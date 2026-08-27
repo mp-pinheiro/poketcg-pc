@@ -5549,6 +5549,14 @@ CASES["SuperEnergyRetrieval_PlayerHandSelection"] = [
 ]
 # <<< factory SuperEnergyRetrieval_PlayerHandSelection
 
+# >>> factory Maintenance_PlayerSelection
+CONTRACT["Maintenance_PlayerSelection"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Maintenance_PlayerSelection"] = [
+    {"keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC500: b"\xFF", hTempCardIndex_ff98: b"\x00", hTempCardIndex_ff9f: b"\x00"}, "read": {hCurSelectionItem: 1, wDuelTempList: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC500: b"\xFF", hTempCardIndex_ff98: b"\x00", hTempCardIndex_ff9f: b"\x00"}, "read": {hCurSelectionItem: 1, wDuelTempList: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000}
+]
+# <<< factory Maintenance_PlayerSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8100,3 +8108,6 @@ MUTATIONS["HandlePlayerSelection2HandCardsToDiscard"] = {"source_symbol": "Handl
 # >>> factory-mutation SuperEnergyRetrieval_PlayerHandSelection
 MUTATIONS["SuperEnergyRetrieval_PlayerHandSelection"] = {"source_symbol": "SuperEnergyRetrieval_PlayerHandSelection", "before": "HandlePlayerSelection2HandCardsResult SuperEnergyRetrieval_PlayerHandSelection(void)\n{\n\treturn HandlePlayerSelection2HandCardsToDiscard();\n}", "after": "HandlePlayerSelection2HandCardsResult SuperEnergyRetrieval_PlayerHandSelection(void)\n{\n\treturn (HandlePlayerSelection2HandCardsResult){0u, 0u};\n}", "case_ids": ["SuperEnergyRetrieval_PlayerHandSelection-0", "SuperEnergyRetrieval_PlayerHandSelection-1"]}
 # <<< factory-mutation SuperEnergyRetrieval_PlayerHandSelection
+# >>> factory-mutation Maintenance_PlayerSelection
+MUTATIONS["Maintenance_PlayerSelection"] = {"source_symbol": "Maintenance_PlayerSelection", "before": "HandlePlayerSelection2HandCardsResult Maintenance_PlayerSelection(void)\n{\n\treturn HandlePlayerSelection2HandCards(ChooseTheCardToPutBackText, Choose2HandCardsFromHandToReturnToDeckText);", "after": "HandlePlayerSelection2HandCardsResult Maintenance_PlayerSelection(void)\n{\n\treturn (HandlePlayerSelection2HandCardsResult){0u, 0u};", "case_ids": ["Maintenance_PlayerSelection-0", "Maintenance_PlayerSelection-1"]}
+# <<< factory-mutation Maintenance_PlayerSelection

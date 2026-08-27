@@ -1016,6 +1016,10 @@ static void chain_lightning_damage_same_color_bench(void)
 
 #define Choose2CardsFromHandToDiscardText 0x0155u
 #define ChooseTheCardToDiscardText 0x0173u
+
+#include "home/effect_functions.h"
+#define Choose2HandCardsFromHandToReturnToDeckText 0x0156u
+#define ChooseTheCardToPutBackText 0x0172u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -8172,3 +8176,10 @@ HandlePlayerSelection2HandCardsResult SuperEnergyRetrieval_PlayerHandSelection(v
 	return HandlePlayerSelection2HandCardsToDiscard();
 }
 /* <<< factory SuperEnergyRetrieval_PlayerHandSelection */
+
+/* >>> factory Maintenance_PlayerSelection */
+HandlePlayerSelection2HandCardsResult Maintenance_PlayerSelection(void)
+{
+	return HandlePlayerSelection2HandCards(ChooseTheCardToPutBackText, Choose2HandCardsFromHandToReturnToDeckText);
+}
+/* <<< factory Maintenance_PlayerSelection */

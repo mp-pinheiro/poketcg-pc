@@ -4120,6 +4120,15 @@ static void adapt_SuperEnergyRetrieval_PlayerHandSelection(ProbeState *s)
 }
 /* <<< factory SuperEnergyRetrieval_PlayerHandSelection */
 
+/* >>> factory Maintenance_PlayerSelection */
+static void adapt_Maintenance_PlayerSelection(ProbeState *s)
+{
+	HandlePlayerSelection2HandCardsResult result = Maintenance_PlayerSelection();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Maintenance_PlayerSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4619,5 +4628,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "HandlePlayerSelection2HandCards", adapt_HandlePlayerSelection2HandCards },
 	{ "HandlePlayerSelection2HandCardsToDiscard", adapt_HandlePlayerSelection2HandCardsToDiscard },
 	{ "SuperEnergyRetrieval_PlayerHandSelection", adapt_SuperEnergyRetrieval_PlayerHandSelection },
+	{ "Maintenance_PlayerSelection", adapt_Maintenance_PlayerSelection },
 	{ NULL, NULL },
 };
