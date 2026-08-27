@@ -5494,6 +5494,18 @@ CASES["ZapdosThunder_RecoilEffect"] = [
 ]
 # <<< factory ZapdosThunder_RecoilEffect
 
+# >>> factory BillEffect
+CONTRACT["BillEffect"] = {"compare": (), "preserve": ()}
+CASES["BillEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xC2BA: b"\x00", 0xC2EE: b"\x00", 0xC27E: b"\x01\x02", 0xC201: b"\x00", 0xC202: b"\x00", 0xC510: b"\xFF", 0xCABB: b"\x00"},
+     "read": {0xC2BA: 1, 0xC2EE: 1, 0xC242: 2, 0xC201: 1, 0xC202: 1, 0xFF98: 1, 0xCBE8: 1, 0xCBE9: 1, 0xC510: 1},
+     "keys": [0x00, 0x01],
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xC2BA: b"\x00", 0xC2EE: b"\x00", 0xC27E: b"\x01\x02", 0xC201: b"\x00", 0xC202: b"\x00", 0xC510: b"\xFF", 0xCABB: b"\x00"}, read={0xC2BA: 1, 0xC2EE: 1, 0xC242: 2, 0xC201: 1, 0xC202: 1, 0xFF98: 1, 0xCBE8: 1, 0xCBE9: 1, 0xC510: 1}, keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory BillEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8030,3 +8042,6 @@ MUTATIONS["ThunderJolt_RecoilEffect"] = {"source_symbol": "ThunderJolt_RecoilEff
 # >>> factory-mutation ZapdosThunder_RecoilEffect
 MUTATIONS["ZapdosThunder_RecoilEffect"] = {"source_symbol": "ZapdosThunder_RecoilEffect", "before": "ZapdosThunder_RecoilEffectResult ZapdosThunder_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tLoadTxRam3(30u);", "after": "ZapdosThunder_RecoilEffectResult ZapdosThunder_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tLoadTxRam3(31u);", "case_ids": ["ZapdosThunder_RecoilEffect-0", "ZapdosThunder_RecoilEffect-1"]}
 # <<< factory-mutation ZapdosThunder_RecoilEffect
+# >>> factory-mutation BillEffect
+MUTATIONS["BillEffect"] = {"source_symbol": "BillEffect", "before": "\tuint8_t remaining = 2u;", "after": "\tuint8_t remaining = 1u;", "case_ids": ["BillEffect-0", "BillEffect-1"]}
+# <<< factory-mutation BillEffect

@@ -4078,6 +4078,14 @@ static void adapt_ZapdosThunder_RecoilEffect(ProbeState *s)
 }
 /* <<< factory ZapdosThunder_RecoilEffect */
 
+/* >>> factory BillEffect */
+static void adapt_BillEffect(ProbeState *s)
+{
+	(void)s;
+	BillEffect();
+}
+/* <<< factory BillEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4572,5 +4580,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Maintenance_ReturnToDeckAndDrawEffect", adapt_Maintenance_ReturnToDeckAndDrawEffect },
 	{ "ThunderJolt_RecoilEffect", adapt_ThunderJolt_RecoilEffect },
 	{ "ZapdosThunder_RecoilEffect", adapt_ZapdosThunder_RecoilEffect },
+	{ "BillEffect", adapt_BillEffect },
 	{ NULL, NULL },
 };

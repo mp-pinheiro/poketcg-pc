@@ -8078,3 +8078,22 @@ ZapdosThunder_RecoilEffectResult ZapdosThunder_RecoilEffect(uint8_t f, uint8_t d
 	return (ZapdosThunder_RecoilEffectResult){result.a, result.f};
 }
 /* <<< factory ZapdosThunder_RecoilEffect */
+
+/* >>> factory BillEffect */
+void BillEffect(void)
+{
+	DisplayDrawNCardsScreen(2u, 0u, 0u, 0u, 0u, 0u, 0u);
+	uint8_t remaining = 2u;
+	while (remaining != 0u) {
+		DrawCardResult card = DrawCardFromDeck();
+		if ((card.f & 0x10u) != 0u)
+			break;
+		hTempCardIndex_ff98 = card.a;
+		AddCardToHand(card.a);
+		IsPlayerTurnResult turn = IsPlayerTurn();
+		if ((turn.f & 0x10u) != 0u)
+			(void)DisplayPlayerDrawCardScreen();
+		--remaining;
+	}
+}
+/* <<< factory BillEffect */
