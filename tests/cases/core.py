@@ -1865,6 +1865,35 @@ hTempPlayAreaLocation_ff9d = 0xFF9D
 wAIFirstAttackDamage = 0xCE00
 wAISecondAttackDamage = 0xCE01
 wSelectedAttack = 0xCCC6
+
+hWhoseTurn = 0xFF97
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wDamage = 0xCCB9
+wSelectedAttack = 0xCCC6
+SNORLAX = 0xBE
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+def _same_damage_case(hp=0, **overrides):
+    case = {
+        "wram": {
+            hWhoseTurn: b"\xC2",
+            hTempPlayAreaLocation_ff9d: b"\x00",
+            0xC2BB: b"\x00",
+            0xC3BB: b"\x00",
+            0xC300: b"\x10",
+            0xC480: bytes((SNORLAX,)),
+            0xC2C8: bytes((hp,)),
+            wDamage: b"\x00\x00",
+            0xCCBB: b"\x00",
+            0xCCBC: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}],
+        "read": {wDamage: 2, wSelectedAttack: 1},
+        "instruction_budget": 40000000,
+        "cycle_budget": 160000000,
+    }
+    case.update(overrides)
+    return case
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -4020,6 +4049,16 @@ CASES["CheckIfDefendingPokemonCanKnockOut"] = [
 ]
 # <<< factory CheckIfDefendingPokemonCanKnockOut
 
+# >>> factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP
+CONTRACT["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP"] = [
+    _same_damage_case(0x00),
+    _same_damage_case(0x00),
+    _same_damage_case(0x00),
+    dict(POISON, **_same_damage_case(0x00)),
+]
+# <<< factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5618,3 +5657,6 @@ MUTATIONS["CheckIfDefendingPokemonCanKnockOut"] = {
     "case_ids": ["CheckIfDefendingPokemonCanKnockOut-0", "CheckIfDefendingPokemonCanKnockOut-1"]
 }
 # <<< factory-mutation CheckIfDefendingPokemonCanKnockOut
+# >>> factory-mutation CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP
+MUTATIONS["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP"] = {"source_symbol": "CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP", "before": "\tif (difference == 0u)\n\t\treturn (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, 0x90u};\n\tif ((flags & 0x10u) != 0u)", "after": "\tif (difference == 0u)\n\t\treturn (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, 0x80u};\n\tif ((flags & 0x10u) != 0u)", "case_ids": ["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP-0", "CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP-3"]}
+# <<< factory-mutation CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP

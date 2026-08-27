@@ -2544,6 +2544,15 @@ static void adapt_CheckIfDefendingPokemonCanKnockOut(ProbeState *s)
 }
 /* <<< factory CheckIfDefendingPokemonCanKnockOut */
 
+/* >>> factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP */
+static void adapt_CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP(ProbeState *s)
+{
+	CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult result = CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2848,5 +2857,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "LookForEnergyNeededForAttackInHand", adapt_LookForEnergyNeededForAttackInHand },
 	{ "PlayShuffleAndDrawCardsAnimation_BothDuelists", adapt_PlayShuffleAndDrawCardsAnimation_BothDuelists },
 	{ "CheckIfDefendingPokemonCanKnockOut", adapt_CheckIfDefendingPokemonCanKnockOut },
+	{ "CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP", adapt_CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP },
 	{ NULL, NULL },
 };

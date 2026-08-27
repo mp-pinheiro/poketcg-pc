@@ -1395,6 +1395,11 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/duel.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/damage_calculation.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -7867,3 +7872,37 @@ CheckIfDefendingPokemonCanKnockOutResult CheckIfDefendingPokemonCanKnockOut(uint
 	return (CheckIfDefendingPokemonCanKnockOutResult){first_damage, 0x10u};
 }
 /* <<< factory CheckIfDefendingPokemonCanKnockOut */
+
+/* >>> factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP */
+CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP(void)
+{
+	(void)EstimateDamage_FromDefendingPokemon(FIRST_ATTACK_OR_PKMN_POWER);
+	DuelistVarResult hp = GetTurnDuelistVariable(
+		(uint8_t)(hTempPlayAreaLocation_ff9d + DUELVARS_ARENA_CARD_HP));
+	uint8_t damage = wDamage;
+	uint8_t difference = (uint8_t)(hp.a - damage);
+	uint8_t flags = 0x40u;
+	if ((hp.a & 0x0Fu) < (damage & 0x0Fu))
+		flags = (uint8_t)(flags | 0x20u);
+	if (hp.a < damage)
+		flags = (uint8_t)(flags | 0x10u);
+	if (difference == 0u)
+		return (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, 0x90u};
+	if ((flags & 0x10u) != 0u)
+		return (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, flags};
+
+	(void)EstimateDamage_FromDefendingPokemon(SECOND_ATTACK);
+	hp = GetTurnDuelistVariable(
+		(uint8_t)(hTempPlayAreaLocation_ff9d + DUELVARS_ARENA_CARD_HP));
+	damage = wDamage;
+	difference = (uint8_t)(hp.a - damage);
+	flags = 0x40u;
+	if ((hp.a & 0x0Fu) < (damage & 0x0Fu))
+		flags = (uint8_t)(flags | 0x20u);
+	if (hp.a < damage)
+		flags = (uint8_t)(flags | 0x10u);
+	if (difference == 0u)
+		return (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, 0x90u};
+	return (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, flags};
+}
+/* <<< factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP */
