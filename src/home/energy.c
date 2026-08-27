@@ -72,6 +72,22 @@
 #define DISCARD_ENERGY_F 0x03u
 #define IGNORE_THIS_ATTACK_F 0x05u
 #define MAX_ENERGY_BOOST_IS_LIMITED 0x02u
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/substatus.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define AI_ENERGY_FLAG_SKIP_EVOLUTION 0x02u
+#define AI_MEWTWO_MILL_F 0x07u
+#define DOUBLE_POISONED 0xc0u
+#define DUELVARS_ARENA_CARD_HP 0xc8u
+#define DUELVARS_ARENA_CARD_STATUS 0xf0u
+#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
+#define MUK 0x27u
+#define POISONED 0x80u
+#define SECOND_ATTACK 0x01u
+#define VENUSAUR_LV67 0x0bu
 /* <<< factory statics */
 
 /* >>> factory RetrievePlayAreaAIScoreFromBackup1 */
@@ -494,3 +510,25 @@ void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a)
 	gb_write8(slot.hl, original);
 }
 /* <<< factory DetermineAIScoreOfAttackEnergyRequirement */
+
+/* >>> factory AIProcessEnergyCards */
+void AIProcessEnergyCards(void)
+{
+	for (uint8_t i=0; i<MAX_PLAY_AREA_POKEMON; ++i) gb_write8((uint16_t)(wPlayAreaEnergyAIScore_ADDR+i),0x80u);
+	HandleLegendaryArticunoEnergyScoring();
+	uint8_t count=GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	for(uint8_t loc=0; count; ++loc,--count){
+		hTempPlayAreaLocation_ff9d=loc; wAIScore=0x80u; wTempAI=0xffu;
+		if(!(wAIEnergyAttachLogicFlags&AI_ENERGY_FLAG_SKIP_EVOLUTION)){
+			(void)CreateHandCardList(count); wCurCardCanAttack=GetTurnDuelistVariable((uint8_t)(loc+DUELVARS_ARENA_CARD)).a;
+			EnergyFlagsResult need=CheckEnergyFlagsNeededInList(GetAttacksEnergyCostBits(wCurCardCanAttack).a);
+			if(need.carry){ CheckForEvolutionInListResult x=CheckForEvolutionInList(wCurCardCanAttack,0); if(x.f&0x10u){wTempAI=x.a;(void)AIEncourage(2);} else if(CheckForEvolutionInDeck(wCurCardCanAttack,0).f&0x10u)(void)AIEncourage(1); }
+		}
+		if(!(CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK).f&0x10u) && (CountTurnDuelistPokemonWithActivePkmnPower(VENUSAUR_LV67).f&0x10u))(void)AIEncourage(1);
+		if(!loc){if(wAIBarrierFlagCounter&(1u<<AI_MEWTWO_MILL_F))AIDiscourage(5);else(void)AIEncourage(4);uint8_t hp=ConvertHPToDamageCounters_Bank5(GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a).a;if(hp<3){uint8_t st=GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;if(st&(hp==2?DOUBLE_POISONED:POISONED))AIDiscourage(10);}}else{uint8_t hp=ConvertHPToDamageCounters_Bank5(GetTurnDuelistVariable((uint8_t)(loc+DUELVARS_ARENA_CARD_HP)).a).a;if(hp<3)AIDiscourage((uint8_t)(3-hp));}
+		if(CheckIfNotABossDeckID().carry==0){(void)HandleAIEnergyScoringForRepeatedBenchPokemon();uint8_t v=gb_read8((uint16_t)(wPlayAreaEnergyAIScore_ADDR+loc));if(v>=0x80)(void)AIEncourage((uint8_t)(v-0x80));else AIDiscourage((uint8_t)(0x80-v));}
+		(void)AIEncourage(1);DetermineAIScoreOfAttackEnergyRequirement(0);DetermineAIScoreOfAttackEnergyRequirement(1);gb_write8((uint16_t)(wPlayAreaAIScore_ADDR+loc),wAIScore);
+	}
+	AIScoreResult best=FindPlayAreaCardWithHighestAIScore(0,0,0,0,0);if(best.f&0x10){if(wAIEnergyAttachLogicFlags)(void)RetrievePlayAreaAIScoreFromBackup1();else{(void)CreateEnergyCardListFromHand(best.a);(void)AITryToPlayEnergyCard();}}else if(wAIEnergyAttachLogicFlags)(void)RetrievePlayAreaAIScoreFromBackup1();
+}
+/* <<< factory AIProcessEnergyCards */

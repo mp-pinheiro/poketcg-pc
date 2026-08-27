@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_ChooseStarterDeckMultichoice",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_ChooseStarterDeckMultichoice\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 0, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff\", \"51899\": \"80\", \"54294\": \"0000\", \"54931\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_ChooseStarterDeckMultichoice\", \"mismatches\": {\"a\": [0, 16], \"f\": [128, 0], \"bus\": {\"address\": 51899, \"reference\": \"ff80000000c2\", \"native\": \"ff0010d600c2\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[50448, 1], [51899, 1], [54294, 2], [54931, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_ChooseStarterDeckMultichoice\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 0, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff\", \"51899\": \"80\", \"54294\": \"0000\", \"54931\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

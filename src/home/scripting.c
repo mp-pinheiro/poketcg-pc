@@ -307,6 +307,12 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 #include "home/labels.h"
 #include "mem.h"
 #define AUTO_CLOSE_TEXTBOX 0x00u
+
+#include "home/scripting.h"
+#include "home/switch_rom.h"
+#include "generated/wram.h"
+#define SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK 0x03u
+#define MULTICHOICE_MENU_ARGS 0x527Bu
 /* <<< factory statics */
 
 
@@ -2079,3 +2085,12 @@ ShowMultichoiceTextboxResult ShowMultichoiceTextbox(uint8_t a, uint16_t hl)
 	return (ShowMultichoiceTextboxResult){out_a, out_f, 0u, doubled, selected, (uint16_t)(entry + 1u)};
 }
 /* <<< factory ShowMultichoiceTextbox */
+
+/* >>> factory ScriptCommand_ChooseStarterDeckMultichoice */
+IncreaseScriptPointerResult ScriptCommand_ChooseStarterDeckMultichoice(void)
+{
+	BankswitchROM(SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK);
+	(void)ShowMultichoiceTextbox(0u, MULTICHOICE_MENU_ARGS);
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_ChooseStarterDeckMultichoice */

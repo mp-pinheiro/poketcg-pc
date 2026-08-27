@@ -60,6 +60,17 @@ wTempAI = 0xCDF1
 wLoadedAttackEffectParam = 0xCCB7
 wLoadedCard1ID = 0xCC2B
 hWhoseTurn = 0xFF97
+
+wAIEnergyAttachLogicFlags = 0xCDD8
+wAIBarrierFlagCounter = 0xCDA7
+wAICardListEnergyBonus = 0xCDB2
+wAIScore = 0xCDBE
+wDuelTempList = 0xC510
+wPlayAreaAIScore = 0xCDBF
+wPlayAreaEnergyAIScore = 0xCDE4
+wTempAI = 0xCDF1
+wTotalAttachedEnergies = 0xCC23
+hTempPlayAreaLocation_ff9d = 0xFF9D
 # <<< factory-cases-statics
 
 # >>> factory GetEnergyCardForDiscardOrEnergyBoostAttack
@@ -110,6 +121,14 @@ CASES["DetermineAIScoreOfAttackEnergyRequirement"] = [
 ]
 # <<< factory DetermineAIScoreOfAttackEnergyRequirement
 
+# >>> factory AIProcessEnergyCards
+CONTRACT["AIProcessEnergyCards"]={"compare":(),"preserve":()}
+CASES["AIProcessEnergyCards"]=[
+ {"a":0xAA,"f":0xF0,"b":0xBB,"c":0xCC,"d":0xDD,"e":0xEE,"hl":0x1234,"wram":{0xCDB2:b"\0\0",0xCDD8:b"\2",0xCDA7:b"\0",0xC2EF:b"\1",0xC2C8:b"\0",0xFF97:b"\xC2",0xCABB:b"\0",0xC510:b"\xff"},"read":{0xCDBF:6,0xCDE4:6},"setup":[{"fn":"CopyDMAFunction"},{"fn":"SetupText","d":0x20,"e":0x40}],"instruction_budget":20000000,"cycle_budget":80000000},
+ {"wram":{0xCDD8:b"\2",0xC2EF:b"\1",0xC2C8:b"\0",0xFF97:b"\xC2",0xCABB:b"\0",0xC510:b"\xff"},"read":{0xCDBF:6,0xCDE4:6},"setup":[{"fn":"CopyDMAFunction"},{"fn":"SetupText","d":0x20,"e":0x40}],"instruction_budget":20000000,"cycle_budget":80000000}
+]
+# <<< factory AIProcessEnergyCards
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -145,3 +164,6 @@ MUTATIONS["AITryToPlayEnergyCard"] = {"source_symbol": "AITryToPlayEnergyCard", 
 # >>> factory-mutation DetermineAIScoreOfAttackEnergyRequirement
 MUTATIONS["DetermineAIScoreOfAttackEnergyRequirement"] = {"source_symbol": "DetermineAIScoreOfAttackEnergyRequirement", "before": "void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a)\n{\n\twSelectedAttack = a;", "after": "void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a)\n{\n\twSelectedAttack = (uint8_t)(a ^ 1u);", "case_ids": ["DetermineAIScoreOfAttackEnergyRequirement-0", "DetermineAIScoreOfAttackEnergyRequirement-1", "DetermineAIScoreOfAttackEnergyRequirement-2"]}
 # <<< factory-mutation DetermineAIScoreOfAttackEnergyRequirement
+# >>> factory-mutation AIProcessEnergyCards
+MUTATIONS["AIProcessEnergyCards"]={"source_symbol":"AIProcessEnergyCards","before":"\tfor (uint8_t i=0; i<MAX_PLAY_AREA_POKEMON; ++i) gb_write8((uint16_t)(wPlayAreaEnergyAIScore_ADDR+i),0x80u);","after":"\tfor (uint8_t i=0; i<MAX_PLAY_AREA_POKEMON; ++i) gb_write8((uint16_t)(wPlayAreaEnergyAIScore_ADDR+i),0x81u);","case_ids":["AIProcessEnergyCards-0"]}
+# <<< factory-mutation AIProcessEnergyCards

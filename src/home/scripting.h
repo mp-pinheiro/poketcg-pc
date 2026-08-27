@@ -611,4 +611,7 @@ typedef struct {
 } ShowMultichoiceTextboxResult;
 ShowMultichoiceTextboxResult ShowMultichoiceTextbox(uint8_t a, uint16_t hl);
 /* <<< factory ShowMultichoiceTextbox */
+/* >>> factory ScriptCommand_ChooseStarterDeckMultichoice */
+IncreaseScriptPointerResult ScriptCommand_ChooseStarterDeckMultichoice(void);
+/* <<< factory ScriptCommand_ChooseStarterDeckMultichoice */
 #endif

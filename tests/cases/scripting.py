@@ -177,6 +177,10 @@ SHOW_MULTI_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e
 SHOW_MULTI_DATA = b"\x00\x00\x00\x00\x10\xC5\x00\x20\xC5\x00\x00"
 SHOW_MULTI_MENU_DATA = b"\x00\x00\x14\x06\x80\x00\x00\x00\x00\x00\x00\x00"
 SHOW_MULTI_POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wStarterDeckChoice = 0xD693
+wd416 = 0xD416
+wd417 = 0xD417
 # <<< factory-cases-statics
 
 
@@ -1533,6 +1537,28 @@ CASES["ShowMultichoiceTextbox"] = [
 ]
 # <<< factory ShowMultichoiceTextbox
 
+# >>> factory ScriptCommand_ChooseStarterDeckMultichoice
+CONTRACT["ScriptCommand_ChooseStarterDeckMultichoice"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_ChooseStarterDeckMultichoice"] = [
+    {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"},
+     "read": {wStarterDeckChoice: 1, wd416: 1, wd417: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"},
+     "read": {wStarterDeckChoice: 1, wd416: 1, wd417: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON,
+         wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"},
+         read={wStarterDeckChoice: 1, wd416: 1, wd417: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         keys=[0x00, 0x01],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ScriptCommand_ChooseStarterDeckMultichoice
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2241,3 +2267,6 @@ MUTATIONS["ScriptCommand_MovePlayer"] = {"source_symbol": "ScriptCommand_MovePla
 # >>> factory-mutation ShowMultichoiceTextbox
 MUTATIONS["ShowMultichoiceTextbox"] = {"source_symbol": "ShowMultichoiceTextbox", "before": "ShowMultichoiceTextboxResult ShowMultichoiceTextbox(uint8_t a, uint16_t hl)\n{\n\twd416 = a;", "after": "ShowMultichoiceTextboxResult ShowMultichoiceTextbox(uint8_t a, uint16_t hl)\n{\n\twd416 = (uint8_t)(a ^ 1u);", "case_ids": ["ShowMultichoiceTextbox-0", "ShowMultichoiceTextbox-1"]}
 # <<< factory-mutation ShowMultichoiceTextbox
+# >>> factory-mutation ScriptCommand_ChooseStarterDeckMultichoice
+MUTATIONS["ScriptCommand_ChooseStarterDeckMultichoice"] = {"source_symbol": "ScriptCommand_ChooseStarterDeckMultichoice", "before": "IncreaseScriptPointerResult ScriptCommand_ChooseStarterDeckMultichoice(void)\n{\n\tBankswitchROM(SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK);\n\t(void)ShowMultichoiceTextbox(0u, MULTICHOICE_MENU_ARGS);", "after": "IncreaseScriptPointerResult ScriptCommand_ChooseStarterDeckMultichoice(void)\n{\n\tBankswitchROM(SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK);\n\t(void)ShowMultichoiceTextbox(0u, (uint16_t)(MULTICHOICE_MENU_ARGS + 2u));", "case_ids": ["ScriptCommand_ChooseStarterDeckMultichoice-0", "ScriptCommand_ChooseStarterDeckMultichoice-1", "ScriptCommand_ChooseStarterDeckMultichoice-2"]}
+# <<< factory-mutation ScriptCommand_ChooseStarterDeckMultichoice
