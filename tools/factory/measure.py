@@ -70,15 +70,20 @@ def _frontier() -> tuple[int, int]:
 
 
 def _pending_artifacts() -> int:
-    """Staged artifacts not yet landed or quarantined; revoked ones re-pend."""
+    """Staged artifacts not yet landed or quarantined; revoked ones re-pend.
+
+    A revocation expires against a newer landing or quarantine, so an artifact
+    whose routines came back through a sibling and was then retired as
+    `superseded` stops counting here instead of pending forever.
+    """
     art = ROOT / ".factory" / "artifacts"
     if not art.is_dir():
         return 0
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import heal
+
     excluded: set[str] = set()
-    revoked: set[str] = set()
-    for name, sink in (("landings.jsonl", excluded),
-                       ("quarantine.jsonl", excluded),
-                       ("revocations.jsonl", revoked)):
+    for name in ("landings.jsonl", "quarantine.jsonl"):
         path = ROOT / ".factory" / name
         if not path.is_file():
             continue
@@ -88,8 +93,8 @@ def _pending_artifacts() -> int:
             except json.JSONDecodeError:
                 continue
             if isinstance(sha, str):
-                sink.add(sha)
-    excluded -= revoked
+                excluded.add(sha)
+    excluded -= heal.revocations_pending_relanding(ROOT)
     return sum(1 for p in art.iterdir()
                if p.is_dir() and p.name not in excluded)
 

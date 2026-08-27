@@ -489,7 +489,7 @@ def _pending_artifact_basenames() -> set[str]:
             sha = entry.get("artifact_sha256")
             if isinstance(sha, str):
                 landed.add(sha)
-    excluded = (landed | _quarantined_artifacts()) - heal.revoked_artifacts()
+    excluded = (landed | _quarantined_artifacts()) - heal.revocations_pending_relanding()
     basenames: set[str] = set()
     for record in workers.artifact_records():
         if record.get("artifact_sha256") in excluded:
@@ -692,11 +692,15 @@ def subcommand_next(count: int, retry_red: bool, retry_limit: int) -> int:
                     )
                 )
             ]
-        # A basename is owned by whichever attempt claimed it first, in this
-        # session or another: surgery is per basename, so two live attempts on one
-        # basename spend two candidate budgets to land one translation.
+        # Basename ownership is cross-invocation only: an attempt issued before
+        # this call, in this session or another, still excludes its basename,
+        # because a landing there would stale candidates already mid-generation.
+        # Within one wave siblings are issued together, verified against one
+        # tree before any landing, and land as one composed batch, so in-wave
+        # same-basename issuance wastes nothing - and with a one-basename
+        # frontier it is the only thing keeping the loop off a single lane.
         by_name = _rows_by_name(records)
-        seen = {
+        owned = {
             Path(by_name[name]["source"]).stem
             for name, state in current.items()
             if state["state"] == "issued" and name in by_name
@@ -714,9 +718,8 @@ def subcommand_next(count: int, retry_red: bool, retry_limit: int) -> int:
             if prepared >= count:
                 break
             stem = Path(row["source"]).stem
-            if stem in seen:
+            if stem in owned:
                 continue
-            seen.add(stem)
             classification = _case_classification(row["name"], row.get("source"))
             if classification == "native-migration-required":
                 preflight_blocked += 1

@@ -108,8 +108,9 @@ blocks and `surgery.apply` writes them into the checkout, replacing a block in
 place when its marker exists and appending otherwise, merging statics
 append-only against the destination. Two artifacts for one basename therefore
 compose, whatever each was verified against, so there is no `base_commit..main`
-path comparison and no `stale-owned-path` quarantine class. Mutation receipts
-are copied, being one file per routine.
+path comparison and no `stale-owned-path` quarantine class. A landing batch may
+therefore carry several artifacts of one basename; grafts apply in
+artifact-hash order. Mutation receipts are copied, being one file per routine.
 
 Landing is monotone in the marker census: the set of routines carrying a
 `/* >>> factory <Fn> */` block under `src/home/` may only grow. A batch that
@@ -134,10 +135,14 @@ session id and no registration; every guard is a `flock` under
 `.factory/locks/`, so a killed session releases everything it held.
 
 Selection and issuance hold `select.lock`. A session never issues a routine
-already claimed by another session's issued attempt, and never issues a second
-routine of a basename that another issued attempt owns — surgery is per
-basename, so two live attempts on one basename would waste one of the two
-greens on a translation the other has already superseded.
+another session's issued attempt already claimed, and never issues into a
+basename owned by an attempt issued in an *earlier* invocation, in any session:
+landing there would stale candidates already mid-generation. Ownership is
+cross-invocation only. One selection wave may issue several routines of a
+single basename, because the loop verifies the whole wave against one tree
+before any landing and the greens land as one composed batch. With a
+one-basename frontier that is the difference between one routine per gate run
+and a full wave per gate run.
 
 Each verifying process claims one lane by `flock` under
 `/tmp/poketcg-factory/`. `factory-next` no longer prints a lane and
@@ -161,13 +166,13 @@ quarantined and reissued. Both paths self-heal.
 
 ## Self-healing
 
-Three failure classes strand the loop without failing anything, so nothing
+These failure classes strand the loop without failing anything, so nothing
 retries them and the frontier reports work that can never move. Every loop
-iteration starts with `just factory-heal`, which repairs all three from on-disk
+iteration starts with `just factory-heal`, which repairs them from on-disk
 evidence and prints
 
 ```text
-HEAL status landed=<n> reaped=<n> revoked=<n> retired=<n> half_landed=<n> orphans=<n> blocked_toml_dirty=<0|1>
+HEAL status landed=<n> reaped=<n> revoked=<n> retired=<n> superseded=<n> half_landed=<n> orphans=<n> blocked_toml_dirty=<0|1>
 ```
 
 - **revoked** — a landing recorded in `.factory/landings.jsonl` whose marker
@@ -181,6 +186,14 @@ HEAL status landed=<n> reaped=<n> revoked=<n> retired=<n> half_landed=<n> orphan
   routine picked up an operational blocker, left the ready frontier, or its
   issuing session died. It becomes `stale`, which is what the fresh pool
   accepts, so the routine re-enters selection with its generation intact.
+- **superseded** — a staged artifact whose routines have all landed through
+  other artifacts, because a stale reissue greened again or two sessions
+  verified one basename. `select_artifacts` already skips it, since every
+  routine it carries is `complete`, but nothing retired it: it inflated
+  `artifacts_pending` and pinned its basename in the pending-artifact deferral
+  set, ordering that basename last in every later selection. It gains a
+  `.factory/quarantine.jsonl` record with `failure_class` `superseded`, which is
+  a landing disposition, not a failure.
 - **retired** — a `red` that both pools have abandoned gains an `AUTO-RETIRED:`
   stanza in `.factory/blocked.toml` carrying its last diagnostic. An operational
   blocker is an input to the derived work records, so `factory-heal` also

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Reconcile the factory ledgers against the tree.
 
-Three failure classes strand the loop without failing anything, so nothing
+These failure classes strand the loop without failing anything, so nothing
 retries them and `factory-next` reports work in flight forever:
 
 - a landing recorded in `.factory/landings.jsonl` whose marker blocks are not in
@@ -15,6 +15,10 @@ retries them and `factory-next` reports work in flight forever:
 - a `red` attempt that both selection pools have abandoned - retry budget spent
   or the same diagnostic twice - with no blocker recorded, so it keeps inflating
   `ready` and its dependents stay stranded.
+- a staged artifact whose routines have all landed through other artifacts. It
+  is skipped by `select_artifacts` forever, yet it kept inflating
+  `artifacts_pending` and pinned its basename in the pending-artifact deferral
+  set, ordering that basename last in every later selection.
 
 Compute outlives its driver too: `run_bounded` detaches every child into its own
 session, so a driver that dies abruptly leaves PyBoy and probe processes pinned
@@ -45,7 +49,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import common
 import packet as packet_mod
 
+LANDINGS_NAME = "landings.jsonl"
 REVOCATIONS_NAME = "revocations.jsonl"
+QUARANTINE_NAME = "quarantine.jsonl"
 BLOCKED_NAME = "blocked.toml"
 DEFAULT_TTL_SECONDS = 21600.0  # 6h; a live wave settles in minutes
 # Must match try_one.main's --retry-limit default. The generation ceiling is not
@@ -114,6 +120,53 @@ def revoked_artifacts(root: Path = common.ROOT) -> set[str]:
     }
 
 
+def _latest_timestamps(path: Path, key: str) -> dict[str, datetime.datetime]:
+    """Newest `key` timestamp per artifact_sha256 in a JSONL ledger."""
+    latest: dict[str, datetime.datetime] = {}
+    for entry in _jsonl(path):
+        sha, stamp = entry.get("artifact_sha256"), entry.get(key)
+        if not isinstance(sha, str) or not isinstance(stamp, str):
+            continue
+        try:
+            moment = datetime.datetime.fromisoformat(stamp)
+        except ValueError:
+            continue
+        if sha not in latest or moment > latest[sha]:
+            latest[sha] = moment
+    return latest
+
+
+def revocations_pending_relanding(root: Path = common.ROOT) -> set[str]:
+    """Revoked artifacts that must be selectable again, so they can be re-landed.
+
+    A revocation says a recorded landing never reached the tree, so the payload
+    has to be re-grafted. It expires the moment a *terminal disposition* newer
+    than it is recorded: a later landing put the payload back, and a later
+    quarantine says this artifact will never land - its routines arrived through
+    a sibling, or the gate rejected it. Without the quarantine arm a revoked
+    artifact whose routines later land elsewhere is un-excluded forever: every
+    retirement is undone on the next read, so it can never be retired, it counts
+    against `artifacts_pending`, and it pins its basename in the pending-artifact
+    deferral set that orders a basename last in selection. A revocation with no
+    comparable timestamp keeps the artifact selectable, because losing a landing
+    is worse than regrafting one.
+    """
+    revoked = revoked_artifacts(root)
+    if not revoked:
+        return revoked
+    revocations = _latest_timestamps(root / ".factory" / REVOCATIONS_NAME, "revoked_at")
+    settled = _latest_timestamps(root / ".factory" / LANDINGS_NAME, "landed_at")
+    for sha, moment in _latest_timestamps(
+            root / ".factory" / QUARANTINE_NAME, "quarantined_at").items():
+        if sha not in settled or moment > settled[sha]:
+            settled[sha] = moment
+    return {
+        sha for sha in revoked
+        if sha not in settled or sha not in revocations
+        or revocations[sha] > settled[sha]
+    }
+
+
 def lost_landings(root: Path = common.ROOT) -> tuple[list[dict[str, Any]], list[str]]:
     """(artifacts whose landed routines vanished, routines present in one half).
 
@@ -129,7 +182,7 @@ def lost_landings(root: Path = common.ROOT) -> tuple[list[dict[str, Any]], list[
     already = revoked_artifacts(root)
     lost: list[dict[str, Any]] = []
     half: list[str] = []
-    for entry in _jsonl(root / ".factory" / "landings.jsonl"):
+    for entry in _jsonl(root / ".factory" / LANDINGS_NAME):
         sha = entry.get("artifact_sha256")
         claimed = entry.get("routines")
         if not isinstance(sha, str) or not isinstance(claimed, list):
@@ -571,6 +624,58 @@ def retire_exhausted_reds(states: dict[str, dict[str, Any]],
     return entries
 
 
+def retire_superseded_artifacts(rows: dict[str, dict[str, Any]], *,
+                                root: Path = common.ROOT,
+                                apply: bool = True) -> list[dict[str, Any]]:
+    """Quarantine staged artifacts whose routines have all landed elsewhere.
+
+    A routine can land twice - a stale reissue greens again, or two sessions
+    verify the same basename - and `select_artifacts` then skips the loser
+    forever, because every routine it carries is already `complete`. Nothing
+    retired it, so it inflated `artifacts_pending` and pinned its basename in
+    the pending-artifact deferral set, ordering that basename last in every
+    later selection. `superseded` is a landing disposition, not a failure.
+    """
+    import workers
+
+    prefix = "HEAL " if apply else "HEAL would-"
+    excluded: set[str] = set()
+    for name in (LANDINGS_NAME, QUARANTINE_NAME):
+        excluded |= {
+            entry["artifact_sha256"]
+            for entry in _jsonl(root / ".factory" / name)
+            if isinstance(entry.get("artifact_sha256"), str)
+        }
+    excluded -= revocations_pending_relanding(root)
+    retired: list[dict[str, Any]] = []
+    for record in workers.artifact_records():
+        sha = record["artifact_sha256"]
+        if sha in excluded:
+            continue
+        identity = record.get("identity") or {}
+        routines = sorted(
+            str(routine["name"])
+            for routine in identity.get("routines") or []
+            if isinstance(routine, dict) and routine.get("name")
+        )
+        if not routines:
+            continue
+        if not all(rows.get(name, {}).get("state") == "complete" for name in routines):
+            continue
+        entry = {
+            "quarantined_at": datetime.datetime.now(datetime.UTC).isoformat(),
+            "artifact_sha256": sha,
+            "basename": str(identity.get("basename") or ""),
+            "failure_class": "superseded",
+            "detail": "all routines already landed via other artifacts",
+        }
+        if apply:
+            common.append_jsonl(root / ".factory" / QUARANTINE_NAME, entry)
+        retired.append(entry)
+        print(f"{prefix}supersede {sha[:16]} {','.join(routines)}")
+    return retired
+
+
 def _toml_string(text: str) -> str:
     """A single-line TOML basic string.
 
@@ -661,10 +766,14 @@ def main(argv: list[str] | None = None) -> int:
             try_one._current_states(), rows,
             retry_limit=arguments.retry_limit, root=root, apply=arguments.apply,
         )
+        superseded = retire_superseded_artifacts(
+            rows, root=root, apply=arguments.apply,
+        )
     _lost, half = lost_landings(root)
     print(
         f"HEAL status landed={len(landed)} reaped={len(reaped)} "
-        f"revoked={len(revoked)} retired={len(retired)} half_landed={len(half)} "
+        f"revoked={len(revoked)} retired={len(retired)} "
+        f"superseded={len(superseded)} half_landed={len(half)} "
         f"orphans={len(orphans)} "
         f"blocked_toml_dirty={1 if (retired and arguments.apply) else 0}"
     )
