@@ -316,8 +316,7 @@ static void adapt_Music1_f4015(ProbeState *s)
 /* >>> factory Music1_PlayNextNote_pop */
 static void adapt_Music1_PlayNextNote_pop(ProbeState *s)
 {
-	s->hl = s->stack[0];
-	Music1_PlayNextNote_pop(&s->hl, s->c);
+	Music1_PlayNextNote_pop(s->stack[0], s->c);
 }
 /* <<< factory Music1_PlayNextNote_pop */
 

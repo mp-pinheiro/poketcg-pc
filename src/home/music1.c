@@ -1587,8 +1587,9 @@ void Music1_f4015(void)
 /* <<< factory Music1_f4015 */
 
 /* >>> factory Music1_PlayNextNote_pop */
-void Music1_PlayNextNote_pop(uint16_t *hl, uint8_t ch)
+void Music1_PlayNextNote_pop(uint16_t caller_stream, uint8_t ch)
 {
-	Music1_PlayNextNote(hl, ch);
+	uint16_t hl = caller_stream;
+	Music1_PlayNextNote(&hl, ch);
 }
 /* <<< factory Music1_PlayNextNote_pop */

@@ -3,7 +3,7 @@
   "case": "tests/cases/music2.py",
   "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"Music2_PlayNextNote_pop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49411, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"d02aff\", \"56717\": \"00010101\", \"56783\": \"2a000000\"}}, \"status\": \"PASS\"}\n",
+  "baseline": "{\"fn\": \"Music2_PlayNextNote_pop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"d02aff\", \"56717\": \"00010101\", \"56783\": \"2a000000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Music2_PlayNextNote_pop\", \"mismatches\": {\"bus\": {\"address\": 56717, \"reference\": \"d02aff000101012a\", \"native\": \"d02aff0100010100\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[49408, 3], [56717, 4], [56783, 4]]}}}\n",
-  "restored": "{\"fn\": \"Music2_PlayNextNote_pop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49411, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"d02aff\", \"56717\": \"00010101\", \"56783\": \"2a000000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Music2_PlayNextNote_pop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"d02aff\", \"56717\": \"00010101\", \"56783\": \"2a000000\"}}, \"status\": \"PASS\"}\n"
 }

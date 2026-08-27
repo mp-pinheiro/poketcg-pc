@@ -313,11 +313,9 @@ static void adapt_SoundTimerHandler_2(ProbeState *s)
 /* <<< factory SoundTimerHandler_2 */
 
 /* >>> factory Music2_PlayNextNote_pop */
-/* >>> factory Music2_PlayNextNote_pop */
 static void adapt_Music2_PlayNextNote_pop(ProbeState *s)
 {
-	s->hl = s->stack[0];
-	Music2_PlayNextNote_pop(&s->hl, s->c);
+	Music2_PlayNextNote_pop(s->stack[0], s->c);
 }
 /* <<< factory Music2_PlayNextNote_pop */
 

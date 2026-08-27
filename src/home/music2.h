@@ -121,7 +121,6 @@ void _SetupSound_2(void);
 void SoundTimerHandler_2(void);
 /* <<< factory SoundTimerHandler_2 */
 /* >>> factory Music2_PlayNextNote_pop */
-/* >>> factory Music2_PlayNextNote_pop */
-void Music2_PlayNextNote_pop(uint16_t *hl, uint8_t ch);
+void Music2_PlayNextNote_pop(uint16_t caller_stream, uint8_t ch);
 /* <<< factory Music2_PlayNextNote_pop */
 #endif /* POKETCG_MUSIC2_H */

@@ -1575,8 +1575,9 @@ void SoundTimerHandler_2(void)
 /* <<< factory SoundTimerHandler_2 */
 
 /* >>> factory Music2_PlayNextNote_pop */
-void Music2_PlayNextNote_pop(uint16_t *hl, uint8_t ch)
+void Music2_PlayNextNote_pop(uint16_t caller_stream, uint8_t ch)
 {
-	Music2_PlayNextNote(hl, ch);
+	uint16_t hl = caller_stream;
+	Music2_PlayNextNote(&hl, ch);
 }
 /* <<< factory Music2_PlayNextNote_pop */
