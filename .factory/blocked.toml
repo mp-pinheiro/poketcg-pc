@@ -459,16 +459,6 @@ reason = "AUTO-RETIRED: src/engine/menus/debug_main.asm:2 (basename `debug_main`
 unblock = "read the recorded diagnostics under .factory/try/Func_12661/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "PlayerPickAttackForAmnesia"
-reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:3217 (basename `effect_functions`). 13 generations exhausted (trapped=False); last diagnostic phase=infra-error failure_class=infrastructure detail={\"error\":\"unknown setup routine: CopyDMAFunction\"}"
-unblock = "read the recorded diagnostics under .factory/try/PlayerPickAttackForAmnesia/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "DeleteSaveDataForNewGame"
-reason = "poketcg/src/engine/menus/start.asm:336: `ld a,[wHasSaveData]; or a; ret z` is a genuine early-exit branch (no save data -> nothing else runs), but it has NOTHING non-trivial to observe or mutate: the whole branch is one early return with no side effect, so any mutation confined to it is rejected as 'corrupted routine still passed' (rule: a mutation on a line no case observes is rejected). The only OTHER branch (save data present) calls InitMenuScreen then FlashWhiteScreen then DoFrameIfLCDEnabled -- the exact same EnableLCD-then-real-VBlank-wait chain already diagnosed and retired for HandleStartMenu and PlayerPickAttackForAmnesia this session: it needs the harness's CopyDMAFunction setup routine (tools/factory/prompt.py documents `setup: [{fn: CopyDMAFunction}]` as the fix), which tests/cases/dma.py has landed as a real ported routine but tools/oracle/gbref/runner.c has not yet wired up as a recognized setup name (confirmed: `unknown setup routine: CopyDMAFunction` reproduces identically here). Testing this branch anyway (with a mutation on the branch condition) reproduces the same 30s+ subprocess hang other CopyDMAFunction-dependent routines hit."
-unblock = "same as HandleStartMenu/PlayerPickAttackForAmnesia/PlayerPickFireEnergyCardToDiscard: land CopyDMAFunction support in tools/oracle/gbref/runner.c's setup-routine dispatch, then retry with `setup: [{\"fn\": \"CopyDMAFunction\"}, ...]` plus a cycling `keys` list for the save-data-present branch; the zero-save-data branch can then use a mutation anchored on the branch condition without risking a hang once the other branch completes normally instead of deadlocking."
-
-[[blocked]]
 name = "CloseIRCommunications"
 reason = "AUTO-RETIRED: src/engine/link/ir_core.asm:252 (basename `ir_core`). 9 generations exhausted (trapped=False); last diagnostic phase=diff failure_class=code detail=fail CloseIRCommunications[0] $CABB=80 $FF40=80 $FF00: oracle cf != C ff fail CloseIRCommunications[1] a=$AA f=$F0 b=$BB c=$CC d=$DD e=$EE hl=$1234 $CABB=80 $FF40=80 $FF00: oracle cf != C ff FAIL CloseIRCommunications: 2/2 cases differ"
 unblock = "read the recorded diagnostics under .factory/try/CloseIRCommunications/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
@@ -553,21 +543,21 @@ reason = "AUTO-RETIRED: src/engine/menus/duel.asm:1376 (basename `duel`). 18 gen
 unblock = "read the recorded diagnostics under .factory/try/_HandlePeekSelection/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "AITryUseAttack"
-reason = "AUTO-RETIRED: src/engine/duel/ai/core.asm:133 (basename `core`). 19 generations exhausted (trapped=False); last diagnostic phase=compile failure_class=code detail=/tmp/poketcg-factory/lane-700/src/home/core.c: In function \u2018AITryUseAttack\u2019: /tmp/poketcg-factory/lane-700/src/home/core.c:8056:163: error: \u2018AIMakeDecisionResult\u2019 has no member named \u2018hl\u2019 8056 | decision=AIMakeDecision(OPPACTION_ATTACK_ANIM_AND_DAMAGE); return (AITryUseAttackResult){a,decision.f,decision.b,decision.c,decision.d,decision.e,decision.hl}; | ^"
-unblock = "read the recorded diagnostics under .factory/try/AITryUseAttack/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "SendTilesToPrinter"
-reason = "AUTO-RETIRED: src/engine/link/printer.asm:391 (basename `printer`). 19 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case SendTilesToPrinter-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":1398,\"sp\":65514,\"rom_bank\":6,\"hbank_rom\":6,\"instructions\":713616,\"cycles\":8000000,\"lcdc\":0,\"if\":224,\"ie\":8,\"ime\":0,\"halted\":0,\"ppu_lcdc\":0,\"ppu_ly\":0,\"ppu_mode\":0,\"bus\":\"8100\"}"
-unblock = "read the recorded diagnostics under .factory/try/SendTilesToPrinter/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "GiveBoosterPack"
-reason = "AUTO-RETIRED: src/engine/menus/give_booster_pack.asm:1 (basename `give_booster_pack`). 20 generations exhausted (trapped=False); last diagnostic phase=validate failure_class=schema detail=GiveBoosterPack: header fragment must not contain preprocessor directives"
-unblock = "read the recorded diagnostics under .factory/try/GiveBoosterPack/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "_ShowPromotionalCardScreen"
 reason = "AUTO-RETIRED: src/engine/promotional_card.asm:5 (basename `promotional_card`). 18 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case _ShowPromotionalCardScreen-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":1955,\"sp\":65518,\"rom_bank\":61,\"hbank_rom\":61,\"instructions\":6688236,\"cycles\":80000012,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":62,\"ppu_mode\":3,\"bus\":\"801c09c2\"}"
 unblock = "read the recorded diagnostics under .factory/try/_ShowPromotionalCardScreen/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "AITryUseAttack"
+reason = "DIAGNOSED P4 structural wall, not a case defect. ai/core.asm:133-166 makes three bank1call AIMakeDecision dispatches (OPPACTION_BEGIN_ATTACK $08 / OPPACTION_USE_ATTACK $09 / OPPACTION_ATTACK_ANIM_AND_DAMAGE $0A). Table target $08 (OppAction_BeginUseAttack) is landed; $09 (OppAction_UseAttack) and $0A (OppAction_PlayAttackAnimationDealAttackDamage) are unported and root on AIDoAction's AIActionTable_* matrix, and the registered AIMakeDecision C (core.c:986-1007) is the documented O(1) simplification that never runs the real per-action engine - the same structural root already diagnosed on the AIPlay_* class. Secondary case defect, now named in the retry prompt: the newest primary failure is the silent legacy_to_schema budget fallback (35485 instructions / 400012 cycles at pc $0541, case declared no budgets). Compile failures across generations were candidates guessing nonexistent AIMakeDecisionResult members (a, hl)."
+unblock = "land OppAction_UseAttack and OppAction_PlayAttackAnimationDealAttackDamage plus the real AIMakeDecision dispatch (the P4 matrix), then re-port; see the AIDoAction stanza and the AIPlay_* class for the shared root."
+
+[[blocked]]
+name = "SendTilesToPrinter"
+reason = "DIAGNOSED reference-side wait the harness never satisfies, not a budget defect (8M cycles declared). The real ROM path SendTilesToPrinter -> SendPrinterPacket spins in home/printer.asm:45-49 .wait_printer_packet_transmission (call DoFrame until wPrinterPacketSequence==0), a byte only the serial interrupt path (SerialHandler -> ExecutePrinterPacketSequence states 11/12) clears; observed as BUDGET_EXHAUSTED at pc $0576 (HandleDPadRepeat interior), 713616 instructions. The landed SendPrinterPacket C port models that handshake synchronously via preseeded wSerialTransferData/wPrinterStatus, but a full-path reference run cannot return."
+unblock = "port with a case whose completion cutpoint stops the reference at the `call SendPrinterPacket` site inside SendTilesToPrinter (bank 6, $60DA), observing sGfxBuffer5 staging and the compressed packet - exactly the form SendPrinterPacket's own landed cases use (real ROM stopped at $315D). A full-path case additionally needs the harness to drive SerialHandler's printer sequence, or an intentional synchronous transform like SendPrinterPacket's."
+
+[[blocked]]
+name = "GiveBoosterPack"
+reason = "DIAGNOSED split failure across the last two generations, neither a harness gap. Gen 18 (the directive-informed draw) finally drove the REFERENCE to completion - the budget/seed recipe is right - but `native probe did not terminate; the C body loops forever on state the reference resolves`: the candidate C hangs in a scene-transition wait, the same native-side composite signature as the OppAction_Play* class (see OppAction_EvolvePokemonCard's DrawDuelMainScene reproducer). Gen 19 then burned on a mechanical validate error, `header fragment must not contain preprocessor directives`, three times."
+unblock = "retry after the DrawDuelMainScene composite root is fixed (OppAction_EvolvePokemonCard stanza has the smallest reproducer), or cut the case at the scene transition; candidates must keep #define lines out of the header fragment (STATICS is the documented home)."
