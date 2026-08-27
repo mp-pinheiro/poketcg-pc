@@ -4175,6 +4175,15 @@ static void adapt_Pokedex_PlayerSelection(ProbeState *s)
 }
 /* <<< factory Pokedex_PlayerSelection */
 
+/* >>> factory Thrash_RecoilEffect */
+static void adapt_Thrash_RecoilEffect(ProbeState *s)
+{
+	Thrash_RecoilEffectResult r = Thrash_RecoilEffect(s->f, s->d, s->e);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Thrash_RecoilEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4680,5 +4689,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SuperEnergyRetrieval_PlayerDiscardPileSelection", adapt_SuperEnergyRetrieval_PlayerDiscardPileSelection },
 	{ "ComputerSearch_PlayerDiscardHandSelection", adapt_ComputerSearch_PlayerDiscardHandSelection },
 	{ "Pokedex_PlayerSelection", adapt_Pokedex_PlayerSelection },
+	{ "Thrash_RecoilEffect", adapt_Thrash_RecoilEffect },
 	{ NULL, NULL },
 };

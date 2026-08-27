@@ -8431,3 +8431,15 @@ PokedexPlayerSelectionResult Pokedex_PlayerSelection(void)
 	}
 }
 /* <<< factory Pokedex_PlayerSelection */
+
+/* >>> factory Thrash_RecoilEffect */
+Thrash_RecoilEffectResult Thrash_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)
+{
+	uint8_t coin = hTemp_ffa0;
+	if (coin != 0u)
+		return (Thrash_RecoilEffectResult){coin, 0x00u};
+	DealConfusionDamageToSelfResult result =
+		DealRecoilDamageToSelf(10u, f, d, e);
+	return (Thrash_RecoilEffectResult){result.a, result.f};
+}
+/* <<< factory Thrash_RecoilEffect */

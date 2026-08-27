@@ -5622,6 +5622,16 @@ CASES["Pokedex_PlayerSelection"] = [
 ]
 # <<< factory Pokedex_PlayerSelection
 
+# >>> factory Thrash_RecoilEffect
+CONTRACT["Thrash_RecoilEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Thrash_RecoilEffect"] = [
+    {"f": 0x00, "wram": {0xFFA0: b"\x01", 0xCABB: b"\x00"},
+     "read": {0xFFA0: 1, 0xCCB8: 1}},
+    dict(POISON, wram={0xFFA0: b"\x01", 0xCABB: b"\x00"},
+         read={0xFFA0: 1, 0xCCB8: 1}),
+]
+# <<< factory Thrash_RecoilEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8191,3 +8201,6 @@ MUTATIONS["ComputerSearch_PlayerDiscardHandSelection"] = {"source_symbol": "Comp
 # >>> factory-mutation Pokedex_PlayerSelection
 MUTATIONS["Pokedex_PlayerSelection"] = {"source_symbol": "Pokedex_PlayerSelection", "before": "\t\t\t\tgb_write8((uint16_t)(hTempList_ADDR + written), 0xFFu);\n\t\t\t\treturn (PokedexPlayerSelectionResult){number,", "after": "\t\t\t\tgb_write8((uint16_t)(hTempList_ADDR + written), 0x00u);\n\t\t\t\treturn (PokedexPlayerSelectionResult){number,", "case_ids": ["Pokedex_PlayerSelection-0", "Pokedex_PlayerSelection-1"]}
 # <<< factory-mutation Pokedex_PlayerSelection
+# >>> factory-mutation Thrash_RecoilEffect
+MUTATIONS["Thrash_RecoilEffect"] = {"source_symbol": "Thrash_RecoilEffect", "before": "Thrash_RecoilEffectResult Thrash_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tuint8_t coin = hTemp_ffa0;\n\tif (coin != 0u)\n\t\treturn (Thrash_RecoilEffectResult){coin, 0x00u};", "after": "Thrash_RecoilEffectResult Thrash_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tuint8_t coin = hTemp_ffa0;\n\tif (coin != 0u)\n\t\treturn (Thrash_RecoilEffectResult){(uint8_t)(coin + 1u), 0x00u};", "case_ids": ["Thrash_RecoilEffect-0", "Thrash_RecoilEffect-1"]}
+# <<< factory-mutation Thrash_RecoilEffect
