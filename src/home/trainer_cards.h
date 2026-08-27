@@ -195,4 +195,12 @@ AIDecideEnergyRemovalResult AIDecide_EnergyRemoval(void);
 /* >>> factory AIDecide_PokemonCenter */
 AIDecideResult AIDecide_PokemonCenter(void);
 /* <<< factory AIDecide_PokemonCenter */
+/* >>> factory AIDecide_PlusPower_Phase13 */
+/* trainer_cards.asm:778.  Two-byte exit: the carry returns put the attack
+ * index in a ($00 for the first attack, $01 for the second) while every
+ * .no_carry / .unusable exit runs `or a` over whatever the last callee left
+ * there, so both a and f have to be reported. */
+typedef struct { uint8_t a; uint8_t f; } AIDecide_PlusPower_Phase13Result;
+AIDecide_PlusPower_Phase13Result AIDecide_PlusPower_Phase13(void);
+/* <<< factory AIDecide_PlusPower_Phase13 */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

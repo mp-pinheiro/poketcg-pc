@@ -440,6 +440,15 @@ static void adapt_AIDecide_PokemonCenter(ProbeState *s)
 }
 /* <<< factory AIDecide_PokemonCenter */
 
+/* >>> factory AIDecide_PlusPower_Phase13 */
+static void adapt_AIDecide_PlusPower_Phase13(ProbeState *s)
+{
+	AIDecide_PlusPower_Phase13Result result = AIDecide_PlusPower_Phase13();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory AIDecide_PlusPower_Phase13 */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -493,5 +502,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_FullHeal", adapt_AIDecide_FullHeal },
 	{ "AIDecide_EnergyRemoval", adapt_AIDecide_EnergyRemoval },
 	{ "AIDecide_PokemonCenter", adapt_AIDecide_PokemonCenter },
+	{ "AIDecide_PlusPower_Phase13", adapt_AIDecide_PlusPower_Phase13 },
 	{ NULL, NULL },
 };

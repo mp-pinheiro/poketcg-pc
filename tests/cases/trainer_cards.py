@@ -358,6 +358,65 @@ wce06 = 0xCE06
 wce08 = 0xCE08
 wce0f = 0xCE0F
 wTotalAttachedEnergies = 0xCC23
+
+_pp13_hWhoseTurn = 0xFF97
+_pp13_hTempPlayAreaLocation_ff9d = 0xFF9D
+_pp13_wPlayerCardLocations = 0xC200
+_pp13_wPlayerArenaCard = 0xC2BB
+_pp13_wOpponentCardLocations = 0xC300
+_pp13_wOpponentArenaCard = 0xC3BB
+_pp13_wOpponentArenaCardHP = 0xC3C8
+_pp13_wPlayerDeck = 0xC400
+_pp13_wOpponentDeck = 0xC480
+_pp13_wDamage = 0xCCB9
+_pp13_wAIMinDamage = 0xCCBB
+_pp13_wAIMaxDamage = 0xCCBC
+_pp13_wTempTurnDuelistCardID = 0xCCC3
+_pp13_wTempNonTurnDuelistCardID = 0xCCC4
+_pp13_wSelectedAttack = 0xCCC6
+_pp13_SNORLAX = 0xBE
+_pp13_CARD_LOCATION_ARENA = 0x10
+
+# Same landed seed shape as tests/cases/core.py's _kaod_case, which is what
+# CheckIfAnyAttackKnocksOutDefendingCard itself is measured green with.  The
+# defending card's HP at $C3C8 MUST stay 0x00 in every case: the `sub [hl]`
+# inside CheckIfAnyAttackKnocksOutDefendingCard then resolves on the FIRST
+# attack (borrow when the estimate is non-zero, zero when it is not), so the
+# reference ROM returns after exactly one EstimateDamage_VersusDefendingCard
+# call.  Any non-zero HP lets that subtraction fall through to SECOND_ATTACK
+# and the reference blows the 240-frame oracle limit.
+def _pp13_case(location=b"\x00", **overrides):
+    wram = {
+        _pp13_hWhoseTurn: b"\xC2",
+        _pp13_hTempPlayAreaLocation_ff9d: location,
+        _pp13_wPlayerCardLocations: bytes((_pp13_CARD_LOCATION_ARENA,)),
+        _pp13_wOpponentCardLocations: bytes((_pp13_CARD_LOCATION_ARENA,)),
+        _pp13_wPlayerArenaCard: b"\x00",
+        _pp13_wOpponentArenaCard: b"\x00",
+        _pp13_wPlayerDeck: bytes((_pp13_SNORLAX,)),
+        _pp13_wOpponentDeck: bytes((_pp13_SNORLAX,)),
+        _pp13_wOpponentArenaCardHP: b"\x00",
+        _pp13_wDamage: b"\x00\x00",
+        _pp13_wAIMinDamage: b"\x00",
+        _pp13_wAIMaxDamage: b"\x00",
+        _pp13_wTempTurnDuelistCardID: b"\x00",
+        _pp13_wTempNonTurnDuelistCardID: b"\x00",
+        _pp13_wSelectedAttack: b"\x00",
+    }
+    case = {
+        "wram": wram,
+        "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}],
+        "instruction_budget": 40000000,
+        "cycle_budget": 160000000,
+        "read": {
+            _pp13_hTempPlayAreaLocation_ff9d: 1,
+            _pp13_wDamage: 2,
+            _pp13_wTempTurnDuelistCardID: 2,
+            _pp13_wSelectedAttack: 1,
+        },
+    }
+    case.update(overrides)
+    return case
 # <<< factory-cases-statics
 
 # >>> factory AIDecide_PokemonTrader_LegendaryMoltres
@@ -840,6 +899,15 @@ CASES["AIDecide_PokemonCenter"] = [
 ]
 # <<< factory AIDecide_PokemonCenter
 
+# >>> factory AIDecide_PlusPower_Phase13
+CONTRACT["AIDecide_PlusPower_Phase13"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_PlusPower_Phase13"] = [
+    _pp13_case(),
+    dict(POISON, **_pp13_case()),
+    _pp13_case(location=b"\x01"),
+]
+# <<< factory AIDecide_PlusPower_Phase13
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1099,3 +1167,11 @@ MUTATIONS["AIDecide_EnergyRemoval"] = {"source_symbol": "AIDecide_EnergyRemoval"
 # >>> factory-mutation AIDecide_PokemonCenter
 MUTATIONS["AIDecide_PokemonCenter"] = {"source_symbol": "AIDecide_PokemonCenter", "before": "AIDecideResult AIDecide_PokemonCenter(void)\n{\n\thTempPlayAreaLocation_ff9d = 0u;", "after": "AIDecideResult AIDecide_PokemonCenter(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["AIDecide_PokemonCenter-0", "AIDecide_PokemonCenter-1"]}
 # <<< factory-mutation AIDecide_PokemonCenter
+# >>> factory-mutation AIDecide_PlusPower_Phase13
+MUTATIONS["AIDecide_PlusPower_Phase13"] = {
+    "source_symbol": "AIDecide_PlusPower_Phase13",
+    "before": "\t/* .cannot_ko: the active Pokemon's id goes to wTempTurnDuelistCardID. */\n\tDuelistVarResult attacker = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\twTempTurnDuelistCardID = (uint8_t)GetCardIDFromDeckIndex(attacker.a);",
+    "after": "\t/* .cannot_ko: the active Pokemon's id goes to wTempTurnDuelistCardID. */\n\tDuelistVarResult attacker = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\twTempTurnDuelistCardID = (uint8_t)(GetCardIDFromDeckIndex(attacker.a) + 1u);",
+    "case_ids": ["AIDecide_PlusPower_Phase13-0", "AIDecide_PlusPower_Phase13-1", "AIDecide_PlusPower_Phase13-2"],
+}
+# <<< factory-mutation AIDecide_PlusPower_Phase13

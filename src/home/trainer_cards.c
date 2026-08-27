@@ -330,6 +330,14 @@
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/random.h"
+
+#include "home/core.h"
+#include "home/damage_calculation.h"
+#include "home/duel.h"
+#include "home/substatus.h"
+#include "home/trainer_cards.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 
@@ -2724,3 +2732,104 @@ AIDecideResult AIDecide_PokemonCenter(void)
 	return (AIDecideResult){0x10u};
 }
 /* <<< factory AIDecide_PokemonCenter */
+
+/* >>> factory AIDecide_PlusPower_Phase13 */
+AIDecide_PlusPower_Phase13Result AIDecide_PlusPower_Phase13(void)
+{
+	/* The `xor a` / `ldh` pair is written twice in the source ("this is
+	   mistakenly duplicated"); both stores are kept. */
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+
+	CheckIfAnyAttackKnocksOutDefendingCardResult ko =
+		CheckIfAnyAttackKnocksOutDefendingCard();
+	if ((ko.f & 0x10u) != 0u) {
+		CheckIfSelectedAttackIsUnusableResult ko_attack =
+			CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		/* `jr nc, .no_carry`: a KO attack that is useable needs no PlusPower.
+		   `or a` at .no_carry keeps a and sets Z from it, clearing N/H/C. */
+		if ((ko_attack.f & 0x10u) == 0u)
+			return (AIDecide_PlusPower_Phase13Result){ko_attack.a,
+				(uint8_t)(ko_attack.a == 0u ? 0x80u : 0x00u)};
+		LookForEnergyNeededForAttackInHandResult energy =
+			LookForEnergyNeededForAttackInHand();
+		if ((energy.f & 0x10u) != 0u)
+			return (AIDecide_PlusPower_Phase13Result){energy.a,
+				(uint8_t)(energy.a == 0u ? 0x80u : 0x00u)};
+	}
+
+	/* .cannot_ko: the active Pokemon's id goes to wTempTurnDuelistCardID. */
+	DuelistVarResult attacker = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	wTempTurnDuelistCardID = (uint8_t)GetCardIDFromDeckIndex(attacker.a);
+
+	SwapTurn();
+	DuelistVarResult defender = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	uint8_t defending_id = (uint8_t)GetCardIDFromDeckIndex(defender.a);
+	wTempNonTurnDuelistCardID = defending_id;
+	NoDamageOrEffectResult prevented =
+		HandleNoDamageOrEffectSubstatus(defending_id, defender.hl);
+	/* SwapTurn pushes af, so the substatus carry survives the swap back. */
+	SwapTurn();
+	if ((prevented.f & 0x10u) != 0u)
+		/* .no_damage_or_effect is the only carry exit and does `ld a, e`
+		   immediately before `scf`, so a mirrors the returned e. */
+		return (AIDecide_PlusPower_Phase13Result){prevented.e,
+			(uint8_t)(prevented.e == 0u ? 0x80u : 0x00u)};
+
+	uint8_t attack = FIRST_ATTACK_OR_PKMN_POWER;
+	for (;;) {
+		wSelectedAttack = attack;
+
+		/* .CheckAttackWithPluspower */
+		uint8_t exit_a;
+		uint8_t kos_with_pluspower = 0u;
+		CheckIfSelectedAttackIsUnusableResult unusable =
+			CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		if ((unusable.f & 0x10u) != 0u) {
+			exit_a = unusable.a; /* .unusable: or a; ret */
+		} else {
+			(void)EstimateDamage_VersusDefendingCard(wSelectedAttack);
+			uint8_t hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a;
+			uint8_t damage = wDamage;
+			exit_a = (uint8_t)(hp - damage);
+			/* `jr c` (damage exceeds the HP left) and `jr z` (the attack
+			   already KOs) both return no carry with the difference in a. */
+			if (hp >= damage && exit_a != 0u) {
+				uint8_t boosted = (uint8_t)(damage + 10u);
+				exit_a = (uint8_t)(hp - boosted);
+				/* `ret c` (the boost overshoots the HP left) and `scf; ret`
+				   (exact KO) are the carry exits; `ret nz` does not KO. */
+				kos_with_pluspower = (uint8_t)(hp <= boosted);
+			}
+		}
+
+		if (kos_with_pluspower != 0u) {
+			/* .MrMimeDamageCheck: `ret c` keeps the carry when the boosted
+			   damage stays below 30, which Mr. Mime cannot prevent. */
+			if ((uint8_t)(wDamage + 10u) >= 30u) {
+				SwapTurn();
+				DuelistVarResult arena =
+					GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+				uint8_t defending = (uint8_t)GetCardIDFromDeckIndex(arena.a);
+				SwapTurn();
+				/* `ret z`: no carry, a still holds e, and MR_MIME is non-zero
+				   so the `or a` at .no_carry leaves Z clear. */
+				if (defending == MR_MIME)
+					return (AIDecide_PlusPower_Phase13Result){defending, 0x00u};
+			}
+			/* Both carry exits of the Mr. Mime check come back with Z clear,
+			   so `xor a; scf` yields $90 and `ld a, SECOND_ATTACK; scf` $10. */
+			if (attack == FIRST_ATTACK_OR_PKMN_POWER)
+				return (AIDecide_PlusPower_Phase13Result){
+					FIRST_ATTACK_OR_PKMN_POWER, 0x90u};
+			return (AIDecide_PlusPower_Phase13Result){SECOND_ATTACK, 0x10u};
+		}
+
+		if (attack == SECOND_ATTACK)
+			/* .no_carry: `or a` on whatever the second check left in a. */
+			return (AIDecide_PlusPower_Phase13Result){exit_a,
+				(uint8_t)(exit_a == 0u ? 0x80u : 0x00u)};
+		attack = SECOND_ATTACK;
+	}
+}
+/* <<< factory AIDecide_PlusPower_Phase13 */
