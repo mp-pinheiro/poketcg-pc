@@ -4156,6 +4156,15 @@ static void adapt_SuperEnergyRetrieval_PlayerDiscardPileSelection(ProbeState *s)
 }
 /* <<< factory SuperEnergyRetrieval_PlayerDiscardPileSelection */
 
+/* >>> factory ComputerSearch_PlayerDiscardHandSelection */
+static void adapt_ComputerSearch_PlayerDiscardHandSelection(ProbeState *s)
+{
+	HandlePlayerSelection2HandCardsResult result = ComputerSearch_PlayerDiscardHandSelection();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory ComputerSearch_PlayerDiscardHandSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4659,5 +4668,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SlicingWindEffect", adapt_SlicingWindEffect },
 	{ "ZapdosThunder_RecoilEffect", adapt_ZapdosThunder_RecoilEffect },
 	{ "SuperEnergyRetrieval_PlayerDiscardPileSelection", adapt_SuperEnergyRetrieval_PlayerDiscardPileSelection },
+	{ "ComputerSearch_PlayerDiscardHandSelection", adapt_ComputerSearch_PlayerDiscardHandSelection },
 	{ NULL, NULL },
 };

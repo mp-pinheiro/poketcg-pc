@@ -1714,6 +1714,9 @@ SlicingWindEffectResult SlicingWindEffect(void);
 typedef struct { uint8_t a; uint8_t f; } SuperEnergyRetrievalPlayerDiscardPileSelectionResult;
 SuperEnergyRetrievalPlayerDiscardPileSelectionResult SuperEnergyRetrieval_PlayerDiscardPileSelection(void);
 /* <<< factory SuperEnergyRetrieval_PlayerDiscardPileSelection */
+/* >>> factory ComputerSearch_PlayerDiscardHandSelection */
+HandlePlayerSelection2HandCardsResult ComputerSearch_PlayerDiscardHandSelection(void);
+/* <<< factory ComputerSearch_PlayerDiscardHandSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

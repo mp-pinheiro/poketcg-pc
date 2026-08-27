@@ -8257,3 +8257,10 @@ SuperEnergyRetrievalPlayerDiscardPileSelectionResult SuperEnergyRetrieval_Player
 	return (SuperEnergyRetrievalPlayerDiscardPileSelectionResult){final_a, (final_a == 0u) ? 0x80u : 0x00u};
 }
 /* <<< factory SuperEnergyRetrieval_PlayerDiscardPileSelection */
+
+/* >>> factory ComputerSearch_PlayerDiscardHandSelection */
+HandlePlayerSelection2HandCardsResult ComputerSearch_PlayerDiscardHandSelection(void)
+{
+	return HandlePlayerSelection2HandCardsToDiscard();
+}
+/* <<< factory ComputerSearch_PlayerDiscardHandSelection */

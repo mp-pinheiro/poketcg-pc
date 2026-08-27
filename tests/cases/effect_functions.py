@@ -5583,6 +5583,14 @@ CASES["SuperEnergyRetrieval_PlayerDiscardPileSelection"] = [
 ]
 # <<< factory SuperEnergyRetrieval_PlayerDiscardPileSelection
 
+# >>> factory ComputerSearch_PlayerDiscardHandSelection
+CONTRACT["ComputerSearch_PlayerDiscardHandSelection"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ComputerSearch_PlayerDiscardHandSelection"] = [
+    {"keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC500: b"\xFF", 0xFF98: b"\x00", 0xFF9F: b"\x00"}, "read": {0xFFB2: 1, 0xC510: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC500: b"\xFF", 0xFF98: b"\x00", 0xFF9F: b"\x00"}, "read": {0xFFB2: 1, 0xC510: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000}
+]
+# <<< factory ComputerSearch_PlayerDiscardHandSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8146,3 +8154,6 @@ MUTATIONS["SlicingWindEffect"] = {"source_symbol": "SlicingWindEffect", "before"
 # >>> factory-mutation SuperEnergyRetrieval_PlayerDiscardPileSelection
 MUTATIONS["SuperEnergyRetrieval_PlayerDiscardPileSelection"] = {"source_symbol": "SuperEnergyRetrieval_PlayerDiscardPileSelection", "before": "\tgb_write8(terminator, 0xffu);", "after": "\tgb_write8(terminator, 0u);", "case_ids": ["SuperEnergyRetrieval_PlayerDiscardPileSelection-0"]}
 # <<< factory-mutation SuperEnergyRetrieval_PlayerDiscardPileSelection
+# >>> factory-mutation ComputerSearch_PlayerDiscardHandSelection
+MUTATIONS["ComputerSearch_PlayerDiscardHandSelection"] = {"source_symbol": "ComputerSearch_PlayerDiscardHandSelection", "before": "HandlePlayerSelection2HandCardsResult ComputerSearch_PlayerDiscardHandSelection(void)\n{\n\treturn HandlePlayerSelection2HandCardsToDiscard();\n}", "after": "HandlePlayerSelection2HandCardsResult ComputerSearch_PlayerDiscardHandSelection(void)\n{\n\treturn (HandlePlayerSelection2HandCardsResult){0u, 0u};\n}", "case_ids": ["ComputerSearch_PlayerDiscardHandSelection-0", "ComputerSearch_PlayerDiscardHandSelection-1"]}
+# <<< factory-mutation ComputerSearch_PlayerDiscardHandSelection
