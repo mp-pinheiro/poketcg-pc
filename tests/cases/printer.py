@@ -89,6 +89,7 @@ CASES = {
 # >>> factory-cases-statics
 wce9d = 0xCE9D
 
+SGFXBUFFER1 = 0xA400
 SGFXBUFFER5 = 0xB400
 
 wDefaultText = 0xC590
@@ -237,6 +238,35 @@ CASES["SendPrinterPacket"] = [
      "read": {0xCE64: 8}, "instruction_budget": 2000000, "cycle_budget": 8000000},
 ]
 # <<< factory SendPrinterPacket
+
+# >>> factory SendTilesToPrinter
+CONTRACT["SendTilesToPrinter"] = {"compare": (), "preserve": ()}
+# 64 map entries naming 52 distinct tiles; sGfxBuffer1 seeds tile i as 16
+# bytes of i, so both the row stride (32: 20 read, 12 skipped) and the tile
+# resolution are observable in the staged buffer and its compressed output.
+_SENDTILES_MAP = bytes(range(64))
+_SENDTILES_GFX = b"".join(bytes([i]) * 16 for i in range(52))
+_SENDTILES_SR = {0: {SGFXBUFFER1: _SENDTILES_GFX}}
+_SENDTILES_READ = {0: {SGFXBUFFER5: 0x280, SGFXBUFFER5 + 0x280: 0x280}}
+CASES["SendTilesToPrinter"] = [
+    {"hl": 0xC500,
+     "wram": {0xC500: _SENDTILES_MAP, wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
+     "sram": _SENDTILES_SR, "ramg": True,
+     "read": {0xCE64: 8}, "sread": _SENDTILES_READ,
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, hl=0xC500,
+         wram={0xC500: _SENDTILES_MAP, wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
+         sram=_SENDTILES_SR, ramg=True,
+         read={0xCE64: 8}, sread=_SENDTILES_READ,
+         instruction_budget=2000000, cycle_budget=8000000),
+    {"hl": 0xC500,
+     "wram": {0xC500: _SENDTILES_MAP, wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
+     "sram": _SENDTILES_SR, "ramg": True,
+     "read": {0xCE64: 8},
+     "expect_regs": {"a": 0x00, "f": 0x80}, "oracle": False, "evidence": "intentional-transform",
+     "why": "PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"},
+]
+# <<< factory SendTilesToPrinter
 
 # >>> factory ShowPrinterConnectionErrorScene
 CONTRACT["ShowPrinterConnectionErrorScene"] = {"compare": ("f",), "preserve": ()}
@@ -554,3 +584,20 @@ MUTATIONS["_PreparePrinterConnection"] = {
 for _record in SCHEMA2_CASES["_PreparePrinterConnection"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
 # <<< factory-completion _PreparePrinterConnection
+
+# >>> factory-mutation SendTilesToPrinter
+MUTATIONS["SendTilesToPrinter"] = {
+    "source_symbol": "SendTilesToPrinter",
+    "before": "\t\thl = (uint16_t)(hl + 32u);",
+    "after": "\t\thl = (uint16_t)(hl + 31u);",
+    "case_ids": ["SendTilesToPrinter-0", "SendTilesToPrinter-1"],
+}
+# <<< factory-mutation SendTilesToPrinter
+# >>> factory-completion SendTilesToPrinter
+# $315D is SendPrinterPacket.wait_printer_packet_transmission (home/printer.asm),
+# the DoFrame loop the reference can never leave without a printer answering on
+# the serial line. legacy_to_schema always emits completion "return", so the
+# split is applied after migration.
+for _record in SCHEMA2_CASES["SendTilesToPrinter"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+# <<< factory-completion SendTilesToPrinter

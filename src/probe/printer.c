@@ -151,6 +151,16 @@ static void adapt_SendPrinterPacket(ProbeState *s)
 }
 /* <<< factory SendPrinterPacket */
 
+/* >>> factory SendTilesToPrinter */
+static void adapt_SendTilesToPrinter(ProbeState *s)
+{
+	SendTilesToPrinterResult r = SendTilesToPrinter(s->hl, s->b, s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory SendTilesToPrinter */
+
 
 /* >>> factory ShowPrinterConnectionErrorScene */
 static void adapt_ShowPrinterConnectionErrorScene(ProbeState *s)
@@ -234,6 +244,7 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "TryInitPrinterCommunications", adapt_TryInitPrinterCommunications },
 	{ "ShowPrinterIsNotConnected", adapt_ShowPrinterIsNotConnected },
 	{ "HandlePrinterError", adapt_HandlePrinterError },
+	{ "SendTilesToPrinter", adapt_SendTilesToPrinter },
 	{ "SendPrinterInstructionPacket", adapt_SendPrinterInstructionPacket },
 	{ "SendPrinterInstructionPacket_1Sheet", adapt_SendPrinterInstructionPacket_1Sheet },
 	{ "_PreparePrinterConnection", adapt__PreparePrinterConnection },

@@ -176,6 +176,8 @@ class Result:
                     data[i] |= 0x7C
                 elif io_addr == 0xFF0F:
                     data[i] |= 0xE0
+                elif io_addr == 0xFF56:
+                    data[i] = 0x3E | (data[i] & 0x01)
             return bytes(data)
         if SRAM_BASE <= addr and addr + n <= SRAM_END:
             off = addr - SRAM_BASE

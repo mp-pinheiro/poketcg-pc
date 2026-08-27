@@ -280,7 +280,7 @@ int main(void)
 				vramb = jnum();
 				if (vramb < 0 || vramb > 1)
 					die("vram_bank out of range");
-			} else if (strcmp(key, "ramg") == 0) {
+			} else if (strcmp(key, "ramg") == 0 || strcmp(key, "ram_enable") == 0) {
 				/* Applied after every seed, whatever the key order: the "sram"
 				 * seed enables the latch as a side effect, so this is the only
 				 * way to enter with non-zero SRAM and the latch off. */

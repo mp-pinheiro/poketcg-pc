@@ -127,6 +127,15 @@ CASES["ReceiveIRDataBuffer"] = [
 ]
 # <<< factory ReceiveIRDataBuffer
 
+# >>> factory ClearRP
+CONTRACT["ClearRP"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
+CASES["ClearRP"] = [
+    {"a": 0x55, "read": {0xFF56: 1}},
+    dict(POISON, read={0xFF56: 1}),
+    {"a": 0x00, "read": {0xFF56: 1}},
+]
+# <<< factory ClearRP
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -203,3 +212,12 @@ MUTATIONS["ReceiveIRDataBuffer"] = {
     "case_ids": ["ReceiveIRDataBuffer-0", "ReceiveIRDataBuffer-1"],
 }
 # <<< factory-mutation ReceiveIRDataBuffer
+
+# >>> factory-mutation ClearRP
+MUTATIONS["ClearRP"] = {
+    "source_symbol": "ClearRP",
+    "before": "\tgb_write8(RP_ADDR, 0x00u);",
+    "after": "\tgb_write8(RP_ADDR, 0x01u);",
+    "case_ids": ["ClearRP-0", "ClearRP-1", "ClearRP-2"],
+}
+# <<< factory-mutation ClearRP

@@ -286,3 +286,11 @@ ReceiveIRDataBufferResult ReceiveIRDataBuffer(void)
 	return (ReceiveIRDataBufferResult){r3.a, r3.f};
 }
 /* <<< factory ReceiveIRDataBuffer */
+
+/* >>> factory ClearRP */
+/* ir_core.asm:270-273 */
+void ClearRP(void)
+{
+	gb_write8(RP_ADDR, 0x00u);
+}
+/* <<< factory ClearRP */

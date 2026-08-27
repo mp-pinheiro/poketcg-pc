@@ -128,6 +128,14 @@ static void adapt_ReceiveIRDataBuffer(ProbeState *s)
 }
 /* <<< factory ReceiveIRDataBuffer */
 
+/* >>> factory ClearRP */
+static void adapt_ClearRP(ProbeState *s)
+{
+	ClearRP();
+	s->a = 0x00u;
+}
+/* <<< factory ClearRP */
+
 const ProbeEntry probe_entries_ir_core[] = {
 	{ "StoreRegistersInIRDataBuffer", adapt_StoreRegistersInIRDataBuffer },
 	{ "LoadRegistersFromIRDataBuffer", adapt_LoadRegistersFromIRDataBuffer },
@@ -143,5 +151,6 @@ const ProbeEntry probe_entries_ir_core[] = {
 	{ "Func_19705", adapt_Func_19705 },
 	{ "TransmitIRDataBuffer", adapt_TransmitIRDataBuffer },
 	{ "ReceiveIRDataBuffer", adapt_ReceiveIRDataBuffer },
+	{ "ClearRP", adapt_ClearRP },
 	{ NULL, NULL },
 };

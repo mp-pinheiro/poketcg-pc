@@ -11,4 +11,7 @@ void InitIRCommunications(uint8_t a);
 /* >>> factory LoadLinkConnectingScene */
 void LoadLinkConnectingScene(uint16_t hl);
 /* <<< factory LoadLinkConnectingScene */
+/* >>> factory ClearRPAndRestoreVBlankFunction */
+void ClearRPAndRestoreVBlankFunction(void);
+/* <<< factory ClearRPAndRestoreVBlankFunction */
 #endif

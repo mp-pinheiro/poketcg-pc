@@ -16,6 +16,7 @@
 #include "home/lcd.h"
 #include "home/load_animation.h"
 #include "home/sprite_vblank.h"
+#include "home/ir_core.h"
 #define SCENE_GAMEBOY_LINK_CONNECTING 0x0eu
 /* <<< factory statics */
 
@@ -58,3 +59,12 @@ void LoadLinkConnectingScene(uint16_t hl)
 	EnableLCD();
 }
 /* <<< factory LoadLinkConnectingScene */
+
+/* >>> factory ClearRPAndRestoreVBlankFunction */
+/* ir_functions.asm:31-36 */
+void ClearRPAndRestoreVBlankFunction(void)
+{
+	ClearRP();
+	RestoreVBlankFunction();
+}
+/* <<< factory ClearRPAndRestoreVBlankFunction */

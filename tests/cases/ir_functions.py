@@ -79,6 +79,15 @@ CASES["LoadLinkConnectingScene"] = [
 ]
 # <<< factory LoadLinkConnectingScene
 
+# >>> factory ClearRPAndRestoreVBlankFunction
+CONTRACT["ClearRPAndRestoreVBlankFunction"] = {"compare": ("a", "f"), "preserve": ("a", "f")}
+CASES["ClearRPAndRestoreVBlankFunction"] = [
+    {"a": 0x42, "wram": {0xCE8D: b"\x34\x12", 0xFF56: b"\x01"}, "read": {0xFF56: 1, 0xCAD1: 2}},
+    dict(POISON, wram={0xCE8D: b"\x78\x56", 0xFF56: b"\x01"}, read={0xFF56: 1, 0xCAD1: 2}),
+    {"a": 0x00, "wram": {0xCE8D: b"\x00\x00"}, "read": {0xFF56: 1, 0xCAD1: 2}},
+]
+# <<< factory ClearRPAndRestoreVBlankFunction
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -108,3 +117,12 @@ MUTATIONS["InitIRCommunications"] = {
 # >>> factory-mutation LoadLinkConnectingScene
 MUTATIONS["LoadLinkConnectingScene"] = {"source_symbol": "LoadLinkConnectingScene", "before": "\tLoadScene(SCENE_GAMEBOY_LINK_CONNECTING, 0u, 0u, 0u, 0u, 0u, saved_hl);", "after": "\tLoadScene(0u, 0u, 0u, 0u, 0u, 0u, saved_hl);", "case_ids": ["LoadLinkConnectingScene-0", "LoadLinkConnectingScene-1"]}
 # <<< factory-mutation LoadLinkConnectingScene
+
+# >>> factory-mutation ClearRPAndRestoreVBlankFunction
+MUTATIONS["ClearRPAndRestoreVBlankFunction"] = {
+    "source_symbol": "ClearRPAndRestoreVBlankFunction",
+    "before": "\tClearRP();\n\tRestoreVBlankFunction();",
+    "after": "\tClearRP();",
+    "case_ids": ["ClearRPAndRestoreVBlankFunction-0", "ClearRPAndRestoreVBlankFunction-1"],
+}
+# <<< factory-mutation ClearRPAndRestoreVBlankFunction

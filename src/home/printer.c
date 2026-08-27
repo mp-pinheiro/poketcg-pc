@@ -388,8 +388,8 @@ no_carry:
 /* >>> factory CompressDataForPrinterSerialTransfer */
 CompressDataForPrinterSerialTransferResult CompressDataForPrinterSerialTransfer(void)
 {
-	uint16_t hl = SGFXBUFFER5_ADDR;
-	uint16_t de = (uint16_t)(SGFXBUFFER5_ADDR + 0x280u);
+	uint16_t hl = sGfxBuffer5_ADDR;
+	uint16_t de = (uint16_t)(sGfxBuffer5_ADDR + 0x280u);
 	uint16_t remaining = 0x280u;
 
 	for (;;) {
@@ -420,7 +420,7 @@ CompressDataForPrinterSerialTransferResult CompressDataForPrinterSerialTransfer(
 		}
 	}
 
-	uint16_t hl_out = (uint16_t)(SGFXBUFFER5_ADDR + 0x280u);
+	uint16_t hl_out = (uint16_t)(sGfxBuffer5_ADDR + 0x280u);
 	uint16_t bc_out = (uint16_t)(de - hl_out);
 	return (CompressDataForPrinterSerialTransferResult){bc_out, hl_out, PRINTERPKT_DATA, TRUE};
 }
@@ -656,11 +656,11 @@ SendTilesToPrinterResult SendTilesToPrinter(uint16_t hl, uint8_t b, uint8_t c)
 {
 	(void)b;
 	(void)c;
-	uint16_t de = SGFXBUFFER5_ADDR;
+	uint16_t de = sGfxBuffer5_ADDR;
 	for (uint8_t row = 0u; row < 2u; row++) {
 		for (uint8_t i = 0u; i < 20u; i++) {
 			uint8_t tile = gb_read8((uint16_t)(hl + i));
-			uint16_t src = (uint16_t)(SGFXBUFFER1_ADDR + (uint16_t)((uint16_t)tile << 4u));
+			uint16_t src = (uint16_t)(sGfxBuffer1_ADDR + (uint16_t)((uint16_t)tile << 4u));
 			for (uint8_t j = 0u; j < 16u; j++) {
 				gb_write8(de, gb_read8((uint16_t)(src + j)));
 				de = (uint16_t)(de + 1u);
