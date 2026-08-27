@@ -89,6 +89,15 @@ CASES["HandleAIHeal"] = [
 ]
 # <<< factory HandleAIHeal
 
+# >>> factory HandleAIPkmnPowers
+CONTRACT["HandleAIPkmnPowers"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleAIPkmnPowers"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\x00\xC5", 0xC3BC: b"\x01\xC5", 0xC400: b"\x27", 0xC480: b"\x27", 0xC500: b"\xFF", 0xC501: b"\xFF"}, "read": {0xCE7C: 1}},
+    {"a": 0x11, "f": 0xE0, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x6789, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\x00\xC5", 0xC3BC: b"\x01\xC5", 0xC400: b"\x27", 0xC480: b"\x27", 0xC500: b"\xFF", 0xC501: b"\xFF"}, "read": {0xCE7C: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\x00\xC5", 0xC3BC: b"\x01\xC5", 0xC400: b"\x27", 0xC480: b"\x27", 0xC500: b"\xFF", 0xC501: b"\xFF"}, read={0xCE7C: 1}),
+]
+# <<< factory HandleAIPkmnPowers
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -131,3 +140,6 @@ MUTATIONS["HandleAIDamageSwap"] = {
 # >>> factory-mutation HandleAIHeal
 MUTATIONS["HandleAIHeal"] = {"source_symbol": "HandleAIHeal", "before": "\tuint8_t copy_length = PKMN_CARD_DATA_LENGTH;", "after": "\tuint8_t copy_length = 0x40u;", "case_ids": ["HandleAIHeal-1", "HandleAIHeal-2", "HandleAIHeal-4"]}
 # <<< factory-mutation HandleAIHeal
+# >>> factory-mutation HandleAIPkmnPowers
+MUTATIONS["HandleAIPkmnPowers"] = {"source_symbol": "HandleAIPkmnPowers", "before": "\tif (muk.f & 0x10u)\n\t\treturn (HandleAIPkmnPowersResult){muk.a, 0x00u};", "after": "\tif (muk.f & 0x10u)\n\t\treturn (HandleAIPkmnPowersResult){(uint8_t)(muk.a + 1u), 0x00u};", "case_ids": ["HandleAIPkmnPowers-0", "HandleAIPkmnPowers-1", "HandleAIPkmnPowers-2"]}
+# <<< factory-mutation HandleAIPkmnPowers

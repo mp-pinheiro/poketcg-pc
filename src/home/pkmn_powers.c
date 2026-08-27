@@ -89,6 +89,21 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 #define SNORLAX 0xbeu
 
 #define PKMN_CARD_DATA_LENGTH 0x41u
+
+#include "home/effect_commands.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+
+#define DUELVARS_ARENA_CARD_STATUS 0xf0u
+#define CNF_SLP_PRZ 0x0fu
+#define EFFECTCMDTYPE_INITIAL_EFFECT_2 0x02u
+#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
+#define POKEMON_POWER 0x04u
+#define GENGAR 0x98u
+#define MANKEY 0x7bu
+#define SLOWBRO 0x93u
+#define VENOMOTH 0x22u
+#define VILEPLUME 0x1eu
 /* <<< factory statics */
 
 /* >>> factory HandleAIShift */
@@ -380,3 +395,50 @@ check_bench:
 	}
 }
 /* <<< factory HandleAIHeal */
+
+/* >>> factory HandleAIPkmnPowers */
+HandleAIPkmnPowersResult HandleAIPkmnPowers(void)
+{
+	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
+	if (muk.f & 0x10u)
+		return (HandleAIPkmnPowersResult){muk.a, 0x00u};
+
+	AIChooseRandomlyNotToDoActionResult skip = AIChooseRandomlyNotToDoAction();
+	if (skip.f & 0x10u)
+		return (HandleAIPkmnPowersResult){skip.a, 0x00u};
+
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	uint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;
+	uint8_t c = PLAY_AREA_ARENA;
+	if (status & CNF_SLP_PRZ)
+		c++;
+	while (c != count) {
+		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + c)).a;
+		gb_write8(WCE08_ADDR, deck_index);
+		hTempPlayAreaLocation_ff9d = c;
+		AttackCopyResult copied = CopyAttackDataAndDamage_FromDeckIndex(deck_index, FIRST_ATTACK_OR_PKMN_POWER);
+		(void)copied;
+		if (wLoadedAttackCategory == POKEMON_POWER) {
+			TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_2, 0u, 0u, 0u);
+			if (!(effect.f & 0x10u)) {
+				uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+				if (card_id == VILEPLUME)
+					(void)HandleAIHeal(c);
+				else if (card_id == VENOMOTH)
+					(void)HandleAIShift(c);
+				else if (card_id == MANKEY)
+					(void)HandleAIPeek(c);
+				else if (card_id == SLOWBRO)
+					(void)HandleAIStrangeBehavior(c);
+				else if (card_id == GENGAR) {
+					HandleAICurseResult curse = HandleAICurse(c);
+					if (curse.f & 0x10u)
+						return (HandleAIPkmnPowersResult){curse.a, curse.f};
+				}
+			}
+		}
+		c++;
+	}
+	return (HandleAIPkmnPowersResult){0u, 0x80u};
+}
+/* <<< factory HandleAIPkmnPowers */

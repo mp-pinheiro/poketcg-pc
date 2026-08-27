@@ -1,0 +1,9 @@
+{
+  "fn": "HandleAIPkmnPowers",
+  "case": "tests/cases/pkmn_powers.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleAIPkmnPowers\", \"registers\": {\"a\": 129, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"0000c5\", \"50107\": \"0001c5\", \"50176\": \"27\", \"50304\": \"27\", \"50432\": \"ffff\", \"52860\": \"27\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleAIPkmnPowers\", \"mismatches\": {\"a\": [129, 130]}}\n",
+  "restored": "{\"fn\": \"HandleAIPkmnPowers\", \"registers\": {\"a\": 129, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"0000c5\", \"50107\": \"0001c5\", \"50176\": \"27\", \"50304\": \"27\", \"50432\": \"ffff\", \"52860\": \"27\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

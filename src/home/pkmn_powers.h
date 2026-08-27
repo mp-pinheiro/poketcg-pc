@@ -27,4 +27,8 @@ HandleAIDamageSwapResult HandleAIDamageSwap(uint8_t f);
 typedef struct { uint8_t a; uint8_t f; } HandleAIHealResult;
 HandleAIHealResult HandleAIHeal(uint8_t c);
 /* <<< factory HandleAIHeal */
+/* >>> factory HandleAIPkmnPowers */
+typedef struct { uint8_t a; uint8_t f; } HandleAIPkmnPowersResult;
+HandleAIPkmnPowersResult HandleAIPkmnPowers(void);
+/* <<< factory HandleAIPkmnPowers */
 #endif /* POKETCG_HOME_PKMN_POWERS_H */
