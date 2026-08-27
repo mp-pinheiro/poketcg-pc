@@ -6458,6 +6458,20 @@ CASES["LeerEffect"] = [
 ]
 # <<< factory LeerEffect
 
+# >>> factory Thunderpunch_ModifierEffect
+CONTRACT["Thunderpunch_ModifierEffect"] = {"compare": (), "preserve": ()}
+CASES["Thunderpunch_ModifierEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x00\x00", 0xFFA0: b"\x00", **_acid_toss_fix},
+         read={0xCCB9: 2, 0xFFA0: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x00\x00", 0xFFA0: b"\x00", **_acid_toss_fix_tail},
+         read={0xCCB9: 2, 0xFFA0: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Thunderpunch_ModifierEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9200,3 +9214,6 @@ MUTATIONS["MetapodStiffenEffect"] = {"source_symbol": "MetapodStiffenEffect", "b
 # >>> factory-mutation LeerEffect
 MUTATIONS["LeerEffect"] = {"source_symbol": "LeerEffect", "before": "\twLoadedAttackAnimation = ATK_ANIM_LEER;\n\tApplySubstatus2ToDefendingCard(SUBSTATUS2_LEER, hl);", "after": "\twLoadedAttackAnimation = 0x75u;\n\tApplySubstatus2ToDefendingCard(SUBSTATUS2_LEER, hl);", "case_ids": ["LeerEffect-0"]}
 # <<< factory-mutation LeerEffect
+# >>> factory-mutation Thunderpunch_ModifierEffect
+MUTATIONS["Thunderpunch_ModifierEffect"] = {"source_symbol": "Thunderpunch_ModifierEffect", "before": "void Thunderpunch_ModifierEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadPlus10IfTails10ToYourselfText, 0u);\n\thTemp_ffa0 = toss.a;\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(10u);", "after": "void Thunderpunch_ModifierEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadPlus10IfTails10ToYourselfText, 0u);\n\thTemp_ffa0 = toss.a;\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(11u);", "case_ids": ["Thunderpunch_ModifierEffect-0", "Thunderpunch_ModifierEffect-1"]}
+# <<< factory-mutation Thunderpunch_ModifierEffect

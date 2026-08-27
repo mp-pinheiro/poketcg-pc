@@ -187,6 +187,14 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 wCurMap = 0xD32F
 wWhichOBP = 0xD4CA
 wWhichOBPalIndex = 0xD4CB
+
+hSCX = 0xFF92
+hSCY = 0xFF93
+wLoadNPCXPos = 0xD3AC
+wLoadNPCYPos = 0xD3AD
+wLoadNPCDirection = 0xD3AE
+wSpriteAnimBuffer = 0xD4D0
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory CreditsSequenceCmd_TransformOverlay
@@ -336,6 +344,16 @@ CASES["CreditsSequenceCmd_LoadOWMap"] = [
          instruction_budget=4000000, cycle_budget=20000000),
 ]
 # <<< factory CreditsSequenceCmd_LoadOWMap
+
+# >>> factory LoadNPCForCreditsSequence
+CONTRACT["LoadNPCForCreditsSequence"] = {"compare": ("b", "d", "e"), "preserve": ("b", "d", "e")}
+CASES["LoadNPCForCreditsSequence"] = [
+    {"b": 0x02, "c": 0x03, "d": 0x00, "e": 0x0B, "wram": {hSCX: b"\x00", hSCY: b"\x00", wSpriteAnimBuffer: b"\x00" * 16}, "read": {wLoadNPCXPos: 1, wLoadNPCYPos: 1, wLoadNPCDirection: 1, wSpriteAnimBuffer: 16}},
+    {"b": 0x10, "c": 0x20, "d": 0x01, "e": 0x04, "wram": {hSCX: b"\x08", hSCY: b"\x10", wSpriteAnimBuffer: b"\x00" * 16}, "read": {wLoadNPCXPos: 1, wLoadNPCYPos: 1, wLoadNPCDirection: 1, wSpriteAnimBuffer: 16}},
+    {"b": 0xFF, "c": 0x00, "d": 0x02, "e": 0x00, "wram": {hSCX: b"\xFF", hSCY: b"\xFE", wSpriteAnimBuffer: b"\xAA" * 16}, "read": {wLoadNPCXPos: 1, wLoadNPCYPos: 1, wLoadNPCDirection: 1, wSpriteAnimBuffer: 16}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {hSCX: b"\x04", hSCY: b"\x0C", wSpriteAnimBuffer: b"\x55" * 16}, "read": {wLoadNPCXPos: 1, wLoadNPCYPos: 1, wLoadNPCDirection: 1, wSpriteAnimBuffer: 16}}
+]
+# <<< factory LoadNPCForCreditsSequence
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -489,3 +507,6 @@ MUTATIONS["CreditsSequenceCmd_LoadOWMap"] = {
     "case_ids": ["CreditsSequenceCmd_LoadOWMap-0", "CreditsSequenceCmd_LoadOWMap-1"],
 }
 # <<< factory-mutation CreditsSequenceCmd_LoadOWMap
+# >>> factory-mutation LoadNPCForCreditsSequence
+MUTATIONS["LoadNPCForCreditsSequence"] = {"source_symbol": "LoadNPCForCreditsSequence", "before": "void LoadNPCForCreditsSequence(uint8_t b, uint8_t c, uint8_t d, uint8_t e)\n{\n\tgb_write8(wLoadNPCXPos_ADDR, c);", "after": "void LoadNPCForCreditsSequence(uint8_t b, uint8_t c, uint8_t d, uint8_t e)\n{\n\tgb_write8(wLoadNPCXPos_ADDR, b);", "case_ids": ["LoadNPCForCreditsSequence-0", "LoadNPCForCreditsSequence-1", "LoadNPCForCreditsSequence-2", "LoadNPCForCreditsSequence-3"]}
+# <<< factory-mutation LoadNPCForCreditsSequence

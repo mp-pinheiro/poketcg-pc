@@ -1,0 +1,9 @@
+{
+  "fn": "LoadNPCForCreditsSequence",
+  "case": "tests/cases/credits_sequence_commands.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadNPCForCreditsSequence\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 3, \"d\": 0, \"e\": 11, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54188\": \"03020b\", \"54480\": \"01002020000b23f57ffc7f2a9f500800\", \"65426\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadNPCForCreditsSequence\", \"mismatches\": {\"bus\": {\"address\": 54188, \"reference\": \"03020b0100\", \"native\": \"02020b0100\", \"reference_size\": 21, \"native_size\": 21, \"spans\": [[54188, 3], [54480, 16], [65426, 2]]}}}\n",
+  "restored": "{\"fn\": \"LoadNPCForCreditsSequence\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 3, \"d\": 0, \"e\": 11, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54188\": \"03020b\", \"54480\": \"01002020000b23f57ffc7f2a9f500800\", \"65426\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

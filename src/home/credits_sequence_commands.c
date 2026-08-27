@@ -51,6 +51,14 @@
 #include "home/load_gfx.h"
 
 #define PALETTE_OVERWORLD_OAM 0x1Du
+
+#include "home/load_animation.h"
+#include "home/npc_data.h"
+#include "home/sprite_animations.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define SPRITE_ANIM_COORD_X 0x02u
 /* <<< factory statics */
 
 #define CREDITS_SEQUENCE_ADDR 0x5AEFu
@@ -321,3 +329,23 @@ void CreditsSequenceCmd_LoadOWMap(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 	AdvanceCreditsSequenceCmdPtrBy5();
 }
 /* <<< factory CreditsSequenceCmd_LoadOWMap */
+
+/* >>> factory LoadNPCForCreditsSequence */
+void LoadNPCForCreditsSequence(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+{
+	gb_write8(wLoadNPCXPos_ADDR, c);
+	gb_write8(wLoadNPCYPos_ADDR, b);
+	gb_write8(wLoadNPCDirection_ADDR, e);
+	LoadNPCSpriteDataResult npc = LoadNPCSpriteData(d, b, c, d, e, 0u);
+	(void)CreateSpriteAndAnimBufferEntry(wNPCSpriteID, npc.f);
+
+	uint16_t sprite_property = GetSpriteAnimBufferProperty(SPRITE_ANIM_COORD_X);
+	uint8_t x = (uint8_t)((uint8_t)(gb_read8(wLoadNPCXPos_ADDR) * 8u) + 8u - hSCX);
+	gb_write8(sprite_property, x);
+	uint8_t y = (uint8_t)((uint8_t)(gb_read8(wLoadNPCYPos_ADDR) * 8u) + 16u - hSCY);
+	gb_write8((uint16_t)(sprite_property + 1u), y);
+
+	uint8_t animation = (uint8_t)(gb_read8(wLoadNPCDirection_ADDR) + wNPCAnim);
+	StartNewSpriteAnimation(animation);
+}
+/* <<< factory LoadNPCForCreditsSequence */

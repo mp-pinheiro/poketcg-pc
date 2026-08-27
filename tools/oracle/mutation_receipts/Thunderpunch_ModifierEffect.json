@@ -1,0 +1,9 @@
+{
+  "fn": "Thunderpunch_ModifierEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Thunderpunch_ModifierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52233\": \"00\", \"52409\": \"0a00\", \"52636\": \"01010002\", \"52814\": \"0000\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Thunderpunch_ModifierEffect\", \"mismatches\": {\"bus\": {\"address\": 52409, \"reference\": \"000001000a00010100\", \"native\": \"000001000b00010100\", \"reference_size\": 16, \"native_size\": 16, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52233, 1], [52409, 2], [52636, 4], [52814, 2], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"Thunderpunch_ModifierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52233\": \"00\", \"52409\": \"0a00\", \"52636\": \"01010002\", \"52814\": \"0000\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

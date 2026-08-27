@@ -1907,6 +1907,9 @@ uint8_t MetapodStiffenEffect(void);
 /* >>> factory LeerEffect */
 uint8_t LeerEffect(uint16_t hl);
 /* <<< factory LeerEffect */
+/* >>> factory Thunderpunch_ModifierEffect */
+void Thunderpunch_ModifierEffect(void);
+/* <<< factory Thunderpunch_ModifierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

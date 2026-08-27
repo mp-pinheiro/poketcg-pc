@@ -4639,6 +4639,14 @@ static void adapt_SleepingGasEffect(ProbeState *s)
 }
 /* <<< factory SleepingGasEffect */
 
+/* >>> factory Thunderpunch_ModifierEffect */
+static void adapt_Thunderpunch_ModifierEffect(ProbeState *s)
+{
+	(void)s;
+	Thunderpunch_ModifierEffect();
+}
+/* <<< factory Thunderpunch_ModifierEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5200,5 +5208,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "KakunaStiffenEffect", adapt_KakunaStiffenEffect },
 	{ "MetapodStiffenEffect", adapt_MetapodStiffenEffect },
 	{ "LeerEffect", adapt_LeerEffect },
+	{ "Thunderpunch_ModifierEffect", adapt_Thunderpunch_ModifierEffect },
 	{ NULL, NULL },
 };

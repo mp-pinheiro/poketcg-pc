@@ -1196,6 +1196,21 @@ void BankswitchROM(uint8_t bank);
 
 #include "home/effect_functions.h"
 #define SleepCheckText 0x00e1u
+
+#include "home/math.h"
+#include "home/print_text.h"
+#include "home/effect_functions.h"
+#include "generated/wram.h"
+
+#include "home/math.h"
+#include "home/print_text.h"
+#include "home/effect_functions.h"
+
+#include "home/damage.h"
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+
+#define IfHeadPlus10IfTails10ToYourselfText 0x00e9u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -9533,3 +9548,14 @@ uint8_t LeerEffect(uint16_t hl)
 	return toss.f;
 }
 /* <<< factory LeerEffect */
+
+/* >>> factory Thunderpunch_ModifierEffect */
+void Thunderpunch_ModifierEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadPlus10IfTails10ToYourselfText, 0u);
+	hTemp_ffa0 = toss.a;
+	if ((toss.f & 0x10u) == 0u)
+		return;
+	AddToDamage(10u);
+}
+/* <<< factory Thunderpunch_ModifierEffect */
