@@ -1,0 +1,9 @@
+{
+  "fn": "DeckNamingScreen_CheckButtonState",
+  "case": "tests/cases/input_name.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DeckNamingScreen_CheckButtonState\", \"registers\": {\"a\": 23, \"b\": 1, \"c\": 4, \"d\": 0, \"e\": 23, \"f\": 0, \"hl\": 28698, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52899\": \"0100\", \"52905\": \"0517\", \"53219\": \"01\", \"53253\": \"0600\", \"65423\": \"40\", \"65425\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DeckNamingScreen_CheckButtonState\", \"mismatches\": {\"bus\": {\"address\": 52900, \"reference\": \"010005170106\", \"native\": \"010405170106\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[52899, 2], [52905, 2], [53219, 1], [53253, 2], [65423, 1], [65425, 1]]}}}\n",
+  "restored": "{\"fn\": \"DeckNamingScreen_CheckButtonState\", \"registers\": {\"a\": 23, \"b\": 1, \"c\": 4, \"d\": 0, \"e\": 23, \"f\": 0, \"hl\": 28698, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52899\": \"0100\", \"52905\": \"0517\", \"53219\": \"01\", \"53253\": \"0600\", \"65423\": \"40\", \"65425\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

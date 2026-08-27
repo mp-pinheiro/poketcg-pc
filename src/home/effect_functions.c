@@ -865,6 +865,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "generated/wram.h"
 #define DamageCheckIfHeadsXDamageText 0x00f4u
+#define DamageCheckIfHeadsPlusDamageText 0x00f3u
+#define AcidCheckText 0x00f5u
+#define IfHeadsOpponentCannotAttackText 0x00fcu
 
 #include "home/math.h"
 #include "home/print_text.h"
