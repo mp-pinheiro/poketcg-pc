@@ -134,4 +134,8 @@ ShowPrinterIsNotConnectedResult ShowPrinterIsNotConnected(uint8_t a, uint8_t f, 
 typedef struct { uint8_t f; } HandlePrinterErrorResult;
 HandlePrinterErrorResult HandlePrinterError(uint8_t f, uint8_t d, uint8_t e);
 /* <<< factory HandlePrinterError */
+/* >>> factory SendPrinterInstructionPacket */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } SendPrinterInstructionPacketResult;
+SendPrinterInstructionPacketResult SendPrinterInstructionPacket(uint16_t hl, uint16_t saved_hl);
+/* <<< factory SendPrinterInstructionPacket */
 #endif

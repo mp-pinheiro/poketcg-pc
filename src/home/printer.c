@@ -84,6 +84,8 @@
 #define PrinterPacketErrorText 0x00dbu
 #define PrinterPaperIsJammedText 0x00d9u
 #define PrintingWasInterruptedText 0x00dcu
+
+#define PRINTERPKT_PRINT_INSTRUCTION 0x02u
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -641,3 +643,13 @@ HandlePrinterErrorResult HandlePrinterError(uint8_t f, uint8_t d, uint8_t e)
 	return (HandlePrinterErrorResult){scene.f};
 }
 /* <<< factory HandlePrinterError */
+
+/* >>> factory SendPrinterInstructionPacket */
+SendPrinterInstructionPacketResult SendPrinterInstructionPacket(uint16_t hl, uint16_t saved_hl)
+{
+	SendPrinterPacketResult packet = SendPrinterPacket(0u, 0u, PRINTERPKT_DATA, FALSE, hl);
+	if ((packet.f & 0x10u) == 0u)
+		packet = SendPrinterPacket(0u, 4u, PRINTERPKT_PRINT_INSTRUCTION, FALSE, saved_hl);
+	return (SendPrinterInstructionPacketResult){packet.a, packet.f, saved_hl};
+}
+/* <<< factory SendPrinterInstructionPacket */
