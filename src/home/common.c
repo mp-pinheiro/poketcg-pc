@@ -85,6 +85,8 @@
 #define AI_TRAINER_CARD_PHASE_05 0x05u
 
 #include "home/booster_pack.h"
+
+#include "home/printer.h"
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -680,3 +682,19 @@ void OpenBoosterPack(void)
 	_OpenBoosterPack();
 }
 /* <<< factory OpenBoosterPack */
+
+/* >>> factory PreparePrinterConnection */
+/* menus/common.asm:26. `farcall _PreparePrinterConnection` / `ret`.
+ * FarCall (home/farcall.asm:62-88) pushes af/de/hl before the bank switch and
+ * pops them back immediately before jumping to the target, and the return
+ * trampoline SwitchToBankAtSP (farcall.asm:44-53) saves and restores af/hl
+ * around its own bankswitch, so the wrapper is register-transparent: whatever
+ * the callee leaves is what this routine's caller sees. The ported callee's
+ * result is carry alone -- the single caller HandlePrinterMenu
+ * (engine/menus/printer.asm:232) tests nothing else -- so only f is
+ * forwarded, and it is forwarded rather than recomputed. */
+uint8_t PreparePrinterConnection(uint16_t hl)
+{
+	return _PreparePrinterConnection(hl).f;
+}
+/* <<< factory PreparePrinterConnection */

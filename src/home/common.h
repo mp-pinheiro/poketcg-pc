@@ -104,4 +104,12 @@ HandleAIAntiMewtwoDeckStrategyResult HandleAIAntiMewtwoDeckStrategy(uint8_t a, u
 /* >>> factory OpenBoosterPack */
 void OpenBoosterPack(void);
 /* <<< factory OpenBoosterPack */
+/* >>> factory PreparePrinterConnection */
+/* PreparePrinterConnection returns the farcalled callee's carry alone. It is
+ * a bare uint8_t instead of a result struct because src/home/common.c also
+ * includes home/printer.h, which already owns the name
+ * PreparePrinterConnectionResult; a second anonymous-struct typedef under that
+ * name would be a redefinition. */
+uint8_t PreparePrinterConnection(uint16_t hl);
+/* <<< factory PreparePrinterConnection */
 #endif /* POKETCG_HOME_COMMON_H */

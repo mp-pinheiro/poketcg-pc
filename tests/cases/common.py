@@ -361,6 +361,39 @@ CASES["OpenBoosterPack"] = [
 ]
 # <<< factory OpenBoosterPack
 
+# >>> factory PreparePrinterConnection
+# The reference never returns from here: the farcall reaches
+# _PreparePrinterConnection, whose SendPrinterPacket parks in the
+# .wait_printer_packet_transmission DoFrame loop ($315D) because no printer
+# hardware raises the serial interrupt that advances wPrinterPacketSequence.
+# Completion is therefore declared pre-ret at that loop head in the
+# factory-completion block at the end of this module, exactly as the landed
+# _PreparePrinterConnection cases in tests/cases/printer.py do. That is the
+# genuine spin, not a small budget, so the generous budgets below only cover
+# the reference's walk down to the loop head.
+#
+# Registers are mid-flight on the reference at that stop, so nothing is
+# compared. The observed bytes are the ones both sides agree on:
+# wPrinterPacketDataPtr ($CE6A), which SendPrinterPacket writes from hl before
+# the wait and neither side rewrites, plus the two seeded serial bytes
+# wSerialTransferData ($CE6E) and wPrinterStatus ($CE6F). $81 is the device
+# number the packet engine expects, so the port's synchronous state machine
+# writes it straight back, and a zero status clears the error nibble, so the
+# port takes the `ret nc` exit without touching wPrinterStatus again -- no
+# scene, no text box, no frames.
+CONTRACT["PreparePrinterConnection"] = {"compare": (), "preserve": ()}
+CASES["PreparePrinterConnection"] = [
+    {"hl": 0xC100,
+     "wram": {0xCE6E: b"\x81", 0xCE6F: b"\x00"},
+     "read": {0xCE6A: 2},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON,
+         wram={0xCE6E: b"\x81", 0xCE6F: b"\x00"},
+         read={0xCE6A: 2},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory PreparePrinterConnection
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -490,3 +523,20 @@ MUTATIONS["HandleAIAntiMewtwoDeckStrategy"] = {
 # >>> factory-mutation OpenBoosterPack
 MUTATIONS["OpenBoosterPack"] = {"source_symbol": "OpenBoosterPack", "before": "void OpenBoosterPack(void)\n{\n\t_OpenBoosterPack();", "after": "void OpenBoosterPack(void)\n{\n\t(void)0;", "case_ids": ["OpenBoosterPack-0", "OpenBoosterPack-1"]}
 # <<< factory-mutation OpenBoosterPack
+# >>> factory-mutation PreparePrinterConnection
+MUTATIONS["PreparePrinterConnection"] = {
+    "source_symbol": "PreparePrinterConnection",
+    "before": "uint8_t PreparePrinterConnection(uint16_t hl)\n{\n\treturn _PreparePrinterConnection(hl).f;",
+    "after": "uint8_t PreparePrinterConnection(uint16_t hl)\n{\n\treturn _PreparePrinterConnection((uint16_t)(hl + 1u)).f;",
+    "case_ids": ["PreparePrinterConnection-0", "PreparePrinterConnection-1"],
+}
+# <<< factory-mutation PreparePrinterConnection
+# >>> factory-completion PreparePrinterConnection
+# $315D is SendPrinterPacket.wait_printer_packet_transmission (home/printer.asm,
+# ROM0, so the capture hook is bank-independent), the DoFrame loop the reference
+# can never leave without a printer answering on the serial line. The farcall
+# wrapper inherits that spin from its callee. legacy_to_schema always emits
+# completion "return", so the split is applied after migration.
+for _record in SCHEMA2_CASES["PreparePrinterConnection"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+# <<< factory-completion PreparePrinterConnection

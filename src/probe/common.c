@@ -228,6 +228,13 @@ static void adapt_OpenBoosterPack(ProbeState *s)
 }
 /* <<< factory OpenBoosterPack */
 
+/* >>> factory PreparePrinterConnection */
+static void adapt_PreparePrinterConnection(ProbeState *s)
+{
+	s->f = PreparePrinterConnection(s->hl);
+}
+/* <<< factory PreparePrinterConnection */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -254,5 +261,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "AIPickEnergyCardToDiscard", adapt_AIPickEnergyCardToDiscard },
 	{ "HandleAIAntiMewtwoDeckStrategy", adapt_HandleAIAntiMewtwoDeckStrategy },
 	{ "OpenBoosterPack", adapt_OpenBoosterPack },
+	{ "PreparePrinterConnection", adapt_PreparePrinterConnection },
 	{ NULL, NULL },
 };
