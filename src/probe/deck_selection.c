@@ -147,6 +147,15 @@ static void adapt_OpenDeckConfirmationMenu(ProbeState *s)
 }
 /* <<< factory OpenDeckConfirmationMenu */
 
+/* >>> factory HandleStartButtonInDeckSelectionMenu */
+static void adapt_HandleStartButtonInDeckSelectionMenu(ProbeState *s)
+{
+	HandleStartButtonInDeckSelectionMenuResult result = HandleStartButtonInDeckSelectionMenu();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory HandleStartButtonInDeckSelectionMenu */
+
 const ProbeEntry probe_entries_deck_selection[] = {
 	{ "GetPointerToDeckCards", adapt_GetPointerToDeckCards },
 	{ "ResetCheckMenuCursorPositionAndBlink", adapt_ResetCheckMenuCursorPositionAndBlink },
@@ -163,5 +172,6 @@ const ProbeEntry probe_entries_deck_selection[] = {
 	{ "PrintThereIsNoDeckHereText", adapt_PrintThereIsNoDeckHereText },
 	{ "WriteCardListsTerminatorBytes", adapt_WriteCardListsTerminatorBytes },
 	{ "OpenDeckConfirmationMenu", adapt_OpenDeckConfirmationMenu },
+	{ "HandleStartButtonInDeckSelectionMenu", adapt_HandleStartButtonInDeckSelectionMenu },
 	{ NULL, NULL },
 };

@@ -73,4 +73,8 @@ WriteCardListsTerminatorBytesResult WriteCardListsTerminatorBytes(void);
 /* >>> factory OpenDeckConfirmationMenu */
 void OpenDeckConfirmationMenu(uint16_t de, uint16_t hl);
 /* <<< factory OpenDeckConfirmationMenu */
+/* >>> factory HandleStartButtonInDeckSelectionMenu */
+typedef struct { uint8_t a; uint8_t f; } HandleStartButtonInDeckSelectionMenuResult;
+HandleStartButtonInDeckSelectionMenuResult HandleStartButtonInDeckSelectionMenu(void);
+/* <<< factory HandleStartButtonInDeckSelectionMenu */
 #endif /* POKETCG_HOME_DECK_SELECTION_H */

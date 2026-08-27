@@ -101,6 +101,10 @@ ODCM_READ = {
     hDPadHeld: 1,
     hffb3: 1,
 }
+
+hDPadHeld = 0xFF8F
+wCurDeck = 0xCEB1
+wCurMenuItem = 0xCD10
 # <<< factory-cases-statics
 
 # >>> factory GetPointerToDeckName
@@ -251,6 +255,15 @@ CASES["OpenDeckConfirmationMenu"] = [
 ]
 # <<< factory OpenDeckConfirmationMenu
 
+# >>> factory HandleStartButtonInDeckSelectionMenu
+CONTRACT["HandleStartButtonInDeckSelectionMenu"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleStartButtonInDeckSelectionMenu"] = [
+    {"wram": {hDPadHeld: b"\x00", wCurDeck: b"\x42"}, "read": {wCurDeck: 1}},
+    {"wram": {hDPadHeld: b"\x08", wCurMenuItem: b"\x00", wCurDeck: b"\x42", 0xCEB2: b"\x00", 0xCEB3: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {wCurDeck: 1}},
+    dict(POISON, wram={hDPadHeld: b"\x00", wCurDeck: b"\x42"}, read={wCurDeck: 1}),
+]
+# <<< factory HandleStartButtonInDeckSelectionMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -300,3 +313,6 @@ MUTATIONS["WriteCardListsTerminatorBytes"] = {"source_symbol": "WriteCardListsTe
 # >>> factory-mutation OpenDeckConfirmationMenu
 MUTATIONS["OpenDeckConfirmationMenu"] = {"source_symbol": "OpenDeckConfirmationMenu", "before": "\twTotalCardCount = DECK_SIZE;", "after": "\twTotalCardCount = 0u;", "case_ids": ["OpenDeckConfirmationMenu-0", "OpenDeckConfirmationMenu-1", "OpenDeckConfirmationMenu-2"]}
 # <<< factory-mutation OpenDeckConfirmationMenu
+# >>> factory-mutation HandleStartButtonInDeckSelectionMenu
+MUTATIONS["HandleStartButtonInDeckSelectionMenu"] = {"source_symbol": "HandleStartButtonInDeckSelectionMenu", "before": "\twCurDeck = wCurMenuItem;", "after": "\twCurDeck = 0x01u;", "case_ids": ["HandleStartButtonInDeckSelectionMenu-1"]}
+# <<< factory-mutation HandleStartButtonInDeckSelectionMenu

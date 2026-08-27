@@ -40,6 +40,15 @@
 #include "home/deck_configuration.h"
 
 #define NUM_FILTERS 0x09u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/deck_check.h"
+
+#define PAD_START 0x08u
+#define ALL_DECKS 0xFFu
+#define MENU_CANCEL 0xFFu
+#define MENU_CONFIRM 0x01u
 /* <<< factory statics */
 
 /* >>> factory GetPointerToDeckCards */
@@ -248,3 +257,27 @@ void OpenDeckConfirmationMenu(uint16_t de, uint16_t hl)
 	HandleDeckConfirmationMenu();
 }
 /* <<< factory OpenDeckConfirmationMenu */
+
+/* >>> factory HandleStartButtonInDeckSelectionMenu */
+HandleStartButtonInDeckSelectionMenuResult HandleStartButtonInDeckSelectionMenu(void)
+{
+	uint8_t a = (uint8_t)(hDPadHeld & PAD_START);
+	if (a == 0u)
+		return (HandleStartButtonInDeckSelectionMenuResult){a, 0xA0u};
+
+	wCurDeck = wCurMenuItem;
+	CheckIfCurDeckIsValidResult validity = CheckIfCurDeckIsValid();
+	if ((validity.f & 0x10u) != 0u) {
+		PlaySFXConfirmOrCancel(MENU_CANCEL);
+		uint8_t deck = PrintThereIsNoDeckHereText();
+		return (HandleStartButtonInDeckSelectionMenuResult){deck, 0x90u};
+	}
+
+	PlaySFXConfirmOrCancel(MENU_CONFIRM);
+	uint16_t cards = GetPointerToDeckCards();
+	uint16_t name = GetPointerToDeckName();
+	OpenDeckConfirmationMenu(cards, name);
+	DrawDecksScreen(ALL_DECKS);
+	return (HandleStartButtonInDeckSelectionMenuResult){wCurDeck, 0x10u};
+}
+/* <<< factory HandleStartButtonInDeckSelectionMenu */
