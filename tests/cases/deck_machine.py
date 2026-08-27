@@ -460,6 +460,24 @@ CASES["HandleDeckMachineSelection"] = [
 ]
 # <<< factory HandleDeckMachineSelection
 
+# >>> factory UpdateDeckMachineScrollArrowsAndEntries
+CONTRACT["UpdateDeckMachineScrollArrowsAndEntries"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["UpdateDeckMachineScrollArrowsAndEntries"] = [
+    {"f": 0x00,
+     "wram": {wCardListVisibleOffset: b"\x00", wNumDeckMachineEntries: b"\x00", wUnableToScrollDown: b"\xAA"},
+     "read": {wUnableToScrollDown: 1},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    {"f": 0xFF,
+     "wram": {wCardListVisibleOffset: b"\x01", wNumDeckMachineEntries: b"\x06", wUnableToScrollDown: b"\xAA"},
+     "read": {wUnableToScrollDown: 1},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON,
+         wram={wCardListVisibleOffset: b"\x01", wNumDeckMachineEntries: b"\x06", wUnableToScrollDown: b"\xAA"},
+         read={wUnableToScrollDown: 1},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory UpdateDeckMachineScrollArrowsAndEntries
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -592,3 +610,6 @@ MUTATIONS["DrawDeckMachineScreen"] = {"source_symbol": "DrawDeckMachineScreen", 
 # >>> factory-mutation HandleDeckMachineSelection
 MUTATIONS["HandleDeckMachineSelection"] = {"source_symbol": "HandleDeckMachineSelection", "before": "\t\t\tDrawListCursor_Visible();\n\t\t\twTempCardListVisibleOffset = wCardListVisibleOffset;", "after": "\t\t\tDrawListCursor_Visible();\n\t\t\twTempCardListVisibleOffset = 0u;", "case_ids": ["HandleDeckMachineSelection-0", "HandleDeckMachineSelection-1"]}
 # <<< factory-mutation HandleDeckMachineSelection
+# >>> factory-mutation UpdateDeckMachineScrollArrowsAndEntries
+MUTATIONS["UpdateDeckMachineScrollArrowsAndEntries"] = {"source_symbol": "UpdateDeckMachineScrollArrowsAndEntries", "before": "PrintVisibleDeckMachineEntriesResult UpdateDeckMachineScrollArrowsAndEntries(uint8_t f)\n{\n\t(void)f;\n\tDrawListScrollArrows();\n\tuint8_t visible_offset = wCardListVisibleOffset;\n\tuint8_t threshold = (uint8_t)(visible_offset + NUM_DECK_MACHINE_VISIBLE_DECKS + 1u);", "after": "PrintVisibleDeckMachineEntriesResult UpdateDeckMachineScrollArrowsAndEntries(uint8_t f)\n{\n\t(void)f;\n\tDrawListScrollArrows();\n\tuint8_t visible_offset = wCardListVisibleOffset;\n\tuint8_t threshold = 0u;", "case_ids": ["UpdateDeckMachineScrollArrowsAndEntries-0", "UpdateDeckMachineScrollArrowsAndEntries-1", "UpdateDeckMachineScrollArrowsAndEntries-2"]}
+# <<< factory-mutation UpdateDeckMachineScrollArrowsAndEntries

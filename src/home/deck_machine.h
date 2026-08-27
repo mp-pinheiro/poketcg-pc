@@ -99,4 +99,7 @@ DrawDeckMachineScreenResult DrawDeckMachineScreen(void);
 typedef struct { uint8_t a; uint8_t f; } HandleDeckMachineSelectionResult;
 HandleDeckMachineSelectionResult HandleDeckMachineSelection(void);
 /* <<< factory HandleDeckMachineSelection */
+/* >>> factory UpdateDeckMachineScrollArrowsAndEntries */
+PrintVisibleDeckMachineEntriesResult UpdateDeckMachineScrollArrowsAndEntries(uint8_t f);
+/* <<< factory UpdateDeckMachineScrollArrowsAndEntries */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

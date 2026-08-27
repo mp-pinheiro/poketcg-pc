@@ -1253,6 +1253,8 @@ void BankswitchROM(uint8_t bank);
 #include "home/print_text.h"
 
 #define DamageToOppBenchIfHeadsDamageToYoursIfTailsText 0x00eau
+
+#define VenomPowderCheckText 0x00e4u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -9949,3 +9951,21 @@ PlayerPickAttackForAmnesiaResult PidgeottoMirrorMove_InitialEffect2(void)
 	return MirrorMove_InitialEffect2();
 }
 /* <<< factory PidgeottoMirrorMove_InitialEffect2 */
+
+/* >>> factory VenomPowder_PoisonConfusion50PercentEffect */
+/* effect_functions.asm:2559-2571 */
+uint8_t VenomPowder_PoisonConfusion50PercentEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(VenomPowderCheckText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return toss.f;
+	(void)PoisonEffect();
+	QueueStatusConditionResult confusion = ConfusionEffect();
+	if ((confusion.f & 0x10u) != 0u)
+		return confusion.f;
+	/* Carry clear means confusion was blocked, so QueueStatusCondition left
+	 * only CONFUSED in wNoEffectFromWhichStatus; name both statuses instead. */
+	wNoEffectFromWhichStatus = CONFUSED | POISONED;
+	return confusion.f;
+}
+/* <<< factory VenomPowder_PoisonConfusion50PercentEffect */

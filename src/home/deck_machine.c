@@ -829,3 +829,23 @@ HandleDeckMachineSelectionResult HandleDeckMachineSelection(void)
 	}
 }
 /* <<< factory HandleDeckMachineSelection */
+
+/* >>> factory UpdateDeckMachineScrollArrowsAndEntries */
+PrintVisibleDeckMachineEntriesResult UpdateDeckMachineScrollArrowsAndEntries(uint8_t f)
+{
+	(void)f;
+	DrawListScrollArrows();
+	uint8_t visible_offset = wCardListVisibleOffset;
+	uint8_t threshold = (uint8_t)(visible_offset + NUM_DECK_MACHINE_VISIBLE_DECKS + 1u);
+	uint8_t entries = wNumDeckMachineEntries;
+	uint8_t draw_f;
+	if (entries < threshold) {
+		draw_f = 0x50u;
+		if ((uint8_t)(entries & 0x0Fu) < (uint8_t)(threshold & 0x0Fu))
+			draw_f |= 0x20u;
+	} else {
+		draw_f = 0x80u;
+	}
+	return PrintVisibleDeckMachineEntries(draw_f);
+}
+/* <<< factory UpdateDeckMachineScrollArrowsAndEntries */

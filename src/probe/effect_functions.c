@@ -4863,6 +4863,13 @@ static void adapt_PidgeottoMirrorMove_InitialEffect2(ProbeState *s)
 }
 /* <<< factory PidgeottoMirrorMove_InitialEffect2 */
 
+/* >>> factory VenomPowder_PoisonConfusion50PercentEffect */
+static void adapt_VenomPowder_PoisonConfusion50PercentEffect(ProbeState *s)
+{
+	s->f = VenomPowder_PoisonConfusion50PercentEffect();
+}
+/* <<< factory VenomPowder_PoisonConfusion50PercentEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5453,5 +5460,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Blizzard_BenchDamage50PercentEffect", adapt_Blizzard_BenchDamage50PercentEffect },
 	{ "SpearowMirrorMove_InitialEffect2", adapt_SpearowMirrorMove_InitialEffect2 },
 	{ "PidgeottoMirrorMove_InitialEffect2", adapt_PidgeottoMirrorMove_InitialEffect2 },
+	{ "VenomPowder_PoisonConfusion50PercentEffect", adapt_VenomPowder_PoisonConfusion50PercentEffect },
 	{ NULL, NULL },
 };

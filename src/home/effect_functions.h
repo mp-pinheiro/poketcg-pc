@@ -1996,6 +1996,9 @@ PlayerPickAttackForAmnesiaResult SpearowMirrorMove_InitialEffect2(void);
 /* >>> factory PidgeottoMirrorMove_InitialEffect2 */
 PlayerPickAttackForAmnesiaResult PidgeottoMirrorMove_InitialEffect2(void);
 /* <<< factory PidgeottoMirrorMove_InitialEffect2 */
+/* >>> factory VenomPowder_PoisonConfusion50PercentEffect */
+uint8_t VenomPowder_PoisonConfusion50PercentEffect(void);
+/* <<< factory VenomPowder_PoisonConfusion50PercentEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
