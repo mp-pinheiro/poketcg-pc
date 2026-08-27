@@ -5774,6 +5774,30 @@ CASES["Revive_PlayerSelection"] = [
 ]
 # <<< factory Revive_PlayerSelection
 
+# >>> factory BellsproutCallForFamily_PlayerSelectEffect
+CONTRACT["BellsproutCallForFamily_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["BellsproutCallForFamily_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x10, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCABB: b"\x00"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x10, 0x01], wram={0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCABB: b"\x00"}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory BellsproutCallForFamily_PlayerSelectEffect
+
+# >>> factory EnergySearch_PlayerSelection
+CONTRACT["EnergySearch_PlayerSelection"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["EnergySearch_PlayerSelection"] = [
+    {"keys": [0x00, 0x10, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCABB: b"\x00"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x10, 0x01], wram={0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCABB: b"\x00"}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory EnergySearch_PlayerSelection
+
+# >>> factory KrabbyCallForFamily_PlayerSelectEffect
+CONTRACT["KrabbyCallForFamily_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["KrabbyCallForFamily_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x10, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCABB: b"\x00"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x10, 0x01], wram={0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCABB: b"\x00"}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory KrabbyCallForFamily_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8379,3 +8403,12 @@ MUTATIONS["Thunderpunch_RecoilEffect"] = {"source_symbol": "Thunderpunch_RecoilE
 # >>> factory-mutation Revive_PlayerSelection
 MUTATIONS["Revive_PlayerSelection"] = {"source_symbol": "Revive_PlayerSelection", "before": "void Revive_PlayerSelection(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseBasicPokemonToPlaceOnBenchText);\n\t(void)CreateBasicPokemonCardListFromDiscardPile();\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(PlayerDiscardPileText, PleaseSelectCardText);\n\t(void)DisplayCardList();\n\thTemp_ffa0 = hTempCardIndex_ff98;", "after": "void Revive_PlayerSelection(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseBasicPokemonToPlaceOnBenchText);\n\t(void)CreateBasicPokemonCardListFromDiscardPile();\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(PlayerDiscardPileText, PleaseSelectCardText);\n\t(void)DisplayCardList();\n\thTemp_ffa0 = 0u;", "case_ids": ["Revive_PlayerSelection-0", "Revive_PlayerSelection-1"]}
 # <<< factory-mutation Revive_PlayerSelection
+# >>> factory-mutation BellsproutCallForFamily_PlayerSelectEffect
+MUTATIONS["BellsproutCallForFamily_PlayerSelectEffect"] = {"source_symbol": "BellsproutCallForFamily_PlayerSelectEffect", "before": "BellsproutCallForFamily_PlayerSelectEffectResult BellsproutCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0xffu;", "after": "BellsproutCallForFamily_PlayerSelectEffectResult BellsproutCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0x00u;", "case_ids": ["BellsproutCallForFamily_PlayerSelectEffect-0", "BellsproutCallForFamily_PlayerSelectEffect-1"]}
+# <<< factory-mutation BellsproutCallForFamily_PlayerSelectEffect
+# >>> factory-mutation EnergySearch_PlayerSelection
+MUTATIONS["EnergySearch_PlayerSelection"] = {"source_symbol": "EnergySearch_PlayerSelection", "before": "EnergySearch_PlayerSelectionResult EnergySearch_PlayerSelection(void)\n{\n\thTemp_ffa0 = 0xffu;", "after": "EnergySearch_PlayerSelectionResult EnergySearch_PlayerSelection(void)\n{\n\thTemp_ffa0 = 0x00u;", "case_ids": ["EnergySearch_PlayerSelection-0", "EnergySearch_PlayerSelection-1"]}
+# <<< factory-mutation EnergySearch_PlayerSelection
+# >>> factory-mutation KrabbyCallForFamily_PlayerSelectEffect
+MUTATIONS["KrabbyCallForFamily_PlayerSelectEffect"] = {"source_symbol": "KrabbyCallForFamily_PlayerSelectEffect", "before": "KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0xffu;", "after": "KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0x00u;", "case_ids": ["KrabbyCallForFamily_PlayerSelectEffect-0", "KrabbyCallForFamily_PlayerSelectEffect-1"]}
+# <<< factory-mutation KrabbyCallForFamily_PlayerSelectEffect

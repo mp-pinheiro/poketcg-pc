@@ -1767,6 +1767,18 @@ Thunderpunch_RecoilEffectResult Thunderpunch_RecoilEffect(uint8_t f, uint8_t d, 
 /* >>> factory Revive_PlayerSelection */
 void Revive_PlayerSelection(void);
 /* <<< factory Revive_PlayerSelection */
+/* >>> factory BellsproutCallForFamily_PlayerSelectEffect */
+typedef struct { uint8_t a; uint8_t f; } BellsproutCallForFamily_PlayerSelectEffectResult;
+BellsproutCallForFamily_PlayerSelectEffectResult BellsproutCallForFamily_PlayerSelectEffect(void);
+/* <<< factory BellsproutCallForFamily_PlayerSelectEffect */
+/* >>> factory EnergySearch_PlayerSelection */
+typedef struct { uint8_t a; uint8_t f; } EnergySearch_PlayerSelectionResult;
+EnergySearch_PlayerSelectionResult EnergySearch_PlayerSelection(void);
+/* <<< factory EnergySearch_PlayerSelection */
+/* >>> factory KrabbyCallForFamily_PlayerSelectEffect */
+typedef struct { uint8_t a; uint8_t f; } KrabbyCallForFamily_PlayerSelectEffectResult;
+KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEffect(void);
+/* <<< factory KrabbyCallForFamily_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

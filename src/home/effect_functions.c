@@ -1111,6 +1111,39 @@ void BankswitchROM(uint8_t bank);
 #include "home/menus.h"
 #include "generated/hram.h"
 #define ChooseBasicPokemonToPlaceOnBenchText 0x0166u
+
+#include "generated/hram.h"
+#include "home/coin_toss.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/sound.h"
+#include "mem.h"
+
+#define BellsproutText 0x0141u
+#define ChooseABellsproutFromDeckText 0x012eu
+#define ChooseABellsproutText 0x012fu
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/sound.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define BasicEnergyText 0x0144u
+#define Choose1BasicEnergyCardFromDeckText 0x011cu
+#define ChooseBasicEnergyCardText 0x0129u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/sound.h"
+#include "mem.h"
+#define ChooseAKrabbyFromDeckText 0x0122u
+#define ChooseAKrabbyText 0x0128u
+#define KrabbyText 0x0142u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -8778,3 +8811,153 @@ void Revive_PlayerSelection(void)
 	hTemp_ffa0 = hTempCardIndex_ff98;
 }
 /* <<< factory Revive_PlayerSelection */
+
+/* >>> factory BellsproutCallForFamily_PlayerSelectEffect */
+BellsproutCallForFamily_PlayerSelectEffectResult BellsproutCallForFamily_PlayerSelectEffect(void)
+{
+	hTemp_ffa0 = 0xffu;
+	CardListResult deck = CreateDeckCardList(0u, 0u);
+	LookForCardsInDeckResult search = LookForCardsInDeck(
+		deck.a, (uint8_t)(BellsproutText >> 8),
+		(uint8_t)BellsproutText, SEARCHEFFECT_CARD_ID, BELLSPROUT,
+		ChooseABellsproutFromDeckText);
+	if ((search.f & 0x10u) != 0u)
+		return (BellsproutCallForFamily_PlayerSelectEffectResult){search.a, search.f};
+
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChooseABellsproutText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) == 0u) {
+			uint16_t card_id = GetCardIDFromDeckIndex(display.a);
+			uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
+				(uint8_t)card_id, 0u, BELLSPROUT);
+			if ((compare & 0x80u) != 0u) {
+				uint8_t selected = hTempCardIndex_ff98;
+				hTemp_ffa0 = selected;
+				return (BellsproutCallForFamily_PlayerSelectEffectResult){selected,
+					(uint8_t)(selected == 0u ? 0x80u : 0x00u)};
+			}
+			PlaySFX_InvalidChoice();
+			continue;
+		}
+
+		DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+		uint16_t hl = locations.hl;
+		for (;;) {
+			if (gb_read8(hl) == CARD_LOCATION_DECK) {
+				uint8_t index = (uint8_t)hl;
+				uint16_t card_id = GetCardIDFromDeckIndex(index);
+				uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
+					(uint8_t)card_id, 0u, BELLSPROUT);
+				if ((compare & 0x80u) != 0u) {
+					PlaySFX_InvalidChoice();
+					break;
+				}
+			}
+			hl = (uint16_t)((hl & 0xff00u) | (uint8_t)(hl + 1u));
+			if ((uint8_t)hl >= DECK_SIZE) {
+				hTemp_ffa0 = 0xffu;
+				return (BellsproutCallForFamily_PlayerSelectEffectResult){0xffu, 0x00u};
+			}
+		}
+	}
+}
+/* <<< factory BellsproutCallForFamily_PlayerSelectEffect */
+
+/* >>> factory EnergySearch_PlayerSelection */
+EnergySearch_PlayerSelectionResult EnergySearch_PlayerSelection(void)
+{
+	hTemp_ffa0 = 0xffu;
+	CardListResult deck = CreateDeckCardList(0u, 0u);
+	LookForCardsInDeckResult search = LookForCardsInDeck(
+		deck.a, (uint8_t)(BasicEnergyText >> 8), (uint8_t)BasicEnergyText,
+		SEARCHEFFECT_BASIC_ENERGY, 0u, Choose1BasicEnergyCardFromDeckText);
+	if ((search.f & 0x10u) != 0u)
+		return (EnergySearch_PlayerSelectionResult){search.a, search.f};
+
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChooseBasicEnergyCardText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) != 0u) {
+			uint16_t list = wDuelTempList_ADDR;
+			uint8_t has_basic_energy = 0u;
+			for (;;) {
+				uint8_t card = gb_read8(list++);
+				if (card == 0xffu)
+					break;
+				if ((CheckIfCardIsBasicEnergy(card) & 0x10u) == 0u) {
+					has_basic_energy = 1u;
+					break;
+				}
+			}
+			if (has_basic_energy != 0u)
+				continue;
+			hTemp_ffa0 = 0xffu;
+			return (EnergySearch_PlayerSelectionResult){0xffu, 0x00u};
+		}
+
+		uint8_t card = hTempCardIndex_ff98;
+		hTemp_ffa0 = card;
+		if ((CheckIfCardIsBasicEnergy(card) & 0x10u) != 0u) {
+			PlaySFX_InvalidChoice();
+			continue;
+		}
+		uint8_t type = wLoadedCard2Type;
+		return (EnergySearch_PlayerSelectionResult){type, (uint8_t)(type == 0u ? 0x80u : 0x00u)};
+	}
+}
+/* <<< factory EnergySearch_PlayerSelection */
+
+/* >>> factory KrabbyCallForFamily_PlayerSelectEffect */
+KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEffect(void)
+{
+	hTemp_ffa0 = 0xffu;
+	CardListResult deck = CreateDeckCardList(0u, 0u);
+	LookForCardsInDeckResult search = LookForCardsInDeck(
+		deck.a, (uint8_t)(ChooseAKrabbyFromDeckText >> 8),
+		(uint8_t)ChooseAKrabbyFromDeckText, SEARCHEFFECT_CARD_ID,
+		KRABBY, ChooseAKrabbyFromDeckText);
+	if ((search.f & 0x10u) != 0u)
+		return (KrabbyCallForFamily_PlayerSelectEffectResult){search.a, search.f};
+
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChooseAKrabbyText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) != 0u) {
+			DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+			uint16_t hl = locations.hl;
+			for (;;) {
+				if (gb_read8(hl) == CARD_LOCATION_DECK) {
+					uint8_t index = (uint8_t)hl;
+					uint16_t card_id = GetCardIDFromDeckIndex(index);
+					uint8_t compare = CompareDEtoBC(
+						(uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, KRABBY);
+					if ((compare & 0x80u) != 0u)
+						break;
+				}
+				hl = (uint16_t)((hl & 0xff00u) | (uint8_t)(hl + 1u));
+				if ((uint8_t)hl >= DECK_SIZE) {
+					hTemp_ffa0 = 0xffu;
+					return (KrabbyCallForFamily_PlayerSelectEffectResult){0xffu, 0x00u};
+				}
+			}
+			PlaySFX_InvalidChoice();
+			continue;
+		}
+		uint16_t card_id = GetCardIDFromDeckIndex(display.a);
+		uint8_t compare = CompareDEtoBC(
+			(uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, KRABBY);
+		if ((compare & 0x80u) == 0u) {
+			PlaySFX_InvalidChoice();
+			continue;
+		}
+		uint8_t selected = hTempCardIndex_ff98;
+		hTemp_ffa0 = selected;
+		return (KrabbyCallForFamily_PlayerSelectEffectResult){selected,
+			(uint8_t)(selected == 0u ? 0x80u : 0x00u)};
+	}
+}
+/* <<< factory KrabbyCallForFamily_PlayerSelectEffect */

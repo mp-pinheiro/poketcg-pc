@@ -4292,6 +4292,33 @@ static void adapt_Revive_PlayerSelection(ProbeState *s)
 }
 /* <<< factory Revive_PlayerSelection */
 
+/* >>> factory BellsproutCallForFamily_PlayerSelectEffect */
+static void adapt_BellsproutCallForFamily_PlayerSelectEffect(ProbeState *s)
+{
+	BellsproutCallForFamily_PlayerSelectEffectResult result = BellsproutCallForFamily_PlayerSelectEffect();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory BellsproutCallForFamily_PlayerSelectEffect */
+
+/* >>> factory EnergySearch_PlayerSelection */
+static void adapt_EnergySearch_PlayerSelection(ProbeState *s)
+{
+	EnergySearch_PlayerSelectionResult result = EnergySearch_PlayerSelection();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory EnergySearch_PlayerSelection */
+
+/* >>> factory KrabbyCallForFamily_PlayerSelectEffect */
+static void adapt_KrabbyCallForFamily_PlayerSelectEffect(ProbeState *s)
+{
+	KrabbyCallForFamily_PlayerSelectEffectResult result = KrabbyCallForFamily_PlayerSelectEffect();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory KrabbyCallForFamily_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4809,5 +4836,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Blizzard_BenchDamageEffect", adapt_Blizzard_BenchDamageEffect },
 	{ "Thunderpunch_RecoilEffect", adapt_Thunderpunch_RecoilEffect },
 	{ "Revive_PlayerSelection", adapt_Revive_PlayerSelection },
+	{ "BellsproutCallForFamily_PlayerSelectEffect", adapt_BellsproutCallForFamily_PlayerSelectEffect },
+	{ "EnergySearch_PlayerSelection", adapt_EnergySearch_PlayerSelection },
+	{ "KrabbyCallForFamily_PlayerSelectEffect", adapt_KrabbyCallForFamily_PlayerSelectEffect },
 	{ NULL, NULL },
 };
