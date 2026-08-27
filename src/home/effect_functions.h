@@ -1717,6 +1717,13 @@ SuperEnergyRetrievalPlayerDiscardPileSelectionResult SuperEnergyRetrieval_Player
 /* >>> factory ComputerSearch_PlayerDiscardHandSelection */
 HandlePlayerSelection2HandCardsResult ComputerSearch_PlayerDiscardHandSelection(void);
 /* <<< factory ComputerSearch_PlayerDiscardHandSelection */
+/* >>> factory Pokedex_PlayerSelection */
+/* Pokedex_PlayerSelection (effect_functions.asm:10144) has a single exit,
+ * `or a / ret`, reached with a still holding the $ff terminator the ordering
+ * walk stopped on, so both a and the flags it computes are reported. */
+typedef struct { uint8_t a; uint8_t f; } PokedexPlayerSelectionResult;
+PokedexPlayerSelectionResult Pokedex_PlayerSelection(void);
+/* <<< factory Pokedex_PlayerSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -4165,6 +4165,16 @@ static void adapt_ComputerSearch_PlayerDiscardHandSelection(ProbeState *s)
 }
 /* <<< factory ComputerSearch_PlayerDiscardHandSelection */
 
+/* >>> factory Pokedex_PlayerSelection */
+static void adapt_Pokedex_PlayerSelection(ProbeState *s)
+{
+	PokedexPlayerSelectionResult result = Pokedex_PlayerSelection();
+
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Pokedex_PlayerSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4669,5 +4679,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ZapdosThunder_RecoilEffect", adapt_ZapdosThunder_RecoilEffect },
 	{ "SuperEnergyRetrieval_PlayerDiscardPileSelection", adapt_SuperEnergyRetrieval_PlayerDiscardPileSelection },
 	{ "ComputerSearch_PlayerDiscardHandSelection", adapt_ComputerSearch_PlayerDiscardHandSelection },
+	{ "Pokedex_PlayerSelection", adapt_Pokedex_PlayerSelection },
 	{ NULL, NULL },
 };

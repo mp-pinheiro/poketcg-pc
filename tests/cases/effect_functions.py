@@ -5591,6 +5591,37 @@ CASES["ComputerSearch_PlayerDiscardHandSelection"] = [
 ]
 # <<< factory ComputerSearch_PlayerDiscardHandSelection
 
+# >>> factory Pokedex_PlayerSelection
+# One card left in the deck ($C2BA = 59) caps the ordering at a single card, so
+# one A tap finishes the selection and .clear_list is never re-entered. $C2B9 is
+# DUELVARS_DECK_CARDS + 59, the only deck slot copied into wDuelTempList; it
+# holds deck index 5, whose card id sits at wPlayerDeck + 5 ($C405). $CABB = 0
+# keeps WaitForVBlank a no-op until the screen code runs EnableLCD itself,
+# $CAB4 = 0 pins the console to DMG so no SGB packet is sent, and $CD9A = 1
+# leaves the "Is this OK?" cursor on YES so A confirms instead of restarting.
+# Observed: wDuelTempList ($C510 = 05 FF), its ordering slots ($C51A = 01 FF),
+# wNumberOfCardsToOrder ($CE75 = 02), hTempList ($FFA0 = 05 FF) and
+# hCurSelectionItem ($FFB2 = 02).
+CONTRACT["Pokedex_PlayerSelection"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Pokedex_PlayerSelection"] = [
+    {"keys": [0x00, 0x01],
+     "wram": {0xFF97: b"\xC2", 0xCAB4: b"\x00", 0xCABB: b"\x00", 0xCD9A: b"\x01",
+              0xC2BA: b"\x3B", 0xC2B9: b"\x05", 0xC405: b"\x08",
+              0xFFA0: b"\x00\x00"},
+     "read": {0xC510: 2, 0xC51A: 2, 0xCE75: 1, 0xFFA0: 2, 0xFFB2: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+     "keys": [0x00, 0x01],
+     "wram": {0xFF97: b"\xC2", 0xCAB4: b"\x00", 0xCABB: b"\x00", 0xCD9A: b"\x01",
+              0xC2BA: b"\x3B", 0xC2B9: b"\x05", 0xC405: b"\x08",
+              0xFFA0: b"\x00\x00"},
+     "read": {0xC510: 2, 0xC51A: 2, 0xCE75: 1, 0xFFA0: 2, 0xFFB2: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+]
+# <<< factory Pokedex_PlayerSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8157,3 +8188,6 @@ MUTATIONS["SuperEnergyRetrieval_PlayerDiscardPileSelection"] = {"source_symbol":
 # >>> factory-mutation ComputerSearch_PlayerDiscardHandSelection
 MUTATIONS["ComputerSearch_PlayerDiscardHandSelection"] = {"source_symbol": "ComputerSearch_PlayerDiscardHandSelection", "before": "HandlePlayerSelection2HandCardsResult ComputerSearch_PlayerDiscardHandSelection(void)\n{\n\treturn HandlePlayerSelection2HandCardsToDiscard();\n}", "after": "HandlePlayerSelection2HandCardsResult ComputerSearch_PlayerDiscardHandSelection(void)\n{\n\treturn (HandlePlayerSelection2HandCardsResult){0u, 0u};\n}", "case_ids": ["ComputerSearch_PlayerDiscardHandSelection-0", "ComputerSearch_PlayerDiscardHandSelection-1"]}
 # <<< factory-mutation ComputerSearch_PlayerDiscardHandSelection
+# >>> factory-mutation Pokedex_PlayerSelection
+MUTATIONS["Pokedex_PlayerSelection"] = {"source_symbol": "Pokedex_PlayerSelection", "before": "\t\t\t\tgb_write8((uint16_t)(hTempList_ADDR + written), 0xFFu);\n\t\t\t\treturn (PokedexPlayerSelectionResult){number,", "after": "\t\t\t\tgb_write8((uint16_t)(hTempList_ADDR + written), 0x00u);\n\t\t\t\treturn (PokedexPlayerSelectionResult){number,", "case_ids": ["Pokedex_PlayerSelection-0", "Pokedex_PlayerSelection-1"]}
+# <<< factory-mutation Pokedex_PlayerSelection

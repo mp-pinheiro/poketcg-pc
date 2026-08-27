@@ -1034,6 +1034,30 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "generated/wram.h"
 #include "mem.h"
 #define ChooseUpTo4FromDiscardPileText 0x0169u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/switch_rom.h"
+#include "mem.h"
+
+/* Every `bank1call` below reaches a bank 1 routine that reads its own tables
+ * out of the $4000-$7FFF window (InitAndDrawCardListScreenLayout and
+ * DisplayCardList both go through CardListParameters at $5710), so the bank has
+ * to be latched around each call exactly as the rst $18 trampoline does:
+ * Bank1Call saves hBankROM, switches to 1, calls, then SwitchToBankAtSP puts
+ * the caller's bank back. This routine is banked at 0b, so without the latch
+ * those tables read out of bank 0b. DECK_SIZE, DUELVARS_DECK_CARDS and
+ * DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK are already defined earlier in this
+ * statics block and are deliberately not repeated. */
+#define Pokedex_PlayerSelection_BANK_DUEL_CORE 0x01u
+#define ChooseTheOrderOfTheCardsText 0x0136u
+#define DuelistDeckText 0x00a9u
+#define IsThisOKText 0x002eu
+#define RearrangeThe5CardsAtTopOfDeckText 0x0162u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -8264,3 +8288,146 @@ HandlePlayerSelection2HandCardsResult ComputerSearch_PlayerDiscardHandSelection(
 	return HandlePlayerSelection2HandCardsToDiscard();
 }
 /* <<< factory ComputerSearch_PlayerDiscardHandSelection */
+
+/* >>> factory Pokedex_PlayerSelection */
+PokedexPlayerSelectionResult Pokedex_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(RearrangeThe5CardsAtTopOfDeckText);
+
+	/* Cap the number of cards to reorder at what is left in the deck, five at
+	 * most. `sub [hl]` re-reads the byte GetTurnDuelistVariable already handed
+	 * back in a. */
+	DuelistVarResult not_in_deck = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	uint8_t taken = not_in_deck.a;
+	uint8_t left = (uint8_t)(DECK_SIZE - taken);
+	uint8_t count = 5u;
+
+	if (left < count)
+		count = left;
+	wNumberOfCardsToOrder = (uint8_t)(count + 1u);
+
+	/* `ld l, a` writes only l, so h stays the duelist page GetTurnDuelistVariable
+	 * returned and the offset wraps inside that page. */
+	uint16_t source = (uint16_t)((not_in_deck.hl & 0xFF00u)
+				     | (uint8_t)(taken + DUELVARS_DECK_CARDS));
+	uint16_t dest = wDuelTempList_ADDR;
+	uint8_t remaining = count;
+
+	do {
+		gb_write8(dest, gb_read8(source));
+		source = (uint16_t)(source + 1u);
+		dest = (uint16_t)(dest + 1u);
+		remaining--;
+	} while (remaining != 0u);
+	gb_write8(dest, 0xFFu);
+
+	for (;;) {
+		/* .clear_list: one zeroed ordering slot per listed card. */
+		uint8_t entries = CountCardsInDuelTempList().a;
+		uint16_t order = (uint16_t)(wDuelTempList_ADDR + 10u);
+
+		hCurSelectionItem = 1u;
+		do {
+			gb_write8(order, 0u);
+			order = (uint16_t)(order + 1u);
+			entries--;
+		} while (entries != 0u);
+		gb_write8(order, 0xFFu);
+
+		{
+			uint8_t bank = hBankROM;
+			BankswitchROM(Pokedex_PlayerSelection_BANK_DUEL_CORE);
+			(void)InitAndDrawCardListScreenLayout();
+			BankswitchROM(bank);
+		}
+		{
+			uint8_t bank = hBankROM;
+			BankswitchROM(Pokedex_PlayerSelection_BANK_DUEL_CORE);
+			SetCardListHeaderText(DuelistDeckText, ChooseTheOrderOfTheCardsText);
+			BankswitchROM(bank);
+		}
+		{
+			uint8_t bank = hBankROM;
+			BankswitchROM(Pokedex_PlayerSelection_BANK_DUEL_CORE);
+			PrintSortNumberInCardList_SetPointer();
+			BankswitchROM(bank);
+		}
+
+		for (;;) {
+			/* .read_input */
+			DisplayCardListResult display;
+
+			{
+				uint8_t bank = hBankROM;
+				BankswitchROM(Pokedex_PlayerSelection_BANK_DUEL_CORE);
+				display = DisplayCardList();
+				BankswitchROM(bank);
+			}
+			if ((display.f & 0x10u) != 0u) {
+				/* .undo: B takes the last ordering number back. */
+				uint8_t selection = hCurSelectionItem;
+				uint16_t scan;
+
+				if (selection == 1u)
+					continue; /* nothing has been ordered yet */
+				selection--;
+				hCurSelectionItem = selection;
+				scan = (uint16_t)(wDuelTempList_ADDR + 10u);
+				while (gb_read8(scan) != selection)
+					scan = (uint16_t)(scan + 1u);
+				gb_write8(scan, 0u);
+				{
+					uint8_t bank = hBankROM;
+					BankswitchROM(Pokedex_PlayerSelection_BANK_DUEL_CORE);
+					PrintSortNumberInCardList_CallFromPointer();
+					BankswitchROM(bank);
+				}
+				continue;
+			}
+
+			uint16_t slot = (uint16_t)(wDuelTempList_ADDR + 10u + hCurMenuItem);
+
+			if (gb_read8(slot) != 0u)
+				continue; /* this card already carries an ordering number */
+			gb_write8(slot, hCurSelectionItem);
+			hCurSelectionItem = (uint8_t)(hCurSelectionItem + 1u);
+			{
+				uint8_t bank = hBankROM;
+				BankswitchROM(Pokedex_PlayerSelection_BANK_DUEL_CORE);
+				PrintSortNumberInCardList_CallFromPointer();
+				BankswitchROM(bank);
+			}
+			if (hCurSelectionItem < wNumberOfCardsToOrder)
+				continue; /* still more cards to number */
+
+			EraseCursor();
+			if ((YesOrNoMenuWithText_LeftAligned(IsThisOKText, 0u, 0u).f & 0x10u) != 0u)
+				break; /* "No": start over from .clear_list */
+
+			{
+				/* Overwrite hTempList with the card indices in pick order. */
+				uint16_t picked = (uint16_t)(wDuelTempList_ADDR + 10u);
+				uint16_t cards = wDuelTempList_ADDR;
+				uint8_t written = 0u;
+				uint8_t number;
+
+				for (;;) {
+					number = gb_read8(picked);
+					picked = (uint16_t)(picked + 1u);
+					if (number == 0xFFu)
+						break;
+					gb_write8((uint16_t)(hTempCardIndex_ff9f_ADDR + number),
+						  gb_read8(cards));
+					cards = (uint16_t)(cards + 1u);
+					written++;
+				}
+				/* `or a` runs on the $ff the walk stopped on, so carry and the
+				 * subtract flag clear and only Z can be set. */
+				gb_write8((uint16_t)(hTempList_ADDR + written), 0xFFu);
+				return (PokedexPlayerSelectionResult){number,
+					(uint8_t)(number == 0u ? 0x80u : 0x00u)};
+			}
+		}
+	}
+}
+/* <<< factory Pokedex_PlayerSelection */
