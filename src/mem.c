@@ -193,6 +193,11 @@ uint8_t gb_read8(uint16_t addr)
 		return g_pal[g_io[0x68] & 0x3Fu];
 	if (addr == 0xFF6Bu)
 		return g_pal[0x40u + (g_io[0x6A] & 0x3Fu)];
+	/* RP ($FF56): unused bits 2-5 float high (0x3C), bit 1 is the IR receive
+	 * status (1 = no signal detected), bit 0 echoes the LED-control bit.
+	 * Bits 6-7 are write-only enable bits and read back as 0. */
+	if (addr == 0xFF56u)
+		return (uint8_t)(0x3Eu | (*gb_ptr(addr) & 0x01u));
 	/* JOYP ($FF00): the stored byte only ever holds the two selection bits a
 	 * routine wrote (P14/P15); the input nibble is synthesized from g_keys on
 	 * every read, matching hardware's active-low matrix. Neither group

@@ -644,6 +644,39 @@ HandlePrinterErrorResult HandlePrinterError(uint8_t f, uint8_t d, uint8_t e)
 }
 /* <<< factory HandlePrinterError */
 
+/* >>> factory SendTilesToPrinter */
+/* engine/link/printer.asm:391-440. Stages two 20-tile rows from the tile map
+ * at hl into sGfxBuffer5, resolving each map entry through sGfxBuffer1, then
+ * compresses the 0x280-byte buffer and hands the packet to the synchronous
+ * SendPrinterPacket transform. .Copy20Tiles reads 20 entries but advances the
+ * map by `2 tiles` (32 entries), so the second row starts 32 entries in and
+ * the map ends 64 entries along. The `push hl` before Compress is what makes
+ * exit hl the advanced map, not Compress's data pointer. */
+SendTilesToPrinterResult SendTilesToPrinter(uint16_t hl, uint8_t b, uint8_t c)
+{
+	(void)b;
+	(void)c;
+	uint16_t de = SGFXBUFFER5_ADDR;
+	for (uint8_t row = 0u; row < 2u; row++) {
+		for (uint8_t i = 0u; i < 20u; i++) {
+			uint8_t tile = gb_read8((uint16_t)(hl + i));
+			uint16_t src = (uint16_t)(SGFXBUFFER1_ADDR + (uint16_t)((uint16_t)tile << 4u));
+			for (uint8_t j = 0u; j < 16u; j++) {
+				gb_write8(de, gb_read8((uint16_t)(src + j)));
+				de = (uint16_t)(de + 1u);
+			}
+		}
+		hl = (uint16_t)(hl + 32u);
+	}
+
+	CompressDataForPrinterSerialTransferResult compressed = CompressDataForPrinterSerialTransfer();
+	SendPrinterPacketResult packet =
+		SendPrinterPacket((uint8_t)(compressed.bc >> 8), (uint8_t)compressed.bc,
+		                  compressed.d, compressed.e, compressed.hl);
+	return (SendTilesToPrinterResult){packet.a, packet.f, hl};
+}
+/* <<< factory SendTilesToPrinter */
+
 /* >>> factory SendPrinterInstructionPacket */
 SendPrinterInstructionPacketResult SendPrinterInstructionPacket(uint16_t hl, uint16_t saved_hl)
 {

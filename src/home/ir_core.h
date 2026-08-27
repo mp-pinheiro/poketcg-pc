@@ -62,4 +62,7 @@ TransmitIRDataBufferResult TransmitIRDataBuffer(void);
 typedef struct { uint8_t a; uint8_t f; } ReceiveIRDataBufferResult;
 ReceiveIRDataBufferResult ReceiveIRDataBuffer(void);
 /* <<< factory ReceiveIRDataBuffer */
+/* >>> factory ClearRP */
+void ClearRP(void);
+/* <<< factory ClearRP */
 #endif /* POKETCG_HOME_IR_CORE_H */
