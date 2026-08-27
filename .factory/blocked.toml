@@ -550,3 +550,8 @@ unblock = "read the recorded diagnostics under .factory/try/GiveBoosterPack/atte
 name = "MagnetonLv35SelfdestructEffect"
 reason = "AUTO-RETIRED (cluster): matches GiveBoosterPack on BUDGET_EXHAUSTED pc=625 (7 stanzas). src/engine/duel/effect_functions.asm:7068 (basename `effect_functions`). generation=5; last diagnostic phase=primary failure_class=code detail=case MagnetonLv35SelfdestructEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":57308,\"rom_bank\":7,\"hbank_rom\":7,\"instructions\":12054185,\"cycles\":80000000,\"lcdc\":195,\"if\":224,\"ie\":5,\"ime\":1,\"halted\":1,\"ppu_lcdc\":195,\"ppu_ly\":67,\"ppu_mode\":0,\"bus\":\"00c300c2\"}"
 unblock = "read the recorded diagnostics under .factory/try/GiveBoosterPack/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "Prophecy_PlayerSelectEffect"
+reason = "AUTO-RETIRED (cluster): matches GiveBoosterPack on BUDGET_EXHAUSTED pc=625 (8 stanzas). src/engine/duel/effect_functions.asm:4721 (basename `effect_functions`). generation=5; last diagnostic phase=primary failure_class=code detail=case Prophecy_PlayerSelectEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":56488,\"rom_bank\":1,\"hbank_rom\":1,\"instructions\":11475895,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":94,\"ppu_mode\":3,\"bus\":\"0080c200\"}"
+unblock = "read the recorded diagnostics under .factory/try/GiveBoosterPack/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
