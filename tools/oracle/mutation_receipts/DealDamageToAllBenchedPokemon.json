@@ -1,0 +1,9 @@
+{
+  "fn": "DealDamageToAllBenchedPokemon",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DealDamageToAllBenchedPokemon\", \"registers\": {\"a\": 1, \"b\": 1, \"c\": 0, \"d\": 0, \"e\": 20, \"f\": 192, \"hl\": 49903, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49903\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DealDamageToAllBenchedPokemon\", \"mismatches\": {\"a\": [1, 0]}}\n",
+  "restored": "{\"fn\": \"DealDamageToAllBenchedPokemon\", \"registers\": {\"a\": 1, \"b\": 1, \"c\": 0, \"d\": 0, \"e\": 20, \"f\": 192, \"hl\": 49903, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49903\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

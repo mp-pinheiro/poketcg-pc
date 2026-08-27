@@ -8619,3 +8619,33 @@ MarowakCallForFamily_PlayerSelectEffectResult MarowakCallForFamily_PlayerSelectE
 	}
 }
 /* <<< factory MarowakCallForFamily_PlayerSelectEffect */
+
+/* >>> factory DealDamageToAllBenchedPokemon */
+DealDamageToAllBenchedPokemonResult DealDamageToAllBenchedPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t animation = a;
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t count_value = count.a;
+	a = count_value;
+	d = 0u;
+	e = animation;
+	b = PLAY_AREA_ARENA;
+	uint8_t old_c = c;
+	c = count_value;
+	++b;
+	old_c = c;
+	--c;
+	f = (uint8_t)((f & 0x10u) | 0x40u | (c == 0u ? 0x80u : 0u) | ((old_c & 0x0fu) == 0u ? 0x20u : 0u));
+	while (c != 0u) {
+		DealDamageToPlayAreaPokemonResult damage =
+			DealDamageToPlayAreaPokemon_RegularAnim(b, (uint16_t)animation, count.hl);
+		a = damage.a;
+		f = damage.f;
+		old_c = c;
+		++b;
+		--c;
+		f = (uint8_t)((f & 0x10u) | 0x40u | (c == 0u ? 0x80u : 0u) | ((old_c & 0x0fu) == 0u ? 0x20u : 0u));
+	}
+	return (DealDamageToAllBenchedPokemonResult){a, f, b, c, d, e, count.hl};
+}
+/* <<< factory DealDamageToAllBenchedPokemon */

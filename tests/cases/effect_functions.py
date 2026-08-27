@@ -5706,6 +5706,14 @@ CASES["MarowakCallForFamily_PlayerSelectEffect"] = [
 ]
 # <<< factory MarowakCallForFamily_PlayerSelectEffect
 
+# >>> factory DealDamageToAllBenchedPokemon
+CONTRACT["DealDamageToAllBenchedPokemon"] = {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ()}
+CASES["DealDamageToAllBenchedPokemon"] = [
+    {"a": 0x14, "f": 0x00, "wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EF: b"\x01"})
+]
+# <<< factory DealDamageToAllBenchedPokemon
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8293,3 +8301,6 @@ MUTATIONS["DevolutionBeam_DevolveEffect"] = {"source_symbol": "DevolutionBeam_De
 # >>> factory-mutation MarowakCallForFamily_PlayerSelectEffect
 MUTATIONS["MarowakCallForFamily_PlayerSelectEffect"] = {"source_symbol": "MarowakCallForFamily_PlayerSelectEffect", "before": "MarowakCallForFamily_PlayerSelectEffectResult MarowakCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0xffu;", "after": "MarowakCallForFamily_PlayerSelectEffectResult MarowakCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0x00u;", "case_ids": ["MarowakCallForFamily_PlayerSelectEffect-0", "MarowakCallForFamily_PlayerSelectEffect-1"]}
 # <<< factory-mutation MarowakCallForFamily_PlayerSelectEffect
+# >>> factory-mutation DealDamageToAllBenchedPokemon
+MUTATIONS["DealDamageToAllBenchedPokemon"] = {"source_symbol": "DealDamageToAllBenchedPokemon", "before": "DealDamageToAllBenchedPokemonResult DealDamageToAllBenchedPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t animation = a;\n\tDuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tuint8_t count_value = count.a;\n\ta = count_value;", "after": "DealDamageToAllBenchedPokemonResult DealDamageToAllBenchedPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t animation = a;\n\tDuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tuint8_t count_value = count.a;\n\ta = 0u;", "case_ids": ["DealDamageToAllBenchedPokemon-0", "DealDamageToAllBenchedPokemon-1"]}
+# <<< factory-mutation DealDamageToAllBenchedPokemon
