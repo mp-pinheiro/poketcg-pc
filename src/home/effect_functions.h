@@ -1707,7 +1707,8 @@ typedef struct { uint8_t a; uint8_t f; } ItemFinderPlayerSelectionResult;
 ItemFinderPlayerSelectionResult ItemFinder_PlayerSelection(void);
 /* <<< factory ItemFinder_PlayerSelection */
 /* >>> factory SlicingWindEffect */
-void SlicingWindEffect(void);
+typedef struct { uint8_t d, e; } SlicingWindEffectResult;
+SlicingWindEffectResult SlicingWindEffect(void);
 /* <<< factory SlicingWindEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */

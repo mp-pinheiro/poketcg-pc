@@ -433,6 +433,13 @@ static void adapt_AIDecide_EnergyRemoval(ProbeState *s)
 }
 /* <<< factory AIDecide_EnergyRemoval */
 
+/* >>> factory AIDecide_PokemonCenter */
+static void adapt_AIDecide_PokemonCenter(ProbeState *s)
+{
+	s->f = AIDecide_PokemonCenter().f;
+}
+/* <<< factory AIDecide_PokemonCenter */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -485,5 +492,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_ScoopUp", adapt_AIDecide_ScoopUp },
 	{ "AIDecide_FullHeal", adapt_AIDecide_FullHeal },
 	{ "AIDecide_EnergyRemoval", adapt_AIDecide_EnergyRemoval },
+	{ "AIDecide_PokemonCenter", adapt_AIDecide_PokemonCenter },
 	{ NULL, NULL },
 };

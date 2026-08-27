@@ -4141,7 +4141,9 @@ static void adapt_ItemFinder_PlayerSelection(ProbeState *s)
 /* >>> factory SlicingWindEffect */
 static void adapt_SlicingWindEffect(ProbeState *s)
 {
-	SlicingWindEffect();
+	SlicingWindEffectResult result = SlicingWindEffect();
+	s->d = result.d;
+	s->e = result.e;
 }
 /* <<< factory SlicingWindEffect */
 
@@ -4645,7 +4647,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SuperEnergyRetrieval_PlayerHandSelection", adapt_SuperEnergyRetrieval_PlayerHandSelection },
 	{ "Maintenance_PlayerSelection", adapt_Maintenance_PlayerSelection },
 	{ "ItemFinder_PlayerSelection", adapt_ItemFinder_PlayerSelection },
-	{ "SlicingWindEffect", adapt_SlicingWindEffect },
 	{ "BillEffect", adapt_BillEffect },
+	{ "SlicingWindEffect", adapt_SlicingWindEffect },
 	{ NULL, NULL },
 };

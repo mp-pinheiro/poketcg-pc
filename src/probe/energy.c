@@ -109,8 +109,9 @@ static void adapt_AIProcessButDontPlayEnergy_SkipEvolutionAndArena(ProbeState *s
 /* >>> factory Func_16488 */
 static void adapt_Func_16488(ProbeState *s)
 {
-	(void)s;
-	Func_16488();
+	Func16488Result r = Func_16488();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory Func_16488 */
 
@@ -125,7 +126,7 @@ const ProbeEntry probe_entries_energy[] = {
 	{ "AIProcessEnergyCards", adapt_AIProcessEnergyCards },
 	{ "AIProcessAndTryToPlayEnergy", adapt_AIProcessAndTryToPlayEnergy },
 	{ "AIProcessButDontPlayEnergy_SkipEvolution", adapt_AIProcessButDontPlayEnergy_SkipEvolution },
-	{ "Func_16488", adapt_Func_16488 },
 	{ "AIProcessButDontPlayEnergy_SkipEvolutionAndArena", adapt_AIProcessButDontPlayEnergy_SkipEvolutionAndArena },
+	{ "Func_16488", adapt_Func_16488 },
 	{ NULL, NULL },
 };

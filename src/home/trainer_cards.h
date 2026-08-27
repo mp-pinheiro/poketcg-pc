@@ -192,4 +192,7 @@ AIDecideFullHealResult AIDecide_FullHeal(void);
 typedef struct { uint8_t a; uint8_t f; } AIDecideEnergyRemovalResult;
 AIDecideEnergyRemovalResult AIDecide_EnergyRemoval(void);
 /* <<< factory AIDecide_EnergyRemoval */
+/* >>> factory AIDecide_PokemonCenter */
+AIDecideResult AIDecide_PokemonCenter(void);
+/* <<< factory AIDecide_PokemonCenter */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

@@ -959,8 +959,12 @@ CASES["DrawCardTypeIconsAndPrintCardCounts"] = [
 # >>> factory ShowConfirmationCardScreen
 CONTRACT["ShowConfirmationCardScreen"] = {"compare": (), "preserve": ()}
 CASES["ShowConfirmationCardScreen"] = [
-    {"wram": {0xCEBB: b"\x00" * 9, 0xCECB: b"\x00", 0xCFB9: b"\x00", 0xCABB: b"\x00"}, "setup": SETUP_PCD, "read": {0xCED0: 2}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xCEBB: b"\x00" * 9, 0xCECB: b"\x00", 0xCFB9: b"\x00", 0xCABB: b"\x00"}, setup=SETUP_PCD, read={0xCED0: 2}, instruction_budget=2000000, cycle_budget=8000000),
+    {"wram": {0xCFB9: b"\x00", 0xCABB: b"\x00", 0xCECB: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xCED0: 2}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={0xCFB9: b"\x00", 0xCABB: b"\x00", 0xCECB: b"\x00"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xCED0: 2}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory ShowConfirmationCardScreen
 

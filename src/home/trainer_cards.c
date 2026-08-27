@@ -323,6 +323,13 @@
 #include "home/common.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/common.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/random.h"
 /* <<< factory statics */
 
 
@@ -2662,3 +2669,58 @@ AIDecideEnergyRemovalResult AIDecide_EnergyRemoval(void)
 	return (AIDecideEnergyRemovalResult){0u, 0x80u};
 }
 /* <<< factory AIDecide_EnergyRemoval */
+
+/* >>> factory AIDecide_PokemonCenter */
+AIDecideResult AIDecide_PokemonCenter(void)
+{
+	hTempPlayAreaLocation_ff9d = 0u;
+
+	CheckIfAnyAttackKnocksOutDefendingCardResult knockout =
+		CheckIfAnyAttackKnocksOutDefendingCard();
+	if ((knockout.f & 0x10u) != 0u) {
+		CheckIfSelectedAttackIsUnusableResult unusable =
+			CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		if ((unusable.f & 0x10u) != 0u) {
+			LookForEnergyNeededForAttackInHandResult energy =
+				LookForEnergyNeededForAttackInHand();
+			if ((energy.f & 0x10u) != 0u)
+				return (AIDecideResult){0u};
+		}
+	}
+
+	wce06 = 0u;
+	wce08 = 0u;
+	wce0f = 0u;
+	uint8_t d = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	uint8_t e = PLAY_AREA_ARENA;
+	for (;;) {
+		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e)).a;
+		(void)LoadCardDataToBuffer1_FromDeckIndex(deck_index);
+		uint8_t hp_counters = ConvertHPToDamageCounters_Bank8(wLoadedCard1HP);
+		wce06 = (uint8_t)(wce06 + hp_counters);
+
+		CardDamageResult damage = GetCardDamageAndMaxHP(e);
+		uint8_t damage_counters = ConvertHPToDamageCounters_Bank8(damage.a);
+		wce08 = (uint8_t)(wce08 + damage_counters);
+
+		(void)GetPlayAreaCardAttachedEnergies(e);
+		uint8_t attached = wTotalAttachedEnergies;
+		uint16_t energy_sum = (uint16_t)wce0f + attached;
+		if (energy_sum > 0xffu)
+			return (AIDecideResult){0u};
+		wce0f = (uint8_t)energy_sum;
+		if (--d == 0u)
+			break;
+		++e;
+	}
+
+	uint8_t half_damage = (uint8_t)(wce08 >> 1);
+	if (half_damage < wce0f)
+		return (AIDecideResult){0u};
+	uint16_t product = HtimesL((uint16_t)(0x0600u | wce06));
+	product = CalculateWordTensDigit(product);
+	if ((uint8_t)product >= wce08)
+		return (AIDecideResult){0u};
+	return (AIDecideResult){0x10u};
+}
+/* <<< factory AIDecide_PokemonCenter */

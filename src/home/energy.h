@@ -44,6 +44,7 @@ void AIProcessButDontPlayEnergy_SkipEvolution(void);
 void AIProcessButDontPlayEnergy_SkipEvolutionAndArena(void);
 /* <<< factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena */
 /* >>> factory Func_16488 */
-void Func_16488(void);
+typedef struct { uint8_t a; uint8_t f; } Func16488Result;
+Func16488Result Func_16488(void);
 /* <<< factory Func_16488 */
 #endif /* POKETCG_HOME_ENERGY_H */

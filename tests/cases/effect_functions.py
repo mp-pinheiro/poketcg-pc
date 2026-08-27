@@ -5563,7 +5563,7 @@ CASES["ItemFinder_PlayerSelection"] = [
 # <<< factory ItemFinder_PlayerSelection
 
 # >>> factory SlicingWindEffect
-CONTRACT["SlicingWindEffect"] = {"compare": (), "preserve": ()}
+CONTRACT["SlicingWindEffect"] = {"compare": ("d", "e"), "preserve": ()}
 CASES["SlicingWindEffect"] = [
 	{"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x01", 0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, "read": {0xCCEB: 1}},
 	dict(POISON, wram={0xFF97: b"\xC2", 0xC3EF: b"\x01", 0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, read={0xCCEB: 1}),
@@ -8128,5 +8128,5 @@ MUTATIONS["Maintenance_PlayerSelection"] = {"source_symbol": "Maintenance_Player
 MUTATIONS["ItemFinder_PlayerSelection"] = {"source_symbol": "ItemFinder_PlayerSelection", "before": "ItemFinderPlayerSelectionResult ItemFinder_PlayerSelection(void)\n{\n\tHandlePlayerSelection2HandCardsResult hand = HandlePlayerSelection2HandCardsToDiscard();\n\tif ((hand.f & 0x10u) != 0u)\n\t\treturn (ItemFinderPlayerSelectionResult){hand.a, hand.f};\n\t(void)CreateTrainerCardListFromDiscardPile();\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(PlayerDiscardPileText, ChooseCardToPlaceInHandText);\n\tDisplayCardListResult display = DisplayCardList();\n\tgb_write8(hTempList_ADDR + 2u, display.a);\n\treturn (ItemFinderPlayerSelectionResult){display.a, display.f};\n}", "after": "ItemFinderPlayerSelectionResult ItemFinder_PlayerSelection(void)\n{\n\treturn (ItemFinderPlayerSelectionResult){0u, 0u};\n}", "case_ids": ["ItemFinder_PlayerSelection-0", "ItemFinder_PlayerSelection-1"]}
 # <<< factory-mutation ItemFinder_PlayerSelection
 # >>> factory-mutation SlicingWindEffect
-MUTATIONS["SlicingWindEffect"] = {"source_symbol": "SlicingWindEffect", "before": "void SlicingWindEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = random.a;", "after": "void SlicingWindEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = (uint8_t)(random.a + 1u);", "case_ids": ["SlicingWindEffect-0", "SlicingWindEffect-1"]}
+MUTATIONS["SlicingWindEffect"] = {"source_symbol": "SlicingWindEffect", "before": "SlicingWindEffectResult SlicingWindEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = random.a;", "after": "SlicingWindEffectResult SlicingWindEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = (uint8_t)(random.a + 1u);", "case_ids": ["SlicingWindEffect-0"]}
 # <<< factory-mutation SlicingWindEffect

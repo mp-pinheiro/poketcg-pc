@@ -8206,12 +8206,13 @@ ItemFinderPlayerSelectionResult ItemFinder_PlayerSelection(void)
 /* <<< factory ItemFinder_PlayerSelection */
 
 /* >>> factory SlicingWindEffect */
-void SlicingWindEffect(void)
+SlicingWindEffectResult SlicingWindEffect(void)
 {
 	SwapTurn();
 	PickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();
 	uint8_t target = random.a;
 	(void)DealDamageToPlayAreaPokemon_RegularAnim(target, 30u, 0u);
 	SwapTurn();
+	return (SlicingWindEffectResult){0u, 30u};
 }
 /* <<< factory SlicingWindEffect */

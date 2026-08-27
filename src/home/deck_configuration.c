@@ -2076,7 +2076,7 @@ void ShowConfirmationCardScreen(void)
 	ShowDeckInfoHeader();
 	wCardListCoords = 5u;
 	gb_write8((uint16_t)(wCardListCoords_ADDR + 1u), 3u);
-	PrintConfirmationCardList(0u, 3u, 5u, (uint16_t *)(wCardListCoords_ADDR + 1u));
+	PrintConfirmationCardList(0u, 3u, 5u, (uint16_t *)wCardListCoords_ADDR);
 }
 /* <<< factory ShowConfirmationCardScreen */
 

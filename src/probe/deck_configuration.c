@@ -738,9 +738,9 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "UpdateConfirmationCardScreen", adapt_UpdateConfirmationCardScreen },
 	{ "ShowDeckInfoHeader", adapt_ShowDeckInfoHeader },
 	{ "DrawCardTypeIconsAndPrintCardCounts", adapt_DrawCardTypeIconsAndPrintCardCounts },
-	{ "ShowConfirmationCardScreen", adapt_ShowConfirmationCardScreen },
 	{ "ShowDeckInfoHeaderAndWaitForBButton", adapt_ShowDeckInfoHeaderAndWaitForBButton },
 	{ "HandleDeckConfirmationMenu", adapt_HandleDeckConfirmationMenu },
 	{ "ConfirmDeckConfiguration", adapt_ConfirmDeckConfiguration },
+	{ "ShowConfirmationCardScreen", adapt_ShowConfirmationCardScreen },
 	{ NULL, NULL },
 };

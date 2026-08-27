@@ -348,6 +348,16 @@ hTempPlayAreaLocation_ff9d = 0xFF9D
 wArena = 0xC2BB
 wOpponentArena = 0xC3BB
 wScratch = 0xCE00
+
+hWhoseTurn = 0xFF97
+ARENA_CARD = 0xC2BB
+ARENA_COUNT = 0xC2EF
+PLAYER_DECK = 0xC400
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wce06 = 0xCE06
+wce08 = 0xCE08
+wce0f = 0xCE0F
+wTotalAttachedEnergies = 0xCC23
 # <<< factory-cases-statics
 
 # >>> factory AIDecide_PokemonTrader_LegendaryMoltres
@@ -818,6 +828,18 @@ CASES["AIDecide_EnergyRemoval"] = [
 ]
 # <<< factory AIDecide_EnergyRemoval
 
+# >>> factory AIDecide_PokemonCenter
+CONTRACT["AIDecide_PokemonCenter"] = {"compare": ("f",), "preserve": ()}
+CASES["AIDecide_PokemonCenter"] = [
+    {"wram": {hWhoseTurn: b"\xC2", ARENA_COUNT: b"\x01", ARENA_CARD: b"\x00", PLAYER_DECK: b"\x01"},
+     "read": {hTempPlayAreaLocation_ff9d: 1, wce06: 1, wce08: 1, wce0f: 1, wTotalAttachedEnergies: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", ARENA_COUNT: b"\x01", ARENA_CARD: b"\x00", PLAYER_DECK: b"\x01"},
+         read={hTempPlayAreaLocation_ff9d: 1, wce06: 1, wce08: 1, wce0f: 1, wTotalAttachedEnergies: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory AIDecide_PokemonCenter
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1074,3 +1096,6 @@ MUTATIONS["AIDecide_FullHeal"] = {"source_symbol": "AIDecide_FullHeal", "before"
 # >>> factory-mutation AIDecide_EnergyRemoval
 MUTATIONS["AIDecide_EnergyRemoval"] = {"source_symbol": "AIDecide_EnergyRemoval", "before": "\tuint8_t start = PLAY_AREA_ARENA;\n\tif (ko.f & 0x10u) {", "after": "\tuint8_t start = PLAY_AREA_BENCH_1;\n\tif (ko.f & 0x10u) {", "case_ids": ["AIDecide_EnergyRemoval-0"]}
 # <<< factory-mutation AIDecide_EnergyRemoval
+# >>> factory-mutation AIDecide_PokemonCenter
+MUTATIONS["AIDecide_PokemonCenter"] = {"source_symbol": "AIDecide_PokemonCenter", "before": "AIDecideResult AIDecide_PokemonCenter(void)\n{\n\thTempPlayAreaLocation_ff9d = 0u;", "after": "AIDecideResult AIDecide_PokemonCenter(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["AIDecide_PokemonCenter-0", "AIDecide_PokemonCenter-1"]}
+# <<< factory-mutation AIDecide_PokemonCenter
