@@ -170,6 +170,18 @@ CASES["PlayerNamingScreen_CheckButtonState"] = [
               0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"}},
     dict(POISON, wram={0xFF8F: b"\x00", 0xFF91: b"\x00", 0xCEA3: b"\x00",
                        0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"}),
+    # A press: `and PAD_A` leaves a=1; the push af/pop af sandwich returns it
+    # with carry. B press: a=MENU_CANCEL, f gains Z from `and PAD_A`.
+    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x01", 0xCEA3: b"\x11",
+              0xCEAA: b"\x17", 0xD006: b"\x03", 0xCEA4: b"\x02", 0xCEA9: b"\x06"},
+     "read": {0xCFE3: 1}},
+    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCEA3: b"\x11",
+              0xCEAA: b"\x17", 0xD006: b"\x03", 0xCEA4: b"\x02", 0xCEA9: b"\x06"},
+     "read": {0xCFE3: 1}},
+    # Blink early exit: a is the OLD counter masked, not the raw byte.
+    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x00", 0xCEA3: b"\x11",
+              0xCEAA: b"\x17", 0xD006: b"\x03", 0xCEA4: b"\x02", 0xCEA9: b"\x06"},
+     "read": {0xCEA3: 1}},
 ]
 # <<< factory PlayerNamingScreen_CheckButtonState
 

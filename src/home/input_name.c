@@ -451,9 +451,16 @@ done_dir:
 	{
 		uint8_t keys = gb_read8(hKeysPressed_ADDR);
 		if (keys & (PAD_A_800 | PAD_B_800)) {
-			uint8_t press_a = (keys & PAD_A_800) ? 0u : MENU_CANCEL_800;
+			/* input_name.asm:441-451: `and PAD_A` leaves a = keys & PAD_A (1)
+			 * for A, a = MENU_CANCEL for B; the push af / pop af sandwich
+			 * around DrawVisibleCursor returns that a with carry set: f = 0x10
+			 * for A (Z clear) and 0x90 for B (Z set). */
+			uint8_t press_a = (keys & PAD_A_800) ? (uint8_t)(keys & PAD_A_800) : MENU_CANCEL_800;
 			(void)PlaySFXConfirmOrCancel_Bank6(press_a);
-			return PlayerNamingScreen_DrawVisibleCursor(0x10u, 0u, 0u, 0u, 0u, 0u);
+			(void)PlayerNamingScreen_DrawVisibleCursor(0x10u, 0u, 0u, 0u, 0u, 0u);
+			return (PlayerNamingScreen_DrawCursorResult){press_a,
+				(uint8_t)(((keys & PAD_A_800) ? 0x00u : 0x80u) | 0x10u),
+				0u, 0u, 0u, 0u, 0u};
 		}
 		uint8_t sfx = gb_read8(wMenuInputSFX_ADDR);
 		if (sfx != 0u)
@@ -462,7 +469,7 @@ done_dir:
 		uint8_t old_blink = gb_read8(wCheckMenuCursorBlinkCounter_ADDR);
 		gb_write8(wCheckMenuCursorBlinkCounter_ADDR, (uint8_t)(old_blink + 1u));
 		if ((old_blink & CURSOR_BLINK_PERIOD_MASK_800) != 0u)
-			return (PlayerNamingScreen_DrawCursorResult){old_blink, 0u, 0u, 0u, 0u, 0u, 0u};
+			return (PlayerNamingScreen_DrawCursorResult){(uint8_t)(old_blink & CURSOR_BLINK_PERIOD_MASK_800), 0u, 0u, 0u, 0u, 0u, 0u};
 
 		uint8_t vis_tile = gb_read8(wVisibleCursorTile_ADDR);
 		return PlayerNamingScreen_DrawCursor(vis_tile, 0u, 0u, 0u, 0u, 0u, 0u);
