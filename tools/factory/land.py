@@ -72,6 +72,22 @@ def _revision(cwd: Path, revision: str) -> str:
     return value
 
 
+def _try_revision(cwd: Path, revision: str) -> str | None:
+    """`_revision`, but None instead of raising when it cannot resolve.
+
+    `main` is in `experimental-advance-branches.enabled-branches`, so a plain
+    `jj commit` auto-advances it onto the new commit with no explicit bookmark
+    write. Abandoning that commit after a gate failure then leaves `main`
+    naming a revision that no longer exists, and `jj log -r main` errors
+    instead of resolving - exactly the case the caller needs to detect as
+    "needs repair", not treat as a fatal error.
+    """
+    try:
+        return _revision(cwd, revision)
+    except LandError:
+        return None
+
+
 def _has_conflict(cwd: Path, revision: str) -> bool:
     """Whether `revision` carries unresolved merge conflicts.
 
@@ -473,9 +489,14 @@ def _land_batch(
             if _run(["jj", "diff", "--summary", *SURGERY_TREES], root, 120).stdout.strip():
                 raise LandError("working copy dirty after abandoning a failed batch")
             # Only rewind the bookmark this batch advanced. If another session
-            # has moved main on, rewinding would unpublish its work.
-            if _revision(root, "main") == source_revision:
-                _run(["jj", "bookmark", "set", "main", "-r", pre_batch_revision], root, 120)
+            # has moved main on, rewinding would unpublish its work. `main` is
+            # auto-advanced (experimental-advance-branches), so the abandon
+            # above may have already left it unresolvable rather than merely
+            # equal to source_revision - both cases need the same repair.
+            main_revision = _try_revision(root, "main")
+            if main_revision is None or main_revision == source_revision:
+                _run(["jj", "bookmark", "set", "main", "-r", pre_batch_revision,
+                      "--allow-backwards"], root, 120)
         return _reject_batch(
             root, artifacts, "gate", gate_tail, gate_command=gate_command,
             progress_command=progress_command, push=push, counter=counter, stale=stale,
