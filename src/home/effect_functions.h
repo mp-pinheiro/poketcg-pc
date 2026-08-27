@@ -1686,6 +1686,9 @@ ZapdosThunder_RecoilEffectResult ZapdosThunder_RecoilEffect(uint8_t f, uint8_t d
 /* >>> factory BillEffect */
 void BillEffect(void);
 /* <<< factory BillEffect */
+/* >>> factory ImposterProfessorOakEffect */
+void ImposterProfessorOakEffect(void);
+/* <<< factory ImposterProfessorOakEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

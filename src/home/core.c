@@ -7906,3 +7906,41 @@ CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult CheckIfAnyDefendingPok
 	return (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, flags};
 }
 /* <<< factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP */
+
+/* >>> factory CheckIfAnyAttackKnocksOutDefendingCard */
+CheckIfAnyAttackKnocksOutDefendingCardResult CheckIfAnyAttackKnocksOutDefendingCard(void)
+{
+	(void)EstimateDamage_VersusDefendingCard(FIRST_ATTACK_OR_PKMN_POWER);
+	DuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	uint8_t damage = wDamage;
+	uint8_t difference = (uint8_t)(hp.a - damage);
+	/* `sub [hl]` always sets N, adds H on a nibble borrow and C on a byte one. */
+	uint8_t flags = 0x40u;
+	if ((hp.a & 0x0Fu) < (damage & 0x0Fu))
+		flags = (uint8_t)(flags | 0x20u);
+	if (hp.a < damage)
+		flags = (uint8_t)(flags | 0x10u);
+	/* Z and C are mutually exclusive after the subtraction, so `ret c` and the
+	   `ret nz` / `scf` tail can be tested in either order.  `scf` clears N and H
+	   but leaves Z, so the exact-KO exit is Z|C = $90. */
+	if (difference == 0u)
+		return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, 0x90u};
+	if ((flags & 0x10u) != 0u)
+		return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, flags};
+
+	/* `ld a, SECOND_ATTACK` falls into .CheckAttack rather than calling it, so
+	   this second pass returns straight to the routine's own caller. */
+	(void)EstimateDamage_VersusDefendingCard(SECOND_ATTACK);
+	hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	damage = wDamage;
+	difference = (uint8_t)(hp.a - damage);
+	flags = 0x40u;
+	if ((hp.a & 0x0Fu) < (damage & 0x0Fu))
+		flags = (uint8_t)(flags | 0x20u);
+	if (hp.a < damage)
+		flags = (uint8_t)(flags | 0x10u);
+	if (difference == 0u)
+		return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, 0x90u};
+	return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, flags};
+}
+/* <<< factory CheckIfAnyAttackKnocksOutDefendingCard */

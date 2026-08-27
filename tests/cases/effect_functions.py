@@ -5506,6 +5506,20 @@ CASES["BillEffect"] = [
 ]
 # <<< factory BillEffect
 
+# >>> factory ImposterProfessorOakEffect
+CONTRACT["ImposterProfessorOakEffect"] = {"compare": (), "preserve": ()}
+CASES["ImposterProfessorOakEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xC2BA: b"\x00", 0xC3EE: b"\x00", 0xC3BA: b"\x00", 0xCABB: b"\x00"},
+     "read": {0xC510: 2, 0xCBE8: 1, 0xCBE9: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xC2BA: b"\x00", 0xC3EE: b"\x00", 0xC3BA: b"\x00", 0xCABB: b"\x00"},
+         read={0xC510: 2, 0xCBE8: 1, 0xCBE9: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ImposterProfessorOakEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8045,3 +8059,6 @@ MUTATIONS["ZapdosThunder_RecoilEffect"] = {"source_symbol": "ZapdosThunder_Recoi
 # >>> factory-mutation BillEffect
 MUTATIONS["BillEffect"] = {"source_symbol": "BillEffect", "before": "\tuint8_t remaining = 2u;", "after": "\tuint8_t remaining = 1u;", "case_ids": ["BillEffect-0", "BillEffect-1"]}
 # <<< factory-mutation BillEffect
+# >>> factory-mutation ImposterProfessorOakEffect
+MUTATIONS["ImposterProfessorOakEffect"] = {"source_symbol": "ImposterProfessorOakEffect", "before": "\tuint8_t draw_count = 7u;", "after": "\tuint8_t draw_count = 6u;", "case_ids": ["ImposterProfessorOakEffect-0", "ImposterProfessorOakEffect-1"]}
+# <<< factory-mutation ImposterProfessorOakEffect

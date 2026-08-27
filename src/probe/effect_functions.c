@@ -4086,6 +4086,13 @@ static void adapt_BillEffect(ProbeState *s)
 }
 /* <<< factory BillEffect */
 
+/* >>> factory ImposterProfessorOakEffect */
+static void adapt_ImposterProfessorOakEffect(ProbeState *s)
+{
+	ImposterProfessorOakEffect();
+}
+/* <<< factory ImposterProfessorOakEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4581,5 +4588,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ThunderJolt_RecoilEffect", adapt_ThunderJolt_RecoilEffect },
 	{ "ZapdosThunder_RecoilEffect", adapt_ZapdosThunder_RecoilEffect },
 	{ "BillEffect", adapt_BillEffect },
+	{ "ImposterProfessorOakEffect", adapt_ImposterProfessorOakEffect },
 	{ NULL, NULL },
 };

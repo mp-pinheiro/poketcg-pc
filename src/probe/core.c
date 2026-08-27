@@ -2553,6 +2553,15 @@ static void adapt_CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP(ProbeState
 }
 /* <<< factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP */
 
+/* >>> factory CheckIfAnyAttackKnocksOutDefendingCard */
+static void adapt_CheckIfAnyAttackKnocksOutDefendingCard(ProbeState *s)
+{
+	CheckIfAnyAttackKnocksOutDefendingCardResult result = CheckIfAnyAttackKnocksOutDefendingCard();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory CheckIfAnyAttackKnocksOutDefendingCard */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2858,5 +2867,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PlayShuffleAndDrawCardsAnimation_BothDuelists", adapt_PlayShuffleAndDrawCardsAnimation_BothDuelists },
 	{ "CheckIfDefendingPokemonCanKnockOut", adapt_CheckIfDefendingPokemonCanKnockOut },
 	{ "CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP", adapt_CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP },
+	{ "CheckIfAnyAttackKnocksOutDefendingCard", adapt_CheckIfAnyAttackKnocksOutDefendingCard },
 	{ NULL, NULL },
 };

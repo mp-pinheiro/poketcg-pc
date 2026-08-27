@@ -8097,3 +8097,33 @@ void BillEffect(void)
 	}
 }
 /* <<< factory BillEffect */
+
+/* >>> factory ImposterProfessorOakEffect */
+void ImposterProfessorOakEffect(void)
+{
+	SwapTurn();
+	HandListResult hand = CreateHandCardList(0u);
+	uint16_t de = (uint16_t)(((uint16_t)hand.d << 8) | hand.e);
+	SortResult sorted = SortCardsInDuelTempListByID(hand.b, hand.c, de);
+	uint16_t hl = wDuelTempList_ADDR;
+	while (gb_read8(hl) != 0xFFu) {
+		uint8_t card = gb_read8(hl);
+		++hl;
+		RemoveCardFromHand(card);
+		ReturnCardToDeck(card);
+	}
+	++hl;
+	ShuffleCardsInDeckResult shuffled = ShuffleCardsInDeck(sorted.b, sorted.c, (uint16_t)(((uint16_t)sorted.d << 8) | sorted.e), hl);
+	uint8_t draw_count = 7u;
+	DisplayDrawNCardsScreen(draw_count, shuffled.f, shuffled.b, shuffled.c, shuffled.d, shuffled.e, shuffled.hl);
+	uint8_t remaining = 7u;
+	while (remaining != 0u) {
+		DrawCardResult card = DrawCardFromDeck();
+		if ((card.f & 0x10u) != 0u)
+			break;
+		AddCardToHand(card.a);
+		--remaining;
+	}
+	SwapTurn();
+}
+/* <<< factory ImposterProfessorOakEffect */

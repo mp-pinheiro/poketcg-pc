@@ -1894,6 +1894,60 @@ def _same_damage_case(hp=0, **overrides):
     }
     case.update(overrides)
     return case
+
+# CheckIfAnyAttackKnocksOutDefendingCard: the turn duelist's card at
+# hTempPlayAreaLocation_ff9d attacks, and the HP the routine subtracts wDamage
+# from belongs to the NON-turn duelist's arena card - $C3C8 while hWhoseTurn is
+# $C2 - not to the attacker.  Seeding that HP to 0 makes `sub [hl]` either hit
+# zero (damage 0, `scf`) or borrow (damage > 0), so the first `.CheckAttack`
+# always comes back with carry and the outer `ret c` returns after exactly ONE
+# EstimateDamage_VersusDefendingCard call.  That single-call shape is the one
+# tests/cases/damage_calculation.py measured green at 40M instructions /
+# 160M cycles; a case that fell through to SECOND_ATTACK would need that whole
+# budget twice over, which is what timed the earlier attempts out at 240 frames.
+_kaod_hWhoseTurn = 0xFF97
+_kaod_hTempPlayAreaLocation_ff9d = 0xFF9D
+_kaod_wPlayerCardLocations = 0xC200
+_kaod_wPlayerArenaCard = 0xC2BB
+_kaod_wPlayerBench = 0xC2BC
+_kaod_wOpponentCardLocations = 0xC300
+_kaod_wOpponentArenaCard = 0xC3BB
+_kaod_wOpponentArenaCardHP = 0xC3C8
+_kaod_wPlayerDeck = 0xC400
+_kaod_wOpponentDeck = 0xC480
+_kaod_wDamage = 0xCCB9
+_kaod_wAIMinDamage = 0xCCBB
+_kaod_wAIMaxDamage = 0xCCBC
+_kaod_wSelectedAttack = 0xCCC6
+_kaod_SNORLAX = 0xBE
+_kaod_CARD_LOCATION_ARENA = 0x10
+
+def _kaod_case(location=b"\x00", extra=None, **overrides):
+    wram = {
+        _kaod_hWhoseTurn: b"\xC2",
+        _kaod_hTempPlayAreaLocation_ff9d: location,
+        _kaod_wPlayerCardLocations: bytes((_kaod_CARD_LOCATION_ARENA,)),
+        _kaod_wOpponentCardLocations: bytes((_kaod_CARD_LOCATION_ARENA,)),
+        _kaod_wPlayerArenaCard: b"\x00",
+        _kaod_wOpponentArenaCard: b"\x00",
+        _kaod_wPlayerDeck: bytes((_kaod_SNORLAX,)),
+        _kaod_wOpponentDeck: bytes((_kaod_SNORLAX,)),
+        _kaod_wOpponentArenaCardHP: b"\x00",
+        _kaod_wDamage: b"\x00\x00",
+        _kaod_wAIMinDamage: b"\x00",
+        _kaod_wAIMaxDamage: b"\x00",
+    }
+    if extra:
+        wram.update(extra)
+    case = {
+        "wram": wram,
+        "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}],
+        "instruction_budget": 40000000,
+        "cycle_budget": 160000000,
+        "read": {_kaod_wDamage: 2, _kaod_wSelectedAttack: 1},
+    }
+    case.update(overrides)
+    return case
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -4059,6 +4113,16 @@ CASES["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP"] = [
 ]
 # <<< factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP
 
+# >>> factory CheckIfAnyAttackKnocksOutDefendingCard
+CONTRACT["CheckIfAnyAttackKnocksOutDefendingCard"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CheckIfAnyAttackKnocksOutDefendingCard"] = [
+    _kaod_case(),
+    _kaod_case(location=b"\x01", extra={_kaod_wPlayerBench: b"\x00"}),
+    dict(POISON, **_kaod_case()),
+    dict(POISON, **_kaod_case(location=b"\x01", extra={_kaod_wPlayerBench: b"\x00"})),
+]
+# <<< factory CheckIfAnyAttackKnocksOutDefendingCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5660,3 +5724,6 @@ MUTATIONS["CheckIfDefendingPokemonCanKnockOut"] = {
 # >>> factory-mutation CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP
 MUTATIONS["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP"] = {"source_symbol": "CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP", "before": "\tif (difference == 0u)\n\t\treturn (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, 0x90u};\n\tif ((flags & 0x10u) != 0u)", "after": "\tif (difference == 0u)\n\t\treturn (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, 0x80u};\n\tif ((flags & 0x10u) != 0u)", "case_ids": ["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP-0", "CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP-3"]}
 # <<< factory-mutation CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP
+# >>> factory-mutation CheckIfAnyAttackKnocksOutDefendingCard
+MUTATIONS["CheckIfAnyAttackKnocksOutDefendingCard"] = {"source_symbol": "CheckIfAnyAttackKnocksOutDefendingCard", "before": "CheckIfAnyAttackKnocksOutDefendingCardResult CheckIfAnyAttackKnocksOutDefendingCard(void)\n{\n\t(void)EstimateDamage_VersusDefendingCard(FIRST_ATTACK_OR_PKMN_POWER);\n\tDuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tuint8_t damage = wDamage;", "after": "CheckIfAnyAttackKnocksOutDefendingCardResult CheckIfAnyAttackKnocksOutDefendingCard(void)\n{\n\t(void)EstimateDamage_VersusDefendingCard(FIRST_ATTACK_OR_PKMN_POWER);\n\tDuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tuint8_t damage = (uint8_t)(wDamage + 1u);", "case_ids": ["CheckIfAnyAttackKnocksOutDefendingCard-0", "CheckIfAnyAttackKnocksOutDefendingCard-1", "CheckIfAnyAttackKnocksOutDefendingCard-2", "CheckIfAnyAttackKnocksOutDefendingCard-3"]}
+# <<< factory-mutation CheckIfAnyAttackKnocksOutDefendingCard

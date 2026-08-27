@@ -1142,4 +1142,8 @@ CheckIfDefendingPokemonCanKnockOutResult CheckIfDefendingPokemonCanKnockOut(uint
 typedef struct { uint8_t a; uint8_t f; } CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult;
 CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP(void);
 /* <<< factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP */
+/* >>> factory CheckIfAnyAttackKnocksOutDefendingCard */
+typedef struct { uint8_t a; uint8_t f; } CheckIfAnyAttackKnocksOutDefendingCardResult;
+CheckIfAnyAttackKnocksOutDefendingCardResult CheckIfAnyAttackKnocksOutDefendingCard(void);
+/* <<< factory CheckIfAnyAttackKnocksOutDefendingCard */
 #endif
