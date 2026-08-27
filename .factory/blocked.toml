@@ -555,3 +555,13 @@ unblock = "read the recorded diagnostics under .factory/try/GiveBoosterPack/atte
 name = "Prophecy_PlayerSelectEffect"
 reason = "AUTO-RETIRED (cluster): matches GiveBoosterPack on BUDGET_EXHAUSTED pc=625 (8 stanzas). src/engine/duel/effect_functions.asm:4721 (basename `effect_functions`). generation=5; last diagnostic phase=primary failure_class=code detail=case Prophecy_PlayerSelectEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":56488,\"rom_bank\":1,\"hbank_rom\":1,\"instructions\":11475895,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":94,\"ppu_mode\":3,\"bus\":\"0080c200\"}"
 unblock = "read the recorded diagnostics under .factory/try/GiveBoosterPack/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "Peek_SelectEffect"
+reason = "AUTO-RETIRED (cluster): matches GiveBoosterPack on BUDGET_EXHAUSTED pc=625 (9 stanzas). src/engine/duel/effect_functions.asm:6269 (basename `effect_functions`). generation=3; last diagnostic phase=primary failure_class=code detail=case Peek_SelectEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65512,\"rom_bank\":2,\"hbank_rom\":2,\"instructions\":18945972,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":48,\"ppu_mode\":3,\"bus\":\"2000ff80c20000\"}"
+unblock = "read the recorded diagnostics under .factory/try/GiveBoosterPack/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "SaveDeckInDeckSaveMachine"
+reason = "AUTO-RETIRED (cluster): matches GiveBoosterPack on BUDGET_EXHAUSTED pc=625 (9 stanzas). src/engine/menus/deck_machine.asm:1139 (basename `deck_machine`). generation=2; last diagnostic phase=primary failure_class=code detail=case SaveDeckInDeckSaveMachine-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65514,\"rom_bank\":2,\"hbank_rom\":2,\"instructions\":15620911,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":120,\"ppu_mode\":0,\"bus\":\"8000000080\"}"
+unblock = "read the recorded diagnostics under .factory/try/GiveBoosterPack/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
