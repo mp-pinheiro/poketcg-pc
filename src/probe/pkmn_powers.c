@@ -48,11 +48,21 @@ static void adapt_HandleAIDamageSwap(ProbeState *s)
 }
 /* <<< factory HandleAIDamageSwap */
 
+/* >>> factory HandleAIHeal */
+static void adapt_HandleAIHeal(ProbeState *s)
+{
+	HandleAIHealResult result = HandleAIHeal(s->c);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory HandleAIHeal */
+
 const ProbeEntry probe_entries_pkmn_powers[] = {
 	{ "HandleAIShift", adapt_HandleAIShift },
 	{ "HandleAIPeek", adapt_HandleAIPeek },
 	{ "HandleAIStrangeBehavior", adapt_HandleAIStrangeBehavior },
 	{ "HandleAICurse", adapt_HandleAICurse },
 	{ "HandleAIDamageSwap", adapt_HandleAIDamageSwap },
+	{ "HandleAIHeal", adapt_HandleAIHeal },
 	{ NULL, NULL },
 };

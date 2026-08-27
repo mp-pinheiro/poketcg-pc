@@ -87,6 +87,8 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 #define MR_MIME 0x9bu
 #define MUK 0x27u
 #define SNORLAX 0xbeu
+
+#define PKMN_CARD_DATA_LENGTH 0x41u
 /* <<< factory statics */
 
 /* >>> factory HandleAIShift */
@@ -327,3 +329,54 @@ HandleAIDamageSwapResult HandleAIDamageSwap(uint8_t f)
 	return (HandleAIDamageSwapResult){0u, 0x00u};
 }
 /* <<< factory HandleAIDamageSwap */
+
+/* >>> factory HandleAIHeal */
+HandleAIHealResult HandleAIHeal(uint8_t c)
+{
+	uint8_t copy_length = PKMN_CARD_DATA_LENGTH;
+	if (copy_length == PKMN_CARD_DATA_LENGTH)
+		hTemp_ffa0 = c;
+	else
+		hTemp_ffa0 = 0u;
+	CardDamageResult arena = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	if (arena.a != 0u) {
+		hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+		CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(PLAY_AREA_ARENA, arena.f, 0u, arena.c, 0u, PLAY_AREA_ARENA, 0u);
+		if (!(ko.f & 0x10u))
+			return (HandleAIHealResult){PLAY_AREA_ARENA, ko.f};
+		uint8_t damage = ko.a;
+		uint8_t hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a;
+		uint8_t remaining = GetCardDamageAndMaxHP(PLAY_AREA_ARENA).a;
+		uint8_t heal = remaining;
+		if (heal > 10u)
+			heal = 10u;
+		uint8_t after = (uint8_t)(hp + heal - damage);
+		if (after == 0u || (uint8_t)(hp + heal) < damage)
+			goto check_bench;
+		hTempCardIndex_ff9f = gb_read8(0xce08u);
+		(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER);
+		hPlayAreaEffectTarget = PLAY_AREA_ARENA;
+		(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT);
+		AIMakeDecisionResult result = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE);
+		return (HandleAIHealResult){OPPACTION_DUEL_MAIN_SCENE, result.f};
+	}
+check_bench:
+	{
+		uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+		uint8_t best_damage = 0u;
+		uint8_t best_location = PLAY_AREA_ARENA;
+		for (uint8_t e = PLAY_AREA_BENCH_1; e != count; e++) {
+			uint8_t remaining = GetCardDamageAndMaxHP(e).a;
+			if (remaining > best_damage) { best_damage = remaining; best_location = e; }
+		}
+		if (best_location == PLAY_AREA_ARENA)
+			return (HandleAIHealResult){PLAY_AREA_ARENA, 0x80u};
+		hTempCardIndex_ff9f = gb_read8(0xce08u);
+		(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER);
+		hPlayAreaEffectTarget = best_location;
+		(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT);
+		AIMakeDecisionResult result = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE);
+		return (HandleAIHealResult){OPPACTION_DUEL_MAIN_SCENE, result.f};
+	}
+}
+/* <<< factory HandleAIHeal */

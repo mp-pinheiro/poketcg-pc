@@ -78,6 +78,17 @@ CASES["HandleAIDamageSwap"] = [
 ]
 # <<< factory HandleAIDamageSwap
 
+# >>> factory HandleAIHeal
+CONTRACT["HandleAIHeal"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleAIHeal"] = [
+    {"c": 0, "wram": {0xFF97: b"\xC2", 0xC200: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\xC9", 0xC2EF: b"\x01"}, "read": {0xFFA0: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"c": 1, "wram": {0xFF97: b"\xC2", 0xC200: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\xC9", 0xC2EF: b"\x01"}, "read": {0xFFA0: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"c": 0xE4, "wram": {0xFF97: b"\xC2", 0xC200: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\xC9", 0xC2EF: b"\x01"}, "read": {0xFFA0: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, c=0xCC, wram={0xFF97: b"\xC2", 0xC200: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\xC9", 0xC2EF: b"\x01"}, read={0xFFA0: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"c": 1, "wram": {0xFF97: b"\xC2", 0xC200: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\xC9", 0xC2EF: b"\x01"}, "read": {0xFFA0: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000}
+]
+# <<< factory HandleAIHeal
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -117,3 +128,6 @@ MUTATIONS["HandleAIDamageSwap"] = {
     "case_ids": ["HandleAIDamageSwap-0", "HandleAIDamageSwap-1"],
 }
 # <<< factory-mutation HandleAIDamageSwap
+# >>> factory-mutation HandleAIHeal
+MUTATIONS["HandleAIHeal"] = {"source_symbol": "HandleAIHeal", "before": "\tuint8_t copy_length = PKMN_CARD_DATA_LENGTH;", "after": "\tuint8_t copy_length = 0x40u;", "case_ids": ["HandleAIHeal-1", "HandleAIHeal-2", "HandleAIHeal-4"]}
+# <<< factory-mutation HandleAIHeal
