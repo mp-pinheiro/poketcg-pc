@@ -2592,6 +2592,13 @@ static void adapt_OppAction_EvolvePokemonCard(ProbeState *s)
 }
 /* <<< factory OppAction_EvolvePokemonCard */
 
+/* >>> factory OppAction_PlayBasicPokemonCard */
+static void adapt_OppAction_PlayBasicPokemonCard(ProbeState *s)
+{
+	OppAction_PlayBasicPokemonCard();
+}
+/* <<< factory OppAction_PlayBasicPokemonCard */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2901,5 +2908,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckIfActiveCardCanKnockOut", adapt_CheckIfActiveCardCanKnockOut },
 	{ "AISelectSpecialAttackParameters", adapt_AISelectSpecialAttackParameters },
 	{ "OppAction_EvolvePokemonCard", adapt_OppAction_EvolvePokemonCard },
+	{ "OppAction_PlayBasicPokemonCard", adapt_OppAction_PlayBasicPokemonCard },
 	{ NULL, NULL },
 };

@@ -813,3 +813,21 @@ PreparePrinterConnectionResult _PreparePrinterConnection(uint16_t hl)
 	return (PreparePrinterConnectionResult){handled.f};
 }
 /* <<< factory _PreparePrinterConnection */
+
+/* >>> factory SendCardListToPrinter */
+SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t offset = wPrinterHorizontalOffset;
+	if (offset != 1u) {
+		LoadGfxBufferForPrinterResult loaded = LoadGfxBufferForPrinter(hl);
+		if ((loaded.f & 0x10u) != 0u)
+			return (SendCardListToPrinterResult){loaded.a, loaded.f, b, c, d, e, loaded.hl};
+		hl = loaded.hl;
+	}
+	TryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();
+	if ((init.f & 0x10u) != 0u)
+		return (SendCardListToPrinterResult){init.a, init.f, b, c, d, e, hl};
+	SendPrinterInstructionPacket_1SheetResult packet = SendPrinterInstructionPacket_1Sheet_3LineFeeds();
+	return (SendCardListToPrinterResult){packet.a, packet.f, b, c, d, e, packet.hl};
+}
+/* <<< factory SendCardListToPrinter */

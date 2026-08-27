@@ -4353,6 +4353,20 @@ static void adapt_Confusion50PercentEffect(ProbeState *s)
 }
 /* <<< factory Confusion50PercentEffect */
 
+/* >>> factory Poison50PercentEffect */
+static void adapt_Poison50PercentEffect(ProbeState *s)
+{
+	s->f = Poison50PercentEffect();
+}
+/* <<< factory Poison50PercentEffect */
+
+/* >>> factory ApplyAndAnimateHPRecovery */
+static void adapt_ApplyAndAnimateHPRecovery(ProbeState *s)
+{
+	ApplyAndAnimateHPRecovery(s->d, s->e);
+}
+/* <<< factory ApplyAndAnimateHPRecovery */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4877,5 +4891,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "TossCoin_BankB", adapt_TossCoin_BankB },
 	{ "GustOfWind_SwitchEffect", adapt_GustOfWind_SwitchEffect },
 	{ "Confusion50PercentEffect", adapt_Confusion50PercentEffect },
+	{ "Poison50PercentEffect", adapt_Poison50PercentEffect },
+	{ "ApplyAndAnimateHPRecovery", adapt_ApplyAndAnimateHPRecovery },
 	{ NULL, NULL },
 };

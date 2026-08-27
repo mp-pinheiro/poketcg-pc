@@ -1409,6 +1409,12 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define MEWTWO_ALT_LV60 0x9Fu
 #define MEWTWO_LV60 0x9Eu
 #define MEW_LV23 0xA2u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/core.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -8056,3 +8062,19 @@ void OppAction_EvolvePokemonCard(void)
 	(void)processed;
 }
 /* <<< factory OppAction_EvolvePokemonCard */
+
+/* >>> factory OppAction_PlayBasicPokemonCard */
+void OppAction_PlayBasicPokemonCard(void)
+{
+	uint8_t index = hTemp_ffa0;
+	hTempCardIndex_ff98 = index;
+	PutHandPokemonResult placed = PutHandPokemonCardInPlayArea(index, 0u);
+	hTempPlayAreaLocation_ff9d = placed.a;
+	DuelistVarResult stage = GetTurnDuelistVariable((uint8_t)(placed.a + DUELVARS_ARENA_CARD_STAGE));
+	gb_write8(stage.hl, BASIC);
+	WaitResult shown = DisplayCardDetailScreen(hTemp_ffa0, PlacedOnTheBenchText);
+	DuelRoutineResult processed = ProcessPlayedPokemonCard(hTemp_ffa0, shown.f, 0u, 0u, 0u, 0u, PlacedOnTheBenchText);
+	DrawDuelMainScene();
+	(void)processed;
+}
+/* <<< factory OppAction_PlayBasicPokemonCard */

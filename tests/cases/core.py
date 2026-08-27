@@ -4154,6 +4154,22 @@ CASES["OppAction_EvolvePokemonCard"] = [
 ]
 # <<< factory OppAction_EvolvePokemonCard
 
+# >>> factory OppAction_PlayBasicPokemonCard
+CONTRACT["OppAction_PlayBasicPokemonCard"] = {"compare": (), "preserve": ()}
+CASES["OppAction_PlayBasicPokemonCard"] = [
+    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": [0x00, 0x01],
+     "wram": {0xFF97: b"\xC2", 0xC2EF: b"\x00", 0xC400: b"\x10", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xFF98: 1, 0xFF9D: 1, 0xC2CE: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x01],
+     "wram": {0xFF97: b"\xC2", 0xC2EF: b"\x00", 0xC400: b"\x10", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xFF98: 1, 0xFF9D: 1, 0xC2CE: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000}
+]
+# <<< factory OppAction_PlayBasicPokemonCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5772,3 +5788,6 @@ MUTATIONS["AISelectSpecialAttackParameters"] = {"source_symbol": "AISelectSpecia
 # >>> factory-mutation OppAction_EvolvePokemonCard
 MUTATIONS["OppAction_EvolvePokemonCard"] = {"source_symbol": "OppAction_EvolvePokemonCard", "before": "void OppAction_EvolvePokemonCard(void)\n{\n\tuint8_t play_area = hTempPlayAreaLocation_ffa1;", "after": "void OppAction_EvolvePokemonCard(void)\n{\n\tuint8_t play_area = 0u;", "case_ids": ["OppAction_EvolvePokemonCard-0", "OppAction_EvolvePokemonCard-1"]}
 # <<< factory-mutation OppAction_EvolvePokemonCard
+# >>> factory-mutation OppAction_PlayBasicPokemonCard
+MUTATIONS["OppAction_PlayBasicPokemonCard"] = {"source_symbol": "OppAction_PlayBasicPokemonCard", "before": "void OppAction_PlayBasicPokemonCard(void)\n{\n\tuint8_t index = hTemp_ffa0;", "after": "void OppAction_PlayBasicPokemonCard(void)\n{\n\tuint8_t index = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["OppAction_PlayBasicPokemonCard-0", "OppAction_PlayBasicPokemonCard-1"]}
+# <<< factory-mutation OppAction_PlayBasicPokemonCard

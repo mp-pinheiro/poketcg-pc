@@ -1157,4 +1157,7 @@ AISelectSpecialAttackParametersResult AISelectSpecialAttackParameters(void);
 /* >>> factory OppAction_EvolvePokemonCard */
 void OppAction_EvolvePokemonCard(void);
 /* <<< factory OppAction_EvolvePokemonCard */
+/* >>> factory OppAction_PlayBasicPokemonCard */
+void OppAction_PlayBasicPokemonCard(void);
+/* <<< factory OppAction_PlayBasicPokemonCard */
 #endif

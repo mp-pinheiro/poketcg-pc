@@ -527,6 +527,24 @@ CASES["_PreparePrinterConnection"] = [
 ]
 # <<< factory _PreparePrinterConnection
 
+# >>> factory SendCardListToPrinter
+CONTRACT["SendCardListToPrinter"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["SendCardListToPrinter"] = [
+    {"keys": [0x02],
+     "wram": {0xCE90: b"\x01", 0xCE6F: b"\x77", 0xCE9E: b"\xAA"},
+     "read": {0xCE90: 1, 0xCE6F: 1, 0xCE9E: 1},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"keys": [0x02],
+     "wram": {0xCE90: b"\x00", 0xCE6F: b"\x55", 0xCE9E: b"\xCC"},
+     "read": {0xCE90: 1, 0xCE6F: 1, 0xCE9E: 1},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, keys=[0x02],
+         wram={0xCE90: b"\x00", 0xCE6F: b"\xAA", 0xCE9E: b"\x55"},
+         read={0xCE90: 1, 0xCE6F: 1, 0xCE9E: 1},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory SendCardListToPrinter
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 SCHEMA2_CASES["SendPrinterPacket"][3]["completion"] = {"mode": "pre-ret", "pc": 0x315D}
@@ -724,3 +742,6 @@ MUTATIONS["AddToPrinterGfxBuffer"] = {
     "case_ids": ["AddToPrinterGfxBuffer-0"],
 }
 # <<< factory-mutation AddToPrinterGfxBuffer
+# >>> factory-mutation SendCardListToPrinter
+MUTATIONS["SendCardListToPrinter"] = {"source_symbol": "SendCardListToPrinter", "before": "SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t offset = wPrinterHorizontalOffset;\n\tif (offset != 1u) {\n\t\tLoadGfxBufferForPrinterResult loaded = LoadGfxBufferForPrinter(hl);\n\t\tif ((loaded.f & 0x10u) != 0u)\n\t\t\treturn (SendCardListToPrinterResult){loaded.a, loaded.f, b, c, d, e, loaded.hl};\n\t\thl = loaded.hl;\n\t}\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();\n\tif ((init.f & 0x10u) != 0u)", "after": "SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t offset = wPrinterHorizontalOffset;\n\tif (offset != 1u) {\n\t\tLoadGfxBufferForPrinterResult loaded = LoadGfxBufferForPrinter(hl);\n\t\tif ((loaded.f & 0x10u) != 0u)\n\t\t\treturn (SendCardListToPrinterResult){loaded.a, loaded.f, b, c, d, e, loaded.hl};\n\t\thl = loaded.hl;\n\t}\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();\n\tif ((init.f & 0x10u) == 0u)", "case_ids": ["SendCardListToPrinter-0", "SendCardListToPrinter-1", "SendCardListToPrinter-2"]}
+# <<< factory-mutation SendCardListToPrinter

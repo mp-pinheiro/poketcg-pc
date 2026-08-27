@@ -1157,6 +1157,17 @@ void BankswitchROM(uint8_t bank);
 #define ATK_ANIM_GUST_OF_WIND 0x8du
 
 #define ConfusionCheckText 0x00e3u
+
+#include "home/effect_functions.h"
+#define PoisonCheckText 0x00e2u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/coin_toss.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#define ATK_ANIM_HEAL 0x79u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -9048,3 +9059,48 @@ uint8_t Confusion50PercentEffect(void)
 	return ConfusionEffect().f;
 }
 /* <<< factory Confusion50PercentEffect */
+
+/* >>> factory Poison50PercentEffect */
+uint8_t Poison50PercentEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(PoisonCheckText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return toss.f;
+	return PoisonEffect().f;
+}
+/* <<< factory Poison50PercentEffect */
+
+/* >>> factory ApplyAndAnimateHPRecovery */
+void ApplyAndAnimateHPRecovery(uint8_t d, uint8_t e)
+{
+	wUnused_HPRecoverAmount = e;
+	gb_write8((uint16_t)(wUnused_HPRecoverAmount_ADDR + 1u), d);
+
+	CardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	if (damage.a == 0u)
+		return;
+
+	wLoadedAttackAnimation = ATK_ANIM_HEAL;
+	/* The asm never loads hWhoseTurn into h (its documented bug): h is still
+	 * the high byte of wUnused_HPRecoverAmount + 1, so PlayAttackAnimation
+	 * always takes the non-turn-side branch and sets bit 7 of b. */
+	PlayAttackAnimation(ATK_ANIM_HEAL, 0x00u, PLAY_AREA_ARENA, 0x01u, d, e,
+		(uint16_t)(wUnused_HPRecoverAmount_ADDR + 1u));
+
+	damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	uint8_t b = 0x00u;
+	uint8_t c = damage.c;
+	DuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	uint16_t sum = (uint16_t)((uint16_t)hp.a + (uint16_t)e);
+
+	e = (uint8_t)sum;
+	d = (uint8_t)(d + (uint8_t)(sum >> 8));
+	if ((CompareDEtoBC(d, e, b, c) & 0x10u) == 0u) {
+		e = c;
+		d = b;
+	}
+	gb_write8(hp.hl, e);
+	WaitAttackAnimation();
+	(void)d;
+}
+/* <<< factory ApplyAndAnimateHPRecovery */

@@ -1793,6 +1793,12 @@ void GustOfWind_SwitchEffect(void);
 /* >>> factory Confusion50PercentEffect */
 uint8_t Confusion50PercentEffect(void);
 /* <<< factory Confusion50PercentEffect */
+/* >>> factory Poison50PercentEffect */
+uint8_t Poison50PercentEffect(void);
+/* <<< factory Poison50PercentEffect */
+/* >>> factory ApplyAndAnimateHPRecovery */
+void ApplyAndAnimateHPRecovery(uint8_t d, uint8_t e);
+/* <<< factory ApplyAndAnimateHPRecovery */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

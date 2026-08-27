@@ -1,0 +1,9 @@
+{
+  "fn": "OppAction_PlayBasicPokemonCard",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OppAction_PlayBasicPokemonCard\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49870\": \"00\", \"49903\": \"01\", \"50176\": \"10\", \"51899\": \"80\", \"65344\": \"80\", \"65431\": \"c200\", \"65437\": \"00\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OppAction_PlayBasicPokemonCard\", \"mismatches\": {\"bus\": {\"address\": 65432, \"reference\": \"108080c2000000\", \"native\": \"108080c2010000\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49870, 1], [49903, 1], [50176, 1], [51899, 1], [65344, 1], [65431, 2], [65437, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"OppAction_PlayBasicPokemonCard\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49870\": \"00\", \"49903\": \"01\", \"50176\": \"10\", \"51899\": \"80\", \"65344\": \"80\", \"65431\": \"c200\", \"65437\": \"00\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
