@@ -109,9 +109,8 @@ static void adapt_AIProcessButDontPlayEnergy_SkipEvolutionAndArena(ProbeState *s
 /* >>> factory Func_16488 */
 static void adapt_Func_16488(ProbeState *s)
 {
-	Func16488Result r = Func_16488();
-	s->a = r.a;
-	s->f = r.f;
+	(void)s;
+	Func_16488();
 }
 /* <<< factory Func_16488 */
 

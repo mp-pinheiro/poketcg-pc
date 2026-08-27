@@ -959,12 +959,8 @@ CASES["DrawCardTypeIconsAndPrintCardCounts"] = [
 # >>> factory ShowConfirmationCardScreen
 CONTRACT["ShowConfirmationCardScreen"] = {"compare": (), "preserve": ()}
 CASES["ShowConfirmationCardScreen"] = [
-    {"wram": {0xCFB9: b"\x00", 0xCABB: b"\x00", 0xCECB: b"\x00"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xCED0: 2}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xCFB9: b"\x00", 0xCABB: b"\x00", 0xCECB: b"\x00"},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xCED0: 2}, instruction_budget=2000000, cycle_budget=8000000),
+    {"rom_bank": 2, "wram": {0xCFB9: b"\x00", 0xCABB: b"\x00", 0xCECB: b"\x00", 0xCED0: b"\x00\x00"}, "sram": {0: {}}, "setup": SETUP_PCD, "read": {0xCED0: 2}, "expect": {0xCED0: b"\x05\x03"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "rom_bank": 2, "wram": {0xCFB9: b"\x00", 0xCABB: b"\x00", 0xCECB: b"\x00", 0xCED0: b"\x00\x00"}, "sram": {0: {}}, "setup": SETUP_PCD, "read": {0xCED0: 2}, "expect": {0xCED0: b"\x05\x03"}, "instruction_budget": 2000000, "cycle_budget": 8000000}
 ]
 # <<< factory ShowConfirmationCardScreen
 
