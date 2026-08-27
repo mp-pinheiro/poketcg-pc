@@ -1,0 +1,9 @@
+{
+  "fn": "AIDecidePlayLegendaryBirds",
+  "case": "tests/cases/hand_pokemon.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIDecidePlayLegendaryBirds\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49850\": \"38\", \"52238\": \"0c\", \"52267\": \"40\", \"52670\": \"20\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecidePlayLegendaryBirds\", \"mismatches\": {\"bus\": {\"address\": 52670, \"reference\": \"380c4020c2\", \"native\": \"380c4000c2\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[49850, 1], [52238, 1], [52267, 1], [52670, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"AIDecidePlayLegendaryBirds\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49850\": \"38\", \"52238\": \"0c\", \"52267\": \"40\", \"52670\": \"20\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

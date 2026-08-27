@@ -58,6 +58,13 @@ MUTATIONS = {
 # >>> factory-cases-statics
 wFirstAttackAIScore = 0xCDBF
 wSelectedAttack = 0xCCC6
+
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wAICannotDamage = 0xCDF0
+wDamage = 0xCCB9
+wDuelTempList = 0xC510
+wSelectedAttack = 0xCCC6
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory CheckWhetherToSwitchToFirstAttack
@@ -69,8 +76,19 @@ CASES["CheckWhetherToSwitchToFirstAttack"] = [
 ]
 # <<< factory CheckWhetherToSwitchToFirstAttack
 
+# >>> factory HandleSpecialAIAttacks
+CONTRACT["HandleSpecialAIAttacks"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleSpecialAIAttacks"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory HandleSpecialAIAttacks
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation CheckWhetherToSwitchToFirstAttack
 MUTATIONS["CheckWhetherToSwitchToFirstAttack"] = {"source_symbol": "CheckWhetherToSwitchToFirstAttack", "before": "\tif (first_score < 0x50u) {\n\t\twSelectedAttack = SECOND_ATTACK;", "after": "\tif (first_score < 0x50u) {\n\t\twSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;", "case_ids": ["CheckWhetherToSwitchToFirstAttack-0", "CheckWhetherToSwitchToFirstAttack-1", "CheckWhetherToSwitchToFirstAttack-2"]}
 # <<< factory-mutation CheckWhetherToSwitchToFirstAttack
+# >>> factory-mutation HandleSpecialAIAttacks
+MUTATIONS["HandleSpecialAIAttacks"] = {"source_symbol": "HandleSpecialAIAttacks", "before": "\tuint8_t score = 0u;\n\tuint8_t flags = 0x80u;", "after": "\tuint8_t score = 0x01u;\n\tuint8_t flags = 0x80u;", "case_ids": ["HandleSpecialAIAttacks-0", "HandleSpecialAIAttacks-1"]}
+# <<< factory-mutation HandleSpecialAIAttacks

@@ -334,6 +334,13 @@ def _defender13_case(location=b"\x00", extra=None, **overrides):
     }
     case.update(overrides)
     return case
+
+hWhoseTurn = 0xFF97
+wAIPlayEnergyCardForRetreat = 0xCDD7
+ARENA_VARS = 0xC200
+ARENA_CARD = 0xC2BB
+ARENA_COUNT = 0xC2EF
+PLAYER_DECK = 0xC400
 # <<< factory-cases-statics
 
 # >>> factory AIDecide_PokemonTrader_LegendaryMoltres
@@ -761,6 +768,15 @@ CASES["AIDecide_Defender_Phase13"] = [
 ]
 # <<< factory AIDecide_Defender_Phase13
 
+# >>> factory AIDecide_Switch
+CONTRACT["AIDecide_Switch"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_Switch"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wAIPlayEnergyCardForRetreat: b"\x00", ARENA_COUNT: b"\x01", ARENA_CARD: b"\x00", PLAYER_DECK: b"\x01", 0xC2C1: b"\xFF", ARENA_VARS: b"\x10"}, "instruction_budget": 5000000, "cycle_budget": 20000000},
+    {"wram": {hWhoseTurn: b"\xC2", wAIPlayEnergyCardForRetreat: b"\x01", ARENA_COUNT: b"\x01", ARENA_CARD: b"\x00", PLAYER_DECK: b"\x01", 0xC2C1: b"\xFF", ARENA_VARS: b"\x10"}, "instruction_budget": 5000000, "cycle_budget": 20000000},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wAIPlayEnergyCardForRetreat: b"\x00", ARENA_COUNT: b"\x01", ARENA_CARD: b"\x00", PLAYER_DECK: b"\x01", 0xC2C1: b"\xFF", ARENA_VARS: b"\x10"}, instruction_budget=5000000, cycle_budget=20000000),
+]
+# <<< factory AIDecide_Switch
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1002,3 +1018,6 @@ MUTATIONS["AIDecide_GustOfWind"] = {"source_symbol": "AIDecide_GustOfWind", "bef
 # >>> factory-mutation AIDecide_Defender_Phase13
 MUTATIONS["AIDecide_Defender_Phase13"] = {"source_symbol": "AIDecide_Defender_Phase13", "before": "AIDecideResult AIDecide_Defender_Phase13(void)\n{\n\thTempPlayAreaLocation_ff9d = 0u;", "after": "AIDecideResult AIDecide_Defender_Phase13(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["AIDecide_Defender_Phase13-0", "AIDecide_Defender_Phase13-1"]}
 # <<< factory-mutation AIDecide_Defender_Phase13
+# >>> factory-mutation AIDecide_Switch
+MUTATIONS["AIDecide_Switch"] = {"source_symbol": "AIDecide_Switch", "before": "\t\treturn (AIDecide_SwitchResult){r.a, (uint8_t)((r.f & 0x80u) | ((r.f & 0x10u) ? 0u : 0x10u))};", "after": "\t\treturn (AIDecide_SwitchResult){0u, (uint8_t)((r.f & 0x80u) | ((r.f & 0x10u) ? 0u : 0x10u))};", "case_ids": ["AIDecide_Switch-0", "AIDecide_Switch-1", "AIDecide_Switch-2"]}
+# <<< factory-mutation AIDecide_Switch

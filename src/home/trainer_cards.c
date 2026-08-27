@@ -291,6 +291,12 @@
 #include "home/duel.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+
+#include "home/retreat.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 
@@ -2429,3 +2435,37 @@ AIDecideResult AIDecide_Defender_Phase13(void)
 	return (AIDecideResult){0u, 0x80u};
 }
 /* <<< factory AIDecide_Defender_Phase13 */
+
+/* >>> factory AIDecide_Switch */
+AIDecide_SwitchResult AIDecide_Switch(void)
+{
+	uint8_t cost;
+	uint8_t attached;
+	if (wAIPlayEnergyCardForRetreat != 0u) {
+		hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+		cost = GetPlayAreaCardRetreatCost();
+		attached = CountNumberOfEnergyCardsAttached(PLAY_AREA_ARENA).a;
+		uint8_t difference = (uint8_t)(cost - attached);
+		if (cost < attached)
+			goto check_cost_amount;
+		if (difference >= 2u)
+			goto do_switch;
+	}
+
+check_cost_amount:
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	cost = GetPlayAreaCardRetreatCost();
+	if (cost >= 3u)
+		goto do_switch;
+	attached = CountNumberOfEnergyCardsAttached(PLAY_AREA_ARENA).a;
+	if (attached < cost)
+		goto do_switch;
+	return (AIDecide_SwitchResult){attached, (uint8_t)((attached == cost ? 0x80u : 0u) | 0x40u | ((attached & 0x0Fu) < (cost & 0x0Fu) ? 0x20u : 0u))};
+
+do_switch:
+	{
+		AIDecideBenchPokemonToSwitchToResult r = AIDecideBenchPokemonToSwitchTo();
+		return (AIDecide_SwitchResult){r.a, (uint8_t)((r.f & 0x80u) | ((r.f & 0x10u) ? 0u : 0x10u))};
+	}
+}
+/* <<< factory AIDecide_Switch */

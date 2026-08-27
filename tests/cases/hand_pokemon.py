@@ -13,6 +13,12 @@ wTotalAttachedEnergies = 0xCC23
 hTempPlayAreaLocation_ff9d = 0xFF9D
 wAIScore = 0xCDBE
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+hWhoseTurn = 0xFF97
+wPlayerDuelVariables = 0xC200
+wOpponentDuelVariables = 0xC300
+wLoadedCard1ID = 0xCC2B
+wAIScore = 0xCDBE
 # <<< factory-cases-statics
 
 # >>> factory AIDecideSpecialEvolutions
@@ -33,6 +39,17 @@ CASES["AIDecideEvolution"] = [
 ]
 # <<< factory AIDecideEvolution
 
+# >>> factory AIDecidePlayLegendaryBirds
+CONTRACT["AIDecidePlayLegendaryBirds"] = {"compare": (), "preserve": ()}
+CASES["AIDecidePlayLegendaryBirds"] = [
+    {"wram": {wOpponentDeckID: b"\x00", wLoadedCard1ID: b"\x00", wAIScore: b"\x20"}},
+    {"wram": {wOpponentDeckID: b"\x0c", wLoadedCard1ID: b"\x40", hWhoseTurn: b"\xc2", wPlayerDuelVariables + 0xba: b"\x37", wAIScore: b"\x20"}},
+    {"wram": {wOpponentDeckID: b"\x0c", wLoadedCard1ID: b"\x40", hWhoseTurn: b"\xc2", wPlayerDuelVariables + 0xba: b"\x38", wAIScore: b"\x20"}, "expect": {wAIScore: b"\x00"}},
+    {"wram": {wOpponentDeckID: b"\x0c", wLoadedCard1ID: b"\x00", wAIScore: b"\x20"}},
+    dict(POISON, wram={wOpponentDeckID: b"\x00", wLoadedCard1ID: b"\x00", wAIScore: b"\x20"}),
+]
+# <<< factory AIDecidePlayLegendaryBirds
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -48,3 +65,6 @@ MUTATIONS["AIDecideSpecialEvolutions"] = {
 # >>> factory-mutation AIDecideEvolution
 MUTATIONS["AIDecideEvolution"] = {"source_symbol": "AIDecideEvolution", "before": "uint8_t AIDecideEvolution(void)\n{\n\tuint8_t result = 0xffu;", "after": "uint8_t AIDecideEvolution(void)\n{\n\tuint8_t result = 0u;", "case_ids": ["AIDecideEvolution-0", "AIDecideEvolution-1"]}
 # <<< factory-mutation AIDecideEvolution
+# >>> factory-mutation AIDecidePlayLegendaryBirds
+MUTATIONS["AIDecidePlayLegendaryBirds"] = {"source_symbol": "AIDecidePlayLegendaryBirds", "before": "void AIDecidePlayLegendaryBirds(void)\n{\n\tuint8_t deck = wOpponentDeckID;", "after": "void AIDecidePlayLegendaryBirds(void)\n{\n\tuint8_t deck = (uint8_t)(wOpponentDeckID + 1u);", "case_ids": ["AIDecidePlayLegendaryBirds-2"]}
+# <<< factory-mutation AIDecidePlayLegendaryBirds

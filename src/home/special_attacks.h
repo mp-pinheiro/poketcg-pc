@@ -15,4 +15,8 @@ BasicPokemonDeckResult CheckIfAnyBasicPokemonInDeck(void);
 /* >>> factory CheckWhetherToSwitchToFirstAttack */
 void CheckWhetherToSwitchToFirstAttack(void);
 /* <<< factory CheckWhetherToSwitchToFirstAttack */
+/* >>> factory HandleSpecialAIAttacks */
+typedef struct { uint8_t a; uint8_t f; } HandleSpecialAIAttacksResult;
+HandleSpecialAIAttacksResult HandleSpecialAIAttacks(void);
+/* <<< factory HandleSpecialAIAttacks */
 #endif

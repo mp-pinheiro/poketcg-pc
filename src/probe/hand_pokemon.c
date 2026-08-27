@@ -19,8 +19,17 @@ static void adapt_AIDecideEvolution(ProbeState *s)
 }
 /* <<< factory AIDecideEvolution */
 
+/* >>> factory AIDecidePlayLegendaryBirds */
+static void adapt_AIDecidePlayLegendaryBirds(ProbeState *s)
+{
+	(void)s;
+	AIDecidePlayLegendaryBirds();
+}
+/* <<< factory AIDecidePlayLegendaryBirds */
+
 const ProbeEntry probe_entries_hand_pokemon[] = {
 	{ "AIDecideSpecialEvolutions", adapt_AIDecideSpecialEvolutions },
 	{ "AIDecideEvolution", adapt_AIDecideEvolution },
+	{ "AIDecidePlayLegendaryBirds", adapt_AIDecidePlayLegendaryBirds },
 	{ NULL, NULL },
 };

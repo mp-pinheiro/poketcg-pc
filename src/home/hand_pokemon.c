@@ -21,6 +21,22 @@
 #define MAGIKARP 0x57u
 #define MUK 0x27u
 #define PLAY_AREA_ARENA 0x00u
+
+#include "home/retreat.h"
+
+#define LEGENDARY_ARTICUNO_DECK_ID 0x0Eu
+#define LEGENDARY_ZAPDOS_DECK_ID 0x0Du
+#define ARTICUNO_LV37 0x5Fu
+#define CNF_SLP_PRZ 0x0Fu
+#define DUELVARS_ARENA_CARD 0xBBu
+#define DUELVARS_ARENA_CARD_STATUS 0xF0u
+#define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
+#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
+#define MAX_BENCH_POKEMON 0x05u
+#define MOLTRES_LV37 0x40u
+#define POKEMON_POWER 0x04u
+#define SNORLAX 0xBEu
+#define ZAPDOS_LV68 0x76u
 /* <<< factory statics */
 
 /* >>> factory AIDecideSpecialEvolutions */
@@ -117,3 +133,75 @@ uint8_t AIDecideEvolution(void)
 	return result;
 }
 /* <<< factory AIDecideEvolution */
+
+/* >>> factory AIDecidePlayLegendaryBirds */
+void AIDecidePlayLegendaryBirds(void)
+{
+	uint8_t deck = wOpponentDeckID;
+	if (deck != LEGENDARY_ZAPDOS_DECK_ID &&
+		deck != LEGENDARY_ARTICUNO_DECK_ID &&
+		deck != LEGENDARY_RONALD_DECK_ID)
+		return;
+
+	uint8_t card = wLoadedCard1ID;
+	if (card == ARTICUNO_LV37) {
+		if (GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a < 2u)
+			return;
+		CheckIfActiveCardCanKnockOutResult knock =
+			CheckIfActiveCardCanKnockOut(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		if ((knock.f & 0x10u) != 0u) {
+			AIDiscourage(100u);
+			return;
+		}
+		CanArenaCardUseNonResidualAttackResult attack =
+			CanArenaCardUseNonResidualAttack(knock.a, knock.f, knock.b, knock.c,
+				knock.d, knock.e, knock.hl);
+		if ((attack.f & 0x10u) == 0u) {
+			AIDiscourage(100u);
+			return;
+		}
+		AIDecideWhetherToRetreatResult retreat = AIDecideWhetherToRetreat();
+		if ((retreat.f & 0x10u) != 0u) {
+			AIDiscourage(100u);
+			return;
+		}
+		if ((GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a & CNF_SLP_PRZ) != 0u) {
+			AIDiscourage(100u);
+			return;
+		}
+		SwapTurn();
+		uint8_t arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+		(void)CopyAttackDataAndDamage_FromDeckIndex(arena, FIRST_ATTACK_OR_PKMN_POWER);
+		SwapTurn();
+		if (wLoadedAttackCategory == POKEMON_POWER)
+			goto check_muk_and_snorlax;
+		if (GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a >= MAX_BENCH_POKEMON)
+			return;
+
+	check_muk_and_snorlax:
+		if ((CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK).f & 0x10u) != 0u) {
+			AIDiscourage(100u);
+			return;
+		}
+		uint8_t opponent_arena =
+			GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+		SwapTurn();
+		uint8_t opponent_card = (uint8_t)GetCardIDFromDeckIndex(opponent_arena);
+		SwapTurn();
+		if (opponent_card == SNORLAX) {
+			AIDiscourage(100u);
+			return;
+		}
+		(void)AIEncourage(70u);
+		return;
+	}
+	if (card == MOLTRES_LV37) {
+		if (GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK).a >= 56u)
+			AIDiscourage(100u);
+		return;
+	}
+	if (card == ZAPDOS_LV68 &&
+		(CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK).f & 0x10u) != 0u)
+		AIDiscourage(100u);
+}
+/* <<< factory AIDecidePlayLegendaryBirds */

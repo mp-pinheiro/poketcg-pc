@@ -390,6 +390,15 @@ static void adapt_AIDecide_Defender_Phase13(ProbeState *s)
 }
 /* <<< factory AIDecide_Defender_Phase13 */
 
+/* >>> factory AIDecide_Switch */
+static void adapt_AIDecide_Switch(ProbeState *s)
+{
+	AIDecide_SwitchResult r = AIDecide_Switch();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIDecide_Switch */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -437,5 +446,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_PlusPower_Phase14", adapt_AIDecide_PlusPower_Phase14 },
 	{ "AIDecide_GustOfWind", adapt_AIDecide_GustOfWind },
 	{ "AIDecide_Defender_Phase13", adapt_AIDecide_Defender_Phase13 },
+	{ "AIDecide_Switch", adapt_AIDecide_Switch },
 	{ NULL, NULL },
 };

@@ -173,4 +173,8 @@ AIDecideResult AIDecide_GustOfWind(void);
 /* >>> factory AIDecide_Defender_Phase13 */
 AIDecideResult AIDecide_Defender_Phase13(void);
 /* <<< factory AIDecide_Defender_Phase13 */
+/* >>> factory AIDecide_Switch */
+typedef struct { uint8_t a; uint8_t f; } AIDecide_SwitchResult;
+AIDecide_SwitchResult AIDecide_Switch(void);
+/* <<< factory AIDecide_Switch */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */
