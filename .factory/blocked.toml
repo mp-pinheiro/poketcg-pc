@@ -457,11 +457,6 @@ reason = "AUTO-RETIRED: src/engine/menus/medal.asm:1 (basename `medal`). 17 gene
 unblock = "read the recorded diagnostics under .factory/try/ShowMedalReceivedScreen/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "SaveDeckConfiguration"
-reason = "AUTO-RETIRED: src/engine/menus/deck_configuration.asm:642 (basename `deck_configuration`). 17 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
-unblock = "read the recorded diagnostics under .factory/try/SaveDeckConfiguration/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "Func_1a080"
 reason = "AUTO-RETIRED: src/engine/link/printer.asm:333 (basename `printer`). 17 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
 unblock = "read the recorded diagnostics under .factory/try/Func_1a080/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
@@ -530,3 +525,8 @@ unblock = "read the recorded diagnostics under .factory/try/_HandlePeekSelection
 name = "DeckNamingScreen_CheckButtonState"
 reason = "RE-DIAGNOSED after measurement; the ROM-bank hypothesis is DISPROVEN. DeckNamingScreen_KeyboardData is bank 6 $7019; a scratch case on the landed callee that reads the char byte at its returned pointer (index=5 -> $702A) PASSES byte-identically on both backends with the coherent bank, and declaring a wrong rom_bank (3) breaks the reference's CODE FETCH (hl restored to entry, native 0x7028) - so a wrong-bank read cannot arise from case declaration, only from an executed mid-flight switch, and the wrapper's whole chain (GetCharInfoFromPos, DrawVisibleCursor, PlaySFXConfirmOrCancel_Bank6) is bank-6 native with no bank switch. The landed callee's own diff phase is clean 8/8 (PyBoy agrees). The wrapper's diff failure (case 2, d: oracle(PyBoy)=$41 'A' = datum 0's char vs candidate=$01 = terminator datum's char) is therefore a POINTER/INDEX divergence: PyBoy's composite state before the read differs from gbref's - the dpad branch's earlier cursor/latch state (hKeysHeld edge modeling or wNamingScreenKeyboardHeight/cursor bytes) evolved differently under PyBoy, selecting a different datum. The primary phase passing means the C matches gbref; which backend is faithful at the divergence point is undetermined."
 unblock = "bisect the wrapper under the diff backend: land the primary-verified wrapper logic with a case whose read span starts at the wrapper's EARLY state (cursor x/y bytes, wNamingScreenKeyboardHeight) instead of the final d register, so the first PyBoy-vs-gbref state difference localizes; alternatively extend the wrapper case with hKeysHeld/$CEA9 reads. The GetCharInfoFromPos contract extension is moot - its diff phase is clean and bank-coherent."
+
+[[blocked]]
+name = "SaveDeckConfiguration"
+reason = "DIAGNOSED mixed failure set at gen 16, none a harness gap. (1) primary: BUDGET_EXHAUSTED pc=$0C33 with 15.4M instructions at 80M cycles - HblankCopyDataHLtoDE's HBlank wait (the $0C00-$0C40 class): the case seeds lcdc=$C3 but not the required wram={0xCABB: b\"\\x80\", 0xFF40: b\"\\x80\"} pair that arms the PPU the HBlank source actually comes from (runner drives the PPU off rLCDC $FF40, not the $CABB shadow); the retry prompt's budget directive names exactly this rule. (2) validate: `header fragment must not contain preprocessor directives` - #define lines belong in STATICS. (3) `no primary oracle case` on some attempts - case authoring, covered once (1) is shaped."
+unblock = "retry with the R3 seed pair wram={0xCABB: b\"\\x80\", 0xFF40: b\"\\x80\"} plus generous instruction_budget/cycle_budget (20M/80M), keep #defines out of the header fragment, and author at least one primary case."
