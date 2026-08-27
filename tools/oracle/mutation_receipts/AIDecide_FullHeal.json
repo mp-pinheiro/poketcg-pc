@@ -1,0 +1,9 @@
+{
+  "fn": "AIDecide_FullHeal",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIDecide_FullHeal\", \"registers\": {\"a\": 4, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49904\": \"04\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_FullHeal\", \"mismatches\": {\"a\": [4, 0], \"f\": [16, 128]}}\n",
+  "restored": "{\"fn\": \"AIDecide_FullHeal\", \"registers\": {\"a\": 4, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49904\": \"04\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

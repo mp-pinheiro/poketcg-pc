@@ -304,6 +304,18 @@
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/retreat.h"
+
+#include "home/retreat.h"
+#include "home/core.h"
+#include "home/common.h"
+#include "generated/wram.h"
+#define ASLEEP 0x02u
+#define CNF_SLP_PRZ 0x0Fu
+#define CONFUSED 0x01u
+#define GASTLY_LV17 0x95u
+#define HAUNTER_LV22 0x97u
+#define PARALYZED 0x03u
+#define SCOOP_UP 0xD5u
 /* <<< factory statics */
 
 
@@ -2515,3 +2527,45 @@ AIDecide_ScoopUpResult AIDecide_ScoopUp(void)
 	return (AIDecide_ScoopUpResult){0u, 0x10u};
 }
 /* <<< factory AIDecide_ScoopUp */
+
+/* >>> factory AIDecide_FullHeal */
+AIDecideFullHealResult AIDecide_FullHeal(void)
+{
+	uint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;
+	status &= CNF_SLP_PRZ;
+	if (status == 0u)
+		return (AIDecideFullHealResult){0u, 0x80u};
+	if (status == ASLEEP) {
+		LookForCardIDInPlayAreaResult ghost = LookForCardIDInPlayArea_Bank8(GASTLY_LV8, PLAY_AREA_ARENA);
+		if (ghost.f & 0x10u)
+			return (AIDecideFullHealResult){ghost.a, 0x10u};
+		ghost = LookForCardIDInPlayArea_Bank8(GASTLY_LV17, PLAY_AREA_ARENA);
+		if (ghost.f & 0x10u)
+			return (AIDecideFullHealResult){ghost.a, 0x10u};
+		ghost = LookForCardIDInPlayArea_Bank8(HAUNTER_LV22, PLAY_AREA_ARENA);
+		if (ghost.f & 0x10u)
+			return (AIDecideFullHealResult){ghost.a, 0x10u};
+	}
+	if (status == PARALYZED || status == ASLEEP || status == CONFUSED) {
+		LookForCardIDInHandListResult hand = LookForCardIDInHandList_Bank8(SCOOP_UP);
+		if (hand.f & 0x10u) {
+			AIDecide_ScoopUpResult scoop = AIDecide_ScoopUp();
+			if (scoop.f & 0x10u)
+				return (AIDecideFullHealResult){scoop.a, (uint8_t)(scoop.a == 0u ? 0x80u : 0u)};
+		}
+		CheckIfCanDamageDefendingPokemonResult damage =
+			CheckIfCanDamageDefendingPokemon(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		if (!(damage.f & 0x10u))
+			return (AIDecideFullHealResult){damage.a, (uint8_t)(damage.a == 0u ? 0x80u : 0u)};
+		if (wAIPlayEnergyCardForRetreat != 0u)
+			return (AIDecideFullHealResult){wAIPlayEnergyCardForRetreat, 0x10u};
+		if (status != CONFUSED) {
+			AIDecideWhetherToRetreatResult retreat = AIDecideWhetherToRetreat();
+			if (!(retreat.f & 0x10u))
+				return (AIDecideFullHealResult){retreat.a, 0x10u};
+			return (AIDecideFullHealResult){retreat.a, (uint8_t)(retreat.a == 0u ? 0x80u : 0u)};
+		}
+	}
+	return (AIDecideFullHealResult){status, 0x10u};
+}
+/* <<< factory AIDecide_FullHeal */

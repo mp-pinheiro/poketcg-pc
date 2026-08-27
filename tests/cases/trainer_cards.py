@@ -797,6 +797,15 @@ CASES["AIDecide_ScoopUp"] = [
 ]
 # <<< factory AIDecide_ScoopUp
 
+# >>> factory AIDecide_FullHeal
+CONTRACT["AIDecide_FullHeal"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_FullHeal"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2F0: b"\x00"}},
+    {"wram": {0xFF97: b"\xC2", 0xC2F0: b"\x04"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2F0: b"\x04"}),
+]
+# <<< factory AIDecide_FullHeal
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1047,3 +1056,6 @@ MUTATIONS["AIDecide_SuperEnergyRemoval"] = {"source_symbol": "AIDecide_SuperEner
 # >>> factory-mutation AIDecide_ScoopUp
 MUTATIONS["AIDecide_ScoopUp"] = {"source_symbol": "AIDecide_ScoopUp", "before": "AIDecide_ScoopUpResult AIDecide_ScoopUp(void)\n{\n\thTempPlayAreaLocation_ff9d = 0u;", "after": "AIDecide_ScoopUpResult AIDecide_ScoopUp(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["AIDecide_ScoopUp-0", "AIDecide_ScoopUp-1"]}
 # <<< factory-mutation AIDecide_ScoopUp
+# >>> factory-mutation AIDecide_FullHeal
+MUTATIONS["AIDecide_FullHeal"] = {"source_symbol": "AIDecide_FullHeal", "before": "AIDecideFullHealResult AIDecide_FullHeal(void)\n{\n\tuint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;", "after": "AIDecideFullHealResult AIDecide_FullHeal(void)\n{\n\tuint8_t status = 0u;", "case_ids": ["AIDecide_FullHeal-1", "AIDecide_FullHeal-2"]}
+# <<< factory-mutation AIDecide_FullHeal
