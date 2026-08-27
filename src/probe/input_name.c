@@ -149,6 +149,20 @@ static void adapt_PlayerNamingScreen_CheckButtonState(ProbeState *s)
 }
 /* <<< factory PlayerNamingScreen_CheckButtonState */
 
+/* >>> factory DeckNamingScreen_CheckButtonState */
+static void adapt_DeckNamingScreen_CheckButtonState(ProbeState *s)
+{
+	DeckNamingScreen_DrawCursorResult r = DeckNamingScreen_CheckButtonState();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory DeckNamingScreen_CheckButtonState */
+
 /* >>> factory PrintPlayerNameFromInput */
 static void adapt_PrintPlayerNameFromInput(ProbeState *s)
 {
@@ -270,6 +284,7 @@ const ProbeEntry probe_entries_input_name[] = {
 	{ "PlayerNamingScreen_DrawInvisibleCursor", adapt_PlayerNamingScreen_DrawInvisibleCursor },
 	{ "PlayerNamingScreen_DrawVisibleCursor", adapt_PlayerNamingScreen_DrawVisibleCursor },
 	{ "PlayerNamingScreen_CheckButtonState", adapt_PlayerNamingScreen_CheckButtonState },
+	{ "DeckNamingScreen_CheckButtonState", adapt_DeckNamingScreen_CheckButtonState },
 	{ "PrintPlayerNameFromInput", adapt_PrintPlayerNameFromInput },
 	{ "DrawPlayerNamingScreenBG", adapt_DrawPlayerNamingScreenBG },
 	{ "PlayerNamingScreen_ProcessInput", adapt_PlayerNamingScreen_ProcessInput },

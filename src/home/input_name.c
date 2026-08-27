@@ -470,6 +470,99 @@ done_dir:
 }
 /* <<< factory PlayerNamingScreen_CheckButtonState */
 
+/* >>> factory DeckNamingScreen_CheckButtonState */
+/* input_name.asm:1232-1341. The PlayerNamingScreen twin with the deck
+ * keyboard's geometry: 3-byte datum units (char at +2), the terminator char
+ * is $02 (recursion), the y==6 row bails without moving, and the left/right
+ * wraps have no player twin's sub-table adjustment. The blink exit masks the
+ * OLD counter with CURSOR_BLINK_PERIOD_MASK before returning it in a. */
+DeckNamingScreen_DrawCursorResult DeckNamingScreen_CheckButtonState(void)
+{
+	gb_write8(wMenuInputSFX_ADDR, 0u);
+	uint8_t dpad = gb_read8(hDPadHeld_ADDR);
+	uint8_t newX = 0u, newY = 0u;
+	int did_move = 0;
+
+	if (dpad != 0u) {
+		uint8_t b = dpad;
+		uint8_t c = gb_read8(wNamingScreenKeyboardHeight_ADDR);
+		uint8_t h = gb_read8(wNamingScreenCursorX_ADDR);
+		uint8_t l = gb_read8(wNamingScreenCursorY_ADDR);
+		uint8_t a = l;
+
+		if (b & PADF_UP_800) {
+			a = (uint8_t)(a - 1u);
+			if (a & 0x80u)
+				a = (uint8_t)(c - 1u);
+			newY = a;
+			newX = h;
+			did_move = 1;
+		} else if (b & PADF_DOWN_800) {
+			a = (uint8_t)(a + 1u);
+			if (a >= c)
+				a = 0u;
+			newY = a;
+			newX = h;
+			did_move = 1;
+		} else if (l != 6u) {
+			c = gb_read8(wNamingScreenNumColumns_ADDR);
+			a = h;
+			if (b & PADF_LEFT_800) {
+				a = (uint8_t)(a - 1u);
+				if (a & 0x80u)
+					a = (uint8_t)(c - 1u);
+				newX = a;
+				newY = l;
+				did_move = 1;
+			} else if (b & PADF_RIGHT_800) {
+				a = (uint8_t)(a + 1u);
+				if (a >= c)
+					a = 0u;
+				newX = a;
+				newY = l;
+				did_move = 1;
+			}
+		}
+	}
+
+	if (did_move) {
+		uint16_t hl_pos = (uint16_t)(((uint16_t)newX << 8) | newY);
+		uint16_t base2 = DeckNamingScreen_GetCharInfoFromPos(hl_pos);
+		uint8_t d_reg = gb_read8((uint16_t)(base2 + 2u));
+
+		(void)DeckNamingScreen_DrawInvisibleCursor(0u, 0u, 0u, 0u, 0u, 0u);
+
+		gb_write8(wNamingScreenCursorY_ADDR, newY);
+		gb_write8(wNamingScreenCursorX_ADDR, newX);
+		gb_write8(wCheckMenuCursorBlinkCounter_ADDR, 0u);
+
+		if (d_reg == 2u)
+			return DeckNamingScreen_CheckButtonState();
+		gb_write8(wMenuInputSFX_ADDR, SFX_CURSOR_800);
+	}
+
+	{
+		uint8_t keys = gb_read8(hKeysPressed_ADDR);
+		if (keys & (PAD_A_800 | PAD_B_800)) {
+			uint8_t press_a = (keys & PAD_A_800) ? 0u : MENU_CANCEL_800;
+			(void)PlaySFXConfirmOrCancel_Bank6(press_a);
+			return DeckNamingScreen_DrawVisibleCursor(0x10u, 0u, 0u, 0u, 0u, 0u);
+		}
+		uint8_t sfx = gb_read8(wMenuInputSFX_ADDR);
+		if (sfx != 0u)
+			PlaySFX(sfx);
+
+		uint8_t old_blink = gb_read8(wCheckMenuCursorBlinkCounter_ADDR);
+		gb_write8(wCheckMenuCursorBlinkCounter_ADDR, (uint8_t)(old_blink + 1u));
+		if ((old_blink & CURSOR_BLINK_PERIOD_MASK_800) != 0u)
+			return (DeckNamingScreen_DrawCursorResult){(uint8_t)(old_blink & CURSOR_BLINK_PERIOD_MASK_800), 0u, 0u, 0u, 0u, 0u, 0u};
+
+		uint8_t vis_tile = gb_read8(wVisibleCursorTile_ADDR);
+		return DeckNamingScreen_DrawCursor(vis_tile, 0u, 0u, 0u, 0u, 0u, 0u);
+	}
+}
+/* <<< factory DeckNamingScreen_CheckButtonState */
+
 /* >>> factory PrintPlayerNameFromInput */
 void PrintPlayerNameFromInput(void)
 {
