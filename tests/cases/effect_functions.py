@@ -2700,6 +2700,14 @@ def _hp_recovery_case(hp, **kwargs):
             "cycle_budget": 80000000}
     case.update(kwargs)
     return case
+
+hTemp_ffa0 = 0xFFA0
+_acid_toss_fix = {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x1E\x00"}
+_acid_toss_fix_tail = dict(_acid_toss_fix)
+_acid_toss_fix_tail[0xCACA] = b"\x00\x00\x80"
+SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+BUDGET = dict(instruction_budget=20000000, cycle_budget=80000000)
+POISON = dict(a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234)
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -6753,6 +6761,15 @@ CASES["ZapdosThunder_Recoil50PercentEffect"] = [
 ]
 # <<< factory ZapdosThunder_Recoil50PercentEffect
 
+# >>> factory RaichuThunder_Recoil50PercentEffect
+CONTRACT["RaichuThunder_Recoil50PercentEffect"] = {"compare": (), "preserve": ()}
+CASES["RaichuThunder_Recoil50PercentEffect"] = [
+    dict(keys=[0x00, 0x01], wram={**_acid_toss_fix}, read={hTemp_ffa0: 1}, setup=SETUP, **BUDGET),
+    dict(keys=[0x00, 0x01], wram={**_acid_toss_fix_tail}, read={hTemp_ffa0: 1}, setup=SETUP, **BUDGET),
+    dict(POISON, keys=[0x00, 0x01], wram={**_acid_toss_fix}, read={hTemp_ffa0: 1}, setup=SETUP, **BUDGET),
+]
+# <<< factory RaichuThunder_Recoil50PercentEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9567,3 +9584,6 @@ MUTATIONS["Thrash_ModifierEffect"] = {"source_symbol": "Thrash_ModifierEffect", 
 # >>> factory-mutation ZapdosThunder_Recoil50PercentEffect
 MUTATIONS["ZapdosThunder_Recoil50PercentEffect"] = {"source_symbol": "ZapdosThunder_Recoil50PercentEffect", "before": "void ZapdosThunder_Recoil50PercentEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfTailsDamageToYourselfTooText, 0u);\n\thTemp_ffa0 = toss.a;\n}", "after": "void ZapdosThunder_Recoil50PercentEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfTailsDamageToYourselfTooText, 0u);\n\thTemp_ffa0 = (uint8_t)(toss.a + 1u);\n}", "case_ids": ["ZapdosThunder_Recoil50PercentEffect-0", "ZapdosThunder_Recoil50PercentEffect-1", "ZapdosThunder_Recoil50PercentEffect-2"]}
 # <<< factory-mutation ZapdosThunder_Recoil50PercentEffect
+# >>> factory-mutation RaichuThunder_Recoil50PercentEffect
+MUTATIONS["RaichuThunder_Recoil50PercentEffect"] = {"source_symbol": "RaichuThunder_Recoil50PercentEffect", "before": "void RaichuThunder_Recoil50PercentEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoin_BankBResult result = TossCoin_BankB(IfTailsDamageToYourselfTooText, 0u);\n\thTemp_ffa0 = result.a;", "after": "void RaichuThunder_Recoil50PercentEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoin_BankBResult result = TossCoin_BankB(IfTailsDamageToYourselfTooText, 0u);\n\thTemp_ffa0 = 0u;", "case_ids": ["RaichuThunder_Recoil50PercentEffect-0", "RaichuThunder_Recoil50PercentEffect-1"]}
+# <<< factory-mutation RaichuThunder_Recoil50PercentEffect

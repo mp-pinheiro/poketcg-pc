@@ -4787,6 +4787,14 @@ static void adapt_ZapdosThunder_Recoil50PercentEffect(ProbeState *s)
 }
 /* <<< factory ZapdosThunder_Recoil50PercentEffect */
 
+/* >>> factory RaichuThunder_Recoil50PercentEffect */
+static void adapt_RaichuThunder_Recoil50PercentEffect(ProbeState *s)
+{
+	(void)s;
+	RaichuThunder_Recoil50PercentEffect();
+}
+/* <<< factory RaichuThunder_Recoil50PercentEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5368,5 +5376,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "VaporeonQuickAttack_DamageBoostEffect", adapt_VaporeonQuickAttack_DamageBoostEffect },
 	{ "Thrash_ModifierEffect", adapt_Thrash_ModifierEffect },
 	{ "ZapdosThunder_Recoil50PercentEffect", adapt_ZapdosThunder_Recoil50PercentEffect },
+	{ "RaichuThunder_Recoil50PercentEffect", adapt_RaichuThunder_Recoil50PercentEffect },
 	{ NULL, NULL },
 };

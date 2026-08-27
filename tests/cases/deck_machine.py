@@ -208,6 +208,10 @@ HDMC_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x4
 HDMC_KEYS = [0x00, 0x02]
 
 wCardListVisibleOffset = 0xCEA1
+
+wTileMapFill = 0xCAB6
+wVBlankOAMCopyToggle = 0xCAC0
+wDeckMachineTitleText = 0xD0A2
 # <<< factory-cases-statics
 
 # >>> factory DrawListScrollArrows
@@ -422,6 +426,14 @@ CASES["PrintVisibleDeckMachineEntries"] = [
 ]
 # <<< factory PrintVisibleDeckMachineEntries
 
+# >>> factory ClearScreenAndDrawDeckMachineScreen
+CONTRACT["ClearScreenAndDrawDeckMachineScreen"] = {"compare": (), "preserve": ()}
+CASES["ClearScreenAndDrawDeckMachineScreen"] = [
+    {"wram": {0xD0A2: b"\x00\x00", 0xCAB6: b"\xff", 0xCAC0: b"\x00"}, "read": {0xCAB6: 1, 0xCAC0: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xD0A2: b"\x00\x00", 0xCAB6: b"\xaa", 0xCAC0: b"\x55"}, read={0xCAB6: 1, 0xCAC0: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ClearScreenAndDrawDeckMachineScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -545,3 +557,6 @@ MUTATIONS["HandleDismantleDeckToMakeSpace"] = {
 # >>> factory-mutation PrintVisibleDeckMachineEntries
 MUTATIONS["PrintVisibleDeckMachineEntries"] = {"source_symbol": "PrintVisibleDeckMachineEntries", "before": "\tuint8_t a = wCardListVisibleOffset;", "after": "\tuint8_t a = (uint8_t)(wCardListVisibleOffset + 1u);", "case_ids": ["PrintVisibleDeckMachineEntries-0", "PrintVisibleDeckMachineEntries-1", "PrintVisibleDeckMachineEntries-2"]}
 # <<< factory-mutation PrintVisibleDeckMachineEntries
+# >>> factory-mutation ClearScreenAndDrawDeckMachineScreen
+MUTATIONS["ClearScreenAndDrawDeckMachineScreen"] = {"source_symbol": "ClearScreenAndDrawDeckMachineScreen", "before": "\twTileMapFill = 0u;", "after": "\twTileMapFill = 1u;", "case_ids": ["ClearScreenAndDrawDeckMachineScreen-0", "ClearScreenAndDrawDeckMachineScreen-1"]}
+# <<< factory-mutation ClearScreenAndDrawDeckMachineScreen

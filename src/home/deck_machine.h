@@ -88,4 +88,7 @@ HandleDismantleDeckToMakeSpaceResult HandleDismantleDeckToMakeSpace(void);
 typedef struct { uint8_t a; uint8_t f; } PrintVisibleDeckMachineEntriesResult;
 PrintVisibleDeckMachineEntriesResult PrintVisibleDeckMachineEntries(uint8_t f);
 /* <<< factory PrintVisibleDeckMachineEntries */
+/* >>> factory ClearScreenAndDrawDeckMachineScreen */
+void ClearScreenAndDrawDeckMachineScreen(void);
+/* <<< factory ClearScreenAndDrawDeckMachineScreen */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

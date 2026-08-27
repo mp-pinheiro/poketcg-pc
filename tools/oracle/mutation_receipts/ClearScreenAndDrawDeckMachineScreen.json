@@ -1,0 +1,9 @@
+{
+  "fn": "ClearScreenAndDrawDeckMachineScreen",
+  "case": "tests/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ClearScreenAndDrawDeckMachineScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"51894\": \"00\", \"51904\": \"01\", \"53410\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ClearScreenAndDrawDeckMachineScreen\", \"mismatches\": {\"bus\": {\"address\": 51894, \"reference\": \"00010000\", \"native\": \"01010000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[51894, 1], [51904, 1], [53410, 2]]}}}\n",
+  "restored": "{\"fn\": \"ClearScreenAndDrawDeckMachineScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"51894\": \"00\", \"51904\": \"01\", \"53410\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

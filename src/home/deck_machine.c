@@ -122,6 +122,14 @@
 
 #include "home/deck_machine.h"
 #include "generated/wram.h"
+
+#include "home/text_box.h"
+#include "home/credits_sequence_commands.h"
+#include "home/lcd.h"
+#include "home/tiles.h"
+#include "home/duel_core.h"
+#include "home/process_text.h"
+#include "home/objects.h"
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -718,3 +726,26 @@ PrintVisibleDeckMachineEntriesResult PrintVisibleDeckMachineEntries(uint8_t f)
 	}
 }
 /* <<< factory PrintVisibleDeckMachineEntries */
+
+/* >>> factory ClearScreenAndDrawDeckMachineScreen */
+void ClearScreenAndDrawDeckMachineScreen(void)
+{
+	Set_OBJ_8x8();
+	wTileMapFill = 0u;
+	ZeroObjectPositions();
+	EmptyScreen();
+	wVBlankOAMCopyToggle = TRUE;
+	(void)LoadSymbolsFont();
+	(void)LoadDuelCardSymbolTiles();
+	SetDefaultConsolePalettes();
+	(void)SetupText(0x3Cu, 0xFFu);
+	uint16_t hl = 0u;
+	DrawRegularTextBox(&hl, 0u, 20u, 13u, 0u, 0u);
+	(void)SetDeckMachineTitleText();
+	uint16_t de = 0u;
+	GetSavedDeckPointers(&hl, &de);
+	(void)PrintVisibleDeckMachineEntries(0u);
+	GetSavedDeckCount();
+	EnableLCD();
+}
+/* <<< factory ClearScreenAndDrawDeckMachineScreen */

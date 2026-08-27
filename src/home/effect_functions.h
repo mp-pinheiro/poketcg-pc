@@ -1968,6 +1968,9 @@ void Thrash_ModifierEffect(void);
 /* >>> factory ZapdosThunder_Recoil50PercentEffect */
 void ZapdosThunder_Recoil50PercentEffect(void);
 /* <<< factory ZapdosThunder_Recoil50PercentEffect */
+/* >>> factory RaichuThunder_Recoil50PercentEffect */
+void RaichuThunder_Recoil50PercentEffect(void);
+/* <<< factory RaichuThunder_Recoil50PercentEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
