@@ -181,6 +181,11 @@ SHOW_MULTI_POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e":
 wStarterDeckChoice = 0xD693
 wd416 = 0xD416
 wd417 = 0xD417
+
+wScriptPointer = 0xD413
+wLoadedEventBits = 0xD3D1
+wEventVars = 0xD3D2
+wMultichoiceTextboxResult_Sam = 0xD694
 # <<< factory-cases-statics
 
 
@@ -1559,6 +1564,24 @@ CASES["ScriptCommand_ChooseStarterDeckMultichoice"] = [
 ]
 # <<< factory ScriptCommand_ChooseStarterDeckMultichoice
 
+# >>> factory ScriptCommand_ShowSamNormalMultichoice
+CONTRACT["ScriptCommand_ShowSamNormalMultichoice"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_ShowSamNormalMultichoice"] = [
+    {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40, wMultichoiceTextboxResult_Sam: b"\x00"},
+     "read": {wEventVars: 0x40, wLoadedEventBits: 1, wMultichoiceTextboxResult_Sam: 1, 0xD416: 1, 0xD417: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40, wMultichoiceTextboxResult_Sam: b"\x00"},
+     "read": {wEventVars: 0x40, wLoadedEventBits: 1, wMultichoiceTextboxResult_Sam: 1, 0xD416: 1, 0xD417: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40, wMultichoiceTextboxResult_Sam: b"\x00"},
+         read={wEventVars: 0x40, wLoadedEventBits: 1, wMultichoiceTextboxResult_Sam: 1, 0xD416: 1, 0xD417: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ScriptCommand_ShowSamNormalMultichoice
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2270,3 +2293,6 @@ MUTATIONS["ShowMultichoiceTextbox"] = {"source_symbol": "ShowMultichoiceTextbox"
 # >>> factory-mutation ScriptCommand_ChooseStarterDeckMultichoice
 MUTATIONS["ScriptCommand_ChooseStarterDeckMultichoice"] = {"source_symbol": "ScriptCommand_ChooseStarterDeckMultichoice", "before": "IncreaseScriptPointerResult ScriptCommand_ChooseStarterDeckMultichoice(void)\n{\n\tBankswitchROM(SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK);\n\t(void)ShowMultichoiceTextbox(0u, MULTICHOICE_MENU_ARGS);", "after": "IncreaseScriptPointerResult ScriptCommand_ChooseStarterDeckMultichoice(void)\n{\n\tBankswitchROM(SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK);\n\t(void)ShowMultichoiceTextbox(0u, (uint16_t)(MULTICHOICE_MENU_ARGS + 2u));", "case_ids": ["ScriptCommand_ChooseStarterDeckMultichoice-0", "ScriptCommand_ChooseStarterDeckMultichoice-1", "ScriptCommand_ChooseStarterDeckMultichoice-2"]}
 # <<< factory-mutation ScriptCommand_ChooseStarterDeckMultichoice
+# >>> factory-mutation ScriptCommand_ShowSamNormalMultichoice
+MUTATIONS["ScriptCommand_ShowSamNormalMultichoice"] = {"source_symbol": "ScriptCommand_ShowSamNormalMultichoice", "before": "IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)\n{\n\tBankswitchROM(3u);\n\tShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, 0x530Cu);\n\tuint8_t choice = wMultichoiceTextboxResult_Sam;", "after": "IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)\n{\n\tBankswitchROM(3u);\n\tShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, 0x530Cu);\n\tuint8_t choice = (uint8_t)(wMultichoiceTextboxResult_Sam ^ 1u);", "case_ids": ["ScriptCommand_ShowSamNormalMultichoice-0", "ScriptCommand_ShowSamNormalMultichoice-1", "ScriptCommand_ShowSamNormalMultichoice-2"]}
+# <<< factory-mutation ScriptCommand_ShowSamNormalMultichoice

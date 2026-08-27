@@ -1258,6 +1258,16 @@ static void adapt_ScriptCommand_ChooseStarterDeckMultichoice(ProbeState *s)
 }
 /* <<< factory ScriptCommand_ChooseStarterDeckMultichoice */
 
+/* >>> factory ScriptCommand_ShowSamNormalMultichoice */
+static void adapt_ScriptCommand_ShowSamNormalMultichoice(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = ScriptCommand_ShowSamNormalMultichoice();
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_ShowSamNormalMultichoice */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1381,5 +1391,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_MovePlayer", adapt_ScriptCommand_MovePlayer },
 	{ "ShowMultichoiceTextbox", adapt_ShowMultichoiceTextbox },
 	{ "ScriptCommand_ChooseStarterDeckMultichoice", adapt_ScriptCommand_ChooseStarterDeckMultichoice },
+	{ "ScriptCommand_ShowSamNormalMultichoice", adapt_ScriptCommand_ShowSamNormalMultichoice },
 	{ NULL, NULL },
 };

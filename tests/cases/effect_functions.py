@@ -2638,6 +2638,9 @@ wDuelTempList = 0xC510
 wPlayerDeck = 0xC27E
 hWhoseTurn = 0xFF97
 wDuelistType = 0xCC0D
+
+hTemp_ffa0 = 0xFFA0
+_wram_txram3 = 0xCE43
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -5471,6 +5474,16 @@ CASES["Maintenance_ReturnToDeckAndDrawEffect"] = [
 ]
 # <<< factory Maintenance_ReturnToDeckAndDrawEffect
 
+# >>> factory ThunderJolt_RecoilEffect
+CONTRACT["ThunderJolt_RecoilEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ThunderJolt_RecoilEffect"] = [
+    {"f": 0x00, "wram": {hTemp_ffa0: b"\x01"},
+     "read": {hTemp_ffa0: 1, _wram_txram3: 2}},
+    dict(POISON, wram={hTemp_ffa0: b"\x01"},
+         read={hTemp_ffa0: 1, _wram_txram3: 2}),
+]
+# <<< factory ThunderJolt_RecoilEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8001,3 +8014,6 @@ MUTATIONS["ProfessorOakEffect"] = {"source_symbol": "ProfessorOakEffect", "befor
 # >>> factory-mutation Maintenance_ReturnToDeckAndDrawEffect
 MUTATIONS["Maintenance_ReturnToDeckAndDrawEffect"] = {"source_symbol": "Maintenance_ReturnToDeckAndDrawEffect", "before": "MaintenanceReturnToDeckAndDrawEffectResult Maintenance_ReturnToDeckAndDrawEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t first = hTempList;", "after": "MaintenanceReturnToDeckAndDrawEffectResult Maintenance_ReturnToDeckAndDrawEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t first = (uint8_t)(hTempList + 1u);", "case_ids": ["Maintenance_ReturnToDeckAndDrawEffect-0", "Maintenance_ReturnToDeckAndDrawEffect-1"]}
 # <<< factory-mutation Maintenance_ReturnToDeckAndDrawEffect
+# >>> factory-mutation ThunderJolt_RecoilEffect
+MUTATIONS["ThunderJolt_RecoilEffect"] = {"source_symbol": "ThunderJolt_RecoilEffect", "before": "ThunderJolt_RecoilEffectResult ThunderJolt_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tLoadTxRam3(10u);", "after": "ThunderJolt_RecoilEffectResult ThunderJolt_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tLoadTxRam3(11u);", "case_ids": ["ThunderJolt_RecoilEffect-0", "ThunderJolt_RecoilEffect-1"]}
+# <<< factory-mutation ThunderJolt_RecoilEffect

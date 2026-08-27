@@ -4059,6 +4059,15 @@ static void adapt_Maintenance_ReturnToDeckAndDrawEffect(ProbeState *s)
 }
 /* <<< factory Maintenance_ReturnToDeckAndDrawEffect */
 
+/* >>> factory ThunderJolt_RecoilEffect */
+static void adapt_ThunderJolt_RecoilEffect(ProbeState *s)
+{
+	ThunderJolt_RecoilEffectResult result = ThunderJolt_RecoilEffect(s->f, s->d, s->e);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory ThunderJolt_RecoilEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4551,5 +4560,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "FetchEffect", adapt_FetchEffect },
 	{ "ProfessorOakEffect", adapt_ProfessorOakEffect },
 	{ "Maintenance_ReturnToDeckAndDrawEffect", adapt_Maintenance_ReturnToDeckAndDrawEffect },
+	{ "ThunderJolt_RecoilEffect", adapt_ThunderJolt_RecoilEffect },
 	{ NULL, NULL },
 };

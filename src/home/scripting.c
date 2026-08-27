@@ -2094,3 +2094,16 @@ IncreaseScriptPointerResult ScriptCommand_ChooseStarterDeckMultichoice(void)
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_ChooseStarterDeckMultichoice */
+
+/* >>> factory ScriptCommand_ShowSamNormalMultichoice */
+IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)
+{
+	BankswitchROM(3u);
+	ShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, 0x530Cu);
+	uint8_t choice = wMultichoiceTextboxResult_Sam;
+	(void)menu;
+	(void)SetEventValue(0x75u, 0u, 0u, choice);
+	wMultichoiceTextboxResult_Sam = 0u;
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_ShowSamNormalMultichoice */

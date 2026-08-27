@@ -614,4 +614,8 @@ ShowMultichoiceTextboxResult ShowMultichoiceTextbox(uint8_t a, uint16_t hl);
 /* >>> factory ScriptCommand_ChooseStarterDeckMultichoice */
 IncreaseScriptPointerResult ScriptCommand_ChooseStarterDeckMultichoice(void);
 /* <<< factory ScriptCommand_ChooseStarterDeckMultichoice */
+/* >>> factory ScriptCommand_ShowSamNormalMultichoice */
+void BankswitchROM(uint8_t bank);
+IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void);
+/* <<< factory ScriptCommand_ShowSamNormalMultichoice */
 #endif
