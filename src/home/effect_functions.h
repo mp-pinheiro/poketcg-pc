@@ -1877,6 +1877,24 @@ BoneAttackEffectResult BoneAttackEffect(uint16_t hl);
 /* >>> factory ArcanineQuickAttack_DamageBoostEffect */
 void ArcanineQuickAttack_DamageBoostEffect(void);
 /* <<< factory ArcanineQuickAttack_DamageBoostEffect */
+/* >>> factory EeveeQuickAttack_DamageBoostEffect */
+void EeveeQuickAttack_DamageBoostEffect(void);
+/* <<< factory EeveeQuickAttack_DamageBoostEffect */
+/* >>> factory ElectabuzzQuickAttack_DamageBoostEffect */
+void ElectabuzzQuickAttack_DamageBoostEffect(void);
+/* <<< factory ElectabuzzQuickAttack_DamageBoostEffect */
+/* >>> factory FlareonQuickAttack_DamageBoostEffect */
+void FlareonQuickAttack_DamageBoostEffect(void);
+/* <<< factory FlareonQuickAttack_DamageBoostEffect */
+/* >>> factory JolteonQuickAttack_DamageBoostEffect */
+void JolteonQuickAttack_DamageBoostEffect(void);
+/* <<< factory JolteonQuickAttack_DamageBoostEffect */
+/* >>> factory FearowAgilityEffect */
+uint16_t FearowAgilityEffect(void);
+/* <<< factory FearowAgilityEffect */
+/* >>> factory ClampEffect */
+uint8_t ClampEffect(void);
+/* <<< factory ClampEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

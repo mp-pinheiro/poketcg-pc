@@ -864,13 +864,17 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/math.h"
 #include "home/print_text.h"
-#include "home/effect_functions.h"
 #include "generated/wram.h"
 #define DamageCheckIfHeadsXDamageText 0x00f4u
 #define DamageCheckIfHeadsPlusDamageText 0x00f3u
 #define AcidCheckText 0x00f5u
 #define IfHeadsOpponentCannotAttackText 0x00fcu
 
+#define SuccessCheckIfHeadsAttackIsSuccessfulText 0x00eeu
+#define IfHeadsDoNotReceiveDamageOrEffectText 0x00fbu
+#define ATK_ANIM_HIT_EFFECT 0x05u
+#define ATK_ANIM_AGILITY_PROTECT 0x52u
+#define SUBSTATUS1_AGILITY 0x0cu
 #include "home/math.h"
 #include "home/print_text.h"
 #include "home/effect_functions.h"
@@ -9385,3 +9389,80 @@ void ArcanineQuickAttack_DamageBoostEffect(void)
 	AddToDamage(20u);
 }
 /* <<< factory ArcanineQuickAttack_DamageBoostEffect */
+
+/* >>> factory EeveeQuickAttack_DamageBoostEffect */
+/* effect_functions.asm:7439-7449 */
+void EeveeQuickAttack_DamageBoostEffect(void)
+{
+	LoadTxRam3(20u);
+	TossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return;
+	AddToDamage(20u);
+}
+/* <<< factory EeveeQuickAttack_DamageBoostEffect */
+
+/* >>> factory ElectabuzzQuickAttack_DamageBoostEffect */
+/* effect_functions.asm:6446-6456 */
+void ElectabuzzQuickAttack_DamageBoostEffect(void)
+{
+	LoadTxRam3(20u);
+	TossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return;
+	AddToDamage(20u);
+}
+/* <<< factory ElectabuzzQuickAttack_DamageBoostEffect */
+
+/* >>> factory FlareonQuickAttack_DamageBoostEffect */
+/* effect_functions.asm:3864-3874 */
+void FlareonQuickAttack_DamageBoostEffect(void)
+{
+	LoadTxRam3(20u);
+	TossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return;
+	AddToDamage(20u);
+}
+/* <<< factory FlareonQuickAttack_DamageBoostEffect */
+
+/* >>> factory JolteonQuickAttack_DamageBoostEffect */
+/* effect_functions.asm:6608-6618 */
+void JolteonQuickAttack_DamageBoostEffect(void)
+{
+	LoadTxRam3(20u);
+	TossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return;
+	AddToDamage(20u);
+}
+/* <<< factory JolteonQuickAttack_DamageBoostEffect */
+
+/* >>> factory FearowAgilityEffect */
+/* effect_functions.asm:7687-7695 */
+uint16_t FearowAgilityEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDoNotReceiveDamageOrEffectText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return 0u;
+	wLoadedAttackAnimation = ATK_ANIM_AGILITY_PROTECT;
+	return ApplySubstatus1ToAttackingCard(SUBSTATUS1_AGILITY);
+}
+/* <<< factory FearowAgilityEffect */
+
+/* >>> factory ClampEffect */
+/* effect_functions.asm:3334-3347. Tails: the xor-a zero-flags exit
+ * (a = EFFECT_FAILED_UNSUCCESSFUL, f = Z = $80) survives SetDefiniteDamage
+ * and SetWasUnsuccessful untouched. */
+uint8_t ClampEffect(void)
+{
+	wLoadedAttackAnimation = ATK_ANIM_HIT_EFFECT;
+	TossCoin_BankBResult toss = TossCoin_BankB(SuccessCheckIfHeadsAttackIsSuccessfulText, 0u);
+	if ((toss.f & 0x10u) != 0u)
+		return ParalysisEffect().f;
+	wLoadedAttackAnimation = ATK_ANIM_NONE;
+	SetDefiniteDamage(0u);
+	SetWasUnsuccessful();
+	return 0x80u;
+}
+/* <<< factory ClampEffect */

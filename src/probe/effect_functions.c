@@ -4496,6 +4496,52 @@ static void adapt_ArcanineQuickAttack_DamageBoostEffect(ProbeState *s)
 }
 /* <<< factory ArcanineQuickAttack_DamageBoostEffect */
 
+/* >>> factory EeveeQuickAttack_DamageBoostEffect */
+static void adapt_EeveeQuickAttack_DamageBoostEffect(ProbeState *s)
+{
+	(void)s;
+	EeveeQuickAttack_DamageBoostEffect();
+}
+/* <<< factory EeveeQuickAttack_DamageBoostEffect */
+
+/* >>> factory ElectabuzzQuickAttack_DamageBoostEffect */
+static void adapt_ElectabuzzQuickAttack_DamageBoostEffect(ProbeState *s)
+{
+	(void)s;
+	ElectabuzzQuickAttack_DamageBoostEffect();
+}
+/* <<< factory ElectabuzzQuickAttack_DamageBoostEffect */
+
+/* >>> factory FlareonQuickAttack_DamageBoostEffect */
+static void adapt_FlareonQuickAttack_DamageBoostEffect(ProbeState *s)
+{
+	(void)s;
+	FlareonQuickAttack_DamageBoostEffect();
+}
+/* <<< factory FlareonQuickAttack_DamageBoostEffect */
+
+/* >>> factory JolteonQuickAttack_DamageBoostEffect */
+static void adapt_JolteonQuickAttack_DamageBoostEffect(ProbeState *s)
+{
+	(void)s;
+	JolteonQuickAttack_DamageBoostEffect();
+}
+/* <<< factory JolteonQuickAttack_DamageBoostEffect */
+
+/* >>> factory FearowAgilityEffect */
+static void adapt_FearowAgilityEffect(ProbeState *s)
+{
+	s->hl = FearowAgilityEffect();
+}
+/* <<< factory FearowAgilityEffect */
+
+/* >>> factory ClampEffect */
+static void adapt_ClampEffect(ProbeState *s)
+{
+	s->f = ClampEffect();
+}
+/* <<< factory ClampEffect */
+
 /* >>> factory PoliwhirlAmnesia_PlayerSelectEffect */
 static void adapt_PoliwhirlAmnesia_PlayerSelectEffect(ProbeState *s)
 {
@@ -5116,5 +5162,11 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "AcidEffect", adapt_AcidEffect },
 	{ "BoneAttackEffect", adapt_BoneAttackEffect },
 	{ "ArcanineQuickAttack_DamageBoostEffect", adapt_ArcanineQuickAttack_DamageBoostEffect },
+	{ "EeveeQuickAttack_DamageBoostEffect", adapt_EeveeQuickAttack_DamageBoostEffect },
+	{ "ElectabuzzQuickAttack_DamageBoostEffect", adapt_ElectabuzzQuickAttack_DamageBoostEffect },
+	{ "FlareonQuickAttack_DamageBoostEffect", adapt_FlareonQuickAttack_DamageBoostEffect },
+	{ "JolteonQuickAttack_DamageBoostEffect", adapt_JolteonQuickAttack_DamageBoostEffect },
+	{ "FearowAgilityEffect", adapt_FearowAgilityEffect },
+	{ "ClampEffect", adapt_ClampEffect },
 	{ NULL, NULL },
 };

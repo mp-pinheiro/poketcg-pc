@@ -6310,6 +6310,98 @@ CASES["ArcanineQuickAttack_DamageBoostEffect"] = [
 ]
 # <<< factory ArcanineQuickAttack_DamageBoostEffect
 
+# >>> factory EeveeQuickAttack_DamageBoostEffect
+CONTRACT["EeveeQuickAttack_DamageBoostEffect"] = {"compare": (), "preserve": ()}
+CASES["EeveeQuickAttack_DamageBoostEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", **_acid_toss_fix},
+         read={0xCCB9: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", **_acid_toss_fix_tail},
+         read={0xCCB9: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory EeveeQuickAttack_DamageBoostEffect
+
+# >>> factory ElectabuzzQuickAttack_DamageBoostEffect
+CONTRACT["ElectabuzzQuickAttack_DamageBoostEffect"] = {"compare": (), "preserve": ()}
+CASES["ElectabuzzQuickAttack_DamageBoostEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", **_acid_toss_fix},
+         read={0xCCB9: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", **_acid_toss_fix_tail},
+         read={0xCCB9: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ElectabuzzQuickAttack_DamageBoostEffect
+
+# >>> factory FlareonQuickAttack_DamageBoostEffect
+CONTRACT["FlareonQuickAttack_DamageBoostEffect"] = {"compare": (), "preserve": ()}
+CASES["FlareonQuickAttack_DamageBoostEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", **_acid_toss_fix},
+         read={0xCCB9: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", **_acid_toss_fix_tail},
+         read={0xCCB9: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory FlareonQuickAttack_DamageBoostEffect
+
+# >>> factory JolteonQuickAttack_DamageBoostEffect
+CONTRACT["JolteonQuickAttack_DamageBoostEffect"] = {"compare": (), "preserve": ()}
+CASES["JolteonQuickAttack_DamageBoostEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", **_acid_toss_fix},
+         read={0xCCB9: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", **_acid_toss_fix_tail},
+         read={0xCCB9: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory JolteonQuickAttack_DamageBoostEffect
+
+# >>> factory FearowAgilityEffect
+CONTRACT["FearowAgilityEffect"] = {"compare": (), "preserve": ()}
+CASES["FearowAgilityEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory FearowAgilityEffect
+
+# >>> factory ClampEffect
+CONTRACT["ClampEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["ClampEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCB9: b"\x10\x00", 0xCCED: b"\x00",
+               0xCCCD: b"\x00", 0xCCCE: b"\x00\x00\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCCB9: 2, 0xCCED: 1, 0xCCCD: 1, 0xCCCE: 3,
+               0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCB9: b"\x10\x00", 0xCCED: b"\x00",
+               0xCCCD: b"\x00", 0xCCCE: b"\x00\x00\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCCB9: 2, 0xCCED: 1, 0xCCCD: 1, 0xCCCE: 3,
+               0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ClampEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9020,3 +9112,22 @@ MUTATIONS["BoneAttackEffect"] = {"source_symbol": "BoneAttackEffect", "before": 
 # >>> factory-mutation ArcanineQuickAttack_DamageBoostEffect
 MUTATIONS["ArcanineQuickAttack_DamageBoostEffect"] = {"source_symbol": "ArcanineQuickAttack_DamageBoostEffect", "before": "\tAddToDamage(20u);", "after": "\tAddToDamage(21u);", "case_ids": ["ArcanineQuickAttack_DamageBoostEffect-0"]}
 # <<< factory-mutation ArcanineQuickAttack_DamageBoostEffect
+
+# >>> factory-mutation EeveeQuickAttack_DamageBoostEffect
+MUTATIONS["EeveeQuickAttack_DamageBoostEffect"] = {"source_symbol": "EeveeQuickAttack_DamageBoostEffect", "before": "void EeveeQuickAttack_DamageBoostEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(20u);", "after": "void EeveeQuickAttack_DamageBoostEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(21u);", "case_ids": ["EeveeQuickAttack_DamageBoostEffect-0"]}
+# <<< factory-mutation EeveeQuickAttack_DamageBoostEffect
+# >>> factory-mutation ElectabuzzQuickAttack_DamageBoostEffect
+MUTATIONS["ElectabuzzQuickAttack_DamageBoostEffect"] = {"source_symbol": "ElectabuzzQuickAttack_DamageBoostEffect", "before": "void ElectabuzzQuickAttack_DamageBoostEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(20u);", "after": "void ElectabuzzQuickAttack_DamageBoostEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(21u);", "case_ids": ["ElectabuzzQuickAttack_DamageBoostEffect-0"]}
+# <<< factory-mutation ElectabuzzQuickAttack_DamageBoostEffect
+# >>> factory-mutation FlareonQuickAttack_DamageBoostEffect
+MUTATIONS["FlareonQuickAttack_DamageBoostEffect"] = {"source_symbol": "FlareonQuickAttack_DamageBoostEffect", "before": "void FlareonQuickAttack_DamageBoostEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(20u);", "after": "void FlareonQuickAttack_DamageBoostEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(21u);", "case_ids": ["FlareonQuickAttack_DamageBoostEffect-0"]}
+# <<< factory-mutation FlareonQuickAttack_DamageBoostEffect
+# >>> factory-mutation JolteonQuickAttack_DamageBoostEffect
+MUTATIONS["JolteonQuickAttack_DamageBoostEffect"] = {"source_symbol": "JolteonQuickAttack_DamageBoostEffect", "before": "void JolteonQuickAttack_DamageBoostEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(20u);", "after": "void JolteonQuickAttack_DamageBoostEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(21u);", "case_ids": ["JolteonQuickAttack_DamageBoostEffect-0"]}
+# <<< factory-mutation JolteonQuickAttack_DamageBoostEffect
+# >>> factory-mutation FearowAgilityEffect
+MUTATIONS["FearowAgilityEffect"] = {"source_symbol": "FearowAgilityEffect", "before": "\twLoadedAttackAnimation = ATK_ANIM_AGILITY_PROTECT;", "after": "\twLoadedAttackAnimation = 0x53u;", "case_ids": ["FearowAgilityEffect-0", "FearowAgilityEffect-2"]}
+# <<< factory-mutation FearowAgilityEffect
+# >>> factory-mutation ClampEffect
+MUTATIONS["ClampEffect"] = {"source_symbol": "ClampEffect", "before": "\twLoadedAttackAnimation = ATK_ANIM_NONE;\n\tSetDefiniteDamage(0u);", "after": "\twLoadedAttackAnimation = ATK_ANIM_NONE;\n\tSetDefiniteDamage(1u);", "case_ids": ["ClampEffect-1"]}
+# <<< factory-mutation ClampEffect
