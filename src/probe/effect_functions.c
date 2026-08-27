@@ -4763,6 +4763,22 @@ static void adapt_SpacingOut_Success50PercentEffect(ProbeState *s)
 }
 /* <<< factory SpacingOut_Success50PercentEffect */
 
+/* >>> factory VaporeonQuickAttack_DamageBoostEffect */
+static void adapt_VaporeonQuickAttack_DamageBoostEffect(ProbeState *s)
+{
+	(void)s;
+	VaporeonQuickAttack_DamageBoostEffect();
+}
+/* <<< factory VaporeonQuickAttack_DamageBoostEffect */
+
+/* >>> factory Thrash_ModifierEffect */
+static void adapt_Thrash_ModifierEffect(ProbeState *s)
+{
+	(void)s;
+	Thrash_ModifierEffect();
+}
+/* <<< factory Thrash_ModifierEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5341,5 +5357,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "RaichuAgilityEffect", adapt_RaichuAgilityEffect },
 	{ "RapidashAgilityEffect", adapt_RapidashAgilityEffect },
 	{ "SpacingOut_Success50PercentEffect", adapt_SpacingOut_Success50PercentEffect },
+	{ "VaporeonQuickAttack_DamageBoostEffect", adapt_VaporeonQuickAttack_DamageBoostEffect },
+	{ "Thrash_ModifierEffect", adapt_Thrash_ModifierEffect },
 	{ NULL, NULL },
 };

@@ -28,6 +28,17 @@ wMenuInputTablePointer = 0xCE53
 wIsSwapTurnPending = 0xCE56
 
 wNumberOfPrizeCardsToSelect = 0xCE59
+
+hBankROM = 0xFF80
+_hps_wram = {
+    0xFF97: b"\xC2",
+    0xC23C: b"\x00",
+    0xC2EC: b"\x3F",
+    0xC400: b"\x08",
+    0xCABB: b"\x00",
+}
+_hps_read = {0xFF80: 1, 0xCE52: 1, 0xCE53: 2, 0xCE56: 1, 0xCE5C: 1}
+_hps_setup = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory DrawPlayersPrizeAndBenchCards
@@ -118,6 +129,14 @@ CASES["SelectPrizeCards"] = [
 ]
 # <<< factory SelectPrizeCards
 
+# >>> factory HandlePeekSelection
+CONTRACT["HandlePeekSelection"] = {"compare": ("a", "f"), "preserve": ("f",), "wram_out": True}
+CASES["HandlePeekSelection"] = [
+    {"f": 0x00, "keys": [0x00, 0x01], "wram": {**_hps_wram, hBankROM: b"\x01"}, "read": dict(_hps_read), "setup": _hps_setup, "instruction_budget": 30000000, "cycle_budget": 120000000},
+    dict(POISON, keys=[0x00, 0x01], wram={**_hps_wram, hBankROM: b"\x01"}, read=dict(_hps_read), setup=_hps_setup, instruction_budget=30000000, cycle_budget=120000000),
+]
+# <<< factory HandlePeekSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -142,3 +161,11 @@ MUTATIONS["DrawAIPeekScreen"] = {"source_symbol": "DrawAIPeekScreen", "before": 
 # >>> factory-mutation SelectPrizeCards
 MUTATIONS["SelectPrizeCards"] = {"source_symbol": "SelectPrizeCards", "before": "\t_SelectPrizeCards();\n\tBankswitchROM(saved_bank);", "after": "\t_SelectPrizeCards();\n\tBankswitchROM((uint8_t)(saved_bank ^ 1u));", "case_ids": ["SelectPrizeCards-0", "SelectPrizeCards-1"]}
 # <<< factory-mutation SelectPrizeCards
+# >>> factory-mutation HandlePeekSelection
+MUTATIONS["HandlePeekSelection"] = {
+    "source_symbol": "HandlePeekSelection",
+    "before": "\tHandlePeekSelectionResult inner = _HandlePeekSelection();\n\tBankswitchROM(saved_bank);",
+    "after": "\tHandlePeekSelectionResult inner = _HandlePeekSelection();\n\tBankswitchROM((uint8_t)(saved_bank ^ 1u));",
+    "case_ids": ["HandlePeekSelection-0", "HandlePeekSelection-1"],
+}
+# <<< factory-mutation HandlePeekSelection

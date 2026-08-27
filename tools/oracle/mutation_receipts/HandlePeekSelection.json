@@ -1,0 +1,9 @@
+{
+  "fn": "HandlePeekSelection",
+  "case": "tests/cases/duel_menus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandlePeekSelection\", \"registers\": {\"a\": 64, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49724\": \"00\", \"49900\": \"3f\", \"50176\": \"08\", \"51899\": \"84\", \"52818\": \"00c248\", \"52822\": \"00\", \"52828\": \"40\", \"65408\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandlePeekSelection\", \"mismatches\": {\"bus\": {\"address\": 65408, \"reference\": \"c248004001c2\", \"native\": \"c248004000c2\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[49724, 1], [49900, 1], [50176, 1], [51899, 1], [52818, 3], [52822, 1], [52828, 1], [65408, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandlePeekSelection\", \"registers\": {\"a\": 64, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49724\": \"00\", \"49900\": \"3f\", \"50176\": \"08\", \"51899\": \"84\", \"52818\": \"00c248\", \"52822\": \"00\", \"52828\": \"40\", \"65408\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

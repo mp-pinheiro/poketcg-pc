@@ -19,4 +19,8 @@ DrawAIPeekScreenResult DrawAIPeekScreen(uint8_t a, uint8_t f);
 /* >>> factory SelectPrizeCards */
 void SelectPrizeCards(uint8_t a);
 /* <<< factory SelectPrizeCards */
+/* >>> factory HandlePeekSelection */
+typedef struct { uint8_t a; uint8_t f; } HandlePeekSelectionV2Result;
+HandlePeekSelectionV2Result HandlePeekSelection(uint8_t f);
+/* <<< factory HandlePeekSelection */
 #endif /* POKETCG_HOME_DUEL_MENUS_H */

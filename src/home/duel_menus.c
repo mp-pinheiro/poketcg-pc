@@ -32,6 +32,12 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define BANK__SelectPrizeCards 0x02u
+
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/overworld.h"
+#include "home/switch_rom.h"
+#define BANK__HandlePeekSelection 0x02u
 /* <<< factory statics */
 
 /* >>> factory DrawPlayersPrizeAndBenchCards */
@@ -89,3 +95,14 @@ void SelectPrizeCards(uint8_t a)
 	BankswitchROM(saved_bank);
 }
 /* <<< factory SelectPrizeCards */
+
+/* >>> factory HandlePeekSelection */
+HandlePeekSelectionV2Result HandlePeekSelection(uint8_t f)
+{
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(BANK__HandlePeekSelection);
+	HandlePeekSelectionResult inner = _HandlePeekSelection();
+	BankswitchROM(saved_bank);
+	return (HandlePeekSelectionV2Result){inner.a, f};
+}
+/* <<< factory HandlePeekSelection */

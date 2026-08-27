@@ -6716,6 +6716,34 @@ CASES["SpacingOut_Success50PercentEffect"] = [
 ]
 # <<< factory SpacingOut_Success50PercentEffect
 
+# >>> factory VaporeonQuickAttack_DamageBoostEffect
+CONTRACT["VaporeonQuickAttack_DamageBoostEffect"] = {"compare": (), "preserve": ()}
+CASES["VaporeonQuickAttack_DamageBoostEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", **_acid_toss_fix},
+         read={0xCCB9: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", **_acid_toss_fix_tail},
+         read={0xCCB9: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory VaporeonQuickAttack_DamageBoostEffect
+
+# >>> factory Thrash_ModifierEffect
+CONTRACT["Thrash_ModifierEffect"] = {"compare": (), "preserve": ()}
+CASES["Thrash_ModifierEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x00\x00", 0xFFA0: b"\x00", **_acid_toss_fix},
+         read={0xCCB9: 2, 0xFFA0: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x00\x00", 0xFFA0: b"\x00", **_acid_toss_fix_tail},
+         read={0xCCB9: 2, 0xFFA0: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Thrash_ModifierEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9516,3 +9544,14 @@ MUTATIONS["VenusaurMegaDrainEffect"] = {"source_symbol": "VenusaurMegaDrainEffec
 # >>> factory-mutation SpacingOut_Success50PercentEffect
 MUTATIONS["SpacingOut_Success50PercentEffect"] = {"source_symbol": "SpacingOut_Success50PercentEffect", "before": "void SpacingOut_Success50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(SuccessCheckIfHeadsAttackIsSuccessfulText, 0u);\n\thTemp_ffa0 = toss.a;\n\tif ((toss.f & 0x10u) == 0u) {", "after": "void SpacingOut_Success50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(SuccessCheckIfHeadsAttackIsSuccessfulText, 0u);\n\thTemp_ffa0 = toss.a;\n\tif ((toss.f & 0x10u) != 0u) {", "case_ids": ["SpacingOut_Success50PercentEffect-0", "SpacingOut_Success50PercentEffect-1"]}
 # <<< factory-mutation SpacingOut_Success50PercentEffect
+# >>> factory-mutation VaporeonQuickAttack_DamageBoostEffect
+MUTATIONS["VaporeonQuickAttack_DamageBoostEffect"] = {
+    "source_symbol": "VaporeonQuickAttack_DamageBoostEffect",
+    "before": "void VaporeonQuickAttack_DamageBoostEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(20u);",
+    "after": "void VaporeonQuickAttack_DamageBoostEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(21u);",
+    "case_ids": ["VaporeonQuickAttack_DamageBoostEffect-0", "VaporeonQuickAttack_DamageBoostEffect-1"]
+}
+# <<< factory-mutation VaporeonQuickAttack_DamageBoostEffect
+# >>> factory-mutation Thrash_ModifierEffect
+MUTATIONS["Thrash_ModifierEffect"] = {"source_symbol": "Thrash_ModifierEffect", "before": "void Thrash_ModifierEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadPlus10IfTails10ToYourselfText, 0u);\n\thTemp_ffa0 = toss.a;\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(10u);", "after": "void Thrash_ModifierEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadPlus10IfTails10ToYourselfText, 0u);\n\thTemp_ffa0 = toss.a;\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(0u);", "case_ids": ["Thrash_ModifierEffect-0", "Thrash_ModifierEffect-1"]}
+# <<< factory-mutation Thrash_ModifierEffect

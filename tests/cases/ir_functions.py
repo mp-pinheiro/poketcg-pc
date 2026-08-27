@@ -88,6 +88,14 @@ CASES["ClearRPAndRestoreVBlankFunction"] = [
 ]
 # <<< factory ClearRPAndRestoreVBlankFunction
 
+# >>> factory LoadLinkNotConnectedSceneAndAskWhetherToTryAgain
+CONTRACT["LoadLinkNotConnectedSceneAndAskWhetherToTryAgain"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["LoadLinkNotConnectedSceneAndAskWhetherToTryAgain"] = [
+    {"hl": 0x0000,"wram": {**WRAM_SEED, 0xCABB: b"\x00"},"sram": {0: {}},"setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],"keys": [0x00, 0x01],"read": {**SCENE_READ, **TEXT_READ},"instruction_budget": 20000000,"cycle_budget": 80000000},
+    dict(POISON, hl=0x0000, wram={**WRAM_SEED, 0xCABB: b"\x00"}, sram={0: {}}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], read={**SCENE_READ, **TEXT_READ}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory LoadLinkNotConnectedSceneAndAskWhetherToTryAgain
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -126,3 +134,6 @@ MUTATIONS["ClearRPAndRestoreVBlankFunction"] = {
     "case_ids": ["ClearRPAndRestoreVBlankFunction-0", "ClearRPAndRestoreVBlankFunction-1"],
 }
 # <<< factory-mutation ClearRPAndRestoreVBlankFunction
+# >>> factory-mutation LoadLinkNotConnectedSceneAndAskWhetherToTryAgain
+MUTATIONS["LoadLinkNotConnectedSceneAndAskWhetherToTryAgain"] = {"source_symbol": "LoadLinkNotConnectedSceneAndAskWhetherToTryAgain", "before": "\t(void)LoadScene(SCENE_GAMEBOY_LINK_NOT_CONNECTED, 0u, 0u, 0u, 0u, 0u, saved_hl);", "after": "\t(void)LoadScene(0u, 0u, 0u, 0u, 0u, 0u, saved_hl);", "case_ids": ["LoadLinkNotConnectedSceneAndAskWhetherToTryAgain-0", "LoadLinkNotConnectedSceneAndAskWhetherToTryAgain-1"]}
+# <<< factory-mutation LoadLinkNotConnectedSceneAndAskWhetherToTryAgain

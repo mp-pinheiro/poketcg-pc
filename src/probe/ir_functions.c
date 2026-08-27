@@ -30,10 +30,20 @@ static void adapt_ClearRPAndRestoreVBlankFunction(ProbeState *s)
 }
 /* <<< factory ClearRPAndRestoreVBlankFunction */
 
+/* >>> factory LoadLinkNotConnectedSceneAndAskWhetherToTryAgain */
+static void adapt_LoadLinkNotConnectedSceneAndAskWhetherToTryAgain(ProbeState *s)
+{
+	LoadLinkNotConnectedSceneAndAskWhetherToTryAgainResult result = LoadLinkNotConnectedSceneAndAskWhetherToTryAgain(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory LoadLinkNotConnectedSceneAndAskWhetherToTryAgain */
+
 const ProbeEntry probe_entries_ir_functions[] = {
 	{ "PlayCardPopSong", adapt_PlayCardPopSong },
 	{ "InitIRCommunications", adapt_InitIRCommunications },
 	{ "LoadLinkConnectingScene", adapt_LoadLinkConnectingScene },
 	{ "ClearRPAndRestoreVBlankFunction", adapt_ClearRPAndRestoreVBlankFunction },
+	{ "LoadLinkNotConnectedSceneAndAskWhetherToTryAgain", adapt_LoadLinkNotConnectedSceneAndAskWhetherToTryAgain },
 	{ NULL, NULL },
 };

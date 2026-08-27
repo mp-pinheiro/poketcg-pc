@@ -1231,6 +1231,14 @@ void BankswitchROM(uint8_t bank);
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define ATK_ANIM_RECOVER 0x58u
+
+#include "home/damage.h"
+#include "home/print_text.h"
+#include "home/effect_functions.h"
+
+#include "generated/hram.h"
+#include "home/damage.h"
+#include "home/effect_functions.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -9810,3 +9818,25 @@ void SpacingOut_Success50PercentEffect(void)
 	wLoadedAttackAnimation = ATK_ANIM_RECOVER;
 }
 /* <<< factory SpacingOut_Success50PercentEffect */
+
+/* >>> factory VaporeonQuickAttack_DamageBoostEffect */
+void VaporeonQuickAttack_DamageBoostEffect(void)
+{
+	LoadTxRam3(20u);
+	TossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return;
+	AddToDamage(20u);
+}
+/* <<< factory VaporeonQuickAttack_DamageBoostEffect */
+
+/* >>> factory Thrash_ModifierEffect */
+void Thrash_ModifierEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadPlus10IfTails10ToYourselfText, 0u);
+	hTemp_ffa0 = toss.a;
+	if ((toss.f & 0x10u) == 0u)
+		return;
+	AddToDamage(10u);
+}
+/* <<< factory Thrash_ModifierEffect */

@@ -1959,6 +1959,12 @@ void VenusaurMegaDrainEffect(void);
 /* >>> factory SpacingOut_Success50PercentEffect */
 void SpacingOut_Success50PercentEffect(void);
 /* <<< factory SpacingOut_Success50PercentEffect */
+/* >>> factory VaporeonQuickAttack_DamageBoostEffect */
+void VaporeonQuickAttack_DamageBoostEffect(void);
+/* <<< factory VaporeonQuickAttack_DamageBoostEffect */
+/* >>> factory Thrash_ModifierEffect */
+void Thrash_ModifierEffect(void);
+/* <<< factory Thrash_ModifierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

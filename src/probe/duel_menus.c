@@ -42,11 +42,21 @@ static void adapt_SelectPrizeCards(ProbeState *s)
 }
 /* <<< factory SelectPrizeCards */
 
+/* >>> factory HandlePeekSelection */
+static void adapt_HandlePeekSelection(ProbeState *s)
+{
+	HandlePeekSelectionV2Result r = HandlePeekSelection(s->f);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory HandlePeekSelection */
+
 const ProbeEntry probe_entries_duel_menus[] = {
 	{ "DrawPlayersPrizeAndBenchCards", adapt_DrawPlayersPrizeAndBenchCards },
 	{ "DrawPlayAreaToPlacePrizeCards", adapt_DrawPlayAreaToPlacePrizeCards },
 	{ "DrawYourOrOppPlayAreaScreen_Bank0", adapt_DrawYourOrOppPlayAreaScreen_Bank0 },
 	{ "DrawAIPeekScreen", adapt_DrawAIPeekScreen },
 	{ "SelectPrizeCards", adapt_SelectPrizeCards },
+	{ "HandlePeekSelection", adapt_HandlePeekSelection },
 	{ NULL, NULL },
 };

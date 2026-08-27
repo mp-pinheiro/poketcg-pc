@@ -18,6 +18,9 @@
 #include "home/sprite_vblank.h"
 #include "home/ir_core.h"
 #define SCENE_GAMEBOY_LINK_CONNECTING 0x0eu
+
+#define SCENE_GAMEBOY_LINK_NOT_CONNECTED 0x10u
+#define WouldYouLikeToTryAgainText 0x0197u
 /* <<< factory statics */
 
 #define MUSIC_CARD_POP 0x08u
@@ -68,3 +71,17 @@ void ClearRPAndRestoreVBlankFunction(void)
 	RestoreVBlankFunction();
 }
 /* <<< factory ClearRPAndRestoreVBlankFunction */
+
+/* >>> factory LoadLinkNotConnectedSceneAndAskWhetherToTryAgain */
+LoadLinkNotConnectedSceneAndAskWhetherToTryAgainResult LoadLinkNotConnectedSceneAndAskWhetherToTryAgain(uint16_t hl)
+{
+	uint16_t saved_hl = hl;
+	RestoreVBlankFunction();
+	SetSpriteAnimationsAsVBlankFunction();
+	(void)LoadScene(SCENE_GAMEBOY_LINK_NOT_CONNECTED, 0u, 0u, 0u, 0u, 0u, saved_hl);
+	(void)DrawWideTextBox_WaitForInput(saved_hl);
+	HandleYesOrNoMenuResult menu = YesOrNoMenuWithText_SetCursorToYes(WouldYouLikeToTryAgainText);
+	ClearRPAndRestoreVBlankFunction();
+	return (LoadLinkNotConnectedSceneAndAskWhetherToTryAgainResult){menu.a, menu.f};
+}
+/* <<< factory LoadLinkNotConnectedSceneAndAskWhetherToTryAgain */
