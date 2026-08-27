@@ -271,6 +271,20 @@
 #include "home/random.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/card_color.h"
+#include "home/damage_calculation.h"
+#include "mem.h"
+#define AI_FLAG_USED_GUST_OF_WIND 0x10u
+#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
+#define MEWTWO_LV53 0x9Du
+#define MEW_LV23 0xA2u
+#define POKEMON_POWER 0x04u
+#define SECOND_ATTACK 0x01u
 /* <<< factory statics */
 
 
@@ -2347,3 +2361,17 @@ AIDecideResult AIDecide_PlusPower_Phase14(void)
 	return (AIDecideResult){0x10u};
 }
 /* <<< factory AIDecide_PlusPower_Phase14 */
+
+/* >>> factory AIDecide_GustOfWind */
+AIDecideResult AIDecide_GustOfWind(void)
+{
+	uint8_t bench_count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	if (bench_count == 1u)
+		return (AIDecideResult){0x80u};
+	if (bench_count == 0u)
+		return (AIDecideResult){0x00u};
+	if ((wPreviousAIFlags & AI_FLAG_USED_GUST_OF_WIND) != 0u)
+		return (AIDecideResult){0x20u};
+	return (AIDecideResult){0x10u};
+}
+/* <<< factory AIDecide_GustOfWind */

@@ -698,6 +698,15 @@ CASES["AIDecide_PlusPower_Phase14"] = [
 ]
 # <<< factory AIDecide_PlusPower_Phase14
 
+# >>> factory AIDecide_GustOfWind
+CONTRACT["AIDecide_GustOfWind"] = {"compare": ("f",), "preserve": ()}
+CASES["AIDecide_GustOfWind"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x01"}},
+    {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x03", 0xCE20: b"\x10"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3EF: b"\x01"}),
+]
+# <<< factory AIDecide_GustOfWind
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -933,3 +942,6 @@ MUTATIONS["AIPlay_Recycle"] = {"source_symbol": "AIPlay_Recycle", "before": "AID
 # >>> factory-mutation AIDecide_PlusPower_Phase14
 MUTATIONS["AIDecide_PlusPower_Phase14"] = {"source_symbol": "AIDecide_PlusPower_Phase14", "before": "\tCheckIfSelectedAttackIsUnusableResult unusable =\n\t\tCheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);\n\tif ((unusable.f & 0x10u) != 0u)\n\t\treturn (AIDecideResult){0u};", "after": "\tCheckIfSelectedAttackIsUnusableResult unusable =\n\t\tCheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);\n\tif ((unusable.f & 0x10u) != 0u)\n\t\treturn (AIDecideResult){0x10u};", "case_ids": ["AIDecide_PlusPower_Phase14-0", "AIDecide_PlusPower_Phase14-1"]}
 # <<< factory-mutation AIDecide_PlusPower_Phase14
+# >>> factory-mutation AIDecide_GustOfWind
+MUTATIONS["AIDecide_GustOfWind"] = {"source_symbol": "AIDecide_GustOfWind", "before": "AIDecideResult AIDecide_GustOfWind(void)\n{\n\tuint8_t bench_count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;\n\tif (bench_count == 1u)", "after": "AIDecideResult AIDecide_GustOfWind(void)\n{\n\tuint8_t bench_count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;\n\tif (bench_count < 1u)", "case_ids": ["AIDecide_GustOfWind-0"]}
+# <<< factory-mutation AIDecide_GustOfWind

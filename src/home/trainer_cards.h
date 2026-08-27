@@ -166,4 +166,8 @@ AIDecideResult AIPlay_Recycle(void);
 /* >>> factory AIDecide_PlusPower_Phase14 */
 AIDecideResult AIDecide_PlusPower_Phase14(void);
 /* <<< factory AIDecide_PlusPower_Phase14 */
+/* >>> factory AIDecide_GustOfWind */
+/* >>> factory AIDecide_GustOfWind */
+AIDecideResult AIDecide_GustOfWind(void);
+/* <<< factory AIDecide_GustOfWind */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

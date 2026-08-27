@@ -375,6 +375,13 @@ static void adapt_AIDecide_PlusPower_Phase14(ProbeState *s)
 }
 /* <<< factory AIDecide_PlusPower_Phase14 */
 
+/* >>> factory AIDecide_GustOfWind */
+static void adapt_AIDecide_GustOfWind(ProbeState *s)
+{
+	s->f = AIDecide_GustOfWind().f;
+}
+/* <<< factory AIDecide_GustOfWind */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -420,5 +427,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIPlay_Pokeball", adapt_AIPlay_Pokeball },
 	{ "AIPlay_Recycle", adapt_AIPlay_Recycle },
 	{ "AIDecide_PlusPower_Phase14", adapt_AIDecide_PlusPower_Phase14 },
+	{ "AIDecide_GustOfWind", adapt_AIDecide_GustOfWind },
 	{ NULL, NULL },
 };
