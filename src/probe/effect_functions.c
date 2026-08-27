@@ -4208,6 +4208,13 @@ static void adapt_PokemonFlute_PlayerSelection(ProbeState *s)
 }
 /* <<< factory PokemonFlute_PlayerSelection */
 
+/* >>> factory DevolutionBeam_DevolveEffect */
+static void adapt_DevolutionBeam_DevolveEffect(ProbeState *s)
+{
+	DevolutionBeam_DevolveEffect();
+}
+/* <<< factory DevolutionBeam_DevolveEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4717,5 +4724,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "RaichuThunder_RecoilEffect", adapt_RaichuThunder_RecoilEffect },
 	{ "BigEggsplosion_MultiplierEffect", adapt_BigEggsplosion_MultiplierEffect },
 	{ "PokemonFlute_PlayerSelection", adapt_PokemonFlute_PlayerSelection },
+	{ "DevolutionBeam_DevolveEffect", adapt_DevolutionBeam_DevolveEffect },
 	{ NULL, NULL },
 };

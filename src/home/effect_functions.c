@@ -1070,6 +1070,16 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define ChoosePokemonToPlaceInPlayText 0x015bu
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/substatus.h"
+#include "home/menus.h"
+#include "home/duel_core.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
+#define ATK_ANIM_DEVOLUTION_BEAM 0x5du
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -8492,3 +8502,59 @@ void PokemonFlute_PlayerSelection(void)
 	hTemp_ffa0 = hTempCardIndex_ff98;
 }
 /* <<< factory PokemonFlute_PlayerSelection */
+
+/* >>> factory DevolutionBeam_DevolveEffect */
+/* effect_functions.asm:5237-5364 */
+void DevolutionBeam_DevolveEffect(void)
+{
+	uint8_t target = hTemp_ffa0;
+	if (target == 0xffu) {
+		return;
+	}
+	if (target != 0u) {
+		SwapTurn();
+		uint8_t location = hTempPlayAreaLocation_ffa1;
+		if (location == 0u) {
+			HandleNoDamageOrEffectResult no_effect = HandleNoDamageOrEffect(0u);
+			if ((no_effect.f & 0x10u) != 0u) {
+				SwapTurn();
+				return;
+			}
+		}
+	}
+	wLoadedAttackAnimation = ATK_ANIM_DEVOLUTION_BEAM;
+	uint8_t location = hTempPlayAreaLocation_ffa1;
+	PlayAttackAnimation(hWhoseTurn, 0u, location, 0u, 0u, 0u, (uint16_t)(((uint16_t)hWhoseTurn << 8) | location));
+	WaitAttackAnimation();
+	hTempPlayAreaLocation_ff9d = location;
+	wTempPlayAreaLocation_cceb = location;
+	DuelistVarResult var = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location));
+	uint8_t deck_index = LoadCardDataToBuffer1_FromDeckIndex(var.a);
+	wTempNonTurnDuelistCardID = wLoadedCard1ID;
+	uint16_t hl = var.hl;
+	if (hTempPlayAreaLocation_ff9d == 0u) {
+		NoDamageOrEffectResult substatus = HandleNoDamageOrEffectSubstatus(0u, hl);
+		if ((substatus.f & 0x10u) == 0u)
+			hl = substatus.hl;
+	}
+	HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult reduction =
+		HandleDamageReductionOrNoDamageFromPkmnPowerEffects(0u, hl);
+	if ((reduction.f & 0x10u) == 0u)
+		hl = reduction.hl;
+	NoDamageOrEffectCheckResult check = CheckNoDamageOrEffect(hl);
+	if ((check.f & 0x10u) != 0u) {
+		(void)DrawWideTextBox_WaitForInput(hl);
+		return;
+	}
+	hTempPlayAreaLocation_ff9d = location;
+	var = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location));
+	CardOneStageBelowResult below = GetCardOneStageBelow(0u, var.a);
+	PrintDevolvedCardNameAndLevelText(0u, 0u, below.d, below.e);
+	UpdateDevolvedCardHPAndStage(below.d);
+	(void)ResetDevolvedCardStatus();
+	AddCardToHand(below.e);
+	(void)PrintPlayAreaCardKnockedOutIfNoHP(location);
+	wDuelDisplayedScreen = 0u;
+	(void)deck_index;
+}
+/* <<< factory DevolutionBeam_DevolveEffect */

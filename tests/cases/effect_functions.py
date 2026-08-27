@@ -2651,6 +2651,10 @@ hCurSelectionItem = 0xFFB2
 hTempCardIndex_ff98 = 0xFF98
 hWhoseTurn = 0xFF97
 wDuelTempList = 0xC510
+
+hTemp_ffa0 = 0xFFA0
+wDuelDisplayedScreen = 0xCAC2
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -5686,6 +5690,14 @@ CASES["PokemonFlute_PlayerSelection"] = [
 ]
 # <<< factory PokemonFlute_PlayerSelection
 
+# >>> factory DevolutionBeam_DevolveEffect
+CONTRACT["DevolutionBeam_DevolveEffect"] = {"compare": (), "preserve": ()}
+CASES["DevolutionBeam_DevolveEffect"] = [
+    {"wram": {hTemp_ffa0: b"\xff", wDuelDisplayedScreen: b"\x00"}, "read": {wDuelDisplayedScreen: 1}},
+    dict(POISON, wram={hTemp_ffa0: b"\xff", wDuelDisplayedScreen: b"\x00"}, read={wDuelDisplayedScreen: 1}),
+]
+# <<< factory DevolutionBeam_DevolveEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8267,3 +8279,6 @@ MUTATIONS["BigEggsplosion_MultiplierEffect"] = {"source_symbol": "BigEggsplosion
 # >>> factory-mutation PokemonFlute_PlayerSelection
 MUTATIONS["PokemonFlute_PlayerSelection"] = {"source_symbol": "PokemonFlute_PlayerSelection", "before": "void PokemonFlute_PlayerSelection(void)\n{\n\tSwapTurn();\n\t(void)CreateBasicPokemonCardListFromDiscardPile();\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(PlayerDiscardPileText, ChoosePokemonToPlaceInPlayText);\n\t(void)DisplayCardList();\n\tSwapTurn();\n\thTemp_ffa0 = hTempCardIndex_ff98;", "after": "void PokemonFlute_PlayerSelection(void)\n{\n\tSwapTurn();\n\t(void)CreateBasicPokemonCardListFromDiscardPile();\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(PlayerDiscardPileText, ChoosePokemonToPlaceInPlayText);\n\t(void)DisplayCardList();\n\tSwapTurn();\n\thTemp_ffa0 = 0u;", "case_ids": ["PokemonFlute_PlayerSelection-0", "PokemonFlute_PlayerSelection-1", "PokemonFlute_PlayerSelection-2"]}
 # <<< factory-mutation PokemonFlute_PlayerSelection
+# >>> factory-mutation DevolutionBeam_DevolveEffect
+MUTATIONS["DevolutionBeam_DevolveEffect"] = {"source_symbol": "DevolutionBeam_DevolveEffect", "before": "void DevolutionBeam_DevolveEffect(void)\n{\n\tuint8_t target = hTemp_ffa0;\n\tif (target == 0xffu) {\n\t\treturn;\n\t}", "after": "void DevolutionBeam_DevolveEffect(void)\n{\n\tuint8_t target = hTemp_ffa0;\n\tif (target == 0xffu) {\n\t\twDuelDisplayedScreen = 1u;\n\t\treturn;\n\t}", "case_ids": ["DevolutionBeam_DevolveEffect-0", "DevolutionBeam_DevolveEffect-1"]}
+# <<< factory-mutation DevolutionBeam_DevolveEffect
