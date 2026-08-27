@@ -6528,6 +6528,60 @@ CASES["Thunderpunch_ModifierEffect"] = [
 ]
 # <<< factory Thunderpunch_ModifierEffect
 
+# >>> factory SeadraAgilityEffect
+CONTRACT["SeadraAgilityEffect"] = {"compare": (), "preserve": ()}
+CASES["SeadraAgilityEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory SeadraAgilityEffect
+
+# >>> factory RaichuAgilityEffect
+CONTRACT["RaichuAgilityEffect"] = {"compare": (), "preserve": ()}
+CASES["RaichuAgilityEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory RaichuAgilityEffect
+
+# >>> factory RapidashAgilityEffect
+CONTRACT["RapidashAgilityEffect"] = {"compare": (), "preserve": ()}
+CASES["RapidashAgilityEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory RapidashAgilityEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9286,3 +9340,17 @@ MUTATIONS["MoltresLv37DiveBomb_Success50PercentEffect"] = {"source_symbol": "Mol
 # >>> factory-mutation HornHazard_NoDamage50PercentEffect
 MUTATIONS["HornHazard_NoDamage50PercentEffect"] = {"source_symbol": "HornHazard_NoDamage50PercentEffect", "before": "uint8_t HornHazard_NoDamage50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfTailsNoDamageText, 0u);\n\tif ((toss.f & 0x10u) != 0u) {\n\t\twLoadedAttackAnimation = ATK_ANIM_HIT;", "after": "uint8_t HornHazard_NoDamage50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfTailsNoDamageText, 0u);\n\tif ((toss.f & 0x10u) != 0u) {\n\t\twLoadedAttackAnimation = 0x00u;", "case_ids": ["HornHazard_NoDamage50PercentEffect-0"]}
 # <<< factory-mutation HornHazard_NoDamage50PercentEffect
+# >>> factory-mutation SeadraAgilityEffect
+MUTATIONS["SeadraAgilityEffect"] = {
+    "source_symbol": "SeadraAgilityEffect",
+    "before": "uint16_t SeadraAgilityEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDoNotReceiveDamageOrEffectText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.hl;\n\twLoadedAttackAnimation = ATK_ANIM_AGILITY_PROTECT;",
+    "after": "uint16_t SeadraAgilityEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDoNotReceiveDamageOrEffectText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.hl;\n\twLoadedAttackAnimation = (uint8_t)(ATK_ANIM_AGILITY_PROTECT ^ 1u);",
+    "case_ids": ["SeadraAgilityEffect-0", "SeadraAgilityEffect-2"]
+}
+# <<< factory-mutation SeadraAgilityEffect
+# >>> factory-mutation RaichuAgilityEffect
+MUTATIONS["RaichuAgilityEffect"] = {"source_symbol": "RaichuAgilityEffect", "before": "uint16_t RaichuAgilityEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDoNotReceiveDamageOrEffectText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn 0u;\n\twLoadedAttackAnimation = ATK_ANIM_AGILITY_PROTECT;", "after": "uint16_t RaichuAgilityEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDoNotReceiveDamageOrEffectText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn 0u;\n\twLoadedAttackAnimation = 0x53u;", "case_ids": ["RaichuAgilityEffect-0", "RaichuAgilityEffect-2"]}
+# <<< factory-mutation RaichuAgilityEffect
+# >>> factory-mutation RapidashAgilityEffect
+MUTATIONS["RapidashAgilityEffect"] = {"source_symbol": "RapidashAgilityEffect", "before": "uint16_t RapidashAgilityEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDoNotReceiveDamageOrEffectText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn 0u;\n\twLoadedAttackAnimation = ATK_ANIM_AGILITY_PROTECT;", "after": "uint16_t RapidashAgilityEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDoNotReceiveDamageOrEffectText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn 0u;\n\twLoadedAttackAnimation = 0x53u;", "case_ids": ["RapidashAgilityEffect-0", "RapidashAgilityEffect-1", "RapidashAgilityEffect-2"]}
+# <<< factory-mutation RapidashAgilityEffect

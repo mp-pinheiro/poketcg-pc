@@ -355,6 +355,16 @@ CASES["LoadNPCForCreditsSequence"] = [
 ]
 # <<< factory LoadNPCForCreditsSequence
 
+# >>> factory CreditsSequenceCmd_LoadNPC
+CONTRACT["CreditsSequenceCmd_LoadNPC"] = {"compare": ("b", "d", "e"), "preserve": ("b", "d", "e")}
+CASES["CreditsSequenceCmd_LoadNPC"] = [
+    {"b": 0x02, "c": 0x03, "d": 0x00, "e": 0x0B, "wram": {hSCX: b"\x00", hSCY: b"\x00", wSpriteAnimBuffer: b"\x00" * 16, wSequenceCmdPtr: b"\x00\x00"}, "read": {wLoadNPCXPos: 1, wLoadNPCYPos: 1, wLoadNPCDirection: 1, wSpriteAnimBuffer: 16, wSequenceCmdPtr: 2}},
+    {"b": 0x10, "c": 0x20, "d": 0x01, "e": 0x04, "wram": {hSCX: b"\x08", hSCY: b"\x10", wSpriteAnimBuffer: b"\x00" * 16, wSequenceCmdPtr: b"\x00\x00"}, "read": {wLoadNPCXPos: 1, wLoadNPCYPos: 1, wLoadNPCDirection: 1, wSpriteAnimBuffer: 16, wSequenceCmdPtr: 2}},
+    {"b": 0xFF, "c": 0x00, "d": 0x02, "e": 0x00, "wram": {hSCX: b"\xFF", hSCY: b"\xFE", wSpriteAnimBuffer: b"\xAA" * 16, wSequenceCmdPtr: b"\x00\x00"}, "read": {wLoadNPCXPos: 1, wLoadNPCYPos: 1, wLoadNPCDirection: 1, wSpriteAnimBuffer: 16, wSequenceCmdPtr: 2}},
+    dict(POISON, wram={hSCX: b"\x04", hSCY: b"\x0C", wSpriteAnimBuffer: b"\x55" * 16, wSequenceCmdPtr: b"\x00\x00"}, read={wLoadNPCXPos: 1, wLoadNPCYPos: 1, wLoadNPCDirection: 1, wSpriteAnimBuffer: 16, wSequenceCmdPtr: 2}),
+]
+# <<< factory CreditsSequenceCmd_LoadNPC
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
@@ -510,3 +520,6 @@ MUTATIONS["CreditsSequenceCmd_LoadOWMap"] = {
 # >>> factory-mutation LoadNPCForCreditsSequence
 MUTATIONS["LoadNPCForCreditsSequence"] = {"source_symbol": "LoadNPCForCreditsSequence", "before": "void LoadNPCForCreditsSequence(uint8_t b, uint8_t c, uint8_t d, uint8_t e)\n{\n\tgb_write8(wLoadNPCXPos_ADDR, c);", "after": "void LoadNPCForCreditsSequence(uint8_t b, uint8_t c, uint8_t d, uint8_t e)\n{\n\tgb_write8(wLoadNPCXPos_ADDR, b);", "case_ids": ["LoadNPCForCreditsSequence-0", "LoadNPCForCreditsSequence-1", "LoadNPCForCreditsSequence-2", "LoadNPCForCreditsSequence-3"]}
 # <<< factory-mutation LoadNPCForCreditsSequence
+# >>> factory-mutation CreditsSequenceCmd_LoadNPC
+MUTATIONS["CreditsSequenceCmd_LoadNPC"] = {"source_symbol": "CreditsSequenceCmd_LoadNPC", "before": "void CreditsSequenceCmd_LoadNPC(uint8_t b, uint8_t c, uint8_t d, uint8_t e)\n{\n\tLoadNPCForCreditsSequence(b, c, d, e);\n\tAdvanceCreditsSequenceCmdPtrBy6();\n}", "after": "void CreditsSequenceCmd_LoadNPC(uint8_t b, uint8_t c, uint8_t d, uint8_t e)\n{\n\tLoadNPCForCreditsSequence(b, b, d, e);\n\tAdvanceCreditsSequenceCmdPtrBy6();\n}", "case_ids": ["CreditsSequenceCmd_LoadNPC-0", "CreditsSequenceCmd_LoadNPC-1", "CreditsSequenceCmd_LoadNPC-2", "CreditsSequenceCmd_LoadNPC-3"]}
+# <<< factory-mutation CreditsSequenceCmd_LoadNPC

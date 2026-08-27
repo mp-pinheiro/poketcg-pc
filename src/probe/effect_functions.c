@@ -4675,6 +4675,27 @@ static void adapt_Thunderpunch_ModifierEffect(ProbeState *s)
 }
 /* <<< factory Thunderpunch_ModifierEffect */
 
+/* >>> factory SeadraAgilityEffect */
+static void adapt_SeadraAgilityEffect(ProbeState *s)
+{
+	s->hl = SeadraAgilityEffect();
+}
+/* <<< factory SeadraAgilityEffect */
+
+/* >>> factory RaichuAgilityEffect */
+static void adapt_RaichuAgilityEffect(ProbeState *s)
+{
+	s->hl = RaichuAgilityEffect();
+}
+/* <<< factory RaichuAgilityEffect */
+
+/* >>> factory RapidashAgilityEffect */
+static void adapt_RapidashAgilityEffect(ProbeState *s)
+{
+	s->hl = RapidashAgilityEffect();
+}
+/* <<< factory RapidashAgilityEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5241,5 +5262,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MoltresLv37DiveBomb_Success50PercentEffect", adapt_MoltresLv37DiveBomb_Success50PercentEffect },
 	{ "HornHazard_NoDamage50PercentEffect", adapt_HornHazard_NoDamage50PercentEffect },
 	{ "Thunderpunch_ModifierEffect", adapt_Thunderpunch_ModifierEffect },
+	{ "SeadraAgilityEffect", adapt_SeadraAgilityEffect },
+	{ "RaichuAgilityEffect", adapt_RaichuAgilityEffect },
+	{ "RapidashAgilityEffect", adapt_RapidashAgilityEffect },
 	{ NULL, NULL },
 };

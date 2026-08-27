@@ -349,3 +349,11 @@ void LoadNPCForCreditsSequence(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 	StartNewSpriteAnimation(animation);
 }
 /* <<< factory LoadNPCForCreditsSequence */
+
+/* >>> factory CreditsSequenceCmd_LoadNPC */
+void CreditsSequenceCmd_LoadNPC(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+{
+	LoadNPCForCreditsSequence(b, c, d, e);
+	AdvanceCreditsSequenceCmdPtrBy6();
+}
+/* <<< factory CreditsSequenceCmd_LoadNPC */

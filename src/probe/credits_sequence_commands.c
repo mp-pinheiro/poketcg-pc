@@ -175,6 +175,13 @@ static void adapt_LoadNPCForCreditsSequence(ProbeState *s)
 }
 /* <<< factory LoadNPCForCreditsSequence */
 
+/* >>> factory CreditsSequenceCmd_LoadNPC */
+static void adapt_CreditsSequenceCmd_LoadNPC(ProbeState *s)
+{
+	CreditsSequenceCmd_LoadNPC(s->b, s->c, s->d, s->e);
+}
+/* <<< factory CreditsSequenceCmd_LoadNPC */
+
 const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "SetCreditsSequenceCmdPtr", adapt_SetCreditsSequenceCmdPtr },
 	{ "ExecuteCreditsSequenceCmd", adapt_ExecuteCreditsSequenceCmd },
@@ -199,5 +206,6 @@ const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "LoadOWMapForCreditsSequence", adapt_LoadOWMapForCreditsSequence },
 	{ "CreditsSequenceCmd_LoadOWMap", adapt_CreditsSequenceCmd_LoadOWMap },
 	{ "LoadNPCForCreditsSequence", adapt_LoadNPCForCreditsSequence },
+	{ "CreditsSequenceCmd_LoadNPC", adapt_CreditsSequenceCmd_LoadNPC },
 	{ NULL, NULL },
 };

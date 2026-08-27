@@ -1922,6 +1922,16 @@ uint8_t HornHazard_NoDamage50PercentEffect(void);
 /* >>> factory Thunderpunch_ModifierEffect */
 void Thunderpunch_ModifierEffect(void);
 /* <<< factory Thunderpunch_ModifierEffect */
+/* >>> factory SeadraAgilityEffect */
+/* >>> factory SeadraAgilityEffect */
+uint16_t SeadraAgilityEffect(void);
+/* <<< factory SeadraAgilityEffect */
+/* >>> factory RaichuAgilityEffect */
+uint16_t RaichuAgilityEffect(void);
+/* <<< factory RaichuAgilityEffect */
+/* >>> factory RapidashAgilityEffect */
+uint16_t RapidashAgilityEffect(void);
+/* <<< factory RapidashAgilityEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

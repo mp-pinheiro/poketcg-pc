@@ -9626,3 +9626,36 @@ uint8_t HornHazard_NoDamage50PercentEffect(void)
 	return 0x80u;
 }
 /* <<< factory HornHazard_NoDamage50PercentEffect */
+
+/* >>> factory SeadraAgilityEffect */
+uint16_t SeadraAgilityEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDoNotReceiveDamageOrEffectText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return toss.hl;
+	wLoadedAttackAnimation = ATK_ANIM_AGILITY_PROTECT;
+	return ApplySubstatus1ToAttackingCard(SUBSTATUS1_AGILITY);
+}
+/* <<< factory SeadraAgilityEffect */
+
+/* >>> factory RaichuAgilityEffect */
+uint16_t RaichuAgilityEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDoNotReceiveDamageOrEffectText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return 0u;
+	wLoadedAttackAnimation = ATK_ANIM_AGILITY_PROTECT;
+	return ApplySubstatus1ToAttackingCard(SUBSTATUS1_AGILITY);
+}
+/* <<< factory RaichuAgilityEffect */
+
+/* >>> factory RapidashAgilityEffect */
+uint16_t RapidashAgilityEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDoNotReceiveDamageOrEffectText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return 0u;
+	wLoadedAttackAnimation = ATK_ANIM_AGILITY_PROTECT;
+	return ApplySubstatus1ToAttackingCard(SUBSTATUS1_AGILITY);
+}
+/* <<< factory RapidashAgilityEffect */
