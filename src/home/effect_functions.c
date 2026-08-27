@@ -1239,6 +1239,10 @@ void BankswitchROM(uint8_t bank);
 #include "generated/hram.h"
 #include "home/damage.h"
 #include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#define IfTailsDamageToYourselfTooText 0x00edu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -9840,3 +9844,12 @@ void Thrash_ModifierEffect(void)
 	AddToDamage(10u);
 }
 /* <<< factory Thrash_ModifierEffect */
+
+/* >>> factory ZapdosThunder_Recoil50PercentEffect */
+void ZapdosThunder_Recoil50PercentEffect(void)
+{
+	LoadTxRam3(30u);
+	TossCoin_BankBResult toss = TossCoin_BankB(IfTailsDamageToYourselfTooText, 0u);
+	hTemp_ffa0 = toss.a;
+}
+/* <<< factory ZapdosThunder_Recoil50PercentEffect */

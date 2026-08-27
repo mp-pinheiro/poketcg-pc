@@ -4779,6 +4779,14 @@ static void adapt_Thrash_ModifierEffect(ProbeState *s)
 }
 /* <<< factory Thrash_ModifierEffect */
 
+/* >>> factory ZapdosThunder_Recoil50PercentEffect */
+static void adapt_ZapdosThunder_Recoil50PercentEffect(ProbeState *s)
+{
+	(void)s;
+	ZapdosThunder_Recoil50PercentEffect();
+}
+/* <<< factory ZapdosThunder_Recoil50PercentEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5359,5 +5367,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SpacingOut_Success50PercentEffect", adapt_SpacingOut_Success50PercentEffect },
 	{ "VaporeonQuickAttack_DamageBoostEffect", adapt_VaporeonQuickAttack_DamageBoostEffect },
 	{ "Thrash_ModifierEffect", adapt_Thrash_ModifierEffect },
+	{ "ZapdosThunder_Recoil50PercentEffect", adapt_ZapdosThunder_Recoil50PercentEffect },
 	{ NULL, NULL },
 };

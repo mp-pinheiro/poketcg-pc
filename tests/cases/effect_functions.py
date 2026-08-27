@@ -6744,6 +6744,15 @@ CASES["Thrash_ModifierEffect"] = [
 ]
 # <<< factory Thrash_ModifierEffect
 
+# >>> factory ZapdosThunder_Recoil50PercentEffect
+CONTRACT["ZapdosThunder_Recoil50PercentEffect"] = {"compare": (), "preserve": ()}
+CASES["ZapdosThunder_Recoil50PercentEffect"] = [
+    dict(keys=[0x00, 0x01], wram={hTemp_ffa0: b"\x00", **_acid_toss_fix}, read={hTemp_ffa0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    dict(keys=[0x00, 0x01], wram={hTemp_ffa0: b"\x00", **_acid_toss_fix_tail}, read={hTemp_ffa0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01], wram={hTemp_ffa0: b"\x77", **_acid_toss_fix}, read={hTemp_ffa0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory ZapdosThunder_Recoil50PercentEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9555,3 +9564,6 @@ MUTATIONS["VaporeonQuickAttack_DamageBoostEffect"] = {
 # >>> factory-mutation Thrash_ModifierEffect
 MUTATIONS["Thrash_ModifierEffect"] = {"source_symbol": "Thrash_ModifierEffect", "before": "void Thrash_ModifierEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadPlus10IfTails10ToYourselfText, 0u);\n\thTemp_ffa0 = toss.a;\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(10u);", "after": "void Thrash_ModifierEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadPlus10IfTails10ToYourselfText, 0u);\n\thTemp_ffa0 = toss.a;\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(0u);", "case_ids": ["Thrash_ModifierEffect-0", "Thrash_ModifierEffect-1"]}
 # <<< factory-mutation Thrash_ModifierEffect
+# >>> factory-mutation ZapdosThunder_Recoil50PercentEffect
+MUTATIONS["ZapdosThunder_Recoil50PercentEffect"] = {"source_symbol": "ZapdosThunder_Recoil50PercentEffect", "before": "void ZapdosThunder_Recoil50PercentEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfTailsDamageToYourselfTooText, 0u);\n\thTemp_ffa0 = toss.a;\n}", "after": "void ZapdosThunder_Recoil50PercentEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfTailsDamageToYourselfTooText, 0u);\n\thTemp_ffa0 = (uint8_t)(toss.a + 1u);\n}", "case_ids": ["ZapdosThunder_Recoil50PercentEffect-0", "ZapdosThunder_Recoil50PercentEffect-1", "ZapdosThunder_Recoil50PercentEffect-2"]}
+# <<< factory-mutation ZapdosThunder_Recoil50PercentEffect
