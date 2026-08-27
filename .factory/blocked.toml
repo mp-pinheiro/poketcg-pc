@@ -587,3 +587,8 @@ unblock = "CORRECTED (previous unblock note wrongly cited Func_235e/VBlank-harne
 name = "GustOfWind_SwitchEffect"
 reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:11149 (basename `effect_functions`). 18 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case GustOfWind_SwitchEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":3117,\"sp\":65434,\"rom_bank\":41,\"hbank_rom\":41,\"instructions\":53925,\"cycles\":400000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":92,\"ppu_mode\":2,\"bus\":\"01ba\"}"
 unblock = "read the recorded diagnostics under .factory/try/GustOfWind_SwitchEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "ChanseyDoubleEdgeEffect"
+reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:8431 (basename `effect_functions`). 17 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
+unblock = "read the recorded diagnostics under .factory/try/ChanseyDoubleEdgeEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
