@@ -477,11 +477,6 @@ reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:8431 (basename `eff
 unblock = "read the recorded diagnostics under .factory/try/ChanseyDoubleEdgeEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "_HandlePeekSelection"
-reason = "AUTO-RETIRED: src/engine/menus/duel.asm:1376 (basename `duel`). 18 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case _HandlePeekSelection-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65518,\"rom_bank\":2,\"hbank_rom\":2,\"instructions\":19126515,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":54,\"ppu_mode\":3,\"bus\":\"00000000000080c20000c2\"}"
-unblock = "read the recorded diagnostics under .factory/try/_HandlePeekSelection/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "_ShowPromotionalCardScreen"
 reason = "AUTO-RETIRED: src/engine/promotional_card.asm:5 (basename `promotional_card`). 18 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case _ShowPromotionalCardScreen-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":1955,\"sp\":65518,\"rom_bank\":61,\"hbank_rom\":61,\"instructions\":6688236,\"cycles\":80000012,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":62,\"ppu_mode\":3,\"bus\":\"801c09c2\"}"
 unblock = "read the recorded diagnostics under .factory/try/_ShowPromotionalCardScreen/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
@@ -537,11 +532,11 @@ reason = "AUTO-RETIRED (cluster): matches _HandlePeekSelection on BUDGET_EXHAUST
 unblock = "read the recorded diagnostics under .factory/try/_HandlePeekSelection/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "OppAction_PlayEnergyCard"
-reason = "AUTO-RETIRED (cluster): matches _HandlePeekSelection on BUDGET_EXHAUSTED pc=625 (5 stanzas). src/engine/duel/core.asm:6529 (basename `core`). generation=12; last diagnostic phase=primary failure_class=code detail=case OppAction_PlayEnergyCard-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65514,\"rom_bank\":1,\"hbank_rom\":1,\"instructions\":19594795,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":122,\"ppu_mode\":3,\"bus\":\"1510800001af053708011010500132080000002026083808000000803e4700040000000200000011083408000014004247010000003702800029080e00170200dc00390880c200050005\"}"
-unblock = "read the recorded diagnostics under .factory/try/_HandlePeekSelection/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "_PrintDeckConfiguration"
 reason = "AUTO-RETIRED (cluster): matches _HandlePeekSelection on BUDGET_EXHAUSTED pc=625 (7 stanzas). src/engine/link/printer.asm:512 (basename `printer`). generation=4; last diagnostic phase=primary failure_class=code detail=case _PrintDeckConfiguration-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65508,\"rom_bank\":6,\"hbank_rom\":6,\"instructions\":19564581,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":9,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":87,\"ppu_mode\":0,\"bus\":\"ff00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000b43c0500000000\"}"
 unblock = "read the recorded diagnostics under .factory/try/_HandlePeekSelection/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "OppAction_PlayEnergyCard"
+reason = "DIAGNOSED R1 non-application + P4 gate, two layers. Gens 10-12 produced BYTE-IDENTICAL BUDGET_EXHAUSTED pc=$0271 halted diagnostics (instructions 19,594,795 x3): the reference halts in WaitForVBlank because the case never applied the R1 recipe the retry prompt names (seed wram={0xCABB: b\"\\x80\", 0xFF40: b\"\\x80\"} together, or 0xCABB=00 for the no-op wait; CopyDMAFunction+SetupText setup; cycled keys; 20M/80M). PlayBasic and Evolve, the two siblings that applied it, LANDED via the DrawHPBar fix. Second layer: even with the reference completing, this routine bank1calls AIMakeDecision(OPPACTION_PLAY_ENERGY_CARD) whose registered C is the documented O(1) simplification - the P4 matrix wall shared with AITryUseAttack/AIDoAction."
+unblock = "re-port after the P4 matrix lands (see AIDoAction stanza), with a case seeding the R1 pair exactly like the landed OppAction_PlayBasicPokemonCard/EvolvePokemonCard cases; a pre-ret cutpoint before the AIMakeDecision call can verify the staging half independently."
