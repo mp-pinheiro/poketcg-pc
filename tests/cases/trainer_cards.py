@@ -817,6 +817,73 @@ CASES["AIPlay_Recycle"] = [
 ]
 # <<< factory AIPlay_Recycle
 
+# >>> factory AIPlay_Bill
+CONTRACT["AIPlay_Bill"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_Bill"] = [
+    dict(a=0x00, wram={0xCE16: b"\x00", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xCE16: b"\x77", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xCE16: b"\xDD", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_Bill
+# >>> factory AIPlay_Imakuni
+CONTRACT["AIPlay_Imakuni"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_Imakuni"] = [
+    dict(a=0x00, wram={0xCE16: b"\x00", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xCE16: b"\x77", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xCE16: b"\xDD", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_Imakuni
+# >>> factory AIPlay_FullHeal
+CONTRACT["AIPlay_FullHeal"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_FullHeal"] = [
+    dict(a=0x00, wram={0xCE16: b"\x00", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xCE16: b"\x77", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xCE16: b"\xDD", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_FullHeal
+# >>> factory AIPlay_ClefairyDollOrMysteriousFossil
+CONTRACT["AIPlay_ClefairyDollOrMysteriousFossil"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_ClefairyDollOrMysteriousFossil"] = [
+    dict(a=0x00, wram={0xCE16: b"\x00", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xCE16: b"\x77", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xCE16: b"\xDD", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_ClefairyDollOrMysteriousFossil
+# >>> factory AIPlay_ImposterProfessorOak
+CONTRACT["AIPlay_ImposterProfessorOak"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_ImposterProfessorOak"] = [
+    dict(a=0x00, wram={0xCE16: b"\x00", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xCE16: b"\x77", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xCE16: b"\xDD", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_ImposterProfessorOak
+# >>> factory AIPlay_PokemonCenter
+CONTRACT["AIPlay_PokemonCenter"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_PokemonCenter"] = [
+    dict(a=0x00, wram={0xCE16: b"\x00", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xCE16: b"\x77", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xCE16: b"\xDD", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_PokemonCenter
+
 # >>> factory AIDecide_PlusPower_Phase14
 CONTRACT["AIDecide_PlusPower_Phase14"] = {"compare": ("f",), "preserve": ()}
 CASES["AIDecide_PlusPower_Phase14"] = [
@@ -1175,3 +1242,40 @@ MUTATIONS["AIDecide_PlusPower_Phase13"] = {
     "case_ids": ["AIDecide_PlusPower_Phase13-0", "AIDecide_PlusPower_Phase13-1", "AIDecide_PlusPower_Phase13-2"],
 }
 # <<< factory-mutation AIDecide_PlusPower_Phase13
+
+# >>> factory-mutation AIPlay_Bill
+MUTATIONS["AIPlay_Bill"] = {"source_symbol": "AIPlay_Bill",
+    "before": "AIDecideResult AIPlay_Bill(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_Bill(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "case_ids": ["AIPlay_Bill-0"]}
+# <<< factory-mutation AIPlay_Bill
+# >>> factory-mutation AIPlay_Imakuni
+MUTATIONS["AIPlay_Imakuni"] = {"source_symbol": "AIPlay_Imakuni",
+    "before": "AIDecideResult AIPlay_Imakuni(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_Imakuni(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "case_ids": ["AIPlay_Imakuni-0"]}
+# <<< factory-mutation AIPlay_Imakuni
+# >>> factory-mutation AIPlay_FullHeal
+MUTATIONS["AIPlay_FullHeal"] = {"source_symbol": "AIPlay_FullHeal",
+    "before": "AIDecideResult AIPlay_FullHeal(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_FullHeal(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "case_ids": ["AIPlay_FullHeal-0"]}
+# <<< factory-mutation AIPlay_FullHeal
+# >>> factory-mutation AIPlay_ClefairyDollOrMysteriousFossil
+MUTATIONS["AIPlay_ClefairyDollOrMysteriousFossil"] = {"source_symbol": "AIPlay_ClefairyDollOrMysteriousFossil",
+    "before": "AIDecideResult AIPlay_ClefairyDollOrMysteriousFossil(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_ClefairyDollOrMysteriousFossil(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "case_ids": ["AIPlay_ClefairyDollOrMysteriousFossil-0"]}
+# <<< factory-mutation AIPlay_ClefairyDollOrMysteriousFossil
+# >>> factory-mutation AIPlay_ImposterProfessorOak
+MUTATIONS["AIPlay_ImposterProfessorOak"] = {"source_symbol": "AIPlay_ImposterProfessorOak",
+    "before": "AIDecideResult AIPlay_ImposterProfessorOak(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_ImposterProfessorOak(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "case_ids": ["AIPlay_ImposterProfessorOak-0"]}
+# <<< factory-mutation AIPlay_ImposterProfessorOak
+# >>> factory-mutation AIPlay_PokemonCenter
+MUTATIONS["AIPlay_PokemonCenter"] = {"source_symbol": "AIPlay_PokemonCenter",
+    "before": "AIDecideResult AIPlay_PokemonCenter(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_PokemonCenter(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "case_ids": ["AIPlay_PokemonCenter-0"]}
+# <<< factory-mutation AIPlay_PokemonCenter

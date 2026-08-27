@@ -2379,6 +2379,67 @@ AIDecideResult AIPlay_Recycle(void)
 }
 /* <<< factory AIPlay_Recycle */
 
+/* >>> factory AIPlay_Bill */
+/* trainer_cards.asm:1420-1425 */
+AIDecideResult AIPlay_Bill(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_Bill */
+
+/* >>> factory AIPlay_Imakuni */
+/* trainer_cards.asm:4520-4525 */
+AIDecideResult AIPlay_Imakuni(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_Imakuni */
+
+/* >>> factory AIPlay_FullHeal */
+/* trainer_cards.asm:3771-3776 */
+AIDecideResult AIPlay_FullHeal(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_FullHeal */
+
+/* >>> factory AIPlay_ClefairyDollOrMysteriousFossil */
+/* trainer_cards.asm:4776-4781 */
+AIDecideResult AIPlay_ClefairyDollOrMysteriousFossil(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_ClefairyDollOrMysteriousFossil */
+
+/* >>> factory AIPlay_ImposterProfessorOak */
+/* trainer_cards.asm:3182-3187 */
+AIDecideResult AIPlay_ImposterProfessorOak(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_ImposterProfessorOak */
+
+/* >>> factory AIPlay_PokemonCenter */
+/* trainer_cards.asm:3083-3088 */
+AIDecideResult AIPlay_PokemonCenter(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_PokemonCenter */
+
+
 /* >>> factory AIDecide_PlusPower_Phase14 */
 AIDecideResult AIDecide_PlusPower_Phase14(void)
 {

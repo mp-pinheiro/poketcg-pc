@@ -163,6 +163,43 @@ AIPlayPokeballResult AIPlay_Pokeball(void);
 /* >>> factory AIPlay_Recycle */
 AIDecideResult AIPlay_Recycle(void);
 /* <<< factory AIPlay_Recycle */
+
+/* >>> factory AIPlay_Bill */
+/* trainer_cards.asm:1420-1425. Stage-only twin: wAITrainerCardToPlay goes to
+ * hTempCardIndex_ff9f, then the OPPACTION_EXECUTE_TRAINER_EFFECTS dispatch;
+ * exit f is AIMakeDecision's carry. */
+AIDecideResult AIPlay_Bill(void);
+/* <<< factory AIPlay_Bill */
+/* >>> factory AIPlay_Imakuni */
+/* trainer_cards.asm:4520-4525. Stage-only twin: wAITrainerCardToPlay goes to
+ * hTempCardIndex_ff9f, then the OPPACTION_EXECUTE_TRAINER_EFFECTS dispatch;
+ * exit f is AIMakeDecision's carry. */
+AIDecideResult AIPlay_Imakuni(void);
+/* <<< factory AIPlay_Imakuni */
+/* >>> factory AIPlay_FullHeal */
+/* trainer_cards.asm:3771-3776. Stage-only twin: wAITrainerCardToPlay goes to
+ * hTempCardIndex_ff9f, then the OPPACTION_EXECUTE_TRAINER_EFFECTS dispatch;
+ * exit f is AIMakeDecision's carry. */
+AIDecideResult AIPlay_FullHeal(void);
+/* <<< factory AIPlay_FullHeal */
+/* >>> factory AIPlay_ClefairyDollOrMysteriousFossil */
+/* trainer_cards.asm:4776-4781. Stage-only twin: wAITrainerCardToPlay goes to
+ * hTempCardIndex_ff9f, then the OPPACTION_EXECUTE_TRAINER_EFFECTS dispatch;
+ * exit f is AIMakeDecision's carry. */
+AIDecideResult AIPlay_ClefairyDollOrMysteriousFossil(void);
+/* <<< factory AIPlay_ClefairyDollOrMysteriousFossil */
+/* >>> factory AIPlay_ImposterProfessorOak */
+/* trainer_cards.asm:3182-3187. Stage-only twin: wAITrainerCardToPlay goes to
+ * hTempCardIndex_ff9f, then the OPPACTION_EXECUTE_TRAINER_EFFECTS dispatch;
+ * exit f is AIMakeDecision's carry. */
+AIDecideResult AIPlay_ImposterProfessorOak(void);
+/* <<< factory AIPlay_ImposterProfessorOak */
+/* >>> factory AIPlay_PokemonCenter */
+/* trainer_cards.asm:3083-3088. Stage-only twin: wAITrainerCardToPlay goes to
+ * hTempCardIndex_ff9f, then the OPPACTION_EXECUTE_TRAINER_EFFECTS dispatch;
+ * exit f is AIMakeDecision's carry. */
+AIDecideResult AIPlay_PokemonCenter(void);
+/* <<< factory AIPlay_PokemonCenter */
 /* >>> factory AIDecide_PlusPower_Phase14 */
 AIDecideResult AIDecide_PlusPower_Phase14(void);
 /* <<< factory AIDecide_PlusPower_Phase14 */

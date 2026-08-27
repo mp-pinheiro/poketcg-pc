@@ -367,6 +367,55 @@ static void adapt_AIPlay_Recycle(ProbeState *s)
 }
 /* <<< factory AIPlay_Recycle */
 
+/* >>> factory AIPlay_Bill */
+static void adapt_AIPlay_Bill(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_Bill();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_Bill */
+
+/* >>> factory AIPlay_Imakuni */
+static void adapt_AIPlay_Imakuni(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_Imakuni();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_Imakuni */
+
+/* >>> factory AIPlay_FullHeal */
+static void adapt_AIPlay_FullHeal(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_FullHeal();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_FullHeal */
+
+/* >>> factory AIPlay_ClefairyDollOrMysteriousFossil */
+static void adapt_AIPlay_ClefairyDollOrMysteriousFossil(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_ClefairyDollOrMysteriousFossil();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_ClefairyDollOrMysteriousFossil */
+
+/* >>> factory AIPlay_ImposterProfessorOak */
+static void adapt_AIPlay_ImposterProfessorOak(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_ImposterProfessorOak();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_ImposterProfessorOak */
+
+/* >>> factory AIPlay_PokemonCenter */
+static void adapt_AIPlay_PokemonCenter(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_PokemonCenter();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_PokemonCenter */
+
+
 /* >>> factory AIDecide_PlusPower_Phase14 */
 static void adapt_AIDecide_PlusPower_Phase14(ProbeState *s)
 {
@@ -493,6 +542,12 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "_AIProcessHandTrainerCards", adapt__AIProcessHandTrainerCards },
 	{ "AIPlay_Pokeball", adapt_AIPlay_Pokeball },
 	{ "AIPlay_Recycle", adapt_AIPlay_Recycle },
+	{ "AIPlay_Bill", adapt_AIPlay_Bill },
+	{ "AIPlay_Imakuni", adapt_AIPlay_Imakuni },
+	{ "AIPlay_FullHeal", adapt_AIPlay_FullHeal },
+	{ "AIPlay_ClefairyDollOrMysteriousFossil", adapt_AIPlay_ClefairyDollOrMysteriousFossil },
+	{ "AIPlay_ImposterProfessorOak", adapt_AIPlay_ImposterProfessorOak },
+	{ "AIPlay_PokemonCenter", adapt_AIPlay_PokemonCenter },
 	{ "AIDecide_PlusPower_Phase14", adapt_AIDecide_PlusPower_Phase14 },
 	{ "AIDecide_GustOfWind", adapt_AIDecide_GustOfWind },
 	{ "AIDecide_Defender_Phase13", adapt_AIDecide_Defender_Phase13 },
