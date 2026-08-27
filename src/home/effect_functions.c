@@ -8165,3 +8165,10 @@ HandlePlayerSelection2HandCardsResult HandlePlayerSelection2HandCardsToDiscard(v
 	return HandlePlayerSelection2HandCards(ChooseTheCardToDiscardText, Choose2CardsFromHandToDiscardText);
 }
 /* <<< factory HandlePlayerSelection2HandCardsToDiscard */
+
+/* >>> factory SuperEnergyRetrieval_PlayerHandSelection */
+HandlePlayerSelection2HandCardsResult SuperEnergyRetrieval_PlayerHandSelection(void)
+{
+	return HandlePlayerSelection2HandCardsToDiscard();
+}
+/* <<< factory SuperEnergyRetrieval_PlayerHandSelection */

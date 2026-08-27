@@ -1696,6 +1696,9 @@ HandlePlayerSelection2HandCardsResult HandlePlayerSelection2HandCards(uint16_t d
 /* >>> factory HandlePlayerSelection2HandCardsToDiscard */
 HandlePlayerSelection2HandCardsResult HandlePlayerSelection2HandCardsToDiscard(void);
 /* <<< factory HandlePlayerSelection2HandCardsToDiscard */
+/* >>> factory SuperEnergyRetrieval_PlayerHandSelection */
+HandlePlayerSelection2HandCardsResult SuperEnergyRetrieval_PlayerHandSelection(void);
+/* <<< factory SuperEnergyRetrieval_PlayerHandSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
