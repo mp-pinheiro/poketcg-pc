@@ -6402,6 +6402,62 @@ CASES["ClampEffect"] = [
 ]
 # <<< factory ClampEffect
 
+# >>> factory HideInShellEffect
+CONTRACT["HideInShellEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["HideInShellEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory HideInShellEffect
+
+# >>> factory KakunaStiffenEffect
+CONTRACT["KakunaStiffenEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["KakunaStiffenEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory KakunaStiffenEffect
+
+# >>> factory MetapodStiffenEffect
+CONTRACT["MetapodStiffenEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["MetapodStiffenEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory MetapodStiffenEffect
+
+# >>> factory LeerEffect
+CONTRACT["LeerEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["LeerEffect"] = [
+    dict(hl=0xC200, keys=[0x00, 0x01],
+         wram={0xC2E8: b"\x00", 0xC2F6: b"\x00", 0xCCB8: b"\x00", 0xCCED: b"\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCCED: 1, 0xC2E8: 1, 0xC2F6: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(hl=0xC200, keys=[0x00, 0x01],
+         wram={0xC2E8: b"\x00", 0xC2F6: b"\x00", 0xCCB8: b"\x00", 0xCCED: b"\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCCED: 1, 0xC2E8: 1, 0xC2F6: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory LeerEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9131,3 +9187,16 @@ MUTATIONS["FearowAgilityEffect"] = {"source_symbol": "FearowAgilityEffect", "bef
 # >>> factory-mutation ClampEffect
 MUTATIONS["ClampEffect"] = {"source_symbol": "ClampEffect", "before": "\twLoadedAttackAnimation = ATK_ANIM_NONE;\n\tSetDefiniteDamage(0u);", "after": "\twLoadedAttackAnimation = ATK_ANIM_NONE;\n\tSetDefiniteDamage(1u);", "case_ids": ["ClampEffect-1"]}
 # <<< factory-mutation ClampEffect
+
+# >>> factory-mutation HideInShellEffect
+MUTATIONS["HideInShellEffect"] = {"source_symbol": "HideInShellEffect", "before": "\twLoadedAttackAnimation = ATK_ANIM_PROTECT;\n\tApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_HIDE_IN_SHELL);", "after": "\twLoadedAttackAnimation = 0x50u;\n\tApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_HIDE_IN_SHELL);", "case_ids": ["HideInShellEffect-0"]}
+# <<< factory-mutation HideInShellEffect
+# >>> factory-mutation KakunaStiffenEffect
+MUTATIONS["KakunaStiffenEffect"] = {"source_symbol": "KakunaStiffenEffect", "before": "uint8_t KakunaStiffenEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsNoDamageNextTurnText, 0u);\n\tif ((toss.f & 0x10u) == 0u) {\n\t\tSetWasUnsuccessful();\n\t\treturn toss.f;\n\t}\n\twLoadedAttackAnimation = ATK_ANIM_PROTECT;", "after": "uint8_t KakunaStiffenEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsNoDamageNextTurnText, 0u);\n\tif ((toss.f & 0x10u) == 0u) {\n\t\tSetWasUnsuccessful();\n\t\treturn toss.f;\n\t}\n\twLoadedAttackAnimation = 0x50u;", "case_ids": ["KakunaStiffenEffect-0"]}
+# <<< factory-mutation KakunaStiffenEffect
+# >>> factory-mutation MetapodStiffenEffect
+MUTATIONS["MetapodStiffenEffect"] = {"source_symbol": "MetapodStiffenEffect", "before": "\twLoadedAttackAnimation = ATK_ANIM_PROTECT;\n\tApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_STIFFEN);\n\treturn toss.f;\n}\n/* <<< factory MetapodStiffenEffect */", "after": "\twLoadedAttackAnimation = 0x50u;\n\tApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_STIFFEN);\n\treturn toss.f;\n}\n/* <<< factory MetapodStiffenEffect */", "case_ids": ["MetapodStiffenEffect-0"]}
+# <<< factory-mutation MetapodStiffenEffect
+# >>> factory-mutation LeerEffect
+MUTATIONS["LeerEffect"] = {"source_symbol": "LeerEffect", "before": "\twLoadedAttackAnimation = ATK_ANIM_LEER;\n\tApplySubstatus2ToDefendingCard(SUBSTATUS2_LEER, hl);", "after": "\twLoadedAttackAnimation = 0x75u;\n\tApplySubstatus2ToDefendingCard(SUBSTATUS2_LEER, hl);", "case_ids": ["LeerEffect-0"]}
+# <<< factory-mutation LeerEffect

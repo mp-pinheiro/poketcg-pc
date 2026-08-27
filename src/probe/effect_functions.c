@@ -4542,6 +4542,34 @@ static void adapt_ClampEffect(ProbeState *s)
 }
 /* <<< factory ClampEffect */
 
+/* >>> factory HideInShellEffect */
+static void adapt_HideInShellEffect(ProbeState *s)
+{
+	s->f = HideInShellEffect();
+}
+/* <<< factory HideInShellEffect */
+
+/* >>> factory KakunaStiffenEffect */
+static void adapt_KakunaStiffenEffect(ProbeState *s)
+{
+	s->f = KakunaStiffenEffect();
+}
+/* <<< factory KakunaStiffenEffect */
+
+/* >>> factory MetapodStiffenEffect */
+static void adapt_MetapodStiffenEffect(ProbeState *s)
+{
+	s->f = MetapodStiffenEffect();
+}
+/* <<< factory MetapodStiffenEffect */
+
+/* >>> factory LeerEffect */
+static void adapt_LeerEffect(ProbeState *s)
+{
+	s->f = LeerEffect(s->hl);
+}
+/* <<< factory LeerEffect */
+
 /* >>> factory PoliwhirlAmnesia_PlayerSelectEffect */
 static void adapt_PoliwhirlAmnesia_PlayerSelectEffect(ProbeState *s)
 {
@@ -5168,5 +5196,9 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "JolteonQuickAttack_DamageBoostEffect", adapt_JolteonQuickAttack_DamageBoostEffect },
 	{ "FearowAgilityEffect", adapt_FearowAgilityEffect },
 	{ "ClampEffect", adapt_ClampEffect },
+	{ "HideInShellEffect", adapt_HideInShellEffect },
+	{ "KakunaStiffenEffect", adapt_KakunaStiffenEffect },
+	{ "MetapodStiffenEffect", adapt_MetapodStiffenEffect },
+	{ "LeerEffect", adapt_LeerEffect },
 	{ NULL, NULL },
 };

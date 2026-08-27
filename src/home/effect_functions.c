@@ -870,11 +870,17 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define AcidCheckText 0x00f5u
 #define IfHeadsOpponentCannotAttackText 0x00fcu
 
-#define SuccessCheckIfHeadsAttackIsSuccessfulText 0x00eeu
+#define IfHeadsNoDamageNextTurnText 0x00f1u
 #define IfHeadsDoNotReceiveDamageOrEffectText 0x00fbu
 #define ATK_ANIM_HIT_EFFECT 0x05u
 #define ATK_ANIM_AGILITY_PROTECT 0x52u
+#define ATK_ANIM_PROTECT 0x4fu
+#define ATK_ANIM_LEER 0x74u
 #define SUBSTATUS1_AGILITY 0x0cu
+#define SUBSTATUS1_NO_DAMAGE_STIFFEN 0x0fu
+#define SUBSTATUS1_NO_DAMAGE_HIDE_IN_SHELL 0x11u
+#define SUBSTATUS2_LEER 0x06u
+#define SuccessCheckIfHeadsAttackIsSuccessfulText 0x00eeu
 #include "home/math.h"
 #include "home/print_text.h"
 #include "home/effect_functions.h"
@@ -9466,3 +9472,64 @@ uint8_t ClampEffect(void)
 	return 0x80u;
 }
 /* <<< factory ClampEffect */
+
+/* >>> factory HideInShellEffect */
+/* effect_functions.asm:3081-3090. Both exits keep TossCoin's flags. */
+uint8_t HideInShellEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadsNoDamageNextTurnText, 0u);
+	if ((toss.f & 0x10u) == 0u) {
+		SetWasUnsuccessful();
+		return toss.f;
+	}
+	wLoadedAttackAnimation = ATK_ANIM_PROTECT;
+	ApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_HIDE_IN_SHELL);
+	return toss.f;
+}
+/* <<< factory HideInShellEffect */
+
+/* >>> factory KakunaStiffenEffect */
+/* effect_functions.asm:1561-1570 */
+uint8_t KakunaStiffenEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadsNoDamageNextTurnText, 0u);
+	if ((toss.f & 0x10u) == 0u) {
+		SetWasUnsuccessful();
+		return toss.f;
+	}
+	wLoadedAttackAnimation = ATK_ANIM_PROTECT;
+	ApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_STIFFEN);
+	return toss.f;
+}
+/* <<< factory KakunaStiffenEffect */
+
+/* >>> factory MetapodStiffenEffect */
+/* effect_functions.asm:1662-1671. Byte-identical twin of KakunaStiffenEffect. */
+uint8_t MetapodStiffenEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadsNoDamageNextTurnText, 0u);
+	if ((toss.f & 0x10u) == 0u) {
+		SetWasUnsuccessful();
+		return toss.f;
+	}
+	wLoadedAttackAnimation = ATK_ANIM_PROTECT;
+	ApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_STIFFEN);
+	return toss.f;
+}
+/* <<< factory MetapodStiffenEffect */
+
+/* >>> factory LeerEffect */
+/* effect_functions.asm:6175-6184. TossCoin preserves hl, so the defending
+ * card's substatus write lands through the caller's original pointer. */
+uint8_t LeerEffect(uint16_t hl)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadsOpponentCannotAttackText, hl);
+	if ((toss.f & 0x10u) == 0u) {
+		SetWasUnsuccessful();
+		return toss.f;
+	}
+	wLoadedAttackAnimation = ATK_ANIM_LEER;
+	ApplySubstatus2ToDefendingCard(SUBSTATUS2_LEER, hl);
+	return toss.f;
+}
+/* <<< factory LeerEffect */

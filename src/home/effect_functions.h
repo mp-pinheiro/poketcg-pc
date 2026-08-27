@@ -1895,6 +1895,18 @@ uint16_t FearowAgilityEffect(void);
 /* >>> factory ClampEffect */
 uint8_t ClampEffect(void);
 /* <<< factory ClampEffect */
+/* >>> factory HideInShellEffect */
+uint8_t HideInShellEffect(void);
+/* <<< factory HideInShellEffect */
+/* >>> factory KakunaStiffenEffect */
+uint8_t KakunaStiffenEffect(void);
+/* <<< factory KakunaStiffenEffect */
+/* >>> factory MetapodStiffenEffect */
+uint8_t MetapodStiffenEffect(void);
+/* <<< factory MetapodStiffenEffect */
+/* >>> factory LeerEffect */
+uint8_t LeerEffect(uint16_t hl);
+/* <<< factory LeerEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
