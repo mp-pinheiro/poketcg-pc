@@ -8748,3 +8748,15 @@ DealDamageToAllBenchedPokemonResult Blizzard_BenchDamageEffect(uint8_t a, uint8_
 	return result;
 }
 /* <<< factory Blizzard_BenchDamageEffect */
+
+/* >>> factory Thunderpunch_RecoilEffect */
+Thunderpunch_RecoilEffectResult Thunderpunch_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)
+{
+	uint8_t coin = hTemp_ffa0;
+	if (coin != 0u)
+		return (Thunderpunch_RecoilEffectResult){coin, 0x00u};
+	DealConfusionDamageToSelfResult result =
+		DealRecoilDamageToSelf(10u, f, d, e);
+	return (Thunderpunch_RecoilEffectResult){result.a, result.f};
+}
+/* <<< factory Thunderpunch_RecoilEffect */

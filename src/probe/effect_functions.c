@@ -4276,6 +4276,15 @@ static void adapt_Blizzard_BenchDamageEffect(ProbeState *s)
 }
 /* <<< factory Blizzard_BenchDamageEffect */
 
+/* >>> factory Thunderpunch_RecoilEffect */
+static void adapt_Thunderpunch_RecoilEffect(ProbeState *s)
+{
+	Thunderpunch_RecoilEffectResult r = Thunderpunch_RecoilEffect(s->f, s->d, s->e);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Thunderpunch_RecoilEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4791,5 +4800,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "HandleProphecyScreen", adapt_HandleProphecyScreen },
 	{ "EarthquakeEffect", adapt_EarthquakeEffect },
 	{ "Blizzard_BenchDamageEffect", adapt_Blizzard_BenchDamageEffect },
+	{ "Thunderpunch_RecoilEffect", adapt_Thunderpunch_RecoilEffect },
 	{ NULL, NULL },
 };

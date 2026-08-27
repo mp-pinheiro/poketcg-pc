@@ -5744,6 +5744,16 @@ CASES["Blizzard_BenchDamageEffect"] = [
 ]
 # <<< factory Blizzard_BenchDamageEffect
 
+# >>> factory Thunderpunch_RecoilEffect
+CONTRACT["Thunderpunch_RecoilEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Thunderpunch_RecoilEffect"] = [
+    {"f": 0x00, "wram": {hTemp_ffa0: b"\x01"},
+     "read": {hTemp_ffa0: 1}},
+    dict(POISON, wram={hTemp_ffa0: b"\x01"},
+         read={hTemp_ffa0: 1}),
+]
+# <<< factory Thunderpunch_RecoilEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8343,3 +8353,6 @@ MUTATIONS["EarthquakeEffect"] = {"source_symbol": "EarthquakeEffect", "before": 
 # >>> factory-mutation Blizzard_BenchDamageEffect
 MUTATIONS["Blizzard_BenchDamageEffect"] = {"source_symbol": "Blizzard_BenchDamageEffect", "before": "if (hTemp_ffa0 == 0u) {\n\t\twIsDamageToSelf = TRUE;", "after": "if (hTemp_ffa0 == 0u) {\n\t\twIsDamageToSelf = 0x00u;", "case_ids": ["Blizzard_BenchDamageEffect-0", "Blizzard_BenchDamageEffect-2"]}
 # <<< factory-mutation Blizzard_BenchDamageEffect
+# >>> factory-mutation Thunderpunch_RecoilEffect
+MUTATIONS["Thunderpunch_RecoilEffect"] = {"source_symbol": "Thunderpunch_RecoilEffect", "before": "Thunderpunch_RecoilEffectResult Thunderpunch_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tuint8_t coin = hTemp_ffa0;\n\tif (coin != 0u)\n\t\treturn (Thunderpunch_RecoilEffectResult){coin, 0x00u};", "after": "Thunderpunch_RecoilEffectResult Thunderpunch_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tuint8_t coin = hTemp_ffa0;\n\tif (coin != 0u)\n\t\treturn (Thunderpunch_RecoilEffectResult){(uint8_t)(coin + 1u), 0x00u};", "case_ids": ["Thunderpunch_RecoilEffect-0", "Thunderpunch_RecoilEffect-1"]}
+# <<< factory-mutation Thunderpunch_RecoilEffect
