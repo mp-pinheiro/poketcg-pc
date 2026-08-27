@@ -4640,7 +4640,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ProfessorOakEffect", adapt_ProfessorOakEffect },
 	{ "Maintenance_ReturnToDeckAndDrawEffect", adapt_Maintenance_ReturnToDeckAndDrawEffect },
 	{ "ThunderJolt_RecoilEffect", adapt_ThunderJolt_RecoilEffect },
-	{ "ZapdosThunder_RecoilEffect", adapt_ZapdosThunder_RecoilEffect },
 	{ "ImposterProfessorOakEffect", adapt_ImposterProfessorOakEffect },
 	{ "HandlePlayerSelection2HandCards", adapt_HandlePlayerSelection2HandCards },
 	{ "HandlePlayerSelection2HandCardsToDiscard", adapt_HandlePlayerSelection2HandCardsToDiscard },
@@ -4649,5 +4648,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ItemFinder_PlayerSelection", adapt_ItemFinder_PlayerSelection },
 	{ "BillEffect", adapt_BillEffect },
 	{ "SlicingWindEffect", adapt_SlicingWindEffect },
+	{ "ZapdosThunder_RecoilEffect", adapt_ZapdosThunder_RecoilEffect },
 	{ NULL, NULL },
 };

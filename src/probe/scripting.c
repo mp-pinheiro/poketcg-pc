@@ -1409,10 +1409,10 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "PrintInteractableObjectText", adapt_PrintInteractableObjectText },
 	{ "Func_c943", adapt_Func_c943 },
 	{ "ScriptCommand_MovePlayer", adapt_ScriptCommand_MovePlayer },
-	{ "ShowMultichoiceTextbox", adapt_ShowMultichoiceTextbox },
 	{ "ScriptCommand_ChooseStarterDeckMultichoice", adapt_ScriptCommand_ChooseStarterDeckMultichoice },
 	{ "ScriptCommand_ShowSamNormalMultichoice", adapt_ScriptCommand_ShowSamNormalMultichoice },
 	{ "ScriptCommand_ShowSamRulesMultichoice", adapt_ScriptCommand_ShowSamRulesMultichoice },
 	{ "ScriptCommand_ChooseDeckToDuelAgainstMultichoice", adapt_ScriptCommand_ChooseDeckToDuelAgainstMultichoice },
+	{ "ShowMultichoiceTextbox", adapt_ShowMultichoiceTextbox },
 	{ NULL, NULL },
 };
