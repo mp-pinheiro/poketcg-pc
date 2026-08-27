@@ -20,4 +20,7 @@ AskToContinueFromDiaryWithDuelDataResult AskToContinueFromDiaryWithDuelData(void
 /* >>> factory HandleStartMenu */
 void HandleStartMenu(void);
 /* <<< factory HandleStartMenu */
+/* >>> factory DrawPlayerPortraitAndPrintNewGameText */
+void DrawPlayerPortraitAndPrintNewGameText(void);
+/* <<< factory DrawPlayerPortraitAndPrintNewGameText */
 #endif /* POKETCG_HOME_START_H */

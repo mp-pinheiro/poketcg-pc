@@ -53,6 +53,11 @@
 #define NULL 0x00u
 #define SYM_CURSOR_R 0x0Fu
 #define SYM_SPACE 0x00u
+
+#include "home/color.h"
+#include "home/play_animation.h"
+#define IsCrazyAboutPokemonAndPokemonCardCollectingText 0x0379u
+#define HANDLEALLSPRITEANIMATIONS_ADDR 0x3CB4u
 /* <<< factory statics */
 
 #define CONSOLE_CGB 0x02u
@@ -231,3 +236,20 @@ void HandleStartMenu(void)
 	}
 }
 /* <<< factory HandleStartMenu */
+
+/* >>> factory DrawPlayerPortraitAndPrintNewGameText */
+void DrawPlayerPortraitAndPrintNewGameText(void)
+{
+	DisableLCD();
+	LoadConsolePaletteData();
+	(void)InitMenuScreen();
+	EnableAndClearSpriteAnimations();
+	(void)SetDoFrameFunction(HANDLEALLSPRITEANIMATIONS_ADDR);
+	DrawPlayerPortrait();
+	(void)FadeScreenFromWhite();
+	DoFrameIfLCDEnabled();
+	(void)PrintScrollableText_NoTextBoxLabel(IsCrazyAboutPokemonAndPokemonCardCollectingText);
+	(void)ResetDoFrameFunction(0u);
+	EnableAndClearSpriteAnimations();
+}
+/* <<< factory DrawPlayerPortraitAndPrintNewGameText */

@@ -105,6 +105,20 @@ CASES["HandleStartMenu"] = [
 ]
 # <<< factory HandleStartMenu
 
+# >>> factory DrawPlayerPortraitAndPrintNewGameText
+CONTRACT["DrawPlayerPortraitAndPrintNewGameText"] = {"compare": (), "preserve": ()}
+CASES["DrawPlayerPortraitAndPrintNewGameText"] = [
+    {"wram": {0xCABB: b"\x00", 0xFF40: b"\x00", 0xD293: b"\xA5"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01], "instruction_budget": 60000000, "cycle_budget": 240000000,
+     "read": {0xD293: 1}},
+    dict(POISON, wram={0xCABB: b"\x00", 0xFF40: b"\x00", 0xD293: b"\x5A"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         keys=[0x00, 0x01], instruction_budget=60000000, cycle_budget=240000000,
+         read={0xD293: 1}),
+]
+# <<< factory DrawPlayerPortraitAndPrintNewGameText
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation CheckIfHasSaveData
@@ -119,3 +133,6 @@ MUTATIONS["AskToContinueFromDiaryWithDuelData"] = {"source_symbol": "AskToContin
 # >>> factory-mutation HandleStartMenu
 MUTATIONS["HandleStartMenu"] = {"source_symbol": "HandleStartMenu", "before": "\t\twLastSelectedStartMenuItem = hCurMenuItem;", "after": "\t\twLastSelectedStartMenuItem = (uint8_t)(hCurMenuItem ^ 1u);", "case_ids": ["HandleStartMenu-0", "HandleStartMenu-1"]}
 # <<< factory-mutation HandleStartMenu
+# >>> factory-mutation DrawPlayerPortraitAndPrintNewGameText
+MUTATIONS["DrawPlayerPortraitAndPrintNewGameText"] = {"source_symbol": "DrawPlayerPortraitAndPrintNewGameText", "before": "\tLoadConsolePaletteData();", "after": "\t(void)0;", "case_ids": ["DrawPlayerPortraitAndPrintNewGameText-0", "DrawPlayerPortraitAndPrintNewGameText-1"]}
+# <<< factory-mutation DrawPlayerPortraitAndPrintNewGameText

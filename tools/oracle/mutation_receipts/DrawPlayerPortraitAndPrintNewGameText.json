@@ -1,0 +1,9 @@
+{
+  "fn": "DrawPlayerPortraitAndPrintNewGameText",
+  "case": "tests/cases/start.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawPlayerPortraitAndPrintNewGameText\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"53907\": \"00\", \"65344\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawPlayerPortraitAndPrintNewGameText\", \"mismatches\": {\"bus\": {\"address\": 53907, \"reference\": \"800080\", \"native\": \"80a580\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[51899, 1], [53907, 1], [65344, 1]]}}}\n",
+  "restored": "{\"fn\": \"DrawPlayerPortraitAndPrintNewGameText\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"53907\": \"00\", \"65344\": \"80\"}}, \"status\": \"PASS\"}\n"
+}
