@@ -4845,6 +4845,24 @@ static void adapt_Blizzard_BenchDamage50PercentEffect(ProbeState *s)
 }
 /* <<< factory Blizzard_BenchDamage50PercentEffect */
 
+/* >>> factory SpearowMirrorMove_InitialEffect2 */
+static void adapt_SpearowMirrorMove_InitialEffect2(ProbeState *s)
+{
+	PlayerPickAttackForAmnesiaResult result = SpearowMirrorMove_InitialEffect2();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory SpearowMirrorMove_InitialEffect2 */
+
+/* >>> factory PidgeottoMirrorMove_InitialEffect2 */
+static void adapt_PidgeottoMirrorMove_InitialEffect2(ProbeState *s)
+{
+	PlayerPickAttackForAmnesiaResult result = PidgeottoMirrorMove_InitialEffect2();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory PidgeottoMirrorMove_InitialEffect2 */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5433,5 +5451,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ThunderJolt_Recoil50PercentEffect", adapt_ThunderJolt_Recoil50PercentEffect },
 	{ "LeekSlap_NoDamage50PercentEffect", adapt_LeekSlap_NoDamage50PercentEffect },
 	{ "Blizzard_BenchDamage50PercentEffect", adapt_Blizzard_BenchDamage50PercentEffect },
+	{ "SpearowMirrorMove_InitialEffect2", adapt_SpearowMirrorMove_InitialEffect2 },
+	{ "PidgeottoMirrorMove_InitialEffect2", adapt_PidgeottoMirrorMove_InitialEffect2 },
 	{ NULL, NULL },
 };

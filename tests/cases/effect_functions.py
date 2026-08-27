@@ -6854,6 +6854,23 @@ CASES["Blizzard_BenchDamage50PercentEffect"] = [
 ]
 # <<< factory Blizzard_BenchDamage50PercentEffect
 
+# >>> factory SpearowMirrorMove_InitialEffect2
+CONTRACT["SpearowMirrorMove_InitialEffect2"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["SpearowMirrorMove_InitialEffect2"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2F8: b"\x00"}, "read": {0xFFA0: 1}},
+    {"wram": {0xFF97: b"\xC2", 0xC2F8: b"\x01"}, "read": {0xFFA0: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2F8: b"\x01"}, read={0xFFA0: 1}),
+]
+# <<< factory SpearowMirrorMove_InitialEffect2
+
+# >>> factory PidgeottoMirrorMove_InitialEffect2
+CONTRACT["PidgeottoMirrorMove_InitialEffect2"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PidgeottoMirrorMove_InitialEffect2"] = [
+	{},
+	dict(POISON),
+]
+# <<< factory PidgeottoMirrorMove_InitialEffect2
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9689,3 +9706,9 @@ MUTATIONS["LeekSlap_NoDamage50PercentEffect"] = {"source_symbol": "LeekSlap_NoDa
 # >>> factory-mutation Blizzard_BenchDamage50PercentEffect
 MUTATIONS["Blizzard_BenchDamage50PercentEffect"] = {"source_symbol": "Blizzard_BenchDamage50PercentEffect", "before": "void Blizzard_BenchDamage50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageToOppBenchIfHeadsDamageToYoursIfTailsText, 0u);\n\thTemp_ffa0 = toss.a;", "after": "void Blizzard_BenchDamage50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageToOppBenchIfHeadsDamageToYoursIfTailsText, 0u);\n\thTemp_ffa0 = (uint8_t)(toss.a ^ 0x01u);", "case_ids": ["Blizzard_BenchDamage50PercentEffect-0", "Blizzard_BenchDamage50PercentEffect-1"]}
 # <<< factory-mutation Blizzard_BenchDamage50PercentEffect
+# >>> factory-mutation SpearowMirrorMove_InitialEffect2
+MUTATIONS["SpearowMirrorMove_InitialEffect2"] = {"source_symbol": "SpearowMirrorMove_InitialEffect2", "before": "PlayerPickAttackForAmnesiaResult SpearowMirrorMove_InitialEffect2(void)\n{\n\treturn MirrorMove_InitialEffect2();\n}", "after": "PlayerPickAttackForAmnesiaResult SpearowMirrorMove_InitialEffect2(void)\n{\n\treturn (PlayerPickAttackForAmnesiaResult){0u, 0u};\n}", "case_ids": ["SpearowMirrorMove_InitialEffect2-0", "SpearowMirrorMove_InitialEffect2-1", "SpearowMirrorMove_InitialEffect2-2"]}
+# <<< factory-mutation SpearowMirrorMove_InitialEffect2
+# >>> factory-mutation PidgeottoMirrorMove_InitialEffect2
+MUTATIONS["PidgeottoMirrorMove_InitialEffect2"] = {"source_symbol": "PidgeottoMirrorMove_InitialEffect2", "before": "\treturn MirrorMove_InitialEffect2();", "after": "\treturn (PlayerPickAttackForAmnesiaResult){0};", "case_ids": ["PidgeottoMirrorMove_InitialEffect2-0", "PidgeottoMirrorMove_InitialEffect2-1"]}
+# <<< factory-mutation PidgeottoMirrorMove_InitialEffect2

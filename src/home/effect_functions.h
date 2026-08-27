@@ -1990,6 +1990,12 @@ uint8_t LeekSlap_NoDamage50PercentEffect(void);
 /* >>> factory Blizzard_BenchDamage50PercentEffect */
 void Blizzard_BenchDamage50PercentEffect(void);
 /* <<< factory Blizzard_BenchDamage50PercentEffect */
+/* >>> factory SpearowMirrorMove_InitialEffect2 */
+PlayerPickAttackForAmnesiaResult SpearowMirrorMove_InitialEffect2(void);
+/* <<< factory SpearowMirrorMove_InitialEffect2 */
+/* >>> factory PidgeottoMirrorMove_InitialEffect2 */
+PlayerPickAttackForAmnesiaResult PidgeottoMirrorMove_InitialEffect2(void);
+/* <<< factory PidgeottoMirrorMove_InitialEffect2 */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

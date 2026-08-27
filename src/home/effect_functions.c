@@ -9935,3 +9935,17 @@ void Blizzard_BenchDamage50PercentEffect(void)
 	hTemp_ffa0 = toss.a;
 }
 /* <<< factory Blizzard_BenchDamage50PercentEffect */
+
+/* >>> factory SpearowMirrorMove_InitialEffect2 */
+PlayerPickAttackForAmnesiaResult SpearowMirrorMove_InitialEffect2(void)
+{
+	return MirrorMove_InitialEffect2();
+}
+/* <<< factory SpearowMirrorMove_InitialEffect2 */
+
+/* >>> factory PidgeottoMirrorMove_InitialEffect2 */
+PlayerPickAttackForAmnesiaResult PidgeottoMirrorMove_InitialEffect2(void)
+{
+	return MirrorMove_InitialEffect2();
+}
+/* <<< factory PidgeottoMirrorMove_InitialEffect2 */
