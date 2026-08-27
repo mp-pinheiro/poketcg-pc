@@ -4261,6 +4261,21 @@ static void adapt_EarthquakeEffect(ProbeState *s)
 }
 /* <<< factory EarthquakeEffect */
 
+/* >>> factory Blizzard_BenchDamageEffect */
+static void adapt_Blizzard_BenchDamageEffect(ProbeState *s)
+{
+	DealDamageToAllBenchedPokemonResult result =
+		Blizzard_BenchDamageEffect(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory Blizzard_BenchDamageEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4775,5 +4790,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DealDamageToAllBenchedPokemon", adapt_DealDamageToAllBenchedPokemon },
 	{ "HandleProphecyScreen", adapt_HandleProphecyScreen },
 	{ "EarthquakeEffect", adapt_EarthquakeEffect },
+	{ "Blizzard_BenchDamageEffect", adapt_Blizzard_BenchDamageEffect },
 	{ NULL, NULL },
 };

@@ -5735,6 +5735,15 @@ CASES["EarthquakeEffect"] = [
 ]
 # <<< factory EarthquakeEffect
 
+# >>> factory Blizzard_BenchDamageEffect
+CONTRACT["Blizzard_BenchDamageEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["Blizzard_BenchDamageEffect"] = [
+    {"f": 0x00, "wram": {0xFFA0: b"\x00", 0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xCCE6: b"\x00"}, "read": {0xCCE6: 1}},
+    {"f": 0x00, "wram": {0xFFA0: b"\x01", 0xFF97: b"\xC2", 0xC3EF: b"\x01", 0xCCE6: b"\x00"}, "read": {0xCCE6: 1}},
+    dict(POISON, wram={0xFFA0: b"\x00", 0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xCCE6: b"\x00"}, read={0xCCE6: 1}),
+]
+# <<< factory Blizzard_BenchDamageEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8331,3 +8340,6 @@ MUTATIONS["HandleProphecyScreen"] = {"source_symbol": "HandleProphecyScreen", "b
 # >>> factory-mutation EarthquakeEffect
 MUTATIONS["EarthquakeEffect"] = {"source_symbol": "EarthquakeEffect", "before": "DealDamageToAllBenchedPokemonResult EarthquakeEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\twIsDamageToSelf = TRUE;", "after": "DealDamageToAllBenchedPokemonResult EarthquakeEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\twIsDamageToSelf = 0u;", "case_ids": ["EarthquakeEffect-0", "EarthquakeEffect-1"]}
 # <<< factory-mutation EarthquakeEffect
+# >>> factory-mutation Blizzard_BenchDamageEffect
+MUTATIONS["Blizzard_BenchDamageEffect"] = {"source_symbol": "Blizzard_BenchDamageEffect", "before": "if (hTemp_ffa0 == 0u) {\n\t\twIsDamageToSelf = TRUE;", "after": "if (hTemp_ffa0 == 0u) {\n\t\twIsDamageToSelf = 0x00u;", "case_ids": ["Blizzard_BenchDamageEffect-0", "Blizzard_BenchDamageEffect-2"]}
+# <<< factory-mutation Blizzard_BenchDamageEffect
