@@ -4452,6 +4452,31 @@ static void adapt_BulbasaurLeechSeedEffect(ProbeState *s)
 }
 /* <<< factory BulbasaurLeechSeedEffect */
 
+/* >>> factory PoliwhirlAmnesia_PlayerSelectEffect */
+static void adapt_PoliwhirlAmnesia_PlayerSelectEffect(ProbeState *s)
+{
+	PlayerPickAttackForAmnesiaResult result = PoliwhirlAmnesia_PlayerSelectEffect();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory PoliwhirlAmnesia_PlayerSelectEffect */
+
+/* >>> factory SlowpokeAmnesia_PlayerSelectEffect */
+static void adapt_SlowpokeAmnesia_PlayerSelectEffect(ProbeState *s)
+{
+	PlayerPickAttackForAmnesiaResult result = SlowpokeAmnesia_PlayerSelectEffect();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory SlowpokeAmnesia_PlayerSelectEffect */
+
+/* >>> factory LickitungSupersonicEffect */
+static void adapt_LickitungSupersonicEffect(ProbeState *s)
+{
+	s->f = LickitungSupersonicEffect();
+}
+/* <<< factory LickitungSupersonicEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4989,5 +5014,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ZubatLeechLifeEffect", adapt_ZubatLeechLifeEffect },
 	{ "ExeggcuteLeechSeedEffect", adapt_ExeggcuteLeechSeedEffect },
 	{ "BulbasaurLeechSeedEffect", adapt_BulbasaurLeechSeedEffect },
+	{ "PoliwhirlAmnesia_PlayerSelectEffect", adapt_PoliwhirlAmnesia_PlayerSelectEffect },
+	{ "SlowpokeAmnesia_PlayerSelectEffect", adapt_SlowpokeAmnesia_PlayerSelectEffect },
+	{ "LickitungSupersonicEffect", adapt_LickitungSupersonicEffect },
 	{ NULL, NULL },
 };

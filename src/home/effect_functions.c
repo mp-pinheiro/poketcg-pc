@@ -9234,3 +9234,27 @@ void BulbasaurLeechSeedEffect(void)
 	ApplyAndAnimateHPRecovery(0u, 10u);
 }
 /* <<< factory BulbasaurLeechSeedEffect */
+
+/* >>> factory PoliwhirlAmnesia_PlayerSelectEffect */
+PlayerPickAttackForAmnesiaResult PoliwhirlAmnesia_PlayerSelectEffect(void)
+{
+	return PlayerPickAttackForAmnesia();
+}
+/* <<< factory PoliwhirlAmnesia_PlayerSelectEffect */
+
+/* >>> factory SlowpokeAmnesia_PlayerSelectEffect */
+PlayerPickAttackForAmnesiaResult SlowpokeAmnesia_PlayerSelectEffect(void)
+{
+	return PlayerPickAttackForAmnesia();
+}
+/* <<< factory SlowpokeAmnesia_PlayerSelectEffect */
+
+/* >>> factory LickitungSupersonicEffect */
+uint8_t LickitungSupersonicEffect(void)
+{
+	uint8_t f = Confusion50PercentEffect();
+	if ((f & 0x10u) == 0u)
+		SetNoEffectFromStatus();
+	return f;
+}
+/* <<< factory LickitungSupersonicEffect */

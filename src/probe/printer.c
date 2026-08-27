@@ -278,6 +278,15 @@ static void adapt_Func_19f87(ProbeState *s)
 }
 /* <<< factory Func_19f87 */
 
+/* >>> factory Func_1a011 */
+static void adapt_Func_1a011(ProbeState *s)
+{
+	Func_1a011Result result = Func_1a011();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Func_1a011 */
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "ShowPrinterConnectionErrorScene", adapt_ShowPrinterConnectionErrorScene },
 	{ "SendPrinterPacket", adapt_SendPrinterPacket },
@@ -308,5 +317,6 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "_PreparePrinterConnection", adapt__PreparePrinterConnection },
 	{ "SendCardListToPrinter", adapt_SendCardListToPrinter },
 	{ "Func_19f87", adapt_Func_19f87 },
+	{ "Func_1a011", adapt_Func_1a011 },
 	{ NULL, NULL },
 };

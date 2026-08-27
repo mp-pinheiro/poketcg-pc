@@ -6089,6 +6089,42 @@ CASES["BulbasaurLeechSeedEffect"] = [
 ]
 # <<< factory BulbasaurLeechSeedEffect
 
+# >>> factory PoliwhirlAmnesia_PlayerSelectEffect
+CONTRACT["PoliwhirlAmnesia_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PoliwhirlAmnesia_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2F1: b"\x01", 0xCABB: b"\x00", 0xCAC2: b"\x01"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2F1: b"\x01", 0xCABB: b"\x00", 0xCAC2: b"\x01"}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PoliwhirlAmnesia_PlayerSelectEffect
+
+# >>> factory SlowpokeAmnesia_PlayerSelectEffect
+CONTRACT["SlowpokeAmnesia_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["SlowpokeAmnesia_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xC2F1: b"\x00", 0xC3BB: b"\x00", 0xC480: b"\x08", 0xC3F1: b"\x01", 0xCAC2: b"\x01", 0xCABB: b"\x00", 0xFFA0: b"\x55"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xC2F1: b"\x00", 0xC3BB: b"\x00", 0xC480: b"\x08", 0xC3F1: b"\x01", 0xCAC2: b"\x01", 0xFFA0: b"\x55"}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory SlowpokeAmnesia_PlayerSelectEffect
+
+# >>> factory LickitungSupersonicEffect
+CONTRACT["LickitungSupersonicEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["LickitungSupersonicEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00", 0xCCED: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+         read={0xCCED: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCE4E: 2, 0xCAC2: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00", 0xCCED: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xEE\xDD"},
+         read={0xCCED: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCE4E: 2, 0xCAC2: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory LickitungSupersonicEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8756,3 +8792,12 @@ MUTATIONS["ExeggcuteLeechSeedEffect"] = {"source_symbol": "ExeggcuteLeechSeedEff
 # >>> factory-mutation BulbasaurLeechSeedEffect
 MUTATIONS["BulbasaurLeechSeedEffect"] = {"source_symbol": "BulbasaurLeechSeedEffect", "before": "void BulbasaurLeechSeedEffect(void)\n{\n\tuint8_t a = gb_read8(wDealtDamage_ADDR);\n\tuint8_t h = gb_read8((uint16_t)(wDealtDamage_ADDR + 1u));\n\tif ((a | h) == 0u)\n\t\treturn;\n\tApplyAndAnimateHPRecovery(0u, 10u);", "after": "void BulbasaurLeechSeedEffect(void)\n{\n\tuint8_t a = gb_read8(wDealtDamage_ADDR);\n\tuint8_t h = gb_read8((uint16_t)(wDealtDamage_ADDR + 1u));\n\tif ((a | h) == 0u)\n\t\treturn;\n\tApplyAndAnimateHPRecovery(0u, 20u);", "case_ids": ["BulbasaurLeechSeedEffect-0", "BulbasaurLeechSeedEffect-2"]}
 # <<< factory-mutation BulbasaurLeechSeedEffect
+# >>> factory-mutation PoliwhirlAmnesia_PlayerSelectEffect
+MUTATIONS["PoliwhirlAmnesia_PlayerSelectEffect"] = {"source_symbol": "PoliwhirlAmnesia_PlayerSelectEffect", "before": "PlayerPickAttackForAmnesiaResult PoliwhirlAmnesia_PlayerSelectEffect(void)\n{\n\treturn PlayerPickAttackForAmnesia();", "after": "PlayerPickAttackForAmnesiaResult PoliwhirlAmnesia_PlayerSelectEffect(void)\n{\n\treturn (PlayerPickAttackForAmnesiaResult){0u, 0u};", "case_ids": ["PoliwhirlAmnesia_PlayerSelectEffect-0", "PoliwhirlAmnesia_PlayerSelectEffect-1"]}
+# <<< factory-mutation PoliwhirlAmnesia_PlayerSelectEffect
+# >>> factory-mutation SlowpokeAmnesia_PlayerSelectEffect
+MUTATIONS["SlowpokeAmnesia_PlayerSelectEffect"] = {"source_symbol": "SlowpokeAmnesia_PlayerSelectEffect", "before": "PlayerPickAttackForAmnesiaResult SlowpokeAmnesia_PlayerSelectEffect(void)\n{\n\treturn PlayerPickAttackForAmnesia();", "after": "PlayerPickAttackForAmnesiaResult SlowpokeAmnesia_PlayerSelectEffect(void)\n{\n\treturn (PlayerPickAttackForAmnesiaResult){0u, 0u};", "case_ids": ["SlowpokeAmnesia_PlayerSelectEffect-0", "SlowpokeAmnesia_PlayerSelectEffect-1"]}
+# <<< factory-mutation SlowpokeAmnesia_PlayerSelectEffect
+# >>> factory-mutation LickitungSupersonicEffect
+MUTATIONS["LickitungSupersonicEffect"] = {"source_symbol": "LickitungSupersonicEffect", "before": "uint8_t LickitungSupersonicEffect(void)\n{\n\tuint8_t f = Confusion50PercentEffect();\n\tif ((f & 0x10u) == 0u)\n\t\tSetNoEffectFromStatus();\n\treturn f;\n}", "after": "uint8_t LickitungSupersonicEffect(void)\n{\n\tuint8_t f = Confusion50PercentEffect();\n\tif ((f & 0x10u) == 0u)\n\t\tSetNoEffectFromStatus();\n\treturn (uint8_t)(f ^ 0x01u);\n}", "case_ids": ["LickitungSupersonicEffect-0", "LickitungSupersonicEffect-1"]}
+# <<< factory-mutation LickitungSupersonicEffect

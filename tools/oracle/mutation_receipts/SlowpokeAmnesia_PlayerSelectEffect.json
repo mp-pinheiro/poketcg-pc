@@ -1,0 +1,9 @@
+{
+  "fn": "SlowpokeAmnesia_PlayerSelectEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SlowpokeAmnesia_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49905\": \"00\", \"50107\": \"00\", \"50161\": \"01\", \"50176\": \"08\", \"50304\": \"08\", \"51899\": \"80\", \"51906\": \"01\", \"65431\": \"c2\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SlowpokeAmnesia_PlayerSelectEffect\", \"mismatches\": {\"f\": [128, 0], \"bus\": {\"address\": 51899, \"reference\": \"000108088001c200\", \"native\": \"000108080001c255\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[49851, 1], [49905, 1], [50107, 1], [50161, 1], [50176, 1], [50304, 1], [51899, 1], [51906, 1], [65431, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"SlowpokeAmnesia_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49905\": \"00\", \"50107\": \"00\", \"50161\": \"01\", \"50176\": \"08\", \"50304\": \"08\", \"51899\": \"80\", \"51906\": \"01\", \"65431\": \"c2\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

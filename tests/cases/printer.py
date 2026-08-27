@@ -109,6 +109,9 @@ SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 wPrinterInitAttempts = 0xCE9E
 
 wTxRam3 = 0xCE43
+
+wPrinterStatus = 0xCE6F
+wPrinterInitAttempts = 0xCE9E
 # <<< factory-cases-statics
 
 # >>> factory Func_1a14b
@@ -558,6 +561,19 @@ CASES["Func_19f87"] = [
 ]
 # <<< factory Func_19f87
 
+# >>> factory Func_1a011
+CONTRACT["Func_1a011"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Func_1a011"] = [
+    {"keys": [0x02], "wram": {wPrinterStatus: b"\x77", wPrinterInitAttempts: b"\xAA"},
+     "read": {wPrinterStatus: 1, wPrinterInitAttempts: 1},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, keys=[0x02],
+         wram={wPrinterStatus: b"\xAA", wPrinterInitAttempts: b"\x55"},
+         read={wPrinterStatus: 1, wPrinterInitAttempts: 1},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory Func_1a011
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 SCHEMA2_CASES["SendPrinterPacket"][3]["completion"] = {"mode": "pre-ret", "pc": 0x315D}
@@ -766,3 +782,11 @@ MUTATIONS["Func_19f87"] = {
     "case_ids": ["Func_19f87-0", "Func_19f87-1"],
 }
 # <<< factory-mutation Func_19f87
+# >>> factory-mutation Func_1a011
+MUTATIONS["Func_1a011"] = {
+    "source_symbol": "Func_1a011",
+    "before": "Func_1a011Result Func_1a011(void)\n{\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();\n\tif ((init.f & 0x10u) != 0u)",
+    "after": "Func_1a011Result Func_1a011(void)\n{\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();\n\tif ((init.f & 0x10u) == 0u)",
+    "case_ids": ["Func_1a011-0", "Func_1a011-1"],
+}
+# <<< factory-mutation Func_1a011

@@ -196,4 +196,8 @@ SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t 
 typedef struct { uint8_t a; uint8_t f; } Func_19f87Result;
 Func_19f87Result Func_19f87(void);
 /* <<< factory Func_19f87 */
+/* >>> factory Func_1a011 */
+typedef struct { uint8_t a; uint8_t f; } Func_1a011Result;
+Func_1a011Result Func_1a011(void);
+/* <<< factory Func_1a011 */
 #endif

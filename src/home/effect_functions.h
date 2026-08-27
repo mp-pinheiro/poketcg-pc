@@ -1833,6 +1833,15 @@ void ExeggcuteLeechSeedEffect(void);
 /* >>> factory BulbasaurLeechSeedEffect */
 void BulbasaurLeechSeedEffect(void);
 /* <<< factory BulbasaurLeechSeedEffect */
+/* >>> factory PoliwhirlAmnesia_PlayerSelectEffect */
+PlayerPickAttackForAmnesiaResult PoliwhirlAmnesia_PlayerSelectEffect(void);
+/* <<< factory PoliwhirlAmnesia_PlayerSelectEffect */
+/* >>> factory SlowpokeAmnesia_PlayerSelectEffect */
+PlayerPickAttackForAmnesiaResult SlowpokeAmnesia_PlayerSelectEffect(void);
+/* <<< factory SlowpokeAmnesia_PlayerSelectEffect */
+/* >>> factory LickitungSupersonicEffect */
+uint8_t LickitungSupersonicEffect(void);
+/* <<< factory LickitungSupersonicEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
