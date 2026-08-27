@@ -66,6 +66,15 @@ static void adapt_HandleAIPkmnPowers(ProbeState *s)
 }
 /* <<< factory HandleAIPkmnPowers */
 
+/* >>> factory HandleAIGoGoRainDanceEnergy */
+static void adapt_HandleAIGoGoRainDanceEnergy(ProbeState *s)
+{
+	HandleAIGoGoRainDanceEnergyResult r = HandleAIGoGoRainDanceEnergy();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory HandleAIGoGoRainDanceEnergy */
+
 const ProbeEntry probe_entries_pkmn_powers[] = {
 	{ "HandleAIShift", adapt_HandleAIShift },
 	{ "HandleAIPeek", adapt_HandleAIPeek },
@@ -74,5 +83,6 @@ const ProbeEntry probe_entries_pkmn_powers[] = {
 	{ "HandleAIDamageSwap", adapt_HandleAIDamageSwap },
 	{ "HandleAIHeal", adapt_HandleAIHeal },
 	{ "HandleAIPkmnPowers", adapt_HandleAIPkmnPowers },
+	{ "HandleAIGoGoRainDanceEnergy", adapt_HandleAIGoGoRainDanceEnergy },
 	{ NULL, NULL },
 };

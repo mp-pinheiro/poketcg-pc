@@ -104,6 +104,11 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 #define SLOWBRO 0x93u
 #define VENOMOTH 0x22u
 #define VILEPLUME 0x1eu
+
+#include "home/energy.h"
+#include "home/substatus.h"
+#define GO_GO_RAIN_DANCE_DECK_ID 0x12u
+#define BLASTOISE 0x43u
 /* <<< factory statics */
 
 /* >>> factory HandleAIShift */
@@ -442,3 +447,22 @@ HandleAIPkmnPowersResult HandleAIPkmnPowers(void)
 	return (HandleAIPkmnPowersResult){0u, 0x80u};
 }
 /* <<< factory HandleAIPkmnPowers */
+
+/* >>> factory HandleAIGoGoRainDanceEnergy */
+HandleAIGoGoRainDanceEnergyResult HandleAIGoGoRainDanceEnergy(void)
+{
+	uint8_t deck = wOpponentDeckID;
+	if (deck != GO_GO_RAIN_DANCE_DECK_ID) {
+		uint8_t f = (uint8_t)(0x40u | ((deck & 0x0fu) < (GO_GO_RAIN_DANCE_DECK_ID & 0x0fu) ? 0x20u : 0u) | (deck < GO_GO_RAIN_DANCE_DECK_ID ? 0x10u : 0u));
+		return (HandleAIGoGoRainDanceEnergyResult){deck, f};
+	}
+	PkmnPowerCountResult blastoise = CountTurnDuelistPokemonWithActivePkmnPower(BLASTOISE);
+	if ((blastoise.f & 0x10u) == 0u)
+		return (HandleAIGoGoRainDanceEnergyResult){blastoise.a, blastoise.f};
+	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
+	if (muk.f & 0x10u)
+		return (HandleAIGoGoRainDanceEnergyResult){muk.a, muk.f};
+	AIProcessAndTryToPlayEnergy();
+	return (HandleAIGoGoRainDanceEnergyResult){0u, 0u};
+}
+/* <<< factory HandleAIGoGoRainDanceEnergy */

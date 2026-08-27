@@ -36,4 +36,8 @@ void AIProcessEnergyCards(void);
 /* >>> factory AIProcessAndTryToPlayEnergy */
 void AIProcessAndTryToPlayEnergy(void);
 /* <<< factory AIProcessAndTryToPlayEnergy */
+/* >>> factory AIProcessButDontPlayEnergy_SkipEvolution */
+/* >>> factory AIProcessButDontPlayEnergy_SkipEvolution */
+void AIProcessButDontPlayEnergy_SkipEvolution(void);
+/* <<< factory AIProcessButDontPlayEnergy_SkipEvolution */
 #endif /* POKETCG_HOME_ENERGY_H */

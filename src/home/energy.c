@@ -88,6 +88,11 @@
 #define POISONED 0x80u
 #define SECOND_ATTACK 0x01u
 #define VENUSAUR_LV67 0x0bu
+
+#include "home/energy.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define AI_ENERGY_FLAG_DONT_PLAY 0x01u
 /* <<< factory statics */
 
 /* >>> factory RetrievePlayAreaAIScoreFromBackup1 */
@@ -546,3 +551,19 @@ void AIProcessAndTryToPlayEnergy(void)
 		(void)RetrievePlayAreaAIScoreFromBackup1();
 }
 /* <<< factory AIProcessAndTryToPlayEnergy */
+
+/* >>> factory AIProcessButDontPlayEnergy_SkipEvolution */
+void AIProcessButDontPlayEnergy_SkipEvolution(void)
+{
+	wAIEnergyAttachLogicFlags = AI_ENERGY_FLAG_DONT_PLAY | AI_ENERGY_FLAG_SKIP_EVOLUTION;
+	uint16_t de = wTempPlayAreaAIScore_ADDR;
+	uint16_t hl = wPlayAreaAIScore_ADDR;
+	for (uint8_t b = MAX_PLAY_AREA_POKEMON; b != 0u; b--) {
+		gb_write8(de, gb_read8(hl));
+		hl = (uint16_t)(hl + 1u);
+		de = (uint16_t)(de + 1u);
+	}
+	wAIScore = gb_read8(hl);
+	AIProcessEnergyCards();
+}
+/* <<< factory AIProcessButDontPlayEnergy_SkipEvolution */
