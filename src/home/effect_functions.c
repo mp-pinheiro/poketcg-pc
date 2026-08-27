@@ -1105,6 +1105,12 @@ void BankswitchROM(uint8_t bank);
 
 #include "home/effect_functions.h"
 #include "generated/wram.h"
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "generated/hram.h"
+#define ChooseBasicPokemonToPlaceOnBenchText 0x0166u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -8760,3 +8766,15 @@ Thunderpunch_RecoilEffectResult Thunderpunch_RecoilEffect(uint8_t f, uint8_t d, 
 	return (Thunderpunch_RecoilEffectResult){result.a, result.f};
 }
 /* <<< factory Thunderpunch_RecoilEffect */
+
+/* >>> factory Revive_PlayerSelection */
+void Revive_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseBasicPokemonToPlaceOnBenchText);
+	(void)CreateBasicPokemonCardListFromDiscardPile();
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(PlayerDiscardPileText, PleaseSelectCardText);
+	(void)DisplayCardList();
+	hTemp_ffa0 = hTempCardIndex_ff98;
+}
+/* <<< factory Revive_PlayerSelection */

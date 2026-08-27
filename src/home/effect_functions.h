@@ -1764,6 +1764,9 @@ DealDamageToAllBenchedPokemonResult Blizzard_BenchDamageEffect(uint8_t a, uint8_
 typedef struct { uint8_t a; uint8_t f; } Thunderpunch_RecoilEffectResult;
 Thunderpunch_RecoilEffectResult Thunderpunch_RecoilEffect(uint8_t f, uint8_t d, uint8_t e);
 /* <<< factory Thunderpunch_RecoilEffect */
+/* >>> factory Revive_PlayerSelection */
+void Revive_PlayerSelection(void);
+/* <<< factory Revive_PlayerSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

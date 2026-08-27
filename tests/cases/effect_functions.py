@@ -5754,6 +5754,26 @@ CASES["Thunderpunch_RecoilEffect"] = [
 ]
 # <<< factory Thunderpunch_RecoilEffect
 
+# >>> factory Revive_PlayerSelection
+CONTRACT["Revive_PlayerSelection"] = {"compare": (), "preserve": ()}
+CASES["Revive_PlayerSelection"] = [
+    {"keys": [0x00, 0x02],
+     "wram": {0xFF97: b"\xC2", 0xC37E: b"\x00", 0xC510: b"\xFF", 0xCABB: b"\x00",
+              0xCBCF: b"\x00", 0xCBD0: b"\x00", 0xCBD6: b"\x00", 0xCBDF: b"\x00",
+              0xFF91: b"\x02", 0xFFB1: b"\x00", 0xFF98: b"\x05", 0xFFA0: b"\x00"},
+     "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x05"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02],
+         wram={0xFF97: b"\xC2", 0xC37E: b"\x00", 0xC510: b"\xFF", 0xCABB: b"\x00",
+               0xCBCF: b"\x00", 0xCBD0: b"\x00", 0xCBD6: b"\x00", 0xCBDF: b"\x00",
+               0xFF91: b"\x02", 0xFFB1: b"\x00", 0xFF98: b"\x05", 0xFFA0: b"\x00"},
+         read={0xFFA0: 1}, expect={0xFFA0: b"\x05"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Revive_PlayerSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8356,3 +8376,6 @@ MUTATIONS["Blizzard_BenchDamageEffect"] = {"source_symbol": "Blizzard_BenchDamag
 # >>> factory-mutation Thunderpunch_RecoilEffect
 MUTATIONS["Thunderpunch_RecoilEffect"] = {"source_symbol": "Thunderpunch_RecoilEffect", "before": "Thunderpunch_RecoilEffectResult Thunderpunch_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tuint8_t coin = hTemp_ffa0;\n\tif (coin != 0u)\n\t\treturn (Thunderpunch_RecoilEffectResult){coin, 0x00u};", "after": "Thunderpunch_RecoilEffectResult Thunderpunch_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tuint8_t coin = hTemp_ffa0;\n\tif (coin != 0u)\n\t\treturn (Thunderpunch_RecoilEffectResult){(uint8_t)(coin + 1u), 0x00u};", "case_ids": ["Thunderpunch_RecoilEffect-0", "Thunderpunch_RecoilEffect-1"]}
 # <<< factory-mutation Thunderpunch_RecoilEffect
+# >>> factory-mutation Revive_PlayerSelection
+MUTATIONS["Revive_PlayerSelection"] = {"source_symbol": "Revive_PlayerSelection", "before": "void Revive_PlayerSelection(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseBasicPokemonToPlaceOnBenchText);\n\t(void)CreateBasicPokemonCardListFromDiscardPile();\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(PlayerDiscardPileText, PleaseSelectCardText);\n\t(void)DisplayCardList();\n\thTemp_ffa0 = hTempCardIndex_ff98;", "after": "void Revive_PlayerSelection(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseBasicPokemonToPlaceOnBenchText);\n\t(void)CreateBasicPokemonCardListFromDiscardPile();\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(PlayerDiscardPileText, PleaseSelectCardText);\n\t(void)DisplayCardList();\n\thTemp_ffa0 = 0u;", "case_ids": ["Revive_PlayerSelection-0", "Revive_PlayerSelection-1"]}
+# <<< factory-mutation Revive_PlayerSelection

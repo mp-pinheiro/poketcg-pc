@@ -4285,6 +4285,13 @@ static void adapt_Thunderpunch_RecoilEffect(ProbeState *s)
 }
 /* <<< factory Thunderpunch_RecoilEffect */
 
+/* >>> factory Revive_PlayerSelection */
+static void adapt_Revive_PlayerSelection(ProbeState *s)
+{
+	Revive_PlayerSelection();
+}
+/* <<< factory Revive_PlayerSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4801,5 +4808,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EarthquakeEffect", adapt_EarthquakeEffect },
 	{ "Blizzard_BenchDamageEffect", adapt_Blizzard_BenchDamageEffect },
 	{ "Thunderpunch_RecoilEffect", adapt_Thunderpunch_RecoilEffect },
+	{ "Revive_PlayerSelection", adapt_Revive_PlayerSelection },
 	{ NULL, NULL },
 };
