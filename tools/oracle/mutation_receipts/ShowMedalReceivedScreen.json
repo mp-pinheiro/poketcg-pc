@@ -1,0 +1,9 @@
+{
+  "fn": "ShowMedalReceivedScreen",
+  "case": "tests/cases/medal.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ShowMedalReceivedScreen\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51899\": \"80\", \"52799\": \"3603\", \"53524\": \"fa00e0\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ShowMedalReceivedScreen\", \"mismatches\": {\"bus\": {\"address\": 53524, \"reference\": \"00803603fa00e0\", \"native\": \"00803603fb00e0\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[51892, 1], [51899, 1], [52799, 2], [53524, 3]]}}}\n",
+  "restored": "{\"fn\": \"ShowMedalReceivedScreen\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51899\": \"80\", \"52799\": \"3603\", \"53524\": \"fa00e0\"}}, \"status\": \"PASS\"}\n"
+}
