@@ -192,11 +192,6 @@ reason = "DIAGNOSED mixed failure set at gen 16, none a harness gap. (1) primary
 unblock = "retry with the R3 seed pair wram={0xCABB: b\"\\x80\", 0xFF40: b\"\\x80\"} plus generous instruction_budget/cycle_budget (20M/80M), keep #defines out of the header fragment, and author at least one primary case."
 
 [[blocked]]
-name = "_RequestToPrintCard"
-reason = "DIAGNOSED case-authoring gap, 16 generations all `no primary oracle case` - candidates never produced a runnable primary case. The routine is the printer-request flow (card page -> printer): its packet paths park in SendPrinterPacket's $315D transmission wait like every member of the landed printer family (_PreparePrinterConnection, SendPrinterInstructionPacket*, SendTilesToPrinter, AddToPrinterGfxBuffer), whose case recipes are established: B-exit where TryInitPrinterCommunications leads, pre-ret $315D completion for packet paths, R1 pair (CABB+FF40 or CABB=00) for any DoFrame wait, injected wSerialTransferData/wPrinterStatus responses for native-only transform cases."
-unblock = "author a primary case per the landed printer family: keys=[0x02] B-exit through TryInitPrinterCommunications, or pre-ret $315D with the packet staged; transform case with wSerialTransferData=0x81/wPrinterStatus=0x00 for the full synchronous path."
-
-[[blocked]]
 name = "InputCurDeckName"
 reason = "AUTO-RETIRED: src/engine/menus/deck_selection.asm:309 (basename `deck_selection`). 17 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case InputCurDeckName-0 {\"status\": \"PORT\", \"fn\": \"InputCurDeckName\", \"mismatches\": {\"a\": [3, 0], \"f\": [64, 128], \"c\": [1, 0], \"e\": [2, 0]}}"
 unblock = "read the recorded diagnostics under .factory/try/InputCurDeckName/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
