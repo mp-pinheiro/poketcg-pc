@@ -828,6 +828,17 @@ CASES["AIPlay_Bill"] = [
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
 ]
 # <<< factory AIPlay_Bill
+# >>> factory AIPlay_Defender
+CONTRACT["AIPlay_Defender"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_Defender"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1, 0xFFA0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1, 0xFFA0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1, 0xFFA0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_Defender
 # >>> factory AIPlay_Imakuni
 CONTRACT["AIPlay_Imakuni"] = {"compare": ("f",), "preserve": ()}
 CASES["AIPlay_Imakuni"] = [
@@ -1249,6 +1260,12 @@ MUTATIONS["AIPlay_Bill"] = {"source_symbol": "AIPlay_Bill",
     "after": "AIDecideResult AIPlay_Bill(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
     "case_ids": ["AIPlay_Bill-0"]}
 # <<< factory-mutation AIPlay_Bill
+# >>> factory-mutation AIPlay_Defender
+MUTATIONS["AIPlay_Defender"] = {"source_symbol": "AIPlay_Defender",
+    "before": "AIDecideResult AIPlay_Defender(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_Defender(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "case_ids": ["AIPlay_Defender-0"]}
+# <<< factory-mutation AIPlay_Defender
 # >>> factory-mutation AIPlay_Imakuni
 MUTATIONS["AIPlay_Imakuni"] = {"source_symbol": "AIPlay_Imakuni",
     "before": "AIDecideResult AIPlay_Imakuni(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",

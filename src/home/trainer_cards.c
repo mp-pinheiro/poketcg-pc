@@ -2389,6 +2389,17 @@ AIDecideResult AIPlay_Bill(void)
 }
 /* <<< factory AIPlay_Bill */
 
+/* >>> factory AIPlay_Defender */
+/* trainer_cards.asm:594-601 */
+AIDecideResult AIPlay_Defender(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTemp_ffa0 = 0u; /* PLAY_AREA_ARENA: AI always attaches Defender to the Active */
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_Defender */
+
 /* >>> factory AIPlay_Imakuni */
 /* trainer_cards.asm:4520-4525 */
 AIDecideResult AIPlay_Imakuni(void)

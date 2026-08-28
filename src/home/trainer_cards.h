@@ -170,6 +170,13 @@ AIDecideResult AIPlay_Recycle(void);
  * exit f is AIMakeDecision's carry. */
 AIDecideResult AIPlay_Bill(void);
 /* <<< factory AIPlay_Bill */
+/* >>> factory AIPlay_Defender */
+/* trainer_cards.asm:594-601. Stage-only twin of AIPlay_Bill with the extra
+ * PLAY_AREA_ARENA byte: wAITrainerCardToPlay goes to hTempCardIndex_ff9f and
+ * 0 to hTemp_ffa0, then the OPPACTION_EXECUTE_TRAINER_EFFECTS dispatch; exit f
+ * is AIMakeDecision's carry. */
+AIDecideResult AIPlay_Defender(void);
+/* <<< factory AIPlay_Defender */
 /* >>> factory AIPlay_Imakuni */
 /* trainer_cards.asm:4520-4525. Stage-only twin: wAITrainerCardToPlay goes to
  * hTempCardIndex_ff9f, then the OPPACTION_EXECUTE_TRAINER_EFFECTS dispatch;

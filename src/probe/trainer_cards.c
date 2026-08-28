@@ -375,6 +375,14 @@ static void adapt_AIPlay_Bill(ProbeState *s)
 }
 /* <<< factory AIPlay_Bill */
 
+/* >>> factory AIPlay_Defender */
+static void adapt_AIPlay_Defender(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_Defender();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_Defender */
+
 /* >>> factory AIPlay_Imakuni */
 static void adapt_AIPlay_Imakuni(ProbeState *s)
 {
@@ -543,6 +551,7 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIPlay_Pokeball", adapt_AIPlay_Pokeball },
 	{ "AIPlay_Recycle", adapt_AIPlay_Recycle },
 	{ "AIPlay_Bill", adapt_AIPlay_Bill },
+	{ "AIPlay_Defender", adapt_AIPlay_Defender },
 	{ "AIPlay_Imakuni", adapt_AIPlay_Imakuni },
 	{ "AIPlay_FullHeal", adapt_AIPlay_FullHeal },
 	{ "AIPlay_ClefairyDollOrMysteriousFossil", adapt_AIPlay_ClefairyDollOrMysteriousFossil },
