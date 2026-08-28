@@ -144,31 +144,6 @@ reason = "AUTO-RETIRED: src/engine/challenge_machine.asm:580 (basename `challeng
 unblock = "read the recorded diagnostics under .factory/try/ChallengeMachine_PrintDuelResultIcons/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "MagneticStormEffect"
-reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:7149 (basename `effect_functions`). 9 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
-unblock = "read the recorded diagnostics under .factory/try/MagneticStormEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "PracticeDuel_PutStaryuInBench"
-reason = "AUTO-RETIRED: src/engine/duel/core.asm:2658 (basename `core`). 9 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
-unblock = "read the recorded diagnostics under .factory/try/PracticeDuel_PutStaryuInBench/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "PracticeDuel_DonePuttingOnBench"
-reason = "AUTO-RETIRED: src/engine/duel/core.asm:2673 (basename `core`). 9 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
-unblock = "read the recorded diagnostics under .factory/try/PracticeDuel_DonePuttingOnBench/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "PracticeDuel_DrawSevenCards"
-reason = "AUTO-RETIRED: src/engine/duel/core.asm:2643 (basename `core`). 9 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
-unblock = "read the recorded diagnostics under .factory/try/PracticeDuel_DrawSevenCards/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "Func_12661"
-reason = "AUTO-RETIRED: src/engine/menus/debug_main.asm:2 (basename `debug_main`). 10 generations exhausted (trapped=True); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
-unblock = "read the recorded diagnostics under .factory/try/Func_12661/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "CloseIRCommunications"
 reason = "AUTO-RETIRED: src/engine/link/ir_core.asm:252 (basename `ir_core`). 9 generations exhausted (trapped=False); last diagnostic phase=diff failure_class=code detail=fail CloseIRCommunications[0] $CABB=80 $FF40=80 $FF00: oracle cf != C ff fail CloseIRCommunications[1] a=$AA f=$F0 b=$BB c=$CC d=$DD e=$EE hl=$1234 $CABB=80 $FF40=80 $FF00: oracle cf != C ff FAIL CloseIRCommunications: 2/2 cases differ"
 unblock = "read the recorded diagnostics under .factory/try/CloseIRCommunications/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
@@ -202,29 +177,9 @@ reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:10078 (basename `ef
 unblock = "read the recorded diagnostics under .factory/try/PokemonTrader_TradeCardsEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes SWEPT 2026-08-26: this stanza records only a CANDIDATE TOOLING FAILURE (SurgeryError / cases module is not valid Python), i.e. no capability gap was ever diagnosed here, so the 10 exhausted generations say nothing about portability. Unlike UnusedCopyrightScreen -- whose stanza had the same shape and which was deleted after measuring REFERENCE_OK -- this one is NOT proven portable: driving the reference bare with setup=[{fn:SetupText,d:0x30,e:0x7F}] and no seeds gives BUDGET_EXHAUSTED at pc=0x0038 (RST 38, executing $FF filler), so it derails without proper seeds. Seed it first, confirm REFERENCE_OK, then delete this entry."
 
 [[blocked]]
-name = "ShowMedalReceivedScreen"
-reason = "AUTO-RETIRED: src/engine/menus/medal.asm:1 (basename `medal`). 17 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
-unblock = "read the recorded diagnostics under .factory/try/ShowMedalReceivedScreen/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "Func_1a080"
-reason = "AUTO-RETIRED: src/engine/link/printer.asm:333 (basename `printer`). 17 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
-unblock = "read the recorded diagnostics under .factory/try/Func_1a080/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "TryBuildDeckMachineDeck"
-reason = "AUTO-RETIRED: src/engine/menus/deck_machine.asm:1509 (basename `deck_machine`). 17 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
-unblock = "read the recorded diagnostics under .factory/try/TryBuildDeckMachineDeck/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "LassEffect"
 reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:10338 (basename `effect_functions`). 17 generations exhausted (trapped=False); last diagnostic phase=mutation failure_class=code detail=MUTATION_GREEN: corrupted routine still passed {\"fn\": \"LassEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49901\": \"01\", \"50448\": \"ff\", \"51899\": \"80\", \"52233\": \"00\", \"65431\": \"c2\", \"65439\": \"00\"}}, \"status\": \"PASS\"}"
 unblock = "read the recorded diagnostics under .factory/try/LassEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "ChanseyDoubleEdgeEffect"
-reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:8431 (basename `effect_functions`). 17 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
-unblock = "read the recorded diagnostics under .factory/try/ChanseyDoubleEdgeEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
 name = "GiveBoosterPack"
