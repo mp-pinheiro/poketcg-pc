@@ -562,6 +562,14 @@ static void adapt_AIPlay_ItemFinder(ProbeState *s)
 }
 /* <<< factory AIPlay_ItemFinder */
 
+/* >>> factory AIPlay_Pokedex */
+static void adapt_AIPlay_Pokedex(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_Pokedex();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_Pokedex */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -630,5 +638,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIPlay_Maintenance", adapt_AIPlay_Maintenance },
 	{ "AIPlay_ComputerSearch", adapt_AIPlay_ComputerSearch },
 	{ "AIPlay_ItemFinder", adapt_AIPlay_ItemFinder },
+	{ "AIPlay_Pokedex", adapt_AIPlay_Pokedex },
 	{ NULL, NULL },
 };

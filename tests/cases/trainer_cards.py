@@ -1052,6 +1052,15 @@ CASES["AIPlay_ItemFinder"] = [
 ]
 # <<< factory AIPlay_ItemFinder
 
+# >>> factory AIPlay_Pokedex
+CONTRACT["AIPlay_Pokedex"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_Pokedex"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x34", 0xCE1A: b"\x34", 0xCE1B: b"\x00", 0xCE1C: b"\x01", 0xCE1D: b"\x02", 0xCE1E: b"\x03", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 7}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCE19: b"\x78", 0xCE1A: b"\x78", 0xCE1B: b"\x02", 0xCE1C: b"\x04", 0xCE1D: b"\x05", 0xCE1E: b"\x06", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 7}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCE19: b"\xEE", 0xCE1A: b"\xDD", 0xCE1B: b"\xEE", 0xCE1C: b"\xDD", 0xCE1D: b"\xEE", 0xCE1E: b"\xDD", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 7}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_Pokedex
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1393,3 +1402,6 @@ MUTATIONS["AIPlay_ComputerSearch"] = {
 # >>> factory-mutation AIPlay_ItemFinder
 MUTATIONS["AIPlay_ItemFinder"] = {"source_symbol": "AIPlay_ItemFinder", "before": "AIDecideResult AIPlay_ItemFinder(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags |= AI_FLAG_MODIFIED_HAND;", "after": "AIDecideResult AIPlay_ItemFinder(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags |= 0u;", "case_ids": ["AIPlay_ItemFinder-0"]}
 # <<< factory-mutation AIPlay_ItemFinder
+# >>> factory-mutation AIPlay_Pokedex
+MUTATIONS["AIPlay_Pokedex"] = {"source_symbol": "AIPlay_Pokedex", "before": "AIDecideResult AIPlay_Pokedex(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIDecideResult AIPlay_Pokedex(void)\n{\n\thTempCardIndex_ff9f = 0u;", "case_ids": ["AIPlay_Pokedex-1"]}
+# <<< factory-mutation AIPlay_Pokedex

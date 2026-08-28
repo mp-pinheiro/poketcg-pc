@@ -347,6 +347,11 @@
 #include "home/core.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+
+#include "home/core.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -3009,3 +3014,18 @@ AIDecideResult AIPlay_ItemFinder(void)
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_ItemFinder */
+
+/* >>> factory AIPlay_Pokedex */
+AIDecideResult AIPlay_Pokedex(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTemp_ffa0 = wce1a;
+	hTempPlayAreaLocation_ffa1 = wce1b;
+	hTempRetreatCostCards = wce1c;
+	gb_write8(hTempRetreatCostCards_ADDR + 1u, wce1d);
+	gb_write8(hTempRetreatCostCards_ADDR + 2u, wce1e);
+	gb_write8(hTempRetreatCostCards_ADDR + 3u, 0xffu);
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_Pokedex */

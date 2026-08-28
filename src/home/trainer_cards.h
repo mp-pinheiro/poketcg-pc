@@ -277,4 +277,7 @@ AIDecideResult AIPlay_ComputerSearch(void);
 /* >>> factory AIPlay_ItemFinder */
 AIDecideResult AIPlay_ItemFinder(void);
 /* <<< factory AIPlay_ItemFinder */
+/* >>> factory AIPlay_Pokedex */
+AIDecideResult AIPlay_Pokedex(void);
+/* <<< factory AIPlay_Pokedex */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */
