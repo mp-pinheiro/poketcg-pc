@@ -224,6 +224,44 @@ wTempDeckMachineCursorPos = 0xD086
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+# HandleAutoDeckMenu (deck_machine.asm:1872). The routine has exactly one
+# `ret`, at .exit: B on the deck menu makes HandleMenuInput return carry with
+# hCurMenuItem = MENU_CANCEL, .deck_selection_made takes its `jp z, .exit`, and
+# `xor a` / `ld [wTempBankSRAM], a` leaves a = 0 with Z set.
+#
+# The body calls EnableLCD inside .InitAutoDeckMenu and then loops on DoFrame,
+# so real frames elapse: the reference needs the game's DMA routine installed
+# (the routine sets wVBlankOAMCopyToggle, and VBlankHandler then calls
+# hDMAFunction) plus a text setup before any glyph is cached, exactly like the
+# landed HandleDeckMissingCardsList cases.
+HADM_KEYS = [0x00, 0x02]
+HADM_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+# A seed address is compared as well as written, so this lists only bytes the
+# reference and the port both leave identical. wLCDC ($CABB) and
+# wVBlankOAMCopyToggle ($CAC0) are absent on purpose: the body enables the LCD
+# and the reference VBlank handler then keeps mirroring the first and clearing
+# the second, which makes both uncomparable.
+HADM_SEEDS = {
+    0xCAB4: b"\x00",  # wConsole = CONSOLE_DMG, read by SetDefaultConsolePalettes
+    0xCAD0: b"\xc9",  # wVBlankFunctionTrampoline: a bare `ret`, called every frame
+    0xD0A9: b"\x00",  # wCurAutoDeckMachine: entry 0 of .DeckMachineTitleTextList
+    0xFF81: b"\x00",  # hBankSRAM
+    0xD0A4: b"\x00",  # wTempBankSRAM, which .exit zeroes again
+}
+# Only bytes this routine's own asm writes.
+HADM_READ = {
+    0xCAB6: 1,  # wTileMapFill
+    0xCD10: 1,  # wCurMenuItem
+    0xCEA1: 1,  # wCardListVisibleOffset
+    0xCEA9: 1,  # wCardListNumCursorPositions
+    0xCECE: 2,  # wCardListUpdateFunction = UpdateDeckMachineScrollArrowsAndEntries
+    0xD086: 1,  # wTempDeckMachineCursorPos
+    0xD087: 1,  # wTempCardListVisibleOffset
+    0xD0A2: 2,  # wDeckMachineTitleText
+    0xD0A5: 1,  # wNumDeckMachineEntries
+    0xFFB1: 1,  # hCurMenuItem
+}
 # <<< factory-cases-statics
 
 # >>> factory DrawListScrollArrows
@@ -532,6 +570,26 @@ CASES["TryBuildDeckMachineDeck"] = [
 ]
 # <<< factory TryBuildDeckMachineDeck
 
+# >>> factory HandleAutoDeckMenu
+CONTRACT["HandleAutoDeckMenu"] = {"compare": ("a", "f"), "preserve": ()}
+# rom_bank 2 is mandatory, not decoration: InitializeMenuParameters and
+# PlaceTextItems read .MenuParameters ($7B6E) and .DeckMachineMenuData ($7B76)
+# off the bus, and with another bank mapped the menu parameters become garbage.
+# keys=[0x00, 0x02] taps B against the edge-triggered hKeysPressed, which is the
+# only bounded exit: HandleMenuInput returns carry with hCurMenuItem =
+# MENU_CANCEL and .deck_selection_made jumps straight to .exit.
+CASES["HandleAutoDeckMenu"] = [
+    {"rom_bank": 2, "ramg": True, "keys": HADM_KEYS,
+     "wram": dict(HADM_SEEDS), "sram": {0: {}},
+     "read": dict(HADM_READ), "setup": HADM_SETUP,
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, rom_bank=2, ramg=True, keys=HADM_KEYS,
+         wram=dict(HADM_SEEDS), sram={0: {}},
+         read=dict(HADM_READ), setup=HADM_SETUP,
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory HandleAutoDeckMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -686,3 +744,14 @@ MUTATIONS["TryBuildDeckMachineDeck"] = {
     "case_ids": ["TryBuildDeckMachineDeck-0", "TryBuildDeckMachineDeck-1"],
 }
 # <<< factory-mutation TryBuildDeckMachineDeck
+# >>> factory-mutation HandleAutoDeckMenu
+MUTATIONS["HandleAutoDeckMenu"] = {
+    "source_symbol": "HandleAutoDeckMenu",
+    # wCardListUpdateFunction ($CECE) is read by both cases and the constant name
+    # is unique to this routine, so the anchor occurs exactly once in
+    # src/home/deck_machine.c and its corruption is visible in the compared bytes.
+    "before": "\tgb_write8(wCardListUpdateFunction_ADDR, (uint8_t)UPDATE_DECK_MACHINE_SCROLL_ARROWS_ADDR);",
+    "after": "\tgb_write8(wCardListUpdateFunction_ADDR, (uint8_t)(UPDATE_DECK_MACHINE_SCROLL_ARROWS_ADDR + 1u));",
+    "case_ids": ["HandleAutoDeckMenu-0", "HandleAutoDeckMenu-1"],
+}
+# <<< factory-mutation HandleAutoDeckMenu

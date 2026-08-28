@@ -261,6 +261,16 @@ static void adapt_TryBuildDeckMachineDeck(ProbeState *s)
 }
 /* <<< factory TryBuildDeckMachineDeck */
 
+/* >>> factory HandleAutoDeckMenu */
+static void adapt_HandleAutoDeckMenu(ProbeState *s)
+{
+	HandleAutoDeckMenuResult r = HandleAutoDeckMenu();
+
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory HandleAutoDeckMenu */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -292,5 +302,6 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "UpdateDeckMachineScrollArrowsAndEntries", adapt_UpdateDeckMachineScrollArrowsAndEntries },
 	{ "SaveDeckInDeckSaveMachine", adapt_SaveDeckInDeckSaveMachine },
 	{ "TryBuildDeckMachineDeck", adapt_TryBuildDeckMachineDeck },
+	{ "HandleAutoDeckMenu", adapt_HandleAutoDeckMenu },
 	{ NULL, NULL },
 };

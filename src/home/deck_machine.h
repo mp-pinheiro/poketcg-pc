@@ -110,4 +110,8 @@ SaveDeckInDeckSaveMachineResult SaveDeckInDeckSaveMachine(void);
 typedef struct { uint8_t a; uint8_t f; } TryBuildDeckMachineDeckResult;
 TryBuildDeckMachineDeckResult TryBuildDeckMachineDeck(void);
 /* <<< factory TryBuildDeckMachineDeck */
+/* >>> factory HandleAutoDeckMenu */
+typedef struct { uint8_t a; uint8_t f; } HandleAutoDeckMenuResult;
+HandleAutoDeckMenuResult HandleAutoDeckMenu(void);
+/* <<< factory HandleAutoDeckMenu */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

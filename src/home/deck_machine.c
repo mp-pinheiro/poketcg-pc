@@ -187,6 +187,42 @@
 #define YouDoNotOwnAllCardsNeededToBuildThisDeckText 0x026du
 /* poketcg.sym: 02:7609 DeckMachineMenuParameters. */
 #define DECK_MACHINE_MENU_PARAMETERS_ADDR 0x7609u
+
+#include "home/auto_deck_machines.h"
+#include "home/credits_sequence_commands.h"
+#include "home/deck_check.h"
+#include "home/deck_configuration.h"
+#include "home/deck_machine.h"
+#include "home/deck_selection.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "home/menus.h"
+#include "home/objects.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
+#include "home/text_box.h"
+#include "home/tiles.h"
+#include "generated/hram.h"
+#include "generated/sram.h"
+#include "generated/wram.h"
+#include "mem.h"
+
+#define PleaseSelectDeckText 0x0224u
+/* poketcg.sym, every one of these in bank 2:
+ *   02:7b6e HandleAutoDeckMenu.MenuParameters
+ *   02:7b76 HandleAutoDeckMenu.DeckMachineMenuData
+ *   02:7b83 HandleAutoDeckMenu.DeckMachineTitleTextList
+ *   02:73fe UpdateDeckMachineScrollArrowsAndEntries
+ * The first two are handed to InitializeMenuParameters/PlaceTextItems, which
+ * read them off the bus, so the case has to map bank 2; the title list is read
+ * with an explicit rom_ptr() because it is this routine's own data. */
+#define HANDLE_AUTO_DECK_MENU_BANK 0x02u
+#define HANDLE_AUTO_DECK_MENU_MENU_PARAMETERS_ADDR 0x7B6Eu
+#define HANDLE_AUTO_DECK_MENU_MENU_DATA_ADDR 0x7B76u
+#define HANDLE_AUTO_DECK_MENU_TITLE_TEXT_LIST_ADDR 0x7B83u
+#define UPDATE_DECK_MACHINE_SCROLL_ARROWS_ADDR 0x73FEu
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -1185,3 +1221,254 @@ TryBuildDeckMachineDeckResult TryBuildDeckMachineDeck(void)
 	return (TryBuildDeckMachineDeckResult){0u, (uint8_t)((waited.f & 0x80u) | CARRY_FLAG)};
 }
 /* <<< factory TryBuildDeckMachineDeck */
+
+/* >>> factory HandleAutoDeckMenu */
+/* deck_machine.asm:1872-2010. The local labels are inlined: .please_select_deck
+ * is the outer loop and .wait_input the inner one, while .InitAutoDeckMenu,
+ * .CreateAutoDeckPointerList and the .please_select_deck prologue become static
+ * helpers so that .read_the_instructions' `jp .wait_input` can re-enter the
+ * inner loop without re-running that prologue.
+ *
+ * .exit is the routine's only `ret`: `xor a` / `ld [wTempBankSRAM], a` leaves
+ * a = 0 with Z set and every other flag clear, so both `jp z, .exit` and the
+ * fallthrough from .asm_bb09 return {0, $80}. */
+
+/* .CreateAutoDeckPointerList: writes the little-endian pointers to the five
+ * consecutive DECK_STRUCT_SIZE auto decks in sAutoDecks into wMachineDeckPtrs. */
+static void hadm_create_auto_deck_pointer_list(void)
+{
+	ClearMemory_Bank2((uint8_t)(2u * NUM_DECK_MACHINE_SLOTS), wMachineDeckPtrs_ADDR);
+
+	uint16_t de = wMachineDeckPtrs_ADDR;
+	uint16_t hl = sAutoDecks_ADDR;
+
+	for (uint8_t i = NUM_DECK_MACHINE_SLOTS; i != 0u; i--) {
+		gb_write8(de++, (uint8_t)hl);
+		gb_write8(de++, (uint8_t)(hl >> 8));
+		hl = (uint16_t)(hl + DECK_STRUCT_SIZE);
+	}
+}
+
+/* .InitAutoDeckMenu */
+static void hadm_init_auto_deck_menu(void)
+{
+	Set_OBJ_8x8();
+	wTileMapFill = 0u;
+	ZeroObjectPositions();
+	EmptyScreen();
+	wVBlankOAMCopyToggle = TRUE;
+	(void)LoadSymbolsFont();
+	(void)LoadDuelCardSymbolTiles();
+	SetDefaultConsolePalettes();
+	(void)SetupText(0x3Cu, 0xFFu);
+
+	uint16_t hl = 0u;
+
+	DrawRegularTextBox(&hl, 0u, 20u, 13u, 0u, 0u);
+	InitTextPrinting(1u, 0u);
+
+	uint16_t title = (uint16_t)(gb_read8(wDeckMachineTitleText_ADDR)
+		| ((uint16_t)gb_read8((uint16_t)(wDeckMachineTitleText_ADDR + 1u)) << 8));
+
+	(void)ProcessTextFromID(title);
+	SafelySwitchToSRAM1();
+	ReadAutoDeckConfiguration();
+	hadm_create_auto_deck_pointer_list();
+	/* .CreateAutoDeckPointerList's closing `dec a` preserves carry and
+	 * ClearMemory_Bank2 preserves af, so PrintVisibleDeckMachineEntries is
+	 * entered on the path that prints all five entries -- the same call the
+	 * landed ClearScreenAndDrawDeckMachineScreen models with a clear carry. */
+	(void)PrintVisibleDeckMachineEntries(0u);
+	SafelySwitchToSRAM0();
+	EnableLCD();
+}
+
+/* .please_select_deck's prologue, everything above .wait_input. */
+static void hadm_open_deck_menu(uint8_t cursor)
+{
+	uint16_t params = HANDLE_AUTO_DECK_MENU_MENU_PARAMETERS_ADDR;
+
+	InitializeMenuParameters(cursor, &params);
+	(void)DrawWideTextBox_PrintText(PleaseSelectDeckText);
+	wCardListNumCursorPositions = NUM_DECK_MACHINE_SLOTS;
+	gb_write8(wCardListUpdateFunction_ADDR, (uint8_t)UPDATE_DECK_MACHINE_SCROLL_ARROWS_ADDR);
+	gb_write8((uint16_t)(wCardListUpdateFunction_ADDR + 1u),
+		  (uint8_t)(UPDATE_DECK_MACHINE_SCROLL_ARROWS_ADDR >> 8));
+}
+
+HandleAutoDeckMenuResult HandleAutoDeckMenu(void)
+{
+	const uint8_t *title = rom_ptr(HANDLE_AUTO_DECK_MENU_BANK,
+		(uint16_t)(HANDLE_AUTO_DECK_MENU_TITLE_TEXT_LIST_ADDR
+			+ (uint8_t)(wCurAutoDeckMachine << 1)));
+
+	gb_write8(wDeckMachineTitleText_ADDR, title[0]);
+	gb_write8((uint16_t)(wDeckMachineTitleText_ADDR + 1u), title[1]);
+	wCardListVisibleOffset = 0u;
+	hadm_init_auto_deck_menu();
+	wNumDeckMachineEntries = NUM_DECK_MACHINE_SLOTS;
+
+	uint8_t cursor = 0u;
+	uint8_t resume_wait_input = 0u;
+
+	for (;;) { /* .please_select_deck */
+		if (!resume_wait_input)
+			hadm_open_deck_menu(cursor);
+		resume_wait_input = 0u;
+
+		uint8_t selection_made = 0u;
+
+		for (;;) { /* .wait_input */
+			DoFrame();
+			if (HandleMenuInput().f & CARRY_FLAG) {
+				selection_made = 1u;
+				break;
+			}
+			/* The PAD_UP | PAD_DOWN test above .asm_ba4e falls through
+			 * to the very next instruction either way, so it is a no-op. */
+			if (!(hDPadHeld & PAD_START))
+				continue;
+
+			wTempCardListVisibleOffset = wCardListVisibleOffset;
+
+			uint8_t offset = wCardListVisibleOffset;
+
+			wTempDeckMachineCursorPos = wCurMenuItem;
+
+			uint8_t index = (uint8_t)(wCurMenuItem + offset);
+
+			wCurDeck = (uint8_t)((uint8_t)(index + 1u) | 0x80u);
+
+			uint16_t entry = (uint16_t)(wMachineDeckPtrs_ADDR
+				+ (uint8_t)(index << 1));
+
+			SafelySwitchToSRAM1();
+
+			uint16_t deck = (uint16_t)(gb_read8(entry)
+				| ((uint16_t)gb_read8((uint16_t)(entry + 1u)) << 8));
+			uint16_t name = (uint16_t)(deck + DECK_NAME_SIZE);
+			uint8_t first = gb_read8(name);
+
+			SafelySwitchToSRAM0();
+			if (first == 0u)
+				continue; /* invalid deck */
+
+			PlaySFXConfirmOrCancel(MENU_CONFIRM);
+			SafelySwitchToSRAM1();
+			OpenDeckConfirmationMenu(name, deck);
+			SafelySwitchToSRAM0();
+			wCardListVisibleOffset = wTempCardListVisibleOffset;
+			hadm_init_auto_deck_menu();
+			cursor = wTempDeckMachineCursorPos;
+			break;
+		}
+		if (!selection_made)
+			continue;
+
+		/* .deck_selection_made */
+		DrawCursor2();
+		wTempCardListVisibleOffset = wCardListVisibleOffset;
+		wTempDeckMachineCursorPos = wCurMenuItem;
+
+		uint8_t item = hCurMenuItem;
+
+		if (item == MENU_CANCEL) {
+			/* .exit */
+			wTempBankSRAM = 0u;
+			return (HandleAutoDeckMenuResult){0u, 0x80u};
+		}
+
+		wSelectedDeckMachineEntry = item;
+		(void)ResetCheckMenuCursorPositionAndBlink();
+		wce5e = 0u;
+		(void)DrawWideTextBox();
+		(void)PlaceTextItems(HANDLE_AUTO_DECK_MENU_MENU_DATA_ADDR);
+
+		uint8_t choice;
+
+		for (;;) { /* .wait_submenu_input */
+			DoFrame();
+
+			TempListResult input = HandleCheckMenuInput_YourOrOppPlayArea();
+
+			if (input.f & CARRY_FLAG) {
+				choice = input.a;
+				break;
+			}
+		}
+		if (choice == MENU_CANCEL) {
+			cursor = wTempDeckMachineCursorPos;
+			continue;
+		}
+
+		/* .submenu_option_selected */
+		uint8_t option = (uint8_t)((uint8_t)(wCheckMenuCursorYPosition << 1)
+			+ wCheckMenuCursorXPosition);
+
+		if (option == 0u) { /* Build a Deck */
+			SafelySwitchToSRAM1();
+
+			TryBuildDeckMachineDeckResult built = TryBuildDeckMachineDeck();
+
+			/* SafelySwitchToSRAM0 and the `ld a, [wTempDeckMachineCursorPos]`
+			 * between them both preserve the carry `jp nc` tests. */
+			SafelySwitchToSRAM0();
+			cursor = wTempDeckMachineCursorPos;
+			if (!(built.f & CARRY_FLAG))
+				continue;
+
+			wCardListVisibleOffset = wTempCardListVisibleOffset;
+			hadm_init_auto_deck_menu();
+			cursor = wTempDeckMachineCursorPos;
+			continue;
+		}
+		if (option == 1u) { /* .asm_bb09 falls into .exit */
+			wTempBankSRAM = 0u;
+			return (HandleAutoDeckMenuResult){0u, 0x80u};
+		}
+
+		/* .read_the_instructions */
+		wTempCardListVisibleOffset = wCardListVisibleOffset;
+
+		uint8_t list_offset = wCardListVisibleOffset;
+
+		wTempDeckMachineCursorPos = wCurMenuItem;
+
+		uint8_t list_index = (uint8_t)(wCurMenuItem + list_offset);
+
+		wCurDeck = list_index;
+
+		uint16_t list_entry = (uint16_t)(wMachineDeckPtrs_ADDR
+			+ (uint8_t)(list_index << 1));
+		uint16_t description = (uint16_t)(wAutoDeckMachineTextDescriptions_ADDR
+			+ (uint8_t)(list_index << 1));
+
+		gb_write8(wCardConfirmationText_ADDR, gb_read8(description));
+		gb_write8((uint16_t)(wCardConfirmationText_ADDR + 1u),
+			  gb_read8((uint16_t)(description + 1u)));
+
+		SafelySwitchToSRAM1();
+
+		uint16_t list_deck = (uint16_t)(gb_read8(list_entry)
+			| ((uint16_t)gb_read8((uint16_t)(list_entry + 1u)) << 8));
+		uint16_t list_name = (uint16_t)(list_deck + DECK_NAME_SIZE);
+		uint8_t list_first = gb_read8(list_name);
+
+		SafelySwitchToSRAM0();
+		if (list_first == 0u) {
+			/* `jp z, .wait_input`: back into the inner loop without
+			 * re-running the .please_select_deck prologue. */
+			resume_wait_input = 1u;
+			continue;
+		}
+
+		PlaySFXConfirmOrCancel(MENU_CONFIRM);
+		SafelySwitchToSRAM1();
+		(void)HandleDeckMissingCardsList(list_deck, list_name);
+		SafelySwitchToSRAM0();
+		wCardListVisibleOffset = wTempCardListVisibleOffset;
+		hadm_init_auto_deck_menu();
+		cursor = wTempDeckMachineCursorPos;
+	}
+}
+/* <<< factory HandleAutoDeckMenu */
