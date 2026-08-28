@@ -344,6 +344,33 @@ That framing is too coarse; measured, the boundary sits elsewhere.
   as `SIGXCPU` (exit 152) even when its driver is gone — an orphaned probe once
   burned 4h17m. Raise or disable it with `POKETCG_PROBE_CPU_SECONDS` (`0` opts
   out) when single-stepping a probe under a debugger.
+- **Mid-run LCD enable is healthy end-to-end — the 2026-08-27 journal diagnoses
+  "PPU never reaches frame_ready after a mid-run enable" (P3_vblank_wedge_diagnosis)
+  and "VBlankHandler trampoline uninitialized" (P3_watchdog_attempt) are both
+  WRONG. Measured 2026-08-28 on GiveBoosterPack-0 under `GBRT_PPU_TRACE`.**
+  A routine that runs `DisableLCD -> ... -> EnableLCD` inside the probed call
+  gets full frames: LY walks 0..153 every frame, `[IRQ-SVC] vec=0040` fires per
+  frame, the ROM VBlankHandler runs to completion (its SCX/SCY/WX/WY/LCDC
+  flushes appear as `PPU-WRITE` rows), and `wVBlankCounter` increments — read
+  back `0xB8` after ~1209 frames with `wReentrancyFlag` clean. The runner's
+  trampoline seed (`jp NoOp` at `wVBlankFunctionTrampoline`) is byte-identical
+  to the game's own boot value (`home/setup.asm:18-24`); it is not a harness gap.
+  A `BUDGET_EXHAUSTED` snapshot of `pc=0x271 halted=1 if=0xE0 ppu_ly=<small>` is
+  therefore a SAMPLING ARTIFACT of a live per-frame loop, never proof of a
+  frame/interrupt wedge. Triage before writing any mechanism into a stanza:
+  rerun the retired case through `compare_one.py` with
+  `GBRT_PPU_TRACE=/tmp/ppu.log` and `GBRT_PPU_TRACE_FRAMES=0-4000`, then
+  histogram `grep -oE 'pc=[0-9A-F]{4}' /tmp/ppu.log | sort | uniq -c | sort -rn`
+  and resolve the hot non-ISR pcs against `poketcg.sym` — the resident loop
+  names the real blocker. GiveBoosterPack's is `WaitForSongToFinish`
+  (`play_song.asm:14`): it plays MUSIC_BOOSTER_PACK and
+  `Music1_AssertSongFinished` polls `wCurSongID`, which nothing clears because
+  no audio driver runs inside a probed call. The remedy is case-shaping — a
+  pre-ret cutpoint before the `PlaySong`/`WaitForSongToFinish` pair observing
+  staged bytes only (the AIPlay phase-1 pattern), or seeding the wait's exit
+  state — NOT frame simulation and NOT a runtime patch. Other members of the
+  `pc=0x271` cluster need this three-minute trace individually before any
+  remedy is recorded; their resident loops are not necessarily the song wait.
 - **Triage recipe for this cluster, and its measured result.** These routines are
   unported, so `compare_one.py` cannot drive them (it resolves the native adapter
   first and exits `unknown routine`). Pipe a request JSON straight into
