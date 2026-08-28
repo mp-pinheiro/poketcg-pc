@@ -352,6 +352,12 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/core.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define IMAKUNI_DECK_ID 0x2Au
 /* <<< factory statics */
 
 
@@ -3029,3 +3035,45 @@ AIDecideResult AIPlay_Pokedex(void)
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_Pokedex */
+
+/* >>> factory AIPlay_Gambler */
+AIDecideResult AIPlay_Gambler(void)
+{
+	wCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);
+	if (wOpponentDeckID == IMAKUNI_DECK_ID) {
+		hTempCardIndex_ff9f = wAITrainerCardToPlay;
+		AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+		return (AIDecideResult){decision.f};
+	}
+	uint8_t rng0 = wRNG1;
+	uint8_t rng1 = gb_read8(wRNG1_ADDR + 1u);
+	uint8_t rng2 = gb_read8(wRNG1_ADDR + 2u);
+	wce06 = rng0;
+	wce08 = rng1;
+	wce0f = rng2;
+	gb_write8(wRNG1_ADDR, 0x50u);
+	gb_write8(wRNG1_ADDR + 1u, 0x50u);
+	gb_write8(wRNG1_ADDR + 2u, 0x50u);
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	gb_write8(wRNG1_ADDR, wce06);
+	gb_write8(wRNG1_ADDR + 1u, wce08);
+	gb_write8(wRNG1_ADDR + 2u, wce0f);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_Gambler */
+
+/* >>> factory AIPlay_EnergyRetrieval */
+AIDecideResult AIPlay_EnergyRetrieval(void)
+{
+	wCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTemp_ffa0 = wAITrainerCardParameter;
+	hTempPlayAreaLocation_ffa1 = wce1a;
+	hTempRetreatCostCards = wce1b;
+	if (hTempRetreatCostCards != 0xffu)
+		gb_write8(hTempRetreatCostCards_ADDR + 1u, 0xffu);
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_EnergyRetrieval */

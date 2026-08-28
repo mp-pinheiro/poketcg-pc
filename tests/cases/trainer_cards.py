@@ -417,6 +417,14 @@ def _pp13_case(location=b"\x00", **overrides):
     }
     case.update(overrides)
     return case
+
+hTempCardIndex_ff9f = 0xFF9F
+wAITrainerCardToPlay = 0xCE16
+wCurrentAIFlags = 0xCE21
+wOpponentDeckID = 0xCC0E
+wRNG1 = 0xCACA
+SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+BUDGET = dict(instruction_budget=20000000, cycle_budget=80000000)
 # <<< factory-cases-statics
 
 # >>> factory AIDecide_PokemonTrader_LegendaryMoltres
@@ -1061,6 +1069,24 @@ CASES["AIPlay_Pokedex"] = [
 ]
 # <<< factory AIPlay_Pokedex
 
+# >>> factory AIPlay_Gambler
+CONTRACT["AIPlay_Gambler"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_Gambler"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE21: b"\x00", 0xCC0E: b"\x00", 0xCACA: b"\x00\x00\x00", 0xCBF9: b"\x01"}, read={0xCE21: 1, 0xFF9F: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE21: b"\x10", 0xCC0E: b"\x2A", 0xCACA: b"\x12\x34\x56", 0xCBF9: b"\x01"}, read={0xCE21: 1, 0xFF9F: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, a=0xAA, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE21: b"\x00", 0xCC0E: b"\x00", 0xCACA: b"\xAA\xBB\xCC", 0xCBF9: b"\x01"}, read={0xCE21: 1, 0xFF9F: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_Gambler
+
+# >>> factory AIPlay_EnergyRetrieval
+CONTRACT["AIPlay_EnergyRetrieval"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_EnergyRetrieval"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x34", 0xCE1A: b"\x02", 0xCE1B: b"\xFF", 0xCE21: b"\x01", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00", 0xFFA3: b"\x55"}, read={0xCE21: 1, 0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1, 0xFFA2: 1, 0xFFA3: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCE19: b"\x78", 0xCE1A: b"\x00", 0xCE1B: b"\x02", 0xCE21: b"\x20", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x80", 0xFFA3: b"\xAA"}, read={0xCE21: 1, 0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1, 0xFFA2: 1, 0xFFA3: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCE19: b"\xDD", 0xCE1A: b"\xEE", 0xCE1B: b"\xFF", 0xCE21: b"\xBB", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00", 0xFFA3: b"\xCC"}, read={0xCE21: 1, 0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1, 0xFFA2: 1, 0xFFA3: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_EnergyRetrieval
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1405,3 +1431,14 @@ MUTATIONS["AIPlay_ItemFinder"] = {"source_symbol": "AIPlay_ItemFinder", "before"
 # >>> factory-mutation AIPlay_Pokedex
 MUTATIONS["AIPlay_Pokedex"] = {"source_symbol": "AIPlay_Pokedex", "before": "AIDecideResult AIPlay_Pokedex(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIDecideResult AIPlay_Pokedex(void)\n{\n\thTempCardIndex_ff9f = 0u;", "case_ids": ["AIPlay_Pokedex-1"]}
 # <<< factory-mutation AIPlay_Pokedex
+# >>> factory-mutation AIPlay_Gambler
+MUTATIONS["AIPlay_Gambler"] = {
+    "source_symbol": "AIPlay_Gambler",
+    "before": "AIDecideResult AIPlay_Gambler(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);",
+    "after": "AIDecideResult AIPlay_Gambler(void)\n{\n\twCurrentAIFlags = wCurrentAIFlags;",
+    "case_ids": ["AIPlay_Gambler-0"]
+}
+# <<< factory-mutation AIPlay_Gambler
+# >>> factory-mutation AIPlay_EnergyRetrieval
+MUTATIONS["AIPlay_EnergyRetrieval"] = {"source_symbol": "AIPlay_EnergyRetrieval", "before": "AIDecideResult AIPlay_EnergyRetrieval(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);", "after": "AIDecideResult AIPlay_EnergyRetrieval(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | 0u);", "case_ids": ["AIPlay_EnergyRetrieval-0"]}
+# <<< factory-mutation AIPlay_EnergyRetrieval

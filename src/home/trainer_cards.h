@@ -280,4 +280,10 @@ AIDecideResult AIPlay_ItemFinder(void);
 /* >>> factory AIPlay_Pokedex */
 AIDecideResult AIPlay_Pokedex(void);
 /* <<< factory AIPlay_Pokedex */
+/* >>> factory AIPlay_Gambler */
+AIDecideResult AIPlay_Gambler(void);
+/* <<< factory AIPlay_Gambler */
+/* >>> factory AIPlay_EnergyRetrieval */
+AIDecideResult AIPlay_EnergyRetrieval(void);
+/* <<< factory AIPlay_EnergyRetrieval */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

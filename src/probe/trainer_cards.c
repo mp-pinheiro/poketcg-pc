@@ -570,6 +570,22 @@ static void adapt_AIPlay_Pokedex(ProbeState *s)
 }
 /* <<< factory AIPlay_Pokedex */
 
+/* >>> factory AIPlay_Gambler */
+static void adapt_AIPlay_Gambler(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_Gambler();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_Gambler */
+
+/* >>> factory AIPlay_EnergyRetrieval */
+static void adapt_AIPlay_EnergyRetrieval(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_EnergyRetrieval();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_EnergyRetrieval */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -639,5 +655,7 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIPlay_ComputerSearch", adapt_AIPlay_ComputerSearch },
 	{ "AIPlay_ItemFinder", adapt_AIPlay_ItemFinder },
 	{ "AIPlay_Pokedex", adapt_AIPlay_Pokedex },
+	{ "AIPlay_Gambler", adapt_AIPlay_Gambler },
+	{ "AIPlay_EnergyRetrieval", adapt_AIPlay_EnergyRetrieval },
 	{ NULL, NULL },
 };
