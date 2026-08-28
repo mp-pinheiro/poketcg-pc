@@ -565,3 +565,8 @@ unblock = "read the recorded diagnostics under .factory/try/GiveBoosterPack/atte
 name = "SaveDeckInDeckSaveMachine"
 reason = "AUTO-RETIRED (cluster): matches GiveBoosterPack on BUDGET_EXHAUSTED pc=625 (9 stanzas). src/engine/menus/deck_machine.asm:1139 (basename `deck_machine`). generation=2; last diagnostic phase=primary failure_class=code detail=case SaveDeckInDeckSaveMachine-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65514,\"rom_bank\":2,\"hbank_rom\":2,\"instructions\":15620911,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":120,\"ppu_mode\":0,\"bus\":\"8000000080\"}"
 unblock = "read the recorded diagnostics under .factory/try/GiveBoosterPack/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "InputCurDeckName"
+reason = "AUTO-RETIRED: src/engine/menus/deck_selection.asm:309 (basename `deck_selection`). 17 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case InputCurDeckName-0 {\"status\": \"PORT\", \"fn\": \"InputCurDeckName\", \"mismatches\": {\"a\": [3, 0], \"f\": [64, 128], \"c\": [1, 0], \"e\": [2, 0]}}"
+unblock = "read the recorded diagnostics under .factory/try/InputCurDeckName/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
