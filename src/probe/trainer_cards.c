@@ -538,6 +538,14 @@ static void adapt_AIPlay_Switch(ProbeState *s)
 }
 /* <<< factory AIPlay_Switch */
 
+/* >>> factory AIPlay_Maintenance */
+static void adapt_AIPlay_Maintenance(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_Maintenance();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_Maintenance */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -603,5 +611,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIPlay_Potion", adapt_AIPlay_Potion },
 	{ "AIPlay_GustOfWind", adapt_AIPlay_GustOfWind },
 	{ "AIPlay_Switch", adapt_AIPlay_Switch },
+	{ "AIPlay_Maintenance", adapt_AIPlay_Maintenance },
 	{ NULL, NULL },
 };

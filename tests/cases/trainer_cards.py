@@ -1025,6 +1025,15 @@ CASES["AIPlay_Switch"] = [
 ]
 # <<< factory AIPlay_Switch
 
+# >>> factory AIPlay_Maintenance
+CONTRACT["AIPlay_Maintenance"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_Maintenance"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE1A: b"\x34", 0xCE1B: b"\x00", 0xCE21: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xCE21: 1, 0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCE1A: b"\x78", 0xCE1B: b"\x02", 0xCE21: b"\x10", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xCE21: 1, 0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCE1A: b"\xDD", 0xCE1B: b"\xEE", 0xCE21: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xCE21: 1, 0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_Maintenance
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1352,3 +1361,6 @@ MUTATIONS["AIPlay_GustOfWind"] = {"source_symbol": "AIPlay_GustOfWind", "before"
 # >>> factory-mutation AIPlay_Switch
 MUTATIONS["AIPlay_Switch"] = {"source_symbol": "AIPlay_Switch", "before": "AIDecideResult AIPlay_Switch(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_USED_SWITCH);", "after": "AIDecideResult AIPlay_Switch(void)\n{\n\twCurrentAIFlags = 0u;", "case_ids": ["AIPlay_Switch-0", "AIPlay_Switch-1", "AIPlay_Switch-2"]}
 # <<< factory-mutation AIPlay_Switch
+# >>> factory-mutation AIPlay_Maintenance
+MUTATIONS["AIPlay_Maintenance"] = {"source_symbol": "AIPlay_Maintenance", "before": "AIDecideResult AIPlay_Maintenance(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);", "after": "AIDecideResult AIPlay_Maintenance(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | 0u);", "case_ids": ["AIPlay_Maintenance-0"]}
+# <<< factory-mutation AIPlay_Maintenance

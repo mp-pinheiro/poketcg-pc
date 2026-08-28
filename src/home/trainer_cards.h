@@ -260,4 +260,8 @@ AIDecideResult AIPlay_GustOfWind(void);
 /* >>> factory AIPlay_Switch */
 AIDecideResult AIPlay_Switch(void);
 /* <<< factory AIPlay_Switch */
+/* >>> factory AIPlay_Maintenance */
+/* >>> factory AIPlay_Maintenance */
+AIDecideResult AIPlay_Maintenance(void);
+/* <<< factory AIPlay_Maintenance */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

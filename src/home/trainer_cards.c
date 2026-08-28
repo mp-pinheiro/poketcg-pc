@@ -2967,3 +2967,15 @@ AIDecideResult AIPlay_Switch(void)
 	return (AIDecideResult){0x80u};
 }
 /* <<< factory AIPlay_Switch */
+
+/* >>> factory AIPlay_Maintenance */
+AIDecideResult AIPlay_Maintenance(void)
+{
+	wCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTemp_ffa0 = wce1a;
+	hTempPlayAreaLocation_ffa1 = wce1b;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_Maintenance */

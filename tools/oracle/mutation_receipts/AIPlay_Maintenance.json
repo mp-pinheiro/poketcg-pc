@@ -1,0 +1,9 @@
+{
+  "fn": "AIPlay_Maintenance",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIPlay_Maintenance\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"000000\", \"52217\": \"00\", \"52758\": \"00\", \"52762\": \"3400\", \"52769\": \"08\", \"65408\": \"08\", \"65439\": \"003400\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIPlay_Maintenance\", \"mismatches\": {\"bus\": {\"address\": 52769, \"reference\": \"000034000808003400\", \"native\": \"000034000008003400\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[51914, 3], [52217, 1], [52758, 1], [52762, 2], [52769, 1], [65408, 1], [65439, 3]]}}}\n",
+  "restored": "{\"fn\": \"AIPlay_Maintenance\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"000000\", \"52217\": \"00\", \"52758\": \"00\", \"52762\": \"3400\", \"52769\": \"08\", \"65408\": \"08\", \"65439\": \"003400\"}}, \"status\": \"PASS\"}\n"
+}
