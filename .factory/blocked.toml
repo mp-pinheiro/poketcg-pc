@@ -177,11 +177,6 @@ reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:10338 (basename `ef
 unblock = "read the recorded diagnostics under .factory/try/LassEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "InputCurDeckName"
-reason = "AUTO-RETIRED: src/engine/menus/deck_selection.asm:309 (basename `deck_selection`). 17 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case InputCurDeckName-0 {\"status\": \"PORT\", \"fn\": \"InputCurDeckName\", \"mismatches\": {\"a\": [3, 0], \"f\": [64, 128], \"c\": [1, 0], \"e\": [2, 0]}}"
-unblock = "read the recorded diagnostics under .factory/try/InputCurDeckName/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "AIDoAction"
 reason = "Verified 2026-08-28: AIDoAction's indirect table is now narrowed by the current C inventory. All general, legendary, no-retreat, bench-switch, prize, and initial-basic targets exist as C routines; the remaining unresolved AIActionTable targets are AIPerformScriptedTurn and SetUpBossStartingHandAndDeck. The former is Sam's pre-turn scripted branch and the latter owns boss-deck hand/deck shaping."
 unblock = "Port and verify AIPerformScriptedTurn and SetUpBossStartingHandAndDeck, then re-port AIDoAction as a direct C switch over the five AIACTION_* slots and the DeckAIPointerTable mapping; preserve the a==0 CopyDeckData path and document the unreachable zero-action branch only after tracing its callers."
