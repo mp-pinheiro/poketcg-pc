@@ -1,0 +1,9 @@
+{
+  "fn": "AIPlay_GustOfWind",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIPlay_GustOfWind\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"000000\", \"52217\": \"00\", \"52758\": \"00\", \"52761\": \"34\", \"52769\": \"10\", \"65408\": \"08\", \"65439\": \"0034\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIPlay_GustOfWind\", \"mismatches\": {\"bus\": {\"address\": 52769, \"reference\": \"0000003410080034\", \"native\": \"0000003400080034\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[51914, 3], [52217, 1], [52758, 1], [52761, 1], [52769, 1], [65408, 1], [65439, 2]]}}}\n",
+  "restored": "{\"fn\": \"AIPlay_GustOfWind\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"000000\", \"52217\": \"00\", \"52758\": \"00\", \"52761\": \"34\", \"52769\": \"10\", \"65408\": \"08\", \"65439\": \"0034\"}}, \"status\": \"PASS\"}\n"
+}

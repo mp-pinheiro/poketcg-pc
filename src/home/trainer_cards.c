@@ -338,6 +338,15 @@
 #include "home/trainer_cards.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#define AI_FLAG_USED_PLUSPOWER 0x01u
+
+#include "home/core.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 
@@ -2905,3 +2914,56 @@ AIDecide_PlusPower_Phase13Result AIDecide_PlusPower_Phase13(void)
 	}
 }
 /* <<< factory AIDecide_PlusPower_Phase13 */
+
+/* >>> factory AIPlay_PlusPower */
+AIDecideResult AIPlay_PlusPower(void)
+{
+	wCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_USED_PLUSPOWER);
+	wAIPlusPowerAttack = wAITrainerCardParameter;
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_PlusPower */
+
+/* >>> factory AIPlay_Potion */
+AIDecideResult AIPlay_Potion(void)
+{
+	uint8_t card = wAITrainerCardToPlay;
+	hTempCardIndex_ff9f = card;
+	uint8_t parameter = wAITrainerCardParameter;
+	hTemp_ffa0 = parameter;
+	CardDamageResult damage = GetCardDamageAndMaxHP(parameter);
+	uint8_t location = damage.a;
+	if (location >= 20u)
+		location = 20u;
+	hTempPlayAreaLocation_ffa1 = location;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_Potion */
+
+/* >>> factory AIPlay_GustOfWind */
+AIDecideResult AIPlay_GustOfWind(void)
+{
+	uint8_t flags = wCurrentAIFlags;
+	flags |= 0x10u;
+	wCurrentAIFlags = flags;
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTemp_ffa0 = wAITrainerCardParameter;
+	AIMakeDecisionResult decision = AIMakeDecision(0x07u, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_GustOfWind */
+
+/* >>> factory AIPlay_Switch */
+AIDecideResult AIPlay_Switch(void)
+{
+	wCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_USED_SWITCH);
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTemp_ffa0 = wAITrainerCardParameter;
+	(void)AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	wAIRetreatScore = 0u;
+	return (AIDecideResult){0x80u};
+}
+/* <<< factory AIPlay_Switch */

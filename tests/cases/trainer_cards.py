@@ -986,6 +986,45 @@ CASES["AIDecide_PlusPower_Phase13"] = [
 ]
 # <<< factory AIDecide_PlusPower_Phase13
 
+# >>> factory AIPlay_PlusPower
+CONTRACT["AIPlay_PlusPower"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_PlusPower"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x34", 0xCE21: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+         read={0xFF9F: 1, 0xCDD6: 1, 0xCE21: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCE19: b"\x78", 0xCE21: b"\x80", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+         read={0xFF9F: 1, 0xCDD6: 1, 0xCE21: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCE19: b"\xDD", 0xCE21: b"\xAA", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+         read={0xFF9F: 1, 0xCDD6: 1, 0xCE21: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_PlusPower
+
+# >>> factory AIPlay_Potion
+CONTRACT["AIPlay_Potion"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_Potion"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xFF97: b"\xC2", 0xCE16: b"\x00", 0xCE19: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\x00", 0xC400: b"\x01", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xFF97: b"\xC2", 0xCE16: b"\x77", 0xCE19: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\x00", 0xC2BC: b"\x00", 0xC2C9: b"\xC0", 0xC400: b"\x01", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, wram={0xFF80: b"\x08", 0xFF97: b"\xC2", 0xCE16: b"\x00", 0xCE19: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\x00", 0xC2BC: b"\x00", 0xC2C9: b"\xC0", 0xC400: b"\x01", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_Potion
+
+# >>> factory AIPlay_GustOfWind
+CONTRACT["AIPlay_GustOfWind"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_GustOfWind"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x34", 0xCE21: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xCE21: 1, hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCE19: b"\x78", 0xCE21: b"\x0F", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x80"}, read={0xCE21: 1, hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCE19: b"\xDD", 0xCE21: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xCE21: 1, hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_GustOfWind
+
+# >>> factory AIPlay_Switch
+CONTRACT["AIPlay_Switch"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_Switch"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x34", 0xCE21: b"\x00", 0xCDB4: b"\x55", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xCE21: 1, hTempCardIndex_ff9f: 1, hTemp_ffa0: 1, 0xCDB4: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCE19: b"\xA5", 0xCE21: b"\x01", 0xCDB4: b"\xAA", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xCE21: 1, hTempCardIndex_ff9f: 1, hTemp_ffa0: 1, 0xCDB4: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCE19: b"\xEE", 0xCE21: b"\x00", 0xCDB4: b"\x99", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xCE21: 1, hTempCardIndex_ff9f: 1, hTemp_ffa0: 1, 0xCDB4: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_Switch
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1296,3 +1335,20 @@ MUTATIONS["AIPlay_PokemonCenter"] = {"source_symbol": "AIPlay_PokemonCenter",
     "after": "AIDecideResult AIPlay_PokemonCenter(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
     "case_ids": ["AIPlay_PokemonCenter-0"]}
 # <<< factory-mutation AIPlay_PokemonCenter
+# >>> factory-mutation AIPlay_PlusPower
+MUTATIONS["AIPlay_PlusPower"] = {
+    "source_symbol": "AIPlay_PlusPower",
+    "before": "AIDecideResult AIPlay_PlusPower(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_USED_PLUSPOWER);\n\twAIPlusPowerAttack = wAITrainerCardParameter;",
+    "after": "AIDecideResult AIPlay_PlusPower(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_USED_PLUSPOWER);\n\twAIPlusPowerAttack = wAITrainerCardToPlay;",
+    "case_ids": ["AIPlay_PlusPower-0", "AIPlay_PlusPower-1", "AIPlay_PlusPower-2"]
+}
+# <<< factory-mutation AIPlay_PlusPower
+# >>> factory-mutation AIPlay_Potion
+MUTATIONS["AIPlay_Potion"] = {"source_symbol": "AIPlay_Potion", "before": "AIDecideResult AIPlay_Potion(void)\n{\n\tuint8_t card = wAITrainerCardToPlay;\n\thTempCardIndex_ff9f = card;", "after": "AIDecideResult AIPlay_Potion(void)\n{\n\tuint8_t card = wAITrainerCardParameter;\n\thTempCardIndex_ff9f = card;", "case_ids": ["AIPlay_Potion-0", "AIPlay_Potion-1", "AIPlay_Potion-2"]}
+# <<< factory-mutation AIPlay_Potion
+# >>> factory-mutation AIPlay_GustOfWind
+MUTATIONS["AIPlay_GustOfWind"] = {"source_symbol": "AIPlay_GustOfWind", "before": "AIDecideResult AIPlay_GustOfWind(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags |= 0x10u;", "after": "AIDecideResult AIPlay_GustOfWind(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags |= 0u;", "case_ids": ["AIPlay_GustOfWind-0", "AIPlay_GustOfWind-1", "AIPlay_GustOfWind-2"]}
+# <<< factory-mutation AIPlay_GustOfWind
+# >>> factory-mutation AIPlay_Switch
+MUTATIONS["AIPlay_Switch"] = {"source_symbol": "AIPlay_Switch", "before": "AIDecideResult AIPlay_Switch(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_USED_SWITCH);", "after": "AIDecideResult AIPlay_Switch(void)\n{\n\twCurrentAIFlags = 0u;", "case_ids": ["AIPlay_Switch-0", "AIPlay_Switch-1", "AIPlay_Switch-2"]}
+# <<< factory-mutation AIPlay_Switch

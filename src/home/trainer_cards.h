@@ -247,4 +247,17 @@ AIDecideResult AIDecide_PokemonCenter(void);
 typedef struct { uint8_t a; uint8_t f; } AIDecide_PlusPower_Phase13Result;
 AIDecide_PlusPower_Phase13Result AIDecide_PlusPower_Phase13(void);
 /* <<< factory AIDecide_PlusPower_Phase13 */
+/* >>> factory AIPlay_PlusPower */
+AIDecideResult AIPlay_PlusPower(void);
+/* <<< factory AIPlay_PlusPower */
+/* >>> factory AIPlay_Potion */
+/* >>> factory AIPlay_Potion */
+AIDecideResult AIPlay_Potion(void);
+/* <<< factory AIPlay_Potion */
+/* >>> factory AIPlay_GustOfWind */
+AIDecideResult AIPlay_GustOfWind(void);
+/* <<< factory AIPlay_GustOfWind */
+/* >>> factory AIPlay_Switch */
+AIDecideResult AIPlay_Switch(void);
+/* <<< factory AIPlay_Switch */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

@@ -506,6 +506,38 @@ static void adapt_AIDecide_PlusPower_Phase13(ProbeState *s)
 }
 /* <<< factory AIDecide_PlusPower_Phase13 */
 
+/* >>> factory AIPlay_PlusPower */
+static void adapt_AIPlay_PlusPower(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_PlusPower();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_PlusPower */
+
+/* >>> factory AIPlay_Potion */
+static void adapt_AIPlay_Potion(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_Potion();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_Potion */
+
+/* >>> factory AIPlay_GustOfWind */
+static void adapt_AIPlay_GustOfWind(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_GustOfWind();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_GustOfWind */
+
+/* >>> factory AIPlay_Switch */
+static void adapt_AIPlay_Switch(ProbeState *s)
+{
+	AIDecideResult r = AIPlay_Switch();
+	s->f = r.f;
+}
+/* <<< factory AIPlay_Switch */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -567,5 +599,9 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_EnergyRemoval", adapt_AIDecide_EnergyRemoval },
 	{ "AIDecide_PokemonCenter", adapt_AIDecide_PokemonCenter },
 	{ "AIDecide_PlusPower_Phase13", adapt_AIDecide_PlusPower_Phase13 },
+	{ "AIPlay_PlusPower", adapt_AIPlay_PlusPower },
+	{ "AIPlay_Potion", adapt_AIPlay_Potion },
+	{ "AIPlay_GustOfWind", adapt_AIPlay_GustOfWind },
+	{ "AIPlay_Switch", adapt_AIPlay_Switch },
 	{ NULL, NULL },
 };
