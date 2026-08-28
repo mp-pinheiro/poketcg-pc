@@ -112,6 +112,16 @@ wTxRam3 = 0xCE43
 
 wPrinterStatus = 0xCE6F
 wPrinterInitAttempts = 0xCE9E
+
+# Shared seeds for the _PrintCardList cases: an empty card collection in SRAM
+# bank 0 (0xA100 sCardCollection) plus four unnamed deck slots (0xA200 sDeck1Name,
+# 0xA254 sDeck2Name, 0xA2A8 sDeck3Name, 0xA2FC sDeck4Name) so
+# CreateTempCardCollection's .AddDeckCards passes over all four and leaves
+# wTempCardCollection all zero on both sides.
+_PRINT_CARD_LIST_SRAM = {0: {0xA100: b"\x00" * 0x100, 0xA200: b"\x00",
+                             0xA254: b"\x00", 0xA2A8: b"\x00", 0xA2FC: b"\x00"}}
+_PRINT_CARD_LIST_SETUP = [{"fn": "CopyDMAFunction"},
+                          {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory Func_1a14b
@@ -672,6 +682,69 @@ CASES["_RequestToPrintCard"] = [
 ]
 # <<< factory _RequestToPrintCard
 
+# >>> factory _PrintCardList
+# The reference never returns from here. The card loop reaches its seventh new
+# card type with wPrinterHorizontalOffset at 19, so AddToPrinterGfxBuffer falls
+# into LoadGfxBufferForPrinter, whose TryInitPrinterCommunications parks in
+# SendPrinterPacket's .wait_printer_packet_transmission DoFrame loop ($315D)
+# because no printer hardware raises the serial interrupt that advances
+# wPrinterPacketSequence. Completion is therefore declared pre-ret at that loop
+# head, exactly as the landed _PrintDeckConfiguration and _RequestToPrintCard
+# cases do.
+#
+# Registers are mid-flight on the reference, so nothing is compared. The
+# observed bytes are the ones this routine writes before that stop and never
+# rewrites afterwards, so the port's full run agrees with the reference's
+# partial one:
+#   $FF97 hWhoseTurn            - PLAYER_TURN, written once before the loop
+#   $CE91 wPrinterCardCount     - the collection slot of the card being
+#                                 examined; the seeded collection is empty, so
+#                                 every iteration writes 0 on both sides
+#   $CE92 wPrinterTotalCardCount - zeroed before the loop and only advanced by
+#                                 owned cards, of which there are none
+#   $CE97 wPrinterNumCardTypes  - same, and only on the all-owned path
+#   $CE9C wPrintOnlyStarRarity  - the SELECT decision, written once at entry
+# Every one of those is seeded to $FF first so the write itself is witnessed.
+# wCurPrinterCardType ($CE94) and wPrinterHorizontalOffset ($CE90) are NOT
+# observed: they keep moving past the reference's stop.
+#
+# wLCDC starts clear so the text boxes before ShowPrinterTransmitting's
+# EnableLCD stay out of WaitForVBlank's halt; CopyDMAFunction installs
+# hDMAFunction for the frames that elapse afterwards and SetupText primes the
+# glyph cache. $81 in wSerialTransferData is the device number the port's
+# synchronous packet engine writes straight back, and a zero wPrinterStatus
+# keeps both sides off every error path.
+#
+# Case 1 holds SELECT for the whole run and so takes the star-rarity branch.
+# hKeysHeld is seeded because the routine reads it before the first DoFrame,
+# and keys=0x04 makes the reference's own joypad read write that same $04 back,
+# so the seeded byte still matches at the stop. wPrinterNumCardTypes is not
+# observed there: star mode advances it per printed card, so it is still moving
+# when the reference parks.
+CONTRACT["_PrintCardList"] = {"compare": (), "preserve": ()}
+CASES["_PrintCardList"] = [
+    {"wram": {0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00",
+              0xCE91: b"\xFF", 0xCE92: b"\xFF\xFF", 0xCE97: b"\xFF",
+              0xCE9C: b"\xFF", 0xFF90: b"\x00", 0xFF97: b"\x00"},
+     "sram": _PRINT_CARD_LIST_SRAM,
+     "ramg": True,
+     "setup": _PRINT_CARD_LIST_SETUP,
+     "keys": 0x00,
+     "read": {0xCE91: 1, 0xCE92: 2, 0xCE97: 1, 0xCE9C: 1, 0xFF97: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON,
+         wram={0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00",
+               0xCE91: b"\xFF", 0xCE92: b"\xFF\xFF", 0xCE9C: b"\xFF",
+               0xFF90: b"\x04", 0xFF97: b"\x00"},
+         sram=_PRINT_CARD_LIST_SRAM,
+         ramg=True,
+         setup=_PRINT_CARD_LIST_SETUP,
+         keys=0x04,
+         read={0xCE91: 1, 0xCE92: 2, 0xCE9C: 1, 0xFF97: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory _PrintCardList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 SCHEMA2_CASES["SendPrinterPacket"][3]["completion"] = {"mode": "pre-ret", "pc": 0x315D}
@@ -935,3 +1008,19 @@ MUTATIONS["_RequestToPrintCard"] = {
 for _record in SCHEMA2_CASES["_RequestToPrintCard"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
 # <<< factory-completion _RequestToPrintCard
+# >>> factory-mutation _PrintCardList
+MUTATIONS["_PrintCardList"] = {
+    "source_symbol": "_PrintCardList",
+    "before": "\twPrintOnlyStarRarity = star_only;",
+    "after": "\twPrintOnlyStarRarity = (uint8_t)(star_only + 1u);",
+    "case_ids": ["_PrintCardList-0", "_PrintCardList-1"],
+}
+# <<< factory-mutation _PrintCardList
+# >>> factory-completion _PrintCardList
+# $315D is SendPrinterPacket.wait_printer_packet_transmission
+# (poketcg/src/home/printer.asm), the DoFrame loop the reference can never leave
+# without a printer answering on the serial line. legacy_to_schema always emits
+# completion "return", so the split is applied after migration.
+for _record in SCHEMA2_CASES["_PrintCardList"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+# <<< factory-completion _PrintCardList

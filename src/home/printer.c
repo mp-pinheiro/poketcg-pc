@@ -126,6 +126,44 @@
 #define SYM_Lv 0x11u
 #define SYM_HP 0x0Cu
 #define NowPrintingText 0x01a2u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/card_collection.h"
+#include "home/card_data.h"
+#include "home/duel.h"
+#include "home/empty_screen.h"
+#include "home/print_text.h"
+#include "home/printer.h"
+#include "home/process_text.h"
+#include "home/sprite_vblank.h"
+#include "home/text_box.h"
+#include "home/tiles.h"
+#define PAD_SELECT 0x04u
+#define PLAYER_TURN 0xC2u
+#define GRASS_ENERGY 0x01u
+#define STAR 0x02u
+/* PROMOTIONAL EQU CARD_SET_PROMOTIONAL << 4, and CARD_SET_PROMOTIONAL is $04
+ * (card_data_constants.asm), so the byte is $40. */
+#define PROMOTIONAL 0x40u
+#define CARD_COUNT_MASK 0x7Fu
+#define CARD_NOT_OWNED 0x80u
+#define CARD_NOT_OWNED_F 0x07u
+#define TX_HALF2FULL 0x07u
+#define TYPE_TRAINER 0x10u
+#define AllCardsOwnedText 0x0015u
+#define TotalNumberOfCardsText 0x0016u
+#define TypesOfCardsText 0x0017u
+#define GrassPokemonText 0x0018u
+#define FirePokemonText 0x0019u
+#define WaterPokemonText 0x001Au
+#define LightningPokemonText 0x001Bu
+#define FightingPokemonText 0x001Cu
+#define PsychicPokemonText 0x001Du
+#define ColorlessPokemonText 0x001Eu
+#define TrainerCardText 0x001Fu
+#define EnergyCardText 0x0020u
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -1096,3 +1134,213 @@ RequestToPrintCardResult _RequestToPrintCard(uint8_t a)
 	return (RequestToPrintCardResult){(uint8_t)(reset.a == 0u ? 0x80u : 0x00u)};
 }
 /* <<< factory _RequestToPrintCard */
+
+/* >>> factory _PrintCardList */
+/* .printer_error / .printer_error_pop_de (printer.asm:797): the shared error
+ * tail. ResetPrinterCommunicationSettings brackets its body with push af/pop af,
+ * so the carry that got here survives into HandlePrinterError, whose ported
+ * result is f alone. */
+static uint8_t print_card_list_printer_error(uint8_t a, uint8_t f, uint8_t b, uint8_t c,
+					     uint8_t d, uint8_t e, uint16_t hl)
+{
+	ResetPrinterCommunicationSettingsResult reset =
+		ResetPrinterCommunicationSettings(a, f, b, c, d, e, hl);
+	RestoreVBlankFunction();
+	HandlePrinterErrorResult handled = HandlePrinterError(reset.f, reset.d, reset.e);
+	return handled.f;
+}
+
+/* .PrintTextWithNumber (printer.asm:838): prints text id `hl` at column 2 of the
+ * current printer row, then the decimal form of the number in bc at column 14.
+ * The second InitTextPrinting keeps whatever e ProcessTextFromID left behind --
+ * the asm reloads d only. Carry is AddToPrinterGfxBuffer's. */
+static AddToPrinterGfxBufferResult print_card_list_text_with_number(uint16_t text_id,
+								   uint16_t number)
+{
+	uint8_t e = (uint8_t)((uint8_t)(wPrinterHorizontalOffset - 1u) | 0x40u);
+	InitTextPrinting(2u, e);
+	ProcessTextHeaderResult header = ProcessTextFromID(text_id);
+	InitTextPrinting(14u, header.e);
+	(void)TwoByteNumberToTxSymbol_PadSpace(number);
+	uint16_t hl = wStringBuffer_ADDR;
+	ProcessText(&hl);
+	return AddToPrinterGfxBuffer(hl);
+}
+
+/* .LoadCardTypeEntry (printer.asm:860): when wLoadedCard1's type differs from
+ * wCurPrinterCardType, draw that type's icon and label and reset the per-type
+ * counters. Both exits clear carry -- `cp c` on equality, and the trailing
+ * `xor a` on the drawing path -- so the caller's `jr c, .printer_error_pop_de`
+ * is unreachable and is not modelled. */
+static void print_card_list_card_type_entry(void)
+{
+	/* .IconTextList (printer.asm:900): three bytes per entry, icon tile then
+	 * the little-endian text id. Indices 0-6 are the TYPE_PKMN_* order, index
+	 * 7 is Energy (every TYPE_ENERGY_* card) and index 8 is Trainer. */
+	static const uint8_t icon_tiles[9] = {
+		0xE0u, 0xE4u, 0xE8u, 0xECu, 0xF0u, 0xF4u, 0xF8u, 0xFCu, 0xDCu
+	};
+	static const uint16_t icon_texts[9] = {
+		FirePokemonText, GrassPokemonText, LightningPokemonText,
+		WaterPokemonText, FightingPokemonText, PsychicPokemonText,
+		ColorlessPokemonText, EnergyCardText, TrainerCardText
+	};
+
+	uint8_t type = wLoadedCard1Type;
+	uint8_t c = type;
+	if (type >= TYPE_ENERGY) {
+		c = 0x08u;
+		if (type < TYPE_TRAINER)
+			c = 0x07u;
+	}
+	if (wCurPrinterCardType == c)
+		return;
+	wCurPrinterCardType = c;
+
+	uint8_t e = (uint8_t)((uint8_t)(wPrinterHorizontalOffset - 1u) | 0x40u);
+	FillRectangle(icon_tiles[c], 2u, 2u, (uint16_t)(0x0100u | e), 0x0102u);
+	e = (uint8_t)(e + 1u);
+	InitTextPrinting(3u, e);
+	ProcessTextHeaderResult label = ProcessTextFromID(icon_texts[c]);
+	(void)AddToPrinterGfxBuffer(label.hl);
+
+	gb_write8(wPrinterCurCardTypeCount_ADDR, 0u);
+	gb_write8((uint16_t)(wPrinterCurCardTypeCount_ADDR + 1u), 0u);
+	wce98 = 0u;
+}
+
+PrintCardListResult _PrintCardList(void)
+{
+	uint8_t star_only = FALSE;
+	if ((hKeysHeld & PAD_SELECT) != 0u)
+		star_only = TRUE;
+	wPrintOnlyStarRarity = star_only;
+
+	ShowPrinterTransmitting();
+	CreateTempCardCollection();
+	(void)CopyPlayerName(wDefaultText_ADDR);
+	(void)PrepareForPrinterCommunications(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	Func_1a025();
+	TileCopyResult tiles = Func_212f();
+	DrawRegularTextBoxDMG(&tiles.hl, 0u, 20u, 4u, 0u, 64u);
+	hWhoseTurn = PLAYER_TURN;
+	InitTextPrinting(2u, 66u);
+	uint16_t text = wDefaultText_ADDR;
+	ProcessText(&text);
+	ProcessTextHeaderResult owned = ProcessTextFromID(AllCardsOwnedText);
+	if (wPrintOnlyStarRarity != 0u) {
+		(void)ProcessSpecialTextCharacter(TX_HALF2FULL, owned.hl);
+		/* ldfw de, fullwidth star: charmaps.asm:360 maps it to the two bytes
+		 * TX_FULLWIDTH3 ($03) and $54, loaded high-byte-first into de. */
+		Func_22ca(0x03u, 0x54u);
+	}
+
+	wCurPrinterCardType = 0xFFu;
+	gb_write8(wPrinterTotalCardCount_ADDR, 0u);
+	gb_write8((uint16_t)(wPrinterTotalCardCount_ADDR + 1u), 0u);
+	wPrinterNumCardTypes = 0u;
+	wPrinterHorizontalOffset = 5u;
+
+	uint8_t card_id = GRASS_ENERGY;
+	for (;;) {
+		/* `jr c, .done_card_loop` tests the carry that GetCardPointer raises
+		 * for an out-of-range id. The ported LoadCardDataToBuffer1_FromCardID
+		 * is void and copies unconditionally, so the bound is evaluated here
+		 * first and wLoadedCard1 is left alone exactly as the ROM leaves it. */
+		CardPtrResult ptr = GetCardPointer(card_id);
+		if (ptr.carry)
+			break;
+		LoadCardDataToBuffer1_FromCardID(card_id);
+		/* `ld d, HIGH(wTempCardCollection)` / `ld a, [de]`: the collection
+		 * count lives at the card id's slot in the $C0 page. */
+		wPrinterCardCount = gb_read8((uint16_t)((wTempCardCollection_ADDR & 0xFF00u)
+							| card_id));
+		print_card_list_card_type_entry();
+
+		uint8_t counted;
+		if (wPrintOnlyStarRarity != 0u) {
+			counted = (uint8_t)((wLoadedCard1Set & 0xF0u) != PROMOTIONAL &&
+					    wLoadedCard1Rarity == STAR);
+			if (counted != 0u)
+				wPrinterCardCount &= (uint8_t)~(uint8_t)(1u << CARD_NOT_OWNED_F);
+		} else {
+			uint8_t count = wPrinterCardCount;
+			counted = (uint8_t)(count != 0u && count != CARD_NOT_OWNED);
+		}
+
+		if (counted != 0u) {
+			uint8_t c = (uint8_t)(wPrinterCardCount & CARD_COUNT_MASK);
+
+			uint16_t total = wPrinterTotalCardCount_ADDR;
+			uint16_t total_sum = (uint16_t)(c + gb_read8(total));
+			gb_write8(total, (uint8_t)total_sum);
+			gb_write8((uint16_t)(total + 1u),
+				  (uint8_t)(gb_read8((uint16_t)(total + 1u))
+					    + (uint8_t)(total_sum >> 8)));
+
+			uint16_t cur = wPrinterCurCardTypeCount_ADDR;
+			uint16_t cur_sum = (uint16_t)(c + gb_read8(cur));
+			gb_write8(cur, (uint8_t)cur_sum);
+			gb_write8((uint16_t)(cur + 1u),
+				  (uint8_t)(gb_read8((uint16_t)(cur + 1u))
+					    + (uint8_t)(cur_sum >> 8)));
+
+			wPrinterNumCardTypes = (uint8_t)(wPrinterNumCardTypes + 1u);
+			wce98 = (uint8_t)(wce98 + 1u);
+
+			/* hl is still wce98 here; LoadCardInfoForPrinter pushes and pops
+			 * it, so AddToPrinterGfxBuffer sees the same word. b is caller
+			 * residue that LoadCardInfoForPrinter only hands to
+			 * CopyCardNameAndLevel, which passes it straight back. */
+			uint16_t hl = wce98_ADDR;
+			LoadCardInfoForPrinter(0u, c, &hl);
+			AddToPrinterGfxBufferResult added = AddToPrinterGfxBuffer(hl);
+			if ((added.f & 0x10u) != 0u)
+				return (PrintCardListResult){print_card_list_printer_error(
+					added.a, added.f, 0u, 0u, 0u, 0u, added.hl)};
+		}
+		card_id = (uint8_t)(card_id + 1u);
+	}
+
+	/* .done_card_loop: the separator line under the last card row. */
+	uint8_t row = (uint8_t)((uint8_t)(wPrinterHorizontalOffset - 1u) | 0x40u);
+	uint16_t line = BCCoordToBGMap0Address(0u, row);
+	CopyLine(&line, 0x35u, 20u, 0x35u, 0x35u);
+	AddToPrinterGfxBufferResult separator = AddToPrinterGfxBuffer(line);
+	if ((separator.f & 0x10u) != 0u)
+		return (PrintCardListResult){print_card_list_printer_error(
+			separator.a, separator.f, 0u, 0u, 0u, 0u, separator.hl)};
+
+	uint16_t total_ptr = wPrinterTotalCardCount_ADDR;
+	uint16_t total = (uint16_t)(gb_read8(total_ptr)
+				    | ((uint16_t)gb_read8((uint16_t)(total_ptr + 1u)) << 8));
+	AddToPrinterGfxBufferResult printed =
+		print_card_list_text_with_number(TotalNumberOfCardsText, total);
+	if ((printed.f & 0x10u) != 0u)
+		return (PrintCardListResult){print_card_list_printer_error(
+			printed.a, printed.f, 0u, 0u, 0u, 0u, printed.hl)};
+
+	if (wPrintOnlyStarRarity == 0u) {
+		printed = print_card_list_text_with_number(TypesOfCardsText,
+							  wPrinterNumCardTypes);
+		if ((printed.f & 0x10u) != 0u)
+			return (PrintCardListResult){print_card_list_printer_error(
+				printed.a, printed.f, 0u, 0u, 0u, 0u, printed.hl)};
+	}
+
+	SendCardListToPrinterResult sent =
+		SendCardListToPrinter(printed.a, printed.f, 0u, 0u, 0u, 0u, printed.hl);
+	if ((sent.f & 0x10u) != 0u)
+		return (PrintCardListResult){print_card_list_printer_error(
+			sent.a, sent.f, sent.b, sent.c, sent.d, sent.e, sent.hl)};
+
+	(void)ResetPrinterCommunicationSettings(sent.a, sent.f, sent.b, sent.c,
+						sent.d, sent.e, sent.hl);
+	RestoreVBlankFunction();
+	/* `or a` over RestoreVBlankFunction's exit a, whose
+	 * ZeroObjectPositionsAndToggleOAMCopy tail ends in `ld a, TRUE` /
+	 * `ld [wVBlankOAMCopyToggle], a`: a is 1, so Z stays clear and carry, N
+	 * and H are cleared. */
+	return (PrintCardListResult){0x00u};
+}
+/* <<< factory _PrintCardList */

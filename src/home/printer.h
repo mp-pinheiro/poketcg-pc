@@ -222,4 +222,15 @@ Func_1a080Result Func_1a080(uint16_t hl);
 typedef struct { uint8_t f; } RequestToPrintCardResult;
 RequestToPrintCardResult _RequestToPrintCard(uint8_t a);
 /* <<< factory _RequestToPrintCard */
+/* >>> factory _PrintCardList */
+/* engine/link/printer.asm:677. Prints the whole card-collection list: an icon
+ * and label row for each new card type, one row per owned card, then the two
+ * totals. Entry registers are all dead -- e is loaded from the SELECT test
+ * before anything reads it, and b/c/d/hl are reloaded by the routine or its
+ * callees. The result is carry only: the success exit is `or a` over
+ * RestoreVBlankFunction's a, and every error exit tails into
+ * HandlePrinterError, whose ported result is f alone. */
+typedef struct { uint8_t f; } PrintCardListResult;
+PrintCardListResult _PrintCardList(void);
+/* <<< factory _PrintCardList */
 #endif
