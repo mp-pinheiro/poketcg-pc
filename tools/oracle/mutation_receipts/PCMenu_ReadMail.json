@@ -1,0 +1,9 @@
+{
+  "fn": "PCMenu_ReadMail",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PCMenu_ReadMail\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"53533\": \"00000000000000000000000000000000\", \"53905\": \"00\", \"65423\": \"02\", \"65425\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PCMenu_ReadMail\", \"mismatches\": {\"a\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"PCMenu_ReadMail\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"53533\": \"00000000000000000000000000000000\", \"53905\": \"00\", \"65423\": \"02\", \"65425\": \"02\"}}, \"status\": \"PASS\"}\n"
+}

@@ -307,6 +307,23 @@ wMedalScreenYOffset = 0xD114
 wOverworldNPCFlags = 0xD0C1
 
 wd3b9 = 0xD3B9
+
+# overworld.asm:1264 (PCMenu_ReadMail). This is a bare farcall wrapper around
+# the already-ported _PCMenu_ReadMail, so it inherits that routine's measured
+# case shape from tests/cases/mail.py: FlashWhiteScreen calls EnableLCD, so the
+# menu loop always lets real frames elapse (CopyDMAFunction has to be installed
+# because InitMenuScreen sets wVBlankOAMCopyToggle), and B has to arrive as an
+# edge on hKeysPressed rather than being held from the first instruction.
+wd291 = 0xD291
+hKeysPressed = 0xFF91
+hDPadHeld = 0xFF8F
+wLCDC = 0xCABB
+wPCPackSelection = 0xD11D
+wPCPacks = 0xD11E
+READ_MAIL_KEYS = [0x00, 0x02]
+# A menu screen load plus the mail screen's frame loop.
+READ_MAIL_INSTRUCTIONS = 60000000
+READ_MAIL_CYCLES = 240000000
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -894,6 +911,43 @@ CASES["PauseMenu_Config"] = [
 ]
 # <<< factory PauseMenu_Config
 
+# >>> factory PCMenu_ReadMail
+CONTRACT["PCMenu_ReadMail"] = {"compare": ("a",), "preserve": ()}
+CASES["PCMenu_ReadMail"] = [
+    # No packs owned, so PrintObtainedPCPacks and BlinkUnopenedPCPacks print
+    # nothing and the only byte the wrapped screen writes that is worth
+    # observing is wd291, which must come back holding exactly the byte it was
+    # seeded with. hDPadHeld is cleared so PCMailHandleDPadInput returns at
+    # once, and hKeysPressed is seeded with B so the native side leaves on its
+    # first pass; the reference leaves on the frame the cycled B lands its edge,
+    # and both end with $02 in hKeysPressed.
+    {"wram": {wd291: b"\x00", hKeysPressed: b"\x02", hDPadHeld: b"\x00",
+              wPCPackSelection: b"\x00", wPCPacks: bytes(15), wLCDC: b"\x00"},
+     "keys": READ_MAIL_KEYS, "setup": SETUP,
+     "read": {wd291: 1},
+     "instruction_budget": READ_MAIL_INSTRUCTIONS, "cycle_budget": READ_MAIL_CYCLES},
+    # One opened pack in slot 0: PrintObtainedPCPacks prints its name and
+    # BlinkUnopenedPCPacks skips it (bit 7 clear), so the drawn screen does not
+    # depend on how many frames elapsed. wd291 carries a distinctive byte, which
+    # is also the byte the farcall has to forward back in a.
+    {"wram": {wd291: b"\x5a", hKeysPressed: b"\x02", hDPadHeld: b"\x00",
+              wPCPackSelection: b"\x00", wPCPacks: b"\x01" + bytes(14),
+              wLCDC: b"\x00"},
+     "keys": READ_MAIL_KEYS, "setup": SETUP,
+     "read": {wd291: 1},
+     "instruction_budget": READ_MAIL_INSTRUCTIONS, "cycle_budget": READ_MAIL_CYCLES},
+    # Poisoned entry registers on the last slot: the wrapper reads no register
+    # input at all, and $FF is the wd291 byte a stuck-at-zero save would lose.
+    dict(POISON,
+         wram={wd291: b"\xff", hKeysPressed: b"\x02", hDPadHeld: b"\x00",
+               wPCPackSelection: b"\x0e", wPCPacks: bytes(14) + b"\x01",
+               wLCDC: b"\x00"},
+         keys=READ_MAIL_KEYS, setup=SETUP,
+         read={wd291: 1},
+         instruction_budget=READ_MAIL_INSTRUCTIONS, cycle_budget=READ_MAIL_CYCLES),
+]
+# <<< factory PCMenu_ReadMail
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1231,3 +1285,11 @@ MUTATIONS["PauseMenu_Config"] = {
     "case_ids": ["PauseMenu_Config-0", "PauseMenu_Config-1"],
 }
 # <<< factory-mutation PauseMenu_Config
+# >>> factory-mutation PCMenu_ReadMail
+MUTATIONS["PCMenu_ReadMail"] = {
+	"source_symbol": "PCMenu_ReadMail",
+	"before": "uint8_t PCMenu_ReadMail(void)\n{\n\treturn _PCMenu_ReadMail();",
+	"after": "uint8_t PCMenu_ReadMail(void)\n{\n\treturn (uint8_t)(_PCMenu_ReadMail() + 1u);",
+	"case_ids": ["PCMenu_ReadMail-0", "PCMenu_ReadMail-1", "PCMenu_ReadMail-2"],
+}
+# <<< factory-mutation PCMenu_ReadMail

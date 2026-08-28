@@ -278,4 +278,9 @@ void PCMenu_CardAlbum(void);
 /* >>> factory PauseMenu_Config */
 void PauseMenu_Config(void);
 /* <<< factory PauseMenu_Config */
+/* >>> factory PCMenu_ReadMail */
+/* overworld.asm:1264. The farcall forwards the callee's a unchanged; b, c, d,
+ * e and hl follow _PCMenu_ReadMail, which models none of them. */
+uint8_t PCMenu_ReadMail(void);
+/* <<< factory PCMenu_ReadMail */
 #endif /* POKETCG_HOME_OVERWORLD_H */

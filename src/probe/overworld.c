@@ -598,6 +598,13 @@ static void adapt_PauseMenu_Config(ProbeState *s)
 }
 /* <<< factory PauseMenu_Config */
 
+/* >>> factory PCMenu_ReadMail */
+static void adapt_PCMenu_ReadMail(ProbeState *s)
+{
+	s->a = PCMenu_ReadMail();
+}
+/* <<< factory PCMenu_ReadMail */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -671,5 +678,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c53d", adapt_Func_c53d },
 	{ "PCMenu_CardAlbum", adapt_PCMenu_CardAlbum },
 	{ "PauseMenu_Config", adapt_PauseMenu_Config },
+	{ "PCMenu_ReadMail", adapt_PCMenu_ReadMail },
 	{ NULL, NULL },
 };

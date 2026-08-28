@@ -213,6 +213,10 @@
 #include "home/lcd.h"
 
 #include "home/config.h"
+
+/* overworld.asm:1264 (PCMenu_ReadMail). The farcall target _PCMenu_ReadMail
+ * is already ported and lives in home/mail.h; nothing else is needed here. */
+#include "home/mail.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -1254,3 +1258,14 @@ void PauseMenu_Config(void)
 	_PauseMenu_Config();
 }
 /* <<< factory PauseMenu_Config */
+
+/* >>> factory PCMenu_ReadMail */
+/* overworld.asm:1264-1266. `farcall _PCMenu_ReadMail / ret`: rst $28's tail
+ * (SwitchToBankAtSP, home/farcall.asm:44-55) pushes and pops af around the bank
+ * restore, so the byte the callee leaves in a is this routine's own result. The
+ * bank switch has no C model -- hBankROM ends holding the caller's own bank. */
+uint8_t PCMenu_ReadMail(void)
+{
+	return _PCMenu_ReadMail();
+}
+/* <<< factory PCMenu_ReadMail */
