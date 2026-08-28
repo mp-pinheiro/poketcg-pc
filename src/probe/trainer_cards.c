@@ -586,6 +586,14 @@ static void adapt_AIPlay_EnergyRetrieval(ProbeState *s)
 }
 /* <<< factory AIPlay_EnergyRetrieval */
 
+/* >>> factory AIPlay_SuperEnergyRemoval */
+static void adapt_AIPlay_SuperEnergyRemoval(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_SuperEnergyRemoval();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_SuperEnergyRemoval */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -657,5 +665,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIPlay_Pokedex", adapt_AIPlay_Pokedex },
 	{ "AIPlay_Gambler", adapt_AIPlay_Gambler },
 	{ "AIPlay_EnergyRetrieval", adapt_AIPlay_EnergyRetrieval },
+	{ "AIPlay_SuperEnergyRemoval", adapt_AIPlay_SuperEnergyRemoval },
 	{ NULL, NULL },
 };

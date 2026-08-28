@@ -286,4 +286,7 @@ AIDecideResult AIPlay_Gambler(void);
 /* >>> factory AIPlay_EnergyRetrieval */
 AIDecideResult AIPlay_EnergyRetrieval(void);
 /* <<< factory AIPlay_EnergyRetrieval */
+/* >>> factory AIPlay_SuperEnergyRemoval */
+AIDecideResult AIPlay_SuperEnergyRemoval(void);
+/* <<< factory AIPlay_SuperEnergyRemoval */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

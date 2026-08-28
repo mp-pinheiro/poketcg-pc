@@ -425,6 +425,9 @@ wOpponentDeckID = 0xCC0E
 wRNG1 = 0xCACA
 SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 BUDGET = dict(instruction_budget=20000000, cycle_budget=80000000)
+
+hTempPlayAreaLocation_ffa1 = 0xFFA1
+hTempRetreatCostCards = 0xFFA2
 # <<< factory-cases-statics
 
 # >>> factory AIDecide_PokemonTrader_LegendaryMoltres
@@ -1087,6 +1090,15 @@ CASES["AIPlay_EnergyRetrieval"] = [
 ]
 # <<< factory AIPlay_EnergyRetrieval
 
+# >>> factory AIPlay_SuperEnergyRemoval
+CONTRACT["AIPlay_SuperEnergyRemoval"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_SuperEnergyRemoval"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xFF97: b"\xC2", 0xCE16: b"\x12", 0xCE19: b"\x34", 0xCE1A: b"\x56", 0xCE1B: b"\x78", 0xCE1C: b"\x9A", 0xCE1D: b"\xBC", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1, 0xFFA2: 4}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xFF97: b"\xC2", 0xCE16: b"\x77", 0xCE19: b"\x44", 0xCE1A: b"\x02", 0xCE1B: b"\x05", 0xCE1C: b"\x06", 0xCE1D: b"\x07", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x80"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1, 0xFFA2: 4}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xFF97: b"\xC2", 0xCE16: b"\xDD", 0xCE19: b"\xEE", 0xCE1A: b"\xCC", 0xCE1B: b"\xBB", 0xCE1C: b"\xAA", 0xCE1D: b"\x99", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1, 0xFFA2: 4}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_SuperEnergyRemoval
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1442,3 +1454,6 @@ MUTATIONS["AIPlay_Gambler"] = {
 # >>> factory-mutation AIPlay_EnergyRetrieval
 MUTATIONS["AIPlay_EnergyRetrieval"] = {"source_symbol": "AIPlay_EnergyRetrieval", "before": "AIDecideResult AIPlay_EnergyRetrieval(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);", "after": "AIDecideResult AIPlay_EnergyRetrieval(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | 0u);", "case_ids": ["AIPlay_EnergyRetrieval-0"]}
 # <<< factory-mutation AIPlay_EnergyRetrieval
+# >>> factory-mutation AIPlay_SuperEnergyRemoval
+MUTATIONS["AIPlay_SuperEnergyRemoval"] = {"source_symbol": "AIPlay_SuperEnergyRemoval", "before": "AIDecideResult AIPlay_SuperEnergyRemoval(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIDecideResult AIPlay_SuperEnergyRemoval(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);", "case_ids": ["AIPlay_SuperEnergyRemoval-0", "AIPlay_SuperEnergyRemoval-1", "AIPlay_SuperEnergyRemoval-2"]}
+# <<< factory-mutation AIPlay_SuperEnergyRemoval

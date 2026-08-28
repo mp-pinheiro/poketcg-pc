@@ -3077,3 +3077,18 @@ AIDecideResult AIPlay_EnergyRetrieval(void)
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_EnergyRetrieval */
+
+/* >>> factory AIPlay_SuperEnergyRemoval */
+AIDecideResult AIPlay_SuperEnergyRemoval(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTemp_ffa0 = wAITrainerCardParameter;
+	hTempPlayAreaLocation_ffa1 = wce1a;
+	hTempRetreatCostCards = wce1b;
+	gb_write8(hTempRetreatCostCards_ADDR + 1u, wce1c);
+	gb_write8(hTempRetreatCostCards_ADDR + 2u, wce1d);
+	gb_write8(hTempRetreatCostCards_ADDR + 3u, 0xffu);
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_SuperEnergyRemoval */

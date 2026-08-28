@@ -1,0 +1,9 @@
+{
+  "fn": "AIPlay_SuperEnergyRemoval",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIPlay_SuperEnergyRemoval\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"51914\": \"000000\", \"52217\": \"00\", \"52758\": \"12\", \"52761\": \"3456789abc\", \"65408\": \"08\", \"65431\": \"c2\", \"65439\": \"123456789abcff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIPlay_SuperEnergyRemoval\", \"mismatches\": {\"bus\": {\"address\": 65439, \"reference\": \"9abc08c2123456789a\", \"native\": \"9abc08c2133456789a\", \"reference_size\": 20, \"native_size\": 20, \"spans\": [[51899, 1], [51914, 3], [52217, 1], [52758, 1], [52761, 5], [65408, 1], [65431, 1], [65439, 7]]}}}\n",
+  "restored": "{\"fn\": \"AIPlay_SuperEnergyRemoval\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"51914\": \"000000\", \"52217\": \"00\", \"52758\": \"12\", \"52761\": \"3456789abc\", \"65408\": \"08\", \"65431\": \"c2\", \"65439\": \"123456789abcff\"}}, \"status\": \"PASS\"}\n"
+}
