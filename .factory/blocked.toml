@@ -295,3 +295,18 @@ unblock = "Trace the nested DisplayCardList/input return path and model the hWho
 name = "CloseIRCommunications"
 reason = "HAND-DIAGNOSED 2026-08-28: attempts 39e51017 and df19a133 show the reference command path does not return under the isolated fixture (BUDGET_EXHAUSTED at pc=0x57B1, sp=0xFFFC after 40001 instructions), while the only non-timeout candidate diverges at serial scratch 0xFF40 (reference 00 80, native 91 82). Current generation-8 candidate set also contains schema-invalid cases. This is a link/IR hardware-state boundary, not actionable C translation evidence."
 unblock = "Construct a valid IR/link fixture that reaches CloseIRCommunications return and emits schema-2 cases, then retry; do not increase budgets or reuse the current malformed candidates."
+
+[[blocked]]
+name = "MainMenu_NewGame"
+reason = "HAND-DIAGNOSED 2026-08-28: generation-10 retry reaches pre-ret but diverges at the nested screen state 0xCAEA..0xCAEC (reference 80 90 c3, native a8 37 04) after the new-game naming/portrait flow. This is a dependent scene-state mismatch, not evidence that the top-level wrapper arithmetic is wrong."
+unblock = "Trace the naming/portrait scene writers for 0xCAEA..0xCAEC and port the missing dependent state transition before retrying MainMenu_NewGame."
+
+[[blocked]]
+name = "Recycle_PlayerSelection"
+reason = "HAND-DIAGNOSED 2026-08-28: generation-10 retry reaches the selection return but diverges at hWhoseTurn 0xFF97 (reference 0x01, native 0xC2) after nested DisplayCardList/input handling. The isolated interactive callee state is incomplete; another unchanged retry is non-informative."
+unblock = "Trace the nested DisplayCardList/input return path and model the hWhoseTurn transition or establish a verified bounded pre-ret contract before retrying Recycle_PlayerSelection."
+
+[[blocked]]
+name = "FriendshipSong_AddToBench50PercentEffect"
+reason = "HAND-DIAGNOSED 2026-08-28: generation-12 retry reaches the coin/bench path but diverges at hWhoseTurn 0xFF97 (reference 0x01, native 0xC2) after nested card display/animation handling. The isolated dependent UI state is incomplete; another unchanged retry is non-informative."
+unblock = "Trace the nested bench-display/card-detail return path and model the hWhoseTurn transition or establish a verified bounded pre-ret contract before retrying FriendshipSong_AddToBench50PercentEffect."
