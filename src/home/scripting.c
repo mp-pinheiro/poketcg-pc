@@ -317,6 +317,29 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 #include "home/scripting.h"
 #include "generated/wram.h"
 #define EVENT_AARON_DECK_MENU_CHOICE 0x76u
+
+#include "generated/wram.h"
+#include "home/give_booster_pack.h"
+#include "home/overworld.h"
+#include "home/scripting.h"
+
+/* scripting.asm:996-1000 .booster_type_table. TRUE is already defined above in
+ * this statics block, so it is not repeated here. */
+#define BOOSTER_COLOSSEUM_TRAINER         0x06u
+#define BOOSTER_EVOLUTION_TRAINER         0x0Du
+#define BOOSTER_MYSTERY_TRAINER_COLORLESS 0x13u
+#define BOOSTER_LABORATORY_TRAINER        0x18u
+#define NO_BOOSTER                        0xFFu
+
+#include "generated/wram.h"
+#include "home/common.h"
+#include "home/init_menu.h"
+#include "home/lcd_enable_frame.h"
+#include "home/overworld.h"
+#include "home/scripting.h"
+
+#include "home/medal.h"
+#include "home/overworld.h"
 /* <<< factory statics */
 
 
@@ -2133,3 +2156,101 @@ IncreaseScriptPointerResult ScriptCommand_ChooseDeckToDuelAgainstMultichoice(voi
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_ChooseDeckToDuelAgainstMultichoice */
+
+/* >>> factory ScriptCommand_GiveOneOfEachTrainerBooster */
+/* scripting.asm:961-1000. Clears wAnotherBoosterPack, fades the overworld out
+ * through Func_c2a3, then walks .booster_type_table handing every entry to
+ * GiveBoosterPack until the NO_BOOSTER terminator, setting wAnotherBoosterPack
+ * to TRUE after each pack so the second and later packs print
+ * AndAnotherBoosterPackText. The table lives in the routine's own bank and is
+ * read with ordinary loads, so it is inlined here.
+ *
+ * The farcall's {a, f} result is dead: `ld a, TRUE` overwrites a and the next
+ * iteration's `cp NO_BOOSTER` recomputes f. The f handed to GiveBoosterPack is
+ * the one `cp NO_BOOSTER` just produced -- rst $28 (FarCall, home/farcall.asm)
+ * pushes af on entry and pops it before jumping to the target, so the compare's
+ * flags reach the callee unchanged.
+ *
+ * `call ReturnToOverworldNoCallback` then `jp IncreaseScriptPointerBy1` makes
+ * that helper's {a, f, c} the exit contract. */
+IncreaseScriptPointerResult ScriptCommand_GiveOneOfEachTrainerBooster(void)
+{
+	static const uint8_t booster_type_table[] = {
+		BOOSTER_COLOSSEUM_TRAINER,
+		BOOSTER_EVOLUTION_TRAINER,
+		BOOSTER_MYSTERY_TRAINER_COLORLESS,
+		BOOSTER_LABORATORY_TRAINER,
+		NO_BOOSTER,
+	};
+	const uint8_t *hl = booster_type_table;
+
+	wAnotherBoosterPack = 0u;
+	Func_c2a3();
+	for (;;) {
+		uint8_t booster = *hl;
+		uint8_t flags;
+
+		if (booster == NO_BOOSTER)
+			break;
+		/* cp NO_BOOSTER on a non-terminator entry: NZ, N set and C set
+		 * because every entry is below $ff, H set whenever the entry's
+		 * low nibble is below $f. All four rows land on $70. */
+		flags = 0x40u | 0x10u;
+		if ((booster & 0x0Fu) < 0x0Fu)
+			flags |= 0x20u;
+		(void)GiveBoosterPack(booster, flags);
+		wAnotherBoosterPack = TRUE;
+		hl++;
+	}
+	(void)ReturnToOverworldNoCallback();
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_GiveOneOfEachTrainerBooster */
+
+/* >>> factory ScriptCommand_ShowCardReceivedScreen */
+/* scripting.asm:990. `ld a, c` / `cp $ff` / `or a` selects the card id: $ff
+ * is the legendary set and loads a == 0, any other non-zero c is the card id
+ * itself, and c == 0 falls back to wCardReceived. `push af` / `pop af` around
+ * the two farcalls only carries that id across them -- the flags it also saves
+ * are dead, because ShowPromotionalCardScreen reads a alone. The tail
+ * `jp IncreaseScriptPointerBy2` makes the shared IncreaseScriptPointerResult
+ * (a, f, c) the exit contract. */
+IncreaseScriptPointerResult ScriptCommand_ShowCardReceivedScreen(uint8_t c)
+{
+	uint8_t card;
+
+	Func_c2a3();
+	if (c == 0xFFu)
+		card = 0u;
+	else if (c != 0u)
+		card = c;
+	else
+		card = wCardReceived;
+
+	(void)InitMenuScreen();
+	(void)FlashWhiteScreen();
+	ShowPromotionalCardScreen(card);
+	WhiteOutDMGPals();
+	DoFrameIfLCDEnabled();
+	(void)ReturnToOverworldNoCallback();
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_ShowCardReceivedScreen */
+
+/* >>> factory ScriptCommand_ShowMedalReceivedScreen */
+/* scripting.asm:1361. `ld a, c` / `push af` / `call Func_c2a3` / `pop af`
+ * only carries the script argument across Func_c2a3, which preserves bc, de and
+ * hl anyway; the farcall then hands that byte to ShowMedalReceivedScreen in a.
+ * The tail `jp IncreaseScriptPointerBy2` is the exit contract, so the shared
+ * IncreaseScriptPointerResult (a, f, c) is returned unchanged.
+ * ReturnToOverworldNoCallback's a is dropped by that tail jump. */
+IncreaseScriptPointerResult ScriptCommand_ShowMedalReceivedScreen(uint8_t c)
+{
+	uint8_t medal_id = c;
+
+	Func_c2a3();
+	ShowMedalReceivedScreen(medal_id);
+	(void)ReturnToOverworldNoCallback();
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_ShowMedalReceivedScreen */

@@ -1288,6 +1288,36 @@ static void adapt_ScriptCommand_ChooseDeckToDuelAgainstMultichoice(ProbeState *s
 }
 /* <<< factory ScriptCommand_ChooseDeckToDuelAgainstMultichoice */
 
+/* >>> factory ScriptCommand_GiveOneOfEachTrainerBooster */
+static void adapt_ScriptCommand_GiveOneOfEachTrainerBooster(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = ScriptCommand_GiveOneOfEachTrainerBooster();
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_GiveOneOfEachTrainerBooster */
+
+/* >>> factory ScriptCommand_ShowCardReceivedScreen */
+static void adapt_ScriptCommand_ShowCardReceivedScreen(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = ScriptCommand_ShowCardReceivedScreen(s->c);
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_ShowCardReceivedScreen */
+
+/* >>> factory ScriptCommand_ShowMedalReceivedScreen */
+static void adapt_ScriptCommand_ShowMedalReceivedScreen(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = ScriptCommand_ShowMedalReceivedScreen(s->c);
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_ShowMedalReceivedScreen */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1414,5 +1444,8 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_ShowSamRulesMultichoice", adapt_ScriptCommand_ShowSamRulesMultichoice },
 	{ "ScriptCommand_ChooseDeckToDuelAgainstMultichoice", adapt_ScriptCommand_ChooseDeckToDuelAgainstMultichoice },
 	{ "ShowMultichoiceTextbox", adapt_ShowMultichoiceTextbox },
+	{ "ScriptCommand_GiveOneOfEachTrainerBooster", adapt_ScriptCommand_GiveOneOfEachTrainerBooster },
+	{ "ScriptCommand_ShowCardReceivedScreen", adapt_ScriptCommand_ShowCardReceivedScreen },
+	{ "ScriptCommand_ShowMedalReceivedScreen", adapt_ScriptCommand_ShowMedalReceivedScreen },
 	{ NULL, NULL },
 };

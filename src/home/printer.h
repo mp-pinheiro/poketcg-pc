@@ -214,4 +214,12 @@ void _PrintDeckConfiguration(uint8_t a);
 typedef struct { uint8_t a; uint8_t f; } Func_1a080Result;
 Func_1a080Result Func_1a080(uint16_t hl);
 /* <<< factory Func_1a080 */
+/* >>> factory _RequestToPrintCard */
+/* engine/link/printer.asm:83. Prints one card's info sheet: entry a is the
+ * card id, and the result is carry only -- the success exit is `or a` (carry
+ * clear) and both error exits tail into HandlePrinterError, whose ported
+ * result is f alone. */
+typedef struct { uint8_t f; } RequestToPrintCardResult;
+RequestToPrintCardResult _RequestToPrintCard(uint8_t a);
+/* <<< factory _RequestToPrintCard */
 #endif

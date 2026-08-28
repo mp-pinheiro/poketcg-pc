@@ -199,6 +199,52 @@ wEventVars = 0xD3D2
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 MENU_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+# scripting.asm:961 ScriptCommand_GiveOneOfEachTrainerBooster. The reference
+# stops mid-flight at the first WaitForSongToFinish (see the completion block),
+# so the only comparable bytes are the two GiveBoosterPack writes that are the
+# same for every row of BoosterScenesAndNameTexts: wTxRam3 + 1 is the `xor a`
+# high byte, always $00, and wTxRam2 + 1 is the booster name text id's high
+# byte, $03 for all four ids ($03A8..$03AB). wTxRam2/wTxRam3 themselves are the
+# per-booster low bytes, which differ between the reference's first pack and the
+# port's fourth, so they are neither seeded nor observed.
+GIVE_EACH_wTxRam2Hi = 0xCE40
+GIVE_EACH_wTxRam3Hi = 0xCE44
+# B, not A: the reference clears one page of ReceivedBoosterPackText through
+# WaitForButtonAorB, which reads edge-triggered hKeysPressed, so the key has to
+# be a cycled list rather than a held button. Same shape the landed
+# GiveBoosterPack cases use.
+GIVE_EACH_KEYS = [0x00, 0x02]
+# Func_c2a3's frame plus a scene load, a white flash, a generated booster and a
+# full page of letter-delayed text, at 70224 cycles per DMG frame.
+GIVE_EACH_INSTRUCTIONS = 60000000
+GIVE_EACH_CYCLES = 240000000
+
+# scripting.asm:990 (ScriptCommand_ShowCardReceivedScreen).
+SCRS_wLoadedCard1Name = 0xCC27
+SCRS_wCardReceived = 0xD697
+SCRS_hWhoseTurn = 0xFF97
+
+# Func_c2a3 sets wVBlankOAMCopyToggle and calls EnableLCD, and FlashWhiteScreen
+# enables it again, so real frames elapse: CopyDMAFunction installs hDMAFunction
+# so VBlankHandler does not run junk and halt every later WaitForVBlank at pc
+# $0271. SetupText warms the glyph cache the card page walks.
+SCRS_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+# B, cycled: WaitForWideTextBoxInput inside _DisplayCardDetailScreen reads
+# edge-triggered hKeysPressed, so a held button is newly pressed only once and
+# is invisible to a wait that starts after the first frame.
+SCRS_KEYS = [0x00, 0x02]
+# The two bytes the reference has written by the cutpoint that the native tail
+# leaves alone: the wLoadedCard1Name pointer that LoadCardDataToBuffer1_FromCardID
+# fills in for the selected card, and hWhoseTurn, set to PLAYER_TURN ($C2) by
+# ShowPromotionalCardScreen and again by ReturnToOverworld. wScriptPointer is
+# deliberately neither seeded nor read: the reference stops before
+# IncreaseScriptPointerBy2, which the native side does run.
+SCRS_READ = {SCRS_wLoadedCard1Name: 2, SCRS_hWhoseTurn: 1}
+# A scene load, a white flash and a full card detail page, at 70224 cycles per
+# DMG frame, with the WaitForVBlank halt retiring few instructions per cycle.
+SCRS_INSTRUCTIONS = 60000000
+SCRS_CYCLES = 240000000
 # <<< factory-cases-statics
 
 
@@ -1620,6 +1666,101 @@ CASES["ScriptCommand_ChooseDeckToDuelAgainstMultichoice"] = [
 ]
 # <<< factory ScriptCommand_ChooseDeckToDuelAgainstMultichoice
 
+# >>> factory ScriptCommand_GiveOneOfEachTrainerBooster
+# The reference is mid-flight at the declared cutpoint, so no register is
+# comparable; the two booster-independent TxRam bytes are. Both are seeded with
+# a poison byte neither run can leave in place, which is what gives the mutation
+# below something to redden: a port that never calls GiveBoosterPack leaves the
+# poison behind while the reference still writes $03/$00.
+CONTRACT["ScriptCommand_GiveOneOfEachTrainerBooster"] = {"compare": (), "preserve": ()}
+CASES["ScriptCommand_GiveOneOfEachTrainerBooster"] = [
+    {"wram": {GIVE_EACH_wTxRam2Hi: b"\xFF", GIVE_EACH_wTxRam3Hi: b"\xFF"},
+     "read": {GIVE_EACH_wTxRam2Hi: 1, GIVE_EACH_wTxRam3Hi: 1},
+     "keys": GIVE_EACH_KEYS, "setup": MENU_SETUP,
+     "instruction_budget": GIVE_EACH_INSTRUCTIONS, "cycle_budget": GIVE_EACH_CYCLES},
+    dict(POISON,
+         wram={GIVE_EACH_wTxRam2Hi: b"\x5A", GIVE_EACH_wTxRam3Hi: b"\x5A"},
+         read={GIVE_EACH_wTxRam2Hi: 1, GIVE_EACH_wTxRam3Hi: 1},
+         keys=GIVE_EACH_KEYS, setup=MENU_SETUP,
+         instruction_budget=GIVE_EACH_INSTRUCTIONS, cycle_budget=GIVE_EACH_CYCLES),
+]
+# <<< factory ScriptCommand_GiveOneOfEachTrainerBooster
+
+# >>> factory ScriptCommand_ShowCardReceivedScreen
+# The reference is mid-flight at the pre-ret cutpoint declared below -- it is
+# parked inside _ShowPromotionalCardScreen's AssertSongFinished wait and never
+# reaches the tail-jump -- so no register is comparable; the card buffer and
+# hWhoseTurn that the path writes before the wait are.
+# c == $ff is not represented by a primary case: with a == 0 the ROM re-enters
+# _ShowPromotionalCardScreen's tail four times and the cutpoint lands on the
+# first pass (Moltres), which the landed ShowPromotionalCardScreen port -- a
+# prefix that stops at that wait -- does not model, exactly as the landed
+# common.py cases for it record.
+CONTRACT["ScriptCommand_ShowCardReceivedScreen"] = {"compare": (), "preserve": ()}
+CASES["ScriptCommand_ShowCardReceivedScreen"] = [
+    # c non-zero and not $ff: the id comes straight from c ($1E VILEPLUME), and
+    # wCardReceived is seeded to a different real card ($43 BLASTOISE) so an
+    # implementation that read the variable instead would land on the wrong name.
+    {"c": 0x1E, "keys": SCRS_KEYS, "setup": SCRS_SETUP,
+     "wram": {SCRS_wCardReceived: b"\x43"}, "read": dict(SCRS_READ),
+     "instruction_budget": SCRS_INSTRUCTIONS, "cycle_budget": SCRS_CYCLES},
+    # c == 0: `or a` / `jr nz` falls through to `ld a, [wCardReceived]`, so the
+    # seeded $43 BLASTOISE is the card that gets loaded.
+    {"c": 0x00, "keys": SCRS_KEYS, "setup": SCRS_SETUP,
+     "wram": {SCRS_wCardReceived: b"\x43"}, "read": dict(SCRS_READ),
+     "instruction_budget": SCRS_INSTRUCTIONS, "cycle_budget": SCRS_CYCLES},
+    # Poisoned entry registers. c == $CC is a real card id on the non-zero arm,
+    # and a/f/b/d/e/hl are all dead on entry -- only c selects anything.
+    dict(POISON, keys=SCRS_KEYS, setup=SCRS_SETUP,
+         wram={SCRS_wCardReceived: b"\x43"}, read=dict(SCRS_READ),
+         instruction_budget=SCRS_INSTRUCTIONS, cycle_budget=SCRS_CYCLES),
+]
+# <<< factory ScriptCommand_ShowCardReceivedScreen
+
+# >>> factory ScriptCommand_ShowMedalReceivedScreen
+# The reference is mid-flight at the completion point declared below -- the
+# AssertSongFinished spin inside ShowMedalReceivedScreen, exactly where the
+# landed ShowMedalReceivedScreen cases cut -- so no register is comparable; the
+# medal screen's own WRAM writes are. $D114-$D116 is
+# wMedalScreenYOffset/wWhichMedal/wMedalDisplayTimer in one span, and nothing the
+# port runs after the cut (ReturnToOverworldNoCallback, IncreaseScriptPointerBy2)
+# writes those three bytes. wLCDC ($CABB) is deliberately neither seeded nor
+# read: the reference stops with the LCD on, while the port runs on into
+# ReturnToOverworld's DisableLCD, so that byte legitimately differs. $CAB4 is
+# wConsole; CONSOLE_DMG is what makes the reference's `farcall SetMainSGBBorder`
+# and EmptyScreen's SGB block return at their first compare, which is the path
+# the C bodies reproduce, and nothing in either run writes it back.
+# CopyDMAFunction installs hDMAFunction, which Func_c2a3's
+# wVBlankOAMCopyToggle = TRUE makes VBlankHandler call every frame once
+# Func_c2a3's EnableLCD and FlashWhiteScreen let real frames elapse; SetupText
+# warms the glyph cache PrintScrollableText_NoTextBoxLabel walks; keys tap A so
+# the edge-triggered text wait advances. Budgets cover Func_c2a3's fade and
+# frame on top of the medal screen's 225 flashing frames and text page.
+CONTRACT["ScriptCommand_ShowMedalReceivedScreen"] = {"compare": (), "preserve": ()}
+CASES["ScriptCommand_ShowMedalReceivedScreen"] = [
+    # Medal 0 (Grass): c = $08 -> wWhichMedal = $00.
+    {"c": 0x08, "keys": [0x00, 0x01],
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "wram": {0xCAB4: b"\x00"},
+     "read": {0xD114: 3},
+     "instruction_budget": 80000000, "cycle_budget": 320000000},
+    # Last medal: c = $0F -> wWhichMedal = $07, the top of MasterMedalNames, so
+    # an off-by-one in the argument hand-off shows here.
+    {"c": 0x0F, "keys": [0x00, 0x01],
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "wram": {0xCAB4: b"\x00"},
+     "read": {0xD114: 3},
+     "instruction_budget": 80000000, "cycle_budget": 320000000},
+    # Poisoned entry registers with a real medal id in c: a/f/b/d/e/hl are all
+    # dead on entry -- only c selects anything -- and $0A is medal 2 (Fire).
+    dict(POISON, c=0x0A, keys=[0x00, 0x01],
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         wram={0xCAB4: b"\x00"},
+         read={0xD114: 3},
+         instruction_budget=80000000, cycle_budget=320000000),
+]
+# <<< factory ScriptCommand_ShowMedalReceivedScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2340,3 +2481,63 @@ MUTATIONS["ScriptCommand_ShowSamRulesMultichoice"] = {"source_symbol": "ScriptCo
 # >>> factory-mutation ScriptCommand_ChooseDeckToDuelAgainstMultichoice
 MUTATIONS["ScriptCommand_ChooseDeckToDuelAgainstMultichoice"] = {"source_symbol": "ScriptCommand_ChooseDeckToDuelAgainstMultichoice", "before": "IncreaseScriptPointerResult ScriptCommand_ChooseDeckToDuelAgainstMultichoice(void)\n{\n\tBankswitchROM(3u);\n\t(void)ShowMultichoiceTextbox(0u, 0x525Eu);\n\tuint8_t choice = wMultichoiceTextboxResult_ChooseDeckToDuelAgainst;\n\t(void)SetEventValue(EVENT_AARON_DECK_MENU_CHOICE, 0u, 0u, choice);\n\treturn IncreaseScriptPointerBy1();\n}", "after": "IncreaseScriptPointerResult ScriptCommand_ChooseDeckToDuelAgainstMultichoice(void)\n{\n\tBankswitchROM(3u);\n\t(void)ShowMultichoiceTextbox(0u, 0x525Eu);\n\tuint8_t choice = wMultichoiceTextboxResult_ChooseDeckToDuelAgainst;\n\t(void)SetEventValue(EVENT_AARON_DECK_MENU_CHOICE, 0u, 0u, choice);\n\treturn IncreaseScriptPointerBy3();\n}", "case_ids": ["ScriptCommand_ChooseDeckToDuelAgainstMultichoice-0", "ScriptCommand_ChooseDeckToDuelAgainstMultichoice-1"]}
 # <<< factory-mutation ScriptCommand_ChooseDeckToDuelAgainstMultichoice
+# >>> factory-mutation ScriptCommand_GiveOneOfEachTrainerBooster
+MUTATIONS["ScriptCommand_GiveOneOfEachTrainerBooster"] = {"source_symbol": "ScriptCommand_GiveOneOfEachTrainerBooster", "before": "\t\t(void)GiveBoosterPack(booster, flags);\n\t\twAnotherBoosterPack = TRUE;", "after": "\t\twAnotherBoosterPack = TRUE;", "case_ids": ["ScriptCommand_GiveOneOfEachTrainerBooster-0", "ScriptCommand_GiveOneOfEachTrainerBooster-1"]}
+# <<< factory-mutation ScriptCommand_GiveOneOfEachTrainerBooster
+# >>> factory-completion ScriptCommand_GiveOneOfEachTrainerBooster
+# The reference cannot reach this routine's ret: the first GiveBoosterPack ends
+# in `call WaitForSongToFinish`, which only clears once the timer ISR has walked
+# the booster jingle to its music_end, and the call-level runner arms VBlank
+# alone. That is the same genuine spin the landed GiveBoosterPack cases pin, so
+# completion is declared at WaitForSongToFinish's own entry (poketcg.sym
+# 00:3C96, ROM0 and therefore bank-independent) -- one instruction ahead of the
+# AssertSongFinished cutpoint those cases use, and still after both observed
+# TxRam bytes have been written. Nothing earlier on this path calls it: neither
+# Func_c2a3's chain nor DisableLCD, InitMenuScreen, LoadBoosterGfx,
+# FlashWhiteScreen, PauseSong, PlaySong, GenerateBoosterPack or
+# PrintScrollableText_NoTextBoxLabel does.
+# legacy_to_schema always emits completion "return", so the split is applied
+# after migration.
+for _record in SCHEMA2_CASES["ScriptCommand_GiveOneOfEachTrainerBooster"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x3C96}
+# <<< factory-completion ScriptCommand_GiveOneOfEachTrainerBooster
+# >>> factory-mutation ScriptCommand_ShowCardReceivedScreen
+MUTATIONS["ScriptCommand_ShowCardReceivedScreen"] = {"source_symbol": "ScriptCommand_ShowCardReceivedScreen", "before": "IncreaseScriptPointerResult ScriptCommand_ShowCardReceivedScreen(uint8_t c)\n{\n\tuint8_t card;\n\n\tFunc_c2a3();\n\tif (c == 0xFFu)\n\t\tcard = 0u;\n\telse if (c != 0u)\n\t\tcard = c;\n\telse\n\t\tcard = wCardReceived;", "after": "IncreaseScriptPointerResult ScriptCommand_ShowCardReceivedScreen(uint8_t c)\n{\n\tuint8_t card;\n\n\tFunc_c2a3();\n\t(void)c;\n\tcard = 0x01u;", "case_ids": ["ScriptCommand_ShowCardReceivedScreen-0", "ScriptCommand_ShowCardReceivedScreen-1", "ScriptCommand_ShowCardReceivedScreen-2"]}
+# <<< factory-mutation ScriptCommand_ShowCardReceivedScreen
+# >>> factory-completion ScriptCommand_ShowCardReceivedScreen
+# The reference never returns: `bank1call ShowPromotionalCardScreen` reaches
+# _ShowPromotionalCardScreen, whose `.loop` waits on AssertSongFinished, which
+# only reports finished once wCurSongID reads $80 -- nothing but the timer ISR's
+# Music1_Update puts it there, and the call-level runner arms VBlank alone. That
+# is a genuine spin, not a small budget, so completion is declared pre-ret at
+# AssertSongFinished itself (poketcg.sym 00:378A, ROM0 and therefore
+# bank-independent), exactly as the landed ShowMedalReceivedScreen,
+# GiveBoosterPack and _ShowPromotionalCardScreen cases do. Nothing ahead of the
+# wait calls AssertSongFinished -- Func_c2a3, InitMenuScreen, FlashWhiteScreen,
+# LoadCardDataToBuffer1_FromCardID, PauseSong, PlaySong and
+# _DisplayCardDetailScreen do not -- so the first hit is the wait itself, after
+# both observed bytes have been written. legacy_to_schema always emits
+# completion "return", so the split is applied after migration.
+for _record in SCHEMA2_CASES["ScriptCommand_ShowCardReceivedScreen"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x378A}
+# <<< factory-completion ScriptCommand_ShowCardReceivedScreen
+# >>> factory-mutation ScriptCommand_ShowMedalReceivedScreen
+MUTATIONS["ScriptCommand_ShowMedalReceivedScreen"] = {"source_symbol": "ScriptCommand_ShowMedalReceivedScreen", "before": "IncreaseScriptPointerResult ScriptCommand_ShowMedalReceivedScreen(uint8_t c)\n{\n\tuint8_t medal_id = c;", "after": "IncreaseScriptPointerResult ScriptCommand_ShowMedalReceivedScreen(uint8_t c)\n{\n\tuint8_t medal_id = (uint8_t)(c + 1u);", "case_ids": ["ScriptCommand_ShowMedalReceivedScreen-0", "ScriptCommand_ShowMedalReceivedScreen-2"]}
+# <<< factory-mutation ScriptCommand_ShowMedalReceivedScreen
+# >>> factory-completion ScriptCommand_ShowMedalReceivedScreen
+# The reference never returns: the farcalled ShowMedalReceivedScreen ends in
+# WaitForSongToFinish, whose AssertSongFinished only reports finished once
+# wCurSongID reads $80, and nothing but the timer ISR's Music1_Update puts it
+# there while the call-level runner arms VBlank alone. That is a genuine spin,
+# not a small budget, so completion is declared pre-ret at AssertSongFinished
+# itself (poketcg.sym 00:378A, ROM0 and therefore bank-independent), exactly the
+# cut the landed ShowMedalReceivedScreen cases declare. Nothing ahead of the wait
+# calls AssertSongFinished -- neither Func_c2a3's fade, SetupText, sprite and
+# LCD work nor the medal screen's PauseSong, PlaySong, InitMenuScreen,
+# DrawCollectedMedals, FlashWhiteScreen, FlashReceivedMedal,
+# DoFrameIfLCDEnabled and PrintScrollableText_NoTextBoxLabel -- so the first hit
+# is the wait, after every observed byte has been written. legacy_to_schema
+# always emits completion "return", so the split is applied after migration.
+for _record in SCHEMA2_CASES["ScriptCommand_ShowMedalReceivedScreen"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x378A}
+# <<< factory-completion ScriptCommand_ShowMedalReceivedScreen

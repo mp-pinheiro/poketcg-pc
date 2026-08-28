@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_ShowMedalReceivedScreen",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_ShowMedalReceivedScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"53524\": \"fa00e0\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_ShowMedalReceivedScreen\", \"mismatches\": {\"bus\": {\"address\": 53525, \"reference\": \"00fa00e0\", \"native\": \"00fa01e0\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[51892, 1], [53524, 3]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_ShowMedalReceivedScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"53524\": \"fa00e0\"}}, \"status\": \"PASS\"}\n"
+}

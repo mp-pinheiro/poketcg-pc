@@ -624,4 +624,26 @@ IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void);
 /* >>> factory ScriptCommand_ChooseDeckToDuelAgainstMultichoice */
 IncreaseScriptPointerResult ScriptCommand_ChooseDeckToDuelAgainstMultichoice(void);
 /* <<< factory ScriptCommand_ChooseDeckToDuelAgainstMultichoice */
+/* >>> factory ScriptCommand_GiveOneOfEachTrainerBooster */
+/* scripting.asm:961. Every entry register is dead -- the routine opens with
+ * `xor a` -- and the tail `jp IncreaseScriptPointerBy1` makes that helper's
+ * {a, f, c} the exit contract. b/d/e/hl are not reported: neither
+ * GiveBoosterPack nor ReturnToOverworldNoCallback carries them out. */
+IncreaseScriptPointerResult ScriptCommand_GiveOneOfEachTrainerBooster(void);
+/* <<< factory ScriptCommand_GiveOneOfEachTrainerBooster */
+/* >>> factory ScriptCommand_ShowCardReceivedScreen */
+/* scripting.asm:990. c on entry is the script argument that selects the card;
+ * the routine tail-jumps to IncreaseScriptPointerBy2, so the shared
+ * IncreaseScriptPointerResult (a, f, c) is the exit contract. b/d/e/hl are not
+ * reported: the promotional card screen does not carry them out. */
+IncreaseScriptPointerResult ScriptCommand_ShowCardReceivedScreen(uint8_t c);
+/* <<< factory ScriptCommand_ShowCardReceivedScreen */
+/* >>> factory ScriptCommand_ShowMedalReceivedScreen */
+/* scripting.asm:1361. c carries the medal event id the script command was
+ * given; the routine tail-jumps to IncreaseScriptPointerBy2, so the shared
+ * IncreaseScriptPointerResult (a, f, c) is the exit contract. b, d, e and hl
+ * are not reported: ShowMedalReceivedScreen and ReturnToOverworldNoCallback do
+ * not carry them out. */
+IncreaseScriptPointerResult ScriptCommand_ShowMedalReceivedScreen(uint8_t c);
+/* <<< factory ScriptCommand_ShowMedalReceivedScreen */
 #endif

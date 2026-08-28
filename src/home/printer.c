@@ -106,6 +106,26 @@
 #define DeckPrinterText 0x0021u
 
 #include "home/printer.h"
+
+#include "generated/sram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/bg_map.h"
+#include "home/card_data.h"
+#include "home/core.h"
+#include "home/lcd.h"
+#include "home/load_animation.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "home/printer.h"
+#include "home/sound.h"
+#include "home/sprite_vblank.h"
+#include "home/text_box.h"
+#include "home/tiles.h"
+#define TX_END 0x00u
+#define SYM_Lv 0x11u
+#define SYM_HP 0x0Cu
+#define NowPrintingText 0x01a2u
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -984,3 +1004,95 @@ Func_1a080Result Func_1a080(uint16_t hl)
 	return (Func_1a080Result){packet.a, packet.f};
 }
 /* <<< factory Func_1a080 */
+
+/* >>> factory _RequestToPrintCard */
+/* engine/link/printer.asm:83. Entry a is the card id (`ld e, a` feeds
+ * LoadCardDataToBuffer1_FromCardID); d/e/b/c/hl are all reloaded by this
+ * routine or by its callees before any use, so they are not parameters.
+ *
+ * The two local labels .DrawTopCardInfoInSRAMGfxBuffer0 (printer.asm:139) and
+ * .DrawCardPicInSRAMGfxBuffer2 (printer.asm:125) are each called exactly once
+ * and are inlined at their callsites.
+ *
+ * Only f is reported. The success exit is `or a` over the a that
+ * ResetPrinterCommunicationSettings passes through, and both error exits end
+ * in HandlePrinterError, whose ported result is f alone -- exit a is residue
+ * on the error paths, so it is omitted uniformly rather than guessed. */
+RequestToPrintCardResult _RequestToPrintCard(uint8_t a)
+{
+	LoadCardDataToBuffer1_FromCardID(a);
+	SetSpriteAnimationsAsVBlankFunction();
+	LoadSceneResult scene =
+		LoadScene(SCENE_GAMEBOY_PRINTER_TRANSMITTING, 0u, 0u, 0u, 0u, 0u, 0u);
+	CopyCardNameAndLevelResult name =
+		CopyCardNameAndLevel(20u, scene.b, scene.c, scene.d, scene.e);
+	gb_write8(name.hl, TX_END);
+	LoadTxRam2(0u);
+	(void)DrawWideTextBox_PrintText(NowPrintingText);
+	EnableLCD();
+	(void)PrepareForPrinterCommunications(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+
+	/* .DrawTopCardInfoInSRAMGfxBuffer0: the empty text box frame, the card's
+	 * type symbol and its name, plus lv/HP for a Pokemon card. */
+	Func_1a025();
+	(void)Func_212f();
+	uint16_t hl = sGfxBuffer0_ADDR;
+	CopyLine(&hl, 0x34u, 20u, 0x30u, 0x31u);
+	uint8_t lines = 15u;
+	while (lines != 0u) {
+		CopyLine(&hl, SYM_SPACE, 20u, 0x36u, 0x37u);
+		lines = (uint8_t)(lines - 1u);
+	}
+	FillRectangle(0x38u, 2u, 2u, 0x0141u, 0x0102u);
+	(void)InitTextPrinting_ProcessTextFromPointerToID(4u, 65u, wLoadedCard1Name_ADDR);
+	uint8_t type = gb_read8(wLoadedCard1Type_ADDR);
+	if (type < TYPE_ENERGY) {
+		WriteByteToBGMap0((uint8_t)(type + 1u), 18u, 65u);
+		WriteByteToBGMap0(SYM_Lv, 11u, 66u);
+		WriteTwoDigitNumberInTxSymbol_PadSpace(gb_read8(wLoadedCard1Level_ADDR),
+						       12u, 66u, 0u, 0u, 0u);
+		WriteByteToBGMap0(SYM_HP, 15u, 66u);
+		WriteOneByteNumberInTxSymbol_PadSpace(gb_read8(wLoadedCard1HP_ADDR),
+						      16u, 66u, 0u, 0u, 0u);
+	}
+
+	/* The asm ignores this result: there is no `jr c` after the call. */
+	(void)Func_19f87();
+
+	/* .DrawCardPicInSRAMGfxBuffer2: the card picture pointer is the word at
+	 * wLoadedCard1Gfx. */
+	uint16_t gfx = (uint16_t)(gb_read8(wLoadedCard1Gfx_ADDR) |
+				  ((uint16_t)gb_read8((uint16_t)(wLoadedCard1Gfx_ADDR + 1u)) << 8));
+	(void)Func_37a5(gfx, sGfxBuffer2_ADDR);
+	FillRectangle(0x40u, 16u, 12u, 0x0244u, 0x0C01u);
+
+	Func_19f99Result picture = Func_19f99();
+	if ((picture.f & 0x10u) != 0u) {
+		RestoreVBlankFunction();
+		ResetPrinterCommunicationSettingsResult reset =
+			ResetPrinterCommunicationSettings(1u, picture.f, 0u, 0u, 0u, 0u, 0u);
+		HandlePrinterErrorResult handled = HandlePrinterError(reset.f, reset.d, reset.e);
+		return (RequestToPrintCardResult){handled.f};
+	}
+
+	DrawBottomCardInfoInSRAMGfxBuffer0();
+
+	Func_1a011Result bottom = Func_1a011();
+	if ((bottom.f & 0x10u) != 0u) {
+		RestoreVBlankFunction();
+		ResetPrinterCommunicationSettingsResult reset =
+			ResetPrinterCommunicationSettings(1u, bottom.f, 0u, 0u, 0u, 0u, 0u);
+		HandlePrinterErrorResult handled = HandlePrinterError(reset.f, reset.d, reset.e);
+		return (RequestToPrintCardResult){handled.f};
+	}
+
+	RestoreVBlankFunction();
+	/* RestoreVBlankFunction's tail is ZeroObjectPositionsAndToggleOAMCopy,
+	 * whose last act is `ld a, TRUE` / `ld [wVBlankOAMCopyToggle], a`, so a is
+	 * 1 here and ResetPrinterCommunicationSettings passes it through. */
+	ResetPrinterCommunicationSettingsResult reset =
+		ResetPrinterCommunicationSettings(1u, bottom.f, 0u, 0u, 0u, 0u, 0u);
+	/* `or a`: carry, N and H clear, Z from a. */
+	return (RequestToPrintCardResult){(uint8_t)(reset.a == 0u ? 0x80u : 0x00u)};
+}
+/* <<< factory _RequestToPrintCard */

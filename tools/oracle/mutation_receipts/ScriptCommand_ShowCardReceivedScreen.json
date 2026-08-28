@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_ShowCardReceivedScreen",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_ShowCardReceivedScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"52263\": \"7b08\", \"54935\": \"43\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_ShowCardReceivedScreen\", \"mismatches\": {\"bus\": {\"address\": 52263, \"reference\": \"7b0843c2\", \"native\": \"fc0743c2\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52263, 2], [54935, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_ShowCardReceivedScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"52263\": \"7b08\", \"54935\": \"43\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

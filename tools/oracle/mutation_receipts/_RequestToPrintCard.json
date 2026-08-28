@@ -1,0 +1,9 @@
+{
+  "fn": "_RequestToPrintCard",
+  "case": "tests/cases/printer.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_RequestToPrintCard\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52260\": \"090000fc07\", \"52268\": \"71\", \"52317\": \"84\", \"52846\": \"8100\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_RequestToPrintCard\", \"mismatches\": {\"bus\": {\"address\": 52260, \"reference\": \"80090000fc07\", \"native\": \"80086100fe07\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[51899, 1], [52260, 5], [52268, 1], [52317, 1], [52846, 2]]}}}\n",
+  "restored": "{\"fn\": \"_RequestToPrintCard\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52260\": \"090000fc07\", \"52268\": \"71\", \"52317\": \"84\", \"52846\": \"8100\"}}, \"status\": \"PASS\"}\n"
+}
