@@ -6968,6 +6968,16 @@ CONTRACT["GamblerEffect"] = {"compare": (), "preserve": ()}
 CASES["GamblerEffect"] = [{"keys": [0x00, 0x01], "wram": {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xF0\x00"}, "read": {0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2, 0xCAC2: 1, 0xCBE8: 1, 0xCBE9: 1}, "setup": [{"fn": "SwapTurn"}, {"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000}, dict(POISON, keys=[0x00, 0x01], wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xF0\x00"}, read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2, 0xCAC2: 1, 0xCBE8: 1, 0xCBE9: 1}, setup=[{"fn": "SwapTurn"}, {"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)]
 # <<< factory GamblerEffect
 
+# >>> factory HealingWind_PlayAreaHealEffect
+CONTRACT["HealingWind_PlayAreaHealEffect"] = {"compare": (), "preserve": ()}
+CASES["HealingWind_PlayAreaHealEffect"] = [
+    _hp_recovery_case(0x50, wram={0xC2EF: b"\x01", 0xFF9D: b"\x00"}, read={0xC2C8: 1, 0xCCB8: 1, 0xFF9D: 1}),
+    _hp_recovery_case(0x40, wram={0xC2EF: b"\x01", 0xFF9D: b"\x00"}, read={0xC2C8: 1, 0xCCB8: 1, 0xFF9D: 1}),
+    _hp_recovery_case(0x10, wram={0xC2EF: b"\x01", 0xFF9D: b"\x00"}, read={0xC2C8: 1, 0xCCB8: 1, 0xFF9D: 1}),
+    _hp_recovery_case(0x30, a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, wram={0xC2EF: b"\x01", 0xFF9D: b"\x00"}, read={0xC2C8: 1, 0xCCB8: 1, 0xFF9D: 1}),
+]
+# <<< factory HealingWind_PlayAreaHealEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9830,3 +9840,6 @@ MUTATIONS["ImakuniEffect"] = {"source_symbol": "ImakuniEffect", "before": "\tsta
 # >>> factory-mutation GamblerEffect
 MUTATIONS["GamblerEffect"] = {"source_symbol": "GamblerEffect", "before": "\tuint8_t draw_count = hTemp_ffa0 != 0u ? 8u : 1u;", "after": "\tuint8_t draw_count = hTemp_ffa0 != 0u ? 7u : 2u;", "case_ids": ["GamblerEffect-0", "GamblerEffect-1"]}
 # <<< factory-mutation GamblerEffect
+# >>> factory-mutation HealingWind_PlayAreaHealEffect
+MUTATIONS["HealingWind_PlayAreaHealEffect"] = {"source_symbol": "HealingWind_PlayAreaHealEffect", "before": "\ta = ATK_ANIM_HEALING_WIND_PLAY_AREA;\n\twLoadedAttackAnimation = a;", "after": "\ta = 0x00u;\n\twLoadedAttackAnimation = a;", "case_ids": ["HealingWind_PlayAreaHealEffect-0", "HealingWind_PlayAreaHealEffect-1", "HealingWind_PlayAreaHealEffect-2", "HealingWind_PlayAreaHealEffect-3"]}
+# <<< factory-mutation HealingWind_PlayAreaHealEffect

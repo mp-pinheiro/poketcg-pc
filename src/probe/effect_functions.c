@@ -4917,6 +4917,13 @@ static void adapt_GamblerEffect(ProbeState *s)
 }
 /* <<< factory GamblerEffect */
 
+/* >>> factory HealingWind_PlayAreaHealEffect */
+static void adapt_HealingWind_PlayAreaHealEffect(ProbeState *s)
+{
+	HealingWind_PlayAreaHealEffect(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+}
+/* <<< factory HealingWind_PlayAreaHealEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5514,5 +5521,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "FullHeal_ClearStatusEffect", adapt_FullHeal_ClearStatusEffect },
 	{ "ImakuniEffect", adapt_ImakuniEffect },
 	{ "GamblerEffect", adapt_GamblerEffect },
+	{ "HealingWind_PlayAreaHealEffect", adapt_HealingWind_PlayAreaHealEffect },
 	{ NULL, NULL },
 };

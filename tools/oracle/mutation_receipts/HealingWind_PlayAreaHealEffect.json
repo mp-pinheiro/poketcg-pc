@@ -1,0 +1,9 @@
+{
+  "fn": "HealingWind_PlayAreaHealEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HealingWind_PlayAreaHealEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"64\", \"49903\": \"01\", \"50176\": \"01\", \"51899\": \"00\", \"52408\": \"86\", \"52413\": \"0000\", \"52862\": \"01\", \"54307\": \"ffffffffffffffff\", \"54444\": \"0800\", \"54464\": \"ff\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HealingWind_PlayAreaHealEffect\", \"mismatches\": {\"bus\": {\"address\": 52408, \"reference\": \"6401010086000001ff\", \"native\": \"6401010000000001ff\", \"reference_size\": 22, \"native_size\": 22, \"spans\": [[49851, 1], [49864, 1], [49903, 1], [50176, 1], [51899, 1], [52408, 1], [52413, 2], [52862, 1], [54307, 8], [54444, 2], [54464, 1], [65431, 1], [65437, 1]]}}}\n",
+  "restored": "{\"fn\": \"HealingWind_PlayAreaHealEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"64\", \"49903\": \"01\", \"50176\": \"01\", \"51899\": \"00\", \"52408\": \"86\", \"52413\": \"0000\", \"52862\": \"01\", \"54307\": \"ffffffffffffffff\", \"54444\": \"0800\", \"54464\": \"ff\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

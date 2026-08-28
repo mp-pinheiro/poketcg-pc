@@ -2019,6 +2019,9 @@ void ImakuniEffect(void);
 /* >>> factory GamblerEffect */
 void GamblerEffect(void);
 /* <<< factory GamblerEffect */
+/* >>> factory HealingWind_PlayAreaHealEffect */
+void HealingWind_PlayAreaHealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory HealingWind_PlayAreaHealEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

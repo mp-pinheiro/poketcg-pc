@@ -1302,6 +1302,13 @@ void BankswitchROM(uint8_t bank);
 #include "generated/wram.h"
 #include "mem.h"
 #define CardCheckIfHeads8CardsIfTails1CardText 0x00f0u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#define ATK_ANIM_HEALING_WIND_PLAY_AREA 0x86u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10211,3 +10218,56 @@ void GamblerEffect(void)
 	}
 }
 /* <<< factory GamblerEffect */
+
+/* >>> factory HealingWind_PlayAreaHealEffect */
+void HealingWind_PlayAreaHealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	uint8_t turn = hWhoseTurn;
+	b = location;
+	c = 0u;
+	a = turn;
+	hl = (uint16_t)(((uint16_t)turn << 8) | (hl & 0xffu));
+	PlayAttackAnimation(a, f, b, c, d, e, hl);
+	WaitAttackAnimation();
+	a = ATK_ANIM_HEALING_WIND_PLAY_AREA;
+	wLoadedAttackAnimation = a;
+
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	hl = count.hl;
+	d = count.a;
+	e = PLAY_AREA_ARENA;
+	for (;;) {
+		uint8_t saved_d = d;
+		uint8_t saved_e = e;
+		a = e;
+		hTempPlayAreaLocation_ff9d = a;
+		CardDamageResult damage = GetCardDamageAndMaxHP(e);
+		if (damage.a != 0u) {
+			d = 0u;
+			e = 20u;
+			if (damage.a < e)
+				e = damage.a;
+			a = (uint8_t)(hTempPlayAreaLocation_ff9d + DUELVARS_ARENA_CARD_HP);
+			DuelistVarResult hp = GetTurnDuelistVariable(a);
+			hl = hp.hl;
+			a = (uint8_t)(hp.a + e);
+			gb_write8(hp.hl, a);
+
+			a = hTempPlayAreaLocation_ff9d;
+			b = a;
+			c = 1u;
+			a = hWhoseTurn;
+			hl = (uint16_t)(((uint16_t)a << 8) | (hl & 0xffu));
+			PlayAttackAnimation(a, f, b, c, d, e, hl);
+			WaitAttackAnimation();
+		}
+		d = saved_d;
+		e = saved_e;
+		++e;
+		--d;
+		if (d == 0u)
+			break;
+	}
+}
+/* <<< factory HealingWind_PlayAreaHealEffect */
