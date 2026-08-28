@@ -1842,6 +1842,39 @@ CASES["Script_LegendaryCardBottomLeft"] = [
 ]
 # <<< factory Script_LegendaryCardBottomLeft
 
+# >>> factory Script_LegendaryCardTopRight
+CONTRACT["Script_LegendaryCardTopRight"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Script_LegendaryCardTopRight"] = [
+    {"wram": {0xD0BF: b"\x11", 0xD0C0: b"\x22", 0xD0C1: b"\x00"}, "read": {0xD0BF: 1, 0xD0C1: 1}},
+    dict(POISON, wram={0xD0BF: b"\x33", 0xD0C0: b"\x44", 0xD0C1: b"\x00"}, read={0xD0BF: 1, 0xD0C1: 1}),
+    {"a": 0x00, "f": 0x00, "b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44, "hl": 0x5566, "wram": {0xD0BF: b"\x00", 0xD0C0: b"\xFF", 0xD0C1: b"\x00"}, "read": {0xD0BF: 1, 0xD0C1: 1}},
+]
+# <<< factory Script_LegendaryCardTopRight
+
+# >>> factory Script_LegendaryCardTopLeft
+CONTRACT["Script_LegendaryCardTopLeft"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Script_LegendaryCardTopLeft"] = [
+    {"wram": {0xD0BF: b"\x11", 0xD0C0: b"\x22", 0xD0C1: b"\x00"}, "read": {0xD0BF: 1, 0xD0C1: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD0BF: b"\x33", 0xD0C0: b"\x44", 0xD0C1: b"\x00"}, "read": {0xD0BF: 1, 0xD0C1: 1}},
+]
+# <<< factory Script_LegendaryCardTopLeft
+
+# >>> factory Script_LegendaryCardBottomRight
+CONTRACT["Script_LegendaryCardBottomRight"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Script_LegendaryCardBottomRight"] = [
+    {"wram": {0xD0BF: b"\x11", 0xD0C0: b"\x22", 0xD0C1: b"\x00"}, "read": {0xD0BF: 1, 0xD0C1: 1}},
+    dict(POISON, wram={0xD0BF: b"\x33", 0xD0C0: b"\x44", 0xD0C1: b"\x00"}, read={0xD0BF: 1, 0xD0C1: 1}),
+]
+# <<< factory Script_LegendaryCardBottomRight
+
+# >>> factory Script_LegendaryCardLeftSpark
+CONTRACT["Script_LegendaryCardLeftSpark"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Script_LegendaryCardLeftSpark"] = [
+    {"wram": {0xD0BF: b"\x11", 0xD0C0: b"\x22", 0xD0C1: b"\x00"}, "read": {0xD0BF: 1, 0xD0C1: 1}},
+    dict(POISON, wram={0xD0BF: b"\x33", 0xD0C0: b"\x44", 0xD0C1: b"\x00"}, read={0xD0BF: 1, 0xD0C1: 1}),
+]
+# <<< factory Script_LegendaryCardLeftSpark
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2650,3 +2683,15 @@ MUTATIONS["Script_Clerk10"] = {"source_symbol": "Script_Clerk10", "before": "voi
 # >>> factory-mutation Script_LegendaryCardBottomLeft
 MUTATIONS["Script_LegendaryCardBottomLeft"] = {"source_symbol": "Script_LegendaryCardBottomLeft", "before": "void Script_LegendaryCardBottomLeft(void)\n{\n\twOverworldNPCFlags = 0u;", "after": "void Script_LegendaryCardBottomLeft(void)\n{\n\twOverworldNPCFlags = 0xFFu;", "case_ids": ["Script_LegendaryCardBottomLeft-0", "Script_LegendaryCardBottomLeft-1"]}
 # <<< factory-mutation Script_LegendaryCardBottomLeft
+# >>> factory-mutation Script_LegendaryCardTopRight
+MUTATIONS["Script_LegendaryCardTopRight"] = {"source_symbol": "Script_LegendaryCardTopRight", "before": "ScriptLegendaryCardTopRightResult Script_LegendaryCardTopRight(void)\n{\n\tCloseAdvancedDialogueBox();", "after": "ScriptLegendaryCardTopRightResult Script_LegendaryCardTopRight(void)\n{\n\t(void)0;", "case_ids": ["Script_LegendaryCardTopRight-0", "Script_LegendaryCardTopRight-1"]}
+# <<< factory-mutation Script_LegendaryCardTopRight
+# >>> factory-mutation Script_LegendaryCardTopLeft
+MUTATIONS["Script_LegendaryCardTopLeft"] = {"source_symbol": "Script_LegendaryCardTopLeft", "before": "void Script_LegendaryCardTopLeft(void)\n{\n\tCloseAdvancedDialogueBox();", "after": "void Script_LegendaryCardTopLeft(void)\n{\n\t(void)0;", "case_ids": ["Script_LegendaryCardTopLeft-0", "Script_LegendaryCardTopLeft-1"]}
+# <<< factory-mutation Script_LegendaryCardTopLeft
+# >>> factory-mutation Script_LegendaryCardBottomRight
+MUTATIONS["Script_LegendaryCardBottomRight"] = {"source_symbol": "Script_LegendaryCardBottomRight", "before": "void Script_LegendaryCardBottomRight(void)\n{\n\twOverworldNPCFlags = 0u;", "after": "void Script_LegendaryCardBottomRight(void)\n{\n\twOverworldNPCFlags = 0xFFu;", "case_ids": ["Script_LegendaryCardBottomRight-0", "Script_LegendaryCardBottomRight-1"]}
+# <<< factory-mutation Script_LegendaryCardBottomRight
+# >>> factory-mutation Script_LegendaryCardLeftSpark
+MUTATIONS["Script_LegendaryCardLeftSpark"] = {"source_symbol": "Script_LegendaryCardLeftSpark", "before": "void Script_LegendaryCardLeftSpark(void)\n{\n\twOverworldNPCFlags = 0u;", "after": "void Script_LegendaryCardLeftSpark(void)\n{\n\twOverworldNPCFlags = 0xFFu;", "case_ids": ["Script_LegendaryCardLeftSpark-0", "Script_LegendaryCardLeftSpark-1"]}
+# <<< factory-mutation Script_LegendaryCardLeftSpark

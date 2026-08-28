@@ -1,0 +1,9 @@
+{
+  "fn": "Script_LegendaryCardLeftSpark",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Script_LegendaryCardLeftSpark\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53439\": \"222200\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Script_LegendaryCardLeftSpark\", \"mismatches\": {\"bus\": {\"address\": 53441, \"reference\": \"222200\", \"native\": \"2222ff\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[53439, 3]]}}}\n",
+  "restored": "{\"fn\": \"Script_LegendaryCardLeftSpark\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53439\": \"222200\"}}, \"status\": \"PASS\"}\n"
+}

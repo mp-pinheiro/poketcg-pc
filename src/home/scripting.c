@@ -2323,3 +2323,34 @@ void Script_LegendaryCardBottomLeft(void)
 	wOverworldMode = wOverworldModeBackup;
 }
 /* <<< factory Script_LegendaryCardBottomLeft */
+
+/* >>> factory Script_LegendaryCardTopRight */
+ScriptLegendaryCardTopRightResult Script_LegendaryCardTopRight(void)
+{
+	CloseAdvancedDialogueBox();
+	return (ScriptLegendaryCardTopRightResult){wOverworldModeBackup, 0x80u};
+}
+/* <<< factory Script_LegendaryCardTopRight */
+
+/* >>> factory Script_LegendaryCardTopLeft */
+void Script_LegendaryCardTopLeft(void)
+{
+	CloseAdvancedDialogueBox();
+}
+/* <<< factory Script_LegendaryCardTopLeft */
+
+/* >>> factory Script_LegendaryCardBottomRight */
+void Script_LegendaryCardBottomRight(void)
+{
+	wOverworldNPCFlags = 0u;
+	wOverworldMode = wOverworldModeBackup;
+}
+/* <<< factory Script_LegendaryCardBottomRight */
+
+/* >>> factory Script_LegendaryCardLeftSpark */
+void Script_LegendaryCardLeftSpark(void)
+{
+	wOverworldNPCFlags = 0u;
+	wOverworldMode = wOverworldModeBackup;
+}
+/* <<< factory Script_LegendaryCardLeftSpark */

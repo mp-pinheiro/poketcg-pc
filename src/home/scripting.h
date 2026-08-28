@@ -663,4 +663,17 @@ void Script_Clerk10(void);
 /* >>> factory Script_LegendaryCardBottomLeft */
 void Script_LegendaryCardBottomLeft(void);
 /* <<< factory Script_LegendaryCardBottomLeft */
+/* >>> factory Script_LegendaryCardTopRight */
+typedef struct { uint8_t a; uint8_t f; } ScriptLegendaryCardTopRightResult;
+ScriptLegendaryCardTopRightResult Script_LegendaryCardTopRight(void);
+/* <<< factory Script_LegendaryCardTopRight */
+/* >>> factory Script_LegendaryCardTopLeft */
+void Script_LegendaryCardTopLeft(void);
+/* <<< factory Script_LegendaryCardTopLeft */
+/* >>> factory Script_LegendaryCardBottomRight */
+void Script_LegendaryCardBottomRight(void);
+/* <<< factory Script_LegendaryCardBottomRight */
+/* >>> factory Script_LegendaryCardLeftSpark */
+void Script_LegendaryCardLeftSpark(void);
+/* <<< factory Script_LegendaryCardLeftSpark */
 #endif

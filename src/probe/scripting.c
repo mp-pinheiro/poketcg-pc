@@ -1352,6 +1352,39 @@ static void adapt_Script_LegendaryCardBottomLeft(ProbeState *s)
 }
 /* <<< factory Script_LegendaryCardBottomLeft */
 
+/* >>> factory Script_LegendaryCardTopRight */
+static void adapt_Script_LegendaryCardTopRight(ProbeState *s)
+{
+	ScriptLegendaryCardTopRightResult result = Script_LegendaryCardTopRight();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Script_LegendaryCardTopRight */
+
+/* >>> factory Script_LegendaryCardTopLeft */
+static void adapt_Script_LegendaryCardTopLeft(ProbeState *s)
+{
+	(void)s;
+	Script_LegendaryCardTopLeft();
+}
+/* <<< factory Script_LegendaryCardTopLeft */
+
+/* >>> factory Script_LegendaryCardBottomRight */
+static void adapt_Script_LegendaryCardBottomRight(ProbeState *s)
+{
+	(void)s;
+	Script_LegendaryCardBottomRight();
+}
+/* <<< factory Script_LegendaryCardBottomRight */
+
+/* >>> factory Script_LegendaryCardLeftSpark */
+static void adapt_Script_LegendaryCardLeftSpark(ProbeState *s)
+{
+	(void)s;
+	Script_LegendaryCardLeftSpark();
+}
+/* <<< factory Script_LegendaryCardLeftSpark */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1485,5 +1518,9 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "Script_GiftCenterClerk", adapt_Script_GiftCenterClerk },
 	{ "Script_Clerk10", adapt_Script_Clerk10 },
 	{ "Script_LegendaryCardBottomLeft", adapt_Script_LegendaryCardBottomLeft },
+	{ "Script_LegendaryCardTopRight", adapt_Script_LegendaryCardTopRight },
+	{ "Script_LegendaryCardTopLeft", adapt_Script_LegendaryCardTopLeft },
+	{ "Script_LegendaryCardBottomRight", adapt_Script_LegendaryCardBottomRight },
+	{ "Script_LegendaryCardLeftSpark", adapt_Script_LegendaryCardLeftSpark },
 	{ NULL, NULL },
 };
