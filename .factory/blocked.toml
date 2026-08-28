@@ -177,11 +177,6 @@ reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:10338 (basename `ef
 unblock = "read the recorded diagnostics under .factory/try/LassEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "PlayBetweenTurnsAnimation"
-reason = "DIAGNOSED animation-wait case-authoring gap, not a harness defect. core.asm:6975-7008 stages wDuelAnimDuelistSide (hWhoseTurn snapshot, swapped when wDuelType=0 and wWhoseTurn!=PLAYER_TURN), zeroes wDuelAnimLocationParam, sets wDuelAnimationScreen=DUEL_ANIM_SCREEN_MAIN_SCENE, then PlayDuelAnimation + a DoFrame loop on CheckAnyAnimationPlaying. All 9 generations failed phase=cases `no primary oracle case` - candidates never authored a runnable primary case. The queue does retire under the documented driver: the MixUpEffect retraction measured CheckAnyAnimationPlaying dropping carry with setup=[ResetAnimationQueue, PlayDuelAnimation] and the frame-cap harness landed with ScriptCommand_WalkPlayerToMasonLaboratory (cycle_budget 160M). A primary case needs those setup entries, wDuelAnim seeds, a cycled keys list, and budgets in the 20M/80M class; the animation-co-port unit (AnimationCommand_*) is landed, so the whole path is green-capable."
-unblock = "retry with a primary case shaped like the landed animation family: setup=[ResetAnimationQueue, PlayDuelAnimation], wDuelAnimDuelistSide/wDuelAnimationScreen seeded, keys cycled, instruction_budget 20M / cycle_budget 80M; or cut the case at the DoFrame loop head pre-ret and observe only the staged wDuelAnim bytes."
-
-[[blocked]]
 name = "InputCurDeckName"
 reason = "AUTO-RETIRED: src/engine/menus/deck_selection.asm:309 (basename `deck_selection`). 17 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case InputCurDeckName-0 {\"status\": \"PORT\", \"fn\": \"InputCurDeckName\", \"mismatches\": {\"a\": [3, 0], \"f\": [64, 128], \"c\": [1, 0], \"e\": [2, 0]}}"
 unblock = "read the recorded diagnostics under .factory/try/InputCurDeckName/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
