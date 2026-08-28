@@ -169,6 +169,28 @@ CASES["ConfigScreenHandleDPadInput"] = [
 ]
 # <<< factory ConfigScreenHandleDPadInput
 
+# >>> factory _PauseMenu_Config
+CONTRACT["_PauseMenu_Config"] = {"compare": (), "preserve": ()}
+CASES["_PauseMenu_Config"] = [
+    {
+        "keys": [0x00, 0x02],
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "wram": {0xCABB: b"\x00", 0xC510: b"\xFF", 0xD291: b"\x5A", 0xCD08: b"\x00"},
+        "read": {0xD11A: 1, 0xD291: 1, 0xCD08: 1},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(POISON,
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        wram={0xCABB: b"\x00", 0xC510: b"\xFF", 0xD291: b"\x5A", 0xCD08: b"\x00"},
+        read={0xD11A: 1, 0xD291: 1, 0xCD08: 1},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
+]
+# <<< factory _PauseMenu_Config
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -261,3 +283,11 @@ MUTATIONS["ConfigScreenHandleDPadInput"] = {
     "case_ids": ["ConfigScreenHandleDPadInput-0", "ConfigScreenHandleDPadInput-1"],
 }
 # <<< factory-mutation ConfigScreenHandleDPadInput
+# >>> factory-mutation _PauseMenu_Config
+MUTATIONS["_PauseMenu_Config"] = {
+    "source_symbol": "_PauseMenu_Config",
+    "before": "wd291 = saved_wd291;",
+    "after": "wd291 = 0;",
+    "case_ids": ["_PauseMenu_Config-0", "_PauseMenu_Config-1"],
+}
+# <<< factory-mutation _PauseMenu_Config

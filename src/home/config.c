@@ -35,6 +35,18 @@ static const uint8_t kDuelAnimationSettings[8] = {
 #include "home/overworld.h"
 
 #define PAD_CTRL_PAD 0xF0u
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/config.h"
+#include "home/lcd_enable_frame.h"
+#include "home/text_box.h"
+#include "home/init_menu.h"
+#include "home/sound.h"
+#include "home/labels.h"
+#include "mem.h"
+#define SFX_CONFIRM 0x02u
+#define SINGLE_SPACED 0x01u
 /* <<< factory statics */
 
 void DrawConfigMenuCursor(uint8_t a, uint8_t c)
@@ -267,3 +279,46 @@ void ConfigScreenHandleDPadInput(void)
 	}
 }
 /* <<< factory ConfigScreenHandleDPadInput */
+
+/* >>> factory _PauseMenu_Config */
+void _PauseMenu_Config(void)
+{
+	uint8_t saved_wd291 = wd291;
+	uint8_t saved_line_separation = wLineSeparation;
+	uint16_t box_hl = 0;
+
+	wConfigExitSettingsCursorPos = 0;
+	wLineSeparation = SINGLE_SPACED;
+	(void)InitMenuScreen();
+	DrawRegularTextBox(&box_hl, 1, 20, 5, 0, 3);
+	DrawRegularTextBox(&box_hl, 1, 20, 5, 0, 9);
+	(void)PrintLabels(0, 0, 0);
+	GetConfigCursorPositions();
+	(void)ShowConfigMenuCursor(0, 0, 0);
+	(void)ShowConfigMenuCursor(1, 0, 1);
+	wCursorBlinkTimer = 0;
+	(void)FlashWhiteScreen();
+
+	for (;;) {
+		uint8_t keys;
+
+		DoFrameIfLCDEnabled();
+		(void)UpdateConfigMenuCursor(wConfigCursorYPos, 0, 0);
+		++wCursorBlinkTimer;
+		ConfigScreenHandleDPadInput();
+		keys = hKeysPressed;
+		if (keys & 0x0Au)
+			break;
+		if (wConfigCursorYPos != 2u)
+			continue;
+		if (!(keys & 0x01u))
+			continue;
+		break;
+	}
+
+	PlaySFX(SFX_CONFIRM);
+	SaveConfigSettings();
+	wLineSeparation = saved_line_separation;
+	wd291 = saved_wd291;
+}
+/* <<< factory _PauseMenu_Config */
