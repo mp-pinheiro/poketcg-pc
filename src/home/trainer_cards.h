@@ -297,4 +297,13 @@ AIDecideSuperPotionPhase11Result AIDecide_SuperPotion_Phase11(void);
 /* trainer_cards.asm:3218-3233 */
 AIDecideResult AIPlay_EnergySearch(void);
 /* <<< factory AIPlay_EnergySearch */
+/* >>> factory AIPlay_ScoopUp */
+AIDecideResult AIPlay_ScoopUp(void);
+/* <<< factory AIPlay_ScoopUp */
+/* >>> factory AIPlay_PokemonBreeder */
+AIDecideResult AIPlay_PokemonBreeder(void);
+/* <<< factory AIPlay_PokemonBreeder */
+/* >>> factory AIPlay_PokemonFlute */
+AIDecideResult AIPlay_PokemonFlute(void);
+/* <<< factory AIPlay_PokemonFlute */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

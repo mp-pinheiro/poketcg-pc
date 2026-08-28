@@ -611,6 +611,30 @@ static void adapt_AIPlay_EnergySearch(ProbeState *s)
 }
 /* <<< factory AIPlay_EnergySearch */
 
+/* >>> factory AIPlay_ScoopUp */
+static void adapt_AIPlay_ScoopUp(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_ScoopUp();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_ScoopUp */
+
+/* >>> factory AIPlay_PokemonBreeder */
+static void adapt_AIPlay_PokemonBreeder(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_PokemonBreeder();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_PokemonBreeder */
+
+/* >>> factory AIPlay_PokemonFlute */
+static void adapt_AIPlay_PokemonFlute(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_PokemonFlute();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_PokemonFlute */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -685,5 +709,8 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIPlay_SuperEnergyRemoval", adapt_AIPlay_SuperEnergyRemoval },
 	{ "AIDecide_SuperPotion_Phase11", adapt_AIDecide_SuperPotion_Phase11 },
 	{ "AIPlay_EnergySearch", adapt_AIPlay_EnergySearch },
+	{ "AIPlay_ScoopUp", adapt_AIPlay_ScoopUp },
+	{ "AIPlay_PokemonBreeder", adapt_AIPlay_PokemonBreeder },
+	{ "AIPlay_PokemonFlute", adapt_AIPlay_PokemonFlute },
 	{ NULL, NULL },
 };

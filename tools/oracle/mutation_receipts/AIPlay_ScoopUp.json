@@ -1,0 +1,9 @@
+{
+  "fn": "AIPlay_ScoopUp",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIPlay_ScoopUp\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"000080\", \"52217\": \"00\", \"52758\": \"77\", \"52761\": \"7802\", \"65408\": \"08\", \"65439\": \"777802\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIPlay_ScoopUp\", \"mismatches\": {\"bus\": {\"address\": 65439, \"reference\": \"77780208777802\", \"native\": \"77780208007802\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[51914, 3], [52217, 1], [52758, 1], [52761, 2], [65408, 1], [65439, 3]]}}}\n",
+  "restored": "{\"fn\": \"AIPlay_ScoopUp\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"000080\", \"52217\": \"00\", \"52758\": \"77\", \"52761\": \"7802\", \"65408\": \"08\", \"65439\": \"777802\"}}, \"status\": \"PASS\"}\n"
+}

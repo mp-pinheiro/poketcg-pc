@@ -1119,6 +1119,36 @@ CASES["AIPlay_EnergySearch"] = [
 ]
 # <<< factory AIPlay_EnergySearch
 
+# >>> factory AIPlay_ScoopUp
+CONTRACT["AIPlay_ScoopUp"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_ScoopUp"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x34", 0xCE1A: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCE19: b"\x78", 0xCE1A: b"\x02", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x80"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCE19: b"\xDD", 0xCE1A: b"\xDD", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_ScoopUp
+
+# >>> factory AIPlay_PokemonBreeder
+CONTRACT["AIPlay_PokemonBreeder"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_PokemonBreeder"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x34", 0xCE1A: b"\x56", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCE19: b"\xA5", 0xCE1A: b"\x12", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCE19: b"\xEE", 0xCE1A: b"\x99", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_PokemonBreeder
+
+# >>> factory AIPlay_PokemonFlute
+CONTRACT["AIPlay_PokemonFlute"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_PokemonFlute"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x34", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCE19: b"\x78", 0xCBF9: b"\x01", 0xCACA: b"\x12\x34\x56"},
+         read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCE19: b"\xDD", 0xCBF9: b"\x01", 0xCACA: b"\xAA\xBB\xCC"},
+         read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_PokemonFlute
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1488,3 +1518,17 @@ MUTATIONS["AIPlay_EnergySearch"] = {
     "case_ids": ["AIPlay_EnergySearch-0"]
 }
 # <<< factory-mutation AIPlay_EnergySearch
+# >>> factory-mutation AIPlay_ScoopUp
+MUTATIONS["AIPlay_ScoopUp"] = {
+    "source_symbol": "AIPlay_ScoopUp",
+    "before": "AIDecideResult AIPlay_ScoopUp(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_ScoopUp(void)\n{\n\thTempCardIndex_ff9f = 0u;",
+    "case_ids": ["AIPlay_ScoopUp-1"]
+}
+# <<< factory-mutation AIPlay_ScoopUp
+# >>> factory-mutation AIPlay_PokemonBreeder
+MUTATIONS["AIPlay_PokemonBreeder"] = {"source_symbol": "AIPlay_PokemonBreeder", "before": "AIDecideResult AIPlay_PokemonBreeder(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIDecideResult AIPlay_PokemonBreeder(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);", "case_ids": ["AIPlay_PokemonBreeder-0"]}
+# <<< factory-mutation AIPlay_PokemonBreeder
+# >>> factory-mutation AIPlay_PokemonFlute
+MUTATIONS["AIPlay_PokemonFlute"] = {"source_symbol": "AIPlay_PokemonFlute", "before": "AIDecideResult AIPlay_PokemonFlute(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;\n\thTemp_ffa0 = wAITrainerCardParameter;", "after": "AIDecideResult AIPlay_PokemonFlute(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);\n\thTemp_ffa0 = wAITrainerCardParameter;", "case_ids": ["AIPlay_PokemonFlute-0"]}
+# <<< factory-mutation AIPlay_PokemonFlute

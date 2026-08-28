@@ -3154,3 +3154,35 @@ AIDecideResult AIPlay_EnergySearch(void)
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_EnergySearch */
+
+/* >>> factory AIPlay_ScoopUp */
+AIDecideResult AIPlay_ScoopUp(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTemp_ffa0 = wAITrainerCardParameter;
+	hTempPlayAreaLocation_ffa1 = wce1a;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_ScoopUp */
+
+/* >>> factory AIPlay_PokemonBreeder */
+AIDecideResult AIPlay_PokemonBreeder(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTempPlayAreaLocation_ffa1 = wAITrainerCardParameter;
+	hTemp_ffa0 = wce1a;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_PokemonBreeder */
+
+/* >>> factory AIPlay_PokemonFlute */
+AIDecideResult AIPlay_PokemonFlute(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTemp_ffa0 = wAITrainerCardParameter;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_PokemonFlute */
