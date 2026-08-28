@@ -30,10 +30,19 @@ static void adapt_AIProcessAndTryToUseAttack(ProbeState *s)
 }
 /* <<< factory AIProcessAndTryToUseAttack */
 
+/* >>> factory AIProcessButDontUseAttack */
+static void adapt_AIProcessButDontUseAttack(ProbeState *s)
+{
+	AIProcessAttacksResult result = AIProcessButDontUseAttack();
+	s->f = result.f;
+}
+/* <<< factory AIProcessButDontUseAttack */
+
 const ProbeEntry probe_entries_attacks[] = {
 	{ "RetrievePlayAreaAIScoreFromBackup2", adapt_RetrievePlayAreaAIScoreFromBackup2 },
 	{ "GetAIScoreOfAttack", adapt_GetAIScoreOfAttack },
 	{ "AIProcessAttacks", adapt_AIProcessAttacks },
 	{ "AIProcessAndTryToUseAttack", adapt_AIProcessAndTryToUseAttack },
+	{ "AIProcessButDontUseAttack", adapt_AIProcessButDontUseAttack },
 	{ NULL, NULL },
 };

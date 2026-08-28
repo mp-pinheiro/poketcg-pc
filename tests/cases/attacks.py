@@ -104,6 +104,14 @@ CASES["AIProcessAndTryToUseAttack"] = [
 ]
 # <<< factory AIProcessAndTryToUseAttack
 
+# >>> factory AIProcessButDontUseAttack
+CONTRACT["AIProcessButDontUseAttack"] = {"compare": ("f",), "preserve": ()}
+CASES["AIProcessButDontUseAttack"] = [
+    {"wram": {wAIBarrierFlagCounter: b"\x80", wAIExecuteProcessedAttack: b"\x00", wPreviousAIFlags: b"\x00", wAIScore: b"\x10\x20\x30\x40\x50\x60\x70"}, "expect": {wAIExecuteProcessedAttack: b"\x01", wAIScore: b"\x10\x20\x30\x40\x50\x60\x70", wTempPlayAreaAIScore: b"\x20\x30\x40\x50\x60\x70", wTempAIScore: b"\x10"}, "read": {wAIExecuteProcessedAttack: 1, wAIScore: 7, wTempPlayAreaAIScore: 6, wTempAIScore: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={wAIBarrierFlagCounter: b"\x80", wAIExecuteProcessedAttack: b"\x00", wPreviousAIFlags: b"\x00", wAIScore: b"\xfe\xfd\xfc\xfb\xfa\xf9\xf8"}, expect={wAIExecuteProcessedAttack: b"\x01", wAIScore: b"\xfe\xfd\xfc\xfb\xfa\xf9\xf8", wTempPlayAreaAIScore: b"\xfd\xfc\xfb\xfa\xf9\xf8", wTempAIScore: b"\xfe"}, read={wAIExecuteProcessedAttack: 1, wAIScore: 7, wTempPlayAreaAIScore: 6, wTempAIScore: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory AIProcessButDontUseAttack
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation GetAIScoreOfAttack
@@ -115,3 +123,6 @@ MUTATIONS["AIProcessAttacks"] = {"source_symbol": "AIProcessAttacks", "before": 
 # >>> factory-mutation AIProcessAndTryToUseAttack
 MUTATIONS["AIProcessAndTryToUseAttack"] = {"source_symbol": "AIProcessAndTryToUseAttack", "before": "\twAIExecuteProcessedAttack = 0u;", "after": "\twAIExecuteProcessedAttack = 1u;", "case_ids": ["AIProcessAndTryToUseAttack-0", "AIProcessAndTryToUseAttack-2"]}
 # <<< factory-mutation AIProcessAndTryToUseAttack
+# >>> factory-mutation AIProcessButDontUseAttack
+MUTATIONS["AIProcessButDontUseAttack"] = {"source_symbol": "AIProcessButDontUseAttack", "before": "\t\tgb_write8((uint16_t)(wTempPlayAreaAIScore_ADDR + i),\n\t\t\t  gb_read8((uint16_t)(wPlayAreaAIScore_ADDR + i)));", "after": "\t\tgb_write8((uint16_t)(wTempPlayAreaAIScore_ADDR + i), 0u);", "case_ids": ["AIProcessButDontUseAttack-0", "AIProcessButDontUseAttack-1"]}
+# <<< factory-mutation AIProcessButDontUseAttack

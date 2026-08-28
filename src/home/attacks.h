@@ -14,4 +14,7 @@ AIProcessAttacksResult AIProcessAttacks(void);
 /* >>> factory AIProcessAndTryToUseAttack */
 AIProcessAttacksResult AIProcessAndTryToUseAttack(void);
 /* <<< factory AIProcessAndTryToUseAttack */
+/* >>> factory AIProcessButDontUseAttack */
+AIProcessAttacksResult AIProcessButDontUseAttack(void);
+/* <<< factory AIProcessButDontUseAttack */
 #endif

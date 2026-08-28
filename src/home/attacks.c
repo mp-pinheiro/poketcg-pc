@@ -120,3 +120,15 @@ AIProcessAttacksResult AIProcessAndTryToUseAttack(void)
 	return AIProcessAttacks();
 }
 /* <<< factory AIProcessAndTryToUseAttack */
+
+/* >>> factory AIProcessButDontUseAttack */
+AIProcessAttacksResult AIProcessButDontUseAttack(void)
+{
+	wAIExecuteProcessedAttack = 1u;
+	for (uint8_t i = 0; i < 6; i++)
+		gb_write8((uint16_t)(wTempPlayAreaAIScore_ADDR + i),
+			  gb_read8((uint16_t)(wPlayAreaAIScore_ADDR + i)));
+	gb_write8(wTempAIScore_ADDR, gb_read8(wAIScore_ADDR));
+	return AIProcessAttacks();
+}
+/* <<< factory AIProcessButDontUseAttack */

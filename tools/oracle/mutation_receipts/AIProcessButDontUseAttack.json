@@ -1,0 +1,9 @@
+{
+  "fn": "AIProcessButDontUseAttack",
+  "case": "tests/cases/attacks.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIProcessButDontUseAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52647\": \"80\", \"52670\": \"10203040506070\", \"52697\": \"01\", \"52701\": \"20304050607010\", \"52768\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIProcessButDontUseAttack\", \"mismatches\": {\"bus\": {\"address\": 52671, \"reference\": \"80102030405060\", \"native\": \"80100000000000\", \"reference_size\": 17, \"native_size\": 17, \"spans\": [[52647, 1], [52670, 7], [52697, 1], [52701, 7], [52768, 1]]}}}\n",
+  "restored": "{\"fn\": \"AIProcessButDontUseAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52647\": \"80\", \"52670\": \"10203040506070\", \"52697\": \"01\", \"52701\": \"20304050607010\", \"52768\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
