@@ -351,6 +351,25 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #define SaveThisDeckText 0x023bu
 #define ThereAreNoBasicPokemonInThisDeckText 0x0236u
 #define YouMustIncludeABasicPokemonInTheDeckText 0x0237u
+
+#include "home/deck_configuration.h"
+#include "home/deck_selection.h"
+#include "home/switch_sram.h"
+#include "home/menus.h"
+#include "home/lcd.h"
+#include "home/credits_sequence_commands.h"
+#include "generated/wram.h"
+#include "mem.h"
+/* DECK_SIZE (60u) and FILTERS_CARD_SELECTION_PARAMS_ADDR are already defined
+ * earlier in this statics block, so they are not repeated here. */
+#define NAME_BUFFER_LENGTH 0x10u
+#define DismantleThisDeckText 0x023du
+#define ThereIsOnly1DeckSoCannotBeDismantledText 0x0235u
+
+#include "home/deck_configuration.h"
+#include "home/menus.h"
+#include "generated/wram.h"
+#define QuitModifyingTheDeckText 0x023cu
 /* <<< factory statics */
 
 
@@ -2247,3 +2266,92 @@ SaveDeckConfigurationResult SaveDeckConfiguration(uint16_t w0)
 	return (SaveDeckConfigurationResult){cursor, 0u};
 }
 /* <<< factory SaveDeckConfiguration */
+
+/* >>> factory DismantleDeck */
+/* deck_configuration.asm:684-716 */
+uint8_t DismantleDeck(uint16_t w0)
+{
+	/* Entered through JumpToFunctionInTable, so the word at sp is the return
+	 * address back into HandleDeckConfigurationMenu; the `add sp, $2` on the
+	 * .Dismantle exit discards it to return one frame further out and never
+	 * reads it. Only `a` is modelled: that exit leaves the flags produced by
+	 * `add sp, $2`, which depend on the runtime sp. */
+	(void)w0;
+
+	HandleYesOrNoMenuResult confirm = YesOrNoMenuWithText(DismantleThisDeckText);
+	if ((confirm.f & 0x10u) != 0u) {
+		/* jr c, SaveDeckConfiguration.go_back */
+		DrawCardTypeIconsAndPrintCardCounts();
+		PrintDeckBuildingCardList();
+		uint8_t back = wced6;
+		wCardListCursorPos = back;
+		return back;
+	}
+
+	if ((CheckIfHasOtherValidDecks() & 0x10u) != 0u) {
+		/* carry: this is the only deck with cards, so it cannot be dismantled */
+		(void)DrawWideTextBox_WaitForInput(ThereIsOnly1DeckSoCannotBeDismantledText);
+		EmptyScreen();
+		uint16_t params = FILTERS_CARD_SELECTION_PARAMS_ADDR;
+		(void)InitCardSelectionParams(0u, &params);
+		/* wTempCardTypeFilter and wCardListCursorPos are the same byte ($CEA4);
+		 * the filter store happens first, exactly as in the asm. */
+		wTempCardTypeFilter = wCurCardTypeFilter;
+		(void)DrawHorizontalListCursor_Visible();
+		PrintDeckBuildingCardList();
+		EnableLCD();
+		uint8_t cursor = wced6;
+		wCardListCursorPos = cursor;
+		return cursor;
+	}
+
+	/* .Dismantle */
+	EnableSRAM();
+	uint16_t name = GetPointerToDeckName();
+	uint8_t a = gb_read8(name);
+	if (a != 0u) {
+		ClearMemory_Bank2(NAME_BUFFER_LENGTH, name);
+		uint16_t cards = GetPointerToDeckCards();
+		(void)AddDeckToCollection(cards);
+		a = DECK_SIZE;
+		ClearMemory_Bank2(DECK_SIZE, cards);
+	}
+	DisableSRAM();
+	return a;
+}
+/* <<< factory DismantleDeck */
+
+/* >>> factory CancelDeckModifications */
+/* deck_configuration.asm:629-640 */
+CancelDeckModificationsResult CancelDeckModifications(uint16_t w0)
+{
+	/* Reached through HandleDeckConfigurationMenu's JumpToFunctionInTable, so
+	 * the word at sp is that menu's own return address. The `add sp, $2` exit
+	 * drops it to return one frame further out; the value is never read, just
+	 * as the landed SaveDeckConfiguration models its own w0. */
+	(void)w0;
+
+	CheckIfCurrentDeckWasChangedResult changed = CheckIfCurrentDeckWasChanged();
+	uint8_t a = changed.a;
+
+	if ((changed.f & 0x10u) != 0u) { /* deck was changed: prompt the player */
+		HandleYesOrNoMenuResult quit = YesOrNoMenuWithText(QuitModifyingTheDeckText);
+		if ((quit.f & 0x10u) != 0u) {
+			/* jr c, SaveDeckConfiguration.go_back. That label is interior to
+			 * the sibling routine and has no entry of its own, so its body is
+			 * repeated here. It leaves with a plain `ret`, one frame in, and
+			 * its flags are whatever PrintDeckBuildingCardList left behind,
+			 * which that routine's ported void signature does not carry. */
+			DrawCardTypeIconsAndPrintCardCounts();
+			PrintDeckBuildingCardList();
+			uint8_t cursor = wced6;
+			wCardListCursorPos = cursor;
+			return (CancelDeckModificationsResult){cursor, 0u};
+		}
+		a = quit.a;
+	}
+
+	/* .cancel_modification: add sp, $2 / or a / ret */
+	return (CancelDeckModificationsResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u)};
+}
+/* <<< factory CancelDeckModifications */

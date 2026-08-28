@@ -233,4 +233,11 @@ RequestToPrintCardResult _RequestToPrintCard(uint8_t a);
 typedef struct { uint8_t f; } PrintCardListResult;
 PrintCardListResult _PrintCardList(void);
 /* <<< factory _PrintCardList */
+/* >>> factory PrinterMenu_CardList */
+/* engine/menus/printer.asm:200. Entry registers are all dead and the two
+ * exits disagree on a/f -- the `ret nz` leaves a = [hffb3] with `or a`'s
+ * flags, the bank1call exit leaves PrintCardList's a/f, and the ported
+ * PrintCardList surfaces carry alone -- so nothing is returned. */
+void PrinterMenu_CardList(void);
+/* <<< factory PrinterMenu_CardList */
 #endif

@@ -283,4 +283,13 @@ void ConfirmDeckConfiguration(void);
 typedef struct { uint8_t a; uint8_t f; } SaveDeckConfigurationResult;
 SaveDeckConfigurationResult SaveDeckConfiguration(uint16_t w0);
 /* <<< factory SaveDeckConfiguration */
+/* >>> factory DismantleDeck */
+/* deck_configuration.asm:684 -- JumpToFunctionInTable target: w0 is the
+ * caller-pushed word that the `add sp, $2` exit discards. */
+uint8_t DismantleDeck(uint16_t w0);
+/* <<< factory DismantleDeck */
+/* >>> factory CancelDeckModifications */
+typedef struct { uint8_t a; uint8_t f; } CancelDeckModificationsResult;
+CancelDeckModificationsResult CancelDeckModifications(uint16_t w0);
+/* <<< factory CancelDeckModifications */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

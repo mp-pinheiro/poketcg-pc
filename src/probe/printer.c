@@ -328,6 +328,14 @@ static void adapt__PrintCardList(ProbeState *s)
 }
 /* <<< factory _PrintCardList */
 
+/* >>> factory PrinterMenu_CardList */
+static void adapt_PrinterMenu_CardList(ProbeState *s)
+{
+	PrinterMenu_CardList();
+	(void)s;
+}
+/* <<< factory PrinterMenu_CardList */
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "ShowPrinterConnectionErrorScene", adapt_ShowPrinterConnectionErrorScene },
 	{ "SendPrinterPacket", adapt_SendPrinterPacket },
@@ -364,5 +372,6 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "Func_1a080", adapt_Func_1a080 },
 	{ "_RequestToPrintCard", adapt__RequestToPrintCard },
 	{ "_PrintCardList", adapt__PrintCardList },
+	{ "PrinterMenu_CardList", adapt_PrinterMenu_CardList },
 	{ NULL, NULL },
 };

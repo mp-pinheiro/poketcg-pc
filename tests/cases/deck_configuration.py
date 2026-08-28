@@ -1045,6 +1045,75 @@ CASES["SaveDeckConfiguration"] = [
 ]
 # <<< factory SaveDeckConfiguration
 
+# >>> factory DismantleDeck
+CONTRACT["DismantleDeck"] = {"compare": ("a",), "preserve": ()}
+# wDefaultYesOrNo = $CD9A: HandleYesOrNoMenu xors wCurMenuItem on entry, so a
+# seed of 1 puts the cursor on YES and the A tap answers YES (no carry), which
+# is what lets the routine reach CheckIfHasOtherValidDecks. wCurDeck = $CEB1,
+# wDecksValid = $CEB2 (two valid decks -> no carry -> .Dismantle). wLCDC =
+# $CABB and rLCDC = $FF40 are seeded together so real frames elapse instead of
+# halting at pc $0271. sDeck1Name = $A200, sDeck1Cards = $A218 and
+# sCardCollection = $A100; those seeded SRAM spans are implicitly compared and
+# are where the dismantle itself is observed. stack[0] is the return address
+# into HandleDeckConfigurationMenu that `add sp, $2` discards so the `ret`
+# lands on the harness sentinel.
+CASES["DismantleDeck"] = [
+    {"stack": [0],
+     "wram": {0xCD9A: b"\x01", 0xCEB1: b"\x00", 0xCEB2: b"\x01\x01\x00\x00",
+              0xCABB: b"\x80", 0xFF40: b"\x80"},
+     "sram": {0: {0xA100: b"\x00\x00\x00\x00",
+                  0xA200: b"\x41\x42" + b"\x00" * 14,
+                  0xA218: b"\x01\x02" + b"\x00" * 58}},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, stack=[0x1234],
+         wram={0xCD9A: b"\x01", 0xCEB1: b"\x00", 0xCEB2: b"\x01\x01\x00\x00",
+               0xCABB: b"\x80", 0xFF40: b"\x80"},
+         sram={0: {0xA100: b"\x00\x00\x00\x00",
+                   0xA200: b"\x41\x42" + b"\x00" * 14,
+                   0xA218: b"\x01\x02" + b"\x00" * 58}},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         keys=[0x00, 0x01],
+         instruction_budget=20000000, cycle_budget=80000000),
+    # Empty deck name: `ld a, [hl] / or a / jr z` skips straight to
+    # .done_dismantle, so SRAM is left untouched and a comes back 0.
+    {"stack": [0],
+     "wram": {0xCD9A: b"\x01", 0xCEB1: b"\x00", 0xCEB2: b"\x01\x01\x00\x00",
+              0xCABB: b"\x80", 0xFF40: b"\x80"},
+     "sram": {0: {0xA100: b"\x00\x00\x00\x00",
+                  0xA200: b"\x00" * 16,
+                  0xA218: b"\x01\x02" + b"\x00" * 58}},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+]
+# <<< factory DismantleDeck
+
+# >>> factory CancelDeckModifications
+CONTRACT["CancelDeckModifications"] = {"compare": ("a", "f"), "preserve": ()}
+# wTotalCardCount = $CECC, wDefaultYesOrNo = $CD9A, wLCDC = $CABB, rLCDC = $FF40.
+# A count of 0x01 is neither 0 nor DECK_SIZE, so CheckIfCurrentDeckWasChanged
+# takes .set_carry at once (the same seed its own landed case uses) and the
+# routine prompts. HandleYesOrNoMenu puts the cursor on wDefaultYesOrNo ^ 1, so
+# seeding 1 selects YES, the A tap answers YES with no carry, and the routine
+# reaches `add sp, $2 / or a / ret` with a = 0.
+# stack[0] is the return address into HandleDeckConfigurationMenu that
+# `add sp, $2` discards so the `ret` lands on the harness sentinel.
+CASES["CancelDeckModifications"] = [
+    {"stack": [0],
+     "wram": {0xCECC: b"\x01", 0xCD9A: b"\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, stack=[0x1234],
+         wram={0xCECC: b"\x01", 0xCD9A: b"\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         keys=[0x00, 0x01],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory CancelDeckModifications
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1378,3 +1447,19 @@ MUTATIONS["SaveDeckConfiguration"] = {
     "case_ids": ["SaveDeckConfiguration-0", "SaveDeckConfiguration-1"],
 }
 # <<< factory-mutation SaveDeckConfiguration
+# >>> factory-mutation DismantleDeck
+MUTATIONS["DismantleDeck"] = {
+    "source_symbol": "DismantleDeck",
+    "before": "\t\tClearMemory_Bank2(NAME_BUFFER_LENGTH, name);",
+    "after": "\t\tClearMemory_Bank2(NAME_BUFFER_LENGTH, (uint16_t)(name + 1u));",
+    "case_ids": ["DismantleDeck-0", "DismantleDeck-1"],
+}
+# <<< factory-mutation DismantleDeck
+# >>> factory-mutation CancelDeckModifications
+MUTATIONS["CancelDeckModifications"] = {
+    "source_symbol": "CancelDeckModifications",
+    "before": "\t/* .cancel_modification: add sp, $2 / or a / ret */\n\treturn (CancelDeckModificationsResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u)};",
+    "after": "\t/* .cancel_modification: add sp, $2 / or a / ret */\n\treturn (CancelDeckModificationsResult){(uint8_t)(a + 1u), (uint8_t)(a == 0u ? 0x80u : 0x00u)};",
+    "case_ids": ["CancelDeckModifications-0", "CancelDeckModifications-1"],
+}
+# <<< factory-mutation CancelDeckModifications

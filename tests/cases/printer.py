@@ -122,6 +122,18 @@ _PRINT_CARD_LIST_SRAM = {0: {0xA100: b"\x00" * 0x100, 0xA200: b"\x00",
                              0xA254: b"\x00", 0xA2A8: b"\x00", 0xA2FC: b"\x00"}}
 _PRINT_CARD_LIST_SETUP = [{"fn": "CopyDMAFunction"},
                           {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+# Shared seeds for the PrinterMenu_CardList cases: an empty card collection
+# in SRAM bank 0 (0xA100 sCardCollection) plus an immediately terminated card
+# list for each of the four built decks (0xA218 sDeck1Cards, 0xA26C
+# sDeck2Cards, 0xA2C0 sDeck3Cards, 0xA314 sDeck4Cards), so
+# CreateCardCollectionListWithDeckCards' ALL_DECKS pass ends at once and
+# CreateFilteredCardList produces an empty visible list on both sides.
+_PRINTER_MENU_CARD_LIST_SRAM = {0: {0xA100: b"\x00" * 0x100, 0xA218: b"\x00",
+                                    0xA26C: b"\x00", 0xA2C0: b"\x00",
+                                    0xA314: b"\x00"}}
+_PRINTER_MENU_CARD_LIST_SETUP = [{"fn": "CopyDMAFunction"},
+                                 {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory Func_1a14b
@@ -745,6 +757,54 @@ CASES["_PrintCardList"] = [
 ]
 # <<< factory _PrintCardList
 
+# >>> factory PrinterMenu_CardList
+# Both cases tap A while the cursor sits at position 1 (the `ld a, $01`
+# handed to InitCardSelectionParams), so HandleCardSelectionInput returns
+# carry with hffb3 = 1 and the routine takes its `ret nz` exit. The
+# bank1call PrintCardList branch is unreachable that way, which is what keeps
+# the reference out of SendPrinterPacket's .wait_printer_packet_transmission
+# DoFrame loop -- these cases complete normally.
+#
+# wLCDC starts clear so every wait before the routine's own EnableLCD is a
+# no-op; CopyDMAFunction installs hDMAFunction for the frames that elapse
+# afterwards and SetupText primes the glyph cache before the card list and
+# the PrintTheCardListText header are printed. keys=[0x00, 0x01] taps A as a
+# cycle, because the ROM's edge-triggered hKeysPressed never sees a held
+# button pressed a second time.
+#
+# Nothing register-wise is compared (the two exits disagree). The observed
+# bytes are the ones this routine writes and never rewrites:
+#   $CEA1 wCardListVisibleOffset - zeroed before the list is printed
+#   $CED3 wCurCardTypeFilter     - zeroed with it
+#   $CEA4 wCardListCursorPos + the nine Data_ad05 parameter bytes at
+#         $CEA5-$CEAD, written once by InitCardSelectionParams
+#   $FFB3 hffb3                  - 1, the cursor position the input handler
+#                                  stored on the frame it reported carry
+# All are seeded to $FF first so the writes themselves are witnessed.
+# $CEA3 wCheckMenuCursorBlinkCounter is deliberately NOT observed: it counts
+# elapsed frames, so it still differs when A lands on a different iteration.
+CONTRACT["PrinterMenu_CardList"] = {"compare": (), "preserve": ()}
+CASES["PrinterMenu_CardList"] = [
+    {"wram": {0xCABB: b"\x00", 0xCEA1: b"\xFF", 0xCED3: b"\xFF",
+              0xCEA4: b"\xFF" * 10, 0xFFB3: b"\xFF"},
+     "sram": _PRINTER_MENU_CARD_LIST_SRAM,
+     "ramg": True,
+     "setup": _PRINTER_MENU_CARD_LIST_SETUP,
+     "keys": [0x00, 0x01],
+     "read": {0xCEA1: 1, 0xCEA4: 10, 0xCED3: 1, 0xFFB3: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON,
+         wram={0xCABB: b"\x00", 0xCEA1: b"\xFF", 0xCED3: b"\xFF",
+               0xCEA4: b"\xFF" * 10, 0xFFB3: b"\xFF"},
+         sram=_PRINTER_MENU_CARD_LIST_SRAM,
+         ramg=True,
+         setup=_PRINTER_MENU_CARD_LIST_SETUP,
+         keys=[0x00, 0x01],
+         read={0xCEA1: 1, 0xCEA4: 10, 0xCED3: 1, 0xFFB3: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PrinterMenu_CardList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 SCHEMA2_CASES["SendPrinterPacket"][3]["completion"] = {"mode": "pre-ret", "pc": 0x315D}
@@ -1024,3 +1084,11 @@ MUTATIONS["_PrintCardList"] = {
 for _record in SCHEMA2_CASES["_PrintCardList"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
 # <<< factory-completion _PrintCardList
+# >>> factory-mutation PrinterMenu_CardList
+MUTATIONS["PrinterMenu_CardList"] = {
+    "source_symbol": "PrinterMenu_CardList",
+    "before": "\tuint16_t params = PRINTER_CARD_LIST_SELECTION_PARAMS_ADDR;\n\t(void)InitCardSelectionParams(0x01u, &params);",
+    "after": "\tuint16_t params = (uint16_t)(PRINTER_CARD_LIST_SELECTION_PARAMS_ADDR + 1u);\n\t(void)InitCardSelectionParams(0x01u, &params);",
+    "case_ids": ["PrinterMenu_CardList-0", "PrinterMenu_CardList-1"],
+}
+# <<< factory-mutation PrinterMenu_CardList

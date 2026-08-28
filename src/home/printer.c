@@ -164,6 +164,26 @@
 #define ColorlessPokemonText 0x001Eu
 #define TrainerCardText 0x001Fu
 #define EnergyCardText 0x0020u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+
+#include "home/common.h"
+#include "home/deck_configuration.h"
+#include "home/deck_selection.h"
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
+#define SYM_BOX_TOP 0x1Cu
+#define PrintTheCardListText 0x0277u
+/* Data_ad05 is `02:6d05 Data_ad05` in poketcg.sym: the nine card-selection
+ * parameter bytes (x 3, y 3, y spacing 0, x spacing 4, 2 entries,
+ * SYM_CURSOR_R $0F, SYM_SPACE $00, NULL handler) this menu hands
+ * InitCardSelectionParams, which reads them through the $4000-$7FFF window. */
+#define PRINTER_CARD_LIST_SELECTION_PARAMS_BANK 2u
+#define PRINTER_CARD_LIST_SELECTION_PARAMS_ADDR 0x6D05u
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -1344,3 +1364,59 @@ PrintCardListResult _PrintCardList(void)
 	return (PrintCardListResult){0x00u};
 }
 /* <<< factory _PrintCardList */
+
+/* >>> factory PrinterMenu_CardList */
+/* engine/menus/printer.asm:200. The card-list entry of the printer menu:
+ * draws the collection screen, seeds the two-entry cursor parameters from
+ * Data_ad05 (02:6d05), then loops on DoFrame until HandleCardSelectionInput
+ * reports a selection. hffb3 then holds the cursor position the input handler
+ * stored, or MENU_CANCEL on B, and only position 0 falls through to the
+ * bank1call.
+ *
+ * Entry registers are all dead -- b/c/d/e/hl are loaded by the routine and a
+ * is `xor a`ed before anything reads it. The two exits disagree on a/f: the
+ * `ret nz` leaves a = [hffb3] with `or a`'s flags (Z clear, so f = $00), while
+ * the bank1call exit leaves PrintCardList's own a/f and the ported
+ * PrintCardList surfaces carry alone. Nothing is returned, exactly as the
+ * landed HandleDeckConfirmationMenu records for the same two-exit shape; the
+ * single caller (HandlePrinterMenu's JumpToFunctionInTable dispatch) reloads a
+ * from wSelectedPrinterMenuItem and discards both. */
+void PrinterMenu_CardList(void)
+{
+	(void)WriteCardListsTerminatorBytes();
+	Set_OBJ_8x8();
+	PrepareMenuGraphics();
+	FillBGMapLineWithA(SYM_BOX_TOP, 0u, 4u);
+
+	wCardListVisibleOffset = 0u;
+	wCurCardTypeFilter = 0u;
+	/* `xor a` leaves a = 0 and f = $80; FillBGMapLineWithA returns with
+	 * b = c = 0 and de = hl = BCCoordToBGMap0Address(0, 4) = $9880. Only a
+	 * reaches the filter lookup -- the callee reloads bc and passes d/e/hl
+	 * on to CreateFilteredCardList, which never reads them. */
+	PrintFilteredCardSelectionList(0u, 0x80u, 0u, 0u, 0x98u, 0x80u, 0x9880u);
+	EnableLCD();
+	InitTextPrinting(1u, 1u);
+	(void)ProcessTextFromID(PrintTheCardListText);
+
+	/* `ld hl, Data_ad05` is a bank-local read with no bankswitch: the
+	 * routine executes from bank 2 and every callee above restores the
+	 * caller's bank before returning, so the reference still has bank 2
+	 * latched here. The port states that latch the way the landed music
+	 * routines state theirs, because the ported callees reach their own
+	 * data through g_rom_bank and do not put it back. */
+	g_rom_bank = PRINTER_CARD_LIST_SELECTION_PARAMS_BANK;
+	uint16_t params = PRINTER_CARD_LIST_SELECTION_PARAMS_ADDR;
+	(void)InitCardSelectionParams(0x01u, &params);
+
+	for (;;) { /* .loop_frame */
+		DoFrame();
+		if (HandleCardSelectionInput().carry != 0u)
+			break;
+	}
+
+	if (hffb3 != 0u)
+		return;
+	(void)PrintCardList();
+}
+/* <<< factory PrinterMenu_CardList */

@@ -673,6 +673,22 @@ static void adapt_SaveDeckConfiguration(ProbeState *s)
 }
 /* <<< factory SaveDeckConfiguration */
 
+/* >>> factory DismantleDeck */
+static void adapt_DismantleDeck(ProbeState *s)
+{
+	s->a = DismantleDeck(s->stack[0]);
+}
+/* <<< factory DismantleDeck */
+
+/* >>> factory CancelDeckModifications */
+static void adapt_CancelDeckModifications(ProbeState *s)
+{
+	CancelDeckModificationsResult result = CancelDeckModifications(s->stack[0]);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory CancelDeckModifications */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "PrintSlashSixty", adapt_PrintSlashSixty },
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
@@ -752,5 +768,7 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "ConfirmDeckConfiguration", adapt_ConfirmDeckConfiguration },
 	{ "ShowConfirmationCardScreen", adapt_ShowConfirmationCardScreen },
 	{ "SaveDeckConfiguration", adapt_SaveDeckConfiguration },
+	{ "DismantleDeck", adapt_DismantleDeck },
+	{ "CancelDeckModifications", adapt_CancelDeckModifications },
 	{ NULL, NULL },
 };
