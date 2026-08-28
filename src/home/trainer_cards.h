@@ -293,4 +293,8 @@ AIDecideResult AIPlay_SuperEnergyRemoval(void);
 typedef struct { uint8_t a; uint8_t f; } AIDecideSuperPotionPhase11Result;
 AIDecideSuperPotionPhase11Result AIDecide_SuperPotion_Phase11(void);
 /* <<< factory AIDecide_SuperPotion_Phase11 */
+/* >>> factory AIPlay_EnergySearch */
+/* trainer_cards.asm:3218-3233 */
+AIDecideResult AIPlay_EnergySearch(void);
+/* <<< factory AIPlay_EnergySearch */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

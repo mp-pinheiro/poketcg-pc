@@ -1110,6 +1110,15 @@ CONTRACT["AIDecide_SuperPotion_Phase11"] = {"compare": ("a", "f"), "preserve": (
 CASES["AIDecide_SuperPotion_Phase11"] = [{"wram": {0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC2C8: b"\x00", 0xCC23: b"\x00"}, "read": {0xFF9D: 1, 0xCCC6: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000}, {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC2C8: b"\x00", 0xCC23: b"\x00"}, "read": {0xFF9D: 1, 0xCCC6: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000}]
 # <<< factory AIDecide_SuperPotion_Phase11
 
+# >>> factory AIPlay_EnergySearch
+CONTRACT["AIPlay_EnergySearch"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_EnergySearch"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x34", 0xCBF9: b"\x01", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1}, keys=[0x00, 0x01], setup=SETUP, instruction_budget=20000000, cycle_budget=80000000),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCE19: b"\x34", 0xCBF9: b"\x01", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1}, keys=[0x00, 0x01], setup=SETUP, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCE19: b"\xDD", 0xCBF9: b"\x01", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1}, keys=[0x00, 0x01], setup=SETUP, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory AIPlay_EnergySearch
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1471,3 +1480,11 @@ MUTATIONS["AIPlay_SuperEnergyRemoval"] = {"source_symbol": "AIPlay_SuperEnergyRe
 # >>> factory-mutation AIDecide_SuperPotion_Phase11
 MUTATIONS["AIDecide_SuperPotion_Phase11"] = {"source_symbol": "AIDecide_SuperPotion_Phase11", "before": "\t\tif (card == 0xffu) return (AIDecideSuperPotionPhase11Result){0xffu, 0xC0u};", "after": "\t\tif (card == 0xffu) return (AIDecideSuperPotionPhase11Result){0u, 0xC0u};", "case_ids": ["AIDecide_SuperPotion_Phase11-0"]}
 # <<< factory-mutation AIDecide_SuperPotion_Phase11
+# >>> factory-mutation AIPlay_EnergySearch
+MUTATIONS["AIPlay_EnergySearch"] = {
+    "source_symbol": "AIPlay_EnergySearch",
+    "before": "AIDecideResult AIPlay_EnergySearch(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_EnergySearch(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardParameter;",
+    "case_ids": ["AIPlay_EnergySearch-0"]
+}
+# <<< factory-mutation AIPlay_EnergySearch

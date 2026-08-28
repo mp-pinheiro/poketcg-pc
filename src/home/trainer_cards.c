@@ -3143,3 +3143,14 @@ AIDecideSuperPotionPhase11Result AIDecide_SuperPotion_Phase11(void)
 	}
 }
 /* <<< factory AIDecide_SuperPotion_Phase11 */
+
+/* >>> factory AIPlay_EnergySearch */
+/* trainer_cards.asm:3218-3233 */
+AIDecideResult AIPlay_EnergySearch(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTemp_ffa0 = wAITrainerCardParameter;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_EnergySearch */
