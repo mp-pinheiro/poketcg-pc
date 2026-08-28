@@ -103,7 +103,7 @@ AITryToRetreatResult AITryToRetreat(uint8_t entry_a, uint8_t entry_f)
 			    (CreateEnergyCardListFromHand(1u).f & FLAG_C) == 0u) {
 				hTemp_ffa0 = wDuelTempList;
 				hTempPlayAreaLocation_ffa1 = PLAY_AREA_ARENA;
-				(void)AIMakeDecision(OPPACTION_PLAY_ENERGY);
+				(void)AIMakeDecision(OPPACTION_PLAY_ENERGY, 0u, 0u, 0u, 0u);
 			}
 		}
 	}
@@ -120,10 +120,10 @@ AITryToRetreatResult AITryToRetreat(uint8_t entry_a, uint8_t entry_f)
 		}
 		hTempCardIndex_ff9f = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
 		hTemp_ffa0 = PLAY_AREA_ARENA;
-		(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER);
+		(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
 		hAIPkmnPowerEffectParam = entry_a;
-		(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT);
-		(void)AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE);
+		(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+		(void)AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
 		/* `or a` over AIMakeDecision's exit a, which AIMakeDecisionResult does
 		 * not carry; the landed convention (HandleAIShift, HandleAIPeek,
 		 * AIAttachEnergyInHandToCardInPlayArea) passes the oppaction byte
@@ -222,7 +222,7 @@ end_retreat_list:
 			gb_write8(de, 0xffu);
 		}
 	}
-	(void)AIMakeDecision(OPPACTION_ATTEMPT_RETREAT);
+	(void)AIMakeDecision(OPPACTION_ATTEMPT_RETREAT, 0u, 0u, 0u, 0u);
 	return (AITryToRetreatResult){OPPACTION_ATTEMPT_RETREAT, 0x00u};
 }
 /* <<< factory AITryToRetreat */

@@ -63,7 +63,7 @@ typedef struct {
 	uint8_t e;
 	uint8_t f;
 } AIMakeDecisionResult;
-AIMakeDecisionResult AIMakeDecision(uint8_t a);
+AIMakeDecisionResult AIMakeDecision(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 /* <<< factory AIMakeDecision */
 /* >>> factory PrintPracticeDuelDrMasonInstructions */
 void PrintPracticeDuelDrMasonInstructions(uint16_t hl);
@@ -1160,4 +1160,7 @@ void OppAction_EvolvePokemonCard(void);
 /* >>> factory OppAction_PlayBasicPokemonCard */
 void OppAction_PlayBasicPokemonCard(void);
 /* <<< factory OppAction_PlayBasicPokemonCard */
+/* >>> factory OppAction_PlayEnergyCard */
+void OppAction_PlayEnergyCard(void);
+/* <<< factory OppAction_PlayEnergyCard */
 #endif

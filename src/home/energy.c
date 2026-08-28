@@ -442,7 +442,7 @@ play_energy_card:
 	{
 		uint8_t loc = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
 		gb_write8(hTempPlayAreaLocation_ffa1_ADDR, loc);
-		(void)AIMakeDecision(OPPACTION_PLAY_ENERGY_600);
+		(void)AIMakeDecision(OPPACTION_PLAY_ENERGY_600, 0u, 0u, 0u, 0u);
 		return 1u;
 	}
 

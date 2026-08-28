@@ -154,7 +154,7 @@ AIShiftResult HandleAIShift(uint8_t c)
 	}
 	/* .found: dispatch the Shift Pkmn Power sequence */
 	hTempCardIndex_ff9f = gb_read8(WCE08_ADDR);
-	(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER);
+	(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
 
 	/* converts WR_* back to a color index: rotate left until bit 7 is set */
 	uint8_t color = 0u;
@@ -165,8 +165,8 @@ AIShiftResult HandleAIShift(uint8_t c)
 	}
 
 	hAIPkmnPowerEffectParam = color;
-	(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT);
-	AIMakeDecisionResult r = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE);
+	(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+	AIMakeDecisionResult r = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
 	return (AIShiftResult){OPPACTION_DUEL_MAIN_SCENE, r.f};
 }
 /* <<< factory HandleAIShift */
@@ -226,10 +226,10 @@ AIPeekResult HandleAIPeek(uint8_t c)
 	}
 
 	hTempCardIndex_ff9f = wce08;
-	AIMakeDecision(OPPACTION_USE_PKMN_POWER);
+	AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
 	hAIPkmnPowerEffectParam = param;
-	AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT);
-	AIMakeDecisionResult done = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE);
+	AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+	AIMakeDecisionResult done = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
 	return (AIPeekResult){OPPACTION_DUEL_MAIN_SCENE, done.f};
 }
 /* <<< factory HandleAIPeek */
@@ -256,20 +256,20 @@ HandleAIStrangeBehaviorResult HandleAIStrangeBehavior(uint8_t c)
 		counters = wce06;
 
 	hTempCardIndex_ff9f = wce08;
-	(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER);
+	(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
 	hAIPkmnPowerEffectParam = 0u;
-	(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT);
+	(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
 
 	counters = ConvertHPToDamageCounters_Bank8(counters);
 	for (uint8_t e = counters; e != 0u; e--) {
 		for (uint8_t d = 30u; d != 0u; d--)
 			DoFrame();
-		(void)AIMakeDecision(OPPACTION_6B15);
+		(void)AIMakeDecision(OPPACTION_6B15, 0u, 0u, 0u, 0u);
 	}
 
 	for (uint8_t d = 60u; d != 0u; d--)
 		DoFrame();
-	AIMakeDecisionResult result = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE);
+	AIMakeDecisionResult result = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
 	return (HandleAIStrangeBehaviorResult){OPPACTION_DUEL_MAIN_SCENE, result.f};
 }
 /* <<< factory HandleAIStrangeBehavior */
@@ -314,9 +314,9 @@ HandleAICurseResult HandleAICurse(uint8_t c)
 				hAIPkmnPowerEffectParam = e;
 				SwapTurn();
 				hTempCardIndex_ff9f = wce08;
-				AIMakeDecision(OPPACTION_USE_PKMN_POWER);
-				AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT);
-				AIMakeDecisionResult r = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE);
+				AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
+				AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+				AIMakeDecisionResult r = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
 				return (HandleAICurseResult){0u, r.f};
 			}
 		}
@@ -382,10 +382,10 @@ HandleAIHealResult HandleAIHeal(uint8_t c)
 		if (after == 0u || (uint8_t)(hp + heal) < damage)
 			goto check_bench;
 		hTempCardIndex_ff9f = gb_read8(0xce08u);
-		(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER);
+		(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
 		hPlayAreaEffectTarget = PLAY_AREA_ARENA;
-		(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT);
-		AIMakeDecisionResult result = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE);
+		(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+		AIMakeDecisionResult result = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
 		return (HandleAIHealResult){OPPACTION_DUEL_MAIN_SCENE, result.f};
 	}
 check_bench:
@@ -400,10 +400,10 @@ check_bench:
 		if (best_location == PLAY_AREA_ARENA)
 			return (HandleAIHealResult){PLAY_AREA_ARENA, 0x80u};
 		hTempCardIndex_ff9f = gb_read8(0xce08u);
-		(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER);
+		(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
 		hPlayAreaEffectTarget = best_location;
-		(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT);
-		AIMakeDecisionResult result = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE);
+		(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+		AIMakeDecisionResult result = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
 		return (HandleAIHealResult){OPPACTION_DUEL_MAIN_SCENE, result.f};
 	}
 }
@@ -517,10 +517,10 @@ HandleAICowardiceResult HandleAICowardice(void)
 					effect_param = 0u;
 				}
 				hTempCardIndex_ff9f = wce08;
-				(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER);
+				(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
 				hAIPkmnPowerEffectParam = effect_param;
-				(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT);
-				(void)AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE);
+				(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+				(void)AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
 				return (HandleAICowardiceResult){OPPACTION_DUEL_MAIN_SCENE, 0x10u};
 			}
 		}

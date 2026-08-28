@@ -802,84 +802,84 @@ CASES["_AIProcessHandTrainerCards"] = [
 # >>> factory AIPlay_Pokeball
 CONTRACT["AIPlay_Pokeball"] = {"compare": ("f",), "preserve": ()}
 CASES["AIPlay_Pokeball"] = [
-    {"a": 0x00, "wram": {0xCE16: b"\x00", 0xCE19: b"\x34", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCACA: b"\x00\x00\x00"}, "read": {0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, "keys": [0x00, 0x01], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0x00, "wram": {0xCE16: b"\x00", 0xCE19: b"\x78", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCACA: b"\x00\x00\x80"}, "read": {0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, "keys": [0x00, 0x01], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xCE16: b"\x00", 0xCE19: b"\xDD", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    {"a": 0x00, "wram": {0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x34", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCACA: b"\x00\x00\x00"}, "read": {0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, "keys": [0x00, 0x01], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0x00, "wram": {0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x78", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCACA: b"\x00\x00\x80"}, "read": {0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, "keys": [0x00, 0x01], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\xDD", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory AIPlay_Pokeball
 
 # >>> factory AIPlay_Recycle
 CONTRACT["AIPlay_Recycle"] = {"compare": ("f",), "preserve": ()}
 CASES["AIPlay_Recycle"] = [
-    dict(a=0x00, wram={0xCE16: b"\x00", 0xCE19: b"\x34", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
-    dict(a=0x00, wram={0xCE16: b"\x00", 0xCE19: b"\x78", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCACA: b"\x00\x00\x80"}, read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
-    dict(POISON, wram={0xCE16: b"\x00", 0xCE19: b"\xDD", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x34", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x78", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCACA: b"\x00\x00\x80"}, read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\xDD", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
 ]
 # <<< factory AIPlay_Recycle
 
 # >>> factory AIPlay_Bill
 CONTRACT["AIPlay_Bill"] = {"compare": ("f",), "preserve": ()}
 CASES["AIPlay_Bill"] = [
-    dict(a=0x00, wram={0xCE16: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
-    dict(a=0x00, wram={0xCE16: b"\x77", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
-    dict(POISON, wram={0xCE16: b"\xDD", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
 ]
 # <<< factory AIPlay_Bill
 # >>> factory AIPlay_Imakuni
 CONTRACT["AIPlay_Imakuni"] = {"compare": ("f",), "preserve": ()}
 CASES["AIPlay_Imakuni"] = [
-    dict(a=0x00, wram={0xCE16: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
-    dict(a=0x00, wram={0xCE16: b"\x77", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
-    dict(POISON, wram={0xCE16: b"\xDD", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
 ]
 # <<< factory AIPlay_Imakuni
 # >>> factory AIPlay_FullHeal
 CONTRACT["AIPlay_FullHeal"] = {"compare": ("f",), "preserve": ()}
 CASES["AIPlay_FullHeal"] = [
-    dict(a=0x00, wram={0xCE16: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
-    dict(a=0x00, wram={0xCE16: b"\x77", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
-    dict(POISON, wram={0xCE16: b"\xDD", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
 ]
 # <<< factory AIPlay_FullHeal
 # >>> factory AIPlay_ClefairyDollOrMysteriousFossil
 CONTRACT["AIPlay_ClefairyDollOrMysteriousFossil"] = {"compare": ("f",), "preserve": ()}
 CASES["AIPlay_ClefairyDollOrMysteriousFossil"] = [
-    dict(a=0x00, wram={0xCE16: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
-    dict(a=0x00, wram={0xCE16: b"\x77", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
-    dict(POISON, wram={0xCE16: b"\xDD", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
 ]
 # <<< factory AIPlay_ClefairyDollOrMysteriousFossil
 # >>> factory AIPlay_ImposterProfessorOak
 CONTRACT["AIPlay_ImposterProfessorOak"] = {"compare": ("f",), "preserve": ()}
 CASES["AIPlay_ImposterProfessorOak"] = [
-    dict(a=0x00, wram={0xCE16: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
-    dict(a=0x00, wram={0xCE16: b"\x77", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
-    dict(POISON, wram={0xCE16: b"\xDD", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
 ]
 # <<< factory AIPlay_ImposterProfessorOak
 # >>> factory AIPlay_PokemonCenter
 CONTRACT["AIPlay_PokemonCenter"] = {"compare": ("f",), "preserve": ()}
 CASES["AIPlay_PokemonCenter"] = [
-    dict(a=0x00, wram={0xCE16: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
-    dict(a=0x00, wram={0xCE16: b"\x77", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
-    dict(POISON, wram={0xCE16: b"\xDD", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
          read={hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
 ]
 # <<< factory AIPlay_PokemonCenter

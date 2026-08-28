@@ -2360,7 +2360,7 @@ AIPlayPokeballResult AIPlay_Pokeball(void)
 		hTempPlayAreaLocation_ffa1 = wAITrainerCardParameter;
 	else
 		hTempPlayAreaLocation_ffa1 = 0xffu;
-	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS);
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
 	return (AIPlayPokeballResult){decision.f};
 }
 /* <<< factory AIPlay_Pokeball */
@@ -2374,7 +2374,7 @@ AIDecideResult AIPlay_Recycle(void)
 		hTemp_ffa0 = wAITrainerCardParameter;
 	else
 		hTemp_ffa0 = 0xffu;
-	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS);
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_Recycle */
@@ -2384,7 +2384,7 @@ AIDecideResult AIPlay_Recycle(void)
 AIDecideResult AIPlay_Bill(void)
 {
 	hTempCardIndex_ff9f = wAITrainerCardToPlay;
-	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS);
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_Bill */
@@ -2394,7 +2394,7 @@ AIDecideResult AIPlay_Bill(void)
 AIDecideResult AIPlay_Imakuni(void)
 {
 	hTempCardIndex_ff9f = wAITrainerCardToPlay;
-	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS);
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_Imakuni */
@@ -2404,7 +2404,7 @@ AIDecideResult AIPlay_Imakuni(void)
 AIDecideResult AIPlay_FullHeal(void)
 {
 	hTempCardIndex_ff9f = wAITrainerCardToPlay;
-	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS);
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_FullHeal */
@@ -2414,7 +2414,7 @@ AIDecideResult AIPlay_FullHeal(void)
 AIDecideResult AIPlay_ClefairyDollOrMysteriousFossil(void)
 {
 	hTempCardIndex_ff9f = wAITrainerCardToPlay;
-	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS);
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_ClefairyDollOrMysteriousFossil */
@@ -2424,7 +2424,7 @@ AIDecideResult AIPlay_ClefairyDollOrMysteriousFossil(void)
 AIDecideResult AIPlay_ImposterProfessorOak(void)
 {
 	hTempCardIndex_ff9f = wAITrainerCardToPlay;
-	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS);
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_ImposterProfessorOak */
@@ -2434,7 +2434,7 @@ AIDecideResult AIPlay_ImposterProfessorOak(void)
 AIDecideResult AIPlay_PokemonCenter(void)
 {
 	hTempCardIndex_ff9f = wAITrainerCardToPlay;
-	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS);
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_PokemonCenter */

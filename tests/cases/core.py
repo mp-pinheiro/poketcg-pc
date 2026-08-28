@@ -180,6 +180,37 @@ CASES["AIMakeDecision"] = [
         wOpponentTurnEnded_: b"\x00",
         wDuelFinished_: b"\x00",
     }},
+    # $0F -> OppAction_NoAction; post-dispatch wSkip==0 exits through the
+    # DuelistIsThinking textbox (core.asm:6255-6259).
+    {"a": 0x0F, "keys": [0x00, 0x01], "wram": {
+        hOppActionTableIndex_: b"\x00",
+        wSkipDuelistIsThinkingDelay_: b"\x01",
+        wVBlankCounter_: b"\x01",
+        wOpponentTurnEnded_: b"\x00",
+        wDuelFinished_: b"\x00",
+        0xFF80: b"\x01", 0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80",
+    },
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    # wDuelFinished forces the .turn_ended carry exit (core.asm:6248-6251).
+    {"a": 0x0F, "wram": {
+        hOppActionTableIndex_: b"\x00",
+        wSkipDuelistIsThinkingDelay_: b"\x01",
+        wVBlankCounter_: b"\x01",
+        wOpponentTurnEnded_: b"\x00",
+        wDuelFinished_: b"\x01",
+    }},
+    # wSkip==0 at entry runs the real DoFrame delay loop from 59 to 60
+    # (core.asm:6236-6240); wDuelFinished then takes the carry exit.
+    {"a": 0x0F, "keys": [0x00, 0x01], "wram": {
+        hOppActionTableIndex_: b"\x00",
+        wSkipDuelistIsThinkingDelay_: b"\x00",
+        wVBlankCounter_: b"\x3B",
+        wOpponentTurnEnded_: b"\x00",
+        wDuelFinished_: b"\x01",
+        0xCABB: b"\x80", 0xFF40: b"\x80",
+    },
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory AIMakeDecision
 
@@ -4170,6 +4201,22 @@ CASES["OppAction_PlayBasicPokemonCard"] = [
 ]
 # <<< factory OppAction_PlayBasicPokemonCard
 
+# >>> factory OppAction_PlayEnergyCard
+CONTRACT["OppAction_PlayEnergyCard"] = {"compare": (), "preserve": ()}
+CASES["OppAction_PlayEnergyCard"] = [
+    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": [0x00, 0x01],
+     "wram": {0xFF97: b"\xC2", 0xC2EF: b"\x00", 0xC400: b"\x10", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\x00", 0xFFA1: b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xFF98: 1, 0xFF9D: 1, 0xCC0B: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x01],
+     "wram": {0xFF97: b"\xC2", 0xC2EF: b"\x00", 0xC400: b"\x10", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\x00", 0xFFA1: b"\x01"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xFF98: 1, 0xFF9D: 1, 0xCC0B: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000}
+]
+# <<< factory OppAction_PlayEnergyCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4709,8 +4756,8 @@ MUTATIONS["CheckSkipDelayAllowed"] = {
 # >>> factory-mutation AIMakeDecision
 MUTATIONS["AIMakeDecision"] = {
     "source_symbol": "AIMakeDecision",
-    "before": "gb_write8(wSkipDuelistIsThinkingDelay_ADDR, 1u);",
-    "after": "gb_write8(wSkipDuelistIsThinkingDelay_ADDR, 0u);",
+    "before": "return (AIMakeDecisionResult){b, c, d, e, 0u};",
+    "after": "return (AIMakeDecisionResult){b, c, d, e, FLAG_C};",
     "case_ids": ["AIMakeDecision-0"],
 }
 # <<< factory-mutation AIMakeDecision
@@ -5791,3 +5838,6 @@ MUTATIONS["OppAction_EvolvePokemonCard"] = {"source_symbol": "OppAction_EvolvePo
 # >>> factory-mutation OppAction_PlayBasicPokemonCard
 MUTATIONS["OppAction_PlayBasicPokemonCard"] = {"source_symbol": "OppAction_PlayBasicPokemonCard", "before": "void OppAction_PlayBasicPokemonCard(void)\n{\n\tuint8_t index = hTemp_ffa0;", "after": "void OppAction_PlayBasicPokemonCard(void)\n{\n\tuint8_t index = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["OppAction_PlayBasicPokemonCard-0", "OppAction_PlayBasicPokemonCard-1"]}
 # <<< factory-mutation OppAction_PlayBasicPokemonCard
+# >>> factory-mutation OppAction_PlayEnergyCard
+MUTATIONS["OppAction_PlayEnergyCard"] = {"source_symbol": "OppAction_PlayEnergyCard", "before": "void OppAction_PlayEnergyCard(void)\n{\n\tuint8_t location = hTempPlayAreaLocation_ffa1;", "after": "void OppAction_PlayEnergyCard(void)\n{\n\tuint8_t location = (uint8_t)(hTempPlayAreaLocation_ffa1 + 1u);", "case_ids": ["OppAction_PlayEnergyCard-0", "OppAction_PlayEnergyCard-1"]}
+# <<< factory-mutation OppAction_PlayEnergyCard

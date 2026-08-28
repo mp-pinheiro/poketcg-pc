@@ -115,7 +115,7 @@ static void adapt_CheckSkipDelayAllowed(ProbeState *s)
 /* >>> factory AIMakeDecision */
 static void adapt_AIMakeDecision(ProbeState *s)
 {
-	AIMakeDecisionResult r = AIMakeDecision(s->a);
+	AIMakeDecisionResult r = AIMakeDecision(s->a, s->b, s->c, s->d, s->e);
 	s->f = r.f;
 }
 /* <<< factory AIMakeDecision */
@@ -2599,6 +2599,13 @@ static void adapt_OppAction_PlayBasicPokemonCard(ProbeState *s)
 }
 /* <<< factory OppAction_PlayBasicPokemonCard */
 
+/* >>> factory OppAction_PlayEnergyCard */
+static void adapt_OppAction_PlayEnergyCard(ProbeState *s)
+{
+	OppAction_PlayEnergyCard();
+}
+/* <<< factory OppAction_PlayEnergyCard */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2909,5 +2916,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "AISelectSpecialAttackParameters", adapt_AISelectSpecialAttackParameters },
 	{ "OppAction_EvolvePokemonCard", adapt_OppAction_EvolvePokemonCard },
 	{ "OppAction_PlayBasicPokemonCard", adapt_OppAction_PlayBasicPokemonCard },
+	{ "OppAction_PlayEnergyCard", adapt_OppAction_PlayEnergyCard },
 	{ NULL, NULL },
 };

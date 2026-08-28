@@ -1681,27 +1681,64 @@ CheckSkipDelayAllowedResult CheckSkipDelayAllowed(uint8_t f, uint8_t b, uint8_t 
 
 /* >>> factory AIMakeDecision */
 /* core.asm:6229-6263 */
-AIMakeDecisionResult AIMakeDecision(uint8_t a)
+#include <stdlib.h>
+#define DuelistIsThinkingText 0x0088u
+AIMakeDecisionResult AIMakeDecision(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
 	gb_write8(hOppActionTableIndex_ADDR, a);
 	uint8_t delay = gb_read8(wSkipDuelistIsThinkingDelay_ADDR);
 	gb_write8(wSkipDuelistIsThinkingDelay_ADDR, 0u);
 	if (delay == 0u) {
-		while (gb_read8(wVBlankCounter_ADDR) < 60u)
-			gb_write8(wVBlankCounter_ADDR,
-			          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
+		do {
+			DoFrame();
+		} while (gb_read8(wVBlankCounter_ADDR) < 60u);
 	}
 
+	uint8_t action = gb_read8(hOppActionTableIndex_ADDR);
 	gb_write8(wOpponentTurnEnded_ADDR, 0u);
-	if (a == 0x08u)
-		gb_write8(wSkipDuelistIsThinkingDelay_ADDR, 1u);
-	uint8_t f = 0u;
+	/* core.asm:6246-6247: JumpToFunctionInTable(OppActionTable). Unported
+	 * targets ($09 UseAttack, $0A PlayAttackAnimationDealAttackDamage,
+	 * $0E ForceSwitchActive) abort like the effect-command dispatch shim.
+	 * $08 skips OppAction_BeginUseAttack's own HRAM preamble in C, so the
+	 * dispatch supplies d/e from hTempCardIndex_ff9f/hTemp_ffa0 itself. */
+	switch (action) {
+	case 0x00u: DuelTransmissionError(); break;
+	case 0x01u: OppAction_PlayBasicPokemonCard(); break;
+	case 0x02u: OppAction_EvolvePokemonCard(); break;
+	case 0x03u: OppAction_PlayEnergyCard(); break;
+	case 0x04u: (void)OppAction_AttemptRetreat(); break;
+	case 0x05u: OppAction_FinishTurnWithoutAttacking(); break;
+	case 0x06u: OppAction_PlayTrainerCard(); break;
+	case 0x07u: OppAction_ExecuteTrainerCardEffectCommands(b, d, e); break;
+	case 0x08u:
+		(void)OppAction_BeginUseAttack(action, 0u, b, c,
+			hTempCardIndex_ff9f, hTemp_ffa0, 0u);
+		break;
+	case 0x0Bu: (void)OppAction_DrawCard(); break;
+	case 0x0Cu: OppAction_UsePokemonPower(); break;
+	case 0x0Du: (void)OppAction_ExecutePokemonPowerEffect(); break;
+	case 0x0Fu:
+	case 0x10u:
+	case 0x13u:
+		OppAction_NoAction();
+		break;
+	case 0x11u: (void)OppAction_TossCoinATimes(); break;
+	case 0x12u: (void)OppAction_6b30(); break;
+	case 0x14u: OppAction_UseMetronomeAttack(); break;
+	case 0x15u: (void)OppAction_6b15(); break;
+	case 0x16u: OppAction_DrawDuelMainScene(); break;
+	default:
+		abort();
+	}
+
 	if (gb_read8(wDuelFinished_ADDR) != 0u ||
 	    gb_read8(wOpponentTurnEnded_ADDR) != 0u)
-		f = FLAG_C;
-	if (gb_read8(wSkipDuelistIsThinkingDelay_ADDR) == 0u)
-		gb_write8(wVBlankCounter_ADDR, 0u);
-	return (AIMakeDecisionResult){0u, 0u, 0u, 0u, f};
+		return (AIMakeDecisionResult){b, c, d, e, FLAG_C};
+	if (gb_read8(wSkipDuelistIsThinkingDelay_ADDR) != 0u)
+		return (AIMakeDecisionResult){b, c, d, e, 0u};
+	gb_write8(wVBlankCounter_ADDR, 0u);
+	TextResult text = DrawWideTextBox_PrintTextNoDelay(DuelistIsThinkingText);
+	return (AIMakeDecisionResult){b, c, d, e, text.a == 0u ? FLAG_Z : 0u};
 }
 /* <<< factory AIMakeDecision */
 
@@ -3647,7 +3684,7 @@ AIAttachEnergyInHandToCardInPlayAreaResult AIAttachEnergyInHandToCardInPlayArea(
 	LookResult location = LookForCardIDInPlayArea_Bank5(e, PLAY_AREA_ARENA);
 	hTempPlayAreaLocation_ffa1 = location.a;
 	hTemp_ffa0 = energy;
-	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_ENERGY);
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_ENERGY, 0u, 0u, 0u, 0u);
 	return (AIAttachEnergyInHandToCardInPlayAreaResult){OPPACTION_PLAY_ENERGY, decision.f};
 }
 /* <<< factory AIAttachEnergyInHandToCardInPlayArea */
@@ -8078,3 +8115,20 @@ void OppAction_PlayBasicPokemonCard(void)
 	(void)processed;
 }
 /* <<< factory OppAction_PlayBasicPokemonCard */
+
+/* >>> factory OppAction_PlayEnergyCard */
+/* core.asm:6529-6543 */
+void OppAction_PlayEnergyCard(void)
+{
+	uint8_t location = hTempPlayAreaLocation_ffa1;
+	hTempPlayAreaLocation_ff9d = location;
+	uint8_t index = hTemp_ffa0;
+	hTempCardIndex_ff98 = index;
+	(void)PutHandCardInPlayArea(index, location);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(hTemp_ffa0);
+	DrawLargePictureOfCard();
+	PrintAttachedEnergyToPokemon();
+	wAlreadyPlayedEnergy = 0x01u;
+	DrawDuelMainScene();
+}
+/* <<< factory OppAction_PlayEnergyCard */

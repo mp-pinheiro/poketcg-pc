@@ -270,7 +270,7 @@ void AIDecidePlayPokemonCard(void)
 			hl = saved_hl;
 			continue;
 		}
-		AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_BASIC_PKMN);
+		AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_BASIC_PKMN, 0u, 0u, 0u, 0u);
 		if (decision.f & 0x10u)
 			return;
 		hl = saved_hl;
