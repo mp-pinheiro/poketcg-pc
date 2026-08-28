@@ -114,46 +114,6 @@ reason = "poketcg/src/scripts/challenge_hall_entrance.asm:1 uses the `get_event_
 unblock = "same as GetStackEventValue/MaxStackEventValue/SetStackEventFalse/SetStackEventValue/SetStackEventZero: add a case-schema knob that lets a schema-2 case override the native harness's synthesized post-call stack byte independently of hl, or land a separately reviewed permanent transform for the four blocked event-var primitives that verifies them via decomposed, already-green callee contracts instead of one end-to-end oracle run, then re-attempt Preload_Clerk9"
 
 [[blocked]]
-name = "ExecuteNextSFXCommand"
-reason = "src/home/sfx.c:285 already defines `static void ExecuteNextSFXCommand(uint16_t cmd_ptr, uint8_t c)` -- confirmed by direct grep. Same already-implemented-registry-discrepancy class as Music1_note above: tools/factory/try_one.py's own preflight classifier (`_already_implemented`) raises PreflightBlocker(\"already-implemented\") for this fn on every fresh --next selection, so it is never reissued once its current.json reaches state=issued, and its stem (`sfx`) is scored first among this basename's routines every call, permanently consuming that basename's per-call dedup slot ahead of its real, still-open siblings (Func_fc279, Func_fc26c, SFX_end, Func_fc1cd, SFX_frequency, SFX_ApplyPitchOffset)."
-unblock = "reconcile the pret routine inventory/gate against the landed src/home/sfx.c so ExecuteNextSFXCommand is reported done rather than todo, and reset or remove this fn's stale .factory/try/ExecuteNextSFXCommand/current.json issued state so it stops consuming the `sfx` basename's dedup slot ahead of its real open siblings"
-
-[[blocked]]
-name = "Music1_end"
-reason = "src/home/music1.c:631 already defines `void Music1_end(uint16_t *hl, uint8_t ch) { Music1_PlayNextNote(hl, ch); }` -- confirmed by direct grep. Same already-implemented-registry-discrepancy class as Music1_note above."
-unblock = "reconcile the pret routine inventory/gate against the landed src/home/music1.c so Music1_end is reported done rather than todo, and reset or remove this fn's stale .factory/try/Music1_end/current.json issued state so it stops counting as active work"
-
-[[blocked]]
-name = "Music2_end"
-reason = "src/home/music2.c:625 already defines `void Music2_end(uint16_t *hl, uint8_t ch) { Music2_PlayNextNote(hl, ch); }` -- confirmed by direct grep. Same already-implemented-registry-discrepancy class as Music1_note above."
-unblock = "reconcile the pret routine inventory/gate against the landed src/home/music2.c so Music2_end is reported done rather than todo, and reset or remove this fn's stale .factory/try/Music2_end/current.json issued state so it stops counting as active work"
-
-[[blocked]]
-name = "DrawTextBox_PrintTextNoDelay"
-reason = "src/home/menus.c:242 already defines `static TextResult DrawTextBox_PrintTextNoDelay(uint8_t a, uint16_t hl)` -- confirmed by direct grep. Same already-implemented-registry-discrepancy class as Music1_note above; its stem (`menus`) permanently consumes that basename's per-call dedup slot on every --next call."
-unblock = "reconcile the pret routine inventory/gate against the landed src/home/menus.c so DrawTextBox_PrintTextNoDelay is reported done rather than todo, and reset or remove this fn's stale .factory/try/DrawTextBox_PrintTextNoDelay/current.json issued state so it stops consuming the `menus` basename's dedup slot"
-
-[[blocked]]
-name = "Func_fc279"
-reason = "src/home/sfx.c:34 already defines `static void Func_fc279(void)` -- confirmed by direct grep. Same already-implemented-registry-discrepancy class as Music1_note/ExecuteNextSFXCommand above; after ExecuteNextSFXCommand was blocked, this fn became the next-scored `sfx`-basename routine and now itself permanently consumes that basename's per-call dedup slot ahead of its real, still-open siblings (Func_fc26c, SFX_end, Func_fc1cd, SFX_frequency, SFX_ApplyPitchOffset)."
-unblock = "reconcile the pret routine inventory/gate against the landed src/home/sfx.c so Func_fc279 is reported done rather than todo, and reset or remove this fn's stale .factory/try/Func_fc279/current.json issued state so it stops consuming the `sfx` basename's dedup slot ahead of its real open siblings"
-
-[[blocked]]
-name = "Func_fc26c"
-reason = "src/home/sfx.c:46 already defines `static void Func_fc26c(void)` -- confirmed by direct grep. Same already-implemented-registry-discrepancy class as Func_fc279/ExecuteNextSFXCommand above; the next-scored `sfx`-basename routine after Func_fc279 was blocked, permanently consuming that basename's per-call dedup slot."
-unblock = "reconcile the pret routine inventory/gate against the landed src/home/sfx.c so Func_fc26c is reported done rather than todo, and reset or remove this fn's stale .factory/try/Func_fc26c/current.json issued state"
-
-[[blocked]]
-name = "Func_fc1cd"
-reason = "src/home/sfx.c:130 already defines `static void Func_fc1cd(void)` -- confirmed by direct grep. Same already-implemented-registry-discrepancy class as Func_fc279/ExecuteNextSFXCommand above."
-unblock = "reconcile the pret routine inventory/gate against the landed src/home/sfx.c so Func_fc1cd is reported done rather than todo, and reset or remove this fn's stale .factory/try/Func_fc1cd/current.json issued state"
-
-[[blocked]]
-name = "SFX_ApplyPitchOffset"
-reason = "src/home/sfx.c:111 already defines `static void SFX_ApplyPitchOffset(uint8_t c)` -- confirmed by direct grep. Same already-implemented-registry-discrepancy class as Func_fc279/ExecuteNextSFXCommand above."
-unblock = "reconcile the pret routine inventory/gate against the landed src/home/sfx.c so SFX_ApplyPitchOffset is reported done rather than todo, and reset or remove this fn's stale .factory/try/SFX_ApplyPitchOffset/current.json issued state"
-
-[[blocked]]
 name = "RunOverworldScript"
 reason = "poketcg/src/home/script.asm:108 was investigated directly as a candidate this cycle (it was previously assumed portable and cited as the unblock path for Script_Nikki/Script_Tech1/Script_d93f). It is NOT a linear run-to-completion interpreter loop: it reads the current bytecode opcode at wScriptPointer, bank-switches to look up OverworldScriptTable[opcode] (restoring the caller's own bank afterward), then ends `pop bc; jp hl` with no `ret` at all -- a raw computed-jump trampoline that tail-jumps into whichever of dozens of ScriptCommand_* handlers the current opcode selects, and never returns to its own caller normally. This cannot be represented as a single register-in/register-out C function an isolated oracle case can verify: three escalating diagnostic runs against the reference ROM all BUDGET_EXHAUSTED at the identical pc=9100 (400,004 cycles), consistent with the probed call jumping into unseeded/garbage bytecode-handler code with no way back to the harness's synthesized return address."
 unblock = "land a project-wide RunOverworldScript execution harness -- e.g. a bytecode-stepping C interpreter that models the full ScriptCommand_* dispatch table natively (reading opcodes and dispatching via a C switch/function-pointer table instead of `jp hl`), replacing the trampoline so script routines' embedded bytecode can be verified end-to-end -- or land a separately reviewed permanent transform that represents `start_script` bodies as data blobs verified by direct source inspection instead of per-routine oracle execution"
@@ -197,11 +157,6 @@ unblock = "read the recorded diagnostics under .factory/try/PracticeDuel_PutStar
 name = "PracticeDuel_DonePuttingOnBench"
 reason = "AUTO-RETIRED: src/engine/duel/core.asm:2673 (basename `core`). 9 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
 unblock = "read the recorded diagnostics under .factory/try/PracticeDuel_DonePuttingOnBench/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "OppAction_UseMetronomeAttack"
-reason = "AUTO-RETIRED: src/engine/duel/core.asm:6762 (basename `core`). 10 generations exhausted (trapped=False); last diagnostic phase=infra-error failure_class=infrastructure detail=Traceback (most recent call last): File \"<path>\", line 561, in <module> raise SystemExit(main()) ^^^^^^ File \"<path>\", line 437, in main probe = subprocess.run( ^^^^^^^^^^^^^^^ File \"<path>\", line 550, in run stdout, stderr = process.communicate(input, timeout=timeout) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ File \""
-unblock = "read the recorded diagnostics under .factory/try/OppAction_UseMetronomeAttack/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
 name = "PracticeDuel_DrawSevenCards"
