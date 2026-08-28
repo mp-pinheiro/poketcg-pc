@@ -1309,6 +1309,11 @@ void BankswitchROM(uint8_t bank);
 #include "home/duel.h"
 #include "home/duel_core.h"
 #define ATK_ANIM_HEALING_WIND_PLAY_AREA 0x86u
+
+#include "home/effect_functions.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define ATK_ANIM_SPIT_POISON_SUCCESS 0x8cu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10271,3 +10276,19 @@ void HealingWind_PlayAreaHealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, 
 	}
 }
 /* <<< factory HealingWind_PlayAreaHealEffect */
+
+/* >>> factory SpitPoison_Poison50PercentEffect */
+SpitPoison_Poison50PercentEffectResult SpitPoison_Poison50PercentEffect(uint16_t hl)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(PoisonCheckText, hl);
+	if ((toss.f & 0x10u) != 0u) {
+		QueueStatusConditionResult poison = PoisonEffect();
+		uint16_t result_hl = (poison.f & 0x10u) != 0u ?
+			wStatusConditionQueueIndex_ADDR : wWhoseTurn_ADDR;
+		return (SpitPoison_Poison50PercentEffectResult){poison.f, result_hl};
+	}
+	wLoadedAttackAnimation = ATK_ANIM_SPIT_POISON_SUCCESS;
+	SetNoEffectFromStatus();
+	return (SpitPoison_Poison50PercentEffectResult){toss.f, toss.hl};
+}
+/* <<< factory SpitPoison_Poison50PercentEffect */

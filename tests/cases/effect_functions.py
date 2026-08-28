@@ -6978,6 +6978,30 @@ CASES["HealingWind_PlayAreaHealEffect"] = [
 ]
 # <<< factory HealingWind_PlayAreaHealEffect
 
+# >>> factory SpitPoison_Poison50PercentEffect
+CONTRACT["SpitPoison_Poison50PercentEffect"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["SpitPoison_Poison50PercentEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00", 0xCCB8: b"\x00", 0xCCED: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01",
+               0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2, 0xCAC2: 1,
+               0xCCCD: 1, 0xCCCE: 3, 0xCCB8: 1, 0xCCED: 1, 0xCCF1: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00", 0xCCB8: b"\x00", 0xCCED: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01",
+               0xCE4E: b"\xEE\xDD"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2, 0xCAC2: 1,
+               0xCCCD: 1, 0xCCCE: 3, 0xCCB8: 1, 0xCCED: 1, 0xCCF1: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory SpitPoison_Poison50PercentEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9843,3 +9867,11 @@ MUTATIONS["GamblerEffect"] = {"source_symbol": "GamblerEffect", "before": "\tuin
 # >>> factory-mutation HealingWind_PlayAreaHealEffect
 MUTATIONS["HealingWind_PlayAreaHealEffect"] = {"source_symbol": "HealingWind_PlayAreaHealEffect", "before": "\ta = ATK_ANIM_HEALING_WIND_PLAY_AREA;\n\twLoadedAttackAnimation = a;", "after": "\ta = 0x00u;\n\twLoadedAttackAnimation = a;", "case_ids": ["HealingWind_PlayAreaHealEffect-0", "HealingWind_PlayAreaHealEffect-1", "HealingWind_PlayAreaHealEffect-2", "HealingWind_PlayAreaHealEffect-3"]}
 # <<< factory-mutation HealingWind_PlayAreaHealEffect
+# >>> factory-mutation SpitPoison_Poison50PercentEffect
+MUTATIONS["SpitPoison_Poison50PercentEffect"] = {
+    "source_symbol": "SpitPoison_Poison50PercentEffect",
+    "before": "SpitPoison_Poison50PercentEffectResult SpitPoison_Poison50PercentEffect(uint16_t hl)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(PoisonCheckText, hl);\n\tif ((toss.f & 0x10u) != 0u) {",
+    "after": "SpitPoison_Poison50PercentEffectResult SpitPoison_Poison50PercentEffect(uint16_t hl)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(PoisonCheckText, hl);\n\tif ((toss.f & 0x10u) == 0u) {",
+    "case_ids": ["SpitPoison_Poison50PercentEffect-0", "SpitPoison_Poison50PercentEffect-1"]
+}
+# <<< factory-mutation SpitPoison_Poison50PercentEffect

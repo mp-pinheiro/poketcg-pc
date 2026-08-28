@@ -4924,6 +4924,15 @@ static void adapt_HealingWind_PlayAreaHealEffect(ProbeState *s)
 }
 /* <<< factory HealingWind_PlayAreaHealEffect */
 
+/* >>> factory SpitPoison_Poison50PercentEffect */
+static void adapt_SpitPoison_Poison50PercentEffect(ProbeState *s)
+{
+	SpitPoison_Poison50PercentEffectResult result = SpitPoison_Poison50PercentEffect(s->hl);
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory SpitPoison_Poison50PercentEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5522,5 +5531,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ImakuniEffect", adapt_ImakuniEffect },
 	{ "GamblerEffect", adapt_GamblerEffect },
 	{ "HealingWind_PlayAreaHealEffect", adapt_HealingWind_PlayAreaHealEffect },
+	{ "SpitPoison_Poison50PercentEffect", adapt_SpitPoison_Poison50PercentEffect },
 	{ NULL, NULL },
 };
