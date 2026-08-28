@@ -11,4 +11,9 @@ typedef struct {
 
 Func126b3Result Func_126b3(void);
 
+/* >>> factory Func_12661 */
+/* debug_main.asm:36 `ret` inherits Func_126b3's a/f/hl unchanged, so the
+ * dispatcher's result type is this routine's too. */
+Func126b3Result Func_12661(void);
+/* <<< factory Func_12661 */
 #endif
