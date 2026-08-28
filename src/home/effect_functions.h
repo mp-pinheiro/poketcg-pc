@@ -2029,6 +2029,9 @@ SpitPoison_Poison50PercentEffectResult SpitPoison_Poison50PercentEffect(uint16_t
 /* >>> factory Peek_SelectEffect */
 void Peek_SelectEffect(void);
 /* <<< factory Peek_SelectEffect */
+/* >>> factory MagneticStormEffect */
+void MagneticStormEffect(void);
+/* <<< factory MagneticStormEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

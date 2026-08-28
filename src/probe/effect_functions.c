@@ -4941,6 +4941,14 @@ static void adapt_Peek_SelectEffect(ProbeState *s)
 }
 /* <<< factory Peek_SelectEffect */
 
+/* >>> factory MagneticStormEffect */
+static void adapt_MagneticStormEffect(ProbeState *s)
+{
+	(void)s;
+	MagneticStormEffect();
+}
+/* <<< factory MagneticStormEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5541,5 +5549,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "HealingWind_PlayAreaHealEffect", adapt_HealingWind_PlayAreaHealEffect },
 	{ "SpitPoison_Poison50PercentEffect", adapt_SpitPoison_Poison50PercentEffect },
 	{ "Peek_SelectEffect", adapt_Peek_SelectEffect },
+	{ "MagneticStormEffect", adapt_MagneticStormEffect },
 	{ NULL, NULL },
 };

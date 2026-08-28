@@ -1326,6 +1326,8 @@ void BankswitchROM(uint8_t bank);
 #define DUELIST_TYPE_LINK_OPP 0x01u
 #define CardPeekWasUsedOnText 0x0146u
 #define PeekWasUsedToLookInYourHandText 0x0145u
+
+#define TheEnergyCardFromPlayAreaWasMovedText 0x014cu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10343,3 +10345,66 @@ void Peek_SelectEffect(void)
 	}
 }
 /* <<< factory Peek_SelectEffect */
+
+/* >>> factory MagneticStormEffect */
+void MagneticStormEffect(void)
+{
+	DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+	uint16_t energy_list = wDuelTempList_ADDR;
+	uint8_t energy_count = 0u;
+	for (uint8_t index = 0u; index < DECK_SIZE; index++) {
+		if ((gb_read8((uint16_t)(locations.hl + index)) & CARD_LOCATION_PLAY_AREA) == 0u)
+			continue;
+		uint16_t card_id = GetCardIDFromDeckIndex(index);
+		if ((GetCardType((uint8_t)card_id) & TYPE_ENERGY) == 0u)
+			continue;
+		gb_write8(energy_list++, index);
+		energy_count++;
+	}
+	gb_write8(energy_list, 0xffu);
+
+	DuelistVarResult pokemon_result = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t pokemon_count = pokemon_result.a;
+	uint8_t remainder = energy_count;
+	uint8_t per_pokemon = 0xffu;
+	for (;;) {
+		per_pokemon = (uint8_t)(per_pokemon + 1u);
+		if (remainder < pokemon_count)
+			break;
+		remainder = (uint8_t)(remainder - pokemon_count);
+	}
+
+	TempListResult listed = CountCardsInDuelTempList();
+	(void)ShuffleCards(listed.a, wDuelTempList_ADDR);
+	uint16_t energy_cursor = wDuelTempList_ADDR;
+	uint8_t slot = PLAY_AREA_ARENA;
+	uint8_t remaining_pokemon = pokemon_count;
+	while (remaining_pokemon != 0u) {
+		uint8_t cards = (uint8_t)(per_pokemon + 1u);
+		while (--cards != 0u) {
+			uint8_t deck_index = gb_read8(energy_cursor++);
+			AddCardToHand(deck_index);
+			(void)PutHandCardInPlayArea(deck_index, slot);
+		}
+		slot++;
+		remaining_pokemon--;
+	}
+
+	uint16_t pokemon_list = hTempList_ADDR;
+	for (uint8_t index = 0u; index < pokemon_count; index++)
+		gb_write8((uint16_t)(pokemon_list + index), index);
+	(void)ShuffleCards(pokemon_count, pokemon_list);
+	uint16_t random_pokemon = pokemon_list;
+	while (gb_read8(energy_cursor) != 0xffu) {
+		uint8_t target = gb_read8(random_pokemon++);
+		uint8_t deck_index = gb_read8(energy_cursor++);
+		AddCardToHand(deck_index);
+		(void)PutHandCardInPlayArea(deck_index, target);
+	}
+
+	DrawDuelMainScene();
+	DrawDuelHUDs();
+	(void)DrawWideTextBox_WaitForInput(TheEnergyCardFromPlayAreaWasMovedText);
+	DrawPlayAreaScreenToShowChanges(0u);
+}
+/* <<< factory MagneticStormEffect */

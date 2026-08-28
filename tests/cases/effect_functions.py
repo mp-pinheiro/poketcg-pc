@@ -7012,6 +7012,56 @@ CASES["Peek_SelectEffect"] = [
 ]
 # <<< factory Peek_SelectEffect
 
+# >>> factory MagneticStormEffect
+CONTRACT["MagneticStormEffect"] = {"compare": (), "preserve": ()}
+CASES["MagneticStormEffect"] = [
+    {
+        "wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables: b"\x10\x00",
+                 wPlayerDuelVariables + 0xEF: b"\x01",
+                 wPlayerDuelVariables + 0xBB: b"\x00",
+                 wPlayerDuelVariables + 0xBC: b"\xFF",
+                 0xC2F1: b"\x00",
+                 wPlayerDeck: b"\x08\x01",
+                 wOpponentDuelVariables + 0xBB: b"\xFF",
+                 wDuelDisplayedScreen: b"\x01", wLCDC: b"\x00",
+                 wDuelTempList: b"\xAA\xAA"},
+        "read": {wDuelTempList: 2, hTempList: 1},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "keys": [0x00, 0x01],
+        "instruction_budget": 20000000, "cycle_budget": 80000000
+    },
+    {
+        "wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables: b"\x10\x10",
+                 wPlayerDuelVariables + 0xEF: b"\x01",
+                 wPlayerDuelVariables + 0xBB: b"\x00",
+                 wPlayerDuelVariables + 0xBC: b"\xFF",
+                 0xC2F1: b"\x00",
+                 wPlayerDeck: b"\x08\x01",
+                 wOpponentDuelVariables + 0xBB: b"\xFF",
+                 wDuelDisplayedScreen: b"\x01", wLCDC: b"\x00",
+                 wDuelTempList: b"\xAA\xAA"},
+        "read": {wDuelTempList: 2, hTempList: 1},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "keys": [0x00, 0x01],
+        "instruction_budget": 20000000, "cycle_budget": 80000000
+    },
+    dict(POISON,
+         wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables: b"\x10\x10",
+               wPlayerDuelVariables + 0xEF: b"\x01",
+               wPlayerDuelVariables + 0xBB: b"\x00",
+               wPlayerDuelVariables + 0xBC: b"\xFF",
+               0xC2F1: b"\x00",
+               wPlayerDeck: b"\x08\x01",
+               wOpponentDuelVariables + 0xBB: b"\xFF",
+               wDuelDisplayedScreen: b"\x01", wLCDC: b"\x00",
+               wDuelTempList: b"\xAA\xAA"},
+         read={wDuelTempList: 2, hTempList: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         keys=[0x00, 0x01],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory MagneticStormEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9888,3 +9938,6 @@ MUTATIONS["SpitPoison_Poison50PercentEffect"] = {
 # >>> factory-mutation Peek_SelectEffect
 MUTATIONS["Peek_SelectEffect"] = {"source_symbol": "Peek_SelectEffect", "before": "\tgb_write8(arena_flags.hl, (uint8_t)(arena_flags.a | (1u << USED_PKMN_POWER_THIS_TURN_F)));", "after": "\tgb_write8(arena_flags.hl, arena_flags.a);", "case_ids": ["Peek_SelectEffect-0", "Peek_SelectEffect-1"]}
 # <<< factory-mutation Peek_SelectEffect
+# >>> factory-mutation MagneticStormEffect
+MUTATIONS["MagneticStormEffect"] = {"source_symbol": "MagneticStormEffect", "before": "void MagneticStormEffect(void)\n{\n\tDuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);\n\tuint16_t energy_list = wDuelTempList_ADDR;", "after": "void MagneticStormEffect(void)\n{\n\tDuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);\n\tuint16_t energy_list = (uint16_t)(wDuelTempList_ADDR + 1u);", "case_ids": ["MagneticStormEffect-1", "MagneticStormEffect-2"]}
+# <<< factory-mutation MagneticStormEffect
