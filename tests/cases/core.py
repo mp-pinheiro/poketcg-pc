@@ -4580,6 +4580,24 @@ CASES["HandlePoisonDamage"] = [
 ]
 # <<< factory HandlePoisonDamage
 
+# >>> factory PracticeDuel_DrawSevenCards
+CONTRACT["PracticeDuel_DrawSevenCards"] = {"compare": (), "preserve": ()}
+CASES["PracticeDuel_DrawSevenCards"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
+     "keys": [0x00, 0x01],
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xC510: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
+         keys=[0x00, 0x01],
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xC510: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PracticeDuel_DrawSevenCards
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6256,3 +6274,11 @@ MUTATIONS["HandlePoisonDamage"] = {
     "case_ids": ["HandlePoisonDamage-1"],
 }
 # <<< factory-mutation HandlePoisonDamage
+# >>> factory-mutation PracticeDuel_DrawSevenCards
+MUTATIONS["PracticeDuel_DrawSevenCards"] = {
+    "source_symbol": "PracticeDuel_DrawSevenCards",
+    "before": "void PracticeDuel_DrawSevenCards(void)\n{\n\tDisplayPracticeDuelPlayerHandScreen();\n\tEnableLCD();\n\tPrintPracticeDuelDrMasonInstructions(DrawSevenCardsPracticeDuelText);\n}",
+    "after": "void PracticeDuel_DrawSevenCards(void)\n{\n\tDisplayPracticeDuelPlayerHandScreen();\n\tEnableLCD();\n\tPrintPracticeDuelDrMasonInstructions(DrawSevenCardsPracticeDuelText + 1u);\n}",
+    "case_ids": ["PracticeDuel_DrawSevenCards-0", "PracticeDuel_DrawSevenCards-1"],
+}
+# <<< factory-mutation PracticeDuel_DrawSevenCards

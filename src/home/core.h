@@ -1217,4 +1217,7 @@ HandleSleepCheckResult HandleSleepCheck(uint16_t hl);
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } HandlePoisonDamageResult;
 HandlePoisonDamageResult HandlePoisonDamage(uint8_t a, uint16_t hl);
 /* <<< factory HandlePoisonDamage */
+/* >>> factory PracticeDuel_DrawSevenCards */
+void PracticeDuel_DrawSevenCards(void);
+/* <<< factory PracticeDuel_DrawSevenCards */
 #endif

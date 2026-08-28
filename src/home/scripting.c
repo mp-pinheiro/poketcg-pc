@@ -2354,3 +2354,17 @@ void Script_LegendaryCardLeftSpark(void)
 	wOverworldMode = wOverworldModeBackup;
 }
 /* <<< factory Script_LegendaryCardLeftSpark */
+
+/* >>> factory Script_Torch */
+void Script_Torch(void)
+{
+	CloseAdvancedDialogueBox();
+}
+/* <<< factory Script_Torch */
+
+/* >>> factory Script_Woman2 */
+void Script_Woman2(void)
+{
+	CloseAdvancedDialogueBox();
+}
+/* <<< factory Script_Woman2 */

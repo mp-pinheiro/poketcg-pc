@@ -1875,6 +1875,22 @@ CASES["Script_LegendaryCardLeftSpark"] = [
 ]
 # <<< factory Script_LegendaryCardLeftSpark
 
+# >>> factory Script_Torch
+CONTRACT["Script_Torch"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Script_Torch"] = [
+    {"wram": {0xD0BF: b"\x11", 0xD0C0: b"\x22", 0xD0C1: b"\x00"}, "read": {0xD0BF: 1, 0xD0C1: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD0BF: b"\x33", 0xD0C0: b"\x44", 0xD0C1: b"\x00"}, "read": {0xD0BF: 1, 0xD0C1: 1}},
+]
+# <<< factory Script_Torch
+
+# >>> factory Script_Woman2
+CONTRACT["Script_Woman2"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Script_Woman2"] = [
+    {"wram": {0xD0BF: b"\x11", 0xD0C0: b"\x22", 0xD0C1: b"\x00"}, "read": {0xD0BF: 1, 0xD0C1: 1}},
+    dict(POISON, wram={0xD0BF: b"\x33", 0xD0C0: b"\x44", 0xD0C1: b"\x00"}, read={0xD0BF: 1, 0xD0C1: 1}),
+]
+# <<< factory Script_Woman2
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2695,3 +2711,9 @@ MUTATIONS["Script_LegendaryCardBottomRight"] = {"source_symbol": "Script_Legenda
 # >>> factory-mutation Script_LegendaryCardLeftSpark
 MUTATIONS["Script_LegendaryCardLeftSpark"] = {"source_symbol": "Script_LegendaryCardLeftSpark", "before": "void Script_LegendaryCardLeftSpark(void)\n{\n\twOverworldNPCFlags = 0u;", "after": "void Script_LegendaryCardLeftSpark(void)\n{\n\twOverworldNPCFlags = 0xFFu;", "case_ids": ["Script_LegendaryCardLeftSpark-0", "Script_LegendaryCardLeftSpark-1"]}
 # <<< factory-mutation Script_LegendaryCardLeftSpark
+# >>> factory-mutation Script_Torch
+MUTATIONS["Script_Torch"] = {"source_symbol": "Script_Torch", "before": "void Script_Torch(void)\n{\n\tCloseAdvancedDialogueBox();", "after": "void Script_Torch(void)\n{\n\t(void)0;", "case_ids": ["Script_Torch-0", "Script_Torch-1"]}
+# <<< factory-mutation Script_Torch
+# >>> factory-mutation Script_Woman2
+MUTATIONS["Script_Woman2"] = {"source_symbol": "Script_Woman2", "before": "void Script_Woman2(void)\n{\n\tCloseAdvancedDialogueBox();", "after": "void Script_Woman2(void)\n{\n\t(void)0;", "case_ids": ["Script_Woman2-0", "Script_Woman2-1"]}
+# <<< factory-mutation Script_Woman2

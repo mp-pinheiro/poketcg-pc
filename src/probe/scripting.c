@@ -1385,6 +1385,22 @@ static void adapt_Script_LegendaryCardLeftSpark(ProbeState *s)
 }
 /* <<< factory Script_LegendaryCardLeftSpark */
 
+/* >>> factory Script_Torch */
+static void adapt_Script_Torch(ProbeState *s)
+{
+	(void)s;
+	Script_Torch();
+}
+/* <<< factory Script_Torch */
+
+/* >>> factory Script_Woman2 */
+static void adapt_Script_Woman2(ProbeState *s)
+{
+	Script_Woman2();
+	(void)s;
+}
+/* <<< factory Script_Woman2 */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1522,5 +1538,7 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "Script_LegendaryCardTopLeft", adapt_Script_LegendaryCardTopLeft },
 	{ "Script_LegendaryCardBottomRight", adapt_Script_LegendaryCardBottomRight },
 	{ "Script_LegendaryCardLeftSpark", adapt_Script_LegendaryCardLeftSpark },
+	{ "Script_Torch", adapt_Script_Torch },
+	{ "Script_Woman2", adapt_Script_Woman2 },
 	{ NULL, NULL },
 };

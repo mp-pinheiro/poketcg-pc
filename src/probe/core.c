@@ -2669,6 +2669,14 @@ static void adapt_HandlePoisonDamage(ProbeState *s)
 }
 /* <<< factory HandlePoisonDamage */
 
+/* >>> factory PracticeDuel_DrawSevenCards */
+static void adapt_PracticeDuel_DrawSevenCards(ProbeState *s)
+{
+	(void)s;
+	PracticeDuel_DrawSevenCards();
+}
+/* <<< factory PracticeDuel_DrawSevenCards */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2987,5 +2995,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PlayBetweenTurnsAnimation", adapt_PlayBetweenTurnsAnimation },
 	{ "HandleSleepCheck", adapt_HandleSleepCheck },
 	{ "HandlePoisonDamage", adapt_HandlePoisonDamage },
+	{ "PracticeDuel_DrawSevenCards", adapt_PracticeDuel_DrawSevenCards },
 	{ NULL, NULL },
 };

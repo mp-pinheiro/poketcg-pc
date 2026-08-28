@@ -676,4 +676,10 @@ void Script_LegendaryCardBottomRight(void);
 /* >>> factory Script_LegendaryCardLeftSpark */
 void Script_LegendaryCardLeftSpark(void);
 /* <<< factory Script_LegendaryCardLeftSpark */
+/* >>> factory Script_Torch */
+void Script_Torch(void);
+/* <<< factory Script_Torch */
+/* >>> factory Script_Woman2 */
+void Script_Woman2(void);
+/* <<< factory Script_Woman2 */
 #endif

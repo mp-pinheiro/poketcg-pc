@@ -1501,6 +1501,8 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define DUEL_ANIM_DAMAGE_HUD 0x8Cu
 #define Received10DamageDueToPoisonText 0x0026u
 #define Received20DamageDueToPoisonText 0x0027u
+
+#define DrawSevenCardsPracticeDuelText 0x01a4u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -8574,3 +8576,12 @@ HandlePoisonDamageResult HandlePoisonDamage(uint8_t a, uint16_t hl)
 	return (HandlePoisonDamageResult){remaining, f, hl};
 }
 /* <<< factory HandlePoisonDamage */
+
+/* >>> factory PracticeDuel_DrawSevenCards */
+void PracticeDuel_DrawSevenCards(void)
+{
+	DisplayPracticeDuelPlayerHandScreen();
+	EnableLCD();
+	PrintPracticeDuelDrMasonInstructions(DrawSevenCardsPracticeDuelText);
+}
+/* <<< factory PracticeDuel_DrawSevenCards */
