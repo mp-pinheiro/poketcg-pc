@@ -61,4 +61,10 @@ void TryOpenPCMailBoosterPack(void);
  * exits are bare `ret z`, so no register result is modelled. */
 void PCMailHandleAInput(void);
 /* <<< factory PCMailHandleAInput */
+/* >>> factory _PCMenu_ReadMail */
+/* mail.asm:22. The tail is `pop af / ld [wd291], a / ret`, so a comes back as
+ * the entry value of wd291; b, c, d, e and hl are whatever PlaySFX leaves and
+ * that callee models no register result, so none of them is modelled here. */
+uint8_t _PCMenu_ReadMail(void);
+/* <<< factory _PCMenu_ReadMail */
 #endif

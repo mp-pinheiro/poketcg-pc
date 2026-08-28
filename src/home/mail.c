@@ -85,6 +85,15 @@
 #define Mail13Part1Text 0x0416u
 #define Mail14Part1Text 0x0417u
 #define Mail15Part1Text 0x0418u
+
+/* mail.asm:22 (_PCMenu_ReadMail). PAD_B is 1 << B_PAD_B with B_PAD_B = 1,
+ * so $02 (hardware.inc:94-104); SFX_CANCEL EQU $03. MailScreenLabels, PAD_A
+ * and SFX_CONFIRM are already defined by this file's earlier ports, and every
+ * header this body needs (home/init_menu.h, home/labels.h, home/text_box.h,
+ * home/lcd_enable_frame.h, home/process_text.h, home/sound.h,
+ * generated/wram.h, generated/hram.h) is already included above. */
+#define PAD_B 0x02u
+#define SFX_CANCEL 0x03u
 /* <<< factory statics */
 
 #define NUM_PC_PACKS 15
@@ -411,3 +420,39 @@ void PCMailHandleAInput(void)
 	DoFrameIfLCDEnabled();
 }
 /* <<< factory PCMailHandleAInput */
+
+/* >>> factory _PCMenu_ReadMail */
+/* mail.asm:22-58. `push af` / `pop af` around the whole screen returns the
+ * entry value of wd291 in a and writes it back before the ret. */
+uint8_t _PCMenu_ReadMail(void)
+{
+	uint8_t saved_d291 = wd291;
+
+	(void)InitMenuScreen();
+	uint16_t hl = SetupText(0x30u, 0xFFu);
+	DrawRegularTextBox(&hl, 0u, 20u, 12u, 0u, 0u);
+	DrawRegularTextBox(&hl, 0u, 20u, 6u, 0u, 12u);
+	/* PrintLabels reloads d from the list on its first instruction, and the e it
+	 * forwards reaches ProcessTextHeader, which overwrites both before use, so
+	 * the de that DrawRegularTextBox leaves behind is dead. */
+	(void)PrintLabels(MailScreenLabels, 0u, 0u);
+	PrintObtainedPCPacks();
+	wCursorBlinkTimer = 0u;
+	(void)FlashWhiteScreen();
+
+	do {
+		DoFrameIfLCDEnabled();
+		/* `ld a, [wPCPackSelection]` is a dead load: UpdateMailMenuCursor takes
+		 * no register input and reads wCursorBlinkTimer itself. */
+		UpdateMailMenuCursor();
+		BlinkUnopenedPCPacks();
+		wCursorBlinkTimer++;
+		PCMailHandleDPadInput();
+		PCMailHandleAInput();
+	} while ((hKeysPressed & PAD_B) == 0u);
+
+	PlaySFX(SFX_CANCEL);
+	wd291 = saved_d291;
+	return saved_d291;
+}
+/* <<< factory _PCMenu_ReadMail */

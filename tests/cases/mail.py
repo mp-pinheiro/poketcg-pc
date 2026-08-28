@@ -129,6 +129,13 @@ hBankROM = 0xFF80
 # declared explicitly; every case here stops before any text page or DoFrame.
 MAIL_A_INSTRUCTIONS = 20000000
 MAIL_A_CYCLES = 80000000
+
+# mail.asm:22 (_PCMenu_ReadMail). FlashWhiteScreen calls EnableLCD, so the
+# menu loop always lets real frames elapse: CopyDMAFunction has to be installed
+# because InitMenuScreen sets wVBlankOAMCopyToggle, and B has to arrive as an
+# edge on hKeysPressed rather than being held from the first instruction.
+wd291 = 0xD291
+MAIL_READ_KEYS = [0x00, 0x02]
 # <<< factory-cases-statics
 
 # >>> factory UpdateMailMenuCursor
@@ -268,6 +275,43 @@ CASES["PCMailHandleAInput"] = [
 ]
 # <<< factory PCMailHandleAInput
 
+# >>> factory _PCMenu_ReadMail
+CONTRACT["_PCMenu_ReadMail"] = {"compare": ("a",), "preserve": ()}
+CASES["_PCMenu_ReadMail"] = [
+    # No packs owned, so PrintObtainedPCPacks and BlinkUnopenedPCPacks print
+    # nothing and the only bytes this routine writes are wCursorBlinkTimer
+    # (loop-count dependent, hence unobserved) and wd291, which must come back
+    # holding exactly the byte it was seeded with. hDPadHeld is cleared so
+    # PCMailHandleDPadInput returns at once, and hKeysPressed is seeded with B
+    # so the native side leaves on its first pass; the reference leaves on the
+    # frame the cycled B lands its edge, and both end with $02 in hKeysPressed.
+    {"wram": {wd291: b"\x00", hKeysPressed: b"\x02", hDPadHeld: b"\x00",
+              wPCPackSelection: b"\x00", wPCPacks: bytes(15),
+              hBankROM: b"\x04", MAIL_wLCDC: b"\x00"},
+     "keys": MAIL_READ_KEYS, "setup": MAIL_TEXT_SETUP,
+     "read": {wd291: 1},
+     "instruction_budget": MAIL_TEXT_INSTRUCTIONS, "cycle_budget": MAIL_TEXT_CYCLES},
+    # One opened pack in slot 0: PrintObtainedPCPacks prints its name and
+    # BlinkUnopenedPCPacks skips it (bit 7 clear), so the drawn screen does not
+    # depend on how many frames elapsed. wd291 carries a distinctive byte.
+    {"wram": {wd291: b"\x5a", hKeysPressed: b"\x02", hDPadHeld: b"\x00",
+              wPCPackSelection: b"\x00", wPCPacks: b"\x01" + bytes(14),
+              hBankROM: b"\x04", MAIL_wLCDC: b"\x00"},
+     "keys": MAIL_READ_KEYS, "setup": MAIL_TEXT_SETUP,
+     "read": {wd291: 1},
+     "instruction_budget": MAIL_TEXT_INSTRUCTIONS, "cycle_budget": MAIL_TEXT_CYCLES},
+    # Poisoned entry registers on the last slot: the routine reads no register
+    # input at all, and $FF is the wd291 byte a stuck-at-zero save would lose.
+    dict(POISON,
+         wram={wd291: b"\xff", hKeysPressed: b"\x02", hDPadHeld: b"\x00",
+               wPCPackSelection: b"\x0e", wPCPacks: bytes(14) + b"\x01",
+               hBankROM: b"\x04", MAIL_wLCDC: b"\x00"},
+         keys=MAIL_READ_KEYS, setup=MAIL_TEXT_SETUP,
+         read={wd291: 1},
+         instruction_budget=MAIL_TEXT_INSTRUCTIONS, cycle_budget=MAIL_TEXT_CYCLES),
+]
+# <<< factory _PCMenu_ReadMail
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -376,3 +420,11 @@ MUTATIONS["PCMailHandleAInput"] = {
 	"case_ids": ["PCMailHandleAInput-2", "PCMailHandleAInput-3"],
 }
 # <<< factory-mutation PCMailHandleAInput
+# >>> factory-mutation _PCMenu_ReadMail
+MUTATIONS["_PCMenu_ReadMail"] = {
+	"source_symbol": "_PCMenu_ReadMail",
+	"before": "uint8_t _PCMenu_ReadMail(void)\n{\n\tuint8_t saved_d291 = wd291;",
+	"after": "uint8_t _PCMenu_ReadMail(void)\n{\n\tuint8_t saved_d291 = (uint8_t)(wd291 + 1u);",
+	"case_ids": ["_PCMenu_ReadMail-0", "_PCMenu_ReadMail-1", "_PCMenu_ReadMail-2"],
+}
+# <<< factory-mutation _PCMenu_ReadMail
