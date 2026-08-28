@@ -279,4 +279,8 @@ void HandleDeckConfirmationMenu(void);
 /* >>> factory ConfirmDeckConfiguration */
 void ConfirmDeckConfiguration(void);
 /* <<< factory ConfirmDeckConfiguration */
+/* >>> factory SaveDeckConfiguration */
+typedef struct { uint8_t a; uint8_t f; } SaveDeckConfigurationResult;
+SaveDeckConfigurationResult SaveDeckConfiguration(uint16_t w0);
+/* <<< factory SaveDeckConfiguration */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

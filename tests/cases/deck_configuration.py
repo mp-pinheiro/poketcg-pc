@@ -1023,6 +1023,28 @@ CASES["ConfirmDeckConfiguration"] = [
 ]
 # <<< factory ConfirmDeckConfiguration
 
+# >>> factory SaveDeckConfiguration
+CONTRACT["SaveDeckConfiguration"] = {"compare": ("a", "f"), "preserve": ()}
+# wTotalCardCount = $CECC, wDefaultYesOrNo = $CD9A, wLCDC = $CABB, rLCDC = $FF40.
+# 0x3B cards takes the "isn't a 60 card deck" branch. HandleYesOrNoMenu xors
+# wCurMenuItem on entry, so seeding wDefaultYesOrNo = 1 puts the cursor on YES,
+# the A tap answers YES, and the routine reaches `add sp, $2 / or a / ret`.
+# stack[0] is the return address into HandleDeckConfigurationMenu that
+# `add sp, $2` discards so the `ret` lands on the harness sentinel.
+CASES["SaveDeckConfiguration"] = [
+    {"stack": [0],
+     "wram": {0xCECC: b"\x3B", 0xCD9A: b"\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, stack=[0x1234],
+         wram={0xCECC: b"\x3B", 0xCD9A: b"\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         keys=[0x00, 0x01],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory SaveDeckConfiguration
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1348,3 +1370,11 @@ MUTATIONS["HandleDeckConfirmationMenu"] = {"source_symbol": "HandleDeckConfirmat
 # >>> factory-mutation ConfirmDeckConfiguration
 MUTATIONS["ConfirmDeckConfiguration"] = {"source_symbol": "ConfirmDeckConfiguration", "before": "ConfirmDeckConfiguration(void)\n{\n\tuint8_t visible_offset = wCardListVisibleOffset;", "after": "ConfirmDeckConfiguration(void)\n{\n\tuint8_t visible_offset = 0u;", "case_ids": ["ConfirmDeckConfiguration-0", "ConfirmDeckConfiguration-1"]}
 # <<< factory-mutation ConfirmDeckConfiguration
+# >>> factory-mutation SaveDeckConfiguration
+MUTATIONS["SaveDeckConfiguration"] = {
+    "source_symbol": "SaveDeckConfiguration",
+    "before": "\t\t\t/* add sp, $2 / or a / ret */\n\t\t\tuint8_t or_a = keep.a;",
+    "after": "\t\t\t/* add sp, $2 / or a / ret */\n\t\t\tuint8_t or_a = (uint8_t)(keep.a + 1u);",
+    "case_ids": ["SaveDeckConfiguration-0", "SaveDeckConfiguration-1"],
+}
+# <<< factory-mutation SaveDeckConfiguration

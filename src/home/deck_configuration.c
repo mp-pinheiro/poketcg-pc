@@ -340,6 +340,17 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "generated/wram.h"
 #include "mem.h"
 #define FILTERS_CARD_SELECTION_PARAMS_ADDR 0x5EAfu
+
+#include "home/deck_configuration.h"
+#include "home/menus.h"
+#include "generated/wram.h"
+/* DECK_SIZE is already #define'd as 60u earlier in this statics block. */
+#define ThisIsntA60CardDeckText 0x0238u
+#define ReturnToOriginalConfigurationText 0x023au
+#define TheDeckMustInclude60CardsText 0x0239u
+#define SaveThisDeckText 0x023bu
+#define ThereAreNoBasicPokemonInThisDeckText 0x0236u
+#define YouMustIncludeABasicPokemonInTheDeckText 0x0237u
 /* <<< factory statics */
 
 
@@ -2191,3 +2202,48 @@ void ConfirmDeckConfiguration(void)
 	wCardListCursorPos = wced6;
 }
 /* <<< factory ConfirmDeckConfiguration */
+
+/* >>> factory SaveDeckConfiguration */
+/* deck_configuration.asm:642 */
+SaveDeckConfigurationResult SaveDeckConfiguration(uint16_t w0)
+{
+	/* Entered through JumpToFunctionInTable, so the word at sp is the return
+	 * address back into HandleDeckConfigurationMenu. The two `add sp, $2`
+	 * exits drop it to return one frame further out; the value is never read. */
+	(void)w0;
+	if (wTotalCardCount != DECK_SIZE) {
+		(void)DrawWideTextBox_WaitForInput(ThisIsntA60CardDeckText);
+		HandleYesOrNoMenuResult keep =
+			YesOrNoMenuWithText(ReturnToOriginalConfigurationText);
+		if ((keep.f & 0x10u) == 0u) {
+			/* add sp, $2 / or a / ret */
+			uint8_t or_a = keep.a;
+			return (SaveDeckConfigurationResult){
+				or_a, (uint8_t)(or_a == 0u ? 0x80u : 0x00u)};
+		}
+		(void)DrawWideTextBox_WaitForInput(TheDeckMustInclude60CardsText);
+	} else {
+		HandleYesOrNoMenuResult save = YesOrNoMenuWithText(SaveThisDeckText);
+		if ((save.f & 0x10u) == 0u) {
+			CheckIfThereAreAnyBasicCardsInDeckResult basic =
+				CheckIfThereAreAnyBasicCardsInDeck();
+			if ((basic.f & 0x10u) != 0u) {
+				/* add sp, $2 / scf / ret: scf keeps Z, clears N and H */
+				return (SaveDeckConfigurationResult){
+					basic.a, (uint8_t)((basic.f & 0x80u) | 0x10u)};
+			}
+			(void)DrawWideTextBox_WaitForInput(ThereAreNoBasicPokemonInThisDeckText);
+			(void)DrawWideTextBox_WaitForInput(YouMustIncludeABasicPokemonInTheDeckText);
+		}
+	}
+	/* .go_back leaves with a plain `ret`, one frame out. Its flags are whatever
+	 * PrintDeckBuildingCardList left behind, which that routine's ported void
+	 * signature does not carry; every caller of this label falls straight into
+	 * OpenDeckConfigurationMenu.skip_init without testing them. */
+	DrawCardTypeIconsAndPrintCardCounts();
+	PrintDeckBuildingCardList();
+	uint8_t cursor = wced6;
+	wCardListCursorPos = cursor;
+	return (SaveDeckConfigurationResult){cursor, 0u};
+}
+/* <<< factory SaveDeckConfiguration */

@@ -129,4 +129,11 @@ void ShowPromotionalCardScreen(uint8_t a);
  * second anonymous-struct typedef under that name would be a redefinition. */
 uint8_t RequestToPrintCard(uint8_t a);
 /* <<< factory RequestToPrintCard */
+/* >>> factory PrintCardList */
+/* PrintCardList returns the farcalled callee's carry alone. It is a bare
+ * uint8_t instead of a result struct because src/home/common.c also includes
+ * home/printer.h, which already owns the name PrintCardListResult; a second
+ * anonymous-struct typedef under that name would be a redefinition. */
+uint8_t PrintCardList(void);
+/* <<< factory PrintCardList */
 #endif /* POKETCG_HOME_COMMON_H */

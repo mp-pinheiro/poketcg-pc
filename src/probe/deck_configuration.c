@@ -664,6 +664,15 @@ static void adapt_ConfirmDeckConfiguration(ProbeState *s)
 }
 /* <<< factory ConfirmDeckConfiguration */
 
+/* >>> factory SaveDeckConfiguration */
+static void adapt_SaveDeckConfiguration(ProbeState *s)
+{
+	SaveDeckConfigurationResult result = SaveDeckConfiguration(s->stack[0]);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory SaveDeckConfiguration */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "PrintSlashSixty", adapt_PrintSlashSixty },
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
@@ -742,5 +751,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "HandleDeckConfirmationMenu", adapt_HandleDeckConfirmationMenu },
 	{ "ConfirmDeckConfiguration", adapt_ConfirmDeckConfiguration },
 	{ "ShowConfirmationCardScreen", adapt_ShowConfirmationCardScreen },
+	{ "SaveDeckConfiguration", adapt_SaveDeckConfiguration },
 	{ NULL, NULL },
 };

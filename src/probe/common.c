@@ -264,6 +264,13 @@ static void adapt_RequestToPrintCard(ProbeState *s)
 }
 /* <<< factory RequestToPrintCard */
 
+/* >>> factory PrintCardList */
+static void adapt_PrintCardList(ProbeState *s)
+{
+	s->f = PrintCardList();
+}
+/* <<< factory PrintCardList */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -295,5 +302,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "PrintDeckConfiguration", adapt_PrintDeckConfiguration },
 	{ "ShowPromotionalCardScreen", adapt_ShowPromotionalCardScreen },
 	{ "RequestToPrintCard", adapt_RequestToPrintCard },
+	{ "PrintCardList", adapt_PrintCardList },
 	{ NULL, NULL },
 };

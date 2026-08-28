@@ -157,6 +157,18 @@ wAIScore = 0xCDBE
 wTempPlayAreaAIScore = 0xCDDD
 wPlayAreaAIScore = 0xCDBF
 wTempAIScore = 0xCDE3
+
+# Shared seeds for the PrintCardList wrapper cases: an empty card collection in
+# SRAM bank 0 (0xA100 sCardCollection) plus four unnamed deck slots (0xA200
+# sDeck1Name, 0xA254 sDeck2Name, 0xA2A8 sDeck3Name, 0xA2FC sDeck4Name) so the
+# callee's CreateTempCardCollection .AddDeckCards pass walks all four and leaves
+# wTempCardCollection all zero on both sides -- the same seeds the landed
+# _PrintCardList cases in tests/cases/printer.py use.
+_PRINT_CARD_LIST_WRAPPER_SRAM = {0: {0xA100: b"\x00" * 0x100, 0xA200: b"\x00",
+                                     0xA254: b"\x00", 0xA2A8: b"\x00",
+                                     0xA2FC: b"\x00"}}
+_PRINT_CARD_LIST_WRAPPER_SETUP = [{"fn": "CopyDMAFunction"},
+                                  {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory CheckIfHasCardIDInHand
@@ -480,6 +492,77 @@ CASES["RequestToPrintCard"] = [
 ]
 # <<< factory RequestToPrintCard
 
+# >>> factory PrintCardList
+# The reference never returns from here: the farcall reaches _PrintCardList,
+# whose card loop reaches its seventh new card type with
+# wPrinterHorizontalOffset at 19, so AddToPrinterGfxBuffer falls into
+# LoadGfxBufferForPrinter, whose TryInitPrinterCommunications parks in
+# SendPrinterPacket's .wait_printer_packet_transmission DoFrame loop ($315D)
+# because no printer hardware raises the serial interrupt that advances
+# wPrinterPacketSequence. Completion is therefore declared pre-ret at that loop
+# head in the factory-completion block at the end of this module, exactly as the
+# landed PreparePrinterConnection and RequestToPrintCard wrapper cases here do.
+# That is the genuine spin, not a small budget, so the generous budgets below
+# only cover the reference's walk down to the loop head.
+#
+# Registers are mid-flight on the reference at that stop, so nothing is
+# compared. The observed bytes are the ones the callee writes before the stop
+# and never rewrites afterwards, so the port's full run agrees with the
+# reference's partial one:
+#   $FF97 hWhoseTurn             - PLAYER_TURN, written once before the loop
+#   $CE91 wPrinterCardCount      - the collection slot of the card being
+#                                  examined; the seeded collection is empty, so
+#                                  every iteration writes 0 on both sides
+#   $CE92 wPrinterTotalCardCount - zeroed before the loop and only advanced by
+#                                  owned cards, of which there are none
+#   $CE97 wPrinterNumCardTypes   - same, and only on the all-owned path
+#   $CE9C wPrintOnlyStarRarity   - the SELECT decision, written once at entry
+# Every one of those is seeded to $FF first so the write itself is witnessed.
+# wCurPrinterCardType ($CE94) and wPrinterHorizontalOffset ($CE90) are NOT
+# observed: they keep moving past the reference's stop.
+#
+# wLCDC ($CABB) starts clear so the text boxes before ShowPrinterTransmitting's
+# EnableLCD stay out of WaitForVBlank's halt; CopyDMAFunction installs
+# hDMAFunction for the frames that elapse afterwards and SetupText primes the
+# glyph cache. $81 in wSerialTransferData ($CE6E) is the device number the
+# port's synchronous packet engine writes straight back, and a zero
+# wPrinterStatus ($CE6F) keeps both sides off every error path.
+#
+# Both cases release SELECT (hKeysHeld $FF90 seeded 0, keys=0x00), so both take
+# the callee's all-owned mode. The star-rarity branch is deliberately not
+# exercised through this wrapper: with SELECT held the callee prints every Star
+# card of the empty collection, and at the $315D stop the reference and the port
+# disagree inside the implicitly compared sCardCollection seed span -- the
+# oracle measured bank 0 $A1F0 as $2D/$00/$20 on the reference against zeroes
+# natively. That divergence is the callee's own SRAM behaviour, not this
+# wrapper's, and _PrintCardList carries its own star-mode case in
+# tests/cases/printer.py. The wrapper's contract is the farcall's register
+# transparency, which the poisoned second case below covers on the mode both
+# sides agree on.
+CONTRACT["PrintCardList"] = {"compare": (), "preserve": ()}
+CASES["PrintCardList"] = [
+    {"wram": {0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00",
+              0xCE91: b"\xFF", 0xCE92: b"\xFF\xFF", 0xCE97: b"\xFF",
+              0xCE9C: b"\xFF", 0xFF90: b"\x00", 0xFF97: b"\x00"},
+     "sram": _PRINT_CARD_LIST_WRAPPER_SRAM,
+     "ramg": True,
+     "setup": _PRINT_CARD_LIST_WRAPPER_SETUP,
+     "keys": 0x00,
+     "read": {0xCE91: 1, 0xCE92: 2, 0xCE97: 1, 0xCE9C: 1, 0xFF97: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON,
+         wram={0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00",
+               0xCE91: b"\xFF", 0xCE92: b"\xFF\xFF", 0xCE97: b"\xFF",
+               0xCE9C: b"\xFF", 0xFF90: b"\x00", 0xFF97: b"\x00"},
+         sram=_PRINT_CARD_LIST_WRAPPER_SRAM,
+         ramg=True,
+         setup=_PRINT_CARD_LIST_WRAPPER_SETUP,
+         keys=0x00,
+         read={0xCE91: 1, 0xCE92: 2, 0xCE97: 1, 0xCE9C: 1, 0xFF97: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PrintCardList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -685,3 +768,23 @@ MUTATIONS["RequestToPrintCard"] = {
 for _record in SCHEMA2_CASES["RequestToPrintCard"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
 # <<< factory-completion RequestToPrintCard
+# >>> factory-mutation PrintCardList
+MUTATIONS["PrintCardList"] = {
+    "source_symbol": "PrintCardList",
+    "before": "uint8_t PrintCardList(void)\n{\n\treturn _PrintCardList().f;",
+    "after": "uint8_t PrintCardList(void)\n{\n\treturn 0u;",
+    "case_ids": ["PrintCardList-0", "PrintCardList-1"],
+}
+# <<< factory-mutation PrintCardList
+# >>> factory-completion PrintCardList
+# $315D is SendPrinterPacket.wait_printer_packet_transmission
+# (poketcg/src/home/printer.asm, ROM0, so the capture hook is bank-independent),
+# the DoFrame loop the reference can never leave without a printer answering on
+# the serial line. The farcall wrapper inherits that spin from its callee, and
+# because the wrapper itself lives in another bank the ROM0 stop pc is what
+# makes the hook reachable at all -- exactly as it is for the landed
+# PreparePrinterConnection and RequestToPrintCard wrappers. legacy_to_schema
+# always emits completion "return", so the split is applied after migration.
+for _record in SCHEMA2_CASES["PrintCardList"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+# <<< factory-completion PrintCardList

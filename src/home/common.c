@@ -767,3 +767,21 @@ uint8_t RequestToPrintCard(uint8_t a)
 	return _RequestToPrintCard(a).f;
 }
 /* <<< factory RequestToPrintCard */
+
+/* >>> factory PrintCardList */
+/* menus/common.asm:34. `farcall _PrintCardList` / `ret`.
+ * FarCall (home/farcall.asm:62-88) pushes af/de/hl before the bank switch and
+ * pops them back immediately before jumping to the target, and the return
+ * trampoline SwitchToBankAtSP (farcall.asm:44-53) saves and restores af/hl
+ * around its own bankswitch, so the wrapper is register-transparent: whatever
+ * the callee leaves is what this routine's caller sees. The callee takes no
+ * entry registers -- it reads the SELECT decision out of hKeysHeld itself --
+ * and its ported result is carry alone, so only f is forwarded, and it is
+ * forwarded rather than recomputed. The single caller PrinterMenu_CardList
+ * (engine/menus/printer.asm:227) tails that flag straight out with its own
+ * `ret`. */
+uint8_t PrintCardList(void)
+{
+	return _PrintCardList().f;
+}
+/* <<< factory PrintCardList */
