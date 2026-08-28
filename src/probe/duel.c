@@ -224,7 +224,7 @@ static void adapt_TranslateColorToWR(ProbeState *s)
 
 static void adapt_CountCardIDInLocation(ProbeState *s)
 {
-	CardCountResult r = CountCardIDInLocation(s->b, s->e, s->hl);
+	CardLocationCountResult r = CountCardIDInLocation(s->b, s->e, s->hl);
 	s->a = r.a;
 	s->hl = r.hl;
 }

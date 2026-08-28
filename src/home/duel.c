@@ -769,7 +769,7 @@ uint8_t TranslateColorToWR(uint8_t a)
 /* duel.asm:1290-1315. Entry hl must already hold the card-locations page; the
  * routine only walks l from 0 to 60. `ld a, c / pop bc` leaves a = the count and
  * restores bc, so the only other exit is hl = page + 60. */
-CardCountResult CountCardIDInLocation(uint8_t b, uint8_t e, uint16_t hl)
+CardLocationCountResult CountCardIDInLocation(uint8_t b, uint8_t e, uint16_t hl)
 {
 	uint8_t count = 0;
 	for (uint8_t l = 0; l < DECK_SIZE; l++) {
@@ -779,7 +779,7 @@ CardCountResult CountCardIDInLocation(uint8_t b, uint8_t e, uint16_t hl)
 			continue;
 		count++;
 	}
-	return (CardCountResult){count, (uint16_t)(hl + DECK_SIZE)};
+	return (CardLocationCountResult){count, (uint16_t)(hl + DECK_SIZE)};
 }
 
 /* duel.asm:2331-2357. PowersOf2 (00:11B7) is `db $01..$80`. The rra x3 folds a's

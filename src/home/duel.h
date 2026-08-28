@@ -155,8 +155,8 @@ uint8_t TranslateColorToWR(uint8_t a);
 typedef struct {
 	uint8_t a;
 	uint16_t hl;
-} CardCountResult;
-CardCountResult CountCardIDInLocation(uint8_t b, uint8_t e, uint16_t hl);
+} CardLocationCountResult;
+CardLocationCountResult CountCardIDInLocation(uint8_t b, uint8_t e, uint16_t hl);
 typedef struct {
 	uint8_t a;
 	uint8_t f;
