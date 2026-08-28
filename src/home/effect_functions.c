@@ -1267,6 +1267,33 @@ void BankswitchROM(uint8_t bank);
 #define BenchText 0x004du
 
 #define PoisonedIfHeadsConfusedIfTailsText 0x00fau
+
+#include "home/coin_toss.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/sound.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+
+#define ODDISH 0x1cu
+#define ChooseAnOddishFromDeckText 0x0126u
+#define ChooseAnOddishText 0x0127u
+#define OddishText 0x0140u
+
+#include "home/core.h"
+#define ATK_ANIM_FULL_HEAL 0x8au
+#define NO_STATUS 0x00u
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/substatus.h"
+#include "home/effect_functions.h"
+#include "mem.h"
+#define ATK_ANIM_OWN_CONFUSION 0x7fu
+#define ThereWasNoEffectText 0x017du
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10056,3 +10083,93 @@ uint8_t FoulGas_PoisonOrConfusionEffect(void)
 	return PoisonEffect().f;
 }
 /* <<< factory FoulGas_PoisonOrConfusionEffect */
+
+/* >>> factory Sprout_PlayerSelectEffect */
+Sprout_PlayerSelectEffectResult Sprout_PlayerSelectEffect(void)
+{
+	hTemp_ffa0 = 0xffu;
+	CardListResult deck = CreateDeckCardList(0u, 0u);
+	LookForCardsInDeckResult search = LookForCardsInDeck(
+		deck.a, (uint8_t)(OddishText >> 8), (uint8_t)OddishText,
+		SEARCHEFFECT_CARD_ID, ODDISH, ChooseAnOddishFromDeckText);
+	if ((search.f & 0x10u) != 0u)
+		return (Sprout_PlayerSelectEffectResult){search.a, search.f};
+
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChooseAnOddishText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) == 0u) {
+			uint16_t card_id = GetCardIDFromDeckIndex(display.a);
+			uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
+				(uint8_t)card_id, 0u, ODDISH);
+			if ((compare & 0x80u) != 0u) {
+				uint8_t selected = hTempCardIndex_ff98;
+				hTemp_ffa0 = selected;
+				return (Sprout_PlayerSelectEffectResult){selected,
+					(uint8_t)(selected == 0u ? 0x80u : 0x00u)};
+			}
+			PlaySFX_InvalidChoice();
+			continue;
+		}
+
+		DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+		uint16_t hl = locations.hl;
+		for (;;) {
+			if (gb_read8(hl) == CARD_LOCATION_DECK) {
+				uint8_t index = (uint8_t)hl;
+				uint16_t card_id = GetCardIDFromDeckIndex(index);
+				uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
+					(uint8_t)card_id, 0u, ODDISH);
+				if ((compare & 0x80u) != 0u) {
+					PlaySFX_InvalidChoice();
+					break;
+				}
+			}
+			hl = (uint16_t)((hl & 0xff00u) | (uint8_t)(hl + 1u));
+			if ((uint8_t)hl >= DECK_SIZE) {
+				hTemp_ffa0 = 0xffu;
+				return (Sprout_PlayerSelectEffectResult){0xffu, 0x00u};
+			}
+		}
+	}
+}
+/* <<< factory Sprout_PlayerSelectEffect */
+
+/* >>> factory FullHeal_ClearStatusEffect */
+void FullHeal_ClearStatusEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	PlayTrainerEffectAnimation(ATK_ANIM_FULL_HEAL, f, b, c, d, e, hl);
+	DuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	gb_write8(status.hl, NO_STATUS);
+	DrawDuelHUDs();
+}
+/* <<< factory FullHeal_ClearStatusEffect */
+
+/* >>> factory ImakuniEffect */
+void ImakuniEffect(void)
+{
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(arena.a);
+	uint8_t card = wLoadedCard1ID;
+	if (card == CLEFAIRY_DOLL || card == MYSTERIOUS_FOSSIL) {
+		PlayTrainerEffectAnimation(ATK_ANIM_OWN_CONFUSION, 0u, 0u, 0u, 0u, 0u, 0u);
+		(void)DrawWideTextBox_WaitForInput(ThereWasNoEffectText);
+		return;
+	}
+	if (card == SNORLAX) {
+		PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(PLAY_AREA_ARENA);
+		if ((incapable.f & 0x10u) == 0u) {
+			PlayTrainerEffectAnimation(ATK_ANIM_OWN_CONFUSION, 0u, 0u, 0u, 0u, 0u, 0u);
+			(void)DrawWideTextBox_WaitForInput(ThereWasNoEffectText);
+			return;
+		}
+	}
+	PlayTrainerEffectAnimation(ATK_ANIM_OWN_CONFUSION, 0u, 0u, 0u, 0u, 0u, 0u);
+	DuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	status.a = (uint8_t)((status.a & PSN_DBLPSN) | CONFUSED);
+	gb_write8(status.hl, status.a);
+	DrawDuelHUDs();
+}
+/* <<< factory ImakuniEffect */

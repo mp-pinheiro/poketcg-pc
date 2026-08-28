@@ -1,0 +1,9 @@
+{
+  "fn": "FullHeal_ClearStatusEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FullHeal_ClearStatusEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49900\": \"00\", \"49903\": \"000000\", \"50107\": \"ff\", \"50156\": \"00\", \"50159\": \"005500\", \"51899\": \"80\", \"52229\": \"c2\", \"52420\": \"15\", \"65344\": \"80\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FullHeal_ClearStatusEffect\", \"mismatches\": {\"bus\": {\"address\": 49904, \"reference\": \"ff00000000ff0000\", \"native\": \"ff00000100ff0000\", \"reference_size\": 15, \"native_size\": 15, \"spans\": [[49851, 1], [49900, 1], [49903, 3], [50107, 1], [50156, 1], [50159, 3], [51899, 1], [52229, 1], [52420, 1], [65344, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"FullHeal_ClearStatusEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49900\": \"00\", \"49903\": \"000000\", \"50107\": \"ff\", \"50156\": \"00\", \"50159\": \"005500\", \"51899\": \"80\", \"52229\": \"c2\", \"52420\": \"15\", \"65344\": \"80\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

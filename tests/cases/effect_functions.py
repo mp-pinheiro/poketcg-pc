@@ -2708,6 +2708,17 @@ _acid_toss_fix_tail[0xCACA] = b"\x00\x00\x80"
 SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 BUDGET = dict(instruction_budget=20000000, cycle_budget=80000000)
 POISON = dict(a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234)
+
+hWhoseTurn = 0xFF97
+wPlayerArenaCard = 0xC2BB
+wPlayerDeck = 0xC400
+wArenaCardStatus = 0xC2F0
+wLoadedCard1ID = 0xCC2B
+BULBASAUR = 0x08
+CLEFAIRY_DOLL = 0xCB
+MYSTERIOUS_FOSSIL = 0xCC
+FRAME_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+FRAME_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000}
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -6925,6 +6936,33 @@ CASES["FoulGas_PoisonOrConfusionEffect"] = [
 ]
 # <<< factory FoulGas_PoisonOrConfusionEffect
 
+# >>> factory Sprout_PlayerSelectEffect
+CONTRACT["Sprout_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Sprout_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x10, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x10, 0x01], wram={0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Sprout_PlayerSelectEffect
+
+# >>> factory FullHeal_ClearStatusEffect
+CONTRACT["FullHeal_ClearStatusEffect"] = {"compare": (), "preserve": ()}
+CASES["FullHeal_ClearStatusEffect"] = [
+    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "wram": {0xFF97: b"\xC2", 0xCC05: b"\xC2", 0xCCC4: b"\x15", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC3F1: b"\x00", 0xC2F0: b"\x77", 0xC3F0: b"\x55", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xC2F0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, f=0xF0, wram={0xFF97: b"\xC2", 0xCC05: b"\xC2", 0xCCC4: b"\x15", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC3F1: b"\x00", 0xC2F0: b"\x77", 0xC3F0: b"\x55", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xC2F0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory FullHeal_ClearStatusEffect
+
+# >>> factory ImakuniEffect
+CONTRACT["ImakuniEffect"] = {"compare": (), "preserve": ()}
+CASES["ImakuniEffect"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((BULBASAUR,)), wArenaCardStatus: b"\x00"}, "read": {wArenaCardStatus: 1}, **dict(FRAME_BUDGET), "setup": FRAME_SETUP, "keys": [0x00, 0x01]},
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((CLEFAIRY_DOLL,)), wArenaCardStatus: b"\x00"}, "read": {wArenaCardStatus: 1}, **dict(FRAME_BUDGET), "setup": FRAME_SETUP, "keys": [0x00, 0x01]},
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((MYSTERIOUS_FOSSIL,)), wArenaCardStatus: b"\x00"}, "read": {wArenaCardStatus: 1}, **dict(FRAME_BUDGET), "setup": FRAME_SETUP, "keys": [0x00, 0x01]},
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((BULBASAUR,)), wArenaCardStatus: b"\xF0"}, "read": {wArenaCardStatus: 1}, **dict(FRAME_BUDGET), "setup": FRAME_SETUP, "keys": [0x00, 0x01]},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((BULBASAUR,)), wArenaCardStatus: b"\xF0"}, read={wArenaCardStatus: 1}, **dict(FRAME_BUDGET), setup=FRAME_SETUP, keys=[0x00, 0x01]),
+]
+# <<< factory ImakuniEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9775,3 +9813,12 @@ MUTATIONS["ThunderstormEffect"] = {"source_symbol": "ThunderstormEffect", "befor
 # >>> factory-mutation FoulGas_PoisonOrConfusionEffect
 MUTATIONS["FoulGas_PoisonOrConfusionEffect"] = {"source_symbol": "FoulGas_PoisonOrConfusionEffect", "before": "uint8_t FoulGas_PoisonOrConfusionEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(PoisonedIfHeadsConfusedIfTailsText, 0u);\n\tif ((toss.f & 0x10u) == 0u)", "after": "uint8_t FoulGas_PoisonOrConfusionEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(PoisonedIfHeadsConfusedIfTailsText, 0u);\n\tif ((toss.f & 0x10u) != 0u)", "case_ids": ["FoulGas_PoisonOrConfusionEffect-0", "FoulGas_PoisonOrConfusionEffect-1"]}
 # <<< factory-mutation FoulGas_PoisonOrConfusionEffect
+# >>> factory-mutation Sprout_PlayerSelectEffect
+MUTATIONS["Sprout_PlayerSelectEffect"] = {"source_symbol": "Sprout_PlayerSelectEffect", "before": "Sprout_PlayerSelectEffectResult Sprout_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0xffu;", "after": "Sprout_PlayerSelectEffectResult Sprout_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0x00u;", "case_ids": ["Sprout_PlayerSelectEffect-0", "Sprout_PlayerSelectEffect-1"]}
+# <<< factory-mutation Sprout_PlayerSelectEffect
+# >>> factory-mutation FullHeal_ClearStatusEffect
+MUTATIONS["FullHeal_ClearStatusEffect"] = {"source_symbol": "FullHeal_ClearStatusEffect", "before": "void FullHeal_ClearStatusEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\tPlayTrainerEffectAnimation(ATK_ANIM_FULL_HEAL, f, b, c, d, e, hl);\n\tDuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);\n\tgb_write8(status.hl, NO_STATUS);","after":"void FullHeal_ClearStatusEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\tPlayTrainerEffectAnimation(ATK_ANIM_FULL_HEAL, f, b, c, d, e, hl);\n\tDuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);\n\tgb_write8(status.hl, 0x01u);","case_ids":["FullHeal_ClearStatusEffect-0","FullHeal_ClearStatusEffect-1"]}
+# <<< factory-mutation FullHeal_ClearStatusEffect
+# >>> factory-mutation ImakuniEffect
+MUTATIONS["ImakuniEffect"] = {"source_symbol": "ImakuniEffect", "before": "\tstatus.a = (uint8_t)((status.a & PSN_DBLPSN) | CONFUSED);", "after": "\tstatus.a = (uint8_t)(status.a & PSN_DBLPSN);", "case_ids": ["ImakuniEffect-0", "ImakuniEffect-3", "ImakuniEffect-4"]}
+# <<< factory-mutation ImakuniEffect

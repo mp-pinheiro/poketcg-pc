@@ -2005,6 +2005,17 @@ void ThunderstormEffect(void);
 /* >>> factory FoulGas_PoisonOrConfusionEffect */
 uint8_t FoulGas_PoisonOrConfusionEffect(void);
 /* <<< factory FoulGas_PoisonOrConfusionEffect */
+/* >>> factory Sprout_PlayerSelectEffect */
+/* >>> factory Sprout_PlayerSelectEffect */
+typedef struct { uint8_t a; uint8_t f; } Sprout_PlayerSelectEffectResult;
+Sprout_PlayerSelectEffectResult Sprout_PlayerSelectEffect(void);
+/* <<< factory Sprout_PlayerSelectEffect */
+/* >>> factory FullHeal_ClearStatusEffect */
+void FullHeal_ClearStatusEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory FullHeal_ClearStatusEffect */
+/* >>> factory ImakuniEffect */
+void ImakuniEffect(void);
+/* <<< factory ImakuniEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

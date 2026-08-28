@@ -4884,6 +4884,31 @@ static void adapt_FoulGas_PoisonOrConfusionEffect(ProbeState *s)
 }
 /* <<< factory FoulGas_PoisonOrConfusionEffect */
 
+/* >>> factory Sprout_PlayerSelectEffect */
+/* >>> factory Sprout_PlayerSelectEffect */
+static void adapt_Sprout_PlayerSelectEffect(ProbeState *s)
+{
+	Sprout_PlayerSelectEffectResult result = Sprout_PlayerSelectEffect();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Sprout_PlayerSelectEffect */
+
+/* >>> factory FullHeal_ClearStatusEffect */
+static void adapt_FullHeal_ClearStatusEffect(ProbeState *s)
+{
+	FullHeal_ClearStatusEffect(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+}
+/* <<< factory FullHeal_ClearStatusEffect */
+
+/* >>> factory ImakuniEffect */
+static void adapt_ImakuniEffect(ProbeState *s)
+{
+	(void)s;
+	ImakuniEffect();
+}
+/* <<< factory ImakuniEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5477,5 +5502,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "VenomPowder_PoisonConfusion50PercentEffect", adapt_VenomPowder_PoisonConfusion50PercentEffect },
 	{ "ThunderstormEffect", adapt_ThunderstormEffect },
 	{ "FoulGas_PoisonOrConfusionEffect", adapt_FoulGas_PoisonOrConfusionEffect },
+	{ "Sprout_PlayerSelectEffect", adapt_Sprout_PlayerSelectEffect },
+	{ "FullHeal_ClearStatusEffect", adapt_FullHeal_ClearStatusEffect },
+	{ "ImakuniEffect", adapt_ImakuniEffect },
 	{ NULL, NULL },
 };
