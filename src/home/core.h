@@ -1190,4 +1190,9 @@ DisplayCardPage_PokemonDescriptionResult DisplayCardPage_PokemonDescription(void
 typedef struct { uint8_t f; } RequestToPrintCards_SelectStartCardResult;
 RequestToPrintCards_SelectStartCardResult RequestToPrintCards_SelectStartCard(void);
 /* <<< factory RequestToPrintCards_SelectStartCard */
+/* >>> factory PlayBetweenTurnsAnimation */
+/* core.asm:6975. Entry a = duel animation index. Every exit register is
+ * RedrawTurnDuelistsDuelHUD residue, so nothing is returned. */
+void PlayBetweenTurnsAnimation(uint8_t a);
+/* <<< factory PlayBetweenTurnsAnimation */
 #endif

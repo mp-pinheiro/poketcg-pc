@@ -2038,6 +2038,57 @@ def desc_seed(length, weight, description):
     seed[DESC_wLoadedCard1Weight] = weight
     seed[DESC_wLoadedCard1Description] = description
     return seed
+
+# PlayBetweenTurnsAnimation (core.asm:6975). Seeds shared by its three cases.
+# PBTA_ANIM_IDLE keeps both sides out of every unbounded animation path:
+#   wAnimationQueue $D423 (7 bytes), wActiveScreenAnim $D42A and wd4c0 $D4C0 all
+#     $FF make CheckAnyAnimationPlaying return nc, so the `DoFrame / jr c` wait
+#     retires after a single frame instead of spinning on an animation that no
+#     registered per-frame function would ever advance.
+#   wDuelAnimBufferCurPos $D4AC = 8 with wDuelAnimBufferSize $D4AD = 0 makes
+#     LoadDuelAnimationToBuffer see (size + DUEL_ANIM_STRUCT_SIZE) & $7F == curpos,
+#     i.e. a full ring, so PlayDuelAnimation is a pure no-op on both sides for an
+#     index below DUEL_SPECIAL_ANIMS ($61) and for one at or above it.
+#   wLCDC $CABB = 0 turns DoFrame's WaitForVBlank into an immediate return (the
+#     LCD is never enabled here, so no frame has to elapse), wDoFrameFunction
+#     $CAD3 = NULL keeps CallIndirect a no-op, and wDebugPauseAllowed $CAD5 = 0
+#     keeps DoFrame off its SELECT pause loop.
+# PBTA_HUD_SEED is the seed the landed RedrawTurnDuelistsDuelHUD cases use for
+# the HUD tail: empty arenas ($C2BB/$C3BB = $FF), no status, human duelist types.
+# PBTA_SCRATCH pre-dirties the three bytes the routine writes, so a body that
+# skipped any of the three stores would diverge instead of matching by default.
+PBTA_POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+PBTA_ANIM_IDLE = {
+    0xD423: b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF",
+    0xD42A: b"\xFF",
+    0xD4C0: b"\xFF",
+    0xD4AC: b"\x08",
+    0xD4AD: b"\x00",
+    0xCABB: b"\x00",
+    0xCAD3: b"\x00\x00",
+    0xCAD5: b"\x00",
+}
+PBTA_HUD_SEED = {
+    0xFF97: b"\xC2",
+    0xCC05: b"\xC2",
+    0xC2BB: b"\xFF",
+    0xC2EC: b"\x00",
+    0xC2EF: b"\x00",
+    0xC2F0: b"\x00",
+    0xC2F1: b"\x00",
+    0xC3BB: b"\xFF",
+    0xC3EC: b"\x00",
+    0xC3EF: b"\x00",
+    0xC3F0: b"\x00",
+    0xC3F1: b"\x00",
+}
+# wDuelAnimationScreen, wDuelAnimDuelistSide, wDuelAnimLocationParam.
+PBTA_SCRATCH = {0xD4AE: b"\x55\x66\x77"}
+PBTA_READ = {0xD4AE: 1, 0xD4AF: 1, 0xD4B0: 1}
+PBTA_DUEL_TYPE = 0xCC09
+PBTA_WHOSE_TURN = 0xCC05
+PBTA_HUD_TILE = 0x996F
+PBTA_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -4363,6 +4414,30 @@ CASES["RequestToPrintCards_SelectStartCard"] = [
 ]
 # <<< factory RequestToPrintCards_SelectStartCard
 
+# >>> factory PlayBetweenTurnsAnimation
+CONTRACT["PlayBetweenTurnsAnimation"] = {"compare": (), "preserve": ()}
+CASES["PlayBetweenTurnsAnimation"] = [
+    # wDuelType != 0 takes .store_duelist_turn straight away, and hWhoseTurn ==
+    # wWhoseTurn keeps the RedrawTurnDuelistsDuelHUD tail on its no-swap path.
+    {"a": 0x00,
+     "wram": {**PBTA_HUD_SEED, **PBTA_ANIM_IDLE, **PBTA_SCRATCH, PBTA_DUEL_TYPE: b"\x01"},
+     "read": PBTA_READ, **PBTA_BUDGET},
+    # wDuelType == 0 with wWhoseTurn != PLAYER_TURN takes the SwapTurn arm, so
+    # wDuelAnimDuelistSide must come back $C3 while hWhoseTurn is restored to $C2;
+    # the HUD tail then runs its own SwapTurn path.
+    {"a": 0x57,
+     "wram": {**PBTA_HUD_SEED, **PBTA_ANIM_IDLE, **PBTA_SCRATCH, PBTA_DUEL_TYPE: b"\x00", PBTA_WHOSE_TURN: b"\xC3"},
+     "read": PBTA_READ, **PBTA_BUDGET},
+    # Poisoned registers; wDuelType == 0 with wWhoseTurn == PLAYER_TURN takes the
+    # store arm, and index $AA >= DUEL_SPECIAL_ANIMS exercises PlayDuelAnimation's
+    # other index arm (still a no-op against the full ring). The BG map tile at
+    # $996F witnesses that the HUD was actually redrawn.
+    dict(PBTA_POISON,
+         wram={**PBTA_HUD_SEED, **PBTA_ANIM_IDLE, **PBTA_SCRATCH, PBTA_DUEL_TYPE: b"\x00"},
+         read=PBTA_READ, vread={0: {PBTA_HUD_TILE: 1}}, **PBTA_BUDGET),
+]
+# <<< factory PlayBetweenTurnsAnimation
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6015,3 +6090,11 @@ MUTATIONS["RequestToPrintCards_SelectStartCard"] = {
     "case_ids": ["RequestToPrintCards_SelectStartCard-0", "RequestToPrintCards_SelectStartCard-1"],
 }
 # <<< factory-mutation RequestToPrintCards_SelectStartCard
+# >>> factory-mutation PlayBetweenTurnsAnimation
+MUTATIONS["PlayBetweenTurnsAnimation"] = {
+    "source_symbol": "PlayBetweenTurnsAnimation",
+    "before": "void PlayBetweenTurnsAnimation(uint8_t a)\n{\n\tif (wDuelType != 0u || wWhoseTurn == PLAYER_TURN) {",
+    "after": "void PlayBetweenTurnsAnimation(uint8_t a)\n{\n\tif (wDuelType == 0u && wWhoseTurn != PLAYER_TURN) {",
+    "case_ids": ["PlayBetweenTurnsAnimation-0", "PlayBetweenTurnsAnimation-1", "PlayBetweenTurnsAnimation-2"],
+}
+# <<< factory-mutation PlayBetweenTurnsAnimation

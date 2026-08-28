@@ -1459,6 +1459,16 @@ static void TossCoin_WaitForOpponent(uint8_t a)
  * (home/card_data.asm:142-167) returns carry when CardPointers + 2*e reaches
  * CardPointers + 2 + 2*NUM_CARDS, i.e. for every card id above NUM_CARDS. */
 #define NUM_CARDS 0xE4u
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/frames.h"
+#include "home/play_animation.h"
+
+/* PLAYER_TURN ($c2) and FLAG_C ($10) are already defined above in this
+ * module's statics; only the screen constant is missing here. */
+#define DUEL_ANIM_SCREEN_MAIN_SCENE 0x00u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -8426,3 +8436,26 @@ RequestToPrintCards_SelectStartCardResult RequestToPrintCards_SelectStartCard(vo
 	}
 }
 /* <<< factory RequestToPrintCards_SelectStartCard */
+
+/* >>> factory PlayBetweenTurnsAnimation */
+/* core.asm:6975-7007. The entry `push af` only shields the animation index
+ * from the wDuelAnimDuelistSide setup, so that index is this port's parameter;
+ * the matching `pop af` hands it straight to PlayDuelAnimation. */
+void PlayBetweenTurnsAnimation(uint8_t a)
+{
+	if (wDuelType != 0u || wWhoseTurn == PLAYER_TURN) {
+		wDuelAnimDuelistSide = hWhoseTurn;
+	} else {
+		SwapTurn();
+		wDuelAnimDuelistSide = hWhoseTurn;
+		SwapTurn();
+	}
+	wDuelAnimLocationParam = 0u;
+	wDuelAnimationScreen = DUEL_ANIM_SCREEN_MAIN_SCENE;
+	(void)PlayDuelAnimation(a);
+	do {
+		DoFrame();
+	} while (CheckAnyAnimationPlaying().f & FLAG_C);
+	RedrawTurnDuelistsDuelHUD();
+}
+/* <<< factory PlayBetweenTurnsAnimation */

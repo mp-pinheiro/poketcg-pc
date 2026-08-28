@@ -2645,6 +2645,13 @@ static void adapt_RequestToPrintCards_SelectStartCard(ProbeState *s)
 }
 /* <<< factory RequestToPrintCards_SelectStartCard */
 
+/* >>> factory PlayBetweenTurnsAnimation */
+static void adapt_PlayBetweenTurnsAnimation(ProbeState *s)
+{
+	PlayBetweenTurnsAnimation(s->a);
+}
+/* <<< factory PlayBetweenTurnsAnimation */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2960,5 +2967,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintPokemonCardWeight", adapt_PrintPokemonCardWeight },
 	{ "DisplayCardPage_PokemonDescription", adapt_DisplayCardPage_PokemonDescription },
 	{ "RequestToPrintCards_SelectStartCard", adapt_RequestToPrintCards_SelectStartCard },
+	{ "PlayBetweenTurnsAnimation", adapt_PlayBetweenTurnsAnimation },
 	{ NULL, NULL },
 };
