@@ -1328,6 +1328,30 @@ static void adapt_ScriptCommand_GiveBoosterPacks(ProbeState *s)
 }
 /* <<< factory ScriptCommand_GiveBoosterPacks */
 
+/* >>> factory Script_GiftCenterClerk */
+static void adapt_Script_GiftCenterClerk(ProbeState *s)
+{
+	(void)s;
+	Script_GiftCenterClerk();
+}
+/* <<< factory Script_GiftCenterClerk */
+
+/* >>> factory Script_Clerk10 */
+static void adapt_Script_Clerk10(ProbeState *s)
+{
+	Script_Clerk10();
+	(void)s;
+}
+/* <<< factory Script_Clerk10 */
+
+/* >>> factory Script_LegendaryCardBottomLeft */
+static void adapt_Script_LegendaryCardBottomLeft(ProbeState *s)
+{
+	(void)s;
+	Script_LegendaryCardBottomLeft();
+}
+/* <<< factory Script_LegendaryCardBottomLeft */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1458,5 +1482,8 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_ShowCardReceivedScreen", adapt_ScriptCommand_ShowCardReceivedScreen },
 	{ "ScriptCommand_ShowMedalReceivedScreen", adapt_ScriptCommand_ShowMedalReceivedScreen },
 	{ "ScriptCommand_GiveBoosterPacks", adapt_ScriptCommand_GiveBoosterPacks },
+	{ "Script_GiftCenterClerk", adapt_Script_GiftCenterClerk },
+	{ "Script_Clerk10", adapt_Script_Clerk10 },
+	{ "Script_LegendaryCardBottomLeft", adapt_Script_LegendaryCardBottomLeft },
 	{ NULL, NULL },
 };

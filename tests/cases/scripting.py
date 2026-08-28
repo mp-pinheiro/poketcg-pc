@@ -268,6 +268,8 @@ GIVE_PACKS_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e
 # full page of letter-delayed text, at 70224 cycles per DMG frame.
 GIVE_PACKS_INSTRUCTIONS = 60000000
 GIVE_PACKS_CYCLES = 240000000
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 
@@ -1816,6 +1818,30 @@ CASES["ScriptCommand_GiveBoosterPacks"] = [
 ]
 # <<< factory ScriptCommand_GiveBoosterPacks
 
+# >>> factory Script_GiftCenterClerk
+CONTRACT["Script_GiftCenterClerk"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Script_GiftCenterClerk"] = [
+    {"wram": {0xD0BF: b"\x11", 0xD0C0: b"\x22", 0xD0C1: b"\x00"}, "read": {0xD0BF: 1, 0xD0C1: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD0BF: b"\x33", 0xD0C0: b"\x44", 0xD0C1: b"\x00"}, "read": {0xD0BF: 1, 0xD0C1: 1}},
+]
+# <<< factory Script_GiftCenterClerk
+
+# >>> factory Script_Clerk10
+CONTRACT["Script_Clerk10"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Script_Clerk10"] = [
+    {"wram": {0xD0BF: b"\x11", 0xD0C0: b"\x22", 0xD0C1: b"\x00"}, "read": {0xD0BF: 1, 0xD0C1: 1}},
+    dict(POISON, wram={0xD0BF: b"\x33", 0xD0C0: b"\x44", 0xD0C1: b"\x00"}, read={0xD0BF: 1, 0xD0C1: 1}),
+]
+# <<< factory Script_Clerk10
+
+# >>> factory Script_LegendaryCardBottomLeft
+CONTRACT["Script_LegendaryCardBottomLeft"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Script_LegendaryCardBottomLeft"] = [
+    {"wram": {0xD0BF: b"\x11", 0xD0C0: b"\x22", 0xD0C1: b"\x00"}, "read": {0xD0BF: 1, 0xD0C1: 1}},
+    dict(POISON, wram={0xD0BF: b"\x33", 0xD0C0: b"\x44", 0xD0C1: b"\x00"}, read={0xD0BF: 1, 0xD0C1: 1}),
+]
+# <<< factory Script_LegendaryCardBottomLeft
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2615,3 +2641,12 @@ MUTATIONS["ScriptCommand_GiveBoosterPacks"] = {"source_symbol": "ScriptCommand_G
 for _record in SCHEMA2_CASES["ScriptCommand_GiveBoosterPacks"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x3C96}
 # <<< factory-completion ScriptCommand_GiveBoosterPacks
+# >>> factory-mutation Script_GiftCenterClerk
+MUTATIONS["Script_GiftCenterClerk"] = {"source_symbol": "Script_GiftCenterClerk", "before": "void Script_GiftCenterClerk(void)\n{\n\tCloseAdvancedDialogueBox();", "after": "void Script_GiftCenterClerk(void)\n{\n\t(void)0;", "case_ids": ["Script_GiftCenterClerk-0", "Script_GiftCenterClerk-1"]}
+# <<< factory-mutation Script_GiftCenterClerk
+# >>> factory-mutation Script_Clerk10
+MUTATIONS["Script_Clerk10"] = {"source_symbol": "Script_Clerk10", "before": "void Script_Clerk10(void)\n{\n\tCloseAdvancedDialogueBox();", "after": "void Script_Clerk10(void)\n{\n\t(void)0;", "case_ids": ["Script_Clerk10-0", "Script_Clerk10-1"]}
+# <<< factory-mutation Script_Clerk10
+# >>> factory-mutation Script_LegendaryCardBottomLeft
+MUTATIONS["Script_LegendaryCardBottomLeft"] = {"source_symbol": "Script_LegendaryCardBottomLeft", "before": "void Script_LegendaryCardBottomLeft(void)\n{\n\twOverworldNPCFlags = 0u;", "after": "void Script_LegendaryCardBottomLeft(void)\n{\n\twOverworldNPCFlags = 0xFFu;", "case_ids": ["Script_LegendaryCardBottomLeft-0", "Script_LegendaryCardBottomLeft-1"]}
+# <<< factory-mutation Script_LegendaryCardBottomLeft

@@ -2301,3 +2301,25 @@ IncreaseScriptPointerResult ScriptCommand_GiveBoosterPacks(uint8_t b, uint8_t c)
 	return IncreaseScriptPointerBy4();
 }
 /* <<< factory ScriptCommand_GiveBoosterPacks */
+
+/* >>> factory Script_GiftCenterClerk */
+void Script_GiftCenterClerk(void)
+{
+	CloseAdvancedDialogueBox();
+}
+/* <<< factory Script_GiftCenterClerk */
+
+/* >>> factory Script_Clerk10 */
+void Script_Clerk10(void)
+{
+	CloseAdvancedDialogueBox();
+}
+/* <<< factory Script_Clerk10 */
+
+/* >>> factory Script_LegendaryCardBottomLeft */
+void Script_LegendaryCardBottomLeft(void)
+{
+	wOverworldNPCFlags = 0u;
+	wOverworldMode = wOverworldModeBackup;
+}
+/* <<< factory Script_LegendaryCardBottomLeft */

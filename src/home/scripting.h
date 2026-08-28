@@ -654,4 +654,13 @@ IncreaseScriptPointerResult ScriptCommand_ShowMedalReceivedScreen(uint8_t c);
  * GiveBoosterPack nor ReturnToOverworldNoCallback carries them out. */
 IncreaseScriptPointerResult ScriptCommand_GiveBoosterPacks(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_GiveBoosterPacks */
+/* >>> factory Script_GiftCenterClerk */
+void Script_GiftCenterClerk(void);
+/* <<< factory Script_GiftCenterClerk */
+/* >>> factory Script_Clerk10 */
+void Script_Clerk10(void);
+/* <<< factory Script_Clerk10 */
+/* >>> factory Script_LegendaryCardBottomLeft */
+void Script_LegendaryCardBottomLeft(void);
+/* <<< factory Script_LegendaryCardBottomLeft */
 #endif
