@@ -1195,4 +1195,26 @@ RequestToPrintCards_SelectStartCardResult RequestToPrintCards_SelectStartCard(vo
  * RedrawTurnDuelistsDuelHUD residue, so nothing is returned. */
 void PlayBetweenTurnsAnimation(uint8_t a);
 /* <<< factory PlayBetweenTurnsAnimation */
+/* >>> factory HandleSleepCheck */
+/* core.asm:7027. hl is a pointer to a duelist's DUELVARS_ARENA_CARD_STATUS byte.
+ * The `pop hl` that restores the caller's pointer happens BEFORE the closing
+ * `call WaitForWideTextBoxInput`, so exit hl is that callee's residue, not the
+ * entry pointer, and exit `a` is its EraseCursor residue; the landed WaitResult
+ * carries neither. Only the flag byte is therefore returned: the `cp ASLEEP`
+ * flags on the early `ret nz`, WaitForWideTextBoxInput's on the full path. */
+typedef struct {
+	uint8_t f;
+} HandleSleepCheckResult;
+
+HandleSleepCheckResult HandleSleepCheck(uint16_t hl);
+/* <<< factory HandleSleepCheck */
+/* >>> factory HandlePoisonDamage */
+/* core.asm:7071. Entry a is only preserved for the not-poisoned exit, entry hl
+ * is the arena card's status byte and comes back unchanged on both exits. The
+ * exit af is either the `bit POISONED_F, [hl]` result ($A0, carry already
+ * cleared by `or a`) or PrintKnockedOutIfHLZero's, whose carry is what both
+ * callsites branch on. */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } HandlePoisonDamageResult;
+HandlePoisonDamageResult HandlePoisonDamage(uint8_t a, uint16_t hl);
+/* <<< factory HandlePoisonDamage */
 #endif

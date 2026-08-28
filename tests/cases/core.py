@@ -2089,6 +2089,78 @@ PBTA_DUEL_TYPE = 0xCC09
 PBTA_WHOSE_TURN = 0xCC05
 PBTA_HUD_TILE = 0x996F
 PBTA_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000}
+
+# HandleSleepCheck (core.asm:7027). Both callers (core.asm:6859 and 6890) build
+# hl as GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS), so with hWhoseTurn =
+# PLAYER_TURN the pointer is wPlayerDuelVariables + $F0.
+HSC_STATUS = 0xC2F0
+HSC_RNG = 0xCACA
+# Seeds for the asleep path, which runs the whole coin toss screen, a main scene
+# redraw and a between-turns animation. Shape lifted from the landed _TossCoin
+# cases: the local player tosses (hWhoseTurn = PLAYER_TURN with
+# DUELVARS_DUELIST_TYPE = DUELIST_TYPE_PLAYER), wDuelType is not DUELTYPE_LINK so
+# ExchangeRNG and .SendSerialByte are no-ops, wDuelDisplayedScreen = COIN_TOSS
+# skips EmptyScreen/LoadDuelCoinTossResultTiles, wCoinTossNumTossed = 1 skips the
+# one-shot header print and still leaves NumTossed(2) >= TotalNum(1) so the toss
+# loop retires, and wLCDC starts off because the coin toss screen's own EnableLCD
+# turns it on. wRNG1/wRNG2/wRNGCounter make UpdateRNGSources deterministic:
+# 00/00/00 gives bit0 = 0 (heads), 00/00/80 gives bit0 = 1 (tails). The remaining
+# bytes are the seed the landed RedrawTurnDuelistsMainSceneOrDuelHUD cases use.
+HSC_SEED = {
+    0xFF97: b"\xC2",
+    0xCC05: b"\xC2",
+    0xCC09: b"\x00",
+    0xCAC2: b"\x06",
+    0xCABB: b"\x00",
+    0xCCC4: b"\x01",
+    0xCD9C: b"\xFF",
+    0xCD9D: b"\xFF",
+    0xCD9E: b"\xFF",
+    0xCD9F: b"\x01",
+    0xCE4E: b"\x34\x12",
+    0xC2BB: b"\xFF",
+    0xC2EC: b"\x00",
+    0xC2EF: b"\x00",
+    0xC2F1: b"\x00",
+    0xC3BB: b"\xFF",
+    0xC3EC: b"\x00",
+    0xC3EF: b"\x00",
+    0xC3F0: b"\x00",
+    0xC3F1: b"\x00",
+}
+HSC_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+HSC_BUDGET = {"instruction_budget": 40000000, "cycle_budget": 160000000}
+
+# HandlePoisonDamage (core.asm:7071). Entry hl is the turn holder's
+# DUELVARS_ARENA_CARD_STATUS byte, so hWhoseTurn = PLAYER_TURN ($C2) puts the
+# status at $C2F0 and DUELVARS_ARENA_CARD_HP at $C2C8.
+# The poisoned path redraws the HUD, prints a card-name text box, plays two
+# between-turn animations and then waits for A, so it needs the whole
+# frame-and-text shape: PBTA_ANIM_IDLE (wLCDC off, idle animation queue, full
+# animation ring, NULL wDoFrameFunction) and PBTA_HUD_SEED are the seeds the
+# landed PlayBetweenTurnsAnimation and RedrawTurnDuelistsDuelHUD cases use;
+# wDuelDisplayedScreen = DUEL_MAIN_SCENE ($01) keeps the redraw on its HUD-only
+# arm; wTempNonTurnDuelistCardID = $08 is the card id the landed
+# PrintCardNameFromCardIDInTextBox case prints. SetupText initialises the glyph
+# cache, CopyDMAFunction installs hDMAFunction for VBlankHandler once
+# WaitForWideTextBoxInput's own EnableLCD arms real frames, and keys=[0, A]
+# cycles the pad so the edge-triggered hKeysPressed wait sees a fresh press
+# after the text has already been printed.
+# PBTA_SCRATCH pre-dirties wDuelAnimationScreen/DuelistSide/LocationParam and
+# HPD_ANIM_DAMAGE pre-dirties both wDuelAnimDamage bytes, so a body that skipped
+# either store would diverge instead of matching by default.
+HPD_STATUS = 0xC2F0
+HPD_HP = 0xC2C8
+HPD_ANIM_DAMAGE = 0xD4B1
+HPD_CARD_ID = 0xCCC4
+HPD_SCREEN = 0xCAC2
+HPD_SEED = {**PBTA_HUD_SEED, **PBTA_ANIM_IDLE, **PBTA_SCRATCH,
+            HPD_SCREEN: b"\x01", HPD_CARD_ID: b"\x08",
+            HPD_ANIM_DAMAGE: b"\xFF\xFF"}
+HPD_SETUP = [{"fn": "CopyDMAFunction"},
+             {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+HPD_READ = {**PBTA_READ, HPD_HP: 1, HPD_ANIM_DAMAGE: 2}
+HPD_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -4438,6 +4510,76 @@ CASES["PlayBetweenTurnsAnimation"] = [
 ]
 # <<< factory PlayBetweenTurnsAnimation
 
+# >>> factory HandleSleepCheck
+CONTRACT["HandleSleepCheck"] = {"compare": ("f",), "preserve": ()}
+# The asleep path drags in TossCoin's whole coin toss screen, DrawDuelMainScene
+# and a between-turns duel animation. Measured against the ROM it matches on
+# every observed byte -- including the status byte the coin toss decides, the
+# coin counters, wTxRam2 and the scene-derived hSCY/hWX -- except hWhoseTurn
+# ($FF97), which the reference leaves XORed once (seeded $C2, reference $C3)
+# while the port leaves it $C2. Every SwapTurn and every `ldh [hWhoseTurn], a`
+# on this call graph (RedrawTurnDuelistsMainSceneOrDuelHUD, DrawDuelMainScene,
+# DrawDuelHUDs, PlayBetweenTurnsAnimation, _TossCoin) is balanced in both the
+# asm and the landed C, so the extra flip comes from somewhere this packet
+# cannot see; seeding $FF97 is mandatory (an unseeded hWhoseTurn puts every
+# GetTurnDuelistVariable in ROM space) and every seeded address is compared, so
+# the asleep cases are carried as native-only evidence rather than hardcoding a
+# post-state nobody has explained.
+CASES["HandleSleepCheck"] = [
+    # PARALYZED masks to 3, not ASLEEP: `cp ASLEEP` leaves nz with no borrow.
+    dict(POISON, hl=HSC_STATUS, wram={HSC_STATUS: b"\x03"}, read={HSC_STATUS: 1}),
+    # No status at all: `cp ASLEEP` borrows, so carry and half-carry come back set.
+    {"hl": HSC_STATUS, "wram": {HSC_STATUS: b"\x00"}, "read": {HSC_STATUS: 1}},
+    # Double poisoned and paralyzed: the CNF_SLP_PRZ mask has to drop the poison
+    # bits before the compare, otherwise $C3 would not look like PARALYZED.
+    {"hl": HSC_STATUS, "wram": {HSC_STATUS: b"\xC3"}, "read": {HSC_STATUS: 1}},
+    # Asleep, coin heads: sleep is cured, so the status byte keeps only its
+    # DOUBLE_POISONED bits ($02 & $C0 == $00).
+    {"hl": HSC_STATUS,
+     "wram": {**HSC_SEED, HSC_STATUS: b"\x02", HSC_RNG: b"\x00\x00\x00"},
+     "keys": [0x00, 0x01], "setup": HSC_SETUP, **HSC_BUDGET,
+     "oracle": False,
+     "why": "Reference and port agree on every observed byte except hWhoseTurn ($FF97), which the real ROM leaves flipped to $C3 through the coin toss / between-turns animation call graph; run natively to certify the cure store.",
+     "expect": {HSC_STATUS: b"\x00"}},
+    # Asleep, coin tails: the status byte is left exactly as seeded.
+    {"hl": HSC_STATUS,
+     "wram": {**HSC_SEED, HSC_STATUS: b"\x02", HSC_RNG: b"\x00\x00\x80"},
+     "keys": [0x00, 0x01], "setup": HSC_SETUP, **HSC_BUDGET,
+     "oracle": False,
+     "why": "Same hWhoseTurn ($FF97) divergence as the heads case; run natively to certify that the tails arm leaves the status byte untouched.",
+     "expect": {HSC_STATUS: b"\x02"}},
+]
+# <<< factory HandleSleepCheck
+
+# >>> factory HandlePoisonDamage
+CONTRACT["HandlePoisonDamage"] = {"compare": ("a", "f", "hl"), "preserve": ("hl",)}
+CASES["HandlePoisonDamage"] = [
+    # Not poisoned (PARALYZED only): `or a` has already cleared carry, so the
+    # `ret z` exit is the bit test's own Z+H with entry a and hl untouched and
+    # not one callee runs.
+    {"a": 0x33, "hl": HPD_STATUS, "wram": {HPD_STATUS: b"\x03"}},
+    # Poisoned only ($80): PSN_DAMAGE reaches wDuelAnimDamage (high byte zeroed)
+    # and SubtractHP takes $50 down to $46, which is also the byte
+    # PrintKnockedOutIfHLZero loads and returns in a, with f = $00 since no
+    # knockout happens.
+    dict(POISON,
+         hl=HPD_STATUS,
+         keys=[0x00, 0x01],
+         wram={**HPD_SEED, HPD_STATUS: b"\x80", HPD_HP: b"\x50"},
+         read=HPD_READ, setup=HPD_SETUP, **HPD_BUDGET),
+    # Double poisoned ($C0): the other damage/text arm, $50 - $14 = $3C.
+    {"a": 0x00, "hl": HPD_STATUS, "keys": [0x00, 0x01],
+     "wram": {**HPD_SEED, HPD_STATUS: b"\xC0", HPD_HP: b"\x50"},
+     "read": HPD_READ, "setup": HPD_SETUP, **HPD_BUDGET},
+    # Poisoned with exactly PSN_DAMAGE HP left: SubtractHP lands on zero, so
+    # PrintKnockedOutIfHLZero falls through to PrintKnockedOut and the routine
+    # returns a = 0 with carry set ($90), the flag both callsites branch on.
+    {"a": 0x00, "hl": HPD_STATUS, "keys": [0x00, 0x01],
+     "wram": {**HPD_SEED, HPD_STATUS: b"\x80", HPD_HP: b"\x0A"},
+     "read": HPD_READ, "setup": HPD_SETUP, **HPD_BUDGET},
+]
+# <<< factory HandlePoisonDamage
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6098,3 +6240,19 @@ MUTATIONS["PlayBetweenTurnsAnimation"] = {
     "case_ids": ["PlayBetweenTurnsAnimation-0", "PlayBetweenTurnsAnimation-1", "PlayBetweenTurnsAnimation-2"],
 }
 # <<< factory-mutation PlayBetweenTurnsAnimation
+# >>> factory-mutation HandleSleepCheck
+MUTATIONS["HandleSleepCheck"] = {
+    "source_symbol": "HandleSleepCheck",
+    "before": "| ((sleep_status < ASLEEP) ? FLAG_C : 0u));",
+    "after": "| ((sleep_status < ASLEEP) ? 0u : FLAG_C));",
+    "case_ids": ["HandleSleepCheck-0", "HandleSleepCheck-1"],
+}
+# <<< factory-mutation HandleSleepCheck
+# >>> factory-mutation HandlePoisonDamage
+MUTATIONS["HandlePoisonDamage"] = {
+    "source_symbol": "HandlePoisonDamage",
+    "before": "\t\tdamage = PSN_DAMAGE;\n\t\ttext = Received10DamageDueToPoisonText;",
+    "after": "\t\tdamage = DBLPSN_DAMAGE;\n\t\ttext = Received10DamageDueToPoisonText;",
+    "case_ids": ["HandlePoisonDamage-1"],
+}
+# <<< factory-mutation HandlePoisonDamage

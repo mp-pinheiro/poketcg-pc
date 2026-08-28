@@ -1469,6 +1469,38 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 /* PLAYER_TURN ($c2) and FLAG_C ($10) are already defined above in this
  * module's statics; only the screen constant is missing here. */
 #define DUEL_ANIM_SCREEN_MAIN_SCENE 0x00u
+
+#include "mem.h"
+#include "generated/wram.h"
+#include "home/card_data.h"
+#include "home/coin_toss.h"
+#include "home/menus.h"
+
+/* HandleSleepCheck (core.asm:7027). ASLEEP, CNF_SLP_PRZ, DOUBLE_POISONED, TX_END
+ * and FLAG_C are already defined earlier in this statics block, so only the two
+ * animation indices and the three text ids are missing. The indices are suffixed
+ * because DUEL_ANIM_* names are added per routine in this module. */
+#define DUEL_ANIM_SLEEP_7027 0x03u
+#define DUEL_ANIM_HEAL_7027  0x3Eu
+#define IsCuredOfSleepText 0x0029u
+#define IsStillAsleepText 0x0028u
+#define PokemonsSleepCheckText 0x00f9u
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "mem.h"
+
+/* HandlePoisonDamage (core.asm:7071). DUELVARS_ARENA_CARD_HP is already
+ * defined above in this module's statics, so only these are missing. */
+#define POISONED_F 7u
+#define DOUBLE_POISONED_F 6u
+#define PSN_DAMAGE 0x0Au
+#define DBLPSN_DAMAGE 0x14u
+#define DUEL_ANIM_POISON 0x05u
+#define DUEL_ANIM_DAMAGE_HUD 0x8Cu
+#define Received10DamageDueToPoisonText 0x0026u
+#define Received20DamageDueToPoisonText 0x0027u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -8459,3 +8491,86 @@ void PlayBetweenTurnsAnimation(uint8_t a)
 	RedrawTurnDuelistsDuelHUD();
 }
 /* <<< factory PlayBetweenTurnsAnimation */
+
+/* >>> factory HandleSleepCheck */
+/* core.asm:7027. hl points at a duelist's DUELVARS_ARENA_CARD_STATUS byte and
+ * is only read/masked here, so it stays a plain address parameter. The early
+ * `ret nz` exits with the `cp ASLEEP` flags; the full path exits with
+ * WaitForWideTextBoxInput's, which is why only the flag byte is returned. */
+HandleSleepCheckResult HandleSleepCheck(uint16_t hl)
+{
+	uint8_t sleep_status = (uint8_t)(gb_read8(hl) & CNF_SLP_PRZ);
+	if (sleep_status != ASLEEP) {
+		uint8_t f = (uint8_t)(0x40u
+			| (((sleep_status & 0x0Fu) < (ASLEEP & 0x0Fu)) ? 0x20u : 0u)
+			| ((sleep_status < ASLEEP) ? FLAG_C : 0u));
+		return (HandleSleepCheckResult){f};
+	}
+
+	LoadCardDataToBuffer1_FromCardID(wTempNonTurnDuelistCardID);
+	/* `ld a, 18` is the pad width; bc and de are dead on entry to the callee. */
+	CopyCardNameAndLevelResult name = CopyCardNameAndLevel(18u, 0u, 0u, 0u, 0u);
+	gb_write8(name.hl, TX_END);
+	wTxRam2 = 0u;
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), 0u);
+
+	TossCoinRoutineResult toss = TossCoin(PokemonsSleepCheckText,
+					     (uint16_t)(wTxRam2_ADDR + 1u));
+	uint8_t anim = DUEL_ANIM_SLEEP_7027;
+	uint16_t text = IsStillAsleepText;
+	if (toss.f & FLAG_C) {
+		/* heads: keep only the poison bits, clearing the sleep status */
+		gb_write8(hl, (uint8_t)(gb_read8(hl) & DOUBLE_POISONED));
+		anim = DUEL_ANIM_HEAL_7027;
+		text = IsCuredOfSleepText;
+	}
+
+	RedrawTurnDuelistsMainSceneOrDuelHUD();
+	PrintCardNameFromCardIDInTextBox(text);
+	PlayBetweenTurnsAnimation(anim);
+	return (HandleSleepCheckResult){WaitForWideTextBoxInput().f};
+}
+/* <<< factory HandleSleepCheck */
+
+/* >>> factory HandlePoisonDamage */
+/* core.asm:7071-7139. Entry hl is the turn holder's DUELVARS_ARENA_CARD_STATUS
+ * byte; the routine pushes it on entry and pops it back before the `ret`, so hl
+ * is preserved on both exits. The `or a` ahead of the bit test only clears
+ * carry, so the not-poisoned `ret z` returns the bit test's own Z+H ($A0) with
+ * entry a untouched. The poisoned exit is PrintKnockedOutIfHLZero's af: its
+ * `ld a, [hl] / or a / ret nz` leaves a = the remaining HP with f = $00, and its
+ * PrintKnockedOut tail runs `dec a` down to zero before `scf`, i.e. that same
+ * byte (zero) with f = $90, so reading the byte here covers both exits. */
+HandlePoisonDamageResult HandlePoisonDamage(uint8_t a, uint16_t hl)
+{
+	uint8_t status = gb_read8(hl);
+	uint8_t damage;
+	uint16_t text;
+
+	if ((status & (uint8_t)(1u << POISONED_F)) == 0u)
+		return (HandlePoisonDamageResult){a, 0xA0u, hl};
+
+	if ((status & (uint8_t)(1u << DOUBLE_POISONED_F)) != 0u) {
+		damage = DBLPSN_DAMAGE;
+		text = Received20DamageDueToPoisonText;
+	} else {
+		damage = PSN_DAMAGE;
+		text = Received10DamageDueToPoisonText;
+	}
+	wDuelAnimDamage = damage;
+	gb_write8((uint16_t)(wDuelAnimDamage_ADDR + 1u), 0x00u);
+
+	RedrawTurnDuelistsMainSceneOrDuelHUD();
+	PrintCardNameFromCardIDInTextBox(text);
+	PlayBetweenTurnsAnimation(DUEL_ANIM_POISON);
+
+	DuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	(void)SubtractHP(hp.hl, damage);
+	PlayBetweenTurnsAnimation(DUEL_ANIM_DAMAGE_HUD);
+
+	uint8_t remaining = gb_read8(hp.hl);
+	uint8_t f = PrintKnockedOutIfHLZero(hp.hl);
+	(void)WaitForWideTextBoxInput();
+	return (HandlePoisonDamageResult){remaining, f, hl};
+}
+/* <<< factory HandlePoisonDamage */

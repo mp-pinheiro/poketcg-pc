@@ -2652,6 +2652,23 @@ static void adapt_PlayBetweenTurnsAnimation(ProbeState *s)
 }
 /* <<< factory PlayBetweenTurnsAnimation */
 
+/* >>> factory HandleSleepCheck */
+static void adapt_HandleSleepCheck(ProbeState *s)
+{
+	s->f = HandleSleepCheck(s->hl).f;
+}
+/* <<< factory HandleSleepCheck */
+
+/* >>> factory HandlePoisonDamage */
+static void adapt_HandlePoisonDamage(ProbeState *s)
+{
+	HandlePoisonDamageResult result = HandlePoisonDamage(s->a, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory HandlePoisonDamage */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2968,5 +2985,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayCardPage_PokemonDescription", adapt_DisplayCardPage_PokemonDescription },
 	{ "RequestToPrintCards_SelectStartCard", adapt_RequestToPrintCards_SelectStartCard },
 	{ "PlayBetweenTurnsAnimation", adapt_PlayBetweenTurnsAnimation },
+	{ "HandleSleepCheck", adapt_HandleSleepCheck },
+	{ "HandlePoisonDamage", adapt_HandlePoisonDamage },
 	{ NULL, NULL },
 };
