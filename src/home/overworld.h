@@ -275,4 +275,7 @@ void Func_c53d(void);
 /* >>> factory PCMenu_CardAlbum */
 void PCMenu_CardAlbum(void);
 /* <<< factory PCMenu_CardAlbum */
+/* >>> factory PauseMenu_Config */
+void PauseMenu_Config(void);
+/* <<< factory PauseMenu_Config */
 #endif /* POKETCG_HOME_OVERWORLD_H */

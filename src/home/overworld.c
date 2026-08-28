@@ -211,6 +211,8 @@
 #include "home/card_album.h"
 #include "home/credits_sequence_commands.h"
 #include "home/lcd.h"
+
+#include "home/config.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -1245,3 +1247,10 @@ void PCMenu_CardAlbum(void)
 	Set_OBJ_8x8();
 }
 /* <<< factory PCMenu_CardAlbum */
+
+/* >>> factory PauseMenu_Config */
+void PauseMenu_Config(void)
+{
+	_PauseMenu_Config();
+}
+/* <<< factory PauseMenu_Config */

@@ -590,6 +590,14 @@ static void adapt_PCMenu_CardAlbum(ProbeState *s)
 }
 /* <<< factory PCMenu_CardAlbum */
 
+/* >>> factory PauseMenu_Config */
+static void adapt_PauseMenu_Config(ProbeState *s)
+{
+	(void)s;
+	PauseMenu_Config();
+}
+/* <<< factory PauseMenu_Config */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -662,5 +670,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c17a", adapt_Func_c17a },
 	{ "Func_c53d", adapt_Func_c53d },
 	{ "PCMenu_CardAlbum", adapt_PCMenu_CardAlbum },
+	{ "PauseMenu_Config", adapt_PauseMenu_Config },
 	{ NULL, NULL },
 };

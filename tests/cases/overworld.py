@@ -873,6 +873,27 @@ CASES["PCMenu_CardAlbum"] = [
 ]
 # <<< factory PCMenu_CardAlbum
 
+# >>> factory PauseMenu_Config
+CONTRACT["PauseMenu_Config"] = {"compare": (), "preserve": ()}
+CASES["PauseMenu_Config"] = [
+    {
+        "keys": [0x00, 0x02],
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "wram": {0xCABB: b"\x00", 0xC510: b"\xff", 0xD291: b"\x5a", 0xCD08: b"\x00"},
+        "read": {0xD11A: 1, 0xD291: 1, 0xCD08: 1},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(POISON,
+         keys=[0x00, 0x02],
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         wram={0xCABB: b"\x00", 0xC510: b"\xff", 0xD291: b"\x5a", 0xCD08: b"\x00"},
+         read={0xD11A: 1, 0xD291: 1, 0xCD08: 1},
+         instruction_budget=20000000,
+         cycle_budget=80000000),
+]
+# <<< factory PauseMenu_Config
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1202,3 +1223,11 @@ MUTATIONS["Func_c53d"] = {"source_symbol": "Func_c53d", "before": "void Func_c53
 # >>> factory-mutation PCMenu_CardAlbum
 MUTATIONS["PCMenu_CardAlbum"] = {"source_symbol": "PCMenu_CardAlbum", "before": "void PCMenu_CardAlbum(void)\n{\n\thSCX = 0u;", "after": "void PCMenu_CardAlbum(void)\n{\n\thSCX = 1u;", "case_ids": ["PCMenu_CardAlbum-0", "PCMenu_CardAlbum-1"]}
 # <<< factory-mutation PCMenu_CardAlbum
+# >>> factory-mutation PauseMenu_Config
+MUTATIONS["PauseMenu_Config"] = {
+    "source_symbol": "PauseMenu_Config",
+    "before": "void PauseMenu_Config(void)\n{\n\t_PauseMenu_Config();",
+    "after": "void PauseMenu_Config(void)\n{\n\t(void)0;",
+    "case_ids": ["PauseMenu_Config-0", "PauseMenu_Config-1"],
+}
+# <<< factory-mutation PauseMenu_Config
