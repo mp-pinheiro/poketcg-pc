@@ -235,6 +235,14 @@ static void adapt_PreparePrinterConnection(ProbeState *s)
 }
 /* <<< factory PreparePrinterConnection */
 
+/* >>> factory AICheckIfAttackIsHighRecoil */
+static void adapt_AICheckIfAttackIsHighRecoil(ProbeState *s)
+{
+	AICheckIfAttackIsHighRecoilResult r = AICheckIfAttackIsHighRecoil();
+	s->f = r.f;
+}
+/* <<< factory AICheckIfAttackIsHighRecoil */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -262,5 +270,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "HandleAIAntiMewtwoDeckStrategy", adapt_HandleAIAntiMewtwoDeckStrategy },
 	{ "OpenBoosterPack", adapt_OpenBoosterPack },
 	{ "PreparePrinterConnection", adapt_PreparePrinterConnection },
+	{ "AICheckIfAttackIsHighRecoil", adapt_AICheckIfAttackIsHighRecoil },
 	{ NULL, NULL },
 };

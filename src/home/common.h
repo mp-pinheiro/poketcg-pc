@@ -112,4 +112,8 @@ void OpenBoosterPack(void);
  * name would be a redefinition. */
 uint8_t PreparePrinterConnection(uint16_t hl);
 /* <<< factory PreparePrinterConnection */
+/* >>> factory AICheckIfAttackIsHighRecoil */
+typedef struct { uint8_t f; } AICheckIfAttackIsHighRecoilResult;
+AICheckIfAttackIsHighRecoilResult AICheckIfAttackIsHighRecoil(void);
+/* <<< factory AICheckIfAttackIsHighRecoil */
 #endif /* POKETCG_HOME_COMMON_H */

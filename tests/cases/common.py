@@ -150,6 +150,13 @@ wAIBarrierFlagCounter = 0xCDA7
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wAIBarrierFlagCounter = 0xCDA7
+wAIExecuteProcessedAttack = 0xCDD9
+wAIScore = 0xCDBE
+wTempPlayAreaAIScore = 0xCDDD
+wPlayAreaAIScore = 0xCDBF
+wTempAIScore = 0xCDE3
 # <<< factory-cases-statics
 
 # >>> factory CheckIfHasCardIDInHand
@@ -394,6 +401,15 @@ CASES["PreparePrinterConnection"] = [
 ]
 # <<< factory PreparePrinterConnection
 
+# >>> factory AICheckIfAttackIsHighRecoil
+CONTRACT["AICheckIfAttackIsHighRecoil"] = {"compare": ("f",), "preserve": ()}
+CASES["AICheckIfAttackIsHighRecoil"] = [
+    {"wram": {wAIBarrierFlagCounter: b"\x80", wAIExecuteProcessedAttack: b"\x00", wAIScore: b"\x10", wTempAIScore: b"\x00", wPlayAreaAIScore: b"\x01\x02\x03\x04\x05\x06", wTempPlayAreaAIScore: b"\x00\x00\x00\x00\x00\x00"}, "expect": {wAIExecuteProcessedAttack: b"\x01"}, "expect_regs": {"f": 0x00}, "read": {wAIExecuteProcessedAttack: 1}},
+    {"wram": {wAIBarrierFlagCounter: b"\x80", wAIExecuteProcessedAttack: b"\xff", wAIScore: b"\x7f", wTempAIScore: b"\x00", wPlayAreaAIScore: b"\x20\x30\x40\x50\x60\x70", wTempPlayAreaAIScore: b"\xaa\xbb\xcc\xdd\xee\xff"}, "expect": {wAIExecuteProcessedAttack: b"\x01"}, "expect_regs": {"f": 0x00}, "read": {wAIExecuteProcessedAttack: 1}},
+    dict(POISON, wram={wAIBarrierFlagCounter: b"\x80", wAIExecuteProcessedAttack: b"\xaa", wAIScore: b"\xbb", wTempAIScore: b"\xcc", wPlayAreaAIScore: b"\x01\x23\x45\x67\x89\xab", wTempPlayAreaAIScore: b"\xde\xad\xbe\xef\x10\x20"}, expect={wAIExecuteProcessedAttack: b"\x01"}, expect_regs={"f": 0x00}, read={wAIExecuteProcessedAttack: 1}),
+]
+# <<< factory AICheckIfAttackIsHighRecoil
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -540,3 +556,6 @@ MUTATIONS["PreparePrinterConnection"] = {
 for _record in SCHEMA2_CASES["PreparePrinterConnection"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
 # <<< factory-completion PreparePrinterConnection
+# >>> factory-mutation AICheckIfAttackIsHighRecoil
+MUTATIONS["AICheckIfAttackIsHighRecoil"] = {"source_symbol": "AICheckIfAttackIsHighRecoil", "before": "AIProcessAttacksResult processed = AIProcessButDontUseAttack();", "after": "AIProcessAttacksResult processed = AIProcessAttacks();", "case_ids": ["AICheckIfAttackIsHighRecoil-0", "AICheckIfAttackIsHighRecoil-1", "AICheckIfAttackIsHighRecoil-2"]}
+# <<< factory-mutation AICheckIfAttackIsHighRecoil

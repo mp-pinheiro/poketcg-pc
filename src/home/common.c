@@ -87,6 +87,12 @@
 #include "home/booster_pack.h"
 
 #include "home/printer.h"
+
+#include "generated/wram.h"
+#include "home/attacks.h"
+#include "home/duel.h"
+#define ATTACK_FLAG1_ADDRESS 0x00u
+#define HIGH_RECOIL_F 0x06u
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -698,3 +704,17 @@ uint8_t PreparePrinterConnection(uint16_t hl)
 	return _PreparePrinterConnection(hl).f;
 }
 /* <<< factory PreparePrinterConnection */
+
+/* >>> factory AICheckIfAttackIsHighRecoil */
+AICheckIfAttackIsHighRecoilResult AICheckIfAttackIsHighRecoil(void)
+{
+	AIProcessAttacksResult processed = AIProcessButDontUseAttack();
+	if ((processed.f & 0x10u) == 0u)
+		return (AICheckIfAttackIsHighRecoilResult){processed.f};
+	uint8_t selected_attack = wSelectedAttack;
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	(void)CopyAttackDataAndDamage_FromDeckIndex(arena.a, selected_attack);
+	AttackFlagResult flag = CheckLoadedAttackFlag(ATTACK_FLAG1_ADDRESS | HIGH_RECOIL_F);
+	return (AICheckIfAttackIsHighRecoilResult){(uint8_t)(flag.f ^ 0x10u)};
+}
+/* <<< factory AICheckIfAttackIsHighRecoil */

@@ -1,0 +1,9 @@
+{
+  "fn": "AICheckIfAttackIsHighRecoil",
+  "case": "tests/cases/common.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AICheckIfAttackIsHighRecoil\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"52647\": \"80\", \"52670\": \"10010203040506\", \"52697\": \"01\", \"52701\": \"01020304050610\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AICheckIfAttackIsHighRecoil\", \"mismatches\": {\"f\": [0, 128], \"bus\": {\"address\": 52697, \"reference\": \"030405060101020304\", \"native\": \"030405060000000000\", \"reference_size\": 16, \"native_size\": 16, \"spans\": [[52647, 1], [52670, 7], [52697, 1], [52701, 7]]}}}\n",
+  "restored": "{\"fn\": \"AICheckIfAttackIsHighRecoil\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"52647\": \"80\", \"52670\": \"10010203040506\", \"52697\": \"01\", \"52701\": \"01020304050610\"}}, \"status\": \"PASS\"}\n"
+}
