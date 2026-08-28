@@ -150,6 +150,18 @@
 #define SFX_CURSOR 0x01u
 #define PAD_RIGHT 0x10u
 #define PAD_LEFT 0x20u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/deck_configuration.h"
+#include "home/deck_machine.h"
+#include "home/deck_selection.h"
+#include "home/frames.h"
+#include "home/menus.h"
+#include "home/switch_sram.h"
+#include "mem.h"
+#define ChooseADeckToSaveText 0x0260u
+#define SavedTheConfigurationForText 0x0263u
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -849,3 +861,60 @@ PrintVisibleDeckMachineEntriesResult UpdateDeckMachineScrollArrowsAndEntries(uin
 	return PrintVisibleDeckMachineEntries(draw_f);
 }
 /* <<< factory UpdateDeckMachineScrollArrowsAndEntries */
+
+/* >>> factory SaveDeckInDeckSaveMachine */
+SaveDeckInDeckSaveMachineResult SaveDeckInDeckSaveMachine(void)
+{
+	uint8_t a = 0u;
+	DrawDecksScreen(ALL_DECKS);
+	for (;;) {
+		uint16_t menu_parameters = 0x7609u;
+		InitializeMenuParameters(a, &menu_parameters);
+		(void)DrawWideTextBox_PrintText(ChooseADeckToSaveText);
+		for (;;) {
+			DoFrame();
+			HandleStartButtonInDeckSelectionMenuResult start =
+				HandleStartButtonInDeckSelectionMenu();
+			if ((start.f & 0x10u) != 0u) {
+				a = start.a;
+				break;
+			}
+			HandleMenuInputResult input = HandleMenuInput();
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			a = hCurMenuItem;
+			if (a == MENU_CANCEL)
+				return (SaveDeckInDeckSaveMachineResult){a, 0xc0u};
+			wCurDeck = a;
+			CheckIfCurDeckIsValidResult valid = CheckIfCurDeckIsValid();
+			if ((valid.f & 0x10u) != 0u) {
+				(void)PrintThereIsNoDeckHereText();
+				a = wCurDeck;
+				break;
+			}
+			uint16_t source = GetPointerToDeckName();
+			uint16_t destination = GetSelectedSavedDeckPtr();
+			EnableSRAM();
+			CopyNBytesFromHLToDE(&source, &destination, DECK_STRUCT_SIZE);
+			DisableSRAM();
+			ClearScreenAndDrawDeckMachineScreen();
+			DrawListScrollArrows();
+			PrintNumSavedDecks();
+			uint8_t list_cursor = wTempDeckMachineCursorPos;
+			uint16_t selection_parameters = 0x76fbu;
+			(void)InitCardSelectionParams(list_cursor, &selection_parameters);
+			(void)DrawListCursor_Visible();
+			source = GetPointerToDeckName();
+			EnableSRAM();
+			(void)CopyDeckName(source);
+			DisableSRAM();
+			a = 0u;
+			wTxRam2 = 0u;
+			gb_write8((uint16_t)(wTxRam2_ADDR + 1u), 0u);
+			WaitResult waited = DrawWideTextBox_WaitForInput(SavedTheConfigurationForText);
+			uint8_t f = (uint8_t)((waited.f & 0x80u) | 0x10u);
+			return (SaveDeckInDeckSaveMachineResult){a, f};
+		}
+	}
+}
+/* <<< factory SaveDeckInDeckSaveMachine */

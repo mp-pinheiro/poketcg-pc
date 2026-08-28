@@ -1314,6 +1314,18 @@ void BankswitchROM(uint8_t bank);
 #include "generated/wram.h"
 #include "generated/hram.h"
 #define ATK_ANIM_SPIT_POISON_SUCCESS 0x8cu
+
+#include "home/core.h"
+#include "home/duel_menus.h"
+#include "home/menus.h"
+#include "home/script.h"
+#include "home/serial.h"
+#define AI_PEEK_TARGET_HAND 0x80u
+#define AI_PEEK_TARGET_HAND_F 0x07u
+#define DUELIST_TYPE_AI_OPP 0x80u
+#define DUELIST_TYPE_LINK_OPP 0x01u
+#define CardPeekWasUsedOnText 0x0146u
+#define PeekWasUsedToLookInYourHandText 0x0145u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10292,3 +10304,42 @@ SpitPoison_Poison50PercentEffectResult SpitPoison_Poison50PercentEffect(uint16_t
 	return (SpitPoison_Poison50PercentEffectResult){toss.f, toss.hl};
 }
 /* <<< factory SpitPoison_Poison50PercentEffect */
+
+/* >>> factory Peek_SelectEffect */
+void Peek_SelectEffect(void)
+{
+	DuelistVarResult arena_flags = GetTurnDuelistVariable(
+		(uint8_t)(hTemp_ffa0 + DUELVARS_ARENA_CARD_FLAGS));
+	gb_write8(arena_flags.hl, (uint8_t)(arena_flags.a | (1u << USED_PKMN_POWER_THIS_TURN_F)));
+
+	DuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (duelist.a == DUELIST_TYPE_LINK_OPP) {
+		SerialRecv8BytesResult received = SerialRecv8Bytes();
+		hAIPkmnPowerEffectParam = received.a;
+	} else if ((duelist.a & DUELIST_TYPE_AI_OPP) == 0u) {
+		FinishQueuedAnimations();
+		HandlePeekSelectionV2Result selected = HandlePeekSelection(0x80u);
+		hAIPkmnPowerEffectParam = selected.a;
+		SerialSend8Bytes(selected.a, selected.f, 0u, 0u, 0u, 0u);
+	}
+
+	uint8_t param = hAIPkmnPowerEffectParam;
+	if ((duelist.a & DUELIST_TYPE_AI_OPP) != 0u || duelist.a == DUELIST_TYPE_LINK_OPP) {
+		if ((param & (1u << AI_PEEK_TARGET_HAND_F)) != 0u) {
+			uint8_t masked = (uint8_t)(param & (uint8_t)~AI_PEEK_TARGET_HAND);
+			if (masked < 0x40u) {
+				SwapTurn();
+				(void)DisplayCardDetailScreen(0u, PeekWasUsedToLookInYourHandText);
+				SwapTurn();
+				return;
+			}
+		}
+		FinishQueuedAnimations();
+		SwapTurn();
+		DrawAIPeekScreenResult screen = DrawAIPeekScreen((uint8_t)(param ^ 0x80u), 0u);
+		(void)screen;
+		SwapTurn();
+		(void)DrawWideTextBox_WaitForInput(CardPeekWasUsedOnText);
+	}
+}
+/* <<< factory Peek_SelectEffect */

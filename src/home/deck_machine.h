@@ -102,4 +102,8 @@ HandleDeckMachineSelectionResult HandleDeckMachineSelection(void);
 /* >>> factory UpdateDeckMachineScrollArrowsAndEntries */
 PrintVisibleDeckMachineEntriesResult UpdateDeckMachineScrollArrowsAndEntries(uint8_t f);
 /* <<< factory UpdateDeckMachineScrollArrowsAndEntries */
+/* >>> factory SaveDeckInDeckSaveMachine */
+typedef struct { uint8_t a; uint8_t f; } SaveDeckInDeckSaveMachineResult;
+SaveDeckInDeckSaveMachineResult SaveDeckInDeckSaveMachine(void);
+/* <<< factory SaveDeckInDeckSaveMachine */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

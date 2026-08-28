@@ -222,6 +222,8 @@ wMachineDeckPtrs = 0xD00D
 wTempCardListVisibleOffset = 0xD087
 wTempDeckMachineCursorPos = 0xD086
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory DrawListScrollArrows
@@ -478,6 +480,24 @@ CASES["UpdateDeckMachineScrollArrowsAndEntries"] = [
 ]
 # <<< factory UpdateDeckMachineScrollArrowsAndEntries
 
+# >>> factory SaveDeckInDeckSaveMachine
+CONTRACT["SaveDeckInDeckSaveMachine"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["SaveDeckInDeckSaveMachine"] = [
+    {"keys": [0x00, 0x01], "ramg": True,
+     "wram": {0xD00D: b"\x50\xA3", 0xD086: b"\x00", 0xD088: b"\x00"},
+     "sram": {0: {0xA200: b"A\x00" + b"\x00" * 22 + b"\x01" * 60}},
+     "sread": {0: {0xA350: 0x54}},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], ramg=True,
+         wram={0xD00D: b"\x50\xA3", 0xD086: b"\x00", 0xD088: b"\x00"},
+         sram={0: {0xA200: b"A\x00" + b"\x00" * 22 + b"\x01" * 60}},
+         sread={0: {0xA350: 0x54}},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory SaveDeckInDeckSaveMachine
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -613,3 +633,11 @@ MUTATIONS["HandleDeckMachineSelection"] = {"source_symbol": "HandleDeckMachineSe
 # >>> factory-mutation UpdateDeckMachineScrollArrowsAndEntries
 MUTATIONS["UpdateDeckMachineScrollArrowsAndEntries"] = {"source_symbol": "UpdateDeckMachineScrollArrowsAndEntries", "before": "PrintVisibleDeckMachineEntriesResult UpdateDeckMachineScrollArrowsAndEntries(uint8_t f)\n{\n\t(void)f;\n\tDrawListScrollArrows();\n\tuint8_t visible_offset = wCardListVisibleOffset;\n\tuint8_t threshold = (uint8_t)(visible_offset + NUM_DECK_MACHINE_VISIBLE_DECKS + 1u);", "after": "PrintVisibleDeckMachineEntriesResult UpdateDeckMachineScrollArrowsAndEntries(uint8_t f)\n{\n\t(void)f;\n\tDrawListScrollArrows();\n\tuint8_t visible_offset = wCardListVisibleOffset;\n\tuint8_t threshold = 0u;", "case_ids": ["UpdateDeckMachineScrollArrowsAndEntries-0", "UpdateDeckMachineScrollArrowsAndEntries-1", "UpdateDeckMachineScrollArrowsAndEntries-2"]}
 # <<< factory-mutation UpdateDeckMachineScrollArrowsAndEntries
+# >>> factory-mutation SaveDeckInDeckSaveMachine
+MUTATIONS["SaveDeckInDeckSaveMachine"] = {
+    "source_symbol": "SaveDeckInDeckSaveMachine",
+    "before": "\t\t\tuint8_t f = (uint8_t)((waited.f & 0x80u) | 0x10u);\n\t\t\treturn (SaveDeckInDeckSaveMachineResult){a, f};",
+    "after": "\t\t\tuint8_t f = (uint8_t)((waited.f & 0x80u) | 0x00u);\n\t\t\treturn (SaveDeckInDeckSaveMachineResult){a, f};",
+    "case_ids": ["SaveDeckInDeckSaveMachine-0", "SaveDeckInDeckSaveMachine-1"],
+}
+# <<< factory-mutation SaveDeckInDeckSaveMachine

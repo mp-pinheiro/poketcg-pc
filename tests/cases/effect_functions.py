@@ -2719,6 +2719,8 @@ CLEFAIRY_DOLL = 0xCB
 MYSTERIOUS_FOSSIL = 0xCC
 FRAME_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 FRAME_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000}
+
+hAIPkmnPowerEffectParam = 0xFFA1
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7002,6 +7004,14 @@ CASES["SpitPoison_Poison50PercentEffect"] = [
 ]
 # <<< factory SpitPoison_Poison50PercentEffect
 
+# >>> factory Peek_SelectEffect
+CONTRACT["Peek_SelectEffect"] = {"compare": (), "preserve": ()}
+CASES["Peek_SelectEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {hWhoseTurn: b"\xC2", 0xC2F1: b"\x00", 0xC2C2: b"\x00", hTemp_ffa0: b"\x00", hAIPkmnPowerEffectParam: b"\x00", 0xCABB: b"\x00", 0xC23C: b"\x00", 0xC2EC: b"\x3F", 0xC400: b"\x08"}, "read": {0xC2C2: 1, hAIPkmnPowerEffectParam: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 30000000, "cycle_budget": 120000000},
+    dict(POISON, keys=[0x00, 0x01], wram={hWhoseTurn: b"\xC2", 0xC2F1: b"\x00", 0xC2C2: b"\x00", hTemp_ffa0: b"\x00", hAIPkmnPowerEffectParam: b"\x00", 0xCABB: b"\x00", 0xC23C: b"\x00", 0xC2EC: b"\x3F", 0xC400: b"\x08"}, read={0xC2C2: 1, hAIPkmnPowerEffectParam: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=30000000, cycle_budget=120000000),
+]
+# <<< factory Peek_SelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9875,3 +9885,6 @@ MUTATIONS["SpitPoison_Poison50PercentEffect"] = {
     "case_ids": ["SpitPoison_Poison50PercentEffect-0", "SpitPoison_Poison50PercentEffect-1"]
 }
 # <<< factory-mutation SpitPoison_Poison50PercentEffect
+# >>> factory-mutation Peek_SelectEffect
+MUTATIONS["Peek_SelectEffect"] = {"source_symbol": "Peek_SelectEffect", "before": "\tgb_write8(arena_flags.hl, (uint8_t)(arena_flags.a | (1u << USED_PKMN_POWER_THIS_TURN_F)));", "after": "\tgb_write8(arena_flags.hl, arena_flags.a);", "case_ids": ["Peek_SelectEffect-0", "Peek_SelectEffect-1"]}
+# <<< factory-mutation Peek_SelectEffect

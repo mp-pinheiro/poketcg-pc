@@ -4933,6 +4933,14 @@ static void adapt_SpitPoison_Poison50PercentEffect(ProbeState *s)
 }
 /* <<< factory SpitPoison_Poison50PercentEffect */
 
+/* >>> factory Peek_SelectEffect */
+static void adapt_Peek_SelectEffect(ProbeState *s)
+{
+	(void)s;
+	Peek_SelectEffect();
+}
+/* <<< factory Peek_SelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5532,5 +5540,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "GamblerEffect", adapt_GamblerEffect },
 	{ "HealingWind_PlayAreaHealEffect", adapt_HealingWind_PlayAreaHealEffect },
 	{ "SpitPoison_Poison50PercentEffect", adapt_SpitPoison_Poison50PercentEffect },
+	{ "Peek_SelectEffect", adapt_Peek_SelectEffect },
 	{ NULL, NULL },
 };
