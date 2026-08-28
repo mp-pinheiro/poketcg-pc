@@ -243,6 +243,13 @@ static void adapt_AICheckIfAttackIsHighRecoil(ProbeState *s)
 }
 /* <<< factory AICheckIfAttackIsHighRecoil */
 
+/* >>> factory PrintDeckConfiguration */
+static void adapt_PrintDeckConfiguration(ProbeState *s)
+{
+	PrintDeckConfiguration(s->a);
+}
+/* <<< factory PrintDeckConfiguration */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -271,5 +278,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "OpenBoosterPack", adapt_OpenBoosterPack },
 	{ "PreparePrinterConnection", adapt_PreparePrinterConnection },
 	{ "AICheckIfAttackIsHighRecoil", adapt_AICheckIfAttackIsHighRecoil },
+	{ "PrintDeckConfiguration", adapt_PrintDeckConfiguration },
 	{ NULL, NULL },
 };

@@ -718,3 +718,10 @@ AICheckIfAttackIsHighRecoilResult AICheckIfAttackIsHighRecoil(void)
 	return (AICheckIfAttackIsHighRecoilResult){(uint8_t)(flag.f ^ 0x10u)};
 }
 /* <<< factory AICheckIfAttackIsHighRecoil */
+
+/* >>> factory PrintDeckConfiguration */
+void PrintDeckConfiguration(uint8_t a)
+{
+	_PrintDeckConfiguration(a);
+}
+/* <<< factory PrintDeckConfiguration */

@@ -410,6 +410,11 @@ CASES["AICheckIfAttackIsHighRecoil"] = [
 ]
 # <<< factory AICheckIfAttackIsHighRecoil
 
+# >>> factory PrintDeckConfiguration
+CONTRACT["PrintDeckConfiguration"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PrintDeckConfiguration"] = [{"a": 0x00, "wram": {0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00", 0xCE92: b"\xFF\xFF", 0xCE9C: b"\xFF", 0xCF17: b"\x00"}, "sram": {0: {0xA350: b"\x00" * 0x53 + b"\xA5"}}, "ramg": True, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": 0x00, "read": {0xC510: 0x54, 0xCE92: 2, 0xCE9C: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000}, dict(POISON, a=0x00, wram={0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00", 0xCE92: b"\xFF\xFF", 0xCE9C: b"\xFF", 0xCF17: b"\x00"}, sram={0: {0xA350: b"\x00" * 0x53 + b"\xA5"}}, ramg=True, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=0x00, read={0xC510: 0x54, 0xCE92: 2, 0xCE9C: 1}, instruction_budget=20000000, cycle_budget=80000000)]
+# <<< factory PrintDeckConfiguration
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -559,3 +564,10 @@ for _record in SCHEMA2_CASES["PreparePrinterConnection"]:
 # >>> factory-mutation AICheckIfAttackIsHighRecoil
 MUTATIONS["AICheckIfAttackIsHighRecoil"] = {"source_symbol": "AICheckIfAttackIsHighRecoil", "before": "AIProcessAttacksResult processed = AIProcessButDontUseAttack();", "after": "AIProcessAttacksResult processed = AIProcessAttacks();", "case_ids": ["AICheckIfAttackIsHighRecoil-0", "AICheckIfAttackIsHighRecoil-1", "AICheckIfAttackIsHighRecoil-2"]}
 # <<< factory-mutation AICheckIfAttackIsHighRecoil
+# >>> factory-mutation PrintDeckConfiguration
+MUTATIONS["PrintDeckConfiguration"] = {"source_symbol": "PrintDeckConfiguration", "before": "void PrintDeckConfiguration(uint8_t a)\n{\n\t_PrintDeckConfiguration(a);", "after": "void PrintDeckConfiguration(uint8_t a)\n{\n\t(void)0;", "case_ids": ["PrintDeckConfiguration-0"]}
+# <<< factory-mutation PrintDeckConfiguration
+# >>> factory-completion PrintDeckConfiguration
+for _record in SCHEMA2_CASES["PrintDeckConfiguration"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+# <<< factory-completion PrintDeckConfiguration

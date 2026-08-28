@@ -116,4 +116,7 @@ uint8_t PreparePrinterConnection(uint16_t hl);
 typedef struct { uint8_t f; } AICheckIfAttackIsHighRecoilResult;
 AICheckIfAttackIsHighRecoilResult AICheckIfAttackIsHighRecoil(void);
 /* <<< factory AICheckIfAttackIsHighRecoil */
+/* >>> factory PrintDeckConfiguration */
+void PrintDeckConfiguration(uint8_t a);
+/* <<< factory PrintDeckConfiguration */
 #endif /* POKETCG_HOME_COMMON_H */
