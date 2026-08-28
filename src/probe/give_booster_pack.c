@@ -8,7 +8,17 @@ static void adapt_PauseMenu_Exit(ProbeState *s)
 	_PauseMenu_Exit();
 }
 
+/* >>> factory GiveBoosterPack */
+static void adapt_GiveBoosterPack(ProbeState *s)
+{
+	GiveBoosterPackResult result = GiveBoosterPack(s->a, s->f);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory GiveBoosterPack */
+
 const ProbeEntry probe_entries_give_booster_pack[] = {
 	{ "_PauseMenu_Exit", adapt_PauseMenu_Exit },
+	{ "GiveBoosterPack", adapt_GiveBoosterPack },
 	{ NULL, NULL },
 };

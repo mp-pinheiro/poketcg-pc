@@ -1,0 +1,9 @@
+{
+  "fn": "GiveBoosterPack",
+  "case": "tests/cases/give_booster_pack.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GiveBoosterPack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52799\": \"a803\", \"52803\": \"0100\", \"53527\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GiveBoosterPack\", \"mismatches\": {\"bus\": {\"address\": 52803, \"reference\": \"80a803010000\", \"native\": \"80a803020000\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[51899, 1], [52799, 2], [52803, 2], [53527, 1]]}}}\n",
+  "restored": "{\"fn\": \"GiveBoosterPack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52799\": \"a803\", \"52803\": \"0100\", \"53527\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
