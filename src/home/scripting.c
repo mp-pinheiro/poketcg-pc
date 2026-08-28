@@ -340,6 +340,10 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 
 #include "home/medal.h"
 #include "home/overworld.h"
+
+/* TRUE and NO_BOOSTER are already defined above in this statics block (the
+ * ScriptCommand_GiveOneOfEachTrainerBooster entry), so they are not repeated
+ * here. */
 /* <<< factory statics */
 
 
@@ -2254,3 +2258,46 @@ IncreaseScriptPointerResult ScriptCommand_ShowMedalReceivedScreen(uint8_t c)
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_ShowMedalReceivedScreen */
+
+/* >>> factory ScriptCommand_GiveBoosterPacks */
+/* scripting.asm:936. b and c are the first two booster ids the script command
+ * was given; the third is fetched with GetScriptArgs3AfterPointer, and only
+ * when b is not NO_BOOSTER, because `jr z, .done` skips that call too.
+ *
+ * Every GiveBoosterPack result is dead here: `ld a, TRUE` overwrites the first
+ * call's a, and each later call is followed only by another call, so the flag
+ * byte the helper hands back is never read. The f handed to the second and
+ * third calls is the one `cp NO_BOOSTER` just produced -- rst $28 (FarCall,
+ * home/farcall.asm) pushes af on entry and pops it before jumping to the
+ * target, so the compare's flags reach the callee unchanged. The first call
+ * inherits Func_c2a3's exit flags, which the void-returning port of that
+ * routine does not model; 0 is passed there, exactly as the landed
+ * TryOpenPCMailBoosterPack does for its own dead-result calls.
+ *
+ * `call ReturnToOverworldNoCallback` then `jp IncreaseScriptPointerBy4` makes
+ * that helper's {a, f, c} the exit contract. b/d/e/hl are not reported:
+ * neither GiveBoosterPack nor ReturnToOverworldNoCallback carries them out. */
+IncreaseScriptPointerResult ScriptCommand_GiveBoosterPacks(uint8_t b, uint8_t c)
+{
+	wAnotherBoosterPack = 0u;
+	Func_c2a3();
+	(void)GiveBoosterPack(c, 0u);
+	wAnotherBoosterPack = TRUE;
+	if (b != NO_BOOSTER) {
+		/* cp NO_BOOSTER on a value below $ff: NZ, N set and C set,
+		 * H set whenever the low nibble is below $f. */
+		uint8_t flags = (uint8_t)(0x40u | 0x10u |
+		                          (((b & 0x0Fu) < 0x0Fu) ? 0x20u : 0u));
+
+		(void)GiveBoosterPack(b, flags);
+		GetScriptArgsAfterPointerResult args = GetScriptArgs3AfterPointer();
+		if (args.c != NO_BOOSTER) {
+			flags = (uint8_t)(0x40u | 0x10u |
+			                  (((args.c & 0x0Fu) < 0x0Fu) ? 0x20u : 0u));
+			(void)GiveBoosterPack(args.c, flags);
+		}
+	}
+	(void)ReturnToOverworldNoCallback();
+	return IncreaseScriptPointerBy4();
+}
+/* <<< factory ScriptCommand_GiveBoosterPacks */

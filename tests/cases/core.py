@@ -1984,6 +1984,10 @@ wPlayerDuelVariables = 0xC200
 wPlayerDeck = 0xC400
 wSelectedAttack = 0xCCC6
 hWhoseTurn = 0xFF97
+
+WEIGHT_STRBUF = 0xCAA0
+WEIGHT_LCDC = 0xCABB
+WEIGHT_BGMAP0 = 0x9800
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -4245,6 +4249,22 @@ CASES["AITryUseAttack"] = [
 ]
 # <<< factory AITryUseAttack
 
+# >>> factory PrintPokemonCardWeight
+CONTRACT["PrintPokemonCardWeight"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["PrintPokemonCardWeight"] = [
+    {"b": 0x01, "c": 0x02, "hl": 0x0000,
+     "wram": {WEIGHT_LCDC: b"\x00", WEIGHT_STRBUF: b"\x00" * 8},
+     "read": {WEIGHT_STRBUF: 8},
+     "vread": {0: {WEIGHT_BGMAP0 + 0x02 * 32 + 0x01: 1}}},
+    {"b": 0x02, "c": 0x03, "hl": 0x04D2,
+     "wram": {WEIGHT_LCDC: b"\x00", WEIGHT_STRBUF: b"\x00" * 8},
+     "read": {WEIGHT_STRBUF: 8},
+     "vread": {0: {WEIGHT_BGMAP0 + 0x03 * 32 + 0x02: 5}}},
+    dict(POISON, wram={WEIGHT_LCDC: b"\x00", WEIGHT_STRBUF: b"\x00" * 8},
+         read={WEIGHT_STRBUF: 8}),
+]
+# <<< factory PrintPokemonCardWeight
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5873,3 +5893,11 @@ MUTATIONS["OppAction_PlayEnergyCard"] = {"source_symbol": "OppAction_PlayEnergyC
 MUTATIONS["AITryUseAttack"] = {"source_symbol": "AITryUseAttack", "before": "\tuint8_t e = wSelectedAttack;\n\thTemp_ffa0 = e;", "after": "\tuint8_t e = wSelectedAttack;\n\thTemp_ffa0 = (uint8_t)(e + 1u);", "case_ids": ["AITryUseAttack-0", "AITryUseAttack-1"]}
 # <<< factory-mutation AITryUseAttack
 
+# >>> factory-mutation PrintPokemonCardWeight
+MUTATIONS["PrintPokemonCardWeight"] = {
+    "source_symbol": "PrintPokemonCardWeight",
+    "before": "\tdestination = BCCoordToBGMap0Address(entry_b, entry_c);\n\tout_c = entry_b;",
+    "after": "\tdestination = BCCoordToBGMap0Address(entry_b, entry_c);\n\tout_c = entry_c;",
+    "case_ids": ["PrintPokemonCardWeight-0", "PrintPokemonCardWeight-1", "PrintPokemonCardWeight-2"],
+}
+# <<< factory-mutation PrintPokemonCardWeight

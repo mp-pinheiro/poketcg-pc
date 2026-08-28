@@ -1167,4 +1167,16 @@ void OppAction_PlayEnergyCard(void);
 typedef struct { uint8_t f; } AITryUseAttackResult;
 AITryUseAttackResult AITryUseAttack(uint8_t b);
 /* <<< factory AITryUseAttack */
+/* >>> factory PrintPokemonCardWeight */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} PrintPokemonCardWeightResult;
+PrintPokemonCardWeightResult PrintPokemonCardWeight(uint8_t b, uint8_t c, uint16_t hl);
+/* <<< factory PrintPokemonCardWeight */
 #endif

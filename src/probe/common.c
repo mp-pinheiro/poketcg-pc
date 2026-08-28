@@ -257,6 +257,13 @@ static void adapt_ShowPromotionalCardScreen(ProbeState *s)
 }
 /* <<< factory ShowPromotionalCardScreen */
 
+/* >>> factory RequestToPrintCard */
+static void adapt_RequestToPrintCard(ProbeState *s)
+{
+	s->f = RequestToPrintCard(s->a);
+}
+/* <<< factory RequestToPrintCard */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -287,5 +294,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "AICheckIfAttackIsHighRecoil", adapt_AICheckIfAttackIsHighRecoil },
 	{ "PrintDeckConfiguration", adapt_PrintDeckConfiguration },
 	{ "ShowPromotionalCardScreen", adapt_ShowPromotionalCardScreen },
+	{ "RequestToPrintCard", adapt_RequestToPrintCard },
 	{ NULL, NULL },
 };

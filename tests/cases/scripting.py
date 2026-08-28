@@ -245,6 +245,29 @@ SCRS_READ = {SCRS_wLoadedCard1Name: 2, SCRS_hWhoseTurn: 1}
 # DMG frame, with the WaitForVBlank halt retiring few instructions per cycle.
 SCRS_INSTRUCTIONS = 60000000
 SCRS_CYCLES = 240000000
+
+# scripting.asm:936 ScriptCommand_GiveBoosterPacks. The reference stops
+# mid-flight at the first GiveBoosterPack's WaitForSongToFinish (see the
+# completion block), exactly like the landed ScriptCommand_GiveOneOfEachTrainerBooster,
+# so the only comparable bytes are the two booster-independent GiveBoosterPack
+# writes: wTxRam3 + 1 is the `xor a` high byte, always $00, and wTxRam2 + 1 is
+# the booster name text id's high byte, $03 for all four ids ($03A8..$03AB).
+# wTxRam2/wTxRam3 themselves are the per-booster low bytes and are neither
+# seeded nor observed. wAnotherBoosterPack ($D117) is deliberately untouched
+# too: the reference is still inside the first pack, where it holds the opening
+# $00, while the port has already run `ld a, TRUE`.
+GIVE_PACKS_wTxRam2Hi = 0xCE40
+GIVE_PACKS_wTxRam3Hi = 0xCE44
+# B, not A: the reference clears one page of ReceivedBoosterPackText through
+# WaitForButtonAorB, which reads edge-triggered hKeysPressed, so the key has to
+# be a cycled list rather than a held button. Same shape the landed
+# GiveBoosterPack and ScriptCommand_GiveOneOfEachTrainerBooster cases use.
+GIVE_PACKS_KEYS = [0x00, 0x02]
+GIVE_PACKS_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+# Func_c2a3's frame plus a scene load, a white flash, a generated booster and a
+# full page of letter-delayed text, at 70224 cycles per DMG frame.
+GIVE_PACKS_INSTRUCTIONS = 60000000
+GIVE_PACKS_CYCLES = 240000000
 # <<< factory-cases-statics
 
 
@@ -1761,6 +1784,38 @@ CASES["ScriptCommand_ShowMedalReceivedScreen"] = [
 ]
 # <<< factory ScriptCommand_ShowMedalReceivedScreen
 
+# >>> factory ScriptCommand_GiveBoosterPacks
+# The reference is mid-flight at the declared cutpoint, so no register is
+# comparable; the two booster-independent TxRam bytes are. Both are seeded with
+# a poison byte neither run can leave in place, which is what gives the mutation
+# below something to redden: a port that never calls GiveBoosterPack leaves the
+# poison behind while the reference still writes $03/$00.
+# b is NO_BOOSTER in both cases, so the port takes `.done` straight after the
+# first pack. That is deliberate: GetScriptArgs3AfterPointer would read the
+# script args through the harness's own wScriptPointer, and wScriptPointer
+# cannot be seeded here -- the port reaches IncreaseScriptPointerBy4 and adds 4
+# to it while the reference, parked in the first pack, never does, so any seed
+# of it would be an implicitly compared byte that must differ.
+CONTRACT["ScriptCommand_GiveBoosterPacks"] = {"compare": (), "preserve": ()}
+CASES["ScriptCommand_GiveBoosterPacks"] = [
+    # c = $06 BOOSTER_COLOSSEUM_TRAINER.
+    {"b": 0xFF, "c": 0x06,
+     "wram": {GIVE_PACKS_wTxRam2Hi: b"\xFF", GIVE_PACKS_wTxRam3Hi: b"\xFF"},
+     "read": {GIVE_PACKS_wTxRam2Hi: 1, GIVE_PACKS_wTxRam3Hi: 1},
+     "keys": GIVE_PACKS_KEYS, "setup": GIVE_PACKS_SETUP,
+     "instruction_budget": GIVE_PACKS_INSTRUCTIONS, "cycle_budget": GIVE_PACKS_CYCLES},
+    # a/f/d/e/hl carry the poison bytes; b and c are the routine's own booster
+    # arguments and must stay real ids -- $CC is past the 29-entry BoosterTypes
+    # table, so it would send both runs off the end of it. c = $18
+    # BOOSTER_LABORATORY_TRAINER, a different pack type from case 0.
+    dict(POISON, b=0xFF, c=0x18,
+         wram={GIVE_PACKS_wTxRam2Hi: b"\x5A", GIVE_PACKS_wTxRam3Hi: b"\x5A"},
+         read={GIVE_PACKS_wTxRam2Hi: 1, GIVE_PACKS_wTxRam3Hi: 1},
+         keys=GIVE_PACKS_KEYS, setup=GIVE_PACKS_SETUP,
+         instruction_budget=GIVE_PACKS_INSTRUCTIONS, cycle_budget=GIVE_PACKS_CYCLES),
+]
+# <<< factory ScriptCommand_GiveBoosterPacks
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2541,3 +2596,22 @@ MUTATIONS["ScriptCommand_ShowMedalReceivedScreen"] = {"source_symbol": "ScriptCo
 for _record in SCHEMA2_CASES["ScriptCommand_ShowMedalReceivedScreen"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x378A}
 # <<< factory-completion ScriptCommand_ShowMedalReceivedScreen
+# >>> factory-mutation ScriptCommand_GiveBoosterPacks
+MUTATIONS["ScriptCommand_GiveBoosterPacks"] = {"source_symbol": "ScriptCommand_GiveBoosterPacks", "before": "IncreaseScriptPointerResult ScriptCommand_GiveBoosterPacks(uint8_t b, uint8_t c)\n{\n\twAnotherBoosterPack = 0u;\n\tFunc_c2a3();\n\t(void)GiveBoosterPack(c, 0u);", "after": "IncreaseScriptPointerResult ScriptCommand_GiveBoosterPacks(uint8_t b, uint8_t c)\n{\n\twAnotherBoosterPack = 0u;\n\tFunc_c2a3();\n\t(void)c;", "case_ids": ["ScriptCommand_GiveBoosterPacks-0", "ScriptCommand_GiveBoosterPacks-1"]}
+# <<< factory-mutation ScriptCommand_GiveBoosterPacks
+# >>> factory-completion ScriptCommand_GiveBoosterPacks
+# The reference cannot reach this routine's ret: the first GiveBoosterPack ends
+# in `call WaitForSongToFinish`, which only clears once the timer ISR has walked
+# the booster jingle to its music_end, and the call-level runner arms VBlank
+# alone. That is the same genuine spin the landed GiveBoosterPack and
+# ScriptCommand_GiveOneOfEachTrainerBooster cases pin, so completion is declared
+# at WaitForSongToFinish's own entry (poketcg.sym 00:3C96, ROM0 and therefore
+# bank-independent), which is still after both observed TxRam bytes have been
+# written. Nothing earlier on this path calls it: neither Func_c2a3's chain nor
+# DisableLCD, InitMenuScreen, LoadBoosterGfx, FlashWhiteScreen, PauseSong,
+# PlaySong, GenerateBoosterPack or PrintScrollableText_NoTextBoxLabel does.
+# legacy_to_schema always emits completion "return", so the split is applied
+# after migration.
+for _record in SCHEMA2_CASES["ScriptCommand_GiveBoosterPacks"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x3C96}
+# <<< factory-completion ScriptCommand_GiveBoosterPacks

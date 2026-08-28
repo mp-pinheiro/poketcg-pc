@@ -750,3 +750,20 @@ void ShowPromotionalCardScreen(uint8_t a)
 	hWhoseTurn = 0xC2u;
 }
 /* <<< factory ShowPromotionalCardScreen */
+
+/* >>> factory RequestToPrintCard */
+/* menus/common.asm:38. `farcall _RequestToPrintCard` / `ret`.
+ * FarCall (home/farcall.asm:62-88) pushes af/de/hl before the bank switch and
+ * pops them back immediately before jumping to the target, and the return
+ * trampoline SwitchToBankAtSP (farcall.asm:44-53) saves and restores af/hl
+ * around its own bankswitch, so the wrapper is register-transparent: whatever
+ * the callee leaves is what this routine's caller sees. Entry a is the card id
+ * the callee feeds to LoadCardDataToBuffer1_FromCardID, and the ported callee's
+ * result is carry alone -- the success exit is `or a` and both error exits tail
+ * into HandlePrinterError -- so only f is forwarded, and it is forwarded rather
+ * than recomputed. */
+uint8_t RequestToPrintCard(uint8_t a)
+{
+	return _RequestToPrintCard(a).f;
+}
+/* <<< factory RequestToPrintCard */

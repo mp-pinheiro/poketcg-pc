@@ -1415,6 +1415,13 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "mem.h"
 #include "home/core.h"
 #include "home/duel.h"
+
+#define SYM_DOT 0x2Au
+#include "generated/wram.h"
+#include "home/bg_map.h"
+#include "home/core.h"
+#include "home/empty_screen.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -8177,3 +8184,67 @@ AITryUseAttackResult AITryUseAttack(uint8_t b)
 	return (AITryUseAttackResult){anim.f};
 }
 /* <<< factory AITryUseAttack */
+
+/* >>> factory PrintPokemonCardWeight */
+/* core.asm:4783. hl is the weight: the routine divides it by ten, formats the
+ * quotient through TwoByteNumberToTxSymbol_PadSpace_Bank1 and appends
+ * ".<remainder>" when the remainder is non-zero, then copies the trimmed
+ * string to the BGMap0 address of b,c. */
+PrintPokemonCardWeightResult PrintPokemonCardWeight(uint8_t b, uint8_t c, uint16_t hl)
+{
+	uint8_t entry_b = b;
+	uint8_t entry_c = c;
+	uint16_t quotient = (uint16_t)(hl / 10u);
+	uint8_t remainder = (uint8_t)(hl % 10u);
+	uint16_t cursor;
+	uint16_t destination;
+	uint8_t out_c;
+	uint16_t source;
+	uint16_t scan;
+	uint8_t length;
+	uint8_t sum;
+	uint8_t f;
+
+	/* The callee's own d/e result is scratch here: BCCoordToBGMap0Address
+	 * overwrites de before this routine returns. */
+	(void)TwoByteNumberToTxSymbol_PadSpace_Bank1(entry_b, entry_c,
+		(uint8_t)(quotient >> 8), (uint8_t)quotient, quotient);
+
+	cursor = (uint16_t)(wStringBuffer_ADDR + 5u);
+	if (remainder != 0u) {
+		gb_write8(cursor, SYM_DOT);
+		gb_write8((uint16_t)(cursor + 1u), (uint8_t)(remainder + SYM_0));
+		cursor = (uint16_t)(cursor + 2u);
+	}
+	gb_write8(cursor, 0u);
+
+	/* `ld c, b` inside BCCoordToBGMap0Address leaves the x coordinate in c,
+	 * and nothing after it reloads c, so that is the c this routine returns. */
+	destination = BCCoordToBGMap0Address(entry_b, entry_c);
+	out_c = entry_b;
+
+	source = wStringBuffer_ADDR;
+	while (gb_read8(source) == 0u)
+		source++;
+
+	length = 0u;
+	scan = source;
+	while (gb_read8(scan) != 0u) {
+		scan++;
+		length++;
+	}
+
+	/* SafeCopyDataHLtoDE advances hl past the bytes it copied; the ROM returns
+	 * that advanced pointer. */
+	SafeCopyDataHLtoDE(&source, &destination, length);
+
+	/* `ld a, b` / `add d`: string length plus the x coordinate, with the flags
+	 * of that add. */
+	sum = (uint8_t)(length + entry_b);
+	f = (uint8_t)((sum == 0u ? 0x80u : 0u)
+		| (((length & 0x0Fu) + (entry_b & 0x0Fu)) > 0x0Fu ? 0x20u : 0u)
+		| (((uint16_t)length + (uint16_t)entry_b) > 0xFFu ? 0x10u : 0u));
+
+	return (PrintPokemonCardWeightResult){sum, f, length, out_c, sum, entry_c, source};
+}
+/* <<< factory PrintPokemonCardWeight */

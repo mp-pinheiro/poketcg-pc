@@ -646,4 +646,12 @@ IncreaseScriptPointerResult ScriptCommand_ShowCardReceivedScreen(uint8_t c);
  * not carry them out. */
 IncreaseScriptPointerResult ScriptCommand_ShowMedalReceivedScreen(uint8_t c);
 /* <<< factory ScriptCommand_ShowMedalReceivedScreen */
+/* >>> factory ScriptCommand_GiveBoosterPacks */
+/* scripting.asm:936. b and c are the two booster ids the script command was
+ * given inline; a third is read from the script args only when b is not
+ * NO_BOOSTER. The tail `jp IncreaseScriptPointerBy4` makes that helper's
+ * {a, f, c} the exit contract. b/d/e/hl are not reported: neither
+ * GiveBoosterPack nor ReturnToOverworldNoCallback carries them out. */
+IncreaseScriptPointerResult ScriptCommand_GiveBoosterPacks(uint8_t b, uint8_t c);
+/* <<< factory ScriptCommand_GiveBoosterPacks */
 #endif

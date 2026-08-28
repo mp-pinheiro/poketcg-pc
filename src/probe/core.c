@@ -2614,6 +2614,20 @@ static void adapt_AITryUseAttack(ProbeState *s)
 }
 /* <<< factory AITryUseAttack */
 
+/* >>> factory PrintPokemonCardWeight */
+static void adapt_PrintPokemonCardWeight(ProbeState *s)
+{
+	PrintPokemonCardWeightResult r = PrintPokemonCardWeight(s->b, s->c, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory PrintPokemonCardWeight */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2926,5 +2940,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OppAction_PlayBasicPokemonCard", adapt_OppAction_PlayBasicPokemonCard },
 	{ "OppAction_PlayEnergyCard", adapt_OppAction_PlayEnergyCard },
 	{ "AITryUseAttack", adapt_AITryUseAttack },
+	{ "PrintPokemonCardWeight", adapt_PrintPokemonCardWeight },
 	{ NULL, NULL },
 };

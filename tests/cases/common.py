@@ -441,6 +441,45 @@ CASES["ShowPromotionalCardScreen"] = [
 ]
 # <<< factory ShowPromotionalCardScreen
 
+# >>> factory RequestToPrintCard
+# The reference never returns from here: the farcall reaches
+# _RequestToPrintCard, whose Func_19f87 path reaches
+# TryInitPrinterCommunications, and that first packet parks in
+# SendPrinterPacket's .wait_printer_packet_transmission DoFrame loop ($315D)
+# because no printer hardware raises the serial interrupt that advances
+# wPrinterPacketSequence. Completion is therefore declared pre-ret at that loop
+# head in the factory-completion block at the end of this module, exactly as the
+# landed _RequestToPrintCard cases in tests/cases/printer.py and the landed
+# PreparePrinterConnection wrapper cases here do. That is the genuine spin, not
+# a small budget, so the generous budgets below only cover the reference's walk
+# down to the loop head.
+#
+# Registers are mid-flight on the reference at that stop, so nothing is
+# compared. The observed bytes are wLoadedCard1's type/gfx/name/HP/level, which
+# LoadCardDataToBuffer1_FromCardID writes from the entry card id at the callee's
+# very first instruction and which nothing on either side rewrites afterwards.
+# The seeded serial bytes agree too: $81 is the device number the port's
+# synchronous packet engine writes straight back, and a zero status keeps it off
+# every error path. wLCDC ($CABB) starts clear so the text box before EnableLCD
+# stays out of WaitForVBlank's halt; CopyDMAFunction installs hDMAFunction for
+# the frames that elapse after EnableLCD.
+CONTRACT["RequestToPrintCard"] = {"compare": (), "preserve": ()}
+CASES["RequestToPrintCard"] = [
+    {"a": 0x01,
+     "wram": {0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": 0x00,
+     "read": {0xCC24: 5, 0xCC2C: 1, 0xCC5D: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON,
+         wram={0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         keys=0x00,
+         read={0xCC24: 5, 0xCC2C: 1, 0xCC5D: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory RequestToPrintCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -627,3 +666,22 @@ MUTATIONS["ShowPromotionalCardScreen"] = {
 for _record in SCHEMA2_CASES["ShowPromotionalCardScreen"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x378A}
 # <<< factory-completion ShowPromotionalCardScreen
+# >>> factory-mutation RequestToPrintCard
+MUTATIONS["RequestToPrintCard"] = {
+    "source_symbol": "RequestToPrintCard",
+    "before": "uint8_t RequestToPrintCard(uint8_t a)\n{\n\treturn _RequestToPrintCard(a).f;",
+    "after": "uint8_t RequestToPrintCard(uint8_t a)\n{\n\treturn _RequestToPrintCard((uint8_t)(a + 1u)).f;",
+    "case_ids": ["RequestToPrintCard-0", "RequestToPrintCard-1"],
+}
+# <<< factory-mutation RequestToPrintCard
+# >>> factory-completion RequestToPrintCard
+# $315D is SendPrinterPacket.wait_printer_packet_transmission (home/printer.asm,
+# ROM0, so the capture hook is bank-independent), the DoFrame loop the reference
+# can never leave without a printer answering on the serial line. The farcall
+# wrapper itself lives in another bank, so the ROM0 stop pc is what makes this
+# work, exactly as it does for the landed PreparePrinterConnection wrapper.
+# legacy_to_schema always emits completion "return", so the split is applied
+# after migration.
+for _record in SCHEMA2_CASES["RequestToPrintCard"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+# <<< factory-completion RequestToPrintCard

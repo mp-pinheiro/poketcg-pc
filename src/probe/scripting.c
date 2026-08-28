@@ -1318,6 +1318,16 @@ static void adapt_ScriptCommand_ShowMedalReceivedScreen(ProbeState *s)
 }
 /* <<< factory ScriptCommand_ShowMedalReceivedScreen */
 
+/* >>> factory ScriptCommand_GiveBoosterPacks */
+static void adapt_ScriptCommand_GiveBoosterPacks(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = ScriptCommand_GiveBoosterPacks(s->b, s->c);
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_GiveBoosterPacks */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1447,5 +1457,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_GiveOneOfEachTrainerBooster", adapt_ScriptCommand_GiveOneOfEachTrainerBooster },
 	{ "ScriptCommand_ShowCardReceivedScreen", adapt_ScriptCommand_ShowCardReceivedScreen },
 	{ "ScriptCommand_ShowMedalReceivedScreen", adapt_ScriptCommand_ShowMedalReceivedScreen },
+	{ "ScriptCommand_GiveBoosterPacks", adapt_ScriptCommand_GiveBoosterPacks },
 	{ NULL, NULL },
 };

@@ -122,4 +122,11 @@ void PrintDeckConfiguration(uint8_t a);
 /* >>> factory ShowPromotionalCardScreen */
 void ShowPromotionalCardScreen(uint8_t a);
 /* <<< factory ShowPromotionalCardScreen */
+/* >>> factory RequestToPrintCard */
+/* RequestToPrintCard returns the farcalled callee's carry alone. It is a bare
+ * uint8_t instead of a result struct because src/home/common.c also includes
+ * home/printer.h, which already owns the name RequestToPrintCardResult; a
+ * second anonymous-struct typedef under that name would be a redefinition. */
+uint8_t RequestToPrintCard(uint8_t a);
+/* <<< factory RequestToPrintCard */
 #endif /* POKETCG_HOME_COMMON_H */
