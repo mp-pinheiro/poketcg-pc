@@ -658,6 +658,15 @@ static void adapt_AIPlay_EnergyRemoval(ProbeState *s)
 }
 /* <<< factory AIPlay_EnergyRemoval */
 
+/* >>> factory AIDecide_Potion_Phase10 */
+static void adapt_AIDecide_Potion_Phase10(ProbeState *s)
+{
+	AIDecidePotionPhase10Result result = AIDecide_Potion_Phase10();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory AIDecide_Potion_Phase10 */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -738,5 +747,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIPlay_ProfessorOak", adapt_AIPlay_ProfessorOak },
 	{ "AIPlay_PokemonTrader", adapt_AIPlay_PokemonTrader },
 	{ "AIPlay_EnergyRemoval", adapt_AIPlay_EnergyRemoval },
+	{ "AIDecide_Potion_Phase10", adapt_AIDecide_Potion_Phase10 },
 	{ NULL, NULL },
 };

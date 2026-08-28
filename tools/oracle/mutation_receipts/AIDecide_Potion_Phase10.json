@@ -1,0 +1,9 @@
+{
+  "fn": "AIDecide_Potion_Phase10",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIDecide_Potion_Phase10\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49864\": \"00\", \"52259\": \"00\", \"52422\": \"01\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_Potion_Phase10\", \"mismatches\": {\"bus\": {\"address\": 65437, \"reference\": \"000001c200\", \"native\": \"000001c201\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[49851, 1], [49864, 1], [52259, 1], [52422, 1], [65431, 1], [65437, 1]]}}}\n",
+  "restored": "{\"fn\": \"AIDecide_Potion_Phase10\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49864\": \"00\", \"52259\": \"00\", \"52422\": \"01\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

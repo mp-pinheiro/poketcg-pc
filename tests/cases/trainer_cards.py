@@ -1176,6 +1176,14 @@ CASES["AIPlay_EnergyRemoval"] = [
 ]
 # <<< factory AIPlay_EnergyRemoval
 
+# >>> factory AIDecide_Potion_Phase10
+CONTRACT["AIDecide_Potion_Phase10"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_Potion_Phase10"] = [
+    dict(wram={0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC2C8: b"\x00", 0xCC23: b"\x00"}, read={0xFF9D: 1, 0xCCC6: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC2C8: b"\x00", 0xCC23: b"\x00"}, read={0xFF9D: 1, 0xCCC6: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory AIDecide_Potion_Phase10
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1573,3 +1581,11 @@ MUTATIONS["AIPlay_EnergyRemoval"] = {
     "case_ids": ["AIPlay_EnergyRemoval-0", "AIPlay_EnergyRemoval-1", "AIPlay_EnergyRemoval-2"]
 }
 # <<< factory-mutation AIPlay_EnergyRemoval
+# >>> factory-mutation AIDecide_Potion_Phase10
+MUTATIONS["AIDecide_Potion_Phase10"] = {
+    "source_symbol": "AIDecide_Potion_Phase10",
+    "before": "AIDecidePotionPhase10Result AIDecide_Potion_Phase10(void)\n{\n\thTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;",
+    "after": "AIDecidePotionPhase10Result AIDecide_Potion_Phase10(void)\n{\n\thTempPlayAreaLocation_ff9d = PLAY_AREA_BENCH_1;",
+    "case_ids": ["AIDecide_Potion_Phase10-0"],
+}
+# <<< factory-mutation AIDecide_Potion_Phase10

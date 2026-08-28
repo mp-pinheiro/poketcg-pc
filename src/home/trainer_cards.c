@@ -3228,3 +3228,67 @@ AIDecideResult AIPlay_EnergyRemoval(void)
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_EnergyRemoval */
+
+/* >>> factory AIDecide_Potion_Phase10 */
+AIDecidePotionPhase10Result AIDecide_Potion_Phase10(void)
+{
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	uint8_t e;
+	uint8_t prizes;
+	if ((ko.f & 0x10u) != 0u) {
+		uint8_t d = ko.a;
+		uint8_t hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a;
+		uint8_t damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA).a;
+		if (damage > 20u) damage = 20u;
+		uint8_t total = (uint8_t)(hp + damage);
+		uint8_t remaining = (uint8_t)(total - d);
+		if (total >= d && remaining != 0u)
+			return (AIDecidePotionPhase10Result){remaining, 0u};
+		SwapTurn();
+		prizes = CountPrizes();
+		SwapTurn();
+		e = (uint8_t)(prizes - 1u) == 0u ? PLAY_AREA_ARENA : PLAY_AREA_BENCH_1;
+	} else {
+		e = PLAY_AREA_ARENA;
+	}
+	for (;;) {
+		uint8_t card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e)).a;
+		if (card == 0xffu)
+			return (AIDecidePotionPhase10Result){0xffu, 0xc0u};
+		wSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;
+		CheckIfSelectedAttackIsUnusableResult unusable = CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, e, 0u, 0u);
+		if ((unusable.f & 0x10u) == 0u && (CheckLoadedAttackFlag(ATTACK_FLAG3_ADDRESS | BOOST_IF_TAKEN_DAMAGE_F).f & 0x10u) != 0u) {
+			e++;
+			continue;
+		}
+		wSelectedAttack = SECOND_ATTACK;
+		unusable = CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, e, 0u, 0u);
+		if ((unusable.f & 0x10u) == 0u && (CheckLoadedAttackFlag(ATTACK_FLAG3_ADDRESS | BOOST_IF_TAKEN_DAMAGE_F).f & 0x10u) != 0u) {
+			e++;
+			continue;
+		}
+		CardDamageResult card_damage = GetCardDamageAndMaxHP(e);
+		if (card_damage.a < 20u) {
+			e++;
+			continue;
+		}
+		if (e != PLAY_AREA_ARENA) {
+			SwapTurn();
+			prizes = CountPrizes();
+			SwapTurn();
+			if ((uint8_t)(prizes - 1u) != 0u) {
+				uint8_t chance = Random(10u);
+				if (chance < 3u)
+					return (AIDecidePotionPhase10Result){chance, (uint8_t)(chance == 0u ? 0x80u : 0u)};
+			}
+		}
+		if (e == PLAY_AREA_ARENA) {
+			AICheckIfAttackIsHighRecoilResult recoil = AICheckIfAttackIsHighRecoil();
+			if ((recoil.f & 0x10u) != 0u)
+				return (AIDecidePotionPhase10Result){e, 0x80u};
+		}
+		return (AIDecidePotionPhase10Result){e, 0x10u};
+	}
+}
+/* <<< factory AIDecide_Potion_Phase10 */

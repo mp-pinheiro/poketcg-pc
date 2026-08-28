@@ -315,4 +315,8 @@ AIMakeDecisionResult AIPlay_PokemonTrader(void);
 /* >>> factory AIPlay_EnergyRemoval */
 AIDecideResult AIPlay_EnergyRemoval(void);
 /* <<< factory AIPlay_EnergyRemoval */
+/* >>> factory AIDecide_Potion_Phase10 */
+typedef struct { uint8_t a; uint8_t f; } AIDecidePotionPhase10Result;
+AIDecidePotionPhase10Result AIDecide_Potion_Phase10(void);
+/* <<< factory AIDecide_Potion_Phase10 */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */
