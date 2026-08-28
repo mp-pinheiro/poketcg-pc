@@ -1,0 +1,9 @@
+{
+  "fn": "HandleAIEnergyTrans",
+  "case": "tests/cases/pkmn_powers.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleAIEnergyTrans\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"0000c5\", \"50107\": \"0001c5\", \"50176\": \"27\", \"50304\": \"27\", \"50432\": \"ffff\", \"52742\": \"09\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleAIEnergyTrans\", \"mismatches\": {\"bus\": {\"address\": 52742, \"reference\": \"2727ffff09c2\", \"native\": \"2727ffff0ac2\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[49851, 3], [50107, 3], [50176, 1], [50304, 1], [50432, 2], [52742, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandleAIEnergyTrans\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"0000c5\", \"50107\": \"0001c5\", \"50176\": \"27\", \"50304\": \"27\", \"50432\": \"ffff\", \"52742\": \"09\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

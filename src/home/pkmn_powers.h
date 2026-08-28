@@ -44,4 +44,8 @@ HandleAICowardiceResult HandleAICowardice(void);
 typedef struct { uint8_t a; uint8_t f; } AIEnergyTransTransferEnergyToBenchResult;
 AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void);
 /* <<< factory AIEnergyTransTransferEnergyToBench */
+/* >>> factory HandleAIEnergyTrans */
+typedef struct { uint8_t a; uint8_t f; } HandleAIEnergyTransResult;
+HandleAIEnergyTransResult HandleAIEnergyTrans(uint8_t a);
+/* <<< factory HandleAIEnergyTrans */
 #endif /* POKETCG_HOME_PKMN_POWERS_H */

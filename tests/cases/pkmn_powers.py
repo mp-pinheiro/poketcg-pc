@@ -78,6 +78,8 @@ hTemp_ffa0 = 0xFFA0
 wce08 = 0xCE08
 
 hTempPlayAreaLocation_ff9d = 0xFF9D
+
+wAINumberOfEnergyTransCards = 0xCE06
 # <<< factory-cases-statics
 
 # >>> factory HandleAIDamageSwap
@@ -136,6 +138,15 @@ CASES["AIEnergyTransTransferEnergyToBench"] = [
 ]
 # <<< factory AIEnergyTransTransferEnergyToBench
 
+# >>> factory HandleAIEnergyTrans
+# The first carry exit is fully seeded; deeper Venusaur/Muk and transfer paths drive live duel state and are omitted because they are not reproducibly exitable from this schema.
+CONTRACT["HandleAIEnergyTrans"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["HandleAIEnergyTrans"] = [
+	{"a": 0x09, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\x00\xC5", 0xC3BC: b"\x01\xC5", 0xC400: b"\x27", 0xC480: b"\x27", 0xC500: b"\xFF", 0xC501: b"\xFF"}, "read": {wAINumberOfEnergyTransCards: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+	dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\x00\xC5", 0xC3BC: b"\x01\xC5", 0xC400: b"\x27", 0xC480: b"\x27", 0xC500: b"\xFF", 0xC501: b"\xFF"}, read={wAINumberOfEnergyTransCards: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory HandleAIEnergyTrans
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -190,3 +201,6 @@ MUTATIONS["HandleAICowardice"] = {"source_symbol": "HandleAICowardice", "before"
 # >>> factory-mutation AIEnergyTransTransferEnergyToBench
 MUTATIONS["AIEnergyTransTransferEnergyToBench"] = {"source_symbol": "AIEnergyTransTransferEnergyToBench", "before": "AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void)\n{\n\thTempPlayAreaLocation_ff9d = 0u;", "after": "AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["AIEnergyTransTransferEnergyToBench-0", "AIEnergyTransTransferEnergyToBench-1"]}
 # <<< factory-mutation AIEnergyTransTransferEnergyToBench
+# >>> factory-mutation HandleAIEnergyTrans
+MUTATIONS["HandleAIEnergyTrans"] = {"source_symbol": "HandleAIEnergyTrans", "before": "HandleAIEnergyTransResult HandleAIEnergyTrans(uint8_t a)\n{\n\twAINumberOfEnergyTransCards = a;", "after": "HandleAIEnergyTransResult HandleAIEnergyTrans(uint8_t a)\n{\n\twAINumberOfEnergyTransCards = (uint8_t)(a + 1u);", "case_ids": ["HandleAIEnergyTrans-0", "HandleAIEnergyTrans-1"]}
+# <<< factory-mutation HandleAIEnergyTrans

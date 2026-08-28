@@ -93,6 +93,15 @@ static void adapt_AIEnergyTransTransferEnergyToBench(ProbeState *s)
 }
 /* <<< factory AIEnergyTransTransferEnergyToBench */
 
+/* >>> factory HandleAIEnergyTrans */
+static void adapt_HandleAIEnergyTrans(ProbeState *s)
+{
+	HandleAIEnergyTransResult r = HandleAIEnergyTrans(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory HandleAIEnergyTrans */
+
 const ProbeEntry probe_entries_pkmn_powers[] = {
 	{ "HandleAIShift", adapt_HandleAIShift },
 	{ "HandleAIPeek", adapt_HandleAIPeek },
@@ -104,5 +113,6 @@ const ProbeEntry probe_entries_pkmn_powers[] = {
 	{ "HandleAIGoGoRainDanceEnergy", adapt_HandleAIGoGoRainDanceEnergy },
 	{ "HandleAICowardice", adapt_HandleAICowardice },
 	{ "AIEnergyTransTransferEnergyToBench", adapt_AIEnergyTransTransferEnergyToBench },
+	{ "HandleAIEnergyTrans", adapt_HandleAIEnergyTrans },
 	{ NULL, NULL },
 };

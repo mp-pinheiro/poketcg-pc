@@ -120,6 +120,9 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 
 #include "generated/hram.h"
 #include "home/core.h"
+
+#include "home/core.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory HandleAIShift */
@@ -541,3 +544,14 @@ AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void
 	return (AIEnergyTransTransferEnergyToBenchResult){knock_out.a, knock_out.f};
 }
 /* <<< factory AIEnergyTransTransferEnergyToBench */
+
+/* >>> factory HandleAIEnergyTrans */
+HandleAIEnergyTransResult HandleAIEnergyTrans(uint8_t a)
+{
+	wAINumberOfEnergyTransCards = a;
+	AIChooseRandomlyNotToDoActionResult skip = AIChooseRandomlyNotToDoAction();
+	if (skip.f & 0x10u)
+		return (HandleAIEnergyTransResult){skip.a, skip.f};
+	return (HandleAIEnergyTransResult){skip.a, skip.f};
+}
+/* <<< factory HandleAIEnergyTrans */
