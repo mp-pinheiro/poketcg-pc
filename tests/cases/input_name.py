@@ -458,6 +458,25 @@ CASES["InputPlayerName"] = [
 ]
 # <<< factory InputPlayerName
 
+# >>> factory InputDeckName
+CONTRACT["InputDeckName"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["InputDeckName"] = [
+    {"a": 0x14, "b": 0x04, "c": 0x01, "d": 0xC1, "e": 0x00, "hl": 0x0000,
+     "rom_bank": 6, "keys": 0x41,
+     "wram": {0xC100: b"\x61\x00" + b"\x00" * 19, 0xFF90: b"\x00", 0xD00A: IPN_PARK},
+     "setup": IPN_SETUP,
+     "read": {0xCAB6: 1, 0xCEA4: 1, 0xCEA9: 1, 0xCEAA: 2, 0xCFE7: 9,
+               0xCFFF: 1, 0xD000: 10, 0xC100: 21},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, a=0x14, hl=0x0000, rom_bank=6, keys=0x41,
+         wram={0xDDEE: b"\x00" * 21, 0xFF90: b"\x00", 0xD00A: IPN_PARK},
+         setup=IPN_SETUP,
+         read={0xCAB6: 1, 0xCEA4: 1, 0xCEA9: 1, 0xCEAA: 2, 0xCFE7: 9,
+               0xCFFF: 1, 0xD000: 10, 0xDDEE: 21},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory InputDeckName
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -609,3 +628,15 @@ for _rec in SCHEMA2_CASES["InputPlayerName"]:
 # >>> factory-mutation DeckNamingScreen_CheckButtonState
 MUTATIONS["DeckNamingScreen_CheckButtonState"] = {"source_symbol": "DeckNamingScreen_CheckButtonState", "before": "\t\tif (d_reg == 2u)", "after": "\t\tif (d_reg == 0x41u)", "case_ids": ["DeckNamingScreen_CheckButtonState-0"]}
 # <<< factory-mutation DeckNamingScreen_CheckButtonState
+# >>> factory-mutation InputDeckName
+MUTATIONS["InputDeckName"] = {
+    "source_symbol": "InputDeckName",
+    "before": "FinalizeInputNameResult InputDeckName(uint8_t a, uint8_t b, uint8_t c,\n\tuint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint16_t source = (uint16_t)(((uint16_t)d << 8) | e);",
+    "after": "FinalizeInputNameResult InputDeckName(uint8_t a, uint8_t b, uint8_t c,\n\tuint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint16_t source = (uint16_t)(((uint16_t)d << 8) | (uint8_t)(e + 1u));",
+    "case_ids": ["InputDeckName-0", "InputDeckName-1"],
+}
+# <<< factory-mutation InputDeckName
+# >>> factory-completion InputDeckName
+for _rec in SCHEMA2_CASES["InputDeckName"]:
+    _rec["completion"] = {"mode": "pre-ret", "pc": 0x6E1B}
+# <<< factory-completion InputDeckName

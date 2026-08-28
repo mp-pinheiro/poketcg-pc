@@ -1,0 +1,9 @@
+{
+  "fn": "ThunderstormEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ThunderstormEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50159\": \"01\", \"65431\": \"c2\", \"65440\": \"00ff\", \"65441\": \"ff\", \"65458\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ThunderstormEffect\", \"mismatches\": {\"bus\": {\"address\": 65458, \"reference\": \"01c200ff02\", \"native\": \"01c200ff01\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[50159, 1], [65431, 1], [65440, 2], [65458, 1]]}}}\n",
+  "restored": "{\"fn\": \"ThunderstormEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50159\": \"01\", \"65431\": \"c2\", \"65440\": \"00ff\", \"65441\": \"ff\", \"65458\": \"02\"}}, \"status\": \"PASS\"}\n"
+}

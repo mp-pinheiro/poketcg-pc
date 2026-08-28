@@ -6895,6 +6895,16 @@ CASES["VenomPowder_PoisonConfusion50PercentEffect"] = [
 ]
 # <<< factory VenomPowder_PoisonConfusion50PercentEffect
 
+# >>> factory ThunderstormEffect
+CONTRACT["ThunderstormEffect"] = {"compare": (), "preserve": ()}
+CASES["ThunderstormEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x01", 0xFFA1: b"\xFF"},
+     "read": {0xFFB2: 1, 0xFFA0: 1, 0xFFA1: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3EF: b"\x01", 0xFFA1: b"\xFF"},
+         read={0xFFB2: 1, 0xFFA0: 1, 0xFFA1: 1}),
+]
+# <<< factory ThunderstormEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9739,3 +9749,6 @@ MUTATIONS["PidgeottoMirrorMove_InitialEffect2"] = {"source_symbol": "PidgeottoMi
 # >>> factory-mutation VenomPowder_PoisonConfusion50PercentEffect
 MUTATIONS["VenomPowder_PoisonConfusion50PercentEffect"] = {"source_symbol": "VenomPowder_PoisonConfusion50PercentEffect", "before": "uint8_t VenomPowder_PoisonConfusion50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(VenomPowderCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;", "after": "uint8_t VenomPowder_PoisonConfusion50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(VenomPowderCheckText, 0u);\n\tif ((toss.f & 0x10u) != 0u)\n\t\treturn toss.f;", "case_ids": ["VenomPowder_PoisonConfusion50PercentEffect-0", "VenomPowder_PoisonConfusion50PercentEffect-1"]}
 # <<< factory-mutation VenomPowder_PoisonConfusion50PercentEffect
+# >>> factory-mutation ThunderstormEffect
+MUTATIONS["ThunderstormEffect"] = {"source_symbol": "ThunderstormEffect", "before": "void ThunderstormEffect(void)\n{\n\thCurSelectionItem = 1u;", "after": "void ThunderstormEffect(void)\n{\n\thCurSelectionItem = 0u;", "case_ids": ["ThunderstormEffect-0", "ThunderstormEffect-1"]}
+# <<< factory-mutation ThunderstormEffect

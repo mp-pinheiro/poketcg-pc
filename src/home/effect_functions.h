@@ -1999,6 +1999,9 @@ PlayerPickAttackForAmnesiaResult PidgeottoMirrorMove_InitialEffect2(void);
 /* >>> factory VenomPowder_PoisonConfusion50PercentEffect */
 uint8_t VenomPowder_PoisonConfusion50PercentEffect(void);
 /* <<< factory VenomPowder_PoisonConfusion50PercentEffect */
+/* >>> factory ThunderstormEffect */
+void ThunderstormEffect(void);
+/* <<< factory ThunderstormEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

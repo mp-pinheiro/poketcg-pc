@@ -4870,6 +4870,13 @@ static void adapt_VenomPowder_PoisonConfusion50PercentEffect(ProbeState *s)
 }
 /* <<< factory VenomPowder_PoisonConfusion50PercentEffect */
 
+/* >>> factory ThunderstormEffect */
+static void adapt_ThunderstormEffect(ProbeState *s)
+{
+	ThunderstormEffect();
+}
+/* <<< factory ThunderstormEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5461,5 +5468,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SpearowMirrorMove_InitialEffect2", adapt_SpearowMirrorMove_InitialEffect2 },
 	{ "PidgeottoMirrorMove_InitialEffect2", adapt_PidgeottoMirrorMove_InitialEffect2 },
 	{ "VenomPowder_PoisonConfusion50PercentEffect", adapt_VenomPowder_PoisonConfusion50PercentEffect },
+	{ "ThunderstormEffect", adapt_ThunderstormEffect },
 	{ NULL, NULL },
 };

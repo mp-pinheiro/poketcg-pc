@@ -268,6 +268,21 @@ static void adapt_InputPlayerName(ProbeState *s)
 }
 /* <<< factory InputPlayerName */
 
+/* >>> factory InputDeckName */
+static void adapt_InputDeckName(ProbeState *s)
+{
+	FinalizeInputNameResult result =
+		InputDeckName(s->a, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory InputDeckName */
+
 const ProbeEntry probe_entries_input_name[] = {
 	{ "DeckNamingScreen_GetCharInfoFromPos", adapt_DeckNamingScreen_GetCharInfoFromPos },
 	{ "ClearMemory_Bank6", adapt_ClearMemory_Bank6 },
@@ -296,5 +311,6 @@ const ProbeEntry probe_entries_input_name[] = {
 	{ "InitializeInputName", adapt_InitializeInputName },
 	{ "FinalizeInputName", adapt_FinalizeInputName },
 	{ "InputPlayerName", adapt_InputPlayerName },
+	{ "InputDeckName", adapt_InputDeckName },
 	{ NULL, NULL },
 };

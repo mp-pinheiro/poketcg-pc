@@ -1255,6 +1255,16 @@ void BankswitchROM(uint8_t bank);
 #define DamageToOppBenchIfHeadsDamageToYoursIfTailsText 0x00eau
 
 #define VenomPowderCheckText 0x00e4u
+
+#include "home/math.h"
+#include "home/print_text.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define PLAY_AREA_BENCH_1 0x01u
+#define BenchText 0x004du
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -9969,3 +9979,68 @@ uint8_t VenomPowder_PoisonConfusion50PercentEffect(void)
 	return confusion.f;
 }
 /* <<< factory VenomPowder_PoisonConfusion50PercentEffect */
+
+/* >>> factory ThunderstormEffect */
+void ThunderstormEffect(void)
+{
+	hCurSelectionItem = 1u;
+	SwapTurn();
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	uint8_t tails = 0u;
+	uint8_t bench = 0u;
+	for (;;) {
+		++bench;
+		count = (uint8_t)(count - 1u);
+		if (count == 0u)
+			break;
+
+		CopyTextResult text = CopyText(BenchText, wDefaultText_ADDR);
+		uint16_t de = (uint16_t)(((uint16_t)text.d << 8) | text.e);
+		gb_write8(de, (uint8_t)('0' + bench));
+		++de;
+		gb_write8(de, (uint8_t)' ');
+		++de;
+
+		DuelistVarResult arena = GetTurnDuelistVariable(
+			(uint8_t)(DUELVARS_ARENA_CARD + bench));
+		(void)LoadCardDataToBuffer2_FromDeckIndex(arena.a);
+		uint16_t name = (uint16_t)(gb_read8(wLoadedCard2Name_ADDR) |
+			((uint16_t)gb_read8((uint16_t)(wLoadedCard2Name_ADDR + 1u)) << 8));
+		(void)CopyText(name, de);
+		wDuelDisplayedScreen = 0u;
+
+		SwapTurn();
+		TossCoin_BankBResult toss = TossCoin_BankB(0u, 0u);
+		SwapTurn();
+		uint16_t position = GetNextPositionInTempList();
+		gb_write8(position, toss.a);
+		if ((toss.f & 0x10u) == 0u)
+			++tails;
+	}
+
+	uint16_t position = GetNextPositionInTempList();
+	gb_write8(position, 0xffu);
+	hTemp_ffa0 = tails;
+	ResetAnimationQueue();
+	SwapTurn();
+
+	if (tails != 0u) {
+		uint8_t damage = ATimes10(tails);
+		(void)DealRecoilDamageToSelf(damage, 0u, 0u, 0u);
+	}
+
+	SwapTurn();
+	uint16_t hl = hTempPlayAreaLocation_ffa1_ADDR;
+	uint8_t location = PLAY_AREA_BENCH_1;
+	for (;;) {
+		uint8_t result = gb_read8(hl++);
+		if (result == 0xffu)
+			break;
+		if (result != 0u)
+			(void)DealDamageToPlayAreaPokemon_RegularAnim(location, 20u, hl);
+		++location;
+	}
+
+	SwapTurn();
+}
+/* <<< factory ThunderstormEffect */

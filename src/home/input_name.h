@@ -115,4 +115,8 @@ FinalizeInputNameResult FinalizeInputName(uint8_t a, uint8_t f, uint8_t b, uint8
  * already typedef'd above. */
 FinalizeInputNameResult InputPlayerName(uint16_t hl);
 /* <<< factory InputPlayerName */
+/* >>> factory InputDeckName */
+FinalizeInputNameResult InputDeckName(uint8_t a, uint8_t b, uint8_t c,
+	uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory InputDeckName */
 #endif /* POKETCG_HOME_INPUT_NAME_H */

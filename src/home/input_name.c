@@ -968,3 +968,80 @@ FinalizeInputNameResult InputPlayerName(uint16_t hl)
 	}
 }
 /* <<< factory InputPlayerName */
+
+/* >>> factory InputDeckName */
+FinalizeInputNameResult InputDeckName(uint8_t a, uint8_t b, uint8_t c,
+	uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint16_t source = (uint16_t)(((uint16_t)d << 8) | e);
+	if (gb_read8(source) == 0u)
+		gb_write8(source, 0x06u);
+
+	(void)InitializeInputName((uint8_t)(a + 1u), b, c, d, e, hl);
+	Set_OBJ_8x8();
+	wTileMapFill = 0u;
+	EmptyScreen();
+	ZeroObjectPositions();
+	wVBlankOAMCopyToggle = 1u;
+	(void)LoadSymbolsFont();
+	(void)SetupText(0x38u, 0xBFu);
+	(void)LoadHalfWidthTextCursorTile(c);
+	wd009 = 0u;
+	DrawDeckNamingScreenBG();
+	wNamingScreenCursorX = 0u;
+	wNamingScreenCursorY = 0u;
+	wNamingScreenNumColumns = 9u;
+	wNamingScreenKeyboardHeight = 7u;
+	wVisibleCursorTile = 0x0Fu;
+	wInvisibleCursorTile = 0u;
+
+	for (;;) {
+		wVBlankOAMCopyToggle = 1u;
+		DoFrame();
+		(void)UpdateRNGSources();
+
+		if ((hDPadHeld & 0x08u) != 0u) {
+			PlaySFXConfirmOrCancel_Bank6(0x01u);
+			(void)DeckNamingScreen_DrawInvisibleCursor(0u, 0u, 0u, 0u, 0u, 0u);
+			wNamingScreenCursorX = 6u;
+			wNamingScreenCursorY = 0u;
+			(void)DeckNamingScreen_DrawVisibleCursor(0u, 0u, 0u, 0u, 0u, 0u);
+			continue;
+		}
+
+		DeckNamingScreen_DrawCursorResult button =
+			DeckNamingScreen_CheckButtonState();
+		if ((button.f & 0x10u) == 0u)
+			continue;
+		if (button.a == 0xFFu) {
+			uint8_t length = wNamingScreenBufferLength;
+			if (length < 2u)
+				continue;
+			gb_write8((uint16_t)(wNamingScreenBuffer_ADDR + length - 1u), 0u);
+			wNamingScreenBufferLength = (uint8_t)(length - 1u);
+			PrintDeckNameFromInput();
+			continue;
+		}
+
+		DeckNamingScreen_ProcessInputResult input =
+			DeckNamingScreen_ProcessInput();
+		if ((input.f & 0x10u) == 0u)
+			continue;
+
+		FinalizeInputNameResult finalized =
+			FinalizeInputName(input.a, input.f, 0u, 0u, 0u, 0u, 0u);
+		uint16_t destination =
+			(uint16_t)(((uint16_t)gb_read8(wNamingScreenDestPointer_ADDR + 1u) << 8) |
+			           gb_read8(wNamingScreenDestPointer_ADDR));
+		uint16_t next = (uint16_t)(destination + 1u);
+		uint8_t next_byte = gb_read8(next);
+		if (next_byte == 0u) {
+			gb_write8(destination, 0u);
+			return (FinalizeInputNameResult){0u, 0x80u, finalized.b,
+				finalized.c, finalized.d, finalized.e, destination};
+		}
+		return (FinalizeInputNameResult){next_byte, 0u, finalized.b,
+			finalized.c, finalized.d, finalized.e, next};
+	}
+}
+/* <<< factory InputDeckName */
