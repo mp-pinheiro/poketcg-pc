@@ -315,7 +315,22 @@ def _probe_alias(routine: str) -> str | None:
     return None
 
 
-def pick_example(asm: str) -> str:
+def pick_example(asm: str, basename: str | None = None) -> str:
+    """Basename whose landed quartet is shown to the generator as the exemplar.
+
+    A routine's OWN file is the best teacher: it already carries the exact
+    signature shape, contract, seed recipe and mutation anchor that file's
+    verifier enforces. Showing an unrelated file instead is a measured cost --
+    `trainer_cards` packets were shown `card_data`, so generators invented
+    `AIMakeDecisionResult` header declarations that basename cannot compile and
+    case rows missing its SETUP/keys recipe, burning generations on routines
+    whose landed siblings demonstrate both. The keyword heuristics below remain
+    the fallback for a basename with no instructive landed routine yet.
+    """
+    if basename:
+        import prompt  # lazy: keeps packet importable without the renderer
+        if prompt.has_worked_example(basename):
+            return basename
     if "SetupText" in asm or "ProcessText" in asm:
         return "menus"
     if re.search(r"EnableSRAM|DisableSRAM|\bsGfx|\$[AB][0-9A-Fa-f]{3}\b", asm):
@@ -603,7 +618,7 @@ def build_packets(
                 "constants": constants_for("\n".join(packet_asm), constants_table),
                 "symbols": symbols_for("\n".join(packet_asm), symbol_table),
                 "text_ids": text_ids_for("\n".join(packet_asm), text_table),
-                "example": pick_example("\n".join(packet_asm)),
+                "example": pick_example("\n".join(packet_asm), basename),
                 "existing": existing,
                 "case_appendability": case_appendability,
                 "bytes": sum(r["size"] for r in routines),

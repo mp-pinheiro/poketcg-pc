@@ -28,8 +28,8 @@ def _marker_body(lines: list[str], open_mark: str, close_mark: str) -> str:
     return "\n".join(lines[start + 1:end]).rstrip()
 
 
-def _worked_case_example(basename: str) -> tuple[str, str] | None:
-    """Verbatim cases and mutation marker bodies of one landed routine.
+def _scan_basename(name: str) -> tuple[str, str] | None:
+    """Best qualifying landed cases+mutation pair inside ONE case module.
 
     Surgery brackets every factory-written routine with markers, so the text
     lifted here compiled, passed the schema audit and matched the ROM comparator.
@@ -39,6 +39,54 @@ def _worked_case_example(basename: str) -> tuple[str, str] | None:
     smallest qualifying routine wins so prompts gain a correct example without
     bloat.
     """
+    path = ROOT / "tests" / "cases" / (name + ".py")
+    if not path.is_file():
+        return None
+    lines = path.read_text().splitlines()
+    best: tuple[int, str, str, str] | None = None
+    for line in lines:
+        if not line.startswith("# >>> factory ") or "factory-mutation" in line:
+            continue
+        fn = line[len("# >>> factory "):].strip()
+        cases = _marker_body(lines, "# >>> factory " + fn, "# <<< factory " + fn)
+        mutation = _marker_body(
+            lines, "# >>> factory-mutation " + fn, "# <<< factory-mutation " + fn)
+        # Smallest is only useful if it is also instructive: the example has to
+        # carry real CASES entries, a poisoned case and a populated contract, or
+        # it teaches none of the rules it is here to demonstrate.
+        if not mutation or "CASES[" not in cases or "POISON" not in cases:
+            continue
+        if '"compare": ()' in cases or "'compare': ()" in cases:
+            continue
+        score = len(cases) + len(mutation)
+        if best is None or (score, fn) < (best[0], best[1]):
+            best = (score, fn, cases, mutation)
+    return (best[2], best[3]) if best is not None else None
+
+
+def has_worked_example(basename: str) -> bool:
+    """True when this basename can teach its OWN conventions.
+
+    A packet whose exemplar comes from an unrelated file teaches that file's
+    shape: `trainer_cards` routines were shown `card_data`, so generators
+    invented signatures and case recipes their own destination file rejects.
+    Requires the whole quartet to exist (a brand-new basename has none of it)
+    and the case module to carry a landed, instructive routine.
+    """
+    quartet = (
+        ROOT / "src" / "home" / f"{basename}.c",
+        ROOT / "src" / "home" / f"{basename}.h",
+        ROOT / "src" / "probe" / f"{basename}.c",
+        ROOT / "tests" / "cases" / f"{basename}.py",
+    )
+    if not all(path.is_file() for path in quartet):
+        return False
+    return _scan_basename(basename) is not None
+
+
+def _worked_case_example(basename: str) -> tuple[str, str] | None:
+    """Verbatim cases and mutation marker bodies of one landed routine,
+    preferring the target basename and falling back across the tree."""
     directory = ROOT / "tests" / "cases"
     ordered = [basename, *sorted(
         path.stem for path in directory.glob("*.py")
@@ -48,31 +96,44 @@ def _worked_case_example(basename: str) -> tuple[str, str] | None:
         if name in seen:
             continue
         seen.add(name)
-        path = directory / (name + ".py")
-        if not path.is_file():
-            continue
-        lines = path.read_text().splitlines()
-        best: tuple[int, str, str, str] | None = None
-        for line in lines:
-            if not line.startswith("# >>> factory ") or "factory-mutation" in line:
-                continue
-            fn = line[len("# >>> factory "):].strip()
-            cases = _marker_body(lines, "# >>> factory " + fn, "# <<< factory " + fn)
-            mutation = _marker_body(
-                lines, "# >>> factory-mutation " + fn, "# <<< factory-mutation " + fn)
-            # Smallest is only useful if it is also instructive: the example has to
-            # carry real CASES entries, a poisoned case and a populated contract, or
-            # it teaches none of the rules it is here to demonstrate.
-            if not mutation or "CASES[" not in cases or "POISON" not in cases:
-                continue
-            if '"compare": ()' in cases or "'compare': ()" in cases:
-                continue
-            score = len(cases) + len(mutation)
-            if best is None or (score, fn) < (best[0], best[1]):
-                best = (score, fn, cases, mutation)
-        if best is not None:
-            return best[2], best[3]
+        found = _scan_basename(name)
+        if found is not None:
+            return found
     return None
+
+
+_HEADER_BUDGET = 3000
+
+
+def _header_tail(header: str, budget: int = _HEADER_BUDGET) -> str:
+    """Most recent whole marker blocks of a header, under a char budget.
+
+    The exemplar exists to show declaration SHAPE, and a whole header does not
+    show it better than its tail does. Unbounded, this section is what made an
+    own-basename exemplar unaffordable: effect_functions renders ~102 KB and
+    core ~60 KB, against card_data's 2 KB. The newest blocks are also the most
+    representative, being the conventions the file most recently accepted.
+    """
+    if len(header) <= budget:
+        return header
+    lines = header.splitlines()
+    kept: list[str] = []
+    total = 0
+    block: list[str] = []
+    for line in reversed(lines):
+        block.insert(0, line)
+        if not line.startswith("/* >>> factory "):
+            continue
+        size = sum(len(entry) + 1 for entry in block)
+        if total + size > budget:
+            break
+        kept = block + kept
+        total += size
+        block = []
+    if not kept:
+        return header[-budget:]
+    return ("/* tail of the existing header; earlier declarations elided */\n"
+            + "\n".join(kept))
 
 
 def _fragment_example(basename: str) -> str:
@@ -118,7 +179,7 @@ def _fragment_example(basename: str) -> str:
     return "\n".join((
         "FRAGMENT EXAMPLE (marker bodies only; never copy a complete file):",
         f"C body:\n{first_function(home)}",
-        "Header declarations:\n" + without_directives(header),
+        "Header declarations:\n" + _header_tail(without_directives(header)),
         "Probe adapter body:\n" + (adapter.group(0).strip() if adapter else
                                     "static void adapt_Name(ProbeState *s) {}"),
         "Cases assignments:\n" + ("\n".join(case_lines) or
