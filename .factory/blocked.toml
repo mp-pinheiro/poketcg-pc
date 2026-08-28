@@ -317,24 +317,9 @@ reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:8431 (basename `eff
 unblock = "read the recorded diagnostics under .factory/try/ChanseyDoubleEdgeEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "_ShowPromotionalCardScreen"
-reason = "AUTO-RETIRED: src/engine/promotional_card.asm:5 (basename `promotional_card`). 18 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case _ShowPromotionalCardScreen-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":1955,\"sp\":65518,\"rom_bank\":61,\"hbank_rom\":61,\"instructions\":6688236,\"cycles\":80000012,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":62,\"ppu_mode\":3,\"bus\":\"801c09c2\"}"
-unblock = "read the recorded diagnostics under .factory/try/_ShowPromotionalCardScreen/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "GiveBoosterPack"
 reason = "DIAGNOSED 2026-08-28 by GBRT_PPU_TRACE (docs/port-contract.md mid-run-LCD-enable bullet): the reference is ALIVE, not wedged. Full frames every 70224 cycles, [IRQ-SVC] vec=0040 serviced per frame, VBlankHandler completes, wVBlankCounter read back 0xB8 after ~1209 frames, wReentrancyFlag clean, runner trampoline seed equals the game boot value (jp NoOp, home/setup.asm:18-24). Resident loop is WaitForSongToFinish (play_song.asm:14): the routine plays MUSIC_BOOSTER_PACK and Music1_AssertSongFinished polls wCurSongID, which nothing clears because no audio driver runs inside a probed call. The prior pc=625 frame_ready/trampoline notes and every remedy citing multi-frame VBlank simulation are superseded."
 unblock = "author a pre-ret cutpoint case stopping before the PlaySong/WaitForSongToFinish pair (staging observables only, AIPlay phase-1 pattern), or seed the song-finished exit state so AssertSongFinished returns 0; frame simulation and runtime patches are NOT remedies for this class."
-
-[[blocked]]
-name = "JigglypuffDoubleEdgeEffect"
-reason = "AUTO-RETIRED (cluster): matches _HandlePeekSelection on BUDGET_EXHAUSTED pc=625 (2 stanzas). src/engine/duel/effect_functions.asm:8192 (basename `effect_functions`). generation=5; last diagnostic phase=primary failure_class=code detail=case JigglypuffDoubleEdgeEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65470,\"rom_bank\":1,\"hbank_rom\":1,\"instructions\":7800454,\"cycles\":32000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":8,\"ppu_mode\":3,\"bus\":\"40807a14000001010001\"}"
-unblock = "CORRECTED 2026-08-28: pc=625 halted BUDGET_EXHAUSTED is a live per-frame loop, not a PPU/interrupt wedge (docs/port-contract.md mid-run-LCD-enable bullet; GiveBoosterPack traced to WaitForSongToFinish). Triage THIS routine with GBRT_PPU_TRACE + pc histogram + poketcg.sym resolution to name its resident wait loop, then author a pre-ret cutpoint before that wait (staging observables) or seed the wait exit state; frame simulation is NOT the remedy."
-
-[[blocked]]
-name = "TakeDownEffect"
-reason = "AUTO-RETIRED (cluster): matches _HandlePeekSelection on BUDGET_EXHAUSTED pc=625 (2 stanzas). src/engine/duel/effect_functions.asm:3554 (basename `effect_functions`). generation=6; last diagnostic phase=primary failure_class=code detail=case TakeDownEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65470,\"rom_bank\":1,\"hbank_rom\":1,\"instructions\":19759473,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":89,\"ppu_mode\":3,\"bus\":\"40807a1e000001010001\"}"
-unblock = "CORRECTED 2026-08-28: pc=625 halted BUDGET_EXHAUSTED is a live per-frame loop, not a PPU/interrupt wedge (docs/port-contract.md mid-run-LCD-enable bullet; GiveBoosterPack traced to WaitForSongToFinish). Triage THIS routine with GBRT_PPU_TRACE + pc histogram + poketcg.sym resolution to name its resident wait loop, then author a pre-ret cutpoint before that wait (staging observables) or seed the wait exit state; frame simulation is NOT the remedy."
 
 [[blocked]]
 name = "PlayBetweenTurnsAnimation"
@@ -347,24 +332,9 @@ reason = "DIAGNOSED missing ambient-precondition, not a harness call-frame bug. 
 unblock = "retry with setup=[{\"fn\": \"SetupRegisters\"}, {\"fn\": \"SetupText\", \"d\": 0x30, \"e\": 0x7F}] (plus CopyDMAFunction if frames elapse) so the reference's VBlank ISR is the NoOp trampoline and the wOverworldNPCFlags write survives to the sentinel; compare $D0C1 only under that setup."
 
 [[blocked]]
-name = "Ram_RecoilSwitchEffect"
-reason = "AUTO-RETIRED (cluster): matches _HandlePeekSelection on BUDGET_EXHAUSTED pc=625 (4 stanzas). src/engine/duel/effect_functions.asm:6168 (basename `effect_functions`). generation=6; last diagnostic phase=primary failure_class=code detail=case Ram_RecoilSwitchEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65470,\"rom_bank\":1,\"hbank_rom\":1,\"instructions\":7800454,\"cycles\":32000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":8,\"ppu_mode\":3,\"bus\":\"407a14000001010001e0\"}"
-unblock = "CORRECTED 2026-08-28: pc=625 halted BUDGET_EXHAUSTED is a live per-frame loop, not a PPU/interrupt wedge (docs/port-contract.md mid-run-LCD-enable bullet; GiveBoosterPack traced to WaitForSongToFinish). Triage THIS routine with GBRT_PPU_TRACE + pc histogram + poketcg.sym resolution to name its resident wait loop, then author a pre-ret cutpoint before that wait (staging observables) or seed the wait exit state; frame simulation is NOT the remedy."
-
-[[blocked]]
 name = "SaveDeckConfiguration"
 reason = "DIAGNOSED mixed failure set at gen 16, none a harness gap. (1) primary: BUDGET_EXHAUSTED pc=$0C33 with 15.4M instructions at 80M cycles - HblankCopyDataHLtoDE's HBlank wait (the $0C00-$0C40 class): the case seeds lcdc=$C3 but not the required wram={0xCABB: b\"\\x80\", 0xFF40: b\"\\x80\"} pair that arms the PPU the HBlank source actually comes from (runner drives the PPU off rLCDC $FF40, not the $CABB shadow); the retry prompt's budget directive names exactly this rule. (2) validate: `header fragment must not contain preprocessor directives` - #define lines belong in STATICS. (3) `no primary oracle case` on some attempts - case authoring, covered once (1) is shaped."
 unblock = "retry with the R3 seed pair wram={0xCABB: b\"\\x80\", 0xFF40: b\"\\x80\"} plus generous instruction_budget/cycle_budget (20M/80M), keep #defines out of the header fragment, and author at least one primary case."
-
-[[blocked]]
-name = "MainMenu_NewGame"
-reason = "AUTO-RETIRED (cluster): matches _HandlePeekSelection on BUDGET_EXHAUSTED pc=625 (5 stanzas). src/engine/menus/main_menu.asm:32 (basename `main_menu`). generation=4; last diagnostic phase=primary failure_class=code detail=case MainMenu_NewGame-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65510,\"rom_bank\":6,\"hbank_rom\":6,\"instructions\":17302535,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":77,\"ppu_mode\":2,\"bus\":\"8000000000\"}"
-unblock = "CORRECTED 2026-08-28: pc=625 halted BUDGET_EXHAUSTED is a live per-frame loop, not a PPU/interrupt wedge (docs/port-contract.md mid-run-LCD-enable bullet; GiveBoosterPack traced to WaitForSongToFinish). Triage THIS routine with GBRT_PPU_TRACE + pc histogram + poketcg.sym resolution to name its resident wait loop, then author a pre-ret cutpoint before that wait (staging observables) or seed the wait exit state; frame simulation is NOT the remedy."
-
-[[blocked]]
-name = "_PrintDeckConfiguration"
-reason = "AUTO-RETIRED (cluster): matches _HandlePeekSelection on BUDGET_EXHAUSTED pc=625 (7 stanzas). src/engine/link/printer.asm:512 (basename `printer`). generation=4; last diagnostic phase=primary failure_class=code detail=case _PrintDeckConfiguration-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65508,\"rom_bank\":6,\"hbank_rom\":6,\"instructions\":19564581,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":9,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":87,\"ppu_mode\":0,\"bus\":\"ff00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000b43c0500000000\"}"
-unblock = "CORRECTED 2026-08-28: pc=625 halted BUDGET_EXHAUSTED is a live per-frame loop, not a PPU/interrupt wedge (docs/port-contract.md mid-run-LCD-enable bullet; GiveBoosterPack traced to WaitForSongToFinish). Triage THIS routine with GBRT_PPU_TRACE + pc histogram + poketcg.sym resolution to name its resident wait loop, then author a pre-ret cutpoint before that wait (staging observables) or seed the wait exit state; frame simulation is NOT the remedy."
 
 [[blocked]]
 name = "_RequestToPrintCard"
@@ -372,49 +342,9 @@ reason = "DIAGNOSED case-authoring gap, 16 generations all `no primary oracle ca
 unblock = "author a primary case per the landed printer family: keys=[0x02] B-exit through TryInitPrinterCommunications, or pre-ret $315D with the packet staged; transform case with wSerialTransferData=0x81/wPrinterStatus=0x00 for the full synchronous path."
 
 [[blocked]]
-name = "WeezingSelfdestructEffect"
-reason = "AUTO-RETIRED (cluster): matches GiveBoosterPack on BUDGET_EXHAUSTED pc=625 (6 stanzas). src/engine/duel/effect_functions.asm:2457 (basename `effect_functions`). generation=7; last diagnostic phase=primary failure_class=code detail=case WeezingSelfdestructEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65470,\"rom_bank\":1,\"hbank_rom\":1,\"instructions\":19759531,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":90,\"ppu_mode\":3,\"bus\":\"400101807a3c00000101000001\"}"
-unblock = "CORRECTED 2026-08-28: pc=625 halted BUDGET_EXHAUSTED is a live per-frame loop, not a PPU/interrupt wedge (docs/port-contract.md mid-run-LCD-enable bullet; GiveBoosterPack traced to WaitForSongToFinish). Triage THIS routine with GBRT_PPU_TRACE + pc histogram + poketcg.sym resolution to name its resident wait loop, then author a pre-ret cutpoint before that wait (staging observables) or seed the wait exit state; frame simulation is NOT the remedy."
-
-[[blocked]]
-name = "MagnetonLv35SelfdestructEffect"
-reason = "AUTO-RETIRED (cluster): matches GiveBoosterPack on BUDGET_EXHAUSTED pc=625 (7 stanzas). src/engine/duel/effect_functions.asm:7068 (basename `effect_functions`). generation=5; last diagnostic phase=primary failure_class=code detail=case MagnetonLv35SelfdestructEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":57308,\"rom_bank\":7,\"hbank_rom\":7,\"instructions\":12054185,\"cycles\":80000000,\"lcdc\":195,\"if\":224,\"ie\":5,\"ime\":1,\"halted\":1,\"ppu_lcdc\":195,\"ppu_ly\":67,\"ppu_mode\":0,\"bus\":\"00c300c2\"}"
-unblock = "CORRECTED 2026-08-28: pc=625 halted BUDGET_EXHAUSTED is a live per-frame loop, not a PPU/interrupt wedge (docs/port-contract.md mid-run-LCD-enable bullet; GiveBoosterPack traced to WaitForSongToFinish). Triage THIS routine with GBRT_PPU_TRACE + pc histogram + poketcg.sym resolution to name its resident wait loop, then author a pre-ret cutpoint before that wait (staging observables) or seed the wait exit state; frame simulation is NOT the remedy."
-
-[[blocked]]
-name = "Prophecy_PlayerSelectEffect"
-reason = "AUTO-RETIRED (cluster): matches GiveBoosterPack on BUDGET_EXHAUSTED pc=625 (8 stanzas). src/engine/duel/effect_functions.asm:4721 (basename `effect_functions`). generation=5; last diagnostic phase=primary failure_class=code detail=case Prophecy_PlayerSelectEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":56488,\"rom_bank\":1,\"hbank_rom\":1,\"instructions\":11475895,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":94,\"ppu_mode\":3,\"bus\":\"0080c200\"}"
-unblock = "CORRECTED 2026-08-28: pc=625 halted BUDGET_EXHAUSTED is a live per-frame loop, not a PPU/interrupt wedge (docs/port-contract.md mid-run-LCD-enable bullet; GiveBoosterPack traced to WaitForSongToFinish). Triage THIS routine with GBRT_PPU_TRACE + pc histogram + poketcg.sym resolution to name its resident wait loop, then author a pre-ret cutpoint before that wait (staging observables) or seed the wait exit state; frame simulation is NOT the remedy."
-
-[[blocked]]
-name = "Peek_SelectEffect"
-reason = "AUTO-RETIRED (cluster): matches GiveBoosterPack on BUDGET_EXHAUSTED pc=625 (9 stanzas). src/engine/duel/effect_functions.asm:6269 (basename `effect_functions`). generation=3; last diagnostic phase=primary failure_class=code detail=case Peek_SelectEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65512,\"rom_bank\":2,\"hbank_rom\":2,\"instructions\":18945972,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":48,\"ppu_mode\":3,\"bus\":\"2000ff80c20000\"}"
-unblock = "CORRECTED 2026-08-28: pc=625 halted BUDGET_EXHAUSTED is a live per-frame loop, not a PPU/interrupt wedge (docs/port-contract.md mid-run-LCD-enable bullet; GiveBoosterPack traced to WaitForSongToFinish). Triage THIS routine with GBRT_PPU_TRACE + pc histogram + poketcg.sym resolution to name its resident wait loop, then author a pre-ret cutpoint before that wait (staging observables) or seed the wait exit state; frame simulation is NOT the remedy."
-
-[[blocked]]
-name = "SaveDeckInDeckSaveMachine"
-reason = "AUTO-RETIRED (cluster): matches GiveBoosterPack on BUDGET_EXHAUSTED pc=625 (9 stanzas). src/engine/menus/deck_machine.asm:1139 (basename `deck_machine`). generation=2; last diagnostic phase=primary failure_class=code detail=case SaveDeckInDeckSaveMachine-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65514,\"rom_bank\":2,\"hbank_rom\":2,\"instructions\":15620911,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":120,\"ppu_mode\":0,\"bus\":\"8000000080\"}"
-unblock = "CORRECTED 2026-08-28: pc=625 halted BUDGET_EXHAUSTED is a live per-frame loop, not a PPU/interrupt wedge (docs/port-contract.md mid-run-LCD-enable bullet; GiveBoosterPack traced to WaitForSongToFinish). Triage THIS routine with GBRT_PPU_TRACE + pc histogram + poketcg.sym resolution to name its resident wait loop, then author a pre-ret cutpoint before that wait (staging observables) or seed the wait exit state; frame simulation is NOT the remedy."
-
-[[blocked]]
 name = "InputCurDeckName"
 reason = "AUTO-RETIRED: src/engine/menus/deck_selection.asm:309 (basename `deck_selection`). 17 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case InputCurDeckName-0 {\"status\": \"PORT\", \"fn\": \"InputCurDeckName\", \"mismatches\": {\"a\": [3, 0], \"f\": [64, 128], \"c\": [1, 0], \"e\": [2, 0]}}"
 unblock = "read the recorded diagnostics under .factory/try/InputCurDeckName/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "EnergyConversion_AddToHandEffect"
-reason = "AUTO-RETIRED (cluster): matches GiveBoosterPack on BUDGET_EXHAUSTED pc=625 (11 stanzas). src/engine/duel/effect_functions.asm:4661 (basename `effect_functions`). generation=5; last diagnostic phase=primary failure_class=code detail=case EnergyConversion_AddToHandEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":57308,\"rom_bank\":7,\"hbank_rom\":7,\"instructions\":12054185,\"cycles\":80000000,\"lcdc\":195,\"if\":224,\"ie\":5,\"ime\":1,\"halted\":1,\"ppu_lcdc\":195,\"ppu_ly\":67,\"ppu_mode\":0,\"bus\":\"0000c200\"}"
-unblock = "CORRECTED 2026-08-28: pc=625 halted BUDGET_EXHAUSTED is a live per-frame loop, not a PPU/interrupt wedge (docs/port-contract.md mid-run-LCD-enable bullet; GiveBoosterPack traced to WaitForSongToFinish). Triage THIS routine with GBRT_PPU_TRACE + pc histogram + poketcg.sym resolution to name its resident wait loop, then author a pre-ret cutpoint before that wait (staging observables) or seed the wait exit state; frame simulation is NOT the remedy."
-
-[[blocked]]
-name = "HealPlayAreaCardHP"
-reason = "AUTO-RETIRED (cluster): matches GiveBoosterPack on BUDGET_EXHAUSTED pc=625 (12 stanzas). src/engine/duel/effect_functions.asm:11183 (basename `effect_functions`). generation=6; last diagnostic phase=primary failure_class=code detail=case HealPlayAreaCardHP-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":57314,\"rom_bank\":6,\"hbank_rom\":6,\"instructions\":15453312,\"cycles\":80000000,\"lcdc\":195,\"if\":224,\"ie\":5,\"ime\":1,\"halted\":1,\"ppu_lcdc\":195,\"ppu_ly\":133,\"ppu_mode\":0,\"bus\":\"000001c3000000000000000000000000000000c200\"}"
-unblock = "CORRECTED 2026-08-28: pc=625 halted BUDGET_EXHAUSTED is a live per-frame loop, not a PPU/interrupt wedge (docs/port-contract.md mid-run-LCD-enable bullet; GiveBoosterPack traced to WaitForSongToFinish). Triage THIS routine with GBRT_PPU_TRACE + pc histogram + poketcg.sym resolution to name its resident wait loop, then author a pre-ret cutpoint before that wait (staging observables) or seed the wait exit state; frame simulation is NOT the remedy."
-
-[[blocked]]
-name = "SubmissionEffect"
-reason = "AUTO-RETIRED (cluster): matches GiveBoosterPack on BUDGET_EXHAUSTED pc=625 (12 stanzas). src/engine/duel/effect_functions.asm:6129 (basename `effect_functions`). generation=6; last diagnostic phase=primary failure_class=code detail=case SubmissionEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":57308,\"rom_bank\":7,\"hbank_rom\":7,\"instructions\":12054370,\"cycles\":80000000,\"lcdc\":195,\"if\":224,\"ie\":5,\"ime\":1,\"halted\":1,\"ppu_lcdc\":195,\"ppu_ly\":71,\"ppu_mode\":0,\"bus\":\"c30000\"}"
-unblock = "CORRECTED 2026-08-28: pc=625 halted BUDGET_EXHAUSTED is a live per-frame loop, not a PPU/interrupt wedge (docs/port-contract.md mid-run-LCD-enable bullet; GiveBoosterPack traced to WaitForSongToFinish). Triage THIS routine with GBRT_PPU_TRACE + pc histogram + poketcg.sym resolution to name its resident wait loop, then author a pre-ret cutpoint before that wait (staging observables) or seed the wait exit state; frame simulation is NOT the remedy."
 
 [[blocked]]
 name = "AIDoAction"
