@@ -1,0 +1,9 @@
+{
+  "fn": "ShowPromotionalCardScreen",
+  "case": "tests/cases/common.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ShowPromotionalCardScreen\", \"registers\": {\"a\": 30, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"52263\": \"7b08\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ShowPromotionalCardScreen\", \"mismatches\": {\"bus\": {\"address\": 52263, \"reference\": \"7b08c2\", \"native\": \"8208c2\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52263, 2], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"ShowPromotionalCardScreen\", \"registers\": {\"a\": 30, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"52263\": \"7b08\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

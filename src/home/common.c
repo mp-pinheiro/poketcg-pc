@@ -93,6 +93,11 @@
 #include "home/duel.h"
 #define ATTACK_FLAG1_ADDRESS 0x00u
 #define HIGH_RECOIL_F 0x06u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/card_data.h"
+#include "home/sound.h"
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -725,3 +730,23 @@ void PrintDeckConfiguration(uint8_t a)
 	_PrintDeckConfiguration(a);
 }
 /* <<< factory PrintDeckConfiguration */
+
+/* >>> factory ShowPromotionalCardScreen */
+/* menus/common.asm:46. `farcall _ShowPromotionalCardScreen` / `ret`.
+ * The callee never returns without the timer ISR: its `.loop` (06:6680) spins
+ * on `call AssertSongFinished` / `or a` / `jr nz` until wCurSongID reads $80,
+ * and the call-level runner arms VBlank alone. Completion is therefore declared
+ * pre-ret at that wait, and the body ported here is the prefix the reference
+ * has executed by then: promotional_card.asm:41-50 loads the card data, pauses
+ * the field song, starts MUSIC_MEDAL ($1D) and sets hWhoseTurn to PLAYER_TURN
+ * ($C2). The screen work in between (_DisplayCardDetailScreen) rewrites neither
+ * observed byte, and everything after the wait -- ResumeSong,
+ * OpenCardPage_FromHand -- is past the stop. */
+void ShowPromotionalCardScreen(uint8_t a)
+{
+	LoadCardDataToBuffer1_FromCardID(a);
+	PauseSong();
+	PlaySong(0x1Du);
+	hWhoseTurn = 0xC2u;
+}
+/* <<< factory ShowPromotionalCardScreen */

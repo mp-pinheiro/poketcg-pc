@@ -119,4 +119,7 @@ AICheckIfAttackIsHighRecoilResult AICheckIfAttackIsHighRecoil(void);
 /* >>> factory PrintDeckConfiguration */
 void PrintDeckConfiguration(uint8_t a);
 /* <<< factory PrintDeckConfiguration */
+/* >>> factory ShowPromotionalCardScreen */
+void ShowPromotionalCardScreen(uint8_t a);
+/* <<< factory ShowPromotionalCardScreen */
 #endif /* POKETCG_HOME_COMMON_H */

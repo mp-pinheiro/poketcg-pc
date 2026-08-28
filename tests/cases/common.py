@@ -415,6 +415,32 @@ CONTRACT["PrintDeckConfiguration"] = {"compare": (), "preserve": (), "wram_out":
 CASES["PrintDeckConfiguration"] = [{"a": 0x00, "wram": {0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00", 0xCE92: b"\xFF\xFF", 0xCE9C: b"\xFF", 0xCF17: b"\x00"}, "sram": {0: {0xA350: b"\x00" * 0x53 + b"\xA5"}}, "ramg": True, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": 0x00, "read": {0xC510: 0x54, 0xCE92: 2, 0xCE9C: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000}, dict(POISON, a=0x00, wram={0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00", 0xCE92: b"\xFF\xFF", 0xCE9C: b"\xFF", 0xCF17: b"\x00"}, sram={0: {0xA350: b"\x00" * 0x53 + b"\xA5"}}, ramg=True, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=0x00, read={0xC510: 0x54, 0xCE92: 2, 0xCE9C: 1}, instruction_budget=20000000, cycle_budget=80000000)]
 # <<< factory PrintDeckConfiguration
 
+# >>> factory ShowPromotionalCardScreen
+# Same shape as the landed _ShowPromotionalCardScreen cases in
+# tests/cases/promotional_card.py, because this wrapper is nothing but the
+# farcall to it. a != 0 in both cases: with a == 0 the ROM re-enters its own
+# tail four times and the pre-ret stop below would land on the first pass, so
+# the legendary branch is not comparable at this completion point. 0x1E is
+# VILEPLUME; POISON's 0xAA takes the promotional fallback. keys=[0x00, 0x02]
+# taps B, which is what WaitForWideTextBoxInput reads inside
+# _DisplayCardDetailScreen. CopyDMAFunction installs hDMAFunction for the VBlank
+# handler; the callee calls SetupText itself, so no second setup entry is
+# needed. The observed bytes are the two the asm writes before the wait: the
+# wLoadedCard1Name pointer ($CC27) that LoadCardDataToBuffer1_FromCardID fills
+# in, and hWhoseTurn ($FF97), set to PLAYER_TURN.
+CONTRACT["ShowPromotionalCardScreen"] = {"compare": (), "preserve": ()}
+CASES["ShowPromotionalCardScreen"] = [
+    {"a": 0x1E, "keys": [0x00, 0x02],
+     "read": {0xCC27: 2, 0xFF97: 1},
+     "setup": [{"fn": "CopyDMAFunction"}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02],
+         read={0xCC27: 2, 0xFF97: 1},
+         setup=[{"fn": "CopyDMAFunction"}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ShowPromotionalCardScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -571,3 +597,33 @@ MUTATIONS["PrintDeckConfiguration"] = {"source_symbol": "PrintDeckConfiguration"
 for _record in SCHEMA2_CASES["PrintDeckConfiguration"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
 # <<< factory-completion PrintDeckConfiguration
+# >>> factory-mutation ShowPromotionalCardScreen
+MUTATIONS["ShowPromotionalCardScreen"] = {
+    "source_symbol": "ShowPromotionalCardScreen",
+    "before": "void ShowPromotionalCardScreen(uint8_t a)\n{\n\tLoadCardDataToBuffer1_FromCardID(a);",
+    "after": "void ShowPromotionalCardScreen(uint8_t a)\n{\n\tLoadCardDataToBuffer1_FromCardID((uint8_t)(a + 1u));",
+    "case_ids": ["ShowPromotionalCardScreen-0", "ShowPromotionalCardScreen-1"],
+}
+# <<< factory-mutation ShowPromotionalCardScreen
+# >>> factory-completion ShowPromotionalCardScreen
+# The reference never returns: the farcall reaches _ShowPromotionalCardScreen,
+# whose `.loop` (06:6680) waits on AssertSongFinished, which only reports done
+# once wCurSongID reads $80 -- nothing but the timer ISR's Music1_Update can put
+# it there, and the call-level runner arms VBlank alone. That is a genuine spin,
+# not a small budget, so completion is declared pre-ret at that wait, exactly as
+# the landed _ShowPromotionalCardScreen and PreparePrinterConnection cases do.
+# The stop pc is AssertSongFinished itself (poketcg.sym 00:378A), one call
+# deeper than the 06:6680 loop head, because $378A is ROM0 and therefore
+# bank-independent -- the same reason the PreparePrinterConnection wrapper stops
+# at $315D. This wrapper is 01:7594 while the loop lives in bank 06, and the
+# PyBoy backend arms a banked stop pc against the routine's OWN bank
+# (tools/oracle/pyboy_oracle.py, `_arm(stop_pc, 0 if stop_pc < 0x4000 else
+# fn_bank)`), so a $6680 hook would sit on bank 01 and could never fire while
+# bank 06 is mapped. Nothing ahead of the loop calls AssertSongFinished --
+# SetupText, LoadCardDataToBuffer1_FromCardID, PauseSong, PlaySong, LoadTxRam2
+# and _DisplayCardDetailScreen do not -- so the first hit is the wait itself,
+# after both observed bytes are written. legacy_to_schema always emits
+# completion "return", so the split is applied after migration.
+for _record in SCHEMA2_CASES["ShowPromotionalCardScreen"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x378A}
+# <<< factory-completion ShowPromotionalCardScreen
