@@ -1503,6 +1503,13 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define Received20DamageDueToPoisonText 0x0027u
 
 #define DrawSevenCardsPracticeDuelText 0x01a4u
+
+#include "home/core.h"
+#include "home/lcd.h"
+#include "generated/wram.h"
+#define PressBToFinishPracticeDuelText 0x01a8u
+
+#define PutPokemonOnBenchPracticeDuelText 0x01a6u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -8585,3 +8592,22 @@ void PracticeDuel_DrawSevenCards(void)
 	PrintPracticeDuelDrMasonInstructions(DrawSevenCardsPracticeDuelText);
 }
 /* <<< factory PracticeDuel_DrawSevenCards */
+
+/* >>> factory PracticeDuel_DonePuttingOnBench */
+void PracticeDuel_DonePuttingOnBench(void)
+{
+	DisplayPracticeDuelPlayerHandScreen();
+	EnableLCD();
+	wPracticeDuelTurn = 0xFFu;
+	PrintPracticeDuelDrMasonInstructions(PressBToFinishPracticeDuelText);
+}
+/* <<< factory PracticeDuel_DonePuttingOnBench */
+
+/* >>> factory PracticeDuel_PutStaryuInBench */
+void PracticeDuel_PutStaryuInBench(void)
+{
+	DisplayPracticeDuelPlayerHandScreen();
+	EnableLCD();
+	PrintPracticeDuelDrMasonInstructions(PutPokemonOnBenchPracticeDuelText);
+}
+/* <<< factory PracticeDuel_PutStaryuInBench */

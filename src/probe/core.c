@@ -2677,6 +2677,22 @@ static void adapt_PracticeDuel_DrawSevenCards(ProbeState *s)
 }
 /* <<< factory PracticeDuel_DrawSevenCards */
 
+/* >>> factory PracticeDuel_DonePuttingOnBench */
+static void adapt_PracticeDuel_DonePuttingOnBench(ProbeState *s)
+{
+	(void)s;
+	PracticeDuel_DonePuttingOnBench();
+}
+/* <<< factory PracticeDuel_DonePuttingOnBench */
+
+/* >>> factory PracticeDuel_PutStaryuInBench */
+static void adapt_PracticeDuel_PutStaryuInBench(ProbeState *s)
+{
+	(void)s;
+	PracticeDuel_PutStaryuInBench();
+}
+/* <<< factory PracticeDuel_PutStaryuInBench */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2996,5 +3012,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "HandleSleepCheck", adapt_HandleSleepCheck },
 	{ "HandlePoisonDamage", adapt_HandlePoisonDamage },
 	{ "PracticeDuel_DrawSevenCards", adapt_PracticeDuel_DrawSevenCards },
+	{ "PracticeDuel_DonePuttingOnBench", adapt_PracticeDuel_DonePuttingOnBench },
+	{ "PracticeDuel_PutStaryuInBench", adapt_PracticeDuel_PutStaryuInBench },
 	{ NULL, NULL },
 };

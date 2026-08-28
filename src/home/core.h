@@ -1220,4 +1220,10 @@ HandlePoisonDamageResult HandlePoisonDamage(uint8_t a, uint16_t hl);
 /* >>> factory PracticeDuel_DrawSevenCards */
 void PracticeDuel_DrawSevenCards(void);
 /* <<< factory PracticeDuel_DrawSevenCards */
+/* >>> factory PracticeDuel_DonePuttingOnBench */
+void PracticeDuel_DonePuttingOnBench(void);
+/* <<< factory PracticeDuel_DonePuttingOnBench */
+/* >>> factory PracticeDuel_PutStaryuInBench */
+void PracticeDuel_PutStaryuInBench(void);
+/* <<< factory PracticeDuel_PutStaryuInBench */
 #endif

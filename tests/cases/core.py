@@ -4598,6 +4598,42 @@ CASES["PracticeDuel_DrawSevenCards"] = [
 ]
 # <<< factory PracticeDuel_DrawSevenCards
 
+# >>> factory PracticeDuel_DonePuttingOnBench
+CONTRACT["PracticeDuel_DonePuttingOnBench"] = {"compare": (), "preserve": ()}
+CASES["PracticeDuel_DonePuttingOnBench"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00", 0xCC00: b"\x01"},
+     "keys": [0x00, 0x01],
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xC510: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1, 0xCC00: 1},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00", 0xCC00: b"\x01"},
+         keys=[0x00, 0x01],
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xC510: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1, 0xCC00: 1},
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PracticeDuel_DonePuttingOnBench
+
+# >>> factory PracticeDuel_PutStaryuInBench
+CONTRACT["PracticeDuel_PutStaryuInBench"] = {"compare": (), "preserve": ()}
+CASES["PracticeDuel_PutStaryuInBench"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
+     "keys": [0x00, 0x01],
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xC510: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
+         keys=[0x00, 0x01],
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xC510: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PracticeDuel_PutStaryuInBench
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6282,3 +6318,19 @@ MUTATIONS["PracticeDuel_DrawSevenCards"] = {
     "case_ids": ["PracticeDuel_DrawSevenCards-0", "PracticeDuel_DrawSevenCards-1"],
 }
 # <<< factory-mutation PracticeDuel_DrawSevenCards
+# >>> factory-mutation PracticeDuel_DonePuttingOnBench
+MUTATIONS["PracticeDuel_DonePuttingOnBench"] = {
+    "source_symbol": "PracticeDuel_DonePuttingOnBench",
+    "before": "\twPracticeDuelTurn = 0xFFu;",
+    "after": "\twPracticeDuelTurn = 0x00u;",
+    "case_ids": ["PracticeDuel_DonePuttingOnBench-0", "PracticeDuel_DonePuttingOnBench-1"],
+}
+# <<< factory-mutation PracticeDuel_DonePuttingOnBench
+# >>> factory-mutation PracticeDuel_PutStaryuInBench
+MUTATIONS["PracticeDuel_PutStaryuInBench"] = {
+    "source_symbol": "PracticeDuel_PutStaryuInBench",
+    "before": "void PracticeDuel_PutStaryuInBench(void)\n{\n\tDisplayPracticeDuelPlayerHandScreen();\n\tEnableLCD();\n\tPrintPracticeDuelDrMasonInstructions(PutPokemonOnBenchPracticeDuelText);\n}",
+    "after": "void PracticeDuel_PutStaryuInBench(void)\n{\n\tDisplayPracticeDuelPlayerHandScreen();\n\tEnableLCD();\n\tPrintPracticeDuelDrMasonInstructions(PutPokemonOnBenchPracticeDuelText + 1u);\n}",
+    "case_ids": ["PracticeDuel_PutStaryuInBench-0", "PracticeDuel_PutStaryuInBench-1"]
+}
+# <<< factory-mutation PracticeDuel_PutStaryuInBench
