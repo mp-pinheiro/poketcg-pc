@@ -546,6 +546,22 @@ static void adapt_AIPlay_Maintenance(ProbeState *s)
 }
 /* <<< factory AIPlay_Maintenance */
 
+/* >>> factory AIPlay_ComputerSearch */
+static void adapt_AIPlay_ComputerSearch(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_ComputerSearch();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_ComputerSearch */
+
+/* >>> factory AIPlay_ItemFinder */
+static void adapt_AIPlay_ItemFinder(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_ItemFinder();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_ItemFinder */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -612,5 +628,7 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIPlay_GustOfWind", adapt_AIPlay_GustOfWind },
 	{ "AIPlay_Switch", adapt_AIPlay_Switch },
 	{ "AIPlay_Maintenance", adapt_AIPlay_Maintenance },
+	{ "AIPlay_ComputerSearch", adapt_AIPlay_ComputerSearch },
+	{ "AIPlay_ItemFinder", adapt_AIPlay_ItemFinder },
 	{ NULL, NULL },
 };

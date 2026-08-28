@@ -1034,6 +1034,24 @@ CASES["AIPlay_Maintenance"] = [
 ]
 # <<< factory AIPlay_Maintenance
 
+# >>> factory AIPlay_ComputerSearch
+CONTRACT["AIPlay_ComputerSearch"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_ComputerSearch"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x34", 0xCE1A: b"\x34", 0xCE1B: b"\x00", 0xCE21: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xCE21: 1, 0xFF9F: 1, 0xFFA2: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCE19: b"\x78", 0xCE1A: b"\x78", 0xCE1B: b"\x02", 0xCE21: b"\x10", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x80"}, read={0xCE21: 1, 0xFF9F: 1, 0xFFA2: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCE19: b"\xDD", 0xCE1A: b"\xDD", 0xCE1B: b"\xEE", 0xCE21: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xCE21: 1, 0xFF9F: 1, 0xFFA2: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_ComputerSearch
+
+# >>> factory AIPlay_ItemFinder
+CONTRACT["AIPlay_ItemFinder"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_ItemFinder"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x34", 0xCE1A: b"\x56", 0xCE1B: b"\x02", 0xCE21: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xCE21: 1, 0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1, 0xFFA2: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCE19: b"\x78", 0xCE1A: b"\x12", 0xCE1B: b"\x03", 0xCE21: b"\x80", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xCE21: 1, 0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1, 0xFFA2: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCE19: b"\xDD", 0xCE1A: b"\xDD", 0xCE1B: b"\xEE", 0xCE21: b"\xAA", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xCE21: 1, 0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1, 0xFFA2: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_ItemFinder
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1364,3 +1382,14 @@ MUTATIONS["AIPlay_Switch"] = {"source_symbol": "AIPlay_Switch", "before": "AIDec
 # >>> factory-mutation AIPlay_Maintenance
 MUTATIONS["AIPlay_Maintenance"] = {"source_symbol": "AIPlay_Maintenance", "before": "AIDecideResult AIPlay_Maintenance(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);", "after": "AIDecideResult AIPlay_Maintenance(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | 0u);", "case_ids": ["AIPlay_Maintenance-0"]}
 # <<< factory-mutation AIPlay_Maintenance
+# >>> factory-mutation AIPlay_ComputerSearch
+MUTATIONS["AIPlay_ComputerSearch"] = {
+    "source_symbol": "AIPlay_ComputerSearch",
+    "before": "AIDecideResult AIPlay_ComputerSearch(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags = (uint8_t)(flags | AI_FLAG_MODIFIED_HAND);",
+    "after": "AIDecideResult AIPlay_ComputerSearch(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags = (uint8_t)(flags | 0u);",
+    "case_ids": ["AIPlay_ComputerSearch-0", "AIPlay_ComputerSearch-1", "AIPlay_ComputerSearch-2"]
+}
+# <<< factory-mutation AIPlay_ComputerSearch
+# >>> factory-mutation AIPlay_ItemFinder
+MUTATIONS["AIPlay_ItemFinder"] = {"source_symbol": "AIPlay_ItemFinder", "before": "AIDecideResult AIPlay_ItemFinder(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags |= AI_FLAG_MODIFIED_HAND;", "after": "AIDecideResult AIPlay_ItemFinder(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags |= 0u;", "case_ids": ["AIPlay_ItemFinder-0"]}
+# <<< factory-mutation AIPlay_ItemFinder

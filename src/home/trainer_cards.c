@@ -2979,3 +2979,33 @@ AIDecideResult AIPlay_Maintenance(void)
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_Maintenance */
+
+/* >>> factory AIPlay_ComputerSearch */
+AIDecideResult AIPlay_ComputerSearch(void)
+{
+	uint8_t flags = wCurrentAIFlags;
+	flags = (uint8_t)(flags | AI_FLAG_MODIFIED_HAND);
+	wCurrentAIFlags = flags;
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTempRetreatCostCards = wAITrainerCardParameter;
+	hTemp_ffa0 = wce1a;
+	hTempPlayAreaLocation_ffa1 = wce1b;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_ComputerSearch */
+
+/* >>> factory AIPlay_ItemFinder */
+AIDecideResult AIPlay_ItemFinder(void)
+{
+	uint8_t flags = wCurrentAIFlags;
+	flags |= AI_FLAG_MODIFIED_HAND;
+	wCurrentAIFlags = flags;
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTemp_ffa0 = wce1a;
+	hTempPlayAreaLocation_ffa1 = wce1b;
+	hTempRetreatCostCards = wAITrainerCardParameter;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_ItemFinder */

@@ -271,4 +271,10 @@ AIDecideResult AIPlay_Switch(void);
 /* >>> factory AIPlay_Maintenance */
 AIDecideResult AIPlay_Maintenance(void);
 /* <<< factory AIPlay_Maintenance */
+/* >>> factory AIPlay_ComputerSearch */
+AIDecideResult AIPlay_ComputerSearch(void);
+/* <<< factory AIPlay_ComputerSearch */
+/* >>> factory AIPlay_ItemFinder */
+AIDecideResult AIPlay_ItemFinder(void);
+/* <<< factory AIPlay_ItemFinder */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */
