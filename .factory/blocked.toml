@@ -260,3 +260,8 @@ unblock = "read the recorded diagnostics under .factory/try/Func_12661/attempts/
 name = "ShowMedalReceivedScreen"
 reason = "AUTO-RETIRED: src/engine/menus/medal.asm:1 (basename `medal`). 17 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
 unblock = "read the recorded diagnostics under .factory/try/ShowMedalReceivedScreen/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "ChanseyDoubleEdgeEffect"
+reason = "HAND-DIAGNOSED 2026-08-28: generation 18 primary verification reaches the reference WaitForVBlank parking loop at pc=0x0271 after the self-damage animation path, with no register mismatch. The effect's frame-dependent animation/recoil chain does not return under the isolated call fixture; this is not a candidate translation mismatch and another unchanged full-call retry is non-informative."
+unblock = "trace DealRecoilDamageToSelf and its animation wait to identify a bounded pre-ret point, then verify a prefix case or port the frame-safe callee before retrying ChanseyDoubleEdgeEffect"
