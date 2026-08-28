@@ -330,3 +330,13 @@ unblock = "Trace the animation wait's required LCD/VBlank exit state with a boun
 name = "PokemonTrader_PlayerDeckSelection"
 reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:10043 (basename `effect_functions`). 9 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case PokemonTrader_PlayerDeckSelection-0 native probe did not terminate; the C body loops forever on state the reference resolves"
 unblock = "read the recorded diagnostics under .factory/try/PokemonTrader_PlayerDeckSelection/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "EnergyConversion_AddToHandEffect"
+reason = "HAND-DIAGNOSED 2026-08-28: generation 7 repeated primary runs reach the reference's WaitForVBlank at pc 0x0271 after the routine's discard-list and player-turn path, with the real ROM's LCD shadow restored to 0xC3 despite CABB/FF40=0 case seeds. Adding C2F1 and hardware seeds does not change the result; further retry is not informative until the frame-dependent DisplayCardListDetails/DealRecoil path is decomposed or a verified pre-ret cutpoint is available."
+unblock = "reproduce the smallest reference case with a trace and isolate the first callee that enables LCD or waits for VBlank, then port that frame-safe prefix or add a separately verified pre-ret completion; do not spend another retry generation on the unchanged full-call case"
+
+[[blocked]]
+name = "MagnetonLv35SelfdestructEffect"
+reason = "HAND-DIAGNOSED 2026-08-28: generation 7 repeated primary runs hit the same reference-side WaitForVBlank/frame path at pc 0xFF8A with LCDC=0x80 and no register mismatch, even after removing SetupText and seeding animation/recoil state. The self-destruct animation/recoil chain is not bounded by the current isolated call contract; another unchanged retry is non-informative."
+unblock = "trace the first DealRecoilDamageToSelf or DealDamageToAllBenchedPokemon animation callee that enables LCD, then verify a bounded prefix/pre-ret case or port that frame-safe callee before retrying this routine"
