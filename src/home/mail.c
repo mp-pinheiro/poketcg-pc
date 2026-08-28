@@ -21,6 +21,32 @@
 #define SFX_CURSOR 0x01u
 
 #define PACK_UNOPENED_F 0x07u
+
+#include "home/give_booster_pack.h"
+#include "home/init_menu.h"
+#include "home/lcd.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
+
+/* PCMailBoosterPacks' booster ids (mail.asm:294-311). NUM_MAILS and
+ * PACK_UNOPENED_F are already defined by this file's earlier ports and are not
+ * repeated here. */
+#define BOOSTER_COLOSSEUM_NEUTRAL 0x00u
+#define BOOSTER_COLOSSEUM_FIRE 0x02u
+#define BOOSTER_COLOSSEUM_TRAINER 0x06u
+#define BOOSTER_EVOLUTION_NEUTRAL 0x07u
+#define BOOSTER_EVOLUTION_GRASS 0x08u
+#define BOOSTER_EVOLUTION_FIGHTING 0x0bu
+#define BOOSTER_EVOLUTION_TRAINER 0x0du
+#define BOOSTER_MYSTERY_NEUTRAL 0x0eu
+#define BOOSTER_MYSTERY_WATER_COLORLESS 0x10u
+#define BOOSTER_MYSTERY_LIGHTNING_COLORLESS 0x11u
+#define BOOSTER_MYSTERY_TRAINER_COLORLESS 0x13u
+#define BOOSTER_LABORATORY_NEUTRAL 0x14u
+#define BOOSTER_LABORATORY_PSYCHIC 0x17u
+#define BOOSTER_LABORATORY_TRAINER 0x18u
+
+#define MailBoosterPackAlreadyOpenedText 0x0419u
 /* <<< factory statics */
 
 #define NUM_PC_PACKS 15
@@ -233,3 +259,48 @@ void BlinkUnopenedPCPacks(void)
 	}
 }
 /* <<< factory BlinkUnopenedPCPacks */
+
+/* >>> factory TryOpenPCMailBoosterPack */
+/* mail.asm:263-292. The low 7 bits of wSelectedPCPack index
+ * PCMailBoosterPacks (asm:294-311), a two-byte row per mail; a zero second id
+ * means that mail grants a single pack. */
+void TryOpenPCMailBoosterPack(void)
+{
+	static const uint8_t pc_mail_booster_packs[NUM_MAILS + 1][2] = {
+		{0x00, 0x00},
+		{BOOSTER_COLOSSEUM_NEUTRAL, 0x00},
+		{BOOSTER_LABORATORY_PSYCHIC, 0x00},
+		{BOOSTER_EVOLUTION_GRASS, 0x00},
+		{BOOSTER_MYSTERY_LIGHTNING_COLORLESS, 0x00},
+		{BOOSTER_EVOLUTION_FIGHTING, 0x00},
+		{BOOSTER_COLOSSEUM_FIRE, 0x00},
+		{BOOSTER_LABORATORY_PSYCHIC, 0x00},
+		{BOOSTER_LABORATORY_PSYCHIC, 0x00},
+		{BOOSTER_MYSTERY_WATER_COLORLESS, 0x00},
+		{BOOSTER_COLOSSEUM_NEUTRAL, BOOSTER_EVOLUTION_NEUTRAL},
+		{BOOSTER_MYSTERY_NEUTRAL, BOOSTER_LABORATORY_NEUTRAL},
+		{BOOSTER_COLOSSEUM_TRAINER, 0x00},
+		{BOOSTER_EVOLUTION_TRAINER, 0x00},
+		{BOOSTER_MYSTERY_TRAINER_COLORLESS, 0x00},
+		{BOOSTER_LABORATORY_TRAINER, 0x00},
+	};
+
+	wAnotherBoosterPack = 0u;
+	uint8_t pack = wSelectedPCPack;
+	if ((pack & (uint8_t)(1u << PACK_UNOPENED_F)) != 0u) {
+		const uint8_t *entry = pc_mail_booster_packs[pack & 0x7fu];
+		/* Both results are dead: `ld a, $01` overwrites the first call's a,
+		 * and the second call is followed only by DisableLCD, so the flag
+		 * byte GiveBoosterPack hands back is never read either. */
+		(void)GiveBoosterPack(entry[0], 0u);
+		wAnotherBoosterPack = 1u;
+		if (entry[1] != 0u)
+			(void)GiveBoosterPack(entry[1], 0u);
+	} else {
+		(void)InitMenuScreen();
+		(void)SetupText(0x30u, 0xffu);
+		(void)PrintScrollableText_NoTextBoxLabel(MailBoosterPackAlreadyOpenedText);
+	}
+	DisableLCD();
+}
+/* <<< factory TryOpenPCMailBoosterPack */

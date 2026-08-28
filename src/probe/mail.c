@@ -130,6 +130,14 @@ static void adapt_BlinkUnopenedPCPacks(ProbeState *s)
 }
 /* <<< factory BlinkUnopenedPCPacks */
 
+/* >>> factory TryOpenPCMailBoosterPack */
+static void adapt_TryOpenPCMailBoosterPack(ProbeState *s)
+{
+	(void)s;
+	TryOpenPCMailBoosterPack();
+}
+/* <<< factory TryOpenPCMailBoosterPack */
+
 const ProbeEntry probe_entries_mail[] = {
 	{ "TryGivePCPack", adapt_TryGivePCPack },
 	{ "GePCPackSelectionCoordinates", adapt_GePCPackSelectionCoordinates },
@@ -145,5 +153,6 @@ const ProbeEntry probe_entries_mail[] = {
 	{ "PrintPCPackName", adapt_PrintPCPackName },
 	{ "PrintObtainedPCPacks", adapt_PrintObtainedPCPacks },
 	{ "BlinkUnopenedPCPacks", adapt_BlinkUnopenedPCPacks },
+	{ "TryOpenPCMailBoosterPack", adapt_TryOpenPCMailBoosterPack },
 	{ NULL, NULL },
 };

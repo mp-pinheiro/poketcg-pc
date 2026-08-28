@@ -51,4 +51,9 @@ void PrintObtainedPCPacks(void);
 /* >>> factory BlinkUnopenedPCPacks */
 void BlinkUnopenedPCPacks(void);
 /* <<< factory BlinkUnopenedPCPacks */
+/* >>> factory TryOpenPCMailBoosterPack */
+/* mail.asm:263. The tail is `call DisableLCD / ret`, and DisableLCD models no
+ * register result, so nothing is returned. */
+void TryOpenPCMailBoosterPack(void);
+/* <<< factory TryOpenPCMailBoosterPack */
 #endif

@@ -99,6 +99,27 @@ CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
 PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
 SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+# mail.asm:263 (TryOpenPCMailBoosterPack).
+wAnotherBoosterPack = 0xD117
+wSelectedPCPack = 0xD12E
+MAIL_wLCDC = 0xCABB
+MAIL_wTxRam2 = 0xCE3F
+MAIL_wTxRam3 = 0xCE43
+
+# wLCDC clear on entry keeps InitMenuScreen's screen off (it never calls
+# EnableLCD), every WaitForVBlank behind the scrollable text a no-op, and the
+# trailing DisableLCD on its early return, so no VBlank-mutated byte is ever
+# involved. CopyDMAFunction is still installed because InitMenuScreen sets
+# wVBlankOAMCopyToggle, and SetupText warms the glyph cache the text page walks.
+MAIL_TEXT_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+# B, cycled: PrintScrollableText_NoTextBoxLabel waits on edge-triggered
+# hKeysPressed, and with the LCD off runner.c still advances the input timeline
+# every 70224 cycles, so a tapped button lands an edge inside the wait.
+MAIL_TEXT_KEYS = [0x00, 0x02]
+# A menu screen load plus a full page of letter-delayed scrollable text.
+MAIL_TEXT_INSTRUCTIONS = 60000000
+MAIL_TEXT_CYCLES = 240000000
 # <<< factory-cases-statics
 
 # >>> factory UpdateMailMenuCursor
@@ -156,6 +177,45 @@ CASES["BlinkUnopenedPCPacks"] = [
     dict(POISON, wram={wPCPacks: b"\x80" + bytes(14), wCursorBlinkTimer: b"\x00", 0xFF80: b"\x04", 0xCABB: b"\x00"}, setup=SETUP, read={**CACHE_READ, **PLACEMENT_READ}, vread={0: {0x9842: 6}}),
 ]
 # <<< factory BlinkUnopenedPCPacks
+
+# >>> factory TryOpenPCMailBoosterPack
+CONTRACT["TryOpenPCMailBoosterPack"] = {"compare": (), "preserve": ()}
+CASES["TryOpenPCMailBoosterPack"] = [
+    # PACK_UNOPENED_F clear: the pack is already open, so the routine prints
+    # MailBoosterPackAlreadyOpenedText and both sides return through DisableLCD.
+    # wAnotherBoosterPack is seeded non-zero and must come back cleared.
+    {"wram": {wSelectedPCPack: b"\x00", wAnotherBoosterPack: b"\xff", MAIL_wLCDC: b"\x00"},
+     "keys": MAIL_TEXT_KEYS, "setup": MAIL_TEXT_SETUP,
+     "read": {wAnotherBoosterPack: 1},
+     "instruction_budget": MAIL_TEXT_INSTRUCTIONS, "cycle_budget": MAIL_TEXT_CYCLES},
+    # A pack id that would select a real two-booster row if bit 7 were set, so
+    # only the branch bit decides; wAnotherBoosterPack starts at the value the
+    # opened path would have left.
+    {"wram": {wSelectedPCPack: b"\x0a", wAnotherBoosterPack: b"\x01", MAIL_wLCDC: b"\x00"},
+     "keys": MAIL_TEXT_KEYS, "setup": MAIL_TEXT_SETUP,
+     "read": {wAnotherBoosterPack: 1},
+     "instruction_budget": MAIL_TEXT_INSTRUCTIONS, "cycle_budget": MAIL_TEXT_CYCLES},
+    # Poisoned entry registers: `xor a` kills a and f immediately and no other
+    # register is an input. $7F is the largest id with the unopened bit clear.
+    dict(POISON, wram={wSelectedPCPack: b"\x7f", wAnotherBoosterPack: b"\xff", MAIL_wLCDC: b"\x00"},
+         keys=MAIL_TEXT_KEYS, setup=MAIL_TEXT_SETUP,
+         read={wAnotherBoosterPack: 1},
+         instruction_budget=MAIL_TEXT_INSTRUCTIONS, cycle_budget=MAIL_TEXT_CYCLES),
+    # Unopened pack, native only. The reference never returns from
+    # GiveBoosterPack -- it spins in WaitForSongToFinish, which is why that
+    # routine itself landed with a pre-ret cutpoint at AssertSongFinished -- so
+    # this branch cannot be measured end to end against the real ROM. Mail 10
+    # ($8A) is the only row whose second id is non-zero, so the second call
+    # re-writes the TxRam pair with BOOSTER_EVOLUTION_NEUTRAL's scene
+    # (SCENE_EVOLUTION_BOOSTER $02) and EvolutionBoosterText ($03A9), which
+    # proves both the row lookup and the `or a` continuation.
+    {"oracle": False,
+     "why": "The reference ROM cannot return from this branch: GiveBoosterPack spins in WaitForSongToFinish and is itself ported only up to a pre-ret cutpoint, so the unopened path is native-only evidence.",
+     "wram": {wSelectedPCPack: b"\x8a", MAIL_wLCDC: b"\x00"},
+     "expect": {wAnotherBoosterPack: b"\x01", MAIL_wTxRam2: b"\xa9\x03", MAIL_wTxRam3: b"\x02\x00"},
+     "instruction_budget": MAIL_TEXT_INSTRUCTIONS, "cycle_budget": MAIL_TEXT_CYCLES},
+]
+# <<< factory TryOpenPCMailBoosterPack
 
 from tests.cases._schema_migration import legacy_to_schema
 
@@ -249,3 +309,11 @@ MUTATIONS["PrintObtainedPCPacks"] = {"source_symbol": "PrintObtainedPCPacks", "b
 # >>> factory-mutation BlinkUnopenedPCPacks
 MUTATIONS["BlinkUnopenedPCPacks"] = {"source_symbol": "BlinkUnopenedPCPacks", "before": "\t\tif ((pack & (uint8_t)(1u << PACK_UNOPENED_F)) == 0u)", "after": "\t\tif ((pack & (uint8_t)(1u << PACK_UNOPENED_F)) != 0u)", "case_ids": ["BlinkUnopenedPCPacks-1", "BlinkUnopenedPCPacks-2", "BlinkUnopenedPCPacks-4"]}
 # <<< factory-mutation BlinkUnopenedPCPacks
+# >>> factory-mutation TryOpenPCMailBoosterPack
+MUTATIONS["TryOpenPCMailBoosterPack"] = {
+	"source_symbol": "TryOpenPCMailBoosterPack",
+	"before": "\twAnotherBoosterPack = 0u;\n\tuint8_t pack = wSelectedPCPack;",
+	"after": "\twAnotherBoosterPack = 1u;\n\tuint8_t pack = wSelectedPCPack;",
+	"case_ids": ["TryOpenPCMailBoosterPack-0", "TryOpenPCMailBoosterPack-1", "TryOpenPCMailBoosterPack-2"],
+}
+# <<< factory-mutation TryOpenPCMailBoosterPack
