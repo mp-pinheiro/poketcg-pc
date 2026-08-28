@@ -260,3 +260,23 @@ unblock = "Trace the first animation/recoil callee that enables LCD and identify
 name = "WeezingSelfdestructEffect"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-9 retry candidate reaches the reference animation/VBlank parking path with LCDC=0x80 and exhausts the configured cycle budget before return; this self-destruct effect is frame-dependent, not a C mismatch. Another unchanged full-call retry is non-informative."
 unblock = "Trace the first animation/recoil callee that enables LCD and identify a bounded pre-ret completion, then verify that prefix or port the frame-safe callee before retrying this effect; do not increase budgets or repeat the unchanged full-call case."
+
+[[blocked]]
+name = "StoneBarrage_MultiplierEffect"
+reason = "HAND-DIAGNOSED 2026-08-28: generation-9 retry reaches a deterministic bus mismatch at 0xCCD9 after TossCoinATimes; reference writes 000181004006000000 while native leaves the multiplier-side state 000181000000000000. The missing state is a callee-owned coin/animation side effect, not the routine arithmetic."
+unblock = "Trace TossCoinATimes_BankB and its SGB/coin result writes at 0xCCD9, then port the missing state transition or use a bounded pre-ret contract before retrying StoneBarrage_MultiplierEffect."
+
+[[blocked]]
+name = "SolarPower_RemoveStatusEffect"
+reason = "HAND-DIAGNOSED 2026-08-28: generation-9 retry remains on the frame-enabled attack-animation path and does not produce a bounded return under the isolated fixture; this is an animation execution boundary, not a translation mismatch."
+unblock = "Trace the first PlayAttackAnimation/WaitAttackAnimation callee that enables LCD and identify a bounded pre-ret completion, then verify that prefix or port the frame-safe callee before retrying SolarPower_RemoveStatusEffect."
+
+[[blocked]]
+name = "Quickfreeze_Paralysis50PercentEffect"
+reason = "HAND-DIAGNOSED 2026-08-28: generation-9 retry reaches the status-effect path but differs at wTempSGBPacket+2 (0xCAE2), reference 0x01 versus native 0x00, after DrawDuelMainScene/animation rendering. The missing byte is a callee side effect outside Quickfreeze own queue writes."
+unblock = "Trace DrawDuelMainScene and the SGB packet write at 0xCAE2, port that missing state transition, then retry Quickfreeze_Paralysis50PercentEffect."
+
+[[blocked]]
+name = "PayDayEffect"
+reason = "HAND-DIAGNOSED 2026-08-28: corrected tails fixture reaches the draw path but generation-9 still diverges at hWhoseTurn 0xFF97 (reference ends 0x01, native 0xC2) after the nested card-display path. The isolated effect depends on an unmodeled turn-side transition outside this routine; another unchanged retry is non-informative."
+unblock = "Trace the nested DrawCardFromDeck/card-display path to identify the hWhoseTurn transition, then model the missing callee state or define a verified bounded pre-ret contract before retrying PayDayEffect."
