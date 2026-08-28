@@ -1179,4 +1179,15 @@ typedef struct {
 } PrintPokemonCardWeightResult;
 PrintPokemonCardWeightResult PrintPokemonCardWeight(uint8_t b, uint8_t c, uint16_t hl);
 /* <<< factory PrintPokemonCardWeight */
+/* >>> factory DisplayCardPage_PokemonDescription */
+typedef struct { uint8_t a; uint8_t f; } DisplayCardPage_PokemonDescriptionResult;
+DisplayCardPage_PokemonDescriptionResult DisplayCardPage_PokemonDescription(void);
+/* <<< factory DisplayCardPage_PokemonDescription */
+/* >>> factory RequestToPrintCards_SelectStartCard */
+/* core.asm:8409. The single exit is `ret c`, so the result is the flag byte
+ * alone; `a` there is GetCardPointer's leftover ROM-address compare operand,
+ * which the ported void LoadCardDataToBuffer1_FromCardID cannot return. */
+typedef struct { uint8_t f; } RequestToPrintCards_SelectStartCardResult;
+RequestToPrintCards_SelectStartCardResult RequestToPrintCards_SelectStartCard(void);
+/* <<< factory RequestToPrintCards_SelectStartCard */
 #endif

@@ -1422,6 +1422,43 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/core.h"
 #include "home/empty_screen.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/bg_map.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
+#include "home/tiles.h"
+#include "mem.h"
+
+/* engine/duel/core.asm:4645 and 4650, both in bank 1. CardRarityTextIDs is
+ * $5E14 (already measured for DrawCardPageSet2AndRarityIcons, whose contract
+ * compares the hl it returns). CardPageLvHPTextTileData is the 9 bytes ahead of
+ * it (two 4-byte blocks plus the $ff terminator) and CardPageLengthWeightTextData
+ * the 9 bytes ahead of that (two 4-byte `textitem`s -- `db x, y` plus a 2-byte
+ * `tx` -- plus the $ff terminator). */
+#define CARD_PAGE_LENGTH_WEIGHT_TEXT_DATA 0x5E02u
+#define CARD_PAGE_LV_HP_TEXT_TILE_DATA 0x5E0Bu
+
+#define TX_KATAKANA 0x0fu
+#define LbsText 0x0010u
+#define PokemonText 0x000eu
+#define CARD_PAGE_DESCRIPTION_LINE_LENGTH 19u
+
+#include "home/frames.h"
+#include "home/credits_sequence_commands.h"
+#include "home/lcd.h"
+#include "home/card_data.h"
+#include "home/common.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+
+/* card_constants.asm:230 -- NUM_CARDS EQU const_value - 1, and RECYCLE is the
+ * last card constant ($e4), so NUM_CARDS is $e4. GetCardPointer
+ * (home/card_data.asm:142-167) returns carry when CardPointers + 2*e reaches
+ * CardPointers + 2 + 2*NUM_CARDS, i.e. for every card id above NUM_CARDS. */
+#define NUM_CARDS 0xE4u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -8248,3 +8285,144 @@ PrintPokemonCardWeightResult PrintPokemonCardWeight(uint8_t b, uint8_t c, uint16
 	return (PrintPokemonCardWeightResult){sum, f, length, out_c, sum, entry_c, source};
 }
 /* <<< factory PrintPokemonCardWeight */
+
+/* >>> factory DisplayCardPage_PokemonDescription */
+/* core.asm:4554. Renders the Pokemon description card page: generic header,
+ * LENGTH/WEIGHT labels, Lv/HP tiles, card symbol, level and HP numbers, the
+ * category line, the length and weight values and finally the description
+ * printed without line separation. The tail is `call SetOneLineSeparation /
+ * ret`, and that routine is `xor a / ld [wLineSeparation], a / ret`, so the
+ * exit registers are exactly the ones it produces. */
+DisplayCardPage_PokemonDescriptionResult DisplayCardPage_PokemonDescription(void)
+{
+	uint16_t block_hl;
+	uint16_t block_de;
+	uint8_t block_a;
+	uint8_t block_b;
+	uint8_t block_c;
+	uint16_t card_length;
+	uint16_t card_weight;
+	uint16_t description;
+	uint8_t lines;
+	uint8_t row;
+	uint8_t separation;
+
+	(void)PrintPokemonCardPageGenericInformation();
+	(void)LoadDuelCardSymbolTiles2();
+	(void)PlaceTextItems(CARD_PAGE_LENGTH_WEIGHT_TEXT_DATA);
+
+	block_hl = CARD_PAGE_LV_HP_TEXT_TILE_DATA;
+	block_de = 0u;
+	block_a = 0u;
+	block_b = 0u;
+	block_c = 0u;
+	WriteDataBlocksToBGMap0(&block_hl, &block_de, &block_a, &block_b, &block_c);
+
+	DrawCardSymbol(3u, 2u);
+	WriteTwoDigitNumberInTxSymbol_PadSpace(gb_read8(wLoadedCard1Level_ADDR), 12u, 2u, 0u, 0u, 0u);
+	WriteOneByteNumberInTxSymbol_PadSpace(gb_read8(wLoadedCard1HP_ADDR), 16u, 2u, 0u, 0u, 0u);
+
+	{
+		ProcessTextHeaderResult category =
+			InitTextPrinting_ProcessTextFromPointerToID(1u, 10u, wLoadedCard1Category_ADDR);
+		/* `ld a, TX_KATAKANA / call ProcessSpecialTextCharacter`: hl is still the
+		 * cursor the category print left behind. */
+		(void)ProcessSpecialTextCharacter(TX_KATAKANA, category.hl);
+	}
+	(void)ProcessTextFromID(PokemonText);
+
+	/* `ld a, [hli] / ld l, [hl] / ld h, a`: the length word is stored feet
+	 * first, so the low address byte becomes h and the high one l. */
+	card_length = (uint16_t)(((uint16_t)gb_read8(wLoadedCard1Length_ADDR) << 8)
+		| (uint16_t)gb_read8((uint16_t)(wLoadedCard1Length_ADDR + 1u)));
+	PrintPokemonCardLength(card_length, 5u, 11u);
+
+	/* `ld a, [hli] / ld h, [hl] / ld l, a`: the weight is a plain little-endian
+	 * word, unlike the length above. */
+	card_weight = (uint16_t)((uint16_t)gb_read8(wLoadedCard1Weight_ADDR)
+		| ((uint16_t)gb_read8((uint16_t)(wLoadedCard1Weight_ADDR + 1u)) << 8));
+	{
+		/* PrintPokemonCardWeight leaves d = x coordinate just past the string it
+		 * printed and e = the row, and that pair is what positions "lbs.". */
+		PrintPokemonCardWeightResult weight_out = PrintPokemonCardWeight(5u, 12u, card_weight);
+		(void)InitTextPrinting_ProcessTextFromID(weight_out.d, weight_out.e, LbsText);
+	}
+
+	(void)SetNoLineSeparation();
+	description = (uint16_t)((uint16_t)gb_read8(wLoadedCard1Description_ADDR)
+		| ((uint16_t)gb_read8((uint16_t)(wLoadedCard1Description_ADDR + 1u)) << 8));
+	lines = CountLinesOfTextFromID(description);
+	/* `lb de, 1, 13 / cp 4 / jr nc`: carry is set only when the line count is
+	 * below four, and that is the branch that moves the text one row down. */
+	row = 13u;
+	if (lines < 4u)
+		row = (uint8_t)(row + 1u);
+	InitTextPrintingInTextbox(CARD_PAGE_DESCRIPTION_LINE_LENGTH, 1u, row);
+	(void)ProcessTextFromPointerToID(wLoadedCard1Description_ADDR);
+
+	separation = SetOneLineSeparation();
+	return (DisplayCardPage_PokemonDescriptionResult){separation,
+		(uint8_t)(separation == 0u ? FLAG_Z : 0u)};
+}
+/* <<< factory DisplayCardPage_PokemonDescription */
+
+/* >>> factory RequestToPrintCards_SelectStartCard */
+/* core.asm:8409. Unreferenced debug helper: pick a start card id with the
+ * D-pad, then print every card from that id up to the end of the card index.
+ *
+ * The `ret c` after LoadCardDataToBuffer1_FromCardID is the only exit. That
+ * carry comes from GetCardPointer (home/card_data.asm:142-167), which the
+ * ported LoadCardDataToBuffer1_FromCardID does not surface -- it is `void` and
+ * copies unconditionally. The bound is therefore evaluated here, BEFORE the
+ * call, so an out-of-range id leaves wLoadedCard1 untouched exactly as the ROM
+ * does. GetCardPointer compares the computed pointer against
+ * CardPointers + 2 + 2*NUM_CARDS and then CCFs, so carry is set for every
+ * id > NUM_CARDS; the flag byte differs between the two out-of-range shapes
+ * because CCF keeps Z: id == NUM_CARDS + 1 hits the pointer exactly equal to
+ * the end marker (Z set -> $90), any higher id compares unequal (Z clear ->
+ * $10). N and H are always cleared by the CCF.
+ *
+ * `a` on that exit is GetCardPointer's leftover compare operand (a ROM-address
+ * byte of CardPointers), which no ported callee can hand back, so the result
+ * carries the flags alone. */
+RequestToPrintCards_SelectStartCardResult RequestToPrintCards_SelectStartCard(void)
+{
+	EmptyScreen();
+	EnableLCD();
+	wPrinterStartCardID = GRASS_ENERGY;
+
+	/* .wait_input */
+	for (;;) {
+		DoFrame();
+		uint8_t b = hDPadHeld;
+		uint8_t a = wPrinterStartCardID;
+		if (b & (1u << B_PAD_LEFT))
+			a = (uint8_t)(a - 1u);
+		if (b & (1u << B_PAD_RIGHT))
+			a = (uint8_t)(a + 1u);
+		if (b & (1u << B_PAD_UP))
+			a = (uint8_t)(a + 10u);
+		if (b & (1u << B_PAD_DOWN))
+			a = (uint8_t)(a - 10u);
+		wPrinterStartCardID = a;
+		WriteOneByteNumberInTxSymbol_PadSpace(a, 5u, 5u, 0u, 0u, 0u);
+		if ((hKeysPressed & PAD_START) != 0u)
+			break;
+	}
+
+	/* .loop_cards -- d stays 0 throughout: e only ever climbs to NUM_CARDS + 1
+	 * before the out-of-bounds exit, so `inc de` never carries into d. */
+	uint8_t e = wPrinterStartCardID;
+	for (;;) {
+		if (e > NUM_CARDS) {
+			uint8_t f = (e == (uint8_t)(NUM_CARDS + 1u))
+				? (uint8_t)(FLAG_Z | FLAG_C)
+				: (uint8_t)FLAG_C;
+			return (RequestToPrintCards_SelectStartCardResult){f};
+		}
+		LoadCardDataToBuffer1_FromCardID(e);
+		(void)RequestToPrintCard(e);
+		e = (uint8_t)(e + 1u);
+	}
+}
+/* <<< factory RequestToPrintCards_SelectStartCard */

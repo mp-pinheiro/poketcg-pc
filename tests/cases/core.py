@@ -1988,6 +1988,56 @@ hWhoseTurn = 0xFF97
 WEIGHT_STRBUF = 0xCAA0
 WEIGHT_LCDC = 0xCABB
 WEIGHT_BGMAP0 = 0x9800
+
+DESC_wStringBuffer = 0xCAA0
+DESC_wConsole = 0xCAB4
+DESC_wLCDC = 0xCABB
+DESC_wCardPageType = 0xCBD1
+DESC_wPokemonLengthPrintOffset = 0xCC03
+DESC_wLoadedCard1Type = 0xCC24
+DESC_wLoadedCard1Set = 0xCC27
+DESC_wLoadedCard1Rarity = 0xCC29
+DESC_wLoadedCard1RarityNext = 0xCC2A
+DESC_wLoadedCard1HP = 0xCC2C
+DESC_wLoadedCard1Category = 0xCC59
+DESC_wLoadedCard1Level = 0xCC5D
+DESC_wLoadedCard1Length = 0xCC5E
+DESC_wLoadedCard1Weight = 0xCC60
+DESC_wLoadedCard1Description = 0xCC62
+DESC_wLineSeparation = 0xCD08
+DESC_hBankROM = 0xFF80
+
+DESC_SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+# Rarity $ff is PROMOSTAR, which makes DrawCardPageSet2AndRarityIcons skip
+# PrintCardPageRarityIcon; wLCDC zero keeps WaitForVBlank a no-op.
+DESC_BASE = {
+    DESC_wCardPageType: b"\x00",
+    DESC_wLoadedCard1Type: b"\x00",
+    DESC_wLoadedCard1Set: b"\x00\x00",
+    DESC_wLoadedCard1Rarity: b"\xff",
+    DESC_wLoadedCard1RarityNext: b"\x01",
+    DESC_wConsole: b"\x00",
+    DESC_wLCDC: b"\x00",
+    DESC_hBankROM: b"\x01",
+    DESC_wLoadedCard1HP: b"\x28",
+    DESC_wLoadedCard1Level: b"\x14",
+    DESC_wLoadedCard1Category: b"\x0e\x00",
+    DESC_wStringBuffer: b"\x00" * 8,
+}
+
+DESC_READ = {
+    DESC_wPokemonLengthPrintOffset: 1,
+    DESC_wLineSeparation: 1,
+    DESC_wStringBuffer: 8,
+}
+
+def desc_seed(length, weight, description):
+    seed = dict(DESC_BASE)
+    seed[DESC_wLoadedCard1Length] = length
+    seed[DESC_wLoadedCard1Weight] = weight
+    seed[DESC_wLoadedCard1Description] = description
+    return seed
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -4265,6 +4315,54 @@ CASES["PrintPokemonCardWeight"] = [
 ]
 # <<< factory PrintPokemonCardWeight
 
+# >>> factory DisplayCardPage_PokemonDescription
+CONTRACT["DisplayCardPage_PokemonDescription"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["DisplayCardPage_PokemonDescription"] = [
+    dict(id="DisplayCardPage_PokemonDescription-0",
+         wram=desc_seed(b"\x03\x0b", b"\xd2\x04", b"\x0e\x00"),
+         read=DESC_READ, setup=DESC_SETUP, rom_bank=1,
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, id="DisplayCardPage_PokemonDescription-1",
+         wram=desc_seed(b"\x02\x64", b"\x64\x00", b"\x10\x00"),
+         read=DESC_READ, setup=DESC_SETUP, rom_bank=1,
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DisplayCardPage_PokemonDescription
+
+# >>> factory RequestToPrintCards_SelectStartCard
+# The routine forces wPrinterStartCardID to GRASS_ENERGY ($01) on entry, so the
+# only way to reach the `ret c` without driving the reference into the printer
+# serial wait is to steer the id out of bounds on the frame START is pressed.
+# keys=[0x00, 0x88] taps DOWN|START: HandleDPadRepeat (home/frames.asm:44-56)
+# copies hKeysHeld into hDPadHeld whenever a control-pad bit is held, so the
+# frame that makes START newly pressed is the same frame that reports DOWN
+# held. $01 - 10 = $F7 = 247 > NUM_CARDS ($E4), so
+# LoadCardDataToBuffer1_FromCardID's GetCardPointer returns carry on the very
+# first pass, RequestToPrintCard is never reached, and both sides return
+# normally with f = $10 (CCF leaves Z clear because $F7 overshoots the end
+# marker rather than landing on it).
+#
+# The observed byte is wPrinterStartCardID ($CE9A), which this routine writes
+# itself every frame and nothing else touches. Nothing the VBlank handler
+# mutates is read. EnableLCD arms real frames, so CopyDMAFunction installs
+# hDMAFunction for VBlankHandler; no text is printed through the glyph cache
+# (WriteOneByteNumberInTxSymbol_PadSpace only fills wStringBuffer and BGMap0),
+# so SetupText is not needed. The DoFrame loop burns whole frames, hence the
+# explicit generous budgets.
+CONTRACT["RequestToPrintCards_SelectStartCard"] = {"compare": ("f",), "preserve": ()}
+CASES["RequestToPrintCards_SelectStartCard"] = [
+    {"keys": [0x00, 0x88],
+     "setup": [{"fn": "CopyDMAFunction"}],
+     "read": {0xCE9A: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON,
+         keys=[0x00, 0x88],
+         setup=[{"fn": "CopyDMAFunction"}],
+         read={0xCE9A: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory RequestToPrintCards_SelectStartCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5901,3 +5999,19 @@ MUTATIONS["PrintPokemonCardWeight"] = {
     "case_ids": ["PrintPokemonCardWeight-0", "PrintPokemonCardWeight-1", "PrintPokemonCardWeight-2"],
 }
 # <<< factory-mutation PrintPokemonCardWeight
+# >>> factory-mutation DisplayCardPage_PokemonDescription
+MUTATIONS["DisplayCardPage_PokemonDescription"] = {
+    "source_symbol": "DisplayCardPage_PokemonDescription",
+    "before": "\tcard_length = (uint16_t)(((uint16_t)gb_read8(wLoadedCard1Length_ADDR) << 8)\n\t\t| (uint16_t)gb_read8((uint16_t)(wLoadedCard1Length_ADDR + 1u)));",
+    "after": "\tcard_length = (uint16_t)(((uint16_t)gb_read8((uint16_t)(wLoadedCard1Length_ADDR + 1u)) << 8)\n\t\t| (uint16_t)gb_read8(wLoadedCard1Length_ADDR));",
+    "case_ids": ["DisplayCardPage_PokemonDescription-0", "DisplayCardPage_PokemonDescription-1"],
+}
+# <<< factory-mutation DisplayCardPage_PokemonDescription
+# >>> factory-mutation RequestToPrintCards_SelectStartCard
+MUTATIONS["RequestToPrintCards_SelectStartCard"] = {
+    "source_symbol": "RequestToPrintCards_SelectStartCard",
+    "before": "\t\tif (b & (1u << B_PAD_DOWN))\n\t\t\ta = (uint8_t)(a - 10u);\n\t\twPrinterStartCardID = a;",
+    "after": "\t\tif (b & (1u << B_PAD_DOWN))\n\t\t\ta = (uint8_t)(a - 11u);\n\t\twPrinterStartCardID = a;",
+    "case_ids": ["RequestToPrintCards_SelectStartCard-0", "RequestToPrintCards_SelectStartCard-1"],
+}
+# <<< factory-mutation RequestToPrintCards_SelectStartCard

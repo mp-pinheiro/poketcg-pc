@@ -2628,6 +2628,23 @@ static void adapt_PrintPokemonCardWeight(ProbeState *s)
 }
 /* <<< factory PrintPokemonCardWeight */
 
+/* >>> factory DisplayCardPage_PokemonDescription */
+static void adapt_DisplayCardPage_PokemonDescription(ProbeState *s)
+{
+	DisplayCardPage_PokemonDescriptionResult r = DisplayCardPage_PokemonDescription();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory DisplayCardPage_PokemonDescription */
+
+/* >>> factory RequestToPrintCards_SelectStartCard */
+static void adapt_RequestToPrintCards_SelectStartCard(ProbeState *s)
+{
+	RequestToPrintCards_SelectStartCardResult result = RequestToPrintCards_SelectStartCard();
+	s->f = result.f;
+}
+/* <<< factory RequestToPrintCards_SelectStartCard */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2941,5 +2958,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OppAction_PlayEnergyCard", adapt_OppAction_PlayEnergyCard },
 	{ "AITryUseAttack", adapt_AITryUseAttack },
 	{ "PrintPokemonCardWeight", adapt_PrintPokemonCardWeight },
+	{ "DisplayCardPage_PokemonDescription", adapt_DisplayCardPage_PokemonDescription },
+	{ "RequestToPrintCards_SelectStartCard", adapt_RequestToPrintCards_SelectStartCard },
 	{ NULL, NULL },
 };
