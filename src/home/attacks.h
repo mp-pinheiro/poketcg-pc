@@ -6,4 +6,8 @@ void RetrievePlayAreaAIScoreFromBackup2(void);
 /* >>> factory GetAIScoreOfAttack */
 void GetAIScoreOfAttack(unsigned char a);
 /* <<< factory GetAIScoreOfAttack */
+/* >>> factory AIProcessAttacks */
+typedef struct { unsigned char f; } AIProcessAttacksResult;
+AIProcessAttacksResult AIProcessAttacks(void);
+/* <<< factory AIProcessAttacks */
 #endif

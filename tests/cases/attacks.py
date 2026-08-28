@@ -59,6 +59,17 @@ hWhoseTurn = 0xFF97
 wSelectedAttack = 0xCCC6
 wAIScore = 0xCDBE
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wAIBarrierFlagCounter = 0xCDA7
+wAIExecuteProcessedAttack = 0xCDD9
+wAIPlusPowerAttack = 0xCDD6
+wAIRetreatScore = 0xCDB4
+wAITriedAttack = 0xCDDB
+wDamage = 0xCCB9
+wFirstAttackAIScore = 0xCDBF
+wPreviousAIFlags = 0xCE20
+wSelectedAttack = 0xCCC6
+hTempPlayAreaLocation_ff9d = 0xFF9D
 # <<< factory-cases-statics
 
 # >>> factory GetAIScoreOfAttack
@@ -70,8 +81,21 @@ CASES["GetAIScoreOfAttack"] = [
 ]
 # <<< factory GetAIScoreOfAttack
 
+# >>> factory AIProcessAttacks
+CONTRACT["AIProcessAttacks"] = {"compare": ("f",), "preserve": ()}
+CASES["AIProcessAttacks"] = [
+    {"wram": {wAIBarrierFlagCounter: b"\x80", wAIExecuteProcessedAttack: b"\x00", wAIRetreatScore: b"\x00"}, "expect": {wAIRetreatScore: b"\x01"}, "read": {wAIRetreatScore: 1}},
+    {"wram": {wPreviousAIFlags: b"\x01", wAIPlusPowerAttack: b"\x03", wAIExecuteProcessedAttack: b"\x01"}, "expect": {wSelectedAttack: b"\x03"}, "read": {wSelectedAttack: 1}},
+    dict(POISON, wram={wPreviousAIFlags: b"\x01", wAIPlusPowerAttack: b"\x7e", wAIExecuteProcessedAttack: b"\x01"}, expect={wSelectedAttack: b"\x7e"}, read={wSelectedAttack: 1}),
+    {"wram": {wAIBarrierFlagCounter: b"\x80", wAIExecuteProcessedAttack: b"\x01"}},
+]
+# <<< factory AIProcessAttacks
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation GetAIScoreOfAttack
 MUTATIONS["GetAIScoreOfAttack"] = {"source_symbol": "GetAIScoreOfAttack", "before": "void GetAIScoreOfAttack(uint8_t a)\n{\n\twSelectedAttack = a;", "after": "void GetAIScoreOfAttack(uint8_t a)\n{\n\twSelectedAttack = 0u;", "case_ids": ["GetAIScoreOfAttack-0", "GetAIScoreOfAttack-1", "GetAIScoreOfAttack-2"]}
 # <<< factory-mutation GetAIScoreOfAttack
+# >>> factory-mutation AIProcessAttacks
+MUTATIONS["AIProcessAttacks"] = {"source_symbol": "AIProcessAttacks", "before": "\t\twSelectedAttack = wAIPlusPowerAttack;", "after": "\t\twSelectedAttack = 0u;", "case_ids": ["AIProcessAttacks-1", "AIProcessAttacks-2"]}
+# <<< factory-mutation AIProcessAttacks

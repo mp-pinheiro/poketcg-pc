@@ -14,8 +14,17 @@ static void adapt_GetAIScoreOfAttack(ProbeState *s)
 }
 /* <<< factory GetAIScoreOfAttack */
 
+/* >>> factory AIProcessAttacks */
+static void adapt_AIProcessAttacks(ProbeState *s)
+{
+	AIProcessAttacksResult result = AIProcessAttacks();
+	s->f = result.f;
+}
+/* <<< factory AIProcessAttacks */
+
 const ProbeEntry probe_entries_attacks[] = {
 	{ "RetrievePlayAreaAIScoreFromBackup2", adapt_RetrievePlayAreaAIScoreFromBackup2 },
 	{ "GetAIScoreOfAttack", adapt_GetAIScoreOfAttack },
+	{ "AIProcessAttacks", adapt_AIProcessAttacks },
 	{ NULL, NULL },
 };

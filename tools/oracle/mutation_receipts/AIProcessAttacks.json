@@ -1,0 +1,9 @@
+{
+  "fn": "AIProcessAttacks",
+  "case": "tests/cases/attacks.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIProcessAttacks\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52422\": \"03\", \"52694\": \"03\", \"52697\": \"01\", \"52768\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIProcessAttacks\", \"mismatches\": {\"bus\": {\"address\": 52422, \"reference\": \"03030101\", \"native\": \"00030101\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52422, 1], [52694, 1], [52697, 1], [52768, 1]]}}}\n",
+  "restored": "{\"fn\": \"AIProcessAttacks\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52422\": \"03\", \"52694\": \"03\", \"52697\": \"01\", \"52768\": \"01\"}}, \"status\": \"PASS\"}\n"
+}
