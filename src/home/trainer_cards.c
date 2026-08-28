@@ -367,6 +367,15 @@
 #include "home/random.h"
 #define ATTACK_FLAG3_ADDRESS 0x10u
 #define BOOST_IF_TAKEN_DAMAGE_F 0u
+
+#include "home/core.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define AI_FLAG_USED_PROFESSOR_OAK 0x04u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
 /* <<< factory statics */
 
 
@@ -3186,3 +3195,36 @@ AIDecideResult AIPlay_PokemonFlute(void)
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_PokemonFlute */
+
+/* >>> factory AIPlay_ProfessorOak */
+AIDecideResult AIPlay_ProfessorOak(void)
+{
+	uint8_t flags = wCurrentAIFlags;
+	flags = (uint8_t)(flags | AI_FLAG_USED_PROFESSOR_OAK | AI_FLAG_MODIFIED_HAND);
+	wCurrentAIFlags = flags;
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_ProfessorOak */
+
+/* >>> factory AIPlay_PokemonTrader */
+AIMakeDecisionResult AIPlay_PokemonTrader(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTemp_ffa0 = wAITrainerCardParameter;
+	hTempPlayAreaLocation_ffa1 = wce1a;
+	return AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+}
+/* <<< factory AIPlay_PokemonTrader */
+
+/* >>> factory AIPlay_EnergyRemoval */
+AIDecideResult AIPlay_EnergyRemoval(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTemp_ffa0 = wAITrainerCardParameter;
+	hTempPlayAreaLocation_ffa1 = wce1a;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_EnergyRemoval */

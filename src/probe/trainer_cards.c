@@ -635,6 +635,29 @@ static void adapt_AIPlay_PokemonFlute(ProbeState *s)
 }
 /* <<< factory AIPlay_PokemonFlute */
 
+/* >>> factory AIPlay_ProfessorOak */
+static void adapt_AIPlay_ProfessorOak(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_ProfessorOak();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_ProfessorOak */
+
+/* >>> factory AIPlay_PokemonTrader */
+static void adapt_AIPlay_PokemonTrader(ProbeState *s)
+{
+	AIMakeDecisionResult result = AIPlay_PokemonTrader();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_PokemonTrader */
+
+/* >>> factory AIPlay_EnergyRemoval */
+static void adapt_AIPlay_EnergyRemoval(ProbeState *s)
+{
+	s->f = AIPlay_EnergyRemoval().f;
+}
+/* <<< factory AIPlay_EnergyRemoval */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -712,5 +735,8 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIPlay_ScoopUp", adapt_AIPlay_ScoopUp },
 	{ "AIPlay_PokemonBreeder", adapt_AIPlay_PokemonBreeder },
 	{ "AIPlay_PokemonFlute", adapt_AIPlay_PokemonFlute },
+	{ "AIPlay_ProfessorOak", adapt_AIPlay_ProfessorOak },
+	{ "AIPlay_PokemonTrader", adapt_AIPlay_PokemonTrader },
+	{ "AIPlay_EnergyRemoval", adapt_AIPlay_EnergyRemoval },
 	{ NULL, NULL },
 };

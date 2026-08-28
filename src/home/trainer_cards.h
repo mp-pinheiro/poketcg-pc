@@ -306,4 +306,13 @@ AIDecideResult AIPlay_PokemonBreeder(void);
 /* >>> factory AIPlay_PokemonFlute */
 AIDecideResult AIPlay_PokemonFlute(void);
 /* <<< factory AIPlay_PokemonFlute */
+/* >>> factory AIPlay_ProfessorOak */
+AIDecideResult AIPlay_ProfessorOak(void);
+/* <<< factory AIPlay_ProfessorOak */
+/* >>> factory AIPlay_PokemonTrader */
+AIMakeDecisionResult AIPlay_PokemonTrader(void);
+/* <<< factory AIPlay_PokemonTrader */
+/* >>> factory AIPlay_EnergyRemoval */
+AIDecideResult AIPlay_EnergyRemoval(void);
+/* <<< factory AIPlay_EnergyRemoval */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

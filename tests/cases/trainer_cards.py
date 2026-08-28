@@ -1149,6 +1149,33 @@ CASES["AIPlay_PokemonFlute"] = [
 ]
 # <<< factory AIPlay_PokemonFlute
 
+# >>> factory AIPlay_ProfessorOak
+CONTRACT["AIPlay_ProfessorOak"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_ProfessorOak"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xFF97: b"\xC2", 0xCE16: b"\x00", 0xCE21: b"\x00", 0xC2BA: b"\x3C", 0xCBF9: b"\x01", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xCE21: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xFF97: b"\xC2", 0xCE16: b"\x77", 0xCE21: b"\x80", 0xC2BA: b"\x3C", 0xCBF9: b"\x01", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x80"}, read={0xFF9F: 1, 0xCE21: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xFF97: b"\xC2", 0xCE16: b"\xDD", 0xCE21: b"\xAA", 0xC2BA: b"\x3C", 0xCBF9: b"\x01", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xCE21: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_ProfessorOak
+
+# >>> factory AIPlay_PokemonTrader
+CONTRACT["AIPlay_PokemonTrader"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_PokemonTrader"] = [
+    {"a": 0x00, "wram": {0xFF80: b"\x08", 0xCE16: b"\x12", 0xCE19: b"\x34", 0xCE1A: b"\x02", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, "read": {0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, "keys": [0x00, 0x01], "setup": SETUP, **BUDGET},
+    {"a": 0x00, "wram": {0xFF80: b"\x08", 0xCE16: b"\x77", 0xCE19: b"\x89", 0xCE1A: b"\x04", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x80"}, "read": {0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, "keys": [0x00, 0x01], "setup": SETUP, **BUDGET},
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCE19: b"\xEE", 0xCE1A: b"\xCC", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_PokemonTrader
+
+# >>> factory AIPlay_EnergyRemoval
+CONTRACT["AIPlay_EnergyRemoval"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_EnergyRemoval"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xFF97: b"\xC2", 0xCE16: b"\x12", 0xCE19: b"\x34", 0xCE1A: b"\x56", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xFF97: b"\xC2", 0xCE16: b"\x77", 0xCE19: b"\x44", 0xCE1A: b"\x02", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x80"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xFF97: b"\xC2", 0xCE16: b"\xDD", 0xCE19: b"\xEE", 0xCE1A: b"\xCC", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_EnergyRemoval
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1532,3 +1559,17 @@ MUTATIONS["AIPlay_PokemonBreeder"] = {"source_symbol": "AIPlay_PokemonBreeder", 
 # >>> factory-mutation AIPlay_PokemonFlute
 MUTATIONS["AIPlay_PokemonFlute"] = {"source_symbol": "AIPlay_PokemonFlute", "before": "AIDecideResult AIPlay_PokemonFlute(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;\n\thTemp_ffa0 = wAITrainerCardParameter;", "after": "AIDecideResult AIPlay_PokemonFlute(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);\n\thTemp_ffa0 = wAITrainerCardParameter;", "case_ids": ["AIPlay_PokemonFlute-0"]}
 # <<< factory-mutation AIPlay_PokemonFlute
+# >>> factory-mutation AIPlay_ProfessorOak
+MUTATIONS["AIPlay_ProfessorOak"] = {"source_symbol": "AIPlay_ProfessorOak", "before": "AIDecideResult AIPlay_ProfessorOak(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags = (uint8_t)(flags | AI_FLAG_USED_PROFESSOR_OAK | AI_FLAG_MODIFIED_HAND);\n\twCurrentAIFlags = flags;", "after": "AIDecideResult AIPlay_ProfessorOak(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags = (uint8_t)(flags | AI_FLAG_MODIFIED_HAND);\n\twCurrentAIFlags = flags;", "case_ids": ["AIPlay_ProfessorOak-0"]}
+# <<< factory-mutation AIPlay_ProfessorOak
+# >>> factory-mutation AIPlay_PokemonTrader
+MUTATIONS["AIPlay_PokemonTrader"] = {"source_symbol": "AIPlay_PokemonTrader", "before": "AIMakeDecisionResult AIPlay_PokemonTrader(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIMakeDecisionResult AIPlay_PokemonTrader(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardParameter;", "case_ids": ["AIPlay_PokemonTrader-0"]}
+# <<< factory-mutation AIPlay_PokemonTrader
+# >>> factory-mutation AIPlay_EnergyRemoval
+MUTATIONS["AIPlay_EnergyRemoval"] = {
+    "source_symbol": "AIPlay_EnergyRemoval",
+    "before": "AIDecideResult AIPlay_EnergyRemoval(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_EnergyRemoval(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "case_ids": ["AIPlay_EnergyRemoval-0", "AIPlay_EnergyRemoval-1", "AIPlay_EnergyRemoval-2"]
+}
+# <<< factory-mutation AIPlay_EnergyRemoval
