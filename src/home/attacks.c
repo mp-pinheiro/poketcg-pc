@@ -21,6 +21,9 @@
 #define PLAY_AREA_ARENA 0x00u
 #define SECOND_ATTACK 0x01u
 #define TRUE 0x01u
+
+#include "generated/wram.h"
+#include "home/attacks.h"
 /* <<< factory statics */
 
 /* engine/duel/ai/attacks.asm:26-41 */
@@ -109,3 +112,11 @@ dont_attack:
 	return (AIProcessAttacksResult){0x80u};
 }
 /* <<< factory AIProcessAttacks */
+
+/* >>> factory AIProcessAndTryToUseAttack */
+AIProcessAttacksResult AIProcessAndTryToUseAttack(void)
+{
+	wAIExecuteProcessedAttack = 0u;
+	return AIProcessAttacks();
+}
+/* <<< factory AIProcessAndTryToUseAttack */

@@ -1,0 +1,9 @@
+{
+  "fn": "AIProcessAndTryToUseAttack",
+  "case": "tests/cases/attacks.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIProcessAndTryToUseAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52647\": \"80\", \"52660\": \"01\", \"52697\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIProcessAndTryToUseAttack\", \"mismatches\": {\"f\": [128, 0], \"bus\": {\"address\": 52660, \"reference\": \"800100\", \"native\": \"800001\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52647, 1], [52660, 1], [52697, 1]]}}}\n",
+  "restored": "{\"fn\": \"AIProcessAndTryToUseAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52647\": \"80\", \"52660\": \"01\", \"52697\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
