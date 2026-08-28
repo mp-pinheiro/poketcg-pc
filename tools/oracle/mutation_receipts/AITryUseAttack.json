@@ -1,0 +1,9 @@
+{
+  "fn": "AITryUseAttack",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AITryUseAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"52193\": \"00\", \"52217\": \"01\", \"52231\": \"01\", \"52422\": \"00\", \"65431\": \"c3\", \"65439\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AITryUseAttack\", \"mismatches\": {\"bus\": {\"address\": 52422, \"reference\": \"0000010100c30000\", \"native\": \"0000010101c30001\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[51899, 1], [52193, 1], [52217, 1], [52231, 1], [52422, 1], [65431, 1], [65439, 2]]}}}\n",
+  "restored": "{\"fn\": \"AITryUseAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"52193\": \"00\", \"52217\": \"01\", \"52231\": \"01\", \"52422\": \"00\", \"65431\": \"c3\", \"65439\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

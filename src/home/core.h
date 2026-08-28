@@ -1163,4 +1163,8 @@ void OppAction_PlayBasicPokemonCard(void);
 /* >>> factory OppAction_PlayEnergyCard */
 void OppAction_PlayEnergyCard(void);
 /* <<< factory OppAction_PlayEnergyCard */
+/* >>> factory AITryUseAttack */
+typedef struct { uint8_t f; } AITryUseAttackResult;
+AITryUseAttackResult AITryUseAttack(uint8_t b);
+/* <<< factory AITryUseAttack */
 #endif

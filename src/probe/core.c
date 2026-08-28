@@ -2606,6 +2606,14 @@ static void adapt_OppAction_PlayEnergyCard(ProbeState *s)
 }
 /* <<< factory OppAction_PlayEnergyCard */
 
+/* >>> factory AITryUseAttack */
+static void adapt_AITryUseAttack(ProbeState *s)
+{
+	AITryUseAttackResult r = AITryUseAttack(s->b);
+	s->f = r.f;
+}
+/* <<< factory AITryUseAttack */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2917,5 +2925,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OppAction_EvolvePokemonCard", adapt_OppAction_EvolvePokemonCard },
 	{ "OppAction_PlayBasicPokemonCard", adapt_OppAction_PlayBasicPokemonCard },
 	{ "OppAction_PlayEnergyCard", adapt_OppAction_PlayEnergyCard },
+	{ "AITryUseAttack", adapt_AITryUseAttack },
 	{ NULL, NULL },
 };

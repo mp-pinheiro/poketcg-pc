@@ -8132,3 +8132,48 @@ void OppAction_PlayEnergyCard(void)
 	DrawDuelMainScene();
 }
 /* <<< factory OppAction_PlayEnergyCard */
+
+/* >>> factory AITryUseAttack */
+/* ai/core.asm:133-166. Only b survives entry to the first dispatch: a/d/e are
+ * reloaded from wSelectedAttack and the arena card, c comes from
+ * CopyAttackDataAndDamage_FromDeckIndex, and hl/f are callee-clobbered.
+ * The tail past the `ret c` at asm:144 threads AIMakeDecision's echoed b/c/d/e,
+ * which is all its registered contract (compare "f") carries; the $09/$0A
+ * dispatches it reaches are the unported OppActionTable traps. */
+#define OPPACTION_BEGIN_ATTACK_C 0x08u
+#define OPPACTION_USE_ATTACK_C 0x09u
+#define OPPACTION_ATTACK_ANIM_AND_DAMAGE_C 0x0Au
+#define EFFECTCMDTYPE_AI_SELECTION 0x08u
+#define EFFECTCMDTYPE_AI_SWITCH_DEFENDING_PKMN 0x0Au
+AITryUseAttackResult AITryUseAttack(uint8_t b)
+{
+	uint8_t e = wSelectedAttack;
+	hTemp_ffa0 = e;
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	hTempCardIndex_ff9f = arena.a;
+	AttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(arena.a, e);
+	AIMakeDecisionResult begin = AIMakeDecision(OPPACTION_BEGIN_ATTACK_C, b,
+		copy.c, (uint8_t)(copy.de >> 8), (uint8_t)copy.de);
+	if ((begin.f & FLAG_C) != 0u)
+		return (AITryUseAttackResult){begin.f};
+
+	AISelectSpecialAttackParametersResult special = AISelectSpecialAttackParameters();
+	if ((special.f & FLAG_C) == 0u)
+		(void)TryExecuteEffectCommandFunction(EFFECTCMDTYPE_AI_SELECTION,
+			begin.b, begin.d, begin.e);
+
+	e = wSelectedAttack;
+	DuelistVarResult arena2 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	AttackCopyResult copy2 = CopyAttackDataAndDamage_FromDeckIndex(arena2.a, e);
+	AIMakeDecisionResult use = AIMakeDecision(OPPACTION_USE_ATTACK_C, begin.b,
+		copy2.c, (uint8_t)(copy2.de >> 8), (uint8_t)copy2.de);
+	if ((use.f & FLAG_C) != 0u)
+		return (AITryUseAttackResult){use.f};
+
+	(void)TryExecuteEffectCommandFunction(EFFECTCMDTYPE_AI_SWITCH_DEFENDING_PKMN,
+		use.b, use.d, use.e);
+	AIMakeDecisionResult anim = AIMakeDecision(OPPACTION_ATTACK_ANIM_AND_DAMAGE_C,
+		use.b, use.c, use.d, use.e);
+	return (AITryUseAttackResult){anim.f};
+}
+/* <<< factory AITryUseAttack */

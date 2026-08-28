@@ -4216,6 +4216,35 @@ CASES["OppAction_PlayEnergyCard"] = [
 ]
 # <<< factory OppAction_PlayEnergyCard
 
+# >>> factory AITryUseAttack
+CONTRACT["AITryUseAttack"] = {"compare": ("f",), "preserve": ()}
+wSelectedAttack_ = 0xCCC6
+hTempCardIndex_ff9f_ = 0xFF9F
+hTemp_ffa0_ = 0xFFA0
+hWhoseTurn_ = 0xFF97
+wLCDC_ = 0xCABB
+wSkipDuelistIsThinkingDelay__ = 0xCBF9
+wDuelFinished__ = 0xCC07
+wOpponentTurnEnded__ = 0xCBE1
+# ai/core.asm:144 `ret c` exits before the $09/$0A dispatches. wDuelFinished
+# (or wOpponentTurnEnded) makes the landed $08 dispatch return carry, so these
+# cases cover the whole reachable path without touching the unported traps.
+CASES["AITryUseAttack"] = [
+    {"b": 0x00, "keys": 0x00,
+     "wram": {wSelectedAttack_: b"\x00", hTempCardIndex_ff9f_: b"\x00", hTemp_ffa0_: b"\x00",
+              hWhoseTurn_: b"\x00", wLCDC_: b"\x00", wSkipDuelistIsThinkingDelay__: b"\x01",
+              wDuelFinished__: b"\x01", wOpponentTurnEnded__: b"\x00"},
+     "read": {hTempCardIndex_ff9f_: 1, hTemp_ffa0_: 1, wSkipDuelistIsThinkingDelay__: 1},
+     "instruction_budget": 6000000, "cycle_budget": 24000000},
+    dict(POISON, keys=0x00,
+         wram={wSelectedAttack_: b"\x03", hTempCardIndex_ff9f_: b"\x00", hTemp_ffa0_: b"\x00",
+               hWhoseTurn_: b"\x00", wLCDC_: b"\x00", wSkipDuelistIsThinkingDelay__: b"\x01",
+               wDuelFinished__: b"\x01", wOpponentTurnEnded__: b"\x00"},
+         read={hTempCardIndex_ff9f_: 1, hTemp_ffa0_: 1, wSkipDuelistIsThinkingDelay__: 1},
+         instruction_budget=6000000, cycle_budget=24000000),
+]
+# <<< factory AITryUseAttack
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5840,3 +5869,7 @@ MUTATIONS["OppAction_PlayBasicPokemonCard"] = {"source_symbol": "OppAction_PlayB
 # >>> factory-mutation OppAction_PlayEnergyCard
 MUTATIONS["OppAction_PlayEnergyCard"] = {"source_symbol": "OppAction_PlayEnergyCard", "before": "void OppAction_PlayEnergyCard(void)\n{\n\tuint8_t location = hTempPlayAreaLocation_ffa1;", "after": "void OppAction_PlayEnergyCard(void)\n{\n\tuint8_t location = (uint8_t)(hTempPlayAreaLocation_ffa1 + 1u);", "case_ids": ["OppAction_PlayEnergyCard-0", "OppAction_PlayEnergyCard-1"]}
 # <<< factory-mutation OppAction_PlayEnergyCard
+# >>> factory-mutation AITryUseAttack
+MUTATIONS["AITryUseAttack"] = {"source_symbol": "AITryUseAttack", "before": "\tuint8_t e = wSelectedAttack;\n\thTemp_ffa0 = e;", "after": "\tuint8_t e = wSelectedAttack;\n\thTemp_ffa0 = (uint8_t)(e + 1u);", "case_ids": ["AITryUseAttack-0", "AITryUseAttack-1"]}
+# <<< factory-mutation AITryUseAttack
+
