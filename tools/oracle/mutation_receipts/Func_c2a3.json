@@ -1,0 +1,9 @@
+{
+  "fn": "Func_c2a3",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_c2a3\", \"registers\": {\"a\": 0, \"b\": 17, \"c\": 34, \"d\": 51, \"e\": 68, \"f\": 0, \"hl\": 21862, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"53441\": \"80\", \"65344\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_c2a3\", \"mismatches\": {\"bus\": {\"address\": 53441, \"reference\": \"008000\", \"native\": \"000000\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[51899, 1], [53441, 1], [65344, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_c2a3\", \"registers\": {\"a\": 0, \"b\": 17, \"c\": 34, \"d\": 51, \"e\": 68, \"f\": 0, \"hl\": 21862, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"53441\": \"80\", \"65344\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

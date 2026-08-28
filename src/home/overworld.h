@@ -283,4 +283,8 @@ void PauseMenu_Config(void);
  * e and hl follow _PCMenu_ReadMail, which models none of them. */
 uint8_t PCMenu_ReadMail(void);
 /* <<< factory PCMenu_ReadMail */
+/* >>> factory Func_c2a3 */
+/* overworld.asm:363. Preserves bc, de and hl; clobbers a and f. */
+void Func_c2a3(void);
+/* <<< factory Func_c2a3 */
 #endif /* POKETCG_HOME_OVERWORLD_H */

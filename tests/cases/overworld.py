@@ -948,6 +948,30 @@ CASES["PCMenu_ReadMail"] = [
 ]
 # <<< factory PCMenu_ReadMail
 
+# >>> factory Func_c2a3
+CONTRACT["Func_c2a3"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+# 0xCABB wLCDC and 0xFF40 rLCDC are seeded enabled together so the reference's
+# VBlank scheduler is armed and EnableLCD takes its "already on" early return;
+# CopyDMAFunction installs hDMAFunction so VBlankHandler does not run junk.
+# 0xD0C1 is wOverworldNPCFlags, which SetOverworldNPCFlags ORs 0x80 into.
+# wVBlankOAMCopyToggle (0xCAC0) is cleared by the reference VBlank handler, so
+# it is neither seeded nor observed.
+CASES["Func_c2a3"] = [
+    {"b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44, "hl": 0x5566,
+     "wram": {0xCABB: b"\x80", 0xFF40: b"\x80", 0xD0C1: b"\x00"},
+     "read": {0xD0C1: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON,
+         wram={0xCABB: b"\x80", 0xFF40: b"\x80", 0xD0C1: b"\x01"},
+         read={0xD0C1: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         keys=[0x00, 0x01],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Func_c2a3
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1293,3 +1317,6 @@ MUTATIONS["PCMenu_ReadMail"] = {
 	"case_ids": ["PCMenu_ReadMail-0", "PCMenu_ReadMail-1", "PCMenu_ReadMail-2"],
 }
 # <<< factory-mutation PCMenu_ReadMail
+# >>> factory-mutation Func_c2a3
+MUTATIONS["Func_c2a3"] = {"source_symbol": "Func_c2a3", "before": "void Func_c2a3(void)\n{\n\tBackupObjectPalettes();\n\tFadeScreenToWhite();\n\t(void)SetOverworldNPCFlags(0x80u); /* 1 << HIDE_ALL_NPC_SPRITES, HIDE_ALL_NPC_SPRITES = 7 */", "after": "void Func_c2a3(void)\n{\n\tBackupObjectPalettes();\n\tFadeScreenToWhite();\n\t(void)SetOverworldNPCFlags(0x00u); /* mutated */", "case_ids": ["Func_c2a3-0", "Func_c2a3-1"]}
+# <<< factory-mutation Func_c2a3

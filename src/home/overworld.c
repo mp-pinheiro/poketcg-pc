@@ -217,6 +217,16 @@
 /* overworld.asm:1264 (PCMenu_ReadMail). The farcall target _PCMenu_ReadMail
  * is already ported and lives in home/mail.h; nothing else is needed here. */
 #include "home/mail.h"
+
+#include "home/overworld.h"
+#include "home/lcd.h"
+#include "home/lcd_enable_frame.h"
+#include "home/load_animation.h"
+#include "home/color.h"
+#include "home/sprite_animations.h"
+#include "home/process_text.h"
+#include "home/objects.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -1269,3 +1279,22 @@ uint8_t PCMenu_ReadMail(void)
 	return _PCMenu_ReadMail();
 }
 /* <<< factory PCMenu_ReadMail */
+
+/* >>> factory Func_c2a3 */
+/* overworld.asm:363-384. hl, bc and de are pushed on entry and popped before
+ * the ret, so only a and f are clobbered. */
+void Func_c2a3(void)
+{
+	BackupObjectPalettes();
+	FadeScreenToWhite();
+	(void)SetOverworldNPCFlags(0x80u); /* 1 << HIDE_ALL_NPC_SPRITES, HIDE_ALL_NPC_SPRITES = 7 */
+	(void)SetupText(0x30u, 0x7fu);
+	Func_12ba7();
+	EnableAndClearSpriteAnimations();
+	ZeroObjectPositions();
+	wVBlankOAMCopyToggle = 1u; /* TRUE */
+	EnableLCD();
+	DoFrameIfLCDEnabled();
+	DisableLCD();
+}
+/* <<< factory Func_c2a3 */
