@@ -185,7 +185,6 @@ CASES["AIMakeDecision"] = [
     {"a": 0x0F, "keys": [0x00, 0x01], "wram": {
         hOppActionTableIndex_: b"\x00",
         wSkipDuelistIsThinkingDelay_: b"\x01",
-        wVBlankCounter_: b"\x01",
         wOpponentTurnEnded_: b"\x00",
         wDuelFinished_: b"\x00",
         0xFF80: b"\x01", 0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80",
