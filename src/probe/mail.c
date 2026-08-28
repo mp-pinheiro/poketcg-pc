@@ -138,6 +138,14 @@ static void adapt_TryOpenPCMailBoosterPack(ProbeState *s)
 }
 /* <<< factory TryOpenPCMailBoosterPack */
 
+/* >>> factory PCMailHandleAInput */
+static void adapt_PCMailHandleAInput(ProbeState *s)
+{
+	(void)s;
+	PCMailHandleAInput();
+}
+/* <<< factory PCMailHandleAInput */
+
 const ProbeEntry probe_entries_mail[] = {
 	{ "TryGivePCPack", adapt_TryGivePCPack },
 	{ "GePCPackSelectionCoordinates", adapt_GePCPackSelectionCoordinates },
@@ -154,5 +162,6 @@ const ProbeEntry probe_entries_mail[] = {
 	{ "PrintObtainedPCPacks", adapt_PrintObtainedPCPacks },
 	{ "BlinkUnopenedPCPacks", adapt_BlinkUnopenedPCPacks },
 	{ "TryOpenPCMailBoosterPack", adapt_TryOpenPCMailBoosterPack },
+	{ "PCMailHandleAInput", adapt_PCMailHandleAInput },
 	{ NULL, NULL },
 };

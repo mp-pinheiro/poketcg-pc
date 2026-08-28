@@ -47,6 +47,44 @@
 #define BOOSTER_LABORATORY_TRAINER 0x18u
 
 #define MailBoosterPackAlreadyOpenedText 0x0419u
+
+#include "home/labels.h"
+#include "home/lcd_enable_frame.h"
+#include "home/text_box.h"
+
+/* mail.asm:136 (PCMailHandleAInput). PAD_A is 1 << B_PAD_A with B_PAD_A = 0,
+ * so $01. MailScreenLabels is the bank-4 label list at 04:47d2 (poketcg.sym),
+ * loaded as a plain 16-bit pointer exactly like status.c's StatusScreenLabels. */
+#define PAD_A 0x01u
+#define SFX_CONFIRM 0x02u
+#define MailScreenLabels 0x47D2u
+
+/* PCMailTextPages' text ids (mail.asm:200-261). `tx Label` expands to
+ * `dw Label_`, the textpointer index from text_offsets.asm:1029-1052. */
+#define Mail1Part1Text 0x0401u
+#define Mail1Part2Text 0x0402u
+#define Mail2Part1Text 0x0403u
+#define Mail2Part2Text 0x0404u
+#define Mail3Part1Text 0x0405u
+#define Mail3Part2Text 0x0406u
+#define Mail4Part1Text 0x0407u
+#define Mail4Part2Text 0x0408u
+#define Mail5Part1Text 0x0409u
+#define Mail5Part2Text 0x040Au
+#define Mail6Part1Text 0x040Bu
+#define Mail6Part2Text 0x040Cu
+#define Mail7Part1Text 0x040Du
+#define Mail7Part2Text 0x040Eu
+#define Mail8Part1Text 0x040Fu
+#define Mail8Part2Text 0x0410u
+#define Mail9Part1Text 0x0411u
+#define Mail9Part2Text 0x0412u
+#define Mail10Part1Text 0x0413u
+#define Mail11Part1Text 0x0414u
+#define Mail12Part1Text 0x0415u
+#define Mail13Part1Text 0x0416u
+#define Mail14Part1Text 0x0417u
+#define Mail15Part1Text 0x0418u
 /* <<< factory statics */
 
 #define NUM_PC_PACKS 15
@@ -304,3 +342,72 @@ void TryOpenPCMailBoosterPack(void)
 	DisableLCD();
 }
 /* <<< factory TryOpenPCMailBoosterPack */
+
+/* >>> factory PCMailHandleAInput */
+/* mail.asm:136-198. PCMailTextPages (asm:200-261) is a 16-row table of two
+ * text ids per mail; row 0 is the unused NULL pair and a zero second id means
+ * that mail has no page two. The row index is the pack byte with bit 7
+ * stripped, exactly as TryOpenPCMailBoosterPack indexes its own table. */
+void PCMailHandleAInput(void)
+{
+	static const uint16_t pc_mail_text_pages[NUM_MAILS + 1][2] = {
+		{0x0000u, 0x0000u},
+		{Mail1Part1Text, Mail1Part2Text},
+		{Mail2Part1Text, Mail2Part2Text},
+		{Mail3Part1Text, Mail3Part2Text},
+		{Mail4Part1Text, Mail4Part2Text},
+		{Mail5Part1Text, Mail5Part2Text},
+		{Mail6Part1Text, Mail6Part2Text},
+		{Mail7Part1Text, Mail7Part2Text},
+		{Mail8Part1Text, Mail8Part2Text},
+		{Mail9Part1Text, Mail9Part2Text},
+		{Mail10Part1Text, 0x0000u},
+		{Mail11Part1Text, 0x0000u},
+		{Mail12Part1Text, 0x0000u},
+		{Mail13Part1Text, 0x0000u},
+		{Mail14Part1Text, 0x0000u},
+		{Mail15Part1Text, 0x0000u},
+	};
+
+	if ((hKeysPressed & PAD_A) == 0u)
+		return;
+
+	PlaySFX(SFX_CONFIRM);
+	PrintObtainedPCPacks();
+	ShowMailMenuCursor();
+
+	uint16_t slot = (uint16_t)(wPCPacks_ADDR + wPCPackSelection);
+	uint8_t pack = gb_read8(slot);
+	wSelectedPCPack = pack;
+	pack &= 0x7Fu;
+	gb_write8(slot, pack);
+	if (pack == 0u)
+		return;
+
+	const uint16_t *pages = pc_mail_text_pages[pack];
+	uint16_t label = GetPCPackNameTextID(wPCPackSelection);
+	(void)PrintScrollableText_WithTextBoxLabel(pages[0], label);
+	TryOpenPCMailBoosterPack();
+
+	(void)InitMenuScreen();
+	uint16_t hl = SetupText(0x30u, 0xFFu);
+	DrawRegularTextBox(&hl, 0u, 20u, 12u, 0u, 0u);
+	(void)PrintLabels(MailScreenLabels, 0u, 0u);
+	PrintObtainedPCPacks();
+	ShowMailMenuCursor();
+	(void)FlashWhiteScreen();
+
+	/* `ld a, [hli] / ld h, [hl] / ld l, a / or h` tests both bytes of the
+	 * second pointer, so the page is skipped only when the whole word is 0. */
+	uint16_t page_two = pages[1];
+	if (page_two != 0u) {
+		label = GetPCPackNameTextID(wPCPackSelection);
+		(void)PrintScrollableText_WithTextBoxLabel(page_two, label);
+	}
+
+	hl = page_two;
+	DrawRegularTextBox(&hl, 0u, 20u, 6u, 0u, 12u);
+	(void)PrintLabels(MailScreenLabels, 0u, 0u);
+	DoFrameIfLCDEnabled();
+}
+/* <<< factory PCMailHandleAInput */

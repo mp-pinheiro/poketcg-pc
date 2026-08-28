@@ -120,6 +120,15 @@ MAIL_TEXT_KEYS = [0x00, 0x02]
 # A menu screen load plus a full page of letter-delayed scrollable text.
 MAIL_TEXT_INSTRUCTIONS = 60000000
 MAIL_TEXT_CYCLES = 240000000
+
+# mail.asm:136 (PCMailHandleAInput).
+hKeysPressed = 0xFF91
+hBankROM = 0xFF80
+# PlaySFX, one printed pack name and the cursor write together sit well above
+# legacy_to_schema's 100000/400000 fallback defaults, so both budgets are
+# declared explicitly; every case here stops before any text page or DoFrame.
+MAIL_A_INSTRUCTIONS = 20000000
+MAIL_A_CYCLES = 80000000
 # <<< factory-cases-statics
 
 # >>> factory UpdateMailMenuCursor
@@ -216,6 +225,48 @@ CASES["TryOpenPCMailBoosterPack"] = [
      "instruction_budget": MAIL_TEXT_INSTRUCTIONS, "cycle_budget": MAIL_TEXT_CYCLES},
 ]
 # <<< factory TryOpenPCMailBoosterPack
+
+# >>> factory PCMailHandleAInput
+CONTRACT["PCMailHandleAInput"] = {"compare": (), "preserve": ()}
+CASES["PCMailHandleAInput"] = [
+    # All-zero entry: `ldh a, [hKeysPressed] / and PAD_A / ret z` leaves before
+    # the SFX, so wSelectedPCPack keeps the byte it was seeded with.
+    {"wram": {hKeysPressed: b"\x00", wPCPackSelection: b"\x00", wPCPacks: bytes(15),
+              wSelectedPCPack: b"\xff"},
+     "read": {wSelectedPCPack: 1, wPCPacks: 15}},
+    # A pressed on an empty slot: PlaySFX, PrintObtainedPCPacks (nothing to
+    # print) and ShowMailMenuCursor all run, then `ld [wSelectedPCPack], a /
+    # and $7f / or a / ret z` exits with the zero pack byte stored.
+    {"wram": {hKeysPressed: b"\x01", wPCPackSelection: b"\x00", wPCPacks: bytes(15),
+              wSelectedPCPack: b"\xff"},
+     "read": {wSelectedPCPack: 1, wPCPacks: 15},
+     "vread": {0: {0x9841: 1}, 1: {0x9841: 1}},
+     "instruction_budget": MAIL_A_INSTRUCTIONS, "cycle_budget": MAIL_A_CYCLES},
+    # Unopened mail id 0 ($80): wSelectedPCPack keeps the whole flag byte, the
+    # slot is written back masked to 0, and `or a / ret z` then exits, so the
+    # text pages are never entered. The non-zero slot makes PrintObtainedPCPacks
+    # print pack 0's name at $9842, with the cursor at $9841 on top of it, which
+    # is why SetupText warms the glyph cache and wLCDC is cleared.
+    {"wram": {hKeysPressed: b"\x01", wPCPackSelection: b"\x00",
+              wPCPacks: b"\x80" + bytes(14), wSelectedPCPack: b"\x00",
+              hBankROM: b"\x04", MAIL_wLCDC: b"\x00"},
+     "setup": SETUP,
+     "read": {wSelectedPCPack: 1, wPCPacks: 15, **CACHE_READ, **PLACEMENT_READ},
+     "vread": {0: {0x9841: 7}},
+     "instruction_budget": MAIL_A_INSTRUCTIONS, "cycle_budget": MAIL_A_CYCLES},
+    # Poisoned entry registers on the last slot: the routine reads no register
+    # input at all (hKeysPressed comes from HRAM), so every poisoned byte is
+    # simply unused, and slot 14 is the index boundary of wPCPacks.
+    dict(POISON,
+         wram={hKeysPressed: b"\x01", wPCPackSelection: b"\x0e",
+               wPCPacks: bytes(14) + b"\x80", wSelectedPCPack: b"\x00",
+               hBankROM: b"\x04", MAIL_wLCDC: b"\x00"},
+         setup=SETUP,
+         read={wSelectedPCPack: 1, wPCPacks: 15, **CACHE_READ, **PLACEMENT_READ},
+         vread={0: {0x994D: 7}},
+         instruction_budget=MAIL_A_INSTRUCTIONS, cycle_budget=MAIL_A_CYCLES),
+]
+# <<< factory PCMailHandleAInput
 
 from tests.cases._schema_migration import legacy_to_schema
 
@@ -317,3 +368,11 @@ MUTATIONS["TryOpenPCMailBoosterPack"] = {
 	"case_ids": ["TryOpenPCMailBoosterPack-0", "TryOpenPCMailBoosterPack-1", "TryOpenPCMailBoosterPack-2"],
 }
 # <<< factory-mutation TryOpenPCMailBoosterPack
+# >>> factory-mutation PCMailHandleAInput
+MUTATIONS["PCMailHandleAInput"] = {
+	"source_symbol": "PCMailHandleAInput",
+	"before": "\tuint8_t pack = gb_read8(slot);\n\twSelectedPCPack = pack;",
+	"after": "\tuint8_t pack = gb_read8(slot);\n\twSelectedPCPack = 0u;",
+	"case_ids": ["PCMailHandleAInput-2", "PCMailHandleAInput-3"],
+}
+# <<< factory-mutation PCMailHandleAInput

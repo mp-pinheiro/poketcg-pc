@@ -56,4 +56,9 @@ void BlinkUnopenedPCPacks(void);
  * register result, so nothing is returned. */
 void TryOpenPCMailBoosterPack(void);
 /* <<< factory TryOpenPCMailBoosterPack */
+/* >>> factory PCMailHandleAInput */
+/* mail.asm:136. The tail is `call DoFrameIfLCDEnabled / ret` and both early
+ * exits are bare `ret z`, so no register result is modelled. */
+void PCMailHandleAInput(void);
+/* <<< factory PCMailHandleAInput */
 #endif
