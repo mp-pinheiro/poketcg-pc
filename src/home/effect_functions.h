@@ -2002,6 +2002,9 @@ uint8_t VenomPowder_PoisonConfusion50PercentEffect(void);
 /* >>> factory ThunderstormEffect */
 void ThunderstormEffect(void);
 /* <<< factory ThunderstormEffect */
+/* >>> factory FoulGas_PoisonOrConfusionEffect */
+uint8_t FoulGas_PoisonOrConfusionEffect(void);
+/* <<< factory FoulGas_PoisonOrConfusionEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

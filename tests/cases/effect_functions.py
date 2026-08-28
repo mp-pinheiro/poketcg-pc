@@ -6905,6 +6905,26 @@ CASES["ThunderstormEffect"] = [
 ]
 # <<< factory ThunderstormEffect
 
+# >>> factory FoulGas_PoisonOrConfusionEffect
+CONTRACT["FoulGas_PoisonOrConfusionEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["FoulGas_PoisonOrConfusionEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCE4E: 2, 0xCAC2: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xEE\xDD"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCE4E: 2, 0xCAC2: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory FoulGas_PoisonOrConfusionEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9752,3 +9772,6 @@ MUTATIONS["VenomPowder_PoisonConfusion50PercentEffect"] = {"source_symbol": "Ven
 # >>> factory-mutation ThunderstormEffect
 MUTATIONS["ThunderstormEffect"] = {"source_symbol": "ThunderstormEffect", "before": "void ThunderstormEffect(void)\n{\n\thCurSelectionItem = 1u;", "after": "void ThunderstormEffect(void)\n{\n\thCurSelectionItem = 0u;", "case_ids": ["ThunderstormEffect-0", "ThunderstormEffect-1"]}
 # <<< factory-mutation ThunderstormEffect
+# >>> factory-mutation FoulGas_PoisonOrConfusionEffect
+MUTATIONS["FoulGas_PoisonOrConfusionEffect"] = {"source_symbol": "FoulGas_PoisonOrConfusionEffect", "before": "uint8_t FoulGas_PoisonOrConfusionEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(PoisonedIfHeadsConfusedIfTailsText, 0u);\n\tif ((toss.f & 0x10u) == 0u)", "after": "uint8_t FoulGas_PoisonOrConfusionEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(PoisonedIfHeadsConfusedIfTailsText, 0u);\n\tif ((toss.f & 0x10u) != 0u)", "case_ids": ["FoulGas_PoisonOrConfusionEffect-0", "FoulGas_PoisonOrConfusionEffect-1"]}
+# <<< factory-mutation FoulGas_PoisonOrConfusionEffect

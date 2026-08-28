@@ -1265,6 +1265,8 @@ void BankswitchROM(uint8_t bank);
 #include "mem.h"
 #define PLAY_AREA_BENCH_1 0x01u
 #define BenchText 0x004du
+
+#define PoisonedIfHeadsConfusedIfTailsText 0x00fau
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10044,3 +10046,13 @@ void ThunderstormEffect(void)
 	SwapTurn();
 }
 /* <<< factory ThunderstormEffect */
+
+/* >>> factory FoulGas_PoisonOrConfusionEffect */
+uint8_t FoulGas_PoisonOrConfusionEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(PoisonedIfHeadsConfusedIfTailsText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return toss.f;
+	return PoisonEffect().f;
+}
+/* <<< factory FoulGas_PoisonOrConfusionEffect */
