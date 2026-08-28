@@ -250,3 +250,13 @@ unblock = "reproduce the smallest reference case with a trace and isolate the fi
 name = "MagnetonLv35SelfdestructEffect"
 reason = "HAND-DIAGNOSED 2026-08-28: generation 7 repeated primary runs hit the same reference-side WaitForVBlank/frame path at pc 0xFF8A with LCDC=0x80 and no register mismatch, even after removing SetupText and seeding animation/recoil state. The self-destruct animation/recoil chain is not bounded by the current isolated call contract; another unchanged retry is non-informative."
 unblock = "trace the first DealRecoilDamageToSelf or DealDamageToAllBenchedPokemon animation callee that enables LCD, then verify a bounded prefix/pre-ret case or port that frame-safe callee before retrying this routine"
+
+[[blocked]]
+name = "Func_12661"
+reason = "AUTO-RETIRED: src/engine/menus/debug_main.asm:2 (basename `debug_main`). 10 generations exhausted (trapped=True); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
+unblock = "read the recorded diagnostics under .factory/try/Func_12661/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "ShowMedalReceivedScreen"
+reason = "AUTO-RETIRED: src/engine/menus/medal.asm:1 (basename `medal`). 17 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
+unblock = "read the recorded diagnostics under .factory/try/ShowMedalReceivedScreen/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
