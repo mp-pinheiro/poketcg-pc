@@ -1,0 +1,9 @@
+{
+  "fn": "AIPerformScriptedTurn",
+  "case": "tests/cases/sams_practice.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIPerformScriptedTurn\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49896\": \"05\", \"49902\": \"00\", \"51899\": \"80\", \"52217\": \"00\", \"52230\": \"04\", \"65431\": \"c2\", \"65440\": \"ffff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIPerformScriptedTurn\", \"mismatches\": {\"bus\": {\"address\": 65441, \"reference\": \"0004c2ffff\", \"native\": \"0004c2ff00\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49851, 1], [49896, 1], [49902, 1], [51899, 1], [52217, 1], [52230, 1], [65431, 1], [65440, 2]]}}}\n",
+  "restored": "{\"fn\": \"AIPerformScriptedTurn\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49896\": \"05\", \"49902\": \"00\", \"51899\": \"80\", \"52217\": \"00\", \"52230\": \"04\", \"65431\": \"c2\", \"65440\": \"ffff\"}}, \"status\": \"PASS\"}\n"
+}

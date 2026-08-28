@@ -35,9 +35,20 @@ static void adapt_GetPlayAreaLocationOfRaticateOrRattata(ProbeState *s)
 }
 /* <<< factory GetPlayAreaLocationOfRaticateOrRattata */
 
+/* >>> factory AIPerformScriptedTurn */
+static void adapt_AIPerformScriptedTurn(ProbeState *s)
+{
+	SamsPracticeResult result = AIPerformScriptedTurn(s->a, s->f, s->b, s->c,
+						s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory AIPerformScriptedTurn */
+
 const ProbeEntry probe_entries_sams_practice[] = {
 	{"IsAIPracticeScriptedTurn", adapt_IsAIPracticeScriptedTurn},
 	{"SetSamsStartingPlayArea", adapt_SetSamsStartingPlayArea},
 	{ "GetPlayAreaLocationOfRaticateOrRattata", adapt_GetPlayAreaLocationOfRaticateOrRattata },
+	{ "AIPerformScriptedTurn", adapt_AIPerformScriptedTurn },
 	{NULL, NULL},
 };
