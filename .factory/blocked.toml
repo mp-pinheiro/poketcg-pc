@@ -245,3 +245,8 @@ unblock = "Trace the first animation/recoil callee that enables LCD and identify
 name = "HealPlayAreaCardHP"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-9 retry candidate reaches the reference animation/VBlank parking path at pc=0xE300 with LCDC=0x80 and exhausts the frame-enabled call before return; this is a frame-dependent effect path, not a translation mismatch. Another unchanged full-call retry is non-informative."
 unblock = "Trace the first animation/healing callee that enables LCD and identify a bounded pre-ret completion, then verify that prefix or port the frame-safe callee before retrying this effect; do not increase budgets or repeat the unchanged full-call case."
+
+[[blocked]]
+name = "SubmissionEffect"
+reason = "HAND-DIAGNOSED 2026-08-28: generation-9 retry candidate reaches the reference animation/VBlank parking loop at pc=625 with LCDC=0x80 and exhausts 80M cycles before return; the isolated recoil path is frame-dependent, not a translation mismatch. Another unchanged full-call retry is non-informative."
+unblock = "Trace the first animation/recoil callee that enables LCD and identify a bounded pre-ret completion, then verify that prefix or port the frame-safe callee before retrying this effect; do not increase budgets or repeat the unchanged full-call case."
