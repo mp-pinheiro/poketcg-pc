@@ -1184,6 +1184,15 @@ CASES["AIDecide_Potion_Phase10"] = [
 ]
 # <<< factory AIDecide_Potion_Phase10
 
+# >>> factory AIPlay_SuperPotion
+CONTRACT["AIPlay_SuperPotion"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_SuperPotion"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xFF97: b"\xC2", 0xCE16: b"\x00", 0xCE19: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\x00", 0xC400: b"\x01", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1, 0xFFA2: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xFF97: b"\xC2", 0xCE16: b"\x77", 0xCE19: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\x00", 0xC2BC: b"\x00", 0xC2C9: b"\xC0", 0xC400: b"\x01", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1, 0xFFA2: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xFF97: b"\xC2", 0xCE16: b"\xDD", 0xCE19: b"\xEE", 0xC2BB: b"\x00", 0xC2C8: b"\x00", 0xC2BC: b"\x00", 0xC2C9: b"\xC0", 0xC400: b"\x01", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xFF9F: 1, 0xFFA0: 1, 0xFFA1: 1, 0xFFA2: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_SuperPotion
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1589,3 +1598,6 @@ MUTATIONS["AIDecide_Potion_Phase10"] = {
     "case_ids": ["AIDecide_Potion_Phase10-0"],
 }
 # <<< factory-mutation AIDecide_Potion_Phase10
+# >>> factory-mutation AIPlay_SuperPotion
+MUTATIONS["AIPlay_SuperPotion"] = {"source_symbol": "AIPlay_SuperPotion", "before": "AIDecideResult AIPlay_SuperPotion(void)\n{\n\tuint8_t card = wAITrainerCardToPlay;\n\thTempCardIndex_ff9f = card;", "after": "AIDecideResult AIPlay_SuperPotion(void)\n{\n\tuint8_t card = wAITrainerCardParameter;\n\thTempCardIndex_ff9f = card;", "case_ids": ["AIPlay_SuperPotion-0", "AIPlay_SuperPotion-1", "AIPlay_SuperPotion-2"]}
+# <<< factory-mutation AIPlay_SuperPotion

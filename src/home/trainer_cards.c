@@ -376,6 +376,12 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/core.h"
+
+#include "home/core.h"
+#include "home/common.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 
@@ -3292,3 +3298,21 @@ AIDecidePotionPhase10Result AIDecide_Potion_Phase10(void)
 	}
 }
 /* <<< factory AIDecide_Potion_Phase10 */
+
+/* >>> factory AIPlay_SuperPotion */
+AIDecideResult AIPlay_SuperPotion(void)
+{
+	uint8_t card = wAITrainerCardToPlay;
+	hTempCardIndex_ff9f = card;
+	uint8_t parameter = wAITrainerCardParameter;
+	hTempPlayAreaLocation_ffa1 = parameter;
+	hTemp_ffa0 = AIPickEnergyCardToDiscard(parameter);
+	CardDamageResult damage = GetCardDamageAndMaxHP(parameter);
+	uint8_t retreat = damage.a;
+	if (retreat >= 40u)
+		retreat = 40u;
+	hTempRetreatCostCards = retreat;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_SuperPotion */
