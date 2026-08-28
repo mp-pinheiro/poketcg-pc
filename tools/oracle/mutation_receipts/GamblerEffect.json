@@ -1,0 +1,9 @@
+{
+  "fn": "GamblerEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GamblerEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"07\", \"52200\": \"0808\", \"52233\": \"00\", \"52636\": \"01010002\", \"52814\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GamblerEffect\", \"mismatches\": {\"bus\": {\"address\": 52200, \"reference\": \"0080070808000101\", \"native\": \"0080070707000101\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [52200, 2], [52233, 1], [52636, 4], [52814, 2]]}}}\n",
+  "restored": "{\"fn\": \"GamblerEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"07\", \"52200\": \"0808\", \"52233\": \"00\", \"52636\": \"01010002\", \"52814\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

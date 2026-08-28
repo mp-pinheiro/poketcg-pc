@@ -1294,6 +1294,14 @@ void BankswitchROM(uint8_t bank);
 #include "mem.h"
 #define ATK_ANIM_OWN_CONFUSION 0x7fu
 #define ThereWasNoEffectText 0x017du
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define CardCheckIfHeads8CardsIfTails1CardText 0x00f0u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10173,3 +10181,33 @@ void ImakuniEffect(void)
 	DrawDuelHUDs();
 }
 /* <<< factory ImakuniEffect */
+
+/* >>> factory GamblerEffect */
+void GamblerEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(CardCheckIfHeads8CardsIfTails1CardText, 0u);
+	hTemp_ffa0 = toss.a;
+	uint8_t gambler = hTempCardIndex_ff9f;
+	RemoveCardFromHand(gambler);
+	PutCardInDiscardPile(gambler);
+	HandListResult hand = CreateHandCardList(0u);
+	SortResult sorted = SortCardsInDuelTempListByID(hand.b, hand.c, (uint16_t)(((uint16_t)hand.d << 8) | hand.e));
+	uint16_t hl = wDuelTempList_ADDR;
+	while (gb_read8(hl) != 0xFFu) {
+		uint8_t card = gb_read8(hl++);
+		RemoveCardFromHand(card);
+		ReturnCardToDeck(card);
+	}
+	++hl;
+	ShuffleCardsInDeckResult shuffled = ShuffleCardsInDeck(sorted.b, sorted.c, (uint16_t)(((uint16_t)sorted.d << 8) | sorted.e), hl);
+	uint8_t draw_count = hTemp_ffa0 != 0u ? 8u : 1u;
+	DisplayDrawNCardsScreen(draw_count, shuffled.f, shuffled.b, draw_count, shuffled.d, shuffled.e, shuffled.hl);
+	while (draw_count != 0u) {
+		DrawCardResult drawn = DrawCardFromDeck();
+		if ((drawn.f & 0x10u) != 0u)
+			break;
+		AddCardToHand(drawn.a);
+		--draw_count;
+	}
+}
+/* <<< factory GamblerEffect */

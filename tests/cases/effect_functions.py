@@ -6963,6 +6963,11 @@ CASES["ImakuniEffect"] = [
 ]
 # <<< factory ImakuniEffect
 
+# >>> factory GamblerEffect
+CONTRACT["GamblerEffect"] = {"compare": (), "preserve": ()}
+CASES["GamblerEffect"] = [{"keys": [0x00, 0x01], "wram": {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xF0\x00"}, "read": {0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2, 0xCAC2: 1, 0xCBE8: 1, 0xCBE9: 1}, "setup": [{"fn": "SwapTurn"}, {"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000}, dict(POISON, keys=[0x00, 0x01], wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xF0\x00"}, read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2, 0xCAC2: 1, 0xCBE8: 1, 0xCBE9: 1}, setup=[{"fn": "SwapTurn"}, {"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)]
+# <<< factory GamblerEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9822,3 +9827,6 @@ MUTATIONS["FullHeal_ClearStatusEffect"] = {"source_symbol": "FullHeal_ClearStatu
 # >>> factory-mutation ImakuniEffect
 MUTATIONS["ImakuniEffect"] = {"source_symbol": "ImakuniEffect", "before": "\tstatus.a = (uint8_t)((status.a & PSN_DBLPSN) | CONFUSED);", "after": "\tstatus.a = (uint8_t)(status.a & PSN_DBLPSN);", "case_ids": ["ImakuniEffect-0", "ImakuniEffect-3", "ImakuniEffect-4"]}
 # <<< factory-mutation ImakuniEffect
+# >>> factory-mutation GamblerEffect
+MUTATIONS["GamblerEffect"] = {"source_symbol": "GamblerEffect", "before": "\tuint8_t draw_count = hTemp_ffa0 != 0u ? 8u : 1u;", "after": "\tuint8_t draw_count = hTemp_ffa0 != 0u ? 7u : 2u;", "case_ids": ["GamblerEffect-0", "GamblerEffect-1"]}
+# <<< factory-mutation GamblerEffect

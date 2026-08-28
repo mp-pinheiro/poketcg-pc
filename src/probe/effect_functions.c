@@ -4909,6 +4909,14 @@ static void adapt_ImakuniEffect(ProbeState *s)
 }
 /* <<< factory ImakuniEffect */
 
+/* >>> factory GamblerEffect */
+static void adapt_GamblerEffect(ProbeState *s)
+{
+	(void)s;
+	GamblerEffect();
+}
+/* <<< factory GamblerEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5505,5 +5513,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Sprout_PlayerSelectEffect", adapt_Sprout_PlayerSelectEffect },
 	{ "FullHeal_ClearStatusEffect", adapt_FullHeal_ClearStatusEffect },
 	{ "ImakuniEffect", adapt_ImakuniEffect },
+	{ "GamblerEffect", adapt_GamblerEffect },
 	{ NULL, NULL },
 };
