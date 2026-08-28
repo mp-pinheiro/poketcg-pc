@@ -3,6 +3,13 @@
 
 #include <stdint.h>
 
+/* Callee result types used by this file's declarations live in core.h
+ * (AIMakeDecisionResult and friends). Packets tell a generator to "include
+ * their header", but `statics` lands in the .c only, so a header fragment
+ * naming a core.h type could not compile and cost four AIPlay_* attempts one
+ * generation each on 2026-08-28. */
+#include "home/core.h"
+
 /* >>> factory RemoveCardFromList */
 void RemoveCardFromList(uint16_t *hl);
 /* <<< factory RemoveCardFromList */
