@@ -289,4 +289,8 @@ AIDecideResult AIPlay_EnergyRetrieval(void);
 /* >>> factory AIPlay_SuperEnergyRemoval */
 AIDecideResult AIPlay_SuperEnergyRemoval(void);
 /* <<< factory AIPlay_SuperEnergyRemoval */
+/* >>> factory AIDecide_SuperPotion_Phase11 */
+typedef struct { uint8_t a; uint8_t f; } AIDecideSuperPotionPhase11Result;
+AIDecideSuperPotionPhase11Result AIDecide_SuperPotion_Phase11(void);
+/* <<< factory AIDecide_SuperPotion_Phase11 */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

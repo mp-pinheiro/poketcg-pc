@@ -428,6 +428,12 @@ BUDGET = dict(instruction_budget=20000000, cycle_budget=80000000)
 
 hTempPlayAreaLocation_ffa1 = 0xFFA1
 hTempRetreatCostCards = 0xFFA2
+
+hWhoseTurn = 0xFF97
+wPlayerDuelVariables = 0xC200
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wSelectedAttack = 0xCCC6
+wTotalAttachedEnergies = 0xCC23
 # <<< factory-cases-statics
 
 # >>> factory AIDecide_PokemonTrader_LegendaryMoltres
@@ -1099,6 +1105,11 @@ CASES["AIPlay_SuperEnergyRemoval"] = [
 ]
 # <<< factory AIPlay_SuperEnergyRemoval
 
+# >>> factory AIDecide_SuperPotion_Phase11
+CONTRACT["AIDecide_SuperPotion_Phase11"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_SuperPotion_Phase11"] = [{"wram": {0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC2C8: b"\x00", 0xCC23: b"\x00"}, "read": {0xFF9D: 1, 0xCCC6: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000}, {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC2C8: b"\x00", 0xCC23: b"\x00"}, "read": {0xFF9D: 1, 0xCCC6: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000}]
+# <<< factory AIDecide_SuperPotion_Phase11
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1457,3 +1468,6 @@ MUTATIONS["AIPlay_EnergyRetrieval"] = {"source_symbol": "AIPlay_EnergyRetrieval"
 # >>> factory-mutation AIPlay_SuperEnergyRemoval
 MUTATIONS["AIPlay_SuperEnergyRemoval"] = {"source_symbol": "AIPlay_SuperEnergyRemoval", "before": "AIDecideResult AIPlay_SuperEnergyRemoval(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIDecideResult AIPlay_SuperEnergyRemoval(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);", "case_ids": ["AIPlay_SuperEnergyRemoval-0", "AIPlay_SuperEnergyRemoval-1", "AIPlay_SuperEnergyRemoval-2"]}
 # <<< factory-mutation AIPlay_SuperEnergyRemoval
+# >>> factory-mutation AIDecide_SuperPotion_Phase11
+MUTATIONS["AIDecide_SuperPotion_Phase11"] = {"source_symbol": "AIDecide_SuperPotion_Phase11", "before": "\t\tif (card == 0xffu) return (AIDecideSuperPotionPhase11Result){0xffu, 0xC0u};", "after": "\t\tif (card == 0xffu) return (AIDecideSuperPotionPhase11Result){0u, 0xC0u};", "case_ids": ["AIDecide_SuperPotion_Phase11-0"]}
+# <<< factory-mutation AIDecide_SuperPotion_Phase11

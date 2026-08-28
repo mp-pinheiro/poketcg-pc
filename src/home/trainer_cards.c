@@ -358,6 +358,15 @@
 #include "generated/hram.h"
 #include "mem.h"
 #define IMAKUNI_DECK_ID 0x2Au
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/common.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/random.h"
+#define ATTACK_FLAG3_ADDRESS 0x10u
+#define BOOST_IF_TAKEN_DAMAGE_F 0u
 /* <<< factory statics */
 
 
@@ -3092,3 +3101,45 @@ AIDecideResult AIPlay_SuperEnergyRemoval(void)
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_SuperEnergyRemoval */
+
+/* >>> factory AIDecide_SuperPotion_Phase11 */
+AIDecideSuperPotionPhase11Result AIDecide_SuperPotion_Phase11(void)
+{
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	uint8_t e = PLAY_AREA_ARENA;
+	if ((ko.f & 0x10u) != 0u) {
+		uint8_t d = ko.a;
+		uint8_t hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a;
+		uint8_t damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA).a;
+		if (damage >= 41u) damage = 40u;
+		uint8_t remaining = (uint8_t)(hp + damage - d);
+		if (remaining != 0u && (uint8_t)(hp + damage) >= d) return (AIDecideSuperPotionPhase11Result){0u, 0u};
+		uint8_t prizes;
+		SwapTurn(); prizes = CountPrizes(); SwapTurn();
+		e = ((uint8_t)(prizes - 1u) == 0u) ? PLAY_AREA_ARENA : PLAY_AREA_BENCH_1;
+	}
+	for (;;) {
+		uint8_t card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e)).a;
+		if (card == 0xffu) return (AIDecideSuperPotionPhase11Result){0xffu, 0xC0u};
+		EnergiesResult energies = GetPlayAreaCardAttachedEnergies(e);
+		if (wTotalAttachedEnergies == 0u || (energies.f & 0x10u) == 0u) { e++; continue; }
+		wSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;
+		CheckIfSelectedAttackIsUnusableResult unusable = CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, e, 0u, 0u);
+		AttackFlagResult flag = CheckLoadedAttackFlag(ATTACK_FLAG3_ADDRESS | BOOST_IF_TAKEN_DAMAGE_F);
+		if ((unusable.f & 0x10u) == 0u && (flag.f & 0x10u) != 0u) { e++; continue; }
+		wSelectedAttack = SECOND_ATTACK;
+		unusable = CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, e, 0u, 0u);
+		flag = CheckLoadedAttackFlag(ATTACK_FLAG3_ADDRESS | BOOST_IF_TAKEN_DAMAGE_F);
+		if ((unusable.f & 0x10u) == 0u && (flag.f & 0x10u) != 0u) { e++; continue; }
+		hTempPlayAreaLocation_ff9d = e;
+		CheckEnergyNeededForAttackResult need = CheckEnergyNeededForAttack();
+		if ((need.f & 0x10u) == 0u) { CheckEnergyNeededForAttackAfterDiscardResult after = CheckEnergyNeededForAttackAfterDiscard(); if ((after.f & 0x10u) != 0u) { e++; continue; } }
+		CardDamageResult card_damage = GetCardDamageAndMaxHP(e);
+		if (card_damage.a < 40u) { e++; continue; }
+		if (e != PLAY_AREA_ARENA) { uint8_t prizes; SwapTurn(); prizes = CountPrizes(); SwapTurn(); if ((uint8_t)(prizes - 1u) != 0u && Random(10u) < 3u) return (AIDecideSuperPotionPhase11Result){0u, 0u}; }
+		if (e == PLAY_AREA_ARENA) { AICheckIfAttackIsHighRecoilResult recoil = AICheckIfAttackIsHighRecoil(); if ((recoil.f & 0x10u) != 0u) return (AIDecideSuperPotionPhase11Result){0u, 0u}; }
+		return (AIDecideSuperPotionPhase11Result){e, 0x10u};
+	}
+}
+/* <<< factory AIDecide_SuperPotion_Phase11 */
