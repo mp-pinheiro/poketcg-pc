@@ -1,0 +1,9 @@
+{
+  "fn": "Func_1a080",
+  "case": "tests/cases/printer.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_1a080\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52842\": \"00c1\", \"52846\": \"8100\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_1a080\", \"mismatches\": {\"bus\": {\"address\": 52842, \"reference\": \"00c18100\", \"native\": \"01c18100\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52842, 2], [52846, 2]]}}}\n",
+  "restored": "{\"fn\": \"Func_1a080\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52842\": \"00c1\", \"52846\": \"8100\"}}, \"status\": \"PASS\"}\n"
+}

@@ -207,4 +207,11 @@ Func_19f99Result Func_19f99(void);
 /* >>> factory _PrintDeckConfiguration */
 void _PrintDeckConfiguration(uint8_t a);
 /* <<< factory _PrintDeckConfiguration */
+/* >>> factory Func_1a080 */
+/* >>> factory Func_1a080 */
+/* engine/link/printer.asm:333. Unreferenced NUL-packet probe over the entry
+ * hl buffer; tail-jumps into SendPrinterPacket, whose ported result is a/f. */
+typedef struct { uint8_t a; uint8_t f; } Func_1a080Result;
+Func_1a080Result Func_1a080(uint16_t hl);
+/* <<< factory Func_1a080 */
 #endif

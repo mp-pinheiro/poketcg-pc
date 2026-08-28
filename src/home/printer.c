@@ -104,6 +104,8 @@
 #include "home/tiles.h"
 #define DECK_STRUCT_SIZE 0x54u
 #define DeckPrinterText 0x0021u
+
+#include "home/printer.h"
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -969,3 +971,16 @@ void _PrintDeckConfiguration(uint8_t a)
 	RestoreVBlankFunction();
 }
 /* <<< factory _PrintDeckConfiguration */
+
+/* >>> factory Func_1a080 */
+/* engine/link/printer.asm:333, unreferenced. A status-probe packet: bc = 0
+ * (no data bytes), lb de, PRINTERPKT_NUL, FALSE, and the caller's hl as the
+ * packet's data pointer. `jp SendPrinterPacket` is a tail jump, so the
+ * callee's exit registers are this routine's exit registers and the ported
+ * a/f come straight back. */
+Func_1a080Result Func_1a080(uint16_t hl)
+{
+	SendPrinterPacketResult packet = SendPrinterPacket(0u, 0u, PRINTERPKT_NUL, FALSE, hl);
+	return (Func_1a080Result){packet.a, packet.f};
+}
+/* <<< factory Func_1a080 */
