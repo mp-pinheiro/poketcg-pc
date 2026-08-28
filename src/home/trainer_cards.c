@@ -388,6 +388,12 @@
 #include "home/common.h"
 #include "home/core.h"
 #include "home/duel.h"
+
+#include "home/common.h"
+#include "home/retreat.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 
@@ -3323,3 +3329,30 @@ AIDecideResult AIPlay_SuperPotion(void)
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_SuperPotion */
+
+/* >>> factory AIDecide_Potion_Phase07 */
+AIDecidePotionPhase07Result AIDecide_Potion_Phase07(void)
+{
+	AIDecideWhetherToRetreatResult retreat = AIDecideWhetherToRetreat();
+	if ((retreat.f & 0x10u) != 0u)
+		return (AIDecidePotionPhase07Result){retreat.a, (uint8_t)(retreat.a == 0u ? 0x80u : 0u)};
+	AICheckIfAttackIsHighRecoilResult recoil = AICheckIfAttackIsHighRecoil();
+	if ((recoil.f & 0x10u) != 0u)
+		return (AIDecidePotionPhase07Result){0u, 0x80u};
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	if ((ko.f & 0x10u) == 0u)
+		return (AIDecidePotionPhase07Result){ko.a, (uint8_t)(ko.a == 0u ? 0x80u : 0u)};
+	uint8_t d = ko.a;
+	uint8_t hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a;
+	uint8_t damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA).a;
+	uint8_t heal = damage < 21u ? damage : 20u;
+	uint8_t total = (uint8_t)(hp + heal);
+	uint8_t remaining = (uint8_t)(total - d);
+	if (total < d)
+		return (AIDecidePotionPhase07Result){remaining, 0u};
+	if (remaining == 0u)
+		return (AIDecidePotionPhase07Result){remaining, 0x80u};
+	return (AIDecidePotionPhase07Result){0u, 0x10u};
+}
+/* <<< factory AIDecide_Potion_Phase07 */

@@ -89,6 +89,21 @@
 
 #include "home/printer.h"
 #include "generated/sram.h"
+
+#include "generated/sram.h"
+#include "generated/wram.h"
+#include "home/card_data.h"
+#include "home/copy.h"
+#include "home/printer.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
+#include "home/random.h"
+#include "home/sprite_vblank.h"
+#include "home/switch_sram.h"
+#include "home/text_box.h"
+#include "home/tiles.h"
+#define DECK_STRUCT_SIZE 0x54u
+#define DeckPrinterText 0x0021u
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -893,3 +908,64 @@ Func_19f99Result Func_19f99(void)
 	return (Func_19f99Result){packet.a, packet.f};
 }
 /* <<< factory Func_19f99 */
+
+/* >>> factory _PrintDeckConfiguration */
+void _PrintDeckConfiguration(uint8_t a)
+{
+	EnableSRAM();
+	uint16_t hl = HtimesL((uint16_t)(((uint16_t)DECK_STRUCT_SIZE << 8) | a));
+	hl = (uint16_t)(hl + sSavedDeck1_ADDR);
+	uint16_t de = wDuelTempList_ADDR;
+	CopyDataHLtoDE(&hl, &de, DECK_STRUCT_SIZE);
+	DisableSRAM();
+
+	ShowPrinterTransmitting();
+	(void)PrepareForPrinterCommunications(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	Func_1a025();
+	TileCopyResult tiles = Func_212f();
+	DrawRegularTextBoxDMG(&tiles.hl, 0u, 20u, 4u, 0u, 64u);
+	InitTextPrinting(4u, 66u);
+	hl = wDuelTempList_ADDR;
+	ProcessText(&hl);
+	(void)ProcessTextFromID(DeckPrinterText);
+
+	wPrinterHorizontalOffset = 5u;
+	wPrinterTotalCardCount = 0u;
+	gb_write8((uint16_t)(wPrinterTotalCardCount_ADDR + 1u), 0u);
+	wPrintOnlyStarRarity = 0u;
+
+	hl = wCurDeckCards_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(hl);
+		if (card == 0u)
+			break;
+		uint8_t b = card;
+		hl = (uint16_t)(hl + 1u);
+		uint8_t c = 1u;
+		LoadCardDataToBuffer1_FromCardID(card);
+		while (gb_read8(hl) == card) {
+			hl = (uint16_t)(hl + 1u);
+			c = (uint8_t)(c + 1u);
+		}
+		wPrinterCardCount = c;
+		LoadCardInfoForPrinter(b, c, &hl);
+		AddToPrinterGfxBufferResult added = AddToPrinterGfxBuffer(hl);
+		if ((added.f & 0x10u) != 0u) {
+			(void)ResetPrinterCommunicationSettings(added.a, added.f, 0u, 0u, 0u, 0u, added.hl);
+			RestoreVBlankFunction();
+			(void)HandlePrinterError(added.f, 0u, 0u);
+			return;
+		}
+	}
+
+	SendCardListToPrinterResult sent = SendCardListToPrinter(0u, 0u, 0u, 0u, 0u, 0u, hl);
+	if ((sent.f & 0x10u) != 0u) {
+		(void)ResetPrinterCommunicationSettings(sent.a, sent.f, sent.b, sent.c, sent.d, sent.e, sent.hl);
+		RestoreVBlankFunction();
+		(void)HandlePrinterError(sent.f, sent.d, sent.e);
+		return;
+	}
+	(void)ResetPrinterCommunicationSettings(sent.a, sent.f, sent.b, sent.c, sent.d, sent.e, sent.hl);
+	RestoreVBlankFunction();
+}
+/* <<< factory _PrintDeckConfiguration */

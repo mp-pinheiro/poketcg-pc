@@ -675,6 +675,15 @@ static void adapt_AIPlay_SuperPotion(ProbeState *s)
 }
 /* <<< factory AIPlay_SuperPotion */
 
+/* >>> factory AIDecide_Potion_Phase07 */
+static void adapt_AIDecide_Potion_Phase07(ProbeState *s)
+{
+	AIDecidePotionPhase07Result result = AIDecide_Potion_Phase07();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory AIDecide_Potion_Phase07 */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -757,5 +766,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIPlay_EnergyRemoval", adapt_AIPlay_EnergyRemoval },
 	{ "AIDecide_Potion_Phase10", adapt_AIDecide_Potion_Phase10 },
 	{ "AIPlay_SuperPotion", adapt_AIPlay_SuperPotion },
+	{ "AIDecide_Potion_Phase07", adapt_AIDecide_Potion_Phase07 },
 	{ NULL, NULL },
 };

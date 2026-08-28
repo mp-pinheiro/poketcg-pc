@@ -322,4 +322,8 @@ AIDecidePotionPhase10Result AIDecide_Potion_Phase10(void);
 /* >>> factory AIPlay_SuperPotion */
 AIDecideResult AIPlay_SuperPotion(void);
 /* <<< factory AIPlay_SuperPotion */
+/* >>> factory AIDecide_Potion_Phase07 */
+typedef struct { uint8_t a; uint8_t f; } AIDecidePotionPhase07Result;
+AIDecidePotionPhase07Result AIDecide_Potion_Phase07(void);
+/* <<< factory AIDecide_Potion_Phase07 */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

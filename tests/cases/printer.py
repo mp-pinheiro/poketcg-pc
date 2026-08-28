@@ -588,6 +588,26 @@ CASES["Func_19f99"] = [
 ]
 # <<< factory Func_19f99
 
+# >>> factory _PrintDeckConfiguration
+CONTRACT["_PrintDeckConfiguration"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["_PrintDeckConfiguration"] = [
+    {"a": 0x00,
+     "wram": {0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00", 0xCE92: b"\xFF\xFF", 0xCE9C: b"\xFF", 0xCF17: b"\x00"},
+     "sram": {0: {0xA350: b"\x00" * 0x53 + b"\xA5"}},
+     "ramg": True,
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": 0x00,
+     "read": {0xC510: 0x54, 0xCE92: 2, 0xCE9C: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, a=0x00,
+         wram={0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00", 0xCE92: b"\xFF\xFF", 0xCE9C: b"\xFF", 0xCF17: b"\x00"},
+         sram={0: {0xA350: b"\x00" * 0x53 + b"\xA5"}}, ramg=True,
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         keys=0x00, read={0xC510: 0x54, 0xCE92: 2, 0xCE9C: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory _PrintDeckConfiguration
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 SCHEMA2_CASES["SendPrinterPacket"][3]["completion"] = {"mode": "pre-ret", "pc": 0x315D}
@@ -812,3 +832,10 @@ MUTATIONS["Func_19f99"] = {
     "case_ids": ["Func_19f99-0", "Func_19f99-1"],
 }
 # <<< factory-mutation Func_19f99
+# >>> factory-mutation _PrintDeckConfiguration
+MUTATIONS["_PrintDeckConfiguration"] = {"source_symbol": "_PrintDeckConfiguration", "before": "\tCopyDataHLtoDE(&hl, &de, DECK_STRUCT_SIZE);", "after": "\tCopyDataHLtoDE(&hl, &de, (uint16_t)(DECK_STRUCT_SIZE - 1u));", "case_ids": ["_PrintDeckConfiguration-0", "_PrintDeckConfiguration-1"]}
+# <<< factory-mutation _PrintDeckConfiguration
+# >>> factory-completion _PrintDeckConfiguration
+for _record in SCHEMA2_CASES["_PrintDeckConfiguration"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+# <<< factory-completion _PrintDeckConfiguration

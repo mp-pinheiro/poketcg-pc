@@ -204,4 +204,7 @@ Func_1a011Result Func_1a011(void);
 typedef struct { uint8_t a; uint8_t f; } Func_19f99Result;
 Func_19f99Result Func_19f99(void);
 /* <<< factory Func_19f99 */
+/* >>> factory _PrintDeckConfiguration */
+void _PrintDeckConfiguration(uint8_t a);
+/* <<< factory _PrintDeckConfiguration */
 #endif

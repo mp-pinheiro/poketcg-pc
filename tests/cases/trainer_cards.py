@@ -1193,6 +1193,14 @@ CASES["AIPlay_SuperPotion"] = [
 ]
 # <<< factory AIPlay_SuperPotion
 
+# >>> factory AIDecide_Potion_Phase07
+CONTRACT["AIDecide_Potion_Phase07"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_Potion_Phase07"] = [
+    {"wram": {0xC200: b"\x10", 0xC2BB: b"\x00", 0xC2BC: b"\xFF", 0xC2C8: b"\x14", 0xC2C9: b"\x00", 0xC300: b"\x10", 0xC3BB: b"\x00", 0xC3C8: b"\x00", 0xC400: b"\xBE", 0xC480: b"\xBE", 0xCC0C: b"\x01", 0xCCB9: b"\x00\x00", 0xCCBB: b"\x00", 0xCCBC: b"\x00", 0xCCC6: b"\x00", 0xCDC7: b"\x00", 0xFF97: b"\xC2", 0xFF9D: b"\x00"}, "read": {0xFF9D: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xC200: b"\x10", 0xC2BB: b"\x00", 0xC2BC: b"\xFF", 0xC2C8: b"\x00", 0xC2C9: b"\x00", 0xC300: b"\x10", 0xC3BB: b"\x00", 0xC3C8: b"\x00", 0xC400: b"\xBE", 0xC480: b"\xBE", 0xCC0C: b"\x01", 0xCCB9: b"\x00\x00", 0xCCBB: b"\x00", 0xCCBC: b"\x00", 0xCCC6: b"\x00", 0xCDC7: b"\x00", 0xFF97: b"\xC2", 0xFF9D: b"\x00"}, read={0xFF9D: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory AIDecide_Potion_Phase07
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1601,3 +1609,11 @@ MUTATIONS["AIDecide_Potion_Phase10"] = {
 # >>> factory-mutation AIPlay_SuperPotion
 MUTATIONS["AIPlay_SuperPotion"] = {"source_symbol": "AIPlay_SuperPotion", "before": "AIDecideResult AIPlay_SuperPotion(void)\n{\n\tuint8_t card = wAITrainerCardToPlay;\n\thTempCardIndex_ff9f = card;", "after": "AIDecideResult AIPlay_SuperPotion(void)\n{\n\tuint8_t card = wAITrainerCardParameter;\n\thTempCardIndex_ff9f = card;", "case_ids": ["AIPlay_SuperPotion-0", "AIPlay_SuperPotion-1", "AIPlay_SuperPotion-2"]}
 # <<< factory-mutation AIPlay_SuperPotion
+# >>> factory-mutation AIDecide_Potion_Phase07
+MUTATIONS["AIDecide_Potion_Phase07"] = {
+    "source_symbol": "AIDecide_Potion_Phase07",
+    "before": "AIDecidePotionPhase07Result AIDecide_Potion_Phase07(void)\n{\n\tAIDecideWhetherToRetreatResult retreat = AIDecideWhetherToRetreat();",
+    "after": "AIDecidePotionPhase07Result AIDecide_Potion_Phase07(void)\n{\n\tAIDecideWhetherToRetreatResult retreat = (AIDecideWhetherToRetreatResult){0xffu, 0x10u};",
+    "case_ids": ["AIDecide_Potion_Phase07-0", "AIDecide_Potion_Phase07-1"]
+}
+# <<< factory-mutation AIDecide_Potion_Phase07
