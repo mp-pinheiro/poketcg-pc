@@ -106,4 +106,8 @@ PrintVisibleDeckMachineEntriesResult UpdateDeckMachineScrollArrowsAndEntries(uin
 typedef struct { uint8_t a; uint8_t f; } SaveDeckInDeckSaveMachineResult;
 SaveDeckInDeckSaveMachineResult SaveDeckInDeckSaveMachine(void);
 /* <<< factory SaveDeckInDeckSaveMachine */
+/* >>> factory TryBuildDeckMachineDeck */
+typedef struct { uint8_t a; uint8_t f; } TryBuildDeckMachineDeckResult;
+TryBuildDeckMachineDeckResult TryBuildDeckMachineDeck(void);
+/* <<< factory TryBuildDeckMachineDeck */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

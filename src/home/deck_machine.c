@@ -162,6 +162,31 @@
 #include "mem.h"
 #define ChooseADeckToSaveText 0x0260u
 #define SavedTheConfigurationForText 0x0263u
+
+#include "home/deck_machine.h"
+#include "home/auto_deck_machines.h"
+#include "home/deck_configuration.h"
+#include "home/deck_selection.h"
+#include "home/menus.h"
+#include "home/random.h"
+#include "home/switch_sram.h"
+#include "generated/sram.h"
+#include "generated/wram.h"
+#include "mem.h"
+
+#define CARD_COUNT_MASK 0x7fu
+#define DECK_1_F 0x00u
+#define DECK_2_F 0x01u
+#define DECK_3_F 0x02u
+#define DECK_4_F 0x03u
+#define BuiltDeckText 0x026eu
+#define DismantleTheseDecksText 0x0270u
+#define DismantledTheDeckText 0x0271u
+#define TheseCardsAreNeededToBuildThisDeckText 0x026fu
+#define ThisDeckCanOnlyBeBuiltIfYouDismantleText 0x026cu
+#define YouDoNotOwnAllCardsNeededToBuildThisDeckText 0x026du
+/* poketcg.sym: 02:7609 DeckMachineMenuParameters. */
+#define DECK_MACHINE_MENU_PARAMETERS_ADDR 0x7609u
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -918,3 +943,245 @@ SaveDeckInDeckSaveMachineResult SaveDeckInDeckSaveMachine(void)
 	}
 }
 /* <<< factory SaveDeckInDeckSaveMachine */
+
+/* >>> factory TryBuildDeckMachineDeck */
+/* deck_machine.asm:1509-1720. The local labels are inlined; .DismantleDeck
+ * and .CheckIfCardIsMissing become static helpers.
+ *
+ * .CheckIfCardIsMissing's `scf / ret z` never returns: the branch is only
+ * reached when the collection count is below the deck count, so `sub e` is
+ * never zero and control falls through into .GetCardCountFromDeck. That tail
+ * pushes af, walks wTempCardCollection + card id to the first zero byte and
+ * pops af back, writing nothing and restoring both a and the carry, so it is
+ * invisible to every caller and is not reproduced here. */
+typedef struct { uint8_t a; uint8_t missing; } TbdmdMissing;
+
+/* .DismantleDeck: a = DECK_*_F. */
+static void tbdmd_dismantle_deck(uint8_t deck)
+{
+	uint16_t hl = HtimesL((uint16_t)(((uint16_t)DECK_STRUCT_SIZE << 8) | deck));
+	hl = (uint16_t)(hl + sBuiltDecks_ADDR);
+	(void)AddDeckToCollection((uint16_t)(hl + DECK_NAME_SIZE));
+	ClearMemory_Bank2(DECK_STRUCT_SIZE, hl);
+}
+
+/* .CheckIfCardIsMissing: `missing` is the asm's carry, `a` the difference it
+ * reports when the collection is short. */
+static TbdmdMissing tbdmd_check_if_card_is_missing(uint8_t card, uint16_t hl)
+{
+	uint8_t d = 0u;
+
+	for (;;) { /* .loop_deck_cards */
+		uint8_t id = gb_read8(hl);
+
+		hl = (uint16_t)(hl + 1u);
+		if (id == 0u)
+			break;
+		if (id == card)
+			d = (uint8_t)(d + 1u);
+	}
+
+	uint8_t e = (uint8_t)(gb_read8((uint16_t)(wTempCardCollection_ADDR + card))
+		& CARD_COUNT_MASK);
+
+	if (e < d)
+		return (TbdmdMissing){(uint8_t)(d - e), 1u};
+	return (TbdmdMissing){e, 0u};
+}
+
+/* .DismantleDecksNeededToBuild: returns the flag byte left by its `scf` (the
+ * player declined) or by its closing `or a` (the decks were dismantled). */
+static uint8_t tbdmd_dismantle_decks_needed_to_build(void)
+{
+	CheckWhichDecksToDismantleToBuildSavedDeckResult chk =
+		CheckWhichDecksToDismantleToBuildSavedDeck();
+
+	/* SafelySwitchToSRAM0 preserves af, so DrawDecksScreen still receives the
+	 * a the farcall returned. */
+	SafelySwitchToSRAM0();
+	DrawDecksScreen(chk.a);
+
+	HandleYesOrNoMenuResult choice = YesOrNoMenuWithText(DismantleTheseDecksText);
+
+	if (choice.f & CARRY_FLAG) {
+		SafelySwitchToTempSRAMBank();
+		return (uint8_t)((choice.f & 0x80u) | CARRY_FLAG);
+	}
+
+	EnableSRAM();
+	if (wDecksToBeDismantled & (uint8_t)(1u << DECK_1_F))
+		tbdmd_dismantle_deck(DECK_1_F);
+	if (wDecksToBeDismantled & (uint8_t)(1u << DECK_2_F))
+		tbdmd_dismantle_deck(DECK_2_F);
+	if (wDecksToBeDismantled & (uint8_t)(1u << DECK_3_F))
+		tbdmd_dismantle_deck(DECK_3_F);
+	if (wDecksToBeDismantled & (uint8_t)(1u << DECK_4_F))
+		tbdmd_dismantle_deck(DECK_4_F);
+	DisableSRAM();
+
+	DrawDecksScreen(wDecksToBeDismantled);
+	SafelySwitchToTempSRAMBank();
+
+	WaitResult waited = DrawWideTextBox_WaitForInput(DismantledTheDeckText);
+
+	/* `or a` clears carry, N and H and takes Z from the byte the wait left in
+	 * a, which is the zero TryDeleteSavedDeck models for the same tail. */
+	return (uint8_t)(waited.f & 0x80u);
+}
+
+TryBuildDeckMachineDeckResult TryBuildDeckMachineDeck(void)
+{
+	uint8_t entry = wSelectedDeckMachineEntry;
+	DeckBuildCheckResult check = CheckIfCanBuildSavedDeck(0x00u, entry);
+
+	if (check.f & CARRY_FLAG) {
+		check = CheckIfCanBuildSavedDeck(ALL_DECKS, entry);
+		if (check.f & CARRY_FLAG) {
+			/* .do_not_own_all_cards_needed */
+			(void)DrawWideTextBox_WaitForInput(
+				YouDoNotOwnAllCardsNeededToBuildThisDeckText);
+
+			/* .ShowMissingCardList */
+			wCurDeck = wSelectedDeckMachineEntry;
+
+			uint16_t saved = GetSelectedSavedDeckPtr();
+			uint16_t src = (uint16_t)(saved + DECK_NAME_SIZE);
+			uint16_t dst = wCurDeckCards_ADDR;
+
+			EnableSRAM();
+			CopyNBytesFromHLToDE(&src, &dst, DECK_SIZE);
+			DisableSRAM();
+			gb_write8((uint16_t)(wCurDeckCards_ADDR + DECK_SIZE), 0u);
+
+			(void)SortCurDeckCardsByID();
+			(void)CreateCurDeckUniqueCardList();
+
+			SafelySwitchToSRAM0();
+			CreateCardCollectionListWithDeckCards(ALL_DECKS);
+			SafelySwitchToTempSRAMBank();
+
+			uint16_t list = wUniqueDeckCardList_ADDR;
+			uint16_t out = wFilteredCardList_ADDR;
+
+			for (;;) { /* .loop_deck_configuration */
+				uint8_t card = gb_read8(list);
+
+				list = (uint16_t)(list + 1u);
+				if (card == 0u)
+					break;
+
+				TbdmdMissing missing =
+					tbdmd_check_if_card_is_missing(card, wCurDeckCards_ADDR);
+
+				if (!missing.missing)
+					continue;
+
+				uint8_t needed = missing.a;
+
+				do { /* .loop_number_missing */
+					gb_write8(out, card);
+					out = (uint16_t)(out + 1u);
+					needed = (uint8_t)(needed - 1u);
+				} while (needed != 0u);
+			}
+
+			/* .finish_missing_card_list */
+			gb_write8(out, 0u);
+
+			gb_write8(wCardConfirmationText_ADDR, (uint8_t)TheseCardsAreNeededToBuildThisDeckText);
+			gb_write8((uint16_t)(wCardConfirmationText_ADDR + 1u),
+				  (uint8_t)(TheseCardsAreNeededToBuildThisDeckText >> 8));
+
+			uint16_t name = GetSelectedSavedDeckPtr();
+			HandleDeckMissingCardsListResult shown =
+				HandleDeckMissingCardsList(name, wFilteredCardList_ADDR);
+
+			/* .set_carry_and_return */
+			return (TryBuildDeckMachineDeckResult){wCardListCursorPos,
+				(uint8_t)((shown.f & 0x80u) | CARRY_FLAG)};
+		}
+
+		(void)DrawWideTextBox_WaitForInput(ThisDeckCanOnlyBeBuiltIfYouDismantleText);
+
+		uint8_t dismantled = tbdmd_dismantle_decks_needed_to_build();
+
+		if (dismantled & CARRY_FLAG) {
+			/* .set_carry_and_return */
+			return (TryBuildDeckMachineDeckResult){wCardListCursorPos,
+				(uint8_t)((dismantled & 0x80u) | CARRY_FLAG)};
+		}
+	}
+
+	/* .build_deck */
+	EnableSRAM();
+	SafelySwitchToSRAM0();
+
+	FindFirstEmptyDeckSlotResult slot = FindFirstEmptyDeckSlot();
+
+	SafelySwitchToTempSRAMBank();
+	DisableSRAM();
+
+	uint8_t deck_slot = slot.a;
+
+	if (slot.f & CARRY_FLAG) {
+		HandleDismantleDeckToMakeSpaceResult space = HandleDismantleDeckToMakeSpace();
+
+		if (space.f & CARRY_FLAG)
+			return (TryBuildDeckMachineDeckResult){space.a,
+				(uint8_t)((space.f & 0x80u) | CARRY_FLAG)};
+		deck_slot = space.a;
+	}
+
+	/* .got_deck_slot */
+	wDeckSlotForNewDeck = deck_slot;
+
+	uint16_t table = (uint16_t)(wMachineDeckPtrs_ADDR
+		+ (uint8_t)(wSelectedDeckMachineEntry << 1));
+	uint16_t deck = (uint16_t)(gb_read8(table)
+		| ((uint16_t)gb_read8((uint16_t)(table + 1u)) << 8));
+
+	uint16_t src = deck;
+	uint16_t dst = wDeckToBuild_ADDR;
+
+	EnableSRAM();
+	CopyNBytesFromHLToDE(&src, &dst, DECK_STRUCT_SIZE);
+
+	SafelySwitchToSRAM0();
+	(void)DecrementDeckCardsInCollection((uint16_t)(wDeckToBuild_ADDR + DECK_NAME_SIZE));
+
+	uint16_t built = HtimesL((uint16_t)(((uint16_t)DECK_STRUCT_SIZE << 8)
+		| wDeckSlotForNewDeck));
+
+	built = (uint16_t)(built + sBuiltDecks_ADDR);
+
+	uint16_t copy_src = wDeckToBuild_ADDR;
+	uint16_t copy_dst = built;
+
+	CopyNBytesFromHLToDE(&copy_src, &copy_dst, DECK_STRUCT_SIZE);
+	DisableSRAM();
+
+	DrawDecksScreen(ALL_DECKS);
+	wCurDeck = wDeckSlotForNewDeck;
+
+	uint16_t menu_parameters = DECK_MACHINE_MENU_PARAMETERS_ADDR;
+
+	InitializeMenuParameters(wDeckSlotForNewDeck, &menu_parameters);
+	DrawCursor2();
+
+	uint16_t deck_name = GetPointerToDeckName();
+
+	EnableSRAM();
+	(void)CopyDeckName(deck_name);
+	DisableSRAM();
+	SafelySwitchToTempSRAMBank();
+
+	wTxRam2 = 0u;
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), 0u);
+
+	WaitResult waited = DrawWideTextBox_WaitForInput(BuiltDeckText);
+
+	/* `xor a` before the wait is what TryDeleteSavedDeck's identical tail
+	 * models, so a is 0 and the closing `scf` only sets carry. */
+	return (TryBuildDeckMachineDeckResult){0u, (uint8_t)((waited.f & 0x80u) | CARRY_FLAG)};
+}
+/* <<< factory TryBuildDeckMachineDeck */

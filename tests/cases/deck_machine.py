@@ -498,6 +498,40 @@ CASES["SaveDeckInDeckSaveMachine"] = [
 ]
 # <<< factory SaveDeckInDeckSaveMachine
 
+# >>> factory TryBuildDeckMachineDeck
+CONTRACT["TryBuildDeckMachineDeck"] = {"compare": ("a", "f"), "preserve": ()}
+# The card collection in SRAM is empty, so both CheckIfCanBuildSavedDeck probes
+# come back with carry set and the routine takes .do_not_own_all_cards_needed ->
+# .ShowMissingCardList, ending in HandleDeckMissingCardsList and returning
+# through .set_carry_and_return with a = wCardListCursorPos and f = $90.
+#
+# rom_bank 2 is mandatory, not decoration: HandleDeckMissingCardsList reads its
+# card-selection params out of bank 2, and with another bank mapped it falls
+# into OpenCardPageFromCardList forever.
+#
+# wLCDC ($CABB) = 0 keeps WaitForVBlank a no-op and keeps DrawWideTextBox off
+# the HblankCopyDataDEtoHL path, exactly as the landed
+# HandleDismantleDeckToMakeSpace cases do. keys=[0x00, 0x02] taps B every other
+# frame against the edge-triggered hKeysPressed: B dismisses the wide text box
+# and then cancels the confirmation list, which is the only bounded exit.
+CASES["TryBuildDeckMachineDeck"] = [
+    {"rom_bank": 2, "ramg": True, "keys": [0x00, 0x02],
+     "wram": {0xCABB: b"\x00", 0xFF81: b"\x00", 0xD0A4: b"\x00",
+              0xD088: b"\x00", 0xD00D: b"\x50\xA3"},
+     "sram": {0: {0xA350: b"A\x00" + b"\x00" * 22 + b"\x01" * 60}},
+     "read": {0xCFDA: 2, 0xCEB1: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, rom_bank=2, ramg=True, keys=[0x00, 0x02],
+         wram={0xCABB: b"\x00", 0xFF81: b"\x00", 0xD0A4: b"\x00",
+               0xD088: b"\x00", 0xD00D: b"\x50\xA3"},
+         sram={0: {0xA350: b"A\x00" + b"\x00" * 22 + b"\x01" * 60}},
+         read={0xCFDA: 2, 0xCEB1: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory TryBuildDeckMachineDeck
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -641,3 +675,14 @@ MUTATIONS["SaveDeckInDeckSaveMachine"] = {
     "case_ids": ["SaveDeckInDeckSaveMachine-0", "SaveDeckInDeckSaveMachine-1"],
 }
 # <<< factory-mutation SaveDeckInDeckSaveMachine
+# >>> factory-mutation TryBuildDeckMachineDeck
+MUTATIONS["TryBuildDeckMachineDeck"] = {
+    "source_symbol": "TryBuildDeckMachineDeck",
+    # wCardConfirmationText ($CFDA) is read by both cases and no sibling in
+    # deck_machine.c writes it, so this anchor is unique and its corruption is
+    # visible in the compared bytes.
+    "before": "\t\t\tgb_write8(wCardConfirmationText_ADDR, (uint8_t)TheseCardsAreNeededToBuildThisDeckText);",
+    "after": "\t\t\tgb_write8(wCardConfirmationText_ADDR, (uint8_t)(TheseCardsAreNeededToBuildThisDeckText + 1u));",
+    "case_ids": ["TryBuildDeckMachineDeck-0", "TryBuildDeckMachineDeck-1"],
+}
+# <<< factory-mutation TryBuildDeckMachineDeck
