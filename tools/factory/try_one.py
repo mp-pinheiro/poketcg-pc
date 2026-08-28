@@ -924,7 +924,7 @@ def summarize() -> int:
     return 0 if records and len(set(green)) >= 4 else 1
 
 
-def _prepare_direct(fn: str) -> dict[str, Any]:
+def _prepare_direct(fn: str, attempt_dir: Path | None = None) -> dict[str, Any]:
     _check_operational_blocker(fn)
     # Same lock as subcommand_next: a direct try must not race a loop's
     # selection into a double claim on one routine.
@@ -935,12 +935,16 @@ def _prepare_direct(fn: str) -> dict[str, Any]:
         state = existing["current"]
         if state["state"] == "issued":
             return existing
+        # Candidate generation is asynchronous. If the caller names this
+        # exact attempt, finish verifying its late files instead of rotating
+        # the claim and making the candidates stale.
+        if attempt_dir is not None and attempt_dir.resolve() == existing["run_dir"].resolve():
+            return existing
         return issue_attempt(
             fn,
             state["generation"] + 1,
             parent_attempt_id=state["attempt_id"],
         )
-
 
 def _set_attempt_state(current: dict[str, Any], state: str, *, retry_limit: int,
                        unsupported: bool = False) -> None:
@@ -1014,7 +1018,7 @@ def main(argv: list[str] | None = None) -> int:
     if not fn:
         parser.error("--fn is required unless --summary, --next, or --capabilities is given")
     try:
-        issued = _prepare_direct(fn)
+        issued = _prepare_direct(fn, arguments.attempt_dir)
     except OperationalBlocker as exc:
         blocker = exc.blocker
         print(f"TRY {fn} blocked phase=resolve detail={blocker.get('reason', 'operational blocker')} "
