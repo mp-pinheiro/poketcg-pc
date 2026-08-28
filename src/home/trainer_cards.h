@@ -326,4 +326,13 @@ AIDecideResult AIPlay_SuperPotion(void);
 typedef struct { uint8_t a; uint8_t f; } AIDecidePotionPhase07Result;
 AIDecidePotionPhase07Result AIDecide_Potion_Phase07(void);
 /* <<< factory AIDecide_Potion_Phase07 */
+/* >>> factory AIPlay_Revive */
+AIDecideResult AIPlay_Revive(void);
+/* <<< factory AIPlay_Revive */
+/* >>> factory AIPlay_Lass */
+AIDecideResult AIPlay_Lass(void);
+/* <<< factory AIPlay_Lass */
+/* >>> factory AIPlay_MrFuji */
+AIDecideResult AIPlay_MrFuji(void);
+/* <<< factory AIPlay_MrFuji */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

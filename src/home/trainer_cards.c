@@ -3356,3 +3356,34 @@ AIDecidePotionPhase07Result AIDecide_Potion_Phase07(void)
 	return (AIDecidePotionPhase07Result){0u, 0x10u};
 }
 /* <<< factory AIDecide_Potion_Phase07 */
+
+/* >>> factory AIPlay_Revive */
+AIDecideResult AIPlay_Revive(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTemp_ffa0 = wAITrainerCardParameter;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_Revive */
+
+/* >>> factory AIPlay_Lass */
+AIDecideResult AIPlay_Lass(void)
+{
+	wCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_Lass */
+
+/* >>> factory AIPlay_MrFuji */
+/* trainer_cards.asm:3870-3878 */
+AIDecideResult AIPlay_MrFuji(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTemp_ffa0 = wAITrainerCardParameter;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_MrFuji */

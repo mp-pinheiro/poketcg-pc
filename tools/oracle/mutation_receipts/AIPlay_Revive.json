@@ -1,0 +1,9 @@
+{
+  "fn": "AIPlay_Revive",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIPlay_Revive\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"000000\", \"52217\": \"00\", \"52758\": \"00\", \"52761\": \"34\", \"65408\": \"08\", \"65439\": \"0034\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIPlay_Revive\", \"mismatches\": {\"bus\": {\"address\": 65439, \"reference\": \"000034080034\", \"native\": \"000034083434\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[51914, 3], [52217, 1], [52758, 1], [52761, 1], [65408, 1], [65439, 2]]}}}\n",
+  "restored": "{\"fn\": \"AIPlay_Revive\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"000000\", \"52217\": \"00\", \"52758\": \"00\", \"52761\": \"34\", \"65408\": \"08\", \"65439\": \"0034\"}}, \"status\": \"PASS\"}\n"
+}

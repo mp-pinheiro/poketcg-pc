@@ -1,0 +1,9 @@
+{
+  "fn": "AIPlay_Lass",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIPlay_Lass\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"000000\", \"52217\": \"00\", \"52758\": \"00\", \"52769\": \"08\", \"65408\": \"08\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIPlay_Lass\", \"mismatches\": {\"bus\": {\"address\": 52769, \"reference\": \"00000000080800\", \"native\": \"00000000000800\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[51914, 3], [52217, 1], [52758, 1], [52769, 1], [65408, 1], [65439, 1]]}}}\n",
+  "restored": "{\"fn\": \"AIPlay_Lass\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"000000\", \"52217\": \"00\", \"52758\": \"00\", \"52769\": \"08\", \"65408\": \"08\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

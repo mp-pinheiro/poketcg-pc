@@ -684,6 +684,30 @@ static void adapt_AIDecide_Potion_Phase07(ProbeState *s)
 }
 /* <<< factory AIDecide_Potion_Phase07 */
 
+/* >>> factory AIPlay_Revive */
+static void adapt_AIPlay_Revive(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_Revive();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_Revive */
+
+/* >>> factory AIPlay_Lass */
+static void adapt_AIPlay_Lass(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_Lass();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_Lass */
+
+/* >>> factory AIPlay_MrFuji */
+static void adapt_AIPlay_MrFuji(ProbeState *s)
+{
+	AIDecideResult result = AIPlay_MrFuji();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_MrFuji */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -767,5 +791,8 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_Potion_Phase10", adapt_AIDecide_Potion_Phase10 },
 	{ "AIPlay_SuperPotion", adapt_AIPlay_SuperPotion },
 	{ "AIDecide_Potion_Phase07", adapt_AIDecide_Potion_Phase07 },
+	{ "AIPlay_Revive", adapt_AIPlay_Revive },
+	{ "AIPlay_Lass", adapt_AIPlay_Lass },
+	{ "AIPlay_MrFuji", adapt_AIPlay_MrFuji },
 	{ NULL, NULL },
 };

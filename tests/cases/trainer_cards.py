@@ -1201,6 +1201,36 @@ CASES["AIDecide_Potion_Phase07"] = [
 ]
 # <<< factory AIDecide_Potion_Phase07
 
+# >>> factory AIPlay_Revive
+CONTRACT["AIPlay_Revive"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_Revive"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x34", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCE19: b"\x78", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x80"}, read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCE19: b"\xDD", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_Revive
+
+# >>> factory AIPlay_Lass
+CONTRACT["AIPlay_Lass"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_Lass"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE21: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xCE21: 1, hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCE21: b"\x10", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x80"}, read={0xCE21: 1, hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCE21: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={0xCE21: 1, hTempCardIndex_ff9f: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_Lass
+
+# >>> factory AIPlay_MrFuji
+CONTRACT["AIPlay_MrFuji"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_MrFuji"] = [
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x34", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCE19: b"\x78", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x80"},
+         read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\xDD", 0xCE19: b"\xDD", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00"},
+         read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_MrFuji
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1617,3 +1647,20 @@ MUTATIONS["AIDecide_Potion_Phase07"] = {
     "case_ids": ["AIDecide_Potion_Phase07-0", "AIDecide_Potion_Phase07-1"]
 }
 # <<< factory-mutation AIDecide_Potion_Phase07
+# >>> factory-mutation AIPlay_Revive
+MUTATIONS["AIPlay_Revive"] = {
+    "source_symbol": "AIPlay_Revive",
+    "before": "AIDecideResult AIPlay_Revive(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;\n\thTemp_ffa0 = wAITrainerCardParameter;",
+    "after": "AIDecideResult AIPlay_Revive(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardParameter;\n\thTemp_ffa0 = wAITrainerCardParameter;",
+    "case_ids": ["AIPlay_Revive-0"]
+}
+# <<< factory-mutation AIPlay_Revive
+# >>> factory-mutation AIPlay_Lass
+MUTATIONS["AIPlay_Lass"] = {"source_symbol": "AIPlay_Lass", "before": "AIDecideResult AIPlay_Lass(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);", "after": "AIDecideResult AIPlay_Lass(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | 0u);", "case_ids": ["AIPlay_Lass-0"]}
+# <<< factory-mutation AIPlay_Lass
+# >>> factory-mutation AIPlay_MrFuji
+MUTATIONS["AIPlay_MrFuji"] = {"source_symbol": "AIPlay_MrFuji",
+    "before": "AIDecideResult AIPlay_MrFuji(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_MrFuji(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "case_ids": ["AIPlay_MrFuji-0"]}
+# <<< factory-mutation AIPlay_MrFuji
