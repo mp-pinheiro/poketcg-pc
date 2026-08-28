@@ -257,6 +257,37 @@ _PROTO_CACHE: dict[str, tuple[str, str] | None] = {}
 _SCALARS = {"void", "uint8_t", "uint16_t", "uint32_t", "int8_t", "int16_t",
             "int32_t", "int", "unsigned", "size_t", "_Bool", "bool", "char"}
 
+# A header documents each routine in a `/* Name (file:lines): ... */` block
+# directly above its declaration, so a raw text search finds the routine's own
+# name inside its doc comment first and `find(";")` then slices prose as the
+# "prototype". 134 of the tree's callees resolved that way, and a callee
+# mentioned only in prose - JumpToFunctionInTable, which no header declares -
+# was advertised to generators as ported and available instead of being
+# reported as unported. Matching against a comment-masked copy fixes both:
+# comment bytes become spaces, so offsets, line starts and newlines are all
+# preserved and the slice can be taken from the masked text directly.
+_COMMENT = re.compile(r"/\*.*?\*/|//[^\n]*", re.DOTALL)
+_HEADER_CACHE: dict[str, str] = {}
+
+
+def _mask_comments(text: str) -> str:
+    out = list(text)
+    for match in _COMMENT.finditer(text):
+        for index in range(match.start(), match.end()):
+            if out[index] != "\n":
+                out[index] = " "
+    return "".join(out)
+
+
+def _masked_header(path: Path) -> str:
+    """Header text with comments blanked, read and masked once per process."""
+    key = str(path)
+    cached = _HEADER_CACHE.get(key)
+    if cached is None:
+        cached = _mask_comments(path.read_text())
+        _HEADER_CACHE[key] = cached
+    return cached
+
 
 def _struct_typedef(text: str, type_name: str) -> str | None:
     match = re.search(
@@ -272,18 +303,21 @@ def prototype_for(routine: str) -> tuple[str, str] | None:
     needle = re.compile(rf"\b{re.escape(c_name(routine))}\s*\(")
     result = None
     for header in sorted((ROOT / "src" / "home").glob("*.h")):
-        text = header.read_text()
-        match = needle.search(text)
+        masked = _masked_header(header)
+        match = needle.search(masked)
         if not match:
             continue
-        line_start = text.rfind("\n", 0, match.start()) + 1
-        semi = text.find(";", match.start())
+        line_start = masked.rfind("\n", 0, match.start()) + 1
+        semi = masked.find(";", match.start())
         if semi < 0:
             continue
-        proto = " ".join(text[line_start:semi + 1].split())
+        # Masked slice: a declaration sharing its line with the tail of the
+        # doc comment above it ("... */ void ReturnCardToDeck(uint8_t a);")
+        # keeps only the declaration, because the comment is now spaces.
+        proto = " ".join(masked[line_start:semi + 1].split())
         return_type = proto.split()[0]
         if return_type not in _SCALARS and not proto.startswith("static"):
-            typedef = _struct_typedef(text, return_type)
+            typedef = _struct_typedef(masked, return_type)
             if typedef:
                 proto = f"{typedef}  {proto}"
         result = (header.name, proto)
