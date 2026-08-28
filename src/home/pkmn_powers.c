@@ -117,6 +117,9 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define TENTACOOL 0x49u
+
+#include "generated/hram.h"
+#include "home/core.h"
 /* <<< factory statics */
 
 /* >>> factory HandleAIShift */
@@ -528,3 +531,13 @@ HandleAICowardiceResult HandleAICowardice(void)
 	}
 }
 /* <<< factory HandleAICowardice */
+
+/* >>> factory AIEnergyTransTransferEnergyToBench */
+AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void)
+{
+	hTempPlayAreaLocation_ff9d = 0u;
+	CheckIfDefendingPokemonCanKnockOutResult knock_out =
+		CheckIfDefendingPokemonCanKnockOut(0u, 0x80u, 0u, 0u, 0u, 0u, 0u);
+	return (AIEnergyTransTransferEnergyToBenchResult){knock_out.a, knock_out.f};
+}
+/* <<< factory AIEnergyTransTransferEnergyToBench */

@@ -40,4 +40,8 @@ HandleAIGoGoRainDanceEnergyResult HandleAIGoGoRainDanceEnergy(void);
 typedef struct { uint8_t a; uint8_t f; } HandleAICowardiceResult;
 HandleAICowardiceResult HandleAICowardice(void);
 /* <<< factory HandleAICowardice */
+/* >>> factory AIEnergyTransTransferEnergyToBench */
+typedef struct { uint8_t a; uint8_t f; } AIEnergyTransTransferEnergyToBenchResult;
+AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void);
+/* <<< factory AIEnergyTransTransferEnergyToBench */
 #endif /* POKETCG_HOME_PKMN_POWERS_H */

@@ -76,6 +76,8 @@ hAIPkmnPowerEffectParam = 0xFFA1
 hTempCardIndex_ff9f = 0xFF9F
 hTemp_ffa0 = 0xFFA0
 wce08 = 0xCE08
+
+hTempPlayAreaLocation_ff9d = 0xFF9D
 # <<< factory-cases-statics
 
 # >>> factory HandleAIDamageSwap
@@ -124,6 +126,15 @@ CASES["HandleAICowardice"] = [
 	dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\x00\xC5", 0xC3BC: b"\x01\xC5", 0xC400: b"\x27", 0xC480: b"\x27", 0xC500: b"\xFF", 0xC501: b"\xFF"}, read={0xCE7C: 1}),
 ]
 # <<< factory HandleAICowardice
+
+# >>> factory AIEnergyTransTransferEnergyToBench
+# The carry-set path drives live duel state through subsequent AI routines and is omitted because it cannot be reproducibly exited from this case schema.
+CONTRACT["AIEnergyTransTransferEnergyToBench"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIEnergyTransTransferEnergyToBench"] = [
+	{"wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\x00\xC5", 0xC3BC: b"\x01\xC5", 0xC400: b"\x27", 0xC480: b"\x27", 0xC500: b"\xFF", 0xC501: b"\xFF"}, "read": {hTempPlayAreaLocation_ff9d: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+	dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\x00\xC5", 0xC3BC: b"\x01\xC5", 0xC400: b"\x27", 0xC480: b"\x27", 0xC500: b"\xFF", 0xC501: b"\xFF"}, read={hTempPlayAreaLocation_ff9d: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory AIEnergyTransTransferEnergyToBench
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -176,3 +187,6 @@ MUTATIONS["HandleAIGoGoRainDanceEnergy"] = {"source_symbol": "HandleAIGoGoRainDa
 # >>> factory-mutation HandleAICowardice
 MUTATIONS["HandleAICowardice"] = {"source_symbol": "HandleAICowardice", "before": "HandleAICowardiceResult HandleAICowardice(void)\n{\n\tPkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);\n\tif (muk.f & 0x10u)\n\t\treturn (HandleAICowardiceResult){muk.a, muk.f};", "after": "HandleAICowardiceResult HandleAICowardice(void)\n{\n\tPkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(TENTACOOL);\n\tif (muk.f & 0x10u)\n\t\treturn (HandleAICowardiceResult){muk.a, muk.f};", "case_ids": ["HandleAICowardice-0", "HandleAICowardice-1", "HandleAICowardice-2"]}
 # <<< factory-mutation HandleAICowardice
+# >>> factory-mutation AIEnergyTransTransferEnergyToBench
+MUTATIONS["AIEnergyTransTransferEnergyToBench"] = {"source_symbol": "AIEnergyTransTransferEnergyToBench", "before": "AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void)\n{\n\thTempPlayAreaLocation_ff9d = 0u;", "after": "AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["AIEnergyTransTransferEnergyToBench-0", "AIEnergyTransTransferEnergyToBench-1"]}
+# <<< factory-mutation AIEnergyTransTransferEnergyToBench
