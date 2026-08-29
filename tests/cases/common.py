@@ -169,6 +169,12 @@ _PRINT_CARD_LIST_WRAPPER_SRAM = {0: {0xA100: b"\x00" * 0x100, 0xA200: b"\x00",
                                      0xA2FC: b"\x00"}}
 _PRINT_CARD_LIST_WRAPPER_SETUP = [{"fn": "CopyDMAFunction"},
                                   {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wConsole = 0xCAB4
+hWhoseTurn = 0xFF97
+wLCDC = 0xCABB
 # <<< factory-cases-statics
 
 # >>> factory CheckIfHasCardIDInHand
@@ -579,6 +585,14 @@ CASES["ReceiveDeckConfiguration"] = [
 ]
 # <<< factory ReceiveDeckConfiguration
 
+# >>> factory DoCardPop
+CONTRACT["DoCardPop"] = {"compare": (), "preserve": ()}
+CASES["DoCardPop"] = [
+    {"oracle": False, "evidence": "primary", "why": "The SGB guard deterministically takes Card Pop!'s error-screen path without requiring infrared hardware; the seeded turn byte verifies that the communication branch is not entered.", "wram": {wConsole: b"\x01", hWhoseTurn: b"\x00", wLCDC: b"\x00"}, "keys": [0x00, 0x01], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {hWhoseTurn: 1}, "expect": {hWhoseTurn: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The SGB guard deterministically takes Card Pop!'s error-screen path without requiring infrared hardware; poisoned entry registers must not alter the turn byte.", wram={wConsole: b"\x01", hWhoseTurn: b"\x00", wLCDC: b"\x00"}, keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={hWhoseTurn: 1}, expect={hWhoseTurn: b"\x00"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DoCardPop
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -810,3 +824,6 @@ MUTATIONS["ReceiveCard"] = {"source_symbol": "ReceiveCard", "before": "ReceiveCa
 # >>> factory-mutation ReceiveDeckConfiguration
 MUTATIONS["ReceiveDeckConfiguration"] = {"source_symbol": "ReceiveDeckConfiguration", "before": "ReceiveDeckConfigurationResult ReceiveDeckConfiguration(void)\n{\n\t_ReceiveDeckConfigurationResult result = _ReceiveDeckConfiguration();\n\treturn (ReceiveDeckConfigurationResult){result.a, result.f};", "after": "ReceiveDeckConfigurationResult ReceiveDeckConfiguration(void)\n{\n\t_ReceiveDeckConfigurationResult result = _ReceiveDeckConfiguration();\n\treturn (ReceiveDeckConfigurationResult){0u, 0u};", "case_ids": ["ReceiveDeckConfiguration-0", "ReceiveDeckConfiguration-1"]}
 # <<< factory-mutation ReceiveDeckConfiguration
+# >>> factory-mutation DoCardPop
+MUTATIONS["DoCardPop"] = {"source_symbol": "DoCardPop", "before": "void DoCardPop(void)\n{\n\t_DoCardPop();", "after": "void DoCardPop(void)\n{\n\thWhoseTurn = 1u;", "case_ids": ["DoCardPop-0", "DoCardPop-1"]}
+# <<< factory-mutation DoCardPop

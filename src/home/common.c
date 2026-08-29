@@ -100,6 +100,8 @@
 #include "home/sound.h"
 
 #include "home/ir_functions.h"
+
+#include "home/card_pop.h"
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -803,3 +805,10 @@ ReceiveDeckConfigurationResult ReceiveDeckConfiguration(void)
 	return (ReceiveDeckConfigurationResult){result.a, result.f};
 }
 /* <<< factory ReceiveDeckConfiguration */
+
+/* >>> factory DoCardPop */
+void DoCardPop(void)
+{
+	_DoCardPop();
+}
+/* <<< factory DoCardPop */

@@ -144,4 +144,7 @@ ReceiveCardResult ReceiveCard(void);
 typedef struct { uint8_t a; uint8_t f; } ReceiveDeckConfigurationResult;
 ReceiveDeckConfigurationResult ReceiveDeckConfiguration(void);
 /* <<< factory ReceiveDeckConfiguration */
+/* >>> factory DoCardPop */
+void DoCardPop(void);
+/* <<< factory DoCardPop */
 #endif /* POKETCG_HOME_COMMON_H */

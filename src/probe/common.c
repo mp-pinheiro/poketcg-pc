@@ -289,6 +289,13 @@ static void adapt_ReceiveDeckConfiguration(ProbeState *s)
 }
 /* <<< factory ReceiveDeckConfiguration */
 
+/* >>> factory DoCardPop */
+static void adapt_DoCardPop(ProbeState *s)
+{
+	DoCardPop();
+}
+/* <<< factory DoCardPop */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -323,5 +330,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "PrintCardList", adapt_PrintCardList },
 	{ "ReceiveCard", adapt_ReceiveCard },
 	{ "ReceiveDeckConfiguration", adapt_ReceiveDeckConfiguration },
+	{ "DoCardPop", adapt_DoCardPop },
 	{ NULL, NULL },
 };
