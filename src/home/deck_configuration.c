@@ -406,6 +406,12 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #define SendTheseCardsText 0x0282u
 #define HANDLE_SEND_DECK_CONFIGURATION_MENU_DATA_ADDR 0x61F4u
 #define DATA_B04A_ADDR 0x704Au
+
+#include "home/deck_configuration.h"
+#include "home/deck_selection.h"
+#include "generated/wram.h"
+#define PREPARE_TO_BUILD_DECK_TEXT_ADDR 0x61C2u
+#define PREPARE_TO_BUILD_DECK_PARAMS_ADDR 0x61D8u
 /* <<< factory statics */
 
 
@@ -2728,3 +2734,17 @@ void HandleSendDeckConfigurationMenu(void)
 	}
 }
 /* <<< factory HandleSendDeckConfigurationMenu */
+
+/* >>> factory PrepareToBuildDeckConfigurationToSend */
+void PrepareToBuildDeckConfigurationToSend(void)
+{
+	ClearMemory_Bank2((uint8_t)(wCurDeckCardsEnd_ADDR - wCurDeckCards_ADDR), wCurDeckCards_ADDR);
+	wCurDeck = 0xffu;
+	uint16_t text = PREPARE_TO_BUILD_DECK_TEXT_ADDR;
+	uint16_t name = wCurDeckName_ADDR;
+	CopyListFromHLToDE(&text, &name);
+	uint16_t params = PREPARE_TO_BUILD_DECK_PARAMS_ADDR;
+	(void)InitDeckBuildingParams(&params, 0u);
+	HandleDeckBuildScreen();
+}
+/* <<< factory PrepareToBuildDeckConfigurationToSend */

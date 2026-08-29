@@ -1230,4 +1230,8 @@ void PracticeDuel_PutStaryuInBench(void);
 typedef struct { uint8_t f; } ChooseInitialArenaAndBenchPokemonResult;
 ChooseInitialArenaAndBenchPokemonResult ChooseInitialArenaAndBenchPokemon(void);
 /* <<< factory ChooseInitialArenaAndBenchPokemon */
+/* >>> factory TurnDuelistTakePrizes */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } TurnDuelistTakePrizesResult;
+TurnDuelistTakePrizesResult TurnDuelistTakePrizes(void);
+/* <<< factory TurnDuelistTakePrizes */
 #endif

@@ -720,6 +720,14 @@ static void adapt_HandleSendDeckConfigurationMenu(ProbeState *s)
 }
 /* <<< factory HandleSendDeckConfigurationMenu */
 
+/* >>> factory PrepareToBuildDeckConfigurationToSend */
+static void adapt_PrepareToBuildDeckConfigurationToSend(ProbeState *s)
+{
+	(void)s;
+	PrepareToBuildDeckConfigurationToSend();
+}
+/* <<< factory PrepareToBuildDeckConfigurationToSend */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "PrintSlashSixty", adapt_PrintSlashSixty },
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
@@ -805,5 +813,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "HandleDeckBuildScreen", adapt_HandleDeckBuildScreen },
 	{ "HandlePlayersCardsScreen", adapt_HandlePlayersCardsScreen },
 	{ "HandleSendDeckConfigurationMenu", adapt_HandleSendDeckConfigurationMenu },
+	{ "PrepareToBuildDeckConfigurationToSend", adapt_PrepareToBuildDeckConfigurationToSend },
 	{ NULL, NULL },
 };

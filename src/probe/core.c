@@ -2701,6 +2701,16 @@ static void adapt_ChooseInitialArenaAndBenchPokemon(ProbeState *s)
 }
 /* <<< factory ChooseInitialArenaAndBenchPokemon */
 
+/* >>> factory TurnDuelistTakePrizes */
+static void adapt_TurnDuelistTakePrizes(ProbeState *s)
+{
+	TurnDuelistTakePrizesResult r = TurnDuelistTakePrizes();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory TurnDuelistTakePrizes */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3023,5 +3033,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PracticeDuel_DonePuttingOnBench", adapt_PracticeDuel_DonePuttingOnBench },
 	{ "PracticeDuel_PutStaryuInBench", adapt_PracticeDuel_PutStaryuInBench },
 	{ "ChooseInitialArenaAndBenchPokemon", adapt_ChooseInitialArenaAndBenchPokemon },
+	{ "TurnDuelistTakePrizes", adapt_TurnDuelistTakePrizes },
 	{ NULL, NULL },
 };

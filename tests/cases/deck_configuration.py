@@ -1184,6 +1184,22 @@ CASES["HandleSendDeckConfigurationMenu"] = [
 ]
 # <<< factory HandleSendDeckConfigurationMenu
 
+# >>> factory PrepareToBuildDeckConfigurationToSend
+CONTRACT["PrepareToBuildDeckConfigurationToSend"] = {"compare": (), "preserve": ()}
+CASES["PrepareToBuildDeckConfigurationToSend"] = [
+    {"wram": {0xCABB: b"\x80", 0xFF40: b"\x80"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x02, 0x10, 0x10, 0x01], "rom_bank": 2,
+     "read": {0xCEB1: 1, 0xCF17: 0x51, 0xCFB9: 0x15},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xCABB: b"\x80", 0xFF40: b"\x80"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         keys=[0x00, 0x02, 0x10, 0x10, 0x01], rom_bank=2,
+         read={0xCEB1: 1, 0xCF17: 0x51, 0xCFB9: 0x15},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PrepareToBuildDeckConfigurationToSend
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1550,3 +1566,6 @@ MUTATIONS["HandlePlayersCardsScreen"] = {"source_symbol": "HandlePlayersCardsScr
 # >>> factory-mutation HandleSendDeckConfigurationMenu
 MUTATIONS["HandleSendDeckConfigurationMenu"] = {"source_symbol": "HandleSendDeckConfigurationMenu", "before": "\t\twced6 = selection;", "after": "\t\twced6 = (uint8_t)(selection + 1u);", "case_ids": ["HandleSendDeckConfigurationMenu-0"]}
 # <<< factory-mutation HandleSendDeckConfigurationMenu
+# >>> factory-mutation PrepareToBuildDeckConfigurationToSend
+MUTATIONS["PrepareToBuildDeckConfigurationToSend"] = {"source_symbol": "PrepareToBuildDeckConfigurationToSend", "before": "\twCurDeck = 0xffu;", "after": "\twCurDeck = 0x00u;", "case_ids": ["PrepareToBuildDeckConfigurationToSend-0"]}
+# <<< factory-mutation PrepareToBuildDeckConfigurationToSend

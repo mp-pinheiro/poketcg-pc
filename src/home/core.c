@@ -1531,6 +1531,20 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define PlacedInTheArenaText 0x0062u
 #define PleaseChooseAnActivePokemonText 0x006eu
 #define TransmittingDataText 0x0057u
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#include "home/ai.h"
+#include "home/duel.h"
+#include "home/duel_menus.h"
+#include "home/frames.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "home/script.h"
+#include "home/serial.h"
+#define DrewNPrizesText 0x0043u
+#define WillDrawNPrizesText 0x0042u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -8715,3 +8729,45 @@ bench_loop:
 		(verify_flags == 0u) ? FLAG_Z : 0u};
 }
 /* <<< factory ChooseInitialArenaAndBenchPokemon */
+
+/* >>> factory TurnDuelistTakePrizes */
+TurnDuelistTakePrizesResult TurnDuelistTakePrizes(void)
+{
+	FinishQueuedAnimations();
+	LoadTxRam3((uint16_t)wNumberPrizeCardsToTake);
+	DuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (duelist.a == DUELIST_TYPE_PLAYER) {
+		(void)DrawWideTextBox_WaitForInput(WillDrawNPrizesText);
+		SelectPrizeCards(wNumberPrizeCardsToTake);
+		uint8_t d = hTemp_ffa0;
+		uint8_t e = gb_read8((uint16_t)(hTemp_ffa0_ADDR + 1u));
+		SerialSend8Bytes(wNumberPrizeCardsToTake, 0u, 0u, 0u,
+			(uint16_t)(((uint16_t)d << 8) | e), hTemp_ffa0_ADDR);
+	} else {
+		uint16_t play_area = (uint16_t)(((uint16_t)hWhoseTurn << 8) | PLAYER_TURN);
+		DrawYourOrOppPlayAreaScreen_Bank0(play_area);
+		(void)DrawWideTextBox_PrintText(WillDrawNPrizesText);
+		wTempNumRemainingPrizeCards = CountPrizes();
+		duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+		if (duelist.a == DUELIST_TYPE_LINK_OPP) {
+			SerialRecv8BytesResult received = SerialRecv8Bytes();
+			DuelistVarResult prizes = GetTurnDuelistVariable(DUELVARS_PRIZES);
+			gb_write8(prizes.hl, received.d);
+			if (received.e != 0xffu)
+				AddCardToHand(received.e);
+		} else {
+			(void)AIDoAction_TakePrize();
+			for (uint8_t delay = 60u; delay != 0u; --delay)
+				DoFrame();
+		}
+		if (wTempNumRemainingPrizeCards < wNumberPrizeCardsToTake)
+			LoadTxRam3((uint16_t)wTempNumRemainingPrizeCards);
+		Func_82b6();
+		(void)DrawWideTextBox_WaitForInput(DrewNPrizesText);
+	}
+	(void)ExchangeRNG(0u, 0u, 0u, 0u);
+	DuelistVarResult prizes = GetTurnDuelistVariable(DUELVARS_PRIZES);
+	uint8_t f = (prizes.a == 0u) ? 0x90u : 0u;
+	return (TurnDuelistTakePrizesResult){prizes.a, f, prizes.hl};
+}
+/* <<< factory TurnDuelistTakePrizes */

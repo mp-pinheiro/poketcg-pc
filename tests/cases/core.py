@@ -4642,6 +4642,37 @@ CASES["ChooseInitialArenaAndBenchPokemon"] = [
 ]
 # <<< factory ChooseInitialArenaAndBenchPokemon
 
+# >>> factory TurnDuelistTakePrizes
+CONTRACT["TurnDuelistTakePrizes"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["TurnDuelistTakePrizes"] = [
+    {"keys": [0x00, 0x01],
+     "wram": {0xFF80: b"\x01", 0xFF97: b"\xC3", 0xCABB: b"\x00", 0xFF40: b"\x00",
+               0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
+               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00",
+               0xC3F1: b"\x81", 0xC3EC: b"\x3F",
+               0xC33C: b"\x00\x00\x00\x00\x00\x00", 0xCC0E: b"\x01",
+               0xCCC8: b"\x01", 0xCC18: b"\x00", 0xC590: b"\x00" * 16},
+     "read": {0xCBFC: 1}, "expect": {0xCBFC: b"\x06"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xFF80: b"\x01", 0xFF97: b"\xC3", 0xCABB: b"\x00", 0xFF40: b"\x00",
+               0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
+               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00",
+               0xC3F1: b"\x81", 0xC3EC: b"\x3F",
+               0xC33C: b"\x00\x00\x00\x00\x00\x00", 0xCC0E: b"\x01",
+               0xCCC8: b"\x01", 0xCC18: b"\x00", 0xC590: b"\x00" * 16},
+         read={0xCBFC: 1}, expect={0xCBFC: b"\x06"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x01],
+     "wram": {0xFF80: b"\x01", 0xFF97: b"\xC2", 0xCABB: b"\x00", 0xFF40: b"\x00",
+               0xC2F1: b"\x00", 0xC2EC: b"\x00", 0xCCC8: b"\x00", 0xCC18: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+]
+# <<< factory TurnDuelistTakePrizes
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6345,3 +6376,6 @@ MUTATIONS["PracticeDuel_PutStaryuInBench"] = {
 # >>> factory-mutation ChooseInitialArenaAndBenchPokemon
 MUTATIONS["ChooseInitialArenaAndBenchPokemon"] = {"source_symbol": "ChooseInitialArenaAndBenchPokemon", "before": "ChooseInitialArenaAndBenchPokemonResult ChooseInitialArenaAndBenchPokemon(void)\n{\n\tDuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tuint8_t duelist_type = duelist.a;\n\tif (duelist_type != DUELIST_TYPE_PLAYER && duelist_type != DUELIST_TYPE_LINK_OPP) {\n\t\tuint8_t action = AIDoAction_StartDuel();\n\t\tgb_write8(duelist.hl, action);", "after": "ChooseInitialArenaAndBenchPokemonResult ChooseInitialArenaAndBenchPokemon(void)\n{\n\tDuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tuint8_t duelist_type = duelist.a;\n\tif (duelist_type != DUELIST_TYPE_PLAYER && duelist_type != DUELIST_TYPE_LINK_OPP) {\n\t\tuint8_t action = AIDoAction_StartDuel();\n\t\tgb_write8(duelist.hl, 0u);", "case_ids": ["ChooseInitialArenaAndBenchPokemon-0"]}
 # <<< factory-mutation ChooseInitialArenaAndBenchPokemon
+# >>> factory-mutation TurnDuelistTakePrizes
+MUTATIONS["TurnDuelistTakePrizes"] = {"source_symbol": "TurnDuelistTakePrizes", "before": "\t\twTempNumRemainingPrizeCards = CountPrizes();", "after": "\t\twTempNumRemainingPrizeCards = (uint8_t)(CountPrizes() + 1u);", "case_ids": ["TurnDuelistTakePrizes-0"]}
+# <<< factory-mutation TurnDuelistTakePrizes
