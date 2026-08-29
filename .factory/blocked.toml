@@ -277,10 +277,6 @@ unblock = "Construct a frame-safe intro fixture that skips or terminates the ani
 name = "PlayCreditsSequence"
 reason = "HAND-DIAGNOSED 2026-08-28: complete candidate reaches the credits frame loop and parks at WaitForVBlank pc=0x0038 with LCDC enabled before the top-level routine can reach its completion cutpoint; isolated full-call fixture is not bounded."
 unblock = "Trace the first credits scene/animation callee that enables LCD and establish a bounded pre-ret completion, then retry PlayCreditsSequence; do not repeat unchanged full-call attempts."
-[[blocked]]
-name = "HandleDuelSetup"
-reason = "HAND-DIAGNOSED 2026-08-28: generation-4 pre-ret candidate preserves the full setup body but its native probe loops forever while the reference reaches the animation wait; no bounded isolated completion exists for the current full-call contract."
-unblock = "Trace and decompose the first shuffle/draw animation callee to a separately verifiable prefix before retrying HandleDuelSetup; do not repeat unchanged full-call attempts."
 
 [[blocked]]
 name = "TryReceiveIRRequest"
