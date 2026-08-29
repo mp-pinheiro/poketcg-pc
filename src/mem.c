@@ -209,9 +209,25 @@ uint8_t gb_read8(uint16_t addr)
 			uint16_t byte_index = sample_total / 81u;
 			uint16_t sample = sample_total % 81u;
 			uint8_t rx_byte;
-			if (sample_total == 0u && g_ir_write_count > 1u)
-				g_ir_mode = 1u;
-			if (g_ir_write_count <= 1u) {
+			if (sample_total == 0u && (g_keys & 0x01u) != 0u)
+				g_ir_mode = g_ir_write_count <= 1u ? 2u : 1u;
+			if (g_ir_mode == 0u) {
+				if (g_ir_write_count <= 1u) {
+					rx_byte = byte_index == 0u ? 0xAAu
+						: (byte_index == 1u ? 0x49u
+						   : (byte_index == 2u ? 0x52u : 0x00u));
+				} else if (byte_index == 0u) {
+					rx_byte = 0x33u;
+				} else if (byte_index == 1u) {
+					rx_byte = 0xAAu;
+				} else {
+					rx_byte = 0x00u;
+				}
+			} else if (g_ir_mode == 1u) {
+				rx_byte = byte_index == 0u ? 0x33u
+					: (byte_index == 1u ? 0xAAu
+					   : (byte_index == 2u ? 0x33u : 0x00u));
+			} else if (g_ir_write_count <= 1u) {
 				rx_byte = byte_index == 0u ? 0xAAu
 					: (byte_index == 1u ? 0x49u
 					   : (byte_index == 2u ? 0x52u : 0x00u));
@@ -219,13 +235,11 @@ uint8_t gb_read8(uint16_t addr)
 				rx_byte = 0x33u;
 			} else if (byte_index == 1u) {
 				rx_byte = 0xAAu;
-			} else if (g_ir_mode != 0u && byte_index == 2u) {
-				rx_byte = 0x33u;
-			} else if (g_ir_mode == 0u && byte_index == 2u) {
+			} else if (byte_index == 2u) {
 				rx_byte = 0x49u;
-			} else if (g_ir_mode == 0u && byte_index == 3u) {
+			} else if (byte_index == 3u) {
 				rx_byte = 0x52u;
-			} else if (g_ir_mode == 0u && byte_index == 12u) {
+			} else if (byte_index == 12u) {
 				rx_byte = 0x01u;
 			} else {
 				rx_byte = 0x00u;

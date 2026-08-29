@@ -655,7 +655,7 @@ int main(int argc, char **argv) {
         ctx->oracle_post_call_byte_valid = 1;
     }
     ctx->oracle_ir_peer = (uint8_t)ir_peer;
-    ctx->oracle_ir_rx_byte = 0x33;
+    ctx->oracle_ir_rx_byte = (input_count && g_joypad_buttons == 0x0E) ? 0 : 0x33;
     if (strcmp(mapper_mode, "seeded") == 0)
         seed_mapper_shadows(ctx, mapper_rom_bank, mapper_ram_bank, mapper_ram_enable);
     /* seed_mapper_shadows ties hBankROM to rom_bank, which is right for paging
