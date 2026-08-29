@@ -233,3 +233,8 @@ unblock = "Trace the duel setup scene's first non-returning frame-dependent call
 name = "PokemonTrader_TradeCardsEffect"
 reason = "HAND-DIAGNOSED 2026-08-29: generation-16..18 primary runs reach the nested card-detail/text and frame path, exhausting at the ROM's animation/text loop with no bounded isolated return; the translation body is complete but the top-level effect fixture lacks a terminating scene state."
 unblock = "Trace the nested card-detail and shuffle animation completion state, then establish a verified bounded pre-ret fixture or port the missing frame-safe callee before retrying PokemonTrader_TradeCardsEffect; do not repeat unchanged scene fixtures."
+ 
+[[blocked]]
+name = "MainMenu_NewGame"
+reason = "HAND-DIAGNOSED 2026-08-29: generation-10..11 primary runs reach the real naming/portrait scene and exhaust in its LCD/input frame path, while bounded candidates diverged in scene scratch state; the isolated top-level new-game call has no verified terminating fixture."
+unblock = "Trace DisplayPlayerNamingScreen and DrawPlayerPortraitAndPrintNewGameText to a bounded pre-ret completion and model the CAEA..CAEC writers, then retry MainMenu_NewGame; do not repeat unchanged naming-scene fixtures."
