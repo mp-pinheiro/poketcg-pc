@@ -284,6 +284,24 @@ static void adapt_InitDeckMachineDrawingParams(ProbeState *s)
 }
 /* <<< factory InitDeckMachineDrawingParams */
 
+/* >>> factory PrinterMenu_DeckConfiguration */
+static void adapt_PrinterMenu_DeckConfiguration(ProbeState *s)
+{
+	PrinterMenu_DeckConfigurationResult result = PrinterMenu_DeckConfiguration();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory PrinterMenu_DeckConfiguration */
+
+/* >>> factory HandleDeckSaveMachineMenu */
+static void adapt_HandleDeckSaveMachineMenu(ProbeState *s)
+{
+	HandleDeckSaveMachineMenuResult result = HandleDeckSaveMachineMenu();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory HandleDeckSaveMachineMenu */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -317,5 +335,7 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "TryBuildDeckMachineDeck", adapt_TryBuildDeckMachineDeck },
 	{ "HandleAutoDeckMenu", adapt_HandleAutoDeckMenu },
 	{ "InitDeckMachineDrawingParams", adapt_InitDeckMachineDrawingParams },
+	{ "PrinterMenu_DeckConfiguration", adapt_PrinterMenu_DeckConfiguration },
+	{ "HandleDeckSaveMachineMenu", adapt_HandleDeckSaveMachineMenu },
 	{ NULL, NULL },
 };

@@ -602,6 +602,52 @@ CASES["InitDeckMachineDrawingParams"] = [
 ]
 # <<< factory InitDeckMachineDrawingParams
 
+# >>> factory PrinterMenu_DeckConfiguration
+CONTRACT["PrinterMenu_DeckConfiguration"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PrinterMenu_DeckConfiguration"] = [
+    {"rom_bank": 2,
+     "wram": {0xCEA1: b"\xA5", 0xD0A5: b"\x5A",
+              0xCEA4: b"\xA5" * 10, 0xFFB3: b"\xA5",
+              0xD086: b"\xA5", 0xD087: b"\xA5"},
+     "sram": {0: {}},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x02],
+     "read": {0xCEA1: 1, 0xD0A5: 1, 0xCEA4: 10, 0xFFB3: 1,
+              0xD086: 1, 0xD087: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, rom_bank=2,
+         wram={0xCEA1: b"\xA5", 0xD0A5: b"\x5A",
+               0xCEA4: b"\xA5" * 10, 0xFFB3: b"\xA5",
+               0xD086: b"\xA5", 0xD087: b"\xA5"},
+         sram={0: {}},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         keys=[0x00, 0x02],
+         read={0xCEA1: 1, 0xD0A5: 1, 0xCEA4: 10, 0xFFB3: 1,
+               0xD086: 1, 0xD087: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PrinterMenu_DeckConfiguration
+
+# >>> factory HandleDeckSaveMachineMenu
+CONTRACT["HandleDeckSaveMachineMenu"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleDeckSaveMachineMenu"] = [
+    {"rom_bank": 2, "ramg": True,
+     "wram": {0xCABB: b"\x00"},
+     "sram": {0: {}},
+     "keys": [0x00, 0x02],
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xD0A5: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, rom_bank=2, ramg=True,
+         wram={0xCABB: b"\x00"},
+         sram={0: {}},
+         keys=[0x00, 0x02],
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xD0A5: 1},
+         instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory HandleDeckSaveMachineMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -770,3 +816,9 @@ MUTATIONS["HandleAutoDeckMenu"] = {
 # >>> factory-mutation InitDeckMachineDrawingParams
 MUTATIONS["InitDeckMachineDrawingParams"] = {"source_symbol": "InitDeckMachineDrawingParams", "before": "InitDeckMachineDrawingParamsResult InitDeckMachineDrawingParams(uint8_t d, uint8_t e)\n{\n\twCardListNumCursorPositions = NUM_DECK_MACHINE_SLOTS;\n\twDeckMachineText = e;\n\tgb_write8((uint16_t)(wDeckMachineText_ADDR + 1u), d);\n\twCardListUpdateFunction = (uint8_t)DRAW_DECK_MACHINE_SCREEN_ADDR;", "after": "InitDeckMachineDrawingParamsResult InitDeckMachineDrawingParams(uint8_t d, uint8_t e)\n{\n\twCardListNumCursorPositions = NUM_DECK_MACHINE_SLOTS;\n\twDeckMachineText = e;\n\tgb_write8((uint16_t)(wDeckMachineText_ADDR + 1u), d);\n\twCardListUpdateFunction = (uint8_t)(DRAW_DECK_MACHINE_SCREEN_ADDR + 1u);", "case_ids": ["InitDeckMachineDrawingParams-0", "InitDeckMachineDrawingParams-1"]}
 # <<< factory-mutation InitDeckMachineDrawingParams
+# >>> factory-mutation PrinterMenu_DeckConfiguration
+MUTATIONS["PrinterMenu_DeckConfiguration"] = {"source_symbol": "PrinterMenu_DeckConfiguration", "before": "PrinterMenu_DeckConfigurationResult PrinterMenu_DeckConfiguration(void)\n{\n\twCardListVisibleOffset = 0u;", "after": "PrinterMenu_DeckConfigurationResult PrinterMenu_DeckConfiguration(void)\n{\n\twCardListVisibleOffset = 1u;", "case_ids": ["PrinterMenu_DeckConfiguration-0", "PrinterMenu_DeckConfiguration-1"]}
+# <<< factory-mutation PrinterMenu_DeckConfiguration
+# >>> factory-mutation HandleDeckSaveMachineMenu
+MUTATIONS["HandleDeckSaveMachineMenu"] = {"source_symbol": "HandleDeckSaveMachineMenu", "before": "HandleDeckSaveMachineMenuResult HandleDeckSaveMachineMenu(void)\n{\n\tuint8_t cursor = 0u;\n\n\twCardListVisibleOffset = 0u;\n\twDeckMachineTitleText = (uint8_t)DeckSaveMachineText;\n\tgb_write8((uint16_t)(wDeckMachineTitleText_ADDR + 1u),\n\t\t  (uint8_t)(DeckSaveMachineText >> 8));\n\tClearScreenAndDrawDeckMachineScreen();\n\twNumDeckMachineEntries = NUM_DECK_SAVE_MACHINE_SLOTS;", "after": "HandleDeckSaveMachineMenuResult HandleDeckSaveMachineMenu(void)\n{\n\tuint8_t cursor = 0u;\n\n\twCardListVisibleOffset = 0u;\n\twDeckMachineTitleText = (uint8_t)DeckSaveMachineText;\n\tgb_write8((uint16_t)(wDeckMachineTitleText_ADDR + 1u),\n\t\t  (uint8_t)(DeckSaveMachineText >> 8));\n\tClearScreenAndDrawDeckMachineScreen();\n\twNumDeckMachineEntries = 0u;", "case_ids": ["HandleDeckSaveMachineMenu-0", "HandleDeckSaveMachineMenu-1"]}
+# <<< factory-mutation HandleDeckSaveMachineMenu

@@ -1,0 +1,9 @@
+{
+  "fn": "PrinterMenu_DeckConfiguration",
+  "case": "tests/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrinterMenu_DeckConfiguration\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"52897\": \"00\", \"52900\": \"0001020200050f000000\", \"53382\": \"0000\", \"53413\": \"3c\", \"65459\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrinterMenu_DeckConfiguration\", \"mismatches\": {\"bus\": {\"address\": 52897, \"reference\": \"0000010202\", \"native\": \"0100010202\", \"reference_size\": 15, \"native_size\": 15, \"spans\": [[52897, 1], [52900, 10], [53382, 2], [53413, 1], [65459, 1]]}}}\n",
+  "restored": "{\"fn\": \"PrinterMenu_DeckConfiguration\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"52897\": \"00\", \"52900\": \"0001020200050f000000\", \"53382\": \"0000\", \"53413\": \"3c\", \"65459\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

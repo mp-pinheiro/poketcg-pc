@@ -697,6 +697,21 @@ static void adapt_HandleSelectUpAndDownInList(ProbeState *s)
 }
 /* <<< factory HandleSelectUpAndDownInList */
 
+/* >>> factory HandleDeckBuildScreen */
+static void adapt_HandleDeckBuildScreen(ProbeState *s)
+{
+	(void)s;
+	HandleDeckBuildScreen();
+}
+/* <<< factory HandleDeckBuildScreen */
+
+/* >>> factory HandlePlayersCardsScreen */
+static void adapt_HandlePlayersCardsScreen(ProbeState *s)
+{
+	HandlePlayersCardsScreen();
+}
+/* <<< factory HandlePlayersCardsScreen */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "PrintSlashSixty", adapt_PrintSlashSixty },
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
@@ -779,5 +794,7 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DismantleDeck", adapt_DismantleDeck },
 	{ "CancelDeckModifications", adapt_CancelDeckModifications },
 	{ "HandleSelectUpAndDownInList", adapt_HandleSelectUpAndDownInList },
+	{ "HandleDeckBuildScreen", adapt_HandleDeckBuildScreen },
+	{ "HandlePlayersCardsScreen", adapt_HandlePlayersCardsScreen },
 	{ NULL, NULL },
 };

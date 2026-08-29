@@ -294,6 +294,9 @@ wNumCardListEntries_hsu = 0xCFE6
 wNumVisibleCardListEntries_hsu = 0xCECB
 wCardListCoords_hsu = 0xCED0
 wUnableToScrollDown_hsu = 0xCECD
+
+HPCS_SRAM = {0: {0xA100: b"\x00" * 0xFF, 0xA218: b"\x00", 0xA26C: b"\x00", 0xA2C0: b"\x00", 0xA314: b"\x00", 0xA010: bytes([0x81, 0x82, 0x00] + [0] * 13)}}
+HPCS_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -1136,6 +1139,30 @@ CASES["HandleSelectUpAndDownInList"] = [
 ]
 # <<< factory HandleSelectUpAndDownInList
 
+# >>> factory HandleDeckBuildScreen
+CONTRACT["HandleDeckBuildScreen"] = {"compare": (), "preserve": ()}
+CASES["HandleDeckBuildScreen"] = [
+    {"wram": {0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x02], "read": {wCardListVisibleOffset: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xCABB: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x02], read={wCardListVisibleOffset: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory HandleDeckBuildScreen
+
+# >>> factory HandlePlayersCardsScreen
+CONTRACT["HandlePlayersCardsScreen"] = {"compare": (), "preserve": ()}
+CASES["HandlePlayersCardsScreen"] = [
+    {"rom_bank": 2, "wram": {0xCAB4: b"\x00", 0xCABB: b"\x00", 0xCEA1: b"\xFF", 0xCED3: b"\xFF", 0xFFB3: b"\xFF"},
+     "sram": HPCS_SRAM, "setup": HPCS_SETUP, "keys": [0x00, 0x02],
+     "read": {0xCEA1: 1, 0xCED3: 1, 0xFFB3: 1},
+     "expect": {0xCEA1: b"\x00", 0xCED3: b"\x00", 0xFFB3: b"\xFF"},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, rom_bank=2, wram={0xCAB4: b"\x00", 0xCABB: b"\x00", 0xCEA1: b"\xFF", 0xCED3: b"\xFF", 0xFFB3: b"\xFF"},
+         sram=HPCS_SRAM, setup=HPCS_SETUP, keys=[0x00, 0x02],
+         read={0xCEA1: 1, 0xCED3: 1, 0xFFB3: 1},
+         expect={0xCEA1: b"\x00", 0xCED3: b"\x00", 0xFFB3: b"\xFF"},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory HandlePlayersCardsScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1493,3 +1520,9 @@ MUTATIONS["HandleSelectUpAndDownInList"] = {
     "case_ids": ["HandleSelectUpAndDownInList-2"],
 }
 # <<< factory-mutation HandleSelectUpAndDownInList
+# >>> factory-mutation HandleDeckBuildScreen
+MUTATIONS["HandleDeckBuildScreen"] = {"source_symbol": "HandleDeckBuildScreen", "before": "\twCardListVisibleOffset = 0u;\n\twCurCardTypeFilter = 0u;", "after": "\twCardListVisibleOffset = 1u;\n\twCurCardTypeFilter = 0u;", "case_ids": ["HandleDeckBuildScreen-0"]}
+# <<< factory-mutation HandleDeckBuildScreen
+# >>> factory-mutation HandlePlayersCardsScreen
+MUTATIONS["HandlePlayersCardsScreen"] = {"source_symbol": "HandlePlayersCardsScreen", "before": "HandlePlayersCardsScreen(void)\n{\n\t(void)WriteCardListsTerminatorBytes();\n\t(void)PrintPlayersCardsHeaderInfo();\n\n\twCardListVisibleOffset = 0u;", "after": "HandlePlayersCardsScreen(void)\n{\n\t(void)WriteCardListsTerminatorBytes();\n\t(void)PrintPlayersCardsHeaderInfo();\n\n\twCardListVisibleOffset = 1u;", "case_ids": ["HandlePlayersCardsScreen-0", "HandlePlayersCardsScreen-1"]}
+# <<< factory-mutation HandlePlayersCardsScreen

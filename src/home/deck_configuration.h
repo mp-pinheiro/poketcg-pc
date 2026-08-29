@@ -296,4 +296,10 @@ CancelDeckModificationsResult CancelDeckModifications(uint16_t w0);
 typedef struct { uint8_t f; } HandleSelectUpAndDownInListResult;
 HandleSelectUpAndDownInListResult HandleSelectUpAndDownInList(void);
 /* <<< factory HandleSelectUpAndDownInList */
+/* >>> factory HandleDeckBuildScreen */
+void HandleDeckBuildScreen(void);
+/* <<< factory HandleDeckBuildScreen */
+/* >>> factory HandlePlayersCardsScreen */
+void HandlePlayersCardsScreen(void);
+/* <<< factory HandlePlayersCardsScreen */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

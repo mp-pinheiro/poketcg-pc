@@ -124,4 +124,12 @@ typedef struct {
 } InitDeckMachineDrawingParamsResult;
 InitDeckMachineDrawingParamsResult InitDeckMachineDrawingParams(uint8_t d, uint8_t e);
 /* <<< factory InitDeckMachineDrawingParams */
+/* >>> factory PrinterMenu_DeckConfiguration */
+typedef struct { uint8_t a; uint8_t f; } PrinterMenu_DeckConfigurationResult;
+PrinterMenu_DeckConfigurationResult PrinterMenu_DeckConfiguration(void);
+/* <<< factory PrinterMenu_DeckConfiguration */
+/* >>> factory HandleDeckSaveMachineMenu */
+typedef struct { uint8_t a; uint8_t f; } HandleDeckSaveMachineMenuResult;
+HandleDeckSaveMachineMenuResult HandleDeckSaveMachineMenu(void);
+/* <<< factory HandleDeckSaveMachineMenu */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

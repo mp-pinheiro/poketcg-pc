@@ -227,6 +227,17 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define DRAW_DECK_MACHINE_SCREEN_ADDR 0x7403u
+
+#define PleaseChooseDeckConfigurationToPrintText 0x0275u
+#define PrintThisDeckText 0x0276u
+#define PRINTER_MENU_DECK_CONFIGURATION_PARAMS_ADDR 0x76FBu
+
+#include "generated/wram.h"
+#define DeckSaveMachineText 0x025cu
+#define NoDeckIsSavedText 0x0264u
+#define OKIfFileDeletedText 0x0272u
+#define DECK_MACHINE_SELECTION_PARAMS_ADDR 0x76FBu
+#define DECK_MACHINE_MENU_DATA_ADDR 0x7274u
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -1489,3 +1500,176 @@ InitDeckMachineDrawingParamsResult InitDeckMachineDrawingParams(uint8_t d, uint8
 	return (InitDeckMachineDrawingParamsResult){0u, 0x80u, (uint8_t)(DRAW_DECK_MACHINE_SCREEN_ADDR >> 8), e, (uint16_t)(wCardListUpdateFunction_ADDR + 1u)};
 }
 /* <<< factory InitDeckMachineDrawingParams */
+
+/* >>> factory PrinterMenu_DeckConfiguration */
+PrinterMenu_DeckConfigurationResult PrinterMenu_DeckConfiguration(void)
+{
+	wCardListVisibleOffset = 0u;
+	ClearScreenAndDrawDeckMachineScreen();
+	wNumDeckMachineEntries = DECK_SIZE;
+
+	uint8_t cursor = 0u;
+	for (;;) {
+		uint16_t params = PRINTER_MENU_DECK_CONFIGURATION_PARAMS_ADDR;
+		(void)InitCardSelectionParams(cursor, &params);
+		DrawListScrollArrows();
+		PrintNumSavedDecks();
+		(void)DrawWideTextBox_PrintText(PleaseChooseDeckConfigurationToPrintText);
+		(void)InitDeckMachineDrawingParams(0x02u, 0x75u);
+
+		for (;;) {
+			HandleDeckMachineSelectionResult selection =
+				HandleDeckMachineSelection();
+			if (selection.f & CARRY_FLAG) {
+				cursor = selection.a;
+				break;
+			}
+			if (selection.a == MENU_CANCEL)
+				return (PrinterMenu_DeckConfigurationResult){MENU_CANCEL, 0xC0u};
+
+			uint8_t index = (uint8_t)(wCardListVisibleOffset + selection.a);
+			wSelectedDeckMachineEntry = index;
+			if (CheckIfSelectedDeckMachineEntryIsEmpty() & CARRY_FLAG)
+				continue;
+
+			(void)DrawWideTextBox();
+			HandleYesOrNoMenuResult choice =
+				YesOrNoMenuWithText(PrintThisDeckText);
+			if (choice.f & CARRY_FLAG) {
+				cursor = wTempDeckMachineCursorPos;
+				wCardListCursorPos = cursor;
+				break;
+			}
+
+			uint16_t source = (uint16_t)(GetSelectedSavedDeckPtr() + DECK_NAME_SIZE);
+			uint16_t destination = wCurDeckCards_ADDR;
+			EnableSRAM();
+			CopyNBytesFromHLToDE(&source, &destination, DECK_SIZE);
+			DisableSRAM();
+			gb_write8((uint16_t)(wCurDeckCards_ADDR + DECK_SIZE), 0u);
+			(void)SortCurDeckCardsByID();
+			PrintDeckConfiguration(wSelectedDeckMachineEntry);
+			ClearScreenAndDrawDeckMachineScreen();
+			cursor = wTempDeckMachineCursorPos;
+			wCardListCursorPos = cursor;
+			break;
+		}
+	}
+}
+/* <<< factory PrinterMenu_DeckConfiguration */
+
+/* >>> factory HandleDeckSaveMachineMenu */
+HandleDeckSaveMachineMenuResult HandleDeckSaveMachineMenu(void)
+{
+	uint8_t cursor = 0u;
+
+	wCardListVisibleOffset = 0u;
+	wDeckMachineTitleText = (uint8_t)DeckSaveMachineText;
+	gb_write8((uint16_t)(wDeckMachineTitleText_ADDR + 1u),
+		  (uint8_t)(DeckSaveMachineText >> 8));
+	ClearScreenAndDrawDeckMachineScreen();
+	wNumDeckMachineEntries = NUM_DECK_SAVE_MACHINE_SLOTS;
+
+wait_input:
+	for (;;) {
+		uint16_t selection_params = DECK_MACHINE_SELECTION_PARAMS_ADDR;
+		(void)InitCardSelectionParams(cursor, &selection_params);
+		DrawListScrollArrows();
+		PrintNumSavedDecks();
+		(void)DrawWideTextBox_PrintText(PleaseSelectDeckText);
+		(void)InitDeckMachineDrawingParams(
+			(uint8_t)(PleaseSelectDeckText >> 8),
+			(uint8_t)PleaseSelectDeckText);
+
+		HandleDeckMachineSelectionResult selection =
+			HandleDeckMachineSelection();
+		if (selection.f & CARRY_FLAG) {
+			cursor = selection.a;
+			continue;
+		}
+		if (selection.a == MENU_CANCEL)
+			return (HandleDeckSaveMachineMenuResult){selection.a, 0xC0u};
+
+		wSelectedDeckMachineEntry =
+			(uint8_t)(wCardListVisibleOffset + selection.a);
+		(void)ResetCheckMenuCursorPositionAndBlink();
+		(void)DrawWideTextBox();
+		(void)PlaceTextItems(DECK_MACHINE_MENU_DATA_ADDR);
+
+		for (;;) {
+			DoFrame();
+			HandleCheckMenuInputResult input = HandleCheckMenuInput();
+			if (!(input.f & CARRY_FLAG))
+				continue;
+			if (input.a == MENU_CANCEL) {
+				cursor = wTempDeckMachineCursorPos;
+				goto wait_input;
+			}
+
+			uint8_t option = (uint8_t)(
+				(uint8_t)(wCheckMenuCursorYPosition << 1)
+				+ wCheckMenuCursorXPosition);
+			if (option == 0u) {
+				uint8_t empty = CheckIfSelectedDeckMachineEntryIsEmpty();
+				if (empty & CARRY_FLAG) {
+					SaveDeckInDeckSaveMachineResult saved =
+						SaveDeckInDeckSaveMachine();
+					cursor = wTempDeckMachineCursorPos;
+					if (saved.f & CARRY_FLAG)
+						goto wait_input;
+				} else {
+					HandleYesOrNoMenuResult answer =
+						YesOrNoMenuWithText(OKIfFileDeletedText);
+					cursor = wTempDeckMachineCursorPos;
+					if (answer.f & CARRY_FLAG)
+						goto wait_input;
+					SaveDeckInDeckSaveMachineResult saved =
+						SaveDeckInDeckSaveMachine();
+					cursor = wTempDeckMachineCursorPos;
+					if (saved.f & CARRY_FLAG)
+						goto wait_input;
+				}
+			} else if (option == 1u) {
+				uint8_t empty = CheckIfSelectedDeckMachineEntryIsEmpty();
+				if (empty & CARRY_FLAG) {
+					(void)DrawWideTextBox_WaitForInput(NoDeckIsSavedText);
+					cursor = wTempDeckMachineCursorPos;
+					goto wait_input;
+				}
+				TryDeleteSavedDeckResult deleted = TryDeleteSavedDeck();
+				cursor = wTempDeckMachineCursorPos;
+				if (deleted.f & CARRY_FLAG)
+					goto wait_input;
+			} else if (option == 2u) {
+				uint8_t empty = CheckIfSelectedDeckMachineEntryIsEmpty();
+				if (empty & CARRY_FLAG) {
+					(void)DrawWideTextBox_WaitForInput(NoDeckIsSavedText);
+					cursor = wTempDeckMachineCursorPos;
+					goto wait_input;
+				}
+				TryBuildDeckMachineDeckResult built =
+					TryBuildDeckMachineDeck();
+				cursor = wTempDeckMachineCursorPos;
+				if (!(built.f & CARRY_FLAG))
+					goto wait_input;
+			} else {
+				uint8_t flags = 0x40u;
+				if (option == 2u)
+					flags |= 0x80u;
+				if ((option & 0x0Fu) < 2u)
+					flags |= 0x20u;
+				if (option < 2u)
+					flags |= CARRY_FLAG;
+				return (HandleDeckSaveMachineMenuResult){option, flags};
+			}
+
+			wCardListVisibleOffset = wTempCardListVisibleOffset;
+			ClearScreenAndDrawDeckMachineScreen();
+			DrawListScrollArrows();
+			PrintNumSavedDecks();
+			cursor = wTempDeckMachineCursorPos;
+			break;
+		}
+	}
+}
+/* <<< factory HandleDeckSaveMachineMenu */

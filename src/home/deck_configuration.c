@@ -378,6 +378,20 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #define HANDLE_SELECT_PRINT_DECK_BUILDING_ADDR 0x59B0u
 #define HANDLE_SELECT_UPDATE_CONFIRM_ADDR 0x5E31u
 #define HANDLE_SELECT_PRINT_CARD_ADDR 0x642Du
+
+#define HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR 0x5667u
+#define HANDLE_DECK_BUILD_FILTERED_PARAMS_ADDR 0x5670u
+
+#include "home/deck_configuration.h"
+#include "home/deck_selection.h"
+#include "home/deck_check.h"
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define HANDLE_PLAYERS_CARDS_DATA_ADDR 0x6396u
+#define HANDLE_PLAYERS_CARDS_PRINT_LIST_ADDR 0x642Du
 /* <<< factory statics */
 
 
@@ -2412,3 +2426,233 @@ HandleSelectUpAndDownInListResult HandleSelectUpAndDownInList(void)
 	return (HandleSelectUpAndDownInListResult){0x10u};
 }
 /* <<< factory HandleSelectUpAndDownInList */
+
+/* >>> factory HandleDeckBuildScreen */
+void HandleDeckBuildScreen(void)
+{
+	(void)WriteCardListsTerminatorBytes();
+	CountNumberOfCardsForEachCardType();
+	DrawCardTypeIconsAndPrintCardCounts();
+
+	wCardListVisibleOffset = 0u;
+	wCurCardTypeFilter = 0u;
+	(void)PrintFilteredCardList(0u, 0u, 0u, 0u, 0u, 0u,
+		HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR);
+
+	uint16_t params;
+	params = HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR;
+	(void)InitCardSelectionParams(0u, &params);
+
+	for (;;) {
+		DoFrame();
+		if ((hDPadHeld & PAD_START) != 0u) {
+			PlaySFXConfirmOrCancel(MENU_CONFIRM);
+			ConfirmDeckConfiguration();
+			wTempCardTypeFilter = wCurCardTypeFilter;
+			continue;
+		}
+
+		uint8_t current_filter = wCurCardTypeFilter;
+		uint8_t temporary_filter = wTempCardTypeFilter;
+		if (temporary_filter != current_filter) {
+			wCurCardTypeFilter = temporary_filter;
+			wCardListVisibleOffset = 0u;
+			(void)PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u,
+				HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR);
+			wCardListNumCursorPositions = NUM_FILTERS;
+		}
+
+		uint8_t jump_to_list = 0u;
+		if ((hDPadHeld & PAD_DOWN) != 0u) {
+			(void)ConfirmSelectionAndReturnCarry();
+			jump_to_list = 1u;
+		} else {
+			HandleCardSelectionInputResult input = HandleCardSelectionInput();
+			if (input.carry == 0u)
+				continue;
+			if (hffb3 == MENU_CANCEL) {
+				OpenDeckConfigurationMenu();
+				return;
+			}
+			jump_to_list = 1u;
+		}
+
+		if (jump_to_list == 0u || wNumEntriesInCurFilter == 0u)
+			continue;
+
+		uint8_t list_cursor = 0u;
+		uint8_t back_to_filter = 0u;
+		for (;;) {
+			params = HANDLE_DECK_BUILD_FILTERED_PARAMS_ADDR;
+			(void)InitCardSelectionParams(list_cursor, &params);
+			uint8_t entries = wNumEntriesInCurFilter;
+			wNumCardListEntries = entries;
+			if (entries < wNumVisibleCardListEntries)
+				wCardListNumCursorPositions = entries;
+
+			wCardListUpdateFunction = (uint8_t)HANDLE_SELECT_PRINT_DECK_BUILDING_ADDR;
+			gb_write8((uint16_t)(wCardListUpdateFunction_ADDR + 1u),
+				(uint8_t)(HANDLE_SELECT_PRINT_DECK_BUILDING_ADDR >> 8));
+			wced2 = 1u;
+
+			uint8_t restart_list = 0u;
+			for (;;) {
+				DoFrame();
+				if ((hDPadHeld & PAD_START) != 0u) {
+					PlaySFXConfirmOrCancel(MENU_CONFIRM);
+					wTempFilteredCardListNumCursorPositions = wCardListCursorPos;
+					ConfirmDeckConfiguration();
+					list_cursor = wTempFilteredCardListNumCursorPositions;
+					restart_list = 1u;
+					break;
+				}
+
+				HandleSelectUpAndDownInListResult page = HandleSelectUpAndDownInList();
+				if ((page.f & 0x10u) != 0u)
+					continue;
+
+				HandleDeckCardSelectionListResult selection = HandleDeckCardSelectionList();
+				if ((selection.f & 0x10u) == 0u)
+					continue;
+
+				(void)DrawListCursor_Invisible();
+				wTempCardListCursorPos = wCardListCursorPos;
+				if (hffb3 == MENU_CANCEL) {
+					params = HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR;
+					(void)InitCardSelectionParams(MENU_CANCEL, &params);
+					wTempCardTypeFilter = wCurCardTypeFilter;
+					back_to_filter = 1u;
+					break;
+				}
+
+				PlaySFXConfirmOrCancel(MENU_CONFIRM);
+				wTempCardListNumCursorPositions = wCardListNumCursorPositions;
+				wTempCardListCursorPos = wCardListCursorPos;
+				gb_write8(wCurCardListPtr_ADDR, (uint8_t)wFilteredCardList_ADDR);
+				gb_write8((uint16_t)(wCurCardListPtr_ADDR + 1u),
+					(uint8_t)(wFilteredCardList_ADDR >> 8));
+				OpenCardPageFromCardList();
+				DrawCardTypeIconsAndPrintCardCounts();
+
+				params = HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR;
+				(void)InitCardSelectionParams(0u, &params);
+				wTempCardTypeFilter = wCurCardTypeFilter;
+				(void)DrawHorizontalListCursor_Visible();
+				PrintDeckBuildingCardList();
+				params = HANDLE_DECK_BUILD_FILTERED_PARAMS_ADDR;
+				(void)InitCardSelectionParams(0u, &params);
+				wCardListNumCursorPositions = wTempCardListNumCursorPositions;
+				list_cursor = wTempCardListCursorPos;
+				wCardListCursorPos = list_cursor;
+			}
+
+			if (back_to_filter != 0u)
+				break;
+			if (restart_list != 0u)
+				continue;
+		}
+	}
+}
+/* <<< factory HandleDeckBuildScreen */
+
+/* >>> factory HandlePlayersCardsScreen */
+void HandlePlayersCardsScreen(void)
+{
+	(void)WriteCardListsTerminatorBytes();
+	(void)PrintPlayersCardsHeaderInfo();
+
+	wCardListVisibleOffset = 0u;
+	wCurCardTypeFilter = 0u;
+	PrintFilteredCardSelectionList(0u, 0x80u, 0u, 0u, 0u, 0u, wCardListCoords_ADDR);
+	EnableLCD();
+
+	uint16_t filter_params = FILTERS_CARD_SELECTION_PARAMS_ADDR;
+	(void)InitCardSelectionParams(0u, &filter_params);
+
+	for (;;) {
+		DoFrame();
+		uint8_t current_filter = wCurCardTypeFilter;
+		uint8_t temp_filter = wTempCardTypeFilter;
+		if (temp_filter != current_filter) {
+			wCurCardTypeFilter = temp_filter;
+			wCardListVisibleOffset = 0u;
+			PrintFilteredCardSelectionList(temp_filter, 0u, 0u, 0u, 0u, 0u, wCardListVisibleOffset_ADDR);
+			hffb0 = 1u;
+			PrintPlayersCardsText();
+			hffb0 = 0u;
+			wCardListNumCursorPositions = NUM_FILTERS;
+		}
+
+		if ((hDPadHeld & PAD_DOWN) != 0u) {
+			(void)ConfirmSelectionAndReturnCarry();
+		} else {
+			HandleCardSelectionInputResult input = HandleCardSelectionInput();
+			if (input.carry == 0u)
+				continue;
+			if (hffb3 == MENU_CANCEL)
+				return;
+		}
+
+		if (wNumEntriesInCurFilter == 0u)
+			continue;
+
+		uint16_t list_params = HANDLE_PLAYERS_CARDS_DATA_ADDR;
+		(void)InitCardSelectionParams(0u, &list_params);
+		uint8_t entries = wNumEntriesInCurFilter;
+		wNumCardListEntries = entries;
+		if (entries < wNumVisibleCardListEntries)
+			wCardListNumCursorPositions = entries;
+		gb_write8(wCardListUpdateFunction_ADDR, (uint8_t)HANDLE_PLAYERS_CARDS_PRINT_LIST_ADDR);
+		gb_write8((uint16_t)(wCardListUpdateFunction_ADDR + 1u),
+			  (uint8_t)(HANDLE_PLAYERS_CARDS_PRINT_LIST_ADDR >> 8));
+		wced2 = 0u;
+
+		uint8_t return_to_filter = 0u;
+		for (;;) {
+			DoFrame();
+			HandleSelectUpAndDownInListResult move = HandleSelectUpAndDownInList();
+			if ((move.f & 0x10u) != 0u)
+				continue;
+			HandleDeckCardSelectionListResult selection = HandleDeckCardSelectionList();
+			if ((selection.f & 0x10u) != 0u) {
+				(void)DrawListCursor_Invisible();
+				wTempCardListCursorPos = wCardListCursorPos;
+				if (hffb3 == MENU_CANCEL) {
+					uint16_t params = FILTERS_CARD_SELECTION_PARAMS_ADDR;
+					(void)InitCardSelectionParams(hffb3, &params);
+					wTempCardTypeFilter = wCurCardTypeFilter;
+					hffb0 = 1u;
+					PrintPlayersCardsText();
+					hffb0 = 0u;
+					return_to_filter = 1u;
+					break;
+				}
+			}
+			else if ((hDPadHeld & PAD_START) == 0u) {
+				continue;
+			}
+
+			PlaySFXConfirmOrCancel(MENU_CONFIRM);
+			wTempCardListNumCursorPositions = wCardListNumCursorPositions;
+			wTempCardListCursorPos = wCardListCursorPos;
+			gb_write8(wCurCardListPtr_ADDR, (uint8_t)wFilteredCardList_ADDR);
+			gb_write8((uint16_t)(wCurCardListPtr_ADDR + 1u),
+			  (uint8_t)(wFilteredCardList_ADDR >> 8));
+			OpenCardPageFromCardList();
+			(void)PrintPlayersCardsHeaderInfo();
+			filter_params = FILTERS_CARD_SELECTION_PARAMS_ADDR;
+			(void)InitCardSelectionParams(0u, &filter_params);
+			wTempCardTypeFilter = wCurCardTypeFilter;
+			(void)DrawHorizontalListCursor_Visible();
+			PrintCardSelectionList();
+			EnableLCD();
+			list_params = HANDLE_PLAYERS_CARDS_DATA_ADDR;
+			(void)InitCardSelectionParams(0u, &list_params);
+			wCardListNumCursorPositions = wTempCardListNumCursorPositions;
+			wCardListCursorPos = wTempCardListCursorPos;
+		}
+		if (return_to_filter != 0u)
+			continue;
+	}
+}
+/* <<< factory HandlePlayersCardsScreen */
