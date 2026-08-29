@@ -310,3 +310,8 @@ unblock = "Trace the nested DisplayCardList/input return path and model the hWho
 name = "FriendshipSong_AddToBench50PercentEffect"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-12 retry reaches the coin/bench path but diverges at hWhoseTurn 0xFF97 (reference 0x01, native 0xC2) after nested card display/animation handling. The isolated dependent UI state is incomplete; another unchanged retry is non-informative."
 unblock = "Trace the nested bench-display/card-detail return path and model the hWhoseTurn transition or establish a verified bounded pre-ret contract before retrying FriendshipSong_AddToBench50PercentEffect."
+
+[[blocked]]
+name = "GolemSelfdestructEffect"
+reason = "HAND-DIAGNOSED 2026-08-28: generation-13 retry reaches the real recoil/bench-damage animation path but the reference exhausts 80,000,000 cycles halted with LCDC=0x80 at pc=0x0271; this is the documented frame/VBlank boundary, not a translation mismatch."
+unblock = "Trace the recoil/bench-damage animation frame path and establish a bounded pre-ret completion or port the frame-safe callee before retrying GolemSelfdestructEffect."
