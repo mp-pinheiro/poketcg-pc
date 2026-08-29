@@ -227,6 +227,11 @@
 #include "home/process_text.h"
 #include "home/objects.h"
 #include "generated/wram.h"
+
+#include "home/deck_configuration.h"
+#include "home/credits_sequence_commands.h"
+#include "home/lcd.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -1298,3 +1303,15 @@ void Func_c2a3(void)
 	DisableLCD();
 }
 /* <<< factory Func_c2a3 */
+
+/* >>> factory PauseMenu_Card */
+void PauseMenu_Card(void)
+{
+	hSCX = 0u;
+	hSCY = 0u;
+	Set_OBJ_8x16();
+	SetDefaultPalettes();
+	HandlePlayersCardsScreen();
+	Set_OBJ_8x8();
+}
+/* <<< factory PauseMenu_Card */

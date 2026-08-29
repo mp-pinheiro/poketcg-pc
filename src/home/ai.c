@@ -25,6 +25,8 @@
 
 #define AIACTION_START_DUEL 0x02u
 #define AIACTION_KO_SWITCH 0x04u
+
+#define AIACTION_TAKE_PRIZE 0x05u
 /* <<< factory statics */
 
 #define SAMS_PRACTICE_DECK_ID 0u
@@ -165,3 +167,10 @@ uint8_t AIDoAction_StartDuel(void)
 	return AIDoAction(0x02u);
 }
 /* <<< factory AIDoAction_StartDuel */
+
+/* >>> factory AIDoAction_TakePrize */
+uint8_t AIDoAction_TakePrize(void)
+{
+	return AIDoAction(AIACTION_TAKE_PRIZE);
+}
+/* <<< factory AIDoAction_TakePrize */

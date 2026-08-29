@@ -36,11 +36,19 @@ static void adapt_AIDoAction_StartDuel(ProbeState *s)
 }
 /* <<< factory AIDoAction_StartDuel */
 
+/* >>> factory AIDoAction_TakePrize */
+static void adapt_AIDoAction_TakePrize(ProbeState *s)
+{
+	s->a = AIDoAction_TakePrize();
+}
+/* <<< factory AIDoAction_TakePrize */
+
 const ProbeEntry probe_entries_ai[] = {
 	{ "LoadOpponentDeck", adapt_LoadOpponentDeck },
 	{ "AIDoAction", adapt_AIDoAction },
 	{ "AIDoAction_ForcedSwitch", adapt_AIDoAction_ForcedSwitch },
 	{ "AIDoAction_KOSwitch", adapt_AIDoAction_KOSwitch },
 	{ "AIDoAction_StartDuel", adapt_AIDoAction_StartDuel },
+	{ "AIDoAction_TakePrize", adapt_AIDoAction_TakePrize },
 	{ NULL, NULL },
 };

@@ -1510,6 +1510,27 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define PressBToFinishPracticeDuelText 0x01a8u
 
 #define PutPokemonOnBenchPracticeDuelText 0x01a6u
+
+#include "home/ai.h"
+#include "home/credits_sequence_commands.h"
+#include "home/tiles.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define BOXMSG_ARENA_POKEMON 0x05u
+#define BOXMSG_BENCH_POKEMON 0x04u
+#define PRACTICEDUEL_DONE_PUTTING_ON_BENCH 0x05u
+#define PRACTICEDUEL_DRAW_SEVEN_CARDS 0x01u
+#define PRACTICEDUEL_PLAY_GOLDEEN 0x02u
+#define PRACTICEDUEL_PUT_STARYU_IN_BENCH 0x03u
+#define PRACTICEDUEL_VERIFY_INITIAL_PLAY 0x04u
+#define ChooseBasicPkmnToPlaceInArenaText 0x0069u
+#define ChooseUpTo5BasicPkmnToPlaceOnBenchText 0x006du
+#define ChooseYourBenchPokemonText 0x006fu
+#define NoSpaceOnTheBenchText 0x00b2u
+#define PlacedInTheArenaText 0x0062u
+#define PleaseChooseAnActivePokemonText 0x006eu
+#define TransmittingDataText 0x0057u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -8612,3 +8633,85 @@ void PracticeDuel_PutStaryuInBench(void)
 	PrintPracticeDuelDrMasonInstructions(PutPokemonOnBenchPracticeDuelText);
 }
 /* <<< factory PracticeDuel_PutStaryuInBench */
+
+/* >>> factory ChooseInitialArenaAndBenchPokemon */
+ChooseInitialArenaAndBenchPokemonResult ChooseInitialArenaAndBenchPokemon(void)
+{
+	DuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	uint8_t duelist_type = duelist.a;
+	if (duelist_type != DUELIST_TYPE_PLAYER && duelist_type != DUELIST_TYPE_LINK_OPP) {
+		uint8_t action = AIDoAction_StartDuel();
+		gb_write8(duelist.hl, action);
+		return (ChooseInitialArenaAndBenchPokemonResult){(action == 0u) ? FLAG_Z : 0u};
+	}
+	if (duelist_type == DUELIST_TYPE_LINK_OPP) {
+		TextResult text = DrawWideTextBox_PrintText(TransmittingDataText);
+		ExchangeRNGResult rng = ExchangeRNG(text.b, text.c,
+			(uint16_t)(((uint16_t)text.d << 8) | text.e), text.hl);
+		(void)rng;
+		SerialExchangeResult exchange = SerialExchangeBytes(0x80u,
+			wPlayerDuelVariables_ADDR, wOpponentDuelVariables_ADDR);
+		if (exchange.f & FLAG_C) {
+			DuelTransmissionError();
+			return (ChooseInitialArenaAndBenchPokemonResult){exchange.f};
+		}
+		exchange = SerialExchangeBytes(0x80u, exchange.hl, exchange.de);
+		if (exchange.f & FLAG_C) {
+			DuelTransmissionError();
+			return (ChooseInitialArenaAndBenchPokemonResult){exchange.f};
+		}
+		duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+		uint8_t previous_type = duelist.a;
+		gb_write8(duelist.hl, DUELIST_TYPE_LINK_OPP);
+		return (ChooseInitialArenaAndBenchPokemonResult){
+			(previous_type == 0u) ? FLAG_Z : 0u};
+	}
+	EmptyScreen();
+	DrawDuelBoxMessage(BOXMSG_ARENA_POKEMON);
+	(void)DrawWideTextBox_WaitForInput(ChooseBasicPkmnToPlaceInArenaText);
+	(void)DoPracticeDuelAction(PRACTICEDUEL_DRAW_SEVEN_CARDS);
+	for (;;) {
+		DisplayPlaceInitialPokemonCardsScreenResult choice =
+			DisplayPlaceInitialPokemonCardsScreen(0u, PleaseChooseAnActivePokemonText);
+		if (choice.f & FLAG_C)
+			continue;
+		uint8_t card_index = hTempCardIndex_ff98;
+		(void)LoadCardDataToBuffer1_FromDeckIndex(card_index);
+		uint8_t practice_flags = DoPracticeDuelAction(PRACTICEDUEL_PLAY_GOLDEEN);
+		if (practice_flags & FLAG_C)
+			continue;
+		card_index = hTempCardIndex_ff98;
+		(void)PutHandPokemonCardInPlayArea(card_index, practice_flags);
+		card_index = hTempCardIndex_ff98;
+		(void)DisplayCardDetailScreen(card_index, PlacedInTheArenaText);
+		break;
+	}
+	EmptyScreen();
+	DrawDuelBoxMessage(BOXMSG_BENCH_POKEMON);
+	(void)PrintScrollableText_NoTextBoxLabel(ChooseUpTo5BasicPkmnToPlaceOnBenchText);
+	(void)DoPracticeDuelAction(PRACTICEDUEL_PUT_STARYU_IN_BENCH);
+bench_loop:
+	for (;;) {
+		DisplayPlaceInitialPokemonCardsScreenResult choice =
+			DisplayPlaceInitialPokemonCardsScreen(TRUE, ChooseYourBenchPokemonText);
+		if (choice.f & FLAG_C)
+			break;
+		DuelistVarResult count =
+			GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+		if (count.a >= MAX_PLAY_AREA_POKEMON) {
+			(void)DrawWideTextBox_WaitForInput(NoSpaceOnTheBenchText);
+			continue;
+		}
+		uint8_t card_index = hTempCardIndex_ff98;
+		(void)PutHandPokemonCardInPlayArea(card_index, FLAG_C);
+		card_index = hTempCardIndex_ff98;
+		(void)DisplayCardDetailScreen(card_index, PlacedOnTheBenchText);
+		(void)DoPracticeDuelAction(PRACTICEDUEL_DONE_PUTTING_ON_BENCH);
+	}
+	uint8_t verify_flags = DoPracticeDuelAction(PRACTICEDUEL_VERIFY_INITIAL_PLAY);
+	if (verify_flags & FLAG_C)
+		goto bench_loop;
+	return (ChooseInitialArenaAndBenchPokemonResult){
+		(verify_flags == 0u) ? FLAG_Z : 0u};
+}
+/* <<< factory ChooseInitialArenaAndBenchPokemon */

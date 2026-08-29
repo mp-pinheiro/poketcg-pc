@@ -184,6 +184,30 @@
  * InitCardSelectionParams, which reads them through the $4000-$7FFF window. */
 #define PRINTER_CARD_LIST_SELECTION_PARAMS_BANK 2u
 #define PRINTER_CARD_LIST_SELECTION_PARAMS_ADDR 0x6D05u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/common.h"
+#include "home/deck_check.h"
+#include "home/deck_configuration.h"
+#include "home/deck_selection.h"
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
+#include "home/tiles.h"
+#include "mem.h"
+#define CONSOLE_CGB 0x02u
+#define MENU_CANCEL 0xFFu
+#define MENU_CONFIRM 0x01u
+#define NUM_FILTERS 0x09u
+#define PAD_DOWN 0x80u
+#define PAD_START 0x08u
+#define FILTERS_CARD_SELECTION_PARAMS_ADDR 0x5667u
+#define PRINTER_POKEMON_CARDS_DATA_ADDR 0x6396u
+#define PRINTER_POKEMON_CARDS_PRINT_LIST_ADDR 0x642Du
+#define PRINTER_POKEMON_CARDS_SELECTION_PARAMS_ADDR 0x6D05u
+#define PrintThisCardYesNoText 0x0274u
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -1420,3 +1444,167 @@ void PrinterMenu_CardList(void)
 	(void)PrintCardList();
 }
 /* <<< factory PrinterMenu_CardList */
+
+/* >>> factory PrinterMenu_PokemonCards */
+void PrinterMenu_PokemonCards(void)
+{
+	(void)WriteCardListsTerminatorBytes();
+	PrintPlayersCardsHeaderInfo();
+
+	wCardListVisibleOffset = 0u;
+	wCurCardTypeFilter = 0u;
+	PrintFilteredCardSelectionList(0u, 0x80u, 0u, 0u, 0u, 0u, wCardListCoords_ADDR);
+	EnableLCD();
+
+	uint16_t filter_params = FILTERS_CARD_SELECTION_PARAMS_ADDR;
+	g_rom_bank = 2u;
+	(void)InitCardSelectionParams(0u, &filter_params);
+
+	for (;;) {
+		DoFrame();
+		uint8_t current_filter = wCurCardTypeFilter;
+		uint8_t temp_filter = wTempCardTypeFilter;
+		if (temp_filter != current_filter) {
+			wCurCardTypeFilter = temp_filter;
+			wCardListVisibleOffset = 0u;
+			PrintFilteredCardSelectionList(temp_filter, 0u, 0u, 0u, 0u, 0u, wCardListVisibleOffset_ADDR);
+			hffb0 = 1u;
+			PrintPlayersCardsText();
+			hffb0 = 0u;
+			wCardListNumCursorPositions = NUM_FILTERS;
+		}
+
+		if ((hDPadHeld & PAD_DOWN) != 0u) {
+			(void)ConfirmSelectionAndReturnCarry();
+		} else {
+			HandleCardSelectionInputResult input = HandleCardSelectionInput();
+			if (input.carry == 0u)
+				continue;
+			if (hffb3 == MENU_CANCEL)
+				return;
+		}
+
+		if (wNumEntriesInCurFilter == 0u)
+			continue;
+
+		uint16_t list_params = PRINTER_POKEMON_CARDS_DATA_ADDR;
+		g_rom_bank = 2u;
+		(void)InitCardSelectionParams(0u, &list_params);
+		uint8_t entries = wNumEntriesInCurFilter;
+		wNumCardListEntries = entries;
+		if (entries < wNumVisibleCardListEntries)
+			wCardListNumCursorPositions = entries;
+		gb_write8(wCardListUpdateFunction_ADDR, (uint8_t)PRINTER_POKEMON_CARDS_PRINT_LIST_ADDR);
+		gb_write8((uint16_t)(wCardListUpdateFunction_ADDR + 1u),
+			(uint8_t)(PRINTER_POKEMON_CARDS_PRINT_LIST_ADDR >> 8));
+		wced2 = 0u;
+
+		for (;;) {
+			DoFrame();
+			HandleSelectUpAndDownInListResult move = HandleSelectUpAndDownInList();
+			if ((move.f & 0x10u) != 0u)
+				continue;
+
+			HandleDeckCardSelectionListResult selection = HandleDeckCardSelectionList();
+			if ((selection.f & 0x10u) != 0u) {
+				(void)DrawListCursor_Invisible();
+				wTempCardListNumCursorPositions = wCardListNumCursorPositions;
+				wTempCardListCursorPos = wCardListCursorPos;
+				if (hffb3 == MENU_CANCEL) {
+					uint16_t params = FILTERS_CARD_SELECTION_PARAMS_ADDR;
+					g_rom_bank = 2u;
+					(void)InitCardSelectionParams(hffb3, &params);
+					wTempCardTypeFilter = wCurCardTypeFilter;
+					hffb0 = 1u;
+					PrintPlayersCardsText();
+					hffb0 = 0u;
+					break;
+				}
+			} else if ((hDPadHeld & PAD_START) == 0u) {
+				continue;
+			}
+
+			PlaySFXConfirmOrCancel(MENU_CONFIRM);
+			wTempCardListNumCursorPositions = wCardListNumCursorPositions;
+			wTempCardListCursorPos = wCardListCursorPos;
+			gb_write8(wCurCardListPtr_ADDR, (uint8_t)wFilteredCardList_ADDR);
+			gb_write8((uint16_t)(wCurCardListPtr_ADDR + 1u),
+				(uint8_t)(wFilteredCardList_ADDR >> 8));
+			OpenCardPageFromCardList();
+			PrintPlayersCardsHeaderInfo();
+
+			uint16_t params = FILTERS_CARD_SELECTION_PARAMS_ADDR;
+			g_rom_bank = 2u;
+			(void)InitCardSelectionParams(0u, &params);
+			wTempCardTypeFilter = wCurCardTypeFilter;
+			(void)DrawHorizontalListCursor_Visible();
+			PrintCardSelectionList();
+			EnableLCD();
+			uint16_t data_params = PRINTER_POKEMON_CARDS_DATA_ADDR;
+			g_rom_bank = 2u;
+			(void)InitCardSelectionParams(0u, &data_params);
+			wCardListNumCursorPositions = wTempCardListNumCursorPositions;
+			wCardListCursorPos = wTempCardListCursorPos;
+		}
+
+		if (hffb3 == MENU_CANCEL)
+			continue;
+
+		(void)DrawListCursor_Visible();
+		FillRectangle(0u, 20u, 4u, 0u, 0u);
+		if (wConsole == CONSOLE_CGB) {
+			hBankVRAM = 1u;
+			gb_write8(0xFF4Fu, 1u);
+			FillRectangle(0u, 20u, 4u, 0u, 0u);
+			hBankVRAM = 0u;
+			gb_write8(0xFF4Fu, 0u);
+		}
+		InitTextPrinting(1u, 1u);
+		(void)ProcessTextFromID(PrintThisCardYesNoText);
+		uint16_t yes_no_params = PRINTER_POKEMON_CARDS_SELECTION_PARAMS_ADDR;
+		g_rom_bank = 2u;
+		(void)InitCardSelectionParams(1u, &yes_no_params);
+
+		for (;;) {
+			DoFrame();
+			HandleCardSelectionInputResult input = HandleCardSelectionInput();
+			if (input.carry == 0u)
+				continue;
+			if (hffb3 == 0u) {
+				uint16_t card_list = wFilteredCardList_ADDR;
+				card_list = (uint16_t)(card_list + wTempCardListCursorPos);
+				card_list = (uint16_t)(card_list + wCardListVisibleOffset);
+				(void)RequestToPrintCard(gb_read8(card_list));
+				PrintPlayersCardsHeaderInfo();
+				break;
+			}
+			FillRectangle(0u, 20u, 4u, 0u, 0u);
+			if (wConsole == CONSOLE_CGB) {
+				hBankVRAM = 1u;
+				gb_write8(0xFF4Fu, 1u);
+				FillRectangle(0u, 20u, 4u, 0u, 0u);
+				hBankVRAM = 0u;
+				gb_write8(0xFF4Fu, 0u);
+			}
+			FillBGMapLineWithA(SYM_BOX_TOP, 0u, 4u);
+			PrintTotalNumberOfCardsInCollection();
+			PrintPlayersCardsText();
+			DrawCardTypeIcons();
+			break;
+		}
+
+		uint16_t filter_params_after = FILTERS_CARD_SELECTION_PARAMS_ADDR;
+		g_rom_bank = 2u;
+		(void)InitCardSelectionParams(0u, &filter_params_after);
+		wTempCardTypeFilter = wCurCardTypeFilter;
+		(void)DrawHorizontalListCursor_Visible();
+		PrintCardSelectionList();
+		EnableLCD();
+		uint16_t data_params_after = PRINTER_POKEMON_CARDS_DATA_ADDR;
+		g_rom_bank = 2u;
+		(void)InitCardSelectionParams(0u, &data_params_after);
+		wCardListNumCursorPositions = wTempCardListNumCursorPositions;
+		wCardListCursorPos = wTempCardListCursorPos;
+	}
+}
+/* <<< factory PrinterMenu_PokemonCards */

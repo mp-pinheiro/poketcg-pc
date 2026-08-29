@@ -240,4 +240,7 @@ PrintCardListResult _PrintCardList(void);
  * PrintCardList surfaces carry alone -- so nothing is returned. */
 void PrinterMenu_CardList(void);
 /* <<< factory PrinterMenu_CardList */
+/* >>> factory PrinterMenu_PokemonCards */
+void PrinterMenu_PokemonCards(void);
+/* <<< factory PrinterMenu_PokemonCards */
 #endif

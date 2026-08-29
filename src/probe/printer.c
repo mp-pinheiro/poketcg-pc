@@ -336,6 +336,13 @@ static void adapt_PrinterMenu_CardList(ProbeState *s)
 }
 /* <<< factory PrinterMenu_CardList */
 
+/* >>> factory PrinterMenu_PokemonCards */
+static void adapt_PrinterMenu_PokemonCards(ProbeState *s)
+{
+	PrinterMenu_PokemonCards();
+}
+/* <<< factory PrinterMenu_PokemonCards */
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "ShowPrinterConnectionErrorScene", adapt_ShowPrinterConnectionErrorScene },
 	{ "SendPrinterPacket", adapt_SendPrinterPacket },
@@ -373,5 +380,6 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "_RequestToPrintCard", adapt__RequestToPrintCard },
 	{ "_PrintCardList", adapt__PrintCardList },
 	{ "PrinterMenu_CardList", adapt_PrinterMenu_CardList },
+	{ "PrinterMenu_PokemonCards", adapt_PrinterMenu_PokemonCards },
 	{ NULL, NULL },
 };

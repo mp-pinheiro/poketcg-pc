@@ -805,6 +805,31 @@ CASES["PrinterMenu_CardList"] = [
 ]
 # <<< factory PrinterMenu_CardList
 
+# >>> factory PrinterMenu_PokemonCards
+CONTRACT["PrinterMenu_PokemonCards"] = {"compare": (), "preserve": ()}
+CASES["PrinterMenu_PokemonCards"] = [
+    {"rom_bank": 2,
+     "wram": {0xCAB4: b"\x00", 0xCABB: b"\x00", 0xCEA1: b"\xFF",
+              0xCED3: b"\xFF", 0xCEA4: b"\xFF" * 10, 0xFFB3: b"\xFF"},
+     "sram": _PRINTER_MENU_CARD_LIST_SRAM,
+     "ramg": True,
+     "setup": _PRINTER_MENU_CARD_LIST_SETUP,
+     "keys": [0x00, 0x02],
+     "read": {0xCEA1: 1, 0xCEA4: 10, 0xCED3: 1, 0xFFB3: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON,
+         rom_bank=2,
+         wram={0xCAB4: b"\x00", 0xCABB: b"\x00", 0xCEA1: b"\xFF",
+               0xCED3: b"\xFF", 0xCEA4: b"\xFF" * 10, 0xFFB3: b"\xFF"},
+         sram=_PRINTER_MENU_CARD_LIST_SRAM,
+         ramg=True,
+         setup=_PRINTER_MENU_CARD_LIST_SETUP,
+         keys=[0x00, 0x02],
+         read={0xCEA1: 1, 0xCEA4: 10, 0xCED3: 1, 0xFFB3: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PrinterMenu_PokemonCards
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 SCHEMA2_CASES["SendPrinterPacket"][3]["completion"] = {"mode": "pre-ret", "pc": 0x315D}
@@ -1092,3 +1117,11 @@ MUTATIONS["PrinterMenu_CardList"] = {
     "case_ids": ["PrinterMenu_CardList-0", "PrinterMenu_CardList-1"],
 }
 # <<< factory-mutation PrinterMenu_CardList
+# >>> factory-mutation PrinterMenu_PokemonCards
+MUTATIONS["PrinterMenu_PokemonCards"] = {
+    "source_symbol": "PrinterMenu_PokemonCards",
+    "before": "void PrinterMenu_PokemonCards(void)\n{\n\t(void)WriteCardListsTerminatorBytes();\n\tPrintPlayersCardsHeaderInfo();\n\n\twCardListVisibleOffset = 0u;\n\twCurCardTypeFilter = 0u;\n\tPrintFilteredCardSelectionList(0u, 0x80u, 0u, 0u, 0u, 0u, wCardListCoords_ADDR);\n\tEnableLCD();\n\n\tuint16_t filter_params = FILTERS_CARD_SELECTION_PARAMS_ADDR;",
+    "after": "void PrinterMenu_PokemonCards(void)\n{\n\t(void)WriteCardListsTerminatorBytes();\n\tPrintPlayersCardsHeaderInfo();\n\n\twCardListVisibleOffset = 0u;\n\twCurCardTypeFilter = 0u;\tPrintFilteredCardSelectionList(0u, 0x80u, 0u, 0u, 0u, 0u, wCardListCoords_ADDR);\n\tEnableLCD();\n\n\tuint16_t filter_params = (uint16_t)(FILTERS_CARD_SELECTION_PARAMS_ADDR + 1u);",
+    "case_ids": ["PrinterMenu_PokemonCards-0", "PrinterMenu_PokemonCards-1"],
+}
+# <<< factory-mutation PrinterMenu_PokemonCards

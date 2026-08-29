@@ -2693,6 +2693,14 @@ static void adapt_PracticeDuel_PutStaryuInBench(ProbeState *s)
 }
 /* <<< factory PracticeDuel_PutStaryuInBench */
 
+/* >>> factory ChooseInitialArenaAndBenchPokemon */
+static void adapt_ChooseInitialArenaAndBenchPokemon(ProbeState *s)
+{
+	ChooseInitialArenaAndBenchPokemonResult r = ChooseInitialArenaAndBenchPokemon();
+	s->f = r.f;
+}
+/* <<< factory ChooseInitialArenaAndBenchPokemon */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3014,5 +3022,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PracticeDuel_DrawSevenCards", adapt_PracticeDuel_DrawSevenCards },
 	{ "PracticeDuel_DonePuttingOnBench", adapt_PracticeDuel_DonePuttingOnBench },
 	{ "PracticeDuel_PutStaryuInBench", adapt_PracticeDuel_PutStaryuInBench },
+	{ "ChooseInitialArenaAndBenchPokemon", adapt_ChooseInitialArenaAndBenchPokemon },
 	{ NULL, NULL },
 };

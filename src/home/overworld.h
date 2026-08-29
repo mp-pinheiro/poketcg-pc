@@ -287,4 +287,7 @@ uint8_t PCMenu_ReadMail(void);
 /* overworld.asm:363. Preserves bc, de and hl; clobbers a and f. */
 void Func_c2a3(void);
 /* <<< factory Func_c2a3 */
+/* >>> factory PauseMenu_Card */
+void PauseMenu_Card(void);
+/* <<< factory PauseMenu_Card */
 #endif /* POKETCG_HOME_OVERWORLD_H */

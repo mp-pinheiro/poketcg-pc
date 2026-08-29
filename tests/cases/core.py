@@ -4634,6 +4634,14 @@ CASES["PracticeDuel_PutStaryuInBench"] = [
 ]
 # <<< factory PracticeDuel_PutStaryuInBench
 
+# >>> factory ChooseInitialArenaAndBenchPokemon
+CONTRACT["ChooseInitialArenaAndBenchPokemon"] = {"compare": ("f",), "preserve": ()}
+CASES["ChooseInitialArenaAndBenchPokemon"] = [
+    {"wram": {0xCC0E: b"\x01", 0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xC2F1: b"\xFF"}, "read": {0xC2F1: 1}},
+    dict(POISON, wram={0xCC0E: b"\x01", 0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xC2F1: b"\xFF"}, read={0xC2F1: 1}),
+]
+# <<< factory ChooseInitialArenaAndBenchPokemon
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6334,3 +6342,6 @@ MUTATIONS["PracticeDuel_PutStaryuInBench"] = {
     "case_ids": ["PracticeDuel_PutStaryuInBench-0", "PracticeDuel_PutStaryuInBench-1"]
 }
 # <<< factory-mutation PracticeDuel_PutStaryuInBench
+# >>> factory-mutation ChooseInitialArenaAndBenchPokemon
+MUTATIONS["ChooseInitialArenaAndBenchPokemon"] = {"source_symbol": "ChooseInitialArenaAndBenchPokemon", "before": "ChooseInitialArenaAndBenchPokemonResult ChooseInitialArenaAndBenchPokemon(void)\n{\n\tDuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tuint8_t duelist_type = duelist.a;\n\tif (duelist_type != DUELIST_TYPE_PLAYER && duelist_type != DUELIST_TYPE_LINK_OPP) {\n\t\tuint8_t action = AIDoAction_StartDuel();\n\t\tgb_write8(duelist.hl, action);", "after": "ChooseInitialArenaAndBenchPokemonResult ChooseInitialArenaAndBenchPokemon(void)\n{\n\tDuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tuint8_t duelist_type = duelist.a;\n\tif (duelist_type != DUELIST_TYPE_PLAYER && duelist_type != DUELIST_TYPE_LINK_OPP) {\n\t\tuint8_t action = AIDoAction_StartDuel();\n\t\tgb_write8(duelist.hl, 0u);", "case_ids": ["ChooseInitialArenaAndBenchPokemon-0"]}
+# <<< factory-mutation ChooseInitialArenaAndBenchPokemon

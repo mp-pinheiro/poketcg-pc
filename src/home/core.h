@@ -1226,4 +1226,8 @@ void PracticeDuel_DonePuttingOnBench(void);
 /* >>> factory PracticeDuel_PutStaryuInBench */
 void PracticeDuel_PutStaryuInBench(void);
 /* <<< factory PracticeDuel_PutStaryuInBench */
+/* >>> factory ChooseInitialArenaAndBenchPokemon */
+typedef struct { uint8_t f; } ChooseInitialArenaAndBenchPokemonResult;
+ChooseInitialArenaAndBenchPokemonResult ChooseInitialArenaAndBenchPokemon(void);
+/* <<< factory ChooseInitialArenaAndBenchPokemon */
 #endif

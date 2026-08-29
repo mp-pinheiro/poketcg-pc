@@ -324,6 +324,8 @@ READ_MAIL_KEYS = [0x00, 0x02]
 # A menu screen load plus the mail screen's frame loop.
 READ_MAIL_INSTRUCTIONS = 60000000
 READ_MAIL_CYCLES = 240000000
+
+PAUSE_CARD_SRAM = {0: {0xA100: b"\x00" * 0xFF, 0xA218: b"\x00", 0xA26C: b"\x00", 0xA2C0: b"\x00", 0xA314: b"\x00", 0xA010: bytes([0x81, 0x82, 0x00] + [0] * 13)}}
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -972,6 +974,23 @@ CASES["Func_c2a3"] = [
 ]
 # <<< factory Func_c2a3
 
+# >>> factory PauseMenu_Card
+CONTRACT["PauseMenu_Card"] = {"compare": (), "preserve": ()}
+CASES["PauseMenu_Card"] = [
+    {"keys": [0x00, 0x02], "setup": SETUP,
+     "wram": {hSCX: b"\x55", hSCY: b"\x66", 0xCABB: b"\x00",
+               0xCEA1: b"\xFF", 0xCED3: b"\xFF", 0xFFB3: b"\xFF"},
+     "sram": PAUSE_CARD_SRAM,
+     "read": {hSCX: 1, hSCY: 1},
+     "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, keys=[0x00, 0x02], setup=SETUP,
+         wram={hSCX: b"\x55", hSCY: b"\x66", 0xCABB: b"\x00",
+               0xCEA1: b"\xFF", 0xCED3: b"\xFF", 0xFFB3: b"\xFF"},
+         sram=PAUSE_CARD_SRAM, read={hSCX: 1, hSCY: 1},
+         instruction_budget=20000000, cycle_budget=100000000),
+]
+# <<< factory PauseMenu_Card
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1320,3 +1339,6 @@ MUTATIONS["PCMenu_ReadMail"] = {
 # >>> factory-mutation Func_c2a3
 MUTATIONS["Func_c2a3"] = {"source_symbol": "Func_c2a3", "before": "void Func_c2a3(void)\n{\n\tBackupObjectPalettes();\n\tFadeScreenToWhite();\n\t(void)SetOverworldNPCFlags(0x80u); /* 1 << HIDE_ALL_NPC_SPRITES, HIDE_ALL_NPC_SPRITES = 7 */", "after": "void Func_c2a3(void)\n{\n\tBackupObjectPalettes();\n\tFadeScreenToWhite();\n\t(void)SetOverworldNPCFlags(0x00u); /* mutated */", "case_ids": ["Func_c2a3-0", "Func_c2a3-1"]}
 # <<< factory-mutation Func_c2a3
+# >>> factory-mutation PauseMenu_Card
+MUTATIONS["PauseMenu_Card"] = {"source_symbol": "PauseMenu_Card", "before": "void PauseMenu_Card(void)\n{\n\thSCX = 0u;", "after": "void PauseMenu_Card(void)\n{\n\thSCX = 1u;", "case_ids": ["PauseMenu_Card-0", "PauseMenu_Card-1"]}
+# <<< factory-mutation PauseMenu_Card
