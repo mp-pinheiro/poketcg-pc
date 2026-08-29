@@ -1,0 +1,9 @@
+{
+  "fn": "Preload_Clerk9",
+  "case": "tests/cases/challenge_hall_entrance.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Preload_Clerk9\", \"registers\": {\"a\": 0, \"b\": 17, \"c\": 34, \"d\": 51, \"e\": 68, \"f\": 144, \"hl\": 28644, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Preload_Clerk9\", \"mismatches\": {\"f\": [144, 16], \"b\": [17, 0], \"c\": [34, 0], \"d\": [51, 0], \"e\": [68, 0]}}\n",
+  "restored": "{\"fn\": \"Preload_Clerk9\", \"registers\": {\"a\": 0, \"b\": 17, \"c\": 34, \"d\": 51, \"e\": 68, \"f\": 144, \"hl\": 28644, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}
