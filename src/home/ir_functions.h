@@ -19,4 +19,16 @@ void ClearRPAndRestoreVBlankFunction(void);
 typedef struct { uint8_t a; uint8_t f; } LoadLinkNotConnectedSceneAndAskWhetherToTryAgainResult;
 LoadLinkNotConnectedSceneAndAskWhetherToTryAgainResult LoadLinkNotConnectedSceneAndAskWhetherToTryAgain(uint16_t hl);
 /* <<< factory LoadLinkNotConnectedSceneAndAskWhetherToTryAgain */
+/* >>> factory SetIRCommunicationErrorCode_NoError */
+typedef struct { uint8_t a; uint8_t f; } SetIRCommunicationErrorCode_NoErrorResult;
+SetIRCommunicationErrorCode_NoErrorResult SetIRCommunicationErrorCode_NoError(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory SetIRCommunicationErrorCode_NoError */
+/* >>> factory SetIRCommunicationErrorCode_Error */
+typedef struct { uint8_t a; uint8_t f; } SetIRCommunicationErrorCode_ErrorResult;
+SetIRCommunicationErrorCode_ErrorResult SetIRCommunicationErrorCode_Error(uint8_t a, uint8_t f, uint8_t b);
+/* <<< factory SetIRCommunicationErrorCode_Error */
+/* >>> factory TryReceiveCardOrDeckConfigurationThroughIR */
+typedef struct { uint8_t a; uint8_t f; } TryReceiveCardOrDeckConfigurationThroughIRResult;
+TryReceiveCardOrDeckConfigurationThroughIRResult TryReceiveCardOrDeckConfigurationThroughIR(uint8_t a);
+/* <<< factory TryReceiveCardOrDeckConfigurationThroughIR */
 #endif

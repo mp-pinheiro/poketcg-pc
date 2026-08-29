@@ -39,11 +39,41 @@ static void adapt_LoadLinkNotConnectedSceneAndAskWhetherToTryAgain(ProbeState *s
 }
 /* <<< factory LoadLinkNotConnectedSceneAndAskWhetherToTryAgain */
 
+/* >>> factory SetIRCommunicationErrorCode_NoError */
+static void adapt_SetIRCommunicationErrorCode_NoError(ProbeState *s)
+{
+	SetIRCommunicationErrorCode_NoErrorResult result = SetIRCommunicationErrorCode_NoError(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory SetIRCommunicationErrorCode_NoError */
+
+/* >>> factory SetIRCommunicationErrorCode_Error */
+static void adapt_SetIRCommunicationErrorCode_Error(ProbeState *s)
+{
+	SetIRCommunicationErrorCode_ErrorResult result = SetIRCommunicationErrorCode_Error(s->a, s->f, s->b);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory SetIRCommunicationErrorCode_Error */
+
+/* >>> factory TryReceiveCardOrDeckConfigurationThroughIR */
+static void adapt_TryReceiveCardOrDeckConfigurationThroughIR(ProbeState *s)
+{
+	TryReceiveCardOrDeckConfigurationThroughIRResult result = TryReceiveCardOrDeckConfigurationThroughIR(s->a);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory TryReceiveCardOrDeckConfigurationThroughIR */
+
 const ProbeEntry probe_entries_ir_functions[] = {
 	{ "PlayCardPopSong", adapt_PlayCardPopSong },
 	{ "InitIRCommunications", adapt_InitIRCommunications },
 	{ "LoadLinkConnectingScene", adapt_LoadLinkConnectingScene },
 	{ "ClearRPAndRestoreVBlankFunction", adapt_ClearRPAndRestoreVBlankFunction },
 	{ "LoadLinkNotConnectedSceneAndAskWhetherToTryAgain", adapt_LoadLinkNotConnectedSceneAndAskWhetherToTryAgain },
+	{ "SetIRCommunicationErrorCode_NoError", adapt_SetIRCommunicationErrorCode_NoError },
+	{ "SetIRCommunicationErrorCode_Error", adapt_SetIRCommunicationErrorCode_Error },
+	{ "TryReceiveCardOrDeckConfigurationThroughIR", adapt_TryReceiveCardOrDeckConfigurationThroughIR },
 	{ NULL, NULL },
 };

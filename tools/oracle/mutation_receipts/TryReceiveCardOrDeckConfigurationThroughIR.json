@@ -1,0 +1,9 @@
+{
+  "fn": "TryReceiveCardOrDeckConfigurationThroughIR",
+  "case": "tests/cases/ir_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TryReceiveCardOrDeckConfigurationThroughIR\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"00\", \"50666\": \"ff\", \"51892\": \"02\", \"51899\": \"80\", \"65344\": \"80\", \"65357\": \"fe\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TryReceiveCardOrDeckConfigurationThroughIR\", \"mismatches\": {\"bus\": {\"address\": 50448, \"reference\": \"00ff028080\", \"native\": \"01ff028080\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[50448, 1], [50666, 1], [51892, 1], [51899, 1], [65344, 1], [65357, 1]]}}}\n",
+  "restored": "{\"fn\": \"TryReceiveCardOrDeckConfigurationThroughIR\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"00\", \"50666\": \"ff\", \"51892\": \"02\", \"51899\": \"80\", \"65344\": \"80\", \"65357\": \"fe\"}}, \"status\": \"PASS\"}\n"
+}

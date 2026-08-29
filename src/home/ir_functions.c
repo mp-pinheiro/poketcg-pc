@@ -21,6 +21,12 @@
 
 #define SCENE_GAMEBOY_LINK_NOT_CONNECTED 0x10u
 #define WouldYouLikeToTryAgainText 0x0197u
+
+#include "generated/wram.h"
+#include "home/ir_core.h"
+
+#include "home/ir_core.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 #define MUSIC_CARD_POP 0x08u
@@ -85,3 +91,45 @@ LoadLinkNotConnectedSceneAndAskWhetherToTryAgainResult LoadLinkNotConnectedScene
 	return (LoadLinkNotConnectedSceneAndAskWhetherToTryAgainResult){menu.a, menu.f};
 }
 /* <<< factory LoadLinkNotConnectedSceneAndAskWhetherToTryAgain */
+
+/* >>> factory SetIRCommunicationErrorCode_NoError */
+SetIRCommunicationErrorCode_NoErrorResult SetIRCommunicationErrorCode_NoError(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)hl;
+	wOwnIRCommunicationParams = 0u;
+	RequestDataReceivalThroughIRResult received = RequestDataReceivalThroughIR(a, f, b, 1u, 0xC5u, 0xEAu, wOwnIRCommunicationParams_ADDR);
+	if ((received.f & 0x10u) != 0u)
+		return (SetIRCommunicationErrorCode_NoErrorResult){received.a, received.f};
+	RequestCloseIRCommunicationResult closed = RequestCloseIRCommunication();
+	return (SetIRCommunicationErrorCode_NoErrorResult){closed.a, (closed.a == 0u) ? 0x80u : 0x00u};
+}
+/* <<< factory SetIRCommunicationErrorCode_NoError */
+
+/* >>> factory SetIRCommunicationErrorCode_Error */
+SetIRCommunicationErrorCode_ErrorResult SetIRCommunicationErrorCode_Error(uint8_t a, uint8_t f, uint8_t b)
+{
+	wIRCommunicationErrorCode = 0x01u;
+	(void)RequestDataReceivalThroughIR(a, f, b, 1u, 0xC5u, 0xEAu, wIRCommunicationErrorCode_ADDR);
+	RequestCloseIRCommunicationResult closed = RequestCloseIRCommunication();
+	return (SetIRCommunicationErrorCode_ErrorResult){0x01u, (uint8_t)((closed.f & 0x80u) | 0x10u)};
+}
+/* <<< factory SetIRCommunicationErrorCode_Error */
+
+/* >>> factory TryReceiveCardOrDeckConfigurationThroughIR */
+TryReceiveCardOrDeckConfigurationThroughIRResult TryReceiveCardOrDeckConfigurationThroughIR(uint8_t a)
+{
+	InitIRCommunications(a);
+	for (;;) {
+		wDuelTempList = 0u;
+		TryReceiveIRRequestResult request = TryReceiveIRRequest();
+		if ((request.f & 0x10u) == 0u)
+			break;
+		if ((request.a & 0x02u) != 0u)
+			return (TryReceiveCardOrDeckConfigurationThroughIRResult){1u, 0x10u};
+	}
+	(void)ExecuteReceivedIRCommands();
+	if (wIRCommunicationErrorCode == 0u)
+		return (TryReceiveCardOrDeckConfigurationThroughIRResult){0u, 0x80u};
+	return (TryReceiveCardOrDeckConfigurationThroughIRResult){0u, 0x90u};
+}
+/* <<< factory TryReceiveCardOrDeckConfigurationThroughIR */

@@ -96,6 +96,30 @@ CASES["LoadLinkNotConnectedSceneAndAskWhetherToTryAgain"] = [
 ]
 # <<< factory LoadLinkNotConnectedSceneAndAskWhetherToTryAgain
 
+# >>> factory SetIRCommunicationErrorCode_NoError
+CONTRACT["SetIRCommunicationErrorCode_NoError"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["SetIRCommunicationErrorCode_NoError"] = [
+    {"oracle": False, "evidence": "primary", "why": "The deterministic native CGB infrared peer drives the receive request; clearing the own-communication parameter and the error return are asserted.", "a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": 0x81, "ir_peer": True, "setup": [{"fn": "CopyDMAFunction"}], "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC5EB: b"\xFF"}, "read": {0xC5EB: 1}, "expect": {0xC5EB: b"\x00"}, "expect_regs": {"a": 0xFF, "f": 0x10}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The deterministic native CGB infrared peer drives the receive request with poisoned registers; clearing the own-communication parameter and the error return are asserted.", keys=0x81, ir_peer=True, setup=[{"fn": "CopyDMAFunction"}], wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC5EB: b"\xFF"}, read={0xC5EB: 1}, expect={0xC5EB: b"\x00"}, expect_regs={"a": 0xFF, "f": 0x10}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory SetIRCommunicationErrorCode_NoError
+
+# >>> factory SetIRCommunicationErrorCode_Error
+CONTRACT["SetIRCommunicationErrorCode_Error"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["SetIRCommunicationErrorCode_Error"] = [
+    {"oracle": False, "evidence": "primary", "why": "Infrared peer hardware is unavailable to the reference runner; the native peer path verifies the error-code write and communication shutdown.", "keys": 0x81, "ir_peer": True, "setup": [{"fn": "CopyDMAFunction"}], "wram": {0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "read": {0xC5EA: 1}, "expect": {0xC5EA: b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x10}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="Infrared peer hardware is unavailable to the reference runner; the native peer path verifies the error-code write and communication shutdown with poisoned registers.", keys=0x81, ir_peer=True, setup=[{"fn": "CopyDMAFunction"}], wram={0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, read={0xC5EA: 1}, expect={0xC5EA: b"\x01"}, expect_regs={"a": 0x01, "f": 0x10}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory SetIRCommunicationErrorCode_Error
+
+# >>> factory TryReceiveCardOrDeckConfigurationThroughIR
+CONTRACT["TryReceiveCardOrDeckConfigurationThroughIR"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["TryReceiveCardOrDeckConfigurationThroughIR"] = [
+    {"oracle": False, "evidence": "primary", "why": "The deterministic CGB infrared peer supplies the request and then the receive-command frame; the communication error byte and carry return are asserted.", "a": 0x02, "keys": 0x81, "ir_peer": True, "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC510: b"\xFF", 0xC5EA: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}], "read": {0xC510: 1, 0xC5EA: 1}, "expect": {0xC510: b"\x00", 0xC5EA: b"\xFF"}, "expect_regs": {"a": 0x00, "f": 0x90}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The deterministic CGB infrared peer supplies the request and then the receive-command frame; the communication error byte and carry return are asserted with poisoned registers.", keys=0x81, ir_peer=True, wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC510: b"\xFF", 0xC5EA: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}], read={0xC510: 1, 0xC5EA: 1}, expect={0xC510: b"\x00", 0xC5EA: b"\xFF"}, expect_regs={"a": 0x00, "f": 0x90}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory TryReceiveCardOrDeckConfigurationThroughIR
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -137,3 +161,27 @@ MUTATIONS["ClearRPAndRestoreVBlankFunction"] = {
 # >>> factory-mutation LoadLinkNotConnectedSceneAndAskWhetherToTryAgain
 MUTATIONS["LoadLinkNotConnectedSceneAndAskWhetherToTryAgain"] = {"source_symbol": "LoadLinkNotConnectedSceneAndAskWhetherToTryAgain", "before": "\t(void)LoadScene(SCENE_GAMEBOY_LINK_NOT_CONNECTED, 0u, 0u, 0u, 0u, 0u, saved_hl);", "after": "\t(void)LoadScene(0u, 0u, 0u, 0u, 0u, 0u, saved_hl);", "case_ids": ["LoadLinkNotConnectedSceneAndAskWhetherToTryAgain-0", "LoadLinkNotConnectedSceneAndAskWhetherToTryAgain-1"]}
 # <<< factory-mutation LoadLinkNotConnectedSceneAndAskWhetherToTryAgain
+# >>> factory-mutation SetIRCommunicationErrorCode_NoError
+MUTATIONS["SetIRCommunicationErrorCode_NoError"] = {
+    "source_symbol": "SetIRCommunicationErrorCode_NoError",
+    "before": "\twOwnIRCommunicationParams = 0u;",
+    "after": "\twOwnIRCommunicationParams = 1u;",
+    "case_ids": ["SetIRCommunicationErrorCode_NoError-0", "SetIRCommunicationErrorCode_NoError-1"]
+}
+# <<< factory-mutation SetIRCommunicationErrorCode_NoError
+# >>> factory-mutation SetIRCommunicationErrorCode_Error
+MUTATIONS["SetIRCommunicationErrorCode_Error"] = {
+    "source_symbol": "SetIRCommunicationErrorCode_Error",
+    "before": "SetIRCommunicationErrorCode_ErrorResult SetIRCommunicationErrorCode_Error(uint8_t a, uint8_t f, uint8_t b)\n{\n\twIRCommunicationErrorCode = 0x01u;",
+    "after": "SetIRCommunicationErrorCode_ErrorResult SetIRCommunicationErrorCode_Error(uint8_t a, uint8_t f, uint8_t b)\n{\n\twIRCommunicationErrorCode = 0x00u;",
+    "case_ids": ["SetIRCommunicationErrorCode_Error-0", "SetIRCommunicationErrorCode_Error-1"]
+}
+# <<< factory-mutation SetIRCommunicationErrorCode_Error
+# >>> factory-mutation TryReceiveCardOrDeckConfigurationThroughIR
+MUTATIONS["TryReceiveCardOrDeckConfigurationThroughIR"] = {
+    "source_symbol": "TryReceiveCardOrDeckConfigurationThroughIR",
+    "before": "TryReceiveCardOrDeckConfigurationThroughIRResult TryReceiveCardOrDeckConfigurationThroughIR(uint8_t a)\n{\n\tInitIRCommunications(a);\n\tfor (;;) {\n\t\twDuelTempList = 0u;",
+    "after": "TryReceiveCardOrDeckConfigurationThroughIRResult TryReceiveCardOrDeckConfigurationThroughIR(uint8_t a)\n{\n\tInitIRCommunications(a);\n\tfor (;;) {\n\t\twDuelTempList = 1u;",
+    "case_ids": ["TryReceiveCardOrDeckConfigurationThroughIR-0", "TryReceiveCardOrDeckConfigurationThroughIR-1"]
+}
+# <<< factory-mutation TryReceiveCardOrDeckConfigurationThroughIR
