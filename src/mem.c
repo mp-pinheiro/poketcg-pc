@@ -13,6 +13,7 @@ uint8_t g_io[0x80];
 uint8_t g_pal[0x80];
 uint8_t g_keys;
 static uint16_t g_ir_read_count;
+static uint16_t g_ir_write_count;
 
 /* Key timeline: entries[0..count-1], cycled per completed joypad poll. count <= 1
  * disarms the advance entirely, leaving g_keys exactly as seeded. */
@@ -135,9 +136,9 @@ void mem_reset(void)
 	memset(g_pal, 0, sizeof g_pal);
 	g_keys = 0;
 	g_ir_read_count = 0;
+	g_ir_write_count = 0;
 	g_key_count = 0;
 	g_key_index = 0;
-	g_key_latch_armed = 0;
 	g_key_latch_addr = 0;
 	memset(g_scratch, 0, sizeof g_scratch);
 	g_rom_bank = 1;
@@ -202,12 +203,20 @@ uint8_t gb_read8(uint16_t addr)
 	 * Bits 6-7 are write-only enable bits and read back as 0. */
 	if (addr == 0xFF56u) {
 		if ((g_keys & 0x80u) != 0u) {
-			uint16_t sample = g_ir_read_count++;
+			uint16_t sample_total = g_ir_read_count++;
+			uint16_t byte_index = sample_total / 81u;
+			uint16_t sample = sample_total % 81u;
+			uint8_t rx_byte = g_ir_write_count <= 1u
+				? (byte_index == 0u ? 0xAAu
+				   : (byte_index == 1u ? 0x49u
+				      : (byte_index == 2u ? 0x52u : 0x00u)))
+				: (byte_index == 0u ? 0x33u
+				   : (byte_index == 1u ? 0xAAu : 0x00u));
 			if (sample == 0u)
 				return 0x3Cu;
 			uint16_t bit = (uint16_t)((sample - 1u) / 10u);
 			if (bit < 8u)
-				return (0x33u & (uint8_t)(1u << bit)) != 0u ? 0x3Eu : 0x3Cu;
+				return (rx_byte & (uint8_t)(1u << bit)) != 0u ? 0x3Eu : 0x3Cu;
 			return 0x3Cu;
 		}
 		return (uint8_t)(0x3Eu | (*gb_ptr(addr) & 0x01u));
@@ -298,6 +307,8 @@ void gb_write8(uint16_t addr, uint8_t v)
 		if (*index & 0x80u)
 			*index = (uint8_t)(0x80u | ((*index + 1u) & 0x3Fu));
 	}
+	if (addr == 0xFF56u && (g_keys & 0x80u) != 0u)
+		g_ir_write_count++;
 	/* A completed joypad poll is the native frame boundary: advance to the next
 	 * timeline entry so the following poll sees a fresh press edge, exactly as a
 	 * new reference frame does. Cycles modulo the entry count, matching
