@@ -228,3 +228,8 @@ unblock = "Trace the nested card-detail and shuffle animation completion state, 
 name = "MainMenu_NewGame"
 reason = "HAND-DIAGNOSED 2026-08-29: generation-10..11 primary runs reach the real naming/portrait scene and exhaust in its LCD/input frame path, while bounded candidates diverged in scene scratch state; the isolated top-level new-game call has no verified terminating fixture."
 unblock = "Trace DisplayPlayerNamingScreen and DrawPlayerPortraitAndPrintNewGameText to a bounded pre-ret completion and model the CAEA..CAEC writers, then retry MainMenu_NewGame; do not repeat unchanged naming-scene fixtures."
+ 
+[[blocked]]
+name = "HealPlayAreaCardHP"
+reason = "HAND-DIAGNOSED 2026-08-29: generation-11 retry candidates with the correct wAnimationsDisabled=0xD421 animation-disable fixture still exhaust in the downstream text/animation path at 80M cycles, including LCD-off and armed-LCD variants; the isolated effect has no verified bounded return."
+unblock = "Trace the first non-returning DrawWideTextBox/CopyCardNameAndLevel or animation callee and establish a verified bounded pre-ret completion or port that frame-safe callee before retrying HealPlayAreaCardHP; do not repeat unchanged top-level fixtures."
