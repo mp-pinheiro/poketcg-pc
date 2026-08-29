@@ -11,4 +11,7 @@ DeckLoadResult LoadOpponentDeck(void);
 /* >>> factory AIDoAction */
 uint8_t AIDoAction(uint8_t a);
 /* <<< factory AIDoAction */
+/* >>> factory AIDoAction_ForcedSwitch */
+uint8_t AIDoAction_ForcedSwitch(void);
+/* <<< factory AIDoAction_ForcedSwitch */
 #endif /* POKETCG_HOME_AI_H */

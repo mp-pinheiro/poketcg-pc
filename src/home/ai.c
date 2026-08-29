@@ -121,3 +121,12 @@ uint8_t AIDoAction(uint8_t a)
 	return action;
 }
 /* <<< factory AIDoAction */
+
+/* >>> factory AIDoAction_ForcedSwitch */
+uint8_t AIDoAction_ForcedSwitch(void)
+{
+	uint8_t result = AIDoAction(0x03u);
+	hTempPlayAreaLocation_ff9d = result;
+	return result;
+}
+/* <<< factory AIDoAction_ForcedSwitch */

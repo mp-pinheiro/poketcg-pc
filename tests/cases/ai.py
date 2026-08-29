@@ -90,6 +90,17 @@ CASES["AIDoAction"] = [
 ]
 # <<< factory AIDoAction
 
+# >>> factory AIDoAction_ForcedSwitch
+CONTRACT["AIDoAction_ForcedSwitch"] = {"compare": ("a",), "preserve": ()}
+CASES["AIDoAction_ForcedSwitch"] = [
+    {"wram": {wOpponentDeckID: b"\x01", hWhoseTurn: b"\xC2"},
+     "read": {hTempPlayAreaLocation_ff9d: 1}},
+    dict(POISON,
+         wram={wOpponentDeckID: b"\x01", hWhoseTurn: b"\xC2"},
+         read={hTempPlayAreaLocation_ff9d: 1}),
+]
+# <<< factory AIDoAction_ForcedSwitch
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -104,3 +115,6 @@ MUTATIONS = {
 # >>> factory-mutation AIDoAction
 MUTATIONS["AIDoAction"] = {"source_symbol": "AIDoAction", "before": "\t\tif (action == 3u || action == 4u) {", "after": "\t\tif (action == 4u) {", "case_ids": ["AIDoAction-0"]}
 # <<< factory-mutation AIDoAction
+# >>> factory-mutation AIDoAction_ForcedSwitch
+MUTATIONS["AIDoAction_ForcedSwitch"] = {"source_symbol": "AIDoAction_ForcedSwitch", "before": "uint8_t AIDoAction_ForcedSwitch(void)\n{\n\tuint8_t result = AIDoAction(0x03u);\n\thTempPlayAreaLocation_ff9d = result;", "after": "uint8_t AIDoAction_ForcedSwitch(void)\n{\n\tuint8_t result = AIDoAction(0x03u);\n\thTempPlayAreaLocation_ff9d = (uint8_t)(result ^ 0xFFu);", "case_ids": ["AIDoAction_ForcedSwitch-0"]}
+# <<< factory-mutation AIDoAction_ForcedSwitch
