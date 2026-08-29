@@ -135,6 +135,20 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #define NthOpponentIsText 0x07dbu
 #define WouldYouLikeToBeginTheDuelText 0x07dcu
 #define XConsecutiveWinsNthOpponentIsText 0x07dau
+
+#include "home/switch_sram.h"
+#include "home/process_text.h"
+#include "home/print_text.h"
+#include "generated/sram.h"
+#include "mem.h"
+#define CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT 0x07F3u
+#define CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT 0x07F4u
+#define CHALLENGE_MACHINE_DUEL_LOST_ICON_TEXT 0x07F5u
+static const uint16_t challenge_machine_duel_result_icons[3] = {
+	CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT,
+	CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT,
+	CHALLENGE_MACHINE_DUEL_LOST_ICON_TEXT,
+};
 /* <<< factory statics */
 
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
@@ -597,3 +611,34 @@ ChallengeMachine_AreYouReadyResult ChallengeMachine_AreYouReady(uint8_t a, uint8
 	return (ChallengeMachine_AreYouReadyResult){a, f};
 }
 /* <<< factory ChallengeMachine_AreYouReady */
+
+/* >>> factory ChallengeMachine_PrintDuelResultIcons */
+void ChallengeMachine_PrintDuelResultIcons(void)
+{
+	uint16_t hl = sChallengeMachineDuelResults_ADDR;
+	uint8_t c = NUM_CHALLENGE_MACHINE_OPPONENTS;
+	uint8_t d = 1u;
+	uint8_t e = 2u;
+	while (c != 0u) {
+		uint16_t saved_hl = hl;
+		uint8_t saved_c = c;
+		uint8_t saved_d = d;
+		uint8_t saved_e = e;
+		InitTextPrinting(d, e);
+		EnableSRAM();
+		uint8_t result = gb_read8(hl);
+		e = (uint8_t)(result + result);
+		d = 0u;
+		(void)PrintTextNoDelay(challenge_machine_duel_result_icons[result], d, e);
+		e = saved_e;
+		d = saved_d;
+		c = saved_c;
+		hl = saved_hl;
+		hl = (uint16_t)(hl + 1u);
+		e = (uint8_t)(e + 1u);
+		e = (uint8_t)(e + 1u);
+		c = (uint8_t)(c - 1u);
+	}
+	DisableSRAM();
+}
+/* <<< factory ChallengeMachine_PrintDuelResultIcons */

@@ -167,6 +167,14 @@ static void adapt_ChallengeMachine_AreYouReady(ProbeState *s)
 }
 /* <<< factory ChallengeMachine_AreYouReady */
 
+/* >>> factory ChallengeMachine_PrintDuelResultIcons */
+static void adapt_ChallengeMachine_PrintDuelResultIcons(ProbeState *s)
+{
+	(void)s;
+	ChallengeMachine_PrintDuelResultIcons();
+}
+/* <<< factory ChallengeMachine_PrintDuelResultIcons */
+
 const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_CheckIfOpponentAlreadySelected", adapt_ChallengeMachine_CheckIfOpponentAlreadySelected },
 	{ "ChallengeMachine_PrintText", adapt_ChallengeMachine_PrintText },
@@ -187,5 +195,6 @@ const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_PrepareDuel", adapt_ChallengeMachine_PrepareDuel },
 	{ "ChallengeMachine_DrawScoreScreen", adapt_ChallengeMachine_DrawScoreScreen },
 	{ "ChallengeMachine_AreYouReady", adapt_ChallengeMachine_AreYouReady },
+	{ "ChallengeMachine_PrintDuelResultIcons", adapt_ChallengeMachine_PrintDuelResultIcons },
 	{ NULL, NULL },
 };

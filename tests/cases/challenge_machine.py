@@ -201,6 +201,11 @@ sChallengeMachineDuelResults = 0xBA50
 sChallengeMachineOpponentNumber = 0xBA55
 sPresentConsecutiveWins = 0xBA47
 wDuelResult = 0xD0C3
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+sChallengeMachineDuelResults = 0xBA50
+SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
 # <<< factory-cases-statics
 
 # >>> factory ChallengeMachine_RecordDuelResult
@@ -357,6 +362,19 @@ CASES["ChallengeMachine_AreYouReady"] = [
 ]
 # <<< factory ChallengeMachine_AreYouReady
 
+# >>> factory ChallengeMachine_PrintDuelResultIcons
+CONTRACT["ChallengeMachine_PrintDuelResultIcons"] = {"compare": (), "preserve": ()}
+CASES["ChallengeMachine_PrintDuelResultIcons"] = [
+    {"sram": {0: {sChallengeMachineDuelResults: b"\x00\x01\x02\x01\x00"}},
+     "setup": SETUP, "read": PLACEMENT_READ,
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON,
+         sram={0: {sChallengeMachineDuelResults: b"\x02\x01\x00\x02\x01"}},
+         setup=SETUP, read=PLACEMENT_READ,
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory ChallengeMachine_PrintDuelResultIcons
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -451,3 +469,6 @@ MUTATIONS["ChallengeMachine_AreYouReady"] = {
     "case_ids": ["ChallengeMachine_AreYouReady-0", "ChallengeMachine_AreYouReady-1"],
 }
 # <<< factory-mutation ChallengeMachine_AreYouReady
+# >>> factory-mutation ChallengeMachine_PrintDuelResultIcons
+MUTATIONS["ChallengeMachine_PrintDuelResultIcons"] = {"source_symbol": "ChallengeMachine_PrintDuelResultIcons", "before": "\t\te = (uint8_t)(e + 1u);\n\t\te = (uint8_t)(e + 1u);", "after": "\t\te = (uint8_t)(e + 1u);\n\t\te = (uint8_t)(e + 2u);", "case_ids": ["ChallengeMachine_PrintDuelResultIcons-0", "ChallengeMachine_PrintDuelResultIcons-1"]}
+# <<< factory-mutation ChallengeMachine_PrintDuelResultIcons
