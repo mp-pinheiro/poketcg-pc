@@ -227,11 +227,6 @@ reason = "HAND-DIAGNOSED 2026-08-29: generation-0 and bounded retry cases never 
 unblock = "Add a deterministic external-IR device model or a verified reference-side request injection for ReceiveByteThroughIRRequest, then retry TryReceiveIRRequest."
 
 [[blocked]]
-name = "RequestCloseIRCommunication"
-reason = "HAND-DIAGNOSED 2026-08-29: generation-0 case remains in the reference IR transmit/poll path through the full 80,000,000-cycle budget despite CopyDMAFunction, LCD, and JOYP fixtures. The isolated oracle has no external IR peer to acknowledge or close the request."
-unblock = "Add a deterministic external-IR peer model or verified reference-side transmit acknowledgement, then retry RequestCloseIRCommunication."
-
-[[blocked]]
 name = "ExecuteReceivedIRCommands"
 reason = "HAND-DIAGNOSED 2026-08-29: generation-0 candidate remains in the reference ReceiveIRDataBuffer polling loop through the full 80,000,000-cycle budget; seeded IR buffer, RP, and JOYP bytes do not provide an external received frame. Native-only evidence cannot verify this hardware-dependent dispatch loop."
 unblock = "Add a deterministic external-IR frame injection/device model to the reference harness, then retry ExecuteReceivedIRCommands."
