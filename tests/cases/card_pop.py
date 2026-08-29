@@ -43,6 +43,14 @@ CASES["DecideCardToReceiveFromCardPop"] = [
 ]
 # <<< factory DecideCardToReceiveFromCardPop
 
+# >>> factory HandleCardPopCommunications
+CONTRACT["HandleCardPopCommunications"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["HandleCardPopCommunications"] = [
+    {"oracle": True, "evidence": "primary", "why": "Card Pop communication depends on external infrared hardware; this deterministic native no-peer case drives the D-pad abort and checks the SRAM-to-WRAM name-list copy and failure return.", "keys": 0x02, "setup": [{"fn": "EnableLCD"}], "sram": {0: {0xBB00: bytes([0x5a]) * 0x100}}, "read": {0xC000: 0x100}, "expect": {0xC000: bytes([0x5a]) * 0x100}, "expect_regs": {"a": 0x02, "f": 0x10, "hl": 0x018B}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="Card Pop communication depends on external infrared hardware; this deterministic native no-peer case drives the D-pad abort with poisoned registers and checks the SRAM-to-WRAM name-list copy and failure return.", keys=0x02, setup=[{"fn": "EnableLCD"}], sram={0: {0xBB00: bytes([0x5a]) * 0x100}}, read={0xC000: 0x100}, expect={0xC000: bytes([0x5a]) * 0x100}, expect_regs={"a": 0x02, "f": 0x10, "hl": 0x018B}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory HandleCardPopCommunications
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -66,3 +74,6 @@ MUTATIONS["LookUpNameInCardPopNameList"] = {"source_symbol": "LookUpNameInCardPo
 # >>> factory-mutation DecideCardToReceiveFromCardPop
 MUTATIONS["DecideCardToReceiveFromCardPop"] = {"source_symbol": "DecideCardToReceiveFromCardPop", "before": "card_e = (d & 0x01u) ? MEW_LV15 : VENUSAUR_LV64;", "after": "card_e = (d & 0x01u) ? VENUSAUR_LV64 : MEW_LV15;", "case_ids": ["DecideCardToReceiveFromCardPop-2"]}
 # <<< factory-mutation DecideCardToReceiveFromCardPop
+# >>> factory-mutation HandleCardPopCommunications
+MUTATIONS["HandleCardPopCommunications"] = {"source_symbol": "HandleCardPopCommunications", "before": "HandleCardPopCommunicationsResult HandleCardPopCommunications(void)\n{\n\tuint16_t copy_src = sCardPopNameList_ADDR;", "after": "HandleCardPopCommunicationsResult HandleCardPopCommunications(void)\n{\n\tuint16_t copy_src = wCardPopNameList_ADDR;", "case_ids": ["HandleCardPopCommunications-0", "HandleCardPopCommunications-1"]}
+# <<< factory-mutation HandleCardPopCommunications

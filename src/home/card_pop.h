@@ -12,4 +12,8 @@ void LookUpNameInCardPopNameList(void);
 /* >>> factory DecideCardToReceiveFromCardPop */
 uint8_t DecideCardToReceiveFromCardPop(void);
 /* <<< factory DecideCardToReceiveFromCardPop */
+/* >>> factory HandleCardPopCommunications */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } HandleCardPopCommunicationsResult;
+HandleCardPopCommunicationsResult HandleCardPopCommunications(void);
+/* <<< factory HandleCardPopCommunications */
 #endif

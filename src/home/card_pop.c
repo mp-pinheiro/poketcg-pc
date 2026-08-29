@@ -27,6 +27,14 @@
 #define MUSIC_MEDAL 0x1du
 #define PLAYER_TURN 0xc2u
 #define VENUSAUR_LV64 0x0au
+
+#include "home/copy.h"
+#include "home/ir_functions.h"
+#include "home/ir_core.h"
+#define CARDPOP_NAME_LIST_SIZE 0x100u
+#define IRPARAM_CARD_POP 0x01u
+#define CannotCardPopWithFriendPreviouslyPoppedWithText 0x018cu
+#define ThePopWasntSuccessfulText 0x018bu
 /* <<< factory statics */
 
 #define CARDPOP_NAME_LENGTH 16u
@@ -164,3 +172,115 @@ uint8_t DecideCardToReceiveFromCardPop(void)
 	return card_e;
 }
 /* <<< factory DecideCardToReceiveFromCardPop */
+
+/* >>> factory HandleCardPopCommunications */
+HandleCardPopCommunicationsResult HandleCardPopCommunications(void)
+{
+	uint16_t copy_src = sCardPopNameList_ADDR;
+	uint16_t copy_dst = wCardPopNameList_ADDR;
+	EnableSRAM();
+	CopyDataHLtoDE(&copy_src, &copy_dst, CARDPOP_NAME_LIST_SIZE);
+	DisableSRAM();
+
+	InitIRCommunications(IRPARAM_CARD_POP);
+
+	uint8_t a;
+	uint8_t f;
+	uint8_t run_commands = 0u;
+	for (;;) {
+		TryReceiveIRRequestResult request = TryReceiveIRRequest();
+		a = request.a;
+		f = request.f;
+		if ((f & 0x10u) == 0u) {
+			run_commands = 1u;
+			break;
+		}
+		if ((a & 0x02u) != 0u)
+			return (HandleCardPopCommunicationsResult){a, 0x10u, ThePopWasntSuccessfulText};
+		TrySendIRRequestResult sent = TrySendIRRequest();
+		a = sent.a;
+		f = sent.f;
+		if ((f & 0x10u) != 0u)
+			continue;
+		break;
+	}
+
+	if (run_commands != 0u) {
+		ExecuteReceivedIRCommandsResult commands = ExecuteReceivedIRCommands();
+		a = commands.a;
+		f = commands.f;
+		if (wIRCommunicationErrorCode != 0u) {
+			a = wIRCommunicationErrorCode;
+			return (HandleCardPopCommunicationsResult){a, 0x10u, ThePopWasntSuccessfulText};
+		}
+		RequestCloseIRCommunicationResult closed = RequestCloseIRCommunication();
+		a = closed.a;
+		f = closed.f;
+		if ((f & 0x10u) != 0u)
+			return (HandleCardPopCommunicationsResult){a, (uint8_t)((f & 0x80u) | 0x10u), ThePopWasntSuccessfulText};
+	} else {
+		ExchangeIRCommunicationParametersResult exchanged =
+			ExchangeIRCommunicationParameters(a, f, 0u, 0u, 0u, 0u, 0u);
+		a = exchanged.a;
+		f = exchanged.f;
+		if ((f & 0x10u) != 0u)
+			return (HandleCardPopCommunicationsResult){a, (uint8_t)((f & 0x80u) | 0x10u), ThePopWasntSuccessfulText};
+
+		RequestDataTransmissionThroughIRResult transmitted =
+			RequestDataTransmissionThroughIR(f, 0u, 0u,
+				(uint8_t)(wOtherPlayerCardPopNameList_ADDR >> 8),
+				(uint8_t)wOtherPlayerCardPopNameList_ADDR,
+				wCardPopNameList_ADDR);
+		a = transmitted.a;
+		f = transmitted.f;
+		if ((f & 0x10u) != 0u)
+			return (HandleCardPopCommunicationsResult){a, (uint8_t)((f & 0x80u) | 0x10u), ThePopWasntSuccessfulText};
+
+		LookUpNameInCardPopNameList();
+		RequestDataReceivalThroughIRResult received =
+			RequestDataReceivalThroughIR(0u, 0u, 0u, 1u,
+				(uint8_t)(wCardPopNameSearchResult_ADDR >> 8),
+				(uint8_t)wCardPopNameSearchResult_ADDR,
+				wCardPopNameSearchResult_ADDR);
+		a = received.a;
+		f = received.f;
+		if ((f & 0x10u) != 0u)
+			return (HandleCardPopCommunicationsResult){a, (uint8_t)((f & 0x80u) | 0x10u), ThePopWasntSuccessfulText};
+
+		SetIRCommunicationErrorCode_NoErrorResult cleared =
+			SetIRCommunicationErrorCode_NoError(a, f, 0u, 0u, 0u, 0u, 0u);
+		a = cleared.a;
+		f = cleared.f;
+		if ((f & 0x10u) != 0u)
+			return (HandleCardPopCommunicationsResult){a, (uint8_t)((f & 0x80u) | 0x10u), ThePopWasntSuccessfulText};
+
+		ExecuteReceivedIRCommandsResult commands = ExecuteReceivedIRCommands();
+		a = commands.a;
+		f = commands.f;
+		if ((f & 0x10u) != 0u)
+			return (HandleCardPopCommunicationsResult){a, (uint8_t)((f & 0x80u) | 0x10u), ThePopWasntSuccessfulText};
+	}
+
+	a = gb_read8(wCardPopNameSearchResult_ADDR);
+	if (a != 0u)
+		return (HandleCardPopCommunicationsResult){a, 0x10u, CannotCardPopWithFriendPreviouslyPoppedWithText};
+
+	a = DecideCardToReceiveFromCardPop();
+	EnableSRAM();
+	uint16_t total_addr = sTotalCardPopsDone_ADDR;
+	uint8_t total = gb_read8(total_addr);
+	gb_write8(total_addr, (uint8_t)(total + 1u));
+	uint16_t destination = (uint16_t)(sCardPopNameList_ADDR
+		+ (uint16_t)((uint8_t)((total & 0x0fu) << 4)));
+	uint16_t source = wNameBuffer_ADDR;
+	for (uint8_t count = NAME_BUFFER_LENGTH; count != 0u; count--) {
+		a = gb_read8(source);
+		source = (uint16_t)(source + 1u);
+		gb_write8(destination, a);
+		destination = (uint16_t)(destination + 1u);
+	}
+	DisableSRAM();
+	f = (a == 0u) ? 0x80u : 0x00u;
+	return (HandleCardPopCommunicationsResult){a, f, destination};
+}
+/* <<< factory HandleCardPopCommunications */
