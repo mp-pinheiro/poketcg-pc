@@ -7158,8 +7158,27 @@ CASES["CreatePlayableStage2PokemonCardListFromHand"] = [
 ]
 # <<< factory CreatePlayableStage2PokemonCardListFromHand
 
+# >>> factory MixUpEffect
+CONTRACT["MixUpEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["MixUpEffect"] = [
+	{"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xC3EE: b"\x00", 0xCABB: b"\x00"},
+	 "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+	dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xC3EE: b"\x00", 0xCABB: b"\x00"},
+	     keys=0x01, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory MixUpEffect
+
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
+
+# >>> factory-mutation MixUpEffect
+MUTATIONS["MixUpEffect"] = {
+	"source_symbol": "MixUpEffect",
+	"before": "gb_write8(hCurSelectionItem_ADDR, count);",
+	"after": "gb_write8(hCurSelectionItem_ADDR, (uint8_t)(count + 1u));",
+	"case_ids": ["MixUpEffect-0", "MixUpEffect-1"],
+}
+# <<< factory-mutation MixUpEffect
 
 # >>> factory-mutation UpdateExpectedAIDamage
 MUTATIONS["UpdateExpectedAIDamage"] = {

@@ -4969,10 +4969,19 @@ static void adapt_BigThunderEffect(ProbeState *s)
 }
 /* <<< factory BigThunderEffect */
 
+/* >>> factory MixUpEffect */
+static void adapt_MixUpEffect(ProbeState *s)
+{
+	(void)s;
+	MixUpEffect();
+}
+/* <<< factory MixUpEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
 	{ "PlusPowerEffect", adapt_PlusPowerEffect },
+	{ "MixUpEffect", adapt_MixUpEffect },
 	{ "StrikesBackEffect", adapt_StrikesBackEffect },
 	{ "Switch_BenchCheck", adapt_Switch_BenchCheck },
 	{ "Switch_SwitchEffect", adapt_Switch_SwitchEffect },

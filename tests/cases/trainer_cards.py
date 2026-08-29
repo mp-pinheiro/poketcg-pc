@@ -1231,6 +1231,14 @@ CASES["AIPlay_MrFuji"] = [
 ]
 # <<< factory AIPlay_MrFuji
 
+# >>> factory AIDecide_ProfessorOak
+CONTRACT["AIDecide_ProfessorOak"] = {"compare": ("f",), "preserve": ()}
+CASES["AIDecide_ProfessorOak"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x36"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BA: b"\x36"}),
+]
+# <<< factory AIDecide_ProfessorOak
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1357,6 +1365,15 @@ MUTATIONS["PickPokedexCards"] = {
 # <<< factory-mutation PickPokedexCards
 # Keep schema-2 inventory after appended routine cases.
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+# >>> factory-mutation AIDecide_ProfessorOak
+MUTATIONS["AIDecide_ProfessorOak"] = {
+    "source_symbol": "AIDecide_ProfessorOak",
+    "before": "if (gb_read8(deck.hl) >= (uint8_t)(DECK_SIZE - 6u))\n\t\treturn (AIDecideResult){0xC0u};",
+    "after": "if (gb_read8(deck.hl) >= (uint8_t)(DECK_SIZE - 6u))\n\t\treturn (AIDecideResult){0x10u};",
+    "case_ids": ["AIDecide_ProfessorOak-0", "AIDecide_ProfessorOak-1"],
+}
+# <<< factory-mutation AIDecide_ProfessorOak
+
 # >>> factory-mutation AIDecide_Pokedex
 MUTATIONS["AIDecide_Pokedex"] = {"source_symbol": "AIDecide_Pokedex", "before": "\tif (counter < 6u)", "after": "\tif (counter < 5u)", "case_ids": ["AIDecide_Pokedex-0"]}
 # <<< factory-mutation AIDecide_Pokedex

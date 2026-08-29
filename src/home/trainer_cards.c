@@ -3226,7 +3226,7 @@ AIDecideResult AIDecide_ProfessorOak(void)
 {
 	DuelistVarResult deck = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
 	if (gb_read8(deck.hl) >= (uint8_t)(DECK_SIZE - 6u))
-		return (AIDecideResult){0x00u};
+		return (AIDecideResult){0xC0u};
 
 	uint8_t opponent = wOpponentDeckID;
 	if (opponent == LEGENDARY_ARTICUNO_DECK_ID) {

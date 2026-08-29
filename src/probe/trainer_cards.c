@@ -708,6 +708,14 @@ static void adapt_AIPlay_MrFuji(ProbeState *s)
 }
 /* <<< factory AIPlay_MrFuji */
 
+/* >>> factory AIDecide_ProfessorOak */
+static void adapt_AIDecide_ProfessorOak(ProbeState *s)
+{
+	AIDecideResult result = AIDecide_ProfessorOak();
+	s->f = result.f;
+}
+/* <<< factory AIDecide_ProfessorOak */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -727,6 +735,7 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "PickPokedexCards_Unreferenced", adapt_PickPokedexCards_Unreferenced },
 	{ "AIDecide_Pokedex", adapt_AIDecide_Pokedex },
 	{ "AIDecide_ItemFinder", adapt_AIDecide_ItemFinder },
+	{ "AIDecide_ProfessorOak", adapt_AIDecide_ProfessorOak },
 	{ "AIDecide_EnergyRetrieval", adapt_AIDecide_EnergyRetrieval },
 	{ "AIDecide_SuperEnergyRetrieval", adapt_AIDecide_SuperEnergyRetrieval },
 	{ "AIDecide_PokemonBreeder", adapt_AIDecide_PokemonBreeder },
