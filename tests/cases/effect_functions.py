@@ -2750,6 +2750,11 @@ def _rdp_case(rng, poison=False):
     if poison:
         case.update(POISON)
     return case
+
+def _big_thunder_case(rng, poison=False):
+    case = _rdp_case(rng, poison=poison)
+    case["read"] = {0xCCC7: 1, 0xCCE6: 1, 0xCCB8: 1, 0xC2C8: 1, 0xC3C8: 1}
+    return case
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7100,6 +7105,15 @@ CASES["RandomlyDamagePlayAreaPokemon"] = [
 ]
 # <<< factory RandomlyDamagePlayAreaPokemon
 
+# >>> factory BigThunderEffect
+CONTRACT["BigThunderEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["BigThunderEffect"] = [
+    _big_thunder_case(b"\x00\x00\x00"),
+    _big_thunder_case(b"\x00\x40\x00"),
+    _big_thunder_case(b"\x00\x00\x00", poison=True),
+]
+# <<< factory BigThunderEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9982,3 +9996,6 @@ MUTATIONS["MagneticStormEffect"] = {"source_symbol": "MagneticStormEffect", "bef
 # >>> factory-mutation RandomlyDamagePlayAreaPokemon
 MUTATIONS["RandomlyDamagePlayAreaPokemon"] = {"source_symbol": "RandomlyDamagePlayAreaPokemon", "before": "RandomlyDamagePlayAreaPokemonResult RandomlyDamagePlayAreaPokemon(uint16_t de)\n{\n\tfor (;;) {\n\t\twNoDamageOrEffect = 0u;", "after": "RandomlyDamagePlayAreaPokemonResult RandomlyDamagePlayAreaPokemon(uint16_t de)\n{\n\tfor (;;) {\n\t\twNoDamageOrEffect = 1u;", "case_ids": ["RandomlyDamagePlayAreaPokemon-0", "RandomlyDamagePlayAreaPokemon-1", "RandomlyDamagePlayAreaPokemon-2"]}
 # <<< factory-mutation RandomlyDamagePlayAreaPokemon
+# >>> factory-mutation BigThunderEffect
+MUTATIONS["BigThunderEffect"] = {"source_symbol": "BigThunderEffect", "before": "RandomlyDamagePlayAreaPokemonResult BigThunderEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)\n{\n\t(void)ExchangeRNG(b, c, de, hl);\n\treturn RandomlyDamagePlayAreaPokemon(70u);", "after": "RandomlyDamagePlayAreaPokemonResult BigThunderEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)\n{\n\t(void)ExchangeRNG(b, c, de, hl);\n\treturn RandomlyDamagePlayAreaPokemon(0u);", "case_ids": ["BigThunderEffect-0", "BigThunderEffect-1", "BigThunderEffect-2"]}
+# <<< factory-mutation BigThunderEffect

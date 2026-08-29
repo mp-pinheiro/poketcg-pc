@@ -4959,6 +4959,16 @@ static void adapt_RandomlyDamagePlayAreaPokemon(ProbeState *s)
 }
 /* <<< factory RandomlyDamagePlayAreaPokemon */
 
+/* >>> factory BigThunderEffect */
+static void adapt_BigThunderEffect(ProbeState *s)
+{
+	RandomlyDamagePlayAreaPokemonResult r =
+		BigThunderEffect(s->b, s->c, (uint16_t)(((uint16_t)s->d << 8u) | s->e), s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory BigThunderEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5561,5 +5571,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Peek_SelectEffect", adapt_Peek_SelectEffect },
 	{ "MagneticStormEffect", adapt_MagneticStormEffect },
 	{ "RandomlyDamagePlayAreaPokemon", adapt_RandomlyDamagePlayAreaPokemon },
+	{ "BigThunderEffect", adapt_BigThunderEffect },
 	{ NULL, NULL },
 };

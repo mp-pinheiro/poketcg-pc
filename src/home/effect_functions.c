@@ -1334,6 +1334,9 @@ void BankswitchROM(uint8_t bank);
 #include "home/duel.h"
 #include "home/random.h"
 #define ATK_ANIM_THUNDER_PLAY_AREA 0x82u
+
+#include "home/effect_functions.h"
+#include "home/serial.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10444,3 +10447,11 @@ RandomlyDamagePlayAreaPokemonResult RandomlyDamagePlayAreaPokemon(uint16_t de)
 	}
 }
 /* <<< factory RandomlyDamagePlayAreaPokemon */
+
+/* >>> factory BigThunderEffect */
+RandomlyDamagePlayAreaPokemonResult BigThunderEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
+{
+	(void)ExchangeRNG(b, c, de, hl);
+	return RandomlyDamagePlayAreaPokemon(70u);
+}
+/* <<< factory BigThunderEffect */

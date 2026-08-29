@@ -2036,6 +2036,9 @@ void MagneticStormEffect(void);
 typedef struct { uint8_t a, f; } RandomlyDamagePlayAreaPokemonResult;
 RandomlyDamagePlayAreaPokemonResult RandomlyDamagePlayAreaPokemon(uint16_t de);
 /* <<< factory RandomlyDamagePlayAreaPokemon */
+/* >>> factory BigThunderEffect */
+RandomlyDamagePlayAreaPokemonResult BigThunderEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
+/* <<< factory BigThunderEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
