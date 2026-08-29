@@ -230,3 +230,8 @@ unblock = "Trace DisplayCardList and its menu/input state to a deterministic sel
 name = "PokemonTrader_PlayerDeckSelection"
 reason = "HAND-DIAGNOSED 2026-08-29: generation-9 candidates model the real trader card-list/text selection scene, which remains interactive and has no bounded return under the isolated key timeline; another unchanged top-level fixture is non-informative."
 unblock = "Trace the trader card-list selection input/state path to a deterministic Pokémon-card completion or establish a verified pre-ret cutpoint before retrying PokemonTrader_PlayerDeckSelection; do not repeat unchanged interactive fixtures."
+ 
+[[blocked]]
+name = "Scavenge_PlayerSelectTrainerEffect"
+reason = "HAND-DIAGNOSED 2026-08-29: generation-7 candidates all enter the real discard-pile card-list DisplayCardList retry loop and the native probes do not terminate under the isolated A-key timeline; no bounded interactive selection completion was established."
+unblock = "Trace DisplayCardList's discard-pile menu/input state to a deterministic trainer-card selection or establish a verified pre-ret cutpoint before retrying Scavenge_PlayerSelectTrainerEffect; do not repeat unchanged interactive fixtures."
