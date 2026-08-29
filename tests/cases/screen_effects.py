@@ -51,6 +51,17 @@ wScreenAnimUpdatePtr = 0xD4B9
 wDuelAnimDamage = 0xD4B1
 WD4C0 = 0xD4C0
 WDUEL_ANIM_RETURN_BANK = 0xD4BE
+
+wAnimationsDisabled = 0xD421
+wTempAnimation = 0xD422
+wScreenShakeOffsetsPtr = 0xD4BC
+wTempWhiteFlashBGP = 0xD4BC
+wBGP = 0xCABC
+wLCDCFunctionTrampoline = 0xCACD
+wBackgroundPalettesCGB = 0xCAF0
+wTempBackgroundPalettesCGB = 0xD297
+wBGScrollMod = 0xD666
+wApplyBGScroll = 0xD667
 # <<< factory-cases-statics
 
 # >>> factory DefaultScreenAnimationUpdate
@@ -157,6 +168,36 @@ CASES["ShakeScreenY_Small"] = [
 ]
 # <<< factory ShakeScreenY_Small
 
+# >>> factory InitScreenAnimation
+CONTRACT["InitScreenAnimation"] = {"compare": (), "preserve": ()}
+CASES["InitScreenAnimation"] = [
+    dict(POISON, wram={wAnimationsDisabled: b"\x00", wTempAnimation: b"\x61"},
+         read={wActiveScreenAnim: 1, wScreenAnimUpdatePtr: 2, wScreenAnimDuration: 1,
+               wScreenShakeOffsetsPtr: 2}),
+    {"wram": {wAnimationsDisabled: b"\x01", wTempAnimation: b"\x61",
+                     wActiveScreenAnim: b"\x55", wScreenAnimUpdatePtr: b"\x34\x12",
+                     wScreenAnimDuration: b"\x77", wScreenShakeOffsetsPtr: b"\x88\x99"},
+     "read": {wActiveScreenAnim: 1, wScreenAnimUpdatePtr: 2, wScreenAnimDuration: 1,
+               wScreenShakeOffsetsPtr: 2}},
+    {"wram": {wAnimationsDisabled: b"\x00", wTempAnimation: b"\x62"},
+     "read": {wActiveScreenAnim: 1, wScreenAnimUpdatePtr: 2, wScreenAnimDuration: 1,
+               wScreenShakeOffsetsPtr: 2}},
+    {"wram": {wAnimationsDisabled: b"\x00", wTempAnimation: b"\x63"},
+     "read": {wActiveScreenAnim: 1, wScreenAnimUpdatePtr: 2, wScreenAnimDuration: 1,
+               wScreenShakeOffsetsPtr: 2}},
+    {"wram": {wAnimationsDisabled: b"\x00", wTempAnimation: b"\x64"},
+     "read": {wActiveScreenAnim: 1, wScreenAnimUpdatePtr: 2, wScreenAnimDuration: 1,
+               wScreenShakeOffsetsPtr: 2}},
+    {"wram": {wAnimationsDisabled: b"\x00", wTempAnimation: b"\x65", wBGP: b"\x11"},
+     "read": {wActiveScreenAnim: 1, wScreenAnimUpdatePtr: 2, wScreenAnimDuration: 1,
+               wTempWhiteFlashBGP: 1, wBackgroundPalettesCGB: 8,
+               wTempBackgroundPalettesCGB: 8, wBGP: 1}},
+    {"wram": {wAnimationsDisabled: b"\x00", wTempAnimation: b"\x66"},
+     "read": {wActiveScreenAnim: 1, wScreenAnimUpdatePtr: 2, wScreenAnimDuration: 1,
+               wBGScrollMod: 1, wApplyBGScroll: 1, wLCDCFunctionTrampoline: 2}},
+]
+# <<< factory InitScreenAnimation
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -213,3 +254,11 @@ MUTATIONS["ShakeScreenY_Big"] = {"source_symbol": "ShakeScreenY_Big", "before": 
 # >>> factory-mutation ShakeScreenY_Small
 MUTATIONS["ShakeScreenY_Small"] = {"source_symbol": "ShakeScreenY_Small", "before": "ShakeScreenY(0x4D55u);", "after": "ShakeScreenY(0x4D61u);", "case_ids": ["ShakeScreenY_Small-0"]}
 # <<< factory-mutation ShakeScreenY_Small
+# >>> factory-mutation InitScreenAnimation
+MUTATIONS["InitScreenAnimation"] = {
+    "source_symbol": "InitScreenAnimation",
+    "before": "void InitScreenAnimation(void)\n{\n\ttypedef void (*ScreenAnimationHandler)(void);\n\ttypedef struct {\n\t\tScreenAnimationHandler handler;\n\t\tuint8_t duration;\n\t} ScreenAnimationEntry;\n\tstatic const ScreenAnimationEntry screen_animation_functions[6] = {\n\t\t{ShakeScreenX_Small, 24u},",
+    "after": "void InitScreenAnimation(void)\n{\n\ttypedef void (*ScreenAnimationHandler)(void);\n\ttypedef struct {\n\t\tScreenAnimationHandler handler;\n\t\tuint8_t duration;\n\t} ScreenAnimationEntry;\n\tstatic const ScreenAnimationEntry screen_animation_functions[6] = {\n\t\t{ShakeScreenX_Big, 24u},",
+    "case_ids": ["InitScreenAnimation-0"]
+}
+# <<< factory-mutation InitScreenAnimation

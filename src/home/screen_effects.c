@@ -52,6 +52,9 @@
 
 #include "home/screen_effects.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#define DUEL_SCREEN_ANIMS 0x61u
 /* <<< factory statics */
 
 /* >>> factory DecrementScreenAnimDuration */
@@ -237,3 +240,30 @@ void ShakeScreenY_Small(void)
 	ShakeScreenY(0x4D55u);
 }
 /* <<< factory ShakeScreenY_Small */
+
+/* >>> factory InitScreenAnimation */
+void InitScreenAnimation(void)
+{
+	typedef void (*ScreenAnimationHandler)(void);
+	typedef struct {
+		ScreenAnimationHandler handler;
+		uint8_t duration;
+	} ScreenAnimationEntry;
+	static const ScreenAnimationEntry screen_animation_functions[6] = {
+		{ShakeScreenX_Small, 24u},
+		{ShakeScreenX_Big, 32u},
+		{ShakeScreenY_Small, 24u},
+		{ShakeScreenY_Big, 32u},
+		{WhiteFlashScreen, 8u},
+		{DistortScreen, 63u},
+	};
+	if (wAnimationsDisabled != 0u)
+		return;
+	uint8_t animation = wTempAnimation;
+	wActiveScreenAnim = animation;
+	uint8_t index = (uint8_t)(animation - DUEL_SCREEN_ANIMS);
+	const ScreenAnimationEntry *entry = &screen_animation_functions[index];
+	wScreenAnimDuration = entry->duration;
+	entry->handler();
+}
+/* <<< factory InitScreenAnimation */

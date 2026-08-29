@@ -1,0 +1,9 @@
+{
+  "fn": "InitScreenAnimation",
+  "case": "tests/cases/screen_effects.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"InitScreenAnimation\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54305\": \"0061\", \"54314\": \"61\", \"54457\": \"ff4c18554d\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"InitScreenAnimation\", \"mismatches\": {\"bus\": {\"address\": 54460, \"reference\": \"61ff4c18554d\", \"native\": \"61ff4c18614d\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[54305, 2], [54314, 1], [54457, 5]]}}}\n",
+  "restored": "{\"fn\": \"InitScreenAnimation\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54305\": \"0061\", \"54314\": \"61\", \"54457\": \"ff4c18554d\"}}, \"status\": \"PASS\"}\n"
+}

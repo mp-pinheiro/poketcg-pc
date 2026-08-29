@@ -115,6 +115,14 @@ static void adapt_ShakeScreenY_Small(ProbeState *s)
 }
 /* <<< factory ShakeScreenY_Small */
 
+/* >>> factory InitScreenAnimation */
+static void adapt_InitScreenAnimation(ProbeState *s)
+{
+	InitScreenAnimation();
+	(void)s;
+}
+/* <<< factory InitScreenAnimation */
+
 const ProbeEntry probe_entries_screen_effects[] = {
 	{ "DecrementScreenAnimDuration", adapt_DecrementScreenAnimDuration },
 	{ "UpdateShakeOffset", adapt_UpdateShakeOffset },
@@ -130,5 +138,6 @@ const ProbeEntry probe_entries_screen_effects[] = {
 	{ "ShakeScreenY", adapt_ShakeScreenY },
 	{ "ShakeScreenY_Big", adapt_ShakeScreenY_Big },
 	{ "ShakeScreenY_Small", adapt_ShakeScreenY_Small },
+	{ "InitScreenAnimation", adapt_InitScreenAnimation },
 	{ NULL, NULL },
 };
