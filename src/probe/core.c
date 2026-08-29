@@ -2711,6 +2711,14 @@ static void adapt_TurnDuelistTakePrizes(ProbeState *s)
 }
 /* <<< factory TurnDuelistTakePrizes */
 
+/* >>> factory Func_6fa5 */
+static void adapt_Func_6fa5(ProbeState *s)
+{
+	Func6fa5Result r = Func_6fa5();
+	s->f = r.f;
+}
+/* <<< factory Func_6fa5 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3034,5 +3042,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PracticeDuel_PutStaryuInBench", adapt_PracticeDuel_PutStaryuInBench },
 	{ "ChooseInitialArenaAndBenchPokemon", adapt_ChooseInitialArenaAndBenchPokemon },
 	{ "TurnDuelistTakePrizes", adapt_TurnDuelistTakePrizes },
+	{ "Func_6fa5", adapt_Func_6fa5 },
 	{ NULL, NULL },
 };

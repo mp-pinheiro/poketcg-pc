@@ -2161,6 +2161,9 @@ HPD_SETUP = [{"fn": "CopyDMAFunction"},
              {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 HPD_READ = {**PBTA_READ, HPD_HP: 1, HPD_ANIM_DAMAGE: 2}
 HPD_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000}
+
+hWhoseTurn = 0xFF97
+wNumberPrizeCardsToTake = 0xCCC8
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -4673,6 +4676,18 @@ CASES["TurnDuelistTakePrizes"] = [
 ]
 # <<< factory TurnDuelistTakePrizes
 
+# >>> factory Func_6fa5
+CONTRACT["Func_6fa5"] = {"compare": ("f",), "preserve": ()}
+CASES["Func_6fa5"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\xFF" * 6,
+              0xC2C8: b"\x00" * 6, wNumberPrizeCardsToTake: b"\xAA"},
+     "read": {wNumberPrizeCardsToTake: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC3", 0xC3BB: b"\xFF" * 6,
+                       0xC3C8: b"\x00" * 6, wNumberPrizeCardsToTake: b"\xAA"},
+         read={wNumberPrizeCardsToTake: 1}),
+]
+# <<< factory Func_6fa5
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6379,3 +6394,11 @@ MUTATIONS["ChooseInitialArenaAndBenchPokemon"] = {"source_symbol": "ChooseInitia
 # >>> factory-mutation TurnDuelistTakePrizes
 MUTATIONS["TurnDuelistTakePrizes"] = {"source_symbol": "TurnDuelistTakePrizes", "before": "\t\twTempNumRemainingPrizeCards = CountPrizes();", "after": "\t\twTempNumRemainingPrizeCards = (uint8_t)(CountPrizes() + 1u);", "case_ids": ["TurnDuelistTakePrizes-0"]}
 # <<< factory-mutation TurnDuelistTakePrizes
+# >>> factory-mutation Func_6fa5
+MUTATIONS["Func_6fa5"] = {
+    "source_symbol": "Func_6fa5",
+    "before": "\t\treturn (Func6fa5Result){knocked.f};",
+    "after": "\t\treturn (Func6fa5Result){0x10u};",
+    "case_ids": ["Func_6fa5-0"],
+}
+# <<< factory-mutation Func_6fa5

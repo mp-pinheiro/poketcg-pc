@@ -1234,4 +1234,9 @@ ChooseInitialArenaAndBenchPokemonResult ChooseInitialArenaAndBenchPokemon(void);
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } TurnDuelistTakePrizesResult;
 TurnDuelistTakePrizesResult TurnDuelistTakePrizes(void);
 /* <<< factory TurnDuelistTakePrizes */
+/* >>> factory Func_6fa5 */
+/* >>> factory Func_6fa5 */
+typedef struct { uint8_t f; } Func6fa5Result;
+Func6fa5Result Func_6fa5(void);
+/* <<< factory Func_6fa5 */
 #endif

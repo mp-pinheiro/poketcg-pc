@@ -1545,6 +1545,13 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/serial.h"
 #define DrewNPrizesText 0x0043u
 #define WillDrawNPrizesText 0x0042u
+
+#include "home/duel_core_state.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "home/serial.h"
+#include "home/duel.h"
+#define TookAllThePrizesText 0x007fu
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -8771,3 +8778,25 @@ TurnDuelistTakePrizesResult TurnDuelistTakePrizes(void)
 	return (TurnDuelistTakePrizesResult){prizes.a, f, prizes.hl};
 }
 /* <<< factory TurnDuelistTakePrizes */
+
+/* >>> factory Func_6fa5 */
+Func6fa5Result Func_6fa5(void)
+{
+	DuelCoreStateWideResult knocked = CountKnockedOutPokemon();
+	if ((knocked.f & 0x10u) == 0u)
+		return (Func6fa5Result){knocked.f};
+
+	SwapTurn();
+	TurnDuelistTakePrizesResult prizes = TurnDuelistTakePrizes();
+	SwapTurn();
+	if ((prizes.f & 0x10u) == 0u)
+		return (Func6fa5Result){prizes.f};
+
+	SwapTurn();
+	DrawDuelMainScene();
+	(void)DrawWideTextBox_WaitForInput(TookAllThePrizesText);
+	ExchangeRNGResult rng = ExchangeRNG(0u, 0u, 0u, 0u);
+	SwapTurn();
+	return (Func6fa5Result){(uint8_t)((rng.f & 0x80u) | 0x10u)};
+}
+/* <<< factory Func_6fa5 */
