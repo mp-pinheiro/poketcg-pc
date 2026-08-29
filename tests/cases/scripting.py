@@ -1969,6 +1969,45 @@ CASES["ScriptCommand_MoveArbitraryNPC"] = [
 ]
 # <<< factory ScriptCommand_MoveArbitraryNPC
 
+# >>> factory MaxStackEventValue
+CONTRACT["MaxStackEventValue"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["MaxStackEventValue"] = [
+    {"post_call_byte": 0x00, "read": {0xD3D1: 1, 0xD3D2: 64}},
+    dict(POISON, post_call_byte=0x01, read={0xD3D1: 1, 0xD3D2: 64}),
+    {"post_call_byte": 0x7F, "read": {0xD3D1: 1, 0xD3D2: 64}},
+    {"post_call_byte": 0x80, "read": {0xD3D1: 1, 0xD3D2: 64}},
+    {"post_call_byte": 0xFF, "read": {0xD3D1: 1, 0xD3D2: 64}},
+]
+# <<< factory MaxStackEventValue
+
+# >>> factory SetStackEventFalse
+CONTRACT["SetStackEventFalse"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["SetStackEventFalse"] = [
+    {"post_call_byte": 0, "wram": {0xD3D1: b"\x01", 0xD3D2: b"\xFF" * 0x40}, "read": {0xD3D1: 1, 0xD3D2: 0x40}},
+    dict(POISON, post_call_byte=1, wram={0xD3D1: b"\x01", 0xD3D2: b"\xFF" * 0x40}, read={0xD3D1: 1, 0xD3D2: 0x40}),
+    {"post_call_byte": 0x7F, "wram": {0xD3D1: b"\x01", 0xD3D2: b"\xFF" * 0x40}, "read": {0xD3D1: 1, 0xD3D2: 0x40}},
+]
+# <<< factory SetStackEventFalse
+
+# >>> factory SetStackEventValue
+CONTRACT["SetStackEventValue"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["SetStackEventValue"] = [
+    {"c": 0xff, "post_call_byte": 0x00, "wram": {0xD411: b"\x00"}, "read": {0xD411: 1}},
+    dict(POISON, c=0xff, post_call_byte=0x00, wram={0xD411: b"\x00"}, read={0xD411: 1}),
+]
+# <<< factory SetStackEventValue
+
+# >>> factory SetStackEventZero
+CONTRACT["SetStackEventZero"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["SetStackEventZero"] = [
+    {"post_call_byte": 0, "wram": {wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wLoadedEventBits: 1, wEventVars: 0x40}},
+    dict(POISON, post_call_byte=1, wram={wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, read={wLoadedEventBits: 1, wEventVars: 0x40}),
+    {"post_call_byte": 0x7F, "wram": {wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wLoadedEventBits: 1, wEventVars: 0x40}},
+    {"post_call_byte": 0x80, "wram": {wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wLoadedEventBits: 1, wEventVars: 0x40}},
+    {"post_call_byte": 0xFF, "wram": {wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wLoadedEventBits: 1, wEventVars: 0x40}},
+]
+# <<< factory SetStackEventZero
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2812,3 +2851,15 @@ MUTATIONS["ScriptCommand_MoveChallengeHallNPC"] = {"source_symbol": "ScriptComma
 # >>> factory-mutation ScriptCommand_MoveArbitraryNPC
 MUTATIONS["ScriptCommand_MoveArbitraryNPC"] = {"source_symbol": "ScriptCommand_MoveArbitraryNPC", "before": "ExecuteArbitraryNPCMovementFromStackResult ScriptCommand_MoveArbitraryNPC(uint8_t f, uint8_t c)\n{\n\tuint16_t saved_index = (uint16_t)(((uint16_t)wLoadedNPCTempIndex << 8) | f);", "after": "ExecuteArbitraryNPCMovementFromStackResult ScriptCommand_MoveArbitraryNPC(uint8_t f, uint8_t c)\n{\n\tuint16_t saved_index = 0u;", "case_ids": ["ScriptCommand_MoveArbitraryNPC-0", "ScriptCommand_MoveArbitraryNPC-1"]}
 # <<< factory-mutation ScriptCommand_MoveArbitraryNPC
+# >>> factory-mutation MaxStackEventValue
+MUTATIONS["MaxStackEventValue"] = {"source_symbol": "MaxStackEventValue", "before": "\treturn MaxOutEventValue(post_call_byte, f, b, c);", "after": "\treturn MaxOutEventValue((uint8_t)(post_call_byte + 1u), f, b, c);", "case_ids": ["MaxStackEventValue-0", "MaxStackEventValue-1", "MaxStackEventValue-2", "MaxStackEventValue-3", "MaxStackEventValue-4"]}
+# <<< factory-mutation MaxStackEventValue
+# >>> factory-mutation SetStackEventFalse
+MUTATIONS["SetStackEventFalse"] = {"source_symbol": "SetStackEventFalse", "before": "SetEventValueResult SetStackEventFalse(uint8_t f, uint8_t b, uint8_t c, uint8_t post_call_byte)\n{\n\treturn ZeroOutEventValue(post_call_byte, f, b, c);", "after": "SetEventValueResult SetStackEventFalse(uint8_t f, uint8_t b, uint8_t c, uint8_t post_call_byte)\n{\n\treturn SetEventValue(post_call_byte, f, b, 1u);", "case_ids": ["SetStackEventFalse-0", "SetStackEventFalse-1", "SetStackEventFalse-2"]}
+# <<< factory-mutation SetStackEventFalse
+# >>> factory-mutation SetStackEventValue
+MUTATIONS["SetStackEventValue"] = {"source_symbol": "SetStackEventValue", "before": "return SetEventValue(event_id, f, b, c);", "after": "return SetEventValue((uint8_t)(event_id + 1u), f, b, c);", "case_ids": ["SetStackEventValue-0", "SetStackEventValue-1"]}
+# <<< factory-mutation SetStackEventValue
+# >>> factory-mutation SetStackEventZero
+MUTATIONS["SetStackEventZero"] = {"source_symbol": "SetStackEventZero", "before": "SetEventValueResult SetStackEventZero(uint8_t event, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\treturn SetEventValue(event, f, b, 0u);", "after": "SetEventValueResult SetStackEventZero(uint8_t event, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\treturn SetEventValue((uint8_t)(event + 1u), f, b, 0u);", "case_ids": ["SetStackEventZero-0", "SetStackEventZero-1", "SetStackEventZero-2", "SetStackEventZero-3", "SetStackEventZero-4"]}
+# <<< factory-mutation SetStackEventZero

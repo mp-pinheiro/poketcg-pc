@@ -1448,6 +1448,42 @@ static void adapt_ScriptCommand_MoveArbitraryNPC(ProbeState *s)
 }
 /* <<< factory ScriptCommand_MoveArbitraryNPC */
 
+/* >>> factory MaxStackEventValue */
+static void adapt_MaxStackEventValue(ProbeState *s)
+{
+	SetEventValueResult result = MaxStackEventValue(s->post_call_byte, s->f, s->b, s->c);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory MaxStackEventValue */
+
+/* >>> factory SetStackEventFalse */
+static void adapt_SetStackEventFalse(ProbeState *s)
+{
+	SetEventValueResult result = SetStackEventFalse(s->f, s->b, s->c, s->post_call_byte);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory SetStackEventFalse */
+
+/* >>> factory SetStackEventValue */
+static void adapt_SetStackEventValue(ProbeState *s)
+{
+	SetEventValueResult result = SetStackEventValue(s->f, s->b, s->c, s->post_call_byte);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory SetStackEventValue */
+
+/* >>> factory SetStackEventZero */
+static void adapt_SetStackEventZero(ProbeState *s)
+{
+	SetEventValueResult result = SetStackEventZero(s->post_call_byte, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory SetStackEventZero */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1591,5 +1627,9 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ExecuteArbitraryNPCMovementFromStack", adapt_ExecuteArbitraryNPCMovementFromStack },
 	{ "ScriptCommand_MoveChallengeHallNPC", adapt_ScriptCommand_MoveChallengeHallNPC },
 	{ "ScriptCommand_MoveArbitraryNPC", adapt_ScriptCommand_MoveArbitraryNPC },
+	{ "MaxStackEventValue", adapt_MaxStackEventValue },
+	{ "SetStackEventFalse", adapt_SetStackEventFalse },
+	{ "SetStackEventValue", adapt_SetStackEventValue },
+	{ "SetStackEventZero", adapt_SetStackEventZero },
 	{ NULL, NULL },
 };

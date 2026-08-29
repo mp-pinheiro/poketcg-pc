@@ -1,0 +1,9 @@
+{
+  "fn": "MaxStackEventValue",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MaxStackEventValue\", \"registers\": {\"a\": 128, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54225\": \"8000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MaxStackEventValue\", \"mismatches\": {\"a\": [128, 64], \"bus\": {\"address\": 54225, \"reference\": \"8000000000\", \"native\": \"4000000000\", \"reference_size\": 65, \"native_size\": 65, \"spans\": [[54225, 65]]}}}\n",
+  "restored": "{\"fn\": \"MaxStackEventValue\", \"registers\": {\"a\": 128, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54225\": \"8000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "SetStackEventFalse",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetStackEventFalse\", \"registers\": {\"a\": 127, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54225\": \"80ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetStackEventFalse\", \"mismatches\": {\"a\": [127, 255], \"bus\": {\"address\": 54289, \"reference\": \"ffffffff7f\", \"native\": \"ffffffffff\", \"reference_size\": 65, \"native_size\": 65, \"spans\": [[54225, 65]]}}}\n",
+  "restored": "{\"fn\": \"SetStackEventFalse\", \"registers\": {\"a\": 127, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54225\": \"80ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f\"}}, \"status\": \"PASS\"}\n"
+}

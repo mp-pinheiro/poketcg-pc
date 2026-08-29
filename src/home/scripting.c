@@ -2439,3 +2439,31 @@ ExecuteArbitraryNPCMovementFromStackResult ScriptCommand_MoveArbitraryNPC(uint8_
 	return ExecuteArbitraryNPCMovementFromStack(c, bc, saved_index, saved_temp);
 }
 /* <<< factory ScriptCommand_MoveArbitraryNPC */
+
+/* >>> factory MaxStackEventValue */
+SetEventValueResult MaxStackEventValue(uint8_t post_call_byte, uint8_t f, uint8_t b, uint8_t c)
+{
+	return MaxOutEventValue(post_call_byte, f, b, c);
+}
+/* <<< factory MaxStackEventValue */
+
+/* >>> factory SetStackEventFalse */
+SetEventValueResult SetStackEventFalse(uint8_t f, uint8_t b, uint8_t c, uint8_t post_call_byte)
+{
+	return ZeroOutEventValue(post_call_byte, f, b, c);
+}
+/* <<< factory SetStackEventFalse */
+
+/* >>> factory SetStackEventValue */
+SetEventValueResult SetStackEventValue(uint8_t f, uint8_t b, uint8_t c, uint8_t event_id)
+{
+	return SetEventValue(event_id, f, b, c);
+}
+/* <<< factory SetStackEventValue */
+
+/* >>> factory SetStackEventZero */
+SetEventValueResult SetStackEventZero(uint8_t event, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	return SetEventValue(event, f, b, 0u);
+}
+/* <<< factory SetStackEventZero */
