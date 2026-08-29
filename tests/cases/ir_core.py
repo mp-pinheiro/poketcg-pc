@@ -180,6 +180,14 @@ CASES["TransmitRegistersThroughIR"] = [
 ]
 # <<< factory TransmitRegistersThroughIR
 
+# >>> factory RequestCloseIRCommunication
+CONTRACT["RequestCloseIRCommunication"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["RequestCloseIRCommunication"] = [
+    {"oracle": False, "evidence": "primary", "why": "Infrared peer hardware is unavailable to the reference runner; the deterministic native IR error path is checked together with the close-command buffer write.", "keys": 0x80, "ir_peer": True, "setup": [{"fn": "CopyDMAFunction"}], "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xCE85: b"\x00\x00\x00\x00\x00\x00\x00\x00"}, "read": {0xCE85: 8}, "expect": {0xCE85: b"\x00\x00\x00\x00\x00\x00\x00\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="Infrared peer hardware is unavailable to the reference runner; the deterministic native IR error path is checked together with the close-command buffer write.", keys=0x80, ir_peer=True, setup=[{"fn": "CopyDMAFunction"}], wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xCE85: b"\xF0\xAA\x34\x12\xEE\xDD\xCC\xBB"}, read={0xCE85: 8}, expect={0xCE85: b"\xF0\x00\x34\x12\xEE\xDD\xCC\xBB"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory RequestCloseIRCommunication
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -290,3 +298,11 @@ MUTATIONS["TransmitRegistersThroughIR"] = {
     "case_ids": ["TransmitRegistersThroughIR-0", "TransmitRegistersThroughIR-1"],
 }
 # <<< factory-mutation TransmitRegistersThroughIR
+# >>> factory-mutation RequestCloseIRCommunication
+MUTATIONS["RequestCloseIRCommunication"] = {
+    "source_symbol": "RequestCloseIRCommunication",
+    "before": "RequestCloseIRCommunicationResult RequestCloseIRCommunication(void)\n{\n\tStartIRCommunications();\n\tgb_write8(wIRDataBuffer_ADDR + 1u, IRCMD_CLOSE);",
+    "after": "RequestCloseIRCommunicationResult RequestCloseIRCommunication(void)\n{\n\tStartIRCommunications();\n\tgb_write8(wIRDataBuffer_ADDR + 1u, 0x01u);",
+    "case_ids": ["RequestCloseIRCommunication-0", "RequestCloseIRCommunication-1"]
+}
+# <<< factory-mutation RequestCloseIRCommunication

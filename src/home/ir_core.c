@@ -32,6 +32,11 @@
 #define RSTAT_ADDR 0xFF41u
 #define STAT_MODE 0x03u
 #define STAT_VBLANK 0x01u
+
+#include "home/ir_core.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define IRCMD_CLOSE 0x00u
 /* <<< factory statics */
 
 /* >>> factory StoreRegistersInIRDataBuffer */
@@ -376,3 +381,14 @@ TransmitRegistersThroughIRResult TransmitRegistersThroughIR(uint8_t a, uint8_t f
 	return (TransmitRegistersThroughIRResult){tx.a, tx.f};
 }
 /* <<< factory TransmitRegistersThroughIR */
+
+/* >>> factory RequestCloseIRCommunication */
+RequestCloseIRCommunicationResult RequestCloseIRCommunication(void)
+{
+	StartIRCommunications();
+	gb_write8(wIRDataBuffer_ADDR + 1u, IRCMD_CLOSE);
+	TransmitIRDataBufferResult tx = TransmitIRDataBuffer();
+	SafelyCloseIRCommunications();
+	return (RequestCloseIRCommunicationResult){tx.a, tx.f};
+}
+/* <<< factory RequestCloseIRCommunication */
