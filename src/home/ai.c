@@ -4,6 +4,22 @@
 #include "home/duel.h"
 #include "home/load_deck.h"
 #include "mem.h"
+/* >>> factory statics */
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/overworld.h"
+#include "home/retreat.h"
+#include "home/sams_practice.h"
+#include "mem.h"
+
+#define BANK_DECK_AI_POINTER_TABLE 5u
+#define DECK_AI_POINTER_TABLE_ADDR 0x4000u
+#define AI_ACTION_TABLE_SAM_PRACTICE_ADDR 0x47BDu
+#define AI_ACTION_TABLE_SAM_FORCED_SWITCH_ADDR 0x47DAu
+#define AI_ACTION_TABLE_SAM_KO_SWITCH_ADDR 0x47E7u
+/* <<< factory statics */
 
 #define SAMS_PRACTICE_DECK_ID 0u
 #define SAMS_NORMAL_DECK_ID 2u
@@ -50,3 +66,58 @@ DeckLoadResult LoadOpponentDeck(void)
 	gb_write8(dv.hl, v);
 	return (DeckLoadResult){v, dv.hl};
 }
+
+/* >>> factory AIDoAction */
+uint8_t AIDoAction(uint8_t a)
+{
+	uint8_t action = a;
+	uint8_t saved_bank = hBankROM;
+
+	BankswitchROM(BANK_DECK_AI_POINTER_TABLE);
+	const uint8_t *deck_entry = rom_ptr(
+		BANK_DECK_AI_POINTER_TABLE,
+		(uint16_t)(DECK_AI_POINTER_TABLE_ADDR +
+			(uint16_t)wOpponentDeckID * 2u));
+	uint16_t action_table = (uint16_t)(deck_entry[0] |
+		((uint16_t)deck_entry[1] << 8));
+
+	if (action == 0u) {
+		const uint8_t *deck_data = rom_ptr(BANK_DECK_AI_POINTER_TABLE, action_table);
+		uint16_t deck_pointer = (uint16_t)(deck_data[0] |
+			((uint16_t)deck_data[1] << 8));
+		CardListResult copied = CopyDeckData(deck_pointer);
+		action = copied.a;
+	} else {
+		const uint8_t *target_entry = rom_ptr(
+			BANK_DECK_AI_POINTER_TABLE,
+			(uint16_t)(action_table + (uint16_t)action * 2u));
+		uint16_t target = (uint16_t)(target_entry[0] |
+			((uint16_t)target_entry[1] << 8));
+
+		if (action == 3u || action == 4u) {
+			if (target == AI_ACTION_TABLE_SAM_FORCED_SWITCH_ADDR ||
+				target == AI_ACTION_TABLE_SAM_KO_SWITCH_ADDR) {
+				SamsPracticeResult scripted = IsAIPracticeScriptedTurn(
+					0u, 0u, 0u, 0u, 0u, 0u, 0u);
+				if ((scripted.f & 0x10u) != 0u) {
+					AIDecideBenchPokemonToSwitchToResult bench =
+						AIDecideBenchPokemonToSwitchTo();
+					action = bench.a;
+				} else if (action == 3u) {
+					action = PickRandomBenchPokemon();
+				} else {
+					GetPlayAreaLocationOfRaticateOrRattata();
+					action = hTempPlayAreaLocation_ff9d;
+				}
+			} else {
+				AIDecideBenchPokemonToSwitchToResult bench =
+					AIDecideBenchPokemonToSwitchTo();
+				action = bench.a;
+			}
+		}
+	}
+
+	BankswitchROM(saved_bank);
+	return action;
+}
+/* <<< factory AIDoAction */

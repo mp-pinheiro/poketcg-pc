@@ -66,6 +66,30 @@ CASES = {
          "expect_regs": {"a": 0x81}},
     ],
 }
+# >>> factory-cases-statics
+wOpponentDeckID = 0xCC0E
+hWhoseTurn = 0xFF97
+hTempPlayAreaLocation_ff9d = 0xFF9D
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+# <<< factory-cases-statics
+
+# >>> factory AIDoAction
+CONTRACT["AIDoAction"] = {"compare": ("a",), "preserve": ()}
+CASES["AIDoAction"] = [
+    {"a": 0x03,
+     "wram": {wOpponentDeckID: b"\x01", hWhoseTurn: b"\xC2"},
+     "read": {hTempPlayAreaLocation_ff9d: 1}},
+    {"a": 0x04,
+     "wram": {wOpponentDeckID: b"\x01", hWhoseTurn: b"\xC2"},
+     "read": {hTempPlayAreaLocation_ff9d: 1}},
+    dict(POISON, a=0x03,
+         wram={wOpponentDeckID: b"\x01", hWhoseTurn: b"\xC2"},
+         read={hTempPlayAreaLocation_ff9d: 1}),
+]
+# <<< factory AIDoAction
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -77,3 +101,6 @@ MUTATIONS = {
         "case_ids": ["LoadOpponentDeck-1", "LoadOpponentDeck-4"],
     },
 }
+# >>> factory-mutation AIDoAction
+MUTATIONS["AIDoAction"] = {"source_symbol": "AIDoAction", "before": "\t\tif (action == 3u || action == 4u) {", "after": "\t\tif (action == 4u) {", "case_ids": ["AIDoAction-0"]}
+# <<< factory-mutation AIDoAction

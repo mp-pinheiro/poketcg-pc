@@ -8,4 +8,7 @@
 typedef struct { uint8_t a; uint16_t hl; } DeckLoadResult;
 DeckLoadResult LoadOpponentDeck(void);
 
+/* >>> factory AIDoAction */
+uint8_t AIDoAction(uint8_t a);
+/* <<< factory AIDoAction */
 #endif /* POKETCG_HOME_AI_H */
