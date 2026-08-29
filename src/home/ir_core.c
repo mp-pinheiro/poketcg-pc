@@ -363,3 +363,16 @@ TrySendIRRequestResult TrySendIRRequest(void)
 	return (TrySendIRRequestResult){result_a, result_f};
 }
 /* <<< factory TrySendIRRequest */
+
+/* >>> factory TransmitRegistersThroughIR */
+TransmitRegistersThroughIRResult TransmitRegistersThroughIR(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	TransmitIRDataBufferResult tx;
+	StoreRegistersInIRDataBuffer(a, f, b, c, d, e, &hl);
+	StartIRCommunications();
+	tx = TransmitIRDataBuffer();
+	if ((tx.f & 0x10u) != 0)
+		SafelyCloseIRCommunications();
+	return (TransmitRegistersThroughIRResult){tx.a, tx.f};
+}
+/* <<< factory TransmitRegistersThroughIR */

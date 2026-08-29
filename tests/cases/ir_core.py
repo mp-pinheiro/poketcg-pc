@@ -168,6 +168,18 @@ CASES["TrySendIRRequest"] = [
 ]
 # <<< factory TrySendIRRequest
 
+# >>> factory-cases-statics
+wIRDataBuffer = 0xCE85
+# <<< factory-cases-statics
+
+# >>> factory TransmitRegistersThroughIR
+CONTRACT["TransmitRegistersThroughIR"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["TransmitRegistersThroughIR"] = [
+    {"oracle": False, "evidence": "primary", "why": "Infrared RP input is an external hardware peer unavailable to the reference runner; native hardware semantics are verified through the deterministic IR error path while the transmitted buffer is asserted.", "keys": 0x80, "ir_peer": True, "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {0xCE85: 8}, "expect": {0xCE85: b"\x00\x00\x00\x00\x00\x00\x00\x00"}},
+    dict(POISON, oracle=False, evidence="primary", why="Infrared RP input is an external hardware peer unavailable to the reference runner; native hardware semantics are verified through the deterministic IR error path while the transmitted buffer is asserted.", keys=0x80, ir_peer=True, wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}], instruction_budget=20000000, cycle_budget=80000000, read={0xCE85: 8}, expect={0xCE85: b"\xF0\xAA\x34\x12\xEE\xDD\xCC\xBB"}),
+]
+# <<< factory TransmitRegistersThroughIR
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -270,3 +282,11 @@ MUTATIONS["TrySendIRRequest"] = {
     "case_ids": ["TrySendIRRequest-0", "TrySendIRRequest-1"],
 }
 # <<< factory-mutation TrySendIRRequest
+# >>> factory-mutation TransmitRegistersThroughIR
+MUTATIONS["TransmitRegistersThroughIR"] = {
+    "source_symbol": "TransmitRegistersThroughIR",
+    "before": "TransmitRegistersThroughIRResult TransmitRegistersThroughIR(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tTransmitIRDataBufferResult tx;\n\tStoreRegistersInIRDataBuffer(a, f, b, c, d, e, &hl);",
+    "after": "TransmitRegistersThroughIRResult TransmitRegistersThroughIR(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tTransmitIRDataBufferResult tx;\n\tStoreRegistersInIRDataBuffer(a, f, b, c, d, (uint8_t)(e + 1u), &hl);",
+    "case_ids": ["TransmitRegistersThroughIR-0", "TransmitRegistersThroughIR-1"],
+}
+# <<< factory-mutation TransmitRegistersThroughIR
