@@ -239,6 +239,21 @@ CASES["IntroSequenceCmd_LoadScytherScene"] = [
 ]
 # <<< factory IntroSequenceCmd_LoadScytherScene
 
+# >>> factory ExecuteIntroSequenceCmd
+CONTRACT["ExecuteIntroSequenceCmd"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["ExecuteIntroSequenceCmd"] = [
+    {"a": 0x11, "f": 0x22, "b": 0x33, "c": 0x44, "d": 0x55, "e": 0x66, "hl": 0x7788,
+     "wram": {0xD633: b"\x01"}, "expect": {0xD633: b"\x00"},
+     "expect_regs": {"a": 0x00, "f": 0xD0, "b": 0x33, "c": 0x44, "d": 0x55, "e": 0x66, "hl": 0x7788}},
+    {"a": 0x11, "f": 0x22, "b": 0x33, "c": 0x44, "d": 0x55, "e": 0x66, "hl": 0x7788,
+     "wram": {0xD633: b"\xff"}, "expect": {0xD633: b"\xff"},
+     "expect_regs": {"a": 0xFF, "f": 0xC0, "b": 0x33, "c": 0x44, "d": 0x55, "e": 0x66, "hl": 0x7788}},
+    dict(POISON, wram={0xD631: b"\x00\xc5", 0xD633: b"\x00", 0xC500: b"\x60\x54\x01\x00"},
+         expect={0xD631: b"\x03\xc5", 0xD633: b"\x00"},
+         expect_regs={"a": 0x00, "f": 0xD0, "b": 0x00, "c": 0x01, "d": 0x54, "e": 0x60, "hl": 0x5460}),
+]
+# <<< factory ExecuteIntroSequenceCmd
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -346,3 +361,6 @@ MUTATIONS["IntroSequenceCmd_LoadScytherScene"] = {
     "case_ids": ["IntroSequenceCmd_LoadScytherScene-0", "IntroSequenceCmd_LoadScytherScene-1"],
 }
 # <<< factory-mutation IntroSequenceCmd_LoadScytherScene
+# >>> factory-mutation ExecuteIntroSequenceCmd
+MUTATIONS["ExecuteIntroSequenceCmd"] = {"source_symbol": "ExecuteIntroSequenceCmd", "before": "\t\t\tuint8_t next_delay = (uint8_t)(delay - 1u);\n\t\t\twSequenceDelay = next_delay;", "after": "\t\t\tuint8_t next_delay = (uint8_t)(delay - 2u);\n\t\t\twSequenceDelay = next_delay;", "case_ids": ["ExecuteIntroSequenceCmd-0", "ExecuteIntroSequenceCmd-2"]}
+# <<< factory-mutation ExecuteIntroSequenceCmd

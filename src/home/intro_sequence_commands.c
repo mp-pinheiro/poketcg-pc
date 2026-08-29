@@ -88,6 +88,25 @@ static void UpdateSpriteAttributes(void)
 
 #include "home/intro_sequence_commands.h"
 #define SCENE_SCYTHER_INTRO 0x06u
+
+#include "home/intro_sequence_commands.h"
+#include "generated/wram.h"
+#define INTRO_SEQUENCE_CMD_WAIT_ORBS_ANIMATION 0x5444u
+#define INTRO_SEQUENCE_CMD_WAIT 0x5460u
+#define INTRO_SEQUENCE_CMD_SET_ORBS_ANIMATIONS 0x5469u
+#define INTRO_SEQUENCE_CMD_SET_ORBS_COORDINATES 0x5486u
+#define INTRO_SEQUENCE_CMD_PLAY_TITLE_SCREEN_MUSIC 0x5519u
+#define INTRO_SEQUENCE_CMD_WAIT_SFX 0x5523u
+#define INTRO_SEQUENCE_CMD_PLAY_SFX 0x5530u
+#define INTRO_SEQUENCE_CMD_FADE_IN 0x5539u
+#define INTRO_SEQUENCE_CMD_FADE_OUT 0x5543u
+#define INTRO_SEQUENCE_CMD_LOAD_CHARIZARD_SCENE 0x5551u
+#define INTRO_SEQUENCE_CMD_LOAD_SCYTHER_SCENE 0x5558u
+#define INTRO_SEQUENCE_CMD_LOAD_AERODACTYL_SCENE 0x555fu
+#define INTRO_SEQUENCE_CMD_LOAD_TITLE_SCREEN_SCENE 0x5575u
+#define INTRO_SEQUENCE_LOAD_OPENING_SCENE_AND_UPDATE_SGB_BORDER 0x5564u
+#define INTRO_SEQUENCE_LOAD_OPENING_SCENE 0x5582u
+#define INTRO_SEQUENCE_EMPTY_FUNC 0x559cu
 /* <<< factory statics */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
@@ -366,3 +385,185 @@ LoadOpeningSceneAndUpdateSGBBorderResult IntroSequenceCmd_LoadScytherScene(void)
 	return LoadOpeningSceneAndUpdateSGBBorder(SCENE_SCYTHER_INTRO, 6u, 3u);
 }
 /* <<< factory IntroSequenceCmd_LoadScytherScene */
+
+/* >>> factory ExecuteIntroSequenceCmd */
+ExecuteIntroSequenceCmdResult ExecuteIntroSequenceCmd(void)
+{
+	uint8_t delay = wSequenceDelay;
+	ExecuteIntroSequenceCmdResult result = {0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u};
+
+	for (;;) {
+		if (delay != 0u) {
+			if (delay == 0xffu) {
+				result.a = delay;
+				result.f = 0xc0u;
+				result.mask |= 0x03u;
+				return result;
+			}
+			uint8_t next_delay = (uint8_t)(delay - 1u);
+			wSequenceDelay = next_delay;
+			result.a = next_delay;
+			result.f = (uint8_t)(0x40u | (next_delay == 0u ? 0x80u : 0u) |
+				((delay & 0x0fu) == 0u ? 0x20u : 0u) | 0x10u);
+			result.mask |= 0x03u;
+			return result;
+		}
+
+		uint16_t command_ptr = (uint16_t)(wSequenceCmdPtr |
+			((uint16_t)gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u)) << 8));
+		uint8_t target_low = gb_read8(command_ptr);
+		uint8_t target_high = gb_read8((uint16_t)(command_ptr + 1u));
+		uint8_t c = gb_read8((uint16_t)(command_ptr + 2u));
+		uint8_t b = gb_read8((uint16_t)(command_ptr + 3u));
+		uint16_t target = (uint16_t)(target_low | ((uint16_t)target_high << 8));
+
+		result.a = b;
+		result.f = 0x80u;
+		result.b = b;
+		result.c = c;
+		result.d = target_high;
+		result.e = target_low;
+		result.hl = target;
+		result.mask = 0x7fu;
+		result.carry = 0u;
+
+		switch (target) {
+		case INTRO_SEQUENCE_CMD_WAIT_ORBS_ANIMATION: {
+			IntroSequenceCmdWaitOrbsAnimationResult r = IntroSequenceCmd_WaitOrbsAnimation();
+			result.a = r.a;
+			result.f = r.f;
+			result.mask = 0x03u;
+			result.carry = (uint8_t)((r.f & 0x10u) != 0u);
+			break;
+		}
+		case INTRO_SEQUENCE_CMD_WAIT: {
+			IntroSequenceCmdWaitResult r = IntroSequenceCmd_Wait(c);
+			result.a = r.a;
+			result.f = r.f;
+			result.carry = (uint8_t)((r.f & 0x10u) != 0u);
+			break;
+		}
+		case INTRO_SEQUENCE_CMD_SET_ORBS_ANIMATIONS: {
+			IntroSequenceCmdSetOrbsAnimationsResult r = IntroSequenceCmd_SetOrbsAnimations(b, c);
+			result.a = r.a;
+			result.f = r.f;
+			result.b = r.b;
+			result.c = r.c;
+			result.d = r.d;
+			result.e = r.e;
+			result.hl = r.hl;
+			result.carry = (uint8_t)((r.f & 0x10u) != 0u);
+			break;
+		}
+		case INTRO_SEQUENCE_CMD_SET_ORBS_COORDINATES: {
+			IntroSequenceCmdSetOrbsCoordinatesResult r = IntroSequenceCmd_SetOrbsCoordinates(b, c);
+			result.a = r.a;
+			result.f = r.f;
+			result.b = r.b;
+			result.c = r.c;
+			result.d = r.d;
+			result.e = r.e;
+			result.hl = r.hl;
+			result.carry = (uint8_t)((r.f & 0x10u) != 0u);
+			break;
+		}
+		case INTRO_SEQUENCE_CMD_PLAY_TITLE_SCREEN_MUSIC: {
+			IntroSequenceCmd_PlayTitleScreenMusicResult r = IntroSequenceCmd_PlayTitleScreenMusic();
+			result.a = r.a;
+			result.f = r.f;
+			result.carry = (uint8_t)((r.f & 0x10u) != 0u);
+			break;
+		}
+		case INTRO_SEQUENCE_CMD_WAIT_SFX: {
+			IntroSequenceCmdWaitSFXResult r = IntroSequenceCmd_WaitSFX();
+			result.a = r.a;
+			result.f = r.f;
+			result.carry = (uint8_t)((r.f & 0x10u) != 0u);
+			break;
+		}
+		case INTRO_SEQUENCE_CMD_PLAY_SFX: {
+			IntroSequenceCmdPlaySFXResult r = IntroSequenceCmd_PlaySFX(c);
+			result.a = r.a;
+			result.f = r.f;
+			result.carry = (uint8_t)((r.f & 0x10u) != 0u);
+			break;
+		}
+		case INTRO_SEQUENCE_CMD_FADE_IN: {
+			IntroSequenceCmd_FadeInResult r = IntroSequenceCmd_FadeIn();
+			result.a = r.a;
+			result.f = r.f;
+			result.carry = (uint8_t)((r.f & 0x10u) != 0u);
+			break;
+		}
+		case INTRO_SEQUENCE_CMD_FADE_OUT: {
+			IntroSequenceCmd_FadeOutResult r = IntroSequenceCmd_FadeOut();
+			result.a = r.a;
+			result.f = r.f;
+			result.mask = 0x03u;
+			result.carry = (uint8_t)((r.f & 0x10u) != 0u);
+			break;
+		}
+		case INTRO_SEQUENCE_CMD_LOAD_CHARIZARD_SCENE: {
+			LoadOpeningSceneAndUpdateSGBBorderResult r = IntroSequenceCmd_LoadCharizardScene();
+			result.b = r.b;
+			result.c = r.c;
+			result.d = r.d;
+			result.e = r.e;
+			result.mask = 0x3cu;
+			result.carry = 1u;
+			break;
+		}
+		case INTRO_SEQUENCE_CMD_LOAD_SCYTHER_SCENE: {
+			LoadOpeningSceneAndUpdateSGBBorderResult r = IntroSequenceCmd_LoadScytherScene();
+			result.b = r.b;
+			result.c = r.c;
+			result.d = r.d;
+			result.e = r.e;
+			result.mask = 0x3cu;
+			result.carry = 1u;
+			break;
+		}
+		case INTRO_SEQUENCE_CMD_LOAD_AERODACTYL_SCENE: {
+			LoadOpeningSceneAndUpdateSGBBorderResult r = IntroSequenceCmd_LoadAerodactylScene();
+			result.b = r.b;
+			result.c = r.c;
+			result.d = r.d;
+			result.e = r.e;
+			result.mask = 0x3cu;
+			result.carry = 1u;
+			break;
+		}
+		case INTRO_SEQUENCE_CMD_LOAD_TITLE_SCREEN_SCENE: {
+			IntroSequenceCmdLoadTitleScreenSceneResult r = IntroSequenceCmd_LoadTitleScreenScene();
+			result.f = r.f;
+			result.mask = 0x02u;
+			result.carry = (uint8_t)((r.f & 0x10u) != 0u);
+			break;
+		}
+		case INTRO_SEQUENCE_LOAD_OPENING_SCENE_AND_UPDATE_SGB_BORDER: {
+			LoadOpeningSceneAndUpdateSGBBorderResult r = LoadOpeningSceneAndUpdateSGBBorder(result.a, result.b, result.c);
+			result.b = r.b;
+			result.c = r.c;
+			result.d = r.d;
+			result.e = r.e;
+			result.mask = 0x3cu;
+			result.carry = 1u;
+			break;
+		}
+		case INTRO_SEQUENCE_LOAD_OPENING_SCENE:
+			LoadOpeningScene(result.a, result.b, result.c);
+			result.mask = 0u;
+			break;
+		case INTRO_SEQUENCE_EMPTY_FUNC:
+			IntroSequenceEmptyFunc();
+			break;
+		default:
+			return result;
+		}
+
+		if (result.carry == 0u)
+			return result;
+		delay = wSequenceDelay;
+	}
+}
+/* <<< factory ExecuteIntroSequenceCmd */

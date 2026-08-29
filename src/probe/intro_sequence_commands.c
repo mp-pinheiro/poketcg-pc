@@ -198,6 +198,27 @@ static void adapt_IntroSequenceCmd_LoadScytherScene(ProbeState *s)
 }
 /* <<< factory IntroSequenceCmd_LoadScytherScene */
 
+/* >>> factory ExecuteIntroSequenceCmd */
+static void adapt_ExecuteIntroSequenceCmd(ProbeState *s)
+{
+	ExecuteIntroSequenceCmdResult result = ExecuteIntroSequenceCmd();
+	if ((result.mask & 0x01u) != 0u)
+		s->a = result.a;
+	if ((result.mask & 0x02u) != 0u)
+		s->f = result.f;
+	if ((result.mask & 0x04u) != 0u)
+		s->b = result.b;
+	if ((result.mask & 0x08u) != 0u)
+		s->c = result.c;
+	if ((result.mask & 0x10u) != 0u)
+		s->d = result.d;
+	if ((result.mask & 0x20u) != 0u)
+		s->e = result.e;
+	if ((result.mask & 0x40u) != 0u)
+		s->hl = result.hl;
+}
+/* <<< factory ExecuteIntroSequenceCmd */
+
 const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "AnimateRandomTitleScreenOrb", adapt_AnimateRandomTitleScreenOrb },
 	{ "AdvanceIntroSequenceCmdPtr", adapt_AdvanceIntroSequenceCmdPtr },
@@ -220,5 +241,6 @@ const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "IntroSequenceCmd_LoadTitleScreenScene", adapt_IntroSequenceCmd_LoadTitleScreenScene },
 	{ "IntroSequenceCmd_LoadScytherScene", adapt_IntroSequenceCmd_LoadScytherScene },
 	{ "IntroSequenceCmd_LoadAerodactylScene", adapt_IntroSequenceCmd_LoadAerodactylScene },
+	{ "ExecuteIntroSequenceCmd", adapt_ExecuteIntroSequenceCmd },
 	{ NULL, NULL },
 };
