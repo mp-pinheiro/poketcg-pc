@@ -14,4 +14,7 @@ uint8_t AIDoAction(uint8_t a);
 /* >>> factory AIDoAction_ForcedSwitch */
 uint8_t AIDoAction_ForcedSwitch(void);
 /* <<< factory AIDoAction_ForcedSwitch */
+/* >>> factory AIDoAction_KOSwitch */
+uint8_t AIDoAction_KOSwitch(void);
+/* <<< factory AIDoAction_KOSwitch */
 #endif /* POKETCG_HOME_AI_H */

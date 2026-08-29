@@ -19,6 +19,8 @@
 #define AI_ACTION_TABLE_SAM_PRACTICE_ADDR 0x47BDu
 #define AI_ACTION_TABLE_SAM_FORCED_SWITCH_ADDR 0x47DAu
 #define AI_ACTION_TABLE_SAM_KO_SWITCH_ADDR 0x47E7u
+
+#define AIACTION_KO_SWITCH 0x04u
 /* <<< factory statics */
 
 #define SAMS_PRACTICE_DECK_ID 0u
@@ -130,3 +132,12 @@ uint8_t AIDoAction_ForcedSwitch(void)
 	return result;
 }
 /* <<< factory AIDoAction_ForcedSwitch */
+
+/* >>> factory AIDoAction_KOSwitch */
+uint8_t AIDoAction_KOSwitch(void)
+{
+	uint8_t result = AIDoAction(AIACTION_KO_SWITCH);
+	hTemp_ffa0 = result;
+	return result;
+}
+/* <<< factory AIDoAction_KOSwitch */

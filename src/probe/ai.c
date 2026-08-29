@@ -22,9 +22,17 @@ static void adapt_AIDoAction_ForcedSwitch(ProbeState *s)
 }
 /* <<< factory AIDoAction_ForcedSwitch */
 
+/* >>> factory AIDoAction_KOSwitch */
+static void adapt_AIDoAction_KOSwitch(ProbeState *s)
+{
+	s->a = AIDoAction_KOSwitch();
+}
+/* <<< factory AIDoAction_KOSwitch */
+
 const ProbeEntry probe_entries_ai[] = {
 	{ "LoadOpponentDeck", adapt_LoadOpponentDeck },
 	{ "AIDoAction", adapt_AIDoAction },
 	{ "AIDoAction_ForcedSwitch", adapt_AIDoAction_ForcedSwitch },
+	{ "AIDoAction_KOSwitch", adapt_AIDoAction_KOSwitch },
 	{ NULL, NULL },
 };

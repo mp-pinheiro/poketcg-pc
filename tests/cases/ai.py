@@ -73,6 +73,8 @@ hTempPlayAreaLocation_ff9d = 0xFF9D
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+hTemp_ffa0 = 0xFFA0
 # <<< factory-cases-statics
 
 # >>> factory AIDoAction
@@ -101,6 +103,17 @@ CASES["AIDoAction_ForcedSwitch"] = [
 ]
 # <<< factory AIDoAction_ForcedSwitch
 
+# >>> factory AIDoAction_KOSwitch
+CONTRACT["AIDoAction_KOSwitch"] = {"compare": ("a",), "preserve": ()}
+CASES["AIDoAction_KOSwitch"] = [
+    {"wram": {wOpponentDeckID: b"\x01", hWhoseTurn: b"\xC2"},
+     "read": {hTemp_ffa0: 1}},
+    dict(POISON,
+         wram={wOpponentDeckID: b"\x01", hWhoseTurn: b"\xC2"},
+         read={hTemp_ffa0: 1}),
+]
+# <<< factory AIDoAction_KOSwitch
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -118,3 +131,6 @@ MUTATIONS["AIDoAction"] = {"source_symbol": "AIDoAction", "before": "\t\tif (act
 # >>> factory-mutation AIDoAction_ForcedSwitch
 MUTATIONS["AIDoAction_ForcedSwitch"] = {"source_symbol": "AIDoAction_ForcedSwitch", "before": "uint8_t AIDoAction_ForcedSwitch(void)\n{\n\tuint8_t result = AIDoAction(0x03u);\n\thTempPlayAreaLocation_ff9d = result;", "after": "uint8_t AIDoAction_ForcedSwitch(void)\n{\n\tuint8_t result = AIDoAction(0x03u);\n\thTempPlayAreaLocation_ff9d = (uint8_t)(result ^ 0xFFu);", "case_ids": ["AIDoAction_ForcedSwitch-0"]}
 # <<< factory-mutation AIDoAction_ForcedSwitch
+# >>> factory-mutation AIDoAction_KOSwitch
+MUTATIONS["AIDoAction_KOSwitch"] = {"source_symbol": "AIDoAction_KOSwitch", "before": "uint8_t AIDoAction_KOSwitch(void)\n{\n\tuint8_t result = AIDoAction(AIACTION_KO_SWITCH);\n\thTemp_ffa0 = result;", "after": "uint8_t AIDoAction_KOSwitch(void)\n{\n\tuint8_t result = AIDoAction(AIACTION_KO_SWITCH);\n\thTemp_ffa0 = (uint8_t)(result ^ 0xFFu);", "case_ids": ["AIDoAction_KOSwitch-0"]}
+# <<< factory-mutation AIDoAction_KOSwitch
