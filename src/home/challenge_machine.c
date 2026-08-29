@@ -510,6 +510,24 @@ ChallengeMachine_PrintOpponentClubStatusResult ChallengeMachine_PrintOpponentClu
 }
 /* <<< factory ChallengeMachine_PrintOpponentClubStatus */
 
+/* >>> factory ChallengeMachine_PrintOpponentInfo */
+void ChallengeMachine_PrintOpponentInfo(uint8_t f, uint8_t d, uint8_t e)
+{
+	uint16_t hl = sChallengeMachineOpponents_ADDR;
+	uint8_t c = 2u;
+	for (uint8_t i = 0u; i < NUM_CHALLENGE_MACHINE_OPPONENTS; i++) {
+		EnableSRAM();
+		wChallengeMachineOpponent = gb_read8(hl);
+		DisableSRAM();
+		(void)ChallengeMachine_PrintOpponentName(f, 14u, c, d, e, hl);
+		(void)ChallengeMachine_PrintOpponentClubStatus(f, 4u, c, d, e, hl);
+		hl++;
+		c = (uint8_t)(c + 2u);
+		e = (uint8_t)(e - 1u);
+	}
+}
+/* <<< factory ChallengeMachine_PrintOpponentInfo */
+
 /* >>> factory ChallengeMachine_PrepareDuel */
 void ChallengeMachine_PrepareDuel(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {

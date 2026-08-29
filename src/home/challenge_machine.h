@@ -83,6 +83,10 @@ ChallengeMachinePrintResult ChallengeMachine_PrintOpponentName(uint8_t f, uint8_
 typedef struct { uint16_t hl; uint8_t b; uint8_t c; } ChallengeMachine_PrintOpponentClubStatusResult;
 ChallengeMachine_PrintOpponentClubStatusResult ChallengeMachine_PrintOpponentClubStatus(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory ChallengeMachine_PrintOpponentClubStatus */
+/* >>> factory ChallengeMachine_PrintOpponentInfo */
+void ChallengeMachine_PrintOpponentInfo(uint8_t f, uint8_t d, uint8_t e);
+/* <<< factory ChallengeMachine_PrintOpponentInfo */
+
 /* >>> factory ChallengeMachine_PrepareDuel */
 void ChallengeMachine_PrepareDuel(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory ChallengeMachine_PrepareDuel */
