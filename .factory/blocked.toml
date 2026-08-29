@@ -281,3 +281,18 @@ unblock = "Trace the first credits scene/animation callee that enables LCD and e
 name = "HandleDuelSetup"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-4 pre-ret candidate preserves the full setup body but its native probe loops forever while the reference reaches the animation wait; no bounded isolated completion exists for the current full-call contract."
 unblock = "Trace and decompose the first shuffle/draw animation callee to a separately verifiable prefix before retrying HandleDuelSetup; do not repeat unchanged full-call attempts."
+
+[[blocked]]
+name = "TryReceiveIRRequest"
+reason = "HAND-DIAGNOSED 2026-08-29: generation-0 and bounded retry cases never receive an external IR request in the reference runner; the real ROM remains in its ReceiveByteThroughIRRequest polling loop through the full 80,000,000-cycle budget, including JOYP key fixtures. Native-only RP/JOYP evidence cannot establish an oracle return contract."
+unblock = "Add a deterministic external-IR device model or a verified reference-side request injection for ReceiveByteThroughIRRequest, then retry TryReceiveIRRequest."
+
+[[blocked]]
+name = "RequestCloseIRCommunication"
+reason = "HAND-DIAGNOSED 2026-08-29: generation-0 case remains in the reference IR transmit/poll path through the full 80,000,000-cycle budget despite CopyDMAFunction, LCD, and JOYP fixtures. The isolated oracle has no external IR peer to acknowledge or close the request."
+unblock = "Add a deterministic external-IR peer model or verified reference-side transmit acknowledgement, then retry RequestCloseIRCommunication."
+
+[[blocked]]
+name = "ExecuteReceivedIRCommands"
+reason = "HAND-DIAGNOSED 2026-08-29: generation-0 candidate remains in the reference ReceiveIRDataBuffer polling loop through the full 80,000,000-cycle budget; seeded IR buffer, RP, and JOYP bytes do not provide an external received frame. Native-only evidence cannot verify this hardware-dependent dispatch loop."
+unblock = "Add a deterministic external-IR frame injection/device model to the reference harness, then retry ExecuteReceivedIRCommands."
