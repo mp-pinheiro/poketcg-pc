@@ -1,0 +1,9 @@
+{
+  "fn": "HandleSendDeckConfigurationMenu",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleSendDeckConfigurationMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"52818\": \"02\", \"52821\": \"ff\", \"52950\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleSendDeckConfigurationMenu\", \"mismatches\": {\"bus\": {\"address\": 52950, \"reference\": \"0002ff02\", \"native\": \"0002ff03\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[51899, 1], [52818, 1], [52821, 1], [52950, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandleSendDeckConfigurationMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"52818\": \"02\", \"52821\": \"ff\", \"52950\": \"02\"}}, \"status\": \"PASS\"}\n"
+}

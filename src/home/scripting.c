@@ -344,6 +344,17 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 /* TRUE and NO_BOOSTER are already defined above in this statics block (the
  * ScriptCommand_GiveOneOfEachTrainerBooster entry), so they are not repeated
  * here. */
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/credits_sequence_commands.h"
+#include "home/deck_machine.h"
+#include "home/lcd.h"
+#include "home/overworld.h"
+#include "home/scripting.h"
+#include "home/sound.h"
+
+#define MUSIC_DECK_MACHINE 0x07u
 /* <<< factory statics */
 
 
@@ -2368,3 +2379,26 @@ void Script_Woman2(void)
 	CloseAdvancedDialogueBox();
 }
 /* <<< factory Script_Woman2 */
+
+/* >>> factory ScriptCommand_OpenDeckMachine */
+IncreaseScriptPointerResult ScriptCommand_OpenDeckMachine(uint8_t c)
+{
+	Func_c2a3();
+	PauseSong();
+	PlaySong(MUSIC_DECK_MACHINE);
+	EmptyScreen();
+	hSCX = 0u;
+	hSCY = 0u;
+	SetDefaultPalettes();
+	EnableLCD();
+	if (c != 0u) {
+		wCurAutoDeckMachine = (uint8_t)(c - 1u);
+		(void)HandleAutoDeckMenu();
+	} else {
+		(void)HandleDeckSaveMachineMenu();
+	}
+	ResumeSong();
+	(void)ReturnToOverworldNoCallback();
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_OpenDeckMachine */

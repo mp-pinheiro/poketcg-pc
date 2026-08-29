@@ -302,4 +302,8 @@ void HandleDeckBuildScreen(void);
 /* >>> factory HandlePlayersCardsScreen */
 void HandlePlayersCardsScreen(void);
 /* <<< factory HandlePlayersCardsScreen */
+/* >>> factory HandleSendDeckConfigurationMenu */
+/* >>> factory HandleSendDeckConfigurationMenu */
+void HandleSendDeckConfigurationMenu(void);
+/* <<< factory HandleSendDeckConfigurationMenu */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

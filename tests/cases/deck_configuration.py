@@ -1163,6 +1163,27 @@ CASES["HandlePlayersCardsScreen"] = [
 ]
 # <<< factory HandlePlayersCardsScreen
 
+# >>> factory HandleSendDeckConfigurationMenu
+CONTRACT["HandleSendDeckConfigurationMenu"] = {"compare": (), "preserve": ()}
+CASES["HandleSendDeckConfigurationMenu"] = [
+    {"wram": {0xCE52: b"\x02", 0xCABB: b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01], "rom_bank": 2,
+     "read": {0xCE55: 1, 0xCED6: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {0xCE52: b"\x01", 0xCABB: b"\x00", 0xCF17: b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01], "rom_bank": 2,
+     "read": {0xCE55: 1, 0xCED6: 1, 0xCF17: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xCE52: b"\x02", 0xCABB: b"\x00"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         keys=[0x00, 0x01], rom_bank=2,
+         read={0xCE55: 1, 0xCED6: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory HandleSendDeckConfigurationMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1526,3 +1547,6 @@ MUTATIONS["HandleDeckBuildScreen"] = {"source_symbol": "HandleDeckBuildScreen", 
 # >>> factory-mutation HandlePlayersCardsScreen
 MUTATIONS["HandlePlayersCardsScreen"] = {"source_symbol": "HandlePlayersCardsScreen", "before": "HandlePlayersCardsScreen(void)\n{\n\t(void)WriteCardListsTerminatorBytes();\n\t(void)PrintPlayersCardsHeaderInfo();\n\n\twCardListVisibleOffset = 0u;", "after": "HandlePlayersCardsScreen(void)\n{\n\t(void)WriteCardListsTerminatorBytes();\n\t(void)PrintPlayersCardsHeaderInfo();\n\n\twCardListVisibleOffset = 1u;", "case_ids": ["HandlePlayersCardsScreen-0", "HandlePlayersCardsScreen-1"]}
 # <<< factory-mutation HandlePlayersCardsScreen
+# >>> factory-mutation HandleSendDeckConfigurationMenu
+MUTATIONS["HandleSendDeckConfigurationMenu"] = {"source_symbol": "HandleSendDeckConfigurationMenu", "before": "\t\twced6 = selection;", "after": "\t\twced6 = (uint8_t)(selection + 1u);", "case_ids": ["HandleSendDeckConfigurationMenu-0"]}
+# <<< factory-mutation HandleSendDeckConfigurationMenu

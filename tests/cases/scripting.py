@@ -1891,6 +1891,29 @@ CASES["Script_Woman2"] = [
 ]
 # <<< factory Script_Woman2
 
+# >>> factory ScriptCommand_OpenDeckMachine
+CONTRACT["ScriptCommand_OpenDeckMachine"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_OpenDeckMachine"] = [
+    {"c": 0x01, "rom_bank": 2, "ramg": True,
+     "wram": {0xCAB4: b"\x00", 0xCAD0: b"\xC9", 0xD0A9: b"\x00",
+              0xFF81: b"\x00", 0xD0A4: b"\x00"},
+     "sram": {0: {}},
+     "keys": [0x00, 0x02],
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xCAB6: 1, 0xCD10: 1, 0xCEA1: 1, 0xCEA9: 1, 0xCECE: 2,
+              0xD086: 1, 0xD087: 1, 0xD0A2: 2, 0xD0A5: 1, 0xD0A9: 1},
+     "instruction_budget": 80000000, "cycle_budget": 320000000},
+    dict(POISON, c=0x02, rom_bank=2, ramg=True,
+         wram={0xCAB4: b"\x00", 0xCAD0: b"\xC9", 0xD0A9: b"\xAA",
+               0xFF81: b"\x00", 0xD0A4: b"\x00"},
+         sram={0: {}}, keys=[0x00, 0x02],
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xCAB6: 1, 0xCD10: 1, 0xCEA1: 1, 0xCEA9: 1, 0xCECE: 2,
+               0xD086: 1, 0xD087: 1, 0xD0A2: 2, 0xD0A5: 1, 0xD0A9: 1},
+         instruction_budget=80000000, cycle_budget=320000000),
+]
+# <<< factory ScriptCommand_OpenDeckMachine
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2717,3 +2740,6 @@ MUTATIONS["Script_Torch"] = {"source_symbol": "Script_Torch", "before": "void Sc
 # >>> factory-mutation Script_Woman2
 MUTATIONS["Script_Woman2"] = {"source_symbol": "Script_Woman2", "before": "void Script_Woman2(void)\n{\n\tCloseAdvancedDialogueBox();", "after": "void Script_Woman2(void)\n{\n\t(void)0;", "case_ids": ["Script_Woman2-0", "Script_Woman2-1"]}
 # <<< factory-mutation Script_Woman2
+# >>> factory-mutation ScriptCommand_OpenDeckMachine
+MUTATIONS["ScriptCommand_OpenDeckMachine"] = {"source_symbol": "ScriptCommand_OpenDeckMachine", "before": "\t\twCurAutoDeckMachine = (uint8_t)(c - 1u);", "after": "\t\twCurAutoDeckMachine = c;", "case_ids": ["ScriptCommand_OpenDeckMachine-0"]}
+# <<< factory-mutation ScriptCommand_OpenDeckMachine

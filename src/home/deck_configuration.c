@@ -392,6 +392,20 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "mem.h"
 #define HANDLE_PLAYERS_CARDS_DATA_ADDR 0x6396u
 #define HANDLE_PLAYERS_CARDS_PRINT_LIST_ADDR 0x642Du
+
+#include "home/deck_configuration.h"
+#include "home/deck_machine.h"
+#include "home/duel.h"
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "home/text_box.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define SendTheseCardsText 0x0282u
+#define HANDLE_SEND_DECK_CONFIGURATION_MENU_DATA_ADDR 0x61F4u
+#define DATA_B04A_ADDR 0x704Au
 /* <<< factory statics */
 
 
@@ -2656,3 +2670,61 @@ void HandlePlayersCardsScreen(void)
 	}
 }
 /* <<< factory HandlePlayersCardsScreen */
+
+/* >>> factory HandleSendDeckConfigurationMenu */
+void HandleSendDeckConfigurationMenu(void)
+{
+	uint16_t box = 0u;
+	DrawRegularTextBox(&box, 0u, 20u, 6u, 0u, 0u);
+	(void)PlaceTextItems(HANDLE_SEND_DECK_CONFIGURATION_MENU_DATA_ADDR);
+	wDuelInitialPrizesUpperBitsSet = 0xffu;
+
+	for (;;) {
+		wVBlankOAMCopyToggle = TRUE;
+		DoFrame();
+		YourOrOppPlayAreaScreen_HandleInput();
+		uint8_t keys = (uint8_t)(hKeysPressed & 0x03u);
+		if (keys == 0u)
+			continue;
+
+		uint8_t selection = (keys & 0x01u) != 0u ?
+			wYourOrOppPlayAreaCurPosition : MENU_CANCEL;
+		wced6 = selection;
+		if (selection == MENU_CANCEL) {
+			DrawCardTypeIconsAndPrintCardCounts();
+			wCardListCursorPos = wTempCardListCursorPos;
+			(void)PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u,
+				FILTERS_CARD_SELECTION_PARAMS_ADDR);
+			HandleDeckBuildScreen();
+			return;
+		}
+
+		if (selection == 0u) {
+			ConfirmDeckConfiguration();
+			OpenDeckConfigurationMenu();
+			return;
+		}
+
+		if (selection == 1u) {
+			if (wCurDeckCards == 0u)
+				return;
+			wCardListVisibleOffset = 0u;
+			uint16_t params = DATA_B04A_ADDR;
+			(void)InitCardSelectionParams(0u, &params);
+			uint16_t source = wCurDeckCards_ADDR;
+			uint16_t destination = wDuelTempList_ADDR;
+			CopyListFromHLToDE(&source, &destination);
+			PrintCardToSendText();
+			(void)Func_b088();
+			EnableLCD();
+			HandleYesOrNoMenuResult answer = YesOrNoMenuWithText(SendTheseCardsText);
+			if ((answer.f & 0x10u) == 0u)
+				return;
+			HandleDeckBuildScreen();
+			return;
+		}
+
+		return;
+	}
+}
+/* <<< factory HandleSendDeckConfigurationMenu */

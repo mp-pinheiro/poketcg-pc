@@ -1401,6 +1401,16 @@ static void adapt_Script_Woman2(ProbeState *s)
 }
 /* <<< factory Script_Woman2 */
 
+/* >>> factory ScriptCommand_OpenDeckMachine */
+static void adapt_ScriptCommand_OpenDeckMachine(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = ScriptCommand_OpenDeckMachine(s->c);
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_OpenDeckMachine */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1540,5 +1550,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "Script_LegendaryCardLeftSpark", adapt_Script_LegendaryCardLeftSpark },
 	{ "Script_Torch", adapt_Script_Torch },
 	{ "Script_Woman2", adapt_Script_Woman2 },
+	{ "ScriptCommand_OpenDeckMachine", adapt_ScriptCommand_OpenDeckMachine },
 	{ NULL, NULL },
 };
