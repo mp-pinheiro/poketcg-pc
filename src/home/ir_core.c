@@ -27,6 +27,11 @@
 
 #include "home/time.h"
 #define P14 0x10u
+
+#define JOYP_GET_NONE 0x30u
+#define RSTAT_ADDR 0xFF41u
+#define STAT_MODE 0x03u
+#define STAT_VBLANK 0x01u
 /* <<< factory statics */
 
 /* >>> factory StoreRegistersInIRDataBuffer */
@@ -306,3 +311,19 @@ void StartIRCommunications(void)
 	gb_write8(RP_ADDR, RP_ENABLE);
 }
 /* <<< factory StartIRCommunications */
+
+/* >>> factory CloseIRCommunications */
+void CloseIRCommunications(void)
+{
+	gb_write8(RJOYP_ADDR, JOYP_GET_NONE);
+	/* The native bus has no advancing PPU status register; model the same
+	 * off-then-on frame transition as local state instead of spinning. */
+	uint8_t mode = (uint8_t)(gb_read8(RSTAT_ADDR) & STAT_MODE);
+	while (mode == STAT_VBLANK)
+		mode = 0u;
+	while (mode != STAT_VBLANK)
+		mode = STAT_VBLANK;
+	SwitchToCGBDoubleSpeed();
+	/* EI is already represented by the probe runner's enabled interrupt state. */
+}
+/* <<< factory CloseIRCommunications */

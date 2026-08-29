@@ -144,6 +144,14 @@ CASES["StartIRCommunications"] = [
 ]
 # <<< factory StartIRCommunications
 
+# >>> factory CloseIRCommunications
+CONTRACT["CloseIRCommunications"] = {"compare": (), "preserve": ()}
+CASES["CloseIRCommunications"] = [
+    {"setup": [{"fn": "CopyDMAFunction"}], "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFF06: 1, 0xFF07: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, setup=[{"fn": "CopyDMAFunction"}], wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFF06: 1, 0xFF07: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory CloseIRCommunications
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -232,3 +240,6 @@ MUTATIONS["ClearRP"] = {
 # >>> factory-mutation StartIRCommunications
 MUTATIONS["StartIRCommunications"] = {"source_symbol": "StartIRCommunications", "before": "void StartIRCommunications(void)\n{\n\tSwitchToCGBNormalSpeed();\n\tgb_write8(RJOYP_ADDR, P14);", "after": "void StartIRCommunications(void)\n{\n\tSwitchToCGBNormalSpeed();\n\tgb_write8(RJOYP_ADDR, 0x00u);", "case_ids": ["StartIRCommunications-0", "StartIRCommunications-1"]}
 # <<< factory-mutation StartIRCommunications
+# >>> factory-mutation CloseIRCommunications
+MUTATIONS["CloseIRCommunications"] = {"source_symbol": "CloseIRCommunications", "before": "\tSwitchToCGBDoubleSpeed();", "after": "\t(void)0;", "case_ids": ["CloseIRCommunications-0", "CloseIRCommunications-1"]}
+# <<< factory-mutation CloseIRCommunications

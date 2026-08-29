@@ -144,6 +144,14 @@ static void adapt_StartIRCommunications(ProbeState *s)
 }
 /* <<< factory StartIRCommunications */
 
+/* >>> factory CloseIRCommunications */
+static void adapt_CloseIRCommunications(ProbeState *s)
+{
+	(void)s;
+	CloseIRCommunications();
+}
+/* <<< factory CloseIRCommunications */
+
 const ProbeEntry probe_entries_ir_core[] = {
 	{ "StoreRegistersInIRDataBuffer", adapt_StoreRegistersInIRDataBuffer },
 	{ "LoadRegistersFromIRDataBuffer", adapt_LoadRegistersFromIRDataBuffer },
@@ -161,5 +169,6 @@ const ProbeEntry probe_entries_ir_core[] = {
 	{ "ReceiveIRDataBuffer", adapt_ReceiveIRDataBuffer },
 	{ "ClearRP", adapt_ClearRP },
 	{ "StartIRCommunications", adapt_StartIRCommunications },
+	{ "CloseIRCommunications", adapt_CloseIRCommunications },
 	{ NULL, NULL },
 };

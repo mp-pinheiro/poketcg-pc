@@ -68,4 +68,7 @@ void ClearRP(void);
 /* >>> factory StartIRCommunications */
 void StartIRCommunications(void);
 /* <<< factory StartIRCommunications */
+/* >>> factory CloseIRCommunications */
+void CloseIRCommunications(void);
+/* <<< factory CloseIRCommunications */
 #endif /* POKETCG_HOME_IR_CORE_H */
