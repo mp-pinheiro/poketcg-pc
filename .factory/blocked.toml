@@ -256,11 +256,6 @@ reason = "HAND-DIAGNOSED 2026-08-28: generation-9 retry reaches the card-selecti
 unblock = "Trace the nested DisplayCardList/input return path and model the hWhoseTurn transition or provide a verified bounded pre-ret contract before retrying PokeBall_PlayerSelection."
 
 [[blocked]]
-name = "CloseIRCommunications"
-reason = "HAND-DIAGNOSED 2026-08-28: attempts 39e51017 and df19a133 show the reference command path does not return under the isolated fixture (BUDGET_EXHAUSTED at pc=0x57B1, sp=0xFFFC after 40001 instructions), while the only non-timeout candidate diverges at serial scratch 0xFF40 (reference 00 80, native 91 82). Current generation-8 candidate set also contains schema-invalid cases. This is a link/IR hardware-state boundary, not actionable C translation evidence."
-unblock = "Construct a valid IR/link fixture that reaches CloseIRCommunications return and emits schema-2 cases, then retry; do not increase budgets or reuse the current malformed candidates."
-
-[[blocked]]
 name = "MainMenu_NewGame"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-10 retry reaches pre-ret but diverges at the nested screen state 0xCAEA..0xCAEC (reference 80 90 c3, native a8 37 04) after the new-game naming/portrait flow. This is a dependent scene-state mismatch, not evidence that the top-level wrapper arithmetic is wrong."
 unblock = "Trace the naming/portrait scene writers for 0xCAEA..0xCAEC and port the missing dependent state transition before retrying MainMenu_NewGame."
@@ -292,3 +287,7 @@ unblock = "Construct a frame-safe intro fixture that skips or terminates the ani
 name = "PlayCreditsSequence"
 reason = "HAND-DIAGNOSED 2026-08-28: complete candidate reaches the credits frame loop and parks at WaitForVBlank pc=0x0038 with LCDC enabled before the top-level routine can reach its completion cutpoint; isolated full-call fixture is not bounded."
 unblock = "Trace the first credits scene/animation callee that enables LCD and establish a bounded pre-ret completion, then retry PlayCreditsSequence; do not repeat unchanged full-call attempts."
+[[blocked]]
+name = "HandleDuelSetup"
+reason = "HAND-DIAGNOSED 2026-08-28: generation-4 pre-ret candidate preserves the full setup body but its native probe loops forever while the reference reaches the animation wait; no bounded isolated completion exists for the current full-call contract."
+unblock = "Trace and decompose the first shuffle/draw animation callee to a separately verifiable prefix before retrying HandleDuelSetup; do not repeat unchanged full-call attempts."
