@@ -136,4 +136,12 @@ uint8_t RequestToPrintCard(uint8_t a);
  * anonymous-struct typedef under that name would be a redefinition. */
 uint8_t PrintCardList(void);
 /* <<< factory PrintCardList */
+/* >>> factory ReceiveCard */
+typedef struct { uint8_t a; uint8_t f; } ReceiveCardResult;
+ReceiveCardResult ReceiveCard(void);
+/* <<< factory ReceiveCard */
+/* >>> factory ReceiveDeckConfiguration */
+typedef struct { uint8_t a; uint8_t f; } ReceiveDeckConfigurationResult;
+ReceiveDeckConfigurationResult ReceiveDeckConfiguration(void);
+/* <<< factory ReceiveDeckConfiguration */
 #endif /* POKETCG_HOME_COMMON_H */

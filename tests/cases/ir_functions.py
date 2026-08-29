@@ -144,6 +144,14 @@ CASES["_ReceiveDeckConfiguration"] = [
 ]
 # <<< factory _ReceiveDeckConfiguration
 
+# >>> factory PrepareSendCardOrDeckConfigurationThroughIR
+CONTRACT["PrepareSendCardOrDeckConfigurationThroughIR"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PrepareSendCardOrDeckConfigurationThroughIR"] = [
+    {"keys": 0x02, "sram": {0: {}}, "wram": {0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=0x02, sram={0: {}}, wram={0xCABB: b"\x80", 0xFF40: b"\x80"}, setup=[{"fn": "CopyDMAFunction"}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PrepareSendCardOrDeckConfigurationThroughIR
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -228,3 +236,11 @@ MUTATIONS["_ReceiveDeckConfiguration"] = {
     "case_ids": ["_ReceiveDeckConfiguration-0", "_ReceiveDeckConfiguration-1"]
 }
 # <<< factory-mutation _ReceiveDeckConfiguration
+# >>> factory-mutation PrepareSendCardOrDeckConfigurationThroughIR
+MUTATIONS["PrepareSendCardOrDeckConfigurationThroughIR"] = {
+    "source_symbol": "PrepareSendCardOrDeckConfigurationThroughIR",
+    "before": "if ((hKeysPressed & 0x02u) != 0u)\n\t\t\treturn (PrepareSendCardOrDeckConfigurationThroughIRResult){1u, 0x10u};",
+    "after": "if ((hKeysPressed & 0x02u) != 0u)\n\t\t\treturn (PrepareSendCardOrDeckConfigurationThroughIRResult){0u, 0x10u};",
+    "case_ids": ["PrepareSendCardOrDeckConfigurationThroughIR-0", "PrepareSendCardOrDeckConfigurationThroughIR-1"],
+}
+# <<< factory-mutation PrepareSendCardOrDeckConfigurationThroughIR

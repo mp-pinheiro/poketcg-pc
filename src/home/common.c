@@ -98,6 +98,8 @@
 #include "generated/wram.h"
 #include "home/card_data.h"
 #include "home/sound.h"
+
+#include "home/ir_functions.h"
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -785,3 +787,19 @@ uint8_t PrintCardList(void)
 	return _PrintCardList().f;
 }
 /* <<< factory PrintCardList */
+
+/* >>> factory ReceiveCard */
+ReceiveCardResult ReceiveCard(void)
+{
+	_ReceiveCardResult r = _ReceiveCard();
+	return (ReceiveCardResult){r.a, r.f};
+}
+/* <<< factory ReceiveCard */
+
+/* >>> factory ReceiveDeckConfiguration */
+ReceiveDeckConfigurationResult ReceiveDeckConfiguration(void)
+{
+	_ReceiveDeckConfigurationResult result = _ReceiveDeckConfiguration();
+	return (ReceiveDeckConfigurationResult){result.a, result.f};
+}
+/* <<< factory ReceiveDeckConfiguration */

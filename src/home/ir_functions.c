@@ -44,6 +44,8 @@
 #define IRPARAM_SEND_DECK 0x03u
 #define DeckConfigurationTransferWasntSuccessful2Text 0x01a1u
 #define ReceivingDeckConfigurationText 0x019du
+
+#include "home/frames.h"
 /* <<< factory statics */
 
 #define MUSIC_CARD_POP 0x08u
@@ -257,3 +259,39 @@ _ReceiveDeckConfigurationResult _ReceiveDeckConfiguration(void)
 	}
 }
 /* <<< factory _ReceiveDeckConfiguration */
+
+/* >>> factory PrepareSendCardOrDeckConfigurationThroughIR */
+PrepareSendCardOrDeckConfigurationThroughIRResult PrepareSendCardOrDeckConfigurationThroughIR(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	InitIRCommunications(a);
+	for (;;) {
+		DoFrame();
+		if ((hKeysPressed & 0x02u) != 0u)
+			return (PrepareSendCardOrDeckConfigurationThroughIRResult){1u, 0x10u};
+		if ((hKeysHeld & 0x01u) == 0u)
+			continue;
+		TrySendIRRequestResult request = TrySendIRRequest();
+		if ((request.f & 0x10u) == 0u) {
+			ExchangeIRCommunicationParametersResult exchanged =
+				ExchangeIRCommunicationParameters(request.a, request.f, b, c, d, e, hl);
+			if ((exchanged.f & 0x10u) != 0u)
+				return (PrepareSendCardOrDeckConfigurationThroughIRResult){exchanged.a, exchanged.f};
+			uint8_t parameter = gb_read8((uint16_t)(wOtherIRCommunicationParams_ADDR + 3u));
+			if (parameter != 0x31u) {
+				uint8_t compare_f = 0x40u;
+				if ((parameter & 0x0Fu) < 0x01u)
+					compare_f = (uint8_t)(compare_f | 0x20u);
+				if (parameter < 0x31u)
+					compare_f = (uint8_t)(compare_f | 0x10u);
+				SetIRCommunicationErrorCode_ErrorResult error =
+					SetIRCommunicationErrorCode_Error(parameter, compare_f, b);
+				return (PrepareSendCardOrDeckConfigurationThroughIRResult){error.a, error.f};
+			}
+			return (PrepareSendCardOrDeckConfigurationThroughIRResult){request.a,
+				(request.a == 0u) ? 0x80u : 0x00u};
+		}
+		if (request.a != 0u)
+			return (PrepareSendCardOrDeckConfigurationThroughIRResult){0u, 0x90u};
+	}
+}
+/* <<< factory PrepareSendCardOrDeckConfigurationThroughIR */

@@ -271,6 +271,24 @@ static void adapt_PrintCardList(ProbeState *s)
 }
 /* <<< factory PrintCardList */
 
+/* >>> factory ReceiveCard */
+static void adapt_ReceiveCard(ProbeState *s)
+{
+	ReceiveCardResult r = ReceiveCard();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory ReceiveCard */
+
+/* >>> factory ReceiveDeckConfiguration */
+static void adapt_ReceiveDeckConfiguration(ProbeState *s)
+{
+	ReceiveDeckConfigurationResult result = ReceiveDeckConfiguration();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory ReceiveDeckConfiguration */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -303,5 +321,7 @@ const ProbeEntry probe_entries_common[] = {
 	{ "ShowPromotionalCardScreen", adapt_ShowPromotionalCardScreen },
 	{ "RequestToPrintCard", adapt_RequestToPrintCard },
 	{ "PrintCardList", adapt_PrintCardList },
+	{ "ReceiveCard", adapt_ReceiveCard },
+	{ "ReceiveDeckConfiguration", adapt_ReceiveDeckConfiguration },
 	{ NULL, NULL },
 };

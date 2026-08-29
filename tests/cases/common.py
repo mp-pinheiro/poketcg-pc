@@ -563,6 +563,22 @@ CASES["PrintCardList"] = [
 ]
 # <<< factory PrintCardList
 
+# >>> factory ReceiveCard
+CONTRACT["ReceiveCard"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ReceiveCard"] = [
+    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically reaches the retry screen and returns through its no-retry carry exit; the own communication parameter block is observed.", "keys": [0x82, 0x10, 0x01], "wram": {0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC5EB: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xC5EB: 4}, "expect": {0xC5EB: b"\x02\x4F\x4B\x31"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically reaches the retry screen and returns through its no-retry carry exit with poisoned registers; the own communication parameter block is observed.", "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x82, 0x10, 0x01], "wram": {0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC5EB: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xC5EB: 4}, "expect": {0xC5EB: b"\x02\x4F\x4B\x31"}, "instruction_budget": 20000000, "cycle_budget": 80000000}
+]
+# <<< factory ReceiveCard
+
+# >>> factory ReceiveDeckConfiguration
+CONTRACT["ReceiveDeckConfiguration"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ReceiveDeckConfiguration"] = [
+    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically reaches the retry screen and returns through its no-retry carry exit; the own communication parameter block and carry return are asserted.", "keys": [0x82, 0x10, 0x01], "wram": {0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC5EB: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xC5EB: 4}, "expect": {0xC5EB: b"\x02\x4F\x4B\x31"}, "expect_regs": {"a": 0x01, "f": 0x90}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically reaches the retry screen and returns through its no-retry carry exit with poisoned registers; the own communication parameter block and carry return are asserted.", "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x82, 0x10, 0x01], "wram": {0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC5EB: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xC5EB: 4}, "expect": {0xC5EB: b"\x02\x4F\x4B\x31"}, "expect_regs": {"a": 0x01, "f": 0x90}, "instruction_budget": 20000000, "cycle_budget": 80000000}
+]
+# <<< factory ReceiveDeckConfiguration
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -788,3 +804,9 @@ MUTATIONS["PrintCardList"] = {
 for _record in SCHEMA2_CASES["PrintCardList"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
 # <<< factory-completion PrintCardList
+# >>> factory-mutation ReceiveCard
+MUTATIONS["ReceiveCard"] = {"source_symbol": "ReceiveCard", "before": "ReceiveCardResult ReceiveCard(void)\n{\n\t_ReceiveCardResult r = _ReceiveCard();\n\treturn (ReceiveCardResult){r.a, r.f};", "after": "ReceiveCardResult ReceiveCard(void)\n{\n\treturn (ReceiveCardResult){0x00u, 0x90u};", "case_ids": ["ReceiveCard-0", "ReceiveCard-1"]}
+# <<< factory-mutation ReceiveCard
+# >>> factory-mutation ReceiveDeckConfiguration
+MUTATIONS["ReceiveDeckConfiguration"] = {"source_symbol": "ReceiveDeckConfiguration", "before": "ReceiveDeckConfigurationResult ReceiveDeckConfiguration(void)\n{\n\t_ReceiveDeckConfigurationResult result = _ReceiveDeckConfiguration();\n\treturn (ReceiveDeckConfigurationResult){result.a, result.f};", "after": "ReceiveDeckConfigurationResult ReceiveDeckConfiguration(void)\n{\n\t_ReceiveDeckConfigurationResult result = _ReceiveDeckConfiguration();\n\treturn (ReceiveDeckConfigurationResult){0u, 0u};", "case_ids": ["ReceiveDeckConfiguration-0", "ReceiveDeckConfiguration-1"]}
+# <<< factory-mutation ReceiveDeckConfiguration
