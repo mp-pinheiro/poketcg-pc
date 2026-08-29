@@ -300,8 +300,3 @@ unblock = "Trace the recoil/bench-damage animation frame path and establish a bo
 name = "AIDoAction_Turn"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-0 wrapper calls action 1 and the reference spins at pc=0x05B8 until the 400004-cycle default ceiling; the turn target includes frame/AI work not bounded by the isolated fixture."
 unblock = "Port the action-1 turn target with a bounded AI fixture or establish a verified pre-ret contract, then retry AIDoAction_Turn."
-
-[[blocked]]
-name = "AIDoAction_TakePrize"
-reason = "HAND-DIAGNOSED 2026-08-28: generation-0 wrapper calls action 5 and the reference spins at pc=0x089C until the 400004-cycle default ceiling; the prize-taking target remains unported and is not a faithful constant delegate."
-unblock = "Port and verify the action-5 prize target with a bounded fixture, then retry AIDoAction_TakePrize."

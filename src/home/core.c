@@ -4345,7 +4345,7 @@ static void AIPickPrizeCards_PickPrizeCard(void)
 	AddCardToHand(card.a);
 }
 
-void AIPickPrizeCards(void)
+uint8_t AIPickPrizeCards(void)
 {
 	uint8_t remaining_picks = wNumberPrizeCardsToTake;
 	for (;;) {
@@ -4357,6 +4357,7 @@ void AIPickPrizeCards(void)
 		if (remaining_picks == 0u)
 			break;
 	}
+	return GetTurnDuelistVariable(DUELVARS_PRIZES).a;
 }
 /* <<< factory AIPickPrizeCards */
 

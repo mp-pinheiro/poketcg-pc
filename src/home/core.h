@@ -644,7 +644,7 @@ typedef struct { uint8_t a; uint8_t f; uint16_t hl; } CountOppEnergyCardsInHandA
 CountOppEnergyCardsInHandAndAttachedResult CountOppEnergyCardsInHandAndAttached(void);
 /* <<< factory CountOppEnergyCardsInHandAndAttached */
 /* >>> factory AIPickPrizeCards */
-void AIPickPrizeCards(void);
+uint8_t AIPickPrizeCards(void);
 /* <<< factory AIPickPrizeCards */
 /* >>> factory HandleAIEnergyScoringForRepeatedBenchPokemon */
 typedef struct { uint8_t a; uint8_t f; } HandleAIEnergyScoringForRepeatedBenchPokemonResult;
