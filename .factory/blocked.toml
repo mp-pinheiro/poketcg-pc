@@ -297,11 +297,6 @@ reason = "HAND-DIAGNOSED 2026-08-28: generation-13 retry reaches the real recoil
 unblock = "Trace the recoil/bench-damage animation frame path and establish a bounded pre-ret completion or port the frame-safe callee before retrying GolemSelfdestructEffect."
 
 [[blocked]]
-name = "AIDoAction_StartDuel"
-reason = "HAND-DIAGNOSED 2026-08-28: generation-0 wrapper reaches the new AIDoAction root but the reference action-2 target returns a=0xFF while current root returns the action byte 0x02; the downstream start-duel target remains unported, so this leaf cannot be a faithful delegate yet."
-unblock = "Port and verify the action-2 start-duel target, then retry AIDoAction_StartDuel as a direct delegate."
-
-[[blocked]]
 name = "AIDoAction_Turn"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-0 wrapper calls action 1 and the reference spins at pc=0x05B8 until the 400004-cycle default ceiling; the turn target includes frame/AI work not bounded by the isolated fixture."
 unblock = "Port the action-1 turn target with a bounded AI fixture or establish a verified pre-ret contract, then retry AIDoAction_Turn."

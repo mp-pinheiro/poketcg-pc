@@ -9,6 +9,7 @@
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/duel.h"
+#include "home/init.h"
 #include "home/overworld.h"
 #include "home/retreat.h"
 #include "home/sams_practice.h"
@@ -16,10 +17,13 @@
 
 #define BANK_DECK_AI_POINTER_TABLE 5u
 #define DECK_AI_POINTER_TABLE_ADDR 0x4000u
+#define AI_ACTION_TABLE_GENERAL_START_DUEL_ADDR 0x4678u
 #define AI_ACTION_TABLE_SAM_PRACTICE_ADDR 0x47BDu
+#define AI_ACTION_TABLE_SAM_START_DUEL_ADDR 0x47D6u
 #define AI_ACTION_TABLE_SAM_FORCED_SWITCH_ADDR 0x47DAu
 #define AI_ACTION_TABLE_SAM_KO_SWITCH_ADDR 0x47E7u
 
+#define AIACTION_START_DUEL 0x02u
 #define AIACTION_KO_SWITCH 0x04u
 /* <<< factory statics */
 
@@ -96,7 +100,18 @@ uint8_t AIDoAction(uint8_t a)
 		uint16_t target = (uint16_t)(target_entry[0] |
 			((uint16_t)target_entry[1] << 8));
 
-		if (action == 3u || action == 4u) {
+		if (action == AIACTION_START_DUEL &&
+			target == AI_ACTION_TABLE_GENERAL_START_DUEL_ADDR) {
+			InitAIDuelVars();
+			AIPlayInitialBasicCardsResult initial =
+				AIPlayInitialBasicCards();
+			action = initial.a;
+		} else if (action == AIACTION_START_DUEL &&
+			target == AI_ACTION_TABLE_SAM_START_DUEL_ADDR) {
+			SamsPracticeResult initial =
+				SetSamsStartingPlayArea(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+			action = initial.a;
+		} else if (action == 3u || action == 4u) {
 			if (target == AI_ACTION_TABLE_SAM_FORCED_SWITCH_ADDR ||
 				target == AI_ACTION_TABLE_SAM_KO_SWITCH_ADDR) {
 				SamsPracticeResult scripted = IsAIPracticeScriptedTurn(
