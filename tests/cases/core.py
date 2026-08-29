@@ -6443,3 +6443,5 @@ MUTATIONS["HandleDuelSetup"] = {
     "case_ids": ["HandleDuelSetup-0", "HandleDuelSetup-1"],
 }
 # <<< factory-mutation HandleDuelSetup
+# Keep schema-2 inventory after all factory-appended cases.
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
