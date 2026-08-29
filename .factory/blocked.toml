@@ -245,3 +245,8 @@ unblock = "read the recorded diagnostics under .factory/try/ChallengeMachine_Pri
 name = "PlayIntroSequence"
 reason = "AUTO-RETIRED: src/engine/intro.asm:1 (basename `intro`). 4 generations exhausted (trapped=True); last diagnostic phase=compile failure_class=code detail=collect2: error: ld returned 1 exit status"
 unblock = "read the recorded diagnostics under .factory/try/PlayIntroSequence/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "RequestDataTransmissionThroughIR"
+reason = "AUTO-RETIRED: src/engine/link/ir_core.asm:434 (basename `ir_core`). 3 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case RequestDataTransmissionThroughIR-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":22254,\"sp\":65516,\"rom_bank\":6,\"hbank_rom\":6,\"instructions\":9930244,\"cycles\":80000004,\"lcdc\":128,\"if\":225,\"ie\":1,\"ime\":0,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":33,\"ppu_mode\":3,\"bus\":\"80000200c500c50100807e\"}"
+unblock = "read the recorded diagnostics under .factory/try/RequestDataTransmissionThroughIR/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
