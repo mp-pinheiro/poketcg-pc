@@ -355,6 +355,9 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 #include "home/sound.h"
 
 #define MUSIC_DECK_MACHINE 0x07u
+
+#include "generated/wram.h"
+#include "home/map.h"
 /* <<< factory statics */
 
 
@@ -2402,3 +2405,16 @@ IncreaseScriptPointerResult ScriptCommand_OpenDeckMachine(uint8_t c)
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_OpenDeckMachine */
+
+/* >>> factory ExecuteArbitraryNPCMovementFromStack */
+ExecuteArbitraryNPCMovementFromStackResult ExecuteArbitraryNPCMovementFromStack(uint8_t a, uint16_t bc, uint16_t w0, uint16_t w1)
+{
+	wTempNPC = a;
+	(void)FindLoadedNPC();
+	ExecuteNPCMovementResult movement = ExecuteNPCMovement(bc);
+	wTempNPC = (uint8_t)(w1 >> 8);
+	uint8_t loaded_index = (uint8_t)(w0 >> 8);
+	wLoadedNPCTempIndex = loaded_index;
+	return (ExecuteArbitraryNPCMovementFromStackResult){loaded_index, (uint8_t)(w0 & 0xF0u), movement.b, movement.c};
+}
+/* <<< factory ExecuteArbitraryNPCMovementFromStack */

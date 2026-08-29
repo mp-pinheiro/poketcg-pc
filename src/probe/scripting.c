@@ -1411,6 +1411,19 @@ static void adapt_ScriptCommand_OpenDeckMachine(ProbeState *s)
 }
 /* <<< factory ScriptCommand_OpenDeckMachine */
 
+/* >>> factory ExecuteArbitraryNPCMovementFromStack */
+static void adapt_ExecuteArbitraryNPCMovementFromStack(ProbeState *s)
+{
+	uint16_t bc = (uint16_t)(((uint16_t)s->b << 8) | s->c);
+	ExecuteArbitraryNPCMovementFromStackResult result =
+		ExecuteArbitraryNPCMovementFromStack(s->a, bc, s->stack[0], s->stack[1]);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+}
+/* <<< factory ExecuteArbitraryNPCMovementFromStack */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1551,5 +1564,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "Script_Torch", adapt_Script_Torch },
 	{ "Script_Woman2", adapt_Script_Woman2 },
 	{ "ScriptCommand_OpenDeckMachine", adapt_ScriptCommand_OpenDeckMachine },
+	{ "ExecuteArbitraryNPCMovementFromStack", adapt_ExecuteArbitraryNPCMovementFromStack },
 	{ NULL, NULL },
 };

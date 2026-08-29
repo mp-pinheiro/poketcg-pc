@@ -1,0 +1,9 @@
+{
+  "fn": "ExecuteArbitraryNPCMovementFromStack",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ExecuteArbitraryNPCMovementFromStack\", \"registers\": {\"a\": 18, \"b\": 193, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 240, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"ff\", \"51899\": \"00\", \"54102\": \"42\", \"54186\": \"1234\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ExecuteArbitraryNPCMovementFromStack\", \"mismatches\": {\"bus\": {\"address\": 54187, \"reference\": \"ff00421234\", \"native\": \"ff00421200\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[49408, 1], [51899, 1], [54102, 1], [54186, 2]]}}}\n",
+  "restored": "{\"fn\": \"ExecuteArbitraryNPCMovementFromStack\", \"registers\": {\"a\": 18, \"b\": 193, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 240, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"ff\", \"51899\": \"00\", \"54102\": \"42\", \"54186\": \"1234\"}}, \"status\": \"PASS\"}\n"
+}

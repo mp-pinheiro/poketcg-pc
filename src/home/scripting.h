@@ -686,4 +686,13 @@ void Script_Woman2(void);
 /* scripting.asm:1733. c selects the deck machine mode: zero opens the save-machine menu, while non-zero values select an auto-deck machine after decrementing. The routine tail-jumps to IncreaseScriptPointerBy2, so its {a, f, c} result is the exit contract. */
 IncreaseScriptPointerResult ScriptCommand_OpenDeckMachine(uint8_t c);
 /* <<< factory ScriptCommand_OpenDeckMachine */
+/* >>> factory ExecuteArbitraryNPCMovementFromStack */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+} ExecuteArbitraryNPCMovementFromStackResult;
+ExecuteArbitraryNPCMovementFromStackResult ExecuteArbitraryNPCMovementFromStack(uint8_t a, uint16_t bc, uint16_t w0, uint16_t w1);
+/* <<< factory ExecuteArbitraryNPCMovementFromStack */
 #endif

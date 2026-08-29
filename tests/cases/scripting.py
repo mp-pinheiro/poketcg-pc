@@ -1914,6 +1914,23 @@ CASES["ScriptCommand_OpenDeckMachine"] = [
 ]
 # <<< factory ScriptCommand_OpenDeckMachine
 
+# >>> factory ExecuteArbitraryNPCMovementFromStack
+CONTRACT["ExecuteArbitraryNPCMovementFromStack"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
+CASES["ExecuteArbitraryNPCMovementFromStack"] = [
+    {"a": 0x42, "b": 0xC1, "c": 0x00, "stack": [0x12F3, 0x34A7],
+     "wram": {0xD356: b"\x42", 0xC100: b"\xFF", 0xCABB: b"\x00"},
+     "keys": [0x00, 0x01], "read": {0xD3AA: 1, 0xD3AB: 1},
+     "setup": [{"fn": "CopyDMAFunction"}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xC1, "c": 0x00, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+     "stack": [0x56F7, 0x78E3],
+     "wram": {0xD356: b"\xAA", 0xC100: b"\xFF", 0xCABB: b"\x00"},
+     "keys": [0x00, 0x01], "read": {0xD3AA: 1, 0xD3AB: 1},
+     "setup": [{"fn": "CopyDMAFunction"}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000}
+]
+# <<< factory ExecuteArbitraryNPCMovementFromStack
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2743,3 +2760,11 @@ MUTATIONS["Script_Woman2"] = {"source_symbol": "Script_Woman2", "before": "void 
 # >>> factory-mutation ScriptCommand_OpenDeckMachine
 MUTATIONS["ScriptCommand_OpenDeckMachine"] = {"source_symbol": "ScriptCommand_OpenDeckMachine", "before": "\t\twCurAutoDeckMachine = (uint8_t)(c - 1u);", "after": "\t\twCurAutoDeckMachine = c;", "case_ids": ["ScriptCommand_OpenDeckMachine-0"]}
 # <<< factory-mutation ScriptCommand_OpenDeckMachine
+# >>> factory-mutation ExecuteArbitraryNPCMovementFromStack
+MUTATIONS["ExecuteArbitraryNPCMovementFromStack"] = {
+    "source_symbol": "ExecuteArbitraryNPCMovementFromStack",
+    "before": "ExecuteArbitraryNPCMovementFromStackResult ExecuteArbitraryNPCMovementFromStack(uint8_t a, uint16_t bc, uint16_t w0, uint16_t w1)\n{\n\twTempNPC = a;\n\t(void)FindLoadedNPC();\n\tExecuteNPCMovementResult movement = ExecuteNPCMovement(bc);\n\twTempNPC = (uint8_t)(w1 >> 8);",
+    "after": "ExecuteArbitraryNPCMovementFromStackResult ExecuteArbitraryNPCMovementFromStack(uint8_t a, uint16_t bc, uint16_t w0, uint16_t w1)\n{\n\twTempNPC = a;\n\t(void)FindLoadedNPC();\n\tExecuteNPCMovementResult movement = ExecuteNPCMovement(bc);\n\twTempNPC = 0u;",
+    "case_ids": ["ExecuteArbitraryNPCMovementFromStack-0", "ExecuteArbitraryNPCMovementFromStack-1"]
+}
+# <<< factory-mutation ExecuteArbitraryNPCMovementFromStack
