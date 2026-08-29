@@ -100,7 +100,9 @@ uint8_t AIDoAction(uint8_t a)
 		uint16_t target = (uint16_t)(target_entry[0] |
 			((uint16_t)target_entry[1] << 8));
 
-		if (action == AIACTION_START_DUEL &&
+		if (action == 5u) {
+			AIPickPrizeCards();
+		} else if (action == AIACTION_START_DUEL &&
 			target == AI_ACTION_TABLE_GENERAL_START_DUEL_ADDR) {
 			InitAIDuelVars();
 			AIPlayInitialBasicCardsResult initial =
