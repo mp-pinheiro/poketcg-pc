@@ -189,6 +189,8 @@ uint8_t gb_read8(uint16_t addr)
 		return (uint8_t)(*gb_ptr(addr) | 0xE0u);
 	if (addr == 0xFF4Fu)
 		return (uint8_t)(0xFEu | g_vram_bank);
+	if (addr == 0xFF4Du)
+		return (uint8_t)(0x7Eu | (*gb_ptr(addr) & 0x80u));
 	if (addr == 0xFF69u)
 		return g_pal[g_io[0x68] & 0x3Fu];
 	if (addr == 0xFF6Bu)
