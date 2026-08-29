@@ -4999,6 +4999,20 @@ static void adapt_LassEffect(ProbeState *s)
 }
 /* <<< factory LassEffect */
 
+/* >>> factory ComputerSearch_DiscardAddToHandEffect */
+static void adapt_ComputerSearch_DiscardAddToHandEffect(ProbeState *s)
+{
+	ShuffleCardsInDeckResult r = ComputerSearch_DiscardAddToHandEffect(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory ComputerSearch_DiscardAddToHandEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5605,5 +5619,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "BigThunderEffect", adapt_BigThunderEffect },
 	{ "EnergySearch_AddToHandEffect", adapt_EnergySearch_AddToHandEffect },
 	{ "LassEffect", adapt_LassEffect },
+	{ "ComputerSearch_DiscardAddToHandEffect", adapt_ComputerSearch_DiscardAddToHandEffect },
 	{ NULL, NULL },
 };

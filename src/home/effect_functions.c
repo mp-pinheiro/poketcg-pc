@@ -1351,6 +1351,11 @@ void BankswitchROM(uint8_t bank);
 #define ChooseTheCardYouWishToExamineText 0x0056u
 #define DuelistHasNoCardsInHandText 0x0178u
 #define PleaseCheckTheOpponentsHandText 0x0163u
+
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10587,3 +10592,22 @@ void LassEffect(void)
 		(void)ShuffleCardsInDeck(hCurSelectionItem, 0u, 0u, wDuelTempList_ADDR);
 }
 /* <<< factory LassEffect */
+
+/* >>> factory ComputerSearch_DiscardAddToHandEffect */
+ShuffleCardsInDeckResult ComputerSearch_DiscardAddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)f;
+	hl = hTempList_ADDR;
+	uint8_t first = gb_read8(hl++);
+	RemoveCardFromHand(first);
+	PutCardInDiscardPile(first);
+	uint8_t second = gb_read8(hl++);
+	RemoveCardFromHand(second);
+	PutCardInDiscardPile(second);
+	uint8_t third = gb_read8(hl);
+	SearchCardInDeckAndAddToHand(third);
+	AddCardToHand(third);
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+}
+/* <<< factory ComputerSearch_DiscardAddToHandEffect */

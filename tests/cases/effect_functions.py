@@ -2768,6 +2768,15 @@ hTempCardIndex_ff9f = 0xFF9F
 hCurSelectionItem = 0xFFB2
 wDuelType = 0xCC09
 wDuelTempList = 0xC510
+
+hTempList = 0xFFA0
+hWhoseTurn = 0xFF97
+wDuelType = 0xCC09
+wDuelDisplayedScreen = 0xCAC2
+wLCDC = 0xCABB
+wNotInDeck = 0xC2BA
+wDiscardCount = 0xC2ED
+wHandCount = 0xC2EE
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7144,6 +7153,24 @@ CASES["LassEffect"] = [
 ]
 # <<< factory LassEffect
 
+# >>> factory ComputerSearch_DiscardAddToHandEffect
+CONTRACT["ComputerSearch_DiscardAddToHandEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ComputerSearch_DiscardAddToHandEffect"] = [
+    {"b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": 0,
+     "wram": {hWhoseTurn: b"\xC2", wDuelType: b"\x00", wDuelDisplayedScreen: b"\x09", wLCDC: b"\x00",
+              wNotInDeck: b"\x3B", wDiscardCount: b"\x00", wHandCount: b"\x00"},
+     "read": {0xC200: 256, wNotInDeck: 1, wDiscardCount: 1, wHandCount: 1},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 3000000, "cycle_budget": 10000000},
+    dict(POISON, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, keys=0,
+         wram={hWhoseTurn: b"\xC2", wDuelType: b"\x00", wDuelDisplayedScreen: b"\x09", wLCDC: b"\x00",
+               wNotInDeck: b"\x3B", wDiscardCount: b"\x00", wHandCount: b"\x00"},
+         read={0xC200: 256, wNotInDeck: 1, wDiscardCount: 1, wHandCount: 1},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=3000000, cycle_budget=10000000),
+]
+# <<< factory ComputerSearch_DiscardAddToHandEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10055,3 +10082,6 @@ MUTATIONS["EnergySearch_AddToHandEffect"] = {"source_symbol": "EnergySearch_AddT
 # >>> factory-mutation LassEffect
 MUTATIONS["LassEffect"] = {"source_symbol": "LassEffect", "before": "\thCurSelectionItem = 0u;", "after": "\thCurSelectionItem = 1u;", "case_ids": ["LassEffect-0", "LassEffect-1"]}
 # <<< factory-mutation LassEffect
+# >>> factory-mutation ComputerSearch_DiscardAddToHandEffect
+MUTATIONS["ComputerSearch_DiscardAddToHandEffect"] = {"source_symbol": "ComputerSearch_DiscardAddToHandEffect", "before": "ShuffleCardsInDeckResult ComputerSearch_DiscardAddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\thl = hTempList_ADDR;\n\tuint8_t first = gb_read8(hl++);\n\tRemoveCardFromHand(first);\n\tPutCardInDiscardPile(first);\n\tuint8_t second = gb_read8(hl++);", "after": "ShuffleCardsInDeckResult ComputerSearch_DiscardAddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\thl = hTempList_ADDR;\n\tuint8_t first = (uint8_t)(gb_read8(hl++) + 1u);\n\tRemoveCardFromHand(first);\n\tPutCardInDiscardPile(first);\n\tuint8_t second = gb_read8(hl++);", "case_ids": ["ComputerSearch_DiscardAddToHandEffect-0", "ComputerSearch_DiscardAddToHandEffect-1"]}
+# <<< factory-mutation ComputerSearch_DiscardAddToHandEffect
