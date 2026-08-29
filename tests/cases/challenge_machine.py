@@ -375,6 +375,16 @@ CASES["ChallengeMachine_PrintDuelResultIcons"] = [
 ]
 # <<< factory ChallengeMachine_PrintDuelResultIcons
 
+# >>> factory ChallengeMachine_PrintOpponentInfo
+CONTRACT["ChallengeMachine_PrintOpponentInfo"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["ChallengeMachine_PrintOpponentInfo"] = [
+    {"d": 0x00, "e": 0x00, "sram": {0: {sChallengeMachineOpponents: bytes(45)}},
+     "wram": {0xCABB: b"\x00"}, "setup": SETUP},
+    dict(POISON, d=0x00, e=0x00, sram={0: {sChallengeMachineOpponents: bytes(45)}},
+         wram={0xCABB: b"\x00"}, setup=SETUP),
+]
+# <<< factory ChallengeMachine_PrintOpponentInfo
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -391,6 +401,14 @@ MUTATIONS = {
         "case_ids": ["ChallengeMachine_PrintText-1", "ChallengeMachine_PrintText-3"],
     },
 }
+# >>> factory-mutation ChallengeMachine_PrintOpponentInfo
+MUTATIONS["ChallengeMachine_PrintOpponentInfo"] = {
+    "source_symbol": "ChallengeMachine_PrintOpponentInfo",
+    "before": "\tuint8_t c = 2u;",
+    "after": "\tuint8_t c = 4u;",
+    "case_ids": ["ChallengeMachine_PrintOpponentInfo-0", "ChallengeMachine_PrintOpponentInfo-1"],
+}
+# <<< factory-mutation ChallengeMachine_PrintOpponentInfo
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation ChallengeMachine_PickOpponentSequence
