@@ -61,10 +61,6 @@ unblock = "Find which body writes hTemp_ffa0 during ShuffleCardsInDeck and port 
 workaround = "SUPERSEDED IN PRACTICE: the premise 'it cannot be left unseeded, because it is the value the first instruction branches on' is false when the branch you want is the one taken at $00. HRAM zeroes on reset, so leaving $FFA0 unseeded selects the non-$ff path with no seed at all, and an unseeded address is never added to the compared bus spans -- the clobber becomes invisible instead of needing a port fix. Five routines of this exact family (Krabby/Marowak/NidoranF/Bellsprout CallForFamily and Sprout_PutInPlayAreaEffect) are landed and full-gate green on that basis, each with CONTRACT compare ('a','f') only -- b/c/d/e/hl must be dropped because ShuffleCardsInDeck merely echoes them (duel.c ShuffleDeck returns c and e untouched) and PutHandPokemonCardInPlayArea's exit e is neither preserved nor returned. Add setup [{fn: SetupText, d: 0x20, e: 0x40}] and instruction_budget 4000000 / cycle_budget 16000000: the deck-shuffle animation walks the glyph cache and otherwise spins at pc $2380. Anchor the mutation on the routine's own signature line, since the landed siblings now share a byte-identical body."
 
 
-[[blocked]]
-name = "ComputerSearch_PlayerDeckSelection"
-reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:9472 (basename `effect_functions`). 7 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case ComputerSearch_PlayerDeckSelection-0 native probe did not terminate; the C body loops forever on state the reference resolves"
-unblock = "read the recorded diagnostics under .factory/try/ComputerSearch_PlayerDeckSelection/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
 name = "Scavenge_PlayerSelectTrainerEffect"
@@ -75,11 +71,6 @@ unblock = "read the recorded diagnostics under .factory/try/Scavenge_PlayerSelec
 name = "MagnemiteSelfdestructEffect"
 reason = "HAND-RESOLVED 2026-08-28: generation-9 primary candidates all exhaust at pc=625 (0x0271, the VBlank parking loop) before returning. The routine enters PlayAttackAnimation/WaitAttackAnimation and cannot reach its post-animation damage paths under the current GBRT fixture; this is an execution-environment boundary, not a C mismatch."
 unblock = "Trace the animation wait's required LCD/VBlank exit state with a bounded PPU trace, then reissue with a case that exits WaitAttackAnimation or an asm-derived pre-ret cutpoint; do not increase budgets or suppress the timeout."
-
-[[blocked]]
-name = "PokemonTrader_PlayerDeckSelection"
-reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:10043 (basename `effect_functions`). 9 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case PokemonTrader_PlayerDeckSelection-0 native probe did not terminate; the C body loops forever on state the reference resolves"
-unblock = "read the recorded diagnostics under .factory/try/PokemonTrader_PlayerDeckSelection/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
 name = "EnergyConversion_AddToHandEffect"
