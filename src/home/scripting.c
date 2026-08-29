@@ -2467,3 +2467,10 @@ SetEventValueResult SetStackEventZero(uint8_t event, uint8_t f, uint8_t b, uint8
 	return SetEventValue(event, f, b, 0u);
 }
 /* <<< factory SetStackEventZero */
+
+/* >>> factory GetStackEventValue */
+uint8_t GetStackEventValue(uint8_t post_call_byte)
+{
+	return GetEventValue(post_call_byte);
+}
+/* <<< factory GetStackEventValue */

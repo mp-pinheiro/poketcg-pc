@@ -2008,6 +2008,14 @@ CASES["SetStackEventZero"] = [
 ]
 # <<< factory SetStackEventZero
 
+# >>> factory GetStackEventValue
+CONTRACT["GetStackEventValue"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["GetStackEventValue"] = [
+    {"post_call_byte": 0x00, "wram": {0xD411: b"\x80"}, "read": {0xD411: 1}},
+    dict(POISON, post_call_byte=0x00, wram={0xD411: b"\x00"}, read={0xD411: 1}),
+]
+# <<< factory GetStackEventValue
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2863,3 +2871,6 @@ MUTATIONS["SetStackEventValue"] = {"source_symbol": "SetStackEventValue", "befor
 # >>> factory-mutation SetStackEventZero
 MUTATIONS["SetStackEventZero"] = {"source_symbol": "SetStackEventZero", "before": "SetEventValueResult SetStackEventZero(uint8_t event, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\treturn SetEventValue(event, f, b, 0u);", "after": "SetEventValueResult SetStackEventZero(uint8_t event, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\treturn SetEventValue((uint8_t)(event + 1u), f, b, 0u);", "case_ids": ["SetStackEventZero-0", "SetStackEventZero-1", "SetStackEventZero-2", "SetStackEventZero-3", "SetStackEventZero-4"]}
 # <<< factory-mutation SetStackEventZero
+# >>> factory-mutation GetStackEventValue
+MUTATIONS["GetStackEventValue"] = {"source_symbol": "GetStackEventValue", "before": "\treturn GetEventValue(post_call_byte);", "after": "\treturn GetEventValue((uint8_t)(post_call_byte + 1u));", "case_ids": ["GetStackEventValue-0", "GetStackEventValue-1"]}
+# <<< factory-mutation GetStackEventValue

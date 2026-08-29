@@ -1484,6 +1484,15 @@ static void adapt_SetStackEventZero(ProbeState *s)
 }
 /* <<< factory SetStackEventZero */
 
+/* >>> factory GetStackEventValue */
+static void adapt_GetStackEventValue(ProbeState *s)
+{
+	uint8_t value = GetStackEventValue(s->post_call_byte);
+	s->a = value;
+	s->f = value == 0u ? 0x80u : 0u;
+}
+/* <<< factory GetStackEventValue */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1631,5 +1640,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "SetStackEventFalse", adapt_SetStackEventFalse },
 	{ "SetStackEventValue", adapt_SetStackEventValue },
 	{ "SetStackEventZero", adapt_SetStackEventZero },
+	{ "GetStackEventValue", adapt_GetStackEventValue },
 	{ NULL, NULL },
 };
