@@ -285,11 +285,6 @@ name = "AIDoAction_Turn"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-0 wrapper calls action 1 and the reference spins at pc=0x05B8 until the 400004-cycle default ceiling; the turn target includes frame/AI work not bounded by the isolated fixture."
 unblock = "Port the action-1 turn target with a bounded AI fixture or establish a verified pre-ret contract, then retry AIDoAction_Turn."
 [[blocked]]
-name = "HandleDuelSetup"
-reason = "HAND-DIAGNOSED 2026-08-28: three complete candidate generations reach the reference animation/VBlank parking path at pc=0x0271 with LCDC enabled before returning; the full duel setup is frame-dependent under the isolated fixture, not a translation mismatch."
-unblock = "Trace the first shuffle/draw animation callee that enables LCD and establish a bounded pre-ret completion or port the frame-safe callee before retrying HandleDuelSetup; do not repeat unchanged full-call attempts."
-
-[[blocked]]
 name = "PlayIntroSequence"
 reason = "HAND-DIAGNOSED 2026-08-28: retry candidates reach either the animation/VBlank parking path or frame-timing-dependent command-stream pointer divergence; the top-level intro sequence is not bounded by the isolated fixture."
 unblock = "Construct a frame-safe intro fixture that skips or terminates the animation/song paths while exercising the real sequence setup, then retry PlayIntroSequence; do not alter the ROM stream address or suppress the sequence loop."
