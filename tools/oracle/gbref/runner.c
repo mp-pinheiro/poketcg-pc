@@ -517,6 +517,8 @@ int main(int argc, char **argv) {
     size_t stack_count = 0;
     uint64_t post_call_byte = 0;
     int post_call_state = json_number(request, "post_call_byte", &post_call_byte);
+    uint64_t ir_peer = 0;
+    int ir_peer_state = json_number(request, "ir_peer", &ir_peer);
     int stack_state = parse_stack_words(request, stack_words, MAX_STACK_WORDS,
                                         &stack_count);
     int setup_state = parse_setup(request, setup_calls, 256, &setup_count);
@@ -547,6 +549,7 @@ int main(int argc, char **argv) {
           event_mask_state != 1 || event_addr > 0xffff || event_value > 0xff ||
           event_mask > 0xff)) ||
         post_call_state < 0 || post_call_byte > 0xff ||
+        ir_peer_state < 0 || ir_peer > 1 ||
         seed_wram_state < 0 || seed_sram_state < 0 || seed_vram_state < 0 ||
         entry_state != 1 || entry > 0xffff || instruction_budget == 0 || cycle_budget == 0 ||
         instruction_budget > UINT32_MAX || cycle_budget > UINT32_MAX ||
@@ -651,6 +654,8 @@ int main(int argc, char **argv) {
         ctx->oracle_post_call_byte = (uint8_t)post_call_byte;
         ctx->oracle_post_call_byte_valid = 1;
     }
+    ctx->oracle_ir_peer = (uint8_t)ir_peer;
+    ctx->oracle_ir_rx_byte = 0x33;
     if (strcmp(mapper_mode, "seeded") == 0)
         seed_mapper_shadows(ctx, mapper_rom_bank, mapper_ram_bank, mapper_ram_enable);
     /* seed_mapper_shadows ties hBankROM to rom_bank, which is right for paging

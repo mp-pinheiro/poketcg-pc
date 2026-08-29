@@ -25,10 +25,14 @@ diff --git a/src/gbrt.c b/src/gbrt.c
 diff --git a/include/gbrt.h b/include/gbrt.h
 --- a/include/gbrt.h
 +++ b/include/gbrt.h
-@@ -334,2 +334,4 @@
+@@ -334,2 +334,8 @@
      void* port_state; /**< Opaque optional native port/frontend state */
 +    uint8_t oracle_post_call_byte;
 +    uint8_t oracle_post_call_byte_valid;
++    uint8_t oracle_ir_peer;
++    uint16_t oracle_ir_writes;
++    uint16_t oracle_ir_reads;
++    uint8_t oracle_ir_rx_byte;
      GBHostConfigurationContract host_configuration_contract; /**< Host-only configuration validation service */
 diff --git a/src/gbrt.c b/src/gbrt.c
 --- a/src/gbrt.c
@@ -38,4 +42,38 @@ diff --git a/src/gbrt.c b/src/gbrt.c
 +            if (addr == 0xFEA0 && ctx->oracle_post_call_byte_valid)
 +                return ctx->oracle_post_call_byte;
              return 0xFF;
+         }
+@@ -2701,7 +2701,15 @@
+         if (addr == 0xFF55) {
+             return gb_hdma_status_read(ctx);
+         }
+         if (addr == 0xFF56) {
++            if (ctx->oracle_ir_peer) {
++                uint16_t sample = ctx->oracle_ir_reads++;
++                if (sample == 0) return 0x3C;
++                uint16_t bit = (uint16_t)((sample - 1u) / 10u);
++                if (bit < 8u)
++                    return (ctx->oracle_ir_rx_byte & (uint8_t)(1u << bit)) ? 0x3E : 0x3C;
++                return 0x3C;
++            }
+             if (!gb_is_cgb_mode(ctx)) return 0xFF;
+             return 0x3E;
+         }
+diff --git a/src/gbrt.c b/src/gbrt.c
+--- a/src/gbrt.c
++++ b/src/gbrt.c
+@@ -3057,6 +3057,14 @@
+         if (addr == 0xFF56) {
+             if (gb_is_cgb_mode(ctx)) {
+                 ctx->io[0x56] = (value & 0xC1) | 0x3E;
++                if (ctx->oracle_ir_peer) {
++                    ctx->oracle_ir_writes++;
++                    uint16_t threshold = ctx->oracle_ir_reads >= 73u ? 18u : 19u;
++                    if (ctx->oracle_ir_writes >= threshold) {
++                        ctx->oracle_ir_writes = 0;
++                        ctx->oracle_ir_reads = 0;
++                    }
++                }
+             }
+             return;
          }

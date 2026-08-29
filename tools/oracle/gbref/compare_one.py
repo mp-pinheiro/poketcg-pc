@@ -115,6 +115,7 @@ def main() -> int:
             "sram": case.get("sram", {}),
             "vram": case.get("vram", {}),
         })
+        case["ir_peer"] = bool(case.get("ir_peer", False))
         case["state"] = {
             name: list(case["state"].get(name, []))
             for name in ("wram", "hram", "sram", "vram", "oam", "palette")
@@ -187,6 +188,7 @@ def main() -> int:
         "id", "hardware", "fn", "entry", "completion", "instruction_budget",
         "cycle_budget", "mapper", "registers", "compare", "preserve", "state",
         "snapshot", "bus", "sram", "vram", "setup", "input_events", "evidence",
+        "ir_peer",
     }
     # `stack` is optional: only a routine entered mid-frame declares caller-pushed
     # words, so demanding the key everywhere would invalidate every landed case.
@@ -327,6 +329,8 @@ def main() -> int:
         "input_events": case["input_events"],
         **registers,
     }
+    if case.get("ir_peer"):
+        request["ir_peer"] = 1
     if stack_words:
         request["stack"] = [int(word) for word in stack_words]
     if post_call_byte is not None:

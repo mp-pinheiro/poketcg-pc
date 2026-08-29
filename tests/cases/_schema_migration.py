@@ -250,6 +250,8 @@ def legacy_to_schema(cases: Mapping[str, Sequence[Mapping[str, Any]]], contract:
                     f"legacy case {function}[{index}].post_call_byte",
                     maximum=0xFF,
                 )
+            if "ir_peer" in legacy:
+                record["ir_peer"] = bool(legacy["ir_peer"])
             reason = legacy.get("reason", legacy.get("why"))
             if evidence != "primary" and reason is not None:
                 record["reason"] = reason

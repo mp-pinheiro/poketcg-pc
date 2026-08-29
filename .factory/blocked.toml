@@ -33,7 +33,6 @@ name = "_ExecuteGameEvent"
 reason = "poketcg/src/home/map.asm:42 dispatches through GameEventPointerTable (a bus-data jump table) via JumpToFunctionInTable into 8 handlers (GameEvent_Overworld, GameEvent_Duel, GameEvent_BattleCenter, GameEvent_GiftCenter, GameEvent_Credits, GameEvent_ContinueDuel, GameEvent_ChallengeMachine, GameEvent_Overworld again). This is docs/port-contract.md's documented Reason 4 (\"Tail dispatch into unported engine\") verbatim -- only GameEvent_Overworld is in this basename's already-ported list (confirmed by grep across src/home/map.h and src/home/map.c: GameEvent_Duel, GameEvent_BattleCenter, GameEvent_GiftCenter, GameEvent_Credits, GameEvent_ContinueDuel, and GameEvent_ChallengeMachine have no C prototype anywhere), so the call-graph sweep cannot see the indirect JumpToFunctionInTable edge and no C body can tail-call the other six targets."
 unblock = "port GameEvent_Duel, GameEvent_BattleCenter, GameEvent_GiftCenter, GameEvent_Credits, GameEvent_ContinueDuel, and GameEvent_ChallengeMachine (the six remaining GameEventPointerTable targets), then re-port _ExecuteGameEvent as a direct C switch over wGameEvent calling the now-available functions per docs/port-contract.md's leaf-slice resolution for CallBC/CallHL/CallHL2/JumpToFunctionInTable"
 
-
 [[blocked]]
 name = "RunOverworldScript"
 reason = "poketcg/src/home/script.asm:108 was investigated directly as a candidate this cycle (it was previously assumed portable and cited as the unblock path for Script_Nikki/Script_Tech1/Script_d93f). It is NOT a linear run-to-completion interpreter loop: it reads the current bytecode opcode at wScriptPointer, bank-switches to look up OverworldScriptTable[opcode] (restoring the caller's own bank afterward), then ends `pop bc; jp hl` with no `ret` at all -- a raw computed-jump trampoline that tail-jumps into whichever of dozens of ScriptCommand_* handlers the current opcode selects, and never returns to its own caller normally. This cannot be represented as a single register-in/register-out C function an isolated oracle case can verify: three escalating diagnostic runs against the reference ROM all BUDGET_EXHAUSTED at the identical pc=9100 (400,004 cycles), consistent with the probed call jumping into unseeded/garbage bytecode-handler code with no way back to the harness's synthesized return address."
@@ -53,9 +52,6 @@ unblock = "same as Script_Nikki/Script_Tech1/Func_fcad: add a project-wide RunOv
 name = "Duel_Init"
 reason = "poketcg/src/engine/menus/duel_init.asm:1 chains DisableLCD -> InitMenuScreen -> DrawRegularTextBox -> two PrintLabels calls (opponent title/deck name) -> DrawOpponentPortrait -> PlaySong -> FlashWhiteScreen -> DoFrameIfLCDEnabled -> SetCursorParametersForTextBox -> WaitForButtonAorB -> WaitForSongToFinish -> FadeScreenToWhite, all against the real ROM (reference-side, independent of the candidate C body). Retested this session with `\"setup\": [{\"fn\": \"SetupText\", \"d\": 0x20, \"e\": 0x40}]` added (the fix that resolved the Func_235e-class misdiagnoses on PrintPlayAreaCardHeader/PrintPokemonCardLength/etc) -- it does NOT help: BUDGET_EXHAUSTED persists at the identical pc=2160 (0x0870, ClearSRAMBank.loop) already documented, confirming this is a genuinely different failure from the Func_235e-missing-SetupText class. ValidateSRAM/RestartSRAM (poketcg/src/home/clear_sram.asm) is confirmed by grep to be called only from the reset vector in start.asm, never from Duel_Init's own call graph, yet the trace lands there anyway -- the same interrupt/VBlank-cascade pattern also seen on SetUpBossStartingHandAndDeck (three unrelated, unreachable-by-static-analysis PCs as budget grows)."
 unblock = "CORRECTED 2026-08-28: the recorded mechanism (interrupt/VBlank-cascade harness limitation, inferred from BUDGET_EXHAUSTED pc samples landing in statically unreachable routines) is UNPROVEN and belongs to a disproved class. A BUDGET_EXHAUSTED pc is a SAMPLING ARTIFACT of wherever the CPU sat when the budget died, not evidence of a wedge: GBRT_PPU_TRACE on GiveBoosterPack-0 proved the reference runs full frames, services [IRQ-SVC] vec=0040 every frame, and increments wVBlankCounter (docs/port-contract.md, mid-run-LCD-enable bullet). Multi-frame VBlank and cycled `keys` timelines ALREADY EXIST in all three lanes. Re-triage before writing any mechanism here: rerun the retired case through compare_one.py with GBRT_PPU_TRACE=/tmp/ppu.log and GBRT_PPU_TRACE_FRAMES=0-4000, histogram `grep -oE 'pc=[0-9A-F]{4}' /tmp/ppu.log | sort | uniq -c | sort -rn`, and resolve the hot non-ISR pcs against poketcg.sym -- the resident loop names the real blocker. Then author a pre-ret cutpoint before that wait, or seed its exit state."
-
-
-
 
 [[blocked]]
 name = "EnergySearch_AddToHandEffect"
@@ -144,6 +140,7 @@ unblock = "Trace the first animation/recoil callee that enables LCD and identify
 name = "Ram_RecoilSwitchEffect"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-8+ retry candidate reaches the reference animation/VBlank parking loop at pc=625 with LCDC=0x80 and exhausts 80M cycles before return; the isolated effect path is frame-dependent, not a translation mismatch. An unchanged full-call retry is non-informative."
 unblock = "Trace the first animation/recoil callee that enables LCD and identify a bounded pre-ret completion, then verify that prefix or port the frame-safe callee before retrying this effect; do not increase budgets or repeat the unchanged full-call case."
+
 [[blocked]]
 name = "HealPlayAreaCardHP"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-10 candidate uses the complete animation/card-text/HP sequence and exact ANIM_IDLE plus wAnimationsDisabled fixture, but reference still parks at WaitForVBlank pc=0x0271 with LCDC=0xC3 before return. This confirms the isolated full-call path remains frame-dependent rather than a translation mismatch."
@@ -239,7 +236,6 @@ name = "ExecuteReceivedIRCommands"
 reason = "HAND-DIAGNOSED 2026-08-29: generation-0 candidate remains in the reference ReceiveIRDataBuffer polling loop through the full 80,000,000-cycle budget; seeded IR buffer, RP, and JOYP bytes do not provide an external received frame. Native-only evidence cannot verify this hardware-dependent dispatch loop."
 unblock = "Add a deterministic external-IR frame injection/device model to the reference harness, then retry ExecuteReceivedIRCommands."
 
-
 [[blocked]]
 name = "HandleDuelSetup"
 reason = "HAND-DIAGNOSED 2026-08-29: generation-5 retry with explicit LCD-off animation fixture and CGB deck seeds reaches the setup body but diverges in the deck/duel WRAM footprint beginning at $C351 (reference 80, native ff) and related card-state spans. The missing initial duel-state writers are not resolved by another unchanged top-level retry."
@@ -254,8 +250,3 @@ unblock = "read the recorded diagnostics under .factory/try/ChallengeMachine_Pri
 name = "PlayIntroSequence"
 reason = "AUTO-RETIRED: src/engine/intro.asm:1 (basename `intro`). 4 generations exhausted (trapped=True); last diagnostic phase=compile failure_class=code detail=collect2: error: ld returned 1 exit status"
 unblock = "read the recorded diagnostics under .factory/try/PlayIntroSequence/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "TransmitRegistersThroughIR"
-reason = "AUTO-RETIRED: src/engine/link/ir_core.asm:467 (basename `ir_core`). 4 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case TransmitRegistersThroughIR-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":57308,\"rom_bank\":7,\"hbank_rom\":7,\"instructions\":20000000,\"cycles\":52577328,\"lcdc\":195,\"if\":224,\"ie\":5,\"ime\":1,\"halted\":1,\"ppu_lcdc\":195,\"ppu_ly\":40,\"ppu_mode\":3,\"bus\":\"00c3c3\"}"
-unblock = "read the recorded diagnostics under .factory/try/TransmitRegistersThroughIR/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"

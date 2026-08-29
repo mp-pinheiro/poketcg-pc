@@ -12,6 +12,7 @@ uint8_t g_oam[0xA0];
 uint8_t g_io[0x80];
 uint8_t g_pal[0x80];
 uint8_t g_keys;
+static uint16_t g_ir_read_count;
 
 /* Key timeline: entries[0..count-1], cycled per completed joypad poll. count <= 1
  * disarms the advance entirely, leaving g_keys exactly as seeded. */
@@ -133,6 +134,7 @@ void mem_reset(void)
 	memset(g_io, 0, sizeof g_io);
 	memset(g_pal, 0, sizeof g_pal);
 	g_keys = 0;
+	g_ir_read_count = 0;
 	g_key_count = 0;
 	g_key_index = 0;
 	g_key_latch_armed = 0;
@@ -198,8 +200,18 @@ uint8_t gb_read8(uint16_t addr)
 	/* RP ($FF56): unused bits 2-5 float high (0x3C), bit 1 is the IR receive
 	 * status (1 = no signal detected), bit 0 echoes the LED-control bit.
 	 * Bits 6-7 are write-only enable bits and read back as 0. */
-	if (addr == 0xFF56u)
+	if (addr == 0xFF56u) {
+		if ((g_keys & 0x80u) != 0u) {
+			uint16_t sample = g_ir_read_count++;
+			if (sample == 0u)
+				return 0x3Cu;
+			uint16_t bit = (uint16_t)((sample - 1u) / 10u);
+			if (bit < 8u)
+				return (0x33u & (uint8_t)(1u << bit)) != 0u ? 0x3Eu : 0x3Cu;
+			return 0x3Cu;
+		}
 		return (uint8_t)(0x3Eu | (*gb_ptr(addr) & 0x01u));
+	}
 	/* JOYP ($FF00): the stored byte only ever holds the two selection bits a
 	 * routine wrote (P14/P15); the input nibble is synthesized from g_keys on
 	 * every read, matching hardware's active-low matrix. Neither group
