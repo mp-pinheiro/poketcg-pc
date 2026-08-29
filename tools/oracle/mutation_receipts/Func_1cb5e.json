@@ -1,0 +1,9 @@
+{
+  "fn": "Func_1cb5e",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_1cb5e\", \"registers\": {\"a\": 140, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54449\": \"2a0000\", \"54454\": \"51\", \"54456\": \"12\", \"54474\": \"0200\", \"65408\": \"07\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_1cb5e\", \"mismatches\": {\"bus\": {\"address\": 54454, \"reference\": \"2a00005112020007\", \"native\": \"2a00000005ffff07\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[54449, 3], [54454, 1], [54456, 1], [54474, 2], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_1cb5e\", \"registers\": {\"a\": 140, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54449\": \"2a0000\", \"54454\": \"51\", \"54456\": \"12\", \"54474\": \"0200\", \"65408\": \"07\"}}, \"status\": \"PASS\"}\n"
+}

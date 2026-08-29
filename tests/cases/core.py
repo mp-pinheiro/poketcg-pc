@@ -4688,6 +4688,16 @@ CASES["Func_6fa5"] = [
 ]
 # <<< factory Func_6fa5
 
+# >>> factory Func_1cb5e
+CONTRACT["Func_1cb5e"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Func_1cb5e"] = [
+    {"a": 0x8C, "wram": {0xFF80: b"\x07", 0xD4B1: b"\x2A\x00", 0xD4B3: b"\x00", 0xD4B6: b"\x00", 0xD4B8: b"\x05", 0xD4CA: b"\xFF", 0xD4CB: b"\xFF"}, "read": {0xD4B3: 1, 0xD4B8: 1, 0xD4CA: 1, 0xD4CB: 1}},
+    dict(POISON, a=0x8C, wram={0xFF80: b"\x07", 0xD4B1: b"\x2A\x00", 0xD4B3: b"\x00", 0xD4B6: b"\x00", 0xD4B8: b"\x05", 0xD4CA: b"\xFF", 0xD4CB: b"\xFF"}, read={0xD4B3: 1, 0xD4B8: 1, 0xD4CA: 1, 0xD4CB: 1}),
+    {"a": 0x00, "wram": {0xD421: b"\x01"}},
+    {"a": 0x96},
+]
+# <<< factory Func_1cb5e
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6402,3 +6412,6 @@ MUTATIONS["Func_6fa5"] = {
     "case_ids": ["Func_6fa5-0"],
 }
 # <<< factory-mutation Func_6fa5
+# >>> factory-mutation Func_1cb5e
+MUTATIONS["Func_1cb5e"] = {"source_symbol": "Func_1cb5e", "before": "\tif (damage_high > 0x03u || (damage_high == 0x03u && damage_low >= 0xE8u)) {", "after": "\tif (damage_high < 0x03u || (damage_high == 0x03u && damage_low >= 0xE8u)) {", "case_ids": ["Func_1cb5e-0"]}
+# <<< factory-mutation Func_1cb5e

@@ -2719,6 +2719,13 @@ static void adapt_Func_6fa5(ProbeState *s)
 }
 /* <<< factory Func_6fa5 */
 
+/* >>> factory Func_1cb5e */
+static void adapt_Func_1cb5e(ProbeState *s)
+{
+	Func_1cb5e(s->a);
+}
+/* <<< factory Func_1cb5e */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3043,5 +3050,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "ChooseInitialArenaAndBenchPokemon", adapt_ChooseInitialArenaAndBenchPokemon },
 	{ "TurnDuelistTakePrizes", adapt_TurnDuelistTakePrizes },
 	{ "Func_6fa5", adapt_Func_6fa5 },
+	{ "Func_1cb5e", adapt_Func_1cb5e },
 	{ NULL, NULL },
 };

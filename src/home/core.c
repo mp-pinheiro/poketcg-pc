@@ -1552,6 +1552,10 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/serial.h"
 #include "home/duel.h"
 #define TookAllThePrizesText 0x007fu
+
+#include "home/screen_effects.h"
+#include "home/load_gfx.h"
+#define PALETTE_DAMAGE 0x25u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -8800,3 +8804,40 @@ Func6fa5Result Func_6fa5(void)
 	return (Func6fa5Result){(uint8_t)((rng.f & 0x80u) | 0x10u)};
 }
 /* <<< factory Func_6fa5 */
+
+/* >>> factory Func_1cb5e */
+void Func_1cb5e(uint8_t a)
+{
+	if (a >= 0x96u) {
+		Func_1ce03(a);
+		return;
+	}
+	if (a != DUEL_ANIM_DAMAGE_HUD) {
+		InitScreenAnimation();
+		return;
+	}
+
+	uint8_t damage_high = gb_read8((uint16_t)(wDuelAnimDamage_ADDR + 1u));
+	uint8_t damage_low = wDuelAnimDamage;
+	if (damage_high > 0x03u || (damage_high == 0x03u && damage_low >= 0xE8u)) {
+		return;
+	}
+
+	wDamageCharAnimDelay = 0u;
+	wWhichOBP = 0u;
+	wWhichOBPalIndex = 0u;
+	LoadOBPalette(PALETTE_DAMAGE);
+
+	DrawDamageAnimationNumbers();
+	uint8_t effectiveness = wDuelAnimEffectiveness;
+	if ((effectiveness & 0x01u) != 0u)
+		DrawDamageAnimationWeak();
+	wDamageCharAnimDelay = 18u;
+	if ((effectiveness & 0x02u) != 0u)
+		DrawDamageAnimationResist();
+	if ((effectiveness & 0x04u) != 0u)
+		DrawDamageAnimationArrow(0x20u);
+
+	wDuelAnimEffectiveness = 0u;
+}
+/* <<< factory Func_1cb5e */

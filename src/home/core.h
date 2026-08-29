@@ -1239,4 +1239,7 @@ TurnDuelistTakePrizesResult TurnDuelistTakePrizes(void);
 typedef struct { uint8_t f; } Func6fa5Result;
 Func6fa5Result Func_6fa5(void);
 /* <<< factory Func_6fa5 */
+/* >>> factory Func_1cb5e */
+void Func_1cb5e(uint8_t a);
+/* <<< factory Func_1cb5e */
 #endif
