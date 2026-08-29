@@ -186,10 +186,6 @@ reason = "HAND-DIAGNOSED 2026-08-29: generation-5 retry with explicit LCD-off an
 unblock = "Trace the InitializeDuelVariables and deck-state writers responsible for the $C351 and related setup footprint, port that state transition, then retry HandleDuelSetup."
 
 
-[[blocked]]
-name = "PlayIntroSequence"
-reason = "AUTO-RETIRED: src/engine/intro.asm:1 (basename `intro`). 4 generations exhausted (trapped=True); last diagnostic phase=compile failure_class=code detail=collect2: error: ld returned 1 exit status"
-unblock = "read the recorded diagnostics under .factory/try/PlayIntroSequence/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
  
 [[blocked]]
 name = "_SendCard"
