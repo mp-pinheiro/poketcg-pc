@@ -2721,6 +2721,35 @@ FRAME_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x
 FRAME_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000}
 
 hAIPkmnPowerEffectParam = 0xFFA1
+
+_RDP_BASE = {
+    0xFF97: b"\xC2", 0xFF9D: b"\x01",
+    0xC2EF: b"\x01", 0xC3EF: b"\x01",
+    0xC2BB: b"\x00", 0xC3BB: b"\x00",
+    0xC2C8: b"\x50", 0xC3C8: b"\x50",
+    0xC400: b"\x01", 0xC480: b"\x01",
+    0xCABB: b"\x00",
+    0xCACA: b"\x00\x00\x00",
+}
+_RDP_IDLE = {
+    0xCE7E: b"\x01",
+    0xD423: b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF",
+    0xD42A: b"\xFF", 0xD4C0: b"\xFF",
+    0xD4AC: b"\x08", 0xD4AD: b"\x00",
+}
+def _rdp_case(rng, poison=False):
+    wram = dict(_RDP_BASE)
+    wram.update(_RDP_IDLE)
+    wram[0xCACA] = rng
+    case = {
+        "d": 0x00, "e": 0x14, "wram": wram,
+        "read": {0xCCC7: 1, 0xCCE6: 1, 0xCCB8: 1},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000, "cycle_budget": 80000000,
+    }
+    if poison:
+        case.update(POISON)
+    return case
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7062,6 +7091,15 @@ CASES["MagneticStormEffect"] = [
 ]
 # <<< factory MagneticStormEffect
 
+# >>> factory RandomlyDamagePlayAreaPokemon
+CONTRACT["RandomlyDamagePlayAreaPokemon"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["RandomlyDamagePlayAreaPokemon"] = [
+    _rdp_case(b"\x00\x00\x00"),
+    _rdp_case(b"\x00\x40\x00"),
+    _rdp_case(b"\x00\x00\x00", poison=True),
+]
+# <<< factory RandomlyDamagePlayAreaPokemon
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9941,3 +9979,6 @@ MUTATIONS["Peek_SelectEffect"] = {"source_symbol": "Peek_SelectEffect", "before"
 # >>> factory-mutation MagneticStormEffect
 MUTATIONS["MagneticStormEffect"] = {"source_symbol": "MagneticStormEffect", "before": "void MagneticStormEffect(void)\n{\n\tDuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);\n\tuint16_t energy_list = wDuelTempList_ADDR;", "after": "void MagneticStormEffect(void)\n{\n\tDuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);\n\tuint16_t energy_list = (uint16_t)(wDuelTempList_ADDR + 1u);", "case_ids": ["MagneticStormEffect-1", "MagneticStormEffect-2"]}
 # <<< factory-mutation MagneticStormEffect
+# >>> factory-mutation RandomlyDamagePlayAreaPokemon
+MUTATIONS["RandomlyDamagePlayAreaPokemon"] = {"source_symbol": "RandomlyDamagePlayAreaPokemon", "before": "RandomlyDamagePlayAreaPokemonResult RandomlyDamagePlayAreaPokemon(uint16_t de)\n{\n\tfor (;;) {\n\t\twNoDamageOrEffect = 0u;", "after": "RandomlyDamagePlayAreaPokemonResult RandomlyDamagePlayAreaPokemon(uint16_t de)\n{\n\tfor (;;) {\n\t\twNoDamageOrEffect = 1u;", "case_ids": ["RandomlyDamagePlayAreaPokemon-0", "RandomlyDamagePlayAreaPokemon-1", "RandomlyDamagePlayAreaPokemon-2"]}
+# <<< factory-mutation RandomlyDamagePlayAreaPokemon

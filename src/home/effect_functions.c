@@ -1328,6 +1328,12 @@ void BankswitchROM(uint8_t bank);
 #define PeekWasUsedToLookInYourHandText 0x0145u
 
 #define TheEnergyCardFromPlayAreaWasMovedText 0x014cu
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/random.h"
+#define ATK_ANIM_THUNDER_PLAY_AREA 0x82u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10408,3 +10414,33 @@ void MagneticStormEffect(void)
 	DrawPlayAreaScreenToShowChanges(0u);
 }
 /* <<< factory MagneticStormEffect */
+
+/* >>> factory RandomlyDamagePlayAreaPokemon */
+RandomlyDamagePlayAreaPokemonResult RandomlyDamagePlayAreaPokemon(uint16_t de)
+{
+	for (;;) {
+		wNoDamageOrEffect = 0u;
+		uint8_t opponent = (uint8_t)(UpdateRNGSources() & 1u);
+		DuelistVarResult count;
+		uint8_t target;
+		if (opponent == 0u) {
+			wIsDamageToSelf = 1u;
+			count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+			target = Random(count.a);
+			if (target == hTempPlayAreaLocation_ff9d)
+				continue;
+		} else {
+			wIsDamageToSelf = 0u;
+			SwapTurn();
+			count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+			target = Random(count.a);
+		}
+		wLoadedAttackAnimation = ATK_ANIM_THUNDER_PLAY_AREA;
+		DealDamageToPlayAreaPokemonResult damage =
+			DealDamageToPlayAreaPokemon(target, de, count.hl);
+		if (opponent != 0u)
+			SwapTurn();
+		return (RandomlyDamagePlayAreaPokemonResult){damage.a, damage.f};
+	}
+}
+/* <<< factory RandomlyDamagePlayAreaPokemon */

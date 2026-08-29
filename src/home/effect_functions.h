@@ -2032,6 +2032,10 @@ void Peek_SelectEffect(void);
 /* >>> factory MagneticStormEffect */
 void MagneticStormEffect(void);
 /* <<< factory MagneticStormEffect */
+/* >>> factory RandomlyDamagePlayAreaPokemon */
+typedef struct { uint8_t a, f; } RandomlyDamagePlayAreaPokemonResult;
+RandomlyDamagePlayAreaPokemonResult RandomlyDamagePlayAreaPokemon(uint16_t de);
+/* <<< factory RandomlyDamagePlayAreaPokemon */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

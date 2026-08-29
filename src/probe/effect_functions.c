@@ -4949,6 +4949,16 @@ static void adapt_MagneticStormEffect(ProbeState *s)
 }
 /* <<< factory MagneticStormEffect */
 
+/* >>> factory RandomlyDamagePlayAreaPokemon */
+static void adapt_RandomlyDamagePlayAreaPokemon(ProbeState *s)
+{
+	RandomlyDamagePlayAreaPokemonResult r =
+		RandomlyDamagePlayAreaPokemon((uint16_t)(((uint16_t)s->d << 8u) | s->e));
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory RandomlyDamagePlayAreaPokemon */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5550,5 +5560,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SpitPoison_Poison50PercentEffect", adapt_SpitPoison_Poison50PercentEffect },
 	{ "Peek_SelectEffect", adapt_Peek_SelectEffect },
 	{ "MagneticStormEffect", adapt_MagneticStormEffect },
+	{ "RandomlyDamagePlayAreaPokemon", adapt_RandomlyDamagePlayAreaPokemon },
 	{ NULL, NULL },
 };
