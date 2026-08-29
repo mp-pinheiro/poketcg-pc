@@ -249,3 +249,13 @@ unblock = "Trace the InitializeDuelVariables and deck-state writers responsible 
 name = "ChallengeMachine_PrintOpponentInfo"
 reason = "AUTO-RETIRED: src/engine/challenge_machine.asm:492 (basename `challenge_machine`). 8 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case ChallengeMachine_PrintOpponentInfo-0 {\"status\": \"PORT\", \"fn\": \"ChallengeMachine_PrintOpponentInfo\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}"
 unblock = "read the recorded diagnostics under .factory/try/ChallengeMachine_PrintOpponentInfo/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "PlayIntroSequence"
+reason = "AUTO-RETIRED: src/engine/intro.asm:1 (basename `intro`). 4 generations exhausted (trapped=True); last diagnostic phase=compile failure_class=code detail=collect2: error: ld returned 1 exit status"
+unblock = "read the recorded diagnostics under .factory/try/PlayIntroSequence/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "TransmitRegistersThroughIR"
+reason = "AUTO-RETIRED: src/engine/link/ir_core.asm:467 (basename `ir_core`). 4 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case TransmitRegistersThroughIR-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":57308,\"rom_bank\":7,\"hbank_rom\":7,\"instructions\":20000000,\"cycles\":52577328,\"lcdc\":195,\"if\":224,\"ie\":5,\"ime\":1,\"halted\":1,\"ppu_lcdc\":195,\"ppu_ly\":40,\"ppu_mode\":3,\"bus\":\"00c3c3\"}"
+unblock = "read the recorded diagnostics under .factory/try/TransmitRegistersThroughIR/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
