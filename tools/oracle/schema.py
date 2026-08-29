@@ -22,8 +22,9 @@ COMPLETIONS = frozenset({"return", "pre-ret", "event"})
 _CASE_KEYS = frozenset({
     "id", "hardware", "mapper", "registers", "bus", "seeds", "state", "snapshot",
     "setup", "input_events", "instruction_budget", "cycle_budget", "completion",
-    "evidence", "reason", "stack",
+    "evidence", "reason", "stack", "post_call_byte",
 })
+
 _MAPPER_KEYS = frozenset({
     "rom_bank", "ram_bank", "vram_bank", "ram_enable", "mode", "hbank_rom",
 })
@@ -250,6 +251,8 @@ def validate_case(case: Mapping[str, Any], *, case_id: str | None = None) -> Map
     _validate_input_events(case.get("input_events", []))
     if "stack" in case:
         _validate_stack(case["stack"])
+    if "post_call_byte" in case:
+        _integer(case["post_call_byte"], "case.post_call_byte", maximum=0xFF)
     _integer(case.get("instruction_budget"), "case.instruction_budget", minimum=1)
     _integer(case.get("cycle_budget"), "case.cycle_budget", minimum=1)
 

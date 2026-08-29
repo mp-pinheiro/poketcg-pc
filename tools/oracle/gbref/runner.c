@@ -674,7 +674,9 @@ int main(int argc, char **argv) {
     while (strcmp(completion, "event") == 0
                ? ((gb_read8(ctx, (uint16_t)event_addr) & (uint8_t)event_mask)
                   != (uint8_t)event_value)
-               : ctx->pc != (strcmp(completion, "pre-ret") == 0 ? stop_pc : 0xfea0)) {
+               : ctx->pc != (strcmp(completion, "pre-ret") == 0
+                              ? stop_pc
+                              : (post_call_state == 1 ? 0xfea1 : 0xfea0))) {
         if (steps >= instruction_budget || cycles >= cycle_budget) {
             /* A budget death parked in a halt is the common trap, and pc alone
              * cannot tell a spin apart from a wait for an interrupt that can

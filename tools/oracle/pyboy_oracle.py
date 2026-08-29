@@ -309,7 +309,8 @@ class Oracle:
 
     def _run(self, symbol: str, regs: dict, stop_pc: int | None = None,
              stack: Sequence[int] | None = None, cycle: bool = False,
-             hbank_rom: int | None = None, frames: int | None = None) -> Result:
+             hbank_rom: int | None = None, frames: int | None = None,
+             post_call_byte: int | None = None) -> Result:
         """Drive one routine to its requested completion point."""
         pb = self.pyboy
         fn_bank, addr = pb.symbol_lookup(symbol)
@@ -330,9 +331,11 @@ class Oracle:
             raise OracleError("stack declares more than 4 caller-pushed words")
         pb.memory[STACK_TOP - 2] = SENTINEL & 0xFF
         pb.memory[STACK_TOP - 1] = SENTINEL >> 8
-        # Caller-pushed saves sit below the return address, in push order, so the
-        # routine's first `pop` reads the last word and its `ret` still finds the
-        # sentinel underneath. STACK_TOP-2 stays the sentinel slot either way.
+        if post_call_byte is not None:
+            pb.memory[SENTINEL] = post_call_byte
+        # Caller-pushed saves sit below the return address, in push order, so
+        # the routine's first `pop` reads the last word and its `ret` still
+        # finds the sentinel underneath. STACK_TOP-2 stays the sentinel slot.
         for index, word in enumerate(words):
             base = STACK_TOP - 4 - 2 * index
             pb.memory[base] = word & 0xFF
@@ -351,7 +354,7 @@ class Oracle:
 
         self._hit = None
         if stop_pc is None:
-            self._arm(SENTINEL)
+            self._arm(SENTINEL + 1 if post_call_byte is not None else SENTINEL)
         else:
             # Home bank ($0000-$3FFF) is always mapped; a banked stop pc must be
             # hooked against the routine's own bank.
@@ -409,7 +412,8 @@ class Oracle:
              stop_pc: int | None = None,
              stack: Sequence[int] | None = None,
              hbank_rom: int | None = None,
-             frames: int | None = None) -> Result:
+             frames: int | None = None,
+             post_call_byte: int | None = None) -> Result:
         pb = self.pyboy
         self._baseline.seek(0)
         pb.load_state(self._baseline)
@@ -469,4 +473,5 @@ class Oracle:
             cycle=True,
             hbank_rom=hbank_rom,
             frames=frames,
+            post_call_byte=post_call_byte,
         )

@@ -190,7 +190,7 @@ def main() -> int:
     }
     # `stack` is optional: only a routine entered mid-frame declares caller-pushed
     # words, so demanding the key everywhere would invalidate every landed case.
-    optional = {"stack", "reason", "why"}
+    optional = {"stack", "post_call_byte", "reason", "why"}
     if mode == "pre-ret":
         required.add("stop_pc" if isinstance(completion, str) else "completion")
     if mode == "event":
@@ -203,6 +203,10 @@ def main() -> int:
             or any(isinstance(word, bool) or not isinstance(word, int)
                    or not 0 <= word <= 0xffff for word in stack_words)):
         raise SystemExit("SCHEMA stack must hold at most 4 words below 0x10000")
+    if post_call_byte is not None and (
+            isinstance(post_call_byte, bool) or not isinstance(post_call_byte, int)
+            or not 0 <= post_call_byte <= 0xff):
+        raise SystemExit("SCHEMA post_call_byte must be an integer in range 0..255")
     if case["hardware"] not in {"dmg", "cgb"}:
         raise SystemExit("SCHEMA hardware must be dmg or cgb")
     if not isinstance(case["registers"], dict) or not set(case["registers"]).issubset(REGISTERS):
