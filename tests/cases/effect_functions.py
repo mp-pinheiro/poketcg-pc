@@ -2761,6 +2761,13 @@ hWhoseTurn = 0xFF97
 wLCDC = 0xCABB
 wDuelDisplayedScreen = 0xCAC2
 hTemp_ffa0 = 0xFFA0
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hWhoseTurn = 0xFF97
+hTempCardIndex_ff9f = 0xFF9F
+hCurSelectionItem = 0xFFB2
+wDuelType = 0xCC09
+wDuelTempList = 0xC510
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7129,6 +7136,14 @@ CASES["EnergySearch_AddToHandEffect"] = [
 ]
 # <<< factory EnergySearch_AddToHandEffect
 
+# >>> factory LassEffect
+CONTRACT["LassEffect"] = {"compare": (), "preserve": ()}
+CASES["LassEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {hWhoseTurn: b"\xC2", wDuelType: b"\x00", 0xC2ED: b"\x00", 0xC3ED: b"\x00", hTempCardIndex_ff9f: b"\x00", 0xCABB: b"\x00"}, "read": {hCurSelectionItem: 1}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={hWhoseTurn: b"\xC2", wDuelType: b"\x00", 0xC2ED: b"\x00", 0xC3ED: b"\x00", hTempCardIndex_ff9f: b"\x00", 0xCABB: b"\x00"}, read={hCurSelectionItem: 1}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory LassEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10037,3 +10052,6 @@ MUTATIONS["BigThunderEffect"] = {"source_symbol": "BigThunderEffect", "before": 
 # >>> factory-mutation EnergySearch_AddToHandEffect
 MUTATIONS["EnergySearch_AddToHandEffect"] = {"source_symbol": "EnergySearch_AddToHandEffect", "before": "ShuffleCardsInDeckResult EnergySearch_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t card = hTemp_ffa0;", "after": "ShuffleCardsInDeckResult EnergySearch_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t card = 0xFFu;", "case_ids": ["EnergySearch_AddToHandEffect-0", "EnergySearch_AddToHandEffect-2"]}
 # <<< factory-mutation EnergySearch_AddToHandEffect
+# >>> factory-mutation LassEffect
+MUTATIONS["LassEffect"] = {"source_symbol": "LassEffect", "before": "\thCurSelectionItem = 0u;", "after": "\thCurSelectionItem = 1u;", "case_ids": ["LassEffect-0", "LassEffect-1"]}
+# <<< factory-mutation LassEffect

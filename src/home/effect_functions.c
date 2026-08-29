@@ -1338,6 +1338,19 @@ void BankswitchROM(uint8_t bank);
 
 #include "home/effect_functions.h"
 #include "home/serial.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/card_data.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#define OPPONENT_TURN 0xc3u
+#define PAD_A 0x01u
+#define ChooseTheCardYouWishToExamineText 0x0056u
+#define DuelistHasNoCardsInHandText 0x0178u
+#define PleaseCheckTheOpponentsHandText 0x0163u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10518,3 +10531,59 @@ ShuffleCardsInDeckResult EnergySearch_AddToHandEffect(uint8_t a, uint8_t f, uint
 	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
 }
 /* <<< factory EnergySearch_AddToHandEffect */
+
+/* >>> factory LassEffect */
+void LassEffect(void)
+{
+	uint8_t discarded = hTempCardIndex_ff9f;
+	RemoveCardFromHand(discarded);
+	PutCardInDiscardPile(discarded);
+	(void)DrawWideTextBox_WaitForInput(PleaseCheckTheOpponentsHandText);
+
+	if (wDuelType != 0u) {
+		uint8_t saved_turn = hWhoseTurn;
+		hWhoseTurn = OPPONENT_TURN;
+		HandListResult hand = CreateHandCardList(0u);
+		if ((hand.f & 0x10u) != 0u)
+			(void)DrawWideTextBox_WaitForInput(DuelistHasNoCardsInHandText);
+		else {
+			(void)InitAndDrawCardListScreenLayout();
+			SetCardListHeaderText(DuelistHandText, ChooseTheCardYouWishToExamineText);
+			wNoItemSelectionMenuKeys = (uint8_t)(PAD_A | PAD_START);
+			(void)DisplayCardList();
+		}
+		hWhoseTurn = saved_turn;
+	} else {
+		SwapTurn();
+		HandListResult hand = CreateHandCardList(0u);
+		if ((hand.f & 0x10u) != 0u)
+			(void)DrawWideTextBox_WaitForInput(DuelistHasNoCardsInHandText);
+		else {
+			(void)InitAndDrawCardListScreenLayout();
+			SetCardListHeaderText(DuelistHandText, ChooseTheCardYouWishToExamineText);
+			wNoItemSelectionMenuKeys = (uint8_t)(PAD_A | PAD_START);
+			(void)DisplayCardList();
+		}
+		SwapTurn();
+	}
+
+	(void)CreateHandCardList(0u);
+	(void)SortCardsInDuelTempListByID(0u, 0u, wDuelTempList_ADDR);
+	hCurSelectionItem = 0u;
+	uint16_t list = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t index = gb_read8(list++);
+		if (index == 0xffu)
+			break;
+		hTempCardIndex_ff98 = index;
+		uint16_t card_id = GetCardIDFromDeckIndex(index);
+		if (GetCardType((uint8_t)card_id) != TYPE_TRAINER)
+			continue;
+		RemoveCardFromHand(index);
+		ReturnCardToDeck(index);
+		hCurSelectionItem++;
+	}
+	if (hCurSelectionItem != 0u)
+		(void)ShuffleCardsInDeck(hCurSelectionItem, 0u, 0u, wDuelTempList_ADDR);
+}
+/* <<< factory LassEffect */

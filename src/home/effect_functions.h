@@ -2042,6 +2042,9 @@ RandomlyDamagePlayAreaPokemonResult BigThunderEffect(uint8_t b, uint8_t c, uint1
 /* >>> factory EnergySearch_AddToHandEffect */
 ShuffleCardsInDeckResult EnergySearch_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory EnergySearch_AddToHandEffect */
+/* >>> factory LassEffect */
+void LassEffect(void);
+/* <<< factory LassEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

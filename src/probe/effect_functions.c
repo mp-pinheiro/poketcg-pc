@@ -4991,6 +4991,14 @@ static void adapt_EnergySearch_AddToHandEffect(ProbeState *s)
 }
 /* <<< factory EnergySearch_AddToHandEffect */
 
+/* >>> factory LassEffect */
+static void adapt_LassEffect(ProbeState *s)
+{
+	(void)s;
+	LassEffect();
+}
+/* <<< factory LassEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5596,5 +5604,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "RandomlyDamagePlayAreaPokemon", adapt_RandomlyDamagePlayAreaPokemon },
 	{ "BigThunderEffect", adapt_BigThunderEffect },
 	{ "EnergySearch_AddToHandEffect", adapt_EnergySearch_AddToHandEffect },
+	{ "LassEffect", adapt_LassEffect },
 	{ NULL, NULL },
 };

@@ -1,0 +1,9 @@
+{
+  "fn": "LassEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LassEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49901\": \"01\", \"50157\": \"00\", \"51899\": \"80\", \"52233\": \"00\", \"65431\": \"c2\", \"65439\": \"00\", \"65458\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LassEffect\", \"mismatches\": {\"bus\": {\"address\": 65458, \"reference\": \"8000c20000\", \"native\": \"8000c20001\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[49901, 1], [50157, 1], [51899, 1], [52233, 1], [65431, 1], [65439, 1], [65458, 1]]}}}\n",
+  "restored": "{\"fn\": \"LassEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49901\": \"01\", \"50157\": \"00\", \"51899\": \"80\", \"52233\": \"00\", \"65431\": \"c2\", \"65439\": \"00\", \"65458\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
