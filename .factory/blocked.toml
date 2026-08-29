@@ -231,3 +231,8 @@ unblock = "Trace the trader card-list selection input/state path to a determinis
 name = "Scavenge_PlayerSelectTrainerEffect"
 reason = "HAND-DIAGNOSED 2026-08-29: generation-7 candidates all enter the real discard-pile card-list DisplayCardList retry loop and the native probes do not terminate under the isolated A-key timeline; no bounded interactive selection completion was established."
 unblock = "Trace DisplayCardList's discard-pile menu/input state to a deterministic trainer-card selection or establish a verified pre-ret cutpoint before retrying Scavenge_PlayerSelectTrainerEffect; do not repeat unchanged interactive fixtures."
+
+[[blocked]]
+name = "PlayIntroSequence"
+reason = "AUTO-RETIRED: src/engine/intro.asm:1 (basename `intro`). 4 generations exhausted (trapped=True); last diagnostic phase=compile failure_class=code detail=collect2: error: ld returned 1 exit status"
+unblock = "read the recorded diagnostics under .factory/try/PlayIntroSequence/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
