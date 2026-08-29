@@ -152,6 +152,22 @@ CASES["CloseIRCommunications"] = [
 ]
 # <<< factory CloseIRCommunications
 
+# >>> factory SafelyCloseIRCommunications
+CONTRACT["SafelyCloseIRCommunications"] = {"compare": (), "preserve": ()}
+CASES["SafelyCloseIRCommunications"] = [
+    {"oracle": False, "evidence": "primary", "why": "rSPD is a hardware speed register whose reference readback varies, so native readback is asserted directly while TMA and TAC verify the speed-switch timer setup.", "setup": [{"fn": "CopyDMAFunction"}], "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "read": {0xFF06: 1, 0xFF07: 1, 0xFF4D: 1}, "expect": {0xFF06: b"\x78", 0xFF07: b"\x07", 0xFF4D: b"\xFE"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="rSPD is a hardware speed register whose reference readback varies, so native readback is asserted directly while TMA and TAC verify the speed-switch timer setup.", setup=[{"fn": "CopyDMAFunction"}], wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, read={0xFF06: 1, 0xFF07: 1, 0xFF4D: 1}, expect={0xFF06: b"\x78", 0xFF07: b"\x07", 0xFF4D: b"\xFE"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory SafelyCloseIRCommunications
+
+# >>> factory TrySendIRRequest
+CONTRACT["TrySendIRRequest"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["TrySendIRRequest"] = [
+    {"keys": 0x02, "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=0x02, wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80"}, setup=[{"fn": "CopyDMAFunction"}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory TrySendIRRequest
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -243,3 +259,14 @@ MUTATIONS["StartIRCommunications"] = {"source_symbol": "StartIRCommunications", 
 # >>> factory-mutation CloseIRCommunications
 MUTATIONS["CloseIRCommunications"] = {"source_symbol": "CloseIRCommunications", "before": "\tSwitchToCGBDoubleSpeed();", "after": "\t(void)0;", "case_ids": ["CloseIRCommunications-0", "CloseIRCommunications-1"]}
 # <<< factory-mutation CloseIRCommunications
+# >>> factory-mutation SafelyCloseIRCommunications
+MUTATIONS["SafelyCloseIRCommunications"] = {"source_symbol": "SafelyCloseIRCommunications", "before": "void SafelyCloseIRCommunications(void)\n{\n\tCloseIRCommunications();", "after": "void SafelyCloseIRCommunications(void)\n{\n\tStartIRCommunications();", "case_ids": ["SafelyCloseIRCommunications-0", "SafelyCloseIRCommunications-1"]}
+# <<< factory-mutation SafelyCloseIRCommunications
+# >>> factory-mutation TrySendIRRequest
+MUTATIONS["TrySendIRRequest"] = {
+    "source_symbol": "TrySendIRRequest",
+    "before": "\tCloseIRCommunications();\n\treturn (TrySendIRRequestResult){result_a, result_f};",
+    "after": "\tCloseIRCommunications();\n\treturn (TrySendIRRequestResult){(uint8_t)(result_a + 1u), result_f};",
+    "case_ids": ["TrySendIRRequest-0", "TrySendIRRequest-1"],
+}
+# <<< factory-mutation TrySendIRRequest

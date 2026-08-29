@@ -327,3 +327,39 @@ void CloseIRCommunications(void)
 	/* EI is already represented by the probe runner's enabled interrupt state. */
 }
 /* <<< factory CloseIRCommunications */
+
+/* >>> factory SafelyCloseIRCommunications */
+void SafelyCloseIRCommunications(void)
+{
+	CloseIRCommunications();
+}
+/* <<< factory SafelyCloseIRCommunications */
+
+/* >>> factory TrySendIRRequest */
+TrySendIRRequestResult TrySendIRRequest(void)
+{
+	StartIRCommunications();
+
+	uint8_t remaining = 4u;
+	uint8_t result_a = 0u;
+	uint8_t result_f = 0u;
+	for (;;) {
+		(void)TransmitByteThroughIR(0xAAu, RP_ADDR, 0u, (uint16_t)remaining);
+		ReceiveByteThroughIRResult received = ReceiveByteThroughIR_ZeroIfUnsuccessful();
+		result_a = received.a;
+		if (received.a == 0x33u) {
+			result_a = 0u;
+			result_f = 0x80u;
+			break;
+		}
+		remaining = (uint8_t)(remaining - 1u);
+		if (remaining != 0u)
+			continue;
+		result_f = 0x90u;
+		break;
+	}
+
+	CloseIRCommunications();
+	return (TrySendIRRequestResult){result_a, result_f};
+}
+/* <<< factory TrySendIRRequest */

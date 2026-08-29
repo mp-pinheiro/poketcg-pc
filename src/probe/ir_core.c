@@ -152,6 +152,23 @@ static void adapt_CloseIRCommunications(ProbeState *s)
 }
 /* <<< factory CloseIRCommunications */
 
+/* >>> factory SafelyCloseIRCommunications */
+static void adapt_SafelyCloseIRCommunications(ProbeState *s)
+{
+	(void)s;
+	SafelyCloseIRCommunications();
+}
+/* <<< factory SafelyCloseIRCommunications */
+
+/* >>> factory TrySendIRRequest */
+static void adapt_TrySendIRRequest(ProbeState *s)
+{
+	TrySendIRRequestResult result = TrySendIRRequest();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory TrySendIRRequest */
+
 const ProbeEntry probe_entries_ir_core[] = {
 	{ "StoreRegistersInIRDataBuffer", adapt_StoreRegistersInIRDataBuffer },
 	{ "LoadRegistersFromIRDataBuffer", adapt_LoadRegistersFromIRDataBuffer },
@@ -170,5 +187,7 @@ const ProbeEntry probe_entries_ir_core[] = {
 	{ "ClearRP", adapt_ClearRP },
 	{ "StartIRCommunications", adapt_StartIRCommunications },
 	{ "CloseIRCommunications", adapt_CloseIRCommunications },
+	{ "SafelyCloseIRCommunications", adapt_SafelyCloseIRCommunications },
+	{ "TrySendIRRequest", adapt_TrySendIRRequest },
 	{ NULL, NULL },
 };

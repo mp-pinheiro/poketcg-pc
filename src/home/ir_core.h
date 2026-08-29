@@ -71,4 +71,11 @@ void StartIRCommunications(void);
 /* >>> factory CloseIRCommunications */
 void CloseIRCommunications(void);
 /* <<< factory CloseIRCommunications */
+/* >>> factory SafelyCloseIRCommunications */
+void SafelyCloseIRCommunications(void);
+/* <<< factory SafelyCloseIRCommunications */
+/* >>> factory TrySendIRRequest */
+typedef struct { uint8_t a; uint8_t f; } TrySendIRRequestResult;
+TrySendIRRequestResult TrySendIRRequest(void);
+/* <<< factory TrySendIRRequest */
 #endif /* POKETCG_HOME_IR_CORE_H */
