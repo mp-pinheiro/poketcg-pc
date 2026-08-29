@@ -217,3 +217,13 @@ unblock = "read the recorded diagnostics under .factory/try/ChallengeMachine_Pri
 name = "PlayIntroSequence"
 reason = "AUTO-RETIRED: src/engine/intro.asm:1 (basename `intro`). 4 generations exhausted (trapped=True); last diagnostic phase=compile failure_class=code detail=collect2: error: ld returned 1 exit status"
 unblock = "read the recorded diagnostics under .factory/try/PlayIntroSequence/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+ 
+[[blocked]]
+name = "_SendCard"
+reason = "HAND-DIAGNOSED 2026-08-29: repeated generation-0..3 primary runs reach the real ROM's frame/IR transfer path and exhaust at WaitForVBlank or the IR protocol loop under both disconnected and deterministic-peer fixtures; no bounded return is available from the isolated top-level send call."
+unblock = "Trace the peer-facing send protocol to a bounded completion or add a verified top-level IR peer fixture that drives the full card transfer, then retry _SendCard; do not repeat the unchanged frame-only cases."
+
+[[blocked]]
+name = "_SendDeckConfiguration"
+reason = "HAND-DIAGNOSED 2026-08-29: repeated generation-0..3 primary runs reach the real ROM's frame/IR transfer path and exhaust at WaitForVBlank or the IR protocol loop under both disconnected and deterministic-peer fixtures; no bounded return is available from the isolated top-level deck send call."
+unblock = "Trace the peer-facing send protocol to a bounded completion or add a verified top-level IR peer fixture that drives the full deck transfer, then retry _SendDeckConfiguration; do not repeat the unchanged frame-only cases."
