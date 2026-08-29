@@ -78,10 +78,6 @@ name = "ChanseyDoubleEdgeEffect"
 reason = "HAND-DIAGNOSED 2026-08-28: generation 18 primary verification reaches the reference WaitForVBlank parking loop at pc=0x0271 after the self-damage animation path, with no register mismatch. The effect's frame-dependent animation/recoil chain does not return under the isolated call fixture; this is not a candidate translation mismatch and another unchanged full-call retry is non-informative."
 unblock = "trace DealRecoilDamageToSelf and its animation wait to identify a bounded pre-ret point, then verify a prefix case or port the frame-safe callee before retrying ChanseyDoubleEdgeEffect"
 
-[[blocked]]
-name = "InputCurDeckName"
-reason = "HAND-DIAGNOSED 2026-08-28: generation 17 candidate cases all timed out after 240 frames, including the corrected keys=[0x00, 0x41] edge timeline. The reference-side InputDeckName interactive path never reaches its completion under this isolated call fixture; the candidate remains bounded only by the harness timeout, so another unchanged retry is non-informative until the naming-screen input path is traced or a verified pre-ret cutpoint is defined."
-unblock = "Trace InputDeckName and HandleDeckNamingInput at the first frame after the UP|A edge to identify the required keyboard/menu state, then author a bounded primary case or use an asm-derived pre-ret completion; do not spend another unchanged retry generation."
 
 [[blocked]]
 name = "Prophecy_PlayerSelectEffect"
@@ -228,3 +224,8 @@ unblock = "read the recorded diagnostics under .factory/try/PlayIntroSequence/at
 name = "PokeBall_PlayerSelection"
 reason = "HAND-DIAGNOSED 2026-08-29: generation-10..12 candidates reach the nested card-list path, but the reference enters the real LCD/VBlank scene and does not return under A or B isolated timelines; native candidates either loop in DisplayCardList or diverge in ambient turn state."
 unblock = "Trace the nested card-list scene's LCD/input completion and establish a verified pre-ret cutpoint or deterministic card-selection fixture before retrying PokeBall_PlayerSelection; do not repeat unchanged interactive fixtures."
+
+[[blocked]]
+name = "StartDuel"
+reason = "HAND-DIAGNOSED 2026-08-29: generations 12-17 tested full-prefix and pre-HandleDuelSetup completion points; the reference oracles still timeout in downstream frame state, while the pre-ret differential path is not a bounded end-to-end contract for this top-level scene."
+unblock = "Resolve the differential pre-ret runner behavior for banked StartDuel or establish a separately verified prefix contract before retrying; do not repeat unchanged full-prefix or 0x40EB cut fixtures."
