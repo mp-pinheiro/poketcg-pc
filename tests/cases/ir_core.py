@@ -188,6 +188,14 @@ CASES["RequestCloseIRCommunication"] = [
 ]
 # <<< factory RequestCloseIRCommunication
 
+# >>> factory RequestDataTransmissionThroughIR
+CONTRACT["RequestDataTransmissionThroughIR"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["RequestDataTransmissionThroughIR"] = [
+    {"oracle": False, "evidence": "primary", "why": "The deterministic CGB infrared peer drives the request exchange; the transmitted register buffer and error return are asserted.", "f": 0x00, "b": 0x00, "c": 0x01, "d": 0xC5, "e": 0x00, "hl": 0xC500, "keys": 0x80, "ir_peer": True, "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}], "read": {0xCE85: 8}, "expect": {0xCE85: b"\x00\x02\x00\xC5\x00\xC5\x01\x00"}, "expect_regs": {"a": 0xFF, "f": 0x10}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The deterministic CGB infrared peer drives the request exchange; the transmitted register buffer and error return are asserted.", keys=0x80, ir_peer=True, wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}], read={0xCE85: 8}, expect={0xCE85: b"\xF0\x02\x34\x12\xEE\xDD\xCC\xBB"}, expect_regs={"a": 0xFF, "f": 0x10}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory RequestDataTransmissionThroughIR
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -306,3 +314,11 @@ MUTATIONS["RequestCloseIRCommunication"] = {
     "case_ids": ["RequestCloseIRCommunication-0", "RequestCloseIRCommunication-1"]
 }
 # <<< factory-mutation RequestCloseIRCommunication
+# >>> factory-mutation RequestDataTransmissionThroughIR
+MUTATIONS["RequestDataTransmissionThroughIR"] = {
+    "source_symbol": "RequestDataTransmissionThroughIR",
+    "before": "RequestDataTransmissionThroughIRResult RequestDataTransmissionThroughIR(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)TransmitRegistersThroughIR(IRCMD_TRANSMIT_DATA, f, b, c, d, e, hl);",
+    "after": "RequestDataTransmissionThroughIRResult RequestDataTransmissionThroughIR(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)TransmitRegistersThroughIR(0x03u, f, b, c, d, e, hl);",
+    "case_ids": ["RequestDataTransmissionThroughIR-0", "RequestDataTransmissionThroughIR-1"]
+}
+# <<< factory-mutation RequestDataTransmissionThroughIR

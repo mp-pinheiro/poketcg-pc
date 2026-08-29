@@ -187,6 +187,15 @@ static void adapt_RequestCloseIRCommunication(ProbeState *s)
 }
 /* <<< factory RequestCloseIRCommunication */
 
+/* >>> factory RequestDataTransmissionThroughIR */
+static void adapt_RequestDataTransmissionThroughIR(ProbeState *s)
+{
+	RequestDataTransmissionThroughIRResult result = RequestDataTransmissionThroughIR(s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	}
+/* <<< factory RequestDataTransmissionThroughIR */
+
 const ProbeEntry probe_entries_ir_core[] = {
 	{ "StoreRegistersInIRDataBuffer", adapt_StoreRegistersInIRDataBuffer },
 	{ "LoadRegistersFromIRDataBuffer", adapt_LoadRegistersFromIRDataBuffer },
@@ -209,5 +218,6 @@ const ProbeEntry probe_entries_ir_core[] = {
 	{ "TrySendIRRequest", adapt_TrySendIRRequest },
 	{ "TransmitRegistersThroughIR", adapt_TransmitRegistersThroughIR },
 	{ "RequestCloseIRCommunication", adapt_RequestCloseIRCommunication },
+	{ "RequestDataTransmissionThroughIR", adapt_RequestDataTransmissionThroughIR },
 	{ NULL, NULL },
 };

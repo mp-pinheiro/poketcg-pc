@@ -86,4 +86,8 @@ TransmitRegistersThroughIRResult TransmitRegistersThroughIR(uint8_t a, uint8_t f
 typedef struct { uint8_t a; uint8_t f; } RequestCloseIRCommunicationResult;
 RequestCloseIRCommunicationResult RequestCloseIRCommunication(void);
 /* <<< factory RequestCloseIRCommunication */
+/* >>> factory RequestDataTransmissionThroughIR */
+typedef struct { uint8_t a; uint8_t f; } RequestDataTransmissionThroughIRResult;
+RequestDataTransmissionThroughIRResult RequestDataTransmissionThroughIR(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory RequestDataTransmissionThroughIR */
 #endif /* POKETCG_HOME_IR_CORE_H */

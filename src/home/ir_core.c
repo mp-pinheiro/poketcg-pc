@@ -37,6 +37,9 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define IRCMD_CLOSE 0x00u
+
+#include "home/ir_core.h"
+#define IRCMD_TRANSMIT_DATA 0x02u
 /* <<< factory statics */
 
 /* >>> factory StoreRegistersInIRDataBuffer */
@@ -392,3 +395,18 @@ RequestCloseIRCommunicationResult RequestCloseIRCommunication(void)
 	return (RequestCloseIRCommunicationResult){tx.a, tx.f};
 }
 /* <<< factory RequestCloseIRCommunication */
+
+/* >>> factory RequestDataTransmissionThroughIR */
+RequestDataTransmissionThroughIRResult RequestDataTransmissionThroughIR(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)TransmitRegistersThroughIR(IRCMD_TRANSMIT_DATA, f, b, c, d, e, hl);
+	Func_1971eResult handshake = Func_1971e();
+	if ((handshake.f & 0x10u) != 0u) {
+		SafelyCloseIRCommunications();
+		return (RequestDataTransmissionThroughIRResult){handshake.a, handshake.f};
+	}
+	ReceiveByteThroughIRResult received = ReceiveNBytesToHLThroughIR((uint16_t)(((uint16_t)d << 8) | e), c);
+	SafelyCloseIRCommunications();
+	return (RequestDataTransmissionThroughIRResult){received.a, received.f};
+}
+/* <<< factory RequestDataTransmissionThroughIR */
