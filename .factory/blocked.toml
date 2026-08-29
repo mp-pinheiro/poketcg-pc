@@ -232,3 +232,8 @@ unblock = "Trace the peer-facing send protocol to a bounded completion or add a 
 name = "StartDuel"
 reason = "HAND-DIAGNOSED 2026-08-29: repeated generation-0..11 primary runs reach the real duel setup scene and exhaust in the ROM's frame/VBlank path under both LCD-off and armed-LCD fixtures, including the proven HandleDuelSetup ambient state; the isolated top-level call has no bounded return."
 unblock = "Trace the duel setup scene's first non-returning frame-dependent callee and establish a verified bounded pre-ret completion or port that callee before retrying StartDuel; do not repeat unchanged top-level fixtures."
+ 
+[[blocked]]
+name = "PokemonTrader_TradeCardsEffect"
+reason = "HAND-DIAGNOSED 2026-08-29: generation-16..18 primary runs reach the nested card-detail/text and frame path, exhausting at the ROM's animation/text loop with no bounded isolated return; the translation body is complete but the top-level effect fixture lacks a terminating scene state."
+unblock = "Trace the nested card-detail and shuffle animation completion state, then establish a verified bounded pre-ret fixture or port the missing frame-safe callee before retrying PokemonTrader_TradeCardsEffect; do not repeat unchanged scene fixtures."
