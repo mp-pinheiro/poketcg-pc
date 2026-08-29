@@ -2058,3 +2058,7 @@ void FireSpin_AISelectEffect(void);
 /* >>> factory FireSpin_DiscardEffect */
 void FireSpin_DiscardEffect(void);
 /* <<< factory FireSpin_DiscardEffect */
+
+/* >>> factory MixUpEffect */
+void MixUpEffect(void);
+/* <<< factory MixUpEffect */

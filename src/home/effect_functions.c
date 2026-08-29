@@ -37,6 +37,8 @@
 #define TX_NoCardsLeftInTheDeckText 0x00B1u
 #define NotEnoughWaterEnergyText 0x00C3u
 #define NoDamageCountersText 0x00ADu
+#define ThePkmnCardsInHandAndDeckWereShuffledText 0x014Eu
+
 
 #define SUBSTATUS1_REDUCE_BY_20 0x13u
 
@@ -10416,7 +10418,50 @@ void MagneticStormEffect(void)
 	(void)DrawWideTextBox_WaitForInput(TheEnergyCardFromPlayAreaWasMovedText);
 	DrawPlayAreaScreenToShowChanges(0u);
 }
+
 /* <<< factory MagneticStormEffect */
+/* >>> factory MixUpEffect */
+void MixUpEffect(void)
+{
+	SwapTurn();
+	(void)CreateHandCardList(0u);
+	(void)SortCardsInDuelTempListByID(0u, 0u, wDuelTempList_ADDR);
+
+	uint8_t count = 0u;
+	uint16_t hand_list = wDuelTempList_ADDR;
+	for (uint16_t offset = 0u; offset < 0x100u; offset++) {
+		uint8_t card = gb_read8((uint16_t)(hand_list + offset));
+		if (card == 0xffu)
+			break;
+		LoadCardDataToBuffer2_FromDeckIndex(card);
+		if (wLoadedCard2Type >= TYPE_ENERGY)
+			continue;
+		count++;
+		RemoveCardFromHand(card);
+		ReturnCardToDeck(card);
+	}
+
+	gb_write8(hCurSelectionItem_ADDR, count);
+	(void)DrawWideTextBox_WaitForInput(ThePkmnCardsInHandAndDeckWereShuffledText);
+	(void)ShuffleCardsInDeck(0u, count, wDuelTempList_ADDR, 0u);
+	(void)CreateDeckCardList(count, wDuelTempList_ADDR);
+	if (count != 0u) {
+		uint8_t remaining = count;
+		for (uint16_t offset = 0u; offset < 0x100u && remaining != 0u; offset++) {
+			uint8_t card = gb_read8((uint16_t)(wDuelTempList_ADDR + offset));
+			if (card == 0xffu)
+				break;
+			LoadCardDataToBuffer2_FromDeckIndex(card);
+			if (wLoadedCard2Type >= TYPE_ENERGY)
+				continue;
+			remaining--;
+			SearchCardInDeckAndAddToHand(card);
+			AddCardToHand(card);
+		}
+	}
+	SwapTurn();
+}
+/* <<< factory MixUpEffect */
 
 /* >>> factory RandomlyDamagePlayAreaPokemon */
 RandomlyDamagePlayAreaPokemonResult RandomlyDamagePlayAreaPokemon(uint16_t de)
