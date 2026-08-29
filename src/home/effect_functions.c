@@ -39,7 +39,6 @@
 #define NoDamageCountersText 0x00ADu
 #define ThePkmnCardsInHandAndDeckWereShuffledText 0x014Eu
 
-
 #define SUBSTATUS1_REDUCE_BY_20 0x13u
 
 #include "home/effect_functions.h"
@@ -10500,3 +10499,22 @@ RandomlyDamagePlayAreaPokemonResult BigThunderEffect(uint8_t b, uint8_t c, uint1
 	return RandomlyDamagePlayAreaPokemon(70u);
 }
 /* <<< factory BigThunderEffect */
+
+/* >>> factory EnergySearch_AddToHandEffect */
+ShuffleCardsInDeckResult EnergySearch_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t card = hTemp_ffa0;
+	if (card != 0xFFu) {
+		SearchCardInDeckAndAddToHand(card);
+		AddCardToHand(card);
+		IsPlayerTurnResult turn = IsPlayerTurn();
+		if ((turn.f & 0x10u) == 0u) {
+			uint8_t saved = hBankROM;
+			BankswitchROM(0x01u);
+			(void)DisplayCardDetailScreen(card, WasPlacedInTheHandText);
+			BankswitchROM(saved);
+		}
+	}
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+}
+/* <<< factory EnergySearch_AddToHandEffect */

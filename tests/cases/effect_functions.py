@@ -2755,6 +2755,12 @@ def _big_thunder_case(rng, poison=False):
     case = _rdp_case(rng, poison=poison)
     case["read"] = {0xCCC7: 1, 0xCCE6: 1, 0xCCB8: 1, 0xC2C8: 1, 0xC3C8: 1}
     return case
+
+wDuelType = 0xCC09
+hWhoseTurn = 0xFF97
+wLCDC = 0xCABB
+wDuelDisplayedScreen = 0xCAC2
+hTemp_ffa0 = 0xFFA0
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7114,6 +7120,15 @@ CASES["BigThunderEffect"] = [
 ]
 # <<< factory BigThunderEffect
 
+# >>> factory EnergySearch_AddToHandEffect
+CONTRACT["EnergySearch_AddToHandEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["EnergySearch_AddToHandEffect"] = [
+    {"keys": 0, "wram": {wDuelType: b"\x00", hWhoseTurn: b"\xC2", hTemp_ffa0: b"\x01", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC201: b"\x00", 0xC2EE: b"\x00", 0xC242: b"\xFF", wDuelDisplayedScreen: b"\x09", 0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00", wLCDC: b"\x00"}, "read": {0xC2BA: 1, 0xC201: 1, 0xC2EE: 1, 0xC242: 1, 0xFFA0: 1}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 3000000, "cycle_budget": 10000000},
+    {"wram": {hWhoseTurn: b"\xC2", hTemp_ffa0: b"\xFF", 0xC2BA: b"\x3B", wDuelDisplayedScreen: b"\x09", 0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00", wLCDC: b"\x00"}, "read": {0xFFA0: 1}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 3000000, "cycle_budget": 10000000},
+    dict(POISON, wram={wDuelType: b"\x00", hWhoseTurn: b"\xC2", hTemp_ffa0: b"\x01", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC201: b"\x00", 0xC2EE: b"\x00", 0xC242: b"\xFF", wDuelDisplayedScreen: b"\x09", 0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00", wLCDC: b"\x00"}, read={0xC2BA: 1, 0xC201: 1, 0xC2EE: 1, 0xC242: 1, 0xFFA0: 1}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=3000000, cycle_budget=10000000),
+]
+# <<< factory EnergySearch_AddToHandEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10019,3 +10034,6 @@ MUTATIONS["RandomlyDamagePlayAreaPokemon"] = {"source_symbol": "RandomlyDamagePl
 # >>> factory-mutation BigThunderEffect
 MUTATIONS["BigThunderEffect"] = {"source_symbol": "BigThunderEffect", "before": "RandomlyDamagePlayAreaPokemonResult BigThunderEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)\n{\n\t(void)ExchangeRNG(b, c, de, hl);\n\treturn RandomlyDamagePlayAreaPokemon(70u);", "after": "RandomlyDamagePlayAreaPokemonResult BigThunderEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)\n{\n\t(void)ExchangeRNG(b, c, de, hl);\n\treturn RandomlyDamagePlayAreaPokemon(0u);", "case_ids": ["BigThunderEffect-0", "BigThunderEffect-1", "BigThunderEffect-2"]}
 # <<< factory-mutation BigThunderEffect
+# >>> factory-mutation EnergySearch_AddToHandEffect
+MUTATIONS["EnergySearch_AddToHandEffect"] = {"source_symbol": "EnergySearch_AddToHandEffect", "before": "ShuffleCardsInDeckResult EnergySearch_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t card = hTemp_ffa0;", "after": "ShuffleCardsInDeckResult EnergySearch_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t card = 0xFFu;", "case_ids": ["EnergySearch_AddToHandEffect-0", "EnergySearch_AddToHandEffect-2"]}
+# <<< factory-mutation EnergySearch_AddToHandEffect

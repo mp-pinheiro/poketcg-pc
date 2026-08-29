@@ -4977,6 +4977,20 @@ static void adapt_MixUpEffect(ProbeState *s)
 }
 /* <<< factory MixUpEffect */
 
+/* >>> factory EnergySearch_AddToHandEffect */
+static void adapt_EnergySearch_AddToHandEffect(ProbeState *s)
+{
+	ShuffleCardsInDeckResult r = EnergySearch_AddToHandEffect(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory EnergySearch_AddToHandEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5581,5 +5595,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MagneticStormEffect", adapt_MagneticStormEffect },
 	{ "RandomlyDamagePlayAreaPokemon", adapt_RandomlyDamagePlayAreaPokemon },
 	{ "BigThunderEffect", adapt_BigThunderEffect },
+	{ "EnergySearch_AddToHandEffect", adapt_EnergySearch_AddToHandEffect },
 	{ NULL, NULL },
 };
