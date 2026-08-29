@@ -6399,7 +6399,7 @@ MUTATIONS["PracticeDuel_PutStaryuInBench"] = {
 }
 # <<< factory-mutation PracticeDuel_PutStaryuInBench
 # >>> factory-mutation ChooseInitialArenaAndBenchPokemon
-MUTATIONS["ChooseInitialArenaAndBenchPokemon"] = {"source_symbol": "ChooseInitialArenaAndBenchPokemon", "before": "ChooseInitialArenaAndBenchPokemonResult ChooseInitialArenaAndBenchPokemon(void)\n{\n\tDuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tuint8_t duelist_type = duelist.a;\n\tif (duelist_type != DUELIST_TYPE_PLAYER && duelist_type != DUELIST_TYPE_LINK_OPP) {\n\t\tuint8_t action = AIDoAction_StartDuel();\n\t\tgb_write8(duelist.hl, action);", "after": "ChooseInitialArenaAndBenchPokemonResult ChooseInitialArenaAndBenchPokemon(void)\n{\n\tDuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tuint8_t duelist_type = duelist.a;\n\tif (duelist_type != DUELIST_TYPE_PLAYER && duelist_type != DUELIST_TYPE_LINK_OPP) {\n\t\tuint8_t action = AIDoAction_StartDuel();\n\t\tgb_write8(duelist.hl, 0u);", "case_ids": ["ChooseInitialArenaAndBenchPokemon-0"]}
+MUTATIONS["ChooseInitialArenaAndBenchPokemon"] = {"source_symbol": "ChooseInitialArenaAndBenchPokemon", "before": "ChooseInitialArenaAndBenchPokemonResult ChooseInitialArenaAndBenchPokemon(void)\n{\n\tDuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tuint8_t duelist_type = duelist.a;\n\tif (duelist_type != DUELIST_TYPE_PLAYER && duelist_type != DUELIST_TYPE_LINK_OPP) {\n\t\t(void)AIDoAction_StartDuel();\n\t\tgb_write8(duelist.hl, duelist_type);", "after": "ChooseInitialArenaAndBenchPokemonResult ChooseInitialArenaAndBenchPokemon(void)\n{\n\tDuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tuint8_t duelist_type = duelist.a;\n\tif (duelist_type != DUELIST_TYPE_PLAYER && duelist_type != DUELIST_TYPE_LINK_OPP) {\n\t\t(void)AIDoAction_StartDuel();\n\t\tgb_write8(duelist.hl, 0u);", "case_ids": ["ChooseInitialArenaAndBenchPokemon-0"]}
 # <<< factory-mutation ChooseInitialArenaAndBenchPokemon
 # >>> factory-mutation TurnDuelistTakePrizes
 MUTATIONS["TurnDuelistTakePrizes"] = {"source_symbol": "TurnDuelistTakePrizes", "before": "\t\twTempNumRemainingPrizeCards = CountPrizes();", "after": "\t\twTempNumRemainingPrizeCards = (uint8_t)(CountPrizes() + 1u);", "case_ids": ["TurnDuelistTakePrizes-0"]}
@@ -6415,3 +6415,31 @@ MUTATIONS["Func_6fa5"] = {
 # >>> factory-mutation Func_1cb5e
 MUTATIONS["Func_1cb5e"] = {"source_symbol": "Func_1cb5e", "before": "\tif (damage_high > 0x03u || (damage_high == 0x03u && damage_low >= 0xE8u)) {", "after": "\tif (damage_high < 0x03u || (damage_high == 0x03u && damage_low >= 0xE8u)) {", "case_ids": ["Func_1cb5e-0"]}
 # <<< factory-mutation Func_1cb5e
+# >>> factory HandleDuelSetup
+CONTRACT["HandleDuelSetup"] = {"compare": ("f",), "preserve": ()}
+HD_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+HD_ANIM_SAFE = {
+    0xD42A: b"\xff", 0xD4C0: b"\xff", 0xD423: b"\xff" * 7,
+    0xCAD3: bytes([0xA2, 0x3B]), 0xD4AC: b"\x00", 0xD4AD: b"\x08",
+}
+HD_WRAM = {
+    0xFF97: b"\xC2", 0xC2F1: b"\x80", 0xC3F1: b"\x80",
+    0xCC09: b"\x80", 0xCC08: b"\x06", 0xC400: b"\x08" * 0x3C,
+    0xC480: b"\x08" * 0x3C, 0xCABB: b"\x00", 0xCCF2: b"\x01",
+    0xFF90: b"\x02", **HD_ANIM_SAFE,
+}
+CASES["HandleDuelSetup"] = [
+    {"keys": [0x00, 0x01], "wram": dict(HD_WRAM), "setup": HD_SETUP,
+     "instruction_budget": 40000000, "cycle_budget": 160000000},
+    dict(POISON, keys=[0x00, 0x01], wram=dict(HD_WRAM), setup=HD_SETUP,
+         instruction_budget=40000000, cycle_budget=160000000),
+]
+# <<< factory HandleDuelSetup
+# >>> factory-mutation HandleDuelSetup
+MUTATIONS["HandleDuelSetup"] = {
+    "source_symbol": "HandleDuelSetup",
+    "before": "return (HandleDuelSetupResult){(rng.a == 0u) ? FLAG_Z : 0u};",
+    "after": "return (HandleDuelSetupResult){(rng.a != 0u) ? FLAG_Z : 0u};",
+    "case_ids": ["HandleDuelSetup-0", "HandleDuelSetup-1"],
+}
+# <<< factory-mutation HandleDuelSetup

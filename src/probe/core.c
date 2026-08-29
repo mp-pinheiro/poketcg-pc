@@ -1218,6 +1218,13 @@ static void adapt_ShuffleDeckAndDrawSevenCards(ProbeState *s)
 	s->f = r.f;
 }
 /* <<< factory ShuffleDeckAndDrawSevenCards */
+/* >>> factory HandleDuelSetup */
+static void adapt_HandleDuelSetup(ProbeState *s)
+{
+	HandleDuelSetupResult r = HandleDuelSetup();
+	s->f = r.f;
+}
+/* <<< factory HandleDuelSetup */
 
 /* >>> factory WriteTwoDigitNumberInTxSymbol_PadSpace */
 static void adapt_WriteTwoDigitNumberInTxSymbol_PadSpace(ProbeState *s)
@@ -2865,6 +2872,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "AIAttachEnergyInHandToCardInBench", adapt_AIAttachEnergyInHandToCardInBench },
 	{ "DrawPracticeDuelInstructionsTextBox", adapt_DrawPracticeDuelInstructionsTextBox },
 	{ "PracticeDuelVerify_Turn7Or8", adapt_PracticeDuelVerify_Turn7Or8 },
+	{ "HandleDuelSetup", adapt_HandleDuelSetup },
 	{ "SetDiscardPileScreenTexts", adapt_SetDiscardPileScreenTexts },
 	{ "PrintAttachedEnergyToPokemon", adapt_PrintAttachedEnergyToPokemon },
 	{ "PrintPokemonEvolvedIntoPokemon", adapt_PrintPokemonEvolvedIntoPokemon },

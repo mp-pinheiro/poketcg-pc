@@ -29,6 +29,15 @@
 #define TX_UnableDueToSleepText     0x0001u
 
 #define FLAG_Z 0x80u
+#define BOXMSG_COIN_TOSS 0x06u
+#define SFX_PLACE_PRIZE 0x08u
+#define TX_COIN_TOSS 0x0075u
+#define TX_IF_HEADS 0x0074u
+#define TX_NEITHER_BASIC 0x006Bu
+#define TX_PLACING_PRIZES 0x0072u
+#define TX_PLACE_PRIZES 0x0073u
+#define TX_YOU_PLAY_FIRST 0x0053u
+#define TX_YOU_PLAY_SECOND 0x0054u
 #define FLAG_C 0x10u
 
 #include "generated/wram.h"
@@ -2527,6 +2536,7 @@ AIPlayInitialBasicCardsResult AIPlayInitialBasicCards(void)
 		if (wLoadedCard1Type >= TYPE_ENERGY || wLoadedCard1Stage != 0u)
 			continue;
 		(void)PutHandPokemonCardInPlayArea(index, 0x80u);
+		continue;
 	}
 }
 /* <<< factory AIPlayInitialBasicCards */
@@ -4039,6 +4049,125 @@ ShuffleDeckAndDrawSevenCardsResult ShuffleDeckAndDrawSevenCards(void)
 	                : (ShuffleDeckAndDrawSevenCardsResult){0u, 0x90u};
 }
 /* <<< factory ShuffleDeckAndDrawSevenCards */
+HandleDuelSetupResult HandleDuelSetup(void)
+{
+retry:
+	DuelCoreStateWideResult init = InitializeDuelVariables();
+	SwapTurn();
+	init = InitializeDuelVariables();
+	SwapTurn();
+	(void)PlayShuffleAndDrawCardsAnimation_BothDuelists(init.b, init.c, init.d, init.e, init.hl);
+	ShuffleDeckAndDrawSevenCardsResult first_draw = ShuffleDeckAndDrawSevenCards();
+	hTemp_ffa0 = first_draw.a;
+	SwapTurn();
+	ShuffleDeckAndDrawSevenCardsResult second_draw = ShuffleDeckAndDrawSevenCards();
+	SwapTurn();
+	uint8_t opponent_basic = hTemp_ffa0;
+	uint8_t player_basic = second_draw.a;
+	if ((uint8_t)(opponent_basic & player_basic) == 0u) {
+		if ((uint8_t)(opponent_basic | player_basic) == 0u) {
+			(void)DrawWideTextBox_WaitForInput(TX_NEITHER_BASIC);
+			DisplayNoBasicPokemonInHandScreen();
+			(void)InitializeDuelVariables();
+			SwapTurn();
+			DisplayNoBasicPokemonInHandScreen();
+			(void)InitializeDuelVariables();
+			SwapTurn();
+			(void)PrintReturnCardsToDeckDrawAgain();
+			goto retry;
+		}
+		if (opponent_basic != 0u)
+			SwapTurn();
+		for (;;) {
+			(void)DisplayNoBasicPokemonInHandScreenAndText();
+			DuelCoreStateWideResult reset = InitializeDuelVariables();
+			PlayShuffleAndDrawCardsAnimation_TurnDuelist(
+				reset.a, reset.f, reset.b, reset.c, reset.d, reset.e, reset.hl);
+			ShuffleDeckAndDrawSevenCardsResult draw = ShuffleDeckAndDrawSevenCards();
+			if ((draw.f & FLAG_C) == 0u)
+				break;
+		}
+		if (opponent_basic != 0u)
+			SwapTurn();
+	}
+	uint8_t saved_turn = hWhoseTurn;
+	hWhoseTurn = PLAYER_TURN;
+	(void)ChooseInitialArenaAndBenchPokemon();
+	SwapTurn();
+	ChooseInitialArenaAndBenchPokemonResult chosen = ChooseInitialArenaAndBenchPokemon();
+	SwapTurn();
+	if ((chosen.f & FLAG_C) != 0u) {
+		hWhoseTurn = saved_turn;
+		return (HandleDuelSetupResult){FLAG_C};
+	}
+	DrawPlayAreaToPlacePrizeCards();
+	(void)DrawWideTextBox_WaitForInput(TX_PLACING_PRIZES);
+	(void)ExchangeRNG(0u, 0u, 0u, 0u);
+	LoadTxRam3((uint16_t)wDuelInitialPrizes);
+	(void)DrawWideTextBox_PrintText(TX_PLACE_PRIZES);
+	EnableLCD();
+	static const uint8_t prize_coordinates[] = {
+		5u, 6u, 14u, 5u, 6u, 6u, 13u, 5u, 5u, 7u, 14u, 4u,
+		6u, 7u, 13u, 4u, 5u, 8u, 14u, 3u, 6u, 8u, 13u, 3u,
+	};
+	uint8_t coordinate_index = 0u;
+	uint8_t deck_index = (uint8_t)(DECK_SIZE - 7u - 1u);
+	uint8_t prizes_left = wDuelInitialPrizes;
+	for (;;) {
+		uint8_t frames = 20u;
+		while (frames != 0u) {
+			DoFrame();
+			CheckSkipDelayAllowedResult skip =
+				CheckSkipDelayAllowed(0u, frames, 0u, prizes_left, deck_index, 0u);
+			if ((skip.f & FLAG_C) != 0u)
+				break;
+			frames--;
+		}
+		uint8_t x = prize_coordinates[coordinate_index++];
+		uint8_t y = prize_coordinates[coordinate_index++];
+		WriteByteToBGMap0(0xACu, x, y);
+		x = prize_coordinates[coordinate_index++];
+		y = prize_coordinates[coordinate_index++];
+		WriteByteToBGMap0(0xACu, x, y);
+		PlaySFX(SFX_PLACE_PRIZE);
+		WriteTwoDigitNumberInTxSymbol_PadSpace(
+			deck_index, 3u, 5u, prizes_left, deck_index, 0u);
+		WriteTwoDigitNumberInTxSymbol_PadSpace(
+			deck_index, 18u, 7u, prizes_left, deck_index, 0u);
+		deck_index--;
+		prizes_left--;
+		if (prizes_left == 0u)
+			break;
+	}
+	(void)WaitForWideTextBoxInput();
+	hWhoseTurn = saved_turn;
+	(void)InitTurnDuelistPrizes();
+	SwapTurn();
+	(void)InitTurnDuelistPrizes();
+	SwapTurn();
+	EmptyScreen();
+	DrawDuelBoxMessage(BOXMSG_COIN_TOSS);
+	(void)DrawWideTextBox_WaitForInput(TX_COIN_TOSS);
+	if (hWhoseTurn == PLAYER_TURN) {
+		(void)CopyPlayerName(wDefaultText_ADDR);
+		LoadTxRam2(0u);
+		TossCoinRoutineResult toss = TossCoin(TX_IF_HEADS, TX_YOU_PLAY_FIRST);
+		if ((toss.f & FLAG_C) == 0u)
+			SwapTurn();
+		(void)DrawWideTextBox_WaitForInput(
+			toss.f & FLAG_C ? TX_YOU_PLAY_FIRST : TX_YOU_PLAY_SECOND);
+	} else {
+		(void)CopyOpponentName(wDefaultText_ADDR);
+		LoadTxRam2(0u);
+		TossCoinRoutineResult toss = TossCoin(TX_IF_HEADS, TX_YOU_PLAY_SECOND);
+		if ((toss.f & FLAG_C) == 0u)
+			SwapTurn();
+		(void)DrawWideTextBox_WaitForInput(
+			toss.f & FLAG_C ? TX_YOU_PLAY_SECOND : TX_YOU_PLAY_FIRST);
+	}
+	ExchangeRNGResult rng = ExchangeRNG(0u, 0u, 0u, 0u);
+	return (HandleDuelSetupResult){(rng.a == 0u) ? FLAG_Z : 0u};
+}
 
 /* >>> factory WriteTwoDigitNumberInTxSymbol_PadSpace */
 void WriteTwoDigitNumberInTxSymbol_PadSpace(
@@ -8665,9 +8794,10 @@ ChooseInitialArenaAndBenchPokemonResult ChooseInitialArenaAndBenchPokemon(void)
 	DuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
 	uint8_t duelist_type = duelist.a;
 	if (duelist_type != DUELIST_TYPE_PLAYER && duelist_type != DUELIST_TYPE_LINK_OPP) {
-		uint8_t action = AIDoAction_StartDuel();
-		gb_write8(duelist.hl, action);
-		return (ChooseInitialArenaAndBenchPokemonResult){(action == 0u) ? FLAG_Z : 0u};
+		(void)AIDoAction_StartDuel();
+		gb_write8(duelist.hl, duelist_type);
+		return (ChooseInitialArenaAndBenchPokemonResult){
+			(duelist_type == 0u) ? FLAG_Z : 0u};
 	}
 	if (duelist_type == DUELIST_TYPE_LINK_OPP) {
 		TextResult text = DrawWideTextBox_PrintText(TransmittingDataText);
