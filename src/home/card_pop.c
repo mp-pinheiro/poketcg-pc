@@ -35,6 +35,28 @@
 #define IRPARAM_CARD_POP 0x01u
 #define CannotCardPopWithFriendPreviouslyPoppedWithText 0x018cu
 #define ThePopWasntSuccessfulText 0x018bu
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/card_pop.h"
+#include "home/core.h"
+#include "home/lcd.h"
+#include "home/load_animation.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
+#include "home/save.h"
+#include "home/sound.h"
+#include "home/sprite_vblank.h"
+#define CONSOLE_SGB 0x01u
+#define SCENE_CARD_POP 0x13u
+#define SCENE_CARD_POP_ERROR 0x14u
+#define SCENE_GAMEBOY_LINK_CONNECTING 0x0eu
+#define SFX_RECEIVE_CARD_POP 0x5du
+#define AreYouBothReadyToCardPopText 0x018au
+#define CardPopCannotBePlayedWithTheGameBoyText 0x00ddu
+#define PositionGameBoyColorsAndPressAButtonText 0x018du
+#define ReceivedThroughCardPopText 0x018eu
 /* <<< factory statics */
 
 #define CARDPOP_NAME_LENGTH 16u
@@ -284,3 +306,51 @@ HandleCardPopCommunicationsResult HandleCardPopCommunications(void)
 	return (HandleCardPopCommunicationsResult){a, f, destination};
 }
 /* <<< factory HandleCardPopCommunications */
+
+/* >>> factory _DoCardPop */
+void _DoCardPop(void)
+{
+	SetSpriteAnimationsAsVBlankFunction();
+	(void)LoadScene(SCENE_CARD_POP, 0u, 0u, 0u, 0u, 0u, 0u);
+	(void)PrintScrollableText_NoTextBoxLabel(AreYouBothReadyToCardPopText);
+	RestoreVBlankFunction();
+	uint16_t error_text = CardPopCannotBePlayedWithTheGameBoyText;
+	if (wConsole == CONSOLE_SGB)
+		goto error;
+
+	PauseSong();
+	SetSpriteAnimationsAsVBlankFunction();
+	(void)LoadScene(SCENE_GAMEBOY_LINK_CONNECTING, 0u, 0u, 0u, 0u, 0u, 0u);
+	(void)DrawWideTextBox_PrintText(PositionGameBoyColorsAndPressAButtonText);
+	EnableLCD();
+	HandleCardPopCommunicationsResult communication = HandleCardPopCommunications();
+	ClearRP();
+	RestoreVBlankFunction();
+	if ((communication.f & 0x10u) != 0u) {
+		error_text = communication.hl;
+		goto error;
+	}
+
+	AddCardToCollectionAndUpdateAlbumProgress(wLoadedCard1ID);
+	uint16_t card_name = (uint16_t)gb_read8(wLoadedCard1Name_ADDR);
+	card_name |= (uint16_t)((uint16_t)gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)) << 8);
+	LoadTxRam2(card_name);
+	hWhoseTurn = PLAYER_TURN;
+	PlaySFX(SFX_RECEIVE_CARD_POP);
+	while (AssertSFXFinished() != 0u)
+		;
+	PlaySong(wCardPopCardObtainSong);
+	(void)_DisplayCardDetailScreen(ReceivedThroughCardPopText);
+	ResumeSong();
+	uint16_t text_hl = SetupText(0x38u, 0x9fu);
+	OpenCardPage_FromHand(0u, 0u, 0u, 0u, 0x38u, 0x9fu, text_hl);
+	return;
+
+error:
+	ResumeSong();
+	SetSpriteAnimationsAsVBlankFunction();
+	(void)LoadScene(SCENE_CARD_POP_ERROR, 0u, 0u, 0u, 0u, 0u, 0u);
+	(void)PrintScrollableText_NoTextBoxLabel(error_text);
+	RestoreVBlankFunction();
+}
+/* <<< factory _DoCardPop */

@@ -16,4 +16,7 @@ uint8_t DecideCardToReceiveFromCardPop(void);
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } HandleCardPopCommunicationsResult;
 HandleCardPopCommunicationsResult HandleCardPopCommunications(void);
 /* <<< factory HandleCardPopCommunications */
+/* >>> factory _DoCardPop */
+void _DoCardPop(void);
+/* <<< factory _DoCardPop */
 #endif

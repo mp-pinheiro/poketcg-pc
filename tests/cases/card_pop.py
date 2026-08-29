@@ -51,6 +51,21 @@ CASES["HandleCardPopCommunications"] = [
 ]
 # <<< factory HandleCardPopCommunications
 
+# >>> factory-cases-statics
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wConsole = 0xCAB4
+hWhoseTurn = 0xFF97
+wLCDC = 0xCABB
+# <<< factory-cases-statics
+
+# >>> factory _DoCardPop
+CONTRACT["_DoCardPop"] = {"compare": (), "preserve": ()}
+CASES["_DoCardPop"] = [
+    {"oracle": False, "evidence": "primary", "why": "The SGB guard deterministically takes Card Pop!'s error-screen path without requiring infrared hardware; the seeded turn byte verifies that the communication branch is not entered.", "wram": {wConsole: b"\x01", hWhoseTurn: b"\x00", wLCDC: b"\x00"}, "keys": [0x00, 0x01], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {hWhoseTurn: 1}, "expect": {hWhoseTurn: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The SGB guard deterministically takes Card Pop!'s error-screen path without requiring infrared hardware; poisoned entry registers must not alter the turn byte.", wram={wConsole: b"\x01", hWhoseTurn: b"\x00", wLCDC: b"\x00"}, keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={hWhoseTurn: 1}, expect={hWhoseTurn: b"\x00"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory _DoCardPop
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -77,3 +92,6 @@ MUTATIONS["DecideCardToReceiveFromCardPop"] = {"source_symbol": "DecideCardToRec
 # >>> factory-mutation HandleCardPopCommunications
 MUTATIONS["HandleCardPopCommunications"] = {"source_symbol": "HandleCardPopCommunications", "before": "HandleCardPopCommunicationsResult HandleCardPopCommunications(void)\n{\n\tuint16_t copy_src = sCardPopNameList_ADDR;", "after": "HandleCardPopCommunicationsResult HandleCardPopCommunications(void)\n{\n\tuint16_t copy_src = wCardPopNameList_ADDR;", "case_ids": ["HandleCardPopCommunications-0", "HandleCardPopCommunications-1"]}
 # <<< factory-mutation HandleCardPopCommunications
+# >>> factory-mutation _DoCardPop
+MUTATIONS["_DoCardPop"] = {"source_symbol": "_DoCardPop", "before": "\tif (wConsole == CONSOLE_SGB)\n\t\tgoto error;", "after": "\tif (wConsole == CONSOLE_SGB) {\n\t\thWhoseTurn = 1u;\n\t\tgoto error;\n\t}", "case_ids": ["_DoCardPop-0", "_DoCardPop-1"]}
+# <<< factory-mutation _DoCardPop

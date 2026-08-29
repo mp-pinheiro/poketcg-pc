@@ -41,11 +41,20 @@ static void adapt_HandleCardPopCommunications(ProbeState *s)
 }
 /* <<< factory HandleCardPopCommunications */
 
+/* >>> factory _DoCardPop */
+static void adapt__DoCardPop(ProbeState *s)
+{
+	(void)s;
+	_DoCardPop();
+}
+/* <<< factory _DoCardPop */
+
 const ProbeEntry probe_entries_card_pop[] = {
 	{ "CreateCardPopCandidateList", adapt_CreateCardPopCandidateList },
 	{ "CalculateNameHash", adapt_CalculateNameHash },
 	{ "LookUpNameInCardPopNameList", adapt_LookUpNameInCardPopNameList },
 	{ "DecideCardToReceiveFromCardPop", adapt_DecideCardToReceiveFromCardPop },
 	{ "HandleCardPopCommunications", adapt_HandleCardPopCommunications },
+	{ "_DoCardPop", adapt__DoCardPop },
 	{ NULL, NULL },
 };

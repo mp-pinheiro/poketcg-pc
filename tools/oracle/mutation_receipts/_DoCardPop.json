@@ -1,0 +1,9 @@
+{
+  "fn": "_DoCardPop",
+  "case": "tests/cases/card_pop.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_DoCardPop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"51899\": \"80\", \"65431\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_DoCardPop\", \"mismatches\": {\"bus\": {\"address\": 65431, \"reference\": \"018000\", \"native\": \"018001\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[51892, 1], [51899, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"_DoCardPop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"51899\": \"80\", \"65431\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
