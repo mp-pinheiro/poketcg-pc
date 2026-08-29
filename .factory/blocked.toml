@@ -221,8 +221,6 @@ name = "AIDoAction_Turn"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-0 wrapper calls action 1 and the reference spins at pc=0x05B8 until the 400004-cycle default ceiling; the turn target includes frame/AI work not bounded by the isolated fixture."
 unblock = "Port the action-1 turn target with a bounded AI fixture or establish a verified pre-ret contract, then retry AIDoAction_Turn."
 
-
-
 [[blocked]]
 name = "HandleDuelSetup"
 reason = "HAND-DIAGNOSED 2026-08-29: generation-5 retry with explicit LCD-off animation fixture and CGB deck seeds reaches the setup body but diverges in the deck/duel WRAM footprint beginning at $C351 (reference 80, native ff) and related card-state spans. The missing initial duel-state writers are not resolved by another unchanged top-level retry."
@@ -237,10 +235,3 @@ unblock = "read the recorded diagnostics under .factory/try/ChallengeMachine_Pri
 name = "PlayIntroSequence"
 reason = "AUTO-RETIRED: src/engine/intro.asm:1 (basename `intro`). 4 generations exhausted (trapped=True); last diagnostic phase=compile failure_class=code detail=collect2: error: ld returned 1 exit status"
 unblock = "read the recorded diagnostics under .factory/try/PlayIntroSequence/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-
-
-[[blocked]]
-name = "StartDuel"
-reason = "HAND-DIAGNOSED 2026-08-29: generations 8-9 all reach the real setup scene and exhaust the 160000000-cycle reference budget in WaitForVBlank with LCD enabled. The isolated duel fixture lacks the dependent scene/input state; another unchanged top-level retry is non-informative."
-unblock = "Trace the duel setup scene state that must precede StartDuel's WaitForVBlank path, port the missing dependent state transition, then retry StartDuel."
