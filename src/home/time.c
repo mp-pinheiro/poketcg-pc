@@ -76,6 +76,8 @@ void SwitchToCGBNormalSpeed(void)
 	uint8_t spd = gb_read8(rSPD);
 	if ((spd & (uint8_t)(1u << B_SPD_DOUBLE)) == 0u)
 		return;
+	spd = (uint8_t)((spd & (uint8_t)~(1u << B_SPD_DOUBLE))
+			| (uint8_t)(1u << B_SPD_PREPARE));
 	uint8_t ie = gb_read8(rIE);
 	gb_write8(rIE, 0u);
 	gb_write8(rSPD, (uint8_t)(spd | (uint8_t)(1u << B_SPD_PREPARE)));
@@ -94,8 +96,8 @@ void SwitchToCGBDoubleSpeed(void)
 	if ((spd & (uint8_t)(1u << B_SPD_DOUBLE)) != 0u)
 		return;
 	uint8_t ie = gb_read8(rIE);
-	gb_write8(rIE, 0u);
-	gb_write8(rSPD, (uint8_t)(spd | (uint8_t)(1u << B_SPD_PREPARE)));
+	gb_write8(rSPD, (uint8_t)(spd | (uint8_t)(1u << B_SPD_DOUBLE)
+			| (uint8_t)(1u << B_SPD_PREPARE)));
 	gb_write8(rIF, 0u);
 	gb_write8(rIE, 0u);
 	gb_write8(rJOYP, 0x30u);
@@ -114,6 +116,8 @@ TimerSetupResult SetupTimer(void)
 		f = 0x10u;
 	} else {
 		f = 0xA0u;
+		if ((gb_read8(rSPD) & (uint8_t)(1u << B_SPD_DOUBLE)) != 0u)
+			b = 0x78u;
 	}
 	gb_write8(rTMA, b);
 	gb_write8(rTAC, 0x03u);
