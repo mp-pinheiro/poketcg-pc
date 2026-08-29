@@ -3,6 +3,14 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+#include "home/color.h"
+#include "home/init_menu.h"
+#include "home/intro.h"
+#include "home/lcd.h"
+#include "home/lcd_enable_frame.h"
+#include "home/play_animation.h"
+#include "home/sound.h"
+
 /* >>> factory statics */
 #include "home/load_animation.h"
 #include "home/random.h"
@@ -107,6 +115,14 @@ static void UpdateSpriteAttributes(void)
 #define INTRO_SEQUENCE_LOAD_OPENING_SCENE_AND_UPDATE_SGB_BORDER 0x5564u
 #define INTRO_SEQUENCE_LOAD_OPENING_SCENE 0x5582u
 #define INTRO_SEQUENCE_EMPTY_FUNC 0x559cu
+#define HANDLE_ALL_SPRITE_ANIMATIONS 0x3CB4u
+#define SPRITE_ANIM_190 0xBEu
+#define SPRITE_ANIM_191 0xBFu
+#define SPRITE_PRESS_START 0x6Au
+#define INTRO_SEQUENCE 0x559Du
+#define PAD_A 0x01u
+#define PAD_START 0x08u
+
 /* <<< factory statics */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
@@ -567,3 +583,49 @@ ExecuteIntroSequenceCmdResult ExecuteIntroSequenceCmd(void)
 	}
 }
 /* <<< factory ExecuteIntroSequenceCmd */
+
+/* >>> factory PlayIntroSequence */
+void PlayIntroSequence(void)
+{
+	DisableLCD();
+	LoadConsolePaletteData();
+	(void)InitMenuScreen();
+	EnableAndClearSpriteAnimations();
+	(void)SetDoFrameFunction(HANDLE_ALL_SPRITE_ANIMATIONS);
+	LoadTitleScreenSprites();
+
+	gb_write8(wSequenceCmdPtr_ADDR, (uint8_t)(INTRO_SEQUENCE & 0xffu));
+	gb_write8((uint16_t)(wSequenceCmdPtr_ADDR + 1u), (uint8_t)(INTRO_SEQUENCE >> 8));
+	wd317 = 0u;
+	wIntroSequencePalsNeedUpdate = 0u;
+	wSequenceDelay = 0u;
+	(void)FlashWhiteScreen();
+
+	for (;;) {
+		DoFrameIfLCDEnabled();
+		(void)UpdateRNGSources();
+		if ((hKeysPressed & (PAD_A | PAD_START)) != 0u)
+			break;
+		if (wIntroSequencePalsNeedUpdate != 0u)
+			Func_10d74();
+		(void)ExecuteIntroSequenceCmd();
+		if (wSequenceDelay == 0xffu)
+			break;
+	}
+
+	if (AssertSongFinished() == 0u) {
+		DisableLCD();
+		PlaySong(MUSIC_TITLESCREEN);
+		(void)LoadScene(SCENE_TITLE_SCREEN, 0u, 0u, 0u, 0u, 0u, 0u);
+		IntroSequenceEmptyFunc();
+	}
+
+	EnableAndClearSpriteAnimations();
+	(void)CreateSpriteAndAnimBufferEntry(SPRITE_PRESS_START, 0u);
+	uint16_t property = GetSpriteAnimBufferProperty(SPRITE_ANIM_COORD_X);
+	gb_write8(property, 48u);
+	gb_write8((uint16_t)(property + 1u), 112u);
+	Func_12ac9(wConsole == CONSOLE_CGB ? SPRITE_ANIM_191 : SPRITE_ANIM_190, 60u);
+	EnableLCD();
+}
+/* <<< factory PlayIntroSequence */
