@@ -292,3 +292,9 @@ unblock = "Add a deterministic external-IR peer model or verified reference-side
 name = "ExecuteReceivedIRCommands"
 reason = "HAND-DIAGNOSED 2026-08-29: generation-0 candidate remains in the reference ReceiveIRDataBuffer polling loop through the full 80,000,000-cycle budget; seeded IR buffer, RP, and JOYP bytes do not provide an external received frame. Native-only evidence cannot verify this hardware-dependent dispatch loop."
 unblock = "Add a deterministic external-IR frame injection/device model to the reference harness, then retry ExecuteReceivedIRCommands."
+
+
+[[blocked]]
+name = "HandleDuelSetup"
+reason = "HAND-DIAGNOSED 2026-08-29: generation-5 retry with explicit LCD-off animation fixture and CGB deck seeds reaches the setup body but diverges in the deck/duel WRAM footprint beginning at $C351 (reference 80, native ff) and related card-state spans. The missing initial duel-state writers are not resolved by another unchanged top-level retry."
+unblock = "Trace the InitializeDuelVariables and deck-state writers responsible for the $C351 and related setup footprint, port that state transition, then retry HandleDuelSetup."
