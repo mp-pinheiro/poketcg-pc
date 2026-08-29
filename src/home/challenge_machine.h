@@ -103,4 +103,7 @@ ChallengeMachine_AreYouReadyResult ChallengeMachine_AreYouReady(uint8_t a, uint8
 /* >>> factory ChallengeMachine_PrintDuelResultIcons */
 void ChallengeMachine_PrintDuelResultIcons(void);
 /* <<< factory ChallengeMachine_PrintDuelResultIcons */
+/* >>> factory ChallengeMachine_DrawOpponentList */
+void ChallengeMachine_DrawOpponentList(void);
+/* <<< factory ChallengeMachine_DrawOpponentList */
 #endif

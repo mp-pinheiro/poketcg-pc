@@ -642,3 +642,21 @@ void ChallengeMachine_PrintDuelResultIcons(void)
 	DisableSRAM();
 }
 /* <<< factory ChallengeMachine_PrintDuelResultIcons */
+
+/* >>> factory ChallengeMachine_DrawOpponentList */
+void ChallengeMachine_DrawOpponentList(void)
+{
+	(void)InitMenuScreen();
+	(void)SetupText(0x30u, 0xBFu);
+
+	uint16_t box1_hl = 0u;
+	DrawRegularTextBox(&box1_hl, 0u, 20u, 13u, 0u, 0u);
+
+	uint16_t box2_hl = 0u;
+	DrawRegularTextBox(&box2_hl, 0u, 20u, 6u, 0u, 12u);
+
+	LabelsResult labels = PrintLabels(0x7545u, 0u, 0u);
+	ChallengeMachine_PrintOpponentInfo(0u, labels.d, labels.e);
+	ChallengeMachine_PrintDuelResultIcons();
+}
+/* <<< factory ChallengeMachine_DrawOpponentList */

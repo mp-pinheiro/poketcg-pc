@@ -385,6 +385,14 @@ CASES["ChallengeMachine_PrintOpponentInfo"] = [
 ]
 # <<< factory ChallengeMachine_PrintOpponentInfo
 
+# >>> factory ChallengeMachine_DrawOpponentList
+CONTRACT["ChallengeMachine_DrawOpponentList"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["ChallengeMachine_DrawOpponentList"] = [
+    {"sram": {0: {0xBA4B: bytes(45), 0xBA50: b"\x00\x01\x02\x01\x00"}}, "wram": {0xCABB: b"\x00"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, sram={0: {0xBA4B: bytes(45), 0xBA50: b"\x02\x01\x00\x02\x01"}}, wram={0xCABB: b"\x00"}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory ChallengeMachine_DrawOpponentList
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -490,3 +498,6 @@ MUTATIONS["ChallengeMachine_AreYouReady"] = {
 # >>> factory-mutation ChallengeMachine_PrintDuelResultIcons
 MUTATIONS["ChallengeMachine_PrintDuelResultIcons"] = {"source_symbol": "ChallengeMachine_PrintDuelResultIcons", "before": "\t\te = (uint8_t)(e + 1u);\n\t\te = (uint8_t)(e + 1u);", "after": "\t\te = (uint8_t)(e + 1u);\n\t\te = (uint8_t)(e + 2u);", "case_ids": ["ChallengeMachine_PrintDuelResultIcons-0", "ChallengeMachine_PrintDuelResultIcons-1"]}
 # <<< factory-mutation ChallengeMachine_PrintDuelResultIcons
+# >>> factory-mutation ChallengeMachine_DrawOpponentList
+MUTATIONS["ChallengeMachine_DrawOpponentList"] = {"source_symbol": "ChallengeMachine_DrawOpponentList", "before": "\tuint16_t box1_hl = 0u;", "after": "\tgb_write8(0xCABBu, 0x80u);\n\tuint16_t box1_hl = 0u;", "case_ids": ["ChallengeMachine_DrawOpponentList-0", "ChallengeMachine_DrawOpponentList-1"]}
+# <<< factory-mutation ChallengeMachine_DrawOpponentList
