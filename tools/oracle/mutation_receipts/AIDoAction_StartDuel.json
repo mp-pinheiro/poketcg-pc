@@ -1,0 +1,9 @@
+{
+  "fn": "AIDoAction_StartDuel",
+  "case": "tests/cases/ai.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIDoAction_StartDuel\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49850\": \"00\", \"52238\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDoAction_StartDuel\", \"mismatches\": {\"a\": [255, 1]}}\n",
+  "restored": "{\"fn\": \"AIDoAction_StartDuel\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49850\": \"00\", \"52238\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

@@ -114,6 +114,17 @@ CASES["AIDoAction_KOSwitch"] = [
 ]
 # <<< factory AIDoAction_KOSwitch
 
+# >>> factory AIDoAction_StartDuel
+CONTRACT["AIDoAction_StartDuel"] = {"compare": ("a",), "preserve": ()}
+CASES["AIDoAction_StartDuel"] = [
+    {"wram": {0xCC0E: b"\x01", 0xFF97: b"\xC2", 0xC2BA: b"\x00"},
+     "expect_regs": {"a": 0xFF}},
+    dict(POISON,
+         wram={0xCC0E: b"\x01", 0xFF97: b"\xC2", 0xC2BA: b"\x00"},
+         expect_regs={"a": 0xFF}),
+]
+# <<< factory AIDoAction_StartDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -134,3 +145,6 @@ MUTATIONS["AIDoAction_ForcedSwitch"] = {"source_symbol": "AIDoAction_ForcedSwitc
 # >>> factory-mutation AIDoAction_KOSwitch
 MUTATIONS["AIDoAction_KOSwitch"] = {"source_symbol": "AIDoAction_KOSwitch", "before": "uint8_t AIDoAction_KOSwitch(void)\n{\n\tuint8_t result = AIDoAction(AIACTION_KO_SWITCH);\n\thTemp_ffa0 = result;", "after": "uint8_t AIDoAction_KOSwitch(void)\n{\n\tuint8_t result = AIDoAction(AIACTION_KO_SWITCH);\n\thTemp_ffa0 = (uint8_t)(result ^ 0xFFu);", "case_ids": ["AIDoAction_KOSwitch-0"]}
 # <<< factory-mutation AIDoAction_KOSwitch
+# >>> factory-mutation AIDoAction_StartDuel
+MUTATIONS["AIDoAction_StartDuel"] = {"source_symbol": "AIDoAction_StartDuel", "before": "uint8_t AIDoAction_StartDuel(void)\n{\n\treturn AIDoAction(0x02u);", "after": "uint8_t AIDoAction_StartDuel(void)\n{\n\treturn AIDoAction(0x01u);", "case_ids": ["AIDoAction_StartDuel-0"]}
+# <<< factory-mutation AIDoAction_StartDuel

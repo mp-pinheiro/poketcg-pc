@@ -156,3 +156,10 @@ uint8_t AIDoAction_KOSwitch(void)
 	return result;
 }
 /* <<< factory AIDoAction_KOSwitch */
+
+/* >>> factory AIDoAction_StartDuel */
+uint8_t AIDoAction_StartDuel(void)
+{
+	return AIDoAction(0x02u);
+}
+/* <<< factory AIDoAction_StartDuel */

@@ -17,4 +17,7 @@ uint8_t AIDoAction_ForcedSwitch(void);
 /* >>> factory AIDoAction_KOSwitch */
 uint8_t AIDoAction_KOSwitch(void);
 /* <<< factory AIDoAction_KOSwitch */
+/* >>> factory AIDoAction_StartDuel */
+uint8_t AIDoAction_StartDuel(void);
+/* <<< factory AIDoAction_StartDuel */
 #endif /* POKETCG_HOME_AI_H */
