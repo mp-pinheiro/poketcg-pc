@@ -14,6 +14,7 @@ uint8_t g_pal[0x80];
 uint8_t g_keys;
 static uint16_t g_ir_read_count;
 static uint16_t g_ir_write_count;
+static uint8_t g_ir_mode;
 
 /* Key timeline: entries[0..count-1], cycled per completed joypad poll. count <= 1
  * disarms the advance entirely, leaving g_keys exactly as seeded. */
@@ -137,6 +138,7 @@ void mem_reset(void)
 	g_keys = 0;
 	g_ir_read_count = 0;
 	g_ir_write_count = 0;
+	g_ir_mode = 0;
 	g_key_count = 0;
 	g_key_index = 0;
 	g_key_latch_addr = 0;
@@ -206,12 +208,28 @@ uint8_t gb_read8(uint16_t addr)
 			uint16_t sample_total = g_ir_read_count++;
 			uint16_t byte_index = sample_total / 81u;
 			uint16_t sample = sample_total % 81u;
-			uint8_t rx_byte = g_ir_write_count <= 1u
-				? (byte_index == 0u ? 0xAAu
-				   : (byte_index == 1u ? 0x49u
-				      : (byte_index == 2u ? 0x52u : 0x00u)))
-				: (byte_index == 0u ? 0x33u
-				   : (byte_index == 1u ? 0xAAu : 0x00u));
+			uint8_t rx_byte;
+			if (sample_total == 0u && g_ir_write_count > 1u)
+				g_ir_mode = 1u;
+			if (g_ir_write_count <= 1u) {
+				rx_byte = byte_index == 0u ? 0xAAu
+					: (byte_index == 1u ? 0x49u
+					   : (byte_index == 2u ? 0x52u : 0x00u));
+			} else if (byte_index == 0u) {
+				rx_byte = 0x33u;
+			} else if (byte_index == 1u) {
+				rx_byte = 0xAAu;
+			} else if (g_ir_mode != 0u && byte_index == 2u) {
+				rx_byte = 0x33u;
+			} else if (g_ir_mode == 0u && byte_index == 2u) {
+				rx_byte = 0x49u;
+			} else if (g_ir_mode == 0u && byte_index == 3u) {
+				rx_byte = 0x52u;
+			} else if (g_ir_mode == 0u && byte_index == 12u) {
+				rx_byte = 0x01u;
+			} else {
+				rx_byte = 0x00u;
+			}
 			if (sample == 0u)
 				return 0x3Cu;
 			uint16_t bit = (uint16_t)((sample - 1u) / 10u);
