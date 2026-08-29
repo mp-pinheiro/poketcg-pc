@@ -370,6 +370,14 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "home/menus.h"
 #include "generated/wram.h"
 #define QuitModifyingTheDeckText 0x023cu
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/deck_configuration.h"
+#include "home/sound.h"
+#define HANDLE_SELECT_PRINT_DECK_BUILDING_ADDR 0x59B0u
+#define HANDLE_SELECT_UPDATE_CONFIRM_ADDR 0x5E31u
+#define HANDLE_SELECT_PRINT_CARD_ADDR 0x642Du
 /* <<< factory statics */
 
 
@@ -2355,3 +2363,52 @@ CancelDeckModificationsResult CancelDeckModifications(uint16_t w0)
 	return (CancelDeckModificationsResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u)};
 }
 /* <<< factory CancelDeckModifications */
+
+/* >>> factory HandleSelectUpAndDownInList */
+HandleSelectUpAndDownInListResult HandleSelectUpAndDownInList(void)
+{
+	uint8_t positions = wCardListNumCursorPositions;
+	uint8_t old_offset = wCardListVisibleOffset;
+	uint8_t held = hDPadHeld;
+
+	if (held != (uint8_t)(PAD_SELECT | PAD_DOWN) &&
+		held != (uint8_t)(PAD_SELECT | PAD_UP)) {
+		return (HandleSelectUpAndDownInListResult){
+			(uint8_t)(held == 0u ? 0x80u : 0u)
+		};
+	}
+
+	uint8_t next;
+	if (held == (uint8_t)(PAD_SELECT | PAD_DOWN)) {
+		uint8_t candidate = (uint8_t)(old_offset + positions);
+		uint8_t doubled = (uint8_t)(candidate + positions);
+		if (doubled < wNumCardListEntries) {
+			next = candidate;
+		} else {
+			next = (uint8_t)(wNumCardListEntries - positions);
+		}
+	} else {
+		if (old_offset >= positions)
+			next = (uint8_t)(old_offset - positions);
+		else
+			next = 0u;
+	}
+
+	wCardListVisibleOffset = next;
+	if (next == old_offset)
+		return (HandleSelectUpAndDownInListResult){0x90u};
+
+	PlaySFX(SFX_CURSOR);
+	uint16_t update_addr = (uint16_t)gb_read8(wCardListUpdateFunction_ADDR);
+	update_addr = (uint16_t)(update_addr |
+		((uint16_t)gb_read8((uint16_t)(wCardListUpdateFunction_ADDR + 1u)) << 8));
+	if (update_addr == HANDLE_SELECT_PRINT_DECK_BUILDING_ADDR) {
+		PrintDeckBuildingCardList();
+	} else if (update_addr == HANDLE_SELECT_UPDATE_CONFIRM_ADDR) {
+		UpdateConfirmationCardScreen();
+	} else if (update_addr == HANDLE_SELECT_PRINT_CARD_ADDR) {
+		PrintCardSelectionList();
+	}
+	return (HandleSelectUpAndDownInListResult){0x10u};
+}
+/* <<< factory HandleSelectUpAndDownInList */

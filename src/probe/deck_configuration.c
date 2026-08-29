@@ -689,6 +689,14 @@ static void adapt_CancelDeckModifications(ProbeState *s)
 }
 /* <<< factory CancelDeckModifications */
 
+/* >>> factory HandleSelectUpAndDownInList */
+static void adapt_HandleSelectUpAndDownInList(ProbeState *s)
+{
+	HandleSelectUpAndDownInListResult result = HandleSelectUpAndDownInList();
+	s->f = result.f;
+}
+/* <<< factory HandleSelectUpAndDownInList */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "PrintSlashSixty", adapt_PrintSlashSixty },
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
@@ -770,5 +778,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "SaveDeckConfiguration", adapt_SaveDeckConfiguration },
 	{ "DismantleDeck", adapt_DismantleDeck },
 	{ "CancelDeckModifications", adapt_CancelDeckModifications },
+	{ "HandleSelectUpAndDownInList", adapt_HandleSelectUpAndDownInList },
 	{ NULL, NULL },
 };

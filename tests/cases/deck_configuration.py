@@ -284,6 +284,16 @@ HDCM_READ = {
 
 wTotalCardCount = 0xCECC
 wConsole = 0xCAB4
+
+HANDLE_SELECT_POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hDPadHeld_hsu = 0xFF8F
+wCardListNumCursorPositions_hsu = 0xCEA9
+wCardListVisibleOffset_hsu = 0xCEA1
+wCardListUpdateFunction_hsu = 0xCECE
+wNumCardListEntries_hsu = 0xCFE6
+wNumVisibleCardListEntries_hsu = 0xCECB
+wCardListCoords_hsu = 0xCED0
+wUnableToScrollDown_hsu = 0xCECD
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -1114,6 +1124,18 @@ CASES["CancelDeckModifications"] = [
 ]
 # <<< factory CancelDeckModifications
 
+# >>> factory HandleSelectUpAndDownInList
+CONTRACT["HandleSelectUpAndDownInList"] = {"compare": ("f",), "preserve": ()}
+CASES["HandleSelectUpAndDownInList"] = [
+    {"wram": {hDPadHeld_hsu: b"\x00", wCardListNumCursorPositions_hsu: b"\x02", wCardListVisibleOffset_hsu: b"\x03", wNumCardListEntries_hsu: b"\x08"}},
+    {"wram": {hDPadHeld_hsu: b"\x04", wCardListNumCursorPositions_hsu: b"\x02", wCardListVisibleOffset_hsu: b"\x03", wNumCardListEntries_hsu: b"\x08"}},
+    {"wram": {hDPadHeld_hsu: b"\x84", wCardListNumCursorPositions_hsu: b"\x02", wCardListVisibleOffset_hsu: b"\x03", wNumCardListEntries_hsu: b"\x05"}},
+    {"oracle": False, "why": "Exercises direct dispatch to the ported card-selection list updater.", "wram": {hDPadHeld_hsu: b"\x84", wCardListNumCursorPositions_hsu: b"\x02", wCardListVisibleOffset_hsu: b"\x01", wNumCardListEntries_hsu: b"\x06", wCardListUpdateFunction_hsu: b"\x2D\x64", wNumVisibleCardListEntries_hsu: b"\x00", wCardListCoords_hsu: b"\x00\x00", wUnableToScrollDown_hsu: b"\x00"}, "expect": {wCardListVisibleOffset_hsu: b"\x03", wUnableToScrollDown_hsu: b"\x01"}, "expect_regs": {"f": 0x10}},
+    {"oracle": False, "why": "Exercises direct dispatch to the ported deck-building list updater.", "wram": {hDPadHeld_hsu: b"\x44", wCardListNumCursorPositions_hsu: b"\x02", wCardListVisibleOffset_hsu: b"\x03", wNumCardListEntries_hsu: b"\x08", wCardListUpdateFunction_hsu: b"\xB0\x59", wNumVisibleCardListEntries_hsu: b"\x00", wCardListCoords_hsu: b"\x00\x00", wUnableToScrollDown_hsu: b"\x00"}, "expect": {wCardListVisibleOffset_hsu: b"\x01", wUnableToScrollDown_hsu: b"\x01"}, "expect_regs": {"f": 0x10}},
+    dict(HANDLE_SELECT_POISON, wram={hDPadHeld_hsu: b"\x00", wCardListNumCursorPositions_hsu: b"\x01", wCardListVisibleOffset_hsu: b"\x01", wNumCardListEntries_hsu: b"\x08"}),
+]
+# <<< factory HandleSelectUpAndDownInList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1463,3 +1485,11 @@ MUTATIONS["CancelDeckModifications"] = {
     "case_ids": ["CancelDeckModifications-0", "CancelDeckModifications-1"],
 }
 # <<< factory-mutation CancelDeckModifications
+# >>> factory-mutation HandleSelectUpAndDownInList
+MUTATIONS["HandleSelectUpAndDownInList"] = {
+    "source_symbol": "HandleSelectUpAndDownInList",
+    "before": "\twCardListVisibleOffset = next;",
+    "after": "\twCardListVisibleOffset = (uint8_t)(next + 1u);",
+    "case_ids": ["HandleSelectUpAndDownInList-2"],
+}
+# <<< factory-mutation HandleSelectUpAndDownInList

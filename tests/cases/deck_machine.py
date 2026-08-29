@@ -590,6 +590,18 @@ CASES["HandleAutoDeckMenu"] = [
 ]
 # <<< factory HandleAutoDeckMenu
 
+# >>> factory InitDeckMachineDrawingParams
+CONTRACT["InitDeckMachineDrawingParams"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "e")}
+CASES["InitDeckMachineDrawingParams"] = [
+    {"d": 0x12, "e": 0x34,
+     "wram": {0xCEA9: b"\x00", 0xD0A7: b"\x00\x00", 0xCECE: b"\x00\x00", 0xCED2: b"\xff"},
+     "read": {0xCEA9: 1, 0xD0A7: 2, 0xCECE: 2, 0xCED2: 1}},
+    dict(POISON, d=0xDD, e=0xEE,
+         wram={0xCEA9: b"\xaa", 0xD0A7: b"\x55\x66", 0xCECE: b"\x77\x88", 0xCED2: b"\x99"},
+         read={0xCEA9: 1, 0xD0A7: 2, 0xCECE: 2, 0xCED2: 1}),
+]
+# <<< factory InitDeckMachineDrawingParams
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -755,3 +767,6 @@ MUTATIONS["HandleAutoDeckMenu"] = {
     "case_ids": ["HandleAutoDeckMenu-0", "HandleAutoDeckMenu-1"],
 }
 # <<< factory-mutation HandleAutoDeckMenu
+# >>> factory-mutation InitDeckMachineDrawingParams
+MUTATIONS["InitDeckMachineDrawingParams"] = {"source_symbol": "InitDeckMachineDrawingParams", "before": "InitDeckMachineDrawingParamsResult InitDeckMachineDrawingParams(uint8_t d, uint8_t e)\n{\n\twCardListNumCursorPositions = NUM_DECK_MACHINE_SLOTS;\n\twDeckMachineText = e;\n\tgb_write8((uint16_t)(wDeckMachineText_ADDR + 1u), d);\n\twCardListUpdateFunction = (uint8_t)DRAW_DECK_MACHINE_SCREEN_ADDR;", "after": "InitDeckMachineDrawingParamsResult InitDeckMachineDrawingParams(uint8_t d, uint8_t e)\n{\n\twCardListNumCursorPositions = NUM_DECK_MACHINE_SLOTS;\n\twDeckMachineText = e;\n\tgb_write8((uint16_t)(wDeckMachineText_ADDR + 1u), d);\n\twCardListUpdateFunction = (uint8_t)(DRAW_DECK_MACHINE_SCREEN_ADDR + 1u);", "case_ids": ["InitDeckMachineDrawingParams-0", "InitDeckMachineDrawingParams-1"]}
+# <<< factory-mutation InitDeckMachineDrawingParams

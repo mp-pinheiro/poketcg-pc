@@ -1,0 +1,9 @@
+{
+  "fn": "InitDeckMachineDrawingParams",
+  "case": "tests/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"InitDeckMachineDrawingParams\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 116, \"e\": 52, \"f\": 128, \"hl\": 52943, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52905\": \"05\", \"52942\": \"0374\", \"52946\": \"00\", \"53415\": \"3412\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"InitDeckMachineDrawingParams\", \"mismatches\": {\"bus\": {\"address\": 52942, \"reference\": \"050374003412\", \"native\": \"050474003412\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[52905, 1], [52942, 2], [52946, 1], [53415, 2]]}}}\n",
+  "restored": "{\"fn\": \"InitDeckMachineDrawingParams\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 116, \"e\": 52, \"f\": 128, \"hl\": 52943, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52905\": \"05\", \"52942\": \"0374\", \"52946\": \"00\", \"53415\": \"3412\"}}, \"status\": \"PASS\"}\n"
+}

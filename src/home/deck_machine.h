@@ -114,4 +114,14 @@ TryBuildDeckMachineDeckResult TryBuildDeckMachineDeck(void);
 typedef struct { uint8_t a; uint8_t f; } HandleAutoDeckMenuResult;
 HandleAutoDeckMenuResult HandleAutoDeckMenu(void);
 /* <<< factory HandleAutoDeckMenu */
+/* >>> factory InitDeckMachineDrawingParams */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} InitDeckMachineDrawingParamsResult;
+InitDeckMachineDrawingParamsResult InitDeckMachineDrawingParams(uint8_t d, uint8_t e);
+/* <<< factory InitDeckMachineDrawingParams */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

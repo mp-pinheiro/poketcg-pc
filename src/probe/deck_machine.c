@@ -271,6 +271,19 @@ static void adapt_HandleAutoDeckMenu(ProbeState *s)
 }
 /* <<< factory HandleAutoDeckMenu */
 
+/* >>> factory InitDeckMachineDrawingParams */
+static void adapt_InitDeckMachineDrawingParams(ProbeState *s)
+{
+	InitDeckMachineDrawingParamsResult r =
+		InitDeckMachineDrawingParams(s->d, s->e);
+	s->a = r.a;
+	s->f = r.f;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory InitDeckMachineDrawingParams */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -303,5 +316,6 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "SaveDeckInDeckSaveMachine", adapt_SaveDeckInDeckSaveMachine },
 	{ "TryBuildDeckMachineDeck", adapt_TryBuildDeckMachineDeck },
 	{ "HandleAutoDeckMenu", adapt_HandleAutoDeckMenu },
+	{ "InitDeckMachineDrawingParams", adapt_InitDeckMachineDrawingParams },
 	{ NULL, NULL },
 };

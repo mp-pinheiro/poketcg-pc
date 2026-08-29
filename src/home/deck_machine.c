@@ -223,6 +223,10 @@
 #define HANDLE_AUTO_DECK_MENU_MENU_DATA_ADDR 0x7B76u
 #define HANDLE_AUTO_DECK_MENU_TITLE_TEXT_LIST_ADDR 0x7B83u
 #define UPDATE_DECK_MACHINE_SCROLL_ARROWS_ADDR 0x73FEu
+
+#include "generated/wram.h"
+#include "mem.h"
+#define DRAW_DECK_MACHINE_SCREEN_ADDR 0x7403u
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -1472,3 +1476,16 @@ HandleAutoDeckMenuResult HandleAutoDeckMenu(void)
 	}
 }
 /* <<< factory HandleAutoDeckMenu */
+
+/* >>> factory InitDeckMachineDrawingParams */
+InitDeckMachineDrawingParamsResult InitDeckMachineDrawingParams(uint8_t d, uint8_t e)
+{
+	wCardListNumCursorPositions = NUM_DECK_MACHINE_SLOTS;
+	wDeckMachineText = e;
+	gb_write8((uint16_t)(wDeckMachineText_ADDR + 1u), d);
+	wCardListUpdateFunction = (uint8_t)DRAW_DECK_MACHINE_SCREEN_ADDR;
+	gb_write8((uint16_t)(wCardListUpdateFunction_ADDR + 1u), (uint8_t)(DRAW_DECK_MACHINE_SCREEN_ADDR >> 8));
+	wced2 = 0u;
+	return (InitDeckMachineDrawingParamsResult){0u, 0x80u, (uint8_t)(DRAW_DECK_MACHINE_SCREEN_ADDR >> 8), e, (uint16_t)(wCardListUpdateFunction_ADDR + 1u)};
+}
+/* <<< factory InitDeckMachineDrawingParams */

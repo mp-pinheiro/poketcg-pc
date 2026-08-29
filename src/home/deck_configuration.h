@@ -292,4 +292,8 @@ uint8_t DismantleDeck(uint16_t w0);
 typedef struct { uint8_t a; uint8_t f; } CancelDeckModificationsResult;
 CancelDeckModificationsResult CancelDeckModifications(uint16_t w0);
 /* <<< factory CancelDeckModifications */
+/* >>> factory HandleSelectUpAndDownInList */
+typedef struct { uint8_t f; } HandleSelectUpAndDownInListResult;
+HandleSelectUpAndDownInListResult HandleSelectUpAndDownInList(void);
+/* <<< factory HandleSelectUpAndDownInList */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */
