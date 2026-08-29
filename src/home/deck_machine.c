@@ -238,6 +238,19 @@
 #define OKIfFileDeletedText 0x0272u
 #define DECK_MACHINE_SELECTION_PARAMS_ADDR 0x76FBu
 #define DECK_MACHINE_MENU_DATA_ADDR 0x7274u
+
+#include "home/common.h"
+#include "home/save.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define DATA_B04A_ADDR 0x704Au
+#define SHOW_RECEIVED_CARDS_LIST_ADDR 0x7053u
+
+#include "home/common.h"
+#include "home/save.h"
+#define PleaseChooseASaveSlotText 0x0285u
+#define ReceivedADeckConfigurationFromText 0x0287u
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -1673,3 +1686,163 @@ wait_input:
 	}
 }
 /* <<< factory HandleDeckSaveMachineMenu */
+
+/* >>> factory GiftCenter_ReceiveCard */
+GiftCenter_ReceiveCardResult GiftCenter_ReceiveCard(void)
+{
+	wDuelTempList = 0u;
+	wNameBuffer = 0u;
+
+	ReceiveCardResult received = ReceiveCard();
+	if (received.f & 0x10u)
+		return (GiftCenter_ReceiveCardResult){received.a, received.f};
+
+	EnableSRAM();
+	AddGiftCenterDeckCardsToCollection(wDuelTempList_ADDR);
+	DisableSRAM();
+	SaveGame();
+
+	wCardListVisibleOffset = 0u;
+	g_rom_bank = 2u;
+	uint16_t params = DATA_B04A_ADDR;
+	(void)InitCardSelectionParams(0u, &params);
+	PrintReceivedTheseCardsText();
+	(void)Func_b088();
+	EnableLCD();
+
+	uint8_t entries = wNumEntriesInCurFilter;
+	wNumCardListEntries = entries;
+	if (entries < wNumVisibleCardListEntries)
+		wCardListNumCursorPositions = entries;
+
+	gb_write8(wCardListUpdateFunction_ADDR, (uint8_t)SHOW_RECEIVED_CARDS_LIST_ADDR);
+	gb_write8((uint16_t)(wCardListUpdateFunction_ADDR + 1u),
+		  (uint8_t)(SHOW_RECEIVED_CARDS_LIST_ADDR >> 8));
+	wced2 = 0u;
+
+input_loop:
+	for (;;) {
+		DoFrame();
+		HandleDeckCardSelectionListResult selection =
+			HandleDeckCardSelectionList();
+		if (selection.f & 0x10u)
+			goto selection_done;
+		HandleLeftRightInCardListResult left_right = HandleLeftRightInCardList();
+		if (left_right.f & 0x10u)
+			continue;
+		if ((hDPadHeld & 0x08u) == 0u)
+			continue;
+		goto card_page;
+	}
+
+card_page:
+	PlaySFXConfirmOrCancel(0x01u);
+	wTempCardListCursorPos = wCardListCursorPos;
+	gb_write8(wCurCardListPtr_ADDR, (uint8_t)wFilteredCardList_ADDR);
+	gb_write8((uint16_t)(wCurCardListPtr_ADDR + 1u),
+		  (uint8_t)(wFilteredCardList_ADDR >> 8));
+	OpenCardPageFromCardList();
+	PrintReceivedTheseCardsText();
+	PrintCardSelectionList();
+	EnableLCD();
+	g_rom_bank = 2u;
+	params = DATA_B04A_ADDR;
+	(void)InitCardSelectionParams(0u, &params);
+	entries = wNumEntriesInCurFilter;
+	if (entries < wNumVisibleCardListEntries)
+		wCardListNumCursorPositions = entries;
+	wCardListCursorPos = wTempCardListCursorPos;
+	goto input_loop;
+
+selection_done:
+	(void)DrawListCursor_Invisible();
+	wTempCardListCursorPos = wCardListCursorPos;
+	if (hffb3 != 0xFFu)
+		goto card_page;
+
+	{
+		uint16_t source = wNameBuffer_ADDR;
+		uint16_t destination = wDefaultText_ADDR;
+		CopyListFromHLToDE(&source, &destination);
+	}
+	return (GiftCenter_ReceiveCardResult){0u, 0x80u};
+}
+/* <<< factory GiftCenter_ReceiveCard */
+
+/* >>> factory GiftCenter_ReceiveDeck */
+GiftCenter_ReceiveDeckResult GiftCenter_ReceiveDeck(void)
+{
+	wCardListVisibleOffset = 0u;
+	wDeckMachineTitleText = (uint8_t)DeckSaveMachineText;
+	gb_write8((uint16_t)(wDeckMachineTitleText_ADDR + 1u),
+		  (uint8_t)(DeckSaveMachineText >> 8));
+	ClearScreenAndDrawDeckMachineScreen();
+	wNumDeckMachineEntries = DECK_SIZE;
+
+	uint8_t cursor = 0u;
+	for (;;) {
+		uint16_t selection_params = DECK_MACHINE_SELECTION_PARAMS_ADDR;
+		(void)InitCardSelectionParams(cursor, &selection_params);
+		DrawListScrollArrows();
+		PrintNumSavedDecks();
+		(void)DrawWideTextBox_PrintText(PleaseChooseASaveSlotText);
+		(void)InitDeckMachineDrawingParams(
+			(uint8_t)(PleaseChooseASaveSlotText >> 8),
+			(uint8_t)PleaseChooseASaveSlotText);
+
+		HandleDeckMachineSelectionResult selection =
+			HandleDeckMachineSelection();
+		if (selection.f & CARRY_FLAG) {
+			cursor = selection.a;
+			continue;
+		}
+		if (selection.a == MENU_CANCEL)
+			return (GiftCenter_ReceiveDeckResult){1u, 0u};
+
+		wSelectedDeckMachineEntry =
+			(uint8_t)(wCardListVisibleOffset + selection.a);
+		uint8_t empty = CheckIfSelectedDeckMachineEntryIsEmpty();
+		if (!(empty & CARRY_FLAG)) {
+			HandleYesOrNoMenuResult answer =
+				YesOrNoMenuWithText(OKIfFileDeletedText);
+			if (!(answer.f & CARRY_FLAG))
+				continue;
+		}
+
+		wDuelTempList = 0u;
+		wNameBuffer = 0u;
+		ReceiveDeckConfigurationResult received =
+			ReceiveDeckConfiguration();
+		if (received.f & CARRY_FLAG)
+			return (GiftCenter_ReceiveDeckResult){received.a, received.f};
+
+		EnableSRAM();
+		uint16_t source = wDuelTempList_ADDR;
+		uint16_t destination = GetSelectedSavedDeckPtr();
+		CopyNBytesFromHLToDE(&source, &destination, DECK_STRUCT_SIZE);
+		DisableSRAM();
+		SaveGame();
+		ClearScreenAndDrawDeckMachineScreen();
+		uint16_t selection_params_after = DECK_MACHINE_SELECTION_PARAMS_ADDR;
+		(void)InitCardSelectionParams(wCardListCursorPos, &selection_params_after);
+		DrawListScrollArrows();
+		PrintNumSavedDecks();
+		(void)DrawListCursor_Visible();
+
+		source = wNameBuffer_ADDR;
+		destination = wDefaultText_ADDR;
+		CopyListFromHLToDE(&source, &destination);
+		gb_write8(wTxRam2_ADDR, 0u);
+		gb_write8((uint16_t)(wTxRam2_ADDR + 1u), 0u);
+		(void)DrawWideTextBox_WaitForInput(
+			ReceivedADeckConfigurationFromText);
+
+		source = GetSelectedSavedDeckPtr();
+		destination = wDefaultText_ADDR;
+		EnableSRAM();
+		CopyListFromHLToDE(&source, &destination);
+		DisableSRAM();
+		return (GiftCenter_ReceiveDeckResult){0u, 0u};
+	}
+}
+/* <<< factory GiftCenter_ReceiveDeck */

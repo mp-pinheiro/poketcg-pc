@@ -648,6 +648,34 @@ CASES["HandleDeckSaveMachineMenu"] = [
 ]
 # <<< factory HandleDeckSaveMachineMenu
 
+# >>> factory GiftCenter_ReceiveCard
+CONTRACT["GiftCenter_ReceiveCard"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["GiftCenter_ReceiveCard"] = [
+    {"oracle": False, "evidence": "primary", "why": "The CGB infrared receive path is external to the reference harness; the deterministic no-retry failure path exercises GiftCenter_ReceiveCard's carry return.", "keys": [0x82, 0x10, 0x01], "wram": {0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC5EB: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xC5EB: 4}, "expect": {0xC5EB: b"\x02\x4F\x4B\x31"}, "expect_regs": {"a": 0x01, "f": 0x90}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The CGB infrared receive path is external to the reference harness; the deterministic no-retry failure path exercises GiftCenter_ReceiveCard's carry return with poisoned registers.", keys=[0x82, 0x10, 0x01], wram={0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC5EB: b"\xFF\xFF\xFF\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xC5EB: 4}, expect={0xC5EB: b"\x02\x4F\x4B\x31"}, expect_regs={"a": 0x01, "f": 0x90}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory GiftCenter_ReceiveCard
+
+# >>> factory GiftCenter_ReceiveDeck
+CONTRACT["GiftCenter_ReceiveDeck"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["GiftCenter_ReceiveDeck"] = [
+    {"rom_bank": 2, "ramg": True,
+     "wram": {0xCABB: b"\x00"},
+     "sram": {0: {}},
+     "keys": [0x00, 0x02],
+     "read": {0xD0A5: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, rom_bank=2, ramg=True,
+         wram={0xCABB: b"\x00"},
+         sram={0: {}},
+         keys=[0x00, 0x02],
+         read={0xD0A5: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory GiftCenter_ReceiveDeck
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -822,3 +850,9 @@ MUTATIONS["PrinterMenu_DeckConfiguration"] = {"source_symbol": "PrinterMenu_Deck
 # >>> factory-mutation HandleDeckSaveMachineMenu
 MUTATIONS["HandleDeckSaveMachineMenu"] = {"source_symbol": "HandleDeckSaveMachineMenu", "before": "HandleDeckSaveMachineMenuResult HandleDeckSaveMachineMenu(void)\n{\n\tuint8_t cursor = 0u;\n\n\twCardListVisibleOffset = 0u;\n\twDeckMachineTitleText = (uint8_t)DeckSaveMachineText;\n\tgb_write8((uint16_t)(wDeckMachineTitleText_ADDR + 1u),\n\t\t  (uint8_t)(DeckSaveMachineText >> 8));\n\tClearScreenAndDrawDeckMachineScreen();\n\twNumDeckMachineEntries = NUM_DECK_SAVE_MACHINE_SLOTS;", "after": "HandleDeckSaveMachineMenuResult HandleDeckSaveMachineMenu(void)\n{\n\tuint8_t cursor = 0u;\n\n\twCardListVisibleOffset = 0u;\n\twDeckMachineTitleText = (uint8_t)DeckSaveMachineText;\n\tgb_write8((uint16_t)(wDeckMachineTitleText_ADDR + 1u),\n\t\t  (uint8_t)(DeckSaveMachineText >> 8));\n\tClearScreenAndDrawDeckMachineScreen();\n\twNumDeckMachineEntries = 0u;", "case_ids": ["HandleDeckSaveMachineMenu-0", "HandleDeckSaveMachineMenu-1"]}
 # <<< factory-mutation HandleDeckSaveMachineMenu
+# >>> factory-mutation GiftCenter_ReceiveCard
+MUTATIONS["GiftCenter_ReceiveCard"] = {"source_symbol": "GiftCenter_ReceiveCard", "before": "\t\treturn (GiftCenter_ReceiveCardResult){received.a, received.f};", "after": "\t\treturn (GiftCenter_ReceiveCardResult){received.a, 0x00u};", "case_ids": ["GiftCenter_ReceiveCard-0", "GiftCenter_ReceiveCard-1"]}
+# <<< factory-mutation GiftCenter_ReceiveCard
+# >>> factory-mutation GiftCenter_ReceiveDeck
+MUTATIONS["GiftCenter_ReceiveDeck"] = {"source_symbol": "GiftCenter_ReceiveDeck", "before": "\twNumDeckMachineEntries = DECK_SIZE;", "after": "\twNumDeckMachineEntries = 0u;", "case_ids": ["GiftCenter_ReceiveDeck-0", "GiftCenter_ReceiveDeck-1"]}
+# <<< factory-mutation GiftCenter_ReceiveDeck

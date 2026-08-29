@@ -132,4 +132,12 @@ PrinterMenu_DeckConfigurationResult PrinterMenu_DeckConfiguration(void);
 typedef struct { uint8_t a; uint8_t f; } HandleDeckSaveMachineMenuResult;
 HandleDeckSaveMachineMenuResult HandleDeckSaveMachineMenu(void);
 /* <<< factory HandleDeckSaveMachineMenu */
+/* >>> factory GiftCenter_ReceiveCard */
+typedef struct { uint8_t a; uint8_t f; } GiftCenter_ReceiveCardResult;
+GiftCenter_ReceiveCardResult GiftCenter_ReceiveCard(void);
+/* <<< factory GiftCenter_ReceiveCard */
+/* >>> factory GiftCenter_ReceiveDeck */
+typedef struct { uint8_t a; uint8_t f; } GiftCenter_ReceiveDeckResult;
+GiftCenter_ReceiveDeckResult GiftCenter_ReceiveDeck(void);
+/* <<< factory GiftCenter_ReceiveDeck */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */
