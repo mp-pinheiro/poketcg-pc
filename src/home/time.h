@@ -7,6 +7,7 @@
 
 void IncrementPlayTimeCounter(void);
 uint8_t CheckForCGB(void);
+void SwitchToCGBDoubleSpeed(void);
 void SwitchToCGBNormalSpeed(void);
 typedef struct {
 	uint8_t a;

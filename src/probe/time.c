@@ -19,6 +19,13 @@ static void adapt_SwitchToCGBNormalSpeed(ProbeState *s)
 }
 
 
+static void adapt_SwitchToCGBDoubleSpeed(ProbeState *s)
+{
+	(void)s;
+	SwitchToCGBDoubleSpeed();
+}
+
+
 static void adapt_SetupTimer(ProbeState *s)
 {
 	TimerSetupResult result = SetupTimer();
@@ -38,6 +45,7 @@ static void adapt_TimerHandler(ProbeState *s)
 const ProbeEntry probe_entries_time[] = {
 	{ "IncrementPlayTimeCounter", adapt_IncrementPlayTimeCounter },
 	{ "CheckForCGB", adapt_CheckForCGB },
+	{ "SwitchToCGBDoubleSpeed", adapt_SwitchToCGBDoubleSpeed },
 	{ "SwitchToCGBNormalSpeed", adapt_SwitchToCGBNormalSpeed },
 	{ "SetupTimer", adapt_SetupTimer },
 	{ "TimerHandler", adapt_TimerHandler },

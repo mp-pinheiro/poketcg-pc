@@ -86,6 +86,23 @@ void SwitchToCGBNormalSpeed(void)
 	gb_write8(rIE, ie);
 }
 
+void SwitchToCGBDoubleSpeed(void)
+{
+	if ((CheckForCGB() & 0x10u) != 0u)
+		return;
+	uint8_t spd = gb_read8(rSPD);
+	if ((spd & (uint8_t)(1u << B_SPD_DOUBLE)) != 0u)
+		return;
+	uint8_t ie = gb_read8(rIE);
+	gb_write8(rIE, 0u);
+	gb_write8(rSPD, (uint8_t)(spd | (uint8_t)(1u << B_SPD_PREPARE)));
+	gb_write8(rIF, 0u);
+	gb_write8(rIE, 0u);
+	gb_write8(rJOYP, 0x30u);
+	(void)SetupTimer();
+	gb_write8(rIE, ie);
+}
+
 #define rTMA 0xFF06u
 #define rTAC 0xFF07u
 
