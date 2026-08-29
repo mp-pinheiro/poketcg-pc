@@ -65,4 +65,7 @@ ReceiveIRDataBufferResult ReceiveIRDataBuffer(void);
 /* >>> factory ClearRP */
 void ClearRP(void);
 /* <<< factory ClearRP */
+/* >>> factory StartIRCommunications */
+void StartIRCommunications(void);
+/* <<< factory StartIRCommunications */
 #endif /* POKETCG_HOME_IR_CORE_H */

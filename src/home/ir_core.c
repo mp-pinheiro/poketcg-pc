@@ -24,6 +24,9 @@
 #define RJOYP_ADDR 0xFF00u
 
 #include "home/ir_core.h"
+
+#include "home/time.h"
+#define P14 0x10u
 /* <<< factory statics */
 
 /* >>> factory StoreRegistersInIRDataBuffer */
@@ -294,3 +297,12 @@ void ClearRP(void)
 	gb_write8(RP_ADDR, 0x00u);
 }
 /* <<< factory ClearRP */
+
+/* >>> factory StartIRCommunications */
+void StartIRCommunications(void)
+{
+	SwitchToCGBNormalSpeed();
+	gb_write8(RJOYP_ADDR, P14);
+	gb_write8(RP_ADDR, RP_ENABLE);
+}
+/* <<< factory StartIRCommunications */

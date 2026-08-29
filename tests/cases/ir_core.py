@@ -136,6 +136,14 @@ CASES["ClearRP"] = [
 ]
 # <<< factory ClearRP
 
+# >>> factory StartIRCommunications
+CONTRACT["StartIRCommunications"] = {"compare": (), "preserve": ()}
+CASES["StartIRCommunications"] = [
+    {"oracle": False, "evidence": "primary", "why": "JOYP and RP are hardware registers whose readback is modeled by the native harness; native P14 and RP_ENABLE writes read back as DF and 3E respectively.", "wram": {0xCAB4: b"\x00", 0xFF00: b"\x30"}, "read": {0xFF00: 1, 0xFF56: 1}, "expect": {0xFF00: b"\xDF", 0xFF56: b"\x3E"}},
+    dict(POISON, oracle=False, evidence="primary", why="JOYP and RP are hardware registers whose readback is modeled by the native harness; native P14 and RP_ENABLE writes read back as DF and 3E respectively.", wram={0xCAB4: b"\x00", 0xFF00: b"\x30"}, read={0xFF00: 1, 0xFF56: 1}, expect={0xFF00: b"\xDF", 0xFF56: b"\x3E"}),
+]
+# <<< factory StartIRCommunications
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -221,3 +229,6 @@ MUTATIONS["ClearRP"] = {
     "case_ids": ["ClearRP-0", "ClearRP-1", "ClearRP-2"],
 }
 # <<< factory-mutation ClearRP
+# >>> factory-mutation StartIRCommunications
+MUTATIONS["StartIRCommunications"] = {"source_symbol": "StartIRCommunications", "before": "void StartIRCommunications(void)\n{\n\tSwitchToCGBNormalSpeed();\n\tgb_write8(RJOYP_ADDR, P14);", "after": "void StartIRCommunications(void)\n{\n\tSwitchToCGBNormalSpeed();\n\tgb_write8(RJOYP_ADDR, 0x00u);", "case_ids": ["StartIRCommunications-0", "StartIRCommunications-1"]}
+# <<< factory-mutation StartIRCommunications
