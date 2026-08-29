@@ -224,3 +224,13 @@ unblock = "Trace DisplayPlayerNamingScreen and DrawPlayerPortraitAndPrintNewGame
 name = "HealPlayAreaCardHP"
 reason = "HAND-DIAGNOSED 2026-08-29: generation-11 retry candidates with the correct wAnimationsDisabled=0xD421 animation-disable fixture still exhaust in the downstream text/animation path at 80M cycles, including LCD-off and armed-LCD variants; the isolated effect has no verified bounded return."
 unblock = "Trace the first non-returning DrawWideTextBox/CopyCardNameAndLevel or animation callee and establish a verified bounded pre-ret completion or port that frame-safe callee before retrying HealPlayAreaCardHP; do not repeat unchanged top-level fixtures."
+ 
+[[blocked]]
+name = "ComputerSearch_PlayerDeckSelection"
+reason = "HAND-DIAGNOSED 2026-08-29: generation-7 candidates all run the real card-list selection loop without a bounded return under the isolated key timeline; the native probes likewise do not terminate while the reference resolves the interactive scene."
+unblock = "Trace DisplayCardList and its menu/input state to a deterministic selection completion or establish a verified pre-ret cutpoint before retrying ComputerSearch_PlayerDeckSelection; do not repeat unchanged interactive fixtures."
+ 
+[[blocked]]
+name = "PokemonTrader_PlayerDeckSelection"
+reason = "HAND-DIAGNOSED 2026-08-29: generation-9 candidates model the real trader card-list/text selection scene, which remains interactive and has no bounded return under the isolated key timeline; another unchanged top-level fixture is non-informative."
+unblock = "Trace the trader card-list selection input/state path to a deterministic Pokémon-card completion or establish a verified pre-ret cutpoint before retrying PokemonTrader_PlayerDeckSelection; do not repeat unchanged interactive fixtures."
