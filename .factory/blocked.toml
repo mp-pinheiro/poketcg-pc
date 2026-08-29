@@ -223,3 +223,8 @@ unblock = "Trace DisplayCardList's discard-pile menu/input state to a determinis
 name = "PlayIntroSequence"
 reason = "AUTO-RETIRED: src/engine/intro.asm:1 (basename `intro`). 4 generations exhausted (trapped=True); last diagnostic phase=compile failure_class=code detail=collect2: error: ld returned 1 exit status"
 unblock = "read the recorded diagnostics under .factory/try/PlayIntroSequence/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+ 
+[[blocked]]
+name = "PokeBall_PlayerSelection"
+reason = "HAND-DIAGNOSED 2026-08-29: generation-10..12 candidates reach the nested card-list path, but the reference enters the real LCD/VBlank scene and does not return under A or B isolated timelines; native candidates either loop in DisplayCardList or diverge in ambient turn state."
+unblock = "Trace the nested card-list scene's LCD/input completion and establish a verified pre-ret cutpoint or deterministic card-selection fixture before retrying PokeBall_PlayerSelection; do not repeat unchanged interactive fixtures."
