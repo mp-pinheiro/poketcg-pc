@@ -196,6 +196,9 @@ AIDecideResult AIPlay_Imakuni(void);
  * exit f is AIMakeDecision's carry. */
 AIDecideResult AIPlay_FullHeal(void);
 /* <<< factory AIPlay_FullHeal */
+/* >>> factory AIDecide_ProfessorOak */
+AIDecideResult AIDecide_ProfessorOak(void);
+/* <<< factory AIDecide_ProfessorOak */
 /* >>> factory AIPlay_ClefairyDollOrMysteriousFossil */
 /* trainer_cards.asm:4776-4781. Stage-only twin: wAITrainerCardToPlay goes to
  * hTempCardIndex_ff9f, then the OPPACTION_EXECUTE_TRAINER_EFFECTS dispatch;

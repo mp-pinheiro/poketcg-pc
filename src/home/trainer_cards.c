@@ -119,6 +119,13 @@
 #define FIRE_CHARGE_DECK_ID 0x17u
 #define ROCK_CRUSHER_DECK_ID 0x11u
 #define WONDERS_OF_SCIENCE_DECK_ID 0x16u
+#define EXCAVATION_DECK_ID 0x15u
+#define MYSTERIOUS_FOSSIL 0xccu
+#define WATER_ENERGY 0x03u
+#define TRUE 0x01u
+#define DUELVARS_CARD_LOCATIONS 0x00u
+#define CARD_LOCATION_HAND 0x01u
+
 
 #define DRAGONAIR 0xc0u
 #define DRATINI 0xbfu
@@ -3213,6 +3220,120 @@ AIDecideResult AIPlay_PokemonFlute(void)
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_PokemonFlute */
+
+/* >>> factory AIDecide_ProfessorOak */
+AIDecideResult AIDecide_ProfessorOak(void)
+{
+	DuelistVarResult deck = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	if (gb_read8(deck.hl) >= (uint8_t)(DECK_SIZE - 6u))
+		return (AIDecideResult){0x00u};
+
+	uint8_t opponent = wOpponentDeckID;
+	if (opponent == LEGENDARY_ARTICUNO_DECK_ID) {
+		uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+		if (count < 3u) {
+			(void)CreateHandCardList(0u);
+			uint8_t d = count;
+			uint8_t e = PLAY_AREA_ARENA;
+			while (d != 0u) {
+				uint8_t card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e)).a;
+				CheckForEvolutionInListResult ev = CheckForEvolutionInList(card, 0u);
+				if (ev.f & 0x10u)
+					return (AIDecideResult){0x10u};
+				e++;
+				d--;
+			}
+		}
+		CountOppEnergyResult energy = CountOppEnergyCardsInHand(0u, 0u);
+		if (energy.a >= 4u)
+			return (AIDecideResult){0x00u};
+		(void)CreateHandCardList(0u);
+		uint16_t list = wDuelTempList_ADDR;
+		(void)RemoveCardIDInList(&list, PROFESSOR_OAK);
+		(void)RemoveCardIDInList(&list, PROFESSOR_OAK);
+		for (;;) {
+			uint8_t index = gb_read8(list++);
+			if (index == 0xffu)
+				return (AIDecideResult){0x10u};
+			CheckIfCardCanBePlayedResult playable = CheckIfCardCanBePlayed(index);
+			if (!(playable.f & 0x10u))
+				return (AIDecideResult){0x00u};
+		}
+	}
+
+	if (opponent == EXCAVATION_DECK_ID) {
+		if (gb_read8(deck.hl) >= 46u)
+			return (AIDecideResult){0x00u};
+		LookForCardIDInHandAndPlayAreaResult fossil =
+			LookForCardIDInHandAndPlayArea(MYSTERIOUS_FOSSIL);
+		wce06 = (fossil.f & 0x10u) ? 0x1eu : 0x50u;
+	} else if (opponent == WONDERS_OF_SCIENCE_DECK_ID) {
+		if (LookForCardIDInHandList_Bank8(GRIMER).f & 0x10u)
+			return (AIDecideResult){0x00u};
+		if (LookForCardIDInHandList_Bank8(MUK).f & 0x10u)
+			return (AIDecideResult){0x00u};
+		deck = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	} else {
+		wce06 = 30u;
+	}
+	if (gb_read8(deck.hl) >= (uint8_t)(DECK_SIZE - 14u))
+		return (AIDecideResult){0x00u};
+
+	uint8_t hand = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a;
+	if (hand < 4u)
+		wce06 = (uint8_t)(wce06 + 50u);
+	else if (hand >= 9u)
+		wce06 = (uint8_t)(wce06 - 30u);
+	if (CreateEnergyCardListFromHand(0u).f & 0x10u)
+		wce06 = (uint8_t)(wce06 + 40u);
+	if ((CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK).f & 0x10u) &&
+	    !(CountTurnDuelistPokemonWithActivePkmnPower(BLASTOISE).f & 0x10u) &&
+	    (LookForCardIDInHand(WATER_ENERGY).f & 0x10u))
+		wce06 = (uint8_t)(wce06 + 10u);
+
+	(void)CreateHandCardList(0u);
+	uint16_t list = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t index = gb_read8(list++);
+		if (index == 0xffu)
+			break;
+		uint8_t type = LoadCardDataToBuffer1_FromDeckIndex(index);
+		if (type < TYPE_ENERGY)
+			continue;
+		if (gb_read8(wLoadedCard1Stage_ADDR) == 0u)
+			wce06 = (uint8_t)(wce06 + 10u);
+	}
+
+	wce0f = 0u;
+	gb_write8((uint16_t)(wce0f_ADDR + 1u), 0u);
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	uint8_t slot = PLAY_AREA_ARENA;
+	while (count != 0u) {
+		uint8_t found_hand = 0u;
+		wce08 = 0u;
+		for (uint8_t candidate = 0u; candidate < DECK_SIZE; candidate++) {
+			EvolveResult ev = CheckIfCanEvolveInto(candidate, slot);
+			if (ev.f & 0x10u)
+				continue;
+			wce08 = TRUE;
+			if (GetTurnDuelistVariable((uint8_t)(DUELVARS_CARD_LOCATIONS + candidate)).a ==
+			    CARD_LOCATION_HAND) {
+				found_hand = 1u;
+				break;
+			}
+		}
+		if (found_hand)
+			wce0f = TRUE;
+		if (wce08 == TRUE)
+			gb_write8((uint16_t)(wce0f_ADDR + 1u), TRUE);
+		slot++;
+		count--;
+	}
+	if (gb_read8((uint16_t)(wce0f_ADDR + 1u)) != 0u && wce0f == 0u)
+		wce06 = (uint8_t)(wce06 + 10u);
+	return (AIDecideResult){wce06 >= 60u ? 0x10u : 0x00u};
+}
+/* <<< factory AIDecide_ProfessorOak */
 
 /* >>> factory AIPlay_ProfessorOak */
 AIDecideResult AIPlay_ProfessorOak(void)
