@@ -215,6 +215,10 @@ unblock = "Trace the first animation/recoil callee that enables LCD and identify
 name = "Ram_RecoilSwitchEffect"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-8+ retry candidate reaches the reference animation/VBlank parking loop at pc=625 with LCDC=0x80 and exhausts 80M cycles before return; the isolated effect path is frame-dependent, not a translation mismatch. An unchanged full-call retry is non-informative."
 unblock = "Trace the first animation/recoil callee that enables LCD and identify a bounded pre-ret completion, then verify that prefix or port the frame-safe callee before retrying this effect; do not increase budgets or repeat the unchanged full-call case."
+[[blocked]]
+name = "HealPlayAreaCardHP"
+reason = "HAND-DIAGNOSED 2026-08-28: generation-10 candidate uses the complete animation/card-text/HP sequence and exact ANIM_IDLE plus wAnimationsDisabled fixture, but reference still parks at WaitForVBlank pc=0x0271 with LCDC=0xC3 before return. This confirms the isolated full-call path remains frame-dependent rather than a translation mismatch."
+unblock = "Trace the first PlayAttackAnimation/WaitAttackAnimation callee that enables LCD under the healing-wind command stream, then port or verify that frame-safe callee before retrying; do not suppress animation or repeat unchanged full-call cases."
 
 [[blocked]]
 name = "SubmissionEffect"
