@@ -62,6 +62,30 @@ uint8_t CheckForCGB(void)
 	return 0x10u;
 }
 
+#define rIE 0xFFFFu
+#define rIF 0xFF0Fu
+#define rJOYP 0xFF00u
+#define rSPD 0xFF4Du
+#define B_SPD_DOUBLE 7u
+#define B_SPD_PREPARE 0u
+
+void SwitchToCGBNormalSpeed(void)
+{
+	if ((CheckForCGB() & 0x10u) != 0u)
+		return;
+	uint8_t spd = gb_read8(rSPD);
+	if ((spd & (uint8_t)(1u << B_SPD_DOUBLE)) == 0u)
+		return;
+	uint8_t ie = gb_read8(rIE);
+	gb_write8(rIE, 0u);
+	gb_write8(rSPD, (uint8_t)(spd | (uint8_t)(1u << B_SPD_PREPARE)));
+	gb_write8(rIF, 0u);
+	gb_write8(rIE, 0u);
+	gb_write8(rJOYP, 0x30u);
+	(void)SetupTimer();
+	gb_write8(rIE, ie);
+}
+
 #define rTMA 0xFF06u
 #define rTAC 0xFF07u
 
