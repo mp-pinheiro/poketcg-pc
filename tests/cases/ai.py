@@ -126,7 +126,7 @@ MUTATIONS = {
     },
 }
 # >>> factory-mutation AIDoAction
-MUTATIONS["AIDoAction"] = {"source_symbol": "AIDoAction", "before": "\t\tif (action == 3u || action == 4u) {", "after": "\t\tif (action == 4u) {", "case_ids": ["AIDoAction-0"]}
+MUTATIONS["AIDoAction"] = {"source_symbol": "AIDoAction", "before": "\t\t} else if (action == 3u || action == 4u) {", "after": "\t\t} else if (action == 4u) {", "case_ids": ["AIDoAction-0"]}
 # <<< factory-mutation AIDoAction
 # >>> factory-mutation AIDoAction_ForcedSwitch
 MUTATIONS["AIDoAction_ForcedSwitch"] = {"source_symbol": "AIDoAction_ForcedSwitch", "before": "uint8_t AIDoAction_ForcedSwitch(void)\n{\n\tuint8_t result = AIDoAction(0x03u);\n\thTempPlayAreaLocation_ff9d = result;", "after": "uint8_t AIDoAction_ForcedSwitch(void)\n{\n\tuint8_t result = AIDoAction(0x03u);\n\thTempPlayAreaLocation_ff9d = (uint8_t)(result ^ 0xFFu);", "case_ids": ["AIDoAction_ForcedSwitch-0"]}
