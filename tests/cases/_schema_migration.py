@@ -244,6 +244,12 @@ def legacy_to_schema(cases: Mapping[str, Sequence[Mapping[str, Any]]], contract:
                              maximum=0xFFFF)
                     for position, word in enumerate(stack)
                 ]
+            if "post_call_byte" in legacy:
+                record["post_call_byte"] = _integer(
+                    legacy["post_call_byte"],
+                    f"legacy case {function}[{index}].post_call_byte",
+                    maximum=0xFF,
+                )
             reason = legacy.get("reason", legacy.get("why"))
             if evidence != "primary" and reason is not None:
                 record["reason"] = reason

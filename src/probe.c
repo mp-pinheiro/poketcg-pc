@@ -268,6 +268,11 @@ int main(void)
 					} while (eat(','));
 					need(']');
 				}
+			} else if (strcmp(key, "post_call_byte") == 0) {
+				long value = jnum();
+				if (value < 0 || value > 0xff)
+					die("post_call_byte out of range");
+				st.post_call_byte = (uint8_t)value;
 			} else if (strcmp(key, "rom_bank") == 0) {
 				romb = jnum();
 				if (romb < 0 || romb > 0xff)

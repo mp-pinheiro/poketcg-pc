@@ -22,3 +22,20 @@ diff --git a/src/gbrt.c b/src/gbrt.c
              }
              /* 0x6000-0x7FFF: Unused for MBC5 */
          }
+diff --git a/include/gbrt.h b/include/gbrt.h
+--- a/include/gbrt.h
++++ b/include/gbrt.h
+@@ -334,2 +334,4 @@
+     void* port_state; /**< Opaque optional native port/frontend state */
++    uint8_t oracle_post_call_byte;
++    uint8_t oracle_post_call_byte_valid;
+     GBHostConfigurationContract host_configuration_contract; /**< Host-only configuration validation service */
+diff --git a/src/gbrt.c b/src/gbrt.c
+--- a/src/gbrt.c
++++ b/src/gbrt.c
+@@ -2670,3 +2670,5 @@
+         if (addr >= 0xFEA0) {
++            if (addr == 0xFEA0 && ctx->oracle_post_call_byte_valid)
++                return ctx->oracle_post_call_byte;
+             return 0xFF;
+         }

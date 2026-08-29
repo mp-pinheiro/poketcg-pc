@@ -10,6 +10,7 @@ typedef struct {
 	uint16_t hl;
 	uint16_t stack[EFFECT_DISPATCH_MAX_STACK_WORDS];
 	uint8_t stack_count;
+	uint8_t post_call_byte;
 } EffectDispatchState;
 
 typedef void (*EffectDispatchFn)(EffectDispatchState *state);

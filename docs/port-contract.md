@@ -121,7 +121,8 @@ const ProbeEntry probe_entries_<file>[] = {
 ```
 
 `ProbeState` is `{ uint8_t a, f, b, c, d, e; uint16_t hl;
-uint16_t stack[PROBE_MAX_STACK_WORDS]; uint8_t stack_count; }`
+uint16_t stack[PROBE_MAX_STACK_WORDS]; uint8_t stack_count;
+uint8_t post_call_byte; }`
 (`src/probe.h`). The native side has no GB frame, so an adapter for a routine
 entered mid-frame reads the words its asm would have popped out of
 `s->stack[0 .. s->stack_count - 1]` — index 0 is the caller's first push, so
@@ -226,6 +227,10 @@ authoritative source:
   `push bc` / `push de` before the `jp`, so its cases declare
   `stack: [saved_bc, saved_de]`. A wrong `stack` produces a red, never a false
   green.
+- `post_call_byte` — an optional integer in `0..255` for a routine whose caller
+embeds an operand byte immediately after its `CALL`. The oracle places it at
+the synthesized post-call address, and the native probe exposes it to adapters
+as `s->post_call_byte`; it is independent of `stack` and `hl`.
 
 Required coverage per routine:
 

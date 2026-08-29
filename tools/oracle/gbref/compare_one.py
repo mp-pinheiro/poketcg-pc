@@ -72,6 +72,7 @@ def main() -> int:
     parser.add_argument("--runner", type=Path, required=True)
     parser.add_argument("--symbols", type=Path, required=True)
     args = parser.parse_args()
+    post_call_byte = None
     seed_wram_spec = ""
     seed_sram_spec = ""
     seed_vram_spec = ""
@@ -129,6 +130,10 @@ def main() -> int:
             raise SystemExit("SCHEMA mapper mode must be fixed or symbol")
         case["mapper"] = mapper
         seeds = case.pop("seeds", {})
+        post_call_byte = case.pop("post_call_byte", None)
+        if post_call_byte is not None:
+            if isinstance(post_call_byte, bool) or not isinstance(post_call_byte, int) or not 0 <= post_call_byte <= 0xff:
+                raise SystemExit("SCHEMA post_call_byte must be an integer in range 0..255")
         seed_wram_map = {}
         seed_parts = []
         for address, payload in seeds.get("wram", {}).items():
@@ -320,6 +325,8 @@ def main() -> int:
     }
     if stack_words:
         request["stack"] = [int(word) for word in stack_words]
+    if post_call_byte is not None:
+        request["post_call_byte"] = post_call_byte
     if mode == "pre-ret":
         request["stop_pc"] = int(case["stop_pc"] if isinstance(completion, str) else completion["pc"])
     if mode == "event":
@@ -442,6 +449,8 @@ def main() -> int:
     }
     if stack_words:
         probe_request["stack"] = [int(word) for word in stack_words]
+    if post_call_byte is not None:
+        probe_request["post_call_byte"] = post_call_byte
     if seed_native_rom_bank:
         probe_request["rom_bank"] = int(case["mapper"]["rom_bank"])
     probe = subprocess.run(

@@ -515,11 +515,13 @@ int main(int argc, char **argv) {
     size_t input_count = 0;
     uint16_t stack_words[MAX_STACK_WORDS];
     size_t stack_count = 0;
+    uint64_t post_call_byte = 0;
+    int post_call_state = json_number(request, "post_call_byte", &post_call_byte);
+    int stack_state = parse_stack_words(request, stack_words, MAX_STACK_WORDS,
+                                        &stack_count);
     int setup_state = parse_setup(request, setup_calls, 256, &setup_count);
     int input_state = parse_input_keys(request, input_buttons, input_dpad,
                                        MAX_INPUT_EVENTS, &input_count);
-    int stack_state = parse_stack_words(request, stack_words, MAX_STACK_WORDS,
-                                        &stack_count);
     if (!setup_state || !input_state) {
         free(request);
         fail("SCHEMA", "setup and input_events must be bounded arrays");
@@ -544,6 +546,7 @@ int main(int argc, char **argv) {
          (predicate_state != 1 || event_addr_state != 1 || event_value_state != 1 ||
           event_mask_state != 1 || event_addr > 0xffff || event_value > 0xff ||
           event_mask > 0xff)) ||
+        post_call_state < 0 || post_call_byte > 0xff ||
         seed_wram_state < 0 || seed_sram_state < 0 || seed_vram_state < 0 ||
         entry_state != 1 || entry > 0xffff || instruction_budget == 0 || cycle_budget == 0 ||
         instruction_budget > UINT32_MAX || cycle_budget > UINT32_MAX ||
@@ -643,6 +646,10 @@ int main(int argc, char **argv) {
             setup_steps++;
             setup_cycles += delta;
         }
+    }
+    if (post_call_state == 1) {
+        ctx->oracle_post_call_byte = (uint8_t)post_call_byte;
+        ctx->oracle_post_call_byte_valid = 1;
     }
     if (strcmp(mapper_mode, "seeded") == 0)
         seed_mapper_shadows(ctx, mapper_rom_bank, mapper_ram_bank, mapper_ram_enable);
