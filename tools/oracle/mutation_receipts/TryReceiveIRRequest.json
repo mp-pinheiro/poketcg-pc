@@ -1,0 +1,9 @@
+{
+  "fn": "TryReceiveIRRequest",
+  "case": "tests/cases/ir_core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TryReceiveIRRequest\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"02\", \"51899\": \"80\", \"65344\": \"80\", \"65357\": \"fe\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TryReceiveIRRequest\", \"mismatches\": {\"a\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"TryReceiveIRRequest\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"02\", \"51899\": \"80\", \"65344\": \"80\", \"65357\": \"fe\"}}, \"status\": \"PASS\"}\n"
+}

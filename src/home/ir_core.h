@@ -90,4 +90,16 @@ RequestCloseIRCommunicationResult RequestCloseIRCommunication(void);
 typedef struct { uint8_t a; uint8_t f; } RequestDataTransmissionThroughIRResult;
 RequestDataTransmissionThroughIRResult RequestDataTransmissionThroughIR(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory RequestDataTransmissionThroughIR */
+/* >>> factory ExecuteReceivedIRCommands */
+typedef struct { uint8_t a; uint8_t f; } ExecuteReceivedIRCommandsResult;
+ExecuteReceivedIRCommandsResult ExecuteReceivedIRCommands(void);
+/* <<< factory ExecuteReceivedIRCommands */
+/* >>> factory TryReceiveIRRequest */
+typedef struct { uint8_t a; uint8_t f; } TryReceiveIRRequestResult;
+TryReceiveIRRequestResult TryReceiveIRRequest(void);
+/* <<< factory TryReceiveIRRequest */
+/* >>> factory RequestDataReceivalThroughIR */
+typedef struct { uint8_t a; uint8_t f; } RequestDataReceivalThroughIRResult;
+RequestDataReceivalThroughIRResult RequestDataReceivalThroughIR(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory RequestDataReceivalThroughIR */
 #endif /* POKETCG_HOME_IR_CORE_H */

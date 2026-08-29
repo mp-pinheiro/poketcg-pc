@@ -196,6 +196,30 @@ CASES["RequestDataTransmissionThroughIR"] = [
 ]
 # <<< factory RequestDataTransmissionThroughIR
 
+# >>> factory ExecuteReceivedIRCommands
+CONTRACT["ExecuteReceivedIRCommands"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ExecuteReceivedIRCommands"] = [
+    {"oracle": False, "evidence": "primary", "why": "The deterministic CGB IR peer supplies the 81-sample AA/49/52/data receive frame; the close command is zero and the native CGB path returns after closing communications.", "keys": 0x82, "ir_peer": True, "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xCE85: b"\x00\x00\x00\x00\x00\x00\x00\x00"}, "setup": [], "read": {0xCE85: 8}, "expect": {0xCE85: b"\x00\x00\x00\x00\x00\x00\x00\x00"}, "expect_regs": {"a": 0x00, "f": 0x90}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The deterministic CGB IR peer supplies the 81-sample AA/49/52/data receive frame; the close command is zero and the native CGB path returns after closing communications.", keys=0x82, ir_peer=True, wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xCE85: b"\xF0\xAA\x34\x12\xEE\xDD\xCC\xBB"}, setup=[], read={0xCE85: 8}, expect={0xCE85: b"\x00\x00\x00\x00\x00\x00\x00\x00"}, expect_regs={"a": 0x00, "f": 0x90}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ExecuteReceivedIRCommands
+
+# >>> factory TryReceiveIRRequest
+CONTRACT["TryReceiveIRRequest"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["TryReceiveIRRequest"] = [
+    {"oracle": False, "evidence": "primary", "why": "The deterministic CGB infrared peer supplies the AA request and the native result is checked through the acknowledgement path.", "keys": 0x80, "ir_peer": True, "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}], "expect_regs": {"a": 0x00, "f": 0x80}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The deterministic CGB infrared peer supplies the AA request and the native result is checked through the acknowledgement path with poisoned registers.", keys=0x80, ir_peer=True, wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}], expect_regs={"a": 0x00, "f": 0x80}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory TryReceiveIRRequest
+
+# >>> factory RequestDataReceivalThroughIR
+CONTRACT["RequestDataReceivalThroughIR"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["RequestDataReceivalThroughIR"] = [
+    {"oracle": False, "evidence": "primary", "why": "The deterministic CGB infrared peer drives the request exchange; the transmitted register buffer and checksum result are asserted.", "f": 0x00, "b": 0x00, "c": 0x01, "d": 0xC5, "e": 0x00, "hl": 0xC500, "keys": 0x80, "ir_peer": True, "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}], "read": {wIRDataBuffer: 8}, "expect": {wIRDataBuffer: b"\x00\x03\x00\xC5\x00\xC5\x01\x00"}, "expect_regs": {"a": 0xFF, "f": 0x10}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The deterministic CGB infrared peer drives the request exchange; the transmitted register buffer and checksum result are asserted.", keys=0x80, ir_peer=True, wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}], read={wIRDataBuffer: 8}, expect={wIRDataBuffer: b"\xF0\x03\x34\x12\xEE\xDD\xCC\xBB"}, expect_regs={"a": 0xFF, "f": 0x10}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory RequestDataReceivalThroughIR
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -322,3 +346,22 @@ MUTATIONS["RequestDataTransmissionThroughIR"] = {
     "case_ids": ["RequestDataTransmissionThroughIR-0", "RequestDataTransmissionThroughIR-1"]
 }
 # <<< factory-mutation RequestDataTransmissionThroughIR
+# >>> factory-mutation ExecuteReceivedIRCommands
+MUTATIONS["ExecuteReceivedIRCommands"] = {
+    "source_symbol": "ExecuteReceivedIRCommands",
+    "before": "\t\t\treturn (ExecuteReceivedIRCommandsResult){0x00u, 0x90u};",
+    "after": "\t\t\treturn (ExecuteReceivedIRCommandsResult){0x00u, 0x80u};",
+    "case_ids": ["ExecuteReceivedIRCommands-0", "ExecuteReceivedIRCommands-1"]
+}
+# <<< factory-mutation ExecuteReceivedIRCommands
+# >>> factory-mutation TryReceiveIRRequest
+MUTATIONS["TryReceiveIRRequest"] = {
+    "source_symbol": "TryReceiveIRRequest",
+    "before": "TryReceiveIRRequestResult TryReceiveIRRequest(void)\n{\n\tStartIRCommunications();\n\tuint16_t hl = 0xFF56u;\n\tfor (;;) {\n\t\tReceiveByteThroughIRResult received = ReceiveByteThroughIR_ZeroIfUnsuccessful();\n\t\tif (received.a == 0xAAu) {\n\t\t\t(void)TransmitByteThroughIR(0x33u, hl, 0u, 0u);\n\t\t\tTryReceiveIRRequestResult result = {0x00u, 0x80u};",
+    "after": "TryReceiveIRRequestResult TryReceiveIRRequest(void)\n{\n\tStartIRCommunications();\n\tuint16_t hl = 0xFF56u;\n\tfor (;;) {\n\t\tReceiveByteThroughIRResult received = ReceiveByteThroughIR_ZeroIfUnsuccessful();\n\t\tif (received.a == 0xAAu) {\n\t\t\t(void)TransmitByteThroughIR(0x33u, hl, 0u, 0u);\n\t\t\tTryReceiveIRRequestResult result = {0x01u, 0x80u};",
+    "case_ids": ["TryReceiveIRRequest-0", "TryReceiveIRRequest-1"]
+}
+# <<< factory-mutation TryReceiveIRRequest
+# >>> factory-mutation RequestDataReceivalThroughIR
+MUTATIONS["RequestDataReceivalThroughIR"] = {"source_symbol": "RequestDataReceivalThroughIR", "before": "RequestDataReceivalThroughIRResult RequestDataReceivalThroughIR(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\tTransmitRegistersThroughIRResult tx = TransmitRegistersThroughIR(IRCMD_RECEIVE_DATA, f, b, c, d, e, hl);", "after": "RequestDataReceivalThroughIRResult RequestDataReceivalThroughIR(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\tTransmitRegistersThroughIRResult tx = TransmitRegistersThroughIR(0x02u, f, b, c, d, e, hl);", "case_ids": ["RequestDataReceivalThroughIR-0", "RequestDataReceivalThroughIR-1"]}
+# <<< factory-mutation RequestDataReceivalThroughIR

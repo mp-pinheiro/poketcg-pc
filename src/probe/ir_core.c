@@ -196,6 +196,33 @@ static void adapt_RequestDataTransmissionThroughIR(ProbeState *s)
 	}
 /* <<< factory RequestDataTransmissionThroughIR */
 
+/* >>> factory ExecuteReceivedIRCommands */
+static void adapt_ExecuteReceivedIRCommands(ProbeState *s)
+{
+	ExecuteReceivedIRCommandsResult result = ExecuteReceivedIRCommands();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory ExecuteReceivedIRCommands */
+
+/* >>> factory TryReceiveIRRequest */
+static void adapt_TryReceiveIRRequest(ProbeState *s)
+{
+	TryReceiveIRRequestResult result = TryReceiveIRRequest();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory TryReceiveIRRequest */
+
+/* >>> factory RequestDataReceivalThroughIR */
+static void adapt_RequestDataReceivalThroughIR(ProbeState *s)
+{
+	RequestDataReceivalThroughIRResult result = RequestDataReceivalThroughIR(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory RequestDataReceivalThroughIR */
+
 const ProbeEntry probe_entries_ir_core[] = {
 	{ "StoreRegistersInIRDataBuffer", adapt_StoreRegistersInIRDataBuffer },
 	{ "LoadRegistersFromIRDataBuffer", adapt_LoadRegistersFromIRDataBuffer },
@@ -219,5 +246,8 @@ const ProbeEntry probe_entries_ir_core[] = {
 	{ "TransmitRegistersThroughIR", adapt_TransmitRegistersThroughIR },
 	{ "RequestCloseIRCommunication", adapt_RequestCloseIRCommunication },
 	{ "RequestDataTransmissionThroughIR", adapt_RequestDataTransmissionThroughIR },
+	{ "ExecuteReceivedIRCommands", adapt_ExecuteReceivedIRCommands },
+	{ "TryReceiveIRRequest", adapt_TryReceiveIRRequest },
+	{ "RequestDataReceivalThroughIR", adapt_RequestDataReceivalThroughIR },
 	{ NULL, NULL },
 };

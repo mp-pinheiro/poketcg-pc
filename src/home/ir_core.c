@@ -40,6 +40,19 @@
 
 #include "home/ir_core.h"
 #define IRCMD_TRANSMIT_DATA 0x02u
+
+#include "home/ir_core.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define IRCMD_RETURN_WO_CLOSING 0x01u
+#define IRCMD_RECEIVE_DATA 0x03u
+#define IRCMD_CALL_FUNCTION 0x04u
+#define NUM_IR_COMMANDS 0x05u
+
+#define P10 0x01u
+
+#include "home/ir_core.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory StoreRegistersInIRDataBuffer */
@@ -410,3 +423,115 @@ RequestDataTransmissionThroughIRResult RequestDataTransmissionThroughIR(uint8_t 
 	return (RequestDataTransmissionThroughIRResult){received.a, received.f};
 }
 /* <<< factory RequestDataTransmissionThroughIR */
+
+/* >>> factory ExecuteReceivedIRCommands */
+ExecuteReceivedIRCommandsResult ExecuteReceivedIRCommands(void)
+{
+	StartIRCommunications();
+	for (;;) {
+		ReceiveIRDataBufferResult received = ReceiveIRDataBuffer();
+		if ((received.f & 0x10u) != 0u) {
+			CloseIRCommunications();
+			return (ExecuteReceivedIRCommandsResult){0x00u, 0x90u};
+		}
+		if ((received.f & 0x80u) != 0u)
+			continue;
+
+		uint8_t command = gb_read8((uint16_t)(wIRDataBuffer_ADDR + 1u));
+		if (command >= NUM_IR_COMMANDS)
+			continue;
+		if (command == IRCMD_CLOSE) {
+			CloseIRCommunications();
+			return (ExecuteReceivedIRCommandsResult){command, (command == 0u) ? 0x80u : 0x00u};
+		}
+		if (command == IRCMD_RETURN_WO_CLOSING)
+			continue;
+		if (command == IRCMD_TRANSMIT_DATA) {
+			Func_19705Result request = Func_19705();
+			if ((request.f & 0x10u) == 0u) {
+				IRRegisterState registers = LoadRegistersFromIRDataBuffer();
+				(void)TransmitNBytesFromHLThroughIR(registers.hl, registers.c);
+			}
+			continue;
+		}
+		if (command == IRCMD_RECEIVE_DATA) {
+			IRRegisterState registers = LoadRegistersFromIRDataBuffer();
+			uint16_t destination = (uint16_t)(((uint16_t)registers.d << 8) | registers.e);
+			ReceiveByteThroughIRResult data = ReceiveNBytesToHLThroughIR(destination, registers.c);
+			if ((data.f & 0x10u) == 0u) {
+				uint8_t checksum = (uint8_t)(data.a - registers.b);
+				(void)TransmitByteThroughIR(checksum,
+					(uint16_t)(destination + registers.c), destination,
+					(uint16_t)(((uint16_t)registers.b << 8) | registers.c));
+			}
+			continue;
+		}
+
+		IRRegisterState registers = LoadRegistersFromIRDataBuffer();
+		StoreRegistersInIRDataBuffer(registers.a, registers.f, registers.b, registers.c,
+			registers.d, registers.e, &registers.hl);
+	}
+}
+/* <<< factory ExecuteReceivedIRCommands */
+
+/* >>> factory TryReceiveIRRequest */
+TryReceiveIRRequestResult TryReceiveIRRequest(void)
+{
+	StartIRCommunications();
+	uint16_t hl = 0xFF56u;
+	for (;;) {
+		ReceiveByteThroughIRResult received = ReceiveByteThroughIR_ZeroIfUnsuccessful();
+		if (received.a == 0xAAu) {
+			(void)TransmitByteThroughIR(0x33u, hl, 0u, 0u);
+			TryReceiveIRRequestResult result = {0x00u, 0x80u};
+			CloseIRCommunications();
+			return result;
+		}
+		uint8_t joyp = gb_read8(RJOYP_ADDR);
+		joyp = (uint8_t)(~joyp);
+		joyp = (uint8_t)(joyp & (P10 | P11));
+		if (joyp == 0u)
+			continue;
+		TryReceiveIRRequestResult result = {(uint8_t)joyp, 0x10u};
+		CloseIRCommunications();
+		return result;
+	}
+}
+/* <<< factory TryReceiveIRRequest */
+
+/* >>> factory RequestDataReceivalThroughIR */
+RequestDataReceivalThroughIRResult RequestDataReceivalThroughIR(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	TransmitRegistersThroughIRResult tx = TransmitRegistersThroughIR(IRCMD_RECEIVE_DATA, f, b, c, d, e, hl);
+	if ((tx.f & 0x10u) != 0u) {
+		SafelyCloseIRCommunications();
+		return (RequestDataReceivalThroughIRResult){tx.a, tx.f};
+	}
+	TransmitNBytesFromHLThroughIRResult transmitted = TransmitNBytesFromHLThroughIR(hl, c);
+	if ((transmitted.f & 0x10u) != 0u) {
+		SafelyCloseIRCommunications();
+		return (RequestDataReceivalThroughIRResult){transmitted.a, transmitted.f};
+	}
+	uint8_t checksum = 0u;
+	uint16_t cursor = hl;
+	uint8_t remaining = c;
+	do {
+		checksum = (uint8_t)(checksum + gb_read8(cursor));
+		cursor = (uint16_t)(cursor + 1u);
+		remaining = (uint8_t)(remaining - 1u);
+	} while (remaining != 0u);
+	ReceiveByteThroughIRResult received = ReceiveByteThroughIR();
+	if ((received.f & 0x10u) != 0u) {
+		SafelyCloseIRCommunications();
+		return (RequestDataReceivalThroughIRResult){received.a, received.f};
+	}
+	if ((uint8_t)(received.a + checksum) == 0u) {
+		SafelyCloseIRCommunications();
+		return (RequestDataReceivalThroughIRResult){0u, 0x80u};
+	}
+	ReturnZFlagUnsetAndCarryFlagSetResult failure = ReturnZFlagUnsetAndCarryFlagSet();
+	SafelyCloseIRCommunications();
+	return (RequestDataReceivalThroughIRResult){failure.a, failure.f};
+}
+/* <<< factory RequestDataReceivalThroughIR */
