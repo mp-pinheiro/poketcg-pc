@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_MoveArbitraryNPC",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_MoveArbitraryNPC\", \"registers\": {\"a\": 7, \"b\": 193, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"ff\", \"49666\": \"00c1\", \"51899\": \"00\", \"54102\": \"42\", \"54186\": \"0755\", \"54291\": \"04c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_MoveArbitraryNPC\", \"mismatches\": {\"a\": [7, 0], \"bus\": {\"address\": 54186, \"reference\": \"00c10042075504c2\", \"native\": \"00c10042005504c2\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49408, 1], [49666, 2], [51899, 1], [54102, 1], [54186, 2], [54291, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_MoveArbitraryNPC\", \"registers\": {\"a\": 7, \"b\": 193, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"ff\", \"49666\": \"00c1\", \"51899\": \"00\", \"54102\": \"42\", \"54186\": \"0755\", \"54291\": \"04c2\"}}, \"status\": \"PASS\"}\n"
+}

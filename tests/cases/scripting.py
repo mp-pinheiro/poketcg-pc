@@ -1931,6 +1931,44 @@ CASES["ExecuteArbitraryNPCMovementFromStack"] = [
 ]
 # <<< factory ExecuteArbitraryNPCMovementFromStack
 
+# >>> factory ScriptCommand_MoveChallengeHallNPC
+CONTRACT["ScriptCommand_MoveChallengeHallNPC"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
+CASES["ScriptCommand_MoveChallengeHallNPC"] = [
+    {"b": 0xC1, "c": 0x00,
+     "wram": {0xD356: b"\x42", 0xC100: b"\xFF", 0xCABB: b"\x00",
+              0xD696: b"\x42", 0xD3AA: b"\x07", 0xD3AB: b"\x55"},
+     "keys": [0x00, 0x01], "read": {0xD3AA: 1, 0xD3AB: 1},
+     "setup": [{"fn": "CopyDMAFunction"}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, b=0xC1, c=0x00,
+         wram={0xD356: b"\x42", 0xC100: b"\xFF", 0xCABB: b"\x00",
+               0xD696: b"\x42", 0xD3AA: b"\xAA", 0xD3AB: b"\xBB"},
+         keys=[0x00, 0x01], read={0xD3AA: 1, 0xD3AB: 1},
+         setup=[{"fn": "CopyDMAFunction"}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ScriptCommand_MoveChallengeHallNPC
+
+# >>> factory ScriptCommand_MoveArbitraryNPC
+CONTRACT["ScriptCommand_MoveArbitraryNPC"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
+CASES["ScriptCommand_MoveArbitraryNPC"] = [
+    {"c": 0x42,
+     "wram": {0xD3AA: b"\x07", 0xD3AB: b"\x55", 0xD356: b"\x42",
+              0xC100: b"\xFF", 0xCABB: b"\x00", 0xD413: b"\x00\xC2",
+              0xC202: b"\x00\xC1"},
+     "keys": [0x00, 0x01], "read": {0xD3AA: 1, 0xD3AB: 1, 0xD413: 2},
+     "setup": [{"fn": "CopyDMAFunction"}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, c=0xCC,
+         wram={0xD3AA: b"\xAA", 0xD3AB: b"\xBB", 0xD356: b"\xCC",
+               0xC100: b"\xFF", 0xCABB: b"\x00", 0xD413: b"\x00\xC2",
+               0xC202: b"\x00\xC1"},
+         keys=[0x00, 0x01], read={0xD3AA: 1, 0xD3AB: 1, 0xD413: 2},
+         setup=[{"fn": "CopyDMAFunction"}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ScriptCommand_MoveArbitraryNPC
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2768,3 +2806,9 @@ MUTATIONS["ExecuteArbitraryNPCMovementFromStack"] = {
     "case_ids": ["ExecuteArbitraryNPCMovementFromStack-0", "ExecuteArbitraryNPCMovementFromStack-1"]
 }
 # <<< factory-mutation ExecuteArbitraryNPCMovementFromStack
+# >>> factory-mutation ScriptCommand_MoveChallengeHallNPC
+MUTATIONS["ScriptCommand_MoveChallengeHallNPC"] = {"source_symbol": "ScriptCommand_MoveChallengeHallNPC", "before": "ExecuteArbitraryNPCMovementFromStackResult ScriptCommand_MoveChallengeHallNPC(uint8_t f, uint16_t bc)\n{\n\tuint16_t saved_index = (uint16_t)(((uint16_t)wLoadedNPCTempIndex << 8) | f);\n\tuint16_t saved_temp = (uint16_t)(((uint16_t)wTempNPC << 8) | f);", "after": "ExecuteArbitraryNPCMovementFromStackResult ScriptCommand_MoveChallengeHallNPC(uint8_t f, uint16_t bc)\n{\n\tuint16_t saved_index = (uint16_t)(((uint16_t)wLoadedNPCTempIndex << 8) | f);\n\tuint16_t saved_temp = 0u;", "case_ids": ["ScriptCommand_MoveChallengeHallNPC-0", "ScriptCommand_MoveChallengeHallNPC-1"]}
+# <<< factory-mutation ScriptCommand_MoveChallengeHallNPC
+# >>> factory-mutation ScriptCommand_MoveArbitraryNPC
+MUTATIONS["ScriptCommand_MoveArbitraryNPC"] = {"source_symbol": "ScriptCommand_MoveArbitraryNPC", "before": "ExecuteArbitraryNPCMovementFromStackResult ScriptCommand_MoveArbitraryNPC(uint8_t f, uint8_t c)\n{\n\tuint16_t saved_index = (uint16_t)(((uint16_t)wLoadedNPCTempIndex << 8) | f);", "after": "ExecuteArbitraryNPCMovementFromStackResult ScriptCommand_MoveArbitraryNPC(uint8_t f, uint8_t c)\n{\n\tuint16_t saved_index = 0u;", "case_ids": ["ScriptCommand_MoveArbitraryNPC-0", "ScriptCommand_MoveArbitraryNPC-1"]}
+# <<< factory-mutation ScriptCommand_MoveArbitraryNPC

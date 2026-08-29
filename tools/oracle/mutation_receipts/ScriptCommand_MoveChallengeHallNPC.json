@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_MoveChallengeHallNPC",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_MoveChallengeHallNPC\", \"registers\": {\"a\": 7, \"b\": 193, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"ff\", \"51899\": \"00\", \"54102\": \"42\", \"54186\": \"0755\", \"54934\": \"42\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_MoveChallengeHallNPC\", \"mismatches\": {\"bus\": {\"address\": 54187, \"reference\": \"ff0042075542\", \"native\": \"ff0042070042\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[49408, 1], [51899, 1], [54102, 1], [54186, 2], [54934, 1]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_MoveChallengeHallNPC\", \"registers\": {\"a\": 7, \"b\": 193, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"ff\", \"51899\": \"00\", \"54102\": \"42\", \"54186\": \"0755\", \"54934\": \"42\"}}, \"status\": \"PASS\"}\n"
+}

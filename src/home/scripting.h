@@ -695,4 +695,10 @@ typedef struct {
 } ExecuteArbitraryNPCMovementFromStackResult;
 ExecuteArbitraryNPCMovementFromStackResult ExecuteArbitraryNPCMovementFromStack(uint8_t a, uint16_t bc, uint16_t w0, uint16_t w1);
 /* <<< factory ExecuteArbitraryNPCMovementFromStack */
+/* >>> factory ScriptCommand_MoveChallengeHallNPC */
+ExecuteArbitraryNPCMovementFromStackResult ScriptCommand_MoveChallengeHallNPC(uint8_t f, uint16_t bc);
+/* <<< factory ScriptCommand_MoveChallengeHallNPC */
+/* >>> factory ScriptCommand_MoveArbitraryNPC */
+ExecuteArbitraryNPCMovementFromStackResult ScriptCommand_MoveArbitraryNPC(uint8_t f, uint8_t c);
+/* <<< factory ScriptCommand_MoveArbitraryNPC */
 #endif

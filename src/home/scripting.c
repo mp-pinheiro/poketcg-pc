@@ -2418,3 +2418,24 @@ ExecuteArbitraryNPCMovementFromStackResult ExecuteArbitraryNPCMovementFromStack(
 	return (ExecuteArbitraryNPCMovementFromStackResult){loaded_index, (uint8_t)(w0 & 0xF0u), movement.b, movement.c};
 }
 /* <<< factory ExecuteArbitraryNPCMovementFromStack */
+
+/* >>> factory ScriptCommand_MoveChallengeHallNPC */
+ExecuteArbitraryNPCMovementFromStackResult ScriptCommand_MoveChallengeHallNPC(uint8_t f, uint16_t bc)
+{
+	uint16_t saved_index = (uint16_t)(((uint16_t)wLoadedNPCTempIndex << 8) | f);
+	uint16_t saved_temp = (uint16_t)(((uint16_t)wTempNPC << 8) | f);
+	return ExecuteArbitraryNPCMovementFromStack(wChallengeHallNPC, bc, saved_index, saved_temp);
+}
+/* <<< factory ScriptCommand_MoveChallengeHallNPC */
+
+/* >>> factory ScriptCommand_MoveArbitraryNPC */
+ExecuteArbitraryNPCMovementFromStackResult ScriptCommand_MoveArbitraryNPC(uint8_t f, uint8_t c)
+{
+	uint16_t saved_index = (uint16_t)(((uint16_t)wLoadedNPCTempIndex << 8) | f);
+	uint16_t saved_temp = (uint16_t)(((uint16_t)wTempNPC << 8) | f);
+	GetScriptArgsAfterPointerResult args = GetScriptArgs2AfterPointer();
+	(void)IncreaseScriptPointerBy1();
+	uint16_t bc = (uint16_t)(((uint16_t)args.b << 8) | args.c);
+	return ExecuteArbitraryNPCMovementFromStack(c, bc, saved_index, saved_temp);
+}
+/* <<< factory ScriptCommand_MoveArbitraryNPC */

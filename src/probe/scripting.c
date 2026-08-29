@@ -1424,6 +1424,30 @@ static void adapt_ExecuteArbitraryNPCMovementFromStack(ProbeState *s)
 }
 /* <<< factory ExecuteArbitraryNPCMovementFromStack */
 
+/* >>> factory ScriptCommand_MoveChallengeHallNPC */
+static void adapt_ScriptCommand_MoveChallengeHallNPC(ProbeState *s)
+{
+	uint16_t bc = (uint16_t)(((uint16_t)s->b << 8) | s->c);
+	ExecuteArbitraryNPCMovementFromStackResult result = ScriptCommand_MoveChallengeHallNPC(s->f, bc);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_MoveChallengeHallNPC */
+
+/* >>> factory ScriptCommand_MoveArbitraryNPC */
+static void adapt_ScriptCommand_MoveArbitraryNPC(ProbeState *s)
+{
+	ExecuteArbitraryNPCMovementFromStackResult result =
+		ScriptCommand_MoveArbitraryNPC(s->f, s->c);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_MoveArbitraryNPC */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1565,5 +1589,7 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "Script_Woman2", adapt_Script_Woman2 },
 	{ "ScriptCommand_OpenDeckMachine", adapt_ScriptCommand_OpenDeckMachine },
 	{ "ExecuteArbitraryNPCMovementFromStack", adapt_ExecuteArbitraryNPCMovementFromStack },
+	{ "ScriptCommand_MoveChallengeHallNPC", adapt_ScriptCommand_MoveChallengeHallNPC },
+	{ "ScriptCommand_MoveArbitraryNPC", adapt_ScriptCommand_MoveArbitraryNPC },
 	{ NULL, NULL },
 };
