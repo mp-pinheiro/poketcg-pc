@@ -250,3 +250,13 @@ unblock = "read the recorded diagnostics under .factory/try/PlayIntroSequence/at
 name = "RequestDataTransmissionThroughIR"
 reason = "AUTO-RETIRED: src/engine/link/ir_core.asm:434 (basename `ir_core`). 3 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case RequestDataTransmissionThroughIR-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":22254,\"sp\":65516,\"rom_bank\":6,\"hbank_rom\":6,\"instructions\":9930244,\"cycles\":80000004,\"lcdc\":128,\"if\":225,\"ie\":1,\"ime\":0,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":33,\"ppu_mode\":3,\"bus\":\"80000200c500c50100807e\"}"
 unblock = "read the recorded diagnostics under .factory/try/RequestDataTransmissionThroughIR/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "RequestDataReceivalThroughIR"
+reason = "HAND-DIAGNOSED 2026-08-29: generations 2-3 all fail in the reference IR receive/transmit polling loop at ReceiveByteThroughIR, after the native deterministic error path is verified. The isolated reference runner has no external IR peer frame source for the command exchange, so another unchanged primary retry is non-informative."
+unblock = "Extend the reference runner's IR peer model with a deterministic command-specific frame/ack exchange, then retry RequestDataReceivalThroughIR."
+
+[[blocked]]
+name = "StartDuel"
+reason = "HAND-DIAGNOSED 2026-08-29: generations 8-9 all reach the real setup scene and exhaust the 160000000-cycle reference budget in WaitForVBlank with LCD enabled. The isolated duel fixture lacks the dependent scene/input state; another unchanged top-level retry is non-informative."
+unblock = "Trace the duel setup scene state that must precede StartDuel's WaitForVBlank path, port the missing dependent state transition, then retry StartDuel."
