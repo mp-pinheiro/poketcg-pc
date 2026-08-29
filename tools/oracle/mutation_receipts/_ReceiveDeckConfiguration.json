@@ -1,0 +1,9 @@
+{
+  "fn": "_ReceiveDeckConfiguration",
+  "case": "tests/cases/ir_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_ReceiveDeckConfiguration\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"00\", \"50667\": \"03504b31\", \"51892\": \"02\", \"51899\": \"80\", \"53553\": \"00\", \"53905\": \"00\", \"54743\": \"00\", \"65344\": \"80\", \"65357\": \"fe\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_ReceiveDeckConfiguration\", \"mismatches\": {\"bus\": {\"address\": 50667, \"reference\": \"0003504b3102\", \"native\": \"0000504b3102\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[50576, 1], [50667, 4], [51892, 1], [51899, 1], [53553, 1], [53905, 1], [54743, 1], [65344, 1], [65357, 1]]}}}\n",
+  "restored": "{\"fn\": \"_ReceiveDeckConfiguration\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"00\", \"50667\": \"03504b31\", \"51892\": \"02\", \"51899\": \"80\", \"53553\": \"00\", \"53905\": \"00\", \"54743\": \"00\", \"65344\": \"80\", \"65357\": \"fe\"}}, \"status\": \"PASS\"}\n"
+}

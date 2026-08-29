@@ -66,6 +66,33 @@ static void adapt_TryReceiveCardOrDeckConfigurationThroughIR(ProbeState *s)
 }
 /* <<< factory TryReceiveCardOrDeckConfigurationThroughIR */
 
+/* >>> factory ExchangeIRCommunicationParameters */
+static void adapt_ExchangeIRCommunicationParameters(ProbeState *s)
+{
+	ExchangeIRCommunicationParametersResult result = ExchangeIRCommunicationParameters(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory ExchangeIRCommunicationParameters */
+
+/* >>> factory _ReceiveCard */
+static void adapt__ReceiveCard(ProbeState *s)
+{
+	_ReceiveCardResult result = _ReceiveCard();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory _ReceiveCard */
+
+/* >>> factory _ReceiveDeckConfiguration */
+static void adapt__ReceiveDeckConfiguration(ProbeState *s)
+{
+	_ReceiveDeckConfigurationResult result = _ReceiveDeckConfiguration();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory _ReceiveDeckConfiguration */
+
 const ProbeEntry probe_entries_ir_functions[] = {
 	{ "PlayCardPopSong", adapt_PlayCardPopSong },
 	{ "InitIRCommunications", adapt_InitIRCommunications },
@@ -75,5 +102,8 @@ const ProbeEntry probe_entries_ir_functions[] = {
 	{ "SetIRCommunicationErrorCode_NoError", adapt_SetIRCommunicationErrorCode_NoError },
 	{ "SetIRCommunicationErrorCode_Error", adapt_SetIRCommunicationErrorCode_Error },
 	{ "TryReceiveCardOrDeckConfigurationThroughIR", adapt_TryReceiveCardOrDeckConfigurationThroughIR },
+	{ "ExchangeIRCommunicationParameters", adapt_ExchangeIRCommunicationParameters },
+	{ "_ReceiveCard", adapt__ReceiveCard },
+	{ "_ReceiveDeckConfiguration", adapt__ReceiveDeckConfiguration },
 	{ NULL, NULL },
 };

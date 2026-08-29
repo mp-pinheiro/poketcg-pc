@@ -31,4 +31,16 @@ SetIRCommunicationErrorCode_ErrorResult SetIRCommunicationErrorCode_Error(uint8_
 typedef struct { uint8_t a; uint8_t f; } TryReceiveCardOrDeckConfigurationThroughIRResult;
 TryReceiveCardOrDeckConfigurationThroughIRResult TryReceiveCardOrDeckConfigurationThroughIR(uint8_t a);
 /* <<< factory TryReceiveCardOrDeckConfigurationThroughIR */
+/* >>> factory ExchangeIRCommunicationParameters */
+typedef struct { uint8_t a; uint8_t f; } ExchangeIRCommunicationParametersResult;
+ExchangeIRCommunicationParametersResult ExchangeIRCommunicationParameters(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory ExchangeIRCommunicationParameters */
+/* >>> factory _ReceiveCard */
+typedef struct { uint8_t a; uint8_t f; } _ReceiveCardResult;
+_ReceiveCardResult _ReceiveCard(void);
+/* <<< factory _ReceiveCard */
+/* >>> factory _ReceiveDeckConfiguration */
+typedef struct { uint8_t a; uint8_t f; } _ReceiveDeckConfigurationResult;
+_ReceiveDeckConfigurationResult _ReceiveDeckConfiguration(void);
+/* <<< factory _ReceiveDeckConfiguration */
 #endif

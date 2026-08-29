@@ -120,6 +120,30 @@ CASES["TryReceiveCardOrDeckConfigurationThroughIR"] = [
 ]
 # <<< factory TryReceiveCardOrDeckConfigurationThroughIR
 
+# >>> factory ExchangeIRCommunicationParameters
+CONTRACT["ExchangeIRCommunicationParameters"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ExchangeIRCommunicationParameters"] = [
+    {"oracle": False, "evidence": "primary", "why": "The deterministic native CGB infrared peer drives the parameter exchange into its communication-error path; the received parameter block and carry return are asserted.", "a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": 0x80, "ir_peer": True, "setup": [{"fn": "CopyDMAFunction"}], "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "read": {0xC5EF: 4}, "expect": {0xC5EF: b"\x00\x00\x00\x00"}, "expect_regs": {"a": 0x00, "f": 0x90}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The deterministic native CGB infrared peer drives the parameter exchange into its communication-error path with poisoned registers; the received parameter block and carry return are asserted.", keys=0x80, ir_peer=True, setup=[{"fn": "CopyDMAFunction"}], wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, read={0xC5EF: 4}, expect={0xC5EF: b"\x00\x00\x00\x00"}, expect_regs={"a": 0x00, "f": 0x90}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ExchangeIRCommunicationParameters
+
+# >>> factory _ReceiveCard
+CONTRACT["_ReceiveCard"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["_ReceiveCard"] = [
+    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically reaches the retry screen and returns through its no-retry carry exit; the own communication parameter block is observed.", "keys": [0x82, 0x10, 0x01], "wram": {0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wOwnIRCommunicationParams: 4}, "expect": {wOwnIRCommunicationParams: b"\x02\x4F\x4B\x31"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The disconnected CGB infrared path deterministically reaches the retry screen and returns through its no-retry carry exit with poisoned registers; the own communication parameter block is observed.", keys=[0x82, 0x10, 0x01], wram={0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wOwnIRCommunicationParams: 4}, expect={wOwnIRCommunicationParams: b"\x02\x4F\x4B\x31"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory _ReceiveCard
+
+# >>> factory _ReceiveDeckConfiguration
+CONTRACT["_ReceiveDeckConfiguration"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["_ReceiveDeckConfiguration"] = [
+    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically reaches the retry screen and returns through its no-retry carry exit; the own communication parameter block is observed.", "keys": [0x82, 0x10, 0x01], "wram": {0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wOwnIRCommunicationParams: 4}, "expect": {wOwnIRCommunicationParams: b"\x02\x4F\x4B\x31"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The disconnected CGB infrared path deterministically reaches the retry screen and returns through its no-retry carry exit with poisoned registers; the own communication parameter block is observed.", keys=[0x82, 0x10, 0x01], wram={0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wOwnIRCommunicationParams: 4}, expect={wOwnIRCommunicationParams: b"\x02\x4F\x4B\x31"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory _ReceiveDeckConfiguration
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -185,3 +209,22 @@ MUTATIONS["TryReceiveCardOrDeckConfigurationThroughIR"] = {
     "case_ids": ["TryReceiveCardOrDeckConfigurationThroughIR-0", "TryReceiveCardOrDeckConfigurationThroughIR-1"]
 }
 # <<< factory-mutation TryReceiveCardOrDeckConfigurationThroughIR
+# >>> factory-mutation ExchangeIRCommunicationParameters
+MUTATIONS["ExchangeIRCommunicationParameters"] = {
+    "source_symbol": "ExchangeIRCommunicationParameters",
+    "before": "error:\n\treturn (ExchangeIRCommunicationParametersResult){0u, 0x90u};",
+    "after": "error:\n\treturn (ExchangeIRCommunicationParametersResult){0u, 0x00u};",
+    "case_ids": ["ExchangeIRCommunicationParameters-0", "ExchangeIRCommunicationParameters-1"]
+}
+# <<< factory-mutation ExchangeIRCommunicationParameters
+# >>> factory-mutation _ReceiveCard
+MUTATIONS["_ReceiveCard"] = {"source_symbol": "_ReceiveCard", "before": "_ReceiveCardResult _ReceiveCard(void)\n{\n\tfor (;;) {\n\t\tStopMusic();\n\t\tLoadLinkConnectingScene(ReceivingACardText);\n\t\tTryReceiveCardOrDeckConfigurationThroughIRResult received =\n\t\t\tTryReceiveCardOrDeckConfigurationThroughIR(IRPARAM_SEND_CARDS);\n\t\tgb_write8((uint16_t)(wOwnIRCommunicationParams_ADDR + 1u), 0x4Fu);", "after": "_ReceiveCardResult _ReceiveCard(void)\n{\n\tfor (;;) {\n\t\tStopMusic();\n\t\tLoadLinkConnectingScene(ReceivingACardText);\n\t\tTryReceiveCardOrDeckConfigurationThroughIRResult received =\n\t\t\tTryReceiveCardOrDeckConfigurationThroughIR(IRPARAM_SEND_CARDS);\n\t\tgb_write8((uint16_t)(wOwnIRCommunicationParams_ADDR + 1u), 0x00u);", "case_ids": ["_ReceiveCard-0", "_ReceiveCard-1"]}
+# <<< factory-mutation _ReceiveCard
+# >>> factory-mutation _ReceiveDeckConfiguration
+MUTATIONS["_ReceiveDeckConfiguration"] = {
+    "source_symbol": "_ReceiveDeckConfiguration",
+    "before": "\t\tTryReceiveCardOrDeckConfigurationThroughIRResult received = TryReceiveCardOrDeckConfigurationThroughIR(IRPARAM_SEND_DECK);",
+    "after": "\t\tTryReceiveCardOrDeckConfigurationThroughIRResult received = TryReceiveCardOrDeckConfigurationThroughIR(0x00u);",
+    "case_ids": ["_ReceiveDeckConfiguration-0", "_ReceiveDeckConfiguration-1"]
+}
+# <<< factory-mutation _ReceiveDeckConfiguration
