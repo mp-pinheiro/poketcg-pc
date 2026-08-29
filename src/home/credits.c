@@ -3,6 +3,15 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+#include "home/credits_sequence_commands.h"
+#include "home/masters_beaten_list.h"
+#include "home/music1.h"
+#include "home/play_song.h"
+#include "home/wait_keys.h"
+#include "home/lcd_enable_frame.h"
+#include "home/sound.h"
+
+
 /* >>> factory statics */
 #define R_STAT        0xFF41u
 #define R_IE          0xFFFFu
@@ -139,4 +148,41 @@ void Func_1d705(void)
 	gb_write8(R_LYC, 0x00u);
 	gb_write8(R_IE, (uint8_t)(gb_read8(R_IE) | IE_STAT_MASK));
 }
+
 /* <<< factory Func_1d705 */
+/* >>> factory PlayCreditsSequence */
+PlayCreditsSequenceResult PlayCreditsSequence(void)
+{
+	uint8_t f = 0u;
+	PlaySong(0u);
+	Func_1d705();
+	(void)AddAllMastersToMastersBeatenList(&f);
+	gb_write8((uint16_t)(wOWMapEvents_ADDR + 1u), 0u);
+	PlaySong(0x12u);
+	(void)FlashWhiteScreen();
+	SetCreditsSequenceCmdPtr();
+	for (;;) {
+		DoFrameIfLCDEnabled();
+		(void)Func_1d765();
+		ExecuteCreditsSequenceCmd();
+		if (wSequenceDelay == 0xffu)
+			break;
+	}
+	while (AssertSongFinished() != 0u) {
+		DoFrameIfLCDEnabled();
+		SoundTimerHandler();
+	}
+	(void)WaitUntilKeysArePressed(0x08u);
+	PlaySong(0u);
+	FadeScreenToWhite();
+	ClearSpriteAnimations();
+	SetWindowOff();
+	Func_1d758();
+	EnableLCD();
+	DoFrameIfLCDEnabled();
+	DisableLCD();
+	wLCDC = (uint8_t)(wLCDC | 0x02u);
+	FrameFunctionResult reset = ResetDoFrameFunction(wLCDC_ADDR);
+	return (PlayCreditsSequenceResult){reset.a, reset.f, reset.hl};
+}
+/* <<< factory PlayCreditsSequence */

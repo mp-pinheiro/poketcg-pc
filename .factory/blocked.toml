@@ -253,10 +253,6 @@ unblock = "Trace the recoil/bench-damage animation frame path and establish a bo
 name = "AIDoAction_Turn"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-0 wrapper calls action 1 and the reference spins at pc=0x05B8 until the 400004-cycle default ceiling; the turn target includes frame/AI work not bounded by the isolated fixture."
 unblock = "Port the action-1 turn target with a bounded AI fixture or establish a verified pre-ret contract, then retry AIDoAction_Turn."
-[[blocked]]
-name = "PlayCreditsSequence"
-reason = "HAND-DIAGNOSED 2026-08-28: complete candidate reaches the credits frame loop and parks at WaitForVBlank pc=0x0038 with LCDC enabled before the top-level routine can reach its completion cutpoint; isolated full-call fixture is not bounded."
-unblock = "Trace the first credits scene/animation callee that enables LCD and establish a bounded pre-ret completion, then retry PlayCreditsSequence; do not repeat unchanged full-call attempts."
 
 [[blocked]]
 name = "TryReceiveIRRequest"
