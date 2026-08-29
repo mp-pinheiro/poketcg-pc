@@ -10611,3 +10611,25 @@ ShuffleCardsInDeckResult ComputerSearch_DiscardAddToHandEffect(uint8_t a, uint8_
 	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
 }
 /* <<< factory ComputerSearch_DiscardAddToHandEffect */
+
+/* >>> factory PokeBall_AddToHandEffect */
+ShuffleCardsInDeckResult PokeBall_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t toss = hTempList;
+	if (toss == 0u)
+		return (ShuffleCardsInDeckResult){toss, b, c, d, e, 0x80u, hl};
+	uint8_t card = gb_read8((uint16_t)(hTempList_ADDR + 1u));
+	if (card != 0xFFu) {
+		SearchCardInDeckAndAddToHand(card);
+		AddCardToHand(card);
+		IsPlayerTurnResult turn = IsPlayerTurn();
+		if ((turn.f & 0x10u) == 0u) {
+			uint8_t saved = hBankROM;
+			BankswitchROM(0x01u);
+			(void)DisplayCardDetailScreen(card, WasPlacedInTheHandText);
+			BankswitchROM(saved);
+		}
+	}
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+}
+/* <<< factory PokeBall_AddToHandEffect */

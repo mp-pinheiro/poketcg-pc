@@ -2777,6 +2777,15 @@ wLCDC = 0xCABB
 wNotInDeck = 0xC2BA
 wDiscardCount = 0xC2ED
 wHandCount = 0xC2EE
+
+PB_TURN = 0xC2
+PB_HWHOSE_TURN = 0xFF97
+PB_DUELIST_TYPE = 0xC2F1
+PB_LOCATIONS = 0xC200
+PB_DECK_CARDS = 0xC27E
+PB_NOT_IN_DECK = 0xC2BA
+PB_HAND_COUNT = 0xC2EE
+PB_WLCDC = 0xCABB
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7171,6 +7180,14 @@ CASES["ComputerSearch_DiscardAddToHandEffect"] = [
 ]
 # <<< factory ComputerSearch_DiscardAddToHandEffect
 
+# >>> factory PokeBall_AddToHandEffect
+CONTRACT["PokeBall_AddToHandEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PokeBall_AddToHandEffect"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory PokeBall_AddToHandEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10085,3 +10102,6 @@ MUTATIONS["LassEffect"] = {"source_symbol": "LassEffect", "before": "\thCurSelec
 # >>> factory-mutation ComputerSearch_DiscardAddToHandEffect
 MUTATIONS["ComputerSearch_DiscardAddToHandEffect"] = {"source_symbol": "ComputerSearch_DiscardAddToHandEffect", "before": "ShuffleCardsInDeckResult ComputerSearch_DiscardAddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\thl = hTempList_ADDR;\n\tuint8_t first = gb_read8(hl++);\n\tRemoveCardFromHand(first);\n\tPutCardInDiscardPile(first);\n\tuint8_t second = gb_read8(hl++);", "after": "ShuffleCardsInDeckResult ComputerSearch_DiscardAddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\thl = hTempList_ADDR;\n\tuint8_t first = (uint8_t)(gb_read8(hl++) + 1u);\n\tRemoveCardFromHand(first);\n\tPutCardInDiscardPile(first);\n\tuint8_t second = gb_read8(hl++);", "case_ids": ["ComputerSearch_DiscardAddToHandEffect-0", "ComputerSearch_DiscardAddToHandEffect-1"]}
 # <<< factory-mutation ComputerSearch_DiscardAddToHandEffect
+# >>> factory-mutation PokeBall_AddToHandEffect
+MUTATIONS["PokeBall_AddToHandEffect"] = {"source_symbol": "PokeBall_AddToHandEffect", "before": "ShuffleCardsInDeckResult PokeBall_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t toss = hTempList;\n\tif (toss == 0u)\n\t\treturn (ShuffleCardsInDeckResult){toss, b, c, d, e, 0x80u, hl};", "after": "ShuffleCardsInDeckResult PokeBall_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t toss = hTempList;\n\tif (toss == 0u)\n\t\treturn (ShuffleCardsInDeckResult){toss, b, c, d, e, 0x00u, hl};", "case_ids": ["PokeBall_AddToHandEffect-0", "PokeBall_AddToHandEffect-1"]}
+# <<< factory-mutation PokeBall_AddToHandEffect

@@ -5013,6 +5013,20 @@ static void adapt_ComputerSearch_DiscardAddToHandEffect(ProbeState *s)
 }
 /* <<< factory ComputerSearch_DiscardAddToHandEffect */
 
+/* >>> factory PokeBall_AddToHandEffect */
+static void adapt_PokeBall_AddToHandEffect(ProbeState *s)
+{
+	ShuffleCardsInDeckResult result = PokeBall_AddToHandEffect(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory PokeBall_AddToHandEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5620,5 +5634,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EnergySearch_AddToHandEffect", adapt_EnergySearch_AddToHandEffect },
 	{ "LassEffect", adapt_LassEffect },
 	{ "ComputerSearch_DiscardAddToHandEffect", adapt_ComputerSearch_DiscardAddToHandEffect },
+	{ "PokeBall_AddToHandEffect", adapt_PokeBall_AddToHandEffect },
 	{ NULL, NULL },
 };
