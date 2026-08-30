@@ -79,4 +79,7 @@ DebugCGBTestResult DebugCGBTest(uint8_t a, uint8_t f, uint8_t b,
 /* >>> factory DebugCreateBoosterPack */
 void DebugCreateBoosterPack(void);
 /* <<< factory DebugCreateBoosterPack */
+/* >>> factory DebugCredits */
+void DebugCredits(void);
+/* <<< factory DebugCredits */
 #endif

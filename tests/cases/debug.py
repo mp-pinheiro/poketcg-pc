@@ -161,6 +161,14 @@ CASES["DebugCreateBoosterPack"] = [
 ]
 # <<< factory DebugCreateBoosterPack
 
+# >>> factory DebugCredits
+CONTRACT["DebugCredits"] = {"compare": (), "preserve": ()}
+CASES["DebugCredits"] = [
+    dict(oracle=False, evidence="primary", why="The bounded debug wrapper stops at the nested credits routine entry; no wrapper state changes occur before that farcall.", wram={0xDD80: b"\x7F"}, read={0xDD80: 1}, expect={0xDD80: b"\x7F"}, instruction_budget=2000000, cycle_budget=8000000),
+    dict(POISON, oracle=False, evidence="primary", why="The wrapper has no pre-call state effects and remains unchanged with poisoned entry registers.", wram={0xDD80: b"\x7F"}, read={0xDD80: 1}, expect={0xDD80: b"\x7F"}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory DebugCredits
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -229,3 +237,10 @@ MUTATIONS["DebugCGBTest"] = {
 # >>> factory-mutation DebugCreateBoosterPack
 MUTATIONS["DebugCreateBoosterPack"] = {"source_symbol": "DebugCreateBoosterPack", "before": "\tuint8_t selected = wDebugBoosterSelection;", "after": "\tuint8_t selected = (uint8_t)(wDebugBoosterSelection + 1u);", "case_ids": ["DebugCreateBoosterPack-0", "DebugCreateBoosterPack-1", "DebugCreateBoosterPack-2"]}
 # <<< factory-mutation DebugCreateBoosterPack
+# >>> factory-mutation DebugCredits
+MUTATIONS["DebugCredits"] = {"source_symbol": "DebugCredits", "before": "void DebugCredits(void)\n{\n}", "after": "void DebugCredits(void)\n{\n\tPlaySong(0u);\n}", "case_ids": ["DebugCredits-0", "DebugCredits-1"]}
+# <<< factory-mutation DebugCredits
+# >>> factory-completion DebugCredits
+for _record in SCHEMA2_CASES["DebugCredits"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x56AD, "bank": 7}
+# <<< factory-completion DebugCredits

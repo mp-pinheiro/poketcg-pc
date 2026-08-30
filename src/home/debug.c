@@ -39,6 +39,8 @@
 #define BOOSTER_MYSTERY_NEUTRAL 0x0Eu
 #define BOOSTER_LABORATORY_NEUTRAL 0x14u
 #define BOOSTER_ENERGY_LIGHTNING_FIRE 0x19u
+
+#include "home/sound.h"
 /* <<< factory statics */
 
 DebugSGBFrameResult DebugSGBFrame(uint8_t b, uint8_t c, uint8_t d,
@@ -225,3 +227,9 @@ void DebugCreateBoosterPack(void)
 	}
 }
 /* <<< factory DebugCreateBoosterPack */
+
+/* >>> factory DebugCredits */
+void DebugCredits(void)
+{
+}
+/* <<< factory DebugCredits */

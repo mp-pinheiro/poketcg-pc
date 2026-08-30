@@ -97,6 +97,14 @@ static void adapt_DebugCreateBoosterPack(ProbeState *s)
 }
 /* <<< factory DebugCreateBoosterPack */
 
+/* >>> factory DebugCredits */
+static void adapt_DebugCredits(ProbeState *s)
+{
+	(void)s;
+	DebugCredits();
+}
+/* <<< factory DebugCredits */
+
 const ProbeEntry probe_entries_debug[] = {
 	{"DebugSGBFrame", adapt_DebugSGBFrame},
 	{"DebugStandardBGCharacter", adapt_DebugStandardBGCharacter},
@@ -107,5 +115,6 @@ const ProbeEntry probe_entries_debug[] = {
 	{ "DebugVEffect", adapt_DebugVEffectOuter },
 	{ "DebugCGBTest", adapt_DebugCGBTest },
 	{ "DebugCreateBoosterPack", adapt_DebugCreateBoosterPack },
+	{ "DebugCredits", adapt_DebugCredits },
 	{NULL, NULL},
 };
