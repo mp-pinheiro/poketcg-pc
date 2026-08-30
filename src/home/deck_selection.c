@@ -49,6 +49,18 @@
 #define ALL_DECKS 0xFFu
 #define MENU_CANCEL 0xFFu
 #define MENU_CONFIRM 0x01u
+
+#include "generated/sram.h"
+#include "generated/wram.h"
+#include "home/input_name.h"
+#include "home/write_number.h"
+#include "mem.h"
+#define MAX_DECK_NAME_LENGTH 0x14u
+#define MAX_UNNAMED_DECK_NUM 0x3e7u
+#define INPUT_CUR_DECK_DECK1_DATA 0x6763u
+#define INPUT_CUR_DECK_DECK2_DATA 0x676cu
+#define INPUT_CUR_DECK_DECK3_DATA 0x6775u
+#define INPUT_CUR_DECK_DECK4_DATA 0x677eu
 /* <<< factory statics */
 
 /* >>> factory GetPointerToDeckCards */
@@ -281,3 +293,53 @@ HandleStartButtonInDeckSelectionMenuResult HandleStartButtonInDeckSelectionMenu(
 	return (HandleStartButtonInDeckSelectionMenuResult){wCurDeck, 0x10u};
 }
 /* <<< factory HandleStartButtonInDeckSelectionMenu */
+
+/* >>> factory InputCurDeckName */
+void InputCurDeckName(void)
+{
+	uint8_t deck = wCurDeck;
+	uint16_t question = INPUT_CUR_DECK_DECK4_DATA;
+	if (deck == 0u)
+		question = INPUT_CUR_DECK_DECK1_DATA;
+	else if (deck == 1u)
+		question = INPUT_CUR_DECK_DECK2_DATA;
+	else if (deck == 2u)
+		question = INPUT_CUR_DECK_DECK3_DATA;
+
+	g_rom_bank = 6u;
+	(void)InputDeckName(MAX_DECK_NAME_LENGTH, 4u, 1u,
+		(uint8_t)(wCurDeckName_ADDR >> 8), (uint8_t)wCurDeckName_ADDR, question);
+	if (gb_read8(wCurDeckName_ADDR) != 0u)
+		return;
+
+	EnableSRAM();
+	uint8_t counter_low = sUnnamedDeckCounter;
+	uint8_t counter_high = sUnnamedDeckCounter_PTR[1];
+	DisableSRAM();
+	uint16_t counter = (uint16_t)(((uint16_t)counter_high << 8) | counter_low);
+	uint16_t text = wDefaultText_ADDR;
+	TwoByteNumberToText(counter, &text);
+
+	uint16_t name = wCurDeckName_ADDR;
+	gb_write8(name++, 0x06u);
+	gb_write8(name++, (uint8_t)'D');
+	gb_write8(name++, (uint8_t)'e');
+	gb_write8(name++, (uint8_t)'c');
+	gb_write8(name++, (uint8_t)'k');
+	gb_write8(name++, (uint8_t)' ');
+	uint16_t digits = (uint16_t)(wDefaultText_ADDR + 2u);
+	gb_write8(name++, gb_read8(digits++));
+	gb_write8(name++, gb_read8(digits++));
+	gb_write8(name++, gb_read8(digits));
+	gb_write8(name, 0u);
+
+	EnableSRAM();
+	counter = (uint16_t)(((uint16_t)sUnnamedDeckCounter_PTR[1] << 8) | sUnnamedDeckCounter);
+	if (counter == MAX_UNNAMED_DECK_NUM)
+		counter = 0u;
+	counter = (uint16_t)(counter + 1u);
+	sUnnamedDeckCounter_PTR[1] = (uint8_t)(counter >> 8);
+	sUnnamedDeckCounter = (uint8_t)counter;
+	DisableSRAM();
+}
+/* <<< factory InputCurDeckName */

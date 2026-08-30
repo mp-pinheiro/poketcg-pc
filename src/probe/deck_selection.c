@@ -156,6 +156,14 @@ static void adapt_HandleStartButtonInDeckSelectionMenu(ProbeState *s)
 }
 /* <<< factory HandleStartButtonInDeckSelectionMenu */
 
+/* >>> factory InputCurDeckName */
+static void adapt_InputCurDeckName(ProbeState *s)
+{
+	(void)s;
+	InputCurDeckName();
+}
+/* <<< factory InputCurDeckName */
+
 const ProbeEntry probe_entries_deck_selection[] = {
 	{ "GetPointerToDeckCards", adapt_GetPointerToDeckCards },
 	{ "ResetCheckMenuCursorPositionAndBlink", adapt_ResetCheckMenuCursorPositionAndBlink },
@@ -173,5 +181,6 @@ const ProbeEntry probe_entries_deck_selection[] = {
 	{ "WriteCardListsTerminatorBytes", adapt_WriteCardListsTerminatorBytes },
 	{ "OpenDeckConfirmationMenu", adapt_OpenDeckConfirmationMenu },
 	{ "HandleStartButtonInDeckSelectionMenu", adapt_HandleStartButtonInDeckSelectionMenu },
+	{ "InputCurDeckName", adapt_InputCurDeckName },
 	{ NULL, NULL },
 };

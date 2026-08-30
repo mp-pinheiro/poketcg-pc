@@ -105,6 +105,10 @@ ODCM_READ = {
 hDPadHeld = 0xFF8F
 wCurDeck = 0xCEB1
 wCurMenuItem = 0xCD10
+
+ICDN_PARK = bytes([0x18, 0xFE, 0x00]) * 4
+ICDN_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+ICDN_READ = {0xCAB6: 1, 0xCEA4: 1, 0xCEA9: 1, 0xCEAA: 2, 0xCFE7: 9, 0xCFFF: 1, 0xD000: 10, wCurDeckName: 21, 0xC590: 6}
 # <<< factory-cases-statics
 
 # >>> factory GetPointerToDeckName
@@ -264,6 +268,27 @@ CASES["HandleStartButtonInDeckSelectionMenu"] = [
 ]
 # <<< factory HandleStartButtonInDeckSelectionMenu
 
+# >>> factory InputCurDeckName
+CONTRACT["InputCurDeckName"] = {"compare": (), "preserve": (), "wram_out": True, "sram_out": True}
+CASES["InputCurDeckName"] = [
+    {"wram": {wCurDeck: bytes([0x00]), wCurDeckName: bytes([0x06, 0x61]) + bytes(19), 0xC590: bytes(6), 0xFF90: bytes([0x00]), 0xD00A: ICDN_PARK},
+     "sram": {0: {sUnnamedDeckCounter: bytes([0x01, 0x00])}},
+     "rom_bank": 6, "keys": 0x41, "setup": ICDN_SETUP,
+     "read": ICDN_READ, "sread": {0: {sUnnamedDeckCounter: 2}},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={wCurDeck: bytes([0x02]), wCurDeckName: bytes([0x06, 0x61]) + bytes(19), 0xC590: bytes(6), 0xFF90: bytes([0x00]), 0xD00A: ICDN_PARK},
+         sram={0: {sUnnamedDeckCounter: bytes([0xE7, 0x03])}},
+         rom_bank=6, keys=0x41, setup=ICDN_SETUP, read=ICDN_READ,
+         sread={0: {sUnnamedDeckCounter: 2}},
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, wram={wCurDeck: bytes([0x01]), wCurDeckName: bytes([0x06, 0x62]) + bytes(19), 0xC590: bytes(6), 0xFF90: bytes([0x00]), 0xD00A: ICDN_PARK},
+         sram={0: {sUnnamedDeckCounter: bytes([0x01, 0x00])}},
+         rom_bank=6, keys=0x41, setup=ICDN_SETUP, read=ICDN_READ,
+         sread={0: {sUnnamedDeckCounter: 2}},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory InputCurDeckName
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -316,3 +341,10 @@ MUTATIONS["OpenDeckConfirmationMenu"] = {"source_symbol": "OpenDeckConfirmationM
 # >>> factory-mutation HandleStartButtonInDeckSelectionMenu
 MUTATIONS["HandleStartButtonInDeckSelectionMenu"] = {"source_symbol": "HandleStartButtonInDeckSelectionMenu", "before": "\twCurDeck = wCurMenuItem;", "after": "\twCurDeck = 0x01u;", "case_ids": ["HandleStartButtonInDeckSelectionMenu-1"]}
 # <<< factory-mutation HandleStartButtonInDeckSelectionMenu
+# >>> factory-mutation InputCurDeckName
+MUTATIONS["InputCurDeckName"] = {"source_symbol": "InputCurDeckName", "before": "\telse if (deck == 2u)\n\t\tquestion = INPUT_CUR_DECK_DECK3_DATA;", "after": "\telse if (deck == 2u)\n\t\tquestion = INPUT_CUR_DECK_DECK1_DATA;", "case_ids": ["InputCurDeckName-1"]}
+# <<< factory-mutation InputCurDeckName
+# >>> factory-completion InputCurDeckName
+for _rec in SCHEMA2_CASES["InputCurDeckName"]:
+    _rec["completion"] = {"mode": "pre-ret", "pc": 0x6E1B, "bank": 6}
+# <<< factory-completion InputCurDeckName

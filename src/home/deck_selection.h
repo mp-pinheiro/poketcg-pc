@@ -77,4 +77,7 @@ void OpenDeckConfirmationMenu(uint16_t de, uint16_t hl);
 typedef struct { uint8_t a; uint8_t f; } HandleStartButtonInDeckSelectionMenuResult;
 HandleStartButtonInDeckSelectionMenuResult HandleStartButtonInDeckSelectionMenu(void);
 /* <<< factory HandleStartButtonInDeckSelectionMenu */
+/* >>> factory InputCurDeckName */
+void InputCurDeckName(void);
+/* <<< factory InputCurDeckName */
 #endif /* POKETCG_HOME_DECK_SELECTION_H */
