@@ -13,6 +13,9 @@
 #define MUSIC_STOP 0x00u
 
 #include "home/scripting.h"
+
+#include "home/objects.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory MainMenu_CardPop */
@@ -48,3 +51,13 @@ void MainMenu_ContinueDuel(void)
 	ClearEvents();
 }
 /* <<< factory MainMenu_ContinueDuel */
+
+/* >>> factory _GameLoop */
+void _GameLoop(void)
+{
+	ZeroObjectPositions();
+	wVBlankOAMCopyToggle = (uint8_t)(wVBlankOAMCopyToggle + 1u);
+	/* SetIntroSGBBorder is scope-excluded; stop before the main-menu dispatch. */
+	wLastSelectedStartMenuItem = 0xFFu;
+}
+/* <<< factory _GameLoop */

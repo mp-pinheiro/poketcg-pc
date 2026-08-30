@@ -18,6 +18,11 @@ CARD_POP_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e":
 wTempMap = 0xD0BB
 
 wCurSongID = 0xDD80
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wVBlankOAMCopyToggle = 0xCAC0
+wLastSelectedStartMenuItem = 0xD627
 # <<< factory-cases-statics
 
 # >>> factory MainMenu_CardPop
@@ -52,6 +57,14 @@ CASES["MainMenu_ContinueDuel"] = [
 ]
 # <<< factory MainMenu_ContinueDuel
 
+# >>> factory _GameLoop
+CONTRACT["_GameLoop"] = {"compare": (), "preserve": ()}
+CASES["_GameLoop"] = [
+    dict(oracle=False, evidence="primary", why="The bounded opening prefix clears object positions, advances the OAM-copy toggle, and initializes the previous start-menu item before the non-returning title/menu dispatch.", wram={wVBlankOAMCopyToggle: b"\x00", wLastSelectedStartMenuItem: b"\x00"}, read={wVBlankOAMCopyToggle: 1, wLastSelectedStartMenuItem: 1}, expect={wVBlankOAMCopyToggle: b"\x01", wLastSelectedStartMenuItem: b"\xff"}, instruction_budget=2000000, cycle_budget=8000000),
+    dict(POISON, oracle=False, evidence="primary", why="The bounded opening prefix performs the same state initialization with poisoned entry registers before the game-loop dispatch.", wram={wVBlankOAMCopyToggle: b"\xff", wLastSelectedStartMenuItem: b"\x00"}, read={wVBlankOAMCopyToggle: 1, wLastSelectedStartMenuItem: 1}, expect={wVBlankOAMCopyToggle: b"\x00", wLastSelectedStartMenuItem: b"\xff"}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory _GameLoop
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -81,3 +94,10 @@ MUTATIONS["MainMenu_ContinueDuel"] = {"source_symbol": "MainMenu_ContinueDuel", 
 for _record in SCHEMA2_CASES["MainMenu_ContinueDuel"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x6787, "bank": 4}
 # <<< factory-completion MainMenu_ContinueDuel
+# >>> factory-mutation _GameLoop
+MUTATIONS["_GameLoop"] = {"source_symbol": "_GameLoop", "before": "void _GameLoop(void)\n{\n\tZeroObjectPositions();\n\twVBlankOAMCopyToggle = (uint8_t)(wVBlankOAMCopyToggle + 1u);\n\t/* SetIntroSGBBorder is scope-excluded; stop before the main-menu dispatch. */\n\twLastSelectedStartMenuItem = 0xFFu;", "after": "void _GameLoop(void)\n{\n\tZeroObjectPositions();\n\twVBlankOAMCopyToggle = 0x7Fu;\n\t/* SetIntroSGBBorder is scope-excluded; stop before the main-menu dispatch. */\n\twLastSelectedStartMenuItem = 0xFFu;", "case_ids": ["_GameLoop-0", "_GameLoop-1"]}
+# <<< factory-mutation _GameLoop
+# >>> factory-completion _GameLoop
+for _record in SCHEMA2_CASES["_GameLoop"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x66E1, "bank": 4}
+# <<< factory-completion _GameLoop

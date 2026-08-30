@@ -34,10 +34,19 @@ static void adapt_MainMenu_ContinueDuel(ProbeState *s)
 }
 /* <<< factory MainMenu_ContinueDuel */
 
+/* >>> factory _GameLoop */
+static void adapt__GameLoop(ProbeState *s)
+{
+	(void)s;
+	_GameLoop();
+}
+/* <<< factory _GameLoop */
+
 const ProbeEntry probe_entries_main_menu[] = {
 	{ "MainMenu_CardPop", adapt_MainMenu_CardPop },
 	{ "MainMenu_NewGame", adapt_MainMenu_NewGame },
 	{ "MainMenu_ContinueFromDiary", adapt_MainMenu_ContinueFromDiary },
 	{ "MainMenu_ContinueDuel", adapt_MainMenu_ContinueDuel },
+	{ "_GameLoop", adapt__GameLoop },
 	{ NULL, NULL },
 };

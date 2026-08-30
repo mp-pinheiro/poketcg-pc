@@ -15,4 +15,7 @@ void MainMenu_ContinueFromDiary(void);
 /* >>> factory MainMenu_ContinueDuel */
 void MainMenu_ContinueDuel(void);
 /* <<< factory MainMenu_ContinueDuel */
+/* >>> factory _GameLoop */
+void _GameLoop(void);
+/* <<< factory _GameLoop */
 #endif /* POKETCG_HOME_MAIN_MENU_H */
