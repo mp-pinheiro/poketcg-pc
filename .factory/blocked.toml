@@ -106,10 +106,6 @@ name = "Recycle_PlayerSelection"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-10 retry reaches the selection return but diverges at hWhoseTurn 0xFF97 (reference 0x01, native 0xC2) after nested DisplayCardList/input handling. The isolated interactive callee state is incomplete; another unchanged retry is non-informative."
 unblock = "Trace the nested DisplayCardList/input return path and model the hWhoseTurn transition or establish a verified bounded pre-ret contract before retrying Recycle_PlayerSelection."
 
-[[blocked]]
-name = "FriendshipSong_AddToBench50PercentEffect"
-reason = "HAND-DIAGNOSED 2026-08-28: generation-12 retry reaches the coin/bench path but diverges at hWhoseTurn 0xFF97 (reference 0x01, native 0xC2) after nested card display/animation handling. The isolated dependent UI state is incomplete; another unchanged retry is non-informative."
-unblock = "Trace the nested bench-display/card-detail return path and model the hWhoseTurn transition or establish a verified bounded pre-ret contract before retrying FriendshipSong_AddToBench50PercentEffect."
 
 [[blocked]]
 name = "GolemSelfdestructEffect"
