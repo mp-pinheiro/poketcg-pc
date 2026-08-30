@@ -666,6 +666,8 @@ int main(int argc, char **argv) {
     /* seed_mapper_shadows ties hBankROM to rom_bank, which is right for paging
      * but wrong for a routine that re-reads hBankROM as data. An explicit
      * hbank_rom overrides it after the shadows are laid down. */
+    if (mapper_hbank_state == 1)
+        gb_write8(ctx, 0xFF80, (uint8_t)mapper_hbank_rom);
     int vblank_scheduler_armed = input_count > 0 || (gb_read8(ctx, 0xff40) & 0x80);
     if (vblank_scheduler_armed) {
         gb_write8(ctx, 0xffff, (uint8_t)(gb_read8(ctx, 0xffff) | 0x01));
