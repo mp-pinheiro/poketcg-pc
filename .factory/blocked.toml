@@ -175,10 +175,6 @@ unblock = "Trace the InitializeDuelVariables and deck-state writers responsible 
 
  
 
-[[blocked]]
-name = "_SendDeckConfiguration"
-reason = "HAND-DIAGNOSED 2026-08-29: repeated generation-0..3 primary runs reach the real ROM's frame/IR transfer path and exhaust at WaitForVBlank or the IR protocol loop under both disconnected and deterministic-peer fixtures; no bounded return is available from the isolated top-level deck send call."
-unblock = "Trace the peer-facing send protocol to a bounded completion or add a verified top-level IR peer fixture that drives the full deck transfer, then retry _SendDeckConfiguration; do not repeat the unchanged frame-only cases."
  
  
 [[blocked]]
