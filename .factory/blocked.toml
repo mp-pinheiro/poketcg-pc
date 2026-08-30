@@ -3,6 +3,10 @@
 
 
 
+[[blocked]]
+name = "RunOverworldScript"
+reason = "The routine is a raw computed-jump trampoline: it reads the current bytecode opcode at wScriptPointer, bank-switches to OverworldScriptTable[opcode], restores the caller bank, then pop bc; jp hl with no ret. A single isolated register-in/register-out C function cannot faithfully model the heterogeneous 88-command dispatch and script continuation protocol; its three direct probes exhaust in the interpreter path."
+unblock = "land a project-wide RunOverworldScript execution harness that models the complete ScriptCommand dispatch table and start_script continuation protocol, or land a separately reviewed permanent data transform for script bodies with end-to-end verification"
 
 
 
