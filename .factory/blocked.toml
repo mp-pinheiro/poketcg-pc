@@ -51,10 +51,6 @@ unblock = "Trace the first PlayAttackAnimation/WaitAttackAnimation callee that e
 
 
 
-[[blocked]]
-name = "Recycle_PlayerSelection"
-reason = "HAND-DIAGNOSED 2026-08-28: generation-10 retry reaches the selection return but diverges at hWhoseTurn 0xFF97 (reference 0x01, native 0xC2) after nested DisplayCardList/input handling. The isolated interactive callee state is incomplete; another unchanged retry is non-informative."
-unblock = "Trace the nested DisplayCardList/input return path and model the hWhoseTurn transition or establish a verified bounded pre-ret contract before retrying Recycle_PlayerSelection."
 
 
 
@@ -69,23 +65,6 @@ unblock = "Trace the InitializeDuelVariables and deck-state writers responsible 
 
  
  
-[[blocked]]
-name = "PokemonTrader_TradeCardsEffect"
-reason = "HAND-DIAGNOSED 2026-08-29: generation-16..18 primary runs reach the nested card-detail/text and frame path, exhausting at the ROM's animation/text loop with no bounded isolated return; the translation body is complete but the top-level effect fixture lacks a terminating scene state."
-unblock = "Trace the nested card-detail and shuffle animation completion state, then establish a verified bounded pre-ret fixture or port the missing frame-safe callee before retrying PokemonTrader_TradeCardsEffect; do not repeat unchanged scene fixtures."
- 
- 
- 
- 
-[[blocked]]
-name = "PokemonTrader_PlayerDeckSelection"
-reason = "HAND-DIAGNOSED 2026-08-29: generation-9 candidates model the real trader card-list/text selection scene, which remains interactive and has no bounded return under the isolated key timeline; another unchanged top-level fixture is non-informative."
-unblock = "Trace the trader card-list selection input/state path to a deterministic Pokémon-card completion or establish a verified pre-ret cutpoint before retrying PokemonTrader_PlayerDeckSelection; do not repeat unchanged interactive fixtures."
- 
-[[blocked]]
-name = "Scavenge_PlayerSelectTrainerEffect"
-reason = "HAND-DIAGNOSED 2026-08-29: generation-7 candidates all enter the real discard-pile card-list DisplayCardList retry loop and the native probes do not terminate under the isolated A-key timeline; no bounded interactive selection completion was established."
-unblock = "Trace DisplayCardList's discard-pile menu/input state to a deterministic trainer-card selection or establish a verified pre-ret cutpoint before retrying Scavenge_PlayerSelectTrainerEffect; do not repeat unchanged interactive fixtures."
 
  
 
