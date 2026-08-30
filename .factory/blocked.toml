@@ -99,3 +99,4 @@ unblock = "read the recorded diagnostics under .factory/try/Scavenge_PlayerSelec
 name = "SolarPower_RemoveStatusEffect"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-10 retry still does not produce a bounded return even with LCD shadow disabled and wAnimationsDisabled set; all candidates remain in the nested attack-animation/status path. This is an unresolved frame-safe callee boundary, not a translation mismatch."
 unblock = "Trace the exact PlayAttackAnimation/WaitAttackAnimation completion contract under wAnimationsDisabled and port the missing bounded callee transition before retrying SolarPower_RemoveStatusEffect."
+
