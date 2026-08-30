@@ -342,4 +342,7 @@ AIDecideResult AIPlay_MrFuji(void);
 typedef struct { uint8_t a; uint8_t f; } AIDecideSuperPotionPhase08Result;
 AIDecideSuperPotionPhase08Result AIDecide_SuperPotion_Phase08(void);
 /* <<< factory AIDecide_SuperPotion_Phase08 */
+/* >>> factory AIPlay_SuperEnergyRetrieval */
+AIDecideResult AIPlay_SuperEnergyRetrieval(void);
+/* <<< factory AIPlay_SuperEnergyRetrieval */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

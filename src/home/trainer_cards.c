@@ -407,6 +407,10 @@
 #include "home/duel.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/core.h"
 /* <<< factory statics */
 
 
@@ -3544,3 +3548,25 @@ AIDecideSuperPotionPhase08Result AIDecide_SuperPotion_Phase08(void)
 	return (AIDecideSuperPotionPhase08Result){e, 0x10u};
 }
 /* <<< factory AIDecide_SuperPotion_Phase08 */
+
+/* >>> factory AIPlay_SuperEnergyRetrieval */
+AIDecideResult AIPlay_SuperEnergyRetrieval(void)
+{
+	wCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	hTemp_ffa0 = wAITrainerCardParameter;
+	hTempPlayAreaLocation_ffa1 = wce1a;
+	hTempRetreatCostCards = wce1b;
+	gb_write8((uint16_t)(hTempRetreatCostCards_ADDR + 1u), wce1c);
+	if (wce1c != 0xffu) {
+		gb_write8((uint16_t)(hTempRetreatCostCards_ADDR + 2u), wce1d);
+		if (wce1d != 0xffu) {
+			gb_write8((uint16_t)(hTempRetreatCostCards_ADDR + 3u), wce1e);
+			if (wce1e != 0xffu)
+				gb_write8((uint16_t)(hTempRetreatCostCards_ADDR + 4u), 0xffu);
+		}
+	}
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, 0u, 0u);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_SuperEnergyRetrieval */

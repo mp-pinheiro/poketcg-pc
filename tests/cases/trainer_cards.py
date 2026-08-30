@@ -1247,6 +1247,15 @@ CASES["AIDecide_SuperPotion_Phase08"] = [
 ]
 # <<< factory AIDecide_SuperPotion_Phase08
 
+# >>> factory AIPlay_SuperEnergyRetrieval
+CONTRACT["AIPlay_SuperEnergyRetrieval"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_SuperEnergyRetrieval"] = [
+    dict(POISON, wram={0xFF80: b"\x08", 0xCE16: b"\x00", 0xCE19: b"\x34", 0xCE1A: b"\x02", 0xCE1B: b"\x11", 0xCE1C: b"\x22", 0xCE1D: b"\x33", 0xCE1E: b"\x44", 0xCE21: b"\x00", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x00\x00\x00", 0xFF9F: b"\xAA\xBB\xCC\xDD\xEE\xF1\xF2\xF3"}, read={0xCE21: 1, 0xFF9F: 8}, setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xFF80: b"\x08", 0xCE16: b"\x77", 0xCE19: b"\x78", 0xCE1A: b"\x09", 0xCE1B: b"\x10", 0xCE1C: b"\xFF", 0xCE1D: b"\x20", 0xCE1E: b"\x30", 0xCE21: b"\x10", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\x12\x34\x56", 0xFF9F: b"\x99\x88\x77\x66\x55\x44\x33\x22"}, read={0xCE21: 1, 0xFF9F: 8}, setup=SETUP, **BUDGET),
+    dict(a=0x00, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, wram={0xFF80: b"\x08", 0xCE16: b"\x42", 0xCE19: b"\xA5", 0xCE1A: b"\x07", 0xCE1B: b"\x01", 0xCE1C: b"\x02", 0xCE1D: b"\xFF", 0xCE1E: b"\x04", 0xCE21: b"\x80", 0xCABB: b"\x00", 0xCBF9: b"\x01", 0xCACA: b"\xAA\xBB\xCC", 0xFF9F: b"\x10\x20\x30\x40\x50\x60\x70\x80"}, read={0xCE21: 1, 0xFF9F: 8}, setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_SuperEnergyRetrieval
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1692,3 +1701,11 @@ MUTATIONS["AIPlay_MrFuji"] = {"source_symbol": "AIPlay_MrFuji",
 # >>> factory-mutation AIDecide_SuperPotion_Phase08
 MUTATIONS["AIDecide_SuperPotion_Phase08"] = {"source_symbol": "AIDecide_SuperPotion_Phase08", "before": "AIDecideSuperPotionPhase08Result AIDecide_SuperPotion_Phase08(void)\n{\n\tAIDecideWhetherToRetreatResult retreat = AIDecideWhetherToRetreat();", "after": "AIDecideSuperPotionPhase08Result AIDecide_SuperPotion_Phase08(void)\n{\n\tAIDecideWhetherToRetreatResult retreat = (AIDecideWhetherToRetreatResult){0xffu, 0x10u};", "case_ids": ["AIDecide_SuperPotion_Phase08-0"]}
 # <<< factory-mutation AIDecide_SuperPotion_Phase08
+# >>> factory-mutation AIPlay_SuperEnergyRetrieval
+MUTATIONS["AIPlay_SuperEnergyRetrieval"] = {
+    "source_symbol": "AIPlay_SuperEnergyRetrieval",
+    "before": "AIDecideResult AIPlay_SuperEnergyRetrieval(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);",
+    "after": "AIDecideResult AIPlay_SuperEnergyRetrieval(void)\n{\n\twCurrentAIFlags = wCurrentAIFlags;",
+    "case_ids": ["AIPlay_SuperEnergyRetrieval-0"]
+}
+# <<< factory-mutation AIPlay_SuperEnergyRetrieval
