@@ -1579,6 +1579,11 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/core.h"
 #include "generated/wram.h"
 #define MUSIC_DUEL_THEME_1 0x02u
+
+#include "generated/wram.h"
+#include "home/script.h"
+#include "mem.h"
+#define SET_LINK_OPPONENT_TURN_FRAME_FUNCTION 0x0F1Du
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -9016,3 +9021,15 @@ void StartDuel_VSLinkOpp(void)
 	wIsPracticeDuel = 0u;
 }
 /* <<< factory StartDuel_VSLinkOpp */
+
+/* >>> factory SetLinkDuelTransmissionFrameFunction */
+void SetLinkDuelTransmissionFrameFunction(void)
+{
+	FinishQueuedAnimations();
+	wLinkOpponentTurnReturnAddress = 0xFCu;
+	gb_write8((uint16_t)(wLinkOpponentTurnReturnAddress_ADDR + 1u), 0xFFu);
+	wDoFrameFunction = (uint8_t)SET_LINK_OPPONENT_TURN_FRAME_FUNCTION;
+	gb_write8((uint16_t)(wDoFrameFunction_ADDR + 1u),
+	          (uint8_t)(SET_LINK_OPPONENT_TURN_FRAME_FUNCTION >> 8u));
+}
+/* <<< factory SetLinkDuelTransmissionFrameFunction */

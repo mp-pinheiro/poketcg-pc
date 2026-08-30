@@ -2756,6 +2756,14 @@ static void adapt_StartDuel_VSLinkOpp(ProbeState *s)
 }
 /* <<< factory StartDuel_VSLinkOpp */
 
+/* >>> factory SetLinkDuelTransmissionFrameFunction */
+static void adapt_SetLinkDuelTransmissionFrameFunction(ProbeState *s)
+{
+	(void)s;
+	SetLinkDuelTransmissionFrameFunction();
+}
+/* <<< factory SetLinkDuelTransmissionFrameFunction */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3085,5 +3093,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "StartDuel", adapt_StartDuel },
 	{ "StartDuel_VSAIOpp", adapt_StartDuel_VSAIOpp },
 	{ "StartDuel_VSLinkOpp", adapt_StartDuel_VSLinkOpp },
+	{ "SetLinkDuelTransmissionFrameFunction", adapt_SetLinkDuelTransmissionFrameFunction },
 	{ NULL, NULL },
 };

@@ -4733,6 +4733,14 @@ CASES["StartDuel_VSLinkOpp"] = [
 ]
 # <<< factory StartDuel_VSLinkOpp
 
+# >>> factory SetLinkDuelTransmissionFrameFunction
+CONTRACT["SetLinkDuelTransmissionFrameFunction"] = {"compare": (), "preserve": ()}
+CASES["SetLinkDuelTransmissionFrameFunction"] = [
+    {"entry_sp": 0xFFFC, "read": {0xCBF7: 2, 0xCAD3: 2}},
+    dict(POISON, entry_sp=0xFFFC, read={0xCBF7: 2, 0xCAD3: 2}),
+]
+# <<< factory SetLinkDuelTransmissionFrameFunction
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6501,3 +6509,11 @@ MUTATIONS["StartDuel_VSLinkOpp"] = {"source_symbol": "StartDuel_VSLinkOpp", "bef
 for _record in SCHEMA2_CASES["StartDuel_VSLinkOpp"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x40CA, "bank": 1}
 # <<< factory-completion StartDuel_VSLinkOpp
+# >>> factory-mutation SetLinkDuelTransmissionFrameFunction
+MUTATIONS["SetLinkDuelTransmissionFrameFunction"] = {
+    "source_symbol": "SetLinkDuelTransmissionFrameFunction",
+    "before": "void SetLinkDuelTransmissionFrameFunction(void)\n{\n\tFinishQueuedAnimations();\n\twLinkOpponentTurnReturnAddress = 0xFCu;",
+    "after": "void SetLinkDuelTransmissionFrameFunction(void)\n{\n\tFinishQueuedAnimations();\n\twLinkOpponentTurnReturnAddress = 0x00u;",
+    "case_ids": ["SetLinkDuelTransmissionFrameFunction-0", "SetLinkDuelTransmissionFrameFunction-1"]
+}
+# <<< factory-mutation SetLinkDuelTransmissionFrameFunction

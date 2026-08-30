@@ -1255,4 +1255,7 @@ void StartDuel_VSAIOpp(void);
 /* >>> factory StartDuel_VSLinkOpp */
 void StartDuel_VSLinkOpp(void);
 /* <<< factory StartDuel_VSLinkOpp */
+/* >>> factory SetLinkDuelTransmissionFrameFunction */
+void SetLinkDuelTransmissionFrameFunction(void);
+/* <<< factory SetLinkDuelTransmissionFrameFunction */
 #endif
