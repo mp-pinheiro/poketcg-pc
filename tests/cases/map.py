@@ -192,6 +192,13 @@ wSCXBuffer = 0xD235
 wSCYBuffer = 0xD236
 wSCX = 0xD0B6
 wSCY = 0xD0B7
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+sPlayerInChallengeMachine = 0xBA44
+wDefaultSong = 0xD111
+wRonaldIsInMap = 0xD3B8
+wCurSongID = 0xDD80
 # <<< factory-cases-statics
 
 # >>> factory GetReceivedLegendaryCards
@@ -232,6 +239,14 @@ CASES["GameEvent_Duel"] = [
 ]
 # <<< factory GameEvent_Duel
 
+# >>> factory GameEvent_ChallengeMachine
+CONTRACT["GameEvent_ChallengeMachine"] = {"compare": (), "preserve": ()}
+CASES["GameEvent_ChallengeMachine"] = [
+    {"ramg": False, "sram": {0: {sPlayerInChallengeMachine: b"\xaa"}}, "wram": {wDefaultSong: b"\x55", wCurSongID: b"\x80"}, "sread": {0: {sPlayerInChallengeMachine: 1}}, "read": {wDefaultSong: 1}, "expect": {wDefaultSong: b"\x06"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, ramg=False, sram={0: {sPlayerInChallengeMachine: b"\x55"}}, wram={wDefaultSong: b"\xaa", wCurSongID: b"\x80"}, sread={0: {sPlayerInChallengeMachine: 1}}, read={wDefaultSong: 1}, expect={wDefaultSong: b"\x06"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory GameEvent_ChallengeMachine
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -271,3 +286,10 @@ MUTATIONS["GameEvent_Duel"] = {"source_symbol": "GameEvent_Duel", "before": "uin
 for _record in SCHEMA2_CASES["GameEvent_Duel"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x6793, "bank": 1}
 # <<< factory-completion GameEvent_Duel
+# >>> factory-mutation GameEvent_ChallengeMachine
+MUTATIONS["GameEvent_ChallengeMachine"] = {"source_symbol": "GameEvent_ChallengeMachine", "before": "void GameEvent_ChallengeMachine(void)\n{\n\twDefaultSong = MUSIC_PC_MAIN_MENU;\n\t(void)PlayDefaultSong();\n\tEnableSRAM();\n\tsPlayerInChallengeMachine = 0u;", "after": "void GameEvent_ChallengeMachine(void)\n{\n\twDefaultSong = MUSIC_PC_MAIN_MENU;\n\t(void)PlayDefaultSong();\n\tEnableSRAM();\n\tsPlayerInChallengeMachine = 1u;" , "case_ids": ["GameEvent_ChallengeMachine-0", "GameEvent_ChallengeMachine-1"]}
+# <<< factory-mutation GameEvent_ChallengeMachine
+# >>> factory-completion GameEvent_ChallengeMachine
+for _record in SCHEMA2_CASES["GameEvent_ChallengeMachine"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x71D3, "bank": 4}
+# <<< factory-completion GameEvent_ChallengeMachine

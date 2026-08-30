@@ -1,0 +1,9 @@
+{
+  "fn": "GameEvent_ChallengeMachine",
+  "case": "tests/cases/map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GameEvent_ChallengeMachine\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {\"0\": {\"47684\": \"00\"}}, \"vram\": {}, \"wram\": {\"53521\": \"06\", \"56704\": \"06\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GameEvent_ChallengeMachine\", \"mismatches\": {\"sram\": {\"byte\": 0, \"reference\": \"00\", \"native\": \"01\"}}}\n",
+  "restored": "{\"fn\": \"GameEvent_ChallengeMachine\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {\"0\": {\"47684\": \"00\"}}, \"vram\": {}, \"wram\": {\"53521\": \"06\", \"56704\": \"06\"}}, \"status\": \"PASS\"}\n"
+}

@@ -113,6 +113,14 @@ static void adapt_GameEvent_Duel(ProbeState *s)
 }
 /* <<< factory GameEvent_Duel */
 
+/* >>> factory GameEvent_ChallengeMachine */
+static void adapt_GameEvent_ChallengeMachine(ProbeState *s)
+{
+	GameEvent_ChallengeMachine();
+	(void)s;
+}
+/* <<< factory GameEvent_ChallengeMachine */
+
 const ProbeEntry probe_entries_map[] = {
 	{ "GetPermissionByteOfMapPosition", adapt_GetPermissionByteOfMapPosition },
 	{ "GetPermissionOfMapPosition", adapt_GetPermissionOfMapPosition },
@@ -130,5 +138,6 @@ const ProbeEntry probe_entries_map[] = {
 	{ "GetReceivedLegendaryCards", adapt_GetReceivedLegendaryCards },
 	{ "OverworldDoFrameFunction", adapt_OverworldDoFrameFunction },
 	{ "GameEvent_Duel", adapt_GameEvent_Duel },
+	{ "GameEvent_ChallengeMachine", adapt_GameEvent_ChallengeMachine },
 	{ NULL, NULL },
 };

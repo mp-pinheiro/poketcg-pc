@@ -44,4 +44,7 @@ void OverworldDoFrameFunction(void);
 /* >>> factory GameEvent_Duel */
 uint8_t GameEvent_Duel(void);
 /* <<< factory GameEvent_Duel */
+/* >>> factory GameEvent_ChallengeMachine */
+void GameEvent_ChallengeMachine(void);
+/* <<< factory GameEvent_ChallengeMachine */
 #endif

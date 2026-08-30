@@ -32,6 +32,14 @@
 #include "home/save.h"
 #include "home/core.h"
 #define GAME_EVENT_DUEL 0x01u
+
+#include "home/map.h"
+#include "home/challenge_machine.h"
+#include "home/switch_sram.h"
+#include "generated/wram.h"
+#include "generated/sram.h"
+#define MUSIC_OVERWORLD 0x09u
+#define MUSIC_PC_MAIN_MENU 0x06u
 /* <<< factory statics */
 
 #define BANK_EXECUTE_NPC_MOVEMENT 0x03u
@@ -240,3 +248,14 @@ uint8_t GameEvent_Duel(void)
 	return 0x10u;
 }
 /* <<< factory GameEvent_Duel */
+
+/* >>> factory GameEvent_ChallengeMachine */
+void GameEvent_ChallengeMachine(void)
+{
+	wDefaultSong = MUSIC_PC_MAIN_MENU;
+	(void)PlayDefaultSong();
+	EnableSRAM();
+	sPlayerInChallengeMachine = 0u;
+	DisableSRAM();
+}
+/* <<< factory GameEvent_ChallengeMachine */

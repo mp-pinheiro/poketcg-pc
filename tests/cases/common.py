@@ -175,6 +175,8 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 wConsole = 0xCAB4
 hWhoseTurn = 0xFF97
 wLCDC = 0xCABB
+
+wCurSongID = 0xDD80
 # <<< factory-cases-statics
 
 # >>> factory CheckIfHasCardIDInHand
@@ -593,6 +595,14 @@ CASES["DoCardPop"] = [
 ]
 # <<< factory DoCardPop
 
+# >>> factory SendCard
+CONTRACT["SendCard"] = {"compare": (), "preserve": ()}
+CASES["SendCard"] = [
+    {"oracle": False, "evidence": "primary", "why": "The wrapper is bounded immediately before entering the external infrared sender; the pre-call music state is preserved and asserted.", "wram": {wCurSongID: b"\xff"}, "read": {wCurSongID: 1}, "expect": {wCurSongID: b"\xff"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The wrapper is bounded immediately before entering the external infrared sender with poisoned registers; the pre-call music state is preserved and asserted.", wram={wCurSongID: b"\xff"}, read={wCurSongID: 1}, expect={wCurSongID: b"\xff"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory SendCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -827,3 +837,10 @@ MUTATIONS["ReceiveDeckConfiguration"] = {"source_symbol": "ReceiveDeckConfigurat
 # >>> factory-mutation DoCardPop
 MUTATIONS["DoCardPop"] = {"source_symbol": "DoCardPop", "before": "void DoCardPop(void)\n{\n\t_DoCardPop();", "after": "void DoCardPop(void)\n{\n\thWhoseTurn = 1u;", "case_ids": ["DoCardPop-0", "DoCardPop-1"]}
 # <<< factory-mutation DoCardPop
+# >>> factory-mutation SendCard
+MUTATIONS["SendCard"] = {"source_symbol": "SendCard", "before": "void SendCard(void)\n{\n}", "after": "void SendCard(void)\n{\n\tStopMusic();\n}", "case_ids": ["SendCard-0", "SendCard-1"]}
+# <<< factory-mutation SendCard
+# >>> factory-completion SendCard
+for _record in SCHEMA2_CASES["SendCard"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x5B41, "bank": 6}
+# <<< factory-completion SendCard

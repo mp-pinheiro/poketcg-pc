@@ -102,6 +102,8 @@
 #include "home/ir_functions.h"
 
 #include "home/card_pop.h"
+
+#include "home/sound.h"
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -812,3 +814,9 @@ void DoCardPop(void)
 	_DoCardPop();
 }
 /* <<< factory DoCardPop */
+
+/* >>> factory SendCard */
+void SendCard(void)
+{
+}
+/* <<< factory SendCard */

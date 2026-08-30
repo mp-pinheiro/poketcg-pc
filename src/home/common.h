@@ -147,4 +147,7 @@ ReceiveDeckConfigurationResult ReceiveDeckConfiguration(void);
 /* >>> factory DoCardPop */
 void DoCardPop(void);
 /* <<< factory DoCardPop */
+/* >>> factory SendCard */
+void SendCard(void);
+/* <<< factory SendCard */
 #endif /* POKETCG_HOME_COMMON_H */
