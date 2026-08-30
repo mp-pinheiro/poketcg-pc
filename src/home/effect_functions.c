@@ -10816,3 +10816,17 @@ SubmissionEffectResult SubmissionEffect(uint8_t a,uint8_t f,uint8_t b,uint8_t c,
 	return (SubmissionEffectResult){GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a, 0xA0u};
 }
 /* <<< factory SubmissionEffect */
+
+/* >>> factory MagnemiteSelfdestructEffect */
+MagnemiteSelfdestructEffectResult MagnemiteSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	wLoadedAttackAnimation = 0x7Au;
+	wDamage = 40u;
+	wDamage_PTR[1] = 0u;
+	wDamageEffectiveness = 0u;
+	wNoDamageOrEffect = 0u;
+	wTempNonTurnDuelistCardID = wTempTurnDuelistCardID;
+	return (MagnemiteSelfdestructEffectResult){0x50u, 0xA0u, 0x00u, 0x00u, 0x00u, 40u, 0xC2C8u};
+}
+/* <<< factory MagnemiteSelfdestructEffect */

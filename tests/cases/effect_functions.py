@@ -2883,6 +2883,22 @@ def _se_case(**kw):
  case={"wram":{_se_arena_hp:b"\x40",0xCCB9:b"\x00\x00",0xCCC1:b"\x00",0xCCC3:b"\x01",0xCCC4:b"\x01",0xCCC7:b"\x00",0xD421:b"\x01",0xCABB:b"\x00",0xFF40:b"\x80"},"setup":[{"fn":"CopyDMAFunction"},{"fn":"SetupText","d":48,"e":127},{"fn":"SwapTurn"}],"instruction_budget":8000000,"cycle_budget":32000000,"read":{_se_arena_hp:1,0xCCB8:1,0xCCB9:2,0xCCC1:1,0xCCC4:1,0xCCC7:1}}
  case.update(kw)
  return case
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+_mse_arena_hp = 0xC2C8
+_mse_loaded_attack_animation = 0xCCB8
+_mse_damage = 0xCCB9
+_mse_damage_effectiveness = 0xCCC1
+_mse_temp_turn = 0xCCC3
+_mse_temp_nonturn = 0xCCC4
+_mse_no_damage_or_effect = 0xCCC7
+_mse_animations_disabled = 0xD421
+_mse_is_damage_to_self = 0xCCE6
+
+def _mse_case(**kw):
+    case = {"wram": {_mse_arena_hp: b"\x50", _mse_damage: b"\x00\x00", _mse_damage_effectiveness: b"\x00", _mse_temp_turn: b"\x01", _mse_temp_nonturn: b"\x01", _mse_no_damage_or_effect: b"\x00", _mse_animations_disabled: b"\x01", _mse_is_damage_to_self: b"\x00", 0xCABB: b"\x00", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}, {"fn": "SwapTurn"}], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {_mse_arena_hp: 1, _mse_loaded_attack_animation: 1, _mse_damage: 2, _mse_damage_effectiveness: 1, _mse_temp_nonturn: 1, _mse_no_damage_or_effect: 1, _mse_is_damage_to_self: 1}}
+    case.update(kw)
+    return case
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7375,6 +7391,15 @@ CONTRACT["SubmissionEffect"]={"compare":("a","f"),"preserve":()}
 CASES["SubmissionEffect"]=[_se_case(a=16,f=0,d=0,e=0),_se_case(**_POISON)]
 # <<< factory SubmissionEffect
 
+# >>> factory MagnemiteSelfdestructEffect
+CONTRACT["MagnemiteSelfdestructEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["MagnemiteSelfdestructEffect"] = [
+    _mse_case(f=0x00),
+    _mse_case(f=0x10),
+    _mse_case(**POISON),
+]
+# <<< factory MagnemiteSelfdestructEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10368,3 +10393,10 @@ MUTATIONS["SubmissionEffect"]={"source_symbol":"SubmissionEffect","before":"\twL
 for _record in SCHEMA2_CASES["SubmissionEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
 # <<< factory-completion SubmissionEffect
+# >>> factory-mutation MagnemiteSelfdestructEffect
+MUTATIONS["MagnemiteSelfdestructEffect"] = {"source_symbol": "MagnemiteSelfdestructEffect", "before": "MagnemiteSelfdestructEffectResult MagnemiteSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 40u;", "after": "MagnemiteSelfdestructEffectResult MagnemiteSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 41u;", "case_ids": ["MagnemiteSelfdestructEffect-0", "MagnemiteSelfdestructEffect-1", "MagnemiteSelfdestructEffect-2"]}
+# <<< factory-mutation MagnemiteSelfdestructEffect
+# >>> factory-completion MagnemiteSelfdestructEffect
+for _record in SCHEMA2_CASES["MagnemiteSelfdestructEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
+# <<< factory-completion MagnemiteSelfdestructEffect

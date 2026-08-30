@@ -2094,6 +2094,10 @@ FriendshipSong_AddToBench50PercentEffectResult FriendshipSong_AddToBench50Percen
 typedef struct { uint8_t a; uint8_t f; } SubmissionEffectResult;
 SubmissionEffectResult SubmissionEffect(uint8_t a,uint8_t f,uint8_t b,uint8_t c,uint8_t d,uint8_t e,uint16_t hl);
 /* <<< factory SubmissionEffect */
+/* >>> factory MagnemiteSelfdestructEffect */
+typedef struct { uint8_t a, f, b, c, d, e; uint16_t hl; } MagnemiteSelfdestructEffectResult;
+MagnemiteSelfdestructEffectResult MagnemiteSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory MagnemiteSelfdestructEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

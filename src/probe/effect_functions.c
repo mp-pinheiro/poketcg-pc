@@ -5131,6 +5131,20 @@ static void adapt_SubmissionEffect(ProbeState *s)
 }
 /* <<< factory SubmissionEffect */
 
+/* >>> factory MagnemiteSelfdestructEffect */
+static void adapt_MagnemiteSelfdestructEffect(ProbeState *s)
+{
+	MagnemiteSelfdestructEffectResult result = MagnemiteSelfdestructEffect(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory MagnemiteSelfdestructEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5751,5 +5765,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ChanseyDoubleEdgeEffect", adapt_ChanseyDoubleEdgeEffect },
 	{ "FriendshipSong_AddToBench50PercentEffect", adapt_FriendshipSong_AddToBench50PercentEffect },
 	{ "SubmissionEffect", adapt_SubmissionEffect },
+	{ "MagnemiteSelfdestructEffect", adapt_MagnemiteSelfdestructEffect },
 	{ NULL, NULL },
 };
