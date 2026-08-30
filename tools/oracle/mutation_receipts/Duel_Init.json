@@ -1,0 +1,9 @@
+{
+  "fn": "Duel_Init",
+  "case": "tests/cases/duel_init.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Duel_Init\", \"registers\": {\"a\": 65, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52467\": \"04\", \"53905\": \"41\", \"65344\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Duel_Init\", \"mismatches\": {\"bus\": {\"address\": 52467, \"reference\": \"80044180\", \"native\": \"80054180\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[51899, 1], [52467, 1], [53905, 1], [65344, 1]]}}}\n",
+  "restored": "{\"fn\": \"Duel_Init\", \"registers\": {\"a\": 65, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52467\": \"04\", \"53905\": \"41\", \"65344\": \"80\"}}, \"status\": \"PASS\"}\n"
+}
