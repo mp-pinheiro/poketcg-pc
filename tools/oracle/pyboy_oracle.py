@@ -308,7 +308,7 @@ class Oracle:
                 pb.button_release(button)
 
     def _run(self, symbol: str, regs: dict, stop_pc: int | None = None,
-             stack: Sequence[int] | None = None, cycle: bool = False,
+             stop_bank: int | None = None, stack: Sequence[int] | None = None, cycle: bool = False,
              hbank_rom: int | None = None, frames: int | None = None,
              post_call_byte: int | None = None) -> Result:
         """Drive one routine to its requested completion point."""
@@ -356,9 +356,9 @@ class Oracle:
         if stop_pc is None:
             self._arm(SENTINEL + 1 if post_call_byte is not None else SENTINEL)
         else:
-            # Home bank ($0000-$3FFF) is always mapped; a banked stop pc must be
-            # hooked against the routine's own bank.
-            self._arm(stop_pc, 0 if stop_pc < 0x4000 else fn_bank)
+            # Home bank ($0000-$3FFF) is always mapped. For a nested completion
+            # in the switchable window, the case may name its owning ROM bank.
+            self._arm(stop_pc, stop_bank if stop_bank is not None else fn_bank)
         try:
             pb.hook_deregister(0, self._VBLANK_HALT)
         except (ValueError, KeyError):
@@ -410,6 +410,7 @@ class Oracle:
              setup: list[dict] | None = None,
              keys: int | Sequence[int] = 0,
              stop_pc: int | None = None,
+             stop_bank: int | None = None,
              stack: Sequence[int] | None = None,
              hbank_rom: int | None = None,
              frames: int | None = None,
@@ -469,6 +470,7 @@ class Oracle:
             symbol,
             {"a": a, "f": f, "b": b, "c": c, "d": d, "e": e, "hl": hl},
             stop_pc,
+            stop_bank,
             stack,
             cycle=True,
             hbank_rom=hbank_rom,

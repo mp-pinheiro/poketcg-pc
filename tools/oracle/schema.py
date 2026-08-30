@@ -262,10 +262,16 @@ def validate_case(case: Mapping[str, Any], *, case_id: str | None = None) -> Map
     mode = completion.get("mode")
     if mode not in COMPLETIONS:
         _fail("case.completion.mode", "must be one of return, pre-ret, event")
-    allowed = {"mode"} | ({"pc"} if mode == "pre-ret" else {"predicate"} if mode == "event" else set())
+    allowed = (
+        {"mode", "pc", "bank"} if mode == "pre-ret"
+        else {"mode", "predicate"} if mode == "event"
+        else {"mode"}
+    )
     _check_unknown(completion, frozenset(allowed), "case.completion")
     if mode == "pre-ret":
         _integer(completion.get("pc"), "case.completion.pc", maximum=0xFFFF)
+        if "bank" in completion:
+            _integer(completion["bank"], "case.completion.bank", maximum=0xFFFF)
     elif mode == "event" and (not isinstance(completion.get("predicate"), str) or not completion["predicate"].strip()):
         _fail("case.completion.predicate", "must be a non-empty string")
     evidence = case.get("evidence")
