@@ -1,0 +1,9 @@
+{
+  "fn": "UnreferencedSaveSerialReturnAddress",
+  "case": "tests/cases/serial.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UnreferencedSaveSerialReturnAddress\", \"registers\": {\"a\": 207, \"b\": 0, \"c\": 0, \"d\": 203, \"e\": 124, \"f\": 0, \"hl\": 53232, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52089\": \"fafff0cf\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UnreferencedSaveSerialReturnAddress\", \"mismatches\": {\"bus\": {\"address\": 52089, \"reference\": \"fafff0cf\", \"native\": \"fbfff0cf\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52089, 4]]}}}\n",
+  "restored": "{\"fn\": \"UnreferencedSaveSerialReturnAddress\", \"registers\": {\"a\": 207, \"b\": 0, \"c\": 0, \"d\": 203, \"e\": 124, \"f\": 0, \"hl\": 53232, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52089\": \"fafff0cf\"}}, \"status\": \"PASS\"}\n"
+}

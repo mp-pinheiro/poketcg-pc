@@ -488,3 +488,17 @@ UnreferencedGoToSerialReturnAddressResult UnreferencedGoToSerialReturnAddress(ui
 	return (UnreferencedGoToSerialReturnAddressResult){low, 0x10u, (uint16_t)(low | ((uint16_t)high << 8))};
 }
 /* <<< factory UnreferencedGoToSerialReturnAddress */
+
+/* >>> factory UnreferencedSaveSerialReturnAddress */
+UnreferencedSaveSerialReturnAddressResult UnreferencedSaveSerialReturnAddress(void)
+{
+	uint16_t entry_sp = 0xFFFCu;
+	uint16_t saved_sp = (uint16_t)(entry_sp - 2u);
+	gb_write8(wSerialReturnSP_ADDR, (uint8_t)saved_sp);
+	gb_write8((uint16_t)(wSerialReturnSP_ADDR + 1u), (uint8_t)(saved_sp >> 8));
+	uint16_t return_address = 0xCFF0u;
+	gb_write8(wSerialReturnAddress_ADDR, (uint8_t)return_address);
+	gb_write8((uint16_t)(wSerialReturnAddress_ADDR + 1u), (uint8_t)(return_address >> 8));
+	return (UnreferencedSaveSerialReturnAddressResult){0xCFu, 0x00u, 0xCBu, 0x7Cu, return_address};
+}
+/* <<< factory UnreferencedSaveSerialReturnAddress */

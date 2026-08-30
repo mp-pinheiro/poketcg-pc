@@ -186,4 +186,11 @@ typedef struct {
 } UnreferencedGoToSerialReturnAddressResult;
 UnreferencedGoToSerialReturnAddressResult UnreferencedGoToSerialReturnAddress(uint16_t hl);
 /* <<< factory UnreferencedGoToSerialReturnAddress */
+/* >>> factory UnreferencedSaveSerialReturnAddress */
+typedef struct {
+	uint8_t a, f, d, e;
+	uint16_t hl;
+} UnreferencedSaveSerialReturnAddressResult;
+UnreferencedSaveSerialReturnAddressResult UnreferencedSaveSerialReturnAddress(void);
+/* <<< factory UnreferencedSaveSerialReturnAddress */
 #endif

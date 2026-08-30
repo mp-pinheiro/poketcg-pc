@@ -198,6 +198,18 @@ static void adapt_UnreferencedGoToSerialReturnAddress(ProbeState *s)
 }
 /* <<< factory UnreferencedGoToSerialReturnAddress */
 
+/* >>> factory UnreferencedSaveSerialReturnAddress */
+static void adapt_UnreferencedSaveSerialReturnAddress(ProbeState *s)
+{
+	UnreferencedSaveSerialReturnAddressResult result = UnreferencedSaveSerialReturnAddress();
+	s->a = result.a;
+	s->f = result.f;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory UnreferencedSaveSerialReturnAddress */
+
 const ProbeEntry probe_entries_serial[] = {
 	{ "SerialTimerHandler", adapt_SerialTimerHandler },
 	{ "Func_0cc5", adapt_Func_0cc5 },
@@ -221,5 +233,6 @@ const ProbeEntry probe_entries_serial[] = {
 	{ "SetOppAction_SerialSendDuelData", adapt_SetOppAction_SerialSendDuelData },
 	{ "SerialRecvDuelData", adapt_SerialRecvDuelData },
 	{ "UnreferencedGoToSerialReturnAddress", adapt_UnreferencedGoToSerialReturnAddress },
+	{ "UnreferencedSaveSerialReturnAddress", adapt_UnreferencedSaveSerialReturnAddress },
 	{ NULL, NULL },
 };

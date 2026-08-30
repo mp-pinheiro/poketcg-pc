@@ -426,6 +426,14 @@ CONTRACT["UnreferencedGoToSerialReturnAddress"] = {"compare": ("a", "f", "b", "c
 CASES["UnreferencedGoToSerialReturnAddress"] = [{}, dict(POISON)]
 # <<< factory UnreferencedGoToSerialReturnAddress
 
+# >>> factory UnreferencedSaveSerialReturnAddress
+CONTRACT["UnreferencedSaveSerialReturnAddress"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
+CASES["UnreferencedSaveSerialReturnAddress"] = [
+    {"entry_sp": 0xFFFC, "wram": {0xCB79: b"\x00\x00", 0xCB7B: b"\x00\x00"}, "read": {0xCB79: 2, 0xCB7B: 2}},
+    dict(POISON, entry_sp=0xFFFC, wram={0xCB79: b"\x00\x00", 0xCB7B: b"\x00\x00"}, read={0xCB79: 2, 0xCB7B: 2}),
+]
+# <<< factory UnreferencedSaveSerialReturnAddress
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -507,3 +515,6 @@ MUTATIONS["SerialRecvDuelData"] = {
 # >>> factory-mutation UnreferencedGoToSerialReturnAddress
 MUTATIONS["UnreferencedGoToSerialReturnAddress"] = {"source_symbol": "UnreferencedGoToSerialReturnAddress", "before": "\tif ((low | high) == 0u) {", "after": "\tif ((low | high) != 0u) {", "case_ids": ["UnreferencedGoToSerialReturnAddress-0", "UnreferencedGoToSerialReturnAddress-1"]}
 # <<< factory-mutation UnreferencedGoToSerialReturnAddress
+# >>> factory-mutation UnreferencedSaveSerialReturnAddress
+MUTATIONS["UnreferencedSaveSerialReturnAddress"] = {"source_symbol": "UnreferencedSaveSerialReturnAddress", "before": "UnreferencedSaveSerialReturnAddressResult UnreferencedSaveSerialReturnAddress(void)\n{\n\tuint16_t entry_sp = 0xFFFCu;", "after": "UnreferencedSaveSerialReturnAddressResult UnreferencedSaveSerialReturnAddress(void)\n{\n\tuint16_t entry_sp = 0xFFFDu;", "case_ids": ["UnreferencedSaveSerialReturnAddress-0", "UnreferencedSaveSerialReturnAddress-1"]}
+# <<< factory-mutation UnreferencedSaveSerialReturnAddress
