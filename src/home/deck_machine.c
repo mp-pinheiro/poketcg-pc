@@ -270,6 +270,8 @@
 #define ProceduresForSendingCardsText 0x027cu
 #define CardSendingProceduresText 0x027du
 #define PleaseReadTheProceduresForSendingCardsText 0x027eu
+
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -1880,3 +1882,13 @@ GiftCenter_SendCardResult GiftCenter_SendCard(void)
 	return (GiftCenter_SendCardResult){0u, 0x80u};
 }
 /* <<< factory GiftCenter_SendCard */
+
+/* >>> factory GiftCenter_SendDeck */
+void GiftCenter_SendDeck(void)
+{
+	wCardListVisibleOffset = 0u;
+	wDeckMachineTitleText = (uint8_t)DeckSaveMachineText;
+	gb_write8((uint16_t)(wDeckMachineTitleText_ADDR + 1u),
+		(uint8_t)(DeckSaveMachineText >> 8u));
+}
+/* <<< factory GiftCenter_SendDeck */

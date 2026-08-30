@@ -1,0 +1,9 @@
+{
+  "fn": "GiftCenter_SendDeck",
+  "case": "tests/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GiftCenter_SendDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52897\": \"00\", \"53410\": \"5c02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GiftCenter_SendDeck\", \"mismatches\": {\"bus\": {\"address\": 52897, \"reference\": \"005c02\", \"native\": \"015c02\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52897, 1], [53410, 2]]}}}\n",
+  "restored": "{\"fn\": \"GiftCenter_SendDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52897\": \"00\", \"53410\": \"5c02\"}}, \"status\": \"PASS\"}\n"
+}

@@ -262,6 +262,9 @@ HADM_READ = {
     0xD0A5: 1,  # wNumDeckMachineEntries
     0xFFB1: 1,  # hCurMenuItem
 }
+
+wCardListVisibleOffset = 0xCEA1
+wDeckMachineTitleText = 0xD0A2
 # <<< factory-cases-statics
 
 # >>> factory DrawListScrollArrows
@@ -684,6 +687,14 @@ CASES["GiftCenter_SendCard"] = [
 ]
 # <<< factory GiftCenter_SendCard
 
+# >>> factory GiftCenter_SendDeck
+CONTRACT["GiftCenter_SendDeck"] = {"compare": (), "preserve": ()}
+CASES["GiftCenter_SendDeck"] = [
+    {"oracle": False, "evidence": "primary", "why": "The bounded prefix initializes the deck-machine scroll offset and title immediately before the frame-heavy screen loader; both writes are asserted.", "wram": {wCardListVisibleOffset: b"\xff", wDeckMachineTitleText: b"\xff\xff"}, "read": {wCardListVisibleOffset: 1, wDeckMachineTitleText: 2}, "expect": {wCardListVisibleOffset: b"\x00", wDeckMachineTitleText: b"\x5c\x02"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The bounded prefix initializes the deck-machine scroll offset and title with poisoned registers immediately before the frame-heavy screen loader; both writes are asserted.", wram={wCardListVisibleOffset: b"\xff", wDeckMachineTitleText: b"\xff\xff"}, read={wCardListVisibleOffset: 1, wDeckMachineTitleText: 2}, expect={wCardListVisibleOffset: b"\x00", wDeckMachineTitleText: b"\x5c\x02"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory GiftCenter_SendDeck
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -871,3 +882,10 @@ MUTATIONS["GiftCenter_SendCard"] = {"source_symbol": "GiftCenter_SendCard", "bef
 for _record in SCHEMA2_CASES["GiftCenter_SendCard"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x2C29, "bank": 0}
 # <<< factory-completion GiftCenter_SendCard
+# >>> factory-mutation GiftCenter_SendDeck
+MUTATIONS["GiftCenter_SendDeck"] = {"source_symbol": "GiftCenter_SendDeck", "before": "void GiftCenter_SendDeck(void)\n{\n\twCardListVisibleOffset = 0u;", "after": "void GiftCenter_SendDeck(void)\n{\n\twCardListVisibleOffset = 1u;", "case_ids": ["GiftCenter_SendDeck-0", "GiftCenter_SendDeck-1"]}
+# <<< factory-mutation GiftCenter_SendDeck
+# >>> factory-completion GiftCenter_SendDeck
+for _record in SCHEMA2_CASES["GiftCenter_SendDeck"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x7379, "bank": 2}
+# <<< factory-completion GiftCenter_SendDeck
