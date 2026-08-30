@@ -1356,6 +1356,16 @@ void BankswitchROM(uint8_t bank);
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "mem.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "mem.h"
+#define PokemonHealedDamageText 0x0179u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10633,3 +10643,15 @@ ShuffleCardsInDeckResult PokeBall_AddToHandEffect(uint8_t a, uint8_t f, uint8_t 
 	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
 }
 /* <<< factory PokeBall_AddToHandEffect */
+
+/* >>> factory HealPlayAreaCardHP */
+void HealPlayAreaCardHP(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t amount = a;
+	uint8_t target = hTempPlayAreaLocation_ff9d;
+	uint8_t turn = hWhoseTurn;
+
+	ResetAttackAnimationIsPlaying();
+	wLoadedAttackAnimation = ATK_ANIM_HEALING_WIND_PLAY_AREA;
+}
+/* <<< factory HealPlayAreaCardHP */

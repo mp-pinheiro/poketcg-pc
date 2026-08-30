@@ -1,0 +1,9 @@
+{
+  "fn": "HealPlayAreaCardHP",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HealPlayAreaCardHP\", \"registers\": {\"a\": 20, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"20\", \"50176\": \"08\", \"51899\": \"00\", \"52408\": \"86\", \"54305\": \"01\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HealPlayAreaCardHP\", \"mismatches\": {\"bus\": {\"address\": 52408, \"reference\": \"002008008601c200\", \"native\": \"002008008701c200\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[49851, 1], [49864, 1], [50176, 1], [51899, 1], [52408, 1], [54305, 1], [65431, 1], [65437, 1]]}}}\n",
+  "restored": "{\"fn\": \"HealPlayAreaCardHP\", \"registers\": {\"a\": 20, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"20\", \"50176\": \"08\", \"51899\": \"00\", \"52408\": \"86\", \"54305\": \"01\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

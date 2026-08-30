@@ -5027,6 +5027,13 @@ static void adapt_PokeBall_AddToHandEffect(ProbeState *s)
 }
 /* <<< factory PokeBall_AddToHandEffect */
 
+/* >>> factory HealPlayAreaCardHP */
+static void adapt_HealPlayAreaCardHP(ProbeState *s)
+{
+	HealPlayAreaCardHP(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+}
+/* <<< factory HealPlayAreaCardHP */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5635,5 +5642,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LassEffect", adapt_LassEffect },
 	{ "ComputerSearch_DiscardAddToHandEffect", adapt_ComputerSearch_DiscardAddToHandEffect },
 	{ "PokeBall_AddToHandEffect", adapt_PokeBall_AddToHandEffect },
+	{ "HealPlayAreaCardHP", adapt_HealPlayAreaCardHP },
 	{ NULL, NULL },
 };

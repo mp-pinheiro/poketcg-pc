@@ -2786,6 +2786,14 @@ PB_DECK_CARDS = 0xC27E
 PB_NOT_IN_DECK = 0xC2BA
 PB_HAND_COUNT = 0xC2EE
 PB_WLCDC = 0xCABB
+
+hTempPlayAreaLocation_ff9d = 0xFF9D
+hWhoseTurn = 0xFF97
+wLoadedAttackAnimation = 0xCCB8
+wPlayerDuelVariables = 0xC200
+wPlayerDeck = 0xC400
+wAnimationsDisabled = 0xD421
+wLCDC = 0xCABB
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7188,6 +7196,15 @@ CASES["PokeBall_AddToHandEffect"] = [
 ]
 # <<< factory PokeBall_AddToHandEffect
 
+# >>> factory HealPlayAreaCardHP
+CONTRACT["HealPlayAreaCardHP"] = {"compare": (), "preserve": ()}
+CASES["HealPlayAreaCardHP"] = [
+    {"a": 0x14, "wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: b"\x20", wPlayerDeck: b"\x08", wLCDC: b"\x00", wAnimationsDisabled: b"\x01", wLoadedAttackAnimation: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "read": {wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: 1, wLoadedAttackAnimation: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: b"\x3F", wPlayerDeck: b"\x08", wLCDC: b"\x00", wAnimationsDisabled: b"\x01", wLoadedAttackAnimation: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "read": {wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: 1, wLoadedAttackAnimation: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: b"\x10", wPlayerDeck: b"\x08", wLCDC: b"\x00", wAnimationsDisabled: b"\x01", wLoadedAttackAnimation: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], read={wLoadedAttackAnimation: 1}, instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory HealPlayAreaCardHP
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10105,3 +10122,10 @@ MUTATIONS["ComputerSearch_DiscardAddToHandEffect"] = {"source_symbol": "Computer
 # >>> factory-mutation PokeBall_AddToHandEffect
 MUTATIONS["PokeBall_AddToHandEffect"] = {"source_symbol": "PokeBall_AddToHandEffect", "before": "ShuffleCardsInDeckResult PokeBall_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t toss = hTempList;\n\tif (toss == 0u)\n\t\treturn (ShuffleCardsInDeckResult){toss, b, c, d, e, 0x80u, hl};", "after": "ShuffleCardsInDeckResult PokeBall_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t toss = hTempList;\n\tif (toss == 0u)\n\t\treturn (ShuffleCardsInDeckResult){toss, b, c, d, e, 0x00u, hl};", "case_ids": ["PokeBall_AddToHandEffect-0", "PokeBall_AddToHandEffect-1"]}
 # <<< factory-mutation PokeBall_AddToHandEffect
+# >>> factory-mutation HealPlayAreaCardHP
+MUTATIONS["HealPlayAreaCardHP"] = {"source_symbol": "HealPlayAreaCardHP", "before": "\twLoadedAttackAnimation = ATK_ANIM_HEALING_WIND_PLAY_AREA;", "after": "\twLoadedAttackAnimation = (uint8_t)(ATK_ANIM_HEALING_WIND_PLAY_AREA + 1u);", "case_ids": ["HealPlayAreaCardHP-0", "HealPlayAreaCardHP-1", "HealPlayAreaCardHP-2"]}
+# <<< factory-mutation HealPlayAreaCardHP
+# >>> factory-completion HealPlayAreaCardHP
+for _record in SCHEMA2_CASES["HealPlayAreaCardHP"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x7494, "bank": 1}
+# <<< factory-completion HealPlayAreaCardHP
