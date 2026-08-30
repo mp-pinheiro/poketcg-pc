@@ -80,10 +80,6 @@ name = "Quickfreeze_Paralysis50PercentEffect"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-9 retry reaches the status-effect path but differs at wTempSGBPacket+2 (0xCAE2), reference 0x01 versus native 0x00, after DrawDuelMainScene/animation rendering. The missing byte is a callee side effect outside Quickfreeze own queue writes."
 unblock = "Trace DrawDuelMainScene and the SGB packet write at 0xCAE2, port that missing state transition, then retry Quickfreeze_Paralysis50PercentEffect."
 
-[[blocked]]
-name = "PayDayEffect"
-reason = "HAND-DIAGNOSED 2026-08-28: corrected tails fixture reaches the draw path but generation-9 still diverges at hWhoseTurn 0xFF97 (reference ends 0x01, native 0xC2) after the nested card-display path. The isolated effect depends on an unmodeled turn-side transition outside this routine; another unchanged retry is non-informative."
-unblock = "Trace the nested DrawCardFromDeck/card-display path to identify the hWhoseTurn transition, then model the missing callee state or define a verified bounded pre-ret contract before retrying PayDayEffect."
 
 
 
