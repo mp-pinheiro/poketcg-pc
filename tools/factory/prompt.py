@@ -435,7 +435,9 @@ def render(packet: dict, feedback: str | None = None,
         "so the routine's first pop reads the LAST element. Its probe adapter takes "
         "those words from s->stack[0 .. s->stack_count-1] because the native side has "
         "no GB stack, and its C signature accepts them as ordinary parameters. Omit "
-        "stack entirely for every routine whose pushes and pops balance.",
+        "stack entirely for every routine whose pushes and pops balance. A routine "
+        "that reads its entry SP may set `entry_sp` in every case; this overrides "
+        "the PyBoy frame location while preserving the GBRT convention of $FFFC.",
         "A `post_call_byte` case field is an integer 0..255 for stack-sensitive "
         "routines whose caller embeds an operand immediately after its CALL. It "
         "overrides the byte at the oracle's synthesized post-call address and is "
