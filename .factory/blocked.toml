@@ -53,37 +53,4 @@ unblock = "land a project-wide RunOverworldScript execution harness -- e.g. a by
 
 
 
-[[blocked]]
-name = "AIDoAction_Turn"
-reason = "HAND-DIAGNOSED 2026-08-28: retry generations 2-3 remain in AIDoAction's action-table/AI turn path at PCs 0x058C and 0x0578 despite LCD-off, empty-board, deck-table, and key-cycle fixtures. The isolated case lacks a bounded AI turn transition; this is an unported AI state-machine boundary, not a wrapper mismatch."
-unblock = "Trace the selected opponent deck action table and seed a complete bounded AI turn state, or port the missing AI turn transition before retrying AIDoAction_Turn."
 
-[[blocked]]
-name = "DebugDuelMode"
-reason = "HAND-DIAGNOSED 2026-08-28: retry generations 3-4 remain in menu input at PC 0x6835 with LCD disabled and A-button timelines; the alternate candidate reaches a flag mismatch after forcing a return. The menu's input/frame state is not isolated by the current fixture, so this is an interactive menu boundary."
-unblock = "Trace HandleMenuInput's exact key and hCurMenuItem contract and construct a bounded selection fixture, then retry DebugDuelMode."
-
-[[blocked]]
-name = "MagnetonLv35SelfdestructEffect"
-reason = "HAND-DIAGNOSED 2026-08-28: retry generation 8 reaches the chained recoil/bench-damage path but all candidates fail before a bounded return under LCD-off arena fixtures. The nested damage helpers still require a complete duel-state/card-data setup; this is a missing callee fixture/state transition, not a top-level wrapper mismatch."
-unblock = "Trace DealRecoilDamageToSelf and DealDamageToAllBenchedPokemon state requirements from a proven fixture, then retry MagnetonLv35SelfdestructEffect."
-
-[[blocked]]
-name = "PokemonTrader_TradeCardsEffect"
-reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:10078 (basename `effect_functions`). 20 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case PokemonTrader_TradeCardsEffect-0 {\"status\": \"PORT\", \"fn\": \"PokemonTrader_TradeCardsEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"010080c24980\", \"native\": \"010080c20001\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[49730, 1], [49850, 1], [49902, 1], [49905, 1], [51899, 1], [65431, 1], [65440, 2]]}}}"
-unblock = "read the recorded diagnostics under .factory/try/PokemonTrader_TradeCardsEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "Scavenge_PlayerSelectTrainerEffect"
-reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:5699 (basename `effect_functions`). 9 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case Scavenge_PlayerSelectTrainerEffect-0 native probe did not terminate; the C body loops forever on state the reference resolves"
-unblock = "read the recorded diagnostics under .factory/try/Scavenge_PlayerSelectTrainerEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "SolarPower_RemoveStatusEffect"
-reason = "HAND-DIAGNOSED 2026-08-28: generation-10 retry still does not produce a bounded return even with LCD shadow disabled and wAnimationsDisabled set; all candidates remain in the nested attack-animation/status path. This is an unresolved frame-safe callee boundary, not a translation mismatch."
-unblock = "Trace the exact PlayAttackAnimation/WaitAttackAnimation completion contract under wAnimationsDisabled and port the missing bounded callee transition before retrying SolarPower_RemoveStatusEffect."
-
-[[blocked]]
-name = "ChanseyDoubleEdgeEffect"
-reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:8431 (basename `effect_functions`). 20 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case ChanseyDoubleEdgeEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":65418,\"sp\":65484,\"rom_bank\":1,\"hbank_rom\":1,\"instructions\":7476374,\"cycles\":32000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":0,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":8,\"ppu_mode\":3,\"bus\":\"407a50000001010001\"}"
-unblock = "read the recorded diagnostics under .factory/try/ChanseyDoubleEdgeEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
