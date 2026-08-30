@@ -70,6 +70,12 @@
 #define AllDataWasDeletedText 0x0375u
 #define OKToDeleteTheDataText 0x0374u
 #define SavedDataAlreadyExistsText 0x0373u
+
+#include "home/intro.h"
+#include "home/load_animation.h"
+#include "home/sound.h"
+#include "generated/wram.h"
+#define MUSIC_STOP 0x00u
 /* <<< factory statics */
 
 #define CONSOLE_CGB 0x02u
@@ -285,3 +291,14 @@ void DeleteSaveDataForNewGame(void)
 	(void)PrintScrollableText_NoTextBoxLabel(AllDataWasDeletedText);
 }
 /* <<< factory DeleteSaveDataForNewGame */
+
+/* >>> factory HandleTitleScreen */
+void HandleTitleScreen(void)
+{
+	if (wLastSelectedStartMenuItem == 0u)
+		return;
+
+	PlaySong(MUSIC_STOP);
+	EnableAndClearSpriteAnimations();
+}
+/* <<< factory HandleTitleScreen */

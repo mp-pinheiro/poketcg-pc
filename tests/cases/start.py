@@ -65,6 +65,10 @@ SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 wHasDuelSaveData = 0xD625
 
 wHasSaveData = 0xD624
+
+wLastSelectedStartMenuItem = 0xD627
+wCurSongID = 0xDD80
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfHasSaveData
@@ -131,6 +135,14 @@ CASES["DeleteSaveDataForNewGame"] = [
 ]
 # <<< factory DeleteSaveDataForNewGame
 
+# >>> factory HandleTitleScreen
+CONTRACT["HandleTitleScreen"] = {"compare": (), "preserve": ()}
+CASES["HandleTitleScreen"] = [
+    dict(oracle=False, evidence="primary", why="The bounded opening prefix stops before PlayIntroSequence's frame-driven intro, after stopping music and enabling sprite animations.", wram={wLastSelectedStartMenuItem: b"\x01", wCurSongID: b"\x7f"}, read={wCurSongID: 1}, expect={wCurSongID: b"\x00"}, instruction_budget=2000000, cycle_budget=8000000),
+    dict(POISON, oracle=False, evidence="primary", why="The opening setup is independent of poisoned entry registers and still stops the current song before the intro call.", wram={wLastSelectedStartMenuItem: b"\x01", wCurSongID: b"\x7f"}, read={wCurSongID: 1}, expect={wCurSongID: b"\x00"}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory HandleTitleScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation CheckIfHasSaveData
@@ -151,3 +163,10 @@ MUTATIONS["DrawPlayerPortraitAndPrintNewGameText"] = {"source_symbol": "DrawPlay
 # >>> factory-mutation DeleteSaveDataForNewGame
 MUTATIONS["DeleteSaveDataForNewGame"] = {"source_symbol": "DeleteSaveDataForNewGame", "before": "void DeleteSaveDataForNewGame(void)\n{\n\tif (wHasSaveData == 0u)\n", "after": "void DeleteSaveDataForNewGame(void)\n{\n\tif (wHasSaveData != 0u)\n", "case_ids": ["DeleteSaveDataForNewGame-2"]}
 # <<< factory-mutation DeleteSaveDataForNewGame
+# >>> factory-mutation HandleTitleScreen
+MUTATIONS["HandleTitleScreen"] = {"source_symbol": "HandleTitleScreen", "before": "void HandleTitleScreen(void)\n{\n\tif (wLastSelectedStartMenuItem == 0u)\n\t\treturn;\n\n\tPlaySong(MUSIC_STOP);", "after": "void HandleTitleScreen(void)\n{\n\tif (wLastSelectedStartMenuItem == 0u)\n\t\treturn;\n\n\tPlaySong(0x01u);", "case_ids": ["HandleTitleScreen-0", "HandleTitleScreen-1"]}
+# <<< factory-mutation HandleTitleScreen
+# >>> factory-completion HandleTitleScreen
+for _record in SCHEMA2_CASES["HandleTitleScreen"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x5086, "bank": 7}
+# <<< factory-completion HandleTitleScreen

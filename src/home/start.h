@@ -26,4 +26,7 @@ void DrawPlayerPortraitAndPrintNewGameText(void);
 /* >>> factory DeleteSaveDataForNewGame */
 void DeleteSaveDataForNewGame(void);
 /* <<< factory DeleteSaveDataForNewGame */
+/* >>> factory HandleTitleScreen */
+void HandleTitleScreen(void);
+/* <<< factory HandleTitleScreen */
 #endif /* POKETCG_HOME_START_H */
