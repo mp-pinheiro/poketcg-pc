@@ -304,6 +304,14 @@ static void adapt_SendCard(ProbeState *s)
 }
 /* <<< factory SendCard */
 
+/* >>> factory SendDeckConfiguration */
+static void adapt_SendDeckConfiguration(ProbeState *s)
+{
+	(void)s;
+	SendDeckConfiguration();
+}
+/* <<< factory SendDeckConfiguration */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -340,5 +348,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "ReceiveDeckConfiguration", adapt_ReceiveDeckConfiguration },
 	{ "DoCardPop", adapt_DoCardPop },
 	{ "SendCard", adapt_SendCard },
+	{ "SendDeckConfiguration", adapt_SendDeckConfiguration },
 	{ NULL, NULL },
 };

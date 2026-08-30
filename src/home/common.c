@@ -820,3 +820,10 @@ void SendCard(void)
 {
 }
 /* <<< factory SendCard */
+
+/* >>> factory SendDeckConfiguration */
+void SendDeckConfiguration(void)
+{
+	_SendDeckConfiguration();
+}
+/* <<< factory SendDeckConfiguration */

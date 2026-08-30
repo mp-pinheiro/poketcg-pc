@@ -150,4 +150,7 @@ void DoCardPop(void);
 /* >>> factory SendCard */
 void SendCard(void);
 /* <<< factory SendCard */
+/* >>> factory SendDeckConfiguration */
+void SendDeckConfiguration(void);
+/* <<< factory SendDeckConfiguration */
 #endif /* POKETCG_HOME_COMMON_H */
