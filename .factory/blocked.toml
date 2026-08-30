@@ -46,3 +46,7 @@ unblock = "land a project-wide RunOverworldScript execution harness -- e.g. a by
 
  
 
+[[blocked]]
+name = "PokemonTrader_TradeCardsEffect"
+reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:10078 (basename `effect_functions`). 22 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case PokemonTrader_TradeCardsEffect-0 {\"status\": \"PORT\", \"fn\": \"PokemonTrader_TradeCardsEffect\", \"mismatches\": {\"a\": [0, 194], \"b\": [0, 144], \"c\": [23, 17]}}"
+unblock = "read the recorded diagnostics under .factory/try/PokemonTrader_TradeCardsEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
