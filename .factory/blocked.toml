@@ -41,10 +41,6 @@ name = "MagnemiteSelfdestructEffect"
 reason = "HAND-RESOLVED 2026-08-28: generation-9 primary candidates all exhaust at pc=625 (0x0271, the VBlank parking loop) before returning. The routine enters PlayAttackAnimation/WaitAttackAnimation and cannot reach its post-animation damage paths under the current GBRT fixture; this is an execution-environment boundary, not a C mismatch."
 unblock = "Trace the animation wait's required LCD/VBlank exit state with a bounded PPU trace, then reissue with a case that exits WaitAttackAnimation or an asm-derived pre-ret cutpoint; do not increase budgets or suppress the timeout."
 
-[[blocked]]
-name = "EnergyConversion_AddToHandEffect"
-reason = "HAND-DIAGNOSED 2026-08-28: generation 7 repeated primary runs reach the reference's WaitForVBlank at pc 0x0271 after the routine's discard-list and player-turn path, with the real ROM's LCD shadow restored to 0xC3 despite CABB/FF40=0 case seeds. Adding C2F1 and hardware seeds does not change the result; further retry is not informative until the frame-dependent DisplayCardListDetails/DealRecoil path is decomposed or a verified pre-ret cutpoint is available."
-unblock = "reproduce the smallest reference case with a trace and isolate the first callee that enables LCD or waits for VBlank, then port that frame-safe prefix or add a separately verified pre-ret completion; do not spend another retry generation on the unchanged full-call case"
 
 [[blocked]]
 name = "MagnetonLv35SelfdestructEffect"
