@@ -82,4 +82,7 @@ void DebugCreateBoosterPack(void);
 /* >>> factory DebugCredits */
 void DebugCredits(void);
 /* <<< factory DebugCredits */
+/* >>> factory _DebugLookAtSprite */
+void _DebugLookAtSprite(void);
+/* <<< factory _DebugLookAtSprite */
 #endif

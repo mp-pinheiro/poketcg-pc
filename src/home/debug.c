@@ -41,6 +41,24 @@
 #define BOOSTER_ENERGY_LIGHTNING_FIRE 0x19u
 
 #include "home/sound.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/credits_sequence_commands.h"
+#include "home/lcd.h"
+#include "home/lcd_enable_frame.h"
+#include "home/load_animation.h"
+#include "home/load_gfx.h"
+#include "home/overworld.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
+#include "home/sprite_animations.h"
+#include "mem.h"
+#define CONSOLE_CGB 0x02u
+#define PALETTE_DEFAULT_CGB 0x00u
+#define PALETTE_OVERWORLD_OAM 0x1du
+#define SPRText 0x0384u
 /* <<< factory statics */
 
 DebugSGBFrameResult DebugSGBFrame(uint8_t b, uint8_t c, uint8_t d,
@@ -233,3 +251,129 @@ void DebugCredits(void)
 {
 }
 /* <<< factory DebugCredits */
+
+/* >>> factory _DebugLookAtSprite */
+void _DebugLookAtSprite(void)
+{
+	static const uint8_t npc_data[44][3] = {
+		{0x00u, 0x00u, 0x1eu}, {0xffu, 0x00u, 0x00u},
+		{0x01u, 0x04u, 0x0eu}, {0xffu, 0x00u, 0x00u},
+		{0x02u, 0x00u, 0x26u}, {0x03u, 0x04u, 0x22u},
+		{0x04u, 0x00u, 0x0eu}, {0x05u, 0x00u, 0x1au},
+		{0x06u, 0x00u, 0x0eu}, {0x07u, 0x04u, 0x1eu},
+		{0x08u, 0x04u, 0x0eu}, {0x09u, 0x00u, 0x16u},
+		{0x0au, 0x00u, 0x0eu}, {0x0bu, 0x04u, 0x22u},
+		{0x0cu, 0x00u, 0x12u}, {0x0du, 0x00u, 0x12u},
+		{0xffu, 0x00u, 0x00u}, {0x0eu, 0x00u, 0x2au},
+		{0xffu, 0x00u, 0x00u}, {0x0fu, 0x00u, 0x26u},
+		{0xffu, 0x00u, 0x00u}, {0x10u, 0x00u, 0x0eu},
+		{0xffu, 0x00u, 0x00u}, {0x11u, 0x04u, 0x16u},
+		{0x12u, 0x04u, 0x1au}, {0x13u, 0x00u, 0x22u},
+		{0x14u, 0x00u, 0x16u}, {0x15u, 0x00u, 0x26u},
+		{0x16u, 0x00u, 0x26u}, {0x17u, 0x04u, 0x1eu},
+		{0x18u, 0x00u, 0x0eu}, {0x19u, 0x00u, 0x1au},
+		{0x1au, 0x00u, 0x16u}, {0x1bu, 0x00u, 0x22u},
+		{0x1cu, 0x04u, 0x0eu}, {0x1du, 0x04u, 0x22u},
+		{0x1eu, 0x00u, 0x1eu}, {0x1fu, 0x04u, 0x1au},
+		{0x20u, 0x00u, 0x16u}, {0x21u, 0x0au, 0x30u},
+		{0x22u, 0x00u, 0x16u}, {0x23u, 0x04u, 0x1eu},
+		{0x24u, 0x00u, 0x16u}, {0x08u, 0x08u, 0x2eu}
+	};
+
+	DisableLCD();
+	EmptyScreen();
+	ClearSpriteAnimations();
+	wWhichOBP = 0;
+	wWhichBGPalIndex = 0;
+	LoadBGPalette(PALETTE_DEFAULT_CGB);
+	wWhichOBP = 0;
+	wWhichOBPalIndex = 0;
+	LoadOBPalette(PALETTE_OVERWORLD_OAM);
+	wLoadNPCDirection = 0x02u;
+	wLoadedNPCTempIndex = 0x01u;
+	{
+		uint8_t index = wLoadedNPCTempIndex;
+		const uint8_t *data = npc_data[index - 1u];
+		if (data[0] != 0xffu) {
+			(void)CreateSpriteAndAnimBufferEntry(data[0], 0);
+			uint8_t animation = (uint8_t)(data[wConsole == CONSOLE_CGB ? 2u : 1u] + wLoadNPCDirection);
+			StartNewSpriteAnimation(animation);
+			uint16_t property = GetSpriteAnimBufferProperty(0x02u);
+			gb_write8(property, 0x48u);
+			gb_write8((uint16_t)(property + 1u), 0x40u);
+		}
+	}
+	{
+		ProcessTextHeaderResult text;
+		InitTextPrinting(0, 4);
+		text = ProcessTextFromID(SPRText);
+		WriteOneByteNumberInTxSymbol_PadSpace(wLoadedNPCTempIndex, 0, 0, text.d, text.e, text.hl);
+	}
+	EnableLCD();
+	for (;;) {
+		DoFrameIfLCDEnabled();
+		{
+			uint8_t keys = hKeysPressed;
+			if ((keys & 0x01u) != 0) {
+				wLoadNPCDirection = (uint8_t)((wLoadNPCDirection + 1u) & 0x03u);
+				ClearSpriteAnimations();
+				{
+					uint8_t index = wLoadedNPCTempIndex;
+					const uint8_t *data = npc_data[index - 1u];
+					if (data[0] != 0xffu) {
+						(void)CreateSpriteAndAnimBufferEntry(data[0], 0);
+						uint8_t animation = (uint8_t)(data[wConsole == CONSOLE_CGB ? 2u : 1u] + wLoadNPCDirection);
+						StartNewSpriteAnimation(animation);
+						uint16_t property = GetSpriteAnimBufferProperty(0x02u);
+						gb_write8(property, 0x48u);
+						gb_write8((uint16_t)(property + 1u), 0x40u);
+					}
+				}
+			}
+			if ((keys & 0xf0u) != 0) {
+				GetDirectionFromDPadResult direction = GetDirectionFromDPad((uint8_t)(keys & 0xf0u));
+				uint8_t index = wLoadedNPCTempIndex;
+				uint8_t step = 0;
+				uint8_t increase = 0;
+				switch (direction.a) {
+				case 0: step = 10; break;
+				case 1: step = 1; increase = 1; break;
+				case 2: step = 10; increase = 1; break;
+				case 3: step = 1; break;
+				default: step = 0; break;
+				}
+				if (step != 0) {
+					if (increase != 0) {
+						uint8_t next = (uint8_t)(index + step);
+						index = (index == 0x2cu || next < index || next >= 0x2cu) ? 0x01u : next;
+					} else {
+						index = (index == 0x01u || index < step || (uint8_t)(index - step) < 0x01u) ? 0x2cu : (uint8_t)(index - step);
+					}
+					wLoadedNPCTempIndex = index;
+					ClearSpriteAnimations();
+					{
+						const uint8_t *data = npc_data[index - 1u];
+						if (data[0] != 0xffu) {
+							(void)CreateSpriteAndAnimBufferEntry(data[0], 0);
+							uint8_t animation = (uint8_t)(data[wConsole == CONSOLE_CGB ? 2u : 1u] + wLoadNPCDirection);
+							StartNewSpriteAnimation(animation);
+							uint16_t property = GetSpriteAnimBufferProperty(0x02u);
+							gb_write8(property, 0x48u);
+							gb_write8((uint16_t)(property + 1u), 0x40u);
+						}
+					}
+					{
+						ProcessTextHeaderResult text;
+						InitTextPrinting(0, 4);
+						text = ProcessTextFromID(SPRText);
+						WriteOneByteNumberInTxSymbol_PadSpace(wLoadedNPCTempIndex, 0, 0, text.d, text.e, text.hl);
+					}
+				}
+			}
+		}
+		HandleAllSpriteAnimations();
+		if ((hKeysPressed & 0x04u) != 0)
+			return;
+	}
+}
+/* <<< factory _DebugLookAtSprite */

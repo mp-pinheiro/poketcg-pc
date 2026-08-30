@@ -129,6 +129,8 @@ DEBUG_CREATE_KEYS = 0xFF91
 DEBUG_CREATE_MENU_ITEM = 0xCD10
 DEBUG_CREATE_SELECTION = 0xD41A
 DEBUG_CREATE_CUR_MENU = 0xFFB1
+
+wLoadedNPCTempIndex = 0xD3AA
 # <<< factory-cases-statics
 
 # >>> factory DebugCreateBoosterPack
@@ -168,6 +170,17 @@ CASES["DebugCredits"] = [
     dict(POISON, oracle=False, evidence="primary", why="The wrapper has no pre-call state effects and remains unchanged with poisoned entry registers.", wram={0xDD80: b"\x7F"}, read={0xDD80: 1}, expect={0xDD80: b"\x7F"}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory DebugCredits
+
+# >>> factory _DebugLookAtSprite
+CONTRACT["_DebugLookAtSprite"] = {
+    "compare": (),
+    "preserve": (),
+}
+CASES["_DebugLookAtSprite"] = [
+    dict(keys=[0x00, 0x04], read={wLoadedNPCTempIndex: 1}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x04], read={wLoadedNPCTempIndex: 1}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory _DebugLookAtSprite
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -244,3 +257,15 @@ MUTATIONS["DebugCredits"] = {"source_symbol": "DebugCredits", "before": "void De
 for _record in SCHEMA2_CASES["DebugCredits"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x56AD, "bank": 7}
 # <<< factory-completion DebugCredits
+# >>> factory-mutation _DebugLookAtSprite
+MUTATIONS["_DebugLookAtSprite"] = {
+    "source_symbol": "_DebugLookAtSprite",
+    "before": "wLoadedNPCTempIndex = 0x01u;",
+    "after": "wLoadedNPCTempIndex = 0x02u;",
+    "case_ids": ["_DebugLookAtSprite-0", "_DebugLookAtSprite-1"],
+}
+# <<< factory-mutation _DebugLookAtSprite
+# >>> factory-completion _DebugLookAtSprite
+for _rec in SCHEMA2_CASES["_DebugLookAtSprite"]:
+    _rec["completion"] = {"mode": "event", "predicate": "mem:0xd3aa==0x1&0xff"}
+# <<< factory-completion _DebugLookAtSprite
