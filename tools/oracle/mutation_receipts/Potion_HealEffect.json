@@ -1,0 +1,9 @@
+{
+  "fn": "Potion_HealEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Potion_HealEffect\", \"registers\": {\"a\": 16, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52408\": \"00\", \"52862\": \"01\", \"65437\": \"02\", \"65440\": \"0214\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Potion_HealEffect\", \"mismatches\": {\"bus\": {\"address\": 65437, \"reference\": \"0001020214\", \"native\": \"0001000214\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[52408, 1], [52862, 1], [65437, 1], [65440, 2]]}}}\n",
+  "restored": "{\"fn\": \"Potion_HealEffect\", \"registers\": {\"a\": 16, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52408\": \"00\", \"52862\": \"01\", \"65437\": \"02\", \"65440\": \"0214\"}}, \"status\": \"PASS\"}\n"
+}

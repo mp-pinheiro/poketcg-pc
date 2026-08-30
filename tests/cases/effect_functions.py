@@ -7205,6 +7205,15 @@ CASES["HealPlayAreaCardHP"] = [
 ]
 # <<< factory HealPlayAreaCardHP
 
+# >>> factory Potion_HealEffect
+CONTRACT["Potion_HealEffect"] = {"compare": (), "preserve": ()}
+CASES["Potion_HealEffect"] = [
+    {"a": 0x10, "f": 0x80, "wram": {0xFFA0: b"\x02", 0xFFA1: b"\x14", 0xFF9D: b"\x07", 0xCCB8: b"\x00", 0xCE7E: b"\x01"}, "read": {0xFF9D: 1, 0xCCB8: 1, 0xCE7E: 1}},
+    dict(POISON, wram={0xFFA0: b"\x03", 0xFFA1: b"\x01", 0xFF9D: b"\x05", 0xCCB8: b"\x00", 0xCE7E: b"\x01"}, read={0xFF9D: 1, 0xCCB8: 1, 0xCE7E: 1}),
+    {"a": 0xFF, "wram": {0xFFA0: b"\x09", 0xFFA1: b"\x00", 0xFF9D: b"\x01", 0xCCB8: b"\xFF", 0xCE7E: b"\xFF"}, "read": {0xFF9D: 1, 0xCCB8: 1, 0xCE7E: 1}},
+]
+# <<< factory Potion_HealEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10129,3 +10138,10 @@ MUTATIONS["HealPlayAreaCardHP"] = {"source_symbol": "HealPlayAreaCardHP", "befor
 for _record in SCHEMA2_CASES["HealPlayAreaCardHP"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x7494, "bank": 1}
 # <<< factory-completion HealPlayAreaCardHP
+# >>> factory-mutation Potion_HealEffect
+MUTATIONS["Potion_HealEffect"] = {"source_symbol": "Potion_HealEffect", "before": "void Potion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\thTempPlayAreaLocation_ff9d = hTemp_ffa0;", "after": "void Potion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\thTempPlayAreaLocation_ff9d = 0u;", "case_ids": ["Potion_HealEffect-0", "Potion_HealEffect-1", "Potion_HealEffect-2"]}
+# <<< factory-mutation Potion_HealEffect
+# >>> factory-completion Potion_HealEffect
+for _record in SCHEMA2_CASES["Potion_HealEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x7EBC, "bank": 11}
+# <<< factory-completion Potion_HealEffect

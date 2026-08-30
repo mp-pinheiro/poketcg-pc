@@ -10655,3 +10655,11 @@ void HealPlayAreaCardHP(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, u
 	wLoadedAttackAnimation = ATK_ANIM_HEALING_WIND_PLAY_AREA;
 }
 /* <<< factory HealPlayAreaCardHP */
+
+/* >>> factory Potion_HealEffect */
+void Potion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	hTempPlayAreaLocation_ff9d = hTemp_ffa0;
+	uint8_t amount = hTempPlayAreaLocation_ffa1;
+}
+/* <<< factory Potion_HealEffect */
