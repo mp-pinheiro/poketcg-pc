@@ -10779,3 +10779,16 @@ DealDamageToAllBenchedPokemonResult GolemSelfdestructEffect(uint8_t a, uint8_t f
 	return (DealDamageToAllBenchedPokemonResult){0xC8u, 0xA0u, 0u, 0u, 0u, 100u, 0xC2C8u};
 }
 /* <<< factory GolemSelfdestructEffect */
+
+/* >>> factory ChanseyDoubleEdgeEffect */
+ChanseyDoubleEdgeEffectResult ChanseyDoubleEdgeEffect(uint8_t f, uint8_t d, uint8_t e)
+{
+	wLoadedAttackAnimation = 0x7Au;
+	wDamage = 80u;
+	wDamage_PTR[1] = 0u;
+	wDamageEffectiveness = 0u;
+	wNoDamageOrEffect = 0u;
+	wTempNonTurnDuelistCardID = wTempTurnDuelistCardID;
+	return (ChanseyDoubleEdgeEffectResult){0x40u, 0xA0u};
+}
+/* <<< factory ChanseyDoubleEdgeEffect */

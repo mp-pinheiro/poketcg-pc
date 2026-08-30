@@ -2840,6 +2840,42 @@ def _gse_case(**kw):
     case = {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80", _gse_arena_hp: b"\xC8", _gse_damage: b"\x00\x00", _gse_damage_effectiveness: b"\x00", _gse_temp_turn: b"\x01", _gse_temp_nonturn: b"\x01", _gse_no_damage: b"\x00", wIsDamageToSelf: b"\x00", _gse_animations_disabled: b"\x01"}, "read": {_gse_arena_hp: 1, _gse_loaded_animation: 1, _gse_damage: 2, _gse_damage_effectiveness: 1, _gse_temp_nonturn: 1, _gse_no_damage: 1, wIsDamageToSelf: 1}, "setup": list(_GSE_SETUP), "instruction_budget": 20000000, "cycle_budget": 80000000}
     case.update(kw)
     return case
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+_cde_arena_hp = 0xC2C8
+_cde_wLoadedAttackAnimation = 0xCCB8
+_cde_wDamage = 0xCCB9
+_cde_wDamageEffectiveness = 0xCCC1
+_cde_wTempTurn = 0xCCC3
+_cde_wTempNonTurn = 0xCCC4
+_cde_wNoDamageOrEffect = 0xCCC7
+_cde_wAnimationsDisabled = 0xD421
+_cde_wLcdc = 0xCABB
+_cde_rLcdc = 0xFF40
+
+def _cde_case(**kw):
+    case = {"wram": {_cde_arena_hp: b"\x40",
+                     _cde_wDamage: b"\x00\x00",
+                     _cde_wDamageEffectiveness: b"\x00",
+                     _cde_wTempTurn: b"\x01",
+                     _cde_wTempNonTurn: b"\x01",
+                     _cde_wNoDamageOrEffect: b"\x00",
+                     _cde_wAnimationsDisabled: b"\x01",
+                     _cde_wLcdc: b"\x00",
+                     _cde_rLcdc: b"\x80"},
+            "setup": [{"fn": "CopyDMAFunction"},
+                      {"fn": "SetupText", "d": 0x30, "e": 0x7F},
+                      {"fn": "SwapTurn"}],
+            "instruction_budget": 20000000,
+            "cycle_budget": 80000000,
+            "read": {_cde_arena_hp: 1,
+                     _cde_wLoadedAttackAnimation: 1,
+                     _cde_wDamage: 2,
+                     _cde_wDamageEffectiveness: 1,
+                     _cde_wTempNonTurn: 1,
+                     _cde_wNoDamageOrEffect: 1}}
+    case.update(kw)
+    return case
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7313,6 +7349,15 @@ CASES["GolemSelfdestructEffect"] = [
 ]
 # <<< factory GolemSelfdestructEffect
 
+# >>> factory ChanseyDoubleEdgeEffect
+CONTRACT["ChanseyDoubleEdgeEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ChanseyDoubleEdgeEffect"] = [
+    _cde_case(f=0x00),
+    _cde_case(f=0x10),
+    _cde_case(**POISON),
+]
+# <<< factory ChanseyDoubleEdgeEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10285,3 +10330,10 @@ MUTATIONS["GolemSelfdestructEffect"] = {"source_symbol": "GolemSelfdestructEffec
 for _record in SCHEMA2_CASES["GolemSelfdestructEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
 # <<< factory-completion GolemSelfdestructEffect
+# >>> factory-mutation ChanseyDoubleEdgeEffect
+MUTATIONS["ChanseyDoubleEdgeEffect"] = {"source_symbol": "ChanseyDoubleEdgeEffect", "before": "ChanseyDoubleEdgeEffectResult ChanseyDoubleEdgeEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 80u;", "after": "ChanseyDoubleEdgeEffectResult ChanseyDoubleEdgeEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 81u;", "case_ids": ["ChanseyDoubleEdgeEffect-0", "ChanseyDoubleEdgeEffect-1", "ChanseyDoubleEdgeEffect-2"]}
+# <<< factory-mutation ChanseyDoubleEdgeEffect
+# >>> factory-completion ChanseyDoubleEdgeEffect
+for _record in SCHEMA2_CASES["ChanseyDoubleEdgeEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
+# <<< factory-completion ChanseyDoubleEdgeEffect

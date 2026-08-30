@@ -5106,6 +5106,15 @@ static void adapt_GolemSelfdestructEffect(ProbeState *s)
 }
 /* <<< factory GolemSelfdestructEffect */
 
+/* >>> factory ChanseyDoubleEdgeEffect */
+static void adapt_ChanseyDoubleEdgeEffect(ProbeState *s)
+{
+	ChanseyDoubleEdgeEffectResult result = ChanseyDoubleEdgeEffect(s->f, s->d, s->e);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory ChanseyDoubleEdgeEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5723,5 +5732,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "JigglypuffDoubleEdgeEffect", adapt_JigglypuffDoubleEdgeEffect },
 	{ "Recycle_PlayerSelection", adapt_Recycle_PlayerSelection },
 	{ "GolemSelfdestructEffect", adapt_GolemSelfdestructEffect },
+	{ "ChanseyDoubleEdgeEffect", adapt_ChanseyDoubleEdgeEffect },
 	{ NULL, NULL },
 };
