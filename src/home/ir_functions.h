@@ -50,4 +50,7 @@ PrepareSendCardOrDeckConfigurationThroughIRResult PrepareSendCardOrDeckConfigura
 /* >>> factory _SendCard */
 void _SendCard(void);
 /* <<< factory _SendCard */
+/* >>> factory _SendDeckConfiguration */
+void _SendDeckConfiguration(void);
+/* <<< factory _SendDeckConfiguration */
 #endif

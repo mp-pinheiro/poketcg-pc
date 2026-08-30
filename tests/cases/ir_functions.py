@@ -162,6 +162,14 @@ CASES["_SendCard"] = [
 ]
 # <<< factory _SendCard
 
+# >>> factory _SendDeckConfiguration
+CONTRACT["_SendDeckConfiguration"] = {"compare": (), "preserve": ()}
+CASES["_SendDeckConfiguration"] = [
+    {"oracle": False, "evidence": "primary", "why": "The bounded prefix stops after the routine's initial music shutdown before the connecting scene and infrared handshake; the music state is asserted.", "read": {wCurSongID: 1}, "expect": {wCurSongID: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"oracle": False, "evidence": "primary", "why": "The bounded prefix stops after the routine's initial music shutdown with poisoned registers before the connecting scene and infrared handshake; the music state is asserted.", "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "read": {wCurSongID: 1}, "expect": {wCurSongID: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+]
+# <<< factory _SendDeckConfiguration
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -261,3 +269,10 @@ MUTATIONS["_SendCard"] = {"source_symbol": "_SendCard", "before": "void _SendCar
 for _record in SCHEMA2_CASES["_SendCard"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x5A1F}
 # <<< factory-completion _SendCard
+# >>> factory-mutation _SendDeckConfiguration
+MUTATIONS["_SendDeckConfiguration"] = {"source_symbol": "_SendDeckConfiguration", "before": "void _SendDeckConfiguration(void)\n{\n\tStopMusic();\n}", "after": "void _SendDeckConfiguration(void)\n{\n\tPlayCardPopSong();\n}", "case_ids": ["_SendDeckConfiguration-0", "_SendDeckConfiguration-1"]}
+# <<< factory-mutation _SendDeckConfiguration
+# >>> factory-completion _SendDeckConfiguration
+for _record in SCHEMA2_CASES["_SendDeckConfiguration"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x5A1F}
+# <<< factory-completion _SendDeckConfiguration

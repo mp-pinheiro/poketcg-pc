@@ -304,3 +304,10 @@ void _SendCard(void)
 	StopMusic();
 }
 /* <<< factory _SendCard */
+
+/* >>> factory _SendDeckConfiguration */
+void _SendDeckConfiguration(void)
+{
+	StopMusic();
+}
+/* <<< factory _SendDeckConfiguration */
