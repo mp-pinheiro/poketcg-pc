@@ -114,10 +114,6 @@ name = "AIPlay_SuperEnergyRetrieval"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-9 retry preserves the trainer dispatch path but diverges in the hTempRetreatCostCards scratch tail at 0xFFA3..0xFFA7 (reference 11 22 33 ff, native seeded 20 30 40 50). The fixture does not model the callee-owned scratch initialization; another unchanged candidate is non-informative."
 unblock = "Trace the OPPACTION_EXECUTE_TRAINER_EFFECTS scratch initialization and build a fixture with the reference hTempRetreatCostCards pre-state, then retry AIPlay_SuperEnergyRetrieval."
 
-[[blocked]]
-name = "AIDecide_SuperPotion_Phase08"
-reason = "HAND-DIAGNOSED 2026-08-28: generation-9 candidate cases both time out in the oracle before returning, including the low-damage and poisoned fixtures. The routine reaches the nested AI retreat/recoil path but the isolated setup lacks a bounded frame-safe completion; this is not a translation mismatch."
-unblock = "Trace the first nested retreat/recoil callee that enables LCD or waits for frames, establish a bounded pre-ret completion, then retry AIDecide_SuperPotion_Phase08."
 
 
 
