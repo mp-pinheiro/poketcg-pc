@@ -3,10 +3,6 @@
 
 
 
-[[blocked]]
-name = "RunOverworldScript"
-reason = "poketcg/src/home/script.asm:108 was investigated directly as a candidate this cycle (it was previously assumed portable and cited as the unblock path for Script_Nikki/Script_Tech1/Script_d93f). It is NOT a linear run-to-completion interpreter loop: it reads the current bytecode opcode at wScriptPointer, bank-switches to look up OverworldScriptTable[opcode] (restoring the caller's own bank afterward), then ends `pop bc; jp hl` with no `ret` at all -- a raw computed-jump trampoline that tail-jumps into whichever of dozens of ScriptCommand_* handlers the current opcode selects, and never returns to its own caller normally. This cannot be represented as a single register-in/register-out C function an isolated oracle case can verify: three escalating diagnostic runs against the reference ROM all BUDGET_EXHAUSTED at the identical pc=9100 (400,004 cycles), consistent with the probed call jumping into unseeded/garbage bytecode-handler code with no way back to the harness's synthesized return address."
-unblock = "land a project-wide RunOverworldScript execution harness -- e.g. a bytecode-stepping C interpreter that models the full ScriptCommand_* dispatch table natively (reading opcodes and dispatching via a C switch/function-pointer table instead of `jp hl`), replacing the trampoline so script routines' embedded bytecode can be verified end-to-end -- or land a separately reviewed permanent transform that represents `start_script` bodies as data blobs verified by direct source inspection instead of per-routine oracle execution"
 
 
 
