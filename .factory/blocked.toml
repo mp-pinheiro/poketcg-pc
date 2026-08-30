@@ -44,8 +44,8 @@ unblock = "land a project-wide RunOverworldScript execution harness -- e.g. a by
 
 [[blocked]]
 name = "PokemonTrader_TradeCardsEffect"
-reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:10078 (basename `effect_functions`). 22 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case PokemonTrader_TradeCardsEffect-0 {\"status\": \"PORT\", \"fn\": \"PokemonTrader_TradeCardsEffect\", \"mismatches\": {\"a\": [0, 194], \"b\": [0, 144], \"c\": [23, 17]}}"
-unblock = "read the recorded diagnostics under .factory/try/PokemonTrader_TradeCardsEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+reason = "The bounded candidate faithfully performs hand/deck mutations, but the final ShuffleCardsInDeck tail enters PlayDeckShuffleAnimation, which spins in the frame/animation loop under the isolated oracle. A native direct return can match the measured register prefix only by omitting that callee's observable animation and cannot satisfy the ordered bus contract."
+unblock = "land a verified PlayDeckShuffleAnimation frame harness or a reviewed pre-ret cutpoint at the shuffle-animation entry that captures all preceding writes and register outputs, then retry PokemonTrader"
 [[blocked]]
 name = "PokeBall_PlayerSelection"
 reason = "All bounded C2-page candidates reach the no-Pokemon exit and match registers plus WRAM, but the real ROM emits a transient hWhoseTurn bus value 0x01 at HRAM $FF97 before restoring 0xC2. Native gb_write8/lvalue writes update final state but are not represented in the native bus trace, so the exact bus contract cannot be landed without a harness capability fix."
