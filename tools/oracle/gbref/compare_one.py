@@ -208,7 +208,7 @@ def main() -> int:
     entry_sp = case.get("entry_sp")
     if entry_sp is not None and (
         isinstance(entry_sp, bool) or not isinstance(entry_sp, int)
-        or not 0x0002 <= entry_sp <= 0xFFFF
+        or not 0x0002 <= entry_sp <= 0xFFFD
     ):
         raise SystemExit("SCHEMA entry_sp must leave room for a return address")
     if post_call_byte is not None and (
@@ -324,8 +324,9 @@ def main() -> int:
         "hardware": case["hardware"],
         "entry": int(case["entry"]),
         "instruction_budget": int(case["instruction_budget"]),
-        "cycle_budget": int(case["cycle_budget"]),
-        "rom_bank": int(case["mapper"]["rom_bank"]),
+        **({"hbank_rom": int(native_hbank_rom)}
+           if native_hbank_rom is not None else {}),
+        **({"entry_sp": int(entry_sp)} if entry_sp is not None else {}),
         "ram_bank": int(case["mapper"]["ram_bank"]),
         "ram_enable": int(bool(case["mapper"]["ram_enable"])),
         "vram_bank": native_vram_bank,

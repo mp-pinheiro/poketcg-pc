@@ -252,7 +252,7 @@ def validate_case(case: Mapping[str, Any], *, case_id: str | None = None) -> Map
     if "stack" in case:
         _validate_stack(case["stack"])
     if "entry_sp" in case:
-        _integer(case["entry_sp"], "case.entry_sp", maximum=0xFFFF)
+        _integer(case["entry_sp"], "case.entry_sp", maximum=0xFFFD)
     if "post_call_byte" in case:
         _integer(case["post_call_byte"], "case.post_call_byte", maximum=0xFF)
     if "ir_peer" in case and not isinstance(case["ir_peer"], bool):

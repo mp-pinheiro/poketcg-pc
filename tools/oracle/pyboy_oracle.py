@@ -330,9 +330,9 @@ class Oracle:
         if len(words) > 4:
             raise OracleError("stack declares more than 4 caller-pushed words")
         frame_sp = STACK_TOP - 2 if entry_sp is None else int(entry_sp)
-        if not 0x0002 <= frame_sp <= 0xFFFF:
+        if not 0x0002 <= frame_sp <= 0xFFFD:
             raise OracleError("entry_sp must leave room for a return address")
-        return_pc = SENTINEL if entry_sp is None else 0xFEA0
+        return_pc = SENTINEL
         pb.memory[frame_sp] = return_pc & 0xFF
         pb.memory[(frame_sp + 1) & 0xFFFF] = return_pc >> 8
         if post_call_byte is not None:

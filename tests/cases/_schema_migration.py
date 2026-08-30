@@ -254,7 +254,7 @@ def legacy_to_schema(cases: Mapping[str, Sequence[Mapping[str, Any]]], contract:
                 record["entry_sp"] = _integer(
                     legacy["entry_sp"],
                     f"legacy case {function}[{index}].entry_sp",
-                    maximum=0xFFFF,
+                    maximum=0xFFFD,
                 )
             if "ir_peer" in legacy:
                 record["ir_peer"] = bool(legacy["ir_peer"])

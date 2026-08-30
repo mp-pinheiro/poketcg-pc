@@ -462,6 +462,8 @@ int main(int argc, char **argv) {
 
     uint64_t entry = 0;
     int entry_state = json_number(request, "entry", &entry);
+    uint64_t entry_sp = 0;
+    int entry_sp_state = json_number(request, "entry_sp", &entry_sp);
     uint64_t instruction_budget = DEFAULT_INSTRUCTION_BUDGET;
     uint64_t cycle_budget = DEFAULT_CYCLE_BUDGET;
     uint64_t stop_pc = 0;
@@ -551,7 +553,10 @@ int main(int argc, char **argv) {
         post_call_state < 0 || post_call_byte > 0xff ||
         ir_peer_state < 0 || ir_peer > 1 ||
         seed_wram_state < 0 || seed_sram_state < 0 || seed_vram_state < 0 ||
-        entry_state != 1 || entry > 0xffff || instruction_budget == 0 || cycle_budget == 0 ||
+        entry_state != 1 || entry > 0xffff ||
+        entry_sp_state < 0 || (entry_sp_state == 1 &&
+                               (entry_sp < 2 || entry_sp > 0xfffd)) ||
+        instruction_budget == 0 || cycle_budget == 0 ||
         instruction_budget > UINT32_MAX || cycle_budget > UINT32_MAX ||
         instruction_state < 0 || cycle_state < 0 ||
         reg_a_state < 0 || reg_f_state < 0 || reg_b_state < 0 ||
@@ -661,15 +666,16 @@ int main(int argc, char **argv) {
     /* seed_mapper_shadows ties hBankROM to rom_bank, which is right for paging
      * but wrong for a routine that re-reads hBankROM as data. An explicit
      * hbank_rom overrides it after the shadows are laid down. */
-    if (mapper_hbank_state == 1)
-        gb_write8(ctx, 0xFF80, (uint8_t)mapper_hbank_rom);
     int vblank_scheduler_armed = input_count > 0 || (gb_read8(ctx, 0xff40) & 0x80);
     if (vblank_scheduler_armed) {
         gb_write8(ctx, 0xffff, (uint8_t)(gb_read8(ctx, 0xffff) | 0x01));
         ctx->ime = 1;
     }
-    ctx->sp = 0xfffe;
-    gb_push16(ctx, 0xfea0);
+    if (entry_sp_state == 1)
+        ctx->sp = (uint16_t)(entry_sp + 2u);
+    else
+        ctx->sp = 0xfffe;
+    gb_push16(ctx, entry_sp_state == 1 ? 0xcff0 : 0xfea0);
     /* Sentinel first, so it stays the deepest word: the routine's final `ret`
      * must still land on it after popping every caller-pushed save below. */
     for (size_t i = 0; i < stack_count; i++)
@@ -681,7 +687,9 @@ int main(int argc, char **argv) {
                   != (uint8_t)event_value)
                : ctx->pc != (strcmp(completion, "pre-ret") == 0
                               ? stop_pc
-                              : (post_call_state == 1 ? 0xfea1 : 0xfea0))) {
+                              : (post_call_state == 1
+                                 ? (entry_sp_state == 1 ? 0xcff1 : 0xfea1)
+                                 : (entry_sp_state == 1 ? 0xcff0 : 0xfea0)))) {
         if (steps >= instruction_budget || cycles >= cycle_budget) {
             /* A budget death parked in a halt is the common trap, and pc alone
              * cannot tell a spin apart from a wait for an interrupt that can
