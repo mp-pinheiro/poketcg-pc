@@ -124,7 +124,8 @@ void ResetAttackAnimationIsPlaying(void)
 /* core.asm:8343-8350 */
 void WaitAttackAnimation(void)
 {
-	if (gb_read8(wLoadedAttackAnimation_ADDR) == 0)
+	if (gb_read8(wLoadedAttackAnimation_ADDR) == 0 ||
+	    gb_read8(wAnimationsDisabled_ADDR) != 0u)
 		return;
 	do {
 		DoFrame();

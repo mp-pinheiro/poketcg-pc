@@ -7400,6 +7400,10 @@ void PlayAttackAnimation(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, 
 	gb_write8(wDamageAnimAmount_ADDR, e);
 	gb_write8(wDamageAnimAmount_ADDR + 1u, d);
 
+	if (wAnimationsDisabled != 0u) {
+		hWhoseTurn = saved_h_whose_turn;
+		return;
+	}
 	uint8_t loaded_animation = wLoadedAttackAnimation;
 	if (loaded_animation == ATK_ANIM_HIT && e >= 70u) {
 		loaded_animation = ATK_ANIM_BIG_HIT;
