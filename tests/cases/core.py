@@ -2164,6 +2164,12 @@ HPD_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000}
 
 hWhoseTurn = 0xFF97
 wNumberPrizeCardsToTake = 0xCCC8
+
+START_DUEL_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+START_DUEL_WRAM = {
+    0xCC18: b"\x06", 0xCC1A: b"\x01",
+}
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -4698,6 +4704,14 @@ CASES["Func_1cb5e"] = [
 ]
 # <<< factory Func_1cb5e
 
+# >>> factory StartDuel
+CONTRACT["StartDuel"] = {"compare": (), "preserve": ()}
+CASES["StartDuel"] = [
+    {"wram": dict(START_DUEL_WRAM), "read": {0xCBC6: 1}},
+    dict(POISON, wram=dict(START_DUEL_WRAM), read={0xCBC6: 1}),
+]
+# <<< factory StartDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6445,3 +6459,10 @@ MUTATIONS["HandleDuelSetup"] = {
 # <<< factory-mutation HandleDuelSetup
 # Keep schema-2 inventory after all factory-appended cases.
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+# >>> factory-mutation StartDuel
+MUTATIONS["StartDuel"] = {"source_symbol": "StartDuel", "before": "\twCurrentDuelMenuItem = 0u;", "after": "\twCurrentDuelMenuItem = 1u;", "case_ids": ["StartDuel-0", "StartDuel-1"]}
+# <<< factory-mutation StartDuel
+# >>> factory-completion StartDuel
+for _record in SCHEMA2_CASES["StartDuel"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x420B, "bank": 1}
+# <<< factory-completion StartDuel

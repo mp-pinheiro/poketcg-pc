@@ -2733,6 +2733,13 @@ static void adapt_Func_1cb5e(ProbeState *s)
 }
 /* <<< factory Func_1cb5e */
 
+/* >>> factory StartDuel */
+static void adapt_StartDuel(ProbeState *s)
+{
+	StartDuel(0u);
+}
+/* <<< factory StartDuel */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3059,5 +3066,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "TurnDuelistTakePrizes", adapt_TurnDuelistTakePrizes },
 	{ "Func_6fa5", adapt_Func_6fa5 },
 	{ "Func_1cb5e", adapt_Func_1cb5e },
+	{ "StartDuel", adapt_StartDuel },
 	{ NULL, NULL },
 };

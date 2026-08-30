@@ -1565,6 +1565,10 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/screen_effects.h"
 #include "home/load_gfx.h"
 #define PALETTE_DAMAGE 0x25u
+
+#include "home/core.h"
+#include "home/sound.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -8971,3 +8975,11 @@ void Func_1cb5e(uint8_t a)
 	wDuelAnimEffectiveness = 0u;
 }
 /* <<< factory Func_1cb5e */
+
+/* >>> factory StartDuel */
+void StartDuel(uint16_t return_address)
+{
+	(void)return_address;
+	wCurrentDuelMenuItem = 0u;
+}
+/* <<< factory StartDuel */
