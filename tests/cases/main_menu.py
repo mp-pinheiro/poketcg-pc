@@ -34,6 +34,14 @@ CASES["MainMenu_NewGame"] = [
 ]
 # <<< factory MainMenu_NewGame
 
+# >>> factory MainMenu_ContinueFromDiary
+CONTRACT["MainMenu_ContinueFromDiary"] = {"compare": (), "preserve": ()}
+CASES["MainMenu_ContinueFromDiary"] = [
+    dict(oracle=False, evidence="primary", why="The bounded prefix ends immediately after the routine stops the current song, before backup validation and the downstream diary transition.", wram={wCurSongID: b"\x80"}, read={wCurSongID: 1}, expect={wCurSongID: b"\x00"}, instruction_budget=2000000, cycle_budget=8000000),
+    dict(POISON, oracle=False, evidence="primary", why="The song-stop prefix must write the stopped song ID even with poisoned entry registers.", wram={wCurSongID: b"\x80"}, read={wCurSongID: 1}, expect={wCurSongID: b"\x00"}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory MainMenu_ContinueFromDiary
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -48,3 +56,10 @@ MUTATIONS["MainMenu_NewGame"] = {"source_symbol": "MainMenu_NewGame", "before": 
 for _record in SCHEMA2_CASES["MainMenu_NewGame"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x6708, "bank": 4}
 # <<< factory-completion MainMenu_NewGame
+# >>> factory-mutation MainMenu_ContinueFromDiary
+MUTATIONS["MainMenu_ContinueFromDiary"] = {"source_symbol": "MainMenu_ContinueFromDiary", "before": "void MainMenu_ContinueFromDiary(void)\n{\n\tPlaySong(MUSIC_STOP);", "after": "void MainMenu_ContinueFromDiary(void)\n{\n\tPlaySong(MUSIC_CARD_POP);", "case_ids": ["MainMenu_ContinueFromDiary-0", "MainMenu_ContinueFromDiary-1"]}
+# <<< factory-mutation MainMenu_ContinueFromDiary
+# >>> factory-completion MainMenu_ContinueFromDiary
+for _record in SCHEMA2_CASES["MainMenu_ContinueFromDiary"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x6746, "bank": 4}
+# <<< factory-completion MainMenu_ContinueFromDiary

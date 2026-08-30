@@ -31,3 +31,10 @@ void MainMenu_NewGame(void)
 	Func_c1b1();
 }
 /* <<< factory MainMenu_NewGame */
+
+/* >>> factory MainMenu_ContinueFromDiary */
+void MainMenu_ContinueFromDiary(void)
+{
+	PlaySong(MUSIC_STOP);
+}
+/* <<< factory MainMenu_ContinueFromDiary */

@@ -18,8 +18,17 @@ static void adapt_MainMenu_NewGame(ProbeState *s)
 }
 /* <<< factory MainMenu_NewGame */
 
+/* >>> factory MainMenu_ContinueFromDiary */
+static void adapt_MainMenu_ContinueFromDiary(ProbeState *s)
+{
+	(void)s;
+	MainMenu_ContinueFromDiary();
+}
+/* <<< factory MainMenu_ContinueFromDiary */
+
 const ProbeEntry probe_entries_main_menu[] = {
 	{ "MainMenu_CardPop", adapt_MainMenu_CardPop },
 	{ "MainMenu_NewGame", adapt_MainMenu_NewGame },
+	{ "MainMenu_ContinueFromDiary", adapt_MainMenu_ContinueFromDiary },
 	{ NULL, NULL },
 };

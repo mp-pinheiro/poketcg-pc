@@ -9,4 +9,7 @@ uint8_t MainMenu_CardPop(void);
 /* >>> factory MainMenu_NewGame */
 void MainMenu_NewGame(void);
 /* <<< factory MainMenu_NewGame */
+/* >>> factory MainMenu_ContinueFromDiary */
+void MainMenu_ContinueFromDiary(void);
+/* <<< factory MainMenu_ContinueFromDiary */
 #endif /* POKETCG_HOME_MAIN_MENU_H */
