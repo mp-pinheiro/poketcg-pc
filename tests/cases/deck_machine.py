@@ -265,6 +265,9 @@ HADM_READ = {
 
 wCardListVisibleOffset = 0xCEA1
 wDeckMachineTitleText = 0xD0A2
+
+wGiftCenterChoice = 0xD10E
+wTileMapFill = 0xCAB6
 # <<< factory-cases-statics
 
 # >>> factory DrawListScrollArrows
@@ -695,6 +698,14 @@ CASES["GiftCenter_SendDeck"] = [
 ]
 # <<< factory GiftCenter_SendDeck
 
+# >>> factory HandleGiftCenter
+CONTRACT["HandleGiftCenter"] = {"compare": (), "preserve": ()}
+CASES["HandleGiftCenter"] = [
+    {"oracle": False, "evidence": "primary", "why": "The bounded dispatch prefix stops immediately before the selected deck-send handler; the menu choice and untouched tile-map state are asserted.", "wram": {wGiftCenterChoice: b"\x02", wTileMapFill: b"\xff"}, "read": {wGiftCenterChoice: 1, wTileMapFill: 1}, "expect": {wGiftCenterChoice: b"\x02", wTileMapFill: b"\xff"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"oracle": False, "evidence": "primary", "why": "The bounded dispatch prefix stops immediately before the selected deck-send handler with poisoned registers; the menu choice and untouched tile-map state are asserted.", "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {wGiftCenterChoice: b"\x02", wTileMapFill: b"\xff"}, "read": {wGiftCenterChoice: 1, wTileMapFill: 1}, "expect": {wGiftCenterChoice: b"\x02", wTileMapFill: b"\xff"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+]
+# <<< factory HandleGiftCenter
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -889,3 +900,10 @@ MUTATIONS["GiftCenter_SendDeck"] = {"source_symbol": "GiftCenter_SendDeck", "bef
 for _record in SCHEMA2_CASES["GiftCenter_SendDeck"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x7379, "bank": 2}
 # <<< factory-completion GiftCenter_SendDeck
+# >>> factory-mutation HandleGiftCenter
+MUTATIONS["HandleGiftCenter"] = {"source_symbol": "HandleGiftCenter", "before": "void HandleGiftCenter(void)\n{\n\tuint8_t choice = (uint8_t)(wGiftCenterChoice & 0x03u);\n\tif (choice == 2u)\n\t\treturn;", "after": "void HandleGiftCenter(void)\n{\n\tuint8_t choice = (uint8_t)(wGiftCenterChoice & 0x03u);\n\tif (choice == 2u) {\n\t\tGiftCenter_SendCard();\n\t\treturn;\n\t}", "case_ids": ["HandleGiftCenter-0", "HandleGiftCenter-1"]}
+# <<< factory-mutation HandleGiftCenter
+# >>> factory-completion HandleGiftCenter
+for _record in SCHEMA2_CASES["HandleGiftCenter"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x7C04, "bank": 2}
+# <<< factory-completion HandleGiftCenter

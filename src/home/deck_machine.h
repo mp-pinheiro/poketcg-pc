@@ -147,4 +147,7 @@ GiftCenter_SendCardResult GiftCenter_SendCard(void);
 /* >>> factory GiftCenter_SendDeck */
 void GiftCenter_SendDeck(void);
 /* <<< factory GiftCenter_SendDeck */
+/* >>> factory HandleGiftCenter */
+void HandleGiftCenter(void);
+/* <<< factory HandleGiftCenter */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

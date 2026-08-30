@@ -272,6 +272,9 @@
 #define PleaseReadTheProceduresForSendingCardsText 0x027eu
 
 #include "generated/wram.h"
+
+#include "generated/wram.h"
+#include "home/deck_machine.h"
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -1892,3 +1895,12 @@ void GiftCenter_SendDeck(void)
 		(uint8_t)(DeckSaveMachineText >> 8u));
 }
 /* <<< factory GiftCenter_SendDeck */
+
+/* >>> factory HandleGiftCenter */
+void HandleGiftCenter(void)
+{
+	uint8_t choice = (uint8_t)(wGiftCenterChoice & 0x03u);
+	if (choice == 2u)
+		return;
+}
+/* <<< factory HandleGiftCenter */
