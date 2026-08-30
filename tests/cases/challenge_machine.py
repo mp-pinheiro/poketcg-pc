@@ -393,6 +393,23 @@ CASES["ChallengeMachine_DrawOpponentList"] = [
 ]
 # <<< factory ChallengeMachine_DrawOpponentList
 
+# >>> factory ChallengeMachine_Duel
+CONTRACT["ChallengeMachine_Duel"] = {"compare": (), "preserve": ()}
+CASES["ChallengeMachine_Duel"] = [
+    {"rom_bank": 4,"sram": {0: {0xBA55: b"\x00"}},
+     "wram": {0xCABB: b"\x00", 0xD692: b"\x00"},
+     "read": {0xDD80: 1}},
+    dict(POISON, rom_bank=4,
+         sram={0: {0xBA55: b"\x00"}},
+         wram={0xCABB: b"\x00", 0xD692: b"\x00"},
+         read={0xDD80: 1}),
+    {"ramg": False, "rom_bank": 4,
+     "sram": {0: {0xBA55: b"\x03"}},
+     "wram": {0xCABB: b"\x00", 0xD692: b"\x03"},
+     "read": {0xDD80: 1}},
+]
+# <<< factory ChallengeMachine_Duel
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -501,3 +518,10 @@ MUTATIONS["ChallengeMachine_PrintDuelResultIcons"] = {"source_symbol": "Challeng
 # >>> factory-mutation ChallengeMachine_DrawOpponentList
 MUTATIONS["ChallengeMachine_DrawOpponentList"] = {"source_symbol": "ChallengeMachine_DrawOpponentList", "before": "\tuint16_t box1_hl = 0u;", "after": "\tgb_write8(0xCABBu, 0x80u);\n\tuint16_t box1_hl = 0u;", "case_ids": ["ChallengeMachine_DrawOpponentList-0", "ChallengeMachine_DrawOpponentList-1"]}
 # <<< factory-mutation ChallengeMachine_DrawOpponentList
+# >>> factory-mutation ChallengeMachine_Duel
+MUTATIONS["ChallengeMachine_Duel"] = {"source_symbol": "ChallengeMachine_Duel", "before": "\tPlaySong(song_ids[opponent_number]);", "after": "\tPlaySong((uint8_t)(song_ids[opponent_number] ^ 1u));", "case_ids": ["ChallengeMachine_Duel-0", "ChallengeMachine_Duel-1", "ChallengeMachine_Duel-2"]}
+# <<< factory-mutation ChallengeMachine_Duel
+# >>> factory-completion ChallengeMachine_Duel
+for _record in SCHEMA2_CASES["ChallengeMachine_Duel"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x378A}
+# <<< factory-completion ChallengeMachine_Duel

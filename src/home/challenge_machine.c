@@ -149,6 +149,17 @@ static const uint16_t challenge_machine_duel_result_icons[3] = {
 	CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT,
 	CHALLENGE_MACHINE_DUEL_LOST_ICON_TEXT,
 };
+
+#include "home/challenge_machine.h"
+#include "home/switch_sram.h"
+#include "home/sound.h"
+#include "home/play_song.h"
+#include "home/save.h"
+#include "home/core.h"
+#include "generated/sram.h"
+#include "generated/wram.h"
+#define MUSIC_MATCH_START_1 0x15u
+#define MUSIC_MATCH_START_2 0x16u
 /* <<< factory statics */
 
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
@@ -660,3 +671,20 @@ void ChallengeMachine_DrawOpponentList(void)
 	ChallengeMachine_PrintDuelResultIcons();
 }
 /* <<< factory ChallengeMachine_DrawOpponentList */
+
+/* >>> factory ChallengeMachine_Duel */
+void ChallengeMachine_Duel(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	ChallengeMachine_PrepareDuel(f, b, c, d, e, hl);
+
+	EnableSRAM();
+	uint8_t opponent_number = sChallengeMachineOpponentNumber;
+	DisableSRAM();
+
+	static const uint8_t song_ids[5] = {
+		MUSIC_MATCH_START_1, MUSIC_MATCH_START_1, MUSIC_MATCH_START_1,
+		MUSIC_MATCH_START_2, MUSIC_MATCH_START_2,
+	};
+	PlaySong(song_ids[opponent_number]);
+}
+/* <<< factory ChallengeMachine_Duel */
