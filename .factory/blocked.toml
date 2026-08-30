@@ -225,7 +225,3 @@ name = "PokeBall_PlayerSelection"
 reason = "HAND-DIAGNOSED 2026-08-29: generation-10..12 candidates reach the nested card-list path, but the reference enters the real LCD/VBlank scene and does not return under A or B isolated timelines; native candidates either loop in DisplayCardList or diverge in ambient turn state."
 unblock = "Trace the nested card-list scene's LCD/input completion and establish a verified pre-ret cutpoint or deterministic card-selection fixture before retrying PokeBall_PlayerSelection; do not repeat unchanged interactive fixtures."
 
-[[blocked]]
-name = "StartDuel"
-reason = "HAND-DIAGNOSED 2026-08-29: generations 12-17 tested full-prefix and pre-HandleDuelSetup completion points; the reference oracles still timeout in downstream frame state, while the pre-ret differential path is not a bounded end-to-end contract for this top-level scene."
-unblock = "Resolve the differential pre-ret runner behavior for banked StartDuel or establish a separately verified prefix contract before retrying; do not repeat unchanged full-prefix or 0x40EB cut fixtures."
