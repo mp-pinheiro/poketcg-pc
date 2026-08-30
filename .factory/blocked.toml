@@ -40,10 +40,6 @@ unblock = "land a project-wide RunOverworldScript execution harness -- e.g. a by
 
 
 
-[[blocked]]
-name = "SolarPower_RemoveStatusEffect"
-reason = "HAND-DIAGNOSED 2026-08-28: generation-9 retry remains on the frame-enabled attack-animation path and does not produce a bounded return under the isolated fixture; this is an animation execution boundary, not a translation mismatch."
-unblock = "Trace the first PlayAttackAnimation/WaitAttackAnimation callee that enables LCD and identify a bounded pre-ret completion, then verify that prefix or port the frame-safe callee before retrying SolarPower_RemoveStatusEffect."
 
 
 
