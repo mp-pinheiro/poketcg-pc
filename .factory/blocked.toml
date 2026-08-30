@@ -46,7 +46,9 @@ unblock = "land a project-wide RunOverworldScript execution harness -- e.g. a by
 name = "PokemonTrader_TradeCardsEffect"
 reason = "The bounded candidate faithfully performs hand/deck mutations, but the final ShuffleCardsInDeck tail enters PlayDeckShuffleAnimation, which spins in the frame/animation loop under the isolated oracle. A native direct return can match the measured register prefix only by omitting that callee's observable animation and cannot satisfy the ordered bus contract."
 unblock = "land a verified PlayDeckShuffleAnimation frame harness or a reviewed pre-ret cutpoint at the shuffle-animation entry that captures all preceding writes and register outputs, then retry PokemonTrader"
+
 [[blocked]]
 name = "PokeBall_PlayerSelection"
-reason = "All bounded C2-page candidates reach the no-Pokemon exit and match registers plus WRAM, but the real ROM emits a transient hWhoseTurn bus value 0x01 at HRAM $FF97 before restoring 0xC2. Native gb_write8/lvalue writes update final state but are not represented in the native bus trace, so the exact bus contract cannot be landed without a harness capability fix."
-unblock = "extend native bus tracing to record HRAM writes in the same ordered trace as reference writes, then retry the verified C2BA=0x3C no-Pokemon candidate"
+reason = "The repeated FF97 mismatch is a GBRT stack-placement artifact, not a ROM write-trace gap: GBRT enters at SP=$FFFE while PyBoy uses safe WRAM stack $DCC0, and the ROM call stack can overwrite HRAM $FF97. Existing runner support accepts per-case entry_sp with the standard $CFF0 sentinel."
+unblock = "retry with entry_sp=0xDCC0 in the PokeBall oracle cases; preserve the C2-page empty-deck fixture and verify both GBRT and PyBoy"
+
