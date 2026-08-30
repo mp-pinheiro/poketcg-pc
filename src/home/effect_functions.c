@@ -1456,6 +1456,12 @@ void BankswitchROM(uint8_t bank);
 #define ChooseBasicOrEvolutionPokemonCardFromDeckText 0x0160u
 #define ChoosePokemonCardText 0x0161u
 #define EvolutionCardText 0x0164u
+
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#define PokemonWasReturnedToDeckText 0x016eu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11130,3 +11136,26 @@ PokeBallPlayerSelectionResult PokeBall_PlayerSelection(void)
 	}
 }
 /* <<< factory PokeBall_PlayerSelection */
+
+/* >>> factory PokemonTrader_TradeCardsEffect */
+ShuffleCardsInDeckResult PokemonTrader_TradeCardsEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t hand_card = hTemp_ffa0;
+	RemoveCardFromHand(hand_card);
+	ReturnCardToDeck(hand_card);
+
+	uint8_t deck_card = hTempPlayAreaLocation_ffa1;
+	SearchCardInDeckAndAddToHand(deck_card);
+	AddCardToHand(deck_card);
+
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	uint8_t out_a = turn.a;
+	uint8_t out_f = 0x70u;
+	uint16_t out_hl = turn.hl;
+	if ((turn.f & 0x10u) == 0u) {
+		(void)DisplayCardDetailScreen(hand_card, PokemonWasReturnedToDeckText);
+		(void)DisplayCardDetailScreen(deck_card, WasPlacedInTheHandText);
+	}
+	return (ShuffleCardsInDeckResult){out_a, b, c, d, e, out_f, out_hl};
+}
+/* <<< factory PokemonTrader_TradeCardsEffect */

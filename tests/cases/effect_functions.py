@@ -2975,6 +2975,18 @@ hTemp_ffa0 = 0xFFA0
 
 _quickfreeze_wram = {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"}
 _quickfreeze_setup = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hTemp_ffa0 = 0xFFA0
+hTempPlayAreaLocation_ffa1 = 0xFFA1
+hWhoseTurn = 0xFF97
+DUELIST_TYPE = 0xC2F1
+HAND_COUNT = 0xC2EE
+HAND = 0xC242
+CARD0_LOCATION = 0xC200
+CARD1_LOCATION = 0xC201
+NOT_IN_DECK = 0xC2BA
+DECK_TOP = 0xC2B8
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7569,6 +7581,22 @@ CASES["PokeBall_PlayerSelection"] = [
 ]
 # <<< factory PokeBall_PlayerSelection
 
+# >>> factory PokemonTrader_TradeCardsEffect
+CONTRACT["PokemonTrader_TradeCardsEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["PokemonTrader_TradeCardsEffect"] = [
+    {"b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000,
+     "wram": {hTemp_ffa0: b"\x00", hTempPlayAreaLocation_ffa1: b"\x01", hWhoseTurn: b"\xC2", DUELIST_TYPE: b"\x00",
+              HAND_COUNT: b"\x01", HAND: b"\x00", NOT_IN_DECK: b"\x3B", DECK_TOP + 1: b"\x01"},
+     "read": {HAND_COUNT: 1, HAND: 2, CARD0_LOCATION: 1, CARD1_LOCATION: 1, DECK_TOP: 2},
+     "instruction_budget": 3000000, "cycle_budget": 10000000},
+    dict(POISON,
+         wram={hTemp_ffa0: b"\x00", hTempPlayAreaLocation_ffa1: b"\x01", hWhoseTurn: b"\xC2", DUELIST_TYPE: b"\x00",
+               HAND_COUNT: b"\x01", HAND: b"\x00", NOT_IN_DECK: b"\x3B", DECK_TOP + 1: b"\x01"},
+         read={HAND_COUNT: 1, HAND: 2, CARD0_LOCATION: 1, CARD1_LOCATION: 1, DECK_TOP: 2},
+         instruction_budget=3000000, cycle_budget=10000000)
+]
+# <<< factory PokemonTrader_TradeCardsEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10640,3 +10668,10 @@ MUTATIONS["Quickfreeze_Paralysis50PercentEffect"] = {"source_symbol": "Quickfree
 # >>> factory-mutation PokeBall_PlayerSelection
 MUTATIONS["PokeBall_PlayerSelection"] = {"source_symbol": "PokeBall_PlayerSelection", "before": "PokeBallPlayerSelectionResult PokeBall_PlayerSelection(void)\n{\n\tSerialTossCoinATimesResult toss = Serial_TossCoin(1u, 0u, 0u, 0u, 0u, TrainerCardSuccessCheckText, 0u);\n\thTempList = toss.a;", "after": "PokeBallPlayerSelectionResult PokeBall_PlayerSelection(void)\n{\n\tSerialTossCoinATimesResult toss = Serial_TossCoin(1u, 0u, 0u, 0u, 0u, TrainerCardSuccessCheckText, 0u);\n\thTempList = (uint8_t)(toss.a ^ 1u);", "case_ids": ["PokeBall_PlayerSelection-0"]}
 # <<< factory-mutation PokeBall_PlayerSelection
+# >>> factory-mutation PokemonTrader_TradeCardsEffect
+MUTATIONS["PokemonTrader_TradeCardsEffect"] = {"source_symbol": "PokemonTrader_TradeCardsEffect", "before": "ShuffleCardsInDeckResult PokemonTrader_TradeCardsEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t hand_card = hTemp_ffa0;", "after": "ShuffleCardsInDeckResult PokemonTrader_TradeCardsEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t hand_card = hTempPlayAreaLocation_ffa1;", "case_ids": ["PokemonTrader_TradeCardsEffect-0", "PokemonTrader_TradeCardsEffect-1"]}
+# <<< factory-mutation PokemonTrader_TradeCardsEffect
+# >>> factory-completion PokemonTrader_TradeCardsEffect
+for _record in SCHEMA2_CASES["PokemonTrader_TradeCardsEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x4F2D, "bank": 1}
+# <<< factory-completion PokemonTrader_TradeCardsEffect

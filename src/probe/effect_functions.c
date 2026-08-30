@@ -5255,6 +5255,21 @@ static void adapt_PokeBall_PlayerSelection(ProbeState *s)
 }
 /* <<< factory PokeBall_PlayerSelection */
 
+/* >>> factory PokemonTrader_TradeCardsEffect */
+static void adapt_PokemonTrader_TradeCardsEffect(ProbeState *s)
+{
+	ShuffleCardsInDeckResult result = PokemonTrader_TradeCardsEffect(s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+	s->f = 0x70u;
+}
+/* <<< factory PokemonTrader_TradeCardsEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5889,5 +5904,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PokemonTrader_PlayerDeckSelection", adapt_PokemonTrader_PlayerDeckSelection },
 	{ "Quickfreeze_Paralysis50PercentEffect", adapt_Quickfreeze_Paralysis50PercentEffect },
 	{ "PokeBall_PlayerSelection", adapt_PokeBall_PlayerSelection },
+	{ "PokemonTrader_TradeCardsEffect", adapt_PokemonTrader_TradeCardsEffect },
 	{ NULL, NULL },
 };
