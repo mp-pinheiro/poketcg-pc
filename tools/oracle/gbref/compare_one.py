@@ -72,7 +72,7 @@ def main() -> int:
     parser.add_argument("--runner", type=Path, required=True)
     parser.add_argument("--symbols", type=Path, required=True)
     args = parser.parse_args()
-    post_call_byte = None
+    completion_spec = None
     seed_wram_spec = ""
     seed_sram_spec = ""
     seed_vram_spec = ""
@@ -176,7 +176,7 @@ def main() -> int:
     case.setdefault("input_events", [])
     if case.get("fn") != args.fn:
         raise SystemExit("SCHEMA case function does not match --fn")
-    completion = completion_spec if args.case.suffix == ".py" else case.get("completion")
+    completion = case.get("completion")
     mode = completion.get("mode") if isinstance(completion, dict) else completion
     if mode not in ("return", "pre-ret", "event") or not isinstance(case.get("registers"), dict):
         raise SystemExit("SCHEMA case requires completion=return|pre-ret|event and registers")
@@ -196,7 +196,7 @@ def main() -> int:
     if mode == "pre-ret":
         required.add("stop_pc" if isinstance(completion, str) else "completion")
     if mode == "event":
-        if isinstance(completion, str):
+        if isinstance(completion_spec, str) or args.case.suffix != ".py":
             required.update({"event_addr", "event_value", "event_mask"})
     if set(case) - optional != required:
         raise SystemExit("SCHEMA case keys do not match schema-2")
@@ -230,7 +230,7 @@ def main() -> int:
         or not 0 <= case["stop_pc"] <= 0xffff
     ):
         raise SystemExit("SCHEMA pre-ret requires stop_pc in address range")
-    if mode == "event" and isinstance(completion, str) and any(
+    if mode == "event" and (isinstance(completion_spec, str) or args.case.suffix != ".py") and any(
         isinstance(case[name], bool) or not isinstance(case[name], int)
         or case[name] < 0 or case[name] > (0xffff if name == "event_addr" else 0xff)
         for name in ("event_addr", "event_value", "event_mask")
@@ -338,8 +338,8 @@ def main() -> int:
     if mode == "pre-ret":
         request["stop_pc"] = int(case["stop_pc"] if isinstance(completion, str) else completion["pc"])
     if mode == "event":
-        if isinstance(completion, dict):
-            request["predicate"] = completion["predicate"]
+        if isinstance(completion_spec, dict):
+            request["predicate"] = completion_spec["predicate"]
         else:
             request["predicate"] = (
                 f"mem:{int(case['event_addr']):#x}=={int(case['event_value']):#x}"
