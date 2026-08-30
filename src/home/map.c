@@ -46,6 +46,8 @@
 #include "generated/wram.h"
 #define GAME_EVENT_GIFT_CENTER 0x03u
 #define MUSIC_CARD_POP 0x08u
+
+#include "home/sound.h"
 /* <<< factory statics */
 
 #define BANK_EXECUTE_NPC_MOVEMENT 0x03u
@@ -275,3 +277,9 @@ void GameEvent_GiftCenter(void)
 	wGiftCenterChoice = (uint8_t)(wGiftCenterChoice | 0x10u);
 }
 /* <<< factory GameEvent_GiftCenter */
+
+/* >>> factory GameEvent_Credits */
+void GameEvent_Credits(void)
+{
+}
+/* <<< factory GameEvent_Credits */

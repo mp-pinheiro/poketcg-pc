@@ -129,6 +129,14 @@ static void adapt_GameEvent_GiftCenter(ProbeState *s)
 }
 /* <<< factory GameEvent_GiftCenter */
 
+/* >>> factory GameEvent_Credits */
+static void adapt_GameEvent_Credits(ProbeState *s)
+{
+	(void)s;
+	GameEvent_Credits();
+}
+/* <<< factory GameEvent_Credits */
+
 const ProbeEntry probe_entries_map[] = {
 	{ "GetPermissionByteOfMapPosition", adapt_GetPermissionByteOfMapPosition },
 	{ "GetPermissionOfMapPosition", adapt_GetPermissionOfMapPosition },
@@ -148,5 +156,6 @@ const ProbeEntry probe_entries_map[] = {
 	{ "GameEvent_Duel", adapt_GameEvent_Duel },
 	{ "GameEvent_ChallengeMachine", adapt_GameEvent_ChallengeMachine },
 	{ "GameEvent_GiftCenter", adapt_GameEvent_GiftCenter },
+	{ "GameEvent_Credits", adapt_GameEvent_Credits },
 	{ NULL, NULL },
 };

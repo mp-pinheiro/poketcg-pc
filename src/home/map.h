@@ -50,4 +50,7 @@ void GameEvent_ChallengeMachine(void);
 /* >>> factory GameEvent_GiftCenter */
 void GameEvent_GiftCenter(void);
 /* <<< factory GameEvent_GiftCenter */
+/* >>> factory GameEvent_Credits */
+void GameEvent_Credits(void);
+/* <<< factory GameEvent_Credits */
 #endif

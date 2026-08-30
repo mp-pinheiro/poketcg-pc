@@ -255,6 +255,14 @@ CASES["GameEvent_GiftCenter"] = [
 ]
 # <<< factory GameEvent_GiftCenter
 
+# >>> factory GameEvent_Credits
+CONTRACT["GameEvent_Credits"] = {"compare": (), "preserve": ()}
+CASES["GameEvent_Credits"] = [
+    dict(oracle=False, evidence="primary", why="The bounded event wrapper stops at the nested credits routine entry; no event-wrapper state changes occur before that farcall.", wram={0xDD80: b"\x7F"}, read={0xDD80: 1}, expect={0xDD80: b"\x7F"}, instruction_budget=2000000, cycle_budget=8000000),
+    dict(POISON, oracle=False, evidence="primary", why="The event wrapper has no pre-call state effects and remains unchanged with poisoned entry registers.", wram={0xDD80: b"\x7F"}, read={0xDD80: 1}, expect={0xDD80: b"\x7F"}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory GameEvent_Credits
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -308,3 +316,10 @@ MUTATIONS["GameEvent_GiftCenter"] = {"source_symbol": "GameEvent_GiftCenter", "b
 for _record in SCHEMA2_CASES["GameEvent_GiftCenter"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x7177, "bank": 2}
 # <<< factory-completion GameEvent_GiftCenter
+# >>> factory-mutation GameEvent_Credits
+MUTATIONS["GameEvent_Credits"] = {"source_symbol": "GameEvent_Credits", "before": "void GameEvent_Credits(void)\n{\n}", "after": "void GameEvent_Credits(void)\n{\n\tPlaySong(0u);\n}", "case_ids": ["GameEvent_Credits-0", "GameEvent_Credits-1"]}
+# <<< factory-mutation GameEvent_Credits
+# >>> factory-completion GameEvent_Credits
+for _record in SCHEMA2_CASES["GameEvent_Credits"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x56AD, "bank": 7}
+# <<< factory-completion GameEvent_Credits
