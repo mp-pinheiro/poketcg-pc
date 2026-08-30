@@ -10,6 +10,8 @@
 #include "ppu.h"
 /* >>> factory statics */
 #include "home/bg_map.h"
+
+#include "home/frames.h"
 /* <<< factory statics */
 
 static uint16_t bg_map0_address(uint16_t xy)
@@ -354,3 +356,79 @@ void Func_2046(uint16_t counter_addr, uint16_t hl8, uint8_t frame_c,
 		Func_2055(hl8, frame_c, frame_lo, frame_hi);
 }
 /* <<< factory Func_2046 */
+
+/* >>> factory Func_1f96 */
+Func1f96Result Func_1f96(uint8_t a, uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
+{
+	uint16_t table = de;
+	uint8_t selected = a;
+	uint8_t max = gb_read8(table);
+	uint8_t frame_c = 0u;
+	uint8_t frame_lo;
+	uint8_t frame_hi;
+	uint16_t raw_callback;
+	uint16_t callback;
+	uint8_t counter = 0u;
+
+	(void)b;
+	(void)c;
+	(void)hl;
+	frame_lo = gb_read8((uint16_t)(table + 3u));
+	frame_hi = gb_read8((uint16_t)(table + 4u));
+	frame_c = max;
+	raw_callback = (uint16_t)(gb_read8((uint16_t)(table + 5u)) |
+		((uint16_t)gb_read8((uint16_t)(table + 6u)) << 8));
+	if (raw_callback != 0u)
+		callback = (uint16_t)(raw_callback + (uint16_t)(table + 5u));
+	else
+		callback = 0u;
+
+	for (;;) {
+		uint8_t old_counter = counter;
+		counter = (uint8_t)(counter + 1u);
+		if ((old_counter & 0x0Fu) == 0u) {
+			uint8_t value = (counter & 0x10u) != 0u
+				? (uint8_t)(callback >> 8) : (uint8_t)callback;
+			HblankWriteByteToBGMap0(value, frame_hi,
+				(uint8_t)(frame_c + frame_lo));
+		}
+
+		DoFrame();
+		{
+			uint8_t keys = hKeysPressed;
+			if ((keys & 0x09u) != 0u) {
+				uint8_t value = (uint8_t)(callback >> 8);
+				HblankWriteByteToBGMap0(value, frame_hi,
+					(uint8_t)(frame_c + frame_lo));
+				return (Func1f96Result){selected,
+					selected == 0u ? 0x80u : 0x00u};
+			}
+			if ((keys & 0x06u) != 0u) {
+				uint8_t value = (uint8_t)(callback >> 8);
+				HblankWriteByteToBGMap0(value, frame_hi,
+					(uint8_t)(frame_c + frame_lo));
+				return (Func1f96Result){selected, 0x10u};
+			}
+			if ((keys & 0x40u) != 0u) {
+				selected = (uint8_t)(selected - 1u);
+				if ((selected & 0x80u) != 0u)
+					selected = (uint8_t)(max - 1u);
+				{
+					uint8_t value = (uint8_t)(callback >> 8);
+					HblankWriteByteToBGMap0(value, frame_hi,
+						(uint8_t)(frame_c + frame_lo));
+				}
+			} else if ((keys & 0x80u) != 0u) {
+				selected = (uint8_t)(selected + 1u);
+				if (selected >= max)
+					selected = 0u;
+				{
+					uint8_t value = (uint8_t)(callback >> 8);
+					HblankWriteByteToBGMap0(value, frame_hi,
+						(uint8_t)(frame_c + frame_lo));
+				}
+			}
+		}
+	}
+}
+/* <<< factory Func_1f96 */

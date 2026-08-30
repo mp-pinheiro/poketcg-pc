@@ -43,4 +43,12 @@ uint8_t Func_2055(uint16_t hl, uint8_t frame_c, uint8_t frame_lo, uint8_t frame_
 void Func_2046(uint16_t counter_addr, uint16_t hl8, uint8_t frame_c,
 	uint8_t frame_lo, uint8_t frame_hi);
 /* <<< factory Func_2046 */
+/* >>> factory Func_1f96 */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} Func1f96Result;
+
+Func1f96Result Func_1f96(uint8_t a, uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
+/* <<< factory Func_1f96 */
 #endif /* POKETCG_HOME_TILES_H */

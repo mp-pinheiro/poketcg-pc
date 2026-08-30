@@ -274,6 +274,18 @@ CASES["Func_2046"] = [
 ]
 # <<< factory Func_2046
 
+# >>> factory Func_1f96
+CONTRACT["Func_1f96"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Func_1f96"] = [
+    {"a": 0x00, "d": 0xC1, "e": 0x00,
+     "wram": {0xC100: b"\x00\x00\x00\x00\x00\x00\x00", 0xCABB: b"\x00"},
+     "keys": [0x00, 0x01]},
+    dict(POISON, d=0xC1, e=0x00,
+         wram={0xC100: b"\x00\x00\x00\x00\x00\x00\x00", 0xCABB: b"\x00"},
+         keys=[0x00, 0x01]),
+]
+# <<< factory Func_1f96
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -317,3 +329,11 @@ MUTATIONS["Func_2046"] = {
     "case_ids": ["Func_2046-0"],
 }
 # <<< factory-mutation Func_2046
+# >>> factory-mutation Func_1f96
+MUTATIONS["Func_1f96"] = {
+    "source_symbol": "Func_1f96",
+    "before": "Func1f96Result Func_1f96(uint8_t a, uint8_t b, uint8_t c, uint16_t de, uint16_t hl)\n{\n\tuint16_t table = de;\n\tuint8_t selected = a;",
+    "after": "Func1f96Result Func_1f96(uint8_t a, uint8_t b, uint8_t c, uint16_t de, uint16_t hl)\n{\n\tuint16_t table = de;\n\tuint8_t selected = (uint8_t)(a + 1u);",
+    "case_ids": ["Func_1f96-0"]
+}
+# <<< factory-mutation Func_1f96

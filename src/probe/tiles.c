@@ -168,6 +168,16 @@ static void adapt_Func_2046(ProbeState *s)
 }
 /* <<< factory Func_2046 */
 
+/* >>> factory Func_1f96 */
+static void adapt_Func_1f96(ProbeState *s)
+{
+	uint16_t de = (uint16_t)(s->d << 8 | s->e);
+	Func1f96Result result = Func_1f96(s->a, s->b, s->c, de, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Func_1f96 */
+
 const ProbeEntry probe_entries_tiles[] = {
 	{ "FillRectangle", adapt_FillRectangle },
 	{ "Copy1bppTiles", adapt_Copy1bppTiles },
@@ -191,5 +201,6 @@ const ProbeEntry probe_entries_tiles[] = {
 	{ "Func_2051", adapt_Func_2051 },
 	{ "Func_2055", adapt_Func_2055 },
 	{ "Func_2046", adapt_Func_2046 },
+	{ "Func_1f96", adapt_Func_1f96 },
 	{ NULL, NULL },
 };
