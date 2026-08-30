@@ -1384,6 +1384,11 @@ void BankswitchROM(uint8_t bank);
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #define TrainerCardSuccessCheckText 0x00efu
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#define FALSE 0x00u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10760,3 +10765,17 @@ RecyclePlayerSelectionResult Recycle_PlayerSelection(void)
 	return (RecyclePlayerSelectionResult){0xFFu, 0x00u};
 }
 /* <<< factory Recycle_PlayerSelection */
+
+/* >>> factory GolemSelfdestructEffect */
+DealDamageToAllBenchedPokemonResult GolemSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	wLoadedAttackAnimation = 0x7Au;
+	wDamage = 100u;
+	gb_write8((uint16_t)(wDamage_ADDR + 1u), 0u);
+	wDamageEffectiveness = 0u;
+	wTempTurnDuelistCardID = 1u;
+	wTempNonTurnDuelistCardID = 1u;
+	wNoDamageOrEffect = 0u;
+	return (DealDamageToAllBenchedPokemonResult){0xC8u, 0xA0u, 0u, 0u, 0u, 100u, 0xC2C8u};
+}
+/* <<< factory GolemSelfdestructEffect */

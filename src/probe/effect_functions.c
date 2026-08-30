@@ -5092,6 +5092,20 @@ static void adapt_Recycle_PlayerSelection(ProbeState *s)
 }
 /* <<< factory Recycle_PlayerSelection */
 
+/* >>> factory GolemSelfdestructEffect */
+static void adapt_GolemSelfdestructEffect(ProbeState *s)
+{
+	DealDamageToAllBenchedPokemonResult result = GolemSelfdestructEffect(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory GolemSelfdestructEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5708,5 +5722,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "TakeDownEffect", adapt_TakeDownEffect },
 	{ "JigglypuffDoubleEdgeEffect", adapt_JigglypuffDoubleEdgeEffect },
 	{ "Recycle_PlayerSelection", adapt_Recycle_PlayerSelection },
+	{ "GolemSelfdestructEffect", adapt_GolemSelfdestructEffect },
 	{ NULL, NULL },
 };

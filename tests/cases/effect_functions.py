@@ -2824,6 +2824,22 @@ def _td_case(**kw):
 
 hTempCardIndex_ff98 = 0xFF98
 hTempList = 0xFFA0
+
+wIsDamageToSelf = 0xCCE6
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+_gse_arena_hp = 0xC2C8
+_gse_loaded_animation = 0xCCB8
+_gse_damage = 0xCCB9
+_gse_damage_effectiveness = 0xCCC1
+_gse_temp_turn = 0xCCC3
+_gse_temp_nonturn = 0xCCC4
+_gse_no_damage = 0xCCC7
+_gse_animations_disabled = 0xD421
+_GSE_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+def _gse_case(**kw):
+    case = {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80", _gse_arena_hp: b"\xC8", _gse_damage: b"\x00\x00", _gse_damage_effectiveness: b"\x00", _gse_temp_turn: b"\x01", _gse_temp_nonturn: b"\x01", _gse_no_damage: b"\x00", wIsDamageToSelf: b"\x00", _gse_animations_disabled: b"\x01"}, "read": {_gse_arena_hp: 1, _gse_loaded_animation: 1, _gse_damage: 2, _gse_damage_effectiveness: 1, _gse_temp_nonturn: 1, _gse_no_damage: 1, wIsDamageToSelf: 1}, "setup": list(_GSE_SETUP), "instruction_budget": 20000000, "cycle_budget": 80000000}
+    case.update(kw)
+    return case
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7289,6 +7305,14 @@ CASES["Recycle_PlayerSelection"] = [
 ]
 # <<< factory Recycle_PlayerSelection
 
+# >>> factory GolemSelfdestructEffect
+CONTRACT["GolemSelfdestructEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["GolemSelfdestructEffect"] = [
+    _gse_case(f=0x00),
+    _gse_case(a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234),
+]
+# <<< factory GolemSelfdestructEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10254,3 +10278,10 @@ for _record in SCHEMA2_CASES["JigglypuffDoubleEdgeEffect"]:
 # >>> factory-mutation Recycle_PlayerSelection
 MUTATIONS["Recycle_PlayerSelection"] = {"source_symbol": "Recycle_PlayerSelection", "before": "hTempList = 0xFFu;\n\treturn (RecyclePlayerSelectionResult){0xFFu, 0x00u};", "after": "hTempList = 0x00u;\n\treturn (RecyclePlayerSelectionResult){0xFFu, 0x00u};", "case_ids": ["Recycle_PlayerSelection-0"]}
 # <<< factory-mutation Recycle_PlayerSelection
+# >>> factory-mutation GolemSelfdestructEffect
+MUTATIONS["GolemSelfdestructEffect"] = {"source_symbol": "GolemSelfdestructEffect", "before": "DealDamageToAllBenchedPokemonResult GolemSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 100u;", "after": "DealDamageToAllBenchedPokemonResult GolemSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 0u;", "case_ids": ["GolemSelfdestructEffect-0", "GolemSelfdestructEffect-1"]}
+# <<< factory-mutation GolemSelfdestructEffect
+# >>> factory-completion GolemSelfdestructEffect
+for _record in SCHEMA2_CASES["GolemSelfdestructEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
+# <<< factory-completion GolemSelfdestructEffect
