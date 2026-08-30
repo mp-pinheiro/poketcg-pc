@@ -50,6 +50,22 @@ add_custom_command(
           "${CMAKE_SOURCE_DIR}/site/data/inventory.json"
   COMMENT "gen_effect_dispatch: probe adapters -> production address table"
   VERBATIM)
+
+set(SCRIPT_DISPATCH_SOURCE "${CMAKE_BINARY_DIR}/script_dispatch_generated.c")
+add_custom_command(
+  OUTPUT "${SCRIPT_DISPATCH_SOURCE}"
+  COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/gen_script_dispatch.py"
+          --probe "${CMAKE_SOURCE_DIR}/src/probe/scripting.c"
+          --table "${CMAKE_SOURCE_DIR}/poketcg/src/data/script_table.asm"
+          --output "${SCRIPT_DISPATCH_SOURCE}"
+  DEPENDS "${CMAKE_SOURCE_DIR}/tools/gen_script_dispatch.py"
+          "${CMAKE_SOURCE_DIR}/src/probe/scripting.c"
+          "${CMAKE_SOURCE_DIR}/poketcg/src/data/script_table.asm"
+  COMMENT "gen_script_dispatch: scripting adapters -> opcode table"
+  VERBATIM)
+if(NOT PORT_FILES)
+  list(APPEND HOME_SOURCES "${SCRIPT_DISPATCH_SOURCE}")
+endif()
 if(NOT PORT_FILES)
   list(APPEND HOME_SOURCES "${EFFECT_DISPATCH_SOURCE}")
 endif()

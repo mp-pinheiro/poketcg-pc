@@ -1,0 +1,9 @@
+{
+  "fn": "RunOverworldScript",
+  "case": "tests/cases/script.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"RunOverworldScript\", \"registers\": {\"a\": 197, \"b\": 18, \"c\": 1, \"d\": 68, \"e\": 85, \"f\": 0, \"hl\": 19646, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"003412\", \"54290\": \"0101c5\", \"65408\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"RunOverworldScript\", \"mismatches\": {\"bus\": {\"address\": 54290, \"reference\": \"0034120101c503\", \"native\": \"0034120001c503\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[50432, 3], [54290, 3], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"RunOverworldScript\", \"registers\": {\"a\": 197, \"b\": 18, \"c\": 1, \"d\": 68, \"e\": 85, \"f\": 0, \"hl\": 19646, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"003412\", \"54290\": \"0101c5\", \"65408\": \"03\"}}, \"status\": \"PASS\"}\n"
+}

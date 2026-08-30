@@ -24,6 +24,9 @@
 #define BANK_GAME_LOOP 0x04u
 /* <<< factory statics */
 
+#include "home/script_dispatch.h"
+#include <stdlib.h>
+
 #define MAP_SCRIPTS_BANK 4u
 #define MAP_SCRIPTS 0x562Au
 
@@ -138,3 +141,50 @@ void Func_3b11(void)
 	BankswitchROM(bank);
 }
 /* <<< factory Func_3b11 */
+
+/* >>> factory RunOverworldScript */
+/* script.asm:108-133. The command entry inherits the caller flags and d/e,
+ * receives the two inline script arguments in b/c, and starts with the
+ * command address in hl. */
+RunOverworldScriptResult RunOverworldScript(
+	uint8_t a, uint8_t f, uint8_t b, uint8_t c,
+	uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)b;
+	(void)c;
+	(void)hl;
+	uint8_t saved_bank = hBankROM;
+	uint16_t script_pointer = (uint16_t)(
+		gb_read8(wScriptPointer_ADDR)
+		| ((uint16_t)gb_read8((uint16_t)(wScriptPointer_ADDR + 1u)) << 8));
+	uint8_t opcode = gb_read8(script_pointer);
+	uint16_t args = (uint16_t)(script_pointer + 1u);
+	uint8_t command_c = gb_read8(args);
+	uint8_t command_b = gb_read8((uint16_t)(args + 1u));
+	const uint8_t *entry;
+
+	BankswitchROM(MAP_SCRIPTS_BANK);
+	entry = rom_ptr(MAP_SCRIPTS_BANK, (uint16_t)(0x617Bu + (uint16_t)opcode * 2u));
+	uint16_t target = (uint16_t)(entry[0] | ((uint16_t)entry[1] << 8));
+	BankswitchROM(saved_bank);
+
+	ScriptDispatchFn dispatch = ScriptDispatchLookupOpcode(opcode);
+	if (dispatch == NULL)
+		abort();
+	ScriptDispatchState state = {
+		.a = saved_bank,
+		.f = f,
+		.b = command_b,
+		.c = command_c,
+		.d = d,
+		.e = e,
+		.hl = target,
+		.stack_count = 0u,
+		.post_call_byte = 0u,
+	};
+	dispatch(&state);
+	return (RunOverworldScriptResult){
+		state.a, state.f, state.b, state.c, state.d, state.e, state.hl};
+}
+/* <<< factory RunOverworldScript */

@@ -90,6 +90,48 @@ CASES["Func_3b11"] = [
 ]
 # <<< factory Func_3b11
 
+# >>> factory RunOverworldScript
+wScriptPointer = 0xD413
+wBreakScriptLoop = 0xD412
+hBankROM = 0xFF80
+CONTRACT["RunOverworldScript"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
+CASES["RunOverworldScript"] = [
+    {
+        "a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00,
+        "d": 0x44, "e": 0x55, "hl": 0x4567,
+        "rom_bank": 0x03,
+        "wram": {
+            wScriptPointer: b"\x00\xC5",
+            0xC500: b"\x00\x34\x12",
+            wBreakScriptLoop: b"\x00",
+        },
+        "read": {hBankROM: 1, wScriptPointer: 2, wBreakScriptLoop: 1},
+    },
+    dict(
+        POISON,
+        rom_bank=0x03,
+        wram={
+            wScriptPointer: b"\x00\xC5",
+            0xC500: b"\x00\x34\x12",
+            wBreakScriptLoop: b"\xff",
+        },
+        read={hBankROM: 1, wScriptPointer: 2, wBreakScriptLoop: 1},
+    ),
+    {
+        "a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00,
+        "d": 0x44, "e": 0x55, "hl": 0x4567,
+        "rom_bank": 0x03,
+        "wram": {
+            wScriptPointer: b"\x00\xC5",
+            0xC500: b"\x01\x34\x12",
+            wBreakScriptLoop: b"\x00",
+        },
+        "read": {hBankROM: 1, wScriptPointer: 2, wBreakScriptLoop: 1},
+    },
+]
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -101,6 +143,14 @@ MUTATIONS = {
         "case_ids": ["GetMapScriptPointer-0", "GetMapScriptPointer-1", "GetMapScriptPointer-2", "GetMapScriptPointer-3", "GetMapScriptPointer-4"],
     },
 }
+# >>> factory-mutation RunOverworldScript
+MUTATIONS["RunOverworldScript"] = {
+    "source_symbol": "RunOverworldScript",
+    "before": "ScriptDispatchFn dispatch = ScriptDispatchLookupOpcode(opcode);",
+    "after": "ScriptDispatchFn dispatch = ScriptDispatchLookupOpcode((uint8_t)(opcode + 1u));",
+    "case_ids": ["RunOverworldScript-0", "RunOverworldScript-1"],
+}
+# <<< factory-mutation RunOverworldScript
 # >>> factory-mutation ResetAnimationQueue
 MUTATIONS["ResetAnimationQueue"] = {
 	"source_symbol": "ResetAnimationQueue",

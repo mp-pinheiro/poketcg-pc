@@ -61,6 +61,22 @@ static void adapt_Func_3b11(ProbeState *s)
 }
 /* <<< factory Func_3b11 */
 
+/* >>> factory RunOverworldScript */
+static void adapt_RunOverworldScript(ProbeState *s)
+{
+	RunOverworldScriptResult r = RunOverworldScript(
+		s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory RunOverworldScript */
+
+
 const ProbeEntry probe_entries_script[] = {
 	{ "GetMapScriptPointer", adapt_GetMapScriptPointer },
 	{ "ResetAnimationQueue", adapt_ResetAnimationQueue },
@@ -68,5 +84,6 @@ const ProbeEntry probe_entries_script[] = {
 	{ "GetNPCDuelConfigurations", adapt_GetNPCDuelConfigurations },
 	{ "HandleMoveModeAPress", adapt_HandleMoveModeAPress },
 	{ "Func_3b11", adapt_Func_3b11 },
+	{ "RunOverworldScript", adapt_RunOverworldScript },
 	{ NULL, NULL },
 };
