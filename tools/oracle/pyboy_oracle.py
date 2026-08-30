@@ -332,8 +332,9 @@ class Oracle:
         frame_sp = STACK_TOP - 2 if entry_sp is None else int(entry_sp)
         if not 0x0002 <= frame_sp <= 0xFFFF:
             raise OracleError("entry_sp must leave room for a return address")
-        pb.memory[frame_sp] = SENTINEL & 0xFF
-        pb.memory[(frame_sp + 1) & 0xFFFF] = SENTINEL >> 8
+        return_pc = SENTINEL if entry_sp is None else 0xFEA0
+        pb.memory[frame_sp] = return_pc & 0xFF
+        pb.memory[(frame_sp + 1) & 0xFFFF] = return_pc >> 8
         if post_call_byte is not None:
             pb.memory[SENTINEL] = post_call_byte
         for index, word in enumerate(words):
@@ -356,7 +357,7 @@ class Oracle:
 
         self._hit = None
         if stop_pc is None:
-            self._arm(SENTINEL + 1 if post_call_byte is not None else SENTINEL)
+            self._arm(SENTINEL + 1 if post_call_byte is not None else return_pc)
         else:
             # Home bank ($0000-$3FFF) is always mapped. For a nested completion
             # in the switchable window, the case may name its owning ROM bank.
