@@ -5175,6 +5175,45 @@ static void adapt_Scavenge_PlayerSelectTrainerEffect(ProbeState *s)
 }
 /* <<< factory Scavenge_PlayerSelectTrainerEffect */
 
+/* >>> factory WeezingSelfdestructEffect */
+static void adapt_WeezingSelfdestructEffect(ProbeState *s)
+{
+	DealDamageToAllBenchedPokemonResult result = WeezingSelfdestructEffect(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory WeezingSelfdestructEffect */
+
+/* >>> factory PayDayEffect */
+static void adapt_PayDayEffect(ProbeState *s)
+{
+	(void)s;
+	PayDayEffect();
+}
+/* <<< factory PayDayEffect */
+
+/* >>> factory StoneBarrage_MultiplierEffect */
+static void adapt_StoneBarrage_MultiplierEffect(ProbeState *s)
+{
+	(void)s;
+	StoneBarrage_MultiplierEffect();
+}
+/* <<< factory StoneBarrage_MultiplierEffect */
+
+/* >>> factory EnergyConversion_AddToHandEffect */
+static void adapt_EnergyConversion_AddToHandEffect(ProbeState *s)
+{
+	EnergyConversionAddToHandEffectResult result = EnergyConversion_AddToHandEffect(s->f, s->d, s->e);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory EnergyConversion_AddToHandEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5800,5 +5839,9 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MagnetonLv35SelfdestructEffect", adapt_MagnetonLv35SelfdestructEffect },
 	{ "MagnetonLv28SelfdestructEffect", adapt_MagnetonLv28SelfdestructEffect },
 	{ "Scavenge_PlayerSelectTrainerEffect", adapt_Scavenge_PlayerSelectTrainerEffect },
+	{ "WeezingSelfdestructEffect", adapt_WeezingSelfdestructEffect },
+	{ "PayDayEffect", adapt_PayDayEffect },
+	{ "StoneBarrage_MultiplierEffect", adapt_StoneBarrage_MultiplierEffect },
+	{ "EnergyConversion_AddToHandEffect", adapt_EnergyConversion_AddToHandEffect },
 	{ NULL, NULL },
 };

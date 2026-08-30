@@ -1,0 +1,9 @@
+{
+  "fn": "EnergyConversion_AddToHandEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"EnergyConversion_AddToHandEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 160, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49864\": \"40\", \"50448\": \"00\", \"52408\": \"7a0a00\", \"52409\": \"0a00\", \"52417\": \"00\", \"52419\": \"0101\", \"52423\": \"00\", \"54305\": \"01\", \"65431\": \"c3\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"EnergyConversion_AddToHandEffect\", \"mismatches\": {\"bus\": {\"address\": 52408, \"reference\": \"40007a0a000001\", \"native\": \"4000000a000001\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[49864, 1], [50448, 1], [52408, 3], [52417, 1], [52419, 2], [52423, 1], [54305, 1], [65431, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"EnergyConversion_AddToHandEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 160, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49864\": \"40\", \"50448\": \"00\", \"52408\": \"7a0a00\", \"52409\": \"0a00\", \"52417\": \"00\", \"52419\": \"0101\", \"52423\": \"00\", \"54305\": \"01\", \"65431\": \"c3\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

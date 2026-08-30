@@ -1402,6 +1402,19 @@ void BankswitchROM(uint8_t bank);
 #include "home/core.h"
 #include "generated/hram.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/menus.h"
+#define IfHeadsDraw1CardFromDeckText 0x00e7u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/random.h"
+#include "home/effect_functions.h"
+#include "mem.h"
+#define FlipUntilFailAppears10DamageForEachHeadsText 0x00e8u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10889,3 +10902,74 @@ Scavenge_PlayerSelectTrainerEffectResult Scavenge_PlayerSelectTrainerEffect(void
 	return (Scavenge_PlayerSelectTrainerEffectResult){selected, 0x90u};
 }
 /* <<< factory Scavenge_PlayerSelectTrainerEffect */
+
+/* >>> factory WeezingSelfdestructEffect */
+DealDamageToAllBenchedPokemonResult WeezingSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)f;
+	(void)b;
+	(void)c;
+	(void)d;
+	(void)e;
+	(void)hl;
+	wLoadedAttackAnimation = 0x7Au;
+	wDamage = 60u;
+	wDamage_PTR[1] = 0u;
+	wDamageEffectiveness = 0u;
+	wTempTurnDuelistCardID = 1u;
+	wTempNonTurnDuelistCardID = 1u;
+	wNoDamageOrEffect = 0u;
+	wIsDamageToSelf = 0u;
+	return (DealDamageToAllBenchedPokemonResult){0xC8u, 0xA0u, 0u, 0u, 0u, 60u, 0xC2C8u};
+}
+/* <<< factory WeezingSelfdestructEffect */
+
+/* >>> factory PayDayEffect */
+void PayDayEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDraw1CardFromDeckText, 0u);
+	if ((toss.f & 0x10u) != 0u) {
+		(void)DrawWideTextBox_WaitForInput(Draw1CardFromTheDeckText);
+		DisplayDrawOneCardScreen(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		DrawCardResult draw = DrawCardFromDeck();
+		if ((draw.f & 0x10u) == 0u) {
+			AddCardToHand(draw.a);
+			(void)LoadCardDataToBuffer1_FromDeckIndex(draw.a);
+			if (wDuelistType == DUELIST_TYPE_PLAYER)
+				OpenCardPage_FromHand(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		}
+	}
+}
+/* <<< factory PayDayEffect */
+
+/* >>> factory StoneBarrage_MultiplierEffect */
+void StoneBarrage_MultiplierEffect(void)
+{
+	hTemp_ffa0 = 0u;
+	for (;;) {
+		TossCoinATimes_BankBResult toss = TossCoinATimes_BankB(0u, 0u, 0u, 0u, 0u, FlipUntilFailAppears10DamageForEachHeadsText, 0u);
+		if ((toss.f & 0x10u) == 0u)
+			break;
+		hTemp_ffa0 = (uint8_t)(hTemp_ffa0 + 1u);
+	}
+	uint16_t damage = HtimesL((uint16_t)(0x0A00u | hTemp_ffa0));
+	gb_write8(wDamage_ADDR, (uint8_t)damage);
+	gb_write8((uint16_t)(wDamage_ADDR + 1u), (uint8_t)(damage >> 8));
+	*gb_ptr(0xCE4E) = 0x00u;
+}
+/* <<< factory StoneBarrage_MultiplierEffect */
+
+/* >>> factory EnergyConversion_AddToHandEffect */
+EnergyConversionAddToHandEffectResult EnergyConversion_AddToHandEffect(uint8_t f, uint8_t d, uint8_t e)
+{
+	(void)f;
+	(void)d;
+	(void)e;
+	wLoadedAttackAnimation = 0x7Au;
+	wDamage = 10u;
+	wDamageEffectiveness = 0u;
+	wNoDamageOrEffect = 0u;
+	return (EnergyConversionAddToHandEffectResult){0u, 0xA0u};
+}
+/* <<< factory EnergyConversion_AddToHandEffect */

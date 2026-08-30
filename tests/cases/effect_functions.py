@@ -2932,6 +2932,41 @@ hTempPlayAreaLocation_ffa1=0xFFA1
 wDuelistDiscardCount=0xC2ED
 wDuelistDiscardCards=0xC27E
 wDuelTempList=0xC510
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+_wsd_arena_hp = 0xC2C8
+_wsd_loaded_attack_animation = 0xCCB8
+_wsd_damage = 0xCCB9
+_wsd_damage_effectiveness = 0xCCC1
+_wsd_temp_turn = 0xCCC3
+_wsd_temp_nonturn = 0xCCC4
+_wsd_no_damage_or_effect = 0xCCC7
+_wsd_animations_disabled = 0xD421
+_wsd_is_damage_to_self = 0xCCE6
+_WSD_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+def _wsd_case(**kw):
+    case = {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80", _wsd_arena_hp: b"\xC8", _wsd_damage: b"\x00\x00", _wsd_damage_effectiveness: b"\x00", _wsd_temp_turn: b"\x01", _wsd_temp_nonturn: b"\x01", _wsd_no_damage_or_effect: b"\x00", _wsd_is_damage_to_self: b"\x00", _wsd_animations_disabled: b"\x01"}, "read": {_wsd_arena_hp: 1, _wsd_loaded_attack_animation: 1, _wsd_damage: 2, _wsd_damage_effectiveness: 1, _wsd_temp_nonturn: 1, _wsd_no_damage_or_effect: 1, _wsd_is_damage_to_self: 1}, "setup": list(_WSD_SETUP), "instruction_budget": 20000000, "cycle_budget": 80000000}
+    case.update(kw)
+    return case
+
+wDuelistType = 0xCC0D
+
+hTemp = 0xFFA0
+wDamage = 0xCCB9
+CASES_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+COIN_WRAM = {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00", 0xCE4E: b"\x34\x12"}
+COIN_READ = {0xCACA: 3, 0xCE4E: 2}
+
+hTempList = 0xFFA0
+wDuelTempList = 0xC510
+_EC_ARENA_HP = 0xC2C8
+_EC_LOADED_ATTACK_ANIMATION = 0xCCB8
+_EC_DAMAGE = 0xCCB9
+_EC_DAMAGE_EFFECTIVENESS = 0xCCC1
+_EC_TEMP_TURN = 0xCCC3
+_EC_TEMP_NON_TURN = 0xCCC4
+_EC_NO_DAMAGE_OR_EFFECT = 0xCCC7
+_EC_ANIMATIONS_DISABLED = 0xD421
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7453,6 +7488,41 @@ CONTRACT["Scavenge_PlayerSelectTrainerEffect"]={"compare":("a","f"),"preserve":(
 CASES["Scavenge_PlayerSelectTrainerEffect"]=[{"keys":[0,1],"wram":{0xFF97:b"\xC2",wDuelistDiscardCount:b"\x01",wDuelistDiscardCards:b"\xDD",0xCABB:b"\x00",0xFF40:b"\x80",0xCBCF:b"\x00",0xCBD0:b"\x00",0xCBD6:b"\x00",0xCBDF:b"\x00",0xCBD8:b"\x00\x00",wDuelTempList:b"\x00",0xFF91:b"\x00",0xFFB1:b"\x00",hTempCardIndex_ff98:b"\x00",hTempPlayAreaLocation_ffa1:b"\x00"},"setup":[{"fn":"CopyDMAFunction"},{"fn":"SetupText","d":0x20,"e":0x40}],"read":{hTempPlayAreaLocation_ffa1:1},"instruction_budget":20000000,"cycle_budget":80000000},dict(POISON,keys=[0,1],wram={0xFF97:b"\xC2",wDuelistDiscardCount:b"\x01",wDuelistDiscardCards:b"\xDD",0xCABB:b"\x00",0xFF40:b"\x80",0xCBCF:b"\x00",0xCBD0:b"\x00",0xCBD6:b"\x00",0xCBDF:b"\x00",0xCBD8:b"\x00\x00",wDuelTempList:b"\x00",0xFF91:b"\x00",0xFFB1:b"\x00",hTempCardIndex_ff98:b"\x00",hTempPlayAreaLocation_ffa1:b"\x00"},setup=[{"fn":"CopyDMAFunction"},{"fn":"SetupText","d":0x20,"e":0x40}],read={hTempPlayAreaLocation_ffa1:1},instruction_budget=20000000,cycle_budget=80000000)]
 # <<< factory Scavenge_PlayerSelectTrainerEffect
 
+# >>> factory WeezingSelfdestructEffect
+CONTRACT["WeezingSelfdestructEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["WeezingSelfdestructEffect"] = [_wsd_case(f=0x00), _wsd_case(**POISON)]
+# <<< factory WeezingSelfdestructEffect
+
+# >>> factory PayDayEffect
+CONTRACT["PayDayEffect"] = {"compare": (), "preserve": ()}
+CASES["PayDayEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {0xC2BA: b"\x3C", wDuelistType: b"\x01", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCE4E: b"\x00\x00"}, "read": {0xCAC2: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xC2BA: b"\x3C", wDuelistType: b"\x01", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCE4E: b"\x00\x00"}, read={0xCAC2: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory PayDayEffect
+
+# >>> factory StoneBarrage_MultiplierEffect
+CONTRACT["StoneBarrage_MultiplierEffect"] = {"compare": (), "preserve": ()}
+CASES["StoneBarrage_MultiplierEffect"] = [
+    {"keys": [0x00, 0x01],
+     "wram": COIN_WRAM,
+     "read": COIN_READ,
+     "setup": CASES_SETUP,
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram=COIN_WRAM, read=COIN_READ, setup=CASES_SETUP,
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory StoneBarrage_MultiplierEffect
+
+# >>> factory EnergyConversion_AddToHandEffect
+CONTRACT["EnergyConversion_AddToHandEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["EnergyConversion_AddToHandEffect"] = [
+    {"f": 0x00, "d": 0x00, "e": 0x00, "wram": {_EC_ARENA_HP: bytes((0x40,)), _EC_DAMAGE: bytes((0x00, 0x00)), _EC_DAMAGE_EFFECTIVENESS: bytes((0x00,)), _EC_TEMP_TURN: bytes((0x01,)), _EC_TEMP_NON_TURN: bytes((0x01,)), _EC_NO_DAMAGE_OR_EFFECT: bytes((0x00,)), _EC_ANIMATIONS_DISABLED: bytes((0x01,)), hTempList: bytes((0xFF,)), wDuelTempList: bytes((0x00,)), 0xFF97: bytes((0xC2,))}, "read": {hTempList: 1, wDuelTempList: 1, _EC_LOADED_ATTACK_ANIMATION: 1, _EC_DAMAGE: 2, _EC_DAMAGE_EFFECTIVENESS: 1, _EC_NO_DAMAGE_OR_EFFECT: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}, {"fn": "SwapTurn"}], "instruction_budget": 8000000, "cycle_budget": 32000000},
+    dict(POISON, wram={_EC_ARENA_HP: bytes((0x40,)), _EC_DAMAGE: bytes((0x00, 0x00)), _EC_DAMAGE_EFFECTIVENESS: bytes((0x00,)), _EC_TEMP_TURN: bytes((0x01,)), _EC_TEMP_NON_TURN: bytes((0x01,)), _EC_NO_DAMAGE_OR_EFFECT: bytes((0x00,)), _EC_ANIMATIONS_DISABLED: bytes((0x01,)), hTempList: bytes((0xFF,)), wDuelTempList: bytes((0x00,)), 0xFF97: bytes((0xC2,))}, read={hTempList: 1, wDuelTempList: 1, _EC_LOADED_ATTACK_ANIMATION: 1, _EC_DAMAGE: 2, _EC_DAMAGE_EFFECTIVENESS: 1, _EC_NO_DAMAGE_OR_EFFECT: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}, {"fn": "SwapTurn"}], instruction_budget=8000000, cycle_budget=32000000),
+]
+# <<< factory EnergyConversion_AddToHandEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10481,3 +10551,23 @@ MUTATIONS["Scavenge_PlayerSelectTrainerEffect"]={"source_symbol":"Scavenge_Playe
 for _record in SCHEMA2_CASES["Scavenge_PlayerSelectTrainerEffect"]:
     _record["completion"]={"mode":"pre-ret","pc":0x55F0,"bank":1}
 # <<< factory-completion Scavenge_PlayerSelectTrainerEffect
+# >>> factory-mutation WeezingSelfdestructEffect
+MUTATIONS["WeezingSelfdestructEffect"] = {"source_symbol": "WeezingSelfdestructEffect", "before": "DealDamageToAllBenchedPokemonResult WeezingSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\t(void)b;\n\t(void)c;\n\t(void)d;\n\t(void)e;\n\t(void)hl;\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 60u;", "after": "DealDamageToAllBenchedPokemonResult WeezingSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\t(void)b;\n\t(void)c;\n\t(void)d;\n\t(void)e;\n\t(void)hl;\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 61u;", "case_ids": ["WeezingSelfdestructEffect-0", "WeezingSelfdestructEffect-1"]}
+# <<< factory-mutation WeezingSelfdestructEffect
+# >>> factory-completion WeezingSelfdestructEffect
+for _record in SCHEMA2_CASES["WeezingSelfdestructEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
+# <<< factory-completion WeezingSelfdestructEffect
+# >>> factory-mutation PayDayEffect
+MUTATIONS["PayDayEffect"] = {"source_symbol":"PayDayEffect","before":"void PayDayEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDraw1CardFromDeckText, 0u);\n\tif ((toss.f & 0x10u) != 0u) {","after":"void PayDayEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDraw1CardFromDeckText, 0u);\n\tif ((toss.f & 0x10u) == 0u) {","case_ids":["PayDayEffect-0","PayDayEffect-1"]}
+# <<< factory-mutation PayDayEffect
+# >>> factory-mutation StoneBarrage_MultiplierEffect
+MUTATIONS["StoneBarrage_MultiplierEffect"] = {"source_symbol": "StoneBarrage_MultiplierEffect", "before": "\t*gb_ptr(0xCE4E) = 0x00u;", "after": "\t*gb_ptr(0xCE4E) = 0x01u;", "case_ids": ["StoneBarrage_MultiplierEffect-0", "StoneBarrage_MultiplierEffect-1"]}
+# <<< factory-mutation StoneBarrage_MultiplierEffect
+# >>> factory-mutation EnergyConversion_AddToHandEffect
+MUTATIONS["EnergyConversion_AddToHandEffect"] = {"source_symbol": "EnergyConversion_AddToHandEffect", "before": "EnergyConversionAddToHandEffectResult EnergyConversion_AddToHandEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\t(void)f;\n\t(void)d;\n\t(void)e;\n\twLoadedAttackAnimation = 0x7Au;", "after": "EnergyConversionAddToHandEffectResult EnergyConversion_AddToHandEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\t(void)f;\n\t(void)d;\n\t(void)e;\n\twLoadedAttackAnimation = 0u;", "case_ids": ["EnergyConversion_AddToHandEffect-0", "EnergyConversion_AddToHandEffect-1"]}
+# <<< factory-mutation EnergyConversion_AddToHandEffect
+# >>> factory-completion EnergyConversion_AddToHandEffect
+for _record in SCHEMA2_CASES["EnergyConversion_AddToHandEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
+# <<< factory-completion EnergyConversion_AddToHandEffect
