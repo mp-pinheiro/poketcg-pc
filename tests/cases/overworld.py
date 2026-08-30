@@ -326,6 +326,9 @@ READ_MAIL_INSTRUCTIONS = 60000000
 READ_MAIL_CYCLES = 240000000
 
 PAUSE_CARD_SRAM = {0: {0xA100: b"\x00" * 0xFF, 0xA218: b"\x00", 0xA26C: b"\x00", 0xA2C0: b"\x00", 0xA314: b"\x00", 0xA010: bytes([0x81, 0x82, 0x00] + [0] * 13)}}
+
+wNextScript = 0xD0C6
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -991,6 +994,14 @@ CASES["PauseMenu_Card"] = [
 ]
 # <<< factory PauseMenu_Card
 
+# >>> factory EnterScript
+CONTRACT["EnterScript"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["EnterScript"] = [
+    {"wram": {wNextScript: b"\x00\xC0", 0xC000: b"\xC9"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={wNextScript: b"\x00\xC0", 0xC000: b"\xC9"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory EnterScript
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1342,3 +1353,6 @@ MUTATIONS["Func_c2a3"] = {"source_symbol": "Func_c2a3", "before": "void Func_c2a
 # >>> factory-mutation PauseMenu_Card
 MUTATIONS["PauseMenu_Card"] = {"source_symbol": "PauseMenu_Card", "before": "void PauseMenu_Card(void)\n{\n\thSCX = 0u;", "after": "void PauseMenu_Card(void)\n{\n\thSCX = 1u;", "case_ids": ["PauseMenu_Card-0", "PauseMenu_Card-1"]}
 # <<< factory-mutation PauseMenu_Card
+# >>> factory-mutation EnterScript
+MUTATIONS["EnterScript"] = {"source_symbol": "EnterScript", "before": "\tuint16_t target = (uint16_t)(wNextScript | ((uint16_t)wNextScript_PTR[1] << 8));", "after": "\tuint16_t target = (uint16_t)(wNextScript | ((uint16_t)wNextScript_PTR[1] << 8) | 1u);", "case_ids": ["EnterScript-0", "EnterScript-1"]}
+# <<< factory-mutation EnterScript

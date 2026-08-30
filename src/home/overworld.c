@@ -1315,3 +1315,11 @@ void PauseMenu_Card(void)
 	Set_OBJ_8x8();
 }
 /* <<< factory PauseMenu_Card */
+
+/* >>> factory EnterScript */
+EnterScriptResult EnterScript(void)
+{
+	uint16_t target = (uint16_t)(wNextScript | ((uint16_t)wNextScript_PTR[1] << 8));
+	return (EnterScriptResult){(uint8_t)target, target};
+}
+/* <<< factory EnterScript */

@@ -621,6 +621,15 @@ static void adapt_PauseMenu_Card(ProbeState *s)
 }
 /* <<< factory PauseMenu_Card */
 
+/* >>> factory EnterScript */
+static void adapt_EnterScript(ProbeState *s)
+{
+	EnterScriptResult result = EnterScript();
+	s->a = result.a;
+	s->hl = result.hl;
+}
+/* <<< factory EnterScript */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -697,5 +706,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "PCMenu_ReadMail", adapt_PCMenu_ReadMail },
 	{ "Func_c2a3", adapt_Func_c2a3 },
 	{ "PauseMenu_Card", adapt_PauseMenu_Card },
+	{ "EnterScript", adapt_EnterScript },
 	{ NULL, NULL },
 };

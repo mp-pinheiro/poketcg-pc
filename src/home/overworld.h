@@ -290,4 +290,12 @@ void Func_c2a3(void);
 /* >>> factory PauseMenu_Card */
 void PauseMenu_Card(void);
 /* <<< factory PauseMenu_Card */
+/* >>> factory EnterScript */
+typedef struct {
+	uint8_t a;
+	uint16_t hl;
+} EnterScriptResult;
+
+EnterScriptResult EnterScript(void);
+/* <<< factory EnterScript */
 #endif /* POKETCG_HOME_OVERWORLD_H */
