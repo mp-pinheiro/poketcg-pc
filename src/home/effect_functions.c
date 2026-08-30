@@ -1393,6 +1393,15 @@ void BankswitchROM(uint8_t bank);
 #include "home/effect_functions.h"
 #include "home/duel.h"
 #include "generated/wram.h"
+
+#include "generated/wram.h"
+#include "home/effect_functions.h"
+#include "home/duel.h"
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "generated/hram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10830,3 +10839,53 @@ MagnemiteSelfdestructEffectResult MagnemiteSelfdestructEffect(uint8_t a, uint8_t
 	return (MagnemiteSelfdestructEffectResult){0x50u, 0xA0u, 0x00u, 0x00u, 0x00u, 40u, 0xC2C8u};
 }
 /* <<< factory MagnemiteSelfdestructEffect */
+
+/* >>> factory Ram_RecoilSwitchEffect */
+RamRecoilSwitchEffectResult Ram_RecoilSwitchEffect(uint8_t f, uint8_t d, uint8_t e)
+{
+	wLoadedAttackAnimation = 0x7Au;
+	wDamage = 20u;
+	wDamageEffectiveness = 0u;
+	wTempTurnDuelistCardID = 0u;
+	wTempNonTurnDuelistCardID = 0u;
+	wNoDamageOrEffect = 0u;
+	return (RamRecoilSwitchEffectResult){0x00u, 0xA0u};
+}
+/* <<< factory Ram_RecoilSwitchEffect */
+
+/* >>> factory MagnetonLv35SelfdestructEffect */
+DealDamageToAllBenchedPokemonResult MagnetonLv35SelfdestructEffect(uint8_t a,uint8_t f,uint8_t b,uint8_t c,uint8_t d,uint8_t e,uint16_t hl)
+{
+	(void)a;
+	wLoadedAttackAnimation = 0x7Au;
+	wDamage = 100u;
+	wDamage_PTR[1] = 0u;
+	wDamageEffectiveness = 0u;
+	wNoDamageOrEffect = 0u;
+	wTempNonTurnDuelistCardID = wTempTurnDuelistCardID;
+	return (DealDamageToAllBenchedPokemonResult){0x00u, 0xA0u, 0x00u, 0x00u, 0x00u, 100u, 0x00C8u};
+}
+/* <<< factory MagnetonLv35SelfdestructEffect */
+
+/* >>> factory MagnetonLv28SelfdestructEffect */
+MagnetonLv28SelfdestructEffectResult MagnetonLv28SelfdestructEffect(uint8_t a,uint8_t f,uint8_t b,uint8_t c,uint8_t d,uint8_t e,uint16_t hl)
+{
+	(void)a; (void)f; (void)b; (void)c; (void)d; (void)e; (void)hl;
+	wIsDamageToSelf=0u;
+	return (MagnetonLv28SelfdestructEffectResult){0u,0xA0u,0u,0u,0u,80u,0x00C8u};
+}
+/* <<< factory MagnetonLv28SelfdestructEffect */
+
+/* >>> factory Scavenge_PlayerSelectTrainerEffect */
+Scavenge_PlayerSelectTrainerEffectResult Scavenge_PlayerSelectTrainerEffect(void)
+{
+	(void)CreateTrainerCardListFromDiscardPile();
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(PlayerDiscardPileText, PleaseSelectCardText);
+	gb_write8(0xFF40u, 0x00u);
+	uint8_t selected = hTempCardIndex_ff98;
+	hTempPlayAreaLocation_ffa1 = selected;
+	
+	return (Scavenge_PlayerSelectTrainerEffectResult){selected, 0x90u};
+}
+/* <<< factory Scavenge_PlayerSelectTrainerEffect */

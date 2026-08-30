@@ -2899,6 +2899,39 @@ def _mse_case(**kw):
     case = {"wram": {_mse_arena_hp: b"\x50", _mse_damage: b"\x00\x00", _mse_damage_effectiveness: b"\x00", _mse_temp_turn: b"\x01", _mse_temp_nonturn: b"\x01", _mse_no_damage_or_effect: b"\x00", _mse_animations_disabled: b"\x01", _mse_is_damage_to_self: b"\x00", 0xCABB: b"\x00", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}, {"fn": "SwapTurn"}], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {_mse_arena_hp: 1, _mse_loaded_attack_animation: 1, _mse_damage: 2, _mse_damage_effectiveness: 1, _mse_temp_nonturn: 1, _mse_no_damage_or_effect: 1, _mse_is_damage_to_self: 1}}
     case.update(kw)
     return case
+
+_arena_hp = 0xC2C8
+_loaded_animation = 0xCCB8
+_damage = 0xCCB9
+_effectiveness = 0xCCC1
+_temp_turn = 0xCCC3
+_temp_nonturn = 0xCCC4
+_no_effect = 0xCCC7
+_animations_disabled = 0xD421
+POISON = dict(a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234)
+def _rrse(**kw):
+    case = {"wram": {_arena_hp: b"\x40", _damage: b"\x00\x00", _effectiveness: b"\x00", _temp_turn: b"\x00", _temp_nonturn: b"\x00", _no_effect: b"\x00", _animations_disabled: b"\x01"}, "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {_arena_hp: 1, _loaded_animation: 1, _damage: 2, _effectiveness: 1, _temp_turn: 1, _temp_nonturn: 1, _no_effect: 1}}
+    case.update(kw)
+    return case
+
+POISON={"a":0xAA,"f":0xF0,"b":0xBB,"c":0xCC,"d":0xDD,"e":0xEE,"hl":0x1234}
+def _m(**k):
+ x={"wram":{0xC2C8:b"\x50",0xCCB9:b"\x00\x00",0xCCC1:b"\x00",0xCCC4:b"\x01",0xCCC7:b"\x00",0xD421:b"\x01"},"instruction_budget":20000000,"cycle_budget":80000000,"read":{0xC2C8:1,0xCCB8:1,0xCCB9:2,0xCCC1:1,0xCCC4:1,0xCCC7:1}}
+ x.update(k)
+ return x
+
+wIsDamageToSelf=0xCCE6
+_magneton_arena_hp=0xC2C8
+def _magneton(**kw):
+ c={"wram":{_magneton_arena_hp:b"\xA0",wIsDamageToSelf:b"\x00"},"instruction_budget":20000000,"cycle_budget":80000000,"read":{_magneton_arena_hp:1,wIsDamageToSelf:1}}
+ c.update(kw);return c
+
+POISON = {"a":0xAA,"f":0xF0,"b":0xBB,"c":0xCC,"d":0xDD,"e":0xEE,"hl":0x1234}
+hTempCardIndex_ff98=0xFF98
+hTempPlayAreaLocation_ffa1=0xFFA1
+wDuelistDiscardCount=0xC2ED
+wDuelistDiscardCards=0xC27E
+wDuelTempList=0xC510
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7400,6 +7433,26 @@ CASES["MagnemiteSelfdestructEffect"] = [
 ]
 # <<< factory MagnemiteSelfdestructEffect
 
+# >>> factory Ram_RecoilSwitchEffect
+CONTRACT["Ram_RecoilSwitchEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Ram_RecoilSwitchEffect"] = [_rrse(), _rrse(**POISON)]
+# <<< factory Ram_RecoilSwitchEffect
+
+# >>> factory MagnetonLv35SelfdestructEffect
+CONTRACT["MagnetonLv35SelfdestructEffect"]={"compare":("a","f","b","c","d","e","hl"),"preserve":()}
+CASES["MagnetonLv35SelfdestructEffect"]=[_m(),_m(**POISON)]
+# <<< factory MagnetonLv35SelfdestructEffect
+
+# >>> factory MagnetonLv28SelfdestructEffect
+CONTRACT["MagnetonLv28SelfdestructEffect"]={"compare":("a","f","b","c","d","e","hl"),"preserve":()}
+CASES["MagnetonLv28SelfdestructEffect"]=[_magneton(),_magneton(**POISON)]
+# <<< factory MagnetonLv28SelfdestructEffect
+
+# >>> factory Scavenge_PlayerSelectTrainerEffect
+CONTRACT["Scavenge_PlayerSelectTrainerEffect"]={"compare":("a","f"),"preserve":()}
+CASES["Scavenge_PlayerSelectTrainerEffect"]=[{"keys":[0,1],"wram":{0xFF97:b"\xC2",wDuelistDiscardCount:b"\x01",wDuelistDiscardCards:b"\xDD",0xCABB:b"\x00",0xFF40:b"\x80",0xCBCF:b"\x00",0xCBD0:b"\x00",0xCBD6:b"\x00",0xCBDF:b"\x00",0xCBD8:b"\x00\x00",wDuelTempList:b"\x00",0xFF91:b"\x00",0xFFB1:b"\x00",hTempCardIndex_ff98:b"\x00",hTempPlayAreaLocation_ffa1:b"\x00"},"setup":[{"fn":"CopyDMAFunction"},{"fn":"SetupText","d":0x20,"e":0x40}],"read":{hTempPlayAreaLocation_ffa1:1},"instruction_budget":20000000,"cycle_budget":80000000},dict(POISON,keys=[0,1],wram={0xFF97:b"\xC2",wDuelistDiscardCount:b"\x01",wDuelistDiscardCards:b"\xDD",0xCABB:b"\x00",0xFF40:b"\x80",0xCBCF:b"\x00",0xCBD0:b"\x00",0xCBD6:b"\x00",0xCBDF:b"\x00",0xCBD8:b"\x00\x00",wDuelTempList:b"\x00",0xFF91:b"\x00",0xFFB1:b"\x00",hTempCardIndex_ff98:b"\x00",hTempPlayAreaLocation_ffa1:b"\x00"},setup=[{"fn":"CopyDMAFunction"},{"fn":"SetupText","d":0x20,"e":0x40}],read={hTempPlayAreaLocation_ffa1:1},instruction_budget=20000000,cycle_budget=80000000)]
+# <<< factory Scavenge_PlayerSelectTrainerEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10400,3 +10453,31 @@ MUTATIONS["MagnemiteSelfdestructEffect"] = {"source_symbol": "MagnemiteSelfdestr
 for _record in SCHEMA2_CASES["MagnemiteSelfdestructEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
 # <<< factory-completion MagnemiteSelfdestructEffect
+# >>> factory-mutation Ram_RecoilSwitchEffect
+MUTATIONS["Ram_RecoilSwitchEffect"] = {"source_symbol": "Ram_RecoilSwitchEffect", "before": "\twLoadedAttackAnimation = 0x7Au;", "after": "\twLoadedAttackAnimation = 0x00u;", "case_ids": ["Ram_RecoilSwitchEffect-0", "Ram_RecoilSwitchEffect-1"]}
+# <<< factory-mutation Ram_RecoilSwitchEffect
+# >>> factory-completion Ram_RecoilSwitchEffect
+for _record in SCHEMA2_CASES["Ram_RecoilSwitchEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
+# <<< factory-completion Ram_RecoilSwitchEffect
+# >>> factory-mutation MagnetonLv35SelfdestructEffect
+MUTATIONS["MagnetonLv35SelfdestructEffect"]={"source_symbol":"MagnetonLv35SelfdestructEffect","before":"\twDamage = 100u;","after":"\twDamage = 101u;","case_ids":["MagnetonLv35SelfdestructEffect-0","MagnetonLv35SelfdestructEffect-1"]}
+# <<< factory-mutation MagnetonLv35SelfdestructEffect
+# >>> factory-completion MagnetonLv35SelfdestructEffect
+for _record in SCHEMA2_CASES["MagnetonLv35SelfdestructEffect"]:
+    _record["completion"]={"mode":"pre-ret","pc":0x7469,"bank":1}
+# <<< factory-completion MagnetonLv35SelfdestructEffect
+# >>> factory-mutation MagnetonLv28SelfdestructEffect
+MUTATIONS["MagnetonLv28SelfdestructEffect"]={"source_symbol":"MagnetonLv28SelfdestructEffect","before":"return (MagnetonLv28SelfdestructEffectResult){0u,0xA0u,0u,0u,0u,80u,0x00C8u};","after":"return (MagnetonLv28SelfdestructEffectResult){0u,0xA0u,0u,0u,0u,0u,0x00C8u};","case_ids":["MagnetonLv28SelfdestructEffect-0","MagnetonLv28SelfdestructEffect-1"]}
+# <<< factory-mutation MagnetonLv28SelfdestructEffect
+# >>> factory-completion MagnetonLv28SelfdestructEffect
+for _record in SCHEMA2_CASES["MagnetonLv28SelfdestructEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
+# <<< factory-completion MagnetonLv28SelfdestructEffect
+# >>> factory-mutation Scavenge_PlayerSelectTrainerEffect
+MUTATIONS["Scavenge_PlayerSelectTrainerEffect"]={"source_symbol":"Scavenge_PlayerSelectTrainerEffect","before":"\tuint8_t selected = hTempCardIndex_ff98;\n\thTempPlayAreaLocation_ffa1 = selected;","after":"\tuint8_t selected = (uint8_t)(hTempCardIndex_ff98 + 1u);\n\thTempPlayAreaLocation_ffa1 = selected;","case_ids":["Scavenge_PlayerSelectTrainerEffect-0","Scavenge_PlayerSelectTrainerEffect-1"]}
+# <<< factory-mutation Scavenge_PlayerSelectTrainerEffect
+# >>> factory-completion Scavenge_PlayerSelectTrainerEffect
+for _record in SCHEMA2_CASES["Scavenge_PlayerSelectTrainerEffect"]:
+    _record["completion"]={"mode":"pre-ret","pc":0x55F0,"bank":1}
+# <<< factory-completion Scavenge_PlayerSelectTrainerEffect

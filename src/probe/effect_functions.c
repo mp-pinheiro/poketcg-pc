@@ -5145,6 +5145,36 @@ static void adapt_MagnemiteSelfdestructEffect(ProbeState *s)
 }
 /* <<< factory MagnemiteSelfdestructEffect */
 
+/* >>> factory Ram_RecoilSwitchEffect */
+static void adapt_Ram_RecoilSwitchEffect(ProbeState *s)
+{
+	RamRecoilSwitchEffectResult result = Ram_RecoilSwitchEffect(s->f, s->d, s->e);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Ram_RecoilSwitchEffect */
+
+/* >>> factory MagnetonLv35SelfdestructEffect */
+static void adapt_MagnetonLv35SelfdestructEffect(ProbeState *s)
+{
+	DealDamageToAllBenchedPokemonResult r=MagnetonLv35SelfdestructEffect(s->a,s->f,s->b,s->c,s->d,s->e,s->hl);
+	s->a=r.a; s->f=r.f; s->b=r.b; s->c=r.c; s->d=r.d; s->e=r.e; s->hl=r.hl;
+}
+/* <<< factory MagnetonLv35SelfdestructEffect */
+
+/* >>> factory MagnetonLv28SelfdestructEffect */
+static void adapt_MagnetonLv28SelfdestructEffect(ProbeState *s){ MagnetonLv28SelfdestructEffectResult r=MagnetonLv28SelfdestructEffect(s->a,s->f,s->b,s->c,s->d,s->e,s->hl); s->a=r.a;s->f=r.f;s->b=r.b;s->c=r.c;s->d=r.d;s->e=r.e;s->hl=r.hl; }
+/* <<< factory MagnetonLv28SelfdestructEffect */
+
+/* >>> factory Scavenge_PlayerSelectTrainerEffect */
+static void adapt_Scavenge_PlayerSelectTrainerEffect(ProbeState *s)
+{
+	Scavenge_PlayerSelectTrainerEffectResult result = Scavenge_PlayerSelectTrainerEffect();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Scavenge_PlayerSelectTrainerEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5766,5 +5796,9 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "FriendshipSong_AddToBench50PercentEffect", adapt_FriendshipSong_AddToBench50PercentEffect },
 	{ "SubmissionEffect", adapt_SubmissionEffect },
 	{ "MagnemiteSelfdestructEffect", adapt_MagnemiteSelfdestructEffect },
+	{ "Ram_RecoilSwitchEffect", adapt_Ram_RecoilSwitchEffect },
+	{ "MagnetonLv35SelfdestructEffect", adapt_MagnetonLv35SelfdestructEffect },
+	{ "MagnetonLv28SelfdestructEffect", adapt_MagnetonLv28SelfdestructEffect },
+	{ "Scavenge_PlayerSelectTrainerEffect", adapt_Scavenge_PlayerSelectTrainerEffect },
 	{ NULL, NULL },
 };

@@ -2098,6 +2098,21 @@ SubmissionEffectResult SubmissionEffect(uint8_t a,uint8_t f,uint8_t b,uint8_t c,
 typedef struct { uint8_t a, f, b, c, d, e; uint16_t hl; } MagnemiteSelfdestructEffectResult;
 MagnemiteSelfdestructEffectResult MagnemiteSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory MagnemiteSelfdestructEffect */
+/* >>> factory Ram_RecoilSwitchEffect */
+typedef struct { uint8_t a; uint8_t f; } RamRecoilSwitchEffectResult;
+RamRecoilSwitchEffectResult Ram_RecoilSwitchEffect(uint8_t f, uint8_t d, uint8_t e);
+/* <<< factory Ram_RecoilSwitchEffect */
+/* >>> factory MagnetonLv35SelfdestructEffect */
+DealDamageToAllBenchedPokemonResult MagnetonLv35SelfdestructEffect(uint8_t a,uint8_t f,uint8_t b,uint8_t c,uint8_t d,uint8_t e,uint16_t hl);
+/* <<< factory MagnetonLv35SelfdestructEffect */
+/* >>> factory MagnetonLv28SelfdestructEffect */
+typedef struct { uint8_t a, f, b, c, d, e; uint16_t hl; } MagnetonLv28SelfdestructEffectResult;
+MagnetonLv28SelfdestructEffectResult MagnetonLv28SelfdestructEffect(uint8_t a,uint8_t f,uint8_t b,uint8_t c,uint8_t d,uint8_t e,uint16_t hl);
+/* <<< factory MagnetonLv28SelfdestructEffect */
+/* >>> factory Scavenge_PlayerSelectTrainerEffect */
+typedef struct { uint8_t a; uint8_t f; } Scavenge_PlayerSelectTrainerEffectResult;
+Scavenge_PlayerSelectTrainerEffectResult Scavenge_PlayerSelectTrainerEffect(void);
+/* <<< factory Scavenge_PlayerSelectTrainerEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
