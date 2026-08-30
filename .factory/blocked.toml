@@ -71,10 +71,6 @@ name = "SolarPower_RemoveStatusEffect"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-9 retry remains on the frame-enabled attack-animation path and does not produce a bounded return under the isolated fixture; this is an animation execution boundary, not a translation mismatch."
 unblock = "Trace the first PlayAttackAnimation/WaitAttackAnimation callee that enables LCD and identify a bounded pre-ret completion, then verify that prefix or port the frame-safe callee before retrying SolarPower_RemoveStatusEffect."
 
-[[blocked]]
-name = "Quickfreeze_Paralysis50PercentEffect"
-reason = "HAND-DIAGNOSED 2026-08-28: generation-9 retry reaches the status-effect path but differs at wTempSGBPacket+2 (0xCAE2), reference 0x01 versus native 0x00, after DrawDuelMainScene/animation rendering. The missing byte is a callee side effect outside Quickfreeze own queue writes."
-unblock = "Trace DrawDuelMainScene and the SGB packet write at 0xCAE2, port that missing state transition, then retry Quickfreeze_Paralysis50PercentEffect."
 
 
 
