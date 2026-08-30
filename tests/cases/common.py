@@ -177,6 +177,10 @@ hWhoseTurn = 0xFF97
 wLCDC = 0xCABB
 
 wCurSongID = 0xDD80
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+WRAM_LCD_SHADOW = 0xCABB
+SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory CheckIfHasCardIDInHand
@@ -611,6 +615,14 @@ CASES["SendDeckConfiguration"] = [
 ]
 # <<< factory SendDeckConfiguration
 
+# >>> factory SetUpAndStartLinkDuel
+CONTRACT["SetUpAndStartLinkDuel"] = {"compare": (), "preserve": ()}
+CASES["SetUpAndStartLinkDuel"] = [
+    {"wram": {WRAM_LCD_SHADOW: b"\x00"}, "setup": SETUP, "read": {WRAM_LCD_SHADOW: 1}, "expect": {WRAM_LCD_SHADOW: b"\x80"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={WRAM_LCD_SHADOW: b"\x00"}, setup=SETUP, read={WRAM_LCD_SHADOW: 1}, expect={WRAM_LCD_SHADOW: b"\x80"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory SetUpAndStartLinkDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -859,3 +871,15 @@ MUTATIONS["SendDeckConfiguration"] = {"source_symbol": "SendDeckConfiguration", 
 for _record in SCHEMA2_CASES["SendDeckConfiguration"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x5A1F}
 # <<< factory-completion SendDeckConfiguration
+# >>> factory-mutation SetUpAndStartLinkDuel
+MUTATIONS["SetUpAndStartLinkDuel"] = {
+    "source_symbol": "SetUpAndStartLinkDuel",
+    "before": "void SetUpAndStartLinkDuel(void)\n{\n\tSetSpriteAnimationsAsVBlankFunction();\n\t(void)LoadScene(SCENE_GAMEBOY_LINK_TRANSMITTING, 0u, 0u, 0u, 0u, 0u, 0u);\n\tLoadPlayerDeck();\n\tSwitchToCGBNormalSpeed();\n\t(void)SetupText(0x20u, 0x40u);\n\tEnableLCD();",
+    "after": "void SetUpAndStartLinkDuel(void)\n{\n\tSetSpriteAnimationsAsVBlankFunction();\n\t(void)LoadScene(SCENE_GAMEBOY_LINK_TRANSMITTING, 0u, 0u, 0u, 0u, 0u, 0u);\n\tLoadPlayerDeck();\n\tSwitchToCGBNormalSpeed();\n\t(void)SetupText(0x20u, 0x40u);\n\t(void)0;",
+    "case_ids": ["SetUpAndStartLinkDuel-0", "SetUpAndStartLinkDuel-1"]
+}
+# <<< factory-mutation SetUpAndStartLinkDuel
+# >>> factory-completion SetUpAndStartLinkDuel
+for _rec, _comp in zip(SCHEMA2_CASES["SetUpAndStartLinkDuel"], ({"mode": "pre-ret", "pc": 0x2382}, {"mode": "pre-ret", "pc": 0x2382})):
+    _rec["completion"] = dict(_comp)
+# <<< factory-completion SetUpAndStartLinkDuel

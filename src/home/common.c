@@ -104,6 +104,15 @@
 #include "home/card_pop.h"
 
 #include "home/sound.h"
+
+#include "home/link_duel.h"
+#include "home/core.h"
+#include "home/load_animation.h"
+#include "home/process_text.h"
+#include "home/sprite_vblank.h"
+#include "home/time.h"
+#include "home/lcd.h"
+#define SCENE_GAMEBOY_LINK_TRANSMITTING 0x0fu
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -827,3 +836,15 @@ void SendDeckConfiguration(void)
 	_SendDeckConfiguration();
 }
 /* <<< factory SendDeckConfiguration */
+
+/* >>> factory SetUpAndStartLinkDuel */
+void SetUpAndStartLinkDuel(void)
+{
+	SetSpriteAnimationsAsVBlankFunction();
+	(void)LoadScene(SCENE_GAMEBOY_LINK_TRANSMITTING, 0u, 0u, 0u, 0u, 0u, 0u);
+	LoadPlayerDeck();
+	SwitchToCGBNormalSpeed();
+	(void)SetupText(0x20u, 0x40u);
+	EnableLCD();
+}
+/* <<< factory SetUpAndStartLinkDuel */

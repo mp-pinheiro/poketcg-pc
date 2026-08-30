@@ -153,4 +153,7 @@ void SendCard(void);
 /* >>> factory SendDeckConfiguration */
 void SendDeckConfiguration(void);
 /* <<< factory SendDeckConfiguration */
+/* >>> factory SetUpAndStartLinkDuel */
+void SetUpAndStartLinkDuel(void);
+/* <<< factory SetUpAndStartLinkDuel */
 #endif /* POKETCG_HOME_COMMON_H */

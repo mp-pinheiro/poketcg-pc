@@ -312,6 +312,14 @@ static void adapt_SendDeckConfiguration(ProbeState *s)
 }
 /* <<< factory SendDeckConfiguration */
 
+/* >>> factory SetUpAndStartLinkDuel */
+static void adapt_SetUpAndStartLinkDuel(ProbeState *s)
+{
+	(void)s;
+	SetUpAndStartLinkDuel();
+}
+/* <<< factory SetUpAndStartLinkDuel */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -349,5 +357,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "DoCardPop", adapt_DoCardPop },
 	{ "SendCard", adapt_SendCard },
 	{ "SendDeckConfiguration", adapt_SendDeckConfiguration },
+	{ "SetUpAndStartLinkDuel", adapt_SetUpAndStartLinkDuel },
 	{ NULL, NULL },
 };
