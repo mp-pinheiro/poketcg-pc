@@ -24,3 +24,10 @@ uint8_t MainMenu_CardPop(void)
 	return 0x10u;
 }
 /* <<< factory MainMenu_CardPop */
+
+/* >>> factory MainMenu_NewGame */
+void MainMenu_NewGame(void)
+{
+	Func_c1b1();
+}
+/* <<< factory MainMenu_NewGame */
