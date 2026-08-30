@@ -12,4 +12,7 @@ void MainMenu_NewGame(void);
 /* >>> factory MainMenu_ContinueFromDiary */
 void MainMenu_ContinueFromDiary(void);
 /* <<< factory MainMenu_ContinueFromDiary */
+/* >>> factory MainMenu_ContinueDuel */
+void MainMenu_ContinueDuel(void);
+/* <<< factory MainMenu_ContinueDuel */
 #endif /* POKETCG_HOME_MAIN_MENU_H */

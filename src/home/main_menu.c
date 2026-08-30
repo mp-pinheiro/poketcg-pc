@@ -11,6 +11,8 @@
 #include "generated/wram.h"
 #define MUSIC_CARD_POP 0x08u
 #define MUSIC_STOP 0x00u
+
+#include "home/scripting.h"
 /* <<< factory statics */
 
 /* >>> factory MainMenu_CardPop */
@@ -38,3 +40,11 @@ void MainMenu_ContinueFromDiary(void)
 	PlaySong(MUSIC_STOP);
 }
 /* <<< factory MainMenu_ContinueFromDiary */
+
+/* >>> factory MainMenu_ContinueDuel */
+void MainMenu_ContinueDuel(void)
+{
+	PlaySong(MUSIC_STOP);
+	ClearEvents();
+}
+/* <<< factory MainMenu_ContinueDuel */

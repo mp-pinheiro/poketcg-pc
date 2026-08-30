@@ -16,6 +16,8 @@ CARD_POP_WRAM = {wConsole: b"\x01", wLCDC: b"\x00", wCurSongID: b"\x80"}
 CARD_POP_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
 wTempMap = 0xD0BB
+
+wCurSongID = 0xDD80
 # <<< factory-cases-statics
 
 # >>> factory MainMenu_CardPop
@@ -42,6 +44,14 @@ CASES["MainMenu_ContinueFromDiary"] = [
 ]
 # <<< factory MainMenu_ContinueFromDiary
 
+# >>> factory MainMenu_ContinueDuel
+CONTRACT["MainMenu_ContinueDuel"] = {"compare": (), "preserve": ()}
+CASES["MainMenu_ContinueDuel"] = [
+    dict(evidence="primary", why="The bounded prefix stops after the ported song stop and event clear, before the unported save and event dispatch calls; PlaySong leaves the current song ID stopped.", wram={wCurSongID: b"\x7f"}, read={wCurSongID: 1}, expect={wCurSongID: b"\x00"}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, evidence="primary", why="The bounded prefix still stops the song and clears events before the unported save and event dispatch calls, regardless of poisoned entry registers.", wram={wCurSongID: b"\x7f"}, read={wCurSongID: 1}, expect={wCurSongID: b"\x00"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory MainMenu_ContinueDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -63,3 +73,11 @@ MUTATIONS["MainMenu_ContinueFromDiary"] = {"source_symbol": "MainMenu_ContinueFr
 for _record in SCHEMA2_CASES["MainMenu_ContinueFromDiary"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x6746, "bank": 4}
 # <<< factory-completion MainMenu_ContinueFromDiary
+# >>> factory-mutation MainMenu_ContinueDuel
+MUTATIONS["MainMenu_ContinueDuel"] = {"source_symbol": "MainMenu_ContinueDuel", "before": "void MainMenu_ContinueDuel(void)\n{\n\tPlaySong(MUSIC_STOP);", "after": "void MainMenu_ContinueDuel(void)\n{\n\tPlaySong(0x01u);", "case_ids": ["MainMenu_ContinueDuel-0", "MainMenu_ContinueDuel-1"]}
+# <<< factory-mutation MainMenu_ContinueDuel
+# >>> factory-completion MainMenu_ContinueDuel
+# MainMenu_ContinueDuel reaches the unported LoadGeneralSaveData farcall after PlaySong and ClearEvents.
+for _record in SCHEMA2_CASES["MainMenu_ContinueDuel"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x6787, "bank": 4}
+# <<< factory-completion MainMenu_ContinueDuel
