@@ -358,7 +358,8 @@ class Oracle:
         else:
             # Home bank ($0000-$3FFF) is always mapped. For a nested completion
             # in the switchable window, the case may name its owning ROM bank.
-            self._arm(stop_pc, stop_bank if stop_bank is not None else fn_bank)
+            self._arm(stop_pc, 0 if stop_pc < 0x4000
+                      else (stop_bank if stop_bank is not None else fn_bank))
         try:
             pb.hook_deregister(0, self._VBLANK_HALT)
         except (ValueError, KeyError):
