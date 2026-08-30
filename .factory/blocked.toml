@@ -36,10 +36,6 @@ unblock = "CORRECTED 2026-08-28: the recorded mechanism (interrupt/VBlank-cascad
 
 
 
-[[blocked]]
-name = "MagnemiteSelfdestructEffect"
-reason = "HAND-RESOLVED 2026-08-28: generation-9 primary candidates all exhaust at pc=625 (0x0271, the VBlank parking loop) before returning. The routine enters PlayAttackAnimation/WaitAttackAnimation and cannot reach its post-animation damage paths under the current GBRT fixture; this is an execution-environment boundary, not a C mismatch."
-unblock = "Trace the animation wait's required LCD/VBlank exit state with a bounded PPU trace, then reissue with a case that exits WaitAttackAnimation or an asm-derived pre-ret cutpoint; do not increase budgets or suppress the timeout."
 
 
 [[blocked]]
