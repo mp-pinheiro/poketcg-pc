@@ -1366,6 +1366,10 @@ void BankswitchROM(uint8_t bank);
 #include "home/print_text.h"
 #include "mem.h"
 #define PokemonHealedDamageText 0x0179u
+
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10663,3 +10667,11 @@ void Potion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, ui
 	uint8_t amount = hTempPlayAreaLocation_ffa1;
 }
 /* <<< factory Potion_HealEffect */
+
+/* >>> factory SuperPotion_HealEffect */
+void SuperPotion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	PutCardInDiscardPile(hTemp_ffa0);
+	hTempPlayAreaLocation_ff9d = hTempPlayAreaLocation_ffa1;
+}
+/* <<< factory SuperPotion_HealEffect */

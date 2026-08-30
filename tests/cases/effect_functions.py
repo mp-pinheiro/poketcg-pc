@@ -7214,6 +7214,14 @@ CASES["Potion_HealEffect"] = [
 ]
 # <<< factory Potion_HealEffect
 
+# >>> factory SuperPotion_HealEffect
+CONTRACT["SuperPotion_HealEffect"] = {"compare": (), "preserve": ()}
+CASES["SuperPotion_HealEffect"] = [
+    {"a": 0x10, "f": 0x80, "wram": {0xFF97: b"\xC2", 0xFFA0: b"\x12", 0xFFA1: b"\x03", 0xFFA2: b"\x01", 0xFF9D: b"\x07", 0xC2ED: b"\x00", 0xD421: b"\x01", 0xCCB8: b"\x00", 0xCE7E: b"\x00"}, "read": {0xC212: 1, 0xC27E: 1, 0xC2ED: 1, 0xFF9D: 1, 0xCCB8: 1, 0xCE7E: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFFA0: b"\x34", 0xFFA1: b"\x05", 0xFFA2: b"\x02", 0xFF9D: b"\x09", 0xC2ED: b"\x01", 0xD421: b"\x01", 0xCCB8: b"\x00", 0xCE7E: b"\x00"}, read={0xC234: 1, 0xC27F: 1, 0xC2ED: 1, 0xFF9D: 1, 0xCCB8: 1, 0xCE7E: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory SuperPotion_HealEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10145,3 +10153,10 @@ MUTATIONS["Potion_HealEffect"] = {"source_symbol": "Potion_HealEffect", "before"
 for _record in SCHEMA2_CASES["Potion_HealEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x7EBC, "bank": 11}
 # <<< factory-completion Potion_HealEffect
+# >>> factory-mutation SuperPotion_HealEffect
+MUTATIONS["SuperPotion_HealEffect"] = {"source_symbol": "SuperPotion_HealEffect", "before": "void SuperPotion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tPutCardInDiscardPile(hTemp_ffa0);\n\thTempPlayAreaLocation_ff9d = hTempPlayAreaLocation_ffa1;", "after": "void SuperPotion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tPutCardInDiscardPile(hTemp_ffa0);\n\thTempPlayAreaLocation_ff9d = 0u;", "case_ids": ["SuperPotion_HealEffect-0", "SuperPotion_HealEffect-1"]}
+# <<< factory-mutation SuperPotion_HealEffect
+# >>> factory-completion SuperPotion_HealEffect
+for _record in SCHEMA2_CASES["SuperPotion_HealEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x7EBC, "bank": 11}
+# <<< factory-completion SuperPotion_HealEffect

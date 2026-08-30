@@ -1,0 +1,9 @@
+{
+  "fn": "SuperPotion_HealEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SuperPotion_HealEffect\", \"registers\": {\"a\": 16, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49682\": \"02\", \"49790\": \"12\", \"49901\": \"01\", \"52408\": \"00\", \"52862\": \"00\", \"54305\": \"01\", \"65431\": \"c2\", \"65437\": \"03\", \"65440\": \"120301\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SuperPotion_HealEffect\", \"mismatches\": {\"bus\": {\"address\": 65437, \"reference\": \"000001c203120301\", \"native\": \"000001c200120301\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[49682, 1], [49790, 1], [49901, 1], [52408, 1], [52862, 1], [54305, 1], [65431, 1], [65437, 1], [65440, 3]]}}}\n",
+  "restored": "{\"fn\": \"SuperPotion_HealEffect\", \"registers\": {\"a\": 16, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49682\": \"02\", \"49790\": \"12\", \"49901\": \"01\", \"52408\": \"00\", \"52862\": \"00\", \"54305\": \"01\", \"65431\": \"c2\", \"65437\": \"03\", \"65440\": \"120301\"}}, \"status\": \"PASS\"}\n"
+}
