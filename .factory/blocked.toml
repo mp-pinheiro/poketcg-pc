@@ -97,10 +97,6 @@ name = "WeezingSelfdestructEffect"
 reason = "HAND-DIAGNOSED 2026-08-28: generation-9 retry candidate reaches the reference animation/VBlank parking path with LCDC=0x80 and exhausts the configured cycle budget before return; this self-destruct effect is frame-dependent, not a C mismatch. Another unchanged full-call retry is non-informative."
 unblock = "Trace the first animation/recoil callee that enables LCD and identify a bounded pre-ret completion, then verify that prefix or port the frame-safe callee before retrying this effect; do not increase budgets or repeat the unchanged full-call case."
 
-[[blocked]]
-name = "StoneBarrage_MultiplierEffect"
-reason = "HAND-DIAGNOSED 2026-08-28: generation-9 retry reaches a deterministic bus mismatch at 0xCCD9 after TossCoinATimes; reference writes 000181004006000000 while native leaves the multiplier-side state 000181000000000000. The missing state is a callee-owned coin/animation side effect, not the routine arithmetic."
-unblock = "Trace TossCoinATimes_BankB and its SGB/coin result writes at 0xCCD9, then port the missing state transition or use a bounded pre-ret contract before retrying StoneBarrage_MultiplierEffect."
 
 [[blocked]]
 name = "SolarPower_RemoveStatusEffect"
