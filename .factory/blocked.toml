@@ -73,3 +73,12 @@ name = "ChanseyDoubleEdgeEffect"
 reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:8431 (basename `effect_functions`). 19 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case ChanseyDoubleEdgeEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":65418,\"sp\":65484,\"rom_bank\":1,\"hbank_rom\":1,\"instructions\":7476374,\"cycles\":32000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":0,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":8,\"ppu_mode\":3,\"bus\":\"40807a5000000101000180\"}"
 unblock = "read the recorded diagnostics under .factory/try/ChanseyDoubleEdgeEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
+[[blocked]]
+name = "PokemonTrader_TradeCardsEffect"
+reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:10078 (basename `effect_functions`). 20 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case PokemonTrader_TradeCardsEffect-0 {\"status\": \"PORT\", \"fn\": \"PokemonTrader_TradeCardsEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"010080c24980\", \"native\": \"010080c20001\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[49730, 1], [49850, 1], [49902, 1], [49905, 1], [51899, 1], [65431, 1], [65440, 2]]}}}"
+unblock = "read the recorded diagnostics under .factory/try/PokemonTrader_TradeCardsEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "Scavenge_PlayerSelectTrainerEffect"
+reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:5699 (basename `effect_functions`). 9 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case Scavenge_PlayerSelectTrainerEffect-0 native probe did not terminate; the C body loops forever on state the reference resolves"
+unblock = "read the recorded diagnostics under .factory/try/Scavenge_PlayerSelectTrainerEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
