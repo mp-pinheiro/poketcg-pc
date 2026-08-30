@@ -41,4 +41,7 @@ GetReceivedLegendaryCardsResult GetReceivedLegendaryCards(void);
 /* >>> factory OverworldDoFrameFunction */
 void OverworldDoFrameFunction(void);
 /* <<< factory OverworldDoFrameFunction */
+/* >>> factory GameEvent_Duel */
+uint8_t GameEvent_Duel(void);
+/* <<< factory GameEvent_Duel */
 #endif

@@ -213,6 +213,25 @@ CASES["OverworldDoFrameFunction"] = [
 ]
 # <<< factory OverworldDoFrameFunction
 
+# >>> factory GameEvent_Duel
+CONTRACT["GameEvent_Duel"] = {"compare": (), "preserve": ()}
+CASES["GameEvent_Duel"] = [
+    {"wram": {0xCC18: b"\x06", 0xCC19: b"\x01", 0xCC1A: b"\x01",
+              0xD0C2: b"\x00", 0xD112: b"\xAA"},
+     "sram": {0: {0xBA44: b"\xAA", 0xB700: b"\x00",
+                   0xA218: bytes(range(60))}},
+     "read": {0xD0C2: 1, 0xD112: 1},
+     "sread": {0: {0xBA44: 1}}},
+    dict(POISON,
+         wram={0xCC18: b"\x06", 0xCC19: b"\x01", 0xCC1A: b"\x01",
+               0xD0C2: b"\x00", 0xD112: b"\xAA"},
+         sram={0: {0xBA44: b"\xAA", 0xB700: b"\x00",
+                   0xA218: bytes(range(60))}},
+         read={0xD0C2: 1, 0xD112: 1},
+         sread={0: {0xBA44: 1}}),
+]
+# <<< factory GameEvent_Duel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -245,3 +264,10 @@ MUTATIONS["GetReceivedLegendaryCards"] = {"source_symbol": "GetReceivedLegendary
 # >>> factory-mutation OverworldDoFrameFunction
 MUTATIONS["OverworldDoFrameFunction"] = {"source_symbol": "OverworldDoFrameFunction", "before": "BankswitchROM(saved_bank);", "after": "BankswitchROM(0u);", "case_ids": ["OverworldDoFrameFunction-1"]}
 # <<< factory-mutation OverworldDoFrameFunction
+# >>> factory-mutation GameEvent_Duel
+MUTATIONS["GameEvent_Duel"] = {"source_symbol": "GameEvent_Duel", "before": "uint8_t GameEvent_Duel(void)\n{\n\twActiveGameEvent = GAME_EVENT_DUEL;", "after": "uint8_t GameEvent_Duel(void)\n{\n\twActiveGameEvent = 0u;", "case_ids": ["GameEvent_Duel-0", "GameEvent_Duel-1"]}
+# <<< factory-mutation GameEvent_Duel
+# >>> factory-completion GameEvent_Duel
+for _record in SCHEMA2_CASES["GameEvent_Duel"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x6793, "bank": 1}
+# <<< factory-completion GameEvent_Duel

@@ -25,6 +25,13 @@
 #include "generated/hram.h"
 #include "mem.h"
 #define HIDE_ALL_NPC_SPRITES 7u
+
+#include "generated/wram.h"
+#include "generated/sram.h"
+#include "home/switch_sram.h"
+#include "home/save.h"
+#include "home/core.h"
+#define GAME_EVENT_DUEL 0x01u
 /* <<< factory statics */
 
 #define BANK_EXECUTE_NPC_MOVEMENT 0x03u
@@ -219,3 +226,17 @@ void OverworldDoFrameFunction(void)
 	BankswitchROM(saved_bank);
 }
 /* <<< factory OverworldDoFrameFunction */
+
+/* >>> factory GameEvent_Duel */
+uint8_t GameEvent_Duel(void)
+{
+	wActiveGameEvent = GAME_EVENT_DUEL;
+	wSongOverride = 0u;
+	EnableSRAM();
+	sPlayerInChallengeMachine = 0u;
+	DisableSRAM();
+	SaveGeneralSaveData();
+	StartDuel_VSAIOpp();
+	return 0x10u;
+}
+/* <<< factory GameEvent_Duel */

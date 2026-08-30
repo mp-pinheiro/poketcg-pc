@@ -106,6 +106,13 @@ static void adapt_OverworldDoFrameFunction(ProbeState *s)
 }
 /* <<< factory OverworldDoFrameFunction */
 
+/* >>> factory GameEvent_Duel */
+static void adapt_GameEvent_Duel(ProbeState *s)
+{
+	s->f = GameEvent_Duel();
+}
+/* <<< factory GameEvent_Duel */
+
 const ProbeEntry probe_entries_map[] = {
 	{ "GetPermissionByteOfMapPosition", adapt_GetPermissionByteOfMapPosition },
 	{ "GetPermissionOfMapPosition", adapt_GetPermissionOfMapPosition },
@@ -122,5 +129,6 @@ const ProbeEntry probe_entries_map[] = {
 	{ "HandleMapWarp", adapt_HandleMapWarp },
 	{ "GetReceivedLegendaryCards", adapt_GetReceivedLegendaryCards },
 	{ "OverworldDoFrameFunction", adapt_OverworldDoFrameFunction },
+	{ "GameEvent_Duel", adapt_GameEvent_Duel },
 	{ NULL, NULL },
 };
