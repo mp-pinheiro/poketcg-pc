@@ -410,6 +410,20 @@ CASES["ChallengeMachine_Duel"] = [
 ]
 # <<< factory ChallengeMachine_Duel
 
+# >>> factory ChallengeMachine_Start
+CONTRACT["ChallengeMachine_Start"] = {"compare": (), "preserve": ()}
+CASES["ChallengeMachine_Start"] = [
+    {"rom_bank": 4,
+     "sram": {0: {0xBA42: b"\xE3\x95", 0xBA44: b"\x00"}},
+     "read": {0xCD08: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, rom_bank=4,
+         sram={0: {0xBA42: b"\xE3\x95", 0xBA44: b"\x00"}},
+         read={0xCD08: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ChallengeMachine_Start
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -525,3 +539,10 @@ MUTATIONS["ChallengeMachine_Duel"] = {"source_symbol": "ChallengeMachine_Duel", 
 for _record in SCHEMA2_CASES["ChallengeMachine_Duel"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x378A}
 # <<< factory-completion ChallengeMachine_Duel
+# >>> factory-mutation ChallengeMachine_Start
+MUTATIONS["ChallengeMachine_Start"] = {"source_symbol": "ChallengeMachine_Start", "before": "void ChallengeMachine_Start(void)\n{\n\twLineSeparation = DOUBLE_SPACED;", "after": "void ChallengeMachine_Start(void)\n{\n\twLineSeparation = 0x01u;", "case_ids": ["ChallengeMachine_Start-0", "ChallengeMachine_Start-1"]}
+# <<< factory-mutation ChallengeMachine_Start
+# >>> factory-completion ChallengeMachine_Start
+for _record in SCHEMA2_CASES["ChallengeMachine_Start"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x71EE, "bank": 4}
+# <<< factory-completion ChallengeMachine_Start

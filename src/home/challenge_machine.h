@@ -109,4 +109,7 @@ void ChallengeMachine_DrawOpponentList(void);
 /* >>> factory ChallengeMachine_Duel */
 void ChallengeMachine_Duel(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory ChallengeMachine_Duel */
+/* >>> factory ChallengeMachine_Start */
+void ChallengeMachine_Start(void);
+/* <<< factory ChallengeMachine_Start */
 #endif

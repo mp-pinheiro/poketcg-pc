@@ -197,6 +197,14 @@ static void adapt_ChallengeMachine_Duel(ProbeState *s)
 }
 /* <<< factory ChallengeMachine_Duel */
 
+/* >>> factory ChallengeMachine_Start */
+static void adapt_ChallengeMachine_Start(ProbeState *s)
+{
+	(void)s;
+	ChallengeMachine_Start();
+}
+/* <<< factory ChallengeMachine_Start */
+
 const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_CheckIfOpponentAlreadySelected", adapt_ChallengeMachine_CheckIfOpponentAlreadySelected },
 	{ "ChallengeMachine_PrintText", adapt_ChallengeMachine_PrintText },
@@ -221,5 +229,6 @@ const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_PrintDuelResultIcons", adapt_ChallengeMachine_PrintDuelResultIcons },
 	{ "ChallengeMachine_DrawOpponentList", adapt_ChallengeMachine_DrawOpponentList },
 	{ "ChallengeMachine_Duel", adapt_ChallengeMachine_Duel },
+	{ "ChallengeMachine_Start", adapt_ChallengeMachine_Start },
 	{ NULL, NULL },
 };
