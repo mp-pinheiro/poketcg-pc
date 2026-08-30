@@ -199,6 +199,11 @@ sPlayerInChallengeMachine = 0xBA44
 wDefaultSong = 0xD111
 wRonaldIsInMap = 0xD3B8
 wCurSongID = 0xDD80
+
+wActiveGameEvent = 0xD0C2
+wDuelResult = 0xD0C3
+wDuelTheme = 0xCC1A
+wSongOverride = 0xD112
 # <<< factory-cases-statics
 
 # >>> factory GetReceivedLegendaryCards
@@ -263,6 +268,14 @@ CASES["GameEvent_Credits"] = [
 ]
 # <<< factory GameEvent_Credits
 
+# >>> factory GameEvent_BattleCenter
+CONTRACT["GameEvent_BattleCenter"] = {"compare": (), "preserve": ()}
+CASES["GameEvent_BattleCenter"] = [
+    {"evidence": "primary", "wram": {wActiveGameEvent: b"\x00", wDuelResult: b"\x00", wDuelTheme: b"\x00", wSongOverride: b"\xAA"}, "read": {wActiveGameEvent: 1, wDuelResult: 1, wDuelTheme: 1, wSongOverride: 1}, "expect": {wActiveGameEvent: b"\x02", wDuelResult: b"\xFF", wDuelTheme: b"\x02", wSongOverride: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, evidence="primary", wram={wActiveGameEvent: b"\xAA", wDuelResult: b"\xBB", wDuelTheme: b"\xCC", wSongOverride: b"\xDD"}, read={wActiveGameEvent: 1, wDuelResult: 1, wDuelTheme: 1, wSongOverride: 1}, expect={wActiveGameEvent: b"\x02", wDuelResult: b"\xFF", wDuelTheme: b"\x02", wSongOverride: b"\x00"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory GameEvent_BattleCenter
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -323,3 +336,10 @@ MUTATIONS["GameEvent_Credits"] = {"source_symbol": "GameEvent_Credits", "before"
 for _record in SCHEMA2_CASES["GameEvent_Credits"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x56AD, "bank": 7}
 # <<< factory-completion GameEvent_Credits
+# >>> factory-mutation GameEvent_BattleCenter
+MUTATIONS["GameEvent_BattleCenter"] = {"source_symbol": "GameEvent_BattleCenter", "before": "uint8_t GameEvent_BattleCenter(void)\n{\n\twActiveGameEvent = GAME_EVENT_BATTLE_CENTER;", "after": "uint8_t GameEvent_BattleCenter(void)\n{\n\twActiveGameEvent = 0u;", "case_ids": ["GameEvent_BattleCenter-0", "GameEvent_BattleCenter-1"]}
+# <<< factory-mutation GameEvent_BattleCenter
+# >>> factory-completion GameEvent_BattleCenter
+for _record in SCHEMA2_CASES["GameEvent_BattleCenter"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x0264}
+# <<< factory-completion GameEvent_BattleCenter

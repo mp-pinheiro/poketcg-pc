@@ -53,4 +53,7 @@ void GameEvent_GiftCenter(void);
 /* >>> factory GameEvent_Credits */
 void GameEvent_Credits(void);
 /* <<< factory GameEvent_Credits */
+/* >>> factory GameEvent_BattleCenter */
+uint8_t GameEvent_BattleCenter(void);
+/* <<< factory GameEvent_BattleCenter */
 #endif

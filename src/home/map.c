@@ -48,6 +48,12 @@
 #define MUSIC_CARD_POP 0x08u
 
 #include "home/sound.h"
+
+#include "home/common.h"
+#include "home/sound.h"
+#include "generated/wram.h"
+#define GAME_EVENT_BATTLE_CENTER 0x02u
+#define MUSIC_DUEL_THEME_1 0x02u
 /* <<< factory statics */
 
 #define BANK_EXECUTE_NPC_MOVEMENT 0x03u
@@ -283,3 +289,16 @@ void GameEvent_Credits(void)
 {
 }
 /* <<< factory GameEvent_Credits */
+
+/* >>> factory GameEvent_BattleCenter */
+uint8_t GameEvent_BattleCenter(void)
+{
+	wActiveGameEvent = GAME_EVENT_BATTLE_CENTER;
+	wSongOverride = 0u;
+	wDuelResult = 0xFFu;
+	wDuelTheme = MUSIC_DUEL_THEME_1;
+	PlaySong(MUSIC_CARD_POP);
+	SetUpAndStartLinkDuel();
+	return 0x10u;
+}
+/* <<< factory GameEvent_BattleCenter */

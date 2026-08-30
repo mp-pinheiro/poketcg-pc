@@ -1,0 +1,9 @@
+{
+  "fn": "GameEvent_BattleCenter",
+  "case": "tests/cases/map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GameEvent_BattleCenter\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52250\": \"02\", \"53442\": \"02ff\", \"53522\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GameEvent_BattleCenter\", \"mismatches\": {\"bus\": {\"address\": 53442, \"reference\": \"0202ff00\", \"native\": \"0200ff00\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52250, 1], [53442, 2], [53522, 1]]}}}\n",
+  "restored": "{\"fn\": \"GameEvent_BattleCenter\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52250\": \"02\", \"53442\": \"02ff\", \"53522\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
