@@ -51,6 +51,14 @@ CASES["Func_1d705"] = [
 ]
 # <<< factory Func_1d705
 
+# >>> factory PlayCreditsSequence
+CONTRACT["PlayCreditsSequence"] = {"compare": (), "preserve": ()}
+CASES["PlayCreditsSequence"] = [
+    dict(oracle=False, evidence="primary", why="The bounded credits prefix stops immediately before its command-frame loop after resetting the overworld event byte and selecting credits music.", wram={0xD324: b"\xA5", 0xDD80: b"\x7F"}, read={0xD324: 1, 0xDD80: 1}, expect={0xD324: b"\x00", 0xDD80: b"\x12"}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, oracle=False, evidence="primary", why="The credits setup writes the same event byte and music selection with poisoned entry registers.", wram={0xD324: b"\xA5", 0xDD80: b"\x7F"}, read={0xD324: 1, 0xDD80: 1}, expect={0xD324: b"\x00", 0xDD80: b"\x12"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PlayCreditsSequence
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -72,3 +80,10 @@ MUTATIONS["Func_1d705"] = {
     "case_ids": ["Func_1d705-0", "Func_1d705-1"],
 }
 # <<< factory-mutation Func_1d705
+# >>> factory-mutation PlayCreditsSequence
+MUTATIONS["PlayCreditsSequence"] = {"source_symbol": "PlayCreditsSequence", "before": "\tgb_write8((uint16_t)(wOWMapEvents_ADDR + 1u), 0u);", "after": "\tgb_write8((uint16_t)(wOWMapEvents_ADDR + 1u), 1u);", "case_ids": ["PlayCreditsSequence-0", "PlayCreditsSequence-1"]}
+# <<< factory-mutation PlayCreditsSequence
+# >>> factory-completion PlayCreditsSequence
+for _record in SCHEMA2_CASES["PlayCreditsSequence"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x56C8, "bank": 7}
+# <<< factory-completion PlayCreditsSequence

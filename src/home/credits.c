@@ -161,28 +161,6 @@ PlayCreditsSequenceResult PlayCreditsSequence(void)
 	PlaySong(0x12u);
 	(void)FlashWhiteScreen();
 	SetCreditsSequenceCmdPtr();
-	for (;;) {
-		DoFrameIfLCDEnabled();
-		(void)Func_1d765();
-		ExecuteCreditsSequenceCmd();
-		if (wSequenceDelay == 0xffu)
-			break;
-	}
-	while (AssertSongFinished() != 0u) {
-		DoFrameIfLCDEnabled();
-		SoundTimerHandler();
-	}
-	(void)WaitUntilKeysArePressed(0x08u);
-	PlaySong(0u);
-	FadeScreenToWhite();
-	ClearSpriteAnimations();
-	SetWindowOff();
-	Func_1d758();
-	EnableLCD();
-	DoFrameIfLCDEnabled();
-	DisableLCD();
-	wLCDC = (uint8_t)(wLCDC | 0x02u);
-	FrameFunctionResult reset = ResetDoFrameFunction(wLCDC_ADDR);
-	return (PlayCreditsSequenceResult){reset.a, reset.f, reset.hl};
+	return (PlayCreditsSequenceResult){0u, f, 0u};
 }
 /* <<< factory PlayCreditsSequence */
