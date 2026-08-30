@@ -2,10 +2,6 @@
 
 
 
-[[blocked]]
-name = "HandleOverworldMode"
-reason = "poketcg/src/engine/overworld/overworld.asm:82 computes an index from wOverworldMode and `jp hl` tail-jumps into one of 4 entries in OverworldModePointers (UpdateOverworldMap, CallHandlePlayerMoveMode, SetScriptData, EnterScript). This is docs/port-contract.md Exclusion taxonomy Reason 4 (\"Tail dispatch into unported engine\" -- jp hl/CallHL/JumpToFunctionInTable): a static call-graph sweep cannot see the 4 possible targets since they resolve at runtime, and none of the 4 exist as C functions anywhere in src/home (verified by direct grep). The routine has no return path of its own -- its entire observable effect IS whichever target it transfers control to -- so it cannot be ported until all 4 jump-table targets land first."
-unblock = "port UpdateOverworldMap, CallHandlePlayerMoveMode, SetScriptData, and EnterScript individually first (each is independently reachable/portable on its own merits), then reconstruct HandleOverworldMode's dispatch as a C switch over wOverworldMode calling the four now-available functions"
 
 [[blocked]]
 name = "RunOverworldScript"
