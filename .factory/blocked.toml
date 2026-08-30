@@ -41,10 +41,6 @@ unblock = "CORRECTED 2026-08-28: the recorded mechanism (interrupt/VBlank-cascad
 
 
 
-[[blocked]]
-name = "Prophecy_PlayerSelectEffect"
-reason = "HAND-DIAGNOSED 2026-08-28: generation-8+ retry candidate reaches the reference animation/VBlank parking loop at pc=625 with LCDC=0x80 and exhausts 80M cycles before return; the isolated effect path is frame-dependent, not a translation mismatch. An unchanged full-call retry is non-informative."
-unblock = "Trace the first animation/recoil callee that enables LCD and identify a bounded pre-ret completion, then verify that prefix or port the frame-safe callee before retrying this effect; do not increase budgets or repeat the unchanged full-call case."
 
 
 [[blocked]]
