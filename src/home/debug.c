@@ -377,3 +377,10 @@ void _DebugLookAtSprite(void)
 	}
 }
 /* <<< factory _DebugLookAtSprite */
+
+/* >>> factory DebugLookAtSprite */
+void DebugLookAtSprite(void)
+{
+	_DebugLookAtSprite();
+}
+/* <<< factory DebugLookAtSprite */

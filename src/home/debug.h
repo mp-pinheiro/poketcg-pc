@@ -85,4 +85,7 @@ void DebugCredits(void);
 /* >>> factory _DebugLookAtSprite */
 void _DebugLookAtSprite(void);
 /* <<< factory _DebugLookAtSprite */
+/* >>> factory DebugLookAtSprite */
+void DebugLookAtSprite(void);
+/* <<< factory DebugLookAtSprite */
 #endif

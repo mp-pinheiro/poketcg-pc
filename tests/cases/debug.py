@@ -182,6 +182,25 @@ CASES["_DebugLookAtSprite"] = [
 ]
 # <<< factory _DebugLookAtSprite
 
+# >>> factory DebugLookAtSprite
+CONTRACT["DebugLookAtSprite"] = {
+    "compare": (),
+    "preserve": (),
+}
+CASES["DebugLookAtSprite"] = [
+    {"keys": [0x00, 0x04],
+     "read": {0xD3AA: 1},
+     "setup": [{"fn": "CopyDMAFunction"},
+                {"fn": "SetupText", "d": 0x30, "e": 0x7F}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x04],
+         read={0xD3AA: 1},
+         setup=[{"fn": "CopyDMAFunction"},
+                {"fn": "SetupText", "d": 0x30, "e": 0x7F}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DebugLookAtSprite
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -269,3 +288,15 @@ MUTATIONS["_DebugLookAtSprite"] = {
 for _rec in SCHEMA2_CASES["_DebugLookAtSprite"]:
     _rec["completion"] = {"mode": "event", "predicate": "mem:0xd3aa==0x1&0xff"}
 # <<< factory-completion _DebugLookAtSprite
+# >>> factory-mutation DebugLookAtSprite
+MUTATIONS["DebugLookAtSprite"] = {
+    "source_symbol": "DebugLookAtSprite",
+    "before": "\t_DebugLookAtSprite();",
+    "after": "\tgb_write8(0xD3AAu, 0x02u);",
+    "case_ids": ["DebugLookAtSprite-0", "DebugLookAtSprite-1"],
+}
+# <<< factory-mutation DebugLookAtSprite
+# >>> factory-completion DebugLookAtSprite
+for _rec in SCHEMA2_CASES["DebugLookAtSprite"]:
+    _rec["completion"] = {"mode": "event", "predicate": "mem:0xd3aa==0x1&0xff"}
+# <<< factory-completion DebugLookAtSprite

@@ -1,0 +1,9 @@
+{
+  "fn": "DebugLookAtSprite",
+  "case": "tests/cases/debug.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DebugLookAtSprite\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54186\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DebugLookAtSprite\", \"mismatches\": {\"bus\": {\"address\": 54186, \"reference\": \"01\", \"native\": \"02\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[54186, 1]]}}}\n",
+  "restored": "{\"fn\": \"DebugLookAtSprite\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54186\": \"01\"}}, \"status\": \"PASS\"}\n"
+}
