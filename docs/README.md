@@ -1,7 +1,7 @@
 # docs/
 
-Six documents, each with one job. Nothing here is a task list — work is selected
-deterministically by the factory from open Forgejo work issues.
+Eight documents, each with one job. Nothing here is a task list — work is selected
+deterministically by the factory from the completion issue ledger.
 
 | doc | role |
 |---|---|
@@ -11,6 +11,8 @@ deterministically by the factory from open Forgejo work issues.
 | `jj-workflow.md` | VCS workflow and Forgejo authentication (Cloudflare Access + PAT helper). |
 | `vision.md` | Descriptive: architecture, phase order, prior-art rationale. Not normative. |
 | `phase1-transform.md` | Per-routine delete/dissolve/port verdicts for the hardware-removal transform. |
+| `issue-standard.md` | **Normative.** Title, tags, body, dependency, evidence, and closure rules for completion issues. |
+| `full-game-findings.json` | Machine-readable empty-slate findings manifest and issue publication ledger. |
 
 Machine-readable state lives outside `docs/` and always wins over prose:
 `site/data/gate.json` (last central gate), `site/data/progress.json` (work
