@@ -5124,6 +5124,13 @@ static void adapt_FriendshipSong_AddToBench50PercentEffect(ProbeState *s)
 }
 /* <<< factory FriendshipSong_AddToBench50PercentEffect */
 
+/* >>> factory SubmissionEffect */
+static void adapt_SubmissionEffect(ProbeState *s)
+{
+	SubmissionEffectResult result=SubmissionEffect(s->a,s->f,s->b,s->c,s->d,s->e,s->hl); s->a=result.a; s->f=result.f;
+}
+/* <<< factory SubmissionEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5743,5 +5750,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "GolemSelfdestructEffect", adapt_GolemSelfdestructEffect },
 	{ "ChanseyDoubleEdgeEffect", adapt_ChanseyDoubleEdgeEffect },
 	{ "FriendshipSong_AddToBench50PercentEffect", adapt_FriendshipSong_AddToBench50PercentEffect },
+	{ "SubmissionEffect", adapt_SubmissionEffect },
 	{ NULL, NULL },
 };

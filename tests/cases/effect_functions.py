@@ -2876,6 +2876,13 @@ def _cde_case(**kw):
                      _cde_wNoDamageOrEffect: 1}}
     case.update(kw)
     return case
+
+_se_arena_hp=0xC2C8
+_POISON={"a":170,"f":240,"b":187,"c":204,"d":221,"e":238,"hl":4660}
+def _se_case(**kw):
+ case={"wram":{_se_arena_hp:b"\x40",0xCCB9:b"\x00\x00",0xCCC1:b"\x00",0xCCC3:b"\x01",0xCCC4:b"\x01",0xCCC7:b"\x00",0xD421:b"\x01",0xCABB:b"\x00",0xFF40:b"\x80"},"setup":[{"fn":"CopyDMAFunction"},{"fn":"SetupText","d":48,"e":127},{"fn":"SwapTurn"}],"instruction_budget":8000000,"cycle_budget":32000000,"read":{_se_arena_hp:1,0xCCB8:1,0xCCB9:2,0xCCC1:1,0xCCC4:1,0xCCC7:1}}
+ case.update(kw)
+ return case
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7363,6 +7370,11 @@ CONTRACT["FriendshipSong_AddToBench50PercentEffect"] = {"compare": ("d", "e"), "
 CASES["FriendshipSong_AddToBench50PercentEffect"] = [{}, dict(POISON)]
 # <<< factory FriendshipSong_AddToBench50PercentEffect
 
+# >>> factory SubmissionEffect
+CONTRACT["SubmissionEffect"]={"compare":("a","f"),"preserve":()}
+CASES["SubmissionEffect"]=[_se_case(a=16,f=0,d=0,e=0),_se_case(**_POISON)]
+# <<< factory SubmissionEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10349,3 +10361,10 @@ MUTATIONS["FriendshipSong_AddToBench50PercentEffect"] = {"source_symbol": "Frien
 for _record in SCHEMA2_CASES["FriendshipSong_AddToBench50PercentEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x407E, "bank": 11}
 # <<< factory-completion FriendshipSong_AddToBench50PercentEffect
+# >>> factory-mutation SubmissionEffect
+MUTATIONS["SubmissionEffect"]={"source_symbol":"SubmissionEffect","before":"\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 20u;","after":"\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 21u;","case_ids":["SubmissionEffect-0","SubmissionEffect-1"]}
+# <<< factory-mutation SubmissionEffect
+# >>> factory-completion SubmissionEffect
+for _record in SCHEMA2_CASES["SubmissionEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
+# <<< factory-completion SubmissionEffect
