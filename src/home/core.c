@@ -1569,6 +1569,16 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/core.h"
 #include "home/sound.h"
 #include "generated/wram.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/ai.h"
+#include "home/core.h"
+#include "home/duel.h"
+
+#include "home/core.h"
+#include "generated/wram.h"
+#define MUSIC_DUEL_THEME_1 0x02u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -8983,3 +8993,22 @@ void StartDuel(uint16_t return_address)
 	wCurrentDuelMenuItem = 0u;
 }
 /* <<< factory StartDuel */
+
+/* >>> factory StartDuel_VSAIOpp */
+void StartDuel_VSAIOpp(void)
+{
+	hWhoseTurn = PLAYER_TURN;
+	wPlayerDuelistType = DUELIST_TYPE_PLAYER;
+	wOpponentDeckID = wNPCDuelDeckID;
+}
+/* <<< factory StartDuel_VSAIOpp */
+
+/* >>> factory StartDuel_VSLinkOpp */
+void StartDuel_VSLinkOpp(void)
+{
+	wDuelTheme = MUSIC_DUEL_THEME_1;
+	wOpponentName = 0u;
+	wOpponentName_PTR[1] = 0u;
+	wIsPracticeDuel = 0u;
+}
+/* <<< factory StartDuel_VSLinkOpp */

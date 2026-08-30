@@ -1249,4 +1249,10 @@ void Func_1cb5e(uint8_t a);
 /* >>> factory StartDuel */
 void StartDuel(uint16_t return_address);
 /* <<< factory StartDuel */
+/* >>> factory StartDuel_VSAIOpp */
+void StartDuel_VSAIOpp(void);
+/* <<< factory StartDuel_VSAIOpp */
+/* >>> factory StartDuel_VSLinkOpp */
+void StartDuel_VSLinkOpp(void);
+/* <<< factory StartDuel_VSLinkOpp */
 #endif

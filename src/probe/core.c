@@ -2740,6 +2740,22 @@ static void adapt_StartDuel(ProbeState *s)
 }
 /* <<< factory StartDuel */
 
+/* >>> factory StartDuel_VSAIOpp */
+static void adapt_StartDuel_VSAIOpp(ProbeState *s)
+{
+	(void)s;
+	StartDuel_VSAIOpp();
+}
+/* <<< factory StartDuel_VSAIOpp */
+
+/* >>> factory StartDuel_VSLinkOpp */
+static void adapt_StartDuel_VSLinkOpp(ProbeState *s)
+{
+	(void)s;
+	StartDuel_VSLinkOpp();
+}
+/* <<< factory StartDuel_VSLinkOpp */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3067,5 +3083,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "Func_6fa5", adapt_Func_6fa5 },
 	{ "Func_1cb5e", adapt_Func_1cb5e },
 	{ "StartDuel", adapt_StartDuel },
+	{ "StartDuel_VSAIOpp", adapt_StartDuel_VSAIOpp },
+	{ "StartDuel_VSLinkOpp", adapt_StartDuel_VSLinkOpp },
 	{ NULL, NULL },
 };

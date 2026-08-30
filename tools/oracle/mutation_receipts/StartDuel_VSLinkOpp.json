@@ -1,0 +1,9 @@
+{
+  "fn": "StartDuel_VSLinkOpp",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"StartDuel_VSLinkOpp\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52166\": \"00\", \"52243\": \"00\", \"52246\": \"000006\", \"52250\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"StartDuel_VSLinkOpp\", \"mismatches\": {\"bus\": {\"address\": 52250, \"reference\": \"0000000602\", \"native\": \"0000000600\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[52166, 1], [52243, 1], [52246, 3], [52250, 1]]}}}\n",
+  "restored": "{\"fn\": \"StartDuel_VSLinkOpp\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52166\": \"00\", \"52243\": \"00\", \"52246\": \"000006\", \"52250\": \"02\"}}, \"status\": \"PASS\"}\n"
+}
