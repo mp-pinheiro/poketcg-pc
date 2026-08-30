@@ -2,201 +2,253 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.215.0 - 2026-08-28
+## v0.216.0 - 2026-08-30
 
 ### Bug Fixes
 
-- *(port)* Bound DrawHPBar fills at HP_BAR_LENGTH
-- *(port)* SendTilesToPrinter transform
-- *(port)* SendPrinterInstructionPacket_1Sheet_3LineFeeds
-- *(port)* LoadGfxBufferForPrinter + AddToPrinterGfxBuffer
-- *(port)* DeckNamingScreen_CheckButtonState
-- *(port)* DeckNamingScreen_CheckButtonState cases
-- *(port)* Correct twin A/B exit and blink mask
-- *(port)* Six stage-only AIPlay trainer handlers
-- *(port)* Stage AIPlay trainer case seeds
-- *(port)* Real AIMakeDecision OppActionTable dispatch
-- *(port)* Unseed frame counter in textbox case
-
-### Documentation
-
-- *(port)* Pc=625 is scene waits, not a PPU defect
+- *(factory)* Show a lane its own basename exemplar
+- *(factory)* Resolve prototypes outside comments
+- *(factory)* Preserve named attempt claims
+- *(factory)* Unblock printer result type
+- *(factory)* Reopen printer leaf
+- *(factory)* Reopen save configuration
+- *(factory)* Reopen animation leaf
+- *(factory)* Reopen input name leaf
+- *(factory)* Diagnose deck name timeout
+- *(factory)* Diagnose effect frame waits
+- *(factory)* Diagnose effect frame waits
+- *(factory)* Diagnose submission frame wait
+- *(factory)* Diagnose self destruct waits
+- *(factory)* Diagnose retry state gaps
+- *(factory)* Land magnetic storm retry
+- *(factory)* Diagnose IR boundary
+- *(factory)* Land scripted AI retry
+- *(factory)* Land random damage retry
+- *(factory)* Land big thunder retry
+- *(factory)* Land big thunder progress
+- *(factory)* Land boss setup root
+- *(factory)* Land AI action root
+- *(factory)* Diagnose AI wrappers
+- *(factory)* Land KO switch leaf
+- *(factory)* Land card list roots
+- *(factory)* Dispatch start duel AI
+- *(factory)* Refresh AI mutation anchor
+- *(factory)* Dispatch prize AI action
+- *(factory)* Return picked prize state
+- *(factory)* Preserve prize action result
+- *(factory)* Unblock heal routine
+- *(factory)* Diagnose heal animation boundary
+- *(factory)* Unblock intro dispatcher
+- *(factory)* Dispatch credits commands
+- *(factory)* Diagnose intro frame paths
+- *(factory)* Diagnose credits frame path
+- *(factory)* Unblock duel setup pre-ret
+- *(factory)* Unblock IR close routine
+- *(factory)* Unblock screen animations
+- *(factory)* Model CGB speed switch
+- *(factory)* Model CGB double speed
+- *(factory)* Model timer speed mode
+- *(factory)* Model SPD readback
+- *(factory)* Diagnose IR peer blockers
+- *(factory)* Retry duel setup frontier
+- *(factory)* Diagnose duel setup blocker
+- *(factory)* Unblock mix up effect
+- *(factory)* Retry duel result icons
+- *(factory)* Record challenge retry
+- *(factory)* Unblock stack event ports
+- *(factory)* Wire stack byte oracle
+- *(cases)* Refresh schema inventory
+- *(oracle)* Model infrared peer
+- *(factory)* Stabilize MixUp oracle case
+- *(factory)* Model infrared peer frames
+- *(factory)* Sequence infrared peer frames
+- *(factory)* Split infrared peer protocols
+- *(factory)* Unblock duel setup diagnosis
+- *(factory)* Reopen trader effect
+- *(factory)* Reopen lass effect
+- *(factory)* Reopen healing effect
+- *(factory)* Reopen energy search
+- *(factory)* Diagnose IR send loops
+- *(factory)* Diagnose duel setup loop
+- *(factory)* Diagnose trader effect loop
+- *(factory)* Reopen new game
+- *(factory)* Diagnose new game loop
+- *(factory)* Reopen challenge info
+- *(factory)* Reopen computer search
+- *(factory)* Diagnose healing effect loop
+- *(factory)* Reopen search routines
+- *(factory)* Diagnose deck selection loops
+- *(factory)* Reopen scavenge effect
+- *(factory)* Diagnose scavenge loop
+- *(factory)* Reopen intro sequence
+- *(factory)* Retire intro sequence
+- *(factory)* Reopen pokeball effect
+- *(factory)* Reopen pokeball selection
+- *(factory)* Reopen duel setup prefix
+- *(factory)* Diagnose card selection loop
+- *(factory)* Diagnose duel prefix limit
+- *(factory)* Support nested pre-ret banks
+- *(factory)* Preserve home pre-ret hooks
+- *(factory)* Reopen duel prefix
+- *(factory)* Retry duel capability
+- *(factory)* Diagnose duel scene loop
+- *(factory)* Reopen duel entry
+- *(factory)* Reopen card send
+- *(factory)* Reopen deck send
 
 ### Features
 
-- *(port)* HandleAICowardice
-- *(port)* AIDecideWhetherToRetreat +1
-- *(port)* AIDecidePlayLegendaryBirds +2
-- *(port)* AIDecidePlayPokemonCard +1
-- *(port)* GetAIScoreOfAttack +1
-- *(port)* SuperEnergyRetrieval_PlayerHandSelect~
-- *(port)* Maintenance_PlayerSelection
-- *(port)* AIDecide_SuperEnergyRemoval
-- *(port)* AIDecide_ScoopUp +1
-- *(port)* AIDecide_FullHeal
-- *(port)* SlicingWindEffect
-- *(port)* AIDecide_EnergyRemoval
-- *(port)* AIDecidePlayPokemonCard +3
-- *(port)* AIDecide_PokemonCenter +3
-- *(port)* ShowMultichoiceTextbox +1
-- *(port)* Func_16488 +3
-- *(port)* SuperEnergyRetrieval_PlayerDiscardPil~
-- *(port)* AIDecide_PlusPower_Phase13
-- *(port)* ComputerSearch_PlayerDiscardHandSelec~
-- *(port)* Pokedex_PlayerSelection
-- *(port)* Thrash_RecoilEffect
-- *(port)* RaichuThunder_RecoilEffect
-- *(port)* BigEggsplosion_MultiplierEffect
-- *(port)* PokemonFlute_PlayerSelection
-- *(port)* DevolutionBeam_DevolveEffect
-- *(port)* MarowakCallForFamily_PlayerSelectEffe~
-- *(port)* DealDamageToAllBenchedPokemon
-- *(port)* HandleProphecyScreen
-- *(port)* EarthquakeEffect
-- *(port)* Blizzard_BenchDamageEffect
-- *(factory)* Compose same-basename waves
-- *(port)* Thunderpunch_RecoilEffect
-- *(port)* Revive_PlayerSelection
-- *(port)* BellsproutCallForFamily_PlayerSele~ +2
-- *(factory)* Name BUDGET_EXHAUSTED remedy in retries
-- *(port)* NidoranFCallForFamily_PlayerSelect~ +1
-- *(port)* DrawPlayerPortraitAndPrintNewGameText
-- *(port)* _PreparePrinterConnection
-- *(port)* PreparePrinterConnection
-- *(port)* GustOfWind_SwitchEffect
-- *(port)* Confusion50PercentEffect +1
-- *(port)* SendTilesToPrinter
-- *(port)* ApplyAndAnimateHPRecovery +3
-- *(port)* Func_19f87
-- *(port)* Paralysis50PercentEffect +1
-- *(port)* Port 9 duel effect functions
-- *(port)* Func_1a011 +3
-- *(port)* DeleteSaveDataForNewGame +3
-- *(port)* KadabraRecover_HealEffect +3
-- *(port)* Port Absorb and BoneAttack effects
-- *(port)* Port Clamp and QuickAttack boosts
-- *(port)* Port Stiffen, HideInShell, Leer
-- *(port)* LoadNPCForCreditsSequence +1
-- *(port)* Port Fly and DiveBomb effects
-- *(port)* CreditsSequenceCmd_LoadNPC +3
-- *(port)* Port Stomp, Scrunch, TailWag, Tantrum
-- *(port)* Port Wartortle and Venusaur drains
-- *(port)* Implement music pop wrappers
-- *(port)* CreditsSequenceCmd_LoadClubMap +3
-- *(port)* HandlePeekSelection +3
-- *(port)* ZapdosThunder_Recoil50PercentEffect
-- *(port)* ClearScreenAndDrawDeckMachineScreen +1
-- *(port)* DrawDeckMachineScreen +2
-- *(port)* HandleDeckMachineSelection
-- *(port)* Blizzard_BenchDamage50PercentEffect +3
-- *(port)* PidgeottoMirrorMove_InitialEffect2 +1
-- *(port)* UpdateDeckMachineScrollArrowsAndEn~ +1
-- *(port)* InputDeckName +1
-- *(port)* FoulGas_PoisonOrConfusionEffect
+- *(port)* AITryUseAttack via begin-attack carry exit
+- *(port)* AIPlay_Defender
+- *(port)* FullHeal_ClearStatusEffect +2
+- *(port)* AIPlay_GustOfWind +3
+- *(port)* AIPlay_Maintenance
+- *(port)* AIProcessAttacks
+- *(port)* AIProcessAndTryToUseAttack
+- *(port)* AIProcessButDontUseAttack
+- *(port)* AICheckIfAttackIsHighRecoil
+- *(port)* _PauseMenu_Config
+- *(port)* PauseMenu_Config
+- *(port)* AIEnergyTransTransferEnergyToBench
+- *(port)* HandleAIEnergyTrans
+- *(port)* AIProcessRetreat
+- *(port)* AIPlay_ComputerSearch +1
+- *(port)* AIPlay_Pokedex
+- *(port)* AIPlay_EnergyRetrieval +1
+- *(port)* AIPlay_SuperEnergyRemoval
+- *(port)* AIDecide_SuperPotion_Phase11
+- *(port)* AIDoTurn_LegendaryDragonite
+- *(port)* AIDoTurn_GeneralNoRetreat +1
+- *(port)* AIPlay_PokemonBreeder +2
+- *(port)* AIDoTurn_LegendaryArticuno +2
+- *(port)* AIMainTurnLogic +3
+- *(port)* AIDoTurn_LegendaryMoltres
+- *(port)* GamblerEffect
+- *(port)* AIDecide_Potion_Phase10
+- *(port)* AIPlay_SuperPotion
+- *(port)* AIPlay_SuperPotion
+- *(port)* HealingWind_PlayAreaHealEffect
+- *(port)* SpitPoison_Poison50PercentEffect
+- *(port)* _ShowPromotionalCardScreen
+- *(port)* AIDecide_Potion_Phase07 +1
+- *(port)* AIPlay_Lass +2
+- *(port)* Peek_SelectEffect +1
+- *(port)* PrintDeckConfiguration
+- *(port)* ShowPromotionalCardScreen
+- *(port)* Func_1a080
+- *(port)* TryBuildDeckMachineDeck
+- *(port)* HandleAutoDeckMenu
+- *(port)* Func_12661
+- *(port)* ShowMedalReceivedScreen
+- *(port)* GiveBoosterPack
+- *(port)* TryOpenPCMailBoosterPack
+- *(port)* PCMailHandleAInput
+- *(port)* _PCMenu_ReadMail
+- *(port)* PCMenu_ReadMail
+- *(port)* Func_c2a3
+- *(port)* ScriptCommand_GiveOneOfEachTrainer~ +3
+- *(port)* PrintPokemonCardWeight +2
+- *(port)* DisplayCardPage_PokemonDescription +1
+- *(port)* _PrintCardList
+- *(port)* PrintCardList +1
+- *(port)* CancelDeckModifications +2
+- *(port)* PlayBetweenTurnsAnimation
+- *(port)* HandlePoisonDamage +1
+- *(port)* Script_Clerk10 +2
+- *(port)* Script_LegendaryCardBottomRight +3
+- *(port)* PracticeDuel_DrawSevenCards +2
+- *(port)* PracticeDuel_DonePuttingOnBench +1
+- *(port)* MagneticStormEffect
+- *(port)* AIPerformScriptedTurn
+- *(port)* RandomlyDamagePlayAreaPokemon
+- *(port)* BigThunderEffect
+- *(port)* SetUpBossStartingHandAndDeck
+- *(port)* AIDoAction
+- *(port)* AIDoAction_ForcedSwitch
+- *(port)* AIDoAction_KOSwitch
+- *(port)* HandleSelectUpAndDownInList +1
+- *(port)* HandleDeckBuildScreen +3
+- *(port)* AIDoAction_StartDuel
+- *(port)* AIDoAction_TakePrize +3
+- *(port)* HandleSendDeckConfigurationMenu +1
+- *(port)* PrepareToBuildDeckConfigurationToS~ +1
+- *(port)* Func_6fa5
+- *(port)* ExecuteIntroSequenceCmd
+- *(port)* ExecuteArbitraryNPCMovementFromStack
+- *(port)* ScriptCommand_MoveArbitraryNPC +1
+- *(port)* InitScreenAnimation
+- *(port)* Func_1cb5e
+- *(port)* StartIRCommunications
+- *(port)* CloseIRCommunications
+- *(port)* SafelyCloseIRCommunications +1
+- *(port)* Add professor oak ai
+- *(port)* Add mix up effect
+- *(port)* Add challenge opponent info
+- *(port)* Add intro sequence
+- *(port)* Add credits sequence
+- *(port)* ChallengeMachine_PrintDuelResultIcons
+- *(port)* MaxStackEventValue +3
+- *(port)* Add duel setup routine
+- *(port)* Preload_Clerk9
+- *(port)* GetStackEventValue
+- *(port)* TransmitRegistersThroughIR
+- *(port)* Register duel routines
+- *(port)* Register opponent info
+- *(port)* ChallengeMachine_DrawOpponentList
+- *(port)* ChallengeMachine_DrawOpponentList
+- *(port)* RequestCloseIRCommunication
+- *(port)* RequestDataTransmissionThroughIR
+- *(port)* ExecuteReceivedIRCommands +2
+- *(port)* SetIRCommunicationErrorCode_Error +2
+- *(port)* ExchangeIRCommunicationParameters +2
+- *(port)* PrepareSendCardOrDeckConfiguration~ +2
+- *(port)* HandleCardPopCommunications
+- *(port)* GiftCenter_ReceiveCard +1
+- *(port)* _DoCardPop
+- *(port)* DoCardPop
+- *(port)* MainMenu_CardPop
+- *(port)* EnergySearch_AddToHandEffect
+- *(port)* LassEffect
+- *(port)* ComputerSearch_DiscardAddToHandEffect
+- *(port)* PokeBall_AddToHandEffect
+- *(port)* InputCurDeckName
+- *(port)* ChangeDeckName
+- *(port)* HealPlayAreaCardHP
+- *(port)* Potion_HealEffect
+- *(port)* SuperPotion_HealEffect
+- *(port)* PokemonCenter_HealDiscardEnergyEffect
+- *(port)* PokemonCenter_HealDiscardEnergyEffect
+- *(port)* StartDuel
+- *(port)* StartDuel_VSAIOpp +1
+- *(port)* ChallengeMachine_Duel
+- *(port)* GameEvent_Duel
+- *(port)* _SetUpAndStartLinkDuel
+- *(port)* _SendCard
+- *(port)* ChallengeMachine_Start
+- *(port)* GameEvent_ChallengeMachine +1
+- *(port)* GiftCenter_SendCard
+- *(port)* _SendDeckConfiguration
+- *(port)* SendDeckConfiguration
 
 ### Miscellaneous
 
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(factory)* Retire AITryUseAttack
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(factory)* Retire NidoranFCallForFamily_PlayerSelectEffect
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(factory)* Retire GustOfWind_SwitchEffect
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(factory)* Retire ChanseyDoubleEdgeEffect
-- *(factory)* Retire RandomlyDamagePlayAreaPokemon
-- *(factory)* Switch loop model to luna
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(factory)* Un-retire budget-exhausted reds
-- *(factory)* Retire exhausted attempt
-- *(factory)* Retire exhausted attempts
-- *(progress)* Refresh port status
-- *(factory)* Publish blocker snapshot
-- *(progress)* Refresh port status
-- *(factory)* Retire blocked attempt
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(factory)* Publish factory state
-- *(progress)* Refresh port status
-- *(factory)* Refresh retired blockers
-- *(factory)* Unretire composite-blocker victims
-- *(factory)* Refresh blocker snapshot
-- *(progress)* Refresh port status
-- *(factory)* Land verified artifacts
-- *(factory)* Refresh retry artifacts
-- *(factory)* Publish gate status
-- *(factory)* Publish gate status
-- *(factory)* Refresh blocker snapshot
-- *(progress)* Refresh port status
-- *(factory)* Refresh gate and progress
-- *(factory)* Publish progress update
-- *(factory)* Refresh factory state
-- *(factory)* Close printer 3LineFeeds blocker
-- *(factory)* Close printer gfx buffer blocker
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(factory)* Retriage npc credits and anim stanzas
-- *(factory)* Refresh gate and progress
-- *(factory)* Retriage stack-sensitive cluster
-- *(progress)* Refresh port status
-- *(progress)* Refresh port status
-- *(factory)* Retriage deck naming bank theory
-- *(factory)* Refresh blocker snapshot
-- *(progress)* Refresh port status
-- *(factory)* Close deck naming button blocker
 - *(factory)* Refresh gate and progress
 - *(factory)* Refresh gate and progress
-- *(factory)* Refresh blocker snapshot
-- *(factory)* Refresh gate and progress
-- *(factory)* Refresh gate and progress
-- *(factory)* Refresh progress snapshot
 - *(progress)* Refresh port status
-- *(factory)* Refresh gate and progress
 - *(progress)* Refresh port status
-- *(factory)* Refresh gate and progress
-- *(factory)* Retriage energy and peek stanzas
-- *(factory)* Document P4 decycling plan
-- *(factory)* Refresh gate and progress
-- *(factory)* Record retired blocker
-- *(factory)* Record retry blocker
-- *(factory)* Refresh gate and progress
-- *(factory)* Refresh gate and progress
-- *(factory)* Refresh gate and progress
-- *(factory)* Refresh gate and progress
-- *(factory)* Retire blocked attempt
+- *(progress)* Refresh port status
+- *(factory)* Retire false-premise blocker stanzas
 - *(progress)* Refresh port status
 - *(progress)* Refresh port status
 - *(progress)* Refresh port status
 - *(progress)* Refresh port status
-- *(factory)* Retire repeated retries
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Block AIDoAction, no oracle path
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Retire exhausted routine
 - *(progress)* Refresh port status
 - *(progress)* Refresh port status
 - *(progress)* Refresh port status
@@ -204,10 +256,148 @@ This changelog is generated automatically from [Conventional Commits](https://ww
 - *(progress)* Refresh port status
 - *(progress)* Refresh port status
 - *(progress)* Refresh port status
-- *(factory)* Retire exhausted attempt
-- *(factory)* Retire exhausted attempt
-- *(factory)* Refresh blocker data
-- *(factory)* Clear stub-rooted AIPlay blockers
-- *(factory)* Refresh gate and progress
-- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Retire trapped retries
+- *(progress)* Refresh port status
+- *(factory)* Refresh derived data
+- *(factory)* Refresh derived data
+- *(factory)* Refresh derived data
+- *(factory)* Refresh derived data
+- *(factory)* Refresh derived data
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh derived data
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh derived data
+- *(progress)* Refresh port status
+- *(factory)* Refresh blocker diagnosis
+- *(progress)* Refresh port status
+- *(factory)* Resolve animation timeout
+- *(factory)* Reopen budget blockers
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Retire trapped trader retry
+- *(factory)* Refresh release gate
+- *(progress)* Refresh port status
+- *(factory)* Refresh release gate
+- *(factory)* Refresh progress
+- *(progress)* Refresh port status
+- *(factory)* Clear stale script blockers
+- *(factory)* Diagnose frame-bound leaf retries
+- *(factory)* Clear implemented routine blockers
+- *(progress)* Refresh port status
+- *(factory)* Reopen evidence-free retries
+- *(factory)* Reconcile retry ledger
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Diagnose Chansey animation wait
+- *(progress)* Refresh port status
+- *(factory)* Reopen unverified debug leaves
+- *(factory)* Unretire missing-evidence leaves
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Reopen booster pre-ret retry
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Reopen ambient setup retry
+- *(progress)* Refresh port status
+- *(factory)* Reopen printer request retry
+- *(progress)* Refresh port status
+- *(factory)* Reopen verified weight leaf
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh progress data
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate reports
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate reports
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh retry ledger
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Unblock IR peer cases
+- *(factory)* Retire blocked IR retry
+- *(factory)* Diagnose scene and IR blockers
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
 
