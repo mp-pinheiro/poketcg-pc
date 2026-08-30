@@ -1,0 +1,9 @@
+{
+  "fn": "Prophecy_PlayerSelectEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Prophecy_PlayerSelectEffect\", \"registers\": {\"a\": 59, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"49849\": \"013b\", \"50105\": \"013b\", \"50177\": \"08\", \"51899\": \"80\", \"52176\": \"00\", \"52634\": \"00\", \"65431\": \"c3\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Prophecy_PlayerSelectEffect\", \"mismatches\": {\"a\": [59, 60]}}\n",
+  "restored": "{\"fn\": \"Prophecy_PlayerSelectEffect\", \"registers\": {\"a\": 59, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"49849\": \"013b\", \"50105\": \"013b\", \"50177\": \"08\", \"51899\": \"80\", \"52176\": \"00\", \"52634\": \"00\", \"65431\": \"c3\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

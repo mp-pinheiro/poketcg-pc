@@ -2967,6 +2967,14 @@ _EC_TEMP_TURN = 0xCCC3
 _EC_TEMP_NON_TURN = 0xCCC4
 _EC_NO_DAMAGE_OR_EFFECT = 0xCCC7
 _EC_ANIMATIONS_DISABLED = 0xD421
+
+POISON = dict(a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234)
+hTempCardIndex_ff98 = 0xFF98
+hTempPlayAreaLocation_ffa1 = 0xFFA1
+hTemp_ffa0 = 0xFFA0
+
+_quickfreeze_wram = {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00"}
+_quickfreeze_setup = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7523,6 +7531,36 @@ CASES["EnergyConversion_AddToHandEffect"] = [
 ]
 # <<< factory EnergyConversion_AddToHandEffect
 
+# >>> factory SolarPower_RemoveStatusEffect
+CONTRACT["SolarPower_RemoveStatusEffect"] = {"compare": (), "preserve": ()}
+CASES["SolarPower_RemoveStatusEffect"] = [{"a":0x00,"f":0x00,"b":0x00,"c":0x00,"d":0x00,"e":0x00,"hl":0xC200,"wram":{0xFF97:b"\xC2",0xC2C3:b"\x05",0xC2F0:b"\x07",0xC3F0:b"\x09"},"read":{0xCCB8:1,0xC2C3:1,0xC2F0:1,0xC3F0:1},"expect":{0xCCB8:b"\x8e",0xC2C3:b"\x05",0xC2F0:b"\x00",0xC3F0:b"\x00"},"setup":[{"fn":"SetupText","d":0x20,"e":0x40}],"instruction_budget":20000000,"cycle_budget":80000000},dict(POISON,f=0xF0,b=0xBB,c=0xCC,d=0xDD,e=0xEE,hl=0x1234,wram={0xFF97:b"\xC2",0xC2C3:b"\x5A",0xC2F0:b"\xA5",0xC3F0:b"\x5A"},read={0xCCB8:1,0xC2C3:1,0xC2F0:1,0xC3F0:1},expect={0xCCB8:b"\x8e",0xC2C3:b"\x5A",0xC2F0:b"\x00",0xC3F0:b"\x00"},setup=[{"fn":"SetupText","d":0x20,"e":0x40}],instruction_budget=20000000,cycle_budget=80000000)]
+# <<< factory SolarPower_RemoveStatusEffect
+
+# >>> factory Prophecy_PlayerSelectEffect
+CONTRACT["Prophecy_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Prophecy_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xCBD0: b"\x00", 0xCD9A: b"\x01", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC401: b"\x08"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": [0x00, 0x10, 0x01], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xCBD0: b"\x00", 0xCD9A: b"\x01", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC3BA: b"\x3B", 0xC3B9: b"\x01", 0xC401: b"\x08"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x10, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xCBD0: b"\x00", 0xCD9A: b"\x01", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC3BA: b"\x3B", 0xC3B9: b"\x01", 0xC401: b"\x08"}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory Prophecy_PlayerSelectEffect
+
+# >>> factory PokemonTrader_PlayerDeckSelection
+CONTRACT["PokemonTrader_PlayerDeckSelection"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PokemonTrader_PlayerDeckSelection"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3A", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC2F1: b"\x00", 0xC2F9: b"\x01", 0xFFA0: b"\x01", 0xFFA1: b"\x00", 0xCABB: b"\x00"}, "read": {0xFFA1: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2BA: b"\x3A", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC2F1: b"\x00", 0xC2F9: b"\x01", 0xFFA0: b"\x01", 0xFFA1: b"\x00", 0xCABB: b"\x00"}, read={0xFFA1: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PokemonTrader_PlayerDeckSelection
+
+# >>> factory Quickfreeze_Paralysis50PercentEffect
+CONTRACT["Quickfreeze_Paralysis50PercentEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["Quickfreeze_Paralysis50PercentEffect"] = [
+    dict(keys=[0x00, 0x01], wram=dict(_quickfreeze_wram), setup=_quickfreeze_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01], wram=dict(_quickfreeze_wram), setup=_quickfreeze_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Quickfreeze_Paralysis50PercentEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10571,3 +10609,23 @@ MUTATIONS["EnergyConversion_AddToHandEffect"] = {"source_symbol": "EnergyConvers
 for _record in SCHEMA2_CASES["EnergyConversion_AddToHandEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
 # <<< factory-completion EnergyConversion_AddToHandEffect
+# >>> factory-mutation SolarPower_RemoveStatusEffect
+MUTATIONS["SolarPower_RemoveStatusEffect"]={"source_symbol":"SolarPower_RemoveStatusEffect","before":"gb_write8((uint16_t)((flags.hl & 0xff00u) | DUELVARS_ARENA_CARD_STATUS), NO_STATUS);","after":"gb_write8((uint16_t)((flags.hl & 0xff00u) | DUELVARS_ARENA_CARD_STATUS), 1u);","case_ids":["SolarPower_RemoveStatusEffect-0","SolarPower_RemoveStatusEffect-1"]}
+# <<< factory-mutation SolarPower_RemoveStatusEffect
+# >>> factory-mutation Prophecy_PlayerSelectEffect
+MUTATIONS["Prophecy_PlayerSelectEffect"] = {"source_symbol": "Prophecy_PlayerSelectEffect", "before": "\t\t\tSwapTurn();\n\t\t\treturn (ProphecyScreenResult){deck.a, 0x70u};", "after": "\t\t\tSwapTurn();\n\t\t\treturn (ProphecyScreenResult){(uint8_t)(deck.a + 1u), 0x70u};", "case_ids": ["Prophecy_PlayerSelectEffect-1", "Prophecy_PlayerSelectEffect-2"]}
+# <<< factory-mutation Prophecy_PlayerSelectEffect
+# >>> factory-completion Prophecy_PlayerSelectEffect
+for _record in SCHEMA2_CASES["Prophecy_PlayerSelectEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x5A76, "bank": 0x0B}
+# <<< factory-completion Prophecy_PlayerSelectEffect
+# >>> factory-mutation PokemonTrader_PlayerDeckSelection
+MUTATIONS["PokemonTrader_PlayerDeckSelection"] = {"source_symbol": "PokemonTrader_PlayerDeckSelection", "before": "\treturn (PokemonTrader_PlayerDeckSelectionResult){hTemp_ffa0, (hTemp_ffa0 == 0u) ? 0x80u : 0x00u};", "after": "\treturn (PokemonTrader_PlayerDeckSelectionResult){(uint8_t)(hTemp_ffa0 + 1u), (hTemp_ffa0 == 0u) ? 0x80u : 0x00u};", "case_ids": ["PokemonTrader_PlayerDeckSelection-0"]}
+# <<< factory-mutation PokemonTrader_PlayerDeckSelection
+# >>> factory-completion PokemonTrader_PlayerDeckSelection
+for _record in SCHEMA2_CASES["PokemonTrader_PlayerDeckSelection"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x55F0, "bank": 1}
+# <<< factory-completion PokemonTrader_PlayerDeckSelection
+# >>> factory-mutation Quickfreeze_Paralysis50PercentEffect
+MUTATIONS["Quickfreeze_Paralysis50PercentEffect"] = {"source_symbol": "Quickfreeze_Paralysis50PercentEffect", "before": "uint8_t Quickfreeze_Paralysis50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(ParalysisCheckText, 0u);\n\tuint8_t result_f;\n\tif ((toss.f & 0x10u) == 0u) {\n\t\tSetWasUnsuccessful();\n\t\tDrawDuelMainScene();\n\t\t(void)PrintFailedEffectText();\n\t\tresult_f = WaitForWideTextBoxInput().f;\n\t} else {\n\t\tQueueStatusConditionResult paralysis = ParalysisEffect();\n\t\tuint8_t location = hTempPlayAreaLocation_ff9d;\n\t\tuint8_t turn = hWhoseTurn;\n\t\tuint16_t animation_hl = (uint16_t)(((uint16_t)turn << 8) | (wStatusConditionQueueIndex_ADDR & 0xffu));\n\t\tPlayAttackAnimation(turn, paralysis.f, location, 0u, 0u, 0u, animation_hl);\n\t\tPlayStatusConditionQueueAnimations();\n\t\tWaitAttackAnimation();\n\t\t(void)ApplyStatusConditionQueue();\n\t\tDrawDuelHUDs();\n\t\tPrintFailedEffectTextResult failed = PrintFailedEffectText();\n\t\tresult_f = failed.f;\n\t\tif ((failed.f & 0x10u) != 0u)\n\t\t\tresult_f = WaitForWideTextBoxInput().f;\n\t}\n\treturn result_f;\n}", "after": "uint8_t Quickfreeze_Paralysis50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(ParalysisCheckText, 0u);\n\tuint8_t result_f;\n\tif ((toss.f & 0x10u) == 0u) {\n\t\tSetWasUnsuccessful();\n\t\tDrawDuelMainScene();\n\t\t(void)PrintFailedEffectText();\n\t\tresult_f = WaitForWideTextBoxInput().f;\n\t} else {\n\t\tQueueStatusConditionResult paralysis = ParalysisEffect();\n\t\tuint8_t location = hTempPlayAreaLocation_ff9d;\n\t\tuint8_t turn = hWhoseTurn;\n\t\tuint16_t animation_hl = (uint16_t)(((uint16_t)turn << 8) | (wStatusConditionQueueIndex_ADDR & 0xffu));\n\t\tPlayAttackAnimation(turn, paralysis.f, location, 0u, 0u, 0u, animation_hl);\n\t\tPlayStatusConditionQueueAnimations();\n\t\tWaitAttackAnimation();\n\t\t(void)ApplyStatusConditionQueue();\n\t\tDrawDuelHUDs();\n\t\tPrintFailedEffectTextResult failed = PrintFailedEffectText();\n\t\tresult_f = failed.f;\n\t\tif ((failed.f & 0x10u) != 0u)\n\t\t\tresult_f = WaitForWideTextBoxInput().f;\n\t}\n\treturn 0x00u;\n}", "case_ids": ["Quickfreeze_Paralysis50PercentEffect-0", "Quickfreeze_Paralysis50PercentEffect-1"]}
+# <<< factory-mutation Quickfreeze_Paralysis50PercentEffect

@@ -1,0 +1,9 @@
+{
+  "fn": "PokemonTrader_PlayerDeckSelection",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PokemonTrader_PlayerDeckSelection\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49730\": \"00\", \"49850\": \"39\", \"49902\": \"01\", \"49905\": \"00\", \"49913\": \"01\", \"51899\": \"00\", \"65431\": \"c2\", \"65440\": \"0100\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PokemonTrader_PlayerDeckSelection\", \"mismatches\": {\"a\": [1, 2]}}\n",
+  "restored": "{\"fn\": \"PokemonTrader_PlayerDeckSelection\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49730\": \"00\", \"49850\": \"39\", \"49902\": \"01\", \"49905\": \"00\", \"49913\": \"01\", \"51899\": \"00\", \"65431\": \"c2\", \"65440\": \"0100\"}}, \"status\": \"PASS\"}\n"
+}

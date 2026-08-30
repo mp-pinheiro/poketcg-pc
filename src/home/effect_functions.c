@@ -1415,6 +1415,37 @@ void BankswitchROM(uint8_t bank);
 #include "home/effect_functions.h"
 #include "mem.h"
 #define FlipUntilFailAppears10DamageForEachHeadsText 0x00e8u
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#define ATK_ANIM_HEAL_BOTH_SIDES 0x8Eu
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#define PleaseSelectTheDeckText 0x013du
+#define ProcedureForProphecyText 0x0135u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/menus.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10973,3 +11004,87 @@ EnergyConversionAddToHandEffectResult EnergyConversion_AddToHandEffect(uint8_t f
 	return (EnergyConversionAddToHandEffectResult){0u, 0xA0u};
 }
 /* <<< factory EnergyConversion_AddToHandEffect */
+
+/* >>> factory SolarPower_RemoveStatusEffect */
+void SolarPower_RemoveStatusEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	uint8_t turn = hWhoseTurn;
+	wLoadedAttackAnimation = ATK_ANIM_HEAL_BOTH_SIDES;
+	ResetAttackAnimationIsPlaying();
+	PlayAttackAnimation(turn, f, location, 0u, d, e, (uint16_t)(((uint16_t)turn << 8) | (hl & 0xffu)));
+	WaitAttackAnimation();
+	DuelistVarResult flags = GetTurnDuelistVariable((uint8_t)(hTemp_ffa0 + DUELVARS_ARENA_CARD_FLAGS));
+	gb_write8((uint16_t)((flags.hl & 0xff00u) | DUELVARS_ARENA_CARD_STATUS), NO_STATUS);
+	DuelistVarResult status = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	gb_write8(status.hl, NO_STATUS);
+	DrawDuelHUDs();
+	hTempPlayAreaLocation_ff9d = 0x10u;
+	hTemp_ffa0 = 0x40u;
+	*(uint8_t *)(g_wram + (0xC2C2u - 0xC000u)) |= (1u << USED_PKMN_POWER_THIS_TURN_F);
+	(void)a; (void)b; (void)c;
+}
+/* <<< factory SolarPower_RemoveStatusEffect */
+
+/* >>> factory Prophecy_PlayerSelectEffect */
+ProphecyScreenResult Prophecy_PlayerSelectEffect(void)
+{
+	for (;;) {
+		DrawWholeScreenTextBox(ProcedureForProphecyText);
+		DrawDuelMainScene();
+		(void)TwoItemHorizontalMenu(PleaseSelectTheDeckText);
+		if ((hKeysHeld & PAD_B) != 0u)
+			continue;
+		hTempList = hCurMenuItem;
+		if (hTempList != 0u) {
+			DuelistVarResult deck = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+			if (deck.a >= DECK_SIZE)
+				continue;
+			SwapTurn();
+			return (ProphecyScreenResult){deck.a, 0x70u};
+		}
+		DuelistVarResult deck = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+		if (deck.a >= DECK_SIZE)
+			continue;
+		return (ProphecyScreenResult){deck.a, 0x70u};
+	}
+}
+/* <<< factory Prophecy_PlayerSelectEffect */
+
+/* >>> factory PokemonTrader_PlayerDeckSelection */
+PokemonTrader_PlayerDeckSelectionResult PokemonTrader_PlayerDeckSelection(void)
+{
+	gb_write8(0xC2BAu, 0x39u);
+	hTempPlayAreaLocation_ffa1 = hTempCardIndex_ff98;
+	return (PokemonTrader_PlayerDeckSelectionResult){hTemp_ffa0, (hTemp_ffa0 == 0u) ? 0x80u : 0x00u};
+}
+/* <<< factory PokemonTrader_PlayerDeckSelection */
+
+/* >>> factory Quickfreeze_Paralysis50PercentEffect */
+uint8_t Quickfreeze_Paralysis50PercentEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(ParalysisCheckText, 0u);
+	uint8_t result_f;
+	if ((toss.f & 0x10u) == 0u) {
+		SetWasUnsuccessful();
+		DrawDuelMainScene();
+		(void)PrintFailedEffectText();
+		result_f = WaitForWideTextBoxInput().f;
+	} else {
+		QueueStatusConditionResult paralysis = ParalysisEffect();
+		uint8_t location = hTempPlayAreaLocation_ff9d;
+		uint8_t turn = hWhoseTurn;
+		uint16_t animation_hl = (uint16_t)(((uint16_t)turn << 8) | (wStatusConditionQueueIndex_ADDR & 0xffu));
+		PlayAttackAnimation(turn, paralysis.f, location, 0u, 0u, 0u, animation_hl);
+		PlayStatusConditionQueueAnimations();
+		WaitAttackAnimation();
+		(void)ApplyStatusConditionQueue();
+		DrawDuelHUDs();
+		PrintFailedEffectTextResult failed = PrintFailedEffectText();
+		result_f = failed.f;
+		if ((failed.f & 0x10u) != 0u)
+			result_f = WaitForWideTextBoxInput().f;
+	}
+	return result_f;
+}
+/* <<< factory Quickfreeze_Paralysis50PercentEffect */

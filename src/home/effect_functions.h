@@ -2126,6 +2126,19 @@ void StoneBarrage_MultiplierEffect(void);
 typedef struct { uint8_t a; uint8_t f; } EnergyConversionAddToHandEffectResult;
 EnergyConversionAddToHandEffectResult EnergyConversion_AddToHandEffect(uint8_t f, uint8_t d, uint8_t e);
 /* <<< factory EnergyConversion_AddToHandEffect */
+/* >>> factory SolarPower_RemoveStatusEffect */
+void SolarPower_RemoveStatusEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory SolarPower_RemoveStatusEffect */
+/* >>> factory Prophecy_PlayerSelectEffect */
+ProphecyScreenResult Prophecy_PlayerSelectEffect(void);
+/* <<< factory Prophecy_PlayerSelectEffect */
+/* >>> factory PokemonTrader_PlayerDeckSelection */
+typedef struct { uint8_t a; uint8_t f; } PokemonTrader_PlayerDeckSelectionResult;
+PokemonTrader_PlayerDeckSelectionResult PokemonTrader_PlayerDeckSelection(void);
+/* <<< factory PokemonTrader_PlayerDeckSelection */
+/* >>> factory Quickfreeze_Paralysis50PercentEffect */
+uint8_t Quickfreeze_Paralysis50PercentEffect(void);
+/* <<< factory Quickfreeze_Paralysis50PercentEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

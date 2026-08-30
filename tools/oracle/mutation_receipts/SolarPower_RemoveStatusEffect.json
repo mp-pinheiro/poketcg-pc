@@ -1,0 +1,9 @@
+{
+  "fn": "SolarPower_RemoveStatusEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SolarPower_RemoveStatusEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49859\": \"05\", \"49904\": \"00\", \"50160\": \"00\", \"52408\": \"8e\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SolarPower_RemoveStatusEffect\", \"mismatches\": {\"bus\": {\"address\": 49904, \"reference\": \"0500008ec2\", \"native\": \"0501008ec2\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[49859, 1], [49904, 1], [50160, 1], [52408, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"SolarPower_RemoveStatusEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49859\": \"05\", \"49904\": \"00\", \"50160\": \"00\", \"52408\": \"8e\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

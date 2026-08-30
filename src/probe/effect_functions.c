@@ -5214,6 +5214,38 @@ static void adapt_EnergyConversion_AddToHandEffect(ProbeState *s)
 }
 /* <<< factory EnergyConversion_AddToHandEffect */
 
+/* >>> factory SolarPower_RemoveStatusEffect */
+static void adapt_SolarPower_RemoveStatusEffect(ProbeState *s)
+{
+	SolarPower_RemoveStatusEffect(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+}
+/* <<< factory SolarPower_RemoveStatusEffect */
+
+/* >>> factory Prophecy_PlayerSelectEffect */
+static void adapt_Prophecy_PlayerSelectEffect(ProbeState *s)
+{
+	ProphecyScreenResult result = Prophecy_PlayerSelectEffect();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Prophecy_PlayerSelectEffect */
+
+/* >>> factory PokemonTrader_PlayerDeckSelection */
+static void adapt_PokemonTrader_PlayerDeckSelection(ProbeState *s)
+{
+	PokemonTrader_PlayerDeckSelectionResult result = PokemonTrader_PlayerDeckSelection();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory PokemonTrader_PlayerDeckSelection */
+
+/* >>> factory Quickfreeze_Paralysis50PercentEffect */
+static void adapt_Quickfreeze_Paralysis50PercentEffect(ProbeState *s)
+{
+	s->f = Quickfreeze_Paralysis50PercentEffect();
+}
+/* <<< factory Quickfreeze_Paralysis50PercentEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5843,5 +5875,9 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PayDayEffect", adapt_PayDayEffect },
 	{ "StoneBarrage_MultiplierEffect", adapt_StoneBarrage_MultiplierEffect },
 	{ "EnergyConversion_AddToHandEffect", adapt_EnergyConversion_AddToHandEffect },
+	{ "SolarPower_RemoveStatusEffect", adapt_SolarPower_RemoveStatusEffect },
+	{ "Prophecy_PlayerSelectEffect", adapt_Prophecy_PlayerSelectEffect },
+	{ "PokemonTrader_PlayerDeckSelection", adapt_PokemonTrader_PlayerDeckSelection },
+	{ "Quickfreeze_Paralysis50PercentEffect", adapt_Quickfreeze_Paralysis50PercentEffect },
 	{ NULL, NULL },
 };
