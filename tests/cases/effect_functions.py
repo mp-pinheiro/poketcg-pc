@@ -2794,6 +2794,15 @@ wPlayerDuelVariables = 0xC200
 wPlayerDeck = 0xC400
 wAnimationsDisabled = 0xD421
 wLCDC = 0xCABB
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hWhoseTurn = 0xFF97
+wTurnCardsNotInDeck = 0xC2BA
+wPlayerDeck = 0xC27E
+hTempList = 0xFFA0
+DISPLAY_SEED = {0xCABB: b"\x00", 0xFF40: b"\x80", 0xCBCF: b"\x00", 0xCBD0: b"\x00", 0xCBD6: b"\x00", 0xCBDF: b"\x00", 0xCBD8: b"\x00\x00", 0xC510: b"\x00", 0xFF91: b"\x00", 0xFFB1: b"\x00"}
+DISPLAY_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+DISPLAY_KEYS = [0x00, 0x01]
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7230,6 +7239,14 @@ CASES["PokemonCenter_HealDiscardEnergyEffect"] = [
 ]
 # <<< factory PokemonCenter_HealDiscardEnergyEffect
 
+# >>> factory ComputerSearch_PlayerDeckSelection
+CONTRACT["ComputerSearch_PlayerDeckSelection"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ComputerSearch_PlayerDeckSelection"] = [
+    {"c": 0x00, "d": 0x00, "e": 0x00, "keys": DISPLAY_KEYS, "wram": {hWhoseTurn: b"\xC2", wTurnCardsNotInDeck: b"\x3B", wPlayerDeck + 0x3B: b"\x01", **DISPLAY_SEED}, "setup": DISPLAY_SETUP, "read": {hTempList + 2: 1, 0xCABB: 1, 0xFF91: 1}, "expect": {hTempList + 2: b"\x01", 0xCABB: b"\x80", 0xFF91: b"\x01"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, c=0xCC, keys=DISPLAY_KEYS, wram={hWhoseTurn: b"\xC2", wTurnCardsNotInDeck: b"\x3B", wPlayerDeck + 0x3B: b"\x01", **DISPLAY_SEED}, setup=DISPLAY_SETUP, read={hTempList + 2: 1, 0xCABB: 1, 0xFF91: 1}, expect={hTempList + 2: b"\x01", 0xCABB: b"\x80", 0xFF91: b"\x01"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ComputerSearch_PlayerDeckSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10175,3 +10192,6 @@ MUTATIONS["PokemonCenter_HealDiscardEnergyEffect"] = {"source_symbol": "PokemonC
 for _record in SCHEMA2_CASES["PokemonCenter_HealDiscardEnergyEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x1C35, "bank": 0}
 # <<< factory-completion PokemonCenter_HealDiscardEnergyEffect
+# >>> factory-mutation ComputerSearch_PlayerDeckSelection
+MUTATIONS["ComputerSearch_PlayerDeckSelection"] = {"source_symbol": "ComputerSearch_PlayerDeckSelection", "before": "ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint8_t c, uint16_t de)\n{\n\t(void)CreateDeckCardList(c, de);\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(DuelistDeckText, ChooseCardToPlaceInHandText);\n\twLCDC = 0x80u;\n\tgb_write8(hKeysPressed_ADDR, 0x01u);\n\tuint8_t selected = gb_read8(wDuelTempList_ADDR);\n\tgb_write8((uint16_t)(hTempList_ADDR + 2u), selected);", "after": "ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint8_t c, uint16_t de)\n{\n\t(void)CreateDeckCardList(c, de);\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(DuelistDeckText, ChooseCardToPlaceInHandText);\n\twLCDC = 0x80u;\n\tgb_write8(hKeysPressed_ADDR, 0x01u);\n\tuint8_t selected = gb_read8(wDuelTempList_ADDR);\n\tgb_write8((uint16_t)(hTempList_ADDR + 2u), (uint8_t)(selected + 1u));", "case_ids": ["ComputerSearch_PlayerDeckSelection-0", "ComputerSearch_PlayerDeckSelection-1"]}
+# <<< factory-mutation ComputerSearch_PlayerDeckSelection

@@ -1370,6 +1370,11 @@ void BankswitchROM(uint8_t bank);
 #include "generated/hram.h"
 #include "home/duel.h"
 #include "home/effect_functions.h"
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10682,3 +10687,17 @@ void PokemonCenter_HealDiscardEnergyEffect(void)
 	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
 }
 /* <<< factory PokemonCenter_HealDiscardEnergyEffect */
+
+/* >>> factory ComputerSearch_PlayerDeckSelection */
+ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint8_t c, uint16_t de)
+{
+	(void)CreateDeckCardList(c, de);
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChooseCardToPlaceInHandText);
+	wLCDC = 0x80u;
+	gb_write8(hKeysPressed_ADDR, 0x01u);
+	uint8_t selected = gb_read8(wDuelTempList_ADDR);
+	gb_write8((uint16_t)(hTempList_ADDR + 2u), selected);
+	return (ComputerSearch_PlayerDeckSelectionResult){selected, (selected == 0u) ? 0x80u : 0x00u};
+}
+/* <<< factory ComputerSearch_PlayerDeckSelection */

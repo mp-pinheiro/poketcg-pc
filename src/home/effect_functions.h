@@ -2063,6 +2063,10 @@ void SuperPotion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t 
 /* >>> factory PokemonCenter_HealDiscardEnergyEffect */
 void PokemonCenter_HealDiscardEnergyEffect(void);
 /* <<< factory PokemonCenter_HealDiscardEnergyEffect */
+/* >>> factory ComputerSearch_PlayerDeckSelection */
+typedef struct { uint8_t a; uint8_t f; } ComputerSearch_PlayerDeckSelectionResult;
+ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint8_t c, uint16_t de);
+/* <<< factory ComputerSearch_PlayerDeckSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

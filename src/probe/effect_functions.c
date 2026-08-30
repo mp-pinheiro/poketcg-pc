@@ -5056,6 +5056,15 @@ static void adapt_PokemonCenter_HealDiscardEnergyEffect(ProbeState *s)
 }
 /* <<< factory PokemonCenter_HealDiscardEnergyEffect */
 
+/* >>> factory ComputerSearch_PlayerDeckSelection */
+static void adapt_ComputerSearch_PlayerDeckSelection(ProbeState *s)
+{
+	ComputerSearch_PlayerDeckSelectionResult result = ComputerSearch_PlayerDeckSelection(s->c, (uint16_t)(((uint16_t)s->d << 8) | s->e));
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory ComputerSearch_PlayerDeckSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5668,5 +5677,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Potion_HealEffect", adapt_Potion_HealEffect },
 	{ "SuperPotion_HealEffect", adapt_SuperPotion_HealEffect },
 	{ "PokemonCenter_HealDiscardEnergyEffect", adapt_PokemonCenter_HealDiscardEnergyEffect },
+	{ "ComputerSearch_PlayerDeckSelection", adapt_ComputerSearch_PlayerDeckSelection },
 	{ NULL, NULL },
 };

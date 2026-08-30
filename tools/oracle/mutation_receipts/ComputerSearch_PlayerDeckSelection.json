@@ -1,0 +1,9 @@
+{
+  "fn": "ComputerSearch_PlayerDeckSelection",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ComputerSearch_PlayerDeckSelection\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49849\": \"013b\", \"50448\": \"01\", \"51899\": \"80\", \"52175\": \"0000\", \"52182\": \"08\", \"52184\": \"0000\", \"52191\": \"00\", \"65344\": \"80\", \"65425\": \"01\", \"65431\": \"c2\", \"65442\": \"01\", \"65457\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ComputerSearch_PlayerDeckSelection\", \"mismatches\": {\"bus\": {\"address\": 65442, \"reference\": \"008001c20100\", \"native\": \"008001c20200\", \"reference_size\": 15, \"native_size\": 15, \"spans\": [[49849, 2], [50448, 1], [51899, 1], [52175, 2], [52182, 1], [52184, 2], [52191, 1], [65344, 1], [65425, 1], [65431, 1], [65442, 1], [65457, 1]]}}}\n",
+  "restored": "{\"fn\": \"ComputerSearch_PlayerDeckSelection\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49849\": \"013b\", \"50448\": \"01\", \"51899\": \"80\", \"52175\": \"0000\", \"52182\": \"08\", \"52184\": \"0000\", \"52191\": \"00\", \"65344\": \"80\", \"65425\": \"01\", \"65431\": \"c2\", \"65442\": \"01\", \"65457\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
