@@ -59,6 +59,10 @@
 #define PALETTE_DEFAULT_CGB 0x00u
 #define PALETTE_OVERWORLD_OAM 0x1du
 #define SPRText 0x0384u
+
+#include "generated/sram.h"
+#include "home/switch_sram.h"
+#define DEBUG_DUEL_MENU_PARAMS 0x6908u
 /* <<< factory statics */
 
 DebugSGBFrameResult DebugSGBFrame(uint8_t b, uint8_t c, uint8_t d,
@@ -384,3 +388,27 @@ void DebugLookAtSprite(void)
 	_DebugLookAtSprite();
 }
 /* <<< factory DebugLookAtSprite */
+
+/* >>> factory DebugDuelMode */
+DebugDuelModeResult DebugDuelMode(void)
+{
+	EnableSRAM();
+	uint8_t selected = (uint8_t)(sDebugDuelMode & 0x01u);
+	sDebugDuelMode = selected;
+	InitAndPrintMenu(DEBUG_DUEL_MENU_PARAMS, selected);
+
+	for (;;) {
+		DoFrameIfLCDEnabled();
+		HandleMenuInputResult input = HandleMenuInput();
+		if ((input.f & 0x10u) == 0u)
+			continue;
+		uint8_t item = hCurMenuItem;
+		if (item != input.e)
+			continue;
+		uint8_t final = (uint8_t)(item & 0x01u);
+		sDebugDuelMode = final;
+		DisableSRAM();
+		return (DebugDuelModeResult){final, (uint8_t)(final == 0u ? 0x90u : 0x10u)};
+	}
+}
+/* <<< factory DebugDuelMode */

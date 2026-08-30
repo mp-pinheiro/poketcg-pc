@@ -131,6 +131,9 @@ DEBUG_CREATE_SELECTION = 0xD41A
 DEBUG_CREATE_CUR_MENU = 0xFFB1
 
 wLoadedNPCTempIndex = 0xD3AA
+
+DEBUG_DUEL_MENU_ITEM = 0xFFB1
+DEBUG_DUEL_MODE = 0xBA41
 # <<< factory-cases-statics
 
 # >>> factory DebugCreateBoosterPack
@@ -200,6 +203,29 @@ CASES["DebugLookAtSprite"] = [
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory DebugLookAtSprite
+
+# >>> factory DebugDuelMode
+CONTRACT["DebugDuelMode"] = {
+    "compare": ("a", "f"),
+    "preserve": (),
+}
+CASES["DebugDuelMode"] = [
+    {"keys": [0x00, 0x01],
+     "wram": {0xCABB: b"\x80", 0xFF40: b"\x80", DEBUG_DUEL_MENU_ITEM: b"\x00"},
+     "sram": {0: {DEBUG_DUEL_MODE: b"\x00"}},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {DEBUG_DUEL_MENU_ITEM: 1},
+     "sread": {0: {DEBUG_DUEL_MODE: 1}},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCABB: b"\x80", 0xFF40: b"\x80", DEBUG_DUEL_MENU_ITEM: b"\x01"},
+         sram={0: {DEBUG_DUEL_MODE: b"\x01"}},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={DEBUG_DUEL_MENU_ITEM: 1},
+         sread={0: {DEBUG_DUEL_MODE: 1}},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DebugDuelMode
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -300,3 +326,11 @@ MUTATIONS["DebugLookAtSprite"] = {
 for _rec in SCHEMA2_CASES["DebugLookAtSprite"]:
     _rec["completion"] = {"mode": "event", "predicate": "mem:0xd3aa==0x1&0xff"}
 # <<< factory-completion DebugLookAtSprite
+# >>> factory-mutation DebugDuelMode
+MUTATIONS["DebugDuelMode"] = {
+    "source_symbol": "DebugDuelMode",
+    "before": "DebugDuelModeResult DebugDuelMode(void)\n{\n\tEnableSRAM();\n\tuint8_t selected = (uint8_t)(sDebugDuelMode & 0x01u);\n\tsDebugDuelMode = selected;\n\tInitAndPrintMenu(DEBUG_DUEL_MENU_PARAMS, selected);\n\n\tfor (;;) {\n\t\tDoFrameIfLCDEnabled();\n\t\tHandleMenuInputResult input = HandleMenuInput();\n\t\tif ((input.f & 0x10u) == 0u)\n\t\t\tcontinue;\n\t\tuint8_t item = hCurMenuItem;\n\t\tif (item != input.e)\n\t\t\tcontinue;\n\t\tuint8_t final = (uint8_t)(item & 0x01u);\n\t\tsDebugDuelMode = final;",
+    "after": "DebugDuelModeResult DebugDuelMode(void)\n{\n\tEnableSRAM();\n\tuint8_t selected = (uint8_t)(sDebugDuelMode & 0x01u);\n\tsDebugDuelMode = selected;\n\tInitAndPrintMenu(DEBUG_DUEL_MENU_PARAMS, selected);\n\n\tfor (;;) {\n\t\tDoFrameIfLCDEnabled();\n\t\tHandleMenuInputResult input = HandleMenuInput();\n\t\tif ((input.f & 0x10u) == 0u)\n\t\t\tcontinue;\n\t\tuint8_t item = hCurMenuItem;\n\t\tif (item != input.e)\n\t\t\tcontinue;\n\t\tuint8_t final = (uint8_t)(item & 0x01u);\n\t\tsDebugDuelMode = (uint8_t)(final ^ 0x01u);",
+    "case_ids": ["DebugDuelMode-0", "DebugDuelMode-1"],
+}
+# <<< factory-mutation DebugDuelMode

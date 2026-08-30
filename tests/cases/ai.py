@@ -144,6 +144,14 @@ CASES["AIDoAction_TakePrize"] = [
 ]
 # <<< factory AIDoAction_TakePrize
 
+# >>> factory AIDoAction_Turn
+CONTRACT["AIDoAction_Turn"] = {"compare": ("a",), "preserve": ()}
+CASES["AIDoAction_Turn"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xCC0E: b"\x01", 0xCDA7: b"\x80", 0xC2EE: b"\x00", 0xC3EE: b"\x00", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\xFF", 0xC3BC: b"\xFF", 0xC400: b"\xB9\xFF", 0xC600: b"\xB9\xFF", 0xCC0B: b"\x01", 0xCE20: b"\x00", 0xCAC2: b"\x01", 0xCBF9: b"\x01", 0xCABB: b"\x00"}, "read": {0xCE20: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xCC0E: b"\x01", 0xCDA7: b"\x80", 0xC2EE: b"\x00", 0xC3EE: b"\x00", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\xFF", 0xC3BC: b"\xFF", 0xC400: b"\xB9\xFF", 0xC600: b"\xB9\xFF", 0xCC0B: b"\x01", 0xCE20: b"\x00", 0xCAC2: b"\x01", 0xCBF9: b"\x01", 0xCABB: b"\x00"}, read={0xCE20: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory AIDoAction_Turn
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -170,3 +178,6 @@ MUTATIONS["AIDoAction_StartDuel"] = {"source_symbol": "AIDoAction_StartDuel", "b
 # >>> factory-mutation AIDoAction_TakePrize
 MUTATIONS["AIDoAction_TakePrize"] = {"source_symbol": "AIDoAction_TakePrize", "before": "uint8_t AIDoAction_TakePrize(void)\n{\n\treturn AIDoAction(AIACTION_TAKE_PRIZE);", "after": "uint8_t AIDoAction_TakePrize(void)\n{\n\treturn AIDoAction(0x03u);", "case_ids": ["AIDoAction_TakePrize-0"]}
 # <<< factory-mutation AIDoAction_TakePrize
+# >>> factory-mutation AIDoAction_Turn
+MUTATIONS['AIDoAction_Turn'] = {'source_symbol': 'AIDoAction_Turn', 'before': 'uint8_t AIDoAction_Turn(void)\n{\n\tuint8_t result = AIDoAction(AIACTION_DO_TURN);', 'after': 'uint8_t AIDoAction_Turn(void)\n{\n\tuint8_t result = AIDoAction(0x02u);', 'case_ids': ['AIDoAction_Turn-0']}
+# <<< factory-mutation AIDoAction_Turn

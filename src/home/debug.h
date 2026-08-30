@@ -88,4 +88,12 @@ void _DebugLookAtSprite(void);
 /* >>> factory DebugLookAtSprite */
 void DebugLookAtSprite(void);
 /* <<< factory DebugLookAtSprite */
+/* >>> factory DebugDuelMode */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} DebugDuelModeResult;
+
+DebugDuelModeResult DebugDuelMode(void);
+/* <<< factory DebugDuelMode */
 #endif

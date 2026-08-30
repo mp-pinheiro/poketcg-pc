@@ -27,6 +27,8 @@
 #define AIACTION_KO_SWITCH 0x04u
 
 #define AIACTION_TAKE_PRIZE 0x05u
+
+#define AIACTION_DO_TURN 0x01u
 /* <<< factory statics */
 
 #define SAMS_PRACTICE_DECK_ID 0u
@@ -174,3 +176,14 @@ uint8_t AIDoAction_TakePrize(void)
 	return AIDoAction(AIACTION_TAKE_PRIZE);
 }
 /* <<< factory AIDoAction_TakePrize */
+
+/* >>> factory AIDoAction_Turn */
+uint8_t AIDoAction_Turn(void)
+{
+	uint8_t result = AIDoAction(AIACTION_DO_TURN);
+	EnableLCD();
+	wSkipDuelistIsThinkingDelay = 0u;
+	gb_write8(0xCDA7u, 0x81u);
+	return result;
+}
+/* <<< factory AIDoAction_Turn */

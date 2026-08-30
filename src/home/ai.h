@@ -23,4 +23,7 @@ uint8_t AIDoAction_StartDuel(void);
 /* >>> factory AIDoAction_TakePrize */
 uint8_t AIDoAction_TakePrize(void);
 /* <<< factory AIDoAction_TakePrize */
+/* >>> factory AIDoAction_Turn */
+uint8_t AIDoAction_Turn(void);
+/* <<< factory AIDoAction_Turn */
 #endif /* POKETCG_HOME_AI_H */

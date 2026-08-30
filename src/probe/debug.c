@@ -121,6 +121,15 @@ static void adapt_DebugLookAtSprite(ProbeState *s)
 }
 /* <<< factory DebugLookAtSprite */
 
+/* >>> factory DebugDuelMode */
+static void adapt_DebugDuelMode(ProbeState *s)
+{
+	DebugDuelModeResult result = DebugDuelMode();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory DebugDuelMode */
+
 const ProbeEntry probe_entries_debug[] = {
 	{"DebugSGBFrame", adapt_DebugSGBFrame},
 	{"DebugStandardBGCharacter", adapt_DebugStandardBGCharacter},
@@ -134,5 +143,6 @@ const ProbeEntry probe_entries_debug[] = {
 	{ "DebugCredits", adapt_DebugCredits },
 	{ "_DebugLookAtSprite", adapt__DebugLookAtSprite },
 	{ "DebugLookAtSprite", adapt_DebugLookAtSprite },
+	{ "DebugDuelMode", adapt_DebugDuelMode },
 	{NULL, NULL},
 };
