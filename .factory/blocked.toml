@@ -51,10 +51,6 @@ unblock = "land a project-wide RunOverworldScript execution harness -- e.g. a by
 
 
 
-[[blocked]]
-name = "HandleDuelSetup"
-reason = "HAND-DIAGNOSED 2026-08-29: generation-5 retry with explicit LCD-off animation fixture and CGB deck seeds reaches the setup body but diverges in the deck/duel WRAM footprint beginning at $C351 (reference 80, native ff) and related card-state spans. The missing initial duel-state writers are not resolved by another unchanged top-level retry."
-unblock = "Trace the InitializeDuelVariables and deck-state writers responsible for the $C351 and related setup footprint, port that state transition, then retry HandleDuelSetup."
 
 
  
