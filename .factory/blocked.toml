@@ -51,10 +51,6 @@ name = "MagnetonLv35SelfdestructEffect"
 reason = "HAND-DIAGNOSED 2026-08-28: generation 7 repeated primary runs hit the same reference-side WaitForVBlank/frame path at pc 0xFF8A with LCDC=0x80 and no register mismatch, even after removing SetupText and seeding animation/recoil state. The self-destruct animation/recoil chain is not bounded by the current isolated call contract; another unchanged retry is non-informative."
 unblock = "trace the first DealRecoilDamageToSelf or DealDamageToAllBenchedPokemon animation callee that enables LCD, then verify a bounded prefix/pre-ret case or port that frame-safe callee before retrying this routine"
 
-[[blocked]]
-name = "ChanseyDoubleEdgeEffect"
-reason = "HAND-DIAGNOSED 2026-08-28: generation 18 primary verification reaches the reference WaitForVBlank parking loop at pc=0x0271 after the self-damage animation path, with no register mismatch. The effect's frame-dependent animation/recoil chain does not return under the isolated call fixture; this is not a candidate translation mismatch and another unchanged full-call retry is non-informative."
-unblock = "trace DealRecoilDamageToSelf and its animation wait to identify a bounded pre-ret point, then verify a prefix case or port the frame-safe callee before retrying ChanseyDoubleEdgeEffect"
 
 
 [[blocked]]
