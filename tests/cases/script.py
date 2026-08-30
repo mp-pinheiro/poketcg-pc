@@ -103,6 +103,7 @@ CASES["RunOverworldScript"] = [
         "a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00,
         "d": 0x44, "e": 0x55, "hl": 0x4567,
         "rom_bank": 0x03,
+        "hbank_rom": 0x03,
         "wram": {
             wScriptPointer: b"\x00\xC5",
             0xC500: b"\x00\x34\x12",
@@ -113,6 +114,7 @@ CASES["RunOverworldScript"] = [
     dict(
         POISON,
         rom_bank=0x03,
+        hbank_rom=0x03,
         wram={
             wScriptPointer: b"\x00\xC5",
             0xC500: b"\x00\x34\x12",
@@ -124,6 +126,7 @@ CASES["RunOverworldScript"] = [
         "a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00,
         "d": 0x44, "e": 0x55, "hl": 0x4567,
         "rom_bank": 0x03,
+        "hbank_rom": 0x03,
         "wram": {
             wScriptPointer: b"\x00\xC5",
             0xC500: b"\x01\x34\x12",
