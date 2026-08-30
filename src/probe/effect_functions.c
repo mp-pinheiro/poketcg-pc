@@ -5065,6 +5065,24 @@ static void adapt_ComputerSearch_PlayerDeckSelection(ProbeState *s)
 }
 /* <<< factory ComputerSearch_PlayerDeckSelection */
 
+/* >>> factory TakeDownEffect */
+static void adapt_TakeDownEffect(ProbeState *s)
+{
+	TakeDownEffectResult result = TakeDownEffect(s->f, s->d, s->e);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory TakeDownEffect */
+
+/* >>> factory JigglypuffDoubleEdgeEffect */
+static void adapt_JigglypuffDoubleEdgeEffect(ProbeState *s)
+{
+	JigglypuffDoubleEdgeEffectResult result = JigglypuffDoubleEdgeEffect(s->f, s->d, s->e);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory JigglypuffDoubleEdgeEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5678,5 +5696,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SuperPotion_HealEffect", adapt_SuperPotion_HealEffect },
 	{ "PokemonCenter_HealDiscardEnergyEffect", adapt_PokemonCenter_HealDiscardEnergyEffect },
 	{ "ComputerSearch_PlayerDeckSelection", adapt_ComputerSearch_PlayerDeckSelection },
+	{ "TakeDownEffect", adapt_TakeDownEffect },
+	{ "JigglypuffDoubleEdgeEffect", adapt_JigglypuffDoubleEdgeEffect },
 	{ NULL, NULL },
 };

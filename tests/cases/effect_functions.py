@@ -2803,6 +2803,24 @@ hTempList = 0xFFA0
 DISPLAY_SEED = {0xCABB: b"\x00", 0xFF40: b"\x80", 0xCBCF: b"\x00", 0xCBD0: b"\x00", 0xCBD6: b"\x00", 0xCBDF: b"\x00", 0xCBD8: b"\x00\x00", 0xC510: b"\x00", 0xFF91: b"\x00", 0xFFB1: b"\x00"}
 DISPLAY_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 DISPLAY_KEYS = [0x00, 0x01]
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+_td_arena_hp = 0xC2C8
+_td_wLoadedAttackAnimation = 0xCCB8
+_td_wDamage = 0xCCB9
+_td_wDamageEffectiveness = 0xCCC1
+_td_wTempTurn = 0xCCC3
+_td_wTempNonTurn = 0xCCC4
+_td_wNoDamageOrEffect = 0xCCC7
+_td_wAnimationsDisabled = 0xD421
+_td_rLCDC = 0xFF40
+
+def _td_case(**kw):
+    case = {"wram": {_td_arena_hp: b"\x40", _td_wDamage: b"\x00\x00", _td_wDamageEffectiveness: b"\x00", _td_wTempTurn: b"\x01", _td_wTempNonTurn: b"\x01", _td_wNoDamageOrEffect: b"\x00", _td_wAnimationsDisabled: b"\x01", 0xCABB: b"\x00", _td_rLCDC: b"\x80"},
+            "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}, {"fn": "SwapTurn"}], "instruction_budget": 8000000, "cycle_budget": 32000000,
+            "read": {_td_arena_hp: 1, _td_wLoadedAttackAnimation: 1, _td_wDamage: 2, _td_wDamageEffectiveness: 1, _td_wTempNonTurn: 1, _td_wNoDamageOrEffect: 1}}
+    case.update(kw)
+    return case
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7247,6 +7265,19 @@ CASES["ComputerSearch_PlayerDeckSelection"] = [
 ]
 # <<< factory ComputerSearch_PlayerDeckSelection
 
+# >>> factory TakeDownEffect
+CONTRACT["TakeDownEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["TakeDownEffect"] = [_td_case(f=0x00), _td_case(f=0x10), _td_case(**POISON)]
+# <<< factory TakeDownEffect
+
+# >>> factory JigglypuffDoubleEdgeEffect
+CONTRACT["JigglypuffDoubleEdgeEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["JigglypuffDoubleEdgeEffect"] = [
+    {"f": 0x00, "wram": {0xC2C8: b"\x40", 0xCCB9: b"\x00\x00", 0xCCC1: b"\x00", 0xCCC3: b"\x01", 0xCCC4: b"\x01", 0xCCC7: b"\x00", 0xD421: b"\x01", 0xCABB: b"\x00", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}, {"fn": "SwapTurn"}], "instruction_budget": 8000000, "cycle_budget": 32000000, "read": {0xC2C8: 1, 0xCCB8: 1, 0xCCB9: 2, 0xCCC1: 1, 0xCCC4: 1, 0xCCC7: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xC2C8: b"\x40", 0xCCB9: b"\x00\x00", 0xCCC1: b"\x00", 0xCCC3: b"\x01", 0xCCC4: b"\x01", 0xCCC7: b"\x00", 0xD421: b"\x01", 0xCABB: b"\x00", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}, {"fn": "SwapTurn"}], "instruction_budget": 8000000, "cycle_budget": 32000000, "read": {0xC2C8: 1, 0xCCB8: 1, 0xCCB9: 2, 0xCCC1: 1, 0xCCC4: 1, 0xCCC7: 1}}
+]
+# <<< factory JigglypuffDoubleEdgeEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10195,3 +10226,17 @@ for _record in SCHEMA2_CASES["PokemonCenter_HealDiscardEnergyEffect"]:
 # >>> factory-mutation ComputerSearch_PlayerDeckSelection
 MUTATIONS["ComputerSearch_PlayerDeckSelection"] = {"source_symbol": "ComputerSearch_PlayerDeckSelection", "before": "ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint8_t c, uint16_t de)\n{\n\t(void)CreateDeckCardList(c, de);\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(DuelistDeckText, ChooseCardToPlaceInHandText);\n\twLCDC = 0x80u;\n\tgb_write8(hKeysPressed_ADDR, 0x01u);\n\tuint8_t selected = gb_read8(wDuelTempList_ADDR);\n\tgb_write8((uint16_t)(hTempList_ADDR + 2u), selected);", "after": "ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint8_t c, uint16_t de)\n{\n\t(void)CreateDeckCardList(c, de);\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(DuelistDeckText, ChooseCardToPlaceInHandText);\n\twLCDC = 0x80u;\n\tgb_write8(hKeysPressed_ADDR, 0x01u);\n\tuint8_t selected = gb_read8(wDuelTempList_ADDR);\n\tgb_write8((uint16_t)(hTempList_ADDR + 2u), (uint8_t)(selected + 1u));", "case_ids": ["ComputerSearch_PlayerDeckSelection-0", "ComputerSearch_PlayerDeckSelection-1"]}
 # <<< factory-mutation ComputerSearch_PlayerDeckSelection
+# >>> factory-mutation TakeDownEffect
+MUTATIONS["TakeDownEffect"] = {"source_symbol": "TakeDownEffect", "before": "\twDamage = 30u;", "after": "\twDamage = 31u;", "case_ids": ["TakeDownEffect-0", "TakeDownEffect-1", "TakeDownEffect-2"]}
+# <<< factory-mutation TakeDownEffect
+# >>> factory-completion TakeDownEffect
+for _record in SCHEMA2_CASES["TakeDownEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
+# <<< factory-completion TakeDownEffect
+# >>> factory-mutation JigglypuffDoubleEdgeEffect
+MUTATIONS["JigglypuffDoubleEdgeEffect"] = {"source_symbol": "JigglypuffDoubleEdgeEffect", "before": "JigglypuffDoubleEdgeEffectResult JigglypuffDoubleEdgeEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\t(void)f;\n\t(void)d;\n\t(void)e;\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 20u;", "after": "JigglypuffDoubleEdgeEffectResult JigglypuffDoubleEdgeEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\t(void)f;\n\t(void)d;\n\t(void)e;\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 21u;", "case_ids": ["JigglypuffDoubleEdgeEffect-0"]}
+# <<< factory-mutation JigglypuffDoubleEdgeEffect
+# >>> factory-completion JigglypuffDoubleEdgeEffect
+for _record in SCHEMA2_CASES["JigglypuffDoubleEdgeEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
+# <<< factory-completion JigglypuffDoubleEdgeEffect

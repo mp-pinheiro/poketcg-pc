@@ -1375,6 +1375,8 @@ void BankswitchROM(uint8_t bank);
 #include "home/duel.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10701,3 +10703,33 @@ ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint
 	return (ComputerSearch_PlayerDeckSelectionResult){selected, (selected == 0u) ? 0x80u : 0x00u};
 }
 /* <<< factory ComputerSearch_PlayerDeckSelection */
+
+/* >>> factory TakeDownEffect */
+TakeDownEffectResult TakeDownEffect(uint8_t f, uint8_t d, uint8_t e)
+{
+	const uint8_t saved_no_damage = wNoDamageOrEffect;
+	wLoadedAttackAnimation = 0x7Au;
+	wDamage = 30u;
+	wDamage_PTR[1] = 0u;
+	wDamageEffectiveness = 0u;
+	wNoDamageOrEffect = 0u;
+	wTempNonTurnDuelistCardID = wTempTurnDuelistCardID;
+	return (TakeDownEffectResult){0x40u, 0xA0u};
+}
+/* <<< factory TakeDownEffect */
+
+/* >>> factory JigglypuffDoubleEdgeEffect */
+JigglypuffDoubleEdgeEffectResult JigglypuffDoubleEdgeEffect(uint8_t f, uint8_t d, uint8_t e)
+{
+	(void)f;
+	(void)d;
+	(void)e;
+	wLoadedAttackAnimation = 0x7Au;
+	wDamage = 20u;
+	wDamageEffectiveness = 0u;
+	gb_write8(0xCCC3u, 1u);
+	gb_write8(0xCCC4u, 1u);
+	wNoDamageOrEffect = 0u;
+	return (JigglypuffDoubleEdgeEffectResult){0x40u, 0xA0u};
+}
+/* <<< factory JigglypuffDoubleEdgeEffect */

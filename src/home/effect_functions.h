@@ -2067,6 +2067,14 @@ void PokemonCenter_HealDiscardEnergyEffect(void);
 typedef struct { uint8_t a; uint8_t f; } ComputerSearch_PlayerDeckSelectionResult;
 ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint8_t c, uint16_t de);
 /* <<< factory ComputerSearch_PlayerDeckSelection */
+/* >>> factory TakeDownEffect */
+typedef struct { uint8_t a; uint8_t f; } TakeDownEffectResult;
+TakeDownEffectResult TakeDownEffect(uint8_t f, uint8_t d, uint8_t e);
+/* <<< factory TakeDownEffect */
+/* >>> factory JigglypuffDoubleEdgeEffect */
+typedef struct { uint8_t a; uint8_t f; } JigglypuffDoubleEdgeEffectResult;
+JigglypuffDoubleEdgeEffectResult JigglypuffDoubleEdgeEffect(uint8_t f, uint8_t d, uint8_t e);
+/* <<< factory JigglypuffDoubleEdgeEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
