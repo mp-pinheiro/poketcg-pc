@@ -297,6 +297,10 @@ wUnableToScrollDown_hsu = 0xCECD
 
 HPCS_SRAM = {0: {0xA100: b"\x00" * 0xFF, 0xA218: b"\x00", 0xA26C: b"\x00", 0xA2C0: b"\x00", 0xA314: b"\x00", 0xA010: bytes([0x81, 0x82, 0x00] + [0] * 13)}}
 HPCS_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+CHANGE_DECK_NAME_KEYS = [0x00, 0x41, 0x00, 0x02]
+CHANGE_DECK_NAME_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+CHANGE_DECK_NAME_READ = {0xCFB9: 22}
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -1200,6 +1204,23 @@ CASES["PrepareToBuildDeckConfigurationToSend"] = [
 ]
 # <<< factory PrepareToBuildDeckConfigurationToSend
 
+# >>> factory ChangeDeckName
+CONTRACT["ChangeDeckName"] = {"compare": (), "preserve": ()}
+CASES["ChangeDeckName"] = [
+    {"wram": {0xCEB1: b"\x00", 0xCFB9: b"\x00" * 22, 0xFF90: b"\x00", 0xCABB: b"\x00"},
+     "sram": {0: {0xB701: b"\x01\x00"}},
+     "keys": CHANGE_DECK_NAME_KEYS, "setup": CHANGE_DECK_NAME_SETUP,
+     "read": CHANGE_DECK_NAME_READ, "sread": {0: {0xB701: 2}},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON,
+         wram={0xCEB1: b"\x02", 0xCFB9: b"\x00" * 22, 0xFF90: b"\x00", 0xCABB: b"\x00"},
+         sram={0: {0xB701: b"\xE7\x03"}},
+         keys=CHANGE_DECK_NAME_KEYS, setup=CHANGE_DECK_NAME_SETUP,
+         read=CHANGE_DECK_NAME_READ, sread={0: {0xB701: 2}},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ChangeDeckName
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1569,3 +1590,10 @@ MUTATIONS["HandleSendDeckConfigurationMenu"] = {"source_symbol": "HandleSendDeck
 # >>> factory-mutation PrepareToBuildDeckConfigurationToSend
 MUTATIONS["PrepareToBuildDeckConfigurationToSend"] = {"source_symbol": "PrepareToBuildDeckConfigurationToSend", "before": "\twCurDeck = 0xffu;", "after": "\twCurDeck = 0x00u;", "case_ids": ["PrepareToBuildDeckConfigurationToSend-0"]}
 # <<< factory-mutation PrepareToBuildDeckConfigurationToSend
+# >>> factory-mutation ChangeDeckName
+MUTATIONS["ChangeDeckName"] = {"source_symbol": "ChangeDeckName", "before": "void ChangeDeckName(void)\n{\n\tInputCurDeckName();", "after": "void ChangeDeckName(void)\n{", "case_ids": ["ChangeDeckName-0"]}
+# <<< factory-mutation ChangeDeckName
+# >>> factory-completion ChangeDeckName
+for _rec in SCHEMA2_CASES["ChangeDeckName"]:
+    _rec["completion"] = {"mode": "pre-ret", "pc": 0x55BC, "bank": 2}
+# <<< factory-completion ChangeDeckName

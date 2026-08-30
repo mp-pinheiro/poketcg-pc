@@ -728,6 +728,14 @@ static void adapt_PrepareToBuildDeckConfigurationToSend(ProbeState *s)
 }
 /* <<< factory PrepareToBuildDeckConfigurationToSend */
 
+/* >>> factory ChangeDeckName */
+static void adapt_ChangeDeckName(ProbeState *s)
+{
+	(void)s;
+	ChangeDeckName();
+}
+/* <<< factory ChangeDeckName */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "PrintSlashSixty", adapt_PrintSlashSixty },
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
@@ -814,5 +822,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "HandlePlayersCardsScreen", adapt_HandlePlayersCardsScreen },
 	{ "HandleSendDeckConfigurationMenu", adapt_HandleSendDeckConfigurationMenu },
 	{ "PrepareToBuildDeckConfigurationToSend", adapt_PrepareToBuildDeckConfigurationToSend },
+	{ "ChangeDeckName", adapt_ChangeDeckName },
 	{ NULL, NULL },
 };

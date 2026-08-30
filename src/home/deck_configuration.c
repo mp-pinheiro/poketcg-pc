@@ -412,6 +412,9 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "generated/wram.h"
 #define PREPARE_TO_BUILD_DECK_TEXT_ADDR 0x61C2u
 #define PREPARE_TO_BUILD_DECK_PARAMS_ADDR 0x61D8u
+
+#include "home/deck_configuration.h"
+#include "home/deck_selection.h"
 /* <<< factory statics */
 
 
@@ -2748,3 +2751,10 @@ void PrepareToBuildDeckConfigurationToSend(void)
 	HandleDeckBuildScreen();
 }
 /* <<< factory PrepareToBuildDeckConfigurationToSend */
+
+/* >>> factory ChangeDeckName */
+void ChangeDeckName(void)
+{
+	InputCurDeckName();
+}
+/* <<< factory ChangeDeckName */

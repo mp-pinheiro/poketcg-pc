@@ -309,4 +309,7 @@ void HandleSendDeckConfigurationMenu(void);
 /* >>> factory PrepareToBuildDeckConfigurationToSend */
 void PrepareToBuildDeckConfigurationToSend(void);
 /* <<< factory PrepareToBuildDeckConfigurationToSend */
+/* >>> factory ChangeDeckName */
+void ChangeDeckName(void);
+/* <<< factory ChangeDeckName */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

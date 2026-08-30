@@ -1,0 +1,9 @@
+{
+  "fn": "ChangeDeckName",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ChangeDeckName\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {\"0\": {\"46849\": \"0200\"}}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52913\": \"00\", \"53177\": \"064465636b2030303100000000000000000000000000\", \"65424\": \"41\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ChangeDeckName\", \"mismatches\": {\"bus\": {\"address\": 51899, \"reference\": \"8000064465\", \"native\": \"0000000000\", \"reference_size\": 25, \"native_size\": 25, \"spans\": [[51899, 1], [52913, 1], [53177, 22], [65424, 1]]}, \"sram\": {\"byte\": 0, \"reference\": \"0200\", \"native\": \"0100\"}}}\n",
+  "restored": "{\"fn\": \"ChangeDeckName\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {\"0\": {\"46849\": \"0200\"}}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52913\": \"00\", \"53177\": \"064465636b2030303100000000000000000000000000\", \"65424\": \"41\"}}, \"status\": \"PASS\"}\n"
+}
