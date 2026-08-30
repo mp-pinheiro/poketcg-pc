@@ -630,6 +630,18 @@ static void adapt_EnterScript(ProbeState *s)
 }
 /* <<< factory EnterScript */
 
+/* >>> factory SetScriptData */
+static void adapt_SetScriptData(ProbeState *s)
+{
+	SetScriptDataResult result = SetScriptData(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->hl = result.hl;
+}
+/* <<< factory SetScriptData */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -707,5 +719,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c2a3", adapt_Func_c2a3 },
 	{ "PauseMenu_Card", adapt_PauseMenu_Card },
 	{ "EnterScript", adapt_EnterScript },
+	{ "SetScriptData", adapt_SetScriptData },
 	{ NULL, NULL },
 };

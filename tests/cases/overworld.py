@@ -329,6 +329,14 @@ PAUSE_CARD_SRAM = {0: {0xA100: b"\x00" * 0xFF, 0xA218: b"\x00", 0xA26C: b"\x00",
 
 wNextScript = 0xD0C6
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wScriptNPC = 0xD3B6
+wLoadedNPCTempIndex = 0xD3AA
+wOverworldMode = 0xD0BF
+wNextScript = 0xD0C6
+wPlayerDirection = 0xD334
+wOverworldNPCFlags = 0xD0C1
+LOADED_NPCS = 0xD34A
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -1002,6 +1010,15 @@ CASES["EnterScript"] = [
 ]
 # <<< factory EnterScript
 
+# >>> factory SetScriptData
+CONTRACT["SetScriptData"] = {"compare": ("a", "f", "b", "c", "hl"), "preserve": ()}
+CASES["SetScriptData"] = [
+	{"hl": 0x0000, "wram": {wScriptNPC: b"\x00", wLoadedNPCTempIndex: b"\xA5", wOverworldMode: b"\x00", wNextScript: b"\x12\x34", wPlayerDirection: b"\x00", wOverworldNPCFlags: b"\x00", LOADED_NPCS: b"\x4A" + b"\x00" * 95}},
+	dict(POISON, hl=0x1234, wram={wScriptNPC: b"\x00", wLoadedNPCTempIndex: b"\xEE", wOverworldMode: b"\xA5", wNextScript: b"\xAA\x55", wPlayerDirection: b"\x02", wOverworldNPCFlags: b"\x04", LOADED_NPCS: b"\x4A" + b"\x00" * 95}),
+	{"hl": 0xBEEF, "wram": {wScriptNPC: b"\x01", wLoadedNPCTempIndex: b"\xFE", wOverworldMode: b"\x01", wNextScript: b"\xFE\xED", wPlayerDirection: b"\x03", wOverworldNPCFlags: b"\x80", LOADED_NPCS: b"\x00" * 12 + b"\x4A" + b"\x00" * 83}},
+]
+# <<< factory SetScriptData
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1356,3 +1373,10 @@ MUTATIONS["PauseMenu_Card"] = {"source_symbol": "PauseMenu_Card", "before": "voi
 # >>> factory-mutation EnterScript
 MUTATIONS["EnterScript"] = {"source_symbol": "EnterScript", "before": "\tuint16_t target = (uint16_t)(wNextScript | ((uint16_t)wNextScript_PTR[1] << 8));", "after": "\tuint16_t target = (uint16_t)(wNextScript | ((uint16_t)wNextScript_PTR[1] << 8) | 1u);", "case_ids": ["EnterScript-0", "EnterScript-1"]}
 # <<< factory-mutation EnterScript
+# >>> factory-mutation SetScriptData
+MUTATIONS["SetScriptData"] = {"source_symbol": "SetScriptData", "before": "SetScriptDataResult SetScriptData(uint16_t hl)\n{\n\tuint8_t script_npc = wScriptNPC;\n\twLoadedNPCTempIndex = script_npc;\n\tSetNewScriptNPCResult npc = SetNewScriptNPC(hl);\n\twNextScript = npc.c;\n\twNextScript_PTR[1] = npc.b;\n\twOverworldMode = OWMODE_SCRIPT;", "after": "SetScriptDataResult SetScriptData(uint16_t hl)\n{\n\tuint8_t script_npc = wScriptNPC;\n\twLoadedNPCTempIndex = script_npc;\n\tSetNewScriptNPCResult npc = SetNewScriptNPC(hl);\n\twNextScript = npc.c;\n\twNextScript_PTR[1] = npc.b;\n\twOverworldMode = 0u;", "case_ids": ["SetScriptData-0", "SetScriptData-1", "SetScriptData-2"]}
+# <<< factory-mutation SetScriptData
+# >>> factory-completion SetScriptData
+for _record in SCHEMA2_CASES["SetScriptData"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x410A, "bank": 3}
+# <<< factory-completion SetScriptData

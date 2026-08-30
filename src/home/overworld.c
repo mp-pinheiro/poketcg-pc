@@ -1323,3 +1323,16 @@ EnterScriptResult EnterScript(void)
 	return (EnterScriptResult){(uint8_t)target, target};
 }
 /* <<< factory EnterScript */
+
+/* >>> factory SetScriptData */
+SetScriptDataResult SetScriptData(uint16_t hl)
+{
+	uint8_t script_npc = wScriptNPC;
+	wLoadedNPCTempIndex = script_npc;
+	SetNewScriptNPCResult npc = SetNewScriptNPC(hl);
+	wNextScript = npc.c;
+	wNextScript_PTR[1] = npc.b;
+	wOverworldMode = OWMODE_SCRIPT;
+	return (SetScriptDataResult){OWMODE_SCRIPT, npc.f, npc.b, npc.c, npc.hl};
+}
+/* <<< factory SetScriptData */

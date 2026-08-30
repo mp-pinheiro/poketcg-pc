@@ -298,4 +298,15 @@ typedef struct {
 
 EnterScriptResult EnterScript(void);
 /* <<< factory EnterScript */
+/* >>> factory SetScriptData */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint16_t hl;
+} SetScriptDataResult;
+
+SetScriptDataResult SetScriptData(uint16_t hl);
+/* <<< factory SetScriptData */
 #endif /* POKETCG_HOME_OVERWORLD_H */
