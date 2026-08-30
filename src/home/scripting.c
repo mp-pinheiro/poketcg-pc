@@ -358,6 +358,10 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 
 #include "generated/wram.h"
 #include "home/map.h"
+
+#include "home/script.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -2474,3 +2478,30 @@ uint8_t GetStackEventValue(uint8_t post_call_byte)
 	return GetEventValue(post_call_byte);
 }
 /* <<< factory GetStackEventValue */
+
+/* >>> factory RST20 */
+RST20Result RST20(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t w0)
+{
+	uint16_t hl = w0;
+	wScriptPointer = (uint8_t)hl;
+	gb_write8(wScriptPointer_ADDR + 1u, (uint8_t)(hl >> 8));
+	a = 0;
+	f = 0;
+	wBreakScriptLoop = 0;
+	do {
+		RunOverworldScriptResult result = RunOverworldScript(a, f, b, c, d, e, hl);
+		a = result.a;
+		f = result.f;
+		b = result.b;
+		c = result.c;
+		d = result.d;
+		e = result.e;
+		hl = result.hl;
+	} while (wBreakScriptLoop == 0);
+	hl = wScriptPointer_ADDR + 1u;
+	a = wScriptPointer;
+	c = a;
+	b = gb_read8(wScriptPointer_ADDR + 1u);
+	return (RST20Result){a, f, b, c, d, e, hl};
+}
+/* <<< factory RST20 */

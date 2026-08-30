@@ -1493,6 +1493,20 @@ static void adapt_GetStackEventValue(ProbeState *s)
 }
 /* <<< factory GetStackEventValue */
 
+/* >>> factory RST20 */
+static void adapt_RST20(ProbeState *s)
+{
+	RST20Result result = RST20(s->a, s->f, s->b, s->c, s->d, s->e, s->stack[0]);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory RST20 */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1641,5 +1655,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "SetStackEventValue", adapt_SetStackEventValue },
 	{ "SetStackEventZero", adapt_SetStackEventZero },
 	{ "GetStackEventValue", adapt_GetStackEventValue },
+	{ "RST20", adapt_RST20 },
 	{ NULL, NULL },
 };

@@ -1,0 +1,9 @@
+{
+  "fn": "RST20",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"RST20\", \"registers\": {\"a\": 3, \"b\": 197, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 54292, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"0f\", \"51899\": \"00\", \"54290\": \"0103c5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"RST20\", \"mismatches\": {\"b\": [197, 0]}}\n",
+  "restored": "{\"fn\": \"RST20\", \"registers\": {\"a\": 3, \"b\": 197, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 54292, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"0f\", \"51899\": \"00\", \"54290\": \"0103c5\"}}, \"status\": \"PASS\"}\n"
+}

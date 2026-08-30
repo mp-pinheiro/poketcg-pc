@@ -716,4 +716,16 @@ SetEventValueResult SetStackEventZero(uint8_t event, uint8_t f, uint8_t b, uint8
 /* >>> factory GetStackEventValue */
 uint8_t GetStackEventValue(uint8_t post_call_byte);
 /* <<< factory GetStackEventValue */
+/* >>> factory RST20 */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} RST20Result;
+RST20Result RST20(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t w0);
+/* <<< factory RST20 */
 #endif

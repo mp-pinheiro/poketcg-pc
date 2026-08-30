@@ -270,6 +270,9 @@ GIVE_PACKS_INSTRUCTIONS = 60000000
 GIVE_PACKS_CYCLES = 240000000
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wBreakScriptLoop = 0xD412
+wScriptPointer = 0xD413
 # <<< factory-cases-statics
 
 
@@ -2016,6 +2019,14 @@ CASES["GetStackEventValue"] = [
 ]
 # <<< factory GetStackEventValue
 
+# >>> factory RST20
+CONTRACT["RST20"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["RST20"] = [
+    {"stack": [0xC500], "wram": {0xC500: b"\x0F", 0xCABB: b"\x00"}, "read": {wBreakScriptLoop: 1, wScriptPointer: 2}, "instruction_budget": 1000000, "cycle_budget": 4000000},
+    dict(POISON, stack=[0xC500], wram={0xC500: b"\x0F", 0xCABB: b"\x00"}, read={wBreakScriptLoop: 1, wScriptPointer: 2}, instruction_budget=1000000, cycle_budget=4000000),
+]
+# <<< factory RST20
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2874,3 +2885,6 @@ MUTATIONS["SetStackEventZero"] = {"source_symbol": "SetStackEventZero", "before"
 # >>> factory-mutation GetStackEventValue
 MUTATIONS["GetStackEventValue"] = {"source_symbol": "GetStackEventValue", "before": "\treturn GetEventValue(post_call_byte);", "after": "\treturn GetEventValue((uint8_t)(post_call_byte + 1u));", "case_ids": ["GetStackEventValue-0", "GetStackEventValue-1"]}
 # <<< factory-mutation GetStackEventValue
+# >>> factory-mutation RST20
+MUTATIONS["RST20"] = {"source_symbol": "RST20", "before": "RST20Result RST20(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t w0)\n{\n\tuint16_t hl = w0;\n\twScriptPointer = (uint8_t)hl;\n\tgb_write8(wScriptPointer_ADDR + 1u, (uint8_t)(hl >> 8));\n\ta = 0;\n\tf = 0;\n\twBreakScriptLoop = 0;\n\tdo {\n\t\tRunOverworldScriptResult result = RunOverworldScript(a, f, b, c, d, e, hl);\n\t\ta = result.a;\n\t\tf = result.f;\n\t\tb = result.b;\n\t\tc = result.c;\n\t\td = result.d;\n\t\te = result.e;\n\t\thl = result.hl;\n\t} while (wBreakScriptLoop == 0);\n\thl = wScriptPointer_ADDR + 1u;\n\ta = wScriptPointer;\n\tc = a;\n\tb = gb_read8(wScriptPointer_ADDR + 1u);", "after": "RST20Result RST20(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t w0)\n{\n\tuint16_t hl = w0;\n\twScriptPointer = (uint8_t)hl;\n\tgb_write8(wScriptPointer_ADDR + 1u, (uint8_t)(hl >> 8));\n\ta = 0;\n\tf = 0;\n\twBreakScriptLoop = 0;\n\tdo {\n\t\tRunOverworldScriptResult result = RunOverworldScript(a, f, b, c, d, e, hl);\n\t\ta = result.a;\n\t\tf = result.f;\n\t\tb = result.b;\n\t\tc = result.c;\n\t\td = result.d;\n\t\te = result.e;\n\t\thl = result.hl;\n\t} while (wBreakScriptLoop == 0);\n\thl = wScriptPointer_ADDR + 1u;\n\ta = wScriptPointer;\n\tc = a;\n\tb = 0;", "case_ids": ["RST20-0", "RST20-1"]}
+# <<< factory-mutation RST20
