@@ -1,0 +1,9 @@
+{
+  "fn": "GameEvent_GiftCenter",
+  "case": "tests/cases/map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GameEvent_GiftCenter\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"53442\": \"03\", \"53518\": \"12\", \"56704\": \"08\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GameEvent_GiftCenter\", \"mismatches\": {\"bus\": {\"address\": 53442, \"reference\": \"031208\", \"native\": \"041208\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[53442, 1], [53518, 1], [56704, 1]]}}}\n",
+  "restored": "{\"fn\": \"GameEvent_GiftCenter\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"53442\": \"03\", \"53518\": \"12\", \"56704\": \"08\"}}, \"status\": \"PASS\"}\n"
+}

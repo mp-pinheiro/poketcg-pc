@@ -40,6 +40,12 @@
 #include "generated/sram.h"
 #define MUSIC_OVERWORLD 0x09u
 #define MUSIC_PC_MAIN_MENU 0x06u
+
+#include "home/map.h"
+#include "home/sound.h"
+#include "generated/wram.h"
+#define GAME_EVENT_GIFT_CENTER 0x03u
+#define MUSIC_CARD_POP 0x08u
 /* <<< factory statics */
 
 #define BANK_EXECUTE_NPC_MOVEMENT 0x03u
@@ -259,3 +265,13 @@ void GameEvent_ChallengeMachine(void)
 	DisableSRAM();
 }
 /* <<< factory GameEvent_ChallengeMachine */
+
+/* >>> factory GameEvent_GiftCenter */
+void GameEvent_GiftCenter(void)
+{
+	PauseSong();
+	PlaySong(MUSIC_CARD_POP);
+	wActiveGameEvent = GAME_EVENT_GIFT_CENTER;
+	wGiftCenterChoice = (uint8_t)(wGiftCenterChoice | 0x10u);
+}
+/* <<< factory GameEvent_GiftCenter */
