@@ -5246,6 +5246,15 @@ static void adapt_Quickfreeze_Paralysis50PercentEffect(ProbeState *s)
 }
 /* <<< factory Quickfreeze_Paralysis50PercentEffect */
 
+/* >>> factory PokeBall_PlayerSelection */
+static void adapt_PokeBall_PlayerSelection(ProbeState *s)
+{
+	PokeBallPlayerSelectionResult result = PokeBall_PlayerSelection();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory PokeBall_PlayerSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5879,5 +5888,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Prophecy_PlayerSelectEffect", adapt_Prophecy_PlayerSelectEffect },
 	{ "PokemonTrader_PlayerDeckSelection", adapt_PokemonTrader_PlayerDeckSelection },
 	{ "Quickfreeze_Paralysis50PercentEffect", adapt_Quickfreeze_Paralysis50PercentEffect },
+	{ "PokeBall_PlayerSelection", adapt_PokeBall_PlayerSelection },
 	{ NULL, NULL },
 };

@@ -2139,6 +2139,10 @@ PokemonTrader_PlayerDeckSelectionResult PokemonTrader_PlayerDeckSelection(void);
 /* >>> factory Quickfreeze_Paralysis50PercentEffect */
 uint8_t Quickfreeze_Paralysis50PercentEffect(void);
 /* <<< factory Quickfreeze_Paralysis50PercentEffect */
+/* >>> factory PokeBall_PlayerSelection */
+typedef struct { uint8_t a; uint8_t f; } PokeBallPlayerSelectionResult;
+PokeBallPlayerSelectionResult PokeBall_PlayerSelection(void);
+/* <<< factory PokeBall_PlayerSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

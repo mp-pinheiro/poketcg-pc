@@ -1446,6 +1446,16 @@ void BankswitchROM(uint8_t bank);
 #include "home/duel_core.h"
 #include "home/effect_functions.h"
 #include "home/menus.h"
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "home/sound.h"
+#define ChooseBasicOrEvolutionPokemonCardFromDeckText 0x0160u
+#define ChoosePokemonCardText 0x0161u
+#define EvolutionCardText 0x0164u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11088,3 +11098,35 @@ uint8_t Quickfreeze_Paralysis50PercentEffect(void)
 	return result_f;
 }
 /* <<< factory Quickfreeze_Paralysis50PercentEffect */
+
+/* >>> factory PokeBall_PlayerSelection */
+PokeBallPlayerSelectionResult PokeBall_PlayerSelection(void)
+{
+	SerialTossCoinATimesResult toss = Serial_TossCoin(1u, 0u, 0u, 0u, 0u, TrainerCardSuccessCheckText, 0u);
+	hTempList = toss.a;
+	if ((toss.f & 0x10u) == 0u) return (PokeBallPlayerSelectionResult){toss.a, toss.f};
+	CardListResult deck = CreateDeckCardList(0u, 0u);
+	LookForCardsInDeckResult search = LookForCardsInDeck(deck.a, 0u, ChooseBasicOrEvolutionPokemonCardFromDeckText, SEARCHEFFECT_POKEMON, 0u, EvolutionCardText);
+	if ((search.f & 0x10u) != 0u) { hTempList_PTR[1] = 0xffu; return (PokeBallPlayerSelectionResult){0xffu, 0x00u}; }
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChoosePokemonCardText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) != 0u) {
+			uint16_t list = wDuelTempList_ADDR;
+			for (;;) {
+				uint8_t index = gb_read8(list++);
+				if (index == 0xffu) { hTempList_PTR[1] = 0xffu; return (PokeBallPlayerSelectionResult){0xffu, 0x00u}; }
+				(void)LoadCardDataToBuffer2_FromDeckIndex(index);
+				if (wLoadedCard2Type < TYPE_ENERGY) break;
+			}
+			PlaySFX_InvalidChoice(); continue;
+		}
+		uint8_t index = hTempCardIndex_ff98;
+		(void)LoadCardDataToBuffer2_FromDeckIndex(index);
+		if (wLoadedCard2Type >= TYPE_ENERGY) { PlaySFX_InvalidChoice(); continue; }
+		hTempList_PTR[1] = index;
+		return (PokeBallPlayerSelectionResult){index, (index == 0u) ? 0x80u : 0x00u};
+	}
+}
+/* <<< factory PokeBall_PlayerSelection */
