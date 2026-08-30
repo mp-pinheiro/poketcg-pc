@@ -5083,6 +5083,15 @@ static void adapt_JigglypuffDoubleEdgeEffect(ProbeState *s)
 }
 /* <<< factory JigglypuffDoubleEdgeEffect */
 
+/* >>> factory Recycle_PlayerSelection */
+static void adapt_Recycle_PlayerSelection(ProbeState *s)
+{
+	RecyclePlayerSelectionResult result = Recycle_PlayerSelection();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Recycle_PlayerSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5698,5 +5707,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ComputerSearch_PlayerDeckSelection", adapt_ComputerSearch_PlayerDeckSelection },
 	{ "TakeDownEffect", adapt_TakeDownEffect },
 	{ "JigglypuffDoubleEdgeEffect", adapt_JigglypuffDoubleEdgeEffect },
+	{ "Recycle_PlayerSelection", adapt_Recycle_PlayerSelection },
 	{ NULL, NULL },
 };

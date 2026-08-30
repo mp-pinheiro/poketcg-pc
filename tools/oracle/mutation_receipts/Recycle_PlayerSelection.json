@@ -1,0 +1,9 @@
+{
+  "fn": "Recycle_PlayerSelection",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Recycle_PlayerSelection\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000181\", \"52233\": \"00\", \"52636\": \"01000002\", \"52814\": \"0000\", \"65432\": \"e1\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Recycle_PlayerSelection\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"020000e1ff\", \"native\": \"020000e100\", \"reference_size\": 15, \"native_size\": 15, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52233, 1], [52636, 4], [52814, 2], [65432, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"Recycle_PlayerSelection\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000181\", \"52233\": \"00\", \"52636\": \"01000002\", \"52814\": \"0000\", \"65432\": \"e1\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1377,6 +1377,13 @@ void BankswitchROM(uint8_t bank);
 #include "generated/wram.h"
 
 #include "generated/wram.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#define TrainerCardSuccessCheckText 0x00efu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -10733,3 +10740,23 @@ JigglypuffDoubleEdgeEffectResult JigglypuffDoubleEdgeEffect(uint8_t f, uint8_t d
 	return (JigglypuffDoubleEdgeEffectResult){0x40u, 0xA0u};
 }
 /* <<< factory JigglypuffDoubleEdgeEffect */
+
+/* >>> factory Recycle_PlayerSelection */
+RecyclePlayerSelectionResult Recycle_PlayerSelection(void)
+{
+	SerialTossCoinATimesResult toss = Serial_TossCoin(1u, 0u, 0u, 0u, 0u, TrainerCardSuccessCheckText, 0u);
+	if ((toss.f & 0x10u) != 0u) {
+		(void)CreateDiscardPileCardList(0u);
+		(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+		SetCardListHeaderText(PlayerDiscardPileText, PleaseSelectCardText);
+		DisplayCardListResult display;
+		do {
+			display = DisplayCardList();
+		} while ((display.f & 0x10u) != 0u);
+		hTempList = hTempCardIndex_ff98;
+		return (RecyclePlayerSelectionResult){hTempCardIndex_ff98, display.f};
+	}
+	hTempList = 0xFFu;
+	return (RecyclePlayerSelectionResult){0xFFu, 0x00u};
+}
+/* <<< factory Recycle_PlayerSelection */

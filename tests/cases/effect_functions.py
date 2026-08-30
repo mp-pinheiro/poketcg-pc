@@ -2821,6 +2821,9 @@ def _td_case(**kw):
             "read": {_td_arena_hp: 1, _td_wLoadedAttackAnimation: 1, _td_wDamage: 2, _td_wDamageEffectiveness: 1, _td_wTempNonTurn: 1, _td_wNoDamageOrEffect: 1}}
     case.update(kw)
     return case
+
+hTempCardIndex_ff98 = 0xFF98
+hTempList = 0xFFA0
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7278,6 +7281,14 @@ CASES["JigglypuffDoubleEdgeEffect"] = [
 ]
 # <<< factory JigglypuffDoubleEdgeEffect
 
+# >>> factory Recycle_PlayerSelection
+CONTRACT["Recycle_PlayerSelection"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Recycle_PlayerSelection"] = [
+    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": [0x00, 0x01], "wram": {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x80", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x00\x00", hTempCardIndex_ff98: b"\xE1", hTempList: b"\x00"}, "read": {hTempList: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x01], "wram": {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x80", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCE4E: b"\x34\x12", hTempCardIndex_ff98: b"\xE1", hTempList: b"\x00"}, "read": {hTempList: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000}
+]
+# <<< factory Recycle_PlayerSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10240,3 +10251,6 @@ MUTATIONS["JigglypuffDoubleEdgeEffect"] = {"source_symbol": "JigglypuffDoubleEdg
 for _record in SCHEMA2_CASES["JigglypuffDoubleEdgeEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
 # <<< factory-completion JigglypuffDoubleEdgeEffect
+# >>> factory-mutation Recycle_PlayerSelection
+MUTATIONS["Recycle_PlayerSelection"] = {"source_symbol": "Recycle_PlayerSelection", "before": "hTempList = 0xFFu;\n\treturn (RecyclePlayerSelectionResult){0xFFu, 0x00u};", "after": "hTempList = 0x00u;\n\treturn (RecyclePlayerSelectionResult){0xFFu, 0x00u};", "case_ids": ["Recycle_PlayerSelection-0"]}
+# <<< factory-mutation Recycle_PlayerSelection

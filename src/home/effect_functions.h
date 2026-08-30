@@ -2075,6 +2075,10 @@ TakeDownEffectResult TakeDownEffect(uint8_t f, uint8_t d, uint8_t e);
 typedef struct { uint8_t a; uint8_t f; } JigglypuffDoubleEdgeEffectResult;
 JigglypuffDoubleEdgeEffectResult JigglypuffDoubleEdgeEffect(uint8_t f, uint8_t d, uint8_t e);
 /* <<< factory JigglypuffDoubleEdgeEffect */
+/* >>> factory Recycle_PlayerSelection */
+typedef struct { uint8_t a; uint8_t f; } RecyclePlayerSelectionResult;
+RecyclePlayerSelectionResult Recycle_PlayerSelection(void);
+/* <<< factory Recycle_PlayerSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
