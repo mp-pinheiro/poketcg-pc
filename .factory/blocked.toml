@@ -61,10 +61,6 @@ unblock = "land a project-wide RunOverworldScript execution harness -- e.g. a by
  
 
 
-[[blocked]]
-name = "SetUpAndStartLinkDuel"
-reason = "HAND-DIAGNOSED 2026-08-28: retry generations 1-2 remain in the link-duel serial/menu path and do not return under the isolated oracle fixture; changing A/B input and both LCD shadow/hardware states only moves the loop between serial/menu PCs 0x2382, 0x238D, and 0x0C0B. This is a link-hardware execution boundary, not a translation mismatch."
-unblock = "Trace the serial link handshake and identify a deterministic no-link return fixture, or port the frame-safe serial handshake before retrying SetUpAndStartLinkDuel."
 
 [[blocked]]
 name = "AIDoAction_Turn"
