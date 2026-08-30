@@ -8,11 +8,6 @@ reason = "poketcg/src/engine/overworld/overworld.asm:82 computes an index from w
 unblock = "port UpdateOverworldMap, CallHandlePlayerMoveMode, SetScriptData, and EnterScript individually first (each is independently reachable/portable on its own merits), then reconstruct HandleOverworldMode's dispatch as a C switch over wOverworldMode calling the four now-available functions"
 
 [[blocked]]
-name = "_ExecuteGameEvent"
-reason = "poketcg/src/home/map.asm:42 dispatches through GameEventPointerTable (a bus-data jump table) via JumpToFunctionInTable into 8 handlers (GameEvent_Overworld, GameEvent_Duel, GameEvent_BattleCenter, GameEvent_GiftCenter, GameEvent_Credits, GameEvent_ContinueDuel, GameEvent_ChallengeMachine, GameEvent_Overworld again). This is docs/port-contract.md's documented Reason 4 (\"Tail dispatch into unported engine\") verbatim -- only GameEvent_Overworld is in this basename's already-ported list (confirmed by grep across src/home/map.h and src/home/map.c: GameEvent_Duel, GameEvent_BattleCenter, GameEvent_GiftCenter, GameEvent_Credits, GameEvent_ContinueDuel, and GameEvent_ChallengeMachine have no C prototype anywhere), so the call-graph sweep cannot see the indirect JumpToFunctionInTable edge and no C body can tail-call the other six targets."
-unblock = "port GameEvent_Duel, GameEvent_BattleCenter, GameEvent_GiftCenter, GameEvent_Credits, GameEvent_ContinueDuel, and GameEvent_ChallengeMachine (the six remaining GameEventPointerTable targets), then re-port _ExecuteGameEvent as a direct C switch over wGameEvent calling the now-available functions per docs/port-contract.md's leaf-slice resolution for CallBC/CallHL/CallHL2/JumpToFunctionInTable"
-
-[[blocked]]
 name = "RunOverworldScript"
 reason = "poketcg/src/home/script.asm:108 was investigated directly as a candidate this cycle (it was previously assumed portable and cited as the unblock path for Script_Nikki/Script_Tech1/Script_d93f). It is NOT a linear run-to-completion interpreter loop: it reads the current bytecode opcode at wScriptPointer, bank-switches to look up OverworldScriptTable[opcode] (restoring the caller's own bank afterward), then ends `pop bc; jp hl` with no `ret` at all -- a raw computed-jump trampoline that tail-jumps into whichever of dozens of ScriptCommand_* handlers the current opcode selects, and never returns to its own caller normally. This cannot be represented as a single register-in/register-out C function an isolated oracle case can verify: three escalating diagnostic runs against the reference ROM all BUDGET_EXHAUSTED at the identical pc=9100 (400,004 cycles), consistent with the probed call jumping into unseeded/garbage bytecode-handler code with no way back to the harness's synthesized return address."
 unblock = "land a project-wide RunOverworldScript execution harness -- e.g. a bytecode-stepping C interpreter that models the full ScriptCommand_* dispatch table natively (reading opcodes and dispatching via a C switch/function-pointer table instead of `jp hl`), replacing the trampoline so script routines' embedded bytecode can be verified end-to-end -- or land a separately reviewed permanent transform that represents `start_script` bodies as data blobs verified by direct source inspection instead of per-routine oracle execution"
@@ -51,17 +46,3 @@ unblock = "land a project-wide RunOverworldScript execution harness -- e.g. a by
 
  
 
-[[blocked]]
-name = "ChanseyDoubleEdgeEffect"
-reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:8431 (basename `effect_functions`). 20 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case ChanseyDoubleEdgeEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":65418,\"sp\":65484,\"rom_bank\":1,\"hbank_rom\":1,\"instructions\":7476374,\"cycles\":32000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":0,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":8,\"ppu_mode\":3,\"bus\":\"407a50000001010001\"}"
-unblock = "read the recorded diagnostics under .factory/try/ChanseyDoubleEdgeEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "PokemonTrader_TradeCardsEffect"
-reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:10078 (basename `effect_functions`). 20 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case PokemonTrader_TradeCardsEffect-0 {\"status\": \"PORT\", \"fn\": \"PokemonTrader_TradeCardsEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"010080c24980\", \"native\": \"010080c20001\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[49730, 1], [49850, 1], [49902, 1], [49905, 1], [51899, 1], [65431, 1], [65440, 2]]}}}"
-unblock = "read the recorded diagnostics under .factory/try/PokemonTrader_TradeCardsEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "Scavenge_PlayerSelectTrainerEffect"
-reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:5699 (basename `effect_functions`). 9 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case Scavenge_PlayerSelectTrainerEffect-0 native probe did not terminate; the C body loops forever on state the reference resolves"
-unblock = "read the recorded diagnostics under .factory/try/Scavenge_PlayerSelectTrainerEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
