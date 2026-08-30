@@ -38,10 +38,6 @@ unblock = "CORRECTED 2026-08-28: the recorded mechanism (interrupt/VBlank-cascad
 
 
 
-[[blocked]]
-name = "MagnetonLv35SelfdestructEffect"
-reason = "HAND-DIAGNOSED 2026-08-28: generation 7 repeated primary runs hit the same reference-side WaitForVBlank/frame path at pc 0xFF8A with LCDC=0x80 and no register mismatch, even after removing SetupText and seeding animation/recoil state. The self-destruct animation/recoil chain is not bounded by the current isolated call contract; another unchanged retry is non-informative."
-unblock = "trace the first DealRecoilDamageToSelf or DealDamageToAllBenchedPokemon animation callee that enables LCD, then verify a bounded prefix/pre-ret case or port that frame-safe callee before retrying this routine"
 
 
 
