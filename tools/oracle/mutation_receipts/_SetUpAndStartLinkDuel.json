@@ -1,0 +1,9 @@
+{
+  "fn": "_SetUpAndStartLinkDuel",
+  "case": "tests/cases/link_duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_SetUpAndStartLinkDuel\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"53443\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_SetUpAndStartLinkDuel\", \"mismatches\": {\"bus\": {\"address\": 53443, \"reference\": \"80ff\", \"native\": \"8000\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[51899, 1], [53443, 1]]}}}\n",
+  "restored": "{\"fn\": \"_SetUpAndStartLinkDuel\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"53443\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}
