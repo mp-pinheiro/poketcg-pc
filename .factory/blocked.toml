@@ -105,10 +105,6 @@ name = "PayDayEffect"
 reason = "HAND-DIAGNOSED 2026-08-28: corrected tails fixture reaches the draw path but generation-9 still diverges at hWhoseTurn 0xFF97 (reference ends 0x01, native 0xC2) after the nested card-display path. The isolated effect depends on an unmodeled turn-side transition outside this routine; another unchanged retry is non-informative."
 unblock = "Trace the nested DrawCardFromDeck/card-display path to identify the hWhoseTurn transition, then model the missing callee state or define a verified bounded pre-ret contract before retrying PayDayEffect."
 
-[[blocked]]
-name = "AIPlay_SuperEnergyRetrieval"
-reason = "HAND-DIAGNOSED 2026-08-28: generation-9 retry preserves the trainer dispatch path but diverges in the hTempRetreatCostCards scratch tail at 0xFFA3..0xFFA7 (reference 11 22 33 ff, native seeded 20 30 40 50). The fixture does not model the callee-owned scratch initialization; another unchanged candidate is non-informative."
-unblock = "Trace the OPPACTION_EXECUTE_TRAINER_EFFECTS scratch initialization and build a fixture with the reference hTempRetreatCostCards pre-state, then retry AIPlay_SuperEnergyRetrieval."
 
 
 
