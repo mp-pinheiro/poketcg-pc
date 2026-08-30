@@ -716,6 +716,15 @@ static void adapt_AIDecide_ProfessorOak(ProbeState *s)
 }
 /* <<< factory AIDecide_ProfessorOak */
 
+/* >>> factory AIDecide_SuperPotion_Phase08 */
+static void adapt_AIDecide_SuperPotion_Phase08(ProbeState *s)
+{
+	AIDecideSuperPotionPhase08Result result = AIDecide_SuperPotion_Phase08();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory AIDecide_SuperPotion_Phase08 */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -803,5 +812,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIPlay_Revive", adapt_AIPlay_Revive },
 	{ "AIPlay_Lass", adapt_AIPlay_Lass },
 	{ "AIPlay_MrFuji", adapt_AIPlay_MrFuji },
+	{ "AIDecide_SuperPotion_Phase08", adapt_AIDecide_SuperPotion_Phase08 },
 	{ NULL, NULL },
 };

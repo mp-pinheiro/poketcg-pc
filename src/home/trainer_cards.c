@@ -126,7 +126,6 @@
 #define DUELVARS_CARD_LOCATIONS 0x00u
 #define CARD_LOCATION_HAND 0x01u
 
-
 #define DRAGONAIR 0xc0u
 #define DRATINI 0xbfu
 #define EEVEE 0xbcu
@@ -401,6 +400,13 @@
 #include "home/core.h"
 #include "home/duel.h"
 #include "generated/hram.h"
+
+#include "home/common.h"
+#include "home/retreat.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 
@@ -3508,3 +3514,33 @@ AIDecideResult AIPlay_MrFuji(void)
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_MrFuji */
+
+/* >>> factory AIDecide_SuperPotion_Phase08 */
+AIDecideSuperPotionPhase08Result AIDecide_SuperPotion_Phase08(void)
+{
+	AIDecideWhetherToRetreatResult retreat = AIDecideWhetherToRetreat();
+	if ((retreat.f & 0x10u) != 0u)
+		return (AIDecideSuperPotionPhase08Result){retreat.a, (uint8_t)(retreat.a == 0u ? 0x80u : 0u)};
+	AICheckIfAttackIsHighRecoilResult recoil = AICheckIfAttackIsHighRecoil();
+	if ((recoil.f & 0x10u) != 0u)
+		return (AIDecideSuperPotionPhase08Result){retreat.a, (uint8_t)(retreat.a == 0u ? 0x80u : 0u)};
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	uint8_t e = PLAY_AREA_ARENA;
+	EnergiesResult energies = GetPlayAreaCardAttachedEnergies(e);
+	if (wTotalAttachedEnergies == 0u)
+		return (AIDecideSuperPotionPhase08Result){0u, 0x80u};
+	CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	if ((ko.f & 0x10u) == 0u)
+		return (AIDecideSuperPotionPhase08Result){ko.a, (uint8_t)(ko.a == 0u ? 0x80u : 0u)};
+	uint8_t d = ko.a;
+	uint8_t hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a;
+	uint8_t damage = GetCardDamageAndMaxHP(e).a;
+	if (damage >= 41u)
+		damage = 40u;
+	uint8_t total = (uint8_t)(hp + damage);
+	uint8_t remaining = (uint8_t)(total - d);
+	if (total < d || remaining == 0u)
+		return (AIDecideSuperPotionPhase08Result){remaining, (uint8_t)(remaining == 0u ? 0x80u : 0u)};
+	return (AIDecideSuperPotionPhase08Result){e, 0x10u};
+}
+/* <<< factory AIDecide_SuperPotion_Phase08 */
