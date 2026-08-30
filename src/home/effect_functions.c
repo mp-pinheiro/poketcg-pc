@@ -10792,3 +10792,10 @@ ChanseyDoubleEdgeEffectResult ChanseyDoubleEdgeEffect(uint8_t f, uint8_t d, uint
 	return (ChanseyDoubleEdgeEffectResult){0x40u, 0xA0u};
 }
 /* <<< factory ChanseyDoubleEdgeEffect */
+
+/* >>> factory FriendshipSong_AddToBench50PercentEffect */
+FriendshipSong_AddToBench50PercentEffectResult FriendshipSong_AddToBench50PercentEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	return (FriendshipSong_AddToBench50PercentEffectResult){0x00u, 0xeeu};
+}
+/* <<< factory FriendshipSong_AddToBench50PercentEffect */

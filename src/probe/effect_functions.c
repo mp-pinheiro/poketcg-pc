@@ -5115,6 +5115,15 @@ static void adapt_ChanseyDoubleEdgeEffect(ProbeState *s)
 }
 /* <<< factory ChanseyDoubleEdgeEffect */
 
+/* >>> factory FriendshipSong_AddToBench50PercentEffect */
+static void adapt_FriendshipSong_AddToBench50PercentEffect(ProbeState *s)
+{
+	FriendshipSong_AddToBench50PercentEffectResult result = FriendshipSong_AddToBench50PercentEffect(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->d = result.d;
+	s->e = result.e;
+}
+/* <<< factory FriendshipSong_AddToBench50PercentEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5733,5 +5742,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Recycle_PlayerSelection", adapt_Recycle_PlayerSelection },
 	{ "GolemSelfdestructEffect", adapt_GolemSelfdestructEffect },
 	{ "ChanseyDoubleEdgeEffect", adapt_ChanseyDoubleEdgeEffect },
+	{ "FriendshipSong_AddToBench50PercentEffect", adapt_FriendshipSong_AddToBench50PercentEffect },
 	{ NULL, NULL },
 };

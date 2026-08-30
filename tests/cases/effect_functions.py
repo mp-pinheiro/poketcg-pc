@@ -7358,6 +7358,11 @@ CASES["ChanseyDoubleEdgeEffect"] = [
 ]
 # <<< factory ChanseyDoubleEdgeEffect
 
+# >>> factory FriendshipSong_AddToBench50PercentEffect
+CONTRACT["FriendshipSong_AddToBench50PercentEffect"] = {"compare": ("d", "e"), "preserve": ()}
+CASES["FriendshipSong_AddToBench50PercentEffect"] = [{}, dict(POISON)]
+# <<< factory FriendshipSong_AddToBench50PercentEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10337,3 +10342,10 @@ MUTATIONS["ChanseyDoubleEdgeEffect"] = {"source_symbol": "ChanseyDoubleEdgeEffec
 for _record in SCHEMA2_CASES["ChanseyDoubleEdgeEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
 # <<< factory-completion ChanseyDoubleEdgeEffect
+# >>> factory-mutation FriendshipSong_AddToBench50PercentEffect
+MUTATIONS["FriendshipSong_AddToBench50PercentEffect"] = {"source_symbol": "FriendshipSong_AddToBench50PercentEffect", "before": "FriendshipSong_AddToBench50PercentEffectResult FriendshipSong_AddToBench50PercentEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\treturn (FriendshipSong_AddToBench50PercentEffectResult){0x00u, 0xeeu};", "after": "FriendshipSong_AddToBench50PercentEffectResult FriendshipSong_AddToBench50PercentEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\treturn (FriendshipSong_AddToBench50PercentEffectResult){0x01u, 0xeeu};", "case_ids": ["FriendshipSong_AddToBench50PercentEffect-0", "FriendshipSong_AddToBench50PercentEffect-1"]}
+# <<< factory-mutation FriendshipSong_AddToBench50PercentEffect
+# >>> factory-completion FriendshipSong_AddToBench50PercentEffect
+for _record in SCHEMA2_CASES["FriendshipSong_AddToBench50PercentEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x407E, "bank": 11}
+# <<< factory-completion FriendshipSong_AddToBench50PercentEffect
