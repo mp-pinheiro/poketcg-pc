@@ -65,6 +65,9 @@ hBankROM = 0xFF80
 wNextScript = 0xD0C6
 wDefaultObjectText = 0xD0CA
 wCurrentNPCNameTx = 0xD0C8
+
+wVBlankOAMCopyToggle = 0xCAC0
+wLastSelectedStartMenuItem = 0xD627
 # <<< factory-cases-statics
 
 # >>> factory HandleMoveModeAPress
@@ -78,6 +81,14 @@ CASES["HandleMoveModeAPress"] = [
     dict(POISON, wram={wCurMap: b"\x01", wPlayerXCoord: b"\x12", wPlayerYCoord: b"\x04", wPlayerDirection: b"\x00", hBankROM: b"\x01"}, read={wNextScript: 2, wDefaultObjectText: 2, wCurrentNPCNameTx: 2})
 ]
 # <<< factory HandleMoveModeAPress
+
+# >>> factory Func_3b11
+CONTRACT["Func_3b11"] = {"compare": (), "preserve": ()}
+CASES["Func_3b11"] = [
+    dict(oracle=False, evidence="primary", why="The reference reaches the non-returning game-loop dispatch after initializing the loop state; this bounded prefix observes the OAM-copy toggle and previous start-menu item.", wram={wVBlankOAMCopyToggle: b"\x00", wLastSelectedStartMenuItem: b"\x00"}, read={wVBlankOAMCopyToggle: 1, wLastSelectedStartMenuItem: 1}, expect={wVBlankOAMCopyToggle: b"\x01", wLastSelectedStartMenuItem: b"\xff"}, instruction_budget=2000000, cycle_budget=8000000),
+    dict(POISON, oracle=False, evidence="primary", why="The bounded prefix reaches the game-loop dispatch and initializes its observed state even with poisoned entry registers.", wram={wVBlankOAMCopyToggle: b"\xff", wLastSelectedStartMenuItem: b"\x00"}, read={wVBlankOAMCopyToggle: 1, wLastSelectedStartMenuItem: 1}, expect={wVBlankOAMCopyToggle: b"\x00", wLastSelectedStartMenuItem: b"\xff"}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory Func_3b11
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -112,3 +123,10 @@ MUTATIONS["GetNPCDuelConfigurations"] = {"source_symbol": "GetNPCDuelConfigurati
 # >>> factory-mutation HandleMoveModeAPress
 MUTATIONS["HandleMoveModeAPress"] = {"source_symbol": "HandleMoveModeAPress", "before": "\tuint8_t object_direction = wPlayerDirection;", "after": "\tuint8_t object_direction = 0xffu;", "case_ids": ["HandleMoveModeAPress-0", "HandleMoveModeAPress-1"]}
 # <<< factory-mutation HandleMoveModeAPress
+# >>> factory-mutation Func_3b11
+MUTATIONS["Func_3b11"] = {"source_symbol": "Func_3b11", "before": "void Func_3b11(void)\n{\n\tuint8_t bank = hBankROM;\n\tBankswitchROM(BANK_GAME_LOOP);\n\t_GameLoop();\n\tBankswitchROM(bank);\n}", "after": "void Func_3b11(void)\n{\n\tuint8_t bank = hBankROM;\n\tBankswitchROM(BANK_GAME_LOOP);\n\t(void)0;\n\tBankswitchROM(bank);\n}", "case_ids": ["Func_3b11-0", "Func_3b11-1"]}
+# <<< factory-mutation Func_3b11
+# >>> factory-completion Func_3b11
+for _record in SCHEMA2_CASES["Func_3b11"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x66E1, "bank": 4}
+# <<< factory-completion Func_3b11

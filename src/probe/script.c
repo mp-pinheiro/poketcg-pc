@@ -53,11 +53,20 @@ static void adapt_HandleMoveModeAPress(ProbeState *s)
 }
 /* <<< factory HandleMoveModeAPress */
 
+/* >>> factory Func_3b11 */
+static void adapt_Func_3b11(ProbeState *s)
+{
+	(void)s;
+	Func_3b11();
+}
+/* <<< factory Func_3b11 */
+
 const ProbeEntry probe_entries_script[] = {
 	{ "GetMapScriptPointer", adapt_GetMapScriptPointer },
 	{ "ResetAnimationQueue", adapt_ResetAnimationQueue },
 	{ "FinishQueuedAnimations", adapt_FinishQueuedAnimations },
 	{ "GetNPCDuelConfigurations", adapt_GetNPCDuelConfigurations },
 	{ "HandleMoveModeAPress", adapt_HandleMoveModeAPress },
+	{ "Func_3b11", adapt_Func_3b11 },
 	{ NULL, NULL },
 };

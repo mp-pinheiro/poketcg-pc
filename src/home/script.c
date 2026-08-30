@@ -19,6 +19,9 @@
 #define MAP_OBJECT_SIZE 0x09u
 #define MAP_SCRIPT_OBJECTS 0x04u
 #define MAP_SCRIPT_PRESSED_A 0x06u
+
+#include "home/main_menu.h"
+#define BANK_GAME_LOOP 0x04u
 /* <<< factory statics */
 
 #define MAP_SCRIPTS_BANK 4u
@@ -125,3 +128,13 @@ HandleMoveModeAPressResult HandleMoveModeAPress(uint8_t a, uint8_t f, uint8_t b,
 	return (HandleMoveModeAPressResult){second.a, second.f, movement.b, movement.c, object_direction, e, second.hl};
 }
 /* <<< factory HandleMoveModeAPress */
+
+/* >>> factory Func_3b11 */
+void Func_3b11(void)
+{
+	uint8_t bank = hBankROM;
+	BankswitchROM(BANK_GAME_LOOP);
+	_GameLoop();
+	BankswitchROM(bank);
+}
+/* <<< factory Func_3b11 */
