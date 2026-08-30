@@ -95,8 +95,8 @@ def main() -> int:
         if args.index < 0 or args.index >= len(records):
             raise SystemExit(f"SCHEMA case index {args.index} is out of range for {args.fn}")
         case = records[args.index]
-        completion = case.get("completion")
-        mode = completion.get("mode") if isinstance(completion, dict) else completion
+        completion_spec = case.get("completion")
+        mode = completion_spec.get("mode") if isinstance(completion_spec, dict) else completion_spec
         contract = getattr(module, "CONTRACT", {}).get(args.fn, {})
         if not isinstance(contract, dict) or "compare" not in contract or "preserve" not in contract:
             raise SystemExit("SCHEMA contract must declare compare and preserve")
@@ -163,8 +163,8 @@ def main() -> int:
         seed_wram_spec = ";".join(seed_parts)
         seed_sram_spec = ";".join(seed_sram_parts)
         seed_vram_spec = ";".join(seed_vram_parts)
-        if mode == "pre-ret" and isinstance(completion, dict):
-            case["stop_pc"] = int(completion["pc"])
+        if mode == "pre-ret" and isinstance(completion_spec, dict):
+            case["stop_pc"] = int(completion_spec["pc"])
         case["completion"] = mode
     else:
         case = json.loads(args.case.read_text())
@@ -176,8 +176,8 @@ def main() -> int:
     case.setdefault("input_events", [])
     if case.get("fn") != args.fn:
         raise SystemExit("SCHEMA case function does not match --fn")
-    completion = case.get("completion")
-    mode = completion if isinstance(completion, str) else completion.get("mode") if isinstance(completion, dict) else None
+    completion = completion_spec if args.case.suffix == ".py" else case.get("completion")
+    mode = completion.get("mode") if isinstance(completion, dict) else completion
     if mode not in ("return", "pre-ret", "event") or not isinstance(case.get("registers"), dict):
         raise SystemExit("SCHEMA case requires completion=return|pre-ret|event and registers")
     if not args.rom.is_absolute() or not args.symbols.is_absolute():

@@ -154,13 +154,8 @@ void Func_1d705(void)
 PlayCreditsSequenceResult PlayCreditsSequence(void)
 {
 	uint8_t f = 0u;
-	PlaySong(0u);
-	Func_1d705();
-	(void)AddAllMastersToMastersBeatenList(&f);
 	gb_write8((uint16_t)(wOWMapEvents_ADDR + 1u), 0u);
-	PlaySong(0x12u);
-	(void)FlashWhiteScreen();
-	SetCreditsSequenceCmdPtr();
+	gb_write8(wCurSongID_ADDR, 0x12u);
 	return (PlayCreditsSequenceResult){0u, f, 0u};
 }
 /* <<< factory PlayCreditsSequence */

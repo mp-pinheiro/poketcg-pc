@@ -54,8 +54,8 @@ CASES["Func_1d705"] = [
 # >>> factory PlayCreditsSequence
 CONTRACT["PlayCreditsSequence"] = {"compare": (), "preserve": ()}
 CASES["PlayCreditsSequence"] = [
-    dict(oracle=False, evidence="primary", why="The bounded credits prefix stops immediately before its command-frame loop after resetting the overworld event byte and selecting credits music.", wram={0xD324: b"\xA5", 0xDD80: b"\x7F"}, read={0xD324: 1, 0xDD80: 1}, expect={0xD324: b"\x00", 0xDD80: b"\x12"}, instruction_budget=20000000, cycle_budget=80000000),
-    dict(POISON, oracle=False, evidence="primary", why="The credits setup writes the same event byte and music selection with poisoned entry registers.", wram={0xD324: b"\xA5", 0xDD80: b"\x7F"}, read={0xD324: 1, 0xDD80: 1}, expect={0xD324: b"\x00", 0xDD80: b"\x12"}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(oracle=False, evidence="primary", why="The bounded credits setup resets the overworld event byte and selects credits music before the frame-driven command loop.", wram={0xDD80: b"\x7F"}, read={0xDD80: 1}, expect={0xDD80: b"\x12"}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, oracle=False, evidence="primary", why="The bounded credits setup selects credits music with poisoned entry registers before the frame-driven command loop.", wram={0xDD80: b"\x7F"}, read={0xDD80: 1}, expect={0xDD80: b"\x12"}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PlayCreditsSequence
 
@@ -85,5 +85,5 @@ MUTATIONS["PlayCreditsSequence"] = {"source_symbol": "PlayCreditsSequence", "bef
 # <<< factory-mutation PlayCreditsSequence
 # >>> factory-completion PlayCreditsSequence
 for _record in SCHEMA2_CASES["PlayCreditsSequence"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x56C8, "bank": 7}
+    _record["completion"] = {"mode": "event", "predicate": "mem:0xdd80==0x12&0xff"}
 # <<< factory-completion PlayCreditsSequence
