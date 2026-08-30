@@ -69,6 +69,8 @@ SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 WRAM_SEED = {0xCAB4: b"\x00", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00"}
 SCENE_READ = {0xCAB4: 1, 0xCABC: 1, 0xD131: 1, 0xD291: 1, 0xD61C: 1, 0xD61D: 1, 0xD620: 2, 0xD622: 2}
 TEXT_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
+
+wCurSongID = 0xDD80
 # <<< factory-cases-statics
 
 # >>> factory LoadLinkConnectingScene
@@ -151,6 +153,14 @@ CASES["PrepareSendCardOrDeckConfigurationThroughIR"] = [
     dict(POISON, keys=0x02, sram={0: {}}, wram={0xCABB: b"\x80", 0xFF40: b"\x80"}, setup=[{"fn": "CopyDMAFunction"}], instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PrepareSendCardOrDeckConfigurationThroughIR
+
+# >>> factory _SendCard
+CONTRACT["_SendCard"] = {"compare": (), "preserve": ()}
+CASES["_SendCard"] = [
+    {"oracle": False, "evidence": "primary", "why": "The bounded prefix stops after the routine initial music shutdown before the scene and infrared handshake; the music state is asserted.", "read": {wCurSongID: 1}, "expect": {wCurSongID: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"oracle": False, "evidence": "primary", "why": "The bounded prefix stops after the routine initial music shutdown with poisoned registers; the music state is asserted.", "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "read": {wCurSongID: 1}, "expect": {wCurSongID: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+]
+# <<< factory _SendCard
 
 from tests.cases._schema_migration import legacy_to_schema
 
@@ -244,3 +254,10 @@ MUTATIONS["PrepareSendCardOrDeckConfigurationThroughIR"] = {
     "case_ids": ["PrepareSendCardOrDeckConfigurationThroughIR-0", "PrepareSendCardOrDeckConfigurationThroughIR-1"],
 }
 # <<< factory-mutation PrepareSendCardOrDeckConfigurationThroughIR
+# >>> factory-mutation _SendCard
+MUTATIONS["_SendCard"] = {"source_symbol": "_SendCard", "before": "void _SendCard(void)\n{\n\tStopMusic();\n}", "after": "void _SendCard(void)\n{\n\tPlayCardPopSong();\n}", "case_ids": ["_SendCard-0", "_SendCard-1"]}
+# <<< factory-mutation _SendCard
+# >>> factory-completion _SendCard
+for _record in SCHEMA2_CASES["_SendCard"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x5A1F}
+# <<< factory-completion _SendCard

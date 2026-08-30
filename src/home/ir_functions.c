@@ -46,6 +46,8 @@
 #define ReceivingDeckConfigurationText 0x019du
 
 #include "home/frames.h"
+
+#include "home/sound.h"
 /* <<< factory statics */
 
 #define MUSIC_CARD_POP 0x08u
@@ -295,3 +297,10 @@ PrepareSendCardOrDeckConfigurationThroughIRResult PrepareSendCardOrDeckConfigura
 	}
 }
 /* <<< factory PrepareSendCardOrDeckConfigurationThroughIR */
+
+/* >>> factory _SendCard */
+void _SendCard(void)
+{
+	StopMusic();
+}
+/* <<< factory _SendCard */

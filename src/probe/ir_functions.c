@@ -103,6 +103,14 @@ static void adapt_PrepareSendCardOrDeckConfigurationThroughIR(ProbeState *s)
 }
 /* <<< factory PrepareSendCardOrDeckConfigurationThroughIR */
 
+/* >>> factory _SendCard */
+static void adapt__SendCard(ProbeState *s)
+{
+	_SendCard();
+	(void)s;
+}
+/* <<< factory _SendCard */
+
 const ProbeEntry probe_entries_ir_functions[] = {
 	{ "PlayCardPopSong", adapt_PlayCardPopSong },
 	{ "InitIRCommunications", adapt_InitIRCommunications },
@@ -116,5 +124,6 @@ const ProbeEntry probe_entries_ir_functions[] = {
 	{ "_ReceiveCard", adapt__ReceiveCard },
 	{ "_ReceiveDeckConfiguration", adapt__ReceiveDeckConfiguration },
 	{ "PrepareSendCardOrDeckConfigurationThroughIR", adapt_PrepareSendCardOrDeckConfigurationThroughIR },
+	{ "_SendCard", adapt__SendCard },
 	{ NULL, NULL },
 };
