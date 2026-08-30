@@ -140,4 +140,8 @@ GiftCenter_ReceiveCardResult GiftCenter_ReceiveCard(void);
 typedef struct { uint8_t a; uint8_t f; } GiftCenter_ReceiveDeckResult;
 GiftCenter_ReceiveDeckResult GiftCenter_ReceiveDeck(void);
 /* <<< factory GiftCenter_ReceiveDeck */
+/* >>> factory GiftCenter_SendCard */
+typedef struct { uint8_t a; uint8_t f; } GiftCenter_SendCardResult;
+GiftCenter_SendCardResult GiftCenter_SendCard(void);
+/* <<< factory GiftCenter_SendCard */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

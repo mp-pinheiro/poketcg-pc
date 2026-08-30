@@ -676,6 +676,14 @@ CASES["GiftCenter_ReceiveDeck"] = [
 ]
 # <<< factory GiftCenter_ReceiveDeck
 
+# >>> factory GiftCenter_SendCard
+CONTRACT["GiftCenter_SendCard"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["GiftCenter_SendCard"] = [
+    {"oracle": False, "evidence": "primary", "why": "The deck-building screen is frame-driven; the bounded cancel timeline exercises the deterministic no-carry exit while avoiding the external card-transfer path.", "keys": [0x00, 0x02], "wram": {0xCAB6: b"\xff", 0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCAB6: 1}, "expect": {0xCAB6: b"\x00"}, "expect_regs": {"a": 0x01, "f": 0x00}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The deck-building screen is frame-driven; the bounded cancel timeline exercises the deterministic no-carry exit with poisoned registers while avoiding the external card-transfer path.", keys=[0x00, 0x02], wram={0xCAB6: b"\xff", 0xCABB: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xCAB6: 1}, expect={0xCAB6: b"\x00"}, expect_regs={"a": 0x01, "f": 0x00}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory GiftCenter_SendCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -856,3 +864,10 @@ MUTATIONS["GiftCenter_ReceiveCard"] = {"source_symbol": "GiftCenter_ReceiveCard"
 # >>> factory-mutation GiftCenter_ReceiveDeck
 MUTATIONS["GiftCenter_ReceiveDeck"] = {"source_symbol": "GiftCenter_ReceiveDeck", "before": "\twNumDeckMachineEntries = DECK_SIZE;", "after": "\twNumDeckMachineEntries = 0u;", "case_ids": ["GiftCenter_ReceiveDeck-0", "GiftCenter_ReceiveDeck-1"]}
 # <<< factory-mutation GiftCenter_ReceiveDeck
+# >>> factory-mutation GiftCenter_SendCard
+MUTATIONS["GiftCenter_SendCard"] = {"source_symbol": "GiftCenter_SendCard", "before": "GiftCenter_SendCardResult GiftCenter_SendCard(void)\n{\n\twTileMapFill = 0u;", "after": "GiftCenter_SendCardResult GiftCenter_SendCard(void)\n{\n\twTileMapFill = 1u;", "case_ids": ["GiftCenter_SendCard-0", "GiftCenter_SendCard-1"]}
+# <<< factory-mutation GiftCenter_SendCard
+# >>> factory-completion GiftCenter_SendCard
+for _record in SCHEMA2_CASES["GiftCenter_SendCard"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x2C29, "bank": 0}
+# <<< factory-completion GiftCenter_SendCard

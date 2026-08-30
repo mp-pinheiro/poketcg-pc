@@ -320,6 +320,15 @@ static void adapt_GiftCenter_ReceiveDeck(ProbeState *s)
 }
 /* <<< factory GiftCenter_ReceiveDeck */
 
+/* >>> factory GiftCenter_SendCard */
+static void adapt_GiftCenter_SendCard(ProbeState *s)
+{
+	GiftCenter_SendCardResult result = GiftCenter_SendCard();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory GiftCenter_SendCard */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -357,5 +366,6 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "HandleDeckSaveMachineMenu", adapt_HandleDeckSaveMachineMenu },
 	{ "GiftCenter_ReceiveCard", adapt_GiftCenter_ReceiveCard },
 	{ "GiftCenter_ReceiveDeck", adapt_GiftCenter_ReceiveDeck },
+	{ "GiftCenter_SendCard", adapt_GiftCenter_SendCard },
 	{ NULL, NULL },
 };

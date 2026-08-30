@@ -251,6 +251,25 @@
 #include "home/save.h"
 #define PleaseChooseASaveSlotText 0x0285u
 #define ReceivedADeckConfigurationFromText 0x0287u
+
+#include "home/deck_configuration.h"
+#include "home/switch_sram.h"
+#include "home/menus.h"
+#include "home/credits_sequence_commands.h"
+#include "home/lcd.h"
+#include "home/process_text.h"
+#include "home/tiles.h"
+#include "home/duel_core.h"
+#include "home/objects.h"
+#include "home/print_text.h"
+#include "home/save.h"
+#include "home/common.h"
+#include "generated/wram.h"
+#define DOUBLE_SPACED 0x00u
+#define SINGLE_SPACED 0x01u
+#define ProceduresForSendingCardsText 0x027cu
+#define CardSendingProceduresText 0x027du
+#define PleaseReadTheProceduresForSendingCardsText 0x027eu
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -1846,3 +1865,18 @@ GiftCenter_ReceiveDeckResult GiftCenter_ReceiveDeck(void)
 	}
 }
 /* <<< factory GiftCenter_ReceiveDeck */
+
+/* >>> factory GiftCenter_SendCard */
+GiftCenter_SendCardResult GiftCenter_SendCard(void)
+{
+	wTileMapFill = 0u;
+	ZeroObjectPositions();
+	EmptyScreen();
+	wVBlankOAMCopyToggle = 1u;
+	(void)LoadSymbolsFont();
+	SetDefaultConsolePalettes();
+	(void)SetupText(0x3Cu, 0xBFu);
+	InitTextPrinting(3u, 1u);
+	return (GiftCenter_SendCardResult){0u, 0x80u};
+}
+/* <<< factory GiftCenter_SendCard */
