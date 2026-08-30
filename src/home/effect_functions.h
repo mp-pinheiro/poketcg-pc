@@ -2060,6 +2060,9 @@ void Potion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, ui
 /* >>> factory SuperPotion_HealEffect */
 void SuperPotion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory SuperPotion_HealEffect */
+/* >>> factory PokemonCenter_HealDiscardEnergyEffect */
+void PokemonCenter_HealDiscardEnergyEffect(void);
+/* <<< factory PokemonCenter_HealDiscardEnergyEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

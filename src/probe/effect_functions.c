@@ -5048,6 +5048,14 @@ static void adapt_SuperPotion_HealEffect(ProbeState *s)
 }
 /* <<< factory SuperPotion_HealEffect */
 
+/* >>> factory PokemonCenter_HealDiscardEnergyEffect */
+static void adapt_PokemonCenter_HealDiscardEnergyEffect(ProbeState *s)
+{
+	(void)s;
+	PokemonCenter_HealDiscardEnergyEffect();
+}
+/* <<< factory PokemonCenter_HealDiscardEnergyEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5659,5 +5667,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "HealPlayAreaCardHP", adapt_HealPlayAreaCardHP },
 	{ "Potion_HealEffect", adapt_Potion_HealEffect },
 	{ "SuperPotion_HealEffect", adapt_SuperPotion_HealEffect },
+	{ "PokemonCenter_HealDiscardEnergyEffect", adapt_PokemonCenter_HealDiscardEnergyEffect },
 	{ NULL, NULL },
 };

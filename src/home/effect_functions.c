@@ -10675,3 +10675,10 @@ void SuperPotion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t 
 	hTempPlayAreaLocation_ff9d = hTempPlayAreaLocation_ffa1;
 }
 /* <<< factory SuperPotion_HealEffect */
+
+/* >>> factory PokemonCenter_HealDiscardEnergyEffect */
+void PokemonCenter_HealDiscardEnergyEffect(void)
+{
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+}
+/* <<< factory PokemonCenter_HealDiscardEnergyEffect */

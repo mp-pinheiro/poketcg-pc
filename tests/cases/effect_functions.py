@@ -7222,6 +7222,14 @@ CASES["SuperPotion_HealEffect"] = [
 ]
 # <<< factory SuperPotion_HealEffect
 
+# >>> factory PokemonCenter_HealDiscardEnergyEffect
+CONTRACT["PokemonCenter_HealDiscardEnergyEffect"] = {"compare": (), "preserve": ()}
+CASES["PokemonCenter_HealDiscardEnergyEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xFF9D: b"\xFF"}, "read": {0xFF9D: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xFF9D: b"\xFF"}, "read": {0xFF9D: 1}},
+]
+# <<< factory PokemonCenter_HealDiscardEnergyEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10160,3 +10168,10 @@ MUTATIONS["SuperPotion_HealEffect"] = {"source_symbol": "SuperPotion_HealEffect"
 for _record in SCHEMA2_CASES["SuperPotion_HealEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x7EBC, "bank": 11}
 # <<< factory-completion SuperPotion_HealEffect
+# >>> factory-mutation PokemonCenter_HealDiscardEnergyEffect
+MUTATIONS["PokemonCenter_HealDiscardEnergyEffect"] = {"source_symbol": "PokemonCenter_HealDiscardEnergyEffect", "before": "void PokemonCenter_HealDiscardEnergyEffect(void)\n{\n\thTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;\n}", "after": "void PokemonCenter_HealDiscardEnergyEffect(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;\n}", "case_ids": ["PokemonCenter_HealDiscardEnergyEffect-0", "PokemonCenter_HealDiscardEnergyEffect-1"]}
+# <<< factory-mutation PokemonCenter_HealDiscardEnergyEffect
+# >>> factory-completion PokemonCenter_HealDiscardEnergyEffect
+for _record in SCHEMA2_CASES["PokemonCenter_HealDiscardEnergyEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x1C35, "bank": 0}
+# <<< factory-completion PokemonCenter_HealDiscardEnergyEffect
