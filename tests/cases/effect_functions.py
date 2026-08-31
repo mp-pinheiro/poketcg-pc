@@ -7835,6 +7835,14 @@ CASES["Spark_PlayerSelectEffect"] = [
 ]
 # <<< factory Spark_PlayerSelectEffect
 
+# >>> factory DevolutionBeam_PlayerSelectEffect
+CONTRACT["DevolutionBeam_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CASES["DevolutionBeam_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1, 0xFFA1: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFFA0: 1, 0xFFA1: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DevolutionBeam_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -11016,3 +11024,6 @@ MUTATIONS["HypnoDarkMind_PlayerSelectEffect"] = {"source_symbol": "HypnoDarkMind
 # >>> factory-mutation Spark_PlayerSelectEffect
 MUTATIONS["Spark_PlayerSelectEffect"] = {"source_symbol": "Spark_PlayerSelectEffect", "before": "void Spark_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0xffu;", "after": "void Spark_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0xfeu;", "case_ids": ["Spark_PlayerSelectEffect-0", "Spark_PlayerSelectEffect-2"]}
 # <<< factory-mutation Spark_PlayerSelectEffect
+# >>> factory-mutation DevolutionBeam_PlayerSelectEffect
+MUTATIONS["DevolutionBeam_PlayerSelectEffect"] = {"source_symbol": "DevolutionBeam_PlayerSelectEffect", "before": "\thTemp_ffa0 = selected_duelist;", "after": "\thTemp_ffa0 = (uint8_t)(selected_duelist + 1u);", "case_ids": ["DevolutionBeam_PlayerSelectEffect-0"]}
+# <<< factory-mutation DevolutionBeam_PlayerSelectEffect

@@ -2229,6 +2229,9 @@ void HypnoDarkMind_PlayerSelectEffect(void);
 /* >>> factory Spark_PlayerSelectEffect */
 void Spark_PlayerSelectEffect(void);
 /* <<< factory Spark_PlayerSelectEffect */
+/* >>> factory DevolutionBeam_PlayerSelectEffect */
+void DevolutionBeam_PlayerSelectEffect(void);
+/* <<< factory DevolutionBeam_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

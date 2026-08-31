@@ -1526,6 +1526,14 @@ void BankswitchROM(uint8_t bank);
 #include "home/credits_sequence_commands.h"
 
 #define ChoosePokemonToScoopUpText 0x015du
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/effect_functions.h"
+#define PleaseSelectThePlayAreaText 0x013eu
+#define ProcedureForDevolutionBeamText 0x0138u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11573,3 +11581,35 @@ void Spark_PlayerSelectEffect(void)
 	SwapTurn();
 }
 /* <<< factory Spark_PlayerSelectEffect */
+
+/* >>> factory DevolutionBeam_PlayerSelectEffect */
+void DevolutionBeam_PlayerSelectEffect(void)
+{
+	(void)DrawWholeScreenTextBox(ProcedureForDevolutionBeamText);
+	for (;;) {
+		DrawDuelMainScene();
+		(void)TwoItemHorizontalMenu(PleaseSelectThePlayAreaText);
+		if ((hKeysHeld & PAD_B) != 0u)
+			return;
+
+		uint8_t selected_duelist = 0u;
+		HandleEvolvedCardSelectionResult selection;
+		if (hCurMenuItem != 0u) {
+			SwapTurn();
+			selection = HandleEvolvedCardSelection();
+			SwapTurn();
+			if ((selection.f & 0x10u) != 0u)
+				continue;
+			selected_duelist = 1u;
+		} else {
+			selection = HandleEvolvedCardSelection();
+			if ((selection.f & 0x10u) != 0u)
+				continue;
+		}
+
+		hTemp_ffa0 = selected_duelist;
+		hAIPkmnPowerEffectParam = hTempPlayAreaLocation_ff9d;
+		return;
+	}
+}
+/* <<< factory DevolutionBeam_PlayerSelectEffect */
