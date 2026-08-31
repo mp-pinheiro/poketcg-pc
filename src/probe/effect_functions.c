@@ -5321,6 +5321,14 @@ static void adapt_MrFuji_PlayerSelection(ProbeState *s)
 }
 /* <<< factory MrFuji_PlayerSelection */
 
+/* >>> factory Switch_PlayerSelection */
+static void adapt_Switch_PlayerSelection(ProbeState *s)
+{
+	(void)s;
+	Switch_PlayerSelection();
+}
+/* <<< factory Switch_PlayerSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5962,5 +5970,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Defender_PlayerSelection", adapt_Defender_PlayerSelection },
 	{ "EnergyRemoval_PlayerSelection", adapt_EnergyRemoval_PlayerSelection },
 	{ "MrFuji_PlayerSelection", adapt_MrFuji_PlayerSelection },
+	{ "Switch_PlayerSelection", adapt_Switch_PlayerSelection },
 	{ NULL, NULL },
 };

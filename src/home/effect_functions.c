@@ -11305,3 +11305,10 @@ void MrFuji_PlayerSelection(void)
 	hTemp_ffa0 = 0u;
 }
 /* <<< factory MrFuji_PlayerSelection */
+
+/* >>> factory Switch_PlayerSelection */
+void Switch_PlayerSelection(void)
+{
+	hTemp_ffa0 = 0u;
+}
+/* <<< factory Switch_PlayerSelection */

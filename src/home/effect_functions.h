@@ -2167,6 +2167,9 @@ HandlePokemonAndEnergySelectionScreenResult EnergyRemoval_PlayerSelection(void);
 /* >>> factory MrFuji_PlayerSelection */
 void MrFuji_PlayerSelection(void);
 /* <<< factory MrFuji_PlayerSelection */
+/* >>> factory Switch_PlayerSelection */
+void Switch_PlayerSelection(void);
+/* <<< factory Switch_PlayerSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

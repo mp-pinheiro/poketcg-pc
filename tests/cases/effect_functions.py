@@ -7662,6 +7662,14 @@ CASES["MrFuji_PlayerSelection"] = [
 ]
 # <<< factory MrFuji_PlayerSelection
 
+# >>> factory Switch_PlayerSelection
+CONTRACT["Switch_PlayerSelection"] = {"compare": (), "preserve": ()}
+CASES["Switch_PlayerSelection"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFFA0: 1}, expect={0xFFA0: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Switch_PlayerSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10762,3 +10770,10 @@ MUTATIONS["MrFuji_PlayerSelection"] = {"source_symbol": "MrFuji_PlayerSelection"
 for _record in SCHEMA2_CASES["MrFuji_PlayerSelection"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x271, "bank": 1}
 # <<< factory-completion MrFuji_PlayerSelection
+# >>> factory-mutation Switch_PlayerSelection
+MUTATIONS["Switch_PlayerSelection"] = {"source_symbol": "Switch_PlayerSelection", "before": "void Switch_PlayerSelection(void)\n{\n\thTemp_ffa0 = 0u;\n}", "after": "void Switch_PlayerSelection(void)\n{\n\thTemp_ffa0 = 1u;\n}", "case_ids": ["Switch_PlayerSelection-0"]}
+# <<< factory-mutation Switch_PlayerSelection
+# >>> factory-completion Switch_PlayerSelection
+for _record in SCHEMA2_CASES["Switch_PlayerSelection"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x592, "bank": 1}
+# <<< factory-completion Switch_PlayerSelection
