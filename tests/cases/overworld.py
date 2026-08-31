@@ -1081,6 +1081,14 @@ CASES["HandlePlayerMoveMode"] = [
 ]
 # <<< factory HandlePlayerMoveMode
 
+# >>> factory CallHandlePlayerMoveMode
+CONTRACT["CallHandlePlayerMoveMode"] = {"compare": (), "preserve": ()}
+CASES["CallHandlePlayerMoveMode"] = [
+	{"wram": {0xD335: b"\x10", 0xD336: b"\x5A"}, "read": {0xD4CF: 1}},
+	dict(POISON, wram={0xD335: b"\x10", 0xD336: b"\xC3"}, read={0xD4CF: 1}),
+]
+# <<< factory CallHandlePlayerMoveMode
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1454,3 +1462,6 @@ MUTATIONS["OpenPauseMenu"] = {"source_symbol": "OpenPauseMenu", "before": "\tClo
 # >>> factory-mutation HandlePlayerMoveMode
 MUTATIONS["HandlePlayerMoveMode"] = {"source_symbol": "HandlePlayerMoveMode", "before": "void HandlePlayerMoveMode(void)\n{\n\twWhichSprite = wPlayerSpriteIndex;", "after": "void HandlePlayerMoveMode(void)\n{\n\twWhichSprite = 0u;", "case_ids": ["HandlePlayerMoveMode-0", "HandlePlayerMoveMode-1", "HandlePlayerMoveMode-2", "HandlePlayerMoveMode-3", "HandlePlayerMoveMode-4", "HandlePlayerMoveMode-5"]}
 # <<< factory-mutation HandlePlayerMoveMode
+# >>> factory-mutation CallHandlePlayerMoveMode
+MUTATIONS["CallHandlePlayerMoveMode"] = {"source_symbol": "CallHandlePlayerMoveMode", "before": "void CallHandlePlayerMoveMode(void)\n{\n\tHandlePlayerMoveMode();", "after": "void CallHandlePlayerMoveMode(void)\n{\n\treturn;", "case_ids": ["CallHandlePlayerMoveMode-0", "CallHandlePlayerMoveMode-1"]}
+# <<< factory-mutation CallHandlePlayerMoveMode

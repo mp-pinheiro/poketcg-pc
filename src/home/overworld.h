@@ -321,4 +321,7 @@ void OpenPauseMenu(void);
 /* >>> factory HandlePlayerMoveMode */
 void HandlePlayerMoveMode(void);
 /* <<< factory HandlePlayerMoveMode */
+/* >>> factory CallHandlePlayerMoveMode */
+void CallHandlePlayerMoveMode(void);
+/* <<< factory CallHandlePlayerMoveMode */
 #endif /* POKETCG_HOME_OVERWORLD_H */

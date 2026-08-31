@@ -1445,3 +1445,10 @@ void HandlePlayerMoveMode(void)
 		OpenPauseMenu();
 }
 /* <<< factory HandlePlayerMoveMode */
+
+/* >>> factory CallHandlePlayerMoveMode */
+void CallHandlePlayerMoveMode(void)
+{
+	HandlePlayerMoveMode();
+}
+/* <<< factory CallHandlePlayerMoveMode */

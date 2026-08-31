@@ -673,6 +673,14 @@ static void adapt_HandlePlayerMoveMode(ProbeState *s)
 }
 /* <<< factory HandlePlayerMoveMode */
 
+/* >>> factory CallHandlePlayerMoveMode */
+static void adapt_CallHandlePlayerMoveMode(ProbeState *s)
+{
+	(void)s;
+	CallHandlePlayerMoveMode();
+}
+/* <<< factory CallHandlePlayerMoveMode */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -755,5 +763,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "PauseMenu", adapt_PauseMenu },
 	{ "OpenPauseMenu", adapt_OpenPauseMenu },
 	{ "HandlePlayerMoveMode", adapt_HandlePlayerMoveMode },
+	{ "CallHandlePlayerMoveMode", adapt_CallHandlePlayerMoveMode },
 	{ NULL, NULL },
 };
