@@ -1073,6 +1073,15 @@ static void adapt_DuelCheckMenu_OppPlayArea(ProbeState *s)
 }
 /* <<< factory DuelCheckMenu_OppPlayArea */
 
+/* >>> factory HandleConfusionDamageToSelf */
+static void adapt_HandleConfusionDamageToSelf(ProbeState *s)
+{
+	HandleConfusionDamageToSelfResult result = HandleConfusionDamageToSelf();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory HandleConfusionDamageToSelf */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "Func_82b6", adapt_Func_82b6 },
 	{ "CopyPlayerName", adapt_CopyPlayerName },
@@ -1203,5 +1212,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea", adapt_OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea },
 	{ "OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea", adapt_OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea },
 	{ "DuelCheckMenu_OppPlayArea", adapt_DuelCheckMenu_OppPlayArea },
+	{ "HandleConfusionDamageToSelf", adapt_HandleConfusionDamageToSelf },
 	{ NULL, NULL },
 };

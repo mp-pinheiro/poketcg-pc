@@ -1854,6 +1854,14 @@ CASES["DuelCheckMenu_OppPlayArea"] = [
 ]
 # <<< factory DuelCheckMenu_OppPlayArea
 
+# >>> factory HandleConfusionDamageToSelf
+CONTRACT["HandleConfusionDamageToSelf"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleConfusionDamageToSelf"] = [
+    {"wram": {0xFF97: b"\xC2", 0xCCE6: b"\x00", 0xCCB8: b"\x00"}, "read": {0xCCE6: 1, 0xCCB8: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xCCE6: b"\x00", 0xCCB8: b"\x00"}, read={0xCCE6: 1, 0xCCB8: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}])
+]
+# <<< factory HandleConfusionDamageToSelf
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_1bb4
@@ -2205,3 +2213,10 @@ for _record in SCHEMA2_CASES["OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea"
 # >>> factory-mutation DuelCheckMenu_OppPlayArea
 MUTATIONS["DuelCheckMenu_OppPlayArea"] = {"source_symbol": "DuelCheckMenu_OppPlayArea", "before": "void DuelCheckMenu_OppPlayArea(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\tPkmnPowerCountResult clairvoyance = IsClairvoyanceActive();\n\twce5e = (clairvoyance.f & 0x10u) != 0u ? 0u : 0x80u;", "after": "void DuelCheckMenu_OppPlayArea(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\tPkmnPowerCountResult clairvoyance = IsClairvoyanceActive();\n\twce5e = (clairvoyance.f & 0x10u) != 0u ? 0u : 0x81u;", "case_ids": ["DuelCheckMenu_OppPlayArea-0", "DuelCheckMenu_OppPlayArea-1"]}
 # <<< factory-mutation DuelCheckMenu_OppPlayArea
+# >>> factory-mutation HandleConfusionDamageToSelf
+MUTATIONS["HandleConfusionDamageToSelf"] = {"source_symbol": "HandleConfusionDamageToSelf", "before": "HandleConfusionDamageToSelfResult HandleConfusionDamageToSelf(void) { gb_write8(0xCCE6u, 1u); return (HandleConfusionDamageToSelfResult){0u, 0x80u}; }", "after": "HandleConfusionDamageToSelfResult HandleConfusionDamageToSelf(void) { gb_write8(0xCCE6u, 1u); return (HandleConfusionDamageToSelfResult){1u, 0x80u}; }", "case_ids": ["HandleConfusionDamageToSelf-0", "HandleConfusionDamageToSelf-1"]}
+# <<< factory-mutation HandleConfusionDamageToSelf
+# >>> factory-completion HandleConfusionDamageToSelf
+for _record in SCHEMA2_CASES["HandleConfusionDamageToSelf"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x2D10, "bank": 13}
+# <<< factory-completion HandleConfusionDamageToSelf

@@ -745,4 +745,8 @@ void OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea(void);
 /* >>> factory DuelCheckMenu_OppPlayArea */
 void DuelCheckMenu_OppPlayArea(void);
 /* <<< factory DuelCheckMenu_OppPlayArea */
+/* >>> factory HandleConfusionDamageToSelf */
+typedef struct { uint8_t a; uint8_t f; } HandleConfusionDamageToSelfResult;
+HandleConfusionDamageToSelfResult HandleConfusionDamageToSelf(void);
+/* <<< factory HandleConfusionDamageToSelf */
 #endif

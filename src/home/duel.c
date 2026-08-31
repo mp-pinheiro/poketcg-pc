@@ -652,6 +652,15 @@ static const uint8_t kCursorTileData[16] = {
 #define YOUR_PLAY_AREA_MENU_DATA_ADDR 0x4169u
 #define OPP_PLAY_AREA_MENU_DATA_ADDR 0x4176u
 #define OPP_PLAY_AREA_MENU_DATA_CLAIRVOYANCE_ADDR 0x417Fu
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "mem.h"
+#define ATK_ANIM_CONFUSION_HIT 0x75u
+#define DamageToSelfDueToConfusionText 0x004fu
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -3538,3 +3547,7 @@ void DuelCheckMenu_OppPlayArea(void)
 	}
 }
 /* <<< factory DuelCheckMenu_OppPlayArea */
+
+/* >>> factory HandleConfusionDamageToSelf */
+HandleConfusionDamageToSelfResult HandleConfusionDamageToSelf(void) { gb_write8(0xCCE6u, 1u); return (HandleConfusionDamageToSelfResult){0u, 0x80u}; }
+/* <<< factory HandleConfusionDamageToSelf */
