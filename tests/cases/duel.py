@@ -1324,6 +1324,20 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wSelectedAttack = 0xCCC6
+hTempCardIndex_ff9f = 0xFF9F
+wTempCardID_ccc2 = 0xCCC2
+wLoadedAttackCategory = 0xCCB1
+wPlayerAttackingAttackIndex = 0xCC10
+wPlayerAttackingCardIndex = 0xCC11
+wPlayerAttackingCardID = 0xCC12
+wLoadedAttackEffectCommands = 0xCCB2
+hWhoseTurn = 0xFF97
+wDuelType = 0xCC09
+wOpponentDuelVariables = 0xC300
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1889,6 +1903,14 @@ CASES["PlayAttackAnimation_DealAttackDamage"] = [
     dict(POISON, evidence="primary", oracle=False, why="The attack-damage wrapper enters animation and after-damage orchestration that cannot return in a standalone reference call; this bounded poisoned primary fixture records its wrapper result without unstable bus observations.", expect_regs={"a": 0x27, "f": 0x70})]
 # <<< factory PlayAttackAnimation_DealAttackDamage
 
+# >>> factory UseAttackOrPokemonPower
+CONTRACT["UseAttackOrPokemonPower"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["UseAttackOrPokemonPower"] = [
+    dict(evidence="primary", oracle=False, why="The Pokemon Power path is bounded with an empty effect-command list and a non-link opponent; it exercises the target's dispatch and all three attacking-card bookkeeping writes without entering the frame-driven attack animation.", wram={wSelectedAttack: b"\x01", hTempCardIndex_ff9f: b"\x02", wTempCardID_ccc2: b"\x2A", wLoadedAttackCategory: b"\x04", wLoadedAttackEffectCommands: b"\x00\x00", hWhoseTurn: b"\xC2", wDuelType: b"\x00", wOpponentDuelVariables + 0xF1: b"\x00"}, read={wPlayerAttackingAttackIndex: 1, wPlayerAttackingCardIndex: 1, wPlayerAttackingCardID: 1}, expect={wPlayerAttackingAttackIndex: b"\x01", wPlayerAttackingCardIndex: b"\x02", wPlayerAttackingCardID: b"\x2A"}, expect_regs={"a": 0x00, "f": 0x70, "b": 0x00, "c": 0x03, "d": 0x00, "e": 0x00, "hl": 0x0000}),
+    dict(POISON, evidence="primary", oracle=False, why="The poisoned-register Pokemon Power case keeps the same bounded no-effect dispatch while proving that the wrapper reloads the selected attack, card index, and card ID rather than leaking entry-register poison.", wram={wSelectedAttack: b"\x01", hTempCardIndex_ff9f: b"\x02", wTempCardID_ccc2: b"\x2A", wLoadedAttackCategory: b"\x04", wLoadedAttackEffectCommands: b"\x00\x00", hWhoseTurn: b"\xC2", wDuelType: b"\x00", wOpponentDuelVariables + 0xF1: b"\x00"}, read={wPlayerAttackingAttackIndex: 1, wPlayerAttackingCardIndex: 1, wPlayerAttackingCardID: 1}, expect={wPlayerAttackingAttackIndex: b"\x01", wPlayerAttackingCardIndex: b"\x02", wPlayerAttackingCardID: b"\x2A"}, expect_regs={"a": 0x00, "f": 0x70, "b": 0xBB, "c": 0x03, "d": 0xDD, "e": 0xEE, "hl": 0x0000})
+]
+# <<< factory UseAttackOrPokemonPower
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_1bb4
@@ -2264,3 +2286,6 @@ MUTATIONS["PlayAttackAnimation_DealAttackDamage"] = {"source_symbol": "PlayAttac
 for _record in SCHEMA2_CASES["PlayAttackAnimation_DealAttackDamage"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x3559}
 # <<< factory-completion PlayAttackAnimation_DealAttackDamage
+# >>> factory-mutation UseAttackOrPokemonPower
+MUTATIONS["UseAttackOrPokemonPower"] = {"source_symbol": "UseAttackOrPokemonPower", "before": "DuelRoutineResult UseAttackOrPokemonPower(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = wSelectedAttack;\n\twPlayerAttackingAttackIndex = a;", "after": "DuelRoutineResult UseAttackOrPokemonPower(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = wSelectedAttack;\n\twPlayerAttackingAttackIndex = (uint8_t)(a ^ 1u);", "case_ids": ["UseAttackOrPokemonPower-0", "UseAttackOrPokemonPower-1"]}
+# <<< factory-mutation UseAttackOrPokemonPower

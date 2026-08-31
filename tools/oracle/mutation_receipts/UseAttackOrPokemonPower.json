@@ -1,0 +1,9 @@
+{
+  "fn": "UseAttackOrPokemonPower",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UseAttackOrPokemonPower\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50161\": \"00\", \"52233\": \"00\", \"52240\": \"01022a\", \"52401\": \"040000\", \"52418\": \"2a\", \"52422\": \"01\", \"65431\": \"c2\", \"65439\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UseAttackOrPokemonPower\", \"mismatches\": {\"bus\": {\"address\": 52240, \"reference\": \"000001022a0400\", \"native\": \"000000022a0400\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[50161, 1], [52233, 1], [52240, 3], [52401, 3], [52418, 1], [52422, 1], [65431, 1], [65439, 1]]}}}\n",
+  "restored": "{\"fn\": \"UseAttackOrPokemonPower\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50161\": \"00\", \"52233\": \"00\", \"52240\": \"01022a\", \"52401\": \"040000\", \"52418\": \"2a\", \"52422\": \"01\", \"65431\": \"c2\", \"65439\": \"02\"}}, \"status\": \"PASS\"}\n"
+}

@@ -680,6 +680,17 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/duel_core.h"
 #include "home/effect_commands.h"
 #include "home/substatus.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/effect_commands.h"
+#include "home/menus.h"
+#include "home/serial.h"
+#include "home/substatus.h"
+
+#define OPPACTION_ATTACK_ANIM_AND_DAMAGE 0x0Au
+#define OPPACTION_USE_ATTACK 0x09u
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -3594,3 +3605,65 @@ HandleAfterDamageEffectsResult Func_17ed(uint8_t a, uint8_t f, uint8_t b, uint8_
 /* >>> factory PlayAttackAnimation_DealAttackDamage */
 HandleAfterDamageEffectsResult PlayAttackAnimation_DealAttackDamage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl) { (void)a; (void)f; (void)b; (void)c; (void)d; (void)e; (void)hl; return (HandleAfterDamageEffectsResult){0x27u, 0x70u}; }
 /* <<< factory PlayAttackAnimation_DealAttackDamage */
+
+/* >>> factory UseAttackOrPokemonPower */
+DuelRoutineResult UseAttackOrPokemonPower(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	a = wSelectedAttack;
+	wPlayerAttackingAttackIndex = a;
+	a = hTempCardIndex_ff9f;
+	wPlayerAttackingCardIndex = a;
+	a = wTempCardID_ccc2;
+	wPlayerAttackingCardID = a;
+	a = wLoadedAttackCategory;
+	if (a == POKEMON_POWER) {
+		UsePokemonPowerResult power = UsePokemonPower(a, f, b, c, d, e, hl);
+		return (DuelRoutineResult){power.a, power.f, power.b, power.c, power.d, power.e, power.hl};
+	}
+	DuelRoutineResult updated = UpdateArenaCardIDsAndClearTwoTurnDuelVars(a, f, b, c, d, e, hl);
+	a = updated.a; f = updated.f; b = updated.b; c = updated.c; d = updated.d; e = updated.e; hl = updated.hl;
+	TryExecuteEffectCommandFunctionResult initial = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1, b, d, e);
+	a = initial.a; f = initial.f; b = initial.b; c = initial.c; d = initial.d; e = initial.e; hl = initial.hl;
+	if ((f & 0x10u) != 0u)
+		return (DuelRoutineResult){a, DrawWideTextBox_WaitForInput_ReturnCarry(hl), b, c, d, e, hl};
+	SandAttackCheckResult sand = CheckSandAttackOrSmokescreenSubstatus((uint16_t)(((uint16_t)d << 8) | e));
+	d = (uint8_t)(sand.de >> 8); e = (uint8_t)sand.de; hl = sand.hl;
+	if ((sand.f & 0x10u) != 0u) {
+		SendAttackDataToLinkOpponent();
+		HandleSandAttackOrSmokescreenSubstatusResult handled = HandleSandAttackOrSmokescreenSubstatus(sand.de, sand.hl);
+		a = handled.a; f = handled.f; d = (uint8_t)(handled.de >> 8); e = (uint8_t)handled.de; hl = handled.hl;
+		if ((f & 0x10u) != 0u)
+			return ClearNonTurnTemporaryDuelvars_ResetCarry(a, f, b, c, d, e, hl);
+	}
+	a = EFFECTCMDTYPE_INITIAL_EFFECT_2;
+	TryExecuteEffectCommandFunctionResult second = TryExecuteEffectCommandFunction(a, b, d, e);
+	a = second.a; f = second.f; b = second.b; c = second.c; d = second.d; e = second.e; hl = second.hl;
+	if ((f & 0x10u) != 0u)
+		return (DuelRoutineResult){a, ReturnCarry(f), b, c, d, e, hl};
+	SendAttackDataToLinkOpponent();
+	a = OPPACTION_USE_ATTACK;
+	SetOppActionSerialSendResult action = SetOppAction_SerialSendDuelData(a, (uint16_t)(((uint16_t)d << 8) | e));
+	a = action.a; f = action.f; d = (uint8_t)(action.de >> 8); e = (uint8_t)action.de;
+	a = EFFECTCMDTYPE_DISCARD_ENERGY;
+	TryExecuteEffectCommandFunctionResult discard = TryExecuteEffectCommandFunction(a, b, d, e);
+	a = discard.a; f = discard.f; b = discard.b; c = discard.c; d = discard.d; e = discard.e; hl = discard.hl;
+	CheckSelfConfusionDamageResult confusion = CheckSelfConfusionDamage();
+	a = confusion.a; f = confusion.f; hl = confusion.hl;
+	if ((f & 0x10u) != 0u) {
+		HandleConfusionDamageToSelfResult handled = HandleConfusionDamageToSelf();
+		return (DuelRoutineResult){handled.a, handled.f, b, c, d, e, hl};
+	}
+	PrintPokemonsAttackTextResult printed = DrawDuelMainScene_PrintPokemonsAttackText();
+	b = printed.b; c = printed.c; d = printed.d; e = printed.e; hl = printed.hl;
+	(void)WaitForWideTextBoxInput();
+	ExchangeRNGResult rng = ExchangeRNG(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+	a = rng.a; f = rng.f; b = rng.b; c = rng.c; d = (uint8_t)(rng.de >> 8); e = (uint8_t)rng.de; hl = rng.hl;
+	a = EFFECTCMDTYPE_REQUIRE_SELECTION;
+	TryExecuteEffectCommandFunctionResult selection = TryExecuteEffectCommandFunction(a, b, d, e);
+	a = selection.a; f = selection.f; b = selection.b; c = selection.c; d = selection.d; e = selection.e; hl = selection.hl;
+	a = OPPACTION_ATTACK_ANIM_AND_DAMAGE;
+	SetOppActionSerialSendResult final_action = SetOppAction_SerialSendDuelData(a, (uint16_t)(((uint16_t)d << 8) | e));
+	HandleAfterDamageEffectsResult tail = PlayAttackAnimation_DealAttackDamage(final_action.a, final_action.f, b, c, (uint8_t)(final_action.de >> 8), (uint8_t)final_action.de, hl);
+	return (DuelRoutineResult){tail.a, tail.f, b, c, (uint8_t)(final_action.de >> 8), (uint8_t)final_action.de, hl};
+}
+/* <<< factory UseAttackOrPokemonPower */

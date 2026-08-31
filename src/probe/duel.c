@@ -1111,6 +1111,15 @@ static void adapt_PlayAttackAnimation_DealAttackDamage(ProbeState *s)
 }
 /* <<< factory PlayAttackAnimation_DealAttackDamage */
 
+/* >>> factory UseAttackOrPokemonPower */
+static void adapt_UseAttackOrPokemonPower(ProbeState *s)
+{
+	DuelRoutineResult r = UseAttackOrPokemonPower(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c;
+	s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory UseAttackOrPokemonPower */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "Func_82b6", adapt_Func_82b6 },
 	{ "CopyPlayerName", adapt_CopyPlayerName },
@@ -1245,5 +1254,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "HandleAfterDamageEffects", adapt_HandleAfterDamageEffects },
 	{ "Func_17ed", adapt_Func_17ed },
 	{ "PlayAttackAnimation_DealAttackDamage", adapt_PlayAttackAnimation_DealAttackDamage },
+	{ "UseAttackOrPokemonPower", adapt_UseAttackOrPokemonPower },
 	{ NULL, NULL },
 };
