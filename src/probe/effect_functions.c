@@ -5313,6 +5313,14 @@ static void adapt_EnergyRemoval_PlayerSelection(ProbeState *s)
 }
 /* <<< factory EnergyRemoval_PlayerSelection */
 
+/* >>> factory MrFuji_PlayerSelection */
+static void adapt_MrFuji_PlayerSelection(ProbeState *s)
+{
+	(void)s;
+	MrFuji_PlayerSelection();
+}
+/* <<< factory MrFuji_PlayerSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5953,5 +5961,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "HandlePokemonAndEnergySelectionScreen", adapt_HandlePokemonAndEnergySelectionScreen },
 	{ "Defender_PlayerSelection", adapt_Defender_PlayerSelection },
 	{ "EnergyRemoval_PlayerSelection", adapt_EnergyRemoval_PlayerSelection },
+	{ "MrFuji_PlayerSelection", adapt_MrFuji_PlayerSelection },
 	{ NULL, NULL },
 };

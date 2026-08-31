@@ -7654,6 +7654,14 @@ CASES["EnergyRemoval_PlayerSelection"] = [
 ]
 # <<< factory EnergyRemoval_PlayerSelection
 
+# >>> factory MrFuji_PlayerSelection
+CONTRACT["MrFuji_PlayerSelection"] = {"compare": (), "preserve": ()}
+CASES["MrFuji_PlayerSelection"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFFA0: 1}, expect={0xFFA0: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory MrFuji_PlayerSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10747,3 +10755,10 @@ MUTATIONS["Defender_PlayerSelection"] = {"source_symbol": "Defender_PlayerSelect
 # >>> factory-mutation EnergyRemoval_PlayerSelection
 MUTATIONS["EnergyRemoval_PlayerSelection"] = {"source_symbol": "EnergyRemoval_PlayerSelection", "before": "HandlePokemonAndEnergySelectionScreen()", "after": "(HandlePokemonAndEnergySelectionScreenResult){0u, 0u}", "case_ids": ["EnergyRemoval_PlayerSelection-0"]}
 # <<< factory-mutation EnergyRemoval_PlayerSelection
+# >>> factory-mutation MrFuji_PlayerSelection
+MUTATIONS["MrFuji_PlayerSelection"] = {"source_symbol": "MrFuji_PlayerSelection", "before": "void MrFuji_PlayerSelection(void)\n{\n\thTemp_ffa0 = 0u;\n}", "after": "void MrFuji_PlayerSelection(void)\n{\n\thTemp_ffa0 = 1u;\n}", "case_ids": ["MrFuji_PlayerSelection-0"]}
+# <<< factory-mutation MrFuji_PlayerSelection
+# >>> factory-completion MrFuji_PlayerSelection
+for _record in SCHEMA2_CASES["MrFuji_PlayerSelection"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x271, "bank": 1}
+# <<< factory-completion MrFuji_PlayerSelection

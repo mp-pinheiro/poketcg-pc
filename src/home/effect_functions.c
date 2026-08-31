@@ -1492,6 +1492,8 @@ void BankswitchROM(uint8_t bank);
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #define ChoosePokemonToRemoveEnergyFromText 0x0152u
+
+#define ChoosePokemonToReturnToTheDeckText 0x015au
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11296,3 +11298,10 @@ HandlePokemonAndEnergySelectionScreenResult EnergyRemoval_PlayerSelection(void)
 	return selected;
 }
 /* <<< factory EnergyRemoval_PlayerSelection */
+
+/* >>> factory MrFuji_PlayerSelection */
+void MrFuji_PlayerSelection(void)
+{
+	hTemp_ffa0 = 0u;
+}
+/* <<< factory MrFuji_PlayerSelection */
