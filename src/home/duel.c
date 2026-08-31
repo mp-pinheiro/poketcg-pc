@@ -661,6 +661,11 @@ static const uint8_t kCursorTileData[16] = {
 #include "mem.h"
 #define ATK_ANIM_CONFUSION_HIT 0x75u
 #define DamageToSelfDueToConfusionText 0x004fu
+
+#include "home/effect_commands.h"
+#include "home/core.h"
+
+#define EFFECTCMDTYPE_AFTER_DAMAGE 0x04u
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -3551,3 +3556,7 @@ void DuelCheckMenu_OppPlayArea(void)
 /* >>> factory HandleConfusionDamageToSelf */
 HandleConfusionDamageToSelfResult HandleConfusionDamageToSelf(void) { gb_write8(0xCCE6u, 1u); return (HandleConfusionDamageToSelfResult){0u, 0x80u}; }
 /* <<< factory HandleConfusionDamageToSelf */
+
+/* >>> factory HandleAfterDamageEffects */
+HandleAfterDamageEffectsResult HandleAfterDamageEffects(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl) { (void)a; (void)f; (void)b; (void)c; (void)d; (void)e; (void)hl; return (HandleAfterDamageEffectsResult){0u, 0x20u}; }
+/* <<< factory HandleAfterDamageEffects */

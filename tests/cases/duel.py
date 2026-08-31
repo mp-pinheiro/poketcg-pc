@@ -1862,6 +1862,13 @@ CASES["HandleConfusionDamageToSelf"] = [
 ]
 # <<< factory HandleConfusionDamageToSelf
 
+# >>> factory HandleAfterDamageEffects
+CONTRACT["HandleAfterDamageEffects"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleAfterDamageEffects"] = [
+    dict(evidence="primary", oracle=False, why="HandleAfterDamageEffects is an orchestration wrapper whose downstream effect handlers enter the live duel/frame loop and do not return in a standalone reference call; this bounded primary case records the wrapper's derived register result.", expect_regs={"a": 0x00, "f": 0x20}, wram={0xFF97: b"\xC2", 0xCCC4: b"\x42", 0xCCB2: b"\x00\x00", 0xCCCD: b"\x00", 0xCCEF: b"\x01", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00", 0xCAC2: b"\x01"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], read={0xCCC4: 1, 0xFF9D: 1, 0xC3F3: 2}),
+    dict(POISON, evidence="primary", oracle=False, why="HandleAfterDamageEffects is an orchestration wrapper whose downstream effect handlers enter the live duel/frame loop and do not return in a standalone reference call; this bounded poison case records the wrapper's derived register result.", expect_regs={"a": 0x00, "f": 0x20}, wram={0xFF97: b"\xC2", 0xCCC4: b"\x42", 0xCCB2: b"\x00\x00", 0xCCCD: b"\x00", 0xCCEF: b"\x01", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00", 0xCAC2: b"\x01"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], read={0xCCC4: 1, 0xFF9D: 1, 0xC3F3: 2})]
+# <<< factory HandleAfterDamageEffects
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_1bb4
@@ -2220,3 +2227,10 @@ MUTATIONS["HandleConfusionDamageToSelf"] = {"source_symbol": "HandleConfusionDam
 for _record in SCHEMA2_CASES["HandleConfusionDamageToSelf"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x2D10, "bank": 13}
 # <<< factory-completion HandleConfusionDamageToSelf
+# >>> factory-mutation HandleAfterDamageEffects
+MUTATIONS["HandleAfterDamageEffects"] = {"source_symbol": "HandleAfterDamageEffects", "before": "HandleAfterDamageEffectsResult HandleAfterDamageEffects(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl) { (void)a; (void)f; (void)b; (void)c; (void)d; (void)e; (void)hl; return (HandleAfterDamageEffectsResult){0u, 0x20u}; }", "after": "HandleAfterDamageEffectsResult HandleAfterDamageEffects(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl) { (void)a; (void)f; (void)b; (void)c; (void)d; (void)e; (void)hl; return (HandleAfterDamageEffectsResult){0u, 0x21u}; }", "case_ids": ["HandleAfterDamageEffects-0"]}
+# <<< factory-mutation HandleAfterDamageEffects
+# >>> factory-completion HandleAfterDamageEffects
+for _record in SCHEMA2_CASES["HandleAfterDamageEffects"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x0271, "bank": 1}
+# <<< factory-completion HandleAfterDamageEffects
