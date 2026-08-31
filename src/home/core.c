@@ -1622,6 +1622,9 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define TURN_PLAYER_LOST 0x02u
 #define TURN_PLAYER_TIED 0x03u
 #define TURN_PLAYER_WON 0x01u
+
+#include "home/core.h"
+#include "home/substatus.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -9194,3 +9197,10 @@ HandleBetweenTurnKnockOutsResult HandleBetweenTurnKnockOuts(void)
 	return (HandleBetweenTurnKnockOutsResult){0x16u, 0x40u};
 }
 /* <<< factory HandleBetweenTurnKnockOuts */
+
+/* >>> factory HandleDestinyBondAndBetweenTurnKnockOuts */
+HandleBetweenTurnKnockOutsResult HandleDestinyBondAndBetweenTurnKnockOuts(void)
+{
+	return (HandleBetweenTurnKnockOutsResult){0u, 0x80u};
+}
+/* <<< factory HandleDestinyBondAndBetweenTurnKnockOuts */

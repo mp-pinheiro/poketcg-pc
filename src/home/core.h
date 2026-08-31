@@ -1290,4 +1290,8 @@ ReplaceKnockedOutPokemonResult ReplaceKnockedOutPokemon(uint8_t a, uint8_t f, ui
 typedef struct { uint8_t a; uint8_t f; } HandleBetweenTurnKnockOutsResult;
 HandleBetweenTurnKnockOutsResult HandleBetweenTurnKnockOuts(void);
 /* <<< factory HandleBetweenTurnKnockOuts */
+/* >>> factory HandleDestinyBondAndBetweenTurnKnockOuts */
+/* >>> factory HandleDestinyBondAndBetweenTurnKnockOuts */
+HandleBetweenTurnKnockOutsResult HandleDestinyBondAndBetweenTurnKnockOuts(void);
+/* <<< factory HandleDestinyBondAndBetweenTurnKnockOuts */
 #endif

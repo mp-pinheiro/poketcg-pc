@@ -4825,6 +4825,14 @@ CASES["HandleBetweenTurnKnockOuts"] = [
 ]
 # <<< factory HandleBetweenTurnKnockOuts
 
+# >>> factory HandleDestinyBondAndBetweenTurnKnockOuts
+CONTRACT["HandleDestinyBondAndBetweenTurnKnockOuts"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleDestinyBondAndBetweenTurnKnockOuts"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x00"}, "read": {0xCCE8: 1, 0xCC07: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EF: b"\x00"}, read={0xCCE8: 1, 0xCC07: 1}),
+]
+# <<< factory HandleDestinyBondAndBetweenTurnKnockOuts
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6659,3 +6667,10 @@ MUTATIONS["HandleBetweenTurnKnockOuts"] = {"source_symbol": "HandleBetweenTurnKn
 for _record in SCHEMA2_CASES["HandleBetweenTurnKnockOuts"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x14F1}
 # <<< factory-completion HandleBetweenTurnKnockOuts
+# >>> factory-mutation HandleDestinyBondAndBetweenTurnKnockOuts
+MUTATIONS["HandleDestinyBondAndBetweenTurnKnockOuts"] = {"source_symbol": "HandleDestinyBondAndBetweenTurnKnockOuts", "before": "HandleBetweenTurnKnockOutsResult HandleDestinyBondAndBetweenTurnKnockOuts(void)\n{\n\treturn (HandleBetweenTurnKnockOutsResult){0u, 0x80u};\n}", "after": "HandleBetweenTurnKnockOutsResult HandleDestinyBondAndBetweenTurnKnockOuts(void)\n{\n\treturn (HandleBetweenTurnKnockOutsResult){1u, 0x80u};\n}", "case_ids": ["HandleDestinyBondAndBetweenTurnKnockOuts-0", "HandleDestinyBondAndBetweenTurnKnockOuts-1"]}
+# <<< factory-mutation HandleDestinyBondAndBetweenTurnKnockOuts
+# >>> factory-completion HandleDestinyBondAndBetweenTurnKnockOuts
+for _record in SCHEMA2_CASES["HandleDestinyBondAndBetweenTurnKnockOuts"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x2380, "bank": 13}
+# <<< factory-completion HandleDestinyBondAndBetweenTurnKnockOuts

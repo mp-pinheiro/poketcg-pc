@@ -2845,6 +2845,15 @@ static void adapt_HandleBetweenTurnKnockOuts(ProbeState *s)
 }
 /* <<< factory HandleBetweenTurnKnockOuts */
 
+/* >>> factory HandleDestinyBondAndBetweenTurnKnockOuts */
+static void adapt_HandleDestinyBondAndBetweenTurnKnockOuts(ProbeState *s)
+{
+	HandleBetweenTurnKnockOutsResult result = HandleDestinyBondAndBetweenTurnKnockOuts();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory HandleDestinyBondAndBetweenTurnKnockOuts */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3185,5 +3194,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "HandleSpecialDuelMainSceneHotkeys", adapt_HandleSpecialDuelMainSceneHotkeys },
 	{ "ReplaceKnockedOutPokemon", adapt_ReplaceKnockedOutPokemon },
 	{ "HandleBetweenTurnKnockOuts", adapt_HandleBetweenTurnKnockOuts },
+	{ "HandleDestinyBondAndBetweenTurnKnockOuts", adapt_HandleDestinyBondAndBetweenTurnKnockOuts },
 	{ NULL, NULL },
 };
