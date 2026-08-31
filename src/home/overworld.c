@@ -232,6 +232,11 @@
 #include "home/credits_sequence_commands.h"
 #include "home/lcd.h"
 #include "generated/hram.h"
+
+#include "generated/hram.h"
+#include "home/deck_selection.h"
+#include "home/credits_sequence_commands.h"
+#include "home/lcd.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -1336,3 +1341,15 @@ SetScriptDataResult SetScriptData(uint16_t hl)
 	return (SetScriptDataResult){OWMODE_SCRIPT, npc.f, npc.b, npc.c, npc.hl};
 }
 /* <<< factory SetScriptData */
+
+/* >>> factory PauseMenu_Deck */
+void PauseMenu_Deck(void)
+{
+	hSCX = 0u;
+	hSCY = 0u;
+	Set_OBJ_8x16();
+	SetDefaultPalettes();
+	DeckSelectionMenu();
+	Set_OBJ_8x8();
+}
+/* <<< factory PauseMenu_Deck */

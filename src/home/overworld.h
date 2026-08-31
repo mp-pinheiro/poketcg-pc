@@ -309,4 +309,7 @@ typedef struct {
 
 SetScriptDataResult SetScriptData(uint16_t hl);
 /* <<< factory SetScriptData */
+/* >>> factory PauseMenu_Deck */
+void PauseMenu_Deck(void);
+/* <<< factory PauseMenu_Deck */
 #endif /* POKETCG_HOME_OVERWORLD_H */

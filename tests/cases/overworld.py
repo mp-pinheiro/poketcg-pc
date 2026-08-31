@@ -1019,6 +1019,14 @@ CASES["SetScriptData"] = [
 ]
 # <<< factory SetScriptData
 
+# >>> factory PauseMenu_Deck
+CONTRACT["PauseMenu_Deck"] = {"compare": (), "preserve": ()}
+CASES["PauseMenu_Deck"] = [
+    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xFF92: b"\x55", 0xFF93: b"\x66", 0xCEB1: b"\x00", 0xCABB: b"\x00"}, "read": {0xFF92: 1, 0xFF93: 1, 0xCEB1: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xFF92: b"\x55", 0xFF93: b"\x66", 0xCEB1: b"\x00", 0xCABB: b"\x00"}, read={0xFF92: 1, 0xFF93: 1, 0xCEB1: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PauseMenu_Deck
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1380,3 +1388,6 @@ MUTATIONS["SetScriptData"] = {"source_symbol": "SetScriptData", "before": "SetSc
 for _record in SCHEMA2_CASES["SetScriptData"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x410A, "bank": 3}
 # <<< factory-completion SetScriptData
+# >>> factory-mutation PauseMenu_Deck
+MUTATIONS["PauseMenu_Deck"] = {"source_symbol": "PauseMenu_Deck", "before": "void PauseMenu_Deck(void)\n{\n\thSCX = 0u;", "after": "void PauseMenu_Deck(void)\n{\n\thSCX = 1u;", "case_ids": ["PauseMenu_Deck-0", "PauseMenu_Deck-1"]}
+# <<< factory-mutation PauseMenu_Deck

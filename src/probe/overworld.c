@@ -642,6 +642,14 @@ static void adapt_SetScriptData(ProbeState *s)
 }
 /* <<< factory SetScriptData */
 
+/* >>> factory PauseMenu_Deck */
+static void adapt_PauseMenu_Deck(ProbeState *s)
+{
+	(void)s;
+	PauseMenu_Deck();
+}
+/* <<< factory PauseMenu_Deck */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -720,5 +728,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "PauseMenu_Card", adapt_PauseMenu_Card },
 	{ "EnterScript", adapt_EnterScript },
 	{ "SetScriptData", adapt_SetScriptData },
+	{ "PauseMenu_Deck", adapt_PauseMenu_Deck },
 	{ NULL, NULL },
 };
