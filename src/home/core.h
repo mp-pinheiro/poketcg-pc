@@ -1355,4 +1355,7 @@ void DuelMenu_Attack(void);
 /* >>> factory UnreferencedDrawCardFromDeckToHand */
 void UnreferencedDrawCardFromDeckToHand(void);
 /* <<< factory UnreferencedDrawCardFromDeckToHand */
+/* >>> factory OppAction_ForceSwitchActive */
+void OppAction_ForceSwitchActive(void);
+/* <<< factory OppAction_ForceSwitchActive */
 #endif

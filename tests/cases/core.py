@@ -2174,6 +2174,15 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 wPlayAreaSelectAction = 0xCBD4
 hTempPlayAreaLocation_ff9d = 0xFF9D
 hTemp_ffa0 = 0xFFA0
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hWhoseTurn = 0xFF97
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wPlayAreaSelectAction = 0xCBD4
+wSerialSendBufToggle = 0xCB7E
+wSerialSendBufIndex = 0xCB7F
+wcb80 = 0xCB80
+wSerialSendBuf = 0xCB81
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -4942,6 +4951,14 @@ CASES["UnreferencedDrawCardFromDeckToHand"] = [
 ]
 # <<< factory UnreferencedDrawCardFromDeckToHand
 
+# >>> factory OppAction_ForceSwitchActive
+CONTRACT["OppAction_ForceSwitchActive"] = {"compare": (), "preserve": ()}
+CASES["OppAction_ForceSwitchActive"] = [
+    {"wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x01", wPlayAreaSelectAction: b"\x55", 0xC3EF: b"\x02", 0xC3BB: b"\x00\x01", 0xC3C8: b"\x20\x20", 0xC480: b"\x08\x09", wSerialSendBufToggle: b"\x00", wSerialSendBufIndex: b"\x00", wcb80: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {wPlayAreaSelectAction: 1, wSerialSendBufToggle: 1, wcb80: 1, wSerialSendBuf: 1}, "expect": {wPlayAreaSelectAction: b"\x01", wSerialSendBufToggle: b"\x01", wcb80: b"\x01", wSerialSendBuf: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x01", wPlayAreaSelectAction: b"\x55", 0xC3EF: b"\x02", 0xC3BB: b"\x00\x01", 0xC3C8: b"\x20\x20", 0xC480: b"\x08\x09", wSerialSendBufToggle: b"\x00", wSerialSendBufIndex: b"\x00", wcb80: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={wPlayAreaSelectAction: 1, wSerialSendBufToggle: 1, wcb80: 1, wSerialSendBuf: 1}, expect={wPlayAreaSelectAction: b"\x01", wSerialSendBufToggle: b"\x01", wcb80: b"\x01", wSerialSendBuf: b"\x01"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory OppAction_ForceSwitchActive
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6923,3 +6940,6 @@ MUTATIONS["UnreferencedDrawCardFromDeckToHand"] = {"source_symbol": "Unreference
 for _record in SCHEMA2_CASES["UnreferencedDrawCardFromDeckToHand"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x04E0, "bank": 1}
 # <<< factory-completion UnreferencedDrawCardFromDeckToHand
+# >>> factory-mutation OppAction_ForceSwitchActive
+MUTATIONS["OppAction_ForceSwitchActive"] = {"source_symbol": "OppAction_ForceSwitchActive", "before": "void OppAction_ForceSwitchActive(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\twPlayAreaSelectAction = 1u;", "after": "void OppAction_ForceSwitchActive(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\twPlayAreaSelectAction = 0u;", "case_ids": ["OppAction_ForceSwitchActive-0", "OppAction_ForceSwitchActive-1"]}
+# <<< factory-mutation OppAction_ForceSwitchActive

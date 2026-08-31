@@ -1634,6 +1634,14 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/serial.h"
 #include "home/core.h"
 #define OPPACTION_DRAW_CARD 0x0Bu
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/serial.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define SelectPkmnOnBenchToSwitchWithActiveText 0x010eu
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -9339,3 +9347,16 @@ void UnreferencedDrawCardFromDeckToHand(void)
 	PrintDuelMenuAndHandleInput();
 }
 /* <<< factory UnreferencedDrawCardFromDeckToHand */
+
+/* >>> factory OppAction_ForceSwitchActive */
+void OppAction_ForceSwitchActive(void)
+{
+	(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);
+	SwapTurn();
+	(void)HasAlivePokemonInBench();
+	wPlayAreaSelectAction = 1u;
+	OpenPlayAreaScreenForSelection();
+	SwapTurn();
+	(void)SerialSendByte(hTempPlayAreaLocation_ff9d);
+}
+/* <<< factory OppAction_ForceSwitchActive */
