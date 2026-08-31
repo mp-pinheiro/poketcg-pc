@@ -210,6 +210,8 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 sCurrentDuel = 0xBC00
 sPlayerInChallengeMachine = 0xBA44
 wSongOverride = 0xD112
+
+wGameEvent = 0xD0B5
 # <<< factory-cases-statics
 
 # >>> factory GetReceivedLegendaryCards
@@ -305,6 +307,14 @@ CASES["GameEvent_ContinueDuel"] = [
 ]
 # <<< factory GameEvent_ContinueDuel
 
+# >>> factory _ExecuteGameEvent
+CONTRACT["_ExecuteGameEvent"] = {"compare": ("f",), "preserve": ()}
+CASES["_ExecuteGameEvent"] = [
+    dict(POISON, wram={wGameEvent: b"\x00", wDefaultSong: b"\x55"}, read={wDefaultSong: 1}, expect={wDefaultSong: b"\x55"}, expect_regs={"f": 0x10}),
+    {"oracle": False, "evidence": "native-stress", "why": "The bounded native fallback models the challenge-machine event prefix without entering its interactive UI loop.", "wram": {wGameEvent: b"\x07", wDefaultSong: b"\x55"}, "read": {wDefaultSong: 1}, "expect": {wDefaultSong: b"\x06"}, "expect_regs": {"f": 0x10}},
+]
+# <<< factory _ExecuteGameEvent
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -375,3 +385,6 @@ for _record in SCHEMA2_CASES["GameEvent_BattleCenter"]:
 # >>> factory-mutation GameEvent_ContinueDuel
 MUTATIONS["GameEvent_ContinueDuel"] = {"source_symbol": "GameEvent_ContinueDuel", "before": "SongResult GameEvent_ContinueDuel(void)\n{\n\twSongOverride = 0u;", "after": "SongResult GameEvent_ContinueDuel(void)\n{\n\twSongOverride = 1u;", "case_ids": ["GameEvent_ContinueDuel-0", "GameEvent_ContinueDuel-1"]}
 # <<< factory-mutation GameEvent_ContinueDuel
+# >>> factory-mutation _ExecuteGameEvent
+MUTATIONS["_ExecuteGameEvent"] = {"source_symbol": "_ExecuteGameEvent", "before": "uint8_t _ExecuteGameEvent(void)\n{\n\tuint8_t event = wGameEvent;", "after": "uint8_t _ExecuteGameEvent(void)\n{\n\tuint8_t event = 7u;", "case_ids": ["_ExecuteGameEvent-0"]}
+# <<< factory-mutation _ExecuteGameEvent

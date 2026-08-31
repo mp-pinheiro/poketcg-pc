@@ -61,6 +61,11 @@
 #include "home/switch_sram.h"
 #include "generated/wram.h"
 #include "generated/sram.h"
+
+#include "home/map.h"
+#include "generated/wram.h"
+#define GAME_EVENT_CHALLENGE_MACHINE 0x06u
+#define NUM_GAME_EVENTS 0x07u
 /* <<< factory statics */
 
 #define BANK_EXECUTE_NPC_MOVEMENT 0x03u
@@ -329,3 +334,34 @@ SongResult GameEvent_ContinueDuel(void)
 	return (SongResult){result.a, (uint8_t)((result.f & 0x80u) | 0x10u)};
 }
 /* <<< factory GameEvent_ContinueDuel */
+
+/* >>> factory _ExecuteGameEvent */
+uint8_t _ExecuteGameEvent(void)
+{
+	uint8_t event = wGameEvent;
+	if (event >= NUM_GAME_EVENTS)
+		event = GAME_EVENT_CHALLENGE_MACHINE;
+	switch (event) {
+	case 0u:
+		return GameEvent_Overworld(0u);
+	case 1u:
+		return GameEvent_Duel();
+	case 2u:
+		return GameEvent_BattleCenter();
+	case 3u:
+		GameEvent_GiftCenter();
+		return 0x10u;
+	case 4u:
+		GameEvent_Credits();
+		return 0x80u;
+	case 5u: {
+		SongResult result = GameEvent_ContinueDuel();
+		return result.f;
+	}
+	case GAME_EVENT_CHALLENGE_MACHINE:
+	default:
+		wDefaultSong = 0x06u;
+		return 0x10u;
+	}
+}
+/* <<< factory _ExecuteGameEvent */

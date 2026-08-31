@@ -153,6 +153,13 @@ static void adapt_GameEvent_ContinueDuel(ProbeState *s)
 }
 /* <<< factory GameEvent_ContinueDuel */
 
+/* >>> factory _ExecuteGameEvent */
+static void adapt__ExecuteGameEvent(ProbeState *s)
+{
+	s->f = _ExecuteGameEvent();
+}
+/* <<< factory _ExecuteGameEvent */
+
 const ProbeEntry probe_entries_map[] = {
 	{ "GetPermissionByteOfMapPosition", adapt_GetPermissionByteOfMapPosition },
 	{ "GetPermissionOfMapPosition", adapt_GetPermissionOfMapPosition },
@@ -175,5 +182,6 @@ const ProbeEntry probe_entries_map[] = {
 	{ "GameEvent_Credits", adapt_GameEvent_Credits },
 	{ "GameEvent_BattleCenter", adapt_GameEvent_BattleCenter },
 	{ "GameEvent_ContinueDuel", adapt_GameEvent_ContinueDuel },
+	{ "_ExecuteGameEvent", adapt__ExecuteGameEvent },
 	{ NULL, NULL },
 };
