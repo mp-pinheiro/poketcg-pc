@@ -324,4 +324,7 @@ void HandlePlayerMoveMode(void);
 /* >>> factory CallHandlePlayerMoveMode */
 void CallHandlePlayerMoveMode(void);
 /* <<< factory CallHandlePlayerMoveMode */
+/* >>> factory HandleOverworldMode */
+void HandleOverworldMode(uint16_t hl);
+/* <<< factory HandleOverworldMode */
 #endif /* POKETCG_HOME_OVERWORLD_H */

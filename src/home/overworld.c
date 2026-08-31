@@ -1452,3 +1452,26 @@ void CallHandlePlayerMoveMode(void)
 	HandlePlayerMoveMode();
 }
 /* <<< factory CallHandlePlayerMoveMode */
+
+/* >>> factory HandleOverworldMode */
+void HandleOverworldMode(uint16_t hl)
+{
+	uint8_t mode = (uint8_t)(wOverworldMode & 0x7fu);
+	switch (mode) {
+	case 0u:
+		UpdateOverworldMap();
+		break;
+	case 1u:
+		CallHandlePlayerMoveMode();
+		break;
+	case 2u:
+		(void)SetScriptData(hl);
+		break;
+	case 3u:
+		(void)EnterScript();
+		break;
+	default:
+		break;
+	}
+}
+/* <<< factory HandleOverworldMode */

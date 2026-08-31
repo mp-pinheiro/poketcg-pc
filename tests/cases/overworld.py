@@ -1089,6 +1089,17 @@ CASES["CallHandlePlayerMoveMode"] = [
 ]
 # <<< factory CallHandlePlayerMoveMode
 
+# >>> factory HandleOverworldMode
+CONTRACT["HandleOverworldMode"] = {"compare": (), "preserve": ()}
+CASES["HandleOverworldMode"] = [
+    {"wram": {0xD0BF: b"\x00", 0xD336: b"\x12", 0xD33E: b"\x00", 0xD4CF: b"\x00"}, "expect": {0xD4CF: b"\x12"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"wram": {0xD0BF: b"\x01", 0xD335: b"\x10", 0xD336: b"\x34", 0xD4CF: b"\x00"}, "expect": {0xD4CF: b"\x34"}},
+    {"hl": 0x0000, "wram": {0xD0BF: b"\x02", 0xD3B6: b"\x00", 0xD3AA: b"\xA5", 0xD0C1: b"\x00", 0xD0C6: b"\x12\x34", 0xD334: b"\x00", 0xD34A: b"\x4A" + b"\x00" * 95}, "expect": {0xD0BF: b"\x03"}},
+    {"wram": {0xD0BF: b"\x03", 0xD0C6: b"\x00\xC0", 0xC000: b"\xC9"}},
+    dict(POISON, wram={0xD0BF: b"\x80", 0xD336: b"\x56", 0xD33E: b"\x00", 0xD4CF: b"\x00"}, expect={0xD4CF: b"\x56"}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory HandleOverworldMode
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1465,3 +1476,6 @@ MUTATIONS["HandlePlayerMoveMode"] = {"source_symbol": "HandlePlayerMoveMode", "b
 # >>> factory-mutation CallHandlePlayerMoveMode
 MUTATIONS["CallHandlePlayerMoveMode"] = {"source_symbol": "CallHandlePlayerMoveMode", "before": "void CallHandlePlayerMoveMode(void)\n{\n\tHandlePlayerMoveMode();", "after": "void CallHandlePlayerMoveMode(void)\n{\n\treturn;", "case_ids": ["CallHandlePlayerMoveMode-0", "CallHandlePlayerMoveMode-1"]}
 # <<< factory-mutation CallHandlePlayerMoveMode
+# >>> factory-mutation HandleOverworldMode
+MUTATIONS["HandleOverworldMode"] = {"source_symbol": "HandleOverworldMode", "before": "\tuint8_t mode = (uint8_t)(wOverworldMode & 0x7fu);", "after": "\tuint8_t mode = 3u;", "case_ids": ["HandleOverworldMode-4"]}
+# <<< factory-mutation HandleOverworldMode

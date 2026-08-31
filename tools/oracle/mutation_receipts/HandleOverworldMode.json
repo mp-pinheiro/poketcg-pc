@@ -1,0 +1,9 @@
+{
+  "fn": "HandleOverworldMode",
+  "case": "tests/cases/overworld.py",
+  "index": 4,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleOverworldMode\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53439\": \"80\", \"54070\": \"56\", \"54078\": \"00\", \"54479\": \"56\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleOverworldMode\", \"mismatches\": {\"bus\": {\"address\": 54479, \"reference\": \"80560056\", \"native\": \"80560000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[53439, 1], [54070, 1], [54078, 1], [54479, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandleOverworldMode\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53439\": \"80\", \"54070\": \"56\", \"54078\": \"00\", \"54479\": \"56\"}}, \"status\": \"PASS\"}\n"
+}
