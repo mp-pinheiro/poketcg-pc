@@ -132,6 +132,7 @@ int shell_pump(Shell *shell, InputFrame *frame)
 	(void)shell;
 #endif
 	gb_write8(0xFF00, joypad_p1(frame->buttons, (uint8_t)(g_io[0] & 0x30)));
+	g_keys = frame->buttons;
 	return 1;
 }
 

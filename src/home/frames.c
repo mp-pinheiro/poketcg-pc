@@ -16,6 +16,21 @@
 #define DO_FRAME_OVERWORLD 0x380Eu
 #define DO_FRAME_FUNC_3E31 0x3E31u
 
+static FrameBoundaryHook g_frame_boundary_hook;
+static void *g_frame_boundary_context;
+
+void frame_boundary_install(FrameBoundaryHook hook, void *context)
+{
+	g_frame_boundary_hook = hook;
+	g_frame_boundary_context = context;
+}
+
+void frame_boundary_reach(void)
+{
+	if (g_frame_boundary_hook)
+		g_frame_boundary_hook(g_frame_boundary_context);
+}
+
 /* CallIndirect(wDoFrameFunction), poketcg/src/home/frames.asm:18-19 through
  * jumptable.asm:15-30: call the registered per-frame function unless the
  * pointer is NULL. CallIndirect reaches its target with `jp hl`, so the callee
@@ -79,6 +94,7 @@ void DoFrame(void)
 	          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 	ReadJoypad();
 	HandleDPadRepeat();
+	frame_boundary_reach();
 }
 
 void DoAFrames(uint8_t a)
