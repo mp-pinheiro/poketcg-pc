@@ -1092,6 +1092,15 @@ static void adapt_HandleAfterDamageEffects(ProbeState *s)
 }
 /* <<< factory HandleAfterDamageEffects */
 
+/* >>> factory Func_17ed */
+static void adapt_Func_17ed(ProbeState *s)
+{
+	HandleAfterDamageEffectsResult r = Func_17ed(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Func_17ed */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "Func_82b6", adapt_Func_82b6 },
 	{ "CopyPlayerName", adapt_CopyPlayerName },
@@ -1224,5 +1233,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "DuelCheckMenu_OppPlayArea", adapt_DuelCheckMenu_OppPlayArea },
 	{ "HandleConfusionDamageToSelf", adapt_HandleConfusionDamageToSelf },
 	{ "HandleAfterDamageEffects", adapt_HandleAfterDamageEffects },
+	{ "Func_17ed", adapt_Func_17ed },
 	{ NULL, NULL },
 };

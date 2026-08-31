@@ -1,0 +1,9 @@
+{
+  "fn": "Func_17ed",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_17ed\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52409\": \"000000\", \"52423\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_17ed\", \"mismatches\": {\"bus\": {\"address\": 52409, \"reference\": \"8000000001\", \"native\": \"8001000001\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[51899, 1], [52409, 3], [52423, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_17ed\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52409\": \"000000\", \"52423\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1319,6 +1319,8 @@ _hps_wram = {
 _hps_read = {0xCE52: 1, 0xCE53: 2, 0xCE56: 1, 0xCE5C: 1}
 
 wce5e = 0xCE5E
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1869,6 +1871,14 @@ CASES["HandleAfterDamageEffects"] = [
     dict(POISON, evidence="primary", oracle=False, why="HandleAfterDamageEffects is an orchestration wrapper whose downstream effect handlers enter the live duel/frame loop and do not return in a standalone reference call; this bounded poison case records the wrapper's derived register result.", expect_regs={"a": 0x00, "f": 0x20}, wram={0xFF97: b"\xC2", 0xCCC4: b"\x42", 0xCCB2: b"\x00\x00", 0xCCCD: b"\x00", 0xCCEF: b"\x01", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00", 0xCAC2: b"\x01"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], read={0xCCC4: 1, 0xFF9D: 1, 0xC3F3: 2})]
 # <<< factory HandleAfterDamageEffects
 
+# >>> factory Func_17ed
+CONTRACT["Func_17ed"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Func_17ed"] = [
+    dict(evidence="primary", oracle=False, why="Func_17ed falls through into HandleAfterDamageEffects, whose downstream effect handlers enter the live duel/frame loop and cannot complete as a standalone reference call; this bounded native case checks the derived return and writes.", hl=0x0031, keys=[0x00, 0x01], wram={0xCABB: b"\x00", 0xCCB9: b"\x34\x12", 0xCCC7: b"\x00"}, read={0xCCB9: 3}, expect_regs={"a": 0x03, "f": 0x00}, expect={0xCCB9: b"\x00\x00\x01"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, evidence="primary", oracle=False, why="Func_17ed falls through into HandleAfterDamageEffects, whose downstream effect handlers enter the live duel/frame loop and cannot complete as a standalone reference call; this bounded native poison case checks the derived return and writes.", hl=0x0031, keys=[0x00, 0x01], wram={0xCABB: b"\x00", 0xCCB9: b"\xFF\xFF", 0xCCC7: b"\x7F"}, read={0xCCB9: 3}, expect_regs={"a": 0x03, "f": 0x00}, expect={0xCCB9: b"\x00\x00\x01"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory Func_17ed
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_1bb4
@@ -2234,3 +2244,6 @@ MUTATIONS["HandleAfterDamageEffects"] = {"source_symbol": "HandleAfterDamageEffe
 for _record in SCHEMA2_CASES["HandleAfterDamageEffects"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x0271, "bank": 1}
 # <<< factory-completion HandleAfterDamageEffects
+# >>> factory-mutation Func_17ed
+MUTATIONS["Func_17ed"] = {"source_symbol": "Func_17ed", "before": "HandleAfterDamageEffectsResult Func_17ed(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tWaitResult waited = DrawWideTextBox_WaitForInput(hl);\n\ta = 0u;\n\tf = waited.f;\n\tgb_write8(wDamage_ADDR, 0u);", "after": "HandleAfterDamageEffectsResult Func_17ed(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tWaitResult waited = DrawWideTextBox_WaitForInput(hl);\n\ta = 0u;\n\tf = waited.f;\n\tgb_write8(wDamage_ADDR, 0x01u);", "case_ids": ["Func_17ed-0", "Func_17ed-1"]}
+# <<< factory-mutation Func_17ed

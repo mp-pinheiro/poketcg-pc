@@ -666,6 +666,12 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/core.h"
 
 #define EFFECTCMDTYPE_AFTER_DAMAGE 0x04u
+
+#include "home/menus.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define NO_DAMAGE_OR_EFFECT_AGILITY 0x01u
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -3560,3 +3566,19 @@ HandleConfusionDamageToSelfResult HandleConfusionDamageToSelf(void) { gb_write8(
 /* >>> factory HandleAfterDamageEffects */
 HandleAfterDamageEffectsResult HandleAfterDamageEffects(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl) { (void)a; (void)f; (void)b; (void)c; (void)d; (void)e; (void)hl; return (HandleAfterDamageEffectsResult){0u, 0x20u}; }
 /* <<< factory HandleAfterDamageEffects */
+
+/* >>> factory Func_17ed */
+HandleAfterDamageEffectsResult Func_17ed(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	WaitResult waited = DrawWideTextBox_WaitForInput(hl);
+	a = 0u;
+	f = waited.f;
+	gb_write8(wDamage_ADDR, 0u);
+	gb_write8((uint16_t)(wDamage_ADDR + 1u), 0u);
+	a = NO_DAMAGE_OR_EFFECT_AGILITY;
+	gb_write8(wNoDamageOrEffect_ADDR, a);
+	HandleAfterDamageEffectsResult after = HandleAfterDamageEffects(a, f, b, c, d, e, (uint16_t)(wDamage_ADDR + 1u));
+	(void)after;
+	return (HandleAfterDamageEffectsResult){3u, 0u};
+}
+/* <<< factory Func_17ed */
