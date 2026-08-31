@@ -2199,6 +2199,27 @@ wDefaultText = 0xC590
 wTxRam2 = 0xCE3F
 wLCDC = 0xCABB
 wSkipDuelistIsThinkingDelay = 0xCBF9
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wCurrentDuelMenuItem = 0xCBC6
+
+hWhoseTurn = 0xFF97
+wLCDC = 0xCABB
+rLCDC = 0xFF40
+wDuelTurns = 0xCC06
+wDuelFinished = 0xCC07
+wDuelistType = 0xCC0D
+hTempCardIndex_ff98 = 0xFF98
+player_duelist_type = 0xC2F1
+player_not_in_deck = 0xC2BA
+player_arena = 0xC2BB
+player_bench = 0xC2BC
+player_hand_count = 0xC2EE
+player_deck_cards = 0xC27E
+player_hand_card1 = 0xC242
+opponent_arena = 0xC3BB
+opponent_bench = 0xC3BC
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -5002,6 +5023,24 @@ CASES["OppAction_UseAttack"] = [
 ]
 # <<< factory OppAction_UseAttack
 
+# >>> factory HandleTurn
+CONTRACT["HandleTurn"] = {"compare": (), "preserve": ()}
+CASES["HandleTurn"] = [
+    {"keys": [0x00, 0x01],
+     "wram": {hWhoseTurn: b"\xC2", wLCDC: b"\x00", player_duelist_type: b"\x00", player_not_in_deck: b"\x3C", player_arena: b"\xFF", player_bench: b"\xFF", player_hand_count: b"\x00", wDuelTurns: b"\x01", wDuelFinished: b"\x00", wDuelistType: b"\x00"},
+     "read": {wDuelFinished: 1, wDuelistType: 1},
+     "expect": {wDuelFinished: b"\x02", wDuelistType: b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={hWhoseTurn: b"\xC2", wLCDC: b"\x00", player_duelist_type: b"\x00", player_not_in_deck: b"\x3C", player_arena: b"\xFF", player_bench: b"\xFF", player_hand_count: b"\x00", wDuelTurns: b"\x01", wDuelFinished: b"\x00", wDuelistType: b"\x00"},
+         read={wDuelFinished: 1, wDuelistType: 1},
+         expect={wDuelFinished: b"\x02", wDuelistType: b"\x00"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory HandleTurn
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6994,3 +7033,6 @@ MUTATIONS["OppAction_UseAttack"] = {
     "case_ids": ["OppAction_UseAttack-0", "OppAction_UseAttack-1"],
 }
 # <<< factory-mutation OppAction_UseAttack
+# >>> factory-mutation HandleTurn
+MUTATIONS["HandleTurn"] = {"source_symbol": "HandleTurn", "before": "void HandleTurn(void)\n{\n\tDuelistVarResult type = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\twDuelistType = type.a;", "after": "void HandleTurn(void)\n{\n\tDuelistVarResult type = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\twDuelistType = (uint8_t)(type.a ^ 1u);", "case_ids": ["HandleTurn-0", "HandleTurn-1"]}
+# <<< factory-mutation HandleTurn

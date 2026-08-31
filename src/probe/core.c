@@ -3031,6 +3031,14 @@ static void adapt_OppAction_UseAttack(ProbeState *s)
 }
 /* <<< factory OppAction_UseAttack */
 
+/* >>> factory HandleTurn */
+static void adapt_HandleTurn(ProbeState *s)
+{
+	(void)s;
+	HandleTurn();
+}
+/* <<< factory HandleTurn */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3394,5 +3402,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "UnreferencedDrawCardFromDeckToHand", adapt_UnreferencedDrawCardFromDeckToHand },
 	{ "OppAction_ForceSwitchActive", adapt_OppAction_ForceSwitchActive },
 	{ "OppAction_UseAttack", adapt_OppAction_UseAttack },
+	{ "HandleTurn", adapt_HandleTurn },
 	{ NULL, NULL },
 };

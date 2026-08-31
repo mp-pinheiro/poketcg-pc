@@ -1649,6 +1649,18 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/menus.h"
 #include "home/serial.h"
 #define EFFECTCMDTYPE_DISCARD_ENERGY 0x06u
+
+#include "home/frames.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define WaitingHandExamineText 0x0058u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/duel_core_state.h"
+#include "home/substatus.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -9388,3 +9400,41 @@ OppActionUseAttackResult OppAction_UseAttack(uint8_t b, uint8_t d, uint8_t e)
 	return (OppActionUseAttackResult){1u};
 }
 /* <<< factory OppAction_UseAttack */
+
+/* >>> factory HandleTurn */
+void HandleTurn(void)
+{
+	DuelistVarResult type = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	wDuelistType = type.a;
+
+	if (wDuelTurns >= 2u)
+		(void)SetAllPlayAreaPokemonCanEvolve();
+
+	DuelCoreStateResult turn_state = InitVariablesToBeginTurn();
+	DisplayDrawOneCardScreen(turn_state.a, turn_state.f, turn_state.b,
+		turn_state.c, 0u, 0u, turn_state.hl);
+
+	DrawCardResult draw = DrawCardFromDeck();
+	if ((draw.f & FLAG_C) != 0u) {
+		wDuelFinished = TURN_PLAYER_LOST;
+		return;
+	}
+
+	hTempCardIndex_ff98 = draw.a;
+	AddCardToHand(draw.a);
+
+	if (wDuelistType != DUELIST_TYPE_PLAYER) {
+		SwapTurn();
+		PkmnPowerCountResult clairvoyance = IsClairvoyanceActive();
+		SwapTurn();
+		if ((clairvoyance.f & FLAG_C) != 0u)
+			(void)DisplayPlayerDrawCardScreen();
+		DuelMainInterface();
+		return;
+	}
+
+	(void)DisplayPlayerDrawCardScreen();
+	SaveDuelStateToSRAM();
+	RestartPracticeDuelTurn();
+}
+/* <<< factory HandleTurn */
