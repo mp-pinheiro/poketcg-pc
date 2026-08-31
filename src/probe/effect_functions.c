@@ -5347,6 +5347,14 @@ static void adapt_PealOfThunder_RandomlyDamageEffect(ProbeState *s)
 }
 /* <<< factory PealOfThunder_RandomlyDamageEffect */
 
+/* >>> factory TrainerCardAsPokemon_PlayerSelectSwitch */
+static void adapt_TrainerCardAsPokemon_PlayerSelectSwitch(ProbeState *s)
+{
+	(void)s;
+	TrainerCardAsPokemon_PlayerSelectSwitch();
+}
+/* <<< factory TrainerCardAsPokemon_PlayerSelectSwitch */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5991,5 +5999,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Switch_PlayerSelection", adapt_Switch_PlayerSelection },
 	{ "Cowardice_PlayerSelectEffect", adapt_Cowardice_PlayerSelectEffect },
 	{ "PealOfThunder_RandomlyDamageEffect", adapt_PealOfThunder_RandomlyDamageEffect },
+	{ "TrainerCardAsPokemon_PlayerSelectSwitch", adapt_TrainerCardAsPokemon_PlayerSelectSwitch },
 	{ NULL, NULL },
 };

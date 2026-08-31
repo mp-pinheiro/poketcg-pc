@@ -2177,6 +2177,9 @@ void Cowardice_PlayerSelectEffect(void);
 typedef struct { uint8_t a; uint8_t f; } PealOfThunderRandomlyDamageEffectResult;
 PealOfThunderRandomlyDamageEffectResult PealOfThunder_RandomlyDamageEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
 /* <<< factory PealOfThunder_RandomlyDamageEffect */
+/* >>> factory TrainerCardAsPokemon_PlayerSelectSwitch */
+void TrainerCardAsPokemon_PlayerSelectSwitch(void);
+/* <<< factory TrainerCardAsPokemon_PlayerSelectSwitch */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

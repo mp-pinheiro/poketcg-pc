@@ -11331,3 +11331,7 @@ void Cowardice_PlayerSelectEffect(void)
 /* >>> factory PealOfThunder_RandomlyDamageEffect */
 PealOfThunderRandomlyDamageEffectResult PealOfThunder_RandomlyDamageEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl) { gb_write8(0xFF97u, 0xC3u); return (PealOfThunderRandomlyDamageEffectResult){0u, 0u}; }
 /* <<< factory PealOfThunder_RandomlyDamageEffect */
+
+/* >>> factory TrainerCardAsPokemon_PlayerSelectSwitch */
+void TrainerCardAsPokemon_PlayerSelectSwitch(void) { if (hTemp_ffa0 != 0u) return; hTempPlayAreaLocation_ffa1 = 0xFFu; }
+/* <<< factory TrainerCardAsPokemon_PlayerSelectSwitch */

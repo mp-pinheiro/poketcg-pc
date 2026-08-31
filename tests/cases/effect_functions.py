@@ -7712,6 +7712,11 @@ CASES["PealOfThunder_RandomlyDamageEffect"] = [
 ]
 # <<< factory PealOfThunder_RandomlyDamageEffect
 
+# >>> factory TrainerCardAsPokemon_PlayerSelectSwitch
+CONTRACT["TrainerCardAsPokemon_PlayerSelectSwitch"] = {"compare": (), "preserve": ()}
+CASES["TrainerCardAsPokemon_PlayerSelectSwitch"] = [dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFF9D: b"\x00", 0xFFA1: b"\xFF", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xFFA1: 1}, expect={0xFFA1: b"\x00"}, instruction_budget=20000000, cycle_budget=80000000)]
+# <<< factory TrainerCardAsPokemon_PlayerSelectSwitch
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10833,3 +10838,10 @@ MUTATIONS["PealOfThunder_RandomlyDamageEffect"] = {"source_symbol": "PealOfThund
 for _record in SCHEMA2_CASES["PealOfThunder_RandomlyDamageEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x1325, "bank": 11}
 # <<< factory-completion PealOfThunder_RandomlyDamageEffect
+# >>> factory-mutation TrainerCardAsPokemon_PlayerSelectSwitch
+MUTATIONS["TrainerCardAsPokemon_PlayerSelectSwitch"] = {"source_symbol": "TrainerCardAsPokemon_PlayerSelectSwitch", "before": "void TrainerCardAsPokemon_PlayerSelectSwitch(void) { if (hTemp_ffa0 != 0u) return; hTempPlayAreaLocation_ffa1 = 0xFFu; }", "after": "void TrainerCardAsPokemon_PlayerSelectSwitch(void) { if (hTemp_ffa0 != 0u) return; hTempPlayAreaLocation_ffa1 = 0u; }", "case_ids": ["TrainerCardAsPokemon_PlayerSelectSwitch-0"]}
+# <<< factory-mutation TrainerCardAsPokemon_PlayerSelectSwitch
+# >>> factory-completion TrainerCardAsPokemon_PlayerSelectSwitch
+for _record in SCHEMA2_CASES["TrainerCardAsPokemon_PlayerSelectSwitch"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x270E, "bank": 1}
+# <<< factory-completion TrainerCardAsPokemon_PlayerSelectSwitch
