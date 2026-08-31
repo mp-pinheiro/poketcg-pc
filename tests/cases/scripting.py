@@ -2027,6 +2027,14 @@ CASES["RST20"] = [
 ]
 # <<< factory RST20
 
+# >>> factory ScriptCommand_OpenMenu
+CONTRACT["ScriptCommand_OpenMenu"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_OpenMenu"] = [
+    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xD0B8: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xD413: b"\x00\xC5"}, "read": {0xD0B8: 1, 0xD413: 2}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xD0B8: b"\x05", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xD413: b"\xFE\xC4"}, read={0xD0B8: 1, 0xD413: 2}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ScriptCommand_OpenMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2888,3 +2896,6 @@ MUTATIONS["GetStackEventValue"] = {"source_symbol": "GetStackEventValue", "befor
 # >>> factory-mutation RST20
 MUTATIONS["RST20"] = {"source_symbol": "RST20", "before": "RST20Result RST20(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t w0)\n{\n\tuint16_t hl = w0;\n\twScriptPointer = (uint8_t)hl;\n\tgb_write8(wScriptPointer_ADDR + 1u, (uint8_t)(hl >> 8));\n\ta = 0;\n\tf = 0;\n\twBreakScriptLoop = 0;\n\tdo {\n\t\tRunOverworldScriptResult result = RunOverworldScript(a, f, b, c, d, e, hl);\n\t\ta = result.a;\n\t\tf = result.f;\n\t\tb = result.b;\n\t\tc = result.c;\n\t\td = result.d;\n\t\te = result.e;\n\t\thl = result.hl;\n\t} while (wBreakScriptLoop == 0);\n\thl = wScriptPointer_ADDR + 1u;\n\ta = wScriptPointer;\n\tc = a;\n\tb = gb_read8(wScriptPointer_ADDR + 1u);", "after": "RST20Result RST20(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t w0)\n{\n\tuint16_t hl = w0;\n\twScriptPointer = (uint8_t)hl;\n\tgb_write8(wScriptPointer_ADDR + 1u, (uint8_t)(hl >> 8));\n\ta = 0;\n\tf = 0;\n\twBreakScriptLoop = 0;\n\tdo {\n\t\tRunOverworldScriptResult result = RunOverworldScript(a, f, b, c, d, e, hl);\n\t\ta = result.a;\n\t\tf = result.f;\n\t\tb = result.b;\n\t\tc = result.c;\n\t\td = result.d;\n\t\te = result.e;\n\t\thl = result.hl;\n\t} while (wBreakScriptLoop == 0);\n\thl = wScriptPointer_ADDR + 1u;\n\ta = wScriptPointer;\n\tc = a;\n\tb = 0;", "case_ids": ["RST20-0", "RST20-1"]}
 # <<< factory-mutation RST20
+# >>> factory-mutation ScriptCommand_OpenMenu
+MUTATIONS["ScriptCommand_OpenMenu"] = {"source_symbol": "ScriptCommand_OpenMenu", "before": "IncreaseScriptPointerResult ScriptCommand_OpenMenu(void)\n{\n\tPauseMenu();\n\tIncreaseScriptPointerResult result = IncreaseScriptPointerBy1();\n\treturn result;\n}", "after": "IncreaseScriptPointerResult ScriptCommand_OpenMenu(void)\n{\n\tPauseMenu();\n\tIncreaseScriptPointerResult result = (IncreaseScriptPointerResult){0, 0, 0};\n\treturn result;\n}", "case_ids": ["ScriptCommand_OpenMenu-0", "ScriptCommand_OpenMenu-1", "ScriptCommand_OpenMenu-1"]}
+# <<< factory-mutation ScriptCommand_OpenMenu

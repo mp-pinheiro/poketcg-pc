@@ -728,4 +728,7 @@ typedef struct {
 } RST20Result;
 RST20Result RST20(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t w0);
 /* <<< factory RST20 */
+/* >>> factory ScriptCommand_OpenMenu */
+IncreaseScriptPointerResult ScriptCommand_OpenMenu(void);
+/* <<< factory ScriptCommand_OpenMenu */
 #endif

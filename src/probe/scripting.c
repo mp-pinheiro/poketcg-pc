@@ -1507,6 +1507,16 @@ static void adapt_RST20(ProbeState *s)
 }
 /* <<< factory RST20 */
 
+/* >>> factory ScriptCommand_OpenMenu */
+static void adapt_ScriptCommand_OpenMenu(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = ScriptCommand_OpenMenu();
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_OpenMenu */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1656,5 +1666,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "SetStackEventZero", adapt_SetStackEventZero },
 	{ "GetStackEventValue", adapt_GetStackEventValue },
 	{ "RST20", adapt_RST20 },
+	{ "ScriptCommand_OpenMenu", adapt_ScriptCommand_OpenMenu },
 	{ NULL, NULL },
 };
