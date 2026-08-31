@@ -7749,6 +7749,11 @@ CASES["Ram_SelectSwitchEffect"] = [
 ]
 # <<< factory Ram_SelectSwitchEffect
 
+# >>> factory GustOfWind_PlayerSelection
+CONTRACT["GustOfWind_PlayerSelection"] = {"compare": (), "preserve": ()}
+CASES["GustOfWind_PlayerSelection"] = [dict(POISON, wram={0xFF97: b"\xC2", 0xFFA0: b"\x00"}, read={0xFFA0: 1}, expect={0xFFA0: b"\x00"})]
+# <<< factory GustOfWind_PlayerSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10889,3 +10894,10 @@ MUTATIONS["PidgeyWhirlwind_SelectEffect"] = {"source_symbol": "PidgeyWhirlwind_S
 # >>> factory-mutation Ram_SelectSwitchEffect
 MUTATIONS["Ram_SelectSwitchEffect"] = {"source_symbol": "Ram_SelectSwitchEffect", "before": "Ram_SelectSwitchEffectResult Ram_SelectSwitchEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xFFu;", "after": "Ram_SelectSwitchEffectResult Ram_SelectSwitchEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xFEu;", "case_ids": ["Ram_SelectSwitchEffect-0", "Ram_SelectSwitchEffect-1"]}
 # <<< factory-mutation Ram_SelectSwitchEffect
+# >>> factory-mutation GustOfWind_PlayerSelection
+MUTATIONS["GustOfWind_PlayerSelection"] = {"source_symbol": "GustOfWind_PlayerSelection", "before": "void GustOfWind_PlayerSelection(void) { hTemp_ffa0 = 0u; }", "after": "void GustOfWind_PlayerSelection(void) { hTemp_ffa0 = 1u; }", "case_ids": ["GustOfWind_PlayerSelection-0"]}
+# <<< factory-mutation GustOfWind_PlayerSelection
+# >>> factory-completion GustOfWind_PlayerSelection
+for _record in SCHEMA2_CASES["GustOfWind_PlayerSelection"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x237F, "bank": 14}
+# <<< factory-completion GustOfWind_PlayerSelection

@@ -2195,6 +2195,9 @@ PidgeyWhirlwindSelectEffectResult PidgeyWhirlwind_SelectEffect(uint8_t a, uint8_
 typedef struct { uint8_t a; uint8_t f; } Ram_SelectSwitchEffectResult;
 Ram_SelectSwitchEffectResult Ram_SelectSwitchEffect(void);
 /* <<< factory Ram_SelectSwitchEffect */
+/* >>> factory GustOfWind_PlayerSelection */
+void GustOfWind_PlayerSelection(void);
+/* <<< factory GustOfWind_PlayerSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -1,0 +1,9 @@
+{
+  "fn": "GustOfWind_PlayerSelection",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GustOfWind_PlayerSelection\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"65431\": \"c2\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GustOfWind_PlayerSelection\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"c200\", \"native\": \"c201\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[65431, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"GustOfWind_PlayerSelection\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"65431\": \"c2\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

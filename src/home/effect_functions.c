@@ -1500,6 +1500,13 @@ void BankswitchROM(uint8_t bank);
 #include "home/core.h"
 #include "home/effect_functions.h"
 #include "home/serial.h"
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+
+#define ChooseAPokemonToSwitchWithActivePokemonText 0x016au
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11396,3 +11403,7 @@ Ram_SelectSwitchEffectResult Ram_SelectSwitchEffect(void)
 	return (Ram_SelectSwitchEffectResult){hTempPlayAreaLocation_ff9d, selected.f};
 }
 /* <<< factory Ram_SelectSwitchEffect */
+
+/* >>> factory GustOfWind_PlayerSelection */
+void GustOfWind_PlayerSelection(void) { hTemp_ffa0 = 0u; }
+/* <<< factory GustOfWind_PlayerSelection */
