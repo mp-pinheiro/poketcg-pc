@@ -1,0 +1,9 @@
+{
+  "fn": "GameLoop",
+  "case": "tests/cases/game_loop.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GameLoop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"40966\": \"02\", \"40969\": \"01\"}}, \"vram\": {}, \"wram\": {\"52466\": \"01\", \"52493\": \"01\", \"52807\": \"02\", \"65424\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GameLoop\", \"mismatches\": {\"bus\": {\"address\": 52493, \"reference\": \"01010200\", \"native\": \"01000200\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52466, 1], [52493, 1], [52807, 1], [65424, 1]]}}}\n",
+  "restored": "{\"fn\": \"GameLoop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"40966\": \"02\", \"40969\": \"01\"}}, \"vram\": {}, \"wram\": {\"52466\": \"01\", \"52493\": \"01\", \"52807\": \"02\", \"65424\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

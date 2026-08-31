@@ -6,4 +6,7 @@ void SetupResetBackUpRamScreen(void);
 /* >>> factory InitSaveDataAndSetUppercase */
 void InitSaveDataAndSetUppercase(void);
 /* <<< factory InitSaveDataAndSetUppercase */
+/* >>> factory GameLoop */
+void GameLoop(void);
+/* <<< factory GameLoop */
 #endif

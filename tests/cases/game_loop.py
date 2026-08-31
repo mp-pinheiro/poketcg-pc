@@ -53,6 +53,12 @@ CASES = {
 hWhoseTurn = 0xFF97
 wUppercaseHalfWidthLetters = 0xCD0D
 sCardCollection = 0xA100
+
+hKeysHeld = 0xFF90
+sTextSpeed = 0xA006
+sSkipDelayAllowed = 0xA009
+wTextSpeed = 0xCE47
+wSkipDelayAllowed = 0xCCF2
 # <<< factory-cases-statics
 
 # >>> factory InitSaveDataAndSetUppercase
@@ -66,6 +72,14 @@ CASES["InitSaveDataAndSetUppercase"] = [
          sread={0: {sCardCollection: 32}}),
 ]
 # <<< factory InitSaveDataAndSetUppercase
+
+# >>> factory GameLoop
+CONTRACT["GameLoop"] = {"compare": (), "preserve": ()}
+CASES["GameLoop"] = [
+    dict(oracle=True, evidence="primary", why="The no-button path performs GameLoop's bounded setup and then reaches the non-returning _GameLoop dispatch; copied text settings and the uppercase-width flag are observed before that dispatch.", wram={hKeysHeld: b"\x00", wTextSpeed: b"\xFF", wSkipDelayAllowed: b"\xFF", wUppercaseHalfWidthLetters: b"\xFF"}, sram={0: {sTextSpeed: b"\x02", sSkipDelayAllowed: b"\x01"}}, read={wTextSpeed: 1, wSkipDelayAllowed: 1, wUppercaseHalfWidthLetters: 1}, expect={wTextSpeed: b"\x02", wSkipDelayAllowed: b"\x01", wUppercaseHalfWidthLetters: b"\x01"}, instruction_budget=2000000, cycle_budget=8000000),
+    dict(POISON, oracle=True, evidence="primary", why="With poisoned entry registers, the no-button setup still copies the selected SRAM settings and sets uppercase half-width letters before the non-returning _GameLoop dispatch.", wram={hKeysHeld: b"\x00", wTextSpeed: b"\xFF", wSkipDelayAllowed: b"\xFF", wUppercaseHalfWidthLetters: b"\xFF"}, sram={0: {sTextSpeed: b"\x06", sSkipDelayAllowed: b"\x00"}}, read={wTextSpeed: 1, wSkipDelayAllowed: 1, wUppercaseHalfWidthLetters: 1}, expect={wTextSpeed: b"\x06", wSkipDelayAllowed: b"\x00", wUppercaseHalfWidthLetters: b"\x01"}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory GameLoop
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -81,3 +95,10 @@ MUTATIONS = {
 # >>> factory-mutation InitSaveDataAndSetUppercase
 MUTATIONS["InitSaveDataAndSetUppercase"] = {"source_symbol": "InitSaveDataAndSetUppercase", "before": "\twUppercaseHalfWidthLetters = 1u;", "after": "\twUppercaseHalfWidthLetters = 0u;", "case_ids": ["InitSaveDataAndSetUppercase-0", "InitSaveDataAndSetUppercase-1"]}
 # <<< factory-mutation InitSaveDataAndSetUppercase
+# >>> factory-mutation GameLoop
+MUTATIONS["GameLoop"] = {"source_symbol": "GameLoop", "before": "void GameLoop(void)\n{\n\tResetSerial();\n\tuint8_t interrupt_enable = gb_read8(rIE);\n\tgb_write8(rIE, (uint8_t)(interrupt_enable | IE_VBLANK));\n\tinterrupt_enable = gb_read8(rIE);\n\tgb_write8(rIE, (uint8_t)(interrupt_enable | IE_TIMER));\n\tEnableSRAM();\n\twTextSpeed = sTextSpeed;\n\twSkipDelayAllowed = sSkipDelayAllowed;\n\tDisableSRAM();\n\twUppercaseHalfWidthLetters = 1u;", "after": "void GameLoop(void)\n{\n\tResetSerial();\n\tuint8_t interrupt_enable = gb_read8(rIE);\n\tgb_write8(rIE, (uint8_t)(interrupt_enable | IE_VBLANK));\n\tinterrupt_enable = gb_read8(rIE);\n\tgb_write8(rIE, (uint8_t)(interrupt_enable | IE_TIMER));\n\tEnableSRAM();\n\twTextSpeed = sTextSpeed;\n\twSkipDelayAllowed = sSkipDelayAllowed;\n\tDisableSRAM();\n\twUppercaseHalfWidthLetters = 0u;", "case_ids": ["GameLoop-0", "GameLoop-1"]}
+# <<< factory-mutation GameLoop
+# >>> factory-completion GameLoop
+for _record in SCHEMA2_CASES["GameLoop"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x66D1, "bank": 4}
+# <<< factory-completion GameLoop
