@@ -11511,3 +11511,20 @@ void Potion_PlayerSelection(void)
 	}
 }
 /* <<< factory Potion_PlayerSelection */
+
+/* >>> factory GengarDarkMind_PlayerSelectEffect */
+void GengarDarkMind_PlayerSelectEffect(void)
+{
+	DuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a < 2u) {
+		hTemp_ffa0 = 0xffu;
+		return;
+	}
+	(void)DrawWideTextBox_WaitForInput(ChoosePkmnInTheBenchToGiveDamageText);
+	SwapTurn();
+	(void)HasAlivePokemonInBench();
+	OpenPlayAreaScreenForSelection();
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	SwapTurn();
+}
+/* <<< factory GengarDarkMind_PlayerSelectEffect */

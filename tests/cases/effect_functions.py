@@ -7803,6 +7803,15 @@ CASES["Potion_PlayerSelection"] = [
 ]
 # <<< factory Potion_PlayerSelection
 
+# >>> factory GengarDarkMind_PlayerSelectEffect
+CONTRACT["GengarDarkMind_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CASES["GengarDarkMind_PlayerSelectEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x01"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\xFF"}},
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x01", 0xC3EF: b"\x02", 0xC3BB: b"\x00\x01", 0xC3C8: b"\x20\x20", 0xC480: b"\x08\x09", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3EF: b"\x01"}, read={0xFFA0: 1}, expect={0xFFA0: b"\xFF"}),
+]
+# <<< factory GengarDarkMind_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10968,3 +10977,6 @@ MUTATIONS["TerrorStrike_50PercentSelectSwitchPokemon"] = {"source_symbol": "Terr
 # >>> factory-mutation Potion_PlayerSelection
 MUTATIONS["Potion_PlayerSelection"] = {"source_symbol": "Potion_PlayerSelection", "before": "void Potion_PlayerSelection(void)\n{\n\t(void)HasAlivePokemonInPlayArea();\n\tfor (;;) {\n\t\tOpenPlayAreaScreenForSelection();\n\t\tuint8_t location = hTempPlayAreaLocation_ff9d;\n\t\thTemp_ffa0 = location;", "after": "void Potion_PlayerSelection(void)\n{\n\t(void)HasAlivePokemonInPlayArea();\n\tfor (;;) {\n\t\tOpenPlayAreaScreenForSelection();\n\t\tuint8_t location = hTempPlayAreaLocation_ff9d;\n\t\thTemp_ffa0 = (uint8_t)(location + 1u);", "case_ids": ["Potion_PlayerSelection-0", "Potion_PlayerSelection-1", "Potion_PlayerSelection-2"]}
 # <<< factory-mutation Potion_PlayerSelection
+# >>> factory-mutation GengarDarkMind_PlayerSelectEffect
+MUTATIONS["GengarDarkMind_PlayerSelectEffect"] = {"source_symbol": "GengarDarkMind_PlayerSelectEffect", "before": "void GengarDarkMind_PlayerSelectEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xffu;", "after": "void GengarDarkMind_PlayerSelectEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xfeu;", "case_ids": ["GengarDarkMind_PlayerSelectEffect-0", "GengarDarkMind_PlayerSelectEffect-2"]}
+# <<< factory-mutation GengarDarkMind_PlayerSelectEffect

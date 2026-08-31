@@ -2217,6 +2217,9 @@ TerrorStrike50PercentSelectSwitchPokemonResult TerrorStrike_50PercentSelectSwitc
 /* >>> factory Potion_PlayerSelection */
 void Potion_PlayerSelection(void);
 /* <<< factory Potion_PlayerSelection */
+/* >>> factory GengarDarkMind_PlayerSelectEffect */
+void GengarDarkMind_PlayerSelectEffect(void);
+/* <<< factory GengarDarkMind_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

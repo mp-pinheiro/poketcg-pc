@@ -5447,6 +5447,14 @@ static void adapt_Potion_PlayerSelection(ProbeState *s)
 }
 /* <<< factory Potion_PlayerSelection */
 
+/* >>> factory GengarDarkMind_PlayerSelectEffect */
+static void adapt_GengarDarkMind_PlayerSelectEffect(ProbeState *s)
+{
+	(void)s;
+	GengarDarkMind_PlayerSelectEffect();
+}
+/* <<< factory GengarDarkMind_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -6103,5 +6111,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "VictreebelLure_SelectSwitchPokemon", adapt_VictreebelLure_SelectSwitchPokemon },
 	{ "TerrorStrike_50PercentSelectSwitchPokemon", adapt_TerrorStrike_50PercentSelectSwitchPokemon },
 	{ "Potion_PlayerSelection", adapt_Potion_PlayerSelection },
+	{ "GengarDarkMind_PlayerSelectEffect", adapt_GengarDarkMind_PlayerSelectEffect },
 	{ NULL, NULL },
 };
