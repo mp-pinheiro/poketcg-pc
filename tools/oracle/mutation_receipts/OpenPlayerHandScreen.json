@@ -1,0 +1,9 @@
+{
+  "fn": "OpenPlayerHandScreen",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OpenPlayerHandScreen\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52190\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OpenPlayerHandScreen\", \"mismatches\": {\"bus\": {\"address\": 52190, \"reference\": \"01\", \"native\": \"00\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[52190, 1]]}}}\n",
+  "restored": "{\"fn\": \"OpenPlayerHandScreen\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52190\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

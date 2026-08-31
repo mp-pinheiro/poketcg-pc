@@ -2854,6 +2854,159 @@ static void adapt_HandleDestinyBondAndBetweenTurnKnockOuts(ProbeState *s)
 }
 /* <<< factory HandleDestinyBondAndBetweenTurnKnockOuts */
 
+/* >>> factory RestartPracticeDuelTurn */
+static void adapt_RestartPracticeDuelTurn(ProbeState *s)
+{
+	(void)s;
+	RestartPracticeDuelTurn();
+}
+/* <<< factory RestartPracticeDuelTurn */
+
+/* >>> factory DuelMainInterface */
+static void adapt_DuelMainInterface(ProbeState *s)
+{
+	(void)s;
+	DuelMainInterface();
+}
+/* <<< factory DuelMainInterface */
+
+/* >>> factory PrintDuelMenuAndHandleInput */
+static void adapt_PrintDuelMenuAndHandleInput(ProbeState *s)
+{
+	(void)s;
+	PrintDuelMenuAndHandleInput();
+}
+/* <<< factory PrintDuelMenuAndHandleInput */
+
+/* >>> factory DuelMenuShortcut_OpponentPlayArea */
+static void adapt_DuelMenuShortcut_OpponentPlayArea(ProbeState *s)
+{
+	(void)s;
+	DuelMenuShortcut_OpponentPlayArea();
+}
+/* <<< factory DuelMenuShortcut_OpponentPlayArea */
+
+/* >>> factory DuelMenuShortcut_PlayerPlayArea */
+static void adapt_DuelMenuShortcut_PlayerPlayArea(ProbeState *s)
+{
+	(void)s;
+	DuelMenuShortcut_PlayerPlayArea();
+}
+/* <<< factory DuelMenuShortcut_PlayerPlayArea */
+
+/* >>> factory DuelMenuShortcut_OpponentDiscardPile */
+static void adapt_DuelMenuShortcut_OpponentDiscardPile(ProbeState *s)
+{
+	(void)s;
+	DuelMenuShortcut_OpponentDiscardPile();
+}
+/* <<< factory DuelMenuShortcut_OpponentDiscardPile */
+
+/* >>> factory DuelMenuShortcut_PlayerDiscardPile */
+static void adapt_DuelMenuShortcut_PlayerDiscardPile(ProbeState *s)
+{
+	(void)s;
+	DuelMenuShortcut_PlayerDiscardPile();
+}
+/* <<< factory DuelMenuShortcut_PlayerDiscardPile */
+
+/* >>> factory DuelMenuShortcut_OpponentActivePokemon */
+static void adapt_DuelMenuShortcut_OpponentActivePokemon(ProbeState *s)
+{
+	(void)s;
+	DuelMenuShortcut_OpponentActivePokemon();
+}
+/* <<< factory DuelMenuShortcut_OpponentActivePokemon */
+
+/* >>> factory DuelMenuShortcut_PlayerActivePokemon */
+static void adapt_DuelMenuShortcut_PlayerActivePokemon(ProbeState *s)
+{
+	(void)s;
+	DuelMenuShortcut_PlayerActivePokemon();
+}
+/* <<< factory DuelMenuShortcut_PlayerActivePokemon */
+
+/* >>> factory DuelMenu_PkmnPower */
+static void adapt_DuelMenu_PkmnPower(ProbeState *s)
+{
+	(void)s;
+	DuelMenu_PkmnPower();
+}
+/* <<< factory DuelMenu_PkmnPower */
+
+/* >>> factory DuelMenu_Done */
+static void adapt_DuelMenu_Done(ProbeState *s)
+{
+	(void)s;
+	DuelMenu_Done();
+}
+/* <<< factory DuelMenu_Done */
+
+/* >>> factory DuelMenu_Retreat */
+static void adapt_DuelMenu_Retreat(ProbeState *s)
+{
+	(void)s;
+	DuelMenu_Retreat();
+}
+/* <<< factory DuelMenu_Retreat */
+
+/* >>> factory DuelMenu_Hand */
+static void adapt_DuelMenu_Hand(ProbeState *s)
+{
+	(void)s;
+	DuelMenu_Hand();
+}
+/* <<< factory DuelMenu_Hand */
+
+/* >>> factory OpenPlayerHandScreen */
+static void adapt_OpenPlayerHandScreen(ProbeState *s)
+{
+	(void)s;
+	OpenPlayerHandScreen();
+}
+/* <<< factory OpenPlayerHandScreen */
+
+/* >>> factory PlayEnergyCard */
+static void adapt_PlayEnergyCard(ProbeState *s)
+{
+	uint8_t saved_c = s->c;
+	PlayEnergyCard(saved_c);
+	s->c = saved_c;
+}
+/* <<< factory PlayEnergyCard */
+
+/* >>> factory ReloadCardListScreen */
+static void adapt_ReloadCardListScreen(ProbeState *s)
+{
+	(void)s;
+	ReloadCardListScreen();
+}
+/* <<< factory ReloadCardListScreen */
+
+/* >>> factory DuelMenu_Check */
+static void adapt_DuelMenu_Check(ProbeState *s)
+{
+	(void)s;
+	DuelMenu_Check();
+}
+/* <<< factory DuelMenu_Check */
+
+/* >>> factory DuelMenuShortcut_BothActivePokemon */
+static void adapt_DuelMenuShortcut_BothActivePokemon(ProbeState *s)
+{
+	(void)s;
+	DuelMenuShortcut_BothActivePokemon();
+}
+/* <<< factory DuelMenuShortcut_BothActivePokemon */
+
+/* >>> factory DuelMenu_Attack */
+static void adapt_DuelMenu_Attack(ProbeState *s)
+{
+	(void)s;
+	DuelMenu_Attack();
+}
+/* <<< factory DuelMenu_Attack */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3195,5 +3348,24 @@ const ProbeEntry probe_entries_core[] = {
 	{ "ReplaceKnockedOutPokemon", adapt_ReplaceKnockedOutPokemon },
 	{ "HandleBetweenTurnKnockOuts", adapt_HandleBetweenTurnKnockOuts },
 	{ "HandleDestinyBondAndBetweenTurnKnockOuts", adapt_HandleDestinyBondAndBetweenTurnKnockOuts },
+	{ "RestartPracticeDuelTurn", adapt_RestartPracticeDuelTurn },
+	{ "DuelMainInterface", adapt_DuelMainInterface },
+	{ "PrintDuelMenuAndHandleInput", adapt_PrintDuelMenuAndHandleInput },
+	{ "DuelMenuShortcut_OpponentPlayArea", adapt_DuelMenuShortcut_OpponentPlayArea },
+	{ "DuelMenuShortcut_PlayerPlayArea", adapt_DuelMenuShortcut_PlayerPlayArea },
+	{ "DuelMenuShortcut_OpponentDiscardPile", adapt_DuelMenuShortcut_OpponentDiscardPile },
+	{ "DuelMenuShortcut_PlayerDiscardPile", adapt_DuelMenuShortcut_PlayerDiscardPile },
+	{ "DuelMenuShortcut_OpponentActivePokemon", adapt_DuelMenuShortcut_OpponentActivePokemon },
+	{ "DuelMenuShortcut_PlayerActivePokemon", adapt_DuelMenuShortcut_PlayerActivePokemon },
+	{ "DuelMenu_PkmnPower", adapt_DuelMenu_PkmnPower },
+	{ "DuelMenu_Done", adapt_DuelMenu_Done },
+	{ "DuelMenu_Retreat", adapt_DuelMenu_Retreat },
+	{ "DuelMenu_Hand", adapt_DuelMenu_Hand },
+	{ "OpenPlayerHandScreen", adapt_OpenPlayerHandScreen },
+	{ "PlayEnergyCard", adapt_PlayEnergyCard },
+	{ "ReloadCardListScreen", adapt_ReloadCardListScreen },
+	{ "DuelMenu_Check", adapt_DuelMenu_Check },
+	{ "DuelMenuShortcut_BothActivePokemon", adapt_DuelMenuShortcut_BothActivePokemon },
+	{ "DuelMenu_Attack", adapt_DuelMenu_Attack },
 	{ NULL, NULL },
 };

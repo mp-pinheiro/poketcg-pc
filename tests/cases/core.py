@@ -4833,6 +4833,107 @@ CASES["HandleDestinyBondAndBetweenTurnKnockOuts"] = [
 ]
 # <<< factory HandleDestinyBondAndBetweenTurnKnockOuts
 
+# >>> factory RestartPracticeDuelTurn
+CONTRACT["RestartPracticeDuelTurn"] = {"compare": (), "preserve": ()}
+CASES["RestartPracticeDuelTurn"] = [dict(POISON, read={0xCC10: 1, 0xCC11: 1}, expect={0xCC10: b"\x00", 0xCC11: b"\x00"})]
+# <<< factory RestartPracticeDuelTurn
+
+# >>> factory DuelMainInterface
+CONTRACT["DuelMainInterface"] = {"compare": (), "preserve": ()}
+CASES["DuelMainInterface"] = [
+    {"wram": {0xCC0D: b"\x80", 0xCAB8: b"\xaa", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd"}, "read": {0xCAB8: 1, 0xCBF9: 1, 0xCC10: 1, 0xCC11: 1}, "expect": {0xCAB8: b"\xaa", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd"}},
+    dict(POISON, wram={0xCC0D: b"\x00", 0xCAB8: b"\xaa", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd"}, read={0xCAB8: 1, 0xCBF9: 1, 0xCC10: 1, 0xCC11: 1}, expect={0xCAB8: b"\xaa", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd"})
+]
+# <<< factory DuelMainInterface
+
+# >>> factory PrintDuelMenuAndHandleInput
+CONTRACT["PrintDuelMenuAndHandleInput"] = {"compare": (), "preserve": ()}
+CASES["PrintDuelMenuAndHandleInput"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# <<< factory PrintDuelMenuAndHandleInput
+
+# >>> factory DuelMenuShortcut_OpponentPlayArea
+CONTRACT["DuelMenuShortcut_OpponentPlayArea"] = {"compare": (), "preserve": ()}
+CASES["DuelMenuShortcut_OpponentPlayArea"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# <<< factory DuelMenuShortcut_OpponentPlayArea
+
+# >>> factory DuelMenuShortcut_PlayerPlayArea
+CONTRACT["DuelMenuShortcut_PlayerPlayArea"] = {"compare": (), "preserve": ()}
+CASES["DuelMenuShortcut_PlayerPlayArea"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# <<< factory DuelMenuShortcut_PlayerPlayArea
+
+# >>> factory DuelMenuShortcut_OpponentDiscardPile
+CONTRACT["DuelMenuShortcut_OpponentDiscardPile"] = {"compare": (), "preserve": ()}
+CASES["DuelMenuShortcut_OpponentDiscardPile"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# <<< factory DuelMenuShortcut_OpponentDiscardPile
+
+# >>> factory DuelMenuShortcut_PlayerDiscardPile
+CONTRACT["DuelMenuShortcut_PlayerDiscardPile"] = {"compare": (), "preserve": ()}
+CASES["DuelMenuShortcut_PlayerDiscardPile"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# <<< factory DuelMenuShortcut_PlayerDiscardPile
+
+# >>> factory DuelMenuShortcut_OpponentActivePokemon
+CONTRACT["DuelMenuShortcut_OpponentActivePokemon"] = {"compare": (), "preserve": ()}
+CASES["DuelMenuShortcut_OpponentActivePokemon"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# <<< factory DuelMenuShortcut_OpponentActivePokemon
+
+# >>> factory DuelMenuShortcut_PlayerActivePokemon
+CONTRACT["DuelMenuShortcut_PlayerActivePokemon"] = {"compare": (), "preserve": ()}
+CASES["DuelMenuShortcut_PlayerActivePokemon"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# <<< factory DuelMenuShortcut_PlayerActivePokemon
+
+# >>> factory DuelMenu_PkmnPower
+CONTRACT["DuelMenu_PkmnPower"] = {"compare": (), "preserve": ()}
+CASES["DuelMenu_PkmnPower"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# <<< factory DuelMenu_PkmnPower
+
+# >>> factory DuelMenu_Done
+CONTRACT["DuelMenu_Done"] = {"compare": (), "preserve": ()}
+CASES["DuelMenu_Done"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# <<< factory DuelMenu_Done
+
+# >>> factory DuelMenu_Retreat
+CONTRACT["DuelMenu_Retreat"] = {"compare": (), "preserve": ()}
+CASES["DuelMenu_Retreat"] = [dict(POISON, wram={0xFFA0: b"\x00"}, read={0xFFA0: 1}, expect={0xFFA0: b"\x00"})]
+# <<< factory DuelMenu_Retreat
+
+# >>> factory DuelMenu_Hand
+CONTRACT["DuelMenu_Hand"] = {"compare": (), "preserve": ()}
+CASES["DuelMenu_Hand"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# <<< factory DuelMenu_Hand
+
+# >>> factory OpenPlayerHandScreen
+CONTRACT["OpenPlayerHandScreen"] = {"compare": (), "preserve": ()}
+CASES["OpenPlayerHandScreen"] = [dict(POISON, read={0xCBDE: 1}, expect={0xCBDE: b"\x01"})]
+# <<< factory OpenPlayerHandScreen
+
+# >>> factory PlayEnergyCard
+CONTRACT["PlayEnergyCard"] = {"compare": (), "preserve": ()}
+CASES["PlayEnergyCard"] = [
+    {"c": 0x03, "hram": {0xFF98: b"\x12", 0xFF9D: b"\x02", 0xFFA0: b"\xaa", 0xFFA1: b"\xbb"}, "wram": {0xCC0B: b"\x00"}, "read": {0xFF98: 1, 0xFF9D: 1, 0xFFA0: 1, 0xFFA1: 1, 0xCC0B: 1}, "expect": {0xFFA0: b"\xaa", 0xFFA1: b"\xbb", 0xCC0B: b"\x00"}},
+    dict(POISON, c=0x0B, hram={0xFF98: b"\x34", 0xFF9D: b"\x03", 0xFFA0: b"\xaa", 0xFFA1: b"\xbb"}, wram={0xCC0B: b"\x01"}, read={0xFFA0: 1, 0xFFA1: 1}, expect={0xFFA0: b"\xaa", 0xFFA1: b"\xbb"})
+]
+# <<< factory PlayEnergyCard
+
+# >>> factory ReloadCardListScreen
+CONTRACT["ReloadCardListScreen"] = {"compare": (), "preserve": ()}
+CASES["ReloadCardListScreen"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# <<< factory ReloadCardListScreen
+
+# >>> factory DuelMenu_Check
+CONTRACT["DuelMenu_Check"] = {"compare": (), "preserve": ()}
+CASES["DuelMenu_Check"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# <<< factory DuelMenu_Check
+
+# >>> factory DuelMenuShortcut_BothActivePokemon
+CONTRACT["DuelMenuShortcut_BothActivePokemon"] = {"compare": (), "preserve": ()}
+CASES["DuelMenuShortcut_BothActivePokemon"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# <<< factory DuelMenuShortcut_BothActivePokemon
+
+# >>> factory DuelMenu_Attack
+CONTRACT["DuelMenu_Attack"] = {"compare": (), "preserve": ()}
+CASES["DuelMenu_Attack"] = [dict(POISON, read={0xCBCF: 1}, expect={0xCBCF: b"\x00"})]
+# <<< factory DuelMenu_Attack
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6674,3 +6775,136 @@ MUTATIONS["HandleDestinyBondAndBetweenTurnKnockOuts"] = {"source_symbol": "Handl
 for _record in SCHEMA2_CASES["HandleDestinyBondAndBetweenTurnKnockOuts"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x2380, "bank": 13}
 # <<< factory-completion HandleDestinyBondAndBetweenTurnKnockOuts
+# >>> factory-mutation RestartPracticeDuelTurn
+MUTATIONS["RestartPracticeDuelTurn"] = {"source_symbol": "RestartPracticeDuelTurn", "before": "void RestartPracticeDuelTurn(void) { }", "after": "void RestartPracticeDuelTurn(void) { wPlayerAttackingCardIndex = 0xFFu; }", "case_ids": ["RestartPracticeDuelTurn-0"]}
+# <<< factory-mutation RestartPracticeDuelTurn
+# >>> factory-completion RestartPracticeDuelTurn
+for _record in SCHEMA2_CASES["RestartPracticeDuelTurn"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x238A, "bank": 1}
+# <<< factory-completion RestartPracticeDuelTurn
+# >>> factory-mutation DuelMainInterface
+MUTATIONS["DuelMainInterface"] = {"source_symbol": "DuelMainInterface", "before": "void DuelMainInterface(void) { }", "after": "void DuelMainInterface(void) { wVBlankCounter = 1u; }", "case_ids": ["DuelMainInterface-0", "DuelMainInterface-1"]}
+# <<< factory-mutation DuelMainInterface
+# >>> factory-completion DuelMainInterface
+for _record in SCHEMA2_CASES["DuelMainInterface"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x238C, "bank": 1}
+# <<< factory-completion DuelMainInterface
+# >>> factory-mutation PrintDuelMenuAndHandleInput
+MUTATIONS["PrintDuelMenuAndHandleInput"] = {"source_symbol": "PrintDuelMenuAndHandleInput", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["PrintDuelMenuAndHandleInput-0"]}
+# <<< factory-mutation PrintDuelMenuAndHandleInput
+# >>> factory-completion PrintDuelMenuAndHandleInput
+for _record in SCHEMA2_CASES["PrintDuelMenuAndHandleInput"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+# <<< factory-completion PrintDuelMenuAndHandleInput
+# >>> factory-mutation DuelMenuShortcut_OpponentPlayArea
+MUTATIONS["DuelMenuShortcut_OpponentPlayArea"] = {"source_symbol": "DuelMenuShortcut_OpponentPlayArea", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenuShortcut_OpponentPlayArea-0"]}
+# <<< factory-mutation DuelMenuShortcut_OpponentPlayArea
+# >>> factory-completion DuelMenuShortcut_OpponentPlayArea
+for _record in SCHEMA2_CASES["DuelMenuShortcut_OpponentPlayArea"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+# <<< factory-completion DuelMenuShortcut_OpponentPlayArea
+# >>> factory-mutation DuelMenuShortcut_PlayerPlayArea
+MUTATIONS["DuelMenuShortcut_PlayerPlayArea"] = {"source_symbol": "DuelMenuShortcut_PlayerPlayArea", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenuShortcut_PlayerPlayArea-0"]}
+# <<< factory-mutation DuelMenuShortcut_PlayerPlayArea
+# >>> factory-completion DuelMenuShortcut_PlayerPlayArea
+for _record in SCHEMA2_CASES["DuelMenuShortcut_PlayerPlayArea"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+# <<< factory-completion DuelMenuShortcut_PlayerPlayArea
+# >>> factory-mutation DuelMenuShortcut_OpponentDiscardPile
+MUTATIONS["DuelMenuShortcut_OpponentDiscardPile"] = {"source_symbol": "DuelMenuShortcut_OpponentDiscardPile", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenuShortcut_OpponentDiscardPile-0"]}
+# <<< factory-mutation DuelMenuShortcut_OpponentDiscardPile
+# >>> factory-completion DuelMenuShortcut_OpponentDiscardPile
+for _record in SCHEMA2_CASES["DuelMenuShortcut_OpponentDiscardPile"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+# <<< factory-completion DuelMenuShortcut_OpponentDiscardPile
+# >>> factory-mutation DuelMenuShortcut_PlayerDiscardPile
+MUTATIONS["DuelMenuShortcut_PlayerDiscardPile"] = {"source_symbol": "DuelMenuShortcut_PlayerDiscardPile", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenuShortcut_PlayerDiscardPile-0"]}
+# <<< factory-mutation DuelMenuShortcut_PlayerDiscardPile
+# >>> factory-completion DuelMenuShortcut_PlayerDiscardPile
+for _record in SCHEMA2_CASES["DuelMenuShortcut_PlayerDiscardPile"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+# <<< factory-completion DuelMenuShortcut_PlayerDiscardPile
+# >>> factory-mutation DuelMenuShortcut_OpponentActivePokemon
+MUTATIONS["DuelMenuShortcut_OpponentActivePokemon"] = {"source_symbol": "DuelMenuShortcut_OpponentActivePokemon", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenuShortcut_OpponentActivePokemon-0"]}
+# <<< factory-mutation DuelMenuShortcut_OpponentActivePokemon
+# >>> factory-completion DuelMenuShortcut_OpponentActivePokemon
+for _record in SCHEMA2_CASES["DuelMenuShortcut_OpponentActivePokemon"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+# <<< factory-completion DuelMenuShortcut_OpponentActivePokemon
+# >>> factory-mutation DuelMenuShortcut_PlayerActivePokemon
+MUTATIONS["DuelMenuShortcut_PlayerActivePokemon"] = {"source_symbol": "DuelMenuShortcut_PlayerActivePokemon", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenuShortcut_PlayerActivePokemon-0"]}
+# <<< factory-mutation DuelMenuShortcut_PlayerActivePokemon
+# >>> factory-completion DuelMenuShortcut_PlayerActivePokemon
+for _record in SCHEMA2_CASES["DuelMenuShortcut_PlayerActivePokemon"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+# <<< factory-completion DuelMenuShortcut_PlayerActivePokemon
+# >>> factory-mutation DuelMenu_PkmnPower
+MUTATIONS["DuelMenu_PkmnPower"] = {"source_symbol": "DuelMenu_PkmnPower", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenu_PkmnPower-0"]}
+# <<< factory-mutation DuelMenu_PkmnPower
+# >>> factory-completion DuelMenu_PkmnPower
+for _record in SCHEMA2_CASES["DuelMenu_PkmnPower"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+# <<< factory-completion DuelMenu_PkmnPower
+# >>> factory-mutation DuelMenu_Done
+MUTATIONS["DuelMenu_Done"] = {"source_symbol": "DuelMenu_Done", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenu_Done-0"]}
+# <<< factory-mutation DuelMenu_Done
+# >>> factory-completion DuelMenu_Done
+for _record in SCHEMA2_CASES["DuelMenu_Done"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x51E7, "bank": 1}
+# <<< factory-completion DuelMenu_Done
+# >>> factory-mutation DuelMenu_Retreat
+MUTATIONS["DuelMenu_Retreat"] = {"source_symbol": "DuelMenu_Retreat", "before": "hTemp_ffa0 = 0u;", "after": "hTemp_ffa0 = 1u;", "case_ids": ["DuelMenu_Retreat-0"]}
+# <<< factory-mutation DuelMenu_Retreat
+# >>> factory-completion DuelMenu_Retreat
+for _record in SCHEMA2_CASES["DuelMenu_Retreat"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x2385, "bank": 14}
+# <<< factory-completion DuelMenu_Retreat
+# >>> factory-mutation DuelMenu_Hand
+MUTATIONS["DuelMenu_Hand"] = {"source_symbol": "DuelMenu_Hand", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenu_Hand-0"]}
+# <<< factory-mutation DuelMenu_Hand
+# >>> factory-completion DuelMenu_Hand
+for _record in SCHEMA2_CASES["DuelMenu_Hand"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+# <<< factory-completion DuelMenu_Hand
+# >>> factory-mutation OpenPlayerHandScreen
+MUTATIONS["OpenPlayerHandScreen"] = {"source_symbol": "OpenPlayerHandScreen", "before": "wCardListItemSelectionMenuType = 0x01u;", "after": "wCardListItemSelectionMenuType = 0x00u;", "case_ids": ["OpenPlayerHandScreen-0"]}
+# <<< factory-mutation OpenPlayerHandScreen
+# >>> factory-completion OpenPlayerHandScreen
+for _record in SCHEMA2_CASES["OpenPlayerHandScreen"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+# <<< factory-completion OpenPlayerHandScreen
+# >>> factory-mutation PlayEnergyCard
+MUTATIONS["PlayEnergyCard"] = {"source_symbol": "PlayEnergyCard", "before": "return;", "after": "hTemp_ffa0 = 1u;", "case_ids": ["PlayEnergyCard-0"]}
+# <<< factory-mutation PlayEnergyCard
+# >>> factory-completion PlayEnergyCard
+for _record in SCHEMA2_CASES["PlayEnergyCard"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+# <<< factory-completion PlayEnergyCard
+# >>> factory-mutation ReloadCardListScreen
+MUTATIONS["ReloadCardListScreen"] = {"source_symbol": "ReloadCardListScreen", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["ReloadCardListScreen-0"]}
+# <<< factory-mutation ReloadCardListScreen
+# >>> factory-completion ReloadCardListScreen
+for _record in SCHEMA2_CASES["ReloadCardListScreen"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x0271, "bank": 1}
+# <<< factory-completion ReloadCardListScreen
+# >>> factory-mutation DuelMenu_Check
+MUTATIONS["DuelMenu_Check"] = {"source_symbol": "DuelMenu_Check", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenu_Check-0"]}
+# <<< factory-mutation DuelMenu_Check
+# >>> factory-completion DuelMenu_Check
+for _record in SCHEMA2_CASES["DuelMenu_Check"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+# <<< factory-completion DuelMenu_Check
+# >>> factory-mutation DuelMenuShortcut_BothActivePokemon
+MUTATIONS["DuelMenuShortcut_BothActivePokemon"] = {"source_symbol": "DuelMenuShortcut_BothActivePokemon", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenuShortcut_BothActivePokemon-0"]}
+# <<< factory-mutation DuelMenuShortcut_BothActivePokemon
+# >>> factory-completion DuelMenuShortcut_BothActivePokemon
+for _record in SCHEMA2_CASES["DuelMenuShortcut_BothActivePokemon"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x4547, "bank": 2}
+# <<< factory-completion DuelMenuShortcut_BothActivePokemon
+# >>> factory-mutation DuelMenu_Attack
+MUTATIONS["DuelMenu_Attack"] = {"source_symbol": "DuelMenu_Attack", "before": "wSelectedDuelSubMenuItem = 0u;", "after": "wSelectedDuelSubMenuItem = 1u;", "case_ids": ["DuelMenu_Attack-0"]}
+# <<< factory-mutation DuelMenu_Attack
+# >>> factory-completion DuelMenu_Attack
+for _record in SCHEMA2_CASES["DuelMenu_Attack"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+# <<< factory-completion DuelMenu_Attack

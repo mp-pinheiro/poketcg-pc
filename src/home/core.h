@@ -1294,4 +1294,61 @@ HandleBetweenTurnKnockOutsResult HandleBetweenTurnKnockOuts(void);
 /* >>> factory HandleDestinyBondAndBetweenTurnKnockOuts */
 HandleBetweenTurnKnockOutsResult HandleDestinyBondAndBetweenTurnKnockOuts(void);
 /* <<< factory HandleDestinyBondAndBetweenTurnKnockOuts */
+/* >>> factory RestartPracticeDuelTurn */
+void RestartPracticeDuelTurn(void);
+/* <<< factory RestartPracticeDuelTurn */
+/* >>> factory DuelMainInterface */
+void DuelMainInterface(void);
+/* <<< factory DuelMainInterface */
+/* >>> factory PrintDuelMenuAndHandleInput */
+void PrintDuelMenuAndHandleInput(void);
+/* <<< factory PrintDuelMenuAndHandleInput */
+/* >>> factory DuelMenuShortcut_OpponentPlayArea */
+void DuelMenuShortcut_OpponentPlayArea(void);
+/* <<< factory DuelMenuShortcut_OpponentPlayArea */
+/* >>> factory DuelMenuShortcut_PlayerPlayArea */
+void DuelMenuShortcut_PlayerPlayArea(void);
+/* <<< factory DuelMenuShortcut_PlayerPlayArea */
+/* >>> factory DuelMenuShortcut_OpponentDiscardPile */
+void DuelMenuShortcut_OpponentDiscardPile(void);
+/* <<< factory DuelMenuShortcut_OpponentDiscardPile */
+/* >>> factory DuelMenuShortcut_PlayerDiscardPile */
+void DuelMenuShortcut_PlayerDiscardPile(void);
+/* <<< factory DuelMenuShortcut_PlayerDiscardPile */
+/* >>> factory DuelMenuShortcut_OpponentActivePokemon */
+void DuelMenuShortcut_OpponentActivePokemon(void);
+/* <<< factory DuelMenuShortcut_OpponentActivePokemon */
+/* >>> factory DuelMenuShortcut_PlayerActivePokemon */
+void DuelMenuShortcut_PlayerActivePokemon(void);
+/* <<< factory DuelMenuShortcut_PlayerActivePokemon */
+/* >>> factory DuelMenu_PkmnPower */
+void DuelMenu_PkmnPower(void);
+/* <<< factory DuelMenu_PkmnPower */
+/* >>> factory DuelMenu_Done */
+void DuelMenu_Done(void);
+/* <<< factory DuelMenu_Done */
+/* >>> factory DuelMenu_Retreat */
+void DuelMenu_Retreat(void);
+/* <<< factory DuelMenu_Retreat */
+/* >>> factory DuelMenu_Hand */
+void DuelMenu_Hand(void);
+/* <<< factory DuelMenu_Hand */
+/* >>> factory OpenPlayerHandScreen */
+void OpenPlayerHandScreen(void);
+/* <<< factory OpenPlayerHandScreen */
+/* >>> factory PlayEnergyCard */
+void PlayEnergyCard(uint8_t c);
+/* <<< factory PlayEnergyCard */
+/* >>> factory ReloadCardListScreen */
+void ReloadCardListScreen(void);
+/* <<< factory ReloadCardListScreen */
+/* >>> factory DuelMenu_Check */
+void DuelMenu_Check(void);
+/* <<< factory DuelMenu_Check */
+/* >>> factory DuelMenuShortcut_BothActivePokemon */
+void DuelMenuShortcut_BothActivePokemon(void);
+/* <<< factory DuelMenuShortcut_BothActivePokemon */
+/* >>> factory DuelMenu_Attack */
+void DuelMenu_Attack(void);
+/* <<< factory DuelMenu_Attack */
 #endif

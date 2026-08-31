@@ -1,0 +1,9 @@
+{
+  "fn": "DuelMainInterface",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DuelMainInterface\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51896\": \"aa\", \"52217\": \"bb\", \"52237\": \"80\", \"52240\": \"ccdd\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DuelMainInterface\", \"mismatches\": {\"bus\": {\"address\": 51896, \"reference\": \"aabb80ccdd\", \"native\": \"01bb80ccdd\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[51896, 1], [52217, 1], [52237, 1], [52240, 2]]}}}\n",
+  "restored": "{\"fn\": \"DuelMainInterface\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51896\": \"aa\", \"52217\": \"bb\", \"52237\": \"80\", \"52240\": \"ccdd\"}}, \"status\": \"PASS\"}\n"
+}
