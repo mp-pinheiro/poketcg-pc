@@ -365,6 +365,32 @@ def validate_manifest(manifest: dict[str, Any], baseline: dict[str, Any]) -> lis
         errors.append("boot-title-negative has no first-mismatch terminal")
     if not P8_IDS <= set(by_id):
         errors.append("Phase 8 stable obligations are incomplete")
+    scenarios = manifest.get("scenario")
+    scenarios_by_id = {
+        scenario.get("id"): scenario
+        for scenario in scenarios if isinstance(scenario, dict)
+    } if isinstance(scenarios, list) else {}
+    for scenario_id in ("boot-title", "boot-title-negative"):
+        scenario = scenarios_by_id.get(scenario_id)
+        if scenario is None:
+            errors.append(f"missing immutable scenario: {scenario_id}")
+            continue
+        if scenario.get("requirement") not in by_id:
+            errors.append(f"{scenario_id} points at unknown requirement")
+        for field in (
+            "start_state", "input_schema", "terminal_event",
+            "raw_checkpoint_schema", "comparison",
+        ):
+            if not isinstance(scenario.get(field), str) or not scenario[field]:
+                errors.append(f"{scenario_id} missing {field}")
+        if not isinstance(scenario.get("minimum_rendered_frames"), int):
+            errors.append(f"{scenario_id} has no frame bound")
+    boot_scenario = scenarios_by_id.get("boot-title")
+    if boot_scenario and boot_scenario.get("minimum_rendered_frames") != 600:
+        errors.append("boot-title scenario was weakened")
+    negative_scenario = scenarios_by_id.get("boot-title-negative")
+    if negative_scenario and not negative_scenario.get("perturbation"):
+        errors.append("boot-title-negative has no perturbation")
     return errors
 
 
@@ -625,6 +651,8 @@ def content_key(baseline: dict[str, Any], manifest: dict[str, Any]) -> str:
     ):
         digest.update(str(value).encode("utf-8"))
         digest.update(b"\0")
+    digest.update(json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode("utf-8"))
+    digest.update(b"\0")
     return digest.hexdigest()[:24]
 
 
@@ -836,7 +864,7 @@ def collect_report() -> dict[str, Any]:
             "routines": mapping.get("expected_logical_routines", 0),
             "code_bytes": sum(
                 int(info.get("size", 0)) for name, info in inventory.get("functions", {}).items()
-                if name not in load_scope_exclusions()
+                if name not in load_scope_exclusions(inventory.get("functions", {}))
             ),
         },
         "final_routines": {

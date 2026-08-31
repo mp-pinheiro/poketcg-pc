@@ -318,6 +318,13 @@ completion-check ID:
     python3 tools/completion/completion.py check "{{ID}}"
 completion-next:
     python3 tools/completion/completion.py next
+
+# Generate only declared ROM data spans for the local product package.
+completion-data-pack:
+    just data-verify
+    python3 tools/gen_data.py --sparse-pack --verify
+completion-data-pack-check:
+    python3 tools/gen_data.py --pack-check
 # Recompute site/data/progress.json + history point from the registry and gate record.
 progress:
     python3 tools/progress/report.py build

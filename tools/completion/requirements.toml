@@ -16,6 +16,28 @@ milestones = [
   "phase-8-widescreen",
 ]
 
+[[scenario]]
+id = "boot-title"
+requirement = "completion:v2:p2:boot-title"
+start_state = "pinned-cgb-boot"
+input_schema = "neutral-rle-v1"
+terminal_event = "NEW_GAME_ENTERED"
+minimum_rendered_frames = 600
+button_edge = "A"
+raw_checkpoint_schema = "reference-checkpoint-v1"
+comparison = "full-state-and-160x144-pixels"
+
+[[scenario]]
+id = "boot-title-negative"
+requirement = "completion:v2:p2:boot-title-negative"
+start_state = "boot-title-reference"
+input_schema = "neutral-rle-v1"
+terminal_event = "FIRST_MISMATCH"
+minimum_rendered_frames = 1
+perturbation = "one-expected-state-byte"
+raw_checkpoint_schema = "reference-checkpoint-v1"
+comparison = "first-mismatch-region-offset"
+
 [[representation]]
 field = "wram"
 domain = "memory"

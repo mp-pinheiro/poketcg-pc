@@ -4,9 +4,12 @@
 from __future__ import annotations
 
 import argparse
-import zlib
+import hashlib
+import json
 import re
+import struct
 import sys
+import zlib
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -173,6 +176,128 @@ def verify(items: list[tuple[dict[str, str], Section, bytes]], arrays: dict[str,
         total += len(expected)
     return len(items), total
 
+PACK_MAGIC = b"PTCGDAT1"
+PACK_HEADER = struct.Struct("<8sII")
+PACK_RECORD = struct.Struct("<IHHII")
+
+
+def write_sparse_pack(
+    items: list[tuple[dict[str, str], Section, bytes]],
+    rom: bytes,
+    pack_path: Path,
+    manifest_path: Path,
+    rom_path: Path,
+    map_path: Path,
+    sym_path: Path,
+) -> tuple[int, int]:
+    payload = bytearray(PACK_HEADER.pack(PACK_MAGIC, 1, len(items)))
+    payload.extend(b"\0" * PACK_RECORD.size * len(items))
+    spans = []
+    for entry, section, data in items:
+        if section.name.casefold() == "romheader" or section.name.casefold().startswith(
+            ("start", "game loop", "duel core", "menus", "overworld", "ai logic")
+        ):
+            raise ValueError(f"refusing executable section in sparse pack: {section.name}")
+        pack_offset = len(payload)
+        payload.extend(data)
+        spans.append({
+            "name": entry["name"],
+            "section": section.name,
+            "kind": "data",
+            "bank": section.bank,
+            "address": section.start,
+            "length": len(data),
+            "pack_offset": pack_offset,
+            "sha256": hashlib.sha256(data).hexdigest(),
+        })
+    records = bytearray()
+    for span in spans:
+        records.extend(PACK_RECORD.pack(
+            span["bank"], span["address"], span["length"], span["pack_offset"], 0
+        ))
+    table_end = PACK_HEADER.size + len(records)
+    payload[PACK_HEADER.size:table_end] = records
+    pack_path.parent.mkdir(parents=True, exist_ok=True)
+    pack_path.write_bytes(payload)
+    manifest = {
+        "schema": 1,
+        "format": "poketcg-sparse-data-v1",
+        "rom_sha256": hashlib.sha256(rom).hexdigest(),
+        "map_sha256": hashlib.sha256(map_path.read_bytes()).hexdigest(),
+        "symbol_sha256": hashlib.sha256(sym_path.read_bytes()).hexdigest(),
+        "pack_sha256": hashlib.sha256(payload).hexdigest(),
+        "pack_size": len(payload),
+        "rom_source": str(rom_path),
+        "spans": spans,
+    }
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_path.write_text(
+        json.dumps(manifest, sort_keys=True, separators=(",", ":")) + "\n"
+    )
+    return len(spans), len(payload)
+
+
+def verify_sparse_pack(
+    pack_path: Path,
+    manifest_path: Path,
+    rom: bytes,
+    sections: dict[str, Section],
+) -> tuple[int, int]:
+    try:
+        payload = pack_path.read_bytes()
+        manifest = json.loads(manifest_path.read_text())
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"cannot read sparse pack: {exc}") from exc
+    if not isinstance(manifest, dict) or manifest.get("schema") != 1:
+        raise ValueError("sparse pack manifest schema is invalid")
+    if manifest.get("rom_sha256") != hashlib.sha256(rom).hexdigest():
+        raise ValueError("sparse pack ROM identity differs from source")
+    if manifest.get("pack_size") != len(payload):
+        raise ValueError("sparse pack size differs from manifest")
+    if hashlib.sha256(payload).hexdigest() != manifest.get("pack_sha256"):
+        raise ValueError("sparse pack hash differs from manifest")
+    if len(payload) < PACK_HEADER.size:
+        raise ValueError("sparse pack is truncated")
+    magic, version, count = PACK_HEADER.unpack(payload[:PACK_HEADER.size])
+    if magic != PACK_MAGIC or version != 1:
+        raise ValueError("sparse pack header is invalid")
+    table_end = PACK_HEADER.size + count * PACK_RECORD.size
+    if table_end > len(payload):
+        raise ValueError("sparse pack record table is truncated")
+    spans = manifest.get("spans")
+    if not isinstance(spans, list) or count != len(spans):
+        raise ValueError("sparse pack span count is invalid")
+    total = 0
+    expected_offset = table_end
+    for index, span in enumerate(spans):
+        if not isinstance(span, dict) or span.get("kind") != "data":
+            raise ValueError("sparse pack contains a non-data span")
+        section = sections.get(span.get("section"))
+        if section is None:
+            raise ValueError(f"sparse pack section is unknown: {span.get('section')}")
+        bank, address, length, pack_offset, _flags = PACK_RECORD.unpack_from(
+            payload, PACK_HEADER.size + index * PACK_RECORD.size
+        )
+        expected_length = section.end - section.start + 1
+        if (span.get("bank"), span.get("address"), span.get("length")) != (
+            bank, address, expected_length
+        ):
+            raise ValueError(f"sparse pack record differs: {section.name}")
+        if pack_offset != expected_offset or span.get("pack_offset") != pack_offset:
+            raise ValueError(f"sparse pack offsets are not contiguous: {section.name}")
+        start = rom_offset(section.bank, section.start)
+        actual = payload[pack_offset:pack_offset + length]
+        expected = rom[start:start + length]
+        if len(actual) != length:
+            raise ValueError(f"sparse pack data is truncated: {section.name}")
+        if actual != expected or hashlib.sha256(actual).hexdigest() != span.get("sha256"):
+            raise ValueError(f"sparse pack first mismatch: {section.name}")
+        expected_offset += length
+        total += length
+    if expected_offset != len(payload):
+        raise ValueError("sparse pack has trailing bytes")
+    return len(spans), total
+
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -184,6 +309,14 @@ def main() -> int:
     # --check validates the artifact already on disk instead of a freshly rendered
     # string, so a corrupted or stale include/generated/data.h is actually caught.
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--sparse-pack", action="store_true")
+    parser.add_argument("--pack-check", action="store_true")
+    parser.add_argument("--pack", type=Path, default=Path("build/completion/data-pack.bin"))
+    parser.add_argument(
+        "--pack-manifest",
+        type=Path,
+        default=Path("build/completion/data-pack.json"),
+    )
     args = parser.parse_args()
     for path in (args.rom, args.map, args.sym):
         if not path.exists():
@@ -192,6 +325,24 @@ def main() -> int:
     symbols = parse_symbols(args.sym)
     rom = args.rom.read_bytes()
     items = slices(SCHEMA, sections, symbols, rom)
+    if args.sparse_pack and args.pack_check:
+        parser.error("--sparse-pack and --pack-check are mutually exclusive")
+    if args.sparse_pack or args.pack_check:
+        if args.check:
+            parser.error("--check validates the C header, not a sparse pack")
+        if args.pack_check:
+            count, total = verify_sparse_pack(args.pack, args.pack_manifest, rom, sections)
+            print(f"gen_data: checked sparse pack {args.pack} -- {count} sections, {total} bytes")
+        else:
+            count, total = write_sparse_pack(
+                items, rom, args.pack, args.pack_manifest,
+                args.rom, args.map, args.sym,
+            )
+            print(f"gen_data: wrote sparse pack {args.pack} -- {count} sections, {total} bytes")
+            if args.verify:
+                verify_sparse_pack(args.pack, args.pack_manifest, rom, sections)
+                print("gen_data: verified sparse pack")
+        return 0
     if args.check:
         if not args.out.exists():
             raise SystemExit(f"nothing to check: {args.out} does not exist")
