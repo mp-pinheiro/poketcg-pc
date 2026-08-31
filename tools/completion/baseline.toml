@@ -1,0 +1,14 @@
+[baseline]
+epoch = 1
+pret_commit = "0e7157e885c03d68b3b44410d3adc5aede385627"
+rom_sha1 = "0f8670a583255cff3e5b7ca71b5d7454d928fc48"
+rom_sha256 = "a54515bb6b3e364964d3c0226f5a6b0c8c0f7318c9296ef2e321df0bbb8541ce"
+rom_size = 1048576
+rom_banks = 64
+map_sha256 = "f6d2dcccf914d59187adbbf27fa0e8e52f39e745c6cbb8e4f0ce9ac251c23881"
+symbol_sha256 = "de725522d96fbb4d1b819db9fd61e4b44eece9e44a8a1a0801d632615f3e6d29"
+inventory_sha256 = "3dc0cff22b46e98116dd2cd7ccffd0c1bd19c635ee3363626df1a0e671a7a438"
+inventory_schema = 1
+map_parser = "rgbds-map-v1"
+symbol_parser = "rgbds-symbol-v1"
+inventory_parser = "progress-inventory-v1"
