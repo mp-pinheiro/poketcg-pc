@@ -727,4 +727,22 @@ typedef struct {
 } HandlePeekSelectionResult;
 HandlePeekSelectionResult _HandlePeekSelection(void);
 /* <<< factory _HandlePeekSelection */
+/* >>> factory _OpenDuelCheckMenu */
+void _OpenDuelCheckMenu(void);
+/* <<< factory _OpenDuelCheckMenu */
+/* >>> factory DuelCheckMenu_InPlayArea */
+void DuelCheckMenu_InPlayArea(void);
+/* <<< factory DuelCheckMenu_InPlayArea */
+/* >>> factory DuelCheckMenu_YourPlayArea */
+void DuelCheckMenu_YourPlayArea(void);
+/* <<< factory DuelCheckMenu_YourPlayArea */
+/* >>> factory OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea */
+void OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea(void);
+/* <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea */
+/* >>> factory OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea */
+void OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea(void);
+/* <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea */
+/* >>> factory DuelCheckMenu_OppPlayArea */
+void DuelCheckMenu_OppPlayArea(void);
+/* <<< factory DuelCheckMenu_OppPlayArea */
 #endif

@@ -1317,6 +1317,8 @@ _hps_wram = {
 # wce5c: exactly the bytes this routine writes itself. Nothing here is touched by
 # the VBlank handler or by anything inside the card page.
 _hps_read = {0xCE52: 1, 0xCE53: 2, 0xCE56: 1, 0xCE5C: 1}
+
+wce5e = 0xCE5E
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1804,6 +1806,54 @@ CASES["_HandlePeekSelection"] = [
 ]
 # <<< factory _HandlePeekSelection
 
+# >>> factory _OpenDuelCheckMenu
+CONTRACT["_OpenDuelCheckMenu"] = {"compare": (), "preserve": ()}
+CASES["_OpenDuelCheckMenu"] = [
+    {"keys": [0x00, 0x02], "wram": {0xFF80: b"\x02", 0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80", wce5e: b"\x55"}, "read": {wce5e: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], wram={0xFF80: b"\x02", 0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80", wce5e: b"\xAA"}, read={wce5e: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory _OpenDuelCheckMenu
+
+# >>> factory DuelCheckMenu_InPlayArea
+CONTRACT["DuelCheckMenu_InPlayArea"] = {"compare": (), "preserve": ()}
+CASES["DuelCheckMenu_InPlayArea"] = [
+    {"wram": {0xCE60: b"\x55"}, "read": {0xCE60: 1}, "completion": {"mode": "pre-ret", "pc": 0x1DCA}},
+    dict(POISON, wram={0xCE60: b"\xAA"}, read={0xCE60: 1}, completion={"mode": "pre-ret", "pc": 0x1DCA}),
+]
+# <<< factory DuelCheckMenu_InPlayArea
+
+# >>> factory DuelCheckMenu_YourPlayArea
+CONTRACT["DuelCheckMenu_YourPlayArea"] = {"compare": (), "preserve": ()}
+CASES["DuelCheckMenu_YourPlayArea"] = [
+    {"keys": [0x00, 0x02], "wram": {0xFF80: b"\x02", 0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xC2BC: b"\xFF", 0xC3BC: b"\xFF", wce5e: b"\x55"}, "read": {wce5e: 1, 0xCE5F: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], wram={0xFF80: b"\x02", 0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xC2BC: b"\xFF", 0xC3BC: b"\xFF", wce5e: b"\xAA"}, read={wce5e: 1, 0xCE5F: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DuelCheckMenu_YourPlayArea
+
+# >>> factory OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea
+CONTRACT["OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea"] = {"compare": (), "preserve": ()}
+CASES["OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea"] = [
+    {"wram": {0xFF97: b"\xC2"}},
+    dict(POISON, wram={0xFF97: b"\xC2"}),
+]
+# <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea
+
+# >>> factory OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea
+CONTRACT["OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea"] = {"compare": (), "preserve": ()}
+CASES["OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea"] = [
+    {"wram": {0xFF97: b"\xC2"}},
+    dict(POISON, wram={0xFF97: b"\xC2"}),
+]
+# <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea
+
+# >>> factory DuelCheckMenu_OppPlayArea
+CONTRACT["DuelCheckMenu_OppPlayArea"] = {"compare": (), "preserve": ()}
+CASES["DuelCheckMenu_OppPlayArea"] = [
+    {"keys": [0x00, 0x02], "wram": {0xFF80: b"\x02", 0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xC200: b"\x00" * 0x100, 0xC300: b"\x00" * 0x100, 0xC2BC: b"\xFF", 0xC3BC: b"\xFF", 0xC590: b"\x00" * 16, wce5e: b"\x55"}, "read": {wce5e: 1, 0xCE5F: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 30000000, "cycle_budget": 120000000},
+    dict(POISON, keys=[0x00, 0x02], wram={0xFF80: b"\x02", 0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xC200: b"\x00" * 0x100, 0xC300: b"\x00" * 0x100, 0xC2BC: b"\xFF", 0xC3BC: b"\xFF", 0xC590: b"\x00" * 16, wce5e: b"\xAA"}, read={wce5e: 1, 0xCE5F: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=30000000, cycle_budget=120000000),
+]
+# <<< factory DuelCheckMenu_OppPlayArea
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_1bb4
@@ -2125,3 +2175,33 @@ MUTATIONS["_HandlePeekSelection"] = {
     "case_ids": ["_HandlePeekSelection-0", "_HandlePeekSelection-1"],
 }
 # <<< factory-mutation _HandlePeekSelection
+# >>> factory-mutation _OpenDuelCheckMenu
+MUTATIONS["_OpenDuelCheckMenu"] = {"source_symbol": "_OpenDuelCheckMenu", "before": "void _OpenDuelCheckMenu(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\twce5e = 0u;", "after": "void _OpenDuelCheckMenu(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\twce5e = 0x80u;", "case_ids": ["_OpenDuelCheckMenu-0", "_OpenDuelCheckMenu-1"]}
+# <<< factory-mutation _OpenDuelCheckMenu
+# >>> factory-mutation DuelCheckMenu_InPlayArea
+MUTATIONS["DuelCheckMenu_InPlayArea"] = {"source_symbol": "DuelCheckMenu_InPlayArea", "before": "void DuelCheckMenu_InPlayArea(void)\n{\n\twInPlayAreaFromSelectButton = 0u;", "after": "void DuelCheckMenu_InPlayArea(void)\n{\n\twInPlayAreaFromSelectButton = 1u;", "case_ids": ["DuelCheckMenu_InPlayArea-0", "DuelCheckMenu_InPlayArea-1"]}
+# <<< factory-mutation DuelCheckMenu_InPlayArea
+# >>> factory-completion DuelCheckMenu_InPlayArea
+for _record in SCHEMA2_CASES["DuelCheckMenu_InPlayArea"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x1DCA}
+# <<< factory-completion DuelCheckMenu_InPlayArea
+# >>> factory-mutation DuelCheckMenu_YourPlayArea
+MUTATIONS["DuelCheckMenu_YourPlayArea"] = {"source_symbol": "DuelCheckMenu_YourPlayArea", "before": "void DuelCheckMenu_YourPlayArea(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\twce5e = 0u;", "after": "void DuelCheckMenu_YourPlayArea(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\twce5e = 0x80u;", "case_ids": ["DuelCheckMenu_YourPlayArea-0", "DuelCheckMenu_YourPlayArea-1"]}
+# <<< factory-mutation DuelCheckMenu_YourPlayArea
+# >>> factory-mutation OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea
+MUTATIONS["OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea"] = {"source_symbol": "OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea", "before": "void OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea(void)\n{\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;", "after": "void OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea(void)\n{\n\thWhoseTurn = 0u;\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;", "case_ids": ["OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea-0", "OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea-1"]}
+# <<< factory-mutation OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea
+# >>> factory-completion OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea
+for _record in SCHEMA2_CASES["OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x238A}
+# <<< factory-completion OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea
+# >>> factory-mutation OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea
+MUTATIONS["OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea"] = {"source_symbol": "OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea", "before": "void OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea(void)\n{\n\thWhoseTurn = 0xC3u;", "after": "void OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea(void)\n{\n\thWhoseTurn = 0xC2u;", "case_ids": ["OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea-0", "OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea-1"]}
+# <<< factory-mutation OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea
+# >>> factory-completion OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea
+for _record in SCHEMA2_CASES["OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x238A}
+# <<< factory-completion OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea
+# >>> factory-mutation DuelCheckMenu_OppPlayArea
+MUTATIONS["DuelCheckMenu_OppPlayArea"] = {"source_symbol": "DuelCheckMenu_OppPlayArea", "before": "void DuelCheckMenu_OppPlayArea(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\tPkmnPowerCountResult clairvoyance = IsClairvoyanceActive();\n\twce5e = (clairvoyance.f & 0x10u) != 0u ? 0u : 0x80u;", "after": "void DuelCheckMenu_OppPlayArea(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\tPkmnPowerCountResult clairvoyance = IsClairvoyanceActive();\n\twce5e = (clairvoyance.f & 0x10u) != 0u ? 0u : 0x81u;", "case_ids": ["DuelCheckMenu_OppPlayArea-0", "DuelCheckMenu_OppPlayArea-1"]}
+# <<< factory-mutation DuelCheckMenu_OppPlayArea

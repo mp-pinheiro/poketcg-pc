@@ -646,6 +646,12 @@ static const uint8_t kCursorTileData[16] = {
 #define PEEK_PAD_B 0x02u
 #define PEEK_DUELVARS_PRIZES 0xECu
 #define PEEK_DUELVARS_PRIZE_CARDS 0x3Cu
+
+#include "home/deck_selection.h"
+#define CHECK_MENU_DATA_ADDR 0x4158u
+#define YOUR_PLAY_AREA_MENU_DATA_ADDR 0x4169u
+#define OPP_PLAY_AREA_MENU_DATA_ADDR 0x4176u
+#define OPP_PLAY_AREA_MENU_DATA_CLAIRVOYANCE_ADDR 0x417Fu
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -3378,3 +3384,157 @@ HandlePeekSelectionResult _HandlePeekSelection(void)
 	}
 }
 /* <<< factory _HandlePeekSelection */
+
+/* >>> factory _OpenDuelCheckMenu */
+void _OpenDuelCheckMenu(void)
+{
+	ResetCheckMenuCursorPositionAndBlink();
+	wce5e = 0u;
+	(void)DrawWideTextBox();
+	wCheckMenuCursorBlinkCounter = 0u;
+	(void)PlaceTextItems(CHECK_MENU_DATA_ADDR);
+	for (;;) {
+		DoFrame();
+		HandleCheckMenuInputResult input = HandleCheckMenuInput();
+		if ((input.f & 0x10u) == 0u)
+			continue;
+		if (input.a == MENU_CANCEL)
+			return;
+		uint8_t selection = (uint8_t)(wCheckMenuCursorXPosition +
+			(uint8_t)(wCheckMenuCursorYPosition << 1));
+		switch (selection) {
+		case 0u:
+			DuelCheckMenu_InPlayArea();
+			break;
+		case 1u:
+			DuelCheckMenu_Glossary();
+			break;
+		case 2u:
+			DuelCheckMenu_YourPlayArea();
+			break;
+		case 3u:
+			DuelCheckMenu_OppPlayArea();
+			break;
+		default:
+			break;
+		}
+	}
+}
+/* <<< factory _OpenDuelCheckMenu */
+
+/* >>> factory DuelCheckMenu_InPlayArea */
+void DuelCheckMenu_InPlayArea(void)
+{
+	wInPlayAreaFromSelectButton = 0u;
+}
+/* <<< factory DuelCheckMenu_InPlayArea */
+
+/* >>> factory DuelCheckMenu_YourPlayArea */
+void DuelCheckMenu_YourPlayArea(void)
+{
+	ResetCheckMenuCursorPositionAndBlink();
+	wce5e = 0u;
+	uint8_t turn = hWhoseTurn;
+	for (;;) {
+		DrawYourOrOppPlayAreaScreen((uint16_t)(((uint16_t)turn << 8) | turn));
+		uint8_t position = (uint8_t)((uint8_t)(wCheckMenuCursorYPosition << 1) +
+			wCheckMenuCursorXPosition);
+		wYourOrOppPlayAreaLastCursorPosition = position;
+		DrawYourOrOppPlayArea_DrawArrows(position, 0xF8u);
+		(void)DrawWideTextBox();
+		wCheckMenuCursorBlinkCounter = 0u;
+		(void)PlaceTextItems(YOUR_PLAY_AREA_MENU_DATA_ADDR);
+		for (;;) {
+			DoFrame();
+			DrawYourOrOppPlayArea_RefreshArrows(0u);
+			TempListResult input = HandleCheckMenuInput_YourOrOppPlayArea();
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			DrawYourOrOppPlayArea_EraseArrows();
+			if (input.a == MENU_CANCEL)
+				return;
+			uint8_t selection = (uint8_t)(wCheckMenuCursorXPosition +
+				(uint8_t)(wCheckMenuCursorYPosition << 1));
+			switch (selection) {
+			case 0u:
+				OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea();
+				break;
+			case 1u:
+				(void)OpenYourOrOppPlayAreaScreen_TurnHolderHand();
+				break;
+			case 2u:
+				OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile(0u);
+				break;
+			default:
+				break;
+			}
+			turn = hWhoseTurn;
+			break;
+		}
+	}
+}
+/* <<< factory DuelCheckMenu_YourPlayArea */
+
+/* >>> factory OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea */
+void OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea(void)
+{
+	uint8_t saved_hWhoseTurn = hWhoseTurn;
+	hWhoseTurn = saved_hWhoseTurn;
+}
+/* <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea */
+
+/* >>> factory OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea */
+void OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea(void)
+{
+	hWhoseTurn = 0xC3u;
+}
+/* <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea */
+
+/* >>> factory DuelCheckMenu_OppPlayArea */
+void DuelCheckMenu_OppPlayArea(void)
+{
+	ResetCheckMenuCursorPositionAndBlink();
+	PkmnPowerCountResult clairvoyance = IsClairvoyanceActive();
+	wce5e = (clairvoyance.f & 0x10u) != 0u ? 0u : 0x80u;
+	for (;;) {
+		uint8_t turn = hWhoseTurn;
+		uint8_t other_turn = (turn == PLAYER_TURN) ? OPPONENT_TURN : PLAYER_TURN;
+		DrawYourOrOppPlayAreaScreen((uint16_t)(((uint16_t)other_turn << 8) | turn));
+		uint8_t position = (uint8_t)((uint8_t)(wCheckMenuCursorYPosition << 1) +
+			wCheckMenuCursorXPosition + 3u);
+		wYourOrOppPlayAreaLastCursorPosition = position;
+		DrawYourOrOppPlayArea_DrawArrows(position, 0xF8u);
+		(void)DrawWideTextBox();
+		wCheckMenuCursorBlinkCounter = 0u;
+		clairvoyance = IsClairvoyanceActive();
+		(void)PlaceTextItems((clairvoyance.f & 0x10u) != 0u ?
+			OPP_PLAY_AREA_MENU_DATA_CLAIRVOYANCE_ADDR : OPP_PLAY_AREA_MENU_DATA_ADDR);
+		for (;;) {
+			DoFrame();
+			DrawYourOrOppPlayArea_RefreshArrows(1u);
+			TempListResult input = HandleCheckMenuInput_YourOrOppPlayArea();
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			DrawYourOrOppPlayArea_EraseArrows();
+			if (input.a == MENU_CANCEL)
+				return;
+			uint8_t selection = (uint8_t)(wCheckMenuCursorXPosition +
+				(uint8_t)(wCheckMenuCursorYPosition << 1));
+			switch (selection) {
+			case 0u:
+				OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea();
+				break;
+			case 1u:
+				OpenYourOrOppPlayAreaScreen_NonTurnHolderHand();
+				break;
+			case 2u:
+				OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile(0u);
+				break;
+			default:
+				break;
+			}
+			break;
+		}
+	}
+}
+/* <<< factory DuelCheckMenu_OppPlayArea */

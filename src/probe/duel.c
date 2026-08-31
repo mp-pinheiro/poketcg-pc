@@ -1025,6 +1025,54 @@ static void adapt__HandlePeekSelection(ProbeState *s)
 }
 /* <<< factory _HandlePeekSelection */
 
+/* >>> factory _OpenDuelCheckMenu */
+static void adapt__OpenDuelCheckMenu(ProbeState *s)
+{
+	(void)s;
+	_OpenDuelCheckMenu();
+}
+/* <<< factory _OpenDuelCheckMenu */
+
+/* >>> factory DuelCheckMenu_InPlayArea */
+static void adapt_DuelCheckMenu_InPlayArea(ProbeState *s)
+{
+	(void)s;
+	DuelCheckMenu_InPlayArea();
+}
+/* <<< factory DuelCheckMenu_InPlayArea */
+
+/* >>> factory DuelCheckMenu_YourPlayArea */
+static void adapt_DuelCheckMenu_YourPlayArea(ProbeState *s)
+{
+	(void)s;
+	DuelCheckMenu_YourPlayArea();
+}
+/* <<< factory DuelCheckMenu_YourPlayArea */
+
+/* >>> factory OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea */
+static void adapt_OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea(ProbeState *s)
+{
+	(void)s;
+	OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea();
+}
+/* <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea */
+
+/* >>> factory OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea */
+static void adapt_OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea(ProbeState *s)
+{
+	(void)s;
+	OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea();
+}
+/* <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea */
+
+/* >>> factory DuelCheckMenu_OppPlayArea */
+static void adapt_DuelCheckMenu_OppPlayArea(ProbeState *s)
+{
+	(void)s;
+	DuelCheckMenu_OppPlayArea();
+}
+/* <<< factory DuelCheckMenu_OppPlayArea */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "Func_82b6", adapt_Func_82b6 },
 	{ "CopyPlayerName", adapt_CopyPlayerName },
@@ -1149,5 +1197,11 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "DuelCheckMenu_Glossary", adapt_DuelCheckMenu_Glossary },
 	{ "OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile", adapt_OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile },
 	{ "_HandlePeekSelection", adapt__HandlePeekSelection },
+	{ "_OpenDuelCheckMenu", adapt__OpenDuelCheckMenu },
+	{ "DuelCheckMenu_InPlayArea", adapt_DuelCheckMenu_InPlayArea },
+	{ "DuelCheckMenu_YourPlayArea", adapt_DuelCheckMenu_YourPlayArea },
+	{ "OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea", adapt_OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea },
+	{ "OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea", adapt_OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea },
+	{ "DuelCheckMenu_OppPlayArea", adapt_DuelCheckMenu_OppPlayArea },
 	{ NULL, NULL },
 };

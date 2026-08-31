@@ -1,0 +1,9 @@
+{
+  "fn": "DuelCheckMenu_YourPlayArea",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DuelCheckMenu_YourPlayArea\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"50108\": \"ff\", \"51899\": \"80\", \"52830\": \"0000\", \"65344\": \"80\", \"65408\": \"02\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DuelCheckMenu_YourPlayArea\", \"mismatches\": {\"bus\": {\"address\": 52830, \"reference\": \"ffff8000008002c2\", \"native\": \"ffff8080008002c2\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[49852, 1], [50108, 1], [51899, 1], [52830, 2], [65344, 1], [65408, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"DuelCheckMenu_YourPlayArea\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"50108\": \"ff\", \"51899\": \"80\", \"52830\": \"0000\", \"65344\": \"80\", \"65408\": \"02\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
