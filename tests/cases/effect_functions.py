@@ -7817,6 +7817,24 @@ CONTRACT["ScoopUp_PlayerSelection"] = {"compare": (), "preserve": ()}
 CASES["ScoopUp_PlayerSelection"] = [dict(POISON, read={0xFFA0: 1, 0xFFA1: 1}, expect={0xFFA0: b"\x00", 0xFFA1: b"\x00"})]
 # <<< factory ScoopUp_PlayerSelection
 
+# >>> factory HypnoDarkMind_PlayerSelectEffect
+CONTRACT["HypnoDarkMind_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CASES["HypnoDarkMind_PlayerSelectEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x01"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\xFF"}},
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x01", 0xC3EF: b"\x02", 0xC3BB: b"\x00\x01", 0xC3C8: b"\x20\x20", 0xC480: b"\x08\x09", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3EF: b"\x01"}, read={0xFFA0: 1}, expect={0xFFA0: b"\xFF"}),
+]
+# <<< factory HypnoDarkMind_PlayerSelectEffect
+
+# >>> factory Spark_PlayerSelectEffect
+CONTRACT["Spark_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CASES["Spark_PlayerSelectEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x01"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\xFF"}},
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x01", 0xC3EF: b"\x02", 0xC3BB: b"\x00\x01", 0xC3C8: b"\x20\x20", 0xC480: b"\x08\x09", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3EF: b"\x01"}, read={0xFFA0: 1}, expect={0xFFA0: b"\xFF"}),
+]
+# <<< factory Spark_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10992,3 +11010,9 @@ MUTATIONS["ScoopUp_PlayerSelection"] = {"source_symbol": "ScoopUp_PlayerSelectio
 for _record in SCHEMA2_CASES["ScoopUp_PlayerSelection"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x237F, "bank": 14}
 # <<< factory-completion ScoopUp_PlayerSelection
+# >>> factory-mutation HypnoDarkMind_PlayerSelectEffect
+MUTATIONS["HypnoDarkMind_PlayerSelectEffect"] = {"source_symbol": "HypnoDarkMind_PlayerSelectEffect", "before": "void HypnoDarkMind_PlayerSelectEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xffu;", "after": "void HypnoDarkMind_PlayerSelectEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xfeu;", "case_ids": ["HypnoDarkMind_PlayerSelectEffect-0", "HypnoDarkMind_PlayerSelectEffect-2"]}
+# <<< factory-mutation HypnoDarkMind_PlayerSelectEffect
+# >>> factory-mutation Spark_PlayerSelectEffect
+MUTATIONS["Spark_PlayerSelectEffect"] = {"source_symbol": "Spark_PlayerSelectEffect", "before": "void Spark_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0xffu;", "after": "void Spark_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0xfeu;", "case_ids": ["Spark_PlayerSelectEffect-0", "Spark_PlayerSelectEffect-2"]}
+# <<< factory-mutation Spark_PlayerSelectEffect

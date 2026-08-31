@@ -11539,3 +11539,37 @@ void GengarDarkMind_PlayerSelectEffect(void)
 /* >>> factory ScoopUp_PlayerSelection */
 void ScoopUp_PlayerSelection(void) { hTemp_ffa0 = 0u; hTempPlayAreaLocation_ffa1 = 0u; }
 /* <<< factory ScoopUp_PlayerSelection */
+
+/* >>> factory HypnoDarkMind_PlayerSelectEffect */
+void HypnoDarkMind_PlayerSelectEffect(void)
+{
+	DuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a < 2u) {
+		hTemp_ffa0 = 0xffu;
+		return;
+	}
+	(void)DrawWideTextBox_WaitForInput(ChoosePkmnInTheBenchToGiveDamageText);
+	SwapTurn();
+	(void)HasAlivePokemonInBench();
+	OpenPlayAreaScreenForSelection();
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	SwapTurn();
+}
+/* <<< factory HypnoDarkMind_PlayerSelectEffect */
+
+/* >>> factory Spark_PlayerSelectEffect */
+void Spark_PlayerSelectEffect(void)
+{
+	hTemp_ffa0 = 0xffu;
+	DuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a < 2u)
+		return;
+	(void)DrawWideTextBox_WaitForInput(ChoosePkmnInTheBenchToGiveDamageText);
+	SwapTurn();
+	(void)HasAlivePokemonInBench();
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_BENCH_1;
+	OpenPlayAreaScreenForSelection();
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	SwapTurn();
+}
+/* <<< factory Spark_PlayerSelectEffect */

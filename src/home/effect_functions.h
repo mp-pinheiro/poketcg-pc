@@ -2223,6 +2223,12 @@ void GengarDarkMind_PlayerSelectEffect(void);
 /* >>> factory ScoopUp_PlayerSelection */
 void ScoopUp_PlayerSelection(void);
 /* <<< factory ScoopUp_PlayerSelection */
+/* >>> factory HypnoDarkMind_PlayerSelectEffect */
+void HypnoDarkMind_PlayerSelectEffect(void);
+/* <<< factory HypnoDarkMind_PlayerSelectEffect */
+/* >>> factory Spark_PlayerSelectEffect */
+void Spark_PlayerSelectEffect(void);
+/* <<< factory Spark_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -5463,6 +5463,22 @@ static void adapt_ScoopUp_PlayerSelection(ProbeState *s)
 }
 /* <<< factory ScoopUp_PlayerSelection */
 
+/* >>> factory HypnoDarkMind_PlayerSelectEffect */
+static void adapt_HypnoDarkMind_PlayerSelectEffect(ProbeState *s)
+{
+	(void)s;
+	HypnoDarkMind_PlayerSelectEffect();
+}
+/* <<< factory HypnoDarkMind_PlayerSelectEffect */
+
+/* >>> factory Spark_PlayerSelectEffect */
+static void adapt_Spark_PlayerSelectEffect(ProbeState *s)
+{
+	(void)s;
+	Spark_PlayerSelectEffect();
+}
+/* <<< factory Spark_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -6121,5 +6137,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Potion_PlayerSelection", adapt_Potion_PlayerSelection },
 	{ "GengarDarkMind_PlayerSelectEffect", adapt_GengarDarkMind_PlayerSelectEffect },
 	{ "ScoopUp_PlayerSelection", adapt_ScoopUp_PlayerSelection },
+	{ "HypnoDarkMind_PlayerSelectEffect", adapt_HypnoDarkMind_PlayerSelectEffect },
+	{ "Spark_PlayerSelectEffect", adapt_Spark_PlayerSelectEffect },
 	{ NULL, NULL },
 };
