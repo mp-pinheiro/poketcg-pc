@@ -44,7 +44,7 @@ int replay_save(const Replay *replay, const char *path)
 		return -1;
 	uint32_t count = (uint32_t)replay->count;
 	int ok = fwrite(replay_magic, 1, sizeof replay_magic, file) == sizeof replay_magic &&
-		fputc(1, file) != EOF && fwrite(&count, sizeof count, 1, file) == 1;
+		fputc(REPLAY_FORMAT_VERSION, file) != EOF && fwrite(&count, sizeof count, 1, file) == 1;
 	if (ok && count)
 		ok = fwrite(replay->frames, sizeof *replay->frames, count, file) == count;
 	if (fclose(file) != 0)
@@ -62,7 +62,8 @@ int replay_load(Replay *replay, const char *path)
 	uint32_t count;
 	int ok = fread(magic, 1, sizeof magic, file) == sizeof magic &&
 		fread(&version, 1, 1, file) == 1 && fread(&count, sizeof count, 1, file) == 1;
-	if (!ok || memcmp(magic, replay_magic, sizeof magic) != 0 || version != 1)
+	if (!ok || memcmp(magic, replay_magic, sizeof magic) != 0 ||
+	    version < 1 || version > REPLAY_FORMAT_VERSION)
 		ok = 0;
 	InputFrame *frames = NULL;
 	if (ok && count) {

@@ -11,6 +11,7 @@ typedef struct {
 	size_t count;
 	size_t capacity;
 } Replay;
+#define REPLAY_FORMAT_VERSION 2u
 typedef void (*ReplayStep)(void *context, InputFrame frame);
 
 int replay_playback(const Replay *replay, ReplayStep step, void *context);

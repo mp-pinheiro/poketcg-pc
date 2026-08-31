@@ -126,6 +126,7 @@ int runtime_run(Shell *shell, uint32_t frame_limit, RuntimeResult *result)
 		result->frame_limit = frame_limit;
 		result->frames = state.frames;
 		result->stopped_by_user = state.stopped_by_user;
+		memcpy(result->framebuffer, state.framebuffer, sizeof state.framebuffer);
 	}
 	pthread_cond_destroy(&state.condition);
 	pthread_mutex_destroy(&state.lock);

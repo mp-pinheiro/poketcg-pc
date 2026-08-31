@@ -150,7 +150,7 @@ else()
 	message(STATUS "SDL2 backend: compiled out (headers unavailable or unusable)")
 endif()
 
-set(POKETCG_SHELL_SOURCES src/main.c src/runtime.c src/shell.c)
+set(POKETCG_SHELL_SOURCES src/main.c src/persistence.c src/runtime.c src/shell.c src/state_dump.c)
 if(EXISTS "${CMAKE_SOURCE_DIR}/src/snapshot.c")
 	list(APPEND POKETCG_SHELL_SOURCES src/snapshot.c)
 endif()
