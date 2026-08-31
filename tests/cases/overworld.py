@@ -1027,6 +1027,35 @@ CASES["PauseMenu_Deck"] = [
 ]
 # <<< factory PauseMenu_Deck
 
+# >>> factory PauseMenu
+CONTRACT["PauseMenu"] = {"compare": (), "preserve": ()}
+CASES["PauseMenu"] = [
+    {
+        "keys": [0x00, 0x02],
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "wram": {0xD0B8: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+        "read": {0xD0B8: 1},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "keys": [0x00, 0x02],
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "wram": {0xD0B8: b"\x05", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+        "read": {0xD0B8: 1},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(POISON,
+         keys=[0x00, 0x02],
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         wram={0xD0B8: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+         read={0xD0B8: 1},
+         instruction_budget=20000000,
+         cycle_budget=80000000),
+]
+# <<< factory PauseMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1391,3 +1420,6 @@ for _record in SCHEMA2_CASES["SetScriptData"]:
 # >>> factory-mutation PauseMenu_Deck
 MUTATIONS["PauseMenu_Deck"] = {"source_symbol": "PauseMenu_Deck", "before": "void PauseMenu_Deck(void)\n{\n\thSCX = 0u;", "after": "void PauseMenu_Deck(void)\n{\n\thSCX = 1u;", "case_ids": ["PauseMenu_Deck-0", "PauseMenu_Deck-1"]}
 # <<< factory-mutation PauseMenu_Deck
+# >>> factory-mutation PauseMenu
+MUTATIONS["PauseMenu"] = {"source_symbol": "PauseMenu", "before": "void PauseMenu(void)\n{\n\tPauseSong();\n\tPlaySong(MUSIC_PAUSE_MENU);\n\tDisplayPauseMenu();\n\tfor (;;) {\n\t\t(void)SetOverworldNPCFlags((uint8_t)(1u << AUTO_CLOSE_TEXTBOX));\n\t\tHandleMenuInputResult input;\n\t\tdo {\n\t\t\tDoFrameIfLCDEnabled();\n\t\t\tinput = HandleMenuInput();\n\t\t} while ((input.f & 0x10u) == 0u);\n\t\twSelectedPauseMenuItem = input.e;", "after": "void PauseMenu(void)\n{\n\tPauseSong();\n\tPlaySong(MUSIC_PAUSE_MENU);\n\tDisplayPauseMenu();\n\tfor (;;) {\n\t\t(void)SetOverworldNPCFlags((uint8_t)(1u << AUTO_CLOSE_TEXTBOX));\n\t\tHandleMenuInputResult input;\n\t\tdo {\n\t\t\tDoFrameIfLCDEnabled();\n\t\t\tinput = HandleMenuInput();\n\t\t} while ((input.f & 0x10u) == 0u);\n\t\twSelectedPauseMenuItem = input.a;", "case_ids": ["PauseMenu-0", "PauseMenu-1", "PauseMenu-2"]}
+# <<< factory-mutation PauseMenu

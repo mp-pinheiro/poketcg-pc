@@ -650,6 +650,14 @@ static void adapt_PauseMenu_Deck(ProbeState *s)
 }
 /* <<< factory PauseMenu_Deck */
 
+/* >>> factory PauseMenu */
+static void adapt_PauseMenu(ProbeState *s)
+{
+	(void)s;
+	PauseMenu();
+}
+/* <<< factory PauseMenu */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -729,5 +737,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "EnterScript", adapt_EnterScript },
 	{ "SetScriptData", adapt_SetScriptData },
 	{ "PauseMenu_Deck", adapt_PauseMenu_Deck },
+	{ "PauseMenu", adapt_PauseMenu },
 	{ NULL, NULL },
 };

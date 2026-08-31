@@ -237,6 +237,15 @@
 #include "home/deck_selection.h"
 #include "home/credits_sequence_commands.h"
 #include "home/lcd.h"
+
+#include "home/overworld.h"
+#include "home/lcd_enable_frame.h"
+#include "home/menus.h"
+#include "home/sound.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define MUSIC_PAUSE_MENU 0x05u
+#define DISPLAY_PAUSE_MENU 0x4797u
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -1353,3 +1362,51 @@ void PauseMenu_Deck(void)
 	Set_OBJ_8x8();
 }
 /* <<< factory PauseMenu_Deck */
+
+/* >>> factory PauseMenu */
+void PauseMenu(void)
+{
+	PauseSong();
+	PlaySong(MUSIC_PAUSE_MENU);
+	DisplayPauseMenu();
+	for (;;) {
+		(void)SetOverworldNPCFlags((uint8_t)(1u << AUTO_CLOSE_TEXTBOX));
+		HandleMenuInputResult input;
+		do {
+			DoFrameIfLCDEnabled();
+			input = HandleMenuInput();
+		} while ((input.f & 0x10u) == 0u);
+		wSelectedPauseMenuItem = input.e;
+		if (hCurMenuItem != input.e || input.e == 0x05u) {
+			ResumeSong();
+			return;
+		}
+		Func_c2a3();
+		switch (wSelectedPauseMenuItem) {
+		case 0u:
+			PauseMenu_Status();
+			break;
+		case 1u:
+			PauseMenu_Diary();
+			break;
+		case 2u:
+			PauseMenu_Deck();
+			break;
+		case 3u:
+			PauseMenu_Card();
+			break;
+		case 4u:
+			PauseMenu_Config();
+			break;
+		case 5u:
+			PauseMenu_Exit();
+			break;
+		default:
+			PauseMenu_Exit();
+			break;
+		}
+		(void)ReturnToOverworldWithCallback(DISPLAY_PAUSE_MENU);
+		DisplayPauseMenu();
+	}
+}
+/* <<< factory PauseMenu */

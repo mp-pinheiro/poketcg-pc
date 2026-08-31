@@ -312,4 +312,7 @@ SetScriptDataResult SetScriptData(uint16_t hl);
 /* >>> factory PauseMenu_Deck */
 void PauseMenu_Deck(void);
 /* <<< factory PauseMenu_Deck */
+/* >>> factory PauseMenu */
+void PauseMenu(void);
+/* <<< factory PauseMenu */
 #endif /* POKETCG_HOME_OVERWORLD_H */
