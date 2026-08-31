@@ -1507,6 +1507,11 @@ void BankswitchROM(uint8_t bank);
 #include "home/menus.h"
 
 #define ChooseAPokemonToSwitchWithActivePokemonText 0x016au
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/menus.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11407,3 +11412,14 @@ Ram_SelectSwitchEffectResult Ram_SelectSwitchEffect(void)
 /* >>> factory GustOfWind_PlayerSelection */
 void GustOfWind_PlayerSelection(void) { hTemp_ffa0 = 0u; }
 /* <<< factory GustOfWind_PlayerSelection */
+
+/* >>> factory Teleport_PlayerSelectEffect */
+void Teleport_PlayerSelectEffect(void)
+{
+	(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);
+	(void)HasAlivePokemonInBench();
+	wPlayAreaSelectAction = 1u;
+	OpenPlayAreaScreenForSelection();
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+}
+/* <<< factory Teleport_PlayerSelectEffect */

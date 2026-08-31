@@ -5398,6 +5398,14 @@ static void adapt_GustOfWind_PlayerSelection(ProbeState *s)
 }
 /* <<< factory GustOfWind_PlayerSelection */
 
+/* >>> factory Teleport_PlayerSelectEffect */
+static void adapt_Teleport_PlayerSelectEffect(ProbeState *s)
+{
+	(void)s;
+	Teleport_PlayerSelectEffect();
+}
+/* <<< factory Teleport_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -6048,5 +6056,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PidgeyWhirlwind_SelectEffect", adapt_PidgeyWhirlwind_SelectEffect },
 	{ "Ram_SelectSwitchEffect", adapt_Ram_SelectSwitchEffect },
 	{ "GustOfWind_PlayerSelection", adapt_GustOfWind_PlayerSelection },
+	{ "Teleport_PlayerSelectEffect", adapt_Teleport_PlayerSelectEffect },
 	{ NULL, NULL },
 };

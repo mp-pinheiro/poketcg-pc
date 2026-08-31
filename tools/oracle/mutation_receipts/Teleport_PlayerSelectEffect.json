@@ -1,0 +1,9 @@
+{
+  "fn": "Teleport_PlayerSelectEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Teleport_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"0000\", \"49864\": \"0101\", \"49903\": \"02\", \"51899\": \"80\", \"65344\": \"80\", \"65431\": \"c2\", \"65437\": \"01\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Teleport_PlayerSelectEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"8080c20101\", \"native\": \"8080c20102\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[49851, 2], [49864, 2], [49903, 1], [51899, 1], [65344, 1], [65431, 1], [65437, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"Teleport_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"0000\", \"49864\": \"0101\", \"49903\": \"02\", \"51899\": \"80\", \"65344\": \"80\", \"65431\": \"c2\", \"65437\": \"01\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

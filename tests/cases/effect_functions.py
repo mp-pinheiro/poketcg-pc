@@ -7754,6 +7754,14 @@ CONTRACT["GustOfWind_PlayerSelection"] = {"compare": (), "preserve": ()}
 CASES["GustOfWind_PlayerSelection"] = [dict(POISON, wram={0xFF97: b"\xC2", 0xFFA0: b"\x00"}, read={0xFFA0: 1}, expect={0xFFA0: b"\x00"})]
 # <<< factory GustOfWind_PlayerSelection
 
+# >>> factory Teleport_PlayerSelectEffect
+CONTRACT["Teleport_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CASES["Teleport_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x01", 0xC2EF: b"\x02", 0xC2BB: b"\x00\x00", 0xC2C8: b"\x01\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9D: b"\x01", 0xC2EF: b"\x02", 0xC2BB: b"\x00\x00", 0xC2C8: b"\x01\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFFA0: 1}, expect={0xFFA0: b"\x01"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory Teleport_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10901,3 +10909,6 @@ MUTATIONS["GustOfWind_PlayerSelection"] = {"source_symbol": "GustOfWind_PlayerSe
 for _record in SCHEMA2_CASES["GustOfWind_PlayerSelection"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x237F, "bank": 14}
 # <<< factory-completion GustOfWind_PlayerSelection
+# >>> factory-mutation Teleport_PlayerSelectEffect
+MUTATIONS["Teleport_PlayerSelectEffect"] = {"source_symbol": "Teleport_PlayerSelectEffect", "before": "void Teleport_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\t(void)HasAlivePokemonInBench();\n\twPlayAreaSelectAction = 1u;\n\tOpenPlayAreaScreenForSelection();\n\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;\n}", "after": "void Teleport_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\t(void)HasAlivePokemonInBench();\n\twPlayAreaSelectAction = 1u;\n\tOpenPlayAreaScreenForSelection();\n\thTemp_ffa0 = (uint8_t)(hTempPlayAreaLocation_ff9d + 1u);\n}", "case_ids": ["Teleport_PlayerSelectEffect-0"]}
+# <<< factory-mutation Teleport_PlayerSelectEffect

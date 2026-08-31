@@ -2198,6 +2198,9 @@ Ram_SelectSwitchEffectResult Ram_SelectSwitchEffect(void);
 /* >>> factory GustOfWind_PlayerSelection */
 void GustOfWind_PlayerSelection(void);
 /* <<< factory GustOfWind_PlayerSelection */
+/* >>> factory Teleport_PlayerSelectEffect */
+void Teleport_PlayerSelectEffect(void);
+/* <<< factory Teleport_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
