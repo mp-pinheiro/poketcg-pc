@@ -5270,6 +5270,32 @@ static void adapt_PokemonTrader_TradeCardsEffect(ProbeState *s)
 }
 /* <<< factory PokemonTrader_TradeCardsEffect */
 
+/* >>> factory HandleEvolvedCardSelection */
+static void adapt_HandleEvolvedCardSelection(ProbeState *s)
+{
+	HandleEvolvedCardSelectionResult r = HandleEvolvedCardSelection();
+	s->f = r.f;
+}
+/* <<< factory HandleEvolvedCardSelection */
+
+/* >>> factory DuelistSelectForcedSwitch */
+static void adapt_DuelistSelectForcedSwitch(ProbeState *s)
+{
+	DuelistSelectForcedSwitchResult result = DuelistSelectForcedSwitch(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory DuelistSelectForcedSwitch */
+
+/* >>> factory HandlePokemonAndEnergySelectionScreen */
+static void adapt_HandlePokemonAndEnergySelectionScreen(ProbeState *s)
+{
+	HandlePokemonAndEnergySelectionScreenResult result = HandlePokemonAndEnergySelectionScreen();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory HandlePokemonAndEnergySelectionScreen */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5905,5 +5931,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Quickfreeze_Paralysis50PercentEffect", adapt_Quickfreeze_Paralysis50PercentEffect },
 	{ "PokeBall_PlayerSelection", adapt_PokeBall_PlayerSelection },
 	{ "PokemonTrader_TradeCardsEffect", adapt_PokemonTrader_TradeCardsEffect },
+	{ "HandleEvolvedCardSelection", adapt_HandleEvolvedCardSelection },
+	{ "DuelistSelectForcedSwitch", adapt_DuelistSelectForcedSwitch },
+	{ "HandlePokemonAndEnergySelectionScreen", adapt_HandlePokemonAndEnergySelectionScreen },
 	{ NULL, NULL },
 };

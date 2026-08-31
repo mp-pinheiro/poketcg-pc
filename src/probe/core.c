@@ -2822,6 +2822,20 @@ static void adapt_HandleSpecialDuelMainSceneHotkeys(ProbeState *s)
 }
 /* <<< factory HandleSpecialDuelMainSceneHotkeys */
 
+/* >>> factory ReplaceKnockedOutPokemon */
+static void adapt_ReplaceKnockedOutPokemon(ProbeState *s)
+{
+	ReplaceKnockedOutPokemonResult r = ReplaceKnockedOutPokemon(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory ReplaceKnockedOutPokemon */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3160,5 +3174,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayPlayAreaScreen", adapt_DisplayPlayAreaScreen },
 	{ "SelectingBenchPokemonMenu", adapt_SelectingBenchPokemonMenu },
 	{ "HandleSpecialDuelMainSceneHotkeys", adapt_HandleSpecialDuelMainSceneHotkeys },
+	{ "ReplaceKnockedOutPokemon", adapt_ReplaceKnockedOutPokemon },
 	{ NULL, NULL },
 };

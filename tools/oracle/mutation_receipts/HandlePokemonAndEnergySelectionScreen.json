@@ -1,0 +1,9 @@
+{
+  "fn": "HandlePokemonAndEnergySelectionScreen",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandlePokemonAndEnergySelectionScreen\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"1010\", \"49851\": \"00\", \"49864\": \"28\", \"49903\": \"01\", \"50176\": \"0801\", \"51899\": \"80\", \"65431\": \"c201\", \"65437\": \"00\", \"65440\": \"0001\", \"65457\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandlePokemonAndEnergySelectionScreen\", \"mismatches\": {\"bus\": {\"address\": 65441, \"reference\": \"c20100000100\", \"native\": \"c20100000200\", \"reference_size\": 14, \"native_size\": 14, \"spans\": [[49664, 2], [49851, 1], [49864, 1], [49903, 1], [50176, 2], [51899, 1], [65431, 2], [65437, 1], [65440, 2], [65457, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandlePokemonAndEnergySelectionScreen\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"1010\", \"49851\": \"00\", \"49864\": \"28\", \"49903\": \"01\", \"50176\": \"0801\", \"51899\": \"80\", \"65431\": \"c201\", \"65437\": \"00\", \"65440\": \"0001\", \"65457\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "DuelistSelectForcedSwitch",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DuelistSelectForcedSwitch\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49905\": \"00\", \"50107\": \"00\", \"50161\": \"80\", \"50176\": \"08\", \"50432\": \"08\", \"52238\": \"01\", \"52240\": \"000008\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DuelistSelectForcedSwitch\", \"mismatches\": {\"bus\": {\"address\": 65437, \"reference\": \"000008c200\", \"native\": \"000008c201\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[49851, 1], [49905, 1], [50107, 1], [50161, 1], [50176, 1], [50432, 1], [52238, 1], [52240, 3], [65431, 1], [65437, 1]]}}}\n",
+  "restored": "{\"fn\": \"DuelistSelectForcedSwitch\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49905\": \"00\", \"50107\": \"00\", \"50161\": \"80\", \"50176\": \"08\", \"50432\": \"08\", \"52238\": \"01\", \"52240\": \"000008\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

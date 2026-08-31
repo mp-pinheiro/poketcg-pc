@@ -1591,6 +1591,21 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/core.h"
 
 #include "generated/hram.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/ai.h"
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "home/serial.h"
+#include "home/script.h"
+#define PRACTICEDUEL_PLAY_STARYU_FROM_BENCH 0x09u
+#define PRACTICEDUEL_REPLACE_KNOCKED_OUT_POKEMON 0x0Au
+#define DuelistIsSelectingPokemonToPlaceInArenaText 0x0110u
+#define DuelistPlacedACardText 0x0044u
+#define SelectPokemonToPlaceInTheArenaText 0x010Fu
+#define ThereAreNoPokemonInPlayAreaText 0x0080u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -9097,3 +9112,61 @@ uint8_t HandleSpecialDuelMainSceneHotkeys(void)
 	return 0xA0u;
 }
 /* <<< factory HandleSpecialDuelMainSceneHotkeys */
+
+/* >>> factory ReplaceKnockedOutPokemon */
+ReplaceKnockedOutPokemonResult ReplaceKnockedOutPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	DuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	if (hp.a != 0u)
+		return (ReplaceKnockedOutPokemonResult){hp.a, hp.a == 0u ? FLAG_Z : 0u, b, c, d, e, hp.hl};
+
+	ClearAllStatusConditions();
+	HasAlivePokemonInPlayAreaResult bench = HasAlivePokemonInBench();
+	if ((bench.f & FLAG_C) != 0u) {
+		DrawDuelMainScene();
+		(void)DrawWideTextBox_WaitForInput(ThereAreNoPokemonInPlayAreaText);
+		ExchangeRNGResult rng = ExchangeRNG(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+		return (ReplaceKnockedOutPokemonResult){rng.a, (uint8_t)(rng.f | FLAG_C), rng.b, rng.c, (uint8_t)(rng.de >> 8), (uint8_t)rng.de, rng.hl};
+	}
+
+	DuelistVarResult type = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (type.a == DUELIST_TYPE_PLAYER) {
+		DrawDuelMainScene();
+		(void)DrawWideTextBox_WaitForInput(SelectPokemonToPlaceInTheArenaText);
+		wPlayAreaSelectAction = 1u;
+		(void)DoPracticeDuelAction(PRACTICEDUEL_PLAY_STARYU_FROM_BENCH);
+		OpenPlayAreaScreenForSelection();
+		a = hTempPlayAreaLocation_ff9d;
+		SerialSend8Bytes(a, f, b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+	}
+	else if (type.a == DUELIST_TYPE_LINK_OPP) {
+		DrawDuelMainScene();
+		(void)DrawWideTextBox_PrintText(DuelistIsSelectingPokemonToPlaceInArenaText);
+		SerialRecv8BytesResult recv = SerialRecv8Bytes();
+		hTempPlayAreaLocation_ff9d = recv.a;
+	}
+	else {
+		(void)AIDoAction_KOSwitch();
+		hTempPlayAreaLocation_ff9d = hTemp_ffa0;
+	}
+
+	for (;;) {
+		FinishQueuedAnimations();
+		uint8_t action_flags = DoPracticeDuelAction(PRACTICEDUEL_REPLACE_KNOCKED_OUT_POKEMON);
+		if ((action_flags & FLAG_C) == 0u)
+			break;
+		DrawDuelMainScene();
+		(void)DrawWideTextBox_WaitForInput(SelectPokemonToPlaceInTheArenaText);
+		(void)DoPracticeDuelAction(PRACTICEDUEL_PLAY_STARYU_FROM_BENCH);
+		OpenPlayAreaScreenForSelection();
+		a = hTempPlayAreaLocation_ff9d;
+		SerialSend8Bytes(a, f, b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+	}
+	FinishQueuedAnimations();
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	WaitResult detail = DisplayCardDetailScreen(arena.a, DuelistPlacedACardText);
+	(void)detail;
+	ExchangeRNGResult rng = ExchangeRNG(b, c, (uint16_t)(((uint16_t)d << 8) | e), DuelistPlacedACardText);
+	return (ReplaceKnockedOutPokemonResult){rng.a, (uint8_t)(rng.a == 0u ? FLAG_Z : 0u), rng.b, rng.c, (uint8_t)(rng.de >> 8), (uint8_t)rng.de, rng.hl};
+}
+/* <<< factory ReplaceKnockedOutPokemon */

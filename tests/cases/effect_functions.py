@@ -2987,6 +2987,21 @@ CARD0_LOCATION = 0xC200
 CARD1_LOCATION = 0xC201
 NOT_IN_DECK = 0xC2BA
 DECK_TOP = 0xC2B8
+
+hCurMenuItem = 0xFFB1
+hTempCardIndex_ff98 = 0xFF98
+hTempPlayAreaLocation_ff9d = 0xFF9D
+hTempPlayAreaLocation_ffa1 = 0xFFA1
+hTemp_ffa0 = 0xFFA0
+wTotalAttachedEnergies = 0xCC23
+hWhoseTurn = 0xFF97
+wDuelistVars = 0xC200
+wPlayerDeck = 0xC400
+wPlayerArenaCard = 0xC2BB
+wPlayerArenaCardHP = 0xC2C8
+wDuelistPokemonCount = 0xC2EF
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+FRAME_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7597,6 +7612,32 @@ CASES["PokemonTrader_TradeCardsEffect"] = [
 ]
 # <<< factory PokemonTrader_TradeCardsEffect
 
+# >>> factory HandleEvolvedCardSelection
+CONTRACT["HandleEvolvedCardSelection"] = {"compare": ("f",), "preserve": ()}
+CASES["HandleEvolvedCardSelection"] = [
+    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "keys": [0x00, 0x01], "read": {0xFF9D: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x02", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "keys": [0x00, 0x01], "read": {0xFF9D: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, keys=[0x00, 0x01], read={0xFF9D: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory HandleEvolvedCardSelection
+
+# >>> factory DuelistSelectForcedSwitch
+CONTRACT["DuelistSelectForcedSwitch"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["DuelistSelectForcedSwitch"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xC3F1: b"\x80", 0xCC0E: b"\x01", 0xCC10: b"\x00\x00\x08", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC400: b"\x08", 0xC500: b"\x08"}, "read": {0xFF9D: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xC3F1: b"\x80", 0xCC0E: b"\x01", 0xCC10: b"\x00\x00\x08", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC400: b"\x08", 0xC500: b"\x08"}, read={0xFF9D: 1}),
+    {"wram": {0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xC3F1: b"\x01", 0xCC09: b"\x01", 0xCB75: b"\x00", 0xCBA2: b"\x04", 0xCBA3: b"\x00", 0xCBA5: b"\x00\x00\x00\x01", 0xCB7E: b"\x00", 0xCB7F: b"\x00", 0xCB80: b"\x00"}, "read": {0xFF9D: 1}}
+]
+# <<< factory DuelistSelectForcedSwitch
+
+# >>> factory HandlePokemonAndEnergySelectionScreen
+CONTRACT["HandlePokemonAndEnergySelectionScreen"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandlePokemonAndEnergySelectionScreen"] = [
+    {"keys": [0x00, 0x01], "wram": {hWhoseTurn: b"\xC2", wDuelistVars: b"\x10\x10", wDuelistPokemonCount: b"\x01", wPlayerArenaCard: b"\x00", wPlayerArenaCardHP: b"\x28", wPlayerDeck: b"\x08\x01", hCurMenuItem: b"\x00", hTempCardIndex_ff98: b"\x00", hTempPlayAreaLocation_ff9d: b"\x00", hTempPlayAreaLocation_ffa1: b"\x00", hTemp_ffa0: b"\x00", 0xCABB: b"\x00"}, "setup": FRAME_SETUP, "read": {hTemp_ffa0: 1, hTempPlayAreaLocation_ffa1: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={hWhoseTurn: b"\xC2", wDuelistVars: b"\x10\x10", wDuelistPokemonCount: b"\x01", wPlayerArenaCard: b"\x00", wPlayerArenaCardHP: b"\x28", wPlayerDeck: b"\x08\x01", hCurMenuItem: b"\x00", hTempCardIndex_ff98: b"\x00", hTempPlayAreaLocation_ff9d: b"\x00", hTempPlayAreaLocation_ffa1: b"\x00", hTemp_ffa0: b"\x00", 0xCABB: b"\x00"}, setup=FRAME_SETUP, read={hTemp_ffa0: 1, hTempPlayAreaLocation_ffa1: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory HandlePokemonAndEnergySelectionScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10675,3 +10716,12 @@ MUTATIONS["PokemonTrader_TradeCardsEffect"] = {"source_symbol": "PokemonTrader_T
 for _record in SCHEMA2_CASES["PokemonTrader_TradeCardsEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x4F2D, "bank": 1}
 # <<< factory-completion PokemonTrader_TradeCardsEffect
+# >>> factory-mutation HandleEvolvedCardSelection
+MUTATIONS["HandleEvolvedCardSelection"] = {"source_symbol": "HandleEvolvedCardSelection", "before": "\t\t\treturn (HandleEvolvedCardSelectionResult){0x00u};", "after": "\t\t\treturn (HandleEvolvedCardSelectionResult){0x10u};", "case_ids": ["HandleEvolvedCardSelection-0"]}
+# <<< factory-mutation HandleEvolvedCardSelection
+# >>> factory-mutation DuelistSelectForcedSwitch
+MUTATIONS["DuelistSelectForcedSwitch"] = {"source_symbol": "DuelistSelectForcedSwitch", "before": "\tuint8_t selected = AIDoAction_ForcedSwitch();\n\thTempPlayAreaLocation_ff9d = selected;", "after": "\tuint8_t selected = AIDoAction_ForcedSwitch();\n\thTempPlayAreaLocation_ff9d = (uint8_t)(selected + 1u);", "case_ids": ["DuelistSelectForcedSwitch-0", "DuelistSelectForcedSwitch-1"]}
+# <<< factory-mutation DuelistSelectForcedSwitch
+# >>> factory-mutation HandlePokemonAndEnergySelectionScreen
+MUTATIONS["HandlePokemonAndEnergySelectionScreen"] = {"source_symbol": "HandlePokemonAndEnergySelectionScreen", "before": "\t\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;\n\t\thTempPlayAreaLocation_ffa1 = hTempCardIndex_ff98;", "after": "\t\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;\n\t\thTempPlayAreaLocation_ffa1 = (uint8_t)(hTempCardIndex_ff98 + 1u);", "case_ids": ["HandlePokemonAndEnergySelectionScreen-0"]}
+# <<< factory-mutation HandlePokemonAndEnergySelectionScreen

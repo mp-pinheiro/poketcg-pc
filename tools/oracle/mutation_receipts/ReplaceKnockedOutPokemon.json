@@ -1,0 +1,9 @@
+{
+  "fn": "ReplaceKnockedOutPokemon",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ReplaceKnockedOutPokemon\", \"registers\": {\"a\": 32, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49864, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49864\": \"20\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ReplaceKnockedOutPokemon\", \"mismatches\": {\"f\": [0, 128]}}\n",
+  "restored": "{\"fn\": \"ReplaceKnockedOutPokemon\", \"registers\": {\"a\": 32, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49864, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49864\": \"20\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

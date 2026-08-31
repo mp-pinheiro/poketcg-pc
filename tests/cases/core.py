@@ -2170,6 +2170,10 @@ START_DUEL_WRAM = {
     0xCC18: b"\x06", 0xCC1A: b"\x01",
 }
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wPlayAreaSelectAction = 0xCBD4
+hTempPlayAreaLocation_ff9d = 0xFF9D
+hTemp_ffa0 = 0xFFA0
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -4805,6 +4809,14 @@ CASES["HandleSpecialDuelMainSceneHotkeys"] = [
 ]
 # <<< factory HandleSpecialDuelMainSceneHotkeys
 
+# >>> factory ReplaceKnockedOutPokemon
+CONTRACT["ReplaceKnockedOutPokemon"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["ReplaceKnockedOutPokemon"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2C8: b"\x20"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2C8: b"\x20"}),
+]
+# <<< factory ReplaceKnockedOutPokemon
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6629,3 +6641,6 @@ MUTATIONS["SelectingBenchPokemonMenu"] = {"source_symbol": "SelectingBenchPokemo
 # >>> factory-mutation HandleSpecialDuelMainSceneHotkeys
 MUTATIONS["HandleSpecialDuelMainSceneHotkeys"] = {"source_symbol": "HandleSpecialDuelMainSceneHotkeys", "before": "return 0xA0u;", "after": "return 0x90u;", "case_ids": ["HandleSpecialDuelMainSceneHotkeys-0", "HandleSpecialDuelMainSceneHotkeys-1"]}
 # <<< factory-mutation HandleSpecialDuelMainSceneHotkeys
+# >>> factory-mutation ReplaceKnockedOutPokemon
+MUTATIONS["ReplaceKnockedOutPokemon"] = {"source_symbol": "ReplaceKnockedOutPokemon", "before": "ReplaceKnockedOutPokemonResult ReplaceKnockedOutPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tDuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tif (hp.a != 0u)\n\t\treturn (ReplaceKnockedOutPokemonResult){hp.a, hp.a == 0u ? FLAG_Z : 0u, b, c, d, e, hp.hl};", "after": "ReplaceKnockedOutPokemonResult ReplaceKnockedOutPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tDuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tif (hp.a != 0u)\n\t\treturn (ReplaceKnockedOutPokemonResult){hp.a, hp.a == 0u ? 0u : FLAG_Z, b, c, d, e, hp.hl};", "case_ids": ["ReplaceKnockedOutPokemon-0"]}
+# <<< factory-mutation ReplaceKnockedOutPokemon

@@ -1462,6 +1462,25 @@ void BankswitchROM(uint8_t bank);
 #include "home/effect_functions.h"
 #include "generated/hram.h"
 #define PokemonWasReturnedToDeckText 0x016eu
+
+#define FLAG_C 0x10u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/ai.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/serial.h"
+#define OPPACTION_FORCE_SWITCH_ACTIVE 0x0eu
+#define SelectPkmnOnBenchToSwitchWithActiveText 0x010eu
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#define NoEnergyCardsText 0x002du
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11159,3 +11178,89 @@ ShuffleCardsInDeckResult PokemonTrader_TradeCardsEffect(uint8_t b, uint8_t c, ui
 	return (ShuffleCardsInDeckResult){out_a, b, c, d, e, out_f, out_hl};
 }
 /* <<< factory PokemonTrader_TradeCardsEffect */
+
+/* >>> factory HandleEvolvedCardSelection */
+HandleEvolvedCardSelectionResult HandleEvolvedCardSelection(void)
+{
+	(void)HasAlivePokemonInPlayArea();
+	for (;;) {
+		OpenPlayAreaScreenForSelection();
+		uint8_t location = hTempPlayAreaLocation_ff9d;
+		DuelistVarResult stage = GetTurnDuelistVariable(
+			(uint8_t)(DUELVARS_ARENA_CARD_STAGE + location));
+		if (stage.a != 0u)
+			return (HandleEvolvedCardSelectionResult){0x00u};
+	}
+}
+/* <<< factory HandleEvolvedCardSelection */
+
+/* >>> factory DuelistSelectForcedSwitch */
+DuelistSelectForcedSwitchResult DuelistSelectForcedSwitch(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)f;
+	(void)c;
+	(void)hl;
+	DuelistVarResult duelist = GetNonTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (duelist.a == DUELIST_TYPE_LINK_OPP) {
+		(void)SetOppAction_SerialSendDuelData(OPPACTION_FORCE_SWITCH_ACTIVE, (uint16_t)((uint16_t)d << 8 | e));
+		SerialByteResult received;
+		do {
+			received = SerialRecvByte();
+		} while ((received.f & 0x10u) != 0u);
+		hTempPlayAreaLocation_ff9d = received.a;
+		return (DuelistSelectForcedSwitchResult){received.a, received.f};
+	}
+	if (duelist.a == DUELIST_TYPE_PLAYER) {
+		(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);
+		SwapTurn();
+		(void)HasAlivePokemonInBench();
+		wPlayAreaSelectAction = 1u;
+		OpenPlayAreaScreenForSelection();
+		uint8_t selected = hTempPlayAreaLocation_ff9d;
+		SwapTurn();
+		return (DuelistSelectForcedSwitchResult){selected, selected == 0u ? 0x80u : 0x00u};
+	}
+	SwapTurn();
+	uint8_t selected = AIDoAction_ForcedSwitch();
+	hTempPlayAreaLocation_ff9d = selected;
+	SwapTurn();
+	AttackCopyResult copied = CopyAttackDataAndDamage_FromCardID(wPlayerAttackingCardID, wPlayerAttackingCardIndex, wPlayerAttackingAttackIndex);
+	DuelRoutineResult updated = UpdateArenaCardIDsAndClearTwoTurnDuelVars(copied.a, copied.f, b, copied.c, (uint8_t)(copied.de >> 8), (uint8_t)copied.de, copied.hl);
+	return (DuelistSelectForcedSwitchResult){updated.a, updated.f};
+}
+/* <<< factory DuelistSelectForcedSwitch */
+
+/* >>> factory HandlePokemonAndEnergySelectionScreen */
+HandlePokemonAndEnergySelectionScreenResult HandlePokemonAndEnergySelectionScreen(void)
+{
+	for (;;) {
+		uint8_t saved = hBankROM;
+		BankswitchROM(0x01u);
+		(void)HasAlivePokemonInPlayArea();
+		BankswitchROM(saved);
+
+		BankswitchROM(0x01u);
+		OpenPlayAreaScreenForSelection();
+		BankswitchROM(saved);
+		uint8_t location = hCurMenuItem;
+		(void)GetPlayAreaCardAttachedEnergies(location);
+		if (wTotalAttachedEnergies == 0u) {
+			(void)DrawWideTextBox_WaitForInput(NoEnergyCardsText);
+			continue;
+		}
+
+		(void)CreateArenaOrBenchEnergyCardList(hCurMenuItem);
+		BankswitchROM(0x01u);
+		DisplayEnergyDiscardScreen(hCurMenuItem);
+		BankswitchROM(saved);
+		HandleEnergyDiscardMenuInputResult input;
+		BankswitchROM(0x01u);
+		input = HandleEnergyDiscardMenuInput();
+		BankswitchROM(saved);
+		hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+		hTempPlayAreaLocation_ffa1 = hTempCardIndex_ff98;
+		return (HandlePokemonAndEnergySelectionScreenResult){hTempCardIndex_ff98, input.f};
+	}
+}
+/* <<< factory HandlePokemonAndEnergySelectionScreen */
