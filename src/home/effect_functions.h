@@ -2170,6 +2170,9 @@ void MrFuji_PlayerSelection(void);
 /* >>> factory Switch_PlayerSelection */
 void Switch_PlayerSelection(void);
 /* <<< factory Switch_PlayerSelection */
+/* >>> factory Cowardice_PlayerSelectEffect */
+void Cowardice_PlayerSelectEffect(void);
+/* <<< factory Cowardice_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -7670,6 +7670,14 @@ CASES["Switch_PlayerSelection"] = [
 ]
 # <<< factory Switch_PlayerSelection
 
+# >>> factory Cowardice_PlayerSelectEffect
+CONTRACT["Cowardice_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CASES["Cowardice_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFF9D: b"\x00", 0xFFA1: b"\xFF", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xFFA1: 1}, "expect": {0xFFA1: b"\xFF"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFF9D: b"\x00", 0xFFA1: b"\xFF", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xFFA1: 1}, expect={0xFFA1: b"\xFF"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Cowardice_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10777,3 +10785,10 @@ MUTATIONS["Switch_PlayerSelection"] = {"source_symbol": "Switch_PlayerSelection"
 for _record in SCHEMA2_CASES["Switch_PlayerSelection"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x592, "bank": 1}
 # <<< factory-completion Switch_PlayerSelection
+# >>> factory-mutation Cowardice_PlayerSelectEffect
+MUTATIONS["Cowardice_PlayerSelectEffect"] = {"source_symbol": "Cowardice_PlayerSelectEffect", "before": "void Cowardice_PlayerSelectEffect(void)\n{\n\tif (hTemp_ffa0 != 0u)\n\t\treturn;\n\thAIPkmnPowerEffectParam = 0xFFu;\n}", "after": "void Cowardice_PlayerSelectEffect(void)\n{\n\tif (hTemp_ffa0 != 0u)\n\t\treturn;\n\thAIPkmnPowerEffectParam = 0u;\n}", "case_ids": ["Cowardice_PlayerSelectEffect-0"]}
+# <<< factory-mutation Cowardice_PlayerSelectEffect
+# >>> factory-completion Cowardice_PlayerSelectEffect
+for _record in SCHEMA2_CASES["Cowardice_PlayerSelectEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x270E, "bank": 1}
+# <<< factory-completion Cowardice_PlayerSelectEffect

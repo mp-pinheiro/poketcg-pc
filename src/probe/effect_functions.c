@@ -5329,6 +5329,14 @@ static void adapt_Switch_PlayerSelection(ProbeState *s)
 }
 /* <<< factory Switch_PlayerSelection */
 
+/* >>> factory Cowardice_PlayerSelectEffect */
+static void adapt_Cowardice_PlayerSelectEffect(ProbeState *s)
+{
+	(void)s;
+	Cowardice_PlayerSelectEffect();
+}
+/* <<< factory Cowardice_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5971,5 +5979,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EnergyRemoval_PlayerSelection", adapt_EnergyRemoval_PlayerSelection },
 	{ "MrFuji_PlayerSelection", adapt_MrFuji_PlayerSelection },
 	{ "Switch_PlayerSelection", adapt_Switch_PlayerSelection },
+	{ "Cowardice_PlayerSelectEffect", adapt_Cowardice_PlayerSelectEffect },
 	{ NULL, NULL },
 };

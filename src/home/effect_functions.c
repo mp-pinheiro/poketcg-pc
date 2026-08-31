@@ -1494,6 +1494,8 @@ void BankswitchROM(uint8_t bank);
 #define ChoosePokemonToRemoveEnergyFromText 0x0152u
 
 #define ChoosePokemonToReturnToTheDeckText 0x015au
+
+#define SelectPokemonToPlaceInTheArenaText 0x010fu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11312,3 +11314,12 @@ void Switch_PlayerSelection(void)
 	hTemp_ffa0 = 0u;
 }
 /* <<< factory Switch_PlayerSelection */
+
+/* >>> factory Cowardice_PlayerSelectEffect */
+void Cowardice_PlayerSelectEffect(void)
+{
+	if (hTemp_ffa0 != 0u)
+		return;
+	hAIPkmnPowerEffectParam = 0xFFu;
+}
+/* <<< factory Cowardice_PlayerSelectEffect */
