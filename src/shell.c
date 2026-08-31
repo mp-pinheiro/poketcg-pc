@@ -13,6 +13,7 @@ struct Shell {
 	int headless;
 #ifdef POKETCG_HAVE_SDL
 	int have_audio;
+	SDL_AudioDeviceID audio_device;
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 	SDL_Texture *texture;
@@ -51,6 +52,18 @@ Shell *shell_create(const ShellConfig *config)
 	 * initialising both in one SDL_Init would sink the video backend with it. */
 	if (!shell->headless && SDL_Init(SDL_INIT_VIDEO) == 0) {
 		shell->have_audio = SDL_InitSubSystem(SDL_INIT_AUDIO) == 0;
+		if (shell->have_audio) {
+			SDL_AudioSpec desired = {0};
+			desired.freq = 44100;
+			desired.format = AUDIO_S16SYS;
+			desired.channels = 2;
+			desired.samples = 1024;
+			shell->audio_device = SDL_OpenAudioDevice(NULL, 0, &desired, NULL, 0);
+			if (!shell->audio_device)
+				shell->have_audio = 0;
+			else
+				SDL_PauseAudioDevice(shell->audio_device, 0);
+		}
 		shell->window = SDL_CreateWindow("poketcg", SDL_WINDOWPOS_UNDEFINED,
 			SDL_WINDOWPOS_UNDEFINED, SCREEN_W * 3, SCREEN_H * 3, 0);
 		shell->renderer = shell->window ? SDL_CreateRenderer(shell->window, -1,
@@ -80,6 +93,8 @@ void shell_destroy(Shell *shell)
 	if (!shell)
 		return;
 #ifdef POKETCG_HAVE_SDL
+	if (shell->audio_device)
+		SDL_CloseAudioDevice(shell->audio_device);
 	if (shell->texture)
 		SDL_DestroyTexture(shell->texture);
 	if (shell->renderer)
@@ -151,16 +166,16 @@ void shell_present(Shell *shell, const uint16_t *framebuffer)
 #endif
 }
 
-/* Sink only: the audio driver is Phase 3. Samples are dropped, but the device check is
- * real, so a caller can rely on this being a no-op when no device was opened. */
+/* Queue interleaved signed 16-bit samples when SDL audio is available. */
 void shell_queue_audio(Shell *shell, const int16_t *samples, size_t count)
 {
-	(void)samples;
-	(void)count;
 #ifdef POKETCG_HAVE_SDL
-	if (!shell || !shell->have_audio)
+	if (!shell || !shell->have_audio || !samples || !count)
 		return;
+	(void)SDL_QueueAudio(shell->audio_device, samples, count * sizeof *samples);
 #else
 	(void)shell;
+	(void)samples;
+	(void)count;
 #endif
 }

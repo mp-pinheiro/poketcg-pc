@@ -67,6 +67,7 @@ void apu_trace_clear(void);
 void apu_trace_set_tick(uint32_t tick);
 size_t apu_trace_count(void);
 const ApuWrite *apu_trace_data(void);
+size_t apu_trace_render_pcm(int16_t *samples, size_t count);
 
 
 int rom_load(const char *path); /* 0 on success, -1 with errno set */

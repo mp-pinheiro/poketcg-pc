@@ -323,7 +323,24 @@ void HandleTitleScreen(void)
 /* >>> factory Start */
 void Start(uint8_t a)
 {
+	gb_write8(rIF, 0);
+	gb_write8(rIE, 0);
+	(void)ZeroRAM();
+	BankswitchROM(1u);
+	BankswitchSRAM(0u);
+	hBankVRAM = 0u;
+	gb_write8(rVBK, 0xFEu);
+	DisableLCD();
 	wInitialA = a;
+	(void)DetectConsole(a);
 	wTileMapFill = 0x20u;
+	(void)SetupVRAM();
+	(void)SetupRegisters();
+	(void)SetupPalettes(0u, 0u, 0u, 0u);
+	SetupSound();
+	(void)SetupTimer();
+	ResetSerial();
+	ValidateSRAM();
+	BankswitchROM(BANK_GAME_LOOP);
 }
 /* <<< factory Start */

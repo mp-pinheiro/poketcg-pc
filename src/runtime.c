@@ -10,6 +10,7 @@
 #include <pthread.h>
 #include <stdint.h>
 #include <string.h>
+#define AUDIO_SAMPLES_PER_FRAME 1470u
 
 typedef struct {
 	pthread_mutex_t lock;
@@ -17,6 +18,7 @@ typedef struct {
 	Shell *shell;
 	Ppu ppu;
 	uint16_t framebuffer[SCREEN_W * SCREEN_H];
+	int16_t audio[AUDIO_SAMPLES_PER_FRAME];
 	uint32_t frame_limit;
 	uint32_t frames;
 	int frame_ready;
@@ -50,7 +52,7 @@ static int stopped(RuntimeState *state)
 static void *run_game(void *context)
 {
 	RuntimeState *state = context;
-	Start(0);
+	Start(0x11u);
 	GameLoop();
 	for (;;) {
 		DoFrame();
@@ -109,9 +111,11 @@ int runtime_run(Shell *shell, uint32_t frame_limit, RuntimeResult *result)
 		g_keys = input.buttons;
 		state.frames++;
 		apu_trace_set_tick(state.frames);
+		size_t pcm_count = apu_trace_render_pcm(
+			state.audio, AUDIO_SAMPLES_PER_FRAME);
 		ppu_render_frame(&state.ppu, state.framebuffer);
 		shell_present(shell, state.framebuffer);
-		shell_queue_audio(shell, NULL, 0);
+		shell_queue_audio(shell, state.audio, pcm_count);
 
 		pthread_mutex_lock(&state.lock);
 		if (state.frame_limit && state.frames >= state.frame_limit)

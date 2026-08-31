@@ -125,6 +125,40 @@ def slices(schema: tuple[dict[str, str], ...], sections: dict[str, Section], sym
         result.append((entry, section, rom[start:end]))
     return result
 
+def sparse_items(
+    rom: bytes,
+) -> list[tuple[dict[str, str], Section, bytes]]:
+    inventory_path = Path("site/data/inventory.json")
+    try:
+        inventory = json.loads(inventory_path.read_text())
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"cannot load source span inventory: {exc}") from exc
+    spans = inventory.get("spans")
+    if not isinstance(spans, list):
+        raise ValueError("source inventory has no spans")
+    result = []
+    for index, span in enumerate(spans):
+        if not isinstance(span, dict) or span.get("kind") != "data":
+            continue
+        if span.get("bank_type") not in {"ROM0", "ROMX"}:
+            raise ValueError(f"non-ROM data span: {span}")
+        bank = span.get("bank")
+        address = span.get("address")
+        length = span.get("length")
+        if not all(isinstance(value, int) for value in (bank, address, length)):
+            raise ValueError(f"invalid source data span: {span}")
+        start = rom_offset(bank, address)
+        end = start + length
+        if length < 1 or end > len(rom):
+            raise ValueError(f"source data span exceeds ROM: {span}")
+        name = f"inventory_span_{index:05d}"
+        section = Section(f"inventory-span-{index:05d}", bank, address, address + length - 1)
+        entry = {"name": name, "section": section.name, "ctype": "uint8_t"}
+        result.append((entry, section, rom[start:end]))
+    if not result:
+        raise ValueError("source inventory has no declared data spans")
+    return result
+
 
 def render(items: list[tuple[dict[str, str], Section, bytes]], rom_name: str) -> str:
     lines = [f"/* Generated from {rom_name} by tools/gen_data.py. Do not edit. */", "#ifndef POKETCG_GENERATED_DATA_H", "#define POKETCG_GENERATED_DATA_H", "", "#include <stdint.h>", ""]
@@ -273,25 +307,36 @@ def verify_sparse_pack(
         if not isinstance(span, dict) or span.get("kind") != "data":
             raise ValueError("sparse pack contains a non-data span")
         section = sections.get(span.get("section"))
-        if section is None:
-            raise ValueError(f"sparse pack section is unknown: {span.get('section')}")
+        label = span.get("section")
+        if section is not None:
+            expected_bank = section.bank
+            expected_address = section.start
+            expected_length = section.end - section.start + 1
+            start = rom_offset(expected_bank, expected_address)
+        else:
+            expected_bank = span.get("bank")
+            expected_address = span.get("address")
+            expected_length = span.get("length")
+            if not all(isinstance(value, int) for value in (
+                expected_bank, expected_address, expected_length,
+            )):
+                raise ValueError(f"sparse pack span is invalid: {label}")
+            start = rom_offset(expected_bank, expected_address)
         bank, address, length, pack_offset, _flags = PACK_RECORD.unpack_from(
             payload, PACK_HEADER.size + index * PACK_RECORD.size
         )
-        expected_length = section.end - section.start + 1
         if (span.get("bank"), span.get("address"), span.get("length")) != (
             bank, address, expected_length
         ):
-            raise ValueError(f"sparse pack record differs: {section.name}")
+            raise ValueError(f"sparse pack record differs: {label}")
         if pack_offset != expected_offset or span.get("pack_offset") != pack_offset:
-            raise ValueError(f"sparse pack offsets are not contiguous: {section.name}")
-        start = rom_offset(section.bank, section.start)
+            raise ValueError(f"sparse pack offsets are not contiguous: {label}")
         actual = payload[pack_offset:pack_offset + length]
         expected = rom[start:start + length]
         if len(actual) != length:
-            raise ValueError(f"sparse pack data is truncated: {section.name}")
+            raise ValueError(f"sparse pack data is truncated: {label}")
         if actual != expected or hashlib.sha256(actual).hexdigest() != span.get("sha256"):
-            raise ValueError(f"sparse pack first mismatch: {section.name}")
+            raise ValueError(f"sparse pack first mismatch: {label}")
         expected_offset += length
         total += length
     if expected_offset != len(payload):
@@ -324,7 +369,7 @@ def main() -> int:
     sections = parse_map(args.map)
     symbols = parse_symbols(args.sym)
     rom = args.rom.read_bytes()
-    items = slices(SCHEMA, sections, symbols, rom)
+    items = sparse_items(rom) if args.sparse_pack else slices(SCHEMA, sections, symbols, rom)
     if args.sparse_pack and args.pack_check:
         parser.error("--sparse-pack and --pack-check are mutually exclusive")
     if args.sparse_pack or args.pack_check:

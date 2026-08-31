@@ -90,6 +90,25 @@ const ApuWrite *apu_trace_data(void)
 	return g_apu_trace;
 }
 
+size_t apu_trace_render_pcm(int16_t *samples, size_t count)
+{
+	if (!samples)
+		return 0;
+	size_t trace_count = g_apu_trace_count;
+	for (size_t i = 0; i < count; i++) {
+		if (!trace_count) {
+			samples[i] = 0;
+			continue;
+		}
+		size_t index = (i * trace_count) / count;
+		if (index >= trace_count)
+			index = trace_count - 1;
+		int amplitude = ((int)(g_apu_trace[index].value & 0x0Fu) - 8) * 2048;
+		samples[i] = (int16_t)amplitude;
+	}
+	return count;
+}
+
 static void apu_trace_record(uint16_t addr, uint8_t value)
 {
 	if (!((addr >= 0xFF10u && addr <= 0xFF26u) ||
@@ -214,10 +233,12 @@ int rom_pack_load(const char *path)
 			.pack_offset = pack_u32(record + 8),
 			.flags = pack_u32(record + 12),
 		};
+		int valid_address = span.bank == 0u
+			? span.address < 0x4000u
+			: span.address >= 0x4000u && span.address <= 0x7FFFu;
 		if (!span.length || span.pack_offset != expected_offset ||
 		    (size_t)span.pack_offset + span.length > size ||
-		    (span.address < 0x4000u || span.address > 0x7FFFu) ||
-		    span.bank > 255u) {
+		    !valid_address || span.bank > 255u) {
 			free(spans);
 			free(pack);
 			errno = EINVAL;
