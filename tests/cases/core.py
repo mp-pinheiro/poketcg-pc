@@ -4741,6 +4741,70 @@ CASES["SetLinkDuelTransmissionFrameFunction"] = [
 ]
 # <<< factory SetLinkDuelTransmissionFrameFunction
 
+# >>> factory OpenNonTurnHolderPlayAreaScreen
+CONTRACT["OpenNonTurnHolderPlayAreaScreen"] = {"compare": (), "preserve": ()}
+CASES["OpenNonTurnHolderPlayAreaScreen"] = [
+    {"wram": {0xFF97: b"\xC2"}, "read": {0xFF97: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2"}, read={0xFF97: 1}),
+]
+# <<< factory OpenNonTurnHolderPlayAreaScreen
+
+# >>> factory OpenTurnHolderPlayAreaScreen
+CONTRACT["OpenTurnHolderPlayAreaScreen"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["OpenTurnHolderPlayAreaScreen"] = [
+    {"wram": {0xFF97: b"\xC2"}},
+    dict(POISON, wram={0xFF97: b"\xC2"}),
+]
+# <<< factory OpenTurnHolderPlayAreaScreen
+
+# >>> factory OpenVariousPlayAreaScreens_FromSelectPresses
+CONTRACT["OpenVariousPlayAreaScreens_FromSelectPresses"] = {"compare": ("f",), "preserve": ()}
+CASES["OpenVariousPlayAreaScreens_FromSelectPresses"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory OpenVariousPlayAreaScreens_FromSelectPresses
+
+# >>> factory OpenPlayAreaScreenForViewing
+CONTRACT["OpenPlayAreaScreenForViewing"] = {"compare": (), "preserve": ()}
+CASES["OpenPlayAreaScreenForViewing"] = [
+    {"wram": {0xCBD4: b"\x55"}, "read": {0xCBD4: 1}},
+    dict(POISON, wram={0xCBD4: b"\xAA"}, read={0xCBD4: 1}),
+]
+# <<< factory OpenPlayAreaScreenForViewing
+
+# >>> factory OpenPlayAreaScreenForSelection
+CONTRACT["OpenPlayAreaScreenForSelection"] = {"compare": (), "preserve": ()}
+CASES["OpenPlayAreaScreenForSelection"] = [
+    {"wram": {0xCBD4: b"\x55"}, "read": {0xCBD4: 1}},
+    dict(POISON, wram={0xCBD4: b"\xAA"}, read={0xCBD4: 1}),
+]
+# <<< factory OpenPlayAreaScreenForSelection
+
+# >>> factory DisplayPlayAreaScreen
+CONTRACT["DisplayPlayAreaScreen"] = {"compare": (), "preserve": ()}
+CASES["DisplayPlayAreaScreen"] = [
+    {"wram": {0xCBD4: b"\x55"}, "read": {0xCBD4: 1}},
+    dict(POISON, wram={0xCBD4: b"\xAA"}, read={0xCBD4: 1}),
+]
+# <<< factory DisplayPlayAreaScreen
+
+# >>> factory SelectingBenchPokemonMenu
+CONTRACT["SelectingBenchPokemonMenu"] = {"compare": ("f",), "preserve": ()}
+CASES["SelectingBenchPokemonMenu"] = [
+    {"wram": {0xCBD4: b"\x00"}},
+    dict(POISON, wram={0xCBD4: b"\x02"}),
+]
+# <<< factory SelectingBenchPokemonMenu
+
+# >>> factory HandleSpecialDuelMainSceneHotkeys
+CONTRACT["HandleSpecialDuelMainSceneHotkeys"] = {"compare": ("f",), "preserve": ()}
+CASES["HandleSpecialDuelMainSceneHotkeys"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory HandleSpecialDuelMainSceneHotkeys
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6517,3 +6581,51 @@ MUTATIONS["SetLinkDuelTransmissionFrameFunction"] = {
     "case_ids": ["SetLinkDuelTransmissionFrameFunction-0", "SetLinkDuelTransmissionFrameFunction-1"]
 }
 # <<< factory-mutation SetLinkDuelTransmissionFrameFunction
+# >>> factory-mutation OpenNonTurnHolderPlayAreaScreen
+MUTATIONS["OpenNonTurnHolderPlayAreaScreen"] = {"source_symbol": "OpenNonTurnHolderPlayAreaScreen", "before": "void OpenNonTurnHolderPlayAreaScreen(void)\n{\n\thWhoseTurn = (hWhoseTurn == 0xC2u) ? 0xC3u : 0xC2u;", "after": "void OpenNonTurnHolderPlayAreaScreen(void)\n{\n\thWhoseTurn = 0xC2u;", "case_ids": ["OpenNonTurnHolderPlayAreaScreen-0", "OpenNonTurnHolderPlayAreaScreen-1"]}
+# <<< factory-mutation OpenNonTurnHolderPlayAreaScreen
+# >>> factory-completion OpenNonTurnHolderPlayAreaScreen
+for _record in SCHEMA2_CASES["OpenNonTurnHolderPlayAreaScreen"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x2383}
+# <<< factory-completion OpenNonTurnHolderPlayAreaScreen
+# >>> factory-mutation OpenTurnHolderPlayAreaScreen
+MUTATIONS["OpenTurnHolderPlayAreaScreen"] = {"source_symbol": "OpenTurnHolderPlayAreaScreen", "before": "return (HasAlivePokemonInPlayAreaResult){0x70u, 0xC0u};", "after": "return (HasAlivePokemonInPlayAreaResult){0x71u, 0xC0u};", "case_ids": ["OpenTurnHolderPlayAreaScreen-0", "OpenTurnHolderPlayAreaScreen-1"]}
+# <<< factory-mutation OpenTurnHolderPlayAreaScreen
+# >>> factory-completion OpenTurnHolderPlayAreaScreen
+for _record in SCHEMA2_CASES["OpenTurnHolderPlayAreaScreen"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x2383}
+# <<< factory-completion OpenTurnHolderPlayAreaScreen
+# >>> factory-mutation OpenVariousPlayAreaScreens_FromSelectPresses
+MUTATIONS["OpenVariousPlayAreaScreens_FromSelectPresses"] = {"source_symbol": "OpenVariousPlayAreaScreens_FromSelectPresses", "before": "return 0x20u;", "after": "return 0x21u;", "case_ids": ["OpenVariousPlayAreaScreens_FromSelectPresses-0", "OpenVariousPlayAreaScreens_FromSelectPresses-1"]}
+# <<< factory-mutation OpenVariousPlayAreaScreens_FromSelectPresses
+# >>> factory-completion OpenVariousPlayAreaScreens_FromSelectPresses
+for _record in SCHEMA2_CASES["OpenVariousPlayAreaScreens_FromSelectPresses"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x1F72}
+# <<< factory-completion OpenVariousPlayAreaScreens_FromSelectPresses
+# >>> factory-mutation OpenPlayAreaScreenForViewing
+MUTATIONS["OpenPlayAreaScreenForViewing"] = {"source_symbol": "OpenPlayAreaScreenForViewing", "before": "void OpenPlayAreaScreenForViewing(void)\n{\n\t(void)0;", "after": "void OpenPlayAreaScreenForViewing(void)\n{\n\tgb_write8(0xCBD4u, 1u);", "case_ids": ["OpenPlayAreaScreenForViewing-0", "OpenPlayAreaScreenForViewing-1"]}
+# <<< factory-mutation OpenPlayAreaScreenForViewing
+# >>> factory-completion OpenPlayAreaScreenForViewing
+for _record in SCHEMA2_CASES["OpenPlayAreaScreenForViewing"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x237F}
+# <<< factory-completion OpenPlayAreaScreenForViewing
+# >>> factory-mutation OpenPlayAreaScreenForSelection
+MUTATIONS["OpenPlayAreaScreenForSelection"] = {"source_symbol": "OpenPlayAreaScreenForSelection", "before": "void OpenPlayAreaScreenForSelection(void)\n{\n\t(void)0;", "after": "void OpenPlayAreaScreenForSelection(void)\n{\n\tgb_write8(0xCBD4u, 1u);", "case_ids": ["OpenPlayAreaScreenForSelection-0", "OpenPlayAreaScreenForSelection-1"]}
+# <<< factory-mutation OpenPlayAreaScreenForSelection
+# >>> factory-completion OpenPlayAreaScreenForSelection
+for _record in SCHEMA2_CASES["OpenPlayAreaScreenForSelection"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x2381}
+# <<< factory-completion OpenPlayAreaScreenForSelection
+# >>> factory-mutation DisplayPlayAreaScreen
+MUTATIONS["DisplayPlayAreaScreen"] = {"source_symbol": "DisplayPlayAreaScreen", "before": "void DisplayPlayAreaScreen(void)\n{\n\t(void)0;", "after": "void DisplayPlayAreaScreen(void)\n{\n\tgb_write8(0xCBD4u, 1u);", "case_ids": ["DisplayPlayAreaScreen-0", "DisplayPlayAreaScreen-1"]}
+# <<< factory-mutation DisplayPlayAreaScreen
+# >>> factory-completion DisplayPlayAreaScreen
+for _record in SCHEMA2_CASES["DisplayPlayAreaScreen"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x2382}
+# <<< factory-completion DisplayPlayAreaScreen
+# >>> factory-mutation SelectingBenchPokemonMenu
+MUTATIONS["SelectingBenchPokemonMenu"] = {"source_symbol": "SelectingBenchPokemonMenu", "before": "return action == 0u ? 0x80u : (action == 2u ? 0xA0u : 0x80u);", "after": "return action == 0u ? 0x81u : (action == 2u ? 0xA0u : 0x80u);", "case_ids": ["SelectingBenchPokemonMenu-0", "SelectingBenchPokemonMenu-1"]}
+# <<< factory-mutation SelectingBenchPokemonMenu
+# >>> factory-mutation HandleSpecialDuelMainSceneHotkeys
+MUTATIONS["HandleSpecialDuelMainSceneHotkeys"] = {"source_symbol": "HandleSpecialDuelMainSceneHotkeys", "before": "return 0xA0u;", "after": "return 0x90u;", "case_ids": ["HandleSpecialDuelMainSceneHotkeys-0", "HandleSpecialDuelMainSceneHotkeys-1"]}
+# <<< factory-mutation HandleSpecialDuelMainSceneHotkeys

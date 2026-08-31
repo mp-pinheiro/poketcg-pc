@@ -2764,6 +2764,64 @@ static void adapt_SetLinkDuelTransmissionFrameFunction(ProbeState *s)
 }
 /* <<< factory SetLinkDuelTransmissionFrameFunction */
 
+/* >>> factory OpenNonTurnHolderPlayAreaScreen */
+static void adapt_OpenNonTurnHolderPlayAreaScreen(ProbeState *s)
+{
+	OpenNonTurnHolderPlayAreaScreen();
+}
+/* <<< factory OpenNonTurnHolderPlayAreaScreen */
+
+/* >>> factory OpenTurnHolderPlayAreaScreen */
+static void adapt_OpenTurnHolderPlayAreaScreen(ProbeState *s)
+{
+	HasAlivePokemonInPlayAreaResult r = OpenTurnHolderPlayAreaScreen();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory OpenTurnHolderPlayAreaScreen */
+
+/* >>> factory OpenVariousPlayAreaScreens_FromSelectPresses */
+static void adapt_OpenVariousPlayAreaScreens_FromSelectPresses(ProbeState *s)
+{
+	s->f = OpenVariousPlayAreaScreens_FromSelectPresses();
+}
+/* <<< factory OpenVariousPlayAreaScreens_FromSelectPresses */
+
+/* >>> factory OpenPlayAreaScreenForViewing */
+static void adapt_OpenPlayAreaScreenForViewing(ProbeState *s)
+{
+	OpenPlayAreaScreenForViewing();
+}
+/* <<< factory OpenPlayAreaScreenForViewing */
+
+/* >>> factory OpenPlayAreaScreenForSelection */
+static void adapt_OpenPlayAreaScreenForSelection(ProbeState *s)
+{
+	OpenPlayAreaScreenForSelection();
+}
+/* <<< factory OpenPlayAreaScreenForSelection */
+
+/* >>> factory DisplayPlayAreaScreen */
+static void adapt_DisplayPlayAreaScreen(ProbeState *s)
+{
+	DisplayPlayAreaScreen();
+}
+/* <<< factory DisplayPlayAreaScreen */
+
+/* >>> factory SelectingBenchPokemonMenu */
+static void adapt_SelectingBenchPokemonMenu(ProbeState *s)
+{
+	s->f = SelectingBenchPokemonMenu();
+}
+/* <<< factory SelectingBenchPokemonMenu */
+
+/* >>> factory HandleSpecialDuelMainSceneHotkeys */
+static void adapt_HandleSpecialDuelMainSceneHotkeys(ProbeState *s)
+{
+	s->f = HandleSpecialDuelMainSceneHotkeys();
+}
+/* <<< factory HandleSpecialDuelMainSceneHotkeys */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3094,5 +3152,13 @@ const ProbeEntry probe_entries_core[] = {
 	{ "StartDuel_VSAIOpp", adapt_StartDuel_VSAIOpp },
 	{ "StartDuel_VSLinkOpp", adapt_StartDuel_VSLinkOpp },
 	{ "SetLinkDuelTransmissionFrameFunction", adapt_SetLinkDuelTransmissionFrameFunction },
+	{ "OpenNonTurnHolderPlayAreaScreen", adapt_OpenNonTurnHolderPlayAreaScreen },
+	{ "OpenTurnHolderPlayAreaScreen", adapt_OpenTurnHolderPlayAreaScreen },
+	{ "OpenVariousPlayAreaScreens_FromSelectPresses", adapt_OpenVariousPlayAreaScreens_FromSelectPresses },
+	{ "OpenPlayAreaScreenForViewing", adapt_OpenPlayAreaScreenForViewing },
+	{ "OpenPlayAreaScreenForSelection", adapt_OpenPlayAreaScreenForSelection },
+	{ "DisplayPlayAreaScreen", adapt_DisplayPlayAreaScreen },
+	{ "SelectingBenchPokemonMenu", adapt_SelectingBenchPokemonMenu },
+	{ "HandleSpecialDuelMainSceneHotkeys", adapt_HandleSpecialDuelMainSceneHotkeys },
 	{ NULL, NULL },
 };

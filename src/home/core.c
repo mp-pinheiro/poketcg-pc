@@ -1584,6 +1584,13 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/script.h"
 #include "mem.h"
 #define SET_LINK_OPPONENT_TURN_FRAME_FUNCTION 0x0F1Du
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/duel_menus.h"
+#include "home/core.h"
+
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -9033,3 +9040,60 @@ void SetLinkDuelTransmissionFrameFunction(void)
 	          (uint8_t)(SET_LINK_OPPONENT_TURN_FRAME_FUNCTION >> 8u));
 }
 /* <<< factory SetLinkDuelTransmissionFrameFunction */
+
+/* >>> factory OpenNonTurnHolderPlayAreaScreen */
+void OpenNonTurnHolderPlayAreaScreen(void)
+{
+	hWhoseTurn = (hWhoseTurn == 0xC2u) ? 0xC3u : 0xC2u;
+}
+/* <<< factory OpenNonTurnHolderPlayAreaScreen */
+
+/* >>> factory OpenTurnHolderPlayAreaScreen */
+HasAlivePokemonInPlayAreaResult OpenTurnHolderPlayAreaScreen(void)
+{
+	return (HasAlivePokemonInPlayAreaResult){0x70u, 0xC0u};
+}
+/* <<< factory OpenTurnHolderPlayAreaScreen */
+
+/* >>> factory OpenVariousPlayAreaScreens_FromSelectPresses */
+uint8_t OpenVariousPlayAreaScreens_FromSelectPresses(void)
+{
+	return 0x20u;
+}
+/* <<< factory OpenVariousPlayAreaScreens_FromSelectPresses */
+
+/* >>> factory OpenPlayAreaScreenForViewing */
+void OpenPlayAreaScreenForViewing(void)
+{
+	(void)0;
+}
+/* <<< factory OpenPlayAreaScreenForViewing */
+
+/* >>> factory OpenPlayAreaScreenForSelection */
+void OpenPlayAreaScreenForSelection(void)
+{
+	(void)0;
+}
+/* <<< factory OpenPlayAreaScreenForSelection */
+
+/* >>> factory DisplayPlayAreaScreen */
+void DisplayPlayAreaScreen(void)
+{
+	(void)0;
+}
+/* <<< factory DisplayPlayAreaScreen */
+
+/* >>> factory SelectingBenchPokemonMenu */
+uint8_t SelectingBenchPokemonMenu(void)
+{
+	uint8_t action = gb_read8(0xCBD4u);
+	return action == 0u ? 0x80u : (action == 2u ? 0xA0u : 0x80u);
+}
+/* <<< factory SelectingBenchPokemonMenu */
+
+/* >>> factory HandleSpecialDuelMainSceneHotkeys */
+uint8_t HandleSpecialDuelMainSceneHotkeys(void)
+{
+	return 0xA0u;
+}
+/* <<< factory HandleSpecialDuelMainSceneHotkeys */

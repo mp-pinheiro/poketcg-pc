@@ -1258,4 +1258,28 @@ void StartDuel_VSLinkOpp(void);
 /* >>> factory SetLinkDuelTransmissionFrameFunction */
 void SetLinkDuelTransmissionFrameFunction(void);
 /* <<< factory SetLinkDuelTransmissionFrameFunction */
+/* >>> factory OpenNonTurnHolderPlayAreaScreen */
+void OpenNonTurnHolderPlayAreaScreen(void);
+/* <<< factory OpenNonTurnHolderPlayAreaScreen */
+/* >>> factory OpenTurnHolderPlayAreaScreen */
+HasAlivePokemonInPlayAreaResult OpenTurnHolderPlayAreaScreen(void);
+/* <<< factory OpenTurnHolderPlayAreaScreen */
+/* >>> factory OpenVariousPlayAreaScreens_FromSelectPresses */
+uint8_t OpenVariousPlayAreaScreens_FromSelectPresses(void);
+/* <<< factory OpenVariousPlayAreaScreens_FromSelectPresses */
+/* >>> factory OpenPlayAreaScreenForViewing */
+void OpenPlayAreaScreenForViewing(void);
+/* <<< factory OpenPlayAreaScreenForViewing */
+/* >>> factory OpenPlayAreaScreenForSelection */
+void OpenPlayAreaScreenForSelection(void);
+/* <<< factory OpenPlayAreaScreenForSelection */
+/* >>> factory DisplayPlayAreaScreen */
+void DisplayPlayAreaScreen(void);
+/* <<< factory DisplayPlayAreaScreen */
+/* >>> factory SelectingBenchPokemonMenu */
+uint8_t SelectingBenchPokemonMenu(void);
+/* <<< factory SelectingBenchPokemonMenu */
+/* >>> factory HandleSpecialDuelMainSceneHotkeys */
+uint8_t HandleSpecialDuelMainSceneHotkeys(void);
+/* <<< factory HandleSpecialDuelMainSceneHotkeys */
 #endif

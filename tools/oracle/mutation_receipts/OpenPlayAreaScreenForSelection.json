@@ -1,0 +1,9 @@
+{
+  "fn": "OpenPlayAreaScreenForSelection",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OpenPlayAreaScreenForSelection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52180\": \"55\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OpenPlayAreaScreenForSelection\", \"mismatches\": {\"bus\": {\"address\": 52180, \"reference\": \"55\", \"native\": \"01\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[52180, 1]]}}}\n",
+  "restored": "{\"fn\": \"OpenPlayAreaScreenForSelection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52180\": \"55\"}}, \"status\": \"PASS\"}\n"
+}
