@@ -7786,6 +7786,14 @@ CASES["VictreebelLure_SelectSwitchPokemon"] = [
 ]
 # <<< factory VictreebelLure_SelectSwitchPokemon
 
+# >>> factory TerrorStrike_50PercentSelectSwitchPokemon
+CONTRACT["TerrorStrike_50PercentSelectSwitchPokemon"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["TerrorStrike_50PercentSelectSwitchPokemon"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x01"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x00"}, "expect_regs": {"a": 0x01, "f": 0x70}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3EF: b"\x01"}, read={0xFFA0: 1}, expect={0xFFA0: b"\x00"}, expect_regs={"a": 0x01, "f": 0x70}),
+]
+# <<< factory TerrorStrike_50PercentSelectSwitchPokemon
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10945,3 +10953,6 @@ MUTATIONS["StretchKick_PlayerSelectEffect"] = {"source_symbol": "StretchKick_Pla
 # >>> factory-mutation VictreebelLure_SelectSwitchPokemon
 MUTATIONS["VictreebelLure_SelectSwitchPokemon"] = {"source_symbol": "VictreebelLure_SelectSwitchPokemon", "before": "void VictreebelLure_SelectSwitchPokemon(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\tOpenPlayAreaScreenForSelection();\n\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;\n\tSwapTurn();\n}", "after": "void VictreebelLure_SelectSwitchPokemon(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\tOpenPlayAreaScreenForSelection();\n\thTemp_ffa0 = (uint8_t)(hTempPlayAreaLocation_ff9d + 1u);\n\tSwapTurn();\n}", "case_ids": ["VictreebelLure_SelectSwitchPokemon-0"]}
 # <<< factory-mutation VictreebelLure_SelectSwitchPokemon
+# >>> factory-mutation TerrorStrike_50PercentSelectSwitchPokemon
+MUTATIONS["TerrorStrike_50PercentSelectSwitchPokemon"] = {"source_symbol": "TerrorStrike_50PercentSelectSwitchPokemon", "before": "TerrorStrike50PercentSelectSwitchPokemonResult TerrorStrike_50PercentSelectSwitchPokemon(void)\n{\n\thTemp_ffa0 = 0x00u;", "after": "TerrorStrike50PercentSelectSwitchPokemonResult TerrorStrike_50PercentSelectSwitchPokemon(void)\n{\n\thTemp_ffa0 = 0x01u;", "case_ids": ["TerrorStrike_50PercentSelectSwitchPokemon-0", "TerrorStrike_50PercentSelectSwitchPokemon-1"]}
+# <<< factory-mutation TerrorStrike_50PercentSelectSwitchPokemon

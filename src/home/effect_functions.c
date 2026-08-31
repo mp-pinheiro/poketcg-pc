@@ -1514,6 +1514,11 @@ void BankswitchROM(uint8_t bank);
 #include "home/menus.h"
 
 #define ChoosePkmnInTheBenchToGiveDamageText 0x011au
+
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#define IfHeadsChangeOpponentsActivePokemonText 0x00ebu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11461,3 +11466,28 @@ void VictreebelLure_SelectSwitchPokemon(void)
 	SwapTurn();
 }
 /* <<< factory VictreebelLure_SelectSwitchPokemon */
+
+/* >>> factory TerrorStrike_50PercentSelectSwitchPokemon */
+TerrorStrike50PercentSelectSwitchPokemonResult TerrorStrike_50PercentSelectSwitchPokemon(void)
+{
+	hTemp_ffa0 = 0x00u;
+	DuelistVarResult count =
+		GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t flags = effect_compare(count.a, 2u);
+	if (count.a < 2u)
+		return (TerrorStrike50PercentSelectSwitchPokemonResult){count.a, flags};
+
+	SerialTossCoinATimesResult toss = Serial_TossCoin(
+		count.a, flags, 0u, 0u,
+		(uint8_t)(IfHeadsChangeOpponentsActivePokemonText >> 8),
+		(uint8_t)IfHeadsChangeOpponentsActivePokemonText, count.hl);
+	hTemp_ffa0 = toss.a;
+	if ((toss.f & 0x10u) == 0u)
+		return (TerrorStrike50PercentSelectSwitchPokemonResult){toss.a, toss.f};
+
+	DuelistSelectForcedSwitchResult selected =
+		DuelistSelectForcedSwitch(toss.a, toss.f, 0u, 0u, 0u, 0u, count.hl);
+	hTempPlayAreaLocation_ffa1 = hTempPlayAreaLocation_ff9d;
+	return (TerrorStrike50PercentSelectSwitchPokemonResult){hTempPlayAreaLocation_ff9d, selected.f};
+}
+/* <<< factory TerrorStrike_50PercentSelectSwitchPokemon */
