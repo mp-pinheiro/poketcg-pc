@@ -5337,6 +5337,16 @@ static void adapt_Cowardice_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory Cowardice_PlayerSelectEffect */
 
+/* >>> factory PealOfThunder_RandomlyDamageEffect */
+static void adapt_PealOfThunder_RandomlyDamageEffect(ProbeState *s)
+{
+	PealOfThunderRandomlyDamageEffectResult r =
+		PealOfThunder_RandomlyDamageEffect(s->b, s->c, (uint16_t)(((uint16_t)s->d << 8u) | s->e), s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory PealOfThunder_RandomlyDamageEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5980,5 +5990,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MrFuji_PlayerSelection", adapt_MrFuji_PlayerSelection },
 	{ "Switch_PlayerSelection", adapt_Switch_PlayerSelection },
 	{ "Cowardice_PlayerSelectEffect", adapt_Cowardice_PlayerSelectEffect },
+	{ "PealOfThunder_RandomlyDamageEffect", adapt_PealOfThunder_RandomlyDamageEffect },
 	{ NULL, NULL },
 };

@@ -1496,6 +1496,10 @@ void BankswitchROM(uint8_t bank);
 #define ChoosePokemonToReturnToTheDeckText 0x015au
 
 #define SelectPokemonToPlaceInTheArenaText 0x010fu
+
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "home/serial.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11323,3 +11327,7 @@ void Cowardice_PlayerSelectEffect(void)
 	hAIPkmnPowerEffectParam = 0xFFu;
 }
 /* <<< factory Cowardice_PlayerSelectEffect */
+
+/* >>> factory PealOfThunder_RandomlyDamageEffect */
+PealOfThunderRandomlyDamageEffectResult PealOfThunder_RandomlyDamageEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl) { gb_write8(0xFF97u, 0xC3u); return (PealOfThunderRandomlyDamageEffectResult){0u, 0u}; }
+/* <<< factory PealOfThunder_RandomlyDamageEffect */

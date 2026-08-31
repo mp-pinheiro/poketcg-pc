@@ -3002,6 +3002,32 @@ wPlayerArenaCardHP = 0xC2C8
 wDuelistPokemonCount = 0xC2EF
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 FRAME_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+def _peal_of_thunder_case(rng, poison=False):
+    wram = {
+        0xFF97: b"\xC2", 0xFF9D: b"\x01",
+        0xC2EF: b"\x01", 0xC3EF: b"\x01",
+        0xC2BB: b"\x00", 0xC3BB: b"\x00",
+        0xC2C8: b"\x50", 0xC3C8: b"\x50",
+        0xC400: b"\x01", 0xC480: b"\x01",
+        0xCABB: b"\x00",
+        0xCACA: rng,
+        0xCCBF: b"\x00\x00",
+        0xCE7E: b"\x01",
+        0xD423: b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF",
+        0xD42A: b"\xFF", 0xD4C0: b"\xFF",
+        0xD4AC: b"\x08", 0xD4AD: b"\x00",
+    }
+    case = {
+        "d": 0x00, "e": 0x14, "wram": wram,
+        "read": {0xCCC7: 1, 0xCCE6: 1, 0xCCB8: 1,
+                  0xC2C8: 1, 0xC3C8: 1, 0xCCBF: 2},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000, "cycle_budget": 80000000,
+    }
+    if poison:
+        case.update(POISON)
+    return case
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7678,6 +7704,14 @@ CASES["Cowardice_PlayerSelectEffect"] = [
 ]
 # <<< factory Cowardice_PlayerSelectEffect
 
+# >>> factory PealOfThunder_RandomlyDamageEffect
+CONTRACT["PealOfThunder_RandomlyDamageEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PealOfThunder_RandomlyDamageEffect"] = [
+    dict(a=0x01, f=0x20, b=0x00, c=0x00, d=0x00, e=0x14, hl=0x0000, wram={0xFF97: b"\xC2"}, read={}, expect_regs={"a": 0x01, "f": 0x20}),
+    dict(POISON, wram={0xFF97: b"\xC2"}, read={}, expect_regs={"a": 0x01, "f": 0x20}, oracle=False, why="The thunder effect's hardware text wait is independent of poisoned registers; preserve its observed return flags.")
+]
+# <<< factory PealOfThunder_RandomlyDamageEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10792,3 +10826,10 @@ MUTATIONS["Cowardice_PlayerSelectEffect"] = {"source_symbol": "Cowardice_PlayerS
 for _record in SCHEMA2_CASES["Cowardice_PlayerSelectEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x270E, "bank": 1}
 # <<< factory-completion Cowardice_PlayerSelectEffect
+# >>> factory-mutation PealOfThunder_RandomlyDamageEffect
+MUTATIONS["PealOfThunder_RandomlyDamageEffect"] = {"source_symbol": "PealOfThunder_RandomlyDamageEffect", "before": "PealOfThunderRandomlyDamageEffectResult PealOfThunder_RandomlyDamageEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl) { gb_write8(0xFF97u, 0xC3u); return (PealOfThunderRandomlyDamageEffectResult){0u, 0u}; }", "after": "PealOfThunderRandomlyDamageEffectResult PealOfThunder_RandomlyDamageEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl) { gb_write8(0xFF97u, 0xC3u); return (PealOfThunderRandomlyDamageEffectResult){1u, 0u}; }", "case_ids": ["PealOfThunder_RandomlyDamageEffect-0"]}
+# <<< factory-mutation PealOfThunder_RandomlyDamageEffect
+# >>> factory-completion PealOfThunder_RandomlyDamageEffect
+for _record in SCHEMA2_CASES["PealOfThunder_RandomlyDamageEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x1325, "bank": 11}
+# <<< factory-completion PealOfThunder_RandomlyDamageEffect
