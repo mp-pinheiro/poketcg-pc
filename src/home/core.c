@@ -1664,6 +1664,9 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 
 #include "generated/wram.h"
 #include "home/duel.h"
+
+#include "generated/wram.h"
+#include "home/lcd.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -9465,3 +9468,10 @@ void OppAction_PlayAttackAnimationDealAttackDamage(void)
 {
 }
 /* <<< factory OppAction_PlayAttackAnimationDealAttackDamage */
+
+/* >>> factory MainDuelLoop */
+void MainDuelLoop(void)
+{
+	EnableLCD();
+}
+/* <<< factory MainDuelLoop */

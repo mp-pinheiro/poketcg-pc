@@ -2222,6 +2222,9 @@ opponent_bench = 0xC3BC
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 wTempNonTurnDuelistCardID = 0xCCC4
+
+wLCDC = 0xCABB
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -5067,6 +5070,16 @@ CASES["OppAction_PlayAttackAnimationDealAttackDamage"] = [
 ]
 # <<< factory OppAction_PlayAttackAnimationDealAttackDamage
 
+# >>> factory MainDuelLoop
+CONTRACT["MainDuelLoop"] = {"compare": (), "preserve": ()}
+CASES["MainDuelLoop"] = [
+    {"wram": {wLCDC: b"\x00"},
+     "read": {wLCDC: 1},
+     "expect": {wLCDC: b"\x80"}},
+    dict(POISON, wram={wLCDC: b"\x00"}, read={wLCDC: 1}, expect={wLCDC: b"\x80"})
+]
+# <<< factory MainDuelLoop
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -7083,3 +7096,10 @@ MUTATIONS["OppAction_PlayAttackAnimationDealAttackDamage"] = {"source_symbol": "
 for _record in SCHEMA2_CASES["OppAction_PlayAttackAnimationDealAttackDamage"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x2382, "bank": 13}
 # <<< factory-completion OppAction_PlayAttackAnimationDealAttackDamage
+# >>> factory-mutation MainDuelLoop
+MUTATIONS["MainDuelLoop"] = {"source_symbol": "MainDuelLoop", "before": "void MainDuelLoop(void)\n{\n\tEnableLCD();\n}", "after": "void MainDuelLoop(void)\n{\n\tDisableLCD();\n}", "case_ids": ["MainDuelLoop-0", "MainDuelLoop-1"]}
+# <<< factory-mutation MainDuelLoop
+# >>> factory-completion MainDuelLoop
+for _record in SCHEMA2_CASES["MainDuelLoop"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x238D, "bank": 13}
+# <<< factory-completion MainDuelLoop

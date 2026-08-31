@@ -1374,4 +1374,8 @@ void HandleBetweenTurnsEvents(void);
 /* >>> factory OppAction_PlayAttackAnimationDealAttackDamage */
 void OppAction_PlayAttackAnimationDealAttackDamage(void);
 /* <<< factory OppAction_PlayAttackAnimationDealAttackDamage */
+/* >>> factory MainDuelLoop */
+/* >>> factory MainDuelLoop */
+void MainDuelLoop(void);
+/* <<< factory MainDuelLoop */
 #endif

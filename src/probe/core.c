@@ -3063,6 +3063,14 @@ static void adapt_OppAction_PlayAttackAnimationDealAttackDamage(ProbeState *s)
 }
 /* <<< factory OppAction_PlayAttackAnimationDealAttackDamage */
 
+/* >>> factory MainDuelLoop */
+static void adapt_MainDuelLoop(ProbeState *s)
+{
+	(void)s;
+	MainDuelLoop();
+}
+/* <<< factory MainDuelLoop */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3430,5 +3438,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "HandleWaitingLinkOpponentMenu", adapt_HandleWaitingLinkOpponentMenu },
 	{ "HandleBetweenTurnsEvents", adapt_HandleBetweenTurnsEvents },
 	{ "OppAction_PlayAttackAnimationDealAttackDamage", adapt_OppAction_PlayAttackAnimationDealAttackDamage },
+	{ "MainDuelLoop", adapt_MainDuelLoop },
 	{ NULL, NULL },
 };
