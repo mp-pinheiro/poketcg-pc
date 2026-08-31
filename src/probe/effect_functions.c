@@ -5527,6 +5527,14 @@ static void adapt_Wail_FillBenchEffect(ProbeState *s)
 }
 /* <<< factory Wail_FillBenchEffect */
 
+/* >>> factory Heal_RemoveDamageEffect */
+static void adapt_Heal_RemoveDamageEffect(ProbeState *s)
+{
+	(void)s;
+	Heal_RemoveDamageEffect();
+}
+/* <<< factory Heal_RemoveDamageEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -6193,5 +6201,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Curse_TransferDamageEffect", adapt_Curse_TransferDamageEffect },
 	{ "SuperPotion_PlayerSelectEffect", adapt_SuperPotion_PlayerSelectEffect },
 	{ "Wail_FillBenchEffect", adapt_Wail_FillBenchEffect },
+	{ "Heal_RemoveDamageEffect", adapt_Heal_RemoveDamageEffect },
 	{ NULL, NULL },
 };

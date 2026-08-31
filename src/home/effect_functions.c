@@ -11776,3 +11776,9 @@ void Wail_FillBenchEffect(void)
 	SwapTurn();
 }
 /* <<< factory Wail_FillBenchEffect */
+
+/* >>> factory Heal_RemoveDamageEffect */
+void Heal_RemoveDamageEffect(void)
+{
+}
+/* <<< factory Heal_RemoveDamageEffect */

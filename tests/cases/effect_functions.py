@@ -3044,6 +3044,9 @@ WFB_PLAYER_ARENA_HP = 0xC2C8
 WFB_WLCDC = 0xCABB
 WFB_RLCDS = 0xFF40
 WFB_EXCLUDE_ARENA = 0xCBD2
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hAIPkmnPowerEffectParam = 0xFFA1
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7926,6 +7929,14 @@ CASES["Wail_FillBenchEffect"] = [
 ]
 # <<< factory Wail_FillBenchEffect
 
+# >>> factory Heal_RemoveDamageEffect
+CONTRACT["Heal_RemoveDamageEffect"] = {"compare": (), "preserve": ()}
+CASES["Heal_RemoveDamageEffect"] = [
+    {"wram": {hAIPkmnPowerEffectParam: b"\x00"}, "read": {hAIPkmnPowerEffectParam: 1}, "expect": {hAIPkmnPowerEffectParam: b"\x00"}},
+    dict(POISON, wram={hAIPkmnPowerEffectParam: b"\x00"}, read={hAIPkmnPowerEffectParam: 1}, expect={hAIPkmnPowerEffectParam: b"\x00"})
+]
+# <<< factory Heal_RemoveDamageEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -11146,3 +11157,10 @@ MUTATIONS["Wail_FillBenchEffect"] = {
     "case_ids": ["Wail_FillBenchEffect-0", "Wail_FillBenchEffect-1"],
 }
 # <<< factory-mutation Wail_FillBenchEffect
+# >>> factory-mutation Heal_RemoveDamageEffect
+MUTATIONS["Heal_RemoveDamageEffect"] = {"source_symbol": "Heal_RemoveDamageEffect", "before": "void Heal_RemoveDamageEffect(void)\n{\n}", "after": "void Heal_RemoveDamageEffect(void)\n{\n\thAIPkmnPowerEffectParam = 1u;\n}", "case_ids": ["Heal_RemoveDamageEffect-0", "Heal_RemoveDamageEffect-1"]}
+# <<< factory-mutation Heal_RemoveDamageEffect
+# >>> factory-completion Heal_RemoveDamageEffect
+for _record in SCHEMA2_CASES["Heal_RemoveDamageEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x2380, "bank": 13}
+# <<< factory-completion Heal_RemoveDamageEffect
