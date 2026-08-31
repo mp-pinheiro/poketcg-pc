@@ -1,0 +1,6 @@
+schema = 1
+width = 160
+height = 144
+scale = 1
+filter = "none"
+color_domain = "cgb-5bit"

@@ -231,14 +231,9 @@ oracle-fuzz-thin: oracle-build-gbref build-barrier
 oracle-gate: oracle-fn-gate oracle-audit-all-parallel
     python3 tools/audit_oracle_cases.py --stage routine
 
-# Release barrier: primary and independent oracles, data round-trip, complete
-# schema inventory, one source-backed mutation declaration per case module, and
-# locally-defined constants checked against pret (a wrong value is invisible to
-# both the compiler and the oracle when no case seeds the address).
-oracle-release-gate: oracle-gate data-verify
-    python3 tools/audit_oracle_cases.py --stage release
-    python3 tools/audit_mutations.py --stage release
-    python3 tools/audit_constants.py
+# Sole release authority. It records an immutable run and an atomic pointer.
+oracle-release-gate:
+    python3 tools/oracle/release_gate.py
 
 # Diff one routine's C port against PyBoy running the real ROM.
 oracle-diff FN: build
@@ -330,6 +325,17 @@ package-smoke:
     just build
     just completion-data-pack
     python3 tools/completion/package_smoke.py
+
+completion-lanes-health:
+    python3 tools/completion/oracle_lanes.py --health
+
+completion-bizhawk-health:
+    python3 tools/completion/bizhawk_runner.py health
+completion-capture SCENARIO *ARGS:
+    python3 tools/completion/bizhawk_runner.py capture "{{SCENARIO}}" {{ARGS}}
+
+completion-cfg-audit:
+    python3 tools/completion/cfg.py
 # Recompute site/data/progress.json + history point from the registry and gate record.
 progress:
     python3 tools/progress/report.py build

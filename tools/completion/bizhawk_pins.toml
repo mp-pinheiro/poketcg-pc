@@ -1,0 +1,41 @@
+schema = 1
+api = "BizHawk Lua integer API 2.9+"
+
+[build]
+version = "2.9.1"
+path = ""
+sha256 = ""
+
+[core]
+name = "Gambatte"
+path = ""
+sha256 = ""
+
+[firmware]
+path = ""
+sha256 = ""
+
+[config]
+path = "tools/completion/bizhawk_config.ini"
+sha256 = "af10400195979c21b2c6bd4243d1bf96f7fc7f98f9a093f92c3697b6bb7d9a23"
+
+[sync]
+path = "tools/completion/bizhawk_sync.toml"
+sha256 = "ac0256526ad7468e26f68f371ce69d124020e1b9f8bb9a20b6c851962a1fda43"
+
+[display]
+path = "tools/completion/bizhawk_display.toml"
+sha256 = "3643eb04376672060665673ae5945da31a0cc6415e82cae98838dfdc5cce1363"
+
+[script]
+path = "tools/completion/bizhawk_capture.lua"
+sha256 = "bc728afb0e25afc4fb59f5402a27d85abef9f6eafa02d1862bb370f37cfaef17"
+
+[rom]
+path = "poketcg/poketcg.gbc"
+sha256 = "a54515bb6b3e364964d3c0226f5a6b0c8c0f7318c9296ef2e321df0bbb8541ce"
+
+[requirements]
+domains = ["WRAM", "ROM", "VRAM", "OAM", "HRAM", "CartRAM", "System Bus"]
+registers = ["A", "F", "B", "C", "D", "E", "H", "L", "SP", "PC"]
+scope_contains = "bus"

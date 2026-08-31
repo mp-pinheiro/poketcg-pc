@@ -49,6 +49,7 @@ int main(int argc, char **argv)
 	const char *save_path = NULL;
 	const char *load_save_path = NULL;
 	const char *dump_state_path = NULL;
+	const char *trace_entries_path = NULL;
 	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "--headless") == 0) {
 			config.headless = 1;
@@ -71,10 +72,12 @@ int main(int argc, char **argv)
 			load_save_path = argv[++i];
 		} else if (strcmp(argv[i], "--dump-state") == 0 && i + 1 < argc) {
 			dump_state_path = argv[++i];
+		} else if (strcmp(argv[i], "--trace-entries") == 0 && i + 1 < argc) {
+			trace_entries_path = argv[++i];
 		} else if (strcmp(argv[i], "--help") == 0) {
 			printf("usage: poketcg [--headless] [--frames N] --data-pack PATH "
 			       "[--require-data BANK:ADDR] [--load-save PATH] [--save PATH] "
-			       "[--dump-state PATH]\n");
+			       "[--dump-state PATH] [--trace-entries PATH]\n");
 			return 0;
 		} else {
 			fprintf(stderr, "unknown argument: %s\n", argv[i]);
@@ -124,6 +127,10 @@ int main(int argc, char **argv)
 	}
 	if (status == 0 && dump_state_path && runtime_write_state(dump_state_path, &runtime) != 0) {
 		fprintf(stderr, "cannot write native state %s\n", dump_state_path);
+		status = 1;
+	}
+	if (status == 0 && trace_entries_path && runtime_write_trace(trace_entries_path, &runtime) != 0) {
+		fprintf(stderr, "cannot write native trace %s\n", trace_entries_path);
 		status = 1;
 	}
 	if (status != 0)

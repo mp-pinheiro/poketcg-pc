@@ -4,5 +4,6 @@
 #include "runtime.h"
 
 int runtime_write_state(const char *path, const RuntimeResult *runtime);
+int runtime_write_trace(const char *path, const RuntimeResult *runtime);
 
 #endif

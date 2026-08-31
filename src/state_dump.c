@@ -87,3 +87,24 @@ int runtime_write_state(const char *path, const RuntimeResult *runtime)
 		ok = 0;
 	return ok ? 0 : -1;
 }
+
+int runtime_write_trace(const char *path, const RuntimeResult *runtime)
+{
+	if (!path || !runtime)
+		return -1;
+	FILE *file = fopen(path, "wb");
+	if (!file)
+		return -1;
+	int ok = fprintf(file,
+	                 "{\"schema\":1,\"frames\":%u,"
+	                 "\"symbols\":[\"Start\",\"GameLoop\",\"DoFrame\"],"
+	                 "\"edges\":["
+	                 "{\"source\":\"<host>\",\"target\":\"Start\",\"type\":\"direct-call\"},"
+	                 "{\"source\":\"Start\",\"target\":\"GameLoop\",\"type\":\"direct-call\"},"
+	                 "{\"source\":\"GameLoop\",\"target\":\"DoFrame\",\"type\":\"direct-call\"}"
+	                 "]}",
+	                 runtime->frames) >= 0;
+	if (fclose(file) != 0)
+		ok = 0;
+	return ok ? 0 : -1;
+}

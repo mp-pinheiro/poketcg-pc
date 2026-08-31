@@ -29,6 +29,8 @@ SCOPE_PATH = ROOT / "tools" / "progress" / "scope.toml"
 REGISTRY_PATH = ROOT / "tests" / "routines.py"
 MAIN_PATH = ROOT / "src" / "main.c"
 COMPLETION_DIR = ROOT / "build" / "completion"
+CFG_TOOL = ROOT / "tools" / "completion" / "cfg.py"
+CFG_OUTPUT = COMPLETION_DIR / "cfg.json"
 MAPPING_PATH = COMPLETION_DIR / "routine-mapping.json"
 EVIDENCE_DIR = COMPLETION_DIR / "evidence"
 ROM_SIZE = 0x100000
@@ -146,6 +148,28 @@ def run_source_inventory() -> dict[str, Any]:
             "source inventory failed: " + (detail[-1] if detail else "unknown error")
         )
     return load_json(INVENTORY_PATH)
+
+def run_cfg_audit() -> dict[str, Any]:
+    try:
+        result = subprocess.run(
+            [sys.executable, str(CFG_TOOL), "--output", str(CFG_OUTPUT)],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=120,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise AuditError(f"CFG audit did not run: {exc}") from exc
+    if not CFG_OUTPUT.is_file():
+        detail = (result.stderr or result.stdout).strip().splitlines()
+        raise AuditError(
+            "CFG audit produced no report: " + (detail[-1] if detail else "unknown error")
+        )
+    report = load_json(CFG_OUTPUT)
+    if not isinstance(report.get("uncovered_required_edges"), int):
+        raise AuditError("CFG report has no uncovered edge count")
+    return report
 
 
 def read_rom_sha1() -> str:
@@ -770,6 +794,15 @@ def collect_report() -> dict[str, Any]:
     if independent_totals.get("padding", 0) != ROM_SIZE - source_mapped:
         errors.append("padding does not account for bytes outside mapped sections")
     try:
+        cfg = run_cfg_audit()
+    except AuditError as exc:
+        cfg = {"required_edges": 0, "covered_edges": 0, "uncovered_required_edges": None}
+        errors.append(str(exc))
+    if cfg.get("uncovered_required_edges"):
+        errors.append(
+            f"uncovered required CFG edges: {cfg['uncovered_required_edges']}"
+        )
+    try:
         mapping = build_mapping(inventory)
     except AuditError as exc:
         mapping = {
@@ -863,7 +896,8 @@ def collect_report() -> dict[str, Any]:
         "landed_inventory": {
             "routines": mapping.get("expected_logical_routines", 0),
             "code_bytes": sum(
-                int(info.get("size", 0)) for name, info in inventory.get("functions", {}).items()
+                int(info.get("size", 0))
+                for name, info in inventory.get("functions", {}).items()
                 if name not in load_scope_exclusions(inventory.get("functions", {}))
             ),
         },
@@ -880,6 +914,9 @@ def collect_report() -> dict[str, Any]:
             "roots": sum(roots.values()),
             "root_total": len(roots),
             "native_scenes": native_scene_count,
+            "required_edges": cfg.get("required_edges", 0),
+            "covered_edges": cfg.get("covered_edges", 0),
+            "uncovered_required_edges": cfg.get("uncovered_required_edges"),
         },
         "requirements": {
             "passing": passing_requirements,
@@ -893,7 +930,6 @@ def collect_report() -> dict[str, Any]:
         "orphan_registrations": mapping.get("orphan_registrations", 0),
     }
     return {
-        "schema": 2,
         "complete": not errors,
         "revision": current_revision(),
         "content_key": key,
