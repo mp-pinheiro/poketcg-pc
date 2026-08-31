@@ -51,6 +51,22 @@ static void adapt_HandlePeekSelection(ProbeState *s)
 }
 /* <<< factory HandlePeekSelection */
 
+/* >>> factory OpenDuelCheckMenu */
+static void adapt_OpenDuelCheckMenu(ProbeState *s)
+{
+	(void)s;
+	OpenDuelCheckMenu();
+}
+/* <<< factory OpenDuelCheckMenu */
+
+/* >>> factory OpenInPlayAreaScreen_FromSelectButton */
+static void adapt_OpenInPlayAreaScreen_FromSelectButton(ProbeState *s)
+{
+	(void)s;
+	OpenInPlayAreaScreen_FromSelectButton();
+}
+/* <<< factory OpenInPlayAreaScreen_FromSelectButton */
+
 const ProbeEntry probe_entries_duel_menus[] = {
 	{ "DrawPlayersPrizeAndBenchCards", adapt_DrawPlayersPrizeAndBenchCards },
 	{ "DrawPlayAreaToPlacePrizeCards", adapt_DrawPlayAreaToPlacePrizeCards },
@@ -58,5 +74,7 @@ const ProbeEntry probe_entries_duel_menus[] = {
 	{ "DrawAIPeekScreen", adapt_DrawAIPeekScreen },
 	{ "SelectPrizeCards", adapt_SelectPrizeCards },
 	{ "HandlePeekSelection", adapt_HandlePeekSelection },
+	{ "OpenDuelCheckMenu", adapt_OpenDuelCheckMenu },
+	{ "OpenInPlayAreaScreen_FromSelectButton", adapt_OpenInPlayAreaScreen_FromSelectButton },
 	{ NULL, NULL },
 };

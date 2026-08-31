@@ -38,6 +38,10 @@
 #include "home/overworld.h"
 #include "home/switch_rom.h"
 #define BANK__HandlePeekSelection 0x02u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/overworld.h"
 /* <<< factory statics */
 
 /* >>> factory DrawPlayersPrizeAndBenchCards */
@@ -106,3 +110,22 @@ HandlePeekSelectionV2Result HandlePeekSelection(uint8_t f)
 	return (HandlePeekSelectionV2Result){inner.a, f};
 }
 /* <<< factory HandlePeekSelection */
+
+/* >>> factory OpenDuelCheckMenu */
+void OpenDuelCheckMenu(void)
+{
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(2u);
+	BankswitchROM(saved_bank);
+}
+/* <<< factory OpenDuelCheckMenu */
+
+/* >>> factory OpenInPlayAreaScreen_FromSelectButton */
+void OpenInPlayAreaScreen_FromSelectButton(void)
+{
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(6u);
+	wInPlayAreaFromSelectButton = 1u;
+	BankswitchROM(saved_bank);
+}
+/* <<< factory OpenInPlayAreaScreen_FromSelectButton */

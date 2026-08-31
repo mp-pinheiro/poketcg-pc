@@ -23,4 +23,10 @@ void SelectPrizeCards(uint8_t a);
 typedef struct { uint8_t a; uint8_t f; } HandlePeekSelectionV2Result;
 HandlePeekSelectionV2Result HandlePeekSelection(uint8_t f);
 /* <<< factory HandlePeekSelection */
+/* >>> factory OpenDuelCheckMenu */
+void OpenDuelCheckMenu(void);
+/* <<< factory OpenDuelCheckMenu */
+/* >>> factory OpenInPlayAreaScreen_FromSelectButton */
+void OpenInPlayAreaScreen_FromSelectButton(void);
+/* <<< factory OpenInPlayAreaScreen_FromSelectButton */
 #endif /* POKETCG_HOME_DUEL_MENUS_H */

@@ -137,6 +137,22 @@ CASES["HandlePeekSelection"] = [
 ]
 # <<< factory HandlePeekSelection
 
+# >>> factory OpenDuelCheckMenu
+CONTRACT["OpenDuelCheckMenu"] = {"compare": (), "preserve": ()}
+CASES["OpenDuelCheckMenu"] = [
+    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xFF80: b"\x01"}, "read": {0xFF80: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xFF80: b"\x01"}, read={0xFF80: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory OpenDuelCheckMenu
+
+# >>> factory OpenInPlayAreaScreen_FromSelectButton
+CONTRACT["OpenInPlayAreaScreen_FromSelectButton"] = {"compare": (), "preserve": ()}
+CASES["OpenInPlayAreaScreen_FromSelectButton"] = [
+    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xFF80: b"\x01"}, "read": {0xFF80: 1, 0xCE60: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xFF80: b"\x01"}, read={0xFF80: 1, 0xCE60: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory OpenInPlayAreaScreen_FromSelectButton
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -169,3 +185,9 @@ MUTATIONS["HandlePeekSelection"] = {
     "case_ids": ["HandlePeekSelection-0", "HandlePeekSelection-1"],
 }
 # <<< factory-mutation HandlePeekSelection
+# >>> factory-mutation OpenDuelCheckMenu
+MUTATIONS["OpenDuelCheckMenu"] = {"source_symbol": "OpenDuelCheckMenu", "before": "void OpenDuelCheckMenu(void)\n{\n\tuint8_t saved_bank = hBankROM;\n\tBankswitchROM(2u);\n\tBankswitchROM(saved_bank);", "after": "void OpenDuelCheckMenu(void)\n{\n\tuint8_t saved_bank = hBankROM;\n\tBankswitchROM(2u);\n\tBankswitchROM((uint8_t)(saved_bank ^ 1u));", "case_ids": ["OpenDuelCheckMenu-0", "OpenDuelCheckMenu-1"]}
+# <<< factory-mutation OpenDuelCheckMenu
+# >>> factory-mutation OpenInPlayAreaScreen_FromSelectButton
+MUTATIONS["OpenInPlayAreaScreen_FromSelectButton"] = {"source_symbol": "OpenInPlayAreaScreen_FromSelectButton", "before": "void OpenInPlayAreaScreen_FromSelectButton(void)\n{\n\tuint8_t saved_bank = hBankROM;\n\tBankswitchROM(6u);\n\twInPlayAreaFromSelectButton = 1u;", "after": "void OpenInPlayAreaScreen_FromSelectButton(void)\n{\n\tuint8_t saved_bank = hBankROM;\n\tBankswitchROM(6u);\n\twInPlayAreaFromSelectButton = 2u;", "case_ids": ["OpenInPlayAreaScreen_FromSelectButton-0", "OpenInPlayAreaScreen_FromSelectButton-1"]}
+# <<< factory-mutation OpenInPlayAreaScreen_FromSelectButton
