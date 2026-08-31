@@ -11381,3 +11381,18 @@ PidgeyWhirlwindSelectEffectResult PidgeyWhirlwind_SelectEffect(uint8_t a, uint8_
 	return (PidgeyWhirlwindSelectEffectResult){hTempPlayAreaLocation_ff9d, selected.f};
 }
 /* <<< factory PidgeyWhirlwind_SelectEffect */
+
+/* >>> factory Ram_SelectSwitchEffect */
+Ram_SelectSwitchEffectResult Ram_SelectSwitchEffect(void)
+{
+	DuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a < 2u) {
+		hTemp_ffa0 = 0xFFu;
+		return (Ram_SelectSwitchEffectResult){0xFFu, 0x70u};
+	}
+	DuelistSelectForcedSwitchResult selected =
+		DuelistSelectForcedSwitch(count.a, 0u, 0u, 0u, 0u, 0u, count.hl);
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	return (Ram_SelectSwitchEffectResult){hTempPlayAreaLocation_ff9d, selected.f};
+}
+/* <<< factory Ram_SelectSwitchEffect */

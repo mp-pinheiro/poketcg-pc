@@ -5381,6 +5381,15 @@ static void adapt_PidgeyWhirlwind_SelectEffect(ProbeState *s)
 }
 /* <<< factory PidgeyWhirlwind_SelectEffect */
 
+/* >>> factory Ram_SelectSwitchEffect */
+static void adapt_Ram_SelectSwitchEffect(ProbeState *s)
+{
+	Ram_SelectSwitchEffectResult result = Ram_SelectSwitchEffect();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Ram_SelectSwitchEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -6029,5 +6038,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ButterfreeWhirlwind_CheckBench", adapt_ButterfreeWhirlwind_CheckBench },
 	{ "PidgeottoWhirlwind_SelectEffect", adapt_PidgeottoWhirlwind_SelectEffect },
 	{ "PidgeyWhirlwind_SelectEffect", adapt_PidgeyWhirlwind_SelectEffect },
+	{ "Ram_SelectSwitchEffect", adapt_Ram_SelectSwitchEffect },
 	{ NULL, NULL },
 };
