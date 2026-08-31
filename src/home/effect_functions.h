@@ -2214,6 +2214,9 @@ void VictreebelLure_SelectSwitchPokemon(void);
 typedef struct { uint8_t a; uint8_t f; } TerrorStrike50PercentSelectSwitchPokemonResult;
 TerrorStrike50PercentSelectSwitchPokemonResult TerrorStrike_50PercentSelectSwitchPokemon(void);
 /* <<< factory TerrorStrike_50PercentSelectSwitchPokemon */
+/* >>> factory Potion_PlayerSelection */
+void Potion_PlayerSelection(void);
+/* <<< factory Potion_PlayerSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -11491,3 +11491,23 @@ TerrorStrike50PercentSelectSwitchPokemonResult TerrorStrike_50PercentSelectSwitc
 	return (TerrorStrike50PercentSelectSwitchPokemonResult){hTempPlayAreaLocation_ff9d, selected.f};
 }
 /* <<< factory TerrorStrike_50PercentSelectSwitchPokemon */
+
+/* >>> factory Potion_PlayerSelection */
+void Potion_PlayerSelection(void)
+{
+	(void)HasAlivePokemonInPlayArea();
+	for (;;) {
+		OpenPlayAreaScreenForSelection();
+		uint8_t location = hTempPlayAreaLocation_ff9d;
+		hTemp_ffa0 = location;
+		CardDamageResult damage = GetCardDamageAndMaxHP(location);
+		if (damage.a == 0u)
+			continue;
+		uint8_t amount = damage.a;
+		if (amount > 20u)
+			amount = 20u;
+		hTempPlayAreaLocation_ffa1 = amount;
+		return;
+	}
+}
+/* <<< factory Potion_PlayerSelection */

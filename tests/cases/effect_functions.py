@@ -7794,6 +7794,15 @@ CASES["TerrorStrike_50PercentSelectSwitchPokemon"] = [
 ]
 # <<< factory TerrorStrike_50PercentSelectSwitchPokemon
 
+# >>> factory Potion_PlayerSelection
+CONTRACT["Potion_PlayerSelection"] = {"compare": (), "preserve": ()}
+CASES["Potion_PlayerSelection"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\x1E", 0xC2CE: b"\x01", 0xC400: b"\x08", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1, 0xFFA1: 1}, "expect": {0xFFA0: b"\x00", 0xFFA1: b"\x0A"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\x0A", 0xC2CE: b"\x01", 0xC400: b"\x08", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1, 0xFFA1: 1}, "expect": {0xFFA0: b"\x00", 0xFFA1: b"\x14"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\x1E", 0xC2CE: b"\x01", 0xC400: b"\x08", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFFA0: 1, 0xFFA1: 1}, expect={0xFFA0: b"\x00", 0xFFA1: b"\x0A"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Potion_PlayerSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10956,3 +10965,6 @@ MUTATIONS["VictreebelLure_SelectSwitchPokemon"] = {"source_symbol": "VictreebelL
 # >>> factory-mutation TerrorStrike_50PercentSelectSwitchPokemon
 MUTATIONS["TerrorStrike_50PercentSelectSwitchPokemon"] = {"source_symbol": "TerrorStrike_50PercentSelectSwitchPokemon", "before": "TerrorStrike50PercentSelectSwitchPokemonResult TerrorStrike_50PercentSelectSwitchPokemon(void)\n{\n\thTemp_ffa0 = 0x00u;", "after": "TerrorStrike50PercentSelectSwitchPokemonResult TerrorStrike_50PercentSelectSwitchPokemon(void)\n{\n\thTemp_ffa0 = 0x01u;", "case_ids": ["TerrorStrike_50PercentSelectSwitchPokemon-0", "TerrorStrike_50PercentSelectSwitchPokemon-1"]}
 # <<< factory-mutation TerrorStrike_50PercentSelectSwitchPokemon
+# >>> factory-mutation Potion_PlayerSelection
+MUTATIONS["Potion_PlayerSelection"] = {"source_symbol": "Potion_PlayerSelection", "before": "void Potion_PlayerSelection(void)\n{\n\t(void)HasAlivePokemonInPlayArea();\n\tfor (;;) {\n\t\tOpenPlayAreaScreenForSelection();\n\t\tuint8_t location = hTempPlayAreaLocation_ff9d;\n\t\thTemp_ffa0 = location;", "after": "void Potion_PlayerSelection(void)\n{\n\t(void)HasAlivePokemonInPlayArea();\n\tfor (;;) {\n\t\tOpenPlayAreaScreenForSelection();\n\t\tuint8_t location = hTempPlayAreaLocation_ff9d;\n\t\thTemp_ffa0 = (uint8_t)(location + 1u);", "case_ids": ["Potion_PlayerSelection-0", "Potion_PlayerSelection-1", "Potion_PlayerSelection-2"]}
+# <<< factory-mutation Potion_PlayerSelection

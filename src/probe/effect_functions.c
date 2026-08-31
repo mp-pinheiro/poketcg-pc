@@ -5439,6 +5439,14 @@ static void adapt_TerrorStrike_50PercentSelectSwitchPokemon(ProbeState *s)
 }
 /* <<< factory TerrorStrike_50PercentSelectSwitchPokemon */
 
+/* >>> factory Potion_PlayerSelection */
+static void adapt_Potion_PlayerSelection(ProbeState *s)
+{
+	(void)s;
+	Potion_PlayerSelection();
+}
+/* <<< factory Potion_PlayerSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -6094,5 +6102,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "StretchKick_PlayerSelectEffect", adapt_StretchKick_PlayerSelectEffect },
 	{ "VictreebelLure_SelectSwitchPokemon", adapt_VictreebelLure_SelectSwitchPokemon },
 	{ "TerrorStrike_50PercentSelectSwitchPokemon", adapt_TerrorStrike_50PercentSelectSwitchPokemon },
+	{ "Potion_PlayerSelection", adapt_Potion_PlayerSelection },
 	{ NULL, NULL },
 };
