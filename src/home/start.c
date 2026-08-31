@@ -76,6 +76,23 @@
 #include "home/sound.h"
 #include "generated/wram.h"
 #define MUSIC_STOP 0x00u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/clear_sram.h"
+#include "home/dma.h"
+#include "home/lcd.h"
+#include "home/overworld.h"
+#include "home/serial.h"
+#include "home/setup.h"
+#include "home/sound.h"
+#include "home/switch_sram.h"
+#include "home/time.h"
+#include "mem.h"
+#define BANK_GAME_LOOP 0x01u
+#define rIF 0xFF0Fu
+#define rIE 0xFFFFu
+#define rVBK 0xFF4Fu
 /* <<< factory statics */
 
 #define CONSOLE_CGB 0x02u
@@ -302,3 +319,11 @@ void HandleTitleScreen(void)
 	EnableAndClearSpriteAnimations();
 }
 /* <<< factory HandleTitleScreen */
+
+/* >>> factory Start */
+void Start(uint8_t a)
+{
+	wInitialA = a;
+	wTileMapFill = 0x20u;
+}
+/* <<< factory Start */

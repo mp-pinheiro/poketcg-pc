@@ -1,0 +1,9 @@
+{
+  "fn": "Start",
+  "case": "tests/cases/start.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Start\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51891\": \"01\", \"51894\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Start\", \"mismatches\": {\"bus\": {\"address\": 51891, \"reference\": \"0120\", \"native\": \"ff20\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[51891, 1], [51894, 1]]}}}\n",
+  "restored": "{\"fn\": \"Start\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51891\": \"01\", \"51894\": \"20\"}}, \"status\": \"PASS\"}\n"
+}

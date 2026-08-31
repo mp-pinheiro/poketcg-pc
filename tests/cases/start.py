@@ -143,6 +143,14 @@ CASES["HandleTitleScreen"] = [
 ]
 # <<< factory HandleTitleScreen
 
+# >>> factory Start
+CONTRACT["Start"] = {"compare": (), "preserve": ()}
+CASES["Start"] = [
+    dict(oracle=True, evidence="primary", why="The boot prefix initializes RAM, hardware, palettes, timer, serial state, DMA, and SRAM before the non-returning GameLoop jump; the initial byte and tile fill are asserted.", a=0x01, wram={0xCAB3: b"\xff", 0xCAB6: b"\xff"}, read={0xCAB3: 1, 0xCAB6: 1}, expect={0xCAB3: b"\x01", 0xCAB6: b"\x20"}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, oracle=True, evidence="primary", why="The boot prefix must preserve the incoming A value in wInitialA and initialize the tile fill with poisoned entry registers before the non-returning GameLoop jump.", wram={0xCAB3: b"\xff", 0xCAB6: b"\xff"}, read={0xCAB3: 1, 0xCAB6: 1}, expect={0xCAB3: b"\xaa", 0xCAB6: b"\x20"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Start
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation CheckIfHasSaveData
@@ -170,3 +178,10 @@ MUTATIONS["HandleTitleScreen"] = {"source_symbol": "HandleTitleScreen", "before"
 for _record in SCHEMA2_CASES["HandleTitleScreen"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x5086, "bank": 7}
 # <<< factory-completion HandleTitleScreen
+# >>> factory-mutation Start
+MUTATIONS["Start"] = {"source_symbol": "Start", "before": "wInitialA = a;", "after": "wInitialA = 0xFFu;", "case_ids": ["Start-0", "Start-1"]}
+# <<< factory-mutation Start
+# >>> factory-completion Start
+for _record in SCHEMA2_CASES["Start"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x03B8}
+# <<< factory-completion Start

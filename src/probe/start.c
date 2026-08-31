@@ -69,6 +69,13 @@ static void adapt_HandleTitleScreen(ProbeState *s)
 }
 /* <<< factory HandleTitleScreen */
 
+/* >>> factory Start */
+static void adapt_Start(ProbeState *s)
+{
+	Start(s->a);
+}
+/* <<< factory Start */
+
 const ProbeEntry probe_entries_start[] = {
 	{ "ShowCardPopCGBDisclaimer", adapt_ShowCardPopCGBDisclaimer },
 	{ "CheckIfHasSaveData", adapt_CheckIfHasSaveData },
@@ -78,5 +85,6 @@ const ProbeEntry probe_entries_start[] = {
 	{ "DrawPlayerPortraitAndPrintNewGameText", adapt_DrawPlayerPortraitAndPrintNewGameText },
 	{ "DeleteSaveDataForNewGame", adapt_DeleteSaveDataForNewGame },
 	{ "HandleTitleScreen", adapt_HandleTitleScreen },
+	{ "Start", adapt_Start },
 	{ NULL, NULL },
 };

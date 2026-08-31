@@ -29,4 +29,7 @@ void DeleteSaveDataForNewGame(void);
 /* >>> factory HandleTitleScreen */
 void HandleTitleScreen(void);
 /* <<< factory HandleTitleScreen */
+/* >>> factory Start */
+void Start(uint8_t a);
+/* <<< factory Start */
 #endif /* POKETCG_HOME_START_H */
