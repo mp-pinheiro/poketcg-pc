@@ -1629,6 +1629,11 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "home/duel.h"
+
+#include "home/duel.h"
+#include "home/serial.h"
+#include "home/core.h"
+#define OPPACTION_DRAW_CARD 0x0Bu
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -9323,3 +9328,14 @@ void DuelMenu_Attack(void)
 	wSelectedDuelSubMenuItem = 0u;
 }
 /* <<< factory DuelMenu_Attack */
+
+/* >>> factory UnreferencedDrawCardFromDeckToHand */
+void UnreferencedDrawCardFromDeckToHand(void)
+{
+	DrawCardResult draw = DrawCardFromDeck();
+	if ((draw.f & 0x10u) == 0u)
+		AddCardToHand(draw.a);
+	(void)SetOppAction_SerialSendDuelData(OPPACTION_DRAW_CARD, 0u);
+	PrintDuelMenuAndHandleInput();
+}
+/* <<< factory UnreferencedDrawCardFromDeckToHand */

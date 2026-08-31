@@ -3007,6 +3007,14 @@ static void adapt_DuelMenu_Attack(ProbeState *s)
 }
 /* <<< factory DuelMenu_Attack */
 
+/* >>> factory UnreferencedDrawCardFromDeckToHand */
+static void adapt_UnreferencedDrawCardFromDeckToHand(ProbeState *s)
+{
+	(void)s;
+	UnreferencedDrawCardFromDeckToHand();
+}
+/* <<< factory UnreferencedDrawCardFromDeckToHand */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3367,5 +3375,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DuelMenu_Check", adapt_DuelMenu_Check },
 	{ "DuelMenuShortcut_BothActivePokemon", adapt_DuelMenuShortcut_BothActivePokemon },
 	{ "DuelMenu_Attack", adapt_DuelMenu_Attack },
+	{ "UnreferencedDrawCardFromDeckToHand", adapt_UnreferencedDrawCardFromDeckToHand },
 	{ NULL, NULL },
 };

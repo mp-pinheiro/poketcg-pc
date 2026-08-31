@@ -1351,4 +1351,8 @@ void DuelMenuShortcut_BothActivePokemon(void);
 /* >>> factory DuelMenu_Attack */
 void DuelMenu_Attack(void);
 /* <<< factory DuelMenu_Attack */
+/* >>> factory UnreferencedDrawCardFromDeckToHand */
+/* >>> factory UnreferencedDrawCardFromDeckToHand */
+void UnreferencedDrawCardFromDeckToHand(void);
+/* <<< factory UnreferencedDrawCardFromDeckToHand */
 #endif

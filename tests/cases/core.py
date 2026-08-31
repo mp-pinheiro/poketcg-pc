@@ -4934,6 +4934,14 @@ CONTRACT["DuelMenu_Attack"] = {"compare": (), "preserve": ()}
 CASES["DuelMenu_Attack"] = [dict(POISON, read={0xCBCF: 1}, expect={0xCBCF: b"\x00"})]
 # <<< factory DuelMenu_Attack
 
+# >>> factory UnreferencedDrawCardFromDeckToHand
+CONTRACT["UnreferencedDrawCardFromDeckToHand"] = {"compare": (), "preserve": ()}
+CASES["UnreferencedDrawCardFromDeckToHand"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3C"}, "read": {0xFF9E: 1}, "expect": {0xFF9E: b"\x0B"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BA: b"\x3C"}, read={0xFF9E: 1}, expect={0xFF9E: b"\x0B"}),
+]
+# <<< factory UnreferencedDrawCardFromDeckToHand
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6908,3 +6916,10 @@ MUTATIONS["DuelMenu_Attack"] = {"source_symbol": "DuelMenu_Attack", "before": "w
 for _record in SCHEMA2_CASES["DuelMenu_Attack"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
 # <<< factory-completion DuelMenu_Attack
+# >>> factory-mutation UnreferencedDrawCardFromDeckToHand
+MUTATIONS["UnreferencedDrawCardFromDeckToHand"] = {"source_symbol": "UnreferencedDrawCardFromDeckToHand", "before": "void UnreferencedDrawCardFromDeckToHand(void)\n{\n\tDrawCardResult draw = DrawCardFromDeck();\n\tif ((draw.f & 0x10u) == 0u)\n\t\tAddCardToHand(draw.a);\n\t(void)SetOppAction_SerialSendDuelData(OPPACTION_DRAW_CARD, 0u);", "after": "void UnreferencedDrawCardFromDeckToHand(void)\n{\n\tDrawCardResult draw = DrawCardFromDeck();\n\tif ((draw.f & 0x10u) == 0u)\n\t\tAddCardToHand(draw.a);\n\t(void)SetOppAction_SerialSendDuelData(0x0Au, 0u);", "case_ids": ["UnreferencedDrawCardFromDeckToHand-0", "UnreferencedDrawCardFromDeckToHand-1"]}
+# <<< factory-mutation UnreferencedDrawCardFromDeckToHand
+# >>> factory-completion UnreferencedDrawCardFromDeckToHand
+for _record in SCHEMA2_CASES["UnreferencedDrawCardFromDeckToHand"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x04E0, "bank": 1}
+# <<< factory-completion UnreferencedDrawCardFromDeckToHand
