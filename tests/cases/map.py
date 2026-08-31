@@ -204,6 +204,12 @@ wActiveGameEvent = 0xD0C2
 wDuelResult = 0xD0C3
 wDuelTheme = 0xCC1A
 wSongOverride = 0xD112
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+sCurrentDuel = 0xBC00
+sPlayerInChallengeMachine = 0xBA44
+wSongOverride = 0xD112
 # <<< factory-cases-statics
 
 # >>> factory GetReceivedLegendaryCards
@@ -276,6 +282,29 @@ CASES["GameEvent_BattleCenter"] = [
 ]
 # <<< factory GameEvent_BattleCenter
 
+# >>> factory GameEvent_ContinueDuel
+CONTRACT["GameEvent_ContinueDuel"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["GameEvent_ContinueDuel"] = [
+    {"wram": {0xCABB: b"\x00", 0xCC07: b"\xA5", wSongOverride: b"\x55"},
+     "sram": {0: {sCurrentDuel: b"\x00", sPlayerInChallengeMachine: b"\x00"}},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01],
+     "read": {wSongOverride: 1},
+     "sread": {0: {sPlayerInChallengeMachine: 1}},
+     "expect_regs": {"a": 0x00, "f": 0x10},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON,
+         wram={0xCABB: b"\x00", 0xCC07: b"\xA5", wSongOverride: b"\xAA"},
+         sram={0: {sCurrentDuel: b"\x00", sPlayerInChallengeMachine: b"\x01"}},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         keys=[0x00, 0x01],
+         read={wSongOverride: 1},
+         sread={0: {sPlayerInChallengeMachine: 1}},
+         expect_regs={"a": 0x01, "f": 0x10},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory GameEvent_ContinueDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -343,3 +372,6 @@ MUTATIONS["GameEvent_BattleCenter"] = {"source_symbol": "GameEvent_BattleCenter"
 for _record in SCHEMA2_CASES["GameEvent_BattleCenter"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x0264}
 # <<< factory-completion GameEvent_BattleCenter
+# >>> factory-mutation GameEvent_ContinueDuel
+MUTATIONS["GameEvent_ContinueDuel"] = {"source_symbol": "GameEvent_ContinueDuel", "before": "SongResult GameEvent_ContinueDuel(void)\n{\n\twSongOverride = 0u;", "after": "SongResult GameEvent_ContinueDuel(void)\n{\n\twSongOverride = 1u;", "case_ids": ["GameEvent_ContinueDuel-0", "GameEvent_ContinueDuel-1"]}
+# <<< factory-mutation GameEvent_ContinueDuel

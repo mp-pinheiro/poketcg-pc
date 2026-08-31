@@ -56,4 +56,7 @@ void GameEvent_Credits(void);
 /* >>> factory GameEvent_BattleCenter */
 uint8_t GameEvent_BattleCenter(void);
 /* <<< factory GameEvent_BattleCenter */
+/* >>> factory GameEvent_ContinueDuel */
+SongResult GameEvent_ContinueDuel(void);
+/* <<< factory GameEvent_ContinueDuel */
 #endif

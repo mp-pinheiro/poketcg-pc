@@ -54,6 +54,13 @@
 #include "generated/wram.h"
 #define GAME_EVENT_BATTLE_CENTER 0x02u
 #define MUSIC_DUEL_THEME_1 0x02u
+
+#include "home/map.h"
+#include "home/challenge_machine.h"
+#include "home/core.h"
+#include "home/switch_sram.h"
+#include "generated/wram.h"
+#include "generated/sram.h"
 /* <<< factory statics */
 
 #define BANK_EXECUTE_NPC_MOVEMENT 0x03u
@@ -302,3 +309,23 @@ uint8_t GameEvent_BattleCenter(void)
 	return 0x10u;
 }
 /* <<< factory GameEvent_BattleCenter */
+
+/* >>> factory GameEvent_ContinueDuel */
+SongResult GameEvent_ContinueDuel(void)
+{
+	wSongOverride = 0u;
+	TryContinueDuel();
+
+	EnableSRAM();
+	uint8_t player_in_challenge = sPlayerInChallengeMachine;
+	DisableSRAM();
+
+	if (player_in_challenge != 0xffu)
+		return (SongResult){player_in_challenge, 0x10u};
+
+	ChallengeMachine_Start();
+	wDefaultSong = MUSIC_OVERWORLD;
+	SongResult result = PlayDefaultSong();
+	return (SongResult){result.a, (uint8_t)((result.f & 0x80u) | 0x10u)};
+}
+/* <<< factory GameEvent_ContinueDuel */
