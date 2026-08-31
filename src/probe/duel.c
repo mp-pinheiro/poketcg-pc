@@ -1101,6 +1101,16 @@ static void adapt_Func_17ed(ProbeState *s)
 }
 /* <<< factory Func_17ed */
 
+/* >>> factory PlayAttackAnimation_DealAttackDamage */
+static void adapt_PlayAttackAnimation_DealAttackDamage(ProbeState *s)
+{
+	HandleAfterDamageEffectsResult r = PlayAttackAnimation_DealAttackDamage(
+		s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory PlayAttackAnimation_DealAttackDamage */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "Func_82b6", adapt_Func_82b6 },
 	{ "CopyPlayerName", adapt_CopyPlayerName },
@@ -1234,5 +1244,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "HandleConfusionDamageToSelf", adapt_HandleConfusionDamageToSelf },
 	{ "HandleAfterDamageEffects", adapt_HandleAfterDamageEffects },
 	{ "Func_17ed", adapt_Func_17ed },
+	{ "PlayAttackAnimation_DealAttackDamage", adapt_PlayAttackAnimation_DealAttackDamage },
 	{ NULL, NULL },
 };

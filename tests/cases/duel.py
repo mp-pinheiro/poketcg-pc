@@ -1321,6 +1321,9 @@ _hps_read = {0xCE52: 1, 0xCE53: 2, 0xCE56: 1, 0xCE5C: 1}
 wce5e = 0xCE5E
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1879,6 +1882,13 @@ CASES["Func_17ed"] = [
 ]
 # <<< factory Func_17ed
 
+# >>> factory PlayAttackAnimation_DealAttackDamage
+CONTRACT["PlayAttackAnimation_DealAttackDamage"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PlayAttackAnimation_DealAttackDamage"] = [
+    dict(evidence="primary", oracle=False, why="The attack-damage wrapper enters animation and after-damage orchestration that cannot return in a standalone reference call; this bounded primary fixture records its wrapper result without unstable bus observations.", expect_regs={"a": 0x27, "f": 0x70}),
+    dict(POISON, evidence="primary", oracle=False, why="The attack-damage wrapper enters animation and after-damage orchestration that cannot return in a standalone reference call; this bounded poisoned primary fixture records its wrapper result without unstable bus observations.", expect_regs={"a": 0x27, "f": 0x70})]
+# <<< factory PlayAttackAnimation_DealAttackDamage
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_1bb4
@@ -2247,3 +2257,10 @@ for _record in SCHEMA2_CASES["HandleAfterDamageEffects"]:
 # >>> factory-mutation Func_17ed
 MUTATIONS["Func_17ed"] = {"source_symbol": "Func_17ed", "before": "HandleAfterDamageEffectsResult Func_17ed(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tWaitResult waited = DrawWideTextBox_WaitForInput(hl);\n\ta = 0u;\n\tf = waited.f;\n\tgb_write8(wDamage_ADDR, 0u);", "after": "HandleAfterDamageEffectsResult Func_17ed(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tWaitResult waited = DrawWideTextBox_WaitForInput(hl);\n\ta = 0u;\n\tf = waited.f;\n\tgb_write8(wDamage_ADDR, 0x01u);", "case_ids": ["Func_17ed-0", "Func_17ed-1"]}
 # <<< factory-mutation Func_17ed
+# >>> factory-mutation PlayAttackAnimation_DealAttackDamage
+MUTATIONS["PlayAttackAnimation_DealAttackDamage"] = {"source_symbol": "PlayAttackAnimation_DealAttackDamage", "before": "HandleAfterDamageEffectsResult PlayAttackAnimation_DealAttackDamage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl) { (void)a; (void)f; (void)b; (void)c; (void)d; (void)e; (void)hl; return (HandleAfterDamageEffectsResult){0x27u, 0x70u}; }", "after": "HandleAfterDamageEffectsResult PlayAttackAnimation_DealAttackDamage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl) { (void)a; (void)f; (void)b; (void)c; (void)d; (void)e; (void)hl; return (HandleAfterDamageEffectsResult){0x27u, 0x71u}; }", "case_ids": ["PlayAttackAnimation_DealAttackDamage-0", "PlayAttackAnimation_DealAttackDamage-1"]}
+# <<< factory-mutation PlayAttackAnimation_DealAttackDamage
+# >>> factory-completion PlayAttackAnimation_DealAttackDamage
+for _record in SCHEMA2_CASES["PlayAttackAnimation_DealAttackDamage"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x3559}
+# <<< factory-completion PlayAttackAnimation_DealAttackDamage
