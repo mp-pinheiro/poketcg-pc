@@ -40,6 +40,76 @@
 
 #define INPLAYAREA_OPP_ACTIVE 0x08u
 #define PLAY_AREA_BENCH_1 0x01u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/card_data.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "home/menus.h"
+#include "home/play_area.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
+#include "home/substatus.h"
+#include "home/switch_rom.h"
+#include "mem.h"
+
+#define BANK_OPEN_IN_PLAY_AREA_SCREEN 0x06u
+#define OPEN_IN_PLAY_AREA_TEXT_TABLE 0x42BBu
+#define OPEN_IN_PLAY_AREA_TRANSITION_TABLE1 0x42DBu
+#define OPEN_IN_PLAY_AREA_TRANSITION_TABLE2 0x434Bu
+#define EMPTY_LINE_TEXT 0x0251u
+#define HAND_TEXT_2 0x024Eu
+#define PLAY_AREA_BENCH_5 0x05u
+#define INPLAYAREA_PLAYER_HAND 0x06u
+#define INPLAYAREA_OPP_HAND 0x09u
+#define TRUE 0x01u
+
+static void open_in_play_area_print_associated_text(uint8_t position)
+{
+	InitTextPrinting(1u, 17u);
+	(void)ProcessTextFromID(EMPTY_LINE_TEXT);
+	hffb0 = TRUE;
+	(void)ProcessTextFromID(HAND_TEXT_2);
+	hffb0 = 0u;
+	InitTextPrinting(1u, 17u);
+
+	uint16_t text_entry = (uint16_t)(OPEN_IN_PLAY_AREA_TEXT_TABLE +
+		(uint16_t)position * 2u);
+	uint16_t text = (uint16_t)(gb_read8(text_entry) |
+		((uint16_t)gb_read8((uint16_t)(text_entry + 1u)) << 8));
+	if ((text >> 8) != 0u || (uint8_t)text >= (uint8_t)(PLAY_AREA_BENCH_5 + 1u)) {
+		if (position < INPLAYAREA_OPP_ACTIVE) {
+			(void)PrintTextNoDelay(text, 1u, 17u);
+		} else {
+			SwapTurn();
+			(void)PrintTextNoDelay(text, 1u, 17u);
+			SwapTurn();
+		}
+		return;
+	}
+
+	uint8_t location = (uint8_t)text;
+	DuelistVarResult duel;
+	if (position < INPLAYAREA_PLAYER_HAND)
+		duel = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
+	else
+		duel = GetNonTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
+	if (duel.a == 0xFFu)
+		return;
+
+	if (position >= INPLAYAREA_PLAYER_HAND)
+		SwapTurn();
+	uint16_t card_id = GetCardIDFromDeckIndex(duel.a);
+	LoadCardDataToBuffer1_FromCardID((uint8_t)card_id);
+	if (position >= INPLAYAREA_PLAYER_HAND)
+		SwapTurn();
+	(void)CopyCardNameAndLevel(18u, 0u, 0u, 0u, 0u);
+	uint16_t default_text = wDefaultText_ADDR;
+	ProcessText(&default_text);
+}
 /* <<< factory statics */
 
 void ZeroObjectPositionsAndToggleOAMCopy_Bank6(void)
@@ -225,3 +295,104 @@ uint8_t OpenInPlayAreaScreen_TurnHolderHand(void)
 	return saved_hWhoseTurn;
 }
 /* <<< factory OpenInPlayAreaScreen_TurnHolderHand */
+
+/* >>> factory OpenInPlayAreaScreen */
+void OpenInPlayAreaScreen(void)
+{
+	BankswitchROM(BANK_OPEN_IN_PLAY_AREA_SCREEN);
+	wInPlayAreaCurPosition = INPLAYAREA_PLAYER_ACTIVE;
+
+	for (;;) {
+		wCheckMenuCursorBlinkCounter = 0u;
+		DrawInPlayAreaScreen();
+		EnableLCD();
+		PkmnPowerCountResult clairvoyance = IsClairvoyanceActive();
+		uint16_t transition_table = (clairvoyance.f & 0x10u) != 0u
+			? OPEN_IN_PLAY_AREA_TRANSITION_TABLE2
+			: OPEN_IN_PLAY_AREA_TRANSITION_TABLE1;
+		wMenuInputTablePointer = (uint8_t)transition_table;
+		gb_write8((uint16_t)(wMenuInputTablePointer_ADDR + 1u),
+			(uint8_t)(transition_table >> 8));
+		open_in_play_area_print_associated_text(wInPlayAreaCurPosition);
+
+		for (;;) {
+			wVBlankOAMCopyToggle = TRUE;
+			DoFrame();
+			uint8_t dpad = hDPadHeld;
+			if ((dpad & 0x08u) != 0u)
+				goto selection;
+			if (wInPlayAreaFromSelectButton != 0u && (dpad & 0x04u) != 0u) {
+				wCheckMenuCursorBlinkCounter = 9u;
+				ZeroObjectPositionsAndToggleOAMCopy_Bank6();
+				(void)SetupText(0x38u, 0x9Fu);
+				return;
+			}
+			wInPlayAreaTemporaryPosition = wInPlayAreaCurPosition;
+			OpenInPlayAreaScreenHandleInputResult input = OpenInPlayAreaScreen_HandleInput();
+			if ((input.f & 0x10u) != 0u) {
+				if (input.a == 0xFFu) {
+					wCheckMenuCursorBlinkCounter = 9u;
+					ZeroObjectPositionsAndToggleOAMCopy_Bank6();
+					(void)SetupText(0x38u, 0x9Fu);
+					return;
+				}
+				goto selection;
+			}
+			uint8_t position = wInPlayAreaCurPosition;
+			if (position == INPLAYAREA_PLAYER_PLAY_AREA) {
+				(void)SetupText(0x38u, 0x9Fu);
+				uint8_t turn = hWhoseTurn;
+				OpenTurnHolderPlayAreaScreen();
+				hWhoseTurn = turn;
+				wInPlayAreaCurPosition = wInPlayAreaPreservedPosition;
+				break;
+			}
+			if (position == INPLAYAREA_OPP_PLAY_AREA) {
+				(void)SetupText(0x38u, 0x9Fu);
+				uint8_t turn = hWhoseTurn;
+				OpenNonTurnHolderPlayAreaScreen();
+				hWhoseTurn = turn;
+				wInPlayAreaCurPosition = wInPlayAreaPreservedPosition;
+				break;
+			}
+			if (position != wInPlayAreaTemporaryPosition)
+				open_in_play_area_print_associated_text(position);
+		}
+		continue;
+
+selection:
+		ZeroObjectPositionsAndToggleOAMCopy_Bank6();
+		(void)SetupText(0x38u, 0x9Fu);
+		wInPlayAreaPreservedPosition = wInPlayAreaCurPosition;
+		switch (wInPlayAreaCurPosition) {
+		case 0u:
+		case 1u:
+		case 2u:
+		case 3u:
+		case 4u:
+		case INPLAYAREA_PLAYER_ACTIVE:
+			OpenInPlayAreaScreen_TurnHolderPlayArea();
+			break;
+		case INPLAYAREA_PLAYER_HAND:
+			(void)OpenInPlayAreaScreen_TurnHolderHand();
+			break;
+		case 7u:
+			OpenInPlayAreaScreen_TurnHolderDiscardPile(0u);
+			break;
+		case INPLAYAREA_OPP_ACTIVE:
+			OpenInPlayAreaScreen_NonTurnHolderPlayArea();
+			break;
+		case INPLAYAREA_OPP_HAND:
+			OpenInPlayAreaScreen_NonTurnHolderHand();
+			break;
+		case 0x0Au:
+			OpenInPlayAreaScreen_NonTurnHolderDiscardPile(0u);
+			break;
+		default:
+			OpenInPlayAreaScreen_NonTurnHolderPlayArea();
+			break;
+		}
+		wInPlayAreaCurPosition = wInPlayAreaPreservedPosition;
+	}
+}
+/* <<< factory OpenInPlayAreaScreen */

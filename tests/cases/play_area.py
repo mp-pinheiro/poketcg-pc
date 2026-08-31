@@ -65,6 +65,17 @@ CASES["OpenInPlayAreaScreen_TurnHolderPlayArea"] = [
 wInPlayAreaCurPosition = 0xCE52
 wCurPlayAreaSlot = 0xCBC9
 wCurPlayAreaY = 0xCBCA
+
+hBankROM = 0xFF80
+hDPadHeld = 0xFF8F
+hWhoseTurn = 0xFF97
+wDefaultText = 0xC590
+wInPlayAreaCurPosition = 0xCE52
+wInPlayAreaPreservedPosition = 0xCE57
+wInPlayAreaTemporaryPosition = 0xCE58
+wInPlayAreaFromSelectButton = 0xCE60
+wMenuInputTablePointer = 0xCE53
+wVBlankOAMCopyToggle = 0xCAC0
 # <<< factory-cases-statics
 
 # >>> factory OpenInPlayAreaScreen_NonTurnHolderPlayArea
@@ -111,6 +122,14 @@ CASES["OpenInPlayAreaScreen_TurnHolderHand"] = [
 ]
 # <<< factory OpenInPlayAreaScreen_TurnHolderHand
 
+# >>> factory OpenInPlayAreaScreen
+CONTRACT["OpenInPlayAreaScreen"] = {"compare": (), "preserve": ()}
+CASES["OpenInPlayAreaScreen"] = [
+    {"keys": [0x00, 0x02], "hram": {hBankROM: b"\x01"}, "wram": {wInPlayAreaFromSelectButton: b"\x00", wInPlayAreaCurPosition: b"\xAA"}, "expect": {hBankROM: b"\x06", wInPlayAreaCurPosition: b"\x05"}, "read": {hBankROM: 1, wInPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1}, "oracle": False, "evidence": "primary", "why": "The frame/input bus timing is observable only on the primary trace; the bounded B exit checks the explicit terminal bank and cursor state.", "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, keys=[0x00, 0x04], hram={hBankROM: b"\x01"}, wram={wInPlayAreaFromSelectButton: b"\x01", wInPlayAreaCurPosition: b"\xAA"}, expect={hBankROM: b"\x06", wInPlayAreaCurPosition: b"\x05"}, read={hBankROM: 1, wInPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1}, oracle=False, evidence="primary", why="The frame/input bus timing is observable only on the primary trace; the bounded SELECT exit checks the explicit terminal bank and cursor state.", instruction_budget=20000000, cycle_budget=100000000),
+]
+# <<< factory OpenInPlayAreaScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation OpenInPlayAreaScreen_HandleInput
@@ -140,3 +159,6 @@ MUTATIONS["OpenInPlayAreaScreen_NonTurnHolderHand"] = {"source_symbol": "OpenInP
 # >>> factory-mutation OpenInPlayAreaScreen_TurnHolderHand
 MUTATIONS["OpenInPlayAreaScreen_TurnHolderHand"] = {"source_symbol": "OpenInPlayAreaScreen_TurnHolderHand", "before": "uint8_t OpenInPlayAreaScreen_TurnHolderHand(void)\n{\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;", "after": "uint8_t OpenInPlayAreaScreen_TurnHolderHand(void)\n{\n\tuint8_t saved_hWhoseTurn = 0u;", "case_ids": ["OpenInPlayAreaScreen_TurnHolderHand-0", "OpenInPlayAreaScreen_TurnHolderHand-1", "OpenInPlayAreaScreen_TurnHolderHand-2"]}
 # <<< factory-mutation OpenInPlayAreaScreen_TurnHolderHand
+# >>> factory-mutation OpenInPlayAreaScreen
+MUTATIONS["OpenInPlayAreaScreen"] = {"source_symbol": "OpenInPlayAreaScreen", "before": "\twInPlayAreaCurPosition = INPLAYAREA_PLAYER_ACTIVE;", "after": "\twInPlayAreaCurPosition = INPLAYAREA_PLAYER_HAND;", "case_ids": ["OpenInPlayAreaScreen-0", "OpenInPlayAreaScreen-1"]}
+# <<< factory-mutation OpenInPlayAreaScreen

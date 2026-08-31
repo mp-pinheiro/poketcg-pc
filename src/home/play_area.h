@@ -29,4 +29,7 @@ void OpenInPlayAreaScreen_NonTurnHolderHand(void);
 /* >>> factory OpenInPlayAreaScreen_TurnHolderHand */
 uint8_t OpenInPlayAreaScreen_TurnHolderHand(void);
 /* <<< factory OpenInPlayAreaScreen_TurnHolderHand */
+/* >>> factory OpenInPlayAreaScreen */
+void OpenInPlayAreaScreen(void);
+/* <<< factory OpenInPlayAreaScreen */
 #endif
