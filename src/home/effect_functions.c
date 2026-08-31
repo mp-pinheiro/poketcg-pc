@@ -1552,6 +1552,14 @@ void BankswitchROM(uint8_t bank);
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/serial.h"
+
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/core.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define BasicPokemonWasPlacedOnEachBenchText 0x0149u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11701,3 +11709,70 @@ void SuperPotion_PlayerSelectEffect(void)
 {
 }
 /* <<< factory SuperPotion_PlayerSelectEffect */
+
+/* >>> factory Wail_FillBenchEffect */
+void Wail_FillBenchEffect(void)
+{
+	SwapTurn();
+	{
+		CardListResult list = CreateDeckCardList(0u, 0u);
+		if (!(list.f & 0x10u)) {
+			(void)ShuffleCards(list.a, wDuelTempList_ADDR);
+			uint16_t cursor = wDuelTempList_ADDR;
+			for (;;) {
+				DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+				if (count.a >= MAX_PLAY_AREA_POKEMON)
+					break;
+				uint8_t index = gb_read8(cursor++);
+				hTempCardIndex_ff98 = index;
+				if (index == 0xffu)
+					break;
+				LoadCardDataToBuffer2_FromDeckIndex(index);
+				if (wLoadedCard2Type >= TYPE_ENERGY)
+					continue;
+				if (wLoadedCard2Stage != 0u)
+					continue;
+				SearchCardInDeckAndAddToHand(index);
+				AddCardToHand(index);
+				(void)PutHandPokemonCardInPlayArea(index, 0u);
+			}
+			(void)ShuffleCardsInDeck(list.b, list.c,
+				(uint16_t)(((uint16_t)list.d << 8) | list.e), cursor);
+		}
+	}
+	SwapTurn();
+	{
+		CardListResult list = CreateDeckCardList(0u, 0u);
+		if (!(list.f & 0x10u)) {
+			(void)ShuffleCards(list.a, wDuelTempList_ADDR);
+			uint16_t cursor = wDuelTempList_ADDR;
+			for (;;) {
+				DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+				if (count.a >= MAX_PLAY_AREA_POKEMON)
+					break;
+				uint8_t index = gb_read8(cursor++);
+				hTempCardIndex_ff98 = index;
+				if (index == 0xffu)
+					break;
+				LoadCardDataToBuffer2_FromDeckIndex(index);
+				if (wLoadedCard2Type >= TYPE_ENERGY)
+					continue;
+				if (wLoadedCard2Stage != 0u)
+					continue;
+				SearchCardInDeckAndAddToHand(index);
+				AddCardToHand(index);
+				(void)PutHandPokemonCardInPlayArea(index, 0u);
+			}
+			(void)ShuffleCardsInDeck(list.b, list.c,
+				(uint16_t)(((uint16_t)list.d << 8) | list.e), cursor);
+		}
+	}
+	(void)DrawWideTextBox_WaitForInput(BasicPokemonWasPlacedOnEachBenchText);
+	(void)HasAlivePokemonInPlayArea();
+	OpenPlayAreaScreenForSelection();
+	SwapTurn();
+	(void)HasAlivePokemonInPlayArea();
+	OpenPlayAreaScreenForSelection();
+	SwapTurn();
+}
+/* <<< factory Wail_FillBenchEffect */

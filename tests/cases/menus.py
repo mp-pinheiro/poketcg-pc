@@ -312,6 +312,11 @@ wDefaultYesOrNo = 0xCD9A
 wMenuCursorXOffset = 0xCD11
 wCursorBlinkCounter = 0xCD0F
 hCurMenuItem = 0xFFB1
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wDuelReturnAddress = 0xCBE5
+wDuelFinished = 0xCC07
+wDuelTheme = 0xCC1A
 # <<< factory-cases-statics
 
 # >>> factory HandleYesOrNoMenu
@@ -512,6 +517,22 @@ CASES["DrawTextBox_PrintTextNoDelay"] = [
 ]
 # <<< factory DrawTextBox_PrintTextNoDelay
 
+# >>> factory ContinueDuel
+CONTRACT["ContinueDuel"] = {"compare": (), "preserve": ()}
+CASES["ContinueDuel"] = [
+    {"entry_sp": 0xFFFC,
+     "wram": {wDuelReturnAddress: b"\xAA\xBB", wDuelFinished: b"\xCC", wDuelTheme: b"\x01"},
+     "read": {wDuelReturnAddress: 2, wDuelFinished: 1},
+     "expect": {wDuelReturnAddress: b"\xFC\xFF", wDuelFinished: b"\x00"},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, entry_sp=0xFFFC,
+         wram={wDuelReturnAddress: b"\xAA\xBB", wDuelFinished: b"\xCC", wDuelTheme: b"\x01"},
+         read={wDuelReturnAddress: 2, wDuelFinished: 1},
+         expect={wDuelReturnAddress: b"\xFC\xFF", wDuelFinished: b"\x00"},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ContinueDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -615,3 +636,10 @@ MUTATIONS["YesOrNoMenuWithText_SetCursorToYes"] = {"source_symbol": "YesOrNoMenu
 # >>> factory-mutation DrawTextBox_PrintTextNoDelay
 MUTATIONS["DrawTextBox_PrintTextNoDelay"] = {"source_symbol": "DrawTextBox_PrintTextNoDelay", "before": "\tInitTextPrintingInTextbox(a, d, e);", "after": "\tInitTextPrintingInTextbox(a, d, (uint8_t)(e + 1u));", "case_ids": ["DrawTextBox_PrintTextNoDelay-1", "DrawTextBox_PrintTextNoDelay-2"]}
 # <<< factory-mutation DrawTextBox_PrintTextNoDelay
+# >>> factory-mutation ContinueDuel
+MUTATIONS["ContinueDuel"] = {"source_symbol": "ContinueDuel", "before": "void ContinueDuel(void)\n{\n\tBankswitchROM(CONTINUE_DUEL_BANK);\n\t_ContinueDuel();", "after": "void ContinueDuel(void)\n{\n\tBankswitchROM(CONTINUE_DUEL_BANK);", "case_ids": ["ContinueDuel-0", "ContinueDuel-1"]}
+# <<< factory-mutation ContinueDuel
+# >>> factory-completion ContinueDuel
+for _record in SCHEMA2_CASES["ContinueDuel"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x2382, "bank": 1}
+# <<< factory-completion ContinueDuel

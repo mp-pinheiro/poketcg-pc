@@ -2245,6 +2245,9 @@ void Curse_TransferDamageEffect(void);
 /* >>> factory SuperPotion_PlayerSelectEffect */
 void SuperPotion_PlayerSelectEffect(void);
 /* <<< factory SuperPotion_PlayerSelectEffect */
+/* >>> factory Wail_FillBenchEffect */
+void Wail_FillBenchEffect(void);
+/* <<< factory Wail_FillBenchEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

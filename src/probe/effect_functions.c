@@ -5519,6 +5519,14 @@ static void adapt_SuperPotion_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory SuperPotion_PlayerSelectEffect */
 
+/* >>> factory Wail_FillBenchEffect */
+static void adapt_Wail_FillBenchEffect(ProbeState *s)
+{
+	(void)s;
+	Wail_FillBenchEffect();
+}
+/* <<< factory Wail_FillBenchEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -6184,5 +6192,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PokemonBreeder_PlayerSelection", adapt_PokemonBreeder_PlayerSelection },
 	{ "Curse_TransferDamageEffect", adapt_Curse_TransferDamageEffect },
 	{ "SuperPotion_PlayerSelectEffect", adapt_SuperPotion_PlayerSelectEffect },
+	{ "Wail_FillBenchEffect", adapt_Wail_FillBenchEffect },
 	{ NULL, NULL },
 };

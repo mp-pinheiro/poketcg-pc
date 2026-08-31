@@ -62,6 +62,10 @@
 
 #include "generated/wram.h"
 #include "generated/hram.h"
+
+#include "home/overworld.h"
+#include "home/core.h"
+#define CONTINUE_DUEL_BANK 0x01u
 /* <<< factory statics */
 
 #define SYM_0 0x20
@@ -807,3 +811,11 @@ HandleYesOrNoMenuResult YesOrNoMenuWithText_SetCursorToYes(uint16_t hl)
 	return YesOrNoMenuWithText(hl);
 }
 /* <<< factory YesOrNoMenuWithText_SetCursorToYes */
+
+/* >>> factory ContinueDuel */
+void ContinueDuel(void)
+{
+	BankswitchROM(CONTINUE_DUEL_BANK);
+	_ContinueDuel();
+}
+/* <<< factory ContinueDuel */

@@ -2233,6 +2233,10 @@ wDuelTheme = 0xCC1A
 
 hWhoseTurn = 0xFF97
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+sCurrentDuel = 0xBC00
+TRY_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -5115,6 +5119,21 @@ CASES["DoLinkOpponentTurn"] = [
 ]
 # <<< factory DoLinkOpponentTurn
 
+# >>> factory TryContinueDuel
+CONTRACT["TryContinueDuel"] = {"compare": (), "preserve": ()}
+CASES["TryContinueDuel"] = [
+    {"wram": {0xCABB: b"\x00", 0xCC07: b"\xA5"},
+     "sram": {0: {sCurrentDuel: b"\x00"}},
+     "keys": [0x00, 0x01], "setup": TRY_SETUP,
+     "read": {0xCC07: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xCABB: b"\x00", 0xCC07: b"\xA5"},
+         sram={0: {sCurrentDuel: b"\x00"}}, keys=[0x00, 0x01],
+         setup=TRY_SETUP, read={0xCC07: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory TryContinueDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -7152,3 +7171,6 @@ MUTATIONS["DoLinkOpponentTurn"] = {"source_symbol": "DoLinkOpponentTurn", "befor
 for _record in SCHEMA2_CASES["DoLinkOpponentTurn"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x238A, "bank": 13}
 # <<< factory-completion DoLinkOpponentTurn
+# >>> factory-mutation TryContinueDuel
+MUTATIONS["TryContinueDuel"] = {"source_symbol": "TryContinueDuel", "before": "void TryContinueDuel(void)\n{\n\tSetupDuel();\n\tuint8_t failed = LoadAndValidateDuelSaveData();\n\tif ((failed & 0x10u) != 0u) {", "after": "void TryContinueDuel(void)\n{\n\tSetupDuel();\n\tuint8_t failed = LoadAndValidateDuelSaveData();\n\tif ((failed & 0x10u) == 0u) {", "case_ids": ["TryContinueDuel-0", "TryContinueDuel-1"]}
+# <<< factory-mutation TryContinueDuel

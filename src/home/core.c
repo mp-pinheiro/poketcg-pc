@@ -1672,6 +1672,9 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/input.h"
 #include "home/sound.h"
 #include "generated/wram.h"
+
+#include "home/core.h"
+#define BackUpIsBrokenText 0x00d6u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -9499,3 +9502,16 @@ void DoLinkOpponentTurn(void)
 {
 }
 /* <<< factory DoLinkOpponentTurn */
+
+/* >>> factory TryContinueDuel */
+void TryContinueDuel(void)
+{
+	SetupDuel();
+	uint8_t failed = LoadAndValidateDuelSaveData();
+	if ((failed & 0x10u) != 0u) {
+		(void)HandleFailedToContinueDuel(BackUpIsBrokenText);
+		return;
+	}
+	_ContinueDuel();
+}
+/* <<< factory TryContinueDuel */

@@ -105,4 +105,7 @@ HandleYesOrNoMenuResult YesOrNoMenuWithText(uint16_t hl);
 /* >>> factory YesOrNoMenuWithText_SetCursorToYes */
 HandleYesOrNoMenuResult YesOrNoMenuWithText_SetCursorToYes(uint16_t hl);
 /* <<< factory YesOrNoMenuWithText_SetCursorToYes */
+/* >>> factory ContinueDuel */
+void ContinueDuel(void);
+/* <<< factory ContinueDuel */
 #endif

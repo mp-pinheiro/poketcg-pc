@@ -3031,6 +3031,19 @@ def _peal_of_thunder_case(rng, poison=False):
 
 hTemp_ffa0 = 0xFFA0
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+WFB_HWHOSE_TURN = 0xFF97
+WFB_OPPONENT_DECK_REMAINING = 0xC3BA
+WFB_PLAYER_DECK_REMAINING = 0xC2BA
+WFB_OPPONENT_PLAY_COUNT = 0xC3EF
+WFB_PLAYER_PLAY_COUNT = 0xC2EF
+WFB_OPPONENT_ARENA_CARD = 0xC3BB
+WFB_PLAYER_ARENA_CARD = 0xC2BB
+WFB_OPPONENT_ARENA_HP = 0xC3C8
+WFB_PLAYER_ARENA_HP = 0xC2C8
+WFB_WLCDC = 0xCABB
+WFB_RLCDS = 0xFF40
+WFB_EXCLUDE_ARENA = 0xCBD2
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7887,6 +7900,32 @@ CASES["SuperPotion_PlayerSelectEffect"] = [
 ]
 # <<< factory SuperPotion_PlayerSelectEffect
 
+# >>> factory Wail_FillBenchEffect
+CONTRACT["Wail_FillBenchEffect"] = {"compare": (), "preserve": ()}
+CASES["Wail_FillBenchEffect"] = [
+    {"keys": [0x00, 0x01],
+     "wram": {WFB_HWHOSE_TURN: b"\xC2",
+              WFB_PLAYER_DECK_REMAINING: b"\x3C", WFB_OPPONENT_DECK_REMAINING: b"\x3C",
+              WFB_PLAYER_PLAY_COUNT: b"\x01", WFB_OPPONENT_PLAY_COUNT: b"\x01",
+              WFB_PLAYER_ARENA_CARD: b"\x00", WFB_OPPONENT_ARENA_CARD: b"\x00",
+              WFB_PLAYER_ARENA_HP: b"\x01", WFB_OPPONENT_ARENA_HP: b"\x01",
+              WFB_WLCDC: b"\x80", WFB_RLCDS: b"\x80", WFB_EXCLUDE_ARENA: b"\xAA"},
+     "read": {WFB_HWHOSE_TURN: 1, WFB_EXCLUDE_ARENA: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={WFB_HWHOSE_TURN: b"\xC2",
+              WFB_PLAYER_DECK_REMAINING: b"\x3C", WFB_OPPONENT_DECK_REMAINING: b"\x3C",
+              WFB_PLAYER_PLAY_COUNT: b"\x01", WFB_OPPONENT_PLAY_COUNT: b"\x01",
+              WFB_PLAYER_ARENA_CARD: b"\x00", WFB_OPPONENT_ARENA_CARD: b"\x00",
+              WFB_PLAYER_ARENA_HP: b"\x01", WFB_OPPONENT_ARENA_HP: b"\x01",
+              WFB_WLCDC: b"\x80", WFB_RLCDS: b"\x80", WFB_EXCLUDE_ARENA: b"\xAA"},
+         read={WFB_HWHOSE_TURN: 1, WFB_EXCLUDE_ARENA: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Wail_FillBenchEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -11099,3 +11138,11 @@ MUTATIONS["SuperPotion_PlayerSelectEffect"] = {"source_symbol": "SuperPotion_Pla
 for _record in SCHEMA2_CASES["SuperPotion_PlayerSelectEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x238A, "bank": 14}
 # <<< factory-completion SuperPotion_PlayerSelectEffect
+# >>> factory-mutation Wail_FillBenchEffect
+MUTATIONS["Wail_FillBenchEffect"] = {
+    "source_symbol": "Wail_FillBenchEffect",
+    "before": "\tOpenPlayAreaScreenForSelection();\n\tSwapTurn();\n}\n",
+    "after": "\tOpenPlayAreaScreenForSelection();\n}\n",
+    "case_ids": ["Wail_FillBenchEffect-0", "Wail_FillBenchEffect-1"],
+}
+# <<< factory-mutation Wail_FillBenchEffect

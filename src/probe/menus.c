@@ -316,6 +316,14 @@ static void adapt_YesOrNoMenuWithText_SetCursorToYes(ProbeState *s)
 }
 /* <<< factory YesOrNoMenuWithText_SetCursorToYes */
 
+/* >>> factory ContinueDuel */
+static void adapt_ContinueDuel(ProbeState *s)
+{
+	(void)s;
+	ContinueDuel();
+}
+/* <<< factory ContinueDuel */
+
 const ProbeEntry probe_entries_menus[] = {
 	{ "InitializeCardListParameters", adapt_InitializeCardListParameters },
 	{ "InitializeMenuParameters", adapt_InitializeMenuParameters },
@@ -360,5 +368,6 @@ const ProbeEntry probe_entries_menus[] = {
 	{ "YesOrNoMenuWithText", adapt_YesOrNoMenuWithText },
 	{ "YesOrNoMenuWithText_SetCursorToYes", adapt_YesOrNoMenuWithText_SetCursorToYes },
 	{ "YesOrNoMenuWithText_LeftAligned", adapt_YesOrNoMenuWithText_LeftAligned },
+	{ "ContinueDuel", adapt_ContinueDuel },
 	{ NULL, NULL },
 };

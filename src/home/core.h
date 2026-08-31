@@ -1384,4 +1384,7 @@ void _ContinueDuel(void);
 /* >>> factory DoLinkOpponentTurn */
 void DoLinkOpponentTurn(void);
 /* <<< factory DoLinkOpponentTurn */
+/* >>> factory TryContinueDuel */
+void TryContinueDuel(void);
+/* <<< factory TryContinueDuel */
 #endif

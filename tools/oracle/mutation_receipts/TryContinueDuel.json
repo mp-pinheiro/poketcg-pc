@@ -1,0 +1,9 @@
+{
+  "fn": "TryContinueDuel",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TryContinueDuel\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"48128\": \"00\"}}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52231\": \"a5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TryContinueDuel\", \"mismatches\": {\"bus\": {\"address\": 52231, \"reference\": \"80a5\", \"native\": \"8000\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[51899, 1], [52231, 1]]}}}\n",
+  "restored": "{\"fn\": \"TryContinueDuel\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"48128\": \"00\"}}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52231\": \"a5\"}}, \"status\": \"PASS\"}\n"
+}
