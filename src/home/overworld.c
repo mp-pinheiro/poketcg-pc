@@ -1410,3 +1410,11 @@ void PauseMenu(void)
 	}
 }
 /* <<< factory PauseMenu */
+
+/* >>> factory OpenPauseMenu */
+void OpenPauseMenu(void)
+{
+	PauseMenu();
+	CloseAdvancedDialogueBox();
+}
+/* <<< factory OpenPauseMenu */

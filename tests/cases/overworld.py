@@ -1056,6 +1056,14 @@ CASES["PauseMenu"] = [
 ]
 # <<< factory PauseMenu
 
+# >>> factory OpenPauseMenu
+CONTRACT["OpenPauseMenu"] = {"compare": (), "preserve": ()}
+CASES["OpenPauseMenu"] = [
+    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xD0B8: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xD0B8: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xD0B8: b"\x05", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xD0B8: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory OpenPauseMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1423,3 +1431,6 @@ MUTATIONS["PauseMenu_Deck"] = {"source_symbol": "PauseMenu_Deck", "before": "voi
 # >>> factory-mutation PauseMenu
 MUTATIONS["PauseMenu"] = {"source_symbol": "PauseMenu", "before": "void PauseMenu(void)\n{\n\tPauseSong();\n\tPlaySong(MUSIC_PAUSE_MENU);\n\tDisplayPauseMenu();\n\tfor (;;) {\n\t\t(void)SetOverworldNPCFlags((uint8_t)(1u << AUTO_CLOSE_TEXTBOX));\n\t\tHandleMenuInputResult input;\n\t\tdo {\n\t\t\tDoFrameIfLCDEnabled();\n\t\t\tinput = HandleMenuInput();\n\t\t} while ((input.f & 0x10u) == 0u);\n\t\twSelectedPauseMenuItem = input.e;", "after": "void PauseMenu(void)\n{\n\tPauseSong();\n\tPlaySong(MUSIC_PAUSE_MENU);\n\tDisplayPauseMenu();\n\tfor (;;) {\n\t\t(void)SetOverworldNPCFlags((uint8_t)(1u << AUTO_CLOSE_TEXTBOX));\n\t\tHandleMenuInputResult input;\n\t\tdo {\n\t\t\tDoFrameIfLCDEnabled();\n\t\t\tinput = HandleMenuInput();\n\t\t} while ((input.f & 0x10u) == 0u);\n\t\twSelectedPauseMenuItem = input.a;", "case_ids": ["PauseMenu-0", "PauseMenu-1", "PauseMenu-2"]}
 # <<< factory-mutation PauseMenu
+# >>> factory-mutation OpenPauseMenu
+MUTATIONS["OpenPauseMenu"] = {"source_symbol": "OpenPauseMenu", "before": "\tCloseAdvancedDialogueBox();", "after": "\twSelectedPauseMenuItem = 1u;\n\tCloseAdvancedDialogueBox();", "case_ids": ["OpenPauseMenu-0", "OpenPauseMenu-1"]}
+# <<< factory-mutation OpenPauseMenu

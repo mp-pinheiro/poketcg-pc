@@ -315,4 +315,7 @@ void PauseMenu_Deck(void);
 /* >>> factory PauseMenu */
 void PauseMenu(void);
 /* <<< factory PauseMenu */
+/* >>> factory OpenPauseMenu */
+void OpenPauseMenu(void);
+/* <<< factory OpenPauseMenu */
 #endif /* POKETCG_HOME_OVERWORLD_H */
