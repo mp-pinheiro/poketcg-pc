@@ -1,0 +1,9 @@
+{
+  "fn": "ScoopUp_PlayerSelection",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScoopUp_PlayerSelection\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"65440\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScoopUp_PlayerSelection\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"0000\", \"native\": \"0100\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[65440, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScoopUp_PlayerSelection\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"65440\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

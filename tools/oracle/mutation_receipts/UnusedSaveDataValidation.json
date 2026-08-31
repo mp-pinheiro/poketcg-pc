@@ -1,0 +1,9 @@
+{
+  "fn": "UnusedSaveDataValidation",
+  "case": "tests/cases/unused_save_validation.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UnusedSaveDataValidation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 1, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51894\": \"5a\", \"65409\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UnusedSaveDataValidation\", \"mismatches\": {\"bus\": {\"address\": 51894, \"reference\": \"5a01\", \"native\": \"ff01\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[51894, 1], [65409, 1]]}}}\n",
+  "restored": "{\"fn\": \"UnusedSaveDataValidation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 1, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51894\": \"5a\", \"65409\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

@@ -2220,6 +2220,9 @@ void Potion_PlayerSelection(void);
 /* >>> factory GengarDarkMind_PlayerSelectEffect */
 void GengarDarkMind_PlayerSelectEffect(void);
 /* <<< factory GengarDarkMind_PlayerSelectEffect */
+/* >>> factory ScoopUp_PlayerSelection */
+void ScoopUp_PlayerSelection(void);
+/* <<< factory ScoopUp_PlayerSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

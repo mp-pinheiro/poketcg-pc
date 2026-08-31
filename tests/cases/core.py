@@ -5041,6 +5041,14 @@ CASES["HandleTurn"] = [
 ]
 # <<< factory HandleTurn
 
+# >>> factory HandleWaitingLinkOpponentMenu
+CONTRACT["HandleWaitingLinkOpponentMenu"] = {"compare": (), "preserve": ()}
+CASES["HandleWaitingLinkOpponentMenu"] = [
+    {"read": {wCurrentDuelMenuItem: 1}, "expect": {wCurrentDuelMenuItem: b"\x00"}, "instruction_budget": 200000, "cycle_budget": 800000},
+    dict(POISON, read={wCurrentDuelMenuItem: 1}, expect={wCurrentDuelMenuItem: b"\x00"}, instruction_budget=200000, cycle_budget=800000),
+]
+# <<< factory HandleWaitingLinkOpponentMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -7036,3 +7044,10 @@ MUTATIONS["OppAction_UseAttack"] = {
 # >>> factory-mutation HandleTurn
 MUTATIONS["HandleTurn"] = {"source_symbol": "HandleTurn", "before": "void HandleTurn(void)\n{\n\tDuelistVarResult type = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\twDuelistType = type.a;", "after": "void HandleTurn(void)\n{\n\tDuelistVarResult type = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\twDuelistType = (uint8_t)(type.a ^ 1u);", "case_ids": ["HandleTurn-0", "HandleTurn-1"]}
 # <<< factory-mutation HandleTurn
+# >>> factory-mutation HandleWaitingLinkOpponentMenu
+MUTATIONS["HandleWaitingLinkOpponentMenu"] = {"source_symbol": "HandleWaitingLinkOpponentMenu", "before": "void HandleWaitingLinkOpponentMenu(void)\n{\n\tuint8_t delay = 10u;\n\twhile (delay != 0u) {\n\t\tDoFrame();\n\t\t--delay;\n\t}\n\twCurrentDuelMenuItem = 0u;", "after": "void HandleWaitingLinkOpponentMenu(void)\n{\n\tuint8_t delay = 10u;\n\twhile (delay != 0u) {\n\t\tDoFrame();\n\t\t--delay;\n\t}\n\twCurrentDuelMenuItem = 1u;", "case_ids": ["HandleWaitingLinkOpponentMenu-0", "HandleWaitingLinkOpponentMenu-1"]}
+# <<< factory-mutation HandleWaitingLinkOpponentMenu
+# >>> factory-completion HandleWaitingLinkOpponentMenu
+for _record in SCHEMA2_CASES["HandleWaitingLinkOpponentMenu"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x6806, "bank": 1}
+# <<< factory-completion HandleWaitingLinkOpponentMenu

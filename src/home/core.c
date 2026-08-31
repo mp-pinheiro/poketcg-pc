@@ -9438,3 +9438,15 @@ void HandleTurn(void)
 	RestartPracticeDuelTurn();
 }
 /* <<< factory HandleTurn */
+
+/* >>> factory HandleWaitingLinkOpponentMenu */
+void HandleWaitingLinkOpponentMenu(void)
+{
+	uint8_t delay = 10u;
+	while (delay != 0u) {
+		DoFrame();
+		--delay;
+	}
+	wCurrentDuelMenuItem = 0u;
+}
+/* <<< factory HandleWaitingLinkOpponentMenu */

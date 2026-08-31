@@ -10,4 +10,7 @@ void StubbedUnusedSaveDataValidation(void);
 typedef struct { uint8_t a; uint8_t f; } UnusedCalculateSaveDataValidationByteResult;
 UnusedCalculateSaveDataValidationByteResult UnusedCalculateSaveDataValidationByte(void);
 /* <<< factory UnusedCalculateSaveDataValidationByte */
+/* >>> factory UnusedSaveDataValidation */
+void UnusedSaveDataValidation(void);
+/* <<< factory UnusedSaveDataValidation */
 #endif /* POKETCG_HOME_UNUSED_SAVE_VALIDATION_H */

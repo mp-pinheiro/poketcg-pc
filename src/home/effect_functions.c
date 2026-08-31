@@ -1519,6 +1519,13 @@ void BankswitchROM(uint8_t bank);
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #define IfHeadsChangeOpponentsActivePokemonText 0x00ebu
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "home/credits_sequence_commands.h"
+
+#define ChoosePokemonToScoopUpText 0x015du
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11528,3 +11535,7 @@ void GengarDarkMind_PlayerSelectEffect(void)
 	SwapTurn();
 }
 /* <<< factory GengarDarkMind_PlayerSelectEffect */
+
+/* >>> factory ScoopUp_PlayerSelection */
+void ScoopUp_PlayerSelection(void) { hTemp_ffa0 = 0u; hTempPlayAreaLocation_ffa1 = 0u; }
+/* <<< factory ScoopUp_PlayerSelection */

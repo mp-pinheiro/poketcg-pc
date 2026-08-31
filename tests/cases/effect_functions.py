@@ -7812,6 +7812,11 @@ CASES["GengarDarkMind_PlayerSelectEffect"] = [
 ]
 # <<< factory GengarDarkMind_PlayerSelectEffect
 
+# >>> factory ScoopUp_PlayerSelection
+CONTRACT["ScoopUp_PlayerSelection"] = {"compare": (), "preserve": ()}
+CASES["ScoopUp_PlayerSelection"] = [dict(POISON, read={0xFFA0: 1, 0xFFA1: 1}, expect={0xFFA0: b"\x00", 0xFFA1: b"\x00"})]
+# <<< factory ScoopUp_PlayerSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10980,3 +10985,10 @@ MUTATIONS["Potion_PlayerSelection"] = {"source_symbol": "Potion_PlayerSelection"
 # >>> factory-mutation GengarDarkMind_PlayerSelectEffect
 MUTATIONS["GengarDarkMind_PlayerSelectEffect"] = {"source_symbol": "GengarDarkMind_PlayerSelectEffect", "before": "void GengarDarkMind_PlayerSelectEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xffu;", "after": "void GengarDarkMind_PlayerSelectEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xfeu;", "case_ids": ["GengarDarkMind_PlayerSelectEffect-0", "GengarDarkMind_PlayerSelectEffect-2"]}
 # <<< factory-mutation GengarDarkMind_PlayerSelectEffect
+# >>> factory-mutation ScoopUp_PlayerSelection
+MUTATIONS["ScoopUp_PlayerSelection"] = {"source_symbol": "ScoopUp_PlayerSelection", "before": "void ScoopUp_PlayerSelection(void) { hTemp_ffa0 = 0u; hTempPlayAreaLocation_ffa1 = 0u; }", "after": "void ScoopUp_PlayerSelection(void) { hTemp_ffa0 = 1u; hTempPlayAreaLocation_ffa1 = 0u; }", "case_ids": ["ScoopUp_PlayerSelection-0"]}
+# <<< factory-mutation ScoopUp_PlayerSelection
+# >>> factory-completion ScoopUp_PlayerSelection
+for _record in SCHEMA2_CASES["ScoopUp_PlayerSelection"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x237F, "bank": 14}
+# <<< factory-completion ScoopUp_PlayerSelection

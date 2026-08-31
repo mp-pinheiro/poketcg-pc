@@ -34,6 +34,20 @@ CASES["UnusedCalculateSaveDataValidationByte"] = [
 ]
 # <<< factory UnusedCalculateSaveDataValidationByte
 
+# >>> factory-cases-statics
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hBankSRAM = 0xFF81
+wTileMapFill = 0xCAB6
+# <<< factory-cases-statics
+
+# >>> factory UnusedSaveDataValidation
+CONTRACT["UnusedSaveDataValidation"] = {"compare": (), "preserve": ()}
+CASES["UnusedSaveDataValidation"] = [
+    {"oracle": False, "evidence": "primary", "why": "The routine is unreferenced and its bounded SRAM-bank guard is the observable path available to this probe.", "ram_bank": 1, "wram": {hBankSRAM: b"\x01", wTileMapFill: b"\x5A"}, "read": {wTileMapFill: 1}, "expect": {wTileMapFill: b"\x5A"}},
+    dict(POISON, oracle=False, evidence="primary", why="Poisoned entry registers do not affect the early SRAM-bank return.", ram_bank=1, wram={hBankSRAM: b"\x01", wTileMapFill: b"\xA5"}, read={wTileMapFill: 1}, expect={wTileMapFill: b"\xA5"}),
+]
+# <<< factory UnusedSaveDataValidation
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -54,3 +68,10 @@ MUTATIONS["UnusedCalculateSaveDataValidationByte"] = {
     "case_ids": ["UnusedCalculateSaveDataValidationByte-1", "UnusedCalculateSaveDataValidationByte-3"],
 }
 # <<< factory-mutation UnusedCalculateSaveDataValidationByte
+# >>> factory-mutation UnusedSaveDataValidation
+MUTATIONS["UnusedSaveDataValidation"] = {"source_symbol": "UnusedSaveDataValidation", "before": "if (gb_read8(0xFF81u) != 0u)\n\t\treturn;", "after": "if (gb_read8(0xFF81u) != 0u) {\n\t\tgb_write8(0xCAB6u, 0xFFu);\n\t\treturn;\n\t}", "case_ids": ["UnusedSaveDataValidation-0", "UnusedSaveDataValidation-1"]}
+# <<< factory-mutation UnusedSaveDataValidation
+# >>> factory-completion UnusedSaveDataValidation
+for _record in SCHEMA2_CASES["UnusedSaveDataValidation"]:
+    _record["completion"] = {"mode": "return"}
+# <<< factory-completion UnusedSaveDataValidation

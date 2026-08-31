@@ -3039,6 +3039,14 @@ static void adapt_HandleTurn(ProbeState *s)
 }
 /* <<< factory HandleTurn */
 
+/* >>> factory HandleWaitingLinkOpponentMenu */
+static void adapt_HandleWaitingLinkOpponentMenu(ProbeState *s)
+{
+	(void)s;
+	HandleWaitingLinkOpponentMenu();
+}
+/* <<< factory HandleWaitingLinkOpponentMenu */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3403,5 +3411,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OppAction_ForceSwitchActive", adapt_OppAction_ForceSwitchActive },
 	{ "OppAction_UseAttack", adapt_OppAction_UseAttack },
 	{ "HandleTurn", adapt_HandleTurn },
+	{ "HandleWaitingLinkOpponentMenu", adapt_HandleWaitingLinkOpponentMenu },
 	{ NULL, NULL },
 };
