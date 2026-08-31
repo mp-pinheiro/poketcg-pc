@@ -1512,6 +1512,8 @@ void BankswitchROM(uint8_t bank);
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/menus.h"
+
+#define ChoosePkmnInTheBenchToGiveDamageText 0x011au
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11435,3 +11437,15 @@ void NinetalesLure_PlayerSelectEffect(void)
 	SwapTurn();
 }
 /* <<< factory NinetalesLure_PlayerSelectEffect */
+
+/* >>> factory StretchKick_PlayerSelectEffect */
+void StretchKick_PlayerSelectEffect(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChoosePkmnInTheBenchToGiveDamageText);
+	SwapTurn();
+	(void)HasAlivePokemonInBench();
+	OpenPlayAreaScreenForSelection();
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	SwapTurn();
+}
+/* <<< factory StretchKick_PlayerSelectEffect */

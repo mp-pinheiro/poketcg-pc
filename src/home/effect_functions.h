@@ -2204,6 +2204,9 @@ void Teleport_PlayerSelectEffect(void);
 /* >>> factory NinetalesLure_PlayerSelectEffect */
 void NinetalesLure_PlayerSelectEffect(void);
 /* <<< factory NinetalesLure_PlayerSelectEffect */
+/* >>> factory StretchKick_PlayerSelectEffect */
+void StretchKick_PlayerSelectEffect(void);
+/* <<< factory StretchKick_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
