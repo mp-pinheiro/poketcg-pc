@@ -1,5 +1,6 @@
 #include "mem.h"
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -40,6 +41,20 @@ void gb_keys_arm_timeline(const uint8_t *entries, uint8_t count, uint16_t latch_
 
 uint8_t *g_rom = NULL;
 size_t g_rom_size = 0;
+
+typedef struct {
+	uint32_t bank;
+	uint16_t address;
+	uint16_t length;
+	uint32_t pack_offset;
+	uint32_t flags;
+} ProductPackSpan;
+
+static uint8_t *g_product_pack;
+static size_t g_product_pack_size;
+static ProductPackSpan *g_product_spans;
+static size_t g_product_span_count;
+static int g_product_mode;
 
 uint8_t g_rom_bank = 1;
 uint8_t g_sram_bank = 0;
@@ -126,6 +141,130 @@ void rom_free(void)
 	g_rom_size = 0;
 }
 
+static uint16_t pack_u16(const uint8_t *p)
+{
+	return (uint16_t)p[0] | (uint16_t)p[1] << 8;
+}
+
+static uint32_t pack_u32(const uint8_t *p)
+{
+	return (uint32_t)p[0] | (uint32_t)p[1] << 8 |
+	       (uint32_t)p[2] << 16 | (uint32_t)p[3] << 24;
+}
+
+int rom_pack_load(const char *path)
+{
+	FILE *f = fopen(path, "rb");
+	if (!f)
+		return -1;
+	if (fseek(f, 0, SEEK_END) != 0) {
+		fclose(f);
+		return -1;
+	}
+	long raw_size = ftell(f);
+	if (raw_size < 16) {
+		fclose(f);
+		errno = EINVAL;
+		return -1;
+	}
+	rewind(f);
+	size_t size = (size_t)raw_size;
+	uint8_t *pack = malloc(size);
+	if (!pack) {
+		fclose(f);
+		return -1;
+	}
+	if (fread(pack, 1, size, f) != size) {
+		free(pack);
+		fclose(f);
+		return -1;
+	}
+	fclose(f);
+	if (memcmp(pack, "PTCGDAT1", 8) != 0 || pack_u32(pack + 8) != 1u) {
+		free(pack);
+		errno = EINVAL;
+		return -1;
+	}
+	uint32_t raw_count = pack_u32(pack + 12);
+	size_t count = (size_t)raw_count;
+	size_t max_size = (size_t)-1;
+	if (count > (max_size - 16u) / 16u) {
+		free(pack);
+		errno = EINVAL;
+		return -1;
+	}
+	size_t table_end = 16u + count * 16u;
+	if (table_end > size) {
+		free(pack);
+		errno = EINVAL;
+		return -1;
+	}
+	ProductPackSpan *spans = count ? calloc(count, sizeof *spans) : NULL;
+	if (count && !spans) {
+		free(pack);
+		return -1;
+	}
+	size_t expected_offset = table_end;
+	for (size_t i = 0; i < count; i++) {
+		const uint8_t *record = pack + 16u + i * 16u;
+		ProductPackSpan span = {
+			.bank = pack_u32(record),
+			.address = pack_u16(record + 4),
+			.length = pack_u16(record + 6),
+			.pack_offset = pack_u32(record + 8),
+			.flags = pack_u32(record + 12),
+		};
+		if (!span.length || span.pack_offset != expected_offset ||
+		    (size_t)span.pack_offset + span.length > size ||
+		    (span.address < 0x4000u || span.address > 0x7FFFu) ||
+		    span.bank > 255u) {
+			free(spans);
+			free(pack);
+			errno = EINVAL;
+			return -1;
+		}
+		spans[i] = span;
+		expected_offset += span.length;
+	}
+	if (expected_offset != size) {
+		free(spans);
+		free(pack);
+		errno = EINVAL;
+		return -1;
+	}
+	rom_pack_free();
+	g_product_pack = pack;
+	g_product_pack_size = size;
+	g_product_spans = spans;
+	g_product_span_count = count;
+	return 0;
+}
+
+void rom_pack_free(void)
+{
+	free(g_product_spans);
+	free(g_product_pack);
+	g_product_spans = NULL;
+	g_product_pack = NULL;
+	g_product_span_count = 0;
+	g_product_pack_size = 0;
+}
+
+void rom_use_reference(void)
+{
+	g_product_mode = 0;
+}
+
+int rom_use_product(void)
+{
+	if (!g_product_pack) {
+		errno = ENOENT;
+		return -1;
+	}
+	g_product_mode = 1;
+	return 0;
+}
+
 void mem_reset(void)
 {
 	memset(g_wram, 0, sizeof g_wram);
@@ -150,12 +289,39 @@ void mem_reset(void)
 	apu_trace_clear();
 }
 
-const uint8_t *rom_ptr(uint8_t bank, uint16_t addr)
+const uint8_t *rom_ptr_reference(uint8_t bank, uint16_t addr)
 {
 	size_t off = addr < 0x4000 ? addr : (size_t)0x4000 * bank + (addr - 0x4000);
 	if (!g_rom || off >= g_rom_size)
 		return g_scratch;
 	return g_rom + off;
+}
+
+static const uint8_t *missing_product_data(uint8_t bank, uint16_t addr)
+{
+	fprintf(stderr, "MISSING_DATA %02X:%04X\n", bank, addr);
+	fflush(stderr);
+	abort();
+	return NULL;
+}
+
+const uint8_t *rom_ptr_product(uint8_t bank, uint16_t addr)
+{
+	for (size_t i = 0; i < g_product_span_count; i++) {
+		const ProductPackSpan *span = &g_product_spans[i];
+		uint32_t end = (uint32_t)span->address + span->length;
+		if (span->bank == bank && addr >= span->address && addr < end) {
+			size_t offset = (size_t)span->pack_offset + addr - span->address;
+			if (offset < g_product_pack_size)
+				return g_product_pack + offset;
+		}
+	}
+	return missing_product_data(bank, addr);
+}
+
+const uint8_t *rom_ptr(uint8_t bank, uint16_t addr)
+{
+	return g_product_mode ? rom_ptr_product(bank, addr) : rom_ptr_reference(bank, addr);
 }
 
 uint8_t *gb_ptr(uint16_t addr)

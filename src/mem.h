@@ -72,8 +72,15 @@ const ApuWrite *apu_trace_data(void);
 int rom_load(const char *path); /* 0 on success, -1 with errno set */
 void rom_free(void);
 
-/* bank:addr -> ROM image. addr < $4000 ignores bank, as on hardware. Out-of-image
- * offsets resolve to the open-bus scratch page rather than reading past g_rom. */
+/* Production resolves only the checked sparse data pack; the probe keeps the
+ * reference-ROM resolver. A product miss terminates with MISSING_DATA bank:addr. */
+int rom_pack_load(const char *path);
+void rom_pack_free(void);
+void rom_use_reference(void);
+int rom_use_product(void);
+const uint8_t *rom_ptr_reference(uint8_t bank, uint16_t addr);
+const uint8_t *rom_ptr_product(uint8_t bank, uint16_t addr);
+/* Existing game call sites use the active role without migration. */
 const uint8_t *rom_ptr(uint8_t bank, uint16_t addr);
 
 /* Whole-address-space access, needed by routines whose state is GB-address-shaped
