@@ -704,6 +704,14 @@ static void adapt_PCMenu_Print(ProbeState *s)
 }
 /* <<< factory PCMenu_Print */
 
+/* >>> factory PCMenu */
+static void adapt_PCMenu(ProbeState *s)
+{
+	(void)s;
+	PCMenu();
+}
+/* <<< factory PCMenu */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -790,5 +798,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "HandleOverworldMode", adapt_HandleOverworldMode },
 	{ "LoadMap", adapt_LoadMap },
 	{ "PCMenu_Print", adapt_PCMenu_Print },
+	{ "PCMenu", adapt_PCMenu },
 	{ NULL, NULL },
 };

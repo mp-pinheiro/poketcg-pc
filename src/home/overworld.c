@@ -1562,3 +1562,11 @@ void PCMenu_Print(void)
 	DoFrameIfLCDEnabled();
 }
 /* <<< factory PCMenu_Print */
+
+/* >>> factory PCMenu */
+void PCMenu(void)
+{
+	wLCDC = 0x80u;
+	wConfigDuelAnimationCursorPos = 0u;
+}
+/* <<< factory PCMenu */

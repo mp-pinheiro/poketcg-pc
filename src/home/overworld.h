@@ -333,4 +333,7 @@ void LoadMap(void);
 /* >>> factory PCMenu_Print */
 void PCMenu_Print(void);
 /* <<< factory PCMenu_Print */
+/* >>> factory PCMenu */
+void PCMenu(void);
+/* <<< factory PCMenu */
 #endif /* POKETCG_HOME_OVERWORLD_H */

@@ -1116,6 +1116,14 @@ CASES["PCMenu_Print"] = [
 ]
 # <<< factory PCMenu_Print
 
+# >>> factory PCMenu
+CONTRACT["PCMenu"] = {"compare": (), "preserve": ()}
+CASES["PCMenu"] = [
+    {"keys": [0x00, 0x02], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xD0B9: b"\x00", 0xFFB1: b"\x00", 0xD112: b"\xAA", 0xCABB: b"\x00"}, "read": {0xCABB: 1}, "expect": {0xCABB: b"\x80"}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x02], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xD0B9: b"\x00", 0xFFB1: b"\x00", 0xD112: b"\xAA", 0xCABB: b"\x00"}, "read": {0xCABB: 1}, "expect": {0xCABB: b"\x80"}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+]
+# <<< factory PCMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1509,3 +1517,10 @@ MUTATIONS["PCMenu_Print"] = {"source_symbol": "PCMenu_Print", "before": "void PC
 for _record in SCHEMA2_CASES["PCMenu_Print"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x056F}
 # <<< factory-completion PCMenu_Print
+# >>> factory-mutation PCMenu
+MUTATIONS["PCMenu"] = {"source_symbol": "PCMenu", "before": "void PCMenu(void)\n{\n\twLCDC = 0x80u;\n\twConfigDuelAnimationCursorPos = 0u;", "after": "void PCMenu(void)\n{\n\twLCDC = 0u;\n\twConfigDuelAnimationCursorPos = 0u;", "case_ids": ["PCMenu-0", "PCMenu-1"]}
+# <<< factory-mutation PCMenu
+# >>> factory-completion PCMenu
+for _record in SCHEMA2_CASES["PCMenu"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x0271, "bank": 3}
+# <<< factory-completion PCMenu
