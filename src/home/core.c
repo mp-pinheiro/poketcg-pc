@@ -1667,6 +1667,11 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 
 #include "generated/wram.h"
 #include "home/lcd.h"
+
+#include "home/core.h"
+#include "home/input.h"
+#include "home/sound.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -9475,3 +9480,16 @@ void MainDuelLoop(void)
 	EnableLCD();
 }
 /* <<< factory MainDuelLoop */
+
+/* >>> factory _ContinueDuel */
+void _ContinueDuel(void)
+{
+	uint16_t entry_sp = 0xFFFCu;
+	wDuelReturnAddress = (uint8_t)entry_sp;
+	wDuelReturnAddress_PTR[1] = (uint8_t)(entry_sp >> 8);
+	ClearJoypad(&entry_sp);
+	PlaySong(wDuelTheme);
+	wDuelFinished = 0u;
+	DuelMainInterface();
+}
+/* <<< factory _ContinueDuel */

@@ -1378,4 +1378,7 @@ void OppAction_PlayAttackAnimationDealAttackDamage(void);
 /* >>> factory MainDuelLoop */
 void MainDuelLoop(void);
 /* <<< factory MainDuelLoop */
+/* >>> factory _ContinueDuel */
+void _ContinueDuel(void);
+/* <<< factory _ContinueDuel */
 #endif

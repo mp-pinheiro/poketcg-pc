@@ -3071,6 +3071,14 @@ static void adapt_MainDuelLoop(ProbeState *s)
 }
 /* <<< factory MainDuelLoop */
 
+/* >>> factory _ContinueDuel */
+static void adapt__ContinueDuel(ProbeState *s)
+{
+	(void)s;
+	_ContinueDuel();
+}
+/* <<< factory _ContinueDuel */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3439,5 +3447,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "HandleBetweenTurnsEvents", adapt_HandleBetweenTurnsEvents },
 	{ "OppAction_PlayAttackAnimationDealAttackDamage", adapt_OppAction_PlayAttackAnimationDealAttackDamage },
 	{ "MainDuelLoop", adapt_MainDuelLoop },
+	{ "_ContinueDuel", adapt__ContinueDuel },
 	{ NULL, NULL },
 };

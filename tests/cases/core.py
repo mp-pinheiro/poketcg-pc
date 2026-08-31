@@ -2225,6 +2225,11 @@ wTempNonTurnDuelistCardID = 0xCCC4
 
 wLCDC = 0xCABB
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wDuelReturnAddress = 0xCBE5
+wDuelFinished = 0xCC07
+wDuelTheme = 0xCC1A
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -5080,6 +5085,22 @@ CASES["MainDuelLoop"] = [
 ]
 # <<< factory MainDuelLoop
 
+# >>> factory _ContinueDuel
+CONTRACT["_ContinueDuel"] = {"compare": (), "preserve": ()}
+CASES["_ContinueDuel"] = [
+    {"entry_sp": 0xFFFC,
+     "wram": {wDuelReturnAddress: b"\xAA\xBB", wDuelFinished: b"\xCC", wDuelTheme: b"\x01"},
+     "read": {wDuelReturnAddress: 2, wDuelFinished: 1},
+     "expect": {wDuelReturnAddress: b"\xFC\xFF", wDuelFinished: b"\x00"},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, entry_sp=0xFFFC,
+         wram={wDuelReturnAddress: b"\xAA\xBB", wDuelFinished: b"\xCC", wDuelTheme: b"\x01"},
+         read={wDuelReturnAddress: 2, wDuelFinished: 1},
+         expect={wDuelReturnAddress: b"\xFC\xFF", wDuelFinished: b"\x00"},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory _ContinueDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -7103,3 +7124,10 @@ MUTATIONS["MainDuelLoop"] = {"source_symbol": "MainDuelLoop", "before": "void Ma
 for _record in SCHEMA2_CASES["MainDuelLoop"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x238D, "bank": 13}
 # <<< factory-completion MainDuelLoop
+# >>> factory-mutation _ContinueDuel
+MUTATIONS["_ContinueDuel"] = {"source_symbol": "_ContinueDuel", "before": "void _ContinueDuel(void)\n{\n\tuint16_t entry_sp = 0xFFFCu;", "after": "void _ContinueDuel(void)\n{\n\tuint16_t entry_sp = 0xFFFDu;", "case_ids": ["_ContinueDuel-0", "_ContinueDuel-1"]}
+# <<< factory-mutation _ContinueDuel
+# >>> factory-completion _ContinueDuel
+for _record in SCHEMA2_CASES["_ContinueDuel"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x2382, "bank": 1}
+# <<< factory-completion _ContinueDuel
