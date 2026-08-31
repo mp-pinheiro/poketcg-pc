@@ -11363,3 +11363,21 @@ void PidgeottoWhirlwind_SelectEffect(void)
 	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
 }
 /* <<< factory PidgeottoWhirlwind_SelectEffect */
+
+/* >>> factory PidgeyWhirlwind_SelectEffect */
+PidgeyWhirlwindSelectEffectResult PidgeyWhirlwind_SelectEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	DuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a < 2u) {
+		hTemp_ffa0 = 0xFFu;
+		return (PidgeyWhirlwindSelectEffectResult){0xFFu, 0x70u};
+	}
+	DuelistSelectForcedSwitchResult selected =
+		DuelistSelectForcedSwitch(count.a, 0x70u, b, c, d, e, count.hl);
+	(void)a;
+	(void)f;
+	(void)hl;
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	return (PidgeyWhirlwindSelectEffectResult){hTempPlayAreaLocation_ff9d, selected.f};
+}
+/* <<< factory PidgeyWhirlwind_SelectEffect */

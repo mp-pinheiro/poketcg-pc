@@ -7733,6 +7733,14 @@ CASES["PidgeottoWhirlwind_SelectEffect"] = [
 ]
 # <<< factory PidgeottoWhirlwind_SelectEffect
 
+# >>> factory PidgeyWhirlwind_SelectEffect
+CONTRACT["PidgeyWhirlwind_SelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PidgeyWhirlwind_SelectEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x01", 0xFFA0: b"\x00"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\xFF"}, "expect_regs": {"a": 0xFF, "f": 0x70}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3EF: b"\x01", 0xFFA0: b"\x00"}, read={0xFFA0: 1}, expect={0xFFA0: b"\xFF"}, expect_regs={"a": 0xFF, "f": 0x70}),
+]
+# <<< factory PidgeyWhirlwind_SelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10867,3 +10875,6 @@ MUTATIONS["ButterfreeWhirlwind_CheckBench"] = {"source_symbol": "ButterfreeWhirl
 # >>> factory-mutation PidgeottoWhirlwind_SelectEffect
 MUTATIONS["PidgeottoWhirlwind_SelectEffect"] = {"source_symbol": "PidgeottoWhirlwind_SelectEffect", "before": "void PidgeottoWhirlwind_SelectEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xffu;", "after": "void PidgeottoWhirlwind_SelectEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xfeu;", "case_ids": ["PidgeottoWhirlwind_SelectEffect-0"]}
 # <<< factory-mutation PidgeottoWhirlwind_SelectEffect
+# >>> factory-mutation PidgeyWhirlwind_SelectEffect
+MUTATIONS["PidgeyWhirlwind_SelectEffect"] = {"source_symbol": "PidgeyWhirlwind_SelectEffect", "before": "PidgeyWhirlwindSelectEffectResult PidgeyWhirlwind_SelectEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xFFu;", "after": "PidgeyWhirlwindSelectEffectResult PidgeyWhirlwind_SelectEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xFEu;", "case_ids": ["PidgeyWhirlwind_SelectEffect-0", "PidgeyWhirlwind_SelectEffect-1"]}
+# <<< factory-mutation PidgeyWhirlwind_SelectEffect

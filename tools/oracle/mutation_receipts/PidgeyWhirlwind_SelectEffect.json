@@ -1,0 +1,9 @@
+{
+  "fn": "PidgeyWhirlwind_SelectEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PidgeyWhirlwind_SelectEffect\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50159\": \"01\", \"65431\": \"c2\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PidgeyWhirlwind_SelectEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"01c2ff\", \"native\": \"01c2fe\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[50159, 1], [65431, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"PidgeyWhirlwind_SelectEffect\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50159\": \"01\", \"65431\": \"c2\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}
