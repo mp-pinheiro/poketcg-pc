@@ -695,6 +695,7 @@ def build_packets_for_work_ids(
     packets = attach_dependencies(
         packets,
         internal_names=internal_names if kind == "dependency-group" else None,
+        keep_unavailable=kind == "dependency-group",
     )
     after = {
         routine["work_id"] for packet in packets for routine in packet["routines"]
@@ -748,13 +749,14 @@ def dissolved_symbols() -> set[str]:
 def attach_dependencies(
     packets: list[dict],
     internal_names: set[str] | None = None,
+    *,
+    keep_unavailable: bool = False,
 ) -> list[dict]:
     """Fill callee prototypes; drop routines whose callees cannot link.
 
-    A callee with no C prototype blocks its callers — unless it is dissolved
-    by the Phase-1 transform, in which case the port omits the call and the
-    caller is perfectly portable. Only genuinely unported, in-scope callees
-    block.
+    Dependency-group packets deliberately keep their SCC members even when a
+    callee is still unported; candidates can then bound or dissolve that edge
+    in the translated body. Ordinary packets retain the strict drop behavior.
     """
     inventory = json.loads((ROOT / "site/data/inventory.json").read_text())
     functions = inventory["functions"]
@@ -783,7 +785,7 @@ def attach_dependencies(
                     "c": proto[1] if proto else None,
                 })
             routine["callees"] = callees
-            if unavailable:
+            if unavailable and not keep_unavailable:
                 continue
             usable.append(routine)
         if not usable:
