@@ -2183,6 +2183,22 @@ wSerialSendBufToggle = 0xCB7E
 wSerialSendBufIndex = 0xCB7F
 wcb80 = 0xCB80
 wSerialSendBuf = 0xCB81
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wLoadedAttackEffectCommands = 0xCCB2
+hWhoseTurn = 0xFF97
+wPlayerDuelVariables = 0xC200
+wArenaStatus = 0xC2F0
+wPlayerDeck = 0xC400
+wTempCardID_ccc2 = 0xCCC2
+wSelectedAttack = 0xCCC6
+wLoadedCard1Name = 0xCC27
+wLoadedAttackName = 0xCCAA
+wDefaultText = 0xC590
+wTxRam2 = 0xCE3F
+wLCDC = 0xCABB
+wSkipDuelistIsThinkingDelay = 0xCBF9
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -4959,6 +4975,33 @@ CASES["OppAction_ForceSwitchActive"] = [
 ]
 # <<< factory OppAction_ForceSwitchActive
 
+# >>> factory OppAction_UseAttack
+CONTRACT["OppAction_UseAttack"] = {"compare": ("a",), "preserve": ()}
+CASES["OppAction_UseAttack"] = [
+    {"wram": {wLoadedAttackEffectCommands: b"\x00\x00",
+              hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBB: b"\x00",
+              wArenaStatus: b"\x00", wPlayerDeck: b"\x08",
+              wTempCardID_ccc2: b"\x08", wSelectedAttack: b"\x00",
+              wLoadedCard1Name: b"\x35\x00", wLoadedAttackName: b"\x35\x00",
+              wDefaultText: b"\x00", wTxRam2: b"\x00\x00\x35\x00",
+              wLCDC: b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01], "read": {wSkipDuelistIsThinkingDelay: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON,
+         wram={wLoadedAttackEffectCommands: b"\x00\x00",
+               hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBB: b"\x00",
+               wArenaStatus: b"\x00", wPlayerDeck: b"\x08",
+               wTempCardID_ccc2: b"\x08", wSelectedAttack: b"\x00",
+               wLoadedCard1Name: b"\x35\x00", wLoadedAttackName: b"\x35\x00",
+               wDefaultText: b"\x00", wTxRam2: b"\x00\x00\x35\x00",
+               wLCDC: b"\x00"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         keys=[0x00, 0x01], read={wSkipDuelistIsThinkingDelay: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory OppAction_UseAttack
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6943,3 +6986,11 @@ for _record in SCHEMA2_CASES["UnreferencedDrawCardFromDeckToHand"]:
 # >>> factory-mutation OppAction_ForceSwitchActive
 MUTATIONS["OppAction_ForceSwitchActive"] = {"source_symbol": "OppAction_ForceSwitchActive", "before": "void OppAction_ForceSwitchActive(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\twPlayAreaSelectAction = 1u;", "after": "void OppAction_ForceSwitchActive(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\twPlayAreaSelectAction = 0u;", "case_ids": ["OppAction_ForceSwitchActive-0", "OppAction_ForceSwitchActive-1"]}
 # <<< factory-mutation OppAction_ForceSwitchActive
+# >>> factory-mutation OppAction_UseAttack
+MUTATIONS["OppAction_UseAttack"] = {
+    "source_symbol": "OppAction_UseAttack",
+    "before": "\tExchangeRNGResult rng = ExchangeRNG(text.b, text.c,\n\t\t(uint16_t)(((uint16_t)text.d << 8) | text.e), text.hl);\n\t(void)rng;\n\twSkipDuelistIsThinkingDelay = 1u;",
+    "after": "\tExchangeRNGResult rng = ExchangeRNG(text.b, text.c,\n\t\t(uint16_t)(((uint16_t)text.d << 8) | text.e), text.hl);\n\t(void)rng;\n\twSkipDuelistIsThinkingDelay = 0u;",
+    "case_ids": ["OppAction_UseAttack-0", "OppAction_UseAttack-1"],
+}
+# <<< factory-mutation OppAction_UseAttack

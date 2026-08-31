@@ -1642,6 +1642,13 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define SelectPkmnOnBenchToSwitchWithActiveText 0x010eu
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/effect_commands.h"
+#include "home/menus.h"
+#include "home/serial.h"
+#define EFFECTCMDTYPE_DISCARD_ENERGY 0x06u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -9360,3 +9367,24 @@ void OppAction_ForceSwitchActive(void)
 	(void)SerialSendByte(hTempPlayAreaLocation_ff9d);
 }
 /* <<< factory OppAction_ForceSwitchActive */
+
+/* >>> factory OppAction_UseAttack */
+OppActionUseAttackResult OppAction_UseAttack(uint8_t b, uint8_t d, uint8_t e)
+{
+	(void)TryExecuteEffectCommandFunction(EFFECTCMDTYPE_DISCARD_ENERGY, b, d, e);
+	CheckSelfConfusionDamageResult confusion = CheckSelfConfusionDamage();
+	if ((confusion.f & 0x10u) != 0u) {
+		(void)HandleConfusionDamageToSelf();
+		wOpponentTurnEnded = 1u;
+		return (OppActionUseAttackResult){1u};
+	}
+	DisplayOpponentUsedAttackScreen();
+	PrintPokemonsAttackTextResult text = PrintPokemonsAttackText();
+	(void)WaitForWideTextBoxInput();
+	ExchangeRNGResult rng = ExchangeRNG(text.b, text.c,
+		(uint16_t)(((uint16_t)text.d << 8) | text.e), text.hl);
+	(void)rng;
+	wSkipDuelistIsThinkingDelay = 1u;
+	return (OppActionUseAttackResult){1u};
+}
+/* <<< factory OppAction_UseAttack */

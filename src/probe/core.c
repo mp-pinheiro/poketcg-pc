@@ -3023,6 +3023,14 @@ static void adapt_OppAction_ForceSwitchActive(ProbeState *s)
 }
 /* <<< factory OppAction_ForceSwitchActive */
 
+/* >>> factory OppAction_UseAttack */
+static void adapt_OppAction_UseAttack(ProbeState *s)
+{
+	OppActionUseAttackResult r = OppAction_UseAttack(s->b, s->d, s->e);
+	s->a = r.a;
+}
+/* <<< factory OppAction_UseAttack */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3385,5 +3393,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DuelMenu_Attack", adapt_DuelMenu_Attack },
 	{ "UnreferencedDrawCardFromDeckToHand", adapt_UnreferencedDrawCardFromDeckToHand },
 	{ "OppAction_ForceSwitchActive", adapt_OppAction_ForceSwitchActive },
+	{ "OppAction_UseAttack", adapt_OppAction_UseAttack },
 	{ NULL, NULL },
 };
