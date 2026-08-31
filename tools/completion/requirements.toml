@@ -1,0 +1,519 @@
+[manifest]
+schema = 2
+version = "completion-v2-epoch-3"
+source = "docs/vision.md"
+source_sha256 = "3dd45cd7e05c298a134f43cd37dae8c96f75b6f9a80a8a60c62e6da405e6e67e"
+
+milestones = [
+  "reset",
+  "phases-0-2",
+  "phase-3-audio",
+  "phase-4-ui",
+  "phase-5-duel",
+  "phase-6-overworld",
+  "phase-7-transport",
+  "faithful-4x3",
+  "phase-8-widescreen",
+]
+
+[[representation]]
+field = "wram"
+domain = "memory"
+required = true
+refinement = ""
+
+[[representation]]
+field = "hram"
+domain = "memory"
+required = true
+refinement = ""
+
+[[representation]]
+field = "sram_bank_0"
+domain = "memory"
+required = true
+refinement = ""
+
+[[representation]]
+field = "sram_bank_1"
+domain = "memory"
+required = true
+refinement = ""
+
+[[representation]]
+field = "sram_bank_2"
+domain = "memory"
+required = true
+refinement = ""
+
+[[representation]]
+field = "sram_bank_3"
+domain = "memory"
+required = true
+refinement = ""
+
+[[representation]]
+field = "vram_bank_0"
+domain = "memory"
+required = true
+refinement = ""
+
+[[representation]]
+field = "vram_bank_1"
+domain = "memory"
+required = true
+refinement = ""
+
+[[representation]]
+field = "oam"
+domain = "memory"
+required = true
+refinement = ""
+
+[[representation]]
+field = "io"
+domain = "hardware"
+required = true
+refinement = ""
+
+[[representation]]
+field = "palette_ram"
+domain = "hardware"
+required = true
+refinement = ""
+
+[[representation]]
+field = "mapper_state"
+domain = "hardware"
+required = true
+refinement = ""
+
+[[representation]]
+field = "input_latch"
+domain = "runtime"
+required = true
+refinement = ""
+
+[[representation]]
+field = "timer_frame_counters"
+domain = "runtime"
+required = true
+refinement = ""
+
+[[representation]]
+field = "rng"
+domain = "game"
+required = true
+refinement = ""
+
+[[representation]]
+field = "apu_state"
+domain = "audio"
+required = true
+refinement = ""
+
+[[representation]]
+field = "apu_trace"
+domain = "audio"
+required = true
+refinement = ""
+
+[[representation]]
+field = "framebuffer"
+domain = "render"
+required = true
+refinement = ""
+
+[[representation]]
+field = "save"
+domain = "persistence"
+required = true
+refinement = ""
+
+[[representation]]
+field = "transport"
+domain = "link"
+required = true
+refinement = ""
+
+[[representation]]
+field = "printer"
+domain = "link"
+required = true
+refinement = ""
+
+[[representation]]
+field = "sm83_registers_function_boundary"
+domain = "diagnostic"
+required = true
+refinement = "exact at function boundaries; diagnostic only at scene boundaries"
+
+[[representation]]
+field = "hardware_exclusions"
+domain = "transform"
+required = true
+refinement = "named transform row required for LY and DIV"
+
+[[requirement]]
+id = "completion:v2:reset:baseline"
+anchor = "docs/vision.md:21-60"
+milestone = "reset"
+deps = []
+command = "just completion-check completion:v2:reset:baseline"
+terminal_event = "BASELINE_PINNED"
+min_frames = 0
+min_events = 1
+state_fields = ["rom_sha1", "rom_sha256", "map_sha256", "symbol_sha256", "inventory_sha256"]
+artifact_schema = "completion-baseline-v1"
+tracker_issue = 3164
+
+[[requirement]]
+id = "completion:v2:reset:rom-coverage"
+anchor = "docs/vision.md:45-60"
+milestone = "reset"
+deps = ["completion:v2:reset:baseline"]
+command = "just completion-check completion:v2:reset:rom-coverage"
+terminal_event = "ROM_COVERAGE_CLOSED"
+min_frames = 0
+min_events = 1
+state_fields = ["rom_bytes", "code_spans", "data_spans", "header_spans", "padding_spans"]
+artifact_schema = "rom-inventory-v2"
+tracker_issue = 3165
+
+[[requirement]]
+id = "completion:v2:reset:routine-bijection"
+anchor = "docs/vision.md:190-217"
+milestone = "reset"
+deps = ["completion:v2:reset:baseline"]
+command = "just completion-check completion:v2:reset:routine-bijection"
+terminal_event = "ROUTINE_MAPPING_CLOSED"
+min_frames = 0
+min_events = 1
+state_fields = ["canonical_routine", "registration", "native_disposition", "span"]
+artifact_schema = "routine-mapping-v1"
+tracker_issue = 3167
+
+[[requirement]]
+id = "completion:v2:reset:representation"
+anchor = "docs/vision.md:195-197"
+milestone = "reset"
+deps = ["completion:v2:reset:baseline"]
+command = "just completion-check completion:v2:reset:representation"
+terminal_event = "RELATION_FROZEN"
+min_frames = 0
+min_events = 1
+state_fields = ["representation_fields", "refinement_rows"]
+artifact_schema = "representation-relation-v1"
+tracker_issue = 3168
+
+[[requirement]]
+id = "completion:v2:reset:truthful-accounting"
+anchor = "docs/vision.md:190-260"
+milestone = "reset"
+deps = ["completion:v2:reset:baseline", "completion:v2:reset:routine-bijection"]
+command = "just completion-check completion:v2:reset:truthful-accounting"
+terminal_event = "TRUTHFUL_COUNTS_EMITTED"
+min_frames = 0
+min_events = 1
+state_fields = ["landed_inventory", "final_routines", "trusted_oracle_evidence", "production_integration", "requirements", "milestone_gates"]
+artifact_schema = "completion-status-v2"
+tracker_issue = 3175
+
+[[requirement]]
+id = "completion:v2:p0:substrate"
+anchor = "docs/vision.md:262-270"
+milestone = "phases-0-2"
+deps = ["completion:v2:reset:representation"]
+command = "just completion-check completion:v2:p0:substrate"
+terminal_event = "SUBSTRATE_READY"
+min_frames = 1
+min_events = 1
+state_fields = ["wram", "hram", "sram_bank_0", "vram_bank_0", "framebuffer"]
+artifact_schema = "function-and-replay-v2"
+tracker_issue = 3176
+
+[[requirement]]
+id = "completion:v2:p1:hardware-removal"
+anchor = "docs/vision.md:284-299"
+milestone = "phases-0-2"
+deps = ["completion:v2:p0:substrate"]
+command = "just completion-check completion:v2:p1:hardware-removal"
+terminal_event = "HARDWARE_TRANSFORM_CLOSED"
+min_frames = 1
+min_events = 1
+state_fields = ["mapper_state", "timer_frame_counters", "input_latch"]
+artifact_schema = "transform-proof-v1"
+tracker_issue = 3177
+
+[[requirement]]
+id = "completion:v2:p2:leaves"
+anchor = "docs/vision.md:269-272"
+milestone = "phases-0-2"
+deps = ["completion:v2:p1:hardware-removal"]
+command = "just completion-check completion:v2:p2:leaves"
+terminal_event = "LEAF_CORPUS_CLOSED"
+min_frames = 1
+min_events = 1
+state_fields = ["wram", "hram", "sram_bank_0", "vram_bank_0", "sm83_registers_function_boundary"]
+artifact_schema = "function-corpus-v2"
+tracker_issue = 3180
+
+[[requirement]]
+id = "completion:v2:p2:save-interchange"
+anchor = "docs/vision.md:269-272"
+milestone = "phases-0-2"
+deps = ["completion:v2:p2:leaves"]
+command = "just completion-check completion:v2:p2:save-interchange"
+terminal_event = "SAVE_ROUND_TRIP"
+min_frames = 0
+min_events = 2
+state_fields = ["save", "sram_bank_0", "sram_bank_1", "sram_bank_2", "sram_bank_3"]
+artifact_schema = "save-interchange-v1"
+tracker_issue = 3181
+
+[[requirement]]
+id = "completion:v2:p2:boot-title"
+anchor = "docs/vision.md:32-43"
+milestone = "phases-0-2"
+deps = ["completion:v2:p2:save-interchange"]
+command = "just completion-check completion:v2:p2:boot-title"
+terminal_event = "NEW_GAME_ENTERED"
+min_frames = 600
+min_events = 3
+state_fields = ["wram", "hram", "vram_bank_0", "vram_bank_1", "oam", "io", "palette_ram", "framebuffer", "input_latch", "timer_frame_counters"]
+artifact_schema = "scenario-corpus-v2"
+tracker_issue = 3182
+
+[[requirement]]
+id = "completion:v2:p2:boot-title-negative"
+anchor = "docs/vision.md:190-217"
+milestone = "phases-0-2"
+deps = ["completion:v2:p2:boot-title"]
+command = "just completion-check completion:v2:p2:boot-title-negative"
+terminal_event = "FIRST_MISMATCH"
+min_frames = 1
+min_events = 1
+state_fields = ["first_mismatch_region", "first_mismatch_offset", "replay_artifact"]
+artifact_schema = "negative-evidence-v1"
+tracker_issue = 3184
+
+[[requirement]]
+id = "completion:v2:p3:audio-trace"
+anchor = "docs/vision.md:272-273"
+milestone = "phase-3-audio"
+deps = ["completion:v2:p2:boot-title"]
+command = "just completion-check completion:v2:p3:audio-trace"
+terminal_event = "AUDIO_TRACE_CLOSED"
+min_frames = 1
+min_events = 1
+state_fields = ["apu_state", "apu_trace", "timer_frame_counters"]
+artifact_schema = "audio-trace-v1"
+tracker_issue = 3183
+
+[[requirement]]
+id = "completion:v2:p3:audio-pcm"
+anchor = "docs/vision.md:272-273"
+milestone = "phase-3-audio"
+deps = ["completion:v2:p3:audio-trace"]
+command = "just completion-check completion:v2:p3:audio-pcm"
+terminal_event = "PCM_WINDOW_CLOSED"
+min_frames = 1
+min_events = 1
+state_fields = ["apu_trace", "framebuffer"]
+artifact_schema = "audio-pcm-v1"
+tracker_issue = 3185
+
+[[requirement]]
+id = "completion:v2:p4:ui-corpus"
+anchor = "docs/vision.md:273-274"
+milestone = "phase-4-ui"
+deps = ["completion:v2:p3:audio-pcm"]
+command = "just completion-check completion:v2:p4:ui-corpus"
+terminal_event = "UI_CORPUS_CLOSED"
+min_frames = 1
+min_events = 1
+state_fields = ["wram", "vram_bank_0", "vram_bank_1", "oam", "palette_ram", "framebuffer"]
+artifact_schema = "scene-corpus-v2"
+tracker_issue = 3189
+
+[[requirement]]
+id = "completion:v2:p4:raster-effects"
+anchor = "docs/vision.md:182-188"
+milestone = "phase-4-ui"
+deps = ["completion:v2:p4:ui-corpus"]
+command = "just completion-check completion:v2:p4:raster-effects"
+terminal_event = "RASTER_EFFECTS_CLOSED"
+min_frames = 1
+min_events = 1
+state_fields = ["framebuffer", "vram_bank_0", "vram_bank_1"]
+artifact_schema = "scene-corpus-v2"
+tracker_issue = 3193
+
+[[requirement]]
+id = "completion:v2:p5:duel-state"
+anchor = "docs/vision.md:301-314"
+milestone = "phase-5-duel"
+deps = ["completion:v2:p4:ui-corpus"]
+command = "just completion-check completion:v2:p5:duel-state"
+terminal_event = "DUEL_VECTOR_CLOSED"
+min_frames = 1
+min_events = 1
+state_fields = ["wram", "rng", "input_latch"]
+artifact_schema = "duel-vector-v1"
+tracker_issue = 3188
+
+[[requirement]]
+id = "completion:v2:p5:seeded-duel"
+anchor = "docs/vision.md:246-255"
+milestone = "phase-5-duel"
+deps = ["completion:v2:p5:duel-state"]
+command = "just completion-check completion:v2:p5:seeded-duel"
+terminal_event = "DUEL_TERMINAL_OUTCOME"
+min_frames = 1
+min_events = 1
+state_fields = ["wram", "rng", "framebuffer", "save"]
+artifact_schema = "duel-corpus-v2"
+tracker_issue = 3190
+
+[[requirement]]
+id = "completion:v2:p6:script-vm"
+anchor = "docs/vision.md:316-329"
+milestone = "phase-6-overworld"
+deps = ["completion:v2:p5:seeded-duel"]
+command = "just completion-check completion:v2:p6:script-vm"
+terminal_event = "SCRIPT_OPCODE_CLOSED"
+min_frames = 1
+min_events = 1
+state_fields = ["wram", "mapper_state", "input_latch"]
+artifact_schema = "script-coverage-v1"
+tracker_issue = 3191
+
+[[requirement]]
+id = "completion:v2:p6:maps-and-campaign"
+anchor = "docs/vision.md:274-276"
+milestone = "phase-6-overworld"
+deps = ["completion:v2:p6:script-vm"]
+command = "just completion-check completion:v2:p6:maps-and-campaign"
+terminal_event = "CREDITS_REACHED"
+min_frames = 1
+min_events = 1
+state_fields = ["wram", "framebuffer", "save", "rng"]
+artifact_schema = "campaign-corpus-v2"
+tracker_issue = 3196
+
+[[requirement]]
+id = "completion:v2:p7:link-ir"
+anchor = "docs/vision.md:331-345"
+milestone = "phase-7-transport"
+deps = ["completion:v2:p6:maps-and-campaign"]
+command = "just completion-check completion:v2:p7:link-ir"
+terminal_event = "LINK_SESSION_CLOSED"
+min_frames = 1
+min_events = 1
+state_fields = ["transport", "wram", "input_latch"]
+artifact_schema = "transport-corpus-v1"
+tracker_issue = 3192
+
+[[requirement]]
+id = "completion:v2:p7:printer"
+anchor = "docs/vision.md:347-351"
+milestone = "phase-7-transport"
+deps = ["completion:v2:p7:link-ir"]
+command = "just completion-check completion:v2:p7:printer"
+terminal_event = "PRINTER_PNG_CLOSED"
+min_frames = 1
+min_events = 1
+state_fields = ["printer", "framebuffer"]
+artifact_schema = "printer-corpus-v1"
+tracker_issue = 3201
+
+[[requirement]]
+id = "completion:v2:faithful-4x3:release"
+anchor = "docs/vision.md:21-25"
+milestone = "faithful-4x3"
+deps = ["completion:v2:p7:printer"]
+command = "just completion-check completion:v2:faithful-4x3:release"
+terminal_event = "CREDITS_REACHED"
+min_frames = 1
+min_events = 1
+state_fields = ["wram", "hram", "sram_bank_0", "sram_bank_1", "sram_bank_2", "sram_bank_3", "vram_bank_0", "vram_bank_1", "oam", "io", "palette_ram", "mapper_state", "input_latch", "timer_frame_counters", "rng", "apu_state", "apu_trace", "framebuffer", "save", "transport", "printer"]
+artifact_schema = "release-corpus-v2"
+tracker_issue = 3178
+
+[[requirement]]
+id = "completion:v2:faithful-4x3:package"
+anchor = "docs/vision.md:353-391"
+milestone = "faithful-4x3"
+deps = ["completion:v2:faithful-4x3:release"]
+command = "just completion-check completion:v2:faithful-4x3:package"
+terminal_event = "PACKAGE_ROM_FREE"
+min_frames = 1
+min_events = 1
+state_fields = ["executable_sha256", "data_pack_sha256", "package_contents"]
+artifact_schema = "package-proof-v1"
+tracker_issue = 3179
+
+[[requirement]]
+id = "completion:v2:p8:ppu:span-widening"
+anchor = "docs/vision.md:131-147"
+milestone = "phase-8-widescreen"
+deps = ["completion:v2:faithful-4x3:release"]
+command = "just completion-check completion:v2:p8:ppu:span-widening"
+terminal_event = "WIDE_SPAN_CLOSED"
+min_frames = 1
+min_events = 1
+state_fields = ["framebuffer"]
+artifact_schema = "widescreen-corpus-v1"
+tracker_issue = 0
+
+[[requirement]]
+id = "completion:v2:p8:runtime:viewport-rect"
+anchor = "docs/vision.md:155-162"
+milestone = "phase-8-widescreen"
+deps = ["completion:v2:p8:ppu:span-widening"]
+command = "just completion-check completion:v2:p8:runtime:viewport-rect"
+terminal_event = "VIEWPORT_RECT_CLOSED"
+min_frames = 1
+min_events = 1
+state_fields = ["wram", "framebuffer"]
+artifact_schema = "widescreen-corpus-v1"
+tracker_issue = 0
+
+[[requirement]]
+id = "completion:v2:p8:ui:wide-layouts"
+anchor = "docs/vision.md:148-153"
+milestone = "phase-8-widescreen"
+deps = ["completion:v2:p8:runtime:viewport-rect"]
+command = "just completion-check completion:v2:p8:ui:wide-layouts"
+terminal_event = "WIDE_UI_CLOSED"
+min_frames = 1
+min_events = 1
+state_fields = ["wram", "framebuffer"]
+artifact_schema = "widescreen-corpus-v1"
+tracker_issue = 0
+
+[[requirement]]
+id = "completion:v2:p8:features:render-only"
+anchor = "docs/vision.md:174-180"
+milestone = "phase-8-widescreen"
+deps = ["completion:v2:p8:ui:wide-layouts"]
+command = "just completion-check completion:v2:p8:features:render-only"
+terminal_event = "RENDER_ONLY_CLOSED"
+min_frames = 1
+min_events = 1
+state_fields = ["wram", "framebuffer"]
+artifact_schema = "feature-neutrality-v1"
+tracker_issue = 0
+
+[[requirement]]
+id = "completion:v2:p8:release:enhanced-corpus"
+anchor = "docs/vision.md:257-260"
+milestone = "phase-8-widescreen"
+deps = ["completion:v2:p8:features:render-only"]
+command = "just completion-check completion:v2:p8:release:enhanced-corpus"
+terminal_event = "WIDESCREEN_CORPUS_CLOSED"
+min_frames = 1
+min_events = 1
+state_fields = ["wram", "framebuffer", "save", "rng"]
+artifact_schema = "widescreen-corpus-v1"
+tracker_issue = 0

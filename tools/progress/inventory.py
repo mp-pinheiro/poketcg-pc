@@ -78,10 +78,17 @@ def extract_callee(line_stripped: str, code_names: set[str], cur_parent: str) ->
     return p
 
 
-def parse_map() -> tuple[dict[str, dict], int]:
+def rom_offset(bank_type: str, bank: int, address: int) -> int:
+    if bank_type == "ROM0":
+        return address
+    return bank * 0x4000 + address - 0x4000
+
+
+def parse_map() -> tuple[dict[str, dict], int, list[dict]]:
     if not MAP_FILE.exists():
         fail("run just bootstrap first")
     labels: dict[str, dict] = {}
+    sections: list[dict] = []
     bank_type = None
     bank_num = None
     sec_start = sec_end = None
@@ -92,6 +99,15 @@ def parse_map() -> tuple[dict[str, dict], int]:
         if bank_type not in ROM_BANK_TYPES or sec_start is None:
             return
         top = [(a, n) for a, n in sec_syms if "." not in n]
+        sections.append({
+            "bank_type": bank_type,
+            "bank": bank_num,
+            "address": sec_start,
+            "length": sec_end - sec_start + 1,
+            "end": sec_end,
+            "section": sec_name,
+            "symbols": [{"address": a, "name": n} for a, n in top],
+        })
         for i, (addr, name) in enumerate(top):
             next_addr = top[i + 1][0] if i + 1 < len(top) else sec_end + 1
             size = next_addr - addr
@@ -124,7 +140,7 @@ def parse_map() -> tuple[dict[str, dict], int]:
     rm = re.search(r"ROM0: (\d+) bytes used.*?ROMX: (\d+) bytes used", text, re.S)
     rom_bytes = int(rm.group(1)) + int(rm.group(2)) if rm else None
 
-    return labels, rom_bytes
+    return labels, rom_bytes, sections
 
 
 def process_asm_files(map_labels: dict[str, dict]) -> tuple[dict[str, dict], dict[str, int], list[str]]:
@@ -315,11 +331,71 @@ def process_asm_files(map_labels: dict[str, dict]) -> tuple[dict[str, dict], dic
         ref_map[name] = max(r - def_lines, 0)
 
     return defs, ref_map, unknown
+def build_spans(sections: list[dict], defs: dict[str, dict]) -> list[dict]:
+    spans: list[dict] = []
+    for section in sections:
+        bank_type = section["bank_type"]
+        bank = section["bank"]
+        section_start = section["address"]
+        section_end = section["end"] + 1
+        if bank_type == "ROM0":
+            base_offset = section_start
+        else:
+            base_offset = bank * 0x4000 + section_start - 0x4000
+        by_address: dict[int, str] = {}
+        for symbol in section["symbols"]:
+            by_address.setdefault(symbol["address"], symbol["name"])
+        addresses = sorted(by_address.items())
+        cursor = section_start
+        for index, (address, name) in enumerate(addresses):
+            if address > cursor:
+                spans.append({
+                    "kind": "unclassified",
+                    "source": "mapped-gap",
+                    "bank_type": bank_type,
+                    "bank": bank,
+                    "address": cursor,
+                    "length": address - cursor,
+                    "offset": base_offset + cursor - section_start,
+                    "section": section["section"],
+                })
+            end = addresses[index + 1][0] if index + 1 < len(addresses) else section_end
+            definition = defs.get(name, {})
+            kind = definition.get("kind")
+            if kind not in {"code", "data"}:
+                kind = "unclassified"
+            if section["section"].casefold() == "romheader":
+                kind = "header/metadata"
+            spans.append({
+                "kind": kind,
+                "source": "mapped-symbol",
+                "bank_type": bank_type,
+                "bank": bank,
+                "address": address,
+                "length": end - address,
+                "offset": base_offset + address - section_start,
+                "section": section["section"],
+                "symbol": name,
+            })
+            cursor = end
+        if cursor < section_end:
+            spans.append({
+                "kind": "unclassified",
+                "source": "mapped-gap",
+                "bank_type": bank_type,
+                "bank": bank,
+                "address": cursor,
+                "length": section_end - cursor,
+                "offset": base_offset + cursor - section_start,
+                "section": section["section"],
+            })
+    return sorted(spans, key=lambda span: span["offset"])
 
 
 def main() -> int:
-    map_labels, rom_bytes = parse_map()
+    map_labels, rom_bytes, sections = parse_map()
     defs, refs_map, unknown = process_asm_files(map_labels)
+    spans = build_spans(sections, defs)
 
     functions = {}
     data_labels = 0
@@ -353,10 +429,17 @@ def main() -> int:
         capture_output=True, text=True, check=True,
     ).stdout.strip()
 
+    mapped_bytes = sum(span["length"] for span in spans)
+    unclassified_bytes = sum(
+        span["length"] for span in spans if span["kind"] == "unclassified"
+    )
     out = {
-        "schema": 1,
+        "schema": 2,
         "pret_commit": pret_commit,
         "rom_bytes": rom_bytes,
+        "mapped_sections": len(sections),
+        "mapped_bytes": mapped_bytes,
+        "unclassified_bytes": unclassified_bytes,
         "totals": {
             "code_functions": len(functions),
             "code_bytes": sum(f["size"] for f in functions.values()),
@@ -365,6 +448,7 @@ def main() -> int:
         },
         "unknown_labels": unknown,
         "functions": functions,
+        "spans": spans,
     }
 
     OUT_FILE.parent.mkdir(parents=True, exist_ok=True)

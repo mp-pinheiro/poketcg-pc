@@ -27,6 +27,7 @@ GATE = ROOT / "site" / "data" / "gate.json"
 PROGRESS = ROOT / "site" / "data" / "progress.json"
 HISTORY = ROOT / "site" / "data" / "history.jsonl"
 BLOCKED = ROOT / ".factory" / "blocked.toml"
+COMPLETION_TOOL = ROOT / "tools" / "completion" / "completion.py"
 
 TIER_BOUNDS = ((1, 0, 100), (2, 100, 300), (3, 300, 800), (4, 800, None))
 LIFECYCLE_STATES = (
@@ -320,6 +321,37 @@ def load_gate() -> dict | None:
     with open(GATE) as f:
         return json.load(f)
 
+def load_completion_status() -> dict | None:
+    if not COMPLETION_TOOL.exists():
+        return None
+    try:
+        result = subprocess.run(
+            [sys.executable, str(COMPLETION_TOOL), "status", "--json"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=120,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {"schema": 2, "complete": False, "errors": [str(exc)]}
+    try:
+        value = json.loads(result.stdout)
+    except json.JSONDecodeError as exc:
+        return {
+            "schema": 2,
+            "complete": False,
+            "errors": [f"completion status is not JSON: {exc}"],
+        }
+    if not isinstance(value, dict):
+        return {"schema": 2, "complete": False, "errors": ["completion status is not an object"]}
+    if result.returncode:
+        value.setdefault("errors", []).append(
+            f"completion status exited {result.returncode}"
+        )
+        value["complete"] = False
+    return value
+
 
 def jj_commit_short() -> str | None:
     commands = (
@@ -607,6 +639,9 @@ def subcommand_build():
     gate_data = load_gate()
     commit = jj_commit_short()
     report = compute(inv, routines_set, gate_data)
+    completion = load_completion_status()
+    if completion is not None:
+        report["completion"] = completion
     report["recent"] = recent_ports(inv)
     previous_report = None
     if PROGRESS.exists():
@@ -618,7 +653,7 @@ def subcommand_build():
         previous_report.get(key) == report.get(key)
         for key in (
             "measures", "categories", "units", "functions", "work_records",
-            "id_migrations", "recent",
+            "id_migrations", "completion", "recent",
         )
     )
     if unchanged and previous_report.get("commit"):

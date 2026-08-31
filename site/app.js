@@ -28,19 +28,26 @@ function bar(pctVal) {
 function fmtDate(ts) { return new Date(ts * 1000).toISOString().slice(0, 10); }
 
 function renderHeader(p) {
-  const m = p.measures;
-  HEADLINE.textContent = pct(m.code, m['code/total']) + '% ported';
-  let sub = `${m.code.toLocaleString()} / ${m['code/total'].toLocaleString()} code bytes`;
-  sub += ` \u00b7 ${m.functions.toLocaleString()} / ${m['functions/total'].toLocaleString()} functions`;
-  if (p.gate.present) {
-    const v = m.verified_functions > 0
-      ? m.verified_functions.toLocaleString() + ' verified'
-      : 'verification in progress';
-    sub += ` \u00b7 ${v}`;
-  } else {
-    sub += ' \u00b7 verification not recorded';
-  }
-  SUBHEAD.textContent = sub;
+  const m = p.measures || {};
+  const c = (p.completion && p.completion.counts) || {};
+  const landed = c.landed_inventory || {};
+  const final = c.final_routines || {};
+  const trusted = c.trusted_oracle_evidence || {};
+  const production = c.production_integration || {};
+  const requirements = c.requirements || {};
+  const milestones = c.milestone_gates || {};
+  HEADLINE.textContent = p.completion && p.completion.complete === true
+    ? '100% complete'
+    : 'Completion assurance';
+  const parts = [
+    `landed inventory ${Number(landed.routines || m.functions || 0).toLocaleString()} routines`,
+    `${Number(final.count || 0).toLocaleString()} / ${Number(final.total || 0).toLocaleString()} final routines`,
+    `${Number(trusted.count || 0).toLocaleString()} / ${Number(trusted.total || 0).toLocaleString()} trusted oracle`,
+    `production roots ${Number(production.roots || 0).toLocaleString()} / ${Number(production.root_total || 0).toLocaleString()}`,
+    `requirements ${Number(requirements.passing || 0).toLocaleString()} / ${Number(requirements.total || 0).toLocaleString()}`,
+    `milestones ${Number(milestones.passing || 0).toLocaleString()} / ${Number(milestones.total || 0).toLocaleString()}`,
+  ];
+  SUBHEAD.textContent = parts.join(' \u00b7 ');
   let commitHtml = '';
   if (p.commit_url && p.commit) {
     commitHtml = `<a href="${p.commit_url}" target="_blank" rel="noopener">${p.commit}</a>`;

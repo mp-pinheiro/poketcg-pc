@@ -308,6 +308,16 @@ assets-verify:
 progress-inventory:
     python3 tools/progress/inventory.py
 
+
+# Truthful completion audit and revision-pinned obligation checks.
+completion-audit:
+    python3 tools/completion/completion.py audit
+completion-status *ARGS:
+    python3 tools/completion/completion.py status {{ARGS}}
+completion-check ID:
+    python3 tools/completion/completion.py check "{{ID}}"
+completion-next:
+    python3 tools/completion/completion.py next
 # Recompute site/data/progress.json + history point from the registry and gate record.
 progress:
     python3 tools/progress/report.py build
