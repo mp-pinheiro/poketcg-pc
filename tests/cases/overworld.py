@@ -337,6 +337,11 @@ wNextScript = 0xD0C6
 wPlayerDirection = 0xD334
 wOverworldNPCFlags = 0xD0C1
 LOADED_NPCS = 0xD34A
+
+hKeysPressed = 0xFF91
+wPlayerCurrentlyMoving = 0xD335
+wPlayerSpriteIndex = 0xD336
+wWhichSprite = 0xD4CF
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -1064,6 +1069,18 @@ CASES["OpenPauseMenu"] = [
 ]
 # <<< factory OpenPauseMenu
 
+# >>> factory HandlePlayerMoveMode
+CONTRACT["HandlePlayerMoveMode"] = {"compare": (), "preserve": ()}
+CASES["HandlePlayerMoveMode"] = [
+    {"wram": {wPlayerSpriteIndex: b"\x12", wPlayerCurrentlyMoving: b"\x00", hKeysPressed: b"\x00"}, "read": {wWhichSprite: 1}},
+    {"keys": [0x08, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {wPlayerSpriteIndex: b"\x34", wPlayerCurrentlyMoving: b"\x00", 0xCABB: b"\x00"}, "read": {wWhichSprite: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {wPlayerSpriteIndex: b"\x56", wPlayerCurrentlyMoving: b"\x10", hKeysPressed: b"\x00"}, "read": {wWhichSprite: 1}},
+    {"wram": {wPlayerSpriteIndex: b"\x78", wPlayerCurrentlyMoving: b"\x01", hKeysPressed: b"\x00", 0xD0BF: b"\x00"}, "read": {wWhichSprite: 1}},
+    {"wram": {wPlayerSpriteIndex: b"\xBC", wPlayerCurrentlyMoving: b"\x02", hKeysPressed: b"\x00", 0xD0BF: b"\x00"}, "read": {wWhichSprite: 1}},
+    dict(POISON, wram={wPlayerSpriteIndex: b"\x9A", wPlayerCurrentlyMoving: b"\x03", hKeysPressed: b"\x00", 0xD0BF: b"\x00"}, read={wWhichSprite: 1}),
+]
+# <<< factory HandlePlayerMoveMode
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1434,3 +1451,6 @@ MUTATIONS["PauseMenu"] = {"source_symbol": "PauseMenu", "before": "void PauseMen
 # >>> factory-mutation OpenPauseMenu
 MUTATIONS["OpenPauseMenu"] = {"source_symbol": "OpenPauseMenu", "before": "\tCloseAdvancedDialogueBox();", "after": "\twSelectedPauseMenuItem = 1u;\n\tCloseAdvancedDialogueBox();", "case_ids": ["OpenPauseMenu-0", "OpenPauseMenu-1"]}
 # <<< factory-mutation OpenPauseMenu
+# >>> factory-mutation HandlePlayerMoveMode
+MUTATIONS["HandlePlayerMoveMode"] = {"source_symbol": "HandlePlayerMoveMode", "before": "void HandlePlayerMoveMode(void)\n{\n\twWhichSprite = wPlayerSpriteIndex;", "after": "void HandlePlayerMoveMode(void)\n{\n\twWhichSprite = 0u;", "case_ids": ["HandlePlayerMoveMode-0", "HandlePlayerMoveMode-1", "HandlePlayerMoveMode-2", "HandlePlayerMoveMode-3", "HandlePlayerMoveMode-4", "HandlePlayerMoveMode-5"]}
+# <<< factory-mutation HandlePlayerMoveMode

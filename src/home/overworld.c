@@ -246,6 +246,11 @@
 #include "generated/wram.h"
 #define MUSIC_PAUSE_MENU 0x05u
 #define DISPLAY_PAUSE_MENU 0x4797u
+
+#include "home/overworld.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define PAD_START 0x08u
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -1418,3 +1423,25 @@ void OpenPauseMenu(void)
 	CloseAdvancedDialogueBox();
 }
 /* <<< factory OpenPauseMenu */
+
+/* >>> factory HandlePlayerMoveMode */
+void HandlePlayerMoveMode(void)
+{
+	wWhichSprite = wPlayerSpriteIndex;
+	uint8_t moving = wPlayerCurrentlyMoving;
+	if ((moving & 0x10u) != 0u)
+		return;
+	if ((moving & 0x01u) == 0u)
+		HandlePlayerMoveModeInput();
+	moving = wPlayerCurrentlyMoving;
+	if (moving != 0u) {
+		if ((moving & 0x01u) != 0u)
+			Func_c66c();
+		if ((moving & 0x02u) != 0u)
+			(void)Func_c6dc(0u);
+		return;
+	}
+	if ((hKeysPressed & PAD_START) != 0u)
+		OpenPauseMenu();
+}
+/* <<< factory HandlePlayerMoveMode */
