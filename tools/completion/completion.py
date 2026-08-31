@@ -96,7 +96,7 @@ def sha256_path(path: Path) -> str:
 
 def current_revision() -> str:
     commands = (
-        ["jj", "log", "-r", "@", "--no-graph", "-T", "commit_id"],
+        ["jj", "log", "-r", "@-", "--no-graph", "-T", "commit_id"],
         ["git", "rev-parse", "HEAD"],
     )
     for command in commands:
