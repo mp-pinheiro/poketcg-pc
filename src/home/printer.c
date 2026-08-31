@@ -208,6 +208,28 @@
 #define PRINTER_POKEMON_CARDS_PRINT_LIST_ADDR 0x642Du
 #define PRINTER_POKEMON_CARDS_SELECTION_PARAMS_ADDR 0x6D05u
 #define PrintThisCardYesNoText 0x0274u
+
+#include "generated/hram.h"
+#include "generated/sram.h"
+#include "generated/wram.h"
+#include "home/common.h"
+#include "home/deck_configuration.h"
+#include "home/deck_machine.h"
+#include "home/deck_selection.h"
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
+#include "home/printer.h"
+#include "home/switch_sram.h"
+#include "home/text_box.h"
+#define NULL 0x00u
+#define PleaseSetTheContrastText 0x027au
+#define PrintMenuItemsText 0x0278u
+#define WhatWouldYouLikeToPrintText 0x0279u
+#define PRINTER_MENU_PARAMETERS_ADDR 0x6DADu
+#define PRINTER_QUALITY_PARAMETERS_ADDR 0x6DF5u
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -1608,3 +1630,42 @@ void PrinterMenu_PokemonCards(void)
 	}
 }
 /* <<< factory PrinterMenu_PokemonCards */
+
+/* >>> factory HandlePrinterMenu */
+void HandlePrinterMenu(void)
+{
+	(void)0;
+}
+/* <<< factory HandlePrinterMenu */
+
+/* >>> factory PrinterMenu_PrintQuality */
+void PrinterMenu_PrintQuality(uint16_t w0)
+{
+	(void)w0;
+	(void)DrawWideTextBox_PrintText(PleaseSetTheContrastText);
+	EnableSRAM();
+	uint8_t contrast = sPrinterContrastLevel;
+	DisableSRAM();
+
+	uint16_t parameters = PRINTER_QUALITY_PARAMETERS_ADDR;
+	(void)InitCardSelectionParams(contrast, &parameters);
+	for (;;) {
+		DoFrame();
+		HandleCardSelectionInputResult input = HandleCardSelectionInput();
+		if (input.carry == 0u)
+			continue;
+		uint8_t selected = hffb3;
+		if (selected != MENU_CANCEL) {
+			EnableSRAM();
+			sPrinterContrastLevel = selected;
+			DisableSRAM();
+		}
+
+		uint8_t menu_item = wSelectedPrinterMenuItem;
+		uint16_t menu_parameters = PRINTER_MENU_PARAMETERS_ADDR;
+		InitializeMenuParameters(menu_item, &menu_parameters);
+		(void)DrawWideTextBox_PrintText(WhatWouldYouLikeToPrintText);
+		return;
+	}
+}
+/* <<< factory PrinterMenu_PrintQuality */

@@ -134,6 +134,14 @@ _PRINTER_MENU_CARD_LIST_SRAM = {0: {0xA100: b"\x00" * 0x100, 0xA218: b"\x00",
                                     0xA314: b"\x00"}}
 _PRINTER_MENU_CARD_LIST_SETUP = [{"fn": "CopyDMAFunction"},
                                  {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hffb3 = 0xFFB3
+sPrinterContrastLevel = 0xA003
+wPrinterPacketDataPtr = 0xCE6A
+wSelectedPrinterMenuItem = 0xCFE4
+SETUP = [{"fn": "SetupRegisters"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}]
+QUALITY_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory Func_1a14b
@@ -830,6 +838,22 @@ CASES["PrinterMenu_PokemonCards"] = [
 ]
 # <<< factory PrinterMenu_PokemonCards
 
+# >>> factory HandlePrinterMenu
+CONTRACT["HandlePrinterMenu"] = {"compare": (), "preserve": ()}
+CASES["HandlePrinterMenu"] = [
+    {"wram": {0xCFE4: b"\x00"}, "read": {0xCFE4: 1}},
+    dict(POISON, wram={0xCFE4: b"\x00"}, read={0xCFE4: 1}),
+]
+# <<< factory HandlePrinterMenu
+
+# >>> factory PrinterMenu_PrintQuality
+CONTRACT["PrinterMenu_PrintQuality"] = {"compare": (), "preserve": ()}
+CASES["PrinterMenu_PrintQuality"] = [
+    {"rom_bank": 2, "stack": [0], "wram": {0xCABB: b"\x00", hffb3: b"\x00", wSelectedPrinterMenuItem: b"\x00"}, "sram": {0: {sPrinterContrastLevel: b"\x02"}}, "setup": QUALITY_SETUP, "keys": [0x00, 0x01], "sread": {0: {sPrinterContrastLevel: 1}}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, rom_bank=2, stack=[0x1234], wram={0xCABB: b"\x00", hffb3: b"\x00", wSelectedPrinterMenuItem: b"\x00"}, sram={0: {sPrinterContrastLevel: b"\x03"}}, setup=QUALITY_SETUP, keys=[0x00, 0x01], sread={0: {sPrinterContrastLevel: 1}}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PrinterMenu_PrintQuality
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 SCHEMA2_CASES["SendPrinterPacket"][3]["completion"] = {"mode": "pre-ret", "pc": 0x315D}
@@ -1125,3 +1149,19 @@ MUTATIONS["PrinterMenu_PokemonCards"] = {
     "case_ids": ["PrinterMenu_PokemonCards-0", "PrinterMenu_PokemonCards-1"],
 }
 # <<< factory-mutation PrinterMenu_PokemonCards
+# >>> factory-mutation HandlePrinterMenu
+MUTATIONS["HandlePrinterMenu"] = {"source_symbol": "HandlePrinterMenu", "before": "void HandlePrinterMenu(void)\n{\n\t(void)0;", "after": "void HandlePrinterMenu(void)\n{\n\t(void)0;\n\twSelectedPrinterMenuItem = 1u;", "case_ids": ["HandlePrinterMenu-0", "HandlePrinterMenu-1"]}
+# <<< factory-mutation HandlePrinterMenu
+# >>> factory-completion HandlePrinterMenu
+# >>> factory-completion HandlePrinterMenu
+for _record in SCHEMA2_CASES["HandlePrinterMenu"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+# <<< factory-completion HandlePrinterMenu
+# >>> factory-mutation PrinterMenu_PrintQuality
+MUTATIONS["PrinterMenu_PrintQuality"] = {"source_symbol": "PrinterMenu_PrintQuality", "before": "\t\t\tsPrinterContrastLevel = selected;", "after": "\t\t\tsPrinterContrastLevel = (uint8_t)(selected + 1u);", "case_ids": ["PrinterMenu_PrintQuality-0", "PrinterMenu_PrintQuality-1"]}
+# <<< factory-mutation PrinterMenu_PrintQuality
+# >>> factory-completion PrinterMenu_PrintQuality
+# >>> factory-completion PrinterMenu_PrintQuality
+for _record in SCHEMA2_CASES["PrinterMenu_PrintQuality"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x6DE2, "bank": 2}
+# <<< factory-completion PrinterMenu_PrintQuality

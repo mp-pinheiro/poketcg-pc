@@ -343,6 +343,20 @@ static void adapt_PrinterMenu_PokemonCards(ProbeState *s)
 }
 /* <<< factory PrinterMenu_PokemonCards */
 
+/* >>> factory HandlePrinterMenu */
+static void adapt_HandlePrinterMenu(ProbeState *s)
+{
+	HandlePrinterMenu();
+}
+/* <<< factory HandlePrinterMenu */
+
+/* >>> factory PrinterMenu_PrintQuality */
+static void adapt_PrinterMenu_PrintQuality(ProbeState *s)
+{
+	PrinterMenu_PrintQuality(s->stack[0]);
+}
+/* <<< factory PrinterMenu_PrintQuality */
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "ShowPrinterConnectionErrorScene", adapt_ShowPrinterConnectionErrorScene },
 	{ "SendPrinterPacket", adapt_SendPrinterPacket },
@@ -381,5 +395,7 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "_PrintCardList", adapt__PrintCardList },
 	{ "PrinterMenu_CardList", adapt_PrinterMenu_CardList },
 	{ "PrinterMenu_PokemonCards", adapt_PrinterMenu_PokemonCards },
+	{ "HandlePrinterMenu", adapt_HandlePrinterMenu },
+	{ "PrinterMenu_PrintQuality", adapt_PrinterMenu_PrintQuality },
 	{ NULL, NULL },
 };

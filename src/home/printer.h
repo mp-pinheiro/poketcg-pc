@@ -243,4 +243,11 @@ void PrinterMenu_CardList(void);
 /* >>> factory PrinterMenu_PokemonCards */
 void PrinterMenu_PokemonCards(void);
 /* <<< factory PrinterMenu_PokemonCards */
+/* >>> factory HandlePrinterMenu */
+void HandlePrinterMenu(void);
+void PrinterMenu_PrintQuality(uint16_t w0);
+/* <<< factory HandlePrinterMenu */
+/* >>> factory PrinterMenu_PrintQuality */
+void PrinterMenu_PrintQuality(uint16_t w0);
+/* <<< factory PrinterMenu_PrintQuality */
 #endif

@@ -1,0 +1,9 @@
+{
+  "fn": "PrinterMenu_PrintQuality",
+  "case": "tests/cases/printer.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrinterMenu_PrintQuality\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"40963\": \"02\"}}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"53220\": \"00\", \"65459\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrinterMenu_PrintQuality\", \"mismatches\": {\"sram\": {\"byte\": 0, \"reference\": \"02\", \"native\": \"03\"}}}\n",
+  "restored": "{\"fn\": \"PrinterMenu_PrintQuality\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"40963\": \"02\"}}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"53220\": \"00\", \"65459\": \"02\"}}, \"status\": \"PASS\"}\n"
+}
