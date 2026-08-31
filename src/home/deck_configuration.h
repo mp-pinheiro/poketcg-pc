@@ -312,4 +312,10 @@ void PrepareToBuildDeckConfigurationToSend(void);
 /* >>> factory ChangeDeckName */
 void ChangeDeckName(void);
 /* <<< factory ChangeDeckName */
+/* >>> factory HandleDeckConfigurationMenu */
+void HandleDeckConfigurationMenu(void);
+/* <<< factory HandleDeckConfigurationMenu */
+/* >>> factory ModifyDeckConfiguration */
+void ModifyDeckConfiguration(uint16_t w0);
+/* <<< factory ModifyDeckConfiguration */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

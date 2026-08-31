@@ -415,6 +415,16 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 
 #include "home/deck_configuration.h"
 #include "home/deck_selection.h"
+
+#include "home/deck_configuration.h"
+#include "home/duel.h"
+#include "home/frames.h"
+#include "home/print_text.h"
+#include "home/text_box.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define DECK_BUILD_MENU_DATA_ADDR 0x5751u
 /* <<< factory statics */
 
 
@@ -2758,3 +2768,64 @@ void ChangeDeckName(void)
 	InputCurDeckName();
 }
 /* <<< factory ChangeDeckName */
+
+/* >>> factory HandleDeckConfigurationMenu */
+void HandleDeckConfigurationMenu(void)
+{
+	uint16_t box = 0u;
+	DrawRegularTextBox(&box, 0u, 20u, 6u, 0u, 0u);
+	(void)PlaceTextItems(DECK_BUILD_MENU_DATA_ADDR);
+	for (;;) {
+		wVBlankOAMCopyToggle = TRUE;
+		DoFrame();
+		YourOrOppPlayAreaScreen_HandleInput();
+		uint8_t keys = (uint8_t)(hKeysPressed & 0x03u);
+		if (keys == 0u)
+			continue;
+		uint8_t selection = (keys & 0x01u) != 0u ?
+			wYourOrOppPlayAreaCurPosition : MENU_CANCEL;
+		uint8_t selected_item = selection;
+		wced6 = selected_item;
+		if (selection == MENU_CANCEL) {
+			DrawCardTypeIconsAndPrintCardCounts();
+			(void)PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u,
+				FILTERS_CARD_SELECTION_PARAMS_ADDR);
+			return;
+		}
+		switch (selection) {
+		case 0u:
+			ConfirmDeckConfiguration();
+			break;
+		case 1u:
+			ModifyDeckConfiguration(0u);
+			return;
+		case 2u:
+			ChangeDeckName();
+			break;
+		case 3u:
+			(void)SaveDeckConfiguration(0u);
+			break;
+		case 4u:
+			(void)DismantleDeck(0u);
+			break;
+		case 5u:
+			(void)CancelDeckModifications(0u);
+			break;
+		default:
+			break;
+		}
+		OpenDeckConfigurationMenu();
+		return;
+	}
+}
+/* <<< factory HandleDeckConfigurationMenu */
+
+/* >>> factory ModifyDeckConfiguration */
+void ModifyDeckConfiguration(uint16_t w0)
+{
+	(void)w0;
+	DrawCardTypeIconsAndPrintCardCounts();
+	(void)PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u,
+		FILTERS_CARD_SELECTION_PARAMS_ADDR);
+}
+/* <<< factory ModifyDeckConfiguration */

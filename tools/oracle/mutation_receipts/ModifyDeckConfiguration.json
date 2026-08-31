@@ -1,0 +1,9 @@
+{
+  "fn": "ModifyDeckConfiguration",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ModifyDeckConfiguration\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52900\": \"00\", \"52947\": \"0012\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ModifyDeckConfiguration\", \"mismatches\": {\"bus\": {\"address\": 52900, \"reference\": \"80000012\", \"native\": \"80010012\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[51899, 1], [52900, 1], [52947, 2]]}}}\n",
+  "restored": "{\"fn\": \"ModifyDeckConfiguration\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52900\": \"00\", \"52947\": \"0012\"}}, \"status\": \"PASS\"}\n"
+}

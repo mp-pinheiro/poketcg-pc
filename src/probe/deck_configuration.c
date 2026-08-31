@@ -736,6 +736,21 @@ static void adapt_ChangeDeckName(ProbeState *s)
 }
 /* <<< factory ChangeDeckName */
 
+/* >>> factory HandleDeckConfigurationMenu */
+static void adapt_HandleDeckConfigurationMenu(ProbeState *s)
+{
+	(void)s;
+	HandleDeckConfigurationMenu();
+}
+/* <<< factory HandleDeckConfigurationMenu */
+
+/* >>> factory ModifyDeckConfiguration */
+static void adapt_ModifyDeckConfiguration(ProbeState *s)
+{
+	ModifyDeckConfiguration(s->stack[0]);
+}
+/* <<< factory ModifyDeckConfiguration */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "PrintSlashSixty", adapt_PrintSlashSixty },
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
@@ -823,5 +838,7 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "HandleSendDeckConfigurationMenu", adapt_HandleSendDeckConfigurationMenu },
 	{ "PrepareToBuildDeckConfigurationToSend", adapt_PrepareToBuildDeckConfigurationToSend },
 	{ "ChangeDeckName", adapt_ChangeDeckName },
+	{ "HandleDeckConfigurationMenu", adapt_HandleDeckConfigurationMenu },
+	{ "ModifyDeckConfiguration", adapt_ModifyDeckConfiguration },
 	{ NULL, NULL },
 };
