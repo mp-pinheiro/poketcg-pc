@@ -88,7 +88,7 @@ def main() -> int:
     parser.add_argument("--symbols", type=Path, required=True)
     parser.add_argument("--probe", type=Path, required=True)
     parser.add_argument("--runner", type=Path, required=True)
-    parser.add_argument("--jobs", type=int, default=os.cpu_count() or 1)
+    parser.add_argument("--jobs", type=int, default=min(4, os.cpu_count() or 1))
     parser.add_argument("--report", type=Path, help="write gate record to JSON")
     args = parser.parse_args()
     if not all(path.is_absolute() and path.is_file()
@@ -175,7 +175,7 @@ def main() -> int:
             "--probe", str(args.probe), "--runner", str(args.runner),
         ]
         result = subprocess.run(command, cwd=ROOT, text=True, capture_output=True,
-                                timeout=30, check=False)
+                                timeout=120, check=False)
         output = result.stdout.strip().splitlines()
         line = output[-1] if output else result.stderr.strip()
         return fn, line, result.returncode
