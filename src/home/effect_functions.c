@@ -11449,3 +11449,15 @@ void StretchKick_PlayerSelectEffect(void)
 	SwapTurn();
 }
 /* <<< factory StretchKick_PlayerSelectEffect */
+
+/* >>> factory VictreebelLure_SelectSwitchPokemon */
+void VictreebelLure_SelectSwitchPokemon(void)
+{
+	(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);
+	SwapTurn();
+	(void)HasAlivePokemonInBench();
+	OpenPlayAreaScreenForSelection();
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	SwapTurn();
+}
+/* <<< factory VictreebelLure_SelectSwitchPokemon */

@@ -5422,6 +5422,14 @@ static void adapt_StretchKick_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory StretchKick_PlayerSelectEffect */
 
+/* >>> factory VictreebelLure_SelectSwitchPokemon */
+static void adapt_VictreebelLure_SelectSwitchPokemon(ProbeState *s)
+{
+	(void)s;
+	VictreebelLure_SelectSwitchPokemon();
+}
+/* <<< factory VictreebelLure_SelectSwitchPokemon */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -6075,5 +6083,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Teleport_PlayerSelectEffect", adapt_Teleport_PlayerSelectEffect },
 	{ "NinetalesLure_PlayerSelectEffect", adapt_NinetalesLure_PlayerSelectEffect },
 	{ "StretchKick_PlayerSelectEffect", adapt_StretchKick_PlayerSelectEffect },
+	{ "VictreebelLure_SelectSwitchPokemon", adapt_VictreebelLure_SelectSwitchPokemon },
 	{ NULL, NULL },
 };

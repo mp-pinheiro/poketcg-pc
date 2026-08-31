@@ -2207,6 +2207,9 @@ void NinetalesLure_PlayerSelectEffect(void);
 /* >>> factory StretchKick_PlayerSelectEffect */
 void StretchKick_PlayerSelectEffect(void);
 /* <<< factory StretchKick_PlayerSelectEffect */
+/* >>> factory VictreebelLure_SelectSwitchPokemon */
+void VictreebelLure_SelectSwitchPokemon(void);
+/* <<< factory VictreebelLure_SelectSwitchPokemon */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
