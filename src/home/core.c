@@ -9493,3 +9493,9 @@ void _ContinueDuel(void)
 	DuelMainInterface();
 }
 /* <<< factory _ContinueDuel */
+
+/* >>> factory DoLinkOpponentTurn */
+void DoLinkOpponentTurn(void)
+{
+}
+/* <<< factory DoLinkOpponentTurn */

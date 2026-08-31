@@ -2242,6 +2242,9 @@ void PokemonBreeder_PlayerSelection(void);
 /* >>> factory Curse_TransferDamageEffect */
 void Curse_TransferDamageEffect(void);
 /* <<< factory Curse_TransferDamageEffect */
+/* >>> factory SuperPotion_PlayerSelectEffect */
+void SuperPotion_PlayerSelectEffect(void);
+/* <<< factory SuperPotion_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

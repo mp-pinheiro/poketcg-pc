@@ -11695,3 +11695,9 @@ void Curse_TransferDamageEffect(void)
 	(void)HandleDestinyBondAndBetweenTurnKnockOuts();
 }
 /* <<< factory Curse_TransferDamageEffect */
+
+/* >>> factory SuperPotion_PlayerSelectEffect */
+void SuperPotion_PlayerSelectEffect(void)
+{
+}
+/* <<< factory SuperPotion_PlayerSelectEffect */

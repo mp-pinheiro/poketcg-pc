@@ -1381,4 +1381,7 @@ void MainDuelLoop(void);
 /* >>> factory _ContinueDuel */
 void _ContinueDuel(void);
 /* <<< factory _ContinueDuel */
+/* >>> factory DoLinkOpponentTurn */
+void DoLinkOpponentTurn(void);
+/* <<< factory DoLinkOpponentTurn */
 #endif

@@ -3028,6 +3028,9 @@ def _peal_of_thunder_case(rng, poison=False):
     if poison:
         case.update(POISON)
     return case
+
+hTemp_ffa0 = 0xFFA0
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7876,6 +7879,14 @@ CASES["Curse_TransferDamageEffect"] = [
 ]
 # <<< factory Curse_TransferDamageEffect
 
+# >>> factory SuperPotion_PlayerSelectEffect
+CONTRACT["SuperPotion_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CASES["SuperPotion_PlayerSelectEffect"] = [
+    {"wram": {hTemp_ffa0: b"\x00"}, "read": {hTemp_ffa0: 1}, "expect": {hTemp_ffa0: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={hTemp_ffa0: b"\x00"}, read={hTemp_ffa0: 1}, expect={hTemp_ffa0: b"\x00"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory SuperPotion_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -11081,3 +11092,10 @@ MUTATIONS["Curse_TransferDamageEffect"] = {"source_symbol": "Curse_TransferDamag
 for _record in SCHEMA2_CASES["Curse_TransferDamageEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x2383, "bank": 13}
 # <<< factory-completion Curse_TransferDamageEffect
+# >>> factory-mutation SuperPotion_PlayerSelectEffect
+MUTATIONS["SuperPotion_PlayerSelectEffect"] = {"source_symbol": "SuperPotion_PlayerSelectEffect", "before": "void SuperPotion_PlayerSelectEffect(void)\n{\n}", "after": "void SuperPotion_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 1u;\n}", "case_ids": ["SuperPotion_PlayerSelectEffect-0", "SuperPotion_PlayerSelectEffect-1"]}
+# <<< factory-mutation SuperPotion_PlayerSelectEffect
+# >>> factory-completion SuperPotion_PlayerSelectEffect
+for _record in SCHEMA2_CASES["SuperPotion_PlayerSelectEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x238A, "bank": 14}
+# <<< factory-completion SuperPotion_PlayerSelectEffect

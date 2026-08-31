@@ -5511,6 +5511,14 @@ static void adapt_Curse_TransferDamageEffect(ProbeState *s)
 }
 /* <<< factory Curse_TransferDamageEffect */
 
+/* >>> factory SuperPotion_PlayerSelectEffect */
+static void adapt_SuperPotion_PlayerSelectEffect(ProbeState *s)
+{
+	(void)s;
+	SuperPotion_PlayerSelectEffect();
+}
+/* <<< factory SuperPotion_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -6175,5 +6183,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DevolutionSpray_DevolutionEffect", adapt_DevolutionSpray_DevolutionEffect },
 	{ "PokemonBreeder_PlayerSelection", adapt_PokemonBreeder_PlayerSelection },
 	{ "Curse_TransferDamageEffect", adapt_Curse_TransferDamageEffect },
+	{ "SuperPotion_PlayerSelectEffect", adapt_SuperPotion_PlayerSelectEffect },
 	{ NULL, NULL },
 };

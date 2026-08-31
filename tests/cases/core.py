@@ -2230,6 +2230,9 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 wDuelReturnAddress = 0xCBE5
 wDuelFinished = 0xCC07
 wDuelTheme = 0xCC1A
+
+hWhoseTurn = 0xFF97
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -5101,6 +5104,17 @@ CASES["_ContinueDuel"] = [
 ]
 # <<< factory _ContinueDuel
 
+# >>> factory DoLinkOpponentTurn
+CONTRACT["DoLinkOpponentTurn"] = {"compare": (), "preserve": ()}
+CASES["DoLinkOpponentTurn"] = [
+    {"wram": {hWhoseTurn: b"\xC2"},
+     "read": {hWhoseTurn: 1},
+     "expect": {hWhoseTurn: b"\xC2"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2"},
+         read={hWhoseTurn: 1}, expect={hWhoseTurn: b"\xC2"}),
+]
+# <<< factory DoLinkOpponentTurn
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -7131,3 +7145,10 @@ MUTATIONS["_ContinueDuel"] = {"source_symbol": "_ContinueDuel", "before": "void 
 for _record in SCHEMA2_CASES["_ContinueDuel"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x2382, "bank": 1}
 # <<< factory-completion _ContinueDuel
+# >>> factory-mutation DoLinkOpponentTurn
+MUTATIONS["DoLinkOpponentTurn"] = {"source_symbol": "DoLinkOpponentTurn", "before": "void DoLinkOpponentTurn(void)\n{\n}", "after": "void DoLinkOpponentTurn(void)\n{\n\thWhoseTurn = 0xC3u;\n}", "case_ids": ["DoLinkOpponentTurn-0", "DoLinkOpponentTurn-1"]}
+# <<< factory-mutation DoLinkOpponentTurn
+# >>> factory-completion DoLinkOpponentTurn
+for _record in SCHEMA2_CASES["DoLinkOpponentTurn"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x238A, "bank": 13}
+# <<< factory-completion DoLinkOpponentTurn
