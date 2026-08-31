@@ -3047,6 +3047,9 @@ WFB_EXCLUDE_ARENA = 0xCBD2
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 hAIPkmnPowerEffectParam = 0xFFA1
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+FRAME_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -7937,6 +7940,30 @@ CASES["Heal_RemoveDamageEffect"] = [
 ]
 # <<< factory Heal_RemoveDamageEffect
 
+# >>> factory SuperEnergyRemoval_PlayerSelection
+CONTRACT["SuperEnergyRemoval_PlayerSelection"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["SuperEnergyRemoval_PlayerSelection"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC200: b"\x10\x10", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08\x01", 0xC300: b"\x10\x10", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08\x01", 0xFFB1: b"\x00", 0xFF98: b"\x00", 0xFF9D: b"\x00", 0xFFA0: b"\x00", 0xFFA1: b"\x00", 0xC510: b"\xFF", 0xCABB: b"\x00"}, "read": {0xFFA0: 5, 0xFFB2: 1, 0xC510: 2, 0xCBFA: 1, 0xCBFB: 1}, "setup": FRAME_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC200: b"\x10\x10", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08\x01", 0xC300: b"\x10\x10", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08\x01", 0xFFB1: b"\x00", 0xFF98: b"\x00", 0xFF9D: b"\x00", 0xFFA0: b"\x00", 0xFFA1: b"\x00", 0xC510: b"\xFF", 0xCABB: b"\x00"}, read={0xFFA0: 5, 0xFFB2: 1, 0xC510: 2, 0xCBFA: 1, 0xCBFB: 1}, setup=FRAME_SETUP, instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory SuperEnergyRemoval_PlayerSelection
+
+# >>> factory DevolutionSpray_PlayerSelection
+CONTRACT["DevolutionSpray_PlayerSelection"] = {"compare": (), "preserve": ()}
+CASES["DevolutionSpray_PlayerSelection"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xFFA0: b"\x00", 0xC200: b"\x10\x10", 0xC2BB: b"\x00", 0xC2C8: b"\x28", 0xC2CE: b"\x01", 0xC2EF: b"\x01", 0xC400: b"\x09\x08", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 3, 0xFF9D: 1, 0xCBC9: 2}, "expect": {0xFFA0: b"\x00\x00\xFF", 0xFF9D: b"\x00", 0xCBC9: b"\x00\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xFFA0: b"\x00", 0xC200: b"\x10\x10", 0xC2BB: b"\x00", 0xC2C8: b"\x28", 0xC2CE: b"\x01", 0xC2EF: b"\x01", 0xC400: b"\x09\x08", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFFA0: 3, 0xFF9D: 1, 0xCBC9: 2}, expect={0xFFA0: b"\x00\x00\xFF", 0xFF9D: b"\x00", 0xCBC9: b"\x00\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DevolutionSpray_PlayerSelection
+
+# >>> factory EnergySpike_PlayerSelectEffect
+CONTRACT["EnergySpike_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CASES["EnergySpike_PlayerSelectEffect"] = [
+    {"wram": {0xCABB: b"\x00"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\xFF"}},
+    dict(POISON, wram={0xCABB: b"\x00"}, read={0xFFA0: 1}, expect={0xFFA0: b"\xFF"}),
+]
+# <<< factory EnergySpike_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -11164,3 +11191,16 @@ MUTATIONS["Heal_RemoveDamageEffect"] = {"source_symbol": "Heal_RemoveDamageEffec
 for _record in SCHEMA2_CASES["Heal_RemoveDamageEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x2380, "bank": 13}
 # <<< factory-completion Heal_RemoveDamageEffect
+# >>> factory-mutation SuperEnergyRemoval_PlayerSelection
+MUTATIONS["SuperEnergyRemoval_PlayerSelection"] = {"source_symbol": "SuperEnergyRemoval_PlayerSelection", "before": "\thPlayAreaEffectTarget = hTempPlayAreaLocation_ff9d;", "after": "\thPlayAreaEffectTarget = (uint8_t)(hTempPlayAreaLocation_ff9d + 1u);", "case_ids": ["SuperEnergyRemoval_PlayerSelection-0", "SuperEnergyRemoval_PlayerSelection-1"]}
+# <<< factory-mutation SuperEnergyRemoval_PlayerSelection
+# >>> factory-mutation DevolutionSpray_PlayerSelection
+MUTATIONS["DevolutionSpray_PlayerSelection"] = {"source_symbol": "DevolutionSpray_PlayerSelection", "before": "void DevolutionSpray_PlayerSelection(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseEvolutionCardAndPressAButtonToDevolveText);\n\thCurSelectionItem = 1u;\n\t(void)HasAlivePokemonInPlayArea();\n\n\tCardOneStageBelowResult below;\n\tfor (;;) {\n\t\tOpenPlayAreaScreenForSelection();\n\t\tbelow = GetCardOneStageBelow(0u, 0u);\n\t\tif ((below.f & 0x10u) == 0u)\n\t\t\tbreak;\n\t}\n\n\tuint8_t location = hTempPlayAreaLocation_ff9d;\n\tDuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + location));\n\tDuelistVarResult stage = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_STAGE + location));\n\tDuelistVarResult card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location));\n\n\tfor (;;) {\n\t\tUpdateDevolvedCardHPAndStage(below.d);\n\t\tuint16_t position = GetNextPositionInTempList_TrainerEffects();\n\t\tgb_write8(position, below.e);\n\t\t(void)LoadCardDataToBuffer2_FromDeckIndex(below.d);\n\t\tif (wLoadedCard2Stage == 0u)\n\t\t\tbreak;\n\t\tInitAndPrintPlayAreaCardInformationAndLocation_WithTextBox();\n\t\tbelow = GetCardOneStageBelow(0u, 0u);\n\t}\n\n\tuint16_t terminator = GetNextPositionInTempList_TrainerEffects();\n\tgb_write8(terminator, 0xffu);\n\thTempList = location;", "after": "void DevolutionSpray_PlayerSelection(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseEvolutionCardAndPressAButtonToDevolveText);\n\thCurSelectionItem = 1u;\n\t(void)HasAlivePokemonInPlayArea();\n\n\tCardOneStageBelowResult below;\n\tfor (;;) {\n\t\tOpenPlayAreaScreenForSelection();\n\t\tbelow = GetCardOneStageBelow(0u, 0u);\n\t\tif ((below.f & 0x10u) == 0u)\n\t\t\tbreak;\n\t}\n\n\tuint8_t location = hTempPlayAreaLocation_ff9d;\n\tDuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + location));\n\tDuelistVarResult stage = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_STAGE + location));\n\tDuelistVarResult card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location));\n\n\tfor (;;) {\n\t\tUpdateDevolvedCardHPAndStage(below.d);\n\t\tuint16_t position = GetNextPositionInTempList_TrainerEffects();\n\t\tgb_write8(position, below.e);\n\t\t(void)LoadCardDataToBuffer2_FromDeckIndex(below.d);\n\t\tif (wLoadedCard2Stage == 0u)\n\t\t\tbreak;\n\t\tInitAndPrintPlayAreaCardInformationAndLocation_WithTextBox();\n\t\tbelow = GetCardOneStageBelow(0u, 0u);\n\t}\n\n\tuint16_t terminator = GetNextPositionInTempList_TrainerEffects();\n\tgb_write8(terminator, 0xffu);\n\thTempList = (uint8_t)(location + 1u);", "case_ids": ["DevolutionSpray_PlayerSelection-0", "DevolutionSpray_PlayerSelection-1"]}
+# <<< factory-mutation DevolutionSpray_PlayerSelection
+# >>> factory-mutation EnergySpike_PlayerSelectEffect
+MUTATIONS["EnergySpike_PlayerSelectEffect"] = {"source_symbol": "EnergySpike_PlayerSelectEffect", "before": "void EnergySpike_PlayerSelectEffect(void)\n{\n\twLCDC = 0x80u;\n\thTemp_ffa0 = 0xffu;", "after": "void EnergySpike_PlayerSelectEffect(void)\n{\n\twLCDC = 0x80u;\n\thTemp_ffa0 = 0x00u;", "case_ids": ["EnergySpike_PlayerSelectEffect-0", "EnergySpike_PlayerSelectEffect-1"]}
+# <<< factory-mutation EnergySpike_PlayerSelectEffect
+# >>> factory-completion EnergySpike_PlayerSelectEffect
+for _record in SCHEMA2_CASES["EnergySpike_PlayerSelectEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x237F, "bank": 14}
+# <<< factory-completion EnergySpike_PlayerSelectEffect

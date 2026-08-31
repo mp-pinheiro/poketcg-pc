@@ -5535,6 +5535,30 @@ static void adapt_Heal_RemoveDamageEffect(ProbeState *s)
 }
 /* <<< factory Heal_RemoveDamageEffect */
 
+/* >>> factory SuperEnergyRemoval_PlayerSelection */
+static void adapt_SuperEnergyRemoval_PlayerSelection(ProbeState *s)
+{
+	HandlePokemonAndEnergySelectionScreenResult result = SuperEnergyRemoval_PlayerSelection();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory SuperEnergyRemoval_PlayerSelection */
+
+/* >>> factory DevolutionSpray_PlayerSelection */
+static void adapt_DevolutionSpray_PlayerSelection(ProbeState *s)
+{
+	(void)s;
+	DevolutionSpray_PlayerSelection();
+}
+/* <<< factory DevolutionSpray_PlayerSelection */
+
+/* >>> factory EnergySpike_PlayerSelectEffect */
+static void adapt_EnergySpike_PlayerSelectEffect(ProbeState *s)
+{
+	EnergySpike_PlayerSelectEffect();
+}
+/* <<< factory EnergySpike_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -6202,5 +6226,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SuperPotion_PlayerSelectEffect", adapt_SuperPotion_PlayerSelectEffect },
 	{ "Wail_FillBenchEffect", adapt_Wail_FillBenchEffect },
 	{ "Heal_RemoveDamageEffect", adapt_Heal_RemoveDamageEffect },
+	{ "SuperEnergyRemoval_PlayerSelection", adapt_SuperEnergyRemoval_PlayerSelection },
+	{ "DevolutionSpray_PlayerSelection", adapt_DevolutionSpray_PlayerSelection },
+	{ "EnergySpike_PlayerSelectEffect", adapt_EnergySpike_PlayerSelectEffect },
 	{ NULL, NULL },
 };

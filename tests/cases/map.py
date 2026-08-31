@@ -315,6 +315,14 @@ CASES["_ExecuteGameEvent"] = [
 ]
 # <<< factory _ExecuteGameEvent
 
+# >>> factory ExecuteGameEvent
+CONTRACT["ExecuteGameEvent"] = {"compare": (), "preserve": ()}
+CASES["ExecuteGameEvent"] = [
+    {"wram": {0xCAC4: b"\x00"}, "read": {0xCAC4: 1}, "expect": {0xCAC4: b"\x01"}},
+    dict(POISON, wram={0xCAC4: b"\x00"}, read={0xCAC4: 1}, expect={0xCAC4: b"\x01"}),
+]
+# <<< factory ExecuteGameEvent
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -388,3 +396,10 @@ MUTATIONS["GameEvent_ContinueDuel"] = {"source_symbol": "GameEvent_ContinueDuel"
 # >>> factory-mutation _ExecuteGameEvent
 MUTATIONS["_ExecuteGameEvent"] = {"source_symbol": "_ExecuteGameEvent", "before": "uint8_t _ExecuteGameEvent(void)\n{\n\tuint8_t event = wGameEvent;", "after": "uint8_t _ExecuteGameEvent(void)\n{\n\tuint8_t event = 7u;", "case_ids": ["_ExecuteGameEvent-0"]}
 # <<< factory-mutation _ExecuteGameEvent
+# >>> factory-mutation ExecuteGameEvent
+MUTATIONS["ExecuteGameEvent"] = {"source_symbol": "ExecuteGameEvent", "before": "void ExecuteGameEvent(void)\n{\n\twPlayTimeCounterEnable = 1u;", "after": "void ExecuteGameEvent(void)\n{\n\twPlayTimeCounterEnable = 0u;", "case_ids": ["ExecuteGameEvent-0", "ExecuteGameEvent-1"]}
+# <<< factory-mutation ExecuteGameEvent
+# >>> factory-completion ExecuteGameEvent
+for _record in SCHEMA2_CASES["ExecuteGameEvent"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x08E1, "bank": 32}
+# <<< factory-completion ExecuteGameEvent

@@ -2251,6 +2251,16 @@ void Wail_FillBenchEffect(void);
 /* >>> factory Heal_RemoveDamageEffect */
 void Heal_RemoveDamageEffect(void);
 /* <<< factory Heal_RemoveDamageEffect */
+/* >>> factory SuperEnergyRemoval_PlayerSelection */
+HandlePokemonAndEnergySelectionScreenResult SuperEnergyRemoval_PlayerSelection(void);
+/* <<< factory SuperEnergyRemoval_PlayerSelection */
+/* >>> factory DevolutionSpray_PlayerSelection */
+void DevolutionSpray_PlayerSelection(void);
+/* <<< factory DevolutionSpray_PlayerSelection */
+/* >>> factory EnergySpike_PlayerSelectEffect */
+/* >>> factory EnergySpike_PlayerSelectEffect */
+void EnergySpike_PlayerSelectEffect(void);
+/* <<< factory EnergySpike_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

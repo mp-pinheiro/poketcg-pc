@@ -1,0 +1,9 @@
+{
+  "fn": "ExecuteGameEvent",
+  "case": "tests/cases/map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ExecuteGameEvent\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51908\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ExecuteGameEvent\", \"mismatches\": {\"bus\": {\"address\": 51908, \"reference\": \"01\", \"native\": \"00\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[51908, 1]]}}}\n",
+  "restored": "{\"fn\": \"ExecuteGameEvent\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51908\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

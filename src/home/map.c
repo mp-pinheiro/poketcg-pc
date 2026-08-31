@@ -66,6 +66,11 @@
 #include "generated/wram.h"
 #define GAME_EVENT_CHALLENGE_MACHINE 0x06u
 #define NUM_GAME_EVENTS 0x07u
+
+#include "home/map.h"
+#include "home/overworld.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 #define BANK_EXECUTE_NPC_MOVEMENT 0x03u
@@ -365,3 +370,10 @@ uint8_t _ExecuteGameEvent(void)
 	}
 }
 /* <<< factory _ExecuteGameEvent */
+
+/* >>> factory ExecuteGameEvent */
+void ExecuteGameEvent(void)
+{
+	wPlayTimeCounterEnable = 1u;
+}
+/* <<< factory ExecuteGameEvent */

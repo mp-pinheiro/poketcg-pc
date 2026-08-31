@@ -1560,6 +1560,31 @@ void BankswitchROM(uint8_t bank);
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define BasicPokemonWasPlacedOnEachBenchText 0x0149u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/switch_rom.h"
+#include "mem.h"
+#define ChoosePokemonInYourAreaThenPokemonInYourOppText 0x0168u
+
+#include "home/menus.h"
+#include "home/credits_sequence_commands.h"
+#include "home/lcd.h"
+#include "home/duel_core.h"
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define ChooseEvolutionCardAndPressAButtonToDevolveText 0x0167u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11782,3 +11807,146 @@ void Heal_RemoveDamageEffect(void)
 {
 }
 /* <<< factory Heal_RemoveDamageEffect */
+
+/* >>> factory SuperEnergyRemoval_PlayerSelection */
+HandlePokemonAndEnergySelectionScreenResult SuperEnergyRemoval_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChoosePokemonInYourAreaThenPokemonInYourOppText);
+	HandlePokemonAndEnergySelectionScreenResult own = HandlePokemonAndEnergySelectionScreen();
+	if ((own.f & 0x10u) != 0u)
+		return own;
+
+	(void)DrawWideTextBox_WaitForInput(ChoosePokemonToRemoveEnergyFromText);
+	SwapTurn();
+	hCurSelectionItem = 3u;
+	for (;;) {
+		uint8_t saved_bank = hBankROM;
+		BankswitchROM(0x01u);
+		(void)HasAlivePokemonInPlayArea();
+		BankswitchROM(saved_bank);
+
+		saved_bank = hBankROM;
+		BankswitchROM(0x01u);
+		OpenPlayAreaScreenForSelection();
+		BankswitchROM(saved_bank);
+		uint8_t location = hCurMenuItem;
+		if (location == 0xffu) {
+			SwapTurn();
+			return (HandlePokemonAndEnergySelectionScreenResult){location, 0x90u};
+		}
+
+		(void)GetPlayAreaCardAttachedEnergies(location);
+		if (wTotalAttachedEnergies == 0u) {
+			(void)DrawWideTextBox_WaitForInput(NoEnergyCardsText);
+			continue;
+		}
+
+		hPlayAreaEffectTarget = hTempPlayAreaLocation_ff9d;
+		saved_bank = hBankROM;
+		BankswitchROM(0x01u);
+		(void)CreateArenaOrBenchEnergyCardList(hTempPlayAreaLocation_ff9d);
+		BankswitchROM(saved_bank);
+		saved_bank = hBankROM;
+		BankswitchROM(0x01u);
+		DisplayEnergyDiscardScreen(hTempPlayAreaLocation_ff9d);
+		BankswitchROM(saved_bank);
+		wEnergyDiscardMenuDenominator = 2u;
+
+		for (;;) {
+			HandleEnergyDiscardMenuInputResult menu;
+			saved_bank = hBankROM;
+			BankswitchROM(0x01u);
+			menu = HandleEnergyDiscardMenuInput();
+			BankswitchROM(saved_bank);
+			if ((menu.f & 0x10u) != 0u) {
+				AskWhetherToQuitSelectingCardsResult quit = AskWhetherToQuitSelectingCards(5u);
+				if ((quit.f & 0x10u) == 0u)
+					break;
+				uint8_t numerator = wEnergyDiscardMenuNumerator;
+				saved_bank = hBankROM;
+				BankswitchROM(0x01u);
+				DisplayEnergyDiscardScreen(hTempPlayAreaLocation_ff9d);
+				BankswitchROM(saved_bank);
+				wEnergyDiscardMenuDenominator = 2u;
+				wEnergyDiscardMenuNumerator = numerator;
+				continue;
+			}
+
+			uint8_t selection = hCurSelectionItem;
+			uint16_t position = GetNextPositionInTempList_TrainerEffects();
+			gb_write8(position, hTempCardIndex_ff98);
+			(void)RemoveCardFromDuelTempList(hTempCardIndex_ff98);
+			++wEnergyDiscardMenuNumerator;
+			if (hCurSelectionItem >= 5u || wDuelTempList == 0xffu)
+				break;
+			saved_bank = hBankROM;
+			BankswitchROM(0x01u);
+			DisplayEnergyDiscardMenu();
+			BankswitchROM(saved_bank);
+		}
+
+		uint8_t final_selection = hCurSelectionItem;
+		uint16_t position = GetNextPositionInTempList_TrainerEffects();
+		gb_write8(position, 0xffu);
+		SwapTurn();
+		return (HandlePokemonAndEnergySelectionScreenResult){final_selection, (uint8_t)(final_selection == 0u ? 0x80u : 0x00u)};
+	}
+}
+/* <<< factory SuperEnergyRemoval_PlayerSelection */
+
+/* >>> factory DevolutionSpray_PlayerSelection */
+void DevolutionSpray_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseEvolutionCardAndPressAButtonToDevolveText);
+	hCurSelectionItem = 1u;
+	(void)HasAlivePokemonInPlayArea();
+
+	CardOneStageBelowResult below;
+	for (;;) {
+		OpenPlayAreaScreenForSelection();
+		below = GetCardOneStageBelow(0u, 0u);
+		if ((below.f & 0x10u) == 0u)
+			break;
+	}
+
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	DuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + location));
+	DuelistVarResult stage = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_STAGE + location));
+	DuelistVarResult card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location));
+
+	for (;;) {
+		UpdateDevolvedCardHPAndStage(below.d);
+		uint16_t position = GetNextPositionInTempList_TrainerEffects();
+		gb_write8(position, below.e);
+		(void)LoadCardDataToBuffer2_FromDeckIndex(below.d);
+		if (wLoadedCard2Stage == 0u)
+			break;
+		InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox();
+		below = GetCardOneStageBelow(0u, 0u);
+	}
+
+	uint16_t terminator = GetNextPositionInTempList_TrainerEffects();
+	gb_write8(terminator, 0xffu);
+	hTempList = location;
+	EmptyScreen();
+	hTempPlayAreaLocation_ff9d = location;
+	wHUDEnergyAndHPBarsX = location;
+	gb_write8((uint16_t)(wHUDEnergyAndHPBarsX_ADDR + 1u), 0u);
+	PrintPlayAreaCardInformationAndLocation();
+	EnableLCD();
+
+	gb_write8(card.hl, card.a);
+	(void)YesOrNoMenuWithText(IsThisOKText);
+	gb_write8(stage.hl, stage.a);
+	gb_write8(hp.hl, hp.a);
+}
+/* <<< factory DevolutionSpray_PlayerSelection */
+
+/* >>> factory EnergySpike_PlayerSelectEffect */
+void EnergySpike_PlayerSelectEffect(void)
+{
+	wLCDC = 0x80u;
+	hTemp_ffa0 = 0xffu;
+	return;
+}
+/* <<< factory EnergySpike_PlayerSelectEffect */

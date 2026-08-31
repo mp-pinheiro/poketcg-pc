@@ -62,4 +62,7 @@ SongResult GameEvent_ContinueDuel(void);
 /* >>> factory _ExecuteGameEvent */
 uint8_t _ExecuteGameEvent(void);
 /* <<< factory _ExecuteGameEvent */
+/* >>> factory ExecuteGameEvent */
+void ExecuteGameEvent(void);
+/* <<< factory ExecuteGameEvent */
 #endif
