@@ -7725,6 +7725,14 @@ CASES["ButterfreeWhirlwind_CheckBench"] = [
 ]
 # <<< factory ButterfreeWhirlwind_CheckBench
 
+# >>> factory PidgeottoWhirlwind_SelectEffect
+CONTRACT["PidgeottoWhirlwind_SelectEffect"] = {"compare": (), "preserve": ()}
+CASES["PidgeottoWhirlwind_SelectEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x01"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\xFF"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3EF: b"\x01"}, read={0xFFA0: 1}, expect={0xFFA0: b"\xFF"})
+]
+# <<< factory PidgeottoWhirlwind_SelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10856,3 +10864,6 @@ for _record in SCHEMA2_CASES["TrainerCardAsPokemon_PlayerSelectSwitch"]:
 # >>> factory-mutation ButterfreeWhirlwind_CheckBench
 MUTATIONS["ButterfreeWhirlwind_CheckBench"] = {"source_symbol": "ButterfreeWhirlwind_CheckBench", "before": "ButterfreeWhirlwind_CheckBenchResult ButterfreeWhirlwind_CheckBench(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xFFu;", "after": "ButterfreeWhirlwind_CheckBenchResult ButterfreeWhirlwind_CheckBench(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0x00u;", "case_ids": ["ButterfreeWhirlwind_CheckBench-0", "ButterfreeWhirlwind_CheckBench-1"]}
 # <<< factory-mutation ButterfreeWhirlwind_CheckBench
+# >>> factory-mutation PidgeottoWhirlwind_SelectEffect
+MUTATIONS["PidgeottoWhirlwind_SelectEffect"] = {"source_symbol": "PidgeottoWhirlwind_SelectEffect", "before": "void PidgeottoWhirlwind_SelectEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xffu;", "after": "void PidgeottoWhirlwind_SelectEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xfeu;", "case_ids": ["PidgeottoWhirlwind_SelectEffect-0"]}
+# <<< factory-mutation PidgeottoWhirlwind_SelectEffect

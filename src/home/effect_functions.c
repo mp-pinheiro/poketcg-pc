@@ -11350,3 +11350,16 @@ ButterfreeWhirlwind_CheckBenchResult ButterfreeWhirlwind_CheckBench(void)
 	return (ButterfreeWhirlwind_CheckBenchResult){selected.a, selected.f};
 }
 /* <<< factory ButterfreeWhirlwind_CheckBench */
+
+/* >>> factory PidgeottoWhirlwind_SelectEffect */
+void PidgeottoWhirlwind_SelectEffect(void)
+{
+	DuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a < 2u) {
+		hTemp_ffa0 = 0xffu;
+		return;
+	}
+	(void)DuelistSelectForcedSwitch(count.a, 0u, 0u, 0u, 0u, 0u, count.hl);
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+}
+/* <<< factory PidgeottoWhirlwind_SelectEffect */

@@ -5364,6 +5364,14 @@ static void adapt_ButterfreeWhirlwind_CheckBench(ProbeState *s)
 }
 /* <<< factory ButterfreeWhirlwind_CheckBench */
 
+/* >>> factory PidgeottoWhirlwind_SelectEffect */
+static void adapt_PidgeottoWhirlwind_SelectEffect(ProbeState *s)
+{
+	(void)s;
+	PidgeottoWhirlwind_SelectEffect();
+}
+/* <<< factory PidgeottoWhirlwind_SelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -6010,5 +6018,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PealOfThunder_RandomlyDamageEffect", adapt_PealOfThunder_RandomlyDamageEffect },
 	{ "TrainerCardAsPokemon_PlayerSelectSwitch", adapt_TrainerCardAsPokemon_PlayerSelectSwitch },
 	{ "ButterfreeWhirlwind_CheckBench", adapt_ButterfreeWhirlwind_CheckBench },
+	{ "PidgeottoWhirlwind_SelectEffect", adapt_PidgeottoWhirlwind_SelectEffect },
 	{ NULL, NULL },
 };
