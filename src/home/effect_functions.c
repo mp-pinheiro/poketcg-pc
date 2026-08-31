@@ -11423,3 +11423,15 @@ void Teleport_PlayerSelectEffect(void)
 	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
 }
 /* <<< factory Teleport_PlayerSelectEffect */
+
+/* >>> factory NinetalesLure_PlayerSelectEffect */
+void NinetalesLure_PlayerSelectEffect(void)
+{
+	(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);
+	SwapTurn();
+	(void)HasAlivePokemonInBench();
+	OpenPlayAreaScreenForSelection();
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	SwapTurn();
+}
+/* <<< factory NinetalesLure_PlayerSelectEffect */

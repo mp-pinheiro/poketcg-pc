@@ -7762,6 +7762,14 @@ CASES["Teleport_PlayerSelectEffect"] = [
 ]
 # <<< factory Teleport_PlayerSelectEffect
 
+# >>> factory NinetalesLure_PlayerSelectEffect
+CONTRACT["NinetalesLure_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CASES["NinetalesLure_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x01", 0xC3EF: b"\x02", 0xC3BB: b"\x00\x01", 0xC3C8: b"\x20\x20", 0xC480: b"\x08\x09", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9D: b"\x01", 0xC3EF: b"\x02", 0xC3BB: b"\x00\x01", 0xC3C8: b"\x20\x20", 0xC480: b"\x08\x09", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFFA0: 1}, expect={0xFFA0: b"\x01"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory NinetalesLure_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10912,3 +10920,6 @@ for _record in SCHEMA2_CASES["GustOfWind_PlayerSelection"]:
 # >>> factory-mutation Teleport_PlayerSelectEffect
 MUTATIONS["Teleport_PlayerSelectEffect"] = {"source_symbol": "Teleport_PlayerSelectEffect", "before": "void Teleport_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\t(void)HasAlivePokemonInBench();\n\twPlayAreaSelectAction = 1u;\n\tOpenPlayAreaScreenForSelection();\n\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;\n}", "after": "void Teleport_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\t(void)HasAlivePokemonInBench();\n\twPlayAreaSelectAction = 1u;\n\tOpenPlayAreaScreenForSelection();\n\thTemp_ffa0 = (uint8_t)(hTempPlayAreaLocation_ff9d + 1u);\n}", "case_ids": ["Teleport_PlayerSelectEffect-0"]}
 # <<< factory-mutation Teleport_PlayerSelectEffect
+# >>> factory-mutation NinetalesLure_PlayerSelectEffect
+MUTATIONS["NinetalesLure_PlayerSelectEffect"] = {"source_symbol": "NinetalesLure_PlayerSelectEffect", "before": "void NinetalesLure_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\tOpenPlayAreaScreenForSelection();\n\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;", "after": "void NinetalesLure_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\tOpenPlayAreaScreenForSelection();\n\thTemp_ffa0 = (uint8_t)(hTempPlayAreaLocation_ff9d + 1u);", "case_ids": ["NinetalesLure_PlayerSelectEffect-0"]}
+# <<< factory-mutation NinetalesLure_PlayerSelectEffect

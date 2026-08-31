@@ -2201,6 +2201,9 @@ void GustOfWind_PlayerSelection(void);
 /* >>> factory Teleport_PlayerSelectEffect */
 void Teleport_PlayerSelectEffect(void);
 /* <<< factory Teleport_PlayerSelectEffect */
+/* >>> factory NinetalesLure_PlayerSelectEffect */
+void NinetalesLure_PlayerSelectEffect(void);
+/* <<< factory NinetalesLure_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

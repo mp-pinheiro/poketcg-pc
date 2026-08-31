@@ -5406,6 +5406,14 @@ static void adapt_Teleport_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory Teleport_PlayerSelectEffect */
 
+/* >>> factory NinetalesLure_PlayerSelectEffect */
+static void adapt_NinetalesLure_PlayerSelectEffect(ProbeState *s)
+{
+	(void)s;
+	NinetalesLure_PlayerSelectEffect();
+}
+/* <<< factory NinetalesLure_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -6057,5 +6065,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Ram_SelectSwitchEffect", adapt_Ram_SelectSwitchEffect },
 	{ "GustOfWind_PlayerSelection", adapt_GustOfWind_PlayerSelection },
 	{ "Teleport_PlayerSelectEffect", adapt_Teleport_PlayerSelectEffect },
+	{ "NinetalesLure_PlayerSelectEffect", adapt_NinetalesLure_PlayerSelectEffect },
 	{ NULL, NULL },
 };
