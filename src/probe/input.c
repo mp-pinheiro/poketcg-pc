@@ -17,9 +17,17 @@ static void adapt_ClearJoypad(ProbeState *s)
 	ClearJoypad(&s->hl);
 }
 
+/* >>> factory Reset */
+static void adapt_Reset(ProbeState *s)
+{
+	s->a = Reset();
+}
+/* <<< factory Reset */
+
 const ProbeEntry probe_entries_input[] = {
 	{ "ReadJoypad", adapt_ReadJoypad },
 	{ "SaveButtonsHeld", adapt_SaveButtonsHeld },
 	{ "ClearJoypad", adapt_ClearJoypad },
+	{ "Reset", adapt_Reset },
 	{ NULL, NULL },
 };

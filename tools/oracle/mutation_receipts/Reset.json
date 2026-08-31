@@ -1,0 +1,9 @@
+{
+  "fn": "Reset",
+  "case": "tests/cases/input.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Reset\", \"registers\": {\"a\": 55, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51891\": \"37\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Reset\", \"mismatches\": {\"a\": [55, 0]}}\n",
+  "restored": "{\"fn\": \"Reset\", \"registers\": {\"a\": 55, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51891\": \"37\"}}, \"status\": \"PASS\"}\n"
+}

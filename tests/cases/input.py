@@ -29,6 +29,14 @@ CASES = {
              read={0xFF8D: 5}),
     ],
 }
+# >>> factory Reset
+CONTRACT["Reset"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
+CASES["Reset"] = [
+    {"wram": {0xCAB3: b"\x37"}, "read": {0xCAB3: 1}},
+    dict(POISON, wram={0xCAB3: b"\xC3"}, read={0xCAB3: 1}),
+]
+# <<< factory Reset
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -40,3 +48,10 @@ MUTATIONS = {
         "case_ids": ["SaveButtonsHeld-0", "SaveButtonsHeld-1"],
     },
 }
+# >>> factory-mutation Reset
+MUTATIONS["Reset"] = {"source_symbol": "Reset", "before": "return wInitialA;", "after": "return 0u;", "case_ids": ["Reset-0", "Reset-1"]}
+# <<< factory-mutation Reset
+# >>> factory-completion Reset
+for _record in SCHEMA2_CASES["Reset"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x0150, "bank": 0}
+# <<< factory-completion Reset

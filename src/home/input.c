@@ -2,6 +2,9 @@
 
 #include "mem.h"
 #include "generated/hram.h"
+/* >>> factory statics */
+#include "generated/wram.h"
+/* <<< factory statics */
 
 #define JOYP 0xFF00u
 #define JOYP_GET_BUTTONS 0x10u
@@ -55,3 +58,10 @@ void ClearJoypad(uint16_t *hl)
 	gb_write8(address, 0);
 	(void)hl;
 }
+
+/* >>> factory Reset */
+uint8_t Reset(void)
+{
+	return wInitialA;
+}
+/* <<< factory Reset */

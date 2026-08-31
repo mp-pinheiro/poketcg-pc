@@ -7,4 +7,7 @@ void ReadJoypad(void);
 void SaveButtonsHeld(uint8_t c);
 void ClearJoypad(uint16_t *hl);
 
+/* >>> factory Reset */
+uint8_t Reset(void);
+/* <<< factory Reset */
 #endif
