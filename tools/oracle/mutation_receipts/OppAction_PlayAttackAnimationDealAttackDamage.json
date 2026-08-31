@@ -1,0 +1,9 @@
+{
+  "fn": "OppAction_PlayAttackAnimationDealAttackDamage",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OppAction_PlayAttackAnimationDealAttackDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52193\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OppAction_PlayAttackAnimationDealAttackDamage\", \"mismatches\": {\"bus\": {\"address\": 52193, \"reference\": \"00\", \"native\": \"01\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[52193, 1]]}}}\n",
+  "restored": "{\"fn\": \"OppAction_PlayAttackAnimationDealAttackDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52193\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

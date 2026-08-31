@@ -1661,6 +1661,9 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/duel.h"
 #include "home/duel_core_state.h"
 #include "home/substatus.h"
+
+#include "generated/wram.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -9450,3 +9453,15 @@ void HandleWaitingLinkOpponentMenu(void)
 	wCurrentDuelMenuItem = 0u;
 }
 /* <<< factory HandleWaitingLinkOpponentMenu */
+
+/* >>> factory HandleBetweenTurnsEvents */
+void HandleBetweenTurnsEvents(void)
+{
+}
+/* <<< factory HandleBetweenTurnsEvents */
+
+/* >>> factory OppAction_PlayAttackAnimationDealAttackDamage */
+void OppAction_PlayAttackAnimationDealAttackDamage(void)
+{
+}
+/* <<< factory OppAction_PlayAttackAnimationDealAttackDamage */

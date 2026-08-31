@@ -1368,4 +1368,10 @@ void HandleTurn(void);
 /* >>> factory HandleWaitingLinkOpponentMenu */
 void HandleWaitingLinkOpponentMenu(void);
 /* <<< factory HandleWaitingLinkOpponentMenu */
+/* >>> factory HandleBetweenTurnsEvents */
+void HandleBetweenTurnsEvents(void);
+/* <<< factory HandleBetweenTurnsEvents */
+/* >>> factory OppAction_PlayAttackAnimationDealAttackDamage */
+void OppAction_PlayAttackAnimationDealAttackDamage(void);
+/* <<< factory OppAction_PlayAttackAnimationDealAttackDamage */
 #endif

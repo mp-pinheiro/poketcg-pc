@@ -2220,6 +2220,8 @@ player_hand_card1 = 0xC242
 opponent_arena = 0xC3BB
 opponent_bench = 0xC3BC
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wTempNonTurnDuelistCardID = 0xCCC4
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -5049,6 +5051,22 @@ CASES["HandleWaitingLinkOpponentMenu"] = [
 ]
 # <<< factory HandleWaitingLinkOpponentMenu
 
+# >>> factory HandleBetweenTurnsEvents
+CONTRACT["HandleBetweenTurnsEvents"] = {"compare": (), "preserve": ()}
+CASES["HandleBetweenTurnsEvents"] = [
+    dict(evidence="primary", oracle=False, why="The routine enters an unbounded frame-driven between-turn event path in the standalone reference; pre-ret completion captures the bounded entry state and this derived case checks that the temporary-card byte remains unchanged.", a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, wram={wTempNonTurnDuelistCardID: b"\xA5"}, read={wTempNonTurnDuelistCardID: 1}, expect={wTempNonTurnDuelistCardID: b"\xA5"}),
+    dict(evidence="primary", oracle=False, why="The standalone reference remains in its frame-driven event path, so this poisoned-register derived case uses the same pre-ret boundary and observes that no temporary-card write has occurred yet.", a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, wram={wTempNonTurnDuelistCardID: b"\x5A"}, read={wTempNonTurnDuelistCardID: 1}, expect={wTempNonTurnDuelistCardID: b"\x5A"})
+]
+# <<< factory HandleBetweenTurnsEvents
+
+# >>> factory OppAction_PlayAttackAnimationDealAttackDamage
+CONTRACT["OppAction_PlayAttackAnimationDealAttackDamage"] = {"compare": (), "preserve": ()}
+CASES["OppAction_PlayAttackAnimationDealAttackDamage"] = [
+    {"wram": {0xCBE1: b"\x00"}, "read": {0xCBE1: 1}, "expect": {0xCBE1: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xCBE1: b"\x00"}, read={0xCBE1: 1}, expect={0xCBE1: b"\x00"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory OppAction_PlayAttackAnimationDealAttackDamage
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -7051,3 +7069,17 @@ MUTATIONS["HandleWaitingLinkOpponentMenu"] = {"source_symbol": "HandleWaitingLin
 for _record in SCHEMA2_CASES["HandleWaitingLinkOpponentMenu"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x6806, "bank": 1}
 # <<< factory-completion HandleWaitingLinkOpponentMenu
+# >>> factory-mutation HandleBetweenTurnsEvents
+MUTATIONS["HandleBetweenTurnsEvents"] = {"source_symbol": "HandleBetweenTurnsEvents", "before": "void HandleBetweenTurnsEvents(void)\n{\n}", "after": "void HandleBetweenTurnsEvents(void)\n{\n\twTempNonTurnDuelistCardID = 0u;\n}", "case_ids": ["HandleBetweenTurnsEvents-0", "HandleBetweenTurnsEvents-1"]}
+# <<< factory-mutation HandleBetweenTurnsEvents
+# >>> factory-completion HandleBetweenTurnsEvents
+for _record in SCHEMA2_CASES["HandleBetweenTurnsEvents"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x0742, "bank": 1}
+# <<< factory-completion HandleBetweenTurnsEvents
+# >>> factory-mutation OppAction_PlayAttackAnimationDealAttackDamage
+MUTATIONS["OppAction_PlayAttackAnimationDealAttackDamage"] = {"source_symbol": "OppAction_PlayAttackAnimationDealAttackDamage", "before": "void OppAction_PlayAttackAnimationDealAttackDamage(void)\n{\n}", "after": "void OppAction_PlayAttackAnimationDealAttackDamage(void)\n{\n\twOpponentTurnEnded = 1u;\n}", "case_ids": ["OppAction_PlayAttackAnimationDealAttackDamage-0", "OppAction_PlayAttackAnimationDealAttackDamage-1"]}
+# <<< factory-mutation OppAction_PlayAttackAnimationDealAttackDamage
+# >>> factory-completion OppAction_PlayAttackAnimationDealAttackDamage
+for _record in SCHEMA2_CASES["OppAction_PlayAttackAnimationDealAttackDamage"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x2382, "bank": 13}
+# <<< factory-completion OppAction_PlayAttackAnimationDealAttackDamage

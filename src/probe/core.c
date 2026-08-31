@@ -3047,6 +3047,22 @@ static void adapt_HandleWaitingLinkOpponentMenu(ProbeState *s)
 }
 /* <<< factory HandleWaitingLinkOpponentMenu */
 
+/* >>> factory HandleBetweenTurnsEvents */
+static void adapt_HandleBetweenTurnsEvents(ProbeState *s)
+{
+	(void)s;
+	HandleBetweenTurnsEvents();
+}
+/* <<< factory HandleBetweenTurnsEvents */
+
+/* >>> factory OppAction_PlayAttackAnimationDealAttackDamage */
+static void adapt_OppAction_PlayAttackAnimationDealAttackDamage(ProbeState *s)
+{
+	(void)s;
+	OppAction_PlayAttackAnimationDealAttackDamage();
+}
+/* <<< factory OppAction_PlayAttackAnimationDealAttackDamage */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3412,5 +3428,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OppAction_UseAttack", adapt_OppAction_UseAttack },
 	{ "HandleTurn", adapt_HandleTurn },
 	{ "HandleWaitingLinkOpponentMenu", adapt_HandleWaitingLinkOpponentMenu },
+	{ "HandleBetweenTurnsEvents", adapt_HandleBetweenTurnsEvents },
+	{ "OppAction_PlayAttackAnimationDealAttackDamage", adapt_OppAction_PlayAttackAnimationDealAttackDamage },
 	{ NULL, NULL },
 };
