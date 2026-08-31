@@ -2836,6 +2836,15 @@ static void adapt_ReplaceKnockedOutPokemon(ProbeState *s)
 }
 /* <<< factory ReplaceKnockedOutPokemon */
 
+/* >>> factory HandleBetweenTurnKnockOuts */
+static void adapt_HandleBetweenTurnKnockOuts(ProbeState *s)
+{
+	HandleBetweenTurnKnockOutsResult r = HandleBetweenTurnKnockOuts();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory HandleBetweenTurnKnockOuts */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3175,5 +3184,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "SelectingBenchPokemonMenu", adapt_SelectingBenchPokemonMenu },
 	{ "HandleSpecialDuelMainSceneHotkeys", adapt_HandleSpecialDuelMainSceneHotkeys },
 	{ "ReplaceKnockedOutPokemon", adapt_ReplaceKnockedOutPokemon },
+	{ "HandleBetweenTurnKnockOuts", adapt_HandleBetweenTurnKnockOuts },
 	{ NULL, NULL },
 };

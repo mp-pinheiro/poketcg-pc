@@ -4817,6 +4817,14 @@ CASES["ReplaceKnockedOutPokemon"] = [
 ]
 # <<< factory ReplaceKnockedOutPokemon
 
+# >>> factory HandleBetweenTurnKnockOuts
+CONTRACT["HandleBetweenTurnKnockOuts"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleBetweenTurnKnockOuts"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\xFF" * 6, 0xC3BB: b"\xFF" * 6, 0xC2C8: b"\x01" * 6, 0xC3C8: b"\x01" * 6, 0xCCE8: b"\x00", 0xCC07: b"\x00"}, "read": {0xFF97: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\xFF" * 6, 0xC3BB: b"\xFF" * 6, 0xC2C8: b"\x01" * 6, 0xC3C8: b"\x01" * 6, 0xCCE8: b"\x00", 0xCC07: b"\x00"}, read={0xFF97: 1}),
+]
+# <<< factory HandleBetweenTurnKnockOuts
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -6644,3 +6652,10 @@ MUTATIONS["HandleSpecialDuelMainSceneHotkeys"] = {"source_symbol": "HandleSpecia
 # >>> factory-mutation ReplaceKnockedOutPokemon
 MUTATIONS["ReplaceKnockedOutPokemon"] = {"source_symbol": "ReplaceKnockedOutPokemon", "before": "ReplaceKnockedOutPokemonResult ReplaceKnockedOutPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tDuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tif (hp.a != 0u)\n\t\treturn (ReplaceKnockedOutPokemonResult){hp.a, hp.a == 0u ? FLAG_Z : 0u, b, c, d, e, hp.hl};", "after": "ReplaceKnockedOutPokemonResult ReplaceKnockedOutPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tDuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tif (hp.a != 0u)\n\t\treturn (ReplaceKnockedOutPokemonResult){hp.a, hp.a == 0u ? 0u : FLAG_Z, b, c, d, e, hp.hl};", "case_ids": ["ReplaceKnockedOutPokemon-0"]}
 # <<< factory-mutation ReplaceKnockedOutPokemon
+# >>> factory-mutation HandleBetweenTurnKnockOuts
+MUTATIONS["HandleBetweenTurnKnockOuts"] = {"source_symbol": "HandleBetweenTurnKnockOuts", "before": "hWhoseTurn = 0xC2u;\n\treturn (HandleBetweenTurnKnockOutsResult){0x16u, 0x40u};", "after": "hWhoseTurn = 0xC2u;\n\treturn (HandleBetweenTurnKnockOutsResult){0x17u, 0x40u};", "case_ids": ["HandleBetweenTurnKnockOuts-0", "HandleBetweenTurnKnockOuts-1"]}
+# <<< factory-mutation HandleBetweenTurnKnockOuts
+# >>> factory-completion HandleBetweenTurnKnockOuts
+for _record in SCHEMA2_CASES["HandleBetweenTurnKnockOuts"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x14F1}
+# <<< factory-completion HandleBetweenTurnKnockOuts

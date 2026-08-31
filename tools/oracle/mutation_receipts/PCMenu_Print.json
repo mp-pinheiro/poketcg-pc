@@ -1,0 +1,9 @@
+{
+  "fn": "PCMenu_Print",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PCMenu_Print\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"04\", \"52846\": \"8100\", \"65426\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PCMenu_Print\", \"mismatches\": {\"bus\": {\"address\": 65426, \"reference\": \"0481000000\", \"native\": \"0481000100\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[51899, 1], [52846, 2], [65426, 2]]}}}\n",
+  "restored": "{\"fn\": \"PCMenu_Print\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"04\", \"52846\": \"8100\", \"65426\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

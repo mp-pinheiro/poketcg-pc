@@ -1108,6 +1108,14 @@ CASES["LoadMap"] = [
 ]
 # <<< factory LoadMap
 
+# >>> factory PCMenu_Print
+CONTRACT["PCMenu_Print"] = {"compare": (), "preserve": ()}
+CASES["PCMenu_Print"] = [
+    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xFF92: b"\x55", 0xFF93: b"\x66", 0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00"}, "read": {0xFF92: 1, 0xFF93: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xFF92: b"\x55", 0xFF93: b"\x66", 0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00"}, read={0xFF92: 1, 0xFF93: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PCMenu_Print
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1494,3 +1502,10 @@ MUTATIONS["LoadMap"] = {"source_symbol": "LoadMap", "before": "\twGameEvent = GA
 for _record in SCHEMA2_CASES["LoadMap"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x3D1D}
 # <<< factory-completion LoadMap
+# >>> factory-mutation PCMenu_Print
+MUTATIONS["PCMenu_Print"] = {"source_symbol": "PCMenu_Print", "before": "void PCMenu_Print(void)\n{\n\thSCX = 0u;", "after": "void PCMenu_Print(void)\n{\n\thSCX = 1u;", "case_ids": ["PCMenu_Print-0", "PCMenu_Print-1"]}
+# <<< factory-mutation PCMenu_Print
+# >>> factory-completion PCMenu_Print
+for _record in SCHEMA2_CASES["PCMenu_Print"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x056F}
+# <<< factory-completion PCMenu_Print

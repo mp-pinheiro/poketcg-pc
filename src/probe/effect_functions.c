@@ -5296,6 +5296,23 @@ static void adapt_HandlePokemonAndEnergySelectionScreen(ProbeState *s)
 }
 /* <<< factory HandlePokemonAndEnergySelectionScreen */
 
+/* >>> factory Defender_PlayerSelection */
+static void adapt_Defender_PlayerSelection(ProbeState *s)
+{
+	(void)s;
+	Defender_PlayerSelection();
+}
+/* <<< factory Defender_PlayerSelection */
+
+/* >>> factory EnergyRemoval_PlayerSelection */
+static void adapt_EnergyRemoval_PlayerSelection(ProbeState *s)
+{
+	HandlePokemonAndEnergySelectionScreenResult result = EnergyRemoval_PlayerSelection();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory EnergyRemoval_PlayerSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5934,5 +5951,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "HandleEvolvedCardSelection", adapt_HandleEvolvedCardSelection },
 	{ "DuelistSelectForcedSwitch", adapt_DuelistSelectForcedSwitch },
 	{ "HandlePokemonAndEnergySelectionScreen", adapt_HandlePokemonAndEnergySelectionScreen },
+	{ "Defender_PlayerSelection", adapt_Defender_PlayerSelection },
+	{ "EnergyRemoval_PlayerSelection", adapt_EnergyRemoval_PlayerSelection },
 	{ NULL, NULL },
 };

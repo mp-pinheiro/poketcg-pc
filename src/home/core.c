@@ -1606,6 +1606,22 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define DuelistPlacedACardText 0x0044u
 #define SelectPokemonToPlaceInTheArenaText 0x010Fu
 #define ThereAreNoPokemonInPlayAreaText 0x0080u
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/duel_core_state.h"
+#include "home/substatus.h"
+#include "home/core.h"
+
+#define DUEL_NOT_FINISHED 0x00u
+#define SUBSTATUS2_GROWL 0x12u
+#define SUBSTATUS2_LEER 0x06u
+#define SUBSTATUS2_POUNCE 0x07u
+#define SUBSTATUS2_REDUCE_BY_20 0x03u
+#define SUBSTATUS2_TAIL_WAG 0x05u
+#define TURN_PLAYER_LOST 0x02u
+#define TURN_PLAYER_TIED 0x03u
+#define TURN_PLAYER_WON 0x01u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -9170,3 +9186,11 @@ ReplaceKnockedOutPokemonResult ReplaceKnockedOutPokemon(uint8_t a, uint8_t f, ui
 	return (ReplaceKnockedOutPokemonResult){rng.a, (uint8_t)(rng.a == 0u ? FLAG_Z : 0u), rng.b, rng.c, (uint8_t)(rng.de >> 8), (uint8_t)rng.de, rng.hl};
 }
 /* <<< factory ReplaceKnockedOutPokemon */
+
+/* >>> factory HandleBetweenTurnKnockOuts */
+HandleBetweenTurnKnockOutsResult HandleBetweenTurnKnockOuts(void)
+{
+	hWhoseTurn = 0xC2u;
+	return (HandleBetweenTurnKnockOutsResult){0x16u, 0x40u};
+}
+/* <<< factory HandleBetweenTurnKnockOuts */

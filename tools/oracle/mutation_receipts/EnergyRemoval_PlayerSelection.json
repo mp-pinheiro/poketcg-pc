@@ -1,0 +1,9 @@
+{
+  "fn": "EnergyRemoval_PlayerSelection",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"EnergyRemoval_PlayerSelection\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49920\": \"1010\", \"50107\": \"00\", \"50120\": \"28\", \"50159\": \"01\", \"50304\": \"0801\", \"51899\": \"80\", \"65431\": \"c201\", \"65437\": \"00\", \"65440\": \"0001\", \"65457\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"EnergyRemoval_PlayerSelection\", \"mismatches\": {\"a\": [1, 0], \"bus\": {\"address\": 65432, \"reference\": \"080180c20100000100\", \"native\": \"080180c20000000000\", \"reference_size\": 14, \"native_size\": 14, \"spans\": [[49920, 2], [50107, 1], [50120, 1], [50159, 1], [50304, 2], [51899, 1], [65431, 2], [65437, 1], [65440, 2], [65457, 1]]}}}\n",
+  "restored": "{\"fn\": \"EnergyRemoval_PlayerSelection\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49920\": \"1010\", \"50107\": \"00\", \"50120\": \"28\", \"50159\": \"01\", \"50304\": \"0801\", \"51899\": \"80\", \"65431\": \"c201\", \"65437\": \"00\", \"65440\": \"0001\", \"65457\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

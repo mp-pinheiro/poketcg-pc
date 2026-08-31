@@ -2158,6 +2158,12 @@ DuelistSelectForcedSwitchResult DuelistSelectForcedSwitch(uint8_t a, uint8_t f, 
 typedef struct { uint8_t a; uint8_t f; } HandlePokemonAndEnergySelectionScreenResult;
 HandlePokemonAndEnergySelectionScreenResult HandlePokemonAndEnergySelectionScreen(void);
 /* <<< factory HandlePokemonAndEnergySelectionScreen */
+/* >>> factory Defender_PlayerSelection */
+void Defender_PlayerSelection(void);
+/* <<< factory Defender_PlayerSelection */
+/* >>> factory EnergyRemoval_PlayerSelection */
+HandlePokemonAndEnergySelectionScreenResult EnergyRemoval_PlayerSelection(void);
+/* <<< factory EnergyRemoval_PlayerSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

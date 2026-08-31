@@ -330,4 +330,7 @@ void HandleOverworldMode(uint16_t hl);
 /* >>> factory LoadMap */
 void LoadMap(void);
 /* <<< factory LoadMap */
+/* >>> factory PCMenu_Print */
+void PCMenu_Print(void);
+/* <<< factory PCMenu_Print */
 #endif /* POKETCG_HOME_OVERWORLD_H */

@@ -1,0 +1,9 @@
+{
+  "fn": "HandleBetweenTurnKnockOuts",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleBetweenTurnKnockOuts\", \"registers\": {\"a\": 22, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 64, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ffffffffffff\", \"49864\": \"010101010101\", \"50107\": \"ffffffffffff\", \"50120\": \"010101010101\", \"52231\": \"00\", \"52456\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleBetweenTurnKnockOuts\", \"mismatches\": {\"a\": [22, 23]}}\n",
+  "restored": "{\"fn\": \"HandleBetweenTurnKnockOuts\", \"registers\": {\"a\": 22, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 64, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ffffffffffff\", \"49864\": \"010101010101\", \"50107\": \"ffffffffffff\", \"50120\": \"010101010101\", \"52231\": \"00\", \"52456\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

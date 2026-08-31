@@ -7638,6 +7638,22 @@ CASES["HandlePokemonAndEnergySelectionScreen"] = [
 ]
 # <<< factory HandlePokemonAndEnergySelectionScreen
 
+# >>> factory Defender_PlayerSelection
+CONTRACT["Defender_PlayerSelection"] = {"compare": (), "preserve": ()}
+CASES["Defender_PlayerSelection"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFFA0: 1}, expect={0xFFA0: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Defender_PlayerSelection
+
+# >>> factory EnergyRemoval_PlayerSelection
+CONTRACT["EnergyRemoval_PlayerSelection"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["EnergyRemoval_PlayerSelection"] = [
+    {"keys": [0x00, 0x01], "wram": {hWhoseTurn: b"\xC2", wOpponentDuelVariables: b"\x10\x10", wOpponentDuelVariables + 0xBB: b"\x00", wOpponentDuelVariables + 0xC8: b"\x28", wOpponentDuelVariables + 0xEF: b"\x01", wOpponentDeck: b"\x08\x01", hCurMenuItem: b"\x00", hTempCardIndex_ff98: b"\x00", hTempPlayAreaLocation_ff9d: b"\x00", hTempPlayAreaLocation_ffa1: b"\x00", hTemp_ffa0: b"\x00", 0xCABB: b"\x00"}, "setup": FRAME_SETUP, "read": {hTemp_ffa0: 1, hTempPlayAreaLocation_ffa1: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={hWhoseTurn: b"\xC2", wOpponentDuelVariables: b"\x10\x10", wOpponentDuelVariables + 0xBB: b"\x00", wOpponentDuelVariables + 0xC8: b"\x28", wOpponentDuelVariables + 0xEF: b"\x01", wOpponentDeck: b"\x08\x01", hCurMenuItem: b"\x00", hTempCardIndex_ff98: b"\x00", hTempPlayAreaLocation_ff9d: b"\x00", hTempPlayAreaLocation_ffa1: b"\x00", hTemp_ffa0: b"\x00", 0xCABB: b"\x00"}, read={hTemp_ffa0: 1, hTempPlayAreaLocation_ffa1: 1}, setup=FRAME_SETUP, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory EnergyRemoval_PlayerSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10725,3 +10741,9 @@ MUTATIONS["DuelistSelectForcedSwitch"] = {"source_symbol": "DuelistSelectForcedS
 # >>> factory-mutation HandlePokemonAndEnergySelectionScreen
 MUTATIONS["HandlePokemonAndEnergySelectionScreen"] = {"source_symbol": "HandlePokemonAndEnergySelectionScreen", "before": "\t\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;\n\t\thTempPlayAreaLocation_ffa1 = hTempCardIndex_ff98;", "after": "\t\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;\n\t\thTempPlayAreaLocation_ffa1 = (uint8_t)(hTempCardIndex_ff98 + 1u);", "case_ids": ["HandlePokemonAndEnergySelectionScreen-0"]}
 # <<< factory-mutation HandlePokemonAndEnergySelectionScreen
+# >>> factory-mutation Defender_PlayerSelection
+MUTATIONS["Defender_PlayerSelection"] = {"source_symbol": "Defender_PlayerSelection", "before": "void Defender_PlayerSelection(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChoosePokemonToAttachDefenderToText);\n\t(void)HasAlivePokemonInPlayArea();\n\tOpenPlayAreaScreenForSelection();\n\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;", "after": "void Defender_PlayerSelection(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChoosePokemonToAttachDefenderToText);\n\t(void)HasAlivePokemonInPlayArea();\n\tOpenPlayAreaScreenForSelection();\n\thTemp_ffa0 = (uint8_t)(hTempPlayAreaLocation_ff9d + 1u);", "case_ids": ["Defender_PlayerSelection-0"]}
+# <<< factory-mutation Defender_PlayerSelection
+# >>> factory-mutation EnergyRemoval_PlayerSelection
+MUTATIONS["EnergyRemoval_PlayerSelection"] = {"source_symbol": "EnergyRemoval_PlayerSelection", "before": "HandlePokemonAndEnergySelectionScreen()", "after": "(HandlePokemonAndEnergySelectionScreenResult){0u, 0u}", "case_ids": ["EnergyRemoval_PlayerSelection-0"]}
+# <<< factory-mutation EnergyRemoval_PlayerSelection

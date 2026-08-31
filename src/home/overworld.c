@@ -275,6 +275,10 @@
 #define DOUBLE_SPACED 0x00u
 #define GAME_EVENT_OVERWORLD 0x00u
 #define SFX_WARP 0x0Cu
+
+#include "generated/hram.h"
+#include "home/printer.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -1542,3 +1546,19 @@ void LoadMap(void)
 	}
 }
 /* <<< factory LoadMap */
+
+/* >>> factory PCMenu_Print */
+void PCMenu_Print(void)
+{
+	hSCX = 0u;
+	hSCY = 0u;
+	Set_OBJ_8x16();
+	SetDefaultPalettes();
+	HandlePrinterMenu();
+	wLCDC = 4u;
+	Set_OBJ_8x8();
+	WhiteOutDMGPals();
+	wLCDC = 4u;
+	DoFrameIfLCDEnabled();
+}
+/* <<< factory PCMenu_Print */

@@ -1,0 +1,9 @@
+{
+  "fn": "Defender_PlayerSelection",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Defender_PlayerSelection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"01\", \"49870\": \"01\", \"49903\": \"01\", \"51899\": \"80\", \"65344\": \"80\", \"65431\": \"c2\", \"65437\": \"00\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Defender_PlayerSelection\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"8080c20000\", \"native\": \"8080c20001\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49851, 1], [49864, 1], [49870, 1], [49903, 1], [51899, 1], [65344, 1], [65431, 1], [65437, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"Defender_PlayerSelection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"01\", \"49870\": \"01\", \"49903\": \"01\", \"51899\": \"80\", \"65344\": \"80\", \"65431\": \"c2\", \"65437\": \"00\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

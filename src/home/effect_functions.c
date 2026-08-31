@@ -1481,6 +1481,17 @@ void BankswitchROM(uint8_t bank);
 #include "home/duel.h"
 #include "home/menus.h"
 #define NoEnergyCardsText 0x002du
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/menus.h"
+
+#define ChoosePokemonToAttachDefenderToText 0x0158u
+
+#include "home/menus.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#define ChoosePokemonToRemoveEnergyFromText 0x0152u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11264,3 +11275,24 @@ HandlePokemonAndEnergySelectionScreenResult HandlePokemonAndEnergySelectionScree
 	}
 }
 /* <<< factory HandlePokemonAndEnergySelectionScreen */
+
+/* >>> factory Defender_PlayerSelection */
+void Defender_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChoosePokemonToAttachDefenderToText);
+	(void)HasAlivePokemonInPlayArea();
+	OpenPlayAreaScreenForSelection();
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+}
+/* <<< factory Defender_PlayerSelection */
+
+/* >>> factory EnergyRemoval_PlayerSelection */
+HandlePokemonAndEnergySelectionScreenResult EnergyRemoval_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChoosePokemonToRemoveEnergyFromText);
+	SwapTurn();
+	HandlePokemonAndEnergySelectionScreenResult selected = HandlePokemonAndEnergySelectionScreen();
+	SwapTurn();
+	return selected;
+}
+/* <<< factory EnergyRemoval_PlayerSelection */
