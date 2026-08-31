@@ -325,6 +325,11 @@ completion-data-pack:
     python3 tools/gen_data.py --sparse-pack --verify
 completion-data-pack-check:
     python3 tools/gen_data.py --pack-check
+
+package-smoke:
+    just build
+    just completion-data-pack
+    python3 tools/completion/package_smoke.py
 # Recompute site/data/progress.json + history point from the registry and gate record.
 progress:
     python3 tools/progress/report.py build
