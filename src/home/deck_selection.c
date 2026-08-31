@@ -61,6 +61,19 @@
 #define INPUT_CUR_DECK_DECK2_DATA 0x676cu
 #define INPUT_CUR_DECK_DECK3_DATA 0x6775u
 #define INPUT_CUR_DECK_DECK4_DATA 0x677eu
+
+#include "home/frames.h"
+#include "home/menus.h"
+#include "home/tiles.h"
+#include "generated/hram.h"
+#include "generated/sram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define DECK_BUILDING_PARAMS_ADDR 0x4da9u
+#define DECK_SELECTION_MENU_PARAMS_ADDR 0x4de2u
+#define DECK_SELECTION_DATA_ADDR 0x5027u
+#define ChosenAsDuelingDeckText 0x022au
+#define PleaseSelectDeckText 0x0224u
 /* <<< factory statics */
 
 /* >>> factory GetPointerToDeckCards */
@@ -343,3 +356,139 @@ void InputCurDeckName(void)
 	DisableSRAM();
 }
 /* <<< factory InputCurDeckName */
+
+/* >>> factory DeckSelectionMenu */
+void DeckSelectionMenu(void)
+{
+	uint16_t params = DECK_BUILDING_PARAMS_ADDR;
+	(void)InitDeckBuildingParams(&params, 0u);
+	DrawDecksScreen(ALL_DECKS);
+	for (;;) {
+		uint16_t menu_params = DECK_SELECTION_MENU_PARAMS_ADDR;
+		InitializeMenuParameters(0u, &menu_params);
+		(void)DrawWideTextBox_PrintText(PleaseSelectDeckText);
+		for (;;) {
+			DoFrame();
+			HandleStartButtonInDeckSelectionMenuResult start = HandleStartButtonInDeckSelectionMenu();
+			if ((start.f & 0x10u) != 0u)
+				break;
+			HandleMenuInputResult input = HandleMenuInput();
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			if (hCurMenuItem == MENU_CANCEL)
+				return;
+			uint8_t selected_deck = hCurMenuItem;
+			wCurDeck = selected_deck;
+			DeckSelectionSubMenu();
+			return;
+		}
+	}
+}
+/* <<< factory DeckSelectionMenu */
+
+/* >>> factory DeckSelectionSubMenu */
+void DeckSelectionSubMenu(void)
+{
+	(void)DrawWideTextBox();
+	(void)PlaceTextItems(DECK_SELECTION_DATA_ADDR);
+	(void)ResetCheckMenuCursorPositionAndBlink();
+	for (;;) {
+		DoFrame();
+		HandleCheckMenuInputResult input = HandleCheckMenuInput();
+		if ((input.f & 0x10u) == 0u)
+			continue;
+		if (input.a == MENU_CANCEL) {
+			(void)EraseCheckMenuCursor();
+			DeckSelectionMenu();
+			return;
+		}
+		if (wCheckMenuCursorXPosition != 0u) {
+			DeckSelectionSubMenu_SelectOrCancel();
+			return;
+		}
+		if (wCheckMenuCursorYPosition != 0u) {
+			CheckIfCurDeckIsValidResult validity = CheckIfCurDeckIsValid();
+			if ((validity.f & 0x10u) != 0u) {
+				(void)PrintThereIsNoDeckHereText();
+				DeckSelectionMenu();
+				return;
+			}
+			goto get_input_deck_name;
+		}
+
+		uint16_t deck_cards = GetPointerToDeckCards();
+		(void)CopyDeckFromSRAM(deck_cards, wCurDeckCards_ADDR);
+		ClearMemory_Bank2(20u, wCurDeckName_ADDR);
+		uint16_t deck_name = GetPointerToDeckName();
+		(void)CopyListFromHLToDEInSRAM(deck_name, wCurDeckName_ADDR);
+
+		HandleDeckBuildScreen();
+		EnableSRAM();
+		(void)DecrementDeckCardsInCollection(wCurDeckCards_ADDR);
+		uint16_t destination = AddDeckToCollection(GetPointerToDeckCards());
+		uint16_t source = wCurDeckCards_ADDR;
+		for (uint8_t i = 0u; i < DECK_SIZE; i++)
+			gb_write8(destination++, gb_read8(source++));
+		uint16_t saved_name = GetPointerToDeckName();
+		uint16_t name_source = wCurDeckName_ADDR;
+		CopyListFromHLToDE(&name_source, &saved_name);
+		uint8_t has_name = gb_read8(GetPointerToDeckName());
+		DisableSRAM();
+		if (has_name != 0u) {
+			DrawDecksScreen(ALL_DECKS);
+			DeckSelectionMenu();
+			return;
+		}
+
+get_input_deck_name:
+		ClearMemory_Bank2(20u, wCurDeckName_ADDR);
+		uint16_t old_name = GetPointerToDeckName();
+		(void)CopyListFromHLToDEInSRAM(old_name, wCurDeckName_ADDR);
+		InputCurDeckName();
+		uint16_t new_name = GetPointerToDeckName();
+		(void)CopyListFromHLToDEInSRAM(new_name, wCurDeckName_ADDR);
+		DrawDecksScreen(ALL_DECKS);
+		DeckSelectionMenu();
+		return;
+	}
+}
+/* <<< factory DeckSelectionSubMenu */
+
+/* >>> factory DeckSelectionSubMenu_SelectOrCancel */
+void DeckSelectionSubMenu_SelectOrCancel(void)
+{
+	if (wCheckMenuCursorYPosition != 0u) {
+		CancelDeckSelectionSubMenu();
+		return;
+	}
+
+	CheckIfCurDeckIsValidResult validity = CheckIfCurDeckIsValid();
+	if ((validity.f & 0x10u) != 0u) {
+		(void)PrintThereIsNoDeckHereText();
+		DeckSelectionMenu();
+		return;
+	}
+
+	EnableSRAM();
+	uint8_t previous_deck = sCurrentlySelectedDeck;
+	DisableSRAM();
+	uint16_t product = HtimesL((uint16_t)(0x0300u | previous_deck));
+	uint16_t rectangle_de = (uint16_t)(0x0200u | (uint8_t)(product + 1u));
+	FillRectangle(0u, 2u, 2u, rectangle_de, 0u);
+
+	uint8_t selected_deck = wCurDeck;
+	EnableSRAM();
+	sCurrentlySelectedDeck = selected_deck;
+	DisableSRAM();
+	DrawHandCardsTileOnCurDeck();
+
+	uint16_t name = GetPointerToDeckName();
+	EnableSRAM();
+	(void)CopyDeckName(name);
+	DisableSRAM();
+	gb_write8(wTxRam2_ADDR, 0u);
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), 0u);
+	(void)DrawWideTextBox_WaitForInput(ChosenAsDuelingDeckText);
+	DeckSelectionMenu();
+}
+/* <<< factory DeckSelectionSubMenu_SelectOrCancel */

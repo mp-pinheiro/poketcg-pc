@@ -164,6 +164,30 @@ static void adapt_InputCurDeckName(ProbeState *s)
 }
 /* <<< factory InputCurDeckName */
 
+/* >>> factory DeckSelectionMenu */
+static void adapt_DeckSelectionMenu(ProbeState *s)
+{
+	(void)s;
+	DeckSelectionMenu();
+}
+/* <<< factory DeckSelectionMenu */
+
+/* >>> factory DeckSelectionSubMenu */
+static void adapt_DeckSelectionSubMenu(ProbeState *s)
+{
+	(void)s;
+	DeckSelectionSubMenu();
+}
+/* <<< factory DeckSelectionSubMenu */
+
+/* >>> factory DeckSelectionSubMenu_SelectOrCancel */
+static void adapt_DeckSelectionSubMenu_SelectOrCancel(ProbeState *s)
+{
+	(void)s;
+	DeckSelectionSubMenu_SelectOrCancel();
+}
+/* <<< factory DeckSelectionSubMenu_SelectOrCancel */
+
 const ProbeEntry probe_entries_deck_selection[] = {
 	{ "GetPointerToDeckCards", adapt_GetPointerToDeckCards },
 	{ "ResetCheckMenuCursorPositionAndBlink", adapt_ResetCheckMenuCursorPositionAndBlink },
@@ -182,5 +206,8 @@ const ProbeEntry probe_entries_deck_selection[] = {
 	{ "OpenDeckConfirmationMenu", adapt_OpenDeckConfirmationMenu },
 	{ "HandleStartButtonInDeckSelectionMenu", adapt_HandleStartButtonInDeckSelectionMenu },
 	{ "InputCurDeckName", adapt_InputCurDeckName },
+	{ "DeckSelectionMenu", adapt_DeckSelectionMenu },
+	{ "DeckSelectionSubMenu", adapt_DeckSelectionSubMenu },
+	{ "DeckSelectionSubMenu_SelectOrCancel", adapt_DeckSelectionSubMenu_SelectOrCancel },
 	{ NULL, NULL },
 };

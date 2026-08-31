@@ -80,4 +80,15 @@ HandleStartButtonInDeckSelectionMenuResult HandleStartButtonInDeckSelectionMenu(
 /* >>> factory InputCurDeckName */
 void InputCurDeckName(void);
 /* <<< factory InputCurDeckName */
+/* >>> factory DeckSelectionMenu */
+void DeckSelectionMenu(void);
+void DeckSelectionSubMenu(void);
+void DeckSelectionSubMenu_SelectOrCancel(void);
+/* <<< factory DeckSelectionMenu */
+/* >>> factory DeckSelectionSubMenu */
+void DeckSelectionSubMenu(void);
+/* <<< factory DeckSelectionSubMenu */
+/* >>> factory DeckSelectionSubMenu_SelectOrCancel */
+void DeckSelectionSubMenu_SelectOrCancel(void);
+/* <<< factory DeckSelectionSubMenu_SelectOrCancel */
 #endif /* POKETCG_HOME_DECK_SELECTION_H */

@@ -289,6 +289,41 @@ CASES["InputCurDeckName"] = [
 ]
 # <<< factory InputCurDeckName
 
+# >>> factory DeckSelectionMenu
+CONTRACT["DeckSelectionMenu"] = {"compare": (), "preserve": ()}
+CASES["DeckSelectionMenu"] = [
+    {"keys": [0x00, 0x02],
+     "wram": {0xCEB1: b"\x00", 0xCABB: b"\x00"},
+     "read": {0xCEB1: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02],
+         wram={0xCEB1: b"\x00", 0xCABB: b"\x00"}, read={0xCEB1: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000)]
+# <<< factory DeckSelectionMenu
+
+# >>> factory DeckSelectionSubMenu
+CONTRACT["DeckSelectionSubMenu"] = {"compare": (), "preserve": ()}
+CASES["DeckSelectionSubMenu"] = [
+    {"keys": [0x00, 0x02, 0x02],
+     "wram": {0xCEAF: b"\xAA", 0xCEB0: b"\x00", 0xCEB1: b"\x00", 0xCABB: b"\x00"},
+     "read": {0xCEAF: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02, 0x02],
+         wram={0xCEAF: b"\xAA", 0xCEB0: b"\x00", 0xCEB1: b"\x00", 0xCABB: b"\x00"}, read={0xCEAF: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000)]
+# <<< factory DeckSelectionSubMenu
+
+# >>> factory DeckSelectionSubMenu_SelectOrCancel
+CONTRACT["DeckSelectionSubMenu_SelectOrCancel"] = {"compare": (), "preserve": ()}
+CASES["DeckSelectionSubMenu_SelectOrCancel"] = [
+    {"wram": {0xCEB0: b"\x01"}, "read": {0xCEB0: 1}},
+    dict(POISON, wram={0xCEB0: b"\x01"}, read={0xCEB0: 1})]
+# <<< factory DeckSelectionSubMenu_SelectOrCancel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -348,3 +383,12 @@ MUTATIONS["InputCurDeckName"] = {"source_symbol": "InputCurDeckName", "before": 
 for _rec in SCHEMA2_CASES["InputCurDeckName"]:
     _rec["completion"] = {"mode": "pre-ret", "pc": 0x6E1B, "bank": 6}
 # <<< factory-completion InputCurDeckName
+# >>> factory-mutation DeckSelectionMenu
+MUTATIONS["DeckSelectionMenu"] = {"source_symbol": "DeckSelectionMenu", "before": "\tDrawDecksScreen(ALL_DECKS);", "after": "\tDrawDecksScreen(ALL_DECKS);\n\twCurDeck = 1u;", "case_ids": ["DeckSelectionMenu-0", "DeckSelectionMenu-1"]}
+# <<< factory-mutation DeckSelectionMenu
+# >>> factory-mutation DeckSelectionSubMenu
+MUTATIONS["DeckSelectionSubMenu"] = {"source_symbol": "DeckSelectionSubMenu", "before": "\t(void)ResetCheckMenuCursorPositionAndBlink();", "after": "\t(void)ResetCheckMenuCursorPositionAndBlink();\n\twCheckMenuCursorXPosition = 1u;", "case_ids": ["DeckSelectionSubMenu-0", "DeckSelectionSubMenu-1"]}
+# <<< factory-mutation DeckSelectionSubMenu
+# >>> factory-mutation DeckSelectionSubMenu_SelectOrCancel
+MUTATIONS["DeckSelectionSubMenu_SelectOrCancel"] = {"source_symbol": "DeckSelectionSubMenu_SelectOrCancel", "before": "\tif (wCheckMenuCursorYPosition != 0u) {\n\t\tCancelDeckSelectionSubMenu();", "after": "\tif (wCheckMenuCursorYPosition != 0u) {\n\t\twCheckMenuCursorYPosition = 0u;\n\t\tCancelDeckSelectionSubMenu();", "case_ids": ["DeckSelectionSubMenu_SelectOrCancel-0", "DeckSelectionSubMenu_SelectOrCancel-1"]}
+# <<< factory-mutation DeckSelectionSubMenu_SelectOrCancel
