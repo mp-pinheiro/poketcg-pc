@@ -2238,6 +2238,10 @@ void DevolutionSpray_DevolutionEffect(void);
 /* >>> factory PokemonBreeder_PlayerSelection */
 void PokemonBreeder_PlayerSelection(void);
 /* <<< factory PokemonBreeder_PlayerSelection */
+/* >>> factory Curse_TransferDamageEffect */
+/* >>> factory Curse_TransferDamageEffect */
+void Curse_TransferDamageEffect(void);
+/* <<< factory Curse_TransferDamageEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

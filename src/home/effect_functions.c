@@ -1547,6 +1547,11 @@ void BankswitchROM(uint8_t bank);
 #include "home/effect_functions.h"
 #include "home/menus.h"
 #define ChooseBasicPokemonToEvolveText 0x015cu
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/serial.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11657,3 +11662,36 @@ void PokemonBreeder_PlayerSelection(void)
 {
 }
 /* <<< factory PokemonBreeder_PlayerSelection */
+
+/* >>> factory Curse_TransferDamageEffect */
+void Curse_TransferDamageEffect(void)
+{
+	uint8_t location = hTempList;
+	DuelistVarResult flags = GetTurnDuelistVariable(
+		(uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));
+	gb_write8(flags.hl, (uint8_t)(flags.a | (1u << USED_PKMN_POWER_THIS_TURN_F)));
+
+	SwapTurn();
+	DuelistVarResult duelist = GetNonTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (duelist.a != DUELIST_TYPE_PLAYER)
+		SetupPlayAreaScreen();
+
+	DuelistVarResult target = GetTurnDuelistVariable(
+		(uint8_t)(DUELVARS_ARENA_CARD_HP + hPlayAreaEffectTarget));
+	gb_write8(target.hl, (uint8_t)(target.a - 10u));
+	DuelistVarResult recipient = GetTurnDuelistVariable(
+		(uint8_t)(DUELVARS_ARENA_CARD_HP + hTempPlayAreaLocation_ffa1));
+	gb_write8(recipient.hl, (uint8_t)(recipient.a + 10u));
+
+	(void)PrintPlayAreaCardList_EnableLCD();
+	duelist = GetNonTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (duelist.a != DUELIST_TYPE_PLAYER) {
+		hTempPlayAreaLocation_ff9d = hPlayAreaEffectTarget;
+		InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox();
+	}
+
+	SwapTurn();
+	(void)ExchangeRNG(0u, 0u, 0u, 0u);
+	(void)HandleDestinyBondAndBetweenTurnKnockOuts();
+}
+/* <<< factory Curse_TransferDamageEffect */

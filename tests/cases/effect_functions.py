@@ -7863,6 +7863,19 @@ CASES["PokemonBreeder_PlayerSelection"] = [
 ]
 # <<< factory PokemonBreeder_PlayerSelection
 
+# >>> factory Curse_TransferDamageEffect
+CONTRACT["Curse_TransferDamageEffect"] = {"compare": (), "preserve": ()}
+CASES["Curse_TransferDamageEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xFFA2: b"\x00", 0xC2C2: b"\x00", 0xC2F1: b"\x00", 0xC3BB: b"\xFF", 0xC3C8: b"\x28", 0xC3C9: b"\x32", 0xC3EF: b"\x01"},
+     "read": {0xC2C2: 1, 0xC3C8: 1, 0xC3C9: 1},
+     "expect": {0xC2C2: b"\x20", 0xC3C8: b"\x1E", 0xC3C9: b"\x3C"}},
+    dict(POISON,
+         wram={0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xFFA2: b"\x00", 0xC2C2: b"\x00", 0xC2F1: b"\x00", 0xC3BB: b"\xFF", 0xC3C8: b"\x28", 0xC3C9: b"\x32", 0xC3EF: b"\x01"},
+         read={0xC2C2: 1, 0xC3C8: 1, 0xC3C9: 1},
+         expect={0xC2C2: b"\x20", 0xC3C8: b"\x1E", 0xC3C9: b"\x3C"}),
+]
+# <<< factory Curse_TransferDamageEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -11061,3 +11074,10 @@ MUTATIONS["PokemonBreeder_PlayerSelection"] = {"source_symbol": "PokemonBreeder_
 for _record in SCHEMA2_CASES["PokemonBreeder_PlayerSelection"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x238C, "bank": 13}
 # <<< factory-completion PokemonBreeder_PlayerSelection
+# >>> factory-mutation Curse_TransferDamageEffect
+MUTATIONS["Curse_TransferDamageEffect"] = {"source_symbol": "Curse_TransferDamageEffect", "before": "void Curse_TransferDamageEffect(void)\n{\n\tuint8_t location = hTempList;\n\tDuelistVarResult flags = GetTurnDuelistVariable(\n\t\t(uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));\n\tgb_write8(flags.hl, (uint8_t)(flags.a | (1u << USED_PKMN_POWER_THIS_TURN_F)));", "after": "void Curse_TransferDamageEffect(void)\n{\n\tuint8_t location = hTempList;\n\tDuelistVarResult flags = GetTurnDuelistVariable(\n\t\t(uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));\n\tgb_write8(flags.hl, flags.a);", "case_ids": ["Curse_TransferDamageEffect-0", "Curse_TransferDamageEffect-1"]}
+# <<< factory-mutation Curse_TransferDamageEffect
+# >>> factory-completion Curse_TransferDamageEffect
+for _record in SCHEMA2_CASES["Curse_TransferDamageEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x2383, "bank": 13}
+# <<< factory-completion Curse_TransferDamageEffect

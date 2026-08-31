@@ -1,0 +1,9 @@
+{
+  "fn": "Curse_TransferDamageEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Curse_TransferDamageEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49858\": \"20\", \"49905\": \"00\", \"50107\": \"ff\", \"50120\": \"1e3c\", \"50159\": \"01\", \"65431\": \"c2\", \"65440\": \"000100\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Curse_TransferDamageEffect\", \"mismatches\": {\"bus\": {\"address\": 49858, \"reference\": \"2000ff1e3c\", \"native\": \"0000ff1e3c\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[49858, 1], [49905, 1], [50107, 1], [50120, 2], [50159, 1], [65431, 1], [65440, 3]]}}}\n",
+  "restored": "{\"fn\": \"Curse_TransferDamageEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49858\": \"20\", \"49905\": \"00\", \"50107\": \"ff\", \"50120\": \"1e3c\", \"50159\": \"01\", \"65431\": \"c2\", \"65440\": \"000100\"}}, \"status\": \"PASS\"}\n"
+}
