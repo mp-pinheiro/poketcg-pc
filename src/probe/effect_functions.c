@@ -5487,6 +5487,14 @@ static void adapt_DevolutionBeam_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory DevolutionBeam_PlayerSelectEffect */
 
+/* >>> factory DevolutionSpray_DevolutionEffect */
+static void adapt_DevolutionSpray_DevolutionEffect(ProbeState *s)
+{
+	(void)s;
+	DevolutionSpray_DevolutionEffect();
+}
+/* <<< factory DevolutionSpray_DevolutionEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -6148,5 +6156,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "HypnoDarkMind_PlayerSelectEffect", adapt_HypnoDarkMind_PlayerSelectEffect },
 	{ "Spark_PlayerSelectEffect", adapt_Spark_PlayerSelectEffect },
 	{ "DevolutionBeam_PlayerSelectEffect", adapt_DevolutionBeam_PlayerSelectEffect },
+	{ "DevolutionSpray_DevolutionEffect", adapt_DevolutionSpray_DevolutionEffect },
 	{ NULL, NULL },
 };

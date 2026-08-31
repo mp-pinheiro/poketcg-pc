@@ -1,0 +1,9 @@
+{
+  "fn": "DevolutionSpray_DevolutionEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DevolutionSpray_DevolutionEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"01\", \"49864\": \"30\", \"49903\": \"00\", \"50176\": \"0809\", \"50576\": \"06\", \"52799\": \"0f080000\", \"65431\": \"c2\", \"65437\": \"00\", \"65440\": \"00ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DevolutionSpray_DevolutionEffect\", \"mismatches\": {\"bus\": {\"address\": 65437, \"reference\": \"080000c20000ff\", \"native\": \"080000c20100ff\", \"reference_size\": 14, \"native_size\": 14, \"spans\": [[49851, 1], [49864, 1], [49903, 1], [50176, 2], [50576, 1], [52799, 4], [65431, 1], [65437, 1], [65440, 2]]}}}\n",
+  "restored": "{\"fn\": \"DevolutionSpray_DevolutionEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"01\", \"49864\": \"30\", \"49903\": \"00\", \"50176\": \"0809\", \"50576\": \"06\", \"52799\": \"0f080000\", \"65431\": \"c2\", \"65437\": \"00\", \"65440\": \"00ff\"}}, \"status\": \"PASS\"}\n"
+}

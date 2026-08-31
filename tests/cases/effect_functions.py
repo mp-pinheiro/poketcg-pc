@@ -7843,6 +7843,18 @@ CASES["DevolutionBeam_PlayerSelectEffect"] = [
 ]
 # <<< factory DevolutionBeam_PlayerSelectEffect
 
+# >>> factory DevolutionSpray_DevolutionEffect
+CONTRACT["DevolutionSpray_DevolutionEffect"] = {"compare": (), "preserve": ()}
+CASES["DevolutionSpray_DevolutionEffect"] = [
+    {"keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "wram": {0xFF97: b"\xC2", 0xFFA0: b"\x00\xFF", 0xC2BB: b"\x01", 0xC2C8: b"\x30", 0xC2EF: b"\x00", 0xC400: b"\x08\x09", 0xC590: b"\x00", 0xCE3F: b"\x00\x00\x00\x00"},
+     "read": {0xFF9D: 1, 0xCE3F: 4}},
+    dict(POISON, keys=0x01, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         wram={0xFF97: b"\xC2", 0xFFA0: b"\x00\xFF", 0xC2BB: b"\x01", 0xC2C8: b"\x30", 0xC2EF: b"\x00", 0xC400: b"\x08\x09", 0xC590: b"\x00", 0xCE3F: b"\x00\x00\x00\x00"},
+         read={0xFF9D: 1, 0xCE3F: 4}),
+]
+# <<< factory DevolutionSpray_DevolutionEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -11027,3 +11039,10 @@ MUTATIONS["Spark_PlayerSelectEffect"] = {"source_symbol": "Spark_PlayerSelectEff
 # >>> factory-mutation DevolutionBeam_PlayerSelectEffect
 MUTATIONS["DevolutionBeam_PlayerSelectEffect"] = {"source_symbol": "DevolutionBeam_PlayerSelectEffect", "before": "\thTemp_ffa0 = selected_duelist;", "after": "\thTemp_ffa0 = (uint8_t)(selected_duelist + 1u);", "case_ids": ["DevolutionBeam_PlayerSelectEffect-0"]}
 # <<< factory-mutation DevolutionBeam_PlayerSelectEffect
+# >>> factory-mutation DevolutionSpray_DevolutionEffect
+MUTATIONS["DevolutionSpray_DevolutionEffect"] = {"source_symbol": "DevolutionSpray_DevolutionEffect", "before": "void DevolutionSpray_DevolutionEffect(void)\n{\n\tuint8_t location = hTempList;\n\thTempPlayAreaLocation_ff9d = location;", "after": "void DevolutionSpray_DevolutionEffect(void)\n{\n\tuint8_t location = hTempList;\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["DevolutionSpray_DevolutionEffect-0", "DevolutionSpray_DevolutionEffect-1"]}
+# <<< factory-mutation DevolutionSpray_DevolutionEffect
+# >>> factory-completion DevolutionSpray_DevolutionEffect
+for _record in SCHEMA2_CASES["DevolutionSpray_DevolutionEffect"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x0C34, "bank": 13}
+# <<< factory-completion DevolutionSpray_DevolutionEffect

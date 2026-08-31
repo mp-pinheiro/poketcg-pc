@@ -1534,6 +1534,12 @@ void BankswitchROM(uint8_t bank);
 #include "home/effect_functions.h"
 #define PleaseSelectThePlayAreaText 0x013eu
 #define ProcedureForDevolutionBeamText 0x0138u
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#include "home/effect_functions.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11613,3 +11619,28 @@ void DevolutionBeam_PlayerSelectEffect(void)
 	}
 }
 /* <<< factory DevolutionBeam_PlayerSelectEffect */
+
+/* >>> factory DevolutionSpray_DevolutionEffect */
+void DevolutionSpray_DevolutionEffect(void)
+{
+	uint8_t location = hTempList;
+	hTempPlayAreaLocation_ff9d = location;
+	DuelistVarResult arena = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location));
+	uint8_t original_card = arena.a;
+	uint16_t list = (uint16_t)(hTempList_ADDR + 1u);
+	for (;;) {
+		uint8_t card = gb_read8(list);
+		if (card == 0xffu)
+			break;
+		CardOneStageBelowResult below = GetCardOneStageBelow(0u, 0u);
+		UpdateDevolvedCardHPAndStage(below.d);
+		(void)ResetDevolvedCardStatus();
+		PutCardInDiscardPile(card);
+		list = (uint16_t)(list + 1u);
+	}
+	uint8_t current_card = gb_read8(arena.hl);
+	PrintDevolvedCardNameAndLevelText(0u, 0u, current_card, original_card);
+	(void)PrintPlayAreaCardKnockedOutIfNoHP(location);
+	(void)HandleDestinyBondAndBetweenTurnKnockOuts();
+}
+/* <<< factory DevolutionSpray_DevolutionEffect */
