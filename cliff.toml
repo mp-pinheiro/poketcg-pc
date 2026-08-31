@@ -36,6 +36,9 @@ tag_pattern = "v?[0-9].*"
 message = "^chore\\(release\\)"
 skip = true
 [[git.commit_parsers]]
+message = "^chore\\((progress|factory|gate)\\)"
+skip = true
+[[git.commit_parsers]]
 message = "^Merge (pull request|branch|remote-tracking branch)"
 skip = true
 [[git.commit_parsers]]
