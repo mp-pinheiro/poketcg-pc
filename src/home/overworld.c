@@ -251,6 +251,30 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define PAD_START 0x08u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/animation.h"
+#include "home/clear_saved_duel.h"
+#include "home/color.h"
+#include "home/credits_sequence_commands.h"
+#include "home/duel_init.h"
+#include "home/lcd.h"
+#include "home/lcd_enable_frame.h"
+#include "home/load_animation.h"
+#include "home/load_overworld.h"
+#include "home/map.h"
+#include "home/npc_core.h"
+#include "home/objects.h"
+#include "home/overworld.h"
+#include "home/scripting.h"
+#include "home/sound.h"
+#include "home/switch_sram.h"
+#include "home/tiles.h"
+
+#define DOUBLE_SPACED 0x00u
+#define GAME_EVENT_OVERWORLD 0x00u
+#define SFX_WARP 0x0Cu
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -1475,3 +1499,46 @@ void HandleOverworldMode(uint16_t hl)
 	}
 }
 /* <<< factory HandleOverworldMode */
+
+/* >>> factory LoadMap */
+void LoadMap(void)
+{
+	DisableLCD();
+	EnableSRAM();
+	ClearSavedDuel();
+	DisableSRAM();
+	wGameEvent = GAME_EVENT_OVERWORLD;
+	wReloadOverworldCallbackPtr = 0u;
+	gb_write8((uint16_t)(wReloadOverworldCallbackPtr_ADDR + 1u), 0u);
+	wMatchStartTheme = 0u;
+	LoadConsolePaletteData();
+	WhiteOutDMGPals();
+	ZeroObjectPositions();
+	wTileMapFill = 0u;
+	(void)LoadSymbolsFont();
+	Set_OBJ_8x8();
+	wLineSeparation = DOUBLE_SPACED;
+	wd291 = 0u;
+
+	for (;;) {
+		FadeScreenToWhite();
+		WhiteOutDMGPals();
+		Func_c241();
+		EmptyScreen();
+		EnableAndClearSpriteAnimations();
+		hWhoseTurn = PLAYER_TURN;
+		(void)ClearNPCs();
+		wCurMap = wTempMap;
+		wPlayerXCoord = wTempPlayerXCoord;
+		wPlayerYCoord = wTempPlayerYCoord;
+		Func_c36a();
+		Func_c184();
+		Func_c49c();
+		LoadMapGfxAndPermissions();
+		Func_c4b9();
+		(void)Func_c943(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		(void)Func_c158();
+		return;
+	}
+}
+/* <<< factory LoadMap */

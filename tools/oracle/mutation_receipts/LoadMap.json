@@ -1,0 +1,9 @@
+{
+  "fn": "LoadMap",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadMap\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53429\": \"00\", \"53435\": \"010e1b02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadMap\", \"mismatches\": {\"bus\": {\"address\": 53429, \"reference\": \"00010e1b02\", \"native\": \"01010e1b02\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[53429, 1], [53435, 4]]}}}\n",
+  "restored": "{\"fn\": \"LoadMap\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53429\": \"00\", \"53435\": \"010e1b02\"}}, \"status\": \"PASS\"}\n"
+}

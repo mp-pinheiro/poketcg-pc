@@ -688,6 +688,14 @@ static void adapt_HandleOverworldMode(ProbeState *s)
 }
 /* <<< factory HandleOverworldMode */
 
+/* >>> factory LoadMap */
+static void adapt_LoadMap(ProbeState *s)
+{
+	(void)s;
+	LoadMap();
+}
+/* <<< factory LoadMap */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -772,5 +780,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "HandlePlayerMoveMode", adapt_HandlePlayerMoveMode },
 	{ "CallHandlePlayerMoveMode", adapt_CallHandlePlayerMoveMode },
 	{ "HandleOverworldMode", adapt_HandleOverworldMode },
+	{ "LoadMap", adapt_LoadMap },
 	{ NULL, NULL },
 };

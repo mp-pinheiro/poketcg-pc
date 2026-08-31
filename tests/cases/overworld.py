@@ -1100,6 +1100,14 @@ CASES["HandleOverworldMode"] = [
 ]
 # <<< factory HandleOverworldMode
 
+# >>> factory LoadMap
+CONTRACT["LoadMap"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["LoadMap"] = [
+	{"wram": {0xD0BB: b"\x01", 0xD0BC: b"\x0E", 0xD0BD: b"\x1B", 0xD0BE: b"\x02"}, "keys": [0x80], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xD0B5: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+	dict(POISON, wram={0xD0BB: b"\x01", 0xD0BC: b"\x0E", 0xD0BD: b"\x1B", 0xD0BE: b"\x02"}, keys=[0x80], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xD0B5: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory LoadMap
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1479,3 +1487,10 @@ MUTATIONS["CallHandlePlayerMoveMode"] = {"source_symbol": "CallHandlePlayerMoveM
 # >>> factory-mutation HandleOverworldMode
 MUTATIONS["HandleOverworldMode"] = {"source_symbol": "HandleOverworldMode", "before": "\tuint8_t mode = (uint8_t)(wOverworldMode & 0x7fu);", "after": "\tuint8_t mode = 3u;", "case_ids": ["HandleOverworldMode-4"]}
 # <<< factory-mutation HandleOverworldMode
+# >>> factory-mutation LoadMap
+MUTATIONS["LoadMap"] = {"source_symbol": "LoadMap", "before": "\twGameEvent = GAME_EVENT_OVERWORLD;", "after": "\twGameEvent = 0x01u;", "case_ids": ["LoadMap-0", "LoadMap-1"]}
+# <<< factory-mutation LoadMap
+# >>> factory-completion LoadMap
+for _record in SCHEMA2_CASES["LoadMap"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x3D1D}
+# <<< factory-completion LoadMap
