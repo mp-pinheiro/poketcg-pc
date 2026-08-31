@@ -2180,6 +2180,10 @@ PealOfThunderRandomlyDamageEffectResult PealOfThunder_RandomlyDamageEffect(uint8
 /* >>> factory TrainerCardAsPokemon_PlayerSelectSwitch */
 void TrainerCardAsPokemon_PlayerSelectSwitch(void);
 /* <<< factory TrainerCardAsPokemon_PlayerSelectSwitch */
+/* >>> factory ButterfreeWhirlwind_CheckBench */
+typedef struct { uint8_t a; uint8_t f; } ButterfreeWhirlwind_CheckBenchResult;
+ButterfreeWhirlwind_CheckBenchResult ButterfreeWhirlwind_CheckBench(void);
+/* <<< factory ButterfreeWhirlwind_CheckBench */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

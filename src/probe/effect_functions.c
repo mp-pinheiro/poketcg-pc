@@ -5355,6 +5355,15 @@ static void adapt_TrainerCardAsPokemon_PlayerSelectSwitch(ProbeState *s)
 }
 /* <<< factory TrainerCardAsPokemon_PlayerSelectSwitch */
 
+/* >>> factory ButterfreeWhirlwind_CheckBench */
+static void adapt_ButterfreeWhirlwind_CheckBench(ProbeState *s)
+{
+	ButterfreeWhirlwind_CheckBenchResult result = ButterfreeWhirlwind_CheckBench();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory ButterfreeWhirlwind_CheckBench */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -6000,5 +6009,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Cowardice_PlayerSelectEffect", adapt_Cowardice_PlayerSelectEffect },
 	{ "PealOfThunder_RandomlyDamageEffect", adapt_PealOfThunder_RandomlyDamageEffect },
 	{ "TrainerCardAsPokemon_PlayerSelectSwitch", adapt_TrainerCardAsPokemon_PlayerSelectSwitch },
+	{ "ButterfreeWhirlwind_CheckBench", adapt_ButterfreeWhirlwind_CheckBench },
 	{ NULL, NULL },
 };

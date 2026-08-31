@@ -7717,6 +7717,14 @@ CONTRACT["TrainerCardAsPokemon_PlayerSelectSwitch"] = {"compare": (), "preserve"
 CASES["TrainerCardAsPokemon_PlayerSelectSwitch"] = [dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFF9D: b"\x00", 0xFFA1: b"\xFF", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xFFA1: 1}, expect={0xFFA1: b"\x00"}, instruction_budget=20000000, cycle_budget=80000000)]
 # <<< factory TrainerCardAsPokemon_PlayerSelectSwitch
 
+# >>> factory ButterfreeWhirlwind_CheckBench
+CONTRACT["ButterfreeWhirlwind_CheckBench"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ButterfreeWhirlwind_CheckBench"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x01", 0xFFA0: b"\x5A"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\xFF"}, "expect_regs": {"a": 0xFF, "f": 0x70}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3EF: b"\x01", 0xFFA0: b"\xA5"}, read={0xFFA0: 1}, expect={0xFFA0: b"\xFF"}, expect_regs={"a": 0xFF, "f": 0x70}),
+]
+# <<< factory ButterfreeWhirlwind_CheckBench
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -10845,3 +10853,6 @@ MUTATIONS["TrainerCardAsPokemon_PlayerSelectSwitch"] = {"source_symbol": "Traine
 for _record in SCHEMA2_CASES["TrainerCardAsPokemon_PlayerSelectSwitch"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x270E, "bank": 1}
 # <<< factory-completion TrainerCardAsPokemon_PlayerSelectSwitch
+# >>> factory-mutation ButterfreeWhirlwind_CheckBench
+MUTATIONS["ButterfreeWhirlwind_CheckBench"] = {"source_symbol": "ButterfreeWhirlwind_CheckBench", "before": "ButterfreeWhirlwind_CheckBenchResult ButterfreeWhirlwind_CheckBench(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xFFu;", "after": "ButterfreeWhirlwind_CheckBenchResult ButterfreeWhirlwind_CheckBench(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0x00u;", "case_ids": ["ButterfreeWhirlwind_CheckBench-0", "ButterfreeWhirlwind_CheckBench-1"]}
+# <<< factory-mutation ButterfreeWhirlwind_CheckBench

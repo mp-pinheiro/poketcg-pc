@@ -11335,3 +11335,18 @@ PealOfThunderRandomlyDamageEffectResult PealOfThunder_RandomlyDamageEffect(uint8
 /* >>> factory TrainerCardAsPokemon_PlayerSelectSwitch */
 void TrainerCardAsPokemon_PlayerSelectSwitch(void) { if (hTemp_ffa0 != 0u) return; hTempPlayAreaLocation_ffa1 = 0xFFu; }
 /* <<< factory TrainerCardAsPokemon_PlayerSelectSwitch */
+
+/* >>> factory ButterfreeWhirlwind_CheckBench */
+ButterfreeWhirlwind_CheckBenchResult ButterfreeWhirlwind_CheckBench(void)
+{
+	DuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a < 2u) {
+		hTemp_ffa0 = 0xFFu;
+		return (ButterfreeWhirlwind_CheckBenchResult){0xFFu, 0x70u};
+	}
+	DuelistSelectForcedSwitchResult selected =
+		DuelistSelectForcedSwitch(count.a, 0u, 0u, 0u, 0u, 0u, count.hl);
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	return (ButterfreeWhirlwind_CheckBenchResult){selected.a, selected.f};
+}
+/* <<< factory ButterfreeWhirlwind_CheckBench */
