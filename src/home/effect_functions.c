@@ -1540,6 +1540,13 @@ void BankswitchROM(uint8_t bank);
 #include "home/duel.h"
 #include "home/duel_core.h"
 #include "home/effect_functions.h"
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#define ChooseBasicPokemonToEvolveText 0x015cu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -11644,3 +11651,9 @@ void DevolutionSpray_DevolutionEffect(void)
 	(void)HandleDestinyBondAndBetweenTurnKnockOuts();
 }
 /* <<< factory DevolutionSpray_DevolutionEffect */
+
+/* >>> factory PokemonBreeder_PlayerSelection */
+void PokemonBreeder_PlayerSelection(void)
+{
+}
+/* <<< factory PokemonBreeder_PlayerSelection */

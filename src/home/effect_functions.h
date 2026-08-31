@@ -2235,6 +2235,9 @@ void DevolutionBeam_PlayerSelectEffect(void);
 /* >>> factory DevolutionSpray_DevolutionEffect */
 void DevolutionSpray_DevolutionEffect(void);
 /* <<< factory DevolutionSpray_DevolutionEffect */
+/* >>> factory PokemonBreeder_PlayerSelection */
+void PokemonBreeder_PlayerSelection(void);
+/* <<< factory PokemonBreeder_PlayerSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

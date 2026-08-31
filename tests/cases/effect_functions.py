@@ -7855,6 +7855,14 @@ CASES["DevolutionSpray_DevolutionEffect"] = [
 ]
 # <<< factory DevolutionSpray_DevolutionEffect
 
+# >>> factory PokemonBreeder_PlayerSelection
+CONTRACT["PokemonBreeder_PlayerSelection"] = {"compare": (), "preserve": ()}
+CASES["PokemonBreeder_PlayerSelection"] = [
+    {"wram": {0xFFA0: b"\x00"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x00"}},
+    dict(POISON, wram={0xFFA0: b"\x00"}, read={0xFFA0: 1}, expect={0xFFA0: b"\x00"})
+]
+# <<< factory PokemonBreeder_PlayerSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -11046,3 +11054,10 @@ MUTATIONS["DevolutionSpray_DevolutionEffect"] = {"source_symbol": "DevolutionSpr
 for _record in SCHEMA2_CASES["DevolutionSpray_DevolutionEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x0C34, "bank": 13}
 # <<< factory-completion DevolutionSpray_DevolutionEffect
+# >>> factory-mutation PokemonBreeder_PlayerSelection
+MUTATIONS["PokemonBreeder_PlayerSelection"] = {"source_symbol": "PokemonBreeder_PlayerSelection", "before": "void PokemonBreeder_PlayerSelection(void)\n{\n}", "after": "void PokemonBreeder_PlayerSelection(void)\n{\n\thTemp_ffa0 = 1u;\n}", "case_ids": ["PokemonBreeder_PlayerSelection-0"]}
+# <<< factory-mutation PokemonBreeder_PlayerSelection
+# >>> factory-completion PokemonBreeder_PlayerSelection
+for _record in SCHEMA2_CASES["PokemonBreeder_PlayerSelection"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x238C, "bank": 13}
+# <<< factory-completion PokemonBreeder_PlayerSelection

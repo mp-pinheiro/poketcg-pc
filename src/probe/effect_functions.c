@@ -5495,6 +5495,14 @@ static void adapt_DevolutionSpray_DevolutionEffect(ProbeState *s)
 }
 /* <<< factory DevolutionSpray_DevolutionEffect */
 
+/* >>> factory PokemonBreeder_PlayerSelection */
+static void adapt_PokemonBreeder_PlayerSelection(ProbeState *s)
+{
+	(void)s;
+	PokemonBreeder_PlayerSelection();
+}
+/* <<< factory PokemonBreeder_PlayerSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -6157,5 +6165,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Spark_PlayerSelectEffect", adapt_Spark_PlayerSelectEffect },
 	{ "DevolutionBeam_PlayerSelectEffect", adapt_DevolutionBeam_PlayerSelectEffect },
 	{ "DevolutionSpray_DevolutionEffect", adapt_DevolutionSpray_DevolutionEffect },
+	{ "PokemonBreeder_PlayerSelection", adapt_PokemonBreeder_PlayerSelection },
 	{ NULL, NULL },
 };
