@@ -5134,6 +5134,22 @@ CASES["TryContinueDuel"] = [
 ]
 # <<< factory TryContinueDuel
 
+# >>> factory PlayPokemonCard
+CONTRACT["PlayPokemonCard"] = {"compare": ("f",), "preserve": ()}
+CASES["PlayPokemonCard"] = [
+    {"keys": [0x00, 0x01],
+     "wram": {0xFF97: b"\xC2", 0xCC2D: b"\x00", 0xC2EF: b"\x06"},
+     "expect_regs": {"f": 0x90},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xFF97: b"\xC2", 0xCC2D: b"\x00", 0xC2EF: b"\x06"},
+         expect_regs={"f": 0x90},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PlayPokemonCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -7174,3 +7190,6 @@ for _record in SCHEMA2_CASES["DoLinkOpponentTurn"]:
 # >>> factory-mutation TryContinueDuel
 MUTATIONS["TryContinueDuel"] = {"source_symbol": "TryContinueDuel", "before": "void TryContinueDuel(void)\n{\n\tSetupDuel();\n\tuint8_t failed = LoadAndValidateDuelSaveData();\n\tif ((failed & 0x10u) != 0u) {", "after": "void TryContinueDuel(void)\n{\n\tSetupDuel();\n\tuint8_t failed = LoadAndValidateDuelSaveData();\n\tif ((failed & 0x10u) == 0u) {", "case_ids": ["TryContinueDuel-0", "TryContinueDuel-1"]}
 # <<< factory-mutation TryContinueDuel
+# >>> factory-mutation PlayPokemonCard
+MUTATIONS["PlayPokemonCard"] = {"source_symbol": "PlayPokemonCard", "before": "\t\tif (count.a >= PLAY_POKEMON_CARD_MAX_PLAY_AREA) {", "after": "\t\tif (count.a > PLAY_POKEMON_CARD_MAX_PLAY_AREA) {", "case_ids": ["PlayPokemonCard-0", "PlayPokemonCard-1"]}
+# <<< factory-mutation PlayPokemonCard

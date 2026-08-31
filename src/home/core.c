@@ -1675,6 +1675,28 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 
 #include "home/core.h"
 #define BackUpIsBrokenText 0x00d6u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "home/serial.h"
+#include "home/substatus.h"
+#include "mem.h"
+
+#define PLAY_POKEMON_CARD_BASIC 0x00u
+#define PLAY_POKEMON_CARD_ARENA_STAGE 0xCEu
+#define PLAY_POKEMON_CARD_NUM_POKEMON 0xEFu
+#define PLAY_POKEMON_CARD_MAX_PLAY_AREA 0x06u
+#define PLAY_POKEMON_CARD_OPP_EVOLVE 0x02u
+#define PLAY_POKEMON_CARD_OPP_BASIC 0x01u
+#define PLAY_POKEMON_CARD_ARENA 0x00u
+#define PLAY_POKEMON_CARD_CANT_EVOLVE_TEXT 0x00B4u
+#define PLAY_POKEMON_CARD_NO_EVOLUTION_TEXT 0x00B3u
+#define PLAY_POKEMON_CARD_NO_SPACE_TEXT 0x00B2u
+#define PLAY_POKEMON_CARD_PLACED_TEXT 0x0061u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -9515,3 +9537,79 @@ void TryContinueDuel(void)
 	_ContinueDuel();
 }
 /* <<< factory TryContinueDuel */
+
+/* >>> factory PlayPokemonCard */
+PlayPokemonCardResult PlayPokemonCard(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t stage = wLoadedCard1Stage;
+	if (stage == PLAY_POKEMON_CARD_BASIC) {
+		DuelistVarResult count = GetTurnDuelistVariable(PLAY_POKEMON_CARD_NUM_POKEMON);
+		if (count.a >= PLAY_POKEMON_CARD_MAX_PLAY_AREA) {
+			WaitResult waited = DrawWideTextBox_WaitForInput(PLAY_POKEMON_CARD_NO_SPACE_TEXT);
+			return (PlayPokemonCardResult){(uint8_t)(waited.f | 0x10u)};
+		}
+
+		hTemp_ffa0 = hTempCardIndex_ff98;
+		PutHandPokemonResult placed = PutHandPokemonCardInPlayArea(hTemp_ffa0, f);
+		hTempPlayAreaLocation_ff9d = placed.a;
+		DuelistVarResult stage_var =
+			GetTurnDuelistVariable((uint8_t)(hTempPlayAreaLocation_ff9d + PLAY_POKEMON_CARD_ARENA_STAGE));
+		gb_write8(stage_var.hl, PLAY_POKEMON_CARD_BASIC);
+		(void)SetOppAction_SerialSendDuelData(PLAY_POKEMON_CARD_OPP_BASIC, 0u);
+
+		(void)LoadCardDataToBuffer1_FromDeckIndex(hTempCardIndex_ff98);
+		CopyCardNameAndLevelResult copied = CopyCardNameAndLevel(20u, b, c, d, e);
+		gb_write8(copied.hl, 0u);
+		LoadTxRam2(0u);
+		WaitResult waited = DrawWideTextBox_WaitForInput(PLAY_POKEMON_CARD_PLACED_TEXT);
+		DuelRoutineResult processed = ProcessPlayedPokemonCard(
+			copied.a, waited.f, copied.b, copied.c, copied.d, copied.e, copied.hl);
+		return (PlayPokemonCardResult){(uint8_t)(processed.a == 0u ? 0x80u : 0x00u)};
+	}
+
+	DuelistVarResult count = GetTurnDuelistVariable(PLAY_POKEMON_CARD_NUM_POKEMON);
+	uint8_t candidate_found = 0u;
+	uint16_t candidate_hl = 0u;
+	for (uint8_t slot = PLAY_POKEMON_CARD_ARENA; slot < count.a; slot++) {
+		EvolveResult check = CheckIfCanEvolveInto(hTempCardIndex_ff98, slot);
+		if ((check.f & 0x10u) == 0u) {
+			candidate_found = 1u;
+			candidate_hl = check.hl;
+			break;
+		}
+	}
+	if (!candidate_found) {
+		uint16_t reason = PLAY_POKEMON_CARD_NO_EVOLUTION_TEXT;
+		for (uint8_t slot = PLAY_POKEMON_CARD_ARENA; slot < count.a; slot++) {
+			EvolveResult check = CheckIfCanEvolveInto(hTempCardIndex_ff98, slot);
+			if ((check.f & 0x10u) != 0u && (check.f & 0x80u) == 0u) {
+				reason = PLAY_POKEMON_CARD_CANT_EVOLVE_TEXT;
+				break;
+			}
+		}
+		WaitResult waited = DrawWideTextBox_WaitForInput(reason);
+		return (PlayPokemonCardResult){(uint8_t)(waited.f | 0x10u)};
+	}
+
+	PrehistoricPowerResult prehistoric = IsPrehistoricPowerActive(candidate_hl);
+	if ((prehistoric.f & 0x10u) != 0u) {
+		WaitResult waited = DrawWideTextBox_WaitForInput(prehistoric.hl);
+		return (PlayPokemonCardResult){(uint8_t)(waited.f | 0x10u)};
+	}
+	(void)HasAlivePokemonInPlayArea();
+
+	OpenPlayAreaScreenForSelection();
+	hTemp_ffa0 = hTempCardIndex_ff98;
+	hTempPlayAreaLocation_ffa1 = hTempPlayAreaLocation_ff9d;
+	EvolveResult evolved = EvolvePokemonCardIfPossible(c);
+	if ((evolved.f & 0x10u) != 0u)
+		return (PlayPokemonCardResult){evolved.f};
+	(void)SetOppAction_SerialSendDuelData(PLAY_POKEMON_CARD_OPP_EVOLVE, 0u);
+	(void)PrintPlayAreaCardList_EnableLCD();
+	PrintPokemonEvolvedIntoPokemon();
+	DuelRoutineResult processed = ProcessPlayedPokemonCard(
+		evolved.a, evolved.f, 0u, evolved.c, evolved.d, evolved.e, evolved.hl);
+	(void)a;
+	return (PlayPokemonCardResult){(uint8_t)(processed.a == 0u ? 0x80u : 0x00u)};
+}
+/* <<< factory PlayPokemonCard */

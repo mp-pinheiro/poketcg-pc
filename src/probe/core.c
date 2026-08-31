@@ -3095,6 +3095,14 @@ static void adapt_TryContinueDuel(ProbeState *s)
 }
 /* <<< factory TryContinueDuel */
 
+/* >>> factory PlayPokemonCard */
+static void adapt_PlayPokemonCard(ProbeState *s)
+{
+	PlayPokemonCardResult result = PlayPokemonCard(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->f = result.f;
+}
+/* <<< factory PlayPokemonCard */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -3466,5 +3474,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "_ContinueDuel", adapt__ContinueDuel },
 	{ "DoLinkOpponentTurn", adapt_DoLinkOpponentTurn },
 	{ "TryContinueDuel", adapt_TryContinueDuel },
+	{ "PlayPokemonCard", adapt_PlayPokemonCard },
 	{ NULL, NULL },
 };
