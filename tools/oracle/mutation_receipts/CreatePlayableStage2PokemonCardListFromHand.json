@@ -1,0 +1,9 @@
+{
+  "fn": "CreatePlayableStage2PokemonCardListFromHand",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CreatePlayableStage2PokemonCardListFromHand\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49730\": \"00\", \"49902\": \"01\", \"50176\": \"08\", \"50448\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreatePlayableStage2PokemonCardListFromHand\", \"mismatches\": {\"f\": [144, 0], \"bus\": {\"address\": 50448, \"reference\": \"000108ffc2\", \"native\": \"000108fec2\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[49730, 1], [49902, 1], [50176, 1], [50448, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"CreatePlayableStage2PokemonCardListFromHand\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49730\": \"00\", \"49902\": \"01\", \"50176\": \"08\", \"50448\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

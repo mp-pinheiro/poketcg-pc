@@ -8010,7 +8010,9 @@ CASES["Gale_LoadAnimation"] = [
 # >>> factory CreatePlayableStage2PokemonCardListFromHand
 CONTRACT["CreatePlayableStage2PokemonCardListFromHand"] = {"compare": ("f",), "preserve": ()}
 CASES["CreatePlayableStage2PokemonCardListFromHand"] = [
-	{"read": {0xC100: 1}},
+	{"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00",
+	          0xC400: b"\x08"}, "read": {0xC510: 1}},
+	{"read": {0xC100: 1, 0xC510: 1}},
 	{"wram": {0xC100: b"\xFF"}, "read": {0xC100: 1}},
 ]
 # <<< factory CreatePlayableStage2PokemonCardListFromHand
