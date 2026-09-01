@@ -991,6 +991,53 @@ def command_check(req_id: str) -> int:
     print(json.dumps(payload, sort_keys=True))
     return 0 if status == "pass" else 2
 
+def command_baseline() -> int:
+    baseline = load_toml(BASELINE_PATH)
+    manifest = load_toml(MANIFEST_PATH)
+    artifact: dict[str, Any] = {
+        "schema": "completion-baseline-v1",
+        "status": "FAIL",
+        "frames": 0,
+        "events": 0,
+        "state_fields": [
+            "rom_sha1", "rom_sha256", "map_sha256", "symbol_sha256",
+            "inventory_sha256",
+        ],
+        "oracles": ["baseline.toml", "source-inventory"],
+    }
+    try:
+        inventory = run_source_inventory()
+        errors = validate_baseline(baseline, inventory)
+        artifact["validation"] = {
+            "errors": errors,
+            "inventory_schema": inventory.get("schema"),
+        }
+        if errors:
+            artifact["failure"] = "BASELINE_INVALID"
+            artifact["detail"] = "; ".join(errors)
+        else:
+            artifact["content_key"] = content_key(baseline, manifest)
+            artifact["baseline"] = baseline["baseline"]
+            artifact["status"] = "PASS"
+            artifact["events"] = 1
+            artifact["terminal_event"] = "BASELINE_PINNED"
+    except (AuditError, KeyError, TypeError) as exc:
+        artifact["failure"] = "BASELINE_ERROR"
+        artifact["detail"] = str(exc)
+    EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+    path = evidence_path("completion:v2:reset:baseline")
+    path.write_text(json.dumps(artifact, sort_keys=True, separators=(",", ":")) + "\n")
+    print(json.dumps({
+        "status": artifact["status"],
+        "artifact": str(path.relative_to(ROOT)),
+        **{
+            key: artifact[key]
+            for key in ("failure", "content_key", "events")
+            if key in artifact
+        },
+    }, sort_keys=True))
+    return 0 if artifact["status"] == "PASS" else 2
+
 
 def command_next() -> int:
     manifest = load_toml(MANIFEST_PATH)
@@ -1018,12 +1065,15 @@ def main(argv: list[str] | None = None) -> int:
     status.add_argument("--json", action="store_true")
     check = subparsers.add_parser("check")
     check.add_argument("id")
+    subparsers.add_parser("baseline")
     subparsers.add_parser("next")
     args = parser.parse_args(argv)
     if args.command == "audit":
         return command_audit()
     if args.command == "status":
         return command_status()
+    if args.command == "baseline":
+        return command_baseline()
     if args.command == "check":
         return command_check(args.id)
     return command_next()

@@ -311,6 +311,8 @@ completion-status *ARGS:
     python3 tools/completion/completion.py status {{ARGS}}
 completion-check ID:
     python3 tools/completion/completion.py check "{{ID}}"
+completion-baseline:
+    python3 tools/completion/completion.py baseline
 completion-next:
     python3 tools/completion/completion.py next
 
