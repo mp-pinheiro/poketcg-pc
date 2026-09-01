@@ -23,7 +23,7 @@ SIG = b"\x04\x21\x05"
 CASES = {
     "ClearSRAMBank": [
         {"a": 1, "sram": {0: {0xA000: b"\x11\x22"}, 1: {0xA000: b"\xaa\xbb\xcc"}}},
-        {"a": 2, "sram": {2: {0xA000: b"\xde\xad"}}, "sread": {2: {0xBFFF: 1}}},
+        {"a": 2, "sram": {2: {0xA000: b"\xde\xad", 0xBFFF: b"\x7f"}}, "sread": {2: {0xBFFF: 1}}},
         {"a": 1, "sram": {1: {0xA000: b"\x01" * 8}}, "sread": {1: {0xBFFF: 1, 0xA800: 4}}},
         dict(POISON, a=3, sram={3: {0xA000: b"\x99\x88\x77\x66\x55\x44"}}),
     ],
@@ -42,7 +42,7 @@ MUTATIONS = {
         "source_symbol": "ClearSRAMBank",
         "before": "for (uint16_t i = 0; i < 0x2000u; i++)",
         "after": "for (uint16_t i = 0; i < 0x1FFFu; i++)",
-        "case_ids": ["ClearSRAMBank-0", "ClearSRAMBank-1", "ClearSRAMBank-2", "ClearSRAMBank-3"],
+        "case_ids": ["ClearSRAMBank-1", "ClearSRAMBank-0", "ClearSRAMBank-2", "ClearSRAMBank-3"],
     },
 }
 # >>> factory ValidateSRAM

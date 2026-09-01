@@ -1,0 +1,9 @@
+{
+  "fn": "ClearSRAMBank",
+  "case": "tests/cases/clear_sram.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ClearSRAMBank\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49152, \"palette\": {}, \"ram_bank\": 2, \"ram_enable\": 1, \"rom_bank\": 1, \"sram\": {\"2\": {\"40960\": \"0000\", \"49151\": \"00\"}}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ClearSRAMBank\", \"mismatches\": {\"sram\": {\"byte\": 2, \"reference\": \"000000\", \"native\": \"00007f\"}}}\n",
+  "restored": "{\"fn\": \"ClearSRAMBank\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49152, \"palette\": {}, \"ram_bank\": 2, \"ram_enable\": 1, \"rom_bank\": 1, \"sram\": {\"2\": {\"40960\": \"0000\", \"49151\": \"00\"}}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}
