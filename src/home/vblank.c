@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "home/vblank.h"
 
 #include "generated/hram.h"
@@ -59,14 +60,16 @@ void RuntimeVBlankHandler(void)
 	switch (target) {
 	case TRAMPOLINE_NOOP:
 		NoOp();
-		return;
+		break;
 	case TRAMPOLINE_ALL_SPRITE_ANIMATIONS:
 		HandleAllSpriteAnimations();
-		return;
+		break;
 	default:
 		DispatchIndirect("wVBlankFunction", target);
 	}
 
-	/* vblank.asm:34. */
+	/* vblank.asm:34: the flush follows the trampoline call unconditionally
+	 * in the asm (fallthrough after `call wVBlankFunctionTrampoline`), so it
+	 * runs even when the trampoline is NoOp. */
 	FlushPalettesIfRequested();
 }
