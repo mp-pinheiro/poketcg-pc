@@ -7983,7 +7983,8 @@ CASES["CopyPlayAreaHPToBackup_Unreferenced"] = [
 # >>> factory CopyPlayAreaHPFromBackup_Unreferenced
 CONTRACT["CopyPlayAreaHPFromBackup_Unreferenced"] = {"compare": (), "preserve": ()}
 CASES["CopyPlayAreaHPFromBackup_Unreferenced"] = [
-	{"wram": {0xCE76: b"\x01\x02\x03\x04\x05\x06"}, "read": {0xCE76: 6}},
+	{"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xC2C8: b"\x00",
+	          0xCE76: b"\x12"}, "read": {0xC2C8: 1}},
 ]
 # <<< factory CopyPlayAreaHPFromBackup_Unreferenced
 # >>> factory EnergySearch_DeckCheck
@@ -9363,7 +9364,7 @@ MUTATIONS["CheckIfCardIsBasicEnergy"] = {"source_symbol": "CheckIfCardIsBasicEne
 MUTATIONS["CopyPlayAreaHPToBackup_Unreferenced"] = {"source_symbol": "CopyPlayAreaHPToBackup_Unreferenced", "before": "wBackupPlayerAreaHP_ADDR + i", "after": "wBackupPlayerAreaHP_ADDR + i + 1u", "case_ids": ["CopyPlayAreaHPToBackup_Unreferenced-0"]}
 # <<< factory-mutation CopyPlayAreaHPToBackup_Unreferenced
 # >>> factory-mutation CopyPlayAreaHPFromBackup_Unreferenced
-MUTATIONS["CopyPlayAreaHPFromBackup_Unreferenced"] = {"source_symbol": "CopyPlayAreaHPFromBackup_Unreferenced", "before": "\t\tgb_write8((uint16_t)(wBackupPlayerAreaHP_ADDR + i", "after": "\t\tgb_write8((uint16_t)(wBackupPlayerAreaHP_ADDR + i + 1u", "case_ids": ["CopyPlayAreaHPFromBackup_Unreferenced-0"]}
+MUTATIONS["CopyPlayAreaHPFromBackup_Unreferenced"] = {"source_symbol": "CopyPlayAreaHPFromBackup_Unreferenced", "before": "gb_read8((uint16_t)(wBackupPlayerAreaHP_ADDR + i))", "after": "gb_read8((uint16_t)(wBackupPlayerAreaHP_ADDR + i + 1u))", "case_ids": ["CopyPlayAreaHPFromBackup_Unreferenced-0"]}
 # <<< factory-mutation CopyPlayAreaHPFromBackup_Unreferenced
 # >>> factory-mutation EnergySearch_DeckCheck
 MUTATIONS["EnergySearch_DeckCheck"] = {"source_symbol": "EnergySearch_DeckCheck", "before": "count.a == DECK_SIZE", "after": "count.a != DECK_SIZE", "case_ids": ["EnergySearch_DeckCheck-0", "EnergySearch_DeckCheck-1"]}
