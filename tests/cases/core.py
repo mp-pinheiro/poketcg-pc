@@ -5817,7 +5817,7 @@ MUTATIONS["CheckIfActiveCardParalyzedOrAsleep"] = {
     "source_symbol": "CheckIfActiveCardParalyzedOrAsleep",
     "before": "masked == 0x03u",
     "after": "masked == 0x04u",
-    "case_ids": ["CheckIfActiveCardParalyzedOrAsleep-0", "CheckIfActiveCardParalyzedOrAsleep-1"],
+    "case_ids": ["CheckIfActiveCardParalyzedOrAsleep-2", "CheckIfActiveCardParalyzedOrAsleep-3"],
 }
 # <<< factory-mutation CheckIfActiveCardParalyzedOrAsleep
 # >>> factory-mutation CheckIfEnoughEnergiesOfType
