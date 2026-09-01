@@ -1,4 +1,5 @@
 #include "home/main_menu.h"
+#include "home/start.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -34,6 +35,7 @@ uint8_t MainMenu_CardPop(void)
 void MainMenu_NewGame(void)
 {
 	Func_c1b1();
+	wGameEvent = 0u;
 }
 /* <<< factory MainMenu_NewGame */
 
@@ -57,7 +59,9 @@ void _GameLoop(void)
 {
 	ZeroObjectPositions();
 	wVBlankOAMCopyToggle = (uint8_t)(wVBlankOAMCopyToggle + 1u);
-	/* SetIntroSGBBorder is scope-excluded; stop before the main-menu dispatch. */
+	/* SetIntroSGBBorder is scope-excluded by the Phase 1 transform. */
+	Func_c1f8();
 	wLastSelectedStartMenuItem = 0xFFu;
+	HandleTitleScreen();
 }
 /* <<< factory _GameLoop */

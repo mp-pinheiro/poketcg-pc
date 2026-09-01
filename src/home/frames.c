@@ -3,7 +3,9 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/input.h"
+#include "home/intro_sequence_commands.h"
 #include "home/load_animation.h"
+#include "home/switch_rom.h"
 #include "home/map.h"
 #include "home/play_animation.h"
 #include "mem.h"
@@ -14,7 +16,9 @@
 /* Registered targets of wDoFrameFunction that this tree has a C body for. */
 #define DO_FRAME_UPDATE_QUEUED_ANIMATIONS 0x3BA2u
 #define DO_FRAME_OVERWORLD 0x380Eu
+#define INTRO_SEQUENCE_BANK 0x07u
 #define DO_FRAME_FUNC_3E31 0x3E31u
+#define DO_FRAME_ALL_SPRITE_ANIMATIONS 0x3CB4u
 
 static FrameBoundaryHook g_frame_boundary_hook;
 static void *g_frame_boundary_context;
@@ -50,6 +54,16 @@ static void CallDoFrameFunction(void)
 	switch (target) {
 	case DO_FRAME_UPDATE_QUEUED_ANIMATIONS:
 		(void)UpdateQueuedAnimations(target);
+		return;
+	case DO_FRAME_ALL_SPRITE_ANIMATIONS:
+		HandleAllSpriteAnimations();
+		if (wSequenceCmdPtr != 0u ||
+		    gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u)) != 0u) {
+			uint8_t saved_bank = hBankROM;
+			BankswitchROM(INTRO_SEQUENCE_BANK);
+			(void)ExecuteIntroSequenceCmd();
+			BankswitchROM(saved_bank);
+		}
 		return;
 	case DO_FRAME_OVERWORLD:
 		OverworldDoFrameFunction();

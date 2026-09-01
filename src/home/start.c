@@ -72,6 +72,7 @@
 #define SavedDataAlreadyExistsText 0x0373u
 
 #include "home/intro.h"
+#include "home/intro_sequence_commands.h"
 #include "home/load_animation.h"
 #include "home/sound.h"
 #include "generated/wram.h"
@@ -83,6 +84,7 @@
 #include "home/dma.h"
 #include "home/lcd.h"
 #include "home/overworld.h"
+#include "home/main_menu.h"
 #include "home/serial.h"
 #include "home/setup.h"
 #include "home/sound.h"
@@ -92,6 +94,13 @@
 #define BANK_GAME_LOOP 0x01u
 #define rIF 0xFF0Fu
 #define rIE 0xFFFFu
+#define PAD_A 0x01u
+#define PAD_START 0x08u
+#define SFX_CONFIRM 0x02u
+#define START_MENU_CARD_POP 0x00u
+#define START_MENU_CONTINUE_FROM_DIARY 0x01u
+#define START_MENU_NEW_GAME 0x02u
+#define START_MENU_CONTINUE_DUEL 0x03u
 #define rVBK 0xFF4Fu
 /* <<< factory statics */
 
@@ -312,10 +321,47 @@ void DeleteSaveDataForNewGame(void)
 /* >>> factory HandleTitleScreen */
 void HandleTitleScreen(void)
 {
-	if (wLastSelectedStartMenuItem == 0u)
-		return;
+	if (wLastSelectedStartMenuItem != 0u) {
+		for (;;) {
+			PlayIntroSequence();
+			wTitleScreenOrbCounter = 0u;
+			wTitleScreenIgnoreInputCounter = 0x3Cu;
+			for (;;) {
+				DoFrameIfLCDEnabled();
+				(void)UpdateRNGSources();
+				(void)AnimateRandomTitleScreenOrb();
+				wTitleScreenOrbCounter++;
+				if (AssertSongFinished() == 0u) {
+					FadeScreenToWhite();
+					break;
+				}
+				if (wTitleScreenIgnoreInputCounter != 0u) {
+					wTitleScreenIgnoreInputCounter--;
+					continue;
+				}
+				if ((hKeysPressed & (PAD_A | PAD_START)) == 0u)
+					continue;
+				PlaySFX(SFX_CONFIRM);
+				FadeScreenToWhite();
+				goto start_menu;
+			}
+		}
+	}
 
-	PlaySong(MUSIC_STOP);
+start_menu:
+	(void)CheckIfHasSaveData();
+	HandleStartMenu();
+	if (wStartMenuChoice == START_MENU_NEW_GAME) {
+		DeleteSaveDataForNewGame();
+		MainMenu_NewGame();
+	} else if (wStartMenuChoice == START_MENU_CONTINUE_FROM_DIARY) {
+		(void)AskToContinueFromDiaryWithDuelData();
+	} else if (wStartMenuChoice == START_MENU_CARD_POP) {
+		(void)ShowCardPopCGBDisclaimer();
+	} else {
+		MainMenu_ContinueDuel();
+	}
+	ResetDoFrameFunction(0u);
 	EnableAndClearSpriteAnimations();
 }
 /* <<< factory HandleTitleScreen */

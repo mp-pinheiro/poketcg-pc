@@ -55,8 +55,10 @@ void GameLoop(void)
 	DisableSRAM();
 	wUppercaseHalfWidthLetters = 1u;
 	StubbedUnusedSaveDataValidation();
-	if (hKeysHeld != (PAD_A | PAD_B))
+	if (hKeysHeld != (PAD_A | PAD_B)) {
+		_GameLoop();
 		return;
+	}
 
 	SetupResetBackUpRamScreen();
 	EmptyScreen();
@@ -66,6 +68,5 @@ void GameLoop(void)
 		s0a000 = 0u;
 		DisableSRAM();
 	}
-	/* Reset and the outer GameLoop restart are non-returning ROM paths. */
 }
 /* <<< factory GameLoop */

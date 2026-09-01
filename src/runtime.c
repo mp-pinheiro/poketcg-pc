@@ -2,6 +2,7 @@
 
 #include "home/frames.h"
 #include "home/game_loop.h"
+#include "home/time.h"
 #include "home/start.h"
 #include "mem.h"
 #include "ppu.h"
@@ -19,6 +20,8 @@ typedef struct {
 	Ppu ppu;
 	uint16_t framebuffer[SCREEN_W * SCREEN_H];
 	int16_t audio[AUDIO_SAMPLES_PER_FRAME];
+	const uint8_t *buttons;
+	size_t button_count;
 	uint32_t frame_limit;
 	uint32_t frames;
 	int frame_ready;
@@ -31,13 +34,21 @@ typedef struct {
 static void boundary(void *context)
 {
 	RuntimeState *state = context;
+	int stop;
 	pthread_mutex_lock(&state->lock);
 	state->frame_ready = 1;
 	pthread_cond_broadcast(&state->condition);
 	while (!state->resume && !state->stop)
 		pthread_cond_wait(&state->condition, &state->lock);
+	stop = state->stop;
 	state->resume = 0;
+	if (stop) {
+		state->worker_done = 1;
+		pthread_cond_broadcast(&state->condition);
+	}
 	pthread_mutex_unlock(&state->lock);
+	if (stop)
+		pthread_exit(NULL);
 }
 
 static int stopped(RuntimeState *state)
@@ -66,12 +77,18 @@ static void *run_game(void *context)
 	return NULL;
 }
 
-int runtime_run(Shell *shell, uint32_t frame_limit, RuntimeResult *result)
+int runtime_run_with_input(
+	Shell *shell, uint32_t frame_limit, const uint8_t *buttons,
+	size_t button_count, RuntimeResult *result)
 {
 	RuntimeState state;
 	memset(&state, 0, sizeof state);
 	state.shell = shell;
+	state.buttons = buttons;
+	state.button_count = button_count;
 	state.frame_limit = frame_limit;
+	if (button_count)
+		g_keys = buttons[0];
 	if (pthread_mutex_init(&state.lock, NULL) != 0)
 		return -1;
 	if (pthread_cond_init(&state.condition, NULL) != 0) {
@@ -108,8 +125,11 @@ int runtime_run(Shell *shell, uint32_t frame_limit, RuntimeResult *result)
 			pthread_mutex_unlock(&state.lock);
 			continue;
 		}
-		g_keys = input.buttons;
+		TimerHandler();
 		state.frames++;
+		if (state.button_count)
+			input.buttons = state.buttons[state.frames % state.button_count];
+		g_keys = input.buttons;
 		apu_trace_set_tick(state.frames);
 		size_t pcm_count = apu_trace_render_pcm(
 			state.audio, AUDIO_SAMPLES_PER_FRAME);
@@ -135,4 +155,9 @@ int runtime_run(Shell *shell, uint32_t frame_limit, RuntimeResult *result)
 	pthread_cond_destroy(&state.condition);
 	pthread_mutex_destroy(&state.lock);
 	return 0;
+}
+
+int runtime_run(Shell *shell, uint32_t frame_limit, RuntimeResult *result)
+{
+	return runtime_run_with_input(shell, frame_limit, NULL, 0, result);
 }
