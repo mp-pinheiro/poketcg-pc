@@ -69,6 +69,67 @@ def reference_boot_input() -> str:
     return "f1000:A:1,f1100:D:1,f1101:A:1,f1200:S:1,f1201:A:1"
 
 
+WVBC_WRAM_OFFSET = 0xCAB8 - 0xC000
+
+
+def reference_boot_frame_offset(oracle: Oracle, probe_frames: int = 600) -> int:
+    """Scanout frames the ROM runs before its first DoFrame boundary.
+
+    gb-recompiled counts PPU scanout frames from power-on, while the native
+    lane counts DoFrame boundaries. wVBlankCounter ($CAB8) increments once per
+    DoFrame on both sides, so the constant phase shift between the two frame
+    indices is probe_frames - wVBlankCounter(probe_frames) (mod 256; the boot
+    offset is small and resolved against that assumption). Every cross-lane
+    comparison must run the reference this many frames ahead and shift its
+    input timeline by the same amount, or the two lanes are compared at
+    different game moments."""
+    result = oracle.run(frame_limit=probe_frames)
+    state = (
+        json.loads(result.state)
+        if isinstance(result.state, (str, bytes))
+        else result.state
+    )
+    counter = state["wram_bank_0_c000_cfff"][WVBC_WRAM_OFFSET]
+    return (probe_frames % 256 - counter) % 256
+
+
+REFERENCE_INCOMPLETE_FIELDS = {"apu_trace"}
+
+
+def fields_incomparable(
+    reference: dict[str, Any], native: dict[str, Any], field: str
+) -> bool:
+    """True when the field carries no comparable reference information.
+
+    Two cases: host-bookkeeping dicts serialized with different schemas on the
+    two sides (timer_frame_counters gains a "cycles" key on oracle-b), and
+    fields the oracle-b scene dump never records at all (apu_trace is always
+    empty there; its parity contract lives in the audio-catalog scenario,
+    which captures the real (address, value) sequence on both lanes)."""
+    if field in REFERENCE_INCOMPLETE_FIELDS:
+        return True
+    ref_value = reference.get(field)
+    nat_value = native.get(field)
+    return (
+        isinstance(ref_value, dict)
+        and isinstance(nat_value, dict)
+        and set(ref_value) != set(nat_value)
+    )
+
+
+def shift_reference_input(text: str, offset: int) -> str:
+    """Shift a comma-separated f<frame>:<key>:<value> timeline by offset."""
+    if offset == 0:
+        return text
+    shifted = []
+    for part in text.split(","):
+        head, rest = part.split(":", 1)
+        if head.startswith("f"):
+            head = f"f{int(head[1:]) + offset}"
+        shifted.append(f"{head}:{rest}")
+    return ",".join(shifted)
+
+
 SAVE_HEADER_MAGIC = b"PKSR"
 SAVE_PAYLOAD_SIZE = 0x8000
 
@@ -127,6 +188,8 @@ def compare_state_fields(
 
     mismatches = []
     for field in fields:
+        if fields_incomparable(reference, native, field):
+            continue
         reference_value = _state_field(reference, field)
         native_value = _state_field(native, field)
         if reference_value is None or native_value is None:
@@ -244,13 +307,23 @@ def main(argv: list[str] | None = None) -> int:
 
                             reference_save = Path(directory) / "reference.gbs"
                             with Oracle(timeout=60.0) as oracle:
+                                frame_offset = reference_boot_frame_offset(oracle)
+                                artifact["reference_frame_offset"] = frame_offset
                                 reference = oracle.run(
-                                    input_file=reference_boot_input(),
-                                    frame_limit=run_frames,
+                                    input_file=shift_reference_input(
+                                        reference_boot_input(), frame_offset
+                                    ),
+                                    frame_limit=run_frames + frame_offset,
                                     save_state=reference_save,
                                 )
                             mismatches = []
+                            schema_skips = []
                             for field in STATE_FIELDS:
+                                if fields_incomparable(reference.state, state, field):
+                                    schema_skips.append(
+                                        {"field": field, "reason": "schema"}
+                                    )
+                                    continue
                                 reference_value = _state_field(reference.state, field)
                                 native_value = _state_field(state, field)
                                 if reference_value is None or native_value is None:
@@ -259,6 +332,7 @@ def main(argv: list[str] | None = None) -> int:
                                 offset = _first_difference(reference_value, native_value)
                                 if offset is not None:
                                     mismatches.append({"field": field, "offset": offset})
+                            artifact["field_schema_skips"] = schema_skips
                             artifact["oracles"] = ["oracle-b", "native"]
                             artifact["comparison"] = {
                                 "status": "PASS" if not mismatches else "FAIL",
@@ -278,8 +352,10 @@ def main(argv: list[str] | None = None) -> int:
 
                         reference_save = Path(directory) / "reference.gbs"
                         with Oracle(timeout=60.0) as oracle:
+                            frame_offset = reference_boot_frame_offset(oracle)
+                            artifact["reference_frame_offset"] = frame_offset
                             reference = oracle.run(
-                                frame_limit=run_frames,
+                                frame_limit=run_frames + frame_offset,
                                 save_state=reference_save,
                             )
                         fields = (
@@ -313,7 +389,12 @@ def main(argv: list[str] | None = None) -> int:
 
                         reference_trace = Path(directory) / "reference-audio.log"
                         with Oracle(timeout=60.0) as oracle:
-                            oracle.run(frame_limit=run_frames, audio_trace=reference_trace)
+                            frame_offset = reference_boot_frame_offset(oracle)
+                            artifact["reference_frame_offset"] = frame_offset
+                            oracle.run(
+                                frame_limit=run_frames + frame_offset,
+                                audio_trace=reference_trace,
+                            )
                         reference_audio = parse_reference_audio(reference_trace)
                         native_audio = state.get("apu_trace")
                         if not isinstance(native_audio, list):

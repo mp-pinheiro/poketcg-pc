@@ -28,8 +28,10 @@ sys.path.insert(0, str(ROOT))
 from scenario import (
     SCENARIO_REQUIREMENTS,
     boot_input,
+    reference_boot_frame_offset,
     reference_boot_input,
     run_native,
+    shift_reference_input,
 )
 from tests.scene_diff import STATE_FIELDS, _first_difference, _state_field
 from tools.oracle.gbrecomp_oracle import Oracle
@@ -80,11 +82,19 @@ def bisect_first_mismatch(
     native_input: Path | None = None,
     oracle_input: str | None = None,
     fields: tuple[str, ...] = DEFAULT_FIELDS,
+    frame_offset: int = 0,
 ) -> dict[str, Any] | None:
-    """Smallest frame N in [1, max_frames] whose end-of-run states diverge,
-    with the first diverging field/offset at that frame; None when the lanes
-    agree over the whole range."""
+    """Smallest native frame N in [1, max_frames] whose end-of-run states
+    diverge, with the first diverging field/offset at that frame; None when
+    the lanes agree over the whole range. The reference runs frame_offset
+    scanout frames ahead of every native frame (boot phase alignment) and its
+    input timeline shifts by the same amount."""
     states: dict[int, tuple[dict[str, Any], dict[str, Any]]] = {}
+    shifted_input = (
+        shift_reference_input(oracle_input, frame_offset)
+        if oracle_input and frame_offset
+        else oracle_input
+    )
 
     def run_pair(frames: int) -> tuple[dict[str, Any], dict[str, Any]]:
         if frames in states:
@@ -104,8 +114,8 @@ def bisect_first_mismatch(
             # The plain oracle dump lacks oam/vram/io/palette and the sram
             # banks; the whole-state save is what fills those in.
             reference = oracle.run(
-                input_file=oracle_input,
-                frame_limit=frames,
+                input_file=shifted_input,
+                frame_limit=frames + frame_offset,
                 save_state=Path(directory) / "reference.gbs",
             )
         pair = (native_state, reference.state)
@@ -156,9 +166,14 @@ def main(argv: list[str] | None = None) -> int:
     oracle_input = builders[1]() if builders else None
     finding: dict[str, Any] | None = None
     with Oracle(timeout=120.0) as oracle:
+        frame_offset = reference_boot_frame_offset(oracle)
         if native_input_values is None:
             finding = bisect_first_mismatch(
-                oracle, args.frames, oracle_input=oracle_input, fields=fields
+                oracle,
+                args.frames,
+                oracle_input=oracle_input,
+                fields=fields,
+                frame_offset=frame_offset,
             )
         else:
             with tempfile.TemporaryDirectory(prefix="poketcg-bisect-input-") as directory:
@@ -173,10 +188,12 @@ def main(argv: list[str] | None = None) -> int:
                     native_input=native_input,
                     oracle_input=oracle_input,
                     fields=fields,
+                    frame_offset=frame_offset,
                 )
     payload: dict[str, Any] = {
         "scenario": args.scenario,
         "max_frames": args.frames,
+        "reference_frame_offset": frame_offset,
         "fields": list(fields),
         **(finding
            if finding
