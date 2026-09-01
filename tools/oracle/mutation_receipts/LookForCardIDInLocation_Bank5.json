@@ -1,0 +1,9 @@
+{
+  "fn": "LookForCardIDInLocation_Bank5",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LookForCardIDInLocation_Bank5\", \"registers\": {\"a\": 0, \"b\": 16, \"c\": 42, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"50176\": \"2a\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LookForCardIDInLocation_Bank5\", \"mismatches\": {\"a\": [0, 60], \"f\": [144, 0], \"e\": [0, 60], \"hl\": [49664, 49723]}}\n",
+  "restored": "{\"fn\": \"LookForCardIDInLocation_Bank5\", \"registers\": {\"a\": 0, \"b\": 16, \"c\": 42, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"50176\": \"2a\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

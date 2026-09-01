@@ -1,0 +1,9 @@
+{
+  "fn": "DancingEmbers_AIEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DancingEmbers_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"28000050\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DancingEmbers_AIEffect\", \"mismatches\": {\"bus\": {\"address\": 52412, \"reference\": \"28000050\", \"native\": \"28000051\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52409, 4]]}}}\n",
+  "restored": "{\"fn\": \"DancingEmbers_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"28000050\"}}, \"status\": \"PASS\"}\n"
+}

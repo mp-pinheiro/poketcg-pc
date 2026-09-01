@@ -1,0 +1,9 @@
+{
+  "fn": "ResetDoFrameFunction_Bank1",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ResetDoFrameFunction_Bank1\", \"registers\": {\"a\": 0, \"b\": 52, \"c\": 86, \"d\": 120, \"e\": 154, \"f\": 128, \"hl\": 51924, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51923\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ResetDoFrameFunction_Bank1\", \"mismatches\": {\"bus\": {\"address\": 51923, \"reference\": \"0000\", \"native\": \"0100\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[51923, 2]]}}}\n",
+  "restored": "{\"fn\": \"ResetDoFrameFunction_Bank1\", \"registers\": {\"a\": 0, \"b\": 52, \"c\": 86, \"d\": 120, \"e\": 154, \"f\": 128, \"hl\": 51924, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51923\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

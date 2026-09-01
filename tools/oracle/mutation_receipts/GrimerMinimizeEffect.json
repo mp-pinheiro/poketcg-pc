@@ -1,0 +1,9 @@
+{
+  "fn": "GrimerMinimizeEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GrimerMinimizeEffect\", \"registers\": {\"a\": 19, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49896, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49895\": \"13\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GrimerMinimizeEffect\", \"mismatches\": {\"bus\": {\"address\": 49895, \"reference\": \"13c2\", \"native\": \"1ec2\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49895, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"GrimerMinimizeEffect\", \"registers\": {\"a\": 19, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49896, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49895\": \"13\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

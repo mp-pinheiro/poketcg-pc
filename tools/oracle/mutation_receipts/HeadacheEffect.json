@@ -1,0 +1,9 @@
+{
+  "fn": "HeadacheEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HeadacheEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50155\": \"02\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HeadacheEffect\", \"mismatches\": {\"bus\": {\"address\": 50155, \"reference\": \"02c2\", \"native\": \"00c2\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[50155, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"HeadacheEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50155\": \"02\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

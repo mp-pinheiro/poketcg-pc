@@ -1,0 +1,9 @@
+{
+  "fn": "Prophecy_ReorderDeckEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Prophecy_ReorderDeckEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 49905, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49666\": \"0000\", \"49790\": \"0102ff\", \"49850\": \"00\", \"65431\": \"c2\", \"65440\": \"000102ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Prophecy_ReorderDeckEffect\", \"mismatches\": {\"f\": [144, 0], \"hl\": [49905, 65441]}}\n",
+  "restored": "{\"fn\": \"Prophecy_ReorderDeckEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 49905, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49666\": \"0000\", \"49790\": \"0102ff\", \"49850\": \"00\", \"65431\": \"c2\", \"65440\": \"000102ff\"}}, \"status\": \"PASS\"}\n"
+}

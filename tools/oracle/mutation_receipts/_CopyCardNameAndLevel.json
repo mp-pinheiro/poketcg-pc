@@ -1,0 +1,9 @@
+{
+  "fn": "_CopyCardNameAndLevel",
+  "case": "tests/cases/copy_card_name.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_CopyCardNameAndLevel\", \"registers\": {\"a\": 32, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 192, \"hl\": 50591, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"06426c6173746f697365204c7635322020202020202020202020200000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_CopyCardNameAndLevel\", \"mismatches\": {\"a\": [32, 34], \"f\": [192, 0], \"hl\": [50591, 50592], \"bus\": {\"address\": 50586, \"reference\": \"6f697365204c763532\", \"native\": \"6f6973650511052505\", \"reference_size\": 32, \"native_size\": 32, \"spans\": [[50576, 32]]}}}\n",
+  "restored": "{\"fn\": \"_CopyCardNameAndLevel\", \"registers\": {\"a\": 32, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 192, \"hl\": 50591, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"06426c6173746f697365204c7635322020202020202020202020200000000000\"}}, \"status\": \"PASS\"}\n"
+}

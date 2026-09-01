@@ -1,0 +1,9 @@
+{
+  "fn": "Cowardice_CheckUseAndBench",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Cowardice_CheckUseAndBench\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 183, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"01ffffffffffff10\", \"49903\": \"01\", \"50107\": \"ffffffffffff\", \"65431\": \"c3\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Cowardice_CheckUseAndBench\", \"mismatches\": {\"f\": [112, 113]}}\n",
+  "restored": "{\"fn\": \"Cowardice_CheckUseAndBench\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 183, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"01ffffffffffff10\", \"49903\": \"01\", \"50107\": \"ffffffffffff\", \"65431\": \"c3\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

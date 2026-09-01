@@ -1,0 +1,9 @@
+{
+  "fn": "MagmarFlamethrower_DiscardEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MagmarFlamethrower_DiscardEffect\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"65440\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MagmarFlamethrower_DiscardEffect\", \"mismatches\": {\"a\": [1, 0]}}\n",
+  "restored": "{\"fn\": \"MagmarFlamethrower_DiscardEffect\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"65440\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

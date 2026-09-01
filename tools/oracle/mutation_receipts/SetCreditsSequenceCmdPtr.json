@@ -1,0 +1,9 @@
+{
+  "fn": "SetCreditsSequenceCmdPtr",
+  "case": "tests/cases/credits_sequence_commands.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetCreditsSequenceCmdPtr\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54833\": \"ef5a00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetCreditsSequenceCmdPtr\", \"mismatches\": {\"bus\": {\"address\": 54835, \"reference\": \"ef5a00\", \"native\": \"ef5a01\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54833, 3]]}}}\n",
+  "restored": "{\"fn\": \"SetCreditsSequenceCmdPtr\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54833\": \"ef5a00\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "PrimeapeFurySwipes_AIEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrimeapeFurySwipes_AIEffect\", \"registers\": {\"a\": 60, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 60, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrimeapeFurySwipes_AIEffect\", \"mismatches\": {\"a\": [60, 30]}}\n",
+  "restored": "{\"fn\": \"PrimeapeFurySwipes_AIEffect\", \"registers\": {\"a\": 60, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 60, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

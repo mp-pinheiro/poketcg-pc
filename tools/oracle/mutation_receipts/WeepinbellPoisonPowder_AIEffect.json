@@ -1,0 +1,9 @@
+{
+  "fn": "WeepinbellPoisonPowder_AIEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"WeepinbellPoisonPowder_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"05\", \"52411\": \"000a\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"WeepinbellPoisonPowder_AIEffect\", \"mismatches\": {\"bus\": {\"address\": 52409, \"reference\": \"05000a\", \"native\": \"06000a\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52409, 1], [52411, 2]]}}}\n",
+  "restored": "{\"fn\": \"WeepinbellPoisonPowder_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"05\", \"52411\": \"000a\"}}, \"status\": \"PASS\"}\n"
+}

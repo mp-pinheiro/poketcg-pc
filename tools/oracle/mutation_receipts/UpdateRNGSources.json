@@ -1,0 +1,9 @@
+{
+  "fn": "UpdateRNGSources",
+  "case": "tests/cases/random.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UpdateRNGSources\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"000001\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UpdateRNGSources\", \"mismatches\": {\"a\": [0, 1], \"bus\": {\"address\": 51914, \"reference\": \"000001\", \"native\": \"010001\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[51914, 3]]}}}\n",
+  "restored": "{\"fn\": \"UpdateRNGSources\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"000001\"}}, \"status\": \"PASS\"}\n"
+}

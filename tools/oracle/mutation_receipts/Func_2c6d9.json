@@ -1,0 +1,9 @@
+{
+  "fn": "Func_2c6d9",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_2c6d9\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {\"0\": {\"39296\": \"18\", \"39474\": \"1d\"}}, \"wram\": {\"50576\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_2c6d9\", \"mismatches\": {\"f\": [128, 0], \"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"Func_2c6d9\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {\"0\": {\"39296\": \"18\", \"39474\": \"1d\"}}, \"wram\": {\"50576\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

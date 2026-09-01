@@ -1,0 +1,9 @@
+{
+  "fn": "MrMimeMeditate_DamageBoostEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MrMimeMeditate_DamageBoostEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50107\": \"00\", \"50120\": \"00\", \"50304\": \"01\", \"52409\": \"7100\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MrMimeMeditate_DamageBoostEffect\", \"mismatches\": {\"bus\": {\"address\": 52409, \"reference\": \"0000017100c2\", \"native\": \"0000017200c2\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[50107, 1], [50120, 1], [50304, 1], [52409, 2], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"MrMimeMeditate_DamageBoostEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50107\": \"00\", \"50120\": \"00\", \"50304\": \"01\", \"52409\": \"7100\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

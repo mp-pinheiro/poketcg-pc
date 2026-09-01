@@ -1,0 +1,9 @@
+{
+  "fn": "Wildfire_DiscardDeckEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Wildfire_DiscardDeckEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50046\": \"0102\", \"50106\": \"01\", \"50157\": \"01\", \"65431\": \"c2\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Wildfire_DiscardDeckEffect\", \"mismatches\": {\"bus\": {\"address\": 50106, \"reference\": \"01020101c201\", \"native\": \"01023c3cc201\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[50046, 2], [50106, 1], [50157, 1], [65431, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"Wildfire_DiscardDeckEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50046\": \"0102\", \"50106\": \"01\", \"50157\": \"01\", \"65431\": \"c2\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "CheckPrintPoisoned",
+  "case": "tests/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckPrintPoisoned\", \"registers\": {\"a\": 128, \"b\": 2, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"39010\": \"08\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckPrintPoisoned\", \"mismatches\": {\"bus\": {\"address\": 39010, \"reference\": \"08\", \"native\": \"80\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[39010, 1]]}}}\n",
+  "restored": "{\"fn\": \"CheckPrintPoisoned\", \"registers\": {\"a\": 128, \"b\": 2, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"39010\": \"08\"}}, \"status\": \"PASS\"}\n"
+}

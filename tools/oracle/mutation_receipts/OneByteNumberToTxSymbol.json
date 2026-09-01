@@ -1,0 +1,9 @@
+{
+  "fn": "OneByteNumberToTxSymbol",
+  "case": "tests/cases/menus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OneByteNumberToTxSymbol\", \"registers\": {\"a\": 32, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50576, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"202000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OneByteNumberToTxSymbol\", \"mismatches\": {\"a\": [32, 33], \"bus\": {\"address\": 50577, \"reference\": \"202000\", \"native\": \"202100\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[50576, 3]]}}}\n",
+  "restored": "{\"fn\": \"OneByteNumberToTxSymbol\", \"registers\": {\"a\": 32, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50576, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"202000\"}}, \"status\": \"PASS\"}\n"
+}

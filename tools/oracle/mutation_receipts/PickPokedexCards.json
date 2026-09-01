@@ -1,0 +1,9 @@
+{
+  "fn": "PickPokedexCards",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PickPokedexCards\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49790\": \"0102030405\", \"49850\": \"00\", \"52646\": \"00\", \"52744\": \"c9c9c9c9c9ff\", \"52751\": \"0102030405\", \"52762\": \"0102030405\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PickPokedexCards\", \"mismatches\": {\"f\": [144, 16]}}\n",
+  "restored": "{\"fn\": \"PickPokedexCards\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49790\": \"0102030405\", \"49850\": \"00\", \"52646\": \"00\", \"52744\": \"c9c9c9c9c9ff\", \"52751\": \"0102030405\", \"52762\": \"0102030405\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

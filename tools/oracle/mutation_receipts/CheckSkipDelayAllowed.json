@@ -1,0 +1,9 @@
+{
+  "fn": "CheckSkipDelayAllowed",
+  "case": "tests/cases/core.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckSkipDelayAllowed\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52466\": \"01\", \"65424\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckSkipDelayAllowed\", \"mismatches\": {\"f\": [16, 160]}}\n",
+  "restored": "{\"fn\": \"CheckSkipDelayAllowed\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52466\": \"01\", \"65424\": \"02\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "LoadConsolePaletteData",
+  "case": "tests/cases/color.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadConsolePaletteData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"53907\": \"00\", \"54039\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadConsolePaletteData\", \"mismatches\": {\"bus\": {\"address\": 53907, \"reference\": \"000000\", \"native\": \"00ff00\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[51892, 1], [53907, 1], [54039, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadConsolePaletteData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"53907\": \"00\", \"54039\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

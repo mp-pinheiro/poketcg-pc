@@ -1,0 +1,9 @@
+{
+  "fn": "FireSpin_CheckEnergy",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FireSpin_CheckEnergy\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 192, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"50176\": \"01\", \"50448\": \"00ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FireSpin_CheckEnergy\", \"mismatches\": {\"f\": [112, 96]}}\n",
+  "restored": "{\"fn\": \"FireSpin_CheckEnergy\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 192, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"50176\": \"01\", \"50448\": \"00ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

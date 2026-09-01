@@ -1,0 +1,9 @@
+{
+  "fn": "GetDamageNumberChars",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetDamageNumberChars\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54449\": \"0000\", \"54452\": \"00004f\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetDamageNumberChars\", \"mismatches\": {\"bus\": {\"address\": 54452, \"reference\": \"000000004f\", \"native\": \"000050504f\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[54449, 2], [54452, 3]]}}}\n",
+  "restored": "{\"fn\": \"GetDamageNumberChars\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54449\": \"0000\", \"54452\": \"00004f\"}}, \"status\": \"PASS\"}\n"
+}

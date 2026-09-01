@@ -1,0 +1,9 @@
+{
+  "fn": "GetCardType",
+  "case": "tests/cases/card_data.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetCardType\", \"registers\": {\"a\": 9, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetCardType\", \"mismatches\": {\"a\": [9, 0]}}\n",
+  "restored": "{\"fn\": \"GetCardType\", \"registers\": {\"a\": 9, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

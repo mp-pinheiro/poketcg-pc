@@ -1,0 +1,9 @@
+{
+  "fn": "PlayShuffleAndDrawCardsAnimation_TurnDuelist",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayShuffleAndDrawCardsAnimation_TurnDuelist\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"51906\": \"09\", \"51923\": \"0000\", \"52201\": \"07\", \"54307\": \"ffffffffffffffff\", \"54444\": \"0000\", \"54464\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayShuffleAndDrawCardsAnimation_TurnDuelist\", \"mismatches\": {\"bus\": {\"address\": 51899, \"reference\": \"8009000007\", \"native\": \"0000a23b00\", \"reference_size\": 17, \"native_size\": 17, \"spans\": [[51899, 1], [51906, 1], [51923, 2], [52201, 1], [54307, 8], [54444, 2], [54464, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"PlayShuffleAndDrawCardsAnimation_TurnDuelist\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"51906\": \"09\", \"51923\": \"0000\", \"52201\": \"07\", \"54307\": \"ffffffffffffffff\", \"54444\": \"0000\", \"54464\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

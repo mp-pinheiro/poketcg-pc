@@ -1,0 +1,9 @@
+{
+  "fn": "SortTempHandByIDList",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SortTempHandByIDList\", \"registers\": {\"a\": 0, \"b\": 16, \"c\": 0, \"d\": 198, \"e\": 2, \"f\": 128, \"hl\": 50450, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"1020\", \"50448\": \"0001ff\", \"50688\": \"201000\", \"52654\": \"00c6\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SortTempHandByIDList\", \"mismatches\": {\"b\": [16, 0], \"e\": [2, 0], \"hl\": [50450, 0]}}\n",
+  "restored": "{\"fn\": \"SortTempHandByIDList\", \"registers\": {\"a\": 0, \"b\": 16, \"c\": 0, \"d\": 198, \"e\": 2, \"f\": 128, \"hl\": 50450, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"1020\", \"50448\": \"0001ff\", \"50688\": \"201000\", \"52654\": \"00c6\"}}, \"status\": \"PASS\"}\n"
+}

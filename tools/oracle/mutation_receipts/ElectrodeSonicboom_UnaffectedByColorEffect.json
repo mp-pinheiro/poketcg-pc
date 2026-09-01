@@ -1,0 +1,9 @@
+{
+  "fn": "ElectrodeSonicboom_UnaffectedByColorEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ElectrodeSonicboom_UnaffectedByColorEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 52410, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"0080\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ElectrodeSonicboom_UnaffectedByColorEffect\", \"mismatches\": {\"bus\": {\"address\": 52410, \"reference\": \"0080\", \"native\": \"0000\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52409, 2]]}}}\n",
+  "restored": "{\"fn\": \"ElectrodeSonicboom_UnaffectedByColorEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 52410, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"0080\"}}, \"status\": \"PASS\"}\n"
+}

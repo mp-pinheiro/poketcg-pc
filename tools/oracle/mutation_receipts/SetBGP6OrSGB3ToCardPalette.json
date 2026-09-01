@@ -1,0 +1,9 @@
+{
+  "fn": "SetBGP6OrSGB3ToCardPalette",
+  "case": "tests/cases/core.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetBGP6OrSGB3ToCardPalette\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"02\", \"52000\": \"0001020304050607\", \"52771\": \"0001020304050607\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetBGP6OrSGB3ToCardPalette\", \"mismatches\": {\"bus\": {\"address\": 52001, \"reference\": \"02000102030405\", \"native\": \"02000000000000\", \"reference_size\": 17, \"native_size\": 17, \"spans\": [[51892, 1], [52000, 8], [52771, 8]]}}}\n",
+  "restored": "{\"fn\": \"SetBGP6OrSGB3ToCardPalette\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"02\", \"52000\": \"0001020304050607\", \"52771\": \"0001020304050607\"}}, \"status\": \"PASS\"}\n"
+}

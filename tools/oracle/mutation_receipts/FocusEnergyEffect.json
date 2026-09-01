@@ -1,0 +1,9 @@
+{
+  "fn": "FocusEnergyEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FocusEnergyEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49895\": \"00\", \"52419\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FocusEnergyEffect\", \"mismatches\": {\"bus\": {\"address\": 49895, \"reference\": \"0000c2\", \"native\": \"1900c2\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[49895, 1], [52419, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"FocusEnergyEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49895\": \"00\", \"52419\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

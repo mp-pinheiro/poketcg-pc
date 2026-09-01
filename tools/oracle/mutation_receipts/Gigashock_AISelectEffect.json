@@ -1,0 +1,9 @@
+{
+  "fn": "Gigashock_AISelectEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Gigashock_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50121\": \"1e0a1428\", \"50159\": \"05\", \"65431\": \"c2\", \"65440\": \"040103ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Gigashock_AISelectEffect\", \"mismatches\": {\"bus\": {\"address\": 65443, \"reference\": \"c2040103ff\", \"native\": \"c204010300\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[50121, 4], [50159, 1], [65431, 1], [65440, 4]]}}}\n",
+  "restored": "{\"fn\": \"Gigashock_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50121\": \"1e0a1428\", \"50159\": \"05\", \"65431\": \"c2\", \"65440\": \"040103ff\"}}, \"status\": \"PASS\"}\n"
+}

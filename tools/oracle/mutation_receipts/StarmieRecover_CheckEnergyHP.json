@@ -1,0 +1,9 @@
+{
+  "fn": "StarmieRecover_CheckEnergyHP",
+  "case": "tests/cases/effect_functions.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"StarmieRecover_CheckEnergyHP\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 40, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 173, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"1010\", \"49851\": \"00\", \"49864\": \"28\", \"50176\": \"0803\", \"52251\": \"0000000100000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"StarmieRecover_CheckEnergyHP\", \"mismatches\": {\"c\": [40, 0], \"hl\": [173, 195]}}\n",
+  "restored": "{\"fn\": \"StarmieRecover_CheckEnergyHP\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 40, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 173, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"1010\", \"49851\": \"00\", \"49864\": \"28\", \"50176\": \"0803\", \"52251\": \"0000000100000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

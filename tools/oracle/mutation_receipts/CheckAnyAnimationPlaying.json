@@ -1,0 +1,9 @@
+{
+  "fn": "CheckAnyAnimationPlaying",
+  "case": "tests/cases/play_animation.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckAnyAnimationPlaying\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"54307\": \"ffffffffffffffff\", \"54464\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckAnyAnimationPlaying\", \"mismatches\": {\"f\": [192, 80]}}\n",
+  "restored": "{\"fn\": \"CheckAnyAnimationPlaying\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"54307\": \"ffffffffffffffff\", \"54464\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

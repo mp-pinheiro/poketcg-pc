@@ -1,0 +1,9 @@
+{
+  "fn": "GetEnergyAttachedMultiplierDamage",
+  "case": "tests/cases/effect_functions.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetEnergyAttachedMultiplierDamage\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 0, \"e\": 20, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"1010\", \"50176\": \"0102\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetEnergyAttachedMultiplierDamage\", \"mismatches\": {\"e\": [20, 18]}}\n",
+  "restored": "{\"fn\": \"GetEnergyAttachedMultiplierDamage\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 0, \"e\": 20, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"1010\", \"50176\": \"0102\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n"
+}

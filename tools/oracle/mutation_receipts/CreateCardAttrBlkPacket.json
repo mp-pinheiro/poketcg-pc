@@ -1,0 +1,9 @@
+{
+  "fn": "CreateCardAttrBlkPacket",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CreateCardAttrBlkPacket\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 51936, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51936\": \"210103000000070500000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreateCardAttrBlkPacket\", \"mismatches\": {\"bus\": {\"address\": 51936, \"reference\": \"2101030000\", \"native\": \"2201030000\", \"reference_size\": 32, \"native_size\": 32, \"spans\": [[51936, 32]]}}}\n",
+  "restored": "{\"fn\": \"CreateCardAttrBlkPacket\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 51936, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51936\": \"210103000000070500000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}, \"status\": \"PASS\"}\n"
+}

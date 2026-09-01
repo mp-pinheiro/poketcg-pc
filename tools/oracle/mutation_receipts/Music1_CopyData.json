@@ -1,0 +1,9 @@
+{
+  "fn": "Music1_CopyData",
+  "case": "tests/cases/music1.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Music1_CopyData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 195, \"e\": 0, \"f\": 0, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Music1_CopyData\", \"mismatches\": {\"hl\": [49664, 49409], \"d\": [195, 194], \"e\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"Music1_CopyData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 195, \"e\": 0, \"f\": 0, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

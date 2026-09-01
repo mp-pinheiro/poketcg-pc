@@ -1,0 +1,9 @@
+{
+  "fn": "SpacingOut_CheckDamage",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SpacingOut_CheckDamage\", \"registers\": {\"a\": 201, \"b\": 0, \"c\": 201, \"d\": 0, \"e\": 0, \"f\": 96, \"hl\": 173, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49339\": \"01\", \"49352\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SpacingOut_CheckDamage\", \"mismatches\": {\"f\": [96, 64]}}\n",
+  "restored": "{\"fn\": \"SpacingOut_CheckDamage\", \"registers\": {\"a\": 201, \"b\": 0, \"c\": 201, \"d\": 0, \"e\": 0, \"f\": 96, \"hl\": 173, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49339\": \"01\", \"49352\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

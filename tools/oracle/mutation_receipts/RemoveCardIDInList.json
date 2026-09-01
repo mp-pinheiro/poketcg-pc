@@ -1,0 +1,9 @@
+{
+  "fn": "RemoveCardIDInList",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"RemoveCardIDInList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 16, \"f\": 144, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"01ffff\", \"50176\": \"1020\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"RemoveCardIDInList\", \"mismatches\": {\"a\": [0, 1], \"bus\": {\"address\": 49408, \"reference\": \"01ffff1020\", \"native\": \"00ffff1020\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[49408, 3], [50176, 2], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"RemoveCardIDInList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 16, \"f\": 144, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"01ffff\", \"50176\": \"1020\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

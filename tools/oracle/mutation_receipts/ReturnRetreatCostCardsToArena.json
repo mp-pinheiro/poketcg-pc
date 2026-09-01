@@ -1,0 +1,9 @@
+{
+  "fn": "ReturnRetreatCostCardsToArena",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ReturnRetreatCostCardsToArena\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 65443, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"65442\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ReturnRetreatCostCardsToArena\", \"mismatches\": {\"hl\": [65443, 65444]}}\n",
+  "restored": "{\"fn\": \"ReturnRetreatCostCardsToArena\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 65443, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"65442\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

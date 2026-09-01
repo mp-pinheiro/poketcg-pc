@@ -1,0 +1,9 @@
+{
+  "fn": "BCCoordToBGMap0Address",
+  "case": "tests/cases/empty_screen.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"BCCoordToBGMap0Address\", \"registers\": {\"a\": 170, \"b\": 18, \"c\": 52, \"d\": 158, \"e\": 146, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"BCCoordToBGMap0Address\", \"mismatches\": {\"d\": [158, 154], \"e\": [146, 116]}}\n",
+  "restored": "{\"fn\": \"BCCoordToBGMap0Address\", \"registers\": {\"a\": 170, \"b\": 18, \"c\": 52, \"d\": 158, \"e\": 146, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

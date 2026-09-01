@@ -1,0 +1,9 @@
+{
+  "fn": "SetListPointer",
+  "case": "tests/cases/list.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetListPointer\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52082\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetListPointer\", \"mismatches\": {\"bus\": {\"address\": 52082, \"reference\": \"0000\", \"native\": \"ff00\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52082, 2]]}}}\n",
+  "restored": "{\"fn\": \"SetListPointer\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52082\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

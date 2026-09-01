@@ -1,0 +1,9 @@
+{
+  "fn": "ClefairyDoll_PlaceInPlayAreaEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ClefairyDoll_PlaceInPlayAreaEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49730\": \"00\", \"49851\": \"00\", \"49858\": \"00\", \"49864\": \"28\", \"49870\": \"00\", \"49876\": \"00\", \"49882\": \"00\", \"49888\": \"00\", \"49902\": \"000100\", \"50176\": \"08\", \"65431\": \"c2\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ClefairyDoll_PlaceInPlayAreaEffect\", \"mismatches\": {\"bus\": {\"address\": 49851, \"reference\": \"000000280000\", \"native\": \"000100c90000\", \"reference_size\": 14, \"native_size\": 14, \"spans\": [[49730, 1], [49851, 1], [49858, 1], [49864, 1], [49870, 1], [49876, 1], [49882, 1], [49888, 1], [49902, 3], [50176, 1], [65431, 1], [65439, 1]]}}}\n",
+  "restored": "{\"fn\": \"ClefairyDoll_PlaceInPlayAreaEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49730\": \"00\", \"49851\": \"00\", \"49858\": \"00\", \"49864\": \"28\", \"49870\": \"00\", \"49876\": \"00\", \"49882\": \"00\", \"49888\": \"00\", \"49902\": \"000100\", \"50176\": \"08\", \"65431\": \"c2\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "DestinyBond_CheckEnergy",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DestinyBond_CheckEnergy\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 194, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52251\": \"0000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DestinyBond_CheckEnergy\", \"mismatches\": {\"hl\": [194, 0]}}\n",
+  "restored": "{\"fn\": \"DestinyBond_CheckEnergy\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 194, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52251\": \"0000000000000000\"}}, \"status\": \"PASS\"}\n"
+}

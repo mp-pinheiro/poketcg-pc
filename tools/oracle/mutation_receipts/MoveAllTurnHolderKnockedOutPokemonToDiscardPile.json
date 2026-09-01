@@ -1,0 +1,9 @@
+{
+  "fn": "MoveAllTurnHolderKnockedOutPokemonToDiscardPile",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MoveAllTurnHolderKnockedOutPokemonToDiscardPile\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49865\": \"00\", \"49903\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MoveAllTurnHolderKnockedOutPokemonToDiscardPile\", \"mismatches\": {\"bus\": {\"address\": 49903, \"reference\": \"0000c2\", \"native\": \"0001c2\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[49865, 1], [49903, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"MoveAllTurnHolderKnockedOutPokemonToDiscardPile\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49865\": \"00\", \"49903\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

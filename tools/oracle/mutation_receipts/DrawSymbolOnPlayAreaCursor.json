@@ -1,0 +1,9 @@
+{
+  "fn": "DrawSymbolOnPlayAreaCursor",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawSymbolOnPlayAreaCursor\", \"registers\": {\"a\": 0, \"b\": 119, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"38976\": \"77\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawSymbolOnPlayAreaCursor\", \"mismatches\": {\"bus\": {\"address\": 38976, \"reference\": \"77\", \"native\": \"00\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[38976, 1]]}}}\n",
+  "restored": "{\"fn\": \"DrawSymbolOnPlayAreaCursor\", \"registers\": {\"a\": 0, \"b\": 119, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"38976\": \"77\"}}, \"status\": \"PASS\"}\n"
+}

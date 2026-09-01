@@ -1,0 +1,9 @@
+{
+  "fn": "SubtractFromDamage",
+  "case": "tests/cases/damage.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SubtractFromDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SubtractFromDamage\", \"mismatches\": {\"bus\": {\"address\": 52410, \"reference\": \"0000\", \"native\": \"00ff\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52409, 2]]}}}\n",
+  "restored": "{\"fn\": \"SubtractFromDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

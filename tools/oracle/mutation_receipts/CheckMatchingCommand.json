@@ -1,0 +1,9 @@
+{
+  "fn": "CheckMatchingCommand",
+  "case": "tests/cases/effect_commands.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckMatchingCommand\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 18168, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52770\": \"0b\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckMatchingCommand\", \"mismatches\": {\"hl\": [18168, 18160]}}\n",
+  "restored": "{\"fn\": \"CheckMatchingCommand\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 18168, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52770\": \"0b\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "Cowardice_ReturnToHandEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Cowardice_ReturnToHandEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49790\": \"ff\", \"49851\": \"02ffffffffffff\", \"49901\": \"00\", \"49903\": \"01\", \"50107\": \"ffffffffffff\", \"51906\": \"00\", \"65431\": \"c2\", \"65440\": \"0001\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Cowardice_ReturnToHandEffect\", \"mismatches\": {\"a\": [0, 1], \"bus\": {\"address\": 51906, \"reference\": \"ffffffff00c20001\", \"native\": \"ffffffff01c20001\", \"reference_size\": 20, \"native_size\": 20, \"spans\": [[49790, 1], [49851, 7], [49901, 1], [49903, 1], [50107, 6], [51906, 1], [65431, 1], [65440, 2]]}}}\n",
+  "restored": "{\"fn\": \"Cowardice_ReturnToHandEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49790\": \"ff\", \"49851\": \"02ffffffffffff\", \"49901\": \"00\", \"49903\": \"01\", \"50107\": \"ffffffffffff\", \"51906\": \"00\", \"65431\": \"c2\", \"65440\": \"0001\"}}, \"status\": \"PASS\"}\n"
+}
