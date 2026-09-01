@@ -1864,7 +1864,11 @@ CASES["HealingWind_InitialEffect"] = [{}, dict(POISON)]
 
 # >>> factory PickRandomBasicCardFromDeck
 CONTRACT["PickRandomBasicCardFromDeck"] = {"compare": ("a", "f"), "preserve": ()}
-CASES["PickRandomBasicCardFromDeck"] = [{}, dict(POISON)]
+CASES["PickRandomBasicCardFromDeck"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3C"}},
+    {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xC27E: b"\x00\xFF", 0xC400: b"\x02"}},
+    dict(POISON),
+]
 # <<< factory PickRandomBasicCardFromDeck
 
 # >>> factory DrawSymbolOnPlayAreaCursor
@@ -9425,7 +9429,7 @@ MUTATIONS["Gale_LoadAnimation"] = {"source_symbol": "Gale_LoadAnimation", "befor
 MUTATIONS["CreatePlayableStage2PokemonCardListFromHand"] = {"source_symbol": "CreatePlayableStage2PokemonCardListFromHand", "before": "gb_write8(dst, 0xffu);", "after": "gb_write8(dst, 0xfeu);", "case_ids": ["CreatePlayableStage2PokemonCardListFromHand-0", "CreatePlayableStage2PokemonCardListFromHand-1"]}
 # <<< factory-mutation CreatePlayableStage2PokemonCardListFromHand
 # >>> factory-mutation PickRandomBasicCardFromDeck
-MUTATIONS["PickRandomBasicCardFromDeck"] = {"source_symbol": "PickRandomBasicCardFromDeck", "before": "wLoadedCard2Type >= TYPE_ENERGY", "after": "wLoadedCard2Type > TYPE_ENERGY", "case_ids": ["PickRandomBasicCardFromDeck-0", "PickRandomBasicCardFromDeck-1"]}
+MUTATIONS["PickRandomBasicCardFromDeck"] = {"source_symbol": "PickRandomBasicCardFromDeck", "before": "if (list.f & 0x10u)\n\t\treturn 0xFFu;", "after": "if (list.f & 0x10u)\n\t\treturn 0x00u;", "case_ids": ["PickRandomBasicCardFromDeck-0", "PickRandomBasicCardFromDeck-1"]}
 # <<< factory-mutation PickRandomBasicCardFromDeck
 # >>> factory-mutation StepIn_SwitchEffect
 MUTATIONS["StepIn_SwitchEffect"] = {"source_symbol": "StepIn_SwitchEffect", "before": "SwapArenaWithBenchPokemon(hTemp_ffa0)", "after": "SwapArenaWithBenchPokemon((uint8_t)(hTemp_ffa0 + 1u))", "case_ids": ["StepIn_SwitchEffect-0"]}

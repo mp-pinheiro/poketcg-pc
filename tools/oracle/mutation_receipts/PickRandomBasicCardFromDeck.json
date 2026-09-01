@@ -1,0 +1,9 @@
+{
+  "fn": "PickRandomBasicCardFromDeck",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PickRandomBasicCardFromDeck\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49850\": \"3c\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PickRandomBasicCardFromDeck\", \"mismatches\": {\"a\": [255, 0], \"f\": [144, 128]}}\n",
+  "restored": "{\"fn\": \"PickRandomBasicCardFromDeck\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49850\": \"3c\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
