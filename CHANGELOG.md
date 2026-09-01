@@ -2,112 +2,89 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.217.0 - 2026-08-31
+## v0.218.0 - 2026-09-01
 
 ### Bug Fixes
 
-- *(factory)* Reopen new game
-- *(factory)* Reopen intro sequence
-- *(factory)* Reopen continue duel
-- *(factory)* Relocate intro routine
-- *(factory)* Reopen enter script
-- *(factory)* Bound credits event check
-- *(oracle)* Preserve event completion spec
-- *(factory)* Unblock Func_1f96
-- *(factory)* Unblock AIDoAction_Turn
-- *(factory)* Unblock StoneBarrage effect
-- *(factory)* Unblock DebugDuelMode
-- *(factory)* Unblock SuperPotion AI
-- *(factory)* Unblock Chansey effect
-- *(factory)* Unblock SuperEnergy retrieval
-- *(factory)* Unblock ComputerSearch selection
-- *(factory)* Unblock Jigglypuff effect
-- *(factory)* Unblock EnergyConversion effect
-- *(factory)* Unblock FriendshipSong effect
-- *(factory)* Unblock Magneton recoil effect
-- *(duel)* Skip disabled attack animations
-- *(factory)* Unblock Golem selfdestruct
-- *(factory)* Unblock Magnemite effect
-- *(factory)* Unblock Magneton35 effect
-- *(factory)* Unblock PayDay effect
-- *(factory)* Unblock PokeBall selection
-- *(factory)* Refresh changed context
-- *(factory)* Unblock Prophecy selection
-- *(factory)* Unblock Quickfreeze effect
-- *(factory)* Retry corrected duel init blocker
-- *(factory)* Retry animation effect blockers
-- *(factory)* Retry interactive effect blockers
-- *(factory)* Retry corrected interactive fixtures
-- *(factory)* Diagnose interactive blockers
-- *(factory)* Retry frame-safe solar power
-- *(factory)* Diagnose solar animation boundary
-- *(factory)* Retry chansey effect
-- *(factory)* Retry duel setup state
-- *(factory)* Retry link handshake fixture
-- *(oracle)* Align captured entry stack pointers
-- *(factory)* Support explicit entry stack frames
-- *(oracle)* Normalize stack return frames
-- *(oracle)* Unify synthetic call frames
-- *(oracle)* Restore ROM bank request
-- *(factory)* Reopen exhausted retries
-- *(factory)* Reopen retired routines
-- *(script)* Align bank oracle cases
-- *(factory)* Preserve SCC packet members
+- *(factory)* Stabilize oracle gate
+- *(completion)* Align revision keys
+- *(completion)* Finish tracker sync
+- *(completion)* Restore assurance recipes
+- *(port)* Preserve graphics bank state
+- *(port)* Stabilize title audio
 
 ### Features
 
-- *(port)* GiftCenter_SendDeck
-- *(port)* HandleGiftCenter
-- *(port)* GameEvent_GiftCenter
-- *(port)* MainMenu_NewGame
-- *(port)* MainMenu_ContinueFromDiary
-- *(port)* MainMenu_ContinueDuel
-- *(port)* PlayIntroSequence
-- *(port)* HandleTitleScreen
-- *(port)* _GameLoop
-- *(port)* Func_3b11
-- *(port)* EnterScript
-- *(port)* SetScriptData
-- *(port)* Register credits sequence
-- *(port)* DebugCredits
-- *(port)* GameEvent_Credits
-- *(port)* _DebugLookAtSprite
-- *(port)* DebugLookAtSprite
-- *(port)* Func_1f96
-- *(port)* AIDecide_SuperPotion_Phase08
-- *(port)* AIPlay_SuperEnergyRetrieval
-- *(port)* SetUpAndStartLinkDuel
-- *(port)* GameEvent_BattleCenter
-- *(port)* SetLinkDuelTransmissionFrameFunction
-- *(port)* UnreferencedSaveSerialReturnAddress
-- *(port)* AIDoAction_Turn +1
-- *(port)* Duel_Init
-- *(port)* ComputerSearch_PlayerDeckSelection
-- *(port)* JigglypuffDoubleEdgeEffect +1
-- *(port)* Recycle_PlayerSelection
-- *(port)* GolemSelfdestructEffect
-- *(port)* ChanseyDoubleEdgeEffect
-- *(port)* FriendshipSong_AddToBench50PercentEff~
-- *(port)* SubmissionEffect
-- *(port)* MagnemiteSelfdestructEffect
-- *(port)* MagnetonLv28SelfdestructEffect +3
-- *(port)* EnergyConversion_AddToHandEffect +3
-- *(port)* PokemonTrader_PlayerDeckSelection +3
-- *(port)* PokeBall_PlayerSelection
-- *(port)* PokemonTrader_TradeCardsEffect
-- *(script)* Dispatch overworld scripts
-- *(port)* RST20
-- *(port)* HandleDeckConfigurationMenu +1
-- *(port)* DeckSelectionMenu +2
-- *(port)* PauseMenu_Deck
-- *(port)* PauseMenu
-- *(port)* OpenPauseMenu
-- *(port)* ScriptCommand_OpenMenu
-- *(port)* HandlePlayerMoveMode
-- *(port)* CallHandlePlayerMoveMode
-- *(port)* HandleOverworldMode
-- *(port)* LoadMap
-- *(port)* OpenDuelCheckMenu +1
-- *(port)* DuelCheckMenu_InPlayArea +5
-- *(port)* DisplayPlayAreaScreen +7
+- *(port)* DuelistSelectForcedSwitch +3
+- *(port)* HandlePrinterMenu +1
+- *(port)* Defender_PlayerSelection +3
+- *(port)* Start
+- *(port)* GameLoop
+- *(port)* Reset
+- *(port)* HandleDestinyBondAndBetweenTurnKnockO~
+- *(port)* MrFuji_PlayerSelection
+- *(port)* Switch_PlayerSelection
+- *(port)* Cowardice_PlayerSelectEffect
+- *(port)* DuelMainInterface +18
+- *(port)* HandleConfusionDamageToSelf
+- *(port)* PealOfThunder_RandomlyDamageEffect
+- *(port)* UnreferencedDrawCardFromDeckToHand
+- *(port)* TrainerCardAsPokemon_PlayerSelectSwit~
+- *(port)* ButterfreeWhirlwind_CheckBench
+- *(port)* PidgeottoWhirlwind_SelectEffect
+- *(port)* PidgeyWhirlwind_SelectEffect
+- *(port)* Ram_SelectSwitchEffect
+- *(port)* GustOfWind_PlayerSelection
+- *(port)* Teleport_PlayerSelectEffect
+- *(port)* NinetalesLure_PlayerSelectEffect
+- *(port)* StretchKick_PlayerSelectEffect
+- *(port)* VictreebelLure_SelectSwitchPokemon
+- *(port)* TerrorStrike_50PercentSelectSwitchPok~
+- *(port)* Potion_PlayerSelection
+- *(port)* OppAction_ForceSwitchActive
+- *(port)* OppAction_UseAttack
+- *(port)* GengarDarkMind_PlayerSelectEffect
+- *(port)* GengarDarkMind_PlayerSelectEffect
+- *(port)* HandleTurn
+- *(port)* HandleAfterDamageEffects
+- *(port)* OpenInPlayAreaScreen
+- *(port)* Func_17ed
+- *(port)* PlayAttackAnimation_DealAttackDamage
+- *(port)* UseAttackOrPokemonPower
+- *(port)* HandleWaitingLinkOpponentMenu +2
+- *(port)* HypnoDarkMind_PlayerSelectEffect +1
+- *(port)* HandleBetweenTurnsEvents +1
+- *(port)* DevolutionBeam_PlayerSelectEffect
+- *(port)* DevolutionSpray_DevolutionEffect
+- *(port)* MainDuelLoop
+- *(port)* PokemonBreeder_PlayerSelection
+- *(port)* Curse_TransferDamageEffect
+- *(port)* _ContinueDuel
+- *(port)* DoLinkOpponentTurn +1
+- *(port)* ContinueDuel +2
+- *(port)* GameEvent_ContinueDuel
+- *(port)* PlayPokemonCard
+- *(port)* Heal_RemoveDamageEffect
+- *(port)* _ExecuteGameEvent
+- *(port)* DevolutionSpray_PlayerSelection +3
+- *(port)* PCMenu
+- *(completion)* Add truthful scope audit
+- *(completion)* Package declared data spans
+- *(runtime)* Add sparse data resolver
+- *(runtime)* Add frame boundary worker
+- *(assurance)* Version replay corpus
+- *(assurance)* Persist native state
+- *(assurance)* Add release gate controls
+- *(runtime)* Initialize packaged boot
+- *(port)* Drive boot menu path
+- *(port)* Complete packaged boot path
+- *(port)* Enter saved overworld
+- *(port)* Wire overworld frame setup
+- *(verify)* Compare full oracle state
+
+### Miscellaneous
+
+- *(scope)* Freeze ROM baseline
+- *(scope)* Close ROM span baseline
+- *(scope)* Pin inventory span digest
 
