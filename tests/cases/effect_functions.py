@@ -1896,7 +1896,8 @@ CASES["GustOfWind_BenchCheck"] = [{"f": 0}, dict(POISON), {"a": 2, "f": 0xF0}]
 # >>> factory MarowakCallForFamily_AISelectEffect
 CONTRACT["MarowakCallForFamily_AISelectEffect"] = {"compare": (), "preserve": ()}
 CASES["MarowakCallForFamily_AISelectEffect"] = [
-    {"wram": {0xC400: b"\xFF"}, "read": {0xC510: 1}},
+    {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xC27E: b"\x00\xFF",
+              0xC400: b"\x7D"}, "read": {0xC510: 2, 0xFFA0: 1}},
     {"wram": {0xC400: b"\x00\xFF"}, "read": {0xC510: 2}},
 ]
 # <<< factory MarowakCallForFamily_AISelectEffect

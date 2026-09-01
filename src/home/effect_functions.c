@@ -4170,7 +4170,7 @@ void MarowakCallForFamily_AISelectEffect(void)
 		if (card == 0xffu)
 			return;
 		LoadCardDataToBuffer2_FromDeckIndex(card);
-		if (gb_read8(wLoadedCard2Type_ADDR) != 0x02u)
+		if (gb_read8(wLoadedCard2Type_ADDR) != 0x04u)
 			continue;
 		if (gb_read8(wLoadedCard2Stage_ADDR) == 0u)
 			return;
