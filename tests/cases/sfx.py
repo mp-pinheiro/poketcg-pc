@@ -9,7 +9,7 @@ CONTRACT = {
 
 CASES = {
     "SFX_PlaySFX": [
-        {"a": 0, "wram": {0xDE53: b"\x00"},
+        {"a": 96, "wram": {0xDE53: b"\x00"},
          "read": {0xDE53: 1, 0xDD8C: 1, 0xDE54: 1}},
         dict(POISON, a=0, wram={0xDE53: b"\x00"},
              read={0xDE53: 1, 0xDD8C: 1, 0xDE54: 1}),
