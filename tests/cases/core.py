@@ -5825,7 +5825,7 @@ MUTATIONS["CheckIfEnoughEnergiesOfType"] = {
     "source_symbol": "CheckIfEnoughEnergiesOfType",
     "before": "required == 0u || required <= attached",
     "after": "required == 0u || required < attached",
-    "case_ids": ["CheckIfEnoughEnergiesOfType-0", "CheckIfEnoughEnergiesOfType-1"],
+    "case_ids": ["CheckIfEnoughEnergiesOfType-1", "CheckIfEnoughEnergiesOfType-0"],
 }
 # <<< factory-mutation CheckIfEnoughEnergiesOfType
 # >>> factory-mutation CheckIfEnoughEnergiesToRetreat

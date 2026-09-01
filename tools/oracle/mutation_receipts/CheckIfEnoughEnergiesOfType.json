@@ -1,0 +1,9 @@
+{
+  "fn": "CheckIfEnoughEnergiesOfType",
+  "case": "tests/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfEnoughEnergiesOfType\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 52252, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52174\": \"03\", \"52251\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfEnoughEnergiesOfType\", \"mismatches\": {\"f\": [0, 16]}}\n",
+  "restored": "{\"fn\": \"CheckIfEnoughEnergiesOfType\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 52252, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52174\": \"03\", \"52251\": \"02\"}}, \"status\": \"PASS\"}\n"
+}
