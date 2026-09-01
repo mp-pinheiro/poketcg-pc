@@ -1,0 +1,9 @@
+{
+  "fn": "CopyPlayAreaHPToBackup_Unreferenced",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyPlayAreaHPToBackup_Unreferenced\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49864\": \"12\", \"49903\": \"01\", \"52854\": \"12\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyPlayAreaHPToBackup_Unreferenced\", \"mismatches\": {\"bus\": {\"address\": 52854, \"reference\": \"120112c2\", \"native\": \"120100c2\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[49864, 1], [49903, 1], [52854, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"CopyPlayAreaHPToBackup_Unreferenced\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49864\": \"12\", \"49903\": \"01\", \"52854\": \"12\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

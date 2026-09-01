@@ -7977,7 +7977,8 @@ CASES["CheckIfCardIsBasicEnergy"] = [
 # >>> factory CopyPlayAreaHPToBackup_Unreferenced
 CONTRACT["CopyPlayAreaHPToBackup_Unreferenced"] = {"compare": (), "preserve": ()}
 CASES["CopyPlayAreaHPToBackup_Unreferenced"] = [
-	{"read": {0xCE76: 6}},
+	{"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xC2C8: b"\x12",
+	          0xCE76: b"\x00"}, "read": {0xCE76: 1}},
 ]
 # <<< factory CopyPlayAreaHPToBackup_Unreferenced
 # >>> factory CopyPlayAreaHPFromBackup_Unreferenced
