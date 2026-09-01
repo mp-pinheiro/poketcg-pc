@@ -1039,6 +1039,106 @@ def command_baseline() -> int:
     return 0 if artifact["status"] == "PASS" else 2
 
 
+def span_summary(spans: list[dict[str, Any]], kind: str) -> dict[str, Any]:
+    selected = [span for span in spans if span.get("kind") == kind]
+    encoded = json.dumps(selected, sort_keys=True, separators=(",", ":")).encode()
+    return {
+        "count": len(selected),
+        "bytes": sum(int(span["length"]) for span in selected),
+        "sha256": hashlib.sha256(encoded).hexdigest(),
+    }
+
+
+def command_rom_coverage() -> int:
+    baseline = load_toml(BASELINE_PATH)
+    manifest = load_toml(MANIFEST_PATH)
+    artifact: dict[str, Any] = {
+        "schema": "rom-inventory-v2",
+        "status": "FAIL",
+        "frames": 0,
+        "events": 0,
+        "state_fields": [
+            "rom_bytes", "code_spans", "data_spans",
+            "header_spans", "padding_spans",
+        ],
+        "oracles": ["source-inventory", "independent-rom-inventory"],
+    }
+    try:
+        inventory = run_source_inventory()
+        source_spans = inventory.get("spans")
+        if not isinstance(source_spans, list):
+            raise AuditError("source inventory has no spans")
+        source_mapped = validate_mapped_spans(source_spans)
+        independent_module = load_rom_inventory_module()
+        independent = independent_module.build(ROM_PATH, MAP_PATH, SYMBOL_PATH)
+        independent_spans = independent.get("spans")
+        if not isinstance(independent_spans, list):
+            raise AuditError("independent inventory has no spans")
+        independent_totals = validate_physical_spans(independent_spans, ROM_SIZE)
+        source_intervals = [
+            span_interval(span) for span in source_spans
+            if isinstance(span, dict)
+        ]
+        independent_intervals = [
+            span_interval(span) for span in independent_spans
+            if isinstance(span, dict) and span.get("kind") != "padding"
+        ]
+        errors: list[str] = []
+        if merge_intervals(source_intervals) != merge_intervals(independent_intervals):
+            errors.append("source and independent mapped ROM unions disagree")
+        source_unclassified = sum(
+            int(span["length"]) for span in source_spans
+            if span.get("kind") == "unclassified"
+        )
+        independent_unclassified = int(independent.get("unclassified_bytes", 0) or 0)
+        if source_unclassified or independent_unclassified:
+            errors.append(
+                f"unclassified ROM spans remain: source={source_unclassified}, "
+                f"independent={independent_unclassified}"
+            )
+        if independent_totals.get("padding", 0) != ROM_SIZE - source_mapped:
+            errors.append("padding does not account for bytes outside mapped sections")
+        artifact["coverage"] = {
+            "source_mapped_bytes": source_mapped,
+            "independent_mapped_bytes": independent.get("mapped_bytes"),
+            "padding_bytes": independent_totals.get("padding", 0),
+            "unclassified_bytes": source_unclassified + independent_unclassified,
+        }
+        artifact["rom_bytes"] = {
+            "size": ROM_SIZE,
+            "sha256": independent["rom_sha256"],
+        }
+        artifact["code_spans"] = span_summary(source_spans, "code")
+        artifact["data_spans"] = span_summary(source_spans, "data")
+        artifact["header_spans"] = span_summary(source_spans, "header/metadata")
+        artifact["padding_spans"] = span_summary(independent_spans, "padding")
+        artifact["validation"] = {"errors": errors}
+        if errors:
+            artifact["failure"] = "ROM_COVERAGE_INVALID"
+            artifact["detail"] = "; ".join(errors)
+        else:
+            artifact["content_key"] = content_key(baseline, manifest)
+            artifact["status"] = "PASS"
+            artifact["events"] = 1
+            artifact["terminal_event"] = "ROM_COVERAGE_CLOSED"
+    except (AuditError, KeyError, TypeError, ValueError) as exc:
+        artifact["failure"] = "ROM_COVERAGE_ERROR"
+        artifact["detail"] = str(exc)
+    EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+    path = evidence_path("completion:v2:reset:rom-coverage")
+    path.write_text(json.dumps(artifact, sort_keys=True, separators=(",", ":")) + "\n")
+    print(json.dumps({
+        "status": artifact["status"],
+        "artifact": str(path.relative_to(ROOT)),
+        **{
+            key: artifact[key]
+            for key in ("failure", "content_key", "events")
+            if key in artifact
+        },
+    }, sort_keys=True))
+    return 0 if artifact["status"] == "PASS" else 2
+
+
 def command_next() -> int:
     manifest = load_toml(MANIFEST_PATH)
     baseline = load_toml(BASELINE_PATH)
@@ -1066,12 +1166,15 @@ def main(argv: list[str] | None = None) -> int:
     check = subparsers.add_parser("check")
     check.add_argument("id")
     subparsers.add_parser("baseline")
+    subparsers.add_parser("rom-coverage")
     subparsers.add_parser("next")
     args = parser.parse_args(argv)
     if args.command == "audit":
         return command_audit()
     if args.command == "status":
         return command_status()
+    if args.command == "rom-coverage":
+        return command_rom_coverage()
     if args.command == "baseline":
         return command_baseline()
     if args.command == "check":

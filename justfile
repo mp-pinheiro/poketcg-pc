@@ -313,6 +313,8 @@ completion-check ID:
     python3 tools/completion/completion.py check "{{ID}}"
 completion-baseline:
     python3 tools/completion/completion.py baseline
+completion-rom-coverage:
+    python3 tools/completion/completion.py rom-coverage
 completion-next:
     python3 tools/completion/completion.py next
 
