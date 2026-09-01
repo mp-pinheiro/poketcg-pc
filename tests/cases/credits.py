@@ -54,7 +54,7 @@ CASES["Func_1d705"] = [
 # >>> factory PlayCreditsSequence
 CONTRACT["PlayCreditsSequence"] = {"compare": (), "preserve": ()}
 CASES["PlayCreditsSequence"] = [
-    dict(oracle=False, evidence="primary", why="The bounded credits setup resets the overworld event byte and selects credits music before the frame-driven command loop.", wram={0xDD80: b"\x7F"}, read={0xDD80: 1}, expect={0xDD80: b"\x12"}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(oracle=False, evidence="primary", why="The bounded credits setup resets the overworld event byte and selects credits music before the frame-driven command loop.", wram={0xDD80: b"\x7F", 0xD324: b"\xFF"}, read={0xDD80: 1, 0xD324: 1}, expect={0xDD80: b"\x12", 0xD324: b"\x00"}, instruction_budget=20000000, cycle_budget=80000000),
     dict(POISON, oracle=False, evidence="primary", why="The bounded credits setup selects credits music with poisoned entry registers before the frame-driven command loop.", wram={0xDD80: b"\x7F"}, read={0xDD80: 1}, expect={0xDD80: b"\x12"}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PlayCreditsSequence
