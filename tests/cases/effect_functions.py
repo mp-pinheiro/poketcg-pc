@@ -9334,7 +9334,7 @@ CASES["LeekSlap_SetUsedThisDuelFlag"] = [{"wram": {0xFF97: b"\xC2", 0xC2C2: b"\x
 # <<< factory LeekSlap_SetUsedThisDuelFlag
 # >>> factory PlusPowerEffect
 CONTRACT["PlusPowerEffect"] = {"compare": (), "preserve": ()}
-CASES["PlusPowerEffect"] = [{"wram": {0xFF9F: b"\x01"}}]
+CASES["PlusPowerEffect"] = [{"wram": {0xFF97: b"\xC2", 0xFF9F: b"\x01", 0xC2EE: b"\x00", 0xC2E0: b"\x00"}, "read": {0xC2E0: 1}}]
 # <<< factory PlusPowerEffect
 # >>> factory StepIn_BenchCheck
 CONTRACT["StepIn_BenchCheck"] = {"compare": ("f", "hl"), "preserve": ()}

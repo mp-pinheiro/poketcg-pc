@@ -1,0 +1,9 @@
+{
+  "fn": "PlusPowerEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlusPowerEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49888\": \"01\", \"49902\": \"00\", \"65431\": \"c2\", \"65439\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlusPowerEffect\", \"mismatches\": {\"bus\": {\"address\": 49888, \"reference\": \"0100c201\", \"native\": \"0200c201\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[49888, 1], [49902, 1], [65431, 1], [65439, 1]]}}}\n",
+  "restored": "{\"fn\": \"PlusPowerEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49888\": \"01\", \"49902\": \"00\", \"65431\": \"c2\", \"65439\": \"01\"}}, \"status\": \"PASS\"}\n"
+}
