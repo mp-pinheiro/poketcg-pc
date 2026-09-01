@@ -1359,8 +1359,8 @@ MUTATIONS["AIDecide_Recycle"] = {
 # >>> factory-mutation AIDecide_ClefairyDollOrMysteriousFossil
 MUTATIONS["AIDecide_ClefairyDollOrMysteriousFossil"] = {
     "source_symbol": "AIDecide_ClefairyDollOrMysteriousFossil",
-    "before": "uint8_t count = GetTurnDuelistVariable(0xEFu).a;\n\tif (count >= 6u)",
-    "after": "uint8_t count = GetTurnDuelistVariable(0xEFu).a;\n\tif (count > 6u)",
+    "before": "return (AIDecidePokemonFluteResult){count, count < 4u ? 0x10u : 0};",
+    "after": "return (AIDecidePokemonFluteResult){count, 0u};",
     "case_ids": ["AIDecide_ClefairyDollOrMysteriousFossil-0", "AIDecide_ClefairyDollOrMysteriousFossil-1"],
 }
 # <<< factory-mutation AIDecide_ClefairyDollOrMysteriousFossil
