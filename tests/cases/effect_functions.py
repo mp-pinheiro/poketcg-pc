@@ -1849,7 +1849,7 @@ CASES["Wail_BenchCheck"] = [{}, dict(POISON), {"a": 6}, {"a": 2}]
 
 # >>> factory StepIn_SwitchEffect
 CONTRACT["StepIn_SwitchEffect"] = {"compare": (), "preserve": ()}
-CASES["StepIn_SwitchEffect"] = [{"wram": {0xFFA0: b"\x01"}}]
+CASES["StepIn_SwitchEffect"] = [{"wram": {0xFF97: b"\xC2", 0xFFA0: b"\x01", 0xC2BB: b"\x01", 0xC2BC: b"\x02", 0xC2BD: b"\x03", 0xC200: b"\x10", 0xC201: b"\x11", 0xC202: b"\x12", 0xC2C2: b"\x00", 0xC2F0: b"\x05"}, "read": {0xC2BB: 1, 0xC2BC: 1, 0xC2BD: 1, 0xC200: 3, 0xC2C2: 1, 0xC2F0: 1}}]
 # <<< factory StepIn_SwitchEffect
 
 # >>> factory ThickSkinnedEffect
