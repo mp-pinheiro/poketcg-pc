@@ -13,10 +13,6 @@
 - **Phase 7 — Link, IR, printer** (#8): open.
 - **Phase 8 — Widescreen and features** (#9): open.
 
-- **Latest recorded gate: 1,037 routines / 3,428 primary cases**,
-  `just oracle-release-gate` exit 0 (schema-2 GBRT primary inventory,
-  independent source-built PyBoy audit, mutation declarations, constant audit,
-  and data round-trip). Operation: `docs/factory-workflow.md`.
 
 A native PC/Linux port of Pokémon Trading Card Game (Game Boy Color), hand-ported
 from the [`pret/poketcg`](https://github.com/pret/poketcg) disassembly into C11
@@ -82,6 +78,7 @@ graph TB
   subgraph oracle["oracle — dev only, excluded from release"]
     PB["PyBoy — per-function"]
     GBR["gb-recompiled — per-scene"]
+    GAM["Gambatte — pinned release capture"]
     CMP["memcmp harness + replay corpus"]
   end
   game --> VARS --> RAM --> PPU --> SDL
@@ -196,7 +193,7 @@ This is what decides whether the project ships, and it is what `suiCune` did
 VRAM (2 banks) + OAM + palette RAM + the CPU register file. `smw`'s wider vector
 (adds OAM and CGRAM over `zelda3`'s) is the right model.
 
-**Two oracles, two granularities.**
+**Three independent lanes.**
 
 - **Per-function — PyBoy.** `hook_register(None, "Label", ...)` resolves
   breakpoints against `poketcg.sym` directly, with full read/write on registers,
@@ -209,6 +206,13 @@ VRAM (2 banks) + OAM + palette RAM + the CPU register file. `smw`'s wider vector
   emitting `bank:addr` in the exact `BB:AAAA` convention of rgblink's `.sym` — so
   joining a trace against the symbol table tells you which routines a scene
   actually exercises, letting you order work by real coverage instead of guessing.
+- **Release capture — headless Gambatte.** The completion bootstrap downloads
+  and source-builds the pinned `libgambatte` core. The release gate checks the
+  source, core, ROM, C ABI, domains, registers, trace schema, framebuffer schema,
+  and no-BIOS mode, then runs a one-frame `release-smoke` capture. The capture
+  records pre/post SM83 registers, both VRAM banks, direct memory domains, the
+  full system bus, an anchored execution trace, a 160×144 PNG, and pinned
+  provenance.
 
 gb-recompiled's cheap JSON `--dump-state` covers `wram_bank_0_c000_cfff` +
 `wram_bank_1_d000_dfff` — which, because poketcg's WRAM is flat and unbanked, is

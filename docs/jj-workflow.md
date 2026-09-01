@@ -160,6 +160,27 @@ If this reports **"Nothing changed"**, `main` did not move. `jj tug`
 (`jj bookmark advance --to @-`) advances it before the next push. Repository
 configuration auto-advances `main`; feature bookmarks remain manual.
 
+## Completion issue projection
+
+After committing a gate or progress publication, project the current completion
+manifest and revision-keyed evidence into Forgejo:
+
+```sh
+just completion-tracker-sync
+just completion-tracker-check
+```
+
+The sync command stores the pre-change issue bodies, labels, and lifecycle in
+`build/completion/tracker-backup.json`. It updates the remote bodies and
+milestone/lifecycle labels, closes only requirements with passing evidence, and
+reopens closed requirements whose evidence is not complete. Restore the saved
+projection with:
+
+```sh
+python3 tools/completion/sync_tracker.py \
+  --restore build/completion/tracker-backup.json
+```
+
 ## Navigating through time (jj's core power)
 
 | To … | Do |

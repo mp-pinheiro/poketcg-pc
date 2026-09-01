@@ -31,10 +31,11 @@ From the repository root:
 ```sh
 just bootstrap
 uv sync --project tools/oracle --frozen
+just completion-gambatte-bootstrap
 just build
 ```
 
-`just bootstrap` clones the pinned `pret/poketcg` disassembly and verifies its ROM checksum. `uv sync --project tools/oracle --frozen` installs the pinned PyBoy project.
+`just bootstrap` clones the pinned `pret/poketcg` disassembly and verifies its ROM checksum. `uv sync --project tools/oracle --frozen` installs the pinned PyBoy project. `just completion-gambatte-bootstrap` downloads the pinned Gambatte source archive, builds its shared library with the pinned SCons version, and rejects archive or core hash drift.
 
 ## Verification
 
@@ -44,15 +45,17 @@ export POKETCG_PORTS=""
 just oracle-diff <RoutineName>
 just oracle-fn-gate
 just oracle-audit-all
+just completion-gambatte-health
+just completion-capture release-smoke --frames 1
 just oracle-release-gate
 ```
 `just progress-serve` serves a port-progress dashboard at `http://127.0.0.1:8765`.
 Published at `https://poketcg-pc.pages.dev` via Cloudflare Pages.
 
-The release gate requires the ROM produced by `just bootstrap`; it runs the
-GBRT primary inventory, the independent PyBoy audit, schema and mutation
-audits, and the data round-trip. Concurrent work should use a private
-`POKETCG_BUILD` directory and a semicolon-separated `POKETCG_PORTS` list.
+The release gate requires the ROM produced by `just bootstrap` and the core
+produced by `just completion-gambatte-bootstrap`. It runs package smoke, the
+completion and CFG audits, independent-lane health, Gambatte health, and a
+one-frame `release-smoke` Gambatte capture.
 
 ## Factory dispatch
 
@@ -68,6 +71,21 @@ just factory-eta      # forecast from recorded landings
 
 See `docs/factory-workflow.md` for the loop and `docs/factory-contract.md` for
 translator constraints.
+
+## Completion issue projection
+
+After a gate or progress publication changes completion evidence, update the
+Forgejo completion issues and verify the projection:
+
+```sh
+just completion-tracker-sync
+just completion-tracker-check
+```
+
+The sync command writes `build/completion/tracker-backup.json` before changing
+issue bodies, milestone and lifecycle labels, or open/closed state. Issue
+lifecycle is derived from revision-keyed evidence; tracker state is not
+completion evidence.
 
 ## GB Recompiled replay oracle
 

@@ -18,6 +18,11 @@ records), `tools/progress/scope.toml` (exclusions), and the Forgejo issue
 ledger itself. `.factory/` holds only rebuildable caches: the issue snapshot,
 verified artifacts, and issued prompts.
 
+Completion issue bodies, milestone/lifecycle labels, and open/closed state are
+projected from `tools/completion/requirements.toml` and revision-keyed evidence
+with `just completion-tracker-sync`; `just completion-tracker-check` detects
+remote drift. The tracker remains a projection and does not contribute evidence.
+
 The wave-era slice plan (`plan.md`) is deleted. Its per-slice history is in jj
 history and `site/data/history.jsonl`; its conventions live in
 `port-contract.md`; its exclusion table is `tools/progress/scope.toml`.

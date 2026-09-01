@@ -2,7 +2,7 @@
 schema = 2
 version = "completion-v2-epoch-4"
 source = "docs/vision.md"
-source_sha256 = "3dd45cd7e05c298a134f43cd37dae8c96f75b6f9a80a8a60c62e6da405e6e67e"
+source_sha256 = "16d9508384b5526512ae0810ecbfcf55c30f5584e10029a060e660e6c7177cf2"
 
 milestones = [
   "reset",
@@ -486,7 +486,7 @@ min_frames = 1
 min_events = 1
 state_fields = ["framebuffer"]
 artifact_schema = "widescreen-corpus-v1"
-tracker_issue = 0
+tracker_issue = 3205
 
 [[requirement]]
 id = "completion:v2:p8:runtime:viewport-rect"
@@ -499,7 +499,7 @@ min_frames = 1
 min_events = 1
 state_fields = ["wram", "framebuffer"]
 artifact_schema = "widescreen-corpus-v1"
-tracker_issue = 0
+tracker_issue = 3206
 
 [[requirement]]
 id = "completion:v2:p8:ui:wide-layouts"
@@ -512,7 +512,7 @@ min_frames = 1
 min_events = 1
 state_fields = ["wram", "framebuffer"]
 artifact_schema = "widescreen-corpus-v1"
-tracker_issue = 0
+tracker_issue = 3207
 
 [[requirement]]
 id = "completion:v2:p8:features:render-only"
@@ -525,7 +525,7 @@ min_frames = 1
 min_events = 1
 state_fields = ["wram", "framebuffer"]
 artifact_schema = "feature-neutrality-v1"
-tracker_issue = 0
+tracker_issue = 3208
 
 [[requirement]]
 id = "completion:v2:p8:release:enhanced-corpus"
@@ -538,4 +538,4 @@ min_frames = 1
 min_events = 1
 state_fields = ["wram", "framebuffer", "save", "rng"]
 artifact_schema = "widescreen-corpus-v1"
-tracker_issue = 0
+tracker_issue = 3209

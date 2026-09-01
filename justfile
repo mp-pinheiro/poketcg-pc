@@ -342,6 +342,8 @@ completion-capture SCENARIO *ARGS:
 completion-cfg-audit:
     python3 tools/completion/cfg.py --trace "${POKETCG_CFG_TRACE:?CFG trace is required}"
 
+completion-tracker-sync:
+    python3 tools/completion/sync_tracker.py --apply
 completion-tracker-check:
     python3 tools/completion/sync_tracker.py --check
 completion-scenario SCENARIO:

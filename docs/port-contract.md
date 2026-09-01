@@ -9,6 +9,7 @@ already follow this; every later phase should too.
 ```sh
 just bootstrap                 # one-time: builds poketcg.gbc + poketcg.sym
 uv sync --project tools/oracle --frozen
+just completion-gambatte-bootstrap # one-time: source-builds the pinned release-capture core
 export POKETCG_BUILD=build-<slice>
 export POKETCG_PORTS=<file>    # semicolon-list of pret basenames
 just build                     # configure this private tree once
@@ -16,6 +17,19 @@ just oracle-warm-group <basename>
 just oracle-diff-fast <PretSymbol>
 just oracle-diff-group <basename>
 just oracle-release-gate       # central release barrier; exits non-zero on any failure
+```
+
+The central release barrier verifies the pinned Gambatte source archive, shared
+core, ROM, C ABI, memory domains, registers, trace schema, framebuffer schema,
+and no-BIOS mode. It also runs a bounded one-frame Gambatte capture; file-health
+alone is not accepted as a passing constituent.
+
+After the gate and progress publication are committed, project the current
+manifest and revision-keyed evidence into Forgejo, then verify that projection:
+
+```sh
+just completion-tracker-sync
+just completion-tracker-check
 ```
 
 `just oracle-diff` remains the live, configure-and-build authority command.
