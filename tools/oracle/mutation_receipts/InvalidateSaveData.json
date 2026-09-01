@@ -1,0 +1,9 @@
+{
+  "fn": "InvalidateSaveData",
+  "case": "tests/cases/save.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"InvalidateSaveData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 3, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"47104\": \"1122\"}, \"2\": {\"47104\": \"f7ff\"}}, \"vram\": {}, \"wram\": {\"65408\": \"0403\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"InvalidateSaveData\", \"mismatches\": {\"sram\": {\"byte\": 2, \"reference\": \"1122f7ff\", \"native\": \"112208ff\"}}}\n",
+  "restored": "{\"fn\": \"InvalidateSaveData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 3, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"47104\": \"1122\"}, \"2\": {\"47104\": \"f7ff\"}}, \"vram\": {}, \"wram\": {\"65408\": \"0403\"}}, \"status\": \"PASS\"}\n"
+}

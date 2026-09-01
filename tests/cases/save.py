@@ -721,6 +721,6 @@ MUTATIONS = {
         "source_symbol": "InvalidateSaveData",
         "before": "\tgb_write8(sBackupGeneralSaveData_ADDR + 0, (uint8_t)(0x08 ^ 0xFF));",
         "after": "\tgb_write8(sBackupGeneralSaveData_ADDR + 0, (uint8_t)(0x08));",
-        "case_ids": ["InvalidateSaveData-0", "InvalidateSaveData-1", "InvalidateSaveData-2"],
+        "case_ids": ["InvalidateSaveData-2", "InvalidateSaveData-0", "InvalidateSaveData-1"],
     },
 }
