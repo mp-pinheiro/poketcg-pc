@@ -1039,9 +1039,9 @@ for _record in SCHEMA2_CASES["SendPrinterInstructionPacket_1Sheet_3LineFeeds"]:
 # >>> factory-mutation LoadGfxBufferForPrinter
 MUTATIONS["LoadGfxBufferForPrinter"] = {
     "source_symbol": "LoadGfxBufferForPrinter",
-    "before": "\tgb_write8(wPrinterHorizontalOffset_ADDR, 1u);",
-    "after": "\tgb_write8(wPrinterHorizontalOffset_ADDR, 2u);",
-    "case_ids": ["LoadGfxBufferForPrinter-2"],
+    "before": "return (LoadGfxBufferForPrinterResult){init.a, init.f, hl};",
+    "after": "return (LoadGfxBufferForPrinterResult){1u, init.f, hl};",
+    "case_ids": ["LoadGfxBufferForPrinter-0", "LoadGfxBufferForPrinter-1"],
 }
 # <<< factory-mutation LoadGfxBufferForPrinter
 # >>> factory-mutation AddToPrinterGfxBuffer
