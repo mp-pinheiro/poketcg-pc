@@ -370,6 +370,8 @@ start_menu:
 	} else {
 		MainMenu_ContinueDuel();
 	}
+	if (wStartMenuChoice == START_MENU_NEW_GAME && wGameEvent == 0u)
+		return;
 	ResetDoFrameFunction(0u);
 	EnableAndClearSpriteAnimations();
 }

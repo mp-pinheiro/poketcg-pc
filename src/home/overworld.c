@@ -18,7 +18,9 @@
 #include "home/map.h"
 #include "home/npc_core.h"
 #include "home/play_animation.h"
+#include "home/color.h"
 #include "mem.h"
+#include "runtime.h"
 
 /* The engine/overworld bank is labeled in pret's bank-linear space: names like
  * Func_c158 address the bank-3 slot $c000-$ffff, i.e. runtime address
@@ -1539,10 +1541,19 @@ void LoadMap(void)
 		Func_c184();
 		Func_c49c();
 		LoadMapGfxAndPermissions();
-		Func_c4b9();
-		(void)Func_c943(0u, 0u, 0u, 0u, 0u, 0u, 0u);
-		(void)Func_c158();
-		return;
+	(void)Func_c943(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	(void)Func_c158();
+	DoMapOWFrame();
+	SetOverworldDoFrameFunction();
+	wOverworldTransition = 0u;
+	wOverworldNPCFlags = 0u;
+	(void)PlayDefaultSong();
+	(void)FadeScreenFromWhite();
+	Func_c141Result active_event = Func_c141();
+	(void)Func_c17a(active_event.hl);
+	SetOverworldDoFrameFunction();
+	runtime_record_event(RUNTIME_EVENT_OVERWORLD_READY);
+	return;
 	}
 }
 /* <<< factory LoadMap */

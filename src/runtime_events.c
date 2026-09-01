@@ -11,7 +11,7 @@ void runtime_events_reset(void)
 	g_event_count = 0u;
 }
 
-void runtime_mark_event(RuntimeEvent event)
+static void record_event(RuntimeEvent event)
 {
 	if (event == RUNTIME_EVENT_NONE)
 		return;
@@ -20,7 +20,18 @@ void runtime_mark_event(RuntimeEvent event)
 		g_event_mask |= bit;
 		g_event_count++;
 	}
-	g_terminal_event = event;
+}
+
+void runtime_mark_event(RuntimeEvent event)
+{
+	record_event(event);
+	if (event != RUNTIME_EVENT_NONE)
+		g_terminal_event = event;
+}
+
+void runtime_record_event(RuntimeEvent event)
+{
+	record_event(event);
 }
 
 RuntimeEvent runtime_terminal_event(void)

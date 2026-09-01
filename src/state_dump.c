@@ -47,6 +47,8 @@ static const char *runtime_event_name(RuntimeEvent event)
 		return "START_MENU_READY";
 	case RUNTIME_EVENT_NEW_GAME_ENTERED:
 		return "NEW_GAME_ENTERED";
+	case RUNTIME_EVENT_OVERWORLD_READY:
+		return "OVERWORLD_READY";
 	default:
 		return "NONE";
 	}

@@ -12,6 +12,7 @@ typedef enum {
 	RUNTIME_EVENT_TITLE_READY = 2,
 	RUNTIME_EVENT_START_MENU_READY = 3,
 	RUNTIME_EVENT_NEW_GAME_ENTERED = 4,
+	RUNTIME_EVENT_OVERWORLD_READY = 5,
 } RuntimeEvent;
 
 typedef struct {
@@ -26,6 +27,7 @@ typedef struct {
 
 void runtime_events_reset(void);
 void runtime_mark_event(RuntimeEvent event);
+void runtime_record_event(RuntimeEvent event);
 RuntimeEvent runtime_terminal_event(void);
 uint32_t runtime_event_mask(void);
 uint32_t runtime_event_count(void);
