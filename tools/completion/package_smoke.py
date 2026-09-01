@@ -82,7 +82,11 @@ def main(argv: list[str] | None = None) -> int:
         )
         if check.returncode:
             fail("staged data pack failed verification: " + (check.stderr or check.stdout).strip())
-        smoke = run_binary(staged_binary, Path("data-pack.bin"), args.frames)
+        trace_path = args.package_dir.parent / "production-trace.json"
+        smoke = run_binary(
+            staged_binary, Path("data-pack.bin"), args.frames,
+            "--trace-entries", str(trace_path),
+        )
         if smoke.returncode != 0:
             fail(f"packaged executable failed: {smoke.stderr.strip()}")
         if f"frames: {args.frames}" not in smoke.stdout:

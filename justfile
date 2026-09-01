@@ -338,7 +338,7 @@ completion-capture SCENARIO *ARGS:
     python3 tools/completion/bizhawk_runner.py capture "{{SCENARIO}}" {{ARGS}}
 
 completion-cfg-audit:
-    python3 tools/completion/cfg.py
+    python3 tools/completion/cfg.py --trace "${POKETCG_CFG_TRACE:?CFG trace is required}"
 
 completion-tracker-check:
     python3 tools/completion/sync_tracker.py --check

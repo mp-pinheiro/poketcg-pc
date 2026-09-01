@@ -135,9 +135,16 @@ def run_source_inventory() -> dict[str, Any]:
     return load_json(INVENTORY_PATH)
 
 def run_cfg_audit() -> dict[str, Any]:
+    trace_text = os.environ.get("POKETCG_CFG_TRACE")
+    if not trace_text:
+        raise AuditError("CFG audit requires a production trace")
+    trace_path = Path(trace_text)
     try:
         result = subprocess.run(
-            [sys.executable, str(CFG_TOOL), "--output", str(CFG_OUTPUT)],
+            [
+                sys.executable, str(CFG_TOOL), "--trace", str(trace_path),
+                "--output", str(CFG_OUTPUT),
+            ],
             cwd=ROOT,
             capture_output=True,
             text=True,
@@ -155,8 +162,6 @@ def run_cfg_audit() -> dict[str, Any]:
     if not isinstance(report.get("uncovered_required_edges"), int):
         raise AuditError("CFG report has no uncovered edge count")
     return report
-
-
 def read_rom_sha1() -> str:
     try:
         text = ROM_SHA1_PATH.read_text(encoding="utf-8")

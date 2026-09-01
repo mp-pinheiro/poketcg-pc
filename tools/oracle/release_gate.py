@@ -137,8 +137,9 @@ def run_constituent(
 ) -> dict[str, Any]:
     started = time.monotonic()
     environment = os.environ.copy()
-    if name == "completion-audit":
+    if name in {"completion-audit", "completion-cfg"}:
         environment["POKETCG_RELEASE_GATE_IN_FLIGHT"] = "1"
+        environment["POKETCG_CFG_TRACE"] = str(log_path.parent / "production-trace.json")
     try:
         completed = subprocess.run(
             command, cwd=ROOT, env=environment, capture_output=True, text=True,
@@ -252,11 +253,11 @@ def main(argv: list[str] | None = None) -> int:
         if args.data_pack:
             package_command.extend(["--pack", str(args.data_pack)])
         commands = {
+            "package-smoke": package_command,
             "completion-audit": [sys.executable, str(COMPLETION), "audit"],
             "completion-cfg": ["just", "completion-cfg-audit"],
             "lane-health": ["just", "completion-lanes-health"],
             "bizhawk-health": ["just", "completion-bizhawk-health"],
-            "package-smoke": package_command,
         }
         for name, command in commands.items():
             constituents[name] = run_constituent(

@@ -122,9 +122,7 @@ int runtime_write_trace(const char *path, const RuntimeResult *runtime)
 	                 "\"terminal_event\":\"%s\","
 	                 "\"symbols\":[\"Start\",\"GameLoop\",\"DoFrame\"],"
 	                 "\"edges\":["
-	                 "{\"source\":\"<host>\",\"target\":\"Start\",\"type\":\"direct-call\"},"
-	                 "{\"source\":\"Start\",\"target\":\"GameLoop\",\"type\":\"direct-call\"},"
-	                 "{\"source\":\"GameLoop\",\"target\":\"DoFrame\",\"type\":\"direct-call\"}"
+	                 "{\"source\":\"Start\",\"target\":\"GameLoop\",\"type\":\"direct-jump\"}"
 	                 "]}",
 	                 runtime->frames, runtime->event_count, runtime->event_mask,
 	                 runtime_event_name(runtime->terminal_event)) >= 0;
