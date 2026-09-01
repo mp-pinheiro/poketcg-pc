@@ -226,7 +226,7 @@ MUTATIONS = {
         "source_symbol": "DecompressData",
         "before": "de = (uint16_t)(de + 1);",
         "after": "de = (uint16_t)(de + 2);",
-        "case_ids": ["DecompressData-0", "DecompressData-1", "DecompressData-2", "DecompressData-3", "DecompressData-4", "DecompressData-5", "DecompressData-6", "DecompressData-7", "DecompressData-8", "DecompressData-9"],
+        "case_ids": ["DecompressData-1", "DecompressData-0", "DecompressData-2", "DecompressData-3", "DecompressData-4", "DecompressData-5", "DecompressData-6", "DecompressData-7", "DecompressData-8", "DecompressData-9"],
     },
 }
 from tests.cases._schema_migration import legacy_to_schema
