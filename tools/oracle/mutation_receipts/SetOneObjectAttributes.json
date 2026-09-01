@@ -1,0 +1,9 @@
+{
+  "fn": "SetOneObjectAttributes",
+  "case": "tests/cases/objects.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetOneObjectAttributes\", \"registers\": {\"a\": 0, \"b\": 64, \"c\": 48, \"d\": 32, \"e\": 16, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51872\": \"00000000\", \"51893\": \"a0\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetOneObjectAttributes\", \"mismatches\": {\"bus\": {\"address\": 51872, \"reference\": \"00000000a0\", \"native\": \"10203040a4\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[51872, 4], [51893, 1]]}}}\n",
+  "restored": "{\"fn\": \"SetOneObjectAttributes\", \"registers\": {\"a\": 0, \"b\": 64, \"c\": 48, \"d\": 32, \"e\": 16, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51872\": \"00000000\", \"51893\": \"a0\"}}, \"status\": \"PASS\"}\n"
+}

@@ -20,7 +20,7 @@ SRC = 0xC100
 
 CASES = {
     "SetOneObjectAttributes": [
-        {"e": 0x10, "d": 0x20, "c": 0x30, "b": 0x40, "wram": {wOAMOffset: b"\x00"}, "read": {wOAM: 4, wOAMOffset: 1}},
+        {"e": 0x10, "d": 0x20, "c": 0x30, "b": 0x40, "wram": {wOAMOffset: bytes((OAM_SIZE,))}, "read": {wOAM + OAM_SIZE: 4, wOAMOffset: 1}},
         dict(POISON, e=0x50, d=0x60, c=0x70, b=0x80, wram={wOAMOffset: b"\x08"}, read={wOAM + 8: 4, wOAMOffset: 1}),
         {"e": 0xA5, "d": 0x5A, "c": 0x01, "b": 0x02, "wram": {wOAMOffset: b"\x9C"}, "read": {wOAM + 0x9C: 4, wOAMOffset: 1}},
         {"wram": {wOAMOffset: bytes((OAM_SIZE,))}, "read": {wOAM: 4, wOAMOffset: 1}},
