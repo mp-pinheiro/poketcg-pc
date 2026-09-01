@@ -135,6 +135,7 @@ def content_key(revision_id: str, tree: str, external: dict[str, str]) -> str:
 def run_constituent(
     name: str, command: list[str], log_path: Path, timeout: float,
 ) -> dict[str, Any]:
+    started = time.monotonic()
     environment = os.environ.copy()
     if name == "completion-audit":
         environment["POKETCG_RELEASE_GATE_IN_FLIGHT"] = "1"
