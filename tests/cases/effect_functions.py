@@ -2011,7 +2011,13 @@ CASES["FireSpin_AISelectEffect"] = [
 # <<< factory FireSpin_AISelectEffect
 # >>> factory FireSpin_DiscardEffect
 CONTRACT["FireSpin_DiscardEffect"] = {"compare": (), "preserve": ()}
-CASES["FireSpin_DiscardEffect"] = [{}, dict(POISON)]
+CASES["FireSpin_DiscardEffect"] = [
+	{"wram": {0xFF97: b"\xC2", 0xFFA0: b"\x01\x02", 0xC2ED: b"\x00",
+	          0xC200: b"\x00", 0xC201: b"\x00"},
+	 "read": {0xC200: 2, 0xC2ED: 1, 0xC27E: 2}},
+	{},
+	dict(POISON),
+]
 # <<< factory FireSpin_DiscardEffect
 
 # >>> factory PidgeottoMirrorMove_InitialEffect1

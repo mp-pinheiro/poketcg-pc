@@ -1,0 +1,9 @@
+{
+  "fn": "FireSpin_DiscardEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FireSpin_DiscardEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"0002\", \"49790\": \"0102\", \"49901\": \"02\", \"65431\": \"c2\", \"65440\": \"0102\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FireSpin_DiscardEffect\", \"mismatches\": {\"bus\": {\"address\": 49665, \"reference\": \"0002010202c2\", \"native\": \"0000020202c2\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[49664, 2], [49790, 2], [49901, 1], [65431, 1], [65440, 2]]}}}\n",
+  "restored": "{\"fn\": \"FireSpin_DiscardEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"0002\", \"49790\": \"0102\", \"49901\": \"02\", \"65431\": \"c2\", \"65440\": \"0102\"}}, \"status\": \"PASS\"}\n"
+}
