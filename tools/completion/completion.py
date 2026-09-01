@@ -1599,6 +1599,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.command == "audit":
         return command_audit()
+    if args.command == "status":
+        return command_status()
     if args.command == "hardware-removal":
         return command_hardware_removal()
     if args.command == "substrate":
