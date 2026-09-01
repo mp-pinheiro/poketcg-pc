@@ -1,0 +1,9 @@
+{
+  "fn": "HtimesL",
+  "case": "tests/cases/random.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HtimesL\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 65025, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HtimesL\", \"mismatches\": {\"hl\": [65025, 65033]}}\n",
+  "restored": "{\"fn\": \"HtimesL\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 65025, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

@@ -218,7 +218,7 @@ MUTATIONS = {
         "source_symbol": "HtimesL",
         "before": "acc = (uint16_t)(acc + de);",
         "after": "acc = (uint16_t)(acc + (uint16_t)(de + 1u));",
-        "case_ids": ["HtimesL-zero", "HtimesL-poison", "HtimesL-max"],
+        "case_ids": ["HtimesL-max", "HtimesL-zero", "HtimesL-poison"],
     },
     "Random": {
         "source_symbol": "Random",
