@@ -1,7 +1,9 @@
 #include "runtime.h"
 
+#include "generated/wram.h"
 #include "home/frames.h"
 #include "home/game_loop.h"
+#include "home/input.h"
 #include "home/time.h"
 #include "home/vblank.h"
 #include "home/start.h"
@@ -10,6 +12,7 @@
 #include "shell.h"
 
 #include <pthread.h>
+#include <setjmp.h>
 #include <stdint.h>
 #include <string.h>
 #define AUDIO_SAMPLES_PER_FRAME 1470u
@@ -67,12 +70,27 @@ static int stopped(RuntimeState *state)
 	return stop;
 }
 
+static jmp_buf g_boot_restart_env;
+
+static void boot_restart_trampoline(void)
+{
+	longjmp(g_boot_restart_env, 1);
+}
+
 static void *run_game(void *context)
 {
+	RuntimeState *state = context;
+
 	runtime_events_reset();
 	runtime_mark_event(RUNTIME_EVENT_BOOT_STARTED);
-	RuntimeState *state = context;
-	Start(0x11u);
+	poketcg_request_boot_restart = boot_restart_trampoline;
+	if (setjmp(g_boot_restart_env) == 0) {
+		Start(0x11u);
+	} else {
+		/* Soft reset: WRAM survives, boot re-enters with the original A. */
+		runtime_mark_event(RUNTIME_EVENT_BOOT_STARTED);
+		Start(wInitialA);
+	}
 	GameLoop();
 	for (;;) {
 		DoFrame();
