@@ -995,7 +995,9 @@ CASES["PracticeDuel_PlayGoldeen"] = [
 # <<< factory PracticeDuel_PlayGoldeen
 CONTRACT["Func_6ba2"] = {"compare": (), "preserve": ()}
 CASES["Func_6ba2"] = [
-    {"hl": 0x0000, "wram": {0xCC0D: b"\x01", 0xC590: b"\x00"},
+    {"hl": 0x0000, "keys": [0x00, 0x01],
+     "wram": {0xCC0D: b"\x01", 0xC590: b"\x00"},
+     "read": {0xFF90: 1, 0xFF91: 1},
      "vread": {0: {0x9980: 192}}},
     dict(POISON, hl=0x0000, keys=0x01,
          wram={0xCC0D: b"\x00", 0xC590: b"\x00",
