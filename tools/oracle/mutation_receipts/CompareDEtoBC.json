@@ -1,0 +1,9 @@
+{
+  "fn": "CompareDEtoBC",
+  "case": "tests/cases/coin_toss.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CompareDEtoBC\", \"registers\": {\"a\": 0, \"b\": 32, \"c\": 0, \"d\": 16, \"e\": 0, \"f\": 80, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CompareDEtoBC\", \"mismatches\": {\"f\": [80, 192]}}\n",
+  "restored": "{\"fn\": \"CompareDEtoBC\", \"registers\": {\"a\": 0, \"b\": 32, \"c\": 0, \"d\": 16, \"e\": 0, \"f\": 80, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

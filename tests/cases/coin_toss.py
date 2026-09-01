@@ -113,7 +113,7 @@ MUTATIONS = {
         "source_symbol": "CompareDEtoBC",
         "before": "if (d != b)",
         "after": "if (d == b)",
-        "case_ids": ["CompareDEtoBC-0", "CompareDEtoBC-1", "CompareDEtoBC-5"],
+        "case_ids": ["CompareDEtoBC-1", "CompareDEtoBC-0", "CompareDEtoBC-5"],
     },
 }
 # >>> factory-mutation TossCoinATimes
