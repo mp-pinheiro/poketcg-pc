@@ -1,0 +1,9 @@
+{
+  "fn": "AIDecide_PokemonFlute",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIDecide_PokemonFlute\", \"registers\": {\"a\": 6, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"50047\": \"00\", \"50157\": \"01\", \"50159\": \"06\", \"50448\": \"00ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_PokemonFlute\", \"mismatches\": {\"a\": [6, 255]}}\n",
+  "restored": "{\"fn\": \"AIDecide_PokemonFlute\", \"registers\": {\"a\": 6, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"50047\": \"00\", \"50157\": \"01\", \"50159\": \"06\", \"50448\": \"00ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

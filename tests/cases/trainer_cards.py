@@ -89,6 +89,8 @@ CASES["AIDecide_Imakuni"] = [
 # >>> factory AIDecide_PokemonFlute
 CONTRACT["AIDecide_PokemonFlute"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecide_PokemonFlute"] = [
+    {"c": 0, "wram": {0xFF97: b"\xC2", 0xC3EF: b"\x06", 0xC3ED: b"\x01", 0xC37F: b"\x00",
+                      0xC510: b"\x00\xff"}},
     {"c": 0, "wram": {0xCC0E: b"\x01", 0xC510: b"\xff", 0xC3EF: b"\x00"}},
     {"c": 0, "wram": {0xCC0E: b"\x01", 0xC510: b"\x00\xff", 0xC3EF: b"\x00",
                       0xCE06: b"\xff", 0xCE08: b"\xff"}},
@@ -1369,7 +1371,7 @@ MUTATIONS["AIDecide_PokemonFlute"] = {
     "source_symbol": "AIDecide_PokemonFlute",
     "before": "uint8_t count = GetNonTurnDuelistVariable(0xEFu).a;\n\tif (count >= 6u)",
     "after": "uint8_t count = GetNonTurnDuelistVariable(0xEFu).a;\n\tif (count > 6u)",
-    "case_ids": ["AIDecide_PokemonFlute-0", "AIDecide_PokemonFlute-1"],
+    "case_ids": ["AIDecide_PokemonFlute-0", "AIDecide_PokemonFlute-1", "AIDecide_PokemonFlute-2"],
 }
 # <<< factory-mutation AIDecide_PokemonFlute
 # >>> factory-mutation PickPokedexCards
