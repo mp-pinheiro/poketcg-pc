@@ -1,7 +1,7 @@
 {
   "fn": "ApplyBackgroundScroll",
   "case": "tests/cases/scroll.py",
-  "index": 1,
+  "index": 0,
   "status": "RED",
   "baseline": "{\"fn\": \"ApplyBackgroundScroll\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"54887\": \"01\", \"65345\": \"80\", \"65348\": \"00\", \"65535\": \"00\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ApplyBackgroundScroll\", \"mismatches\": {\"bus\": {\"address\": 54887, \"reference\": \"01800000\", \"native\": \"00c00002\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[54887, 1], [65345, 1], [65348, 1], [65535, 1]]}}}\n",
