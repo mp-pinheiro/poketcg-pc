@@ -15,6 +15,7 @@ just completion-routine-mapping # verify routine registration bijection
 just completion-representation # verify state representation relation
 just completion-truthful-accounting # verify published counts reconcile
 just completion-substrate # capture one real native frame
+just completion-hardware-removal # verify transform and leaf oracle checks
 just completion-gambatte-bootstrap # one-time: source-builds the pinned release-capture core
 export POKETCG_BUILD=build-<slice>
 export POKETCG_PORTS=<file>    # semicolon-list of pret basenames

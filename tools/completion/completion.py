@@ -1485,6 +1485,83 @@ def command_substrate() -> int:
     return 0 if artifact["status"] == "PASS" else 2
 
 
+def command_hardware_removal() -> int:
+    baseline = load_toml(BASELINE_PATH)
+    manifest = load_toml(MANIFEST_PATH)
+    fields = ["mapper_state", "timer_frame_counters", "input_latch"]
+    artifact: dict[str, Any] = {
+        "schema": "transform-proof-v1",
+        "status": "FAIL",
+        "frames": 1,
+        "events": 0,
+        "state_fields": fields,
+        "oracles": ["native", "oracle-diff-all", "adapter-lint"],
+    }
+    try:
+        transform = (ROOT / "docs" / "phase1-transform.md").read_text(encoding="utf-8")
+        required_rows = (
+            "Bank1Call", "FarCall", "HblankCopyDataHLtoDE",
+            "VBlankHandler", "SwitchToCGBDoubleSpeed",
+        )
+        missing_rows = [row for row in required_rows if f"`{row}`" not in transform]
+        if missing_rows:
+            raise AuditError("transform record is missing: " + ",".join(missing_rows))
+        checks: dict[str, str] = {}
+        for name, command in (
+            ("oracle_diff_all", ["just", "oracle-diff-all"]),
+            ("adapter_lint", [sys.executable, str(ROOT / "tools" / "lint_adapters.py")]),
+        ):
+            result = subprocess.run(
+                command, cwd=ROOT, capture_output=True, text=True,
+                timeout=300, check=False,
+            )
+            if result.returncode:
+                detail = (result.stderr or result.stdout).strip().splitlines()
+                raise AuditError(f"{name} failed: {detail[-1] if detail else 'unknown error'}")
+            checks[name] = "PASS"
+        with tempfile.TemporaryDirectory(prefix="poketcg-transform-") as directory:
+            directory_path = Path(directory)
+            state_path = directory_path / "state.json"
+            result = subprocess.run(
+                [
+                    str(ROOT / "build" / "poketcg"), "--headless",
+                    "--data-pack", str(ROOT / "build" / "completion" / "data-pack.bin"),
+                    "--frames", "1", "--dump-state", str(state_path),
+                ],
+                cwd=ROOT, capture_output=True, text=True, timeout=60, check=False,
+            )
+            if result.returncode:
+                raise AuditError(result.stderr.strip() or "native transform smoke failed")
+            state = load_json(state_path)
+            missing_fields = [field for field in fields if field not in state]
+            if missing_fields:
+                raise AuditError("native state is missing: " + ",".join(missing_fields))
+            artifact["state_hashes"] = {
+                field: mapping_digest(state[field]) for field in fields
+            }
+        artifact["checks"] = checks
+        artifact["content_key"] = content_key(baseline, manifest)
+        artifact["status"] = "PASS"
+        artifact["events"] = 1
+        artifact["terminal_event"] = "HARDWARE_TRANSFORM_CLOSED"
+    except (AuditError, KeyError, OSError, TypeError, ValueError, subprocess.TimeoutExpired) as exc:
+        artifact["failure"] = "TRANSFORM_ERROR"
+        artifact["detail"] = str(exc)
+    EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+    path = evidence_path("completion:v2:p1:hardware-removal")
+    path.write_text(json.dumps(artifact, sort_keys=True, separators=(",", ":")) + "\n")
+    print(json.dumps({
+        "status": artifact["status"],
+        "artifact": str(path.relative_to(ROOT)),
+        **{
+            key: artifact[key]
+            for key in ("failure", "content_key", "events")
+            if key in artifact
+        },
+    }, sort_keys=True))
+    return 0 if artifact["status"] == "PASS" else 2
+
+
 def command_next() -> int:
     manifest = load_toml(MANIFEST_PATH)
     baseline = load_toml(BASELINE_PATH)
@@ -1516,13 +1593,14 @@ def main(argv: list[str] | None = None) -> int:
     subparsers.add_parser("routine-mapping")
     subparsers.add_parser("representation")
     subparsers.add_parser("substrate")
+    subparsers.add_parser("hardware-removal")
     subparsers.add_parser("truthful-accounting")
     subparsers.add_parser("next")
     args = parser.parse_args(argv)
     if args.command == "audit":
         return command_audit()
-    if args.command == "status":
-        return command_status()
+    if args.command == "hardware-removal":
+        return command_hardware_removal()
     if args.command == "substrate":
         return command_substrate()
     if args.command == "truthful-accounting":

@@ -323,6 +323,8 @@ completion-truthful-accounting:
     python3 tools/completion/completion.py truthful-accounting
 completion-substrate:
     python3 tools/completion/completion.py substrate
+completion-hardware-removal:
+    python3 tools/completion/completion.py hardware-removal
 completion-next:
     python3 tools/completion/completion.py next
 
