@@ -58,7 +58,7 @@ MUTATIONS = {
     "IsArenaPokemonAsleepOrPoisoned": {
         "source_symbol": "IsArenaPokemonAsleepOrPoisoned",
         "before": "value &= (POISONED | DOUBLE_POISONED);",
-        "after": "value &= (DOUBLE_POISONED);",
-        "case_ids": ["IsArenaPokemonAsleepOrPoisoned-0", "IsArenaPokemonAsleepOrPoisoned-1", "IsArenaPokemonAsleepOrPoisoned-2", "IsArenaPokemonAsleepOrPoisoned-3", "IsArenaPokemonAsleepOrPoisoned-4"],
+        "after": "value &= 0x40u;",
+        "case_ids": ["IsArenaPokemonAsleepOrPoisoned-2", "IsArenaPokemonAsleepOrPoisoned-0", "IsArenaPokemonAsleepOrPoisoned-1", "IsArenaPokemonAsleepOrPoisoned-3", "IsArenaPokemonAsleepOrPoisoned-4"],
     },
 }

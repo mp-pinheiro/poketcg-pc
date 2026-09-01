@@ -1,0 +1,9 @@
+{
+  "fn": "IsArenaPokemonAsleepOrPoisoned",
+  "case": "tests/cases/duel_core_status.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"IsArenaPokemonAsleepOrPoisoned\", \"registers\": {\"a\": 128, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 49904, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49904\": \"80\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"IsArenaPokemonAsleepOrPoisoned\", \"mismatches\": {\"a\": [128, 0], \"f\": [16, 128]}}\n",
+  "restored": "{\"fn\": \"IsArenaPokemonAsleepOrPoisoned\", \"registers\": {\"a\": 128, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 49904, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49904\": \"80\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
