@@ -341,6 +341,7 @@ CASES["SetCardListInfoBoxText"] = [
 CONTRACT["PrintCardListHeaderAndInfoBoxTexts"] = {"compare": (), "preserve": ()}
 CASES["PrintCardListHeaderAndInfoBoxTexts"] = [
     {"wram": {0xCBDA: b"\x00\x00", 0xCBDC: b"\x00\x00"},
+     "read": {0xFFAA: 2, 0xFFAD: 1},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
     dict(POISON, wram={0xCBDA: b"\x00\x00", 0xCBDC: b"\x00\x00"},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
@@ -5307,8 +5308,8 @@ MUTATIONS["LookForCardIDInPlayArea_Bank5"] = {
 # >>> factory-mutation PrintCardListHeaderAndInfoBoxTexts
 MUTATIONS["PrintCardListHeaderAndInfoBoxTexts"] = {
     "source_symbol": "PrintCardListHeaderAndInfoBoxTexts",
-    "before": "e = 14u;",
-    "after": "e = 13u;",
+    "before": "\te = 1u;\n\tInitTextPrinting(d, e);",
+    "after": "\te = 2u;\n\tInitTextPrinting(d, e);",
     "case_ids": ["PrintCardListHeaderAndInfoBoxTexts-0", "PrintCardListHeaderAndInfoBoxTexts-1"],
 }
 # <<< factory-mutation PrintCardListHeaderAndInfoBoxTexts
