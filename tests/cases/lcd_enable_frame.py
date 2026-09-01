@@ -13,8 +13,8 @@ CONTRACT = {
 
 CASES = {
     "DoFrameIfLCDEnabled": [
-        {"setup": [{"fn": "DisableLCD"}], "wram": {HRAM: b"\0\0\0\0\0"},
-         "read": {HRAM: 5}},
+        {"setup": [{"fn": "DisableLCD"}], "keys": 0x01,
+         "wram": {HRAM: b"\0\0\0\0\0"}, "read": {HRAM: 5}},
         dict(POISON, setup=[{"fn": "DisableLCD"}],
              wram={HRAM: b"\x11\x22\x33\x44\x55"}, read={HRAM: 5}),
         {"oracle": False,
