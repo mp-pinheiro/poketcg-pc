@@ -169,7 +169,7 @@ CASES = {
     # conditional pointer advance observable at all; the register-only
     # contract above cannot see it.
     "LoadBGPalette": [
-        {}, dict(POISON),
+        {"read": {0xFF47: 1}},
         {"a": 1, "read": {0xCAF0: 64}},
         {"a": 0, "read": {0xCAF0: 64}},
         dict(POISON, a=1, read={0xCAF0: 64}),

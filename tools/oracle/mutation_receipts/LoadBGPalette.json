@@ -1,0 +1,9 @@
+{
+  "fn": "LoadBGPalette",
+  "case": "tests/cases/load_gfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadBGPalette\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"65351\": \"e4\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadBGPalette\", \"mismatches\": {\"bus\": {\"address\": 65351, \"reference\": \"e420\", \"native\": \"e520\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[65351, 1], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadBGPalette\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"65351\": \"e4\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n"
+}
