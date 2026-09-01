@@ -15,6 +15,7 @@ CONTRACT = {
 
 CASES = {
     "LoadDeck": [
+        {"a": 55, "wram": {hWhoseTurn: bytes((PLAYER_TURN,))}},
         {"a": 1, "wram": {hWhoseTurn: bytes((PLAYER_TURN,))},
          "read": {wPlayerDeck: 60, wDeckName: 2}},
         {"a": 8, "wram": {hWhoseTurn: bytes((OPPONENT_TURN,))},
