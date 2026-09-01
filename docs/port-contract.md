@@ -13,7 +13,6 @@ just completion-baseline        # pin and validate the reset baseline evidence
 just completion-rom-coverage # validate the complete ROM span partition
 just completion-routine-mapping # verify routine registration bijection
 just completion-representation # verify state representation relation
-just completion-truthful-accounting # verify published counts reconcile
 just completion-substrate # verify leaf parity, replay, and native state capture
 just completion-hardware-removal # verify transform and leaf oracle checks
 just completion-gambatte-bootstrap # one-time: source-builds the pinned release-capture core
