@@ -65,7 +65,7 @@ MUTATIONS = {
         "source": "src/home/switch_rom.c",
         "before": "hBankROM = bank;",
         "after": "hBankROM = 0;",
-        "case_ids": ["BankswitchROM-0", "BankswitchROM-1", "BankswitchROM-2"],
+        "case_ids": ["BankswitchROM-1", "BankswitchROM-0", "BankswitchROM-2"],
     },
 }
 # >>> factory-mutation BankpushROM
