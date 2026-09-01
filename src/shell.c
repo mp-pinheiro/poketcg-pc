@@ -39,6 +39,10 @@ uint8_t joypad_p1(uint8_t held, uint8_t select_bits)
 		result = (uint8_t)((result & 0x0F) | (uint8_t)(row_value(held, BTN_A) << 4));
 	return result;
 }
+uint8_t shell_hkeys_from_input(uint8_t buttons)
+{
+	return (uint8_t)((buttons << 4) | (buttons >> 4));
+}
 
 Shell *shell_create(const ShellConfig *config)
 {
@@ -147,7 +151,7 @@ int shell_pump(Shell *shell, InputFrame *frame)
 	(void)shell;
 #endif
 	gb_write8(0xFF00, joypad_p1(frame->buttons, (uint8_t)(g_io[0] & 0x30)));
-	g_keys = frame->buttons;
+	g_keys = shell_hkeys_from_input(frame->buttons);
 	return 1;
 }
 

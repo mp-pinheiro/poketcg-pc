@@ -16,6 +16,7 @@ typedef struct {
 Shell *shell_create(const ShellConfig *config);
 void shell_destroy(Shell *shell);
 int shell_pump(Shell *shell, InputFrame *frame);
+uint8_t shell_hkeys_from_input(uint8_t buttons);
 void shell_present(Shell *shell, const uint16_t *framebuffer);
 void shell_queue_audio(Shell *shell, const int16_t *samples, size_t count);
 

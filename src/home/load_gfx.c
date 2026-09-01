@@ -197,10 +197,12 @@ void LoadGraphicsPointerFromHL(uint16_t *hl)
 
 uint8_t LoadSpriteGfx(uint8_t a)
 {
-	uint8_t total;
+	uint8_t saved = hBankROM;
+	BankswitchROM(0x20u);
 	uint16_t hl = GetMapDataPointer(a, GFX_TABLE_SPRITES).hl;
 	LoadGraphicsPointerFromHL(&hl);
-	total = gb_read8(hl);
+	uint8_t total = gb_read8(hl);
+	BankswitchROM(saved);
 	wTotalNumTiles = total;
 	wCurSpriteTileSize = TILE_SIZE;
 	LoadGfxDataFromTempPointerToVRAMBank();
@@ -253,9 +255,12 @@ void LoadTilesetGfx(void)
 
 void Func_80238(void)
 {
+	uint8_t saved = hBankROM;
+	BankswitchROM(0x20u);
 	uint16_t hl = GetMapDataPointer(wCurTileset, GFX_TABLE_TILESETS).hl;
 	LoadGraphicsPointerFromHL(&hl);
 	wTotalNumTiles = gb_read8(hl);
+	BankswitchROM(saved);
 	wCurSpriteTileSize = TILE_SIZE;
 	wWhichVRAMBank = 0;
 	wVRAMTileOffset = 0x80;
@@ -322,9 +327,12 @@ LoadTilesetChunkResult LoadTilesetGfx_CopyGfxData(uint8_t b, uint8_t c)
 
 void Func_803b9(void)
 {
+	uint8_t saved = hBankROM;
+	BankswitchROM(0x20u);
 	uint16_t hl = GetMapDataPointer(wCurTilemap, GFX_TABLE_TILEMAPS).hl;
 	LoadGraphicsPointerFromHL(&hl);
 	wCurTileset = gb_read8(hl);
+	BankswitchROM(saved);
 }
 
 void LoadBGPalette(uint8_t a)
@@ -392,17 +400,18 @@ void LoadOBPalette(uint8_t a)
 
 void LoadPaletteDataToBuffer(uint8_t a)
 {
+	uint8_t saved = hBankROM;
+	BankswitchROM(0x20u);
 	uint16_t hl = GetMapDataPointer(a, GFX_TABLE_PALETTES).hl;
 	uint8_t size;
 	uint16_t count;
 	uint16_t de = wLoadedPalData_ADDR;
-	uint8_t saved;
 	LoadGraphicsPointerFromHL(&hl);
 	size = gb_read8(hl++);
 	count = (uint16_t)((size & 0x0fu) + 1u)
 	      + (uint16_t)((size & 0xf0u) >> 1)
 	      + 1u;
-	saved = hBankROM;
+	BankswitchROM(saved);
 	BankswitchROM(wTempPointerBank);
 	CopyBankedDataToDE(count, de);
 	BankswitchROM(saved);

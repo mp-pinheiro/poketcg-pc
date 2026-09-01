@@ -88,7 +88,7 @@ int runtime_run_with_input(
 	state.button_count = button_count;
 	state.frame_limit = frame_limit;
 	if (button_count)
-		g_keys = buttons[0];
+		g_keys = shell_hkeys_from_input(buttons[0]);
 	if (pthread_mutex_init(&state.lock, NULL) != 0)
 		return -1;
 	if (pthread_cond_init(&state.condition, NULL) != 0) {
@@ -129,7 +129,7 @@ int runtime_run_with_input(
 		state.frames++;
 		if (state.button_count)
 			input.buttons = state.buttons[state.frames % state.button_count];
-		g_keys = input.buttons;
+		g_keys = shell_hkeys_from_input(input.buttons);
 		apu_trace_set_tick(state.frames);
 		size_t pcm_count = apu_trace_render_pcm(
 			state.audio, AUDIO_SAMPLES_PER_FRAME);

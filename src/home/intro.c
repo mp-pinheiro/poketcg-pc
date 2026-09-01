@@ -8,9 +8,11 @@
 #include "home/color.h"
 #include "home/init_menu.h"
 #include "home/lcd.h"
+#include "home/sound.h"
 #include "home/play_animation.h"
 #define HANDLE_ALL_SPRITE_ANIMATIONS 0x3CB4u
 #define INTRO_SEQUENCE 0x559Du
+#define MUSIC_TITLESCREEN 0x01u
 /* <<< factory statics */
 
 #define PALETTE_TITLE_SCREEN_ORBS 0x1eu
@@ -42,6 +44,7 @@ void PlayIntroSequence(void)
 	LoadConsolePaletteData();
 	(void)InitMenuScreen();
 	EnableAndClearSpriteAnimations();
+	PlaySong(MUSIC_TITLESCREEN);
 	(void)SetDoFrameFunction(HANDLE_ALL_SPRITE_ANIMATIONS);
 	LoadTitleScreenSprites();
 

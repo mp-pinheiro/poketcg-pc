@@ -84,6 +84,7 @@
 #include "home/dma.h"
 #include "home/lcd.h"
 #include "home/overworld.h"
+#include "home/frames.h"
 #include "home/main_menu.h"
 #include "home/serial.h"
 #include "home/setup.h"
@@ -321,6 +322,13 @@ void DeleteSaveDataForNewGame(void)
 /* >>> factory HandleTitleScreen */
 void HandleTitleScreen(void)
 {
+	if (!frame_boundary_is_installed()) {
+		if (wLastSelectedStartMenuItem == 0u)
+			return;
+		PlaySong(MUSIC_STOP);
+		EnableAndClearSpriteAnimations();
+		return;
+	}
 	if (wLastSelectedStartMenuItem != 0u) {
 		for (;;) {
 			PlayIntroSequence();
@@ -347,7 +355,6 @@ void HandleTitleScreen(void)
 			}
 		}
 	}
-
 start_menu:
 	(void)CheckIfHasSaveData();
 	HandleStartMenu();
