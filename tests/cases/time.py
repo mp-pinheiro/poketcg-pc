@@ -70,8 +70,8 @@ MUTATIONS = {
         "source_symbol": "IncrementPlayTimeCounter",
         "before": "if (b0 < 60u)",
         "after": "if (b0 <= 60u)",
-        "case_ids": ["IncrementPlayTimeCounter-0", "IncrementPlayTimeCounter-1",
-                      "IncrementPlayTimeCounter-2", "IncrementPlayTimeCounter-3",
+        "case_ids": ["IncrementPlayTimeCounter-2", "IncrementPlayTimeCounter-0",
+                      "IncrementPlayTimeCounter-1", "IncrementPlayTimeCounter-3",
                       "IncrementPlayTimeCounter-4", "IncrementPlayTimeCounter-5"],
     },
 }
