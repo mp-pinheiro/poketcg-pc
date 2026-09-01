@@ -191,6 +191,20 @@ SCHEMA2_CASES = {
             "completion": {"mode": "return"},
             "evidence": "primary",
         },
+        {
+            "id": "Random-mutation-boundary",
+            "hardware": "cgb",
+            "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
+            "registers": dict(POISON, a=255),
+            "bus": {},
+            "seeds": {"wram": {wRNG1: b"\x02\x40\x00"}},
+            "setup": [],
+            "input_events": [],
+            "instruction_budget": 1000,
+            "cycle_budget": 10000,
+            "completion": {"mode": "return"},
+            "evidence": "primary",
+        },
     ],
 }
 MUTATIONS = {
@@ -210,6 +224,6 @@ MUTATIONS = {
         "source_symbol": "Random",
         "before": "return (uint8_t)(HtimesL((uint16_t)(a << 8 | l)) >> 8);",
         "after": "return (uint8_t)(HtimesL((uint16_t)(a << 8 | (uint8_t)(l + 1u))) >> 8);",
-        "case_ids": ["Random-zero", "Random-one"],
+        "case_ids": ["Random-mutation-boundary", "Random-zero", "Random-one"],
     },
 }

@@ -1,0 +1,9 @@
+{
+  "fn": "Random",
+  "case": "tests/cases/random.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Random\", \"registers\": {\"a\": 128, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"058401\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Random\", \"mismatches\": {\"a\": [128, 129]}}\n",
+  "restored": "{\"fn\": \"Random\", \"registers\": {\"a\": 128, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"058401\"}}, \"status\": \"PASS\"}\n"
+}
