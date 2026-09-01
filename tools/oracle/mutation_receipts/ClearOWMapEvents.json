@@ -1,9 +1,9 @@
 {
   "fn": "ClearOWMapEvents",
   "case": "tests/cases/map_events.py",
-  "index": 2,
+  "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"ClearOWMapEvents\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"54050\": \"11000000000000000000000022\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"ClearOWMapEvents\", \"mismatches\": {\"bus\": {\"address\": 54061, \"reference\": \"000000000022\", \"native\": \"000000009922\", \"reference_size\": 13, \"native_size\": 13, \"spans\": [[54050, 13]]}}}\n",
-  "restored": "{\"fn\": \"ClearOWMapEvents\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"54050\": \"11000000000000000000000022\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"ClearOWMapEvents\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"54051\": \"0000000000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ClearOWMapEvents\", \"mismatches\": {\"bus\": {\"address\": 54061, \"reference\": \"0000000000\", \"native\": \"00000000ff\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[54051, 11]]}}}\n",
+  "restored": "{\"fn\": \"ClearOWMapEvents\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"54051\": \"0000000000000000000000\"}}, \"status\": \"PASS\"}\n"
 }
