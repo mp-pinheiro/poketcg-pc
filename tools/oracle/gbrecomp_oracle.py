@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import struct
 import os
 import subprocess
 import tempfile
@@ -11,6 +12,93 @@ from pathlib import Path
 
 DEFAULT_BINARY = Path.home() / ".local/share/gbrecompiled/poketcg/poketcg"
 REGENERATE_RECIPE = "just oracleb-regenerate"
+
+GBSV_HEADER = struct.Struct("<IIQ9I")
+GBSV_MAGIC = 0x56534247
+PPU_COLOR_FRAMEBUFFER_OFFSET = 23142
+PPU_BG_PALETTE_OFFSET = 161384
+PPU_OBJ_PALETTE_OFFSET = 161448
+PPU_FRAMEBUFFER_SIZE = 160 * 144
+
+
+def _full_state(save_state: Path, dump: dict) -> dict:
+    raw = save_state.read_bytes()
+    if len(raw) < GBSV_HEADER.size:
+        raise OracleError("gb-recompiled savestate is truncated")
+    header = GBSV_HEADER.unpack_from(raw)
+    if header[0] != GBSV_MAGIC:
+        raise OracleError("gb-recompiled savestate has invalid magic")
+    _, version, _, rom_size, eram_size, wram_size, vram_size, oam_size, hram_size, io_size, ppu_size, apu_size = header
+    if version != 9:
+        raise OracleError(f"unsupported gb-recompiled savestate version {version}")
+    region_sizes = (eram_size, wram_size, vram_size, oam_size, hram_size, io_size, ppu_size, apu_size)
+    core_size = len(raw) - GBSV_HEADER.size - sum(region_sizes)
+    if core_size < 366:
+        raise OracleError("gb-recompiled savestate core is truncated")
+    cursor = GBSV_HEADER.size + core_size
+    regions: dict[str, bytes] = {}
+    for name, size in zip(
+        ("eram", "wram", "vram", "oam", "hram", "io", "ppu", "apu"), region_sizes
+    ):
+        end = cursor + size
+        if end > len(raw):
+            raise OracleError(f"gb-recompiled savestate {name} region is truncated")
+        regions[name] = raw[cursor:end]
+        cursor = end
+    if cursor != len(raw):
+        raise OracleError("gb-recompiled savestate has trailing bytes")
+    if wram_size < 0x2000 or vram_size != 0x4000 or hram_size < 0x7F or io_size < 0x81:
+        raise OracleError("gb-recompiled savestate memory layout is unsupported")
+    if ppu_size < PPU_OBJ_PALETTE_OFFSET + 0x40:
+        raise OracleError("gb-recompiled savestate PPU state is truncated")
+
+    wram = regions["wram"][:0x2000]
+    vram = regions["vram"]
+    io = regions["io"][:0x80]
+    hram = regions["hram"][:0x7F] + bytes((regions["io"][0x80],))
+    ppu = regions["ppu"]
+    color_framebuffer = ppu[
+        PPU_COLOR_FRAMEBUFFER_OFFSET:
+        PPU_COLOR_FRAMEBUFFER_OFFSET + PPU_FRAMEBUFFER_SIZE * 2
+    ]
+    state = {
+        "wram": list(wram),
+        "hram": list(hram),
+        "sram_bank_0": list(regions["eram"][0x0000:0x2000]),
+        "sram_bank_1": list(regions["eram"][0x2000:0x4000]),
+        "sram_bank_2": list(regions["eram"][0x4000:0x6000]),
+        "sram_bank_3": list(regions["eram"][0x6000:0x8000]),
+        "vram_bank_0": list(vram[:0x2000]),
+        "vram_bank_1": list(vram[0x2000:0x4000]),
+        "oam": list(regions["oam"]),
+        "io": list(io),
+        "palette_ram": list(
+            ppu[PPU_BG_PALETTE_OFFSET:PPU_BG_PALETTE_OFFSET + 0x40]
+            + ppu[PPU_OBJ_PALETTE_OFFSET:PPU_OBJ_PALETTE_OFFSET + 0x40]
+        ),
+        "mapper_state": {
+            "rom_bank": struct.unpack_from("<H", raw, GBSV_HEADER.size + 352)[0],
+            "sram_bank": raw[GBSV_HEADER.size + 354],
+            "vram_bank": raw[GBSV_HEADER.size + 356],
+            "sram_enabled": raw[GBSV_HEADER.size + 358],
+        },
+        "input_latch": raw[GBSV_HEADER.size + 365],
+        "timer_frame_counters": {
+            "frames": dump.get("completed_frames", 0),
+            "cycles": dump.get("cycles", 0),
+        },
+        "rng": list(wram[0xACA:0xACD]),
+        "apu_state": {"raw": list(regions["apu"])},
+        "apu_trace": [],
+        "framebuffer": list(struct.unpack("<" + "H" * PPU_FRAMEBUFFER_SIZE, color_framebuffer)),
+        "save": list(regions["eram"]),
+        "transport": [],
+        "printer": [],
+        "scratch": [0] * 0x100,
+    }
+    if rom_size <= 0:
+        raise OracleError("gb-recompiled savestate has invalid ROM size")
+    return state
 
 
 @dataclass(frozen=True)
@@ -86,7 +174,7 @@ class Oracle:
             # stale-save footgun, and it made a 10-frame replay non-reproducible here.
             saves = Path(directory) / "saves"
             saves.mkdir()
-            command = [str(self.binary), "--headless", "--no-audio",
+            command = [str(self.binary), "--headless",
                        "--save-dir", str(saves), "--ignore-rtc-persistence"]
             if input_file is not None:
                 command += ["--input", str(input_file)]
@@ -111,6 +199,8 @@ class Oracle:
         missing = [key for key in required if key not in state]
         if missing:
             raise OracleError(f"gb-recompiled state is missing keys: {', '.join(missing)}")
+        if save_state is not None:
+            state.update(_full_state(Path(save_state), state))
         return Result(*(state[key] for key in required[:11]), state=state)
 
     def __enter__(self) -> "Oracle":

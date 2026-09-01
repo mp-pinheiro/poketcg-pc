@@ -120,13 +120,22 @@ def compare(result: Result, c_state: dict | None, *, perturb: str | None = None)
         failures += 1
     return failures
 
-def run_native(binary: Path, pack: Path, frames: int, state_path: Path) -> dict:
+def run_native(
+    binary: Path,
+    pack: Path,
+    frames: int,
+    state_path: Path,
+    input_file: str | None = None,
+) -> dict:
+    command = [
+        str(binary), "--headless", "--data-pack", str(pack),
+        "--frames", str(frames), "--dump-state", str(state_path),
+    ]
+    if input_file is not None:
+        command.extend(["--input", input_file])
     try:
         completed = subprocess.run(
-            [
-                str(binary), "--headless", "--data-pack", str(pack),
-                "--frames", str(frames), "--dump-state", str(state_path),
-            ],
+            command,
             capture_output=True,
             text=True,
             timeout=30,
@@ -167,9 +176,20 @@ def main() -> int:
     )
     args = parser.parse_args()
     try:
-        with Oracle(args.oracle, timeout=args.timeout) as oracle:
-            first = oracle.run(input_file=args.input_file, frame_limit=args.frames)
-            second = oracle.run(input_file=args.input_file, frame_limit=args.frames)
+        with tempfile.TemporaryDirectory(prefix="poketcg-oracle-state-") as directory:
+            first_save = Path(directory) / "first.gbs"
+            second_save = Path(directory) / "second.gbs"
+            with Oracle(args.oracle, timeout=args.timeout) as oracle:
+                first = oracle.run(
+                    input_file=args.input_file,
+                    frame_limit=args.frames,
+                    save_state=first_save,
+                )
+                second = oracle.run(
+                    input_file=args.input_file,
+                    frame_limit=args.frames,
+                    save_state=second_save,
+                )
         if _canonical(first.state) != _canonical(second.state):
             print("replay mismatch: repeated reference states differ", file=sys.stderr)
             return 1
@@ -180,10 +200,10 @@ def main() -> int:
                 first_path = Path(directory) / "first.json"
                 second_path = Path(directory) / "second.json"
                 native_state = run_native(
-                    args.native, args.native_pack, args.frames, first_path
+                    args.native, args.native_pack, args.frames, first_path, args.input_file
                 )
                 second_native = run_native(
-                    args.native, args.native_pack, args.frames, second_path
+                    args.native, args.native_pack, args.frames, second_path, args.input_file
                 )
             if _canonical(native_state) != _canonical(second_native):
                 print("replay mismatch: repeated native states differ", file=sys.stderr)
