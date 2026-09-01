@@ -9350,7 +9350,7 @@ CASES["StrikesBackEffect"] = [{}, dict(POISON)]
 # <<< factory StrikesBackEffect
 # >>> factory Switch_BenchCheck
 CONTRACT["Switch_BenchCheck"] = {"compare": ("a", "f", "hl"), "preserve": ()}
-CASES["Switch_BenchCheck"] = [{}, {"a": 2}, {"a": 6}]
+CASES["Switch_BenchCheck"] = [{"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x02"}}, {"a": 2}, {"a": 6}]
 # <<< factory Switch_BenchCheck
 # >>> factory Switch_SwitchEffect
 CONTRACT["Switch_SwitchEffect"] = {"compare": (), "preserve": ()}
