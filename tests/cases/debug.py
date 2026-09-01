@@ -235,7 +235,7 @@ MUTATIONS = {
         "source_symbol": "DebugSGBFrame",
         "before": "if (next >= 4u)",
         "after": "if (next > 4u)",
-        "case_ids": ["DebugSGBFrame-0", "DebugSGBFrame-1", "DebugSGBFrame-2"],
+        "case_ids": ["DebugSGBFrame-2", "DebugSGBFrame-0", "DebugSGBFrame-1"],
     },
     "DebugStandardBGCharacter": {
         "source_symbol": "DebugStandardBGCharacter",
