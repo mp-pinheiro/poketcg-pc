@@ -5609,7 +5609,7 @@ MUTATIONS["DrawHPBar"] = {
     "source_symbol": "DrawHPBar",
     "before": "uint8_t tile = SYM_HP_OK;",
     "after": "uint8_t tile = SYM_HP_NOK;",
-    "case_ids": ["DrawHPBar-0", "DrawHPBar-1", "DrawHPBar-3"],
+    "case_ids": ["DrawHPBar-3", "DrawHPBar-0", "DrawHPBar-1"],
 }
 # <<< factory-mutation DrawHPBar
 # >>> factory-mutation ValidateSavedDuelDataFromHL
