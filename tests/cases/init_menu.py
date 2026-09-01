@@ -37,7 +37,8 @@ CONTRACT = {
 
 CASES = {
     "InitMenuScreen": [
-        {"wram": {TILE_MAP_FILL: b"\xff", LCDC: b"\x00", H_SCX: b"\x12", H_SCY: b"\x34"},
+        {"wram": {TILE_MAP_FILL: b"\xff", LCDC: b"\x00", H_SCX: b"\x12", H_SCY: b"\x34",
+                  R_SCX: b"\x55", R_SCY: b"\x66"},
          "read": {TILE_MAP_FILL: 1, LCDC: 1, H_SCX: 1, H_SCY: 1, R_SCX: 1, R_SCY: 1,
                   VBLANK_OAM_TOGGLE: 1}},
         dict(POISON, wram={TILE_MAP_FILL: b"\x7f", LCDC: b"\x00", H_SCX: b"\xaa", H_SCY: b"\xbb"},
