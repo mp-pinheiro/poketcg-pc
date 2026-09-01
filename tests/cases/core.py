@@ -1264,7 +1264,7 @@ CASES["MoveAllTurnHolderKnockedOutPokemonToDiscardPile"] = [
 # >>> factory PrintSortNumberInCardList_CallFromPointer
 CONTRACT["PrintSortNumberInCardList_CallFromPointer"] = {"compare": (), "preserve": ()}
 CASES["PrintSortNumberInCardList_CallFromPointer"] = [
-    {"wram": {0xC51A: b"\x01\x02\xFF"}},
+    {"wram": {0xC51A: b"\x01\x02\xFF"}, "vread": {0: {0x9841: 2, 0x9881: 1}}, "setup": [{"fn": "PrintSortNumberInCardList_SetPointer"}]},
     dict(POISON, wram={0xC51A: b"\x03\x04\xFF"}),
 ]
 # <<< factory PrintSortNumberInCardList_CallFromPointer

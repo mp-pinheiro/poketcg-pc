@@ -1,0 +1,9 @@
+{
+  "fn": "PrintSortNumberInCardList_CallFromPointer",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintSortNumberInCardList_CallFromPointer\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"38977\": \"2100\", \"39041\": \"22\"}}, \"wram\": {\"50458\": \"0102ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintSortNumberInCardList_CallFromPointer\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"PrintSortNumberInCardList_CallFromPointer\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"38977\": \"2100\", \"39041\": \"22\"}}, \"wram\": {\"50458\": \"0102ff\"}}, \"status\": \"PASS\"}\n"
+}
