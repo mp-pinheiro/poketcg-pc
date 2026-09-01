@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
 BINARY = ROOT / "build" / "poketcg"
 PACK = ROOT / "build" / "completion" / "data-pack.bin"
 EVIDENCE_DIR = ROOT / "build" / "completion" / "evidence"
@@ -57,6 +58,9 @@ def boot_input(frames: int) -> list[int]:
         if index < frames:
             values[index] = value
     return values
+
+def reference_boot_input() -> str:
+    return "f1000:A:1,f1100:D:1,f1101:A:1,f1200:S:1,f1201:A:1"
 
 
 
@@ -156,7 +160,40 @@ def main(argv: list[str] | None = None) -> int:
                     elif artifact["events"] < 3:
                         artifact["failure"] = "EVENT_BOUND_NOT_MET"
                     else:
-                        artifact["failure"] = "REFERENCE_COMPARISON_MISSING"
+                        try:
+                            from tests.scene_diff import STATE_FIELDS, _first_difference, _state_field
+                            from tools.oracle.gbrecomp_oracle import Oracle
+
+                            reference_save = Path(directory) / "reference.gbs"
+                            with Oracle(timeout=60.0) as oracle:
+                                reference = oracle.run(
+                                    input_file=reference_boot_input(),
+                                    frame_limit=run_frames,
+                                    save_state=reference_save,
+                                )
+                            mismatches = []
+                            for field in STATE_FIELDS:
+                                reference_value = _state_field(reference.state, field)
+                                native_value = _state_field(state, field)
+                                if reference_value is None or native_value is None:
+                                    mismatches.append({"field": field, "reason": "missing"})
+                                    continue
+                                offset = _first_difference(reference_value, native_value)
+                                if offset is not None:
+                                    mismatches.append({"field": field, "offset": offset})
+                            artifact["oracles"] = ["oracle-b", "native"]
+                            artifact["comparison"] = {
+                                "status": "PASS" if not mismatches else "FAIL",
+                                "mismatches": mismatches,
+                            }
+                            if mismatches:
+                                artifact["failure"] = "STATE_MISMATCH"
+                            else:
+                                artifact["status"] = "PASS"
+                                artifact.pop("failure", None)
+                        except (OSError, ValueError, RuntimeError) as exc:
+                            artifact["failure"] = "ORACLE_ERROR"
+                            artifact["detail"] = str(exc)
                 elif args.scenario == "boot-title-negative":
                     artifact["failure"] = "REFERENCE_COMPARISON_MISSING"
                 else:
