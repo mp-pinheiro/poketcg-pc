@@ -4,6 +4,7 @@
 #include "generated/wram.h"
 #include "home/sound.h"
 #include "home/switch_rom.h"
+#include "home/copy.h"
 #include "mem.h"
 /* >>> factory statics */
 #include "home/warp.h"

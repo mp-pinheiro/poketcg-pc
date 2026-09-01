@@ -398,13 +398,14 @@ void Music1_PlayNextNote(uint16_t *hl, uint8_t ch)
 
 		/* $E0: EndLoop — decrement count, jump back if not zero */
 		case 16: {
-			uint16_t sp = Music1_GetChannelStackPointer(ch) - 1;
+			uint16_t sp = Music1_GetChannelStackPointer(ch) - 1u;
 			uint8_t count = gb_read8(sp);
 			if (--count) {
 				gb_write8(sp, count);
-				*hl = (uint16_t)gb_read8(sp - 2) << 8 | gb_read8(sp - 3);
+				*hl = (uint16_t)gb_read8(sp - 1u) << 8
+				      | gb_read8(sp - 2u);
 			} else {
-				Music1_SetChannelStackPointer(ch, sp - 2);
+				Music1_SetChannelStackPointer(ch, sp - 2u);
 			}
 			break;
 		}

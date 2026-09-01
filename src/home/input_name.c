@@ -286,6 +286,9 @@ void DeckNamingScreen_AdjustCursorPosition(uint8_t a)
 PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_DrawCursor(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	uint8_t saved_a = a;
+	(void)f;
+	(void)e;
+	(void)hl;
 	uint16_t char_info = PlayerNamingScreen_GetCharInfoFromPos((uint16_t)((uint16_t)gb_read8(wNamingScreenCursorX_ADDR) << 8 | gb_read8(wNamingScreenCursorY_ADDR)));
 	gb_write8(0x2000u, 0x06u);
 	uint8_t tile = rom_ptr(6u, char_info++)[0];
@@ -301,6 +304,9 @@ PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_DrawCursor(uint8_t a, uin
 DeckNamingScreen_DrawCursorResult DeckNamingScreen_DrawCursor(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	uint8_t saved_a = a;
+	(void)f;
+	(void)e;
+	(void)hl;
 	uint16_t char_info = DeckNamingScreen_GetCharInfoFromPos((uint16_t)((uint16_t)gb_read8(wNamingScreenCursorX_ADDR) << 8 | gb_read8(wNamingScreenCursorY_ADDR)));
 	gb_write8(0x2000u, 0x06u);
 	uint8_t tile = rom_ptr(6u, char_info++)[0];
@@ -881,6 +887,13 @@ InitializeInputNameResult InitializeInputName(uint8_t a, uint8_t b, uint8_t c,
 /* >>> factory FinalizeInputName */
 FinalizeInputNameResult FinalizeInputName(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)a;
+	(void)f;
+	(void)b;
+	(void)c;
+	(void)d;
+	(void)e;
+	(void)hl;
 	uint16_t destination = (uint16_t)((uint16_t)gb_read8(wNamingScreenDestPointer_ADDR + 1u) << 8 | gb_read8(wNamingScreenDestPointer_ADDR));
 	uint16_t source = wNamingScreenBuffer_ADDR;
 	uint16_t copy_count = (uint16_t)wNamingScreenBufferMaxLength + 1u;
