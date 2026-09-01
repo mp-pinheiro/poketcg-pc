@@ -876,11 +876,12 @@ MUTATIONS = {
         "before": "\t\tgb_write8(wSerialTransferData_ADDR, gb_read8(rSB));",
         "after": "\t\tgb_write8(wSerialTransferData_ADDR, (uint8_t)(gb_read8(rSB) ^ 0xFFu));",
         "case_ids": [
+            "ExecutePrinterPacketSequence-8",
             "ExecutePrinterPacketSequence-0", "ExecutePrinterPacketSequence-1",
             "ExecutePrinterPacketSequence-2", "ExecutePrinterPacketSequence-3",
             "ExecutePrinterPacketSequence-4", "ExecutePrinterPacketSequence-5",
             "ExecutePrinterPacketSequence-6", "ExecutePrinterPacketSequence-7",
-            "ExecutePrinterPacketSequence-8", "ExecutePrinterPacketSequence-9",
+            "ExecutePrinterPacketSequence-8",
         ],
     },
 }
