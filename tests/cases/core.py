@@ -1224,6 +1224,7 @@ CASES["DecideLinkDuelVariables"] = [
 # >>> factory DisplayAttackPage
 CONTRACT["DisplayAttackPage"] = {"compare": (), "preserve": ()}
 CASES["DisplayAttackPage"] = [
+    {"wram": {0xCC04: b"\x02"}, "read": {0xCC04: 1}},
     {"wram": {0xCC04: b"\x00"}},
     dict(POISON, wram={0xCC04: b"\x03"}),
 ]
@@ -5850,7 +5851,7 @@ MUTATIONS["DecideLinkDuelVariables"] = {
 MUTATIONS["DisplayAttackPage"] = {
     "source_symbol": "DisplayAttackPage",
     "before": "case 2u:\n\t\tSwitchAttackPage();",
-    "after": "SwitchCardPage();",
+    "after": "case 2u:\n\t\twAttackPageNumber = 0u;",
     "case_ids": ["DisplayAttackPage-0", "DisplayAttackPage-1"],
 }
 # <<< factory-mutation DisplayAttackPage
