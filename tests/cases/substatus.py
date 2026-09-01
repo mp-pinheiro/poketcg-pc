@@ -568,7 +568,7 @@ MUTATIONS = {
         "source_symbol": "HandleDoubleDamageSubstatus",
         "before": "de = (uint16_t)(de << 1);",
         "after": "de = (uint16_t)(de >> 1);",
-        "case_ids": ["HandleDoubleDamageSubstatus-0", "HandleDoubleDamageSubstatus-1", "HandleDoubleDamageSubstatus-2", "HandleDoubleDamageSubstatus-3", "HandleDoubleDamageSubstatus-4"],
+        "case_ids": ["HandleDoubleDamageSubstatus-1", "HandleDoubleDamageSubstatus-0", "HandleDoubleDamageSubstatus-2", "HandleDoubleDamageSubstatus-3", "HandleDoubleDamageSubstatus-4"],
     },
 }
 # >>> factory-mutation ApplyStrikesBack_AgainstResidualAttack
