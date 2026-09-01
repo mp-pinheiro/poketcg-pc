@@ -152,8 +152,8 @@ def main(argv: list[str] | None = None) -> int:
     if not runner.is_file():
         raise SystemExit(f"missing {runner}; run just oracle-build-gbref")
     if not args.all:
-        existing = {path.stem for path in RECEIPT_DIR.glob("*.json")}
-        all_targets = [item for item in all_targets if item[0] not in existing]
+        unresolved = set(coverage["missing_names"]) | set(coverage["invalid_names"])
+        all_targets = [item for item in all_targets if item[0] in unresolved]
     if args.limit is not None:
         all_targets = all_targets[: args.limit]
     results = []
