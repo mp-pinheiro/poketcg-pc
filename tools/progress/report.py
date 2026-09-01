@@ -20,6 +20,8 @@ import importlib.util
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(ROOT))
+from tools.completion.revision import current_source_revision
 INVENTORY = ROOT / "site" / "data" / "inventory.json"
 SCOPE = ROOT / "tools" / "progress" / "scope.toml"
 REGISTRY = ROOT / "tests" / "routines.py"
@@ -93,9 +95,35 @@ def gate_input_trees() -> dict[str, str] | None:
 
 def gate_is_trusted(gate_data: dict | None) -> bool:
     """Return true only for a complete, structurally valid gate."""
-    if not gate_data or gate_data.get("schema") != 1:
+    if not gate_data or not gate_data.get("complete"):
         return False
-    if not gate_data.get("complete"):
+    schema = gate_data.get("schema")
+    if schema in {2, 3}:
+        if gate_data.get("revision") != current_source_revision(ROOT):
+            return False
+        counts = gate_data.get("counts") or {}
+        final = counts.get("final_routines") or {}
+        production = counts.get("production_integration") or {}
+        requirements = counts.get("requirements") or {}
+        milestones = counts.get("milestone_gates") or {}
+        trusted = counts.get("trusted_oracle_evidence") or {}
+        if (
+            counts.get("unclassified_bytes") != 0
+            or counts.get("orphan_registrations") != 0
+            or final.get("count") != final.get("total")
+            or production.get("roots") != production.get("root_total")
+            or production.get("uncovered_required_edges") != 0
+            or requirements.get("passing") != requirements.get("total")
+            or milestones.get("passing") != milestones.get("total")
+            or trusted.get("count") != trusted.get("total")
+        ):
+            return False
+        constituents = gate_data.get("constituents")
+        return isinstance(constituents, dict) and bool(constituents) and all(
+            isinstance(item, dict) and item.get("status") == "PASS"
+            for item in constituents.values()
+        )
+    if schema != 1:
         return False
     inventory = gate_data.get("inventory") or {}
     count = inventory.get("routines")
@@ -156,6 +184,7 @@ def project_work_records(
 ) -> list[dict]:
     """Project report rows into stable, issue-sized desired work records."""
     trusted = gate_is_trusted(gate_data)
+    gate_complete = trusted and gate_data.get("schema") in {2, 3}
     gate_routines = (gate_data or {}).get("routines") or {}
     operational = load_operational_blockers()
     active_packets = active_packets or {}
@@ -180,7 +209,7 @@ def project_work_records(
         }
         if work["excluded"]:
             work["state"] = "excluded"
-        elif trusted and gate_routines.get(name, {}).get("status") == "pass":
+        elif gate_complete or (trusted and gate_routines.get(name, {}).get("status") == "pass"):
             work["state"] = "complete"
         elif trusted and gate_routines.get(name, {}).get("status") == "fail":
             work["state"] = "failing"

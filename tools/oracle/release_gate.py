@@ -15,6 +15,8 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+from tools.completion.revision import current_source_revision
 GATE_PATH = ROOT / "site" / "data" / "gate.json"
 HISTORY_PATH = ROOT / "site" / "data" / "history.jsonl"
 COMPLETION = ROOT / "tools" / "completion" / "completion.py"
@@ -57,11 +59,7 @@ def command_output(command: list[str]) -> str:
 
 
 def revision() -> str:
-    try:
-        return command_output(["jj", "log", "-r", "@-", "--no-graph", "-T", "commit_id"])
-    except GateError:
-        return command_output(["git", "rev-parse", "HEAD"])
-
+    return current_source_revision(ROOT)
 
 def ensure_clean() -> None:
     try:

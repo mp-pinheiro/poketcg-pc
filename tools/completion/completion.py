@@ -17,6 +17,8 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+from tools.completion.revision import current_source_revision
 BASELINE_PATH = ROOT / "tools" / "completion" / "baseline.toml"
 MANIFEST_PATH = ROOT / "tools" / "completion" / "requirements.toml"
 INVENTORY_PATH = ROOT / "site" / "data" / "inventory.json"
@@ -95,25 +97,7 @@ def sha256_path(path: Path) -> str:
 
 
 def current_revision() -> str:
-    commands = (
-        ["jj", "log", "-r", "@-", "--no-graph", "-T", "commit_id"],
-        ["git", "rev-parse", "HEAD"],
-    )
-    for command in commands:
-        try:
-            result = subprocess.run(
-                command,
-                cwd=ROOT,
-                capture_output=True,
-                text=True,
-                timeout=10,
-                check=False,
-            )
-        except (OSError, subprocess.TimeoutExpired):
-            continue
-        if result.returncode == 0 and result.stdout.strip():
-            return result.stdout.strip()
-    return "unknown"
+    return current_source_revision(ROOT)
 
 
 def load_rom_inventory_module() -> Any:
