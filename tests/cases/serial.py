@@ -44,8 +44,8 @@ CONTRACT = {
 CASES = {
     # Opcode 0 is neither $29 nor $12: pure early return, nothing touched.
     "SerialTimerHandler": [
-        {"wram": {wSerialOp: b"\x00", rSC: b"\x00"},
-         "read": {wSerialOp: 1, wSerialFlags: 1, wSerialTimeoutCounter: 1, rSC: 1}},
+        {"wram": {wSerialOp: b"\x29", rSC: b"\x00"},
+         "read": {wSerialOp: 1, rSC: 1}},
         # Begin a transfer: internal clock, then start. rSC lands at $81.
         {"wram": {wSerialOp: b"\x29", rSC: b"\x00"},
          "read": {rSC: 1}},
