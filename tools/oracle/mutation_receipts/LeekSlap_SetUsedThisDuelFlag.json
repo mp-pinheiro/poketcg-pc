@@ -1,0 +1,9 @@
+{
+  "fn": "LeekSlap_SetUsedThisDuelFlag",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LeekSlap_SetUsedThisDuelFlag\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49858\": \"40\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LeekSlap_SetUsedThisDuelFlag\", \"mismatches\": {\"bus\": {\"address\": 49858, \"reference\": \"40c2\", \"native\": \"80c2\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49858, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"LeekSlap_SetUsedThisDuelFlag\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49858\": \"40\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
