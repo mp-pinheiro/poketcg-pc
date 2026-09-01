@@ -1954,7 +1954,7 @@ CASES["VictreebelLure_AssertPokemonInBench"] = [{}, {"wram": {0xC3EF: b"\x02"}}]
 # <<< factory VictreebelLure_AssertPokemonInBench
 # >>> factory ThunderboltEffect
 CONTRACT["ThunderboltEffect"] = {"compare": (), "preserve": ()}
-CASES["ThunderboltEffect"] = [{}, dict(POISON)]
+CASES["ThunderboltEffect"] = [{"wram": {0xFF97: b"\xC2", 0xC200: b"\x10", 0xC201: b"\x10", 0xC400: b"\xCB\x01", 0xC2ED: b"\x00", 0xC27E: b"\x00\x00"}, "read": {0xC200: 2, 0xC2ED: 1, 0xC27E: 2}}, dict(POISON)]
 # <<< factory ThunderboltEffect
 # >>> factory TrainerCardAsPokemon_DiscardEffect
 CONTRACT["TrainerCardAsPokemon_DiscardEffect"] = {"compare": (), "preserve": ()}
@@ -9316,7 +9316,7 @@ MUTATIONS["TrainerCardAsPokemon_BenchCheck"] = {"source_symbol": "TrainerCardAsP
 MUTATIONS["VictreebelLure_AssertPokemonInBench"] = {"source_symbol": "VictreebelLure_AssertPokemonInBench", "before": "effect_compare(count.a, 2u)", "after": "effect_compare(count.a, 3u)", "case_ids": ["VictreebelLure_AssertPokemonInBench-0", "VictreebelLure_AssertPokemonInBench-1"]}
 # <<< factory-mutation VictreebelLure_AssertPokemonInBench
 # >>> factory-mutation ThunderboltEffect
-MUTATIONS["ThunderboltEffect"] = {"source_symbol": "ThunderboltEffect", "before": "if (card == 0xffu)", "after": "if (card == 0xfeu)", "case_ids": ["ThunderboltEffect-0", "ThunderboltEffect-1"]}
+MUTATIONS["ThunderboltEffect"] = {"source_symbol": "ThunderboltEffect", "before": "PutCardInDiscardPile(card);", "after": "PutCardInDiscardPile(0u);", "case_ids": ["ThunderboltEffect-0", "ThunderboltEffect-1"]}
 # <<< factory-mutation ThunderboltEffect
 # >>> factory-mutation TrainerCardAsPokemon_DiscardEffect
 MUTATIONS["TrainerCardAsPokemon_DiscardEffect"] = {"source_symbol": "TrainerCardAsPokemon_DiscardEffect", "before": "if (location == PLAY_AREA_ARENA)", "after": "if (location != PLAY_AREA_ARENA)", "case_ids": ["TrainerCardAsPokemon_DiscardEffect-0", "TrainerCardAsPokemon_DiscardEffect-1"]}

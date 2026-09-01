@@ -1,0 +1,9 @@
+{
+  "fn": "ThunderboltEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ThunderboltEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"1002\", \"49790\": \"0100\", \"49901\": \"01\", \"50176\": \"cb01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ThunderboltEffect\", \"mismatches\": {\"bus\": {\"address\": 49664, \"reference\": \"1002010001\", \"native\": \"0210000001\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[49664, 2], [49790, 2], [49901, 1], [50176, 2], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"ThunderboltEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"1002\", \"49790\": \"0100\", \"49901\": \"01\", \"50176\": \"cb01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
