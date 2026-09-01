@@ -1,0 +1,9 @@
+{
+  "fn": "FillRectangle",
+  "case": "tests/cases/tiles.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FillRectangle\", \"registers\": {\"a\": 16, \"b\": 2, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 513, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"38912\": \"1012\", \"38944\": \"1113\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FillRectangle\", \"mismatches\": {\"bus\": {\"address\": 38913, \"reference\": \"10121113\", \"native\": \"10111112\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[38912, 2], [38944, 2]]}}}\n",
+  "restored": "{\"fn\": \"FillRectangle\", \"registers\": {\"a\": 16, \"b\": 2, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 513, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"38912\": \"1012\", \"38944\": \"1113\"}}, \"status\": \"PASS\"}\n"
+}

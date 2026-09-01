@@ -294,7 +294,7 @@ MUTATIONS = {
         "source_symbol": "FillRectangle",
         "before": "uint8_t col_step = (uint8_t)(hl >> 8);",
         "after": "uint8_t col_step = (uint8_t)hl;",
-        "case_ids": ["FillRectangle-1", "FillRectangle-2", "FillRectangle-3", "FillRectangle-4"],
+        "case_ids": ["FillRectangle-3", "FillRectangle-1", "FillRectangle-2", "FillRectangle-4"],
     },
 }
 # >>> factory-mutation Func_2057
