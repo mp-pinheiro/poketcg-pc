@@ -1,0 +1,9 @@
+{
+  "fn": "SpacingOut_HealEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SpacingOut_HealEffect\", \"registers\": {\"a\": 42, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49864, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"01\", \"49864\": \"2a\", \"50177\": \"7d\", \"65431\": \"c2\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SpacingOut_HealEffect\", \"mismatches\": {\"a\": [42, 52], \"bus\": {\"address\": 49864, \"reference\": \"012a7dc201\", \"native\": \"01347dc201\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[49851, 1], [49864, 1], [50177, 1], [65431, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"SpacingOut_HealEffect\", \"registers\": {\"a\": 42, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49864, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"01\", \"49864\": \"2a\", \"50177\": \"7d\", \"65431\": \"c2\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

@@ -9396,7 +9396,7 @@ CASES["SpacingOut_CheckDamage"] = [
 # >>> factory SpacingOut_HealEffect
 CONTRACT["SpacingOut_HealEffect"] = {"compare": ("a", "f", "hl"), "preserve": ()}
 CASES["SpacingOut_HealEffect"] = [
-    {"wram": {0xFFA0: b"\x00", 0xC0BB: b"\x01", 0xC0C8: b"\x20"}},
+    {"wram": {0xFF97: b"\xC2", 0xFFA0: b"\x01", 0xC2BB: b"\x01", 0xC2C8: b"\x20", 0xC401: b"\x7D"}, "read": {0xC2C8: 1}},
     dict(POISON, wram={0xFFA0: b"\x01", 0xC0BB: b"\x01", 0xC0C8: b"\x20"}),
     {"a": 1, "f": 0x10, "wram": {0xFFA0: b"\x01", 0xC0BB: b"\x01", 0xC0C8: b"\x00"}},
 ]
