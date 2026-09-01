@@ -1,0 +1,9 @@
+{
+  "fn": "Scavenge_DiscardEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Scavenge_DiscardEffect\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49669\": \"02\", \"49790\": \"05\", \"49901\": \"01\", \"65431\": \"c2\", \"65440\": \"05\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Scavenge_DiscardEffect\", \"mismatches\": {\"bus\": {\"address\": 49669, \"reference\": \"020501c205\", \"native\": \"000001c205\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[49669, 1], [49790, 1], [49901, 1], [65431, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"Scavenge_DiscardEffect\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49669\": \"02\", \"49790\": \"05\", \"49901\": \"01\", \"65431\": \"c2\", \"65440\": \"05\"}}, \"status\": \"PASS\"}\n"
+}

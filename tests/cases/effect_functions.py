@@ -9254,7 +9254,7 @@ CASES["PrehistoricPowerEffect"] = [{}, dict(POISON)]
 # <<< factory PrehistoricPowerEffect
 # >>> factory Scavenge_DiscardEffect
 CONTRACT["Scavenge_DiscardEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
-CASES["Scavenge_DiscardEffect"] = [{"wram": {0xFFA0: b"\x00"}}, dict(POISON, wram={0xFFA0: b"\x05"})]
+CASES["Scavenge_DiscardEffect"] = [{"wram": {0xFF97: b"\xC2", 0xFFA0: b"\x05", 0xC205: b"\x00", 0xC2ED: b"\x00", 0xC27E: b"\x00"}, "read": {0xC205: 1, 0xC2ED: 1, 0xC27E: 1}}, dict(POISON, wram={0xFFA0: b"\x05"})]
 # <<< factory Scavenge_DiscardEffect
 
 # >>> factory-mutation DreamEaterEffect
