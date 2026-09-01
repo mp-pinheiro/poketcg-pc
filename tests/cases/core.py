@@ -1091,7 +1091,9 @@ CASES["CheckForEvolutionInList"] = [
 CONTRACT["CountNumberOfEnergyCardsAttached"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["CountNumberOfEnergyCardsAttached"] = [
     {"e": 0, "wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x10", 0xC400: b"\x01"}, "read": {0xCC1B: 8, 0xCC23: 1}},
-    {"e": 0, "wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x10", 0xC400: b"\x01", 0xC201: b"\x10", 0xC401: b"\x01"}, "read": {0xCC1B: 8, 0xCC23: 1}},
+    {"e": 0, "wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x10", 0xC400: b"\x07",
+                      0xC201: b"\x10", 0xC401: b"\x01", 0xC27E: b"\x07"},
+     "read": {0xCC1B: 8, 0xCC23: 1}},
     dict(POISON, e=0, wram={hWhoseTurn: b"\xC3", 0xC300: b"\x10", 0xC500: b"\x01"}, read={0xCC1B: 8, 0xCC23: 1}),
 ]
 # <<< factory CountNumberOfEnergyCardsAttached

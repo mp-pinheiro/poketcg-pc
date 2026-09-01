@@ -1,0 +1,9 @@
+{
+  "fn": "CountNumberOfEnergyCardsAttached",
+  "case": "tests/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CountNumberOfEnergyCardsAttached\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"1010\", \"49790\": \"07\", \"50176\": \"0701\", \"52251\": \"000100000000020003\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CountNumberOfEnergyCardsAttached\", \"mismatches\": {\"a\": [2, 3]}}\n",
+  "restored": "{\"fn\": \"CountNumberOfEnergyCardsAttached\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"1010\", \"49790\": \"07\", \"50176\": \"0701\", \"52251\": \"000100000000020003\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
