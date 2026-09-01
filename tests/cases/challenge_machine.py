@@ -378,8 +378,9 @@ CASES["ChallengeMachine_PrintDuelResultIcons"] = [
 # >>> factory ChallengeMachine_PrintOpponentInfo
 CONTRACT["ChallengeMachine_PrintOpponentInfo"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["ChallengeMachine_PrintOpponentInfo"] = [
-    {"d": 0x00, "e": 0x00, "sram": {0: {sChallengeMachineOpponents: bytes(45)}},
-     "wram": {0xCABB: b"\x00"}, "setup": SETUP},
+    {"d": 0x00, "e": 0x00,
+     "sram": {0: {sChallengeMachineOpponents: bytes([0, 1, 2, 3, 4] + [0] * 40)}},
+     "wram": {0xCABB: b"\x00"}, "setup": SETUP, "read": {0xD692: 1}},
     dict(POISON, d=0x00, e=0x00, sram={0: {sChallengeMachineOpponents: bytes(45)}},
          wram={0xCABB: b"\x00"}, setup=SETUP),
 ]
@@ -443,8 +444,8 @@ MUTATIONS = {
 # >>> factory-mutation ChallengeMachine_PrintOpponentInfo
 MUTATIONS["ChallengeMachine_PrintOpponentInfo"] = {
     "source_symbol": "ChallengeMachine_PrintOpponentInfo",
-    "before": "\tuint8_t c = 2u;",
-    "after": "\tuint8_t c = 4u;",
+    "before": "hl++;",
+    "after": "hl = (uint16_t)(hl + 2u);",
     "case_ids": ["ChallengeMachine_PrintOpponentInfo-0", "ChallengeMachine_PrintOpponentInfo-1"],
 }
 # <<< factory-mutation ChallengeMachine_PrintOpponentInfo
