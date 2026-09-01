@@ -1982,7 +1982,13 @@ CASES["DestinyBond_DiscardEffect"] = [
 # <<< factory DestinyBond_DiscardEffect
 # >>> factory Ember_DiscardEffect
 CONTRACT["Ember_DiscardEffect"] = {"compare": (), "preserve": ()}
-CASES["Ember_DiscardEffect"] = [{}, dict(POISON)]
+CASES["Ember_DiscardEffect"] = [
+	{"wram": {0xFF97: b"\xC2", 0xFFA0: b"\x01", 0xC2ED: b"\x00",
+	          0xC200: b"\x00", 0xC201: b"\x00"},
+	 "read": {0xC200: 2, 0xC2ED: 1, 0xC27E: 1}},
+	{},
+	dict(POISON),
+]
 # <<< factory Ember_DiscardEffect
 # >>> factory FireBlast_DiscardEffect
 CONTRACT["FireBlast_DiscardEffect"] = {"compare": (), "preserve": ()}
