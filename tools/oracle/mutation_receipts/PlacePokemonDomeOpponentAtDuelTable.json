@@ -1,9 +1,9 @@
 {
   "fn": "PlacePokemonDomeOpponentAtDuelTable",
   "case": "tests/cases/pokemon_dome.py",
-  "index": 1,
+  "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"PlacePokemonDomeOpponentAtDuelTable\", \"registers\": {\"a\": 3, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 144, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54188\": \"120e03\"}}, \"status\": \"PASS\"}\n",
+  "baseline": "{\"fn\": \"PlacePokemonDomeOpponentAtDuelTable\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54188\": \"120e03\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"PlacePokemonDomeOpponentAtDuelTable\", \"mismatches\": {\"bus\": {\"address\": 54189, \"reference\": \"120e03\", \"native\": \"120f03\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54188, 3]]}}}\n",
-  "restored": "{\"fn\": \"PlacePokemonDomeOpponentAtDuelTable\", \"registers\": {\"a\": 3, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 144, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54188\": \"120e03\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"PlacePokemonDomeOpponentAtDuelTable\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54188\": \"120e03\"}}, \"status\": \"PASS\"}\n"
 }

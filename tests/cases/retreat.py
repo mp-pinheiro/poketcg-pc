@@ -172,7 +172,9 @@ MUTATIONS = {
         "source_symbol": "SetAIRetreatFlags",
         "before": "gb_write8(wAIRetreatFlags_ADDR, 0);",
         "after": "gb_write8(wAIRetreatFlags_ADDR, 0xFF);",
-        "case_ids": [f"SetAIRetreatFlags-{i}" for i in range(len(CASES["SetAIRetreatFlags"]))],
+        "case_ids": ["SetAIRetreatFlags-1", "SetAIRetreatFlags-5", "SetAIRetreatFlags-0",
+                     "SetAIRetreatFlags-2", "SetAIRetreatFlags-3", "SetAIRetreatFlags-4",
+                     "SetAIRetreatFlags-6"],
     },
 }
 

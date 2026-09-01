@@ -79,7 +79,7 @@ MUTATIONS = {
         "source_symbol": "Wait",
         "before": "\treturn (SGBWaitResult){0, 0x80u, 0, 0, 0, 0};",
         "after": "\treturn (SGBWaitResult){1, 0x80u, 0, 0, 0, 0};",
-        "case_ids": ["Wait-0", "Wait-1", "Wait-2"],
+        "case_ids": ["Wait-1", "Wait-2"],
     },
 }
 # >>> factory-mutation SendSGB

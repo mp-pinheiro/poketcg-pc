@@ -157,7 +157,7 @@ MUTATIONS = {
         "source_symbol": "PlayLoadedDuelAnimation",
         "before": "if (lo != (uint8_t)UPDATE_ADDR || hi != (uint8_t)(UPDATE_ADDR >> 8))\n        return;",
         "after": "if (lo != (uint8_t)UPDATE_ADDR && hi != (uint8_t)(UPDATE_ADDR >> 8))\n        return;",
-        "case_ids": ["PlayLoadedDuelAnimation-0", "PlayLoadedDuelAnimation-zero"],
+        "case_ids": ["PlayLoadedDuelAnimation-3", "PlayLoadedDuelAnimation-zero"],
     },
     "LoadDuelAnimationToBuffer": {
         "source_symbol": "LoadDuelAnimationToBuffer",
@@ -169,7 +169,7 @@ MUTATIONS = {
         "source_symbol": "_UpdateQueuedAnimations",
         "before": "accumulator &= read(queue_addr);",
         "after": "accumulator |= read(queue_addr);",
-        "case_ids": ["_UpdateQueuedAnimations-0", "_UpdateQueuedAnimations-zero"],
+        "case_ids": ["_UpdateQueuedAnimations-1", "_UpdateQueuedAnimations-zero"],
     },
     "ClearAndDisableQueuedAnimations": {
         "source_symbol": "ClearAndDisableQueuedAnimations",
