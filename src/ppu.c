@@ -2,6 +2,8 @@
 
 #include "mem.h"
 
+#include <string.h>
+
 enum {
 	IO_LCDC = 0x40,
 	IO_SCY  = 0x42,
@@ -173,23 +175,32 @@ void ppu_render_scanline(Ppu *p, int ly, uint16_t *fb)
 	render_sprites(ly, lcdc, fb, ab);
 }
 
+/* The renderer samples SCX/SCY/WX/WY from the live IO image every frame
+ * (ppu_render_frame), so this only resets the per-line arrays and the window
+ * line counter — no boot-time offset snapshot is consumed anywhere. */
 void ppu_init_offsets(Ppu *p)
 {
-	uint8_t scx = g_io[IO_SCX];
-	uint8_t scy = g_io[IO_SCY];
-	uint8_t wx = g_io[IO_WX];
-	uint8_t wy = g_io[IO_WY];
+	memset(p->bg, 0, sizeof p->bg);
+	memset(p->win, 0, sizeof p->win);
+	p->win_line = -1;
+}
+
+void ppu_render_frame(Ppu *p, uint16_t *fb)
+{
+	/* RuntimeVBlankHandler flushes hSCX/hSCY/hWX/hWY into the IO image each
+	 * frame; sample the live registers so mid-game scroll, window, and LCD
+	 * updates reach the rendered output. */
+	const uint8_t scx = g_io[IO_SCX];
+	const uint8_t scy = g_io[IO_SCY];
+	const uint8_t wx = g_io[IO_WX];
+	const uint8_t wy = g_io[IO_WY];
+
 	for (int i = 0; i < SCREEN_H; i++) {
 		p->bg[i].scx = scx;
 		p->bg[i].scy = scy;
 		p->win[i].wx = wx;
 		p->win[i].wy = wy;
 	}
-	p->win_line = -1;
-}
-
-void ppu_render_frame(Ppu *p, uint16_t *fb)
-{
 	p->win_line = -1;
 	for (int ly = 0; ly < SCREEN_H; ly++)
 		ppu_render_scanline(p, ly, fb);

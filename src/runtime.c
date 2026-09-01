@@ -3,6 +3,7 @@
 #include "home/frames.h"
 #include "home/game_loop.h"
 #include "home/time.h"
+#include "home/vblank.h"
 #include "home/start.h"
 #include "mem.h"
 #include "ppu.h"
@@ -141,11 +142,24 @@ int runtime_run_with_input(
 			pthread_mutex_unlock(&state.lock);
 			continue;
 		}
-		TimerHandler();
 		state.frames++;
 		if (state.button_count)
 			input.buttons = state.buttons[state.frames % state.button_count];
 		g_keys = shell_hkeys_from_input(input.buttons);
+		/* Hardware timer cadence: SetupTimer programs TAC=$07
+		 * (TAC_16KHZ: 16384 Hz, a 256-cycle tick) with TMA=-68
+		 * ($BC), so TimerHandler fires every 256*68 = 17408 cycles
+		 * — 240.93 Hz, 70224/17408 ≈ 4.03 per frame. The interrupt
+		 * layer is batched at the frame boundary in this port. */
+		state.timer_cycles += 70224u;
+		while (state.timer_cycles >= 17408u) {
+			TimerHandler();
+			state.timer_cycles -= 17408u;
+		}
+		/* Halt-return VBlank work (OAM DMA, scroll/window/LCDC flush,
+		 * VBlank function, palette flush), so the PPU sample below and
+		 * the next frame's game code see it, like the ROM's ISR. */
+		RuntimeVBlankHandler();
 		apu_trace_set_tick(state.frames);
 		size_t pcm_count = apu_trace_render_pcm(
 			state.audio, AUDIO_SAMPLES_PER_FRAME);
