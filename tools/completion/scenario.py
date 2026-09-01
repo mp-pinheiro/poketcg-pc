@@ -53,7 +53,7 @@ def state_hash(state: dict[str, Any]) -> str:
     return hashlib.sha256(canonical_bytes(state)).hexdigest()
 def boot_input(frames: int) -> list[int]:
     values = [0] * frames
-    for index, value in ((180, 16), (240, 8), (241, 16)):
+    for index, value in ((1000, 16), (1100, 8), (1101, 16), (1200, 128), (1201, 16)):
         if index < frames:
             values[index] = value
     return values
@@ -98,6 +98,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("scenario", choices=sorted(SCENARIO_REQUIREMENTS))
     parser.add_argument("--frames", type=int, default=600)
     args = parser.parse_args(argv)
+    if args.frames < 1:
+        raise ValueError("frame bound must be positive")
+    run_frames = max(args.frames, 2000) if args.scenario == "boot-title" else args.frames
     requirement = SCENARIO_REQUIREMENTS[args.scenario]
     key = current_key()
     artifact: dict[str, Any] = {
@@ -105,16 +108,13 @@ def main(argv: list[str] | None = None) -> int:
         "status": "FAIL",
         "content_key": key,
         "scenario": args.scenario,
-        "frames": args.frames,
-        "events": 0,
+        "frames": run_frames,
         "state_fields": [],
         "oracles": ["native"],
         "required_edges": 0,
         "covered_edges": 0,
     }
     try:
-        if args.frames < 1:
-            raise ValueError("frame bound must be positive")
         EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(prefix="poketcg-scenario-") as directory:
             state_path = Path(directory) / "state.json"
@@ -123,11 +123,11 @@ def main(argv: list[str] | None = None) -> int:
             if args.scenario == "boot-title":
                 input_path = Path(directory) / "input.txt"
                 input_path.write_text(
-                    ",".join(str(value) for value in boot_input(args.frames)) + "\n",
+                    ",".join(str(value) for value in boot_input(run_frames)) + "\n",
                     encoding="utf-8",
                 )
             returncode, stdout, stderr = run_native(
-                args.frames, state_path, trace_path, input_path
+                run_frames, state_path, trace_path, input_path
             )
             if returncode != 0:
                 artifact["failure"] = "EARLY_EXIT"

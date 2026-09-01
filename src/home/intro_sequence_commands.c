@@ -9,6 +9,7 @@
 #include "home/lcd.h"
 #include "home/lcd_enable_frame.h"
 #include "home/play_animation.h"
+#include "home/switch_rom.h"
 #include "home/sound.h"
 
 /* >>> factory statics */
@@ -425,6 +426,7 @@ ExecuteIntroSequenceCmdResult ExecuteIntroSequenceCmd(void)
 			return result;
 		}
 
+		BankswitchROM(7u);
 		uint16_t command_ptr = (uint16_t)(wSequenceCmdPtr |
 			((uint16_t)gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u)) << 8));
 		uint8_t target_low = gb_read8(command_ptr);

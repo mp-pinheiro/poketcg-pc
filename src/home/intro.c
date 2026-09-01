@@ -1,8 +1,15 @@
 #include "home/intro.h"
+#include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/load_animation.h"
+#include "home/frames.h"
+#include "home/intro_sequence_commands.h"
 #include "home/load_gfx.h"
 #include "home/sprite_animations.h"
+#include "home/switch_rom.h"
+#include "home/scenes.h"
+#include "home/lcd_enable_frame.h"
+#include "home/random.h"
 #include "mem.h"
 /* >>> factory statics */
 #include "home/color.h"
@@ -12,7 +19,10 @@
 #include "home/play_animation.h"
 #define HANDLE_ALL_SPRITE_ANIMATIONS 0x3CB4u
 #define INTRO_SEQUENCE 0x559Du
+#define SCENE_TITLE_SCREEN 0x00u
 #define MUSIC_TITLESCREEN 0x01u
+#define PAD_A 0x01u
+#define PAD_START 0x08u
 /* <<< factory statics */
 
 #define PALETTE_TITLE_SCREEN_ORBS 0x1eu
@@ -54,5 +64,33 @@ void PlayIntroSequence(void)
 	wIntroSequencePalsNeedUpdate = 0u;
 	wSequenceDelay = 0u;
 	(void)FlashWhiteScreen();
+	if (!frame_boundary_is_installed()) {
+		EnableLCD();
+		return;
+	}
+
+	for (;;) {
+		DoFrameIfLCDEnabled();
+		(void)UpdateRNGSources();
+		if ((hKeysPressed & (PAD_A | PAD_START)) != 0u) {
+			if (AssertSongFinished() == 0u) {
+				DisableLCD();
+				PlaySong(MUSIC_TITLESCREEN);
+				LoadOpeningScene(SCENE_TITLE_SCREEN, 0u, 0u);
+				IntroSequenceEmptyFunc();
+			}
+			break;
+		}
+		if (wIntroSequencePalsNeedUpdate != 0u)
+			Func_10d74();
+		uint8_t saved_bank = hBankROM;
+		BankswitchROM(7u);
+		(void)ExecuteIntroSequenceCmd();
+		BankswitchROM(saved_bank);
+		if (wSequenceDelay == 0xFFu)
+			break;
+	}
+	EnableAndClearSpriteAnimations();
+	EnableLCD();
 }
 /* <<< factory PlayIntroSequence */

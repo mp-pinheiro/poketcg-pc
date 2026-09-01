@@ -48,6 +48,8 @@ NATIVE_DATA_SPANS = (
     ("input_name_transition_2", 6, 0x6D5F, 0x2A),
     ("naming_default_player_name", 4, 0x68EB, 0x10),
     ("input_name_deck_underbar", 6, 0x6E83, 0x16),
+    ("intro_sequence", 7, 0x559D, 0x77),
+    ("intro_sequence_lookahead", 7, 0x5614, 0x01),
     ("input_name_deck_keyboard", 6, 0x7019, 0xC1),
 )
 
