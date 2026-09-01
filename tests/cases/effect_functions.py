@@ -1903,7 +1903,12 @@ CASES["MarowakCallForFamily_AISelectEffect"] = [
 
 # >>> factory CreateListOfFireEnergyAttachedToArena
 CONTRACT["CreateListOfFireEnergyAttachedToArena"] = {"compare": ("a", "c", "f", "hl"), "preserve": ()}
-CASES["CreateListOfFireEnergyAttachedToArena"] = [{}, dict(POISON)]
+CASES["CreateListOfFireEnergyAttachedToArena"] = [
+	{"wram": {0xFF97: b"\xC2", 0xC200: b"\x10", 0xC400: b"\x02"},
+	 "read": {0xC510: 2}},
+	{},
+	dict(POISON),
+]
 # <<< factory CreateListOfFireEnergyAttachedToArena
 # >>> factory CreateEnergyCardListFromDiscardPile_AllEnergy
 CONTRACT["CreateEnergyCardListFromDiscardPile_AllEnergy"] = {"compare": ("f", "hl"), "preserve": ()}
