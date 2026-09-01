@@ -93,7 +93,8 @@ def issue_labels(body: str) -> set[str]:
 
 
 def desired_labels(lifecycle: str, milestone: str) -> set[str]:
-    return {"completion/v2", f"milestone/{milestone}", f"lifecycle/{lifecycle}"}
+    label_lifecycle = "ready" if lifecycle == "complete" else lifecycle
+    return {"completion/v2", f"milestone/{milestone}", f"lifecycle/{label_lifecycle}"}
 
 def issue_lifecycle(body: str) -> str:
     lines = body.splitlines()
