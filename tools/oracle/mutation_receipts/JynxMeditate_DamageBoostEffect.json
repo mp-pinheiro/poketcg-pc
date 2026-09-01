@@ -1,0 +1,9 @@
+{
+  "fn": "JynxMeditate_DamageBoostEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"JynxMeditate_DamageBoostEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"0a\", \"50176\": \"08\", \"52409\": \"1e00\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"JynxMeditate_DamageBoostEffect\", \"mismatches\": {\"bus\": {\"address\": 52409, \"reference\": \"000a081e00c3\", \"native\": \"000a081f00c3\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[49851, 1], [49864, 1], [50176, 1], [52409, 2], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"JynxMeditate_DamageBoostEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"0a\", \"50176\": \"08\", \"52409\": \"1e00\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n"
+}

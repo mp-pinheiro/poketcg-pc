@@ -9210,7 +9210,12 @@ CASES["DreamEaterEffect"] = [
 
 # >>> factory JynxMeditate_DamageBoostEffect
 CONTRACT["JynxMeditate_DamageBoostEffect"] = {"compare": (), "preserve": ()}
-CASES["JynxMeditate_DamageBoostEffect"] = [{}, dict(POISON)]
+CASES["JynxMeditate_DamageBoostEffect"] = [
+	{"wram": {0xFF97: b"\xC3", 0xC2BB: b"\x00", 0xC2C8: b"\x0A",
+	          0xC400: b"\x08", 0xCCB9: b"\x00\x00"}, "read": {0xCCB9: 2}},
+	{},
+	dict(POISON),
+]
 # <<< factory JynxMeditate_DamageBoostEffect
 # >>> factory KadabraRecover_CheckEnergyHP
 CONTRACT["KadabraRecover_CheckEnergyHP"] = {"compare": ("a", "f", "b", "c", "d", "hl"), "preserve": ("b", "d")}
