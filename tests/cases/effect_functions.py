@@ -9233,7 +9233,7 @@ CASES["MewtwoAltEnergyAbsorption_AddToHandEffect"] = [{"wram": {0xFF97: b"\xC2",
 # <<< factory MewtwoAltEnergyAbsorption_AddToHandEffect
 # >>> factory MewtwoEnergyAbsorption_AddToHandEffect
 CONTRACT["MewtwoEnergyAbsorption_AddToHandEffect"] = {"compare": (), "preserve": ()}
-CASES["MewtwoEnergyAbsorption_AddToHandEffect"] = [{"wram": {0xFFA0: b"\xFF"}}, dict(POISON, wram={0xFFA0: b"\xFF"})]
+CASES["MewtwoEnergyAbsorption_AddToHandEffect"] = [{"wram": {0xFF97: b"\xC2", 0xFFA0: b"\xFF", 0xC2FF: b"\x00"}, "read": {0xC2FF: 1}}, dict(POISON, wram={0xFFA0: b"\xFF"})]
 # <<< factory MewtwoEnergyAbsorption_AddToHandEffect
 # >>> factory NeutralizingShieldEffect
 CONTRACT["NeutralizingShieldEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
@@ -9265,7 +9265,7 @@ MUTATIONS["KadabraRecover_CheckEnergyHP"] = {"source_symbol": "KadabraRecover_Ch
 MUTATIONS["MewtwoAltEnergyAbsorption_AddToHandEffect"] = {"source_symbol": "MewtwoAltEnergyAbsorption_AddToHandEffect", "before": "if (card == 0xffu)", "after": "if (card != 0xffu)", "case_ids": ["MewtwoAltEnergyAbsorption_AddToHandEffect-0", "MewtwoAltEnergyAbsorption_AddToHandEffect-1"]}
 # <<< factory-mutation MewtwoAltEnergyAbsorption_AddToHandEffect
 # >>> factory-mutation MewtwoEnergyAbsorption_AddToHandEffect
-MUTATIONS["MewtwoEnergyAbsorption_AddToHandEffect"] = {"source_symbol": "MewtwoEnergyAbsorption_AddToHandEffect", "before": "MewtwoAltEnergyAbsorption_AddToHandEffect();", "after": "MewtwoEnergyAbsorption_AddToHandEffect();", "case_ids": ["MewtwoEnergyAbsorption_AddToHandEffect-0", "MewtwoEnergyAbsorption_AddToHandEffect-1"]}
+MUTATIONS["MewtwoEnergyAbsorption_AddToHandEffect"] = {"source_symbol": "MewtwoEnergyAbsorption_AddToHandEffect", "before": "MewtwoAltEnergyAbsorption_AddToHandEffect();", "after": "MoveDiscardPileCardToHand(0xffu);", "case_ids": ["MewtwoEnergyAbsorption_AddToHandEffect-0", "MewtwoEnergyAbsorption_AddToHandEffect-1"]}
 # <<< factory-mutation MewtwoEnergyAbsorption_AddToHandEffect
 # >>> factory-mutation NeutralizingShieldEffect
 MUTATIONS["NeutralizingShieldEffect"] = {"source_symbol": "NeutralizingShieldEffect", "before": "return 0x10u;", "after": "return 0x00u;", "case_ids": ["NeutralizingShieldEffect-0", "NeutralizingShieldEffect-1"]}
