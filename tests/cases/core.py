@@ -1078,6 +1078,10 @@ wDuelTempList = 0xC510
 wPlayerDuelVariables = 0xC200
 hWhoseTurn = 0xFF97
 CASES["CheckForEvolutionInList"] = [
+    {"a": 0, "wram": {wDuelTempList: b"\x01\xff", hWhoseTurn: b"\xc2",
+                      wPlayerDuelVariables + 0xbb: b"\x08",
+                      wPlayerDuelVariables + 0xc2: b"\x80",
+                      0xc27e: b"\x08\x09"}},
     {"a": 0, "wram": {wDuelTempList: b"\xff", hWhoseTurn: b"\xc2", wPlayerDuelVariables + 0xbb: b"\x00"}},
     {"a": 0, "wram": {wDuelTempList: b"\x01\xff", hWhoseTurn: b"\xc2", wPlayerDuelVariables + 0xbb: b"\x08", wPlayerDuelVariables + 0xc2: b"\x80"}},
     dict(POISON, a=0, wram={wDuelTempList: b"\x01\xff", hWhoseTurn: b"\xc2", wPlayerDuelVariables + 0xbb: b"\x08", wPlayerDuelVariables + 0xc2: b"\x80"}),
@@ -5717,8 +5721,8 @@ MUTATIONS["DrawWideTextBox_WaitForInput_Bank1"] = {
 # >>> factory-mutation CheckForEvolutionInList
 MUTATIONS["CheckForEvolutionInList"] = {
     "source_symbol": "CheckForEvolutionInList",
-    "before": "if (check.f & 0x10u)",
-    "after": "if (check.f & 0x00u)",
+    "before": "return (CheckForEvolutionInListResult){candidate, target, candidate,",
+    "after": "return (CheckForEvolutionInListResult){original, target, candidate,",
     "case_ids": ["CheckForEvolutionInList-0", "CheckForEvolutionInList-1"],
 }
 # <<< factory-mutation CheckForEvolutionInList
