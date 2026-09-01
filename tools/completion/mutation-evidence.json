@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "status": "INCOMPLETE",
+  "revision": "59bee62549c0dcab2d6bea3df42c361887257b2c",
+  "captured_at": "2026-09-01T03:59:56Z",
+  "command": "just completion-mutation-campaign --missing",
+  "primary_witnesses": 2477,
+  "campaign_targets": 270,
+  "campaign_red": 179,
+  "campaign_failed": 91,
+  "receipt_red": 2354,
+  "receipt_invalid": 32,
+  "receipt_missing": 91,
+  "campaign_artifact_sha256": "d7442f21757b769b6ebbebb9e07dc165c21d2cfb220e03d97da9b3718cf91b41",
+  "failure": "91 primary mutation witnesses remain undetected and 32 existing receipts are stale under the current witness identity"
+}
