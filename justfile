@@ -151,6 +151,11 @@ build-incremental:
     }
     ninja -C "{{build_dir}}"
 
+# Serialize landings: `just land-lock <command...>` runs it under .locks/land.lock.
+land-lock *CMD:
+    mkdir -p .locks
+    flock .locks/land.lock {{CMD}}
+
 oracle-warm FN: build-incremental
     #!/usr/bin/env bash
     set -euo pipefail

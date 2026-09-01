@@ -14,6 +14,10 @@
 #define AUDIO_SAMPLES_PER_FRAME 1470u
 
 
+static RuntimeStateDumpCb g_state_dump_callback;
+static const uint32_t *g_state_dump_frames;
+static size_t g_state_dump_frame_count;
+
 typedef struct {
 	pthread_mutex_t lock;
 	pthread_cond_t condition;
@@ -25,6 +29,7 @@ typedef struct {
 	size_t button_count;
 	uint32_t frame_limit;
 	uint32_t frames;
+	uint32_t timer_cycles;
 	int frame_ready;
 	int resume;
 	int stop;
@@ -78,6 +83,14 @@ static void *run_game(void *context)
 	pthread_cond_broadcast(&state->condition);
 	pthread_mutex_unlock(&state->lock);
 	return NULL;
+}
+
+void runtime_set_state_dump_frames(
+	RuntimeStateDumpCb callback, const uint32_t *frames, size_t frame_count)
+{
+	g_state_dump_callback = callback;
+	g_state_dump_frames = frames;
+	g_state_dump_frame_count = frame_count;
 }
 
 int runtime_run_with_input(
@@ -139,6 +152,23 @@ int runtime_run_with_input(
 		ppu_render_frame(&state.ppu, state.framebuffer);
 		shell_present(shell, state.framebuffer);
 		shell_queue_audio(shell, state.audio, pcm_count);
+		if (g_state_dump_callback) {
+			for (size_t i = 0; i < g_state_dump_frame_count; i++) {
+				if (state.frames != g_state_dump_frames[i])
+					continue;
+				RuntimeResult dump;
+				dump.frame_limit = frame_limit;
+				dump.frames = state.frames;
+				dump.event_mask = runtime_event_mask();
+				dump.event_count = runtime_event_count();
+				dump.terminal_event = runtime_terminal_event();
+				dump.stopped_by_user = state.stopped_by_user;
+				memcpy(dump.framebuffer, state.framebuffer,
+				       sizeof dump.framebuffer);
+				g_state_dump_callback(state.frames, &dump);
+				break;
+			}
+		}
 
 		pthread_mutex_lock(&state.lock);
 		if (state.frame_limit && state.frames >= state.frame_limit)

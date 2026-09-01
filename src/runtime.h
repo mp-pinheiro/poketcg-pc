@@ -32,6 +32,11 @@ RuntimeEvent runtime_terminal_event(void);
 uint32_t runtime_event_mask(void);
 uint32_t runtime_event_count(void);
 
+typedef void (*RuntimeStateDumpCb)(uint32_t frame, const RuntimeResult *result);
+
+void runtime_set_state_dump_frames(
+	RuntimeStateDumpCb callback, const uint32_t *frames, size_t frame_count);
+
 int runtime_run(struct Shell *shell, uint32_t frame_limit, RuntimeResult *result);
 int runtime_run_with_input(
 	struct Shell *shell, uint32_t frame_limit,
