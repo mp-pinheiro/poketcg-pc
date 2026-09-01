@@ -1246,7 +1246,7 @@ CASES["DoPracticeDuelAction"] = [
 # >>> factory DrawDuelHorizontalSeparator
 CONTRACT["DrawDuelHorizontalSeparator"] = {"compare": (), "preserve": ()}
 CASES["DrawDuelHorizontalSeparator"] = [
-    {},
+    {"vread": {0: {0x9880: 0x60}}},
     dict(POISON),
 ]
 # <<< factory DrawDuelHorizontalSeparator

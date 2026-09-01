@@ -1,0 +1,9 @@
+{
+  "fn": "DrawDuelHorizontalSeparator",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawDuelHorizontalSeparator\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"39040\": \"373737373737373737313200000000000000000000000000000000000000000000000000000000000033340000000000000000000000000000000000000000000000000000000000003334000000000000000000000000000000000000000000\"}}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawDuelHorizontalSeparator\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"DrawDuelHorizontalSeparator\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"39040\": \"373737373737373737313200000000000000000000000000000000000000000000000000000000000033340000000000000000000000000000000000000000000000000000000000003334000000000000000000000000000000000000000000\"}}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}
