@@ -48,7 +48,7 @@ MUTATIONS = {
     "SaveButtonsHeld": {
         "source_symbol": "SaveButtonsHeld",
         "before": "gb_write8(JOYP, JOYP_GET_NONE);",
-        "after": "gb_write8(JOYP, JOYP_GET_CTRL_PAD);",
+        "after": "gb_write8(hKeysHeld_ADDR, (uint8_t)(c + 1u));",
         "case_ids": ["SaveButtonsHeld-0", "SaveButtonsHeld-1"],
     },
 }
