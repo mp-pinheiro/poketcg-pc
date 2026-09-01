@@ -27,6 +27,11 @@
 
 #define PALETTE_TITLE_SCREEN_ORBS 0x1eu
 #define SPRITE_ANIM_ATTRIBUTES 1u
+#define SPRITE_ANIM_COORD_X 2u
+#define SPRITE_PRESS_START 0x6au
+#define SPRITE_ANIM_190 0xbeu
+#define SPRITE_ANIM_191 0xbfu
+#define CONSOLE_CGB 0x02u
 
 void LoadTitleScreenSprites(void)
 {
@@ -47,6 +52,20 @@ void LoadTitleScreenSprites(void)
     }
 }
 
+/* intro.asm:55-73 .ShowPressStart */
+static void ShowPressStart(void)
+{
+	CreateSpriteAndAnimBufferEntry(SPRITE_PRESS_START, 0u);
+	uint16_t property = GetSpriteAnimBufferProperty(SPRITE_ANIM_COORD_X);
+	gb_write8(property, 48u);         /* x */
+	gb_write8((uint16_t)(property + 1u), 112u); /* y */
+	uint8_t anim = SPRITE_ANIM_190;
+	if (wConsole == CONSOLE_CGB)
+		anim = SPRITE_ANIM_191;
+	Func_12ac9(anim, 60u); /* bc = 60 */
+}
+
+
 /* >>> factory PlayIntroSequence */
 void PlayIntroSequence(void)
 {
@@ -54,7 +73,6 @@ void PlayIntroSequence(void)
 	LoadConsolePaletteData();
 	(void)InitMenuScreen();
 	EnableAndClearSpriteAnimations();
-	PlaySong(MUSIC_TITLESCREEN);
 	(void)SetDoFrameFunction(HANDLE_ALL_SPRITE_ANIMATIONS);
 	LoadTitleScreenSprites();
 
@@ -91,6 +109,8 @@ void PlayIntroSequence(void)
 			break;
 	}
 	EnableAndClearSpriteAnimations();
+	ShowPressStart(); /* intro.asm:51 .ShowPressStart */
 	EnableLCD();
 }
 /* <<< factory PlayIntroSequence */
+

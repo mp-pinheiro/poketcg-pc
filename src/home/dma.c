@@ -4,7 +4,6 @@
 #include "mem.h"
 /* >>> factory statics */
 #include "generated/hram.h"
-#define DMA_ROM_ADDR 0x05A1u
 #define DMA_COPY_LENGTH 10u
 /* <<< factory statics */
 
@@ -23,8 +22,12 @@ void DMA(void)
 /* >>> factory CopyDMAFunction */
 void CopyDMAFunction(void)
 {
-	const uint8_t *stub = rom_ptr(0u, DMA_ROM_ADDR);
+	/* home/dma.asm:15-22 DMA, bytes $05A1-$05AA: `ld a,HIGH(wOAM);
+	 * ldh [rDMA],a; ld a,40; dec a; jr nz,-3; ret`. Literal bytes so the
+	 * product build never depends on a data-pack span for bank 0. */
+	static const uint8_t dma_stub[] = {0x3E, 0xCA, 0xE0, 0x46, 0x3E,
+					   0x28, 0x3D, 0x20, 0xFD, 0xC9};
 	for (uint8_t i = 0u; i < DMA_COPY_LENGTH; i++)
-		gb_write8((uint16_t)(hDMAFunction_ADDR + i), stub[i]);
+		gb_write8((uint16_t)(hDMAFunction_ADDR + i), dma_stub[i]);
 }
 /* <<< factory CopyDMAFunction */

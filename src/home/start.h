@@ -24,7 +24,7 @@ void HandleStartMenu(void);
 void DrawPlayerPortraitAndPrintNewGameText(void);
 /* <<< factory DrawPlayerPortraitAndPrintNewGameText */
 /* >>> factory DeleteSaveDataForNewGame */
-void DeleteSaveDataForNewGame(void);
+uint8_t DeleteSaveDataForNewGame(void);
 /* <<< factory DeleteSaveDataForNewGame */
 /* >>> factory HandleTitleScreen */
 void HandleTitleScreen(void);

@@ -4,6 +4,6 @@
   "index": 0,
   "status": "RED",
   "baseline": "{\"fn\": \"PlayIntroSequence\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54039\": \"00\", \"54833\": \"9d550000\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"PlayIntroSequence\", \"mismatches\": {\"bus\": {\"address\": 54039, \"reference\": \"009d550000\", \"native\": \"019d550000\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[54039, 1], [54833, 4]]}}}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayIntroSequence\", \"mismatches\": {\"bus\": {\"address\": 54039, \"reference\": \"009d550000\", \"native\": \"ff9d550000\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[54039, 1], [54833, 4]]}}}\n",
   "restored": "{\"fn\": \"PlayIntroSequence\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54039\": \"00\", \"54833\": \"9d550000\"}}, \"status\": \"PASS\"}\n"
 }

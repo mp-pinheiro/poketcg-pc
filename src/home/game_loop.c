@@ -1,6 +1,7 @@
 #include "home/game_loop.h"
 
-#include "generated/wram.h"
+#include "home/frames.h"
+#include "home/input.h"
 #include "home/duel_core.h"
 #include "home/lcd.h"
 #include "home/process_text.h"
@@ -56,8 +57,15 @@ void GameLoop(void)
 	wUppercaseHalfWidthLetters = 1u;
 	StubbedUnusedSaveDataValidation();
 	if (hKeysHeld != (PAD_A | PAD_B)) {
-		_GameLoop();
-		return;
+		if (!frame_boundary_is_installed()) {
+			/* Probe world: the oracle stops GameLoop pre-ret at the
+			 * _GameLoop dispatch (game_loop.asm:22), so run the bounded
+			 * prefix exactly once instead of looping. */
+			_GameLoop();
+			return;
+		}
+		for (;;)
+			_GameLoop(); /* game_loop.asm:22-23 */
 	}
 
 	SetupResetBackUpRamScreen();
@@ -68,5 +76,6 @@ void GameLoop(void)
 		s0a000 = 0u;
 		DisableSRAM();
 	}
+	(void)Reset(); /* .reset_game: jp Reset (game_loop.asm:35-36) */
 }
 /* <<< factory GameLoop */

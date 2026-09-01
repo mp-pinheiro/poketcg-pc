@@ -1,0 +1,9 @@
+{
+  "fn": "ReadJoypad",
+  "case": "tests/cases/input.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ReadJoypad\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"65421\": \"000f000f00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ReadJoypad\", \"mismatches\": {\"bus\": {\"address\": 65424, \"reference\": \"000f000f00\", \"native\": \"000f000000\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[65421, 5]]}}}\n",
+  "restored": "{\"fn\": \"ReadJoypad\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"65421\": \"000f000f00\"}}, \"status\": \"PASS\"}\n"
+}

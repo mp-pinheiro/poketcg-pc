@@ -169,10 +169,10 @@ MUTATIONS["HandleStartMenu"] = {"source_symbol": "HandleStartMenu", "before": "\
 MUTATIONS["DrawPlayerPortraitAndPrintNewGameText"] = {"source_symbol": "DrawPlayerPortraitAndPrintNewGameText", "before": "\tLoadConsolePaletteData();", "after": "\t(void)0;", "case_ids": ["DrawPlayerPortraitAndPrintNewGameText-0", "DrawPlayerPortraitAndPrintNewGameText-1"]}
 # <<< factory-mutation DrawPlayerPortraitAndPrintNewGameText
 # >>> factory-mutation DeleteSaveDataForNewGame
-MUTATIONS["DeleteSaveDataForNewGame"] = {"source_symbol": "DeleteSaveDataForNewGame", "before": "void DeleteSaveDataForNewGame(void)\n{\n\tif (wHasSaveData == 0u)\n", "after": "void DeleteSaveDataForNewGame(void)\n{\n\tif (wHasSaveData != 0u)\n", "case_ids": ["DeleteSaveDataForNewGame-2"]}
+MUTATIONS["DeleteSaveDataForNewGame"] = {"source_symbol": "DeleteSaveDataForNewGame", "before": "uint8_t DeleteSaveDataForNewGame(void)\n{\n\tif (wHasSaveData == 0u)\n", "after": "uint8_t DeleteSaveDataForNewGame(void)\n{\n\tif (wHasSaveData != 0u)\n", "case_ids": ["DeleteSaveDataForNewGame-2"]}
 # <<< factory-mutation DeleteSaveDataForNewGame
 # >>> factory-mutation HandleTitleScreen
-MUTATIONS["HandleTitleScreen"] = {"source_symbol": "HandleTitleScreen", "before": "PlaySong(MUSIC_STOP);", "after": "PlaySong(0x01u);", "case_ids": ["HandleTitleScreen-0", "HandleTitleScreen-1"]}
+MUTATIONS["HandleTitleScreen"] = {"source_symbol": "HandleTitleScreen", "before": "\t\tPlaySong(MUSIC_STOP);\n\t\tEnableAndClearSpriteAnimations();\n\t\treturn;", "after": "\t\tPlaySong(0x01u);\n\t\tEnableAndClearSpriteAnimations();\n\t\treturn;", "case_ids": ["HandleTitleScreen-0", "HandleTitleScreen-1"]}
 # <<< factory-mutation HandleTitleScreen
 # >>> factory-completion HandleTitleScreen
 for _record in SCHEMA2_CASES["HandleTitleScreen"]:

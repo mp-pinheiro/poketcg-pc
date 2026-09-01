@@ -301,10 +301,10 @@ void DrawPlayerPortraitAndPrintNewGameText(void)
 /* <<< factory DrawPlayerPortraitAndPrintNewGameText */
 
 /* >>> factory DeleteSaveDataForNewGame */
-void DeleteSaveDataForNewGame(void)
+uint8_t DeleteSaveDataForNewGame(void)
 {
 	if (wHasSaveData == 0u)
-		return;
+		return 0x00u; /* ret z */
 
 	DisableLCD();
 	(void)InitMenuScreen();
@@ -314,9 +314,10 @@ void DeleteSaveDataForNewGame(void)
 	(void)PrintScrollableText_NoTextBoxLabel(SavedDataAlreadyExistsText);
 	HandleYesOrNoMenuResult result = YesOrNoMenuWithText(OKToDeleteTheDataText);
 	if ((result.f & 0x10u) != 0u)
-		return;
+		return 0x10u; /* ret c: quit if chose "no" */
 	InvalidateSaveData();
 	(void)PrintScrollableText_NoTextBoxLabel(AllDataWasDeletedText);
+	return 0x00u; /* or a */
 }
 /* <<< factory DeleteSaveDataForNewGame */
 
@@ -324,26 +325,33 @@ void DeleteSaveDataForNewGame(void)
 void HandleTitleScreen(void)
 {
 	if (!frame_boundary_is_installed()) {
+		/* Probe world: the oracle stops pre-ret right before the intro
+		 * call (start.asm:16); keep the bounded opening prefix. */
 		if (wLastSelectedStartMenuItem == 0u)
 			return;
 		PlaySong(MUSIC_STOP);
 		EnableAndClearSpriteAnimations();
 		return;
 	}
+
 	if (wLastSelectedStartMenuItem != 0u) {
-		for (;;) {
+		for (;;) { /* .play_opening */
+			PlaySong(MUSIC_STOP);
+			EnableAndClearSpriteAnimations();
 			PlayIntroSequence();
+			LoadTitleScreenSprites();
 			runtime_mark_event(RUNTIME_EVENT_TITLE_READY);
 			wTitleScreenOrbCounter = 0u;
 			wTitleScreenIgnoreInputCounter = 0x3Cu;
-			for (;;) {
+			uint8_t start_menu = 0u;
+			while (start_menu == 0u) { /* .loop */
 				DoFrameIfLCDEnabled();
 				(void)UpdateRNGSources();
 				(void)AnimateRandomTitleScreenOrb();
 				wTitleScreenOrbCounter++;
 				if (AssertSongFinished() == 0u) {
 					FadeScreenToWhite();
-					break;
+					break; /* jr .play_opening: replay opening */
 				}
 				if (wTitleScreenIgnoreInputCounter != 0u) {
 					wTitleScreenIgnoreInputCounter--;
@@ -353,25 +361,35 @@ void HandleTitleScreen(void)
 					continue;
 				PlaySFX(SFX_CONFIRM);
 				FadeScreenToWhite();
-				goto start_menu;
+				start_menu = 1u; /* key fallthrough: .start_menu */
 			}
+			if (start_menu != 0u)
+				break;
 		}
 	}
-start_menu:
-	(void)CheckIfHasSaveData();
-	HandleStartMenu();
-	if (wStartMenuChoice == START_MENU_NEW_GAME) {
-		DeleteSaveDataForNewGame();
-		MainMenu_NewGame();
-	} else if (wStartMenuChoice == START_MENU_CONTINUE_FROM_DIARY) {
-		(void)AskToContinueFromDiaryWithDuelData();
-	} else if (wStartMenuChoice == START_MENU_CARD_POP) {
-		(void)ShowCardPopCGBDisclaimer();
-	} else {
-		MainMenu_ContinueDuel();
+
+	for (;;) { /* jr c, HandleTitleScreen re-entries (start.asm:63-76) */
+		(void)CheckIfHasSaveData();
+		HandleStartMenu();
+		if (wStartMenuChoice == START_MENU_NEW_GAME) {
+			if ((DeleteSaveDataForNewGame() & 0x10u) != 0u)
+				continue;
+			break; /* jr .card_pop: not Card Pop! -> .continue_duel */
+		}
+		if (wStartMenuChoice == START_MENU_CONTINUE_FROM_DIARY) {
+			AskToContinueFromDiaryWithDuelDataResult answer =
+				AskToContinueFromDiaryWithDuelData();
+			if ((answer.f & 0x10u) != 0u)
+				continue;
+			break;
+		}
+		if (wStartMenuChoice == START_MENU_CARD_POP) {
+			if ((ShowCardPopCGBDisclaimer() & 0x10u) != 0u)
+				continue;
+			break; /* falls into .continue_duel */
+		}
+		break; /* .continue_duel */
 	}
-	if (wStartMenuChoice == START_MENU_NEW_GAME && wGameEvent == 0u)
-		return;
 	ResetDoFrameFunction(0u);
 	EnableAndClearSpriteAnimations();
 }
@@ -397,6 +415,7 @@ void Start(uint8_t a)
 	SetupSound();
 	(void)SetupTimer();
 	ResetSerial();
+	CopyDMAFunction();
 	ValidateSRAM();
 	BankswitchROM(BANK_GAME_LOOP);
 }

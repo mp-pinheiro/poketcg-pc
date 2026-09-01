@@ -61,7 +61,7 @@ MUTATIONS = {
     },
 }
 # >>> factory-mutation PlayIntroSequence
-MUTATIONS["PlayIntroSequence"] = {"source_symbol": "PlayIntroSequence", "before": "void PlayIntroSequence(void)\n{\n\tDisableLCD();\n\tLoadConsolePaletteData();\n\t(void)InitMenuScreen();\n\tEnableAndClearSpriteAnimations();\n\tPlaySong(MUSIC_TITLESCREEN);", "after": "void PlayIntroSequence(void)\n{\n\tDisableLCD();\n\tLoadConsolePaletteData();\n\t(void)InitMenuScreen();\n\tEnableAndClearSpriteAnimations();\n\tPlaySong(0x00u);", "case_ids": ["PlayIntroSequence-0", "PlayIntroSequence-1"]}
+MUTATIONS["PlayIntroSequence"] = {"source_symbol": "PlayIntroSequence", "before": "\twd317 = 0u;", "after": "\twd317 = 0xFFu;", "case_ids": ["PlayIntroSequence-0", "PlayIntroSequence-1"]}
 # <<< factory-mutation PlayIntroSequence
 # >>> factory-completion PlayIntroSequence
 for _record in SCHEMA2_CASES["PlayIntroSequence"]:
