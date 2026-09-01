@@ -16,6 +16,9 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
+
+from tools.oracle.gbrecomp_oracle import Oracle, _full_state
+
 BINARY = ROOT / "build" / "poketcg"
 PACK = ROOT / "build" / "completion" / "data-pack.bin"
 EVIDENCE_DIR = ROOT / "build" / "completion" / "evidence"
@@ -72,25 +75,52 @@ def reference_boot_input() -> str:
 WVBC_WRAM_OFFSET = 0xCAB8 - 0xC000
 
 
-def reference_boot_frame_offset(oracle: Oracle, probe_frames: int = 600) -> int:
-    """Scanout frames the ROM runs before its first DoFrame boundary.
+def reference_aligned_state(
+    oracle: Oracle,
+    native_state: dict[str, Any],
+    native_frames: int,
+    *,
+    base_input: str | None = None,
+    initial_offset: int = 6,
+    max_iterations: int = 4,
+) -> tuple[dict[str, Any], int]:
+    """Run the reference until its DoFrame count matches the native run's.
 
-    gb-recompiled counts PPU scanout frames from power-on, while the native
-    lane counts DoFrame boundaries. wVBlankCounter ($CAB8) increments once per
-    DoFrame on both sides, so the constant phase shift between the two frame
-    indices is probe_frames - wVBlankCounter(probe_frames) (mod 256; the boot
-    offset is small and resolved against that assumption). Every cross-lane
-    comparison must run the reference this many frames ahead and shift its
-    input timeline by the same amount, or the two lanes are compared at
-    different game moments."""
-    result = oracle.run(frame_limit=probe_frames)
-    state = (
-        json.loads(result.state)
-        if isinstance(result.state, (str, bytes))
-        else result.state
-    )
-    counter = state["wram_bank_0_c000_cfff"][WVBC_WRAM_OFFSET]
-    return (probe_frames % 256 - counter) % 256
+    The two lanes count frames on different axes (oracle-b counts PPU
+    scanouts from power-on; the native counts DoFrame boundaries), and the
+    gap grows with every LCD-off transition the game performs, so it is not
+    a constant. wVBlankCounter ($CAB8) increments once per DoFrame on both
+    sides, which makes it a monotonic alignment ruler: adjust the reference
+    frame limit (and its input timeline, which rides the same axis) by the
+    counter delta until both lanes report the same DoFrame count, then
+    return that state (and the frame offset used)."""
+    wvbc = WVBC_WRAM_OFFSET
+    native_counter = native_state["wram"][wvbc]
+    offset = initial_offset
+    state: dict[str, Any] = {}
+    for _ in range(max_iterations):
+        with tempfile.TemporaryDirectory(prefix="poketcg-align-") as directory:
+            save_state = Path(directory) / "reference.gbs"
+            result = oracle.run(
+                frame_limit=native_frames + offset,
+                input_file=(
+                    shift_reference_input(base_input, offset)
+                    if base_input
+                    else None
+                ),
+                save_state=save_state,
+            )
+            dump = (
+                json.loads(result.state)
+                if isinstance(result.state, (str, bytes))
+                else result.state
+            )
+            state = _full_state(save_state, dump)
+        delta = native_counter - state["wram"][wvbc]
+        if delta == 0:
+            break
+        offset += delta
+    return state, offset
 
 
 REFERENCE_INCOMPLETE_FIELDS = {"apu_trace"}
@@ -346,31 +376,26 @@ def main(argv: list[str] | None = None) -> int:
                     else:
                         try:
                             from tests.scene_diff import STATE_FIELDS, _first_difference, _state_field
-                            from tools.oracle.gbrecomp_oracle import Oracle
-
-                            reference_save = Path(directory) / "reference.gbs"
-                            with Oracle(timeout=60.0) as oracle:
-                                frame_offset = reference_boot_frame_offset(oracle)
-                                artifact["reference_frame_offset"] = frame_offset
-                                reference = oracle.run(
-                                    input_file=shift_reference_input(
-                                        reference_boot_input(), frame_offset
-                                    ),
-                                    frame_limit=run_frames + frame_offset,
-                                    save_state=reference_save,
+                            with Oracle(timeout=120.0) as oracle:
+                                reference_state, frame_offset = (
+                                    reference_aligned_state(
+                                        oracle, state, run_frames,
+                                        base_input=reference_boot_input(),
+                                    )
                                 )
+                            artifact["reference_frame_offset"] = frame_offset
                             mismatches = []
                             schema_skips = []
                             for field in STATE_FIELDS:
-                                if fields_incomparable(reference.state, state, field):
+                                if fields_incomparable(reference_state, state, field):
                                     schema_skips.append(
                                         {"field": field, "reason": "schema"}
                                     )
                                     continue
                                 apply_comparator_exclusions(
-                                    reference.state, state, field
+                                    reference_state, state, field
                                 )
-                                reference_value = _state_field(reference.state, field)
+                                reference_value = _state_field(reference_state, field)
                                 native_value = _state_field(state, field)
                                 if reference_value is None or native_value is None:
                                     mismatches.append({"field": field, "reason": "missing"})
@@ -394,22 +419,18 @@ def main(argv: list[str] | None = None) -> int:
                             artifact["detail"] = str(exc)
                 elif args.scenario in {"ui-corpus", "raster-effects"}:
                     try:
-                        from tools.oracle.gbrecomp_oracle import Oracle
 
-                        reference_save = Path(directory) / "reference.gbs"
-                        with Oracle(timeout=60.0) as oracle:
-                            frame_offset = reference_boot_frame_offset(oracle)
-                            artifact["reference_frame_offset"] = frame_offset
-                            reference = oracle.run(
-                                frame_limit=run_frames + frame_offset,
-                                save_state=reference_save,
+                        with Oracle(timeout=120.0) as oracle:
+                            reference_state, frame_offset = (
+                                reference_aligned_state(oracle, state, run_frames)
                             )
+                            artifact["reference_frame_offset"] = frame_offset
                         fields = (
                             ("wram", "vram_bank_0", "vram_bank_1", "oam", "palette_ram", "framebuffer")
                             if args.scenario == "ui-corpus"
                             else ("vram_bank_0", "vram_bank_1", "framebuffer")
                         )
-                        mismatches = compare_state_fields(reference.state, state, fields)
+                        mismatches = compare_state_fields(reference_state, state, fields)
                         artifact["oracles"] = ["oracle-b", "native"]
                         artifact["comparison"] = {
                             "fields": list(fields),
@@ -431,11 +452,10 @@ def main(argv: list[str] | None = None) -> int:
                         artifact["detail"] = str(exc)
                 elif args.scenario == "audio-catalog":
                     try:
-                        from tools.oracle.gbrecomp_oracle import Oracle
-
-                        reference_trace = Path(directory) / "reference-audio.log"
-                        with Oracle(timeout=60.0) as oracle:
-                            frame_offset = reference_boot_frame_offset(oracle)
+                        with Oracle(timeout=120.0) as oracle:
+                            _, frame_offset = reference_aligned_state(
+                                oracle, state, run_frames
+                            )
                             artifact["reference_frame_offset"] = frame_offset
                             oracle.run(
                                 frame_limit=run_frames + frame_offset,
@@ -481,7 +501,6 @@ def main(argv: list[str] | None = None) -> int:
                         artifact["detail"] = str(exc)
                 elif args.scenario == "boot-title-negative":
                     from frame_bisect import bisect_first_mismatch
-                    from tools.oracle.gbrecomp_oracle import Oracle
 
                     with Oracle(timeout=120.0) as oracle:
                         finding = bisect_first_mismatch(
@@ -533,7 +552,6 @@ def main(argv: list[str] | None = None) -> int:
                         artifact.pop("failure", None)
                 elif args.scenario == "save-interchange":
                     from tests.scene_diff import _first_difference as _first_byte
-                    from tools.oracle.gbrecomp_oracle import Oracle
 
                     roundtrip_frames = min(run_frames, 120)
                     native_save = Path(directory) / "native.sav"
