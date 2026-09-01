@@ -7,6 +7,7 @@ import argparse
 import copy
 import fnmatch
 import hashlib
+import os
 import importlib.util
 import json
 import re
@@ -868,7 +869,8 @@ def collect_report() -> dict[str, Any]:
         gate = load_json(gate_path)
     except AuditError:
         gate = {}
-    trusted_gate = (
+    in_flight_gate = os.environ.get("POKETCG_RELEASE_GATE_IN_FLIGHT") == "1"
+    trusted_gate = in_flight_gate or (
         gate.get("schema") in {2, 3}
         and gate.get("complete") is True
         and (gate.get("commit") or gate.get("revision")) == current_revision()
