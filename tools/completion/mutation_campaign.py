@@ -27,14 +27,13 @@ def load_module(path: Path) -> Any:
     return module
 
 
-def witness_index(case_ids: list[object]) -> int:
-    for case_id in case_ids:
-        match = re.search(r"-(\d+)$", str(case_id))
-        if match:
-            return int(match.group(1))
+def witness_index(case_ids: list[object], records: list[dict[str, Any]]) -> int:
+    if case_ids:
+        first_id = str(case_ids[0])
+        for index, record in enumerate(records):
+            if isinstance(record, dict) and record.get("id") == first_id:
+                return index
     return 0
-
-
 def targets() -> list[tuple[str, str, int]]:
     found: list[tuple[str, str, int]] = []
     for path in sorted((ROOT / "tests" / "cases").glob("*.py")):
@@ -44,7 +43,8 @@ def targets() -> list[tuple[str, str, int]]:
         for fn, mutation in getattr(module, "MUTATIONS", {}).items():
             case_ids = mutation.get("case_ids") if isinstance(mutation, dict) else None
             if isinstance(case_ids, list) and case_ids:
-                found.append((fn, path.relative_to(ROOT).as_posix(), witness_index(case_ids)))
+                records = getattr(module, "SCHEMA2_CASES", {}).get(fn, [])
+                found.append((fn, path.relative_to(ROOT).as_posix(), witness_index(case_ids, records)))
     return sorted(found)
 
 
@@ -76,12 +76,43 @@ def run_target(fn: str, case: str, index: int, build: Path, runner: Path, timeou
     status = "RED" if completed.returncode == 0 and "MUTATION_RED" in output else "FAIL"
     return {"fn": fn, "case": case, "index": index, "status": status, "output": output}
 
+def receipt_report(all_targets: list[tuple[str, str, int]]) -> dict[str, Any]:
+    missing = []
+    invalid = []
+    red = 0
+    for fn, case, index in all_targets:
+        path = RECEIPT_DIR / f"{fn}.json"
+        if not path.is_file():
+            missing.append(fn)
+            continue
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            invalid.append(fn)
+            continue
+        if value.get("fn") != fn or value.get("case") != case or value.get("index") != index:
+            invalid.append(fn)
+            continue
+        if value.get("status") == "RED":
+            red += 1
+        else:
+            invalid.append(fn)
+    return {
+        "total_primary": len(all_targets),
+        "receipt_red": red,
+        "receipt_missing": len(missing),
+        "receipt_invalid": len(invalid),
+        "missing_names": missing,
+        "invalid_names": invalid,
+    }
+
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--all", action="store_true", help="run every witness, including existing receipts")
     parser.add_argument("--missing", action="store_true", help="run only witnesses without a receipt")
     parser.add_argument("--limit", type=int)
+    parser.add_argument("--report", action="store_true", help="report receipt coverage without running mutations")
     parser.add_argument("--build", type=Path, default=ROOT / "build")
     parser.add_argument(
         "--runner",
@@ -94,19 +125,35 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--all and --missing are mutually exclusive")
     if args.limit is not None and args.limit < 1:
         parser.error("--limit must be positive")
+    all_targets = targets()
+    coverage = receipt_report(all_targets)
+    if args.report:
+        summary = {
+            "schema": 1,
+            "mode": "report",
+            "complete": coverage["receipt_missing"] == 0 and coverage["receipt_invalid"] == 0,
+            "coverage": coverage,
+        }
+        OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+        OUTPUT.write_text(
+            json.dumps(summary, sort_keys=True, separators=(",", ":")) + "\n",
+            encoding="utf-8",
+        )
+        print(json.dumps({
+            key: summary[key] for key in ("mode", "complete")
+        } | {
+            key: coverage[key] for key in ("total_primary", "receipt_red", "receipt_missing", "receipt_invalid")
+        }, sort_keys=True))
+        return 0 if summary["complete"] else 2
     build = args.build if args.build.is_absolute() else ROOT / args.build
     runner = args.runner if args.runner.is_absolute() else ROOT / args.runner
     if not (build / "poketcg_probe").is_file():
         raise SystemExit(f"missing {build / 'poketcg_probe'}; run just build")
     if not runner.is_file():
         raise SystemExit(f"missing {runner}; run just oracle-build-gbref")
-    all_targets = targets()
     if not args.all:
         existing = {path.stem for path in RECEIPT_DIR.glob("*.json")}
-        if args.missing:
-            all_targets = [item for item in all_targets if item[0] not in existing]
-        else:
-            all_targets = [item for item in all_targets if item[0] not in existing]
+        all_targets = [item for item in all_targets if item[0] not in existing]
     if args.limit is not None:
         all_targets = all_targets[: args.limit]
     results = []
@@ -122,6 +169,7 @@ def main(argv: list[str] | None = None) -> int:
         "targets": len(all_targets),
         "red": sum(result["status"] == "RED" for result in results),
         "failed": sum(result["status"] != "RED" for result in results),
+        "coverage": receipt_report(targets()),
         "results": results,
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
