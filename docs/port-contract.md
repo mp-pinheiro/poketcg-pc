@@ -11,6 +11,7 @@ just bootstrap                 # one-time: builds poketcg.gbc + poketcg.sym
 uv sync --project tools/oracle --frozen
 just completion-baseline        # pin and validate the reset baseline evidence
 just completion-rom-coverage # validate the complete ROM span partition
+just completion-routine-mapping # verify routine registration bijection
 just completion-gambatte-bootstrap # one-time: source-builds the pinned release-capture core
 export POKETCG_BUILD=build-<slice>
 export POKETCG_PORTS=<file>    # semicolon-list of pret basenames

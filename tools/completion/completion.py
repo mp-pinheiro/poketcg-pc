@@ -1139,6 +1139,103 @@ def command_rom_coverage() -> int:
     return 0 if artifact["status"] == "PASS" else 2
 
 
+def mapping_digest(value: object) -> str:
+    encoded = json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def command_routine_mapping() -> int:
+    baseline = load_toml(BASELINE_PATH)
+    manifest = load_toml(MANIFEST_PATH)
+    artifact: dict[str, Any] = {
+        "schema": "routine-mapping-v1",
+        "status": "FAIL",
+        "frames": 0,
+        "events": 0,
+        "state_fields": [
+            "canonical_routine", "registration",
+            "native_disposition", "span",
+        ],
+        "oracles": ["source-inventory", "native-registration"],
+    }
+    try:
+        inventory = run_source_inventory()
+        mapping = build_mapping(inventory)
+        rows = mapping["rows"]
+        registration_rows = mapping["registration_rows"]
+        errors = []
+        if mapping["logical_routines"] != mapping["expected_logical_routines"]:
+            errors.append("logical routine counts disagree")
+        if mapping["missing_native"]:
+            errors.append("missing native implementations")
+        if mapping["orphan_registrations"] or mapping["unregistered_inventory"]:
+            errors.append("routine mapping is not bijective")
+        artifact["mapping"] = {
+            key: mapping[key]
+            for key in (
+                "registrations", "logical_routines", "expected_logical_routines",
+                "extra_registrations", "expected_extra_registrations",
+                "orphan_registrations", "unregistered_inventory",
+                "final_routines", "provisional_routines",
+            )
+        }
+        artifact["canonical_routine"] = {
+            "count": len(rows),
+            "sha256": mapping_digest([row["canonical"] for row in rows]),
+        }
+        artifact["registration"] = {
+            "count": len(registration_rows),
+            "sha256": mapping_digest(registration_rows),
+        }
+        artifact["native_disposition"] = {
+            "count": len(rows),
+            "sha256": mapping_digest([
+                {
+                    "canonical": row["canonical"],
+                    "disposition": row["disposition"],
+                    "completion_mode": row["completion_mode"],
+                    "native_symbols": row["native_symbols"],
+                }
+                for row in rows
+            ]),
+        }
+        artifact["span"] = {
+            "count": len(rows),
+            "sha256": mapping_digest([
+                {"canonical": row["canonical"], "span": row["span"]}
+                for row in rows
+            ]),
+        }
+        artifact["validation"] = {
+            "errors": errors,
+            "missing_native": mapping["missing_native_names"],
+        }
+        if errors:
+            artifact["failure"] = "ROUTINE_MAPPING_INVALID"
+            artifact["detail"] = "; ".join(errors)
+        else:
+            artifact["content_key"] = content_key(baseline, manifest)
+            artifact["status"] = "PASS"
+            artifact["events"] = 1
+            artifact["terminal_event"] = "ROUTINE_MAPPING_CLOSED"
+    except (AuditError, KeyError, TypeError, ValueError) as exc:
+        artifact["failure"] = "ROUTINE_MAPPING_ERROR"
+        artifact["detail"] = str(exc)
+    EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+    path = evidence_path("completion:v2:reset:routine-bijection")
+    path.write_text(json.dumps(artifact, sort_keys=True, separators=(",", ":")) + "\n")
+    print(json.dumps({
+        "status": artifact["status"],
+        "artifact": str(path.relative_to(ROOT)),
+        **{
+            key: artifact[key]
+            for key in ("failure", "content_key", "events")
+            if key in artifact
+        },
+    }, sort_keys=True))
+    return 0 if artifact["status"] == "PASS" else 2
+
+
 def command_next() -> int:
     manifest = load_toml(MANIFEST_PATH)
     baseline = load_toml(BASELINE_PATH)
@@ -1167,12 +1264,15 @@ def main(argv: list[str] | None = None) -> int:
     check.add_argument("id")
     subparsers.add_parser("baseline")
     subparsers.add_parser("rom-coverage")
+    subparsers.add_parser("routine-mapping")
     subparsers.add_parser("next")
     args = parser.parse_args(argv)
     if args.command == "audit":
         return command_audit()
     if args.command == "status":
         return command_status()
+    if args.command == "routine-mapping":
+        return command_routine_mapping()
     if args.command == "rom-coverage":
         return command_rom_coverage()
     if args.command == "baseline":

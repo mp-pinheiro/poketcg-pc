@@ -315,6 +315,8 @@ completion-baseline:
     python3 tools/completion/completion.py baseline
 completion-rom-coverage:
     python3 tools/completion/completion.py rom-coverage
+completion-routine-mapping:
+    python3 tools/completion/completion.py routine-mapping
 completion-next:
     python3 tools/completion/completion.py next
 
