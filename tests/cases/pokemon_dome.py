@@ -150,7 +150,7 @@ MUTATIONS = {
         "source_symbol": "Func_f762",
         "before": "gb_read8(W_LOAD_NPC_Y_POS_ADDR) + 2u",
         "after": "gb_read8(W_LOAD_NPC_Y_POS_ADDR) + 3u",
-        "case_ids": ["Func_f762-0", "Func_f762-1", "Func_f762-2",
+        "case_ids": ["Func_f762-2", "Func_f762-0", "Func_f762-1",
                      "Func_f762-3", "Func_f762-4"],
     },
     "Func_f782": {
