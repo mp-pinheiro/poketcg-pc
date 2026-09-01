@@ -1,0 +1,9 @@
+{
+  "fn": "InitTextFormat",
+  "case": "tests/cases/process_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"InitTextFormat\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52491\": \"00\", \"65455\": \"0f\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"InitTextFormat\", \"mismatches\": {\"bus\": {\"address\": 65455, \"reference\": \"000f\", \"native\": \"000e\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52491, 1], [65455, 1]]}}}\n",
+  "restored": "{\"fn\": \"InitTextFormat\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52491\": \"00\", \"65455\": \"0f\"}}, \"status\": \"PASS\"}\n"
+}

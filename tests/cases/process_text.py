@@ -19,7 +19,7 @@ CONTRACT = {
 }
 
 CASES = {
-    "InitTextFormat": [{}, dict(POISON)],
+    "InitTextFormat": [{"read": {0xCD0B: 1, 0xFFAF: 1}}, dict(POISON, read={0xCD0B: 1, 0xFFAF: 1})],
     "CaseHalfWidthLetter": [{"e": 0x61}, dict(POISON, e=0x7A)],
     # All four exit paths: swap (e < TX_CTRL_START, carry set), half-width, katakana,
     # and not-katakana. Previously both cases used e=0x01 and drove only the swap.
