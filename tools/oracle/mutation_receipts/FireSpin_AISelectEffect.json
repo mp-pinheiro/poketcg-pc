@@ -1,0 +1,9 @@
+{
+  "fn": "FireSpin_AISelectEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FireSpin_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"50176\": \"01\", \"65431\": \"c2\", \"65440\": \"00ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FireSpin_AISelectEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"1001c200ff\", \"native\": \"1001c2ffff\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[49664, 1], [50176, 1], [65431, 1], [65440, 2]]}}}\n",
+  "restored": "{\"fn\": \"FireSpin_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"50176\": \"01\", \"65431\": \"c2\", \"65440\": \"00ff\"}}, \"status\": \"PASS\"}\n"
+}

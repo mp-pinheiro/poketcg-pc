@@ -2002,7 +2002,12 @@ CASES["FireBlast_DiscardEffect"] = [
 # <<< factory FireBlast_DiscardEffect
 # >>> factory FireSpin_AISelectEffect
 CONTRACT["FireSpin_AISelectEffect"] = {"compare": (), "preserve": ()}
-CASES["FireSpin_AISelectEffect"] = [{}, dict(POISON)]
+CASES["FireSpin_AISelectEffect"] = [
+	{"wram": {0xFF97: b"\xC2", 0xC200: b"\x10", 0xC400: b"\x01"},
+	 "read": {0xFFA0: 2}},
+	{},
+	dict(POISON),
+]
 # <<< factory FireSpin_AISelectEffect
 # >>> factory FireSpin_DiscardEffect
 CONTRACT["FireSpin_DiscardEffect"] = {"compare": (), "preserve": ()}
