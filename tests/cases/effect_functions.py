@@ -9229,7 +9229,7 @@ CASES["KadabraRecover_CheckEnergyHP"] = [
 # <<< factory KadabraRecover_CheckEnergyHP
 # >>> factory MewtwoAltEnergyAbsorption_AddToHandEffect
 CONTRACT["MewtwoAltEnergyAbsorption_AddToHandEffect"] = {"compare": (), "preserve": ()}
-CASES["MewtwoAltEnergyAbsorption_AddToHandEffect"] = [{"wram": {0xFFA0: b"\xFF"}}, dict(POISON, wram={0xFFA0: b"\xFF"})]
+CASES["MewtwoAltEnergyAbsorption_AddToHandEffect"] = [{"wram": {0xFF97: b"\xC2", 0xFFA0: b"\xFF", 0xC2FF: b"\x00"}, "read": {0xC2FF: 1}}, dict(POISON, wram={0xFFA0: b"\xFF"})]
 # <<< factory MewtwoAltEnergyAbsorption_AddToHandEffect
 # >>> factory MewtwoEnergyAbsorption_AddToHandEffect
 CONTRACT["MewtwoEnergyAbsorption_AddToHandEffect"] = {"compare": (), "preserve": ()}
