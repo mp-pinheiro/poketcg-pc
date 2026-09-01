@@ -133,7 +133,7 @@ CASES = {
     "GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2": [{}, dict(POISON), {"wram": {0xd4ca: b"\x80", 0xd4cb: b"\x01"}, "read": {0xd4ca: 1, 0xd4cb: 1}}],
     "LoadTilesetGfx": [{}, dict(POISON)],
     "Func_80238": [
-        {"vread": {0: {0x8000: 0x10, 0x9000: 0x10}}},
+        {"vread": {0: {0x8000: 0x10, 0x9000: 0x10}}, "read": {0xD4CA: 1}},
         {**POISON, "vread": {0: {0x8000: 0x10, 0x9000: 0x10}}},
         {"a": 0, "hl": 0, "vread": {0: {0x8000: 0x10, 0x9000: 0x10}}},
         {"a": 0xff, "hl": 0xffff, "vread": {0: {0x8000: 0x10, 0x9000: 0x10}}},
