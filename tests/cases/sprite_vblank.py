@@ -33,8 +33,8 @@ MUTATIONS = {
         "before": "gb_write8(*de, first);",
         "after": "gb_write8(*de, (uint8_t)(first ^ 0xFFu));",
         "case_ids": [
-            "BackupVBlankFunctionTrampoline-0",
             "BackupVBlankFunctionTrampoline-1",
+            "BackupVBlankFunctionTrampoline-0",
             "BackupVBlankFunctionTrampoline-2",
             "BackupVBlankFunctionTrampoline-3",
         ],
