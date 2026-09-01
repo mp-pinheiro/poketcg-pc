@@ -1,0 +1,9 @@
+{
+  "fn": "DestinyBond_DiscardEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DestinyBond_DiscardEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"0200\", \"49790\": \"00\", \"49901\": \"01\", \"65431\": \"c2\", \"65440\": \"0001\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DestinyBond_DiscardEffect\", \"mismatches\": {\"bus\": {\"address\": 49664, \"reference\": \"02000001c2\", \"native\": \"00020101c2\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[49664, 2], [49790, 1], [49901, 1], [65431, 1], [65440, 2]]}}}\n",
+  "restored": "{\"fn\": \"DestinyBond_DiscardEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"0200\", \"49790\": \"00\", \"49901\": \"01\", \"65431\": \"c2\", \"65440\": \"0001\"}}, \"status\": \"PASS\"}\n"
+}
