@@ -35,7 +35,7 @@ CASES = {
     ],
 
     "SendByteThroughSerialData": [
-        {"a": 0, "read": {rSC: 1}},
+        {"a": 0, "read": {rSC: 1, wSerialTransferData: 1}},
         dict(POISON, read={rSC: 1}),
         {"a": 0xFF, "read": {rSC: 1}},
     ],
@@ -868,7 +868,7 @@ MUTATIONS = {
     "SendByteThroughSerialData": {
         "source_symbol": "SendByteThroughSerialData",
         "before": "\tgb_write8(rSB, a);",
-        "after": "\tgb_write8(rSB, (uint8_t)(a ^ 1u));",
+        "after": "\tgb_write8(wSerialTransferData_ADDR, (uint8_t)(a ^ 1u));",
         "case_ids": ["SendByteThroughSerialData-0", "SendByteThroughSerialData-1", "SendByteThroughSerialData-2"],
     },
     "ExecutePrinterPacketSequence": {

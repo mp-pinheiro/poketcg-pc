@@ -1,0 +1,9 @@
+{
+  "fn": "SendByteThroughSerialData",
+  "case": "tests/cases/printer.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SendByteThroughSerialData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52846\": \"00\", \"65282\": \"fd\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SendByteThroughSerialData\", \"mismatches\": {\"bus\": {\"address\": 52846, \"reference\": \"00fd\", \"native\": \"01fd\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52846, 1], [65282, 1]]}}}\n",
+  "restored": "{\"fn\": \"SendByteThroughSerialData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52846\": \"00\", \"65282\": \"fd\"}}, \"status\": \"PASS\"}\n"
+}
