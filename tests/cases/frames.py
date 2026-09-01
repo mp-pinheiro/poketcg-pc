@@ -13,7 +13,9 @@ CONTRACT = {
 CASES = {
     "DoAFrames": [
         {"a": 0, "wram": {0xFF8D: b"\0\0\0\0\0"}, "read": {0xFF8D: 5}},
-        dict(POISON, a=1, wram={0xFF8D: b"\0\0\0\0\0"}, read={0xFF8D: 5}),
+        dict(POISON, a=1, keys=[0x01, 0x00],
+             wram={0xFF8D: b"\0\0\0\0\0"},
+             read={0xFF8D: 5, 0xFF90: 1, 0xFF91: 1}),
     ],
     "DoFrame": [
         {"wram": {0xFF8D: b"\0\0\0\0\0"}, "read": {0xFF8D: 5}},
@@ -38,7 +40,7 @@ MUTATIONS = {
     "DoAFrames": {
         "source_symbol": "DoAFrames",
         "before": "uint16_t count = a ? a : 0x100u;",
-        "after": "uint16_t count = a ? a : 0x200u;",
-        "case_ids": ["DoAFrames-0", "DoAFrames-1"],
+        "after": "uint16_t count = a ? (uint16_t)(a + 1u) : 0x100u;",
+        "case_ids": ["DoAFrames-1", "DoAFrames-0"],
     },
 }

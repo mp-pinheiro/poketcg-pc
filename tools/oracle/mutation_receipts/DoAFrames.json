@@ -1,0 +1,9 @@
+{
+  "fn": "DoAFrames",
+  "case": "tests/cases/frames.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DoAFrames\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"65421\": \"0000010101\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DoAFrames\", \"mismatches\": {\"bus\": {\"address\": 65422, \"reference\": \"0000010101\", \"native\": \"0001000000\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[65421, 5]]}}}\n",
+  "restored": "{\"fn\": \"DoAFrames\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"65421\": \"0000010101\"}}, \"status\": \"PASS\"}\n"
+}
