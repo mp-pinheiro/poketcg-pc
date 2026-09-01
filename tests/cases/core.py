@@ -504,7 +504,8 @@ CASES["PrintSortNumberInCardList_SetPointer"] = [
 # >>> factory PrintSortNumberInCardList_body
 CONTRACT["PrintSortNumberInCardList"] = {"compare": (), "preserve": ()}
 CASES["PrintSortNumberInCardList"] = [
-	{"wram": {0xC51A: b"\x00\x01\xff"}, "read": {0x9841: 2}},
+	{"wram": {0xC51A: b"\x00\x01\xff"}, "read": {0x9841: 2},
+	 "vread": {0: {0x9841: 2, 0x9881: 1}}},
 	dict(POISON, wram={0xC51A: b"\x01\x00\xff"}, read={0x9841: 2}),
 	{"wram": {0xC51A: b"\xff"}},
 ]
@@ -5905,7 +5906,7 @@ MUTATIONS["PrintCardNameFromCardIDInTextBox"] = {
 MUTATIONS["PrintSortNumberInCardList"] = {
     "source_symbol": "PrintSortNumberInCardList",
     "before": "value = (uint8_t)(value + SYM_0);",
-    "after": "value = (uint8_t)(value + SYM_1);",
+    "after": "value = (uint8_t)(value + (uint8_t)(SYM_0 + 1u));",
     "case_ids": ["PrintSortNumberInCardList-0", "PrintSortNumberInCardList-1"],
 }
 # <<< factory-mutation PrintSortNumberInCardList
