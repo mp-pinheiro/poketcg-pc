@@ -48,6 +48,9 @@ CONTRACT = {
 
 CASES = {
 	"Func_3e44": [
+		{"wram": {wd657: b"\x02", wd658: b"\x00", wd64b: b"\x00" * 6,
+		          wd651: b"\x00" * 6, wd665: b"\x00"},
+		 "read": {wd657: 1, wd658: 1, rWX: 1, rLCDC: 1, rLYC: 1}},
 		{"wram": {wd657: b"\x00", wd658: b"\x00", wd64b: b"\x00" * 6,
 		          wd651: b"\x00" * 6, wd665: b"\x00"}},
 		dict(POISON,
