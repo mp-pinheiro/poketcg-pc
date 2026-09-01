@@ -320,11 +320,7 @@ const uint8_t *rom_ptr_reference(uint8_t bank, uint16_t addr)
 
 static const uint8_t *missing_product_data(uint8_t bank, uint16_t addr)
 {
-	fprintf(stderr, "MISSING_DATA %02X:%04X c0=%p c1=%p c2=%p c3=%p c4=%p\n",
-	        bank, addr, __builtin_return_address(0), __builtin_return_address(1),
-	        __builtin_return_address(2), __builtin_return_address(3),
-	        __builtin_return_address(4));
-	fflush(stderr);
+	fprintf(stderr, "MISSING_DATA %02X:%04X\n", bank, addr);
 	abort();
 	return NULL;
 }

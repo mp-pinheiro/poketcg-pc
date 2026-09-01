@@ -13,6 +13,7 @@
 #include <string.h>
 #define AUDIO_SAMPLES_PER_FRAME 1470u
 
+
 typedef struct {
 	pthread_mutex_t lock;
 	pthread_cond_t condition;
@@ -62,6 +63,8 @@ static int stopped(RuntimeState *state)
 
 static void *run_game(void *context)
 {
+	runtime_events_reset();
+	runtime_mark_event(RUNTIME_EVENT_BOOT_STARTED);
 	RuntimeState *state = context;
 	Start(0x11u);
 	GameLoop();
@@ -149,6 +152,9 @@ int runtime_run_with_input(
 	if (result) {
 		result->frame_limit = frame_limit;
 		result->frames = state.frames;
+		result->event_mask = runtime_event_mask();
+		result->event_count = runtime_event_count();
+		result->terminal_event = runtime_terminal_event();
 		result->stopped_by_user = state.stopped_by_user;
 		memcpy(result->framebuffer, state.framebuffer, sizeof state.framebuffer);
 	}

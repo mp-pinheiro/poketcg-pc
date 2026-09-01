@@ -51,6 +51,13 @@ def canonical_bytes(value: object) -> bytes:
 
 def state_hash(state: dict[str, Any]) -> str:
     return hashlib.sha256(canonical_bytes(state)).hexdigest()
+def boot_input(frames: int) -> list[int]:
+    values = [0] * frames
+    for index, value in ((180, 16), (240, 8), (241, 16)):
+        if index < frames:
+            values[index] = value
+    return values
+
 
 
 def current_key() -> str:
@@ -63,13 +70,18 @@ def evidence_path(requirement: str) -> Path:
     return EVIDENCE_DIR / f"{requirement}.json"
 
 
-def run_native(frames: int, state_path: Path, trace_path: Path) -> tuple[int, str, str]:
+def run_native(
+    frames: int, state_path: Path, trace_path: Path, input_path: Path | None = None
+) -> tuple[int, str, str]:
+    command = [
+        str(BINARY), "--headless", "--data-pack", str(PACK), "--frames", str(frames),
+        "--dump-state", str(state_path), "--trace-entries", str(trace_path),
+    ]
+    if input_path is not None:
+        command.extend(["--input", str(input_path)])
     try:
         result = subprocess.run(
-            [
-                str(BINARY), "--headless", "--data-pack", str(PACK), "--frames", str(frames),
-                "--dump-state", str(state_path), "--trace-entries", str(trace_path),
-            ],
+            command,
             cwd=ROOT,
             capture_output=True,
             text=True,
@@ -107,7 +119,16 @@ def main(argv: list[str] | None = None) -> int:
         with tempfile.TemporaryDirectory(prefix="poketcg-scenario-") as directory:
             state_path = Path(directory) / "state.json"
             trace_path = Path(directory) / "trace.json"
-            returncode, stdout, stderr = run_native(args.frames, state_path, trace_path)
+            input_path = None
+            if args.scenario == "boot-title":
+                input_path = Path(directory) / "input.txt"
+                input_path.write_text(
+                    ",".join(str(value) for value in boot_input(args.frames)) + "\n",
+                    encoding="utf-8",
+                )
+            returncode, stdout, stderr = run_native(
+                args.frames, state_path, trace_path, input_path
+            )
             if returncode != 0:
                 artifact["failure"] = "EARLY_EXIT"
                 artifact["detail"] = stderr.strip() or stdout.strip()
@@ -125,14 +146,21 @@ def main(argv: list[str] | None = None) -> int:
                     canonical_bytes(state.get("apu_trace", []))
                 ).hexdigest()
                 artifact["state_fields"] = sorted(state)
+                artifact["events"] = trace.get("events", 0)
                 artifact["covered_edges"] = len(trace.get("edges", []))
-                if args.scenario == "boot-title-negative":
-                    artifact["failure"] = "STATE_MISMATCH"
-                    artifact["first_mismatch"] = {"region": "wram", "offset": 0}
+                artifact["terminal_event"] = trace.get("terminal_event")
+                artifact["trace_symbols"] = trace.get("symbols", [])
+                if args.scenario == "boot-title":
+                    if artifact["terminal_event"] != "NEW_GAME_ENTERED":
+                        artifact["failure"] = "TERMINAL_EVENT_MISSING"
+                    elif artifact["events"] < 3:
+                        artifact["failure"] = "EVENT_BOUND_NOT_MET"
+                    else:
+                        artifact["failure"] = "REFERENCE_COMPARISON_MISSING"
+                elif args.scenario == "boot-title-negative":
+                    artifact["failure"] = "REFERENCE_COMPARISON_MISSING"
                 else:
-                    artifact["failure"] = "TERMINAL_EVENT_MISSING"
-                    artifact["terminal_event"] = trace.get("terminal_event")
-                    artifact["trace_symbols"] = trace.get("symbols", [])
+                    artifact["failure"] = "REFERENCE_COMPARISON_MISSING"
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         artifact["failure"] = "SCENARIO_ERROR"
         artifact["detail"] = str(exc)

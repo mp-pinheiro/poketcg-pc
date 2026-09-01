@@ -3,6 +3,8 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+#include "home/switch_rom.h"
+#include "home/text_box.h"
 /* >>> factory statics */
 #include "generated/wram.h"
 #include "home/random.h"
@@ -203,15 +205,15 @@ TransformCharacterResult TransformCharacter(uint16_t hl, uint8_t d, uint8_t e)
 	if (e == TX_KATAKANA)
 		e = (uint8_t)(e - 1u);
 	for (;;) {
-		uint8_t t0 = gb_read8(hl++);
+		uint8_t t0 = rom_ptr(6u, hl++)[0];
 		if (t0 == 0u)
 			return (TransformCharacterResult){hl, d, e, 0x90u};
-		uint8_t t1 = gb_read8(hl);
+		uint8_t t1 = rom_ptr(6u, hl)[0];
 		if (t0 == d && t1 == e) {
 			hl = (uint16_t)(hl + 1u);
-			e = gb_read8(hl);
+			e = rom_ptr(6u, hl)[0];
 			hl = (uint16_t)(hl + 1u);
-			d = gb_read8(hl);
+			d = rom_ptr(6u, hl)[0];
 			return (TransformCharacterResult){hl, d, e, (uint8_t)((t1 == 0u) ? 0x80u : 0x00u)};
 		}
 		hl = (uint16_t)(hl + 3u);
@@ -286,9 +288,9 @@ PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_DrawCursor(uint8_t a, uin
 	uint8_t saved_a = a;
 	uint16_t char_info = PlayerNamingScreen_GetCharInfoFromPos((uint16_t)((uint16_t)gb_read8(wNamingScreenCursorX_ADDR) << 8 | gb_read8(wNamingScreenCursorY_ADDR)));
 	gb_write8(0x2000u, 0x06u);
-	uint8_t tile = gb_read8(char_info++);
+	uint8_t tile = rom_ptr(6u, char_info++)[0];
 	c = tile;
-	b = (uint8_t)(gb_read8(char_info) - 1u);
+	b = (uint8_t)(rom_ptr(6u, char_info)[0] - 1u);
 	PlayerNamingScreen_AdjustCursorPosition(saved_a);
 	WriteByteToBGMap0(saved_a, b, c);
 	return (PlayerNamingScreen_DrawCursorResult){saved_a, (uint8_t)(saved_a == 0u ? 0x80u : 0u), b, c, d, saved_a, char_info};
@@ -301,9 +303,9 @@ DeckNamingScreen_DrawCursorResult DeckNamingScreen_DrawCursor(uint8_t a, uint8_t
 	uint8_t saved_a = a;
 	uint16_t char_info = DeckNamingScreen_GetCharInfoFromPos((uint16_t)((uint16_t)gb_read8(wNamingScreenCursorX_ADDR) << 8 | gb_read8(wNamingScreenCursorY_ADDR)));
 	gb_write8(0x2000u, 0x06u);
-	uint8_t tile = gb_read8(char_info++);
+	uint8_t tile = rom_ptr(6u, char_info++)[0];
 	c = tile;
-	b = (uint8_t)(gb_read8(char_info) - 1u);
+	b = (uint8_t)(rom_ptr(6u, char_info)[0] - 1u);
 	DeckNamingScreen_AdjustCursorPosition(saved_a);
 	WriteByteToBGMap0(saved_a, b, c);
 	return (DeckNamingScreen_DrawCursorResult){saved_a, (uint8_t)(saved_a == 0u ? 0x80u : 0u), b, c, d, saved_a, char_info};
@@ -379,7 +381,7 @@ PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_CheckButtonState(void)
 				if (l == 6u) {
 					uint16_t hl_in = (uint16_t)(((uint16_t)h << 8) | l);
 					uint16_t base = PlayerNamingScreen_GetCharInfoFromPos(hl_in);
-					uint8_t entry = gb_read8((uint16_t)(base + 5u));
+					uint8_t entry = rom_ptr(6u, (uint16_t)(base + 5u))[0];
 					uint8_t sub = (uint8_t)(entry - 1u);
 					a = (uint8_t)(saved - sub);
 					if (a == 0xFFu) {
@@ -405,7 +407,7 @@ PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_CheckButtonState(void)
 				if (l == 6u) {
 					uint16_t hl_in = (uint16_t)(((uint16_t)h << 8) | l);
 					uint16_t base = PlayerNamingScreen_GetCharInfoFromPos(hl_in);
-					uint8_t entry = gb_read8((uint16_t)(base + 4u));
+					uint8_t entry = rom_ptr(6u, (uint16_t)(base + 4u))[0];
 					uint8_t sub = (uint8_t)(entry - 1u);
 					a = (uint8_t)(saved + sub);
 				} else {
@@ -435,7 +437,7 @@ done_dir:
 		uint16_t entry_addr = (uint16_t)(base2 + 3u);
 		if (gb_read8(wd009_ADDR) == 2u)
 			entry_addr = (uint16_t)(entry_addr + 2u);
-		uint8_t d_reg = gb_read8(entry_addr);
+		uint8_t d_reg = rom_ptr(6u, entry_addr)[0];
 
 		(void)PlayerNamingScreen_DrawInvisibleCursor(0u, 0u, 0u, 0u, 0u, 0u);
 
@@ -581,6 +583,8 @@ DeckNamingScreen_DrawCursorResult DeckNamingScreen_CheckButtonState(void)
 /* >>> factory PrintPlayerNameFromInput */
 void PrintPlayerNameFromInput(void)
 {
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(6u);
 	uint8_t d = wNamingScreenNamePosition;
 	uint8_t e = gb_read8((uint16_t)(wNamingScreenNamePosition_ADDR + 1u));
 	InitTextPrinting(d, e);
@@ -593,6 +597,7 @@ void PrintPlayerNameFromInput(void)
 	InitTextPrinting(d, e);
 	uint16_t buf_hl = wNamingScreenBuffer_ADDR;
 	ProcessText(&buf_hl);
+	BankswitchROM(saved_bank);
 }
 /* <<< factory PrintPlayerNameFromInput */
 
@@ -606,6 +611,8 @@ void DrawPlayerNamingScreenBG(void)
 	uint8_t c = gb_read8(wNamingScreenQuestionPointer_ADDR);
 	uint8_t h = gb_read8((uint16_t)(wNamingScreenQuestionPointer_ADDR + 1u));
 	uint16_t question_hl = (uint16_t)(((uint16_t)h << 8) | c);
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(6u);
 	if (question_hl != 0u) {
 		(void)PlaceTextItems(question_hl);
 	}
@@ -615,6 +622,7 @@ void DrawPlayerNamingScreenBG(void)
 	InitTextPrinting(2u, 4u);
 	(void)ProcessTextFromID(PlayerNameKeyboardText);
 	EnableLCD();
+	BankswitchROM(saved_bank);
 }
 /* <<< factory DrawPlayerNamingScreenBG */
 
@@ -627,9 +635,9 @@ PlayerNamingScreen_ProcessInputResult PlayerNamingScreen_ProcessInput(void)
 
 	hl = PlayerNamingScreen_GetCharInfoFromPos(hl);
 	hl = (uint16_t)(hl + 2u);
-	uint8_t e = gb_read8(hl);
+	uint8_t e = rom_ptr(6u, hl)[0];
 	hl = (uint16_t)(hl + 1u);
-	uint8_t d = gb_read8(hl);
+	uint8_t d = rom_ptr(6u, hl)[0];
 	hl = (uint16_t)(hl + 1u);
 
 	if (d == 0x09u) {
@@ -673,8 +681,8 @@ PlayerNamingScreen_ProcessInputResult PlayerNamingScreen_ProcessInput(void)
 	uint8_t no_append = 0u;
 
 	if (wd009 == 0x02u) {
-		uint8_t char_e = gb_read8(hl);
-		uint8_t char_a = gb_read8((uint16_t)(hl + 1u));
+		uint8_t char_e = rom_ptr(6u, hl)[0];
+		uint8_t char_a = rom_ptr(6u, (uint16_t)(hl + 1u))[0];
 		final_d = (char_a != 0u) ? char_a : 0x0Eu;
 		final_e = char_e;
 	} else if (d == 0x03u && e == 0x59u) {

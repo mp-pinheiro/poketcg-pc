@@ -4,9 +4,16 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+#include "runtime.h"
+#include "generated/sram.h"
+#include "home/map.h"
+#include "home/naming.h"
+#include "home/starter_deck.h"
+#include "home/switch_sram.h"
 /* >>> factory statics */
 #include "home/common.h"
 #include "home/lcd_enable_frame.h"
+#define MUSIC_OVERWORLD 0x09u
 #include "home/overworld.h"
 #include "home/sound.h"
 #include "generated/wram.h"
@@ -34,8 +41,20 @@ uint8_t MainMenu_CardPop(void)
 /* >>> factory MainMenu_NewGame */
 void MainMenu_NewGame(void)
 {
+	runtime_mark_event(RUNTIME_EVENT_NEW_GAME_ENTERED);
 	Func_c1b1();
+	(void)DisplayPlayerNamingScreen();
+	InitSaveData();
+	EnableSRAM();
+	wAnimationsDisabled = sAnimationsDisabled;
+	wTextSpeed = sTextSpeed;
+	DisableSRAM();
+	PlaySong(MUSIC_STOP);
+	wDefaultSong = MUSIC_OVERWORLD;
+	(void)PlayDefaultSong();
+	DrawPlayerPortraitAndPrintNewGameText();
 	wGameEvent = 0u;
+	ExecuteGameEvent();
 }
 /* <<< factory MainMenu_NewGame */
 

@@ -36,6 +36,21 @@ SCHEMA = (
     {"name": "gfx_6", "section": "Gfx 6", "ctype": "uint8_t", "symbol": "CardPopGfx"},
 )
 
+# Static tables embedded in code sections are declared explicitly so the
+# production resolver never reads unclassified code bytes from the ROM.
+NATIVE_DATA_SPANS = (
+    ("input_name_question_data", 6, 0x675E, 0x29),
+    ("input_name_background_data", 6, 0x68BC, 0x05),
+    ("input_name_char_underbar", 6, 0x68F2, 0x16),
+    ("input_name_cursor_tile", 6, 0x6A77, 0x10),
+    ("input_name_keyboard", 6, 0x6BAF, 0x14A),
+    ("input_name_transition_1", 6, 0x6CF9, 0x66),
+    ("input_name_transition_2", 6, 0x6D5F, 0x2A),
+    ("naming_default_player_name", 4, 0x68EB, 0x10),
+    ("input_name_deck_underbar", 6, 0x6E83, 0x16),
+    ("input_name_deck_keyboard", 6, 0x7019, 0xC1),
+)
+
 SECTION_RE = re.compile(
     r'^\s*SECTION:\s*\$([0-9A-Fa-f]{4})-\$([0-9A-Fa-f]{4})\s+\(\$[0-9A-Fa-f]{4}\s+bytes\)\s+\["([^"]+)"\]$'
 )
@@ -153,6 +168,14 @@ def sparse_items(
             raise ValueError(f"source data span exceeds ROM: {span}")
         name = f"inventory_span_{index:05d}"
         section = Section(f"inventory-span-{index:05d}", bank, address, address + length - 1)
+        entry = {"name": name, "section": section.name, "ctype": "uint8_t"}
+        result.append((entry, section, rom[start:end]))
+    for name, bank, address, length in NATIVE_DATA_SPANS:
+        start = rom_offset(bank, address)
+        end = start + length
+        if length < 1 or end > len(rom):
+            raise ValueError(f"native data span exceeds ROM: {name}")
+        section = Section(f"native-{name}", bank, address, address + length - 1)
         entry = {"name": name, "section": section.name, "ctype": "uint8_t"}
         result.append((entry, section, rom[start:end]))
     if not result:

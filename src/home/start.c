@@ -50,7 +50,6 @@
 #include "home/random.h"
 #define DOUBLE_SPACED 0x00u
 #define MUSIC_PC_MAIN_MENU 0x06u
-#define NULL 0x00u
 #define SYM_CURSOR_R 0x0Fu
 #define SYM_SPACE 0x00u
 
@@ -92,6 +91,7 @@
 #include "home/switch_sram.h"
 #include "home/time.h"
 #include "mem.h"
+#include "runtime.h"
 #define BANK_GAME_LOOP 0x01u
 #define rIF 0xFF0Fu
 #define rIE 0xFFFFu
@@ -235,7 +235,7 @@ void HandleStartMenu(void)
 	static const uint8_t params[17] = {
 		0x00u, 0x00u, 0x0Eu, 0x04u, 0x02u, 0x02u,
 		0x6Cu, 0x03u, 0xFFu, 0x01u, 0x02u, 0x02u, 0x01u,
-		SYM_CURSOR_R, SYM_SPACE, NULL, 0x00u
+		SYM_CURSOR_R, SYM_SPACE, 0x00u, 0x00u
 	};
 	for (uint8_t i = 0u; i < 17u; ++i)
 		gb_write8((uint16_t)(wStartMenuParams_ADDR + i), params[i]);
@@ -262,6 +262,7 @@ void HandleStartMenu(void)
 		selected = 1u;
 	InitAndPrintMenu(wStartMenuParams_ADDR, selected);
 	(void)FlashWhiteScreen();
+	runtime_mark_event(RUNTIME_EVENT_START_MENU_READY);
 	for (;;) {
 		DoFrameIfLCDEnabled();
 		(void)UpdateRNGSources();
@@ -332,6 +333,7 @@ void HandleTitleScreen(void)
 	if (wLastSelectedStartMenuItem != 0u) {
 		for (;;) {
 			PlayIntroSequence();
+			runtime_mark_event(RUNTIME_EVENT_TITLE_READY);
 			wTitleScreenOrbCounter = 0u;
 			wTitleScreenIgnoreInputCounter = 0x3Cu;
 			for (;;) {

@@ -36,6 +36,22 @@ static int write_region(FILE *file, const char *name, const uint8_t *data, size_
 	return fprintf(file, "\"%s\":", name) < 0 || write_bytes(file, data, count) != 0 ? -1 : 0;
 }
 
+static const char *runtime_event_name(RuntimeEvent event)
+{
+	switch (event) {
+	case RUNTIME_EVENT_BOOT_STARTED:
+		return "BOOT_STARTED";
+	case RUNTIME_EVENT_TITLE_READY:
+		return "TITLE_READY";
+	case RUNTIME_EVENT_START_MENU_READY:
+		return "START_MENU_READY";
+	case RUNTIME_EVENT_NEW_GAME_ENTERED:
+		return "NEW_GAME_ENTERED";
+	default:
+		return "NONE";
+	}
+}
+
 int runtime_write_state(const char *path, const RuntimeResult *runtime)
 {
 	if (!path || !runtime)
@@ -44,6 +60,10 @@ int runtime_write_state(const char *path, const RuntimeResult *runtime)
 	if (!file)
 		return -1;
 	int ok = fputc('{', file) != EOF;
+	const char *terminal = runtime_event_name(runtime->terminal_event);
+	ok = ok && fprintf(file,
+	                   "\"runtime\":{\"frames\":%u,\"events\":%u,\"event_mask\":%u,\"terminal_event\":\"%s\"},",
+	                   runtime->frames, runtime->event_count, runtime->event_mask, terminal) >= 0;
 	ok = ok && write_region(file, "wram", g_wram, sizeof g_wram) == 0;
 	ok = ok && fputc(',', file) != EOF;
 	ok = ok && write_region(file, "hram", g_hram, sizeof g_hram) == 0;
@@ -96,14 +116,16 @@ int runtime_write_trace(const char *path, const RuntimeResult *runtime)
 	if (!file)
 		return -1;
 	int ok = fprintf(file,
-	                 "{\"schema\":1,\"frames\":%u,"
+	                 "{\"schema\":1,\"frames\":%u,\"events\":%u,\"event_mask\":%u,"
+	                 "\"terminal_event\":\"%s\","
 	                 "\"symbols\":[\"Start\",\"GameLoop\",\"DoFrame\"],"
 	                 "\"edges\":["
 	                 "{\"source\":\"<host>\",\"target\":\"Start\",\"type\":\"direct-call\"},"
 	                 "{\"source\":\"Start\",\"target\":\"GameLoop\",\"type\":\"direct-call\"},"
 	                 "{\"source\":\"GameLoop\",\"target\":\"DoFrame\",\"type\":\"direct-call\"}"
 	                 "]}",
-	                 runtime->frames) >= 0;
+	                 runtime->frames, runtime->event_count, runtime->event_mask,
+	                 runtime_event_name(runtime->terminal_event)) >= 0;
 	if (fclose(file) != 0)
 		ok = 0;
 	return ok ? 0 : -1;
