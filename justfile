@@ -319,6 +319,8 @@ completion-routine-mapping:
     python3 tools/completion/completion.py routine-mapping
 completion-representation:
     python3 tools/completion/completion.py representation
+completion-truthful-accounting:
+    python3 tools/completion/completion.py truthful-accounting
 completion-next:
     python3 tools/completion/completion.py next
 

@@ -1318,6 +1318,98 @@ def command_representation() -> int:
     return 0 if artifact["status"] == "PASS" else 2
 
 
+def command_truthful_accounting() -> int:
+    baseline = load_toml(BASELINE_PATH)
+    manifest = load_toml(MANIFEST_PATH)
+    artifact: dict[str, Any] = {
+        "schema": "completion-status-v2",
+        "status": "FAIL",
+        "frames": 0,
+        "events": 0,
+        "state_fields": [
+            "landed_inventory", "final_routines", "trusted_oracle_evidence",
+            "production_integration", "requirements", "milestone_gates",
+        ],
+        "oracles": ["gate-report", "source-inventory", "routine-mapping"],
+    }
+    try:
+        gate = load_json(ROOT / "site" / "data" / "gate.json")
+        inventory = run_source_inventory()
+        mapping = build_mapping(inventory)
+        counts = gate.get("counts")
+        if not isinstance(counts, dict):
+            raise AuditError("gate report has no counts")
+        errors = []
+        excluded = load_scope_exclusions(inventory["functions"])
+        code_bytes = sum(
+            int(info["size"]) for name, info in inventory["functions"].items()
+            if name not in excluded
+        )
+        landed = counts.get("landed_inventory", {})
+        final = counts.get("final_routines", {})
+        requirements = counts.get("requirements", {})
+        milestones = counts.get("milestone_gates", {})
+        if landed.get("routines") != mapping["expected_logical_routines"]:
+            errors.append("landed routine count disagrees")
+        if landed.get("code_bytes") != code_bytes:
+            errors.append("landed code byte count disagrees")
+        if final.get("count") != mapping["final_routines"]:
+            errors.append("final routine count disagrees")
+        if final.get("total") != mapping["logical_routines"]:
+            errors.append("final routine total disagrees")
+        if counts.get("provisional_routines") != mapping["provisional_routines"]:
+            errors.append("provisional routine count disagrees")
+        if counts.get("orphan_registrations") != mapping["orphan_registrations"]:
+            errors.append("orphan registration count disagrees")
+        requirement_rows = manifest.get("requirement", [])
+        key = content_key(baseline, manifest)
+        statuses = {
+            req["id"]: check_evidence(req, key)[0]
+            for req in requirement_rows
+            if isinstance(req, dict) and isinstance(req.get("id"), str)
+        }
+        passing = sum(status == "pass" for status in statuses.values())
+        if requirements.get("total") != len(statuses):
+            errors.append("requirement total disagrees")
+        if requirements.get("passing") != passing:
+            errors.append("requirement passing count disagrees")
+        if requirements.get("remaining") != len(statuses) - passing:
+            errors.append("requirement remaining count disagrees")
+        if milestones.get("total") != len(manifest.get("manifest", {}).get("milestones", [])):
+            errors.append("milestone total disagrees")
+        artifact["landed_inventory"] = landed
+        artifact["final_routines"] = final
+        artifact["trusted_oracle_evidence"] = counts.get("trusted_oracle_evidence")
+        artifact["production_integration"] = counts.get("production_integration")
+        artifact["requirements"] = requirements
+        artifact["milestone_gates"] = milestones
+        artifact["validation"] = {"errors": errors, "source_code_bytes": code_bytes}
+        if errors:
+            artifact["failure"] = "ACCOUNTING_INVALID"
+            artifact["detail"] = "; ".join(errors)
+        else:
+            artifact["content_key"] = key
+            artifact["status"] = "PASS"
+            artifact["events"] = 1
+            artifact["terminal_event"] = "TRUTHFUL_COUNTS_EMITTED"
+    except (AuditError, KeyError, TypeError, ValueError) as exc:
+        artifact["failure"] = "ACCOUNTING_ERROR"
+        artifact["detail"] = str(exc)
+    EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+    path = evidence_path("completion:v2:reset:truthful-accounting")
+    path.write_text(json.dumps(artifact, sort_keys=True, separators=(",", ":")) + "\n")
+    print(json.dumps({
+        "status": artifact["status"],
+        "artifact": str(path.relative_to(ROOT)),
+        **{
+            key: artifact[key]
+            for key in ("failure", "content_key", "events")
+            if key in artifact
+        },
+    }, sort_keys=True))
+    return 0 if artifact["status"] == "PASS" else 2
+
+
 def command_next() -> int:
     manifest = load_toml(MANIFEST_PATH)
     baseline = load_toml(BASELINE_PATH)
@@ -1348,12 +1440,15 @@ def main(argv: list[str] | None = None) -> int:
     subparsers.add_parser("rom-coverage")
     subparsers.add_parser("routine-mapping")
     subparsers.add_parser("representation")
+    subparsers.add_parser("truthful-accounting")
     subparsers.add_parser("next")
     args = parser.parse_args(argv)
     if args.command == "audit":
         return command_audit()
     if args.command == "status":
         return command_status()
+    if args.command == "truthful-accounting":
+        return command_truthful_accounting()
     if args.command == "representation":
         return command_representation()
     if args.command == "routine-mapping":
