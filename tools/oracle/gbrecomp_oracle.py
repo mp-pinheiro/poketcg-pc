@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import struct
 import os
+import re
 import subprocess
 import tempfile
 from dataclasses import dataclass
@@ -156,9 +157,14 @@ class Oracle:
                 f"gb-recompiled binary not found at {self.binary}; set POKETCG_ORACLEB "
                 f"or regenerate it with {REGENERATE_RECIPE}")
 
-    def run(self, *, input_file: str | os.PathLike | None = None,
-            frame_limit: int = 30,
-            save_state: str | os.PathLike | None = None) -> Result:
+    def run(
+        self,
+        *,
+        input_file: str | os.PathLike | None = None,
+        frame_limit: int = 30,
+        save_state: str | os.PathLike | None = None,
+        audio_trace: str | os.PathLike | None = None,
+    ) -> Result:
         """Run one scene. `save_state`, when given, is where the binary's whole-state
         save is kept -- the JSON dump has no VRAM/OAM/IO, so that file is the only
         route to a full comparison. It is only requested when a caller asks for it;
@@ -179,16 +185,29 @@ class Oracle:
             if input_file is not None:
                 command += ["--input", str(input_file)]
             command += ["--limit-frames", str(frame_limit), "--dump-state", str(dump)]
+            if audio_trace is not None:
+                command.append("--debug-audio-trace")
             if save_state is not None:
                 command += ["--save-state-file", str(Path(save_state).resolve())]
             try:
-                completed = subprocess.run(command, capture_output=True, text=True,
-                                           timeout=self.timeout, check=False)
+                completed = subprocess.run(
+                    command,
+                    cwd=directory,
+                    capture_output=True,
+                    text=True,
+                    timeout=self.timeout,
+                    check=False,
+                )
             except subprocess.TimeoutExpired as exc:
                 raise OracleError(f"gb-recompiled scene timed out after {self.timeout}s") from exc
             if completed.returncode != 0:
                 detail = (completed.stderr or completed.stdout).strip()
                 raise OracleError(f"gb-recompiled scene failed ({completed.returncode}): {detail}")
+            if audio_trace is not None:
+                trace_source = Path(directory) / "debug_audio_trace.log"
+                if not trace_source.is_file():
+                    raise OracleError("gb-recompiled audio trace was not produced")
+                Path(audio_trace).write_bytes(trace_source.read_bytes())
             try:
                 state = json.loads(dump.read_text())
             except (OSError, json.JSONDecodeError) as exc:

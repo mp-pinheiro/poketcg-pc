@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import re
 import json
 import subprocess
 import sys
@@ -22,6 +23,7 @@ SCENARIO_REQUIREMENTS = {
     "boot-title-negative": "completion:v2:p2:boot-title-negative",
     "save-interchange": "completion:v2:p2:save-interchange",
     "audio-catalog": "completion:v2:p3:audio-trace",
+    "audio-pcm": "completion:v2:p3:audio-pcm",
     "ui-corpus": "completion:v2:p4:ui-corpus",
     "seeded-duel": "completion:v2:p5:seeded-duel",
     "all-maps-scripts": "completion:v2:p6:maps-and-campaign",
@@ -36,6 +38,7 @@ SCENARIO_SCHEMAS = {
     "boot-title-negative": "negative-evidence-v1",
     "save-interchange": "save-interchange-v1",
     "audio-catalog": "audio-trace-v1",
+    "audio-pcm": "audio-pcm-v1",
     "ui-corpus": "scene-corpus-v2",
     "seeded-duel": "duel-corpus-v2",
     "all-maps-scripts": "campaign-corpus-v2",
@@ -61,6 +64,25 @@ def boot_input(frames: int) -> list[int]:
 
 def reference_boot_input() -> str:
     return "f1000:A:1,f1100:D:1,f1101:A:1,f1200:S:1,f1201:A:1"
+
+AUDIO_WRITE_RE = re.compile(
+    r"\[WRITE\]\s+cyc=(\d+)\s+addr=([0-9A-Fa-f]{4}).*<=\s+([0-9A-Fa-f]{2})"
+)
+
+
+def parse_reference_audio(path: Path) -> list[dict[str, int]]:
+    records = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        match = AUDIO_WRITE_RE.search(line)
+        if match:
+            records.append({
+                "tick": int(match.group(1)),
+                "address": int(match.group(2), 16),
+                "value": int(match.group(3), 16),
+            })
+    if not records:
+        raise ValueError("reference audio trace has no register writes")
+    return records
 
 
 
@@ -194,6 +216,51 @@ def main(argv: list[str] | None = None) -> int:
                         except (OSError, ValueError, RuntimeError) as exc:
                             artifact["failure"] = "ORACLE_ERROR"
                             artifact["detail"] = str(exc)
+                elif args.scenario == "audio-catalog":
+                    try:
+                        from tools.oracle.gbrecomp_oracle import Oracle
+
+                        reference_trace = Path(directory) / "reference-audio.log"
+                        with Oracle(timeout=60.0) as oracle:
+                            oracle.run(frame_limit=run_frames, audio_trace=reference_trace)
+                        reference_audio = parse_reference_audio(reference_trace)
+                        native_audio = state.get("apu_trace")
+                        if not isinstance(native_audio, list):
+                            raise ValueError("native audio trace is not a list")
+                        native_pairs = [
+                            (int(item["address"]), int(item["value"]))
+                            for item in native_audio
+                            if isinstance(item, dict)
+                            and "address" in item
+                            and "value" in item
+                        ]
+                        reference_pairs = [
+                            (item["address"], item["value"]) for item in reference_audio
+                        ]
+                        common = min(len(native_pairs), len(reference_pairs))
+                        first_mismatch = next(
+                            (
+                                index for index in range(common)
+                                if native_pairs[index] != reference_pairs[index]
+                            ),
+                            common if len(native_pairs) != len(reference_pairs) else None,
+                        )
+                        artifact["oracles"] = ["oracle-b", "native"]
+                        artifact["comparison"] = {
+                            "native_writes": len(native_pairs),
+                            "reference_writes": len(reference_pairs),
+                            "first_mismatch": first_mismatch,
+                            "status": "PASS" if first_mismatch is None else "FAIL",
+                        }
+                        if first_mismatch is None:
+                            artifact["status"] = "PASS"
+                            artifact["terminal_event"] = "AUDIO_TRACE_CLOSED"
+                            artifact.pop("failure", None)
+                        else:
+                            artifact["failure"] = "AUDIO_TRACE_MISMATCH"
+                    except (OSError, ValueError, RuntimeError) as exc:
+                        artifact["failure"] = "ORACLE_ERROR"
+                        artifact["detail"] = str(exc)
                 elif args.scenario == "boot-title-negative":
                     artifact["failure"] = "REFERENCE_COMPARISON_MISSING"
                 else:
