@@ -106,8 +106,8 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
     "InitVariablesToBeginTurn": {
         "source_symbol": "InitVariablesToBeginTurn",
-        "before": "return (DuelCoreStateResult){hWhoseTurn, 0, 0, 0, 0x80};",
-        "after": "return (DuelCoreStateResult){hWhoseTurn, 0, 0, 1, 0x00};",
+        "before": "wAlreadyPlayedEnergy = 0;\n\twConfusionRetreatCheckWasUnsuccessful = 0;",
+        "after": "wAlreadyPlayedEnergy = 1;\n\twConfusionRetreatCheckWasUnsuccessful = 0;",
         "case_ids": ["InitVariablesToBeginTurn-0", "InitVariablesToBeginTurn-1"],
     },
 }

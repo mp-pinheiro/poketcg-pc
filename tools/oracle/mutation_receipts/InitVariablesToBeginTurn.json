@@ -1,0 +1,9 @@
+{
+  "fn": "InitVariablesToBeginTurn",
+  "case": "tests/cases/duel_core_state.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"InitVariablesToBeginTurn\", \"registers\": {\"a\": 194, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52229\": \"c2\", \"52235\": \"0000ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"InitVariablesToBeginTurn\", \"mismatches\": {\"bus\": {\"address\": 52235, \"reference\": \"c20000ffc2\", \"native\": \"c20100ffc2\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[52229, 1], [52235, 3], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"InitVariablesToBeginTurn\", \"registers\": {\"a\": 194, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52229\": \"c2\", \"52235\": \"0000ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
