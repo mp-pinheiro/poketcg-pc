@@ -375,5 +375,7 @@ uint8_t _ExecuteGameEvent(void)
 void ExecuteGameEvent(void)
 {
 	wPlayTimeCounterEnable = 1u;
+	if ((_ExecuteGameEvent() & 0x10u) != 0u && wGameEvent == 0u)
+		LoadMap();
 }
 /* <<< factory ExecuteGameEvent */
