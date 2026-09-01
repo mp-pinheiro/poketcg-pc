@@ -1,0 +1,9 @@
+{
+  "fn": "DivideBCbyDE",
+  "case": "tests/cases/division.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DivideBCbyDE\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 100, \"d\": 0, \"e\": 10, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DivideBCbyDE\", \"mismatches\": {\"b\": [0, 13], \"c\": [100, 48], \"hl\": [0, 8]}}\n",
+  "restored": "{\"fn\": \"DivideBCbyDE\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 100, \"d\": 0, \"e\": 10, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

@@ -94,13 +94,27 @@ SCHEMA2_CASES = {
             "completion": {"mode": "return"},
             "evidence": "primary",
         },
+        {
+            "id": "DivideBCbyDE-exact",
+            "hardware": "cgb",
+            "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
+            "registers": _case(1000, 10),
+            "bus": {},
+            "seeds": {},
+            "setup": [],
+            "input_events": [],
+            "instruction_budget": 10000,
+            "cycle_budget": 100000,
+            "completion": {"mode": "return"},
+            "evidence": "primary",
+        },
     ],
 }
 MUTATIONS = {
     "DivideBCbyDE": {
         "source_symbol": "DivideBCbyDE",
-        "before": "bc = (uint16_t)(bc << 1);",
-        "after": "bc = (uint16_t)(bc << 1 | 1u);",
-        "case_ids": ["DivideBCbyDE-zero", "DivideBCbyDE-poison", "DivideBCbyDE-divisor-zero"],
+        "before": "cf = bc >> 15;",
+        "after": "cf = (bc >> 15) ^ 1;",
+        "case_ids": ["DivideBCbyDE-exact", "DivideBCbyDE-zero", "DivideBCbyDE-poison", "DivideBCbyDE-divisor-zero"],
     },
 }
