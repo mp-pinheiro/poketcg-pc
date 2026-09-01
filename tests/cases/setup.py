@@ -123,6 +123,6 @@ MUTATIONS = {
         "source_symbol": "DetectConsole",
         "before": "a == BOOTUP_A_CGB",
         "after":  "a != BOOTUP_A_CGB",
-        "case_ids": ["DetectConsole-0", "DetectConsole-1", "DetectConsole-2"],
+        "case_ids": ["DetectConsole-2", "DetectConsole-0", "DetectConsole-1"],
     },
 }
