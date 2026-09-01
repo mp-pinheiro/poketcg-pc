@@ -531,7 +531,7 @@ MUTATIONS["PlayerNamingScreen_AdjustCursorPosition"] = {"source_symbol": "Player
 MUTATIONS["DeckNamingScreen_AdjustCursorPosition"] = {"source_symbol": "DeckNamingScreen_AdjustCursorPosition", "before": "\td = (uint8_t)(d + (uint8_t)(name_position << 1));", "after": "\td = (uint8_t)d;", "case_ids": ["DeckNamingScreen_AdjustCursorPosition-1", "DeckNamingScreen_AdjustCursorPosition-2"]}
 # <<< factory-mutation DeckNamingScreen_AdjustCursorPosition
 # >>> factory-mutation PlayerNamingScreen_DrawCursor
-MUTATIONS["PlayerNamingScreen_DrawCursor"] = {"source_symbol": "PlayerNamingScreen_DrawCursor", "before": "uint8_t tile = gb_read8(char_info++);", "after": "uint8_t tile = gb_read8((uint16_t)(char_info + 1u));", "case_ids": ["PlayerNamingScreen_DrawCursor-0"]}
+MUTATIONS["PlayerNamingScreen_DrawCursor"] = {"source_symbol": "PlayerNamingScreen_DrawCursor", "before": "uint8_t tile = rom_ptr(6u, char_info++)[0];", "after": "uint8_t tile = rom_ptr(6u, (uint16_t)(char_info + 1u))[0];", "case_ids": ["PlayerNamingScreen_DrawCursor-0"]}
 # <<< factory-mutation PlayerNamingScreen_DrawCursor
 # >>> factory-mutation DeckNamingScreen_DrawCursor
 MUTATIONS["DeckNamingScreen_DrawCursor"] = {"source_symbol": "DeckNamingScreen_DrawCursor", "before": "uint16_t char_info = DeckNamingScreen_GetCharInfoFromPos((uint16_t)((uint16_t)gb_read8(wNamingScreenCursorX_ADDR) << 8 | gb_read8(wNamingScreenCursorY_ADDR)));", "after": "uint16_t char_info = DeckNamingScreen_GetCharInfoFromPos((uint16_t)((uint16_t)gb_read8(wNamingScreenCursorX_ADDR) << 8 | (uint16_t)(gb_read8(wNamingScreenCursorY_ADDR) + 1u)));", "case_ids": ["DeckNamingScreen_DrawCursor-0"]}

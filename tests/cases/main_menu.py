@@ -73,7 +73,7 @@ MUTATIONS = {}
 MUTATIONS["MainMenu_CardPop"] = {"source_symbol": "MainMenu_CardPop", "before": "uint8_t MainMenu_CardPop(void)\n{\n\tPlaySong(MUSIC_CARD_POP);\n\tDoCardPop();\n\tWhiteOutDMGPals();\n\tDoFrameIfLCDEnabled();\n\tPlaySong(MUSIC_STOP);", "after": "uint8_t MainMenu_CardPop(void)\n{\n\tPlaySong(MUSIC_CARD_POP);\n\tDoCardPop();\n\tWhiteOutDMGPals();\n\tDoFrameIfLCDEnabled();\n\tPlaySong(MUSIC_CARD_POP);", "case_ids": ["MainMenu_CardPop-0", "MainMenu_CardPop-1"]}
 # <<< factory-mutation MainMenu_CardPop
 # >>> factory-mutation MainMenu_NewGame
-MUTATIONS["MainMenu_NewGame"] = {"source_symbol": "MainMenu_NewGame", "before": "void MainMenu_NewGame(void)\n{\n\tFunc_c1b1();", "after": "void MainMenu_NewGame(void)\n{\n\t(void)0;", "case_ids": ["MainMenu_NewGame-0", "MainMenu_NewGame-1"]}
+MUTATIONS["MainMenu_NewGame"] = {"source_symbol": "MainMenu_NewGame", "before": "void MainMenu_NewGame(void)\n{\n\truntime_mark_event(RUNTIME_EVENT_NEW_GAME_ENTERED);", "after": "void MainMenu_NewGame(void)\n{\n\truntime_mark_event(RUNTIME_EVENT_BOOT_STARTED);", "case_ids": ["MainMenu_NewGame-0", "MainMenu_NewGame-1"]}
 # <<< factory-mutation MainMenu_NewGame
 # >>> factory-completion MainMenu_NewGame
 for _record in SCHEMA2_CASES["MainMenu_NewGame"]:
@@ -95,7 +95,7 @@ for _record in SCHEMA2_CASES["MainMenu_ContinueDuel"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x6787, "bank": 4}
 # <<< factory-completion MainMenu_ContinueDuel
 # >>> factory-mutation _GameLoop
-MUTATIONS["_GameLoop"] = {"source_symbol": "_GameLoop", "before": "void _GameLoop(void)\n{\n\tZeroObjectPositions();\n\twVBlankOAMCopyToggle = (uint8_t)(wVBlankOAMCopyToggle + 1u);\n\t/* SetIntroSGBBorder is scope-excluded; stop before the main-menu dispatch. */\n\twLastSelectedStartMenuItem = 0xFFu;", "after": "void _GameLoop(void)\n{\n\tZeroObjectPositions();\n\twVBlankOAMCopyToggle = 0x7Fu;\n\t/* SetIntroSGBBorder is scope-excluded; stop before the main-menu dispatch. */\n\twLastSelectedStartMenuItem = 0xFFu;", "case_ids": ["_GameLoop-0", "_GameLoop-1"]}
+MUTATIONS["_GameLoop"] = {"source_symbol": "_GameLoop", "before": "void _GameLoop(void)\n{\n\tZeroObjectPositions();\n\twVBlankOAMCopyToggle = (uint8_t)(wVBlankOAMCopyToggle + 1u);\n\t/* SetIntroSGBBorder is scope-excluded by the Phase 1 transform. */\n\tFunc_c1f8();\n\twLastSelectedStartMenuItem = 0xFFu;", "after": "void _GameLoop(void)\n{\n\tZeroObjectPositions();\n\twVBlankOAMCopyToggle = 0x7Fu;\n\t/* SetIntroSGBBorder is scope-excluded by the Phase 1 transform. */\n\tFunc_c1f8();\n\twLastSelectedStartMenuItem = 0xFFu;", "case_ids": ["_GameLoop-0", "_GameLoop-1"]}
 # <<< factory-mutation _GameLoop
 # >>> factory-completion _GameLoop
 for _record in SCHEMA2_CASES["_GameLoop"]:

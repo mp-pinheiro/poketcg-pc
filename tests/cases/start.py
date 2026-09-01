@@ -172,7 +172,7 @@ MUTATIONS["DrawPlayerPortraitAndPrintNewGameText"] = {"source_symbol": "DrawPlay
 MUTATIONS["DeleteSaveDataForNewGame"] = {"source_symbol": "DeleteSaveDataForNewGame", "before": "void DeleteSaveDataForNewGame(void)\n{\n\tif (wHasSaveData == 0u)\n", "after": "void DeleteSaveDataForNewGame(void)\n{\n\tif (wHasSaveData != 0u)\n", "case_ids": ["DeleteSaveDataForNewGame-2"]}
 # <<< factory-mutation DeleteSaveDataForNewGame
 # >>> factory-mutation HandleTitleScreen
-MUTATIONS["HandleTitleScreen"] = {"source_symbol": "HandleTitleScreen", "before": "void HandleTitleScreen(void)\n{\n\tif (wLastSelectedStartMenuItem == 0u)\n\t\treturn;\n\n\tPlaySong(MUSIC_STOP);", "after": "void HandleTitleScreen(void)\n{\n\tif (wLastSelectedStartMenuItem == 0u)\n\t\treturn;\n\n\tPlaySong(0x01u);", "case_ids": ["HandleTitleScreen-0", "HandleTitleScreen-1"]}
+MUTATIONS["HandleTitleScreen"] = {"source_symbol": "HandleTitleScreen", "before": "PlaySong(MUSIC_STOP);", "after": "PlaySong(0x01u);", "case_ids": ["HandleTitleScreen-0", "HandleTitleScreen-1"]}
 # <<< factory-mutation HandleTitleScreen
 # >>> factory-completion HandleTitleScreen
 for _record in SCHEMA2_CASES["HandleTitleScreen"]:

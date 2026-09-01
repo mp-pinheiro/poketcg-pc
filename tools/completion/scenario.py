@@ -25,6 +25,7 @@ SCENARIO_REQUIREMENTS = {
     "audio-catalog": "completion:v2:p3:audio-trace",
     "audio-pcm": "completion:v2:p3:audio-pcm",
     "ui-corpus": "completion:v2:p4:ui-corpus",
+    "raster-effects": "completion:v2:p4:raster-effects",
     "seeded-duel": "completion:v2:p5:seeded-duel",
     "all-maps-scripts": "completion:v2:p6:maps-and-campaign",
     "new-game-to-credits": "completion:v2:faithful-4x3:release",
@@ -85,6 +86,23 @@ def parse_reference_audio(path: Path) -> list[dict[str, int]]:
     return records
 
 
+
+def compare_state_fields(
+    reference: dict[str, Any], native: dict[str, Any], fields: tuple[str, ...]
+) -> list[dict[str, Any]]:
+    from tests.scene_diff import _first_difference, _state_field
+
+    mismatches = []
+    for field in fields:
+        reference_value = _state_field(reference, field)
+        native_value = _state_field(native, field)
+        if reference_value is None or native_value is None:
+            mismatches.append({"field": field, "reason": "missing"})
+            continue
+        offset = _first_difference(reference_value, native_value)
+        if offset is not None:
+            mismatches.append({"field": field, "offset": offset})
+    return mismatches
 
 def current_key() -> str:
     from completion import content_key, load_toml
@@ -216,6 +234,41 @@ def main(argv: list[str] | None = None) -> int:
                         except (OSError, ValueError, RuntimeError) as exc:
                             artifact["failure"] = "ORACLE_ERROR"
                             artifact["detail"] = str(exc)
+                elif args.scenario in {"ui-corpus", "raster-effects"}:
+                    try:
+                        from tools.oracle.gbrecomp_oracle import Oracle
+
+                        reference_save = Path(directory) / "reference.gbs"
+                        with Oracle(timeout=60.0) as oracle:
+                            reference = oracle.run(
+                                frame_limit=run_frames,
+                                save_state=reference_save,
+                            )
+                        fields = (
+                            ("wram", "vram_bank_0", "vram_bank_1", "oam", "palette_ram", "framebuffer")
+                            if args.scenario == "ui-corpus"
+                            else ("vram_bank_0", "vram_bank_1", "framebuffer")
+                        )
+                        mismatches = compare_state_fields(reference.state, state, fields)
+                        artifact["oracles"] = ["oracle-b", "native"]
+                        artifact["comparison"] = {
+                            "fields": list(fields),
+                            "mismatches": mismatches,
+                            "status": "PASS" if not mismatches else "FAIL",
+                        }
+                        if not mismatches:
+                            artifact["status"] = "PASS"
+                            artifact["terminal_event"] = (
+                                "UI_CORPUS_CLOSED"
+                                if args.scenario == "ui-corpus"
+                                else "RASTER_EFFECTS_CLOSED"
+                            )
+                            artifact.pop("failure", None)
+                        else:
+                            artifact["failure"] = "UI_STATE_MISMATCH"
+                    except (OSError, ValueError, RuntimeError) as exc:
+                        artifact["failure"] = "ORACLE_ERROR"
+                        artifact["detail"] = str(exc)
                 elif args.scenario == "audio-catalog":
                     try:
                         from tools.oracle.gbrecomp_oracle import Oracle
