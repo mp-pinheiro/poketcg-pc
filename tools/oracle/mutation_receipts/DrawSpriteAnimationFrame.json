@@ -1,0 +1,9 @@
+{
+  "fn": "DrawSpriteAnimationFrame",
+  "case": "tests/cases/load_animation.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawSpriteAnimationFrame\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49413, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"0105080200\", \"51712\": \"65981200\", \"51893\": \"04\", \"54736\": \"00906010000000\", \"54742\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawSpriteAnimationFrame\", \"mismatches\": {\"bus\": {\"address\": 51712, \"reference\": \"050802006598120004\", \"native\": \"050802000000000000\", \"reference_size\": 17, \"native_size\": 17, \"spans\": [[49408, 5], [51712, 4], [51893, 1], [54736, 7]]}}}\n",
+  "restored": "{\"fn\": \"DrawSpriteAnimationFrame\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49413, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"0105080200\", \"51712\": \"65981200\", \"51893\": \"04\", \"54736\": \"00906010000000\", \"54742\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

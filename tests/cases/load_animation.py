@@ -67,7 +67,7 @@ CASES = {
     "DrawSpriteAnimationFrame": [
         # Baseline: no flip, no edge clipping, single record.
         {"hl": 0xC100, "wram": {
-            wCurrSpriteFrameBank: b"\x00", wCurrSpriteXPos: b"\x50", wCurrSpriteYPos: b"\x60",
+            wCurrSpriteFrameBank: b"\x00", wCurrSpriteXPos: b"\x90", wCurrSpriteYPos: b"\x60",
             wCurrSpriteAttributes: b"\x00", wCurrSpriteTileID: b"\x10", wOAMOffset: b"\x00",
             0xC100: bytes((1, 0x05, 0x08, 0x02, 0x00))},
          "read": {wOAM: 4, wOAMOffset: 1, wCurrSpriteRightEdgeCheck: 2}},
@@ -250,7 +250,7 @@ MUTATIONS = {
         "source_symbol": "DrawSpriteAnimationFrame",
         "before": "wCurrSpriteRightEdgeCheck = (wCurrSpriteXPos >= 0xF0u) ? 0xFFu : 0x00u;",
         "after": "wCurrSpriteRightEdgeCheck = (wCurrSpriteXPos >= 0x80u) ? 0xFFu : 0x00u;",
-        "case_ids": ["DrawSpriteAnimationFrame-0", "DrawSpriteAnimationFrame-1", "DrawSpriteAnimationFrame-2", "DrawSpriteAnimationFrame-3", "DrawSpriteAnimationFrame-4", "DrawSpriteAnimationFrame-5"],
+        "case_ids": ["DrawSpriteAnimationFrame-1", "DrawSpriteAnimationFrame-0", "DrawSpriteAnimationFrame-2", "DrawSpriteAnimationFrame-3", "DrawSpriteAnimationFrame-4", "DrawSpriteAnimationFrame-5"],
     },
 }
 # >>> factory-mutation ClearSpriteAnimations
