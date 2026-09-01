@@ -250,7 +250,7 @@ MUTATIONS = {
         "source_symbol": "DrawSpriteAnimationFrame",
         "before": "wCurrSpriteRightEdgeCheck = (wCurrSpriteXPos >= 0xF0u) ? 0xFFu : 0x00u;",
         "after": "wCurrSpriteRightEdgeCheck = (wCurrSpriteXPos >= 0x80u) ? 0xFFu : 0x00u;",
-        "case_ids": ["DrawSpriteAnimationFrame-1", "DrawSpriteAnimationFrame-0", "DrawSpriteAnimationFrame-2", "DrawSpriteAnimationFrame-3", "DrawSpriteAnimationFrame-4", "DrawSpriteAnimationFrame-5"],
+        "case_ids": ["DrawSpriteAnimationFrame-0", "DrawSpriteAnimationFrame-1", "DrawSpriteAnimationFrame-2", "DrawSpriteAnimationFrame-3", "DrawSpriteAnimationFrame-4", "DrawSpriteAnimationFrame-5"],
     },
 }
 # >>> factory-mutation ClearSpriteAnimations
