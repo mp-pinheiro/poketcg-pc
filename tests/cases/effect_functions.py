@@ -1938,7 +1938,7 @@ CASES["ScoopUp_BenchCheck"] = [{}, {"wram": {0xC2EF: b"\x02"}}]
 # <<< factory ScoopUp_BenchCheck
 # >>> factory MysteriousFossil_BenchCheck
 CONTRACT["MysteriousFossil_BenchCheck"] = {"compare": ("a", "f", "hl"), "preserve": ()}
-CASES["MysteriousFossil_BenchCheck"] = [{}, {"wram": {0xC2EF: b"\x06"}}]
+CASES["MysteriousFossil_BenchCheck"] = [{"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x06"}}, {}]
 # <<< factory MysteriousFossil_BenchCheck
 # >>> factory TrainerCardAsPokemon_BenchCheck
 CONTRACT["TrainerCardAsPokemon_BenchCheck"] = {"compare": ("a", "f", "hl"), "preserve": ()}
