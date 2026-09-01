@@ -1,0 +1,9 @@
+{
+  "fn": "KadabraRecover_CheckEnergyHP",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"KadabraRecover_CheckEnergyHP\", \"registers\": {\"a\": 98, \"b\": 0, \"c\": 108, \"d\": 0, \"e\": 0, \"f\": 96, \"hl\": 173, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"49851\": \"00\", \"49864\": \"0a\", \"50176\": \"06\", \"52325\": \"0de50106080050066c4e070800000e460208080150076b4e0908000010e549680b0100c3a44e690b000010464a6a0b0230c4d54e6b0b000010a74a6c0b0000c5\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"KadabraRecover_CheckEnergyHP\", \"mismatches\": {\"a\": [98, 1], \"f\": [96, 192], \"c\": [108, 0], \"hl\": [173, 194]}}\n",
+  "restored": "{\"fn\": \"KadabraRecover_CheckEnergyHP\", \"registers\": {\"a\": 98, \"b\": 0, \"c\": 108, \"d\": 0, \"e\": 0, \"f\": 96, \"hl\": 173, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"49851\": \"00\", \"49864\": \"0a\", \"50176\": \"06\", \"52325\": \"0de50106080050066c4e070800000e460208080150076b4e0908000010e549680b0100c3a44e690b000010464a6a0b0230c4d54e6b0b000010a74a6c0b0000c5\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

@@ -9219,7 +9219,12 @@ CASES["JynxMeditate_DamageBoostEffect"] = [
 # <<< factory JynxMeditate_DamageBoostEffect
 # >>> factory KadabraRecover_CheckEnergyHP
 CONTRACT["KadabraRecover_CheckEnergyHP"] = {"compare": ("a", "f", "b", "c", "d", "hl"), "preserve": ("b", "d")}
-CASES["KadabraRecover_CheckEnergyHP"] = [{}, dict(POISON)]
+CASES["KadabraRecover_CheckEnergyHP"] = [
+	{"wram": {0xFF97: b"\xC2", 0xC200: b"\x10", 0xC2BB: b"\x00",
+	          0xC2C8: b"\x0A", 0xC400: b"\x06"}, "read": {0xCC65: 64}},
+	{},
+	dict(POISON),
+]
 # <<< factory KadabraRecover_CheckEnergyHP
 # >>> factory MewtwoAltEnergyAbsorption_AddToHandEffect
 CONTRACT["MewtwoAltEnergyAbsorption_AddToHandEffect"] = {"compare": (), "preserve": ()}
@@ -9253,7 +9258,7 @@ MUTATIONS["DreamEaterEffect"] = {"source_symbol": "DreamEaterEffect", "before": 
 MUTATIONS["JynxMeditate_DamageBoostEffect"] = {"source_symbol": "JynxMeditate_DamageBoostEffect", "before": "AddToDamage(damage.a);", "after": "AddToDamage((uint8_t)(damage.a + 1u));", "case_ids": ["JynxMeditate_DamageBoostEffect-0", "JynxMeditate_DamageBoostEffect-1"]}
 # <<< factory-mutation JynxMeditate_DamageBoostEffect
 # >>> factory-mutation KadabraRecover_CheckEnergyHP
-MUTATIONS["KadabraRecover_CheckEnergyHP"] = {"source_symbol": "KadabraRecover_CheckEnergyHP", "before": "\t\tf |= 0x20u;\n\tif (energy < 1u)", "after": "\t\tf |= 0x20u;\n\tif (energy < 2u)", "case_ids": ["KadabraRecover_CheckEnergyHP-0", "KadabraRecover_CheckEnergyHP-1"]}
+MUTATIONS["KadabraRecover_CheckEnergyHP"] = {"source_symbol": "KadabraRecover_CheckEnergyHP", "before": "if (energy < 1u)\n\t\treturn (KadabraRecoverCheckEnergyHPResult){energy, f, 0u, 0u, hl};", "after": "if (energy < 2u)\n\t\treturn (KadabraRecoverCheckEnergyHPResult){energy, f, 0u, 0u, hl};", "case_ids": ["KadabraRecover_CheckEnergyHP-0", "KadabraRecover_CheckEnergyHP-1"]}
 # <<< factory-mutation KadabraRecover_CheckEnergyHP
 # >>> factory-mutation MewtwoAltEnergyAbsorption_AddToHandEffect
 MUTATIONS["MewtwoAltEnergyAbsorption_AddToHandEffect"] = {"source_symbol": "MewtwoAltEnergyAbsorption_AddToHandEffect", "before": "if (card == 0xffu)", "after": "if (card != 0xffu)", "case_ids": ["MewtwoAltEnergyAbsorption_AddToHandEffect-0", "MewtwoAltEnergyAbsorption_AddToHandEffect-1"]}
