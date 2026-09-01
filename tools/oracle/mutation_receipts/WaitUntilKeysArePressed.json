@@ -1,0 +1,9 @@
+{
+  "fn": "WaitUntilKeysArePressed",
+  "case": "tests/cases/wait_keys.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"WaitUntilKeysArePressed\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 32, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"65424\": \"0101\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"WaitUntilKeysArePressed\", \"mismatches\": {\"a\": [1, 0]}}\n",
+  "restored": "{\"fn\": \"WaitUntilKeysArePressed\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 32, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"65424\": \"0101\"}}, \"status\": \"PASS\"}\n"
+}

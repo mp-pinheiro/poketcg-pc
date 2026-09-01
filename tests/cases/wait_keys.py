@@ -42,8 +42,8 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
     "WaitUntilKeysArePressed": {
         "source_symbol": "WaitUntilKeysArePressed",
-        "before": "if (pressed != 0)",
-        "after": "if (pressed == 0)",
+        "before": "return (WaitKeysResult){pressed, 0x20u};",
+        "after": "return (WaitKeysResult){(uint8_t)(pressed ^ 1u), 0x20u};",
         "case_ids": ["WaitUntilKeysArePressed-0", "WaitUntilKeysArePressed-1",
                       "WaitUntilKeysArePressed-2", "WaitUntilKeysArePressed-3",
                       "WaitUntilKeysArePressed-4"],
