@@ -114,6 +114,83 @@ static int load_input_timeline(
 	*count_out = count;
 	return 0;
 }
+static const char *g_dump_state_path;
+static uint32_t *g_dump_frames;
+static size_t g_dump_frame_count;
+static int g_dump_frames_failed;
+
+static int compare_u32(const void *left, const void *right)
+{
+	uint32_t a = *(const uint32_t *)left, b = *(const uint32_t *)right;
+	return a < b ? -1 : a > b ? 1 : 0;
+}
+
+static int parse_frame_list(const char *text, uint32_t **frames_out, size_t *count_out)
+{
+	uint32_t *frames = NULL;
+	size_t count = 0;
+	size_t capacity = 0;
+	const char *cursor = text;
+	if (!*text)
+		return -1;
+	while (*cursor) {
+		char *end = NULL;
+		errno = 0;
+		unsigned long long parsed = strtoull(cursor, &end, 10);
+		if (errno || end == cursor || parsed > UINT32_MAX)
+			goto fail;
+		if (count == capacity) {
+			size_t next = capacity ? capacity * 2 : 8;
+			uint32_t *grown = realloc(frames, next * sizeof *grown);
+			if (!grown)
+				goto fail;
+			frames = grown;
+			capacity = next;
+		}
+		frames[count++] = (uint32_t)parsed;
+		cursor = end;
+		if (*cursor == ',') {
+			cursor++;
+			if (!*cursor)
+				goto fail;
+		} else if (*cursor) {
+			goto fail;
+		}
+	}
+	qsort(frames, count, sizeof *frames, compare_u32);
+	size_t unique = 0;
+	for (size_t i = 0; i < count; i++)
+		if (!i || frames[i] != frames[unique - 1])
+			frames[unique++] = frames[i];
+	*frames_out = frames;
+	*count_out = unique;
+	return 0;
+fail:
+	free(frames);
+	return -1;
+}
+
+static void state_dump_frames_callback(uint32_t frame, const RuntimeResult *result)
+{
+	char path[512];
+	const char *dump = g_dump_state_path;
+	int written;
+	if (dump && *dump) {
+		const char *slash = strrchr(dump, '/');
+		const char *dot = strrchr(dump, '.');
+		size_t base = dot && (!slash || dot > slash) ? (size_t)(dot - dump) : strlen(dump);
+		if (base >= sizeof path)
+			base = sizeof path - 1;
+		written = snprintf(path, sizeof path, "%.*s-f%u.json", (int)base, dump, frame);
+	} else {
+		written = snprintf(path, sizeof path, "state-%u.json", frame);
+	}
+	if (written < 0 || (size_t)written >= sizeof path ||
+	    runtime_write_state(path, result) != 0) {
+		fprintf(stderr, "cannot write per-frame native state for frame %u\n", frame);
+		g_dump_frames_failed = 1;
+	}
+}
 
 int main(int argc, char **argv)
 {
@@ -126,6 +203,7 @@ int main(int argc, char **argv)
 	const char *save_path = NULL;
 	const char *load_save_path = NULL;
 	const char *dump_state_path = NULL;
+	const char *dump_state_frames_text = NULL;
 	const char *input_path = NULL;
 	const char *trace_entries_path = NULL;
 	for (int i = 1; i < argc; i++) {
@@ -150,6 +228,13 @@ int main(int argc, char **argv)
 			load_save_path = argv[++i];
 		} else if (strcmp(argv[i], "--dump-state") == 0 && i + 1 < argc) {
 			dump_state_path = argv[++i];
+		} else if (strcmp(argv[i], "--dump-state-frames") == 0 && i + 1 < argc) {
+			dump_state_frames_text = argv[++i];
+			if (parse_frame_list(dump_state_frames_text, &g_dump_frames,
+			                    &g_dump_frame_count) != 0) {
+				fprintf(stderr, "invalid --dump-state-frames value\n");
+				return 2;
+			}
 		} else if (strcmp(argv[i], "--input") == 0 && i + 1 < argc) {
 			input_path = argv[++i];
 		} else if (strcmp(argv[i], "--trace-entries") == 0 && i + 1 < argc) {
@@ -157,7 +242,10 @@ int main(int argc, char **argv)
 		} else if (strcmp(argv[i], "--help") == 0) {
 			printf("usage: poketcg [--headless] [--frames N] --data-pack PATH "
 			       "[--require-data BANK:ADDR] [--load-save PATH] [--save PATH] "
+			       "[--dump-state PATH] [--dump-state-frames N[,N...]] "
 			       "[--input PATH] [--trace-entries PATH]\n");
+			printf("with --dump-state-frames and no --dump-state, per-frame dumps "
+			       "are written to state-<N>.json in the current directory\n");
 			return 0;
 		} else {
 			fprintf(stderr, "unknown argument: %s\n", argv[i]);
@@ -207,11 +295,18 @@ int main(int argc, char **argv)
 		rom_pack_free();
 		return 1;
 	}
+	g_dump_state_path = dump_state_path;
+	if (g_dump_frame_count)
+		runtime_set_state_dump_frames(
+			state_dump_frames_callback, g_dump_frames, g_dump_frame_count);
 	RuntimeResult runtime = {0};
 	int status = input_count
 		? runtime_run_with_input(shell, frame_limit, input_buttons, input_count, &runtime)
 		: runtime_run(shell, frame_limit, &runtime);
 	free(input_buttons);
+	if (g_dump_frames_failed)
+		status = 1;
+	free(g_dump_frames);
 	if (status == 0 && save_path && sram_save_atomic(save_path) != 0) {
 		fprintf(stderr, "cannot save %s: %s\n", save_path, strerror(errno));
 		status = 1;

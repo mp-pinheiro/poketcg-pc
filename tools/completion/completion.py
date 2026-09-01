@@ -11,6 +11,7 @@ import os
 import importlib.util
 import json
 import re
+import shutil
 import subprocess
 import tempfile
 import sys
@@ -103,6 +104,19 @@ def sha256_path(path: Path) -> str:
     except OSError as exc:
         raise AuditError(f"cannot hash {path}: {exc}") from exc
     return digest.hexdigest()
+
+def load_completion_sibling(name: str) -> Any:
+    path = ROOT / "tools" / "completion" / f"{name}.py"
+    spec = importlib.util.spec_from_file_location(f"completion_{name}", path)
+    if spec is None or spec.loader is None:
+        raise AuditError(f"cannot load {path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    try:
+        spec.loader.exec_module(module)
+    except Exception as exc:
+        raise AuditError(f"cannot load {path}: {exc}") from exc
+    return module
 
 
 def current_revision() -> str:
@@ -1441,6 +1455,209 @@ def command_hardware_removal() -> int:
     return 0 if artifact["status"] == "PASS" else 2
 
 
+def _artifact_names(values: list[str], limit: int = 64) -> dict[str, Any]:
+    shown = values[:limit]
+    return {
+        "count": len(values),
+        "names": shown,
+        "truncated": len(values) > len(shown),
+    }
+
+
+def command_leaves() -> int:
+    baseline = load_toml(BASELINE_PATH)
+    manifest = load_toml(MANIFEST_PATH)
+    fields = [
+        "wram", "hram", "sram_bank_0", "vram_bank_0",
+        "sm83_registers_function_boundary",
+    ]
+    artifact: dict[str, Any] = {
+        "schema": "function-corpus-v2",
+        "status": "FAIL",
+        "frames": 1,
+        "events": 0,
+        "state_fields": fields,
+        "oracles": ["routine-registry", "primary-cases", "mutation-receipts"],
+    }
+    try:
+        from tests.routines import ALL, ROUTINES
+        campaign = load_completion_sibling("mutation_campaign")
+        registered = sorted(ALL)
+        without_primary = [
+            name for name in registered if primary_case_for(name) is None
+        ]
+        targets = campaign.targets()
+        report = campaign.receipt_report(targets)
+        receipt_universe = {fn for fn, _case, _index in targets}
+        without_receipt = [
+            name for name in registered if name not in receipt_universe
+        ]
+        artifact["corpus"] = {
+            "registered_routines": len(registered),
+            "registered_basenames": len(ROUTINES),
+            "without_primary_case": _artifact_names(without_primary),
+            "without_receipt": _artifact_names(without_receipt),
+        }
+        artifact["receipts"] = {
+            key: report[key]
+            for key in (
+                "total_primary", "receipt_red", "receipt_missing",
+                "receipt_invalid", "missing_names", "invalid_names",
+            )
+        }
+        errors = []
+        if without_primary:
+            errors.append(
+                f"{len(without_primary)} registered routines have no primary case"
+            )
+        if without_receipt:
+            errors.append(
+                f"{len(without_receipt)} registered routines have no mutation witness"
+            )
+        if report["receipt_missing"] or report["receipt_invalid"]:
+            errors.append(
+                f"receipt campaign has {report['receipt_missing']} missing and "
+                f"{report['receipt_invalid']} invalid receipts"
+            )
+        if report["receipt_red"] != report["total_primary"]:
+            errors.append(
+                f"{report['receipt_red']} of {report['total_primary']} receipts are RED"
+            )
+        if errors:
+            artifact["failure"] = "LEAF_CORPUS_INCOMPLETE"
+            artifact["detail"] = "; ".join(errors)
+        else:
+            artifact["content_key"] = content_key(baseline, manifest)
+            artifact["status"] = "PASS"
+            artifact["events"] = 1
+            artifact["terminal_event"] = "LEAF_CORPUS_CLOSED"
+    except (AuditError, KeyError, TypeError, ValueError, OSError) as exc:
+        artifact["failure"] = "LEAF_CORPUS_ERROR"
+        artifact["detail"] = str(exc)
+    EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+    path = evidence_path("completion:v2:p2:leaves")
+    path.write_text(json.dumps(artifact, sort_keys=True, separators=(",", ":")) + "\n")
+    print(json.dumps({
+        "status": artifact["status"],
+        "artifact": str(path.relative_to(ROOT)),
+        **{
+            key: artifact[key]
+            for key in ("failure", "content_key", "events")
+            if key in artifact
+        },
+    }, sort_keys=True))
+    return 0 if artifact["status"] == "PASS" else 2
+
+
+def command_package() -> int:
+    baseline = load_toml(BASELINE_PATH)
+    manifest = load_toml(MANIFEST_PATH)
+    fields = ["executable_sha256", "data_pack_sha256", "package_contents"]
+    artifact: dict[str, Any] = {
+        "schema": "package-proof-v1",
+        "status": "FAIL",
+        "frames": 0,
+        "events": 0,
+        "state_fields": fields,
+        "oracles": ["package-smoke", "gen-data"],
+    }
+    try:
+        binary = ROOT / "build" / "poketcg"
+        pack = ROOT / "build" / "completion" / "data-pack.bin"
+        if not binary.is_file():
+            raise AuditError(f"missing executable: {binary}")
+        if not pack.is_file():
+            raise AuditError(f"missing data pack: {pack}")
+        smoke = load_completion_sibling("package_smoke")
+        with tempfile.TemporaryDirectory(prefix="poketcg-package-proof-") as directory:
+            package_dir = Path(directory) / "package"
+            package_dir.mkdir()
+            staged_binary = package_dir / "poketcg"
+            staged_pack = package_dir / "data-pack.bin"
+            shutil.copy2(binary, staged_binary)
+            shutil.copy2(pack, staged_pack)
+            staged_binary.chmod(staged_binary.stat().st_mode | 0o111)
+            contents = sorted(
+                path.relative_to(package_dir).as_posix()
+                for path in package_dir.rglob("*")
+            )
+            if contents != ["data-pack.bin", "poketcg"]:
+                raise AuditError(f"package contents differ: {contents}")
+            forbidden = [
+                path.as_posix() for path in package_dir.rglob("*")
+                if path.is_file()
+                and path.suffix.casefold() in smoke.FORBIDDEN_SUFFIXES
+            ]
+            if forbidden:
+                raise AuditError(
+                    "forbidden ROM/build artifact in package: " + ",".join(forbidden)
+                )
+            check = subprocess.run(
+                [
+                    sys.executable, str(ROOT / "tools" / "gen_data.py"), "--pack-check",
+                    "--pack", str(staged_pack),
+                ],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+                timeout=30,
+                check=False,
+            )
+            if check.returncode:
+                raise AuditError(
+                    "staged data pack failed verification: "
+                    + (check.stderr or check.stdout).strip()
+                )
+            result = smoke.run_binary(staged_binary, Path("data-pack.bin"), 600)
+            if result.returncode != 0:
+                raise AuditError(f"packaged executable failed: {result.stderr.strip()}")
+            if "frames: 600" not in result.stdout:
+                raise AuditError(
+                    "packaged executable did not render 600 frames: "
+                    f"{result.stdout.strip()}"
+                )
+            missing = smoke.run_binary(
+                staged_binary, Path("data-pack.bin"), 1, "--require-data", "00:4000"
+            )
+            if "MISSING_DATA 00:4000" not in missing.stderr or missing.returncode == 0:
+                raise AuditError(
+                    "missing production span did not fail with MISSING_DATA bank:addr"
+                )
+            artifact["executable_sha256"] = sha256_path(staged_binary)
+            artifact["data_pack_sha256"] = sha256_path(staged_pack)
+            artifact["package_contents"] = contents
+            artifact["checks"] = {
+                "forbidden_suffixes": "PASS",
+                "pack_check": "PASS",
+                "smoke_frames": "PASS",
+                "missing_span": "PASS",
+            }
+            artifact["content_key"] = content_key(baseline, manifest)
+            artifact["status"] = "PASS"
+            artifact["frames"] = 600
+            artifact["events"] = 1
+            artifact["terminal_event"] = "PACKAGE_ROM_FREE"
+    except (
+        AuditError, KeyError, OSError, TypeError, ValueError,
+        subprocess.TimeoutExpired,
+    ) as exc:
+        artifact["failure"] = "PACKAGE_ERROR"
+        artifact["detail"] = str(exc)
+    EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+    path = evidence_path("completion:v2:faithful-4x3:package")
+    path.write_text(json.dumps(artifact, sort_keys=True, separators=(",", ":")) + "\n")
+    print(json.dumps({
+        "status": artifact["status"],
+        "artifact": str(path.relative_to(ROOT)),
+        **{
+            key: artifact[key]
+            for key in ("failure", "content_key", "events")
+            if key in artifact
+        },
+    }, sort_keys=True))
+    return 0 if artifact["status"] == "PASS" else 2
+
+
 def command_next() -> int:
     manifest = load_toml(MANIFEST_PATH)
     baseline = load_toml(BASELINE_PATH)
@@ -1472,12 +1689,18 @@ def main(argv: list[str] | None = None) -> int:
     subparsers.add_parser("routine-mapping")
     subparsers.add_parser("substrate")
     subparsers.add_parser("hardware-removal")
+    subparsers.add_parser("leaves")
+    subparsers.add_parser("package")
     subparsers.add_parser("next")
     args = parser.parse_args(argv)
     if args.command == "audit":
         return command_audit()
     if args.command == "status":
         return command_status()
+    if args.command == "leaves":
+        return command_leaves()
+    if args.command == "package":
+        return command_package()
     if args.command == "hardware-removal":
         return command_hardware_removal()
     if args.command == "substrate":

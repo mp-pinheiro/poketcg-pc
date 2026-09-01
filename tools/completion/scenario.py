@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import re
 import json
+import struct
 import subprocess
 import sys
 import tempfile
@@ -39,6 +40,7 @@ SCENARIO_SCHEMAS = {
     "boot-title-negative": "negative-evidence-v1",
     "save-interchange": "save-interchange-v1",
     "audio-catalog": "audio-trace-v1",
+    "raster-effects": "scene-corpus-v2",
     "audio-pcm": "audio-pcm-v1",
     "ui-corpus": "scene-corpus-v2",
     "seeded-duel": "duel-corpus-v2",
@@ -66,6 +68,37 @@ def boot_input(frames: int) -> list[int]:
 def reference_boot_input() -> str:
     return "f1000:A:1,f1100:D:1,f1101:A:1,f1200:S:1,f1201:A:1"
 
+
+SAVE_HEADER_MAGIC = b"PKSR"
+SAVE_PAYLOAD_SIZE = 0x8000
+
+
+def fnv1a(data: bytes) -> int:
+    checksum = 2166136261
+    for byte in data:
+        checksum = ((checksum ^ byte) * 16777619) & 0xFFFFFFFF
+    return checksum
+
+
+def native_battery_to_file(payload: bytes, path: Path) -> None:
+    """Wrap raw battery RAM in the native PKSR save format."""
+    if len(payload) != SAVE_PAYLOAD_SIZE:
+        raise ValueError(f"battery payload must be {SAVE_PAYLOAD_SIZE} bytes")
+    header = SAVE_HEADER_MAGIC + struct.pack("<III", 1, len(payload), fnv1a(payload))
+    path.write_bytes(header + payload)
+
+
+def file_to_native_battery(path: Path) -> bytes:
+    raw = path.read_bytes()
+    if len(raw) != 16 + SAVE_PAYLOAD_SIZE:
+        raise ValueError(f"{path} is not a native battery save (size {len(raw)})")
+    header, payload = raw[:16], raw[16:]
+    if (header[:4] != SAVE_HEADER_MAGIC
+            or struct.unpack_from("<II", header, 4) != (1, SAVE_PAYLOAD_SIZE)):
+        raise ValueError(f"{path} is not a native battery save (header)")
+    if struct.unpack_from("<I", header, 12)[0] != fnv1a(payload):
+        raise ValueError(f"{path} fails its battery checksum")
+    return payload
 AUDIO_WRITE_RE = re.compile(
     r"\[WRITE\]\s+cyc=(\d+)\s+addr=([0-9A-Fa-f]{4}).*<=\s+([0-9A-Fa-f]{2})"
 )
@@ -115,7 +148,8 @@ def evidence_path(requirement: str) -> Path:
 
 
 def run_native(
-    frames: int, state_path: Path, trace_path: Path, input_path: Path | None = None
+    frames: int, state_path: Path, trace_path: Path, input_path: Path | None = None,
+    save_path: Path | None = None, load_save_path: Path | None = None,
 ) -> tuple[int, str, str]:
     command = [
         str(BINARY), "--headless", "--data-pack", str(PACK), "--frames", str(frames),
@@ -123,6 +157,10 @@ def run_native(
     ]
     if input_path is not None:
         command.extend(["--input", str(input_path)])
+    if save_path is not None:
+        command.extend(["--save", str(save_path)])
+    if load_save_path is not None:
+        command.extend(["--load-save", str(load_save_path)])
     try:
         result = subprocess.run(
             command,
@@ -164,7 +202,7 @@ def main(argv: list[str] | None = None) -> int:
             state_path = Path(directory) / "state.json"
             trace_path = Path(directory) / "trace.json"
             input_path = None
-            if args.scenario == "boot-title":
+            if args.scenario in {"boot-title", "boot-title-negative"}:
                 input_path = Path(directory) / "input.txt"
                 input_path.write_text(
                     ",".join(str(value) for value in boot_input(run_frames)) + "\n",
@@ -315,7 +353,149 @@ def main(argv: list[str] | None = None) -> int:
                         artifact["failure"] = "ORACLE_ERROR"
                         artifact["detail"] = str(exc)
                 elif args.scenario == "boot-title-negative":
-                    artifact["failure"] = "REFERENCE_COMPARISON_MISSING"
+                    from frame_bisect import bisect_first_mismatch
+                    from tools.oracle.gbrecomp_oracle import Oracle
+
+                    with Oracle(timeout=120.0) as oracle:
+                        finding = bisect_first_mismatch(
+                            oracle,
+                            run_frames,
+                            native_input=input_path,
+                            oracle_input=reference_boot_input(),
+                        )
+                    artifact["oracles"] = ["oracle-b", "native"]
+                    if finding is None:
+                        artifact["failure"] = "NO_MISMATCH_FOUND"
+                        artifact["detail"] = (
+                            f"native and oracle-b agree over all {run_frames} frames; "
+                            "negative evidence requires a detected first mismatch"
+                        )
+                    else:
+                        artifact["status"] = "PASS"
+                        artifact["terminal_event"] = "FIRST_MISMATCH"
+                        artifact["events"] = 1
+                        artifact["first_mismatch_frame"] = finding["frame"]
+                        artifact["first_mismatch_region"] = finding["field"]
+                        artifact["first_mismatch_offset"] = finding["offset"]
+                        artifact["state_fields"] = [
+                            "first_mismatch_region",
+                            "first_mismatch_offset",
+                            "replay_artifact",
+                        ]
+                        replay = {
+                            "schema": "negative-evidence-replay-v1",
+                            "scenario": args.scenario,
+                            "sweep_frames": run_frames,
+                            "bisect_frame": finding["frame"],
+                            "first_mismatch_region": finding["field"],
+                            "first_mismatch_offset": finding["offset"],
+                            "native": finding.get("native"),
+                            "reference": finding.get("reference"),
+                            "context": finding.get("context", {}),
+                            "reference_input": reference_boot_input(),
+                            "native_input_sha256": hashlib.sha256(
+                                input_path.read_bytes() if input_path else b""
+                            ).hexdigest(),
+                        }
+                        replay_path = EVIDENCE_DIR / f"{requirement}.replay.json"
+                        replay_path.write_text(
+                            json.dumps(replay, sort_keys=True, separators=(",", ":")) + "\n",
+                            encoding="utf-8",
+                        )
+                        artifact["replay_artifact"] = str(replay_path.relative_to(ROOT))
+                        artifact.pop("failure", None)
+                elif args.scenario == "save-interchange":
+                    from tests.scene_diff import _first_difference as _first_byte
+                    from tools.oracle.gbrecomp_oracle import Oracle
+
+                    roundtrip_frames = min(run_frames, 120)
+                    native_save = Path(directory) / "native.sav"
+                    producer_state = Path(directory) / "state-producer.json"
+                    producer_trace = Path(directory) / "trace-producer.json"
+                    returncode, stdout, stderr = run_native(
+                        roundtrip_frames, producer_state, producer_trace,
+                        save_path=native_save,
+                    )
+                    if returncode != 0:
+                        raise ValueError(
+                            "native battery producer run failed: "
+                            f"{stderr.strip() or stdout.strip()}"
+                        )
+                    produced = file_to_native_battery(native_save)
+                    # The interchange medium is the battery file itself. The
+                    # oracle-b savestate's eram region is NOT the cart battery
+                    # (a staged sentinel comes back as counters there), so the
+                    # loaded lane is judged by the battery it writes at exit.
+                    with Oracle(timeout=120.0) as oracle:
+                        oracle.run(
+                            frame_limit=roundtrip_frames,
+                            staged_battery=produced,
+                            require_battery_load=True,
+                            capture_battery=True,
+                        )
+                        reference_battery = oracle.last_battery
+                        if not reference_battery:
+                            raise ValueError("oracle-b did not write battery RAM at exit")
+                        if len(reference_battery) != SAVE_PAYLOAD_SIZE:
+                            raise ValueError(
+                                "oracle-b battery has "
+                                f"{len(reference_battery)} bytes, expected "
+                                f"{SAVE_PAYLOAD_SIZE}"
+                            )
+                        offset_a = _first_byte(produced, reference_battery)
+                        direction_native_to_reference = {
+                            "direction": "native-to-reference",
+                            "frames": roundtrip_frames,
+                            "battery_sha256": hashlib.sha256(produced).hexdigest(),
+                            "loaded_battery_sha256": hashlib.sha256(reference_battery).hexdigest(),
+                            "status": "PASS" if offset_a is None else "FAIL",
+                        }
+                        if offset_a is not None:
+                            direction_native_to_reference["first_mismatch_offset"] = offset_a
+                    reference_save = Path(directory) / "reference.sav"
+                    native_battery_to_file(reference_battery, reference_save)
+                    loader_state = Path(directory) / "state-loader.json"
+                    loader_trace = Path(directory) / "trace-loader.json"
+                    returncode, stdout, stderr = run_native(
+                        roundtrip_frames, loader_state, loader_trace,
+                        load_save_path=reference_save,
+                    )
+                    if returncode != 0:
+                        raise ValueError(
+                            "native battery loader run failed: "
+                            f"{stderr.strip() or stdout.strip()}"
+                        )
+                    loader = json.loads(loader_state.read_text(encoding="utf-8"))
+                    native_sram = bytes(loader["save"])
+                    offset_b = _first_byte(reference_battery, native_sram)
+                    direction_reference_to_native = {
+                        "direction": "reference-to-native",
+                        "frames": roundtrip_frames,
+                        "battery_sha256": hashlib.sha256(reference_battery).hexdigest(),
+                        "loaded_battery_sha256": hashlib.sha256(native_sram).hexdigest(),
+                        "status": "PASS" if offset_b is None else "FAIL",
+                    }
+                    if offset_b is not None:
+                        direction_reference_to_native["first_mismatch_offset"] = offset_b
+                    artifact["oracles"] = ["oracle-b", "native"]
+                    artifact["comparison"] = {
+                        "round_trip": "native -> oracle-b -> native",
+                        "directions": [
+                            direction_native_to_reference,
+                            direction_reference_to_native,
+                        ],
+                    }
+                    artifact["state_fields"] = [
+                        "save", "sram_bank_0", "sram_bank_1", "sram_bank_2", "sram_bank_3",
+                    ]
+                    artifact["events"] = 2
+                    if (direction_native_to_reference["status"] == "PASS"
+                            and direction_reference_to_native["status"] == "PASS"):
+                        artifact["status"] = "PASS"
+                        artifact["terminal_event"] = "SAVE_ROUND_TRIP"
+                        artifact.pop("failure", None)
+                    else:
+                        artifact["failure"] = "SAVE_ROUND_TRIP_MISMATCH"
                 else:
                     artifact["failure"] = "REFERENCE_COMPARISON_MISSING"
     except (OSError, ValueError, json.JSONDecodeError) as exc:

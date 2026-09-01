@@ -157,10 +157,16 @@ class Oracle:
                 f"gb-recompiled binary not found at {self.binary}; set POKETCG_ORACLEB "
                 f"or regenerate it with {REGENERATE_RECIPE}")
 
+    # Battery snapshot written by the last run() that passed capture_battery=True.
+    last_battery: bytes | None = None
+
     def run(
         self,
         *,
         input_file: str | os.PathLike | None = None,
+        staged_battery: bytes | None = None,
+        require_battery_load: bool = False,
+        capture_battery: bool = False,
         frame_limit: int = 30,
         save_state: str | os.PathLike | None = None,
         audio_trace: str | os.PathLike | None = None,
@@ -169,7 +175,15 @@ class Oracle:
         save is kept -- the JSON dump has no VRAM/OAM/IO, so that file is the only
         route to a full comparison. It is only requested when a caller asks for it;
         writing it into the scratch directory would delete it before anyone could read
-        it, which is worse than not producing it at all."""
+        it, which is worse than not producing it at all.
+
+        `staged_battery` seeds the scene's battery RAM (raw 32 KiB .sav payload) for
+        save round-trips; the emulator names its battery file after the ROM title,
+        POKECARD (header bytes $0134-, NUL-truncated) -- there is no --save-id flag.
+        `require_battery_load` fails the run unless the emulator reports loading the
+        staged battery. `capture_battery` copies the battery written at exit into
+        self.last_battery; the scratch directory is deleted right after, so this is
+        the only way to observe it."""
         if frame_limit < 1:
             raise ValueError("frame_limit must be positive")
         with tempfile.TemporaryDirectory(prefix="poketcg-oracleb-") as directory:
@@ -180,6 +194,8 @@ class Oracle:
             # stale-save footgun, and it made a 10-frame replay non-reproducible here.
             saves = Path(directory) / "saves"
             saves.mkdir()
+            if staged_battery is not None:
+                (saves / "POKECARD.sav").write_bytes(staged_battery)
             command = [str(self.binary), "--headless",
                        "--save-dir", str(saves), "--ignore-rtc-persistence"]
             if input_file is not None:
@@ -203,6 +219,14 @@ class Oracle:
             if completed.returncode != 0:
                 detail = (completed.stderr or completed.stdout).strip()
                 raise OracleError(f"gb-recompiled scene failed ({completed.returncode}): {detail}")
+            if require_battery_load and "[GBRT] Loaded battery RAM" not in completed.stdout:
+                raise OracleError(
+                    "gb-recompiled did not load the staged battery RAM: "
+                    f"{(completed.stderr or completed.stdout).strip()}")
+            self.last_battery = None
+            if capture_battery:
+                written = sorted(saves.glob("*.sav"))
+                self.last_battery = written[0].read_bytes() if written else None
             if audio_trace is not None:
                 trace_source = Path(directory) / "debug_audio_trace.log"
                 if not trace_source.is_file():
