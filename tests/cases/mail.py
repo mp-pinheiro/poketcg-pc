@@ -321,7 +321,7 @@ MUTATIONS = {
         "source_symbol": "GePCPackSelectionCoordinates",
         "before": "pc_mail_coordinates[selection][0],",
         "after": "pc_mail_coordinates[selection][1],",
-        "case_ids": ["GePCPackSelectionCoordinates-0", "GePCPackSelectionCoordinates-1", "GePCPackSelectionCoordinates-2"],
+        "case_ids": ["GePCPackSelectionCoordinates-2", "GePCPackSelectionCoordinates-0", "GePCPackSelectionCoordinates-1"],
     },
     "TryGivePCPack": {
         "source_symbol": "TryGivePCPack",
