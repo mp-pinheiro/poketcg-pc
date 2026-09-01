@@ -5,7 +5,7 @@
 
 /* Joypad bits in the order the DMG/CGB P1 register exposes them: the low nibble is
  * the direction row and the high nibble the button row. Held low when pressed on
- * hardware; this struct stores them active-high and joypad_p1() does the inversion. */
+ * hardware; this struct stores them active-high. */
 enum {
 	BTN_RIGHT = 1 << 0,
 	BTN_LEFT = 1 << 1,
@@ -22,9 +22,5 @@ enum {
 typedef struct {
 	uint8_t buttons;
 } InputFrame;
-
-/* Resolve P1 ($FF00) for the currently held buttons against the select bits the game
- * wrote. Bits 4/5 select which row is readable; a selected-and-pressed bit reads 0. */
-uint8_t joypad_p1(uint8_t held, uint8_t select_bits);
 
 #endif /* POKETCG_INPUT_H */

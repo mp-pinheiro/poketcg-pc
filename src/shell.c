@@ -20,25 +20,6 @@ struct Shell {
 #endif
 };
 
-static uint8_t row_value(uint8_t held, uint8_t mask)
-{
-	uint8_t value = 0x0F;
-	for (unsigned i = 0; i < 4; i++) {
-		if (held & (uint8_t)(mask << i))
-			value &= (uint8_t)~(1u << i);
-	}
-	return value;
-}
-
-uint8_t joypad_p1(uint8_t held, uint8_t select_bits)
-{
-	uint8_t result = (uint8_t)(0xC0 | (select_bits & 0x30) | 0x0F);
-	if (!(select_bits & 0x10))
-		result = (uint8_t)((result & 0xF0) | row_value(held, BTN_RIGHT));
-	if (!(select_bits & 0x20))
-		result = (uint8_t)((result & 0x0F) | (uint8_t)(row_value(held, BTN_A) << 4));
-	return result;
-}
 uint8_t shell_hkeys_from_input(uint8_t buttons)
 {
 	return (uint8_t)((buttons << 4) | (buttons >> 4));
@@ -150,7 +131,6 @@ int shell_pump(Shell *shell, InputFrame *frame)
 #else
 	(void)shell;
 #endif
-	gb_write8(0xFF00, joypad_p1(frame->buttons, (uint8_t)(g_io[0] & 0x30)));
 	g_keys = shell_hkeys_from_input(frame->buttons);
 	return 1;
 }
