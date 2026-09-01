@@ -168,6 +168,6 @@ MUTATIONS = {
         "source_symbol": "FillMemoryWithA",
         "before": "gb_write8(hl++, a);",
         "after": "gb_write8(hl, a);",
-        "case_ids": ["FillMemoryWithA-0", "FillMemoryWithA-1", "FillMemoryWithA-2", "FillMemoryWithA-3", "FillMemoryWithA-4", "FillMemoryWithA-5"],
+        "case_ids": ["FillMemoryWithA-1", "FillMemoryWithA-0", "FillMemoryWithA-2", "FillMemoryWithA-3", "FillMemoryWithA-4", "FillMemoryWithA-5"],
     },
 }

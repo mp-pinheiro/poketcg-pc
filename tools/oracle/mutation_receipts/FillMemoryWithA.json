@@ -1,0 +1,9 @@
+{
+  "fn": "FillMemoryWithA",
+  "case": "tests/cases/memory.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FillMemoryWithA\", \"registers\": {\"a\": 170, \"b\": 0, \"c\": 64, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1111\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FillMemoryWithA\", \"mismatches\": {\"bus\": {\"address\": 49409, \"reference\": \"aaaaaaaaaaaa\", \"native\": \"aa1111111111\", \"reference_size\": 66, \"native_size\": 66, \"spans\": [[49408, 66]]}}}\n",
+  "restored": "{\"fn\": \"FillMemoryWithA\", \"registers\": {\"a\": 170, \"b\": 0, \"c\": 64, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1111\"}}, \"status\": \"PASS\"}\n"
+}
