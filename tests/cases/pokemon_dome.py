@@ -157,7 +157,7 @@ MUTATIONS = {
         "source_symbol": "Func_f782",
         "before": "gb_write8(W_LOAD_NPC_X_POS_ADDR, b)",
         "after": "gb_write8(W_LOAD_NPC_X_POS_ADDR, c)",
-        "case_ids": ["Func_f782-0", "Func_f782-1", "Func_f782-2", "Func_f782-3"],
+        "case_ids": ["Func_f782-2", "Func_f782-0", "Func_f782-1", "Func_f782-3"],
     },
     "PlacePokemonDomeOpponentAtDuelTable": {
         "source_symbol": "PlacePokemonDomeOpponentAtDuelTable",
