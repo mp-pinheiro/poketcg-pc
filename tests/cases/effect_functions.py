@@ -8052,6 +8052,7 @@ CONTRACT["MixUpEffect"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["MixUpEffect"] = [
 	dict(POISON,
 	     wram={0xC510: b"\xFF"},
+	     read={0xFF97: 1},
 	     keys=[0x00, 0x01],
 	     setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
 	     instruction_budget=4000000, cycle_budget=16000000),
@@ -8064,8 +8065,8 @@ MUTATIONS = {}
 # >>> factory-mutation MixUpEffect
 MUTATIONS["MixUpEffect"] = {
 	"source_symbol": "MixUpEffect",
-	"before": "gb_write8(hCurSelectionItem_ADDR, count);",
-	"after": "gb_write8(hCurSelectionItem_ADDR, (uint8_t)(count + 1u));",
+	"before": "\tSwapTurn();\n}",
+	"after": "\thWhoseTurn = hWhoseTurn;\n}",
 	"case_ids": ["MixUpEffect-0"],
 }
 # <<< factory-mutation MixUpEffect

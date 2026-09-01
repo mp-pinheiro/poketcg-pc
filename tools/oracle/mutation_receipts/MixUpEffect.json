@@ -1,0 +1,9 @@
+{
+  "fn": "MixUpEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MixUpEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"00\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MixUpEffect\", \"mismatches\": {\"bus\": {\"address\": 65431, \"reference\": \"00c3\", \"native\": \"00c2\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[50448, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"MixUpEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"00\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n"
+}
