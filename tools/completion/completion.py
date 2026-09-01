@@ -1421,9 +1421,40 @@ def command_substrate() -> int:
         "frames": 1,
         "events": 0,
         "state_fields": fields,
-        "oracles": ["native"],
+        "oracles": ["native", "pyboy", "oracle-b"],
     }
+    checks: dict[str, dict[str, str]] = {}
     try:
+        for name, command, marker in (
+            (
+                "leaf_parity",
+                ["just", "oracle-diff", "ClearSRAMBGMaps"],
+                "PASS ClearSRAMBGMaps",
+            ),
+            (
+                "replay_roundtrip",
+                ["just", "oracleb-replay"],
+                "replay: identical",
+            ),
+        ):
+            result = subprocess.run(
+                command,
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+                timeout=300,
+                check=False,
+            )
+            output = result.stdout + result.stderr
+            if result.returncode or marker not in output:
+                detail = output.strip().splitlines()
+                raise AuditError(
+                    f"{name} failed: {detail[-1] if detail else 'missing success marker'}"
+                )
+            checks[name] = {
+                "status": "PASS",
+                "sha256": hashlib.sha256(output.encode()).hexdigest(),
+            }
         with tempfile.TemporaryDirectory(prefix="poketcg-substrate-") as directory:
             directory_path = Path(directory)
             native_state_path = directory_path / "native-state.json"
@@ -1463,11 +1494,19 @@ def command_substrate() -> int:
                 "events": trace.get("events"),
                 "symbols": trace.get("symbols", []),
             }
+            artifact["checks"] = checks
             artifact["content_key"] = content_key(baseline, manifest)
             artifact["status"] = "PASS"
             artifact["events"] = 1
             artifact["terminal_event"] = "SUBSTRATE_READY"
-    except (AuditError, KeyError, OSError, TypeError, ValueError) as exc:
+    except (
+        AuditError,
+        KeyError,
+        OSError,
+        TypeError,
+        ValueError,
+        subprocess.TimeoutExpired,
+    ) as exc:
         artifact["failure"] = "SUBSTRATE_ERROR"
         artifact["detail"] = str(exc)
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
