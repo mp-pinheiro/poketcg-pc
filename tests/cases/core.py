@@ -1186,8 +1186,8 @@ CASES["SortTempHandByIDList"] = [
 # >>> factory ApplyCardCGBAttributes
 CONTRACT["ApplyCardCGBAttributes"] = {"compare": (), "preserve": ()}
 CASES["ApplyCardCGBAttributes"] = [
-    {"d": 0x02, "e": 0x03},
-    dict(POISON, d=0x09, e=0x05),
+    {"a": 0x06, "d": 0x02, "e": 0x03, "vread": {1: {0x9862: 0xA8}}},
+    dict(POISON, a=0x07, d=0x09, e=0x05),
 ]
 # <<< factory ApplyCardCGBAttributes
 # >>> factory ApplyStatusConditionToArenaPokemon
@@ -5789,8 +5789,8 @@ MUTATIONS["SortTempHandByIDList"] = {
 # >>> factory-mutation ApplyCardCGBAttributes
 MUTATIONS["ApplyCardCGBAttributes"] = {
     "source_symbol": "ApplyCardCGBAttributes",
-    "before": "FillRectangle(0x80u, 8u, 6u, de, 0u);",
-    "after": "FillRectangle(0x00u, 8u, 6u, de, 0u);",
+    "before": "FillRectangle(a, 8u, 6u, de, 0u);",
+    "after": "FillRectangle(0u, 8u, 6u, de, 0u);",
     "case_ids": ["ApplyCardCGBAttributes-0", "ApplyCardCGBAttributes-1"],
 }
 # <<< factory-mutation ApplyCardCGBAttributes

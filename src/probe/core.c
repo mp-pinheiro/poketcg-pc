@@ -910,7 +910,7 @@ static void adapt_SortTempHandByIDList(ProbeState *s)
 /* >>> factory ApplyCardCGBAttributes */
 static void adapt_ApplyCardCGBAttributes(ProbeState *s)
 {
-	ApplyCardCGBAttributes((uint16_t)((uint16_t)s->d << 8 | s->e));
+	ApplyCardCGBAttributes(s->a, (uint16_t)((uint16_t)s->d << 8 | s->e));
 }
 /* <<< factory ApplyCardCGBAttributes */
 /* >>> factory ApplyStatusConditionToArenaPokemon */

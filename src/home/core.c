@@ -3470,15 +3470,14 @@ SortTempHandResult SortTempHandByIDList(void)
 
 
 /* >>> factory ApplyCardCGBAttributes */
-void ApplyCardCGBAttributes(uint16_t de)
+void ApplyCardCGBAttributes(uint8_t a, uint16_t de)
 {
 	hBankVRAM = 1u;
 	gb_write8(0xFF4Fu, 1u);
-	FillRectangle(0x80u, 8u, 6u, de, 0u);
+	FillRectangle(a, 8u, 6u, de, 0u);
 	hBankVRAM = 0u;
 	gb_write8(0xFF4Fu, 0u);
 }
-/* <<< factory ApplyCardCGBAttributes */
 
 
 /* >>> factory ApplyStatusConditionToArenaPokemon */
@@ -6149,7 +6148,7 @@ SendCardAttrBlkPacketResult ApplyBGP6OrSGB3ToCardImage(uint8_t a, uint8_t f, uin
 	}
 	a = 0x06u;
 	f = 0x40u;
-	ApplyCardCGBAttributes((uint16_t)((uint16_t)d << 8 | e));
+	ApplyCardCGBAttributes(a, (uint16_t)((uint16_t)d << 8 | e));
 	return (SendCardAttrBlkPacketResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory ApplyBGP6OrSGB3ToCardImage */
@@ -6335,7 +6334,7 @@ SendCardAttrBlkPacketResult ApplyBGP7OrSGB2ToCardImage(uint8_t a, uint8_t f, uin
 	}
 	a = 0x07u;
 	f = 0x40u;
-	ApplyCardCGBAttributes((uint16_t)((uint16_t)d << 8 | e));
+	ApplyCardCGBAttributes(a, (uint16_t)((uint16_t)d << 8 | e));
 	return (SendCardAttrBlkPacketResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory ApplyBGP7OrSGB2ToCardImage */

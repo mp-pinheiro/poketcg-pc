@@ -434,7 +434,7 @@ SortTempHandResult SortTempHandByIDList(void);
 uint8_t HandleFailedToContinueDuel(uint16_t hl);
 /* <<< factory HandleFailedToContinueDuel */
 /* >>> factory ApplyCardCGBAttributes */
-void ApplyCardCGBAttributes(uint16_t de);
+void ApplyCardCGBAttributes(uint8_t a, uint16_t de);
 /* <<< factory ApplyCardCGBAttributes */
 /* >>> factory ApplyStatusConditionToArenaPokemon */
 uint8_t ApplyStatusConditionToArenaPokemon(uint16_t *hl, uint8_t d, uint8_t *e);
