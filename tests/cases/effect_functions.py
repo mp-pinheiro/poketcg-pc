@@ -1962,7 +1962,7 @@ CASES["TrainerCardAsPokemon_DiscardEffect"] = [{}, dict(POISON)]
 # <<< factory TrainerCardAsPokemon_DiscardEffect
 # >>> factory MysteriousFossil_PlaceInPlayAreaEffect
 CONTRACT["MysteriousFossil_PlaceInPlayAreaEffect"] = {"compare": (), "preserve": ()}
-CASES["MysteriousFossil_PlaceInPlayAreaEffect"] = [{}, dict(POISON)]
+CASES["MysteriousFossil_PlaceInPlayAreaEffect"] = [{"wram": {0xFF97: b"\xC2", 0xFF9F: b"\x00", 0xC2EF: b"\x00", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC400: b"\x08"}, "read": {0xC2EF: 1, 0xC2BB: 1, 0xC2C8: 1, 0xC2CE: 1, 0xC2C2: 1, 0xC2D4: 1, 0xC2E0: 1, 0xC2DA: 1, 0xC2F0: 1}}, dict(POISON, wram={0xFF97: b"\xC3", 0xFF9F: b"\x00", 0xC3EF: b"\x02", 0xC3EE: b"\x01", 0xC342: b"\x00", 0xC300: b"\x08"}, read={0xC3EF: 1, 0xC3BD: 1})]
 # <<< factory MysteriousFossil_PlaceInPlayAreaEffect
 
 # >>> factory Barrier_DiscardEffect
