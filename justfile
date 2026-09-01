@@ -314,6 +314,8 @@ completion-check ID:
 completion-next:
     python3 tools/completion/completion.py next
 
+completion-mutation-campaign *ARGS:
+    python3 tools/completion/mutation_campaign.py {{ARGS}}
 # Generate only declared ROM data spans for the local product package.
 completion-data-pack:
     just progress-inventory

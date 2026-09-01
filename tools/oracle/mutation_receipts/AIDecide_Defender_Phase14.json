@@ -1,0 +1,9 @@
+{
+  "fn": "AIDecide_Defender_Phase14",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIDecide_Defender_Phase14\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_Defender_Phase14\", \"mismatches\": {\"f\": [128, 16]}}\n",
+  "restored": "{\"fn\": \"AIDecide_Defender_Phase14\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}
