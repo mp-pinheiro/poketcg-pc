@@ -9320,7 +9320,7 @@ MUTATIONS["MysteriousFossil_PlaceInPlayAreaEffect"] = {"source_symbol": "Mysteri
 # <<< factory-mutation MysteriousFossil_PlaceInPlayAreaEffect
 # >>> factory LeekSlap_OncePerDuelCheck
 CONTRACT["LeekSlap_OncePerDuelCheck"] = {"compare": ("f",), "preserve": ()}
-CASES["LeekSlap_OncePerDuelCheck"] = [{}, {"wram": {0xC200: b"\x40"}}]
+CASES["LeekSlap_OncePerDuelCheck"] = [{"wram": {0xFF97: b"\xC2", 0xC2C2: b"\x40"}}, {}]
 # <<< factory LeekSlap_OncePerDuelCheck
 # >>> factory LeekSlap_SetUsedThisDuelFlag
 CONTRACT["LeekSlap_SetUsedThisDuelFlag"] = {"compare": (), "preserve": ()}

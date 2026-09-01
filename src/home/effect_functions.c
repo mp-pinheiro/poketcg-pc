@@ -4329,7 +4329,7 @@ uint8_t LeekSlap_OncePerDuelCheck(void)
 	DuelistVarResult flags = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_FLAGS);
 	if ((gb_read8(flags.hl) & (uint8_t)(1u << USED_LEEK_SLAP_THIS_DUEL_F)) == 0u)
 		return 0xA0u;
-	return 0x30u;
+	return 0x10u;
 }
 /* <<< factory LeekSlap_OncePerDuelCheck */
 
