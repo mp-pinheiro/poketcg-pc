@@ -36,7 +36,7 @@ MUTATIONS = {
         "source_symbol": "Bankswitch3dTo3f",
         "before": "BankswitchROM(0x3Du);",
         "after": "BankswitchROM(0x3Eu);",
-        "case_ids": ["Bankswitch3dTo3f-0", "Bankswitch3dTo3f-1"],
+        "case_ids": ["Bankswitch3dTo3f-2", "Bankswitch3dTo3f-3"],
     },
 }
 
