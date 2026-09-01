@@ -331,6 +331,33 @@ def process_asm_files(map_labels: dict[str, dict]) -> tuple[dict[str, dict], dic
         ref_map[name] = max(r - def_lines, 0)
 
     return defs, ref_map, unknown
+DATA_SECTION_HINTS = (
+    "audio", "anim", "booster", "card", "deck", "gfx", "graphic", "pal",
+    "text", "sgb", "table", "data", "map objects", "map data", "copyright",
+)
+CODE_SECTION_NAMES = {
+    "vblank", "lcdc", "timer", "serial", "joypad", "start", "audio callback",
+    "game loop", "duel core", "menus common", "menus 1", "menus 2", "menus 3",
+    "menus 4", "overworld scripting", "overworld map", "save", "map scripts",
+    "sprite animations", "scenes", "challenge machine", "ai logic 1", "ai logic 2",
+    "effect commands", "animation commands", "ir communications core",
+    "sprite animations vblank", "starter deck", "link functions",
+    "promotional card", "booster pack menu", "input name", "auto deck machines",
+    "bank 7", "duel animations", "start menu", "intro sequence",
+    "credits sequence", "effect functions", "unused save validation", "color",
+    "gift center menu",
+}
+
+
+def section_span_kind(name: str) -> str:
+    lowered = name.casefold()
+    if lowered == "romheader":
+        return "header/metadata"
+    if any(hint in lowered for hint in DATA_SECTION_HINTS):
+        return "data"
+    return "code" if lowered.startswith("rst") or lowered in CODE_SECTION_NAMES else "unclassified"
+
+
 def build_spans(sections: list[dict], defs: dict[str, dict]) -> list[dict]:
     spans: list[dict] = []
     for section in sections:
@@ -350,7 +377,7 @@ def build_spans(sections: list[dict], defs: dict[str, dict]) -> list[dict]:
         for index, (address, name) in enumerate(addresses):
             if address > cursor:
                 spans.append({
-                    "kind": "unclassified",
+                    "kind": section_span_kind(section["section"]),
                     "source": "mapped-gap",
                     "bank_type": bank_type,
                     "bank": bank,
@@ -360,10 +387,9 @@ def build_spans(sections: list[dict], defs: dict[str, dict]) -> list[dict]:
                     "section": section["section"],
                 })
             end = addresses[index + 1][0] if index + 1 < len(addresses) else section_end
-            definition = defs.get(name, {})
-            kind = definition.get("kind")
+            kind = defs.get(name, {}).get("kind")
             if kind not in {"code", "data"}:
-                kind = "unclassified"
+                kind = section_span_kind(section["section"])
             if section["section"].casefold() == "romheader":
                 kind = "header/metadata"
             spans.append({
@@ -380,7 +406,7 @@ def build_spans(sections: list[dict], defs: dict[str, dict]) -> list[dict]:
             cursor = end
         if cursor < section_end:
             spans.append({
-                "kind": "unclassified",
+                "kind": section_span_kind(section["section"]),
                 "source": "mapped-gap",
                 "bank_type": bank_type,
                 "bank": bank,

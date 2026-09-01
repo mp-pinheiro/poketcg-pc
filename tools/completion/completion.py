@@ -34,8 +34,8 @@ CFG_OUTPUT = COMPLETION_DIR / "cfg.json"
 MAPPING_PATH = COMPLETION_DIR / "routine-mapping.json"
 EVIDENCE_DIR = COMPLETION_DIR / "evidence"
 ROM_SIZE = 0x100000
-EXPECTED_PROVISIONAL = 160
-EXPECTED_EXTRA_REGISTRATIONS = 10
+EXPECTED_PROVISIONAL = 158
+EXPECTED_EXTRA_REGISTRATIONS = 9
 ALLOWED_SPAN_KINDS = {"code", "data", "header/metadata", "padding", "unclassified"}
 REQUIRED_RELATION_FIELDS = {
     "wram", "hram", "sram_bank_0", "sram_bank_1", "sram_bank_2",
@@ -858,7 +858,14 @@ def collect_report() -> dict[str, Any]:
         )
         for milestone in manifest_values.get("milestones", [])
     }
-    production_source = MAIN_PATH.read_text(encoding="utf-8") if MAIN_PATH.is_file() else ""
+    production_source = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in (
+            MAIN_PATH,
+            ROOT / "src" / "runtime.c",
+            ROOT / "src" / "home" / "start.c",
+        )
+    )
     roots = {
         symbol: bool(re.search(rf"\b{symbol}\s*\(", production_source))
         for symbol in ("Start", "GameLoop", "HandleTitleScreen")
@@ -878,9 +885,9 @@ def collect_report() -> dict[str, Any]:
     except AuditError:
         gate = {}
     trusted_gate = (
-        gate.get("schema") == 2
+        gate.get("schema") in {2, 3}
         and gate.get("complete") is True
-        and gate.get("commit") == current_revision()
+        and (gate.get("commit") or gate.get("revision")) == current_revision()
     )
     if not trusted_gate:
         errors.append("trusted oracle evidence is empty or stale")

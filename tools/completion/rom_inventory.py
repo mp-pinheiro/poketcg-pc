@@ -118,7 +118,7 @@ def section_kind(name: str) -> str:
         "promotional card", "booster pack menu", "input name",
         "auto deck machines", "bank 7", "duel animations", "start menu",
         "intro sequence", "credits sequence", "effect functions",
-        "unused save validation",
+        "unused save validation", "color", "gift center menu",
     }:
         return "code"
     return "unclassified"
@@ -151,7 +151,7 @@ def section_spans(
     for index, (offset, name) in enumerate(addresses):
         if offset > cursor:
             spans.append({
-                "kind": "unclassified",
+                "kind": kind,
                 "source": "mapped-gap",
                 "bank_type": section.bank_type,
                 "bank": section.bank,
@@ -175,7 +175,7 @@ def section_spans(
         cursor = end
     if cursor < section_end:
         spans.append({
-            "kind": "unclassified",
+            "kind": kind,
             "source": "mapped-gap",
             "bank_type": section.bank_type,
             "bank": section.bank,

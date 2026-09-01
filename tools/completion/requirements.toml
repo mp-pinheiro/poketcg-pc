@@ -1,6 +1,6 @@
 [manifest]
 schema = 2
-version = "completion-v2-epoch-3"
+version = "completion-v2-epoch-4"
 source = "docs/vision.md"
 source_sha256 = "3dd45cd7e05c298a134f43cd37dae8c96f75b6f9a80a8a60c62e6da405e6e67e"
 
