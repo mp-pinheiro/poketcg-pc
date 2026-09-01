@@ -29,7 +29,7 @@ sha256 = "3643eb04376672060665673ae5945da31a0cc6415e82cae98838dfdc5cce1363"
 
 [script]
 path = "tools/completion/bizhawk_capture.lua"
-sha256 = "bc728afb0e25afc4fb59f5402a27d85abef9f6eafa02d1862bb370f37cfaef17"
+sha256 = "7bce87bfa23b5bd1523aa9b46f758f5d5543cc1e4d3db82f5204a1e130c6534e"
 
 [rom]
 path = "poketcg/poketcg.gbc"
