@@ -134,6 +134,6 @@ MUTATIONS = {
         "source_symbol": "GetArenaCardColor",
         "before": "\treturn GetPlayAreaCardColor(0);",
         "after": "\treturn GetPlayAreaCardColor(1);",
-        "case_ids": ["GetArenaCardColor-0", "GetArenaCardColor-1", "GetArenaCardColor-2", "GetArenaCardColor-3", "GetArenaCardColor-4"],
+        "case_ids": ["GetArenaCardColor-3", "GetArenaCardColor-0", "GetArenaCardColor-1", "GetArenaCardColor-2", "GetArenaCardColor-4"],
     },
 }

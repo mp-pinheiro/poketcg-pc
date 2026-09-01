@@ -1,0 +1,9 @@
+{
+  "fn": "GetArenaCardColor",
+  "case": "tests/cases/card_color.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetArenaCardColor\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ffff\", \"49876\": \"83\", \"49904\": \"00\", \"50107\": \"ffff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetArenaCardColor\", \"mismatches\": {\"a\": [3, 201]}}\n",
+  "restored": "{\"fn\": \"GetArenaCardColor\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ffff\", \"49876\": \"83\", \"49904\": \"00\", \"50107\": \"ffff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
