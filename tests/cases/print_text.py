@@ -222,6 +222,8 @@ CASES.update({
          "vread": VRAM_READ},
         {"hl": 1, "d": 0, "e": 0, "wram": {0xFF90: b"\x02"},
          "setup": SETUP, "read": dict(CACHE_READ), "vread": VRAM_READ},
+        {"hl": 1, "d": 0x12, "e": 0x34, "setup": SETUP,
+         "read": dict(CACHE_READ), "vread": VRAM_READ},
     ],
     # No hl==0 shortcut: hl is always a text id. id 0 resolves to an immediate
     # TX_END; id 1 ("Hand") runs the engine.
@@ -278,8 +280,8 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
     "PrintText": {
         "source_symbol": "PrintText",
-        "before": "\t\treturn print_text_body(wDefaultText_ADDR, d, e);",
-        "after": "\t\treturn print_text_body(wDefaultText_ADDR, e, d);",
-        "case_ids": ["PrintText-0", "PrintText-1", "PrintText-2", "PrintText-3"],
+        "before": "if (hl == 0) {",
+        "after": "if (hl != 0) {",
+        "case_ids": ["PrintText-0", "PrintText-1", "PrintText-2", "PrintText-3", "PrintText-4"],
     },
 }
