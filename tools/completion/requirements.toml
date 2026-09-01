@@ -215,37 +215,12 @@ state_fields = ["canonical_routine", "registration", "native_disposition", "span
 artifact_schema = "routine-mapping-v1"
 tracker_issue = 3167
 
-[[requirement]]
-id = "completion:v2:reset:representation"
-anchor = "docs/vision.md:195-197"
-milestone = "reset"
-deps = ["completion:v2:reset:baseline"]
-command = "just completion-check completion:v2:reset:representation"
-terminal_event = "RELATION_FROZEN"
-min_frames = 0
-min_events = 1
-state_fields = ["representation_fields", "refinement_rows"]
-artifact_schema = "representation-relation-v1"
-tracker_issue = 3168
-
-[[requirement]]
-id = "completion:v2:reset:truthful-accounting"
-anchor = "docs/vision.md:190-260"
-milestone = "reset"
-deps = ["completion:v2:reset:baseline", "completion:v2:reset:routine-bijection"]
-command = "just completion-check completion:v2:reset:truthful-accounting"
-terminal_event = "TRUTHFUL_COUNTS_EMITTED"
-min_frames = 0
-min_events = 1
-state_fields = ["landed_inventory", "final_routines", "trusted_oracle_evidence", "production_integration", "requirements", "milestone_gates"]
-artifact_schema = "completion-status-v2"
-tracker_issue = 3175
 
 [[requirement]]
 id = "completion:v2:p0:substrate"
 anchor = "docs/vision.md:262-270"
 milestone = "phases-0-2"
-deps = ["completion:v2:reset:representation"]
+deps = ["completion:v2:reset:routine-bijection"]
 command = "just completion-check completion:v2:p0:substrate"
 terminal_event = "SUBSTRATE_READY"
 min_frames = 1

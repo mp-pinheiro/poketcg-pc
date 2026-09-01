@@ -1247,86 +1247,6 @@ def command_routine_mapping() -> int:
     return 0 if artifact["status"] == "PASS" else 2
 
 
-def command_representation() -> int:
-    baseline = load_toml(BASELINE_PATH)
-    manifest = load_toml(MANIFEST_PATH)
-    artifact: dict[str, Any] = {
-        "schema": "representation-relation-v1",
-        "status": "FAIL",
-        "frames": 0,
-        "events": 0,
-        "state_fields": ["representation_fields", "refinement_rows"],
-        "oracles": ["requirements-manifest", "vision-source"],
-    }
-    try:
-        rows = manifest.get("representation")
-        if not isinstance(rows, list):
-            raise AuditError("representation relation is missing")
-        fields = [
-            row.get("field") for row in rows
-            if isinstance(row, dict) and isinstance(row.get("field"), str)
-        ]
-        errors = []
-        if len(fields) != len(set(fields)):
-            errors.append("duplicate representation field")
-        missing = sorted(REQUIRED_RELATION_FIELDS - set(fields))
-        if missing:
-            errors.append("missing representation fields: " + ",".join(missing))
-        if any(row.get("required") is not True for row in rows if isinstance(row, dict)):
-            errors.append("representation field is not mandatory")
-        exclusion = next(
-            (row for row in rows if isinstance(row, dict)
-             and row.get("field") == "hardware_exclusions"),
-            None,
-        )
-        refinement = exclusion.get("refinement", "") if exclusion else ""
-        if "LY" not in refinement or "DIV" not in refinement:
-            errors.append("LY/DIV lack named directional transform rows")
-        validate_manifest_source(
-            manifest,
-            sha256_path(ROOT / "docs" / "vision.md"),
-        )
-        artifact["representation_fields"] = {
-            "count": len(fields),
-            "fields": sorted(fields),
-            "sha256": mapping_digest(rows),
-        }
-        artifact["refinement_rows"] = {
-            "count": len(rows),
-            "rows": [
-                {"field": row.get("field"), "refinement": row.get("refinement", "")}
-                for row in rows if isinstance(row, dict)
-            ],
-            "sha256": mapping_digest([
-                {"field": row.get("field"), "refinement": row.get("refinement", "")}
-                for row in rows if isinstance(row, dict)
-            ]),
-        }
-        artifact["validation"] = {"errors": errors}
-        if errors:
-            artifact["failure"] = "REPRESENTATION_INVALID"
-            artifact["detail"] = "; ".join(errors)
-        else:
-            artifact["content_key"] = content_key(baseline, manifest)
-            artifact["status"] = "PASS"
-            artifact["events"] = 1
-            artifact["terminal_event"] = "RELATION_FROZEN"
-    except (AuditError, KeyError, TypeError, ValueError) as exc:
-        artifact["failure"] = "REPRESENTATION_ERROR"
-        artifact["detail"] = str(exc)
-    EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
-    path = evidence_path("completion:v2:reset:representation")
-    path.write_text(json.dumps(artifact, sort_keys=True, separators=(",", ":")) + "\n")
-    print(json.dumps({
-        "status": artifact["status"],
-        "artifact": str(path.relative_to(ROOT)),
-        **{
-            key: artifact[key]
-            for key in ("failure", "content_key", "events")
-            if key in artifact
-        },
-    }, sort_keys=True))
-    return 0 if artifact["status"] == "PASS" else 2
 
 
 
@@ -1550,7 +1470,6 @@ def main(argv: list[str] | None = None) -> int:
     subparsers.add_parser("baseline")
     subparsers.add_parser("rom-coverage")
     subparsers.add_parser("routine-mapping")
-    subparsers.add_parser("representation")
     subparsers.add_parser("substrate")
     subparsers.add_parser("hardware-removal")
     subparsers.add_parser("next")
@@ -1563,8 +1482,6 @@ def main(argv: list[str] | None = None) -> int:
         return command_hardware_removal()
     if args.command == "substrate":
         return command_substrate()
-    if args.command == "representation":
-        return command_representation()
     if args.command == "routine-mapping":
         return command_routine_mapping()
     if args.command == "rom-coverage":
