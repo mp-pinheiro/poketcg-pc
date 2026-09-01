@@ -338,6 +338,6 @@ MUTATIONS = {
         "source_symbol": "GetCardCountInCollection",
         "before": "\tuint8_t a = (uint8_t)(gb_read8(CARD_SLOT(sCardCollection_ADDR, id)) & 0x7Fu);",
         "after": "\tuint8_t a = (uint8_t)(gb_read8(CARD_SLOT(sCardCollection_ADDR, id)) & 0xFFu);",
-        "case_ids": ["GetCardCountInCollection-0", "GetCardCountInCollection-1", "GetCardCountInCollection-2", "GetCardCountInCollection-3", "GetCardCountInCollection-4", "GetCardCountInCollection-5"],
+        "case_ids": ["GetCardCountInCollection-2", "GetCardCountInCollection-0", "GetCardCountInCollection-1", "GetCardCountInCollection-3", "GetCardCountInCollection-4", "GetCardCountInCollection-5"],
     },
 }
