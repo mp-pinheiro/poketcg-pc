@@ -671,11 +671,49 @@ TryDeleteSavedDeckResult TryDeleteSavedDeck(void)
  * MENU_CANCEL and f = $C0 (`cp` against an equal value sets Z and N and clears
  * H and C).
  *
- * .CardListUpdateFunction is stored, never called here: the asm only parks its
- * address in wCardListUpdateFunction for CallIndirect, and this tree does not
- * dispatch that pointer (see the note on HandleLeftRightInCardList in
- * src/home/deck_configuration.c). The two bytes written are the real bank-2
- * address, so the WRAM still matches the reference. */
+ * .CardListUpdateFunction is armed into wCardListUpdateFunction each .loop
+ * iteration and fired by the card-list input handlers after a scroll
+ * (deck_configuration.asm:1823-1824, 2483-2484); the port routes that dispatch
+ * through DispatchCardListUpdateFunction in deck_configuration.c, which
+ * resolves 02:6e9a to HandleDeckMissingCardsList_CardListUpdateFunction
+ * below. The two bytes written are the real bank-2 address, so the WRAM
+ * still matches the reference. */
+/* .PrintDeckIndexAndName, deck_machine.asm:131-159: prints text in the form
+ * "X.<DECK NAME> deck"; returns early when no deck name is selected. */
+static void PrintDeckIndexAndName(void)
+{
+	if (wCurDeckName == 0u)
+		return;
+	InitTextPrinting(0u, 1u);
+
+	ConvertToNumericalDigitsResult digits =
+		ConvertToNumericalDigits((uint8_t)(wCurDeck + 1u),
+					 wDefaultText_ADDR);
+
+	gb_write8(digits.hl, FW_MIDDLE_DOT);
+	gb_write8((uint16_t)(digits.hl + 1u), TX_END);
+
+	uint16_t text = wDefaultText_ADDR;
+
+	ProcessText(&text);
+
+	uint16_t name = wCurDeckName_ADDR;
+	uint16_t name_dst = wDefaultText_ADDR;
+
+	CopyListFromHLToDE(&name, &name_dst);
+
+	/* `ld b, $0 / add hl, bc` appends the suffix at the tile
+	 * length GetTextLengthInTiles returns in c. */
+	TextLength length = GetTextLengthInTiles(wDefaultText_ADDR);
+	uint16_t suffix = DeckNameSuffix_ADDR;
+	uint16_t suffix_dst = (uint16_t)(wDefaultText_ADDR + length.c);
+
+	CopyListFromHLToDE(&suffix, &suffix_dst);
+	InitTextPrinting(3u, 1u);
+	text = wDefaultText_ADDR;
+	ProcessText(&text);
+}
+
 HandleDeckMissingCardsListResult HandleDeckMissingCardsList(uint16_t hl, uint16_t de)
 {
 	(void)CopyListFromHLToDEInSRAM(hl, wCurDeckName_ADDR);
@@ -711,36 +749,7 @@ HandleDeckMissingCardsListResult HandleDeckMissingCardsList(uint16_t hl, uint16_
 
 		/* .PrintTitleAndList -> .ClearScreenAndPrintDeckTitle */
 		EmptyScreenAndLoadFontDuelAndHandCardsIcons();
-		if (wCurDeckName != 0u) { /* .PrintDeckIndexAndName */
-			InitTextPrinting(0u, 1u);
-
-			ConvertToNumericalDigitsResult digits =
-				ConvertToNumericalDigits((uint8_t)(wCurDeck + 1u),
-							 wDefaultText_ADDR);
-
-			gb_write8(digits.hl, FW_MIDDLE_DOT);
-			gb_write8((uint16_t)(digits.hl + 1u), TX_END);
-
-			uint16_t text = wDefaultText_ADDR;
-
-			ProcessText(&text);
-
-			uint16_t name = wCurDeckName_ADDR;
-			uint16_t name_dst = wDefaultText_ADDR;
-
-			CopyListFromHLToDE(&name, &name_dst);
-
-			/* `ld b, $0 / add hl, bc` appends the suffix at the tile
-			 * length GetTextLengthInTiles returns in c. */
-			TextLength length = GetTextLengthInTiles(wDefaultText_ADDR);
-			uint16_t suffix = DeckNameSuffix_ADDR;
-			uint16_t suffix_dst = (uint16_t)(wDefaultText_ADDR + length.c);
-
-			CopyListFromHLToDE(&suffix, &suffix_dst);
-			InitTextPrinting(3u, 1u);
-			text = wDefaultText_ADDR;
-			ProcessText(&text);
-		}
+		PrintDeckIndexAndName();
 		EnableLCD();
 
 		wCardListCoords = 3u;
@@ -786,6 +795,24 @@ HandleDeckMissingCardsListResult HandleDeckMissingCardsList(uint16_t hl, uint16_
 	}
 }
 /* <<< factory HandleDeckMissingCardsList */
+
+/* >>> factory HandleDeckMissingCardsList.CardListUpdateFunction */
+/* deck_machine.asm:100-113. Armed into wCardListUpdateFunction by
+ * HandleDeckMissingCardsList's .loop and fired by the card-list input
+ * handlers after a scroll (deck_configuration.asm:1823-1824, 2483-2484):
+ * redraws the confirmation list in place. PrintConfirmationCardList takes
+ * its coordinates from wCardListCoords and ignores a, de and hl, so the
+ * asm's `jp PrintConfirmationCardList` carries no register state. */
+void HandleDeckMissingCardsList_CardListUpdateFunction(void)
+{
+	hffb0 = 0x01u;
+	PrintDeckIndexAndName();
+	InitTextPrinting(1u, 14u);
+	(void)ProcessTextFromID(wCardConfirmationText);
+	hffb0 = 0x00u;
+	PrintConfirmationCardList(0u, 3u, 3u, (uint16_t *)0);
+}
+/* <<< factory HandleDeckMissingCardsList.CardListUpdateFunction */
 
 /* >>> factory HandleDismantleDeckToMakeSpace */
 HandleDismantleDeckToMakeSpaceResult HandleDismantleDeckToMakeSpace(void)

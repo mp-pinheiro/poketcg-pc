@@ -379,6 +379,19 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #define HANDLE_SELECT_UPDATE_CONFIRM_ADDR 0x5E31u
 #define HANDLE_SELECT_PRINT_CARD_ADDR 0x642Du
 
+/* Remaining wCardListUpdateFunction targets armed outside this file
+ * (poketcg.sym): 02:66fa PrintCardSetListEntries (card_album.asm:685-688),
+ * 02:6e9a HandleDeckMissingCardsList.CardListUpdateFunction
+ * (deck_machine.asm:49-52), 02:7053 ShowReceivedCardsList
+ * (deck_machine.asm:250-253), 02:73fe
+ * UpdateDeckMachineScrollArrowsAndEntries (deck_machine.asm:1899-1902),
+ * 02:7403 DrawDeckMachineScreen (deck_machine.asm:638-641). */
+#define CARD_LIST_PRINT_CARD_SET_ADDR 0x66FAu
+#define CARD_LIST_MISSING_CARDS_ADDR 0x6E9Au
+#define CARD_LIST_SHOW_RECEIVED_ADDR 0x7053u
+#define CARD_LIST_UPDATE_MACHINE_ARROWS_ADDR 0x73FEu
+#define CARD_LIST_DRAW_MACHINE_SCREEN_ADDR 0x7403u
+
 #define HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR 0x5667u
 #define HANDLE_DECK_BUILD_FILTERED_PARAMS_ADDR 0x5670u
 
@@ -393,8 +406,10 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #define HANDLE_PLAYERS_CARDS_DATA_ADDR 0x6396u
 #define HANDLE_PLAYERS_CARDS_PRINT_LIST_ADDR 0x642Du
 
+#include "home/card_album.h"
 #include "home/deck_configuration.h"
 #include "home/deck_machine.h"
+#include "home/indirect_dispatch.h"
 #include "home/duel.h"
 #include "home/frames.h"
 #include "home/lcd.h"
@@ -1178,6 +1193,57 @@ HandleCardSelectionInputResult HandleCardSelectionInput(void)
 }
 /* <<< factory HandleCardSelectionInput */
 
+/* CallIndirect(wCardListUpdateFunction), deck_configuration.asm:1823-1824,
+ * 1849-1850, 2483-2484, 2532-2533: the card-list input handlers fire the
+ * redraw routine armed by whichever card-list screen is active. Every bank-2
+ * address the asm stores into wCardListUpdateFunction is registered below;
+ * DispatchIndirect no-ops on the cleared pointer and fails loud on any
+ * nonzero target without a C body. */
+static void DispatchCardListUpdateFunction(void)
+{
+	uint16_t target = (uint16_t)(gb_read8(wCardListUpdateFunction_ADDR)
+	                            | (uint16_t)gb_read8((uint16_t)(wCardListUpdateFunction_ADDR + 1u)) << 8);
+
+	switch (target) {
+	case HANDLE_SELECT_PRINT_DECK_BUILDING_ADDR:
+		PrintDeckBuildingCardList();
+		return;
+	case HANDLE_SELECT_UPDATE_CONFIRM_ADDR:
+		UpdateConfirmationCardScreen();
+		return;
+		/* 02:642d PrintCardSelectionList, armed by deck_configuration.asm
+		 * 3155-3158 and printer.asm:62-65. */
+	case HANDLE_SELECT_PRINT_CARD_ADDR:
+		PrintCardSelectionList();
+		return;
+		/* 02:66fa PrintCardSetListEntries, armed by card_album.asm:685-688. */
+	case CARD_LIST_PRINT_CARD_SET_ADDR:
+		(void)PrintCardSetListEntries();
+		return;
+		/* 02:6e9a HandleDeckMissingCardsList.CardListUpdateFunction,
+		 * armed by deck_machine.asm:49-52. */
+	case CARD_LIST_MISSING_CARDS_ADDR:
+		HandleDeckMissingCardsList_CardListUpdateFunction();
+		return;
+		/* 02:7053 ShowReceivedCardsList, armed by deck_machine.asm:250-253. */
+	case CARD_LIST_SHOW_RECEIVED_ADDR:
+		ShowReceivedCardsList();
+		return;
+		/* 02:73fe, armed by deck_machine.asm:1899-1902; the callee ignores
+		 * its f input (see the port in deck_machine.c). */
+	case CARD_LIST_UPDATE_MACHINE_ARROWS_ADDR:
+		UpdateDeckMachineScrollArrowsAndEntries(0u);
+		return;
+		/* 02:7403, armed by deck_machine.asm:638-641. */
+	case CARD_LIST_DRAW_MACHINE_SCREEN_ADDR:
+		(void)DrawDeckMachineScreen();
+		return;
+	default:
+		DispatchIndirect("wCardListUpdateFunction", target);
+		return;
+	}
+}
+
 /* >>> factory HandleLeftRightInCardList */
 HandleLeftRightInCardListResult HandleLeftRightInCardList(void)
 {
@@ -1206,10 +1272,7 @@ HandleLeftRightInCardListResult HandleLeftRightInCardList(void)
 		return (HandleLeftRightInCardListResult){0x90u};
 
 	PlaySFX(SFX_CURSOR);
-	/* CallIndirect(wCardListUpdateFunction) intentionally not modeled: it invokes
-	 * a runtime function pointer whose target varies per card-list screen and has
-	 * no C prototype in this basename's scope; the oracle only exercises the
-	 * dpad=0 early-return path below where this call never executes. */
+	DispatchCardListUpdateFunction();
 	return (HandleLeftRightInCardListResult){0x10u};
 }
 /* <<< factory HandleLeftRightInCardList */
@@ -2019,10 +2082,10 @@ HandleDeckCardSelectionListResult HandleDeckCardSelectionList(void)
 		uint8_t count = wCardListNumCursorPositions;
 		if ((dpad & (1u << B_PAD_UP)) != 0u) {
 			wMenuInputSFX = SFX_CURSOR; a = (uint8_t)(cursor - 1u);
-			if ((a & 0x80u) != 0u && wCardListVisibleOffset != 0u) { --wCardListVisibleOffset; a = 0u; }
+			if ((a & 0x80u) != 0u && wCardListVisibleOffset != 0u) { --wCardListVisibleOffset; DispatchCardListUpdateFunction(); a = 0u; }
 		} else if ((dpad & (1u << B_PAD_DOWN)) != 0u) {
 			wMenuInputSFX = SFX_CURSOR; a = (uint8_t)(cursor + 1u);
-			if (a >= count) { if (wUnableToScrollDown == 0u) { ++wCardListVisibleOffset; --a; } else { --a; wMenuInputSFX = FALSE; } }
+			if (a >= count) { if (wUnableToScrollDown == 0u) { ++wCardListVisibleOffset; DispatchCardListUpdateFunction(); --a; } else { --a; wMenuInputSFX = FALSE; } }
 		}
 		(void)DrawListCursor_Invisible(); wCardListCursorPos = a; wCheckMenuCursorBlinkCounter = 0u;
 	} else if (wced2 != 0u) {
@@ -2446,16 +2509,7 @@ HandleSelectUpAndDownInListResult HandleSelectUpAndDownInList(void)
 		return (HandleSelectUpAndDownInListResult){0x90u};
 
 	PlaySFX(SFX_CURSOR);
-	uint16_t update_addr = (uint16_t)gb_read8(wCardListUpdateFunction_ADDR);
-	update_addr = (uint16_t)(update_addr |
-		((uint16_t)gb_read8((uint16_t)(wCardListUpdateFunction_ADDR + 1u)) << 8));
-	if (update_addr == HANDLE_SELECT_PRINT_DECK_BUILDING_ADDR) {
-		PrintDeckBuildingCardList();
-	} else if (update_addr == HANDLE_SELECT_UPDATE_CONFIRM_ADDR) {
-		UpdateConfirmationCardScreen();
-	} else if (update_addr == HANDLE_SELECT_PRINT_CARD_ADDR) {
-		PrintCardSelectionList();
-	}
+	DispatchCardListUpdateFunction();
 	return (HandleSelectUpAndDownInListResult){0x10u};
 }
 /* <<< factory HandleSelectUpAndDownInList */

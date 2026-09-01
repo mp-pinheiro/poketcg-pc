@@ -4,6 +4,7 @@
 #include "generated/wram.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+#include <stdio.h>
 #include <stdlib.h>
 /* >>> factory statics */
 #include "home/effect_commands.h"
@@ -18,9 +19,10 @@
 
 /* engine/duel/effect_commands.asm:37-85. hl walks a command list (2 bytes/entry:
  * type, function pointer; 0 terminates) under BANK_EFFECT_COMMANDS. NULL hl
- * short-circuits before any bank switch or wEffectFunctionsBank write. Only the
- * lookup ports -- TryExecuteEffectCommandFunction's `jp hl` dispatch into bank
- * $0b stays unported. */
+ * short-circuits before any bank switch or wEffectFunctionsBank write. The
+ * matched function pointer resolves through the generated bank-$0b dispatch
+ * table (tools/gen_effect_dispatch.py over the probe adapters); a pointer
+ * with no adapter fails loud. */
 EffectCmdLookup CheckMatchingCommand(uint8_t a, uint16_t hl)
 {
 	if (hl == 0)
@@ -63,8 +65,12 @@ TryExecuteEffectCommandFunctionResult TryExecuteEffectCommandFunction(
 	uint8_t saved_bank = hBankROM;
 	uint8_t effect_bank = wEffectFunctionsBank;
 	EffectDispatchFn function = EffectDispatchLookupAddress(lookup.hl);
-	if (function == NULL)
+	if (function == NULL) {
+		fprintf(stderr,
+		        "indirect dispatch miss site=TryExecuteEffectCommandFunction target=$%04X\n",
+		        (unsigned)lookup.hl);
 		abort();
+	}
 	BankswitchROM(effect_bank);
 	TryExecuteEffectCommandFunctionResult state = {
 		.a = effect_bank,

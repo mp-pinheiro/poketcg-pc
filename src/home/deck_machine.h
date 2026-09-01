@@ -80,6 +80,11 @@ TryDeleteSavedDeckResult TryDeleteSavedDeck(void);
 typedef struct { uint8_t a; uint8_t f; } HandleDeckMissingCardsListResult;
 HandleDeckMissingCardsListResult HandleDeckMissingCardsList(uint16_t hl, uint16_t de);
 /* <<< factory HandleDeckMissingCardsList */
+/* >>> factory HandleDeckMissingCardsList.CardListUpdateFunction */
+/* Armed into wCardListUpdateFunction by HandleDeckMissingCardsList and fired
+ * through the card-list input handlers' dispatch (deck_configuration.c). */
+void HandleDeckMissingCardsList_CardListUpdateFunction(void);
+/* <<< factory HandleDeckMissingCardsList.CardListUpdateFunction */
 /* >>> factory HandleDismantleDeckToMakeSpace */
 typedef struct { uint8_t a; uint8_t f; } HandleDismantleDeckToMakeSpaceResult;
 HandleDismantleDeckToMakeSpaceResult HandleDismantleDeckToMakeSpace(void);

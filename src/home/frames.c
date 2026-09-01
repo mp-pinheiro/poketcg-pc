@@ -2,20 +2,24 @@
 
 #include "generated/hram.h"
 #include "generated/wram.h"
+#include "home/indirect_dispatch.h"
 #include "home/input.h"
 #include "home/load_animation.h"
 #include "home/map.h"
 #include "home/play_animation.h"
+#include "home/serial.h"
 #include "mem.h"
 
 #define PAD_CTRL_PAD 0xF0u
 #define PAD_BUTTONS 0x0Fu
+#define PAD_SELECT 0x04u
 
 /* Registered targets of wDoFrameFunction that this tree has a C body for. */
 #define DO_FRAME_UPDATE_QUEUED_ANIMATIONS 0x3BA2u
 #define DO_FRAME_OVERWORLD 0x380Eu
 #define DO_FRAME_FUNC_3E31 0x3E31u
 #define DO_FRAME_ALL_SPRITE_ANIMATIONS 0x3CB4u
+#define DO_FRAME_LINK_OPPONENT_TURN 0x0F1Du
 
 static FrameBoundaryHook g_frame_boundary_hook;
 static void *g_frame_boundary_context;
@@ -39,8 +43,9 @@ int frame_boundary_is_installed(void)
 
 /* CallIndirect(wDoFrameFunction), poketcg/src/home/frames.asm:18-19 through
  * jumptable.asm:15-30: call the registered per-frame function unless the
- * pointer is NULL. CallIndirect reaches its target with `jp hl`, so the callee
- * sees hl holding its own address.
+ * pointer is NULL (DispatchIndirect treats zero as a no-op, matching
+ * CallIndirect). Every non-NULL address stored anywhere in the asm is
+ * registered below; an unregistered nonzero target fails loud.
  *
  * Omitting this call made every native loop that waits for an animation spin
  * forever: ResetAnimationQueue registers UpdateQueuedAnimations here
@@ -66,10 +71,16 @@ static void CallDoFrameFunction(void)
 	case DO_FRAME_FUNC_3E31:
 		Func_3e31();
 		return;
+	case DO_FRAME_LINK_OPPONENT_TURN:
+		/* engine/duel/core.asm:6405-6409 stores this target for the link
+		 * opponent's turn (serial.asm:504-521). The asm's decided path
+		 * reloads sp from wLinkOpponentTurnReturnAddress -- not expressible
+		 * in C -- so the port models it as bank switch + carry inside the
+		 * callee; the frame hook observes the serial-poll side effects. */
+		(void)LinkOpponentTurnFrameFunction();
+		return;
 	default:
-		/* NULL, and any address whose routine is not ported yet: the asm
-		 * returns immediately for NULL, and an unported target keeps the
-		 * behaviour this port had before the dispatch existed. */
+		DispatchIndirect("wDoFrameFunction", target);
 		return;
 	}
 }
@@ -96,6 +107,25 @@ void HandleDPadRepeat(void)
 	          (uint8_t)(gb_read8(hKeysPressed_ADDR) & PAD_BUTTONS));
 }
 
+/* frames.asm:23-39: when wDebugPauseAllowed is set, pressing SELECT freezes
+ * the game inside DoFrame until SELECT is pressed again. Each paused
+ * iteration repeats DoFrame's vblank tail (WaitForVBlank, ReadJoypad,
+ * HandleDPadRepeat) -- WaitForVBlank is the halt point, so it also keeps the
+ * frame boundary reachable: the host keeps granting frames and pumping while
+ * the game is paused. */
+static void DoFrameDebugPause(void)
+{
+	for (;;) {
+		gb_write8(wVBlankCounter_ADDR,
+		          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
+		ReadJoypad();
+		HandleDPadRepeat();
+		frame_boundary_reach();
+		if ((gb_read8(hKeysPressed_ADDR) & PAD_SELECT) != 0u)
+			return;
+	}
+}
+
 void DoFrame(void)
 {
 	CallDoFrameFunction();
@@ -103,6 +133,9 @@ void DoFrame(void)
 	          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 	ReadJoypad();
 	HandleDPadRepeat();
+	if (gb_read8(wDebugPauseAllowed_ADDR) != 0u &&
+	    (gb_read8(hKeysPressed_ADDR) & PAD_SELECT) != 0u)
+		DoFrameDebugPause();
 	frame_boundary_reach();
 }
 
