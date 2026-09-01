@@ -58,8 +58,8 @@ CASES = {
 MUTATIONS = {
     "SetDefaultPalettes": {
         "source_symbol": "SetDefaultPalettes",
-        "before": "gb_write8(wBGP_ADDR, 0xE4u);",
-        "after": "gb_write8(wBGP_ADDR, 0x00u);",
+        "before": "gb_write8(wTextBoxFrameType_ADDR, 4);",
+        "after": "gb_write8(wTextBoxFrameType_ADDR, 5);",
         "case_ids": ["SetDefaultPalettes-0", "SetDefaultPalettes-1", "SetDefaultPalettes-2"],
     },
 }
