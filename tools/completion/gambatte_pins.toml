@@ -1,0 +1,26 @@
+schema = 1
+api = "libgambatte-c-v1"
+
+[source]
+commit = "e35e24de89f06642852f622d7d4159ba6a4abea2"
+url = "https://github.com/pokemon-speedrunning/gambatte-core/archive/e35e24de89f06642852f622d7d4159ba6a4abea2.tar.gz"
+path = "build/completion/gambatte/gambatte-core.tar.gz"
+sha256 = "4f4c382737ef9e6d1b38b20eae2b34756547b1a0e820a19dd4da3baf47f312c5"
+scons_version = "4.5.2"
+
+[core]
+path = "build/completion/gambatte/source/libgambatte/libgambatte.so"
+sha256 = "6aa9e4925c7cce81f67d04197e739af98127351efa9b8d7ca578a823cd0d7d24"
+
+[rom]
+path = "poketcg/poketcg.gbc"
+sha256 = "a54515bb6b3e364964d3c0226f5a6b0c8c0f7318c9296ef2e321df0bbb8541ce"
+
+[boot]
+mode = "no-bios"
+
+[requirements]
+domains = ["WRAM", "ROM", "VRAM", "VRAM Bank 0", "VRAM Bank 1", "OAM", "HRAM", "CartRAM", "System Bus", "BG Palette RGB", "OBJ Palette RGB"]
+registers = ["A", "F", "B", "C", "D", "E", "H", "L", "SP", "PC"]
+trace = "anchored-exec-v1"
+framebuffer = "rgba8888-160x144"

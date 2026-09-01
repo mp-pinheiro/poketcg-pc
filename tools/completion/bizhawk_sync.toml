@@ -1,4 +1,0 @@
-schema = 1
-frame_advance = "emu.frameadvance"
-input_driver = "joypad.set"
-lag_emulation = true

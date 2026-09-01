@@ -20,7 +20,7 @@ from tools.completion.revision import current_source_revision
 GATE_PATH = ROOT / "site" / "data" / "gate.json"
 HISTORY_PATH = ROOT / "site" / "data" / "history.jsonl"
 COMPLETION = ROOT / "tools" / "completion" / "completion.py"
-PINS = ROOT / "tools" / "completion" / "bizhawk_pins.toml"
+GAMBATTE_PINS = ROOT / "tools" / "completion" / "gambatte_pins.toml"
 
 
 class GateError(RuntimeError):
@@ -113,7 +113,7 @@ def external_identity(args: argparse.Namespace) -> dict[str, str]:
     values = {
         "baseline": str(ROOT / "tools/completion/baseline.toml"),
         "requirements": str(ROOT / "tools/completion/requirements.toml"),
-        "bizhawk_pins": str(PINS),
+        "gambatte_pins": str(GAMBATTE_PINS),
         "rom": str(args.rom or ROOT / "poketcg/poketcg.gbc"),
         "symbols": str(args.symbols or ROOT / "poketcg/poketcg.sym"),
         "binary": str(args.binary or ROOT / "build/poketcg"),
@@ -252,12 +252,25 @@ def main(argv: list[str] | None = None) -> int:
             package_command.extend(["--binary", str(args.binary)])
         if args.data_pack:
             package_command.extend(["--pack", str(args.data_pack)])
+        gambatte_capture_command = [
+            sys.executable,
+            str(ROOT / "tools/completion/gambatte_runner.py"),
+            "capture",
+            "release-smoke",
+            "--frames",
+            "1",
+            "--output",
+            str(run_dir / "gambatte-smoke.json"),
+            "--import-output",
+            str(run_dir / "gambatte-smoke.imported.json"),
+        ]
         commands = {
             "package-smoke": package_command,
             "completion-audit": [sys.executable, str(COMPLETION), "audit"],
             "completion-cfg": ["just", "completion-cfg-audit"],
             "lane-health": ["just", "completion-lanes-health"],
-            "bizhawk-health": ["just", "completion-bizhawk-health"],
+            "gambatte-health": ["just", "completion-gambatte-health"],
+            "gambatte-capture": gambatte_capture_command,
         }
         for name, command in commands.items():
             constituents[name] = run_constituent(

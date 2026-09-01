@@ -60,19 +60,25 @@ def parse_oracle_b(payload: bytes) -> dict[str, Any]:
     return value
 
 
-def serialize_bizhawk(domains: dict[str, bytes], registers: dict[str, int], trace: list[dict[str, int]]) -> bytes:
+def serialize_gambatte(
+    domains: dict[str, bytes],
+    registers_before: dict[str, int],
+    registers_after: dict[str, int],
+    trace: list[dict[str, int]],
+) -> bytes:
     return json.dumps({
-        "lane": "bizhawk-gambatte",
+        "lane": "gambatte-headless",
         "domains": {name: data.hex() for name, data in sorted(domains.items())},
-        "registers": registers,
+        "registers_before": registers_before,
+        "registers_after": registers_after,
         "trace": trace,
     }, sort_keys=True, separators=(",", ":")).encode()
 
 
-def parse_bizhawk(payload: bytes) -> dict[str, Any]:
+def parse_gambatte(payload: bytes) -> dict[str, Any]:
     value = json.loads(payload)
-    if value.get("lane") != "bizhawk-gambatte" or not isinstance(value.get("domains"), dict):
-        raise ValueError("invalid BizHawk lane record")
+    if value.get("lane") != "gambatte-headless" or not isinstance(value.get("domains"), dict):
+        raise ValueError("invalid Gambatte lane record")
     return value
 
 
@@ -98,9 +104,9 @@ def health() -> dict[str, dict[str, Any]]:
             "status": "PASS" if _available(oracle_b) else "UNAVAILABLE",
             "path": str(oracle_b),
         },
-        "bizhawk-gambatte": {
-            "status": "PASS" if (ROOT / "tools" / "completion" / "bizhawk_capture.lua").is_file() else "UNAVAILABLE",
-            "path": "tools/completion/bizhawk_capture.lua",
+        "gambatte-headless": {
+            "status": "PASS" if _available(ROOT / "tools/completion/gambatte_runner.py") else "UNAVAILABLE",
+            "path": "tools/completion/gambatte_runner.py",
         },
     }
 

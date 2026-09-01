@@ -332,10 +332,12 @@ package-smoke:
 completion-lanes-health:
     python3 tools/completion/oracle_lanes.py --health
 
-completion-bizhawk-health:
-    python3 tools/completion/bizhawk_runner.py health
+completion-gambatte-bootstrap:
+    python3 tools/completion/gambatte_runner.py bootstrap
+completion-gambatte-health:
+    python3 tools/completion/gambatte_runner.py health
 completion-capture SCENARIO *ARGS:
-    python3 tools/completion/bizhawk_runner.py capture "{{SCENARIO}}" {{ARGS}}
+    python3 tools/completion/gambatte_runner.py capture "{{SCENARIO}}" {{ARGS}}
 
 completion-cfg-audit:
     python3 tools/completion/cfg.py --trace "${POKETCG_CFG_TRACE:?CFG trace is required}"
