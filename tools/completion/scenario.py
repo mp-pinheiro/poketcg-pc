@@ -117,6 +117,49 @@ def fields_incomparable(
     )
 
 
+# Documented comparator exclusions: byte ranges that differ for structural
+# reasons with no game-visible consequence, so a whole-state byte compare does
+# not fail on them.
+# - hram[0] ($FF80 hBankROM): the C port resolves banks via direct calls and
+#   does not maintain the asm's farcall bank shadow; the game never reads it.
+# - hram[96..113] ($FFE0-$FFED): one-time boot-era stack debris. The asm boot
+#   runs `ld sp, $fffe` and freezes the hardware stack at `ld sp, $e000`
+#   (start.asm:4-31); the C port has no GB stack, so those bytes are
+#   untraceable debris no code ever reads again.
+# - mapper_state["rom_bank"]/["vram_bank"]: dead host-side trackers in the
+#   oracle's savestate (its recompiled build resolves banks statically and
+#   never updates them); the native fields are live MBC state. rVBK ($FF4F)
+#   matches on both sides, so VRAM bank selection stays compared via io.
+COMPARATOR_EXCLUDED_RANGES = {
+    "hram": [(0, 1), (96, 114)],
+}
+COMPARATOR_EXCLUDED_KEYS = {
+    "mapper_state": {"rom_bank", "vram_bank"},
+}
+
+
+def apply_comparator_exclusions(
+    reference: dict[str, Any], native: dict[str, Any], field: str
+) -> None:
+    """Neutralize excluded ranges/keys in BOTH states so they cannot
+    mismatch. Byte ranges zero on both sides; excluded dict keys are dropped
+    from both. Exclusions are assertions of structural difference, each with
+    a documented reason above."""
+    for start, end in COMPARATOR_EXCLUDED_RANGES.get(field, ()):
+        for state in (reference, native):
+            values = state.get(field)
+            if isinstance(values, list):
+                for index in range(start, min(end, len(values))):
+                    values[index] = 0
+    excluded = COMPARATOR_EXCLUDED_KEYS.get(field, set())
+    if excluded:
+        for state in (reference, native):
+            values = state.get(field)
+            if isinstance(values, dict):
+                for key in excluded:
+                    values.pop(key, None)
+
+
 def shift_reference_input(text: str, offset: int) -> str:
     """Shift a comma-separated f<frame>:<key>:<value> timeline by offset."""
     if offset == 0:
@@ -139,7 +182,6 @@ def fnv1a(data: bytes) -> int:
     for byte in data:
         checksum = ((checksum ^ byte) * 16777619) & 0xFFFFFFFF
     return checksum
-
 
 def native_battery_to_file(payload: bytes, path: Path) -> None:
     """Wrap raw battery RAM in the native PKSR save format."""
@@ -190,6 +232,7 @@ def compare_state_fields(
     for field in fields:
         if fields_incomparable(reference, native, field):
             continue
+        apply_comparator_exclusions(reference, native, field)
         reference_value = _state_field(reference, field)
         native_value = _state_field(native, field)
         if reference_value is None or native_value is None:
@@ -324,6 +367,9 @@ def main(argv: list[str] | None = None) -> int:
                                         {"field": field, "reason": "schema"}
                                     )
                                     continue
+                                apply_comparator_exclusions(
+                                    reference.state, state, field
+                                )
                                 reference_value = _state_field(reference.state, field)
                                 native_value = _state_field(state, field)
                                 if reference_value is None or native_value is None:
