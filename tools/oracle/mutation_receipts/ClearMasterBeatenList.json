@@ -1,9 +1,9 @@
 {
   "fn": "ClearMasterBeatenList",
   "case": "tests/cases/masters_beaten_list.py",
-  "index": 2,
+  "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"ClearMasterBeatenList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54202\": \"5a00000000000000000000a5\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"ClearMasterBeatenList\", \"mismatches\": {\"bus\": {\"address\": 54203, \"reference\": \"5a0000000000\", \"native\": \"5affffffffff\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[54202, 12]]}}}\n",
-  "restored": "{\"fn\": \"ClearMasterBeatenList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54202\": \"5a00000000000000000000a5\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"ClearMasterBeatenList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54203\": \"00000000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ClearMasterBeatenList\", \"mismatches\": {\"bus\": {\"address\": 54203, \"reference\": \"0000000000\", \"native\": \"ffffffffff\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[54203, 10]]}}}\n",
+  "restored": "{\"fn\": \"ClearMasterBeatenList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54203\": \"00000000000000000000\"}}, \"status\": \"PASS\"}\n"
 }
