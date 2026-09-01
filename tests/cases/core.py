@@ -1233,7 +1233,7 @@ CASES["DisplayAttackPage"] = [
 CONTRACT["DisplayCardPage"] = {"compare": (), "preserve": ()}
 CASES["DisplayCardPage"] = [
     {"oracle": False, "why": "Page zero enters the scene loop without a prepared duel screen.", "wram": {0xCBC7: b"\x00"}},
-    dict(POISON, wram={0xCBC7: b"\x0D"}),
+    dict(POISON, wram={0xCBC7: b"\x0D"}, read={0xFF40: 1}),
 ]
 # <<< factory DisplayCardPage
 # >>> factory DoPracticeDuelAction
@@ -5859,8 +5859,8 @@ MUTATIONS["DisplayAttackPage"] = {
 MUTATIONS["DisplayCardPage"] = {
     "source_symbol": "DisplayCardPage",
     "before": "void DisplayCardPage(void)\n{\n\tEnableLCD();",
-    "after": "DisableLCD();",
-    "case_ids": ["DisplayCardPage-0", "DisplayCardPage-1"],
+    "after": "void DisplayCardPage(void)\n{\n\tDisableLCD();",
+    "case_ids": ["DisplayCardPage-1", "DisplayCardPage-0"],
 }
 # <<< factory-mutation DisplayCardPage
 # >>> factory-mutation DoPracticeDuelAction
