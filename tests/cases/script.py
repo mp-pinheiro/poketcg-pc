@@ -143,7 +143,7 @@ MUTATIONS = {
         "source_symbol": "GetMapScriptPointer",
         "before": "(uint16_t)(MAP_SCRIPTS + (uint16_t)wCurMap * 16u + l)",
         "after":  "(uint16_t)(MAP_SCRIPTS + (uint16_t)wCurMap * 15u + l)",
-        "case_ids": ["GetMapScriptPointer-0", "GetMapScriptPointer-1", "GetMapScriptPointer-2", "GetMapScriptPointer-3", "GetMapScriptPointer-4"],
+        "case_ids": ["GetMapScriptPointer-2", "GetMapScriptPointer-0", "GetMapScriptPointer-1", "GetMapScriptPointer-3", "GetMapScriptPointer-4"],
     },
 }
 # >>> factory-mutation RunOverworldScript

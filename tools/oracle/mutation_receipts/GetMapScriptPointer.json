@@ -1,0 +1,9 @@
+{
+  "fn": "GetMapScriptPointer",
+  "case": "tests/cases/script.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetMapScriptPointer\", \"registers\": {\"a\": 127, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 31492, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"54063\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetMapScriptPointer\", \"mismatches\": {\"a\": [127, 4], \"hl\": [31492, 1024]}}\n",
+  "restored": "{\"fn\": \"GetMapScriptPointer\", \"registers\": {\"a\": 127, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 31492, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"54063\": \"01\"}}, \"status\": \"PASS\"}\n"
+}
