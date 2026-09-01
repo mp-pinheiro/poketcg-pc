@@ -12,6 +12,7 @@ import importlib.util
 import json
 import re
 import subprocess
+import tempfile
 import sys
 import tomllib
 from pathlib import Path
@@ -1410,6 +1411,80 @@ def command_truthful_accounting() -> int:
     return 0 if artifact["status"] == "PASS" else 2
 
 
+def command_substrate() -> int:
+    baseline = load_toml(BASELINE_PATH)
+    manifest = load_toml(MANIFEST_PATH)
+    fields = ["wram", "hram", "sram_bank_0", "vram_bank_0", "framebuffer"]
+    artifact: dict[str, Any] = {
+        "schema": "function-and-replay-v2",
+        "status": "FAIL",
+        "frames": 1,
+        "events": 0,
+        "state_fields": fields,
+        "oracles": ["native"],
+    }
+    try:
+        with tempfile.TemporaryDirectory(prefix="poketcg-substrate-") as directory:
+            directory_path = Path(directory)
+            native_state_path = directory_path / "native-state.json"
+            native_trace_path = directory_path / "native-trace.json"
+            native = subprocess.run(
+                [
+                    str(ROOT / "build" / "poketcg"), "--headless",
+                    "--data-pack", str(ROOT / "build" / "completion" / "data-pack.bin"),
+                    "--frames", "1", "--dump-state", str(native_state_path),
+                    "--trace-entries", str(native_trace_path),
+                ],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+                timeout=60,
+                check=False,
+            )
+            if native.returncode:
+                raise AuditError(native.stderr.strip() or "native substrate run failed")
+            state = load_json(native_state_path)
+            trace = load_json(native_trace_path)
+            missing = [field for field in fields if field not in state]
+            if missing:
+                raise AuditError("native state is missing: " + ",".join(missing))
+            if trace.get("frames") != 1:
+                raise AuditError("native trace did not capture one frame")
+            artifact["state_hashes"] = {
+                field: {
+                    "length": len(state[field]),
+                    "sha256": mapping_digest(state[field]),
+                }
+                for field in fields
+            }
+            artifact["trace"] = {
+                "schema": trace.get("schema"),
+                "frames": trace.get("frames"),
+                "events": trace.get("events"),
+                "symbols": trace.get("symbols", []),
+            }
+            artifact["content_key"] = content_key(baseline, manifest)
+            artifact["status"] = "PASS"
+            artifact["events"] = 1
+            artifact["terminal_event"] = "SUBSTRATE_READY"
+    except (AuditError, KeyError, OSError, TypeError, ValueError) as exc:
+        artifact["failure"] = "SUBSTRATE_ERROR"
+        artifact["detail"] = str(exc)
+    EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+    path = evidence_path("completion:v2:p0:substrate")
+    path.write_text(json.dumps(artifact, sort_keys=True, separators=(",", ":")) + "\n")
+    print(json.dumps({
+        "status": artifact["status"],
+        "artifact": str(path.relative_to(ROOT)),
+        **{
+            key: artifact[key]
+            for key in ("failure", "content_key", "events")
+            if key in artifact
+        },
+    }, sort_keys=True))
+    return 0 if artifact["status"] == "PASS" else 2
+
+
 def command_next() -> int:
     manifest = load_toml(MANIFEST_PATH)
     baseline = load_toml(BASELINE_PATH)
@@ -1440,6 +1515,7 @@ def main(argv: list[str] | None = None) -> int:
     subparsers.add_parser("rom-coverage")
     subparsers.add_parser("routine-mapping")
     subparsers.add_parser("representation")
+    subparsers.add_parser("substrate")
     subparsers.add_parser("truthful-accounting")
     subparsers.add_parser("next")
     args = parser.parse_args(argv)
@@ -1447,6 +1523,8 @@ def main(argv: list[str] | None = None) -> int:
         return command_audit()
     if args.command == "status":
         return command_status()
+    if args.command == "substrate":
+        return command_substrate()
     if args.command == "truthful-accounting":
         return command_truthful_accounting()
     if args.command == "representation":
