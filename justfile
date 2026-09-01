@@ -316,6 +316,7 @@ completion-next:
 
 # Generate only declared ROM data spans for the local product package.
 completion-data-pack:
+    just progress-inventory
     just data-verify
     python3 tools/gen_data.py --sparse-pack --verify
 completion-data-pack-check:
@@ -336,6 +337,11 @@ completion-capture SCENARIO *ARGS:
 
 completion-cfg-audit:
     python3 tools/completion/cfg.py
+
+completion-tracker-check:
+    python3 tools/completion/sync_tracker.py --check
+completion-scenario SCENARIO:
+    python3 tools/completion/scenario.py "{{SCENARIO}}"
 # Recompute site/data/progress.json + history point from the registry and gate record.
 progress:
     python3 tools/progress/report.py build
