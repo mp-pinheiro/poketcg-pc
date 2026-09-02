@@ -61,8 +61,15 @@ Match `blocked_by`, or stderr from an `oracle-diff`.
 
 `gdb` 15.1 speaks DAP, so a `MISSING_DATA` abort is attributable in about two
 minutes rather than by inference. Break on `missing_product_data`
-(`src/mem.c`), continue, and read the backtrace: the caller chain names the
-routine that computed the address. The game runs on thread 2, not thread 1.
+(`src/mem.c`), continue, and read the backtrace. The game runs on thread 2, not
+thread 1.
+
+The frame to act on is the shallowest one outside `src/mem.c` — the frames below
+it (`rom_ptr_product`, `rom_ptr`, `gb_ptr`, `gb_read8`) are the bus itself and
+are never the defect. That frame is the routine that computed the address; read
+its local holding the address (`evaluate` with its `frame_id`) and compare it
+against the asm the routine was ported from. If it looks right, the bank is
+wrong and the defect is in whichever ancestor frame should have switched.
 
 ## The banks recipe
 
