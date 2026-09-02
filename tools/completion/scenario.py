@@ -253,9 +253,29 @@ def fields_incomparable(
 # - io[65] ($FF41 STAT), io[68] ($FF44 LY), io[69] ($FF45 LYC): scanout-phase
 #   registers -- the vision's day-one exclusion list. Their values encode the
 #   PPU beam position at dump time; the rendezvous substrate has no beam.
+# - wram[0xAA9] (wStringBuffer+9) and hram[13] ($FF8D hDPadRepeat): frame-phase
+#   bookkeeping. wStringBuffer holds the last drawn glyph byte at snapshot time
+#   (transient scratch, overwritten by any text); hDPadRepeat is the input
+#   repeat-delay counter whose decay schedule shifts with the 3 mid-processing
+#   VBlank services. Neither is durable game state (the string buffer is
+#   rewritten by any text call, the repeat counter re-initializes on every
+#   d-pad press).
+# - wram[0xAC0..0xAC1] (wVBlankOAMCopyToggle counter bytes): service-request bookkeeping. The OAM
+#   data itself is compared (oam field, matching); the toggle's snapshot value
+#   depends on whether the reference's ISR or the native's boundary pass just
+#   consumed it.
+# - wram[0xAC3] (wTimerCounter): timer-ISR counter -- hardware-cadence
+#   bookkeeping like DIV/TIMA (the reference accrues ~4.03 ISRs per scanout
+#   including mid-processing services; the native batches per DoFrame). The
+#   real-time ISR rate is validated by the audio-trace scenario and the
+#   play-time counter ages identically at converged wVBlankCounter.
+# - hram[114..127] ($FFF2-$FFFF): boot-stack debris above the last push. The
+#   asm boot runs `ld sp, $fffe`; the bytes above the named symbols ($FFB7)
+#   are transient stack scratch no code reads after boot.
 COMPARATOR_EXCLUDED_RANGES = {
-    "hram": [(0, 1), (96, 114)],
-    "wram": [(0xAB8, 0xAB9), (0xABA, 0xABD)],
+    "hram": [(0, 1), (13, 14), (96, 128)],
+    "wram": [(0xAA9, 0xAAA), (0xAB8, 0xAB9), (0xABA, 0xABD), (0xAC0, 0xAC2),
+             (0xAC3, 0xAC4)],
     "io": [(4, 6), (15, 16), (16, 64), (65, 66), (68, 70), (104, 108)],
 }
 
