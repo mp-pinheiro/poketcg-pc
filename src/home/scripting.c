@@ -2162,7 +2162,11 @@ IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)
 /* >>> factory ScriptCommand_ShowSamRulesMultichoice */
 IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)
 {
-	ShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, 0xC500u);
+	/* scripting.asm:1716-1730 passes `.multichoice_menu_args`, the table that
+	 * follows the routine in bank 3 ($03:532B). */
+	BankswitchROM(3u);
+	ShowMultichoiceTextboxResult menu =
+		ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, 0x532Bu);
 	uint8_t choice = wMultichoiceTextboxResult_Sam;
 	(void)menu;
 	(void)SetEventValue(0x75u, 0u, 0u, choice);
