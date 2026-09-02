@@ -279,6 +279,22 @@ Required coverage per routine:
    not a sufficient one — one case may cover several labels, and a loop head is
    not an alternative path — so treat it as a ranked worklist, not a verdict.
 
+5. **an observation of whatever the routine actually changes.** A `CONTRACT`
+   that compares only registers cannot see a memory defect, and a routine whose
+   callers wrap it in `push`/`pop` restores those registers regardless of
+   whether its copy was correct — so such a matrix is structurally incapable of
+   failing. `LoadOBPalette` is the worked failure: two register-only cases,
+   `compare`/`preserve` limited to `b c d e hl`, all of them restored by the
+   caller's push/pop. It passed for the life of the port while passing the
+   address of the CGB palette size byte instead of one byte past it
+   (`load_gfx.asm:757-762`, where `ld a,[hli]` both reads the size and advances
+   `hl`), so every object palette landed one byte late with the size byte
+   sitting in `wObjectPalettesCGB[0]`. `LoadBGPalette` had the `+1` and was
+   byte-exact, which is why only the object half diverged. A routine that
+   writes a buffer needs a `read`/`vread` span over that buffer in its cases;
+   rewriting the matrix to seven cases with `read: {0xCB30: 64}` made the
+   defect fail loudly and 5 of the 7 reproduce it on revert.
+
 **Legacy `hram` seeds use absolute addresses.** Schema-2 seeds true HRAM
 through the absolute-address `wram` bus map, so `legacy_to_schema` merges
 `hram={$FF80..$FFFE: ...}` after `wram`. Before 2026-08-26 those entries were
