@@ -181,9 +181,11 @@ is global; "after W1" means after Wave 1 has landed and passed its landing check
     native lane with `--frames N` and the oracle-b lane with `--limit-frames N` for the
     same input timeline, compare final states via `tests/scene_diff.py` normalization,
     binary-search the smallest N with a mismatch, then linear-scan fields/offsets.
-    Emits `{"frame", "field", "offset", "native", "reference"}` JSON. Oracle-b per-frame
-    via limit sweeps is O(N²) at ≤2000 frames ≈ 11 runs — acceptable; do not patch
-    gb-recompiled unless a sweep exceeds 10 min (contingency).
+    Emits `{"frame", "field", "offset", "native", "reference"}` JSON. Measured, not
+    budgeted: one oracle-b run of 300 frames costs 0.27 s and a full harness-aligned
+    2000-frame comparison costs 3.04 s, so reference wall-clock was never the
+    bottleneck and gb-recompiled never needs patching for cost. What was missing is
+    enumeration and attribution — see the census/attribution section below.
 18. Implement the `boot-title-negative` branch (`scenario.py:317-318`): cold-boot both
     lanes on the same input, bisect to first mismatch, write `negative-evidence-v1`
     with `first_mismatch_region`/`first_mismatch_offset`/`replay_artifact` per
@@ -241,14 +243,34 @@ is global; "after W1" means after Wave 1 has landed and passed its landing check
     (receipt_red 2477, missing 0, invalid 0), or every remaining witness is deferred
     with a consolidated blocker table after a zero-progress retry pass.
 
-### Wave 2 — boot-title green (after W1; single lane — the fix loop)
+### Wave 2 — boot-title green (after W1; parallel batches, not a single lane)
 
-21. Iterate to `just completion-scenario boot-title` PASS: run the scenario, take the
-    mismatch list, run `frame_bisect.py boot-title`, fix the first divergent write
-    under the normal per-function oracle discipline (`just oracle-diff <Fn>` after each
-    fix), repeat. PASS requires: terminal_event `NEW_GAME_ENTERED` (input timeline
+21. Iterate to `just completion-scenario boot-title` PASS with the census batch loop.
+    The scenario comparator emits `comparison.census` — every differing byte, grouped
+    under the RAM symbol that owns it (`tools/completion/scenario.py`
+    `compare_state_fields`) — and `tools/completion/refstream.py writers` names the
+    reference routine that wrote each byte from an anchored Gambatte run. One cycle is:
+    `just completion-scenario boot-title`, then
+    `python3 tools/completion/dispatch_census.py --evidence <artifact> --out
+    .factory/divergence/<batch>`, which groups the bytes by owning pret basename and
+    writes one self-contained fix packet per basename; dispatch those packets as one
+    parallel `tasks[]` batch (each agent owns exactly one four-file quartet), then land
+    serially and require `census.total_bytes` and `census.regions` to fall.
+    PASS requires: terminal_event `NEW_GAME_ENTERED` (input timeline
     A@1000, DOWN@1100, A@1101, START@1200, A@1201), events ≥ 3, zero mismatches across
     the 22 state fields at frame 2000.
+
+    Measured go/no-go for this milestone, 2026-09-02: the harness reported 1 mismatch
+    while 123 bytes actually differed. 95 of them were the game's CPU stack below
+    `$E000` (`start.asm:31`; declared WRAM ends at `$DEE5`, `wram.asm:3288-3289`),
+    which the C port cannot have and which is now excluded with that citation. The
+    remaining divergence is **28 bytes across 17 regions owned by 6 basenames**:
+    `music1` 15 (`Music1_UpdateChannel1`/`_UpdateVibrato`/`_UpdateChannel4`/`Music1_call`),
+    `clear_sram` 4 (`ClearSRAMBank`), `setup` 4 (`ZeroRAM`), `random` 3
+    (`UpdateRNGSources`), `menus` 1 (`HandleMenuInput`), `sfx` 1 (`SFX_loop`).
+    Six root-cause candidates is far under the 20 that gates this approach, so the
+    batch loop proceeds. The anchored reference reproduces 117 of the 119 divergent
+    wram offsets oracle-b reports, so the fast lane is licensed by the slow one.
 22. Regenerate the five stale producers (`just completion-baseline`,
     `completion-rom-coverage`, `completion-routine-mapping`, `completion-substrate`,
     `completion-hardware-removal`) so their `content_key` is current.

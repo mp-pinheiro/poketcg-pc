@@ -363,6 +363,24 @@ completion-tracker-check:
     python3 tools/completion/sync_tracker.py --check
 completion-scenario SCENARIO:
     python3 tools/completion/scenario.py "{{SCENARIO}}"
+
+# Anchored Gambatte reference stream: one run, one full state per reference DoFrame.
+completion-refstream SCENARIO *ARGS:
+    python3 tools/completion/refstream.py build "{{SCENARIO}}" {{ARGS}}
+
+# Name the reference routine that wrote each of a comma-separated address list.
+completion-writers SCENARIO ADDRESS *ARGS:
+    python3 tools/completion/refstream.py writers "{{SCENARIO}}" --address "{{ADDRESS}}" {{ARGS}}
+
+# Bank-verified routine-entry trace of the reference over a scenario's timeline.
+completion-reftrace SCENARIO *ARGS:
+    python3 tools/completion/refstream.py trace "{{SCENARIO}}" {{ARGS}}
+
+# Group a scenario census into one self-contained fix packet per owning basename.
+completion-dispatch SCENARIO OUT *ARGS:
+    python3 tools/completion/dispatch_census.py --scenario "{{SCENARIO}}" \
+        --evidence "{{build_dir}}/completion/evidence/$(python3 -c 'import sys; sys.path.insert(0, "tools/completion"); import scenario; print(scenario.SCENARIO_REQUIREMENTS["{{SCENARIO}}"])').json" \
+        --out "{{OUT}}" {{ARGS}}
 # Recompute site/data/progress.json + history point from the registry and gate record.
 progress:
     python3 tools/progress/report.py build

@@ -17,7 +17,9 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from refstream import group_by_symbol
 from tools.oracle.gbrecomp_oracle import Oracle, _full_state
 
 # Same lane-isolation convention as the justfile's build_dir.
@@ -272,10 +274,21 @@ def fields_incomparable(
 # - hram[114..127] ($FFF2-$FFFF): boot-stack debris above the last push. The
 #   asm boot runs `ld sp, $fffe`; the bytes above the named symbols ($FFB7)
 #   are transient stack scratch no code reads after boot.
+# - wram[0x1EE5..0x1FFF] ($DEE5-$DFFF): the game's CPU stack. Declared WRAM
+#   ends at $DEE5 (wram.asm:3288-3289, `wMusicCh1StackBackup: ds $c * 4` at
+#   $DEB5, immediately followed by `INCLUDE "sram.asm"`), and start.asm:31
+#   runs `ld sp, $e000`, so every byte above $DEE4 is stack that grew down
+#   from $E000 -- return addresses and pushed register pairs. The C port has
+#   no Game Boy stack at all: calls and saved registers live on the host C
+#   stack, so these bytes are unreproducible by construction, exactly like
+#   the hram[96..128] boot-stack debris above. Measured writer of the
+#   divergent bytes is whichever routine pushed last (`refstream.py writers`
+#   named DrawSpriteAnimationFrame.loop for the boot-title timeline), which
+#   is the signature of stack traffic rather than a data region.
 COMPARATOR_EXCLUDED_RANGES = {
     "hram": [(0, 1), (13, 14), (96, 128)],
     "wram": [(0xAA9, 0xAAA), (0xAB8, 0xAB9), (0xABA, 0xABD), (0xAC0, 0xAC2),
-             (0xAC3, 0xAC4)],
+             (0xAC3, 0xAC4), (0x1EE5, 0x2000)],
     "io": [(4, 6), (15, 16), (16, 64), (65, 66), (68, 70), (104, 108)],
 }
 
@@ -369,25 +382,89 @@ def parse_reference_audio(path: Path) -> list[dict[str, int]]:
 
 
 
+CENSUS_TOP_REGIONS = 20
+CENSUS_OFFSETS_PER_REGION = 8
+
+
+def excluded_byte_count(field: str) -> int:
+    return sum(end - start for start, end in COMPARATOR_EXCLUDED_RANGES.get(field, ()))
+
+
+def field_differences(
+    reference: dict[str, Any], native: dict[str, Any], field: str
+) -> tuple[list[int], bool]:
+    """Differing byte offsets for one field, plus whether the two sides differ
+    in length. Exclusions must already be applied to both states."""
+    from tests.scene_diff import _state_field
+
+    reference_value = _state_field(reference, field)
+    native_value = _state_field(native, field)
+    if reference_value is None or native_value is None:
+        return [], False
+    offsets = [
+        offset
+        for offset, (mine, theirs) in enumerate(zip(reference_value, native_value))
+        if mine != theirs
+    ]
+    return offsets, len(reference_value) != len(native_value)
+
+
 def compare_state_fields(
     reference: dict[str, Any], native: dict[str, Any], fields: tuple[str, ...]
-) -> list[dict[str, Any]]:
-    from tests.scene_diff import _first_difference, _state_field
+) -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[str, str]]]:
+    """(mismatches, census, schema_skips).
 
-    mismatches = []
+    `mismatches` keeps one first-offset entry per field so the requirement
+    gate's PASS/FAIL semantics are unchanged; `census` counts every differing
+    byte and groups it under the RAM symbol that owns it, which is the
+    burn-down metric."""
+    from tests.scene_diff import _state_field
+
+    mismatches: list[dict[str, Any]] = []
+    schema_skips: list[dict[str, str]] = []
+    regions: list[dict[str, Any]] = []
+    by_field: dict[str, int] = {}
+    length_divergent: list[str] = []
+    excluded_total = 0
     for field in fields:
         if fields_incomparable(reference, native, field):
+            schema_skips.append({"field": field, "reason": "schema"})
             continue
         apply_comparator_exclusions(reference, native, field)
-        reference_value = _state_field(reference, field)
-        native_value = _state_field(native, field)
-        if reference_value is None or native_value is None:
+        excluded_total += excluded_byte_count(field)
+        if _state_field(reference, field) is None or _state_field(native, field) is None:
             mismatches.append({"field": field, "reason": "missing"})
             continue
-        offset = _first_difference(reference_value, native_value)
-        if offset is not None:
-            mismatches.append({"field": field, "offset": offset})
-    return mismatches
+        offsets, length_differs = field_differences(reference, native, field)
+        by_field[field] = len(offsets)
+        if length_differs:
+            length_divergent.append(field)
+        if offsets:
+            mismatches.append({"field": field, "offset": offsets[0]})
+        elif length_differs:
+            mismatches.append({"field": field, "offset": _length_mismatch_offset(reference, native, field)})
+        regions.extend(
+            group_by_symbol(field, offsets, offsets_per_region=CENSUS_OFFSETS_PER_REGION)
+        )
+    regions.sort(key=lambda row: (-row["count"], row["field"], row["field_offset"]))
+    census = {
+        "total_bytes": sum(by_field.values()),
+        "regions": len(regions),
+        "excluded_bytes_total": excluded_total,
+        "by_field": by_field,
+        "top_regions": regions[:CENSUS_TOP_REGIONS],
+    }
+    if length_divergent:
+        census["length_divergent_fields"] = length_divergent
+    return mismatches, census, schema_skips
+
+
+def _length_mismatch_offset(
+    reference: dict[str, Any], native: dict[str, Any], field: str
+) -> int:
+    from tests.scene_diff import _state_field
+
+    return min(len(_state_field(reference, field)), len(_state_field(native, field)))
 
 def current_key() -> str:
     from completion import content_key, load_toml
@@ -491,7 +568,7 @@ def main(argv: list[str] | None = None) -> int:
                         artifact["failure"] = "EVENT_BOUND_NOT_MET"
                     else:
                         try:
-                            from tests.scene_diff import STATE_FIELDS, _first_difference, _state_field
+                            from tests.scene_diff import STATE_FIELDS
                             with Oracle(timeout=120.0) as oracle:
                                 reference_state, frame_offset = (
                                     reference_aligned_state(
@@ -500,30 +577,15 @@ def main(argv: list[str] | None = None) -> int:
                                     )
                                 )
                             artifact["reference_frame_offset"] = frame_offset
-                            mismatches = []
-                            schema_skips = []
-                            for field in STATE_FIELDS:
-                                if fields_incomparable(reference_state, state, field):
-                                    schema_skips.append(
-                                        {"field": field, "reason": "schema"}
-                                    )
-                                    continue
-                                apply_comparator_exclusions(
-                                    reference_state, state, field
-                                )
-                                reference_value = _state_field(reference_state, field)
-                                native_value = _state_field(state, field)
-                                if reference_value is None or native_value is None:
-                                    mismatches.append({"field": field, "reason": "missing"})
-                                    continue
-                                offset = _first_difference(reference_value, native_value)
-                                if offset is not None:
-                                    mismatches.append({"field": field, "offset": offset})
+                            mismatches, census, schema_skips = compare_state_fields(
+                                reference_state, state, STATE_FIELDS
+                            )
                             artifact["field_schema_skips"] = schema_skips
                             artifact["oracles"] = ["oracle-b", "native"]
                             artifact["comparison"] = {
                                 "status": "PASS" if not mismatches else "FAIL",
                                 "mismatches": mismatches,
+                                "census": census,
                             }
                             if mismatches:
                                 artifact["failure"] = "STATE_MISMATCH"
@@ -546,11 +608,15 @@ def main(argv: list[str] | None = None) -> int:
                             if args.scenario == "ui-corpus"
                             else ("vram_bank_0", "vram_bank_1", "framebuffer")
                         )
-                        mismatches = compare_state_fields(reference_state, state, fields)
+                        mismatches, census, schema_skips = compare_state_fields(
+                            reference_state, state, fields
+                        )
+                        artifact["field_schema_skips"] = schema_skips
                         artifact["oracles"] = ["oracle-b", "native"]
                         artifact["comparison"] = {
                             "fields": list(fields),
                             "mismatches": mismatches,
+                            "census": census,
                             "status": "PASS" if not mismatches else "FAIL",
                         }
                         if not mismatches:
