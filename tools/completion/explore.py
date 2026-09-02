@@ -148,7 +148,8 @@ class Explorer:
         self.seen |= self.hits
         return self.snapshot(), len(masks)
 
-    def search(self, seed_masks: list[int], report_every: int, frontier_cap: int) -> dict[str, Any]:
+    def search(self, seed_masks: list[int], report_every: int, frontier_cap: int,
+               max_depth: int) -> dict[str, Any]:
         start = time.perf_counter()
         blob, frames = self.seed(seed_masks)
         # Every reachable state stays in the frontier, prioritised by what its
@@ -158,21 +159,25 @@ class Explorer:
         frontier: list[tuple[int, int, float, bytes, list[str]]] = []
         visited: set[int] = set()
         heapq.heappush(frontier, (0, -frames, self.rng.random(), blob, []))
+        # Restarting from nodes that actually discovered something is what
+        # breaks the plateau: a uniform restart over the frontier mostly lands
+        # on barren deep nodes, and a 40,000-expansion run gained 2 routines
+        # while diving to 179,884 frames.
+        discoveries: list[tuple[bytes, list[str], int]] = []
         best_path: list[str] = []
         timeline: list[dict[str, Any]] = []
         while frontier and self.expansions < self.budget:
-            # A deterministic tie-break dives the first action forever: with
-            # every sibling at equal depth and zero discovery it walked a
-            # 31,000-frame chain of WAITs. Random tie-breaks plus occasional
-            # uniform restarts keep the search moving across screens.
-            if self.rng.random() < 0.2 and len(frontier) > 1:
+            if discoveries and self.rng.random() < 0.35:
+                blob, path, depth = discoveries[self.rng.randrange(len(discoveries))]
+            elif self.rng.random() < 0.15 and len(frontier) > 1:
                 index = self.rng.randrange(len(frontier))
                 frontier[index], frontier[-1] = frontier[-1], frontier[index]
                 _score, negative_depth, _seq, blob, path = frontier.pop()
                 heapq.heapify(frontier)
+                depth = -negative_depth
             else:
                 _score, negative_depth, _seq, blob, path = heapq.heappop(frontier)
-            depth = -negative_depth
+                depth = -negative_depth
             for label, mask, press, settle, repeats in actions():
                 if self.expansions >= self.budget:
                     break
@@ -200,7 +205,10 @@ class Explorer:
                         entry["checkpoint"] = f"{stem}.gbs"
                         entry["state"] = f"{stem}.json"
                     timeline.append(entry)
+                    discoveries.append((child_blob, path + [label], child_depth))
                 child = path + [label]
+                if child_depth > max_depth:
+                    continue
                 # The random key stops equal-scoring siblings from being
                 # explored in a fixed order, which collapsed the search into a
                 # single 31,000-frame chain of WAITs.
@@ -258,6 +266,8 @@ def main(argv: list[str] | None = None) -> int:
                         help="boot-title prefix replayed before searching")
     parser.add_argument("--report-every", type=int, default=50)
     parser.add_argument("--frontier-cap", type=int, default=4000)
+    parser.add_argument("--max-depth", type=int, default=45000,
+                        help="drop children past this frame depth")
     parser.add_argument("--json")
     parser.add_argument("--corpus", help="directory for checkpoints and replay scripts")
     args = parser.parse_args(argv)
@@ -271,7 +281,8 @@ def main(argv: list[str] | None = None) -> int:
     explorer = Explorer(args.budget, seed_masks,
                         checkpoint_dir=(corpus / "checkpoints") if corpus else None)
     try:
-        result = explorer.search(seed_masks, args.report_every, args.frontier_cap)
+        result = explorer.search(seed_masks, args.report_every, args.frontier_cap,
+                                 args.max_depth)
         result["subsystems"] = subsystem_report(explorer.seen)
         result["covered_routines"] = sorted(explorer.seen)
     finally:

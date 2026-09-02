@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define TRACE_CAPACITY 4000000u
+#define TRACE_CAPACITY 20000000u
 #define TRACE_MAGIC "PTCGTRC1"
 
 /* Every function here must stay uninstrumented, or __cyg_profile_func_enter

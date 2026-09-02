@@ -212,6 +212,7 @@ class Core:
         self.frame = 0
         self.ordinal = 0
         self.override_mask: int | None = None
+        self.input_axis = "ordinal"
         self._user_exec: Callable[[int, int], None] | None = None
         self._keepalive: list[Any] = []
         self.core = self.library.gambatte_create()
@@ -239,13 +240,15 @@ class Core:
         self.override_mask = mask
 
     def _input(self, _context: int) -> int:
-        """The reference reads JOYP inside ReadJoypad, before the DoFrame
-        anchor fires, so ordinal k is the mask the native port applies on the
-        frame whose boundary is anchor k."""
+        """Scenario timelines are indexed by DoFrame anchor, because that is the
+        axis the native port applies its own --input on. A TAS movie is indexed
+        by emulator frame instead, and mixing the two desyncs immediately: the
+        boot-to-credits movie is 78,207 frames but only 55,080 DoFrames."""
         if self.override_mask is not None:
             return native_mask_to_gambatte(self.override_mask)
-        if 0 <= self.ordinal < len(self._masks):
-            return native_mask_to_gambatte(self._masks[self.ordinal])
+        index = self.frame if self.input_axis == "frame" else self.ordinal
+        if 0 <= index < len(self._masks):
+            return native_mask_to_gambatte(self._masks[index])
         return 0
 
     def _exec(self, address: int, cycle: int) -> None:
@@ -337,6 +340,13 @@ def _pack_palette(rgb: bytes) -> bytes:
         packed += struct.pack("<H", value)
     packed += b"\x00" * (0x40 - len(packed))
     return bytes(packed[:0x40])
+
+
+def load_masks(path: str | Path) -> list[int]:
+    """Per-frame JOYP masks from a comma-separated file, the same encoding the
+    native --input flag consumes and tas_movie.py emits."""
+    text = Path(path).read_text()
+    return [int(part) for part in text.replace("\n", ",").split(",") if part.strip()]
 
 
 def scenario_masks(scenario: str, frames: int) -> list[int]:
@@ -576,16 +586,24 @@ def writer_before(entry: dict[str, Any], ordinal: int) -> dict[str, Any] | None:
 
 
 def routine_trace(
-    scenario: str, frames: int, wanted: set[str] | None, *, ordinals: int | None = None
+    scenario: str, frames: int, wanted: set[str] | None, *,
+    ordinals: int | None = None, masks: list[int] | None = None,
 ) -> dict[str, Any]:
     """Reference routine-entry counts. `ordinals` bounds the run by DoFrame
     anchors instead of PPU frames, which is the only axis comparable against
     native counts: the native lane counts DoFrames, and 2,000 of those span
-    roughly 2,049 PPU frames, so bounding by frames compares unequal windows."""
-    masks = scenario_masks(scenario, frames)
+    roughly 2,049 PPU frames, so bounding by frames compares unequal windows.
+    `masks` replaces the scenario timeline, which is how a TAS movie is run."""
+    movie = masks is not None
+    if masks is None:
+        masks = scenario_masks(scenario, frames)
+    else:
+        masks = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     candidates, by_bank_address = routine_entry_addresses()
     events: list[tuple[int, str]] = []
     with Core(masks) as core:
+        if movie:
+            core.input_axis = "frame"
 
         def on_exec(address: int, _cycle: int) -> None:
             if address not in candidates:
@@ -601,8 +619,10 @@ def routine_trace(
         core.run(frames, stop=(None if ordinals is None else lambda: core.ordinal > ordinals))
         reached = core.ordinal
     per_routine: dict[str, int] = {}
-    for _ordinal, name in events:
+    first_seen: dict[str, int] = {}
+    for ordinal, name in events:
         per_routine[name] = per_routine.get(name, 0) + 1
+        first_seen.setdefault(name, ordinal)
     return {
         "scenario": scenario,
         "frames": frames,
@@ -611,7 +631,8 @@ def routine_trace(
         "events": len(events),
         "distinct_routines": len(per_routine),
         "calls": sorted(
-            ({"routine": name, "count": count} for name, count in per_routine.items()),
+            ({"routine": name, "count": count, "first_ordinal": first_seen[name]}
+             for name, count in per_routine.items()),
             key=lambda row: (-row["count"], row["routine"]),
         ),
         "first_events": [
@@ -650,6 +671,7 @@ def main(argv: list[str] | None = None) -> int:
     trace_parser.add_argument("scenario")
     trace_parser.add_argument("--frames", type=int, default=2000)
     trace_parser.add_argument("--routines")
+    trace_parser.add_argument("--masks", help="per-frame mask file replacing the scenario timeline")
 
     args = parser.parse_args(argv)
     try:
@@ -659,7 +681,9 @@ def main(argv: list[str] | None = None) -> int:
             payload = writers(args.scenario, args.frames, parse_addresses(args.address))
         else:
             wanted = set(args.routines.split(",")) if args.routines else None
-            payload = routine_trace(args.scenario, args.frames, wanted)
+            payload = routine_trace(
+                args.scenario, args.frames, wanted,
+                masks=load_masks(args.masks) if args.masks else None)
     except (RefstreamError, OSError, ValueError) as exc:
         print(json.dumps({"status": "FAIL", "detail": str(exc)}), file=sys.stderr)
         return 2
