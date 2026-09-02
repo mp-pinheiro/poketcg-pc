@@ -50,7 +50,9 @@ Match `blocked_by`, or stderr from an `oracle-diff`.
 | `script entry miss target=$XXXX` | an address the table does not carry | `just build` regenerates the table; if it persists, `grep -i "XXXX" poketcg/poketcg.sym` names the symbol, and it needs adding to `tools/gen_script_entry_dispatch.py`'s inputs |
 | `script entry ram opcode=$OO` | a RAM jump stub that is neither `ret` nor `rst $20` | a probe case stubbed a jump destination the dispatcher cannot decode; report it |
 | `script opcode miss opcode=$OO` | a script command with no handler | the opcode's handler is named by entry `$OO` of `poketcg/src/data/script_table.asm`; port it in the basename owning that asm file |
-| `MISSING_DATA BB:AAAA` | a banked read at an address the pack does not carry, almost always the wrong bank | `grep -i " AAAA" poketcg/poketcg.sym` names what is really there. Attribute it with the debugger (below), then apply the **banks recipe** to the frame that computed the address. |
+| `MISSING_DATA BB:AAAA` and the reading routine's inputs look sane | the pack does not carry that byte, or the bank is wrong | `grep -i " AAAA" poketcg/poketcg.sym` names what is really there. Attribute it with the debugger (below), then apply the **banks recipe** to the frame that computed the address. |
+| `MISSING_DATA BB:AAAA` but the reading routine's inputs are garbage | a divergence upstream, not a bank fault | Do not touch banks. The address is a symptom: some earlier routine produced a bad pointer or index. Apply the **divergence recipe**. |
+| `HANG no exit within Ns` | a wait loop the port never satisfies | The trace was still written, so `blockers[0]` and the counts are valid. Attribute it by attaching the debugger and reading the backtrace of thread 2: the innermost loop is the wait. Compare its exit condition against the asm; the usual cause is a flag the port never sets. |
 | `indirect dispatch miss site=S target=$XXXX` | a RAM function pointer with no case in `S`'s switch | add a `case` for the symbol at `XXXX` to the switch named by `S`; `CallDoFrameFunction` in `src/home/frames.c` is the model |
 | `bank guard depth exceeded at` | farcall recursion deeper than 512 | raise `BANK_GUARD_DEPTH` in `src/bank_guard.c` to 2048 and rerun; if it recurs, report |
 | `probe timed out after 30 seconds` | a loop no case can exit | apply the **loops recipe** |
@@ -90,6 +92,34 @@ BankswitchROM(saved_bank);     /* only where the asm restores it */
 
 `DisplayPCMenu` in `src/home/overworld.c` is the model. `just
 completion-composition-audit banks` lists every routine still missing one.
+
+## The divergence recipe
+
+When a routine reads a garbage address, the routine is usually correct and its
+input is not. Walk backwards to the producer rather than patching the reader.
+
+For the overworld script interpreter, the producer is almost always a command
+that advanced `wScriptPointer` by the wrong amount, which leaves the next fetch
+mid-command. Establish the truth first, then compare:
+
+1. Read `wScriptPointer` ($D413) at the failure and the script entry the run
+   came from (`target` in `ScriptEntryEnter`'s frame).
+2. Derive the real command boundaries from the asm: each `ScriptCommand_X` ends
+   in `IncreaseScriptPointerByN`, resolved through tail-jumps
+   (`jr`/`jp` to a helper). Walk from the entry, adding each `N`.
+3. If the failing pointer is not one of those boundaries, one command advanced
+   wrong. Break on `IncreaseScriptPointer` with a condition on the offending
+   `low` byte and read `a` — the requested advance — plus the backtrace, which
+   names the command that asked for it.
+4. If the command named there is not the one the asm has at that address, the
+   *opcode fetch* read the wrong bank, not the wrong address: compare the byte
+   the port saw against that address in each bank to identify which bank leaked,
+   then fix whatever selected it (see the banks recipe).
+
+That last step is how the audio leak was found: the interpreter fetched an
+opcode out of bank `$3D` because the sound wrappers did not restore the caller's
+bank, so `CloseTextBox` was dispatched as `SetChallengeHallNPCCoords` and
+advanced 3 instead of 1.
 
 ## The loops recipe
 
