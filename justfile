@@ -394,6 +394,18 @@ build-trace:
 # Per-routine call-count diff, native against the reference stream.
 completion-trace-diff SCENARIO *ARGS:
     python3 tools/completion/native_trace.py "{{SCENARIO}}" {{ARGS}}
+
+# Convert a BizHawk .bk2 movie into the port's per-frame input encoding.
+completion-tas-convert MOVIE *ARGS:
+    python3 tools/completion/tas_movie.py "{{MOVIE}}" {{ARGS}}
+
+# How far the port tracks the ROM through the completion TAS, and what stops it.
+completion-tas-progress *ARGS:
+    python3 tools/completion/tas_progress.py {{ARGS}}
+
+# Coverage-guided input search with savestate checkpoints.
+completion-explore *ARGS:
+    python3 tools/completion/explore.py {{ARGS}}
 # Recompute site/data/progress.json + history point from the registry and gate record.
 progress:
     python3 tools/progress/report.py build
