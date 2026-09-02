@@ -65,14 +65,28 @@ def canonical_bytes(value: object) -> bytes:
 def state_hash(state: dict[str, Any]) -> str:
     return hashlib.sha256(canonical_bytes(state)).hexdigest()
 def boot_input(frames: int) -> list[int]:
-    values = [0] * frames
-    for index, value in ((1000, 16), (1100, 8), (1101, 16), (1200, 128), (1201, 16)):
-        if index < frames:
-            values[index] = value
-    return values
+    """Per-frame held-button masks for the boot-title timeline (JOYP nibble
+    order: low nibble dpad, high nibble buttons). Every press is held for 3
+    consecutive frames -- a human holds a button for many frames, and the
+    reference applies input per scanout while the native applies it per
+    DoFrame, so a 1-frame press landing on a skipped (LCD-off) DoFrame is
+    lost natively while the reference still catches it. Anchors are the
+    original 1-frame ones; where widened windows touch (D@1100/A@1101,
+    S@1200/A@1201) the shared frames carry the OR of both masks, which
+    byte-matches the reference lane's combined entries."""
+    masks = [0] * frames
+    for start, value in ((1000, 16), (1100, 8), (1101, 16), (1200, 128), (1201, 16)):
+        for index in range(start, min(start + 3, frames)):
+            masks[index] |= value
+    return masks
 
 def reference_boot_input() -> str:
-    return "f1000:A:1,f1100:D:1,f1101:A:1,f1200:S:1,f1201:A:1"
+    """oracle-b input script (f<start>:<buttons>:<duration>, active for
+    frames [start, start+duration)) mirroring boot_input(): same anchors,
+    every press held 3 frames. shift_reference_input moves starts only, so
+    window overlap is shift-invariant, and simultaneously-active entries AND
+    into a combined joypad state that byte-matches boot_input's OR'd masks."""
+    return "f1000:A:3,f1100:D:3,f1101:A:3,f1200:S:3,f1201:A:3"
 
 
 WVBC_WRAM_OFFSET = 0xCAB8 - 0xC000
