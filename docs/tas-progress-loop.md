@@ -42,37 +42,56 @@ sibling `DisplayPCMenu` 35 lines below had the bank switch and was the model.
 (`$04:4095`) read from bank 1. `LoadMap` never called `Func_c4b9`
 (`overworld.asm:42`).
 
-## Two decisions the loop is blocked on
+## Computed jumps and non-returning loops
 
-**1. Non-returning scene loops cannot be probed.** `LoadMap`'s `.overworld_loop`
-(`overworld.asm:54-61`) exits only when `wOverworldTransition` gets bit 4 or 6,
-which no isolated case can arrange, so a faithful C loop hangs the native probe
-at 30 s. The reference lanes are bounded by `cycle_budget`; the native probe has
-no equivalent, which is why the routine ships flattened to a single pass with a
-bare `return` — the same shape as the documented `GameLoop` flattening. The seam
-for a fix already exists: `frame_boundary_install` (`src/home/frames.h:7`), unused
-by `src/probe.c`. Giving the probe a frame budget would bound the native lane the
-way `cycle_budget` bounds the reference, and would unblock this whole class. It
-changes the verification substrate, so it is not a basename fix.
+Both are handled now, and both were needed before `HandleOverworldMode` could
+run at all.
 
-**2. `jp hl` to a script entry needs a derived dispatch table.** `EnterScript`
-(`overworld.asm:122-127`) ends in `jp hl` with `hl` from `wNextScript`. Of 247
-`Script_*` labels, 212 open with `start_script` (`rst $20`, so they are bytecode
-and want `RST20(target + 1)`) and 35 are real code needing a C function — 23 of
-those are ported, 12 are not (`Script_dead`, `Script_e61c`,
-`Script_Mitch_GiveBoosters`, …). Deciding at runtime by reading the target's
-opcode is wrong: it reads code as data, which the product data pack cannot serve,
-and it aborts on `00:0000` the moment a null `wNextScript` is reached. The table
-must be derived at build time from `poketcg.sym` plus the ROM, like
-`ScriptDispatchLookupOpcode` is for opcodes.
+**The probe bounds a routine whose asm never returns.** `LoadMap`'s
+`.overworld_loop` (`overworld.asm:54-61`) leaves only when `wOverworldTransition`
+gets bit 4 or 6, which no isolated case can arrange, so a faithful C loop used to
+hang the probe at its wall-clock timeout — which is why the routine shipped
+flattened to a single pass with a bare `return`, the same shape as the documented
+`GameLoop` flattening. `frame_boundary_install_watchdog` (`src/home/frames.h`)
+now bounds the native lane, and `tests/test_leaves.py` derives the allowance from
+the case's own `cycle_budget` with the arithmetic that bounds PyBoy, so both
+lanes read state at the same frame. The allowance is never declared per case, and
+the probe reports `frame_budget_reached`, so a routine expected to return cannot
+stop short unnoticed. The watchdog is deliberately separate from the host hook,
+because `frame_boundary_is_installed()` means "the runtime host is driving
+frames" and eight routines branch on it.
 
-Until both land, `HandleOverworldMode` stays unreachable and the gate stays at
-its baseline. The wiring itself is proven: with a blocking loop plus an opcode
-trampoline, the port ran the overworld, opened the pause menu and drew the status
+**Script entries are resolved at build time.** Two sites reach a script by a
+computed jump: `EnterScript` (`overworld.asm:122-127`) through `wNextScript`, and
+`CallMapScriptPointerIfExists` (`scripting.asm:98-101`) through the `MapScripts`
+table. Deciding at run time by reading the target's first opcode is wrong — it
+reads ROM code as data, which the product data pack does not carry, and it aborts
+on `00:0000` the moment a null `wNextScript` appears.
+`tools/gen_script_entry_dispatch.py` resolves all 324 targets from `poketcg.sym`,
+the ROM and `data/map_scripts.asm`: **212 are bytecode** (they open with
+`start_script`, a lone `rst $20`, and are interpreted by `RST20(target + 1)`),
+**46 are ported routines**, and **66 have no C body yet**. `ScriptEntryEnter`
+aborts by name on an unported target, so a whole-game run says which routine it
+needs. Every target lives in bank `$03` or `$04` with no address claimed twice,
+which is why a 16-bit key matches what a `jp hl` actually carries.
+
+## What still blocks the ordinal
+
+`CallMapScriptPointerIfExists` still returns the pointer instead of jumping
+(`src/home/scripting.c`), so `FindNPCOrObject` sets `OWMODE_SCRIPT` on a carry
+that no longer has a script behind it (`overworld.asm:1082`, `home/script.asm:1-57`)
+and `wNextScript` stays null. Wiring it needs a decision the asm does not settle
+cheaply: `jp hl` makes the map script's own exit registers the caller's result,
+and `ScriptEntryEnter` returns void, so the carry that `HandleMoveModeAPress`
+propagates has nowhere to come from. Behind that sit the 66 unported targets.
+
+Until then `LoadMap` keeps its single-pass `return` and the gate holds at its
+baseline. The wiring is proven, not theoretical: with the loop and trampoline in
+place the port ran the overworld, opened the pause menu and drew the status
 screen — `LoadMap → HandleOverworldMode → CallHandlePlayerMoveMode →
-OpenPauseMenu → PauseMenu → DisplayPauseMenu` — before dying on the null script
-pointer. That evidence is why the two items above are the next work, not a
-re-diagnosis.
+OpenPauseMenu → PauseMenu → DisplayPauseMenu → PrintLabels` — which is how the
+five missing `farcall` bank switches were found.
+
 
 ## The loop
 
