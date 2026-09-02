@@ -156,42 +156,54 @@ PrintStartMenuDescriptionTextResult PrintStartMenuDescriptionText(uint8_t a, uin
 			dispatch = (uint8_t)(dispatch + 2u);
 		DrawRegularTextBox(&box, 0u, 20u, 8u, 0u, 10u);
 		switch (dispatch) {
-		case 1u: {
+		/* start.asm:265-266 jumps through JumpToFunctionInTable, whose
+		 * index is 0-based (jumptable.asm:3-4 doubles `a` and adds it
+		 * straight to the table address), so the four cases are the
+		 * table order at start.asm:271-275: CardPop, ContinueFromDiary,
+		 * NewGame, ContinueDuel. */
+		case 0u: {
 			InitTextPrinting(1u, 12u);
 			TextResult text = PrintTextNoDelay(WhenYouCardPopWithFriendText, 1u, 12u);
-			out_a = text.a;
+			(void)text;
 			break;
 		}
-		case 2u: {
+		case 1u: {
 			uint8_t map = wCurOverworldMap;
 			uint8_t offset = (uint8_t)(map + map);
 			uint16_t src = (uint16_t)(OVERWORLD_MAP_NAMES + offset);
 			gb_write8(wTxRam2_ADDR, gb_read8(src));
+			gb_write8((uint16_t)(wTxRam2_ADDR + 1u), gb_read8((uint16_t)(src + 1u)));
 			gb_write8(wTxRam3_ADDR, wMedalCount);
 			gb_write8((uint16_t)(wTxRam3_ADDR + 1u), 0u);
 			InitTextPrinting(1u, 10u);
 			TextResult text = PrintTextNoDelay(ContinueFromDiarySummaryText, 1u, 10u);
-			out_a = text.a;
-			PrintAlbumProgress_SkipGetProgress(wTotalNumCardsCollected, wTotalNumCardsToCollect, 9u, 14u);
+			(void)text;
+			PrintAlbumProgress_SkipGetProgress(9u, 14u, wTotalNumCardsCollected, wTotalNumCardsToCollect);
 			PrintPlayTime_SkipUpdateTime(10u, 16u);
+			break;
+		}
+		case 2u: {
+			InitTextPrinting(1u, 12u);
+			TextResult text = PrintTextNoDelay(StartANewGameText, 1u, 12u);
+			(void)text;
 			break;
 		}
 		case 3u: {
 			InitTextPrinting(1u, 12u);
-			TextResult text = PrintTextNoDelay(StartANewGameText, 1u, 12u);
-			out_a = text.a;
-			break;
-		}
-		case 4u: {
-			InitTextPrinting(1u, 12u);
 			TextResult text = PrintTextNoDelay(TheGameWillContinueFromThePointInTheDuelText, 1u, 12u);
-			out_a = text.a;
+			(void)text;
 			break;
 		}
 		default:
 			break;
 		}
 	}
+	/* start.asm:267-268: every path falls through .skip, which reloads
+	 * `a` from wCurMenuItem, so the dispatched print's own return value
+	 * never reaches the caller. The dispatch path's F is the flag state
+	 * the printed branch left behind; PrintTextNoDelay does not surface
+	 * it (TextResult has no f member, src/home/print_text.h:54-57), so
+	 * only the skip path's F is modeled here. */
 	uint8_t out_f = (menu_item == wCurHighlightedStartMenuItem) ? 0xC0u : f;
 	wCurHighlightedStartMenuItem = menu_item;
 	(void)a;
