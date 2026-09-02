@@ -1,8 +1,8 @@
 {
   "banks": 14,
-  "executed_routines": 568,
+  "executed_routines": 613,
   "jumps": 4,
   "loops": 38,
-  "reached_ordinal": 20212,
-  "reached_routines": 458
+  "reached_ordinal": 21013,
+  "reached_routines": 493
 }

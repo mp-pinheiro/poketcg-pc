@@ -1,5 +1,7 @@
 #include "home/load_overworld.h"
 
+#include "home/script_entry_dispatch.h"
+
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -36,12 +38,23 @@ void LoadMapTilesAndPals(void)
 }
 /* <<< factory LoadMapTilesAndPals */
 
+/* Func_c9c7 tail-calls CallMapScriptPointerIfExists, whose `jp hl` runs the
+ * map's CLOSE_TEXT_BOX script and returns through this routine
+ * (load_overworld.asm:22-29, scripting.asm:98-103). */
+static void enter_close_text_box_script(void)
+{
+	CallMapScriptResult found = Func_c9c7();
+
+	if ((found.f & 0x10u) != 0u)
+		(void)ScriptEntryEnter(found.hl);
+}
+
 /* >>> factory ReloadMapAfterTextClose */
 void ReloadMapAfterTextClose(void)
 {
 	ClearSRAMBGMaps();
 	LoadTilemap_ToSRAM(0u, 0u);
-	Func_c9c7();
+	enter_close_text_box_script();
 	SafelyCopyBGMapFromSRAMToVRAM();
 	Func_c3ee();
 }
@@ -54,7 +67,7 @@ void LoadMapGfxAndPermissions(void)
 	wTextBoxFrameType = 0u;
 	LoadMapTilesAndPals();
 	LoadPermissionMap();
-	Func_c9c7();
+	enter_close_text_box_script();
 	SafelyCopyBGMapFromSRAMToVRAM();
 	Func_c3ff();
 	if (wCurMap != OVERWORLD_MAP)

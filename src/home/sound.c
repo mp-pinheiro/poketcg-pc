@@ -87,15 +87,91 @@ TileConvertWrapResult Func_37a5(uint16_t hl, uint16_t de)
 	return (TileConvertWrapResult){r.hl, r.de, saved};
 }
 
-/* home/sound.asm audio wrappers — farcall trampolines dissolved to direct calls */
+/* home/sound.asm:19-33 reaches the driver by `farcall`, which selects the
+ * driver's own bank and restores the caller's on return. The port calls the
+ * bodies directly, and it renamed them (`_PlaySFX` -> `Music1_PlaySFX`), so
+ * tools/gen_bank_guard.py cannot match them against the asm's farcall targets
+ * and does not cover them. Without the restore the driver's internal switch
+ * leaks: the overworld script interpreter then fetched its next opcode out of
+ * bank $3D and ran a different command. */
 #define SFX_DENIED 0x04u
+#define BANK_AUDIO_1 0x3Du
 
-void SetupSound(void)       { Music1_Init(); }
-void StopMusic(void)        { Music1_PlaySong(0); }
-void PlaySong(uint8_t a)    { Music1_PlaySong(a); }
-uint8_t AssertSongFinished(void)  { return Music1_AssertSongFinished(); }
-uint8_t AssertSFXFinished(void)   { return Music1_AssertSFXFinished(); }
-void PlaySFX_InvalidChoice(void)  { Music1_PlaySFX(SFX_DENIED); }
-void PlaySFX(uint8_t a)     { Music1_PlaySFX(a); }
-void PauseSong(void)        { Music1_PauseSong(); }
-void ResumeSong(void)       { Music1_ResumeSong(); }
+static uint8_t enter_audio_bank(void)
+{
+	uint8_t saved = hBankROM;
+
+	BankswitchROM(BANK_AUDIO_1);
+	return saved;
+}
+
+void SetupSound(void)
+{
+	uint8_t saved = enter_audio_bank();
+
+	Music1_Init();
+	BankswitchROM(saved);
+}
+
+void StopMusic(void)
+{
+	uint8_t saved = enter_audio_bank();
+
+	Music1_PlaySong(0);
+	BankswitchROM(saved);
+}
+
+void PlaySong(uint8_t a)
+{
+	uint8_t saved = enter_audio_bank();
+
+	Music1_PlaySong(a);
+	BankswitchROM(saved);
+}
+
+uint8_t AssertSongFinished(void)
+{
+	uint8_t saved = enter_audio_bank();
+	uint8_t result = Music1_AssertSongFinished();
+
+	BankswitchROM(saved);
+	return result;
+}
+
+uint8_t AssertSFXFinished(void)
+{
+	uint8_t saved = enter_audio_bank();
+	uint8_t result = Music1_AssertSFXFinished();
+
+	BankswitchROM(saved);
+	return result;
+}
+
+void PlaySFX_InvalidChoice(void)
+{
+	PlaySFX(SFX_DENIED);
+}
+
+void PlaySFX(uint8_t a)
+{
+	uint8_t saved = enter_audio_bank();
+
+	Music1_PlaySFX(a);
+	BankswitchROM(saved);
+}
+
+void PauseSong(void)
+{
+	uint8_t saved = enter_audio_bank();
+
+	Music1_PauseSong();
+	BankswitchROM(saved);
+}
+
+void ResumeSong(void)
+{
+	uint8_t saved = enter_audio_bank();
+
+	Music1_ResumeSong();
+	BankswitchROM(saved);
+}

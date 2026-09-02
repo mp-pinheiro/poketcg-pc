@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import signal
 import subprocess
 import sys
 from pathlib import Path
@@ -48,24 +49,42 @@ def case_basenames() -> dict[str, str]:
     return mapping
 
 
-def run_native(binary: Path, pack: Path, masks: Path, frames: int, trace: Path) -> str:
-    """Runs the instrumented lane and returns its abort reason, empty when clean.
+def run_native(binary: Path, pack: Path, masks: Path, frames: int, trace: Path,
+               timeout: float) -> str:
+    """Runs the instrumented lane and returns what stopped it, empty when clean.
 
-    An abort still leaves a trace, because src/trace.c flushes on SIGABRT, so a
-    run that dies on an unported script entry is still measured up to that
-    point. The reason is reported as `blocked_by` rather than swallowing the
-    numbers, which is what makes every iteration of the loop comparable.
+    src/trace.c writes the trace on SIGABRT, so a run that dies on an unported
+    script entry is still measured up to that point, and a run that hangs in a
+    wait loop is signalled here to get the same treatment. Either way the reason
+    is reported as `blocked_by` instead of swallowing the numbers, which is what
+    keeps every iteration of the loop comparable.
     """
     if trace.exists():
         trace.unlink()
-    result = subprocess.run(
-        [str(binary), "--headless", "--data-pack", str(pack), "--frames", str(frames),
-         "--input", str(masks), "--trace-calls", str(trace)],
-        cwd=ROOT, capture_output=True, text=True, timeout=1800, check=False,
-    )
-    if result.returncode == 0:
+    command = [str(binary), "--headless", "--data-pack", str(pack),
+               "--frames", str(frames), "--input", str(masks),
+               "--trace-calls", str(trace)]
+    process = subprocess.Popen(command, cwd=ROOT, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, text=True)
+    hung = False
+    try:
+        _out, errors = process.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        hung = True
+        process.send_signal(signal.SIGABRT)
+        try:
+            _out, errors = process.communicate(timeout=120)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            raise ProgressError(
+                f"native run ignored SIGABRT after {timeout:g}s") from None
+
+    if hung:
+        reason = f"HANG no exit within {timeout:g}s"
+    elif process.returncode == 0:
         return ""
-    reason = (result.stderr.strip().splitlines() or ["unknown"])[-1][:200]
+    else:
+        reason = (errors.strip().splitlines() or ["unknown"])[-1][:200]
     if not trace.exists():
         raise ProgressError(f"native run failed with no trace: {reason}")
     return reason
@@ -181,6 +200,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--trace", default="build/completion/tas/native-progress.bin")
     parser.add_argument("--frames", type=int, default=78207)
     parser.add_argument("--limit", type=int, default=12)
+    parser.add_argument("--run-timeout", type=float, default=240.0,
+                        help="seconds before the run is aborted for its trace")
     parser.add_argument("--skip-run", action="store_true", help="reuse an existing trace")
     parser.add_argument("--write-ratchet", action="store_true",
                         help="raise the ratchet to the measured values")
@@ -196,7 +217,7 @@ def main(argv: list[str] | None = None) -> int:
         if not args.skip_run:
             blocked_by = run_native(
                 resolve(args.binary), resolve(args.pack), resolve(args.masks),
-                args.frames, resolve(args.trace))
+                args.frames, resolve(args.trace), args.run_timeout)
         payload = report(resolve(args.reference), resolve(args.binary),
                          resolve(args.trace), args.limit, blocked_by)
     except (ProgressError, OSError, ValueError, subprocess.TimeoutExpired) as exc:
