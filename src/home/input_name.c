@@ -944,6 +944,19 @@ FinalizeInputNameResult InputPlayerName(uint16_t hl)
 	LoadTextCursorTile();
 	wd009 = 0x02u;
 	DrawPlayerNamingScreenBG();
+	/* input_name.asm:68-141 runs its whole LCD-off setup -- EmptyScreen's
+	 * tilemap fill (its DisableLCD crosses one VBlank service: oracle-b
+	 * boot trace lands wvbc 79 inside DisableLCD.wait_vblank of this
+	 * setup), LoadSymbolsFont, the keyboard text box and the three text
+	 * prints -- without a single halt, so the reference's next service
+	 * preempts the draws mid-flight instead of landing at a DoFrame
+	 * boundary. The collapsed native setup crossed none: the reference
+	 * freezes exactly one wVBlankCounter step here (rng-advance grid,
+	 * 1150-frame probe: menu exit advance at 78, freeze at 79, naming
+	 * loop from 80; native skips the freeze and loops from 79, leaving
+	 * its RNG one advance ahead at the name checksum). Consume that one
+	 * service once the screen is drawn. */
+	frame_boundary_consume_services(1u);
 	wNamingScreenCursorX = 0u;
 	wNamingScreenCursorY = 0u;
 	wNamingScreenNumColumns = 9u;

@@ -162,7 +162,17 @@ int runtime_run_with_input(
 		}
 		state.frames++;
 		if (state.button_count)
-			input.buttons = state.buttons[state.frames % state.button_count];
+			/* gb-recompiled applies the scripted mask at scanout but
+			 * the emulated joypad reads it back one scanout later
+			 * (measured on the boot timeline: the reference sights
+			 * every press edge exactly one game-loop iteration after
+			 * the script frame -- title A@f1000 exits its loop at
+			 * wvbc+2, not +1; the menu A@f1101 and the naming
+			 * S@f1200/A@f1201 confirmations shift by the same one
+			 * iteration). Index the previous entry so a press lands
+			 * on the same loop iteration on both lanes. */
+			input.buttons = state.buttons[(state.frames - 1u)
+			                              % state.button_count];
 		g_keys = shell_hkeys_from_input(input.buttons);
 		if (frame_boundary_take_service_pass()) {
 			/* Mid-processing VBlank service: ISR-equivalent work only.
