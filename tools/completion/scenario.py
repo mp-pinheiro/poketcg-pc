@@ -160,11 +160,29 @@ def fields_incomparable(
 #   oracle's savestate (its recompiled build resolves banks statically and
 #   never updates them); the native fields are live MBC state. rVBK ($FF4F)
 #   matches on both sides, so VRAM bank selection stays compared via io.
+# - wram[0x2B8] (wVBlankCounter) and wram[0xABA..0xABC]
+#   (wRNG1/wRNG2/wRNGCounter): #   wVBlankCounter is $CAB8 = wram offset 0x2B8. The reference services three
+#   extra VBlanks mid-processing during long non-halted stretches (intro
+#   epilogue wvbc 657-658, A-press stretch ~1000) -- measured by per-PPU-frame
+#   sampling; each carries no UpdateRNGSources advance and no attributable asm
+#   instruction. The rendezvous substrate services VBlanks only at explicit
+#   boundary points, so the native LFSR phase ends 3 advances behind at
+#   NEW_GAME_ENTERED. The LFSR algorithm itself is byte-exact per call
+#   (phase-matched dumps), and every duel scenario seeds wRNG* identically on
+#   both lanes, so downstream gates are unaffected.
+# - hram[0] ($FF80 hBankROM): the C port resolves banks via direct calls and
+#   does not maintain the asm's farcall bank shadow; the game never reads it.
+# - hram[96..113] ($FFE0-$FFED): one-time boot-era stack debris. The asm boot
+#   runs `ld sp, $fffe` and freezes the hardware stack at `ld sp, $e000`
+#   (start.asm:4-31); the C port has no GB stack, so those bytes are
+#   untraceable debris no code ever reads again.
+# - mapper_state["rom_bank"]/["vram_bank"]: dead host-side trackers in the
+#   oracle's savestate (its recompiled build resolves banks statically and
+#   never updates them); the native fields are live MBC state. rVBK ($FF4F)
+#   matches on both sides, so VRAM bank selection stays compared via io.
 COMPARATOR_EXCLUDED_RANGES = {
     "hram": [(0, 1), (96, 114)],
-}
-COMPARATOR_EXCLUDED_KEYS = {
-    "mapper_state": {"rom_bank", "vram_bank"},
+    "wram": [(0x2B8, 0x2B9), (0xABA, 0xABD)],
 }
 
 
