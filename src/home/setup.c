@@ -44,10 +44,54 @@ DetectConsoleResult DetectConsole(uint8_t a)
 	gb_write8(wConsole_ADDR, console);
 	if (console != CONSOLE_CGB)
 		return (DetectConsoleResult){console, console};
-
+	/* The reference runs the real CGB boot ROM; by the time Start hands off
+	 * with a=$11 these registers hold bootrom leftovers (gbrt.c's
+	 * post-boot model minus KEY1, whose raw byte the bootrom never writes).
+	 * Applied once per process, here, so DMG probe worlds keep pristine io
+	 * and a soft reset (which re-runs Start but never the bootrom) does not
+	 * resurrect boot-era register values the game has since rewritten. */
+	static int g_boot_io_applied;
+	if (!g_boot_io_applied) {
+		g_boot_io_applied = 1;
+		g_io[0x00] = 0xCFu;  /* JOYP */
+		g_io[0x02] = 0x7Fu;  /* SC */
+		g_io[0x07] = 0xF8u;  /* TAC: timer disabled at boot */
+		g_io[0x0F] = 0xE1u;  /* IF */
+		g_io[0x10] = 0x80u;  /* NR10 */
+		g_io[0x11] = 0xBFu;  /* NR11 */
+		g_io[0x12] = 0xF3u;  /* NR12 */
+		g_io[0x13] = 0xFFu;  /* NR13 */
+		g_io[0x14] = 0xBFu;  /* NR14 */
+		g_io[0x16] = 0x3Fu;  /* NR21 */
+		g_io[0x17] = 0x00u;  /* NR22 */
+		g_io[0x18] = 0xFFu;  /* NR23 */
+		g_io[0x19] = 0xBFu;  /* NR24 */
+		g_io[0x1A] = 0x7Fu;  /* NR30 */
+		g_io[0x1B] = 0xFFu;  /* NR31 */
+		g_io[0x1C] = 0x9Fu;  /* NR32 */
+		g_io[0x1D] = 0xFFu;  /* NR33 */
+		g_io[0x1E] = 0xBFu;  /* NR34 */
+		g_io[0x20] = 0xFFu;  /* NR41 */
+		g_io[0x24] = 0x77u;  /* NR50 */
+		g_io[0x25] = 0xF3u;  /* NR51 */
+		g_io[0x26] = 0xF1u;  /* NR52 */
+		g_io[0x4F] = 0xFEu;  /* VBK */
+		g_io[0x51] = 0xFFu;  /* HDMA1 */
+		g_io[0x52] = 0xFFu;  /* HDMA2 */
+		g_io[0x53] = 0xFFu;  /* HDMA3 */
+		g_io[0x54] = 0xFFu;  /* HDMA4 */
+		g_io[0x55] = 0xFFu;  /* HDMA5 */
+		g_io[0x56] = 0x3Eu;  /* RP */
+		g_io[0x68] = 0xC0u;  /* BGPI */
+		g_io[0x6A] = 0xC0u;  /* OBPI */
+		g_io[0x6C] = 0xFEu;  /* OPRI */
+		g_io[0x70] = 0xF8u;  /* SVBK */
+	}
 	gb_write8(rWBK, 0x01u);
-	/* SwitchToCGBDoubleSpeed deleted per Phase 1 (double_speed.asm); the
-	 * timer rate-compensates instead of running the CPU at double speed. */
+	/* setup.asm:51 -- on CGB the boot switches to double speed. The STOP
+	 * itself is modeled by mem_cgb_speed_switch_stop (inside the switch);
+	 * only the speed flag and KEY1/TMA state are observable in this port. */
+	SwitchToCGBDoubleSpeed();
 	return (DetectConsoleResult){0x01u, console};
 }
 

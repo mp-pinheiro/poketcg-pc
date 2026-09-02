@@ -56,6 +56,29 @@ extern int g_sram_enabled;
 
 /* VBK ($FF4F) low bit: which half of g_vram the $8000-$9FFF window resolves to. */
 extern uint8_t g_vram_bank;
+/* KEY1 ($FF4D) double-speed state, toggled by mem_cgb_speed_switch_stop() --
+ * the port's stand-in for the STOP instruction's hardware speed switch. The
+ * CPU is not actually re-clocked (the port is frame-batched); the flag exists
+ * because the reference's timer hardware ticks on the fast clock under double
+ * speed, and $FF4D readback / TMA selection observe it. */
+extern uint8_t g_cgb_double_speed;
+
+/* Advance the free-running hardware clock by the slow-cycle cost of one frame.
+ * Ages DIV ($FF04) and TIMA ($FF05) exactly as the reference runtime does:
+ * DIV increments every fast cycle (2x per slow cycle under double speed),
+ * TIMA ticks every 256 fast cycles and reloads from TMA ($FF06) on overflow.
+ * The boot phase and per-frame charge table in mem.c are calibrated to the
+ * boot-title timeline; see the clock-model comment there. Driven once per
+ * frame from the host loop, next to the TimerHandler batch. */
+void mem_advance_hardware_clock(uint32_t slow_cycles);
+
+/* The STOP instruction of double_speed.asm's CGBSpeedSwitch: KEY1 prepare bit
+ * (bit 0) gates it; hardware clears prepare and toggles the speed flag. */
+void mem_cgb_speed_switch_stop(void);
+
+/* Reset every region and both bank latches to power-on state. Leaves g_rom alone. */
+void mem_reset(void);
+
 typedef struct {
 	uint32_t tick;
 	uint16_t address;
@@ -93,7 +116,5 @@ uint8_t gb_read8(uint16_t addr);
 void gb_write8(uint16_t addr, uint8_t v); /* writes below $8000 decode as MBC5 registers */
 void mbc5_conformance_vector(void);
 
-/* Reset every region and both bank latches to power-on state. Leaves g_rom alone. */
-void mem_reset(void);
 
 #endif /* POKETCG_MEM_H */

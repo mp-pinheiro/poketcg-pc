@@ -76,14 +76,16 @@ void SwitchToCGBNormalSpeed(void)
 	uint8_t spd = gb_read8(rSPD);
 	if ((spd & (uint8_t)(1u << B_SPD_DOUBLE)) == 0u)
 		return;
-	spd = (uint8_t)((spd & (uint8_t)~(1u << B_SPD_DOUBLE))
-			| (uint8_t)(1u << B_SPD_PREPARE));
 	uint8_t ie = gb_read8(rIE);
 	gb_write8(rIE, 0u);
-	gb_write8(rSPD, (uint8_t)(spd | (uint8_t)(1u << B_SPD_PREPARE)));
+	/* double_speed.asm CGBSpeedSwitch: set the KEY1 prepare bit, then STOP
+	 * flips the hardware speed flag (mem_cgb_speed_switch_stop) and clears
+	 * prepare. SetupTimer re-reads $FF4D and reverts TMA to $BC. */
+	gb_write8(rSPD, (uint8_t)(1u << B_SPD_PREPARE));
 	gb_write8(rIF, 0u);
 	gb_write8(rIE, 0u);
 	gb_write8(rJOYP, 0x30u);
+	mem_cgb_speed_switch_stop();
 	(void)SetupTimer();
 	gb_write8(rIE, ie);
 }
@@ -96,11 +98,16 @@ void SwitchToCGBDoubleSpeed(void)
 	if ((spd & (uint8_t)(1u << B_SPD_DOUBLE)) != 0u)
 		return;
 	uint8_t ie = gb_read8(rIE);
-	gb_write8(rSPD, (uint8_t)(spd | (uint8_t)(1u << B_SPD_DOUBLE)
-			| (uint8_t)(1u << B_SPD_PREPARE)));
+	/* double_speed.asm CGBSpeedSwitch: set the KEY1 prepare bit only (the
+	 * speed bit is readback-synthesized from the flag), then STOP switches
+	 * the hardware to double speed and clears prepare. SetupTimer re-reads
+	 * $FF4D and compensates TMA to $78 -- same real-time ISR rate as the
+	 * $BC period, because the timer ticks on the fast clock at 2x. */
+	gb_write8(rSPD, (uint8_t)(spd | (uint8_t)(1u << B_SPD_PREPARE)));
 	gb_write8(rIF, 0u);
 	gb_write8(rIE, 0u);
 	gb_write8(rJOYP, 0x30u);
+	mem_cgb_speed_switch_stop();
 	(void)SetupTimer();
 	gb_write8(rIE, ie);
 }

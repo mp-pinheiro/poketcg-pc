@@ -164,6 +164,10 @@ int runtime_run_with_input(
 		if (state.button_count)
 			input.buttons = state.buttons[state.frames % state.button_count];
 		g_keys = shell_hkeys_from_input(input.buttons);
+		/* CGB hardware clock aging (Lane D model in mem.c): DIV free-runs
+		 * at the double-speed rate; TIMA ticks every 256 fast cycles and
+		 * reloads from TMA. One frame of slow cycles per host frame. */
+		mem_advance_hardware_clock(70224u);
 		/* Hardware timer cadence: SetupTimer programs TAC=$07
 		 * (TAC_16KHZ: 16384 Hz, a 256-cycle tick) with TMA=-68
 		 * ($BC), so TimerHandler fires every 256*68 = 17408 cycles

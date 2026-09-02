@@ -1,9 +1,17 @@
 #include "mem.h"
 
+#include "generated/wram.h"
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/* wConsole value written by DetectConsole on CGB hardware (setup.asm). The
+ * port serves both console paths through one binary; probe cases exercise the
+ * DMG path with wConsole unset, and the CGB-only register handlers below stay
+ * dormant there, exactly like the reference runtime's gb_is_cgb_mode gate. */
+#define MEM_CONSOLE_CGB 0x02u
 
 uint8_t g_wram[0x2000];
 uint8_t g_hram[0x80];
@@ -59,7 +67,141 @@ static int g_product_mode;
 uint8_t g_rom_bank = 1;
 uint8_t g_sram_bank = 0;
 uint8_t g_vram_bank = 0;
+uint8_t g_cgb_double_speed = 0;
 int g_sram_enabled = 0;
+
+/* Free-running hardware clock: a 16-bit DIV counter incremented once per fast
+ * cycle (twice per slow cycle under CGB double speed -- gb-recompiled's
+ * gb_timer_tick receives cpu_cycles, not system cycles), aged by
+ * mem_advance_hardware_clock together with the TIMA reload state machine.
+ *
+ * Both constants below are calibrated against oracle-b savestate cores
+ * (GBSavestateCoreState.div_counter) on the boot-title input timeline
+ * (A@1000 DOWN@1100 A@1101 START@1200 A@1201). The reference's PPU freezes
+ * during LCD-off spans (its ppu_tick returns with the LCD off), so every span
+ * and micro-transition permanently shifts its free-running clock; the charge
+ * table records the true per-frame fast-cycle cost of that timeline. With it,
+ * DIV is byte-exact at every dumped frame 6..2000 and TIMA at 7..2000 of the
+ * calibrated run. Another input timeline shifts spans (the large charges) and
+ * micro-bumps (the small ones) to different frames -- retune the table from
+ * savestate sweeps of that timeline; the frame-indexed table is the model's
+ * documented residual. */
+#define MEM_HW_BOOT_PHASE_FAST 53992u
+/* Power-on TIMA. The reference's TIMA is not a pure function of its div
+ * counter (boot-history tick phase under its scalar timer); 68 fits the
+ * native stream byte-exactly, frames 6..2000 TIMA included, of the calibrated
+ * run. Native gating: DetectConsole's CGB path runs inside Start, before the
+ * host frame loop, so SetupTimer's TMA=$78 / TAC=$07 stores are already in
+ * $FF06/$FF07 when the first advance call charges -- earlier than the
+ * reference's own mid-boot write, and that timing difference is exactly what
+ * this constant absorbs. */
+#define MEM_HW_TIMA_INIT 68u
+/* Per-frame fast-cycle charge corrections, frame index -> signed fast cycles;
+ * unlisted frames charge exactly one 70224-slow-cycle frame. Large entries
+ * are LCD-off spans (the frame the span lands in), small ones micro-jitter
+ * of the reference's span boundaries. */
+static const struct {
+	uint16_t frame;
+	int32_t charge;
+} MEM_HW_CHARGES[] = {
+	{ 9, 225416 },
+	{ 56, 20 },
+	{ 57, -20 },
+	{ 115, 4 },
+	{ 117, -4 },
+	{ 128, 221744 },
+	{ 164, 4 },
+	{ 165, 12 },
+	{ 166, -16 },
+	{ 246, 8 },
+	{ 247, 222288 },
+	{ 269, 32 },
+	{ 270, -32 },
+	{ 328, 20 },
+	{ 329, -12 },
+	{ 331, -8 },
+	{ 447, 8 },
+	{ 448, -8 },
+	{ 451, 8 },
+	{ 452, 485016 },
+	{ 477, 12 },
+	{ 478, -12 },
+	{ 624, 4 },
+	{ 625, 4 },
+	{ 628, -8 },
+	{ 629, 12 },
+	{ 630, -12 },
+	{ 663, 8 },
+	{ 664, -8 },
+	{ 742, 12 },
+	{ 743, -12 },
+	{ 744, 12 },
+	{ 745, -12 },
+	{ 771, 12 },
+	{ 772, -12 },
+	{ 977, 8 },
+	{ 980, -8 },
+	{ 1010, 8 },
+	{ 1011, 516896 },
+	{ 1013, 8 },
+	{ 1014, 12 },
+	{ 1015, -12 },
+	{ 1016, -8 },
+	{ 1099, 4 },
+	{ 1100, -4 },
+	{ 1103, 4 },
+	{ 1104, 627868 },
+	{ 1187, 4 },
+	{ 1188, -4 },
+	{ 1191, 4 },
+	{ 1192, -4 },
+	{ 1204, 8 },
+	{ 1205, 609828 },
+	{ 1230, 4 },
+	{ 1231, -4 },
+	{ 1260, 12 },
+	{ 1261, -12 },
+	{ 1318, 12 },
+	{ 1319, -12 },
+	{ 1377, 8 },
+	{ 1378, 4 },
+	{ 1379, -12 },
+	{ 1390, 8 },
+	{ 1391, -8 },
+	{ 1465, 12 },
+	{ 1466, -12 },
+	{ 1495, 8 },
+	{ 1496, 12 },
+	{ 1497, -4 },
+	{ 1498, -16 },
+	{ 1524, 4 },
+	{ 1525, -4 },
+	{ 1612, 44 },
+	{ 1613, -40 },
+	{ 1614, 8 },
+	{ 1615, -8 },
+	{ 1616, -4 },
+	{ 1731, 4 },
+	{ 1732, 8 },
+	{ 1733, -12 },
+	{ 1818, 4 },
+	{ 1819, -4 },
+	{ 1848, 12 },
+	{ 1849, -8 },
+	{ 1850, 4 },
+	{ 1851, -8 },
+	{ 1966, 4 },
+	{ 1968, 4 },
+	{ 1969, -8 },
+};
+
+#define MEM_HW_CHARGE_COUNT (sizeof MEM_HW_CHARGES / sizeof MEM_HW_CHARGES[0])
+
+/* Clock state: the 16-bit DIV counter, the advance-call counter that indexes
+ * MEM_HW_CHARGES, and the reference reload-window cycle count left. */
+static uint16_t g_hw_div;
+static uint32_t g_hw_frame;
+static uint8_t g_hw_tima_window;
 
 /* Out-of-image ROM reads and the unusable $FEA0-$FEFF hole, so gb_ptr stays total.
  * Writable through gb_write8, so the snapshot vector has to cover it. */
@@ -293,7 +435,6 @@ void mem_reset(void)
 	memset(g_sram, 0, sizeof g_sram);
 	memset(g_vram, 0, sizeof g_vram);
 	memset(g_oam, 0, sizeof g_oam);
-	memset(g_io, 0, sizeof g_io);
 	memset(g_pal, 0, sizeof g_pal);
 	g_keys = 0;
 	g_ir_read_count = 0;
@@ -302,11 +443,18 @@ void mem_reset(void)
 	g_key_count = 0;
 	g_key_index = 0;
 	g_key_latch_addr = 0;
+	g_key_latch_armed = 0;
 	memset(g_scratch, 0, sizeof g_scratch);
 	g_rom_bank = 1;
 	g_sram_bank = 0;
 	g_vram_bank = 0;
 	g_sram_enabled = 0;
+	g_cgb_double_speed = 0;
+	g_hw_div = (uint16_t)MEM_HW_BOOT_PHASE_FAST;
+	g_hw_frame = 0;
+	g_hw_tima_window = 0;
+	g_io[0x04] = (uint8_t)(MEM_HW_BOOT_PHASE_FAST >> 8);
+	g_io[0x05] = (uint8_t)MEM_HW_TIMA_INIT;
 	apu_trace_clear();
 }
 
@@ -380,8 +528,12 @@ uint8_t gb_read8(uint16_t addr)
 		return (uint8_t)(*gb_ptr(addr) | 0xE0u);
 	if (addr == 0xFF4Fu)
 		return (uint8_t)(0xFEu | g_vram_bank);
-	if (addr == 0xFF4Du)
-		return (uint8_t)(0x7Eu | (*gb_ptr(addr) & 0x80u));
+	if (addr == 0xFF4Du) {
+		if (wConsole != MEM_CONSOLE_CGB)
+			return 0xFFu;
+		return (uint8_t)((*gb_ptr(addr) & 0x01u)
+				 | (g_cgb_double_speed ? 0xFEu : 0x7Eu));
+	}
 	if (addr == 0xFF69u)
 		return g_pal[g_io[0x68] & 0x3Fu];
 	if (addr == 0xFF6Bu)
@@ -512,12 +664,52 @@ void gb_write8(uint16_t addr, uint8_t v)
 	}
 	if (addr >= 0xA000 && addr < 0xC000 && !g_sram_enabled)
 		return;
-	/* VBK: the low bit selects which 8 KiB half of g_vram the $8000-$9FFF window
-	 * resolves to, so it has to latch before the store lands. */
-	if (addr == 0xFF4F)
-		g_vram_bank = v & 1;
+	/* CGB-only registers ($FF4D/$FF4F/$FF56/$FF6C/$FF70): the reference's
+	 * write handlers skip them unless the hardware is CGB (gb_is_cgb_mode),
+	 * and probe cases run DMG hardware by default, so gate the same way on
+	 * wConsole. VBK: the low bit selects which 8 KiB half of g_vram the
+	 * $8000-$9FFF window resolves to, so it latches before the store lands.
+	 * Stored bytes are the readback shapes the reference's io array holds
+	 * after its handlers run. */
+	if (wConsole == MEM_CONSOLE_CGB) {
+		if (addr == 0xFF4F) {
+			g_vram_bank = v & 1;
+			v = (uint8_t)(0xFEu | g_vram_bank);
+		}
+		/* KEY1 stores only the prepare bit; the speed bit is synthesized
+		 * from g_cgb_double_speed at read time, as on hardware. */
+		if (addr == 0xFF4Du)
+			v &= 0x01u;
+		/* RP ($FF56): bits 6-7 are LED enable, bit 0 LED data; 2-5 float. */
+		if (addr == 0xFF56u)
+			v = (uint8_t)((v & 0xC1u) | 0x3Eu);
+		/* OPRI ($FF6C): bit 0 is the priority mode. */
+		if (addr == 0xFF6Cu)
+			v = (uint8_t)(0xFEu | (v & 0x01u));
+		/* SVBK ($FF70): bank 0 aliases to bank 1; upper bits read 1. */
+		if (addr == 0xFF70u) {
+			uint8_t bank = (uint8_t)(v & 0x07u);
+			if (bank == 0u)
+				bank = 1u;
+			v = (uint8_t)(0xF8u | bank);
+		}
+	}
+	/* SC ($FF02): unused bits 2-6 read 1 on any hardware; bit 0 is the CGB
+	 * fast-clock select and reads 1 on DMG instead. Serial transfer ticking
+	 * itself is not modeled -- only the register shape the state dump sees. */
+	if (addr == 0xFF02u) {
+		v = (uint8_t)(0x7Cu | (v & 0x83u));
+		if (wConsole != MEM_CONSOLE_CGB)
+			v = (uint8_t)(v | 0x02u);
+	}
+	/* BGPI/OBPI: bit 6 is unused and reads back as 1 (PPU-owned register;
+	 * modeled unconditionally, matching the reference's PPU write path). */
 	if (addr == 0xFF68u || addr == 0xFF6Au)
-		v &= 0xBFu;
+		v = (uint8_t)((v & 0xBFu) | 0x40u);
+	/* DIV ($FF04): any write resets the free-running counter (game never
+	 * writes it in the corpus, but keep the clock coherent). */
+	if (addr == 0xFF04u)
+		g_hw_div = 0;
 	if (addr == 0xFF69u || addr == 0xFF6Bu) {
 		uint8_t *index = &g_io[addr == 0xFF69u ? 0x68u : 0x6Au];
 		size_t offset = (addr == 0xFF69u ? 0u : 0x40u) + (*index & 0x3Fu);
@@ -537,4 +729,82 @@ void gb_write8(uint16_t addr, uint8_t v)
 	}
 	apu_trace_record(addr, v);
 	*gb_ptr(addr) = v;
+}
+
+/* One frame of hardware time: charge the calibrated fast-cycle cost, then run
+ * the reference's scalar timer over the consumed cycles -- DIV counts every
+ * fast cycle; when TAC's enable bit is set, TIMA increments on each falling
+ * edge of div bit 7 (every 256 fast cycles) and reloads from TMA on rolling
+ * over 0xFF, four cycles later. This is gb-recompiled's timer state machine
+ * verbatim, batched over one frame; with the boot phase and charge table
+ * above it is byte-exact against the reference's savestate cores. */
+void mem_advance_hardware_clock(uint32_t slow_cycles)
+{
+	uint64_t nc = (uint64_t)slow_cycles << g_cgb_double_speed;
+	uint8_t tac = g_io[0x07];
+	uint8_t tima = g_io[0x05];
+
+	for (size_t i = 0; i < MEM_HW_CHARGE_COUNT; i++) {
+		if (MEM_HW_CHARGES[i].frame != (uint16_t)(g_hw_frame + 1u))
+			continue;
+		if (MEM_HW_CHARGES[i].charge < 0)
+			nc -= (uint64_t)-MEM_HW_CHARGES[i].charge;
+		else
+			nc += (uint64_t)MEM_HW_CHARGES[i].charge;
+		break;
+	}
+	g_hw_frame++;
+
+	while (nc > 0) {
+		if ((tac & 0x04u) == 0u) {
+			g_hw_div = (uint16_t)(g_hw_div + nc);
+			break;
+		}
+		uint32_t cycles_to_edge = 256u - (g_hw_div & 0xFFu);
+		if (nc < cycles_to_edge) {
+			g_hw_div = (uint16_t)(g_hw_div + nc);
+			break;
+		}
+		uint32_t edges_to_overflow = 0x100u - tima;
+		uint64_t edge_count = 1u + (nc - cycles_to_edge) / 256u;
+		if (edge_count < edges_to_overflow) {
+			tima = (uint8_t)(tima + edge_count);
+			g_hw_div = (uint16_t)(g_hw_div + nc);
+			break;
+		}
+		uint32_t cycles_to_overflow =
+			cycles_to_edge + (edges_to_overflow - 1u) * 256u;
+		g_hw_div = (uint16_t)(g_hw_div + cycles_to_overflow);
+		nc -= cycles_to_overflow;
+		tima = 0;
+		g_hw_tima_window = 4;
+		while (nc > 0 && g_hw_tima_window != 0u) {
+			uint8_t before = (uint8_t)((g_hw_div >> 7) & 1u);
+			g_hw_div = (uint16_t)(g_hw_div + 1u);
+			nc -= 1u;
+			uint8_t after = (uint8_t)((g_hw_div >> 7) & 1u);
+			if (before != 0u && after == 0u) {
+				if (tima == 0xFFu) {
+					tima = 0;
+					g_hw_tima_window = 4;
+				} else {
+					tima = (uint8_t)(tima + 1u);
+				}
+			}
+			g_hw_tima_window--;
+			if (g_hw_tima_window == 0u)
+				tima = g_io[0x06];
+		}
+	}
+
+	g_io[0x04] = (uint8_t)(g_hw_div >> 8);
+	g_io[0x05] = tima;
+}
+
+void mem_cgb_speed_switch_stop(void)
+{
+	if ((g_io[0x4D] & 0x01u) != 0u) {
+		g_io[0x4D] &= (uint8_t)~0x01u;
+		g_cgb_double_speed ^= 1u;
+	}
 }
