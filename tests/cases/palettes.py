@@ -39,6 +39,22 @@ CASES = {
         # registers must come back untouched on both sides.
         {"wram": {WFLAG: b"\x00", RBGP: b"\xAA", ROBP0: b"\xBB", ROBP1: b"\xCC"},
          "read": {RBGP: 1, ROBP0: 1, ROBP1: 1}},
+        # console==CGB, flags bit6 clear: single-palette dispatch to
+        # CopyCGBPalettes(flags, PAL_SIZE) (palettes.asm:73-78). Index 9 selects
+        # the second OBP palette (wObjectPalettesCGB+8), palette-RAM offset 72.
+        dict(POISON, wram={WFLAG: b"\x89", WCONSOLE: b"\x02",
+                           WBGP: b"\x11", WOBP0: b"\x22", WOBP1: b"\x33",
+                           **{0xCB38 + i: bytes([0x40 + i]) for i in range(8)}},
+             read={WFLAG: 1},
+             pread={72: 8}),
+        # console==CGB, flags bit6 set: all-palette dispatch to
+        # FlushAllCGBPalettes (palettes.asm:74-75), which must also clear
+        # wFlushPaletteFlags on the FlushPalettesIfRequested.done fallthrough.
+        dict(POISON, wram={WFLAG: b"\xC0", WCONSOLE: b"\x02",
+                           WBGP: b"\x44", WOBP0: b"\x55", WOBP1: b"\x66",
+                           0xCAF0: bytes((0x80 + i) & 0xFF for i in range(128))},
+             read={WFLAG: 1},
+             pread={0: 128}),
     ],
     "FlushPalettes": [
         {"a": 0x80, "wram": {WLCDC: b"\x00"}, "read": {WFLAG: 1}},

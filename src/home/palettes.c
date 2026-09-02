@@ -11,6 +11,11 @@
 #define CONSOLE_CGB             0x02u
 #define FLUSH_ONE_PAL           0x80u
 #define FLUSH_ALL_PALS          0xC0u
+/* palettes.asm:74: `bit FLUSH_ALL_PALS_F, a` tests bit 6 alone, not the full
+ * FLUSH_ALL_PALS (0xC0) pattern. Every single-palette flush request also has
+ * FLUSH_ONE_PAL (bit 7) set, so masking with FLUSH_ALL_PALS instead of this
+ * bit routed every CGB single-palette flush through FlushAllCGBPalettes. */
+#define FLUSH_ALL_PALS_F         0x40u
 #define PAL_SIZE                8u
 #define NUM_BACKGROUND_PALETTES 8u
 #define STAT_BUSY               0x02u
@@ -53,23 +58,46 @@ FlushAllCGBPalettesResult FlushAllCGBPalettes(void)
 	return (FlushAllCGBPalettesResult){r.b, r.c, r.d, r.e, r.hl};
 }
 
-void FlushPalettesIfRequested(void)
+/* Register-observable core of FlushPalettesIfRequested. palettes.asm:67-78's
+ * CGB dispatch leaves whatever CopyCGBPalettes/FlushAllCGBPalettes clobbered
+ * in b/c/d/e live on return; neither real caller reads it back
+ * (palettes.asm:27-33's FlushPalettes wraps the call in push/pop, and
+ * vblank.asm:34's end-of-handler call never touches bc/de again), so the
+ * production entry point below stays void and this takes/returns the
+ * pass-through register state purely for the probe to verify against the
+ * oracle's real CPU. */
+FlushPalettesIfRequestedResult FlushPalettesIfRequested_Registers(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
 	uint8_t flags = gb_read8(wFlushPaletteFlags_ADDR);
 
 	if (flags == 0)
-		return;
+		return (FlushPalettesIfRequestedResult){b, c, d, e};
 	gb_write8(rBGP, gb_read8(wBGP_ADDR));
 	gb_write8(rOBP0, gb_read8(wOBP0_ADDR));
 	gb_write8(rOBP1, gb_read8(wOBP1_ADDR));
 	if (gb_read8(wConsole_ADDR) == CONSOLE_CGB) {
 		flags = gb_read8(wFlushPaletteFlags_ADDR);
-		if (flags & FLUSH_ALL_PALS)
-			FlushAllCGBPalettes();
-		else
-			CopyCGBPalettes(flags, PAL_SIZE);
+		if (flags & FLUSH_ALL_PALS_F) {
+			FlushAllCGBPalettesResult r = FlushAllCGBPalettes();
+			b = r.b;
+			c = r.c;
+			d = r.d;
+			e = r.e;
+		} else {
+			CopyCGBPalettesResult r = CopyCGBPalettes(flags, PAL_SIZE);
+			b = r.b;
+			c = r.c;
+			d = r.d;
+			e = r.e;
+		}
 	}
 	gb_write8(wFlushPaletteFlags_ADDR, 0);
+	return (FlushPalettesIfRequestedResult){b, c, d, e};
+}
+
+void FlushPalettesIfRequested(void)
+{
+	(void)FlushPalettesIfRequested_Registers(0, 0, 0, 0);
 }
 
 void FlushPalettes(uint8_t a)

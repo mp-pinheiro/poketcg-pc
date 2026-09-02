@@ -40,8 +40,11 @@ static void adapt_SetOBP1(ProbeState *s)
 
 static void adapt_FlushPalettesIfRequested(ProbeState *s)
 {
-	(void)s;
-	FlushPalettesIfRequested();
+	FlushPalettesIfRequestedResult r = FlushPalettesIfRequested_Registers(s->b, s->c, s->d, s->e);
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
 }
 
 static void adapt_CopyCGBPalettes(ProbeState *s)
