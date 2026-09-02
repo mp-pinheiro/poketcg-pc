@@ -1,5 +1,7 @@
 #include "home/scripting.h"
 
+#include "home/script_entry_dispatch.h"
+
 #include "generated/wram.h"
 #include "mem.h"
 

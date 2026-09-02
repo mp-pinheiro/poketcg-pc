@@ -81,6 +81,59 @@ CASES["MasonLabCloseTextBox"] = [
 ]
 # <<< factory MasonLabCloseTextBox
 
+# >>> factory MasonLabLoadMap
+# mason_laboratory.asm:21-29. EVENT_MASON_LAB_STATE is wEventVars+$0D bits 1-3
+# (scripting.asm EventVarMasks), so the state is seeded shifted left one.
+_LAB_STATE_BYTE = wEventVars + 0x0D
+CONTRACT["MasonLabLoadMap"] = {"compare": (), "preserve": ()}
+CASES["MasonLabLoadMap"] = [
+    # State 0: Dr Mason is looked up and the first-visit script is queued.
+    {"wram": {_LAB_STATE_BYTE: b"\x00", wTempNPC: b"\x00", wNextScript: b"\x00\x00"},
+     "read": {wTempNPC: 1, wNextScript: 2}},
+    # State 3 == MASON_LAB_RECEIVED_STARTER_DECK: `ret nc`, nothing written.
+    {"wram": {_LAB_STATE_BYTE: b"\x06", wTempNPC: b"\x00", wNextScript: b"\x00\x00"},
+     "read": {wTempNPC: 1, wNextScript: 2}},
+    # State 4: above the threshold, same early exit.
+    {"wram": {_LAB_STATE_BYTE: b"\x08", wTempNPC: b"\x00", wNextScript: b"\x00\x00"},
+     "read": {wTempNPC: 1, wNextScript: 2}},
+    dict(POISON, wram={_LAB_STATE_BYTE: b"\x00", wTempNPC: b"\x00", wNextScript: b"\x00\x00"},
+         read={wTempNPC: 1, wNextScript: 2}),
+]
+# <<< factory MasonLabLoadMap
+
+# >>> factory MasonLabPressedA
+# mason_laboratory.asm:31-37. EVENT_RECEIVED_LEGENDARY_CARDS is wEventVars+$06
+# bit 1. ChallengeMachineObjectTable ($03:5572) holds (x, y, direction) triples
+# 10,4,NORTH and 12,4,NORTH, matched against the player's own position
+# (fire_club_lobby.asm:26-42).
+_LEGENDARY_BYTE = wEventVars + 0x06
+wPlayerXCoord = 0xD330
+wPlayerYCoord = 0xD331
+wPlayerDirection = 0xD334
+
+def _pressed_a(legendary, x, y, direction):
+    return {_LEGENDARY_BYTE: bytes((legendary,)),
+            wPlayerXCoord: bytes((x,)), wPlayerYCoord: bytes((y,)),
+            wPlayerDirection: bytes((direction,)),
+            wNextScript: b"\x00\x00"}
+
+_PRESSED_A_READ = {wNextScript: 2}
+CONTRACT["MasonLabPressedA"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["MasonLabPressedA"] = [
+    # Legendary cards not received: `or a / ret z` before any search.
+    {"wram": _pressed_a(0x00, 10, 4, 0x00), "read": dict(_PRESSED_A_READ)},
+    # Received, standing at the first table entry: the search reports found.
+    {"wram": _pressed_a(0x02, 10, 4, 0x00), "read": dict(_PRESSED_A_READ)},
+    # Received, standing at the second entry.
+    {"wram": _pressed_a(0x02, 12, 4, 0x00), "read": dict(_PRESSED_A_READ)},
+    # Received but facing the wrong way: walks the table to its terminator.
+    {"wram": _pressed_a(0x02, 10, 4, 0x02), "read": dict(_PRESSED_A_READ)},
+    # Received, nowhere near either entry.
+    {"wram": _pressed_a(0x02, 0x33, 0x44, 0x00), "read": dict(_PRESSED_A_READ)},
+    dict(POISON, wram=_pressed_a(0x02, 10, 4, 0x00), read=dict(_PRESSED_A_READ)),
+]
+# <<< factory MasonLabPressedA
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Script_Tech1

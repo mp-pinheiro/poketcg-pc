@@ -487,6 +487,26 @@ const uint8_t *rom_ptr_product(uint8_t bank, uint16_t addr)
 	return missing_product_data(bank, addr);
 }
 
+/* Whether a banked ROM byte is backed by the product pack. The interpreter in
+ * home/script.asm:108-133 fetches both operand bytes before it knows the
+ * command's length, so a one-byte command at the end of a script blob reads
+ * past it into whatever follows -- bytes the asm discards and the pack, which
+ * carries data sections only, does not hold. */
+int rom_byte_available(uint8_t bank, uint16_t addr)
+{
+	if (!g_product_mode)
+		return 1;
+	for (size_t i = 0; i < g_product_span_count; i++) {
+		const ProductPackSpan *span = &g_product_spans[i];
+		uint32_t end = (uint32_t)span->address + span->length;
+
+		if (span->bank == bank && addr >= span->address && addr < end)
+			return (size_t)span->pack_offset + addr - span->address
+			       < g_product_pack_size;
+	}
+	return 0;
+}
+
 const uint8_t *rom_ptr(uint8_t bank, uint16_t addr)
 {
 	return g_product_mode ? rom_ptr_product(bank, addr) : rom_ptr_reference(bank, addr);

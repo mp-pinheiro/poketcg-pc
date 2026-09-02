@@ -107,6 +107,10 @@ const uint8_t *rom_ptr_product(uint8_t bank, uint16_t addr);
 /* Existing game call sites use the active role without migration. */
 const uint8_t *rom_ptr(uint8_t bank, uint16_t addr);
 
+/* Whether a banked ROM byte is backed by the product pack; always true against
+ * the reference ROM. For a read the asm performs speculatively and discards. */
+int rom_byte_available(uint8_t bank, uint16_t addr);
+
 /* Whole-address-space access, needed by routines whose state is GB-address-shaped
  * (the decompressor keeps its source and buffer pointers in WRAM as raw addresses).
  * Total by design: it never returns NULL, because several ported routines walk the

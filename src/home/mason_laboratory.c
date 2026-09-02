@@ -18,6 +18,17 @@
 #include "home/grass_club_entrance.h"
 #define MasonLaboratoryAfterDuelTable 0x5542u
 
+#include "home/fire_club_lobby.h"
+#include "home/map.h"
+#include "home/overworld.h"
+#include "home/scripting.h"
+#define EVENT_MASON_LAB_STATE 0x3Eu
+#define EVENT_RECEIVED_LEGENDARY_CARDS 0x22u
+#define MASON_LAB_RECEIVED_STARTER_DECK 0x03u
+#define NPC_DRMASON 0x01u
+#define SCRIPT_ENTER_LAB_FIRST_TIME 0x5753u
+#define CHALLENGE_MACHINE_OBJECT_TABLE 0x5572u
+
 #define MAP_EVENT_CHALLENGE_MACHINE 0x0au
 /* <<< factory statics */
 
@@ -57,6 +68,40 @@ void MasonLabCloseTextBox(void)
 	ApplyOWMapEventChangeIfEventSet(MAP_EVENT_CHALLENGE_MACHINE);
 }
 /* <<< factory MasonLabCloseTextBox */
+
+/* >>> factory MasonLabLoadMap */
+/* mason_laboratory.asm:21-29. `ret nc` when the lab state has reached
+ * MASON_LAB_RECEIVED_STARTER_DECK, otherwise Dr Mason is looked up and the
+ * first-visit script is queued by a tail jump. No caller reads the exit
+ * registers: the LOAD_MAP slot's flags reach LoadMap through Func_c17a, which
+ * discards them. */
+void MasonLabLoadMap(void)
+{
+	if (GetEventValue(EVENT_MASON_LAB_STATE) >= MASON_LAB_RECEIVED_STARTER_DECK)
+		return;
+	wTempNPC = NPC_DRMASON;
+	(void)FindLoadedNPC();
+	(void)SetNextNPCAndScript(SCRIPT_ENTER_LAB_FIRST_TIME, 0u);
+}
+/* <<< factory MasonLabLoadMap */
+
+/* >>> factory MasonLabPressedA */
+/* mason_laboratory.asm:31-37. `or a / ret z` exits with carry clear before the
+ * legendary cards are received; afterwards the challenge machine's object table
+ * is searched and that search's carry is the result, which FindNPCOrObject
+ * reads to decide whether to enter script mode. */
+MasonLabPressedAResult MasonLabPressedA(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	if (GetEventValue(EVENT_RECEIVED_LEGENDARY_CARDS) == 0u)
+		return (MasonLabPressedAResult){hl, b, c, d, e, 0u};
+
+	FindExtraInteractableObjectsResult found =
+		FindExtraInteractableObjects(CHALLENGE_MACHINE_OBJECT_TABLE);
+
+	return (MasonLabPressedAResult){found.hl, found.b, found.c, found.d,
+					found.e, found.carry};
+}
+/* <<< factory MasonLabPressedA */
 
 /* >>> factory Script_Tech1 */
 /* mason_laboratory.asm:58-90. Two paths, each ending in its own `rst $20`:

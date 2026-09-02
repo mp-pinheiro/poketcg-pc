@@ -25,6 +25,7 @@
 /* <<< factory statics */
 
 #include "home/script_dispatch.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 #define MAP_SCRIPTS_BANK 4u
@@ -91,6 +92,28 @@ GetNPCDuelConfigurationsResult GetNPCDuelConfigurations(uint8_t a, uint8_t f, ui
 }
 /* <<< factory GetNPCDuelConfigurations */
 
+/* `call CallMapScriptPointerIfExists` ends in `jp hl` when the map has the slot
+ * (engine/overworld/scripting.asm:98-101), and the entry's own `ret` unwinds to
+ * this routine's caller, so the entry's exit flags are this routine's result --
+ * FindNPCOrObject reads that carry (engine/overworld/overworld.asm:1251-1255).
+ * CallMapScriptPointerIfExists itself stops at the entry, because its oracle
+ * cases are captured there. */
+static uint8_t enter_pressed_a_script(CallMapScriptResult found)
+{
+	if ((found.f & 0x10u) == 0u)
+		return found.f;
+	return ScriptEntryEnter(found.hl);
+}
+
+static uint8_t script_operand(uint16_t addr)
+{
+	if (addr >= 0x4000u && addr < 0x8000u
+	    && !rom_byte_available(g_rom_bank, addr))
+		return 0u;
+	return gb_read8(addr);
+}
+
+
 /* >>> factory HandleMoveModeAPress */
 HandleMoveModeAPressResult HandleMoveModeAPress(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
@@ -103,7 +126,8 @@ HandleMoveModeAPressResult HandleMoveModeAPress(uint8_t a, uint8_t f, uint8_t b,
 	if ((objects.f & 0x10u) == 0u) {
 		BankswitchROM(saved_bank);
 		CallMapScriptResult second = CallMapScriptPointerIfExists(MAP_SCRIPT_PRESSED_A);
-		return (HandleMoveModeAPressResult){second.a, second.f, b, c, d, e, second.hl};
+		uint8_t second_f = enter_pressed_a_script(second);
+		return (HandleMoveModeAPressResult){second.a, second_f, b, c, d, e, second.hl};
 	}
 
 	FindPlayerMovementWithOffsetResult movement = FindPlayerMovementFromDirection();
@@ -128,7 +152,8 @@ HandleMoveModeAPressResult HandleMoveModeAPress(uint8_t a, uint8_t f, uint8_t b,
 
 	BankswitchROM(saved_bank);
 	CallMapScriptResult second = CallMapScriptPointerIfExists(MAP_SCRIPT_PRESSED_A);
-	return (HandleMoveModeAPressResult){second.a, second.f, movement.b, movement.c, object_direction, e, second.hl};
+	uint8_t second_f = enter_pressed_a_script(second);
+	return (HandleMoveModeAPressResult){second.a, second_f, movement.b, movement.c, object_direction, e, second.hl};
 }
 /* <<< factory HandleMoveModeAPress */
 
@@ -160,8 +185,12 @@ RunOverworldScriptResult RunOverworldScript(
 		| ((uint16_t)gb_read8((uint16_t)(wScriptPointer_ADDR + 1u)) << 8));
 	uint8_t opcode = gb_read8(script_pointer);
 	uint16_t args = (uint16_t)(script_pointer + 1u);
-	uint8_t command_c = gb_read8(args);
-	uint8_t command_b = gb_read8((uint16_t)(args + 1u));
+	/* Both operand bytes are fetched before the command's length is known, so
+	 * a one-byte command at the end of a blob reads past it. Every command
+	 * that consumes an operand owns bytes inside its own blob, so a byte the
+	 * pack does not carry is one the asm discards. */
+	uint8_t command_c = script_operand(args);
+	uint8_t command_b = script_operand((uint16_t)(args + 1u));
 	const uint8_t *entry;
 
 	BankswitchROM(MAP_SCRIPTS_BANK);
@@ -170,8 +199,12 @@ RunOverworldScriptResult RunOverworldScript(
 	BankswitchROM(saved_bank);
 
 	ScriptDispatchFn dispatch = ScriptDispatchLookupOpcode(opcode);
-	if (dispatch == NULL)
+	if (dispatch == NULL) {
+		fprintf(stderr,
+			"script opcode miss opcode=$%02X target=$%04X pointer=$%04X\n",
+			(unsigned)opcode, (unsigned)target, (unsigned)script_pointer);
 		abort();
+	}
 	ScriptDispatchState state = {
 		.a = saved_bank,
 		.f = f,

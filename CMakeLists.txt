@@ -66,6 +66,9 @@ add_custom_command(
   COMMENT "gen_script_dispatch: scripting adapters -> opcode table"
   VERBATIM)
 
+# The table classifies a target by whether src/home declares it, so a new
+# declaration has to reconfigure it.
+file(GLOB HOME_HEADERS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/home/*.h")
 set(SCRIPT_ENTRY_SOURCE "${CMAKE_BINARY_DIR}/script_entry_dispatch_generated.c")
 add_custom_command(
   OUTPUT "${SCRIPT_ENTRY_SOURCE}"
@@ -78,6 +81,7 @@ add_custom_command(
   DEPENDS "${CMAKE_SOURCE_DIR}/tools/gen_script_entry_dispatch.py"
           "${CMAKE_SOURCE_DIR}/poketcg/poketcg.sym"
           "${CMAKE_SOURCE_DIR}/poketcg/src/data/map_scripts.asm"
+          ${HOME_HEADERS}
   COMMENT "gen_script_entry_dispatch: poketcg.sym + rom -> script entry table"
   VERBATIM)
 if(NOT PORT_FILES)
@@ -112,7 +116,6 @@ if(PORT_FILES)
 endif()
 
 set(BANK_GUARD_SOURCE "${CMAKE_BINARY_DIR}/bank_guard_generated.c")
-file(GLOB HOME_HEADERS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/home/*.h")
 add_custom_command(
   OUTPUT "${BANK_GUARD_SOURCE}"
   COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/gen_bank_guard.py"

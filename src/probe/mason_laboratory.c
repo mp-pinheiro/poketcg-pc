@@ -35,6 +35,26 @@ static void adapt_MasonLabCloseTextBox(ProbeState *s)
 /* <<< factory MasonLabCloseTextBox */
 
 
+/* >>> factory MasonLabLoadMap */
+static void adapt_MasonLabLoadMap(ProbeState *s)
+{
+	(void)s;
+	MasonLabLoadMap();
+}
+/* <<< factory MasonLabLoadMap */
+
+/* >>> factory MasonLabPressedA */
+static void adapt_MasonLabPressedA(ProbeState *s)
+{
+	MasonLabPressedAResult r = MasonLabPressedA(s->b, s->c, s->d, s->e, s->hl);
+	s->hl = r.hl;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory MasonLabPressedA */
+
 /* >>> factory Script_Tech1 */
 static void adapt_Script_Tech1(ProbeState *s)
 {
@@ -51,5 +71,7 @@ const ProbeEntry probe_entries_mason_laboratory[] = {
 	{ "Preload_DrMason", adapt_Preload_DrMason },
 	{ "MasonLaboratoryAfterDuel", adapt_MasonLaboratoryAfterDuel },
 	{ "MasonLabCloseTextBox", adapt_MasonLabCloseTextBox },
+	{ "MasonLabLoadMap", adapt_MasonLabLoadMap },
+	{ "MasonLabPressedA", adapt_MasonLabPressedA },
 	{ NULL, NULL },
 };

@@ -1309,6 +1309,12 @@ FuncC17aResult Func_c17a(uint16_t hl)
 		return result;
 	}
 	CallMapScriptResult result = Func_c9b8();
+
+	/* Func_c9b8 tail-calls CallMapScriptPointerIfExists, whose `jp hl` runs the
+	 * map's LOAD_MAP entry and returns through this routine's own `ret`
+	 * (overworld.asm:190-196, scripting.asm:87-101). */
+	if ((result.f & 0x10u) != 0u)
+		return (FuncC17aResult){result.a, ScriptEntryEnter(result.hl), result.hl};
 	return (FuncC17aResult){result.a, result.f, result.hl};
 }
 /* <<< factory Func_c17a */
@@ -1523,7 +1529,7 @@ void HandleOverworldMode(uint16_t hl)
 	case 3u: {
 		EnterScriptResult entered = EnterScript();
 
-		ScriptEntryEnter(entered.hl);
+		(void)ScriptEntryEnter(entered.hl);
 		break;
 	}
 	default:
@@ -1577,9 +1583,37 @@ void LoadMap(void)
 		(void)PlayDefaultSong();
 		(void)FadeScreenFromWhite();
 		Func_c141Result active_event = Func_c141();
-		(void)Func_c17a(active_event.hl);
-		SetOverworldDoFrameFunction();
+		FuncC17aResult loaded = Func_c17a(active_event.hl);
+
 		runtime_record_event(RUNTIME_EVENT_OVERWORLD_READY);
+
+		/* overworld.asm:54-61 .overworld_loop. hl stays whatever Func_c17a
+		 * left because DoFrameIfLCDEnabled/SetScreenScroll never set it, and
+		 * nothing downstream dereferences it: SetNewScriptNPC and
+		 * ResetDoFrameFunction both return it untouched. */
+		uint8_t transition;
+
+		do {
+			DoFrameIfLCDEnabled();
+			SetScreenScroll();
+			HandleOverworldMode(loaded.hl);
+			transition = wOverworldTransition;
+		} while ((transition & 0xD0u) == 0u);
+
+		DoFrameIfLCDEnabled();
+		if ((wOverworldTransition & 0x10u) != 0u) {
+			PlaySFX(SFX_WARP);
+			continue;
+		}
+
+		/* overworld.asm:71-79 .no_warp */
+		FadeScreenToWhite();
+		(void)Func_c1a0(loaded.hl);
+		if (wMatchStartTheme != 0u) {
+			Func_c280();
+			(void)Duel_Init(0u);
+		}
+		Func_c280();
 		return;
 	}
 }
