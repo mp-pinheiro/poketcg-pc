@@ -46,13 +46,12 @@ void DisableLCD(void)
 	gb_write8(wIE_ADDR, interrupt_enable);
 	gb_write8(rIE, (uint8_t)(interrupt_enable & (uint8_t)~IE_VBLANK));
 	frame_boundary_reach();
-	/* When the rLY poll crosses line 144 the PPU sets the VBlank IF request
-	 * regardless of IE (runtime ppu.c sets IF at line-144 entry); the pending
-	 * interrupt services at the IE restore below, running a full VBlankHandler
-	 * pass -- wVBlankCounter++ included (vblank.asm:35) -- with no game-loop
-	 * RNG advance. Model that pending service here. */
-	gb_write8(wVBlankCounter_ADDR,
-	          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
+	/* The rLY poll consumes exactly one VBlank service (the pending IF
+	 * fires at the IE restore): modeled by the frame boundary pass above,
+	 * whose host pass is the ISR equivalent. Do not add a second counter
+	 * increment here -- the reference grants exactly one service per
+	 * DisableLCD (trace-measured: 5 DisableLCD-class services per
+	 * boot-to-name run). */
 	value &= (uint8_t)~LCDC_ON;
 	gb_write8(rLCDC, value);
 	gb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) & (uint8_t)~LCDC_ON));
