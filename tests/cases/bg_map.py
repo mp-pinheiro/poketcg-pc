@@ -63,6 +63,6 @@ MUTATIONS = {
         "source_symbol": "WriteDataBlockToBGMap0",
         "before": "\tuint16_t source = data;",
         "after": "\tuint16_t source = (uint16_t)(data + 1);",
-        "case_ids": ["WriteDataBlockToBGMap0-0", "WriteDataBlockToBGMap0-1"],
+        "case_ids": ["WriteDataBlockToBGMap0-1", "WriteDataBlockToBGMap0-0"],
     },
 }

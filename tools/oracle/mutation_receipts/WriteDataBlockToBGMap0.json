@@ -1,0 +1,9 @@
+{
+  "fn": "WriteDataBlockToBGMap0",
+  "case": "tests/cases/bg_map.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"WriteDataBlockToBGMap0\", \"registers\": {\"a\": 34, \"b\": 0, \"c\": 3, \"d\": 152, \"e\": 100, \"f\": 240, \"hl\": 49413, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"39010\": \"1122\", \"49408\": \"0203112200\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"WriteDataBlockToBGMap0\", \"mismatches\": {\"a\": [34, 0], \"bus\": {\"address\": 39010, \"reference\": \"1122020311\", \"native\": \"2200020311\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[39010, 2], [49408, 5]]}}}\n",
+  "restored": "{\"fn\": \"WriteDataBlockToBGMap0\", \"registers\": {\"a\": 34, \"b\": 0, \"c\": 3, \"d\": 152, \"e\": 100, \"f\": 240, \"hl\": 49413, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"39010\": \"1122\", \"49408\": \"0203112200\"}}, \"status\": \"PASS\"}\n"
+}

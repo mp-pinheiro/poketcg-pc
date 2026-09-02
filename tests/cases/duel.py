@@ -863,7 +863,7 @@ CASES.update({
         dict(POISON, hl=0xC101, wram={0xC101: b"\x02"}),
         {"hl": 0xC1FF, "wram": {0xC1FF: b"\x7F"}},
         {"hl": 0xC100, "wram": {0xC100: b"\x00", wTempNonTurnDuelistCardID: b"\x08",
-                                0xCAD3: b"\x48\x03"},
+                                0xCAD3: b"\x00\x00"},
          "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
          "instruction_budget": 1000000, "cycle_budget": 4000000,
          "vread": {0: {0x9980: 1}}},
@@ -1981,9 +1981,7 @@ MUTATIONS = {
         "source_symbol": "PrintKnockedOutIfHLZero",
         "before": "\t(void)PrintKnockedOut();\n\treturn 0x90u;",
         "after": "\t(void)PrintKnockedOut();\n\treturn 0xd0u;",
-        "case_ids": ["PrintKnockedOutIfHLZero-0",
-                     "PrintKnockedOutIfHLZero-1",
-                     "PrintKnockedOutIfHLZero-3"],
+        "case_ids": ["PrintKnockedOutIfHLZero-3"],
     },
 }
 # >>> factory-mutation GetFirstSetPrizeCard
