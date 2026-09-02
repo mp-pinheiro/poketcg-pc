@@ -373,6 +373,48 @@ is global; "after W1" means after Wave 1 has landed and passed its landing check
     / 3 cases, `AIDecideWhetherToRetreat` 39 / 4, `HandleSpecialAIAttacks` 32 / 2)
     but not by how much; one duel census settles it.
 
+21e. Per-frame census landed: `just completion-frame-census boot-title` (~29 s) compares
+    the native lane against every reference `DoFrame` anchor, refines each first
+    divergence inside its coarse window with a second native run, and joins each byte to
+    the reference write immediately preceding it (`refstream.writers(..., events=True)`
+    plus `writer_before`). Measured on the tree at batch-one close: **624 divergent byte
+    positions across 256 regions over the run, against 18 bytes / 10 regions at the
+    terminal frame.** Roughly 600 bytes diverge persistently mid-run and are healed by
+    later overwrites, so the terminal-frame number never described the port's state.
+
+    Persistent classes, taken at ordinals 199 / 799 / 1599 to separate them from the
+    one-ordinal boot-setup transient at ordinal 2:
+
+    | bytes | region | first ordinal | reference writers |
+    |---|---|---|---|
+    | 56 | `wObjectPalettesCGB` `$CB30` | 1 | `SetDefaultConsolePalettes.copy_de_to_hl`, `LoadPaletteDataFromHL.loop`, `FadePalIntoAnother` |
+    | 56 | `wTempObjectPalettesCGB` `$D2D7` | 2 | `CopyDataHLtoDE`, `FillMemoryWithDE.loop` |
+    | 28 → 8 | `wOAM` `$CA00` | 2 | `SetOneObjectAttributes` (×1008), `ZeroObjectPositions.loop` |
+    | 63 | `wBackgroundPalettesCGB` `$CAF0` | 2 | converges quickly, unlike the object halves |
+
+    The 112 bytes of CGB object-palette shadow divergence persist from ordinal 1 to about
+    800 and were invisible to every previous measurement. They are the residue of the
+    ROM's deferred palette flush (`vblank.asm` `FlushPalettesIfRequested`) having had no
+    native counterpart for most of this port's life.
+
+21f. The `io` domain is not comparable as currently dumped, and this cost a false lead
+    worth recording. The reference side reads the **bus** (`gambatte_cpuread`) while the
+    native side dumps the **raw `g_io` store** (`src/state_dump.c`), so 44 bytes diverge
+    at every single ordinal: unmapped addresses (`$FF03`, `$FF08-$FF0E`, `$FF4E`,
+    `$FF57-$FF67`, `$FF6D-$FF6F`, `$FF71`, `$FF78-$FF7F`) read `$FF` on hardware and hold
+    `$00` in the array, `$FF07` reads `$FF` because TAC's unused bits float high, and
+    `$FF00` differs only because the port models joypad readback in `gb_read8`
+    (`src/mem.c:601-608` returns `0xC0 | sel | low`) rather than in the stored byte — the
+    port is provably right there and the tool was wrong. `io` is therefore opt-in via
+    `--domains` and excluded from the default. To make it genuinely comparable, dump
+    `gb_read8` results for `$FF00-$FF7F` alongside the raw store in `src/state_dump.c`;
+    `mem.c` is shared (`AGENTS.md` §6) so that is an orchestrator-only, serial change,
+    never made while basename agents are building. `$FF4D` deserves its own look when it
+    is: the reference reads `$FE`, meaning the ROM is running in double speed, while the
+    port reports single — the timer cadence nevertheless matches (`TimerHandler` 8,003
+    reference calls over 2,000 frames against the port's 70224/17408 ≈ 4.03 per frame).
+
+
 22. Regenerate the five stale producers (`just completion-baseline`,
     `completion-rom-coverage`, `completion-routine-mapping`, `completion-substrate`,
     `completion-hardware-removal`) so their `content_key` is current.

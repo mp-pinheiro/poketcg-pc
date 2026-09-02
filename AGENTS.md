@@ -59,6 +59,7 @@ The commands that matter, from the `justfile`:
 | `just completion-writers <id> <addrs>` | name the reference routine that wrote each address, ranked by last write |
 | `just completion-reftrace <id>` | bank-verified routine-entry trace of the reference over a scenario timeline |
 | `just completion-dispatch <id> <out>` | group a census into one self-contained fix packet per owning basename |
+| `just completion-frame-census <id>` | earliest anchor ordinal each byte goes wrong, joined to the reference write just before it |
 | `just oracle-diff-all` | older PyBoy-only full sweep. Orchestrator only; writes no gate record |
 | `just progress` | rebuild the progress report from registry + gate |
 | `just frontier` | print unported routines whose callees are all ported |
