@@ -1,5 +1,6 @@
 #include "home/bg_map.h"
 
+#include "generated/wram.h"
 #include "mem.h"
 #include "ppu.h"
 
@@ -58,15 +59,26 @@ void WriteDataBlocksToBGMap0(uint16_t *hl, uint16_t *de, uint8_t *a, uint8_t *b,
 	} while ((gb_read8(*hl) & 0x80) == 0);
 }
 
-void WriteByteToBGMap0(uint8_t a, uint8_t b, uint8_t c)
+/* bg_map.asm:52-68. With the LCD off the byte goes straight to the map; with it
+ * on the asm falls through into HblankWriteByteToBGMap0, which stages the byte
+ * in wTempByte and returns a = 0. The staging write is observable, so the
+ * branch has to be reproduced even though the Phase 1 transform makes both
+ * paths write the same map byte. */
+uint8_t WriteByteToBGMap0(uint8_t a, uint8_t b, uint8_t c)
 {
+	if ((wLCDC & 0x80u) != 0u)
+		return HblankWriteByteToBGMap0(a, b, c);
 	gb_write8(bg_map0_address(b, c), a);
+	return a;
 }
 
-/* Not an alias of WriteByteToBGMap0: HblankCopyDataHLtoDE ends on `ldh a, [rSTAT] /
- * and STAT_MODE`, and its loop only exits when that is zero, so exit a is always 0. */
+/* bg_map.asm:73-88. Not an alias of WriteByteToBGMap0: the byte is staged in
+ * wTempByte and copied from there, and HblankCopyDataHLtoDE ends on
+ * `ldh a, [rSTAT] / and STAT_MODE` whose loop only exits when that is zero, so
+ * exit a is always 0. */
 uint8_t HblankWriteByteToBGMap0(uint8_t a, uint8_t b, uint8_t c)
 {
+	gb_write8(wTempByte_ADDR, a);
 	gb_write8(bg_map0_address(b, c), a);
 	return 0;
 }

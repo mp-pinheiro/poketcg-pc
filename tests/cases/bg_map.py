@@ -3,6 +3,8 @@
 SRC = 0xC100
 DST = 0xC500
 VRAM = 0x9800
+WLCDC = 0xCABB
+WTEMPBYTE = 0xCAC1
 PAT = bytes((i * 13 + 5) & 0xFF for i in range(520))
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -32,13 +34,26 @@ CASES = {
         {"hl": SRC, "wram": {SRC: bytes((0, 0)) + PAT[:256] + b"\0"}, "read": {VRAM: 256}},
         {"hl": SRC, "wram": {SRC: bytes((0, 0)) + PAT[:257] + b"\0"}, "read": {VRAM: 256}},
     ],
+    # bg_map.asm:52-68 branches on wLCDC bit 7: LCD off writes the map byte
+    # directly, LCD on stages it in wTempByte first and returns a = 0. Both
+    # paths and the staging byte are observed.
     "WriteByteToBGMap0": [
-        {"read": {VRAM: 1}},
-        dict(POISON, a=0x5A, b=7, c=4, read={VRAM + 135: 1}),
+        {"read": {VRAM: 1, WTEMPBYTE: 1}},
+        {"a": 0x5A, "b": 7, "c": 4, "wram": {WLCDC: b"\x00", WTEMPBYTE: b"\x00"},
+         "read": {VRAM + 135: 1, WTEMPBYTE: 1}},
+        {"a": 0x3C, "b": 7, "c": 4, "wram": {WLCDC: b"\x80", WTEMPBYTE: b"\x00"},
+         "read": {VRAM + 135: 1, WTEMPBYTE: 1}},
+        dict(POISON, a=0x5A, b=7, c=4, wram={WLCDC: b"\x00", WTEMPBYTE: b"\x00"},
+             read={VRAM + 135: 1, WTEMPBYTE: 1}),
+        dict(POISON, a=0x5A, b=7, c=4, wram={WLCDC: b"\x80", WTEMPBYTE: b"\x00"},
+             read={VRAM + 135: 1, WTEMPBYTE: 1}),
     ],
     "HblankWriteByteToBGMap0": [
-        {"read": {VRAM: 1}},
-        dict(POISON, a=0xA5, b=9, c=6, read={VRAM + 201: 1}),
+        {"read": {VRAM: 1, WTEMPBYTE: 1}},
+        {"a": 0xA5, "b": 9, "c": 6, "wram": {WTEMPBYTE: b"\x00"},
+         "read": {VRAM + 201: 1, WTEMPBYTE: 1}},
+        dict(POISON, a=0xA5, b=9, c=6, wram={WTEMPBYTE: b"\x00"},
+             read={VRAM + 201: 1, WTEMPBYTE: 1}),
     ],
     "CopyDataToBGMap0": [
         {"a": 1, "hl": SRC, "wram": {SRC: b"\x42"}, "read": {VRAM: 1}},

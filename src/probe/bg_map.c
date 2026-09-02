@@ -28,7 +28,7 @@ static void adapt_WriteDataBlockToBGMap0(ProbeState *s)
 
 static void adapt_WriteByteToBGMap0(ProbeState *s)
 {
-	WriteByteToBGMap0(s->a, s->b, s->c);
+	s->a = WriteByteToBGMap0(s->a, s->b, s->c);
 }
 
 static void adapt_HblankWriteByteToBGMap0(ProbeState *s)
