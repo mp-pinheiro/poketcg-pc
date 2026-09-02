@@ -19,7 +19,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import refstream
 import scenario as scenario_module
 
-DEFAULT_DOMAINS = ("wram", "hram", "io", "oam")
+# `io` is opt-in via --domains: the reference side of that domain is bus
+# readback (gambatte_cpuread) while the native side dumps the raw g_io store,
+# so the two are not the same quantity. Unmapped addresses read $FF on hardware
+# and hold $00 in the array, and $FF00 differs because the port models joypad
+# readback in gb_read8 (src/mem.c:601-608) rather than in the stored byte —
+# comparing the store reports 44 constant phantom bytes at every ordinal.
+# Making it comparable means dumping gb_read8 results for $FF00-$FF7F beside
+# the raw store in src/state_dump.c.
+DEFAULT_DOMAINS = ("wram", "hram", "oam")
 FIELD_BASE = {"wram": 0xC000, "hram": 0xFF80, "io": 0xFF00, "oam": 0xFE00}
 
 
