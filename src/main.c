@@ -245,6 +245,7 @@ int main(int argc, char **argv)
 			trace_entries_path = argv[++i];
 		} else if (strcmp(argv[i], "--trace-calls") == 0 && i + 1 < argc) {
 			trace_calls_path = argv[++i];
+			trace_flush_on_abort(trace_calls_path);
 		} else if (strcmp(argv[i], "--load-checkpoint") == 0 && i + 1 < argc) {
 			checkpoint_path = argv[++i];
 		} else if (strcmp(argv[i], "--help") == 0) {

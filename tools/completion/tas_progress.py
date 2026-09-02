@@ -15,6 +15,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import composition_audit
 import native_trace
 
 
@@ -47,18 +48,31 @@ def case_basenames() -> dict[str, str]:
     return mapping
 
 
-def run_native(binary: Path, pack: Path, masks: Path, frames: int, trace: Path) -> None:
+def run_native(binary: Path, pack: Path, masks: Path, frames: int, trace: Path) -> str:
+    """Runs the instrumented lane and returns its abort reason, empty when clean.
+
+    An abort still leaves a trace, because src/trace.c flushes on SIGABRT, so a
+    run that dies on an unported script entry is still measured up to that
+    point. The reason is reported as `blocked_by` rather than swallowing the
+    numbers, which is what makes every iteration of the loop comparable.
+    """
+    if trace.exists():
+        trace.unlink()
     result = subprocess.run(
         [str(binary), "--headless", "--data-pack", str(pack), "--frames", str(frames),
          "--input", str(masks), "--trace-calls", str(trace)],
         cwd=ROOT, capture_output=True, text=True, timeout=1800, check=False,
     )
-    if result.returncode != 0:
-        raise ProgressError(f"native run failed: {result.stderr.strip()[:300]}")
+    if result.returncode == 0:
+        return ""
+    reason = (result.stderr.strip().splitlines() or ["unknown"])[-1][:200]
+    if not trace.exists():
+        raise ProgressError(f"native run failed with no trace: {reason}")
+    return reason
 
 
 def report(
-    reference_path: Path, binary: Path, trace: Path, limit: int
+    reference_path: Path, binary: Path, trace: Path, limit: int, blocked_by: str = ""
 ) -> dict[str, Any]:
     reference = json.loads(reference_path.read_text())
     rows = {row["routine"]: row for row in reference["calls"]}
@@ -102,10 +116,12 @@ def report(
         source = inventory.get(name, {}).get("file", "")
         key = owners.get(name, basename_of(source) if source else "?")
         by_basename[key] = by_basename.get(key, 0) + 1
+    audits = composition_audit.counts()
     return {
         "schema": 1,
-        "format": "tas-progress-v1",
+        "format": "tas-progress-v2",
         "reference": str(reference_path.relative_to(ROOT)),
+        "blocked_by": blocked_by,
         "native_records": records,
         "native_overflow": overflow,
         "reference_ordinals": total_ordinals,
@@ -113,12 +129,47 @@ def report(
         "progress_pct": round(100.0 * reached_ordinal / total_ordinals, 2) if total_ordinals else None,
         "comparable_routines": len(comparable),
         "reached_routines": len(reached),
+        "executed_routines": len(native),
+        "translated_routines": len(inventory),
         "missing_routines": len(missing),
         "structural_misses": structural,
         "frontier_misses": len(frontier),
         "blockers": blockers,
         "frontier_by_basename": dict(sorted(by_basename.items(), key=lambda kv: -kv[1])),
+        **audits,
     }
+
+
+RATCHET_PATH = ROOT / "tools" / "completion" / "tas_ratchet.json"
+# Progress may only move one way. The first three rise, the audit counts fall.
+RATCHET_RISING = ("reached_ordinal", "reached_routines", "executed_routines")
+RATCHET_FALLING = ("loops", "banks", "jumps")
+
+
+def check_ratchet(payload: dict[str, Any]) -> dict[str, Any] | None:
+    if not RATCHET_PATH.is_file():
+        return None
+    recorded = json.loads(RATCHET_PATH.read_text())
+    for key in RATCHET_RISING:
+        if key in recorded and payload[key] < recorded[key]:
+            return {"status": "REGRESSION", "key": key,
+                    "was": recorded[key], "now": payload[key]}
+    for key in RATCHET_FALLING:
+        if key in recorded and payload[key] > recorded[key]:
+            return {"status": "REGRESSION", "key": key,
+                    "was": recorded[key], "now": payload[key]}
+    return None
+
+
+def write_ratchet(payload: dict[str, Any]) -> dict[str, int]:
+    recorded = json.loads(RATCHET_PATH.read_text()) if RATCHET_PATH.is_file() else {}
+    for key in RATCHET_RISING:
+        recorded[key] = max(int(payload[key]), int(recorded.get(key, 0)))
+    for key in RATCHET_FALLING:
+        current = int(payload[key])
+        recorded[key] = min(current, int(recorded.get(key, current)))
+    RATCHET_PATH.write_text(json.dumps(recorded, indent=2, sort_keys=True) + "\n")
+    return recorded
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -131,6 +182,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--frames", type=int, default=78207)
     parser.add_argument("--limit", type=int, default=12)
     parser.add_argument("--skip-run", action="store_true", help="reuse an existing trace")
+    parser.add_argument("--write-ratchet", action="store_true",
+                        help="raise the ratchet to the measured values")
     parser.add_argument("--json")
     args = parser.parse_args(argv)
 
@@ -139,19 +192,29 @@ def main(argv: list[str] | None = None) -> int:
         return path if path.is_absolute() else ROOT / path
 
     try:
+        blocked_by = ""
         if not args.skip_run:
-            run_native(resolve(args.binary), resolve(args.pack), resolve(args.masks),
-                       args.frames, resolve(args.trace))
+            blocked_by = run_native(
+                resolve(args.binary), resolve(args.pack), resolve(args.masks),
+                args.frames, resolve(args.trace))
         payload = report(resolve(args.reference), resolve(args.binary),
-                         resolve(args.trace), args.limit)
+                         resolve(args.trace), args.limit, blocked_by)
     except (ProgressError, OSError, ValueError, subprocess.TimeoutExpired) as exc:
         print(json.dumps({"status": "FAIL", "detail": str(exc)}), file=sys.stderr)
         return 2
+
     text = json.dumps(payload, indent=2, sort_keys=True)
     if args.json:
         resolve(args.json).write_text(text + "\n")
     print(text)
-    return 0 if not payload["missing_routines"] else 1
+    if args.write_ratchet:
+        print(json.dumps({"ratchet": write_ratchet(payload)}, sort_keys=True))
+        return 0
+    regression = check_ratchet(payload)
+    if regression:
+        print(json.dumps(regression, sort_keys=True), file=sys.stderr)
+        return 3
+    return 0
 
 
 if __name__ == "__main__":

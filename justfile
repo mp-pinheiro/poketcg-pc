@@ -403,6 +403,14 @@ completion-tas-convert MOVIE *ARGS:
 completion-tas-progress *ARGS:
     python3 tools/completion/tas_progress.py {{ARGS}}
 
+
+# Raise the ratchet to the values the last gate run measured.
+completion-tas-ratchet *ARGS:
+    python3 tools/completion/tas_progress.py --skip-run --write-ratchet {{ARGS}}
+
+# Count the composition defects per-routine verification cannot see.
+completion-composition-audit AUDIT="all":
+    python3 tools/completion/composition_audit.py {{AUDIT}}
 # Coverage-guided input search with savestate checkpoints.
 completion-explore *ARGS:
     python3 tools/completion/explore.py {{ARGS}}

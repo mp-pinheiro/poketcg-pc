@@ -22,4 +22,7 @@ int trace_overflowed(void);
  * tools/completion/native_trace.py against the same binary's symbol table. */
 int trace_write_raw(const char *path);
 
+/* Writes the trace if the run aborts, so a failed run is still measurable. */
+void trace_flush_on_abort(const char *path);
+
 #endif /* POKETCG_TRACE_H */

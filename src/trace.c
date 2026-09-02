@@ -1,5 +1,6 @@
 #include "trace.h"
 
+#include <signal.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -76,6 +77,27 @@ NOTRACE void __cyg_profile_func_exit(void *this_fn, void *call_site)
 {
 	bank_guard_exit(this_fn);
 	(void)call_site;
+}
+
+/* A whole-game run that aborts -- an unported script entry, a data-pack miss --
+ * still executed everything up to that point, and the gate needs that trace to
+ * report how far the port got. abort() raises SIGABRT, so the handler writes
+ * the records and re-raises with the disposition restored. */
+static const char *g_abort_path;
+
+NOTRACE static void flush_on_abort(int signal_number)
+{
+	if (g_abort_path)
+		(void)trace_write_raw(g_abort_path);
+	signal(signal_number, SIG_DFL);
+	raise(signal_number);
+}
+
+NOTRACE void trace_flush_on_abort(const char *path)
+{
+	g_abort_path = path;
+	if (path)
+		signal(SIGABRT, flush_on_abort);
 }
 
 NOTRACE int trace_write_raw(const char *path)
