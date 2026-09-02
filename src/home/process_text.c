@@ -111,8 +111,12 @@ uint16_t GetFullWidthFontTileOffset(uint8_t d, uint8_t e)
 	} else if (d == TX_KATAKANA) {
 		base = 0;
 		e = (uint8_t)(e - 0x10);
+		d = 0;
 	}
-	return (uint16_t)(base + (uint16_t)e * TILE_SIZE_1BPP);
+	/* process_text.asm:789-805: hl = (d:e) * 8 + bc -- d is the high byte
+	 * of the 16-bit font index (the TX_FULLWIDTHn block), not a separate
+	 * block selector. */
+	return (uint16_t)((((uint16_t)d << 8) | e) * TILE_SIZE_1BPP + base);
 }
 
 uint16_t ConvertTileNumberToTileDataAddress(uint8_t *b, uint8_t *c)
