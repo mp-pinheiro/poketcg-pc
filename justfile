@@ -381,6 +381,10 @@ completion-dispatch SCENARIO OUT *ARGS:
     python3 tools/completion/dispatch_census.py --scenario "{{SCENARIO}}" \
         --evidence "{{build_dir}}/completion/evidence/$(python3 -c 'import sys; sys.path.insert(0, "tools/completion"); import scenario; print(scenario.SCENARIO_REQUIREMENTS["{{SCENARIO}}"])').json" \
         --out "{{OUT}}" {{ARGS}}
+
+# Earliest anchor ordinal each byte goes wrong, with the reference writer just before it.
+completion-frame-census SCENARIO *ARGS:
+    python3 tools/completion/frame_census.py "{{SCENARIO}}" {{ARGS}}
 # Recompute site/data/progress.json + history point from the registry and gate record.
 progress:
     python3 tools/progress/report.py build

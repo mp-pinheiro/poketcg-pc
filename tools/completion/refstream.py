@@ -488,7 +488,12 @@ def open_stream(scenario: str, frames: int, anchors: int) -> Stream:
     return Stream(ROOT / meta["directory"])
 
 
-def writers(scenario: str, frames: int, addresses: list[int]) -> list[dict[str, Any]]:
+EVENT_CAP = 8192
+
+
+def writers(
+    scenario: str, frames: int, addresses: list[int], *, events: bool = False
+) -> list[dict[str, Any]]:
     masks = scenario_masks(scenario, frames)
     resolve = label_resolver()
     watched = set(addresses)
@@ -496,6 +501,7 @@ def writers(scenario: str, frames: int, addresses: list[int]) -> list[dict[str, 
     tally: dict[int, dict[tuple[str, int, int, int], dict[str, Any]]] = {
         address: {} for address in addresses
     }
+    stream: dict[int, list[dict[str, Any]]] = {address: [] for address in addresses}
     with Core(masks) as core:
 
         def on_write(address: int, _cycle: int) -> None:
@@ -524,6 +530,15 @@ def writers(scenario: str, frames: int, addresses: list[int]) -> list[dict[str, 
             record["count"] += 1
             record["last_ordinal"] = core.ordinal
             record["last_sequence"] = sequence
+            if events and len(stream[address]) < EVENT_CAP:
+                stream[address].append({
+                    "ordinal": core.ordinal,
+                    "sequence": sequence,
+                    "label": name,
+                    "label_offset": label_offset,
+                    "pc": f"0x{pc:04X}",
+                    "routine": record["routine"],
+                })
 
         core.on_write(on_write)
         core.install_exec()
@@ -537,8 +552,18 @@ def writers(scenario: str, frames: int, addresses: list[int]) -> list[dict[str, 
             tally[address].values(),
             key=lambda row: (-row["last_ordinal"], -row["last_sequence"]),
         )
-        result.append({"address": f"0x{address:04X}", "writers": rows})
+        entry: dict[str, Any] = {"address": f"0x{address:04X}", "writers": rows}
+        if events:
+            entry["events"] = stream[address]
+        result.append(entry)
     return result
+
+
+def writer_before(entry: dict[str, Any], ordinal: int) -> dict[str, Any] | None:
+    """The last recorded reference write to this address strictly before an
+    ordinal, which is the routine whose value the comparison should have seen."""
+    prior = [event for event in entry.get("events", ()) if event["ordinal"] < ordinal]
+    return prior[-1] if prior else None
 
 
 def routine_trace(
