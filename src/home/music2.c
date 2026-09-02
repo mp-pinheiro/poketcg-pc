@@ -395,13 +395,14 @@ void Music2_PlayNextNote(uint16_t *hl, uint8_t ch)
 
 		/* $E0: EndLoop — decrement count, jump back if not zero */
 		case 16: {
-			uint16_t sp = Music2_GetChannelStackPointer(ch) - 1;
+			uint16_t sp = Music2_GetChannelStackPointer(ch) - 1u;
 			uint8_t count = gb_read8(sp);
 			if (--count) {
 				gb_write8(sp, count);
-				*hl = (uint16_t)gb_read8(sp - 2) << 8 | gb_read8(sp - 3);
+				*hl = (uint16_t)gb_read8(sp - 1u) << 8
+				      | gb_read8(sp - 2u);
 			} else {
-				Music2_SetChannelStackPointer(ch, sp - 2);
+				Music2_SetChannelStackPointer(ch, sp - 2u);
 			}
 			break;
 		}
@@ -411,22 +412,27 @@ void Music2_PlayNextNote(uint16_t *hl, uint8_t ch)
 			*hl = read16(*hl);
 			break;
 
-		/* $E2: call — push return addr, jump to 2-byte target */
+		/* $E2: call — push the raw operand address (music2.asm:976-992
+		 * pushes the popped stream pointer unmodified, before it reads
+		 * the 2-byte target through it), jump to the 2-byte target. */
 		case 18: {
 			uint16_t sp = Music2_GetChannelStackPointer(ch);
-			uint16_t ret_addr = *hl + 2;
+			uint16_t call_operand = *hl;
 			uint16_t target = read16(*hl);
-			gb_write8(sp, (uint8_t)ret_addr);
-			gb_write8(sp + 1, (uint8_t)(ret_addr >> 8));
+			gb_write8(sp, (uint8_t)call_operand);
+			gb_write8(sp + 1, (uint8_t)(call_operand >> 8));
 			Music2_SetChannelStackPointer(ch, sp + 2);
 			*hl = target;
 			break;
 		}
 
-		/* $E3: ret — pop return address from channel stack */
+		/* $E3: ret — pop the raw operand address from the channel stack
+		 * and add 2 to skip the call's 2-byte operand (music2.asm:994-1005
+		 * `inc de` twice after the pop). */
 		case 19: {
 			uint16_t sp = Music2_GetChannelStackPointer(ch) - 2;
-			*hl = (uint16_t)gb_read8(sp + 1) << 8 | gb_read8(sp);
+			uint16_t ret_target = (uint16_t)gb_read8(sp + 1) << 8 | gb_read8(sp);
+			*hl = (uint16_t)(ret_target + 2u);
 			Music2_SetChannelStackPointer(ch, sp);
 			break;
 		}
@@ -874,29 +880,25 @@ void Music2_end(uint16_t caller_stream, uint8_t ch)
 
 static void update_channel(uint8_t ch)
 {
-	uint8_t is_playing, instr, counter;
+	uint8_t is_playing, counter;
 	uint16_t ch_ptr;
 
 	is_playing = wMusicIsPlaying_PTR[ch];
 	if (!is_playing) goto stop_chan;
 
-	if (ch == 3) {
-		instr = wddba_PTR[0]; /* wddba is the 4th instrument field (ch 3 uses wddba) */
-	} else {
-		instr = wddb7_PTR[ch];
-	}
 	counter = wddbb_PTR[ch];
 
-	/* Echo/hardware envelope: if instrument is non-zero and counter expires */
-	if (instr != 0) {
-		uint8_t echo_ctr = wddc3_PTR[ch];
-		if (echo_ctr) {
-			echo_ctr--;
+	/* Echo/hardware envelope: channels 1-3 only (music2.asm:385-538). Channel
+	 * 4 (noise) has no wddc3/echo logic at all (music2.asm:540-577) — it must
+	 * never read or decrement wddc3. */
+	if (ch != 3) {
+		uint8_t instr = wddb7_PTR[ch];
+		if (instr != 0) {
+			/* music2.asm:392-395/445-448/498-501 decrement unconditionally
+			 * (no zero guard), wrapping $00 to $FF. */
+			uint8_t echo_ctr = (uint8_t)(wddc3_PTR[ch] - 1u);
 			wddc3_PTR[ch] = echo_ctr;
-		}
-		if (echo_ctr == 0 && counter != 1 && !(wdd8c & (1 << (ch == 3 ? 3 : ch)))) {
-			/* Apply echo envelope. Ch 4 skips this path (handled in f480a). */
-			if (ch < 3) {
+			if (echo_ctr == 0 && counter != 1 && !(wdd8c & (1 << ch))) {
 				uint8_t echo_val = wMusicEcho_PTR[ch];
 				if (ch == 0) {
 					gb_write8(APU_AUD1ENV, echo_val);
@@ -904,7 +906,7 @@ static void update_channel(uint8_t ch)
 				} else if (ch == 1) {
 					gb_write8(APU_AUD2ENV, echo_val);
 					gb_write8(APU_AUD2HIGH, K_RESTART);
-				} else if (ch == 2) {
+				} else {
 					if (!(wdd8c & 0x04))
 						gb_write8(APU_AUD3LEVEL, echo_val);
 				}
@@ -916,28 +918,34 @@ static void update_channel(uint8_t ch)
 	counter--;
 	wddbb_PTR[ch] = counter;
 	if (counter != 0) {
-		/* Channel 4 has a noise update path while waiting. */
-		if (ch == 3 && wddef) {
-			Music2_f4839();
+		if (ch == 3) {
+			/* music2.asm:559-564: channel 4 never reaches Music2_f485a
+			 * from this path, whether or not wddef is set. */
+			if (wddef) Music2_f4839();
 			return;
 		}
 		Music2_f485a(ch);
 		return;
 	}
 
-	/* Time for a new note. Load stream pointer from channel pointers. */
 	ch_ptr = (uint16_t)wMusicChannelPointers_PTR[ch * 2 + 1] << 8
 	         | wMusicChannelPointers_PTR[ch * 2];
+	/* music2.asm:409-422/462-475/511-524/544-557: the caller (this
+	 * function) never writes wMusicChannelPointers back after this call.
+	 * The dispatcher only updates it via Music2_note's own epilogue
+	 * (asm:832-840, ported as the wMusicChannelPointers_PTR store at the
+	 * end of pnn_note). The "end" command (Music2_end, asm:1122-1127)
+	 * pops and discards its advanced stream pointer instead of storing
+	 * it, so a stream that stops mid-dispatch after consuming non-note
+	 * commands must leave the last committed note position untouched,
+	 * not the fully-advanced position. */
 	Music2_PlayNextNote(&ch_ptr, ch);
-
-	/* PlayNextNote advances ch_ptr; write it back. */
-	wMusicChannelPointers_PTR[ch * 2] = (uint8_t)ch_ptr;
-	wMusicChannelPointers_PTR[ch * 2 + 1] = (uint8_t)(ch_ptr >> 8);
 
 	if (!wMusicIsPlaying_PTR[ch]) goto stop_chan;
 
 	/* Apply note to APU hardware. */
 	update_ch_output(ch);
+	if (ch == 3) return; /* music2.asm:556-558: no Music2_f485a on channel 4. */
 	Music2_f485a(ch);
 	return;
 

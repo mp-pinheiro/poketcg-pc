@@ -117,6 +117,16 @@ CASES["Music2_BeginSong"] = [
                           0xDDF2: 1}},
     {"a": 0x01, "read": {0xDD81: 1, 0xDD95: 8, 0xDD8D: 4, 0xDDF2: 1}},
     dict(POISON, a=0x01, read={0xDD81: 1, 0xDD95: 8, 0xDD8D: 4, 0xDDF2: 1}),
+    # song 6 = Music_PCMainMenu (music2_headers.asm:112-117): bank $3e, flags
+    # %1111 -- every channel enabled, so this is the only stock case that
+    # exercises BeginSong's per-channel pointer init for all 4 channels
+    # against a real music2 song header instead of the %0000 (no channel)
+    # headers used by songs 0/1. wCurSongBank must land on $3e (music2's own
+    # bank), proving the header/bank tables are read correctly in-driver.
+    {"a": 0x06, "read": {0xDD81: 1, 0xDD95: 8, 0xDD9D: 8, 0xDDBB: 4,
+                          0xDD8D: 4, 0xDD91: 4, 0xDDEA: 4, 0xDDBF: 4,
+                          0xDDDF: 4, 0xDDCB: 4, 0xDDF3: 8, 0xDDC7: 4,
+                          0xDDF2: 1}},
 ]
 
 # -- Stack helpers --------------------------------------------------------
@@ -328,6 +338,22 @@ CASES["Music2_UpdateChannel1"] = [
                        0xDD95: b"\x00\xC1",
                        0xDDB7: b"\x00", 0xDDC3: b"\x01",
                        0xDDA5: b"\x2C\x00"}),
+    # zero-guarded decrement: music2.asm:392-395/445-448/498-501 decrement
+    # wddc3 unconditionally, so 0 wraps to $FF, which then blocks the echo
+    # envelope write ($FF != 0). A zero-guarded decrement instead leaves
+    # wddc3 at 0 and (wrongly) applies the envelope.
+    {"wram": {0xDD8D: b"\x01", 0xDD8C: b"\x00", 0xDDB7: b"\x10",
+              0xDDBB: b"\x03", 0xDDC3: b"\x00", 0xDDC7: b"\x55",
+              0xDD95: b"\x00\xC1"},
+     "read": {0xDDC3: 1}},
+    # the caller must never write wMusicChannelPointers back after
+    # PlayNextNote returns via a non-note exit (music2.asm:409-422 etc);
+    # only Music2_note's own epilogue stores it. Music2_end ($DA) pops and
+    # discards its advanced pointer, so the channel pointer must stay at
+    # its pre-call value, not the fully-advanced one.
+    {"wram": {0xDD8D: b"\x01", 0xDD8C: b"\x00", 0xDDB7: b"\x00",
+              0xDDBB: b"\x01", 0xDD95: b"\x00\xC1", 0xC100: b"\xDA"},
+     "read": {0xDD95: 2, 0xDD8D: 1}},
 ]
 
 CONTRACT["Music2_UpdateChannel2"] = {"compare": (), "preserve": ()}
@@ -384,6 +410,13 @@ CASES["Music2_UpdateChannel4"] = [
                        0xDDBE: b"\x01", 0xDDEF: b"\x00",
                        0xDD9B: b"\x00\xC1",
                        0xDDBA: b"\x00"}),
+    # channel 4 (noise) has no wddc3/echo logic at all (music2.asm:540-577)
+    # -- it must never read or decrement wddc3. wddef=1 keeps the
+    # counter!=0 branch's f4839 call identical for both the buggy and
+    # fixed code, isolating this case to the wddc3 write alone.
+    {"wram": {0xDD90: b"\x01", 0xDD8C: b"\x00", 0xDDBA: b"\x10",
+              0xDDC6: b"\x05", 0xDDBE: b"\x03", 0xDDEF: b"\x01"},
+     "read": {0xDDC6: 1}},
 ]
 
 # -- Pause / Resume / Backup / LoadBackup ---------------------------------
@@ -1101,6 +1134,45 @@ CASES["Music2_PlayNextNote"] = [
          wram={**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x7A\x40",
                0xDDAF: b"\x03\x03\x03\x03"},
          read=_NOTE_READ),
+    # $E0 EndLoop, non-exhausted: jump back to the pushed continuation
+    # address. music2.asm:956-961 reads hi at sp-2 / lo at sp-3 relative to
+    # the count byte's own position ($C202); a byte-swapped, off-by-one read
+    # lands on $0099 instead of $C300 and never reaches the $E6 write below.
+    {"c": 0, "hl": 0xC100,
+     "wram": {**_PNN_IDLE, 0xC100: b"\xE0",
+              0xC1FF: b"\x99",
+              0xC200: b"\x00\xC3\x02",
+              0xDDF3: b"\x03\xC2",
+              0xC300: b"\xE6\x5A\xFF",
+              0xDDE7: b"\x00\x00\x00"},
+     "read": {0xDDE7: 1, 0xDD8D: 4, 0xDDF3: 2, 0xC202: 1}},
+    # $E0 EndLoop, exhausted: count reaches zero, pops the 3-byte frame and
+    # falls through to the next command in the (unadvanced) stream.
+    {"c": 0, "hl": 0xC100,
+     "wram": {**_PNN_IDLE, 0xC100: b"\xE0\xE6\x77\xFF",
+              0xC200: b"\xAA\xBB\x01",
+              0xDDF3: b"\x03\xC2",
+              0xDDE7: b"\x00\x00\x00"},
+     "read": {0xDDE7: 1, 0xDD8D: 4, 0xDDF3: 2}},
+    # $E2 call must push the raw operand address (music2.asm:976-992), not
+    # the operand address plus 2 -- that +2 belongs to Music2_ret alone.
+    dict(POISON, b=0, c=1, hl=0xC100,
+         wram={**_PNN_IDLE, 0xC100: b"\xE2\x00\xC3",
+               0xDDF5: b"\x00\xC2",
+               0xC300: b"\xFF"},
+         read={0xC200: 2, 0xDDF5: 2}),
+    # $E3 ret pops the raw call-operand address and adds 2 to skip the
+    # 2-byte call operand (music2.asm:994-1005 `inc de` twice); a ret that
+    # skips the +2 lands on $C150 ($D9 tie, sets the tie flag) instead of
+    # $C152 ($DA end, leaves the tie flag untouched). The two target spans
+    # are kept non-overlapping (2 bytes at $C150 vs 1 byte at $C152) so
+    # neither command's bytes can be silently clobbered by the other's seed.
+    dict(POISON, b=0, c=2, hl=0xC100,
+         wram={**_PNN_IDLE, 0xC100: b"\xE3",
+               0xC200: b"\x50\xC1", 0xDDF7: b"\x02\xC2",
+               0xC150: b"\xD9\xFF", 0xC152: b"\xDA",
+               0xDD93: b"\x00"},
+         read={0xDD93: 1, 0xDD8D: 4, 0xDDF7: 2}),
 ]
 # <<< factory Music2_PlayNextNote
 
