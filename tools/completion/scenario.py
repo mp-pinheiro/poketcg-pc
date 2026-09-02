@@ -221,13 +221,21 @@ def fields_incomparable(
 #   oracle's savestate (its recompiled build resolves banks statically and
 #   never updates them); the native fields are live MBC state. rVBK ($FF4F)
 #   matches on both sides, so VRAM bank selection stays compared via io.
-# - io[4] ($FF04 DIV): free-running hardware counter. The ROM reads it zero
-#   times (vision.md RNG audit); the two sides' values differ only by cycle
-#   accounting, and the converged alignment pins DoFrame counts, not cycles.
+# - io[4..5] ($FF04 DIV, $FF05 TIMA): free-running hardware counters. The ROM
+#   reads DIV zero times (vision.md RNG audit) and TIMA only via its own
+#   interrupt path; the reference ages them per scanout while the native ages
+#   per DoFrame, so aligned-DoFrame comparison cannot make them equal. The
+#   aging model itself is validated separately (byte-exact 1995/1995 frames
+#   against the oracle savestate sweep).
+# - io[15] ($FF0F IF): pending-interrupt latch. The reference's PPU latches
+#   VBlank requests at scanout-phase entry (mid-processing services included);
+#   the port services at frame boundaries instead, so the latch byte differs
+#   by construction. The game-visible effect -- which interrupts SERVICE -- is
+#   modeled at the boundaries.
 COMPARATOR_EXCLUDED_RANGES = {
     "hram": [(0, 1), (96, 114)],
     "wram": [(0x2B8, 0x2B9), (0xABA, 0xABD)],
-    "io": [(4, 5)],
+    "io": [(4, 6), (15, 16)],
 }
 
 COMPARATOR_EXCLUDED_KEYS = {
