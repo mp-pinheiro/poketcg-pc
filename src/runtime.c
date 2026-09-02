@@ -78,21 +78,30 @@ static void boot_restart_trampoline(void)
 	longjmp(g_boot_restart_env, 1);
 }
 
+static int g_skip_boot;
+
+void runtime_skip_boot(int enable)
+{
+	g_skip_boot = enable;
+}
+
 static void *run_game(void *context)
 {
 	RuntimeState *state = context;
 
 	runtime_events_reset();
-	runtime_mark_event(RUNTIME_EVENT_BOOT_STARTED);
-	poketcg_request_boot_restart = boot_restart_trampoline;
-	if (setjmp(g_boot_restart_env) == 0) {
-		Start(0x11u);
-	} else {
-		/* Soft reset: WRAM survives, boot re-enters with the original A. */
+	if (!g_skip_boot) {
 		runtime_mark_event(RUNTIME_EVENT_BOOT_STARTED);
-		Start(wInitialA);
+		poketcg_request_boot_restart = boot_restart_trampoline;
+		if (setjmp(g_boot_restart_env) == 0) {
+			Start(0x11u);
+		} else {
+			/* Soft reset: WRAM survives, boot re-enters with the original A. */
+			runtime_mark_event(RUNTIME_EVENT_BOOT_STARTED);
+			Start(wInitialA);
+		}
+		GameLoop();
 	}
-	GameLoop();
 	for (;;) {
 		DoFrame();
 		if (stopped(state))

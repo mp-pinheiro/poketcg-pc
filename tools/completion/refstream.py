@@ -211,6 +211,7 @@ class Core:
         self._masks = masks
         self.frame = 0
         self.ordinal = 0
+        self.override_mask: int | None = None
         self._user_exec: Callable[[int, int], None] | None = None
         self._keepalive: list[Any] = []
         self.core = self.library.gambatte_create()
@@ -231,10 +232,18 @@ class Core:
         self.library.gambatte_settimemode(self.core, True)
         self.library.gambatte_settime(self.core, 0)
 
+    def hold(self, mask: int | None) -> None:
+        """Drive input from an explicit mask instead of the scenario timeline,
+        which is what the coverage search needs: it decides the next button
+        press itself rather than replaying a fixed script."""
+        self.override_mask = mask
+
     def _input(self, _context: int) -> int:
         """The reference reads JOYP inside ReadJoypad, before the DoFrame
         anchor fires, so ordinal k is the mask the native port applies on the
         frame whose boundary is anchor k."""
+        if self.override_mask is not None:
+            return native_mask_to_gambatte(self.override_mask)
         if 0 <= self.ordinal < len(self._masks):
             return native_mask_to_gambatte(self._masks[self.ordinal])
         return 0

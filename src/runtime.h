@@ -37,6 +37,11 @@ typedef void (*RuntimeStateDumpCb)(uint32_t frame, const RuntimeResult *result);
 void runtime_set_state_dump_frames(
 	RuntimeStateDumpCb callback, const uint32_t *frames, size_t frame_count);
 
+/* Resume from an injected reference checkpoint instead of booting: skips Start
+ * and GameLoop and drives DoFrame directly, so a subsystem the port cannot yet
+ * reach on its own can still be exercised. Diagnostic only. */
+void runtime_skip_boot(int enable);
+
 int runtime_run(struct Shell *shell, uint32_t frame_limit, RuntimeResult *result);
 int runtime_run_with_input(
 	struct Shell *shell, uint32_t frame_limit,

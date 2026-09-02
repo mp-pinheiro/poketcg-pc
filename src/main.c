@@ -3,6 +3,7 @@
 #include "state_dump.h"
 #include "runtime.h"
 #include "shell.h"
+#include "checkpoint.h"
 #include "trace.h"
 
 #include <errno.h>
@@ -208,6 +209,7 @@ int main(int argc, char **argv)
 	const char *input_path = NULL;
 	const char *trace_entries_path = NULL;
 	const char *trace_calls_path = NULL;
+	const char *checkpoint_path = NULL;
 	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "--headless") == 0) {
 			config.headless = 1;
@@ -243,13 +245,18 @@ int main(int argc, char **argv)
 			trace_entries_path = argv[++i];
 		} else if (strcmp(argv[i], "--trace-calls") == 0 && i + 1 < argc) {
 			trace_calls_path = argv[++i];
+		} else if (strcmp(argv[i], "--load-checkpoint") == 0 && i + 1 < argc) {
+			checkpoint_path = argv[++i];
 		} else if (strcmp(argv[i], "--help") == 0) {
 			printf("usage: poketcg [--headless] [--frames N] --data-pack PATH "
 			       "[--require-data BANK:ADDR] [--load-save PATH] [--save PATH] "
 			       "[--dump-state PATH] [--dump-state-frames N[,N...]] "
-			       "[--input PATH] [--trace-entries PATH] [--trace-calls PATH]\n");
+			       "[--input PATH] [--trace-entries PATH] [--trace-calls PATH] "
+			       "[--load-checkpoint PATH]\n");
 			printf("--trace-calls needs a build configured with "
 			       "-DPOKETCG_TRACE=ON; without it the dump is empty\n");
+			printf("--load-checkpoint injects a reference state and skips boot; "
+			       "it is a diagnostic fixture, not evidence the game works\n");
 			printf("with --dump-state-frames and no --dump-state, per-frame dumps "
 			       "are written to state-<N>.json in the current directory\n");
 			return 0;
@@ -305,6 +312,16 @@ int main(int argc, char **argv)
 	if (g_dump_frame_count)
 		runtime_set_state_dump_frames(
 			state_dump_frames_callback, g_dump_frames, g_dump_frame_count);
+	if (checkpoint_path) {
+		if (checkpoint_load(checkpoint_path) != 0) {
+			fprintf(stderr, "cannot load checkpoint %s\n", checkpoint_path);
+			free(input_buttons);
+			shell_destroy(shell);
+			rom_pack_free();
+			return 2;
+		}
+		runtime_skip_boot(1);
+	}
 	RuntimeResult runtime = {0};
 	int status = input_count
 		? runtime_run_with_input(shell, frame_limit, input_buttons, input_count, &runtime)
