@@ -106,6 +106,20 @@ CASES["ExecuteNextSFXCommand"] = [
      "wram": {0xC100: b"\x10\xAB\xF0", 0xDD8C: b"\xFF"},
      "read": {0xDE2D: 1, 0xDD8C: 1},
      "hram": {0xFF1C: b"\x00", 0xFF1E: b"\x00"}},
+    # idx=4 (endloop), c=0, count decrements 1->0: real asm falls through to
+    # `jp ExecuteNextSFXCommand` at the forward pointer instead of stopping
+    # (sfx.asm:248-253/263-265); byte at hl+1 is then idx=15 (end), which
+    # must run and clear wdd8c bit 0.
+    {"hl": 0xC500, "c": 0,
+     "wram": {0xC500: b"\x40\xF0", 0xDE3F: b"\x01", 0xDD8C: b"\xFF"},
+     "read": {0xDE3F: 1, 0xDD8C: 1}},
+    # idx=4 (endloop), c=1, count decrements 2->1: real asm jumps back to the
+    # wde43-stored loop address (sfx.asm:254-262) and keeps interpreting
+    # there; the loop address here points at an idx=15 (end) opcode for c=1.
+    {"hl": 0xC800, "c": 1,
+     "wram": {0xC800: b"\x40", 0xDE40: b"\x02", 0xDE45: b"\x00\xC9",
+              0xC900: b"\xF0", 0xDD8C: b"\xFF"},
+     "read": {0xDE40: 1, 0xDD8C: 1}},
 ]
 # <<< factory ExecuteNextSFXCommand
 

@@ -234,17 +234,22 @@ static uint16_t SFX_Loop(uint16_t cmd_ptr, uint8_t c)
 	return cmd_ptr;
 }
 
-static bool SFX_EndLoop(uint16_t *cmd_ptr, uint8_t c)
+/* sfx.asm:248-265. Both branches fall through to
+ * `jp ExecuteNextSFXCommand`: a finished loop (count reaches zero) resumes
+ * forward at the saved post-opcode pointer, it never halts the
+ * interpreter. Matches the probe-tested standalone SFX_endloop
+ * (sfx.c:590-603), which calls ExecuteNextSFXCommand again in the
+ * count==0 case instead of returning. */
+static uint16_t SFX_EndLoop(uint16_t cmd_ptr, uint8_t c)
 {
 	uint8_t count = gb_read8((uint16_t)(wde3f_ADDR + c));
 	count = (uint8_t)(count - 1u);
 	if (count == 0u)
-		return false;
+		return cmd_ptr;
 	gb_write8((uint16_t)(wde3f_ADDR + c), count);
 	uint16_t store_addr = (uint16_t)(wde43_ADDR + (uint16_t)c * 2u);
 	uint16_t loop_addr = (uint16_t)gb_read8(store_addr) | (uint16_t)(gb_read8((uint16_t)(store_addr + 1u)) << 8);
-	*cmd_ptr = loop_addr;
-	return true;
+	return loop_addr;
 }
 
 static uint16_t SFX_PitchOffset(uint16_t cmd_ptr, uint8_t c)
@@ -287,6 +292,9 @@ static void SFX_Wave(uint8_t param)
 	gb_write8(0xFF1Au, AUD3ENA_ON);
 }
 
+/* sfx.asm:423-445. `rlca` rotates pan_val (a) and `rlc e` (sfx.asm:434)
+ * independently rotates e's own top bit into its bottom bit; e never reads
+ * from a. */
 static uint16_t SFX_Pan(uint16_t cmd_ptr, uint8_t c)
 {
 	uint8_t pan_val = gb_read8(cmd_ptr);
@@ -298,7 +306,7 @@ static uint16_t SFX_Pan(uint16_t cmd_ptr, uint8_t c)
 		if (ch == 0u)
 			break;
 		pan_val = (uint8_t)((pan_val << 1u) | (pan_val >> 7u));
-		e = (uint8_t)((e << 1u) | (pan_val & 1u));
+		e = (uint8_t)((e << 1u) | (e >> 7u));
 	}
 	wdd85 = (uint8_t)((wdd85 & e) | pan_val);
 	return cmd_ptr;
@@ -344,8 +352,7 @@ void ExecuteNextSFXCommand(uint16_t hl, uint16_t bc)
 			cmd_ptr = SFX_Loop(cmd_ptr, c);
 			break;
 		case 4u:
-			if (!SFX_EndLoop(&cmd_ptr, c))
-				return;
+			cmd_ptr = SFX_EndLoop(cmd_ptr, c);
 			break;
 		case 5u:
 			cmd_ptr = SFX_PitchOffset(cmd_ptr, c);
