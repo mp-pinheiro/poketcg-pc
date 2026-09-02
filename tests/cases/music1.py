@@ -590,6 +590,27 @@ CASES["Music1_Update"] = [
                        0xDD8C: b"\x0F", 0xDD80: b"\x80",
                        0xDD82: b"\x80"},
          read={0xDD8D: 4}),
+    # wCurSongBank ($DD81) = $3E banks in the music2 driver, and music1.asm's
+    # `call Music1_UpdateChannel1` then resolves to 3e:40e9's copy instead of
+    # 3d's. Every other case here sets $3D, so the whole music2 dispatch was
+    # unobserved; the reference takes it on 208 of its 2,001 audio ticks over
+    # the boot timeline.
+    {"wram": {0xDD81: b"\x3E", 0xDDF2: b"\x00",
+              0xDD8C: b"\x00", 0xDD80: b"\x80",
+              0xDD82: b"\x80",
+              0xDD8D: b"\x01\x01\x01\x01",
+              0xDDBB: b"\x01\x01\x01\x01",
+              0xDDB7: b"\x00\x00\x00\x00",
+              0xDDEF: b"\x00",
+              0xDD95: b"\x00\xC1\x00\xC1\x00\xC1\x00\xC1",
+              0xDDDF: b"\x00\x00\x00\x00",
+              0xDDA5: b"\x2C\x00",
+              0xDDA7: b"\x2C\x00",
+              0xDDA9: b"\x2C\x00",
+              0xDDF1: b"\x77",
+              0xDD84: b"\xFF", 0xDD85: b"\x00",
+              0xDDF0: b"\x00"},
+     "read": {0xDD8D: 4, 0xDDBB: 4, 0xDDC3: 4}},
 ]
 # >>> factory _PauseSong
 CONTRACT["_PauseSong"] = {"compare": (), "preserve": ()}

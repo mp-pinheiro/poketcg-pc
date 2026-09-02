@@ -3,6 +3,7 @@
 #include "generated/hram.h"
 #include "mem.h"
 #include "home/switch_rom.h"
+#include "home/music2.h"
 #include "home/sfx.h"
 /* >>> factory statics */
 #include "home/music1.h"
@@ -12,6 +13,10 @@
 /* <<< factory statics */
 
 #define MUSIC1_BANK 0x3Du
+/* poketcg.sym: Music1_Update is 3d:40e9 and Music2_Update is 3e:40e9 -- the
+ * two drivers are parallel ROM copies at identical bank offsets, so the audio
+ * tick's dispatch target depends on which of the two wCurSongBank maps in. */
+#define MUSIC2_BANK 0x3Eu
 
 /* ── ROM table addresses (bank $3d) ─────────────────────────────────── */
 #define ADR_NumberOfSongs1      0x4EE5u
