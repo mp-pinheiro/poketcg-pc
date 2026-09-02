@@ -19,6 +19,15 @@ CONTRACT = {
 CASES = {
     "LoadMapHeader": [
         {"wram": {
+            W_CONSOLE: b"\x02",
+            W_CUR_MAP: b"\x00",
+            W_CUR_TILEMAP: b"\xAA",
+            W_CUR_MAP_SGB_PALS: b"\xAA",
+            W_CUR_MAP_INITIAL_PALETTE: b"\xAA",
+            W_CUR_MAP_PALETTE: b"\xAA",
+            W_DEFAULT_SONG: b"\xAA",
+        }},
+        {"wram": {
             W_CONSOLE: b"\x00",
             W_CUR_MAP: b"\x00",
             W_CUR_TILEMAP: b"\x00",
@@ -36,15 +45,6 @@ CASES = {
             W_CUR_MAP_PALETTE: b"\xAA",
             W_DEFAULT_SONG: b"\xAA",
         }),
-        {"wram": {
-            W_CONSOLE: b"\x02",
-            W_CUR_MAP: b"\x00",
-            W_CUR_TILEMAP: b"\xAA",
-            W_CUR_MAP_SGB_PALS: b"\xAA",
-            W_CUR_MAP_INITIAL_PALETTE: b"\xAA",
-            W_CUR_MAP_PALETTE: b"\xAA",
-            W_DEFAULT_SONG: b"\xAA",
-        }},
         dict(POISON, wram={
             W_CONSOLE: b"\x02",
             W_CUR_MAP: b"\x23",

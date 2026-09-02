@@ -13,13 +13,13 @@ VRAM_READ = {0: {0x8000: 0x1000, 0x9000: 0x800}}
 
 CASES = {
     "ShowCardPopCGBDisclaimer": [
-        {"wram": {WCONSOLE: b"\x02"}},
         {"wram": {WCONSOLE: b"\x00"}, "keys": 0x01,
          "setup": SETUP, "read": CACHE_READ, "vread": VRAM_READ},
         {"wram": {WCONSOLE: b"\x00"}, "keys": 0x02,
          "setup": SETUP, "read": CACHE_READ, "vread": VRAM_READ},
         dict(POISON, wram={WCONSOLE: b"\x00"}, keys=0x01,
              setup=SETUP, read=CACHE_READ, vread=VRAM_READ),
+        {"wram": {WCONSOLE: b"\x02"}},
     ],
 }
 

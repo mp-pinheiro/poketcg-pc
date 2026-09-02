@@ -15,10 +15,10 @@ CASES = {
         dict(POISON, wram={wPCPackSelection: b"\x0e"}),
     ],
     "TryGivePCPack": [
+        dict(POISON, a=10, wram={wPCPacks: b"\x81\x02" + bytes(13)}, read={wPCPacks: 15}),
         {"wram": {wPCPacks: bytes(15)}},
         {"a": 1, "wram": {wPCPacks: bytes(15)}, "read": {wPCPacks: 15}},
         {"a": 15, "wram": {wPCPacks: bytes(14) + b"\x01"}, "read": {wPCPacks: 15}},
-        dict(POISON, a=10, wram={wPCPacks: b"\x81\x02" + bytes(13)}, read={wPCPacks: 15}),
         {"a": 0x7f, "wram": {wPCPacks: bytes([1] * 15)}, "read": {wPCPacks: 15}},
     ],
 }
