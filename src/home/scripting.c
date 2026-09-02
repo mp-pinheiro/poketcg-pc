@@ -59,12 +59,11 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "generated/wram.h"
 #include "mem.h"
 
-/* scripting.asm:1400. MapNames is a table of 12 tx (2-byte) name pointers
- * sitting right after ScriptCommand_LoadCurrentMapNameIntoTxRamSlot in the
- * overworld script bank. The routine does not switch banks itself, so the
- * table is reached through ordinary bus reads at this $4000-$7fff window
- * offset. */
-#define MAP_NAMES 0x7080u
+/* scripting.asm:1391 MapNames, a table of 12 tx (2-byte) name text ids in the
+ * overworld script bank. The routine does not switch banks itself, so the table
+ * is reached through ordinary bus reads at this $4000-$7fff window offset;
+ * poketcg.sym puts it at 03:5153. */
+#define MAP_NAMES 0x5153u
 
 #include "generated/wram.h"
 

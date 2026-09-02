@@ -670,14 +670,24 @@ CASES["ScriptCommand_BattleCenter"] = [
 
 # >>> factory ScriptCommand_LoadCurrentMapNameIntoTxRamSlot
 CONTRACT["ScriptCommand_LoadCurrentMapNameIntoTxRamSlot"] = {"compare": ("a", "f", "b", "c"), "preserve": ()}
+# The slot is wTxRam2 + (c * 2) truncated to a byte (scripting.asm:1371-1374),
+# and the two bytes it receives come from MapNames indexed by
+# wOverworldMapSelection rotated left. Without a read span over that slot a
+# wrong MapNames address is invisible, which is how 0x7080 survived.
+def _map_name_slot(c):
+	return {0xCE3F + ((c << 1) & 0xFF): 2}
+
+
 CASES["ScriptCommand_LoadCurrentMapNameIntoTxRamSlot"] = [
-	{"c": 0, "wram": {0xD413: b"\x00\x00"}},
-	{"c": 0, "wram": {0xD32E: b"\x00", 0xD413: b"\xff\xff"}},
-	{"c": 1, "wram": {0xD32E: b"\x01", 0xD413: b"\x10\x06"}},
-	{"c": 2, "wram": {0xD32E: b"\x0b"}},
-	{"c": 0x40, "wram": {0xD32E: b"\x80"}},
-	{"c": 0x7f, "wram": {0xD32E: b"\xff"}},
-	dict(POISON, c=3, wram={0xD32E: b"\x05", 0xD413: b"\x00\xd0"}),
+	{"c": 0, "wram": {0xD413: b"\x00\x00"}, "read": _map_name_slot(0)},
+	{"c": 0, "wram": {0xD32E: b"\x00", 0xD413: b"\xff\xff"}, "read": _map_name_slot(0)},
+	{"c": 1, "wram": {0xD32E: b"\x01", 0xD413: b"\x10\x06"}, "read": _map_name_slot(1)},
+	{"c": 2, "wram": {0xD32E: b"\x0b"}, "read": _map_name_slot(2)},
+	{"c": 3, "wram": {0xD32E: b"\x03"}, "read": _map_name_slot(3)},
+	{"c": 0x40, "wram": {0xD32E: b"\x80"}, "read": _map_name_slot(0x40)},
+	{"c": 0x7f, "wram": {0xD32E: b"\xff"}, "read": _map_name_slot(0x7f)},
+	dict(POISON, c=3, wram={0xD32E: b"\x05", 0xD413: b"\x00\xd0"},
+	     read=_map_name_slot(3)),
 ]
 # <<< factory ScriptCommand_LoadCurrentMapNameIntoTxRamSlot
 
