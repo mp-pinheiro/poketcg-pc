@@ -106,7 +106,9 @@ def parse_map() -> tuple[dict[str, dict], int, list[dict]]:
             "length": sec_end - sec_start + 1,
             "end": sec_end,
             "section": sec_name,
-            "symbols": [{"address": a, "name": n} for a, n in top],
+            # Local labels included; build_spans keeps only the ones the asm
+            # defines with data. Routine sizes below stay top-level only.
+            "symbols": [{"address": a, "name": n} for a, n in sec_syms],
         })
         for i, (addr, name) in enumerate(top):
             next_addr = top[i + 1][0] if i + 1 < len(top) else sec_end + 1
@@ -142,6 +144,46 @@ def parse_map() -> tuple[dict[str, dict], int, list[dict]]:
 
     return labels, rom_bytes, sections
 
+
+def local_data_labels() -> set[str]:
+    """Fully-qualified local labels the asm defines with data, not instructions.
+
+    A routine's tables live after its last instruction under a local label
+    (`.multichoice_menu_args`, `.after_duel_table`), and the game reads them
+    through the bus. They are absent from `defs`, which skips local labels, so
+    the span builder would otherwise fold them into the routine's code span and
+    the product pack would not carry them.
+    """
+    found: set[str] = set()
+    for path in sorted(glob.glob(str(SRC_DIR / "**" / "*.asm"), recursive=True)):
+        current = None
+        pending: list[str] = []
+        for raw in Path(path).read_text(errors="replace").splitlines():
+            stripped = raw.split(";", 1)[0].strip()
+            if not stripped:
+                continue
+            match = LAB_RE.match(stripped)
+            if match:
+                name = match.group(1)
+                if "." in name:
+                    pending.append(name if name[0] != "." else f"{current or ''}{name}")
+                else:
+                    current = name
+                    pending = []
+                continue
+            if stripped.startswith("."):
+                pending.append(f"{current or ''}{stripped.split()[0]}")
+                continue
+            if stripped.split()[0].upper() in SKIP_TOKENS:
+                if stripped.split()[0].upper() == "SECTION":
+                    current = None
+                    pending = []
+                continue
+            if pending:
+                if classify_line(stripped) == "data":
+                    found.update(pending)
+                pending = []
+    return found
 
 def process_asm_files(map_labels: dict[str, dict]) -> tuple[dict[str, dict], dict[str, int], list[str]]:
     files = sorted(glob.glob(str(SRC_DIR / "**" / "*.asm"), recursive=True))
@@ -358,7 +400,8 @@ def section_span_kind(name: str) -> str:
     return "code" if lowered.startswith("rst") or lowered in CODE_SECTION_NAMES else "unclassified"
 
 
-def build_spans(sections: list[dict], defs: dict[str, dict]) -> list[dict]:
+def build_spans(sections: list[dict], defs: dict[str, dict],
+                data_locals: set[str]) -> list[dict]:
     spans: list[dict] = []
     for section in sections:
         bank_type = section["bank_type"]
@@ -371,7 +414,13 @@ def build_spans(sections: list[dict], defs: dict[str, dict]) -> list[dict]:
             base_offset = bank * 0x4000 + section_start - 0x4000
         by_address: dict[int, str] = {}
         for symbol in section["symbols"]:
-            by_address.setdefault(symbol["address"], symbol["name"])
+            name = symbol["name"]
+            # A local label is an internal branch target and must not cut the
+            # routine's span; one the asm defines with data is where the code
+            # ends and the tables the game reads begin, so it does.
+            if "." in name and name not in data_locals:
+                continue
+            by_address.setdefault(symbol["address"], name)
         addresses = sorted(by_address.items())
         cursor = section_start
         for index, (address, name) in enumerate(addresses):
@@ -388,6 +437,8 @@ def build_spans(sections: list[dict], defs: dict[str, dict]) -> list[dict]:
                 })
             end = addresses[index + 1][0] if index + 1 < len(addresses) else section_end
             kind = defs.get(name, {}).get("kind")
+            if name in data_locals:
+                kind = "data"
             if kind not in {"code", "data"}:
                 kind = section_span_kind(section["section"])
             if section["section"].casefold() == "romheader":
@@ -421,7 +472,7 @@ def build_spans(sections: list[dict], defs: dict[str, dict]) -> list[dict]:
 def main() -> int:
     map_labels, rom_bytes, sections = parse_map()
     defs, refs_map, unknown = process_asm_files(map_labels)
-    spans = build_spans(sections, defs)
+    spans = build_spans(sections, defs, local_data_labels())
 
     functions = {}
     data_labels = 0
