@@ -101,6 +101,9 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
                          for bank, spans in vreads.items()}
     if case.get("ramg") is not None:
         req["ramg"] = 1 if case["ramg"] else 0
+    frames = pyboy_frames(case)
+    if frames is not None:
+        req["frame_budget"] = int(frames)
     if case.get("setup"):
         req["setup"] = [{k: int(v) if k != "fn" else v for k, v in pre.items()}
                         for pre in case["setup"]]

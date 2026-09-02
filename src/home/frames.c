@@ -24,6 +24,8 @@
 
 static FrameBoundaryHook g_frame_boundary_hook;
 static void *g_frame_boundary_context;
+static FrameBoundaryHook g_frame_watchdog;
+static void *g_frame_watchdog_context;
 static uint8_t g_pending_service_passes;
 
 uint8_t frame_boundary_take_service_pass(void)
@@ -41,10 +43,18 @@ void frame_boundary_install(FrameBoundaryHook hook, void *context)
 	g_frame_boundary_context = context;
 }
 
+void frame_boundary_install_watchdog(FrameBoundaryHook hook, void *context)
+{
+	g_frame_watchdog = hook;
+	g_frame_watchdog_context = context;
+}
+
 void frame_boundary_reach(void)
 {
 	if (g_frame_boundary_hook)
 		g_frame_boundary_hook(g_frame_boundary_context);
+	if (g_frame_watchdog)
+		g_frame_watchdog(g_frame_watchdog_context);
 }
 /* Models VBlank services the reference delivers while game code is still
  * running, so no DoFrame completes around them: each count entry runs one

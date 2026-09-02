@@ -18,14 +18,39 @@
  * under "wram"; sread spans come back grouped by bank under "sram", after "wram".
  */
 
+#include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/resource.h>
 
 #include "generated/hram.h"
+#include "home/frames.h"
 #include "mem.h"
 #include "probe.h"
+
+/* Bounds a routine whose asm never returns, such as LoadMap's .overworld_loop
+ * (engine/overworld/overworld.asm:54-61), which leaves only when
+ * wOverworldTransition gets bit 4 or 6 and so never exits under an isolated
+ * case. Without a bound the probe spins to the harness wall-clock timeout and
+ * reports a hang instead of a comparison.
+ *
+ * The allowance is derived in tests/test_leaves.py from the case's own
+ * cycle_budget, with the arithmetic that bounds the PyBoy lane, because both
+ * lanes must read state at the same frame. frame_budget_reached is reported so
+ * a routine expected to return cannot stop short unnoticed. */
+static jmp_buf g_frame_budget_env;
+static long g_frames_remaining;
+static int g_frame_budget_reached;
+
+static void frame_watchdog(void *context)
+{
+	(void)context;
+	if (--g_frames_remaining > 0)
+		return;
+	g_frame_budget_reached = 1;
+	longjmp(g_frame_budget_env, 1);
+}
 
 #define MAX_SPANS 256
 #define MAX_SPAN_BYTES 65536
@@ -212,6 +237,7 @@ int main(void)
 	long ramb = -1;
 	long vramb = -1;
 	long keys = 0; /* hKeysHeld bit layout; applied after every seed, like ramg */
+	long frame_budget = 0;
 	ProbeState st = { 0 };
 	/* Routines that need warm state a single call cannot build -- the text engine's
 	 * tile cache, for one -- name the routines that establish it. Each runs after
@@ -290,6 +316,8 @@ int main(void)
 				 * seed enables the latch as a side effect, so this is the only
 				 * way to enter with non-zero SRAM and the latch off. */
 				ramg = jnum() != 0;
+			} else if (strcmp(key, "frame_budget") == 0) {
+				frame_budget = jnum();
 			} else if (strcmp(key, "keys") == 0) {
 				keys = jnum();
 			} else if (strcmp(key, "input_events") == 0) {
@@ -602,10 +630,21 @@ int main(void)
 		pre(&setups[i].st);
 	}
 
-	call(&st);
+	if (frame_budget > 0) {
+		g_frames_remaining = frame_budget;
+		if (setjmp(g_frame_budget_env) == 0) {
+			frame_boundary_install_watchdog(frame_watchdog, NULL);
+			call(&st);
+		}
+		frame_boundary_install_watchdog(NULL, NULL);
+	} else {
+		call(&st);
+	}
 
-	printf("{\"a\":%u,\"f\":%u,\"b\":%u,\"c\":%u,\"d\":%u,\"e\":%u,\"hl\":%u,"
+	printf("{\"frame_budget_reached\":%d,"
+	       "\"a\":%u,\"f\":%u,\"b\":%u,\"c\":%u,\"d\":%u,\"e\":%u,\"hl\":%u,"
 	       "\"rom_bank\":%u,\"ram_bank\":%u,\"ram_enable\":%u,\"wram\":{",
+	       g_frame_budget_reached,
 	       st.a, st.f, st.b, st.c, st.d, st.e, st.hl,
 	       g_rom_bank, g_sram_bank, g_sram_enabled != 0);
 	for (size_t i = 0; i < nspans; i++) {
