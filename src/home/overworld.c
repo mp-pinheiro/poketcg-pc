@@ -1,5 +1,7 @@
 #include "home/overworld.h"
 
+#include "home/script_entry_dispatch.h"
+
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -1517,10 +1519,13 @@ void HandleOverworldMode(uint16_t hl)
 		break;
 	case 2u:
 		(void)SetScriptData(hl);
+		/* overworld.asm:120 falls through with `jr EnterScript` */
+	case 3u: {
+		EnterScriptResult entered = EnterScript();
+
+		ScriptEntryEnter(entered.hl);
 		break;
-	case 3u:
-		(void)EnterScript();
-		break;
+	}
 	default:
 		break;
 	}

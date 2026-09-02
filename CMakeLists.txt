@@ -65,6 +65,24 @@ add_custom_command(
           "${CMAKE_SOURCE_DIR}/poketcg/src/data/script_table.asm"
   COMMENT "gen_script_dispatch: scripting adapters -> opcode table"
   VERBATIM)
+
+set(SCRIPT_ENTRY_SOURCE "${CMAKE_BINARY_DIR}/script_entry_dispatch_generated.c")
+add_custom_command(
+  OUTPUT "${SCRIPT_ENTRY_SOURCE}"
+  COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/gen_script_entry_dispatch.py"
+          --sym "${CMAKE_SOURCE_DIR}/poketcg/poketcg.sym"
+          --rom "${CMAKE_SOURCE_DIR}/poketcg/poketcg.gbc"
+          --home "${CMAKE_SOURCE_DIR}/src/home"
+          --map-scripts "${CMAKE_SOURCE_DIR}/poketcg/src/data/map_scripts.asm"
+          --output "${SCRIPT_ENTRY_SOURCE}"
+  DEPENDS "${CMAKE_SOURCE_DIR}/tools/gen_script_entry_dispatch.py"
+          "${CMAKE_SOURCE_DIR}/poketcg/poketcg.sym"
+          "${CMAKE_SOURCE_DIR}/poketcg/src/data/map_scripts.asm"
+  COMMENT "gen_script_entry_dispatch: poketcg.sym + rom -> script entry table"
+  VERBATIM)
+if(NOT PORT_FILES)
+  list(APPEND HOME_SOURCES "${SCRIPT_ENTRY_SOURCE}")
+endif()
 if(NOT PORT_FILES)
   list(APPEND HOME_SOURCES "${SCRIPT_DISPATCH_SOURCE}")
 endif()
