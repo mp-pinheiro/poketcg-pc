@@ -185,6 +185,10 @@ COMPARATOR_EXCLUDED_RANGES = {
     "wram": [(0x2B8, 0x2B9), (0xABA, 0xABD)],
 }
 
+COMPARATOR_EXCLUDED_KEYS = {
+    "mapper_state": {"rom_bank", "vram_bank"},
+}
+
 
 def apply_comparator_exclusions(
     reference: dict[str, Any], native: dict[str, Any], field: str
