@@ -628,10 +628,13 @@ uint8_t gb_read8(uint16_t addr)
 		case 0xFF78u: case 0xFF79u: case 0xFF7Au: case 0xFF7Bu:
 		case 0xFF7Cu: case 0xFF7Du: case 0xFF7Eu: case 0xFF7Fu:
 			return 0xFFu;
-		case 0xFF07u: /* TAC: bits 0-2 */
-			return (uint8_t)(*gb_ptr(addr) | 0xF8u);
-		case 0xFF75u: /* undocumented CGB register: bits 4-6 */
-			return (uint8_t)((*gb_ptr(addr) & 0x70u) | 0x8Fu);
+		/* TAC ($FF07) and $FF75 float their unused bits high on real
+		 * hardware and under Gambatte, but PyBoy returns the stored
+		 * byte and PyBoy is the per-routine oracle this port is
+		 * verified against (docs/port-contract.md) -- SetupTimer's
+		 * cases read $FF07 and go red against a hardware model. The
+		 * two references disagree here; the routine contract wins, and
+		 * the whole-game census carries the two bytes instead. */
 		default:
 			break;
 		}
