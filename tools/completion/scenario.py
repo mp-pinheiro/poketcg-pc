@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import os
 import re
 import json
 import struct
@@ -19,9 +20,11 @@ sys.path.insert(0, str(ROOT))
 
 from tools.oracle.gbrecomp_oracle import Oracle, _full_state
 
-BINARY = ROOT / "build" / "poketcg"
-PACK = ROOT / "build" / "completion" / "data-pack.bin"
-EVIDENCE_DIR = ROOT / "build" / "completion" / "evidence"
+# Same lane-isolation convention as the justfile's build_dir.
+_BUILD_DIR = Path(os.environ.get("POKETCG_BUILD", "build"))
+BINARY = ROOT / _BUILD_DIR / "poketcg"
+PACK = ROOT / _BUILD_DIR / "completion" / "data-pack.bin"
+EVIDENCE_DIR = ROOT / _BUILD_DIR / "completion" / "evidence"
 SCENARIO_REQUIREMENTS = {
     "boot-title": "completion:v2:p2:boot-title",
     "boot-title-negative": "completion:v2:p2:boot-title-negative",
@@ -123,6 +126,38 @@ def reference_aligned_state(
     return state, offset
 
 
+def reference_boot_frame_offset(
+    oracle: Oracle,
+    *,
+    probe_frames: int = 1024,
+) -> int:
+    """wVBlankCounter-aligned reference frame offset for the boot timeline.
+
+    Runs the native lane for probe_frames DoFrames, then iterates the
+    reference frame limit exactly like reference_aligned_state until both
+    lanes report the same wVBlankCounter. The returned offset is the
+    reference-scanout lead frame_bisect applies to every reference run."""
+    with tempfile.TemporaryDirectory(prefix="poketcg-offset-") as directory:
+        state_path = Path(directory) / "state.json"
+        trace_path = Path(directory) / "trace.json"
+        returncode, stdout, stderr = run_native(
+            probe_frames, state_path, trace_path
+        )
+        if returncode != 0:
+            raise RuntimeError(
+                f"native probe run failed at {probe_frames} frames: "
+                f"{stderr.strip() or stdout.strip()}"
+            )
+        native_state = json.loads(state_path.read_text(encoding="utf-8"))
+    _, offset = reference_aligned_state(
+        oracle,
+        native_state,
+        probe_frames,
+        base_input=reference_boot_input(),
+    )
+    return offset
+
+
 REFERENCE_INCOMPLETE_FIELDS = {"apu_trace"}
 # Fields whose values depend on the hardware VBlank-service phase the
 # rendezvous substrate cannot reproduce (3 mid-processing services per
@@ -186,9 +221,13 @@ def fields_incomparable(
 #   oracle's savestate (its recompiled build resolves banks statically and
 #   never updates them); the native fields are live MBC state. rVBK ($FF4F)
 #   matches on both sides, so VRAM bank selection stays compared via io.
+# - io[4] ($FF04 DIV): free-running hardware counter. The ROM reads it zero
+#   times (vision.md RNG audit); the two sides' values differ only by cycle
+#   accounting, and the converged alignment pins DoFrame counts, not cycles.
 COMPARATOR_EXCLUDED_RANGES = {
     "hram": [(0, 1), (96, 114)],
     "wram": [(0x2B8, 0x2B9), (0xABA, 0xABD)],
+    "io": [(4, 5)],
 }
 
 COMPARATOR_EXCLUDED_KEYS = {
