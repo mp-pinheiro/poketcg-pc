@@ -1290,10 +1290,30 @@ void Music1_Update(void)
 	Music1_EmptyFunc();
 	Music1_CheckForNewSound();
 	SFX_Update();
-	{
-		uint8_t bank = wCurSongBank;
-		hBankROM = bank;
-		BankswitchROM(bank);
+	uint8_t bank = wCurSongBank;
+	hBankROM = bank;
+	BankswitchROM(bank);
+	/* music1.asm:170-186 banks in wCurSongBank and only then `call
+	 * Music1_UpdateChannel1`, so the target resolves in whatever bank is
+	 * mapped by then. The two drivers are parallel ROM copies at identical
+	 * bank offsets (poketcg.sym: 3d:40e9 Music1_Update, 3e:40e9
+	 * Music2_Update), so a song banked at $3e runs the music2 driver from
+	 * this one entry; the ROM never enters SoundTimerHandler_2 at all.
+	 * Measured over the boot timeline: 2,001 reference ticks, of which
+	 * 1,793 dispatch into Music1_UpdateChannel1 and 208 into
+	 * Music2_UpdateChannel1. */
+	if (bank == MUSIC2_BANK) {
+		if (wddf2 != 0) {
+			Music2_f4980();
+		} else {
+			Music2_UpdateChannel1();
+			Music2_UpdateChannel2();
+			Music2_UpdateChannel3();
+			Music2_UpdateChannel4();
+		}
+		Music2_f4866();
+		Music2_CheckForEndOfSong();
+		return;
 	}
 	if (wddf2 != 0) {
 		Music1_f4980();
