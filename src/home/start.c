@@ -21,10 +21,9 @@
 #include "home/text_box.h"
 #define ContinueFromDiarySummaryText 0x0370u
 #define StartANewGameText 0x0371u
+#define WhenYouCardPopWithFriendText 0x036Fu
 #define TheGameWillContinueFromThePointInTheDuelText 0x0372u
-#define WhenYouCardPopWithFriendText 0x036fu
-#define MAP_NAMES 0x7080u
-
+#define OVERWORLD_MAP_NAMES 0x397Bu /* home/map.asm OverworldMapNames; fixed bank $00 */
 #include "home/lcd.h"
 #include "home/lcd_enable_frame.h"
 #include "home/load_animation.h"
@@ -166,9 +165,8 @@ PrintStartMenuDescriptionTextResult PrintStartMenuDescriptionText(uint8_t a, uin
 		case 2u: {
 			uint8_t map = wCurOverworldMap;
 			uint8_t offset = (uint8_t)(map + map);
-			uint16_t src = (uint16_t)(MAP_NAMES - 2u + offset);
+			uint16_t src = (uint16_t)(OVERWORLD_MAP_NAMES + offset);
 			gb_write8(wTxRam2_ADDR, gb_read8(src));
-			gb_write8((uint16_t)(wTxRam2_ADDR + 1u), gb_read8((uint16_t)(src + 1u)));
 			gb_write8(wTxRam3_ADDR, wMedalCount);
 			gb_write8((uint16_t)(wTxRam3_ADDR + 1u), 0u);
 			InitTextPrinting(1u, 10u);
@@ -258,8 +256,11 @@ void HandleStartMenu(void)
 	gb_write8((uint16_t)(wStartMenuParams_ADDR + 7u), 0x03u);
 	wTitleScreenIgnoreInputCounter = 0xFFu;
 	uint8_t selected = wLastSelectedStartMenuItem;
-	if (selected >= 4u && wHasSaveData != 0u)
-		selected = 1u;
+	/* start.asm:119-125: when wLastSelectedStartMenuItem >= 4, `ld a,
+	 * [wHasSaveData]` loads the flag over it, so a no-save boot starts on
+	 * item 0 and a has-save boot on item 1 -- never on the stale $FF. */
+	if (selected >= 4u)
+		selected = (wHasSaveData != 0u) ? 1u : 0u;
 	InitAndPrintMenu(wStartMenuParams_ADDR, selected);
 	/* start.asm:104-141: InitAndPrintMenu's menu-item print (PrintTextNoDelay
 	 * -> Func_235e) spans a VBlank period on the reference -- service 1008
