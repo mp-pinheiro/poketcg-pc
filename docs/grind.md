@@ -220,7 +220,7 @@ executed on the TAS, and the four largest — `MainDuelLoop` (34),
 of a routine the subject calls, directly or one level down. The oracle then
 stops on the first such call, so the contract covers only what runs before it —
 which is exactly where a stub ends. A pc outside the routine's own span is
-legitimate when the asm tail-jumps, so this is a worklist and not a gate; 19
+legitimate when the asm tail-jumps, so this is a worklist and not a gate; 27
 rows today.
 
 The duel entry chain was four of them. `StartDuel`'s pc was `SetupDuel`'s entry
@@ -229,6 +229,12 @@ were `LoadPlayerDeck`'s. Each cut the reference exactly where the C stub's last
 write was, so `void StartDuel(uint16_t) { wCurrentDuelMenuItem = 0u; }` and its
 three stubbed siblings passed for the life of the port while the entire duel
 engine sat unreachable behind them.
+
+`Duel_Init` was the fifth, cut inside `WaitForSongToFinish`. Six routines share
+that shape, because the wait only ends when `wCurSongID` reaches `$80`
+(`music1.asm:73-79`) and a looping song never gets there. The way out is a theme
+id past `NumberOfSongs1`: `music1.asm:36-39` then skips the `wCurSongID` write,
+the seeded `$80` survives, and the wait returns on its first pass.
 
 These three are why a routine can be green on its oracle and still do nothing: a
 stub with a `compare: ()` contract, no `read` span, and a completion pc at its

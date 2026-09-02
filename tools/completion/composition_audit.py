@@ -223,7 +223,7 @@ def audit_jumps(bodies: dict[str, tuple[str, str]],
 SYM_LINE = re.compile(r"^([0-9A-Fa-f]{2}):([0-9A-Fa-f]{4})\s+(\S+)$")
 COMPLETION_BLOCK = re.compile(
     r"# >>> factory-completion (\w+)\n(.*?)# <<< factory-completion", re.S)
-COMPLETION_PC = re.compile(r'"pc":\s*(0x[0-9A-Fa-f]+).*?"bank":\s*(\d+)', re.S)
+COMPLETION_PC = re.compile(r'"pc":\s*(0x[0-9A-Fa-f]+)(?:[^}]*?"bank":\s*(\d+))?', re.S)
 ASM_CALL_TARGET = re.compile(r"^\s+(?:call|farcall|bank1call|callfar)\s+(?:\w+,\s*)?(\w+)")
 
 
@@ -278,8 +278,11 @@ def audit_cuts() -> list[dict[str, Any]]:
             found = COMPLETION_PC.search(body)
             if not found or name not in entries:
                 continue
-            pc, declared = int(found.group(1), 16), int(found.group(2))
+            pc = int(found.group(1), 16)
             bank, address = entries[name]
+            # A block may omit `bank`, in which case the routine's own bank is
+            # the only candidate; skipping those hid Duel_Init's cut entirely.
+            declared = int(found.group(2)) if found.group(2) else bank
             landing = (by_site.get((declared, pc)) or by_site.get((bank, pc))
                        or by_site.get((0, pc)))
             if landing is None or landing == name or pc == address:
