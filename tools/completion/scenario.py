@@ -241,7 +241,7 @@ def fields_incomparable(
 #   PPU beam position at dump time; the rendezvous substrate has no beam.
 COMPARATOR_EXCLUDED_RANGES = {
     "hram": [(0, 1), (96, 114)],
-    "wram": [(0x2B8, 0x2B9), (0xABA, 0xABD)],
+    "wram": [(0xAB8, 0xAB9), (0xABA, 0xABD)],
     "io": [(4, 6), (15, 16), (16, 64), (65, 66), (68, 70), (104, 108)],
 }
 
