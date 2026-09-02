@@ -36,6 +36,22 @@ void frame_boundary_reach(void)
 	if (g_frame_boundary_hook)
 		g_frame_boundary_hook(g_frame_boundary_context);
 }
+/* Models VBlank services the reference delivers while game code is still
+ * running, so no DoFrame completes around them: each count entry runs one
+ * host boundary pass (the scanout the ISR waited out -- timer batch,
+ * RuntimeVBlankHandler, render) and then bumps wVBlankCounter for the
+ * service itself (vblank.asm:35), with no RNG advance. No-op in the probe
+ * world. The two per-boot sites are annotated where they call this. */
+void frame_boundary_consume_services(uint8_t count)
+{
+	if (!g_frame_boundary_hook)
+		return;
+	for (uint8_t i = 0; i < count; i++) {
+		frame_boundary_reach();
+		gb_write8(wVBlankCounter_ADDR,
+		          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
+	}
+}
 
 int frame_boundary_is_installed(void)
 {
@@ -135,14 +151,19 @@ static void DoFrameDebugPause(void)
 void DoFrame(void)
 {
 	CallDoFrameFunction();
+	if (gb_read8(wDebugPauseAllowed_ADDR) != 0u &&
+	    (gb_read8(hKeysPressed_ADDR) & PAD_SELECT) != 0u)
+		DoFrameDebugPause();
+	/* frames.asm:20-26 order: the body runs, then the halt waits out the
+	 * VBlank -- whose ISR increments wVBlankCounter (vblank.asm:35) and
+	 * services DMA/flushes (the host boundary pass) -- and only then does
+	 * the tail (ReadJoypad, HandleDPadRepeat) poll the lines as of this
+	 * vblank. */
+	frame_boundary_reach();
 	gb_write8(wVBlankCounter_ADDR,
 	          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 	ReadJoypad();
 	HandleDPadRepeat();
-	if (gb_read8(wDebugPauseAllowed_ADDR) != 0u &&
-	    (gb_read8(hKeysPressed_ADDR) & PAD_SELECT) != 0u)
-		DoFrameDebugPause();
-	frame_boundary_reach();
 }
 
 void DoAFrames(uint8_t a)
