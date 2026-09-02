@@ -492,14 +492,17 @@ def writers(scenario: str, frames: int, addresses: list[int]) -> list[dict[str, 
     masks = scenario_masks(scenario, frames)
     resolve = label_resolver()
     watched = set(addresses)
+    sequence = 0
     tally: dict[int, dict[tuple[str, int, int, int], dict[str, Any]]] = {
         address: {} for address in addresses
     }
     with Core(masks) as core:
 
         def on_write(address: int, _cycle: int) -> None:
+            nonlocal sequence
             if address not in watched:
                 return
+            sequence += 1
             pc = core.pc()
             label = resolve(core.bank_of(pc), pc)
             name, label_offset = label if label else (f"${pc:04X}", 0)
@@ -514,16 +517,26 @@ def writers(scenario: str, frames: int, addresses: list[int]) -> list[dict[str, 
                     "routine": routine_of_label(name),
                     "count": 0,
                     "first_ordinal": core.ordinal,
+                    "last_ordinal": core.ordinal,
+                    "last_sequence": 0,
                 },
             )
             record["count"] += 1
+            record["last_ordinal"] = core.ordinal
+            record["last_sequence"] = sequence
 
         core.on_write(on_write)
         core.install_exec()
         core.run(frames)
     result = []
     for address in addresses:
-        rows = sorted(tally[address].values(), key=lambda row: -row["count"])
+        # The byte's value at the comparison point comes from the LAST write,
+        # not the most frequent one: a boot-time clear loop outnumbers the
+        # routine that actually set the byte later in the timeline.
+        rows = sorted(
+            tally[address].values(),
+            key=lambda row: (-row["last_ordinal"], -row["last_sequence"]),
+        )
         result.append({"address": f"0x{address:04X}", "writers": rows})
     return result
 
