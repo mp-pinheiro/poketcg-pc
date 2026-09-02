@@ -1,15 +1,26 @@
 #!/usr/bin/env python3
-"""Count the composition defects per-routine verification cannot see.
+"""Find the defects per-routine verification cannot see.
 
 Each class is a shape the PyBoy oracle passes by construction, because it only
 ever calls one routine with a synthesized environment:
 
-  loops  a scene loop flattened to a single pass, so the game never iterates it
-  banks  a `ld a, BANK(X)` the C body never performs, so a read hits the wrong bank
-  jumps  a `jp hl` the port answers with an address instead of dispatching it
+  loops      a scene loop flattened to a single pass, so the game never iterates
+  banks      a `ld a, BANK(X)` the C never performs, so a read hits the wrong bank
+  jumps      a `jp hl` the port answers with an address instead of dispatching it
+  backedges  the asm loops and the C has no loop at all
+  stubs      a substantial asm routine whose C body does nothing
 
-The counts are ratcheted by tools/completion/tas_progress.py; they may fall and
-never rise.
+`loops`, `banks` and `jumps` are exact and ratcheted by tas_progress.py: they
+may fall and never rise.
+
+`backedges` and `stubs` are ranked worklists, not gates, in the same sense as
+the branch-count screen in docs/port-contract.md: a necessary condition, not a
+verdict. Both have legitimate rows. A back-edge is absent from the C when the
+asm loop was hardware (DisableLCD waiting on rLY, deleted by the Phase 1
+transform) or arithmetic a C operator expresses directly. A one-statement body
+is correct when it delegates to the routine it wraps. Triage against the asm
+before touching anything, and order the work by whether the ROM executes the
+routine on the TAS.
 """
 
 from __future__ import annotations
@@ -85,6 +96,74 @@ def asm_routines() -> tuple[dict[str, list[str]], dict[str, str]]:
                 jumps.setdefault(current, path.name)
     return banks, jumps
 
+LOCAL_LABEL = re.compile(r"^(\.\w+)\s*$")
+BRANCH = re.compile(r"^\s+(?:jr|jp)\s+(?:(?:nz|z|nc|c),\s*)?([A-Za-z_.][\w.]*)\s*$")
+INSTRUCTION = re.compile(r"^\s+[a-z][a-z0-9_.]*\b")
+LOOP_KEYWORDS = ("for (", "for(", "while (", "while(", "do {", "goto ")
+
+
+def asm_shapes() -> tuple[set[str], dict[str, int]]:
+    """Routines whose asm branches backwards, and every routine's instruction count."""
+    looping: set[str] = set()
+    sizes: dict[str, int] = {}
+
+    def close(name: str | None, labels: dict[str, int], branches: list[tuple[int, str]],
+              count: int) -> None:
+        if name is None:
+            return
+        sizes[name] = max(sizes.get(name, 0), count)
+        for position, target in branches:
+            if target.startswith(".") and labels.get(target, position) < position:
+                looping.add(name)
+                return
+
+    for path in sorted(ASM_ROOT.rglob("*.asm")):
+        current, labels, branches, count, step = None, {}, [], 0, 0
+        for raw in path.read_text(errors="replace").splitlines():
+            line = raw.split(";", 1)[0]
+            label = LABEL.match(line)
+            if label:
+                close(current, labels, branches, count)
+                current, labels, branches, count, step = label.group(1), {}, [], 0, 0
+                continue
+            if current is None:
+                continue
+            step += 1
+            local = LOCAL_LABEL.match(line.strip()) if line.strip().startswith(".") else None
+            if local:
+                labels.setdefault(local.group(1), step)
+                continue
+            branch = BRANCH.match(line)
+            if branch:
+                branches.append((step, branch.group(1)))
+            if INSTRUCTION.match(line):
+                count += 1
+        close(current, labels, branches, count)
+    return looping, sizes
+
+
+def audit_backedges(bodies: dict[str, tuple[str, str]],
+                    looping: set[str]) -> list[dict[str, Any]]:
+    return [
+        {"routine": name, "file": bodies[name][0]}
+        for name in sorted(looping)
+        if name in bodies
+        and not any(keyword in bodies[name][1] for keyword in LOOP_KEYWORDS)
+    ]
+
+
+def audit_stubs(bodies: dict[str, tuple[str, str]],
+                sizes: dict[str, int]) -> list[dict[str, Any]]:
+    rows = []
+    for name, (filename, body) in sorted(bodies.items()):
+        asm_instructions = sizes.get(name, 0)
+        statements = sum(1 for line in body.splitlines() if line.strip().endswith(";"))
+        if asm_instructions >= 8 and statements <= 1:
+            rows.append({"routine": name, "file": filename,
+                         "asm_instructions": asm_instructions,
+                         "c_statements": statements})
+    return rows
+
 
 def audit_loops(bodies: dict[str, tuple[str, str]]) -> list[dict[str, Any]]:
     rows = []
@@ -123,6 +202,7 @@ def audit_jumps(bodies: dict[str, tuple[str, str]],
 
 
 def counts() -> dict[str, int]:
+    """Only the exact classes. The worklists are not ratcheted; see the docstring."""
     bodies = c_bodies()
     banks, jumps = asm_routines()
     return {
@@ -134,19 +214,25 @@ def counts() -> dict[str, int]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("audit", choices=("loops", "banks", "jumps", "all"))
+    parser.add_argument("audit", choices=("loops", "banks", "jumps",
+                                          "backedges", "stubs", "all"))
     args = parser.parse_args(argv)
 
     bodies = c_bodies()
-    banks, jumps = asm_routines()
     if args.audit == "all":
         print(json.dumps(counts(), indent=2, sort_keys=True))
         return 0
-    rows = {
-        "loops": lambda: audit_loops(bodies),
-        "banks": lambda: audit_banks(bodies, banks),
-        "jumps": lambda: audit_jumps(bodies, jumps),
-    }[args.audit]()
+    if args.audit in ("backedges", "stubs"):
+        looping, sizes = asm_shapes()
+        rows = (audit_backedges(bodies, looping) if args.audit == "backedges"
+                else audit_stubs(bodies, sizes))
+    else:
+        banks, jumps = asm_routines()
+        rows = {
+            "loops": lambda: audit_loops(bodies),
+            "banks": lambda: audit_banks(bodies, banks),
+            "jumps": lambda: audit_jumps(bodies, jumps),
+        }[args.audit]()
     print(json.dumps({"count": len(rows), "rows": rows}, indent=2, sort_keys=True))
     return 0
 

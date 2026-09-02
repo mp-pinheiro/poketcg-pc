@@ -183,3 +183,31 @@ computed jump, and a flattened scene loop all pass it. Those three classes are
 what kept 85% of the port from ever executing. Each now has a mechanism rather
 than an audit — the bank guard, the generated script entry table, the probe frame
 budget — and the residual counts are ratcheted so they cannot grow back.
+
+## Two worklists, not gates
+
+`just completion-composition-audit backedges` and `… stubs` find what the three
+ratcheted classes cannot.
+
+**`backedges`** lists routines whose asm branches backwards but whose C has no
+loop construct at all. That is not the same shape as `loops`, which finds a loop
+flattened *in place* (`for (;;) { … return; }`); a loop replaced by an `if` has
+no loop syntax to detect. `ExecuteGameEvent` was exactly that — `map.asm:31-35`
+loops event → `LoadMap` → event, the port ran it once, and the whole duel engine
+sat behind it. 99 rows today, 23 of which the ROM executes on the TAS.
+
+**`stubs`** lists routines with at least 8 asm instructions and at most one C
+statement. 56 rows today, headed by `MainDuelLoop` (122 asm instructions, body
+`{ EnableLCD(); }`).
+
+Neither is ratcheted, because both have legitimate rows. A back-edge is absent
+from the C when the asm loop was hardware the Phase 1 transform deletes
+(`DisableLCD` spinning on `rLY`) or arithmetic a C operator expresses directly.
+A one-statement body is right when it delegates to the routine it wraps. Triage
+each row against the asm, and order the work by whether the ROM executes the
+routine: cross-reference `build/completion/tas/ref-5530b.json`, whose `calls`
+entries carry `count` and `first_ordinal`.
+
+These two are why a routine can be green on its oracle and still do nothing: a
+stub with a `compare: ()` contract and no `read` span passes every check the
+substrate has. That is `docs/port-contract.md` item 5 at scale.
