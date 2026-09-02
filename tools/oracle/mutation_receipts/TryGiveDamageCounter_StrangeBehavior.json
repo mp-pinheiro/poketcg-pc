@@ -1,0 +1,9 @@
+{
+  "fn": "TryGiveDamageCounter_StrangeBehavior",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TryGiveDamageCounter_StrangeBehavior\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 49864, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49864\": \"0a20\", \"65431\": \"c2\", \"65440\": \"0001\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TryGiveDamageCounter_StrangeBehavior\", \"mismatches\": {\"a\": [0, 42], \"f\": [144, 0], \"hl\": [49864, 49865], \"bus\": {\"address\": 49864, \"reference\": \"0a20c20001\", \"native\": \"002ac20001\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[49864, 2], [65431, 1], [65440, 2]]}}}\n",
+  "restored": "{\"fn\": \"TryGiveDamageCounter_StrangeBehavior\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 49864, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49864\": \"0a20\", \"65431\": \"c2\", \"65440\": \"0001\"}}, \"status\": \"PASS\"}\n"
+}

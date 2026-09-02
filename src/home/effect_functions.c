@@ -4386,7 +4386,7 @@ TryGiveDamageCounter_StrangeBehaviorResult TryGiveDamageCounter_StrangeBehavior(
 		GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + source));
 	uint8_t remaining = (uint8_t)(source_hp.a - 10u);
 	if (remaining == 0u)
-		return (TryGiveDamageCounter_StrangeBehaviorResult){0u, 0x10u, source_hp.hl};
+		return (TryGiveDamageCounter_StrangeBehaviorResult){0u, 0x90u, source_hp.hl};
 	gb_write8(source_hp.hl, remaining);
 	DuelistVarResult target_hp =
 		GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + target));

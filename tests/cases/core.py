@@ -1071,9 +1071,9 @@ CONTRACT["GetAttacksEnergyCostBits"] = {"compare": ("a",), "preserve": ()}
 wLoadedCard2Atk1EnergyCost = 0xCC71
 wLoadedCard2Atk2EnergyCost = 0xCC84
 CASES["GetAttacksEnergyCostBits"] = [
-    {"a": 0, "wram": {wLoadedCard2Atk1EnergyCost: b"\x00\x00\x00\x00", wLoadedCard2Atk2EnergyCost: b"\x00\x00\x00\x00"}},
-    {"a": 1, "wram": {wLoadedCard2Atk1EnergyCost: b"\x10\x01\x20\x04", wLoadedCard2Atk2EnergyCost: b"\x00\x00\x00\x80"}},
-    dict(POISON, a=2, wram={wLoadedCard2Atk1EnergyCost: b"\x00" * 4, wLoadedCard2Atk2EnergyCost: b"\x00" * 4}),
+    {"a": 0, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck_: b"\x00"}},
+    {"a": 1, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck_ + 1: b"\x33"}},
+    dict(POISON, a=2, wram={hWhoseTurn: b"\xC2", wPlayerDeck_ + 2: b"\x33"}),
 ]
 # <<< factory GetAttacksEnergyCostBits
 # >>> factory CheckForEvolutionInList

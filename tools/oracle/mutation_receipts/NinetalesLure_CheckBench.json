@@ -1,0 +1,9 @@
+{
+  "fn": "NinetalesLure_CheckBench",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"NinetalesLure_CheckBench\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 183, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50159\": \"02\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"NinetalesLure_CheckBench\", \"mismatches\": {\"f\": [192, 112]}}\n",
+  "restored": "{\"fn\": \"NinetalesLure_CheckBench\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 183, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50159\": \"02\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

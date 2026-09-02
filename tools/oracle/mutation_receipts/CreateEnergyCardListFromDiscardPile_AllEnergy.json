@@ -1,0 +1,9 @@
+{
+  "fn": "CreateEnergyCardListFromDiscardPile_AllEnergy",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CreateEnergyCardListFromDiscardPile_AllEnergy\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49789, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49790\": \"05\", \"49901\": \"01\", \"50181\": \"07\", \"50448\": \"05ff0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreateEnergyCardListFromDiscardPile_AllEnergy\", \"mismatches\": {\"f\": [0, 144], \"bus\": {\"address\": 50448, \"reference\": \"05010705ff0000c2\", \"native\": \"050107ff000000c2\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[49790, 1], [49901, 1], [50181, 1], [50448, 4], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"CreateEnergyCardListFromDiscardPile_AllEnergy\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49789, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49790\": \"05\", \"49901\": \"01\", \"50181\": \"07\", \"50448\": \"05ff0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

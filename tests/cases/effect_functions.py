@@ -1844,7 +1844,7 @@ CASES["Peek_OncePerTurnCheck"] = [
 
 # >>> factory Wail_BenchCheck
 CONTRACT["Wail_BenchCheck"] = {"compare": ("a", "f", "hl"), "preserve": ()}
-CASES["Wail_BenchCheck"] = [{}, dict(POISON), {"a": 6}, {"a": 2}]
+CASES["Wail_BenchCheck"] = [{"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x05"}}, dict(POISON), {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x06", 0xC3EF: b"\x02"}}, {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x02"}}]
 # <<< factory Wail_BenchCheck
 
 # >>> factory StepIn_SwitchEffect
@@ -1917,24 +1917,20 @@ CASES["CreateListOfFireEnergyAttachedToArena"] = [
 # <<< factory CreateListOfFireEnergyAttachedToArena
 # >>> factory CreateEnergyCardListFromDiscardPile_AllEnergy
 CONTRACT["CreateEnergyCardListFromDiscardPile_AllEnergy"] = {"compare": ("f", "hl"), "preserve": ()}
-CASES["CreateEnergyCardListFromDiscardPile_AllEnergy"] = [{}, dict(POISON)]
+CASES["CreateEnergyCardListFromDiscardPile_AllEnergy"] = [{"wram": {0xFF97: b"\xC2", 0xC2ED: b"\x01", 0xC27E: b"\x05", 0xC405: b"\x07"}, "read": {0xC510: 4}}, dict(POISON)]
 # <<< factory CreateEnergyCardListFromDiscardPile_AllEnergy
 # >>> factory CheckIfDeckIsEmpty
 CONTRACT["CheckIfDeckIsEmpty"] = {"compare": ("a", "f", "hl"), "preserve": ()}
 CASES["CheckIfDeckIsEmpty"] = [{}, {"wram": {0xC2BA: b"\x3C"}}, {"wram": {0xC2BA: b"\x50"}}]
 # <<< factory CheckIfDeckIsEmpty
-# >>> factory VictreebelLure_AssertPokemonInBench
-CONTRACT["VictreebelLure_AssertPokemonInBench"] = {"compare": ("a", "f", "hl"), "preserve": ()}
-CASES["VictreebelLure_AssertPokemonInBench"] = [{}, dict(POISON)]
-# <<< factory VictreebelLure_AssertPokemonInBench
 # >>> factory Toxic_DoublePoisonEffect
 CONTRACT["Toxic_DoublePoisonEffect"] = {"compare": ("f",), "preserve": ()}
-CASES["Toxic_DoublePoisonEffect"] = [{}, dict(POISON)]
+CASES["Toxic_DoublePoisonEffect"] = [{"read": {0xCCCD: 4}}, dict(POISON, read={0xCCCD: 4})]
 # <<< factory Toxic_DoublePoisonEffect
 
 # >>> factory NinetalesLure_CheckBench
 CONTRACT["NinetalesLure_CheckBench"] = {"compare": ("a", "f", "hl"), "preserve": ()}
-CASES["NinetalesLure_CheckBench"] = [{}, {"wram": {0xC3EF: b"\x02"}}]
+CASES["NinetalesLure_CheckBench"] = [{"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x02"}}, {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x03"}}]
 # <<< factory NinetalesLure_CheckBench
 # >>> factory ScoopUp_BenchCheck
 CONTRACT["ScoopUp_BenchCheck"] = {"compare": ("a", "f", "hl"), "preserve": ()}
@@ -1946,11 +1942,11 @@ CASES["MysteriousFossil_BenchCheck"] = [{"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x0
 # <<< factory MysteriousFossil_BenchCheck
 # >>> factory TrainerCardAsPokemon_BenchCheck
 CONTRACT["TrainerCardAsPokemon_BenchCheck"] = {"compare": ("a", "f", "hl"), "preserve": ()}
-CASES["TrainerCardAsPokemon_BenchCheck"] = [{}, {"wram": {0xC2EF: b"\x02", 0xFF9D: b"\x00"}}]
+CASES["TrainerCardAsPokemon_BenchCheck"] = [{"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x02", 0xFF9D: b"\x00"}}, {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x03", 0xFF9D: b"\x00"}}]
 # <<< factory TrainerCardAsPokemon_BenchCheck
 # >>> factory VictreebelLure_AssertPokemonInBench
 CONTRACT["VictreebelLure_AssertPokemonInBench"] = {"compare": ("a", "f", "hl"), "preserve": ()}
-CASES["VictreebelLure_AssertPokemonInBench"] = [{}, {"wram": {0xC3EF: b"\x02"}}]
+CASES["VictreebelLure_AssertPokemonInBench"] = [{"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x02"}}, {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x03"}}]
 # <<< factory VictreebelLure_AssertPokemonInBench
 # >>> factory ThunderboltEffect
 CONTRACT["ThunderboltEffect"] = {"compare": (), "preserve": ()}
@@ -1958,7 +1954,7 @@ CASES["ThunderboltEffect"] = [{"wram": {0xFF97: b"\xC2", 0xC200: b"\x10", 0xC201
 # <<< factory ThunderboltEffect
 # >>> factory TrainerCardAsPokemon_DiscardEffect
 CONTRACT["TrainerCardAsPokemon_DiscardEffect"] = {"compare": (), "preserve": ()}
-CASES["TrainerCardAsPokemon_DiscardEffect"] = [{}, dict(POISON)]
+CASES["TrainerCardAsPokemon_DiscardEffect"] = [{"wram": {0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFFA1: b"\x02", 0xC2EF: b"\x03", 0xC2BB: b"\x11", 0xC2BC: b"\x22", 0xC2BD: b"\x33", 0xC2C8: b"\x30", 0xC2C9: b"\x40", 0xC2CA: b"\x50", 0xC2CE: b"\x01", 0xC2CF: b"\x01", 0xC2D0: b"\x01", 0xC2F0: b"\x01", 0xC205: b"\x10", 0xC206: b"\x11", 0xC207: b"\x12"}, "read": {0xC200: 0x3C, 0xC2BB: 0x40}}, dict(POISON)]
 # <<< factory TrainerCardAsPokemon_DiscardEffect
 # >>> factory MysteriousFossil_PlaceInPlayAreaEffect
 CONTRACT["MysteriousFossil_PlaceInPlayAreaEffect"] = {"compare": (), "preserve": ()}
@@ -9294,9 +9290,6 @@ MUTATIONS["CreateEnergyCardListFromDiscardPile_AllEnergy"] = {"source_symbol": "
 # >>> factory-mutation CheckIfDeckIsEmpty
 MUTATIONS["CheckIfDeckIsEmpty"] = {"source_symbol": "CheckIfDeckIsEmpty", "before": "if (count.a == DECK_SIZE)", "after": "if (count.a != DECK_SIZE)", "case_ids": ["CheckIfDeckIsEmpty-0", "CheckIfDeckIsEmpty-1"]}
 # <<< factory-mutation CheckIfDeckIsEmpty
-# >>> factory-mutation VictreebelLure_AssertPokemonInBench
-MUTATIONS["VictreebelLure_AssertPokemonInBench"] = {"source_symbol": "VictreebelLure_AssertPokemonInBench", "before": "return (VictreebelLureAssertPokemonInBenchResult){", "after": "return (VictreebelLureAssertPokemonInBenchResult){0u, 0u, EffectNoPokemonOnTheBenchText};", "case_ids": ["VictreebelLure_AssertPokemonInBench-0", "VictreebelLure_AssertPokemonInBench-1"]}
-# <<< factory-mutation VictreebelLure_AssertPokemonInBench
 # >>> factory-mutation Toxic_DoublePoisonEffect
 MUTATIONS["Toxic_DoublePoisonEffect"] = {"source_symbol": "Toxic_DoublePoisonEffect", "before": "return DoublePoisonEffect();", "after": "return PoisonEffect();", "case_ids": ["Toxic_DoublePoisonEffect-0", "Toxic_DoublePoisonEffect-1"]}
 # <<< factory-mutation Toxic_DoublePoisonEffect
@@ -9376,13 +9369,12 @@ MUTATIONS["Switch_BenchCheck"] = {"source_symbol": "Switch_BenchCheck", "before"
 # <<< factory-mutation Switch_BenchCheck
 # >>> factory-mutation Switch_SwitchEffect
 MUTATIONS["Switch_SwitchEffect"] = {"source_symbol": "Switch_SwitchEffect", "before": "hTemp_ffa0", "after": "hTemp_ffa0 + 1u", "case_ids": ["Switch_SwitchEffect-0"]}
-# <<< factory-mutation Switch_SwitchEffect
 # >>> factory TryGiveDamageCounter_StrangeBehavior
 CONTRACT["TryGiveDamageCounter_StrangeBehavior"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
 CASES["TryGiveDamageCounter_StrangeBehavior"] = [
-    {"wram": {0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xC0C8: b"\x20", 0xC0C9: b"\x30"}, "read": {0xC100: 0x900}},
-    dict(POISON, wram={0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xC0C8: b"\x0A", 0xC0C9: b"\x20"}, read={0xC100: 0x900}),
-    {"b": 1, "c": 2, "d": 3, "e": 4, "wram": {0xFFA0: b"\x01", 0xFFA1: b"\x00", 0xC0C8: b"\x20", 0xC0C9: b"\x30"}, "read": {0xC100: 0x900}},
+    {"wram": {0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xC2C8: b"\x0A", 0xC2C9: b"\x20"}, "read": {0xC2C8: 2}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xC2C8: b"\x0B", 0xC2C9: b"\x20"}, read={0xC2C8: 2}),
+    {"wram": {0xFF97: b"\xC2", 0xFFA0: b"\x01", 0xFFA1: b"\x00", 0xC2C8: b"\x20", 0xC2C9: b"\x30"}, "read": {0xC2C8: 2}},
 ]
 # <<< factory TryGiveDamageCounter_StrangeBehavior
 # >>> factory SpacingOut_CheckDamage

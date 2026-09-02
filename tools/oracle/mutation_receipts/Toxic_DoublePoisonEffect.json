@@ -1,0 +1,9 @@
+{
+  "fn": "Toxic_DoublePoisonEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Toxic_DoublePoisonEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52429\": \"03c20fc0\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Toxic_DoublePoisonEffect\", \"mismatches\": {\"bus\": {\"address\": 52432, \"reference\": \"03c20fc0\", \"native\": \"03c20f80\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52429, 4]]}}}\n",
+  "restored": "{\"fn\": \"Toxic_DoublePoisonEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52429\": \"03c20fc0\"}}, \"status\": \"PASS\"}\n"
+}
