@@ -102,29 +102,34 @@ INSTRUCTION = re.compile(r"^\s+[a-z][a-z0-9_.]*\b")
 LOOP_KEYWORDS = ("for (", "for(", "while (", "while(", "do {", "goto ")
 
 
-def asm_shapes() -> tuple[set[str], dict[str, int]]:
-    """Routines whose asm branches backwards, and every routine's instruction count."""
+ASM_CALL = re.compile(r"^\s*(?:call|farcall)\b", re.IGNORECASE)
+
+
+def asm_shapes() -> tuple[set[str], dict[str, int], dict[str, int]]:
+    """Routines whose asm branches backwards, plus per-routine instruction and call counts."""
     looping: set[str] = set()
     sizes: dict[str, int] = {}
+    asm_calls: dict[str, int] = {}
 
     def close(name: str | None, labels: dict[str, int], branches: list[tuple[int, str]],
-              count: int) -> None:
+              count: int, calls: int) -> None:
         if name is None:
             return
         sizes[name] = max(sizes.get(name, 0), count)
+        asm_calls[name] = max(asm_calls.get(name, 0), calls)
         for position, target in branches:
             if target.startswith(".") and labels.get(target, position) < position:
                 looping.add(name)
                 return
 
     for path in sorted(ASM_ROOT.rglob("*.asm")):
-        current, labels, branches, count, step = None, {}, [], 0, 0
+        current, labels, branches, count, step, calls = None, {}, [], 0, 0, 0
         for raw in path.read_text(errors="replace").splitlines():
             line = raw.split(";", 1)[0]
             label = LABEL.match(line)
             if label:
-                close(current, labels, branches, count)
-                current, labels, branches, count, step = label.group(1), {}, [], 0, 0
+                close(current, labels, branches, count, calls)
+                current, labels, branches, count, step, calls = label.group(1), {}, [], 0, 0, 0
                 continue
             if current is None:
                 continue
@@ -136,10 +141,12 @@ def asm_shapes() -> tuple[set[str], dict[str, int]]:
             branch = BRANCH.match(line)
             if branch:
                 branches.append((step, branch.group(1)))
+            if ASM_CALL.match(line):
+                calls += 1
             if INSTRUCTION.match(line):
                 count += 1
-        close(current, labels, branches, count)
-    return looping, sizes
+        close(current, labels, branches, count, calls)
+    return looping, sizes, asm_calls
 
 
 def audit_backedges(bodies: dict[str, tuple[str, str]],
@@ -152,16 +159,26 @@ def audit_backedges(bodies: dict[str, tuple[str, str]],
     ]
 
 
+CALLEE = re.compile(r"\b([A-Za-z_]\w*)\s*\(")
+NOT_A_CALL = frozenset(("if", "while", "for", "switch", "sizeof", "return"))
+
+
 def audit_stubs(bodies: dict[str, tuple[str, str]],
-                sizes: dict[str, int]) -> list[dict[str, Any]]:
+                sizes: dict[str, int],
+                asm_calls: dict[str, int]) -> list[dict[str, Any]]:
     rows = []
     for name, (filename, body) in sorted(bodies.items()):
         asm_instructions = sizes.get(name, 0)
         statements = sum(1 for line in body.splitlines() if line.strip().endswith(";"))
-        if asm_instructions >= 8 and statements <= 1:
-            rows.append({"routine": name, "file": filename,
-                         "asm_instructions": asm_instructions,
-                         "c_statements": statements})
+        if asm_instructions < 8 or statements > 1:
+            continue
+        callees = {c for c in CALLEE.findall(body) if c not in NOT_A_CALL}
+        rows.append({"routine": name, "file": filename,
+                     "asm_instructions": asm_instructions,
+                     "c_statements": statements,
+                     "asm_calls": asm_calls.get(name, 0),
+                     "c_calls": len(callees),
+                     "dropped_calls": max(0, asm_calls.get(name, 0) - len(callees))})
     return rows
 
 
@@ -223,9 +240,9 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(counts(), indent=2, sort_keys=True))
         return 0
     if args.audit in ("backedges", "stubs"):
-        looping, sizes = asm_shapes()
+        looping, sizes, asm_calls = asm_shapes()
         rows = (audit_backedges(bodies, looping) if args.audit == "backedges"
-                else audit_stubs(bodies, sizes))
+                else audit_stubs(bodies, sizes, asm_calls))
     else:
         banks, jumps = asm_routines()
         rows = {

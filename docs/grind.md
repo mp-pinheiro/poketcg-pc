@@ -197,16 +197,24 @@ loops event → `LoadMap` → event, the port ran it once, and the whole duel en
 sat behind it. 99 rows today, 23 of which the ROM executes on the TAS.
 
 **`stubs`** lists routines with at least 8 asm instructions and at most one C
-statement. 56 rows today, headed by `MainDuelLoop` (122 asm instructions, body
-`{ EnableLCD(); }`).
+statement. 55 rows today. Each row carries `asm_calls`, `c_calls` and
+`dropped_calls`: routines the asm calls that the C body does not. Rank by that,
+because statement count alone cannot separate missing work from a transform that
+condensed the asm legitimately — `SwapTurn`'s eight instructions are seven
+push/pop and one assignment, and it is a complete port.
 
 Neither is ratcheted, because both have legitimate rows. A back-edge is absent
 from the C when the asm loop was hardware the Phase 1 transform deletes
 (`DisableLCD` spinning on `rLY`) or arithmetic a C operator expresses directly.
-A one-statement body is right when it delegates to the routine it wraps. Triage
+A one-statement body is right when it delegates to the routine it wraps, which
+is also why `dropped_calls` over-counts a delegation: `ProcessText` calls
+`process_text_core`, and the five calls the asm makes live one level down. Triage
 each row against the asm, and order the work by whether the ROM executes the
 routine: cross-reference `build/completion/tas/ref-5530b.json`, whose `calls`
-entries carry `count` and `first_ordinal`.
+entries carry `count` and `first_ordinal`. Ten rows with dropped calls are
+executed on the TAS, and the four largest — `MainDuelLoop` (34),
+`DuelMenu_Attack` (18), `DisplayPlayAreaScreen` (15), `OpenPlayerHandScreen`
+(8) — are the duel engine.
 
 These two are why a routine can be green on its oracle and still do nothing: a
 stub with a `compare: ()` contract and no `read` span passes every check the
