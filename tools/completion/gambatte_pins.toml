@@ -10,7 +10,7 @@ scons_version = "4.5.2"
 
 [core]
 path = "build/completion/gambatte/source/libgambatte/libgambatte.so"
-sha256 = "6aa9e4925c7cce81f67d04197e739af98127351efa9b8d7ca578a823cd0d7d24"
+sha256 = "1fc680ae7af048bc21291995f9d6b9cc0a336c68e08377b36ae0c27d28474ad6"
 
 [rom]
 path = "poketcg/poketcg.gbc"
