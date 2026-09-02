@@ -196,14 +196,25 @@ CursorTileResult SetCursorParametersForTextBox_Default(uint8_t d, uint8_t e)
 	return result;
 }
 
-void DrawCursor(uint8_t a)
+/* menus.asm:190-210's tail (`or a; ret`) reloads the tile into a before the
+ * write, so DrawCursor's exit a/e/f are fully determined by the tile and the
+ * computed BG coordinate -- not garbage. HandleMenuInput's tail jumps into
+ * RefreshMenuCursor_CheckPlaySFX (menus.asm:122,135) need that exit state,
+ * so it is kept here instead of discarded. */
+static HandleMenuInputResult DrawCursorRegs(uint8_t tile)
 {
 	uint16_t product = HtimesL((uint16_t)((uint16_t)wCurMenuItem << 8 | wMenuYSeparation));
 	uint8_t d = wMenuCursorXOffset;
 	uint8_t e = (uint8_t)((uint8_t)product + wMenuCursorYOffset);
 
 	AdjustCoordinatesForBGScroll(&d, &e);
-	WriteByteToBGMap0(a, d, e);
+	WriteByteToBGMap0(tile, d, e);
+	return (HandleMenuInputResult){tile, e, (tile == 0u) ? 0x80u : 0x00u};
+}
+
+void DrawCursor(uint8_t a)
+{
+	(void)DrawCursorRegs(a);
 }
 
 void EraseCursor(void)
@@ -216,17 +227,30 @@ void DrawCursor2(void)
 	DrawCursor(wMenuVisibleCursorTile);
 }
 
-void RefreshMenuCursor(void)
+/* menus.asm:173-184. `and $f; ret nz` (:178-179) only fires when the
+ * pre-increment counter's low nibble is non-zero; e is left untouched by it.
+ * RefreshMenuCursor_CheckPlaySFX is only ever reached with carry already
+ * clear (menus.asm:122 `jr nc`, :135 `jr z`), so every HandleMenuInput
+ * caller takes the "no selection" branch and never reads a/e here -- e has
+ * no defined value on this path (dead register, not a callable output), so
+ * 0 stands in for it. When the counter is on a 16-frame boundary, execution
+ * falls through into DrawCursor/EraseCursor instead, whose exit state is
+ * fully defined and reused verbatim. */
+static HandleMenuInputResult RefreshMenuCursorRegs(void)
 {
 	uint8_t old = wCursorBlinkCounter;
 
 	wCursorBlinkCounter = (uint8_t)(old + 1);
-	if (old & 0x0f)
-		return;
-	if (!(wCursorBlinkCounter & 0x10))
-		DrawCursor(wMenuVisibleCursorTile);
-	else
-		EraseCursor();
+	if ((old & 0x0fu) != 0u)
+		return (HandleMenuInputResult){(uint8_t)(old & 0x0fu), 0u, 0x20u};
+	if ((wCursorBlinkCounter & 0x10u) == 0u)
+		return DrawCursorRegs(wMenuVisibleCursorTile);
+	return DrawCursorRegs(wMenuInvisibleCursorTile);
+}
+
+void RefreshMenuCursor(void)
+{
+	(void)RefreshMenuCursorRegs();
 }
 
 /* menus.asm:654-683 always fills a fixed 2x2 block (`lb bc, 2, 2`). Not using
@@ -400,13 +424,22 @@ WaitResult WaitForWideTextBoxInput(void)
 	}
 }
 
-/* >>> factory RefreshMenuCursor_CheckPlaySFX */
-void RefreshMenuCursor_CheckPlaySFX(void)
+/* HandleMenuInput's two callers of RefreshMenuCursor_CheckPlaySFX are tail
+ * jumps in the real asm (menus.asm:122 `jr nc`, :135 `jr z` -- not `call`),
+ * so the a/e/f state it exits with is exactly what HandleMenuInput itself
+ * returns on those paths. */
+static HandleMenuInputResult RefreshMenuCursor_CheckPlaySFXRegs(void)
 {
 	uint8_t a = wRefreshMenuCursorSFX;
 	if (a != 0u)
 		PlaySFX(a);
-	RefreshMenuCursor();
+	return RefreshMenuCursorRegs();
+}
+
+/* >>> factory RefreshMenuCursor_CheckPlaySFX */
+void RefreshMenuCursor_CheckPlaySFX(void)
+{
+	(void)RefreshMenuCursor_CheckPlaySFXRegs();
 }
 /* <<< factory RefreshMenuCursor_CheckPlaySFX */
 
@@ -644,10 +677,8 @@ HandleMenuInputResult HandleMenuInput(void)
 
 	if (wMenuUpdateFunc != 0u) {
 		CardListMenuFunctionResult r = CardListMenuFunction();
-		if ((r.f & 0x10u) == 0u) {
-			RefreshMenuCursor_CheckPlaySFX();
-			return (HandleMenuInputResult){0u, 0u, 0u};
-		}
+		if ((r.f & 0x10u) == 0u)
+			return RefreshMenuCursor_CheckPlaySFXRegs();
 		DrawCursor2();
 		uint8_t drawn_tile = wMenuVisibleCursorTile;
 		uint8_t z_bit = (drawn_tile == 0u) ? 0x80u : 0u;
@@ -658,10 +689,8 @@ HandleMenuInputResult HandleMenuInput(void)
 	}
 
 	uint8_t pressed = (uint8_t)(hKeysPressed & (PAD_A | PAD_B));
-	if (pressed == 0u) {
-		RefreshMenuCursor_CheckPlaySFX();
-		return (HandleMenuInputResult){0u, 0u, 0u};
-	}
+	if (pressed == 0u)
+		return RefreshMenuCursor_CheckPlaySFXRegs();
 	if ((pressed & PAD_A) != 0u) {
 		DrawCursor2();
 		uint8_t drawn_tile = wMenuVisibleCursorTile;

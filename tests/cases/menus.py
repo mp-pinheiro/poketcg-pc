@@ -391,9 +391,14 @@ CASES["CardListMenuFunction"] = [
 # >>> factory HandleMenuInput
 CONTRACT["HandleMenuInput"] = {"compare": ("a", "e", "f"), "preserve": ()}
 CASES["HandleMenuInput"] = [
-    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x01", 0xCD17: b"\x00\x00", 0xCD10: b"\x02", 0xCD14: b"\x04", 0xFFB1: b"\x02", 0xCD15: b"\x00"}, "read": {0xFFB1: 1, 0xCD10: 1}},
-    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCD17: b"\x00\x00", 0xCD10: b"\x03", 0xCD14: b"\x04", 0xFFB1: b"\x03", 0xCD15: b"\x00"}, "read": {0xFFB1: 1, 0xCD10: 1}},
-    dict(POISON, wram={0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCD17: b"\x00\x00", 0xCD10: b"\x01", 0xCD14: b"\x04", 0xFFB1: b"\x01", 0xCD15: b"\x00"}, read={0xFFB1: 1, 0xCD10: 1}),
+    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x01", 0xCD17: b"\x00\x00", 0xCD10: b"\x02", 0xCD14: b"\x04", 0xFFB1: b"\x02", 0xCD15: b"\x00", 0xCD99: b"\x99"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD99: 1}},
+    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCD17: b"\x00\x00", 0xCD10: b"\x03", 0xCD14: b"\x04", 0xFFB1: b"\x03", 0xCD15: b"\x00", 0xCD99: b"\x2A"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD99: 1}},
+    dict(POISON, wram={0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCD17: b"\x00\x00", 0xCD10: b"\x01", 0xCD14: b"\x04", 0xFFB1: b"\x01", 0xCD15: b"\x00", 0xCD99: b"\x77"}, read={0xFFB1: 1, 0xCD10: 1, 0xCD99: 1}),
+    # menus.asm:79-104: hDPadHeld PAD_UP with a nonzero cursor position takes
+    # the up/down branch, which overwrites wRefreshMenuCursorSFX with $1
+    # (buffered cursor SFX) after the unconditional entry clear -- seeded
+    # nonzero here to prove both writes land, not just the entry clear.
+    {"wram": {0xFF8F: b"\x40", 0xFF91: b"\x00", 0xCD17: b"\x00\x00", 0xCD10: b"\x02", 0xCD14: b"\x04", 0xFFB1: b"\x02", 0xCD15: b"\x00", 0xCD99: b"\x99"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD99: 1}},
 ]
 # <<< factory HandleMenuInput
 
