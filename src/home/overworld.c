@@ -155,7 +155,13 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define PC_MENU_PARAMS 0x4DA9u
-#define PC_MENU_BANK 0x04u
+/* Bank $04 holds the menu implementations and their data: the params tables
+ * PauseMenuParams ($04:4D98) and PCMenuParams ($04:4DA9), InitAndPrintMenu
+ * ($04:51E9), and every _PauseMenu_* body ($04:4059-$04:4548) with its labels
+ * (StatusScreenLabels $04:4095). The asm reaches all of them by `farcall`,
+ * which selects the callee's bank and restores the caller's on return
+ * (overworld.asm:1151-1155, 1165-1199). */
+#define MENUS_BANK 0x04u
 
 #define PAUSE_MENU_TEXT_LIST_BANK 0x03u
 #define PAUSE_MENU_TEXT_LIST_ADDR 0x427Cu
@@ -646,7 +652,10 @@ FuncC1A0Result Func_c1a0(uint16_t hl)
 /* >>> factory PauseMenu_Exit */
 void PauseMenu_Exit(void)
 {
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(MENUS_BANK);
 	_PauseMenu_Exit();
+	BankswitchROM(saved_bank);
 }
 /* <<< factory PauseMenu_Exit */
 
@@ -950,7 +959,10 @@ void UpdateOverworldMap(void)
 void DisplayPauseMenu(void)
 {
 	uint8_t selected = wSelectedPauseMenuItem;
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(MENUS_BANK);
 	InitAndPrintMenu(PAUSE_MENU_PARAMS, selected);
+	BankswitchROM(saved_bank);
 }
 /* <<< factory DisplayPauseMenu */
 
@@ -975,7 +987,10 @@ FuncC8edResult Func_c8ed(uint16_t hl)
 /* >>> factory PauseMenu_Diary */
 void PauseMenu_Diary(void)
 {
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(MENUS_BANK);
 	_PauseMenu_Diary();
+	BankswitchROM(saved_bank);
 }
 /* <<< factory PauseMenu_Diary */
 
@@ -984,7 +999,7 @@ void DisplayPCMenu(void)
 {
 	uint8_t selected = wSelectedPCMenuItem;
 	uint8_t saved_bank = hBankROM;
-	BankswitchROM(PC_MENU_BANK);
+	BankswitchROM(MENUS_BANK);
 	InitAndPrintMenu(PC_MENU_PARAMS, selected);
 	BankswitchROM(saved_bank);
 }
@@ -1008,7 +1023,10 @@ void Func_c268(void)
 /* >>> factory PauseMenu_Status */
 void PauseMenu_Status(void)
 {
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(MENUS_BANK);
 	_PauseMenu_Status();
+	BankswitchROM(saved_bank);
 }
 /* <<< factory PauseMenu_Status */
 
@@ -1319,7 +1337,10 @@ void PCMenu_CardAlbum(void)
 /* >>> factory PauseMenu_Config */
 void PauseMenu_Config(void)
 {
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(MENUS_BANK);
 	_PauseMenu_Config();
+	BankswitchROM(saved_bank);
 }
 /* <<< factory PauseMenu_Config */
 
@@ -1541,19 +1562,20 @@ void LoadMap(void)
 		Func_c184();
 		Func_c49c();
 		LoadMapGfxAndPermissions();
-	(void)Func_c943(0u, 0u, 0u, 0u, 0u, 0u, 0u);
-	(void)Func_c158();
-	DoMapOWFrame();
-	SetOverworldDoFrameFunction();
-	wOverworldTransition = 0u;
-	wOverworldNPCFlags = 0u;
-	(void)PlayDefaultSong();
-	(void)FadeScreenFromWhite();
-	Func_c141Result active_event = Func_c141();
-	(void)Func_c17a(active_event.hl);
-	SetOverworldDoFrameFunction();
-	runtime_record_event(RUNTIME_EVENT_OVERWORLD_READY);
-	return;
+		Func_c4b9();
+		(void)Func_c943(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		(void)Func_c158();
+		DoMapOWFrame();
+		SetOverworldDoFrameFunction();
+		wOverworldTransition = 0u;
+		wOverworldNPCFlags = 0u;
+		(void)PlayDefaultSong();
+		(void)FadeScreenFromWhite();
+		Func_c141Result active_event = Func_c141();
+		(void)Func_c17a(active_event.hl);
+		SetOverworldDoFrameFunction();
+		runtime_record_event(RUNTIME_EVENT_OVERWORLD_READY);
+		return;
 	}
 }
 /* <<< factory LoadMap */
