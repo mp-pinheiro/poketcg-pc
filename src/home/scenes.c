@@ -110,7 +110,7 @@ void SetBoosterLogoOAM(void)
 /* <<< factory SetBoosterLogoOAM */
 
 /* >>> factory _DrawPortrait */
-void _DrawPortrait(void)
+void _DrawPortrait(uint8_t b, uint8_t c)
 {
 	uint8_t saved_wd291 = wd291;
 	uint8_t d = 0xD0u;
@@ -120,7 +120,9 @@ void _DrawPortrait(void)
 		e = 0x06u;
 	}
 	wd291 = e;
-	LoadTilemap_ToVRAM(d, e);
+	/* scenes.asm:258-268: d is the tileset's VRAM tile offset and e the BG
+	 * palette index; the tilemap itself loads at the caller's bc. */
+	LoadTilemap_ToVRAM(b, c);
 
 	uint8_t portrait = wCurPortrait;
 	uint8_t tileset;

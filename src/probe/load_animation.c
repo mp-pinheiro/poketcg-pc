@@ -68,21 +68,21 @@ static void adapt_EnableAndClearSpriteAnimations(ProbeState *s)
 /* >>> factory DrawPortrait */
 static void adapt_DrawPortrait(ProbeState *s)
 {
-	DrawPortrait(s->a);
+	DrawPortrait(s->a, s->b, s->c);
 }
 /* <<< factory DrawPortrait */
 
 /* >>> factory DrawOpponentPortrait */
 static void adapt_DrawOpponentPortrait(ProbeState *s)
 {
-	DrawOpponentPortrait(s->a);
+	DrawOpponentPortrait(s->a, s->b, s->c);
 }
 /* <<< factory DrawOpponentPortrait */
 
 /* >>> factory DrawPlayerPortrait */
 static void adapt_DrawPlayerPortrait(ProbeState *s)
 {
-	DrawPlayerPortrait();
+	DrawPlayerPortrait(s->b, s->c);
 	(void)s;
 }
 /* <<< factory DrawPlayerPortrait */

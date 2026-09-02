@@ -27,7 +27,7 @@ void _PauseMenu_Diary(void)
 	InitMenuRegs init = InitMenuScreen();
 	DrawRegularTextBox(&init.hl, 0u, 20u, 12u, 0u, 0u);
 	LabelsResult labels = PrintLabels(0x40F7u, 0u, 0u);
-	DrawPauseMenuPlayerPortrait();
+	DrawPauseMenuPlayerPortrait(1u, 3u); /* menus/diary.asm:11 lb bc, 1, 3 */
 	PrintAlbumProgress(12u, 8u);
 	PrintPlayTime(13u, 10u);
 	PrintMedalCount(16u, 6u, labels.d, labels.e, labels.hl);

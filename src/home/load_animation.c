@@ -258,29 +258,33 @@ void EnableAndClearSpriteAnimations(void)
 /* <<< factory EnableAndClearSpriteAnimations */
 
 /* >>> factory DrawPortrait */
-void DrawPortrait(uint8_t a)
+/* load_animation.asm:275-287: a = tilemap id; bc (the portrait's tilemap
+ * coordinates) flows through untouched to _DrawPortrait. */
+void DrawPortrait(uint8_t a, uint8_t b, uint8_t c)
 {
 	wCurTilemap = a;
 	uint8_t saved = hBankROM;
 	BankswitchROM(BANK_DRAW_PORTRAIT);
-	_DrawPortrait();
+	_DrawPortrait(b, c);
 	BankswitchROM(saved);
 }
 /* <<< factory DrawPortrait */
 
 /* >>> factory DrawOpponentPortrait */
-void DrawOpponentPortrait(uint8_t a)
+/* load_animation.asm:289-291: a = portrait, bc = coordinates. */
+void DrawOpponentPortrait(uint8_t a, uint8_t b, uint8_t c)
 {
 	wCurPortrait = a;
-	DrawPortrait(TILEMAP_OPPONENT);
+	DrawPortrait(TILEMAP_OPPONENT, b, c);
 }
 /* <<< factory DrawOpponentPortrait */
 
 /* >>> factory DrawPlayerPortrait */
-void DrawPlayerPortrait(void)
+/* load_animation.asm:293-295 via DrawPortrait: bc = coordinates. */
+void DrawPlayerPortrait(uint8_t b, uint8_t c)
 {
 	wCurPortrait = PLAYER_PIC;
-	DrawPortrait(TILEMAP_PLAYER);
+	DrawPortrait(TILEMAP_PLAYER, b, c);
 }
 /* <<< factory DrawPlayerPortrait */
 

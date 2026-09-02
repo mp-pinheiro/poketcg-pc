@@ -13,8 +13,7 @@ static void adapt_SetBoosterLogoOAM(ProbeState *s)
 /* >>> factory _DrawPortrait */
 static void adapt__DrawPortrait(ProbeState *s)
 {
-	(void)s;
-	_DrawPortrait();
+	_DrawPortrait(s->b, s->c);
 }
 /* <<< factory _DrawPortrait */
 

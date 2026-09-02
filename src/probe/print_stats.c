@@ -6,8 +6,7 @@
 /* >>> factory DrawPauseMenuPlayerPortrait */
 static void adapt_DrawPauseMenuPlayerPortrait(ProbeState *s)
 {
-	(void)s;
-	DrawPauseMenuPlayerPortrait();
+	DrawPauseMenuPlayerPortrait(s->b, s->c);
 }
 /* <<< factory DrawPauseMenuPlayerPortrait */
 

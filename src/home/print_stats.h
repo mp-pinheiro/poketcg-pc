@@ -4,8 +4,7 @@
 #include <stdint.h>
 
 /* >>> factory DrawPauseMenuPlayerPortrait */
-void DrawPauseMenuPlayerPortrait(void);
-void DrawPlayerPortrait(void);
+void DrawPauseMenuPlayerPortrait(uint8_t b, uint8_t c);
 /* <<< factory DrawPauseMenuPlayerPortrait */
 /* >>> factory FlashReceivedMedal */
 void FlashReceivedMedal(void);

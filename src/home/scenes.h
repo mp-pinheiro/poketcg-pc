@@ -7,7 +7,7 @@
 void SetBoosterLogoOAM(void);
 /* <<< factory SetBoosterLogoOAM */
 /* >>> factory _DrawPortrait */
-void _DrawPortrait(void);
+void _DrawPortrait(uint8_t b, uint8_t c);
 /* <<< factory _DrawPortrait */
 /* >>> factory LoadScene_LoadSGBPacket */
 typedef struct {

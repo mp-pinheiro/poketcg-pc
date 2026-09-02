@@ -25,7 +25,7 @@ void _PauseMenu_Status(void)
 	DrawCollectedMedals();
 	DrawRegularTextBox(&init.hl, 0u, 20u, 8u, 0u, 0u);
 	(void)PrintLabels(StatusScreenLabels, 0u, 0u);
-	DrawPauseMenuPlayerPortrait();
+	DrawPauseMenuPlayerPortrait(1u, 1u); /* menus/status.asm:14 lb bc, 1, 1 */
 	PrintAlbumProgress(12u, 4u);
 	PrintPlayTime(13u, 6u);
 	(void)FlashWhiteScreen();

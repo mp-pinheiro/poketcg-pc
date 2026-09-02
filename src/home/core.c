@@ -4879,7 +4879,7 @@ void DrawDuelistPortraitsAndNames(void)
 	InitTextPrinting(0, 11);
 	ProcessText(&hl);
 
-	DrawPlayerPortrait();
+	DrawPlayerPortrait(0u, 5u); /* duel/core.asm:1593 lb bc, 0, 5 */
 
 	hl = wDefaultText_ADDR;
 	(void)CopyOpponentName(wDefaultText_ADDR);
@@ -4887,7 +4887,7 @@ void DrawDuelistPortraitsAndNames(void)
 	InitTextPrinting((uint8_t)(length.a + SCREEN_WIDTH), 0);
 	ProcessText(&hl);
 
-	DrawOpponentPortrait(wOpponentPortrait);
+	DrawOpponentPortrait(wOpponentPortrait, 13u, 1u); /* duel/core.asm:1610 lb bc, 13, 1 */
 	DrawDuelHorizontalSeparator();
 }
 /* <<< factory DrawDuelistPortraitsAndNames */

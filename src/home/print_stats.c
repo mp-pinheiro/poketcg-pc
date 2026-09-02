@@ -58,9 +58,9 @@ static const uint8_t kMedalCoordsAndTilemaps[24] = {
 /* <<< factory statics */
 
 /* >>> factory DrawPauseMenuPlayerPortrait */
-void DrawPauseMenuPlayerPortrait(void)
+void DrawPauseMenuPlayerPortrait(uint8_t b, uint8_t c)
 {
-	DrawPlayerPortrait();
+	DrawPlayerPortrait(b, c);
 }
 /* <<< factory DrawPauseMenuPlayerPortrait */
 

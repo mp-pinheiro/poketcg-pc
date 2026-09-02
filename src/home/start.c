@@ -231,7 +231,7 @@ void HandleStartMenu(void)
 	(void)SetupText(0x30u, 0x8Fu);
 	EnableAndClearSpriteAnimations();
 	wLineSeparation = DOUBLE_SPACED;
-	DrawPlayerPortrait();
+	DrawPlayerPortrait(14u, 1u); /* menus/start.asm:229 lb bc, 14, 1 */
 	static const uint8_t params[17] = {
 		0x00u, 0x00u, 0x0Eu, 0x04u, 0x02u, 0x02u,
 		0x6Cu, 0x03u, 0xFFu, 0x01u, 0x02u, 0x02u, 0x01u,
@@ -291,7 +291,7 @@ void DrawPlayerPortraitAndPrintNewGameText(void)
 	(void)InitMenuScreen();
 	EnableAndClearSpriteAnimations();
 	(void)SetDoFrameFunction(HANDLEALLSPRITEANIMATIONS_ADDR);
-	DrawPlayerPortrait();
+	DrawPlayerPortrait(7u, 3u); /* menus/start.asm:410 lb bc, 7, 3 */
 	(void)FadeScreenFromWhite();
 	DoFrameIfLCDEnabled();
 	(void)PrintScrollableText_NoTextBoxLabel(IsCrazyAboutPokemonAndPokemonCardCollectingText);
