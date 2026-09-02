@@ -317,9 +317,14 @@ CASES["_ExecuteGameEvent"] = [
 
 # >>> factory ExecuteGameEvent
 CONTRACT["ExecuteGameEvent"] = {"compare": (), "preserve": ()}
+# map.asm:31-35 loops until _ExecuteGameEvent reports a restart, so the routine
+# does not return under any seed. The budget bounds both lanes at the same
+# frame; the completion pc below is where the reference is captured.
 CASES["ExecuteGameEvent"] = [
-    {"wram": {0xCAC4: b"\x00"}, "read": {0xCAC4: 1}, "expect": {0xCAC4: b"\x01"}},
-    dict(POISON, wram={0xCAC4: b"\x00"}, read={0xCAC4: 1}, expect={0xCAC4: b"\x01"}),
+    {"wram": {0xCAC4: b"\x00"}, "read": {0xCAC4: 1}, "expect": {0xCAC4: b"\x01"},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xCAC4: b"\x00"}, read={0xCAC4: 1}, expect={0xCAC4: b"\x01"},
+         instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory ExecuteGameEvent
 

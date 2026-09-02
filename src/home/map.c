@@ -373,10 +373,19 @@ uint8_t _ExecuteGameEvent(void)
 /* <<< factory _ExecuteGameEvent */
 
 /* >>> factory ExecuteGameEvent */
+/* map.asm:26-39. A loop, not a single dispatch: LoadMap returns whenever a
+ * script requests another game event (bit 6 of wOverworldTransition), and the
+ * next iteration dispatches it and re-enters the map. Flattening it to one
+ * pass is what dropped the port out to the title screen instead of starting
+ * the practice duel. Carry clear from _ExecuteGameEvent is the only exit, and
+ * it means "restart the game", which only the credits request. */
 void ExecuteGameEvent(void)
 {
+	uint8_t saved_bank = hBankROM;
+
 	wPlayTimeCounterEnable = 1u;
-	if ((_ExecuteGameEvent() & 0x10u) != 0u && wGameEvent == 0u)
+	while ((_ExecuteGameEvent() & 0x10u) != 0u)
 		LoadMap();
+	BankswitchROM(saved_bank);
 }
 /* <<< factory ExecuteGameEvent */
