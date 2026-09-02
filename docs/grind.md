@@ -211,3 +211,25 @@ entries carry `count` and `first_ordinal`.
 These two are why a routine can be green on its oracle and still do nothing: a
 stub with a `compare: ()` contract and no `read` span passes every check the
 substrate has. That is `docs/port-contract.md` item 5 at scale.
+
+## Clearing stubs: bottom-up only
+
+A stub high in a call tree cannot be verified until its callees exist, so the
+`stubs` worklist must be worked from the leaves up. Measured the hard way on
+`MainDuelLoop`: the port against `engine/duel/core.asm:73-218` compiles and is
+faithful, and it still cannot pass, because `MainDuelLoop` always runs
+`HandleTurn` before it tests `wDuelFinished`, and `HandleTurn`'s subtree is
+itself stubbed (`HandleBetweenTurnsEvents` is empty, `DisplayPlayAreaScreen`
+and `DuelMenu_Attack` are one-liners). The probe times out with no frame
+boundary to bound it. That work was reverted rather than landed red.
+
+Order a subtree by callee depth, not by how important the routine looks. For
+the duel engine that means the leaves in `core.c`, `effect_functions.c` and
+`trainer_cards.c` first, and `MainDuelLoop` last.
+
+Expect to rewrite the case matrix of every stub you fill in. A stub's cases were
+authored against the stub: `MainDuelLoop`'s two cases seeded `wLCDC` and
+expected `EnableLCD`'s `$80`, which the body `{ EnableLCD(); }` satisfies
+trivially, and its mutation receipt corrupted that same call. Both passed for
+the life of the port. Re-derive the matrix from the asm's branches, and retarget
+the mutation at a line the real body owns.
