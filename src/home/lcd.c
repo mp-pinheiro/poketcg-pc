@@ -46,6 +46,13 @@ void DisableLCD(void)
 	gb_write8(wIE_ADDR, interrupt_enable);
 	gb_write8(rIE, (uint8_t)(interrupt_enable & (uint8_t)~IE_VBLANK));
 	frame_boundary_reach();
+	/* When the rLY poll crosses line 144 the PPU sets the VBlank IF request
+	 * regardless of IE (runtime ppu.c sets IF at line-144 entry); the pending
+	 * interrupt services at the IE restore below, running a full VBlankHandler
+	 * pass -- wVBlankCounter++ included (vblank.asm:35) -- with no game-loop
+	 * RNG advance. Model that pending service here. */
+	gb_write8(wVBlankCounter_ADDR,
+	          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 	value &= (uint8_t)~LCDC_ON;
 	gb_write8(rLCDC, value);
 	gb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) & (uint8_t)~LCDC_ON));
@@ -53,6 +60,15 @@ void DisableLCD(void)
 	gb_write8(rOBP0, 0);
 	gb_write8(rOBP1, 0);
 	gb_write8(rIE, interrupt_enable);
+	/* lcd.asm:43-44 masks IE_VBLANK before the rLY poll and lcd.asm:55
+	 * restores it after; the PPU raises the VBlank IF request at line 144
+	 * regardless of IE (gb-recompiled runtime ppu.c), so whenever the poll
+	 * crosses line 144 the pending request services immediately at this
+	 * restore - one full VBlankHandler run (vblank.asm:35 wVBlankCounter++)
+	 * between game instructions. The boundary pass above models the frame
+	 * the poll consumed; this increment models that service. */
+	gb_write8(wVBlankCounter_ADDR,
+	          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 }
 
 void Set_OBJ_8x8(void)

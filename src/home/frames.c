@@ -20,6 +20,7 @@
 #define DO_FRAME_FUNC_3E31 0x3E31u
 #define DO_FRAME_ALL_SPRITE_ANIMATIONS 0x3CB4u
 #define DO_FRAME_LINK_OPPONENT_TURN 0x0F1Du
+#define DO_FRAME_NOOP 0x0348u
 
 static FrameBoundaryHook g_frame_boundary_hook;
 static void *g_frame_boundary_context;
@@ -78,6 +79,11 @@ static void CallDoFrameFunction(void)
 		 * in C -- so the port models it as bank switch + carry inside the
 		 * callee; the frame hook observes the serial-poll side effects. */
 		(void)LinkOpponentTurnFrameFunction();
+		return;
+	case DO_FRAME_NOOP:
+		/* home/jumptable.asm CallIndirect guard: NoOp ($0348) is the asm's
+		 * canonical do-nothing per-frame function; several probe cases seed
+		 * it explicitly. */
 		return;
 	default:
 		DispatchIndirect("wDoFrameFunction", target);
