@@ -96,7 +96,10 @@ def build_report(
     scenario: str, frames: int, binary: Path, trace: Path, limit: int
 ) -> dict[str, Any]:
     counts, first_frame, overflow, total = native_counts(binary, trace)
-    reference = refstream.routine_trace(scenario, frames, None)
+    # The native lane counts DoFrames, so the reference must be bounded by the
+    # same anchor count rather than by PPU frames, which span a different
+    # amount of emulated time. `frames + 400` only caps the emulation length.
+    reference = refstream.routine_trace(scenario, frames + 400, None, ordinals=frames)
     reference_counts = {row["routine"]: row["count"] for row in reference["calls"]}
     # Only names the reference can even report are comparable: the port has
     # adapters and helpers with no ROM counterpart, and 259 registered routines

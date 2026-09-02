@@ -567,8 +567,12 @@ def writer_before(entry: dict[str, Any], ordinal: int) -> dict[str, Any] | None:
 
 
 def routine_trace(
-    scenario: str, frames: int, wanted: set[str] | None
+    scenario: str, frames: int, wanted: set[str] | None, *, ordinals: int | None = None
 ) -> dict[str, Any]:
+    """Reference routine-entry counts. `ordinals` bounds the run by DoFrame
+    anchors instead of PPU frames, which is the only axis comparable against
+    native counts: the native lane counts DoFrames, and 2,000 of those span
+    roughly 2,049 PPU frames, so bounding by frames compares unequal windows."""
     masks = scenario_masks(scenario, frames)
     candidates, by_bank_address = routine_entry_addresses()
     events: list[tuple[int, str]] = []
@@ -585,13 +589,16 @@ def routine_trace(
                 events.append((core.ordinal, name))
 
         core.install_exec(on_exec)
-        core.run(frames)
+        core.run(frames, stop=(None if ordinals is None else lambda: core.ordinal > ordinals))
+        reached = core.ordinal
     per_routine: dict[str, int] = {}
     for _ordinal, name in events:
         per_routine[name] = per_routine.get(name, 0) + 1
     return {
         "scenario": scenario,
         "frames": frames,
+        "ordinal_bound": ordinals,
+        "ordinals_reached": reached,
         "events": len(events),
         "distinct_routines": len(per_routine),
         "calls": sorted(
