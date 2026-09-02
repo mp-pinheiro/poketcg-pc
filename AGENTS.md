@@ -60,6 +60,8 @@ The commands that matter, from the `justfile`:
 | `just completion-reftrace <id>` | bank-verified routine-entry trace of the reference over a scenario timeline |
 | `just completion-dispatch <id> <out>` | group a census into one self-contained fix packet per owning basename |
 | `just completion-frame-census <id>` | earliest anchor ordinal each byte goes wrong, joined to the reference write just before it |
+| `just build-trace` | instrumented lane (`-DPOKETCG_TRACE=ON`) producing the native call trace |
+| `just completion-trace-diff <id>` | per-routine call-count diff, native against the reference; positive deltas are real |
 | `just oracle-diff-all` | older PyBoy-only full sweep. Orchestrator only; writes no gate record |
 | `just progress` | rebuild the progress report from registry + gate |
 | `just frontier` | print unported routines whose callees are all ported |

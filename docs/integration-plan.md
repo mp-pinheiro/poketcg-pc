@@ -414,6 +414,53 @@ is global; "after W1" means after Wave 1 has landed and passed its landing check
     port reports single — the timer cadence nevertheless matches (`TimerHandler` 8,003
     reference calls over 2,000 frames against the port's 70224/17408 ≈ 4.03 per frame).
 
+21g. Bilateral call-count diff landed, and it is the instrument the cadence questions
+    needed. `just build-trace` configures `-DPOKETCG_TRACE=ON`, which adds
+    `-finstrument-functions` to the `gbmem` target with `mem.c`/`ppu.c` excluded (leaving
+    `gb_read8`/`gb_write8` uninstrumented, without which the record count inflates by two
+    orders of magnitude). `src/trace.c`'s `__cyg_profile_func_enter` appends
+    frame-tagged `(frame, callee, caller)` records against its own TU's base address, the
+    port dumps them with `--trace-calls PATH`, and
+    `just completion-trace-diff boot-title --trace <raw>` resolves them via `nm` and
+    diffs per-routine counts against `refstream.routine_trace`. Measured: 411,421 records,
+    no overflow, 1.7 s to diff, 304 routines comparable of the reference's 405, 76
+    divergent.
+
+    Read the sign. Negative deltas are mostly the port legitimately expressing a called
+    loop as internal C — `CopyDataHLtoDE` at −12,057 and `WaitForButtonAorB` at −622 are
+    not bugs. Positive deltas cannot be explained that way.
+
+    The positive cluster resolved the audio residue that three separate agents had
+    verified as byte-exact and still could not move. `Music1_UpdateChannel1` runs 2,012
+    times natively against 1,793 in the reference, and `Music2_UpdateChannel1` runs 208
+    times in the reference and **never** in the port — and `1,793 + 208 = 2,001`, exactly
+    `Music1_Update`'s call count. `music1.asm:170-186` banks in `wCurSongBank` *before*
+    `call Music1_UpdateChannel1`, and the two drivers are parallel ROM copies at identical
+    bank offsets (`poketcg.sym`: `3d:40e9 Music1_Update` / `3e:40e9 Music2_Update`,
+    `3d:4ee5 NumberOfSongs1` / `3e:4ee5 NumberOfSongs2`), so a song whose bank is `$3E`
+    runs the whole music2 driver from that one entry. The ROM never enters
+    `SoundTimerHandler_2` at all: 0 reference calls to `Music2_Update`.
+
+    This also validates the bank-verified filter in `refstream.routine_entry_addresses`.
+    Attributing a trace hit on the 16-bit address alone would have collapsed both drivers
+    into one name and hidden the whole finding — the same filter bug that first reported
+    duel AI routines executing during the title screen.
+
+    Implementing the dispatch in `Music1_Update` aborts the port with
+    `MISSING_DATA 00:3100` between frames 1000 and 1210, where `Music1_BeginSong` starts a
+    new song: the music2 driver has never executed in the port's history and computes a
+    pointer below `$4000` (`$3100` is code, inside `DrawAIPeekScreen` at `00:30f9`). The
+    dispatch is therefore held out of the tree until `src/home/music2.c` is repaired, so
+    the shared checkout stays green; `MUSIC2_BANK` and a `wCurSongBank = $3E` case for
+    `Music1_Update` are landed meanwhile. Land the pair together.
+
+    Note for whoever writes that case: a WRAM-only case cannot discriminate the dispatch.
+    Verified by reverting it to `if (0 && ...)` — all four `Music1_Update` cases still
+    pass, because the two drivers are near-identical code differing only in their
+    per-bank ROM tables. The call-count diff is the acceptance signal for this class of
+    fix, not the per-routine oracle.
+
+
 
 22. Regenerate the five stale producers (`just completion-baseline`,
     `completion-rom-coverage`, `completion-routine-mapping`, `completion-substrate`,
