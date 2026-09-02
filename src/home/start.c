@@ -261,9 +261,15 @@ void HandleStartMenu(void)
 	if (selected >= 4u && wHasSaveData != 0u)
 		selected = 1u;
 	InitAndPrintMenu(wStartMenuParams_ADDR, selected);
+	/* start.asm:104-141: InitAndPrintMenu's menu-item print (PrintTextNoDelay
+	 * -> Func_235e) spans a VBlank period on the reference -- service 1008
+	 * interrupts it mid-draw (1150-frame trace: wvbc 1008; the reference
+	 * burns 12 no-advance steps 997-1008 vs native 9). Consume it once per
+	 * menu opening, before the white flash. */
+	frame_boundary_consume_services(1u);
 	(void)FlashWhiteScreen();
 	runtime_mark_event(RUNTIME_EVENT_START_MENU_READY);
-	for (;;) {
+	for (;;) { /* .wait_input */
 		DoFrameIfLCDEnabled();
 		(void)UpdateRNGSources();
 		HandleMenuInputResult input = HandleMenuInput();
@@ -340,6 +346,18 @@ void HandleTitleScreen(void)
 			EnableAndClearSpriteAnimations();
 			PlayIntroSequence();
 			LoadTitleScreenSprites();
+			/* start.asm:17 calls LoadTitleScreenSprites with the LCD
+			 * back on (intro.asm:52): the seven 4-tile orb copies
+			 * through CopyGfxData's hblank-gated HRAM copier plus the
+			 * sprite-buffer work fill most of a frame period, and the
+			 * reference's ISR services twice while this chain is still
+			 * running -- service 657 interrupts CopyGfxData.hblank_copy
+			 * inside the GRASS copy, service 658 lands at CopyGfxData+3
+			 * of the PSYCHIC copy, both inside DoFrame interval 652
+			 * (700/1150-frame reference traces). The intro-side call
+			 * (intro.c) runs with the LCD off and crosses nothing.
+			 * Model both services here. */
+			frame_boundary_consume_services(2u);
 			runtime_mark_event(RUNTIME_EVENT_TITLE_READY);
 			wTitleScreenOrbCounter = 0u;
 			wTitleScreenIgnoreInputCounter = 0x3Cu;
