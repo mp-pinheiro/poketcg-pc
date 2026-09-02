@@ -54,6 +54,11 @@ The commands that matter, from the `justfile`:
 | `just build` | configure + build the C side |
 | `just oracle-diff <Fn>` | diff one routine against the PyBoy oracle — the per-routine check |
 | `just oracle-release-gate` | **the gate.** Central barrier; the only producer of `site/data/gate.json` |
+| `just completion-scenario <id>` | run one whole-game scenario; emits `comparison.census` — every differing byte grouped by owning RAM symbol |
+| `just completion-refstream <id>` | anchored Gambatte reference stream: one full state per reference `DoFrame` |
+| `just completion-writers <id> <addrs>` | name the reference routine that wrote each address, ranked by last write |
+| `just completion-reftrace <id>` | bank-verified routine-entry trace of the reference over a scenario timeline |
+| `just completion-dispatch <id> <out>` | group a census into one self-contained fix packet per owning basename |
 | `just oracle-diff-all` | older PyBoy-only full sweep. Orchestrator only; writes no gate record |
 | `just progress` | rebuild the progress report from registry + gate |
 | `just frontier` | print unported routines whose callees are all ported |
@@ -96,7 +101,10 @@ registration is a side effect of the cases module existing.
 
 - `just oracle-diff <Fn>` prints `PASS`.
 - Required case coverage exists (`docs/port-contract.md`): an all-zero case, a
-  poisoned-register case, every boundary.
+  poisoned-register case, every boundary, **and every internal branch**. Cases
+  that all land on one path leave the others unverified and both the oracle and
+  the mutation receipt pass anyway — that is how `PrintStartMenuDescriptionText`
+  shipped a four-way dispatch shifted by one.
 - A **recorded mutation test**: corrupt the routine, confirm the diff goes RED,
   restore, confirm PASS.
 - An input-waiting routine (drives `ReadJoypad`/`hKeysHeld`) is tested by passing

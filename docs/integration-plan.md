@@ -271,6 +271,108 @@ is global; "after W1" means after Wave 1 has landed and passed its landing check
     Six root-cause candidates is far under the 20 that gates this approach, so the
     batch loop proceeds. The anchored reference reproduces 117 of the 119 divergent
     wram offsets oracle-b reports, so the fast lane is licensed by the slow one.
+
+    Batch one, landed 2026-09-02, six parallel basename agents in ~23 min.
+    Census trajectory, each step measured by rerunning the scenario:
+
+    | step | census | what moved it |
+    |---|---|---|
+    | reported before | 1 "mismatch" | `_first_difference` returned one offset per field |
+    | counted | 123 bytes / 18 regions | census replaces the first-offset report |
+    | CPU-stack exclusion | 28 / 17 | not a fix; structural, asm-cited |
+    | `start.c` dispatch by table index | 23 / 14 | `wDecimalChars`×3, `wTxRam2`, `wde43` |
+    | `music1` raw call-stack pointer + `wddc3` wraparound/scope | 18 / 10 | four `wMusicCh<N>Stack` bytes, one `wddc3` |
+
+    Four real port bugs landed with asm citations and per-routine oracle PASS:
+    the `PrintStartMenuDescriptionText` dispatch shift plus its missing
+    `wTxRam2+1` write and swapped `PrintAlbumProgress_SkipGetProgress` argument
+    order (`start.asm:236-296,323-328`); `Music1_PlayNextNote`'s `$E2`/`$E3`
+    storing `*hl + 2` where `music1.asm:976-1005` stores the popped pointer
+    unmodified and adds 2 on the `ret` side; `Music1_UpdateChannel4` driving
+    `wddc3` and vibrato that `music1.asm:540-577` never touches;
+    `ExecuteNextSFXCommand`'s inlined endloop returning out of the interpreter
+    where `sfx.asm:248-265` always `jp ExecuteNextSFXCommand`.
+
+    Two results worth keeping honest. `sfx` and `menus` each found and fixed a
+    real bug with a regression case that fails pre-fix and passes post-fix, yet
+    moved this milestone's census by zero: `sfx`'s assigned byte `wde43` had
+    already been removed by the `start.c` fix, so the packet's attribution of it
+    to `SFX_loop` was itself downstream of the mis-routed print chain. And
+    `music1` reported fixing 8 bytes where the census measured 5 — the four
+    `wddc3` bytes it claimed are still 3 divergent. Agent reports are not
+    evidence; the rerun census is.
+
+    Remaining 18 bytes, two root causes. Eight are one frame-service phase
+    desync — `wRNG1`/`wRNG2`/`wRNGCounter` feeding the two `sPlayerName`
+    checksum bytes written by `DisplayPlayerNamingScreen.no_name`
+    (`naming.asm:30-33`) and `wRefreshMenuCursorSFX`, all downstream of
+    `HandleStartMenu`'s wait loop and the `frame_boundary_consume_services`
+    model. Ten are `music1` channel state (`wddbb`×4, `wddc3`×3, `wdde3`×2,
+    `wddef`) whose reachable write paths each match the assembly and pass
+    individual `oracle-diff`, so they need per-frame census (first divergent
+    ordinal) rather than another terminal-frame pass.
+
+### Reaching determinism on the unexercised 86%
+
+21a. The boot milestone exercised **405 of 2,969 routines (13.6%)**, measured with
+    `just completion-reftrace boot-title`. Coverage is step-shaped, not linear in
+    time: 180 routines by frame 30, +69 across frames 30-1000 of title/menu idle,
+    +155 across the New Game/naming transition at 1000-1400, and +1 across the
+    last 1000 frames. Wall-clock is nearly free; scene transitions are what cost.
+    So the remaining work tracks unvisited code paths, not playtime.
+
+21b. Five traps produced this session's mis-measurement; each needs a mechanical
+    guard, because none of them was caught by discipline:
+    - **Lossy aggregate as status.** `_first_difference` reported 1 of 123. Every
+      gate number must be a countable magnitude.
+    - **Exclusions are the cheapest fake progress.** The largest single movement
+      today (−95) was an exclusion, not a fix. `excluded_bytes_total` must ratchet
+      and each entry must carry a machine-resolvable `file:line` plus a class from
+      a closed vocabulary (`cpu-stack`, `ppu-beam`, `service-phase`,
+      `host-bookkeeping`). Where derivable the tool must re-prove it: for the
+      stack span, assert every divergent byte's reference writer PC is a push/pop
+      via `refstream.py writers`.
+    - **Plausible attribution mis-routes work.** `writers()` first ranked by
+      frequency, so a boot clear loop outranked the real last writer; fixed to
+      rank by `last_ordinal` then `last_sequence`. Track `unattributed_bytes`; it
+      was 121/121 attributed and must stay at zero unattributed.
+    - **Best-overlap alignment manufactures agreement.** Searching ordinals for
+      maximum overlap was acceptable once, to cross-check the anchored stream
+      against oracle-b. It must never be the comparator: anchor ordinal `N-1` is
+      the invariant and drift beyond ±8 is the finding.
+    - **Terminal-frame-only comparison.** Divergence that heals before frame 2000
+      is invisible. The anchored stream already holds all 2,100 reference DoFrames
+      and the native already dumps per-frame, so report `first_divergent_ordinal`
+      per region and fix at the earliest symptom.
+
+21c. Front-load the reference. It is a perfect oracle at ~1.5 s per 2,000-frame run
+    and is independent of the port's state, so every question about what correct
+    looks like can be answered before the port can reach a duel. Build, in order:
+    a **coverage ledger** (`reftrace` per scenario, unioned — publishes
+    `executed / 2969` as the real denominator and names the 2,564 never-exercised
+    routines); a **corpus derived by coverage search** rather than hand-authored
+    (score candidate input scripts by newly-executed routines; thousands of
+    candidates is under an hour and needs no working port); a **branch-coverage
+    ledger** (same exec callback filtered to all 12,207 label addresses instead of
+    the 2,969 entries, turning the `port-contract.md` branch screen into measured
+    fact); and the **bilateral call-trace diff** (`-finstrument-functions` on the
+    `gbmem` target, projected onto the 2,710 names present in both `poketcg.sym`
+    and the native binary), which reports the first divergent *call* instead of a
+    byte a thousand frames later, catches right-answer/wrong-path, and is also the
+    missing `POKETCG_CFG_TRACE` producer for the gate's 15,827 uncovered edges.
+
+21d. Every milestone gets its own semantic anchor. The boot milestone's whole win
+    came from comparing at exec anchor `$0552` inside `DoFrame` rather than at PPU
+    frame boundaries, which alone removed ~40 bytes of `wOAM` sampling-phase noise.
+    The duel's equivalent is the turn-transition routine, comparing the 826-byte
+    duel state at turn boundaries with both lanes' RNG seeded identically — not a
+    frame comparison. Build that census before any further boot-path polishing: it
+    is a scenario branch plus an anchor, not new tooling, and it is the measurement
+    that decides whether this plan survives the duel engine. The branch/case
+    deficit says density there is worse than boot (`GetAIScoreOfAttack` 48 branches
+    / 3 cases, `AIDecideWhetherToRetreat` 39 / 4, `HandleSpecialAIAttacks` 32 / 2)
+    but not by how much; one duel census settles it.
+
 22. Regenerate the five stale producers (`just completion-baseline`,
     `completion-rom-coverage`, `completion-routine-mapping`, `completion-substrate`,
     `completion-hardware-removal`) so their `content_key` is current.

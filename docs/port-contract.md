@@ -260,6 +260,24 @@ Required coverage per routine:
 3. every boundary — `n=0` for counted routines (must behave as maximum, never a
    no-op), plus counts of 1 and 256/257. 256/257 is where a port that decrements
    only the low byte breaks.
+4. **every internal branch the routine can take.** A routine whose cases all
+   land on one path is unverified on the others, and the oracle plus the
+   mutation receipt will both pass anyway. `PrintStartMenuDescriptionText`
+   (`src/engine/menus/start.asm:236-296`) is the worked failure: two cases, both
+   seeding `wCurMenuItem == wCurHighlightedStartMenuItem`, so both took the
+   `.skip` early exit and the four-way `JumpToFunctionInTable` dispatch below it
+   never ran. Every case index was shifted by one — CardPop's body answered for
+   ContinueFromDiary — and it survived per-function verification until the
+   whole-game census attributed four divergent bytes to it.
+
+   Screen for the hole with the routine's own local labels: a routine with `n`
+   `Label.branch` entries in `poketcg.sym` needs at least `n+1` distinct paths
+   before its matrix can be called complete. Across the tree 556 routines
+   (18.7%) currently have fewer cases than that, headed by the duel AI
+   (`GetAIScoreOfAttack`: 48 internal branches, 3 cases;
+   `AIDecideWhetherToRetreat`: 39 and 4). The count is a necessary condition,
+   not a sufficient one — one case may cover several labels, and a loop head is
+   not an alternative path — so treat it as a ranked worklist, not a verdict.
 
 **Legacy `hram` seeds use absolute addresses.** Schema-2 seeds true HRAM
 through the absolute-address `wram` bus map, so `legacy_to_schema` merges
