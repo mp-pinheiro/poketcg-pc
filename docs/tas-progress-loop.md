@@ -26,6 +26,54 @@ plays the game from boot to the end of the movie.
 Baseline when this loop was written: **ordinal 15,379 / 70,999 = 21.66%**, 362 of
 898 comparable routines reached, 466 frontier misses.
 
+## Attributing a crash: use the debugger
+
+`gdb` 15.1 is installed and speaks DAP, so a `MISSING_DATA bank:addr` abort is
+attributable in about two minutes instead of by inference. Break on
+`missing_product_data` (`src/mem.c:469`) and read the backtrace; the caller chain
+names the routine, and `poketcg.sym` names what lives at the address.
+
+That loop found three real bugs in one sitting. `DisplayPauseMenu` read
+`PauseMenuParams` (`$04:4D98`) with bank 1 selected because the port called
+`InitAndPrintMenu` directly where `overworld.asm:1151-1155` uses `farcall`; the
+sibling `DisplayPCMenu` 35 lines below had the bank switch and was the model.
+`PauseMenu_Status`/`_Diary`/`_Config`/`_Exit` are each a bare `farcall X / ret`
+(`overworld.asm:1165-1199`) and all four were missing it, so `StatusScreenLabels`
+(`$04:4095`) read from bank 1. `LoadMap` never called `Func_c4b9`
+(`overworld.asm:42`).
+
+## Two decisions the loop is blocked on
+
+**1. Non-returning scene loops cannot be probed.** `LoadMap`'s `.overworld_loop`
+(`overworld.asm:54-61`) exits only when `wOverworldTransition` gets bit 4 or 6,
+which no isolated case can arrange, so a faithful C loop hangs the native probe
+at 30 s. The reference lanes are bounded by `cycle_budget`; the native probe has
+no equivalent, which is why the routine ships flattened to a single pass with a
+bare `return` — the same shape as the documented `GameLoop` flattening. The seam
+for a fix already exists: `frame_boundary_install` (`src/home/frames.h:7`), unused
+by `src/probe.c`. Giving the probe a frame budget would bound the native lane the
+way `cycle_budget` bounds the reference, and would unblock this whole class. It
+changes the verification substrate, so it is not a basename fix.
+
+**2. `jp hl` to a script entry needs a derived dispatch table.** `EnterScript`
+(`overworld.asm:122-127`) ends in `jp hl` with `hl` from `wNextScript`. Of 247
+`Script_*` labels, 212 open with `start_script` (`rst $20`, so they are bytecode
+and want `RST20(target + 1)`) and 35 are real code needing a C function — 23 of
+those are ported, 12 are not (`Script_dead`, `Script_e61c`,
+`Script_Mitch_GiveBoosters`, …). Deciding at runtime by reading the target's
+opcode is wrong: it reads code as data, which the product data pack cannot serve,
+and it aborts on `00:0000` the moment a null `wNextScript` is reached. The table
+must be derived at build time from `poketcg.sym` plus the ROM, like
+`ScriptDispatchLookupOpcode` is for opcodes.
+
+Until both land, `HandleOverworldMode` stays unreachable and the gate stays at
+its baseline. The wiring itself is proven: with a blocking loop plus an opcode
+trampoline, the port ran the overworld, opened the pause menu and drew the status
+screen — `LoadMap → HandleOverworldMode → CallHandlePlayerMoveMode →
+OpenPauseMenu → PauseMenu → DisplayPauseMenu` — before dying on the null script
+pointer. That evidence is why the two items above are the next work, not a
+re-diagnosis.
+
 ## The loop
 
 1. `just completion-tas-progress --json build/completion/tas/progress.json`
