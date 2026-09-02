@@ -938,14 +938,18 @@ static void update_channel(uint8_t ch)
 		return;
 	}
 
-	/* Time for a new note. Load stream pointer from channel pointers. */
 	ch_ptr = (uint16_t)wMusicChannelPointers_PTR[ch * 2 + 1] << 8
 	         | wMusicChannelPointers_PTR[ch * 2];
+	/* music1.asm:409-422/462-475/511-524/544-557: the caller (this
+	 * function) never writes wMusicChannelPointers back after this call.
+	 * The dispatcher only updates it via Music1_note's own epilogue
+	 * (asm:832-840, ported as the wMusicChannelPointers_PTR store at the
+	 * end of pnn_note). The "end" command (Music1_end, asm:1122-1127)
+	 * pops and discards its advanced stream pointer instead of storing
+	 * it, so a stream that stops mid-dispatch after consuming non-note
+	 * commands must leave the last committed note position untouched,
+	 * not the fully-advanced position. */
 	Music1_PlayNextNote(&ch_ptr, ch);
-
-	/* PlayNextNote advances ch_ptr; write it back. */
-	wMusicChannelPointers_PTR[ch * 2] = (uint8_t)ch_ptr;
-	wMusicChannelPointers_PTR[ch * 2 + 1] = (uint8_t)(ch_ptr >> 8);
 
 	if (!wMusicIsPlaying_PTR[ch]) goto stop_chan;
 

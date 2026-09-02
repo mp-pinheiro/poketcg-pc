@@ -402,6 +402,15 @@ CASES["Music1_UpdateChannel4"] = [
     {"wram": {0xDD90: b"\x01", 0xDD8C: b"\x00",
               0xDDBA: b"\x10", 0xDDBE: b"\x05",
               0xDDEF: b"\x00", 0xDDC6: b"\x42"}},
+    # music1.asm:1122-1127 (Music1_end): the popped stream pointer is
+    # discarded via `pop hl; ret`, never stored to wMusicChannelPointers.
+    # A note whose stream immediately hits an end command ($DA) must leave
+    # wMusicChannelPointers at the command byte's own address, not the
+    # post-increment position past it.
+    {"wram": {0xDD90: b"\x01", 0xDD8C: b"\x00",
+              0xDDBE: b"\x01", 0xDDEF: b"\x00",
+              0xDD9B: b"\x00\xC3",
+              0xC300: b"\xDA"}},
     # channel 4 never reaches Music1_f485a/UpdateVibrato (music1.asm:
     # 559-564): a nonzero vibrato delay must not advance wdde3+3.
     {"wram": {0xDD90: b"\x01", 0xDD8C: b"\x00",
