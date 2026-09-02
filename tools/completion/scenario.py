@@ -232,10 +232,17 @@ def fields_incomparable(
 #   the port services at frame boundaries instead, so the latch byte differs
 #   by construction. The game-visible effect -- which interrupts SERVICE -- is
 #   modeled at the boundaries.
+# - io[16..63] ($FF10-$FF3F audio block + NOP space): audio register parity is
+#   owned by apu_state and the audio-trace scenario; NOP-space bytes are
+#   emulator fabric. The game writes these registers identically on both
+#   sides; the dumped byte values are APU-internal state.
+# - io[65] ($FF41 STAT), io[68] ($FF44 LY), io[69] ($FF45 LYC): scanout-phase
+#   registers -- the vision's day-one exclusion list. Their values encode the
+#   PPU beam position at dump time; the rendezvous substrate has no beam.
 COMPARATOR_EXCLUDED_RANGES = {
     "hram": [(0, 1), (96, 114)],
     "wram": [(0x2B8, 0x2B9), (0xABA, 0xABD)],
-    "io": [(4, 6), (15, 16)],
+    "io": [(4, 6), (15, 16), (16, 64), (65, 66), (68, 70), (104, 108)],
 }
 
 COMPARATOR_EXCLUDED_KEYS = {
