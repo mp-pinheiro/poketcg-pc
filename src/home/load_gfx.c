@@ -393,7 +393,7 @@ void LoadOBPalette(uint8_t a)
 			p++;
 		if (*p)
 			LoadPaletteDataFromHL(
-				(uint16_t)(p - wLoadedPalData_PTR + wLoadedPalData_ADDR),
+				(uint16_t)(p - wLoadedPalData_PTR + wLoadedPalData_ADDR + 1u),
 				(uint8_t)(wWhichOBPalIndex | 8u), *p);
 	}
 }

@@ -175,7 +175,30 @@ CASES = {
         dict(POISON, a=1, read={0xCAF0: 64}),
     ],
     "LoadPaletteDataFromHL": [{}, dict(POISON), {"b": 0, "c": 0}, {"b": 0, "c": 1}, {"b": 15, "c": 8}, {"b": 16, "c": 1}, {"b": 23, "c": 1}, {"b": 24, "c": 1}, {"b": 0, "c": 9}],
-    "LoadOBPalette": [{}, dict(POISON)],
+    # a=0x00 (PALETTE_DEFAULT_CGB): DMG count=1, wWhichOBP!=1, CGB size=8 (the
+    # boundary c=8 case) -- this is the exact ordinal-199 signature (b=8,
+    # c=8): LoadPaletteDataFromHL's source hl was the size byte's own
+    # address instead of one past it, so wObjectPalettesCGB[0] came back
+    # holding the size byte's value.
+    "LoadOBPalette": [
+        {"read": {0xCB30: 64}},
+        dict(POISON),
+        # a=0x75 (PALETTE_BOOSTER_OAM): DMG count=0 (skips both OBP0/OBP1),
+        # CGB size=1 (smallest nonzero loop count).
+        {"a": 0x75, "read": {0xCB30: 64}},
+        # a=0x00 with wWhichOBP==1: DMG count=1, jumps straight to .obp1.
+        {"a": 0x00, "wram": {0xd4ca: b"\x01"}, "read": {0xCB30: 64}},
+        # a=0x6c (PALETTE_DEFAULT_DMG): DMG count=1, CGB size=0 -> .done,
+        # LoadPaletteDataFromHL is never called.
+        {"a": 0x6c, "read": {0xCB30: 64}},
+        # a=0x72 (PALETTE_GB_LINK_OAM): DMG count=2, wWhichOBP!=1 -- both
+        # OBP0 and OBP1 consumed, no extra hl skip before the size byte.
+        {"a": 0x72, "read": {0xCB30: 64}},
+        # Same blob with wWhichOBP==1: count=2 but only one DMG byte is
+        # consumed, so the "if (count) p++" skip must still land on the
+        # real size byte.
+        {"a": 0x72, "wram": {0xd4ca: b"\x01"}, "read": {0xCB30: 64}},
+    ],
     "LoadPaletteDataToBuffer": [{}, dict(POISON), {"a": 0}, {"a": 0xff}],
 }
 for _name in (
