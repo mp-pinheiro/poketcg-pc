@@ -267,7 +267,10 @@ void HandleStartMenu(void)
 	 * interrupts it mid-draw (1150-frame trace: wvbc 1008; the reference
 	 * burns 12 no-advance steps 997-1008 vs native 9). Consume it once per
 	 * menu opening, before the white flash. */
-	frame_boundary_consume_services(1u);
+	/* start.asm:104-141: the description print spans two service periods
+	 * on the reference (cursor+box in one, text body in the next;
+	 * 1150-frame trace: wvbc 1007 mid-box, 1008 mid-text). */
+	frame_boundary_consume_services(2u);
 	(void)FlashWhiteScreen();
 	runtime_mark_event(RUNTIME_EVENT_START_MENU_READY);
 	for (;;) { /* .wait_input */

@@ -164,6 +164,17 @@ int runtime_run_with_input(
 		if (state.button_count)
 			input.buttons = state.buttons[state.frames % state.button_count];
 		g_keys = shell_hkeys_from_input(input.buttons);
+		if (frame_boundary_take_service_pass()) {
+			/* Mid-processing VBlank service: ISR-equivalent work only.
+			 * No input re-sample, no frame counter, no timer/clock
+			 * aging, no render -- the game made no DoFrame progress. */
+			RuntimeVBlankHandler();
+			pthread_mutex_lock(&state.lock);
+			state.resume = 1;
+			pthread_cond_broadcast(&state.condition);
+			pthread_mutex_unlock(&state.lock);
+			continue;
+		}
 		/* CGB hardware clock aging (Lane D model in mem.c): DIV free-runs
 		 * at the double-speed rate; TIMA ticks every 256 fast cycles and
 		 * reloads from TMA. One frame of slow cycles per host frame. */

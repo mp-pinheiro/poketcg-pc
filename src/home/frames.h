@@ -7,6 +7,7 @@ typedef void (*FrameBoundaryHook)(void *context);
 void frame_boundary_install(FrameBoundaryHook hook, void *context);
 
 void frame_boundary_reach(void);
+void frame_boundary_consume_services(uint8_t count);
 int frame_boundary_is_installed(void);
 
 void DoAFrames(uint8_t a);

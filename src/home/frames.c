@@ -24,6 +24,16 @@
 
 static FrameBoundaryHook g_frame_boundary_hook;
 static void *g_frame_boundary_context;
+static uint8_t g_pending_service_passes;
+
+uint8_t frame_boundary_take_service_pass(void)
+{
+	uint8_t pending = g_pending_service_passes;
+
+	if (pending != 0u)
+		g_pending_service_passes = (uint8_t)(pending - 1u);
+	return pending;
+}
 
 void frame_boundary_install(FrameBoundaryHook hook, void *context)
 {
@@ -38,20 +48,24 @@ void frame_boundary_reach(void)
 }
 /* Models VBlank services the reference delivers while game code is still
  * running, so no DoFrame completes around them: each count entry runs one
- * host boundary pass (the scanout the ISR waited out -- timer batch,
- * RuntimeVBlankHandler, render) and then bumps wVBlankCounter for the
- * service itself (vblank.asm:35), with no RNG advance. No-op in the probe
- * world. The two per-boot sites are annotated where they call this. */
+ * host SERVICE pass (ISR-equivalent work only -- RuntimeVBlankHandler; no
+ * input re-sample, no frame counter, no timer/clock aging, no render) and
+ * then bumps wVBlankCounter for the service itself (vblank.asm:35), with no
+ * RNG advance. No-op in the probe world. The per-boot sites are annotated
+ * where they call this. */
 void frame_boundary_consume_services(uint8_t count)
 {
 	if (!g_frame_boundary_hook)
 		return;
+	g_pending_service_passes = count;
 	for (uint8_t i = 0; i < count; i++) {
 		frame_boundary_reach();
 		gb_write8(wVBlankCounter_ADDR,
 		          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 	}
+	g_pending_service_passes = 0;
 }
+
 
 int frame_boundary_is_installed(void)
 {
