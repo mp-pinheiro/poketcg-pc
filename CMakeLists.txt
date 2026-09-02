@@ -93,10 +93,23 @@ if(PORT_FILES)
   message(STATUS "PORT_FILES subset build: ${PORT_FILES}")
 endif()
 
-add_library(gbmem STATIC src/mem.c src/ppu.c src/runtime_events.c ${HOME_SOURCES})
+add_library(gbmem STATIC src/mem.c src/ppu.c src/runtime_events.c src/trace.c ${HOME_SOURCES})
 add_dependencies(gbmem gen_layout)
 target_include_directories(gbmem PUBLIC "${CMAKE_SOURCE_DIR}/src" "${CMAKE_SOURCE_DIR}/include")
 target_compile_options(gbmem PRIVATE -Wall -Wextra)
+
+# Frame-tagged function-entry trace for the bilateral call-count diff against
+# the reference stream, and the producer for the CFG audit's covered edges.
+# mem.c/ppu.c are excluded because instrumenting gb_read8/gb_write8 inflates the
+# record count by two orders of magnitude without naming a single routine.
+option(POKETCG_TRACE "instrument function entries in the ported routines" OFF)
+if(POKETCG_TRACE)
+  target_compile_options(gbmem PRIVATE
+    -finstrument-functions
+    -finstrument-functions-exclude-file-list=mem.c,ppu.c,runtime_events.c,trace.c)
+  target_compile_definitions(gbmem PUBLIC POKETCG_TRACE=1)
+  message(STATUS "function-entry instrumentation: on")
+endif()
 
 # One adapter translation unit per pret source file, each exporting
 # `const ProbeEntry probe_entries_<basename>[]`. Generating the group list from

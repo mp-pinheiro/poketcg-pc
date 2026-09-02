@@ -385,6 +385,15 @@ completion-dispatch SCENARIO OUT *ARGS:
 # Earliest anchor ordinal each byte goes wrong, with the reference writer just before it.
 completion-frame-census SCENARIO *ARGS:
     python3 tools/completion/frame_census.py "{{SCENARIO}}" {{ARGS}}
+
+# Instrumented lane for the bilateral call-count diff and the CFG audit producer.
+build-trace:
+    cmake -G Ninja -S . -B build-trace -DPOKETCG_TRACE=ON
+    ninja -C build-trace
+
+# Per-routine call-count diff, native against the reference stream.
+completion-trace-diff SCENARIO *ARGS:
+    python3 tools/completion/native_trace.py "{{SCENARIO}}" {{ARGS}}
 # Recompute site/data/progress.json + history point from the registry and gate record.
 progress:
     python3 tools/progress/report.py build

@@ -10,6 +10,7 @@
 #include "mem.h"
 #include "ppu.h"
 #include "shell.h"
+#include "trace.h"
 
 #include <pthread.h>
 #include <setjmp.h>
@@ -161,6 +162,7 @@ int runtime_run_with_input(
 			continue;
 		}
 		state.frames++;
+		trace_set_frame(state.frames);
 		if (state.button_count)
 			/* gb-recompiled applies the scripted mask at scanout but
 			 * the emulated joypad reads it back one scanout later

@@ -3,6 +3,7 @@
 #include "state_dump.h"
 #include "runtime.h"
 #include "shell.h"
+#include "trace.h"
 
 #include <errno.h>
 #include <stdint.h>
@@ -206,6 +207,7 @@ int main(int argc, char **argv)
 	const char *dump_state_frames_text = NULL;
 	const char *input_path = NULL;
 	const char *trace_entries_path = NULL;
+	const char *trace_calls_path = NULL;
 	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "--headless") == 0) {
 			config.headless = 1;
@@ -239,11 +241,15 @@ int main(int argc, char **argv)
 			input_path = argv[++i];
 		} else if (strcmp(argv[i], "--trace-entries") == 0 && i + 1 < argc) {
 			trace_entries_path = argv[++i];
+		} else if (strcmp(argv[i], "--trace-calls") == 0 && i + 1 < argc) {
+			trace_calls_path = argv[++i];
 		} else if (strcmp(argv[i], "--help") == 0) {
 			printf("usage: poketcg [--headless] [--frames N] --data-pack PATH "
 			       "[--require-data BANK:ADDR] [--load-save PATH] [--save PATH] "
 			       "[--dump-state PATH] [--dump-state-frames N[,N...]] "
-			       "[--input PATH] [--trace-entries PATH]\n");
+			       "[--input PATH] [--trace-entries PATH] [--trace-calls PATH]\n");
+			printf("--trace-calls needs a build configured with "
+			       "-DPOKETCG_TRACE=ON; without it the dump is empty\n");
 			printf("with --dump-state-frames and no --dump-state, per-frame dumps "
 			       "are written to state-<N>.json in the current directory\n");
 			return 0;
@@ -317,6 +323,10 @@ int main(int argc, char **argv)
 	}
 	if (status == 0 && trace_entries_path && runtime_write_trace(trace_entries_path, &runtime) != 0) {
 		fprintf(stderr, "cannot write native trace %s\n", trace_entries_path);
+		status = 1;
+	}
+	if (status == 0 && trace_calls_path && trace_write_raw(trace_calls_path) != 0) {
+		fprintf(stderr, "cannot write native call trace %s\n", trace_calls_path);
 		status = 1;
 	}
 	if (status != 0)
