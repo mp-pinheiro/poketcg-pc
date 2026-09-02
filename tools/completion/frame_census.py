@@ -19,16 +19,18 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import refstream
 import scenario as scenario_module
 
-# `io` is opt-in via --domains: the reference side of that domain is bus
-# readback (gambatte_cpuread) while the native side dumps the raw g_io store,
-# so the two are not the same quantity. Unmapped addresses read $FF on hardware
-# and hold $00 in the array, and $FF00 differs because the port models joypad
-# readback in gb_read8 (src/mem.c:601-608) rather than in the stored byte —
-# comparing the store reports 44 constant phantom bytes at every ordinal.
-# Making it comparable means dumping gb_read8 results for $FF00-$FF7F beside
-# the raw store in src/state_dump.c.
-DEFAULT_DOMAINS = ("wram", "hram", "oam")
-FIELD_BASE = {"wram": 0xC000, "hram": 0xFF80, "io": 0xFF00, "oam": 0xFE00}
+# The raw `io` store is not comparable against an emulator: the reference side
+# is bus readback (gambatte_cpuread) while the native side dumps g_io, so
+# unmapped addresses that read $FF on hardware but hold $00 in the array show
+# as 44 constant phantom bytes. `io_readback` is the native gb_read8 result for
+# $FF00-$FF7F (src/state_dump.c) and is the like-for-like comparison; plain
+# `io` stays available via --domains for inspecting the store itself.
+DEFAULT_DOMAINS = ("wram", "hram", "oam", "io_readback")
+FIELD_BASE = {
+    "wram": 0xC000, "hram": 0xFF80, "io": 0xFF00, "io_readback": 0xFF00,
+    "oam": 0xFE00,
+}
+REFERENCE_DOMAIN = {"io_readback": "io"}
 
 
 class FrameCensusError(RuntimeError):
@@ -36,8 +38,9 @@ class FrameCensusError(RuntimeError):
 
 
 def exclusion_mask(field: str, length: int) -> bytes:
+    ledger = REFERENCE_DOMAIN.get(field, field)
     mask = bytearray(length)
-    for start, end in scenario_module.COMPARATOR_EXCLUDED_RANGES.get(field, ()):
+    for start, end in scenario_module.COMPARATOR_EXCLUDED_RANGES.get(ledger, ()):
         for index in range(max(0, start), min(length, end)):
             mask[index] = 1
     return bytes(mask)
@@ -78,7 +81,7 @@ def compare_frame(
     """(field, offset, native byte, reference byte) for one anchor ordinal."""
     rows = []
     for field in domains:
-        reference = stream.domain(ordinal, field)
+        reference = stream.domain(ordinal, REFERENCE_DOMAIN.get(field, field))
         values = native.get(field)
         if not isinstance(values, list):
             continue

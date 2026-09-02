@@ -81,6 +81,16 @@ int runtime_write_state(const char *path, const RuntimeResult *runtime)
 	}
 	ok = ok && fputs(",\"oam\":", file) >= 0 && write_bytes(file, g_oam, sizeof g_oam) == 0;
 	ok = ok && fputs(",\"io\":", file) >= 0 && write_bytes(file, g_io, sizeof g_io) == 0;
+	/* g_io is the backing store; the bus value a routine actually observes
+	 * comes from gb_read8, which models joypad matrix resolution and the
+	 * registers whose unused bits float high. Emulator references expose
+	 * only the bus, so comparing the store against them reports every
+	 * unmapped address as divergent. Emit both and compare like with like. */
+	uint8_t io_readback[sizeof g_io];
+	for (size_t i = 0; i < sizeof io_readback; i++)
+		io_readback[i] = gb_read8((uint16_t)(0xFF00u + i));
+	ok = ok && fputs(",\"io_readback\":", file) >= 0 &&
+	     write_bytes(file, io_readback, sizeof io_readback) == 0;
 	ok = ok && fputs(",\"palette_ram\":", file) >= 0 && write_bytes(file, g_pal, sizeof g_pal) == 0;
 	ok = ok && fprintf(file, ",\"mapper_state\":{\"rom_bank\":%u,\"sram_bank\":%u,\"vram_bank\":%u,\"sram_enabled\":%d}",
 	                   g_rom_bank, g_sram_bank, g_vram_bank, g_sram_enabled) >= 0;

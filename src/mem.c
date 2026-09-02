@@ -607,6 +607,35 @@ uint8_t gb_read8(uint16_t addr)
 			low &= (uint8_t)~(g_keys & 0x0Fu);
 		return (uint8_t)(0xC0u | sel | low);
 	}
+	/* Unmapped IO and the unused bits of partially-mapped registers float
+	 * high on hardware, so a routine reading them sees $FF where the backing
+	 * array holds $00. Measured against the ROM under Gambatte over the
+	 * boot timeline: these 40 addresses read $FF at every frame, TAC's five
+	 * unused bits read high ($07 stored, $FF observed), and $FF75 exposes
+	 * only bits 4-6 ($8F observed with those bits clear). */
+	if (addr >= 0xFF00u && addr < 0xFF80u) {
+		switch (addr) {
+		case 0xFF03u:
+		case 0xFF08u: case 0xFF09u: case 0xFF0Au: case 0xFF0Bu:
+		case 0xFF0Cu: case 0xFF0Du: case 0xFF0Eu:
+		case 0xFF4Cu: case 0xFF4Eu: case 0xFF50u:
+		case 0xFF57u: case 0xFF58u: case 0xFF59u: case 0xFF5Au:
+		case 0xFF5Bu: case 0xFF5Cu: case 0xFF5Du: case 0xFF5Eu:
+		case 0xFF5Fu: case 0xFF60u: case 0xFF61u: case 0xFF62u:
+		case 0xFF63u: case 0xFF64u: case 0xFF65u: case 0xFF66u:
+		case 0xFF67u:
+		case 0xFF6Du: case 0xFF6Eu: case 0xFF6Fu: case 0xFF71u:
+		case 0xFF78u: case 0xFF79u: case 0xFF7Au: case 0xFF7Bu:
+		case 0xFF7Cu: case 0xFF7Du: case 0xFF7Eu: case 0xFF7Fu:
+			return 0xFFu;
+		case 0xFF07u: /* TAC: bits 0-2 */
+			return (uint8_t)(*gb_ptr(addr) | 0xF8u);
+		case 0xFF75u: /* undocumented CGB register: bits 4-6 */
+			return (uint8_t)((*gb_ptr(addr) & 0x70u) | 0x8Fu);
+		default:
+			break;
+		}
+	}
 	return *gb_ptr(addr);
 }
 
