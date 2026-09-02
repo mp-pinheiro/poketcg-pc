@@ -1,5 +1,10 @@
 """Oracle-diff cases for poketcg/src/engine/duel/core.asm."""
 
+from tests.cases._duel_setup import (
+    DUEL_ANIM_SAFE, DUEL_CYCLE_BUDGET, DUEL_INSTRUCTION_BUDGET, DUEL_KEYS,
+    DUEL_SETUP, DUEL_WRAM)
+
+
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -2176,10 +2181,10 @@ HPD_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000}
 hWhoseTurn = 0xFF97
 wNumberPrizeCardsToTake = 0xCCC8
 
-START_DUEL_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
-START_DUEL_WRAM = {
-    0xCC18: b"\x06", 0xCC1A: b"\x01",
-}
+START_DUEL_SETUP = DUEL_SETUP
+START_DUEL_ANIM_SAFE = DUEL_ANIM_SAFE
+START_DUEL_WRAM = DUEL_WRAM
+START_DUEL_KEYS = DUEL_KEYS
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 wPlayAreaSelectAction = 0xCBD4
@@ -4784,30 +4789,67 @@ CASES["Func_1cb5e"] = [
 
 # >>> factory StartDuel
 CONTRACT["StartDuel"] = {"compare": (), "preserve": ()}
+# core.asm:54-70 runs SetupDuel, InitVariablesToBeginDuel and HandleDuelSetup,
+# which drive frames and wait for input, so both lanes need a frame budget to
+# reach the completion pc. The observations cover every byte the routine itself
+# writes: the entry stack pointer, the menu item and the initial prize count.
+DUEL_ENTRY_SP = 0xFFFC
+_START_DUEL_READ = {0xCBC6: 1, 0xCBE5: 2, 0xCC08: 1}
 CASES["StartDuel"] = [
-    {"wram": dict(START_DUEL_WRAM), "read": {0xCBC6: 1}},
-    dict(POISON, wram=dict(START_DUEL_WRAM), read={0xCBC6: 1}),
+    {"entry_sp": DUEL_ENTRY_SP, "keys": list(START_DUEL_KEYS),
+     "wram": dict(START_DUEL_WRAM), "setup": START_DUEL_SETUP,
+     "read": dict(_START_DUEL_READ),
+     "instruction_budget": DUEL_INSTRUCTION_BUDGET,
+     "cycle_budget": DUEL_CYCLE_BUDGET},
+    dict(POISON, entry_sp=DUEL_ENTRY_SP, keys=list(START_DUEL_KEYS),
+         wram=dict(START_DUEL_WRAM), setup=START_DUEL_SETUP,
+         read=dict(_START_DUEL_READ),
+         instruction_budget=DUEL_INSTRUCTION_BUDGET,
+         cycle_budget=DUEL_CYCLE_BUDGET),
 ]
 # <<< factory StartDuel
 
 # >>> factory StartDuel_VSAIOpp
 CONTRACT["StartDuel_VSAIOpp"] = {"compare": (), "preserve": ()}
+# core.asm:31-42 loads both decks and falls through into StartDuel, so the
+# deck buffers and StartDuel's own writes are both observed under its budget.
+_VSAI_READ = {0xFF97: 1, 0xC2F1: 1, 0xCC0E: 1, 0xC400: 60, 0xC480: 60}
+_VSAI_READ.update(_START_DUEL_READ)
 CASES["StartDuel_VSAIOpp"] = [
-    {"wram": {0xCC18: b"\x06", 0xCC19: b"\x01", 0xCC1A: b"\x01"},
-     "sram": {0: {0xB700: b"\x00", 0xA218: bytes(range(60))}},
-     "read": {0xFF97: 1, 0xC2F1: 1, 0xCC0E: 1}},
-    dict(POISON,
-         wram={0xCC18: b"\x06", 0xCC19: b"\x01", 0xCC1A: b"\x01"},
-         sram={0: {0xB700: b"\x00", 0xA218: bytes(range(60))}},
-         read={0xFF97: 1, 0xC2F1: 1, 0xCC0E: 1}),
+    {"entry_sp": DUEL_ENTRY_SP, "keys": list(START_DUEL_KEYS),
+     "wram": {**START_DUEL_WRAM, 0xCC19: b"\x01"},
+     "setup": START_DUEL_SETUP,
+     "sram": {0: {0xB700: b"\x00", 0xA218: b"\x08" * 60}},
+     "read": dict(_VSAI_READ),
+     "instruction_budget": DUEL_INSTRUCTION_BUDGET,
+     "cycle_budget": DUEL_CYCLE_BUDGET},
+    dict(POISON, entry_sp=DUEL_ENTRY_SP, keys=list(START_DUEL_KEYS),
+         wram={**START_DUEL_WRAM, 0xCC19: b"\x01"},
+         setup=START_DUEL_SETUP,
+         sram={0: {0xB700: b"\x00", 0xA218: b"\x08" * 60}},
+         read=dict(_VSAI_READ),
+         instruction_budget=DUEL_INSTRUCTION_BUDGET,
+         cycle_budget=DUEL_CYCLE_BUDGET),
 ]
 # <<< factory StartDuel_VSAIOpp
 
 # >>> factory StartDuel_VSLinkOpp
 CONTRACT["StartDuel_VSLinkOpp"] = {"compare": (), "preserve": ()}
+# core.asm:44-52 clears the opponent name and falls through into StartDuel.
+_VSLINK_WRAM = {0xCC18: b"\x06", 0xCC1A: b"\x01", 0xCC13: b"\xAA", 0xCC16: b"\xBB\xCC"}
+_VSLINK_READ = {0xCC13: 1, 0xCC16: 2, 0xCC1A: 1}
+_VSLINK_READ.update(_START_DUEL_READ)
 CASES["StartDuel_VSLinkOpp"] = [
-    {"setup": START_DUEL_SETUP, "wram": {0xCC18: b"\x06", 0xCC1A: b"\x01", 0xCC13: b"\xAA", 0xCC16: b"\xBB\xCC"}, "read": {0xCC13: 1, 0xCC16: 2, 0xCC1A: 1, 0xCBC6: 1}},
-    dict(POISON, setup=START_DUEL_SETUP, wram={0xCC18: b"\x06", 0xCC1A: b"\x01", 0xCC13: b"\xAA", 0xCC16: b"\xBB\xCC"}, read={0xCC13: 1, 0xCC16: 2, 0xCC1A: 1, 0xCBC6: 1}),
+    {"entry_sp": DUEL_ENTRY_SP, "keys": list(START_DUEL_KEYS),
+     "wram": {**START_DUEL_WRAM, 0xCC13: b"\xAA", 0xCC16: b"\xBB\xCC"},
+     "setup": START_DUEL_SETUP, "read": dict(_VSLINK_READ),
+     "instruction_budget": DUEL_INSTRUCTION_BUDGET,
+     "cycle_budget": DUEL_CYCLE_BUDGET},
+    dict(POISON, entry_sp=DUEL_ENTRY_SP, keys=list(START_DUEL_KEYS),
+         wram={**START_DUEL_WRAM, 0xCC13: b"\xAA", 0xCC16: b"\xBB\xCC"},
+         setup=START_DUEL_SETUP, read=dict(_VSLINK_READ),
+         instruction_budget=DUEL_INSTRUCTION_BUDGET,
+         cycle_budget=DUEL_CYCLE_BUDGET),
 ]
 # <<< factory StartDuel_VSLinkOpp
 
@@ -6880,22 +6922,15 @@ MUTATIONS["Func_1cb5e"] = {"source_symbol": "Func_1cb5e", "before": "\tif (damag
 # <<< factory-mutation Func_1cb5e
 # >>> factory HandleDuelSetup
 CONTRACT["HandleDuelSetup"] = {"compare": ("f",), "preserve": ()}
-HD_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
-HD_ANIM_SAFE = {
-    0xD42A: b"\xff", 0xD4C0: b"\xff", 0xD423: b"\xff" * 7,
-    0xCAD3: bytes([0xA2, 0x3B]), 0xD4AC: b"\x00", 0xD4AD: b"\x08",
-}
-HD_WRAM = {
-    0xFF97: b"\xC2", 0xC2F1: b"\x80", 0xC3F1: b"\x80",
-    0xCC09: b"\x80", 0xCC08: b"\x06", 0xC400: b"\x08" * 0x3C,
-    0xC480: b"\x08" * 0x3C, 0xCABB: b"\x00", 0xCCF2: b"\x01",
-    0xFF90: b"\x02", **HD_ANIM_SAFE,
-}
+HD_SETUP = START_DUEL_SETUP
+HD_WRAM = {**START_DUEL_WRAM, 0xCC08: b"\x06"}
 CASES["HandleDuelSetup"] = [
     {"keys": [0x00, 0x01], "wram": dict(HD_WRAM), "setup": HD_SETUP,
-     "instruction_budget": 40000000, "cycle_budget": 160000000},
+     "instruction_budget": DUEL_INSTRUCTION_BUDGET,
+     "cycle_budget": DUEL_CYCLE_BUDGET},
     dict(POISON, keys=[0x00, 0x01], wram=dict(HD_WRAM), setup=HD_SETUP,
-         instruction_budget=40000000, cycle_budget=160000000),
+         instruction_budget=DUEL_INSTRUCTION_BUDGET,
+         cycle_budget=DUEL_CYCLE_BUDGET),
 ]
 # <<< factory HandleDuelSetup
 # >>> factory-mutation HandleDuelSetup
@@ -6913,21 +6948,21 @@ MUTATIONS["StartDuel"] = {"source_symbol": "StartDuel", "before": "\twCurrentDue
 # <<< factory-mutation StartDuel
 # >>> factory-completion StartDuel
 for _record in SCHEMA2_CASES["StartDuel"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x420B, "bank": 1}
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x40ED, "bank": 1}
 # <<< factory-completion StartDuel
 # >>> factory-mutation StartDuel_VSAIOpp
 MUTATIONS["StartDuel_VSAIOpp"] = {"source_symbol": "StartDuel_VSAIOpp", "before": "void StartDuel_VSAIOpp(void)\n{\n\thWhoseTurn = PLAYER_TURN;\n\twPlayerDuelistType = DUELIST_TYPE_PLAYER;\n\twOpponentDeckID = wNPCDuelDeckID;\n}", "after": "void StartDuel_VSAIOpp(void)\n{\n\thWhoseTurn = PLAYER_TURN;\n\twPlayerDuelistType = DUELIST_TYPE_PLAYER;\n\twOpponentDeckID = 0u;\n}", "case_ids": ["StartDuel_VSAIOpp-0", "StartDuel_VSAIOpp-1"]}
 # <<< factory-mutation StartDuel_VSAIOpp
 # >>> factory-completion StartDuel_VSAIOpp
 for _record in SCHEMA2_CASES["StartDuel_VSAIOpp"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x6793, "bank": 1}
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x40CA, "bank": 1}
 # <<< factory-completion StartDuel_VSAIOpp
 # >>> factory-mutation StartDuel_VSLinkOpp
 MUTATIONS["StartDuel_VSLinkOpp"] = {"source_symbol": "StartDuel_VSLinkOpp", "before": "void StartDuel_VSLinkOpp(void)\n{\n\twDuelTheme = MUSIC_DUEL_THEME_1;\n\twOpponentName = 0u;\n\twOpponentName_PTR[1] = 0u;\n\twIsPracticeDuel = 0u;\n}", "after": "void StartDuel_VSLinkOpp(void)\n{\n\twDuelTheme = 0u;\n\twOpponentName = 0u;\n\twOpponentName_PTR[1] = 0u;\n\twIsPracticeDuel = 0u;\n}", "case_ids": ["StartDuel_VSLinkOpp-0", "StartDuel_VSLinkOpp-1"]}
 # <<< factory-mutation StartDuel_VSLinkOpp
 # >>> factory-completion StartDuel_VSLinkOpp
 for _record in SCHEMA2_CASES["StartDuel_VSLinkOpp"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x40CA, "bank": 1}
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x40ED, "bank": 1}
 # <<< factory-completion StartDuel_VSLinkOpp
 # >>> factory-mutation SetLinkDuelTransmissionFrameFunction
 MUTATIONS["SetLinkDuelTransmissionFrameFunction"] = {

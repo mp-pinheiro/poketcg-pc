@@ -12,6 +12,11 @@
 #define SYM_HP_NOK 0x17u
 #include "home/duel.h"
 
+/* core.asm:55-58 records the GB stack pointer at StartDuel's entry so
+ * ContinueDuel can unwind to it. The port has no GB stack; both lanes enter a
+ * duel with sp at the reset top, which is the value _ContinueDuel already uses. */
+#define DUEL_ENTRY_SP 0xFFFCu
+
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
 #define DUELVARS_ARENA_CARD_HP                  0xC8u
 #define MENU_CANCEL 0xFFu
@@ -9108,10 +9113,18 @@ void Func_1cb5e(uint8_t a)
 /* <<< factory Func_1cb5e */
 
 /* >>> factory StartDuel */
-void StartDuel(uint16_t return_address)
+void StartDuel(void)
 {
-	(void)return_address;
+	wDuelReturnAddress = (uint8_t)DUEL_ENTRY_SP;
+	wDuelReturnAddress_PTR[1] = (uint8_t)(DUEL_ENTRY_SP >> 8);
 	wCurrentDuelMenuItem = 0u;
+	SetupDuel();
+	wDuelInitialPrizes = wNPCDuelPrizes;
+	InitVariablesToBeginDuel();
+	PlaySong(wDuelTheme);
+	if ((HandleDuelSetup().f & 0x10u) != 0u)
+		return;
+	MainDuelLoop();
 }
 /* <<< factory StartDuel */
 
@@ -9121,6 +9134,10 @@ void StartDuel_VSAIOpp(void)
 	hWhoseTurn = PLAYER_TURN;
 	wPlayerDuelistType = DUELIST_TYPE_PLAYER;
 	wOpponentDeckID = wNPCDuelDeckID;
+	LoadPlayerDeck();
+	SwapTurn();
+	(void)LoadOpponentDeck();
+	SwapTurn();
 }
 /* <<< factory StartDuel_VSAIOpp */
 
@@ -9131,6 +9148,7 @@ void StartDuel_VSLinkOpp(void)
 	wOpponentName = 0u;
 	wOpponentName_PTR[1] = 0u;
 	wIsPracticeDuel = 0u;
+	StartDuel();
 }
 /* <<< factory StartDuel_VSLinkOpp */
 
@@ -9508,7 +9526,7 @@ void MainDuelLoop(void)
 /* >>> factory _ContinueDuel */
 void _ContinueDuel(void)
 {
-	uint16_t entry_sp = 0xFFFCu;
+	uint16_t entry_sp = DUEL_ENTRY_SP;
 	wDuelReturnAddress = (uint8_t)entry_sp;
 	wDuelReturnAddress_PTR[1] = (uint8_t)(entry_sp >> 8);
 	ClearJoypad(&entry_sp);

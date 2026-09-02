@@ -2736,7 +2736,8 @@ static void adapt_Func_1cb5e(ProbeState *s)
 /* >>> factory StartDuel */
 static void adapt_StartDuel(ProbeState *s)
 {
-	StartDuel(0u);
+	(void)s;
+	StartDuel();
 }
 /* <<< factory StartDuel */
 

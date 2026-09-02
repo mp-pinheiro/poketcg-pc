@@ -1247,7 +1247,7 @@ Func6fa5Result Func_6fa5(void);
 void Func_1cb5e(uint8_t a);
 /* <<< factory Func_1cb5e */
 /* >>> factory StartDuel */
-void StartDuel(uint16_t return_address);
+void StartDuel(void);
 /* <<< factory StartDuel */
 /* >>> factory StartDuel_VSAIOpp */
 void StartDuel_VSAIOpp(void);
