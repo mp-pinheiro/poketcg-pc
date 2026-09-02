@@ -184,10 +184,10 @@ what kept 85% of the port from ever executing. Each now has a mechanism rather
 than an audit — the bank guard, the generated script entry table, the probe frame
 budget — and the residual counts are ratcheted so they cannot grow back.
 
-## Two worklists, not gates
+## Three worklists, not gates
 
-`just completion-composition-audit backedges` and `… stubs` find what the three
-ratcheted classes cannot.
+`just completion-composition-audit backedges`, `… stubs` and `… cuts` find what
+the three ratcheted classes cannot.
 
 **`backedges`** lists routines whose asm branches backwards but whose C has no
 loop construct at all. That is not the same shape as `loops`, which finds a loop
@@ -216,9 +216,24 @@ executed on the TAS, and the four largest — `MainDuelLoop` (34),
 `DuelMenu_Attack` (18), `DisplayPlayAreaScreen` (15), `OpenPlayerHandScreen`
 (8) — are the duel engine.
 
-These two are why a routine can be green on its oracle and still do nothing: a
-stub with a `compare: ()` contract and no `read` span passes every check the
-substrate has. That is `docs/port-contract.md` item 5 at scale.
+**`cuts`** lists `factory-completion` overrides whose `pre-ret` pc is the entry
+of a routine the subject calls, directly or one level down. The oracle then
+stops on the first such call, so the contract covers only what runs before it —
+which is exactly where a stub ends. A pc outside the routine's own span is
+legitimate when the asm tail-jumps, so this is a worklist and not a gate; 19
+rows today.
+
+The duel entry chain was four of them. `StartDuel`'s pc was `SetupDuel`'s entry
+(`core.asm:59`, its first call), `StartDuel_VSAIOpp`'s and `GameEvent_Duel`'s
+were `LoadPlayerDeck`'s. Each cut the reference exactly where the C stub's last
+write was, so `void StartDuel(uint16_t) { wCurrentDuelMenuItem = 0u; }` and its
+three stubbed siblings passed for the life of the port while the entire duel
+engine sat unreachable behind them.
+
+These three are why a routine can be green on its oracle and still do nothing: a
+stub with a `compare: ()` contract, no `read` span, and a completion pc at its
+own first call passes every check the substrate has. That is
+`docs/port-contract.md` item 5 at scale.
 
 ## Clearing stubs: bottom-up only
 

@@ -9,6 +9,8 @@ ever calls one routine with a synthesized environment:
   jumps      a `jp hl` the port answers with an address instead of dispatching it
   backedges  the asm loops and the C has no loop at all
   stubs      a substantial asm routine whose C body does nothing
+  cuts       a completion pc that stops the oracle at a routine the subject
+             calls, so the contract ends where the stub ended
 
 `loops`, `banks` and `jumps` are exact and ratcheted by tas_progress.py: they
 may fall and never rise.
@@ -218,6 +220,85 @@ def audit_jumps(bodies: dict[str, tuple[str, str]],
     return rows
 
 
+SYM_LINE = re.compile(r"^([0-9A-Fa-f]{2}):([0-9A-Fa-f]{4})\s+(\S+)$")
+COMPLETION_BLOCK = re.compile(
+    r"# >>> factory-completion (\w+)\n(.*?)# <<< factory-completion", re.S)
+COMPLETION_PC = re.compile(r'"pc":\s*(0x[0-9A-Fa-f]+).*?"bank":\s*(\d+)', re.S)
+ASM_CALL_TARGET = re.compile(r"^\s+(?:call|farcall|bank1call|callfar)\s+(?:\w+,\s*)?(\w+)")
+
+
+def symbol_entries() -> dict[str, tuple[int, int]]:
+    """Top-level symbol -> (bank, address). Dotted local labels are branch targets."""
+    entries: dict[str, tuple[int, int]] = {}
+    for line in (ROOT / "poketcg" / "poketcg.sym").read_text().splitlines():
+        match = SYM_LINE.match(line.strip())
+        if match and "." not in match.group(3):
+            entries[match.group(3)] = (int(match.group(1), 16), int(match.group(2), 16))
+    return entries
+
+
+def asm_call_targets() -> dict[str, set[str]]:
+    """Routine -> the routines it calls, from the asm rather than the port."""
+    targets: dict[str, set[str]] = {}
+    for path in sorted(ASM_ROOT.rglob("*.asm")):
+        current = None
+        for raw in path.read_text(errors="replace").splitlines():
+            line = raw.split(";", 1)[0]
+            label = LABEL.match(line)
+            if label:
+                current = label.group(1)
+                continue
+            if current is None:
+                continue
+            call = ASM_CALL_TARGET.match(line)
+            if call:
+                targets.setdefault(current, set()).add(call.group(1))
+    return targets
+
+
+def audit_cuts() -> list[dict[str, Any]]:
+    """Completion overrides that stop the oracle inside a routine the subject calls.
+
+    A `pre-ret` pc outside the subject's own span is legitimate when the asm
+    tail-jumps: the routine really does complete at the jump target. It is a
+    defect when the pc is the entry of a routine the subject `call`s, because
+    the oracle then stops on the first such call and the contract covers only
+    what runs before it -- which is exactly where a stub ends. Four routines in
+    the duel entry chain were pinned this way (StartDuel at SetupDuel,
+    StartDuel_VSAIOpp and GameEvent_Duel at LoadPlayerDeck), and each stub
+    passed for the life of the port.
+    """
+    entries = symbol_entries()
+    by_site = {(bank, address): name for name, (bank, address) in entries.items()}
+    targets = asm_call_targets()
+    rows = []
+    for path in sorted((ROOT / "tests" / "cases").glob("*.py")):
+        text = path.read_text()
+        for name, body in COMPLETION_BLOCK.findall(text):
+            found = COMPLETION_PC.search(body)
+            if not found or name not in entries:
+                continue
+            pc, declared = int(found.group(1), 16), int(found.group(2))
+            bank, address = entries[name]
+            landing = (by_site.get((declared, pc)) or by_site.get((bank, pc))
+                       or by_site.get((0, pc)))
+            if landing is None or landing == name or pc == address:
+                continue
+            direct = targets.get(name, set())
+            # A cut can hide one level down: GameEvent_Duel `bank1call`s
+            # StartDuel_VSAIOpp and its pc lands in LoadPlayerDeck, which only
+            # the callee calls.
+            reachable = set(direct)
+            for callee in direct:
+                reachable |= targets.get(callee, set())
+            if landing not in reachable:  # a tail jump, not a call
+                continue
+            rows.append({"routine": name, "file": path.name, "pc": f"{pc:04X}",
+                         "cuts_at": landing,
+                         "depth": 1 if landing in direct else 2})
+    return rows
+
+
 def counts() -> dict[str, int]:
     """Only the exact classes. The worklists are not ratcheted; see the docstring."""
     bodies = c_bodies()
@@ -232,14 +313,16 @@ def counts() -> dict[str, int]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("audit", choices=("loops", "banks", "jumps",
-                                          "backedges", "stubs", "all"))
+                                          "backedges", "stubs", "cuts", "all"))
     args = parser.parse_args(argv)
 
     bodies = c_bodies()
     if args.audit == "all":
         print(json.dumps(counts(), indent=2, sort_keys=True))
         return 0
-    if args.audit in ("backedges", "stubs"):
+    if args.audit == "cuts":
+        rows = audit_cuts()
+    elif args.audit in ("backedges", "stubs"):
         looping, sizes, asm_calls = asm_shapes()
         rows = (audit_backedges(bodies, looping) if args.audit == "backedges"
                 else audit_stubs(bodies, sizes, asm_calls))
