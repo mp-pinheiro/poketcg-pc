@@ -36,6 +36,7 @@ function renderHeader(p) {
   const production = c.production_integration || {};
   const requirements = c.requirements || {};
   const milestones = c.milestone_gates || {};
+  const divergence = c.scene_divergence || {};
   HEADLINE.textContent = p.completion && p.completion.complete === true
     ? '100% complete'
     : 'Completion assurance';
@@ -46,6 +47,7 @@ function renderHeader(p) {
     `production roots ${Number(production.roots || 0).toLocaleString()} / ${Number(production.root_total || 0).toLocaleString()}`,
     `requirements ${Number(requirements.passing || 0).toLocaleString()} / ${Number(requirements.total || 0).toLocaleString()}`,
     `milestones ${Number(milestones.passing || 0).toLocaleString()} / ${Number(milestones.total || 0).toLocaleString()}`,
+    `scene divergence ${Number(divergence.total_bytes || 0).toLocaleString()} bytes in ${Number(divergence.regions || 0).toLocaleString()} regions`,
   ];
   SUBHEAD.textContent = parts.join(' \u00b7 ');
   let commitHtml = '';

@@ -649,6 +649,34 @@ def evidence_path(req_id: str) -> Path:
     return EVIDENCE_DIR / f"{req_id}.json"
 
 
+def scene_divergence_counts() -> dict[str, Any]:
+    """Per-scenario divergence census, the whole-game burn-down metric.
+
+    Reports every differing byte, not the first offset per field that
+    `comparison.mismatches` carries, so a batch of fixes that removes real
+    divergence is distinguishable from one that only moves the first offset."""
+    scenarios: dict[str, dict[str, int]] = {}
+    if EVIDENCE_DIR.is_dir():
+        for path in sorted(EVIDENCE_DIR.glob("*.json")):
+            try:
+                artifact = load_json(path)
+            except AuditError:
+                continue
+            census = (artifact.get("comparison") or {}).get("census")
+            if not isinstance(census, dict):
+                continue
+            scenarios[str(artifact.get("scenario") or path.stem)] = {
+                "total_bytes": int(census.get("total_bytes", 0)),
+                "regions": int(census.get("regions", 0)),
+                "excluded_bytes_total": int(census.get("excluded_bytes_total", 0)),
+            }
+    return {
+        "scenarios": scenarios,
+        "total_bytes": sum(row["total_bytes"] for row in scenarios.values()),
+        "regions": sum(row["regions"] for row in scenarios.values()),
+    }
+
+
 def check_evidence(req: dict[str, Any], content_key: str) -> tuple[str, str | None]:
     path = evidence_path(req["id"])
     if not path.is_file():
@@ -951,6 +979,7 @@ def collect_report() -> dict[str, Any]:
             "total": len(milestone_pass),
         },
         "orphan_registrations": mapping.get("orphan_registrations", 0),
+        "scene_divergence": scene_divergence_counts(),
     }
     return {
         "complete": not errors,
