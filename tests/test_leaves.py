@@ -33,6 +33,32 @@ CACHE_SCHEMA = 1
 PYBOY_OPAQUE_SEEDS = frozenset({0xFF01})
 
 
+_SYMBOL_BANKS: dict[str, tuple[int, int]] = {}
+
+
+def symbol_bank(fn: str) -> int | None:
+    """Bank a routine's own symbol lives in, or None for the home region.
+
+    PyBoy enters a routine at its symbol bank (pyboy_oracle.py). The probe
+    otherwise keeps the reset default, and src/bank_guard.c switches on entry
+    whenever the two differ -- so a banked routine has to start on the same
+    bank in both lanes or the guard's switch shows up as an hBankROM diff.
+    """
+    if not _SYMBOL_BANKS:
+        import re
+
+        pattern = re.compile(r"^([0-9A-Fa-f]{2}):([0-9A-Fa-f]{4})\s+(\S+)\s*$")
+        for line in (ROOT / "poketcg" / "poketcg.sym").read_text().splitlines():
+            match = pattern.match(line)
+            if match:
+                _SYMBOL_BANKS.setdefault(
+                    match.group(3), (int(match.group(1), 16), int(match.group(2), 16))
+                )
+    found = _SYMBOL_BANKS.get(fn)
+    if found is None or found[1] < 0x4000:
+        return None
+    return found[0]
+
 def load_cases() -> tuple[dict[str, list[dict]], dict[str, tuple[str, ...]]]:
     cases: dict[str, list[dict]] = {}
     contracts: dict[str, tuple[str, ...]] = {}
@@ -119,10 +145,11 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
     if case.get("post_call_byte") is not None:
         req["post_call_byte"] = int(case["post_call_byte"])
     if case.get("rom_bank") is not None:
-        # PyBoy enters a routine at its own symbol bank (pyboy_oracle.py);
-        # the probe otherwise retains the reset default. A routine that reads
-        # its own bank's tables without bankswitching needs the two to agree.
         req["rom_bank"] = int(case["rom_bank"])
+    else:
+        default_bank = symbol_bank(fn)
+        if default_bank is not None:
+            req["rom_bank"] = default_bank
     try:
         out = subprocess.run(
             [str(probe)],

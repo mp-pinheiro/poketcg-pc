@@ -24,6 +24,7 @@
 #include <string.h>
 #include <sys/resource.h>
 
+#include "bank_guard.h"
 #include "generated/hram.h"
 #include "home/frames.h"
 #include "mem.h"
@@ -637,6 +638,8 @@ int main(void)
 			call(&st);
 		}
 		frame_boundary_install_watchdog(NULL, NULL);
+		if (g_frame_budget_reached)
+			bank_guard_reset();
 	} else {
 		call(&st);
 	}

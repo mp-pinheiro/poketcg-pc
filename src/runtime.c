@@ -1,5 +1,6 @@
 #include "runtime.h"
 
+#include "bank_guard.h"
 #include "generated/wram.h"
 #include "home/frames.h"
 #include "home/game_loop.h"
@@ -96,7 +97,9 @@ static void *run_game(void *context)
 		if (setjmp(g_boot_restart_env) == 0) {
 			Start(0x11u);
 		} else {
-			/* Soft reset: WRAM survives, boot re-enters with the original A. */
+			/* Soft reset: WRAM survives, boot re-enters with the original A.
+			 * The longjmp skipped every pending exit hook. */
+			bank_guard_reset();
 			runtime_mark_event(RUNTIME_EVENT_BOOT_STARTED);
 			Start(wInitialA);
 		}

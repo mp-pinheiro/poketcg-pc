@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "bank_guard.h"
+
 #define TRACE_CAPACITY 20000000u
 #define TRACE_MAGIC "PTCGTRC1"
 
@@ -16,7 +18,11 @@ typedef struct {
 	uint32_t caller;
 } TraceRecord;
 
+#ifdef POKETCG_TRACE
+/* 229 MiB of BSS, so it exists only in the instrumented lane. The entry hook
+ * itself is always compiled because the bank guard rides on it. */
 static TraceRecord g_records[TRACE_CAPACITY];
+#endif
 static size_t g_count;
 static uint32_t g_frame;
 static int g_overflow;
@@ -51,6 +57,8 @@ NOTRACE int trace_overflowed(void)
 
 NOTRACE void __cyg_profile_func_enter(void *this_fn, void *call_site)
 {
+	bank_guard_enter(this_fn);
+#ifdef POKETCG_TRACE
 	if (g_count >= TRACE_CAPACITY) {
 		g_overflow = 1;
 		return;
@@ -59,16 +67,23 @@ NOTRACE void __cyg_profile_func_enter(void *this_fn, void *call_site)
 	record->frame = g_frame;
 	record->callee = (uint32_t)((uintptr_t)this_fn - trace_base());
 	record->caller = (uint32_t)((uintptr_t)call_site - trace_base());
+#else
+	(void)call_site;
+#endif
 }
 
 NOTRACE void __cyg_profile_func_exit(void *this_fn, void *call_site)
 {
-	(void)this_fn;
+	bank_guard_exit(this_fn);
 	(void)call_site;
 }
 
 NOTRACE int trace_write_raw(const char *path)
 {
+#ifndef POKETCG_TRACE
+	(void)path;
+	return -1;
+#else
 	if (!path)
 		return -1;
 	FILE *file = fopen(path, "wb");
@@ -88,4 +103,5 @@ NOTRACE int trace_write_raw(const char *path)
 	if (fclose(file) != 0)
 		ok = 0;
 	return ok ? 0 : -1;
+#endif
 }

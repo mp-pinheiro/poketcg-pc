@@ -111,22 +111,46 @@ if(PORT_FILES)
   message(STATUS "PORT_FILES subset build: ${PORT_FILES}")
 endif()
 
-add_library(gbmem STATIC src/mem.c src/ppu.c src/runtime_events.c src/trace.c ${HOME_SOURCES})
+set(BANK_GUARD_SOURCE "${CMAKE_BINARY_DIR}/bank_guard_generated.c")
+file(GLOB HOME_HEADERS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/home/*.h")
+add_custom_command(
+  OUTPUT "${BANK_GUARD_SOURCE}"
+  COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/gen_bank_guard.py"
+          --sym "${CMAKE_SOURCE_DIR}/poketcg/poketcg.sym"
+          --asm-root "${CMAKE_SOURCE_DIR}/poketcg/src"
+          --home "${CMAKE_SOURCE_DIR}/src/home"
+          --output "${BANK_GUARD_SOURCE}"
+  DEPENDS "${CMAKE_SOURCE_DIR}/tools/gen_bank_guard.py"
+          "${CMAKE_SOURCE_DIR}/poketcg/poketcg.sym"
+          ${HOME_HEADERS}
+  COMMENT "gen_bank_guard: farcall targets -> required bank table"
+  VERBATIM)
+
+set(GBMEM_SOURCES src/mem.c src/ppu.c src/runtime_events.c src/trace.c
+                  src/bank_guard.c ${HOME_SOURCES})
+if(NOT PORT_FILES)
+  list(APPEND GBMEM_SOURCES "${BANK_GUARD_SOURCE}")
+endif()
+
+add_library(gbmem STATIC ${GBMEM_SOURCES})
 add_dependencies(gbmem gen_layout)
 target_include_directories(gbmem PUBLIC "${CMAKE_SOURCE_DIR}/src" "${CMAKE_SOURCE_DIR}/include")
 target_compile_options(gbmem PRIVATE -Wall -Wextra)
 
-# Frame-tagged function-entry trace for the bilateral call-count diff against
-# the reference stream, and the producer for the CFG audit's covered edges.
-# mem.c/ppu.c are excluded because instrumenting gb_read8/gb_write8 inflates the
+# Entry/exit instrumentation carries `farcall`'s bank switch for every target in
+# the generated table (src/bank_guard.c), so it is on in every build. mem.c and
+# ppu.c are excluded because instrumenting gb_read8/gb_write8 inflates the
 # record count by two orders of magnitude without naming a single routine.
-option(POKETCG_TRACE "instrument function entries in the ported routines" OFF)
+target_compile_options(gbmem PRIVATE
+  -finstrument-functions
+  -finstrument-functions-exclude-file-list=mem.c,ppu.c,runtime_events.c,trace.c,bank_guard.c,bank_guard_generated.c)
+
+# Frame-tagged function-entry recording for the bilateral call-count diff
+# against the reference stream, and the producer for the CFG audit's edges.
+option(POKETCG_TRACE "record function entries in the ported routines" OFF)
 if(POKETCG_TRACE)
-  target_compile_options(gbmem PRIVATE
-    -finstrument-functions
-    -finstrument-functions-exclude-file-list=mem.c,ppu.c,runtime_events.c,trace.c)
   target_compile_definitions(gbmem PUBLIC POKETCG_TRACE=1)
-  message(STATUS "function-entry instrumentation: on")
+  message(STATUS "function-entry recording: on")
 endif()
 
 # One adapter translation unit per pret source file, each exporting
