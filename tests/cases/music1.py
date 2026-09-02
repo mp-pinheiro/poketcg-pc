@@ -328,6 +328,11 @@ CASES["Music1_UpdateChannel1"] = [
                        0xDD95: b"\x00\xC1",
                        0xDDB7: b"\x00", 0xDDC3: b"\x01",
                        0xDDA5: b"\x2C\x00"}),
+    # echo counter wraps $00 -> $FF; music1.asm:392-395 decrements
+    # unconditionally, with no zero guard before the store.
+    {"wram": {0xDD8D: b"\x01", 0xDD8C: b"\x00",
+              0xDDB7: b"\x10", 0xDDBB: b"\x05",
+              0xDDC3: b"\x00", 0xDDDF: b"\x00"}},
 ]
 
 CONTRACT["Music1_UpdateChannel2"] = {"compare": (), "preserve": ()}
@@ -347,6 +352,10 @@ CASES["Music1_UpdateChannel2"] = [
                        0xDD97: b"\x00\xC1",
                        0xDDB8: b"\x00", 0xDDC4: b"\x01",
                        0xDDA7: b"\x2C\x00"}),
+    # echo counter wraps $00 -> $FF (music1.asm:445-448).
+    {"wram": {0xDD8E: b"\x01", 0xDD8C: b"\x00",
+              0xDDB8: b"\x10", 0xDDBC: b"\x05",
+              0xDDC4: b"\x00", 0xDDE0: b"\x00"}},
 ]
 
 CONTRACT["Music1_UpdateChannel3"] = {"compare": (), "preserve": ()}
@@ -366,6 +375,10 @@ CASES["Music1_UpdateChannel3"] = [
                        0xDD99: b"\x00\xC1",
                        0xDDB9: b"\x00", 0xDDC5: b"\x01",
                        0xDDA9: b"\x2C\x00", 0xDD8B: b"\x00"}),
+    # echo counter wraps $00 -> $FF (music1.asm:498-501).
+    {"wram": {0xDD8F: b"\x01", 0xDD8C: b"\x00",
+              0xDDB9: b"\x10", 0xDDBD: b"\x05",
+              0xDDC5: b"\x00", 0xDDE1: b"\x00"}},
 ]
 
 CONTRACT["Music1_UpdateChannel4"] = {"compare": (), "preserve": ()}
@@ -384,6 +397,16 @@ CASES["Music1_UpdateChannel4"] = [
                        0xDDBE: b"\x01", 0xDDEF: b"\x00",
                        0xDD9B: b"\x00\xC1",
                        0xDDBA: b"\x00"}),
+    # channel 4 has no echo counter: wddc3+3 must never move, unlike
+    # channels 1-3 (music1.asm:540-577 has no wddc3 reference at all).
+    {"wram": {0xDD90: b"\x01", 0xDD8C: b"\x00",
+              0xDDBA: b"\x10", 0xDDBE: b"\x05",
+              0xDDEF: b"\x00", 0xDDC6: b"\x42"}},
+    # channel 4 never reaches Music1_f485a/UpdateVibrato (music1.asm:
+    # 559-564): a nonzero vibrato delay must not advance wdde3+3.
+    {"wram": {0xDD90: b"\x01", 0xDD8C: b"\x00",
+              0xDDBE: b"\x05", 0xDDEF: b"\x00",
+              0xDDE2: b"\x05", 0xDDE6: b"\x33"}},
 ]
 
 # -- Pause / Resume / Backup / LoadBackup ---------------------------------
@@ -1096,6 +1119,28 @@ CASES["Music1_PlayNextNote"] = [
          wram={**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x7A\x40",
                0xDDAF: b"\x03\x03\x03\x03"},
          read=_NOTE_READ),
+    # $E2 call pushes the raw operand address, not operand+2
+    # (music1.asm:976-992: the popped stream pointer is stored unmodified,
+    # before it is used to read the 2-byte target).
+    {"c": 0, "hl": 0xC100,
+     "wram": {**_PNN_IDLE, 0xC100: b"\xE2\x00\xC2", 0xC200: b"\xFF",
+              0xDDF3: b"\x00\xC3"},
+     "read": {0xC300: 2}},
+    dict(POISON, b=0, c=1, hl=0xC110,
+         wram={**_PNN_IDLE, 0xC110: b"\xE2\x00\xC2", 0xC200: b"\xFF",
+               0xDDF5: b"\x00\xC3"},
+         read={0xC300: 2}),
+    # $E3 ret resumes at the popped stack value + 2, not the raw value
+    # (music1.asm:994-1005 `inc de` twice after the pop): landing on $DA
+    # (end) at the +2 target rather than $D7 (inc_octave) at the raw one.
+    {"c": 0, "hl": 0xC100,
+     "wram": {**_PNN_IDLE, 0xC100: b"\xE3", 0xDDAF: b"\x05\x05\x05\x05",
+              0xDDF3: b"\x00\xC3", 0xC2FE: b"\x50\xC1",
+              0xC150: b"\xD7\xFF", 0xC152: b"\xDA"}},
+    dict(POISON, b=0, c=1, hl=0xC100,
+         wram={**_PNN_IDLE, 0xC100: b"\xE3", 0xDDAF: b"\x05\x05\x05\x05",
+               0xDDF5: b"\x00\xC3", 0xC2FE: b"\x50\xC1",
+               0xC150: b"\xD7\xFF", 0xC152: b"\xDA"}),
 ]
 # <<< factory Music1_PlayNextNote
 
