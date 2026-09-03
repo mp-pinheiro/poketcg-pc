@@ -455,11 +455,14 @@ CASES["PrintDeckConfiguration"] = [{"a": 0x00, "wram": {0xCABB: b"\x00", 0xCE6E:
 CONTRACT["ShowPromotionalCardScreen"] = {"compare": (), "preserve": ()}
 CASES["ShowPromotionalCardScreen"] = [
     {"a": 0x1E, "keys": [0x00, 0x02],
-     "read": {0xCC27: 2, 0xFF97: 1},
+     # SetupText (promotional_card.asm:7-8) is the callee's first act and
+     # writes wcd04, wTilePatternSelector and hffa8; observing them is what
+     # distinguishes running the screen from standing in for its prefix.
+     "read": {0xCC27: 2, 0xFF97: 1, 0xCD04: 1, 0xCD06: 2, 0xFFA8: 1},
      "setup": [{"fn": "CopyDMAFunction"}],
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, keys=[0x00, 0x02],
-         read={0xCC27: 2, 0xFF97: 1},
+         read={0xCC27: 2, 0xFF97: 1, 0xCD04: 1, 0xCD06: 2, 0xFFA8: 1},
          setup=[{"fn": "CopyDMAFunction"}],
          instruction_budget=20000000, cycle_budget=80000000),
 ]
@@ -807,7 +810,11 @@ MUTATIONS["ShowPromotionalCardScreen"] = {
 # after both observed bytes are written. legacy_to_schema always emits
 # completion "return", so the split is applied after migration.
 for _record in SCHEMA2_CASES["ShowPromotionalCardScreen"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x378A}
+    # AssertSongFinished's entry: the callee spins on it until wCurSongID
+    # reads $80, which no probe seed reaches, so neither lane can stop at a
+    # `ret`. Both stop at that entry instead.
+    _record["completion"] = {"mode": "entry", "pc": 0x378A, "bank": 0,
+                             "routine": "AssertSongFinished"}
 # <<< factory-completion ShowPromotionalCardScreen
 # >>> factory-mutation RequestToPrintCard
 MUTATIONS["RequestToPrintCard"] = {

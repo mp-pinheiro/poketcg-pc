@@ -278,6 +278,11 @@ def audit_cuts() -> list[dict[str, Any]]:
             found = COMPLETION_PC.search(body)
             if not found or name not in entries:
                 continue
+            # `entry` mode stops both lanes at that routine's entry on purpose
+            # (src/trace.h trace_set_stop), which is the answer to a cut rather
+            # than an instance of one.
+            if '"mode": "entry"' in body:
+                continue
             pc = int(found.group(1), 16)
             bank, address = entries[name]
             # A block may omit `bank`, in which case the routine's own bank is
