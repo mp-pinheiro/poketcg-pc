@@ -18,6 +18,7 @@
  * under "wram"; sread spans come back grouped by bank under "sram", after "wram".
  */
 
+#include <dlfcn.h>
 #include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,6 +30,7 @@
 #include "home/frames.h"
 #include "mem.h"
 #include "probe.h"
+#include "trace.h"
 
 /* Bounds a routine whose asm never returns, such as LoadMap's .overworld_loop
  * (engine/overworld/overworld.asm:54-61), which leaves only when
@@ -51,6 +53,21 @@ static void frame_watchdog(void *context)
 		return;
 	g_frame_budget_reached = 1;
 	longjmp(g_frame_budget_env, 1);
+}
+
+/* Stops the routine at a named callee's entry, for an asm body with no
+ * reachable `ret` under any seed the case schema can express: the duel entry
+ * runs an interactive arena choice (core.asm:1950-1953) that 16 frames of
+ * input cannot satisfy, so its own `ret` is never the boundary. The reference
+ * stops on that callee's pc; this lane stops when the callee is entered, which
+ * the -finstrument-functions hook already sees for every ported routine. */
+static jmp_buf g_stop_env;
+static int g_stop_reached;
+
+static void stop_hit(void)
+{
+	g_stop_reached = 1;
+	longjmp(g_stop_env, 1);
 }
 
 #define MAX_SPANS 256
@@ -239,6 +256,7 @@ int main(void)
 	long vramb = -1;
 	long keys = 0; /* hKeysHeld bit layout; applied after every seed, like ramg */
 	long frame_budget = 0;
+	char stop_routine[MAX_NAME] = "";
 	ProbeState st = { 0 };
 	/* Routines that need warm state a single call cannot build -- the text engine's
 	 * tile cache, for one -- name the routines that establish it. Each runs after
@@ -317,6 +335,8 @@ int main(void)
 				 * seed enables the latch as a side effect, so this is the only
 				 * way to enter with non-zero SRAM and the latch off. */
 				ramg = jnum() != 0;
+			} else if (strcmp(key, "stop_routine") == 0) {
+				jstr(stop_routine, sizeof stop_routine);
 			} else if (strcmp(key, "frame_budget") == 0) {
 				frame_budget = jnum();
 			} else if (strcmp(key, "keys") == 0) {
@@ -631,23 +651,45 @@ int main(void)
 		pre(&setups[i].st);
 	}
 
-	if (frame_budget > 0) {
-		g_frames_remaining = frame_budget;
-		if (setjmp(g_frame_budget_env) == 0) {
-			frame_boundary_install_watchdog(frame_watchdog, NULL);
-			call(&st);
+	if (stop_routine[0]) {
+		void *target = dlsym(RTLD_DEFAULT, stop_routine);
+
+		if (!target) {
+			printf("{\"error\":\"unknown stop routine: %s\"}\n", stop_routine);
+			return 1;
 		}
-		frame_boundary_install_watchdog(NULL, NULL);
-		if (g_frame_budget_reached)
-			bank_guard_reset();
-	} else {
-		call(&st);
+		trace_set_stop(target, stop_hit);
 	}
 
-	printf("{\"frame_budget_reached\":%d,"
+	if (setjmp(g_stop_env) == 0) {
+		if (frame_budget > 0) {
+			g_frames_remaining = frame_budget;
+			if (setjmp(g_frame_budget_env) == 0) {
+				frame_boundary_install_watchdog(frame_watchdog, NULL);
+				call(&st);
+			}
+			frame_boundary_install_watchdog(NULL, NULL);
+			if (g_frame_budget_reached)
+				bank_guard_reset();
+		} else {
+			call(&st);
+		}
+	}
+	if (g_stop_reached) {
+		/* The longjmp left the routine mid-call, so the guard's saved banks
+		 * are stale. The reference stopped at the same boundary with the
+		 * callee's own bank selected, which is what the guard would have
+		 * switched to on entry, so leave g_rom_bank alone and only drop the
+		 * frames the unwound calls would have restored. */
+		frame_boundary_install_watchdog(NULL, NULL);
+		bank_guard_reset();
+	}
+	trace_set_stop(NULL, NULL);
+
+	printf("{\"stop_reached\":%d,\"frame_budget_reached\":%d,"
 	       "\"a\":%u,\"f\":%u,\"b\":%u,\"c\":%u,\"d\":%u,\"e\":%u,\"hl\":%u,"
 	       "\"rom_bank\":%u,\"ram_bank\":%u,\"ram_enable\":%u,\"wram\":{",
-	       g_frame_budget_reached,
+	       g_stop_reached, g_frame_budget_reached,
 	       st.a, st.f, st.b, st.c, st.d, st.e, st.hl,
 	       g_rom_bank, g_sram_bank, g_sram_enabled != 0);
 	for (size_t i = 0; i < nspans; i++) {

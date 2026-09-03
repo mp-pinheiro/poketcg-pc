@@ -170,6 +170,10 @@ add_executable(poketcg_probe src/probe.c src/probe_table.c ${PROBE_SOURCES})
 target_include_directories(poketcg_probe PRIVATE "${CMAKE_BINARY_DIR}")
 target_link_libraries(poketcg_probe PRIVATE gbmem)
 target_compile_options(poketcg_probe PRIVATE -Wall -Wextra)
+# A case may stop the run at a named routine's entry rather than at a return
+# (src/trace.h trace_set_stop), so the probe resolves that name with dlsym and
+# needs its own routine symbols in the dynamic table.
+set_target_properties(poketcg_probe PROPERTIES ENABLE_EXPORTS ON)
 
 
 include(CheckCSourceCompiles)

@@ -35,12 +35,14 @@ static uint64_t g_count;
 static uint32_t g_frame;
 static int g_overflow;
 
+#ifdef POKETCG_TRACE
 /* Offsets are taken against this translation unit's own entry point so the
  * dump survives ASLR and can be resolved with `nm` offline. */
 NOTRACE static uintptr_t trace_base(void)
 {
 	return (uintptr_t)(void *)trace_set_frame;
 }
+#endif
 
 NOTRACE void trace_set_frame(uint32_t frame)
 {
@@ -67,10 +69,21 @@ NOTRACE int trace_overflowed(void)
 	return g_overflow;
 }
 
+static const void *g_stop_fn;
+static void (*g_stop_hit)(void);
+
+NOTRACE void trace_set_stop(const void *fn, void (*hit)(void))
+{
+	g_stop_fn = fn;
+	g_stop_hit = hit;
+}
+
 NOTRACE void __cyg_profile_func_enter(void *this_fn, void *call_site)
 {
 	bank_guard_enter(this_fn);
 	(void)call_site;
+	if (this_fn == g_stop_fn && g_stop_hit)
+		g_stop_hit();
 #ifdef POKETCG_TRACE
 	uint32_t callee = (uint32_t)((uintptr_t)this_fn - trace_base());
 	/* Open addressing on the callee offset. Every offset is a multiple of the

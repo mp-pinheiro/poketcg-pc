@@ -130,6 +130,13 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
     frames = pyboy_frames(case)
     if frames is not None:
         req["frame_budget"] = int(frames)
+    # completion mode `entry`: the routine's own asm `ret` is unreachable under
+    # any seed the schema can express, so both lanes stop inside it. The oracle
+    # stops on the named callee's pc, this lane on its entry (src/trace.h
+    # trace_set_stop), which is the same boundary.
+    completion = case.get("_completion", {})
+    if completion.get("mode") == "entry":
+        req["stop_routine"] = completion["routine"]
     if case.get("setup"):
         req["setup"] = [{k: int(v) if k != "fn" else v for k, v in pre.items()}
                         for pre in case["setup"]]
@@ -260,8 +267,8 @@ def direct_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], c
                       c=case.get("c", 0), d=case.get("d", 0), e=case.get("e", 0),
                       hl=case.get("hl", 0), wram=case.get("wram"), sram=case.get("sram"),
                       ramg=case.get("ramg"), setup=case.get("setup"), keys=key_timeline(case),
-                      stop_pc=completion.get("pc") if completion.get("mode") == "pre-ret" else None,
-                      stop_bank=completion.get("bank") if completion.get("mode") == "pre-ret" else None,
+                      stop_pc=completion.get("pc") if completion.get("mode") in ("pre-ret", "entry") else None,
+                      stop_bank=completion.get("bank") if completion.get("mode") in ("pre-ret", "entry") else None,
                       stack=case.get("stack"), hbank_rom=case.get("hbank_rom"),
                       post_call_byte=case.get("post_call_byte"),
                       entry_sp=case.get("entry_sp"),
@@ -550,7 +557,7 @@ def main() -> int:
                             key = hashlib.sha256(payload).hexdigest()
                             ref = None
                             completion = case.get("_completion", {"mode": "return"})
-                            result = oracle.call(fn, a=case.get("a", 0), f=case.get("f", 0), b=case.get("b", 0), c=case.get("c", 0), d=case.get("d", 0), e=case.get("e", 0), hl=case.get("hl", 0), wram=case.get("wram"), sram=case.get("sram"), ramg=case.get("ramg"), setup=case.get("setup"), keys=key_timeline(case), stop_pc=completion.get("pc") if completion.get("mode") == "pre-ret" else None, stop_bank=completion.get("bank") if completion.get("mode") == "pre-ret" else None, stack=case.get("stack"), post_call_byte=case.get("post_call_byte"), entry_sp=case.get("entry_sp"))
+                            result = oracle.call(fn, a=case.get("a", 0), f=case.get("f", 0), b=case.get("b", 0), c=case.get("c", 0), d=case.get("d", 0), e=case.get("e", 0), hl=case.get("hl", 0), wram=case.get("wram"), sram=case.get("sram"), ramg=case.get("ramg"), setup=case.get("setup"), keys=key_timeline(case), stop_pc=completion.get("pc") if completion.get("mode") in ("pre-ret", "entry") else None, stop_bank=completion.get("bank") if completion.get("mode") in ("pre-ret", "entry") else None, stack=case.get("stack"), post_call_byte=case.get("post_call_byte"), entry_sp=case.get("entry_sp"))
                             reads, sreads, vreads = merged_spans(case)
                             ref = {"registers": {field: getattr(result, field) for field in fields}, "wram": {str(a): result.mem(a, n).hex() for a, n in reads.items()}, "sram": {str(b): {str(a): result.mem(a, n, bank=b).hex() for a, n in spans.items()} for b, spans in sreads.items()}, "vram": {str(b): {str(a): result.mem(a, n, bank=b).hex() for a, n in spans.items()} for b, spans in vreads.items()}}
                             cache_reference(args.cache_dir, key, fn, fields, ref)
