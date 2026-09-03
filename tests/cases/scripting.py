@@ -175,6 +175,12 @@ SHOW_MULTI_RESULT = 0xC520
 SHOW_MULTI_KEYS = [0x00, 0x01]
 SHOW_MULTI_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 SHOW_MULTI_DATA = b"\x00\x00\x00\x00\x10\xC5\x00\x20\xC5\x00\x00"
+# Byte +6 is the value to return when B is pressed, and it is zero in the data
+# above, so every case there takes the `jr z, .wait_input` arm and the
+# fallthrough at scripting.asm:1665-1671 is unreachable. This pair makes it
+# reachable: a non-zero B-press value plus a B press.
+SHOW_MULTI_DATA_BPRESS = b"\x00\x00\x00\x00\x10\xC5\x03\x20\xC5\x00\x00"
+SHOW_MULTI_KEYS_B = [0x00, 0x02]
 SHOW_MULTI_MENU_DATA = b"\x00\x00\x14\x06\x80\x00\x00\x00\x00\x00\x00\x00"
 SHOW_MULTI_POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -1630,6 +1636,12 @@ CASES["ShowMultichoiceTextbox"] = [
     {"a": 0x01, "hl": SHOW_MULTI_BASE, "keys": SHOW_MULTI_KEYS,
      "setup": SHOW_MULTI_SETUP,
      "wram": {SHOW_MULTI_BASE: SHOW_MULTI_DATA, SHOW_MULTI_MENU: SHOW_MULTI_MENU_DATA,
+               SHOW_MULTI_RESULT: b"\x00", 0xCABB: b"\x00", 0xFF91: b"\x01"},
+     "read": {0xD416: 1, 0xD417: 1, SHOW_MULTI_RESULT: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0x00, "hl": SHOW_MULTI_BASE, "keys": SHOW_MULTI_KEYS_B,
+     "setup": SHOW_MULTI_SETUP,
+     "wram": {SHOW_MULTI_BASE: SHOW_MULTI_DATA_BPRESS, SHOW_MULTI_MENU: SHOW_MULTI_MENU_DATA,
                SHOW_MULTI_RESULT: b"\x00", 0xCABB: b"\x00", 0xFF91: b"\x01"},
      "read": {0xD416: 1, 0xD417: 1, SHOW_MULTI_RESULT: 1},
      "instruction_budget": 20000000, "cycle_budget": 80000000},

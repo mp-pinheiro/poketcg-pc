@@ -2110,8 +2110,11 @@ ShowMultichoiceTextboxResult ShowMultichoiceTextbox(uint8_t a, uint16_t hl)
 			break;
 		if (wd417 == 0u)
 			continue;
+		/* scripting.asm:1665-1671 falls through into `.got_result`: the
+		 * B-press value is the result, not another round of input. */
 		selected = wd417;
 		hCurMenuItem = selected;
+		break;
 	}
 
 	uint16_t result_ptr = (uint16_t)(gb_read8((uint16_t)(base + 7u)) |
