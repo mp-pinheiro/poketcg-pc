@@ -62,7 +62,15 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 #define DUELVARS_ARENA_CARD_HP 0xc8u
 #define OPPACTION_6B15 0x15u
 #define PLAY_AREA_ARENA 0x00u
+#define VENUSAUR_LV67 0x0bu
+#define DUELVARS_CARD_LOCATIONS 0x00u
+#define CARD_LOCATION_ARENA 0x10u
+#define GRASS_ENERGY 0x01u
+#define OPPACTION_DUEL_MAIN_SCENE_269 0x16u
+/* wAttachedEnergies ($CC1B) indexed by GRASS ($01). */
+#define GRASS_ENERGY_COUNT_ADDR 0xCC1Cu
 
+#include "home/attacks.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "generated/wram.h"
@@ -536,12 +544,106 @@ HandleAICowardiceResult HandleAICowardice(void)
 /* <<< factory HandleAICowardice */
 
 /* >>> factory AIEnergyTransTransferEnergyToBench */
+/* pkmn_powers.asm:269-402. AI logic for moving Grass energy off the Arena card
+ * onto the bench with Venusaur Lv67's Energy Trans.
+ *
+ * Six exits. The first four bail before anything is transferred and hand back
+ * their callee's registers or the byte an `or a` just tested; `.done_transfer`
+ * ends in AIMakeDecision and returns its. */
 AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void)
 {
-	hTempPlayAreaLocation_ff9d = 0u;
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
 	CheckIfDefendingPokemonCanKnockOutResult knock_out =
 		CheckIfDefendingPokemonCanKnockOut(0u, 0x80u, 0u, 0u, 0u, 0u, 0u);
-	return (AIEnergyTransTransferEnergyToBenchResult){knock_out.a, knock_out.f};
+
+	if ((knock_out.f & 0x10u) == 0u)
+		return (AIEnergyTransTransferEnergyToBenchResult){knock_out.a,
+								 knock_out.f};
+
+	/* if any attack would be used this turn, leave the energy where it is */
+	AIProcessAttacksResult attack = AIProcessButDontUseAttack();
+
+	if ((attack.f & 0x10u) != 0u)
+		return (AIEnergyTransTransferEnergyToBenchResult){attack.a,
+								 attack.f};
+
+	(void)GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	if (gb_read8(GRASS_ENERGY_COUNT_ADDR) == 0u)
+		return (AIEnergyTransTransferEnergyToBenchResult){0u, 0x80u};
+
+	AIEnergyResult needed = AIProcessButDontPlayEnergy_SkipEvolutionAndArena();
+
+	if ((needed.f & 0x10u) == 0u)
+		return (AIEnergyTransTransferEnergyToBenchResult){needed.a,
+								 needed.f};
+
+	/* an attachment is wanted, so look for Venusaur Lv67 to power it */
+	uint8_t slot = (uint8_t)(GetTurnDuelistVariable(
+		DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a - 1u);
+
+	for (;;) {
+		DuelistVarResult card = GetTurnDuelistVariable(
+			(uint8_t)(DUELVARS_ARENA_CARD + slot));
+
+		hTempCardIndex_ff9f = card.a;
+		wAIVenusaurLv67DeckIndex = card.a;
+		if ((uint8_t)GetCardIDFromDeckIndex(card.a) == VENUSAUR_LV67)
+			break;
+		if (slot == 0u)
+			return (AIEnergyTransTransferEnergyToBenchResult){0u, 0x80u};
+		slot--;
+	}
+
+	hTemp_ffa0 = slot;
+	wAIVenusaurLv67PlayAreaLocation = slot;
+	(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
+	(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+
+	for (;;) {
+		hTempPlayAreaLocation_ffa1 = 0u;
+		hTemp_ffa0 = wAIVenusaurLv67PlayAreaLocation;
+		(void)GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+		if (gb_read8(GRASS_ENERGY_COUNT_ADDR) == 0u)
+			break;
+
+		/* find a Grass energy still attached to the Arena card */
+		uint8_t index = 0u;
+
+		while (index < DECK_SIZE) {
+			if (GetTurnDuelistVariable(
+				(uint8_t)(DUELVARS_CARD_LOCATIONS + index)).a
+					== CARD_LOCATION_ARENA
+			    && (uint8_t)GetCardIDFromDeckIndex(index)
+					== GRASS_ENERGY)
+				break;
+			index++;
+		}
+		if (index == DECK_SIZE)
+			break;
+		gb_write8(hAIEnergyTransEnergyCard_ADDR, index);
+
+		/* pick the bench card to move it to */
+		AIEnergyResult target =
+			AIProcessButDontPlayEnergy_SkipEvolutionAndArena();
+
+		if ((target.f & 0x10u) == 0u)
+			break;
+		gb_write8(hAIEnergyTransPlayAreaLocation_ADDR,
+			  hTempPlayAreaLocation_ff9d);
+		for (uint8_t frames = 30u; frames != 0u; frames--)
+			DoFrame();
+		hTempCardIndex_ff9f = wAIVenusaurLv67DeckIndex;
+		(void)CopyAttackDataAndDamage_FromDeckIndex(
+			wAIVenusaurLv67DeckIndex, FIRST_ATTACK_OR_PKMN_POWER);
+		(void)AIMakeDecision(OPPACTION_6B15, 0u, 0u, 0u, 0u);
+	}
+
+	for (uint8_t frames = 60u; frames != 0u; frames--)
+		DoFrame();
+	AIMakeDecisionResult scene =
+		AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE_269, 0u, 0u, 0u, 0u);
+
+	return (AIEnergyTransTransferEnergyToBenchResult){scene.a, scene.f};
 }
 /* <<< factory AIEnergyTransTransferEnergyToBench */
 
