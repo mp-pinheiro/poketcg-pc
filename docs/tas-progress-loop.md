@@ -36,6 +36,17 @@ Baseline recorded here when the loop was written was ordinal 15,379; the wiring
 described below moved it to 17,193. `tools/completion/tas_ratchet.json` holds the
 current floor, and the gate exits 3 on any regression.
 
+One ratchet key is not plain-monotone. `executed_routines` counts every routine
+the native lane runs, matched against the reference or not, so the only way to
+raise it is to execute more code -- including code the ROM never executes at
+that point. So an `executed_routines` fall passes only when `reached_routines`
+strictly rises in the same run, and the ceiling then drops to the measured
+value. Landing `DuelMainInterface`'s body is the case it was written for: the
+matched count went 645 -> 649 while the unmatched remainder fell by 69, because
+the port stopped running past a duel the ROM stays inside. Any fall that does
+not buy a match is still a regression, and `reached_routines` itself is never
+tradeable.
+
 ## Why composition needs its own mechanisms
 
 Per-routine verification calls one routine in a synthesized environment, so it

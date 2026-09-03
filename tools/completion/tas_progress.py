@@ -187,6 +187,25 @@ RATCHET_RISING = ("reached_routines", "executed_routines")
 # on both definitions and wrong only when they are compared, which is the blind
 # spot the music1/music2 fork used to carry four unfixed bugs.
 RATCHET_FALLING = ("loops", "banks", "jumps", "overrides", "shadows")
+# `executed_routines` counts every routine the native lane runs, matched or not,
+# so the only way to raise it is to execute more code -- including code the ROM
+# never executes at that point. Landing `DuelMainInterface`'s body raised the
+# matched count (`reached_routines` 645 -> 649) while dropping the unmatched
+# remainder by 69, because the port stopped running past a duel the ROM stays
+# inside; a plain rising ratchet scores that correction as a regression. So the
+# trade is allowed in exactly one direction: an `executed_routines` fall passes
+# only when `reached_routines` strictly rises in the same run, which still
+# rejects every loss of exercise that does not buy a match. When the trade is
+# taken the ceiling drops to the measured value, so it cannot be re-earned by
+# running junk.
+RATCHET_TRADE = {"executed_routines": "reached_routines"}
+
+
+def trade_taken(payload: dict[str, Any], recorded: dict[str, Any], key: str) -> bool:
+    partner = RATCHET_TRADE.get(key)
+    if partner is None or key not in recorded or partner not in recorded:
+        return False
+    return payload[key] < recorded[key] and payload[partner] > recorded[partner]
 
 
 def check_ratchet(payload: dict[str, Any]) -> dict[str, Any] | None:
@@ -195,6 +214,8 @@ def check_ratchet(payload: dict[str, Any]) -> dict[str, Any] | None:
     recorded = json.loads(RATCHET_PATH.read_text())
     for key in RATCHET_RISING:
         if key in recorded and payload[key] < recorded[key]:
+            if trade_taken(payload, recorded, key):
+                continue
             return {"status": "REGRESSION", "key": key,
                     "was": recorded[key], "now": payload[key]}
     for key in RATCHET_FALLING:
@@ -206,8 +227,12 @@ def check_ratchet(payload: dict[str, Any]) -> dict[str, Any] | None:
 
 def write_ratchet(payload: dict[str, Any]) -> dict[str, int]:
     recorded = json.loads(RATCHET_PATH.read_text()) if RATCHET_PATH.is_file() else {}
+    snapshot = dict(recorded)
     for key in RATCHET_RISING:
-        recorded[key] = max(int(payload[key]), int(recorded.get(key, 0)))
+        if trade_taken(payload, snapshot, key):
+            recorded[key] = int(payload[key])
+        else:
+            recorded[key] = max(int(payload[key]), int(recorded.get(key, 0)))
     for key in RATCHET_FALLING:
         current = int(payload[key])
         recorded[key] = min(current, int(recorded.get(key, current)))
