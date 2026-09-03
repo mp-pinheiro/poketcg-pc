@@ -381,6 +381,35 @@ def audit_truncated() -> list[dict[str, Any]]:
     return rows
 
 
+def audit_shadows() -> list[dict[str, Any]]:
+    """ROM routines the port defines twice, once as a file-local reimplementation.
+
+    `duel_animation_core.c` carries `static` copies of `PlayBufferedDuelAnimations`
+    (under a lowercase name), `DefaultScreenAnimationUpdate`,
+    `EnableAndClearSpriteAnimations`, `GetAnimCoordsAndFlags` and
+    `LoadAnimCoordsAndFlags`, all of which exist ported elsewhere. The copies
+    drift: that one advances `wDuelAnimBufferCurPos` after its field writes and
+    returns the wrong register on the carry exit.
+
+    No case can find this. Both definitions are reachable, each is green where it
+    is tested, and the divergence exists only between them -- the same blind spot
+    the `music1`/`music2` fork exploited for four bugs.
+    """
+    defined: dict[str, list[str]] = {}
+    for path in sorted(HOME.glob("*.c")):
+        lines = path.read_text(errors="replace").splitlines()
+        for index, line in enumerate(lines):
+            match = DEFINITION.match(line)
+            if not match or index + 1 >= len(lines) or not lines[index + 1].startswith("{"):
+                continue
+            defined.setdefault(match.group(1), []).append(f"{path.name}:{index + 1}")
+
+    rom = set(symbol_entries())
+    return [{"routine": name, "sites": sites}
+            for name, sites in sorted(defined.items())
+            if name in rom and len(sites) > 1]
+
+
 def audit_overrides() -> list[dict[str, Any]]:
     """Probe adapters that overwrite a real result register with a constant.
 
@@ -421,6 +450,7 @@ def counts() -> dict[str, int]:
         "banks": len(audit_banks(bodies, banks)),
         "jumps": len(audit_jumps(bodies, jumps)),
         "overrides": len(audit_overrides()),
+        "shadows": len(audit_shadows()),
     }
 
 
@@ -428,14 +458,16 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("audit", choices=("loops", "banks", "jumps", "overrides",
                                           "backedges", "stubs", "cuts",
-                                          "truncated", "all"))
+                                          "truncated", "shadows", "all"))
     args = parser.parse_args(argv)
 
     bodies = c_bodies()
     if args.audit == "all":
         print(json.dumps(counts(), indent=2, sort_keys=True))
         return 0
-    if args.audit == "truncated":
+    if args.audit == "shadows":
+        rows = audit_shadows()
+    elif args.audit == "truncated":
         rows = audit_truncated()
     elif args.audit == "overrides":
         rows = audit_overrides()

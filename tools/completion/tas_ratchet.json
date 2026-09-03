@@ -4,5 +4,6 @@
   "jumps": 4,
   "loops": 36,
   "overrides": 0,
-  "reached_routines": 607
+  "reached_routines": 607,
+  "shadows": 4
 }

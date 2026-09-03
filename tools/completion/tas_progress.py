@@ -183,7 +183,10 @@ RATCHET_RISING = ("reached_routines", "executed_routines")
 # `overrides` is ratcheted at zero from the turn it was found: a probe adapter
 # that assigns a register constant over a copied result makes that register
 # unverifiable, and no case matrix can detect a hole in the harness reading it.
-RATCHET_FALLING = ("loops", "banks", "jumps", "overrides")
+# `shadows` joins it for the same reason: a ROM routine defined twice is green
+# on both definitions and wrong only when they are compared, which is the blind
+# spot the music1/music2 fork used to carry four unfixed bugs.
+RATCHET_FALLING = ("loops", "banks", "jumps", "overrides", "shadows")
 
 
 def check_ratchet(payload: dict[str, Any]) -> dict[str, Any] | None:
