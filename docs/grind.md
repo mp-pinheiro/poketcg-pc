@@ -742,6 +742,47 @@ moved no gate number, while a class the audit could enumerate in one pass was
 sitting on 19 percentage points of progress. When a defect class is
 *enumerable*, clear it before hand-porting anything.
 
+## The duel loop was a one-line stub
+
+With the shadows cleared, the gate's earliest blockers moved to ordinal 37,879:
+`UpdateSubstatusConditions_StartOfTurn` and `DisplayDuelistTurnScreen`, called
+adjacently at `core.asm:76-77`. Their caller is `MainDuelLoop`, whose entire
+port body was `EnableLCD();` -- the `truncated` audit's second-largest row at 25
+dropped calls, and the thing gating everything past that ordinal.
+
+Ported in full (`core.asm:73-217`): the per-turn sequence, the two
+`wDuelFinished` checks around the between-turns work, the fifteen-turn practice
+cutoff, the result screen with its win/loss/draw animation and song, and the
+tie path that reruns the whole loop as a one-prize sudden death match. All 26
+callees already existed; the constants came from the disassembly's own tables
+(`BOXMSG_DECISION` is index 3 of its `const_def`, `OPPONENT_TURN` is
+`HIGH(wOpponentDuelVariables)`).
+
+| after | reached | executed | frontier | ordinal | pct |
+| --- | --- | --- | --- | --- | --- |
+| shadows cleared | 628 | 800 | 149 | 37,879 | 53.35 |
+| MainDuelLoop | 645 | 853 | **42** | 43,575 | **61.37** |
+
+**A non-returning routine breaks its callers' contracts.** The stub returned
+immediately, so `MainDuelLoop`'s own row and both `StartDuel` rows used
+`pre-ret` pcs. Once the real loop landed, the native lane ran into a loop that
+only exits when the duel ends while the reference sat at those pcs: the loop's
+own probe timed out at 30 s, and `StartDuel`/`StartDuel_VSLinkOpp` went red on
+`$D423` and `hWhoseTurn` -- state the port had reached and the reference had
+not. `core` fell 369 -> 367 and the group check caught it.
+
+All three now stop both lanes with `entry` mode at
+`UpdateSubstatusConditions_StartOfTurn` (`00:35E6`), the loop's first call.
+Raising frame budgets was not enough on its own: stopping at `HandleTurn`
+instead still exceeded 1,140 frames, because reaching it draws the turn screen
+and needs duel state the seeds do not build. So the row verifies that the loop
+is entered and reaches its first call, and the gate's 19-point jump is what
+verifies the body.
+
+Worth noting for the next stub of this shape: check every caller's completion
+mode *before* landing a body that stops returning, not after the group check
+goes red.
+
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
 things the asm never does: `wLCDC = $80`, `hKeysPressed = $01`, and reading the
