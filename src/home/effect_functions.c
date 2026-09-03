@@ -6827,13 +6827,19 @@ Scavenge_PlayerSelectEnergyEffectResult Scavenge_PlayerSelectEnergyEffect(void)
 /* <<< factory Scavenge_PlayerSelectEnergyEffect */
 
 /* >>> factory PlayerPickFireEnergyCardToDiscard */
+/* effect_functions.asm:3517-3524. The port skipped the menu input entirely and
+ * synthesized a `0x90` exit. The two trailing `ldh` moves set no flags, so the
+ * exit flags are the input handler's; only `a` is the card index it left in
+ * hTempCardIndex_ff98. */
 PlayerPickFireEnergyCardToDiscardResult PlayerPickFireEnergyCardToDiscard(void)
 {
 	(void)CreateListOfFireEnergyAttachedToArena();
 	DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
+	HandleEnergyDiscardMenuInputResult input = HandleEnergyDiscardMenuInput();
 	uint8_t card = hTempCardIndex_ff98;
+
 	hTemp_ffa0 = card;
-	return (PlayerPickFireEnergyCardToDiscardResult){card, 0x90u};
+	return (PlayerPickFireEnergyCardToDiscardResult){card, input.f};
 }
 /* <<< factory PlayerPickFireEnergyCardToDiscard */
 
