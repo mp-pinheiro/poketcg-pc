@@ -978,19 +978,53 @@ handler's branch selection is therefore transcribed, not verified, and it stays
 that way until those bodies write something. The `DuelMainInterface` dispatch,
 by contrast, does discriminate (1/6 fail misrouted, 2/2 after).
 
-**`DuelMainInterface`'s body was reverted, and the gate is why.** It verified
-cleanly on both arms -- AI and player -- with discrimination proven. But on the
-TAS it moved `reached_routines` 645 -> 649 while dropping `executed_routines`
-**853 -> 788**: the port enters the duel menu's input loop and stalls there,
-losing 65 routines it used to exercise. Neither the ordinal nor the frontier
-moved. That is the runbook's reject-and-requeue case, so the body is out and the
-measurement is here instead of in a commit.
+**`DuelMainInterface`'s body is landed after all, and the trace says why the
+gate first refused it.** The body verified cleanly on both arms with
+discrimination proven, but it moved `reached_routines` 645 -> 649 while
+`executed_routines` fell 853 -> 788, which the rising ratchet scored as a
+regression. The unmatched remainder (`executed - reached`) fell 208 -> 139, so
+the arithmetic is a trade: more matched execution, less unmatched. The ratchet
+now allows exactly that one direction and drops the ceiling when it is taken
+(`tas_progress.py`, `RATCHET_TRADE`); a fall that does not buy a match is still
+a regression.
 
-Two seams named on the way, both cheap to test next: the key-poll cadence (the
-port's first `DoFrame` saw no keys where the reference's did, showing up as
-`wVBlankCounter` `$ab` vs `$ac`, fixed by dropping the leading `0x00` from the
-timeline) and `HandleDuelMenuInput`, which is the one callee in that loop whose
-return decides whether it ever exits.
+**I first wrote that the port had "stopped running past a duel the ROM stays
+inside". That was not measured, and tracing disproved the picture.** Reading the
+native counts against the reference:
+
+| routine | native | ROM |
+| --- | --- | --- |
+| `DuelMainInterface` | 1 | 9 |
+| `DrawDuelMainScene` | 1 | 9 |
+| `DrawDuelHUDs` | 0 | 9 |
+| `PrintDuelMenuAndHandleInput` | 0 | 28 |
+| `HandleDuelMenuInput` | 0 | 1,036 |
+| `OpenInPlayAreaScreen` | 0 | 13 |
+
+The port enters the interface once, draws once, never reaches `DrawDuelHUDs`,
+and never runs the menu handler at all. Yet `DoFrame` runs 57,542 times, so it
+is alive the whole while -- and the top native counts name where those frames
+go:
+
+| routine | native | ROM |
+| --- | --- | --- |
+| `TryHandleSpriteAnimationFrame` | 312,918 | 45,252 |
+| `GetPermissionOfMapPosition` | 310,862 | 43,046 |
+| `UpdateNPCSpritePosition` | 271,999 | 37,660 |
+| `UpdateNPCMovementStep` | 271,992 | 37,653 |
+
+**The port spins in the overworld at roughly seven times the ROM's rate.** That
+is the actual blocker, and it is upstream of every duel-region row worked this
+turn and the last two. The five `duel` routines at the head of the worklist and
+`OpenInPlayAreaScreen_HandleInput` all already have real bodies -- there is no
+stub work left on the frontier. It is purely reachability, and the reachability
+is lost in overworld movement, not in the duel menu.
+
+`HandleDuelMenuInput` was checked and cleared on the way: its A-press exit is a
+faithful transcription of `HandleMenuInput.A_pressed` (`menus.asm:125-131`), and
+`HandleDPadRepeat` composes `hDPadHeld` correctly including the
+`hKeysPressed & PAD_BUTTONS` overwrite (`frames.asm:45-65`) that carries the A
+bit the loop's only exit tests. Neither is the stall.
 
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
