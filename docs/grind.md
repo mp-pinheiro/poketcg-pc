@@ -203,6 +203,22 @@ That is what a routine whose exits are chosen by input or RNG needs: the cases
 that reach a `ret` compare everything, and the one that cannot still compares
 its memory spans. Prophecy went 2/3 failing on the stub to 3/3 passing.
 
+**Seed a card list before narrowing it.** Narrowing is the last resort, not the
+first: `PokemonTrader_PlayerDeckSelection` also failed to reach its `ret` on
+both cases, and two seed bytes fixed it instead. A card-list loop that rejects
+non-Pokemon picks cannot terminate on a zeroed duelvars page, because a card
+index resolves to a card id through the deck array at `0xC400` and the low card
+ids are the energies (`card_constants.asm:1-9`: `$01`-`$07` energy, `BULBASAUR`
+`$08` the first Pokemon). Seeding `0xC400`/`0xC401` to `$08` let both cases
+reach `0b:788C` and compare every field -- no override needed.
+
+Related: the duelvars page is worth reading before trusting a seed's address.
+Card locations are `0xC200`-`0xC23B`, deck cards `0xC27E`-`0xC2B9`, and
+`DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK` is `0xC2BA` immediately after them --
+which is how the stand-in's invented `gb_write8(0xC2BAu, 0x39u)` was recognised
+for what it was: a hand-computed net effect of the two callees the port skipped
+(`RemoveCardFromHand` then `ReturnCardToDeck`, one card moving into the deck).
+
 ## When the divergence is the movie, not the port
 
 `5530S` is luck-manipulated: the RNG advances every frame, so the hand a duel
