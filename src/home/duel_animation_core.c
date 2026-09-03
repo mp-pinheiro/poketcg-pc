@@ -1,5 +1,6 @@
 #include "home/duel_animation_core.h"
 #include "generated/wram.h"
+#include "home/load_animation.h"
 #include "home/sprite_animations.h"
 #include "home/load_gfx.h"
 #include "home/sound.h"
@@ -71,11 +72,6 @@ static void DefaultScreenAnimationUpdate(void)
           (uint8_t)(DEFAULT_SCREEN_UPDATE_ADDR >> 8));
 }
 
-static void EnableAndClearSpriteAnimations(void)
-{
-    write(wAllSpriteAnimationsDisabled_ADDR, 0);
-    _ClearSpriteAnimations();
-}
 
 
 void _ResetAnimationQueue(void)
