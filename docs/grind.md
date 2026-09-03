@@ -185,13 +185,23 @@ its three cases pass at the non-turn exit once the body actually calls
 HandleProphecyScreen -- which the port omitted, along with the trailing
 SwapTurn, and which its pc at that callee's entry concealed.
 
-What blocks the row is case zero: it reaches neither exit under any seed tried
-(its own keys, the three-key timeline the others use, and the non-turn duelvar
-seeds it lacks). Leaving just that case on the old mid-flight pc does not work
-either -- this routine's contract compares `a` and `f`, and a mid-flight stop
-has no comparable registers, so mixing boundaries within one routine fails the
-register check. Landing the body needs case zero's input driven to an exit
-first; the body change alone is correct but unprovable.
+Case zero reaches neither exit under any seed tried: its own keys, the
+three-key timeline the others use, and the non-turn duelvar seeds it lacks. So
+it stops mid-flight at HandleProphecyScreen's entry instead, and a mid-flight
+stop has no comparable registers -- which used to fail the routine's `a`/`f`
+contract and made the row unlandable.
+
+**A case may now narrow its own comparison.** `"compare": ()` on a case entry,
+beside its `read` spans, replaces the routine contract's field tuple for that
+case alone. It may only narrow -- a superset is rejected, since a case must not
+assert fields the routine does not claim -- and the harness prints the narrowed
+tuple in that case's result line, so it can never become a quiet exclusion.
+`fields` is part of the cache key (`normalize_case`'s `"contract"`), so an
+override keys separately and cannot poison a sibling's reference.
+
+That is what a routine whose exits are chosen by input or RNG needs: the cases
+that reach a `ret` compare everything, and the one that cannot still compares
+its memory spans. Prophecy went 2/3 failing on the stub to 3/3 passing.
 
 ## When the divergence is the movie, not the port
 

@@ -534,11 +534,29 @@ def main() -> int:
             entries = cases.get(fn)
             if not entries:
                 print(f"FAIL {fn}: no cases"); failures += 1; continue
-            fields = contracts.get(fn)
-            if fields is None:
+            routine_fields = contracts.get(fn)
+            if routine_fields is None:
                 print(f"FAIL {fn}: no CONTRACT entry naming the fields to diff"); failures += 1; continue
             bad_cases = 0
             for i, case in enumerate(entries):
+                # A routine whose exits are chosen by input or RNG cannot always
+                # stop every case at a real `ret`; a case that must stop
+                # mid-flight has no comparable registers, so it names its own
+                # narrower field tuple. `fields` is part of the cache key
+                # (normalize_case's "contract"), so an override keys separately.
+                # It may only narrow: a superset would let a case assert fields
+                # the routine's own contract does not claim, and a rename would
+                # silently diff something else. Narrowed cases are marked in the
+                # result line so this can never become a quiet exclusion.
+                fields = routine_fields
+                narrowed = ""
+                if "compare" in case:
+                    fields = tuple(case["compare"])
+                    if not set(fields) <= set(routine_fields):
+                        print(f"FAIL {fn}[{i}]: case compare {fields} is not a subset of {routine_fields}")
+                        bad_cases += 1
+                        continue
+                    narrowed = f" compare={fields or '()'}"
                 try:
                     if not case.get("oracle", True):
                         print(f"  skip {fn}[{i}] {describe(case)}")
@@ -567,9 +585,9 @@ def main() -> int:
                 except Exception as ex:
                     bad = [f"{type(ex).__name__}: {ex}"]
                 if bad:
-                    bad_cases += 1; print(f"  fail {fn}[{i}] {describe(case)}"); [print(f"        {line}") for line in bad]
+                    bad_cases += 1; print(f"  fail {fn}[{i}] {describe(case)}{narrowed}"); [print(f"        {line}") for line in bad]
                 else:
-                    print(f"  ok   {fn}[{i}] {describe(case)}")
+                    print(f"  ok   {fn}[{i}] {describe(case)}{narrowed}")
             if bad_cases:
                 failures += 1; print(f"FAIL {fn}: {bad_cases}/{len(entries)} cases differ")
             else:
