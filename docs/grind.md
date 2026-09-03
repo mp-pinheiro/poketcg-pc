@@ -1076,8 +1076,50 @@ a fallthrough is not a loop, and a placeholder is not an address -- and the
 evidence is the gate, which is the honest signal to cite for a defect no case
 can reach.
 
-`PrintDuelMenuAndHandleInput` is still never called (0 against 28), so
-`HandleTurn`'s dispatch into the player arm is the next thing to read.
+## The player's turn: three fallthroughs and one unmapped bank
+
+`PrintDuelMenuAndHandleInput` was called 0 times against the ROM's 28, so the
+duel menu was never reached even with the interface and the whole chain below it
+live. Four defects between `HandleTurn` and the menu, found by measurement
+rather than reading:
+
+**The AI arm was taken every time** -- `AIDoAction_Turn` native 14, ROM **0**,
+while `HandleTurn` ran 30 times against the ROM's 1. But a gdb probe at the
+first `HandleTurn` showed the state was *correct*: `hWhoseTurn=C2`, player slot
+`00`. `SwapTurn`, `GetTurnDuelistVariable` and `LoadOpponentDeck`'s framing all
+checked clean. Probing the first `DuelMainInterface` call instead showed
+`hWhoseTurn=C3` -- so the player's turn was leaving `HandleTurn` before ever
+reaching the interface, and only opponent turns got there.
+
+**`StartDuel_VSAIOpp` dropped its tail jump.** `core.asm:42` is `jr StartDuel`;
+the port set up both decks and returned. Its recorded stop pc `0x40CA` *is*
+`StartDuel`'s address -- the boundary had always been the jump target, mislabelled
+`pre-ret`, which is why nothing had noticed.
+
+**`RestartPracticeDuelTurn` was an empty stub, and it sits on two
+fallthroughs.** `core.asm:270` falls from `.player_turn` into it, and
+`core.asm:277` falls from it into `DuelMainInterface`. Both were missing, so the
+player's path ended at `SaveDuelStateToSRAM`. Porting it (one
+`DoPracticeDuelAction` call plus the fallthrough) is what finally ran the menu.
+
+**`bank1call` was not modelled.** `map.asm:111` enters the duel with
+`bank1call StartDuel_VSAIOpp`, so bank 1 stays mapped for the entire duel --
+which is what makes `DuelMenuData` ($01:54E9) readable. Without it,
+`PlaceTextItems` read text id `$970F` out of whatever bank happened to be
+mapped, and the offset lookup aborted with `MISSING_DATA 00:04FD`. The same fix
+removed a duplicate `StartDuel()` call the tail-jump repair had made redundant.
+
+| measurement | turn start | now |
+| --- | --- | --- |
+| `reached_routines` | 677 | 682 |
+| `executed_routines` | 868 | 907 |
+| `PrintDuelMenuAndHandleInput` | 0 (ROM 28) | runs |
+| `blocked_by` | clean | clean |
+
+Worth keeping: **two of the four had a mis-sourced completion pc sitting on
+top of them**, and in both cases the recorded address was a jump target rather
+than a `ret`. A stub that never runs far enough cannot notice that its boundary
+is nonsense, so the two defects hid each other.
 
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
