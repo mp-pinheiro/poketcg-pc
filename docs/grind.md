@@ -36,9 +36,23 @@ Read `blocked_by` in the output first, then the numbers. The run is measured eve
 when it aborts: `src/trace.c` flushes the trace on `SIGABRT`, so every iteration
 produces comparable numbers.
 
-Baseline at the time of writing: `reached_ordinal` 17193 of 70999 (24.22%),
-`reached_routines` 457, `executed_routines` 562 of 3009 translated,
-`frontier_misses` 370, audits `loops` 38, `banks` 14, `jumps` 4.
+`native_overflow` must be `false`. The tracer aggregates one count and one first
+frame per routine, so a full-movie replay cannot fill it — it is bounded by the
+routine count, not the call count. It was a 20,000,000-entry call log until that
+cap started binding the headline number instead of the port: two consecutive
+gate runs filled it to exactly 20,000,000 and reported ordinals that measured
+the buffer. Uncapped, the same tree read 21,337 rather than 21,074, and 694
+routines ever executed rather than 645.
+
+Both lanes must also be fed the movie the same way. The reference replays it per
+rendered frame and the native loop counter tracks that frame, so `--masks` goes
+to both unchanged. `refstream.py axis` re-checks the pairing by measurement, and
+says re-indexing the movie onto the DoFrame anchor axis is worse (ordinal
+20,212, 583 executed); do not do it.
+
+Baseline at the time of writing: `reached_ordinal` 21337 of 70999 (30.05%),
+`reached_routines` 506, `executed_routines` 694 of 3009 translated,
+`frontier_misses` 281, audits `loops` 38, `banks` 14, `jumps` 4.
 
 ## Decision table
 

@@ -349,7 +349,13 @@ def load_masks(path: str | Path) -> list[int]:
     return [int(part) for part in text.replace("\n", ",").split(",") if part.strip()]
 
 
-def scenario_masks(scenario: str, frames: int) -> list[int]:
+def scenario_masks(scenario: str, frames: int,
+                   masks: list[int] | None = None) -> list[int]:
+    """`masks` replaces the scenario timeline, padded or clipped to `frames`,
+    which is how a TAS movie anchors the same stream a boot input does."""
+    if masks is not None:
+        return (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
+
     sys.path.insert(0, str(ROOT / "tools" / "completion"))
     import scenario as scenario_module
 
@@ -414,8 +420,9 @@ def routine_of_label(label: str) -> str:
     return root if root in names else label
 
 
-def build(scenario: str, frames: int, anchors: int) -> dict[str, Any]:
-    masks = scenario_masks(scenario, frames)
+def build(scenario: str, frames: int, anchors: int,
+          masks: list[int] | None = None) -> dict[str, Any]:
+    masks = scenario_masks(scenario, frames, masks)
     with Core(masks) as core:
         key = stream_key(core.pins, masks, frames)
         directory = STREAM_ROOT / key
@@ -502,8 +509,9 @@ class Stream:
         return struct.unpack_from("<II", self._ordinals, ordinal * 8)
 
 
-def open_stream(scenario: str, frames: int, anchors: int) -> Stream:
-    meta = build(scenario, frames, anchors)
+def open_stream(scenario: str, frames: int, anchors: int,
+                masks: list[int] | None = None) -> Stream:
+    meta = build(scenario, frames, anchors, masks)
     return Stream(ROOT / meta["directory"])
 
 
@@ -511,9 +519,10 @@ EVENT_CAP = 8192
 
 
 def writers(
-    scenario: str, frames: int, addresses: list[int], *, events: bool = False
+    scenario: str, frames: int, addresses: list[int], *, events: bool = False,
+    masks: list[int] | None = None
 ) -> list[dict[str, Any]]:
-    masks = scenario_masks(scenario, frames)
+    masks = scenario_masks(scenario, frames, masks)
     resolve = label_resolver()
     watched = set(addresses)
     sequence = 0
@@ -641,6 +650,52 @@ def routine_trace(
     }
 
 
+def anchor_axis(scenario: str, frames: int, ordinals: int,
+                masks: list[int] | None = None) -> dict[str, Any]:
+    """The reference frame each DoFrame anchor lands on, replaying a movie the
+    way it was recorded.
+
+    A BizHawk movie is one mask per rendered frame, so a faithful reference
+    replay indexes it that way (`input_axis = "frame"`), and the anchor axis
+    drifts away from it: anchor 21,074 sits at frame 21,437, the last anchor at
+    frame 78,206.
+
+    That drift does NOT mean the native lane needs re-indexing, which is what
+    this map was built to test. `runtime.c:188` indexes the native timeline by
+    its own loop counter, and that counter tracks the reference's rendered frame
+    rather than its DoFrame anchor, so handing native the raw movie is already
+    the matching pairing. Feeding it the anchor-re-indexed timeline instead was
+    measured and is worse: ordinal 20,212 against 21,337, and 583 routines ever
+    executed against 694. Use this to re-check that pairing whenever the input
+    encoding or the frame boundary changes.
+    """
+    movie = masks is not None
+    if masks is None:
+        masks = scenario_masks(scenario, frames)
+    else:
+        masks = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
+    axis: list[int] = []
+    with Core(masks) as core:
+        if movie:
+            core.input_axis = "frame"
+
+        def on_exec(address: int, _cycle: int) -> None:
+            if address == DOFRAME_ANCHOR and len(axis) <= ordinals:
+                axis.append(core.frame)
+
+        core.install_exec(on_exec)
+        core.run(frames, stop=lambda: core.ordinal > ordinals)
+        return {
+            "schema": 1,
+            "format": "anchor-axis-v1",
+            "scenario": scenario,
+            "input_axis": "frame" if movie else "ordinal",
+            "frames": core.frame,
+            "anchors": len(axis),
+            "axis": axis,
+        }
+
+
 def parse_addresses(text: str) -> list[int]:
     values = []
     for part in text.split(","):
@@ -673,10 +728,20 @@ def main(argv: list[str] | None = None) -> int:
     trace_parser.add_argument("--routines")
     trace_parser.add_argument("--masks", help="per-frame mask file replacing the scenario timeline")
 
+    axis_parser = subcommands.add_parser("axis")
+    axis_parser.add_argument("scenario")
+    axis_parser.add_argument("--frames", type=int, default=2000)
+    axis_parser.add_argument("--ordinals", type=int, default=2000)
+    axis_parser.add_argument("--masks", help="per-frame mask file replacing the scenario timeline")
+
     args = parser.parse_args(argv)
     try:
         if args.command == "build":
             payload: Any = build(args.scenario, args.frames, args.anchors)
+        elif args.command == "axis":
+            payload = anchor_axis(
+                args.scenario, args.frames, args.ordinals,
+                masks=load_masks(args.masks) if args.masks else None)
         elif args.command == "writers":
             payload = writers(args.scenario, args.frames, parse_addresses(args.address))
         else:

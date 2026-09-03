@@ -95,10 +95,15 @@ def compare_frame(
 
 
 def earliest_divergence(
-    scenario: str, frames: int, step: int, domains: tuple[str, ...], refine: bool
+    scenario: str, frames: int, step: int, domains: tuple[str, ...], refine: bool,
+    masks: list[int] | None = None
 ) -> dict[str, Any]:
-    stream = refstream.open_stream(scenario, frames + 400, frames + 100)
-    masks = scenario_module.boot_input(frames)
+    # A movie is frame-indexed while an anchor is one reference DoFrame, and the
+    # two axes advance at different rates, so the reference run is bounded by the
+    # movie's length and stops on the anchor count instead.
+    bound = len(masks) if masks else frames + 400
+    stream = refstream.open_stream(scenario, bound, frames + 100, masks)
+    masks = refstream.scenario_masks(scenario, frames, masks)
     coarse = [frame for frame in range(step, frames + 1, step)]
     first: dict[tuple[str, int], tuple[int, int, int]] = {}
     with tempfile.TemporaryDirectory() as directory:
@@ -129,9 +134,12 @@ def earliest_divergence(
 
 
 def build_report(
-    scenario: str, frames: int, step: int, domains: tuple[str, ...], refine: bool, attribute: bool
+    scenario: str, frames: int, step: int, domains: tuple[str, ...], refine: bool,
+    attribute: bool, masks: list[int] | None = None
 ) -> dict[str, Any]:
-    found = earliest_divergence(scenario, frames, step, domains, refine)
+    found = earliest_divergence(scenario, frames, step, domains, refine, masks)
+    masks = refstream.scenario_masks(scenario, frames + 400, masks)
+
     first = found["first"]
     if not first:
         return {
@@ -146,7 +154,8 @@ def build_report(
         })
         attribution = {
             int(entry["address"], 16): entry
-            for entry in refstream.writers(scenario, frames + 400, addresses, events=True)
+            for entry in refstream.writers(scenario, frames + 400, addresses,
+                                           events=True, masks=masks)
         }
     grouped: dict[tuple[str, str, int], dict[str, Any]] = {}
     for (field, offset), (frame, got, want) in sorted(first.items(), key=lambda item: item[1][0]):
@@ -190,12 +199,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--no-refine", action="store_true")
     parser.add_argument("--no-attribute", action="store_true")
     parser.add_argument("--json")
+    parser.add_argument("--masks", help="per-frame JOYP timeline replacing the "
+                                        "scenario's own input, e.g. a TAS movie")
     args = parser.parse_args(argv)
     domains = tuple(part.strip() for part in args.domains.split(",") if part.strip())
     try:
         report = build_report(
             args.scenario, args.frames, args.step, domains,
             not args.no_refine, not args.no_attribute,
+            refstream.load_masks(args.masks) if args.masks else None,
         )
     except (FrameCensusError, refstream.RefstreamError, OSError, ValueError) as exc:
         print(json.dumps({"status": "FAIL", "detail": str(exc)}), file=sys.stderr)
