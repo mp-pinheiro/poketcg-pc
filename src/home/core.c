@@ -1652,6 +1652,8 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/script.h"
 #define PRACTICEDUEL_PLAY_STARYU_FROM_BENCH 0x09u
 #define PRACTICEDUEL_REPLACE_KNOCKED_OUT_POKEMON 0x0Au
+#define PRACTICEDUEL_REPEAT_INSTRUCTIONS 0x08u
+#define OPPACTION_FINISH_NO_ATTACK 0x05u
 #define DuelistIsSelectingPokemonToPlaceInArenaText 0x0110u
 #define DuelistPlacedACardText 0x0044u
 #define SelectPokemonToPlaceInTheArenaText 0x010Fu
@@ -9421,9 +9423,16 @@ void DuelMenu_PkmnPower(void)
 /* <<< factory DuelMenu_PkmnPower */
 
 /* >>> factory DuelMenu_Done */
+/* core.asm:467-475. `jp c, RestartPracticeDuelTurn` is a tail jump, so that
+ * callee's `ret` reaches this routine's caller. */
 void DuelMenu_Done(void)
 {
-	return;
+	if ((DoPracticeDuelAction(PRACTICEDUEL_REPEAT_INSTRUCTIONS) & 0x10u) != 0u) {
+		RestartPracticeDuelTurn();
+		return;
+	}
+	(void)SetOppAction_SerialSendDuelData(OPPACTION_FINISH_NO_ATTACK, 0u);
+	ClearNonTurnTemporaryDuelvars();
 }
 /* <<< factory DuelMenu_Done */
 

@@ -5045,7 +5045,19 @@ CASES["DuelMenu_PkmnPower"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6
 
 # >>> factory DuelMenu_Done
 CONTRACT["DuelMenu_Done"] = {"compare": (), "preserve": ()}
-CASES["DuelMenu_Done"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# core.asm:467-475. wIsPracticeDuel ($CC13) picks the path: zero makes
+# DoPracticeDuelAction return without carry (asm:2623-2625) so the routine runs
+# on to its own `ret`, writing hOppActionTableIndex ($FF9E) and clearing the
+# eight non-turn duelvars from DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX. The
+# carry path is not covered: it tail-jumps into RestartPracticeDuelTurn, which
+# has no reachable `ret` of its own under a probe.
+_DMD_WRAM = {0xCC13: b"\x00", 0xFF97: b"\xC2", 0xC3F1: b"\x00",
+             0xC3F2: b"\xFF" * 8, 0xFF9E: b"\xFF", 0xCBC6: b"\x00"}
+_DMD_READ = {0xFF9E: 1, 0xC3F2: 8, 0xCBC6: 1}
+CASES["DuelMenu_Done"] = [
+    {"wram": dict(_DMD_WRAM), "read": dict(_DMD_READ)},
+    dict(POISON, wram=dict(_DMD_WRAM), read=dict(_DMD_READ)),
+]
 # <<< factory DuelMenu_Done
 
 # >>> factory DuelMenu_Retreat
@@ -7153,7 +7165,10 @@ MUTATIONS["DuelMenu_Done"] = {"source_symbol": "DuelMenu_Done", "before": "retur
 # <<< factory-mutation DuelMenu_Done
 # >>> factory-completion DuelMenu_Done
 for _record in SCHEMA2_CASES["DuelMenu_Done"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x51E7, "bank": 1}
+    # core.asm:475, the routine's own `ret`. The pc was
+    # DoPracticeDuelAction's entry, its first call, so the reference stopped
+    # before either write.
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x43AA, "bank": 1}
 # <<< factory-completion DuelMenu_Done
 # >>> factory-mutation DuelMenu_Retreat
 MUTATIONS["DuelMenu_Retreat"] = {"source_symbol": "DuelMenu_Retreat", "before": "hTemp_ffa0 = 0u;", "after": "hTemp_ffa0 = 1u;", "case_ids": ["DuelMenu_Retreat-0"]}
