@@ -705,13 +705,42 @@ real routine calls `ClearSpriteAnimations`, i.e. it skipped the bank switch the
 wrapper performs. Deleting it and including `load_animation.h` leaves
 `duel_animation_core` 5/5 and `load_animation` 15/15 clean.
 
-The other four are not one-line redirects and should not be treated as such.
-Two have different signatures from the routine they shadow --
-`LoadAnimCoordsAndFlags(uint8_t slot)` against `LoadAnimCoordsAndFlags(void)`,
-and `ApplyStatusConditionToArenaPokemon(uint8_t, uint16_t *)` against a
-three-argument form -- so each needs its callers read before deciding whether
-the shadow is a mis-named helper or a genuine second implementation. Sizing that
-is what the ratchet is for; guessing is how the `music1` fork survived.
+All three shadows in `duel_animation_core.c` are gone, and removing them moved
+the gate further than anything else this session:
+
+| after | reached | executed | frontier | ordinal | pct |
+| --- | --- | --- | --- | --- | --- |
+| sprite anim shadow | 607 | 742 | 189 | 24,677 | 34.76 |
+| screen update shadow | 608 | 743 | 189 | 24,677 | 34.76 |
+| coords shadows | 628 | 800 | 149 | 37,879 | **53.35** |
+
+Each shadow was a truncated or mis-sourced copy, and the truncations were the
+point:
+
+- `DefaultScreenAnimationUpdate`'s copy omitted `DisableInt_LYCoincidence` and
+  the `hSCX`/`rSCX`/`hSCY` zeroes the real routine performs
+- `LoadAnimCoordsAndFlags`'s copy read the sprite index from `wWhichSprite`
+  (`$D4CF`) where the asm reads `wAnimationQueue` (`$D423`, `animations/core.asm:151`).
+  It only ever agreed because its caller writes that same value into the queue
+  head immediately before -- a coincidence, not a translation
+- the copy also composed the attribute flags the other way round, keeping the
+  existing flip bits and OR-ing all of `flags`, where the real routine takes
+  `flags`' flip bits and OR-s the existing byte
+
+The byte offsets did agree: the real routine starts from sprite property `$01`,
+so its `hl, +1, +2, +$0C` walk lands on the same four bytes as the copy's
+`+1, +2, +3, +15`. Checking that before assuming a defect is what made the
+redirect safe.
+
+One shadow remains -- `ApplyStatusConditionToArenaPokemon`, `duel_core.c:135`
+against `core.c:3543` -- and its signatures genuinely differ, a two-argument
+form against a three-argument one, so its callers decide whether it is a
+mis-named helper or a fourth second implementation. The ratchet holds at 1.
+
+The lesson is about ordering. Four turns went into AI register contracts that
+moved no gate number, while a class the audit could enumerate in one pass was
+sitting on 19 percentage points of progress. When a defect class is
+*enumerable*, clear it before hand-porting anything.
 
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
