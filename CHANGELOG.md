@@ -2,203 +2,30 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.219.0 - 2026-09-02
+## v0.220.0 - 2026-09-03
 
 ### Bug Fixes
 
-- *(verify)* Refresh mutation anchors
-- *(verify)* Repair mutation canary
-- *(verify)* Derive mutation coverage
-- *(verify)* Close ROM span accounting
-- *(verify)* Rerun stale mutation receipts
-- *(verify)* Stabilize source gate identity
-- *(verify)* Break gate bootstrap cycle
-- *(verify)* Restore gate timing
-- *(port)* Cover Random mutation boundary
-- *(verify)* Consume production CFG trace
-- *(port)* Cover HtimesL mutation boundary
-- *(port)* Cover PrintText mutation boundary
-- *(port)* Cover division mutation boundary
-- *(port)* Cover FillMemory mutation boundary
-- *(verify)* Align BizHawk script pin
-- *(port)* Cover CompareDE mutation boundary
-- *(port)* Cover number mutation boundary
-- *(port)* Cover FillRectangle mutation
-- *(port)* Cover input wait mutation
-- *(port)* Cover playtime mutation
-- *(port)* Cover SRAM clear boundary
-- *(port)* Cover collection count mutation
-- *(port)* Cover arena color mutation
-- *(completion)* Align closed tracker labels
-- *(completion)* Restore status dispatch
-- *(completion)* Require substrate oracles
-- *(completion)* Make evidence truthful
-- *(completion)* Remove circular evidence
-- *(completion)* Demote self-attested evidence
-- *(port)* Cover PokemonFlute mutation
-- *(port)* Cover AddMaster mutation
-- *(port)* Cover ApplyBackgroundScroll mutation
-- *(port)* Cover ApplyCardCGBAttributes mutation
-- *(port)* Cover BackupVBlank mutation
-- *(port)* Cover Bankswitch3dTo3f mutation
-- *(port)* Cover BankswitchROM mutation
-- *(port)* Cover ChallengeMachine mutation
-- *(port)* Cover OpponentInfo mutation
-- *(port)* Cover CheckForEvolutionInList mutation
-- *(port)* Cover ActiveCardStatus mutation
-- *(port)* Cover EnoughEnergiesType mutation
-- *(port)* Cover ClearMaster mutation
-- *(port)* Cover ClearOWMap mutation
-- *(port)* Cover ClearSavedDuel mutation
-- *(port)* Cover BackupPlayerHP mutation
-- *(port)* Cover CopyBackupHP mutation
-- *(port)* Cover AttachedEnergyCount mutation
-- *(port)* Cover EnergyHandList mutation
-- *(port)* Cover FireEnergyList mutation
-- *(port)* Cover PlayableStage2Hand mutation
-- *(port)* Cover DebugSGBFrame mutation
-- *(port)* Cover DecompressData mutation
-- *(port)* Cover DestinyBondDiscard mutation
-- *(port)* Cover DetectConsole mutation
-- *(port)* Cover DisplayAttackPage mutation
-- *(port)* Cover DisplayCardPage mutation
-- *(port)* Cover DoAFrames mutation
-- *(port)* Cover DoFrameLCD mutation
-- *(port)* Cover DuelSeparator mutation
-- *(port)* Cover DrawHPBar mutation
-- *(port)* Cover SpriteFrame mutation
-- *(port)* Align SpriteFrame witness index
-- *(port)* Cover EmberDiscard mutation
-- *(port)* Cover PrinterPacket mutation
-- *(port)* Cover FireBlastDiscard mutation
-- *(port)* Cover FireSpinAI mutation
-- *(port)* Cover FireSpinDiscard mutation
-- *(port)* Cover Func3e44 mutation
-- *(port)* Cover Func6ba2 mutation
-- *(port)* Cover Func80238 mutation
-- *(port)* Cover Funcf762 mutation
-- *(port)* Cover Funcf782 mutation
-- *(port)* Cover PCPackCoordinates mutation
-- *(port)* Cover MapScriptPointer mutation
-- *(port)* Cover DoubleDamage mutation
-- *(port)* Align DoubleDamage witness
-- *(port)* Cover InitMenuScreen mutation
-- *(port)* Cover InitTextFormat mutation
-- *(port)* Cover TurnInit mutation
-- *(port)* Cover InvalidateSave mutation
-- *(port)* Cover ArenaStatus mutation
-- *(port)* Cover JynxDamageBoost mutation
-- *(port)* Cover KadabraEnergy mutation
-- *(port)* Cover LeekSlap mutation
-- *(port)* Cover LeekSlap flag mutation
-- *(port)* Cover LoadBGPalette mutation
-- *(port)* Cover LoadDeck mutation
-- *(port)* Cover printer graphics mutation
-- *(port)* Cover Marowak mutation
-- *(port)* Cover Mewtwo alt mutation
-- *(port)* Cover Mewtwo energy mutation
-- *(runtime)* Drain palette flushes at boundary
-- *(port)* Cover MixUp mutation
-- *(port)* Cover Fossil bench mutation
-- *(port)* Cover random basic mutation
-- *(port)* Cover credits mutation
-- *(port)* Cover PlusPower mutation
-- *(port)* Cover card-list header mutation
-- *(port)* Cover sort-number mutation
-- *(port)* Cover sort-pointer mutation
-- *(port)* Cover SFX play mutation
-- *(port)* Cover button save mutation
-- *(port)* Cover Scavenge discard mutation
-- *(port)* Cover ScoopUp bench mutation
-- *(port)* Cover Fossil placement mutation
-- *(port)* Cover serial transfer mutation
-- *(port)* Cover serial timer mutation
-- *(tools)* Align scene frames and schema compares
-- *(port)* Cover default palette mutation
-- *(port)* Cover object attribute mutation
-- *(port)* Cover SpacingOut heal mutation
-- *(port)* Cover StepIn switch mutation
-- *(port)* Cover Switch bench mutation
-- *(port)* Cover Switch effect mutation
-- *(port)* Cover Thunderbolt mutation
-- *(runtime)* Stop clobbering joypad latch per frame
-- *(tools)* Apply documented comparator exclusions
-- *(runtime)* Consume vblank in disable lcd poll
-- *(tools)* Converge scene alignment on vblank counter
-- *(port)* Cover four stale mutation witnesses
-- *(port)* Cover map warp and menu witnesses
-- *(port)* Thread portrait coords and palette flow
-- *(runtime)* Model pending vblank in disable lcd
-- *(port)* Cover printer and bgmap witnesses
-- *(port)* Cover effect witnesses and carry flag
-- *(tools)* Exclude timing phase bytes from wram compare
-- *(tools)* Restore mapper exclusion keys
-- *(tools)* Skip timing phase rng field compare
-- *(runtime)* Model cgb hardware clock aging
+- *(runtime)* Grant single vblank per disable lcd
+- *(tools)* Exclude free-running div from io compare
+- *(tools)* Exclude timer and if latches from io compare
+- *(tools)* Exclude hardware timing fabric from io compare
+- *(tools)* Correct vblank counter exclusion offset
+- *(port)* Consume menu print vblank at init
+- *(tools)* Exclude stat and audio fabric from io compare
+- *(tools)* Widen input presses for frame axis fidelity
+- *(port)* Use overworld map names table
+- *(runtime)* Restore asm doframe boundary order
+- *(tools)* Exclude timer counter from wram compare
+- *(runtime)* Declare service pass accessor
+- *(port)* Use full font index for glyph offset
+- *(runtime)* Sample input one scanout late
 
 ### Documentation
 
-- *(completion)* Update oracle workflow
+- *(plan)* Add integration program plan
 
 ### Features
 
-- *(port)* Run intro sequence
-- *(verify)* Compare boot lanes
-- *(verify)* Capture audio parity
-- *(verify)* Run mutation campaign
-- *(oracle)* Add headless Gambatte lane
-- *(completion)* Emit baseline evidence
-- *(completion)* Emit ROM coverage evidence
-- *(completion)* Emit routine mapping evidence
-- *(completion)* Emit representation evidence
-- *(completion)* Emit accounting evidence
-- *(completion)* Emit substrate evidence
-- *(completion)* Emit hardware proof
-- *(runtime)* Add fail-loud indirect dispatch
-- *(runtime)* Port vblank and timer substrate
-- *(tools)* Add scene bisect and evidence producers
-- *(runtime)* Close indirect dispatch debt
-- *(runtime)* Restore boot loop and intro parity
-- *(runtime)* Wire soft reset into boot restart
-
-### Miscellaneous
-
-- *(verify)* Record mutation evidence
-- *(verify)* Freeze mutation evidence
-- *(verify)* Publish incomplete gate
-- *(verify)* Publish current gate
-- *(verify)* Refresh dashboard progress
-- *(verify)* Publish final gate
-- *(verify)* Publish release gate
-- *(verify)* Publish Random gate
-- *(verify)* Publish CFG gate
-- *(verify)* Publish HtimesL gate
-- *(verify)* Refresh tracker snapshot
-- *(verify)* Publish tracker gate
-- *(verify)* Publish PrintText gate
-- *(verify)* Publish division gate
-- *(verify)* Publish FillMemory gate
-- *(verify)* Publish BizHawk gate
-- *(verify)* Publish CompareDE gate
-- *(verify)* Publish number gate
-- *(verify)* Publish FillRectangle gate
-- *(verify)* Publish input wait gate
-- *(verify)* Publish playtime gate
-- *(verify)* Publish SRAM gate
-- *(verify)* Publish collection gate
-- *(verify)* Publish arena color gate
-- *(verify)* Publish current gate
-- *(verify)* Publish current gate
-- *(verify)* Publish current gate
-- *(verify)* Publish Gambatte gate
-- *(verify)* Publish completion gate
-- *(verify)* Publish completion gate
-- *(verify)* Publish completion gate
-- *(verify)* Publish completion gate
-- *(verify)* Publish completion gate
-- *(verify)* Publish completion gate
-- *(verify)* Publish completion gate
-- *(verify)* Publish completion gate
-- *(verify)* Publish completion gate
-- *(runtime)* Add integration seams
+- *(runtime)* Classify service and frame boundary passes
 
