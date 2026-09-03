@@ -170,8 +170,16 @@ def report(
 
 
 RATCHET_PATH = ROOT / "tools" / "completion" / "tas_ratchet.json"
-# Progress may only move one way. The first three rise, the audit counts fall.
-RATCHET_RISING = ("reached_ordinal", "reached_routines", "executed_routines")
+# Progress may only move one way: the routine set sizes rise, the audit counts
+# fall. `reached_ordinal` is deliberately not ratcheted. It is a max over the
+# reference first_ordinal of every routine the port reached, so one incidental
+# call to a routine the ROM first runs late sets it arbitrarily high while the
+# port is stuck far earlier. That is measured, not theoretical: an incidental
+# GoToPreviousCardPage call (reference ordinal 46,969) reported 66.15% while
+# the port actually tracked to 24,677, and completing SwitchCardPage's dispatch
+# removed the incidental call and appeared as a 22,000-ordinal regression.
+# Read it as a ceiling on depth, never as progress; the set sizes are the gate.
+RATCHET_RISING = ("reached_routines", "executed_routines")
 RATCHET_FALLING = ("loops", "banks", "jumps")
 
 

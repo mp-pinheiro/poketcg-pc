@@ -50,20 +50,29 @@ to both unchanged. `refstream.py axis` re-checks the pairing by measurement, and
 says re-indexing the movie onto the DoFrame anchor axis is worse (ordinal
 20,212, 583 executed); do not do it.
 
-Baseline at the time of writing: `reached_ordinal` 21337 of 70999 (30.05%),
-`reached_routines` 506, `executed_routines` 694 of 3009 translated,
-`frontier_misses` 281, audits `loops` 38, `banks` 14, `jumps` 4.
+Baseline at the time of writing: `reached_routines` 607, `executed_routines`
+742 of 3009 translated, `frontier_misses` 189, `reached_ordinal` 24677 of 70999
+(34.76%), audits `loops` 37, `banks` 14, `jumps` 4.
 
-`blockers[]` is a filtered view: it drops every miss below `reached_ordinal`,
-calling those structural. But `reached_ordinal` is a *max* over the routines the
-port reached, so a single incidental call to a late routine raises the bar and
-reclassifies real misses beneath it. That happened here: one `DisableSpriteAnim`
-call at reference ordinal 21,337 hid `StartDuel` and twenty duel-setup routines
-at 21,074, and `blockers[0]` pointed at a sprite routine instead. Read
-`misses[]` too — the same data unfiltered, so nothing is silently dropped. Both
-lists have legitimate rows: `misses[]` is headed by the bank trampolines the
-guard dissolved (`BankpopROM`, 24,250 reference calls) and the inlined audio
-leaf labels, so triage each row against the asm rather than taking row zero.
+**`reached_ordinal` is not progress.** It is a max over the reference
+`first_ordinal` of every routine the port reached, so one incidental call to a
+routine the ROM first runs late sets it arbitrarily high while the port is stuck
+far earlier. It reported 66.15% off a single `GoToPreviousCardPage` call
+(reference ordinal 46,969) when the port tracked to 24,677, and completing
+`SwitchCardPage`'s dispatch removed that call and looked like a 22,000-ordinal
+regression while `reached_routines` and `executed_routines` did not move at all.
+It is therefore reported but not ratcheted; the two set sizes are the gate. Read
+it as a ceiling on depth.
+
+`blockers[]` inherits the same flaw: it drops every miss below `reached_ordinal`
+and calls those structural, so an inflated max hides real misses. One
+`DisableSpriteAnim` call at reference ordinal 21,337 once hid `StartDuel` and
+twenty duel-setup routines at 21,074, and `blockers[0]` pointed at a sprite
+routine instead. Read `misses[]` too — the same data unfiltered, so nothing is
+silently dropped. Both lists have legitimate rows: `misses[]` is headed by the
+bank trampolines the guard dissolved (`BankpopROM`, 24,250 reference calls) and
+the inlined audio leaf labels, so triage each row against the asm rather than
+taking row zero.
 
 ## Decision table
 
