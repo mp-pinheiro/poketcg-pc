@@ -1,16 +1,24 @@
+#define _POSIX_C_SOURCE 200809L
 #include "shell.h"
-
-#include "mem.h"
 
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #ifdef POKETCG_HAVE_SDL
 #include <SDL2/SDL.h>
 #endif
 
+/* One PPU frame: 1e9 * 70224 / 4194304 ns (59.7275 Hz), the same cadence the
+ * runtime ages the hardware clock by (mem_advance_hardware_clock(70224)). */
+#define POKETCG_FRAME_NS 16742706ull
+
 struct Shell {
 	int headless;
+	/* Held buttons across host passes. SDL delivers press/release edges, so the
+	 * pump has to keep the level itself or a held key lasts one pass. */
+	uint8_t buttons;
+	uint64_t next_ns;
 #ifdef POKETCG_HAVE_SDL
 	int have_audio;
 	SDL_AudioDeviceID audio_device;
@@ -96,6 +104,11 @@ const char *shell_backend_name(const Shell *shell)
 	return shell && !shell->headless ? "sdl" : "headless";
 }
 
+int shell_has_window(const Shell *shell)
+{
+	return shell && !shell->headless;
+}
+
 int shell_pump(Shell *shell, InputFrame *frame)
 {
 	if (!shell || !frame)
@@ -106,33 +119,56 @@ int shell_pump(Shell *shell, InputFrame *frame)
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT)
 				return 0;
-			if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
-				uint8_t bit = 0;
+			if (event.type != SDL_KEYDOWN && event.type != SDL_KEYUP)
+				continue;
+			/* OS key-repeat re-delivers KEYDOWN for a held key; the game reads
+			 * edge-triggered hKeysPressed, so a repeat must not be a new edge. */
+			if (event.key.repeat)
+				continue;
+			uint8_t bit = 0;
 			switch (event.key.keysym.sym) {
-				case SDLK_RIGHT: bit = BTN_RIGHT; break;
-				case SDLK_LEFT: bit = BTN_LEFT; break;
-				case SDLK_UP: bit = BTN_UP; break;
-				case SDLK_DOWN: bit = BTN_DOWN; break;
-				case SDLK_z: bit = BTN_A; break;
-				case SDLK_x: bit = BTN_B; break;
-				case SDLK_BACKSPACE: bit = BTN_SELECT; break;
-				case SDLK_RETURN: bit = BTN_START; break;
-				default: break;
-				}
-				if (bit) {
-					if (event.type == SDL_KEYDOWN)
-						frame->buttons |= bit;
-					else
-						frame->buttons &= (uint8_t)~bit;
-				}
+			case SDLK_RIGHT: bit = BTN_RIGHT; break;
+			case SDLK_LEFT: bit = BTN_LEFT; break;
+			case SDLK_UP: bit = BTN_UP; break;
+			case SDLK_DOWN: bit = BTN_DOWN; break;
+			case SDLK_z: bit = BTN_A; break;
+			case SDLK_x: bit = BTN_B; break;
+			case SDLK_BACKSPACE: bit = BTN_SELECT; break;
+			case SDLK_RETURN: bit = BTN_START; break;
+			default: break;
 			}
+			if (!bit)
+				continue;
+			if (event.type == SDL_KEYDOWN)
+				shell->buttons |= bit;
+			else
+				shell->buttons &= (uint8_t)~bit;
 		}
 	}
-#else
-	(void)shell;
 #endif
-	g_keys = shell_hkeys_from_input(frame->buttons);
+	frame->buttons = shell->buttons;
 	return 1;
+}
+
+void shell_pace(Shell *shell)
+{
+	if (!shell_has_window(shell))
+		return;
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	uint64_t now = (uint64_t)ts.tv_sec * 1000000000ull + (uint64_t)ts.tv_nsec;
+	/* More than four frames behind: drop the debt rather than free-run to
+	 * catch up, so a stall never turns into a burst. */
+	if (shell->next_ns == 0 || now > shell->next_ns + 4u * POKETCG_FRAME_NS)
+		shell->next_ns = now;
+	if (now < shell->next_ns) {
+		uint64_t wait = shell->next_ns - now;
+		struct timespec req;
+		req.tv_sec = (time_t)(wait / 1000000000ull);
+		req.tv_nsec = (long)(wait % 1000000000ull);
+		nanosleep(&req, NULL);
+	}
+	shell->next_ns += POKETCG_FRAME_NS;
 }
 
 void shell_present(Shell *shell, const uint16_t *framebuffer)
