@@ -552,11 +552,26 @@ CASES["CreateListOfEnergyAttachedToArena"] = [
 
 # >>> factory HandleNoDamageOrEffect
 CONTRACT["HandleNoDamageOrEffect"] = {"compare": ("f", "hl"), "preserve": ()}
+# The non-zero ids reach DrawWideTextBox_PrintText, whose EnableLCD writes
+# wLCDC (menus.asm:788-797); hl=0 skips the call on both lanes as the control.
 CASES["HandleNoDamageOrEffect"] = [
-    {"hl": 0x1234, "wram": {0xCCC7: b"\x00"}},
-    {"hl": 0x0000, "wram": {0xCCC7: b"\x80"}},
-    dict(POISON, hl=0x4567, wram={0xCCC7: b"\x80"}),
-    dict(POISON, hl=0x1234, wram={0xCCC7: b"\x00"}),
+    {"hl": 0x1234, "wram": {0xCCC7: b"\x00", 0xCABB: b"\x00"},
+     "read": {0xCABB: 1}, "setup": [{"fn": "CopyDMAFunction"},
+                                    {"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    {"hl": 0x0000, "wram": {0xCCC7: b"\x80", 0xCABB: b"\x00"},
+     "read": {0xCABB: 1}},
+    dict(POISON, hl=0x4567, wram={0xCCC7: b"\x80", 0xCABB: b"\x00"},
+         read={0xCABB: 1}, setup=[{"fn": "CopyDMAFunction"},
+                                  {"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    dict(POISON, hl=0x1234, wram={0xCCC7: b"\x00", 0xCABB: b"\x00"},
+         read={0xCABB: 1}, setup=[{"fn": "CopyDMAFunction"},
+                                  {"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    # substatus.asm:455-469: a NO_DAMAGE_OR_EFFECT_* value with bit 7 clear is
+    # the only way past `ret z` and `.dont_print_text` to the conditional call.
+    {"hl": 0x1234, "wram": {0xCCC7: b"\x01", 0xCABB: b"\x00"},
+     "read": {0xCABB: 1, 0xCCC7: 1}, "keys": [0x00, 0x01],
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory HandleNoDamageOrEffect
 

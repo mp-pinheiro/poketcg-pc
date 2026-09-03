@@ -2218,12 +2218,23 @@ CreateListOfEnergyAttachedToArenaResult CreateListOfEnergyAttachedToArena(uint8_
 
 
 /* >>> factory HandleNoDamageOrEffect */
+/* effect_functions.asm:454-461. `call nz, DrawWideTextBox_PrintText` really
+ * draws the box when the text id is non-zero; the port skipped the call and
+ * only synthesized its exit flags. Those flags are still `or h`'s -- carry from
+ * the trailing `scf`, Z only on the zero id -- because TextResult carries no f,
+ * so the observable change is the box itself and the callee's hl. */
 HandleNoDamageOrEffectResult HandleNoDamageOrEffect(uint16_t hl)
 {
 	NoDamageOrEffectCheckResult check = CheckNoDamageOrEffect(hl);
+
 	if ((check.f & 0x10u) == 0u)
 		return (HandleNoDamageOrEffectResult){check.f, check.hl};
-	return (HandleNoDamageOrEffectResult){(uint8_t)(0x10u | (check.hl == 0u ? 0x80u : 0x00u)), check.hl};
+	if (check.hl == 0u)
+		return (HandleNoDamageOrEffectResult){0x90u, check.hl};
+
+	TextResult text = DrawWideTextBox_PrintText(check.hl);
+
+	return (HandleNoDamageOrEffectResult){0x10u, text.hl};
 }
 /* <<< factory HandleNoDamageOrEffect */
 
