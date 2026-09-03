@@ -176,6 +176,23 @@ the prompt id the entry `ldtx` loaded) and `$CAC2` diverges too, so porting the
 body needs that routine's register and counter contract established first.
 Attempting the body without it produces a red row, not a fix.
 
+**A routine with several exits needs one reachable per case.** `pre-ret` takes a
+single pc, but the pc may differ per case, since the completion block iterates
+the records: `enumerate(SCHEMA2_CASES[...])` assigns one pc to case zero and
+another to the rest. That is what `Prophecy_PlayerSelectEffect`'s two exits
+need (effect_functions.asm:4746 at `0b:5A2E`, asm:4754 at `0b:5A3B`), and two of
+its three cases pass at the non-turn exit once the body actually calls
+HandleProphecyScreen -- which the port omitted, along with the trailing
+SwapTurn, and which its pc at that callee's entry concealed.
+
+What blocks the row is case zero: it reaches neither exit under any seed tried
+(its own keys, the three-key timeline the others use, and the non-turn duelvar
+seeds it lacks). Leaving just that case on the old mid-flight pc does not work
+either -- this routine's contract compares `a` and `f`, and a mid-flight stop
+has no comparable registers, so mixing boundaries within one routine fails the
+register check. Landing the body needs case zero's input driven to an exit
+first; the body change alone is correct but unprovable.
+
 ## When the divergence is the movie, not the port
 
 `5530S` is luck-manipulated: the RNG advances every frame, so the hand a duel
