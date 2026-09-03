@@ -821,6 +821,30 @@ correct, provable and still not move the gate: these three were real
 truncations, but the chain above them is broken too, so the reachability payoff
 arrives only when the last orphan is connected.
 
+The orphan root turned out to be two more stubs, both bare `return;`:
+`DuelMenu_Check` (`core.asm:747-750`) and `DuelMenuShortcut_BothActivePokemon`
+(`:752-756`). `DuelMenu_Check` is fixed -- `FinishQueuedAnimations`,
+`OpenDuelCheckMenu`, then the `jp DuelMainInterface` tail jump -- and needed the
+same `entry`-mode move as everything else on this path, stopping at
+`OpenDuelCheckMenu` (`00:3096`) because `DuelMainInterface` never returns
+either. `core` stays 369/371.
+
+**Still no gate movement**, which now says something specific: the TAS reaches
+the play area through the Select-button shortcut, not the Check item. That path
+is `DuelMenuShortcut_BothActivePokemon` ->
+`OpenVariousPlayAreaScreens_FromSelectPresses` (`:758-777`), and it is blocked
+on registers rather than on missing calls. Its body is
+`call OpenInPlayAreaScreen_FromSelectButton` / `ret c`, then a local helper
+twice around a `SwapTurn`, each with `ret c` -- but the wrapper's port returns
+`void`, and the carry it needs comes from `OpenInPlayAreaScreen`, also `void`.
+
+So the Select path needs two register contracts before its body can be written:
+`OpenInPlayAreaScreen` must report the carry its input loop exits with, and
+`OpenInPlayAreaScreen_FromSelectButton` must pass it through -- `BankswitchROM`
+sets no flags (`switch_rom.asm:90-93`), so the wrapper's carry is exactly its
+callee's. That is the same shape as the AI energy chain and should be done
+bottom-up, not by guessing a value at the top.
+
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
 things the asm never does: `wLCDC = $80`, `hKeysPressed = $01`, and reading the
