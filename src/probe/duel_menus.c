@@ -62,8 +62,7 @@ static void adapt_OpenDuelCheckMenu(ProbeState *s)
 /* >>> factory OpenInPlayAreaScreen_FromSelectButton */
 static void adapt_OpenInPlayAreaScreen_FromSelectButton(ProbeState *s)
 {
-	(void)s;
-	OpenInPlayAreaScreen_FromSelectButton();
+	s->f = OpenInPlayAreaScreen_FromSelectButton();
 }
 /* <<< factory OpenInPlayAreaScreen_FromSelectButton */
 

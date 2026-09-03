@@ -146,11 +146,10 @@ CASES["OpenDuelCheckMenu"] = [
 # <<< factory OpenDuelCheckMenu
 
 # >>> factory OpenInPlayAreaScreen_FromSelectButton
-# Its `f` is not compared: the screen's two exits are `scf; ret` and `or a; ret`
-# (play_area.asm:62-78), so the Z bit is inherited from whatever ran before and
-# the port does not model it. The reference returns $90 here, the carry alone
-# being what every caller reads.
-CONTRACT["OpenInPlayAreaScreen_FromSelectButton"] = {"compare": (), "preserve": ()}
+# `f` is a real output: the screen's exits are `scf; ret` and `or a; ret`
+# (play_area.asm:73-81) over SetupText's a=0/Z=1/H=1 return, giving $90 and
+# $80. BankswitchROM sets no flags, so the wrapper passes it through.
+CONTRACT["OpenInPlayAreaScreen_FromSelectButton"] = {"compare": ("f",), "preserve": ()}
 CASES["OpenInPlayAreaScreen_FromSelectButton"] = [
     {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xFF80: b"\x01"}, "read": {0xFF80: 1, 0xCE60: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xFF80: b"\x01"}, read={0xFF80: 1, 0xCE60: 1}, instruction_budget=20000000, cycle_budget=80000000),
