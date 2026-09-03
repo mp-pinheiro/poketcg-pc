@@ -4542,7 +4542,7 @@ CASES["OppAction_PlayEnergyCard"] = [
 # <<< factory OppAction_PlayEnergyCard
 
 # >>> factory AITryUseAttack
-CONTRACT["AITryUseAttack"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["AITryUseAttack"] = {"compare": ("a", "f"), "preserve": ()}
 wSelectedAttack_ = 0xCCC6
 hTempCardIndex_ff9f_ = 0xFF9F
 hTemp_ffa0_ = 0xFFA0

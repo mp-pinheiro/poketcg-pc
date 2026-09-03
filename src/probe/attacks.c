@@ -18,6 +18,7 @@ static void adapt_GetAIScoreOfAttack(ProbeState *s)
 static void adapt_AIProcessAttacks(ProbeState *s)
 {
 	AIProcessAttacksResult result = AIProcessAttacks();
+	s->a = result.a;
 	s->f = result.f;
 }
 /* <<< factory AIProcessAttacks */
@@ -26,6 +27,7 @@ static void adapt_AIProcessAttacks(ProbeState *s)
 static void adapt_AIProcessAndTryToUseAttack(ProbeState *s)
 {
 	AIProcessAttacksResult result = AIProcessAndTryToUseAttack();
+	s->a = result.a;
 	s->f = result.f;
 }
 /* <<< factory AIProcessAndTryToUseAttack */
@@ -34,6 +36,7 @@ static void adapt_AIProcessAndTryToUseAttack(ProbeState *s)
 static void adapt_AIProcessButDontUseAttack(ProbeState *s)
 {
 	AIProcessAttacksResult result = AIProcessButDontUseAttack();
+	s->a = result.a;
 	s->f = result.f;
 }
 /* <<< factory AIProcessButDontUseAttack */

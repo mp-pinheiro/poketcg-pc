@@ -2620,6 +2620,7 @@ static void adapt_OppAction_PlayEnergyCard(ProbeState *s)
 static void adapt_AITryUseAttack(ProbeState *s)
 {
 	AITryUseAttackResult r = AITryUseAttack(s->b);
+	s->a = r.a;
 	s->f = r.f;
 }
 /* <<< factory AITryUseAttack */

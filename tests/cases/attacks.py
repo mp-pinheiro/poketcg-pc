@@ -86,7 +86,8 @@ CASES["GetAIScoreOfAttack"] = [
 # <<< factory GetAIScoreOfAttack
 
 # >>> factory AIProcessAttacks
-CONTRACT["AIProcessAttacks"] = {"compare": ("f",), "preserve": ()}
+# ai/attacks.asm:52-116. `a` is a real output at all four exits.
+CONTRACT["AIProcessAttacks"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIProcessAttacks"] = [
     {"wram": {wAIBarrierFlagCounter: b"\x80", wAIExecuteProcessedAttack: b"\x00", wAIRetreatScore: b"\x00"}, "expect": {wAIRetreatScore: b"\x01"}, "read": {wAIRetreatScore: 1}},
     {"wram": {wPreviousAIFlags: b"\x01", wAIPlusPowerAttack: b"\x03", wAIExecuteProcessedAttack: b"\x01"}, "expect": {wSelectedAttack: b"\x03"}, "read": {wSelectedAttack: 1}},
@@ -96,7 +97,7 @@ CASES["AIProcessAttacks"] = [
 # <<< factory AIProcessAttacks
 
 # >>> factory AIProcessAndTryToUseAttack
-CONTRACT["AIProcessAndTryToUseAttack"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["AIProcessAndTryToUseAttack"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIProcessAndTryToUseAttack"] = [
     {"wram": {wAIBarrierFlagCounter: b"\x80", wAIExecuteProcessedAttack: b"\xff", wAIRetreatScore: b"\x00"}, "expect": {wAIExecuteProcessedAttack: b"\x00", wAIRetreatScore: b"\x01"}, "read": {wAIExecuteProcessedAttack: 1, wAIRetreatScore: 1}},
     {"wram": {wAIBarrierFlagCounter: b"\x80", wAIExecuteProcessedAttack: b"\x00", wAIRetreatScore: b"\x00"}, "expect": {wAIExecuteProcessedAttack: b"\x00", wAIRetreatScore: b"\x01"}, "read": {wAIExecuteProcessedAttack: 1, wAIRetreatScore: 1}},
@@ -105,7 +106,7 @@ CASES["AIProcessAndTryToUseAttack"] = [
 # <<< factory AIProcessAndTryToUseAttack
 
 # >>> factory AIProcessButDontUseAttack
-CONTRACT["AIProcessButDontUseAttack"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["AIProcessButDontUseAttack"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIProcessButDontUseAttack"] = [
     {"wram": {wAIBarrierFlagCounter: b"\x80", wAIExecuteProcessedAttack: b"\x00", wPreviousAIFlags: b"\x00", wAIScore: b"\x10\x20\x30\x40\x50\x60\x70"}, "expect": {wAIExecuteProcessedAttack: b"\x01", wAIScore: b"\x10\x20\x30\x40\x50\x60\x70", wTempPlayAreaAIScore: b"\x20\x30\x40\x50\x60\x70", wTempAIScore: b"\x10"}, "read": {wAIExecuteProcessedAttack: 1, wAIScore: 7, wTempPlayAreaAIScore: 6, wTempAIScore: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, wram={wAIBarrierFlagCounter: b"\x80", wAIExecuteProcessedAttack: b"\x00", wPreviousAIFlags: b"\x00", wAIScore: b"\xfe\xfd\xfc\xfb\xfa\xf9\xf8"}, expect={wAIExecuteProcessedAttack: b"\x01", wAIScore: b"\xfe\xfd\xfc\xfb\xfa\xf9\xf8", wTempPlayAreaAIScore: b"\xfd\xfc\xfb\xfa\xf9\xf8", wTempAIScore: b"\xfe"}, read={wAIExecuteProcessedAttack: 1, wAIScore: 7, wTempPlayAreaAIScore: 6, wTempAIScore: 1}, instruction_budget=20000000, cycle_budget=80000000),

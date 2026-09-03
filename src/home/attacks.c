@@ -75,9 +75,11 @@ AIProcessAttacksResult AIProcessAttacks(void)
 		CheckWhetherToSwitchToFirstAttack();
 
 attack_chosen:
-	if (wAIExecuteProcessedAttack != 0u) {
+	uint8_t chosen_execute = wAIExecuteProcessedAttack;
+
+	if (chosen_execute != 0u) {
 		RetrievePlayAreaAIScoreFromBackup2();
-		return (AIProcessAttacksResult){0x10u};
+		return (AIProcessAttacksResult){chosen_execute, 0x10u};
 	}
 
 	(void)AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_14);
@@ -100,16 +102,19 @@ use_attack:
 	wAITriedAttack = TRUE;
 	{
 		AITryUseAttackResult tried = AITryUseAttack(TRUE);
-		return (AIProcessAttacksResult){(uint8_t)((tried.f & 0x80u) | 0x10u)};
+		return (AIProcessAttacksResult){tried.a,
+			(uint8_t)((tried.f & 0x80u) | 0x10u)};
 	}
 
 dont_attack:
-	if (wAIExecuteProcessedAttack != 0u) {
+	uint8_t failed_execute = wAIExecuteProcessedAttack;
+
+	if (failed_execute != 0u) {
 		RetrievePlayAreaAIScoreFromBackup2();
-		return (AIProcessAttacksResult){0x00u};
+		return (AIProcessAttacksResult){failed_execute, 0x00u};
 	}
 	wAIRetreatScore = (uint8_t)(wAIRetreatScore + 1u);
-	return (AIProcessAttacksResult){0x80u};
+	return (AIProcessAttacksResult){failed_execute, 0x80u};
 }
 /* <<< factory AIProcessAttacks */
 

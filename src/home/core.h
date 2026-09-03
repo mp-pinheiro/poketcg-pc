@@ -1173,7 +1173,9 @@ void OppAction_PlayBasicPokemonCard(void);
 void OppAction_PlayEnergyCard(void);
 /* <<< factory OppAction_PlayEnergyCard */
 /* >>> factory AITryUseAttack */
-typedef struct { uint8_t f; } AITryUseAttackResult;
+/* ai/core.asm:133-168. All three exits return straight out of AIMakeDecision,
+ * so `a` is that call's, now that AIMakeDecisionResult carries it. */
+typedef struct { uint8_t a; uint8_t f; } AITryUseAttackResult;
 AITryUseAttackResult AITryUseAttack(uint8_t b);
 /* <<< factory AITryUseAttack */
 /* >>> factory PrintPokemonCardWeight */

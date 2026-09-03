@@ -8645,7 +8645,7 @@ AITryUseAttackResult AITryUseAttack(uint8_t b)
 	AIMakeDecisionResult begin = AIMakeDecision(OPPACTION_BEGIN_ATTACK_C, b,
 		copy.c, (uint8_t)(copy.de >> 8), (uint8_t)copy.de);
 	if ((begin.f & FLAG_C) != 0u)
-		return (AITryUseAttackResult){begin.f};
+		return (AITryUseAttackResult){begin.a, begin.f};
 
 	AISelectSpecialAttackParametersResult special = AISelectSpecialAttackParameters();
 	if ((special.f & FLAG_C) == 0u)
@@ -8658,13 +8658,13 @@ AITryUseAttackResult AITryUseAttack(uint8_t b)
 	AIMakeDecisionResult use = AIMakeDecision(OPPACTION_USE_ATTACK_C, begin.b,
 		copy2.c, (uint8_t)(copy2.de >> 8), (uint8_t)copy2.de);
 	if ((use.f & FLAG_C) != 0u)
-		return (AITryUseAttackResult){use.f};
+		return (AITryUseAttackResult){use.a, use.f};
 
 	(void)TryExecuteEffectCommandFunction(EFFECTCMDTYPE_AI_SWITCH_DEFENDING_PKMN,
 		use.b, use.d, use.e);
 	AIMakeDecisionResult anim = AIMakeDecision(OPPACTION_ATTACK_ANIM_AND_DAMAGE_C,
 		use.b, use.c, use.d, use.e);
-	return (AITryUseAttackResult){anim.f};
+	return (AITryUseAttackResult){anim.a, anim.f};
 }
 /* <<< factory AITryUseAttack */
 
