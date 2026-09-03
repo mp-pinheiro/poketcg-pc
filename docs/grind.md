@@ -447,6 +447,32 @@ one-line tail jump -- worth knowing before trusting them alone.
 Only `f` is modelled. `a` at exit differs per path and has no consumer, so
 inventing a value for it would have been the same defect in a smaller costume.
 
+**That carry was not the last obstruction: `a` is.**
+`AIEnergyTransTransferEnergyToBench`'s contract compares `("a", "f")`, and its
+six exits split by whether `a` is derivable:
+
+- `pkmn_powers.asm:273` `ret nc` -- `a` is CheckIfDefendingPokemonCanKnockOut's,
+  which its result already carries
+- `:285` `ret z` after `ld a, [wAttachedEnergies + GRASS]` / `or a` -- `a` is
+  zero on that path by construction
+- `:311` `ret z` -- `a` is the loop counter `b`, which reached zero
+- `.done_transfer` -- `a` is AIMakeDecision's, already modelled
+- `:278` `ret c` -- `a` is AIProcessButDontUseAttack's, and
+  `AIProcessAttacksResult` carries only `f`
+- `:289` `ret nc` -- `a` is the wrapper's, and `AIEnergyResult` carries only `f`
+
+The last two are the blocker. `AIProcessButDontUseAttack` tail-calls
+`AIProcessAttacks` (`attacks.c:132`), whose four exits build `f` values with no
+`a` tracked at all, so the byte has to be derived there first -- one routine,
+four exits, the same shape as the carry work above. Adding `a` to those two
+result structs is the prerequisite; guessing it would put a wrong byte in a
+*compared* field, which is worse than leaving the row on the worklist.
+
+`HandleAIEnergyTrans` is the same wait and stays a stub for the same reason. Its
+two identical `if` arms are gone: both returned the same value, so the condition
+was dead code that read as a modelled branch. Removing it changes no behaviour
+and removes the disguise.
+
 `ChallengeMachine_Duel` was the second row of that class and is fixed --
 `challenge_machine.asm:177-181`, the song wait, the `wSongOverride` clear,
 `SaveGeneralSaveData` and `StartDuel_VSAIOpp`, the duel entry itself, all
