@@ -7,6 +7,7 @@ import argparse
 import ctypes
 import hashlib
 import json
+import mmap
 import re
 import struct
 import sys
@@ -364,8 +365,10 @@ def scenario_masks(scenario: str, frames: int,
     return [0] * frames
 
 
-def stream_key(pins: dict[str, Any], masks: list[int], frames: int) -> str:
+def stream_key(pins: dict[str, Any], masks: list[int], frames: int,
+               input_axis: str = "ordinal") -> str:
     digest = hashlib.sha256()
+    digest.update(input_axis.encode())
     digest.update(pins["rom"]["sha256"].encode())
     digest.update(pins["core"]["sha256"].encode())
     digest.update(bytes(mask & 0xFF for mask in masks))
@@ -422,9 +425,13 @@ def routine_of_label(label: str) -> str:
 
 def build(scenario: str, frames: int, anchors: int,
           masks: list[int] | None = None) -> dict[str, Any]:
+    # A movie is one mask per rendered frame and must be replayed on that axis,
+    # the same way routine_trace does it; the anchor axis desyncs it.
+    axis = "frame" if masks is not None else "ordinal"
     masks = scenario_masks(scenario, frames, masks)
     with Core(masks) as core:
-        key = stream_key(core.pins, masks, frames)
+        core.input_axis = axis
+        key = stream_key(core.pins, masks, frames, axis)
         directory = STREAM_ROOT / key
         meta_path = directory / "meta.json"
         if meta_path.is_file():
@@ -493,10 +500,19 @@ class Stream:
     def __init__(self, directory: Path) -> None:
         self.directory = directory
         self.meta = json.loads((directory / "meta.json").read_text())
-        self._records = (directory / "anchors.bin").read_bytes()
+        # A TAS-length stream is one full state per anchor: 21,500 anchors is
+        # 181 MB. Reading that into a bytes object and slicing it per compare
+        # copies enough to exhaust a 16 GB box. Mapping it keeps the pages
+        # file-backed and reclaimable; only one domain is copied per compare.
+        self._handle = (directory / "anchors.bin").open("rb")
+        self._records = mmap.mmap(self._handle.fileno(), 0, access=mmap.ACCESS_READ)
         self._ordinals = (directory / "ordinals.bin").read_bytes()
         self.stride = int(self.meta["stride"])
         self.count = len(self._records) // self.stride
+
+    def close(self) -> None:
+        self._records.close()
+        self._handle.close()
 
     def domain(self, ordinal: int, name: str) -> bytes:
         if not 0 <= ordinal < self.count:
@@ -531,6 +547,8 @@ def writers(
     }
     stream: dict[int, list[dict[str, Any]]] = {address: [] for address in addresses}
     with Core(masks) as core:
+        if movie:
+            core.input_axis = "frame"
 
         def on_write(address: int, _cycle: int) -> None:
             nonlocal sequence
