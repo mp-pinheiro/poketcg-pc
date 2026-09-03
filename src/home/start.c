@@ -119,7 +119,12 @@ uint8_t ShowCardPopCGBDisclaimer(void)
 	InitTextPrinting(1, 12);
 	(void)PrintTextNoDelay(DISCLAIMER_TEXT_ID, 1, 12);
 	(void)SetCursorParametersForTextBox(18, 17, SYM_CURSOR_D, SYM_BOX_BOTTOM);
-	return 0x10u;
+	/* start.asm:399-401. The port dropped the wait and returned a bare
+	 * carry. `scf` clears N and H and leaves Z, so the exit is the callee's
+	 * Z with carry forced on. */
+	WaitResult wait = WaitForButtonAorB();
+
+	return (uint8_t)((wait.f & 0x80u) | 0x10u);
 }
 
 /* >>> factory CheckIfHasSaveData */

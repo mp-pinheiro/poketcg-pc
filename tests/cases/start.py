@@ -12,13 +12,17 @@ CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4,
 VRAM_READ = {0: {0x8000: 0x1000, 0x9000: 0x800}}
 
 CASES = {
+    # start.asm:399 waits on WaitForButtonAorB, whose RefreshMenuCursor
+    # increments wCursorBlinkCounter every frame (menus.asm:173-176). Observing
+    # that byte is what distinguishes running the wait from skipping it; the
+    # cache and VRAM spans alone do not.
     "ShowCardPopCGBDisclaimer": [
-        {"wram": {WCONSOLE: b"\x00"}, "keys": 0x01,
-         "setup": SETUP, "read": CACHE_READ, "vread": VRAM_READ},
-        {"wram": {WCONSOLE: b"\x00"}, "keys": 0x02,
-         "setup": SETUP, "read": CACHE_READ, "vread": VRAM_READ},
-        dict(POISON, wram={WCONSOLE: b"\x00"}, keys=0x01,
-             setup=SETUP, read=CACHE_READ, vread=VRAM_READ),
+        {"wram": {WCONSOLE: b"\x00", 0xCD0F: b"\x00"}, "keys": 0x01,
+         "setup": SETUP, "read": {**CACHE_READ, 0xCD0F: 1}, "vread": VRAM_READ},
+        {"wram": {WCONSOLE: b"\x00", 0xCD0F: b"\x00"}, "keys": 0x02,
+         "setup": SETUP, "read": {**CACHE_READ, 0xCD0F: 1}, "vread": VRAM_READ},
+        dict(POISON, wram={WCONSOLE: b"\x00", 0xCD0F: b"\x00"}, keys=0x01,
+             setup=SETUP, read={**CACHE_READ, 0xCD0F: 1}, vread=VRAM_READ),
         {"wram": {WCONSOLE: b"\x02"}},
     ],
 }
