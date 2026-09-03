@@ -9498,7 +9498,31 @@ void RestartPracticeDuelTurn(void) { }
 /* <<< factory RestartPracticeDuelTurn */
 
 /* >>> factory DuelMainInterface */
-void DuelMainInterface(void) { }
+/* core.asm:282-299. Draws the main duel scene, then hands the bottom text box to
+ * whoever owns the turn: the player gets the duel menu, a link opponent gets its
+ * own turn routine, and an AI opponent gets "thinking" text and acts. Only the
+ * AI arm has a `ret`; the other two are tail jumps. */
+void DuelMainInterface(void)
+{
+	uint8_t type;
+
+	DrawDuelMainScene();
+	type = wDuelistType;
+	if (type == DUELIST_TYPE_PLAYER) {
+		PrintDuelMenuAndHandleInput();
+		return;
+	}
+	if (type == DUELIST_TYPE_LINK_OPP) {
+		DoLinkOpponentTurn();
+		return;
+	}
+	wVBlankCounter = 0u;
+	wSkipDuelistIsThinkingDelay = 0u;
+	(void)DrawWideTextBox_PrintTextNoDelay(DuelistIsThinkingText);
+	(void)AIDoAction_Turn();
+	wPlayerAttackingCardIndex = 0xFFu;
+	wPlayerAttackingAttackIndex = 0xFFu;
+}
 /* <<< factory DuelMainInterface */
 
 #define DUEL_MENU_DATA 0x54E9u

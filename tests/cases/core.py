@@ -5035,8 +5035,17 @@ CASES["RestartPracticeDuelTurn"] = [dict(POISON, read={0xCC10: 1, 0xCC11: 1}, ex
 # >>> factory DuelMainInterface
 CONTRACT["DuelMainInterface"] = {"compare": (), "preserve": ()}
 CASES["DuelMainInterface"] = [
-    {"wram": {0xCC0D: b"\x80", 0xCAB8: b"\xaa", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd"}, "read": {0xCAB8: 1, 0xCBF9: 1, 0xCC10: 1, 0xCC11: 1}, "expect": {0xCAB8: b"\xaa", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd"}},
-    dict(POISON, wram={0xCC0D: b"\x00", 0xCAB8: b"\xaa", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd"}, read={0xCAB8: 1, 0xCBF9: 1, 0xCC10: 1, 0xCC11: 1}, expect={0xCAB8: b"\xaa", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd"})
+    # wDuelistType $80 is the AI opponent. Drawing the main scene costs more than
+    # the default 240-frame allowance.
+    {"wram": {0xCC0D: b"\x80", 0xCAB8: b"\xaa", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd"}, "read": {0xCAB8: 1, 0xCBF9: 1, 0xCC10: 1, 0xCC11: 1}, "expect": {0xCAB8: b"\xaa", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    # wDuelistType 0 is the player, so this one falls into the duel menu's input
+    # loop: it holds B and presses Up to leave through the first shortcut.
+    dict(POISON, wram={0xCC0D: b"\x00", 0xCAB8: b"\xaa", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd", 0xCC07: b"\x00", 0xCBE7: b"\x00"}, read={0xCAB8: 1, 0xCBF9: 1, 0xCC10: 1, 0xCC11: 1}, expect={0xCAB8: b"\xaa", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd"},
+         keys=[0x42, 0x42],
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000)
 ]
 # <<< factory DuelMainInterface
 
@@ -5275,11 +5284,15 @@ CASES["_ContinueDuel"] = [
      "wram": {wDuelReturnAddress: b"\xAA\xBB", wDuelFinished: b"\xCC", wDuelTheme: b"\x01"},
      "read": {wDuelReturnAddress: 2, wDuelFinished: 1},
      "expect": {wDuelReturnAddress: b"\xFC\xFF", wDuelFinished: b"\x00"},
+     "keys": [0x42, 0x42],
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, entry_sp=0xFFFC,
          wram={wDuelReturnAddress: b"\xAA\xBB", wDuelFinished: b"\xCC", wDuelTheme: b"\x01"},
          read={wDuelReturnAddress: 2, wDuelFinished: 1},
          expect={wDuelReturnAddress: b"\xFC\xFF", wDuelFinished: b"\x00"},
+         keys=[0x42, 0x42],
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory _ContinueDuel
@@ -7193,8 +7206,16 @@ for _record in SCHEMA2_CASES["RestartPracticeDuelTurn"]:
 MUTATIONS["DuelMainInterface"] = {"source_symbol": "DuelMainInterface", "before": "void DuelMainInterface(void) { }", "after": "void DuelMainInterface(void) { wVBlankCounter = 1u; }", "case_ids": ["DuelMainInterface-0", "DuelMainInterface-1"]}
 # <<< factory-mutation DuelMainInterface
 # >>> factory-completion DuelMainInterface
-for _record in SCHEMA2_CASES["DuelMainInterface"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x238C, "bank": 1}
+# 0x238C is below 0x4000, so "bank 1" never meant anything there. This routine
+# is at 01:426D; only its AI arm has a `ret`, and that arm calls AIDoAction_Turn,
+# which needs a live duel state the seeds do not build, so it stops on entering
+# it -- both counter zeroes and the thinking text are still compared. The player
+# arm tail-jumps into the duel menu and leaves through the B+Up shortcut.
+SCHEMA2_CASES["DuelMainInterface"][0]["completion"] = {
+    "mode": "entry", "pc": 0x2BBF, "bank": 0, "routine": "AIDoAction_Turn"}
+SCHEMA2_CASES["DuelMainInterface"][1]["completion"] = {
+    "mode": "entry", "pc": 0x430B, "bank": 1,
+    "routine": "DuelMenuShortcut_OpponentPlayArea"}
 # <<< factory-completion DuelMainInterface
 # >>> factory-mutation PrintDuelMenuAndHandleInput
 MUTATIONS["PrintDuelMenuAndHandleInput"] = {"source_symbol": "PrintDuelMenuAndHandleInput", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["PrintDuelMenuAndHandleInput-0"]}
@@ -7393,8 +7414,11 @@ for _record in SCHEMA2_CASES["MainDuelLoop"]:
 MUTATIONS["_ContinueDuel"] = {"source_symbol": "_ContinueDuel", "before": "void _ContinueDuel(void)\n{\n\tuint16_t entry_sp = 0xFFFCu;", "after": "void _ContinueDuel(void)\n{\n\tuint16_t entry_sp = 0xFFFDu;", "case_ids": ["_ContinueDuel-0", "_ContinueDuel-1"]}
 # <<< factory-mutation _ContinueDuel
 # >>> factory-completion _ContinueDuel
+# It falls through DuelMainInterface into the duel menu's input loop and has no
+# reachable `ret` of its own, so both lanes stop where the B+Up shortcut lands.
 for _record in SCHEMA2_CASES["_ContinueDuel"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x2382, "bank": 1}
+    _record["completion"] = {"mode": "entry", "pc": 0x430B, "bank": 1,
+                             "routine": "DuelMenuShortcut_OpponentPlayArea"}
 # <<< factory-completion _ContinueDuel
 # >>> factory-mutation DoLinkOpponentTurn
 MUTATIONS["DoLinkOpponentTurn"] = {"source_symbol": "DoLinkOpponentTurn", "before": "void DoLinkOpponentTurn(void)\n{\n}", "after": "void DoLinkOpponentTurn(void)\n{\n\thWhoseTurn = 0xC3u;\n}", "case_ids": ["DoLinkOpponentTurn-0", "DoLinkOpponentTurn-1"]}
