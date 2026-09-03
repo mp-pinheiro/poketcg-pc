@@ -4935,9 +4935,15 @@ CASES["OpenTurnHolderPlayAreaScreen"] = [
 
 # >>> factory OpenVariousPlayAreaScreens_FromSelectPresses
 CONTRACT["OpenVariousPlayAreaScreens_FromSelectPresses"] = {"compare": ("f",), "preserve": ()}
+# Seeds the B press that backs out of the in-play-area screen, which is the
+# chain's first `ret c`; redrawing that screen needs more than 240 frames.
 CASES["OpenVariousPlayAreaScreens_FromSelectPresses"] = [
-    {},
-    dict(POISON),
+    {"keys": [0x00, 0x02],
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02],
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory OpenVariousPlayAreaScreens_FromSelectPresses
 
@@ -5126,7 +5132,14 @@ CASES["DuelMenu_Check"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}
 
 # >>> factory DuelMenuShortcut_BothActivePokemon
 CONTRACT["DuelMenuShortcut_BothActivePokemon"] = {"compare": (), "preserve": ()}
-CASES["DuelMenuShortcut_BothActivePokemon"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# The chain walks the in-play-area screen, so this seeds the B press that backs
+# out of it and the budget that redraw needs.
+CASES["DuelMenuShortcut_BothActivePokemon"] = [
+    dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"},
+         keys=[0x00, 0x02],
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000)
+]
 # <<< factory DuelMenuShortcut_BothActivePokemon
 
 # >>> factory DuelMenu_Attack
@@ -7087,8 +7100,10 @@ for _record in SCHEMA2_CASES["OpenTurnHolderPlayAreaScreen"]:
 MUTATIONS["OpenVariousPlayAreaScreens_FromSelectPresses"] = {"source_symbol": "OpenVariousPlayAreaScreens_FromSelectPresses", "before": "return 0x20u;", "after": "return 0x21u;", "case_ids": ["OpenVariousPlayAreaScreens_FromSelectPresses-0", "OpenVariousPlayAreaScreens_FromSelectPresses-1"]}
 # <<< factory-mutation OpenVariousPlayAreaScreens_FromSelectPresses
 # >>> factory-completion OpenVariousPlayAreaScreens_FromSelectPresses
+# 0x1F72 was `FillRectangle.next_tile` in bank 0, an unrelated `ret`: this
+# routine is at 01:4597 and its carry exit is the `ret c` at 01:459A.
 for _record in SCHEMA2_CASES["OpenVariousPlayAreaScreens_FromSelectPresses"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x1F72}
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x459A, "bank": 1}
 # <<< factory-completion OpenVariousPlayAreaScreens_FromSelectPresses
 # >>> factory-mutation OpenPlayAreaScreenForViewing
 MUTATIONS["OpenPlayAreaScreenForViewing"] = {"source_symbol": "OpenPlayAreaScreenForViewing", "before": "void OpenPlayAreaScreenForViewing(void)\n{\n\t(void)0;", "after": "void OpenPlayAreaScreenForViewing(void)\n{\n\tgb_write8(0xCBD4u, 1u);", "case_ids": ["OpenPlayAreaScreenForViewing-0", "OpenPlayAreaScreenForViewing-1"]}
@@ -7276,8 +7291,11 @@ for _record in SCHEMA2_CASES["DuelMenu_Check"]:
 MUTATIONS["DuelMenuShortcut_BothActivePokemon"] = {"source_symbol": "DuelMenuShortcut_BothActivePokemon", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenuShortcut_BothActivePokemon-0"]}
 # <<< factory-mutation DuelMenuShortcut_BothActivePokemon
 # >>> factory-completion DuelMenuShortcut_BothActivePokemon
+# 0x4547 in bank 2 names no symbol at all, and this routine ends in a tail jump
+# with no `ret`; both lanes stop where that jump lands instead.
 for _record in SCHEMA2_CASES["DuelMenuShortcut_BothActivePokemon"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x4547, "bank": 2}
+    _record["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
+                             "routine": "DuelMainInterface"}
 # <<< factory-completion DuelMenuShortcut_BothActivePokemon
 # >>> factory-mutation DuelMenu_Attack
 MUTATIONS["DuelMenu_Attack"] = {"source_symbol": "DuelMenu_Attack", "before": "wSelectedDuelSubMenuItem = 0u;", "after": "wSelectedDuelSubMenuItem = 1u;", "case_ids": ["DuelMenu_Attack-0"]}

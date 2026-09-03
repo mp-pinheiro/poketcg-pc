@@ -9258,14 +9258,34 @@ HasAlivePokemonInPlayAreaResult OpenTurnHolderPlayAreaScreen(void)
 /* <<< factory OpenTurnHolderPlayAreaScreen */
 
 /* >>> factory OpenVariousPlayAreaScreens_FromSelectPresses */
-/* core.asm:758-766. Not ported: the chain's own `f` cannot be derived yet. Its
- * first call returns the in-play-area screen's flags, whose exits are `scf; ret`
- * and `or a; ret` (play_area.asm:62-78), so the Z bit is inherited from inside
- * that screen. The reference returns $90 there and $20 here; the old stub's
- * $20 agreed with the latter by coincidence, not by translation. */
+/* core.asm:768-777. Shows one duelist's play area for viewing; carry means the
+ * player backed out with B. `and PAD_B` sets H, so the no-carry exit is Z|H. */
+static uint8_t view_one_play_area(void)
+{
+	(void)HasAlivePokemonInPlayArea();
+	wPlayAreaSelectAction = 2u;
+	(void)OpenPlayAreaScreenForViewing();
+	return (hKeysPressed & PAD_B) != 0u ? 0x10u : 0xA0u;
+}
+
+/* core.asm:758-766. The Select shortcut: the in-play-area screen, then each
+ * duelist's play area in turn. SwapTurn is `push af ... pop af` (duel.asm:2364)
+ * so it preserves flags, and the final `ret` carries the second view's. */
 uint8_t OpenVariousPlayAreaScreens_FromSelectPresses(void)
 {
-	return 0x20u;
+	uint8_t screen = OpenInPlayAreaScreen_FromSelectButton();
+	uint8_t own;
+	uint8_t other;
+
+	if ((screen & 0x10u) != 0u)
+		return screen;
+	own = view_one_play_area();
+	if ((own & 0x10u) != 0u)
+		return own;
+	SwapTurn();
+	other = view_one_play_area();
+	SwapTurn();
+	return other;
 }
 /* <<< factory OpenVariousPlayAreaScreens_FromSelectPresses */
 
@@ -9586,9 +9606,13 @@ void DuelMenu_Check(void)
 /* <<< factory DuelMenu_Check */
 
 /* >>> factory DuelMenuShortcut_BothActivePokemon */
+/* core.asm:753-756. The duel menu's Select shortcut; `jp DuelMainInterface` is a
+ * tail jump, so this routine has no `ret` of its own. */
 void DuelMenuShortcut_BothActivePokemon(void)
 {
-	return;
+	FinishQueuedAnimations();
+	(void)OpenVariousPlayAreaScreens_FromSelectPresses();
+	DuelMainInterface();
 }
 /* <<< factory DuelMenuShortcut_BothActivePokemon */
 
