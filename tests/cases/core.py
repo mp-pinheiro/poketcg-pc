@@ -252,9 +252,22 @@ CASES["PrintPracticeDuelInstructionsTextBoxLabel"] = [
 
 # >>> factory SwitchCardPage
 CONTRACT["SwitchCardPage"] = {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+# core.asm:3773-3789 dispatches sixteen table entries. Four of them answer from
+# the loaded card's attack and description fields via CheckCardPageExists, so
+# every index runs with those fields present, and the field-dependent ones also
+# run with them absent. The carry each arm returns is not compared: the exits
+# reached by `scf` leave Z as the caller had it, and CardPageResult carries no Z
+# to model that with.
+_SCP_FIELDS = {0xCC34: b"\x11\x22", 0xCC38: b"\x33\x44",
+               0xCC47: b"\x55\x66", 0xCC4B: b"\x77\x88",
+               0xCC30: b"\x99\xAA"}
+_SCP_EMPTY = {address: b"\x00\x00" for address in _SCP_FIELDS}
 CASES["SwitchCardPage"] = [
     {"a": 0},
     dict(POISON, a=0, f=0),
+    *({"a": page, "wram": dict(_SCP_FIELDS)} for page in range(16)),
+    *({"a": page, "wram": dict(_SCP_EMPTY)} for page in (2, 3, 4, 5, 10, 14)),
+    dict(POISON, a=15, wram=dict(_SCP_FIELDS)),
 ]
 # <<< factory SwitchCardPage
 

@@ -266,15 +266,55 @@ CardPageResult CardPageSwitch_PokemonOverviewOrDescription(void)
 }
 /* <<< factory CardPageSwitch_PokemonOverviewOrDescription */
 
+/* Every handler in the table exits through `or`, never `scf`, except the four
+ * that return an explicit page, so a carry of zero is the whole conversion.
+ * GoToFirstOrNextCardPage recomputes Z from `a` with its own `or a`
+ * (core.asm:3729-3731), which is why CardPageResult carries no Z. */
+static CardPageResult page_exists(CardPageExistsResult r)
+{
+	return (CardPageResult){r.a, 0u};
+}
+
 /* >>> factory SwitchCardPage */
-/* core.asm:3769-3790 */
+/* core.asm:3769-3790. All sixteen table entries dispatch; the port answered
+ * only two and returned the page unchanged for the rest, so a card page never
+ * advanced past the overview and the duel's card list could not be left. */
 CardPageResult SwitchCardPage(uint8_t a)
 {
 	switch (a) {
-	case 0u:
+	case 0x00u:
 		return CardPageSwitch_00();
-	case CARDPAGE_POKEMON_OVERVIEW:
+	case 0x01u:
+	case 0x06u:
 		return CardPageSwitch_PokemonOverviewOrDescription();
+	case 0x02u:
+		return page_exists(CardPageSwitch_PokemonAttack1Page1());
+	case 0x03u:
+		{
+			uint16_t hl = 0u;
+
+			return page_exists(CardPageSwitch_PokemonAttack1Page2(&hl));
+		}
+	case 0x04u:
+		return page_exists(CardPageSwitch_PokemonAttack2Page1());
+	case 0x05u:
+		return page_exists(CardPageSwitch_PokemonAttack2Page2());
+	case 0x07u:
+		return CardPageSwitch_PokemonEnd();
+	case 0x08u:
+		return CardPageSwitch_08();
+	case 0x09u:
+	case 0x0Du:
+		return (CardPageResult){CardPageSwitch_EnergyOrTrainerPage1().a, 0u};
+	case 0x0Au:
+	case 0x0Eu:
+		return (CardPageResult){CardPageSwitch_TrainerPage2().a, 0u};
+	case 0x0Bu:
+		return CardPageSwitch_EnergyEnd();
+	case 0x0Cu:
+		return CardPageSwitch_0c();
+	case 0x0Fu:
+		return CardPageSwitch_TrainerEnd();
 	default:
 		return (CardPageResult){a, 0u};
 	}
