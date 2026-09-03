@@ -126,6 +126,9 @@ void OpenInPlayAreaScreen_FromSelectButton(void)
 	uint8_t saved_bank = hBankROM;
 	BankswitchROM(6u);
 	wInPlayAreaFromSelectButton = 1u;
+	/* duel_menus.asm:11-20: the screen itself was missing between the flag
+	 * write and the bank restore. */
+	OpenInPlayAreaScreen();
 	BankswitchROM(saved_bank);
 }
 /* <<< factory OpenInPlayAreaScreen_FromSelectButton */

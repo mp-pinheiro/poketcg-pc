@@ -3462,9 +3462,11 @@ void _OpenDuelCheckMenu(void)
 /* <<< factory _OpenDuelCheckMenu */
 
 /* >>> factory DuelCheckMenu_InPlayArea */
+/* menus/duel.asm:36-40 */
 void DuelCheckMenu_InPlayArea(void)
 {
 	wInPlayAreaFromSelectButton = 0u;
+	OpenInPlayAreaScreen();
 }
 /* <<< factory DuelCheckMenu_InPlayArea */
 

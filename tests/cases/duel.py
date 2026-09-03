@@ -2237,8 +2237,12 @@ MUTATIONS["_OpenDuelCheckMenu"] = {"source_symbol": "_OpenDuelCheckMenu", "befor
 MUTATIONS["DuelCheckMenu_InPlayArea"] = {"source_symbol": "DuelCheckMenu_InPlayArea", "before": "void DuelCheckMenu_InPlayArea(void)\n{\n\twInPlayAreaFromSelectButton = 0u;", "after": "void DuelCheckMenu_InPlayArea(void)\n{\n\twInPlayAreaFromSelectButton = 1u;", "case_ids": ["DuelCheckMenu_InPlayArea-0", "DuelCheckMenu_InPlayArea-1"]}
 # <<< factory-mutation DuelCheckMenu_InPlayArea
 # >>> factory-completion DuelCheckMenu_InPlayArea
+# menus/duel.asm:39 now really enters OpenInPlayAreaScreen, whose input loop
+# only exits on a keypress, so `pre-ret` stopped the reference while the native
+# lane ran into the loop. Both stop at the screen draw the loop opens with.
 for _record in SCHEMA2_CASES["DuelCheckMenu_InPlayArea"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x1DCA}
+    _record["completion"] = {"mode": "entry", "pc": 0x42CE, "bank": 2,
+                             "routine": "DrawInPlayAreaScreen"}
 # <<< factory-completion DuelCheckMenu_InPlayArea
 # >>> factory-mutation DuelCheckMenu_YourPlayArea
 MUTATIONS["DuelCheckMenu_YourPlayArea"] = {"source_symbol": "DuelCheckMenu_YourPlayArea", "before": "void DuelCheckMenu_YourPlayArea(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\twce5e = 0u;", "after": "void DuelCheckMenu_YourPlayArea(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\twce5e = 0x80u;", "case_ids": ["DuelCheckMenu_YourPlayArea-0", "DuelCheckMenu_YourPlayArea-1"]}
