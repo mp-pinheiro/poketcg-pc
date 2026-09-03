@@ -514,12 +514,28 @@ not shallower. `AIProcessButDontUseAttack` tail-calls `AIProcessAttacks`
 
 So three of four derive, and the fourth descends again: `AITryUseAttack`
 (`ai/core.asm:133`) has three exits and every one returns straight out of
-`AIMakeDecision`, whose `AIMakeDecisionResult` carries `b`-`f` and no `a`.
-`AIMakeDecision` itself (`core.asm:6229`) has several exits of its own. That is
-five levels from the AI row, so the honest description is not "one register two
-levels down" but a register chain whose bottom I have not yet found. Guessing
-anywhere along it would put a wrong byte in a *compared* field, which is worse
-than leaving the row on the worklist.
+`AIMakeDecision`.
+
+**`AIMakeDecision` is the bottom, and it is now landed.** Its three exits are
+each derivable from bytes the port already computes (`core.asm:6229-6263`):
+
+- `.turn_ended` -- `a` is the `wDuelFinished | wOpponentTurnEnded` OR the branch
+  itself tested, so it is non-zero by construction
+- the `ret nz` -- `a` is the re-read `wSkipDuelistIsThinkingDelay`, which the
+  dispatch may have set, non-zero on this path
+- the fall-through -- `a` is `DrawWideTextBox_PrintTextNoDelay`'s own `a`, and
+  `TextResult` already carries it
+
+`AIMakeDecisionResult` gained `a`, the probe adapter reports it, and the
+contract compares `("a", "f")` where it compared only `f`. Zeroing the
+fall-through fails 1/6, so it discriminates. `core` stays 369/371, the two
+pre-existing failures bisected earlier as not mine.
+
+Three links remain above it, each now unblocked rather than unknown:
+`AITryUseAttackResult` and `AIProcessAttacksResult` need `a` threaded through
+(both are one-line tail returns from `AIMakeDecision`), then
+`AIEnergyTransTransferEnergyToBench`'s `:278` and `:289` exits close and the
+143-line body becomes portable. Nothing along the chain needs guessing now.
 
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
