@@ -7585,10 +7585,12 @@ void PlayAttackAnimation(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, 
 	gb_write8(wDamageAnimAmount_ADDR, e);
 	gb_write8(wDamageAnimAmount_ADDR + 1u, d);
 
-	if (wAnimationsDisabled != 0u) {
-		hWhoseTurn = saved_h_whose_turn;
-		return;
-	}
+	/* core.asm:8362-8406 has no wAnimationsDisabled check here: the asm always
+	 * upgrades ATK_ANIM_HIT and always farcalls PlayAttackAnimationCommands.
+	 * The guard belongs one level down, where animations/core.asm:51 puts it
+	 * and src/home/duel_animation_core.c:116 already has it. Hoisting it here
+	 * skipped PlayAttackAnimationCommands, so wAttackAnimationIsPlaying was
+	 * never set. */
 	uint8_t loaded_animation = wLoadedAttackAnimation;
 	if (loaded_animation == ATK_ANIM_HIT && e >= 70u) {
 		loaded_animation = ATK_ANIM_BIG_HIT;

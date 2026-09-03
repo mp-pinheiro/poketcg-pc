@@ -4132,6 +4132,25 @@ CASES["PlayAttackAnimation"] = [
     {"a": 0x44, "f": 0x80, "b": 0x05, "c": 0x07, "d": 0x01, "e": 0x45, "hl": 0xC300, "wram": {hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC3", wTempNonTurnDuelistCardID: b"\xA0", wLoadedAttackAnimation: b"\x00"}, "read": {wDamageAnimEffectiveness: 1, wDamageAnimPlayAreaLocation: 1, wDamageAnimPlayAreaSide: 1, wDamageAnimCardID: 1, wDamageAnimAmount: 2}},
     dict(POISON, wram={hWhoseTurn: b"\xC3", wWhoseTurn: b"\xC3", wTempNonTurnDuelistCardID: b"\xFE", wLoadedAttackAnimation: b"\x00"}, read={wDamageAnimEffectiveness: 1, wDamageAnimPlayAreaLocation: 1, wDamageAnimPlayAreaSide: 1, wDamageAnimCardID: 1, wDamageAnimAmount: 2}),
     dict(POISON, b=0x7F, c=0xCC, d=0xAA, e=0x10, hl=0x7F00, wram={hWhoseTurn: b"\x80", wWhoseTurn: b"\x7F", wTempNonTurnDuelistCardID: b"\x42", wLoadedAttackAnimation: b"\x00"}, read={wDamageAnimEffectiveness: 1, wDamageAnimPlayAreaLocation: 1, wDamageAnimPlayAreaSide: 1, wDamageAnimCardID: 1, wDamageAnimAmount: 2}),
+    # core.asm:8389-8397 upgrades ATK_ANIM_HIT to ATK_ANIM_BIG_HIT at 70 damage
+    # and then always dispatches, which the cases above cannot see: they seed
+    # wLoadedAttackAnimation to 0, so PlayAttackAnimationCommands returns on its
+    # own `ret z`. wAnimationsDisabled is set so the deeper guard
+    # (animations/core.asm:51) short-circuits the animation itself.
+    {"a": 0x10, "b": 0x02, "c": 0x01, "d": 0x00, "e": 70, "hl": 0xC200,
+     "wram": {hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC2",
+              wTempNonTurnDuelistCardID: b"\x15",
+              wLoadedAttackAnimation: b"\x01", 0xCE7E: b"\x00",
+              0xD421: b"\x01"},
+     "read": {wLoadedAttackAnimation: 1, 0xCE7E: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0x10, "b": 0x02, "c": 0x01, "d": 0x00, "e": 69, "hl": 0xC200,
+     "wram": {hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC2",
+              wTempNonTurnDuelistCardID: b"\x15",
+              wLoadedAttackAnimation: b"\x01", 0xCE7E: b"\x00",
+              0xD421: b"\x01"},
+     "read": {wLoadedAttackAnimation: 1, 0xCE7E: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory PlayAttackAnimation
 

@@ -10904,7 +10904,7 @@ void HealPlayAreaCardHP(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, u
 void Potion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	hTempPlayAreaLocation_ff9d = hTemp_ffa0;
-	uint8_t amount = hTempPlayAreaLocation_ffa1;
+	HealPlayAreaCardHP(hTempPlayAreaLocation_ffa1, f, b, c, d, e, hl);
 }
 /* <<< factory Potion_HealEffect */
 
@@ -10913,6 +10913,7 @@ void SuperPotion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t 
 {
 	PutCardInDiscardPile(hTemp_ffa0);
 	hTempPlayAreaLocation_ff9d = hTempPlayAreaLocation_ffa1;
+	HealPlayAreaCardHP(hPlayAreaEffectTarget, f, b, c, d, e, hl);
 }
 /* <<< factory SuperPotion_HealEffect */
 

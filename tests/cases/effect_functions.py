@@ -7498,10 +7498,33 @@ CASES["HealPlayAreaCardHP"] = [
 
 # >>> factory Potion_HealEffect
 CONTRACT["Potion_HealEffect"] = {"compare": (), "preserve": ()}
+# The routine runs HealPlayAreaCardHP, which dispatches an animation and waits
+# on a text box, so every case seeds the arena Pokemon it heals and the frame
+# budget that bounds both lanes. hTempPlayAreaLocation_ffa1 carries the amount.
+_POT_BASE = {
+    hWhoseTurn: b"\xC2",
+    wPlayerDuelVariables + DUELVARS_ARENA_CARD: b"\x00",
+    wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: b"\x20",
+    wPlayerDeck: b"\x08", wLCDC: b"\x00",
+    wAnimationsDisabled: b"\x01", wLoadedAttackAnimation: b"\x00",
+}
+_POT_READ = {0xFF9D: 1, 0xCCB8: 1, 0xCE7E: 1,
+             wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: 1}
+_POT_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+_POT_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000}
 CASES["Potion_HealEffect"] = [
-    {"a": 0x10, "f": 0x80, "wram": {0xFFA0: b"\x02", 0xFFA1: b"\x14", 0xFF9D: b"\x07", 0xCCB8: b"\x00", 0xCE7E: b"\x01"}, "read": {0xFF9D: 1, 0xCCB8: 1, 0xCE7E: 1}},
-    dict(POISON, wram={0xFFA0: b"\x03", 0xFFA1: b"\x01", 0xFF9D: b"\x05", 0xCCB8: b"\x00", 0xCE7E: b"\x01"}, read={0xFF9D: 1, 0xCCB8: 1, 0xCE7E: 1}),
-    {"a": 0xFF, "wram": {0xFFA0: b"\x09", 0xFFA1: b"\x00", 0xFF9D: b"\x01", 0xCCB8: b"\xFF", 0xCE7E: b"\xFF"}, "read": {0xFF9D: 1, 0xCCB8: 1, 0xCE7E: 1}},
+    dict(_POT_BUDGET, a=0x10, f=0x80,
+         wram={**_POT_BASE, 0xFFA0: b"\x00", 0xFFA1: b"\x14",
+               0xFF9D: b"\x07", 0xCCB8: b"\x00", 0xCE7E: b"\x01"},
+         setup=_POT_SETUP, keys=[0x00, 0x01], read=dict(_POT_READ)),
+    dict(_POT_BUDGET, a=0xFF,
+         wram={**_POT_BASE, 0xFFA0: b"\x00", 0xFFA1: b"\x01",
+               0xFF9D: b"\x01", 0xCCB8: b"\xFF", 0xCE7E: b"\xFF"},
+         setup=_POT_SETUP, keys=[0x00, 0x01], read=dict(_POT_READ)),
+    dict(POISON,
+         wram={**_POT_BASE, 0xFFA0: b"\x00", 0xFFA1: b"\x01",
+               0xFF9D: b"\x05", 0xCCB8: b"\x00", 0xCE7E: b"\x01"},
+         setup=_POT_SETUP, keys=[0x00, 0x01], read=dict(_POT_READ), **_POT_BUDGET),
 ]
 # <<< factory Potion_HealEffect
 
@@ -10967,14 +10990,18 @@ MUTATIONS["Potion_HealEffect"] = {"source_symbol": "Potion_HealEffect", "before"
 # <<< factory-mutation Potion_HealEffect
 # >>> factory-completion Potion_HealEffect
 for _record in SCHEMA2_CASES["Potion_HealEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7EBC, "bank": 11}
+    # the routine's own `ret`; the pc was HealPlayAreaCardHP's entry, its only
+    # call, so the reference stopped before the heal ran.
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x73F8, "bank": 11}
 # <<< factory-completion Potion_HealEffect
 # >>> factory-mutation SuperPotion_HealEffect
 MUTATIONS["SuperPotion_HealEffect"] = {"source_symbol": "SuperPotion_HealEffect", "before": "void SuperPotion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tPutCardInDiscardPile(hTemp_ffa0);\n\thTempPlayAreaLocation_ff9d = hTempPlayAreaLocation_ffa1;", "after": "void SuperPotion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tPutCardInDiscardPile(hTemp_ffa0);\n\thTempPlayAreaLocation_ff9d = 0u;", "case_ids": ["SuperPotion_HealEffect-0", "SuperPotion_HealEffect-1"]}
 # <<< factory-mutation SuperPotion_HealEffect
 # >>> factory-completion SuperPotion_HealEffect
 for _record in SCHEMA2_CASES["SuperPotion_HealEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7EBC, "bank": 11}
+    # the routine's own `ret`; the pc was HealPlayAreaCardHP's entry, its only
+    # call, so the reference stopped before the heal ran.
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x71C3, "bank": 11}
 # <<< factory-completion SuperPotion_HealEffect
 # >>> factory-mutation PokemonCenter_HealDiscardEnergyEffect
 MUTATIONS["PokemonCenter_HealDiscardEnergyEffect"] = {"source_symbol": "PokemonCenter_HealDiscardEnergyEffect", "before": "void PokemonCenter_HealDiscardEnergyEffect(void)\n{\n\thTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;\n}", "after": "void PokemonCenter_HealDiscardEnergyEffect(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;\n}", "case_ids": ["PokemonCenter_HealDiscardEnergyEffect-0", "PokemonCenter_HealDiscardEnergyEffect-1"]}
