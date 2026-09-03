@@ -783,6 +783,44 @@ Worth noting for the next stub of this shape: check every caller's completion
 mode *before* landing a body that stops returning, not after the group check
 goes red.
 
+## An orphan chain four levels deep
+
+With `MainDuelLoop` landed the earliest blockers became five `duel` routines at
+ordinal 43,575, each called 109-218 times: `DrawInPlayArea_ActiveCardGfx`,
+`DrawInPlayArea_Icons`, `DrawPlayArea_PrizeCards`,
+`GetDuelInitialPrizesUpperBitsSet` and `LoadCursorTile`. High call counts on
+several routines at one ordinal means a single un-called caller, not several
+bugs, so the work is to walk up until something is missing.
+
+Walking up found three consecutive truncated callers, each fully ported except
+for the one call that mattered:
+
+- `DuelCheckMenu_InPlayArea` (`menus/duel.asm:36-40`) set
+  `wInPlayAreaFromSelectButton` and omitted `farcall OpenInPlayAreaScreen`
+- `OpenInPlayAreaScreen_FromSelectButton` (`duel_menus.asm:11-20`) set the same
+  flag to 1 between two bankswitches and omitted the call between them
+- `OpenDuelCheckMenu` (`duel_menus.asm:1-9`) switched to bank 2 and straight
+  back, omitting `call _OpenDuelCheckMenu`
+
+All three are fixed and green; `duel` 134/134, `duel_menus` 8/8.
+`DrawInPlayAreaScreen`, `OpenInPlayAreaScreen` and `_OpenDuelCheckMenu` were
+already complete underneath them, dispatch table and all -- three empty wrappers
+were keeping an entire screen unreachable.
+
+**The gate did not move.** Ordinal stays 43,575 and frontier 42, because
+neither entry point has a caller either: nothing in the port calls
+`OpenDuelCheckMenu` or `OpenInPlayAreaScreen_FromSelectButton`. The break is one
+level higher again, in whatever handles the duel menu's Check item and the
+Select button.
+
+Two things worth carrying forward. `DuelCheckMenu_InPlayArea` needed its
+contract moved to `entry` mode at `DrawInPlayAreaScreen` once the call was
+restored, for the same reason `MainDuelLoop` did -- restoring a call into an
+input loop breaks every caller still using a `pre-ret` pc. And a fix can be
+correct, provable and still not move the gate: these three were real
+truncations, but the chain above them is broken too, so the reachability payoff
+arrives only when the last orphan is connected.
+
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
 things the asm never does: `wLCDC = $80`, `hKeysPressed = $01`, and reading the
