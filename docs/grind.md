@@ -531,11 +531,31 @@ contract compares `("a", "f")` where it compared only `f`. Zeroing the
 fall-through fails 1/6, so it discriminates. `core` stays 369/371, the two
 pre-existing failures bisected earlier as not mine.
 
-Three links remain above it, each now unblocked rather than unknown:
-`AITryUseAttackResult` and `AIProcessAttacksResult` need `a` threaded through
-(both are one-line tail returns from `AIMakeDecision`), then
-`AIEnergyTransTransferEnergyToBench`'s `:278` and `:289` exits close and the
-143-line body becomes portable. Nothing along the chain needs guessing now.
+The attack side above it is now threaded and proven.
+`AITryUseAttackResult` gained `a` -- all three of its exits already held the
+`AIMakeDecisionResult` they return from -- and `AIProcessAttacksResult` gained
+it too: the two flag tests leave `a` as the `wAIExecuteProcessedAttack` byte
+they read, `.failed_to_use` is that byte at zero, and `.use_attack` takes
+`AITryUseAttack`'s. Four contracts moved from comparing `f` to `("a", "f")`,
+the probe adapters report it, and zeroing the `.attack_chosen` value fails
+`AIProcessAttacks` 2/4. `attacks` 5/5, `core` 369/371.
+
+That closes `AIEnergyTransTransferEnergyToBench`'s `:278` exit. `:289` is the
+one that remains: it needs `a` from `AIEnergyResult`, which I modelled last
+turn as `{ f }` alone. For the `AIProcessButDontPlayEnergy_*` wrappers that
+byte is derivable and simple -- the flag byte the `or a` tests, non-zero on the
+two reachable paths -- because those wrappers never reach `.play_card`. It is
+only `AIProcessAndTryToPlayEnergy`, which clears the flags, that reaches it,
+and there `a` is `AITryToPlayEnergyCard`'s.
+
+`AITryToPlayEnergyCard`'s own exits are mostly derivable now that
+`AIMakeDecision` carries `a`: `.play_energy_card` is that call's `a`,
+`.check_if_done` is the `wTempAI` byte and `.check_first_attack` the
+`wSelectedAttack` byte (`energy.asm` relative `:142-159`). Its two `ret nc`
+exits at `:61` and `:70` inherit from `CheckIfEvolutionNeedsEnergyForAttack` and
+`GetEnergyCardForDiscardOrEnergyBoostAttack`, which are the next unknowns. So
+the wrapper half can be closed without touching that; only the flags-cleared
+entry needs the deeper work.
 
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
