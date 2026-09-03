@@ -6,25 +6,32 @@
 
 #include "bank_guard.h"
 
-#define TRACE_CAPACITY 20000000u
-#define TRACE_MAGIC "PTCGTRC1"
+/* The gate consumes one count and one first frame per routine, never the call
+ * sequence, so the tracer aggregates instead of logging. A 20,000,000-record
+ * log was 229 MiB of BSS and, worse, silently capped a full-movie replay
+ * mid-run: both a raw-movie and an aligned-movie gate run filled it exactly,
+ * so reached_ordinal was reporting the buffer's size rather than where the port
+ * stopped tracking the ROM. This table is bounded by the number of ported
+ * routines instead of the number of calls. */
+#define TRACE_SLOTS 16384u
+#define TRACE_MAGIC "PTCGTRC2"
 
 /* Every function here must stay uninstrumented, or __cyg_profile_func_enter
  * recurses into itself on the first call. */
 #define NOTRACE __attribute__((no_instrument_function))
 
 typedef struct {
-	uint32_t frame;
 	uint32_t callee;
-	uint32_t caller;
+	uint32_t first_frame;
+	uint64_t calls;
 } TraceRecord;
 
 #ifdef POKETCG_TRACE
-/* 229 MiB of BSS, so it exists only in the instrumented lane. The entry hook
- * itself is always compiled because the bank guard rides on it. */
-static TraceRecord g_records[TRACE_CAPACITY];
+/* The entry hook itself is always compiled because the bank guard rides on it. */
+static TraceRecord g_records[TRACE_SLOTS];
+static uint32_t g_used;
 #endif
-static size_t g_count;
+static uint64_t g_count;
 static uint32_t g_frame;
 static int g_overflow;
 
@@ -44,11 +51,15 @@ NOTRACE void trace_reset(void)
 {
 	g_count = 0;
 	g_overflow = 0;
+#ifdef POKETCG_TRACE
+	memset(g_records, 0, sizeof g_records);
+	g_used = 0;
+#endif
 }
 
 NOTRACE size_t trace_count(void)
 {
-	return g_count;
+	return (size_t)g_count;
 }
 
 NOTRACE int trace_overflowed(void)
@@ -59,17 +70,30 @@ NOTRACE int trace_overflowed(void)
 NOTRACE void __cyg_profile_func_enter(void *this_fn, void *call_site)
 {
 	bank_guard_enter(this_fn);
-#ifdef POKETCG_TRACE
-	if (g_count >= TRACE_CAPACITY) {
-		g_overflow = 1;
-		return;
-	}
-	TraceRecord *record = &g_records[g_count++];
-	record->frame = g_frame;
-	record->callee = (uint32_t)((uintptr_t)this_fn - trace_base());
-	record->caller = (uint32_t)((uintptr_t)call_site - trace_base());
-#else
 	(void)call_site;
+#ifdef POKETCG_TRACE
+	uint32_t callee = (uint32_t)((uintptr_t)this_fn - trace_base());
+	/* Open addressing on the callee offset. Every offset is a multiple of the
+	 * function alignment, so the low bits carry no entropy; mix them out. */
+	uint32_t slot = (callee ^ (callee >> 13)) & (TRACE_SLOTS - 1u);
+
+	g_count++;
+	for (uint32_t probe = 0; probe < TRACE_SLOTS; probe++) {
+		TraceRecord *record = &g_records[slot];
+		if (record->calls == 0u) {
+			record->callee = callee;
+			record->first_frame = g_frame;
+			record->calls = 1u;
+			g_used++;
+			return;
+		}
+		if (record->callee == callee) {
+			record->calls++;
+			return;
+		}
+		slot = (slot + 1u) & (TRACE_SLOTS - 1u);
+	}
+	g_overflow = 1;
 #endif
 }
 
@@ -112,16 +136,21 @@ NOTRACE int trace_write_raw(const char *path)
 	if (!file)
 		return -1;
 	uint64_t base = (uint64_t)trace_base();
-	uint64_t count = (uint64_t)g_count;
+	uint64_t calls = g_count;
 	uint32_t overflow = (uint32_t)g_overflow;
 	uint32_t record_size = (uint32_t)sizeof(TraceRecord);
+	uint64_t used = (uint64_t)g_used;
 	int ok = fwrite(TRACE_MAGIC, 8, 1, file) == 1
 	      && fwrite(&base, sizeof base, 1, file) == 1
-	      && fwrite(&count, sizeof count, 1, file) == 1
+	      && fwrite(&used, sizeof used, 1, file) == 1
 	      && fwrite(&overflow, sizeof overflow, 1, file) == 1
-	      && fwrite(&record_size, sizeof record_size, 1, file) == 1;
-	if (ok && g_count)
-		ok = fwrite(g_records, sizeof *g_records, g_count, file) == g_count;
+	      && fwrite(&record_size, sizeof record_size, 1, file) == 1
+	      && fwrite(&calls, sizeof calls, 1, file) == 1;
+	for (uint32_t slot = 0; ok && slot < TRACE_SLOTS; slot++) {
+		if (g_records[slot].calls == 0u)
+			continue;
+		ok = fwrite(&g_records[slot], sizeof g_records[slot], 1, file) == 1;
+	}
 	if (fclose(file) != 0)
 		ok = 0;
 	return ok ? 0 : -1;

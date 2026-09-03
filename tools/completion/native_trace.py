@@ -19,9 +19,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import refstream
 
-MAGIC = b"PTCGTRC1"
-HEADER = struct.Struct("<8sQQII")
-RECORD = struct.Struct("<III")
+MAGIC = b"PTCGTRC2"
+# used slots, then the total call count the run made across all of them; the
+# tracer aggregates, so the file size is bounded by the routine count.
+HEADER = struct.Struct("<8sQQIIQ")
+RECORD = struct.Struct("<IIQ")
 
 
 class NativeTraceError(RuntimeError):
@@ -55,11 +57,11 @@ def resolver(symbols: list[tuple[int, str]]):
     return resolve
 
 
-def load_trace(path: Path) -> tuple[int, list[tuple[int, int, int]], bool]:
+def load_trace(path: Path) -> tuple[int, list[tuple[int, int, int]], bool, int]:
     raw = path.read_bytes()
     if len(raw) < HEADER.size:
         raise NativeTraceError(f"{path} is too short to be a call trace")
-    magic, base, count, overflow, record_size = HEADER.unpack_from(raw)
+    magic, base, count, overflow, record_size, calls = HEADER.unpack_from(raw)
     if magic != MAGIC:
         raise NativeTraceError(f"{path} is not a native call trace")
     if record_size != RECORD.size:
@@ -68,7 +70,7 @@ def load_trace(path: Path) -> tuple[int, list[tuple[int, int, int]], bool]:
         RECORD.unpack_from(raw, HEADER.size + index * RECORD.size)
         for index in range(count)
     ]
-    return base, records, bool(overflow)
+    return base, records, bool(overflow), calls
 
 
 def native_counts(
@@ -79,17 +81,17 @@ def native_counts(
     base_symbol = next((address for address, name in symbols if name == "trace_set_frame"), None)
     if base_symbol is None:
         raise NativeTraceError(f"{binary} has no trace_set_frame symbol")
-    _base, records, overflow = load_trace(trace)
+    _base, records, overflow, calls = load_trace(trace)
     counts: dict[str, int] = {}
     first_frame: dict[str, int] = {}
-    for frame, callee, _caller in records:
+    for callee, frame, slot_calls in records:
         name = resolve(base_symbol + callee)
         if name is None:
             continue
-        counts[name] = counts.get(name, 0) + 1
-        if name not in first_frame:
+        counts[name] = counts.get(name, 0) + slot_calls
+        if name not in first_frame or frame < first_frame[name]:
             first_frame[name] = frame
-    return counts, first_frame, overflow, len(records)
+    return counts, first_frame, overflow, calls
 
 
 def build_report(
