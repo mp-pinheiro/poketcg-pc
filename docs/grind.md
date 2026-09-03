@@ -411,6 +411,31 @@ this one register is the whole obstruction. Porting 143 asm lines on top of an
 unmodelled carry would be a guess dressed as a port, which is why this turn
 stopped and took a smaller row instead.
 
+`AIProcessEnergyCards`' exits are now enumerated, and the wrapper's half of the
+contract is fully derived. The routine has one `ret` and four exit paths
+(`energy.asm:265-285`):
+
+- highest score found and `wAIEnergyAttachLogicFlags` non-zero: `scf` then
+  `jp RetrievePlayAreaAIScoreFromBackup1`, which is `push af` ... `pop af; ret`
+  (`:71-85`) and so preserves flags -- **carry set**
+- none found and flags non-zero: the same tail jump with no `scf`, reached past
+  `or a` -- **carry clear**
+- none found and flags zero: `or a; ret` -- **carry clear**
+- found and flags zero: `.play_card`, `jp AITryToPlayEnergyCard`
+
+All three `AIProcessButDontPlayEnergy_*` wrappers write a non-zero flag byte, so
+only the first two paths are reachable through them and their carry is exactly
+"a card was chosen". The asm says so itself at `energy.asm:22-23`, and
+`FindPlayAreaCardWithHighestAIScore` already returns an `f` the port can read.
+
+What still blocks it is the fourth path. `AIProcessAndTryToPlayEnergy` clears
+the flag byte with `xor a` (`:90`) and jumps in, so that path is live, and its
+carry is `AITryToPlayEnergyCard`'s -- 144 asm lines with many exits, whose port
+returns a plain `uint8_t` holding a value rather than flags. Giving
+`AIProcessEnergyCards` a complete `f` therefore needs that routine's contract
+first. Do not fill the fourth path with a placeholder to unblock the other
+three: it is the hottest AI path in the game.
+
 `ChallengeMachine_Duel` was the second row of that class and is fixed --
 `challenge_machine.asm:177-181`, the song wait, the `wSongOverride` clear,
 `SaveGeneralSaveData` and `StartDuel_VSAIOpp`, the duel entry itself, all
@@ -461,6 +486,19 @@ copy loop leaves in `c`. The packet data is read from ROM at `01:5B6C` rather
 than transcribed, matching what the CGB arm beside it already does with
 `CGBDefaultPalettes`. A fourth case seeding SGB and observing the 16 packet
 bytes fails 1/4 before and passes 4/4 after.
+
+`ShowCardPopCGBDisclaimer` is the reachable-arm variant, and shows that a
+reachable arm is not the same as an observed one. Its cases already seeded
+`wConsole = $00` with keys, so all three DMG cases ran the arm -- yet the port
+dropped `call WaitForButtonAorB` (`start.asm:399`) and returned a bare `$10`,
+and the cache and VRAM spans could not tell. The notice therefore flashed past
+without waiting for input on every DMG and SGB console.
+
+The discriminator is one byte. `WaitForButtonAorB` calls `RefreshMenuCursor`,
+which increments `wCursorBlinkCounter` (`$CD0F`) once per frame
+(`menus.asm:173-176`), so observing it separates running the wait from skipping
+it: 3/4 fail before, 4/4 pass after. The exit is the callee's `Z` with carry
+forced on, since `scf` clears N and H and leaves Z alone.
 
 ## When the divergence is the movie, not the port
 
