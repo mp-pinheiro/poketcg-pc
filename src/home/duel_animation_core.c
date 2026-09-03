@@ -1,6 +1,7 @@
 #include "home/duel_animation_core.h"
 #include "generated/wram.h"
 #include "home/load_animation.h"
+#include "home/core.h"
 #include "home/screen_effects.h"
 #include "home/sprite_animations.h"
 #include "home/load_gfx.h"
@@ -40,31 +41,6 @@ static uint8_t coord_index(void)
     return (uint8_t)(c + read(wDuelAnimLocationParam_ADDR));
 }
 
-static void GetAnimCoordsAndFlags(uint8_t *flags, uint8_t *x, uint8_t *y)
-{
-    static const uint8_t coords[][3] = {
-        {88, 88, 4}, {40, 80, 0}, {136, 48, 0x33},
-        {88, 72, 0}, {24, 96, 0}, {56, 96, 0}, {88, 96, 0},
-        {120, 96, 0}, {152, 96, 0}, {88, 80, 0}, {152, 40, 0},
-        {120, 40, 0}, {88, 40, 0}, {56, 40, 0}, {24, 40, 0}
-    };
-    uint8_t index = coord_index();
-    if (index > 14u) index = 0;
-    *x = coords[index][0];
-    *y = coords[index][1];
-    *flags = (uint8_t)(read(wAnimFlags_ADDR) & coords[index][2]);
-}
-
-static void LoadAnimCoordsAndFlags(uint8_t slot)
-{
-    uint16_t addr = (uint16_t)(wSpriteAnimBuffer_ADDR + (uint16_t)slot * 16u);
-    uint8_t flags, x, y;
-    GetAnimCoordsAndFlags(&flags, &x, &y);
-    write((uint16_t)(addr + 1u), (uint8_t)(flags | (read((uint16_t)(addr + 1u)) & (SPRITE_X_FLIP | SPRITE_Y_FLIP))));
-    write((uint16_t)(addr + 2u), x);
-    write((uint16_t)(addr + 3u), y);
-    write((uint16_t)(addr + 15u), (uint8_t)(flags | (read((uint16_t)(addr + 15u)) & (SPRITE_X_INVERTED | SPRITE_Y_INVERTED))));
-}
 
 
 
@@ -112,7 +88,7 @@ void PlayLoadedDuelAnimation(void)
     write(wWhichOBPalIndex_ADDR, 0);
     LoadOBPalette(palette_id);
     write(wAnimFlags_ADDR, flags);
-    LoadAnimCoordsAndFlags(read(wWhichSprite_ADDR));
+    LoadAnimCoordsAndFlags();
     StartNewSpriteAnimation(anim_id);
 }
 
