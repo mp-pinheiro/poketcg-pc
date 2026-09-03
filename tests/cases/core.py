@@ -3868,9 +3868,18 @@ CASES["OpenCardPage_FromCheckHandOrDiscardPile"] = [
 
 # >>> factory CardListItemSelectionMenu
 CONTRACT["CardListItemSelectionMenu"] = {"compare": ("a", "f"), "preserve": ()}
+_CLIS_READ = {0xCD0F: 1, 0xCD10: 1, 0xCD11: 8}
+_CLIS_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+_CLIS_POISONED = {0xCD0F: b"\xAA", 0xCD10: b"\xAA", 0xCD11: b"\xAA" * 8}
 CASES["CardListItemSelectionMenu"] = [
     {"wram": {0xCBDE: b"\x00"}},
     dict(POISON, wram={0xCBDE: b"\x00"}),
+    {"wram": {0xCBDE: b"\x02", **_CLIS_POISONED}, "keys": 0x02,
+     "setup": _CLIS_SETUP, "read": dict(_CLIS_READ),
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xCBDE: b"\x01", **_CLIS_POISONED}, keys=0x02,
+         setup=_CLIS_SETUP, read=dict(_CLIS_READ),
+         instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory CardListItemSelectionMenu
 

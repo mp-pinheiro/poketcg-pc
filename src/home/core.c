@@ -974,6 +974,11 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/print_text.h"
 #define DuelistHandText 0x00a7u
 #define CARD_LIST_PARAMETERS 0x5710u
+/* duel/core.asm:3380, the eight menu parameter bytes CardListItemSelectionMenu
+ * passes to InitializeMenuParameters. The port held 0x0E01, which is that
+ * table's own first two bytes read as a little-endian word rather than its
+ * address (01:5708), so the read landed in SerialHandleSend's code. */
+#define ITEM_SELECTION_MENU_PARAMETERS 0x5708u
 
 #include "home/core.h"
 #include "home/duel.h"
@@ -6945,21 +6950,27 @@ CardListItemSelectionMenuResult CardListItemSelectionMenu(void)
 			text = PlayCheck1Text;
 	}
 	(void)DrawNarrowTextBox_PrintTextNoDelay(text);
-	uint16_t parameters = 0x0E01u;
+	uint16_t parameters = ITEM_SELECTION_MENU_PARAMETERS;
 	InitializeMenuParameters(0u, &parameters);
 	for (;;) {
 		DoFrame();
 		HandleMenuInputResult input = HandleMenuInput();
 		if ((input.f & 0x10u) == 0u)
 			continue;
+		/* duel/core.asm:3376 `.b_pressed` is `scf / ret`, reached by
+		 * `jr z` from `cp MENU_CANCEL`, so the comparison's Z survives
+		 * into the caller alongside the carry. */
 		if (input.a == MENU_CANCEL)
-			return (CardListItemSelectionMenuResult){input.a, 0x10u};
+			return (CardListItemSelectionMenuResult){input.a, 0x90u};
 		if (input.a == 0u)
 			return (CardListItemSelectionMenuResult){input.a, 0x80u};
 		(void)LoadCardDataToBuffer1_FromDeckIndex(hTempCardIndex_ff98);
 		OpenCardPage_FromHand(input.a, input.f, 0u, 0u, 0u, 0u, text);
 		DrawCardListScreenLayoutResult screen = DrawCardListScreenLayout();
-		return (CardListItemSelectionMenuResult){screen.a, 0x10u};
+		/* The CHECK path falls into the same `scf / ret`, so its Z comes
+		 * from DrawCardListScreenLayout rather than from a comparison. */
+		return (CardListItemSelectionMenuResult){
+			screen.a, (uint8_t)((screen.f & 0x80u) | 0x10u)};
 	}
 }
 /* <<< factory CardListItemSelectionMenu */
