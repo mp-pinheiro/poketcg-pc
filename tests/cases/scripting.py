@@ -2782,8 +2782,13 @@ MUTATIONS["ScriptCommand_GiveOneOfEachTrainerBooster"] = {"source_symbol": "Scri
 # PrintScrollableText_NoTextBoxLabel does.
 # legacy_to_schema always emits completion "return", so the split is applied
 # after migration.
+# `pre-ret` at that entry stopped the reference there while the native lane ran
+# on to its own return, comparing two different moments. `entry` mode stops both
+# lanes at the same named callee instead, which is what the landed
+# GiveBoosterPack, ShowMedalReceivedScreen and ChallengeMachine_Duel rows use.
 for _record in SCHEMA2_CASES["ScriptCommand_GiveOneOfEachTrainerBooster"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x3C96}
+    _record["completion"] = {"mode": "entry", "pc": 0x378A, "bank": 0,
+                             "routine": "AssertSongFinished"}
 # <<< factory-completion ScriptCommand_GiveOneOfEachTrainerBooster
 # >>> factory-mutation ScriptCommand_ShowCardReceivedScreen
 MUTATIONS["ScriptCommand_ShowCardReceivedScreen"] = {"source_symbol": "ScriptCommand_ShowCardReceivedScreen", "before": "IncreaseScriptPointerResult ScriptCommand_ShowCardReceivedScreen(uint8_t c)\n{\n\tuint8_t card;\n\n\tFunc_c2a3();\n\tif (c == 0xFFu)\n\t\tcard = 0u;\n\telse if (c != 0u)\n\t\tcard = c;\n\telse\n\t\tcard = wCardReceived;", "after": "IncreaseScriptPointerResult ScriptCommand_ShowCardReceivedScreen(uint8_t c)\n{\n\tuint8_t card;\n\n\tFunc_c2a3();\n\t(void)c;\n\tcard = 0x01u;", "case_ids": ["ScriptCommand_ShowCardReceivedScreen-0", "ScriptCommand_ShowCardReceivedScreen-1", "ScriptCommand_ShowCardReceivedScreen-2"]}
@@ -2841,8 +2846,13 @@ MUTATIONS["ScriptCommand_GiveBoosterPacks"] = {"source_symbol": "ScriptCommand_G
 # PlaySong, GenerateBoosterPack or PrintScrollableText_NoTextBoxLabel does.
 # legacy_to_schema always emits completion "return", so the split is applied
 # after migration.
+# `pre-ret` at that entry stopped the reference there while the native lane ran
+# on to its own return, comparing two different moments. `entry` mode stops both
+# lanes at the same named callee instead, which is what the landed
+# GiveBoosterPack, ShowMedalReceivedScreen and ChallengeMachine_Duel rows use.
 for _record in SCHEMA2_CASES["ScriptCommand_GiveBoosterPacks"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x3C96}
+    _record["completion"] = {"mode": "entry", "pc": 0x378A, "bank": 0,
+                             "routine": "AssertSongFinished"}
 # <<< factory-completion ScriptCommand_GiveBoosterPacks
 # >>> factory-mutation Script_GiftCenterClerk
 MUTATIONS["Script_GiftCenterClerk"] = {"source_symbol": "Script_GiftCenterClerk", "before": "void Script_GiftCenterClerk(void)\n{\n\tCloseAdvancedDialogueBox();", "after": "void Script_GiftCenterClerk(void)\n{\n\t(void)0;", "case_ids": ["Script_GiftCenterClerk-0", "Script_GiftCenterClerk-1"]}
