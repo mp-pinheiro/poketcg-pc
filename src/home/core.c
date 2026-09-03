@@ -9220,6 +9220,8 @@ void StartDuel_VSAIOpp(void)
 	SwapTurn();
 	(void)LoadOpponentDeck();
 	SwapTurn();
+	/* core.asm:42 tail-jumps into StartDuel; the port stopped at the setup. */
+	StartDuel();
 }
 /* <<< factory StartDuel_VSAIOpp */
 

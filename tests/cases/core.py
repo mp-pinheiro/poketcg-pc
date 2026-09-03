@@ -7094,8 +7094,11 @@ for _record in SCHEMA2_CASES["StartDuel"]:
 MUTATIONS["StartDuel_VSAIOpp"] = {"source_symbol": "StartDuel_VSAIOpp", "before": "void StartDuel_VSAIOpp(void)\n{\n\thWhoseTurn = PLAYER_TURN;\n\twPlayerDuelistType = DUELIST_TYPE_PLAYER;\n\twOpponentDeckID = wNPCDuelDeckID;\n}", "after": "void StartDuel_VSAIOpp(void)\n{\n\thWhoseTurn = PLAYER_TURN;\n\twPlayerDuelistType = DUELIST_TYPE_PLAYER;\n\twOpponentDeckID = 0u;\n}", "case_ids": ["StartDuel_VSAIOpp-0", "StartDuel_VSAIOpp-1"]}
 # <<< factory-mutation StartDuel_VSAIOpp
 # >>> factory-completion StartDuel_VSAIOpp
+# 0x40CA is StartDuel itself: core.asm:42 tail-jumps there, so the recorded
+# address was the jump target and never a `ret` of this routine.
 for _record in SCHEMA2_CASES["StartDuel_VSAIOpp"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x40CA, "bank": 1}
+    _record["completion"] = {"mode": "entry", "pc": 0x40CA, "bank": 1,
+                             "routine": "StartDuel"}
 # <<< factory-completion StartDuel_VSAIOpp
 # >>> factory-mutation StartDuel_VSLinkOpp
 MUTATIONS["StartDuel_VSLinkOpp"] = {"source_symbol": "StartDuel_VSLinkOpp", "before": "void StartDuel_VSLinkOpp(void)\n{\n\twDuelTheme = MUSIC_DUEL_THEME_1;\n\twOpponentName = 0u;\n\twOpponentName_PTR[1] = 0u;\n\twIsPracticeDuel = 0u;\n}", "after": "void StartDuel_VSLinkOpp(void)\n{\n\twDuelTheme = 0u;\n\twOpponentName = 0u;\n\twOpponentName_PTR[1] = 0u;\n\twIsPracticeDuel = 0u;\n}", "case_ids": ["StartDuel_VSLinkOpp-0", "StartDuel_VSLinkOpp-1"]}
