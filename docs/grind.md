@@ -286,18 +286,62 @@ port already computes them as locals, so exposing them is a two-line change --
 and it is wrong. `$1211` is input-independent, so `de` is produced *after* the
 loop, by the exit chain at `:8066-8068`.
 
-Ruled out by reading: `ResetAnimationQueue`'s `_ResetAnimationQueue`
+Ruled out by reading, all of them preserving `de`: `_ResetAnimationQueue`
 (`animations/core.asm:1-26`) pops `bc` and `hl` but never `de`; `Set_OBJ_8x8`
-(`lcd.asm:58-62`), `DefaultScreenAnimationUpdate` (`screen_effects.asm:60-72`)
-and `_ClearSpriteAnimations` (`sprite_animations.asm:3-36`) write neither
-register. The remaining candidates are `DisableInt_LYCoincidence`,
-`GetFirstSpriteAnimBufferProperty` and `ClearSpriteVRAMBuffer`'s body.
+(`lcd.asm:58-62`), `DefaultScreenAnimationUpdate` (`screen_effects.asm:60-72`),
+`_ClearSpriteAnimations` (`sprite_animations.asm:3-36`), `ClearSpriteVRAMBuffer`
+(`:480-493`, `c` only), `GetSpriteAnimBufferProperty` (`load_animation.asm:208-225`,
+pushes `bc`) and `DisableInt_LYCoincidence` (`scroll.asm:158-166`).
+`ClearAndDisableQueuedAnimations` (`animations/core.asm:431-434`) pushes `de`
+outright. So the whole exit chain is innocent and the write is inside the loop.
 
-Input-independence is what makes this worth finishing rather than narrowing:
-one derivation on that chain covers every coin-toss caller at once, and applies
-to any routine whose contract ends after an animation-queue reset. Do not land
-`$1211` as a constant -- that is the invented-magic-value shape this session
-has been removing all along.
+Two measurements narrow it to the audio driver. A temporary case seeding
+`wCoinTossNumTossed` non-zero skips the entire text block and still yields
+`$1211`, so the text engine is innocent. And `PlayDeckShuffleAnimation`'s
+one-card path -- sixty `DoFrame` calls then `ret`, with no `PlaySFX` -- leaves
+`de = $0000` (and the `c = $C1` its own narrowing already declares), so
+`DoFrame` is innocent too. That leaves `PlaySFX`, a `farcall _PlaySFX` into the
+audio driver (`sound.asm:23-25`), as the only remaining `de` writer between the
+text block and the proven-clean exit chain.
+
+Note the earlier claim of input-independence is not yet established: every case
+may simply have landed the same coin face. Confirm that before assuming one
+derivation covers all callers. Either way, do not land `$1211` as a constant --
+that is the invented-magic-value shape this session has been removing all along.
+
+Reading registers without a correct port: widening a CONTRACT alone prints
+`d: oracle $12 != C $DD`, so the oracle's value at any boundary is readable
+without touching a struct, an adapter or the port body. That is how both
+measurements above were taken, and it costs one line and one probe run.
+
+## Widening a read span found a real divergence
+
+`ScriptCommand_GiveBoosterPacks` and `ScriptCommand_GiveOneOfEachTrainerBooster`
+both cut at `WaitForSongToFinish` (`00:3C96`) under `pre-ret`, which stops the
+reference there while the native lane runs on to its own return -- two different
+moments. Both now use `entry` mode at `AssertSongFinished`, matching the landed
+`GiveBoosterPack`, `ShowMedalReceivedScreen` and `ChallengeMachine_Duel` rows,
+and `cuts` fell 14 -> 12.
+
+No discriminator exists for the boundary change itself: both contracts compare
+`()` -- registers are not comparable when the routine never returns -- and the
+cases observe two TxRam bytes each. Dropping `Func_c2a3` from the body is not
+caught, so the boundary switch is correctness by construction, as with the
+earlier song-wait rows.
+
+Widening the span is where it got interesting. `wAnotherBoosterPack` (`$D117`)
+is written to zero before the first `GiveBoosterPack`, so an `entry` boundary
+can observe it even though the routine never returns. Adding it fails both rows
+**2/2**: oracle `00`, port `01`. The reference is still inside the first booster
+pack at `AssertSongFinished`, before `ld a, TRUE` (`scripting.asm:945`), while
+the port has already run past it -- so the port's `GiveBoosterPack` never enters
+`AssertSongFinished` on this path and the native stop never fires.
+
+That is a real behavioural divergence in the port's booster-pack path, not a
+harness artifact: the identical recipe works for `GiveBoosterPack` tested
+directly, so the difference is what the port does when reached through these two
+script commands. The span addition is reverted rather than landed red; restoring
+it is the acceptance test for the fix.
 
 ## When the divergence is the movie, not the port
 
