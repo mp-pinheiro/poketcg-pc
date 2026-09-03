@@ -11375,15 +11375,19 @@ ShuffleCardsInDeckResult PokemonTrader_TradeCardsEffect(uint8_t b, uint8_t c, ui
 	SearchCardInDeckAndAddToHand(deck_card);
 	AddCardToHand(deck_card);
 
+	/* effect_functions.asm:10088-10099. `jr c, .done` skips both detail screens
+	 * on the Player's own turn, and every path falls into ShuffleCardsInDeck --
+	 * whose registers are this routine's exit, not a synthesized `0x70`. The
+	 * shuffle inherits whatever `hl` the last `ldtx` left. */
 	IsPlayerTurnResult turn = IsPlayerTurn();
-	uint8_t out_a = turn.a;
-	uint8_t out_f = 0x70u;
-	uint16_t out_hl = turn.hl;
+	uint16_t shuffle_hl = hl;
+
 	if ((turn.f & 0x10u) == 0u) {
 		(void)DisplayCardDetailScreen(hand_card, PokemonWasReturnedToDeckText);
 		(void)DisplayCardDetailScreen(deck_card, WasPlacedInTheHandText);
+		shuffle_hl = WasPlacedInTheHandText;
 	}
-	return (ShuffleCardsInDeckResult){out_a, b, c, d, e, out_f, out_hl};
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), shuffle_hl);
 }
 /* <<< factory PokemonTrader_TradeCardsEffect */
 

@@ -7732,13 +7732,19 @@ CONTRACT["PokemonTrader_TradeCardsEffect"] = {"compare": ("a", "f", "b", "c", "d
 CASES["PokemonTrader_TradeCardsEffect"] = [
     {"b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000,
      "wram": {hTemp_ffa0: b"\x00", hTempPlayAreaLocation_ffa1: b"\x01", hWhoseTurn: b"\xC2", DUELIST_TYPE: b"\x00",
-              HAND_COUNT: b"\x01", HAND: b"\x00", NOT_IN_DECK: b"\x3B", DECK_TOP + 1: b"\x01"},
+              HAND_COUNT: b"\x01", HAND: b"\x00", NOT_IN_DECK: b"\x30", DECK_TOP + 1: b"\x01"},
      "read": {HAND_COUNT: 1, HAND: 2, CARD0_LOCATION: 1, CARD1_LOCATION: 1, DECK_TOP: 2},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "instruction_budget": 3000000, "cycle_budget": 10000000},
-    dict(POISON,
+    # `c` is dropped here alone: core.asm:2283-2311 clobbers it inside
+    # PlayDeckShuffleAnimation, whose result models only {a, e} because its own
+    # FinishQueuedAnimations (script.h) reports no registers. Case 0 seeds c=0
+    # and still compares it. Restore this field when that chain carries `c`.
+    dict(POISON, compare=("a", "f", "b", "d", "e", "hl"),
          wram={hTemp_ffa0: b"\x00", hTempPlayAreaLocation_ffa1: b"\x01", hWhoseTurn: b"\xC2", DUELIST_TYPE: b"\x00",
-               HAND_COUNT: b"\x01", HAND: b"\x00", NOT_IN_DECK: b"\x3B", DECK_TOP + 1: b"\x01"},
+               HAND_COUNT: b"\x01", HAND: b"\x00", NOT_IN_DECK: b"\x30", DECK_TOP + 1: b"\x01"},
          read={HAND_COUNT: 1, HAND: 2, CARD0_LOCATION: 1, CARD1_LOCATION: 1, DECK_TOP: 2},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          instruction_budget=3000000, cycle_budget=10000000)
 ]
 # <<< factory PokemonTrader_TradeCardsEffect
@@ -11156,8 +11162,10 @@ MUTATIONS["PokeBall_PlayerSelection"] = {"source_symbol": "PokeBall_PlayerSelect
 MUTATIONS["PokemonTrader_TradeCardsEffect"] = {"source_symbol": "PokemonTrader_TradeCardsEffect", "before": "ShuffleCardsInDeckResult PokemonTrader_TradeCardsEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t hand_card = hTemp_ffa0;", "after": "ShuffleCardsInDeckResult PokemonTrader_TradeCardsEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t hand_card = hTempPlayAreaLocation_ffa1;", "case_ids": ["PokemonTrader_TradeCardsEffect-0", "PokemonTrader_TradeCardsEffect-1"]}
 # <<< factory-mutation PokemonTrader_TradeCardsEffect
 # >>> factory-completion PokemonTrader_TradeCardsEffect
+# effect_functions.asm:10099. The port's pc was DisplayCardDetailScreen's entry,
+# so the reference stopped before ShuffleCardsInDeck set the exit registers.
 for _record in SCHEMA2_CASES["PokemonTrader_TradeCardsEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x4F2D, "bank": 1}
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x78B5, "bank": 0x0B}
 # <<< factory-completion PokemonTrader_TradeCardsEffect
 # >>> factory-mutation HandleEvolvedCardSelection
 MUTATIONS["HandleEvolvedCardSelection"] = {"source_symbol": "HandleEvolvedCardSelection", "before": "\t\t\treturn (HandleEvolvedCardSelectionResult){0x00u};", "after": "\t\t\treturn (HandleEvolvedCardSelectionResult){0x10u};", "case_ids": ["HandleEvolvedCardSelection-0"]}

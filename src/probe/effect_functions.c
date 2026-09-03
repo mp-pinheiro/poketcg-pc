@@ -5266,7 +5266,6 @@ static void adapt_PokemonTrader_TradeCardsEffect(ProbeState *s)
 	s->d = result.d;
 	s->e = result.e;
 	s->hl = result.hl;
-	s->f = 0x70u;
 }
 /* <<< factory PokemonTrader_TradeCardsEffect */
 
