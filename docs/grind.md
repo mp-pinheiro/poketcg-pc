@@ -540,22 +540,35 @@ they read, `.failed_to_use` is that byte at zero, and `.use_attack` takes
 the probe adapters report it, and zeroing the `.attack_chosen` value fails
 `AIProcessAttacks` 2/4. `attacks` 5/5, `core` 369/371.
 
-That closes `AIEnergyTransTransferEnergyToBench`'s `:278` exit. `:289` is the
-one that remains: it needs `a` from `AIEnergyResult`, which I modelled last
-turn as `{ f }` alone. For the `AIProcessButDontPlayEnergy_*` wrappers that
-byte is derivable and simple -- the flag byte the `or a` tests, non-zero on the
-two reachable paths -- because those wrappers never reach `.play_card`. It is
-only `AIProcessAndTryToPlayEnergy`, which clears the flags, that reaches it,
-and there `a` is `AITryToPlayEnergyCard`'s.
+That closes `AIEnergyTransTransferEnergyToBench`'s `:278` exit, and `:289` is
+closed now too -- along with every link below it. The last two unknowns turned
+out not to be unknowns: `CheckIfEvolutionNeedsEnergyForAttackResult` and
+`GetEnergyCardForDiscardOrEnergyBoostAttackResult` both already carry `a`, so
+all five of `AITryToPlayEnergyCard`'s exits derive -- the two `ret nc` paths
+from those callees, `.play_energy_card` from `AIMakeDecision` with the trailing
+`scf`, and the two `or a` exits from the `wTempAI` and `wSelectedAttack` bytes
+they tested (`energy.asm` relative `:61-159`).
 
-`AITryToPlayEnergyCard`'s own exits are mostly derivable now that
-`AIMakeDecision` carries `a`: `.play_energy_card` is that call's `a`,
-`.check_if_done` is the `wTempAI` byte and `.check_first_attack` the
-`wSelectedAttack` byte (`energy.asm` relative `:142-159`). Its two `ret nc`
-exits at `:61` and `:70` inherit from `CheckIfEvolutionNeedsEnergyForAttack` and
-`GetEnergyCardForDiscardOrEnergyBoostAttack`, which are the next unknowns. So
-the wrapper half can be closed without touching that; only the flags-cleared
-entry needs the deeper work.
+So `AITryToPlayEnergyCard` returns `{ a, f }` instead of a bare `uint8_t`, and
+`AIEnergyResult` gained `a`: the `wAIEnergyAttachLogicFlags` byte the `or a`
+tests read on the three flag-dependent paths, zero on the no-flags exit, and
+the play path's own `a`. Six call sites cut over -- `core.c`, the three
+legendary handlers, `AIProcessEnergyCards` and the probe adapter. Zeroing the
+`scf` path's `a` fails `AIProcessEnergyCards` 2/2. `energy` 12/12, `attacks`
+5/5, `core` 369/371.
+
+Two process notes from landing it. First, widening the contracts *before*
+patching the probe adapters produced `a: oracle $02 != C $AA` -- the `$AA` being
+the poison case's seeded input, still sitting in `s->a` because the adapter
+reported only `f`. A new output is unobservable until the adapter carries it,
+and the failure looks like a wrong derivation rather than a missing wire.
+
+Second, the gate caught a `loops` regression, 36 -> 37, on
+`AITryToPlayEnergyCard`. It was not behavioural: `audit_loops` flags a `return`
+at two-tab depth followed by two closing braces as a fake loop, and the braced
+blocks I wrapped the new locals in made exactly that shape. Hoisting the two
+declarations to the function head flattened it back. The ratchet earned its
+keep on a change that every per-routine oracle called clean.
 
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
