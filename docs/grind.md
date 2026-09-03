@@ -683,6 +683,36 @@ divergence only appears when the two are compared against each other. The
 which is the third distinct defect class that audit has surfaced, after the
 stopped transcriptions and the invented writes.
 
+`composition_audit.py shadows` now enumerates the class directly: a name that
+`poketcg.sym` knows as a ROM routine and that the port defines in more than one
+`src/home/*.c`. It reports the routine and both `file:line` sites, and it is in
+`RATCHET_FALLING`, so the count can only go down.
+
+It found five, and four of them are `static` reimplementations shadowing a
+routine that exists ported elsewhere:
+
+| routine | shadow | real |
+| --- | --- | --- |
+| `ApplyStatusConditionToArenaPokemon` | `duel_core.c:135` | `core.c:3543` |
+| `DefaultScreenAnimationUpdate` | `duel_animation_core.c:66` | `screen_effects.c:104` |
+| `EnableAndClearSpriteAnimations` | `duel_animation_core.c:74` | `load_animation.c:253` |
+| `GetAnimCoordsAndFlags` | `duel_animation_core.c:41` | `core.c:2246` |
+| `LoadAnimCoordsAndFlags` | `duel_animation_core.c:56` | `core.c:4836` |
+
+`EnableAndClearSpriteAnimations` is fixed and is the proof the audit tracks
+removals: 5 -> 4. Its shadow called `_ClearSpriteAnimations` directly where the
+real routine calls `ClearSpriteAnimations`, i.e. it skipped the bank switch the
+wrapper performs. Deleting it and including `load_animation.h` leaves
+`duel_animation_core` 5/5 and `load_animation` 15/15 clean.
+
+The other four are not one-line redirects and should not be treated as such.
+Two have different signatures from the routine they shadow --
+`LoadAnimCoordsAndFlags(uint8_t slot)` against `LoadAnimCoordsAndFlags(void)`,
+and `ApplyStatusConditionToArenaPokemon(uint8_t, uint16_t *)` against a
+three-argument form -- so each needs its callers read before deciding whether
+the shadow is a mis-named helper or a genuine second implementation. Sizing that
+is what the ratchet is for; guessing is how the `music1` fork survived.
+
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
 things the asm never does: `wLCDC = $80`, `hKeysPressed = $01`, and reading the
