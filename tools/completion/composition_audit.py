@@ -335,12 +335,32 @@ def audit_truncated() -> list[dict[str, Any]]:
                 sequences.setdefault(current, []).append(call.group(1))
 
     bodies = c_bodies()
+    rom_symbols = set(symbol_entries())
     rows: list[dict[str, Any]] = []
     for name, (file, body) in sorted(bodies.items()):
         calls = [c for c in sequences.get(name, []) if c in bodies and c != name]
         if len(calls) < 2:
             continue
-        present = [re.search(r"\b%s\s*\(" % re.escape(c), body) is not None
+        # The asm parser cannot see local labels, so a `.helper`'s calls land on
+        # its parent. The port decomposes those into its own functions -- either
+        # `Parent_Helper` (LoadTilemap_InitAndDecompressBGMap) or a file-local
+        # static (print_text_body) -- and a routine whose callees all sit in one
+        # reads as truncated when it is not. Expand through anything called that
+        # is not a ROM symbol, since only port-local decomposition can be absent
+        # from the sym file.
+        reach, seen = body, {name}
+        pending = [name]
+        while pending:
+            for helper, (_, other) in bodies.items():
+                if helper in seen or helper in rom_symbols:
+                    continue
+                if not re.search(r"\b%s\s*\(" % re.escape(helper), reach):
+                    continue
+                seen.add(helper)
+                reach += other
+                pending.append(helper)
+            pending.pop(0)
+        present = [re.search(r"\b%s\s*\(" % re.escape(c), reach) is not None
                    for c in calls]
         if all(present) or not present[0]:
             continue
