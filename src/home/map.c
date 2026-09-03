@@ -276,11 +276,15 @@ uint8_t GameEvent_Duel(void)
 	sPlayerInChallengeMachine = 0u;
 	DisableSRAM();
 	SaveGeneralSaveData();
-	/* map.asm:111 bank1call StartDuel_VSAIOpp, whose asm falls through into
-	 * StartDuel (core.asm:42). StartDuel_VSAIOpp stops at that tail jump, so
-	 * the fallthrough is expressed at the one call site. */
+	/* map.asm:111 `bank1call StartDuel_VSAIOpp`: bank 1 stays mapped for the
+	 * whole duel, which is what makes DuelMenuData ($01:54E9) readable. The
+	 * asm falls through into StartDuel (core.asm:42), which that routine now
+	 * does itself. */
+	uint8_t saved_bank = hBankROM;
+
+	BankswitchROM(1u);
 	StartDuel_VSAIOpp();
-	StartDuel();
+	BankswitchROM(saved_bank);
 	return 0x10u;
 }
 /* <<< factory GameEvent_Duel */
