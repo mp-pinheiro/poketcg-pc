@@ -7515,9 +7515,34 @@ CASES["SuperPotion_HealEffect"] = [
 
 # >>> factory PokemonCenter_HealDiscardEnergyEffect
 CONTRACT["PokemonCenter_HealDiscardEnergyEffect"] = {"compare": (), "preserve": ()}
+# effect_functions.asm:11229-11281 walks every Pokemon in the turn duelist's
+# play area, so the seed gives it one and two of them. Deck slot 0 holds the
+# arena Pokemon and slot 1 a water energy attached to it
+# (CARD_LOCATION_PLAY_AREA | PLAY_AREA_ARENA), which the loop must discard after
+# healing. The zero-damage `continue` at asm:11242 is not covered: it needs the
+# arena card's HP to equal that card's max HP, which is ROM card data the case
+# cannot state.
+_PC_BASE = {
+    hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\xFF",
+    wPlayerDuelVariables + DUELVARS_ARENA_CARD: b"\x00\x01",
+    wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: b"\x20\x20",
+    wPlayerDuelVariables + 0x00: b"\x00\x10",
+    wPlayerDeck: b"\x08\x03",
+    wLCDC: b"\x00", wAnimationsDisabled: b"\x01",
+    wLoadedAttackAnimation: b"\x00",
+}
+_PC_READ = {wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: 2,
+            wPlayerDuelVariables + 0x00: 2,
+            hTempPlayAreaLocation_ff9d: 1}
+_PC_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+_PC_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000}
 CASES["PokemonCenter_HealDiscardEnergyEffect"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xFF9D: b"\xFF"}, "read": {0xFF9D: 1}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xFF9D: b"\xFF"}, "read": {0xFF9D: 1}},
+    dict(_PC_BUDGET, wram={**_PC_BASE, 0xC2EF: b"\x01"}, setup=_PC_SETUP,
+         keys=[0x00, 0x01], read=dict(_PC_READ)),
+    dict(_PC_BUDGET, wram={**_PC_BASE, 0xC2EF: b"\x02"}, setup=_PC_SETUP,
+         keys=[0x00, 0x01], read=dict(_PC_READ)),
+    dict(POISON, wram={**_PC_BASE, 0xC2EF: b"\x01"}, setup=_PC_SETUP,
+         keys=[0x00, 0x01], read=dict(_PC_READ), **_PC_BUDGET),
 ]
 # <<< factory PokemonCenter_HealDiscardEnergyEffect
 
@@ -10932,7 +10957,10 @@ MUTATIONS["HealPlayAreaCardHP"] = {"source_symbol": "HealPlayAreaCardHP", "befor
 # <<< factory-mutation HealPlayAreaCardHP
 # >>> factory-completion HealPlayAreaCardHP
 for _record in SCHEMA2_CASES["HealPlayAreaCardHP"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7494, "bank": 1}
+    # effect_functions.asm:11222, the routine's own `ret`. The pc used to be
+    # PlayAttackAnimation's entry, its first bank1call, so the reference stopped
+    # before the heal write and the seeded HP compared unchanged on both lanes.
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x7F02, "bank": 11}
 # <<< factory-completion HealPlayAreaCardHP
 # >>> factory-mutation Potion_HealEffect
 MUTATIONS["Potion_HealEffect"] = {"source_symbol": "Potion_HealEffect", "before": "void Potion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\thTempPlayAreaLocation_ff9d = hTemp_ffa0;", "after": "void Potion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\thTempPlayAreaLocation_ff9d = 0u;", "case_ids": ["Potion_HealEffect-0", "Potion_HealEffect-1", "Potion_HealEffect-2"]}
@@ -10953,7 +10981,10 @@ MUTATIONS["PokemonCenter_HealDiscardEnergyEffect"] = {"source_symbol": "PokemonC
 # <<< factory-mutation PokemonCenter_HealDiscardEnergyEffect
 # >>> factory-completion PokemonCenter_HealDiscardEnergyEffect
 for _record in SCHEMA2_CASES["PokemonCenter_HealDiscardEnergyEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x1C35, "bank": 0}
+    # effect_functions.asm:11281, the routine's own `ret`. The pc used to be
+    # GetCardDamageAndMaxHP's entry, the first call inside the loop, so the
+    # reference stopped before a single iteration ran.
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x7658, "bank": 11}
 # <<< factory-completion PokemonCenter_HealDiscardEnergyEffect
 # >>> factory-mutation ComputerSearch_PlayerDeckSelection
 MUTATIONS["ComputerSearch_PlayerDeckSelection"] = {"source_symbol": "ComputerSearch_PlayerDeckSelection", "before": "ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint8_t c, uint16_t de)\n{\n\t(void)CreateDeckCardList(c, de);\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(DuelistDeckText, ChooseCardToPlaceInHandText);\n\twLCDC = 0x80u;\n\tgb_write8(hKeysPressed_ADDR, 0x01u);\n\tuint8_t selected = gb_read8(wDuelTempList_ADDR);\n\tgb_write8((uint16_t)(hTempList_ADDR + 2u), selected);", "after": "ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint8_t c, uint16_t de)\n{\n\t(void)CreateDeckCardList(c, de);\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(DuelistDeckText, ChooseCardToPlaceInHandText);\n\twLCDC = 0x80u;\n\tgb_write8(hKeysPressed_ADDR, 0x01u);\n\tuint8_t selected = gb_read8(wDuelTempList_ADDR);\n\tgb_write8((uint16_t)(hTempList_ADDR + 2u), (uint8_t)(selected + 1u));", "case_ids": ["ComputerSearch_PlayerDeckSelection-0", "ComputerSearch_PlayerDeckSelection-1"]}

@@ -10864,14 +10864,39 @@ ShuffleCardsInDeckResult PokeBall_AddToHandEffect(uint8_t a, uint8_t f, uint8_t 
 /* <<< factory PokeBall_AddToHandEffect */
 
 /* >>> factory HealPlayAreaCardHP */
+/* effect_functions.asm:11183-11222. The healed amount arrives in a and is held
+ * across the animation and the text box in de, then added to the target's
+ * DUELVARS_ARENA_CARD_HP. */
 void HealPlayAreaCardHP(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
-	uint8_t amount = a;
-	uint8_t target = hTempPlayAreaLocation_ff9d;
-	uint8_t turn = hWhoseTurn;
+	const uint8_t healed = a;
+
+	(void)f;
+	(void)b;
+	(void)c;
+	(void)d;
+	(void)e;
+	(void)hl;
 
 	ResetAttackAnimationIsPlaying();
 	wLoadedAttackAnimation = ATK_ANIM_HEALING_WIND_PLAY_AREA;
+	PlayAttackAnimation(ATK_ANIM_HEALING_WIND_PLAY_AREA, 0u,
+			    hTempPlayAreaLocation_ff9d, 0x01u, 0u, healed,
+			    (uint16_t)((uint16_t)hWhoseTurn << 8));
+	WaitAttackAnimation();
+
+	LoadTxRam3(healed);
+	LoadTxRam2(0x0000u);
+	DuelistVarResult card =
+		GetTurnDuelistVariable((uint8_t)(hTempPlayAreaLocation_ff9d + DUELVARS_ARENA_CARD));
+	(void)LoadCardDataToBuffer1_FromDeckIndex(card.a);
+	CopyCardNameAndLevelResult copied = CopyCardNameAndLevel(18u, 0u, 0u, 0u, 0u);
+	gb_write8(copied.hl, 0x00u);
+	(void)DrawWideTextBox_WaitForInput(PokemonHealedDamageText);
+
+	DuelistVarResult target =
+		GetTurnDuelistVariable((uint8_t)(hTempPlayAreaLocation_ff9d + DUELVARS_ARENA_CARD_HP));
+	gb_write8(target.hl, (uint8_t)(target.a + healed));
 }
 /* <<< factory HealPlayAreaCardHP */
 
@@ -10892,9 +10917,40 @@ void SuperPotion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t 
 /* <<< factory SuperPotion_HealEffect */
 
 /* >>> factory PokemonCenter_HealDiscardEnergyEffect */
+/* effect_functions.asm:11229-11281. Walks the turn duelist's play area, heals
+ * every damaged Pokemon, and discards the energy cards attached to each one it
+ * healed. `l` doubles as the deck index because DUELVARS_CARD_LOCATIONS is the
+ * duelvars page's offset zero. */
 void PokemonCenter_HealDiscardEnergyEffect(void)
 {
-	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	DuelistVarResult count =
+		GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t remaining = count.a;
+
+	for (uint8_t slot = PLAY_AREA_ARENA; remaining != 0u; remaining--, slot++) {
+		hTempPlayAreaLocation_ff9d = slot;
+
+		CardDamageResult damage = GetCardDamageAndMaxHP(slot);
+
+		if (damage.a == 0u)
+			continue;
+
+		HealPlayAreaCardHP(damage.a, 0u, 0u, 0u, 0u, damage.a, 0u);
+
+		const uint8_t attached =
+			(uint8_t)(hTempPlayAreaLocation_ff9d | CARD_LOCATION_PLAY_AREA);
+		DuelistVarResult locations =
+			GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+
+		for (uint8_t index = 0u; index < DECK_SIZE; index++) {
+			if (gb_read8((uint16_t)(locations.hl + index)) != attached)
+				continue;
+			(void)LoadCardDataToBuffer2_FromDeckIndex(index);
+			if ((wLoadedCard2Type & TYPE_ENERGY) == 0u)
+				continue;
+			PutCardInDiscardPile(index);
+		}
+	}
 }
 /* <<< factory PokemonCenter_HealDiscardEnergyEffect */
 
