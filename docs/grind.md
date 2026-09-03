@@ -938,6 +938,60 @@ to locate the disagreement, then reverted it: comparing a whole `f` byte whose Z
 is inherited would fail forever. The carry alone is what its callers read, and
 that is what it now returns.
 
+## The root of the duel-menu region, and one rejected body
+
+Walking the chain up finally reached the floor. `PrintDuelMenuAndHandleInput`
+(`core.asm:301-349`) was a **one-line stub**, and above it `DuelMainInterface`
+(`core.asm:282-299`) was an empty body. Every one of the nine stubs found below
+them over the previous two turns sat under a menu handler that never ran.
+
+Landed and green this turn:
+
+| routine | asm | what was wrong |
+| --- | --- | --- |
+| `OpenInPlayAreaScreen` | `play_area.asm:73-81` | both exit flag bytes invented |
+| `OpenInPlayAreaScreen_FromSelectButton` | `duel_menus.asm:11-20` | carry dropped; adapter discarded it |
+| `OpenVariousPlayAreaScreens_FromSelectPresses` | `core.asm:758-777` | stub |
+| `DuelMenuShortcut_BothActivePokemon` | `core.asm:753-756` | stub |
+| `PrintDuelMenuAndHandleInput` | `core.asm:301-349` | one-line stub |
+| `UnreferencedDrawCardFromDeckToHand` | `core.asm:365` | entered the handler's head, not `.menu_items_printed` |
+
+**The flag bytes were derivable after all.** Last turn I recorded the screen's Z
+bit as inherited and unmodellable. It is inherited -- from `SetupText`, which
+ends in a clear loop exiting when `inc l` wraps (`process_text.asm:154-159`).
+That leaves `a = 0` with Z and H set, so `scf; ret` gives **`$90`** and
+`or a; ret` gives **`$80`**. `$90` is exactly the byte the reference reported.
+"Inherited" is not the same as "unknowable"; it means read one routine further.
+
+**Four consecutive rows carried mis-sourced completion pcs.** Not stale --
+wrong: `0x1F72` was `FillRectangle.next_tile` in bank 0, `0x4547` in bank 2
+named no symbol at all, `0x237D` was another routine's `ret`, and `0x238C` sits
+below `0x4000` where a bank number is meaningless. Every one belonged to a
+routine whose body was a stub, so nothing had ever executed far enough to
+notice. Addresses recomputed from the sym file and the instruction lengths, and
+`01:4294`/`01:4295` corroborating each other is what gave confidence.
+
+**An `entry` boundary does not assert which callee was entered.** I mis-routed
+the B+Up shortcut to a different one and the row still passed, because all six
+shortcut bodies are empty stubs and nothing observable distinguishes them. The
+handler's branch selection is therefore transcribed, not verified, and it stays
+that way until those bodies write something. The `DuelMainInterface` dispatch,
+by contrast, does discriminate (1/6 fail misrouted, 2/2 after).
+
+**`DuelMainInterface`'s body was reverted, and the gate is why.** It verified
+cleanly on both arms -- AI and player -- with discrimination proven. But on the
+TAS it moved `reached_routines` 645 -> 649 while dropping `executed_routines`
+**853 -> 788**: the port enters the duel menu's input loop and stalls there,
+losing 65 routines it used to exercise. Neither the ordinal nor the frontier
+moved. That is the runbook's reject-and-requeue case, so the body is out and the
+measurement is here instead of in a commit.
+
+Two seams named on the way, both cheap to test next: the key-poll cadence (the
+port's first `DoFrame` saw no keys where the reference's did, showing up as
+`wVBlankCounter` `$ab` vs `$ac`, fixed by dropping the leading `0x00` from the
+timeline) and `HandleDuelMenuInput`, which is the one callee in that loop whose
+return decides whether it ever exits.
+
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
 things the asm never does: `wLCDC = $80`, `hKeysPressed = $01`, and reading the
