@@ -592,6 +592,32 @@ budget. Until then this row is in the same position as
 `ChallengeMachine_Duel`: a literal transcription whose callees all exist, landed
 because leaving the truncation is worse, and honestly not proven.
 
+**Attempted and failed: seeding a way into that body.** The obvious lever is
+the turn duelist's arena HP -- `CheckIfDefendingPokemonCanKnockOut` asks whether
+the Defending Pokemon's attacks reach it -- so I added a case with
+`DUELVARS_ARENA_CARD_HP` on page `$C2` set to ten, otherwise identical to the
+existing seed. It passes 3/3, and inverting the first condition *still* passes
+3/3, so the new case exits in the same place as the other two. Reverted rather
+than kept: a case that implies coverage it does not have is worse than no case.
+
+Two things were learned that are worth more than the attempt cost. First, the
+old stub passed **by coincidence**: marking the first exit with a sentinel shows
+the reference returning `a=$00, f=$80`, which is exactly what
+`CheckIfDefendingPokemonCanKnockOut` hands back there -- and also exactly what
+two of the deeper exits return. Sentinel-marking each exit in turn is a cheap
+way to learn which one the reference actually takes, and it is how this was
+settled: markers on the grass-count and Venusaur-not-found exits leave the row
+passing, so neither is reached.
+
+Second, the note already sitting beside `HandleAIEnergyTrans` -- that the deeper
+paths "drive live duel state and are not reproducibly exitable from this
+schema" -- is correct, and now has evidence behind it rather than assertion. The
+predicate needs the defending card's attack data loaded and a damage estimate
+computed, which is further than a wram seed list reaches. Verifying these bodies
+wants a duel state captured from a running game, not a hand-written seed; that
+is a different instrument from the case matrix and should be recognised as such
+before more turns go into seeds.
+
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
 things the asm never does: `wLCDC = $80`, `hKeysPressed = $01`, and reading the
