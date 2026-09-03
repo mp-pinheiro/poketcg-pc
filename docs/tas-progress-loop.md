@@ -42,8 +42,10 @@ raise it is to execute more code -- including code the ROM never executes at
 that point. So an `executed_routines` fall passes only when `reached_routines`
 strictly rises in the same run, and the ceiling then drops to the measured
 value. Landing `DuelMainInterface`'s body is the case it was written for: the
-matched count went 645 -> 649 while the unmatched remainder fell by 69, because
-the port stopped running past a duel the ROM stays inside. Any fall that does
+matched count went 645 -> 649 while the unmatched remainder fell by 69. What
+those 69 were was not established -- tracing showed the port spends most of the
+movie spinning in overworld movement code either way -- so the claim behind the
+rule is only the arithmetic, matched up and unmatched down. Any fall that does
 not buy a match is still a regression, and `reached_routines` itself is never
 tradeable.
 

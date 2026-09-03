@@ -187,17 +187,19 @@ RATCHET_RISING = ("reached_routines", "executed_routines")
 # on both definitions and wrong only when they are compared, which is the blind
 # spot the music1/music2 fork used to carry four unfixed bugs.
 RATCHET_FALLING = ("loops", "banks", "jumps", "overrides", "shadows")
-# `executed_routines` counts every routine the native lane runs, matched or not,
-# so the only way to raise it is to execute more code -- including code the ROM
-# never executes at that point. Landing `DuelMainInterface`'s body raised the
-# matched count (`reached_routines` 645 -> 649) while dropping the unmatched
-# remainder by 69, because the port stopped running past a duel the ROM stays
-# inside; a plain rising ratchet scores that correction as a regression. So the
-# trade is allowed in exactly one direction: an `executed_routines` fall passes
-# only when `reached_routines` strictly rises in the same run, which still
-# rejects every loss of exercise that does not buy a match. When the trade is
-# taken the ceiling drops to the measured value, so it cannot be re-earned by
-# running junk.
+# `executed_routines` counts every routine the native lane runs, matched against
+# the reference or not, so the only way to raise it is to execute more code --
+# including code the ROM never executes at that point. Landing
+# `DuelMainInterface`'s body raised the matched count (`reached_routines`
+# 645 -> 649) while the unmatched remainder fell by 69, and a plain rising
+# ratchet scores that as a regression. What the 69 were was NOT established:
+# tracing showed the port spends most of the movie spinning in overworld
+# movement code either way, so the honest claim is only the arithmetic --
+# matched up, unmatched down. The trade is therefore allowed in exactly one
+# direction: an `executed_routines` fall passes only when `reached_routines`
+# strictly rises in the same run, which still rejects every loss of exercise
+# that does not buy a match. When the trade is taken the ceiling drops to the
+# measured value, so it cannot be re-earned by running junk.
 RATCHET_TRADE = {"executed_routines": "reached_routines"}
 
 
