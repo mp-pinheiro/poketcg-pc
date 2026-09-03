@@ -307,6 +307,52 @@ def audit_cuts() -> list[dict[str, Any]]:
     return rows
 
 
+def audit_truncated() -> list[dict[str, Any]]:
+    """Bodies that stop partway: every later asm callee missing, all earlier ones present.
+
+    `GiveBoosterPack` ported the eleven statements up to `PlaySong` and stopped,
+    with a comment declaring the rest unmeasurable. It was, at that routine's own
+    boundary -- it passed 4/4 with the tail deleted. Only a caller running past
+    the cut could see it, which is how `ScriptCommand_GiveBoosterPacks` failed on
+    `wAnotherBoosterPack`. No case matrix detects this class, so match its shape
+    directly: an unbroken prefix of the asm's call sequence present, and an
+    unbroken suffix absent. Interleaved gaps are a different thing (a branch the
+    body folded, a helper it inlined) and are not reported.
+    """
+    sequences: dict[str, list[str]] = {}
+    for path in sorted(ASM_ROOT.rglob("*.asm")):
+        current = None
+        for raw in path.read_text(errors="replace").splitlines():
+            line = raw.split(";", 1)[0]
+            label = LABEL.match(line)
+            if label:
+                current = label.group(1)
+                continue
+            if current is None:
+                continue
+            call = ASM_CALL_TARGET.match(line)
+            if call:
+                sequences.setdefault(current, []).append(call.group(1))
+
+    bodies = c_bodies()
+    rows: list[dict[str, Any]] = []
+    for name, (file, body) in sorted(bodies.items()):
+        calls = [c for c in sequences.get(name, []) if c in bodies and c != name]
+        if len(calls) < 2:
+            continue
+        present = [re.search(r"\b%s\s*\(" % re.escape(c), body) is not None
+                   for c in calls]
+        if all(present) or not present[0]:
+            continue
+        cut = present.index(False)
+        if any(present[cut:]):
+            continue
+        rows.append({"routine": name, "file": file, "kept": cut,
+                     "dropped": len(calls) - cut, "missing": calls[cut:]})
+    rows.sort(key=lambda r: (-r["dropped"], r["routine"]))
+    return rows
+
+
 def audit_overrides() -> list[dict[str, Any]]:
     """Probe adapters that overwrite a real result register with a constant.
 
@@ -353,14 +399,17 @@ def counts() -> dict[str, int]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("audit", choices=("loops", "banks", "jumps", "overrides",
-                                          "backedges", "stubs", "cuts", "all"))
+                                          "backedges", "stubs", "cuts",
+                                          "truncated", "all"))
     args = parser.parse_args(argv)
 
     bodies = c_bodies()
     if args.audit == "all":
         print(json.dumps(counts(), indent=2, sort_keys=True))
         return 0
-    if args.audit == "overrides":
+    if args.audit == "truncated":
+        rows = audit_truncated()
+    elif args.audit == "overrides":
         rows = audit_overrides()
     elif args.audit == "cuts":
         rows = audit_cuts()
