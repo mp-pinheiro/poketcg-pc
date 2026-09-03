@@ -5042,7 +5042,20 @@ CASES["DuelMainInterface"] = [
 
 # >>> factory PrintDuelMenuAndHandleInput
 CONTRACT["PrintDuelMenuAndHandleInput"] = {"compare": (), "preserve": ()}
-CASES["PrintDuelMenuAndHandleInput"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# One case per branch class. [0] holds B and presses Up, which is the first of
+# the five d-pad shortcuts. [1] presses Select, which walks the whole shortcut
+# chain down to the in-play-area screen and out through DuelMainInterface, so it
+# needs the B press that backs out of that screen and the redraw budget.
+CASES["PrintDuelMenuAndHandleInput"] = [
+    dict(POISON, wram={0xCBC6: b"\x00", 0xCC07: b"\x00", 0xCBE7: b"\x00"},
+         read={0xCBC6: 1, 0xCC07: 1}, keys=[0x00, 0x42, 0x42],
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, wram={0xCBC6: b"\x00", 0xCC07: b"\x00", 0xCBE7: b"\x00"},
+         read={0xCBC6: 1, 0xCC07: 1}, keys=[0x00, 0x04, 0x02],
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
 # <<< factory PrintDuelMenuAndHandleInput
 
 # >>> factory DuelMenuShortcut_OpponentPlayArea
@@ -5149,9 +5162,17 @@ CASES["DuelMenu_Attack"] = [dict(POISON, read={0xCBCF: 1}, expect={0xCBCF: b"\x0
 
 # >>> factory UnreferencedDrawCardFromDeckToHand
 CONTRACT["UnreferencedDrawCardFromDeckToHand"] = {"compare": (), "preserve": ()}
+# It falls into the duel menu's input loop, so these seed the Select shortcut
+# that walks out of it, plus the B press and budget that path needs.
 CASES["UnreferencedDrawCardFromDeckToHand"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3C"}, "read": {0xFF9E: 1}, "expect": {0xFF9E: b"\x0B"}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BA: b"\x3C"}, read={0xFF9E: 1}, expect={0xFF9E: b"\x0B"}),
+    {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCC07: b"\x00", 0xCBE7: b"\x00"},
+     "read": {0xFF9E: 1}, "expect": {0xFF9E: b"\x0B"}, "keys": [0x00, 0x04, 0x02],
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCC07: b"\x00", 0xCBE7: b"\x00"},
+         read={0xFF9E: 1}, expect={0xFF9E: b"\x0B"}, keys=[0x00, 0x04, 0x02],
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory UnreferencedDrawCardFromDeckToHand
 
@@ -7179,8 +7200,14 @@ for _record in SCHEMA2_CASES["DuelMainInterface"]:
 MUTATIONS["PrintDuelMenuAndHandleInput"] = {"source_symbol": "PrintDuelMenuAndHandleInput", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["PrintDuelMenuAndHandleInput-0"]}
 # <<< factory-mutation PrintDuelMenuAndHandleInput
 # >>> factory-completion PrintDuelMenuAndHandleInput
-for _record in SCHEMA2_CASES["PrintDuelMenuAndHandleInput"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+# 0x237D in bank 13 named another routine's `ret`. This routine's own `ret nz`
+# only fires on an already-finished duel, and neither case reaches it: both stop
+# where their shortcut's tail jump lands.
+SCHEMA2_CASES["PrintDuelMenuAndHandleInput"][0]["completion"] = {
+    "mode": "entry", "pc": 0x430B, "bank": 1,
+    "routine": "DuelMenuShortcut_OpponentPlayArea"}
+SCHEMA2_CASES["PrintDuelMenuAndHandleInput"][1]["completion"] = {
+    "mode": "entry", "pc": 0x426D, "bank": 1, "routine": "DuelMainInterface"}
 # <<< factory-completion PrintDuelMenuAndHandleInput
 # >>> factory-mutation DuelMenuShortcut_OpponentPlayArea
 MUTATIONS["DuelMenuShortcut_OpponentPlayArea"] = {"source_symbol": "DuelMenuShortcut_OpponentPlayArea", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenuShortcut_OpponentPlayArea-0"]}
@@ -7308,8 +7335,12 @@ for _record in SCHEMA2_CASES["DuelMenu_Attack"]:
 MUTATIONS["UnreferencedDrawCardFromDeckToHand"] = {"source_symbol": "UnreferencedDrawCardFromDeckToHand", "before": "void UnreferencedDrawCardFromDeckToHand(void)\n{\n\tDrawCardResult draw = DrawCardFromDeck();\n\tif ((draw.f & 0x10u) == 0u)\n\t\tAddCardToHand(draw.a);\n\t(void)SetOppAction_SerialSendDuelData(OPPACTION_DRAW_CARD, 0u);", "after": "void UnreferencedDrawCardFromDeckToHand(void)\n{\n\tDrawCardResult draw = DrawCardFromDeck();\n\tif ((draw.f & 0x10u) == 0u)\n\t\tAddCardToHand(draw.a);\n\t(void)SetOppAction_SerialSendDuelData(0x0Au, 0u);", "case_ids": ["UnreferencedDrawCardFromDeckToHand-0", "UnreferencedDrawCardFromDeckToHand-1"]}
 # <<< factory-mutation UnreferencedDrawCardFromDeckToHand
 # >>> factory-completion UnreferencedDrawCardFromDeckToHand
+# 0x04E0 in bank 1 named an unrelated `ret`; this routine tail-jumps into the
+# duel menu's input loop and has no `ret` of its own, so it stops where its
+# shortcut's tail jump lands.
 for _record in SCHEMA2_CASES["UnreferencedDrawCardFromDeckToHand"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x04E0, "bank": 1}
+    _record["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
+                             "routine": "DuelMainInterface"}
 # <<< factory-completion UnreferencedDrawCardFromDeckToHand
 # >>> factory-mutation OppAction_ForceSwitchActive
 MUTATIONS["OppAction_ForceSwitchActive"] = {"source_symbol": "OppAction_ForceSwitchActive", "before": "void OppAction_ForceSwitchActive(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\twPlayAreaSelectAction = 1u;", "after": "void OppAction_ForceSwitchActive(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\twPlayAreaSelectAction = 0u;", "case_ids": ["OppAction_ForceSwitchActive-0", "OppAction_ForceSwitchActive-1"]}

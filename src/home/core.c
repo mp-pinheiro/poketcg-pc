@@ -9501,8 +9501,98 @@ void RestartPracticeDuelTurn(void) { }
 void DuelMainInterface(void) { }
 /* <<< factory DuelMainInterface */
 
+#define DUEL_MENU_DATA 0x54E9u
+static void duel_menu_items_printed(void);
 /* >>> factory PrintDuelMenuAndHandleInput */
-void PrintDuelMenuAndHandleInput(void) { return; }
+/* core.asm:301-349. Prints the duel menu, then loops on input. Holding B turns
+ * the d-pad and Start into the five shortcut views; Start alone and Select are
+ * two more; anything else falls through to the menu itself, whose selection
+ * dispatches through DuelMenuFunctionTable. Every one of those exits is a tail
+ * jump in the asm, so this routine only returns by its own `ret nz` when the
+ * duel has already finished. */
+void PrintDuelMenuAndHandleInput(void)
+{
+	(void)DrawWideTextBox();
+	(void)PlaceTextItems(DUEL_MENU_DATA);
+	duel_menu_items_printed();
+}
+
+/* core.asm:305-349, the `.menu_items_printed` entry: UnreferencedDrawCardFromDeckToHand
+ * jumps here, skipping the text box and menu items above. */
+static void duel_menu_items_printed(void)
+{
+	SaveDuelData();
+	if (wDuelFinished != 0u)
+		return;
+	SetMenuItem(wCurrentDuelMenuItem);
+
+	for (;;) {
+		DoFrame();
+		if ((hKeysHeld & PAD_B) != 0u) {
+			uint8_t held = hKeysPressed;
+
+			if ((held & PAD_UP) != 0u) {
+				DuelMenuShortcut_OpponentPlayArea();
+				return;
+			}
+			if ((held & PAD_DOWN) != 0u) {
+				DuelMenuShortcut_PlayerPlayArea();
+				return;
+			}
+			if ((held & PAD_LEFT) != 0u) {
+				DuelMenuShortcut_PlayerDiscardPile();
+				return;
+			}
+			if ((held & PAD_RIGHT) != 0u) {
+				DuelMenuShortcut_OpponentDiscardPile();
+				return;
+			}
+			if ((held & PAD_START) != 0u) {
+				DuelMenuShortcut_OpponentActivePokemon();
+				return;
+			}
+		}
+		if ((hKeysPressed & PAD_START) != 0u) {
+			DuelMenuShortcut_PlayerActivePokemon();
+			return;
+		}
+		if ((hKeysPressed & PAD_SELECT) != 0u) {
+			DuelMenuShortcut_BothActivePokemon();
+			return;
+		}
+		if (wDebugSkipDuelMenuInput != 0u)
+			continue;
+
+		HandleMenuInputResult input = HandleDuelMenuInput(0u);
+
+		wCurrentDuelMenuItem = input.e;
+		if ((input.f & 0x10u) == 0u)
+			continue;
+		switch (hCurMenuItem) {
+		case 0u:
+			DuelMenu_Hand();
+			break;
+		case 1u:
+			DuelMenu_Attack();
+			break;
+		case 2u:
+			DuelMenu_Check();
+			break;
+		case 3u:
+			DuelMenu_PkmnPower();
+			break;
+		case 4u:
+			DuelMenu_Retreat();
+			break;
+		case 5u:
+			DuelMenu_Done();
+			break;
+		default:
+			break;
+		}
+		break;
+	}
+}
 /* <<< factory PrintDuelMenuAndHandleInput */
 
 /* >>> factory DuelMenuShortcut_OpponentPlayArea */
@@ -9630,7 +9720,8 @@ void UnreferencedDrawCardFromDeckToHand(void)
 	if ((draw.f & 0x10u) == 0u)
 		AddCardToHand(draw.a);
 	(void)SetOppAction_SerialSendDuelData(OPPACTION_DRAW_CARD, 0u);
-	PrintDuelMenuAndHandleInput();
+	/* core.asm:365 jumps to `.menu_items_printed`, not to the routine's head. */
+	duel_menu_items_printed();
 }
 /* <<< factory UnreferencedDrawCardFromDeckToHand */
 
