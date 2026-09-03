@@ -1,4 +1,5 @@
 #include "home/duel_menus.h"
+#include "home/play_area.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -124,14 +125,17 @@ void OpenDuelCheckMenu(void)
 /* <<< factory OpenDuelCheckMenu */
 
 /* >>> factory OpenInPlayAreaScreen_FromSelectButton */
-void OpenInPlayAreaScreen_FromSelectButton(void)
+uint8_t OpenInPlayAreaScreen_FromSelectButton(void)
 {
 	uint8_t saved_bank = hBankROM;
+	OpenInPlayAreaScreenResult screen;
+
 	BankswitchROM(6u);
 	wInPlayAreaFromSelectButton = 1u;
 	/* duel_menus.asm:11-20: the screen itself was missing between the flag
 	 * write and the bank restore. */
-	OpenInPlayAreaScreen();
+	screen = OpenInPlayAreaScreen();
 	BankswitchROM(saved_bank);
+	return screen.f;
 }
 /* <<< factory OpenInPlayAreaScreen_FromSelectButton */

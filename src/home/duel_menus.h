@@ -27,6 +27,8 @@ HandlePeekSelectionV2Result HandlePeekSelection(uint8_t f);
 void OpenDuelCheckMenu(void);
 /* <<< factory OpenDuelCheckMenu */
 /* >>> factory OpenInPlayAreaScreen_FromSelectButton */
-void OpenInPlayAreaScreen_FromSelectButton(void);
+/* duel_menus.asm:11-20. BankswitchROM sets no flags (switch_rom.asm:90-93),
+ * so the wrapper's carry is exactly the screen's. */
+uint8_t OpenInPlayAreaScreen_FromSelectButton(void);
 /* <<< factory OpenInPlayAreaScreen_FromSelectButton */
 #endif /* POKETCG_HOME_DUEL_MENUS_H */
