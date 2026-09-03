@@ -241,6 +241,31 @@ before re-reading the asm. Here `ShuffleCards` -> `ShuffleDeck` ->
 `ShuffleCardsInDeck` all propagated `f=$C0` correctly and the port still
 reported `$70`, which is only possible below the port.
 
+## Push a narrowing down to the routine that owns the gap
+
+The trade row shipped for one turn with `c` narrowed away on a case, blamed on
+`PlayDeckShuffleAnimation`. That narrowing is now gone, and the way it closed
+is the reusable part: the clobber was derivable after all. Its animation path
+ends in `FinishQueuedAnimations` (`script.asm:166`), whose `ZeroObjectPositions`
+counts `c` down from `OAM_COUNT` to zero (`objects.asm:76-84`), and whose
+closing `BankswitchROM` preserves `bc` (`switch_rom.asm:90-93`). So `c` is
+zero, provably, with no measurement.
+
+Two things made it cheap. First, the output belongs on the routine that
+produces it, not on the 16 callers of `FinishQueuedAnimations` or the 31 of
+`ZeroObjectPositions` -- widening either signature would have churned 47
+callsites to move one byte. Second, the gap was path-local: the same routine's
+`.one_card_in_deck` branch calls neither of those and its `c` really does come
+out of the DoFrame chain unmodelled.
+
+That is what the narrowing hatch is for. `PlayDeckShuffleAnimation`'s contract
+now compares `("a", "c")`, its two one-card cases narrow to `("a",)` with the
+reason cited, and a third case seeding twelve cards in the deck covers the
+animation path and compares `c` with nothing dropped. The gap ends up declared
+on the branch that owns it instead of on a consumer two levels up, and the
+consumer compares every field again. Restoring `c` as a pass-through makes the
+trade row fail, so the derived zero is load-bearing.
+
 ## When the divergence is the movie, not the port
 
 `5530S` is luck-manipulated: the RNG advances every frame, so the hand a duel
