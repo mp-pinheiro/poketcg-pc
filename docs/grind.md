@@ -152,6 +152,30 @@ clean. This named `MapNames`, which the port had at `0x7080` instead of
 (`11 D1`) into `wTxRam2`, and `$D111` is not a text id, so the text engine
 resolved it to `$7FFF` and read past the end of bank `$0C`.
 
+## Two limits of the `entry` completion mode
+
+`entry` stops both lanes at a named routine's entry, which is the answer to a
+`cuts` row whose subject has no reachable `ret`. It does not make every such
+row verifiable, and two limits decide whether it helps.
+
+**No register is comparable.** The native lane leaves the routine through a
+`longjmp`, so it never produces a return value and the probe reports whatever
+the adapter left in `a`/`f`/`d`/`e`. A case using `entry` therefore needs
+`compare: ()`, the way `tests/cases/medal.py` already declares it. If the
+routine's only observable contract was its exit registers, `entry` buys nothing:
+`FriendshipSong_AddToBench50PercentEffect` writes nothing at all before its coin
+toss, so stopping there verifies an empty prefix.
+
+**A single pc cannot cover an RNG-chosen exit.** That routine has three
+(effect_functions.asm:8809, 8818, 8830) and the toss picks between them. The
+toss is pinnable -- the RNG words live at `$CACA` and a case can seed them, as
+`TossCoin_BankB`'s own cases do -- and with them zeroed the reference does take
+the tails exit at `0b:7127`. What still blocks it is the coin-toss state: `de`
+is not preserved across `TossCoin_BankB` (the reference leaves `$12/$11`, not
+the prompt id the entry `ldtx` loaded) and `$CAC2` diverges too, so porting the
+body needs that routine's register and counter contract established first.
+Attempting the body without it produces a red row, not a fix.
+
 ## When the divergence is the movie, not the port
 
 `5530S` is luck-manipulated: the RNG advances every frame, so the hand a duel
