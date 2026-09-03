@@ -895,6 +895,49 @@ contracts -- it takes the allowed-keys byte in `a`, stores it to
 caller's completion mode before landing it: it contains an input loop, and that
 trap has now bitten three times on this path.
 
+## The play area screen is ported; the carry above it is not derivable yet
+
+`DisplayPlayAreaScreen` (`core.asm:4933-5022`) is landed in full, along with
+both entry wrappers (`OpenPlayAreaScreenForViewing` /
+`ForSelection`, which differ only in the key mask they pass) and the
+`OpenInPlayAreaScreen_FromSelectButton` carry passthrough. All four green,
+`core` 369/371, `duel_menus` 8/8, `play_area` 9/9, gate exit 0.
+
+The pre-check written down last turn paid for itself immediately: all three
+screen rows carried `pre-ret` pcs, all three hung the native lane the moment the
+input loop became real, and all three needed `entry` boundaries at
+`SelectingBenchPokemonMenu` (`01:60DD`) plus 20M/80M budgets, because redrawing
+the play area does not fit in 240 frames. That trap is now 4-for-4 on this path.
+
+**Where it stopped, and why the row was reverted rather than landed.**
+`OpenVariousPlayAreaScreens_FromSelectPresses` (`core.asm:758-766`) is a clean
+transcription -- `SwapTurn` is `push af ... pop af` (`duel.asm:2364-2372`), so it
+preserves flags and the fall-through `ret` carries the second view's, with
+nothing to guess. It still failed, and the measurement is the useful part:
+
+- at its real `ret` the reference reports `f = $20` -- H set, no carry, no Z
+- its first callee, `OpenInPlayAreaScreen_FromSelectButton`, reports `f = $90`
+- the port's threading yields `$10` and `$00` respectively
+
+`$20` is the state left by an `and` with nothing after it, so it is not any exit
+this routine can produce. The screen below exits via `scf; ret` and `or a; ret`
+(`play_area.asm:62-78`), which means **the Z bit is inherited from whatever ran
+inside the screen** and the port models none of it. Both available row shapes
+are therefore dishonest: `pre-ret` asserts a byte that cannot be derived, and
+`entry` compares a result register that does not exist yet because the routine
+has not returned.
+
+So the body is reverted to its stub with those three measurements written into
+the comment, and the contract was left alone. Worth noting **the old stub
+returned `$20` -- the reference's exact byte -- by coincidence**, which is the
+same class as `CheckIfDefendingPokemonCanKnockOut` passing while wrong. A stub
+agreeing with the reference is not evidence that anything was translated.
+
+I also widened `OpenInPlayAreaScreen_FromSelectButton`'s contract to `("f",)`
+to locate the disagreement, then reverted it: comparing a whole `f` byte whose Z
+is inherited would fail forever. The carry alone is what its callers read, and
+that is what it now returns.
+
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
 things the asm never does: `wLCDC = $80`, `hKeysPressed = $01`, and reading the
