@@ -120,16 +120,25 @@ def report(
     frontier = [(ordinal, name) for ordinal, name in missing if ordinal >= reached_ordinal]
     structural = len(missing) - len(frontier)
 
-    blockers = []
-    for ordinal, name in frontier[:limit]:
+    # `blockers` below is filtered to ordinals at or past reached_ordinal, and
+    # reached_ordinal is a max over reached routines, so one incidental call to
+    # a late routine raises the bar and reclassifies every genuine miss under it
+    # as structural. That is not hypothetical: a single DisableSpriteAnim call
+    # (reference ordinal 21,337) hid StartDuel and twenty duel-setup routines at
+    # 21,074. `misses` is the same data unfiltered, so the earliest thing the
+    # ROM does that the port does not is always misses[0].
+    def describe(ordinal: int, name: str) -> dict[str, Any]:
         source = inventory.get(name, {}).get("file", "")
-        blockers.append({
+        return {
             "routine": name,
             "reference_first_ordinal": ordinal,
             "reference_calls": rows[name]["count"],
             "source": source,
             "basename": owners.get(name, basename_of(source) if source else "?"),
-        })
+        }
+
+    misses = [describe(ordinal, name) for ordinal, name in missing[:limit]]
+    blockers = [describe(ordinal, name) for ordinal, name in frontier[:limit]]
     by_basename: dict[str, int] = {}
     for _ordinal, name in frontier:
         source = inventory.get(name, {}).get("file", "")
@@ -153,6 +162,7 @@ def report(
         "missing_routines": len(missing),
         "structural_misses": structural,
         "frontier_misses": len(frontier),
+        "misses": misses,
         "blockers": blockers,
         "frontier_by_basename": dict(sorted(by_basename.items(), key=lambda kv: -kv[1])),
         **audits,

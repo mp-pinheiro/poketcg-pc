@@ -54,6 +54,17 @@ Baseline at the time of writing: `reached_ordinal` 21337 of 70999 (30.05%),
 `reached_routines` 506, `executed_routines` 694 of 3009 translated,
 `frontier_misses` 281, audits `loops` 38, `banks` 14, `jumps` 4.
 
+`blockers[]` is a filtered view: it drops every miss below `reached_ordinal`,
+calling those structural. But `reached_ordinal` is a *max* over the routines the
+port reached, so a single incidental call to a late routine raises the bar and
+reclassifies real misses beneath it. That happened here: one `DisableSpriteAnim`
+call at reference ordinal 21,337 hid `StartDuel` and twenty duel-setup routines
+at 21,074, and `blockers[0]` pointed at a sprite routine instead. Read
+`misses[]` too — the same data unfiltered, so nothing is silently dropped. Both
+lists have legitimate rows: `misses[]` is headed by the bank trampolines the
+guard dissolved (`BankpopROM`, 24,250 reference calls) and the inlined audio
+leaf labels, so triage each row against the asm rather than taking row zero.
+
 ## Decision table
 
 Match `blocked_by`, or stderr from an `oracle-diff`.
