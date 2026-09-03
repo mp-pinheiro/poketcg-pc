@@ -307,6 +307,37 @@ def audit_cuts() -> list[dict[str, Any]]:
     return rows
 
 
+def audit_overrides() -> list[dict[str, Any]]:
+    """Probe adapters that overwrite a real result register with a constant.
+
+    `PokemonTrader_TradeCardsEffect` copied all seven registers out of its
+    result struct and then assigned `s->f = 0x70u` over the top, so its exit
+    flags were unverifiable for the port's life -- no case matrix can catch a
+    hole in the harness that reads it. A constant is legitimate only when the
+    adapter never copied a result at all, which is why the copy has to be seen
+    first.
+    """
+    rows: list[dict[str, Any]] = []
+    for path in sorted((ROOT / "src" / "probe").glob("*.c")):
+        routine, copied = None, False
+        for number, line in enumerate(path.read_text(errors="replace").splitlines(), 1):
+            begun = re.match(r"static void adapt_(\w+)\(ProbeState", line)
+            if begun:
+                routine, copied = begun.group(1), False
+                continue
+            if routine is None:
+                continue
+            if re.search(r"s->\w+ = result\.", line):
+                copied = True
+            constant = re.match(r"\ts->(\w+) = 0x[0-9A-Fa-f]+u;", line)
+            if constant and copied:
+                rows.append({"routine": routine, "register": constant.group(1),
+                             "file": f"src/probe/{path.name}", "line": number})
+            if line.startswith("}"):
+                routine = None
+    return rows
+
+
 def counts() -> dict[str, int]:
     """Only the exact classes. The worklists are not ratcheted; see the docstring."""
     bodies = c_bodies()
@@ -315,12 +346,13 @@ def counts() -> dict[str, int]:
         "loops": len(audit_loops(bodies)),
         "banks": len(audit_banks(bodies, banks)),
         "jumps": len(audit_jumps(bodies, jumps)),
+        "overrides": len(audit_overrides()),
     }
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("audit", choices=("loops", "banks", "jumps",
+    parser.add_argument("audit", choices=("loops", "banks", "jumps", "overrides",
                                           "backedges", "stubs", "cuts", "all"))
     args = parser.parse_args(argv)
 
@@ -328,7 +360,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.audit == "all":
         print(json.dumps(counts(), indent=2, sort_keys=True))
         return 0
-    if args.audit == "cuts":
+    if args.audit == "overrides":
+        rows = audit_overrides()
+    elif args.audit == "cuts":
         rows = audit_cuts()
     elif args.audit in ("backedges", "stubs"):
         looping, sizes, asm_calls = asm_shapes()

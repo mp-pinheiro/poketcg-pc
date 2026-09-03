@@ -180,7 +180,10 @@ RATCHET_PATH = ROOT / "tools" / "completion" / "tas_ratchet.json"
 # removed the incidental call and appeared as a 22,000-ordinal regression.
 # Read it as a ceiling on depth, never as progress; the set sizes are the gate.
 RATCHET_RISING = ("reached_routines", "executed_routines")
-RATCHET_FALLING = ("loops", "banks", "jumps")
+# `overrides` is ratcheted at zero from the turn it was found: a probe adapter
+# that assigns a register constant over a copied result makes that register
+# unverifiable, and no case matrix can detect a hole in the harness reading it.
+RATCHET_FALLING = ("loops", "banks", "jumps", "overrides")
 
 
 def check_ratchet(payload: dict[str, Any]) -> dict[str, Any] | None:

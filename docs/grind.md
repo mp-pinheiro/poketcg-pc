@@ -219,6 +219,28 @@ which is how the stand-in's invented `gb_write8(0xC2BAu, 0x39u)` was recognised
 for what it was: a hand-computed net effect of the two callees the port skipped
 (`RemoveCardFromHand` then `ReturnCardToDeck`, one card moving into the deck).
 
+## A hole in the harness that reads the port
+
+Every hiding mechanism found before this one lived in the port or its case
+matrix. `PokemonTrader_TradeCardsEffect` had a third kind: its probe adapter
+copied all seven registers out of the result struct and then assigned
+`s->f = 0x70u` over the top (`src/probe/effect_functions.c`). No case matrix
+can catch that -- the matrix is compared against whatever the probe reports, so
+the routine's exit flags were unverifiable for the port's life, and widening
+cases or seeding harder would never have surfaced it.
+
+`composition_audit.py overrides` now enumerates the class: a probe adapter that
+assigns a register constant *after* copying a real result. A constant is
+legitimate when the adapter never copied one, which is why the copy must be
+seen first. The count is 1 on the pre-fix tree with exact `file:line`, 0 after,
+and `overrides` is in `RATCHET_FALLING` at zero so it cannot come back.
+
+The lesson generalises past this audit: when a routine's field disagrees and
+the port's chain provably produces the right value, read the probe adapter
+before re-reading the asm. Here `ShuffleCards` -> `ShuffleDeck` ->
+`ShuffleCardsInDeck` all propagated `f=$C0` correctly and the port still
+reported `$70`, which is only possible below the port.
+
 ## When the divergence is the movie, not the port
 
 `5530S` is luck-manipulated: the RNG advances every frame, so the hand a duel
