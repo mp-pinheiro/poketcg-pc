@@ -1284,7 +1284,10 @@ void OpenPlayAreaScreenForSelection(void);
 void DisplayPlayAreaScreen(void);
 /* <<< factory DisplayPlayAreaScreen */
 /* >>> factory SelectingBenchPokemonMenu */
-uint8_t SelectingBenchPokemonMenu(void);
+/* core.asm:5052-5088. Three exits derive; the interactive menu below them is
+ * still unported. */
+typedef struct { uint8_t a; uint8_t f; } BenchPokemonMenuResult;
+BenchPokemonMenuResult SelectingBenchPokemonMenu(void);
 /* <<< factory SelectingBenchPokemonMenu */
 /* >>> factory HandleSpecialDuelMainSceneHotkeys */
 uint8_t HandleSpecialDuelMainSceneHotkeys(void);

@@ -9286,10 +9286,24 @@ void DisplayPlayAreaScreen(void)
 /* <<< factory DisplayPlayAreaScreen */
 
 /* >>> factory SelectingBenchPokemonMenu */
-uint8_t SelectingBenchPokemonMenu(void)
+/* core.asm:5052-5088. `ret z` twice on the way in, then `.return_carry` when
+ * the action is 2: `cp $02` leaves Z set and the `scf` adds carry, so that exit
+ * is a=2 with Z and C. The menu loop past those three exits is not ported yet,
+ * so this reports the action byte with the "not allowed" flags rather than
+ * pretending to have run it. */
+BenchPokemonMenuResult SelectingBenchPokemonMenu(void)
 {
-	uint8_t action = gb_read8(0xCBD4u);
-	return action == 0u ? 0x80u : (action == 2u ? 0xA0u : 0x80u);
+	uint8_t action = gb_read8(wPlayAreaSelectAction_ADDR);
+
+	if (action == 0u)
+		return (BenchPokemonMenuResult){0u, 0x80u};
+	/* `and PAD_SELECT` sets H, so this exit is Z|H where the `or a` above
+	 * it is Z alone. */
+	if ((hKeysPressed & PAD_SELECT) == 0u)
+		return (BenchPokemonMenuResult){0u, 0xA0u};
+	if (action == 2u)
+		return (BenchPokemonMenuResult){2u, 0x90u};
+	return (BenchPokemonMenuResult){action, 0x80u};
 }
 /* <<< factory SelectingBenchPokemonMenu */
 

@@ -2816,7 +2816,10 @@ static void adapt_DisplayPlayAreaScreen(ProbeState *s)
 /* >>> factory SelectingBenchPokemonMenu */
 static void adapt_SelectingBenchPokemonMenu(ProbeState *s)
 {
-	s->f = SelectingBenchPokemonMenu();
+	BenchPokemonMenuResult r = SelectingBenchPokemonMenu();
+
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory SelectingBenchPokemonMenu */
 

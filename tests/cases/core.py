@@ -4966,7 +4966,9 @@ CASES["DisplayPlayAreaScreen"] = [
 # <<< factory DisplayPlayAreaScreen
 
 # >>> factory SelectingBenchPokemonMenu
-CONTRACT["SelectingBenchPokemonMenu"] = {"compare": ("f",), "preserve": ()}
+# core.asm:5052-5058. `a` is an output too: zero on both early exits, and the
+# action byte on the `.return_carry` exit.
+CONTRACT["SelectingBenchPokemonMenu"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["SelectingBenchPokemonMenu"] = [
     {"wram": {0xCBD4: b"\x00"}},
     dict(POISON, wram={0xCBD4: b"\x02"}),
