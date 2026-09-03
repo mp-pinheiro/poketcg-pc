@@ -70,7 +70,7 @@ AIDoTurn_LegendaryZapdosResult AIDoTurn_LegendaryZapdos(uint8_t a, uint8_t f, ui
 					CountNumberOfEnergyCardsAttachedResult attached = CountNumberOfEnergyCardsAttached(PLAY_AREA_ARENA);
 					if (attached.a == 0u) {
 						hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
-						if (AITryToPlayEnergyCard() != 0u)
+						if ((AITryToPlayEnergyCard().f & 0x10u) != 0u)
 							skip_energy = 1u;
 					}
 				}

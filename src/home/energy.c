@@ -316,8 +316,11 @@ CheckIfEvolutionNeedsEnergyForAttackResult CheckIfEvolutionNeedsEnergyForAttack(
 /* <<< factory CheckIfEvolutionNeedsEnergyForAttack */
 
 /* >>> factory AITryToPlayEnergyCard */
-uint8_t AITryToPlayEnergyCard(void)
+AITryToPlayEnergyCardResult AITryToPlayEnergyCard(void)
 {
+	uint8_t pending;
+	uint8_t attack;
+
 	gb_write8(wTempAI_ADDR, 0u);
 	gb_write8(wSelectedAttack_ADDR, FIRST_ATTACK_OR_PKMN_POWER_600);
 	CheckEnergyNeededForAttackResult r1 = CheckEnergyNeededForAttack();
@@ -357,7 +360,7 @@ second_attack:
 		CheckIfEvolutionNeedsEnergyForAttackResult evo =
 			CheckIfEvolutionNeedsEnergyForAttack(0u, 0u, 0u, 0u, 0u);
 		if ((evo.f & 0x10u) == 0u)
-			return 0u;
+			return (AITryToPlayEnergyCardResult){evo.a, evo.f};
 		(void)CreateEnergyCardListFromHand(evo.a);
 		goto check_deck;
 	}
@@ -367,7 +370,7 @@ energy_boost_or_discard_energy:
 		GetEnergyCardForDiscardOrEnergyBoostAttackResult g =
 			GetEnergyCardForDiscardOrEnergyBoostAttack(0u);
 		if ((g.f & 0x10u) == 0u)
-			return 0u;
+			return (AITryToPlayEnergyCardResult){g.a, g.f};
 	}
 
 check_deck:
@@ -442,16 +445,20 @@ play_energy_card:
 	{
 		uint8_t loc = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
 		gb_write8(hTempPlayAreaLocation_ffa1_ADDR, loc);
-		(void)AIMakeDecision(OPPACTION_PLAY_ENERGY_600, 0u, 0u, 0u, 0u);
-		return 1u;
+		AIMakeDecisionResult played =
+			AIMakeDecision(OPPACTION_PLAY_ENERGY_600, 0u, 0u, 0u, 0u);
+
+		return (AITryToPlayEnergyCardResult){played.a, 0x10u};
 	}
 
 check_if_done:
-	if (gb_read8(wTempAI_ADDR) != 0u)
-		return 0u;
-	if (gb_read8(wSelectedAttack_ADDR) == 0u)
+	pending = gb_read8(wTempAI_ADDR);
+	if (pending != 0u)
+		return (AITryToPlayEnergyCardResult){pending, 0x00u};
+	attack = gb_read8(wSelectedAttack_ADDR);
+	if (attack == 0u)
 		goto second_attack;
-	return 0u;
+	return (AITryToPlayEnergyCardResult){attack, 0x00u};
 }
 /* <<< factory AITryToPlayEnergyCard */
 
@@ -545,17 +552,21 @@ AIEnergyResult AIProcessEnergyCards(void)
 	 * 1/0 return already is, set only on `.play_energy_card` (:138-145). */
 	AIScoreResult best = FindPlayAreaCardWithHighestAIScore(0, 0, 0, 0, 0);
 
+	uint8_t logic = wAIEnergyAttachLogicFlags;
+
 	if ((best.f & 0x10u) != 0u) {
-		if (wAIEnergyAttachLogicFlags != 0u) {
+		if (logic != 0u) {
 			(void)RetrievePlayAreaAIScoreFromBackup1();
-			return (AIEnergyResult){0x10u};
+			return (AIEnergyResult){logic, 0x10u};
 		}
 		(void)CreateEnergyCardListFromHand(best.a);
-		return (AIEnergyResult){AITryToPlayEnergyCard() != 0u ? 0x10u : 0x00u};
+		AITryToPlayEnergyCardResult played = AITryToPlayEnergyCard();
+
+		return (AIEnergyResult){played.a, played.f};
 	}
-	if (wAIEnergyAttachLogicFlags != 0u)
+	if (logic != 0u)
 		(void)RetrievePlayAreaAIScoreFromBackup1();
-	return (AIEnergyResult){0x00u};
+	return (AIEnergyResult){logic, 0x00u};
 }
 /* <<< factory AIProcessEnergyCards */
 

@@ -25,7 +25,12 @@ typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t 
 CheckIfEvolutionNeedsEnergyForAttackResult CheckIfEvolutionNeedsEnergyForAttack(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory CheckIfEvolutionNeedsEnergyForAttack */
 /* >>> factory AITryToPlayEnergyCard */
-uint8_t AITryToPlayEnergyCard(void);
+/* energy.asm relative :61-159. Five exits, every one derivable: the two
+ * `ret nc` paths take their callee's a/f, `.play_energy_card` takes
+ * AIMakeDecision's a with the trailing `scf`, and the two `or a` exits
+ * leave the wTempAI and wSelectedAttack bytes they tested. */
+typedef struct { uint8_t a; uint8_t f; } AITryToPlayEnergyCardResult;
+AITryToPlayEnergyCardResult AITryToPlayEnergyCard(void);
 /* <<< factory AITryToPlayEnergyCard */
 /* >>> factory DetermineAIScoreOfAttackEnergyRequirement */
 void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a);
@@ -34,7 +39,9 @@ void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a);
 /* energy.asm:265-285. Only `f` is modelled: the carry is set on the
  * `.play_energy_card` tail and clear on every other exit, and `a` at exit
  * differs per path with no consumer. */
-typedef struct { uint8_t f; } AIEnergyResult;
+/* `a` is the wAIEnergyAttachLogicFlags byte the `or a` tests read -- zero on
+ * the no-flags exit -- or AITryToPlayEnergyCard's on the play path. */
+typedef struct { uint8_t a; uint8_t f; } AIEnergyResult;
 AIEnergyResult AIProcessEnergyCards(void);
 /* <<< factory AIProcessEnergyCards */
 /* >>> factory AIProcessAndTryToPlayEnergy */

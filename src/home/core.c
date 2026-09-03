@@ -5182,7 +5182,7 @@ CoreCardListResult Func_15886(uint16_t hl)
 				continue;
 			}
 			hTempPlayAreaLocation_ff9d = e;
-			uint8_t play_f = AITryToPlayEnergyCard();
+			uint8_t play_f = AITryToPlayEnergyCard().f;
 			if (play_f & 0x10u) {
 				return (CoreCardListResult){0u, play_f};
 			}

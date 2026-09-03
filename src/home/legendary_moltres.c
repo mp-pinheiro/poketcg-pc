@@ -68,7 +68,7 @@ AIDoTurn_LegendaryMoltresResult AIDoTurn_LegendaryMoltres(uint8_t a, uint8_t f, 
 				CoreCardListResult energy = CreateEnergyCardListFromHand(arena.a);
 				if ((energy.f & 0x10u) == 0u) {
 					CountNumberOfEnergyCardsAttachedResult attached = CountNumberOfEnergyCardsAttached(PLAY_AREA_ARENA);
-					if (attached.a == 0u) { hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA; if (AITryToPlayEnergyCard() == 0u) AIProcessAndTryToPlayEnergy(); }
+					if (attached.a == 0u) { hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA; if ((AITryToPlayEnergyCard().f & 0x10u) == 0u) AIProcessAndTryToPlayEnergy(); }
 					else AIProcessAndTryToPlayEnergy();
 				}
 			} else AIProcessAndTryToPlayEnergy();
