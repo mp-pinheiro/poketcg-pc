@@ -276,7 +276,11 @@ uint8_t GameEvent_Duel(void)
 	sPlayerInChallengeMachine = 0u;
 	DisableSRAM();
 	SaveGeneralSaveData();
+	/* map.asm:111 bank1call StartDuel_VSAIOpp, whose asm falls through into
+	 * StartDuel (core.asm:42). StartDuel_VSAIOpp stops at that tail jump, so
+	 * the fallthrough is expressed at the one call site. */
 	StartDuel_VSAIOpp();
+	StartDuel();
 	return 0x10u;
 }
 /* <<< factory GameEvent_Duel */

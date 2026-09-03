@@ -24,12 +24,16 @@ DUEL_WRAM = {
     0xCC18: b"\x06", 0xCC1A: b"\x01",
     0xFF97: b"\xC2", 0xC2F1: b"\x80", 0xC3F1: b"\x80",
     0xCC09: b"\x80", 0xC400: b"\x08" * 0x3C, 0xC480: b"\x08" * 0x3C,
-    0xCABB: b"\x00", 0xCCF2: b"\x01", 0xFF90: b"\x02",
+    0xCABB: b"\x00", 0xCCF2: b"\x01",
     **DUEL_ANIM_SAFE,
 }
 
 # One press: the error path needs a single A, and a held key raises no further
 # edge, so a longer timeline would change nothing.
+# hKeysHeld ($FF90) is deliberately not seeded. Every joypad poll latches it
+# and the timeline cycles modulo its entry count, so its value at a stop point
+# inside the run is parity-dependent, and seeding it would make a
+# non-deterministic byte a compared output.
 DUEL_KEYS = [0x00, 0x01]
 
 DUEL_INSTRUCTION_BUDGET = 200000000

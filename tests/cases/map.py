@@ -1,3 +1,7 @@
+from tests.cases._duel_setup import (
+    DUEL_CYCLE_BUDGET, DUEL_INSTRUCTION_BUDGET, DUEL_KEYS, DUEL_SETUP,
+    DUEL_WRAM)
+
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 W_PERMISSION_MAP = 0xD133
@@ -236,19 +240,22 @@ CASES["OverworldDoFrameFunction"] = [
 # >>> factory GameEvent_Duel
 CONTRACT["GameEvent_Duel"] = {"compare": (), "preserve": ()}
 CASES["GameEvent_Duel"] = [
-    {"wram": {0xCC18: b"\x06", 0xCC19: b"\x01", 0xCC1A: b"\x01",
-              0xD0C2: b"\x00", 0xD112: b"\xAA"},
-     "sram": {0: {0xBA44: b"\xAA", 0xB700: b"\x00",
-                   0xA218: bytes(range(60))}},
+    {"keys": list(DUEL_KEYS),
+     "wram": {**DUEL_WRAM, 0xCC19: b"\x01", 0xD0C2: b"\x00", 0xD112: b"\xAA"},
+     "setup": DUEL_SETUP,
+     "sram": {0: {0xBA44: b"\xAA", 0xB700: b"\x00", 0xA218: b"\x08" * 60}},
      "read": {0xD0C2: 1, 0xD112: 1},
-     "sread": {0: {0xBA44: 1}}},
-    dict(POISON,
-         wram={0xCC18: b"\x06", 0xCC19: b"\x01", 0xCC1A: b"\x01",
-               0xD0C2: b"\x00", 0xD112: b"\xAA"},
-         sram={0: {0xBA44: b"\xAA", 0xB700: b"\x00",
-                   0xA218: bytes(range(60))}},
+     "sread": {0: {0xBA44: 1}},
+     "instruction_budget": DUEL_INSTRUCTION_BUDGET,
+     "cycle_budget": DUEL_CYCLE_BUDGET},
+    dict(POISON, keys=list(DUEL_KEYS),
+         wram={**DUEL_WRAM, 0xCC19: b"\x01", 0xD0C2: b"\x00", 0xD112: b"\xAA"},
+         setup=DUEL_SETUP,
+         sram={0: {0xBA44: b"\xAA", 0xB700: b"\x00", 0xA218: b"\x08" * 60}},
          read={0xD0C2: 1, 0xD112: 1},
-         sread={0: {0xBA44: 1}}),
+         sread={0: {0xBA44: 1}},
+         instruction_budget=DUEL_INSTRUCTION_BUDGET,
+         cycle_budget=DUEL_CYCLE_BUDGET),
 ]
 # <<< factory GameEvent_Duel
 
@@ -365,7 +372,11 @@ MUTATIONS["GameEvent_Duel"] = {"source_symbol": "GameEvent_Duel", "before": "uin
 # <<< factory-mutation GameEvent_Duel
 # >>> factory-completion GameEvent_Duel
 for _record in SCHEMA2_CASES["GameEvent_Duel"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x6793, "bank": 1}
+    # GameEvent_Duel's own `ret` (00:38DA) needs the duel to finish, and the
+    # duel stops at an interactive arena choice no 16-frame input can pass, so
+    # both lanes stop where the setup reaches that choice instead.
+    _record["completion"] = {"mode": "entry", "pc": 0x4CD5, "bank": 1,
+                             "routine": "ChooseInitialArenaAndBenchPokemon"}
 # <<< factory-completion GameEvent_Duel
 # >>> factory-mutation GameEvent_ChallengeMachine
 MUTATIONS["GameEvent_ChallengeMachine"] = {"source_symbol": "GameEvent_ChallengeMachine", "before": "void GameEvent_ChallengeMachine(void)\n{\n\twDefaultSong = MUSIC_PC_MAIN_MENU;\n\t(void)PlayDefaultSong();\n\tEnableSRAM();\n\tsPlayerInChallengeMachine = 0u;", "after": "void GameEvent_ChallengeMachine(void)\n{\n\twDefaultSong = MUSIC_PC_MAIN_MENU;\n\t(void)PlayDefaultSong();\n\tEnableSRAM();\n\tsPlayerInChallengeMachine = 1u;" , "case_ids": ["GameEvent_ChallengeMachine-0", "GameEvent_ChallengeMachine-1"]}
