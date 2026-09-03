@@ -618,28 +618,35 @@ wants a duel state captured from a running game, not a hand-written seed; that
 is a different instrument from the case matrix and should be recognised as such
 before more turns go into seeds.
 
-**`$CD0F` disagrees the other way round, and that is a live lead.**
+**`$CD0F` disagreed, and the cause was the key timeline, not the port.** I
+wrote this up as a live lead and it was wrong; here is the correction.
+
 `PlayerPickFireEnergyCardToDiscard` skipped `HandleEnergyDiscardMenuInput`
 entirely (`effect_functions.asm:3517-3524`) and synthesized a `$90` exit; the
 two trailing `ldh` moves set no flags, so the exit flags are the handler's and
-only `a` is the card index it leaves in `hTempCardIndex_ff98`. Fixed, and the
-row is green.
+only `a` is the card index it leaves in `hTempCardIndex_ff98`. Fixed, row green,
+`truncated` 17 -> 16.
 
-Removing the call again still passes, so the fix is unproven by its own cases.
-Reaching for the cursor-blink instrument that worked on the Card Pop notice
-produced a *failure in the opposite direction*: the port leaves `$CD0F` at `01`
-and the reference at `00`. The asm's `.wait_input` calls `DoFrame` before
-`HandleCardListInput` (`core.asm:958-960`), so the reference does take a frame
-and should have incremented it too -- which means something on the reference's
-exit path resets the counter where the port's chain does not, most likely an
-`EraseCursor` reached through `HandleCardListInput`.
+Observing the cursor counter then failed in the *opposite* direction -- port
+`01`, reference `00` -- which looked like the reference resetting the counter
+somewhere the port does not. It is not. The no-A/B path returns through
+`RefreshMenuCursor_CheckPlaySFXRegs` (`menus.c:681`, `menus.asm` past
+`.check_A_or_B`), which increments; with the case's two-entry timeline
+`[0x00, 0x02]` the first poll sees no keys, so exactly one refresh happens
+before B registers, and the two lanes do not poll in step. Reseeding the case
+with a constant B press makes the counter agree and the row pass with the span
+in place, which is the proof.
 
-That is one level below this row, so the span was reverted rather than landed
-red, and the faithful call was kept: skipping a real input handler is worse than
-a one-byte cursor divergence, and the divergence was already there -- the old
-stub only hid it by never calling in. Worth chasing on
-`HandleEnergyDiscardMenuInput` itself, where `$CD0F` is a ready-made
-discriminator for whichever routine owns the reset.
+But that same configuration destroys the instrument: with B held from the first
+poll neither lane ever refreshes, so the counter is zero whether the handler
+runs or not. `$CD0F` can therefore expose the parity seam or discriminate the
+call, never both at once, and for this row it cannot do the second. Both the
+span and the reseed were reverted; the faithful call stays, landed unproven.
+
+The general shape is worth remembering: a byte that only moves inside an input
+loop is hostage to the timeline that drives the loop. `hKeysHeld` had the same
+problem earlier in the session. Prefer an observation the routine writes
+*outside* its wait loop.
 
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
