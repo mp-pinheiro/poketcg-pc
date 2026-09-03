@@ -428,13 +428,25 @@ only the first two paths are reachable through them and their carry is exactly
 "a card was chosen". The asm says so itself at `energy.asm:22-23`, and
 `FindPlayAreaCardWithHighestAIScore` already returns an `f` the port can read.
 
-What still blocks it is the fourth path. `AIProcessAndTryToPlayEnergy` clears
-the flag byte with `xor a` (`:90`) and jumps in, so that path is live, and its
-carry is `AITryToPlayEnergyCard`'s -- 144 asm lines with many exits, whose port
-returns a plain `uint8_t` holding a value rather than flags. Giving
-`AIProcessEnergyCards` a complete `f` therefore needs that routine's contract
-first. Do not fill the fourth path with a placeholder to unblock the other
-three: it is the hottest AI path in the game.
+The fourth path closed too, and no placeholder was needed. Its carry is
+`AITryToPlayEnergyCard`'s, and enumerating that routine's five exits shows the
+carry is set on exactly one of them: `.play_energy_card` ends `scf; ret`
+(`energy.asm` relative `:138-145`), while `:61` and `:70` leave via `ret nc` and
+`:154` and `:159` return straight after an `or a`, which clears carry. The
+routine's own comment states it. The port's existing `uint8_t` return is already
+that boolean -- `1` on the play path, `0` on every other -- so it was the carry
+all along, merely typed as a value.
+
+So `AIProcessEnergyCards` now returns `AIEnergyResult { f }`, the two
+`AIProcessButDontPlayEnergy_*` wrappers return it unchanged because they tail
+jump, and the three contracts compare `f` where they compared nothing.
+Inverting the `scf` path fails `AIProcessEnergyCards` 2/2, so the carry is
+discriminated rather than coincidentally agreeing. The wrappers' own two cases
+do not reach that path, so their carry rests on the callee's proof plus a
+one-line tail jump -- worth knowing before trusting them alone.
+
+Only `f` is modelled. `a` at exit differs per path and has no consumer, so
+inventing a value for it would have been the same defect in a smaller costume.
 
 `ChallengeMachine_Duel` was the second row of that class and is fixed --
 `challenge_machine.asm:177-181`, the song wait, the `wSongOverride` clear,
