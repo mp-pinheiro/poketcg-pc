@@ -618,6 +618,29 @@ wants a duel state captured from a running game, not a hand-written seed; that
 is a different instrument from the case matrix and should be recognised as such
 before more turns go into seeds.
 
+**`$CD0F` disagrees the other way round, and that is a live lead.**
+`PlayerPickFireEnergyCardToDiscard` skipped `HandleEnergyDiscardMenuInput`
+entirely (`effect_functions.asm:3517-3524`) and synthesized a `$90` exit; the
+two trailing `ldh` moves set no flags, so the exit flags are the handler's and
+only `a` is the card index it leaves in `hTempCardIndex_ff98`. Fixed, and the
+row is green.
+
+Removing the call again still passes, so the fix is unproven by its own cases.
+Reaching for the cursor-blink instrument that worked on the Card Pop notice
+produced a *failure in the opposite direction*: the port leaves `$CD0F` at `01`
+and the reference at `00`. The asm's `.wait_input` calls `DoFrame` before
+`HandleCardListInput` (`core.asm:958-960`), so the reference does take a frame
+and should have incremented it too -- which means something on the reference's
+exit path resets the counter where the port's chain does not, most likely an
+`EraseCursor` reached through `HandleCardListInput`.
+
+That is one level below this row, so the span was reverted rather than landed
+red, and the faithful call was kept: skipping a real input handler is worse than
+a one-byte cursor divergence, and the divergence was already there -- the old
+stub only hid it by never calling in. Worth chasing on
+`HandleEnergyDiscardMenuInput` itself, where `$CD0F` is a ready-made
+discriminator for whichever routine owns the reset.
+
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
 things the asm never does: `wLCDC = $80`, `hKeysPressed = $01`, and reading the
