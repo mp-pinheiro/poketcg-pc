@@ -546,12 +546,16 @@ AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void
 /* <<< factory AIEnergyTransTransferEnergyToBench */
 
 /* >>> factory HandleAIEnergyTrans */
+/* Still a stub: pkmn_powers.asm continues past this point with the Energy Trans
+ * scoring the `truncated` audit reports. Porting it needs `a` on the exits of
+ * AIProcessAttacks and AIProcessEnergyCards, neither of which models it yet.
+ * The two identical arms this replaced looked like a modelled branch and were
+ * not one. */
 HandleAIEnergyTransResult HandleAIEnergyTrans(uint8_t a)
 {
 	wAINumberOfEnergyTransCards = a;
 	AIChooseRandomlyNotToDoActionResult skip = AIChooseRandomlyNotToDoAction();
-	if (skip.f & 0x10u)
-		return (HandleAIEnergyTransResult){skip.a, skip.f};
+
 	return (HandleAIEnergyTransResult){skip.a, skip.f};
 }
 /* <<< factory HandleAIEnergyTrans */
