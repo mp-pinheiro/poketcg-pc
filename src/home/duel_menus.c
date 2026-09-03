@@ -112,10 +112,13 @@ HandlePeekSelectionV2Result HandlePeekSelection(uint8_t f)
 /* <<< factory HandlePeekSelection */
 
 /* >>> factory OpenDuelCheckMenu */
+/* duel_menus.asm:1-9: the menu itself was missing between the bankswitch and
+ * the restore, so nothing below it could ever run. */
 void OpenDuelCheckMenu(void)
 {
 	uint8_t saved_bank = hBankROM;
 	BankswitchROM(2u);
+	_OpenDuelCheckMenu();
 	BankswitchROM(saved_bank);
 }
 /* <<< factory OpenDuelCheckMenu */
