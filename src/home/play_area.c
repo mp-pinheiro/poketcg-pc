@@ -297,7 +297,7 @@ uint8_t OpenInPlayAreaScreen_TurnHolderHand(void)
 /* <<< factory OpenInPlayAreaScreen_TurnHolderHand */
 
 /* >>> factory OpenInPlayAreaScreen */
-void OpenInPlayAreaScreen(void)
+OpenInPlayAreaScreenResult OpenInPlayAreaScreen(void)
 {
 	BankswitchROM(BANK_OPEN_IN_PLAY_AREA_SCREEN);
 	wInPlayAreaCurPosition = INPLAYAREA_PLAYER_ACTIVE;
@@ -325,7 +325,7 @@ void OpenInPlayAreaScreen(void)
 				wCheckMenuCursorBlinkCounter = 9u;
 				ZeroObjectPositionsAndToggleOAMCopy_Bank6();
 				(void)SetupText(0x38u, 0x9Fu);
-				return;
+				return (OpenInPlayAreaScreenResult){0x00u};
 			}
 			wInPlayAreaTemporaryPosition = wInPlayAreaCurPosition;
 			OpenInPlayAreaScreenHandleInputResult input = OpenInPlayAreaScreen_HandleInput();
@@ -334,7 +334,7 @@ void OpenInPlayAreaScreen(void)
 					wCheckMenuCursorBlinkCounter = 9u;
 					ZeroObjectPositionsAndToggleOAMCopy_Bank6();
 					(void)SetupText(0x38u, 0x9Fu);
-					return;
+					return (OpenInPlayAreaScreenResult){0x10u};
 				}
 				goto selection;
 			}

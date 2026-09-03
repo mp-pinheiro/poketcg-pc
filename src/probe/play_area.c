@@ -68,8 +68,7 @@ static void adapt_OpenInPlayAreaScreen_TurnHolderHand(ProbeState *s)
 /* >>> factory OpenInPlayAreaScreen */
 static void adapt_OpenInPlayAreaScreen(ProbeState *s)
 {
-	(void)s;
-	OpenInPlayAreaScreen();
+	s->f = OpenInPlayAreaScreen().f;
 }
 /* <<< factory OpenInPlayAreaScreen */
 

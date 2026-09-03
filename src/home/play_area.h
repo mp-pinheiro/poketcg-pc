@@ -30,6 +30,9 @@ void OpenInPlayAreaScreen_NonTurnHolderHand(void);
 uint8_t OpenInPlayAreaScreen_TurnHolderHand(void);
 /* <<< factory OpenInPlayAreaScreen_TurnHolderHand */
 /* >>> factory OpenInPlayAreaScreen */
-void OpenInPlayAreaScreen(void);
+/* play_area.asm:62-78. Two exits: carry set when B backs out of the screen,
+ * clear on the Select-button skip. */
+typedef struct { uint8_t f; } OpenInPlayAreaScreenResult;
+OpenInPlayAreaScreenResult OpenInPlayAreaScreen(void);
 /* <<< factory OpenInPlayAreaScreen */
 #endif

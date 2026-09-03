@@ -123,7 +123,9 @@ CASES["OpenInPlayAreaScreen_TurnHolderHand"] = [
 # <<< factory OpenInPlayAreaScreen_TurnHolderHand
 
 # >>> factory OpenInPlayAreaScreen
-CONTRACT["OpenInPlayAreaScreen"] = {"compare": (), "preserve": ()}
+# play_area.asm:62-78. The carry is the screen's only output: set when B
+# backs out, clear on the Select-button skip.
+CONTRACT["OpenInPlayAreaScreen"] = {"compare": ("f",), "preserve": ()}
 CASES["OpenInPlayAreaScreen"] = [
     {"keys": [0x00, 0x02], "hram": {hBankROM: b"\x01"}, "wram": {wInPlayAreaFromSelectButton: b"\x00", wInPlayAreaCurPosition: b"\xAA"}, "expect": {hBankROM: b"\x06", wInPlayAreaCurPosition: b"\x05"}, "read": {hBankROM: 1, wInPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1}, "oracle": False, "evidence": "primary", "why": "The frame/input bus timing is observable only on the primary trace; the bounded B exit checks the explicit terminal bank and cursor state.", "instruction_budget": 20000000, "cycle_budget": 100000000},
     dict(POISON, keys=[0x00, 0x04], hram={hBankROM: b"\x01"}, wram={wInPlayAreaFromSelectButton: b"\x01", wInPlayAreaCurPosition: b"\xAA"}, expect={hBankROM: b"\x06", wInPlayAreaCurPosition: b"\x05"}, read={hBankROM: 1, wInPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1}, oracle=False, evidence="primary", why="The frame/input bus timing is observable only on the primary trace; the bounded SELECT exit checks the explicit terminal bank and cursor state.", instruction_budget=20000000, cycle_budget=100000000),
