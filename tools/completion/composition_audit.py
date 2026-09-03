@@ -330,8 +330,16 @@ def audit_truncated() -> list[dict[str, Any]]:
                 continue
             if current is None:
                 continue
-            call = ASM_CALL_TARGET.match(line)
-            if call:
+            # `call Other.label` is a jump into another routine's local label,
+            # which the port factors into its own static rather than calling the
+            # parent -- ScriptCommand_JumpIfNPCLoaded reaches
+            # ScriptCommand_JumpIfEventTrue.pass_try_jump and the port models it
+            # as script_jump_event_pass. Recording the parent name reads as a
+            # missing call that was never a call.
+            call = re.match(
+                r"^\s+(?:call|farcall|bank1call|callfar)\s+(?:\w+,\s*)?([\w.]+)",
+                line)
+            if call and "." not in call.group(1):
                 sequences.setdefault(current, []).append(call.group(1))
 
     bodies = c_bodies()
