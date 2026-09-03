@@ -11117,16 +11117,25 @@ MagnetonLv28SelfdestructEffectResult MagnetonLv28SelfdestructEffect(uint8_t a,ui
 /* <<< factory MagnetonLv28SelfdestructEffect */
 
 /* >>> factory Scavenge_PlayerSelectTrainerEffect */
+/* effect_functions.asm:5699-5710. `.loop_input` re-enters DisplayCardList while
+ * it reports carry, and only its no-carry exit leaves hTempCardIndex_ff98
+ * holding the chosen card; the two `ldh` moves after it touch no flag, so the
+ * exit flags are that callee's. */
 Scavenge_PlayerSelectTrainerEffectResult Scavenge_PlayerSelectTrainerEffect(void)
 {
+	DisplayCardListResult display;
+
 	(void)CreateTrainerCardListFromDiscardPile();
 	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
 	SetCardListHeaderText(PlayerDiscardPileText, PleaseSelectCardText);
-	gb_write8(0xFF40u, 0x00u);
+	do {
+		display = DisplayCardList();
+	} while ((display.f & 0x10u) != 0u);
+
 	uint8_t selected = hTempCardIndex_ff98;
+
 	hTempPlayAreaLocation_ffa1 = selected;
-	
-	return (Scavenge_PlayerSelectTrainerEffectResult){selected, 0x90u};
+	return (Scavenge_PlayerSelectTrainerEffectResult){selected, display.f};
 }
 /* <<< factory Scavenge_PlayerSelectTrainerEffect */
 

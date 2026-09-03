@@ -11094,7 +11094,10 @@ MUTATIONS["Scavenge_PlayerSelectTrainerEffect"]={"source_symbol":"Scavenge_Playe
 # <<< factory-mutation Scavenge_PlayerSelectTrainerEffect
 # >>> factory-completion Scavenge_PlayerSelectTrainerEffect
 for _record in SCHEMA2_CASES["Scavenge_PlayerSelectTrainerEffect"]:
-    _record["completion"]={"mode":"pre-ret","pc":0x55F0,"bank":1}
+    # effect_functions.asm:5710, the routine's own `ret`. The pc was
+    # DisplayCardList's entry, so the reference stopped at the first pass of
+    # `.loop_input` and the selection the loop exists to make was never made.
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x5F5E, "bank": 11}
 # <<< factory-completion Scavenge_PlayerSelectTrainerEffect
 # >>> factory-mutation WeezingSelfdestructEffect
 MUTATIONS["WeezingSelfdestructEffect"] = {"source_symbol": "WeezingSelfdestructEffect", "before": "DealDamageToAllBenchedPokemonResult WeezingSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\t(void)b;\n\t(void)c;\n\t(void)d;\n\t(void)e;\n\t(void)hl;\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 60u;", "after": "DealDamageToAllBenchedPokemonResult WeezingSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\t(void)b;\n\t(void)c;\n\t(void)d;\n\t(void)e;\n\t(void)hl;\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 61u;", "case_ids": ["WeezingSelfdestructEffect-0", "WeezingSelfdestructEffect-1"]}
