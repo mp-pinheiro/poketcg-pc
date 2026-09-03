@@ -107,12 +107,29 @@ its local holding the address (`evaluate` with its `frame_id`) and compare it
 against the asm the routine was ported from. If it looks right, the bank is
 wrong and the defect is in whichever ancestor frame should have switched.
 
-## Finding who wrote a WRAM byte
+## Finding who wrote a byte
 
 When the address looks right and the bank is right, the byte it was built from
 is stale or garbage and the question becomes which routine wrote it. The gdb
-adapter has no data watchpoints, and a conditional breakpoint on `gb_write8` is
-evaluated on every bus access and does not finish a replay.
+*DAP adapter* has no data watchpoints, and a conditional breakpoint on
+`gb_write8` is evaluated on every bus access and does not finish a replay. The
+gdb *CLI* does have them, which is the shortest route when the address is known
+and reachable: stop somewhere near the moment, arm a hardware watchpoint on the
+host array, and continue.
+
+```sh
+gdb -batch -ex "break src/home/core.c:7817" -ex run -ex "delete 1" \
+  -ex "watch g_hram[0x18]" -ex continue -ex "bt 6" --args build-trace/poketcg \
+  --headless --data-pack build/completion/data-pack.bin --frames 78207 \
+  --input build/completion/tas/input.txt
+```
+
+`g_wram` is indexed from `$C000` and `g_hram` from `$FF80`. That named the
+writer of `hTempCardIndex_ff98` in one 40-second run, where four rounds of
+reading asm had not.
+
+`POKETCG_WATCH` remains the tool for a byte whose *moment* is unknown, since a
+watchpoint needs somewhere to stop first.
 
 `POKETCG_WATCH=ADDR:VALUE[/SKIP]` polls that byte at every bus access and aborts
 in `watch_hit` (`src/mem.c`) once it holds `VALUE`, so a plain function
@@ -134,6 +151,28 @@ clean. This named `MapNames`, which the port had at `0x7080` instead of
 `03:5153`: `ScriptCommand_LoadCurrentMapNameIntoTxRamSlot` read two code bytes
 (`11 D1`) into `wTxRam2`, and `$D111` is not a text id, so the text engine
 resolved it to `$7FFF` and read past the end of bank `$0C`.
+
+## When the divergence is the movie, not the port
+
+`5530S` is luck-manipulated: the RNG advances every frame, so the hand a duel
+deals depends on the whole frame history before it. Once the port reaches a duel,
+a divergence can therefore be a desync from the movie rather than a defect, and
+it looks like a livelock: the ROM's cursor sits on a card the player may select
+and the port's does not.
+
+The initial Pokemon placement is the worked example. The port stalls in
+`DisplayPlaceInitialPokemonCardsScreen` because every card it offers is judged
+non-basic, and all five routines on that path match the asm line for line
+(`DisplayCardList`'s branches, both `GetCardInDuelTempList` variants,
+`IsLoadedCard1BasicPokemon`, `CardListItemSelectionMenu`). `Random` is called 8
+times on both lanes and `ShuffleDeckAndDrawSevenCards` twice, so the shuffle is
+not missing; the permutation differs.
+
+Recognise the shape before spending a session on it: a routine on the stalled
+path whose native and reference call counts differ by a factor rather than being
+zero, with every routine on that path matching its asm. Closing this class needs
+a movie our lane can replay from boot, not more porting -- `4189M` declares
+`GBC_Firmware_World` and needs the CGB boot ROM we do not load.
 
 ## The banks recipe
 
