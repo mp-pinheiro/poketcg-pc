@@ -266,6 +266,39 @@ on the branch that owns it instead of on a consumer two levels up, and the
 consumer compares every field again. Restoring `c` as a pass-through makes the
 trade row fail, so the derived zero is load-bearing.
 
+## The coin toss `de`: measured, not yet derived
+
+`_TossCoin`, `TossCoin` and `TossCoin_BankB` all pass today, and all three
+contracts omit `d` and `e`. That omission is the whole defect class: `de` is
+not preserved across a toss, so any caller whose own contract compares those
+registers after one fails, which is what stopped
+`FriendshipSong_AddToBench50PercentEffect`.
+
+Widening the three contracts is the acceptance test, and it currently fails
+2/2, 3/3 and 3/3. The reference leaves **`de = $1211` on every case**, the same
+value for heads and tails and for either duelist type.
+
+That constant disproves the obvious model, which I wrote and reverted. The last
+`de` writes inside the routine are the SFX block (`core.asm:7988-7992`: `d` the
+result sound `$54`/`$55`, `e` the Player-adjusted result) and, on a multiple
+toss, the tally draw offset (`:8005-8021`). Both are input-dependent and the
+port already computes them as locals, so exposing them is a two-line change --
+and it is wrong. `$1211` is input-independent, so `de` is produced *after* the
+loop, by the exit chain at `:8066-8068`.
+
+Ruled out by reading: `ResetAnimationQueue`'s `_ResetAnimationQueue`
+(`animations/core.asm:1-26`) pops `bc` and `hl` but never `de`; `Set_OBJ_8x8`
+(`lcd.asm:58-62`), `DefaultScreenAnimationUpdate` (`screen_effects.asm:60-72`)
+and `_ClearSpriteAnimations` (`sprite_animations.asm:3-36`) write neither
+register. The remaining candidates are `DisableInt_LYCoincidence`,
+`GetFirstSpriteAnimBufferProperty` and `ClearSpriteVRAMBuffer`'s body.
+
+Input-independence is what makes this worth finishing rather than narrowing:
+one derivation on that chain covers every coin-toss caller at once, and applies
+to any routine whose contract ends after an animation-queue reset. Do not land
+`$1211` as a constant -- that is the invented-magic-value shape this session
+has been removing all along.
+
 ## When the divergence is the movie, not the port
 
 `5530S` is luck-manipulated: the RNG advances every frame, so the hand a duel
