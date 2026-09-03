@@ -499,12 +499,43 @@ six exits split by whether `a` is derivable:
   `AIProcessAttacksResult` carries only `f`
 - `:289` `ret nc` -- `a` is the wrapper's, and `AIEnergyResult` carries only `f`
 
-The last two are the blocker. `AIProcessButDontUseAttack` tail-calls
-`AIProcessAttacks` (`attacks.c:132`), whose four exits build `f` values with no
-`a` tracked at all, so the byte has to be derived there first -- one routine,
-four exits, the same shape as the carry work above. Adding `a` to those two
-result structs is the prerequisite; guessing it would put a wrong byte in a
-*compared* field, which is worse than leaving the row on the worklist.
+The last two are the blocker, and tracing it further this turn made it deeper,
+not shallower. `AIProcessButDontUseAttack` tail-calls `AIProcessAttacks`
+(`attacks.c:132`), whose four exits are:
+
+- `.attack_chosen` with `wAIExecuteProcessedAttack` non-zero: `scf` then
+  `jp RetrievePlayAreaAIScoreFromBackup2`, which is `push af` ... `pop af`
+  (`attacks.asm:26-35`) -- `a` is the flag byte just loaded, **derivable**
+- `.dont_attack` with that byte non-zero: the same tail jump without `scf` --
+  **derivable**
+- `.failed_to_use`: only `inc [hl]` and `or a` follow, neither touching `a`, so
+  it is that byte, zero on this path -- **derivable**
+- `.use_attack`: `call AITryUseAttack` then `scf; ret` -- `a` is the callee's
+
+So three of four derive, and the fourth descends again: `AITryUseAttack`
+(`ai/core.asm:133`) has three exits and every one returns straight out of
+`AIMakeDecision`, whose `AIMakeDecisionResult` carries `b`-`f` and no `a`.
+`AIMakeDecision` itself (`core.asm:6229`) has several exits of its own. That is
+five levels from the AI row, so the honest description is not "one register two
+levels down" but a register chain whose bottom I have not yet found. Guessing
+anywhere along it would put a wrong byte in a *compared* field, which is worse
+than leaving the row on the worklist.
+
+**A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
+skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
+things the asm never does: `wLCDC = $80`, `hKeysPressed = $01`, and reading the
+chosen card out of `wDuelTempList`'s first entry instead of taking
+`DisplayCardList`'s no-carry return. Its two cases already observe `$CABB` and
+`$FF91`, so they should have caught the first two outright -- except
+`DISPLAY_SEED` and `DISPLAY_KEYS` seed those addresses to `$80` and `$01`, so
+each invented write stores the value already there and is invisible.
+
+That is a new way for a case to fail to discriminate, distinct from the earlier
+ones: the span is right, the case reaches the code, and the write is still
+unobservable because the seed pre-agrees with it. When a fix deletes an invented
+write, check the seed for that address before concluding the observation is
+sound. The loop is landed as a transcription that deletes invented state; 2/2
+pass both before and after, and no discriminator was found.
 
 `HandleAIEnergyTrans` is the same wait and stays a stub for the same reason. Its
 two identical `if` arms are gone: both returned the same value, so the condition
