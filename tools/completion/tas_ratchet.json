@@ -1,9 +1,9 @@
 {
   "banks": 14,
-  "executed_routines": 800,
+  "executed_routines": 853,
   "jumps": 4,
   "loops": 36,
   "overrides": 0,
-  "reached_routines": 628,
+  "reached_routines": 645,
   "shadows": 1
 }

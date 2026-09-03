@@ -9602,10 +9602,133 @@ void OppAction_PlayAttackAnimationDealAttackDamage(void)
 }
 /* <<< factory OppAction_PlayAttackAnimationDealAttackDamage */
 
+/* core.asm:73-217 constants. BOXMSG_DECISION is index 3 of the box-message
+ * const_def; DUEL_WIN/DUEL_LOSS are 0/1; OPPONENT_TURN is
+ * HIGH(wOpponentDuelVariables). */
+#define BOXMSG_DECISION_MAIN 0x03u
+#define DUEL_WIN_MAIN 0x00u
+#define DUEL_LOSS_MAIN 0x01u
+#define OPPONENT_TURN_MAIN 0xC3u
+#define DUEL_ANIM_DUEL_WIN_MAIN 0x5Du
+#define DUEL_ANIM_DUEL_LOSS_MAIN 0x5Eu
+#define DUEL_ANIM_DUEL_DRAW_MAIN 0x5Fu
+#define MUSIC_MATCH_VICTORY_MAIN 0x18u
+#define MUSIC_MATCH_LOSS_MAIN 0x19u
+#define MUSIC_MATCH_DRAW_MAIN 0x1Au
+#define DECISION_TEXT_MAIN 0x0076u
+#define DUEL_WAS_A_DRAW_TEXT_MAIN 0x0077u
+#define WON_DUEL_TEXT_MAIN 0x0078u
+#define LOST_DUEL_TEXT_MAIN 0x0079u
+#define SUDDEN_DEATH_TEXT_MAIN 0x007Au
+
 /* >>> factory MainDuelLoop */
+/* core.asm:73-217. One turn per iteration: start-of-turn substatus, the turn
+ * screen, the turn itself, then the between-turns work. wDuelFinished is
+ * checked after each ExchangeRNG, and a practice duel also ends after fifteen
+ * turns. The finished path draws the result, animates it with the matching
+ * song, and a tie restarts the whole loop as sudden death. */
 void MainDuelLoop(void)
 {
+	uint8_t saved_turn;
+	uint8_t finished;
+	uint8_t anim;
+	uint8_t song;
+	uint16_t text;
+
+main_loop:
+	wCurrentDuelMenuItem = 0u;
+	UpdateSubstatusConditions_StartOfTurn();
+	DisplayDuelistTurnScreen();
+	HandleTurn();
+
+	/* .between_turns */
+	(void)ExchangeRNG(0u, 0u, 0u, 0u);
+	if (wDuelFinished != 0u)
+		goto duel_finished;
+	UpdateSubstatusConditions_EndOfTurn();
+	HandleBetweenTurnsEvents();
+	FinishQueuedAnimations();
+	(void)ExchangeRNG(0u, 0u, 0u, 0u);
+	if (wDuelFinished != 0u)
+		goto duel_finished;
+
+	wDuelTurns = (uint8_t)(wDuelTurns + 1u);
+	/* eight player turns and seven opponent turns */
+	if (wDuelType == DUELTYPE_PRACTICE && wIsPracticeDuel != 0u
+	    && wDuelTurns >= 15u) {
+		wDuelResult = DUEL_WIN_MAIN;
+		return;
+	}
+	SwapTurn();
+	goto main_loop;
+
+duel_finished:
+	ZeroObjectPositionsAndToggleOAMCopy();
+	EmptyScreen();
+	DrawDuelBoxMessage(BOXMSG_DECISION_MAIN);
+	(void)DrawWideTextBox_WaitForInput(DECISION_TEXT_MAIN);
+	EmptyScreen();
+	saved_turn = hWhoseTurn;
+	hWhoseTurn = PLAYER_TURN;
+	DrawDuelistPortraitsAndNames();
+	PrintDuelResultStats();
+	hWhoseTurn = saved_turn;
+
+	ResetAnimationQueue();
+	finished = wDuelFinished;
+	/* the winner is the active duelist on a win and the other one on a loss */
+	if ((finished == TURN_PLAYER_WON && hWhoseTurn == PLAYER_TURN)
+	    || (finished == TURN_PLAYER_LOST && hWhoseTurn != PLAYER_TURN)) {
+		wDuelResult = DUEL_WIN_MAIN;
+		anim = DUEL_ANIM_DUEL_WIN_MAIN;
+		song = MUSIC_MATCH_VICTORY_MAIN;
+		text = WON_DUEL_TEXT_MAIN;
+	} else if (finished == TURN_PLAYER_WON || finished == TURN_PLAYER_LOST) {
+		wDuelResult = DUEL_LOSS_MAIN;
+		anim = DUEL_ANIM_DUEL_LOSS_MAIN;
+		song = MUSIC_MATCH_LOSS_MAIN;
+		text = LOST_DUEL_TEXT_MAIN;
+	} else {
+		anim = DUEL_ANIM_DUEL_DRAW_MAIN;
+		song = MUSIC_MATCH_DRAW_MAIN;
+		text = DUEL_WAS_A_DRAW_TEXT_MAIN;
+	}
+
+	(void)PlayDuelAnimation(anim);
+	PlaySong(song);
+	hWhoseTurn = OPPONENT_TURN_MAIN;
+	(void)DrawWideTextBox_PrintText(text);
 	EnableLCD();
+	do {
+		DoFrame();
+	} while (AssertSongFinished() != 0u);
+
+	if (wDuelFinished != TURN_PLAYER_TIED) {
+		PlayDefaultSong();
+		(void)WaitForWideTextBoxInput();
+		FinishQueuedAnimations();
+		ResetSerial();
+		hWhoseTurn = PLAYER_TURN;
+		return;
+	}
+
+	/* .tied_duel: replay the duel as a one-prize sudden death match */
+	(void)WaitForWideTextBoxInput();
+	FinishQueuedAnimations();
+	PlaySong(wDuelTheme);
+	(void)DrawWideTextBox_WaitForInput(SUDDEN_DEATH_TEXT_MAIN);
+	wDuelInitialPrizes = 1u;
+	InitVariablesToBeginDuel();
+	if (wDuelType == DUELTYPE_LINK) {
+		(void)ExchangeRNG(0u, 0u, 0u, 0u);
+		hWhoseTurn = (wSerialOp == 0x29u) ? PLAYER_TURN : OPPONENT_TURN_MAIN;
+		if ((HandleDuelSetup().f & 0x10u) != 0u)
+			return;
+		goto main_loop;
+	}
+	hWhoseTurn = PLAYER_TURN;
+	(void)HandleDuelSetup();
+	goto main_loop;
 }
 /* <<< factory MainDuelLoop */
 

@@ -5206,10 +5206,15 @@ CASES["OppAction_PlayAttackAnimationDealAttackDamage"] = [
 # >>> factory MainDuelLoop
 CONTRACT["MainDuelLoop"] = {"compare": (), "preserve": ()}
 CASES["MainDuelLoop"] = [
+    # Reaching HandleTurn draws the duelist turn screen on the way, so the
+    # default 240-frame allowance is not enough for either lane.
     {"wram": {wLCDC: b"\x00"},
      "read": {wLCDC: 1},
-     "expect": {wLCDC: b"\x80"}},
-    dict(POISON, wram={wLCDC: b"\x00"}, read={wLCDC: 1}, expect={wLCDC: b"\x80"})
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={wLCDC: b"\x00"}, read={wLCDC: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000)
 ]
 # <<< factory MainDuelLoop
 
@@ -7015,8 +7020,12 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS["StartDuel"] = {"source_symbol": "StartDuel", "before": "\twCurrentDuelMenuItem = 0u;", "after": "\twCurrentDuelMenuItem = 1u;", "case_ids": ["StartDuel-0", "StartDuel-1"]}
 # <<< factory-mutation StartDuel
 # >>> factory-completion StartDuel
+# MainDuelLoop no longer returns, so a `pre-ret` here stopped the reference
+# before the loop while the native lane ran into it. Both lanes stop at the
+# loop's first call instead.
 for _record in SCHEMA2_CASES["StartDuel"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x40ED, "bank": 1}
+    _record["completion"] = {"mode": "entry", "pc": 0x35E6, "bank": 0,
+                             "routine": "UpdateSubstatusConditions_StartOfTurn"}
 # <<< factory-completion StartDuel
 # >>> factory-mutation StartDuel_VSAIOpp
 MUTATIONS["StartDuel_VSAIOpp"] = {"source_symbol": "StartDuel_VSAIOpp", "before": "void StartDuel_VSAIOpp(void)\n{\n\thWhoseTurn = PLAYER_TURN;\n\twPlayerDuelistType = DUELIST_TYPE_PLAYER;\n\twOpponentDeckID = wNPCDuelDeckID;\n}", "after": "void StartDuel_VSAIOpp(void)\n{\n\thWhoseTurn = PLAYER_TURN;\n\twPlayerDuelistType = DUELIST_TYPE_PLAYER;\n\twOpponentDeckID = 0u;\n}", "case_ids": ["StartDuel_VSAIOpp-0", "StartDuel_VSAIOpp-1"]}
@@ -7029,8 +7038,12 @@ for _record in SCHEMA2_CASES["StartDuel_VSAIOpp"]:
 MUTATIONS["StartDuel_VSLinkOpp"] = {"source_symbol": "StartDuel_VSLinkOpp", "before": "void StartDuel_VSLinkOpp(void)\n{\n\twDuelTheme = MUSIC_DUEL_THEME_1;\n\twOpponentName = 0u;\n\twOpponentName_PTR[1] = 0u;\n\twIsPracticeDuel = 0u;\n}", "after": "void StartDuel_VSLinkOpp(void)\n{\n\twDuelTheme = 0u;\n\twOpponentName = 0u;\n\twOpponentName_PTR[1] = 0u;\n\twIsPracticeDuel = 0u;\n}", "case_ids": ["StartDuel_VSLinkOpp-0", "StartDuel_VSLinkOpp-1"]}
 # <<< factory-mutation StartDuel_VSLinkOpp
 # >>> factory-completion StartDuel_VSLinkOpp
+# MainDuelLoop no longer returns, so a `pre-ret` here stopped the reference
+# before the loop while the native lane ran into it. Both lanes stop at the
+# loop's first call instead.
 for _record in SCHEMA2_CASES["StartDuel_VSLinkOpp"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x40ED, "bank": 1}
+    _record["completion"] = {"mode": "entry", "pc": 0x35E6, "bank": 0,
+                             "routine": "UpdateSubstatusConditions_StartOfTurn"}
 # <<< factory-completion StartDuel_VSLinkOpp
 # >>> factory-mutation SetLinkDuelTransmissionFrameFunction
 MUTATIONS["SetLinkDuelTransmissionFrameFunction"] = {
@@ -7287,8 +7300,13 @@ for _record in SCHEMA2_CASES["OppAction_PlayAttackAnimationDealAttackDamage"]:
 MUTATIONS["MainDuelLoop"] = {"source_symbol": "MainDuelLoop", "before": "void MainDuelLoop(void)\n{\n\tEnableLCD();\n}", "after": "void MainDuelLoop(void)\n{\n\tDisableLCD();\n}", "case_ids": ["MainDuelLoop-0", "MainDuelLoop-1"]}
 # <<< factory-mutation MainDuelLoop
 # >>> factory-completion MainDuelLoop
+# core.asm:73-78. The loop only returns when the duel ends, so `pre-ret` stopped
+# the reference while the native lane ran on forever. `entry` mode stops both at
+# HandleTurn, which is after the two start-of-turn calls the gate reports as the
+# earliest frontier misses.
 for _record in SCHEMA2_CASES["MainDuelLoop"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x238D, "bank": 13}
+    _record["completion"] = {"mode": "entry", "pc": 0x35E6, "bank": 0,
+                             "routine": "UpdateSubstatusConditions_StartOfTurn"}
 # <<< factory-completion MainDuelLoop
 # >>> factory-mutation _ContinueDuel
 MUTATIONS["_ContinueDuel"] = {"source_symbol": "_ContinueDuel", "before": "void _ContinueDuel(void)\n{\n\tuint16_t entry_sp = 0xFFFCu;", "after": "void _ContinueDuel(void)\n{\n\tuint16_t entry_sp = 0xFFFDu;", "case_ids": ["_ContinueDuel-0", "_ContinueDuel-1"]}
