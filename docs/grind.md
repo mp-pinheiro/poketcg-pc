@@ -1026,6 +1026,59 @@ faithful transcription of `HandleMenuInput.A_pressed` (`menus.asm:125-131`), and
 `hKeysPressed & PAD_BUTTONS` overwrite (`frames.asm:45-65`) that carries the A
 bit the loop's only exit tests. Neither is the stall.
 
+## The overworld spin was one script command, and the port now runs the movie
+
+The 7x overworld overcount was not an overworld defect at all. Ranking every
+routine by native/ROM ratio put a uniform 6.9-7.2x across the whole movement
+path, which is the shape of one wrapping loop, not four bugs. Following it up:
+`OverworldDoFrameFunction` ran on 68% of the port's frames against 8% of the
+ROM's, so nothing ran twice per frame -- the port simply never left the
+overworld. Inside the script VM the cluster was unmistakable:
+`ScriptCommand_JumpIfEventEqual` 239 against 29, `Jump` 40/4, `CloseTextBox`
+84/12, `ShowSamRulesMultichoice` 41/5, while `MovePlayer`, `EndScript` and a
+dozen others matched exactly. A print/ask/close/jump cycle re-asking forever.
+
+**`ShowMultichoiceTextbox` never returned the B-press value.** At
+`scripting.asm:1665-1670`, when `wd417` is non-zero the asm sets `e` and
+`hCurMenuItem` and **falls through into `.got_result`**. The port set both and
+then continued its `for (;;)`, waiting for an input that could never satisfy the
+equality test. One `break`.
+
+That collapsed the loop and exposed the next stop, which the gate had been
+hiding under a clean-looking run: `blocked_by = MISSING_DATA 00:0000`, an abort
+on a null data pointer. A gdb backtrace named it in one shot --
+`DrawDuelMainScene` -> `WriteDataBlocksToBGMap0` -> `gb_read8(0)`. The port
+declared its arguments as `tile_data = 0`, `bg_map = 0` and passed their
+addresses, where `core.asm:2394` passes `DuelEAndHPTileData` ($01:5188). A
+placeholder that could only fire once the routine was actually reached.
+
+| measurement | before | after both |
+| --- | --- | --- |
+| `reached_routines` | 649 | 677 |
+| `executed_routines` | 788 | 868 |
+| `RunOverworldScript` | 497 (ROM 107) | 149 |
+| `GetPermissionOfMapPosition` | 310,862 (ROM 43,046) | 18,958 |
+| `DrawDuelHUDs` | 0 (ROM 9) | 7 |
+| `DoFrame` | 57,542 | **78,167** |
+| `blocked_by` | `MISSING_DATA 00:0000` | *(clean)* |
+
+**The port now runs the whole 78,207-frame movie without aborting or hanging.**
+
+**Neither fix is discriminated by its case matrix, and that is stated rather
+than papered over.** `ShowMultichoiceTextbox`'s cases all carry a zero B-press
+value at byte +6, so the fallthrough is unreachable by construction; adding a
+case with a non-zero value and a B press still did not discriminate, because the
+seeded `wCurMenuItem` equals what `HandleMenuInput`'s B exit reports, so the row
+leaves by the equality break instead. `DrawDuelMainScene`'s cases seed
+`wDuelDisplayedScreen` to the main scene and take the early return, so they
+never reach the call that was dereferencing zero. Both fixes are asm-derived --
+a fallthrough is not a loop, and a placeholder is not an address -- and the
+evidence is the gate, which is the honest signal to cite for a defect no case
+can reach.
+
+`PrintDuelMenuAndHandleInput` is still never called (0 against 28), so
+`HandleTurn`'s dispatch into the player arm is the next thing to read.
+
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
 things the asm never does: `wLCDC = $80`, `hKeysPressed = $01`, and reading the
