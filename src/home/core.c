@@ -6432,6 +6432,7 @@ void DisplayPracticeDuelPlayerHandScreen(void)
 }
 /* <<< factory DisplayPracticeDuelPlayerHandScreen */
 
+#define DUEL_E_AND_HP_TILE_DATA 0x5188u
 /* >>> factory DrawDuelMainScene */
 void DrawDuelMainScene(void)
 {
@@ -6475,7 +6476,9 @@ void DrawDuelMainScene(void)
 		(void)ApplyBGP6OrSGB3ToCardImage(0xA0u, 0u, 8u, 6u, 0x0Cu, 1u, 0x0601u);
 	}
 	SwapTurn();
-	uint16_t tile_data = 0u;
+	/* core.asm:2394 passes `DuelEAndHPTileData` ($01:5188); the callee walks
+	 * hl until a block's first byte has bit 7 set. */
+	uint16_t tile_data = DUEL_E_AND_HP_TILE_DATA;
 	uint16_t bg_map = 0u;
 	uint8_t a = 0u, b = 0u, c = 0u;
 	WriteDataBlocksToBGMap0(&tile_data, &bg_map, &a, &b, &c);
