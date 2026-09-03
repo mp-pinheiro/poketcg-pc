@@ -10972,11 +10972,18 @@ ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint
 	(void)CreateDeckCardList(c, de);
 	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
 	SetCardListHeaderText(DuelistDeckText, ChooseCardToPlaceInHandText);
-	wLCDC = 0x80u;
-	gb_write8(hKeysPressed_ADDR, 0x01u);
-	uint8_t selected = gb_read8(wDuelTempList_ADDR);
-	gb_write8((uint16_t)(hTempList_ADDR + 2u), selected);
-	return (ComputerSearch_PlayerDeckSelectionResult){selected, (selected == 0u) ? 0x80u : 0x00u};
+	/* effect_functions.asm:9478-9482. `.loop_input` re-enters DisplayCardList
+	 * while it reports carry -- B cannot exit this list -- and only its
+	 * no-carry return holds the chosen card. The port skipped the loop and
+	 * substituted an LCDC value, a key press and a read of wDuelTempList's
+	 * first entry, none of which the asm performs. */
+	DisplayCardListResult display;
+
+	do {
+		display = DisplayCardList();
+	} while ((display.f & 0x10u) != 0u);
+	gb_write8((uint16_t)(hTempList_ADDR + 2u), display.a);
+	return (ComputerSearch_PlayerDeckSelectionResult){display.a, display.f};
 }
 /* <<< factory ComputerSearch_PlayerDeckSelection */
 
