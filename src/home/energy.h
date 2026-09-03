@@ -31,17 +31,20 @@ uint8_t AITryToPlayEnergyCard(void);
 void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a);
 /* <<< factory DetermineAIScoreOfAttackEnergyRequirement */
 /* >>> factory AIProcessEnergyCards */
-void AIProcessEnergyCards(void);
+/* energy.asm:265-285. Only `f` is modelled: the carry is set on the
+ * `.play_energy_card` tail and clear on every other exit, and `a` at exit
+ * differs per path with no consumer. */
+typedef struct { uint8_t f; } AIEnergyResult;
+AIEnergyResult AIProcessEnergyCards(void);
 /* <<< factory AIProcessEnergyCards */
 /* >>> factory AIProcessAndTryToPlayEnergy */
 void AIProcessAndTryToPlayEnergy(void);
 /* <<< factory AIProcessAndTryToPlayEnergy */
 /* >>> factory AIProcessButDontPlayEnergy_SkipEvolution */
-/* >>> factory AIProcessButDontPlayEnergy_SkipEvolution */
-void AIProcessButDontPlayEnergy_SkipEvolution(void);
+AIEnergyResult AIProcessButDontPlayEnergy_SkipEvolution(void);
 /* <<< factory AIProcessButDontPlayEnergy_SkipEvolution */
 /* >>> factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena */
-void AIProcessButDontPlayEnergy_SkipEvolutionAndArena(void);
+AIEnergyResult AIProcessButDontPlayEnergy_SkipEvolutionAndArena(void);
 /* <<< factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena */
 /* >>> factory Func_16488 */
 void Func_16488(void);

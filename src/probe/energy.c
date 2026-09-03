@@ -79,7 +79,7 @@ static void adapt_DetermineAIScoreOfAttackEnergyRequirement(ProbeState *s)
 /* >>> factory AIProcessEnergyCards */
 static void adapt_AIProcessEnergyCards(ProbeState *s)
 {
-	(void)s; AIProcessEnergyCards();
+	s->f = AIProcessEnergyCards().f;
 }
 /* <<< factory AIProcessEnergyCards */
 
@@ -94,15 +94,14 @@ static void adapt_AIProcessAndTryToPlayEnergy(ProbeState *s)
 /* >>> factory AIProcessButDontPlayEnergy_SkipEvolution */
 static void adapt_AIProcessButDontPlayEnergy_SkipEvolution(ProbeState *s)
 {
-	AIProcessButDontPlayEnergy_SkipEvolution();
+	s->f = AIProcessButDontPlayEnergy_SkipEvolution().f;
 }
 /* <<< factory AIProcessButDontPlayEnergy_SkipEvolution */
 
 /* >>> factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena */
 static void adapt_AIProcessButDontPlayEnergy_SkipEvolutionAndArena(ProbeState *s)
 {
-	(void)s;
-	AIProcessButDontPlayEnergy_SkipEvolutionAndArena();
+	s->f = AIProcessButDontPlayEnergy_SkipEvolutionAndArena().f;
 }
 /* <<< factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena */
 

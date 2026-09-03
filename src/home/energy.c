@@ -521,7 +521,7 @@ void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a)
 /* <<< factory DetermineAIScoreOfAttackEnergyRequirement */
 
 /* >>> factory AIProcessEnergyCards */
-void AIProcessEnergyCards(void)
+AIEnergyResult AIProcessEnergyCards(void)
 {
 	for (uint8_t i=0; i<MAX_PLAY_AREA_POKEMON; ++i) gb_write8((uint16_t)(wPlayAreaEnergyAIScore_ADDR+i),0x80u);
 	HandleLegendaryArticunoEnergyScoring();
@@ -538,7 +538,24 @@ void AIProcessEnergyCards(void)
 		if(CheckIfNotABossDeckID().carry==0){(void)HandleAIEnergyScoringForRepeatedBenchPokemon();uint8_t v=gb_read8((uint16_t)(wPlayAreaEnergyAIScore_ADDR+loc));if(v>=0x80)(void)AIEncourage((uint8_t)(v-0x80));else AIDiscourage((uint8_t)(0x80-v));}
 		(void)AIEncourage(1);DetermineAIScoreOfAttackEnergyRequirement(0);DetermineAIScoreOfAttackEnergyRequirement(1);gb_write8((uint16_t)(wPlayAreaAIScore_ADDR+loc),wAIScore);
 	}
-	AIScoreResult best=FindPlayAreaCardWithHighestAIScore(0,0,0,0,0);if(best.f&0x10){if(wAIEnergyAttachLogicFlags)(void)RetrievePlayAreaAIScoreFromBackup1();else{(void)CreateEnergyCardListFromHand(best.a);(void)AITryToPlayEnergyCard();}}else if(wAIEnergyAttachLogicFlags)(void)RetrievePlayAreaAIScoreFromBackup1();
+	/* energy.asm:265-285. RetrievePlayAreaAIScoreFromBackup1 is push af ...
+	 * pop af (:71-85), so the carry each tail jump carries is this routine's:
+	 * `scf` when a card was found under logic flags, clear otherwise, and
+	 * AITryToPlayEnergyCard's own carry on the no-flags path -- which its
+	 * 1/0 return already is, set only on `.play_energy_card` (:138-145). */
+	AIScoreResult best = FindPlayAreaCardWithHighestAIScore(0, 0, 0, 0, 0);
+
+	if ((best.f & 0x10u) != 0u) {
+		if (wAIEnergyAttachLogicFlags != 0u) {
+			(void)RetrievePlayAreaAIScoreFromBackup1();
+			return (AIEnergyResult){0x10u};
+		}
+		(void)CreateEnergyCardListFromHand(best.a);
+		return (AIEnergyResult){AITryToPlayEnergyCard() != 0u ? 0x10u : 0x00u};
+	}
+	if (wAIEnergyAttachLogicFlags != 0u)
+		(void)RetrievePlayAreaAIScoreFromBackup1();
+	return (AIEnergyResult){0x00u};
 }
 /* <<< factory AIProcessEnergyCards */
 
@@ -557,7 +574,7 @@ void AIProcessAndTryToPlayEnergy(void)
 /* <<< factory AIProcessAndTryToPlayEnergy */
 
 /* >>> factory AIProcessButDontPlayEnergy_SkipEvolution */
-void AIProcessButDontPlayEnergy_SkipEvolution(void)
+AIEnergyResult AIProcessButDontPlayEnergy_SkipEvolution(void)
 {
 	wAIEnergyAttachLogicFlags = AI_ENERGY_FLAG_DONT_PLAY | AI_ENERGY_FLAG_SKIP_EVOLUTION;
 	uint16_t de = wTempPlayAreaAIScore_ADDR;
@@ -568,13 +585,13 @@ void AIProcessButDontPlayEnergy_SkipEvolution(void)
 		de = (uint16_t)(de + 1u);
 	}
 	wAIScore = gb_read8(hl);
-	AIProcessEnergyCards();
+	return AIProcessEnergyCards();
 }
 /* <<< factory AIProcessButDontPlayEnergy_SkipEvolution */
 
 /* >>> factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena */
 /* energy.asm:48-70 */
-void AIProcessButDontPlayEnergy_SkipEvolutionAndArena(void)
+AIEnergyResult AIProcessButDontPlayEnergy_SkipEvolutionAndArena(void)
 {
 	wAIEnergyAttachLogicFlags = AI_ENERGY_FLAG_DONT_PLAY | AI_ENERGY_FLAG_SKIP_EVOLUTION | AI_ENERGY_FLAG_SKIP_ARENA_CARD;
 	uint16_t de = wTempPlayAreaAIScore_ADDR;
@@ -585,7 +602,7 @@ void AIProcessButDontPlayEnergy_SkipEvolutionAndArena(void)
 		de = (uint16_t)(de + 1u);
 	}
 	gb_write8(de, wAIScore);
-	AIProcessEnergyCards();
+	return AIProcessEnergyCards();
 }
 /* <<< factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena */
 
