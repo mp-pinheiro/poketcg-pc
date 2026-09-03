@@ -5029,7 +5029,14 @@ CASES["HandleDestinyBondAndBetweenTurnKnockOuts"] = [
 
 # >>> factory RestartPracticeDuelTurn
 CONTRACT["RestartPracticeDuelTurn"] = {"compare": (), "preserve": ()}
-CASES["RestartPracticeDuelTurn"] = [dict(POISON, read={0xCC10: 1, 0xCC11: 1}, expect={0xCC10: b"\x00", 0xCC11: b"\x00"})]
+# It now flows into DuelMainInterface, which redraws the duel scene, so this
+# needs the text setup and a budget past the default 240 frames.
+CASES["RestartPracticeDuelTurn"] = [
+    dict(POISON, read={0xCC10: 1, 0xCC11: 1},
+         expect={0xCC10: b"\x00", 0xCC11: b"\x00"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000)
+]
 # <<< factory RestartPracticeDuelTurn
 
 # >>> factory DuelMainInterface
@@ -7202,8 +7209,12 @@ for _record in SCHEMA2_CASES["HandleDestinyBondAndBetweenTurnKnockOuts"]:
 MUTATIONS["RestartPracticeDuelTurn"] = {"source_symbol": "RestartPracticeDuelTurn", "before": "void RestartPracticeDuelTurn(void) { }", "after": "void RestartPracticeDuelTurn(void) { wPlayerAttackingCardIndex = 0xFFu; }", "case_ids": ["RestartPracticeDuelTurn-0"]}
 # <<< factory-mutation RestartPracticeDuelTurn
 # >>> factory-completion RestartPracticeDuelTurn
+# 0x238A sits below 0x4000, where a bank number means nothing. This routine has
+# no `ret`: core.asm:277 falls through into DuelMainInterface, so both lanes stop
+# at that routine's first call instead.
 for _record in SCHEMA2_CASES["RestartPracticeDuelTurn"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x238A, "bank": 1}
+    _record["completion"] = {"mode": "entry", "pc": 0x4F9D, "bank": 1,
+                             "routine": "DrawDuelMainScene"}
 # <<< factory-completion RestartPracticeDuelTurn
 # >>> factory-mutation DuelMainInterface
 MUTATIONS["DuelMainInterface"] = {"source_symbol": "DuelMainInterface", "before": "void DuelMainInterface(void) { }", "after": "void DuelMainInterface(void) { wVBlankCounter = 1u; }", "case_ids": ["DuelMainInterface-0", "DuelMainInterface-1"]}

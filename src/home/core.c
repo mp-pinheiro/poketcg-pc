@@ -9499,7 +9499,15 @@ HandleBetweenTurnKnockOutsResult HandleDestinyBondAndBetweenTurnKnockOuts(void)
 /* <<< factory HandleDestinyBondAndBetweenTurnKnockOuts */
 
 /* >>> factory RestartPracticeDuelTurn */
-void RestartPracticeDuelTurn(void) { }
+/* core.asm:274-277. The player's turn falls through here from `.player_turn`,
+ * and this falls through again into DuelMainInterface; the port stopped at both.
+ * PRACTICEDUEL_PRINT_TURN_INSTRUCTIONS is the sixth entry of a `const_def 1`
+ * block (duel_constants.asm:258-264). */
+void RestartPracticeDuelTurn(void)
+{
+	(void)DoPracticeDuelAction(6u);
+	DuelMainInterface();
+}
 /* <<< factory RestartPracticeDuelTurn */
 
 /* >>> factory DuelMainInterface */
@@ -9822,6 +9830,7 @@ void HandleTurn(void)
 
 	(void)DisplayPlayerDrawCardScreen();
 	SaveDuelStateToSRAM();
+	/* core.asm:270 falls through into RestartPracticeDuelTurn. */
 	RestartPracticeDuelTurn();
 }
 /* <<< factory HandleTurn */
