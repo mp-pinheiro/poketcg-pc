@@ -11232,26 +11232,40 @@ void SolarPower_RemoveStatusEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, u
 /* <<< factory SolarPower_RemoveStatusEffect */
 
 /* >>> factory Prophecy_PlayerSelectEffect */
+/* effect_functions.asm:4721-4754. Two loops, not one: B returns to `.start` and
+ * redraws the procedure text box, while an empty deck returns only to
+ * `.select_deck`. Both duelist branches end in HandleProphecyScreen, whose exit
+ * flags are this routine's -- the non-turn branch's trailing SwapTurn touches
+ * none of them. */
 ProphecyScreenResult Prophecy_PlayerSelectEffect(void)
 {
 	for (;;) {
 		DrawWholeScreenTextBox(ProcedureForProphecyText);
-		DrawDuelMainScene();
-		(void)TwoItemHorizontalMenu(PleaseSelectTheDeckText);
-		if ((hKeysHeld & PAD_B) != 0u)
-			continue;
-		hTempList = hCurMenuItem;
-		if (hTempList != 0u) {
-			DuelistVarResult deck = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
-			if (deck.a >= DECK_SIZE)
+		for (;;) {
+			DrawDuelMainScene();
+			(void)TwoItemHorizontalMenu(PleaseSelectTheDeckText);
+			if ((hKeysHeld & PAD_B) != 0u)
+				break;
+			hTempList = hCurMenuItem;
+			if (hTempList != 0u) {
+				DuelistVarResult other = GetNonTurnDuelistVariable(
+					DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+
+				if (other.a >= DECK_SIZE)
+					continue;
+				SwapTurn();
+				ProphecyScreenResult screen = HandleProphecyScreen();
+
+				SwapTurn();
+				return screen;
+			}
+			DuelistVarResult own = GetTurnDuelistVariable(
+				DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+
+			if (own.a >= DECK_SIZE)
 				continue;
-			SwapTurn();
-			return (ProphecyScreenResult){deck.a, 0x70u};
+			return HandleProphecyScreen();
 		}
-		DuelistVarResult deck = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
-		if (deck.a >= DECK_SIZE)
-			continue;
-		return (ProphecyScreenResult){deck.a, 0x70u};
 	}
 }
 /* <<< factory Prophecy_PlayerSelectEffect */
