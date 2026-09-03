@@ -1713,12 +1713,12 @@ CASES["ScriptCommand_ChooseDeckToDuelAgainstMultichoice"] = [
 CONTRACT["ScriptCommand_GiveOneOfEachTrainerBooster"] = {"compare": (), "preserve": ()}
 CASES["ScriptCommand_GiveOneOfEachTrainerBooster"] = [
     {"wram": {GIVE_EACH_wTxRam2Hi: b"\xFF", GIVE_EACH_wTxRam3Hi: b"\xFF"},
-     "read": {GIVE_EACH_wTxRam2Hi: 1, GIVE_EACH_wTxRam3Hi: 1},
+     "read": {GIVE_EACH_wTxRam2Hi: 1, GIVE_EACH_wTxRam3Hi: 1, 0xD117: 1},
      "keys": GIVE_EACH_KEYS, "setup": MENU_SETUP,
      "instruction_budget": GIVE_EACH_INSTRUCTIONS, "cycle_budget": GIVE_EACH_CYCLES},
     dict(POISON,
          wram={GIVE_EACH_wTxRam2Hi: b"\x5A", GIVE_EACH_wTxRam3Hi: b"\x5A"},
-         read={GIVE_EACH_wTxRam2Hi: 1, GIVE_EACH_wTxRam3Hi: 1},
+         read={GIVE_EACH_wTxRam2Hi: 1, GIVE_EACH_wTxRam3Hi: 1, 0xD117: 1},
          keys=GIVE_EACH_KEYS, setup=MENU_SETUP,
          instruction_budget=GIVE_EACH_INSTRUCTIONS, cycle_budget=GIVE_EACH_CYCLES),
 ]
@@ -1816,7 +1816,7 @@ CASES["ScriptCommand_GiveBoosterPacks"] = [
     # c = $06 BOOSTER_COLOSSEUM_TRAINER.
     {"b": 0xFF, "c": 0x06,
      "wram": {GIVE_PACKS_wTxRam2Hi: b"\xFF", GIVE_PACKS_wTxRam3Hi: b"\xFF"},
-     "read": {GIVE_PACKS_wTxRam2Hi: 1, GIVE_PACKS_wTxRam3Hi: 1},
+     "read": {GIVE_PACKS_wTxRam2Hi: 1, GIVE_PACKS_wTxRam3Hi: 1, 0xD117: 1},
      "keys": GIVE_PACKS_KEYS, "setup": GIVE_PACKS_SETUP,
      "instruction_budget": GIVE_PACKS_INSTRUCTIONS, "cycle_budget": GIVE_PACKS_CYCLES},
     # a/f/d/e/hl carry the poison bytes; b and c are the routine's own booster
@@ -1825,7 +1825,7 @@ CASES["ScriptCommand_GiveBoosterPacks"] = [
     # BOOSTER_LABORATORY_TRAINER, a different pack type from case 0.
     dict(POISON, b=0xFF, c=0x18,
          wram={GIVE_PACKS_wTxRam2Hi: b"\x5A", GIVE_PACKS_wTxRam3Hi: b"\x5A"},
-         read={GIVE_PACKS_wTxRam2Hi: 1, GIVE_PACKS_wTxRam3Hi: 1},
+         read={GIVE_PACKS_wTxRam2Hi: 1, GIVE_PACKS_wTxRam3Hi: 1, 0xD117: 1},
          keys=GIVE_PACKS_KEYS, setup=GIVE_PACKS_SETUP,
          instruction_budget=GIVE_PACKS_INSTRUCTIONS, cycle_budget=GIVE_PACKS_CYCLES),
 ]
