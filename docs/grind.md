@@ -570,6 +570,28 @@ blocks I wrapped the new locals in made exactly that shape. Hoisting the two
 declarations to the function head flattened it back. The ratchet earned its
 keep on a change that every per-routine oracle called clean.
 
+**The first AI body is landed.** `AIEnergyTransTransferEnergyToBench`
+(`pkmn_powers.asm:269-402`) is ported in full: the Venusaur Lv67 search down the
+play area, the transfer loop that rescans the deck for a Grass energy still on
+the Arena card each pass, the 30-frame and 60-frame waits, and all six exits
+returning the registers derived over the previous three turns. `truncated`
+17, `pkmn_powers` 11/11, `loops` 36, gate exit 0.
+
+**Its two cases do not reach past the first exit, so the body is unverified.**
+Inverting the very first condition -- `CheckIfDefendingPokemonCanKnockOut`'s
+carry test -- still passes 2/2, which is the proof that everything after it is
+dead as far as the matrix is concerned. There is no completion pc cutting it;
+the seeds simply stop there.
+
+A discriminating case has to satisfy four things at once, which is why none
+exists yet: `CheckIfDefendingPokemonCanKnockOut` returning carry, then
+`AIProcessButDontUseAttack` returning *no* carry, then a non-zero Grass count at
+`$CC1C`, then `AIProcessButDontPlayEnergy_SkipEvolutionAndArena` returning carry
+-- and it must also afford the 30- and 60-frame `DoFrame` waits inside its frame
+budget. Until then this row is in the same position as
+`ChallengeMachine_Duel`: a literal transcription whose callees all exist, landed
+because leaving the truncation is worse, and honestly not proven.
+
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
 things the asm never does: `wLCDC = $80`, `hKeysPressed = $01`, and reading the
