@@ -1,6 +1,7 @@
 #include "home/duel_animation_core.h"
 #include "generated/wram.h"
 #include "home/load_animation.h"
+#include "home/screen_effects.h"
 #include "home/sprite_animations.h"
 #include "home/load_gfx.h"
 #include "home/sound.h"
@@ -63,13 +64,6 @@ static void LoadAnimCoordsAndFlags(uint8_t slot)
     write((uint16_t)(addr + 2u), x);
     write((uint16_t)(addr + 3u), y);
     write((uint16_t)(addr + 15u), (uint8_t)(flags | (read((uint16_t)(addr + 15u)) & (SPRITE_X_INVERTED | SPRITE_Y_INVERTED))));
-}
-static void DefaultScreenAnimationUpdate(void)
-{
-    write(wActiveScreenAnim_ADDR, 0xff);
-    write(wScreenAnimUpdatePtr_ADDR, (uint8_t)DEFAULT_SCREEN_UPDATE_ADDR);
-    write((uint16_t)(wScreenAnimUpdatePtr_ADDR + 1u),
-          (uint8_t)(DEFAULT_SCREEN_UPDATE_ADDR >> 8));
 }
 
 
