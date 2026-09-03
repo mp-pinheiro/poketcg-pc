@@ -11271,11 +11271,35 @@ ProphecyScreenResult Prophecy_PlayerSelectEffect(void)
 /* <<< factory Prophecy_PlayerSelectEffect */
 
 /* >>> factory PokemonTrader_PlayerDeckSelection */
+/* effect_functions.asm:10043-10075. The chosen hand card is parked in the deck
+ * so it can itself be offered for trade, and is put back only after a valid
+ * pick. `.read_input` re-enters DisplayCardList both when it reports carry (B)
+ * and when the pick is not a Pokemon, so the type check is part of the loop.
+ * The final `or a` makes the exit flags a function of the parked card. */
 PokemonTrader_PlayerDeckSelectionResult PokemonTrader_PlayerDeckSelection(void)
 {
-	gb_write8(0xC2BAu, 0x39u);
+	uint8_t parked = hTemp_ffa0;
+
+	RemoveCardFromHand(parked);
+	ReturnCardToDeck(parked);
+	(void)DrawWideTextBox_WaitForInput(ChooseBasicOrEvolutionPokemonCardFromDeckText);
+	(void)CreateDeckCardList(0u, 0u);
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChoosePokemonCardText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+
+		if ((display.f & 0x10u) != 0u)
+			continue;
+		(void)LoadCardDataToBuffer2_FromDeckIndex(display.a);
+		if (wLoadedCard2Type >= TYPE_ENERGY)
+			continue;
+		break;
+	}
 	hTempPlayAreaLocation_ffa1 = hTempCardIndex_ff98;
-	return (PokemonTrader_PlayerDeckSelectionResult){hTemp_ffa0, (hTemp_ffa0 == 0u) ? 0x80u : 0x00u};
+	SearchCardInDeckAndAddToHand(parked);
+	AddCardToHand(parked);
+	return (PokemonTrader_PlayerDeckSelectionResult){parked, (parked == 0u) ? 0x80u : 0x00u};
 }
 /* <<< factory PokemonTrader_PlayerDeckSelection */
 
