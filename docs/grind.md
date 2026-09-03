@@ -364,11 +364,32 @@ believing it.
 rather than its symptom: an unbroken prefix of the asm's call sequence present
 in the body, an unbroken suffix absent. Interleaved gaps are excluded, because
 those are a folded branch or an inlined helper rather than a stopped
-transcription. It reports 35 rows, and it dropped from 36 to 35 the moment
-`ChallengeMachine_Duel` was completed, which is the same in-repo validation the
-`overrides` audit got. It is a worklist, not a ratchet: the top rows are AI
-routines where a body may legitimately fold branches, so the count is not yet a
-number to defend.
+transcription. It dropped from 36 to 35 the moment `ChallengeMachine_Duel` was
+completed, which is the same in-repo validation the `overrides` audit got.
+
+**As first landed it was wrong on a third of its rows, and refining it is what
+found the next bug.** The asm parser cannot see local labels, so a `.helper`'s
+calls accumulate onto its parent -- and the port decomposes those labels into
+its own functions, so the parent's body legitimately does not name them.
+`LoadTilemap` read as truncated because all four of its missing callees sit in
+`LoadTilemap_InitAndDecompressBGMap`, and `PrintText` because its three sit in
+`print_text_body`. The rule that covers both namings: expand through anything
+the body calls that is absent from `poketcg.sym`, since only port-local
+decomposition can be missing from the symbol table. That took the count 35 ->
+24 and removed eleven false positives, including both graphics rows.
+
+A third false-positive class remains and is not worth detecting: a
+side-effect-free ROM callee inlined. `SetupVRAM` is flagged for not calling
+`CheckForCGB`, which is `wConsole`, `cp CONSOLE_CGB`, carry (`time.asm:88-93`)
+-- the port's inline test is exactly equivalent. So the count is a worklist, not
+a ratchet, and triage before belief remains mandatory.
+
+Triage of the three largest rows says the detector measures real work.
+`GetAIScoreOfAttack` (91 dropped) is nine body lines, `HandleAIEnergyTrans`
+(21) is seven -- and both of its `if` branches return the identical value, so
+the condition is dead code shaped to satisfy a boundary -- and
+`AIEnergyTransTransferEnergyToBench` (17) is six. These are the duel AI, the
+region the TAS never reaches, so nothing else measures them at all.
 
 `ChallengeMachine_Duel` was the second row of that class and is fixed --
 `challenge_machine.asm:177-181`, the song wait, the `wSongOverride` clear,
@@ -383,6 +404,27 @@ trick does not transfer: `ChallengeMachine_Start`'s reference stops at
 for that reason, so it was reverted rather than kept as decoration. The tail is
 landed as a literal transcription of four asm lines whose callees all already
 existed; that is the whole of its justification.
+
+`HandleNoDamageOrEffect` was the row the refinement exposed, and this one is
+proven. The asm's `call nz, DrawWideTextBox_PrintText`
+(`effect_functions.asm:454-461`) was absent: the port synthesized the exit flags
+and never drew the box. Its flags happen to be right -- carry from the trailing
+`scf`, `Z` only on the zero text id, and `TextResult` carries no `f` -- so the
+observable loss was the box itself and the callee's `hl`.
+
+All four existing cases were structurally unable to reach that call, which is
+why nothing detected it. `CheckNoDamageOrEffect` (`substatus.asm:451-474`) exits
+at `ret z` when `wNoDamageOrEffect` is zero, and takes `.dont_print_text` with
+`hl = 0` when bit 7 is already set; the cases seeded only `$00` and `$80`, one
+of each. A fifth case seeding `$01` -- any `NO_DAMAGE_OR_EFFECT_*` with bit 7
+clear -- is the first to pass the guard, and it discriminates on `wLCDC`
+(`$CABB`), which `DrawWideTextBox_PrintText` writes via `EnableLCD`
+(`menus.asm:788-797`). 1/5 fails before, 5/5 passes after.
+
+Two spans went in before that one and neither discriminated: `$D41C`, which was
+simply the wrong address for `wLCDC`, and then the right address on cases that
+still could not reach the call. Check that a case can reach the code before
+concluding a span is useless.
 
 ## When the divergence is the movie, not the port
 
