@@ -73,6 +73,34 @@ its local holding the address (`evaluate` with its `frame_id`) and compare it
 against the asm the routine was ported from. If it looks right, the bank is
 wrong and the defect is in whichever ancestor frame should have switched.
 
+## Finding who wrote a WRAM byte
+
+When the address looks right and the bank is right, the byte it was built from
+is stale or garbage and the question becomes which routine wrote it. The gdb
+adapter has no data watchpoints, and a conditional breakpoint on `gb_write8` is
+evaluated on every bus access and does not finish a replay.
+
+`POKETCG_WATCH=ADDR:VALUE[/SKIP]` polls that byte at every bus access and aborts
+in `watch_hit` (`src/mem.c`) once it holds `VALUE`, so a plain function
+breakpoint yields the backtrace. `SKIP` passes over that many earlier matches.
+Polling rather than trapping the store is deliberate: most WRAM writes reach
+`g_wram` through a `wram.h` macro and never touch the bus, so a store trap misses
+them.
+
+```sh
+export POKETCG_WATCH=CE40:D1
+gdb -batch -ex run -ex "bt 22" --args build-trace/poketcg --headless \
+  --data-pack build/completion/data-pack.bin --frames 78207 \
+  --input build/completion/tas/input.txt
+```
+
+Export it in the shell and run gdb there. The DAP `launch` request's `env` field
+does not reach the process, so a watch set that way never arms and the run looks
+clean. This named `MapNames`, which the port had at `0x7080` instead of
+`03:5153`: `ScriptCommand_LoadCurrentMapNameIntoTxRamSlot` read two code bytes
+(`11 D1`) into `wTxRam2`, and `$D111` is not a text id, so the text engine
+resolved it to `$7FFF` and read past the end of bank `$0C`.
+
 ## The banks recipe
 
 The asm reaches a routine in another bank one of two ways.

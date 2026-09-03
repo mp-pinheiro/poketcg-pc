@@ -533,8 +533,11 @@ uint8_t *gb_ptr(uint16_t addr)
 	return g_hram + (addr - 0xFF80);
 }
 
+static void watch_poll(void);
+
 uint8_t gb_read8(uint16_t addr)
 {
+	watch_poll();
 	if (addr >= 0xA000 && addr < 0xC000 && !g_sram_enabled)
 		return 0xFF; /* open bus, as on hardware */
 	/* STAT bit 7 is unused and reads back as 1 on real hardware, so a
@@ -708,8 +711,65 @@ void mbc5_conformance_vector(void)
 	gb_write8(0x0000, 0x00);
 }
 
+/* The gdb adapter this project drives has no data watchpoints, and a
+ * conditional breakpoint on gb_write8 is evaluated on every bus write and does
+ * not finish a TAS replay. POKETCG_WATCH=ADDR:VALUE[/SKIP] polls the byte at
+ * every bus access instead of trapping a store, because most WRAM writes reach
+ * g_wram through a wram.h macro and never touch the bus; polling still catches
+ * those, at the granularity of the next bus access. It aborts inside
+ * watch_hit, where a plain function breakpoint gives the backtrace. */
+static uint16_t g_watch_addr;
+static int g_watch_value = -1;
+static long g_watch_skip;
+static int g_watch_ready;
+
+__attribute__((noinline)) static void watch_hit(uint16_t addr, uint8_t v)
+{
+	fprintf(stderr, "watch %04X == %02X\n", addr, v);
+	abort();
+}
+
+static void watch_init(void)
+{
+	const char *spec = getenv("POKETCG_WATCH");
+
+	g_watch_ready = 1;
+	if (spec == NULL || *spec == '\0')
+		return;
+
+	char *end = NULL;
+	unsigned long addr = strtoul(spec, &end, 16);
+
+	if (end == spec || addr < 0xC000u || addr > 0xDFFFu)
+		return;
+	if (*end == ':')
+		g_watch_value = (int)strtoul(end + 1, &end, 16);
+	if (*end == '/')
+		g_watch_skip = (long)strtoul(end + 1, &end, 10);
+	g_watch_addr = (uint16_t)addr;
+}
+
+static void watch_poll(void)
+{
+	if (!g_watch_ready)
+		watch_init();
+	if (g_watch_addr == 0u)
+		return;
+
+	uint8_t now = g_wram[g_watch_addr - 0xC000u];
+
+	if (g_watch_value >= 0 && (int)now != g_watch_value)
+		return;
+	if (g_watch_skip > 0) {
+		g_watch_skip--;
+		return;
+	}
+	watch_hit(g_watch_addr, now);
+}
+
 void gb_write8(uint16_t addr, uint8_t v)
 {
+	watch_poll();
 	if (addr < 0x8000) {
 		mbc5_write(addr, v);
 		return;
