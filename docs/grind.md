@@ -360,6 +360,30 @@ contract says "nothing past here is measurable", that is a claim about the
 chosen boundary, never a licence to stop porting. Check a caller before
 believing it.
 
+`composition_audit.py truncated` now enumerates the class by matching its shape
+rather than its symptom: an unbroken prefix of the asm's call sequence present
+in the body, an unbroken suffix absent. Interleaved gaps are excluded, because
+those are a folded branch or an inlined helper rather than a stopped
+transcription. It reports 35 rows, and it dropped from 36 to 35 the moment
+`ChallengeMachine_Duel` was completed, which is the same in-repo validation the
+`overrides` audit got. It is a worklist, not a ratchet: the top rows are AI
+routines where a body may legitimately fold branches, so the count is not yet a
+number to defend.
+
+`ChallengeMachine_Duel` was the second row of that class and is fixed --
+`challenge_machine.asm:177-181`, the song wait, the `wSongOverride` clear,
+`SaveGeneralSaveData` and `StartDuel_VSAIOpp`, the duel entry itself, all
+absent. **No discriminator exists for it, unlike the booster row.** Its own
+three cases pass with the tail deleted, as the class predicts, and the caller
+trick does not transfer: `ChallengeMachine_Start`'s reference stops at
+`04:71EE`, early in its own body and before `call ChallengeMachine_Duel`
+(`:67`), so nothing it observes straddles that return. An SRAM span over
+`sPlayerInChallengeMachine` -- written `$ff` before the call and `0` at
+`.resume_challenge` right after, the exact `$D117` shape -- passes either way
+for that reason, so it was reverted rather than kept as decoration. The tail is
+landed as a literal transcription of four asm lines whose callees all already
+existed; that is the whole of its justification.
+
 ## When the divergence is the movie, not the port
 
 `5530S` is luck-manipulated: the RNG advances every frame, so the hand a duel
