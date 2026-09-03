@@ -2,14 +2,22 @@
 #include "mem.h"
 /* >>> factory statics */
 #include "generated/wram.h"
+#include "home/booster_packs.h"
+#include "home/common.h"
 #include "home/credits_sequence_commands.h"
 #include "home/init_menu.h"
 #include "home/lcd.h"
+#include "home/lcd_enable_frame.h"
+#include "home/objects.h"
+#include "home/overworld.h"
+#include "home/play_song.h"
+#include "home/print_text.h"
 #include "home/sound.h"
 #include "mem.h"
 
 #define NUM_BOOSTERS 0x1du
 #define MUSIC_BOOSTER_PACK 0x1cu
+#define TRUE 0x01u
 
 #define BOOSTER_COLOSSEUM 0x00u
 #define BOOSTER_EVOLUTION 0x01u
@@ -96,6 +104,24 @@ GiveBoosterPackResult GiveBoosterPack(uint8_t a, uint8_t f)
 	(void)FlashWhiteScreen();
 	PauseSong();
 	PlaySong(MUSIC_BOOSTER_PACK);
+	/* asm:39-41. The entry `push bc` is popped back here, so `c` is the
+	 * booster id again -- the type and the type*4 table offset both wrote
+	 * over it in between. */
+	GenerateBoosterPack(a);
+	(void)PrintScrollableText_NoTextBoxLabel(
+		wAnotherBoosterPack == TRUE ? AndAnotherBoosterPackText
+					    : ReceivedBoosterPackText);
+	WaitForSongToFinish();
+	ResumeSong();
+	(void)PrintScrollableText_NoTextBoxLabel(CheckedCardsInBoosterPackText);
+	DisableLCD();
+	SetDefaultPalettes();
+	ZeroObjectPositions();
+	wVBlankOAMCopyToggle = TRUE;
+	wTextBoxFrameType = 4u;
+	OpenBoosterPack();
+	WhiteOutDMGPals();
+	DoFrameIfLCDEnabled();
 	return (GiveBoosterPackResult){saved_d291, f};
 }
 /* <<< factory GiveBoosterPack */
