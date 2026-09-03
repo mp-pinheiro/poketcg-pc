@@ -648,6 +648,41 @@ loop is hostage to the timeline that drives the loop. `hKeysHeld` had the same
 problem earlier in the session. Prefer an observation the routine writes
 *outside* its wait loop.
 
+## Three ROM routines are implemented twice
+
+`duel_animation_core.c` carries its own copies of routines that already exist
+ported elsewhere, and one of them has drifted. This is the `music1`/`music2`
+class again, found this time by the `truncated` audit rather than by a bug
+report.
+
+`_UpdateQueuedAnimations` was flagged for not calling
+`PlayBufferedDuelAnimations`. It does not call it because the file defines a
+file-local `play_buffered_duel_animations` that reimplements it. The two are not
+equivalent:
+
+- the copy advances `wDuelAnimBufferCurPos` *after* the eight field copies;
+  `core.c:2281` advances it before
+- the copy returns a re-read of `wDuelAnimBufferCurPos` on both exits, where the
+  real routine returns `CheckAnyAnimationPlaying`'s `a` on the carry exit
+  (`core.c:2293-2299`) and only the buffer position on the drained exit
+
+So the copy is wrong on the carry path. `PlayBufferedDuelAnimations` has its own
+cases and passes; the copy has none, because nothing knows it exists.
+
+Cutting `_UpdateQueuedAnimations` over to the real routine needs `core.h`, and
+including it fails to compile: this same file also defines
+`GetAnimCoordsAndFlags` and `LoadAnimCoordsAndFlags` with signatures that
+conflict with the ported declarations. That is three duplicated ROM routines in
+one file, so the fix is a file-scoped de-duplication rather than a one-line
+redirect, and it was left un-attempted rather than half-done.
+
+What makes this worth its own section: no oracle case can find it. Both
+implementations are reachable, both are green where they are tested, and the
+divergence only appears when the two are compared against each other. The
+`truncated` audit found it as a side effect of asking a different question --
+which is the third distinct defect class that audit has surfaced, after the
+stopped transcriptions and the invented writes.
+
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
 things the asm never does: `wLCDC = $80`, `hKeysPressed = $01`, and reading the
