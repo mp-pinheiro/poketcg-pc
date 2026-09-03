@@ -292,8 +292,22 @@ uint16_t PrintThereWasNoEffectFromStatusText(void)
 void SetDefaultConsolePalettes(void)
 {
 	uint8_t console = gb_read8(wConsole_ADDR);
-	if (console == 0x01u)
+	if (console == 0x01u) {
+		/* core.asm:4158-4170. The SGB branch was a bare return. Bytes at
+		 * 01:5B28 confirm the shape: `ld a, $01` is the packet header
+		 * (PAL01 << 3) + 1, the source is Pal01Packet_Default at 01:5B6C,
+		 * `ld c, $0e` copies 14 bytes, and `ld [hl], c` terminates with
+		 * the zero the copy loop left in c. Read from ROM the way the CGB
+		 * branch below reads CGBDefaultPalettes. */
+		gb_write8(wTextBoxFrameType_ADDR, 4);
+		gb_write8(wTempSGBPacket_ADDR, 0x01u);
+		for (uint8_t i = 0; i < 14u; i++)
+			gb_write8((uint16_t)(wTempSGBPacket_ADDR + 1u + i),
+				  gb_read8((uint16_t)(0x5B6Cu + i)));
+		gb_write8((uint16_t)(wTempSGBPacket_ADDR + 15u), 0u);
+		(void)SendSGB(0u, 0x80u, 0u, 0u, 0u, 0u, wTempSGBPacket_ADDR);
 		return;
+	}
 	if (console == 0x02u) {
 		gb_write8(wTextBoxFrameType_ADDR, 4);
 		uint16_t src = 0x5B44u;

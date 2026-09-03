@@ -419,6 +419,12 @@ CASES["SetDefaultConsolePalettes"] = [
                0xFF49: b"\xff"},
          read={WBGP: 1, WOBP0: 1, WFLAG: 1,
                0xFF47: 1, 0xFF48: 1, 0xFF49: 1}),
+    # core.asm:4158-4170. No case seeded wConsole = CONSOLE_SGB, which is why
+    # the whole SGB branch could be a bare return; the packet it builds at
+    # wTempSGBPacket is the observation that catches it.
+    {"wram": {WCONSOLE: b"\x01", WTEXT: b"\x00", 0xCAE0: b"\x00" * 16},
+     "read": {WTEXT: 1, 0xCAE0: 16},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
     {"b": 1,
      "wram": {WCONSOLE: b"\x02", HBANK: b"\x01", WBG: b"\x00" * 40,
               WOBJ: b"\x00" * 8, WTEXT: b"\x00", WFLAG: b"\xff"},
