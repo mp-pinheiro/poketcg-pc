@@ -1,8 +1,10 @@
 #include "home/challenge_machine.h"
 
 #include "generated/sram.h"
+#include "home/core.h"
 #include "home/print_text.h"
 #include "home/process_text.h"
+#include "home/save.h"
 #include "mem.h"
 /* >>> factory statics */
 #include "home/challenge_machine.h"
@@ -693,6 +695,14 @@ void ChallengeMachine_Duel(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e
 		MUSIC_MATCH_START_2, MUSIC_MATCH_START_2,
 	};
 	PlaySong(song_ids[opponent_number]);
+	/* challenge_machine.asm:177-181. The port stopped at PlaySong, so the
+	 * song wait, the override clear, the save and the duel entry itself were
+	 * all absent -- and with the wait absent the native lane never enters
+	 * AssertSongFinished, which is where this row's cases stop. */
+	WaitForSongToFinish();
+	wSongOverride = 0u;
+	SaveGeneralSaveData();
+	StartDuel_VSAIOpp();
 }
 /* <<< factory ChallengeMachine_Duel */
 
