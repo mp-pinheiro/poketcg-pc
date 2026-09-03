@@ -324,8 +324,12 @@ OpenInPlayAreaScreenResult OpenInPlayAreaScreen(void)
 			if (wInPlayAreaFromSelectButton != 0u && (dpad & 0x04u) != 0u) {
 				wCheckMenuCursorBlinkCounter = 9u;
 				ZeroObjectPositionsAndToggleOAMCopy_Bank6();
+				/* SetupText's clear loop ends on `inc l`
+				 * wrapping to zero (process_text.asm:154-159),
+				 * so it returns a = 0 with Z and H set. `or a`
+				 * then leaves Z alone and clears H and C. */
 				(void)SetupText(0x38u, 0x9Fu);
-				return (OpenInPlayAreaScreenResult){0x00u};
+				return (OpenInPlayAreaScreenResult){0x80u};
 			}
 			wInPlayAreaTemporaryPosition = wInPlayAreaCurPosition;
 			OpenInPlayAreaScreenHandleInputResult input = OpenInPlayAreaScreen_HandleInput();
@@ -333,8 +337,9 @@ OpenInPlayAreaScreenResult OpenInPlayAreaScreen(void)
 				if (input.a == 0xFFu) {
 					wCheckMenuCursorBlinkCounter = 9u;
 					ZeroObjectPositionsAndToggleOAMCopy_Bank6();
+					/* `scf` keeps SetupText's Z and clears H. */
 					(void)SetupText(0x38u, 0x9Fu);
-					return (OpenInPlayAreaScreenResult){0x10u};
+					return (OpenInPlayAreaScreenResult){0x90u};
 				}
 				goto selection;
 			}
