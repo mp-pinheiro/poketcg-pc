@@ -2795,21 +2795,30 @@ static void adapt_OpenVariousPlayAreaScreens_FromSelectPresses(ProbeState *s)
 /* >>> factory OpenPlayAreaScreenForViewing */
 static void adapt_OpenPlayAreaScreenForViewing(ProbeState *s)
 {
-	OpenPlayAreaScreenForViewing();
+	PlayAreaScreenResult r = OpenPlayAreaScreenForViewing();
+
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory OpenPlayAreaScreenForViewing */
 
 /* >>> factory OpenPlayAreaScreenForSelection */
 static void adapt_OpenPlayAreaScreenForSelection(ProbeState *s)
 {
-	OpenPlayAreaScreenForSelection();
+	PlayAreaScreenResult r = OpenPlayAreaScreenForSelection();
+
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory OpenPlayAreaScreenForSelection */
 
 /* >>> factory DisplayPlayAreaScreen */
 static void adapt_DisplayPlayAreaScreen(ProbeState *s)
 {
-	DisplayPlayAreaScreen();
+	PlayAreaScreenResult r = DisplayPlayAreaScreen(s->a);
+
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory DisplayPlayAreaScreen */
 

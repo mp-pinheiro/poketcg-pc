@@ -1275,13 +1275,16 @@ HasAlivePokemonInPlayAreaResult OpenTurnHolderPlayAreaScreen(void);
 uint8_t OpenVariousPlayAreaScreens_FromSelectPresses(void);
 /* <<< factory OpenVariousPlayAreaScreens_FromSelectPresses */
 /* >>> factory OpenPlayAreaScreenForViewing */
-void OpenPlayAreaScreenForViewing(void);
+/* core.asm:4925-5022. All three share one body; `a` is the allowed-keys mask
+ * and the two exits differ only by `or a` versus `scf`. */
+typedef struct { uint8_t a; uint8_t f; } PlayAreaScreenResult;
+PlayAreaScreenResult OpenPlayAreaScreenForViewing(void);
 /* <<< factory OpenPlayAreaScreenForViewing */
 /* >>> factory OpenPlayAreaScreenForSelection */
-void OpenPlayAreaScreenForSelection(void);
+PlayAreaScreenResult OpenPlayAreaScreenForSelection(void);
 /* <<< factory OpenPlayAreaScreenForSelection */
 /* >>> factory DisplayPlayAreaScreen */
-void DisplayPlayAreaScreen(void);
+PlayAreaScreenResult DisplayPlayAreaScreen(uint8_t a);
 /* <<< factory DisplayPlayAreaScreen */
 /* >>> factory SelectingBenchPokemonMenu */
 /* core.asm:5052-5088. Three exits derive; the interactive menu below them is

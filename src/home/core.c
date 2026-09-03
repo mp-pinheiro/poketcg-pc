@@ -9258,30 +9258,116 @@ HasAlivePokemonInPlayAreaResult OpenTurnHolderPlayAreaScreen(void)
 /* <<< factory OpenTurnHolderPlayAreaScreen */
 
 /* >>> factory OpenVariousPlayAreaScreens_FromSelectPresses */
+/* core.asm:758-766. Not ported: the chain's own `f` cannot be derived yet. Its
+ * first call returns the in-play-area screen's flags, whose exits are `scf; ret`
+ * and `or a; ret` (play_area.asm:62-78), so the Z bit is inherited from inside
+ * that screen. The reference returns $90 there and $20 here; the old stub's
+ * $20 agreed with the latter by coincidence, not by translation. */
 uint8_t OpenVariousPlayAreaScreens_FromSelectPresses(void)
 {
 	return 0x20u;
 }
 /* <<< factory OpenVariousPlayAreaScreens_FromSelectPresses */
 
+#define PLAY_AREA_PARAMS_INCLUDED 0x60BEu
+#define PLAY_AREA_PARAMS_EXCLUDED 0x60C6u
 /* >>> factory OpenPlayAreaScreenForViewing */
-void OpenPlayAreaScreenForViewing(void)
+PlayAreaScreenResult OpenPlayAreaScreenForViewing(void)
 {
-	(void)0;
+	return DisplayPlayAreaScreen(PAD_START | PAD_A);
 }
 /* <<< factory OpenPlayAreaScreenForViewing */
 
 /* >>> factory OpenPlayAreaScreenForSelection */
-void OpenPlayAreaScreenForSelection(void)
+PlayAreaScreenResult OpenPlayAreaScreenForSelection(void)
 {
-	(void)0;
+	return DisplayPlayAreaScreen(PAD_START);
 }
 /* <<< factory OpenPlayAreaScreenForSelection */
 
 /* >>> factory DisplayPlayAreaScreen */
-void DisplayPlayAreaScreen(void)
+/* core.asm:4933-5022. Draws the play area list, then loops on menu input.
+ * Pressing one of wNoItemSelectionMenuKeys opens the highlighted card's page
+ * and redraws; choosing a Pokemon with HP left exits without carry; cancelling
+ * exits with carry. The Select shortcut hands off to the selection entry, which
+ * re-enters this body with a narrower key mask. */
+PlayAreaScreenResult DisplayPlayAreaScreen(uint8_t a)
 {
-	(void)0;
+	uint8_t saved_index = hTempCardIndex_ff98;
+	uint16_t params;
+
+	wNoItemSelectionMenuKeys = a;
+	if (wPlayAreaScreenLoaded != 0u)
+		goto init_menu;
+	wSelectedDuelSubMenuItem = 0u;
+	wPlayAreaScreenLoaded = 1u;
+
+redraw:
+	ZeroObjectPositionsAndToggleOAMCopy();
+	EmptyScreen();
+	(void)LoadDuelCardSymbolTiles();
+	(void)LoadDuelCheckPokemonScreenTiles();
+	PrintPlayAreaCardList();
+	EnableLCD();
+
+init_menu:
+	params = wExcludeArenaPokemon != 0u ? PLAY_AREA_PARAMS_EXCLUDED
+					    : PLAY_AREA_PARAMS_INCLUDED;
+	InitializeMenuParameters(wSelectedDuelSubMenuItem, &params);
+	wNumMenuItems = wNumPlayAreaItems;
+	for (;;) {
+		DoFrame();
+		BenchPokemonMenuResult bench = SelectingBenchPokemonMenu();
+
+		if ((bench.f & 0x10u) != 0u) {
+			if (bench.a == 0x02u)
+				goto exit_selected;
+			hTempCardIndex_ff98 = saved_index;
+			return OpenPlayAreaScreenForSelection();
+		}
+
+		HandleMenuInputResult input = HandleMenuInput();
+
+		if ((input.f & 0x10u) == 0u)
+			continue;
+		wSelectedDuelSubMenuItem = input.e;
+		wCurPlayAreaSlot = (uint8_t)(wExcludeArenaPokemon + input.e);
+		if ((hKeysPressed & wNoItemSelectionMenuKeys) != 0u) {
+			DuelistVarResult card = GetTurnDuelistVariable(
+				(uint8_t)(wCurPlayAreaSlot + DUELVARS_ARENA_CARD));
+
+			if (card.a != 0xFFu) {
+				LoadCardDataToBuffer1_FromCardID(
+					(uint8_t)GetCardIDFromDeckIndex(card.a));
+				OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+			}
+			goto redraw;
+		}
+		hTempPlayAreaLocation_ff9d =
+			(uint8_t)(hCurMenuItem + wExcludeArenaPokemon);
+		if (hCurMenuItem == MENU_CANCEL)
+			goto exit_cancel;
+		{
+			DuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(
+				hTempPlayAreaLocation_ff9d + DUELVARS_ARENA_CARD_HP));
+
+			if (hp.a != 0u)
+				goto exit_selected;
+		}
+		goto init_menu;
+	}
+
+exit_selected:
+	hTempCardIndex_ff98 = saved_index;
+	hCurMenuItem = hTempPlayAreaLocation_ff9d;
+	return (PlayAreaScreenResult){hCurMenuItem,
+		hCurMenuItem == 0u ? 0x80u : 0x00u};
+
+exit_cancel:
+	/* `cp MENU_CANCEL` left Z set and `scf` only adds carry. */
+	hTempCardIndex_ff98 = saved_index;
+	hCurMenuItem = hTempPlayAreaLocation_ff9d;
+	return (PlayAreaScreenResult){hCurMenuItem, 0x90u};
 }
 /* <<< factory DisplayPlayAreaScreen */
 

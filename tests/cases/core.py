@@ -4944,24 +4944,38 @@ CASES["OpenVariousPlayAreaScreens_FromSelectPresses"] = [
 # >>> factory OpenPlayAreaScreenForViewing
 CONTRACT["OpenPlayAreaScreenForViewing"] = {"compare": (), "preserve": ()}
 CASES["OpenPlayAreaScreenForViewing"] = [
-    {"wram": {0xCBD4: b"\x55"}, "read": {0xCBD4: 1}},
-    dict(POISON, wram={0xCBD4: b"\xAA"}, read={0xCBD4: 1}),
+    {"wram": {0xCBD4: b"\x55"}, "read": {0xCBD4: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xCBD4: b"\xAA"}, read={0xCBD4: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory OpenPlayAreaScreenForViewing
 
 # >>> factory OpenPlayAreaScreenForSelection
 CONTRACT["OpenPlayAreaScreenForSelection"] = {"compare": (), "preserve": ()}
 CASES["OpenPlayAreaScreenForSelection"] = [
-    {"wram": {0xCBD4: b"\x55"}, "read": {0xCBD4: 1}},
-    dict(POISON, wram={0xCBD4: b"\xAA"}, read={0xCBD4: 1}),
+    {"wram": {0xCBD4: b"\x55"}, "read": {0xCBD4: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xCBD4: b"\xAA"}, read={0xCBD4: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory OpenPlayAreaScreenForSelection
 
 # >>> factory DisplayPlayAreaScreen
 CONTRACT["DisplayPlayAreaScreen"] = {"compare": (), "preserve": ()}
+# Reaching the menu loop redraws the whole play area first, so the default
+# 240-frame allowance is not enough for either lane.
 CASES["DisplayPlayAreaScreen"] = [
-    {"wram": {0xCBD4: b"\x55"}, "read": {0xCBD4: 1}},
-    dict(POISON, wram={0xCBD4: b"\xAA"}, read={0xCBD4: 1}),
+    {"wram": {0xCBD4: b"\x55"}, "read": {0xCBD4: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xCBD4: b"\xAA"}, read={0xCBD4: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory DisplayPlayAreaScreen
 
@@ -7080,22 +7094,34 @@ for _record in SCHEMA2_CASES["OpenVariousPlayAreaScreens_FromSelectPresses"]:
 MUTATIONS["OpenPlayAreaScreenForViewing"] = {"source_symbol": "OpenPlayAreaScreenForViewing", "before": "void OpenPlayAreaScreenForViewing(void)\n{\n\t(void)0;", "after": "void OpenPlayAreaScreenForViewing(void)\n{\n\tgb_write8(0xCBD4u, 1u);", "case_ids": ["OpenPlayAreaScreenForViewing-0", "OpenPlayAreaScreenForViewing-1"]}
 # <<< factory-mutation OpenPlayAreaScreenForViewing
 # >>> factory-completion OpenPlayAreaScreenForViewing
+# The screen now runs its menu loop, which only exits on input, so a `pre-ret`
+# pc left the native lane running forever. Both lanes stop at the per-iteration
+# SelectingBenchPokemonMenu call, after the redraw and menu init.
 for _record in SCHEMA2_CASES["OpenPlayAreaScreenForViewing"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x237F}
+    _record["completion"] = {"mode": "entry", "pc": 0x60DD, "bank": 1,
+                             "routine": "SelectingBenchPokemonMenu"}
 # <<< factory-completion OpenPlayAreaScreenForViewing
 # >>> factory-mutation OpenPlayAreaScreenForSelection
 MUTATIONS["OpenPlayAreaScreenForSelection"] = {"source_symbol": "OpenPlayAreaScreenForSelection", "before": "void OpenPlayAreaScreenForSelection(void)\n{\n\t(void)0;", "after": "void OpenPlayAreaScreenForSelection(void)\n{\n\tgb_write8(0xCBD4u, 1u);", "case_ids": ["OpenPlayAreaScreenForSelection-0", "OpenPlayAreaScreenForSelection-1"]}
 # <<< factory-mutation OpenPlayAreaScreenForSelection
 # >>> factory-completion OpenPlayAreaScreenForSelection
+# The screen now runs its menu loop, which only exits on input, so a `pre-ret`
+# pc left the native lane running forever. Both lanes stop at the per-iteration
+# SelectingBenchPokemonMenu call, after the redraw and menu init.
 for _record in SCHEMA2_CASES["OpenPlayAreaScreenForSelection"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x2381}
+    _record["completion"] = {"mode": "entry", "pc": 0x60DD, "bank": 1,
+                             "routine": "SelectingBenchPokemonMenu"}
 # <<< factory-completion OpenPlayAreaScreenForSelection
 # >>> factory-mutation DisplayPlayAreaScreen
 MUTATIONS["DisplayPlayAreaScreen"] = {"source_symbol": "DisplayPlayAreaScreen", "before": "void DisplayPlayAreaScreen(void)\n{\n\t(void)0;", "after": "void DisplayPlayAreaScreen(void)\n{\n\tgb_write8(0xCBD4u, 1u);", "case_ids": ["DisplayPlayAreaScreen-0", "DisplayPlayAreaScreen-1"]}
 # <<< factory-mutation DisplayPlayAreaScreen
 # >>> factory-completion DisplayPlayAreaScreen
+# The screen now runs its menu loop, which only exits on input, so a `pre-ret`
+# pc left the native lane running forever. Both lanes stop at the per-iteration
+# SelectingBenchPokemonMenu call, after the redraw and menu init.
 for _record in SCHEMA2_CASES["DisplayPlayAreaScreen"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x2382}
+    _record["completion"] = {"mode": "entry", "pc": 0x60DD, "bank": 1,
+                             "routine": "SelectingBenchPokemonMenu"}
 # <<< factory-completion DisplayPlayAreaScreen
 # >>> factory-mutation SelectingBenchPokemonMenu
 MUTATIONS["SelectingBenchPokemonMenu"] = {"source_symbol": "SelectingBenchPokemonMenu", "before": "return action == 0u ? 0x80u : (action == 2u ? 0xA0u : 0x80u);", "after": "return action == 0u ? 0x81u : (action == 2u ? 0xA0u : 0x80u);", "case_ids": ["SelectingBenchPokemonMenu-0", "SelectingBenchPokemonMenu-1"]}
