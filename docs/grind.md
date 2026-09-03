@@ -399,17 +399,16 @@ as `script_jump_event_pass`; both `ScriptCommand_Jump*` rows were phantoms.
 Excluding dotted targets took the count 24 -> 21. Across two refinements the
 audit went 35 -> 21, so **two of every five rows it first reported were noise**.
 
-**The three AI rows are blocked, and the blocker is a register contract two
-levels down.** `AIEnergyTransTransferEnergyToBench` (`pkmn_powers.asm:269-402`)
-branches on the carry of `AIProcessButDontPlayEnergy_SkipEvolutionAndArena`
-twice, at `:289` and `:373`. That routine returns `void` in the port, and its
-asm ends `jr AIProcessEnergyCards` (`energy.asm:66`) -- a tail jump, so the
-callee's flags are its exit -- and `AIProcessEnergyCards` is `void` too. Its
-body is long with many exits, so establishing that carry is its own piece of
-work. All nine other callees of the AI row already exist with real signatures;
-this one register is the whole obstruction. Porting 143 asm lines on top of an
-unmodelled carry would be a guess dressed as a port, which is why this turn
-stopped and took a smaller row instead.
+**The three AI rows were blocked on a register contract two levels down, and
+that contract is now landed.** `AIEnergyTransTransferEnergyToBench`
+(`pkmn_powers.asm:269-402`) branches on the carry of
+`AIProcessButDontPlayEnergy_SkipEvolutionAndArena` twice, at `:289` and `:373`.
+That routine returned `void`, and its asm ends `jr AIProcessEnergyCards`
+(`energy.asm:66`) -- a tail jump, so the callee's flags are its exit -- and
+`AIProcessEnergyCards` returned `void` too. All nine other callees of the AI row
+already existed with real signatures; this one register was the whole
+obstruction, and porting 143 asm lines on top of an unmodelled carry would have
+been a guess dressed as a port.
 
 `AIProcessEnergyCards`' exits are now enumerated, and the wrapper's half of the
 contract is fully derived. The routine has one `ret` and four exit paths
