@@ -7736,11 +7736,7 @@ CASES["PokemonTrader_TradeCardsEffect"] = [
      "read": {HAND_COUNT: 1, HAND: 2, CARD0_LOCATION: 1, CARD1_LOCATION: 1, DECK_TOP: 2},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "instruction_budget": 3000000, "cycle_budget": 10000000},
-    # `c` is dropped here alone: core.asm:2283-2311 clobbers it inside
-    # PlayDeckShuffleAnimation, whose result models only {a, e} because its own
-    # FinishQueuedAnimations (script.h) reports no registers. Case 0 seeds c=0
-    # and still compares it. Restore this field when that chain carries `c`.
-    dict(POISON, compare=("a", "f", "b", "d", "e", "hl"),
+    dict(POISON,
          wram={hTemp_ffa0: b"\x00", hTempPlayAreaLocation_ffa1: b"\x01", hWhoseTurn: b"\xC2", DUELIST_TYPE: b"\x00",
                HAND_COUNT: b"\x01", HAND: b"\x00", NOT_IN_DECK: b"\x30", DECK_TOP + 1: b"\x01"},
          read={HAND_COUNT: 1, HAND: 2, CARD0_LOCATION: 1, CARD1_LOCATION: 1, DECK_TOP: 2},

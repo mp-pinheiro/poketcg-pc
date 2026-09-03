@@ -1637,8 +1637,9 @@ static void adapt_PrintPokemonCardLength(ProbeState *s)
 /* >>> factory PlayDeckShuffleAnimation */
 static void adapt_PlayDeckShuffleAnimation(ProbeState *s)
 {
-	PlayDeckShuffleAnimationResult r = PlayDeckShuffleAnimation(s->e);
+	PlayDeckShuffleAnimationResult r = PlayDeckShuffleAnimation(s->c, s->e);
 	s->a = r.a;
+	s->c = r.c;
 	s->e = r.e;
 }
 /* <<< factory PlayDeckShuffleAnimation */

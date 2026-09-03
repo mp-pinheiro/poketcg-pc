@@ -5657,8 +5657,14 @@ void PrintPokemonCardLength(uint16_t hl, uint8_t b, uint8_t c)
  * feeds that register straight to ShuffleDeck, so `e` is a real output and not
  * scratch. The one-card path never assigns it, so it has to arrive as a
  * parameter to survive. Measured: reference returns e=$51 on the player's turn
- * and e=$52 on the opponent's. */
-PlayDeckShuffleAnimationResult PlayDeckShuffleAnimation(uint8_t e)
+ * and e=$52 on the opponent's.
+ *
+ * `c` is an output on the animation path only: it ends in
+ * FinishQueuedAnimations (script.asm:166), whose ZeroObjectPositions counts
+ * `c` down from OAM_COUNT to zero (objects.asm:76-84) and whose closing
+ * BankswitchROM preserves bc (switch_rom.asm:90-93). The one-card path calls
+ * neither, so `c` arrives as a parameter there for the same reason `e` does. */
+PlayDeckShuffleAnimationResult PlayDeckShuffleAnimation(uint8_t c, uint8_t e)
 {
 	if (gb_read8(wDuelDisplayedScreen_ADDR) != SHUFFLE_DECK_490) {
 		ZeroObjectPositionsAndToggleOAMCopy();
@@ -5679,7 +5685,7 @@ PlayDeckShuffleAnimationResult PlayDeckShuffleAnimation(uint8_t e)
 			DoFrame();
 			counter = (uint8_t)(counter - 1u);
 		} while (counter != 0u);
-		return (PlayDeckShuffleAnimationResult){0x01u, e};
+		return (PlayDeckShuffleAnimationResult){0x01u, c, e};
 	}
 
 	(void)DrawWideTextBox_PrintText(ShufflesTheDeckText);
@@ -5704,7 +5710,7 @@ PlayDeckShuffleAnimationResult PlayDeckShuffleAnimation(uint8_t e)
 			break;
 	}
 	FinishQueuedAnimations();
-	return (PlayDeckShuffleAnimationResult){0x01u, e};
+	return (PlayDeckShuffleAnimationResult){0x01u, 0x00u, e};
 }
 /* <<< factory PlayDeckShuffleAnimation */
 
@@ -5713,7 +5719,7 @@ uint8_t OppAction_6b30(void)
 {
 	uint8_t saved = hWhoseTurn;
 	hWhoseTurn = hTemp_ffa0;
-	(void)PlayDeckShuffleAnimation(0u);
+	(void)PlayDeckShuffleAnimation(0u, 0u);
 	hWhoseTurn = saved;
 	return saved;
 }

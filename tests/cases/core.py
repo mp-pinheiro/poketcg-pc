@@ -3097,16 +3097,28 @@ CASES["PrintPokemonCardLength"] = [
 # <<< factory PrintPokemonCardLength
 
 # >>> factory PlayDeckShuffleAnimation
-CONTRACT["PlayDeckShuffleAnimation"] = {"compare": ("a",), "preserve": ()}
+# `c` is an output on the animation path only (core.c documents the derivation).
+# The two `.one_card_in_deck` cases below narrow it away: that path calls neither
+# ZeroObjectPositions nor FinishQueuedAnimations, so its `c` comes out of the
+# DoFrame chain and no port model produces it.
+CONTRACT["PlayDeckShuffleAnimation"] = {"compare": ("a", "c"), "preserve": ()}
 CASES["PlayDeckShuffleAnimation"] = [
-    {"keys": 0, "instruction_budget": 3000000, "cycle_budget": 10000000,
+    {"compare": ("a",), "keys": 0, "instruction_budget": 3000000, "cycle_budget": 10000000,
      "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCAC2: b"\x09",
               0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, keys=0, instruction_budget=3000000, cycle_budget=10000000,
+    dict(POISON, compare=("a",), keys=0, instruction_budget=3000000, cycle_budget=10000000,
          wram={0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCAC2: b"\x09",
                0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    # core.asm:2277-2311. Both cases above seed 0xC2BA=0x3C -- zero cards in
+    # deck -- so they only ever take `.one_card_in_deck`. This one leaves 12
+    # cards there, which is the path that queues the animation and ends in
+    # FinishQueuedAnimations, the only path where `c` is an output.
+    {"c": 0xCC, "keys": 0, "instruction_budget": 3000000, "cycle_budget": 10000000,
+     "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x30", 0xCAC2: b"\x09",
+              0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
 ]
 # <<< factory PlayDeckShuffleAnimation
 
