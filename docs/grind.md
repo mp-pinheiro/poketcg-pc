@@ -872,6 +872,29 @@ expect the ordinal to move.
 Nine stubs and shadows have now been found on one path from the duel menu to the
 play area screen. The region was never "ported and buggy"; it was outlined.
 
+`SelectingBenchPokemonMenu` sits between the two, and its stub was returning
+invented flags with no `a` at all -- which matters because
+`DisplayPlayAreaScreen` branches on both its carry *and* `cp $02`. Its three
+early exits derive (`core.asm:5052-5088`) and are now landed with a real
+`{a, f}` result, contract widened from `("f",)` to `("a", "f")`, adapter
+reporting both. The menu loop past them is still unported and says so in the
+body rather than implying otherwise.
+
+One flag detail earned its keep. The two early exits differ by a single bit: the
+first leaves via `or a`, which clears H, so it is `$80`; the second leaves via
+`and PAD_SELECT`, and **`and` sets H**, so it is `$A0`. I wrote `$80` for both
+and the oracle caught it immediately -- `f: oracle $A0 != C $80`. The old stub
+happened to return `$A0` on that path by luck, so widening the contract to
+compare `a` is what made the difference visible at all.
+
+So the order for next turn is fixed and mechanical: `DisplayPlayAreaScreen`
+(`core.asm:4933-5022`, 91 lines) can now be written against real callee
+contracts -- it takes the allowed-keys byte in `a`, stores it to
+`wNoItemSelectionMenuKeys`, and its two exits differ only by `or a` versus
+`scf`. Its menu-parameter tables are at `01:60BE` and `01:60C6`. Check every
+caller's completion mode before landing it: it contains an input loop, and that
+trap has now bitten three times on this path.
+
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
 things the asm never does: `wLCDC = $80`, `hKeysPressed = $01`, and reading the
