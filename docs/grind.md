@@ -337,11 +337,28 @@ pack at `AssertSongFinished`, before `ld a, TRUE` (`scripting.asm:945`), while
 the port has already run past it -- so the port's `GiveBoosterPack` never enters
 `AssertSongFinished` on this path and the native stop never fires.
 
-That is a real behavioural divergence in the port's booster-pack path, not a
-harness artifact: the identical recipe works for `GiveBoosterPack` tested
-directly, so the difference is what the port does when reached through these two
-script commands. The span addition is reverted rather than landed red; restoring
-it is the acceptance test for the fix.
+The cause was a truncated body, and it was fixed. `GiveBoosterPack`'s port
+stopped at `PlaySong` (`give_booster_pack.asm:38`) with a comment declaring
+everything past it unmeasurable, so `pop bc`, `GenerateBoosterPack`, the
+`wAnotherBoosterPack` text choice, `WaitForSongToFinish`, `ResumeSong`, the
+second scrollable text, `SetDefaultPalettes`, `ZeroObjectPositions`,
+`OpenBoosterPack`, `WhiteOutDMGPals` and `DoFrameIfLCDEnabled` were all absent.
+With the wait absent, the native lane never entered `AssertSongFinished`, so the
+`entry` stop never fired and the port ran on to write `TRUE`. All eleven callees
+already existed; the tail is a straight transcription.
+
+**A truncated body is invisible to its own cases.** `GiveBoosterPack` passes 4/4
+*with the tail deleted*: nothing it does after the cut is observable at its own
+boundary, which is exactly what its comment asserted and exactly why the
+truncation survived. The only witness is a caller that runs past the cut --
+here the two script commands, whose `$D117` write happens after the callee
+returns and therefore straddles it.
+
+So the boundary comment was self-fulfilling: it declared the tail unmeasurable,
+which was true of that routine alone and false of the program. When a row's
+contract says "nothing past here is measurable", that is a claim about the
+chosen boundary, never a licence to stop porting. Check a caller before
+believing it.
 
 ## When the divergence is the movie, not the port
 
