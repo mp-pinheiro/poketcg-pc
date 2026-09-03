@@ -1307,8 +1307,9 @@ static void adapt_PrintPracticeDuelInstructions(ProbeState *s)
 /* >>> factory DisplayPreviousCardPage */
 static void adapt_DisplayPreviousCardPage(ProbeState *s)
 {
-	DisplayPreviousCardPage();
-	(void)s;
+	CardPageNavigationResult r = DisplayPreviousCardPage();
+
+	s->f = r.f;
 }
 /* <<< factory DisplayPreviousCardPage */
 

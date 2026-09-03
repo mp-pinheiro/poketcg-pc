@@ -618,7 +618,7 @@ CardPageNavigationResult GoToFirstOrNextCardPage(void);
 void PrintPracticeDuelInstructions(uint16_t hl);
 /* <<< factory PrintPracticeDuelInstructions */
 /* >>> factory DisplayPreviousCardPage */
-void DisplayPreviousCardPage(void);
+CardPageNavigationResult DisplayPreviousCardPage(void);
 /* <<< factory DisplayPreviousCardPage */
 /* >>> factory PrintNumberOfHandAndDeckCards */
 void PrintNumberOfHandAndDeckCards(void);

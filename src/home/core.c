@@ -4508,11 +4508,16 @@ void PrintPracticeDuelInstructions(uint16_t hl)
 /* <<< factory PrintPracticeDuelInstructions */
 
 /* >>> factory DisplayPreviousCardPage */
-void DisplayPreviousCardPage(void)
+/* duel/core.asm:3653-3656 `call GoToPreviousCardPage / jr nc, DisplayCardPage /
+ * ret`, so the carry reaches the caller, which displays the page itself when
+ * the navigation refused to move (asm:3548-3549). */
+CardPageNavigationResult DisplayPreviousCardPage(void)
 {
 	CardPageNavigationResult navigation = GoToPreviousCardPage();
+
 	if ((navigation.f & 0x10u) == 0u)
 		DisplayCardPage();
+	return navigation;
 }
 /* <<< factory DisplayPreviousCardPage */
 
@@ -5390,10 +5395,15 @@ CheckEnergyNeededForAttackAfterDiscardResult CheckEnergyNeededForAttackAfterDisc
 /* <<< factory CheckEnergyNeededForAttackAfterDiscard */
 
 /* >>> factory DisplayFirstOrNextCardPage */
+/* duel/core.asm:3659-3662 `call GoToFirstOrNextCardPage / ret c` then falls
+ * through into DisplayCardPage. */
 CardPageNavigationResult DisplayFirstOrNextCardPage(uint8_t b)
 {
 	CardPageNavigationResult r = GoToFirstOrNextCardPage();
+
 	r.b = b;
+	if ((r.f & 0x10u) == 0u)
+		DisplayCardPage();
 	return r;
 }
 /* <<< factory DisplayFirstOrNextCardPage */
@@ -5493,12 +5503,14 @@ PrintAttackOrCardDescriptionResult PrintAttackOrNonPokemonCardDescription(uint16
 /* >>> factory DisplayCardPageOnLeftOrRightPressed */
 void DisplayCardPageOnLeftOrRightPressed(uint8_t a)
 {
-	if (a & (1u << B_PAD_LEFT)) {
-		(void)GoToPreviousCardPage();
-	} else {
-		(void)GoToFirstOrNextCardPage();
-	}
-	DisplayCardPage();
+	CardPageNavigationResult moved = (a & (1u << B_PAD_LEFT))
+		? DisplayPreviousCardPage()
+		: DisplayFirstOrNextCardPage(0u);
+
+	/* asm:3544-3549 `call c, DisplayCardPage`: the wrapper already displayed
+	 * on its no-carry path, so the page is drawn exactly once either way. */
+	if ((moved.f & 0x10u) != 0u)
+		DisplayCardPage();
 }
 /* <<< factory DisplayCardPageOnLeftOrRightPressed */
 
