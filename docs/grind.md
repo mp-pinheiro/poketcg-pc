@@ -378,11 +378,24 @@ the body calls that is absent from `poketcg.sym`, since only port-local
 decomposition can be missing from the symbol table. That took the count 35 ->
 24 and removed eleven false positives, including both graphics rows.
 
-A third false-positive class remains and is not worth detecting: a
-side-effect-free ROM callee inlined. `SetupVRAM` is flagged for not calling
-`CheckForCGB`, which is `wConsole`, `cp CONSOLE_CGB`, carry (`time.asm:88-93`)
--- the port's inline test is exactly equivalent. So the count is a worklist, not
-a ratchet, and triage before belief remains mandatory.
+Three further false-positive classes remain, all of them judgement rather than
+parsing, and none worth detecting:
+
+- **A side-effect-free ROM callee inlined.** `SetupVRAM` is flagged for not
+  calling `CheckForCGB`, which is `wConsole`, `cp CONSOLE_CGB`, carry
+  (`time.asm:88-93`) -- the port's inline test is exactly equivalent.
+- **A pure copy helper inlined.** `FadeScreenFromWhite` is flagged for
+  `CopyDataHLtoDE_SaveRegisters`, which its helper replaces with a 128-byte loop
+  -- sixteen palettes of eight bytes, the same span, and the callee restores the
+  registers it saved anyway.
+- **A wait routed through a real sibling.** `PrintKnockedOut` is flagged for
+  `DoFrame` because the port calls `DoAFrames(40)` where the asm inlines its own
+  `.wait_frames` loop. `DoAFrames` is itself a ROM routine (`00:0536`) whose
+  body is that loop, so the behaviour matches; only the routine-entry trace
+  differs, by one extra entry the ROM does not make.
+
+So the count is a worklist, not a ratchet, and triage before belief remains
+mandatory.
 
 Triage of the three largest rows says the detector measures real work.
 `GetAIScoreOfAttack` (91 dropped) is nine body lines, `HandleAIEnergyTrans`
@@ -398,6 +411,31 @@ reaches `ScriptCommand_JumpIfEventTrue.pass_try_jump` and the port models that
 as `script_jump_event_pass`; both `ScriptCommand_Jump*` rows were phantoms.
 Excluding dotted targets took the count 24 -> 21. Across two refinements the
 audit went 35 -> 21, so **two of every five rows it first reported were noise**.
+
+**Do not make the reachability transitive through ROM siblings.** Two of the
+classes above are only clearable by following calls further than the parent's
+own body, so I tried exactly that and measured it against the three AI rows as
+positive controls, since those are known real truncations:
+
+| hops through the port call graph | rows | controls kept |
+| --- | --- | --- |
+| 1 | 30 | all three |
+| 2 | 17 | one |
+| 3 | 15 | one |
+
+Past one hop the closure swallows `GetAIScoreOfAttack` and
+`AIEnergyTransTransferEnergyToBench` -- it stops measuring truncation and starts
+measuring whether a name appears anywhere nearby. The landed rule is therefore
+the right shape and stays: unbounded through *port-local* helpers, which are the
+same routine split up, and never through a ROM sibling, which is a different
+routine the port chose to call.
+
+One implementation note, because it nearly cost a machine. The first attempt
+accumulated each helper's body text into a growing string; that is quadratic in
+total source size across ~3,000 bodies and had to be killed after two minutes.
+Building the call graph once with a single `findall` per body and closing over
+the graph instead runs in 0.3 s. Reachability questions on this tree are graph
+problems, not string problems.
 
 **The three AI rows were blocked on a register contract two levels down, and
 that contract is now landed.** `AIEnergyTransTransferEnergyToBench`
