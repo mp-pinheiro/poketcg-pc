@@ -7237,8 +7237,12 @@ for _record in SCHEMA2_CASES["ReloadCardListScreen"]:
 MUTATIONS["DuelMenu_Check"] = {"source_symbol": "DuelMenu_Check", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenu_Check-0"]}
 # <<< factory-mutation DuelMenu_Check
 # >>> factory-completion DuelMenu_Check
+# core.asm:747-750 now really enters OpenDuelCheckMenu and tail-jumps into
+# DuelMainInterface, neither of which returns without input, so `pre-ret` left
+# the native lane running forever. Both lanes stop at the check menu's entry.
 for _record in SCHEMA2_CASES["DuelMenu_Check"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+    _record["completion"] = {"mode": "entry", "pc": 0x3096, "bank": 0,
+                             "routine": "OpenDuelCheckMenu"}
 # <<< factory-completion DuelMenu_Check
 # >>> factory-mutation DuelMenuShortcut_BothActivePokemon
 MUTATIONS["DuelMenuShortcut_BothActivePokemon"] = {"source_symbol": "DuelMenuShortcut_BothActivePokemon", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenuShortcut_BothActivePokemon-0"]}

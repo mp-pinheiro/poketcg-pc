@@ -9475,9 +9475,13 @@ void ReloadCardListScreen(void)
 /* <<< factory ReloadCardListScreen */
 
 /* >>> factory DuelMenu_Check */
+/* core.asm:747-750. `jp DuelMainInterface` is a tail jump, so that routine's
+ * exit is this one's. */
 void DuelMenu_Check(void)
 {
-	return;
+	FinishQueuedAnimations();
+	OpenDuelCheckMenu();
+	DuelMainInterface();
 }
 /* <<< factory DuelMenu_Check */
 
