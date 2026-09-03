@@ -56,7 +56,12 @@ CheckSkipDelayAllowedResult CheckSkipDelayAllowed(uint8_t f, uint8_t b, uint8_t 
 	uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory CheckSkipDelayAllowed */
 /* >>> factory AIMakeDecision */
+/* core.asm:6229-6263. `a` is derivable at each of the three exits: the
+ * wDuelFinished/wOpponentTurnEnded OR that `.turn_ended` branched on, the
+ * re-read wSkipDuelistIsThinkingDelay the `ret nz` tested, and
+ * DrawWideTextBox_PrintTextNoDelay's own `a` on the fall-through. */
 typedef struct {
+	uint8_t a;
 	uint8_t b;
 	uint8_t c;
 	uint8_t d;

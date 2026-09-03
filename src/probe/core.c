@@ -116,6 +116,7 @@ static void adapt_CheckSkipDelayAllowed(ProbeState *s)
 static void adapt_AIMakeDecision(ProbeState *s)
 {
 	AIMakeDecisionResult r = AIMakeDecision(s->a, s->b, s->c, s->d, s->e);
+	s->a = r.a;
 	s->f = r.f;
 }
 /* <<< factory AIMakeDecision */

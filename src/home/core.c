@@ -2065,14 +2065,20 @@ AIMakeDecisionResult AIMakeDecision(uint8_t a, uint8_t b, uint8_t c, uint8_t d, 
 		abort();
 	}
 
-	if (gb_read8(wDuelFinished_ADDR) != 0u ||
-	    gb_read8(wOpponentTurnEnded_ADDR) != 0u)
-		return (AIMakeDecisionResult){b, c, d, e, FLAG_C};
-	if (gb_read8(wSkipDuelistIsThinkingDelay_ADDR) != 0u)
-		return (AIMakeDecisionResult){b, c, d, e, 0u};
+	uint8_t ended = (uint8_t)(gb_read8(wDuelFinished_ADDR)
+				  | gb_read8(wOpponentTurnEnded_ADDR));
+
+	if (ended != 0u)
+		return (AIMakeDecisionResult){ended, b, c, d, e, FLAG_C};
+	uint8_t skip = gb_read8(wSkipDuelistIsThinkingDelay_ADDR);
+
+	if (skip != 0u)
+		return (AIMakeDecisionResult){skip, b, c, d, e, 0u};
 	gb_write8(wVBlankCounter_ADDR, 0u);
 	TextResult text = DrawWideTextBox_PrintTextNoDelay(DuelistIsThinkingText);
-	return (AIMakeDecisionResult){b, c, d, e, text.a == 0u ? FLAG_Z : 0u};
+
+	return (AIMakeDecisionResult){text.a, b, c, d, e,
+				      text.a == 0u ? FLAG_Z : 0u};
 }
 /* <<< factory AIMakeDecision */
 

@@ -157,7 +157,10 @@ CASES["CheckSkipDelayAllowed"] = [
 # <<< factory CheckSkipDelayAllowed
 
 # >>> factory AIMakeDecision
-CONTRACT["AIMakeDecision"] = {"compare": ("f",), "preserve": ()}
+# core.asm:6229-6263. `a` is a real output at all three exits, so compare it:
+# the wDuelFinished/wOpponentTurnEnded OR, the re-read skip byte, or the
+# text call's own `a`.
+CONTRACT["AIMakeDecision"] = {"compare": ("a", "f"), "preserve": ()}
 hOppActionTableIndex_ = 0xFF9E
 wSkipDuelistIsThinkingDelay_ = 0xCBF9
 wVBlankCounter_ = 0xCAB8
