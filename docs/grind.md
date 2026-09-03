@@ -391,6 +391,26 @@ the condition is dead code shaped to satisfy a boundary -- and
 `AIEnergyTransTransferEnergyToBench` (17) is six. These are the duel AI, the
 region the TAS never reaches, so nothing else measures them at all.
 
+A fourth class was real and is fixed. `call Other.label` jumps into another
+routine's local label, and `ASM_CALL_TARGET` captured only the parent token, so
+it recorded a call that was never a call. `ScriptCommand_JumpIfNPCLoaded`
+reaches `ScriptCommand_JumpIfEventTrue.pass_try_jump` and the port models that
+as `script_jump_event_pass`; both `ScriptCommand_Jump*` rows were phantoms.
+Excluding dotted targets took the count 24 -> 21. Across two refinements the
+audit went 35 -> 21, so **two of every five rows it first reported were noise**.
+
+**The three AI rows are blocked, and the blocker is a register contract two
+levels down.** `AIEnergyTransTransferEnergyToBench` (`pkmn_powers.asm:269-402`)
+branches on the carry of `AIProcessButDontPlayEnergy_SkipEvolutionAndArena`
+twice, at `:289` and `:373`. That routine returns `void` in the port, and its
+asm ends `jr AIProcessEnergyCards` (`energy.asm:66`) -- a tail jump, so the
+callee's flags are its exit -- and `AIProcessEnergyCards` is `void` too. Its
+body is long with many exits, so establishing that carry is its own piece of
+work. All nine other callees of the AI row already exist with real signatures;
+this one register is the whole obstruction. Porting 143 asm lines on top of an
+unmodelled carry would be a guess dressed as a port, which is why this turn
+stopped and took a smaller row instead.
+
 `ChallengeMachine_Duel` was the second row of that class and is fixed --
 `challenge_machine.asm:177-181`, the song wait, the `wSongOverride` clear,
 `SaveGeneralSaveData` and `StartDuel_VSAIOpp`, the duel entry itself, all
@@ -425,6 +445,22 @@ Two spans went in before that one and neither discriminated: `$D41C`, which was
 simply the wrong address for `wLCDC`, and then the right address on cases that
 still could not reach the call. Check that a case can reach the code before
 concluding a span is useless.
+
+`SetDefaultConsolePalettes` is the same story on the console axis rather than
+the flag axis. Its SGB arm was a bare `return`, so the frame type, the packet
+build and `SendSGB` were all absent (`core.asm:4158-4170`). No case seeded
+`wConsole = CONSOLE_SGB`: two cases used DMG and one CGB, so the arm was
+unreachable by construction and could stay empty indefinitely.
+
+The ROM settled the one ambiguity rather than rgbasm precedence guessing. In
+`ld a, PAL01 << 3 + 1` with `PAL01 = $00` the header byte is `$00` or `$01`
+depending on how `<<` and `+` bind; the bytes at `01:5B28` read `3E 01`, so it
+is `$01`. The rest of the block confirms the shape outright -- `11 6C 5B` the
+source, `0E 0E` the count, `71` (`ld [hl], c`) the terminator using the zero the
+copy loop leaves in `c`. The packet data is read from ROM at `01:5B6C` rather
+than transcribed, matching what the CGB arm beside it already does with
+`CGBDefaultPalettes`. A fourth case seeding SGB and observing the 16 packet
+bytes fails 1/4 before and passes 4/4 after.
 
 ## When the divergence is the movie, not the port
 
