@@ -845,6 +845,33 @@ sets no flags (`switch_rom.asm:90-93`), so the wrapper's carry is exactly its
 callee's. That is the same shape as the AI energy chain and should be done
 bottom-up, not by guessing a value at the top.
 
+Bottom-up on that chain reached a floor worth naming. `OpenInPlayAreaScreen`'s
+carry is derivable and landed: two exits, `scf; ret` when B backs out and
+`or a; ret` on the Select-button skip (`play_area.asm:62-78`). The result type
+carries `f`, the probe adapter reports it, and its contract now compares `("f",)`
+where it compared nothing. `play_area` 9/9, `duel_menus` 8/8, gate exit 0.
+
+It is derived rather than proven: the two cases never reach the skip exit, so
+inverting that carry leaves them passing. Landed anyway because the derivation
+is a two-line asm reading, and left labelled as such.
+
+The floor below it is `DisplayPlayAreaScreen`, and it is a stub -- `(void)0;`.
+So the Select path is five deep:
+
+`DuelMenuShortcut_BothActivePokemon` (stub) ->
+`OpenVariousPlayAreaScreens_FromSelectPresses` (stub) ->
+`OpenPlayAreaScreenForViewing` (stub, two lines: `ld a, PAD_START + PAD_A` and a
+tail jump) -> `DisplayPlayAreaScreen` (stub, **91 asm lines**).
+
+That last one is the substantive routine and a turn's work on its own, which is
+why this turn stopped at the carry rather than starting it. The three above it
+are two-to-six lines each and become mechanical once it exists, so the order is
+forced: port `DisplayPlayAreaScreen` first, then the three wrappers upward, then
+expect the ordinal to move.
+
+Nine stubs and shadows have now been found on one path from the duel menu to the
+play area screen. The region was never "ported and buggy"; it was outlined.
+
 **A seed can hide an invented write.** `ComputerSearch_PlayerDeckSelection`
 skipped `.loop_input` (`effect_functions.asm:9478-9482`) and substituted three
 things the asm never does: `wLCDC = $80`, `hKeysPressed = $01`, and reading the
