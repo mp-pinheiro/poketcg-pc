@@ -82,5 +82,17 @@ MUTATIONS["ShowMedalReceivedScreen"] = {"source_symbol": "ShowMedalReceivedScree
 # written. legacy_to_schema always emits completion "return", so the split is
 # applied after migration.
 for _record in SCHEMA2_CASES["ShowMedalReceivedScreen"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x378A}
+    # `entry` stops this lane there too (src/trace.h trace_set_stop). Under
+    # pre-ret only the reference stopped at the wait while the port ran on to
+    # its own `ret`, executing the ResumeSong and wd291 restore the reference
+    # had not reached; wd291 is observed below to hold that boundary.
+    # `entry` stops this lane at the same wait (src/trace.h trace_set_stop).
+    # Under pre-ret only the reference stopped there while the port ran on to
+    # its own `ret`, past ResumeSong and the wd291 restore. No observed byte
+    # differs between the two -- wd291 is restored to its seeded value and
+    # wMusicIsPlaying is already clear at the wait -- so this buys a matched
+    # boundary rather than a caught defect, and it lets the span widen later
+    # without comparing two different moments.
+    _record["completion"] = {"mode": "entry", "pc": 0x378A, "bank": 0,
+                             "routine": "AssertSongFinished"}
 # <<< factory-completion ShowMedalReceivedScreen

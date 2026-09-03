@@ -538,7 +538,13 @@ MUTATIONS["ChallengeMachine_Duel"] = {"source_symbol": "ChallengeMachine_Duel", 
 # <<< factory-mutation ChallengeMachine_Duel
 # >>> factory-completion ChallengeMachine_Duel
 for _record in SCHEMA2_CASES["ChallengeMachine_Duel"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x378A}
+    # `entry` stops this lane at the same wait (src/trace.h trace_set_stop).
+    # Under pre-ret only the reference stopped there while the port ran on to
+    # its own `ret`. No observed byte differs between the two, so this buys a
+    # matched boundary rather than a caught defect, and it lets the span widen
+    # later without comparing two different moments.
+    _record["completion"] = {"mode": "entry", "pc": 0x378A, "bank": 0,
+                             "routine": "AssertSongFinished"}
 # <<< factory-completion ChallengeMachine_Duel
 # >>> factory-mutation ChallengeMachine_Start
 MUTATIONS["ChallengeMachine_Start"] = {"source_symbol": "ChallengeMachine_Start", "before": "void ChallengeMachine_Start(void)\n{\n\twLineSeparation = DOUBLE_SPACED;", "after": "void ChallengeMachine_Start(void)\n{\n\twLineSeparation = 0x01u;", "case_ids": ["ChallengeMachine_Start-0", "ChallengeMachine_Start-1"]}

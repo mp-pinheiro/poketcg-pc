@@ -121,5 +121,11 @@ MUTATIONS["GiveBoosterPack"] = {"source_symbol": "GiveBoosterPack", "before": "\
 # legacy_to_schema always emits completion "return", so the split is applied
 # after migration.
 for _record in SCHEMA2_CASES["GiveBoosterPack"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x378A}
+    # `entry` stops this lane at the same wait (src/trace.h trace_set_stop).
+    # Under pre-ret only the reference stopped there while the port ran on to
+    # its own `ret`. No observed byte differs between the two, so this buys a
+    # matched boundary rather than a caught defect, and it lets the span widen
+    # later without comparing two different moments.
+    _record["completion"] = {"mode": "entry", "pc": 0x378A, "bank": 0,
+                             "routine": "AssertSongFinished"}
 # <<< factory-completion GiveBoosterPack
