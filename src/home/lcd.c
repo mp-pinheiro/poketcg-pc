@@ -64,10 +64,12 @@ void DisableLCD(void)
 	 * regardless of IE (gb-recompiled runtime ppu.c), so whenever the poll
 	 * crosses line 144 the pending request services immediately at this
 	 * restore - one full VBlankHandler run (vblank.asm:35 wVBlankCounter++)
-	 * between game instructions. The boundary pass above models the frame
-	 * the poll consumed; this increment models that service. */
-	gb_write8(wVBlankCounter_ADDR,
-	          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
+	 * between game instructions. Under a host the boundary pass above is
+	 * that service and keeps the counter (src/runtime.c vblank_service);
+	 * the probe world has no pass, so the increment is modeled here. */
+	if (!frame_boundary_is_installed())
+		gb_write8(wVBlankCounter_ADDR,
+		          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 }
 
 void Set_OBJ_8x8(void)

@@ -29,6 +29,23 @@ int frame_boundary_is_installed(void);
 uint32_t frame_boundary_doframe_ordinal(void);
 void frame_boundary_reset_ordinal(void);
 void frame_boundary_install_anchor(FrameBoundaryHook hook, void *context);
+/* True while the boundary pass a DoFrame's own halt reached is running, as
+ * opposed to DisableLCD's rLY poll (src/home/lcd.c): only the former is the
+ * VBlank the ROM's DoFrame waits for. */
+int frame_boundary_pass_is_doframe(void);
+/* Timer sync points: every routine through which game code observes
+ * timer-ISR state -- the home/sound.asm wrappers (src/home/sound.c) and the
+ * play-time counter's readers and writers (CopyGeneralSaveDataToSRAM,
+ * PrintPlayTime, Func_c1b1, ExecuteGameEvent) -- calls this at entry, and the
+ * host delivers the timer ISRs the ROM had fired by that point of the DoFrame
+ * interval (src/runtime.c timer_sync; the same set is hooked on the
+ * reference in tools/completion/session.py TIMER_SYNC). */
+void frame_boundary_install_timer_sync(FrameBoundaryHook hook, void *context);
+void frame_boundary_timer_sync(void);
+/* When the host replays a session with the ROM's own servicing schedule (the
+ * lag track), the hand-placed frame_boundary_consume_services sites stand
+ * down: the track already carries every VBlank they model. */
+void frame_boundary_services_from_track(int enable);
 
 void DoAFrames(uint8_t a);
 void DoFrame(void);

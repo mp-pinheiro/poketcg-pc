@@ -117,6 +117,95 @@ static int load_input_timeline(
 	*count_out = count;
 	return 0;
 }
+/* Lag track: one line per DoFrame, `<cycles> <ticks> <vblanks>`. */
+/* One line per DoFrame interval: `<cycles> <timer ISRs> <VBlank ISRs>`
+ * followed by, per sound-driver wrapper call in that interval, the number of
+ * its timer ISRs that had fired before the call (tools/completion/session.py
+ * lag_track). */
+static void lag_track_free(LagTrack *track)
+{
+	free(track->cycles);
+	free(track->ticks);
+	free(track->vblanks);
+	free(track->call_start);
+	free(track->call_ticks);
+	memset(track, 0, sizeof *track);
+}
+
+static int grow(void **block, size_t capacity, size_t size)
+{
+	void *grown = realloc(*block, capacity * size);
+	if (!grown)
+		return -1;
+	*block = grown;
+	return 0;
+}
+
+static int load_lag_track(const char *path, LagTrack *track)
+{
+	FILE *file = fopen(path, "r");
+	char line[4096];
+	size_t capacity = 0, call_capacity = 0, calls = 0;
+	memset(track, 0, sizeof *track);
+	if (!file)
+		return -1;
+	while (fgets(line, sizeof line, file)) {
+		char *cursor = line, *end;
+		unsigned long f, t, v;
+		if (!strchr(line, '\n') && !feof(file))
+			goto fail;
+		f = strtoul(cursor, &end, 10);
+		if (end == cursor)
+			goto fail;
+		cursor = end;
+		t = strtoul(cursor, &end, 10);
+		if (end == cursor)
+			goto fail;
+		cursor = end;
+		v = strtoul(cursor, &end, 10);
+		if (end == cursor || f < 1 || f > 0xFFFFFFFFul || t > 65535 || v > 65535)
+			goto fail;
+		cursor = end;
+		if (track->count == capacity) {
+			capacity = capacity ? capacity * 2 : 1024;
+			if (grow((void **)&track->cycles, capacity, sizeof *track->cycles) != 0 ||
+			    grow((void **)&track->ticks, capacity, sizeof *track->ticks) != 0 ||
+			    grow((void **)&track->vblanks, capacity, sizeof *track->vblanks) != 0 ||
+			    grow((void **)&track->call_start, capacity + 1, sizeof *track->call_start) != 0)
+				goto fail;
+		}
+		track->cycles[track->count] = (uint32_t)f;
+		track->ticks[track->count] = (uint16_t)t;
+		track->vblanks[track->count] = (uint16_t)v;
+		track->call_start[track->count] = (uint32_t)calls;
+		for (;;) {
+			unsigned long o = strtoul(cursor, &end, 10);
+			if (end == cursor)
+				break;
+			if (o > 65535)
+				goto fail;
+			cursor = end;
+			if (calls == call_capacity) {
+				call_capacity = call_capacity ? call_capacity * 2 : 1024;
+				if (grow((void **)&track->call_ticks, call_capacity, sizeof *track->call_ticks) != 0)
+					goto fail;
+			}
+			track->call_ticks[calls++] = (uint16_t)o;
+		}
+		track->count++;
+	}
+	fclose(file);
+	if (!track->count)
+		goto fail_closed;
+	track->call_start[track->count] = (uint32_t)calls;
+	return 0;
+fail:
+	fclose(file);
+fail_closed:
+	lag_track_free(track);
+	return -1;
+}
+
 static const char *g_dump_state_path;
 static uint32_t *g_dump_frames;
 static size_t g_dump_frame_count;
@@ -211,6 +300,7 @@ int main(int argc, char **argv)
 	const char *input_ordinal_path = NULL;
 	const char *record_input_path = NULL;
 	const char *digest_out_path = NULL;
+	const char *lag_track_path = NULL;
 	const char *digest_mask_path = NULL;
 	const char *dump_state_ordinals_text = NULL;
 	uint32_t *dump_ordinals = NULL;
@@ -256,6 +346,8 @@ int main(int argc, char **argv)
 			record_input_path = argv[++i];
 		} else if (strcmp(argv[i], "--digest-out") == 0 && i + 1 < argc) {
 			digest_out_path = argv[++i];
+		} else if (strcmp(argv[i], "--lag-track") == 0 && i + 1 < argc) {
+			lag_track_path = argv[++i];
 		} else if (strcmp(argv[i], "--digest-mask") == 0 && i + 1 < argc) {
 			digest_mask_path = argv[++i];
 		} else if (strcmp(argv[i], "--dump-state-ordinals") == 0 && i + 1 < argc) {
@@ -283,7 +375,7 @@ int main(int argc, char **argv)
 			       "[--dump-state PATH] [--dump-state-frames N[,N...]] "
 			       "[--input PATH] [--input-ordinal PATH] [--record-input PATH] "
 			       "[--dump-state-ordinals N[,N...]] [--stop-ordinal N] "
-			       "[--digest-out PATH [--digest-mask FILE]] "
+			       "[--digest-out PATH [--digest-mask FILE]] [--lag-track PATH] "
 			       "[--trace-entries PATH] [--trace-calls PATH] "
 			       "[--load-checkpoint PATH]\n");
 			printf("--frames 0 runs until the window closes\n");
@@ -296,6 +388,8 @@ int main(int argc, char **argv)
 			       "not host frames\n");
 			printf("--digest-out writes 16 bytes per DoFrame: CRC-32 of WRAM, HRAM, "
 			       "OAM and VRAM with --digest-mask ranges zeroed\n");
+			printf("--lag-track replays the reference's clock, timer and VBlank services "
+			       "per DoFrame (session.py writes it); verification only\n");
 			printf("--trace-calls needs a build configured with "
 			       "-DPOKETCG_TRACE=ON; without it the dump is empty\n");
 			printf("--load-checkpoint injects a reference state and skips boot; "
@@ -359,6 +453,16 @@ int main(int argc, char **argv)
 		rom_pack_free();
 		return 2;
 	}
+	LagTrack lag_track;
+	memset(&lag_track, 0, sizeof lag_track);
+	if (lag_track_path && load_lag_track(lag_track_path, &lag_track) != 0) {
+		fprintf(stderr, "cannot load lag track %s\n", lag_track_path);
+		free(ordinal_buttons);
+		free(input_buttons);
+		rom_pack_free();
+		return 2;
+	}
+	runtime_set_lag_track(&lag_track);
 	FILE *record_sink = NULL;
 	if (record_input_path) {
 		record_sink = fopen(record_input_path, "w");
@@ -427,6 +531,8 @@ int main(int argc, char **argv)
 		status = 1;
 	}
 	runtime_set_record_input(NULL);
+	runtime_set_lag_track(NULL);
+	lag_track_free(&lag_track);
 	free(ordinal_buttons);
 	free(input_buttons);
 	if (g_dump_frames_failed)

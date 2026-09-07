@@ -12,7 +12,7 @@ typedef struct {
 	uint8_t *mask;
 } DigestRegion;
 
-static DigestRegion g_regions[4];
+static DigestRegion g_regions[5];
 static uint8_t g_scratch_copy[0x4000];
 static FILE *g_sink;
 static uint32_t g_crc_table[256];
@@ -37,7 +37,7 @@ static uint32_t crc32_bytes(const uint8_t *data, uint32_t length)
 
 static DigestRegion *region_named(const char *name, size_t length)
 {
-	for (size_t i = 0; i < 4; i++)
+	for (size_t i = 0; i < 5; i++)
 		if (strlen(g_regions[i].name) == length &&
 		    memcmp(g_regions[i].name, name, length) == 0)
 			return &g_regions[i];
@@ -82,11 +82,16 @@ static int load_mask(const char *path)
 
 int digest_open(const char *sink_path, const char *mask_path)
 {
-	static uint8_t wram_mask[0x2000], hram_mask[0x80], oam_mask[0xA0], vram_mask[0x4000];
+	static uint8_t wram_mask[0x2000], hram_mask[0x80], oam_mask[0xA0], vram_mask[0x4000],
+	               audio_mask[0x165];
 	g_regions[0] = (DigestRegion){"wram", g_wram, sizeof wram_mask, wram_mask};
 	g_regions[1] = (DigestRegion){"hram", g_hram, sizeof hram_mask, hram_mask};
 	g_regions[2] = (DigestRegion){"oam", g_oam, sizeof oam_mask, oam_mask};
 	g_regions[3] = (DigestRegion){"vram", g_vram, sizeof vram_mask, vram_mask};
+	/* SECTION "WRAM Audio", $DD80-$DEE4 (wram.asm:2992-3289): the sound
+	 * driver, digested on its own so its transient ISR phase is reported
+	 * without gating the game-state regions. */
+	g_regions[4] = (DigestRegion){"audio", g_wram + 0x1D80, sizeof audio_mask, audio_mask};
 	crc_init();
 	if (mask_path && load_mask(mask_path) != 0)
 		return -1;
@@ -96,11 +101,11 @@ int digest_open(const char *sink_path, const char *mask_path)
 
 void digest_anchor(uint32_t ordinal)
 {
-	uint8_t record[16];
+	uint8_t record[20];
 	(void)ordinal;
 	if (!g_sink)
 		return;
-	for (size_t r = 0; r < 4; r++) {
+	for (size_t r = 0; r < 5; r++) {
 		const DigestRegion *region = &g_regions[r];
 		memcpy(g_scratch_copy, region->bytes, region->length);
 		for (uint32_t i = 0; i < region->length; i++)

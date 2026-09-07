@@ -1501,8 +1501,7 @@ static void adapt_DrawOpponentSelectionScreen(ProbeState *s)
 /* >>> factory PracticeDuel_ReplaceKnockedOutPokemon */
 static void adapt_PracticeDuel_ReplaceKnockedOutPokemon(ProbeState *s)
 {
-	(void)s;
-	PracticeDuel_ReplaceKnockedOutPokemon();
+	s->f = PracticeDuel_ReplaceKnockedOutPokemon();
 }
 /* <<< factory PracticeDuel_ReplaceKnockedOutPokemon */
 

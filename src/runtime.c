@@ -33,6 +33,99 @@ static RuntimeStateDumpCb g_ordinal_dump_callback;
 static const uint32_t *g_ordinal_dump_list;
 static size_t g_ordinal_dump_count;
 static uint32_t g_stop_ordinal;
+static const LagTrack *g_lag;
+/* Timer-ISR schedule progress within the current DoFrame interval. */
+static struct {
+	uint32_t ordinal;
+	uint32_t call;
+	uint16_t delivered;
+} g_schedule;
+static uint32_t g_schedule_mismatches;
+
+void runtime_set_lag_track(const LagTrack *track)
+{
+	g_lag = track && track->count ? track : NULL;
+	memset(&g_schedule, 0, sizeof g_schedule);
+	g_schedule_mismatches = 0;
+	frame_boundary_services_from_track(g_lag != NULL);
+}
+
+uint32_t runtime_lag_schedule_mismatches(void)
+{
+	return g_schedule_mismatches;
+}
+
+/* One VBlank ISR: the halt-return work (vblank.asm:2-46) and the counter it
+ * keeps (vblank.asm:35). Every increment of wVBlankCounter under a host goes
+ * through here, so the count per ordinal is exactly the services delivered. */
+static void vblank_service(void)
+{
+	RuntimeVBlankHandler();
+	gb_write8(wVBlankCounter_ADDR, (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
+}
+
+static void schedule_sync(uint32_t ordinal)
+{
+	if (g_schedule.ordinal == ordinal)
+		return;
+	g_schedule.ordinal = ordinal;
+	g_schedule.call = g_lag->call_start[ordinal];
+	g_schedule.delivered = 0;
+}
+
+static void schedule_deliver(uint32_t ordinal, uint16_t target)
+{
+	if (target > g_lag->ticks[ordinal])
+		target = g_lag->ticks[ordinal];
+	while (g_schedule.delivered < target) {
+		TimerHandler();
+		g_schedule.delivered++;
+	}
+}
+
+/* Game-thread hook at every timer sync point (home/frames.h): the interval's
+ * timer ISRs that preceded this call on the ROM run now. */
+static void timer_sync(void *context)
+{
+	(void)context;
+	uint32_t ordinal = frame_boundary_doframe_ordinal();
+	if (!g_lag || ordinal >= g_lag->count)
+		return;
+	schedule_sync(ordinal);
+	if (g_schedule.call < g_lag->call_start[ordinal + 1])
+		schedule_deliver(ordinal, g_lag->call_ticks[g_schedule.call++]);
+	else
+		g_schedule_mismatches++;
+}
+
+/* The interval just ended at this anchor: its remaining timer ISRs run
+ * before the state is digested. */
+static void schedule_close(uint32_t ordinal)
+{
+	if (!g_lag || ordinal >= g_lag->count)
+		return;
+	schedule_sync(ordinal);
+	schedule_deliver(ordinal, g_lag->ticks[ordinal]);
+	if (g_schedule.call != g_lag->call_start[ordinal + 1])
+		g_schedule_mismatches++;
+}
+
+static void age_cycles(uint32_t *timer_cycles, uint32_t cycles)
+{
+	/* CGB hardware clock aging (Lane D model in mem.c): DIV free-runs at
+	 * the double-speed rate; TIMA ticks every 256 fast cycles and reloads
+	 * from TMA. Hardware timer cadence: SetupTimer programs TAC=$07
+	 * (TAC_16KHZ: 16384 Hz, a 256-cycle tick) with TMA=-68 ($BC), so
+	 * TimerHandler fires every 256*68 = 17408 cycles -- 240.93 Hz,
+	 * 70224/17408 ~ 4.03 per frame. The interrupt layer is batched at the
+	 * frame boundary in this port. */
+	mem_advance_hardware_clock(cycles);
+	*timer_cycles += cycles;
+	while (*timer_cycles >= 17408u) {
+		TimerHandler();
+		*timer_cycles -= 17408u;
+	}
+}
 
 void runtime_set_ordinal_input(const uint8_t *buttons, size_t count)
 {
@@ -76,6 +169,8 @@ typedef struct {
 	int stopped_by_user;
 	int worker_done;
 	int handed_over;
+	uint32_t aged_ordinal;
+	uint16_t services; /* VBlank services delivered in the current ordinal */
 } RuntimeState;
 
 static void boundary(void *context)
@@ -180,6 +275,17 @@ static void anchor(void *context)
 	RuntimeState *state = context;
 	uint32_t ordinal = frame_boundary_doframe_ordinal();
 
+	/* Ordinal k's anchor closes interval k-1 (frames.c increments first). */
+	schedule_close(ordinal - 1u);
+	if (g_lag && ordinal >= 1u && ordinal - 1u < g_lag->count) {
+		/* The ROM's VBlank count for the interval, less what the
+		 * boundary passes delivered: nonzero only when the closing
+		 * DoFrame ran with the LCD off and had no service of its own. */
+		while (state->services < g_lag->vblanks[ordinal - 1u]) {
+			vblank_service();
+			state->services++;
+		}
+	}
 	if (g_record_sink) {
 		/* g_keys is hKeysHeld order; the timeline file is InputFrame order. */
 		fprintf(g_record_sink, "%u\n",
@@ -206,6 +312,7 @@ int runtime_run_with_input(
 {
 	RuntimeState state;
 	memset(&state, 0, sizeof state);
+	state.aged_ordinal = UINT32_MAX;
 	state.shell = shell;
 	state.buttons = buttons;
 	state.button_count = button_count;
@@ -227,8 +334,10 @@ int runtime_run_with_input(
 	frame_boundary_reset_ordinal();
 	frame_boundary_install(boundary, &state);
 	frame_boundary_install_anchor(anchor, &state);
+	frame_boundary_install_timer_sync(timer_sync, &state);
 	pthread_t worker;
 	if (pthread_create(&worker, NULL, run_game, &state) != 0) {
+		frame_boundary_install_timer_sync(NULL, NULL);
 		frame_boundary_install_anchor(NULL, NULL);
 		frame_boundary_install(NULL, NULL);
 		pthread_cond_destroy(&state.condition);
@@ -304,24 +413,42 @@ int runtime_run_with_input(
 			shell_set_title(shell, "poketcg - your turn");
 			shell_take_focus(shell);
 		}
-		/* CGB hardware clock aging (Lane D model in mem.c): DIV free-runs
-		 * at the double-speed rate; TIMA ticks every 256 fast cycles and
-		 * reloads from TMA. One frame of slow cycles per host frame. */
-		mem_advance_hardware_clock(70224u);
-		/* Hardware timer cadence: SetupTimer programs TAC=$07
-		 * (TAC_16KHZ: 16384 Hz, a 256-cycle tick) with TMA=-68
-		 * ($BC), so TimerHandler fires every 256*68 = 17408 cycles
-		 * — 240.93 Hz, 70224/17408 ≈ 4.03 per frame. The interrupt
-		 * layer is batched at the frame boundary in this port. */
-		state.timer_cycles += 70224u;
-		while (state.timer_cycles >= 17408u) {
-			TimerHandler();
-			state.timer_cycles -= 17408u;
+		if (g_lag && ordinal < g_lag->count) {
+			/* The ROM's own schedule for this DoFrame: its real time ages
+			 * the hardware clock and the extra VBlank services run the
+			 * ISR work (vblank.asm:2-46); the timer ISRs are the game
+			 * thread's (timer_sync, schedule_close). Once per ordinal:
+			 * DisableLCD's rLY poll (src/home/lcd.c) reaches the boundary
+			 * without completing a DoFrame and shares its ordinal with
+			 * the DoFrame that follows. */
+			if (state.aged_ordinal != ordinal) {
+				state.aged_ordinal = ordinal;
+				state.services = 0;
+				mem_advance_hardware_clock(g_lag->cycles[ordinal]);
+				/* All but the last service ran while game code was
+				 * still working (DisableLCD's own poll included); the
+				 * last is the DoFrame's own below, or -- when the
+				 * DoFrame finds the LCD off and waits for nothing --
+				 * the anchor's remainder. */
+				for (uint16_t i = 1; i < g_lag->vblanks[ordinal]; i++) {
+					vblank_service();
+					state.services++;
+				}
+			}
+		} else {
+			age_cycles(&state.timer_cycles, 70224u);
 		}
-		/* Halt-return VBlank work (OAM DMA, scroll/window/LCDC flush,
-		 * VBlank function, palette flush), so the PPU sample below and
-		 * the next frame's game code see it, like the ROM's ISR. */
-		RuntimeVBlankHandler();
+		/* The DoFrame's own VBlank: the halt-return work (OAM DMA,
+		 * scroll/window/LCDC flush, VBlank function, palette flush) and
+		 * the counter, so the PPU sample below and the next frame's game
+		 * code see it, like the ROM's ISR -- which a disabled LCD never
+		 * raises (lcd.asm:2-16: DoFrame then completes without waiting).
+		 * Without a track DisableLCD's pass is a service as well. */
+		if ((gb_read8(0xFF40u) & 0x80u) != 0u &&
+		    (frame_boundary_pass_is_doframe() || !g_lag)) {
+			vblank_service();
+			state.services++;
+		}
 		apu_trace_set_tick(state.frames);
 		size_t pcm_count = apu_trace_render_pcm(
 			state.audio, AUDIO_SAMPLES_PER_FRAME);
@@ -352,6 +479,7 @@ int runtime_run_with_input(
 		pthread_mutex_unlock(&state.lock);
 	}
 	pthread_join(worker, NULL);
+	frame_boundary_install_timer_sync(NULL, NULL);
 	frame_boundary_install_anchor(NULL, NULL);
 	frame_boundary_install(NULL, NULL);
 	if (g_record_sink)

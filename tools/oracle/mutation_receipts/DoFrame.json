@@ -1,0 +1,9 @@
+{
+  "fn": "DoFrame",
+  "case": "tests/cases/frames.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DoFrame\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51896\": \"2a\", \"51899\": \"00\", \"65344\": \"00\", \"65421\": \"0000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DoFrame\", \"mismatches\": {\"bus\": {\"address\": 51896, \"reference\": \"2a00000000\", \"native\": \"2b00000000\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[51896, 1], [51899, 1], [65344, 1], [65421, 5]]}}}\n",
+  "restored": "{\"fn\": \"DoFrame\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51896\": \"2a\", \"51899\": \"00\", \"65344\": \"00\", \"65421\": \"0000000000\"}}, \"status\": \"PASS\"}\n"
+}

@@ -66,9 +66,22 @@ void frame_boundary_reach(void)
  * then bumps wVBlankCounter for the service itself (vblank.asm:35), with no
  * RNG advance. No-op in the probe world. The per-boot sites are annotated
  * where they call this. */
+static int g_services_from_track;
+static int g_doframe_pass;
+
+int frame_boundary_pass_is_doframe(void)
+{
+	return g_doframe_pass;
+}
+
+void frame_boundary_services_from_track(int enable)
+{
+	g_services_from_track = enable;
+}
+
 void frame_boundary_consume_services(uint8_t count)
 {
-	if (!g_frame_boundary_hook)
+	if (!g_frame_boundary_hook || g_services_from_track)
 		return;
 	g_pending_service_passes = count;
 	for (uint8_t i = 0; i < count; i++) {
@@ -99,6 +112,21 @@ void frame_boundary_install_anchor(FrameBoundaryHook hook, void *context)
 {
 	g_frame_anchor = hook;
 	g_frame_anchor_context = context;
+}
+
+static FrameBoundaryHook g_timer_sync_hook;
+static void *g_timer_sync_context;
+
+void frame_boundary_install_timer_sync(FrameBoundaryHook hook, void *context)
+{
+	g_timer_sync_hook = hook;
+	g_timer_sync_context = context;
+}
+
+void frame_boundary_timer_sync(void)
+{
+	if (g_timer_sync_hook)
+		g_timer_sync_hook(g_timer_sync_context);
 }
 
 /* CallIndirect(wDoFrameFunction), poketcg/src/home/frames.asm:18-19 through
@@ -188,11 +216,14 @@ uint16_t HandleDPadRepeat(uint16_t hl)
 static void DoFrameDebugPause(void)
 {
 	for (;;) {
-		gb_write8(wVBlankCounter_ADDR,
-		          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
+		g_doframe_pass = 1;
+		frame_boundary_reach();
+		g_doframe_pass = 0;
+		if (!frame_boundary_is_installed())
+			gb_write8(wVBlankCounter_ADDR,
+			          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 		ReadJoypad();
 		(void)HandleDPadRepeat(0u);
-		frame_boundary_reach();
 		if ((gb_read8(hKeysPressed_ADDR) & PAD_SELECT) != 0u)
 			return;
 	}
@@ -209,9 +240,18 @@ void DoFrame(void)
 	 * services DMA/flushes (the host boundary pass) -- and only then does
 	 * the tail (ReadJoypad, HandleDPadRepeat) poll the lines as of this
 	 * vblank. */
+	g_doframe_pass = 1;
 	frame_boundary_reach();
-	gb_write8(wVBlankCounter_ADDR,
-	          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
+	g_doframe_pass = 0;
+	/* lcd.asm:2-16 WaitForVBlank: with wLCDC's enable bit clear there is
+	 * no wait and no VBlank ISR, so the counter stands (PrintText's
+	 * per-character DoFrames under a disabled LCD complete instantly on
+	 * the ROM); the tail still polls the lines and the anchor still counts.
+	 * Under a host the boundary pass is the ISR and keeps the counter
+	 * (src/runtime.c vblank_service); the probe world has no ISR to run. */
+	if (!frame_boundary_is_installed() && (gb_read8(wLCDC_ADDR) & 0x80u) != 0u)
+		gb_write8(wVBlankCounter_ADDR,
+		          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 	ReadJoypad();
 	(void)HandleDPadRepeat(0u);
 	/* frames.asm $0552: the reference anchors its per-DoFrame state here. */

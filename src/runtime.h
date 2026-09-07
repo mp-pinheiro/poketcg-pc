@@ -55,6 +55,29 @@ void runtime_set_record_input(FILE *sink);
 void runtime_set_state_dump_ordinals(
 	RuntimeStateDumpCb callback, const uint32_t *ordinals, size_t count);
 void runtime_set_stop_ordinal(uint32_t ordinal);
+/* Lag track: for DoFrame k, entry k-1 is (cycles of real time, timer ISRs,
+ * VBlank ISRs) the reference spent between anchors k-1 and k, read off the
+ * ROM's own counters, plus the ISR schedule of that interval's timer sync
+ * points (home/frames.h): call_ticks[call_start[k-1] .. call_start[k]) is,
+ * per sync point reached in order, how many of the interval's timer ISRs had
+ * fired before it. The host ages the clock by the cycles and runs the VBlank
+ * services at the boundary; the timer ISRs run on the game thread, delivered
+ * up to each sync point's count there and the remainder at the anchor, so
+ * the sound driver and the play-time counter are seen by game code at the
+ * same tick as on the ROM and a song-timed wait exits on the same DoFrame.
+ * Verification only; live play has no track and no lag. */
+typedef struct {
+	uint32_t *cycles;
+	uint16_t *ticks;
+	uint16_t *vblanks;
+	uint32_t *call_start; /* count + 1 entries */
+	uint16_t *call_ticks;
+	size_t count;
+} LagTrack;
+void runtime_set_lag_track(const LagTrack *track);
+/* Sync points the schedule could not place: the interval reached more or
+ * fewer of them than the reference recorded, a different code path. */
+uint32_t runtime_lag_schedule_mismatches(void);
 
 /* Resume from an injected reference checkpoint instead of booting: skips Start
  * and GameLoop and drives DoFrame directly, so a subsystem the port cannot yet

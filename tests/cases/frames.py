@@ -25,6 +25,11 @@ CASES = {
              why="LCD-on DoFrame reaches the dissolved VBlank boundary",
              expect={0xCAB8: b"\x00"},
              expect_regs={"b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}),
+        # lcd.asm:2-16: LCD off (wLCDC $CABB, rLCDC $FF40 bit 7 clear) makes
+        # WaitForVBlank return at once with no ISR, so wVBlankCounter ($CAB8)
+        # stands; the oracle runs this one, there is nothing to wait for.
+        dict(POISON, wram={0xCAB8: b"\x2a", 0xCABB: b"\x00", 0xFF40: b"\x00", 0xFF8D: b"\0\0\0\0\0"},
+             read={0xCAB8: 1, 0xFF8D: 5}),
     ],
     # $FF8D..$FF91 = hDPadRepeat, hKeysReleased, hDPadHeld, hKeysHeld,
     # hKeysPressed. The last four rows walk a held direction through the
@@ -47,6 +52,12 @@ from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
 MUTATIONS = {
+    "DoFrame": {
+        "source_symbol": "DoFrame",
+        "before": "\tif ((gb_read8(wLCDC_ADDR) & 0x80u) != 0u)\n\t\tgb_write8(wVBlankCounter_ADDR,",
+        "after": "\tif (1)\n\t\tgb_write8(wVBlankCounter_ADDR,",
+        "case_ids": ["DoFrame-3"],
+    },
     "DoAFrames": {
         "source_symbol": "DoAFrames",
         "before": "uint16_t count = a ? a : 0x100u;",
