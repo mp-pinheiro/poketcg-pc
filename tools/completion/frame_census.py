@@ -78,10 +78,13 @@ def native_dumps(state_path: Path) -> dict[int, dict[str, Any]]:
 def compare_frame(
     native: dict[str, Any], stream: refstream.Stream, ordinal: int, domains: tuple[str, ...],
     extra_excluded: dict[str, list[tuple[int, int]]] | None = None,
+    include: dict[str, list[tuple[int, int]]] | None = None,
 ) -> list[tuple[str, int, int, int]]:
     """(field, offset, native byte, reference byte) for one anchor ordinal.
     `extra_excluded` adds field-relative [start, end) ranges on top of the
-    scenario ledger for callers whose axis makes more state timing-phase."""
+    scenario ledger for callers whose axis makes more state timing-phase;
+    `include` removes ledger ranges whose justification does not hold on the
+    caller's axis, so the byte is compared after all."""
     rows = []
     for field in domains:
         reference = stream.domain(ordinal, REFERENCE_DOMAIN.get(field, field))
@@ -92,6 +95,9 @@ def compare_frame(
         for start, end in (extra_excluded or {}).get(field, ()):
             for index in range(max(0, start), min(len(mask), end)):
                 mask[index] = 1
+        for start, end in (include or {}).get(field, ()):
+            for index in range(max(0, start), min(len(mask), end)):
+                mask[index] = 0
         for offset in range(min(len(reference), len(values))):
             if mask[offset]:
                 continue

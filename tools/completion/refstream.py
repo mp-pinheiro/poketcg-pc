@@ -56,8 +56,13 @@ FIELD_WINDOWS = {
     "sram_bank_2": (0xA000, 0x2000),
     "sram_bank_3": (0xA000, 0x2000),
     "save": (0xA000, 0x8000),
+    "vram_bank_0": (0x8000, 0x2000),
+    "vram_bank_1": (0x8000, 0x2000),
 }
+# Banked windows share an address range, so a label belongs to the field whose
+# bank the .sym gives it (v0Tiles0 is 00:8000, v1Tiles0 is 01:8000).
 SRAM_FIELD_BANK = {f"sram_bank_{bank}": bank for bank in range(4)}
+SRAM_FIELD_BANK.update({f"vram_bank_{bank}": bank for bank in range(2)})
 
 RECORD_DOMAINS = (
     ("wram", 0x2000),

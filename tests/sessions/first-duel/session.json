@@ -1,8 +1,8 @@
 {
-  "goal": "reach the practice duel and take one turn",
+  "goal": "practice duel to its end",
   "name": "first-duel",
-  "ordinals": 14336,
-  "recorded": "2026-09-07T04:37:18+00:00",
+  "ordinals": 19659,
+  "recorded": "2026-09-07T05:22:29+00:00",
   "schema": 1,
   "terminal_event": ""
 }

@@ -63,6 +63,12 @@ DOMAINS = ("wram", "hram", "oam")
 # stays compared: the game sets it, so it must match.
 TIMING_PHASE = {"wram": [(0xCAC5 - 0xC000, 0xCACA - 0xC000),
                          (0xDD80 - 0xC000, 0xDEE5 - 0xC000)]}
+# Ledger entries whose justification is the frame axis. hDPadRepeat ($FF8D)
+# is excluded there because the reference's mid-processing VBlank services
+# shift its decay schedule against the native frame count; on the DoFrame
+# axis HandleDPadRepeat runs once per anchor on both lanes, so the counter is
+# exactly comparable, and hiding it only defers the divergence to hDPadHeld.
+COMPARE_DESPITE_LEDGER = {"hram": [(0x0D, 0x0E)]}
 # One refstream anchor is RECORD_STRIDE bytes held whole in memory while the
 # stream is built; 20,000 ordinals is 174 MB, and WSL has died on this repo
 # for less. Longer play is a second session, never a bigger cap.
@@ -113,7 +119,6 @@ def run_native(directory: Path, input_path: Path, n: int, ordinals: list[int]) -
         "--input-ordinal", str(input_path),
         "--dump-state", str(state_path),
         "--dump-state-ordinals", ",".join(str(value) for value in ordinals),
-        "--trace-calls", str(directory / "calls.bin"),
     ]
     try:
         result = subprocess.run(
@@ -151,7 +156,8 @@ def compare_at(native: dict[str, Any], stream: refstream.Stream, ordinal: int) -
     index = ordinal - 1
     if index >= stream.count:
         return []
-    return frame_census.compare_frame(native, stream, index, DOMAINS, TIMING_PHASE)
+    return frame_census.compare_frame(native, stream, index, DOMAINS, TIMING_PHASE,
+                                      COMPARE_DESPITE_LEDGER)
 
 
 def probe(directory: Path, input_path: Path, n: int, ordinals: list[int],
@@ -220,8 +226,8 @@ def attribute(name: str, masks: list[int], frames: int, rows: list[tuple[str, in
         picked.append((field, offset, got, want, symbol))
     picked = picked[:16]
     addresses = sorted({
-        frame_census.FIELD_BASE[field] + offset
-        for field, offset, _got, _want, _symbol in picked if field in frame_census.FIELD_BASE
+        refstream.FIELD_WINDOWS[field][0] + offset
+        for field, offset, _got, _want, _symbol in picked if field in refstream.FIELD_WINDOWS
     })
     writers = {
         int(entry["address"], 16): entry
@@ -230,7 +236,7 @@ def attribute(name: str, masks: list[int], frames: int, rows: list[tuple[str, in
     } if addresses else {}
     out = []
     for field, offset, got, want, symbol in picked:
-        address = frame_census.FIELD_BASE.get(field, 0) + offset
+        address = refstream.FIELD_WINDOWS.get(field, (0, 0))[0] + offset
         entry = writers.get(address)
         # A write during DoFrame K carries core.ordinal K-1 (the anchor for K
         # has not fired yet), so "before ordinal K" is exactly the set whose
@@ -243,6 +249,93 @@ def attribute(name: str, masks: list[int], frames: int, rows: list[tuple[str, in
             "writer_label": prior["label"] if prior else "",
         })
     return out
+
+
+# VRAM is not in the reference stream (8,736 bytes per anchor already; 16 KiB
+# more per anchor would not fit the memory cap), so it is compared at probe
+# ordinals from a dedicated reference run, and only once WRAM/HRAM/OAM are
+# clean over the whole session: a wrong tile is only worth chasing when the
+# game state that placed it agrees. Everything a tile or map needs to be right
+# is written through the bus, so the same writer attribution applies.
+VRAM_FIELDS = ("vram_bank_0", "vram_bank_1")
+
+
+def reference_vram(name: str, masks: list[int], frames: int,
+                   ordinals: set[int]) -> dict[int, dict[str, bytes]]:
+    """Both VRAM banks at each probed ordinal, from one reference replay."""
+    padded = refstream.scenario_masks(f"session:{name}", frames, masks)
+    captured: dict[int, dict[str, bytes]] = {}
+    last = max(ordinals)
+    with refstream.Core(padded) as core:
+        core.input_axis = "ordinal"
+        hits = 0
+
+        def on_exec(address: int, _cycle: int) -> None:
+            nonlocal hits
+            if address != refstream.DOFRAME_ANCHOR:
+                return
+            hits += 1
+            if hits in ordinals:
+                vram = core.area("VRAM")
+                captured[hits] = {"vram_bank_0": vram[:0x2000], "vram_bank_1": vram[0x2000:0x4000]}
+
+        core.install_exec(on_exec)
+        core.run(frames, stop=lambda: hits >= last)
+    return captured
+
+
+def compare_vram(native: dict[str, Any], reference: dict[str, bytes]) -> list[tuple[str, int, int, int]]:
+    rows = []
+    for field in VRAM_FIELDS:
+        values = native.get(field)
+        expected = reference.get(field)
+        if not isinstance(values, list) or expected is None:
+            continue
+        for offset in range(min(len(values), len(expected))):
+            if values[offset] != expected[offset]:
+                rows.append((field, offset, values[offset], expected[offset]))
+    return rows
+
+
+def first_vram_divergence(name: str, masks: list[int], frames: int) -> dict[str, Any]:
+    """Same bracket search as the game-state stage, one native run and one
+    reference run per pass."""
+    n = len(masks)
+    input_path = session_dir(name) / "input.txt"
+    lo, hi = 0, None
+    rows: list[tuple[str, int, int, int]] = []
+    with tempfile.TemporaryDirectory(prefix=f"session-vram-{name}-") as tmp:
+        directory = Path(tmp)
+        for pass_index in range(MAX_PASSES):
+            if pass_index == 0:
+                ordinals = geometric(n, PROBES_PER_PASS)
+            else:
+                assert hi is not None
+                if hi - lo <= 1:
+                    break
+                ordinals = linear(lo, hi, PROBES_PER_PASS)
+            pass_dir = directory / f"pass{pass_index}"
+            pass_dir.mkdir()
+            state_path, failure = run_native(pass_dir, input_path, n, ordinals)
+            if failure:
+                raise SessionError(f"native run failed during the VRAM stage: {failure[-300:]}")
+            dumps = frame_census.native_dumps(state_path)
+            reference = reference_vram(name, masks, frames, set(ordinals))
+            diffs = {
+                ordinal: compare_vram(native, reference.get(ordinal, {}))
+                for ordinal, native in dumps.items()
+            }
+            divergent = sorted(ordinal for ordinal, diff in diffs.items() if diff)
+            clean = sorted(ordinal for ordinal, diff in diffs.items() if not diff)
+            if not divergent:
+                if hi is None:
+                    return {"ordinal": None, "rows": []}
+                lo = max([lo] + [o for o in clean if o < hi])
+                break
+            hi = divergent[0]
+            rows = diffs[hi]
+            lo = max([lo] + [o for o in clean if o < hi])
+    return {"ordinal": hi, "rows": rows}
 
 
 def verify(name: str, *, write: bool, json_path: Path | None) -> int:
@@ -265,16 +358,22 @@ def verify(name: str, *, write: bool, json_path: Path | None) -> int:
         found = first_divergence(name, masks, stream)
     finally:
         stream.close()
+    stage = "state"
     if found["ordinal"] is None and found["reached"] < n:
         confirmed = found["reached"]
         status = "native-short"
     elif found["ordinal"] is None:
         confirmed, status = n, "clean"
+        vram = first_vram_divergence(name, masks, frames)
+        stage = "vram"
+        if vram["ordinal"] is not None:
+            found = {**found, "ordinal": vram["ordinal"], "rows": vram["rows"]}
+            confirmed, status = vram["ordinal"] - 1, "diverged"
     else:
         confirmed, status = found["ordinal"] - 1, "diverged"
-    report.update(status=status, confirmed=confirmed, reached=found["reached"],
+    report.update(status=status, stage=stage, confirmed=confirmed, reached=found["reached"],
                   native_failure=found["failure"])
-    print(f"SESSION {name} status={status} confirmed={confirmed} ordinals={n}")
+    print(f"SESSION {name} status={status} stage={stage} confirmed={confirmed} ordinals={n}")
     if status == "diverged":
         details = attribute(name, masks, frames, found["rows"], found["ordinal"])
         report["divergence"] = {"ordinal": found["ordinal"], "rows": details}
