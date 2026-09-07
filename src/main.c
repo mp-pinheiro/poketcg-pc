@@ -120,7 +120,9 @@ static int load_input_timeline(
 /* Lag track: one line per DoFrame, `<cycles> <ticks> <vblanks>`. */
 /* One line per DoFrame interval: `<cycles> <timer ISRs> <VBlank ISRs>`
  * followed by, per sound-driver wrapper call in that interval, the number of
- * its timer ISRs that had fired before the call (tools/completion/session.py
+ * its timer ISRs that had fired before the call, then optionally `v` and, per
+ * game write to wVBlankCounter in that interval, the number of its VBlank
+ * ISRs that had fired before the write (tools/completion/session.py
  * lag_track). */
 static void lag_track_free(LagTrack *track)
 {
@@ -129,6 +131,8 @@ static void lag_track_free(LagTrack *track)
 	free(track->vblanks);
 	free(track->call_start);
 	free(track->call_ticks);
+	free(track->write_start);
+	free(track->write_vblanks);
 	memset(track, 0, sizeof *track);
 }
 
@@ -145,7 +149,7 @@ static int load_lag_track(const char *path, LagTrack *track)
 {
 	FILE *file = fopen(path, "r");
 	char line[4096];
-	size_t capacity = 0, call_capacity = 0, calls = 0;
+	size_t capacity = 0, call_capacity = 0, calls = 0, write_capacity = 0, writes = 0;
 	memset(track, 0, sizeof *track);
 	if (!file)
 		return -1;
@@ -171,13 +175,15 @@ static int load_lag_track(const char *path, LagTrack *track)
 			if (grow((void **)&track->cycles, capacity, sizeof *track->cycles) != 0 ||
 			    grow((void **)&track->ticks, capacity, sizeof *track->ticks) != 0 ||
 			    grow((void **)&track->vblanks, capacity, sizeof *track->vblanks) != 0 ||
-			    grow((void **)&track->call_start, capacity + 1, sizeof *track->call_start) != 0)
+			    grow((void **)&track->call_start, capacity + 1, sizeof *track->call_start) != 0 ||
+			    grow((void **)&track->write_start, capacity + 1, sizeof *track->write_start) != 0)
 				goto fail;
 		}
 		track->cycles[track->count] = (uint32_t)f;
 		track->ticks[track->count] = (uint16_t)t;
 		track->vblanks[track->count] = (uint16_t)v;
 		track->call_start[track->count] = (uint32_t)calls;
+		track->write_start[track->count] = (uint32_t)writes;
 		for (;;) {
 			unsigned long o = strtoul(cursor, &end, 10);
 			if (end == cursor)
@@ -192,12 +198,32 @@ static int load_lag_track(const char *path, LagTrack *track)
 			}
 			track->call_ticks[calls++] = (uint16_t)o;
 		}
+		while (*cursor == ' ' || *cursor == '\t')
+			cursor++;
+		if (*cursor == 'v') {
+			cursor++;
+			for (;;) {
+				unsigned long o = strtoul(cursor, &end, 10);
+				if (end == cursor)
+					break;
+				if (o > 65535)
+					goto fail;
+				cursor = end;
+				if (writes == write_capacity) {
+					write_capacity = write_capacity ? write_capacity * 2 : 64;
+					if (grow((void **)&track->write_vblanks, write_capacity, sizeof *track->write_vblanks) != 0)
+						goto fail;
+				}
+				track->write_vblanks[writes++] = (uint16_t)o;
+			}
+		}
 		track->count++;
 	}
 	fclose(file);
 	if (!track->count)
 		goto fail_closed;
 	track->call_start[track->count] = (uint32_t)calls;
+	track->write_start[track->count] = (uint32_t)writes;
 	return 0;
 fail:
 	fclose(file);

@@ -129,6 +129,21 @@ void frame_boundary_timer_sync(void)
 		g_timer_sync_hook(g_timer_sync_context);
 }
 
+static FrameBoundaryHook g_vblank_sync_hook;
+static void *g_vblank_sync_context;
+
+void frame_boundary_install_vblank_sync(FrameBoundaryHook hook, void *context)
+{
+	g_vblank_sync_hook = hook;
+	g_vblank_sync_context = context;
+}
+
+void frame_boundary_vblank_sync(void)
+{
+	if (g_vblank_sync_hook)
+		g_vblank_sync_hook(g_vblank_sync_context);
+}
+
 /* CallIndirect(wDoFrameFunction), poketcg/src/home/frames.asm:18-19 through
  * jumptable.asm:15-30: call the registered per-frame function unless the
  * pointer is NULL (DispatchIndirect treats zero as a no-op, matching

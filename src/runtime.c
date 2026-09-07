@@ -267,6 +267,42 @@ static void fill_result(const RuntimeState *state, uint32_t frame_limit,
 	memcpy(out->framebuffer, state->framebuffer, sizeof out->framebuffer);
 }
 
+/* VBlank ISRs the ROM saw before each of the game's own writes to
+ * wVBlankCounter (runtime.h write_start/write_vblanks). Delivered on the game
+ * thread at the same writes (frame_boundary_vblank_sync); the interval's
+ * remainder runs at its end, before the DoFrame's own service. */
+static struct {
+	uint32_t ordinal;
+	uint32_t write;
+} g_vschedule = {UINT32_MAX, 0};
+
+static void vschedule_sync(uint32_t ordinal)
+{
+	if (g_vschedule.ordinal == ordinal)
+		return;
+	g_vschedule.ordinal = ordinal;
+	g_vschedule.write = g_lag->write_start[ordinal];
+}
+
+static void vblank_sync(void *context)
+{
+	RuntimeState *state = context;
+	uint32_t ordinal = frame_boundary_doframe_ordinal();
+
+	if (!g_lag || ordinal >= g_lag->count)
+		return;
+	vschedule_sync(ordinal);
+	if (g_vschedule.write >= g_lag->write_start[ordinal + 1]) {
+		g_schedule_mismatches++;
+		return;
+	}
+	uint16_t target = g_lag->write_vblanks[g_vschedule.write++];
+	while (state->services < target) {
+		vblank_service();
+		state->services++;
+	}
+}
+
 /* Game-thread hook at the DoFrame anchor (frames.c, the $0552 analogue). The
  * host set resume as the last act of its pass and is parked on frame_ready, so
  * g_keys and the framebuffer are stable here. */
@@ -285,7 +321,14 @@ static void anchor(void *context)
 			vblank_service();
 			state->services++;
 		}
+		if (g_vschedule.ordinal == ordinal - 1u &&
+		    g_vschedule.write != g_lag->write_start[ordinal])
+			g_schedule_mismatches++;
 	}
+	/* Interval `ordinal` starts here; its services are counted from zero
+	 * and delivered at the game's counter writes (vblank_sync) and at the
+	 * interval's end (the host pass below). */
+	state->services = 0;
 	if (g_record_sink) {
 		/* g_keys is hKeysHeld order; the timeline file is InputFrame order. */
 		fprintf(g_record_sink, "%u\n",
@@ -335,9 +378,11 @@ int runtime_run_with_input(
 	frame_boundary_install(boundary, &state);
 	frame_boundary_install_anchor(anchor, &state);
 	frame_boundary_install_timer_sync(timer_sync, &state);
+	frame_boundary_install_vblank_sync(vblank_sync, &state);
 	pthread_t worker;
 	if (pthread_create(&worker, NULL, run_game, &state) != 0) {
 		frame_boundary_install_timer_sync(NULL, NULL);
+		frame_boundary_install_vblank_sync(NULL, NULL);
 		frame_boundary_install_anchor(NULL, NULL);
 		frame_boundary_install(NULL, NULL);
 		pthread_cond_destroy(&state.condition);
@@ -423,14 +468,18 @@ int runtime_run_with_input(
 			 * the DoFrame that follows. */
 			if (state.aged_ordinal != ordinal) {
 				state.aged_ordinal = ordinal;
-				state.services = 0;
 				mem_advance_hardware_clock(g_lag->cycles[ordinal]);
-				/* All but the last service ran while game code was
-				 * still working (DisableLCD's own poll included); the
-				 * last is the DoFrame's own below, or -- when the
-				 * DoFrame finds the LCD off and waits for nothing --
-				 * the anchor's remainder. */
-				for (uint16_t i = 1; i < g_lag->vblanks[ordinal]; i++) {
+			}
+			/* All but the last service ran while game code was still
+			 * working (DisableLCD's own poll included). Those the game
+			 * observed before writing the counter were delivered at
+			 * the write (vblank_sync); the rest run here, at the
+			 * interval's end -- the DoFrame's pass, not DisableLCD's
+			 * earlier poll pass. The last is the DoFrame's own below,
+			 * or -- when the DoFrame finds the LCD off and waits for
+			 * nothing -- the anchor's remainder. */
+			if (frame_boundary_pass_is_doframe()) {
+				while (state.services + 1u < g_lag->vblanks[ordinal]) {
 					vblank_service();
 					state.services++;
 				}
@@ -480,6 +529,7 @@ int runtime_run_with_input(
 	}
 	pthread_join(worker, NULL);
 	frame_boundary_install_timer_sync(NULL, NULL);
+	frame_boundary_install_vblank_sync(NULL, NULL);
 	frame_boundary_install_anchor(NULL, NULL);
 	frame_boundary_install(NULL, NULL);
 	if (g_record_sink)

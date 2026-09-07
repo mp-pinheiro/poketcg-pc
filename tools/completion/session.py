@@ -23,6 +23,7 @@ after the increment; reference, the count of $0552 anchor hits.
 from __future__ import annotations
 
 import argparse
+import ctypes
 import hashlib
 import json
 import struct
@@ -46,7 +47,7 @@ SESSIONS = ROOT / "tests" / "sessions"
 CACHE = ROOT / "build" / "completion" / "sessions"
 RATCHET_PATH = ROOT / "tools" / "completion" / "session_ratchet.json"
 NATIVE_TIMEOUT = 1800
-DIGEST_FORMAT = "session-digest-v6"
+DIGEST_FORMAT = "session-digest-v7"
 # wram, hram, oam, vram, audio; then the reference's real time at the anchor
 # in 2 MiHz units (emitted samples of completed slices plus the exec
 # callback's in-slice offset), wVBlankCounter and wTimerCounter.
@@ -72,6 +73,14 @@ TIMER_SYNC = {
     (4, 0x5299): "CopyGeneralSaveDataToSRAM",     # save.asm:93, saves it
 }
 TIMER_SYNC_ADDRESSES = {address: bank for bank, address in TIMER_SYNC}
+# The game's own writes to wVBlankCounter, the only places VBlank-ISR timing
+# is observable mid-interval: `ld [wVBlankCounter], a` in DuelMainInterface
+# (core.asm:291) and AIMakeDecision (core.asm:6255). One record per write:
+# the interval, the real time, the counter before the write and the value
+# written. The port calls frame_boundary_vblank_sync at the same writes.
+VBLANK_SYNC = {(1, 0x427D): "DuelMainInterface", (1, 0x67EE): "AIMakeDecision"}
+VBLANK_SYNC_ADDRESSES = {address: bank for bank, address in VBLANK_SYNC}
+VBLANK_RECORD = struct.Struct("<IQBB")
 # The first four gate `confirmed`; audio is SECTION "WRAM Audio" on its own,
 # reported but not gated: the sound driver runs from the timer ISR, which the
 # lag track schedules around the game's driver calls, but the reference APU
@@ -249,16 +258,19 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     meta_path = directory / "meta.json"
     if meta_path.is_file() and not record_input:
         meta = json.loads(meta_path.read_text())
-        meta["cached"] = True
-        return meta
+        if meta.get("format") == DIGEST_FORMAT:
+            meta["cached"] = True
+            return meta
     tables = mask_tables()
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     records = bytearray()
     calls = bytearray()
+    vblank_writes = bytearray()
     inputs = bytearray()
     with refstream.Core(padded) as core:
         core.input_axis = axis
         read = core.library.gambatte_cpuread
+        registers = (ctypes.c_int * 10)()
         hits = 0
 
         def on_exec(address: int, cycle: int) -> None:
@@ -267,6 +279,12 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
                 bank = TIMER_SYNC_ADDRESSES[address]
                 if bank is None or core.bank_of(address) == bank:
                     calls.extend(CALL_RECORD.pack(hits, core.samples + cycle, read(core.core, 0xCAC3)))
+                return
+            if address in VBLANK_SYNC_ADDRESSES:
+                if core.bank_of(address) == VBLANK_SYNC_ADDRESSES[address]:
+                    core.library.gambatte_getregs(core.core, registers)
+                    vblank_writes.extend(VBLANK_RECORD.pack(hits, core.samples + cycle,
+                                                            read(core.core, 0xCAB8), registers[2] & 0xFF))
                 return
             if address != refstream.DOFRAME_ANCHOR:
                 return
@@ -284,7 +302,8 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     directory.mkdir(parents=True, exist_ok=True)
     (directory / "digests.bin").write_bytes(bytes(records))
     (directory / "calls.bin").write_bytes(bytes(calls))
-    (directory / "lag.txt").write_text(lag_track(bytes(records), bytes(calls)))
+    (directory / "vblank-writes.bin").write_bytes(bytes(vblank_writes))
+    (directory / "lag.txt").write_text(lag_track(bytes(records), bytes(calls), bytes(vblank_writes)))
     meta = {
         "schema": 1, "format": DIGEST_FORMAT, "name": name, "axis": axis, "key": key,
         "frames": frames, "anchors": hits, "record": REFERENCE_RECORD.size,
@@ -312,20 +331,27 @@ def unwrap(delta_mod: int, expected: float, modulus: int = 256) -> int:
     return max(0, min(candidates, key=lambda c: abs(c - expected)))
 
 
-def lag_track(records: bytes, calls: bytes = b"") -> str:
+def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"") -> str:
     """One line per DoFrame: `<cycles> <timer ISRs> <VBlank ISRs>` the ROM
     spent between the previous anchor and this one, then one number per
     timer sync point reached in that interval: the timer ISRs that had fired
-    before it. The port replays the schedule (src/runtime.c timer_sync): the ISR
-    counts come from the ROM's own wTimerCounter and wVBlankCounter,
-    unwrapped by the real time, so the port's interrupt handlers run exactly
-    as often as the ROM's did and the driver sees each call at the same tick.
+    before it; then, after a `v`, one number per game write to wVBlankCounter
+    in the interval: the VBlank ISRs that had fired before it. The port
+    replays the schedule (src/runtime.c timer_sync, vblank_sync): the ISR
+    counts come from the ROM's own wTimerCounter and wVBlankCounter, unwrapped
+    by the real time and followed through the game's own resets of the VBlank
+    counter, so the port's interrupt handlers run exactly as often as the
+    ROM's did and the game observes each count at the same point.
     Line 1 carries the boot's absolute counts."""
     count = len(records) // REFERENCE_RECORD.size
     by_interval: dict[int, list[tuple[int, int]]] = {}
     for index in range(len(calls) // CALL_RECORD.size):
         interval, time, counter = CALL_RECORD.unpack_from(calls, index * CALL_RECORD.size)
         by_interval.setdefault(interval, []).append((time, counter))
+    writes_by_interval: dict[int, list[tuple[int, int, int]]] = {}
+    for index in range(len(vblank_writes) // VBLANK_RECORD.size):
+        interval, time, before, written = VBLANK_RECORD.unpack_from(vblank_writes, index * VBLANK_RECORD.size)
+        writes_by_interval.setdefault(interval, []).append((time, before, written))
     lines = []
     prev = (0, 0, 0)  # time, vblanks, ticks at the interval's start
     for index in range(count):
@@ -334,14 +360,26 @@ def lag_track(records: bytes, calls: bytes = b"") -> str:
         cycles = 2 * (time - prev[0])
         if index == 0:
             dt, dv = ticks, vblanks
+            offsets_v: list[int] = []
         else:
             dt = unwrap(ticks - prev[2], cycles / TICK_CYCLES)
-            dv = unwrap(vblanks - prev[1], cycles / 70224)
+            # VBlank ISRs, segment by segment between the game's own writes.
+            dv = 0
+            offsets_v = []
+            cursor_time, cursor_value = prev[0], prev[1]
+            for write_time, before, written in writes_by_interval.get(index, ()):
+                dv += unwrap(before - cursor_value, 2 * (write_time - cursor_time) / 70224)
+                offsets_v.append(dv)
+                cursor_time, cursor_value = write_time, written
+            dv += unwrap(vblanks - cursor_value, 2 * (time - cursor_time) / 70224)
         offsets = [
             min(dt, unwrap(counter - prev[2], (call_time - prev[0]) / TICK_TIME))
             for call_time, counter in by_interval.get(index, ())
         ]
-        lines.append(" ".join(str(n) for n in [max(1, cycles), dt, dv, *offsets]))
+        fields = [max(1, cycles), dt, dv, *offsets]
+        if offsets_v:
+            fields += ["v", *offsets_v]
+        lines.append(" ".join(str(n) for n in fields))
         prev = (time, vblanks, ticks)
     return "\n".join(lines) + "\n"
 
@@ -412,6 +450,59 @@ def reference_capture(name: str, masks: list[int], frames: int, ordinal: int) ->
     if not captured:
         raise SessionError(f"reference never reached ordinal {ordinal}")
     return captured
+
+
+FIXTURES = ROOT / "tests" / "fixtures"
+
+
+def capture(name: str, routine: str, *, after: int = 0, out: Path | None = None) -> int:
+    """The reference's live state at `routine`'s first entry (at or after DoFrame
+    `after`) while it replays session `name`, written as a case fixture
+    (tests/cases/_fixtures.py): registers, SP, WRAM, HRAM and VRAM bank 0."""
+    masks, _meta = load_session(name)
+    frames = len(masks) * 2 + 400
+    padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
+    candidates, by_bank_address = refstream.routine_entry_addresses()
+    targets = {address for (bank, address), label in by_bank_address.items() if label == routine}
+    if not targets:
+        raise SessionError(f"{routine} is not a ported routine with a symbol")
+    banks = {address: bank for (bank, address), label in by_bank_address.items() if label == routine}
+    captured: dict[str, Any] = {}
+    with refstream.Core(padded) as core:
+        core.input_axis = "ordinal"
+        read = core.library.gambatte_cpuread
+        registers = (ctypes.c_int * 10)()
+
+        def on_exec(address: int, _cycle: int) -> None:
+            if captured or address not in targets or core.ordinal < after:
+                return
+            bank = 0 if address < 0x4000 else core.bank_of(address)
+            if bank != banks[address]:
+                return
+            core.library.gambatte_getregs(core.core, registers)
+            regions = reference_regions(core)
+            captured.update({
+                "session": name, "ordinal": core.ordinal, "entry": routine,
+                "regs": {"a": registers[2] & 0xFF, "b": registers[3] & 0xFF, "c": registers[4] & 0xFF,
+                         "d": registers[5] & 0xFF, "e": registers[6] & 0xFF, "f": registers[7] & 0xF0,
+                         "hl": ((registers[8] & 0xFF) << 8) | (registers[9] & 0xFF)},
+                "sp": registers[1] & 0xFFFF,
+                "wram": regions["wram"].hex(), "hram": regions["hram"].hex(),
+                "vram0": regions["vram"][:0x2000].hex(),
+            })
+
+        core.install_exec(on_exec)
+        core.run(frames, stop=lambda: bool(captured))
+    if not captured:
+        raise SessionError(f"{routine} was never entered in session {name} after ordinal {after}")
+    path = out or FIXTURES / f"{name}-{routine}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(captured))
+    regs = captured["regs"]
+    print(f"FIXTURE {path.relative_to(ROOT) if path.is_relative_to(ROOT) else path} ordinal={captured['ordinal']} "
+          f"a={regs['a']:02x} f={regs['f']:02x} bc={regs['b']:02x}{regs['c']:02x} de={regs['d']:02x}{regs['e']:02x} "
+          f"hl={regs['hl']:04x} sp={captured['sp']:04x}")
+    return 0
 
 
 def lag_between(reference: bytes, ordinal: int) -> dict[str, int]:
@@ -650,6 +741,11 @@ def main(argv: list[str] | None = None) -> int:
     derive_parser.add_argument("--movie", required=True, type=Path,
                                help="per-rendered-frame mask file, e.g. build/completion/tas/input.txt")
     derive_parser.add_argument("--goal", default="")
+    capture_parser = sub.add_parser("capture", help="write a case fixture from the reference's state at a routine's entry")
+    capture_parser.add_argument("name")
+    capture_parser.add_argument("--routine", required=True)
+    capture_parser.add_argument("--after", type=int, default=0, help="first DoFrame ordinal to consider")
+    capture_parser.add_argument("--out", type=Path)
     args = parser.parse_args(argv)
     try:
         if args.command == "status":
@@ -659,6 +755,8 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "derive":
             movie = args.movie if args.movie.is_absolute() else ROOT / args.movie
             return derive(args.name, movie, args.goal or f"derived from {args.movie}")
+        if args.command == "capture":
+            return capture(args.name, args.routine, after=args.after, out=args.out)
         name = args.name or lowest_confirmed()
         return verify(name, write=args.write_ratchet,
                       json_path=Path(args.json) if args.json else None)

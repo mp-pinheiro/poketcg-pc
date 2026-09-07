@@ -42,6 +42,11 @@ int frame_boundary_pass_is_doframe(void);
  * reference in tools/completion/session.py TIMER_SYNC). */
 void frame_boundary_install_timer_sync(FrameBoundaryHook hook, void *context);
 void frame_boundary_timer_sync(void);
+/* The game's own writes to wVBlankCounter (core.asm:291, :6255): under a
+ * lag track the host delivers the VBlank services the ROM saw before the
+ * write here, so a counter the game resets mid-interval reads the same. */
+void frame_boundary_install_vblank_sync(FrameBoundaryHook hook, void *context);
+void frame_boundary_vblank_sync(void);
 /* When the host replays a session with the ROM's own servicing schedule (the
  * lag track), the hand-placed frame_boundary_consume_services sites stand
  * down: the track already carries every VBlank they model. */

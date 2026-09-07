@@ -2080,6 +2080,7 @@ AIMakeDecisionResult AIMakeDecision(uint8_t a, uint8_t b, uint8_t c, uint8_t d, 
 
 	if (skip != 0u)
 		return (AIMakeDecisionResult){skip, b, c, d, e, 0u};
+	frame_boundary_vblank_sync();
 	gb_write8(wVBlankCounter_ADDR, 0u);
 	TextResult text = DrawWideTextBox_PrintTextNoDelay(DuelistIsThinkingText);
 
@@ -2809,14 +2810,18 @@ CoreCardListResult LookForCardIDInHand(uint8_t a)
 
 
 /* >>> factory LookForCardIDInHandList_Bank5 */
+/* ai/core.asm:724-742. Every candidate index is parked in
+ * hTempCardIndex_ff98 as it is tried; the card id to find in wTempCardIDToLook. */
 CoreCardListResult LookForCardIDInHandList_Bank5(uint8_t a)
 {
+	wTempCardIDToLook = a;
 	(void)CreateHandCardList(0u);
 	uint16_t list = wDuelTempList_ADDR;
 	for (;;) {
 		uint8_t deck_index = gb_read8(list++);
 		if (deck_index == 0xFFu)
 			return (CoreCardListResult){0xFFu, 0xC0u};
+		hTempCardIndex_ff98 = deck_index;
 		if ((uint8_t)LoadCardDataToBuffer1_FromDeckIndex(deck_index) == a)
 			return (CoreCardListResult){deck_index, 0x90u};
 	}
@@ -9711,6 +9716,7 @@ void DuelMainInterface(void)
 		DoLinkOpponentTurn();
 		return;
 	}
+	frame_boundary_vblank_sync();
 	wVBlankCounter = 0u;
 	wSkipDuelistIsThinkingDelay = 0u;
 	(void)DrawWideTextBox_PrintTextNoDelay(DuelistIsThinkingText);
