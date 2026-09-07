@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Generate the script entry address table from poketcg.sym plus the ROM.
 
-Two sites reach a script by a computed jump, and both need the target resolved
-ahead of time because deciding at run time would mean reading ROM code as data,
-which the product data pack does not carry.
+Three sites reach a routine by a computed jump or call, and each needs the
+target resolved ahead of time because deciding at run time would mean reading
+ROM code as data, which the product data pack does not carry.
 
 EnterScript (engine/overworld/overworld.asm:122-127) ends in `jp hl` with hl
 taken from wNextScript. Every `Script_*` label that opens with the
@@ -13,6 +13,11 @@ are ordinary routines needing a C body.
 CallMapScriptPointerIfExists (engine/overworld/scripting.asm:98-101) ends in
 `jp hl` with hl read out of the MapScripts table, whose targets are named in
 data/map_scripts.asm and are all ordinary routines.
+
+Func_c943 (engine/overworld/scripting.asm:41-49) copies each NPC record of the
+map's NPC table into wTempNPC and, when the record's pre-load pointer is not
+NULL, calls it through CallHL2; its carry decides whether the NPC is loaded.
+Those pointers are named in data/npc_map_data.asm and are ordinary routines.
 """
 
 from __future__ import annotations
@@ -56,8 +61,17 @@ def map_script_code_targets(map_scripts: Path) -> set[str]:
         if name != "NULL" and index % 8 not in MAP_SCRIPT_DATA_SLOTS
     }
 
-def script_entries(sym_path: Path, rom_path: Path, map_scripts: Path
-                   ) -> dict[int, tuple[int, int, list[str]]]:
+
+def npc_preload_targets(npc_map_data: Path) -> set[str]:
+    """Every `dw` in data/npc_map_data.asm is an NPC record's pre-load pointer
+    (format at the top of the file: NPC, X, Y, direction, function)."""
+    return {
+        name for name in MAP_SCRIPT_TARGET.findall(npc_map_data.read_text())
+        if name != "NULL"
+    }
+
+def script_entries(sym_path: Path, rom_path: Path, map_scripts: Path,
+                   npc_map_data: Path) -> dict[int, tuple[int, int, list[str]]]:
     rom = rom_path.read_bytes()
     table = symbol_table(sym_path)
 
@@ -82,6 +96,7 @@ def script_entries(sym_path: Path, rom_path: Path, map_scripts: Path
         and first_byte(name) == OPCODE_RST_20
     }
     wanted |= map_script_code_targets(map_scripts)
+    wanted |= npc_preload_targets(npc_map_data)
     unresolved = sorted(name for name in wanted if name not in table)
     if unresolved:
         raise SystemExit(f"script entry targets missing from poketcg.sym: {unresolved}")
@@ -163,8 +178,9 @@ def thunk(name: str, owner: tuple[str, str, str], header_text: str) -> str:
     return "\n".join(lines)
 
 
-def render(sym_path: Path, rom_path: Path, home: Path, map_scripts: Path) -> str:
-    entries = script_entries(sym_path, rom_path, map_scripts)
+def render(sym_path: Path, rom_path: Path, home: Path, map_scripts: Path,
+           npc_map_data: Path) -> str:
+    entries = script_entries(sym_path, rom_path, map_scripts, npc_map_data)
     owners = ported_symbols(home)
     header_text = {p.name: p.read_text() for p in home.glob("*.h")}
 
@@ -276,9 +292,10 @@ def main() -> int:
     parser.add_argument("--rom", type=Path, required=True)
     parser.add_argument("--home", type=Path, required=True)
     parser.add_argument("--map-scripts", type=Path, required=True)
+    parser.add_argument("--npc-map-data", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    content = render(args.sym, args.rom, args.home, args.map_scripts)
+    content = render(args.sym, args.rom, args.home, args.map_scripts, args.npc_map_data)
     if not args.output.is_file() or args.output.read_text() != content:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(content)

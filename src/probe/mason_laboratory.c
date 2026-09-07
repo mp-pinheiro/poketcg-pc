@@ -12,6 +12,25 @@ static void adapt_Preload_DrMason(ProbeState *s)
 }
 /* <<< factory Preload_DrMason */
 
+/* >>> factory Preload_Sam */
+static void adapt_Preload_Sam(ProbeState *s)
+{
+	PreloadSamResult result = Preload_Sam();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Preload_Sam */
+
+/* >>> factory Preload_Tech5 */
+static void adapt_Preload_Tech5(ProbeState *s)
+{
+	PreloadTech5Result result = Preload_Tech5(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory Preload_Tech5 */
+
 /* >>> factory MasonLaboratoryAfterDuel */
 static void adapt_MasonLaboratoryAfterDuel(ProbeState *s)
 {
@@ -69,6 +88,8 @@ static void adapt_Script_Tech1(ProbeState *s)
 const ProbeEntry probe_entries_mason_laboratory[] = {
 	{ "Script_Tech1", adapt_Script_Tech1 },
 	{ "Preload_DrMason", adapt_Preload_DrMason },
+	{ "Preload_Sam", adapt_Preload_Sam },
+	{ "Preload_Tech5", adapt_Preload_Tech5 },
 	{ "MasonLaboratoryAfterDuel", adapt_MasonLaboratoryAfterDuel },
 	{ "MasonLabCloseTextBox", adapt_MasonLabCloseTextBox },
 	{ "MasonLabLoadMap", adapt_MasonLabLoadMap },

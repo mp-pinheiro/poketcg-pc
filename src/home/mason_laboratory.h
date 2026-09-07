@@ -7,6 +7,14 @@
 typedef struct { uint8_t a; uint8_t f; } PreloadDrMasonResult;
 PreloadDrMasonResult Preload_DrMason(void);
 /* <<< factory Preload_DrMason */
+/* >>> factory Preload_Sam */
+typedef struct { uint8_t a; uint8_t f; } PreloadSamResult;
+PreloadSamResult Preload_Sam(void);
+/* <<< factory Preload_Sam */
+/* >>> factory Preload_Tech5 */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } PreloadTech5Result;
+PreloadTech5Result Preload_Tech5(uint16_t hl);
+/* <<< factory Preload_Tech5 */
 /* >>> factory MasonLaboratoryAfterDuel */
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } MasonLaboratoryAfterDuelResult;
 MasonLaboratoryAfterDuelResult MasonLaboratoryAfterDuel(void);

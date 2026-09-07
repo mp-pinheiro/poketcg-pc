@@ -2045,11 +2045,20 @@ Func_c943Result Func_c943(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d,
 			CopyBankedDataToDE(NPC_MAP_SIZE, wTempNPC_ADDR);
 			if (wTempNPC == 0u)
 				break;
-			LoadNPCSpriteDataResult sprite = LoadNPCSpriteData(wTempNPC, b, c, d, e, hl);
-			a = sprite.a;
-			f = sprite.f;
-			(void)Func_c998();
-			(void)LoadNPC();
+			/* scripting.asm:41-49: the record's pre-load pointer, when
+			 * not NULL, is called through CallHL2 and its carry decides
+			 * whether this NPC is loaded at all (Preload_Sam moves Sam
+			 * to the table, Preload_Tech5 shifts the technician). The
+			 * table resolves the pointer to its C body at build time. */
+			uint16_t preload = (uint16_t)(wLoadNPCFunction |
+				((uint16_t)gb_read8((uint16_t)(wLoadNPCFunction_ADDR + 1u)) << 8));
+			if (preload == 0u || (ScriptEntryEnter(preload) & 0x10u) != 0u) {
+				LoadNPCSpriteDataResult sprite = LoadNPCSpriteData(wTempNPC, b, c, d, e, hl);
+				a = sprite.a;
+				f = sprite.f;
+				(void)Func_c998();
+				(void)LoadNPC();
+			}
 			hl = (uint16_t)(hl + NPC_MAP_SIZE);
 		}
 	}

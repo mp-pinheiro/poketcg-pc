@@ -30,6 +30,7 @@
 #define CHALLENGE_MACHINE_OBJECT_TABLE 0x5572u
 
 #define MAP_EVENT_CHALLENGE_MACHINE 0x0au
+#define SOUTH 0x02u
 /* <<< factory statics */
 
 /* >>> factory Preload_DrMason */
@@ -52,6 +53,50 @@ PreloadDrMasonResult Preload_DrMason(void)
 	return (PreloadDrMasonResult){a, f};
 }
 /* <<< factory Preload_DrMason */
+
+/* >>> factory Preload_Sam */
+/* mason_laboratory.asm Preload_Sam: before the practice duel Sam stands at
+ * the table, ($0a,$08) facing south; from MASON_LAB_IN_PRACTICE_DUEL on the
+ * map data's own position stands. `cp 1` then `scf`: Z survives the scf, so f
+ * is $90 exactly when the state is 1, and a is SOUTH on the moved branch. The
+ * get_event_value macro is GetStackEventValue, which also parks the event's
+ * mask in wLoadedEventBits through GetEventVar. */
+PreloadSamResult Preload_Sam(void)
+{
+	uint8_t state = GetEventValue(EVENT_MASON_LAB_STATE);
+	uint8_t a = state;
+	uint8_t f = state == MASON_LAB_IN_PRACTICE_DUEL ? 0x90u : 0x10u;
+
+	if (state < MASON_LAB_IN_PRACTICE_DUEL) {
+		gb_write8(wLoadNPCXPos_ADDR, 0x0Au);
+		gb_write8(wLoadNPCYPos_ADDR, 0x08u);
+		gb_write8(wLoadNPCDirection_ADDR, SOUTH);
+		a = SOUTH;
+	}
+	return (PreloadSamResult){a, f};
+}
+/* <<< factory Preload_Sam */
+
+/* >>> factory Preload_Tech5 */
+/* mason_laboratory.asm Preload_Tech5: once the legendary cards are received
+ * the technician stands two tiles to the right. Z comes from `or a` on the
+ * skip path and from the second `inc [hl]` on the moved one (an X of $FE
+ * wraps to zero); `scf` then sets carry and leaves Z alone, with hl pointing
+ * at wLoadNPCXPos on the moved branch. */
+PreloadTech5Result Preload_Tech5(uint16_t hl)
+{
+	uint8_t value = GetEventValue(EVENT_RECEIVED_LEGENDARY_CARDS);
+	uint8_t zero = value == 0u;
+
+	if (value != 0u) {
+		hl = wLoadNPCXPos_ADDR;
+		uint8_t moved = (uint8_t)(gb_read8(hl) + 2u);
+		gb_write8(hl, moved);
+		zero = moved == 0u;
+	}
+	return (PreloadTech5Result){value, zero ? 0x90u : 0x10u, hl};
+}
+/* <<< factory Preload_Tech5 */
 
 /* >>> factory MasonLaboratoryAfterDuel */
 MasonLaboratoryAfterDuelResult MasonLaboratoryAfterDuel(void)

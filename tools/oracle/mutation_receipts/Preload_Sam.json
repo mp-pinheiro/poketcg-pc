@@ -1,0 +1,9 @@
+{
+  "fn": "Preload_Sam",
+  "case": "tests/cases/mason_laboratory.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Preload_Sam\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54188\": \"0a0802\", \"54225\": \"0e\", \"54239\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Preload_Sam\", \"mismatches\": {\"a\": [2, 0], \"bus\": {\"address\": 54188, \"reference\": \"0a08020e00\", \"native\": \"5566770e00\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[54188, 3], [54225, 1], [54239, 1]]}}}\n",
+  "restored": "{\"fn\": \"Preload_Sam\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54188\": \"0a0802\", \"54225\": \"0e\", \"54239\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

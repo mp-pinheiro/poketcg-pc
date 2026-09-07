@@ -50,6 +50,60 @@ CASES["Preload_DrMason"] = [
 ]
 # <<< factory Preload_DrMason
 
+# >>> factory Preload_Sam
+# EVENT_MASON_LAB_STATE is wEventVars+$0D bits 1-3; the macro leaves that
+# mask ($0E) in wLoadedEventBits. State 0 moves Sam to ($0a,$08) facing south
+# and returns a=SOUTH; state 1 is the `cp` Z path (f=$90); anything higher
+# leaves the map data alone.
+wLoadNPCDirection = 0xD3AE
+wLoadedEventBits = 0xD3D1
+
+def sam_pos(state_byte, x=0x55, y=0x66, direction=0x77):
+    return {EVENT_MASON_LAB_STATE_BYTE: bytes((state_byte,)),
+            wLoadNPCXPos: bytes((x,)), wLoadNPCYPos: bytes((y,)),
+            wLoadNPCDirection: bytes((direction,)), wLoadedEventBits: b"\x00"}
+
+SAM_READ = {EVENT_MASON_LAB_STATE_BYTE: 1, wLoadNPCXPos: 1, wLoadNPCYPos: 1,
+            wLoadNPCDirection: 1, wLoadedEventBits: 1}
+
+CONTRACT["Preload_Sam"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
+CASES["Preload_Sam"] = [
+    {"wram": sam_pos(0x00), "read": SAM_READ},
+    dict(POISON, wram=sam_pos(0xF1), read=SAM_READ),
+    {"wram": sam_pos(0x02), "read": SAM_READ},
+    dict(POISON, wram=sam_pos(0xF3), read=SAM_READ),
+    {"wram": sam_pos(0x04), "read": SAM_READ},
+    dict(POISON, wram=sam_pos(0x0E), read=SAM_READ),
+]
+# <<< factory Preload_Sam
+
+# >>> factory Preload_Tech5
+# EVENT_RECEIVED_LEGENDARY_CARDS is wEventVars+$06 bit 1 (mask $02). Set, the
+# technician's X advances by two and hl is left on wLoadNPCXPos; clear, the
+# `or a` Z path returns f=$90 with hl untouched.
+EVENT_LEGENDARY_BYTE = wEventVars + 0x06
+
+def tech5_pos(event_byte, x=0x55):
+    return {EVENT_LEGENDARY_BYTE: bytes((event_byte,)), wLoadNPCXPos: bytes((x,)),
+            wLoadedEventBits: b"\x00"}
+
+TECH5_READ = {EVENT_LEGENDARY_BYTE: 1, wLoadNPCXPos: 1, wLoadedEventBits: 1}
+
+CONTRACT["Preload_Tech5"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e"),
+}
+CASES["Preload_Tech5"] = [
+    {"wram": tech5_pos(0x00), "read": TECH5_READ},
+    dict(POISON, wram=tech5_pos(0xFD), read=TECH5_READ),
+    {"wram": tech5_pos(0x02), "read": TECH5_READ},
+    dict(POISON, wram=tech5_pos(0xFF, x=0xFE), read=TECH5_READ),
+]
+# <<< factory Preload_Tech5
+
 # >>> factory MasonLaboratoryAfterDuel
 CONTRACT["MasonLaboratoryAfterDuel"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": (), "wram_out": True}
 CASES["MasonLaboratoryAfterDuel"] = [
@@ -195,6 +249,24 @@ MUTATIONS["Preload_DrMason"] = {
                  "Preload_DrMason-3", "Preload_DrMason-4"],
 }
 # <<< factory-mutation Preload_DrMason
+# >>> factory-mutation Preload_Sam
+MUTATIONS["Preload_Sam"] = {
+    "source_symbol": "Preload_Sam",
+    "before": "if (state < MASON_LAB_IN_PRACTICE_DUEL) {",
+    "after": "if (state >= MASON_LAB_IN_PRACTICE_DUEL) {",
+    "case_ids": ["Preload_Sam-0", "Preload_Sam-1", "Preload_Sam-2",
+                 "Preload_Sam-3", "Preload_Sam-4", "Preload_Sam-5"],
+}
+# <<< factory-mutation Preload_Sam
+# >>> factory-mutation Preload_Tech5
+MUTATIONS["Preload_Tech5"] = {
+    "source_symbol": "Preload_Tech5",
+    "before": "uint8_t moved = (uint8_t)(gb_read8(hl) + 2u);",
+    "after": "uint8_t moved = (uint8_t)(gb_read8(hl) + 1u);",
+    "case_ids": ["Preload_Tech5-0", "Preload_Tech5-1", "Preload_Tech5-2",
+                 "Preload_Tech5-3"],
+}
+# <<< factory-mutation Preload_Tech5
 # >>> factory-mutation MasonLaboratoryAfterDuel
 MUTATIONS["MasonLaboratoryAfterDuel"] = {"source_symbol": "MasonLaboratoryAfterDuel", "before": "	FindEndOfDuelScriptResult r = FindEndOfDuelScript(MasonLaboratoryAfterDuelTable);", "after": "	FindEndOfDuelScriptResult r = FindEndOfDuelScript((uint16_t)(MasonLaboratoryAfterDuelTable + 1u));", "case_ids": ["MasonLaboratoryAfterDuel-0"]}
 # <<< factory-mutation MasonLaboratoryAfterDuel

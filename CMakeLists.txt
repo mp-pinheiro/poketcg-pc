@@ -77,10 +77,12 @@ add_custom_command(
           --rom "${CMAKE_SOURCE_DIR}/poketcg/poketcg.gbc"
           --home "${CMAKE_SOURCE_DIR}/src/home"
           --map-scripts "${CMAKE_SOURCE_DIR}/poketcg/src/data/map_scripts.asm"
+          --npc-map-data "${CMAKE_SOURCE_DIR}/poketcg/src/data/npc_map_data.asm"
           --output "${SCRIPT_ENTRY_SOURCE}"
   DEPENDS "${CMAKE_SOURCE_DIR}/tools/gen_script_entry_dispatch.py"
           "${CMAKE_SOURCE_DIR}/poketcg/poketcg.sym"
           "${CMAKE_SOURCE_DIR}/poketcg/src/data/map_scripts.asm"
+          "${CMAKE_SOURCE_DIR}/poketcg/src/data/npc_map_data.asm"
           ${HOME_HEADERS}
   COMMENT "gen_script_entry_dispatch: poketcg.sym + rom -> script entry table"
   VERBATIM)
