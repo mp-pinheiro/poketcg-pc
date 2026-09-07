@@ -1013,9 +1013,8 @@ CASES["EraseCheckMenuCursor_YourOrOppPlayArea"] = [
 # >>> factory LoadCursorTile
 CONTRACT["LoadCursorTile"] = {"compare": (), "preserve": ()}
 CASES["LoadCursorTile"] = [
-    {"keys": 1, "vread": {0: {0x8000: 16}}},
-    {"keys": 2, "vread": {0: {0x8000: 16}}},
-    dict(POISON, keys=1, vread={0: {0x8000: 16}}),
+    {"vread": {0: {0x8000: 16}}},
+    dict(POISON, vread={0: {0x8000: 16}}),
 ]
 # <<< factory LoadCursorTile
 
@@ -1647,14 +1646,24 @@ CASES["DrawInPlayArea_ActiveCardGfx"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF"}, "read": {0xCE5D: 1}, "expect": {0xCE5D: b"\x00"}},
     {"wram": {0xFF97: b"\xC3", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF"}, "read": {0xCE5D: 1}, "expect": {0xCE5D: b"\x00"}},
     dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF"}, read={0xCE5D: 1}, expect={0xCE5D: b"\x00"}),
+    # Both arenas hold Bulbasaur (deck index 0, id $08): the card image tiles
+    # land at v0Tiles1 $8A00 and $9500, the palette in wCardPalette, and the
+    # 6x8 images in the BG map at (9,6) and (2,6).
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC400: b"\x08", 0xC480: b"\x08", 0xC200: b"\x10", 0xC300: b"\x10", 0xCABB: b"\x00"},
+         read={0xCE5D: 1, 0xCE23: 8, 0xCB21: 8}, vread={0: {0x8A00: 0x300, 0x9500: 0x300, 0x9800: 0x400}},
+         instruction_budget=3000000, cycle_budget=12000000),
 ]
 # <<< factory DrawInPlayArea_ActiveCardGfx
 
 # >>> factory DrawInPlayAreaScreen
 CONTRACT["DrawInPlayAreaScreen"] = {"compare": (), "preserve": (), "wram_out": True}
+# The whole BG map is read back: the prize-card and icon coordinate tables are
+# ROM literals, and a wrong table draws both lanes' screens differently.
 CASES["DrawInPlayAreaScreen"] = [
-    {"wram": {0xFF97: b"\x00", 0xCABB: b"\x00"}, "read": {0xCAB6: 1, 0xCAC2: 1, 0xCE50: 1, 0xCE51: 1}, "instruction_budget": 3000000, "cycle_budget": 12000000},
-    dict(POISON, wram={0xFF97: b"\x01", 0xCABB: b"\x00"}, read={0xCAB6: 1, 0xCAC2: 1, 0xCE50: 1, 0xCE51: 1}, instruction_budget=3000000, cycle_budget=12000000),
+    {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC2EF: b"\x01", 0xC3EF: b"\x01", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC400: b"\x08", 0xC480: b"\x08", 0xC200: b"\x10", 0xC300: b"\x10", 0xC2EC: b"\x3F", 0xC3EC: b"\x0F", 0xCC08: b"\x06"},
+     "read": {0xCAB6: 1, 0xCAC2: 1, 0xCE50: 1, 0xCE51: 1}, "vread": {0: {0x9800: 0x400}}, "instruction_budget": 3000000, "cycle_budget": 12000000},
+    dict(POISON, wram={0xFF97: b"\xC3", 0xCABB: b"\x00", 0xC2EF: b"\x01", 0xC3EF: b"\x01", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC400: b"\x08", 0xC480: b"\x08", 0xC200: b"\x10", 0xC300: b"\x10", 0xC2EC: b"\x3F", 0xC3EC: b"\x0F", 0xCC08: b"\x06"},
+         read={0xCAB6: 1, 0xCAC2: 1, 0xCE50: 1, 0xCE51: 1}, vread={0: {0x9800: 0x400}}, instruction_budget=3000000, cycle_budget=12000000),
 ]
 # <<< factory DrawInPlayAreaScreen
 
@@ -2167,7 +2176,7 @@ MUTATIONS["PrintPokemonsAttackText"] = {"source_symbol": "PrintPokemonsAttackTex
 MUTATIONS["PrintFailedEffectText"] = {"source_symbol": "PrintFailedEffectText", "before": "\t\treturn (PrintFailedEffectTextResult){0x80u};", "after": "\t\treturn (PrintFailedEffectTextResult){0x00u};", "case_ids": ["PrintFailedEffectText-0", "PrintFailedEffectText-1"]}
 # <<< factory-mutation PrintFailedEffectText
 # >>> factory-mutation DrawInPlayArea_ActiveCardGfx
-MUTATIONS["DrawInPlayArea_ActiveCardGfx"] = {"source_symbol": "DrawInPlayArea_ActiveCardGfx", "before": "\tgb_write8(wArenaCardsInPlayArea_ADDR, 0u);", "after": "\tgb_write8(wArenaCardsInPlayArea_ADDR, 1u);", "case_ids": ["DrawInPlayArea_ActiveCardGfx-0"]}
+MUTATIONS["DrawInPlayArea_ActiveCardGfx"] = {"source_symbol": "DrawInPlayArea_ActiveCardGfx", "before": "\t\tLoadCardGfx(gfx, 0x8A00u, 0x30u, TILE_SIZE);", "after": "\t\tLoadCardGfx(gfx, 0x8A00u, 0x30u, 0x08u);", "case_ids": ["DrawInPlayArea_ActiveCardGfx-3"]}
 # <<< factory-mutation DrawInPlayArea_ActiveCardGfx
 # >>> factory-mutation DrawInPlayAreaScreen
 MUTATIONS["DrawInPlayAreaScreen"] = {

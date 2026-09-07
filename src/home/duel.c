@@ -2015,10 +2015,9 @@ TempListResult EraseCheckMenuCursor_YourOrOppPlayArea(void)
 /* <<< factory EraseCheckMenuCursor_YourOrOppPlayArea */
 
 /* >>> factory LoadCursorTile */
-/* duel.asm:1687-1700. Copies the 16-byte cursor tile into v0Tiles0 and falls
- * through into YourOrOppPlayAreaScreen_HandleInput. The .tile_data label is a
- * ROM literal in this routine's own bank, so it is materialized as a C table
- * and written byte-for-byte to the same destination. */
+/* duel.asm:1687-1696. Copies the 16-byte cursor tile into v0Tiles0 and
+ * returns; the .tile_data literal that follows the `ret` is materialized as a
+ * C table and written byte-for-byte to the same destination. */
 void LoadCursorTile(void)
 {
 	uint16_t dst = V0_TILES0;
@@ -2026,7 +2025,6 @@ void LoadCursorTile(void)
 
 	for (i = 0u; i < 16u; i++)
 		gb_write8((uint16_t)(dst + i), kCursorTileData[i]);
-	YourOrOppPlayAreaScreen_HandleInput();
 }
 /* <<< factory LoadCursorTile */
 
@@ -2809,6 +2807,7 @@ Func_1bb4Result Func_1bb4(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
 
 
 /* >>> factory DrawInPlayArea_ActiveCardGfx */
+#define TILE_SIZE 0x10u
 void DrawInPlayArea_ActiveCardGfx(void)
 {
 	DuelistVarResult result;
@@ -2819,7 +2818,7 @@ void DrawInPlayArea_ActiveCardGfx(void)
 		gb_write8(wArenaCardsInPlayArea_ADDR, (uint8_t)(gb_read8(wArenaCardsInPlayArea_ADDR) | 0x01u));
 		(void)LoadCardDataToBuffer1_FromDeckIndex(result.a);
 		gfx = (uint16_t)(gb_read8(wLoadedCard1Gfx_ADDR) | ((uint16_t)gb_read8((uint16_t)(wLoadedCard1Gfx_ADDR + 1u)) << 8));
-		LoadCardGfx(gfx, 0x8A00u, 0x30u, 0x08u);
+		LoadCardGfx(gfx, 0x8A00u, 0x30u, TILE_SIZE);
 		SetBGP6OrSGB3ToCardPalette();
 	}
 	result = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD);
@@ -2828,7 +2827,7 @@ void DrawInPlayArea_ActiveCardGfx(void)
 		SwapTurn();
 		(void)LoadCardDataToBuffer1_FromDeckIndex(result.a);
 		gfx = (uint16_t)(gb_read8(wLoadedCard1Gfx_ADDR) | ((uint16_t)gb_read8((uint16_t)(wLoadedCard1Gfx_ADDR + 1u)) << 8));
-		LoadCardGfx(gfx, 0x9500u, 0x30u, 0x08u);
+		LoadCardGfx(gfx, 0x9500u, 0x30u, TILE_SIZE);
 		SetBGP7OrSGB2ToCardPalette();
 		SwapTurn();
 	}
@@ -2865,16 +2864,16 @@ void DrawInPlayAreaScreen(void)
 
 	wCheckMenuPlayAreaWhichDuelist = hWhoseTurn;
 	wCheckMenuPlayAreaWhichLayout = hWhoseTurn;
-	DrawPlayArea_PrizeCards(0x4629u);
+	DrawPlayArea_PrizeCards(0x44E4u); /* PrizeCardsCoordinateData_InPlayArea.player */
 	DrawPlayArea_BenchCards(3u, 3u, 15u);
-	DrawInPlayArea_Icons(0x4635u);
+	DrawInPlayArea_Icons(0x4641u); /* PlayAreaIconCoordinates.player2 */
 	SwapTurn();
 	wCheckMenuPlayAreaWhichDuelist = hWhoseTurn;
 	SwapTurn();
-	DrawPlayArea_PrizeCards(0x462Fu);
+	DrawPlayArea_PrizeCards(0x44F0u); /* PrizeCardsCoordinateData_InPlayArea.opponent */
 	DrawPlayArea_BenchCards(3u, 3u, 0u);
 	SwapTurn();
-	DrawInPlayArea_Icons(0x463Bu);
+	DrawInPlayArea_Icons(0x4647u); /* PlayAreaIconCoordinates.opponent2 */
 	SwapTurn();
 	DrawInPlayArea_ActiveCardGfx();
 }
