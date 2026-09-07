@@ -113,6 +113,8 @@
 #define PALETTE_OVERWORLD_OAM 0x1Du
 
 #include "home/scripting.h"
+#include "home/battle_center.h"
+#include "home/gift_center.h"
 #include "home/save.h"
 #include "generated/hram.h"
 
@@ -172,8 +174,7 @@
 #include "home/status.h"
 
 #include "home/process_text.h"
-#define POINTER_TABLE_C152 0x4152u
-#define POINTER_TABLE_C152_BANK 3u
+#define GAME_EVENT_BATTLE_CENTER 0x02u
 
 #include "home/load_overworld.h"
 #include "generated/wram.h"
@@ -1064,53 +1065,27 @@ void Func_c241(void)
 /* <<< factory Func_c241 */
 
 /* >>> factory Func_c141 */
-/* overworld.asm:156-166 -- seventeen bytes with FOUR exits:
- *   wActiveGameEvent == 0 -> `ret z`, an ordinary return, nothing cleared
- *   otherwise it clears the event and dispatches through PointerTable_c152:
- *     GAME_EVENT_DUEL          (1) -> Func_c9bc  $49BC
- *     GAME_EVENT_BATTLE_CENTER (2) -> Func_fc2b  $7C2B
- *     GAME_EVENT_GIFT_CENTER   (3) -> Func_fcad  $7CAD
- * Each case declares the completion its seed reaches, so the dispatch target is
- * observed as a stop point AND as `hl`.
- *
- * `push af` / `xor a` / `ld [hl], a` / `pop af` clears the event while restoring
- * a and f, so `dec a` sees the ORIGINAL event value and the table index is
- * event-1. JumpToFunctionInTable is an excluded leaf-slice, resolved here:
- *   add a / add l / ld l, a / ld a, $0 / adc h / ld a, [hli] / ld h, [hl] /
- *   ld l, a / jp hl
- * so at the target a = target & 0xFF, hl = target, and f comes from the `adc h`
- * that finishes the 16-bit index add -- not from the pointer load, since `ld`
- * never touches flags. */
+/* overworld.asm:156-172. A pending game event is cleared and its handler
+ * runs: the duel's after-duel map script, the battle center, or the gift
+ * center. `push af`/`pop af` around the clear keep the original event for the
+ * table index. Func_fc2b and Func_fcad are link-cable sessions with no
+ * register outputs a caller reads. */
 Func_c141Result Func_c141(void)
 {
-	uint16_t hl = wActiveGameEvent_ADDR;
-	uint8_t event = gb_read8(hl);
-	uint8_t idx2, lo, hi, carry, res, f;
-	uint16_t sum, entry, target;
-	const uint8_t *p;
-
+	uint8_t event = gb_read8(wActiveGameEvent_ADDR);
 	if (event == 0u)
-		return (Func_c141Result){0u, 0x80u, hl}; /* or a set Z; ret z */
-
-	gb_write8(hl, 0u);
-	idx2 = (uint8_t)((uint8_t)(event - 1u) << 1); /* dec a ; add a */
-	lo = (uint8_t)POINTER_TABLE_C152;
-	hi = (uint8_t)(POINTER_TABLE_C152 >> 8);
-	sum = (uint16_t)idx2 + lo;                     /* add l */
-	carry = (uint8_t)(sum > 0xFFu);
-	res = (uint8_t)(hi + carry);                   /* ld a, $0 ; adc h */
-	f = 0u;
-	if (res == 0u)
-		f |= 0x80u;
-	if (((hi & 0x0Fu) + carry) > 0x0Fu)
-		f |= 0x20u;
-	if (((uint16_t)hi + carry) > 0xFFu)
-		f |= 0x10u;
-
-	entry = (uint16_t)((uint16_t)res << 8 | (uint8_t)sum);
-	p = rom_ptr(POINTER_TABLE_C152_BANK, entry);
-	target = (uint16_t)(p[0] | (uint16_t)p[1] << 8);
-	return (Func_c141Result){(uint8_t)(target & 0xFFu), f, target};
+		return (Func_c141Result){0u, 0x80u, wActiveGameEvent_ADDR};
+	gb_write8(wActiveGameEvent_ADDR, 0u);
+	if (event == GAME_EVENT_DUEL) {
+		CallMapScriptResult r = Func_c9bc();
+		return (Func_c141Result){r.a, r.f, r.hl};
+	}
+	if (event == GAME_EVENT_BATTLE_CENTER) {
+		Func_fc2b();
+		return (Func_c141Result){0u, 0u, 0u};
+	}
+	Func_fcadResult gift = Func_fcad();
+	return (Func_c141Result){gift.a, 0u, 0u};
 }
 /* <<< factory Func_c141 */
 
@@ -1311,12 +1286,6 @@ FuncC17aResult Func_c17a(uint16_t hl)
 		return result;
 	}
 	CallMapScriptResult result = Func_c9b8();
-
-	/* Func_c9b8 tail-calls CallMapScriptPointerIfExists, whose `jp hl` runs the
-	 * map's LOAD_MAP entry and returns through this routine's own `ret`
-	 * (overworld.asm:190-196, scripting.asm:87-101). */
-	if ((result.f & 0x10u) != 0u)
-		return (FuncC17aResult){result.a, ScriptEntryEnter(result.hl), result.hl};
 	return (FuncC17aResult){result.a, result.f, result.hl};
 }
 /* <<< factory Func_c17a */

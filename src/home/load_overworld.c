@@ -38,15 +38,9 @@ void LoadMapTilesAndPals(void)
 }
 /* <<< factory LoadMapTilesAndPals */
 
-/* Func_c9c7 tail-calls CallMapScriptPointerIfExists, whose `jp hl` runs the
- * map's CLOSE_TEXT_BOX script and returns through this routine
- * (load_overworld.asm:22-29, scripting.asm:98-103). */
 static void enter_close_text_box_script(void)
 {
-	CallMapScriptResult found = Func_c9c7();
-
-	if ((found.f & 0x10u) != 0u)
-		(void)ScriptEntryEnter(found.hl);
+	(void)Func_c9c7();
 }
 
 /* >>> factory ReloadMapAfterTextClose */

@@ -92,19 +92,6 @@ GetNPCDuelConfigurationsResult GetNPCDuelConfigurations(uint8_t a, uint8_t f, ui
 }
 /* <<< factory GetNPCDuelConfigurations */
 
-/* `call CallMapScriptPointerIfExists` ends in `jp hl` when the map has the slot
- * (engine/overworld/scripting.asm:98-101), and the entry's own `ret` unwinds to
- * this routine's caller, so the entry's exit flags are this routine's result --
- * FindNPCOrObject reads that carry (engine/overworld/overworld.asm:1251-1255).
- * CallMapScriptPointerIfExists itself stops at the entry, because its oracle
- * cases are captured there. */
-static uint8_t enter_pressed_a_script(CallMapScriptResult found)
-{
-	if ((found.f & 0x10u) == 0u)
-		return found.f;
-	return ScriptEntryEnter(found.hl);
-}
-
 static uint8_t script_operand(uint16_t addr)
 {
 	if (addr >= 0x4000u && addr < 0x8000u
@@ -126,7 +113,7 @@ HandleMoveModeAPressResult HandleMoveModeAPress(uint8_t a, uint8_t f, uint8_t b,
 	if ((objects.f & 0x10u) == 0u) {
 		BankswitchROM(saved_bank);
 		CallMapScriptResult second = CallMapScriptPointerIfExists(MAP_SCRIPT_PRESSED_A);
-		uint8_t second_f = enter_pressed_a_script(second);
+		uint8_t second_f = second.f;
 		return (HandleMoveModeAPressResult){second.a, second_f, b, c, d, e, second.hl};
 	}
 
@@ -152,7 +139,7 @@ HandleMoveModeAPressResult HandleMoveModeAPress(uint8_t a, uint8_t f, uint8_t b,
 
 	BankswitchROM(saved_bank);
 	CallMapScriptResult second = CallMapScriptPointerIfExists(MAP_SCRIPT_PRESSED_A);
-	uint8_t second_f = enter_pressed_a_script(second);
+	uint8_t second_f = second.f;
 	return (HandleMoveModeAPressResult){second.a, second_f, movement.b, movement.c, object_direction, e, second.hl};
 }
 /* <<< factory HandleMoveModeAPress */

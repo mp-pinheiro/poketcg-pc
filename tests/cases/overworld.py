@@ -1,3 +1,4 @@
+from tests.cases._fixtures import after_duel_fixture, AFTER_DUEL_REGS
 """Oracle-diff cases for poketcg/src/engine/overworld/overworld.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -1127,42 +1128,24 @@ CASES["PCMenu"] = [
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
-# overworld.asm:156-166, seventeen bytes with FOUR exits, one completion each:
-#   wActiveGameEvent == 0 -> mode "return" (`ret z`, event NOT cleared)
-#   1 GAME_EVENT_DUEL          -> pre-ret $49BC (Func_c9bc)
-#   2 GAME_EVENT_BATTLE_CENTER -> pre-ret $7C2B (Func_fc2b)
-#   3 GAME_EVENT_GIFT_CENTER   -> pre-ret $7CAD (Func_fcad)
-# All three targets are verified routines, so this dispatch is the last piece.
-#
-# JumpToFunctionInTable is an excluded leaf-slice resolved in the C body. At the
-# target a = target & 0xFF and hl = target, while f comes from the `adc h` that
-# finishes the index add -- measured 0x00 for all three arms, since `ld` never
-# touches flags. Comparing hl is what verifies the dispatch chose the right arm.
-#
-# Index 0 must be event == 1: at event 0 the mutated index is never computed, so
-# dropping the `dec a` would be invisible there.
+# The pending game event is cleared and its handler runs to completion.
+# Fixture: Func_c141's entry after the practice duel (GAME_EVENT_DUEL, Dr.
+# Mason's lab): the after-duel table names Sam's script and
+# SetNextNPCAndScript loads it. Event 0 returns at once. The battle and gift
+# centers open link sessions that never return without a peer, so they stay
+# uncovered here.
 _C141_EVENT = 0xD0C2
-_C141_SEEDS = (
-    (1, {"mode": "pre-ret", "pc": 0x49BC}),  # index 0: reds the mutation
-    (0, {"mode": "return"}),
-    (2, {"mode": "pre-ret", "pc": 0x7C2B}),
-    (3, {"mode": "pre-ret", "pc": 0x7CAD}),
-    (1, {"mode": "pre-ret", "pc": 0x49BC}),  # POISON registers
-)
-CONTRACT["Func_c141"] = {"compare": ("a", "f", "hl"), "preserve": ("b", "c", "d", "e")}
-CASES["Func_c141"] = []
-for _i, (_ev, _comp) in enumerate(_C141_SEEDS):
-    _base = dict(POISON) if _i == 4 else {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}
-    _base["wram"] = {_C141_EVENT: bytes((_ev,))}
-    _base["read"] = {_C141_EVENT: 1}
-    CASES["Func_c141"].append(_base)
+_C141_READ = {0xD000: 0x400, _C141_EVENT: 1}
+# Only the flags survive the map-script jump (see CallMapScriptPointerIfExists).
+CONTRACT["Func_c141"] = {"compare": ("f",), "preserve": ()}
+CASES["Func_c141"] = [
+    dict(after_duel_fixture(vram=False), read=_C141_READ, **AFTER_DUEL_REGS),
+    dict(after_duel_fixture(vram=False, **{"D0C2": b"\x00"}), read=_C141_READ, **POISON),
+    dict(POISON, wram={_C141_EVENT: b"\x00"}, read={_C141_EVENT: 1}),
+]
 # <<< factory Func_c141
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
-# >>> factory-completion Func_c141
-for _rec, (_ev, _comp) in zip(SCHEMA2_CASES["Func_c141"], _C141_SEEDS):
-    _rec["completion"] = dict(_comp)
-# <<< factory-completion Func_c141
 
 MUTATIONS = {}
 # >>> factory-mutation Func_c6cc
@@ -1409,7 +1392,7 @@ MUTATIONS["Func_c251"] = {"source_symbol": "Func_c251", "before": "/* >>> factor
 MUTATIONS["Func_c241"] = {"source_symbol": "Func_c241", "before": "void Func_c241(void)\n{\n\t(void)SetupText(0x30u, 0x7Fu);", "after": "void Func_c241(void)\n{\n\t(void)SetupText(0x31u, 0x7Fu);", "case_ids": ["Func_c241-0", "Func_c241-1"]}
 # <<< factory-mutation Func_c241
 # >>> factory-mutation Func_c141
-MUTATIONS["Func_c141"] = {"source_symbol": "Func_c141", "before": "\tidx2 = (uint8_t)((uint8_t)(event - 1u) << 1); /* dec a ; add a */", "after": "\tidx2 = (uint8_t)(event << 1); /* dec a ; add a */", "case_ids": ["Func_c141-0"]}
+MUTATIONS["Func_c141"] = {"source_symbol": "Func_c141", "before": "\tgb_write8(wActiveGameEvent_ADDR, 0u);", "after": "\tgb_write8(wActiveGameEvent_ADDR, event);", "case_ids": ["Func_c141-0"]}
 # <<< factory-mutation Func_c141
 # >>> factory-mutation CloseTextBox
 MUTATIONS["CloseTextBox"] = {"source_symbol": "CloseTextBox", "before": "\tflags = (uint8_t)(flags & (uint8_t)~(1u << AUTO_CLOSE_TEXTBOX));", "after": "\tflags = (uint8_t)(flags | (uint8_t)(1u << AUTO_CLOSE_TEXTBOX));", "case_ids": ["CloseTextBox-0", "CloseTextBox-1"]}

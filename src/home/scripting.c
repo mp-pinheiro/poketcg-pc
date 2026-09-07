@@ -1854,20 +1854,18 @@ ScriptCommand_JumpIfNPCLoadedResult ScriptCommand_JumpIfNPCLoaded(uint8_t f, uin
  * what GetMapScriptPointer produced -- and because `hl` IS the jump target,
  * comparing hl is what verifies the transfer. The target is ordinary script code,
  * not a `rst $20`, so no bytecode interpreter is involved on this boundary. */
+/* scripting.asm:98-101: `ret nc` when the map has no script in slot l,
+ * otherwise `jp hl` into the entry, whose exit flags become the caller's. */
 CallMapScriptResult CallMapScriptPointerIfExists(uint8_t l)
 {
 	MapScriptResult r = GetMapScriptPointer(l);
-	return (CallMapScriptResult){r.a, r.f, r.hl};
+	if ((r.f & 0x10u) == 0u)
+		return (CallMapScriptResult){r.a, r.f, r.hl};
+	return (CallMapScriptResult){r.a, ScriptEntryEnter(r.hl), r.hl};
 }
 /* <<< factory CallMapScriptPointerIfExists */
 
 /* >>> factory Func_c9bc */
-/* scripting.asm:91-93 -- four bytes:
- *   ld l, MAP_SCRIPT_AFTER_DUEL / jr CallMapScriptPointerIfExists
- * A tail call, so the exits are the callee's: an ordinary return when the map
- * has no AFTER_DUEL script, or `jp hl` into the script entry when it does. The
- * cases mix completion modes accordingly. Nothing between here and there touches
- * a register, so the result is exactly the callee's. */
 CallMapScriptResult Func_c9bc(void)
 {
 	return CallMapScriptPointerIfExists(MAP_SCRIPT_AFTER_DUEL);

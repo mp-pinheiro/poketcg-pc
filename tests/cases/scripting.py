@@ -1,3 +1,4 @@
+from tests.cases._fixtures import after_duel_fixture, AFTER_DUEL_REGS, load_map_fixture, LOAD_MAP_REGS
 # >>> factory-cases-statics
 wScriptPointer = 0xD413
 wLoadedEventBits = 0xD3D1
@@ -156,14 +157,10 @@ def menu_state(default_yes=0):
 wLoadedNPCTempIndex = 0xD3AA
 wTempNPC = 0xD3AB
 
-_C9B8_CURMAP = 0xD32F
-_C9B8_SEEDS = (
-    (0, {"mode": "pre-ret", "pc": 0x54EC}),
-    (1, {"mode": "pre-ret", "pc": 0x5549}),
-    (2, {"mode": "return"}),
-    (4, {"mode": "pre-ret", "pc": 0x6809}),
-    (1, {"mode": "pre-ret", "pc": 0x5549}),
-)
+# The map-script family reads back the overworld state block.
+_CMSP_CURMAP = 0xD32F
+_CMSP_READ = {0xD000: 0x400, _CMSP_CURMAP: 1}
+
 
 wDefaultObjectText = 0xD0CA
 
@@ -1381,22 +1378,28 @@ CASES["ScriptCommand_WalkPlayerToMasonLaboratory"] = [
 # <<< factory ScriptCommand_WalkPlayerToMasonLaboratory
 
 # >>> factory Func_c9c7
-CONTRACT["Func_c9c7"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+# `ld l, MAP_SCRIPT_CLOSE_TEXTBOX`: the lab's MasonLabCloseTextBox runs on the
+# after-duel fixture; map 0 has no entry. The entry's port is void, so the
+# flags past the jump are not modeled and the contract compares the state.
+CONTRACT["Func_c9c7"] = {"compare": (), "preserve": ()}
 CASES["Func_c9c7"] = [
+    {**after_duel_fixture(), **AFTER_DUEL_REGS, "read": _CMSP_READ},
     {"wram": {0xD32F: b"\x00"}, "read": {0xD32F: 1}},
-    {"wram": {0xD32F: b"\x01"}, "read": {0xD32F: 1}},
-    dict(POISON, wram={0xD32F: b"\x01"}, read={0xD32F: 1}),
+    {**after_duel_fixture(), **POISON, "read": _CMSP_READ},
 ]
 # <<< factory Func_c9c7
 
 # >>> factory Func_c9b8
-CONTRACT["Func_c9b8"] = {"compare": ("a", "f", "hl"), "preserve": ("b", "c", "d", "e")}
-CASES["Func_c9b8"] = []
-for _i, (_map, _comp) in enumerate(_C9B8_SEEDS):
-    _base = dict(POISON) if _i == 4 else {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}
-    _base["wram"] = {_C9B8_CURMAP: bytes((_map,))}
-    _base["read"] = {_C9B8_CURMAP: 1}
-    CASES["Func_c9b8"].append(_base)
+# `ld l, MAP_SCRIPT_LOAD_MAP`: the overworld's LoadOverworld runs (fixture);
+# map 2 has no LOAD_MAP entry. LoadOverworld's port is void, so the flags past
+# the jump are not modeled and the contract compares the state block only. Index 0 reds the mutation: the overworld's
+# AFTER_DUEL slot is empty.
+CONTRACT["Func_c9b8"] = {"compare": (), "preserve": ()}
+CASES["Func_c9b8"] = [
+    {**load_map_fixture(vram=False), **LOAD_MAP_REGS, "read": _CMSP_READ},
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0, "wram": {_CMSP_CURMAP: b"\x02"}, "read": {_CMSP_CURMAP: 1}},
+    {**load_map_fixture(vram=False), **POISON, "read": _CMSP_READ},
+]
 # <<< factory Func_c9b8
 
 # >>> factory ScriptCommand_CloseTextBox
@@ -1425,13 +1428,15 @@ CASES["ScriptCommand_PrintText"] = [
 # <<< factory ScriptCommand_PrintText
 
 # >>> factory Func_c9c0
-CONTRACT["Func_c9c0"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+# `ld l, MAP_SCRIPT_MOVED_PLAYER`: neither the lab (fixture) nor map 0 has an
+# entry, so both return nc; the Water Club's WaterClubMovePlayer runs from the
+# after-duel state with wCurMap retargeted.
+CONTRACT["Func_c9c0"] = {"compare": ("f",), "preserve": ()}
 CASES["Func_c9c0"] = [
+    {**after_duel_fixture(**{"D32F": b"\x0c"}), **AFTER_DUEL_REGS, "read": _CMSP_READ},
     {"wram": {0xD32F: b"\x00"}, "read": {0xD32F: 1}},
-    {"wram": {0xD32F: b"\x0c"}, "read": {0xD32F: 1}},
-    {"wram": {0xD32F: b"\x20"}, "read": {0xD32F: 1}},
-    {"wram": {0xD32F: b"\x01"}, "read": {0xD32F: 1}},
-    dict(POISON, wram={0xD32F: b"\x0c"}, read={0xD32F: 1}),
+    {**after_duel_fixture(), **AFTER_DUEL_REGS, "read": _CMSP_READ},
+    {**after_duel_fixture(**{"D32F": b"\x0c"}), **POISON, "read": _CMSP_READ},
 ]
 # <<< factory Func_c9c0
 
@@ -2066,72 +2071,36 @@ CASES["ScriptCommand_OpenMenu"] = [
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
-# scripting.asm:98-101 is `call GetMapScriptPointer` / `ret nc` / `jp hl`.
-# The two exits need DIFFERENT completion MODES, so the cases mix them:
-#   no script in the slot (carry clear) -> mode "return"
-#   script found (carry set)            -> `jp hl`, so mode "pre-ret" at the
-#                                          map script's own entry address
-# Neither exit touches a register, so both observe GetMapScriptPointer's result.
-# hl IS the jump target, so comparing hl is what verifies the transfer.
-#
-# Entries come from MapScripts (04:562A), indexed wCurMap*16 + l, read off the
-# ROM 2026-08-26. The pointers are ordinary script code, not `rst $20`, so no
-# bytecode interpreter is involved at this boundary.
-_CMSP_CURMAP = 0xD32F
-_CMSP_SEEDS = (
-    (0, 8, {"mode": "pre-ret", "pc": 0x54EC}),  # index 0: found; reds the mutation
-    (0, 0, {"mode": "return"}),                 # slot empty -> ret nc
-    (1, 0, {"mode": "pre-ret", "pc": 0x772F}),
-    (1, 6, {"mode": "pre-ret", "pc": 0x5565}),
-    (0, 8, {"mode": "pre-ret", "pc": 0x54EC}),  # POISON registers
-)
-CONTRACT["CallMapScriptPointerIfExists"] = {"compare": ("a", "f", "hl"), "preserve": ("b", "c", "d", "e")}
-CASES["CallMapScriptPointerIfExists"] = []
-for _i, (_map, _l, _comp) in enumerate(_CMSP_SEEDS):
-    _base = dict(POISON) if _i == 4 else {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0}
-    _base["hl"] = _l
-    _base["wram"] = {_CMSP_CURMAP: bytes((_map,))}
-    _base["read"] = {_CMSP_CURMAP: 1}
-    CASES["CallMapScriptPointerIfExists"].append(_base)
+# scripting.asm:98-101: `ret nc` when the map has no script in slot l, else
+# `jp hl` into it, so the entry runs to completion here. Fixtures: the lab's
+# AFTER_DUEL entry after the practice duel (MasonLaboratoryAfterDuel ->
+# SetNextNPCAndScript); the overworld's LOAD_MAP entry is Func_c9b8's case.
+# Index 0 reds the mutation: slot l+2 of the lab is empty. Only the flags are modeled past the jump (ScriptEntryEnter
+# returns the entry's f where its port declares one, 0 for a void port such as
+# LoadOverworld or MasonLabCloseTextBox); the entry's other exit registers are
+# read by no caller, so the contract compares the flags and the state block.
+CONTRACT["CallMapScriptPointerIfExists"] = {"compare": ("f",), "preserve": ()}
+CASES["CallMapScriptPointerIfExists"] = [
+    {**after_duel_fixture(), **AFTER_DUEL_REGS, "hl": 0x000A, "read": _CMSP_READ},
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0, "wram": {_CMSP_CURMAP: b"\x00"}, "read": {_CMSP_CURMAP: 1}},
+    {**after_duel_fixture(), **POISON, "hl": 0x000A, "read": _CMSP_READ},
+]
 # <<< factory CallMapScriptPointerIfExists
 
 
 # >>> factory Func_c9bc
-# scripting.asm:91-93 is `ld l, MAP_SCRIPT_AFTER_DUEL` / `jr
-# CallMapScriptPointerIfExists` -- a tail call, so the exits are the callee's and
-# the cases mix completion modes: mode "return" when the map has no AFTER_DUEL
-# script, pre-ret at the script entry when it does. Slot l=10 read off MapScripts
-# (04:562A) 2026-08-26: map 0 absent, map 1 $553B, map 2 $589F, map 4 $67F6.
-# Index 0 must be a map whose l=10 and l=12 slots differ, or retargeting the
-# constant to MAP_SCRIPT_MOVED_PLAYER is invisible; map 0 has both absent.
-_C9BC_CURMAP = 0xD32F
-_C9BC_SEEDS = (
-    (1, {"mode": "pre-ret", "pc": 0x553B}),  # index 0: reds the mutation
-    (0, {"mode": "return"}),                 # slot absent -> ret nc
-    (2, {"mode": "pre-ret", "pc": 0x589F}),
-    (4, {"mode": "pre-ret", "pc": 0x67F6}),
-    (1, {"mode": "pre-ret", "pc": 0x553B}),  # POISON registers
-)
-CONTRACT["Func_c9bc"] = {"compare": ("a", "f", "hl"), "preserve": ("b", "c", "d", "e")}
-CASES["Func_c9bc"] = []
-for _i, (_map, _comp) in enumerate(_C9BC_SEEDS):
-    _base = dict(POISON) if _i == 4 else {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}
-    _base["wram"] = {_C9BC_CURMAP: bytes((_map,))}
-    _base["read"] = {_C9BC_CURMAP: 1}
-    CASES["Func_c9bc"].append(_base)
+# `ld l, MAP_SCRIPT_AFTER_DUEL` into CallMapScriptPointerIfExists: the lab's
+# after-duel entry runs (fixture), map 0 has none. Index 0 reds the mutation:
+# the lab's MOVED_PLAYER slot is empty.
+CONTRACT["Func_c9bc"] = {"compare": ("f",), "preserve": ()}
+CASES["Func_c9bc"] = [
+    {**after_duel_fixture(), **AFTER_DUEL_REGS, "read": _CMSP_READ},
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0, "wram": {_CMSP_CURMAP: b"\x00"}, "read": {_CMSP_CURMAP: 1}},
+    {**after_duel_fixture(), **POISON, "read": _CMSP_READ},
+]
 # <<< factory Func_c9bc
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
-# >>> factory-completion Func_c9bc
-for _rec, (_map, _comp) in zip(SCHEMA2_CASES["Func_c9bc"], _C9BC_SEEDS):
-    _rec["completion"] = dict(_comp)
-# <<< factory-completion Func_c9bc
-# >>> factory-completion CallMapScriptPointerIfExists
-# One completion per case, taken from that case's own _CMSP_SEEDS entry so the
-# seeded map/slot and the declared stop point cannot drift apart.
-for _rec, (_map, _l, _comp) in zip(SCHEMA2_CASES["CallMapScriptPointerIfExists"], _CMSP_SEEDS):
-    _rec["completion"] = dict(_comp)
-# <<< factory-completion CallMapScriptPointerIfExists
 
 MUTATIONS = {}
 
@@ -2700,25 +2669,17 @@ MUTATIONS["ScriptCommand_JumpIfNPCLoaded"] = {"source_symbol": "ScriptCommand_Ju
 MUTATIONS["ScriptCommand_WalkPlayerToMasonLaboratory"] = {"source_symbol": "ScriptCommand_WalkPlayerToMasonLaboratory", "before": "\tgb_write8(wOverworldMapSelection_ADDR, OWMAP_MASON_LABORATORY);", "after": "\tgb_write8(wOverworldMapSelection_ADDR, (uint8_t)(OWMAP_MASON_LABORATORY + 1u));", "case_ids": ["ScriptCommand_WalkPlayerToMasonLaboratory-0", "ScriptCommand_WalkPlayerToMasonLaboratory-1"]}
 # <<< factory-mutation ScriptCommand_WalkPlayerToMasonLaboratory
 # >>> factory-mutation CallMapScriptPointerIfExists
-MUTATIONS["CallMapScriptPointerIfExists"] = {"source_symbol": "CallMapScriptPointerIfExists", "before": "\tMapScriptResult r = GetMapScriptPointer(l);", "after": "\tMapScriptResult r = GetMapScriptPointer((uint8_t)(l + 1u));", "case_ids": ["CallMapScriptPointerIfExists-0"]}
+MUTATIONS["CallMapScriptPointerIfExists"] = {"source_symbol": "CallMapScriptPointerIfExists", "before": "\tif ((r.f & 0x10u) == 0u)\n\t\treturn (CallMapScriptResult){r.a, r.f, r.hl};", "after": "\tif ((r.f & 0x10u) != 0u)\n\t\treturn (CallMapScriptResult){r.a, r.f, r.hl};", "case_ids": ["CallMapScriptPointerIfExists-0"]}
 # <<< factory-mutation CallMapScriptPointerIfExists
 # >>> factory-mutation Func_c9bc
 MUTATIONS["Func_c9bc"] = {"source_symbol": "Func_c9bc", "before": "\treturn CallMapScriptPointerIfExists(MAP_SCRIPT_AFTER_DUEL);", "after": "\treturn CallMapScriptPointerIfExists((uint8_t)(MAP_SCRIPT_AFTER_DUEL + 2u));", "case_ids": ["Func_c9bc-0"]}
 # <<< factory-mutation Func_c9bc
 # >>> factory-mutation Func_c9c7
-MUTATIONS["Func_c9c7"] = {"source_symbol": "Func_c9c7", "before": "CallMapScriptResult Func_c9c7(void)\n{\n\treturn CallMapScriptPointerIfExists(0x0eu);", "after": "CallMapScriptResult Func_c9c7(void)\n{\n\treturn CallMapScriptPointerIfExists(0x0fu);", "case_ids": ["Func_c9c7-1", "Func_c9c7-2"]}
+MUTATIONS["Func_c9c7"] = {"source_symbol": "Func_c9c7", "before": "\treturn CallMapScriptPointerIfExists(0x0eu);", "after": "\treturn CallMapScriptPointerIfExists(MAP_SCRIPT_AFTER_DUEL);", "case_ids": ["Func_c9c7-0"]}
 # <<< factory-mutation Func_c9c7
-# >>> factory-completion Func_c9c7
-for _rec, _comp in zip(SCHEMA2_CASES["Func_c9c7"], ({"mode": "return"}, {"mode": "pre-ret", "pc": 0x555E}, {"mode": "pre-ret", "pc": 0x555E})):
-    _rec["completion"] = dict(_comp)
-# <<< factory-completion Func_c9c7
 # >>> factory-mutation Func_c9b8
 MUTATIONS["Func_c9b8"] = {"source_symbol": "Func_c9b8", "before": "CallMapScriptResult Func_c9b8(void)\n{\n\treturn CallMapScriptPointerIfExists(MAP_SCRIPT_LOAD_MAP);", "after": "CallMapScriptResult Func_c9b8(void)\n{\n\treturn CallMapScriptPointerIfExists(0x0Au);", "case_ids": ["Func_c9b8-0", "Func_c9b8-1", "Func_c9b8-3"]}
 # <<< factory-mutation Func_c9b8
-# >>> factory-completion Func_c9b8
-for _rec, (_map, _comp) in zip(SCHEMA2_CASES["Func_c9b8"], _C9B8_SEEDS):
-    _rec["completion"] = dict(_comp)
-# <<< factory-completion Func_c9b8
 # >>> factory-mutation ScriptCommand_CloseTextBox
 MUTATIONS["ScriptCommand_CloseTextBox"] = {"source_symbol": "ScriptCommand_CloseTextBox", "before": "IncreaseScriptPointerResult ScriptCommand_CloseTextBox(void)\n{\n\tCloseTextBox();", "after": "IncreaseScriptPointerResult ScriptCommand_CloseTextBox(void)\n{\n\t(void)0;", "case_ids": ["ScriptCommand_CloseTextBox-0", "ScriptCommand_CloseTextBox-2"]}
 # <<< factory-mutation ScriptCommand_CloseTextBox
@@ -2728,10 +2689,6 @@ MUTATIONS["ScriptCommand_PrintText"] = {"source_symbol": "ScriptCommand_PrintTex
 # >>> factory-mutation Func_c9c0
 MUTATIONS["Func_c9c0"] = {"source_symbol": "Func_c9c0", "before": "CallMapScriptResult Func_c9c0(void)\n{\n\treturn CallMapScriptPointerIfExists(MAP_SCRIPT_MOVED_PLAYER);", "after": "CallMapScriptResult Func_c9c0(void)\n{\n\treturn CallMapScriptPointerIfExists((uint8_t)(MAP_SCRIPT_MOVED_PLAYER + 2u));", "case_ids": ["Func_c9c0-1", "Func_c9c0-2", "Func_c9c0-4"]}
 # <<< factory-mutation Func_c9c0
-# >>> factory-completion Func_c9c0
-for _rec, _comp in zip(SCHEMA2_CASES["Func_c9c0"], ({"mode": "return"}, {"mode": "pre-ret", "pc": 0x613F}, {"mode": "pre-ret", "pc": 0x76C6}, {"mode": "return"}, {"mode": "pre-ret", "pc": 0x613F})):
-    _rec["completion"] = dict(_comp)
-# <<< factory-completion Func_c9c0
 # >>> factory-mutation Func_cc32
 MUTATIONS["Func_cc32"] = {"source_symbol": "Func_cc32", "before": "void Func_cc32(uint16_t hl)\n{\n\tuint16_t de = (uint16_t)wCurrentNPCNameTx |\n\t\t(uint16_t)((uint16_t)gb_read8((uint16_t)(wCurrentNPCNameTx_ADDR + 1u)) << 8);", "after": "void Func_cc32(uint16_t hl)\n{\n\tuint16_t de = 0u;", "case_ids": ["Func_cc32-1", "Func_cc32-2"]}
 # <<< factory-mutation Func_cc32

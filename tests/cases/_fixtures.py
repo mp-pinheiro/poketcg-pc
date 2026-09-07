@@ -91,7 +91,23 @@ class Fixture:
 
 ATTACK = Fixture("practice-win-attack-entry")
 ATTACK_REGS = ATTACK.regs
+# Func_c141's entry after the practice duel: wActiveGameEvent = GAME_EVENT_DUEL,
+# Dr. Mason's lab loaded, Sam's after-duel script about to be dispatched.
+AFTER_DUEL = Fixture("practice-win-after-duel-entry")
+AFTER_DUEL_REGS = AFTER_DUEL.regs
+# Func_c9b8's entry at the game's start: wCurMap = OVERWORLD_MAP, so the
+# LOAD_MAP slot is LoadOverworld (Func_d4fb, then Script_BeginGame).
+LOAD_MAP = Fixture("practice-win-load-map-entry")
+LOAD_MAP_REGS = LOAD_MAP.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return ATTACK.case(vram=vram, bank=bank, **changes)
+
+
+def after_duel_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AFTER_DUEL.case(vram=vram, bank=bank, **changes)
+
+
+def load_map_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return LOAD_MAP.case(vram=vram, bank=bank, **changes)
