@@ -4,6 +4,7 @@
 #include "runtime.h"
 #include "shell.h"
 #include "checkpoint.h"
+#include "digest.h"
 #include "trace.h"
 
 #include <errno.h>
@@ -209,6 +210,8 @@ int main(int argc, char **argv)
 	const char *input_path = NULL;
 	const char *input_ordinal_path = NULL;
 	const char *record_input_path = NULL;
+	const char *digest_out_path = NULL;
+	const char *digest_mask_path = NULL;
 	const char *dump_state_ordinals_text = NULL;
 	uint32_t *dump_ordinals = NULL;
 	size_t dump_ordinal_count = 0;
@@ -251,6 +254,10 @@ int main(int argc, char **argv)
 			input_ordinal_path = argv[++i];
 		} else if (strcmp(argv[i], "--record-input") == 0 && i + 1 < argc) {
 			record_input_path = argv[++i];
+		} else if (strcmp(argv[i], "--digest-out") == 0 && i + 1 < argc) {
+			digest_out_path = argv[++i];
+		} else if (strcmp(argv[i], "--digest-mask") == 0 && i + 1 < argc) {
+			digest_mask_path = argv[++i];
 		} else if (strcmp(argv[i], "--dump-state-ordinals") == 0 && i + 1 < argc) {
 			dump_state_ordinals_text = argv[++i];
 			if (parse_frame_list(dump_state_ordinals_text, &dump_ordinals,
@@ -276,6 +283,7 @@ int main(int argc, char **argv)
 			       "[--dump-state PATH] [--dump-state-frames N[,N...]] "
 			       "[--input PATH] [--input-ordinal PATH] [--record-input PATH] "
 			       "[--dump-state-ordinals N[,N...]] [--stop-ordinal N] "
+			       "[--digest-out PATH [--digest-mask FILE]] "
 			       "[--trace-entries PATH] [--trace-calls PATH] "
 			       "[--load-checkpoint PATH]\n");
 			printf("--frames 0 runs until the window closes\n");
@@ -286,6 +294,8 @@ int main(int argc, char **argv)
 			       "exact file --input-ordinal replays\n");
 			printf("--dump-state-ordinals and --stop-ordinal count DoFrames, "
 			       "not host frames\n");
+			printf("--digest-out writes 16 bytes per DoFrame: CRC-32 of WRAM, HRAM, "
+			       "OAM and VRAM with --digest-mask ranges zeroed\n");
 			printf("--trace-calls needs a build configured with "
 			       "-DPOKETCG_TRACE=ON; without it the dump is empty\n");
 			printf("--load-checkpoint injects a reference state and skips boot; "
@@ -361,6 +371,16 @@ int main(int argc, char **argv)
 			return 2;
 		}
 	}
+	if (digest_out_path && digest_open(digest_out_path, digest_mask_path) != 0) {
+		fprintf(stderr, "cannot open --digest-out %s: %s\n",
+		        digest_out_path, strerror(errno));
+		if (record_sink)
+			fclose(record_sink);
+		free(ordinal_buttons);
+		free(input_buttons);
+		rom_pack_free();
+		return 2;
+	}
 	Shell *shell = shell_create(&config);
 	if (!shell) {
 		if (record_sink)
@@ -397,6 +417,10 @@ int main(int argc, char **argv)
 	int status = input_count
 		? runtime_run_with_input(shell, frame_limit, input_buttons, input_count, &runtime)
 		: runtime_run(shell, frame_limit, &runtime);
+	if (digest_out_path && digest_close() != 0) {
+		fprintf(stderr, "cannot finish --digest-out %s\n", digest_out_path);
+		status = 1;
+	}
 	if (record_sink && fclose(record_sink) != 0) {
 		fprintf(stderr, "cannot finish --record-input %s: %s\n",
 		        record_input_path, strerror(errno));

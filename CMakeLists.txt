@@ -214,7 +214,7 @@ else()
 	message(STATUS "SDL2 backend: compiled out (headers unavailable or unusable)")
 endif()
 
-set(POKETCG_SHELL_SOURCES src/main.c src/checkpoint.c src/persistence.c src/runtime.c src/shell.c src/state_dump.c)
+set(POKETCG_SHELL_SOURCES src/main.c src/checkpoint.c src/digest.c src/persistence.c src/runtime.c src/shell.c src/state_dump.c)
 add_executable(poketcg ${POKETCG_SHELL_SOURCES})
 target_include_directories(poketcg PRIVATE "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(poketcg PRIVATE Threads::Threads)

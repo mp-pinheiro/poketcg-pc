@@ -1,6 +1,7 @@
 #include "runtime.h"
 
 #include "bank_guard.h"
+#include "digest.h"
 #include "generated/wram.h"
 #include "home/frames.h"
 #include "home/game_loop.h"
@@ -186,6 +187,7 @@ static void anchor(void *context)
 		if ((ordinal & 0xFFu) == 0u)
 			fflush(g_record_sink);
 	}
+	digest_anchor(ordinal);
 	if (!g_ordinal_dump_callback)
 		return;
 	for (size_t i = 0; i < g_ordinal_dump_count; i++) {
