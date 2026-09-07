@@ -1192,7 +1192,13 @@ CASES["PickRandomBenchPokemon"] = [
 
 # >>> factory PracticeDuel_VerifyPlayerTurnActions
 CONTRACT["PracticeDuel_VerifyPlayerTurnActions"] = {"compare": ("f",), "preserve": ()}
+# The practice-duel attack state is the player's turn 1 with Goldeen ($53)
+# selected: PracticeDuelVerify_Turn1 accepts it. Any other card is the wrong
+# action: Dr. Mason's "follow my guidance" text and the turn's saved duel data
+# reloaded from the SRAM backup, carry set.
 CASES["PracticeDuel_VerifyPlayerTurnActions"] = [
+    dict(_attack_fixture(vram=False), read={0xC200: 0x200, 0xCC00: 0x100, 0xCBFE: 1}, **_ATTACK_REGS),
+    dict(_attack_fixture(vram=False, **{"CCC2": b"\x54"}), read={0xC200: 0x200, 0xCC00: 0x100, 0xCBFE: 1}, **POISON),
     dict(POISON, wram={0xFF97: b"\xC2", 0xCC06: b"\x00", 0xCCC2: b"\x53"}),
 ]
 # <<< factory PracticeDuel_VerifyPlayerTurnActions
@@ -6345,7 +6351,7 @@ MUTATIONS["MoveAllTurnHolderKnockedOutPokemonToDiscardPile"] = {
 }
 # <<< factory-mutation MoveAllTurnHolderKnockedOutPokemonToDiscardPile
 # >>> factory-mutation PracticeDuel_VerifyPlayerTurnActions
-MUTATIONS["PracticeDuel_VerifyPlayerTurnActions"] = {"source_symbol": "PracticeDuel_VerifyPlayerTurnActions", "before": "card == 0x53u", "after": "card == 0x54u", "case_ids": ["PracticeDuel_VerifyPlayerTurnActions-0"]}
+MUTATIONS["PracticeDuel_VerifyPlayerTurnActions"] = {"source_symbol": "PracticeDuel_VerifyPlayerTurnActions", "before": "\tcase 0: f = PracticeDuelVerify_Turn1().f; break;", "after": "\tcase 0: f = PracticeDuelVerify_Turn2().f; break;", "case_ids": ["PracticeDuel_VerifyPlayerTurnActions-0"]}
 # <<< factory-mutation PracticeDuel_VerifyPlayerTurnActions
 # >>> factory-mutation PrintCardNameFromCardIDInTextBox
 MUTATIONS["PrintCardNameFromCardIDInTextBox"] = {

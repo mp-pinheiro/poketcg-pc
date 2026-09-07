@@ -3424,42 +3424,25 @@ uint8_t PickRandomBenchPokemon(void)
 
 /* >>> factory PracticeDuel_VerifyPlayerTurnActions */
 /* core.asm:2701-2712 */
+/* core.asm:2701-2722. wDuelTurns >> 1 indexes PracticeDuelTurnVerificationPointerTable
+ * (core.asm:2912-2920); a wrong action falls through into
+ * PracticeDuel_RepeatInstructions, which restores the turn's saved duel data
+ * and returns carry. */
 PracticeDuelTurnActionsResult PracticeDuel_VerifyPlayerTurnActions(void)
 {
-	uint8_t turn = (uint8_t)(wDuelTurns >> 1);
-	uint8_t card = gb_read8(wTempCardID_ccc2_ADDR);
-	uint8_t attack = gb_read8(wSelectedAttack_ADDR);
-	EnergiesResult energy;
-	uint8_t ok;
-	switch (turn) {
-	case 0: ok = card == 0x53u; break;
-	case 1:
-		energy = GetPlayAreaCardAttachedEnergies(0);
-		ok = card == 0x54u && attack == 1u &&
-		     gb_read8((uint16_t)(wAttachedEnergies_ADDR + 5u));
-		break;
-	case 2:
-		energy = GetPlayAreaCardAttachedEnergies(1);
-		ok = card == 0x54u && gb_read8((uint16_t)(wAttachedEnergies_ADDR + 2u));
-		break;
-	case 3:
-		energy = GetPlayAreaCardAttachedEnergies(2);
-		ok = wPlayerNumberOfPokemonInPlayArea == 3u &&
-		     gb_read8((uint16_t)(wAttachedEnergies_ADDR + 2u)) &&
-		     card == 0x54u && attack == 1u;
-		break;
-	case 4:
-		energy = GetPlayAreaCardAttachedEnergies(0);
-		ok = gb_read8((uint16_t)(wAttachedEnergies_ADDR + 2u)) == 2u && card == 0x55u;
-		break;
-	case 5:
-		energy = GetPlayAreaCardAttachedEnergies(0);
-		ok = gb_read8((uint16_t)(wAttachedEnergies_ADDR + 2u)) == 3u &&
-		     wPlayerArenaCardHP == 40u && card == 0x55u;
-		break;
-	default: ok = card == 0x56u && attack == 1u; break;
+	uint8_t f;
+	switch ((uint8_t)(wDuelTurns >> 1)) {
+	case 0: f = PracticeDuelVerify_Turn1().f; break;
+	case 1: f = PracticeDuelVerify_Turn2().f; break;
+	case 2: f = PracticeDuelVerify_Turn3().f; break;
+	case 3: f = PracticeDuelVerify_Turn4().f; break;
+	case 4: f = PracticeDuelVerify_Turn5().f; break;
+	case 5: f = PracticeDuelVerify_Turn6().f; break;
+	default: f = PracticeDuelVerify_Turn7Or8().f; break;
 	}
-	return (PracticeDuelTurnActionsResult){ok ? 0xC0u : 0x10u};
+	if ((f & 0x10u) == 0u)
+		return (PracticeDuelTurnActionsResult){f};
+	return (PracticeDuelTurnActionsResult){PracticeDuel_RepeatInstructions()};
 }
 /* <<< factory PracticeDuel_VerifyPlayerTurnActions */
 
