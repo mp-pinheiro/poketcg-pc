@@ -6363,7 +6363,8 @@ void DrawCardPageSurroundingBox(void)
 	DrawRegularTextBox(&hl, 0u, 20u, 18u, 0u, 0u);
 	hl = wTextBoxFrameType_ADDR;
 	gb_write8(wTextBoxFrameType_ADDR, (uint8_t)(gb_read8(wTextBoxFrameType_ADDR) & 0x7fu));
-	SendCardAttrBlkPacketResult result = ApplyBGP6OrSGB3ToCardImage(0u, 0u, 0u, 0u, 4u, 6u, hl);
+	/* core.asm:4489 `lb de, 6, 4`: the image sits at x 6, y 4. */
+	SendCardAttrBlkPacketResult result = ApplyBGP6OrSGB3ToCardImage(0u, 0u, 0u, 0u, 6u, 4u, hl);
 	(void)result;
 }
 /* <<< factory DrawCardPageSurroundingBox */

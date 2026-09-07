@@ -1224,9 +1224,12 @@ CASES["SortTempHandByIDList"] = [
 
 # >>> factory ApplyCardCGBAttributes
 CONTRACT["ApplyCardCGBAttributes"] = {"compare": (), "preserve": ()}
+# VBK only switches when wConsole ($CAB4) says CGB (src/mem.c), as on the
+# reference's own hardware, so the attribute rectangle needs that seed to land
+# in bank 1 on both lanes.
 CASES["ApplyCardCGBAttributes"] = [
-    {"a": 0x06, "d": 0x02, "e": 0x03, "vread": {1: {0x9862: 0xA8}}},
-    dict(POISON, a=0x07, d=0x09, e=0x05),
+    {"a": 0x06, "d": 0x02, "e": 0x03, "wram": {0xCAB4: b"\x02"}, "vread": {0: {0x9862: 0xA8}, 1: {0x9862: 0xA8}}},
+    dict(POISON, a=0x07, d=0x09, e=0x05, wram={0xCAB4: b"\x02"}, vread={0: {0x9800: 0x400}, 1: {0x9800: 0x400}}),
 ]
 # <<< factory ApplyCardCGBAttributes
 # >>> factory ApplyStatusConditionToArenaPokemon
@@ -3532,9 +3535,12 @@ CASES["DrawLargePictureOfCard"] = [
 
 # >>> factory DrawCardPageSurroundingBox
 CONTRACT["DrawCardPageSurroundingBox"] = {"compare": (), "preserve": ()}
+# On CGB (wConsole $CAB4 = 2) the 8x6 card image at (6,4) gets BG palette 6
+# in the VRAM bank 1 attribute map; both banks of the BG map are read back.
 CASES["DrawCardPageSurroundingBox"] = [
     {"wram": {0xCCF3: b"\x00"}, "expect": {0xCCF3: b"\x00"}},
     dict(POISON, wram={0xCCF3: b"\x00"}, expect={0xCCF3: b"\x00"}),
+    dict(POISON, wram={0xCCF3: b"\x00", 0xCAB4: b"\x02"}, vread={0: {0x9800: 0x400}, 1: {0x9800: 0x400}}),
 ]
 # <<< factory DrawCardPageSurroundingBox
 
