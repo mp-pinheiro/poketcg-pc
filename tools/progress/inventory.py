@@ -34,9 +34,15 @@ DATA_RE = re.compile(r'^\s*(?:dw|db|dn|table_width|dr|ds)\b', re.I)
 INSTR = set("""adc add and bit call ccf cp cpl daa dec di ei halt inc jp jr ld ldh ldi ldd
 nop or pop push res ret reti rl rla rlc rlca rr rra rrc rrca rst sbc scf set sla sra srl
 stop sub swap xor""".split())
+# Every macro in poketcg/src/macros/code.asm expands to instructions; a routine
+# whose first line is one of them (MasonLabLoadMap opens with get_event_value)
+# is code, not data.
 CODE_MACROS = {"farcall", "bank1call", "homecall", "callab", "callba", "ldtx", "lb",
                "jumptable", "fallthrough", "jp_hl", "debug_ret", "rst",
-               "handle_dmg_or_cgb", "sgb_command"}
+               "handle_dmg_or_cgb", "sgb_command",
+               "lb", "ldtx", "bank1call", "farcall",
+               "set_event_value", "set_event_false", "set_event_zero", "max_event_value",
+               "get_event_value", "debug_nop", "retbc", "ldgbpal"}
 SKIP_TOKENS = {"SECTION", "INCLUDE", "ENDC", "IF", "ELSE", "ENDM", "MACRO", "REPT",
                "ENDR", "ASSERT", "UNION", "NEXTU", "ENDU", "DEF", "CHARMAP", "PUSHS",
                "POPS", "RSSET", "EXPORT"}
