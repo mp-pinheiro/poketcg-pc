@@ -1,6 +1,8 @@
 {
   "axis_match": true,
   "axis_mismatch_ordinal": null,
+  "ceiling": 48437,
+  "ceiling_reason": "Duel Escape glitch: at DoFrame 48438 the movie presses Down+A in the In Play Area screen with the cursor at INPLAYAREA_PLAYER_PLAY_AREA ($10); play_area.asm's 16-entry .PositionsJumpTable is indexed past its end and the ROM jumps to 6:52FA, executing AttackAnimation_* data and then bank 23 text as instructions. The port does not follow arbitrary code execution.",
   "derived_from": "build/completion/tas/input.txt",
   "goal": "TASVideos 5530S replayed by the reference; the ROM's own route, boot to wherever it desyncs",
   "movie_frames": 78207,

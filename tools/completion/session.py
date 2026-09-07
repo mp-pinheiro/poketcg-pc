@@ -496,7 +496,18 @@ def verify(name: str, *, write: bool, json_path: Path | None) -> int:
                                      lag_path=lag_path, digest_out=digest_path, mask_path=mask_path)
         native = digest_path.read_bytes() if digest_path.is_file() else b""
         ordinal, reached, regions, audio_first = first_divergence(reference, native)
-        if ordinal is None and reached < n:
+        # A session may declare a ceiling: the last ordinal the ROM's own
+        # route is defined C code. tas-5530s takes the Duel Escape glitch at
+        # 48438 (an out-of-table jump into attack animation data, executed as
+        # instructions); no port follows arbitrary code execution, so the
+        # session is clean once it matches through the ceiling.
+        ceiling = meta.get("ceiling")
+        if ceiling is not None and (ordinal is None or ordinal > ceiling) and reached >= ceiling:
+            status, confirmed = "clean", ceiling
+            if ordinal is not None:
+                print(f"CEILING {name} ordinal={ceiling}: {meta.get('ceiling_reason', '')}")
+                ordinal = None
+        elif ordinal is None and reached < n:
             status, confirmed = "native-short", reached
         elif ordinal is None:
             status, confirmed = "clean", n
