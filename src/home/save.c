@@ -30,7 +30,6 @@ static uint8_t save_src_read8(uint16_t addr)
 /* CopyGeneralSaveDataToSRAM:: save.asm:93-179 */
 void CopyGeneralSaveDataToSRAM(uint16_t de)
 {
-	frame_boundary_timer_sync();
 	uint16_t header = de;
 	uint16_t dst = (uint16_t)(de + (sGeneralSaveDataHeaderEnd_ADDR - sGeneralSaveData_ADDR));
 	uint16_t byte_count = 0, checksum = 0;
@@ -62,6 +61,13 @@ void CopyGeneralSaveDataToSRAM(uint16_t de)
 
 		n = count ? count : 0x10000u;
 		while (n--) {
+			/* The timer sync point is this read of wPlayTimeCounter's first
+			 * byte (save.asm .loop_bytes, 04:52FD with hl = wPlayTimeCounter),
+			 * not the routine's entry: a timer ISR between the two put one
+			 * more tick into the reference's saved play time than the
+			 * port's, and the checksum showed it. */
+			if (src == wPlayTimeCounter_ADDR)
+				frame_boundary_timer_sync();
 			uint8_t v = save_src_read8(src++);
 
 			gb_write8(dst++, v);
