@@ -38,6 +38,25 @@ CASES["RockClubLobbyAfterDuel"] = [
 ]
 # <<< factory RockClubLobbyAfterDuel
 
+# >>> factory Preload_Lass3
+CONTRACT["Preload_Lass3"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Preload_Lass3"] = [
+    {"wram": {0xD3D8: b"\x00"}},
+    {"wram": {0xD3D8: b"\x02"}},
+    dict(POISON, wram={0xD3D8: b"\x02"}),
+]
+# <<< factory Preload_Lass3
+
+# >>> factory Preload_ChrisInRockClubLobby
+CONTRACT["Preload_ChrisInRockClubLobby"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Preload_ChrisInRockClubLobby"] = [
+    {"wram": {0xD3D5: b"\x00"}},
+    {"wram": {0xD3D5: b"\x10"}},
+    {"wram": {0xD3D5: b"\x80"}},
+    dict(POISON, wram={0xD3D5: b"\x90"}),
+]
+# <<< factory Preload_ChrisInRockClubLobby
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -45,3 +64,9 @@ MUTATIONS = {}
 # >>> factory-mutation RockClubLobbyAfterDuel
 MUTATIONS["RockClubLobbyAfterDuel"] = {"source_symbol": "RockClubLobbyAfterDuel", "before": "	FindEndOfDuelScriptResult r = FindEndOfDuelScript(RockClubLobbyAfterDuelTable);", "after": "	FindEndOfDuelScriptResult r = FindEndOfDuelScript((uint16_t)(RockClubLobbyAfterDuelTable + 1u));", "case_ids": ["RockClubLobbyAfterDuel-0"]}
 # <<< factory-mutation RockClubLobbyAfterDuel
+# >>> factory-mutation Preload_Lass3
+MUTATIONS["Preload_Lass3"] = {"source_symbol": "Preload_Lass3", "before": "\tif (a < TRUE)\n\t\tf |= 0x10u;", "after": "\tif (a <= TRUE)\n\t\tf |= 0x10u;", "case_ids": ["Preload_Lass3-1"]}
+# <<< factory-mutation Preload_Lass3
+# >>> factory-mutation Preload_ChrisInRockClubLobby
+MUTATIONS["Preload_ChrisInRockClubLobby"] = {"source_symbol": "Preload_ChrisInRockClubLobby", "before": "\tif (a < PUPIL_DEFEATED)\n\t\tf |= 0x10u;", "after": "\tif (a <= PUPIL_DEFEATED)\n\t\tf |= 0x10u;", "case_ids": ["Preload_ChrisInRockClubLobby-2"]}
+# <<< factory-mutation Preload_ChrisInRockClubLobby

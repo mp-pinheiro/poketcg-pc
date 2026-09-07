@@ -43,9 +43,29 @@ static void adapt_FireClubLobbyAfterDuel(ProbeState *s)
 }
 /* <<< factory FireClubLobbyAfterDuel */
 
+/* >>> factory Preload_Lad2 */
+static void adapt_Preload_Lad2(ProbeState *s)
+{
+	PreloadLad2Result r = Preload_Lad2();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Preload_Lad2 */
+
+/* >>> factory Preload_JessicaInFireClubLobby */
+static void adapt_Preload_JessicaInFireClubLobby(ProbeState *s)
+{
+	PreloadJessicaInFireClubLobbyResult r = Preload_JessicaInFireClubLobby();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Preload_JessicaInFireClubLobby */
+
 const ProbeEntry probe_entries_fire_club_lobby[] = {
 	{ "FindExtraInteractableObjects", adapt_FindExtraInteractableObjects },
 	{ "FireClubPressedA", adapt_FireClubPressedA },
 	{ "FireClubLobbyAfterDuel", adapt_FireClubLobbyAfterDuel },
+	{ "Preload_Lad2", adapt_Preload_Lad2 },
+	{ "Preload_JessicaInFireClubLobby", adapt_Preload_JessicaInFireClubLobby },
 	{ NULL, NULL },
 };

@@ -11,4 +11,8 @@ ScienceClubLobbyAfterDuelResult ScienceClubLobbyAfterDuel(void);
 typedef struct { uint8_t a; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } ScriptSpecs2Result;
 ScriptSpecs2Result Script_Specs2(void);
 /* <<< factory Script_Specs2 */
+/* >>> factory Preload_ImakuniInScienceClubLobby */
+typedef struct { uint8_t a; uint8_t f; } PreloadImakuniInScienceClubLobbyResult;
+PreloadImakuniInScienceClubLobbyResult Preload_ImakuniInScienceClubLobby(void);
+/* <<< factory Preload_ImakuniInScienceClubLobby */
 #endif /* POKETCG_HOME_SCIENCE_CLUB_LOBBY_H */

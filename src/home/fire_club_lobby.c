@@ -16,6 +16,10 @@
 #include "home/grass_club_entrance.h"
 #include "mem.h"
 #define AFTER_DUEL_TABLE_830 0x6D50u
+#define EVENT_LAD2_STATE 0x21u
+#define LAD2_SLOWPOKE_AVAILABLE 0x01u
+#define EVENT_PUPIL_JESSICA_STATE 0x20u
+#define PUPIL_DEFEATED 0x08u
 /* <<< factory statics */
 
 /* >>> factory FindExtraInteractableObjects */
@@ -62,3 +66,38 @@ FireClubLobbyAfterDuelResult FireClubLobbyAfterDuel(void)
 	return (FireClubLobbyAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }
 /* <<< factory FireClubLobbyAfterDuel */
+
+/* >>> factory Preload_Lad2 */
+/* fire_club_lobby.asm:150-153: `cp LAD2_SLOWPOKE_AVAILABLE` on the event value; carry loads the NPC. */
+PreloadLad2Result Preload_Lad2(void)
+{
+	uint8_t a = GetEventValue(EVENT_LAD2_STATE);
+	uint8_t f = 0x40u;
+	if (a == LAD2_SLOWPOKE_AVAILABLE)
+		f |= 0x80u;
+	if ((a & 0x0Fu) < (LAD2_SLOWPOKE_AVAILABLE & 0x0Fu))
+		f |= 0x20u;
+	if (a < LAD2_SLOWPOKE_AVAILABLE)
+		f |= 0x10u;
+	return (PreloadLad2Result){a, f};
+}
+/* <<< factory Preload_Lad2 */
+
+/* >>> factory Preload_JessicaInFireClubLobby */
+/* fire_club_lobby.asm:58-63: `or a` returns an inactive pupil with Z; otherwise
+ * `cp PUPIL_DEFEATED`, whose carry -- not yet defeated -- loads the pupil. */
+PreloadJessicaInFireClubLobbyResult Preload_JessicaInFireClubLobby(void)
+{
+	uint8_t a = GetEventValue(EVENT_PUPIL_JESSICA_STATE);
+	if (a == 0u)
+		return (PreloadJessicaInFireClubLobbyResult){a, 0x80u};
+	uint8_t f = 0x40u;
+	if (a == PUPIL_DEFEATED)
+		f |= 0x80u;
+	if ((a & 0x0Fu) < (PUPIL_DEFEATED & 0x0Fu))
+		f |= 0x20u;
+	if (a < PUPIL_DEFEATED)
+		f |= 0x10u;
+	return (PreloadJessicaInFireClubLobbyResult){a, f};
+}
+/* <<< factory Preload_JessicaInFireClubLobby */

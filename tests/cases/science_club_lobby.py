@@ -38,6 +38,19 @@ CASES["ScienceClubLobbyAfterDuel"] = [
 ]
 # <<< factory ScienceClubLobbyAfterDuel
 
+# EVENT_IMAKUNI_STATE is bits 7-6 of $D3D4, EVENT_TEMP_DUELED_IMAKUNI bit 4 of
+# $D411, EVENT_IMAKUNI_ROOM bits 3-2 of $D3DD (scripting.asm EventVarMasks).
+# >>> factory Preload_ImakuniInScienceClubLobby
+CONTRACT["Preload_ImakuniInScienceClubLobby"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Preload_ImakuniInScienceClubLobby"] = [
+    {"wram": {0xD3D4: b"\x80", 0xD411: b"\x00", 0xD3DD: b"\x04"}, "read": {0xD3D4: 1, 0xD3DD: 1}},
+    {"wram": {0xD3D4: b"\x80", 0xD411: b"\x00", 0xD3DD: b"\x08"}, "read": {0xD3D4: 1, 0xD3DD: 1}},
+    {"wram": {0xD3D4: b"\x80", 0xD411: b"\x10", 0xD3DD: b"\x04"}, "read": {0xD3D4: 1, 0xD3DD: 1}},
+    {"wram": {0xD3D4: b"\x00", 0xD411: b"\x00", 0xD3DD: b"\x04"}, "read": {0xD3D4: 1, 0xD3DD: 1}},
+    dict(POISON, wram={0xD3D4: b"\x40", 0xD411: b"\x00", 0xD3DD: b"\x04"}, read={0xD3D4: 1, 0xD3DD: 1}),
+]
+# <<< factory Preload_ImakuniInScienceClubLobby
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Script_Specs2
@@ -93,3 +106,6 @@ MUTATIONS["ScienceClubLobbyAfterDuel"] = {"source_symbol": "ScienceClubLobbyAfte
 # >>> factory-mutation Script_Specs2
 MUTATIONS["Script_Specs2"] = {"source_symbol": "Script_Specs2", "before": "\tuint8_t c = (uint8_t)(rng & 0x03u);", "after": "\tuint8_t c = (uint8_t)(rng & 0x01u);", "case_ids": ["Script_Specs2-0", "Script_Specs2-3", "Script_Specs2-4"]}
 # <<< factory-mutation Script_Specs2
+# >>> factory-mutation Preload_ImakuniInScienceClubLobby
+MUTATIONS["Preload_ImakuniInScienceClubLobby"] = {"source_symbol": "Preload_ImakuniInScienceClubLobby", "before": "\tif (room != IMAKUNI_SCIENCE_CLUB)", "after": "\tif (room == IMAKUNI_SCIENCE_CLUB)", "case_ids": ["Preload_ImakuniInScienceClubLobby-0", "Preload_ImakuniInScienceClubLobby-1"]}
+# <<< factory-mutation Preload_ImakuniInScienceClubLobby

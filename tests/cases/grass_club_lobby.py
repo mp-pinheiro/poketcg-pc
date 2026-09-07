@@ -38,6 +38,15 @@ CASES["GrassClubLobbyAfterDuel"] = [
 ]
 # <<< factory GrassClubLobbyAfterDuel
 
+# >>> factory Preload_Gal2
+CONTRACT["Preload_Gal2"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Preload_Gal2"] = [
+    {"wram": {0xD3D8: b"\x00"}},
+    {"wram": {0xD3D8: b"\x02"}},
+    dict(POISON, wram={0xD3D8: b"\x02"}),
+]
+# <<< factory Preload_Gal2
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -45,3 +54,6 @@ MUTATIONS = {}
 # >>> factory-mutation GrassClubLobbyAfterDuel
 MUTATIONS["GrassClubLobbyAfterDuel"] = {"source_symbol": "GrassClubLobbyAfterDuel", "before": "\tFindEndOfDuelScriptResult r = FindEndOfDuelScript(GrassClubLobbyAfterDuelTable);", "after": "\tFindEndOfDuelScriptResult r = FindEndOfDuelScript((uint16_t)(GrassClubLobbyAfterDuelTable + 1u));", "case_ids": ["GrassClubLobbyAfterDuel-0"]}
 # <<< factory-mutation GrassClubLobbyAfterDuel
+# >>> factory-mutation Preload_Gal2
+MUTATIONS["Preload_Gal2"] = {"source_symbol": "Preload_Gal2", "before": "\tif (a < TRUE)\n\t\tf |= 0x10u;", "after": "\tif (a <= TRUE)\n\t\tf |= 0x10u;", "case_ids": ["Preload_Gal2-1"]}
+# <<< factory-mutation Preload_Gal2

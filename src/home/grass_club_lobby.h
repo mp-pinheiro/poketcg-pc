@@ -7,4 +7,8 @@
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } GrassClubLobbyAfterDuelResult;
 GrassClubLobbyAfterDuelResult GrassClubLobbyAfterDuel(void);
 /* <<< factory GrassClubLobbyAfterDuel */
+/* >>> factory Preload_Gal2 */
+typedef struct { uint8_t a; uint8_t f; } PreloadGal2Result;
+PreloadGal2Result Preload_Gal2(void);
+/* <<< factory Preload_Gal2 */
 #endif /* POKETCG_HOME_GRASS_CLUB_LOBBY_H */

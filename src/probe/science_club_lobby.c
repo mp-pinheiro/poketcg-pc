@@ -31,8 +31,18 @@ static void adapt_Script_Specs2(ProbeState *s)
 }
 /* <<< factory Script_Specs2 */
 
+/* >>> factory Preload_ImakuniInScienceClubLobby */
+static void adapt_Preload_ImakuniInScienceClubLobby(ProbeState *s)
+{
+	PreloadImakuniInScienceClubLobbyResult r = Preload_ImakuniInScienceClubLobby();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Preload_ImakuniInScienceClubLobby */
+
 const ProbeEntry probe_entries_science_club_lobby[] = {
 	{ "Script_Specs2", adapt_Script_Specs2 },
 	{ "ScienceClubLobbyAfterDuel", adapt_ScienceClubLobbyAfterDuel },
+	{ "Preload_ImakuniInScienceClubLobby", adapt_Preload_ImakuniInScienceClubLobby },
 	{ NULL, NULL },
 };

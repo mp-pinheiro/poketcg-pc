@@ -38,6 +38,28 @@ CASES["WaterClubLobbyAfterDuel"] = [
 ]
 # <<< factory WaterClubLobbyAfterDuel
 
+# >>> factory Preload_Man2
+CONTRACT["Preload_Man2"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Preload_Man2"] = [
+    {"wram": {0xD3DD: b"\x00"}},
+    {"wram": {0xD3DD: b"\x20"}},
+    dict(POISON, wram={0xD3DD: b"\x30"}),
+]
+# <<< factory Preload_Man2
+
+# EVENT_IMAKUNI_STATE is bits 7-6 of $D3D4, EVENT_TEMP_DUELED_IMAKUNI bit 4 of
+# $D411, EVENT_IMAKUNI_ROOM bits 3-2 of $D3DD (scripting.asm EventVarMasks).
+# >>> factory Preload_ImakuniInWaterClubLobby
+CONTRACT["Preload_ImakuniInWaterClubLobby"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Preload_ImakuniInWaterClubLobby"] = [
+    {"wram": {0xD3D4: b"\x80", 0xD411: b"\x00", 0xD3DD: b"\x0C"}, "read": {0xD3D4: 1, 0xD3DD: 1}},
+    {"wram": {0xD3D4: b"\x80", 0xD411: b"\x00", 0xD3DD: b"\x00"}, "read": {0xD3D4: 1, 0xD3DD: 1}},
+    {"wram": {0xD3D4: b"\x80", 0xD411: b"\x10", 0xD3DD: b"\x0C"}, "read": {0xD3D4: 1, 0xD3DD: 1}},
+    {"wram": {0xD3D4: b"\x00", 0xD411: b"\x00", 0xD3DD: b"\x0C"}, "read": {0xD3D4: 1, 0xD3DD: 1}},
+    dict(POISON, wram={0xD3D4: b"\x40", 0xD411: b"\x00", 0xD3DD: b"\x0C"}, read={0xD3D4: 1, 0xD3DD: 1}),
+]
+# <<< factory Preload_ImakuniInWaterClubLobby
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -45,3 +67,9 @@ MUTATIONS = {}
 # >>> factory-mutation WaterClubLobbyAfterDuel
 MUTATIONS["WaterClubLobbyAfterDuel"] = {"source_symbol": "WaterClubLobbyAfterDuel", "before": "	FindEndOfDuelScriptResult r = FindEndOfDuelScript(WaterClubLobbyAfterDuelTable);", "after": "	FindEndOfDuelScriptResult r = FindEndOfDuelScript((uint16_t)(WaterClubLobbyAfterDuelTable + 1u));", "case_ids": ["WaterClubLobbyAfterDuel-0"]}
 # <<< factory-mutation WaterClubLobbyAfterDuel
+# >>> factory-mutation Preload_Man2
+MUTATIONS["Preload_Man2"] = {"source_symbol": "Preload_Man2", "before": "\tif (a < JOSHUA_DEFEATED)\n\t\tf |= 0x10u;", "after": "\tif (a <= JOSHUA_DEFEATED)\n\t\tf |= 0x10u;", "case_ids": ["Preload_Man2-1"]}
+# <<< factory-mutation Preload_Man2
+# >>> factory-mutation Preload_ImakuniInWaterClubLobby
+MUTATIONS["Preload_ImakuniInWaterClubLobby"] = {"source_symbol": "Preload_ImakuniInWaterClubLobby", "before": "\tif (room != IMAKUNI_WATER_CLUB)", "after": "\tif (room == IMAKUNI_WATER_CLUB)", "case_ids": ["Preload_ImakuniInWaterClubLobby-0", "Preload_ImakuniInWaterClubLobby-1"]}
+# <<< factory-mutation Preload_ImakuniInWaterClubLobby

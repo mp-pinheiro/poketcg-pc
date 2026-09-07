@@ -38,6 +38,19 @@ CASES["LightningClubLobbyAfterDuel"] = [
 ]
 # <<< factory LightningClubLobbyAfterDuel
 
+# EVENT_IMAKUNI_STATE is bits 7-6 of $D3D4, EVENT_TEMP_DUELED_IMAKUNI bit 4 of
+# $D411, EVENT_IMAKUNI_ROOM bits 3-2 of $D3DD (scripting.asm EventVarMasks).
+# >>> factory Preload_ImakuniInLightningClubLobby
+CONTRACT["Preload_ImakuniInLightningClubLobby"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Preload_ImakuniInLightningClubLobby"] = [
+    {"wram": {0xD3D4: b"\x80", 0xD411: b"\x00", 0xD3DD: b"\x08"}, "read": {0xD3D4: 1, 0xD3DD: 1}},
+    {"wram": {0xD3D4: b"\x80", 0xD411: b"\x00", 0xD3DD: b"\x0C"}, "read": {0xD3D4: 1, 0xD3DD: 1}},
+    {"wram": {0xD3D4: b"\x80", 0xD411: b"\x10", 0xD3DD: b"\x08"}, "read": {0xD3D4: 1, 0xD3DD: 1}},
+    {"wram": {0xD3D4: b"\x00", 0xD411: b"\x00", 0xD3DD: b"\x08"}, "read": {0xD3D4: 1, 0xD3DD: 1}},
+    dict(POISON, wram={0xD3D4: b"\x40", 0xD411: b"\x00", 0xD3DD: b"\x08"}, read={0xD3D4: 1, 0xD3DD: 1}),
+]
+# <<< factory Preload_ImakuniInLightningClubLobby
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -45,3 +58,6 @@ MUTATIONS = {}
 # >>> factory-mutation LightningClubLobbyAfterDuel
 MUTATIONS["LightningClubLobbyAfterDuel"] = {"source_symbol": "LightningClubLobbyAfterDuel", "before": "	FindEndOfDuelScriptResult r = FindEndOfDuelScript(LightningClubLobbyAfterDuelTable);", "after": "	FindEndOfDuelScriptResult r = FindEndOfDuelScript((uint16_t)(LightningClubLobbyAfterDuelTable + 1u));", "case_ids": ["LightningClubLobbyAfterDuel-0"]}
 # <<< factory-mutation LightningClubLobbyAfterDuel
+# >>> factory-mutation Preload_ImakuniInLightningClubLobby
+MUTATIONS["Preload_ImakuniInLightningClubLobby"] = {"source_symbol": "Preload_ImakuniInLightningClubLobby", "before": "\tif (room != IMAKUNI_LIGHTNING_CLUB)", "after": "\tif (room == IMAKUNI_LIGHTNING_CLUB)", "case_ids": ["Preload_ImakuniInLightningClubLobby-0", "Preload_ImakuniInLightningClubLobby-1"]}
+# <<< factory-mutation Preload_ImakuniInLightningClubLobby
