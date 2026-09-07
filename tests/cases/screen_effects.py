@@ -99,9 +99,18 @@ CASES["ShakeScreenX"] = [
 
 # >>> factory Func_1ce03
 CONTRACT["Func_1ce03"] = {"compare": ("a", "f"), "preserve": ()}
+# screen_effects.asm:258-286: a - $96 indexes .pointer_table. $98 runs
+# UpdateMainSceneHUD (the HUD text row is read back), $97 runs PrintDamageText
+# (wTxRam2 receives the damage, hl parked as the caller leaves it), $9B is one
+# of the empty DuelAnim15x routines. The return bank ($CE21) is the caller's.
 CASES["Func_1ce03"] = [
-    {"a": 0x9E, "wram": {WD4C0: b"\x00", WDUEL_ANIM_RETURN_BANK: b"\x00", wDuelAnimDamage: b"\x34\x12"}, "expect": {WD4C0: b"\x80"}, "read": {WD4C0: 1}},
-    dict(POISON, a=0x9E, wram={WD4C0: b"\x00", WDUEL_ANIM_RETURN_BANK: b"\x00", wDuelAnimDamage: b"\x78\x56"}, expect={WD4C0: b"\x80"}, read={WD4C0: 1}),
+    {"a": 0x98, "wram": {WD4C0: b"\x00", WDUEL_ANIM_RETURN_BANK: b"\x06", 0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xC2C8: b"\x28"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {WD4C0: 1}, "vread": {0: {0x9800: 0x400}},
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, a=0x97, wram={WD4C0: b"\x00", WDUEL_ANIM_RETURN_BANK: b"\x06", 0xCCB8: b"\x00", 0xCCC4: b"\x08", 0xCE7F: b"\x14\x00", 0xCAD3: b"\x48\x03", 0xCE3F: b"\xAA\x55"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={WD4C0: 1, 0xCE3F: 2}, vread={0: {0x9800: 0x400}},
+         instruction_budget=4000000, cycle_budget=16000000),
+    dict(POISON, a=0x9B, wram={WD4C0: b"\x00", WDUEL_ANIM_RETURN_BANK: b"\x06"}, read={WD4C0: 1}),
 ]
 # <<< factory Func_1ce03
 
@@ -231,7 +240,7 @@ MUTATIONS["LoadDefaultScreenAnimationUpdateWhenFinished"] = {"source_symbol": "L
 MUTATIONS["ShakeScreenX"] = {"source_symbol": "ShakeScreenX", "before": "\tgb_write8(wScreenAnimUpdatePtr_ADDR, (uint8_t)SHAKE_SCREEN_X_UPDATE_FUNC_ADDR);", "after": "\tgb_write8(wScreenAnimUpdatePtr_ADDR, (uint8_t)(SHAKE_SCREEN_X_UPDATE_FUNC_ADDR + 1u));", "case_ids": ["ShakeScreenX-0", "ShakeScreenX-1"]}
 # <<< factory-mutation ShakeScreenX
 # >>> factory-mutation Func_1ce03
-MUTATIONS["Func_1ce03"] = {"source_symbol": "Func_1ce03", "before": "\tFunc_3bb5();", "after": "\treturn;", "case_ids": ["Func_1ce03-0", "Func_1ce03-1"]}
+MUTATIONS["Func_1ce03"] = {"source_symbol": "Func_1ce03", "before": "\tFunc_3bb5(effects[(uint8_t)(a - 0x96u)]);", "after": "\tFunc_3bb5(DuelAnim153);", "case_ids": ["Func_1ce03-1"]}
 # <<< factory-mutation Func_1ce03
 # >>> factory-mutation ShakeScreenX_Big
 MUTATIONS["ShakeScreenX_Big"] = {"source_symbol": "ShakeScreenX_Big", "before": "\tShakeScreenX(0x4d61u);", "after": "\tShakeScreenX(0x4d62u);", "case_ids": ["ShakeScreenX_Big-0", "ShakeScreenX_Big-1"]}

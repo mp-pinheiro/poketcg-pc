@@ -34,6 +34,6 @@ typedef struct {
 UpdateQueuedAnimationsResult UpdateQueuedAnimations(uint16_t hl);
 /* <<< factory UpdateQueuedAnimations */
 /* >>> factory Func_3bb5 */
-void Func_3bb5(void);
+void Func_3bb5(void (*effect)(void));
 /* <<< factory Func_3bb5 */
 #endif

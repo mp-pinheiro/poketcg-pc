@@ -46,9 +46,11 @@ static void adapt_UpdateQueuedAnimations(ProbeState *s)
 /* <<< factory UpdateQueuedAnimations */
 
 /* >>> factory Func_3bb5 */
+static void probe_no_effect(void) { }
+
 static void adapt_Func_3bb5(ProbeState *s)
 {
-	Func_3bb5();
+	Func_3bb5(probe_no_effect);
 	s->a = 0x80u;
 	s->f = 0x80u;
 }

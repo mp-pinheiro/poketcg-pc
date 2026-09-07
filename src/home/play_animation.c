@@ -88,12 +88,15 @@ UpdateQueuedAnimationsResult UpdateQueuedAnimations(uint16_t hl)
 /* <<< factory UpdateQueuedAnimations */
 
 /* >>> factory Func_3bb5 */
-void Func_3bb5(void)
+/* play_animation.asm:75-89. `CallHL2` runs the screen-effect routine the
+ * caller chose in the animation's return bank, between the two wd4c0 writes. */
+void Func_3bb5(void (*effect)(void))
 {
 	gb_write8(wd4c0_ADDR, 0x00u);
 	uint8_t saved_bank = gb_read8(hBankROM_ADDR);
 	BankswitchROM(gb_read8(wDuelAnimReturnBank_ADDR));
 	HandleAllSpriteAnimations();
+	effect();
 	BankswitchROM(saved_bank);
 	gb_write8(wd4c0_ADDR, 0x80u);
 }
