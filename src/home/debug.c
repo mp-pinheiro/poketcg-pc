@@ -311,7 +311,7 @@ void _DebugLookAtSprite(void)
 		ProcessTextHeaderResult text;
 		InitTextPrinting(0, 4);
 		text = ProcessTextFromID(SPRText);
-		WriteOneByteNumberInTxSymbol_PadSpace(wLoadedNPCTempIndex, 0, 0, text.d, text.e, text.hl);
+		WriteOneByteNumberInTxSymbol_PadSpace(wLoadedNPCTempIndex, 0, 0, 0, 4, text.hl);
 	}
 	EnableLCD();
 	for (;;) {
@@ -370,7 +370,7 @@ void _DebugLookAtSprite(void)
 						ProcessTextHeaderResult text;
 						InitTextPrinting(0, 4);
 						text = ProcessTextFromID(SPRText);
-						WriteOneByteNumberInTxSymbol_PadSpace(wLoadedNPCTempIndex, 0, 0, text.d, text.e, text.hl);
+						WriteOneByteNumberInTxSymbol_PadSpace(wLoadedNPCTempIndex, 0, 0, 0, 4, text.hl);
 					}
 				}
 			}

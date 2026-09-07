@@ -930,7 +930,7 @@ TallyCardsInCardFilterListsResult TallyCardsInCardFilterLists(uint8_t d, uint8_t
 		return (TallyCardsInCardFilterListsResult){sum, 0x00u, d, e, hl};
 	InitTextPrinting(11u, 1u);
 	ProcessTextHeaderResult result = ProcessTextFromID(NoCardsChosenText);
-	return (TallyCardsInCardFilterListsResult){result.a, result.f, result.d, result.e, result.hl};
+	return (TallyCardsInCardFilterListsResult){result.a, result.f, 11u, 1u, result.hl};
 }
 /* <<< factory TallyCardsInCardFilterLists */
 

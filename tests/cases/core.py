@@ -2590,6 +2590,8 @@ CASES["PrintDuelResultStats"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2EC: b"\x15", 0xC2EF: b"\x01", 0xC2BA: b"\x1E", 0xC3EC: b"\x3F", 0xC3EF: b"\x00", 0xC3BA: b"\x3C"}, "setup": SETUP_TEXT, "read": TEXT_READ},
     {"wram": {0xFF97: b"\xC2", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC2BA: b"\x3C", 0xC3EC: b"\x01", 0xC3EF: b"\x02", 0xC3BA: b"\x00"}, "setup": SETUP_TEXT, "read": TEXT_READ},
     dict(POISON, wram={0xFF97: b"\xC2", 0xC2EC: b"\x01", 0xC2EF: b"\x02", 0xC2BA: b"\x1E", 0xC3EC: b"\x08", 0xC3EF: b"\x01", 0xC3BA: b"\x01"}, setup=SETUP_TEXT, read=TEXT_READ),
+    # The numbers and "Cards" go next to each heading; read the whole BG map.
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EC: b"\x01", 0xC2EF: b"\x02", 0xC2BA: b"\x1E", 0xC3EC: b"\x08", 0xC3EF: b"\x01", 0xC3BA: b"\x01"}, setup=SETUP_TEXT, read={**TEXT_READ, 0x9800: 0x400}),
 ]
 # <<< factory PrintDuelResultStats
 
@@ -6574,7 +6576,7 @@ MUTATIONS["PrintOpponentNumberOfHandAndDeckCards"] = {"source_symbol": "PrintOpp
 MUTATIONS["PrintPlayerNumberOfHandAndDeckCards"] = {"source_symbol": "PrintPlayerNumberOfHandAndDeckCards", "before": "uint8_t deck = (uint8_t)(DECK_SIZE - wPlayerNumberOfCardsNotInDeck - wNumCardsBeingDrawn);", "after": "uint8_t deck = (uint8_t)(DECK_SIZE - wPlayerNumberOfCardsNotInDeck + wNumCardsBeingDrawn);", "case_ids": ["PrintPlayerNumberOfHandAndDeckCards-0", "PrintPlayerNumberOfHandAndDeckCards-1", "PrintPlayerNumberOfHandAndDeckCards-2"]}
 # <<< factory-mutation PrintPlayerNumberOfHandAndDeckCards
 # >>> factory-mutation PrintDuelResultStats
-MUTATIONS["PrintDuelResultStats"] = {"source_symbol": "PrintDuelResultStats", "before": "\t\tuint8_t cards = (uint8_t)(DECK_SIZE - gb_read8(cards_var.hl));", "after": "\t\tuint8_t cards = (uint8_t)(DECK_SIZE - gb_read8(cards_var.hl) + 1u);", "case_ids": ["PrintDuelResultStats-0", "PrintDuelResultStats-1", "PrintDuelResultStats-2"]}
+MUTATIONS["PrintDuelResultStats"] = {"source_symbol": "PrintDuelResultStats", "before": "\t\td = (uint8_t)(b + 2u);", "after": "\t\td = (uint8_t)(b + 1u);", "case_ids": ["PrintDuelResultStats-3"]}
 # <<< factory-mutation PrintDuelResultStats
 # >>> factory-mutation ConvertColorToEnergyCardID
 MUTATIONS["ConvertColorToEnergyCardID"] = {"source_symbol": "ConvertColorToEnergyCardID", "before": "\treturn result;", "after": "\treturn (uint8_t)(result ^ 1u);", "case_ids": ["ConvertColorToEnergyCardID-0", "ConvertColorToEnergyCardID-1"]}

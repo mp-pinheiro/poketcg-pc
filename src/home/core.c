@@ -4480,42 +4480,36 @@ void PrintPlayerNumberOfHandAndDeckCards(void)
 /* <<< factory PrintPlayerNumberOfHandAndDeckCards */
 
 /* >>> factory PrintDuelResultStats */
+/* core.asm:1618-1666. ProcessText preserves de, so d,e stay the text
+ * coordinates throughout; b,c are the number coordinates. */
+static void PrintDuelResultStats_PrintXCards(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+{
+	WriteTwoDigitNumberInTxSymbol_PadSpace(a, b, c, d, e, 0u);
+	(void)InitTextPrinting_ProcessTextFromID(d, e, CardsText);
+}
+
 void PrintDuelResultStats(void)
 {
 	for (uint8_t turn = 0u; turn < 2u; ++turn) {
 		uint8_t d = turn == 0u ? 8u : 1u;
 		uint8_t e = d;
 		(void)SetNoLineSeparation();
-		ProcessTextHeaderResult heading = InitTextPrinting_ProcessTextFromID(
-			d, e, PrizesLeftActivePokemonCardsInDeckText);
-		d = heading.d;
-		e = heading.e;
+		(void)InitTextPrinting_ProcessTextFromID(d, e, PrizesLeftActivePokemonCardsInDeckText);
 		(void)SetOneLineSeparation();
 		uint8_t c = e;
 		uint8_t b = (uint8_t)(d + 7u);
 		d = (uint8_t)(b + 2u);
-		uint8_t prizes = CountPrizes();
-		WriteTwoDigitNumberInTxSymbol_PadSpace(
-			prizes, b, c, d, e, heading.hl);
+		PrintDuelResultStats_PrintXCards(CountPrizes(), b, c, d, e);
 		e = (uint8_t)(e + 1u);
 		c = (uint8_t)(c + 1u);
-		DuelistVarResult pokemon = GetTurnDuelistVariable(
-			DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
-		uint16_t pokemon_text = pokemon.a != 0u ? YesText : NoneText;
+		DuelistVarResult pokemon = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
 		d = (uint8_t)(d - 1u);
-		ProcessTextHeaderResult pokemon_result = InitTextPrinting_ProcessTextFromID(
-			d, e, pokemon_text);
-		d = pokemon_result.d;
-		e = pokemon_result.e;
+		(void)InitTextPrinting_ProcessTextFromID(d, e, pokemon.a != 0u ? YesText : NoneText);
 		e = (uint8_t)(e + 1u);
 		d = (uint8_t)(d + 1u);
 		c = (uint8_t)(c + 1u);
-		DuelistVarResult cards_var = GetTurnDuelistVariable(
-			DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
-		uint8_t cards = (uint8_t)(DECK_SIZE - gb_read8(cards_var.hl));
-		WriteTwoDigitNumberInTxSymbol_PadSpace(
-			cards, b, c, d, e, cards_var.hl);
-		(void)InitTextPrinting_ProcessTextFromID(d, e, CardsText);
+		DuelistVarResult cards_var = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+		PrintDuelResultStats_PrintXCards((uint8_t)(DECK_SIZE - gb_read8(cards_var.hl)), b, c, d, e);
 		SwapTurn();
 	}
 }
@@ -5561,7 +5555,7 @@ PrintAttackOrCardDescriptionResult PrintAttackOrCardDescription(uint16_t hl, uin
 	InitTextPrintingInTextbox(19u, d, e);
 	ProcessTextHeaderResult text = ProcessTextFromID(text_id);
 	(void)SetOneLineSeparation();
-	return (PrintAttackOrCardDescriptionResult){text.a, text.d, text.e, text.f, text.hl};
+	return (PrintAttackOrCardDescriptionResult){text.a, d, e, text.f, text.hl};
 }
 /* <<< factory PrintAttackOrCardDescription */
 

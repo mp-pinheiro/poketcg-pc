@@ -313,16 +313,24 @@ ProcessTextHeaderResult ProcessTextFromPointerToID(uint16_t hl)
 	return ProcessTextFromID((uint16_t)(lo | (uint16_t)hi << 8));
 }
 
+/* ProcessText pushes and pops de, so both return the coordinates they were
+ * given; callers that continue printing rely on that. */
 ProcessTextHeaderResult InitTextPrinting_ProcessTextFromID(uint8_t d, uint8_t e, uint16_t hl)
 {
 	InitTextPrinting(d, e);
-	return ProcessTextFromID(hl);
+	ProcessTextHeaderResult r = ProcessTextFromID(hl);
+	r.d = d;
+	r.e = e;
+	return r;
 }
 
 ProcessTextHeaderResult InitTextPrinting_ProcessTextFromPointerToID(uint8_t d, uint8_t e, uint16_t hl)
 {
 	InitTextPrinting(d, e);
-	return ProcessTextFromPointerToID(hl);
+	ProcessTextHeaderResult r = ProcessTextFromPointerToID(hl);
+	r.d = d;
+	r.e = e;
+	return r;
 }
 
 #define TEXT_SPEED_3 2u

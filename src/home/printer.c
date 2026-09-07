@@ -1226,7 +1226,7 @@ static AddToPrinterGfxBufferResult print_card_list_text_with_number(uint16_t tex
 	uint8_t e = (uint8_t)((uint8_t)(wPrinterHorizontalOffset - 1u) | 0x40u);
 	InitTextPrinting(2u, e);
 	ProcessTextHeaderResult header = ProcessTextFromID(text_id);
-	InitTextPrinting(14u, header.e);
+	InitTextPrinting(14u, e);
 	(void)TwoByteNumberToTxSymbol_PadSpace(number);
 	uint16_t hl = wStringBuffer_ADDR;
 	ProcessText(&hl);
