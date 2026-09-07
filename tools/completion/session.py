@@ -70,9 +70,12 @@ TIMER_SYNC = {
     (None, 0x383D): "ExecuteGameEvent",           # map.asm:26, enables the counter
     (3, 0x41B1): "Func_c1b1",                     # overworld.asm:230, zeroes it
     (4, 0x41CD): "PrintPlayTime",                 # print_stats.asm:115, reads it
-    (4, 0x5299): "CopyGeneralSaveDataToSRAM",     # save.asm:93, saves it
+    (4, 0x52FD): "CopyGeneralSaveDataToSRAM",     # save.asm .loop_bytes `ld a, [hli]`: saves it
 }
 TIMER_SYNC_ADDRESSES = {address: bank for bank, address in TIMER_SYNC}
+# A sync point inside a copy loop fires once per byte; only the read of the
+# play-time counter's first byte is the sync (the port syncs at that read).
+TIMER_SYNC_HL = {0x52FD: 0xCAC5}
 # The game's own writes to wVBlankCounter, the only places VBlank-ISR timing
 # is observable mid-interval: `ld [wVBlankCounter], a` in DuelMainInterface
 # (core.asm:291) and AIMakeDecision (core.asm:6255). One record per write:
@@ -245,6 +248,12 @@ def stream_key(masks: list[int], frames: int, axis: str, pokes: refstream.Pokes 
     h.update(bytes(m & 0xFF for m in masks))
     h.update(refstream.pokes_text(pokes).encode())
     h.update(mask_text().encode())
+    # The lag track in the stream directory is shaped by the sync points, so
+    # a change to them rebuilds the reference rather than replaying against
+    # a schedule the port no longer follows.
+    h.update(repr(sorted(TIMER_SYNC.items(), key=repr)).encode())
+    h.update(repr(sorted(TIMER_SYNC_HL.items())).encode())
+    h.update(repr(sorted(VBLANK_SYNC.items())).encode())
     h.update(pins["rom"]["sha256"].encode())
     h.update(pins["core"]["sha256"].encode())
     h.update(str(pins["boot"].get("sha1", pins["boot"]["mode"])).encode())
@@ -252,13 +261,16 @@ def stream_key(masks: list[int], frames: int, axis: str, pokes: refstream.Pokes 
 
 
 def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "ordinal",
-                    record_input: bool = False, frame_mode: str = "vblank",
+                    record_input: bool = False, frame_mode: str = "vblank", gba: bool = False,
                     pokes: refstream.Pokes | None = None) -> dict[str, Any]:
     """One reference replay: a digest record per DoFrame anchor, cached by
     input. With `record_input` the byte ReadJoypad saw at each anchor is
     returned as well, in InputFrame order, which is how a movie becomes a
     session."""
-    key = stream_key(masks, frames, axis if frame_mode == "vblank" else f"{axis}:{frame_mode}", pokes)
+    profile = axis if frame_mode == "vblank" else f"{axis}:{frame_mode}"
+    if gba:
+        profile += ":gba"
+    key = stream_key(masks, frames, profile, pokes)
     directory = CACHE / name / key
     meta_path = directory / "meta.json"
     if meta_path.is_file() and not record_input:
@@ -272,7 +284,7 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     calls = bytearray()
     vblank_writes = bytearray()
     inputs = bytearray()
-    with refstream.Core(padded, pokes=pokes) as core:
+    with refstream.Core(padded, gba=gba, pokes=pokes) as core:
         core.input_axis = axis
         core.frame_mode = frame_mode
         read = core.library.gambatte_cpuread
@@ -284,6 +296,11 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
             if address in TIMER_SYNC_ADDRESSES:
                 bank = TIMER_SYNC_ADDRESSES[address]
                 if bank is None or core.bank_of(address) == bank:
+                    wanted_hl = TIMER_SYNC_HL.get(address)
+                    if wanted_hl is not None:
+                        core.library.gambatte_getregs(core.core, registers)
+                        if (((registers[8] & 0xFF) << 8) | (registers[9] & 0xFF)) != wanted_hl:
+                            return
                     calls.extend(CALL_RECORD.pack(hits, core.samples + cycle, read(core.core, 0xCAC3)))
                 return
             if address in VBLANK_SYNC_ADDRESSES:
@@ -440,7 +457,7 @@ def first_divergence(reference: bytes, native: bytes) -> tuple[int | None, int, 
 
 
 def reference_capture(name: str, masks: list[int], frames: int, ordinal: int,
-                      pokes: refstream.Pokes | None = None) -> dict[str, bytes]:
+                      pokes: refstream.Pokes | None = None, *, sram: bool = False) -> dict[str, bytes]:
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     captured: dict[str, bytes] = {}
     with refstream.Core(padded, pokes=pokes) as core:
@@ -454,6 +471,8 @@ def reference_capture(name: str, masks: list[int], frames: int, ordinal: int,
             hits += 1
             if hits == ordinal:
                 captured.update(reference_regions(core))
+                if sram:
+                    captured["sram"] = core.area("CartRAM")
 
         core.install_exec(on_exec)
         core.run(frames, stop=lambda: hits >= ordinal)
@@ -675,10 +694,11 @@ def derive(name: str, movie: Path, goal: str) -> int:
     its digests must equal the movie run's: the ROM reads JOYP only inside
     ReadJoypad, so both axes are one execution."""
     movie_masks = refstream.load_masks(movie)
-    frame_mode = refstream.movie_frame_mode(movie)
+    profile = refstream.movie_profile(movie)
+    frame_mode = profile["frame_mode"]
     frames = len(movie_masks) + 400
     movie_run = build_reference(f"{name}-movie", movie_masks, frames, axis="frame",
-                                record_input=True, frame_mode=frame_mode)
+                                record_input=True, frame_mode=frame_mode, gba=profile["gba"])
     inputs = movie_run["inputs"]
     directory = session_dir(name)
     directory.mkdir(parents=True, exist_ok=True)
@@ -686,7 +706,8 @@ def derive(name: str, movie: Path, goal: str) -> int:
     meta = {
         "schema": 1, "name": name, "goal": goal, "ordinals": len(inputs),
         "derived_from": str(movie.relative_to(ROOT) if movie.is_absolute() else movie),
-        "movie_frames": len(movie_masks), "movie_frame_mode": frame_mode, "reference_frames": frames,
+        "movie_frames": len(movie_masks), "movie_frame_mode": frame_mode, "movie_gba": profile["gba"],
+        "reference_frames": frames,
         "recorded": datetime.now(UTC).isoformat(timespec="seconds"),
     }
     session_run = build_reference(name, inputs, frames, axis="ordinal")
@@ -741,12 +762,16 @@ def diff(name: str, ordinal: int) -> int:
         dump_path = state_path.with_name(f"{state_path.stem}-f{ordinal}.json")
         if not dump_path.is_file():
             raise SessionError(f"no native dump at ordinal {ordinal}: {failure[-300:]}")
-        native = native_regions(json.loads(dump_path.read_text()))
-    reference = reference_capture(name, masks, frames, ordinal, meta["pokes"])
+        dump = json.loads(dump_path.read_text())
+        native = native_regions(dump)
+        native["sram"] = b"".join(bytes(dump[f"sram_bank_{bank}"]) for bank in range(4))
+    reference = reference_capture(name, masks, frames, ordinal, meta["pokes"], sram=True)
     tables = mask_tables()
     rows = 0
-    for region in REGIONS[:GATED]:
-        table = tables[region]
+    # SRAM is not digested (a save is compared through the checksum the game
+    # keeps in WRAM); it is diffed here so a checksum row names its byte.
+    for region in (*REGIONS[:GATED], "sram"):
+        table = tables[region] if region in tables else bytes(len(native["sram"]))
         nat, ref = native[region], reference[region]
         offset = 0
         while offset < min(len(nat), len(ref)):
@@ -756,6 +781,14 @@ def diff(name: str, ordinal: int) -> int:
             end = offset
             while end < min(len(nat), len(ref)) and not table[end] and nat[end] != ref[end]:
                 end += 1
+            if region == "sram":
+                bank, in_bank = divmod(offset, 0x2000)
+                symbol, _base = refstream.resolve_region(f"sram_bank_{bank}", in_bank)
+                print(f"DIFF ordinal={ordinal} field=sram_bank_{bank} address=0x{0xA000 + in_bank:04X} symbol={symbol} "
+                      f"native={nat[offset:end].hex()} reference={ref[offset:end].hex()}")
+                rows += 1
+                offset = end
+                continue
             field, field_offset = region_field(region, offset)
             symbol, _base = refstream.resolve_region(field, field_offset)
             address = refstream.FIELD_WINDOWS[field][0] + field_offset
