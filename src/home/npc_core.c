@@ -39,11 +39,13 @@
 #define MOVEMENT_CMD_SPECIAL     0xf0u
 #define MOVEMENT_CMD_STOP        0xffu
 
+/* home/map.asm:227-231 PlayerMovementOffsetTable_Tiles: NPC and player
+ * coordinates count half-tiles, so one step is two units. */
 static const uint8_t player_movement_offset_table_tiles[] = {
-	0x00u, 0xffu,
-	0x01u, 0x00u,
-	0x00u, 0x01u,
-	0xffu, 0x00u,
+	0x00u, 0xfeu, /* NORTH */
+	0x02u, 0x00u, /* EAST */
+	0x00u, 0x02u, /* SOUTH */
+	0xfeu, 0x00u, /* WEST */
 };
 
 #define LOADED_NPC_COORD_X 0x02u

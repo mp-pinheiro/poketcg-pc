@@ -113,12 +113,19 @@ CASES["Func_1c5e9"] = [
 
 # >>> factory UpdateNPCPosition
 CONTRACT["UpdateNPCPosition"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("b", "c", "hl")}
+# The routine indexes wLoadedNPCs ($D34A; id, sprite, x, y, direction, ...)
+# through wLoadedNPCTempIndex, so the observed span has to be the NPC slot:
+# the earlier span over wTempNPC ($D3AB) never saw the coordinates move, which
+# is how a +-1 transcription of PlayerMovementOffsetTable_Tiles (steps are
+# +-2, map.asm:227-231) shipped green.
 CASES["UpdateNPCPosition"] = [
-	{"wram": {0xD3AA: b"\x00", 0xD3AB: b"\x00\x00\x00\x00\x00"}, "read": {0xD3AB: 5}},
-	dict(POISON, wram={0xD3AA: b"\x00", 0xD3AB: b"\x11\x22\x30\x40\x00"}, read={0xD3AB: 5}),
-	{"wram": {0xD3AA: b"\x00", 0xD3AB: b"\x11\x22\x30\x40\x01"}, "read": {0xD3AB: 5}},
-	{"wram": {0xD3AA: b"\x00", 0xD3AB: b"\x11\x22\x30\x40\x02"}, "read": {0xD3AB: 5}},
-	{"wram": {0xD3AA: b"\x00", 0xD3AB: b"\x11\x22\x30\x40\x03"}, "read": {0xD3AB: 5}},
+	{"wram": {0xD3AA: b"\x00", 0xD34A: b"\x00" * 8}, "read": {0xD34A: 8}},
+	dict(POISON, wram={0xD3AA: b"\x00", 0xD34A: b"\x11\x22\x30\x40\x00\x00\x00\x00"}, read={0xD34A: 8}),
+	{"wram": {0xD3AA: b"\x00", 0xD34A: b"\x11\x22\x30\x40\x01\x00\x00\x00"}, "read": {0xD34A: 8}},
+	{"wram": {0xD3AA: b"\x00", 0xD34A: b"\x11\x22\x30\x40\x02\x00\x00\x00"}, "read": {0xD34A: 8}},
+	{"wram": {0xD3AA: b"\x00", 0xD34A: b"\x11\x22\x30\x40\x03\x00\x00\x00"}, "read": {0xD34A: 8}},
+	# second slot, so the index arithmetic is observed as well
+	{"wram": {0xD3AA: b"\x01", 0xD34A: b"\x00" * 12 + b"\x11\x22\x30\x40\x01\x00\x00\x00"}, "read": {0xD34A: 20}},
 ]
 # <<< factory UpdateNPCPosition
 
