@@ -1,4 +1,4 @@
-from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_defending_ko_fixture as _ai_defending_ko_fixture, AI_DEFENDING_KO_REGS as _AI_DEFENDING_KO_REGS
+from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_defending_ko_fixture as _ai_defending_ko_fixture, AI_DEFENDING_KO_REGS as _AI_DEFENDING_KO_REGS, power_screen_fixture as _power_screen_fixture, POWER_SCREEN_REGS as _POWER_SCREEN_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/core.asm."""
 
 from tests.cases._duel_setup import (
@@ -4043,6 +4043,8 @@ CONTRACT["DisplayPlayAreaScreenToUsePkmnPower"] = {"compare": (), "preserve": ()
 CASES["DisplayPlayAreaScreenToUsePkmnPower"] = [
     {"keys": [0x00, 0x02], "instruction_budget": 5000000, "cycle_budget": 20000000, "wram": {0xFF97: b"\x00", 0xC2EF: b"\x00", 0xCABB: b"\x00"}, "read": {0xCBCF: 1}, "expect": {0xCBCF: b"\x00"}},
     dict(POISON, keys=[0x00, 0x02], instruction_budget=5000000, cycle_budget=20000000, wram={0xFF97: b"\x00", 0xC2EF: b"\x00", 0xCABB: b"\x00"}, read={0xCBCF: 1}, expect={0xCBCF: b"\x00"}),
+    # B cancels on the first frame: the drawn screen and the menu parameters are the observation.
+    dict(_power_screen_fixture(bank=1), **_POWER_SCREEN_REGS, keys=[0x00, 0x02]),
 ]
 # <<< factory DisplayPlayAreaScreenToUsePkmnPower
 

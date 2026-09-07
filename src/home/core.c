@@ -7176,6 +7176,8 @@ void OpenActivePokemonScreen(void)
 }
 /* <<< factory OpenActivePokemonScreen */
 
+#define PLAY_AREA_PARAMS_INCLUDED 0x60BEu
+#define PLAY_AREA_PARAMS_EXCLUDED 0x60C6u
 /* >>> factory DisplayPlayAreaScreenToUsePkmnPower */
 /* core.asm:5618-5675. Carry (f bit 4) is the B press that leaves without a
  * power; a chosen power returns with it clear and hTemp_ffa0 holding the
@@ -7207,6 +7209,13 @@ draw_screen:
 	} while (b != count);
 	gb_write8(wNumPlayAreaItems_ADDR, b);
 	EnableLCD();
+	/* core.asm:5623-5627: the play area menu, arena card included, cursor on
+	 * the last selection; as many items as cards. */
+	{
+		uint16_t params = PLAY_AREA_PARAMS_INCLUDED;
+		InitializeMenuParameters(gb_read8(wSelectedDuelSubMenuItem_ADDR), &params);
+	}
+	gb_write8(wNumMenuItems_ADDR, gb_read8(wNumPlayAreaItems_ADDR));
 	for (;;) {
 		DoFrame();
 		HandleMenuInputResult input = HandleMenuInput();
@@ -9381,8 +9390,6 @@ uint8_t OpenVariousPlayAreaScreens_FromSelectPresses(void)
 }
 /* <<< factory OpenVariousPlayAreaScreens_FromSelectPresses */
 
-#define PLAY_AREA_PARAMS_INCLUDED 0x60BEu
-#define PLAY_AREA_PARAMS_EXCLUDED 0x60C6u
 /* >>> factory OpenPlayAreaScreenForViewing */
 PlayAreaScreenResult OpenPlayAreaScreenForViewing(void)
 {

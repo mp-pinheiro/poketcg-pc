@@ -25,6 +25,12 @@ from pathlib import Path
 # (tools/oracle/pyboy_oracle.py RESERVED); $DD80+ is the sound driver's.
 _HOLES = (0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCD0F, 0xCEA3)
 _SPANS = ((0xC000, 0xCFF0), (0xD000, 0xDC30), (0xDD00, 0xDD80))
+# The joypad snapshot hDPadRepeat..hKeysPressed ($FF8D-$FF91) is the `keys`
+# timeline as each lane injects it: the probe advances it per completed poll,
+# PyBoy per frame, so a routine that polls inside its own DoFrame loop
+# (ExecuteNPCMovement) exits on different entries. The game state the polls
+# drove is compared through WRAM; the snapshot itself is not.
+_HRAM_HOLES = (0xFF8D, 0xFF8E, 0xFF8F, 0xFF90, 0xFF91)
 
 
 class Fixture:
@@ -72,7 +78,11 @@ class Fixture:
             spans[cursor] = bytes(wram[cursor - 0xC000:end - 0xC000])
         # $FFB8-$FFFE is the unused HRAM tail (hram.asm `ds $38`); the gbref
         # runner's setup calls run on a stack up there.
-        spans[0xFF80] = bytes(hram[:0x38])
+        cursor = 0xFF80
+        for hole in _HRAM_HOLES:
+            spans[cursor] = bytes(hram[cursor - 0xFF80:hole - 0xFF80])
+            cursor = hole + 1
+        spans[cursor] = bytes(hram[cursor - 0xFF80:0x38])
         if vram:
             spans[0x8000] = self.vram
         # rLCDC from the game's own wLCDC mirror: the gbref lane runs a real PPU,
@@ -148,6 +158,18 @@ AI_RETREAT_SWITCH = Fixture("ai-duel-02-retreat-switch-entry")
 AI_RETREAT_SWITCH_REGS = AI_RETREAT_SWITCH.regs
 AI_TRY_RETREAT = Fixture("ai-duel-02-try-retreat-entry")
 AI_TRY_RETREAT_REGS = AI_TRY_RETREAT.regs
+# Back in the lab after the AI duel, DoFrame 37028: the after-duel script's
+# MOVE_ACTIVE_NPC, from the script command through the first movement step.
+NPC_EXECUTE = Fixture("ai-duel-02-npc-execute-entry")
+NPC_EXECUTE_REGS = NPC_EXECUTE.regs
+NPC_START = Fixture("ai-duel-02-npc-start-entry")
+NPC_START_REGS = NPC_START.regs
+NPC_MOVE = Fixture("ai-duel-02-npc-move-entry")
+NPC_MOVE_REGS = NPC_MOVE.regs
+# The TAS route's DisplayPlayAreaScreenToUsePkmnPower at DoFrame 35174: the
+# player opens the play area to use a Pokemon Power; the case's B press cancels.
+POWER_SCREEN = Fixture("tas-5530s-pkmn-power-screen-entry")
+POWER_SCREEN_REGS = POWER_SCREEN.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -216,3 +238,19 @@ def ai_retreat_switch_fixture(vram: bool = True, bank: int | None = None, **chan
 
 def ai_try_retreat_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return AI_TRY_RETREAT.case(vram=vram, bank=bank, **changes)
+
+
+def npc_execute_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return NPC_EXECUTE.case(vram=vram, bank=bank, **changes)
+
+
+def npc_start_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return NPC_START.case(vram=vram, bank=bank, **changes)
+
+
+def npc_move_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return NPC_MOVE.case(vram=vram, bank=bank, **changes)
+
+
+def power_screen_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return POWER_SCREEN.case(vram=vram, bank=bank, **changes)
