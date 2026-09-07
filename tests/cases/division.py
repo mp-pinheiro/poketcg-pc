@@ -24,10 +24,11 @@ CASES = {
         # de=0 with a real dividend: quotient $FFFF, remainder = dividend.
         _case(0x1234, 0x0000, a=0xAA, hl=0x5678),
         _case(0xFFFF, 0x0000),
-        # Exact division: 1000 / 10 = 100 remainder 0.
-        _case(1000, 10),
+        # Exact division: 1000 / 10 = 100 remainder 0. The loop counter the asm
+        # parks in hffb6 (division.asm:8,28) reads 1 afterwards; observe it.
+        _case(1000, 10, read={0xFFB6: 1}),
         # With a remainder: 1000 / 7 = 142 remainder 6.
-        _case(1000, 7),
+        _case(1000, 7, read={0xFFB6: 1}),
         # bc < de: quotient 0, remainder = dividend.
         _case(5, 100),
         _case(0xFFFE, 0xFFFF),
@@ -57,7 +58,7 @@ SCHEMA2_CASES = {
             "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": {r: 0 for r in POISON},
-            "bus": {},
+            "bus": {0xFFB6: 1},
             "seeds": {},
             "setup": [],
             "input_events": [],
@@ -71,7 +72,7 @@ SCHEMA2_CASES = {
             "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": dict(POISON),
-            "bus": {},
+            "bus": {0xFFB6: 1},
             "seeds": {},
             "setup": [],
             "input_events": [],
@@ -85,7 +86,7 @@ SCHEMA2_CASES = {
             "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": _case(0x1234, 0),
-            "bus": {},
+            "bus": {0xFFB6: 1},
             "seeds": {},
             "setup": [],
             "input_events": [],
@@ -99,7 +100,7 @@ SCHEMA2_CASES = {
             "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": _case(1000, 10),
-            "bus": {},
+            "bus": {0xFFB6: 1},
             "seeds": {},
             "setup": [],
             "input_events": [],

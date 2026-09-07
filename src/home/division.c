@@ -1,5 +1,7 @@
 #include "home/division.h"
 
+#include "mem.h"
+
 /* Restoring division hand-ported from poketcg/src/home/division.asm.
  *
  * Divisor 0 yields quotient $FFFF and remainder = dividend. Bug-compatible with
@@ -8,8 +10,9 @@
  * Exit carry equals entry carry, so carry is not an output: bc is rotated 17
  * times in total and no iteration consumes the bit rotated in before the loop.
  *
- * The asm holds its loop counter in `hffb6`; nothing in poketcg reads that byte,
- * so $FFB6 is deliberately left untouched.
+ * The asm keeps its loop counter in `hffb6` (division.asm:8,28), so the byte
+ * reads 1 after any division. Nothing else consumes it, but the whole-state
+ * comparison does, and the port writes where the asm writes.
  *
  * Dropping the bit shifted out of hl is safe, not lossy: after iteration i the
  * remainder is below 2^i, so it never exceeds $7FFF before the last shift.
@@ -23,10 +26,11 @@ DivResult DivideBCbyDE(uint16_t bc, uint16_t de)
 	cf = bc >> 15;
 	bc = (uint16_t)(bc << 1);
 
-	for (int i = 0; i < 16; i++) {
+	for (uint8_t counter = 0x10u; counter != 0u; counter--) {
 		uint8_t l, h, a;
 		int borrow;
 
+		gb_write8(0xFFB6u, counter);
 		hl = (uint16_t)(hl << 1 | cf);
 
 		l = (uint8_t)(hl - e);
