@@ -140,6 +140,14 @@ AI_BILL_REGS = AI_BILL.regs
 # was just knocked out and it picks the bench card to promote.
 AI_KO_SWITCH = Fixture("ai-duel-02-ko-switch-entry")
 AI_KO_SWITCH_REGS = AI_KO_SWITCH.regs
+# The retreat phase of the AI turn at DoFrame 28004: deciding to retreat, the
+# bench card to switch to, and the retreat itself (a = 2, the chosen bench slot).
+AI_RETREAT_DECISION = Fixture("ai-duel-02-retreat-decision-entry")
+AI_RETREAT_DECISION_REGS = AI_RETREAT_DECISION.regs
+AI_RETREAT_SWITCH = Fixture("ai-duel-02-retreat-switch-entry")
+AI_RETREAT_SWITCH_REGS = AI_RETREAT_SWITCH.regs
+AI_TRY_RETREAT = Fixture("ai-duel-02-try-retreat-entry")
+AI_TRY_RETREAT_REGS = AI_TRY_RETREAT.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -196,3 +204,15 @@ def ai_bill_fixture(vram: bool = True, bank: int | None = None, **changes: bytes
 
 def ai_ko_switch_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return AI_KO_SWITCH.case(vram=vram, bank=bank, **changes)
+
+
+def ai_retreat_decision_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_RETREAT_DECISION.case(vram=vram, bank=bank, **changes)
+
+
+def ai_retreat_switch_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_RETREAT_SWITCH.case(vram=vram, bank=bank, **changes)
+
+
+def ai_try_retreat_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_TRY_RETREAT.case(vram=vram, bank=bank, **changes)

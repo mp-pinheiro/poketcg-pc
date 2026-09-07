@@ -1,4 +1,4 @@
-from tests.cases._fixtures import ai_ko_switch_fixture as _ai_ko_switch_fixture, AI_KO_SWITCH_REGS as _AI_KO_SWITCH_REGS
+from tests.cases._fixtures import ai_ko_switch_fixture as _ai_ko_switch_fixture, AI_KO_SWITCH_REGS as _AI_KO_SWITCH_REGS, ai_retreat_decision_fixture as _ai_retreat_decision_fixture, AI_RETREAT_DECISION_REGS as _AI_RETREAT_DECISION_REGS, ai_retreat_switch_fixture as _ai_retreat_switch_fixture, AI_RETREAT_SWITCH_REGS as _AI_RETREAT_SWITCH_REGS, ai_try_retreat_fixture as _ai_try_retreat_fixture, AI_TRY_RETREAT_REGS as _AI_TRY_RETREAT_REGS
 """Oracle-diff cases for SetAIRetreatFlags (engine/duel/ai/retreat.asm:440-460)."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -145,6 +145,7 @@ CASES["AITryToRetreat"] = [
               wPlayerDuelVariables + DUELVARS_ARENA_CARD_STATUS: b"\x82"},
      "read": {hTempPlayAreaLocation_ffa1: 1},
      "instruction_budget": 200000, "cycle_budget": 800000},
+    dict(_ai_try_retreat_fixture(bank=5), **_AI_TRY_RETREAT_REGS),
 ]
 # <<< factory AITryToRetreat
 
@@ -154,6 +155,7 @@ CASES["AIDecideBenchPokemonToSwitchTo"] = [
     {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA: b"\x01"}, "expect_regs": {"a": 1, "f": 0x70}},
     dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA: b"\x01"}, expect_regs={"a": 1, "f": 0x70}),
     dict(_ai_ko_switch_fixture(bank=5), **_AI_KO_SWITCH_REGS),
+    dict(_ai_retreat_switch_fixture(bank=5), **_AI_RETREAT_SWITCH_REGS),
 ]
 # <<< factory AIDecideBenchPokemonToSwitchTo
 
@@ -163,7 +165,8 @@ CASES["AIDecideWhetherToRetreat"] = [
     {"wram": {W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL: b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x00}},
     {"wram": {W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL: b"\x80"}, "expect_regs": {"a": 0x80, "f": 0x00}},
     dict(POISON, wram={W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL: b"\x01"}, expect_regs={"a": 0x01, "f": 0x00}),
-    {"a": 0x5c, "f": 0x40, "b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44, "hl": 0x89ab, "wram": {W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL: b"\xff"}, "expect_regs": {"a": 0xff, "f": 0x00}}
+    {"a": 0x5c, "f": 0x40, "b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44, "hl": 0x89ab, "wram": {W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL: b"\xff"}, "expect_regs": {"a": 0xff, "f": 0x00}},
+    dict(_ai_retreat_decision_fixture(bank=5), **_AI_RETREAT_DECISION_REGS),
 ]
 # <<< factory AIDecideWhetherToRetreat
 

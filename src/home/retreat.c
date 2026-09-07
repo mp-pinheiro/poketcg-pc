@@ -222,8 +222,9 @@ end_retreat_list:
 			gb_write8(de, 0xffu);
 		}
 	}
-	(void)AIMakeDecision(OPPACTION_ATTEMPT_RETREAT, 0u, 0u, 0u, 0u);
-	return (AITryToRetreatResult){OPPACTION_ATTEMPT_RETREAT, 0x00u};
+	/* retreat.asm .retreat: `or a` on what AIMakeDecision leaves in a. */
+	AIMakeDecisionResult retreated = AIMakeDecision(OPPACTION_ATTEMPT_RETREAT, 0u, 0u, 0u, 0u);
+	return (AITryToRetreatResult){retreated.a, retreated.a == 0u ? 0x80u : 0x00u};
 }
 /* <<< factory AITryToRetreat */
 
@@ -432,27 +433,30 @@ active_cant_use_atk:
 
 active_cant_ko_1:
 	{
+		/* retreat.asm:52-79. A non-boss deck leaves for .check_resistance_1
+		 * right after the defender's knockout check: only a boss deck weighs
+		 * the prize counts, and it plays an energy for the retreat when the
+		 * defender can knock out and the player is on its last prize. */
 		CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(a, f, b, c, d, e, hl);
 		a = ko.a; f = ko.f;
-		if ((f & 0x10u) != 0u) {
+		uint8_t defender_can_ko = (f & 0x10u) != 0u;
+		if (defender_can_ko) {
 			AIEncourageResult r = AIEncourage(2u);
 			a = r.a; f = r.f;
-			CheckIfNotABossDeckIDResult boss = CheckIfNotABossDeckID();
-			a = boss.a; f = boss.carry ? 0x10u : 0u;
-			if (!boss.carry && wAIPlayerPrizeCount < 2u)
-				wAIPlayEnergyCardForRetreat = TRUE;
 		}
-	}
-	{
 		CheckIfNotABossDeckIDResult boss = CheckIfNotABossDeckID();
 		a = boss.a; f = boss.carry ? 0x10u : 0u;
-		if (!boss.carry && wAIPlayerPrizeCount < 2u) {
-			AIEncourageResult r = AIEncourage(2u);
-			a = r.a; f = r.f;
+		if (!boss.carry) {
+			if (wAIPlayerPrizeCount < 2u) {
+				if (defender_can_ko)
+					wAIPlayEnergyCardForRetreat = TRUE;
+				AIEncourageResult r = AIEncourage(2u);
+				a = r.a; f = r.f;
+			}
+			if (wAIOpponentPrizeCount < 2u)
+				AIDiscourage(2u);
 		}
 	}
-	if (wAIOpponentPrizeCount < 2u)
-		AIDiscourage(2u);
 
 check_resistance_1:
 	a = TranslateColorToWR(GetArenaCardColor());
