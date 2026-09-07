@@ -1,0 +1,9 @@
+{
+  "fn": "Preload_Rod",
+  "case": "tests/cases/pokemon_dome.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Preload_Rod\", \"registers\": {\"a\": 10, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54188\": \"100a\", \"54249\": \"2000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Preload_Rod\", \"mismatches\": {\"bus\": {\"address\": 54188, \"reference\": \"100a2000\", \"native\": \"110a2000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[54188, 2], [54249, 2]]}}}\n",
+  "restored": "{\"fn\": \"Preload_Rod\", \"registers\": {\"a\": 10, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54188\": \"100a\", \"54249\": \"2000\"}}, \"status\": \"PASS\"}\n"
+}

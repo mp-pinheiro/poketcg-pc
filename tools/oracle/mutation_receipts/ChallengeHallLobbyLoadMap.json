@@ -1,0 +1,9 @@
+{
+  "fn": "ChallengeHallLobbyLoadMap",
+  "case": "tests/cases/challenge_hall_lobby.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ChallengeHallLobbyLoadMap\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54247\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ChallengeHallLobbyLoadMap\", \"mismatches\": {\"a\": [0, 3], \"f\": [128, 0], \"b\": [0, 113], \"c\": [0, 102]}}\n",
+  "restored": "{\"fn\": \"ChallengeHallLobbyLoadMap\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54247\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

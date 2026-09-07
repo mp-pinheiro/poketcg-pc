@@ -1,0 +1,9 @@
+{
+  "fn": "Preload_IshiharaInIshiharasHouse",
+  "case": "tests/cases/ishiharas_house.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Preload_IshiharaInIshiharasHouse\", \"registers\": {\"a\": 8, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54231\": \"48\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Preload_IshiharaInIshiharasHouse\", \"mismatches\": {\"f\": [192, 112]}}\n",
+  "restored": "{\"fn\": \"Preload_IshiharaInIshiharasHouse\", \"registers\": {\"a\": 8, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54231\": \"48\"}}, \"status\": \"PASS\"}\n"
+}

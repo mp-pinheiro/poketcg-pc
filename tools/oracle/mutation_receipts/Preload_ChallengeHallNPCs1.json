@@ -1,0 +1,9 @@
+{
+  "fn": "Preload_ChallengeHallNPCs1",
+  "case": "tests/cases/challenge_hall_lobby.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Preload_ChallengeHallNPCs1\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53521\": \"55\", \"54242\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Preload_ChallengeHallNPCs1\", \"mismatches\": {\"a\": [0, 11], \"f\": [128, 16], \"bus\": {\"address\": 53521, \"reference\": \"5500\", \"native\": \"0b00\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[53521, 1], [54242, 1]]}}}\n",
+  "restored": "{\"fn\": \"Preload_ChallengeHallNPCs1\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53521\": \"55\", \"54242\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

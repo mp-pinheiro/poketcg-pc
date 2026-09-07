@@ -1,0 +1,9 @@
+{
+  "fn": "Preload_Guide",
+  "case": "tests/cases/challenge_hall.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Preload_Guide\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54188\": \"1c02\", \"54242\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Preload_Guide\", \"mismatches\": {\"bus\": {\"address\": 54188, \"reference\": \"1c0280\", \"native\": \"556680\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54188, 2], [54242, 1]]}}}\n",
+  "restored": "{\"fn\": \"Preload_Guide\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54188\": \"1c02\", \"54242\": \"80\"}}, \"status\": \"PASS\"}\n"
+}

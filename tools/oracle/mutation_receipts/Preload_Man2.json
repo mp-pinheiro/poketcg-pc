@@ -1,0 +1,9 @@
+{
+  "fn": "Preload_Man2",
+  "case": "tests/cases/water_club_lobby.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Preload_Man2\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54237\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Preload_Man2\", \"mismatches\": {\"f\": [192, 208]}}\n",
+  "restored": "{\"fn\": \"Preload_Man2\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54237\": \"20\"}}, \"status\": \"PASS\"}\n"
+}

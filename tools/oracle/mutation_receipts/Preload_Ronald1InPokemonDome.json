@@ -1,0 +1,9 @@
+{
+  "fn": "Preload_Ronald1InPokemonDome",
+  "case": "tests/cases/pokemon_dome.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Preload_Ronald1InPokemonDome\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53521\": \"0f\", \"54192\": \"00\", \"54251\": \"40\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Preload_Ronald1InPokemonDome\", \"mismatches\": {\"bus\": {\"address\": 53521, \"reference\": \"0f0040\", \"native\": \"100040\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[53521, 1], [54192, 1], [54251, 1]]}}}\n",
+  "restored": "{\"fn\": \"Preload_Ronald1InPokemonDome\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53521\": \"0f\", \"54192\": \"00\", \"54251\": \"40\"}}, \"status\": \"PASS\"}\n"
+}
