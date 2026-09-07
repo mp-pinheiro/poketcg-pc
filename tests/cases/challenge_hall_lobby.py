@@ -36,6 +36,33 @@ CASES = {
     ],
 }
 
+# >>> factory ChallengeHallLobbyLoadMap
+CONTRACT["ChallengeHallLobbyLoadMap"] = {"compare": ("a", "f", "b", "c", "hl"), "preserve": ()}
+CASES["ChallengeHallLobbyLoadMap"] = [
+    {"wram": {wEventVars + 0x15: b"\x00"}},
+    {"wram": {wEventVars + 0x15: b"\x10", wLoadedEventBits: b"\x00"}},
+    dict(POISON, wram={wEventVars + 0x15: b"\x10"}),
+]
+# <<< factory ChallengeHallLobbyLoadMap
+
+# >>> factory Preload_ChallengeHallNPCs1
+CONTRACT["Preload_ChallengeHallNPCs1"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Preload_ChallengeHallNPCs1"] = [
+    {"wram": {EVENT_BYTE: b"\x00", wDefaultSong: b"\x55"}},
+    {"wram": {EVENT_BYTE: b"\x80", wDefaultSong: b"\x55"}},
+    dict(POISON, wram={EVENT_BYTE: b"\x80", wDefaultSong: b"\x55"}),
+]
+# <<< factory Preload_ChallengeHallNPCs1
+
+# >>> factory Preload_ChallengeHallLobbyRonald1
+CONTRACT["Preload_ChallengeHallLobbyRonald1"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Preload_ChallengeHallLobbyRonald1"] = [
+    {"wram": {wEventVars: bytes(64), 0xD334: b"\x08"}},
+    {"wram": {wEventVars: bytes(64), 0xD3E5: b"\x10", 0xD334: b"\x08"}},
+    dict(POISON, wram={wEventVars: bytes(64), 0xD3E5: b"\x10", 0xD334: b"\x08"}),
+]
+# <<< factory Preload_ChallengeHallLobbyRonald1
+
 # >>> factory-cases-statics
 TABLE_ADDR = 0xC500
 def table_row(state, result, event, convo):
@@ -74,3 +101,12 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation SetRonaldChallengeHallLobbyState
 MUTATIONS["SetRonaldChallengeHallLobbyState"] = {"source_symbol": "SetRonaldChallengeHallLobbyState", "before": "if (a != e) {", "after": "if (a != d) {", "case_ids": ["SetRonaldChallengeHallLobbyState-0"]}
 # <<< factory-mutation SetRonaldChallengeHallLobbyState
+# >>> factory-mutation ChallengeHallLobbyLoadMap
+MUTATIONS["ChallengeHallLobbyLoadMap"] = {"source_symbol": "ChallengeHallLobbyLoadMap", "before": "if (event == 0u)", "after": "if (event != 0u)", "case_ids": ["ChallengeHallLobbyLoadMap-0", "ChallengeHallLobbyLoadMap-1"]}
+# <<< factory-mutation ChallengeHallLobbyLoadMap
+# >>> factory-mutation Preload_ChallengeHallNPCs1
+MUTATIONS["Preload_ChallengeHallNPCs1"] = {"source_symbol": "Preload_ChallengeHallNPCs1", "before": "event == 0u", "after": "event != 0u", "case_ids": ["Preload_ChallengeHallNPCs1-0", "Preload_ChallengeHallNPCs1-1"]}
+# <<< factory-mutation Preload_ChallengeHallNPCs1
+# >>> factory-mutation Preload_ChallengeHallLobbyRonald1
+MUTATIONS["Preload_ChallengeHallLobbyRonald1"] = {"source_symbol": "Preload_ChallengeHallLobbyRonald1", "before": "EVENT_RECEIVED_LEGENDARY_CARDS) != 0u", "after": "EVENT_RECEIVED_LEGENDARY_CARDS) == 0u", "case_ids": ["Preload_ChallengeHallLobbyRonald1-0", "Preload_ChallengeHallLobbyRonald1-1"]}
+# <<< factory-mutation Preload_ChallengeHallLobbyRonald1

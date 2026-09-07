@@ -51,6 +51,30 @@ static void adapt_ChallengeHallAfterDuel(ProbeState *s)
 }
 /* <<< factory ChallengeHallAfterDuel */
 
+/* >>> factory ChallengeHallLoadMap */
+static void adapt_ChallengeHallLoadMap(ProbeState *s)
+{
+	ChallengeHallLoadMapResult r = ChallengeHallLoadMap(s->b, s->c, s->hl);
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->hl = r.hl;
+}
+/* <<< factory ChallengeHallLoadMap */
+
+/* >>> factory Preload_Guide */
+static void adapt_Preload_Guide(ProbeState *s)
+{
+	PreloadGuideResult r = Preload_Guide();
+	s->a = r.a; s->f = r.f;
+}
+/* <<< factory Preload_Guide */
+
+/* >>> factory Preload_ChallengeHallOpponent */
+static void adapt_Preload_ChallengeHallOpponent(ProbeState *s)
+{
+	PreloadChallengeHallOpponentResult r = Preload_ChallengeHallOpponent();
+	s->a = r.a; s->f = r.f;
+}
+/* <<< factory Preload_ChallengeHallOpponent */
+
 const ProbeEntry probe_entries_challenge_hall[] = {
 	{ "Func_f5db", adapt_Func_f5db },
 	{ "Func_f5e9", adapt_Func_f5e9 },
@@ -58,5 +82,8 @@ const ProbeEntry probe_entries_challenge_hall[] = {
 	{ "Func_f5cc", adapt_Func_f5cc },
 	{ "Func_f5d4", adapt_Func_f5d4 },
 	{ "ChallengeHallAfterDuel", adapt_ChallengeHallAfterDuel },
+	{ "ChallengeHallLoadMap", adapt_ChallengeHallLoadMap },
+	{ "Preload_Guide", adapt_Preload_Guide },
+	{ "Preload_ChallengeHallOpponent", adapt_Preload_ChallengeHallOpponent },
 	{ NULL, NULL },
 };

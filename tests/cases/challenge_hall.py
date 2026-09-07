@@ -3,6 +3,7 @@
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
+from tests.cases._schema_migration import legacy_to_schema
 FLAGS = 0xD698
 
 CONTRACT = {
@@ -77,7 +78,33 @@ CASES["ChallengeHallAfterDuel"] = [
 ]
 # <<< factory ChallengeHallAfterDuel
 
-from tests.cases._schema_migration import legacy_to_schema
+# >>> factory ChallengeHallLoadMap
+CONTRACT["ChallengeHallLoadMap"] = {"compare": ("a", "f", "b", "c", "hl"), "preserve": ()}
+CASES["ChallengeHallLoadMap"] = [
+    {"wram": {0xD3E2: b"\x00", 0xD3AB: b"\x00"}},
+    {"wram": {0xD3E2: b"\x02", 0xD3AB: b"\x00", 0xD34A: b"\x00" * 96}},
+    dict(POISON, wram={0xD3E2: b"\x02", 0xD3AB: b"\x00", 0xD34A: b"\x00" * 96}),
+]
+# <<< factory ChallengeHallLoadMap
+
+# >>> factory Preload_Guide
+CONTRACT["Preload_Guide"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Preload_Guide"] = [
+    {"wram": {0xD3E2: b"\x00", 0xD3AC: b"\x55\x66"}},
+    {"wram": {0xD3E2: b"\x80", 0xD3AC: b"\x55\x66"}},
+    dict(POISON, wram={0xD3E2: b"\x80", 0xD3AC: b"\x55\x66"}),
+]
+# <<< factory Preload_Guide
+
+# >>> factory Preload_ChallengeHallOpponent
+CONTRACT["Preload_ChallengeHallOpponent"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Preload_ChallengeHallOpponent"] = [
+    {"wram": {0xD3E2: b"\x80", 0xD3AB: b"\x00"}},
+    {"wram": {0xD3E2: b"\x82", 0xD3AB: b"\x00", 0xD3E7: b"\x00"}},
+    dict(POISON, wram={0xD3E2: b"\x82", 0xD3AB: b"\x00", 0xD3E7: b"\x00"}),
+]
+# <<< factory Preload_ChallengeHallOpponent
+
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
 MUTATIONS = {
@@ -121,3 +148,11 @@ MUTATIONS["Func_f5d4"] = {
 # >>> factory-mutation ChallengeHallAfterDuel
 MUTATIONS["ChallengeHallAfterDuel"] = {"source_symbol": "ChallengeHallAfterDuel", "before": "\tuint8_t c = (wDuelResult == DUEL_WIN) ? 0u : 2u;", "after": "\tuint8_t c = (wDuelResult == DUEL_WIN) ? 2u : 0u;", "case_ids": ["ChallengeHallAfterDuel-0", "ChallengeHallAfterDuel-1"]}
 # <<< factory-mutation ChallengeHallAfterDuel
+# >>> factory-mutation ChallengeHallLoadMap
+MUTATIONS["ChallengeHallLoadMap"] = {"source_symbol": "ChallengeHallLoadMap", "before": "if (event == 0u)", "after": "if (event != 0u)", "case_ids": ["ChallengeHallLoadMap-0", "ChallengeHallLoadMap-1"]}
+# <<< factory-mutation ChallengeHallLoadMap
+# >>> factory-mutation Preload_Guide
+MUTATIONS["Preload_Guide"] = {"source_symbol": "Preload_Guide", "before": "if (event != 0u) {", "after": "if (event == 0u) {", "case_ids": ["Preload_Guide-1", "Preload_Guide-2"]}
+# >>> factory-mutation Preload_ChallengeHallOpponent
+MUTATIONS["Preload_ChallengeHallOpponent"] = {"source_symbol": "Preload_ChallengeHallOpponent", "before": "starting == 0u", "after": "starting != 0u", "case_ids": ["Preload_ChallengeHallOpponent-0", "Preload_ChallengeHallOpponent-1"]}
+# <<< factory-mutation Preload_ChallengeHallOpponent

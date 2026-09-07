@@ -17,6 +17,21 @@ ChallengeHallClearResult Func_f5db(void);
 ChallengeHallBitResult Func_f5e9(uint8_t c);
 void Script_Host(void);
 
+/* >>> factory ChallengeHallLoadMap */
+typedef struct { uint8_t a, f, b, c; uint16_t hl; } ChallengeHallLoadMapResult;
+ChallengeHallLoadMapResult ChallengeHallLoadMap(uint8_t b, uint8_t c, uint16_t hl);
+/* <<< factory ChallengeHallLoadMap */
+
+/* >>> factory Preload_Guide */
+typedef struct { uint8_t a, f; } PreloadGuideResult;
+PreloadGuideResult Preload_Guide(void);
+/* <<< factory Preload_Guide */
+
+/* >>> factory Preload_ChallengeHallOpponent */
+typedef struct { uint8_t a, f; } PreloadChallengeHallOpponentResult;
+PreloadChallengeHallOpponentResult Preload_ChallengeHallOpponent(void);
+/* <<< factory Preload_ChallengeHallOpponent */
+
 /* >>> factory Func_f5cc */
 /* Func_f5cc:: challenge_hall.asm:517-523. c = bit index (0-31) into the
  * wd698 4-byte flag bitmap, via Func_f5e9's byte/mask split. Exit carry
