@@ -767,6 +767,66 @@ def diff(name: str, ordinal: int) -> int:
     return 0 if rows == 0 else 1
 
 
+# Routines that say nothing about where a DoFrame interval went: bank
+# switches, the sound driver, text plumbing and the card-data loaders that
+# every AI evaluation calls dozens of times.
+ROUTINE_NOISE = (
+    "Bank", "Music", "SFX", "TimerHandler", "SoundTimerHandler", "IncrementPlayTime",
+    "SerialTimerHandler", "ReadJoypad", "SaveButtonsHeld", "HandleDPadRepeat",
+    "FlushPalettesIfRequested", "NoOp", "HtimesL", "GetTurnDuelistVariable",
+    "GetNonTurnDuelistVariable", "GetCardPointer", "GetCardIDFromDeckIndex", "_GetCardIDFromDeckIndex",
+    "LoadCardDataTo", "CopyText", "GetText", "InitText", "ProcessText", "PlaceNextTextTile",
+    "BCCoordToBGMap0Address", "DECoordToBGMap0Address", "WriteByteToBGMap0", "HblankWriteByteToBGMap0",
+    "SafeCopyData", "JPHblankCopy", "CaseHalfWidthLetter", "ClassifyTextCharacterPair",
+    "ProcessSpecialTextCharacter", "TerminateHalfWidthText", "GenerateTextTile", "Func_22ca",
+    "Func_2325", "Func_235e", "ConvertSpecialTrainerCardToPokemon", "SwapTurn",
+    "CopyAttackDataAndDamage", "GetCardType", "CountCardIDInLocation", "TranslateColorToWR",
+    "GetArenaCard", "GetCardWeakness", "GetCardResistance", "GetPlayAreaCardColor",
+    "CheckIsIncapableOfUsingPkmnPower", "CountPokemonWithActivePkmnPower", "CountTurnDuelistPokemonWithActivePkmnPower",
+    "ApplyAttached", "HandleDamageReduction", "HandleDoubleDamageSubstatus", "HandleNoDamageOrEffectSubstatus",
+    "CheckIfEnoughParticularAttachedEnergy", "GetPlayAreaCardAttachedEnergies", "HandleEnergyBurn",
+    "CheckEnergyNeededForAttack", "CheckLoadedAttackFlag", "ConvertColorToEnergyCardID", "CheckMatchingCommand",
+    "TryExecuteEffectCommandFunction", "CalculateDamage_", "EstimateDamage_", "FindLastCardInHand",
+    "CreateHandCardList", "ConvertHPToDamageCounters",
+)
+
+
+def routines(name: str, ordinal: int, *, everything: bool) -> int:
+    """The reference's routine entries between DoFrame anchors `ordinal` and
+    `ordinal + 1`, in order, runs collapsed: the interval a verify diverged in,
+    read as the routines it ran. The noise list keeps the AI's decision
+    routines visible; --all prints every entry."""
+    masks, meta = load_session(name)
+    frames = reference_frames(masks, meta)
+    padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
+    candidates, by_bank_address = refstream.routine_entry_addresses()
+    sequence: list[str] = []
+    with refstream.Core(padded, pokes=meta["pokes"]) as core:
+        core.input_axis = "ordinal"
+
+        def on_exec(address: int, _cycle: int) -> None:
+            if address not in candidates or core.ordinal != ordinal:
+                return
+            bank = 0 if address < 0x4000 else core.bank_of(address)
+            label = by_bank_address.get((bank, address))
+            if label and (everything or not label.startswith(ROUTINE_NOISE)):
+                sequence.append(label)
+
+        core.install_exec(on_exec)
+        core.run(frames, stop=lambda: core.ordinal > ordinal)
+    out: list[str] = []
+    for label in sequence:
+        if out and out[-1].split("x")[0] == label:
+            head, _, count = out[-1].partition("x")
+            out[-1] = f"{head}x{int(count or 1) + 1}"
+        else:
+            out.append(label)
+    print(f"ROUTINES {name} ordinal={ordinal} entries={len(sequence)} shown={len(out)}")
+    for index, label in enumerate(out):
+        print(f"  {index:4d} {label}")
+    return 0
+
+
 def status() -> int:
     ratchet = read_ratchet()
     print(f"{'session':<24} {'ordinals':>8} {'confirmed':>9}  goal")
@@ -881,6 +941,10 @@ def main(argv: list[str] | None = None) -> int:
     diff_parser = sub.add_parser("diff", help="all gated bytes the lanes disagree on at one ordinal")
     diff_parser.add_argument("name")
     diff_parser.add_argument("ordinal", type=int)
+    routines_parser = sub.add_parser("routines", help="the reference's routine entries within one DoFrame interval")
+    routines_parser.add_argument("name")
+    routines_parser.add_argument("ordinal", type=int)
+    routines_parser.add_argument("--all", action="store_true", help="include the plumbing routines")
     meta_parser = sub.add_parser("meta")
     meta_parser.add_argument("name")
     meta_parser.add_argument("--goal", default="")
@@ -913,6 +977,8 @@ def main(argv: list[str] | None = None) -> int:
             return status()
         if args.command == "diff":
             return diff(args.name, args.ordinal)
+        if args.command == "routines":
+            return routines(args.name, args.ordinal, everything=args.all)
         if args.command == "meta":
             return record_meta(args.name, args.goal)
         if args.command == "derive":

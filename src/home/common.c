@@ -149,14 +149,24 @@ uint16_t CalculateWordTensDigit(uint16_t hl)
 /* <<< factory CalculateWordTensDigit */
 
 /* >>> factory PickTwoAttachedEnergyCards */
+static uint8_t pick_two_cp_flags(uint8_t a, uint8_t n)
+{
+	return (uint8_t)(0x40u
+		| ((a == n) ? 0x80u : 0u)
+		| (((a & 0x0Fu) < (n & 0x0Fu)) ? 0x20u : 0u)
+		| ((a < n) ? 0x10u : 0u));
+}
+
 /* common.asm:285-411 */
 PickTwoResult PickTwoAttachedEnergyCards(uint8_t a)
 {
 	hTempPlayAreaLocation_ff9d = a;
 	(void)CreateArenaOrBenchEnergyCardList(a);
 	uint8_t loc = hTempPlayAreaLocation_ff9d;
-	if (CountNumberOfEnergyCardsAttached(loc).a < 2u)
-		return (PickTwoResult){0xffu, 0u, 0u};
+	uint8_t attached = CountNumberOfEnergyCardsAttached(loc).a;
+	if (attached < 2u)
+		return (PickTwoResult){0xffu, 0u, 0u, pick_two_cp_flags(attached, 2u)};
+	uint8_t exit_f;
 
 	loc = hTempPlayAreaLocation_ff9d;
 	uint8_t deckindex = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + loc)).a;
@@ -175,6 +185,7 @@ PickTwoResult PickTwoAttachedEnergyCards(uint8_t a)
 			break;
 		if ((uint8_t)GetCardIDFromDeckIndex(v) == DOUBLE_COLORLESS_ENERGY) {
 			if (wTempAI != 0xffu) {
+				exit_f = pick_two_cp_flags(wTempAI, 0xffu);
 				wCurCardCanAttack = gb_read8(hl);
 				goto done;
 			}
@@ -192,6 +203,7 @@ PickTwoResult PickTwoAttachedEnergyCards(uint8_t a)
 			break;
 		if (CheckIfEnergyIsUseful(v).f & 0x10u) {
 			if (wTempAI != 0xffu) {
+				exit_f = pick_two_cp_flags(wTempAI, 0xffu);
 				wCurCardCanAttack = gb_read8(hl);
 				goto done;
 			}
@@ -204,6 +216,7 @@ PickTwoResult PickTwoAttachedEnergyCards(uint8_t a)
 
 	hl = wDuelTempList_ADDR;
 	if (wTempAI == 0xffu) {
+		exit_f = pick_two_cp_flags(0xffu, 0xffu);
 		wTempAI = gb_read8(hl);
 		hl = (uint16_t)(hl + 1u);
 		wCurCardCanAttack = gb_read8(hl);
@@ -213,11 +226,12 @@ PickTwoResult PickTwoAttachedEnergyCards(uint8_t a)
 			v = gb_read8(hl);
 			hl = (uint16_t)(hl + 1u);
 		} while (v == b);
+		exit_f = pick_two_cp_flags(v, b);
 		wCurCardCanAttack = v;
 	}
 
 done:
-	return (PickTwoResult){wTempAI, wCurCardCanAttack, 1u};
+	return (PickTwoResult){wTempAI, wCurCardCanAttack, 1u, exit_f};
 }
 /* <<< factory PickTwoAttachedEnergyCards */
 

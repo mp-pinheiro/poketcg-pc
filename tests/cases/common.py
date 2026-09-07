@@ -47,7 +47,7 @@ CASES["CalculateWordTensDigit"] = [
 # <<< factory CalculateWordTensDigit
 
 # >>> factory PickTwoAttachedEnergyCards
-CONTRACT["PickTwoAttachedEnergyCards"] = {"compare": ("a",), "preserve": ()}
+CONTRACT["PickTwoAttachedEnergyCards"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["PickTwoAttachedEnergyCards"] = [
     {"a": 0, "read": {0xCDF1: 2, 0xCDB9: 2, 0xC510: 8}},
     {"a": 1, "read": {0xCDF1: 2, 0xCDB9: 2, 0xC510: 8}},
@@ -655,12 +655,7 @@ MUTATIONS["CalculateWordTensDigit"] = {
 }
 # <<< factory-mutation CalculateWordTensDigit
 # >>> factory-mutation PickTwoAttachedEnergyCards
-MUTATIONS["PickTwoAttachedEnergyCards"] = {
-    "source_symbol": "PickTwoAttachedEnergyCards",
-    "before": "\t\treturn (PickTwoResult){0xffu, 0u, 0u};",
-    "after": "\t\treturn (PickTwoResult){0xfeu, 0u, 0u};",
-    "case_ids": ["PickTwoAttachedEnergyCards-0", "PickTwoAttachedEnergyCards-1", "PickTwoAttachedEnergyCards-2", "PickTwoAttachedEnergyCards-3", "PickTwoAttachedEnergyCards-4"],
-}
+MUTATIONS["PickTwoAttachedEnergyCards"] = {"source_symbol": "PickTwoAttachedEnergyCards", "before": "\t\treturn (PickTwoResult){0xffu, 0u, 0u, pick_two_cp_flags(attached, 2u)};", "after": "\t\treturn (PickTwoResult){0xfeu, 0u, 0u, pick_two_cp_flags(attached, 2u)};", "case_ids": ["PickTwoAttachedEnergyCards-0", "PickTwoAttachedEnergyCards-1", "PickTwoAttachedEnergyCards-2", "PickTwoAttachedEnergyCards-3", "PickTwoAttachedEnergyCards-4"]}
 # <<< factory-mutation PickTwoAttachedEnergyCards
 # >>> factory-mutation ClearMemory_Bank8
 MUTATIONS["ClearMemory_Bank8"] = {

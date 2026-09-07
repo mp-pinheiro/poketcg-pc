@@ -364,6 +364,18 @@
 #include "generated/hram.h"
 #include "mem.h"
 #define IMAKUNI_DECK_ID 0x34u
+#define NUM_COLORED_TYPES 0x06u
+#define CARD_LOCATION_ARENA 0x10u
+#define PLAYER_TURN 0xC2u
+#define DUELVARS_BENCH 0xBCu
+#define ATTACK_FLAG1_ADDRESS 0x00u
+#define HIGH_RECOIL_F 0x06u
+#define LOW_RECOIL_F 0x04u
+#define AI_MEWTWO_MILL 0x80u
+#define GHOST_DECK_ID 0x2Du
+#define LASS 0xC7u
+#define MEOWTH_LV15 0xB2u
+#define ZUBAT 0x1Au
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -412,6 +424,21 @@
 #include "generated/hram.h"
 #include "home/core.h"
 /* <<< factory statics */
+
+/* The exit F register of a `cp n` and of an `or a`, for the decisions whose
+ * carry is the verdict and whose a register becomes the card parameter. */
+static uint8_t cp_flags(uint8_t a, uint8_t n)
+{
+	return (uint8_t)(0x40u
+		| ((a == n) ? 0x80u : 0u)
+		| (((a & 0x0Fu) < (n & 0x0Fu)) ? 0x20u : 0u)
+		| ((a < n) ? 0x10u : 0u));
+}
+
+static uint8_t or_a_flags(uint8_t a)
+{
+	return a == 0u ? 0x80u : 0x00u;
+}
 
 
 /* >>> factory RemoveCardFromList */
@@ -513,36 +540,41 @@ PickPokedexResult PickPokedexCards(void)
 }
 /* <<< factory PickPokedexCards */
 /* >>> factory AIDecide_Recycle */
-AIDecideResult AIDecide_Recycle(void)
+AIDecideParameterResult AIDecide_Recycle(void)
 {
+	/* trainer_cards.asm AIDecide_Recycle: the five priority slots live in
+	 * wce08..wce0c and the first one filled is the card to recycle. */
 	CardListResult discard = CreateDiscardPileCardList(0);
 	if (discard.f & 0x10u)
-		return (AIDecideResult){0x80u};
-	uint8_t priority[5] = {0xFFu, 0xFFu, 0xFFu, 0xFFu, 0xFFu};
+		return (AIDecideParameterResult){discard.a, or_a_flags(discard.a)};
+	for (uint8_t i = 0; i < 5u; i++)
+		gb_write8((uint16_t)(wce08_ADDR + i), 0xFFu);
 	uint16_t list = wDuelTempList_ADDR;
-	uint8_t ghost = wOpponentDeckID == 0x0Du;
+	uint8_t ghost = wOpponentDeckID == GHOST_DECK_ID;
 	for (;;) {
 		uint8_t deck_index = gb_read8(list++);
 		if (deck_index == 0xFFu)
 			break;
 		uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(deck_index);
 		if (!ghost) {
-			if (card_id == 0x07u) priority[0] = deck_index;
-			else if (card_id == 0xB8u) priority[1] = deck_index;
-			else if (card_id == 0xBAu) priority[2] = deck_index;
-			else if (card_id == 0xADu) priority[3] = deck_index;
+			if (card_id == DOUBLE_COLORLESS_ENERGY) gb_write8(wce08_ADDR, deck_index);
+			else if (card_id == CHANSEY) gb_write8(wce08_ADDR + 1u, deck_index);
+			else if (card_id == TAUROS) gb_write8(wce08_ADDR + 2u, deck_index);
+			else if (card_id == JIGGLYPUFF_LV12) gb_write8(wce08_ADDR + 3u, deck_index);
 		} else {
-			if (card_id == 0x95u) priority[0] = deck_index;
-			else if (card_id == 0x94u) priority[1] = deck_index;
-			else if (card_id == 0x1Au) priority[2] = deck_index;
-			else if (card_id == 0xBBu) priority[3] = deck_index;
-			else if (card_id == 0xB2u) priority[4] = deck_index;
+			if (card_id == GASTLY_LV17) gb_write8(wce08_ADDR, deck_index);
+			else if (card_id == GASTLY_LV8) gb_write8(wce08_ADDR + 1u, deck_index);
+			else if (card_id == ZUBAT) gb_write8(wce08_ADDR + 2u, deck_index);
+			else if (card_id == DITTO) gb_write8(wce08_ADDR + 3u, deck_index);
+			else if (card_id == MEOWTH_LV15) gb_write8(wce08_ADDR + 4u, deck_index);
 		}
 	}
-	for (uint8_t i = 0; i < 5u; i++)
-		if (priority[i] != 0xFFu)
-			return (AIDecideResult){0x10u};
-	return (AIDecideResult){0x00u};
+	for (uint8_t i = 0; i < 5u; i++) {
+		uint8_t chosen = gb_read8((uint16_t)(wce08_ADDR + i));
+		if (chosen != 0xFFu)
+			return (AIDecideParameterResult){chosen, 0x10u};
+	}
+	return (AIDecideParameterResult){0xFFu, 0x00u};
 }
 /* <<< factory AIDecide_Recycle */
 
@@ -588,33 +620,34 @@ AIDecideMaintenanceResult AIDecide_Maintenance(void)
 }
 /* <<< factory AIDecide_Maintenance */
 /* >>> factory AIDecide_Lass */
-AIDecideResult AIDecide_Lass(void)
+AIDecideParameterResult AIDecide_Lass(void)
 {
 	uint8_t hand_count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a;
 	if (hand_count < 7u)
-		return (AIDecideResult){hand_count == 0u ? 0x80u : 0x00u};
+		return (AIDecideParameterResult){hand_count, or_a_flags(hand_count)};
 	(void)CreateHandCardList(hand_count);
 	uint16_t list = wDuelTempList_ADDR;
 	for (;;) {
 		uint8_t deck_index = gb_read8(list++);
 		if (deck_index == 0xFFu)
-			return (AIDecideResult){0x90u};
+			return (AIDecideParameterResult){0xFFu, 0x90u};
 		uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(deck_index);
-		if (card_id == 0xC7u)
+		if (card_id == LASS)
 			continue;
-		if (gb_read8(wLoadedCard1Type_ADDR) == 0x08u)
-			return (AIDecideResult){0x00u};
+		uint8_t type = gb_read8(wLoadedCard1Type_ADDR);
+		if (type == TYPE_TRAINER)
+			return (AIDecideParameterResult){type, 0x00u};
 	}
 }
 /* <<< factory AIDecide_Lass */
 
 /* >>> factory AIDecide_Imakuni */
-AIDecideResult AIDecide_Imakuni(void)
+AIDecideParameterResult AIDecide_Imakuni(void)
 {
-	uint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;
-	if ((status & 0x0Fu) == 0x01u)
-		return (AIDecideResult){0x00u};
-	return (AIDecideResult){0x10u};
+	uint8_t status = (uint8_t)(GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a & CNF_SLP_PRZ);
+	if (status == CONFUSED)
+		return (AIDecideParameterResult){status, 0x00u};
+	return (AIDecideParameterResult){status, 0x10u};
 }
 /* <<< factory AIDecide_Imakuni */
 /* >>> factory AIDecide_PokemonFlute */
@@ -665,60 +698,65 @@ AIDecidePokemonFluteResult AIDecide_ClefairyDollOrMysteriousFossil(void)
 /* <<< factory AIDecide_ClefairyDollOrMysteriousFossil */
 
 /* >>> factory AIDecide_Defender_Phase14 */
-AIDecideResult AIDecide_Defender_Phase14(void)
+AIDecideParameterResult AIDecide_Defender_Phase14(void)
 {
-	uint8_t flag = CheckLoadedAttackFlag(0x06u).f;
-	if (!(flag & 0x10u))
-		flag = CheckLoadedAttackFlag(0x04u).f;
-	if (!(flag & 0x10u))
-		return (AIDecideResult){0x80u};
-	uint8_t arena = GetTurnDuelistVariable(0xBBu).a;
-	(void)LoadCardDataToBuffer2_FromDeckIndex(arena);
-	uint8_t damage = wSelectedAttack == 0u ? wLoadedCard2Atk1EffectParam :
-		wLoadedCard2Atk2EffectParam;
+	/* trainer_cards.asm AIDecide_Defender_Phase14: play Defender when the
+	 * chosen attack's recoil, after the card's own weakness and resistance
+	 * and the 20 Defender prevents, would still not knock the card out. */
+	AttackFlagResult recoil = CheckLoadedAttackFlag(ATTACK_FLAG1_ADDRESS | HIGH_RECOIL_F);
+	if ((recoil.f & 0x10u) == 0u)
+		recoil = CheckLoadedAttackFlag(ATTACK_FLAG1_ADDRESS | LOW_RECOIL_F);
+	if ((recoil.f & 0x10u) == 0u)
+		return (AIDecideParameterResult){recoil.a, or_a_flags(recoil.a)};
+	(void)LoadCardDataToBuffer2_FromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
+	uint8_t damage = wSelectedAttack == 0u ? wLoadedCard2Atk1EffectParam : wLoadedCard2Atk2EffectParam;
 	uint8_t color = TranslateColorToWR(GetArenaCardColor());
 	if (GetArenaCardWeakness() & color)
 		damage = (uint8_t)(damage << 1);
+	color = TranslateColorToWR(GetArenaCardColor());
 	if (GetArenaCardResistance() & color) {
+		uint8_t reduced = (uint8_t)(damage - 30u);
 		if (damage < 30u)
-			return (AIDecideResult){0};
-		damage = (uint8_t)(damage - 30u);
+			return (AIDecideParameterResult){reduced, or_a_flags(reduced)};
+		damage = reduced;
 	}
 	if (damage == 0u)
-		return (AIDecideResult){0};
+		return (AIDecideParameterResult){0u, 0x80u};
 	damage = (uint8_t)(damage - 20u);
-	uint8_t hp = GetTurnDuelistVariable(0x08u).a;
-	return (AIDecideResult){(uint8_t)(((damage != 0u) && (hp > damage)) ? 0x10u : 0)};
+	uint8_t hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a;
+	uint8_t left = (uint8_t)(hp - damage);
+	if (hp <= damage)
+		return (AIDecideParameterResult){left, or_a_flags(left)};
+	return (AIDecideParameterResult){left, 0x10u};
 }
 /* <<< factory AIDecide_Defender_Phase14 */
 
 /* >>> factory AIDecide_Bill */
-AIDecideResult AIDecide_Bill(void)
+AIDecideParameterResult AIDecide_Bill(void)
 {
+	/* trainer_cards.asm:1428-1432: a is the count the cp leaves. */
 	uint8_t remaining = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK).a;
-	uint8_t f = 0x40u;
-	if ((remaining & 0x0Fu) < 3u)
-		f |= 0x20u;
-	if (remaining < 51u)
-		f |= 0x10u;
-	if (remaining == 51u)
-		f |= 0x80u;
-	return (AIDecideResult){f};
+	return (AIDecideParameterResult){remaining, cp_flags(remaining, DECK_SIZE - 9u)};
 }
 /* <<< factory AIDecide_Bill */
 
 /* >>> factory AIDecide_Gambler */
-AIDecideResult AIDecide_Gambler(void)
+AIDecideParameterResult AIDecide_Gambler(void)
 {
-	if (wOpponentDeckID == 0x34u) {
-		if (Random(10u) < 2u)
-			return (AIDecideResult){0x10u};
-		return (AIDecideResult){0x80u};
+	if (wOpponentDeckID == IMAKUNI_DECK_ID) {
+		/* .imakuni: play it two times in ten; a is the roll either way. */
+		uint8_t roll = Random(10u);
+		if (roll < 2u)
+			return (AIDecideParameterResult){roll, 0x10u};
+		return (AIDecideParameterResult){roll, or_a_flags(roll)};
 	}
-	if (!(wAIBarrierFlagCounter & 0x80u))
-		return (AIDecideResult){0x80u};
+	uint8_t mill = (uint8_t)(wAIBarrierFlagCounter & AI_MEWTWO_MILL);
+	if (mill == 0u)
+		return (AIDecideParameterResult){0u, 0x80u};
 	uint8_t remaining = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK).a;
-	return (AIDecideResult){(uint8_t)(remaining >= 56u ? 0x90u : 0x80u)};
+	if (remaining >= DECK_SIZE - 4u)
+		return (AIDecideParameterResult){remaining, (uint8_t)((remaining == DECK_SIZE - 4u ? 0x80u : 0u) | 0x10u)};
+	return (AIDecideParameterResult){remaining, or_a_flags(remaining)};
 }
 /* <<< factory AIDecide_Gambler */
 
@@ -746,18 +784,18 @@ AIDecideReviveResult AIDecide_Revive(void)
 /* <<< factory AIDecide_Revive */
 
 /* >>> factory AIDecide_ImposterProfessorOak */
-AIDecideResult AIDecide_ImposterProfessorOak(void)
+AIDecideParameterResult AIDecide_ImposterProfessorOak(void)
 {
 	uint8_t remaining = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK).a;
 	uint8_t hand = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a;
-	if (remaining < (60u - 14u)) {
+	if (remaining < DECK_SIZE - 14u) {
 		if (hand < 9u)
-			return (AIDecideResult){(uint8_t)(hand == 0u ? 0x80u : 0x00u)};
-		return (AIDecideResult){(uint8_t)(hand == 9u ? 0x90u : 0x10u)};
+			return (AIDecideParameterResult){hand, or_a_flags(hand)};
+		return (AIDecideParameterResult){hand, (uint8_t)((hand == 9u ? 0x80u : 0u) | 0x10u)};
 	}
 	if (hand < 6u)
-		return (AIDecideResult){0x10u};
-	return (AIDecideResult){0x00u};
+		return (AIDecideParameterResult){hand, 0x10u};
+	return (AIDecideParameterResult){hand, or_a_flags(hand)};
 }
 /* <<< factory AIDecide_ImposterProfessorOak */
 
@@ -1970,7 +2008,7 @@ AIDecide_PokeballResult AIDecide_Pokeball(void)
 /* <<< factory AIDecide_Pokeball */
 
 /* >>> factory AIDecide_MrFuji */
-AIDecideResult AIDecide_MrFuji(void)
+AIDecideParameterResult AIDecide_MrFuji(void)
 {
 	gb_write8(0xCE06u, 0xFFu);
 	gb_write8(0xCE08u, 0xFFu);
@@ -1978,7 +2016,7 @@ AIDecideResult AIDecide_MrFuji(void)
 	DuelistVarResult r1 = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
 	uint8_t count = r1.a;
 	if (count == 1u)
-		return (AIDecideResult){0xC0u};
+		return (AIDecideParameterResult){count, 0xC0u};
 
 	uint8_t d = (uint8_t)(count - 1u);
 	uint8_t e = PLAY_AREA_BENCH_1;
@@ -2002,9 +2040,10 @@ AIDecideResult AIDecide_MrFuji(void)
 		d--;
 	}
 
-	if (gb_read8(0xCE06u) == 0xFFu)
-		return (AIDecideResult){0xC0u};
-	return (AIDecideResult){0x10u};
+	uint8_t chosen = gb_read8(0xCE06u);
+	if (chosen == 0xFFu)
+		return (AIDecideParameterResult){chosen, 0xC0u};
+	return (AIDecideParameterResult){chosen, 0x10u};
 }
 /* <<< factory AIDecide_MrFuji */
 
@@ -2416,38 +2455,38 @@ AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a)
  * Register arguments the C signatures still carry are the asm's incidental
  * inputs; the loop hands them the scratch values it has. */
 typedef struct { uint8_t a; uint8_t f; } TrainerDecision;
-static TrainerDecision decide_AIDecide_Bill(void) { AIDecideResult r = AIDecide_Bill(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_Bill(void) { AIDecideParameterResult r = AIDecide_Bill(); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_ClefairyDollOrMysteriousFossil(void) { AIDecidePokemonFluteResult r = AIDecide_ClefairyDollOrMysteriousFossil(); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_ComputerSearch(void) { AIDecide_ComputerSearchResult r = AIDecide_ComputerSearch(0u, 0u); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_Defender_Phase13(void) { AIDecideResult r = AIDecide_Defender_Phase13(); return (TrainerDecision){0u, r.f}; }
-static TrainerDecision decide_AIDecide_Defender_Phase14(void) { AIDecideResult r = AIDecide_Defender_Phase14(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_Defender_Phase13(void) { AIDecideParameterResult r = AIDecide_Defender_Phase13(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_Defender_Phase14(void) { AIDecideParameterResult r = AIDecide_Defender_Phase14(); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_EnergyRemoval(void) { AIDecideEnergyRemovalResult r = AIDecide_EnergyRemoval(); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_EnergyRetrieval(void) { AIDecideEnergyRetrievalResult r = AIDecide_EnergyRetrieval(0u); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_EnergySearch(void) { AIDecideEnergySearchResult r = AIDecide_EnergySearch(0u); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_FullHeal(void) { AIDecideFullHealResult r = AIDecide_FullHeal(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_Gambler(void) { AIDecideResult r = AIDecide_Gambler(); return (TrainerDecision){0u, r.f}; }
-static TrainerDecision decide_AIDecide_GustOfWind(void) { AIDecideResult r = AIDecide_GustOfWind(); return (TrainerDecision){0u, r.f}; }
-static TrainerDecision decide_AIDecide_Imakuni(void) { AIDecideResult r = AIDecide_Imakuni(); return (TrainerDecision){0u, r.f}; }
-static TrainerDecision decide_AIDecide_ImposterProfessorOak(void) { AIDecideResult r = AIDecide_ImposterProfessorOak(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_Gambler(void) { AIDecideParameterResult r = AIDecide_Gambler(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_GustOfWind(void) { AIDecideParameterResult r = AIDecide_GustOfWind(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_Imakuni(void) { AIDecideParameterResult r = AIDecide_Imakuni(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_ImposterProfessorOak(void) { AIDecideParameterResult r = AIDecide_ImposterProfessorOak(); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_ItemFinder(void) { AIDecide_ItemFinderResult r = AIDecide_ItemFinder(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_Lass(void) { AIDecideResult r = AIDecide_Lass(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_Lass(void) { AIDecideParameterResult r = AIDecide_Lass(); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_Maintenance(void) { AIDecideMaintenanceResult r = AIDecide_Maintenance(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_MrFuji(void) { AIDecideResult r = AIDecide_MrFuji(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_MrFuji(void) { AIDecideParameterResult r = AIDecide_MrFuji(); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_PlusPower_Phase13(void) { AIDecide_PlusPower_Phase13Result r = AIDecide_PlusPower_Phase13(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_PlusPower_Phase14(void) { AIDecideResult r = AIDecide_PlusPower_Phase14(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_PlusPower_Phase14(void) { AIDecideParameterResult r = AIDecide_PlusPower_Phase14(); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_Pokeball(void) { AIDecide_PokeballResult r = AIDecide_Pokeball(); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_Pokedex(void) { AIDecidePokedexResult r = AIDecide_Pokedex(); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_PokemonBreeder(void) { AIDecidePokemonBreederResult r = AIDecide_PokemonBreeder(0u); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_PokemonCenter(void) { AIDecideResult r = AIDecide_PokemonCenter(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_PokemonCenter(void) { AIDecideParameterResult r = AIDecide_PokemonCenter(); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_PokemonFlute(void) { AIDecidePokemonFluteResult r = AIDecide_PokemonFlute(0u); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_PokemonTrader(void) { AIDecide_PokemonTraderResult r = AIDecide_PokemonTrader(); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_Potion_Phase07(void) { AIDecidePotionPhase07Result r = AIDecide_Potion_Phase07(); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_Potion_Phase10(void) { AIDecidePotionPhase10Result r = AIDecide_Potion_Phase10(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_ProfessorOak(void) { AIDecideResult r = AIDecide_ProfessorOak(); return (TrainerDecision){0u, r.f}; }
-static TrainerDecision decide_AIDecide_Recycle(void) { AIDecideResult r = AIDecide_Recycle(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_ProfessorOak(void) { AIDecideParameterResult r = AIDecide_ProfessorOak(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_Recycle(void) { AIDecideParameterResult r = AIDecide_Recycle(); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_Revive(void) { AIDecideReviveResult r = AIDecide_Revive(); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_ScoopUp(void) { AIDecide_ScoopUpResult r = AIDecide_ScoopUp(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_SuperEnergyRemoval(void) { AIDecideResult r = AIDecide_SuperEnergyRemoval(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_SuperEnergyRemoval(void) { AIDecideParameterResult r = AIDecide_SuperEnergyRemoval(); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_SuperEnergyRetrieval(void) { AIDecideSuperEnergyRetrievalResult r = AIDecide_SuperEnergyRetrieval(0u); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_SuperPotion_Phase08(void) { AIDecideSuperPotionPhase08Result r = AIDecide_SuperPotion_Phase08(); return (TrainerDecision){r.a, r.f}; }
 static TrainerDecision decide_AIDecide_SuperPotion_Phase11(void) { AIDecideSuperPotionPhase11Result r = AIDecide_SuperPotion_Phase11(); return (TrainerDecision){r.a, r.f}; }
@@ -2700,100 +2739,294 @@ AIDecideResult AIPlay_PokemonCenter(void)
 
 
 /* >>> factory AIDecide_PlusPower_Phase14 */
-AIDecideResult AIDecide_PlusPower_Phase14(void)
+AIDecideParameterResult AIDecide_PlusPower_Phase14(void)
 {
+	/* trainer_cards.asm AIDecide_PlusPower_Phase14: a usable attack that does
+	 * not already knock out, a 30% roll, and no Mr. Mime wall past 30 damage. */
 	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	/* .CheckAttackDoesntKO */
 	CheckIfSelectedAttackIsUnusableResult unusable =
 		CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
 	if ((unusable.f & 0x10u) != 0u)
-		return (AIDecideResult){0u};
-
+		return (AIDecideParameterResult){unusable.a, or_a_flags(unusable.a)};
 	(void)EstimateDamage_VersusDefendingCard(wSelectedAttack);
-	DuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
-	uint8_t remaining = (uint8_t)(hp.a - wDamage);
-	if (remaining == 0u || hp.a < wDamage)
-		return (AIDecideResult){0u};
-
-	CheckIfSelectedAttackIsUnusableResult random_unusable =
-		CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
-	if ((random_unusable.f & 0x10u) != 0u)
-		return (AIDecideResult){0u};
+	uint8_t hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a;
+	uint8_t left = (uint8_t)(hp - wDamage);
+	if (hp <= wDamage)
+		return (AIDecideParameterResult){left, or_a_flags(left)};
+	/* .check_random */
+	unusable = CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	if ((unusable.f & 0x10u) != 0u)
+		return (AIDecideParameterResult){unusable.a, or_a_flags(unusable.a)};
 	(void)EstimateDamage_VersusDefendingCard(wSelectedAttack);
-	if (wAIMinDamage < 10u)
-		return (AIDecideResult){0u};
-	if (Random(10u) >= 3u)
-		return (AIDecideResult){0u};
-	if ((uint8_t)(wDamage + 10u) < 30u)
-		return (AIDecideResult){0u};
+	uint8_t minimum = wAIMinDamage;
+	if (minimum < 10u)
+		return (AIDecideParameterResult){minimum, or_a_flags(minimum)};
+	uint8_t roll = Random(10u);
+	if (roll >= 3u)
+		return (AIDecideParameterResult){roll, or_a_flags(roll)};
+	/* .MrMimeDamageCheck */
+	uint8_t boosted = (uint8_t)(wDamage + 10u);
+	if (boosted < 30u)
+		return (AIDecideParameterResult){boosted, 0x10u};
 	SwapTurn();
-	uint8_t arena_index = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
-	uint16_t card_id = GetCardIDFromDeckIndex(arena_index);
+	uint8_t defender = (uint8_t)GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
 	SwapTurn();
-	if ((uint8_t)card_id == MR_MIME)
-		return (AIDecideResult){0u};
-	return (AIDecideResult){0x10u};
+	if (defender == MR_MIME)
+		return (AIDecideParameterResult){defender, 0x00u};
+	return (AIDecideParameterResult){defender, 0x10u};
 }
 /* <<< factory AIDecide_PlusPower_Phase14 */
 
 /* >>> factory AIDecide_GustOfWind */
-AIDecideResult AIDecide_GustOfWind(void)
+/* trainer_cards.asm AIDecide_GustOfWind. The local routines that stand a
+ * bench card in for the player's arena card restore it through two `pop af`,
+ * so the Z each carry-exit keeps is GetNonTurnDuelistVariable's own
+ * `cp PLAYER_TURN`. */
+static uint8_t non_turn_z(void)
 {
-	uint8_t bench_count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
-	if (bench_count == 1u)
-		return (AIDecideResult){0x80u};
+	return hWhoseTurn == PLAYER_TURN ? 0x80u : 0x00u;
+}
+
+/* .CheckIfAttackDealsNoDamage: carry when the attack is a Pokemon Power or
+ * can deal no damage at all to the defending card. */
+static uint8_t gust_attack_deals_no_damage(void)
+{
+	(void)CopyAttackDataAndDamage_FromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a, wSelectedAttack);
+	if (wLoadedAttackCategory == POKEMON_POWER)
+		return 1u;
+	if (wDamage == 0u)
+		return 0u;
+	(void)EstimateDamage_VersusDefendingCard(wSelectedAttack);
+	return wAIMaxDamage == 0u;
+}
+
+/* .CheckIfNoAttackDealsDamage */
+static uint8_t gust_no_attack_deals_damage(void)
+{
+	wSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;
+	if (!gust_attack_deals_no_damage())
+		return 0u;
+	wSelectedAttack = SECOND_ATTACK;
+	return gust_attack_deals_no_damage();
+}
+
+/* Stand the player's bench card at `location` in as the arena card, run
+ * `check`, put the arena card back. Returns the check's verdict. */
+typedef uint8_t (*GustArenaCheck)(uint8_t location);
+
+static uint8_t gust_with_bench_card_in_arena(uint8_t location, GustArenaCheck check)
+{
+	DuelistVarResult arena = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	uint8_t arena_card = arena.a;
+	gb_write8(arena.hl, GetNonTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD)).a);
+	uint8_t bench_hp = GetNonTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD_HP)).a;
+	DuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	uint8_t arena_hp = hp.a;
+	gb_write8(hp.hl, bench_hp);
+	uint8_t verdict = check(location);
+	gb_write8(GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).hl, arena_hp);
+	gb_write8(GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD).hl, arena_card);
+	return verdict;
+}
+
+/* .CheckIfAttackKnocksOut against the card in location e. */
+static uint8_t gust_attack_knocks_out(uint8_t attack, uint8_t location)
+{
+	(void)EstimateDamage_VersusDefendingCard(attack);
+	return GetNonTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + location)).a <= wDamage;
+}
+
+/* .CheckIfAnyAttackKnocksOut, then whether that attack can actually be used:
+ * usable now, or usable once the energy in hand is attached. */
+static uint8_t gust_knockout_check(uint8_t location)
+{
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	if (!gust_attack_knocks_out(FIRST_ATTACK_OR_PKMN_POWER, location)
+	    && !gust_attack_knocks_out(SECOND_ATTACK, location))
+		return 0u;
+	if ((CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u).f & 0x10u) == 0u)
+		return 1u;
+	return (LookForEnergyNeededForAttackInHand().f & 0x10u) != 0u;
+}
+
+/* .FindBenchCardToKnockOut */
+static uint8_t gust_find_bench_card_to_knock_out(uint8_t *location_out)
+{
+	uint16_t bench = GetNonTurnDuelistVariable(DUELVARS_BENCH).hl;
+	for (uint8_t location = PLAY_AREA_BENCH_1;; location++) {
+		if (gb_read8(bench++) == 0xFFu)
+			return 0u;
+		if (gust_with_bench_card_in_arena(location, gust_knockout_check)) {
+			*location_out = location;
+			return 1u;
+		}
+	}
+}
+
+/* .CheckIfCanDamageBenchedCard's check */
+static uint8_t gust_can_damage_arena(uint8_t location)
+{
+	(void)location;
+	return (CheckIfCanDamageDefendingPokemon(PLAY_AREA_ARENA, 0x80u, 0u, 0u, 0u, 0u, 0u).f & 0x10u) != 0u;
+}
+
+/* .FindBenchCardWithWeakness: a player's bench card weak to color b that the
+ * arena card can damage. Carry-exit F keeps CheckIfCanDamageDefendingPokemon's Z. */
+static uint8_t gust_find_bench_card_with_weakness(uint8_t color, uint8_t *location_out, uint8_t *z_out)
+{
+	uint16_t bench = GetNonTurnDuelistVariable(DUELVARS_BENCH).hl;
+	for (uint8_t location = PLAY_AREA_BENCH_1;; location++) {
+		uint8_t card = gb_read8(bench++);
+		if (card == 0xFFu)
+			return 0u;
+		SwapTurn();
+		(void)LoadCardDataToBuffer1_FromDeckIndex(card);
+		SwapTurn();
+		if ((wLoadedCard1Weakness & color) == 0u)
+			continue;
+		CheckIfCanDamageDefendingPokemonResult damage =
+			CheckIfCanDamageDefendingPokemon(PLAY_AREA_ARENA, 0x80u, 0u, 0u, 0u, 0u, 0u);
+		if (damage.f & 0x10u) {
+			*location_out = location;
+			*z_out = (uint8_t)(damage.f & 0x80u);
+			return 1u;
+		}
+	}
+}
+
+AIDecideParameterResult AIDecide_GustOfWind(void)
+{
+	uint8_t bench_count = (uint8_t)(GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a - 1u);
 	if (bench_count == 0u)
-		return (AIDecideResult){0x00u};
-	if ((wPreviousAIFlags & AI_FLAG_USED_GUST_OF_WIND) != 0u)
-		return (AIDecideResult){0x20u};
-	return (AIDecideResult){0x10u};
+		return (AIDecideParameterResult){0u, 0x80u};
+	uint8_t used = (uint8_t)(wPreviousAIFlags & AI_FLAG_USED_GUST_OF_WIND);
+	if (used != 0u)
+		return (AIDecideParameterResult){used, 0x20u};
+	CanArenaCardUseNonResidualAttackResult attack =
+		CanArenaCardUseNonResidualAttack(used, 0xA0u, 0u, 0u, 0u, 0u, 0u);
+	if ((attack.f & 0x10u) == 0u)
+		return (AIDecideParameterResult){attack.a, attack.f};
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	if (CheckIfAnyAttackKnocksOutDefendingCard().f & 0x10u) {
+		CheckIfSelectedAttackIsUnusableResult unusable =
+			CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		if ((unusable.f & 0x10u) == 0u)
+			return (AIDecideParameterResult){unusable.a, or_a_flags(unusable.a)};
+		LookForEnergyNeededForAttackInHandResult energy = LookForEnergyNeededForAttackInHand();
+		if (energy.f & 0x10u)
+			return (AIDecideParameterResult){energy.a, or_a_flags(energy.a)};
+	}
+	/* .check_id */
+	uint8_t arena_id = (uint8_t)GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
+	if (arena_id == MEW_LV23 || arena_id == MEWTWO_LV53)
+		return (AIDecideParameterResult){arena_id, 0x00u};
+	uint8_t location;
+	uint8_t z;
+	if (gust_find_bench_card_to_knock_out(&location))
+		return (AIDecideParameterResult){location, (uint8_t)(0x10u | non_turn_z())};
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	if (!gust_no_attack_deals_damage()) {
+		uint8_t color = TranslateColorToWR(GetArenaCardColor());
+		SwapTurn();
+		uint8_t weak = (uint8_t)(GetArenaCardWeakness() & color);
+		SwapTurn();
+		if (weak != 0u)
+			return (AIDecideParameterResult){weak, 0x00u};
+		if (gust_find_bench_card_with_weakness(color, &location, &z))
+			return (AIDecideParameterResult){location, (uint8_t)(0x10u | z)};
+		return (AIDecideParameterResult){0xFFu, 0x00u};
+	}
+	/* .check_bench_energy: the arena card cannot damage the defending card.
+	 * The asm never loads b here: it is whatever the last damage estimate
+	 * left, and every estimate that reaches its weakness/resistance tail
+	 * leaves `ld b, CARD_LOCATION_ARENA` (ApplyAttachedDefender's input,
+	 * damage_calculation.asm:166). That value doubles as a WATER weakness
+	 * mask. A ROM bug, modeled as the register it is. */
+	if (gust_find_bench_card_with_weakness(CARD_LOCATION_ARENA, &location, &z))
+		return (AIDecideParameterResult){location, (uint8_t)(0x10u | z)};
+	uint8_t count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	for (location = PLAY_AREA_BENCH_1; --count != 0u; location++) {
+		SwapTurn();
+		(void)GetPlayAreaCardAttachedEnergies(location);
+		SwapTurn();
+		if (wTotalAttachedEnergies != 0u)
+			continue;
+		if (gust_with_bench_card_in_arena(location, gust_can_damage_arena))
+			return (AIDecideParameterResult){location, (uint8_t)(0x10u | non_turn_z())};
+	}
+	/* .check_bench_hp: the damageable bench card with the least HP left. */
+	wce06 = 0xFFu;
+	wce08 = 0u;
+	count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	for (location = PLAY_AREA_BENCH_1; --count != 0u; location++) {
+		uint8_t hp = GetNonTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD_HP)).a;
+		if (wce06 < (uint8_t)(hp + 1u))
+			continue;
+		if (!gust_with_bench_card_in_arena(location, gust_can_damage_arena))
+			continue;
+		wce06 = hp;
+		wce08 = location;
+	}
+	uint8_t found = wce08;
+	if (found == 0u)
+		return (AIDecideParameterResult){0u, 0x80u};
+	return (AIDecideParameterResult){found, 0x10u};
 }
 /* <<< factory AIDecide_GustOfWind */
 
 /* >>> factory AIDecide_Defender_Phase13 */
-AIDecideResult AIDecide_Defender_Phase13(void)
+AIDecideParameterResult AIDecide_Defender_Phase13(void)
 {
-	hTempPlayAreaLocation_ff9d = 0u;
-	CheckIfAnyAttackKnocksOutDefendingCardResult ko = CheckIfAnyAttackKnocksOutDefendingCard();
-	if (ko.f & 0x10u) {
-		CheckIfSelectedAttackIsUnusableResult unusable = CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
-		if (unusable.f & 0x10u) {
-			LookForEnergyNeededForAttackInHandResult energy = LookForEnergyNeededForAttackInHand();
-			if (energy.f & 0x10u)
-				return (AIDecideResult){0u, 0x80u};
-		}
+	/* trainer_cards.asm AIDecide_Defender_Phase13: play Defender when the
+	 * player's strongest usable attack would knock the arena card out only
+	 * without the 20 it prevents, and no knockout of the player's card is
+	 * within reach this turn. */
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	if (CheckIfAnyAttackKnocksOutDefendingCard().f & 0x10u) {
+		CheckIfSelectedAttackIsUnusableResult unusable =
+			CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		if ((unusable.f & 0x10u) == 0u)
+			return (AIDecideParameterResult){unusable.a, or_a_flags(unusable.a)};
+		LookForEnergyNeededForAttackInHandResult energy = LookForEnergyNeededForAttackInHand();
+		if (energy.f & 0x10u)
+			return (AIDecideParameterResult){energy.a, or_a_flags(energy.a)};
 	}
-	CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult same = CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP();
-	if (!(same.f & 0x10u))
-		return (AIDecideResult){0u, 0x80u};
+	/* .cannot_ko */
+	CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult same =
+		CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP();
+	if ((same.f & 0x10u) == 0u)
+		return (AIDecideParameterResult){same.a, or_a_flags(same.a)};
 	SwapTurn();
-	CheckIfSelectedAttackIsUnusableResult selected = CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	CheckIfSelectedAttackIsUnusableResult selected =
+		CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
 	SwapTurn();
 	if (selected.f & 0x10u)
-		return (AIDecideResult){0u, 0x80u};
-	uint8_t selected_attack = wSelectedAttack;
-	(void)EstimateDamage_FromDefendingPokemon(selected_attack);
-	wce06 = wDamage;
+		return (AIDecideParameterResult){selected.a, or_a_flags(selected.a)};
+	(void)EstimateDamage_FromDefendingPokemon(wSelectedAttack);
 	uint8_t selected_damage = wDamage;
-	wSelectedAttack = (uint8_t)(SECOND_ATTACK - selected_attack);
+	wce06 = selected_damage;
+	wSelectedAttack = (uint8_t)(SECOND_ATTACK - wSelectedAttack);
 	SwapTurn();
-	CheckIfSelectedAttackIsUnusableResult other = CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	CheckIfSelectedAttackIsUnusableResult other =
+		CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
 	SwapTurn();
-	if (other.f & 0x10u) {
+	uint8_t switch_back = (other.f & 0x10u) != 0u;
+	if (!switch_back) {
+		(void)EstimateDamage_FromDefendingPokemon(wSelectedAttack);
+		switch_back = wDamage < selected_damage;
+	}
+	if (switch_back) {
 		wSelectedAttack = (uint8_t)(SECOND_ATTACK - wSelectedAttack);
 		wDamage = wce06;
-	} else {
-		uint8_t other_attack = wSelectedAttack;
-		(void)EstimateDamage_FromDefendingPokemon(other_attack);
-		if (wDamage < selected_damage) {
-			wSelectedAttack = (uint8_t)(SECOND_ATTACK - wSelectedAttack);
-			wDamage = wce06;
-		}
 	}
-	uint8_t damage_after_defender = (uint8_t)(wDamage - 20u);
+	/* .subtract */
+	uint8_t after_defender = (uint8_t)(wDamage - 20u);
 	uint8_t hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a;
-	if (hp > damage_after_defender)
-		return (AIDecideResult){0u, 0x10u};
-	return (AIDecideResult){0u, 0x80u};
+	uint8_t left = (uint8_t)(hp - after_defender);
+	if (hp <= after_defender)
+		return (AIDecideParameterResult){left, or_a_flags(left)};
+	return (AIDecideParameterResult){left, 0x10u};
 }
 /* <<< factory AIDecide_Defender_Phase13 */
 
@@ -2832,9 +3065,126 @@ do_switch:
 /* <<< factory AIDecide_Switch */
 
 /* >>> factory AIDecide_SuperEnergyRemoval */
-AIDecideResult AIDecide_SuperEnergyRemoval(void)
+/* trainer_cards.asm AIDecide_SuperEnergyRemoval and its local routines. */
+
+/* .CheckIfFewerThanTwoEnergyCards: carry when the card in location e has
+ * fewer than two energy cards, or fewer than two energy counting a double
+ * colorless as two. */
+static uint8_t ser_fewer_than_two_energy(uint8_t location)
 {
-	return (AIDecideResult){0x00u};
+	(void)GetPlayAreaCardAttachedEnergies(location);
+	if (wTotalAttachedEnergies < 2u)
+		return 1u;
+	uint8_t total = 0u;
+	for (uint8_t color = 0u; color < NUM_COLORED_TYPES; color++)
+		total = (uint8_t)(total + gb_read8((uint16_t)(wAttachedEnergies_ADDR + color)));
+	total = (uint8_t)(total + (gb_read8((uint16_t)(wAttachedEnergies_ADDR + NUM_COLORED_TYPES)) >> 1));
+	return total < 2u;
+}
+
+/* .CheckIfNotEnoughEnergyToAttack: carry when neither attack of the card in
+ * location e has its energy, or only the second does and with a surplus of two. */
+static uint8_t ser_not_enough_energy_to_attack(uint8_t location)
+{
+	wSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;
+	hTempPlayAreaLocation_ff9d = location;
+	if ((CheckEnergyNeededForAttack().f & 0x10u) == 0u)
+		return 0u;
+	wSelectedAttack = SECOND_ATTACK;
+	hTempPlayAreaLocation_ff9d = location;
+	if ((CheckEnergyNeededForAttack().f & 0x10u) != 0u)
+		return 1u;
+	return CheckIfNoSurplusEnergyForAttack().a >= 2u;
+}
+
+/* .FindHighestDamagingAttack: the strongest attack of the card in location e
+ * against the AI's arena card, kept in wce06 with its location in wce08. */
+static void ser_find_highest_damaging_attack(uint8_t location)
+{
+	for (uint8_t attack = FIRST_ATTACK_OR_PKMN_POWER; attack <= SECOND_ATTACK; attack++) {
+		hTempPlayAreaLocation_ff9d = location;
+		(void)EstimateDamage_VersusDefendingCard(attack);
+		uint8_t damage = wDamage;
+		if (damage != 0u && wce06 < damage) {
+			wce06 = damage;
+			wce08 = location;
+		}
+	}
+}
+
+/* .LookForNonDoubleColorless: carry when the card in location e has a basic
+ * energy card attached. */
+static uint8_t ser_has_basic_energy(uint8_t location)
+{
+	(void)CreateArenaOrBenchEnergyCardList(location);
+	uint16_t list = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(list++);
+		if (card == 0xFFu)
+			return 0u;
+		if (LoadCardDataToBuffer1_FromDeckIndex(card) < DOUBLE_COLORLESS_ENERGY)
+			return 1u;
+	}
+}
+
+AIDecideParameterResult AIDecide_SuperEnergyRemoval(void)
+{
+	/* A card of the AI's own with a basic energy to pay the cost. */
+	uint8_t own = PLAY_AREA_BENCH_1;
+	for (;; own++) {
+		if (GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + own)).a == 0xFFu)
+			return (AIDecideParameterResult){0xFFu, 0x00u};
+		if (ser_has_basic_energy(own))
+			break;
+	}
+	wce0f = own;
+	/* Whether the arena card can knock the defending card out this turn:
+	 * if it can, leave the player's arena card alone and look at the bench. */
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	uint8_t start = PLAY_AREA_ARENA;
+	if (CheckIfAnyAttackKnocksOutDefendingCard().f & 0x10u) {
+		if ((CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u).f & 0x10u) == 0u
+		    || (LookForEnergyNeededForAttackInHand().f & 0x10u) != 0u)
+			start = PLAY_AREA_BENCH_1;
+	}
+	SwapTurn();
+	uint8_t target = start;
+	for (;; target++) {
+		if (GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + target)).a == 0xFFu) {
+			SwapTurn();
+			return (AIDecideParameterResult){0xFFu, 0x00u};
+		}
+		if (ser_fewer_than_two_energy(target))
+			continue;
+		if (!ser_not_enough_energy_to_attack(target))
+			break;
+	}
+	if (target != PLAY_AREA_ARENA) {
+		/* .check_bench_damage: the bench card with the strongest attack. */
+		wce06 = 0u;
+		wce08 = 0u;
+		for (uint8_t bench = PLAY_AREA_BENCH_1;; bench++) {
+			if (GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + bench)).a == 0xFFu)
+				break;
+			if (ser_fewer_than_two_energy(bench) || ser_not_enough_energy_to_attack(bench))
+				continue;
+			ser_find_highest_damaging_attack(bench);
+		}
+		target = wce08;
+		if (target == 0u) {
+			SwapTurn();
+			return (AIDecideParameterResult){0u, 0x80u};
+		}
+	}
+	/* .pick_energy */
+	wce1b = target;
+	PickTwoResult picked = PickTwoAttachedEnergyCards(target);
+	wce1c = picked.a;
+	wce1d = picked.b;
+	SwapTurn();
+	uint8_t parameter = wce0f;
+	wce1a = AIPickEnergyCardToDiscard(parameter);
+	return (AIDecideParameterResult){parameter, (uint8_t)((picked.f & 0x80u) | 0x10u)};
 }
 /* <<< factory AIDecide_SuperEnergyRemoval */
 
@@ -2999,21 +3349,20 @@ AIDecideEnergyRemovalResult AIDecide_EnergyRemoval(void)
 /* <<< factory AIDecide_EnergyRemoval */
 
 /* >>> factory AIDecide_PokemonCenter */
-AIDecideResult AIDecide_PokemonCenter(void)
+AIDecideParameterResult AIDecide_PokemonCenter(void)
 {
-	hTempPlayAreaLocation_ff9d = 0u;
-
-	CheckIfAnyAttackKnocksOutDefendingCardResult knockout =
-		CheckIfAnyAttackKnocksOutDefendingCard();
-	if ((knockout.f & 0x10u) != 0u) {
+	/* trainer_cards.asm AIDecide_PokemonCenter: not when a knockout is within
+	 * reach this turn; otherwise when the damage to heal outweighs the energy
+	 * lost and beats 60% of the total HP. */
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	if (CheckIfAnyAttackKnocksOutDefendingCard().f & 0x10u) {
 		CheckIfSelectedAttackIsUnusableResult unusable =
 			CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
-		if ((unusable.f & 0x10u) != 0u) {
-			LookForEnergyNeededForAttackInHandResult energy =
-				LookForEnergyNeededForAttackInHand();
-			if ((energy.f & 0x10u) != 0u)
-				return (AIDecideResult){0u};
-		}
+		if ((unusable.f & 0x10u) == 0u)
+			return (AIDecideParameterResult){unusable.a, or_a_flags(unusable.a)};
+		LookForEnergyNeededForAttackInHandResult energy = LookForEnergyNeededForAttackInHand();
+		if (energy.f & 0x10u)
+			return (AIDecideParameterResult){energy.a, or_a_flags(energy.a)};
 	}
 
 	wce06 = 0u;
@@ -3035,7 +3384,7 @@ AIDecideResult AIDecide_PokemonCenter(void)
 		uint8_t attached = wTotalAttachedEnergies;
 		uint16_t energy_sum = (uint16_t)wce0f + attached;
 		if (energy_sum > 0xffu)
-			return (AIDecideResult){0u};
+			return (AIDecideParameterResult){(uint8_t)energy_sum, or_a_flags((uint8_t)energy_sum)};
 		wce0f = (uint8_t)energy_sum;
 		if (--d == 0u)
 			break;
@@ -3044,12 +3393,12 @@ AIDecideResult AIDecide_PokemonCenter(void)
 
 	uint8_t half_damage = (uint8_t)(wce08 >> 1);
 	if (half_damage < wce0f)
-		return (AIDecideResult){0u};
+		return (AIDecideParameterResult){half_damage, or_a_flags(half_damage)};
 	uint16_t product = HtimesL((uint16_t)(0x0600u | wce06));
-	product = CalculateWordTensDigit(product);
-	if ((uint8_t)product >= wce08)
-		return (AIDecideResult){0u};
-	return (AIDecideResult){0x10u};
+	uint8_t tens = (uint8_t)CalculateWordTensDigit(product);
+	if (tens >= wce08)
+		return (AIDecideParameterResult){tens, or_a_flags(tens)};
+	return (AIDecideParameterResult){tens, 0x10u};
 }
 /* <<< factory AIDecide_PokemonCenter */
 
@@ -3407,63 +3756,84 @@ AIDecideResult AIPlay_PokemonFlute(void)
 /* <<< factory AIPlay_PokemonFlute */
 
 /* >>> factory AIDecide_ProfessorOak */
-AIDecideResult AIDecide_ProfessorOak(void)
+/* .LookForEvolution: carry when a card in hand evolves the card in play area
+ * location e; wce08 is set when any card of the deck could. */
+static uint8_t oak_evolution_in_hand(uint8_t location)
 {
-	DuelistVarResult deck = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
-	if (gb_read8(deck.hl) >= (uint8_t)(DECK_SIZE - 6u))
-		return (AIDecideResult){0xC0u};
+	wce08 = 0u;
+	for (uint8_t candidate = 0u; candidate < DECK_SIZE; candidate++) {
+		if (CheckIfCanEvolveInto(candidate, location).f & 0x10u)
+			continue;
+		wce08 = TRUE;
+		if (GetTurnDuelistVariable((uint8_t)(DUELVARS_CARD_LOCATIONS + candidate)).a == CARD_LOCATION_HAND)
+			return 1u;
+	}
+	return 0u;
+}
 
-	uint8_t opponent = wOpponentDeckID;
-	if (opponent == LEGENDARY_ARTICUNO_DECK_ID) {
+AIDecideParameterResult AIDecide_ProfessorOak(void)
+{
+	/* trainer_cards.asm AIDecide_ProfessorOak: a score in wce06 against 60. */
+	uint8_t remaining = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK).a;
+	if (remaining >= DECK_SIZE - 6u)
+		return (AIDecideParameterResult){remaining, cp_flags(remaining, DECK_SIZE - 6u)};
+
+	uint8_t deck_id = wOpponentDeckID;
+	if (deck_id == LEGENDARY_ARTICUNO_DECK_ID) {
+		/* .HandleLegendaryArticunoDeck */
 		uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
 		if (count < 3u) {
 			(void)CreateHandCardList(0u);
-			uint8_t d = count;
-			uint8_t e = PLAY_AREA_ARENA;
-			while (d != 0u) {
-				uint8_t card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e)).a;
-				CheckForEvolutionInListResult ev = CheckForEvolutionInList(card, 0u);
-				if (ev.f & 0x10u)
-					return (AIDecideResult){0x10u};
-				e++;
-				d--;
+			uint8_t evolves = 0u;
+			for (uint8_t location = PLAY_AREA_ARENA; location != count; location++) {
+				uint8_t card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location)).a;
+				if (CheckForEvolutionInList(card, 0u).f & 0x10u) {
+					evolves = 1u;
+					break;
+				}
 			}
+			if (!evolves)
+				return (AIDecideParameterResult){count, 0x90u};
 		}
+		/* .check_playable_cards */
 		CountOppEnergyResult energy = CountOppEnergyCardsInHand(0u, 0u);
 		if (energy.a >= 4u)
-			return (AIDecideResult){0x00u};
+			return (AIDecideParameterResult){energy.a, or_a_flags(energy.a)};
 		(void)CreateHandCardList(0u);
 		uint16_t list = wDuelTempList_ADDR;
 		(void)RemoveCardIDInList(&list, PROFESSOR_OAK);
 		(void)RemoveCardIDInList(&list, PROFESSOR_OAK);
 		for (;;) {
 			uint8_t index = gb_read8(list++);
-			if (index == 0xffu)
-				return (AIDecideResult){0x10u};
+			if (index == 0xFFu)
+				return (AIDecideParameterResult){0xFFu, 0x90u};
 			CheckIfCardCanBePlayedResult playable = CheckIfCardCanBePlayed(index);
-			if (!(playable.f & 0x10u))
-				return (AIDecideResult){0x00u};
+			if ((playable.f & 0x10u) == 0u)
+				return (AIDecideParameterResult){playable.a, or_a_flags(playable.a)};
 		}
 	}
 
-	if (opponent == EXCAVATION_DECK_ID) {
-		if (gb_read8(deck.hl) >= 46u)
-			return (AIDecideResult){0x00u};
-		LookForCardIDInHandAndPlayAreaResult fossil =
-			LookForCardIDInHandAndPlayArea(MYSTERIOUS_FOSSIL);
-		wce06 = (fossil.f & 0x10u) ? 0x1eu : 0x50u;
-	} else if (opponent == WONDERS_OF_SCIENCE_DECK_ID) {
-		if (LookForCardIDInHandList_Bank8(GRIMER).f & 0x10u)
-			return (AIDecideResult){0x00u};
-		if (LookForCardIDInHandList_Bank8(MUK).f & 0x10u)
-			return (AIDecideResult){0x00u};
-		deck = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	if (deck_id == EXCAVATION_DECK_ID) {
+		/* .HandleExcavationDeck */
+		if (remaining >= 46u)
+			return (AIDecideParameterResult){remaining, cp_flags(remaining, 46u)};
+		LookForCardIDInHandAndPlayAreaResult fossil = LookForCardIDInHandAndPlayArea(MYSTERIOUS_FOSSIL);
+		wce06 = (fossil.f & 0x10u) ? 0x1Eu : 0x50u;
 	} else {
+		if (deck_id == WONDERS_OF_SCIENCE_DECK_ID) {
+			/* .HandleWondersOfScienceDeck */
+			LookForCardIDInHandListResult found = LookForCardIDInHandList_Bank8(GRIMER);
+			if ((found.f & 0x10u) == 0u)
+				found = LookForCardIDInHandList_Bank8(MUK);
+			if (found.f & 0x10u)
+				return (AIDecideParameterResult){found.a, or_a_flags(found.a)};
+		}
+		/* .general_logic */
+		if (remaining >= DECK_SIZE - 14u)
+			return (AIDecideParameterResult){remaining, cp_flags(remaining, DECK_SIZE - 14u)};
 		wce06 = 30u;
 	}
-	if (gb_read8(deck.hl) >= (uint8_t)(DECK_SIZE - 14u))
-		return (AIDecideResult){0x00u};
-
+	/* .general_logic_got_initial_score */
 	uint8_t hand = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a;
 	if (hand < 4u)
 		wce06 = (uint8_t)(wce06 + 50u);
@@ -3471,52 +3841,42 @@ AIDecideResult AIDecide_ProfessorOak(void)
 		wce06 = (uint8_t)(wce06 - 30u);
 	if (CreateEnergyCardListFromHand(0u).f & 0x10u)
 		wce06 = (uint8_t)(wce06 + 40u);
-	if ((CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK).f & 0x10u) &&
-	    !(CountTurnDuelistPokemonWithActivePkmnPower(BLASTOISE).f & 0x10u) &&
-	    (LookForCardIDInHand(WATER_ENERGY).f & 0x10u))
+	/* .handle_blastoise: Blastoise in play, no Muk, and no Water Energy in hand. */
+	if ((CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK).f & 0x10u) == 0u
+	    && (CountTurnDuelistPokemonWithActivePkmnPower(BLASTOISE).f & 0x10u) != 0u
+	    && (LookForCardIDInHand(WATER_ENERGY).f & 0x10u) != 0u)
 		wce06 = (uint8_t)(wce06 + 10u);
-
+	/* .check_hand: `jr c` where `jr nc` was meant, so only a Basic that is
+	 * not a Pokemon card counts -- a Basic Energy or a Trainer. */
 	(void)CreateHandCardList(0u);
 	uint16_t list = wDuelTempList_ADDR;
 	for (;;) {
 		uint8_t index = gb_read8(list++);
-		if (index == 0xffu)
+		if (index == 0xFFu)
 			break;
-		uint8_t type = LoadCardDataToBuffer1_FromDeckIndex(index);
-		if (type < TYPE_ENERGY)
+		(void)LoadCardDataToBuffer1_FromDeckIndex(index);
+		if (wLoadedCard1Type < TYPE_ENERGY)
 			continue;
-		if (gb_read8(wLoadedCard1Stage_ADDR) == 0u)
+		if (wLoadedCard1Stage == 0u)
 			wce06 = (uint8_t)(wce06 + 10u);
 	}
-
+	/* .check_evolutions */
 	wce0f = 0u;
 	gb_write8((uint16_t)(wce0f_ADDR + 1u), 0u);
 	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
-	uint8_t slot = PLAY_AREA_ARENA;
-	while (count != 0u) {
-		uint8_t found_hand = 0u;
-		wce08 = 0u;
-		for (uint8_t candidate = 0u; candidate < DECK_SIZE; candidate++) {
-			EvolveResult ev = CheckIfCanEvolveInto(candidate, slot);
-			if (ev.f & 0x10u)
-				continue;
-			wce08 = TRUE;
-			if (GetTurnDuelistVariable((uint8_t)(DUELVARS_CARD_LOCATIONS + candidate)).a ==
-			    CARD_LOCATION_HAND) {
-				found_hand = 1u;
-				break;
-			}
-		}
-		if (found_hand)
+	for (uint8_t location = PLAY_AREA_ARENA; count != 0u; location++, count--) {
+		if (oak_evolution_in_hand(location))
 			wce0f = TRUE;
 		if (wce08 == TRUE)
 			gb_write8((uint16_t)(wce0f_ADDR + 1u), TRUE);
-		slot++;
-		count--;
 	}
 	if (gb_read8((uint16_t)(wce0f_ADDR + 1u)) != 0u && wce0f == 0u)
 		wce06 = (uint8_t)(wce06 + 10u);
-	return (AIDecideResult){wce06 >= 60u ? 0x10u : 0x00u};
+	/* .check_score */
+	uint8_t score = wce06;
+	if (score >= 60u)
+		return (AIDecideParameterResult){score, (uint8_t)((score == 60u ? 0x80u : 0u) | 0x10u)};
+	return (AIDecideParameterResult){score, or_a_flags(score)};
 }
 /* <<< factory AIDecide_ProfessorOak */
 

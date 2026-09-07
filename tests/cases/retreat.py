@@ -1,3 +1,4 @@
+from tests.cases._fixtures import ai_ko_switch_fixture as _ai_ko_switch_fixture, AI_KO_SWITCH_REGS as _AI_KO_SWITCH_REGS
 """Oracle-diff cases for SetAIRetreatFlags (engine/duel/ai/retreat.asm:440-460)."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -151,7 +152,8 @@ CASES["AITryToRetreat"] = [
 CONTRACT["AIDecideBenchPokemonToSwitchTo"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecideBenchPokemonToSwitchTo"] = [
     {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA: b"\x01"}, "expect_regs": {"a": 1, "f": 0x70}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA: b"\x01"}, expect_regs={"a": 1, "f": 0x70})
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA: b"\x01"}, expect_regs={"a": 1, "f": 0x70}),
+    dict(_ai_ko_switch_fixture(bank=5), **_AI_KO_SWITCH_REGS),
 ]
 # <<< factory AIDecideBenchPokemonToSwitchTo
 

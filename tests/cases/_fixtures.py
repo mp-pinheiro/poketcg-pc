@@ -132,6 +132,14 @@ AI_ATTACK_SCORE_REGS = AI_ATTACK_SCORE.regs
 # that same turn: the chosen attack's damage against the player's arena card.
 AI_ESTIMATE = Fixture("ai-duel-02-estimate-entry")
 AI_ESTIMATE_REGS = AI_ESTIMATE.regs
+# AIDecide_Bill's entry at DoFrame 25589, phase 4 of the trainer-card pass with
+# eleven cards left in the deck: the parameter byte is the count the cp leaves.
+AI_BILL = Fixture("ai-duel-02-bill-entry")
+AI_BILL_REGS = AI_BILL.regs
+# AIDecideBenchPokemonToSwitchTo's entry at DoFrame 26540: the AI's arena card
+# was just knocked out and it picks the bench card to promote.
+AI_KO_SWITCH = Fixture("ai-duel-02-ko-switch-entry")
+AI_KO_SWITCH_REGS = AI_KO_SWITCH.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -180,3 +188,11 @@ def ai_attack_score_fixture(vram: bool = True, bank: int | None = None, **change
 
 def ai_estimate_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return AI_ESTIMATE.case(vram=vram, bank=bank, **changes)
+
+
+def ai_bill_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_BILL.case(vram=vram, bank=bank, **changes)
+
+
+def ai_ko_switch_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_KO_SWITCH.case(vram=vram, bank=bank, **changes)

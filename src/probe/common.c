@@ -34,6 +34,7 @@ static void adapt_PickTwoAttachedEnergyCards(ProbeState *s)
 	s->a = r.a;
 	if (r.b_valid)
 		s->b = r.b;
+	s->f = r.f;
 }
 /* <<< factory PickTwoAttachedEnergyCards */
 

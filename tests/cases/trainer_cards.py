@@ -1,4 +1,4 @@
-from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS
+from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_bill_fixture as _ai_bill_fixture, AI_BILL_REGS as _AI_BILL_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/ai/trainer_cards.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -60,7 +60,7 @@ CASES["AIDecide_Maintenance"] = [
 # <<< factory AIDecide_Maintenance
 
 # >>> factory AIDecide_Lass
-CONTRACT["AIDecide_Lass"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["AIDecide_Lass"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecide_Lass"] = [
     {"wram": {0xFF97: b"\xC2", 0xC3EE: b"\x06"}},
     {"wram": {0xFF97: b"\xC2", 0xC3EE: b"\x07",
@@ -72,7 +72,7 @@ CASES["AIDecide_Lass"] = [
 # <<< factory AIDecide_Lass
 
 # >>> factory AIDecide_Recycle
-CONTRACT["AIDecide_Recycle"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["AIDecide_Recycle"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecide_Recycle"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00"}},
     dict(POISON, wram={0xFF97: b"\xC2", 0xC2ED: b"\x00"}),
@@ -80,7 +80,7 @@ CASES["AIDecide_Recycle"] = [
 # <<< factory AIDecide_Recycle
 
 # >>> factory AIDecide_Imakuni
-CONTRACT["AIDecide_Imakuni"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["AIDecide_Imakuni"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecide_Imakuni"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2F0: b"\x01"}},
     {"wram": {0xFF97: b"\xC2", 0xC2F0: b"\x00"}},
@@ -107,7 +107,7 @@ CASES["AIDecide_ClefairyDollOrMysteriousFossil"] = [
 ]
 # <<< factory AIDecide_ClefairyDollOrMysteriousFossil
 # >>> factory AIDecide_Defender_Phase14
-CONTRACT["AIDecide_Defender_Phase14"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["AIDecide_Defender_Phase14"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecide_Defender_Phase14"] = [
     dict(POISON),
     dict(POISON, wram={0xCCB4: b"\x01"}),
@@ -118,18 +118,19 @@ CASES["AIDecide_Defender_Phase14"] = [
 # <<< factory AIDecide_Defender_Phase14
 
 # >>> factory AIDecide_Bill
-CONTRACT["AIDecide_Bill"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["AIDecide_Bill"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecide_Bill"] = [
     dict(POISON, wram={0xC3BA: b"\x00"}),
     dict(POISON, wram={0xC3BA: b"\x03"}),
     dict(POISON, wram={0xC3BA: b"\x32"}),
     dict(POISON, wram={0xC3BA: b"\x33"}),
+    dict(_ai_bill_fixture(bank=8), **_AI_BILL_REGS),
 ]
 # <<< factory AIDecide_Bill
 
 
 # >>> factory AIDecide_Gambler
-CONTRACT["AIDecide_Gambler"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["AIDecide_Gambler"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecide_Gambler"] = [
     {"wram": {0xFF97: b"\xC2", 0xCC0E: b"\x34"}},
     {"wram": {0xFF97: b"\xC2", 0xCC0E: b"\x00", 0xCDA7: b"\x80", 0xC2BA: b"\x38"}},
@@ -154,7 +155,7 @@ CASES["AIDecide_Revive"] = [
 # <<< factory AIDecide_Revive
 
 # >>> factory AIDecide_ImposterProfessorOak
-CONTRACT["AIDecide_ImposterProfessorOak"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["AIDecide_ImposterProfessorOak"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecide_ImposterProfessorOak"] = [
     {"wram": {0xFF97: b"\xC2", 0xC3BA: b"\x2E", 0xC3EE: b"\x05"}},
     {"wram": {0xFF97: b"\xC2", 0xC3BA: b"\x2E", 0xC3EE: b"\x06"}},
@@ -738,7 +739,7 @@ CASES["AIDecide_Pokeball"] = [
 # <<< factory AIDecide_Pokeball
 
 # >>> factory AIDecide_MrFuji
-CONTRACT["AIDecide_MrFuji"] = {"compare": ("f",), "preserve": (), "wram_out": True}
+CONTRACT["AIDecide_MrFuji"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
 CASES["AIDecide_MrFuji"] = [
     {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA: b"\x01"},
      "read": {wce06: 1, wce08: 1}},
@@ -924,7 +925,7 @@ CASES["AIPlay_PokemonCenter"] = [
 # <<< factory AIPlay_PokemonCenter
 
 # >>> factory AIDecide_PlusPower_Phase14
-CONTRACT["AIDecide_PlusPower_Phase14"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["AIDecide_PlusPower_Phase14"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecide_PlusPower_Phase14"] = [
     {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00"}, "sram": {0: {}}, "instruction_budget": 20000000, "cycle_budget": 80000000},
     {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00"}, "sram": {0: {}}, "instruction_budget": 20000000, "cycle_budget": 80000000, **POISON},
@@ -933,7 +934,7 @@ CASES["AIDecide_PlusPower_Phase14"] = [
 # <<< factory AIDecide_PlusPower_Phase14
 
 # >>> factory AIDecide_GustOfWind
-CONTRACT["AIDecide_GustOfWind"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["AIDecide_GustOfWind"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecide_GustOfWind"] = [
     {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x01"}},
     {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x03", 0xCE20: b"\x10"}},
@@ -942,7 +943,7 @@ CASES["AIDecide_GustOfWind"] = [
 # <<< factory AIDecide_GustOfWind
 
 # >>> factory AIDecide_Defender_Phase13
-CONTRACT["AIDecide_Defender_Phase13"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["AIDecide_Defender_Phase13"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecide_Defender_Phase13"] = [
     _defender13_case(),
     _defender13_case(b"\x01"),
@@ -960,7 +961,7 @@ CASES["AIDecide_Switch"] = [
 # <<< factory AIDecide_Switch
 
 # >>> factory AIDecide_SuperEnergyRemoval
-CONTRACT["AIDecide_SuperEnergyRemoval"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["AIDecide_SuperEnergyRemoval"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecide_SuperEnergyRemoval"] = [
     {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC2BB: b"\xFF\xFF\xFF\xFF\xFF", 0xC510: b"\xFF"}, "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC2BB: b"\xFF\xFF\xFF\xFF\xFF", 0xC510: b"\xFF"}, keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000)
@@ -994,7 +995,7 @@ CASES["AIDecide_EnergyRemoval"] = [
 # <<< factory AIDecide_EnergyRemoval
 
 # >>> factory AIDecide_PokemonCenter
-CONTRACT["AIDecide_PokemonCenter"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["AIDecide_PokemonCenter"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecide_PokemonCenter"] = [
     {"wram": {hWhoseTurn: b"\xC2", ARENA_COUNT: b"\x01", ARENA_CARD: b"\x00", PLAYER_DECK: b"\x01"},
      "read": {hTempPlayAreaLocation_ff9d: 1, wce06: 1, wce08: 1, wce0f: 1, wTotalAttachedEnergies: 1},
@@ -1243,7 +1244,7 @@ CASES["AIPlay_MrFuji"] = [
 # <<< factory AIPlay_MrFuji
 
 # >>> factory AIDecide_ProfessorOak
-CONTRACT["AIDecide_ProfessorOak"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["AIDecide_ProfessorOak"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecide_ProfessorOak"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x36"}},
     dict(POISON, wram={0xFF97: b"\xC2", 0xC2BA: b"\x36"}),
@@ -1297,12 +1298,7 @@ MUTATIONS["FindAndRemoveCardFromList"] = {
 # <<< factory-mutation FindAndRemoveCardFromList
 
 # >>> factory-mutation AIDecide_Bill
-MUTATIONS["AIDecide_Bill"] = {
-    "source_symbol": "AIDecide_Bill",
-    "before": "\treturn (AIDecideResult){f};",
-    "after": "\treturn (AIDecideResult){0};",
-    "case_ids": ["AIDecide_Bill-0"],
-}
+MUTATIONS["AIDecide_Bill"] = {"source_symbol": "AIDecide_Bill", "before": "\treturn (AIDecideParameterResult){remaining, cp_flags(remaining, DECK_SIZE - 9u)};", "after": "\treturn (AIDecideParameterResult){(uint8_t)(remaining + 1u), cp_flags(remaining, DECK_SIZE - 9u)};", "case_ids": ["AIDecide_Bill-0"]}
 # <<< factory-mutation AIDecide_Bill
 # >>> factory-mutation AIDecide_Defender_Phase14
 MUTATIONS["AIDecide_Defender_Phase14"] = {
@@ -1312,27 +1308,12 @@ MUTATIONS["AIDecide_Defender_Phase14"] = {
     "case_ids": ["AIDecide_Defender_Phase14-0"],
 }
 # <<< factory-mutation AIDecide_Defender_Phase14
-MUTATIONS["AIDecide_Lass"] = {
-    "source_symbol": "AIDecide_Lass",
-    "before": "\t\treturn (AIDecideResult){hand_count == 0u ? 0x80u : 0x00u};",
-    "after": "\t\treturn (AIDecideResult){0x00u};",
-    "case_ids": ["AIDecide_Lass-3"],
-}
+MUTATIONS["AIDecide_Lass"] = {"source_symbol": "AIDecide_Lass", "before": "\tif (hand_count < 7u)\n\t\treturn (AIDecideParameterResult){hand_count, or_a_flags(hand_count)};", "after": "\tif (hand_count < 7u)\n\t\treturn (AIDecideParameterResult){hand_count, 0x00u};", "case_ids": ["AIDecide_Lass-3"]}
 # <<< factory-mutation AIDecide_Lass
 # >>> factory-mutation AIDecide_Imakuni
-MUTATIONS["AIDecide_Imakuni"] = {
-    "source_symbol": "AIDecide_Imakuni",
-    "before": "\treturn (AIDecideResult){0x10u};",
-    "after": "\treturn (AIDecideResult){0x00u};",
-    "case_ids": ["AIDecide_Imakuni-1"],
-}
+MUTATIONS["AIDecide_Imakuni"] = {"source_symbol": "AIDecide_Imakuni", "before": "\t\treturn (AIDecideParameterResult){status, 0x00u};\n\treturn (AIDecideParameterResult){status, 0x10u};", "after": "\t\treturn (AIDecideParameterResult){status, 0x00u};\n\treturn (AIDecideParameterResult){status, 0x00u};", "case_ids": ["AIDecide_Imakuni-1"]}
 # <<< factory-mutation AIDecide_Imakuni# >>> factory-mutation AIDecide_Gambler
-MUTATIONS["AIDecide_Gambler"] = {
-    "source_symbol": "AIDecide_Gambler",
-    "before": "return (AIDecideResult){(uint8_t)(remaining >= 56u ? 0x90u : 0x80u)};",
-    "after": "return (AIDecideResult){0x80u};",
-    "case_ids": ["AIDecide_Gambler-1"],
-}
+MUTATIONS["AIDecide_Gambler"] = {"source_symbol": "AIDecide_Gambler", "before": "\t\treturn (AIDecideParameterResult){remaining, (uint8_t)((remaining == DECK_SIZE - 4u ? 0x80u : 0u) | 0x10u)};", "after": "\t\treturn (AIDecideParameterResult){remaining, (uint8_t)((remaining == DECK_SIZE - 4u ? 0x80u : 0u) | 0x00u)};", "case_ids": ["AIDecide_Gambler-1"]}
 # <<< factory-mutation AIDecide_Gambler
 # >>> factory-mutation AIDecide_Revive
 MUTATIONS["AIDecide_Revive"] = {
@@ -1359,12 +1340,7 @@ MUTATIONS["PickPokedexCards_Unreferenced"] = {
 }
 # <<< factory-mutation PickPokedexCards_Unreferenced
 # >>> factory-mutation AIDecide_Recycle
-MUTATIONS["AIDecide_Recycle"] = {
-    "source_symbol": "AIDecide_Recycle",
-    "before": "\tif (discard.f & 0x10u)\n\t\treturn (AIDecideResult){0x80u};",
-    "after": "\tif (discard.f & 0x10u)\n\t\treturn (AIDecideResult){0x00u};",
-    "case_ids": ["AIDecide_Recycle-0", "AIDecide_Recycle-1"],
-}
+MUTATIONS["AIDecide_Recycle"] = {"source_symbol": "AIDecide_Recycle", "before": "\tif (discard.f & 0x10u)\n\t\treturn (AIDecideParameterResult){discard.a, or_a_flags(discard.a)};", "after": "\tif (discard.f & 0x10u)\n\t\treturn (AIDecideParameterResult){discard.a, 0x00u};", "case_ids": ["AIDecide_Recycle-0", "AIDecide_Recycle-1"]}
 # <<< factory-mutation AIDecide_Recycle
 
 # >>> factory-mutation AIDecide_ClefairyDollOrMysteriousFossil
@@ -1394,12 +1370,7 @@ MUTATIONS["PickPokedexCards"] = {
 # Keep schema-2 inventory after appended routine cases.
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation AIDecide_ProfessorOak
-MUTATIONS["AIDecide_ProfessorOak"] = {
-    "source_symbol": "AIDecide_ProfessorOak",
-    "before": "if (gb_read8(deck.hl) >= (uint8_t)(DECK_SIZE - 6u))\n\t\treturn (AIDecideResult){0xC0u};",
-    "after": "if (gb_read8(deck.hl) >= (uint8_t)(DECK_SIZE - 6u))\n\t\treturn (AIDecideResult){0x10u};",
-    "case_ids": ["AIDecide_ProfessorOak-0", "AIDecide_ProfessorOak-1"],
-}
+MUTATIONS["AIDecide_ProfessorOak"] = {"source_symbol": "AIDecide_ProfessorOak", "before": "\tif (remaining >= DECK_SIZE - 6u)\n\t\treturn (AIDecideParameterResult){remaining, cp_flags(remaining, DECK_SIZE - 6u)};", "after": "\tif (remaining >= DECK_SIZE - 7u)\n\t\treturn (AIDecideParameterResult){remaining, cp_flags(remaining, DECK_SIZE - 7u)};", "case_ids": ["AIDecide_ProfessorOak-0", "AIDecide_ProfessorOak-1"]}
 # <<< factory-mutation AIDecide_ProfessorOak
 
 # >>> factory-mutation AIDecide_Pokedex
@@ -1469,7 +1440,7 @@ MUTATIONS["AIDecide_PokemonTrader_LegendaryDragonite"] = {"source_symbol": "AIDe
 MUTATIONS["AIDecide_Pokeball"] = {"source_symbol": "AIDecide_Pokeball", "before": "\t\tr = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, CHANSEY);", "after": "\t\tr = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, TAUROS);", "case_ids": ["AIDecide_Pokeball-1"]}
 # <<< factory-mutation AIDecide_Pokeball
 # >>> factory-mutation AIDecide_MrFuji
-MUTATIONS["AIDecide_MrFuji"] = {"source_symbol": "AIDecide_MrFuji", "before": "return (AIDecideResult){0xC0u};\n\n\tuint8_t d", "after": "return (AIDecideResult){0x10u};\n\n\tuint8_t d", "case_ids": ["AIDecide_MrFuji-0"]}
+MUTATIONS["AIDecide_MrFuji"] = {"source_symbol": "AIDecide_MrFuji", "before": "\tif (count == 1u)\n\t\treturn (AIDecideParameterResult){count, 0xC0u};", "after": "\tif (count == 1u)\n\t\treturn (AIDecideParameterResult){count, 0xD0u};", "case_ids": ["AIDecide_MrFuji-0"]}
 # <<< factory-mutation AIDecide_MrFuji
 # >>> factory-mutation AIDecide_PokemonTrader_BlisteringPokemon
 MUTATIONS["AIDecide_PokemonTrader_BlisteringPokemon"] = {"source_symbol": "AIDecide_PokemonTrader_BlisteringPokemon", "before": "a = r6.a;", "after": "a = 0u;", "case_ids": ["AIDecide_PokemonTrader_BlisteringPokemon-0", "AIDecide_PokemonTrader_BlisteringPokemon-1"]}
@@ -1504,19 +1475,19 @@ MUTATIONS["AIPlay_Pokeball"] = {"source_symbol": "AIPlay_Pokeball", "before": "A
 MUTATIONS["AIPlay_Recycle"] = {"source_symbol": "AIPlay_Recycle", "before": "AIDecideResult AIPlay_Recycle(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIDecideResult AIPlay_Recycle(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardParameter;", "case_ids": ["AIPlay_Recycle-0", "AIPlay_Recycle-1", "AIPlay_Recycle-2"]}
 # <<< factory-mutation AIPlay_Recycle
 # >>> factory-mutation AIDecide_PlusPower_Phase14
-MUTATIONS["AIDecide_PlusPower_Phase14"] = {"source_symbol": "AIDecide_PlusPower_Phase14", "before": "\tCheckIfSelectedAttackIsUnusableResult unusable =\n\t\tCheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);\n\tif ((unusable.f & 0x10u) != 0u)\n\t\treturn (AIDecideResult){0u};", "after": "\tCheckIfSelectedAttackIsUnusableResult unusable =\n\t\tCheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);\n\tif ((unusable.f & 0x10u) != 0u)\n\t\treturn (AIDecideResult){0x10u};", "case_ids": ["AIDecide_PlusPower_Phase14-0", "AIDecide_PlusPower_Phase14-1"]}
+MUTATIONS["AIDecide_PlusPower_Phase14"] = {"source_symbol": "AIDecide_PlusPower_Phase14", "before": "\tif ((unusable.f & 0x10u) != 0u)\n\t\treturn (AIDecideParameterResult){unusable.a, or_a_flags(unusable.a)};\n\t(void)EstimateDamage_VersusDefendingCard(wSelectedAttack);\n\tuint8_t hp", "after": "\tif ((unusable.f & 0x10u) != 0u)\n\t\treturn (AIDecideParameterResult){(uint8_t)(unusable.a + 1u), or_a_flags(unusable.a)};\n\t(void)EstimateDamage_VersusDefendingCard(wSelectedAttack);\n\tuint8_t hp", "case_ids": ["AIDecide_PlusPower_Phase14-0", "AIDecide_PlusPower_Phase14-1"]}
 # <<< factory-mutation AIDecide_PlusPower_Phase14
 # >>> factory-mutation AIDecide_GustOfWind
-MUTATIONS["AIDecide_GustOfWind"] = {"source_symbol": "AIDecide_GustOfWind", "before": "AIDecideResult AIDecide_GustOfWind(void)\n{\n\tuint8_t bench_count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;\n\tif (bench_count == 1u)", "after": "AIDecideResult AIDecide_GustOfWind(void)\n{\n\tuint8_t bench_count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;\n\tif (bench_count < 1u)", "case_ids": ["AIDecide_GustOfWind-0"]}
+MUTATIONS["AIDecide_GustOfWind"] = {"source_symbol": "AIDecide_GustOfWind", "before": "\tif (bench_count == 0u)\n\t\treturn (AIDecideParameterResult){0u, 0x80u};", "after": "\tif (bench_count == 0u)\n\t\treturn (AIDecideParameterResult){0u, 0x90u};", "case_ids": ["AIDecide_GustOfWind-0"]}
 # <<< factory-mutation AIDecide_GustOfWind
 # >>> factory-mutation AIDecide_Defender_Phase13
-MUTATIONS["AIDecide_Defender_Phase13"] = {"source_symbol": "AIDecide_Defender_Phase13", "before": "AIDecideResult AIDecide_Defender_Phase13(void)\n{\n\thTempPlayAreaLocation_ff9d = 0u;", "after": "AIDecideResult AIDecide_Defender_Phase13(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["AIDecide_Defender_Phase13-0", "AIDecide_Defender_Phase13-1"]}
+MUTATIONS["AIDecide_Defender_Phase13"] = {"source_symbol": "AIDecide_Defender_Phase13", "before": "\t * within reach this turn. */\n\thTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;", "after": "\t * within reach this turn. */\n\thTempPlayAreaLocation_ff9d = PLAY_AREA_BENCH_1;", "case_ids": ["AIDecide_Defender_Phase13-0", "AIDecide_Defender_Phase13-1"]}
 # <<< factory-mutation AIDecide_Defender_Phase13
 # >>> factory-mutation AIDecide_Switch
 MUTATIONS["AIDecide_Switch"] = {"source_symbol": "AIDecide_Switch", "before": "\t\treturn (AIDecide_SwitchResult){r.a, (uint8_t)((r.f & 0x80u) | ((r.f & 0x10u) ? 0u : 0x10u))};", "after": "\t\treturn (AIDecide_SwitchResult){0u, (uint8_t)((r.f & 0x80u) | ((r.f & 0x10u) ? 0u : 0x10u))};", "case_ids": ["AIDecide_Switch-0", "AIDecide_Switch-1", "AIDecide_Switch-2"]}
 # <<< factory-mutation AIDecide_Switch
 # >>> factory-mutation AIDecide_SuperEnergyRemoval
-MUTATIONS["AIDecide_SuperEnergyRemoval"] = {"source_symbol": "AIDecide_SuperEnergyRemoval", "before": "AIDecideResult AIDecide_SuperEnergyRemoval(void)\n{\n\treturn (AIDecideResult){0x00u};", "after": "AIDecideResult AIDecide_SuperEnergyRemoval(void)\n{\n\treturn (AIDecideResult){0x10u};", "case_ids": ["AIDecide_SuperEnergyRemoval-0", "AIDecide_SuperEnergyRemoval-1"]}
+MUTATIONS["AIDecide_SuperEnergyRemoval"] = {"source_symbol": "AIDecide_SuperEnergyRemoval", "before": "\t\tif (GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + own)).a == 0xFFu)\n\t\t\treturn (AIDecideParameterResult){0xFFu, 0x00u};", "after": "\t\tif (GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + own)).a == 0xFFu)\n\t\t\treturn (AIDecideParameterResult){0xFFu, 0x80u};", "case_ids": ["AIDecide_SuperEnergyRemoval-0", "AIDecide_SuperEnergyRemoval-1"]}
 # <<< factory-mutation AIDecide_SuperEnergyRemoval
 # >>> factory-mutation AIDecide_ScoopUp
 MUTATIONS["AIDecide_ScoopUp"] = {"source_symbol": "AIDecide_ScoopUp", "before": "AIDecide_ScoopUpResult AIDecide_ScoopUp(void)\n{\n\thTempPlayAreaLocation_ff9d = 0u;", "after": "AIDecide_ScoopUpResult AIDecide_ScoopUp(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["AIDecide_ScoopUp-0", "AIDecide_ScoopUp-1"]}
@@ -1528,7 +1499,7 @@ MUTATIONS["AIDecide_FullHeal"] = {"source_symbol": "AIDecide_FullHeal", "before"
 MUTATIONS["AIDecide_EnergyRemoval"] = {"source_symbol": "AIDecide_EnergyRemoval", "before": "\tuint8_t start = PLAY_AREA_ARENA;\n\tif (ko.f & 0x10u) {", "after": "\tuint8_t start = PLAY_AREA_BENCH_1;\n\tif (ko.f & 0x10u) {", "case_ids": ["AIDecide_EnergyRemoval-0"]}
 # <<< factory-mutation AIDecide_EnergyRemoval
 # >>> factory-mutation AIDecide_PokemonCenter
-MUTATIONS["AIDecide_PokemonCenter"] = {"source_symbol": "AIDecide_PokemonCenter", "before": "AIDecideResult AIDecide_PokemonCenter(void)\n{\n\thTempPlayAreaLocation_ff9d = 0u;", "after": "AIDecideResult AIDecide_PokemonCenter(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["AIDecide_PokemonCenter-0", "AIDecide_PokemonCenter-1"]}
+MUTATIONS["AIDecide_PokemonCenter"] = {"source_symbol": "AIDecide_PokemonCenter", "before": "\t\twce06 = (uint8_t)(wce06 + hp_counters);", "after": "\t\twce06 = (uint8_t)(wce06 + hp_counters + 1u);", "case_ids": ["AIDecide_PokemonCenter-0", "AIDecide_PokemonCenter-1"]}
 # <<< factory-mutation AIDecide_PokemonCenter
 # >>> factory-mutation AIDecide_PlusPower_Phase13
 MUTATIONS["AIDecide_PlusPower_Phase13"] = {

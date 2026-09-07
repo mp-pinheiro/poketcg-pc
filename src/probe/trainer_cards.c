@@ -39,7 +39,9 @@ static void adapt_PickPokedexCards(ProbeState *s)
 /* >>> factory AIDecide_Recycle */
 static void adapt_AIDecide_Recycle(ProbeState *s)
 {
-	s->f = AIDecide_Recycle().f;
+	AIDecideParameterResult r = AIDecide_Recycle();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory AIDecide_Recycle */
 /* >>> factory AIDecide_Maintenance */
@@ -54,14 +56,18 @@ static void adapt_AIDecide_Maintenance(ProbeState *s)
 /* >>> factory AIDecide_Lass */
 static void adapt_AIDecide_Lass(ProbeState *s)
 {
-	s->f = AIDecide_Lass().f;
+	AIDecideParameterResult r = AIDecide_Lass();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory AIDecide_Lass */
 
 /* >>> factory AIDecide_Imakuni */
 static void adapt_AIDecide_Imakuni(ProbeState *s)
 {
-	s->f = AIDecide_Imakuni().f;
+	AIDecideParameterResult r = AIDecide_Imakuni();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory AIDecide_Imakuni */
 /* >>> factory AIDecide_PokemonFlute */
@@ -83,14 +89,18 @@ static void adapt_AIDecide_ClefairyDollOrMysteriousFossil(ProbeState *s)
 /* >>> factory AIDecide_Defender_Phase14 */
 static void adapt_AIDecide_Defender_Phase14(ProbeState *s)
 {
-	s->f = AIDecide_Defender_Phase14().f;
+	AIDecideParameterResult r = AIDecide_Defender_Phase14();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory AIDecide_Defender_Phase14 */
 
 /* >>> factory AIDecide_Bill */
 static void adapt_AIDecide_Bill(ProbeState *s)
 {
-	s->f = AIDecide_Bill().f;
+	AIDecideParameterResult r = AIDecide_Bill();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory AIDecide_Bill */
 
@@ -98,7 +108,9 @@ static void adapt_AIDecide_Bill(ProbeState *s)
 /* >>> factory AIDecide_Gambler */
 static void adapt_AIDecide_Gambler(ProbeState *s)
 {
-	s->f = AIDecide_Gambler().f;
+	AIDecideParameterResult r = AIDecide_Gambler();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory AIDecide_Gambler */
 
@@ -114,7 +126,9 @@ static void adapt_AIDecide_Revive(ProbeState *s)
 /* >>> factory AIDecide_ImposterProfessorOak */
 static void adapt_AIDecide_ImposterProfessorOak(ProbeState *s)
 {
-	s->f = AIDecide_ImposterProfessorOak().f;
+	AIDecideParameterResult r = AIDecide_ImposterProfessorOak();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory AIDecide_ImposterProfessorOak */
 
@@ -283,7 +297,8 @@ static void adapt_AIDecide_Pokeball(ProbeState *s)
 static void adapt_AIDecide_MrFuji(ProbeState *s)
 {
 	(void)s;
-	AIDecideResult r = AIDecide_MrFuji();
+	AIDecideParameterResult r = AIDecide_MrFuji();
+	s->a = r.a;
 	s->f = r.f;
 }
 /* <<< factory AIDecide_MrFuji */
@@ -427,7 +442,8 @@ static void adapt_AIPlay_PokemonCenter(ProbeState *s)
 /* >>> factory AIDecide_PlusPower_Phase14 */
 static void adapt_AIDecide_PlusPower_Phase14(ProbeState *s)
 {
-	AIDecideResult result = AIDecide_PlusPower_Phase14();
+	AIDecideParameterResult result = AIDecide_PlusPower_Phase14();
+	s->a = result.a;
 	s->f = result.f;
 }
 /* <<< factory AIDecide_PlusPower_Phase14 */
@@ -435,14 +451,17 @@ static void adapt_AIDecide_PlusPower_Phase14(ProbeState *s)
 /* >>> factory AIDecide_GustOfWind */
 static void adapt_AIDecide_GustOfWind(ProbeState *s)
 {
-	s->f = AIDecide_GustOfWind().f;
+	AIDecideParameterResult r = AIDecide_GustOfWind();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory AIDecide_GustOfWind */
 
 /* >>> factory AIDecide_Defender_Phase13 */
 static void adapt_AIDecide_Defender_Phase13(ProbeState *s)
 {
-	AIDecideResult r = AIDecide_Defender_Phase13();
+	AIDecideParameterResult r = AIDecide_Defender_Phase13();
+	s->a = r.a;
 	s->f = r.f;
 }
 /* <<< factory AIDecide_Defender_Phase13 */
@@ -459,7 +478,9 @@ static void adapt_AIDecide_Switch(ProbeState *s)
 /* >>> factory AIDecide_SuperEnergyRemoval */
 static void adapt_AIDecide_SuperEnergyRemoval(ProbeState *s)
 {
-	s->f = AIDecide_SuperEnergyRemoval().f;
+	AIDecideParameterResult r = AIDecide_SuperEnergyRemoval();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory AIDecide_SuperEnergyRemoval */
 
@@ -493,7 +514,9 @@ static void adapt_AIDecide_EnergyRemoval(ProbeState *s)
 /* >>> factory AIDecide_PokemonCenter */
 static void adapt_AIDecide_PokemonCenter(ProbeState *s)
 {
-	s->f = AIDecide_PokemonCenter().f;
+	AIDecideParameterResult r = AIDecide_PokemonCenter();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory AIDecide_PokemonCenter */
 
@@ -711,7 +734,8 @@ static void adapt_AIPlay_MrFuji(ProbeState *s)
 /* >>> factory AIDecide_ProfessorOak */
 static void adapt_AIDecide_ProfessorOak(ProbeState *s)
 {
-	AIDecideResult result = AIDecide_ProfessorOak();
+	AIDecideParameterResult result = AIDecide_ProfessorOak();
+	s->a = result.a;
 	s->f = result.f;
 }
 /* <<< factory AIDecide_ProfessorOak */

@@ -14,7 +14,9 @@ uint8_t ConvertHPToDamageCounters_Bank8(uint8_t a);
 uint16_t CalculateWordTensDigit(uint16_t hl);
 /* <<< factory CalculateWordTensDigit */
 /* >>> factory PickTwoAttachedEnergyCards */
-typedef struct { uint8_t a; uint8_t b; uint8_t b_valid; } PickTwoResult;
+/* f is the exit F register: the `cp` that chose the exit, which a caller
+ * that pushes af around its own work (AIDecide_SuperEnergyRemoval) keeps. */
+typedef struct { uint8_t a; uint8_t b; uint8_t b_valid; uint8_t f; } PickTwoResult;
 PickTwoResult PickTwoAttachedEnergyCards(uint8_t a);
 /* <<< factory PickTwoAttachedEnergyCards */
 /* >>> factory ClearMemory_Bank8 */

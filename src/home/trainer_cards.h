@@ -30,19 +30,23 @@ AIDecideMaintenanceResult AIDecide_Maintenance(void);
 /* <<< factory AIDecide_Maintenance */
 /* >>> factory AIDecide_Lass */
 typedef struct { uint8_t f; } AIDecideResult;
-AIDecideResult AIDecide_Lass(void);
+/* A trainer-card decision whose a register _AIProcessHandTrainerCards stores as
+ * wAITrainerCardParameter when the carry says play: the asm leaves a there on
+ * every exit, so every exit models it. */
+typedef struct { uint8_t a; uint8_t f; } AIDecideParameterResult;
+AIDecideParameterResult AIDecide_Lass(void);
 /* <<< factory AIDecide_Lass */
 /* >>> factory AIDecide_Recycle */
-AIDecideResult AIDecide_Recycle(void);
+AIDecideParameterResult AIDecide_Recycle(void);
 /* <<< factory AIDecide_Recycle */
 /* >>> factory AIDecide_Imakuni */
-AIDecideResult AIDecide_Imakuni(void);
+AIDecideParameterResult AIDecide_Imakuni(void);
 /* <<< factory AIDecide_Imakuni */
 /* >>> factory AIDecide_Defender_Phase14 */
-AIDecideResult AIDecide_Defender_Phase14(void);
+AIDecideParameterResult AIDecide_Defender_Phase14(void);
 /* <<< factory AIDecide_Defender_Phase14 */
 /* >>> factory AIDecide_Bill */
-AIDecideResult AIDecide_Bill(void);
+AIDecideParameterResult AIDecide_Bill(void);
 /* <<< factory AIDecide_Bill */
 /* >>> factory AIDecide_PokemonFlute */
 typedef struct { uint8_t a, f; } AIDecidePokemonFluteResult;
@@ -52,14 +56,14 @@ AIDecidePokemonFluteResult AIDecide_PokemonFlute(uint8_t c);
 AIDecidePokemonFluteResult AIDecide_ClefairyDollOrMysteriousFossil(void);
 /* <<< factory AIDecide_ClefairyDollOrMysteriousFossil */
 /* >>> factory AIDecide_Gambler */
-AIDecideResult AIDecide_Gambler(void);
+AIDecideParameterResult AIDecide_Gambler(void);
 /* <<< factory AIDecide_Gambler */
 /* >>> factory AIDecide_Revive */
 typedef struct { uint8_t a, f; } AIDecideReviveResult;
 AIDecideReviveResult AIDecide_Revive(void);
 /* <<< factory AIDecide_Revive */
 /* >>> factory AIDecide_ImposterProfessorOak */
-AIDecideResult AIDecide_ImposterProfessorOak(void);
+AIDecideParameterResult AIDecide_ImposterProfessorOak(void);
 /* <<< factory AIDecide_ImposterProfessorOak */
 /* >>> factory PickPokedexCards_Unreferenced */
 PickPokedexResult PickPokedexCards_Unreferenced(void);
@@ -133,7 +137,7 @@ typedef struct { uint8_t a; uint8_t f; } AIDecide_PokeballResult;
 AIDecide_PokeballResult AIDecide_Pokeball(void);
 /* <<< factory AIDecide_Pokeball */
 /* >>> factory AIDecide_MrFuji */
-AIDecideResult AIDecide_MrFuji(void);
+AIDecideParameterResult AIDecide_MrFuji(void);
 /* <<< factory AIDecide_MrFuji */
 /* >>> factory AIDecide_PokemonTrader_BlisteringPokemon */
 typedef struct { uint8_t a; uint8_t f; } AIDecide_PokemonTrader_BlisteringPokemonResult;
@@ -197,7 +201,7 @@ AIDecideResult AIPlay_Imakuni(void);
 AIDecideResult AIPlay_FullHeal(void);
 /* <<< factory AIPlay_FullHeal */
 /* >>> factory AIDecide_ProfessorOak */
-AIDecideResult AIDecide_ProfessorOak(void);
+AIDecideParameterResult AIDecide_ProfessorOak(void);
 /* <<< factory AIDecide_ProfessorOak */
 /* >>> factory AIPlay_ClefairyDollOrMysteriousFossil */
 /* trainer_cards.asm:4776-4781. Stage-only twin: wAITrainerCardToPlay goes to
@@ -218,21 +222,21 @@ AIDecideResult AIPlay_ImposterProfessorOak(void);
 AIDecideResult AIPlay_PokemonCenter(void);
 /* <<< factory AIPlay_PokemonCenter */
 /* >>> factory AIDecide_PlusPower_Phase14 */
-AIDecideResult AIDecide_PlusPower_Phase14(void);
+AIDecideParameterResult AIDecide_PlusPower_Phase14(void);
 /* <<< factory AIDecide_PlusPower_Phase14 */
 /* >>> factory AIDecide_GustOfWind */
 /* >>> factory AIDecide_GustOfWind */
-AIDecideResult AIDecide_GustOfWind(void);
+AIDecideParameterResult AIDecide_GustOfWind(void);
 /* <<< factory AIDecide_GustOfWind */
 /* >>> factory AIDecide_Defender_Phase13 */
-AIDecideResult AIDecide_Defender_Phase13(void);
+AIDecideParameterResult AIDecide_Defender_Phase13(void);
 /* <<< factory AIDecide_Defender_Phase13 */
 /* >>> factory AIDecide_Switch */
 typedef struct { uint8_t a; uint8_t f; } AIDecide_SwitchResult;
 AIDecide_SwitchResult AIDecide_Switch(void);
 /* <<< factory AIDecide_Switch */
 /* >>> factory AIDecide_SuperEnergyRemoval */
-AIDecideResult AIDecide_SuperEnergyRemoval(void);
+AIDecideParameterResult AIDecide_SuperEnergyRemoval(void);
 /* <<< factory AIDecide_SuperEnergyRemoval */
 /* >>> factory AIDecide_ScoopUp */
 typedef struct { uint8_t a; uint8_t f; } AIDecide_ScoopUpResult;
@@ -247,7 +251,7 @@ typedef struct { uint8_t a; uint8_t f; } AIDecideEnergyRemovalResult;
 AIDecideEnergyRemovalResult AIDecide_EnergyRemoval(void);
 /* <<< factory AIDecide_EnergyRemoval */
 /* >>> factory AIDecide_PokemonCenter */
-AIDecideResult AIDecide_PokemonCenter(void);
+AIDecideParameterResult AIDecide_PokemonCenter(void);
 /* <<< factory AIDecide_PokemonCenter */
 /* >>> factory AIDecide_PlusPower_Phase13 */
 /* trainer_cards.asm:778.  Two-byte exit: the carry returns put the attack

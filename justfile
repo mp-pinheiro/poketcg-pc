@@ -130,6 +130,10 @@ oracle-audit-cases STAGE:
 hatch-status:
     python3 tools/audit_hatches.py --list
 
+# Routines whose C body is far smaller than the asm it ports: the hollow-body queue.
+hollow-ratio *ARGS:
+    python3 tools/completion/hollow_ratio.py {{ARGS}}
+
 # Lower the release ceiling on unaudited hatches to the current count (tools/oracle/hatch_ratchet.json).
 hatch-ratchet:
     python3 tools/audit_hatches.py --write-ratchet
