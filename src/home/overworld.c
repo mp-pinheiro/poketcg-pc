@@ -1467,7 +1467,9 @@ void HandlePlayerMoveMode(void)
 	if (moving != 0u) {
 		if ((moving & 0x01u) != 0u)
 			Func_c66c();
-		if ((moving & 0x02u) != 0u)
+		/* overworld.asm:755-759 re-reads the flags: the step Func_c66c just
+		 * finished sets bit 1, and its arrival runs in the same frame. */
+		if ((wPlayerCurrentlyMoving & 0x02u) != 0u)
 			(void)Func_c6dc(0u);
 		return;
 	}

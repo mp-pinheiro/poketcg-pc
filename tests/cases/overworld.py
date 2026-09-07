@@ -1,4 +1,4 @@
-from tests.cases._fixtures import after_duel_fixture, AFTER_DUEL_REGS
+from tests.cases._fixtures import after_duel_fixture, AFTER_DUEL_REGS, move_step_fixture as _move_step_fixture, MOVE_STEP_REGS as _MOVE_STEP_REGS
 """Oracle-diff cases for poketcg/src/engine/overworld/overworld.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -1072,6 +1072,9 @@ CASES["OpenPauseMenu"] = [
 
 # >>> factory HandlePlayerMoveMode
 CONTRACT["HandlePlayerMoveMode"] = {"compare": (), "preserve": ()}
+_MOVE_STEP = _move_step_fixture(bank=3)
+_MOVE_STEP["wram"] = {**_MOVE_STEP["wram"], 0xFF8F: b"\x00", 0xFF90: b"\x80", 0xFF91: b"\x00"}
+_MOVE_STEP["read"] = {**_MOVE_STEP["read"], 0xD335: 1, 0xD338: 1, 0xD4DE: 2}
 CASES["HandlePlayerMoveMode"] = [
     {"wram": {wPlayerSpriteIndex: b"\x12", wPlayerCurrentlyMoving: b"\x00", hKeysPressed: b"\x00"}, "read": {wWhichSprite: 1}},
     {"keys": [0x08, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {wPlayerSpriteIndex: b"\x34", wPlayerCurrentlyMoving: b"\x00", 0xCABB: b"\x00"}, "read": {wWhichSprite: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
@@ -1079,6 +1082,8 @@ CASES["HandlePlayerMoveMode"] = [
     {"wram": {wPlayerSpriteIndex: b"\x78", wPlayerCurrentlyMoving: b"\x01", hKeysPressed: b"\x00", 0xD0BF: b"\x00"}, "read": {wWhichSprite: 1}},
     {"wram": {wPlayerSpriteIndex: b"\xBC", wPlayerCurrentlyMoving: b"\x02", hKeysPressed: b"\x00", 0xD0BF: b"\x00"}, "read": {wWhichSprite: 1}},
     dict(POISON, wram={wPlayerSpriteIndex: b"\x9A", wPlayerCurrentlyMoving: b"\x03", hKeysPressed: b"\x00", 0xD0BF: b"\x00"}, read={wWhichSprite: 1}),
+    # The joypad is read, not polled: DOWN held as the frame had it.
+    dict(_MOVE_STEP, **_MOVE_STEP_REGS),
 ]
 # <<< factory HandlePlayerMoveMode
 

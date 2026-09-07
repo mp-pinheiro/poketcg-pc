@@ -174,6 +174,10 @@ POWER_SCREEN_REGS = POWER_SCREEN.regs
 # exit must leave wCheckMenuCursorBlinkCounter as the frame found it.
 IN_PLAY_AREA_B_EXIT = Fixture("tas-5530s-in-play-area-b-exit-entry")
 IN_PLAY_AREA_B_EXIT_REGS = IN_PLAY_AREA_B_EXIT.regs
+# The fighting-club route's first walk (DoFrame 99702): DOWN held, one pixel of
+# the step left, so the step and its arrival (Func_c6dc) both run this frame.
+MOVE_STEP = Fixture("fighting-club-move-step-entry")
+MOVE_STEP_REGS = MOVE_STEP.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -262,3 +266,7 @@ def power_screen_fixture(vram: bool = True, bank: int | None = None, **changes: 
 
 def in_play_area_b_exit_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return IN_PLAY_AREA_B_EXIT.case(vram=vram, bank=bank, **changes)
+
+
+def move_step_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return MOVE_STEP.case(vram=vram, bank=bank, **changes)
