@@ -14,8 +14,7 @@ static void adapt_DoFrame(ProbeState *s)
 
 static void adapt_HandleDPadRepeat(ProbeState *s)
 {
-	HandleDPadRepeat();
-	(void)s;
+	s->hl = HandleDPadRepeat(s->hl);
 }
 
 const ProbeEntry probe_entries_frames[] = {

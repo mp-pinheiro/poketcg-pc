@@ -26,11 +26,21 @@ CASES = {
              expect={0xCAB8: b"\x00"},
              expect_regs={"b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}),
     ],
+    # $FF8D..$FF91 = hDPadRepeat, hKeysReleased, hDPadHeld, hKeysHeld,
+    # hKeysPressed. The last four rows walk a held direction through the
+    # repeat schedule: new press (counter 24, d-pad reported), counting down
+    # (d-pad masked to the newly pressed buttons -- the row the port used to
+    # fail), expiry (counter 6, d-pad reported), and a button pressed during
+    # the countdown (only that button reported).
     "HandleDPadRepeat": [
         {"wram": {0xFF8D: b"\0\0\0\0\0"}, "read": {0xFF8D: 5}},
         dict(POISON, wram={0xFF8D: b"\0\0\0\0\0"}, read={0xFF8D: 5}),
         {"wram": {0xFF8D: b"\xF0\x00\x00\x00\x01"}, "read": {0xFF8D: 5}},
         {"wram": {0xFF8D: b"\xF0\x00\x00\x00\x00"}, "read": {0xFF8D: 5}},
+        {"wram": {0xFF8D: b"\x00\x00\x00\x40\x40"}, "read": {0xFF8D: 5}},
+        {"wram": {0xFF8D: b"\x0A\x00\x00\x40\x00"}, "read": {0xFF8D: 5}},
+        {"wram": {0xFF8D: b"\x01\x00\x00\x40\x00"}, "read": {0xFF8D: 5}},
+        {"wram": {0xFF8D: b"\x05\x00\x00\x41\x01"}, "read": {0xFF8D: 5}},
     ],
 }
 from tests.cases._schema_migration import legacy_to_schema

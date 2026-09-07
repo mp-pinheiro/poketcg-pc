@@ -32,5 +32,6 @@ void frame_boundary_install_anchor(FrameBoundaryHook hook, void *context);
 
 void DoAFrames(uint8_t a);
 void DoFrame(void);
-void HandleDPadRepeat(void);
+/* Returns hl: the asm leaves it on hDPadRepeat whenever a direction is held. */
+uint16_t HandleDPadRepeat(uint16_t hl);
 #endif

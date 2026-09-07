@@ -150,26 +150,33 @@ static void CallDoFrameFunction(void)
 	}
 }
 
-void HandleDPadRepeat(void)
+/* frames.asm:45-65. hDPadHeld carries the d-pad only on the frame a
+ * direction is pressed and on every frame the repeat counter runs out (24,
+ * then 6); on the frames in between the `jr nz, .done` masks it back to the
+ * newly pressed buttons, which is what makes a held direction step a menu
+ * cursor at the repeat rate instead of every frame. */
+uint16_t HandleDPadRepeat(uint16_t hl)
 {
 	uint8_t keys = gb_read8(hKeysHeld_ADDR);
 
 	gb_write8(hDPadHeld_ADDR, keys);
 	if (keys & PAD_CTRL_PAD) {
+		hl = hDPadRepeat_ADDR;
 		if (gb_read8(hKeysPressed_ADDR) & PAD_CTRL_PAD) {
 			gb_write8(hDPadRepeat_ADDR, 24);
-			return;
+			return hl;
 		}
 		uint8_t repeat = (uint8_t)(gb_read8(hDPadRepeat_ADDR) - 1u);
 
 		gb_write8(hDPadRepeat_ADDR, repeat);
-		if (repeat != 0)
-			return;
-		gb_write8(hDPadRepeat_ADDR, 6);
-		return;
+		if (repeat == 0) {
+			gb_write8(hDPadRepeat_ADDR, 6);
+			return hl;
+		}
 	}
 	gb_write8(hDPadHeld_ADDR,
 	          (uint8_t)(gb_read8(hKeysPressed_ADDR) & PAD_BUTTONS));
+	return hl;
 }
 
 /* frames.asm:23-39: when wDebugPauseAllowed is set, pressing SELECT freezes
@@ -184,7 +191,7 @@ static void DoFrameDebugPause(void)
 		gb_write8(wVBlankCounter_ADDR,
 		          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 		ReadJoypad();
-		HandleDPadRepeat();
+		(void)HandleDPadRepeat(0u);
 		frame_boundary_reach();
 		if ((gb_read8(hKeysPressed_ADDR) & PAD_SELECT) != 0u)
 			return;
@@ -206,7 +213,7 @@ void DoFrame(void)
 	gb_write8(wVBlankCounter_ADDR,
 	          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 	ReadJoypad();
-	HandleDPadRepeat();
+	(void)HandleDPadRepeat(0u);
 	/* frames.asm $0552: the reference anchors its per-DoFrame state here. */
 	g_doframe_ordinal++;
 	if (g_frame_anchor)
