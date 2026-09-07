@@ -2411,14 +2411,189 @@ AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a)
 /* <<< factory AIDecide_EnergySearch */
 
 /* >>> factory _AIProcessHandTrainerCards */
-AIProcessHandTrainerCardsResult _AIProcessHandTrainerCards(uint8_t a)
+/* Adapters: every decide routine yields (a, f) -- a is the parameter stored
+ * in wAITrainerCardParameter on carry -- and every play routine yields f.
+ * Register arguments the C signatures still carry are the asm's incidental
+ * inputs; the loop hands them the scratch values it has. */
+typedef struct { uint8_t a; uint8_t f; } TrainerDecision;
+static TrainerDecision decide_AIDecide_Bill(void) { AIDecideResult r = AIDecide_Bill(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_ClefairyDollOrMysteriousFossil(void) { AIDecidePokemonFluteResult r = AIDecide_ClefairyDollOrMysteriousFossil(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_ComputerSearch(void) { AIDecide_ComputerSearchResult r = AIDecide_ComputerSearch(0u, 0u); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_Defender_Phase13(void) { AIDecideResult r = AIDecide_Defender_Phase13(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_Defender_Phase14(void) { AIDecideResult r = AIDecide_Defender_Phase14(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_EnergyRemoval(void) { AIDecideEnergyRemovalResult r = AIDecide_EnergyRemoval(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_EnergyRetrieval(void) { AIDecideEnergyRetrievalResult r = AIDecide_EnergyRetrieval(0u); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_EnergySearch(void) { AIDecideEnergySearchResult r = AIDecide_EnergySearch(0u); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_FullHeal(void) { AIDecideFullHealResult r = AIDecide_FullHeal(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_Gambler(void) { AIDecideResult r = AIDecide_Gambler(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_GustOfWind(void) { AIDecideResult r = AIDecide_GustOfWind(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_Imakuni(void) { AIDecideResult r = AIDecide_Imakuni(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_ImposterProfessorOak(void) { AIDecideResult r = AIDecide_ImposterProfessorOak(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_ItemFinder(void) { AIDecide_ItemFinderResult r = AIDecide_ItemFinder(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_Lass(void) { AIDecideResult r = AIDecide_Lass(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_Maintenance(void) { AIDecideMaintenanceResult r = AIDecide_Maintenance(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_MrFuji(void) { AIDecideResult r = AIDecide_MrFuji(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_PlusPower_Phase13(void) { AIDecide_PlusPower_Phase13Result r = AIDecide_PlusPower_Phase13(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_PlusPower_Phase14(void) { AIDecideResult r = AIDecide_PlusPower_Phase14(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_Pokeball(void) { AIDecide_PokeballResult r = AIDecide_Pokeball(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_Pokedex(void) { AIDecidePokedexResult r = AIDecide_Pokedex(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_PokemonBreeder(void) { AIDecidePokemonBreederResult r = AIDecide_PokemonBreeder(0u); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_PokemonCenter(void) { AIDecideResult r = AIDecide_PokemonCenter(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_PokemonFlute(void) { AIDecidePokemonFluteResult r = AIDecide_PokemonFlute(0u); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_PokemonTrader(void) { AIDecide_PokemonTraderResult r = AIDecide_PokemonTrader(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_Potion_Phase07(void) { AIDecidePotionPhase07Result r = AIDecide_Potion_Phase07(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_Potion_Phase10(void) { AIDecidePotionPhase10Result r = AIDecide_Potion_Phase10(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_ProfessorOak(void) { AIDecideResult r = AIDecide_ProfessorOak(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_Recycle(void) { AIDecideResult r = AIDecide_Recycle(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_Revive(void) { AIDecideReviveResult r = AIDecide_Revive(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_ScoopUp(void) { AIDecide_ScoopUpResult r = AIDecide_ScoopUp(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_SuperEnergyRemoval(void) { AIDecideResult r = AIDecide_SuperEnergyRemoval(); return (TrainerDecision){0u, r.f}; }
+static TrainerDecision decide_AIDecide_SuperEnergyRetrieval(void) { AIDecideSuperEnergyRetrievalResult r = AIDecide_SuperEnergyRetrieval(0u); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_SuperPotion_Phase08(void) { AIDecideSuperPotionPhase08Result r = AIDecide_SuperPotion_Phase08(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_SuperPotion_Phase11(void) { AIDecideSuperPotionPhase11Result r = AIDecide_SuperPotion_Phase11(); return (TrainerDecision){r.a, r.f}; }
+static TrainerDecision decide_AIDecide_Switch(void) { AIDecide_SwitchResult r = AIDecide_Switch(); return (TrainerDecision){r.a, r.f}; }
+static uint8_t play_AIPlay_Bill(void) { return AIPlay_Bill().f; }
+static uint8_t play_AIPlay_ClefairyDollOrMysteriousFossil(void) { return AIPlay_ClefairyDollOrMysteriousFossil().f; }
+static uint8_t play_AIPlay_ComputerSearch(void) { return AIPlay_ComputerSearch().f; }
+static uint8_t play_AIPlay_Defender(void) { return AIPlay_Defender().f; }
+static uint8_t play_AIPlay_EnergyRemoval(void) { return AIPlay_EnergyRemoval().f; }
+static uint8_t play_AIPlay_EnergyRetrieval(void) { return AIPlay_EnergyRetrieval().f; }
+static uint8_t play_AIPlay_EnergySearch(void) { return AIPlay_EnergySearch().f; }
+static uint8_t play_AIPlay_FullHeal(void) { return AIPlay_FullHeal().f; }
+static uint8_t play_AIPlay_Gambler(void) { return AIPlay_Gambler().f; }
+static uint8_t play_AIPlay_GustOfWind(void) { return AIPlay_GustOfWind().f; }
+static uint8_t play_AIPlay_Imakuni(void) { return AIPlay_Imakuni().f; }
+static uint8_t play_AIPlay_ImposterProfessorOak(void) { return AIPlay_ImposterProfessorOak().f; }
+static uint8_t play_AIPlay_ItemFinder(void) { return AIPlay_ItemFinder().f; }
+static uint8_t play_AIPlay_Lass(void) { return AIPlay_Lass().f; }
+static uint8_t play_AIPlay_Maintenance(void) { return AIPlay_Maintenance().f; }
+static uint8_t play_AIPlay_MrFuji(void) { return AIPlay_MrFuji().f; }
+static uint8_t play_AIPlay_PlusPower(void) { return AIPlay_PlusPower().f; }
+static uint8_t play_AIPlay_Pokeball(void) { return AIPlay_Pokeball().f; }
+static uint8_t play_AIPlay_Pokedex(void) { return AIPlay_Pokedex().f; }
+static uint8_t play_AIPlay_PokemonBreeder(void) { return AIPlay_PokemonBreeder().f; }
+static uint8_t play_AIPlay_PokemonCenter(void) { return AIPlay_PokemonCenter().f; }
+static uint8_t play_AIPlay_PokemonFlute(void) { return AIPlay_PokemonFlute().f; }
+static uint8_t play_AIPlay_PokemonTrader(void) { return AIPlay_PokemonTrader().f; }
+static uint8_t play_AIPlay_Potion(void) { return AIPlay_Potion().f; }
+static uint8_t play_AIPlay_ProfessorOak(void) { return AIPlay_ProfessorOak().f; }
+static uint8_t play_AIPlay_Recycle(void) { return AIPlay_Recycle().f; }
+static uint8_t play_AIPlay_Revive(void) { return AIPlay_Revive().f; }
+static uint8_t play_AIPlay_ScoopUp(void) { return AIPlay_ScoopUp().f; }
+static uint8_t play_AIPlay_SuperEnergyRemoval(void) { return AIPlay_SuperEnergyRemoval().f; }
+static uint8_t play_AIPlay_SuperEnergyRetrieval(void) { return AIPlay_SuperEnergyRetrieval().f; }
+static uint8_t play_AIPlay_SuperPotion(void) { return AIPlay_SuperPotion().f; }
+static uint8_t play_AIPlay_Switch(void) { return AIPlay_Switch().f; }
+
+typedef struct {
+	uint8_t phase;
+	uint8_t card;
+	TrainerDecision (*decide)(void);
+	uint8_t (*play)(void);
+} TrainerLogic;
+
+/* data/duel/ai_trainer_card_logic.asm, in table order. */
+static const TrainerLogic trainer_logic[] = {
+	{0x07u, 0xDDu, decide_AIDecide_Potion_Phase07, play_AIPlay_Potion}, /* POTION */
+	{0x0Au, 0xDDu, decide_AIDecide_Potion_Phase10, play_AIPlay_Potion}, /* POTION */
+	{0x08u, 0xDEu, decide_AIDecide_SuperPotion_Phase08, play_AIPlay_SuperPotion}, /* SUPER_POTION */
+	{0x0Bu, 0xDEu, decide_AIDecide_SuperPotion_Phase11, play_AIPlay_SuperPotion}, /* SUPER_POTION */
+	{0x0Du, 0xD9u, decide_AIDecide_Defender_Phase13, play_AIPlay_Defender}, /* DEFENDER */
+	{0x0Eu, 0xD9u, decide_AIDecide_Defender_Phase14, play_AIPlay_Defender}, /* DEFENDER */
+	{0x0Du, 0xD8u, decide_AIDecide_PlusPower_Phase13, play_AIPlay_PlusPower}, /* PLUSPOWER */
+	{0x0Eu, 0xD8u, decide_AIDecide_PlusPower_Phase14, play_AIPlay_PlusPower}, /* PLUSPOWER */
+	{0x09u, 0xD2u, decide_AIDecide_Switch, play_AIPlay_Switch}, /* SWITCH */
+	{0x07u, 0xDBu, decide_AIDecide_GustOfWind, play_AIPlay_GustOfWind}, /* GUST_OF_WIND */
+	{0x0Au, 0xDBu, decide_AIDecide_GustOfWind, play_AIPlay_GustOfWind}, /* GUST_OF_WIND */
+	{0x04u, 0xC5u, decide_AIDecide_Bill, play_AIPlay_Bill}, /* BILL */
+	{0x05u, 0xD0u, decide_AIDecide_EnergyRemoval, play_AIPlay_EnergyRemoval}, /* ENERGY_REMOVAL */
+	{0x05u, 0xD1u, decide_AIDecide_SuperEnergyRemoval, play_AIPlay_SuperEnergyRemoval}, /* SUPER_ENERGY_REMOVAL */
+	{0x07u, 0xCAu, decide_AIDecide_PokemonBreeder, play_AIPlay_PokemonBreeder}, /* POKEMON_BREEDER */
+	{0x0Fu, 0xC3u, decide_AIDecide_ProfessorOak, play_AIPlay_ProfessorOak}, /* PROFESSOR_OAK */
+	{0x0Au, 0xCDu, decide_AIDecide_EnergyRetrieval, play_AIPlay_EnergyRetrieval}, /* ENERGY_RETRIEVAL */
+	{0x0Bu, 0xCEu, decide_AIDecide_SuperEnergyRetrieval, play_AIPlay_SuperEnergyRetrieval}, /* SUPER_ENERGY_RETRIEVAL */
+	{0x06u, 0xD3u, decide_AIDecide_PokemonCenter, play_AIPlay_PokemonCenter}, /* POKEMON_CENTER */
+	{0x07u, 0xC4u, decide_AIDecide_ImposterProfessorOak, play_AIPlay_ImposterProfessorOak}, /* IMPOSTER_PROFESSOR_OAK */
+	{0x0Cu, 0xCFu, decide_AIDecide_EnergySearch, play_AIPlay_EnergySearch}, /* ENERGY_SEARCH */
+	{0x03u, 0xD7u, decide_AIDecide_Pokedex, play_AIPlay_Pokedex}, /* POKEDEX */
+	{0x07u, 0xDFu, decide_AIDecide_FullHeal, play_AIPlay_FullHeal}, /* FULL_HEAL */
+	{0x0Au, 0xC6u, decide_AIDecide_MrFuji, play_AIPlay_MrFuji}, /* MR_FUJI */
+	{0x0Au, 0xD5u, decide_AIDecide_ScoopUp, play_AIPlay_ScoopUp}, /* SCOOP_UP */
+	{0x02u, 0xE1u, decide_AIDecide_Maintenance, play_AIPlay_Maintenance}, /* MAINTENANCE */
+	{0x03u, 0xE4u, decide_AIDecide_Recycle, play_AIPlay_Recycle}, /* RECYCLE */
+	{0x0Du, 0xC7u, decide_AIDecide_Lass, play_AIPlay_Lass}, /* LASS */
+	{0x04u, 0xDAu, decide_AIDecide_ItemFinder, play_AIPlay_ItemFinder}, /* ITEM_FINDER */
+	{0x01u, 0xC8u, decide_AIDecide_Imakuni, play_AIPlay_Imakuni}, /* IMAKUNI_CARD */
+	{0x01u, 0xE3u, decide_AIDecide_Gambler, play_AIPlay_Gambler}, /* GAMBLER */
+	{0x05u, 0xE0u, decide_AIDecide_Revive, play_AIPlay_Revive}, /* REVIVE */
+	{0x0Du, 0xE2u, decide_AIDecide_PokemonFlute, play_AIPlay_PokemonFlute}, /* POKEMON_FLUTE */
+	{0x05u, 0xCBu, decide_AIDecide_ClefairyDollOrMysteriousFossil, play_AIPlay_ClefairyDollOrMysteriousFossil}, /* CLEFAIRY_DOLL */
+	{0x05u, 0xCCu, decide_AIDecide_ClefairyDollOrMysteriousFossil, play_AIPlay_ClefairyDollOrMysteriousFossil}, /* MYSTERIOUS_FOSSIL */
+	{0x02u, 0xD4u, decide_AIDecide_Pokeball, play_AIPlay_Pokeball}, /* POKE_BALL */
+	{0x02u, 0xD6u, decide_AIDecide_ComputerSearch, play_AIPlay_ComputerSearch}, /* COMPUTER_SEARCH */
+	{0x02u, 0xC9u, decide_AIDecide_PokemonTrader, play_AIPlay_PokemonTrader}, /* POKEMON_TRADER */
+};
+
+static void relist_hand(void)
 {
-	wAITrainerCardPhase = a;
 	(void)CreateHandCardList(0u);
 	uint16_t hl = wDuelTempList_ADDR;
 	uint16_t de = wTempHandCardList_ADDR;
 	(void)CopyListWithFFTerminatorFromHLToDE_Bank8(&hl, &de);
-	return (AIProcessHandTrainerCardsResult){0xffu, 0xc0u};
+}
+
+/* trainer_cards.asm:3-148. For every card in hand, every table row of the
+ * requested phase naming that card is tried: the card must be playable
+ * (Headache, its own initial effect, the AI's random abstention), its decide
+ * routine must return carry, and the Play Trainer screen must not end the
+ * turn. A hand modified by the card's effect is re-listed from the top. */
+AIProcessHandTrainerCardsResult _AIProcessHandTrainerCards(uint8_t a)
+{
+	wAITrainerCardPhase = a;
+	relist_hand();
+	uint16_t hand = wTempHandCardList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(hand++);
+		wAITrainerCardToPlay = card;
+		if (card == 0xffu)
+			return (AIProcessHandTrainerCardsResult){0xffu, 0xc0u};
+		uint8_t phase = wAITrainerCardPhase;
+		for (size_t row = 0; row < sizeof trainer_logic / sizeof trainer_logic[0]; row++) {
+			const TrainerLogic *logic = &trainer_logic[row];
+			wCurrentAIFlags = 0u;
+			if (logic->phase != phase)
+				continue;
+			wAITrainerLogicCard = logic->card;
+			uint8_t id = LoadCardDataToBuffer1_FromDeckIndex(wAITrainerCardToPlay);
+			if (id == SWITCH && (wPreviousAIFlags & AI_FLAG_USED_SWITCH) != 0u)
+				continue;
+			if (id != wAITrainerLogicCard)
+				continue;
+			hTempCardIndex_ff9f = wAITrainerCardToPlay;
+			if ((CheckCantUseTrainerDueToEffect().f & 0x10u) != 0u)
+				continue;
+			LoadEffectResult loaded = LoadNonPokemonCardEffectCommands();
+			if ((TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1, 0u, (uint8_t)(loaded.de >> 8), (uint8_t)loaded.de).f & 0x10u) != 0u)
+				continue;
+			if ((AIChooseRandomlyNotToDoAction().f & 0x10u) != 0u)
+				continue;
+			TrainerDecision decision = logic->decide();
+			if ((decision.f & 0x10u) == 0u)
+				continue;
+			wAITrainerCardParameter = decision.a;
+			hTempCardIndex_ff9f = wAITrainerCardToPlay;
+			if ((AIMakeDecision(OPPACTION_PLAY_TRAINER, 0u, 0u, 0u, 0u).f & 0x10u) != 0u)
+				continue;
+			(void)logic->play();
+			wPreviousAIFlags = (uint8_t)(wPreviousAIFlags | wCurrentAIFlags);
+			if ((wPreviousAIFlags & AI_FLAG_MODIFIED_HAND) != 0u) {
+				relist_hand();
+				hand = wTempHandCardList_ADDR;
+				wPreviousAIFlags = (uint8_t)(wPreviousAIFlags & (uint8_t)~AI_FLAG_MODIFIED_HAND);
+			}
+			break;
+		}
+	}
 }
 /* <<< factory _AIProcessHandTrainerCards */
 

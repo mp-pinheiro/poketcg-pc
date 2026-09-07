@@ -1,3 +1,4 @@
+from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS
 """Oracle-diff cases for poketcg/src/home/ai.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -79,16 +80,17 @@ hTemp_ffa0 = 0xFFA0
 
 # >>> factory AIDoAction
 CONTRACT["AIDoAction"] = {"compare": ("a",), "preserve": ()}
+# Sam's side of the practice-duel state (tests/cases/_fixtures.py). Scripted
+# turn 1 (a = AIACTION_DO_TURN) attaches a Fighting Energy to Machop and
+# attacks Goldeen (40 -> 20). AIACTION_KO_SWITCH while scripted picks Rattata
+# or Raticate on the bench, or bench slot 1. AIACTION_TAKE_PRIZE picks a prize.
+# Deck id 1 (a general deck) routes a forced switch through
+# AIDecideBenchPokemonToSwitchTo.
 CASES["AIDoAction"] = [
-    {"a": 0x03,
-     "wram": {wOpponentDeckID: b"\x01", hWhoseTurn: b"\xC2"},
-     "read": {hTempPlayAreaLocation_ff9d: 1}},
-    {"a": 0x04,
-     "wram": {wOpponentDeckID: b"\x01", hWhoseTurn: b"\xC2"},
-     "read": {hTempPlayAreaLocation_ff9d: 1}},
-    dict(POISON, a=0x03,
-         wram={wOpponentDeckID: b"\x01", hWhoseTurn: b"\xC2"},
-         read={hTempPlayAreaLocation_ff9d: 1}),
+    dict(_attack_fixture(**{"FF97": b"\xc3"}), a=0x01, read={0xC200: 0x200, 0xCC00: 0x100}),
+    dict(_attack_fixture(**{"FF97": b"\xc3"}), a=0x04, read={0xC200: 0x200, 0xFF9D: 4}),
+    dict(_attack_fixture(**{"FF97": b"\xc3"}), a=0x05, read={0xC200: 0x200, 0xFFA0: 2}),
+    dict(_attack_fixture(**{"FF97": b"\xc3", "CC0E": b"\x01"}), read={0xC200: 0x200, 0xFF9D: 4}, **dict(POISON, a=0x03)),
 ]
 # <<< factory AIDoAction
 
@@ -146,9 +148,13 @@ CASES["AIDoAction_TakePrize"] = [
 
 # >>> factory AIDoAction_Turn
 CONTRACT["AIDoAction_Turn"] = {"compare": ("a",), "preserve": ()}
+# Sam's side of the practice-duel state (tests/cases/_fixtures.py) with the
+# turn handed to him: turn 1 is scripted (AIPerformScriptedTurn attaches an
+# energy and attacks). With his deck id pointed at the general AI instead, the
+# same state runs AIMainTurnLogic.
 CASES["AIDoAction_Turn"] = [
-    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xCC0E: b"\x01", 0xCDA7: b"\x80", 0xC2EE: b"\x00", 0xC3EE: b"\x00", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\xFF", 0xC3BC: b"\xFF", 0xC400: b"\xB9\xFF", 0xC600: b"\xB9\xFF", 0xCC0B: b"\x01", 0xCE20: b"\x00", 0xCAC2: b"\x01", 0xCBF9: b"\x01", 0xCABB: b"\x00"}, "read": {0xCE20: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xCC0E: b"\x01", 0xCDA7: b"\x80", 0xC2EE: b"\x00", 0xC3EE: b"\x00", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\xFF", 0xC3BC: b"\xFF", 0xC400: b"\xB9\xFF", 0xC600: b"\xB9\xFF", 0xCC0B: b"\x01", 0xCE20: b"\x00", 0xCAC2: b"\x01", 0xCBF9: b"\x01", 0xCABB: b"\x00"}, read={0xCE20: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    dict(_attack_fixture(**{"FF97": b"\xc3"}), **_ATTACK_REGS),
+    dict(_attack_fixture(**{"FF97": b"\xc3", "CC0E": b"\x01"}), **POISON),
 ]
 # <<< factory AIDoAction_Turn
 
@@ -164,7 +170,7 @@ MUTATIONS = {
     },
 }
 # >>> factory-mutation AIDoAction
-MUTATIONS["AIDoAction"] = {"source_symbol": "AIDoAction", "before": "\t\t} else if (action == 3u || action == 4u) {", "after": "\t\t} else if (action == 4u) {", "case_ids": ["AIDoAction-0"]}
+MUTATIONS["AIDoAction"] = {"source_symbol": "AIDoAction", "before": "\t\tcase AIACTION_DO_TURN:\n\t\t\tif (sam && sam_scripted())\n\t\t\t\t(void)AIPerformScriptedTurn(0u, 0u, 0u, 0u, 0u, 0u, 0u);", "after": "\t\tcase AIACTION_DO_TURN:\n\t\t\tif (sam && sam_scripted())\n\t\t\t\t(void)AIMainTurnLogic(0u, 0u, 0u, 0u, 0u, 0u, 0u);", "case_ids": ["AIDoAction-0"]}
 # <<< factory-mutation AIDoAction
 # >>> factory-mutation AIDoAction_ForcedSwitch
 MUTATIONS["AIDoAction_ForcedSwitch"] = {"source_symbol": "AIDoAction_ForcedSwitch", "before": "uint8_t AIDoAction_ForcedSwitch(void)\n{\n\tuint8_t result = AIDoAction(0x03u);\n\thTempPlayAreaLocation_ff9d = result;", "after": "uint8_t AIDoAction_ForcedSwitch(void)\n{\n\tuint8_t result = AIDoAction(0x03u);\n\thTempPlayAreaLocation_ff9d = (uint8_t)(result ^ 0xFFu);", "case_ids": ["AIDoAction_ForcedSwitch-0"]}

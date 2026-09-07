@@ -1,3 +1,4 @@
+from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/ai/trainer_cards.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -812,9 +813,17 @@ CASES["AIDecide_EnergySearch"] = [
 
 # >>> factory _AIProcessHandTrainerCards
 CONTRACT["_AIProcessHandTrainerCards"] = {"compare": ("a", "f"), "preserve": ()}
+# Sam's side of the practice-duel state with deck card 42 (a Potion) added to
+# his hand and Machop at 10 of 50 HP, where Goldeen's Horn Attack would knock
+# it out: phase 7 plays the Potion (Machop to 30, the card discarded). The
+# same hand in phase 4 (Bill's phase) plays nothing. Without the Potion,
+# phase 7 scans the whole hand and plays nothing.
 CASES["_AIProcessHandTrainerCards"] = [
-    {"a": 0x00, "wram": {wAITrainerCardPhase: b"\x00"}, "expect": {wAITrainerCardPhase: b"\x00"}},
-    dict(POISON, a=0x00, wram={wAITrainerCardPhase: b"\x00"}, expect={wAITrainerCardPhase: b"\x00"}),
+    dict(_attack_fixture(vram=False, bank=8, **{"FF97": b"\xc3", "C3C8": b"\x0a"}), a=0x07, setup=[{"fn": "AddCardToHand", "a": 42}],
+         read={0xC200: 0x200, 0xCC00: 0x100, 0xCE16: 4}),
+    dict(_attack_fixture(vram=False, bank=8, **{"FF97": b"\xc3", "C3C8": b"\x0a"}), a=0x04, setup=[{"fn": "AddCardToHand", "a": 42}],
+         read={0xC200: 0x200, 0xCC00: 0x100, 0xCE16: 4}),
+    dict(_attack_fixture(vram=False, bank=8, **{"FF97": b"\xc3"}), read={0xC200: 0x200, 0xCE16: 4}, **dict(POISON, a=0x07)),
 ]
 # <<< factory _AIProcessHandTrainerCards
 
@@ -1486,12 +1495,7 @@ MUTATIONS["AIDecide_EnergySearch"] = {
 }
 # <<< factory-mutation AIDecide_EnergySearch
 # >>> factory-mutation _AIProcessHandTrainerCards
-MUTATIONS["_AIProcessHandTrainerCards"] = {
-    "source_symbol": "_AIProcessHandTrainerCards",
-    "before": "\twAITrainerCardPhase = a;",
-    "after": "\twAITrainerCardPhase = (uint8_t)(a ^ 0x01u);",
-    "case_ids": ["_AIProcessHandTrainerCards-0", "_AIProcessHandTrainerCards-1"],
-}
+MUTATIONS["_AIProcessHandTrainerCards"] = {"source_symbol": "_AIProcessHandTrainerCards", "before": "\t\t\t(void)logic->play();", "after": "\t\t\t(void)logic;", "case_ids": ["_AIProcessHandTrainerCards-0"]}
 # <<< factory-mutation _AIProcessHandTrainerCards
 # >>> factory-mutation AIPlay_Pokeball
 MUTATIONS["AIPlay_Pokeball"] = {"source_symbol": "AIPlay_Pokeball", "before": "AIPlayPokeballResult AIPlay_Pokeball(void)\n{\n\tuint8_t card = wAITrainerCardToPlay;\n\thTempCardIndex_ff9f = card;", "after": "AIPlayPokeballResult AIPlay_Pokeball(void)\n{\n\tuint8_t card = wAITrainerCardParameter;\n\thTempCardIndex_ff9f = card;", "case_ids": ["AIPlay_Pokeball-0", "AIPlay_Pokeball-1", "AIPlay_Pokeball-2"]}

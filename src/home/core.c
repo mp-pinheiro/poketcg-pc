@@ -1,4 +1,5 @@
 #include "home/core.h"
+#include <stdio.h>
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -2034,9 +2035,7 @@ AIMakeDecisionResult AIMakeDecision(uint8_t a, uint8_t b, uint8_t c, uint8_t d, 
 
 	uint8_t action = gb_read8(hOppActionTableIndex_ADDR);
 	gb_write8(wOpponentTurnEnded_ADDR, 0u);
-	/* core.asm:6246-6247: JumpToFunctionInTable(OppActionTable). Unported
-	 * targets ($09 UseAttack, $0A PlayAttackAnimationDealAttackDamage,
-	 * $0E ForceSwitchActive) abort like the effect-command dispatch shim.
+	/* core.asm:6246-6247: JumpToFunctionInTable(OppActionTable), core.asm:6487.
 	 * $08 skips OppAction_BeginUseAttack's own HRAM preamble in C, so the
 	 * dispatch supplies d/e from hTempCardIndex_ff9f/hTemp_ffa0 itself. */
 	switch (action) {
@@ -2052,9 +2051,12 @@ AIMakeDecisionResult AIMakeDecision(uint8_t a, uint8_t b, uint8_t c, uint8_t d, 
 		(void)OppAction_BeginUseAttack(action, 0u, b, c,
 			hTempCardIndex_ff9f, hTemp_ffa0, 0u);
 		break;
+	case 0x09u: (void)OppAction_UseAttack(b, d, e); break;
+	case 0x0Au: OppAction_PlayAttackAnimationDealAttackDamage(); break;
 	case 0x0Bu: (void)OppAction_DrawCard(); break;
 	case 0x0Cu: OppAction_UsePokemonPower(); break;
 	case 0x0Du: (void)OppAction_ExecutePokemonPowerEffect(); break;
+	case 0x0Eu: OppAction_ForceSwitchActive(); break;
 	case 0x0Fu:
 	case 0x10u:
 	case 0x13u:
@@ -4111,12 +4113,14 @@ AIAttachEnergyInHandToCardInPlayAreaResult AIAttachEnergyInHandToCardInPlayArea(
 	CoreCardListResult hand = LookForCardIDInHandList_Bank5(e);
 	if ((hand.f & 0x10u) == 0u)
 		return (AIAttachEnergyInHandToCardInPlayAreaResult){hand.a, hand.f};
+	/* ai/core.asm:794-803: the Pokemon (d) is looked up in the play area,
+	 * the energy card's deck index goes to hTemp_ffa0. */
 	uint8_t energy = hand.a;
-	LookResult location = LookForCardIDInPlayArea_Bank5(e, PLAY_AREA_ARENA);
+	LookResult location = LookForCardIDInPlayArea_Bank5(d, PLAY_AREA_ARENA);
 	hTempPlayAreaLocation_ffa1 = location.a;
 	hTemp_ffa0 = energy;
 	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_ENERGY, 0u, 0u, 0u, 0u);
-	return (AIAttachEnergyInHandToCardInPlayAreaResult){OPPACTION_PLAY_ENERGY, decision.f};
+	return (AIAttachEnergyInHandToCardInPlayAreaResult){decision.a, decision.f};
 }
 /* <<< factory AIAttachEnergyInHandToCardInPlayArea */
 
@@ -4201,8 +4205,14 @@ AIAttachEnergyInHandToCardInBenchResult AIAttachEnergyInHandToCardInBench(uint8_
 	CoreCardListResult hand = LookForCardIDInHandList_Bank5(e);
 	if ((hand.f & 0x10u) == 0u)
 		return (AIAttachEnergyInHandToCardInBenchResult){hand.a, hand.f};
-	AIAttachEnergyInHandToCardInPlayAreaResult result = AIAttachEnergyInHandToCardInPlayArea(d, e);
-	return (AIAttachEnergyInHandToCardInBenchResult){result.a, result.f};
+	/* ai/core.asm:807-814: the same attach, but the Pokemon is looked up
+	 * from PLAY_AREA_BENCH_1. */
+	uint8_t energy = hand.a;
+	LookResult location = LookForCardIDInPlayArea_Bank5(d, PLAY_AREA_BENCH_1);
+	hTempPlayAreaLocation_ffa1 = location.a;
+	hTemp_ffa0 = energy;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_ENERGY, 0u, 0u, 0u, 0u);
+	return (AIAttachEnergyInHandToCardInBenchResult){decision.a, decision.f};
 }
 /* <<< factory AIAttachEnergyInHandToCardInBench */
 
@@ -10222,7 +10232,9 @@ void OppAction_ForceSwitchActive(void)
 	SwapTurn();
 	(void)HasAlivePokemonInBench();
 	wPlayAreaSelectAction = 1u;
-	OpenPlayAreaScreenForSelection();
+	/* core.asm:6700-6702: the selection screen repeats until a slot is taken. */
+	while ((OpenPlayAreaScreenForSelection().f & FLAG_C) != 0u)
+		;
 	SwapTurn();
 	(void)SerialSendByte(hTempPlayAreaLocation_ff9d);
 }

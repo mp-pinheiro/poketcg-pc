@@ -2350,7 +2350,11 @@ CASES["SetCardListHeaderText"] = [
 
 # >>> factory AIAttachEnergyInHandToCardInPlayArea
 CONTRACT["AIAttachEnergyInHandToCardInPlayArea"] = {"compare": ("a", "f"), "preserve": ()}
+# Sam's side of the practice-duel state: a Fighting Energy from his hand goes
+# onto Machop in the arena (the scripted turn 1). No Fighting Energy in hand
+# ($C300-$C33B: every hand card moved to the deck) returns no-carry untouched.
 CASES["AIAttachEnergyInHandToCardInPlayArea"] = [
+    dict(_attack_fixture(**{"FF97": b"\xc3"}), d=0x7D, e=0x05, read={0xC200: 0x200, 0xCC00: 0x100, 0xFFA0: 2}),
     dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00\x01", 0xC400: b"\xCB\x01"}, expect_regs={"a": 0xFF, "f": 0xC0}),
 ]
 # <<< factory AIAttachEnergyInHandToCardInPlayArea
@@ -6462,12 +6466,7 @@ MUTATIONS["SaveDuelData"] = {"source_symbol": "SaveDuelData", "before": "SaveDue
 MUTATIONS["SetCardListHeaderText"] = {"source_symbol": "SetCardListHeaderText", "before": "wCardListHeaderText_PTR[1] = (uint8_t)(de >> 8);", "after": "wCardListHeaderText_PTR[1] = (uint8_t)de;", "case_ids": ["SetCardListHeaderText-0", "SetCardListHeaderText-1", "SetCardListHeaderText-2"]}
 # <<< factory-mutation SetCardListHeaderText
 # >>> factory-mutation AIAttachEnergyInHandToCardInPlayArea
-MUTATIONS["AIAttachEnergyInHandToCardInPlayArea"] = {
-    "source_symbol": "AIAttachEnergyInHandToCardInPlayArea",
-    "before": "if ((hand.f & 0x10u) == 0u)",
-    "after": "if ((hand.f & 0x10u) != 0u)",
-    "case_ids": ["AIAttachEnergyInHandToCardInPlayArea-0"],
-}
+MUTATIONS["AIAttachEnergyInHandToCardInPlayArea"] = {"source_symbol": "AIAttachEnergyInHandToCardInPlayArea", "before": "\tLookResult location = LookForCardIDInPlayArea_Bank5(d, PLAY_AREA_ARENA);\n\thTempPlayAreaLocation_ffa1 = location.a;\n\thTemp_ffa0 = energy;\n\tAIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_ENERGY, 0u, 0u, 0u, 0u);\n\treturn (AIAttachEnergyInHandToCardInPlayAreaResult){decision.a, decision.f};", "after": "\tLookResult location = LookForCardIDInPlayArea_Bank5(e, PLAY_AREA_ARENA);\n\thTempPlayAreaLocation_ffa1 = location.a;\n\thTemp_ffa0 = energy;\n\tAIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_ENERGY, 0u, 0u, 0u, 0u);\n\treturn (AIAttachEnergyInHandToCardInPlayAreaResult){decision.a, decision.f};", "case_ids": ["AIAttachEnergyInHandToCardInPlayArea-0"]}
 # <<< factory-mutation AIAttachEnergyInHandToCardInPlayArea
 # >>> factory-mutation GoToPreviousCardPage
 MUTATIONS["GoToPreviousCardPage"] = {

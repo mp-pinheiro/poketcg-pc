@@ -133,9 +133,9 @@ MUTATIONS = {
     },
     "CalculateDamage_FromDefendingPokemon": {
         "source_symbol": "CalculateDamage_FromDefendingPokemon",
-        "before": "damage = HandleDoubleDamageSubstatus(damage);\n    b = TranslateColorToWR(GetArenaCardColor());",
-        "after": "damage = (uint16_t)(damage + 1u);\n    b = TranslateColorToWR(GetArenaCardColor());",
-        "case_ids": ["CalculateDamage_FromDefendingPokemon-1"],
+        "before": "    if (damage & (1u << (UNAFFECTED_BY_WEAKNESS_RESISTANCE_F + 8u))) {\n        damage = (uint16_t)(damage & ~(uint16_t)(1u << (UNAFFECTED_BY_WEAKNESS_RESISTANCE_F + 8u)));",
+        "after": "    if (damage & (1u << UNAFFECTED_BY_WEAKNESS_RESISTANCE_F)) {\n        damage = (uint16_t)(damage & ~(uint16_t)(1u << UNAFFECTED_BY_WEAKNESS_RESISTANCE_F));",
+        "case_ids": ["CalculateDamage_FromDefendingPokemon-2"],
     },
 }
 # >>> factory-mutation EstimateDamage_VersusDefendingCard
