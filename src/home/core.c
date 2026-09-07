@@ -9537,15 +9537,16 @@ ReplaceKnockedOutPokemonResult ReplaceKnockedOutPokemon(uint8_t a, uint8_t f, ui
 		return (ReplaceKnockedOutPokemonResult){rng.a, (uint8_t)(rng.f | FLAG_C), rng.b, rng.c, (uint8_t)(rng.de >> 8), (uint8_t)rng.de, rng.hl};
 	}
 
+	/* core.asm:7360-7407. The player's pick loops on the selection screen
+	 * alone (`.select_pokemon`) until a slot is chosen and, after the
+	 * practice duel's check, the chosen bench card is swapped into the arena. */
 	DuelistVarResult type = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
-	if (type.a == DUELIST_TYPE_PLAYER) {
+	int player = type.a == DUELIST_TYPE_PLAYER;
+	if (player) {
 		DrawDuelMainScene();
 		(void)DrawWideTextBox_WaitForInput(SelectPokemonToPlaceInTheArenaText);
 		wPlayAreaSelectAction = 1u;
 		(void)DoPracticeDuelAction(PRACTICEDUEL_PLAY_STARYU_FROM_BENCH);
-		OpenPlayAreaScreenForSelection();
-		a = hTempPlayAreaLocation_ff9d;
-		SerialSend8Bytes(a, f, b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
 	}
 	else if (type.a == DUELIST_TYPE_LINK_OPP) {
 		DrawDuelMainScene();
@@ -9559,18 +9560,18 @@ ReplaceKnockedOutPokemonResult ReplaceKnockedOutPokemon(uint8_t a, uint8_t f, ui
 	}
 
 	for (;;) {
+		if (player) {
+			while ((OpenPlayAreaScreenForSelection().f & FLAG_C) != 0u)
+				;
+			a = hTempPlayAreaLocation_ff9d;
+			SerialSend8Bytes(a, f, b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+		}
 		FinishQueuedAnimations();
-		uint8_t action_flags = DoPracticeDuelAction(PRACTICEDUEL_REPLACE_KNOCKED_OUT_POKEMON);
-		if ((action_flags & FLAG_C) == 0u)
+		if ((DoPracticeDuelAction(PRACTICEDUEL_REPLACE_KNOCKED_OUT_POKEMON) & FLAG_C) == 0u)
 			break;
-		DrawDuelMainScene();
-		(void)DrawWideTextBox_WaitForInput(SelectPokemonToPlaceInTheArenaText);
-		(void)DoPracticeDuelAction(PRACTICEDUEL_PLAY_STARYU_FROM_BENCH);
-		OpenPlayAreaScreenForSelection();
-		a = hTempPlayAreaLocation_ff9d;
-		SerialSend8Bytes(a, f, b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+		player = 1;
 	}
-	FinishQueuedAnimations();
+	(void)SwapPlayAreaPokemon(hTempPlayAreaLocation_ff9d, PLAY_AREA_ARENA);
 	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	WaitResult detail = DisplayCardDetailScreen(arena.a, DuelistPlacedACardText);
 	(void)detail;
@@ -9580,17 +9581,94 @@ ReplaceKnockedOutPokemonResult ReplaceKnockedOutPokemon(uint8_t a, uint8_t f, ui
 /* <<< factory ReplaceKnockedOutPokemon */
 
 /* >>> factory HandleBetweenTurnKnockOuts */
+/* core.asm:7258-7324. Four carries are shifted into wDuelFinishParam: the
+ * non-turn holder taking prizes, the turn holder taking prizes, then each side
+ * replacing its knocked-out arena card. A non-zero parameter indexes the
+ * outcome table and finishes the duel with carry set. */
+static void clear_damage_reduction_of_knocked_out(void)
+{
+	if (GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a == 0u)
+		ClearDamageReductionSubstatus2();
+}
+
+static void shift_finish_param(uint8_t f)
+{
+	wDuelFinishParam = (uint8_t)((wDuelFinishParam << 1) | ((f >> 4) & 1u));
+}
+
 HandleBetweenTurnKnockOutsResult HandleBetweenTurnKnockOuts(void)
 {
-	hWhoseTurn = 0xC2u;
-	return (HandleBetweenTurnKnockOutsResult){0x16u, 0x40u};
+	static const uint8_t outcomes[16] = {
+		DUEL_NOT_FINISHED, TURN_PLAYER_LOST, TURN_PLAYER_WON,  TURN_PLAYER_TIED,
+		TURN_PLAYER_LOST,  TURN_PLAYER_LOST, TURN_PLAYER_TIED, TURN_PLAYER_LOST,
+		TURN_PLAYER_WON,   TURN_PLAYER_TIED, TURN_PLAYER_WON,  TURN_PLAYER_WON,
+		TURN_PLAYER_TIED,  TURN_PLAYER_LOST, TURN_PLAYER_WON,  TURN_PLAYER_TIED,
+	};
+	SwapTurn();
+	clear_damage_reduction_of_knocked_out();
+	SwapTurn();
+	clear_damage_reduction_of_knocked_out();
+	wDuelFinishParam = 0u;
+	SwapTurn();
+	shift_finish_param(Func_6fa5().f);
+	SwapTurn();
+	uint8_t a;
+	uint8_t finished = 0u;
+	if (wDuelFinishParam != 0u &&
+	    (CheckIfTurnDuelistPlayAreaPokemonAreAllKnockedOut().f & 0x10u) == 0u) {
+		uint8_t knocked_out = CountKnockedOutPokemon().a;
+		SwapTurn();
+		uint8_t prizes = CountPrizes();
+		SwapTurn();
+		if ((uint8_t)(prizes - 1u) >= knocked_out) {
+			SwapTurn();
+			(void)TakeAPrizes(knocked_out);
+			SwapTurn();
+			a = TURN_PLAYER_WON;
+			finished = 1u;
+		}
+	}
+	if (!finished) {
+		shift_finish_param(Func_6fa5().f);
+		if (wDuelFinishParam == 1u) {
+			SwapTurn();
+			uint8_t all_out = CheckIfTurnDuelistPlayAreaPokemonAreAllKnockedOut().f;
+			SwapTurn();
+			if ((all_out & 0x10u) == 0u) {
+				a = TURN_PLAYER_LOST;
+				finished = 1u;
+			}
+		}
+	}
+	if (!finished) {
+		SwapTurn();
+		shift_finish_param(ReplaceKnockedOutPokemon(0u, 0u, 0u, 0u, 0u, 0u, 0u).f);
+		SwapTurn();
+		shift_finish_param(ReplaceKnockedOutPokemon(0u, 0u, 0u, 0u, 0u, 0u, 0u).f);
+		if (wDuelFinishParam != 0u) {
+			a = outcomes[wDuelFinishParam & 0x0Fu];
+			finished = 1u;
+		} else {
+			a = 0u;
+		}
+	}
+	if (finished)
+		wDuelFinished = a;
+	MoveAllTurnHolderKnockedOutPokemonToDiscardPile();
+	SwapTurn();
+	MoveAllTurnHolderKnockedOutPokemonToDiscardPile();
+	SwapTurn();
+	(void)ShiftAllPokemonToFirstPlayAreaSlots();
+	return (HandleBetweenTurnKnockOutsResult){a, finished ? 0x10u : 0x80u};
 }
 /* <<< factory HandleBetweenTurnKnockOuts */
 
 /* >>> factory HandleDestinyBondAndBetweenTurnKnockOuts */
+/* core.asm:7254-7256: falls through into HandleBetweenTurnKnockOuts. */
 HandleBetweenTurnKnockOutsResult HandleDestinyBondAndBetweenTurnKnockOuts(void)
 {
-	return (HandleBetweenTurnKnockOutsResult){0u, 0x80u};
+	(void)HandleDestinyBondSubstatus();
+	return HandleBetweenTurnKnockOuts();
 }
 /* <<< factory HandleDestinyBondAndBetweenTurnKnockOuts */
 
@@ -10222,15 +10300,79 @@ void HandleWaitingLinkOpponentMenu(void)
 }
 /* <<< factory HandleWaitingLinkOpponentMenu */
 
+#include "home/duel_core_status.h"
 /* >>> factory HandleBetweenTurnsEvents */
+/* core.asm:6827-6897. Nothing to show when neither arena card carries a
+ * status condition: PlusPowers and Defenders are discarded and that is all.
+ * Otherwise the "between turns" box message runs poison, sleep, and paralysis
+ * for both sides and resolves any knockouts that produced. */
+#define BOXMSG_BETWEEN_TURNS 0x02u
+#define BetweenTurnsText 0x002bu
+#define IsCuredOfParalysisText 0x002au
+
+static void handle_between_turns_status(void)
+{
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	wTempNonTurnDuelistCardID = (uint8_t)GetCardIDFromDeckIndex(arena.a);
+	uint16_t status = (uint16_t)(((uint16_t)hWhoseTurn << 8) | DUELVARS_ARENA_CARD_STATUS);
+	if (gb_read8(status) == 0u)
+		return;
+	if ((HandlePoisonDamage(0u, status).f & 0x10u) != 0u)
+		return;
+	(void)HandleSleepCheck(status);
+}
+
 void HandleBetweenTurnsEvents(void)
 {
+	DuelCoreStatusResult turn = IsArenaPokemonAsleepOrPoisoned();
+	uint8_t something = (uint8_t)((turn.f & 0x10u) != 0u || turn.a == PARALYZED);
+	if (!something) {
+		SwapTurn();
+		DuelCoreStatusResult other = IsArenaPokemonAsleepOrPoisoned();
+		SwapTurn();
+		something = (uint8_t)((other.f & 0x10u) != 0u);
+	}
+	if (!something) {
+		(void)DiscardAttachedPlusPowers();
+		SwapTurn();
+		(void)DiscardAttachedDefenders();
+		SwapTurn();
+		return;
+	}
+	ResetAnimationQueue();
+	ZeroObjectPositionsAndToggleOAMCopy();
+	EmptyScreen();
+	DrawDuelBoxMessage(BOXMSG_BETWEEN_TURNS);
+	(void)DrawWideTextBox_WaitForInput(BetweenTurnsText);
+
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	wTempNonTurnDuelistCardID = (uint8_t)GetCardIDFromDeckIndex(arena.a);
+	uint16_t status = (uint16_t)(((uint16_t)hWhoseTurn << 8) | DUELVARS_ARENA_CARD_STATUS);
+	if (gb_read8(status) != 0u && (HandlePoisonDamage(0u, status).f & 0x10u) == 0u) {
+		(void)HandleSleepCheck(status);
+		if ((gb_read8(status) & CNF_SLP_PRZ) == PARALYZED) {
+			gb_write8(status, (uint8_t)(gb_read8(status) & DOUBLE_POISONED));
+			RedrawTurnDuelistsMainSceneOrDuelHUD();
+			PrintCardNameFromCardIDInTextBox(IsCuredOfParalysisText);
+			PlayBetweenTurnsAnimation(DUEL_ANIM_HEAL_7027);
+			(void)WaitForWideTextBoxInput();
+		}
+	}
+	(void)DiscardAttachedPlusPowers();
+	SwapTurn();
+	handle_between_turns_status();
+	(void)DiscardAttachedDefenders();
+	SwapTurn();
+	(void)HandleBetweenTurnKnockOuts();
 }
 /* <<< factory HandleBetweenTurnsEvents */
 
 /* >>> factory OppAction_PlayAttackAnimationDealAttackDamage */
+/* core.asm:6680-6684. */
 void OppAction_PlayAttackAnimationDealAttackDamage(void)
 {
+	(void)PlayAttackAnimation_DealAttackDamage(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	wOpponentTurnEnded = 1u;
 }
 /* <<< factory OppAction_PlayAttackAnimationDealAttackDamage */
 

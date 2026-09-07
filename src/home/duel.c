@@ -1,4 +1,5 @@
 #include "home/duel.h"
+#include <stdio.h>
 
 #include "generated/hram.h"
 #include "generated/sram.h"
@@ -666,6 +667,8 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/core.h"
 
 #define EFFECTCMDTYPE_AFTER_DAMAGE 0x04u
+#define DUEL_MAIN_SCENE 0x01u
+#define RESIDUAL 0x80u
 
 #include "home/menus.h"
 #include "home/duel.h"
@@ -2956,19 +2959,54 @@ DuelRoutineResult ProcessPlayedPokemonCard(uint8_t a, uint8_t f, uint8_t b, uint
 /* <<< factory ProcessPlayedPokemonCard */
 
 /* >>> factory _SelectPrizeCards */
+/* menus/duel.asm:1901-2013. The player picks wNumberOfPrizeCardsToSelect
+ * prizes from the play-area screen; each pick clears its prize bit, appends
+ * the deck index to the list at hTempPlayAreaLocation_ffa1, adds the card to
+ * the hand and shows its page. The list ends with $ff and hTemp_ffa0 holds the
+ * remaining prize mask. The cursor transition table lives at 02:4b5b. */
 void _SelectPrizeCards(void)
 {
-	uint8_t first = GetFirstSetPrizeCard(0);
-	gb_write8(0xCE52u, first);
-	gb_write8(0xCE5Au, 0xA1u);
-	gb_write8(0xCE5Bu, 0xFFu);
-	if (gb_read8(0xCE59u) == 0u) {
+	wYourOrOppPlayAreaCurPosition = GetFirstSetPrizeCard(0u);
+	uint16_t list = hTempPlayAreaLocation_ffa1_ADDR;
+	wSelectedPrizeCardListPtr = (uint8_t)list;
+	gb_write8((uint16_t)(wSelectedPrizeCardListPtr_ADDR + 1u), (uint8_t)(list >> 8));
+	for (;;) {
+		if (wNumberOfPrizeCardsToSelect == 0u || GetTurnDuelistVariable(DUELVARS_PRIZES).a == 0u)
+			break;
+		uint16_t side = (uint16_t)(((uint16_t)hWhoseTurn << 8) | hWhoseTurn);
+		DrawYourOrOppPlayAreaScreen(side);
+		(void)DrawWideTextBox();
+		InitTextPrinting(1u, 14u);
+		(void)ProcessTextFromID(PleaseChooseAPrizeText);
+		wMenuInputTablePointer = (uint8_t)0x4B5Bu;
+		gb_write8((uint16_t)(wMenuInputTablePointer_ADDR + 1u), (uint8_t)(0x4B5Bu >> 8));
+		uint8_t mask;
+		for (;;) {
+			wVBlankOAMCopyToggle = TRUE;
+			DoFrame();
+			YourOrOppPlayAreaScreenInputResult input = YourOrOppPlayAreaScreen_HandleInput();
+			if ((input.f & 0x10u) == 0u || input.a == 0xffu)
+				continue;
+			ZeroObjectPositionsWithCopyToggleOn();
+			mask = (uint8_t)(1u << wYourOrOppPlayAreaCurPosition);
+			if ((GetTurnDuelistVariable(DUELVARS_PRIZES).a & mask) != 0u)
+				break;
+		}
 		DuelistVarResult prizes = GetTurnDuelistVariable(DUELVARS_PRIZES);
-		gb_write8(0xFFA0u, prizes.a);
-		gb_write8(0xFFA1u, 0xFFu);
-		return;
+		gb_write8(prizes.hl, (uint8_t)(prizes.a - mask));
+		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(wYourOrOppPlayAreaCurPosition + DUELVARS_PRIZE_CARDS)).a;
+		gb_write8(list++, deck_index);
+		wSelectedPrizeCardListPtr = (uint8_t)list;
+		gb_write8((uint16_t)(wSelectedPrizeCardListPtr_ADDR + 1u), (uint8_t)(list >> 8));
+		AddCardToHand(deck_index);
+		(void)LoadCardDataToBuffer1_FromDeckIndex(deck_index);
+		Set_OBJ_8x16();
+		OpenCardPage_FromHand(deck_index, 0u, 0u, 0u, 0u, 0u, 0u);
+		wNumberOfPrizeCardsToSelect = (uint8_t)(wNumberOfPrizeCardsToSelect - 1u);
+		wYourOrOppPlayAreaCurPosition = GetFirstSetPrizeCard(wYourOrOppPlayAreaCurPosition);
 	}
-	_DrawPlayAreaToPlacePrizeCards();
+	hTemp_ffa0 = GetTurnDuelistVariable(DUELVARS_PRIZES).a;
+	gb_write8(list, 0xffu);
 }
 /* <<< factory _SelectPrizeCards */
 
@@ -3577,11 +3615,42 @@ void DuelCheckMenu_OppPlayArea(void)
 /* <<< factory DuelCheckMenu_OppPlayArea */
 
 /* >>> factory HandleConfusionDamageToSelf */
-HandleConfusionDamageToSelfResult HandleConfusionDamageToSelf(void) { gb_write8(0xCCE6u, 1u); return (HandleConfusionDamageToSelfResult){0u, 0x80u}; }
+/* duel.asm:1632-1645. 20 damage to the attacker's own arena card; `or a`
+ * clears carry so the caller treats the attack as spent. */
+HandleConfusionDamageToSelfResult HandleConfusionDamageToSelf(void)
+{
+	DrawDuelMainScene();
+	wIsDamageToSelf = 1u;
+	(void)DrawWideTextBox_PrintText(DamageToSelfDueToConfusionText);
+	wLoadedAttackAnimation = ATK_ANIM_CONFUSION_HIT;
+	DealConfusionDamageToSelfResult dealt = DealConfusionDamageToSelf(20u, 0u, 0u, 0u);
+	Func_1bb4Result done = Func_1bb4(0u, 0u, 0u, 0u);
+	(void)dealt;
+	HandleBetweenTurnKnockOutsResult knockouts = HandleDestinyBondAndBetweenTurnKnockOuts();
+	(void)done;
+	ClearNonTurnTemporaryDuelvars();
+	return (HandleConfusionDamageToSelfResult){knockouts.a, (uint8_t)(knockouts.a == 0u ? 0x80u : 0x00u)};
+}
 /* <<< factory HandleConfusionDamageToSelf */
 
 /* >>> factory HandleAfterDamageEffects */
-HandleAfterDamageEffectsResult HandleAfterDamageEffects(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl) { (void)a; (void)f; (void)b; (void)c; (void)d; (void)e; (void)hl; return (HandleAfterDamageEffectsResult){0u, 0x20u}; }
+/* duel.asm:1596-1607. Runs the attack's after-damage effect command with the
+ * defending card ID restored around it, then the whole post-attack chain down
+ * to the knockout/prize resolution; `or a` leaves carry clear. */
+HandleAfterDamageEffectsResult HandleAfterDamageEffects(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a; (void)f;
+	uint8_t defending = wTempNonTurnDuelistCardID;
+	TryExecuteEffectCommandFunctionResult after = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_AFTER_DAMAGE, b, d, e);
+	b = after.b; c = after.c; d = after.d; e = after.e; hl = after.hl;
+	wTempNonTurnDuelistCardID = defending;
+	(void)HandleStrikesBack_AgainstResidualAttack();
+	(void)ApplyStatusConditionQueue();
+	(void)Func_1bb4(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+	UpdateArenaCardLastTurnDamage();
+	HandleBetweenTurnKnockOutsResult knockouts = HandleDestinyBondAndBetweenTurnKnockOuts();
+	return (HandleAfterDamageEffectsResult){knockouts.a, (uint8_t)(knockouts.a == 0u ? 0x80u : 0x00u)};
+}
 /* <<< factory HandleAfterDamageEffects */
 
 /* >>> factory Func_17ed */
@@ -3601,7 +3670,39 @@ HandleAfterDamageEffectsResult Func_17ed(uint8_t a, uint8_t f, uint8_t b, uint8_
 /* <<< factory Func_17ed */
 
 /* >>> factory PlayAttackAnimation_DealAttackDamage */
-HandleAfterDamageEffectsResult PlayAttackAnimation_DealAttackDamage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl) { (void)a; (void)f; (void)b; (void)c; (void)d; (void)e; (void)hl; return (HandleAfterDamageEffectsResult){0x27u, 0x70u}; }
+/* duel.asm:1543-1583. Non-residual attacks first let the defender's
+ * no-damage substatus (Agility, Fly...) speak; then the damage is modified,
+ * animated, subtracted from the arena HP, and the after-damage chain runs. */
+HandleAfterDamageEffectsResult PlayAttackAnimation_DealAttackDamage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	ResetAttackAnimationIsPlaying();
+	if ((wLoadedAttackCategory & RESIDUAL) == 0u) {
+		SwapTurn();
+		NoDamageOrEffectResult none = HandleNoDamageOrEffectSubstatus(e, hl);
+		f = none.f; e = none.e; hl = none.hl;
+		SwapTurn();
+	}
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	TryExecuteEffectCommandFunctionResult before = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_BEFORE_DAMAGE, b, d, e);
+	f = before.f; b = before.b; c = before.c;
+	uint16_t de = ApplyDamageModifiers_DamageToTarget();
+	ApplyTransparencyResult transparent = ApplyTransparencyIfApplicable(f, de, before.hl);
+	de = (uint16_t)(((uint16_t)transparent.d << 8) | transparent.e);
+	wDealtDamage = (uint8_t)de;
+	gb_write8((uint16_t)(wDealtDamage_ADDR + 1u), (uint8_t)(de >> 8));
+	b = PLAY_AREA_ARENA;
+	c = wDamageEffectiveness;
+	DuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	PlayAttackAnimation(hp.a, transparent.f, b, c, (uint8_t)(de >> 8), (uint8_t)de, hp.hl);
+	PlayStatusConditionQueueAnimations();
+	WaitAttackAnimation();
+	(void)SubtractHP(hp.hl, de);
+	if (wDuelDisplayedScreen == DUEL_MAIN_SCENE)
+		DrawDuelHUDs();
+	(void)PrintKnockedOutIfHLZero(hp.hl);
+	return HandleAfterDamageEffects(0u, 0u, b, c, (uint8_t)(de >> 8), (uint8_t)de, hp.hl);
+}
 /* <<< factory PlayAttackAnimation_DealAttackDamage */
 
 /* >>> factory UseAttackOrPokemonPower */

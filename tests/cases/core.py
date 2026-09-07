@@ -1,3 +1,4 @@
+from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/core.asm."""
 
 from tests.cases._duel_setup import (
@@ -5108,26 +5109,38 @@ CASES["HandleSpecialDuelMainSceneHotkeys"] = [
 # <<< factory HandleSpecialDuelMainSceneHotkeys
 
 # >>> factory ReplaceKnockedOutPokemon
-CONTRACT["ReplaceKnockedOutPokemon"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+# Only carry is consumed (core.asm:7304 `rl [hl]`); the rest is whatever the
+# selection screen and ExchangeRNG left behind.
+CONTRACT["ReplaceKnockedOutPokemon"] = {"compare": ("a", "f"), "preserve": ()}
+# Goldeen knocked out with Staryu on the bench: the player picks the first
+# bench slot (A on the selection screen), Staryu is swapped into the arena and
+# its card is shown. Arena card intact: nothing to do, Z.
 CASES["ReplaceKnockedOutPokemon"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2C8: b"\x20"}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2C8: b"\x20"}),
+    dict(_attack_fixture(**{"C2C8": b"\x00"}), **_ATTACK_REGS),
+    dict(_attack_fixture(), **POISON),
 ]
 # <<< factory ReplaceKnockedOutPokemon
 
 # >>> factory HandleBetweenTurnKnockOuts
 CONTRACT["HandleBetweenTurnKnockOuts"] = {"compare": ("a", "f"), "preserve": ()}
+# The practice-duel attack state (tests/cases/_fixtures.py). Nobody knocked
+# out: a=0, Z, play areas untouched. Machop at 0 HP with no bench: Sam cannot
+# replace it, the duel ends TURN_PLAYER_WON with carry. Goldeen at 0 HP (the
+# player's own arena card) with Staryu on the bench: the player is prompted
+# to pick the replacement (A picks the first bench slot), the opponent takes
+# a prize, and the duel goes on.
 CASES["HandleBetweenTurnKnockOuts"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\xFF" * 6, 0xC3BB: b"\xFF" * 6, 0xC2C8: b"\x01" * 6, 0xC3C8: b"\x01" * 6, 0xCCE8: b"\x00", 0xCC07: b"\x00"}, "read": {0xFF97: 1}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\xFF" * 6, 0xC3BB: b"\xFF" * 6, 0xC2C8: b"\x01" * 6, 0xC3C8: b"\x01" * 6, 0xCCE8: b"\x00", 0xCC07: b"\x00"}, read={0xFF97: 1}),
+    dict(_attack_fixture(), **_ATTACK_REGS),
+    dict(_attack_fixture(**{"C3C8": b"\x00", "C3BC": b"\xff" * 5, "C3EF": b"\x01"}), **POISON),
+    dict(_attack_fixture(**{"C2C8": b"\x00"}), **_ATTACK_REGS),
 ]
 # <<< factory HandleBetweenTurnKnockOuts
 
 # >>> factory HandleDestinyBondAndBetweenTurnKnockOuts
 CONTRACT["HandleDestinyBondAndBetweenTurnKnockOuts"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["HandleDestinyBondAndBetweenTurnKnockOuts"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x00"}, "read": {0xCCE8: 1, 0xCC07: 1}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EF: b"\x00"}, read={0xCCE8: 1, 0xCC07: 1}),
+    dict(_attack_fixture(), **_ATTACK_REGS),
+    dict(_attack_fixture(**{"C3C8": b"\x00", "C3BC": b"\xff" * 5, "C3EF": b"\x01"}), **POISON),
 ]
 # <<< factory HandleDestinyBondAndBetweenTurnKnockOuts
 
@@ -5498,17 +5511,24 @@ CASES["HandleWaitingLinkOpponentMenu"] = [
 
 # >>> factory HandleBetweenTurnsEvents
 CONTRACT["HandleBetweenTurnsEvents"] = {"compare": (), "preserve": ()}
+# Same state at the end of the player's turn. Clean arena cards: only the
+# PlusPower/Defender discards run. Machop poisoned ($C3F0 bit 7): the
+# between-turns box, 10 poison damage to Machop (50 -> 40) and the HUD.
+# Goldeen paralyzed ($C2F0 = PARALYZED): the cure message runs.
 CASES["HandleBetweenTurnsEvents"] = [
-    dict(evidence="primary", oracle=False, why="The routine enters an unbounded frame-driven between-turn event path in the standalone reference; pre-ret completion captures the bounded entry state and this derived case checks that the temporary-card byte remains unchanged.", a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, wram={wTempNonTurnDuelistCardID: b"\xA5"}, read={wTempNonTurnDuelistCardID: 1}, expect={wTempNonTurnDuelistCardID: b"\xA5"}),
-    dict(evidence="primary", oracle=False, why="The standalone reference remains in its frame-driven event path, so this poisoned-register derived case uses the same pre-ret boundary and observes that no temporary-card write has occurred yet.", a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, wram={wTempNonTurnDuelistCardID: b"\x5A"}, read={wTempNonTurnDuelistCardID: 1}, expect={wTempNonTurnDuelistCardID: b"\x5A"})
+    dict(_attack_fixture(), **_ATTACK_REGS),
+    dict(_attack_fixture(**{"C3F0": b"\x80"}), **POISON),
+    dict(_attack_fixture(**{"C2F0": b"\x03"}), **_ATTACK_REGS),
 ]
 # <<< factory HandleBetweenTurnsEvents
 
 # >>> factory OppAction_PlayAttackAnimationDealAttackDamage
 CONTRACT["OppAction_PlayAttackAnimationDealAttackDamage"] = {"compare": (), "preserve": ()}
+# The attack state with Sam as the turn holder (hWhoseTurn = OPPONENT_TURN,
+# the loaded attack is his): damage lands on Goldeen and the turn ends.
 CASES["OppAction_PlayAttackAnimationDealAttackDamage"] = [
-    {"wram": {0xCBE1: b"\x00"}, "read": {0xCBE1: 1}, "expect": {0xCBE1: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xCBE1: b"\x00"}, read={0xCBE1: 1}, expect={0xCBE1: b"\x00"}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(_attack_fixture(**{"FF97": b"\xc3", "CBE1": b"\x00"}), read={0xC200: 0x200, 0xCC00: 0x100, 0xCBE1: 1}, **_ATTACK_REGS),
+    dict(_attack_fixture(**{"FF97": b"\xc3", "CBE1": b"\x00"}), read={0xC200: 0x200, 0xCC00: 0x100, 0xCBE1: 1}, **POISON),
 ]
 # <<< factory OppAction_PlayAttackAnimationDealAttackDamage
 
@@ -7437,22 +7457,14 @@ MUTATIONS["SelectingBenchPokemonMenu"] = {"source_symbol": "SelectingBenchPokemo
 MUTATIONS["HandleSpecialDuelMainSceneHotkeys"] = {"source_symbol": "HandleSpecialDuelMainSceneHotkeys", "before": "return 0xA0u;", "after": "return 0x90u;", "case_ids": ["HandleSpecialDuelMainSceneHotkeys-0", "HandleSpecialDuelMainSceneHotkeys-1"]}
 # <<< factory-mutation HandleSpecialDuelMainSceneHotkeys
 # >>> factory-mutation ReplaceKnockedOutPokemon
-MUTATIONS["ReplaceKnockedOutPokemon"] = {"source_symbol": "ReplaceKnockedOutPokemon", "before": "ReplaceKnockedOutPokemonResult ReplaceKnockedOutPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tDuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tif (hp.a != 0u)\n\t\treturn (ReplaceKnockedOutPokemonResult){hp.a, hp.a == 0u ? FLAG_Z : 0u, b, c, d, e, hp.hl};", "after": "ReplaceKnockedOutPokemonResult ReplaceKnockedOutPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tDuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tif (hp.a != 0u)\n\t\treturn (ReplaceKnockedOutPokemonResult){hp.a, hp.a == 0u ? 0u : FLAG_Z, b, c, d, e, hp.hl};", "case_ids": ["ReplaceKnockedOutPokemon-0"]}
+MUTATIONS["ReplaceKnockedOutPokemon"] = {"source_symbol": "ReplaceKnockedOutPokemon", "before": "\t(void)SwapPlayAreaPokemon(hTempPlayAreaLocation_ff9d, PLAY_AREA_ARENA);", "after": "", "case_ids": ["ReplaceKnockedOutPokemon-0"]}
 # <<< factory-mutation ReplaceKnockedOutPokemon
 # >>> factory-mutation HandleBetweenTurnKnockOuts
-MUTATIONS["HandleBetweenTurnKnockOuts"] = {"source_symbol": "HandleBetweenTurnKnockOuts", "before": "hWhoseTurn = 0xC2u;\n\treturn (HandleBetweenTurnKnockOutsResult){0x16u, 0x40u};", "after": "hWhoseTurn = 0xC2u;\n\treturn (HandleBetweenTurnKnockOutsResult){0x17u, 0x40u};", "case_ids": ["HandleBetweenTurnKnockOuts-0", "HandleBetweenTurnKnockOuts-1"]}
+MUTATIONS["HandleBetweenTurnKnockOuts"] = {"source_symbol": "HandleBetweenTurnKnockOuts", "before": "\tif (finished)\n\t\twDuelFinished = a;", "after": "\tif (finished)\n\t\twDuelFinished = 0u;", "case_ids": ["HandleBetweenTurnKnockOuts-1"]}
 # <<< factory-mutation HandleBetweenTurnKnockOuts
-# >>> factory-completion HandleBetweenTurnKnockOuts
-for _record in SCHEMA2_CASES["HandleBetweenTurnKnockOuts"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x14F1}
-# <<< factory-completion HandleBetweenTurnKnockOuts
 # >>> factory-mutation HandleDestinyBondAndBetweenTurnKnockOuts
-MUTATIONS["HandleDestinyBondAndBetweenTurnKnockOuts"] = {"source_symbol": "HandleDestinyBondAndBetweenTurnKnockOuts", "before": "HandleBetweenTurnKnockOutsResult HandleDestinyBondAndBetweenTurnKnockOuts(void)\n{\n\treturn (HandleBetweenTurnKnockOutsResult){0u, 0x80u};\n}", "after": "HandleBetweenTurnKnockOutsResult HandleDestinyBondAndBetweenTurnKnockOuts(void)\n{\n\treturn (HandleBetweenTurnKnockOutsResult){1u, 0x80u};\n}", "case_ids": ["HandleDestinyBondAndBetweenTurnKnockOuts-0", "HandleDestinyBondAndBetweenTurnKnockOuts-1"]}
+MUTATIONS["HandleDestinyBondAndBetweenTurnKnockOuts"] = {"source_symbol": "HandleDestinyBondAndBetweenTurnKnockOuts", "before": "\treturn HandleBetweenTurnKnockOuts();", "after": "\treturn (HandleBetweenTurnKnockOutsResult){0u, 0x80u};", "case_ids": ["HandleDestinyBondAndBetweenTurnKnockOuts-1"]}
 # <<< factory-mutation HandleDestinyBondAndBetweenTurnKnockOuts
-# >>> factory-completion HandleDestinyBondAndBetweenTurnKnockOuts
-for _record in SCHEMA2_CASES["HandleDestinyBondAndBetweenTurnKnockOuts"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x2380, "bank": 13}
-# <<< factory-completion HandleDestinyBondAndBetweenTurnKnockOuts
 # >>> factory-mutation RestartPracticeDuelTurn
 MUTATIONS["RestartPracticeDuelTurn"] = {"source_symbol": "RestartPracticeDuelTurn", "before": "void RestartPracticeDuelTurn(void) { }", "after": "void RestartPracticeDuelTurn(void) { wPlayerAttackingCardIndex = 0xFFu; }", "case_ids": ["RestartPracticeDuelTurn-0"]}
 # <<< factory-mutation RestartPracticeDuelTurn
@@ -7673,19 +7685,11 @@ for _record in SCHEMA2_CASES["HandleWaitingLinkOpponentMenu"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x6806, "bank": 1}
 # <<< factory-completion HandleWaitingLinkOpponentMenu
 # >>> factory-mutation HandleBetweenTurnsEvents
-MUTATIONS["HandleBetweenTurnsEvents"] = {"source_symbol": "HandleBetweenTurnsEvents", "before": "void HandleBetweenTurnsEvents(void)\n{\n}", "after": "void HandleBetweenTurnsEvents(void)\n{\n\twTempNonTurnDuelistCardID = 0u;\n}", "case_ids": ["HandleBetweenTurnsEvents-0", "HandleBetweenTurnsEvents-1"]}
+MUTATIONS["HandleBetweenTurnsEvents"] = {"source_symbol": "HandleBetweenTurnsEvents", "before": "\t\t\tgb_write8(status, (uint8_t)(gb_read8(status) & DOUBLE_POISONED));", "after": "", "case_ids": ["HandleBetweenTurnsEvents-2"]}
 # <<< factory-mutation HandleBetweenTurnsEvents
-# >>> factory-completion HandleBetweenTurnsEvents
-for _record in SCHEMA2_CASES["HandleBetweenTurnsEvents"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x0742, "bank": 1}
-# <<< factory-completion HandleBetweenTurnsEvents
 # >>> factory-mutation OppAction_PlayAttackAnimationDealAttackDamage
-MUTATIONS["OppAction_PlayAttackAnimationDealAttackDamage"] = {"source_symbol": "OppAction_PlayAttackAnimationDealAttackDamage", "before": "void OppAction_PlayAttackAnimationDealAttackDamage(void)\n{\n}", "after": "void OppAction_PlayAttackAnimationDealAttackDamage(void)\n{\n\twOpponentTurnEnded = 1u;\n}", "case_ids": ["OppAction_PlayAttackAnimationDealAttackDamage-0", "OppAction_PlayAttackAnimationDealAttackDamage-1"]}
+MUTATIONS["OppAction_PlayAttackAnimationDealAttackDamage"] = {"source_symbol": "OppAction_PlayAttackAnimationDealAttackDamage", "before": "\twOpponentTurnEnded = 1u;", "after": "\twOpponentTurnEnded = 0u;", "case_ids": ["OppAction_PlayAttackAnimationDealAttackDamage-0"]}
 # <<< factory-mutation OppAction_PlayAttackAnimationDealAttackDamage
-# >>> factory-completion OppAction_PlayAttackAnimationDealAttackDamage
-for _record in SCHEMA2_CASES["OppAction_PlayAttackAnimationDealAttackDamage"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x2382, "bank": 13}
-# <<< factory-completion OppAction_PlayAttackAnimationDealAttackDamage
 # >>> factory-mutation MainDuelLoop
 MUTATIONS["MainDuelLoop"] = {"source_symbol": "MainDuelLoop", "before": "void MainDuelLoop(void)\n{\n\tEnableLCD();\n}", "after": "void MainDuelLoop(void)\n{\n\tDisableLCD();\n}", "case_ids": ["MainDuelLoop-0", "MainDuelLoop-1"]}
 # <<< factory-mutation MainDuelLoop

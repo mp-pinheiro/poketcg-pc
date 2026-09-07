@@ -1,3 +1,4 @@
+from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -1687,9 +1688,13 @@ CASES["ProcessPlayedPokemonCard"] = [
 
 # >>> factory _SelectPrizeCards
 CONTRACT["_SelectPrizeCards"] = {"compare": (), "preserve": ()}
+# One prize to select from the practice-duel state: A takes the first set
+# prize, it joins the hand and its page is shown; the list at $FFA1 gets the
+# deck index and the terminator, $FFA0 the remaining mask. Nothing to select:
+# only the terminator and mask are written.
 CASES["_SelectPrizeCards"] = [
-    {"a": 0x00, "f": 0x00, "wram": {0xCE59: b"\x00", 0xFF97: b"\xC2", 0xC2EC: b"\x00"}, "read": {0xCE52: 1, 0xCE5A: 2, 0xFFA0: 1, 0xFFA1: 1}},
-    dict(POISON, wram={0xCE59: b"\x00", 0xFF97: b"\xC2", 0xC2EC: b"\x00"}, read={0xCE52: 1, 0xCE5A: 2, 0xFFA0: 1, 0xFFA1: 1}),
+    dict(_attack_fixture(**{"CE59": b"\x01"}), read={0xC200: 0x200, 0xCC00: 0x100, 0xCE52: 1, 0xCE5A: 2, 0xFFA0: 3}, **_ATTACK_REGS),
+    dict(_attack_fixture(**{"CE59": b"\x00"}), read={0xC200: 0x200, 0xCE52: 1, 0xCE5A: 2, 0xFFA0: 3}, **POISON),
 ]
 # <<< factory _SelectPrizeCards
 
@@ -1896,17 +1901,25 @@ CASES["DuelCheckMenu_OppPlayArea"] = [
 
 # >>> factory HandleConfusionDamageToSelf
 CONTRACT["HandleConfusionDamageToSelf"] = {"compare": ("a", "f"), "preserve": ()}
+
+
+# Confusion self-damage from the same state: 20 to Goldeen (40 HP -> 20).
 CASES["HandleConfusionDamageToSelf"] = [
-    {"wram": {0xFF97: b"\xC2", 0xCCE6: b"\x00", 0xCCB8: b"\x00"}, "read": {0xCCE6: 1, 0xCCB8: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xCCE6: b"\x00", 0xCCB8: b"\x00"}, read={0xCCE6: 1, 0xCCB8: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}])
+    dict(_attack_fixture(), **_ATTACK_REGS),
+    dict(_attack_fixture(), **POISON)
 ]
 # <<< factory HandleConfusionDamageToSelf
 
 # >>> factory HandleAfterDamageEffects
 CONTRACT["HandleAfterDamageEffects"] = {"compare": ("a", "f"), "preserve": ()}
+# From the same state after the 10 damage landed (Machop 50 -> 40): no
+# knockout, so the chain ends with the play areas untouched and carry clear.
+# The second case knocks Machop out (HP 0) with no bench: Sam's replacement
+# fails, the duel finishes with the player's win.
 CASES["HandleAfterDamageEffects"] = [
-    dict(evidence="primary", oracle=False, why="HandleAfterDamageEffects is an orchestration wrapper whose downstream effect handlers enter the live duel/frame loop and do not return in a standalone reference call; this bounded primary case records the wrapper's derived register result.", expect_regs={"a": 0x00, "f": 0x20}, wram={0xFF97: b"\xC2", 0xCCC4: b"\x42", 0xCCB2: b"\x00\x00", 0xCCCD: b"\x00", 0xCCEF: b"\x01", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00", 0xCAC2: b"\x01"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], read={0xCCC4: 1, 0xFF9D: 1, 0xC3F3: 2}),
-    dict(POISON, evidence="primary", oracle=False, why="HandleAfterDamageEffects is an orchestration wrapper whose downstream effect handlers enter the live duel/frame loop and do not return in a standalone reference call; this bounded poison case records the wrapper's derived register result.", expect_regs={"a": 0x00, "f": 0x20}, wram={0xFF97: b"\xC2", 0xCCC4: b"\x42", 0xCCB2: b"\x00\x00", 0xCCCD: b"\x00", 0xCCEF: b"\x01", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00", 0xCAC2: b"\x01"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], read={0xCCC4: 1, 0xFF9D: 1, 0xC3F3: 2})]
+    dict(_attack_fixture(**{"C3C8": b"\x28"}), **_ATTACK_REGS),
+    dict(_attack_fixture(**{"C3C8": b"\x00", "C3BC": b"\xff" * 5, "C3EF": b"\x01"}), **POISON),
+]
 # <<< factory HandleAfterDamageEffects
 
 # >>> factory Func_17ed
@@ -1919,9 +1932,13 @@ CASES["Func_17ed"] = [
 
 # >>> factory PlayAttackAnimation_DealAttackDamage
 CONTRACT["PlayAttackAnimation_DealAttackDamage"] = {"compare": ("a", "f"), "preserve": ()}
+# Horn Attack for 10: Machop 50 -> 40, HUD redrawn, no knockout. The second
+# case makes it lethal (Machop at 10 HP, no bench) so the prize and duel-end
+# path runs too.
 CASES["PlayAttackAnimation_DealAttackDamage"] = [
-    dict(evidence="primary", oracle=False, why="The attack-damage wrapper enters animation and after-damage orchestration that cannot return in a standalone reference call; this bounded primary fixture records its wrapper result without unstable bus observations.", expect_regs={"a": 0x27, "f": 0x70}),
-    dict(POISON, evidence="primary", oracle=False, why="The attack-damage wrapper enters animation and after-damage orchestration that cannot return in a standalone reference call; this bounded poisoned primary fixture records its wrapper result without unstable bus observations.", expect_regs={"a": 0x27, "f": 0x70})]
+    dict(_attack_fixture(), **_ATTACK_REGS),
+    dict(_attack_fixture(**{"C3C8": b"\x0a", "C3BC": b"\xff" * 5, "C3EF": b"\x01"}), **POISON),
+]
 # <<< factory PlayAttackAnimation_DealAttackDamage
 
 # >>> factory UseAttackOrPokemonPower
@@ -2193,12 +2210,7 @@ MUTATIONS["DrawDuelMainScene_PrintPokemonsAttackText"] = {"source_symbol": "Draw
 MUTATIONS["ProcessPlayedPokemonCard"] = {"source_symbol": "ProcessPlayedPokemonCard", "before": "\twTempTurnDuelistCardID = e;", "after": "\twTempTurnDuelistCardID = d;", "case_ids": ["ProcessPlayedPokemonCard-0", "ProcessPlayedPokemonCard-1"]}
 # <<< factory-mutation ProcessPlayedPokemonCard
 # >>> factory-mutation _SelectPrizeCards
-MUTATIONS["_SelectPrizeCards"] = {
-    "source_symbol": "_SelectPrizeCards",
-    "before": "gb_write8(0xCE5Au, 0xA1u);",
-    "after": "gb_write8(0xCE5Au, 0xA2u);",
-    "case_ids": ["_SelectPrizeCards-0", "_SelectPrizeCards-1"]
-}
+MUTATIONS["_SelectPrizeCards"] = {"source_symbol": "_SelectPrizeCards", "before": "\t\tAddCardToHand(deck_index);", "after": "", "case_ids": ["_SelectPrizeCards-0"]}
 # <<< factory-mutation _SelectPrizeCards
 # >>> factory-mutation PlayTrainerCard
 MUTATIONS["PlayTrainerCard"] = {"source_symbol": "PlayTrainerCard", "before": "PlayTrainerCardResult PlayTrainerCard(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tTrainerEffectResult blocked = CheckCantUseTrainerDueToEffect();\n\tf = blocked.f;\n\thl = blocked.hl;\n\tif ((f & 0x10u) != 0u) {", "after": "PlayTrainerCardResult PlayTrainerCard(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tTrainerEffectResult blocked = CheckCantUseTrainerDueToEffect();\n\tf = blocked.f;\n\thl = blocked.hl;\n\tif ((f & 0x10u) == 0u) {", "case_ids": ["PlayTrainerCard-0"]}
@@ -2292,29 +2304,17 @@ for _record in SCHEMA2_CASES["OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea"
 MUTATIONS["DuelCheckMenu_OppPlayArea"] = {"source_symbol": "DuelCheckMenu_OppPlayArea", "before": "void DuelCheckMenu_OppPlayArea(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\tPkmnPowerCountResult clairvoyance = IsClairvoyanceActive();\n\twce5e = (clairvoyance.f & 0x10u) != 0u ? 0u : 0x80u;", "after": "void DuelCheckMenu_OppPlayArea(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\tPkmnPowerCountResult clairvoyance = IsClairvoyanceActive();\n\twce5e = (clairvoyance.f & 0x10u) != 0u ? 0u : 0x81u;", "case_ids": ["DuelCheckMenu_OppPlayArea-0", "DuelCheckMenu_OppPlayArea-1"]}
 # <<< factory-mutation DuelCheckMenu_OppPlayArea
 # >>> factory-mutation HandleConfusionDamageToSelf
-MUTATIONS["HandleConfusionDamageToSelf"] = {"source_symbol": "HandleConfusionDamageToSelf", "before": "HandleConfusionDamageToSelfResult HandleConfusionDamageToSelf(void) { gb_write8(0xCCE6u, 1u); return (HandleConfusionDamageToSelfResult){0u, 0x80u}; }", "after": "HandleConfusionDamageToSelfResult HandleConfusionDamageToSelf(void) { gb_write8(0xCCE6u, 1u); return (HandleConfusionDamageToSelfResult){1u, 0x80u}; }", "case_ids": ["HandleConfusionDamageToSelf-0", "HandleConfusionDamageToSelf-1"]}
+MUTATIONS["HandleConfusionDamageToSelf"] = {"source_symbol": "HandleConfusionDamageToSelf", "before": "DealConfusionDamageToSelf(20u, 0u, 0u, 0u);", "after": "DealConfusionDamageToSelf(10u, 0u, 0u, 0u);", "case_ids": ["HandleConfusionDamageToSelf-0"]}
 # <<< factory-mutation HandleConfusionDamageToSelf
-# >>> factory-completion HandleConfusionDamageToSelf
-for _record in SCHEMA2_CASES["HandleConfusionDamageToSelf"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x2D10, "bank": 13}
-# <<< factory-completion HandleConfusionDamageToSelf
 # >>> factory-mutation HandleAfterDamageEffects
-MUTATIONS["HandleAfterDamageEffects"] = {"source_symbol": "HandleAfterDamageEffects", "before": "HandleAfterDamageEffectsResult HandleAfterDamageEffects(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl) { (void)a; (void)f; (void)b; (void)c; (void)d; (void)e; (void)hl; return (HandleAfterDamageEffectsResult){0u, 0x20u}; }", "after": "HandleAfterDamageEffectsResult HandleAfterDamageEffects(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl) { (void)a; (void)f; (void)b; (void)c; (void)d; (void)e; (void)hl; return (HandleAfterDamageEffectsResult){0u, 0x21u}; }", "case_ids": ["HandleAfterDamageEffects-0"]}
+MUTATIONS["HandleAfterDamageEffects"] = {"source_symbol": "HandleAfterDamageEffects", "before": "\tHandleBetweenTurnKnockOutsResult knockouts = HandleDestinyBondAndBetweenTurnKnockOuts();", "after": "\tHandleBetweenTurnKnockOutsResult knockouts = {0u, 0x80u};", "case_ids": ["HandleAfterDamageEffects-1"]}
 # <<< factory-mutation HandleAfterDamageEffects
-# >>> factory-completion HandleAfterDamageEffects
-for _record in SCHEMA2_CASES["HandleAfterDamageEffects"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x0271, "bank": 1}
-# <<< factory-completion HandleAfterDamageEffects
 # >>> factory-mutation Func_17ed
 MUTATIONS["Func_17ed"] = {"source_symbol": "Func_17ed", "before": "HandleAfterDamageEffectsResult Func_17ed(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tWaitResult waited = DrawWideTextBox_WaitForInput(hl);\n\ta = 0u;\n\tf = waited.f;\n\tgb_write8(wDamage_ADDR, 0u);", "after": "HandleAfterDamageEffectsResult Func_17ed(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tWaitResult waited = DrawWideTextBox_WaitForInput(hl);\n\ta = 0u;\n\tf = waited.f;\n\tgb_write8(wDamage_ADDR, 0x01u);", "case_ids": ["Func_17ed-0", "Func_17ed-1"]}
 # <<< factory-mutation Func_17ed
 # >>> factory-mutation PlayAttackAnimation_DealAttackDamage
-MUTATIONS["PlayAttackAnimation_DealAttackDamage"] = {"source_symbol": "PlayAttackAnimation_DealAttackDamage", "before": "HandleAfterDamageEffectsResult PlayAttackAnimation_DealAttackDamage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl) { (void)a; (void)f; (void)b; (void)c; (void)d; (void)e; (void)hl; return (HandleAfterDamageEffectsResult){0x27u, 0x70u}; }", "after": "HandleAfterDamageEffectsResult PlayAttackAnimation_DealAttackDamage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl) { (void)a; (void)f; (void)b; (void)c; (void)d; (void)e; (void)hl; return (HandleAfterDamageEffectsResult){0x27u, 0x71u}; }", "case_ids": ["PlayAttackAnimation_DealAttackDamage-0", "PlayAttackAnimation_DealAttackDamage-1"]}
+MUTATIONS["PlayAttackAnimation_DealAttackDamage"] = {"source_symbol": "PlayAttackAnimation_DealAttackDamage", "before": "\t(void)SubtractHP(hp.hl, de);", "after": "", "case_ids": ["PlayAttackAnimation_DealAttackDamage-0"]}
 # <<< factory-mutation PlayAttackAnimation_DealAttackDamage
-# >>> factory-completion PlayAttackAnimation_DealAttackDamage
-for _record in SCHEMA2_CASES["PlayAttackAnimation_DealAttackDamage"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x3559}
-# <<< factory-completion PlayAttackAnimation_DealAttackDamage
 # >>> factory-mutation UseAttackOrPokemonPower
 MUTATIONS["UseAttackOrPokemonPower"] = {"source_symbol": "UseAttackOrPokemonPower", "before": "DuelRoutineResult UseAttackOrPokemonPower(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = wSelectedAttack;\n\twPlayerAttackingAttackIndex = a;", "after": "DuelRoutineResult UseAttackOrPokemonPower(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = wSelectedAttack;\n\twPlayerAttackingAttackIndex = (uint8_t)(a ^ 1u);", "case_ids": ["UseAttackOrPokemonPower-0", "UseAttackOrPokemonPower-1"]}
 # <<< factory-mutation UseAttackOrPokemonPower
