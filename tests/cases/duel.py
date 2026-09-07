@@ -286,12 +286,14 @@ CASES = {
     # hTempListPtr_ff99 preselects the list to sort. The direct entry reads [ptr]
     # as a card index and scans from [ptr+1], so a well-formed list ends with the
     # terminator at [ptr+1]; the sort stops once the pointer itself lands on $FF.
+    # hTempCardID_ff9b ($FF9B-$FF9C) holds the running lowest id
+    # (duel.asm:599-602, 618-622); its final value is the last pass's.
     "SortCardsInListByID": [
-        {"wram": {hWhoseTurn: b"\xC2", 0xFF99: b"\x10\xC5",
+        {"wram": {hWhoseTurn: b"\xC2", 0xFF99: b"\x10\xC5", 0xFF9B: b"\x55\x55",
                   0xC510: b"\x02\x01\x00\xff", wPlayerDeck: b"\x03\x02\x01"},
          "read": {0xC510: 4, 0xFF99: 2}},
         # Single card at [ptr], terminator at [ptr+1].
-        {"wram": {hWhoseTurn: b"\xC2", 0xFF99: b"\x00\xC5",
+        {"wram": {hWhoseTurn: b"\xC2", 0xFF99: b"\x00\xC5", 0xFF9B: b"\x55\x55",
                   0xC500: b"\x00\xff", wPlayerDeck: b"\x01"},
          "read": {0xC500: 2, 0xFF99: 2}},
     ],
@@ -1391,9 +1393,15 @@ CASES["DrawPlayArea_PrizeCards"] = [
 
 # >>> factory _DrawPlayersPrizeAndBenchCards
 CONTRACT["_DrawPlayersPrizeAndBenchCards"] = {"compare": (), "preserve": ()}
+# Two prizes each side (wDuelInitialPrizes $CC08, DUELVARS_PRIZES $xxEC):
+# PrizeCardsCoordinateData_2 puts the player's at (6,0),(6,2) and the
+# opponent's at (4,18),(4,16), 2x2 tiles each. 0xC100 seeded and diffed: the
+# asm passes the table by ROM address and writes no WRAM while doing so.
 CASES["_DrawPlayersPrizeAndBenchCards"] = [
     {"instruction_budget": 1000000, "cycle_budget": 4000000,
+     "wram": {0xCC08: b"\x02", 0xC2EC: b"\x01", 0xC3EC: b"\x03", 0xCAB4: b"\x00", 0xC100: b"\x00" * 12},
      "read": {wCheckMenuPlayAreaWhichLayout: 1, wTileMapFill: 1, wVBlankOAMCopyToggle: 1},
+     "vread": {0: {0x9806: 2, 0x9826: 2, 0x9846: 2, 0x9866: 2, 0x9A04: 2, 0x9A24: 2, 0x9A44: 2, 0x9A64: 2}},
      "expect": {wCheckMenuPlayAreaWhichLayout: b"\xC2", wTileMapFill: b"\x00", wVBlankOAMCopyToggle: b"\x01"}},
     dict(POISON, instruction_budget=1000000, cycle_budget=4000000,
          read={wCheckMenuPlayAreaWhichLayout: 1, wTileMapFill: 1, wVBlankOAMCopyToggle: 1},
@@ -1565,8 +1573,12 @@ CASES["DrawYourOrOppPlayArea_ActiveCardGfx"] = [
 
 # >>> factory _DrawYourOrOppPlayAreaScreen
 CONTRACT["_DrawYourOrOppPlayAreaScreen"] = {"compare": (), "preserve": (), "wram_out": True}
+# Case 0 also seeds two player prizes (wDuelInitialPrizes $CC08, DUELVARS_PRIZES
+# $C2EC) and reads PrizeCardsCoordinateData_YourOrOppPlayArea.player's slots
+# (2,1),(2,3) plus the (12,2) slot a wrong table drew into; 0xC100 seeded and
+# diffed because the table is passed by ROM address, never copied to WRAM.
 CASES["_DrawYourOrOppPlayAreaScreen"] = [
-    {"instruction_budget": 20000000, "cycle_budget": 80000000, "wram": {hWhoseTurn: b"\xC2", wCheckMenuPlayAreaWhichDuelist: b"\xC2", wCheckMenuPlayAreaWhichLayout: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03", 0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText: b"\x00" * 16}, "read": {wDefaultText: 7}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    {"instruction_budget": 20000000, "cycle_budget": 80000000, "wram": {hWhoseTurn: b"\xC2", wCheckMenuPlayAreaWhichDuelist: b"\xC2", wCheckMenuPlayAreaWhichLayout: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03", 0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText: b"\x00" * 16, 0xCC08: b"\x02", 0xC2EC: b"\x01", 0xC100: b"\x00" * 12}, "read": {wDefaultText: 7}, "vread": {0: {0x9822: 2, 0x9842: 2, 0x9862: 2, 0x9882: 2, 0x984C: 2}}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
     dict(POISON, instruction_budget=20000000, cycle_budget=80000000, wram={hWhoseTurn: b"\xC2", wCheckMenuPlayAreaWhichDuelist: b"\xC3", wCheckMenuPlayAreaWhichLayout: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03", 0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText: b"\x00" * 16}, read={wDefaultText: 7}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory _DrawYourOrOppPlayAreaScreen
@@ -1944,7 +1956,7 @@ CASES["Func_1bb4"] = [
 # >>> factory Func_82b6
 CONTRACT["Func_82b6"] = {"compare": (), "preserve": ()}
 CASES["Func_82b6"] = [
-    {"wram": {0xCE50: b"\xC4", 0xCE51: b"\xC4", 0xC4EC: b"\x01", 0xCC08: b"\x02", 0xCAB4: b"\x00"},
+    {"wram": {0xCE50: b"\xC4", 0xCE51: b"\xC4", 0xC4EC: b"\x01", 0xCC08: b"\x02", 0xCAB4: b"\x00", 0xC100: b"\x00" * 12},
      "vread": {0: {0x9822: 2, 0x9842: 2, 0x9862: 2, 0x9882: 2}}},
     {"wram": {0xCE50: b"\xC4", 0xCE51: b"\xC3", 0xC4EC: b"\x01", 0xCC08: b"\x02", 0xCAB4: b"\x00"},
      "vread": {0: {0x99E9: 2, 0x9A09: 2, 0x9A29: 2, 0x9A49: 2}}},
@@ -1957,6 +1969,12 @@ CASES["Func_82b6"] = [
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
 MUTATIONS = {
+    "SortCardsInListByID": {
+        "source_symbol": "SortCardsInListByID",
+        "before": "\t\tgb_write8(hTempCardID_ff9b_ADDR, (uint8_t)lowest_id);\n\t\tgb_write8((uint16_t)(hTempCardID_ff9b_ADDR + 1u), (uint8_t)(lowest_id >> 8));\n\t\tuint16_t scan",
+        "after": "\t\tuint16_t scan",
+        "case_ids": ["SortCardsInListByID-0"],
+    },
     "SwapTurn": {
         "source_symbol": "SwapTurn",
         "before": "hWhoseTurn = hWhoseTurn == PLAYER_TURN ? OPPONENT_TURN : PLAYER_TURN;",
@@ -2202,7 +2220,7 @@ MUTATIONS["Func_1bb4"] = {
 }
 # <<< factory-mutation Func_1bb4
 # >>> factory-mutation Func_82b6
-MUTATIONS["Func_82b6"] = {'source_symbol': 'Func_82b6', 'before': '\tif (duelist == layout)', 'after': '\tif (duelist != layout)', 'case_ids': ['Func_82b6-0', 'Func_82b6-1', 'Func_82b6-2']}
+MUTATIONS["Func_82b6"] = {'source_symbol': 'Func_82b6', 'before': 'duelist == layout ?', 'after': 'duelist != layout ?', 'case_ids': ['Func_82b6-0', 'Func_82b6-1', 'Func_82b6-2']}
 # <<< factory-mutation Func_82b6
 # >>> factory-mutation OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile
 MUTATIONS["OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile"] = {"source_symbol": "OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile", "before": "void OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile(uint8_t c)\n{\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;\n\t(void)OpenTurnHolderDiscardPileScreen(c);", "after": "void OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile(uint8_t c)\n{\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;\n\t(void)0;", "case_ids": ["OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile-0", "OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile-1", "OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile-2"]}

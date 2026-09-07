@@ -704,7 +704,7 @@ HasAlivePokemonInPlayAreaResult HasAlivePokemonInBench(void);
 void DrawOpponentSelectionScreen(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory DrawOpponentSelectionScreen */
 /* >>> factory PracticeDuel_ReplaceKnockedOutPokemon */
-void PracticeDuel_ReplaceKnockedOutPokemon(void);
+uint8_t PracticeDuel_ReplaceKnockedOutPokemon(void);
 /* <<< factory PracticeDuel_ReplaceKnockedOutPokemon */
 /* >>> factory DrawDamageAnimationArrow */
 void DrawDamageAnimationArrow(uint8_t f);
@@ -1001,6 +1001,7 @@ void OpenActivePokemonScreen(void);
 void DisplayPlayAreaScreenToUsePkmnPower(void);
 /* <<< factory DisplayPlayAreaScreenToUsePkmnPower */
 /* >>> factory DisplayCardPage_PokemonOverview */
+void DisplayCardPage_PokemonOverview_Attacks(uint8_t c);
 void DisplayCardPage_PokemonOverview(void);
 /* <<< factory DisplayCardPage_PokemonOverview */
 /* >>> factory DisplayEnergyOrTrainerCardPage */

@@ -6,6 +6,7 @@
 #include "home/switch_rom.h"
 #include "home/copy.h"
 #include "mem.h"
+#include "home/frames.h"
 /* >>> factory statics */
 #include "home/warp.h"
 #define BANK_HANDLE_MAP_WARP 7u
@@ -389,6 +390,7 @@ uint8_t _ExecuteGameEvent(void)
  * it means "restart the game", which only the credits request. */
 void ExecuteGameEvent(void)
 {
+	frame_boundary_timer_sync();
 	uint8_t saved_bank = hBankROM;
 
 	wPlayTimeCounterEnable = 1u;

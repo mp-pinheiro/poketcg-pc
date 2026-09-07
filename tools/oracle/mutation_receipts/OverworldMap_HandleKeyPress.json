@@ -1,9 +1,9 @@
 {
   "fn": "OverworldMap_HandleKeyPress",
   "case": "tests/cases/overworld_map.py",
-  "index": 1,
+  "index": 2,
   "status": "RED",
-  "baseline": "{\"fn\": \"OverworldMap_HandleKeyPress\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54062\": \"00\", \"54068\": \"00\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"OverworldMap_HandleKeyPress\", \"mismatches\": {\"bus\": {\"address\": 54068, \"reference\": \"0000\", \"native\": \"0002\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[54062, 1], [54068, 1]]}}}\n",
-  "restored": "{\"fn\": \"OverworldMap_HandleKeyPress\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54062\": \"00\", \"54068\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"OverworldMap_HandleKeyPress\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"54062\": \"01\", \"54070\": \"07\", \"54075\": \"03\", \"54077\": \"01\", \"54479\": \"07\", \"65425\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OverworldMap_HandleKeyPress\", \"mismatches\": {\"bus\": {\"address\": 54479, \"reference\": \"010703010701\", \"native\": \"010703010001\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[54062, 1], [54070, 1], [54075, 1], [54077, 1], [54479, 1], [65425, 1]]}}}\n",
+  "restored": "{\"fn\": \"OverworldMap_HandleKeyPress\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"54062\": \"01\", \"54070\": \"07\", \"54075\": \"03\", \"54077\": \"01\", \"54479\": \"07\", \"65425\": \"01\"}}, \"status\": \"PASS\"}\n"
 }

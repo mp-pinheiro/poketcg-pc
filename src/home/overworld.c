@@ -5,6 +5,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+#include "home/frames.h"
 /* >>> factory statics */
 #include "home/load_animation.h"
 #include "mem.h"
@@ -897,6 +898,7 @@ void Func_c1ed(void)
 /* >>> factory Func_c1b1 */
 void Func_c1b1(void)
 {
+	frame_boundary_timer_sync();
 	wOverworldMapSelection = OWMAP_POKEMON_DOME;
 	wTempMap = OVERWORLD_MAP;
 	wTempPlayerXCoord = 0x0Cu;

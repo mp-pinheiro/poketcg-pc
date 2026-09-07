@@ -1,4 +1,5 @@
 #include "home/sound.h"
+#include "home/frames.h"
 
 #include "home/music1.h"
 #include "generated/hram.h"
@@ -101,6 +102,9 @@ static uint8_t enter_audio_bank(void)
 {
 	uint8_t saved = hBankROM;
 
+	/* One entry per wrapper, StopMusic and PlaySFX_InvalidChoice included
+	 * once through the wrapper they fall into (sound.asm:5-7, 21-23). */
+	frame_boundary_timer_sync();
 	BankswitchROM(BANK_AUDIO_1);
 	return saved;
 }

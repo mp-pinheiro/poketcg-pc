@@ -107,10 +107,11 @@ CASES = {
 CASES.update({
     # No text engine involved: a bounded copy of at most a tiles, so this runs on the
     # oracle against the real ROM. e comes back as the actual character count.
+    # hff96 ($FF96) holds the count across GetTextOffsetFromTextID.
     "CopyTextData_FromTextID": [
-        {"a": 8, "hl": 1, "d": 0xC1, "e": 0x00, "read": {0xC100: 10}},
-        {"a": 2, "hl": 1, "d": 0xC1, "e": 0x00, "read": {0xC100: 4}},
-        dict(POISON, a=8, hl=1, d=0xC1, e=0x00, read={0xC100: 10}),
+        {"a": 8, "hl": 1, "d": 0xC1, "e": 0x00, "wram": {0xFF96: b"\x55"}, "read": {0xC100: 10}},
+        {"a": 2, "hl": 1, "d": 0xC1, "e": 0x00, "wram": {0xFF96: b"\x55"}, "read": {0xC100: 4}},
+        dict(POISON, a=8, hl=1, d=0xC1, e=0x00, wram={0xFF96: b"\x55"}, read={0xC100: 10}),
     ],
     # hWhoseTurn selects the callee; hl always comes back as the buffer the asm
     # pushed and popped, whichever name was copied.
@@ -278,6 +279,12 @@ CASES["ProcessTextFromID"].append(
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
+    "CopyTextData_FromTextID": {
+        "source_symbol": "CopyTextData_FromTextID",
+        "before": "\tgb_write8(hff96_ADDR, a);\n\tuint16_t source = GetTextOffsetFromTextID(hl);",
+        "after": "\tuint16_t source = GetTextOffsetFromTextID(hl);",
+        "case_ids": ["CopyTextData_FromTextID-0", "CopyTextData_FromTextID-1", "CopyTextData_FromTextID-2"],
+    },
     "PrintText": {
         "source_symbol": "PrintText",
         "before": "if (hl == 0) {",

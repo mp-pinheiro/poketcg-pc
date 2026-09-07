@@ -479,8 +479,12 @@ done_dir:
 		if ((old_blink & CURSOR_BLINK_PERIOD_MASK_800) != 0u)
 			return (PlayerNamingScreen_DrawCursorResult){(uint8_t)(old_blink & CURSOR_BLINK_PERIOD_MASK_800), 0u, 0u, 0u, 0u, 0u, 0u};
 
-		uint8_t vis_tile = gb_read8(wVisibleCursorTile_ADDR);
-		return PlayerNamingScreen_DrawCursor(vis_tile, 0u, 0u, 0u, 0u, 0u, 0u);
+		/* `bit B_CURSOR_BLINK_PERIOD, [hl]` tests the counter after the
+		 * inc: bit 4 set draws the invisible tile, so the cursor blinks
+		 * with a 16-frame half-period. */
+		uint8_t tile = gb_read8((uint8_t)(old_blink + 1u) & (1u << B_CURSOR_BLINK_PERIOD_800)
+		                        ? wInvisibleCursorTile_ADDR : wVisibleCursorTile_ADDR);
+		return PlayerNamingScreen_DrawCursor(tile, 0u, 0u, 0u, 0u, 0u, 0u);
 	}
 }
 /* <<< factory PlayerNamingScreen_CheckButtonState */
@@ -580,8 +584,12 @@ DeckNamingScreen_DrawCursorResult DeckNamingScreen_CheckButtonState(void)
 		if ((old_blink & CURSOR_BLINK_PERIOD_MASK_800) != 0u)
 			return (DeckNamingScreen_DrawCursorResult){(uint8_t)(old_blink & CURSOR_BLINK_PERIOD_MASK_800), 0u, 0u, 0u, 0u, 0u, 0u};
 
-		uint8_t vis_tile = gb_read8(wVisibleCursorTile_ADDR);
-		return DeckNamingScreen_DrawCursor(vis_tile, 0u, 0u, 0u, 0u, 0u, 0u);
+		/* `bit B_CURSOR_BLINK_PERIOD, [hl]` tests the counter after the
+		 * inc: bit 4 set draws the invisible tile, so the cursor blinks
+		 * with a 16-frame half-period. */
+		uint8_t tile = gb_read8((uint8_t)(old_blink + 1u) & (1u << B_CURSOR_BLINK_PERIOD_800)
+		                        ? wInvisibleCursorTile_ADDR : wVisibleCursorTile_ADDR);
+		return DeckNamingScreen_DrawCursor(tile, 0u, 0u, 0u, 0u, 0u, 0u);
 	}
 }
 /* <<< factory DeckNamingScreen_CheckButtonState */

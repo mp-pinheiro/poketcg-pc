@@ -3,6 +3,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+#include "home/frames.h"
 /* >>> factory statics */
 #include "home/load_animation.h"
 
@@ -172,6 +173,7 @@ void PrintAlbumProgress(uint8_t b, uint8_t c)
 /* >>> factory PrintPlayTime */
 void PrintPlayTime(uint8_t b, uint8_t c)
 {
+	frame_boundary_timer_sync();
 	gb_write8(wPlayTimeHourMinutes_ADDR, gb_read8((uint16_t)(wPlayTimeCounter_ADDR + 2u)));
 	gb_write8((uint16_t)(wPlayTimeHourMinutes_ADDR + 1u), gb_read8((uint16_t)(wPlayTimeCounter_ADDR + 3u)));
 	gb_write8((uint16_t)(wPlayTimeHourMinutes_ADDR + 2u), gb_read8((uint16_t)(wPlayTimeCounter_ADDR + 4u)));

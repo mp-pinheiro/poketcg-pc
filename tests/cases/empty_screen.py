@@ -11,15 +11,18 @@ CONTRACT = {
 }
 
 CASES = {
+    # LCD on at entry (wLCDC $CABB and rLCDC $FF40 bit 7): empty_screen.asm:3
+    # calls DisableLCD first, which is what clears both, so WriteByteToBGMap0
+    # and DoFrameIfLCDEnabled take their LCD-off paths until EnableLCD.
     "EmptyScreen": [
-        {"wram": {wTileMapFill: b"\x00", wConsole: b"\x00"},
-         "read": {0x9800: 0x800, 0xFF82: 1}},
+        {"wram": {wTileMapFill: b"\x00", wConsole: b"\x00", 0xCABB: b"\x91", 0xFF40: b"\x91"},
+         "read": {0x9800: 0x800, 0xFF82: 1, 0xFF40: 1}},
         dict(POISON,
              wram={wTileMapFill: b"\xA5", wConsole: b"\x00",
-                   wDuelDisplayedScreen: b"\x7F"},
-             read={0x9800: 0x800, 0xFF82: 1}),
-        {"wram": {wTileMapFill: b"\x5A", wConsole: b"\x02"},
-         "read": {0x9800: 0x800, 0xFF82: 1}},
+                   wDuelDisplayedScreen: b"\x7F", 0xCABB: b"\x91", 0xFF40: b"\x91"},
+             read={0x9800: 0x800, 0xFF82: 1, 0xFF40: 1}),
+        {"wram": {wTileMapFill: b"\x5A", wConsole: b"\x02", 0xCABB: b"\x91", 0xFF40: b"\x91"},
+         "read": {0x9800: 0x800, 0xFF82: 1, 0xFF40: 1}},
     ],
     "BCCoordToBGMap0Address": [
         {},
@@ -32,6 +35,12 @@ from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
 MUTATIONS = {
+    "EmptyScreen": {
+        "source_symbol": "EmptyScreen",
+        "before": "\tDisableLCD();\n\t(void)FillTileMap();",
+        "after": "\t(void)FillTileMap();",
+        "case_ids": ["EmptyScreen-0", "EmptyScreen-1", "EmptyScreen-2"],
+    },
     "BCCoordToBGMap0Address": {
         "source_symbol": "BCCoordToBGMap0Address",
         "before": "uint16_t offset = (uint16_t)((uint16_t)c * TILEMAP_W + b);",

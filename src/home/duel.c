@@ -601,7 +601,7 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/duel.h"
 #include "home/substatus.h"
 #define CARD_LOCATION_ARENA 0x10u
-#define CARD_LOCATION_PLAY_AREA 0x01u
+#define CARD_LOCATION_PLAY_AREA 0x10u
 #define DUELVARS_ARENA_CARD_HP 0xC8u
 
 #define ATK_ANIM_BENCH_HIT 0x78u
@@ -745,6 +745,10 @@ SortResult SortCardsInListByID(uint8_t b, uint8_t c, uint16_t de)
 		}
 		uint16_t lowest_pos = ptr;
 		uint16_t lowest_id = GetCardIDFromDeckIndex_bc(gb_read8(ptr), 0).a;
+		/* duel.asm:599-602, 618-622: the running lowest id lives in
+		 * hTempCardID_ff9b (two bytes), rewritten on every new lowest. */
+		gb_write8(hTempCardID_ff9b_ADDR, (uint8_t)lowest_id);
+		gb_write8((uint16_t)(hTempCardID_ff9b_ADDR + 1u), (uint8_t)(lowest_id >> 8));
 		uint16_t scan = (uint16_t)(ptr + 1u);
 		while (!(gb_read8(scan) & 0x80u)) {
 			uint16_t candidate = GetCardIDFromDeckIndex_bc(gb_read8(scan), 0).a;
@@ -754,6 +758,8 @@ SortResult SortCardsInListByID(uint8_t b, uint8_t c, uint16_t de)
 			if (candidate <= lowest_id) {
 				lowest_id = candidate;
 				lowest_pos = scan;
+				gb_write8(hTempCardID_ff9b_ADDR, (uint8_t)lowest_id);
+				gb_write8((uint16_t)(hTempCardID_ff9b_ADDR + 1u), (uint8_t)(lowest_id >> 8));
 			}
 			scan++;
 		}
@@ -2190,14 +2196,17 @@ void DrawPlayArea_PrizeCards(uint16_t hl)
 }
 /* <<< factory DrawPlayArea_PrizeCards */
 
+/* duel.asm:796-849, ROM bank 2 (this file's bank): x, y pairs read by
+ * DrawPlayArea_PrizeCards through hl. Passed by ROM address, never copied
+ * into WRAM -- the asm writes nothing while pointing at them. */
+#define PRIZE_COORDS_YOUR_OR_OPP_PLAYER 0x44B4u
+#define PRIZE_COORDS_YOUR_OR_OPP_OPPONENT 0x44C0u
+#define PRIZE_COORDS_2_PLAYER 0x44CCu
+#define PRIZE_COORDS_2_OPPONENT 0x44D8u
+
 /* >>> factory _DrawPlayersPrizeAndBenchCards */
 void _DrawPlayersPrizeAndBenchCards(void)
 {
-	static const uint8_t player_coords[] = {6u, 0u, 6u, 2u, 8u, 0u, 8u, 2u, 10u, 0u, 10u, 2u};
-	static const uint8_t opponent_coords[] = {4u, 18u, 4u, 16u, 2u, 18u, 2u, 16u, 0u, 18u, 0u, 16u};
-	const uint16_t coords_addr = 0xC100u;
-	for (uint8_t i = 0u; i < sizeof(player_coords); ++i)
-		gb_write8((uint16_t)(coords_addr + i), player_coords[i]);
 	gb_write8(wTileMapFill_ADDR, 0u);
 	ZeroObjectPositions();
 	wVBlankOAMCopyToggle = TRUE;
@@ -2207,12 +2216,10 @@ void _DrawPlayersPrizeAndBenchCards(void)
 	(void)LoadDeckAndDiscardPileIcons();
 	wCheckMenuPlayAreaWhichDuelist = PLAYER_TURN;
 	wCheckMenuPlayAreaWhichLayout = PLAYER_TURN;
-	DrawPlayArea_PrizeCards(coords_addr);
+	DrawPlayArea_PrizeCards(PRIZE_COORDS_2_PLAYER);
 	DrawPlayArea_BenchCards(3u, 5u, 10u);
-	for (uint8_t i = 0u; i < sizeof(opponent_coords); ++i)
-		gb_write8((uint16_t)(coords_addr + i), opponent_coords[i]);
 	wCheckMenuPlayAreaWhichDuelist = OPPONENT_TURN;
-	DrawPlayArea_PrizeCards(coords_addr);
+	DrawPlayArea_PrizeCards(PRIZE_COORDS_2_OPPONENT);
 	DrawPlayArea_BenchCards(3u, 1u, 0u);
 }
 /* <<< factory _DrawPlayersPrizeAndBenchCards */
@@ -2616,9 +2623,6 @@ void DrawYourOrOppPlayArea_ActiveCardGfx(uint16_t de)
 /* >>> factory _DrawYourOrOppPlayAreaScreen */
 void _DrawYourOrOppPlayAreaScreen(void)
 {
-	static const uint8_t player_prizes[] = {12u, 2u, 14u, 2u, 12u, 4u, 14u, 4u, 12u, 6u, 14u, 6u};
-	static const uint8_t opponent_prizes[] = {12u, 12u, 14u, 12u, 12u, 14u, 14u, 14u, 12u, 16u, 14u, 16u};
-	const uint16_t prize_coords = 0xC100u;
 	gb_write8(wTileMapFill_ADDR, 0u);
 	ZeroObjectPositions();
 	gb_write8(wVBlankOAMCopyToggle_ADDR, TRUE);
@@ -2645,16 +2649,12 @@ void _DrawYourOrOppPlayAreaScreen(void)
 		SwapTurn();
 	}
 	if (wCheckMenuPlayAreaWhichDuelist == wCheckMenuPlayAreaWhichLayout) {
-		for (uint8_t i = 0u; i < sizeof(player_prizes); ++i)
-			gb_write8((uint16_t)(prize_coords + i), player_prizes[i]);
-		DrawPlayArea_PrizeCards(prize_coords);
+		DrawPlayArea_PrizeCards(PRIZE_COORDS_YOUR_OR_OPP_PLAYER);
 		DrawYourOrOppPlayArea_ActiveCardGfx(0x0602u);
 		DrawPlayArea_BenchCards(4u, 1u, 9u);
 		DrawYourOrOppPlayArea_Icons(0u);
 	} else {
-		for (uint8_t i = 0u; i < sizeof(opponent_prizes); ++i)
-			gb_write8((uint16_t)(prize_coords + i), opponent_prizes[i]);
-		DrawPlayArea_PrizeCards(prize_coords);
+		DrawPlayArea_PrizeCards(PRIZE_COORDS_YOUR_OR_OPP_OPPONENT);
 		DrawYourOrOppPlayArea_ActiveCardGfx(0x0605u);
 		DrawPlayArea_BenchCards(4u, 1u, 2u);
 		DrawYourOrOppPlayArea_Icons(1u);
@@ -3190,20 +3190,11 @@ DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon_RegularAnim(uint8_
  * _DrawPlayersPrizeAndBenchCards caller of the same callee. */
 void Func_82b6(void)
 {
-	static const uint8_t player[] = {2u, 1u, 2u, 3u, 4u, 1u, 4u, 3u, 6u, 1u, 6u, 3u};
-	static const uint8_t opponent[] = {9u, 17u, 9u, 15u, 7u, 17u, 7u, 15u, 5u, 17u, 5u, 15u};
-	const uint8_t *coords;
-	const uint16_t scratch = 0xC100u;
 	uint8_t duelist = gb_read8(wCheckMenuPlayAreaWhichDuelist_ADDR);
 	uint8_t layout = gb_read8(wCheckMenuPlayAreaWhichLayout_ADDR);
 
-	if (duelist == layout)
-		coords = player;
-	else
-		coords = opponent;
-	for (uint8_t i = 0u; i < sizeof(player); i++)
-		gb_write8((uint16_t)(scratch + i), coords[i]);
-	DrawPlayArea_PrizeCards(scratch);
+	DrawPlayArea_PrizeCards(duelist == layout ? PRIZE_COORDS_YOUR_OR_OPP_PLAYER
+	                                          : PRIZE_COORDS_YOUR_OR_OPP_OPPONENT);
 }
 /* <<< factory Func_82b6 */
 

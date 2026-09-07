@@ -182,6 +182,15 @@ CASES["PlayerNamingScreen_CheckButtonState"] = [
     {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x00", 0xCEA3: b"\x11",
               0xCEAA: b"\x17", 0xD006: b"\x03", 0xCEA4: b"\x02", 0xCEA9: b"\x06"},
      "read": {0xCEA3: 1}},
+    # Blink phase: `bit B_CURSOR_BLINK_PERIOD, [hl]` on the incremented counter.
+    # $00 -> $01 draws the visible tile (a sprite lands in wOAM slot 0);
+    # $10 -> $11 draws the invisible one (ZeroObjectPositions, no sprite).
+    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x00", 0xCEA3: b"\x00", 0xCEAB: b"\x00",
+              0xCEAA: b"\x17", 0xD006: b"\x03", 0xCEA4: b"\x02", 0xCEA9: b"\x06"},
+     "read": {0xCEA3: 1, 0xCA00: 4, 0xCAB5: 1}},
+    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x00", 0xCEA3: b"\x10", 0xCEAB: b"\x00",
+              0xCEAA: b"\x17", 0xD006: b"\x03", 0xCEA4: b"\x02", 0xCEA9: b"\x06"},
+     "read": {0xCEA3: 1, 0xCA00: 4, 0xCAB5: 1}},
 ]
 # <<< factory PlayerNamingScreen_CheckButtonState
 

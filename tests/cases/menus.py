@@ -385,6 +385,26 @@ CASES["CardListMenuFunction"] = [
     {"keys": 0x00, "wram": {wCurMenuItem: b"\x01", wNumMenuItems: b"\x03", wListScrollOffset: b"\x02", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x12"}, "read": {hCurMenuItem: 1}},
     {"keys": 0x02, "wram": {wCurMenuItem: b"\x01", wNumMenuItems: b"\x03", wListScrollOffset: b"\x02", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\xAA"}, "read": {hCurMenuItem: 1}},
     dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x01", wNumMenuItems: b"\x03", wListScrollOffset: b"\x02", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x55"}, read={hCurMenuItem: 1}),
+    # menus.asm:573-581 `jp hl` on wListFunctionPointer = CardListFunction
+    # ($01:5719): START pressed (hKeysPressed $FF91) is the list function's
+    # own carry exit, B its MENU_CANCEL write to hCurMenuItem, neither an A/B
+    # decision of this routine. Bank 1 mapped by hBankROM ($FF80).
+    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x01", wNumMenuItems: b"\x03", wListScrollOffset: b"\x02", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x19\x57", wRefreshMenuCursorSFX: b"\x55", 0xFF91: b"\x08", 0xFF80: b"\x01"}, read={hCurMenuItem: 1}),
+    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x01", wNumMenuItems: b"\x03", wListScrollOffset: b"\x02", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x19\x57", wRefreshMenuCursorSFX: b"\x55", 0xFF91: b"\x02", 0xFF80: b"\x01"}, read={hCurMenuItem: 1}),
+    # menus.asm:436-481 `.no_more_items`: hDPadHeld ($FF8F) UP with the cursor
+    # wrapped to the last visible item and no page above (scroll 0), and DOWN
+    # wrapped to the first item with no page below (scroll + items == list),
+    # both clear the buffered cursor SFX (wRefreshMenuCursorSFX, seeded 1 as
+    # HandleMenuInput leaves it) instead of scrolling.
+    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x02", wNumMenuItems: b"\x03", wListScrollOffset: b"\x00", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x01", 0xFF8F: b"\x40"}, read={hCurMenuItem: 1, wCurMenuItem: 1, wListScrollOffset: 1}),
+    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x00", wNumMenuItems: b"\x03", wListScrollOffset: b"\x02", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x01", 0xFF8F: b"\x80"}, read={hCurMenuItem: 1, wCurMenuItem: 1, wListScrollOffset: 1}),
+    # menus.asm:495-508 LEFT from a page less than one page down (scroll 2 of
+    # 5 visible, 7 items) with the cursor on absolute item 6: the first page
+    # is shown with the cursor at 6 - 5 = 1, not at 6. menus.asm:530-546 RIGHT
+    # onto the last page from scroll 0, cursor 0: scroll becomes 2 and the
+    # cursor 0 - 2 + 5 = 3.
+    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x04", wNumMenuItems: b"\x05", wListScrollOffset: b"\x02", wNumListItems: b"\x07", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x01", 0xFF8F: b"\x20"}, read={hCurMenuItem: 1, wCurMenuItem: 1, wListScrollOffset: 1}),
+    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x00", wNumMenuItems: b"\x05", wListScrollOffset: b"\x00", wNumListItems: b"\x07", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x01", 0xFF8F: b"\x10"}, read={hCurMenuItem: 1, wCurMenuItem: 1, wListScrollOffset: 1}),
 ]
 # <<< factory CardListMenuFunction
 
@@ -399,6 +419,15 @@ CASES["HandleMenuInput"] = [
     # (buffered cursor SFX) after the unconditional entry clear -- seeded
     # nonzero here to prove both writes land, not just the entry clear.
     {"wram": {0xFF8F: b"\x40", 0xFF91: b"\x00", 0xCD17: b"\x00\x00", 0xCD10: b"\x02", 0xCD14: b"\x04", 0xFFB1: b"\x02", 0xCD15: b"\x00", 0xCD99: b"\x99"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD99: 1}},
+    # menus.asm:113-122 `call CallHL` on wMenuUpdateFunc ($CD17). With
+    # PlayAreaScreenMenuFunction ($01:60CE, hBankROM $FF80 = 1) installed,
+    # START is that function's carry exit -- A-pressed epilogue, blink counter
+    # ($CD0F) untouched -- and no button is its nc exit into RefreshMenuCursor,
+    # which advances the counter. A port that runs CardListMenuFunction for
+    # every update function, or that refreshes the cursor before the update
+    # function decides, differs on the counter or the flags.
+    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x08", 0xCD17: b"\xCE\x60", 0xCD10: b"\x02", 0xCD14: b"\x04", 0xFFB1: b"\x02", 0xCD15: b"\x00", 0xCD99: b"\x99", 0xCD0F: b"\x05", 0xFF80: b"\x01"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD99: 1, 0xCD0F: 1}},
+    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x00", 0xCD17: b"\xCE\x60", 0xCD10: b"\x02", 0xCD14: b"\x04", 0xFFB1: b"\x02", 0xCD15: b"\x00", 0xCD99: b"\x00", 0xCD0F: b"\x05", 0xFF80: b"\x01"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD99: 1, 0xCD0F: 1}},
 ]
 # <<< factory HandleMenuInput
 
@@ -602,10 +631,10 @@ MUTATIONS["PrintCardListItems"] = {
 }
 # <<< factory-mutation PrintCardListItems
 # >>> factory-mutation CardListMenuFunction
-MUTATIONS["CardListMenuFunction"] = {"source_symbol": "CardListMenuFunction", "before": "hCurMenuItem = selected;", "after": "hCurMenuItem = (uint8_t)(selected + 1u);", "case_ids": ["CardListMenuFunction-0", "CardListMenuFunction-1", "CardListMenuFunction-2", "CardListMenuFunction-3"]}
+MUTATIONS["CardListMenuFunction"] = {"source_symbol": "CardListMenuFunction", "before": "\tif (list_fn == CARD_LIST_FUNCTION) {\n\t\tCardListFunctionResult r = CardListFunction();\n\t\treturn (CardListMenuFunctionResult){r.a, r.f};\n\t}", "after": "\tif (list_fn == CARD_LIST_FUNCTION)\n\t\treturn (CardListMenuFunctionResult){0u, 0x00u};", "case_ids": ["CardListMenuFunction-4", "CardListMenuFunction-5"]}
 # <<< factory-mutation CardListMenuFunction
 # >>> factory-mutation HandleMenuInput
-MUTATIONS["HandleMenuInput"] = {"source_symbol": "HandleMenuInput", "before": "\thCurMenuItem = 0xFFu;\n\t(void)PlayOpenOrExitScreenSFX(0u, 0x80u);", "after": "\thCurMenuItem = 0x00u;\n\t(void)PlayOpenOrExitScreenSFX(0u, 0x80u);", "case_ids": ["HandleMenuInput-1"]}
+MUTATIONS["HandleMenuInput"] = {"source_symbol": "HandleMenuInput", "before": "\t\t} else if (update == PLAY_AREA_SCREEN_MENU_FUNCTION) {\n\t\t\tupdate_f = PlayAreaScreenMenuFunction();", "after": "\t\t} else if (update == PLAY_AREA_SCREEN_MENU_FUNCTION) {\n\t\t\tupdate_f = CardListMenuFunction().f;", "case_ids": ["HandleMenuInput-4"]}
 # <<< factory-mutation HandleMenuInput
 # >>> factory-mutation HandleCardListInput
 MUTATIONS["HandleCardListInput"] = {"source_symbol": "HandleCardListInput", "before": "\tresult.d = wListScrollOffset;", "after": "\tresult.d = (uint8_t)(wListScrollOffset + 1u);", "case_ids": ["HandleCardListInput-0", "HandleCardListInput-1", "HandleCardListInput-2"]}

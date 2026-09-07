@@ -1,9 +1,9 @@
 {
   "fn": "DoPracticeDuelAction",
   "case": "tests/cases/core.py",
-  "index": 0,
+  "index": 2,
   "status": "RED",
-  "baseline": "{\"fn\": \"DoPracticeDuelAction\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52243\": \"00\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"DoPracticeDuelAction\", \"mismatches\": {\"f\": [128, 0]}}\n",
-  "restored": "{\"fn\": \"DoPracticeDuelAction\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52243\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"DoPracticeDuelAction\", \"registers\": {\"a\": 4, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49903\": \"02\", \"52222\": \"04\", \"52243\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DoPracticeDuelAction\", \"mismatches\": {\"f\": [192, 0]}}\n",
+  "restored": "{\"fn\": \"DoPracticeDuelAction\", \"registers\": {\"a\": 4, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49903\": \"02\", \"52222\": \"04\", \"52243\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
 }

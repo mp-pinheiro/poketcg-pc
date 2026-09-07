@@ -2,32 +2,28 @@
 
 #include "generated/hram.h"
 #include "generated/wram.h"
+#include "home/lcd.h"
+#include "home/setup.h"
+#include "home/sgb.h"
 #include "mem.h"
 #include "ppu.h"
 
-static void fill_bg_maps(uint8_t value)
-{
-	uint32_t count = (uint32_t)TILEMAP_W * TILEMAP_H;
-	uint16_t address = 0x9800u;
-
-	while (count-- != 0)
-		gb_write8(address++, value);
-}
-
+/* empty_screen.asm:2-14. DisableLCD first: it is what turns wLCDC's enable
+ * bit off, so every WriteByteToBGMap0 until the next EnableLCD takes the
+ * direct path (no wTempByte staging) and DoFrameIfLCDEnabled skips its
+ * DoFrame, as on the ROM. FillTileMap is the home routine, not a copy. */
+#define CONSOLE_SGB 0x01u
+#define ATTR_BLK_PACKET_EMPTY_SCREEN 0x04BFu
 void EmptyScreen(void)
 {
-	hBankVRAM = 0;
-	gb_write8(0xFF4Fu, 0x00u);
-	fill_bg_maps(wTileMapFill);
+	DisableLCD();
+	(void)FillTileMap();
 	wDuelDisplayedScreen = 0;
-
-	if (wConsole == 0x02u) {
-		hBankVRAM = 1;
-		gb_write8(0xFF4Fu, 0x01u);
-		fill_bg_maps(0);
-		hBankVRAM = 0;
-		gb_write8(0xFF4Fu, 0x00u);
-	}
+	if (wConsole != CONSOLE_SGB)
+		return;
+	EnableLCD();
+	(void)SendSGB(0u, 0u, 0u, 0u, 0u, 0u, ATTR_BLK_PACKET_EMPTY_SCREEN);
+	DisableLCD();
 }
 
 uint16_t BCCoordToBGMap0Address(uint8_t b, uint8_t c)

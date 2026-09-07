@@ -811,6 +811,12 @@ CASES["ScriptCommand_SetEventValue"] = [
     {"c": 0x7F, "wram": {wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2, wEventVars: 0x40}},
     {"c": 0x80, "wram": {wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2, wEventVars: 0x40}},
     {"c": 0xFF, "wram": {wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2, wEventVars: 0x40}},
+    # scripting.asm:1894-1895: c is the event, b the value. EVENT_MASON_LAB_STATE
+    # ($3E, byte $0D bits 1-3) set to 1 must read $02; a port that shifts c
+    # instead of b writes $0C. EVENT_BEAT_NIKKI ($08, byte 0 bit 7) set to 1
+    # must read $80, and shifting c gives 0.
+    {"b": 1, "c": 0x3E, "wram": {wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2, wEventVars: 0x40}},
+    {"b": 1, "c": 0x08, "wram": {wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2, wEventVars: 0x40}},
 ]
 # <<< factory ScriptCommand_SetEventValue
 

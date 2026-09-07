@@ -1,9 +1,9 @@
 {
   "fn": "DrawDuelMainScene",
   "case": "tests/cases/core.py",
-  "index": 1,
+  "index": 3,
   "status": "RED",
-  "baseline": "{\"fn\": \"DrawDuelMainScene\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"50161\": \"01\", \"51906\": \"01\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"DrawDuelMainScene\", \"mismatches\": {\"bus\": {\"address\": 65431, \"reference\": \"000101c3\", \"native\": \"000101c2\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[49905, 1], [50161, 1], [51906, 1], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"DrawDuelMainScene\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"50161\": \"01\", \"51906\": \"01\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"DrawDuelMainScene\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"35328\": \"ffffaad5ff80d5aaff80aad5ff80d5aa\", \"36096\": \"ffffaad5ff80d5aaff80aad5ff80d5aa\", \"38944\": \"0012000000000000\", \"39084\": \"a4aab0b6bcc2c8ce\"}}, \"wram\": {\"49851\": \"00\", \"49864\": \"28\", \"49903\": \"01\", \"49905\": \"01\", \"50107\": \"00\", \"50120\": \"32\", \"50159\": \"01\", \"50176\": \"01\", \"50304\": \"02\", \"51899\": \"80\", \"51906\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawDuelMainScene\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"DrawDuelMainScene\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"35328\": \"ffffaad5ff80d5aaff80aad5ff80d5aa\", \"36096\": \"ffffaad5ff80d5aaff80aad5ff80d5aa\", \"38944\": \"0012000000000000\", \"39084\": \"a4aab0b6bcc2c8ce\"}}, \"wram\": {\"49851\": \"00\", \"49864\": \"28\", \"49903\": \"01\", \"49905\": \"01\", \"50107\": \"00\", \"50120\": \"32\", \"50159\": \"01\", \"50176\": \"01\", \"50304\": \"02\", \"51899\": \"80\", \"51906\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
 }

@@ -16,6 +16,15 @@
 
 #define SFX_CANCEL 0x03u
 #define SFX_CONFIRM 0x02u
+/* Function pointers the asm installs in RAM: menus.asm:322 CardListMenuFunction
+ * into wMenuUpdateFunc; duel/core.asm:5030/5038 PlayAreaScreenMenuFunction
+ * ($01:60CE) into wMenuUpdateFunc; core.asm:3395 CardListFunction ($01:5719)
+ * into wListFunctionPointer. */
+#define CARD_LIST_MENU_FUNCTION 0x283Fu
+#define PLAY_AREA_SCREEN_MENU_FUNCTION 0x60CEu
+#define CARD_LIST_FUNCTION 0x5719u
+#include "home/core.h"
+#include "home/indirect_dispatch.h"
 
 #include "home/frames.h"
 #include "home/lcd.h"
@@ -559,8 +568,8 @@ void Func_2827(void)
 void PrintCardListItems(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl)
 {
 	InitializeCardListParameters(a, d, e, hl);
-	gb_write8(wMenuUpdateFunc_ADDR, 0x3Fu);
-	gb_write8((uint16_t)(wMenuUpdateFunc_ADDR + 1u), 0x28u);
+	gb_write8(wMenuUpdateFunc_ADDR, (uint8_t)CARD_LIST_MENU_FUNCTION);
+	gb_write8((uint16_t)(wMenuUpdateFunc_ADDR + 1u), (uint8_t)(CARD_LIST_MENU_FUNCTION >> 8));
 	wMenuYSeparation = 2u;
 	wCardListIndicatorYPosition = 1u;
 	ReloadCardListItems();
@@ -573,23 +582,31 @@ CardListMenuFunctionResult CardListMenuFunction(void)
 	uint8_t keys = hDPadHeld;
 	uint8_t count = (uint8_t)(wNumMenuItems - 1u);
 	uint8_t cur = wCurMenuItem;
+	/* menus.asm:436-481. `.no_more_items` -- the page cannot scroll past
+	 * either end -- clears wRefreshMenuCursorSFX, so the buffered cursor
+	 * SFX HandleMenuInput armed for the wrap stays silent. */
 	if ((keys & PAD_UP) != 0u) {
 		if (cur == count) {
 			wCurMenuItem = 0u;
 			if (wListScrollOffset != 0u) {
 				wListScrollOffset = (uint8_t)(wListScrollOffset - 1u);
 				ReloadCardListItems();
+			} else {
+				wRefreshMenuCursorSFX = 0u;
 			}
 		}
 	} else if ((keys & PAD_DOWN) != 0u) {
 		if (cur == 0u) {
 			wCurMenuItem = count;
-			if ((uint8_t)(wListScrollOffset + count + 1u) < wNumListItems) {
+			if ((uint8_t)(wListScrollOffset + count + 1u) != wNumListItems) {
 				wListScrollOffset = (uint8_t)(wListScrollOffset + 1u);
 				ReloadCardListItems();
+			} else {
+				wRefreshMenuCursorSFX = 0u;
 			}
 		} else if ((uint8_t)(cur + wListScrollOffset) >= wNumListItems) {
 			wCurMenuItem = (uint8_t)(cur - 1u);
+			wRefreshMenuCursorSFX = 0u;
 		}
 	} else if ((keys & 0x20u) != 0u) {
 		if (wListScrollOffset != 0u) {
@@ -598,8 +615,14 @@ CardListMenuFunctionResult CardListMenuFunction(void)
 				wListScrollOffset = next;
 				ReloadCardListItems();
 			} else {
+				/* menus.asm:495-508 .top_of_page_reached: the cursor
+				 * keeps its absolute item, less one page if that item
+				 * is beyond the first page (`sub [hl] / jr nc`). */
+				uint8_t absolute = (uint8_t)(wListScrollOffset + cur);
+
 				EraseCursor();
-				wCurMenuItem = (uint8_t)(wListScrollOffset + cur);
+				wCurMenuItem = absolute >= wNumMenuItems
+					? (uint8_t)(absolute - wNumMenuItems) : absolute;
 				wListScrollOffset = 0u;
 				wRefreshMenuCursorSFX = 0u;
 				ReloadCardListItems();
@@ -612,10 +635,18 @@ CardListMenuFunctionResult CardListMenuFunction(void)
 				wListScrollOffset = next;
 				ReloadCardListItems();
 			} else {
+				/* menus.asm:530-546 .asm_28f9: the last page; the
+				 * cursor keeps its absolute item relative to the new
+				 * scroll, plus one page when that goes negative. */
+				uint8_t absolute = (uint8_t)(wListScrollOffset + cur);
+				uint8_t relative;
+
 				EraseCursor();
-				uint8_t old_scroll = wListScrollOffset;
 				wListScrollOffset = (uint8_t)(wNumListItems - wNumMenuItems);
-				wCurMenuItem = (uint8_t)(old_scroll + cur - wListScrollOffset);
+				relative = (uint8_t)(absolute - wListScrollOffset);
+				if (absolute < wListScrollOffset)
+					relative = (uint8_t)(relative + wNumMenuItems);
+				wCurMenuItem = relative;
 				ReloadCardListItems();
 			}
 		}
@@ -634,8 +665,19 @@ CardListMenuFunctionResult CardListMenuFunction(void)
 		uint16_t total_de = 0u;
 		CopyDataToBGMap0(2u, &total_hl, &total_de, 16u, y);
 	}
-	if (wListFunctionPointer != 0u || gb_read8((uint16_t)(wListFunctionPointer_ADDR + 1u)) != 0u)
+	/* menus.asm:573-581 `jp hl` on wListFunctionPointer with a = hCurMenuItem:
+	 * the function's own exit is this one's. CardListFunction ($01:5719,
+	 * CardListParameters) is the only list function the asm installs. */
+	uint16_t list_fn = (uint16_t)(wListFunctionPointer |
+	                              ((uint16_t)gb_read8((uint16_t)(wListFunctionPointer_ADDR + 1u)) << 8));
+	if (list_fn == CARD_LIST_FUNCTION) {
+		CardListFunctionResult r = CardListFunction();
+		return (CardListMenuFunctionResult){r.a, r.f};
+	}
+	if (list_fn != 0u) {
+		DispatchIndirect("wListFunctionPointer", list_fn);
 		return (CardListMenuFunctionResult){0u, 0x00u};
+	}
 	uint8_t pressed = (uint8_t)(hKeysPressed & (PAD_A | PAD_B));
 	if (pressed == 0u)
 		return (CardListMenuFunctionResult){0u, 0xA0u};
@@ -675,14 +717,33 @@ HandleMenuInputResult HandleMenuInput(void)
 	}
 	hCurMenuItem = wCurMenuItem;
 
-	if (wMenuUpdateFunc != 0u) {
-		CardListMenuFunctionResult r = CardListMenuFunction();
-		if ((r.f & 0x10u) == 0u)
+	/* menus.asm:113-122 `call CallHL` on wMenuUpdateFunc: the two functions
+	 * ever installed are CardListMenuFunction (home, by PrintCardListItems)
+	 * and PlayAreaScreenMenuFunction ($01:60CE, by the play area screen's
+	 * menu parameter blocks). Carry from either takes the A-pressed exit;
+	 * anything else registered is an unported target. */
+	uint16_t update = (uint16_t)(wMenuUpdateFunc |
+	                             ((uint16_t)gb_read8((uint16_t)(wMenuUpdateFunc_ADDR + 1u)) << 8));
+	if (update != 0u) {
+		uint8_t update_a, update_f;
+		if (update == CARD_LIST_MENU_FUNCTION) {
+			CardListMenuFunctionResult r = CardListMenuFunction();
+			update_a = r.a;
+			update_f = r.f;
+		} else if (update == PLAY_AREA_SCREEN_MENU_FUNCTION) {
+			update_f = PlayAreaScreenMenuFunction();
+			update_a = hCurMenuItem;
+		} else {
+			DispatchIndirect("wMenuUpdateFunc", update);
+			update_a = 0u;
+			update_f = 0u;
+		}
+		if ((update_f & 0x10u) == 0u)
 			return RefreshMenuCursor_CheckPlaySFXRegs();
 		DrawCursor2();
 		uint8_t drawn_tile = wMenuVisibleCursorTile;
 		uint8_t z_bit = (drawn_tile == 0u) ? 0x80u : 0u;
-		(void)PlayOpenOrExitScreenSFX(r.a, (uint8_t)(z_bit));
+		(void)PlayOpenOrExitScreenSFX(update_a, (uint8_t)(z_bit));
 		uint8_t e2 = wCurMenuItem;
 		uint8_t a2 = hCurMenuItem;
 		return (HandleMenuInputResult){a2, e2, (uint8_t)(0x10u | z_bit)};

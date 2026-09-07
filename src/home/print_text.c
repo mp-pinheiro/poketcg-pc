@@ -218,6 +218,8 @@ CopyTextResult CopyPlayerNameOrTurnDuelistName(void)
 CopyTextResult CopyTextData_FromTextID(uint8_t a, uint16_t hl, uint16_t de)
 {
 	uint8_t saved = hBankROM;
+	/* print_text.asm:519 parks the count in hff96 across the offset lookup. */
+	gb_write8(hff96_ADDR, a);
 	uint16_t source = GetTextOffsetFromTextID(hl);
 	CopyTextResult result = CopyTextData(a, source, de);
 

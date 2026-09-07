@@ -7,6 +7,7 @@
 #include "home/clear_saved_duel.h"
 #include "home/switch_sram.h"
 #include "mem.h"
+#include "home/frames.h"
 
 /* WRAMToSRAMMapper:: save.asm:461-497, ROM bank 4. 6 bytes/entry: dw addr, dw count,
  * db min, db max; terminated by a zero address word. */
@@ -29,6 +30,7 @@ static uint8_t save_src_read8(uint16_t addr)
 /* CopyGeneralSaveDataToSRAM:: save.asm:93-179 */
 void CopyGeneralSaveDataToSRAM(uint16_t de)
 {
+	frame_boundary_timer_sync();
 	uint16_t header = de;
 	uint16_t dst = (uint16_t)(de + (sGeneralSaveDataHeaderEnd_ADDR - sGeneralSaveData_ADDR));
 	uint16_t byte_count = 0, checksum = 0;

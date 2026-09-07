@@ -899,7 +899,9 @@ IncreaseScriptPointerResult ScriptCommand_ZeroOutEventValue(uint8_t f, uint8_t b
 /* >>> factory ScriptCommand_SetEventValue */
 IncreaseScriptPointerResult ScriptCommand_SetEventValue(uint8_t f, uint8_t b, uint8_t c)
 {
-	(void)SetEventValue(c, f, b, c);
+	/* scripting.asm:1894-1895 `ld a, c / ld c, b`: c is the event id, b the
+	 * new value. Passing c as the value wrote every event's own id into it. */
+	(void)SetEventValue(c, f, b, b);
 	return IncreaseScriptPointerBy3();
 }
 /* <<< factory ScriptCommand_SetEventValue */

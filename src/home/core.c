@@ -63,7 +63,7 @@
 
 #define SAVE_DUEL_HEADER_SIZE 4u
 #define SAVE_DUEL_CHECKSUM_SEED 0x2345u
-#define RNGVARS_SIZE 10u
+#define RNGVARS_SIZE 3u
 #define TRUE 1u
 
 typedef struct {
@@ -91,6 +91,7 @@ static uint32_t duel_save_total_size(void)
 }
 
 #include "home/frames.h"
+#include "home/indirect_dispatch.h"
 #include "home/lcd.h"
 #include "home/tiles.h"
 #define CONSOLE_CGB 0x02u
@@ -108,10 +109,8 @@ static uint32_t duel_save_total_size(void)
 #include "home/random.h"
 
 #define DECK_SIZE 60u
-#define SAVE_DUEL_DATA_SIZE 0x0400u
 
 #define DECK_SIZE_ 60u
-#define SAVE_DUEL_DATA_SIZE_MINUS6 (0x100u - 6u)
 
 #include "home/print_text.h"
 #include "home/process_text.h"
@@ -164,7 +163,7 @@ static uint32_t duel_save_total_size(void)
 #define SPRITE_ANIM_FLAG_X_FLIP     0x20u
 #define SPRITE_ANIM_FLAG_Y_FLIP     0x40u
 
-#define COLORLESS_F 0x80u
+#define COLORLESS_F 0x40u
 #define DOUBLE_COLORLESS_ENERGY 0x07u
 #define TYPE_ENERGY_DOUBLE_COLORLESS 0x0Eu
 #define EXEGGCUTE 0x28u
@@ -175,17 +174,17 @@ static uint32_t duel_save_total_size(void)
 #define SURFING_PIKACHU_ALT_LV13 0x66u
 #define EEVEE 0xBCu
 #define FIGHTING_ENERGY 0x05u
-#define FIGHTING_F 0x20u
+#define FIGHTING_F 0x10u
 #define FIRE_ENERGY 0x02u
-#define FIRE_F 0x04u
+#define FIRE_F 0x01u
 #define GRASS_ENERGY 0x01u
 #define GRASS_F 0x02u
 #define LIGHTNING_ENERGY 0x04u
-#define LIGHTNING_F 0x08u
+#define LIGHTNING_F 0x04u
 #define PSYCHIC_ENERGY 0x06u
-#define PSYCHIC_F 0x40u
+#define PSYCHIC_F 0x20u
 #define WATER_ENERGY 0x03u
-#define WATER_F 0x10u
+#define WATER_F 0x08u
 
 #include "home/objects.h"
 #include "home/lcd.h"
@@ -196,8 +195,8 @@ static uint32_t duel_save_total_size(void)
 
 #define NUM_TYPES 0x08u
 #define SYM_SPACE 0x00u
-#define SYM_FIRE 0xD0u
-#define SYM_PLUS 0xD8u
+#define SYM_FIRE 0x01u
+#define SYM_PLUS 0x2Bu
 
 #include "home/duel.h"
 #include "generated/hram.h"
@@ -364,12 +363,12 @@ CardPageResult CardPageSwitch_00(void)
 /* Opponent deck IDs (deck_constants.asm). These six non-boss decks are the ones
  * whose AI skips a pending Trainer-card action half the time instead of a
  * quarter of the time. */
-#define MUSCLES_FOR_BRAINS_DECK_ID      0x1au
-#define BLISTERING_POKEMON_DECK_ID      0x1bu
-#define WATERFRONT_POKEMON_DECK_ID      0x1cu
-#define BOOM_BOOM_SELFDESTRUCT_DECK_ID  0x1du
-#define KALEIDOSCOPE_DECK_ID            0x1eu
-#define RESHUFFLE_DECK_ID               0x1fu
+#define MUSCLES_FOR_BRAINS_DECK_ID      0x1cu
+#define BLISTERING_POKEMON_DECK_ID      0x20u
+#define WATERFRONT_POKEMON_DECK_ID      0x22u
+#define BOOM_BOOM_SELFDESTRUCT_DECK_ID  0x26u
+#define KALEIDOSCOPE_DECK_ID            0x2au
+#define RESHUFFLE_DECK_ID               0x33u
 
 #include "home/duel.h"
 #include "mem.h"
@@ -522,6 +521,7 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "mem.h"
 
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xbau
+#define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xEEu
 #define CardsText 0x007eu
 #define NoneText 0x007cu
 #define PrizesLeftActivePokemonCardsInDeckText 0x007bu
@@ -694,6 +694,7 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "mem.h"
 #define PLAY_AREA_BENCH_1_730 0x01u
 #define SelectStaryuPracticeDuelText 0x01D7u
+#define ChooseStaryuPracticeDuelText 0x01A7u
 
 #include "home/core.h"
 #include "generated/wram.h"
@@ -832,8 +833,8 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/empty_screen.h"
 #include "generated/wram.h"
 #define KnockOutText 0x004eu
-#define SYM_E 0x0Bu
-#define SYM_HP 0x0Cu
+#define SYM_E 0x12u
+#define SYM_HP 0x10u
 
 #include "home/duel.h"
 #include "home/core.h"
@@ -943,7 +944,7 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/duel.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
-#define HAS_EVOLUTION 0x01u
+#define HAS_EVOLUTION 0x10u
 
 #include "generated/wram.h"
 #include "home/legendary_articuno.h"
@@ -1188,10 +1189,10 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "mem.h"
 #define CARDPAGETYPE_NOT_PLAY_AREA 0x00u
 #define CARDPAGETYPE_PLAY_AREA 0x01u
-#define SYM_COLORLESS 0x0Au
-#define CARD_PAGE_RETREAT_WR_TEXT_DATA 0x4000u
-#define CARD_PAGE_LV_HP_NO_TEXT_TILE_DATA 0x4004u
-#define CARD_PAGE_NO_TEXT_TILE_DATA 0x400Cu
+#define SYM_COLORLESS 0x07u
+#define CARD_PAGE_RETREAT_WR_TEXT_DATA 0x5D05u
+#define CARD_PAGE_LV_HP_NO_TEXT_TILE_DATA 0x5D12u
+#define CARD_PAGE_NO_TEXT_TILE_DATA 0x5D1Au
 
 #include "generated/wram.h"
 #include "home/core.h"
@@ -1583,6 +1584,8 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define PRACTICEDUEL_PLAY_GOLDEEN 0x02u
 #define PRACTICEDUEL_PUT_STARYU_IN_BENCH 0x03u
 #define PRACTICEDUEL_VERIFY_INITIAL_PLAY 0x04u
+#define PRACTICEDUEL_PRINT_TURN_INSTRUCTIONS 0x06u
+#define PRACTICEDUEL_VERIFY_PLAYER_TURN_ACTIONS 0x07u
 #define ChooseBasicPkmnToPlaceInArenaText 0x0069u
 #define ChooseUpTo5BasicPkmnToPlaceOnBenchText 0x006du
 #define ChooseYourBenchPokemonText 0x006fu
@@ -3619,23 +3622,94 @@ void DisplayAttackPage(void)
 	}
 }
 /* >>> factory DisplayCardPage */
+/* core.asm:3665-3701: CardPageDisplayPointerTable indexed by wCardPageNumber.
+ * The page routines read wLoadedCard1 and the page number; their register
+ * parameters are the asm's incidental entry state, which none of them
+ * consumes (ApplyBGP6OrSGB3ToCardImage takes its coordinates from `lb de`). */
+#define CARDPAGE_POKEMON_ATTACK1_1 0x02u
+#define CARDPAGE_POKEMON_ATTACK1_2 0x03u
+#define CARDPAGE_POKEMON_ATTACK2_1 0x04u
+#define CARDPAGE_POKEMON_ATTACK2_2 0x05u
+#define CARDPAGE_ENERGY_2 0x0Au
+#define CARDPAGE_TABLE_LAST 0x0Fu
 void DisplayCardPage(void)
 {
+	uint8_t page = wCardPageNumber;
+
+	switch (page) {
+	case CARDPAGE_POKEMON_OVERVIEW:
+		DisplayCardPage_PokemonOverview();
+		break;
+	case CARDPAGE_POKEMON_ATTACK1_1:
+		DisplayCardPage_PokemonAttack1Page1(0u, 0u, 0u);
+		break;
+	case CARDPAGE_POKEMON_ATTACK1_2:
+		DisplayCardPage_PokemonAttack1Page2(0u, 0u, 0u);
+		break;
+	case CARDPAGE_POKEMON_ATTACK2_1:
+		DisplayCardPage_PokemonAttack2Page1(0u, 0u, 0u);
+		break;
+	case CARDPAGE_POKEMON_ATTACK2_2:
+		DisplayCardPage_PokemonAttack2Page2(0u, 0u, 0u);
+		break;
+	case CARDPAGE_POKEMON_DESCRIPTION:
+		(void)DisplayCardPage_PokemonDescription();
+		break;
+	case CARDPAGE_ENERGY:
+	case CARDPAGE_ENERGY_2:
+		(void)DisplayCardPage_Energy(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		break;
+	case CARDPAGE_TRAINER_1:
+		(void)DisplayCardPage_TrainerPage1(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		break;
+	case CARDPAGE_TRAINER_2:
+		(void)DisplayCardPage_TrainerPage2(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		break;
+	default:
+		if (page > CARDPAGE_TABLE_LAST)
+			DispatchIndirect("CardPageDisplayPointerTable", page);
+		DrawDuelMainScene();
+		break;
+	}
 	EnableLCD();
 }
 /* <<< factory DisplayCardPage */
 
 /* >>> factory DoPracticeDuelAction */
+/* core.asm:2621-2641. Every arm of PracticeDuelActionTable; the flags are the
+ * action's own (the callers that test carry are PLAY_GOLDEEN,
+ * VERIFY_INITIAL_PLAY, VERIFY_PLAYER_TURN_ACTIONS, REPEAT_INSTRUCTIONS). Not a
+ * practice duel: `or a / ret z` leaves Z set, carry clear. */
 uint8_t DoPracticeDuelAction(uint8_t a)
 {
 	wPracticeDuelAction = a;
 	if (wIsPracticeDuel == 0u)
 		return 0x80u;
 	switch (a) {
-	case 2u:
+	case PRACTICEDUEL_DRAW_SEVEN_CARDS:
+		PracticeDuel_DrawSevenCards();
+		return 0x00u;
+	case PRACTICEDUEL_PLAY_GOLDEEN:
 		return PracticeDuel_PlayGoldeen().f;
-	case 6u:
+	case PRACTICEDUEL_PUT_STARYU_IN_BENCH:
+		PracticeDuel_PutStaryuInBench();
+		return 0x00u;
+	case PRACTICEDUEL_VERIFY_INITIAL_PLAY:
+		return PracticeDuel_VerifyInitialPlay().f;
+	case PRACTICEDUEL_DONE_PUTTING_ON_BENCH:
+		PracticeDuel_DonePuttingOnBench();
+		return 0x00u;
+	case PRACTICEDUEL_PRINT_TURN_INSTRUCTIONS:
+		PracticeDuel_PrintTurnInstructions();
+		return 0x00u;
+	case PRACTICEDUEL_VERIFY_PLAYER_TURN_ACTIONS:
 		return PracticeDuel_VerifyPlayerTurnActions().f;
+	case PRACTICEDUEL_REPEAT_INSTRUCTIONS:
+		return PracticeDuel_RepeatInstructions();
+	case PRACTICEDUEL_PLAY_STARYU_FROM_BENCH:
+		return PracticeDuel_PlayStaryuFromBench().f;
+	case PRACTICEDUEL_REPLACE_KNOCKED_OUT_POKEMON:
+		return PracticeDuel_ReplaceKnockedOutPokemon();
 	default:
 		return 0x00u;
 	}
@@ -3643,29 +3717,27 @@ uint8_t DoPracticeDuelAction(uint8_t a)
 /* <<< factory DoPracticeDuelAction */
 
 /* >>> factory DrawDuelHorizontalSeparator */
+/* core.asm:2582-2616. The blocks are x, y, bytes[], 0: row 4 from x=0 for 11
+ * tiles, rows 5-6 two tiles at x=9, row 7 from x=9 for 11 -- the separator
+ * sits under the opponent's HUD, not at the left edge. CGB writes the same
+ * blocks of palette 2 into VRAM bank 1. */
+#define DUEL_HORIZONTAL_SEPARATOR_TILE_DATA 0x5199u
+#define DUEL_HORIZONTAL_SEPARATOR_CGB_PAL_DATA 0x51C0u
 void DrawDuelHorizontalSeparator(void)
 {
-	for (uint8_t x = 0u; x < 9u; x++)
-		WriteByteToBGMap0(0x37u, x, 4u);
-	WriteByteToBGMap0(0x31u, 9u, 4u);
-	WriteByteToBGMap0(0x32u, 10u, 4u);
-	WriteByteToBGMap0(0x33u, 9u, 5u);
-	WriteByteToBGMap0(0x34u, 10u, 5u);
-	WriteByteToBGMap0(0x33u, 9u, 6u);
-	WriteByteToBGMap0(0x34u, 10u, 6u);
-	WriteByteToBGMap0(0x35u, 0u, 7u);
-	WriteByteToBGMap0(0x36u, 1u, 7u);
-	for (uint8_t x = 2u; x < 11u; x++)
-		WriteByteToBGMap0(0x37u, x, 7u);
-	if (wConsole == CONSOLE_CGB) {
-		hBankVRAM = 1u;
-		gb_write8(0xFF4Fu, 1u);
-		for (uint8_t y = 4u; y <= 7u; y++)
-			for (uint8_t x = 0u; x < 11u; x++)
-				gb_write8((uint16_t)(0x9800u + (uint16_t)y * 32u + x), 0x02u);
-		hBankVRAM = 0u;
-		gb_write8(0xFF4Fu, 0u);
-	}
+	uint16_t data = DUEL_HORIZONTAL_SEPARATOR_TILE_DATA;
+	uint16_t bg_map = 0u;
+	uint8_t a = 0u, b = 0u, c = 0u;
+
+	WriteDataBlocksToBGMap0(&data, &bg_map, &a, &b, &c);
+	if (wConsole != CONSOLE_CGB)
+		return;
+	hBankVRAM = 1u;
+	gb_write8(0xFF4Fu, 1u);
+	data = DUEL_HORIZONTAL_SEPARATOR_CGB_PAL_DATA;
+	WriteDataBlocksToBGMap0(&data, &bg_map, &a, &b, &c);
+	hBankVRAM = 0u;
+	gb_write8(0xFF4Fu, 0u);
 }
 /* <<< factory DrawDuelHorizontalSeparator */
 
@@ -3685,8 +3757,21 @@ void MoveAllTurnHolderKnockedOutPokemonToDiscardPile(void)
 /* <<< factory MoveAllTurnHolderKnockedOutPokemonToDiscardPile */
 
 /* >>> factory PrintSortNumberInCardList_CallFromPointer */
+/* core.asm:3431-3433 `jp CallIndirect`: a NULL pointer -- what every card list
+ * starts with (InitAndDrawCardListScreenLayout) -- prints nothing; the only
+ * value ever installed is PrintSortNumberInCardList ($01:574A, set by
+ * PrintSortNumberInCardList_SetPointer for deck reordering); anything else
+ * is an unregistered target for DispatchIndirect. */
 void PrintSortNumberInCardList_CallFromPointer(void)
 {
+	uint16_t target = (uint16_t)(gb_read8(wPrintSortNumberInCardListPtr_ADDR) |
+	                             ((uint16_t)gb_read8(wPrintSortNumberInCardListPtr_ADDR + 1u) << 8));
+	if (target == 0u)
+		return;
+	if (target != PRINT_SORT_NUMBER_IN_CARD_LIST) {
+		DispatchIndirect("wPrintSortNumberInCardListPtr", target);
+		return;
+	}
 	PrintSortNumberInCardList();
 }
 /* <<< factory PrintSortNumberInCardList_CallFromPointer */
@@ -3695,7 +3780,12 @@ void PrintSortNumberInCardList_CallFromPointer(void)
 PracticeDuelInitialPlayResult PracticeDuel_VerifyInitialPlay(void)
 {
 	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
-	return (PracticeDuelInitialPlayResult){count == 2u ? 0xC0u : 0x10u};
+	if (count == 2u)
+		return (PracticeDuelInitialPlayResult){0xC0u};
+	/* `scf / jp PrintPracticeDuelDrMasonInstructions`: Dr. Mason asks for
+	 * Staryu, and the carry rides through its push af / pop af. */
+	PrintPracticeDuelDrMasonInstructions(ChooseStaryuPracticeDuelText);
+	return (PracticeDuelInitialPlayResult){0x10u};
 }
 /* <<< factory PracticeDuel_VerifyInitialPlay */
 
@@ -5101,13 +5191,18 @@ void DrawOpponentSelectionScreen(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uin
 /* <<< factory DrawOpponentSelectionScreen */
 
 /* >>> factory PracticeDuel_ReplaceKnockedOutPokemon */
-void PracticeDuel_ReplaceKnockedOutPokemon(void)
+/* core.asm:2737-2745. Returns f: the `cp / ret z` exit leaves Z and N; the
+ * Staryu-not-chosen path sets carry (`scf`, Z as HasAlivePokemonInBench left
+ * it) through PrintPracticeDuelDrMasonInstructions' push af / pop af. The
+ * caller (core.asm:7425) loops on that carry. */
+uint8_t PracticeDuel_ReplaceKnockedOutPokemon(void)
 {
 	uint8_t loc = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
 	if (loc == PLAY_AREA_BENCH_1_730)
-		return;
-	(void)HasAlivePokemonInBench();
+		return 0xC0u;
+	HasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInBench();
 	PrintPracticeDuelDrMasonInstructions(SelectStaryuPracticeDuelText);
+	return (uint8_t)((alive.f & 0x80u) | 0x10u);
 }
 /* <<< factory PracticeDuel_ReplaceKnockedOutPokemon */
 
@@ -6321,9 +6416,13 @@ void DrawDuelHUD(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 	(void)LoadCardDataToBuffer1_FromDeckIndex(arena_again.a);
 	uint8_t max_hp = wLoadedCard1HP, cur_hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a;
 	DrawHPBar(max_hp, cur_hp);
-	uint16_t dst = BCCoordToBGMap0Address(hud_x, (uint8_t)(hud_y + 1u)), src = wDefaultText_ADDR;
+	/* core.asm:2531-2543: the second HP bar row starts one map row below
+	 * the first row's start (`push de` / `pop de` around the first copy),
+	 * not below where that copy left de. */
+	uint16_t row = BCCoordToBGMap0Address(hud_x, (uint8_t)(hud_y + 1u));
+	uint16_t dst = row, src = wDefaultText_ADDR;
 	SafeCopyDataHLtoDE(&src, &dst, 6u);
-	dst = (uint16_t)(dst + TILEMAP_WIDTH); src = (uint16_t)(wDefaultText_ADDR + 6u);
+	dst = (uint16_t)(row + TILEMAP_WIDTH); src = (uint16_t)(wDefaultText_ADDR + 6u);
 	SafeCopyDataHLtoDE(&src, &dst, 6u);
 	uint8_t attr_b = (uint8_t)(hud_x + 6u), attr_c = (uint8_t)(hud_y + 1u);
 	uint8_t plus = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER).a;
@@ -6455,12 +6554,15 @@ void DrawDuelMainScene(void)
 	EmptyScreen();
 	(void)LoadSymbolsFont();
 	gb_write8(wDuelDisplayedScreen_ADDR, DUEL_MAIN_SCENE);
+	/* core.asm:2357-2366: the arena images go to v0Tiles1 + $50 tiles and
+	 * v0Tiles1 + $20 tiles -- $8D00 and $8A00, the tiles FillRectangle's
+	 * $D0 and $A0 index -- not into v0Tiles0. */
 	result = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	LoadPlayAreaCardGfx(result.a, 0x8500u);
+	LoadPlayAreaCardGfx(result.a, (uint16_t)(V0_TILES1 + 0x500u));
 	SetBGP7OrSGB2ToCardPalette();
 	SwapTurn();
 	result = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	LoadPlayAreaCardGfx(result.a, 0x8200u);
+	LoadPlayAreaCardGfx(result.a, (uint16_t)(V0_TILES1 + 0x200u));
 	SetBGP6OrSGB3ToCardPalette();
 	FlushAllPalettesOrSendPal23Packet();
 	SwapTurn();
@@ -6494,7 +6596,10 @@ void DrawDuelMainScene(void)
 /* >>> factory InitAndDrawCardListScreenLayout */
 DrawCardListScreenLayoutResult InitAndDrawCardListScreenLayout(void)
 {
+	/* core.asm:3149-3152 `ld [hli], a / ld [hl], a`: the item and the
+	 * page scroll offset behind it both start at zero. */
 	wSelectedDuelSubMenuItem = 0u;
+	wSelectedDuelSubMenuScrollOffset = 0u;
 	wSortCardListByID = 0u;
 	wPrintSortNumberInCardListPtr = 0u;
 	gb_write8(wPrintSortNumberInCardListPtr_ADDR + 1u, 0u);
@@ -7147,10 +7252,42 @@ draw_screen:
 /* <<< factory DisplayPlayAreaScreenToUsePkmnPower */
 
 /* >>> factory DisplayCardPage_PokemonOverview */
+/* core.asm:4280 `.attacks`: the tail of the overview page from the first
+ * attack line down, parameterised by its starting row so the printer can lay
+ * the same block into the SRAM gfx buffer at row 66. */
+void DisplayCardPage_PokemonOverview_Attacks(uint8_t c)
+{
+	uint8_t page_type = gb_read8(wCardPageType_ADDR);
+	uint8_t b, e, retreat;
+	(void)PrintAttackOrPkmnPowerInformation(5u, c, 0u, c, wLoadedCard1Atk1Name_ADDR);
+	c = (uint8_t)(c + 2u);
+	(void)PrintAttackOrPkmnPowerInformation(5u, c, 0u, c, wLoadedCard1Atk2Name_ADDR);
+	c = (uint8_t)(c + 2u);
+	retreat = gb_read8(wLoadedCard1RetreatCost_ADDR);
+	e = (uint8_t)(retreat + 1u);
+	b = 8u;
+	while (e != 0u) {
+		e = (uint8_t)(e - 1u);
+		if (e == 0u)
+			break;
+		JPWriteByteToBGMap0(SYM_COLORLESS, b, c);
+		b = (uint8_t)(b + 1u);
+	}
+	c = (uint8_t)(c + 1u);
+	if (page_type != CARDPAGETYPE_NOT_PLAY_AREA && gb_read8(wCurPlayAreaSlot_ADDR) == 0u) {
+		retreat = GetArenaCardWeakness();
+		e = GetArenaCardResistance();
+	} else {
+		retreat = gb_read8(wLoadedCard1Weakness_ADDR);
+		e = gb_read8(wLoadedCard1Resistance_ADDR);
+	}
+	PrintCardPageWeaknessesOrResistances(retreat, 8u, c);
+	PrintCardPageWeaknessesOrResistances(e, 8u, (uint8_t)(c + 1u));
+}
+
 void DisplayCardPage_PokemonOverview(void)
 {
 	uint8_t page_type = gb_read8(wCardPageType_ADDR);
-	uint8_t b, c, e, retreat;
 	uint16_t hl, de;
 	uint8_t data_a, data_b, data_c;
 	if (page_type != CARDPAGETYPE_NOT_PLAY_AREA) {
@@ -7176,31 +7313,7 @@ void DisplayCardPage_PokemonOverview(void)
 		WriteOneByteNumberInTxSymbol_PadSpace(gb_read8(wLoadedCard1HP_ADDR), 16u, 2u, 0u, 0u, 0u);
 	}
 	WriteOneByteNumberInTxSymbol_PadSpace(gb_read8(wLoadedCard1PokedexNumber_ADDR), 16u, 16u, 0u, 0u, 0u);
-	c = 10u;
-	(void)PrintAttackOrPkmnPowerInformation(5u, c, 0u, c, wLoadedCard1Atk1Name_ADDR);
-	c = 12u;
-	(void)PrintAttackOrPkmnPowerInformation(5u, c, 0u, c, wLoadedCard1Atk2Name_ADDR);
-	c = 14u;
-	retreat = gb_read8(wLoadedCard1RetreatCost_ADDR);
-	e = (uint8_t)(retreat + 1u);
-	b = 8u;
-	while (e != 0u) {
-		e = (uint8_t)(e - 1u);
-		if (e == 0u)
-			break;
-		JPWriteByteToBGMap0(SYM_COLORLESS, b, c);
-		b = (uint8_t)(b + 1u);
-	}
-	c = 15u;
-	if (page_type != CARDPAGETYPE_NOT_PLAY_AREA && gb_read8(wCurPlayAreaSlot_ADDR) == 0u) {
-		retreat = GetArenaCardWeakness();
-		e = GetArenaCardResistance();
-	} else {
-		retreat = gb_read8(wLoadedCard1Weakness_ADDR);
-		e = gb_read8(wLoadedCard1Resistance_ADDR);
-	}
-	PrintCardPageWeaknessesOrResistances(retreat, 8u, c);
-	PrintCardPageWeaknessesOrResistances(e, 8u, 16u);
+	DisplayCardPage_PokemonOverview_Attacks(10u);
 }
 /* <<< factory DisplayCardPage_PokemonOverview */
 
@@ -7277,14 +7390,16 @@ void PracticeDuel_PrintTurnInstructions(void)
 	uint8_t turns = gb_read8(wDuelTurns_ADDR);
 	uint8_t previous_turn = gb_read8(wPracticeDuelTurn_ADDR);
 	gb_write8(wPracticeDuelTurn_ADDR, turns);
+	/* core.asm:2684-2700 `cp [hl] / jp nz`: a new turn prints Dr. Mason's
+	 * full instructions (a = 0); the same turn again means the player got
+	 * it wrong, so ask whether to show them again (a = the menu's answer). */
 	if (turns != previous_turn) {
-		TextResult text = PrintScrollableText_WithTextBoxLabel_NoWait(NeedPracticeAgainPracticeDuelText, DrMasonText);
-		(void)text;
-		HandleYesOrNoMenuResult menu = YesOrNoMenu();
-		PrintPracticeDuelInstructionsForCurrentTurn(menu.a);
+		PrintPracticeDuelInstructionsForCurrentTurn(0u);
 		return;
 	}
-	PrintPracticeDuelInstructionsForCurrentTurn(0u);
+	(void)PrintScrollableText_WithTextBoxLabel_NoWait(NeedPracticeAgainPracticeDuelText, DrMasonText);
+	HandleYesOrNoMenuResult menu = YesOrNoMenu();
+	PrintPracticeDuelInstructionsForCurrentTurn(menu.a);
 }
 /* <<< factory PracticeDuel_PrintTurnInstructions */
 
@@ -7738,31 +7853,17 @@ DisplayCardListResult DisplayCardList(void)
 					hffb0 = 0u;
 				}
 
+				/* HandleMenuInput reaches CardListFunction through
+				 * CardListMenuFunction's wListFunctionPointer dispatch
+				 * (home/menus.c), so its carry, cursor draw and SFX are
+				 * the epilogue of this one call, as on the ROM. */
 				HandleCardListInputResult input = HandleCardListInput();
-				uint8_t list_item;
-				uint8_t list_scroll;
 
-				if ((input.f & FLAG_C) != 0u) {
-					list_scroll = input.d;
-					list_item = input.e;
-				} else {
-					/* CardListMenuFunction (home/menus.c) stops where the
-					 * asm does `jp hl` on wListFunctionPointer, so the
-					 * function PrintCardListItems armed out of
-					 * CardListParameters -- CardListFunction ($5719) -- is
-					 * called here, followed by the HandleMenuInput and
-					 * HandleCardListInput epilogues the ROM reaches through
-					 * it: draw the cursor, play the open/exit SFX, and
-					 * report the scroll offset and item it settled on. */
-					CardListFunctionResult list_fn = CardListFunction();
+				if ((input.f & FLAG_C) == 0u)
+					continue;
 
-					if ((list_fn.f & FLAG_C) == 0u)
-						continue;
-					DrawCursor2();
-					(void)PlayOpenOrExitScreenSFX(list_fn.a, list_fn.f);
-					list_scroll = wListScrollOffset;
-					list_item = wCurMenuItem;
-				}
+				uint8_t list_scroll = input.d;
+				uint8_t list_item = input.e;
 
 				/* refresh the position of the last checked card, so that the
 				 * cursor points to it when the list is reloaded */
@@ -8021,6 +8122,10 @@ DisplayPlaceInitialPokemonCardsScreenResult DisplayPlaceInitialPokemonCardsScree
 			uint8_t placing = wPlacingInitialBenchPokemon;
 			if (placing == 0u)
 				continue;
+			/* `scf / jr .done`: the bench exit shares .done, whose sort
+			 * runs under push af / pop af, so the carry survives it. */
+			if (wSortCardListByID != 0u)
+				(void)SortHandCardsByID();
 			return (DisplayPlaceInitialPokemonCardsScreenResult){placing, 0x10u};
 		}
 		uint8_t card_index = hTempCardIndex_ff98;
@@ -8039,47 +8144,23 @@ DisplayPlaceInitialPokemonCardsScreenResult DisplayPlaceInitialPokemonCardsScree
 /* <<< factory DisplayPlaceInitialPokemonCardsScreen */
 
 /* >>> factory PrintDeckAndHandIconsAndNumberOfCards */
-/* duel/core.asm:1490-1504. The two data tables live in bank 1 and feed a
- * gb_read8-based block writer, so copy them to WRAM before calling it. */
+/* core.asm:1490-1504. The x, y, bytes[], 0 blocks live in this bank
+ * ($01:4A35, $01:4A6E) and are passed by address, never copied into WRAM. */
+#define DECK_AND_HAND_ICONS_TILE_DATA 0x4A35u
+#define DECK_AND_HAND_ICONS_CGB_PAL_DATA 0x4A6Eu
 void PrintDeckAndHandIconsAndNumberOfCards(void)
 {
-	static const uint8_t tiles[] = {
-		0x04u, 0x03u, 0x2Du, 0x00u, 0x0Au, 0x03u, 0x2Du, 0x00u,
-		0x08u, 0x02u, 0xF4u, 0xF5u, 0x00u, 0x08u, 0x03u, 0xF6u,
-		0xF7u, 0x00u, 0x02u, 0x02u, 0xF8u, 0xF9u, 0x00u, 0x02u,
-		0x03u, 0xFAu, 0xFBu, 0x00u, 0x09u, 0x0Au, 0x2Du, 0x00u,
-		0x0Fu, 0x0Au, 0x2Du, 0x00u, 0x07u, 0x09u, 0xF4u, 0xF5u,
-		0x00u, 0x07u, 0x0Au, 0xF6u, 0xF7u, 0x00u, 0x0Du, 0x09u,
-		0xF8u, 0xF9u, 0x00u, 0x0Du, 0x0Au, 0xFAu, 0xFBu, 0x00u,
-		0xFFu,
-	};
-	static const uint8_t palettes[] = {
-		0x08u, 0x02u, 0x02u, 0x02u, 0x00u, 0x08u, 0x03u, 0x02u,
-		0x02u, 0x00u, 0x02u, 0x02u, 0x02u, 0x02u, 0x00u, 0x02u,
-		0x03u, 0x02u, 0x02u, 0x00u, 0x07u, 0x09u, 0x02u, 0x02u,
-		0x00u, 0x07u, 0x0Au, 0x02u, 0x02u, 0x00u, 0x0Du, 0x09u,
-		0x02u, 0x02u, 0x00u, 0x0Du, 0x0Au, 0x02u, 0x02u, 0x00u,
-		0xFFu,
-	};
-	const uint16_t scratch = 0xC100u;
-	uint16_t hl;
-	uint16_t de;
-	uint8_t a;
-	uint8_t b;
-	uint8_t c;
+	uint16_t data = DECK_AND_HAND_ICONS_TILE_DATA;
+	uint16_t bg_map = 0u;
+	uint8_t a = 0u, b = 0u, c = 0u;
 
 	(void)LoadDuelDrawCardsScreenTiles();
-	for (uint8_t i = 0u; i < sizeof(tiles); i++)
-		gb_write8((uint16_t)(scratch + i), tiles[i]);
-	hl = scratch; de = 0u; a = 0u; b = 0u; c = 0u;
-	WriteDataBlocksToBGMap0(&hl, &de, &a, &b, &c);
+	WriteDataBlocksToBGMap0(&data, &bg_map, &a, &b, &c);
 	if (wConsole == CONSOLE_CGB) {
-		for (uint8_t i = 0u; i < sizeof(palettes); i++)
-			gb_write8((uint16_t)(scratch + i), palettes[i]);
 		hBankVRAM = 1u;
 		gb_write8(0xFF4Fu, 1u);
-		hl = scratch; de = 0u; a = 0u; b = 0u; c = 0u;
-		WriteDataBlocksToBGMap0(&hl, &de, &a, &b, &c);
+		data = DECK_AND_HAND_ICONS_CGB_PAL_DATA;
+		WriteDataBlocksToBGMap0(&data, &bg_map, &a, &b, &c);
 		hBankVRAM = 0u;
 		gb_write8(0xFF4Fu, 0u);
 	}
@@ -9500,12 +9581,10 @@ HandleBetweenTurnKnockOutsResult HandleDestinyBondAndBetweenTurnKnockOuts(void)
 
 /* >>> factory RestartPracticeDuelTurn */
 /* core.asm:274-277. The player's turn falls through here from `.player_turn`,
- * and this falls through again into DuelMainInterface; the port stopped at both.
- * PRACTICEDUEL_PRINT_TURN_INSTRUCTIONS is the sixth entry of a `const_def 1`
- * block (duel_constants.asm:258-264). */
+ * and this falls through again into DuelMainInterface; the port stopped at both. */
 void RestartPracticeDuelTurn(void)
 {
-	(void)DoPracticeDuelAction(6u);
+	(void)DoPracticeDuelAction(PRACTICEDUEL_PRINT_TURN_INSTRUCTIONS);
 	DuelMainInterface();
 }
 /* <<< factory RestartPracticeDuelTurn */
@@ -9562,6 +9641,7 @@ static void duel_menu_items_printed(void)
 	if (wDuelFinished != 0u)
 		return;
 	SetMenuItem(wCurrentDuelMenuItem);
+	uint8_t menu_e = 0u;
 
 	for (;;) {
 		DoFrame();
@@ -9600,8 +9680,14 @@ static void duel_menu_items_printed(void)
 		if (wDebugSkipDuelMenuInput != 0u)
 			continue;
 
-		HandleMenuInputResult input = HandleDuelMenuInput(0u);
+		/* e rides from one HandleDuelMenuInput to the next (DoFrame and
+		 * the shortcut tests touch only a): the blink-counter early return
+		 * (menus.asm:274-279) leaves it alone, so wCurrentDuelMenuItem
+		 * keeps the item the last cursor draw reported. The first call
+		 * always draws, SetMenuItem having zeroed the counter. */
+		HandleMenuInputResult input = HandleDuelMenuInput(menu_e);
 
+		menu_e = input.e;
 		wCurrentDuelMenuItem = input.e;
 		if ((input.f & 0x10u) == 0u)
 			continue;
@@ -9700,24 +9786,133 @@ void DuelMenu_Retreat(void) { hTemp_ffa0 = 0u; }
 /* <<< factory DuelMenu_Retreat */
 
 /* >>> factory DuelMenu_Hand */
-void DuelMenu_Hand(void) { return; }
+/* core.asm:543-551. Every exit is a tail jump into DuelMainInterface or
+ * PrintDuelMenuAndHandleInput, so those loops' exits are this one's. */
+void DuelMenu_Hand(void)
+{
+	if (GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a != 0u) {
+		OpenPlayerHandScreen();
+		return;
+	}
+	(void)DrawWideTextBox_WaitForInput(NoCardsInHandText);
+	PrintDuelMenuAndHandleInput();
+}
 /* <<< factory DuelMenu_Hand */
 
 /* >>> factory OpenPlayerHandScreen */
+/* core.asm:554-582 with its .handle_input re-entry from ReloadCardListScreen
+ * (core.asm:625-629): a card that could not be played rebuilds the list,
+ * redraws the layout and returns to DisplayCardList. */
+static void OpenPlayerHandScreen_HandleInput(void);
+
 void OpenPlayerHandScreen(void)
 {
-	wCardListItemSelectionMenuType = 0x01u;
+	(void)CreateHandCardList(0u);
+	(void)InitAndDrawCardListScreenLayout();
+	SetCardListInfoBoxText(PleaseSelectHandText);
+	wCardListItemSelectionMenuType = PLAY_CHECK;
+	OpenPlayerHandScreen_HandleInput();
+}
+
+static void OpenPlayerHandScreen_HandleInput(void)
+{
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if (wSortCardListByID != 0u)
+			(void)SortHandCardsByID();
+		if ((display.f & FLAG_C) != 0u) {
+			DuelMainInterface();
+			return;
+		}
+		uint8_t index = hTempCardIndex_ff98;
+		(void)LoadCardDataToBuffer1_FromDeckIndex(index);
+		uint8_t type = wLoadedCard1Type;
+		if ((type & (1u << TYPE_TRAINER_F)) != 0u) {
+			PlayTrainerCardResult played = PlayTrainerCard(0u, 0u, 0u, type, 0u, 0u, 0u);
+			if ((played.f & FLAG_C) == 0u) {
+				DuelMainInterface();
+				return;
+			}
+		} else if ((type & (1u << TYPE_ENERGY_F)) != 0u) {
+			PlayEnergyCard(type);
+			return;
+		} else {
+			PlayPokemonCardResult played = PlayPokemonCard(0u, 0u, 0u, type, 0u, 0u, 0u);
+			if ((played.f & FLAG_C) == 0u) {
+				DuelMainInterface();
+				return;
+			}
+		}
+		/* ReloadCardListScreen: the card was not played. */
+		(void)CreateHandCardList(0u);
+		(void)DrawCardListScreenLayout();
+	}
 }
 /* <<< factory OpenPlayerHandScreen */
 
 /* >>> factory PlayEnergyCard */
-void PlayEnergyCard(uint8_t c) { (void)c; return; }
+/* core.asm:586-623. c is the energy card's type. Exits are tail jumps into
+ * DuelMainInterface, OpenPlayerHandScreen or ReloadCardListScreen. */
+#define MayOnlyAttachOneEnergyCardText 0x003Eu
+#define TYPE_ENERGY_WATER 0x0Bu
+void PlayEnergyCard(uint8_t c)
+{
+	int set_played;
+
+	if (c == TYPE_ENERGY_WATER && (IsRainDanceActive().f & FLAG_C) != 0u) {
+		/* .rain_dance_active */
+		(void)HasAlivePokemonInPlayArea();
+		if ((OpenPlayAreaScreenForSelection().f & FLAG_C) != 0u) {
+			DuelMainInterface();
+			return;
+		}
+		if ((CheckRainDanceScenario().f & FLAG_C) != 0u) {
+			set_played = 0;
+		} else if (wAlreadyPlayedEnergy == 0u) {
+			set_played = 1;
+		} else {
+			(void)DrawWideTextBox_WaitForInput(MayOnlyAttachOneEnergyCardText);
+			OpenPlayerHandScreen();
+			return;
+		}
+	} else {
+		/* .not_water_energy */
+		if (wAlreadyPlayedEnergy != 0u) {
+			/* .already_played_energy, then ReloadCardListScreen */
+			(void)DrawWideTextBox_WaitForInput(MayOnlyAttachOneEnergyCardText);
+			ReloadCardListScreen();
+			return;
+		}
+		(void)HasAlivePokemonInPlayArea();
+		if ((OpenPlayAreaScreenForSelection().f & FLAG_C) != 0u) {
+			DuelMainInterface();
+			return;
+		}
+		set_played = 1;
+	}
+	if (set_played)
+		wAlreadyPlayedEnergy = TRUE;
+	/* .play_energy */
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	hTempPlayAreaLocation_ffa1 = location;
+	uint8_t index = hTempCardIndex_ff98;
+	hTemp_ffa0 = index;
+	(void)PutHandCardInPlayArea(index, location);
+	(void)PrintPlayAreaCardList_EnableLCD();
+	(void)SetOppAction_SerialSendDuelData(OPPACTION_PLAY_ENERGY, 0u);
+	PrintAttachedEnergyToPokemon();
+	DuelMainInterface();
+}
 /* <<< factory PlayEnergyCard */
 
 /* >>> factory ReloadCardListScreen */
+/* core.asm:625-629: rebuild the hand list, redraw the layout and re-enter
+ * OpenPlayerHandScreen's input loop. */
 void ReloadCardListScreen(void)
 {
-	return;
+	(void)CreateHandCardList(0u);
+	(void)DrawCardListScreenLayout();
+	OpenPlayerHandScreen_HandleInput();
 }
 /* <<< factory ReloadCardListScreen */
 
@@ -9744,9 +9939,87 @@ void DuelMenuShortcut_BothActivePokemon(void)
 /* <<< factory DuelMenuShortcut_BothActivePokemon */
 
 /* >>> factory DuelMenu_Attack */
+/* core.asm:981-1058. The exits are tail jumps into the duel loops
+ * (PrintDuelMenuAndHandleInput, RestartPracticeDuelTurn, DuelMainInterface)
+ * or the plain `ret` after a successful UseAttackOrPokemonPower. */
+#define ATTACK_MENU_PARAMETERS 0x47E4u
+#define NoSelectableAttackText 0x003Cu
+#define NotEnoughEnergyCardsText 0x00C0u
 void DuelMenu_Attack(void)
 {
+	CantAttackResult cant = HandleCantAttackSubstatus();
+	uint16_t alert = cant.hl;
+
+	if ((cant.f & FLAG_C) == 0u) {
+		CheckIfActiveStatusResult status = CheckIfActiveCardParalyzedOrAsleep();
+		if ((status.f & FLAG_C) == 0u)
+			goto can_attack;
+		alert = status.hl;
+	}
+	/* .alert_cant_attack_and_cancel_menu */
+	(void)DrawWideTextBox_WaitForInput(alert);
+	PrintDuelMenuAndHandleInput();
+	return;
+
+can_attack:
 	wSelectedDuelSubMenuItem = 0u;
+	for (;;) {
+		/* .try_open_attack_menu */
+		uint8_t count = PrintAndLoadAttacksToDuelTempList();
+
+		if (count == 0u) {
+			(void)DrawWideTextBox_WaitForInput(NoSelectableAttackText);
+			PrintDuelMenuAndHandleInput();
+			return;
+		}
+		/* .open_attack_menu */
+		uint16_t params = ATTACK_MENU_PARAMETERS;
+		InitializeMenuParameters(wSelectedDuelSubMenuItem, &params);
+		wNumMenuItems = count;
+		(void)LoadCardDataToBuffer1_FromDeckIndex(
+			gb_read8((uint16_t)(((uint16_t)hWhoseTurn << 8) | DUELVARS_ARENA_CARD)));
+		for (;;) {
+			/* .wait_for_input */
+			DoFrame();
+			if ((hKeysPressed & PAD_START) != 0u) {
+				/* .display_selected_attack_info */
+				OpenAttackPage();
+				DrawDuelMainScene();
+				break;
+			}
+			HandleMenuInputResult input = HandleMenuInput();
+			if ((input.f & FLAG_C) == 0u)
+				continue;
+			if (input.a == MENU_CANCEL) {
+				PrintDuelMenuAndHandleInput();
+				return;
+			}
+			wSelectedDuelSubMenuItem = input.a;
+			if ((CheckIfEnoughEnergiesToAttack().f & FLAG_C) != 0u) {
+				(void)DrawWideTextBox_WaitForInput(NotEnoughEnergyCardsText);
+				break;
+			}
+			/* .enough_energy */
+			uint16_t entry = (uint16_t)(wDuelTempList_ADDR + (uint16_t)hCurMenuItem * 2u);
+			uint8_t d = gb_read8(entry);
+			uint8_t e = gb_read8((uint16_t)(entry + 1u));
+			(void)CopyAttackDataAndDamage_FromDeckIndex(d, e);
+			AmnesiaResult amnesia = HandleAmnesiaSubstatus();
+			if ((amnesia.f & FLAG_C) != 0u) {
+				/* .cannot_use_due_to_amnesia */
+				(void)DrawWideTextBox_WaitForInput(amnesia.hl);
+				break;
+			}
+			if ((DoPracticeDuelAction(PRACTICEDUEL_VERIFY_PLAYER_TURN_ACTIONS) & FLAG_C) != 0u) {
+				RestartPracticeDuelTurn();
+				return;
+			}
+			DuelRoutineResult used = UseAttackOrPokemonPower(0u, 0u, 0u, 0u, d, e, 0u);
+			if ((used.f & FLAG_C) != 0u)
+				DuelMainInterface();
+			return;
+		}
+	}
 }
 /* <<< factory DuelMenu_Attack */
 
