@@ -139,11 +139,15 @@ CASES = {
         {"wram": PALETTE_SEED, "read": {BG_PALS: 64, TEMP_BG_PALS: 64}},
         dict(POISON, wram=PALETTE_SEED, read={BG_PALS: 64, TEMP_BG_PALS: 64}),
     ],
+    # color.asm:297,322: .unequal parks the faded red and the top two green bits
+    # in hffb6/hffb7; a colour already at its target skips the block. Reading
+    # both bytes is what separates a port that fades in C locals from the asm.
     "FadePalIntoAnother.GetFadedColor": [
-        {"b": 0, "c": 0, "d": 0, "e": 0}, dict(POISON, b=0, c=0, d=0, e=0),
-        {"b": 0x7C, "c": 0x1F, "d": 0x7C, "e": 0x1F},
-        {"b": 0, "c": 0, "d": 0x7C, "e": 0xFF},
-        {"b": 0x04, "c": 0x21, "d": 0x08, "e": 0xA5},
+        {"b": 0, "c": 0, "d": 0, "e": 0, "read": {0xFFB6: 2}},
+        dict(POISON, b=0, c=0, d=0, e=0, read={0xFFB6: 2}),
+        {"b": 0x7C, "c": 0x1F, "d": 0x7C, "e": 0x1F, "read": {0xFFB6: 2}},
+        {"b": 0, "c": 0, "d": 0x7C, "e": 0xFF, "read": {0xFFB6: 2}},
+        {"b": 0x04, "c": 0x21, "d": 0x08, "e": 0xA5, "read": {0xFFB6: 2}},
     ],
     "FadePalIntoAnother.FadeColor": [
         {"a": 0, "hl": 0}, {"a": 31, "hl": 0}, {"a": 0, "hl": 31},
