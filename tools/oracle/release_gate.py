@@ -268,6 +268,7 @@ def main(argv: list[str] | None = None) -> int:
             "package-smoke": package_command,
             "completion-audit": [sys.executable, str(COMPLETION), "audit"],
             "completion-cfg": ["just", "completion-cfg-audit"],
+            "hatches": [sys.executable, str(ROOT / "tools/audit_hatches.py"), "--stage", "release"],
             "lane-health": ["just", "completion-lanes-health"],
             "gambatte-health": ["just", "completion-gambatte-health"],
             "gambatte-capture": gambatte_capture_command,

@@ -124,6 +124,11 @@ oracle-build-gbref:
 
 oracle-audit-cases STAGE:
     python3 tools/audit_oracle_cases.py --stage {{STAGE}}
+    python3 tools/audit_hatches.py --stage {{STAGE}}
+
+# The routines still accepted through an escape hatch, as a work queue (tests/hatches.py).
+hatch-status:
+    python3 tools/audit_hatches.py --list
 
 
 # Configure + build the C side (gbmem, poketcg_probe).
@@ -206,6 +211,7 @@ oracle-fn-all: oracle-build-gbref build-barrier lint-adapters
 # Primary function gate: GBRT health, adapters, schema, and inventory.
 oracle-fn-gate: oracle-health-gbref oracle-fn-all
     python3 tools/audit_oracle_cases.py --stage routine
+    python3 tools/audit_hatches.py --stage routine
 
 
 # Run the GBRT primary gate and regenerate the progress report from the result.
@@ -243,6 +249,7 @@ oracle-fuzz-thin: oracle-build-gbref build-barrier
 # Aggregate function gate adds the independent PyBoy audit.
 oracle-gate: oracle-fn-gate oracle-audit-all-parallel
     python3 tools/audit_oracle_cases.py --stage routine
+    python3 tools/audit_hatches.py --stage routine
 
 # Sole release authority. It records an immutable run and an atomic pointer.
 oracle-release-gate:

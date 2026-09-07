@@ -119,6 +119,7 @@ either list to move `confirmed`.
 | the line contains | what it means | what to do |
 |---|---|---|
 | `status=diverged` and `DIVERGE ... writer=R` | the reference's `R` produced a byte the port did not | read `R`'s asm against its C body; the defect is in `R` or in what `R` reads. Fix, `just oracle-diff R`, add a case that observes the byte (`read`), rerun `just session-verify NAME`; `confirmed` must rise |
+| `DIVERGE ... writer=R` and `R`'s cases are green | `R` is accepted through a hatch, or a callee is: the case never ran the ROM to `ret` | `just hatch-status` names it; port it with a fixture case (`## The hatch queue`). Check every callee the reference entered in that ordinal against the native's counts (`native_trace.native_counts` vs `refstream.routine_trace`); the one the native never entered is the stub |
 | `WINDOW ... LAG` (`reference_frames` > 1) | the ROM spent extra VBlanks between these two DoFrames -- a routine heavy enough to lag, or an LCD-off stretch | if the divergent bytes are `wVBlankCounter`-timed (a `cp N` wait, `FadeScreenToTempPals`), model the extra VBlanks with `frame_boundary_consume_services(reference_vblanks - 1)` at the site, as `src/home/start.c:290` does |
 | `DIVERGE ... writer=` empty | no reference write to that address before that ordinal | the port invented a write. Run `build-trace/poketcg --input-ordinal ... --stop-ordinal K` for K-1 and K with `--trace-calls`, diff the counts with `tools/completion/native_trace.native_counts` against `refstream.routine_trace(..., ordinals=K, axis="ordinal")`; the routines only the port entered are the suspects |
 | `status=diverged` and both lanes name the same routines | same code, different bytes | dump both lanes at K-1 and K (`--dump-state-ordinals`, `session.reference_capture`) and read the writer's asm with those inputs |
@@ -1529,6 +1530,44 @@ These three are why a routine can be green on its oracle and still do nothing: a
 stub with a `compare: ()` contract, no `read` span, and a completion pc at its
 own first call passes every check the substrate has. That is
 `docs/port-contract.md` item 5 at scale.
+
+## The hatch queue: where the stubs are, and why they passed
+
+Every stub found on the duel path this far had a green `oracle-diff` and a red
+mutation receipt, and was still a one-line constant. Two case mechanisms let
+that happen: a `completion` of `pre-ret`/`entry` stops the reference at a
+program counter before the routine's own `ret`, and a non-`primary`
+`evidence` never runs the reference at all. `tools/audit_hatches.py` now
+rejects both unless the routine is declared in `tests/hatches.py`, and also
+flags a C body with no calls and no bus access whose asm is more than a
+`ret` (`HOLLOW`). Declared `unaudited` entries pass the routine stage and
+block release, so the registry is the queue:
+
+```sh
+just hatch-status         # the queue, session-reached routines first
+```
+
+Porting an entry means: a return-mode case that observes the routine's real
+outputs, `PASS`, a red receipt on a line the real body owns, and deleting the
+entry. Never add an entry to make a routine pass.
+
+The case that observes a routine's real outputs is a fixture, not a hand-built
+seed. `tests/cases/_fixtures.py` seeds the reference's own captured state
+(WRAM, HRAM, VRAM bank 0, SP) at a routine's entry in a recorded session,
+patches the bytes the case varies (`attack_fixture(**{"C3C8": b"\x00"})`),
+observes both duelists' variables and the BG map, and taps `A` through every
+wait. Capture a new state at another routine's entry with
+`tools/completion/session.py capture NAME --routine R`. Bytes the lanes
+cannot agree on are holes in the fixture, listed and explained there:
+`wVBlankCounter`, the cursor blink counters, `wIE`, `wFlushPaletteFlags`,
+`wVBlankOAMCopyToggle`. Do not widen that list for a byte the game computes.
+
+| the line contains | what it means | what to do |
+|---|---|---|
+| `HATCH R: pre-ret case without a declared hatch` | a case stops the reference before `R`'s own `ret` | delete the `factory-completion R` block and give `R` a fixture case that runs to `ret`; if `R` truly never returns, declare it `never-returns` with the asm line of the loop |
+| `HATCH R: native-stress ... without a declared hatch` | a case never runs the reference | replace it with a fixture case; `hardware-only`/`link-only` are the only kinds that may stay |
+| `HOLLOW R: ... is N instructions` | the C body does nothing while the asm does | port `R`; its cases were authored against the stub and must be rewritten from the asm's branches |
+| `HATCH unaudited blocks release: R` | declared debt | the queue above; work it session-reached first |
 
 ## Clearing stubs: bottom-up only
 
