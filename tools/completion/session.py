@@ -56,7 +56,13 @@ DOMAINS = ("wram", "hram", "oam")
 # excludes wTimerCounter. The span is exactly SECTION "WRAM Audio"
 # (wram.asm:2992-3289, $DD80 up to the stack at $DEE5). Audio correctness is
 # the audio-catalog scenario's, compared as an APU write sequence.
-TIMING_PHASE = {"wram": [(0xDD80 - 0xC000, 0xDEE5 - 0xC000)]}
+# wPlayTimeCounter ($CAC5-$CAC9) is the same ISR's other product
+# (time.asm:15-16): during a map load the ROM's timer keeps firing for the
+# frames the CPU is busy, ticks the port's batched timer cannot see, and
+# nothing but the diary reads the result. wPlayTimeCounterEnable ($CAC4)
+# stays compared: the game sets it, so it must match.
+TIMING_PHASE = {"wram": [(0xCAC5 - 0xC000, 0xCACA - 0xC000),
+                         (0xDD80 - 0xC000, 0xDEE5 - 0xC000)]}
 # One refstream anchor is RECORD_STRIDE bytes held whole in memory while the
 # stream is built; 20,000 ordinals is 174 MB, and WSL has died on this repo
 # for less. Longer play is a second session, never a bigger cap.
@@ -202,18 +208,28 @@ def first_divergence(name: str, masks: list[int], stream: refstream.Stream) -> d
 
 def attribute(name: str, masks: list[int], frames: int, rows: list[tuple[str, int, int, int]],
               ordinal: int) -> list[dict[str, Any]]:
+    # One row per symbol, earliest offset first: the reader wants routines,
+    # not bytes, and the writer replay is priced per watched address.
+    picked: list[tuple[str, int, int, int, str]] = []
+    seen: set[str] = set()
+    for field, offset, got, want in rows:
+        symbol, _base = refstream.resolve_region(field, offset)
+        if symbol in seen:
+            continue
+        seen.add(symbol)
+        picked.append((field, offset, got, want, symbol))
+    picked = picked[:16]
     addresses = sorted({
         frame_census.FIELD_BASE[field] + offset
-        for field, offset, _got, _want in rows if field in frame_census.FIELD_BASE
-    })[:16]
+        for field, offset, _got, _want, _symbol in picked if field in frame_census.FIELD_BASE
+    })
     writers = {
         int(entry["address"], 16): entry
         for entry in refstream.writers(f"session:{name}", frames, addresses,
                                        events=True, masks=masks, axis="ordinal")
     } if addresses else {}
     out = []
-    for field, offset, got, want in rows[:64]:
-        symbol, _base = refstream.resolve_region(field, offset)
+    for field, offset, got, want, symbol in picked:
         address = frame_census.FIELD_BASE.get(field, 0) + offset
         entry = writers.get(address)
         # A write during DoFrame K carries core.ordinal K-1 (the anchor for K
@@ -226,15 +242,7 @@ def attribute(name: str, masks: list[int], frames: int, rows: list[tuple[str, in
             "writer": prior["routine"] if prior else "",
             "writer_label": prior["label"] if prior else "",
         })
-    # One row per symbol, earliest offset first, so the status lines stay short.
-    seen: set[str] = set()
-    unique = []
-    for row in out:
-        if row["symbol"] in seen:
-            continue
-        seen.add(row["symbol"])
-        unique.append(row)
-    return unique
+    return out
 
 
 def verify(name: str, *, write: bool, json_path: Path | None) -> int:
