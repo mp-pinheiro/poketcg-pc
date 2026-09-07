@@ -244,16 +244,17 @@ def stream_key(masks: list[int], frames: int, axis: str) -> str:
     h.update(mask_text().encode())
     h.update(pins["rom"]["sha256"].encode())
     h.update(pins["core"]["sha256"].encode())
+    h.update(str(pins["boot"].get("sha1", pins["boot"]["mode"])).encode())
     return h.hexdigest()[:24]
 
 
 def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "ordinal",
-                    record_input: bool = False) -> dict[str, Any]:
+                    record_input: bool = False, frame_mode: str = "vblank") -> dict[str, Any]:
     """One reference replay: a digest record per DoFrame anchor, cached by
     input. With `record_input` the byte ReadJoypad saw at each anchor is
     returned as well, in InputFrame order, which is how a movie becomes a
     session."""
-    key = stream_key(masks, frames, axis)
+    key = stream_key(masks, frames, axis if frame_mode == "vblank" else f"{axis}:{frame_mode}")
     directory = CACHE / name / key
     meta_path = directory / "meta.json"
     if meta_path.is_file() and not record_input:
@@ -269,6 +270,7 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     inputs = bytearray()
     with refstream.Core(padded) as core:
         core.input_axis = axis
+        core.frame_mode = frame_mode
         read = core.library.gambatte_cpuread
         registers = (ctypes.c_int * 10)()
         hits = 0
@@ -651,8 +653,10 @@ def derive(name: str, movie: Path, goal: str) -> int:
     its digests must equal the movie run's: the ROM reads JOYP only inside
     ReadJoypad, so both axes are one execution."""
     movie_masks = refstream.load_masks(movie)
+    frame_mode = refstream.movie_frame_mode(movie)
     frames = len(movie_masks) + 400
-    movie_run = build_reference(f"{name}-movie", movie_masks, frames, axis="frame", record_input=True)
+    movie_run = build_reference(f"{name}-movie", movie_masks, frames, axis="frame",
+                                record_input=True, frame_mode=frame_mode)
     inputs = movie_run["inputs"]
     directory = session_dir(name)
     directory.mkdir(parents=True, exist_ok=True)
@@ -660,7 +664,7 @@ def derive(name: str, movie: Path, goal: str) -> int:
     meta = {
         "schema": 1, "name": name, "goal": goal, "ordinals": len(inputs),
         "derived_from": str(movie.relative_to(ROOT) if movie.is_absolute() else movie),
-        "movie_frames": len(movie_masks), "reference_frames": frames,
+        "movie_frames": len(movie_masks), "movie_frame_mode": frame_mode, "reference_frames": frames,
         "recorded": datetime.now(UTC).isoformat(timespec="seconds"),
     }
     session_run = build_reference(name, inputs, frames, axis="ordinal")

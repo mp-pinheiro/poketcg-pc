@@ -17,7 +17,11 @@ path = "poketcg/poketcg.gbc"
 sha256 = "a54515bb6b3e364964d3c0226f5a6b0c8c0f7318c9296ef2e321df0bbb8541ce"
 
 [boot]
-mode = "no-bios"
+# The CGB boot ROM (BizHawk's GBC_Firmware_World). Never bundled: drop the
+# image at `path`; `sha1` is the one every TASVideos movie header names.
+mode = "bios"
+path = "build/completion/gambatte/cgb_boot.bin"
+sha1 = "1293d68bf9643bc4f36954c1e80e38f39864528d"
 
 [requirements]
 domains = ["WRAM", "ROM", "VRAM", "VRAM Bank 0", "VRAM Bank 1", "OAM", "HRAM", "CartRAM", "System Bus", "BG Palette RGB", "OBJ Palette RGB"]

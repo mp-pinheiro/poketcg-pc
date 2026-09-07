@@ -80,6 +80,7 @@ REQUIRED_SYMBOLS = (
     "gambatte_create",
     "gambatte_destroy",
     "gambatte_loadbuf",
+    "gambatte_loadbiosbuf",
     "gambatte_runfor",
     "gambatte_setinputgetter",
     "gambatte_setexeccallback",
@@ -112,6 +113,60 @@ def load_pins() -> dict[str, Any]:
 def resolve(path: str) -> Path:
     candidate = Path(path)
     return candidate if candidate.is_absolute() else ROOT / candidate
+
+
+# gambatte_loadbuf flags (libgambatte/include/gambatte.h): CGB_MODE,
+# READONLY_SAV, and NO_BIOS for the heuristic boot.
+CGB_MODE = 1
+GBA_FLAG = 2
+READONLY_SAV = 16
+NO_BIOS = 32
+BOOT_MODES = ("no-bios", "bios")
+
+
+def boot_rom(pins: dict[str, Any]) -> bytes | None:
+    """The CGB boot ROM the pins name, verified, or None for the heuristic
+    boot. `[boot] mode = "bios"` needs `path` and `sha1`: the image is
+    Nintendo's, so it is never bundled; TASVideos movies name it by that same
+    SHA-1 (`GBC_Firmware_World`)."""
+    boot = pins.get("boot", {})
+    mode = boot.get("mode")
+    if mode not in BOOT_MODES:
+        raise GambatteError(f"[boot] mode must be one of {BOOT_MODES}, not {mode!r}")
+    if mode == "no-bios":
+        return None
+    path = resolve(str(boot.get("path", "")))
+    try:
+        data = path.read_bytes()
+    except OSError as exc:
+        raise GambatteError(f"boot ROM {path} is not readable: {exc}") from exc
+    actual = hashlib.sha1(data).hexdigest()
+    if actual != str(boot.get("sha1", "")).lower():
+        raise GambatteError(f"boot ROM {path} sha1 {actual} != pinned {boot.get('sha1')}")
+    return data
+
+
+def load_rom(library: ctypes.CDLL, core: Any, rom_buffer: Any, rom_length: int,
+             pins: dict[str, Any], *, gba: bool = False) -> None:
+    """Load the boot ROM (if pinned) and then the cartridge: gambatte resets
+    the machine at load, so the BIOS must already be installed.
+
+    `gba` is BizHawk's GBACGB sync setting (GBA_FLAG): GBA initial CPU
+    registers, the CGB boot ROM patched to the AGB one, and a 485,808-sample
+    stall before the CPU starts. A movie recorded with it desyncs without it,
+    because the ROM's first RNG state comes off that boot."""
+    bios = boot_rom(pins)
+    flags = CGB_MODE | READONLY_SAV
+    if gba:
+        flags |= GBA_FLAG
+    if bios is None:
+        flags |= NO_BIOS
+    else:
+        bios_buffer = (ctypes.c_ubyte * len(bios)).from_buffer_copy(bios)
+        if library.gambatte_loadbiosbuf(core, bios_buffer, len(bios)) != 0:
+            raise GambatteError("gambatte_loadbiosbuf failed")
+    if library.gambatte_loadbuf(core, rom_buffer, rom_length, flags) != 0:
+        raise GambatteError("gambatte_loadbuf failed")
 
 
 def digest(path: Path) -> str:
@@ -177,6 +232,17 @@ def core_capabilities(path: Path) -> dict[str, Any]:
     }
 
 
+def _boot_health(pins: dict[str, Any]) -> dict[str, Any]:
+    mode = pins.get("boot", {}).get("mode")
+    row = {"required": " or ".join(BOOT_MODES), "pinned": mode, "status": "PASS"}
+    try:
+        boot_rom(pins)
+    except GambatteError as exc:
+        row["status"] = "FAIL"
+        row["detail"] = str(exc)
+    return row
+
+
 def health_report(pins: dict[str, Any]) -> dict[str, Any]:
     files = {name: file_status(pins.get(name, {})) for name in ("source", "core", "rom")}
     requirements = pins.get("requirements", {})
@@ -206,11 +272,7 @@ def health_report(pins: dict[str, Any]) -> dict[str, Any]:
             "pinned": requirements.get("framebuffer"),
             "status": "PASS" if requirements.get("framebuffer") == "rgba8888-160x144" else "DRIFT",
         },
-        "boot": {
-            "required": "no-bios",
-            "pinned": pins.get("boot", {}).get("mode"),
-            "status": "PASS" if pins.get("boot", {}).get("mode") == "no-bios" else "DRIFT",
-        },
+        "boot": _boot_health(pins),
     }
     status = "PASS" if all(row["status"] == "PASS" for row in files.values()) and all(
         row["status"] == "PASS" for row in capabilities.values()
@@ -309,6 +371,12 @@ def configure_library(path: Path) -> ctypes.CDLL:
         ctypes.c_uint,
     ]
     library.gambatte_loadbuf.restype = ctypes.c_int
+    library.gambatte_loadbiosbuf.argtypes = [
+        ctypes.c_void_p,
+        ctypes.POINTER(ctypes.c_ubyte),
+        ctypes.c_uint,
+    ]
+    library.gambatte_loadbiosbuf.restype = ctypes.c_int
     library.gambatte_runfor.argtypes = [
         ctypes.c_void_p,
         ctypes.POINTER(ctypes.c_uint32),
@@ -412,9 +480,7 @@ def capture_record(pins: dict[str, Any], scenario: str, frames: int, anchor: int
     if not core:
         raise GambatteError("gambatte_create returned null")
     try:
-        flags = 1 | 16 | 32
-        if library.gambatte_loadbuf(core, rom_buffer, len(rom), flags) != 0:
-            raise GambatteError("gambatte_loadbuf failed")
+        load_rom(library, core, rom_buffer, len(rom), pins)
         library.gambatte_setinputgetter(core, ctypes.cast(neutral_input, ctypes.c_void_p), None)
         library.gambatte_setexeccallback(core, ctypes.cast(execution, ctypes.c_void_p))
         library.gambatte_setcgbpalette(core, color_lut())
@@ -540,7 +606,7 @@ def load_capture(path: Path, pins: dict[str, Any]) -> dict[str, Any]:
         "source_sha256": pins["source"]["sha256"],
         "core_sha256": pins["core"]["sha256"],
         "rom_sha256": pins["rom"]["sha256"],
-        "boot_mode": "no-bios",
+        "boot_mode": pins["boot"]["mode"],
     }
     if provenance != expected_provenance:
         raise GambatteError("raw capture provenance differs from pins")

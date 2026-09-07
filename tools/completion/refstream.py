@@ -203,7 +203,7 @@ def native_mask_to_gambatte(mask: int) -> int:
 
 
 class Core:
-    def __init__(self, masks: list[int]) -> None:
+    def __init__(self, masks: list[int], *, gba: bool = False) -> None:
         self.library, self.pins = _library()
         import gambatte_runner
 
@@ -222,13 +222,18 @@ class Core:
         self.ordinal = 0
         self.override_mask: int | None = None
         self.input_axis = "ordinal"
+        self.frame_mode = "vblank"
+        self._frame_overflow = 0
         self._user_exec: Callable[[int, int], None] | None = None
         self._keepalive: list[Any] = []
         self.core = self.library.gambatte_create()
         if not self.core:
             raise RefstreamError("gambatte_create returned null")
-        if self.library.gambatte_loadbuf(self.core, self._rom_buffer, len(rom), 1 | 16 | 32) != 0:
-            raise RefstreamError("gambatte_loadbuf failed")
+        try:
+            gambatte_runner.load_rom(self.library, self.core, self._rom_buffer, len(rom),
+                                     self.pins, gba=gba)
+        except gambatte_runner.GambatteError as exc:
+            raise RefstreamError(str(exc)) from exc
         getter = INPUT_GETTER(self._input)
         self._keepalive.append(getter)
         self.library.gambatte_setinputgetter(
@@ -282,15 +287,39 @@ class Core:
         )
 
     def step_frame(self) -> None:
-        for _ in range(MAX_SLICES_PER_FRAME):
+        """One movie frame, the way BizHawk's Gambatte core advances one
+        (Gameboy.cs FrameAdvance). `frame_mode` names its sync setting:
+
+        - "vblank" (EqualLengthFrames=false, the 2.x default): one runfor with
+          a 35,112-sample budget; it returns early at the frame's V-Blank, and
+          when the LCD is off it returns at the budget -- a lag frame that still
+          consumes one movie input.
+        - "equal" (EqualLengthFrames=true, the 1.x default): exactly 35,112
+          samples per frame, across as many runfor calls as V-Blanks interrupt,
+          the remainder carried into the next frame.
+
+        Looping "until a frame renders" matches neither: an LCD-off stretch
+        then swallows movie frames and every later input lands early, which is
+        how both TAS replays lost their luck manipulation."""
+        if self.frame_mode == "vblank":
             emitted = ctypes.c_uint(SAMPLES_PER_FRAME)
-            rendered = self.library.gambatte_runfor(
+            self.library.gambatte_runfor(
                 self.core, self._framebuffer, WIDTH, self._sound, ctypes.byref(emitted)
             )
             self.samples += int(emitted.value)
-            if rendered >= 0:
+            return
+        remaining = SAMPLES_PER_FRAME - self._frame_overflow
+        for _ in range(MAX_SLICES_PER_FRAME):
+            emitted = ctypes.c_uint(remaining)
+            self.library.gambatte_runfor(
+                self.core, self._framebuffer, WIDTH, self._sound, ctypes.byref(emitted)
+            )
+            self.samples += int(emitted.value)
+            remaining -= int(emitted.value)
+            if remaining <= 0:
+                self._frame_overflow = -remaining
                 return
-        raise RefstreamError(f"no rendered frame after {MAX_SLICES_PER_FRAME} slices")
+        raise RefstreamError(f"frame not filled after {MAX_SLICES_PER_FRAME} slices")
 
     def run(self, frames: int, *, stop: Callable[[], bool] | None = None) -> int:
         for index in range(frames):
@@ -359,6 +388,22 @@ def load_masks(path: str | Path) -> list[int]:
     return [int(part) for part in text.replace("\n", ",").split(",") if part.strip()]
 
 
+def movie_profile(path: str | Path) -> dict[str, Any]:
+    """How a converted movie has to be replayed, from the sidecar tas_movie.py
+    writes beside the masks: `frame_mode` (the .bk2's EqualLengthFrames) and
+    `gba` (its GBACGB). An input file with no sidecar is a hand recording made
+    on the native lane: V-Blank frames, no GBA boot."""
+    sidecar = Path(path).with_suffix(".json")
+    profile = {"frame_mode": "vblank", "gba": False}
+    if not sidecar.exists():
+        return profile
+    record = json.loads(sidecar.read_text())
+    mode = record.get("frame_mode", "vblank")
+    if mode not in ("vblank", "equal"):
+        raise RefstreamError(f"{sidecar}: frame_mode must be vblank or equal, not {mode!r}")
+    return {"frame_mode": mode, "gba": bool(record.get("gba_cgb"))}
+
+
 def scenario_masks(scenario: str, frames: int,
                    masks: list[int] | None = None) -> list[int]:
     """`masks` replaces the scenario timeline, padded or clipped to `frames`,
@@ -380,6 +425,7 @@ def stream_key(pins: dict[str, Any], masks: list[int], frames: int,
     digest.update(input_axis.encode())
     digest.update(pins["rom"]["sha256"].encode())
     digest.update(pins["core"]["sha256"].encode())
+    digest.update(str(pins["boot"].get("sha1", pins["boot"]["mode"])).encode())
     digest.update(bytes(mask & 0xFF for mask in masks))
     digest.update(struct.pack("<I", frames))
     digest.update(STREAM_FORMAT.encode())

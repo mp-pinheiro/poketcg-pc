@@ -160,11 +160,30 @@ whose ROM SHA1 does not match `poketcg/poketcg.gbc`. Two are known good, both
 Gambatte-core and both exact ROM matches:
 
 - TASVideos `5530S`, 78,207 frames, BizHawk 1.11.4 — the current input.
-- TASVideos `4189M`, 61,687 frames, BizHawk 2.4.1, console-verified. Declares
-  `GBC_Firmware_World`, so it needs the CGB boot ROM our lane does not load.
+  `EqualLengthFrames=true`, `GBACGB=false`, no firmware.
+- TASVideos `4189M`, 61,687 frames, BizHawk 2.4.1, console-verified.
+  `EqualLengthFrames=false`, `GBACGB=true`, `GBC_Firmware_World`.
 
-Neither replays to the end in our lane: no credits, booster packs or deck edits on
-either, because this is a luck-manipulated run where RNG advances every frame and a
-single frame of boot difference shifts every manipulated duel. That costs depth, not
-validity — the reference defines truth for whatever input it is given, and 70,999
-ordinals is a fixed target. Closing the last stretch needs a boot ROM, not tooling.
+Every replay knob BizHawk records is now implemented and pinned, and neither movie
+still replays to the end. `tools/completion/tas_movie.py` reads both sync settings
+into the mask sidecar; `refstream.Core` honours them (`frame_mode`, `gba`), and
+`[boot]` in `gambatte_pins.toml` loads a verified CGB boot ROM
+(`gambatte_loadbiosbuf`, sha1 `1293d68b…`, the `GBC_Firmware_World` every movie
+header names — the image is Nintendo's and is never committed). `step_frame`
+implements both of BizHawk's frame clocks exactly as `Gambatte.IEmulator.cs`
+does: `vblank` is one `runfor` with a 35,112-sample budget, `equal` loops on
+`TICKSINFRAME - frameOverflow` and carries the remainder.
+
+Measured 2026-09-07 on all four clock/boot combinations of `4189M`: the run
+enters Dr. Mason's lab, plays the practice duel, and stalls at
+`wPracticeDuelAction == 6` around frame 40,000, never leaving `wCurMap == 1`.
+`GBACGB` is load-bearing — without it the ROM's own scripted-turn check
+(`PracticeDuel_RepeatInstructions`) fires at frame 24,593; with it, never — but
+it is not sufficient. Both movies were recorded on older gambatte builds than
+the pinned `gambatte-core`, and a luck-manipulated run does not survive an
+emulation-detail difference. Do not re-derive this; the knobs are all
+implemented and the measurement is above.
+
+That costs depth, not validity — the reference defines truth for whatever input
+it is given. The unattended frontier generator is `tools/completion/explore.py`
+plus `just session-derive`, not another movie.

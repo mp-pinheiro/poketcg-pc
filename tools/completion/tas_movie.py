@@ -80,6 +80,30 @@ def masks(archive: zipfile.ZipFile) -> list[int]:
     return out
 
 
+def frame_mode(archive: zipfile.ZipFile) -> str:
+    """BizHawk's Gambatte frame clock, from the movie's SyncSettings:
+    EqualLengthFrames=true (the 1.x default) is 35,112 samples per frame,
+    false (the 2.x default) ends a frame at V-Blank. refstream.Core replays
+    each the way it was recorded (`frame_mode`)."""
+    try:
+        settings = json.loads(archive.read("SyncSettings.json").decode("utf-8"))
+    except KeyError:
+        return "equal"
+    equal = settings.get("o", settings).get("EqualLengthFrames")
+    return "equal" if equal else "vblank"
+
+
+def gba_cgb(archive: zipfile.ZipFile) -> bool:
+    """BizHawk's GBACGB sync setting: GBA initial CPU registers and the AGB
+    boot ROM. It changes the state the game starts from, so a movie recorded
+    with it only replays with gambatte's GBA_FLAG."""
+    try:
+        settings = json.loads(archive.read("SyncSettings.json").decode("utf-8"))
+    except KeyError:
+        return False
+    return bool(settings.get("o", settings).get("GBACGB"))
+
+
 def convert(path: Path, rom: Path) -> dict[str, Any]:
     archive = open_movie(path)
     fields = header(archive)
@@ -90,6 +114,9 @@ def convert(path: Path, rom: Path) -> dict[str, Any]:
         "schema": 1,
         "format": "tas-movie-v1",
         "frames": len(timeline),
+        "frame_mode": frame_mode(archive),
+        "gba_cgb": gba_cgb(archive),
+        "boot_rom_sha1": fields.get("GBC_Firmware_World", "").lower() or None,
         "core": fields.get("Core"),
         "platform": fields.get("Platform"),
         "cgb_mode": fields.get("IsCGBMode"),
