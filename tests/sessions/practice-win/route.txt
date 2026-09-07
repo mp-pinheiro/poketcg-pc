@@ -1,0 +1,581 @@
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press UP
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold DOWN 3
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold B 2
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold DOWN 3
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold DOWN 2
+idle
+hold DOWN 2
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold DOWN 2
+idle
+hold DOWN 2
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold DOWN 2
+idle
+press A
+idle
+hold DOWN 2
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold DOWN 2
+idle
+press A
+idle
+press A
+idle
+hold DOWN 2
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold DOWN 2
+idle
+hold DOWN 2
+idle
+press A
+idle
+press A
+idle
+hold DOWN 2
+idle
+press A
+idle
+hold DOWN 2
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold DOWN 2
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold DOWN 2
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold DOWN 2
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold DOWN 2
+idle
+hold DOWN 2
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold DOWN 2
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold DOWN 2
+idle
+press A
+idle
+hold DOWN 2
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold DOWN 2
+idle
+press A
+idle
+hold DOWN 2
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle

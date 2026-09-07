@@ -1346,9 +1346,21 @@ follow arbitrary code execution, so the session declares `ceiling: 48437` in
 its `session.json` and `session-verify` reports it `clean` there. Everything
 the movie does after that is the glitch's aftermath, not the game.
 
-Coverage past that point comes from sessions that play the game: record one
-with `just play --record-input PATH` and file it with `session-meta`. The
-`first-duel` session is the model.
+Coverage past that point comes from sessions that play the game. Two ways:
+
+- `just play --record-input PATH` records a human; `session-meta` files it.
+- `just session-pilot FROM SCRIPT OUT "goal"` drives the reference core from a
+  script (`tools/completion/pilot.py`): replay session `FROM`, then `press A`,
+  `hold DOWN 2`, `idle` (release everything until the ROM has sat still for
+  150 DoFrames under the session mask), `shot name` (a PNG of the screen,
+  `build/completion/pilot/name.png`). `idle` is what makes a route robust --
+  the script names presses, not frame counts -- and the shots are how a route
+  is checked by eye before the port is asked to follow it. `practice-win`
+  (`tests/sessions/practice-win/route.txt`) was built this way: it extends
+  `first-duel` through the whole practice duel to the win and back to the lab.
+
+Every session verifies the same way (`just session-verify NAME`) and ratchets
+the same `confirmed_ordinal`.
 
 ## The banks recipe
 
