@@ -83,7 +83,10 @@ void LoadOWFrameTiles(void)
 		gb_write8(0xff4fu, (uint8_t)(0xfeu | hBankVRAM));
 
 		uint16_t descriptor = (uint16_t)(tile + 2u);
-		uint8_t tileset_bank = (uint8_t)(gb_read8(descriptor) + 20u);
+		/* animation.asm:206 adds BANK(MapOWFramesetPointers), which is $20
+		 * (poketcg.sym: 20:45d6). Decimal 20 fetched every animated tile
+		 * from bank $16. */
+		uint8_t tileset_bank = (uint8_t)(gb_read8(descriptor) + 0x20u);
 		uint16_t tileset = (uint16_t)(gb_read8((uint16_t)(descriptor + 1u)) |
 			((uint16_t)gb_read8((uint16_t)(descriptor + 2u)) << 8));
 		uint16_t tile_offset = (uint16_t)(gb_read8((uint16_t)(descriptor + 3u)) |
