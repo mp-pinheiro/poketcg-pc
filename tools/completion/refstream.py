@@ -424,10 +424,12 @@ def routine_of_label(label: str) -> str:
 
 
 def build(scenario: str, frames: int, anchors: int,
-          masks: list[int] | None = None) -> dict[str, Any]:
+          masks: list[int] | None = None, *, axis: str | None = None) -> dict[str, Any]:
     # A movie is one mask per rendered frame and must be replayed on that axis,
-    # the same way routine_trace does it; the anchor axis desyncs it.
-    axis = "frame" if masks is not None else "ordinal"
+    # the same way routine_trace does it; the anchor axis desyncs it. A session
+    # recorded by the native port is one mask per DoFrame and asks for the
+    # anchor axis explicitly.
+    axis = axis or ("frame" if masks is not None else "ordinal")
     masks = scenario_masks(scenario, frames, masks)
     with Core(masks) as core:
         core.input_axis = axis
@@ -526,8 +528,8 @@ class Stream:
 
 
 def open_stream(scenario: str, frames: int, anchors: int,
-                masks: list[int] | None = None) -> Stream:
-    meta = build(scenario, frames, anchors, masks)
+                masks: list[int] | None = None, *, axis: str | None = None) -> Stream:
+    meta = build(scenario, frames, anchors, masks, axis=axis)
     return Stream(ROOT / meta["directory"])
 
 
@@ -536,8 +538,9 @@ EVENT_CAP = 8192
 
 def writers(
     scenario: str, frames: int, addresses: list[int], *, events: bool = False,
-    masks: list[int] | None = None
+    masks: list[int] | None = None, axis: str | None = None,
 ) -> list[dict[str, Any]]:
+    movie = masks is not None
     masks = scenario_masks(scenario, frames, masks)
     resolve = label_resolver()
     watched = set(addresses)
@@ -547,8 +550,7 @@ def writers(
     }
     stream: dict[int, list[dict[str, Any]]] = {address: [] for address in addresses}
     with Core(masks) as core:
-        if movie:
-            core.input_axis = "frame"
+        core.input_axis = axis or ("frame" if movie else "ordinal")
 
         def on_write(address: int, _cycle: int) -> None:
             nonlocal sequence
@@ -615,12 +617,14 @@ def writer_before(entry: dict[str, Any], ordinal: int) -> dict[str, Any] | None:
 def routine_trace(
     scenario: str, frames: int, wanted: set[str] | None, *,
     ordinals: int | None = None, masks: list[int] | None = None,
+    axis: str | None = None,
 ) -> dict[str, Any]:
     """Reference routine-entry counts. `ordinals` bounds the run by DoFrame
     anchors instead of PPU frames, which is the only axis comparable against
     native counts: the native lane counts DoFrames, and 2,000 of those span
     roughly 2,049 PPU frames, so bounding by frames compares unequal windows.
-    `masks` replaces the scenario timeline, which is how a TAS movie is run."""
+    `masks` replaces the scenario timeline, which is how a TAS movie is run;
+    `axis="ordinal"` replays them per DoFrame instead, for a native session."""
     movie = masks is not None
     if masks is None:
         masks = scenario_masks(scenario, frames)
@@ -629,8 +633,7 @@ def routine_trace(
     candidates, by_bank_address = routine_entry_addresses()
     events: list[tuple[int, str]] = []
     with Core(masks) as core:
-        if movie:
-            core.input_axis = "frame"
+        core.input_axis = axis or ("frame" if movie else "ordinal")
 
         def on_exec(address: int, _cycle: int) -> None:
             if address not in candidates:
