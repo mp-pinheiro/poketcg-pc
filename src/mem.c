@@ -7,11 +7,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* wConsole value written by DetectConsole on CGB hardware (setup.asm). The
- * port serves both console paths through one binary; probe cases exercise the
- * DMG path with wConsole unset, and the CGB-only register handlers below stay
- * dormant there, exactly like the reference runtime's gb_is_cgb_mode gate. */
-#define MEM_CONSOLE_CGB 0x02u
+/* The hardware is a Game Boy Color, unconditionally. wConsole is the game's
+ * own detection result (setup.asm DetectConsole) and only selects the
+ * software paths; every oracle lane runs the ROM on CGB hardware (PyBoy boots
+ * the CGB ROM as CGB, and every schema case declares `hardware: cgb`), so
+ * VBK, KEY1 and the SC readback below behave as CGB registers whether or not
+ * a case seeded wConsole. Gating them on wConsole put CGB attribute writes in
+ * VRAM bank 0 for every case that left it unset. */
 
 uint8_t g_wram[0x2000];
 uint8_t g_hram[0x80];
@@ -551,12 +553,9 @@ uint8_t gb_read8(uint16_t addr)
 		return (uint8_t)(*gb_ptr(addr) | 0xE0u);
 	if (addr == 0xFF4Fu)
 		return (uint8_t)(0xFEu | g_vram_bank);
-	if (addr == 0xFF4Du) {
-		if (wConsole != MEM_CONSOLE_CGB)
-			return 0xFFu;
+	if (addr == 0xFF4Du)
 		return (uint8_t)((*gb_ptr(addr) & 0x01u)
 				 | (g_cgb_double_speed ? 0xFEu : 0x7Eu));
-	}
 	if (addr == 0xFF69u)
 		return g_pal[g_io[0x68] & 0x3Fu];
 	if (addr == 0xFF6Bu)
@@ -776,14 +775,11 @@ void gb_write8(uint16_t addr, uint8_t v)
 	}
 	if (addr >= 0xA000 && addr < 0xC000 && !g_sram_enabled)
 		return;
-	/* CGB-only registers ($FF4D/$FF4F/$FF56/$FF6C/$FF70): the reference's
-	 * write handlers skip them unless the hardware is CGB (gb_is_cgb_mode),
-	 * and probe cases run DMG hardware by default, so gate the same way on
-	 * wConsole. VBK: the low bit selects which 8 KiB half of g_vram the
-	 * $8000-$9FFF window resolves to, so it latches before the store lands.
-	 * Stored bytes are the readback shapes the reference's io array holds
-	 * after its handlers run. */
-	if (wConsole == MEM_CONSOLE_CGB) {
+	/* CGB-only registers ($FF4D/$FF4F/$FF56/$FF6C/$FF70). VBK: the low bit
+	 * selects which 8 KiB half of g_vram the $8000-$9FFF window resolves to,
+	 * so it latches before the store lands. Stored bytes are the readback
+	 * shapes the reference's io array holds after its handlers run. */
+	{
 		if (addr == 0xFF4F) {
 			g_vram_bank = v & 1;
 			v = (uint8_t)(0xFEu | g_vram_bank);
@@ -806,14 +802,11 @@ void gb_write8(uint16_t addr, uint8_t v)
 			v = (uint8_t)(0xF8u | bank);
 		}
 	}
-	/* SC ($FF02): unused bits 2-6 read 1 on any hardware; bit 0 is the CGB
-	 * fast-clock select and reads 1 on DMG instead. Serial transfer ticking
-	 * itself is not modeled -- only the register shape the state dump sees. */
-	if (addr == 0xFF02u) {
+	/* SC ($FF02): unused bits 2-6 read 1; bit 1 is the CGB fast-clock select.
+	 * Serial transfer ticking itself is not modeled -- only the register
+	 * shape the state dump sees. */
+	if (addr == 0xFF02u)
 		v = (uint8_t)(0x7Cu | (v & 0x83u));
-		if (wConsole != MEM_CONSOLE_CGB)
-			v = (uint8_t)(v | 0x02u);
-	}
 	/* BGPI/OBPI: bit 6 is unused and reads back as 1 (PPU-owned register;
 	 * modeled unconditionally, matching the reference's PPU write path). */
 	if (addr == 0xFF68u || addr == 0xFF6Au)
