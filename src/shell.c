@@ -171,6 +171,29 @@ void shell_pace(Shell *shell)
 	shell->next_ns += POKETCG_FRAME_NS;
 }
 
+void shell_set_title(Shell *shell, const char *title)
+{
+#ifdef POKETCG_HAVE_SDL
+	if (shell_has_window(shell) && shell->window)
+		SDL_SetWindowTitle(shell->window, title);
+#else
+	(void)shell;
+	(void)title;
+#endif
+}
+
+void shell_take_focus(Shell *shell)
+{
+#ifdef POKETCG_HAVE_SDL
+	if (shell_has_window(shell) && shell->window) {
+		SDL_RaiseWindow(shell->window);
+		SDL_SetWindowInputFocus(shell->window);
+	}
+#else
+	(void)shell;
+#endif
+}
+
 void shell_present(Shell *shell, const uint16_t *framebuffer)
 {
 #ifdef POKETCG_HAVE_SDL

@@ -30,4 +30,10 @@ int shell_has_window(const Shell *shell);
  * cannot change game state -- it only decides how fast a human sees it. */
 void shell_pace(Shell *shell);
 
+/* Window title, and raising the window with keyboard focus: a replayed prefix
+ * ends with the human's hands still on the terminal, so the hand-over both
+ * announces itself and grabs the keyboard. No-ops without a window. */
+void shell_set_title(Shell *shell, const char *title);
+void shell_take_focus(Shell *shell);
+
 #endif

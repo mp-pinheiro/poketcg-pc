@@ -74,6 +74,7 @@ typedef struct {
 	int stop;
 	int stopped_by_user;
 	int worker_done;
+	int handed_over;
 } RuntimeState;
 
 static void boundary(void *context)
@@ -288,6 +289,18 @@ int runtime_run_with_input(
 		if (timeline_live) {
 			input.buttons = g_ordinal_buttons[ordinal];
 			g_keys = shell_hkeys_from_input(input.buttons);
+			if ((ordinal & 0xFFu) == 0u) {
+				char title[64];
+				snprintf(title, sizeof title, "poketcg - replaying %u/%u",
+				         (unsigned)ordinal, (unsigned)g_ordinal_count);
+				shell_set_title(shell, title);
+			}
+		} else if (g_ordinal_buttons && !state.handed_over) {
+			/* The replayed prefix just ended: from here the keyboard is
+			 * the input, so take it. */
+			state.handed_over = 1;
+			shell_set_title(shell, "poketcg - your turn");
+			shell_take_focus(shell);
 		}
 		/* CGB hardware clock aging (Lane D model in mem.c): DIV free-runs
 		 * at the double-speed rate; TIMA ticks every 256 fast cycles and

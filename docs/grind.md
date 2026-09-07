@@ -55,8 +55,11 @@ are capped at 20,000 DoFrames (~5.5 minutes); longer play is a second session.
 
 To continue a session past its end without replaying by hand:
 `just play --input-ordinal tests/sessions/NAME/input.txt --record-input /tmp/NAME.txt`
-replays the recording at full speed, hands the keyboard over, and keeps
-recording; copy the result back over `input.txt` and refresh `session-meta`.
+replays the recording at full speed (title: `poketcg - replaying N/M`), then
+raises the window, takes the keyboard and retitles it `poketcg - your turn`;
+everything from there is recorded too. Copy the result back over `input.txt`
+and refresh `session-meta`. A recording whose tail is all zeros means the
+window never had the keyboard: click it before pressing anything.
 
 Two recordings ship as the floor: `tests/sessions/boot-menu` (boot, skip the
 intro with A, start menu, New Game). When the loop landed it stood at
