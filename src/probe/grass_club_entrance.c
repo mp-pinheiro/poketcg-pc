@@ -31,8 +31,18 @@ static void adapt_GrassClubEntranceAfterDuel(ProbeState *s)
 }
 /* <<< factory GrassClubEntranceAfterDuel */
 
+/* >>> factory Preload_MichaelInGrassClubEntrance */
+static void adapt_Preload_MichaelInGrassClubEntrance(ProbeState *s)
+{
+	PreloadMichaelInGrassClubEntranceResult r = Preload_MichaelInGrassClubEntrance();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Preload_MichaelInGrassClubEntrance */
+
 const ProbeEntry probe_entries_grass_club_entrance[] = {
 	{ "FindEndOfDuelScript", adapt_FindEndOfDuelScript },
 	{ "GrassClubEntranceAfterDuel", adapt_GrassClubEntranceAfterDuel },
+	{ "Preload_MichaelInGrassClubEntrance", adapt_Preload_MichaelInGrassClubEntrance },
 	{ NULL, NULL },
 };

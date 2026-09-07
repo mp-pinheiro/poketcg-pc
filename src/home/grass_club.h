@@ -11,4 +11,8 @@ GrassClubAfterDuelResult GrassClubAfterDuel(void);
 typedef struct { uint8_t a; uint8_t f; } ScriptNikkiResult;
 ScriptNikkiResult Script_Nikki(void);
 /* <<< factory Script_Nikki */
+/* >>> factory Preload_NikkiInGrassClub */
+typedef struct { uint8_t a; uint8_t f; } PreloadNikkiInGrassClubResult;
+PreloadNikkiInGrassClubResult Preload_NikkiInGrassClub(void);
+/* <<< factory Preload_NikkiInGrassClub */
 #endif /* POKETCG_HOME_GRASS_CLUB_H */

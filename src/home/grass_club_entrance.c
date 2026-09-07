@@ -8,7 +8,7 @@
 #include "home/scripting.h"
 #include "generated/wram.h"
 #define DUEL_WIN 0x00u
-
+#define PUPIL_DEFEATED 0x08u
 #define GrassClubEntranceAfterDuelTable 0x6553u
 /* <<< factory statics */
 
@@ -48,3 +48,16 @@ FindEndOfDuelScriptResult GrassClubEntranceAfterDuel(void)
 	return FindEndOfDuelScript(GrassClubEntranceAfterDuelTable);
 }
 /* <<< factory GrassClubEntranceAfterDuel */
+
+/* >>> factory Preload_MichaelInGrassClubEntrance */
+PreloadMichaelInGrassClubEntranceResult Preload_MichaelInGrassClubEntrance(void)
+{
+	uint8_t a = GetEventValue(0x11u);
+	if (a == 0u)
+		return (PreloadMichaelInGrassClubEntranceResult){a, 0x80u};
+	uint8_t f = (uint8_t)(0x40u | ((a == PUPIL_DEFEATED) ? 0x80u : 0u)
+		| (((a & 0x0Fu) < (PUPIL_DEFEATED & 0x0Fu)) ? 0x20u : 0u)
+		| ((a < PUPIL_DEFEATED) ? 0x10u : 0u));
+	return (PreloadMichaelInGrassClubEntranceResult){a, f};
+}
+/* <<< factory Preload_MichaelInGrassClubEntrance */

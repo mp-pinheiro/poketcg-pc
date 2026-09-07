@@ -17,7 +17,6 @@ static void adapt_GrassClubAfterDuel(ProbeState *s)
 }
 /* <<< factory GrassClubAfterDuel */
 
-
 /* >>> factory Script_Nikki */
 static void adapt_Script_Nikki(ProbeState *s)
 {
@@ -27,8 +26,18 @@ static void adapt_Script_Nikki(ProbeState *s)
 }
 /* <<< factory Script_Nikki */
 
+/* >>> factory Preload_NikkiInGrassClub */
+static void adapt_Preload_NikkiInGrassClub(ProbeState *s)
+{
+	PreloadNikkiInGrassClubResult r = Preload_NikkiInGrassClub();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Preload_NikkiInGrassClub */
+
 const ProbeEntry probe_entries_grass_club[] = {
 	{ "Script_Nikki", adapt_Script_Nikki },
 	{ "GrassClubAfterDuel", adapt_GrassClubAfterDuel },
+	{ "Preload_NikkiInGrassClub", adapt_Preload_NikkiInGrassClub },
 	{ NULL, NULL },
 };

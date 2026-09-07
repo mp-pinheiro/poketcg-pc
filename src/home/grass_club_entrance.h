@@ -10,4 +10,8 @@ FindEndOfDuelScriptResult FindEndOfDuelScript(uint16_t hl);
 /* >>> factory GrassClubEntranceAfterDuel */
 FindEndOfDuelScriptResult GrassClubEntranceAfterDuel(void);
 /* <<< factory GrassClubEntranceAfterDuel */
+/* >>> factory Preload_MichaelInGrassClubEntrance */
+typedef struct { uint8_t a; uint8_t f; } PreloadMichaelInGrassClubEntranceResult;
+PreloadMichaelInGrassClubEntranceResult Preload_MichaelInGrassClubEntrance(void);
+/* <<< factory Preload_MichaelInGrassClubEntrance */
 #endif /* POKETCG_HOME_GRASS_CLUB_ENTRANCE_H */
