@@ -674,6 +674,11 @@ MUTATIONS["DrawTextBox_PrintTextNoDelay"] = {"source_symbol": "DrawTextBox_Print
 MUTATIONS["ContinueDuel"] = {"source_symbol": "ContinueDuel", "before": "void ContinueDuel(void)\n{\n\tBankswitchROM(CONTINUE_DUEL_BANK);\n\t_ContinueDuel();", "after": "void ContinueDuel(void)\n{\n\tBankswitchROM(CONTINUE_DUEL_BANK);", "case_ids": ["ContinueDuel-0", "ContinueDuel-1"]}
 # <<< factory-mutation ContinueDuel
 # >>> factory-completion ContinueDuel
+# _ContinueDuel (duel/core.asm:9-21) tail-jumps into MainDuelLoop and never
+# returns; the recorded 0x2382 was a text-cache `ret` the reference happened to
+# stop on. Both lanes stop at the duel interface call, after the two writes
+# this case observes.
 for _record in SCHEMA2_CASES["ContinueDuel"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x2382, "bank": 1}
+    _record["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
+                             "routine": "DuelMainInterface"}
 # <<< factory-completion ContinueDuel
