@@ -94,7 +94,11 @@ void PlayIntroSequence(void)
 			if (AssertSongFinished() == 0u) {
 				DisableLCD();
 				PlaySong(MUSIC_TITLESCREEN);
-				LoadOpeningScene(SCENE_TITLE_SCREEN, 0u, 0u);
+				/* intro.asm:45-47 is the home LoadScene, not the
+				 * sequence command LoadOpeningScene: that one also
+				 * whites the palettes through Func_10d17 and advances
+				 * wSequenceCmdPtr, neither of which the skip does. */
+				(void)LoadScene(SCENE_TITLE_SCREEN, 0u, 0u, 0u, 0u, 0u, 0u);
 				IntroSequenceEmptyFunc();
 			}
 			break;
