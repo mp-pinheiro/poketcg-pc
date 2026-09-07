@@ -130,6 +130,10 @@ oracle-audit-cases STAGE:
 hatch-status:
     python3 tools/audit_hatches.py --list
 
+# Lower the release ceiling on unaudited hatches to the current count (tools/oracle/hatch_ratchet.json).
+hatch-ratchet:
+    python3 tools/audit_hatches.py --write-ratchet
+
 
 # Configure + build the C side (gbmem, poketcg_probe).
 build:

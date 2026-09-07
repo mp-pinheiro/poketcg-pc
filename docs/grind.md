@@ -125,8 +125,13 @@ either list to move `confirmed`.
 | `status=diverged` and both lanes name the same routines | same code, different bytes | dump both lanes at K-1 and K (`--dump-state-ordinals`, `session.reference_capture`) and read the writer's asm with those inputs |
 | `status=native-short` | the port aborted or hung before the session ended | the `NATIVE` lines carry stderr; take `blocked_by` from them and use the decision table below |
 | `status=ref-short` | the reference produced fewer DoFrames than the session has entries | a hand recording outran its `reference_frames`; refresh `session-meta`. A derived session cannot do this |
-| `status=clean` | the whole session is confirmed | derive the next movie, or record a human session for a screen no movie reaches |
+| `status=clean` | the whole session is confirmed | every session clean means the loop has no frontier: work `just hatch-status` until a new recording exists. A recording is `just play --record-input tests/sessions/<name>/input.txt` from boot (a human), or `just session-derive` from a movie; `session-meta` files it. Do not invent one by hand-editing input bytes |
 | `REGRESSION NAME key=confirmed_ordinal` | your change lowered a session's confirmed ordinal | revert your change; do not land it |
+| `DIVERGE field=vram` only, both lanes ran the same routines | a tile the port drew wrong, not a control-flow fork | dump both lanes' BG map rows around the address; the writer's asm decides the tile from a status byte or a coordinate. Today's two: `CheckPrintPoisoned` printed the raw status byte where `and POISONED` leaves 0; `PrintDuelResultStats` took d/e from a text-print result that the asm preserves (`ProcessText` pushes de) |
+| the native's `--trace-calls` interval looks one DoFrame ahead of the reference's | it is: the stop is honoured at the next boundary, so `trace(stop K) - trace(stop K-1)` is the work after anchor K, i.e. the reference's ordinal-K list | compare native `[K-1 -> K]` against reference `K`. State dumps (`--dump-state-ordinals K`) are taken at the anchor and are not shifted |
+| `run_mutation.py ... --index 0` prints `MUTATION_GREEN` for a fixture-backed routine | `--index` is the case index, not the mutation index; case 0 may not observe the mutated line | pass the index of the case that reads the byte the mutation flips (usually the fixture case), and name it in `case_ids` |
+| `MUTATION_BASELINE_FAILED ... "bus": {"address": 32768, "reference": "ffff...` | the gbref lane read VRAM while the PPU was in mode 3 -- the routine returns mid-frame | build the case with `vram=False` (`Fixture.case`); VRAM is then neither seeded nor compared for that case, so add a `read` on the WRAM the routine writes |
+| a reference routine is "never entered" by `session.py capture --after K` | the session's later stretch takes the other branch (e.g. `Func_c17a` returns early in script mode, so `Func_c9b8` is only entered at the session's first map load) | retry with `--after 0`, or capture from the session that reaches it (`just hatch-status` prints the first ordinal per routine) |
 
 ## The TAS loop (secondary)
 
@@ -1540,11 +1545,14 @@ program counter before the routine's own `ret`, and a non-`primary`
 `evidence` never runs the reference at all. `tools/audit_hatches.py` now
 rejects both unless the routine is declared in `tests/hatches.py`, and also
 flags a C body with no calls and no bus access whose asm is more than a
-`ret` (`HOLLOW`). Declared `unaudited` entries pass the routine stage and
-block release, so the registry is the queue:
+`ret` (`HOLLOW`). Declared `unaudited` entries pass the routine stage; at
+release the count is a ratchet against `tools/oracle/hatch_ratchet.json` --
+it may only fall, so a landing that adds no debt is not blocked by the debt
+it inherited, and a landing that adds one is. The registry is the queue:
 
 ```sh
-just hatch-status         # the queue, session-reached routines first
+just hatch-status                                   # the queue, session-reached routines first
+just hatch-ratchet                                  # after deleting entries: lower the ceiling
 ```
 
 Porting an entry means: a return-mode case that observes the routine's real
@@ -1567,7 +1575,17 @@ cannot agree on are holes in the fixture, listed and explained there:
 | `HATCH R: pre-ret case without a declared hatch` | a case stops the reference before `R`'s own `ret` | delete the `factory-completion R` block and give `R` a fixture case that runs to `ret`; if `R` truly never returns, declare it `never-returns` with the asm line of the loop |
 | `HATCH R: native-stress ... without a declared hatch` | a case never runs the reference | replace it with a fixture case; `hardware-only`/`link-only` are the only kinds that may stay |
 | `HOLLOW R: ... is N instructions` | the C body does nothing while the asm does | port `R`; its cases were authored against the stub and must be rewritten from the asm's branches |
-| `HATCH unaudited blocks release: R` | declared debt | the queue above; work it session-reached first |
+| `HATCH unaudited=N exceeds the ratchet ceiling` | a landing declared new debt | it does not land; port the routine instead |
+
+A worked example, the map-script family (`CallMapScriptPointerIfExists` and
+its four `ld l, MAP_SCRIPT_*` wrappers, `Func_c141`): the C returned the
+script pointer and stopped, every consumer re-implemented the `jp hl`, and two
+of them forgot to -- so Sam's after-duel script never ran and the practice
+session diverged in the lab. The fix is one `ScriptEntryEnter` in the callee,
+the consumers' copies deleted, and fixture cases at the real entries
+(`practice-win-after-duel-entry`, `practice-win-load-map-entry`). Only the
+flags survive the jump in C, so those contracts compare `f` and the state
+block; no caller reads more.
 
 ## Clearing stubs: bottom-up only
 

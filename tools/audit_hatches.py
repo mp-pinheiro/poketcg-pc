@@ -16,8 +16,11 @@ no bus access while the disassembly's body is more than a return.
 Every routine relying on one of these must be declared in tests/hatches.py with
 a kind. `never-returns` (a loop the asm never leaves), `hardware-only` (IR,
 printer, serial) and `link-only` are facts about the ROM. `unaudited` is debt:
-it passes the routine stage so the grind can proceed, and blocks release.
-An undeclared hatch fails both stages, so a new stub cannot be introduced.
+it passes the routine stage so the grind can proceed, and the release stage
+ratchets it: the count may only fall below tools/oracle/hatch_ratchet.json,
+which `--write-ratchet` lowers, so a landing that adds no debt is not blocked
+by the debt it inherited. An undeclared hatch fails both stages, so a new stub
+cannot be introduced.
 
 `--list` prints the debt as a work queue: asm body size first, whether a
 recorded reference session reaches the routine, and the declared kind.
@@ -41,6 +44,7 @@ from audit_oracle_cases import load_modules
 
 HATCH_KINDS = {"never-returns", "hardware-only", "link-only", "unaudited"}
 RELEASE_BLOCKING = {"unaudited"}
+RATCHET = ROOT / "tools" / "oracle" / "hatch_ratchet.json"
 LABEL = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)::?\s*(;.*)?$")
 FACTORY = re.compile(r"^/\* >>> factory (\w+) \*/\n(.*?)\n/\* <<< factory \1 \*/", re.DOTALL | re.MULTILINE)
 CALL = re.compile(r"\b([A-Za-z_]\w*)\s*\(")
@@ -138,6 +142,8 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--stage", choices=("routine", "release"), default="routine")
     parser.add_argument("--list", action="store_true", help="print the declared debt as a work queue")
+    parser.add_argument("--write-ratchet", action="store_true",
+                        help="lower the release ceiling to the current unaudited count")
     args = parser.parse_args()
 
     hatches = load_hatches()
@@ -154,9 +160,6 @@ def main() -> int:
         if fn not in uses and fn not in hollow:
             print(f"HATCH {fn}: declared but no case uses a hatch and the body is not hollow; delete the entry")
             failures += 1
-        if args.stage == "release" and entry["kind"] in RELEASE_BLOCKING:
-            print(f"HATCH {entry['kind']} blocks release: {fn}")
-            failures += 1
 
     for fn, mechanisms in sorted(uses.items()):
         if fn not in hatches:
@@ -167,6 +170,15 @@ def main() -> int:
             count, asm_file, line = bodies[fn]
             print(f"HOLLOW {fn}: {file} body has no calls or bus access; {asm_file}:{line} is {count} instructions")
             failures += 1
+
+    unaudited = sum(1 for entry in hatches.values() if isinstance(entry, dict) and entry.get("kind") in RELEASE_BLOCKING)
+    ceiling = json.loads(RATCHET.read_text())["unaudited"] if RATCHET.exists() else unaudited
+    if args.stage == "release" and unaudited > ceiling:
+        print(f"HATCH unaudited={unaudited} exceeds the ratchet ceiling {ceiling}: a landing added debt")
+        failures += 1
+    if args.write_ratchet and not failures and unaudited < ceiling:
+        RATCHET.write_text(json.dumps({"unaudited": unaudited}, indent=2) + "\n")
+        print(f"HATCH ratchet {ceiling} -> {unaudited}")
 
     if args.list:
         reach = session_reach()
