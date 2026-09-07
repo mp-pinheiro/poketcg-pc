@@ -16,6 +16,7 @@
 #include <pthread.h>
 #include <setjmp.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #define AUDIO_SAMPLES_PER_FRAME 1470u
 
@@ -23,6 +24,38 @@
 static RuntimeStateDumpCb g_state_dump_callback;
 static const uint32_t *g_state_dump_frames;
 static size_t g_state_dump_frame_count;
+
+static const uint8_t *g_ordinal_buttons;
+static size_t g_ordinal_count;
+static FILE *g_record_sink;
+static RuntimeStateDumpCb g_ordinal_dump_callback;
+static const uint32_t *g_ordinal_dump_list;
+static size_t g_ordinal_dump_count;
+static uint32_t g_stop_ordinal;
+
+void runtime_set_ordinal_input(const uint8_t *buttons, size_t count)
+{
+	g_ordinal_buttons = buttons;
+	g_ordinal_count = count;
+}
+
+void runtime_set_record_input(FILE *sink)
+{
+	g_record_sink = sink;
+}
+
+void runtime_set_state_dump_ordinals(
+	RuntimeStateDumpCb callback, const uint32_t *ordinals, size_t count)
+{
+	g_ordinal_dump_callback = callback;
+	g_ordinal_dump_list = ordinals;
+	g_ordinal_dump_count = count;
+}
+
+void runtime_set_stop_ordinal(uint32_t ordinal)
+{
+	g_stop_ordinal = ordinal;
+}
 
 typedef struct {
 	pthread_mutex_t lock;
@@ -125,6 +158,45 @@ void runtime_set_state_dump_frames(
 	g_state_dump_frame_count = frame_count;
 }
 
+static void fill_result(const RuntimeState *state, uint32_t frame_limit,
+                        RuntimeResult *out)
+{
+	out->frame_limit = frame_limit;
+	out->frames = state->frames;
+	out->event_mask = runtime_event_mask();
+	out->event_count = runtime_event_count();
+	out->terminal_event = runtime_terminal_event();
+	out->stopped_by_user = state->stopped_by_user;
+	memcpy(out->framebuffer, state->framebuffer, sizeof out->framebuffer);
+}
+
+/* Game-thread hook at the DoFrame anchor (frames.c, the $0552 analogue). The
+ * host set resume as the last act of its pass and is parked on frame_ready, so
+ * g_keys and the framebuffer are stable here. */
+static void anchor(void *context)
+{
+	RuntimeState *state = context;
+	uint32_t ordinal = frame_boundary_doframe_ordinal();
+
+	if (g_record_sink) {
+		/* g_keys is hKeysHeld order; the timeline file is InputFrame order. */
+		fprintf(g_record_sink, "%u\n",
+		        (unsigned)shell_hkeys_from_input(g_keys));
+		if ((ordinal & 0xFFu) == 0u)
+			fflush(g_record_sink);
+	}
+	if (!g_ordinal_dump_callback)
+		return;
+	for (size_t i = 0; i < g_ordinal_dump_count; i++) {
+		if (ordinal != g_ordinal_dump_list[i])
+			continue;
+		RuntimeResult dump;
+		fill_result(state, state->frame_limit, &dump);
+		g_ordinal_dump_callback(ordinal, &dump);
+		break;
+	}
+}
+
 int runtime_run_with_input(
 	Shell *shell, uint32_t frame_limit, const uint8_t *buttons,
 	size_t button_count, RuntimeResult *result)
@@ -137,6 +209,8 @@ int runtime_run_with_input(
 	state.frame_limit = frame_limit;
 	if (button_count)
 		g_keys = shell_hkeys_from_input(buttons[0]);
+	else if (g_ordinal_count)
+		g_keys = shell_hkeys_from_input(g_ordinal_buttons[0]);
 	if (pthread_mutex_init(&state.lock, NULL) != 0)
 		return -1;
 	if (pthread_cond_init(&state.condition, NULL) != 0) {
@@ -144,9 +218,15 @@ int runtime_run_with_input(
 		return -1;
 	}
 	ppu_init_offsets(&state.ppu);
+	/* The ordinal axis is monotone across a soft reset, exactly as the
+	 * reference keeps counting $0552 hits through `jp Start`; it restarts
+	 * only with the process. */
+	frame_boundary_reset_ordinal();
 	frame_boundary_install(boundary, &state);
+	frame_boundary_install_anchor(anchor, &state);
 	pthread_t worker;
 	if (pthread_create(&worker, NULL, run_game, &state) != 0) {
+		frame_boundary_install_anchor(NULL, NULL);
 		frame_boundary_install(NULL, NULL);
 		pthread_cond_destroy(&state.condition);
 		pthread_mutex_destroy(&state.lock);
@@ -199,6 +279,16 @@ int runtime_run_with_input(
 			pthread_mutex_unlock(&state.lock);
 			continue;
 		}
+		/* DoFrame-ordinal timeline: the ordinal counter is the number of
+		 * completed DoFrames, so entry [ordinal] is what the DoFrame this
+		 * pass belongs to will read -- the same index refstream.Core
+		 * serves at its anchor. Past the end, the shell's input stands. */
+		uint32_t ordinal = frame_boundary_doframe_ordinal();
+		int timeline_live = g_ordinal_buttons && ordinal < g_ordinal_count;
+		if (timeline_live) {
+			input.buttons = g_ordinal_buttons[ordinal];
+			g_keys = shell_hkeys_from_input(input.buttons);
+		}
 		/* CGB hardware clock aging (Lane D model in mem.c): DIV free-runs
 		 * at the double-speed rate; TIMA ticks every 256 fast cycles and
 		 * reloads from TMA. One frame of slow cycles per host frame. */
@@ -221,6 +311,9 @@ int runtime_run_with_input(
 		size_t pcm_count = apu_trace_render_pcm(
 			state.audio, AUDIO_SAMPLES_PER_FRAME);
 		ppu_render_frame(&state.ppu, state.framebuffer);
+		/* A recorded prefix replays at full speed; only live play is paced. */
+		if (!timeline_live)
+			shell_pace(shell);
 		shell_present(shell, state.framebuffer);
 		shell_queue_audio(shell, state.audio, pcm_count);
 		if (g_state_dump_callback) {
@@ -228,14 +321,7 @@ int runtime_run_with_input(
 				if (state.frames != g_state_dump_frames[i])
 					continue;
 				RuntimeResult dump;
-				dump.frame_limit = frame_limit;
-				dump.frames = state.frames;
-				dump.event_mask = runtime_event_mask();
-				dump.event_count = runtime_event_count();
-				dump.terminal_event = runtime_terminal_event();
-				dump.stopped_by_user = state.stopped_by_user;
-				memcpy(dump.framebuffer, state.framebuffer,
-				       sizeof dump.framebuffer);
+				fill_result(&state, frame_limit, &dump);
 				g_state_dump_callback(state.frames, &dump);
 				break;
 			}
@@ -244,21 +330,19 @@ int runtime_run_with_input(
 		pthread_mutex_lock(&state.lock);
 		if (state.frame_limit && state.frames >= state.frame_limit)
 			state.stop = 1;
+		if (g_stop_ordinal && ordinal >= g_stop_ordinal)
+			state.stop = 1;
 		state.resume = 1;
 		pthread_cond_broadcast(&state.condition);
 		pthread_mutex_unlock(&state.lock);
 	}
 	pthread_join(worker, NULL);
+	frame_boundary_install_anchor(NULL, NULL);
 	frame_boundary_install(NULL, NULL);
-	if (result) {
-		result->frame_limit = frame_limit;
-		result->frames = state.frames;
-		result->event_mask = runtime_event_mask();
-		result->event_count = runtime_event_count();
-		result->terminal_event = runtime_terminal_event();
-		result->stopped_by_user = state.stopped_by_user;
-		memcpy(result->framebuffer, state.framebuffer, sizeof state.framebuffer);
-	}
+	if (g_record_sink)
+		fflush(g_record_sink);
+	if (result)
+		fill_result(&state, frame_limit, result);
 	pthread_cond_destroy(&state.condition);
 	pthread_mutex_destroy(&state.lock);
 	return 0;

@@ -2,6 +2,8 @@
 #define POKETCG_RUNTIME_H
 
 #include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
 #include "ppu.h"
 
 struct Shell;
@@ -36,6 +38,23 @@ typedef void (*RuntimeStateDumpCb)(uint32_t frame, const RuntimeResult *result);
 
 void runtime_set_state_dump_frames(
 	RuntimeStateDumpCb callback, const uint32_t *frames, size_t frame_count);
+
+/* The DoFrame-ordinal lane. Ordinals are 1-based counts of completed DoFrame
+ * tails (frame_boundary_doframe_ordinal); the reference stream indexes the same
+ * axis, so everything here is comparable ordinal-for-ordinal with no lag.
+ *  - ordinal input: entry k-1 is what DoFrame k reads. Never wraps: past the
+ *    end, the shell supplies input, which is how a recorded prefix is replayed
+ *    at full speed and then handed to a human.
+ *  - record: one decimal line per ordinal with the InputFrame byte DoFrame k
+ *    read, including ordinals the timeline supplied.
+ *  - dump ordinals: state written at the anchor, same callback and naming as
+ *    the host-frame dumps.
+ *  - stop ordinal: the run ends once that many DoFrames completed. */
+void runtime_set_ordinal_input(const uint8_t *buttons, size_t count);
+void runtime_set_record_input(FILE *sink);
+void runtime_set_state_dump_ordinals(
+	RuntimeStateDumpCb callback, const uint32_t *ordinals, size_t count);
+void runtime_set_stop_ordinal(uint32_t ordinal);
 
 /* Resume from an injected reference checkpoint instead of booting: skips Start
  * and GameLoop and drives DoFrame directly, so a subsystem the port cannot yet

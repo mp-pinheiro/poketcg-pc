@@ -207,6 +207,12 @@ int main(int argc, char **argv)
 	const char *dump_state_path = NULL;
 	const char *dump_state_frames_text = NULL;
 	const char *input_path = NULL;
+	const char *input_ordinal_path = NULL;
+	const char *record_input_path = NULL;
+	const char *dump_state_ordinals_text = NULL;
+	uint32_t *dump_ordinals = NULL;
+	size_t dump_ordinal_count = 0;
+	uint32_t stop_ordinal = 0;
 	const char *trace_entries_path = NULL;
 	const char *trace_calls_path = NULL;
 	const char *checkpoint_path = NULL;
@@ -241,6 +247,22 @@ int main(int argc, char **argv)
 			}
 		} else if (strcmp(argv[i], "--input") == 0 && i + 1 < argc) {
 			input_path = argv[++i];
+		} else if (strcmp(argv[i], "--input-ordinal") == 0 && i + 1 < argc) {
+			input_ordinal_path = argv[++i];
+		} else if (strcmp(argv[i], "--record-input") == 0 && i + 1 < argc) {
+			record_input_path = argv[++i];
+		} else if (strcmp(argv[i], "--dump-state-ordinals") == 0 && i + 1 < argc) {
+			dump_state_ordinals_text = argv[++i];
+			if (parse_frame_list(dump_state_ordinals_text, &dump_ordinals,
+			                    &dump_ordinal_count) != 0) {
+				fprintf(stderr, "invalid --dump-state-ordinals value\n");
+				return 2;
+			}
+		} else if (strcmp(argv[i], "--stop-ordinal") == 0 && i + 1 < argc) {
+			if (parse_frame_limit(argv[++i], &stop_ordinal) != 0 || !stop_ordinal) {
+				fprintf(stderr, "invalid --stop-ordinal value\n");
+				return 2;
+			}
 		} else if (strcmp(argv[i], "--trace-entries") == 0 && i + 1 < argc) {
 			trace_entries_path = argv[++i];
 		} else if (strcmp(argv[i], "--trace-calls") == 0 && i + 1 < argc) {
@@ -252,8 +274,18 @@ int main(int argc, char **argv)
 			printf("usage: poketcg [--headless] [--frames N] --data-pack PATH "
 			       "[--require-data BANK:ADDR] [--load-save PATH] [--save PATH] "
 			       "[--dump-state PATH] [--dump-state-frames N[,N...]] "
-			       "[--input PATH] [--trace-entries PATH] [--trace-calls PATH] "
+			       "[--input PATH] [--input-ordinal PATH] [--record-input PATH] "
+			       "[--dump-state-ordinals N[,N...]] [--stop-ordinal N] "
+			       "[--trace-entries PATH] [--trace-calls PATH] "
 			       "[--load-checkpoint PATH]\n");
+			printf("--frames 0 runs until the window closes\n");
+			printf("--input is one byte per host frame (a movie axis); "
+			       "--input-ordinal is one byte per DoFrame and never wraps: "
+			       "past its end the keyboard takes over. They are exclusive\n");
+			printf("--record-input writes one decimal byte per DoFrame, the "
+			       "exact file --input-ordinal replays\n");
+			printf("--dump-state-ordinals and --stop-ordinal count DoFrames, "
+			       "not host frames\n");
 			printf("--trace-calls needs a build configured with "
 			       "-DPOKETCG_TRACE=ON; without it the dump is empty\n");
 			printf("--load-checkpoint injects a reference state and skips boot; "
@@ -296,6 +328,11 @@ int main(int argc, char **argv)
 		rom_pack_free();
 		return 2;
 	}
+	if (input_path && input_ordinal_path) {
+		fprintf(stderr, "--input and --input-ordinal are exclusive\n");
+		rom_pack_free();
+		return 2;
+	}
 	uint8_t *input_buttons = NULL;
 	size_t input_count = 0;
 	if (input_path && load_input_timeline(input_path, &input_buttons, &input_count) != 0) {
@@ -303,8 +340,32 @@ int main(int argc, char **argv)
 		rom_pack_free();
 		return 2;
 	}
+	uint8_t *ordinal_buttons = NULL;
+	size_t ordinal_count = 0;
+	if (input_ordinal_path &&
+	    load_input_timeline(input_ordinal_path, &ordinal_buttons, &ordinal_count) != 0) {
+		fprintf(stderr, "cannot load ordinal input timeline %s\n", input_ordinal_path);
+		free(input_buttons);
+		rom_pack_free();
+		return 2;
+	}
+	FILE *record_sink = NULL;
+	if (record_input_path) {
+		record_sink = fopen(record_input_path, "w");
+		if (!record_sink) {
+			fprintf(stderr, "cannot open --record-input %s: %s\n",
+			        record_input_path, strerror(errno));
+			free(ordinal_buttons);
+			free(input_buttons);
+			rom_pack_free();
+			return 2;
+		}
+	}
 	Shell *shell = shell_create(&config);
 	if (!shell) {
+		if (record_sink)
+			fclose(record_sink);
+		free(ordinal_buttons);
 		free(input_buttons);
 		rom_pack_free();
 		return 1;
@@ -313,9 +374,18 @@ int main(int argc, char **argv)
 	if (g_dump_frame_count)
 		runtime_set_state_dump_frames(
 			state_dump_frames_callback, g_dump_frames, g_dump_frame_count);
+	if (dump_ordinal_count)
+		runtime_set_state_dump_ordinals(
+			state_dump_frames_callback, dump_ordinals, dump_ordinal_count);
+	runtime_set_ordinal_input(ordinal_buttons, ordinal_count);
+	runtime_set_record_input(record_sink);
+	runtime_set_stop_ordinal(stop_ordinal);
 	if (checkpoint_path) {
 		if (checkpoint_load(checkpoint_path) != 0) {
 			fprintf(stderr, "cannot load checkpoint %s\n", checkpoint_path);
+			if (record_sink)
+				fclose(record_sink);
+			free(ordinal_buttons);
 			free(input_buttons);
 			shell_destroy(shell);
 			rom_pack_free();
@@ -327,9 +397,17 @@ int main(int argc, char **argv)
 	int status = input_count
 		? runtime_run_with_input(shell, frame_limit, input_buttons, input_count, &runtime)
 		: runtime_run(shell, frame_limit, &runtime);
+	if (record_sink && fclose(record_sink) != 0) {
+		fprintf(stderr, "cannot finish --record-input %s: %s\n",
+		        record_input_path, strerror(errno));
+		status = 1;
+	}
+	runtime_set_record_input(NULL);
+	free(ordinal_buttons);
 	free(input_buttons);
 	if (g_dump_frames_failed)
 		status = 1;
+	free(dump_ordinals);
 	free(g_dump_frames);
 	if (status == 0 && save_path && sram_save_atomic(save_path) != 0) {
 		fprintf(stderr, "cannot save %s: %s\n", save_path, strerror(errno));

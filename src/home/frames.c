@@ -26,6 +26,9 @@ static FrameBoundaryHook g_frame_boundary_hook;
 static void *g_frame_boundary_context;
 static FrameBoundaryHook g_frame_watchdog;
 static void *g_frame_watchdog_context;
+static FrameBoundaryHook g_frame_anchor;
+static void *g_frame_anchor_context;
+static uint32_t g_doframe_ordinal;
 static uint8_t g_pending_service_passes;
 
 uint8_t frame_boundary_take_service_pass(void)
@@ -80,6 +83,22 @@ void frame_boundary_consume_services(uint8_t count)
 int frame_boundary_is_installed(void)
 {
 	return g_frame_boundary_hook != NULL;
+}
+
+uint32_t frame_boundary_doframe_ordinal(void)
+{
+	return g_doframe_ordinal;
+}
+
+void frame_boundary_reset_ordinal(void)
+{
+	g_doframe_ordinal = 0;
+}
+
+void frame_boundary_install_anchor(FrameBoundaryHook hook, void *context)
+{
+	g_frame_anchor = hook;
+	g_frame_anchor_context = context;
 }
 
 /* CallIndirect(wDoFrameFunction), poketcg/src/home/frames.asm:18-19 through
@@ -188,6 +207,10 @@ void DoFrame(void)
 	          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 	ReadJoypad();
 	HandleDPadRepeat();
+	/* frames.asm $0552: the reference anchors its per-DoFrame state here. */
+	g_doframe_ordinal++;
+	if (g_frame_anchor)
+		g_frame_anchor(g_frame_anchor_context);
 }
 
 void DoAFrames(uint8_t a)
