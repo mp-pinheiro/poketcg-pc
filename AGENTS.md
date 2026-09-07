@@ -88,9 +88,12 @@ export POKETCG_BUILD=build-<slice>
 export POKETCG_PORTS="<pret basenames>"   # semicolon list; see CMakeLists.txt:34-60
 ```
 
-Agents **never** run `just oracle-diff-all`. A routine registered in
-`tests/routines.py` without cases is a hard FAIL for everyone, so only the
-barrier — run centrally, after every slice lands — runs the full gate.
+Parallel slice agents **never** run `just oracle-diff-all`: a routine
+registered in `tests/routines.py` without cases is a hard FAIL for everyone,
+so with slices in flight only the barrier — run centrally, after every slice
+lands — runs the full gate. A single session that owns the checkout runs it
+before every ratchet (`docs/grind.md`, "The gates, every iteration"); it
+takes about 150 s and its baseline is all-green.
 
 ## 6. File ownership
 

@@ -249,11 +249,18 @@ oracle-release-gate:
     python3 tools/oracle/release_gate.py
 
 # Diff one routine's C port against PyBoy running the real ROM.
-oracle-diff FN: build
+oracle-diff FN *ARGS: build
     #!/usr/bin/env bash
     set -euo pipefail
     export POKETCG_ROM=poketcg/poketcg.gbc
-    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --fn {{FN}} --probe {{build_dir}}/poketcg_probe
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --fn {{FN}} --probe {{build_dir}}/poketcg_probe {{ARGS}}
+
+# Which of a routine's writes no case observes (--all sweeps every routine).
+blind-spots *ARGS:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export POKETCG_ROM=poketcg/poketcg.gbc
+    uv run --project tools/oracle --frozen --python 3.12.3 python tools/oracle/blind_spots.py {{ARGS}}
 
 # Diff every routine in tests/routines.py. Non-zero if any fails or has no cases.
 oracle-diff-all: build lint-adapters lint-constants

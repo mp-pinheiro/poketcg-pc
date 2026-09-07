@@ -15,8 +15,8 @@ cd /home/matheus/git/poketcg
 Read `docs/port-contract.md` (case coverage, items 4 and 5 especially) and
 `AGENTS.md` (file ownership, command table).
 
-Never run `just oracle-diff-all`, `just oracle-release-gate`, a formatter, a
-linter, or any `git` command. Commit with `jj` only, naming your own paths:
+Never run `just oracle-release-gate`, a formatter, or any `git` command.
+Commit with `jj` only, naming your own paths:
 
 ```sh
 jj commit <paths> -m "type(scope): subject"      # subject <= 50 chars, no body
@@ -24,6 +24,42 @@ jj commit <paths> -m "type(scope): subject"      # subject <= 50 chars, no body
 
 Another session shares this checkout. Files you did not change are not yours;
 never revert, stage, or commit them.
+
+## The gates, every iteration
+
+Three mechanical checks, in this order, before a ratchet moves. Together they
+take under four minutes and each one has caught a class of defect the session
+loop bisected to one routine at a time:
+
+```sh
+just lint-constants        # <1 s: every #define that names an asm symbol carries
+                           #       the asm's value; banked literals name data
+just oracle-diff-all       # ~150 s: every routine against PyBoy; the baseline is
+                           #       all-green and a red line is the next fix
+just session-verify        # ~100 s: the digest stream against the reference
+```
+
+`oracle-diff-all` was once forbidden to sessions because parallel slices
+registered routines before their cases existed. One session owns the checkout
+now, and a red baseline is how twenty routines sat broken while `confirmed`
+climbed: run it.
+
+Two diagnostics narrow a divergence before any bisection, both from the same
+PyBoy run the oracle already makes:
+
+```sh
+just oracle-diff R --auto-observe   # compare every byte the ROM wrote in R, not just
+                                    # the case's spans (tests/test_leaves.py)
+just blind-spots --fn R             # which of R's writes no case observes
+```
+
+A `DIVERGE ... writer=R` line names the routine; `--auto-observe` on `R` and
+its callees shows the wrong bytes without replaying the session. Timing
+counters the probe cannot match (`wVBlankCounter`, the cursor blink counters,
+the key-edge bytes) are excluded; anything else it prints is a defect or a
+case that never looked. A whole-tree sweep (`just blind-spots --all`, ~90 s)
+ranks the routines whose cases observe none of their writes; those are where
+the next session divergence comes from.
 
 ## The session loop
 
