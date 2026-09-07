@@ -1,0 +1,207 @@
+# From practice-win's end: Dr. Mason's closing talk and the starter deck choice
+# (Charmander & Friends), out of the lab onto the overworld map, east to the
+# Fighting Club, Ronald's entrance scene, up into the club room to Mitch, back
+# down to the lobby.
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press LEFT
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold DOWN 48
+hold DOWN 48
+hold DOWN 48
+hold DOWN 48
+idle
+press RIGHT
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold UP 48
+hold UP 48
+hold UP 48
+idle
+hold LEFT 20
+idle
+hold UP 24
+idle
+press A
+idle
+press A
+idle
+hold RIGHT 8
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+hold LEFT 40
+idle
+hold LEFT 24
+idle
+hold DOWN 120
+idle
+hold RIGHT 64
+idle
+hold DOWN 64
+idle

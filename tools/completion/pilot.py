@@ -17,6 +17,8 @@ Script lines, one step each (`#` comments allowed):
                        input: 150 DoFrames in a row whose WRAM, under the session
                        mask plus the cursor-blink counters, did not change
     shot name          write build/completion/pilot/<name>.png of the screen now
+    peek               print the player's tile, facing and map, and every loaded
+                       NPC's tile, so a walk can be aimed instead of guessed
 
 `idle` is what makes a route robust: a text box that prints for 70 frames and a
 menu that opens in 3 both settle before the next press, so the script names
@@ -78,6 +80,8 @@ def parse_script(path: Path) -> list[tuple[str, int, str]]:
             steps.append(("shot", 0, parts[1]))
         elif verb == "idle" and len(parts) == 1:
             steps.append(("idle", 0, ""))
+        elif verb == "peek" and len(parts) == 1:
+            steps.append(("peek", 0, ""))
         else:
             raise SystemExit(f"{path}:{number}: cannot parse {raw!r}")
     return steps
@@ -100,6 +104,26 @@ def write_png(path: Path, pixels: bytes, width: int, height: int) -> None:
 
     path.write_bytes(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))
                      + chunk(b"IDAT", zlib.compress(raw, 9)) + chunk(b"IEND", b""))
+
+
+# wram.asm: wPlayerXCoord/wPlayerYCoord ($D330/$D331, in tiles), wPlayerDirection
+# ($D334, NORTH..WEST), wCurMap ($D32F), wLoadedNPCs ($D34A: 8 entries of 12
+# bytes, id at +0, x/y tiles at +2/+3, direction at +4).
+DIRECTIONS = ("north", "east", "south", "west")
+
+
+def peek(core: refstream.Core) -> str:
+    read = core.library.gambatte_cpuread
+    at = lambda address: read(core.core, address)  # noqa: E731
+    facing = DIRECTIONS[at(0xD334) & 3]
+    lines = [f"player x={at(0xD330)} y={at(0xD331)} facing={facing} map={at(0xD32F)}"]
+    for slot in range(8):
+        base = 0xD34A + slot * 12
+        npc = at(base)
+        if npc == 0:
+            continue
+        lines.append(f"npc[{slot}] id={npc} x={at(base + 2)} y={at(base + 3)} facing={DIRECTIONS[at(base + 4) & 3]}")
+    return "\n".join(lines)
 
 
 def screenshot(core: refstream.Core, path: Path) -> None:
@@ -211,6 +235,8 @@ def main(argv: list[str] | None = None) -> int:
             elif verb == "shot":
                 screenshot(driver.core, SHOTS / f"{extra}.png")
                 print(f"shot {extra}: ordinal {len(driver.masks)} -> {SHOTS / (extra + '.png')}")
+            elif verb == "peek":
+                print(f"peek: ordinal {len(driver.masks)}\n{peek(driver.core)}")
         masks = driver.masks
     finally:
         driver.close()
