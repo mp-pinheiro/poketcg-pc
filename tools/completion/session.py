@@ -125,6 +125,8 @@ def load_session(name: str) -> tuple[list[int], dict[str, Any]]:
         raise SessionError(f"no session input at {input_path.relative_to(ROOT)}")
     masks = refstream.load_masks(input_path)
     meta = json.loads(meta_path.read_text()) if meta_path.is_file() else {}
+    pokes_path = directory / "pokes.txt"
+    meta["pokes"] = refstream.load_pokes(pokes_path) if pokes_path.is_file() else {}
     return masks, meta
 
 
@@ -232,7 +234,7 @@ def digest(regions: dict[str, bytes], tables: dict[str, bytes]) -> tuple[int, ..
     return tuple(zlib.crc32(masked(regions[r], tables[r])) & 0xFFFFFFFF for r in REGIONS)
 
 
-def stream_key(masks: list[int], frames: int, axis: str) -> str:
+def stream_key(masks: list[int], frames: int, axis: str, pokes: refstream.Pokes | None = None) -> str:
     import gambatte_runner
 
     pins = gambatte_runner.load_pins()
@@ -241,6 +243,7 @@ def stream_key(masks: list[int], frames: int, axis: str) -> str:
     h.update(axis.encode())
     h.update(struct.pack("<I", frames))
     h.update(bytes(m & 0xFF for m in masks))
+    h.update(refstream.pokes_text(pokes).encode())
     h.update(mask_text().encode())
     h.update(pins["rom"]["sha256"].encode())
     h.update(pins["core"]["sha256"].encode())
@@ -249,12 +252,13 @@ def stream_key(masks: list[int], frames: int, axis: str) -> str:
 
 
 def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "ordinal",
-                    record_input: bool = False, frame_mode: str = "vblank") -> dict[str, Any]:
+                    record_input: bool = False, frame_mode: str = "vblank",
+                    pokes: refstream.Pokes | None = None) -> dict[str, Any]:
     """One reference replay: a digest record per DoFrame anchor, cached by
     input. With `record_input` the byte ReadJoypad saw at each anchor is
     returned as well, in InputFrame order, which is how a movie becomes a
     session."""
-    key = stream_key(masks, frames, axis if frame_mode == "vblank" else f"{axis}:{frame_mode}")
+    key = stream_key(masks, frames, axis if frame_mode == "vblank" else f"{axis}:{frame_mode}", pokes)
     directory = CACHE / name / key
     meta_path = directory / "meta.json"
     if meta_path.is_file() and not record_input:
@@ -268,7 +272,7 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     calls = bytearray()
     vblank_writes = bytearray()
     inputs = bytearray()
-    with refstream.Core(padded) as core:
+    with refstream.Core(padded, pokes=pokes) as core:
         core.input_axis = axis
         core.frame_mode = frame_mode
         read = core.library.gambatte_cpuread
@@ -399,6 +403,9 @@ def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
         "--lag-track", str(lag_path),
         "--dump-state", str(state_path),
     ]
+    pokes_path = input_path.with_name("pokes.txt")
+    if pokes_path.is_file():
+        command += ["--poke-ordinal", str(pokes_path)]
     if digest_out:
         command += ["--digest-out", str(digest_out)]
         if mask_path:
@@ -432,10 +439,11 @@ def first_divergence(reference: bytes, native: bytes) -> tuple[int | None, int, 
     return None, nat_count, [], audio_first
 
 
-def reference_capture(name: str, masks: list[int], frames: int, ordinal: int) -> dict[str, bytes]:
+def reference_capture(name: str, masks: list[int], frames: int, ordinal: int,
+                      pokes: refstream.Pokes | None = None) -> dict[str, bytes]:
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     captured: dict[str, bytes] = {}
-    with refstream.Core(padded) as core:
+    with refstream.Core(padded, pokes=pokes) as core:
         core.input_axis = "ordinal"
         hits = 0
 
@@ -461,7 +469,7 @@ def capture(name: str, routine: str, *, after: int = 0, out: Path | None = None)
     """The reference's live state at `routine`'s first entry (at or after DoFrame
     `after`) while it replays session `name`, written as a case fixture
     (tests/cases/_fixtures.py): registers, SP, WRAM, HRAM and VRAM bank 0."""
-    masks, _meta = load_session(name)
+    masks, meta = load_session(name)
     frames = len(masks) * 2 + 400
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     candidates, by_bank_address = refstream.routine_entry_addresses()
@@ -470,7 +478,7 @@ def capture(name: str, routine: str, *, after: int = 0, out: Path | None = None)
         raise SessionError(f"{routine} is not a ported routine with a symbol")
     banks = {address: bank for (bank, address), label in by_bank_address.items() if label == routine}
     captured: dict[str, Any] = {}
-    with refstream.Core(padded) as core:
+    with refstream.Core(padded, pokes=meta["pokes"]) as core:
         core.input_axis = "ordinal"
         read = core.library.gambatte_cpuread
         registers = (ctypes.c_int * 10)()
@@ -525,7 +533,8 @@ def region_field(region: str, offset: int) -> tuple[str, int]:
 
 
 def attribute(name: str, masks: list[int], frames: int, ordinal: int,
-              native: dict[str, bytes], reference: dict[str, bytes]) -> list[dict[str, Any]]:
+              native: dict[str, bytes], reference: dict[str, bytes],
+              pokes: refstream.Pokes | None = None) -> list[dict[str, Any]]:
     tables = mask_tables()
     picked: list[tuple[str, int, int, int, str]] = []
     seen: set[str] = set()
@@ -546,7 +555,7 @@ def attribute(name: str, masks: list[int], frames: int, ordinal: int,
     writers = {
         int(entry["address"], 16): entry
         for entry in refstream.writers(f"session:{name}", frames, addresses, events=True,
-                                       masks=masks, axis="ordinal", ordinals=ordinal)
+                                       masks=masks, axis="ordinal", ordinals=ordinal, pokes=pokes)
     } if addresses else {}
     out = []
     for field, offset, got, want, symbol in picked:
@@ -571,7 +580,8 @@ def verify(name: str, *, write: bool, json_path: Path | None) -> int:
     frames = reference_frames(masks, meta)
     report: dict[str, Any] = {"schema": 2, "format": "session-verify-v2", "name": name,
                               "ordinals": n, "goal": meta.get("goal", "")}
-    ref_meta = build_reference(name, masks, frames)
+    pokes = meta["pokes"]
+    ref_meta = build_reference(name, masks, frames, pokes=pokes)
     reference = load_reference(ref_meta)
     ref_count = len(reference) // REFERENCE_RECORD.size
     if ref_count < n:
@@ -623,8 +633,8 @@ def verify(name: str, *, write: bool, json_path: Path | None) -> int:
             if not dump_path.is_file():
                 raise SessionError(f"no native dump at ordinal {ordinal}: {cap_failure[-300:]}")
             native_state = native_regions(json.loads(dump_path.read_text()))
-            reference_state = reference_capture(name, masks, frames, ordinal)
-            details = attribute(name, masks, frames, ordinal, native_state, reference_state)
+            reference_state = reference_capture(name, masks, frames, ordinal, pokes)
+            details = attribute(name, masks, frames, ordinal, native_state, reference_state, pokes)
             report["divergence"]["rows"] = details
             for row in details[:8]:
                 print(f"DIVERGE ordinal={ordinal} field={row['field']} address={row['address']} "
@@ -728,6 +738,86 @@ def record_meta(name: str, goal: str) -> int:
     return 0
 
 
+# The ROM's duel loop dispatches per turn holder (core.asm HandleTurn reads
+# DUELVARS_DUELIST_TYPE) and AIDoAction keys on the global wOpponentDeckID
+# (home/ai.asm), so with the player's duelist type set to AI the ROM plays
+# both sides of a duel by itself. The poke lands at the first anchor after
+# StartDuel_VSAIOpp/InitVariablesToBeginDuel have run and before
+# ChooseInitialArenaAndBenchPokemon reads the type (practice-win: 23,226 and
+# 23,840). Text boxes still wait for a press, so the tail mashes A.
+AI_DUEL = {
+    "wPlayerDuelistType": 0xC2F1, "wOpponentDuelistType": 0xC3F1,
+    "wDuelType": 0xCC09, "wOpponentDeckID": 0xCC0E, "wIsPracticeDuel": 0xCC13,
+    "wDuelInitialPrizes": 0xCC08, "wRNG1": 0xCACA, "wRNG2": 0xCACB,
+}
+DUELIST_TYPE_AI_OPP = 0x80
+WRAM = {"wDuelTurns": 0x0C06, "wDuelFinished": 0x0C07}
+AI_DUEL_MAX_ORDINALS = 80_000
+
+
+def ai_duel(name: str, *, base: str, at: int, deck: int, seed: int | None, prizes: int | None,
+            period: int, tail: int, goal: str) -> int:
+    """Branch `base` at DoFrame `at` into an AI-versus-AI duel and record the
+    session the reference plays: the base's input through `at`, the pokes,
+    then A every `period` DoFrames until wDuelFinished is set plus `tail`
+    more, so the result screen and the post-duel script are in the session."""
+    base_masks, base_meta = load_session(base)
+    if not 1 <= at <= len(base_masks):
+        raise SessionError(f"--at must be within {base}'s {len(base_masks)} ordinals")
+    if not 0 <= deck <= 0x7F:
+        raise SessionError("deck id must be 0..127")
+    pokes: refstream.Pokes = {k: list(v) for k, v in base_meta["pokes"].items() if k < at}
+    kind = DUELIST_TYPE_AI_OPP | deck
+    writes = [(AI_DUEL["wPlayerDuelistType"], kind), (AI_DUEL["wOpponentDuelistType"], kind),
+              (AI_DUEL["wDuelType"], kind), (AI_DUEL["wOpponentDeckID"], deck),
+              (AI_DUEL["wIsPracticeDuel"], 0)]
+    if prizes is not None:
+        writes.append((AI_DUEL["wDuelInitialPrizes"], prizes))
+    if seed is not None:
+        writes += [(AI_DUEL["wRNG1"], seed & 0xFF), (AI_DUEL["wRNG2"], (seed >> 8) & 0xFF)]
+    pokes.setdefault(at, []).extend(writes)
+    prefix = base_masks[:at]
+    mash = [0x10 if (i % period) < 4 else 0 for i in range(AI_DUEL_MAX_ORDINALS - at)]
+    masks = prefix + mash
+    finished_at: int | None = None
+    turns = 0
+    end = len(masks)
+    with refstream.Core(masks, pokes=pokes) as core:
+        core.input_axis = "ordinal"
+        core.install_exec(None)
+
+        def stop() -> bool:
+            nonlocal finished_at, turns, end
+            if core.ordinal <= at:
+                return False
+            wram = core.area("WRAM")
+            turns = wram[WRAM["wDuelTurns"]]
+            if finished_at is None and wram[WRAM["wDuelFinished"]] != 0:
+                finished_at = core.ordinal
+                end = min(len(masks), finished_at + tail)
+            return core.ordinal >= end
+
+        core.run(len(masks) * 2 + 400, stop=stop)
+    if finished_at is None:
+        raise SessionError(f"the duel did not finish within {AI_DUEL_MAX_ORDINALS} ordinals "
+                           f"(turns={turns}); the AI or the mash period stalled")
+    directory = session_dir(name)
+    directory.mkdir(parents=True, exist_ok=True)
+    (directory / "input.txt").write_text("\n".join(str(m) for m in masks[:end]) + "\n")
+    (directory / "pokes.txt").write_text(refstream.pokes_text(pokes))
+    meta = {
+        "schema": 1, "name": name, "ordinals": end,
+        "goal": goal or f"AI-versus-AI duel, deck id {deck}, branched from {base} at {at}",
+        "derived_from": base, "branch_ordinal": at, "ai_deck": deck, "seed": seed,
+        "prizes": prizes, "duel_finished_ordinal": finished_at, "duel_turns": turns,
+        "recorded": datetime.now(UTC).isoformat(timespec="seconds"),
+    }
+    (directory / "session.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
+    print(f"SESSION {name} ordinals={end} duel_finished={finished_at} turns={turns} "
+          f"deck={deck} seed={seed} prizes={prizes}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -750,6 +840,18 @@ def main(argv: list[str] | None = None) -> int:
     capture_parser.add_argument("--routine", required=True)
     capture_parser.add_argument("--after", type=int, default=0, help="first DoFrame ordinal to consider")
     capture_parser.add_argument("--out", type=Path)
+    duel_parser = sub.add_parser("ai-duel", help="branch a session into an AI-versus-AI duel")
+    duel_parser.add_argument("name")
+    duel_parser.add_argument("--from", dest="base", default="practice-win")
+    duel_parser.add_argument("--at", type=int, default=23227,
+                             help="DoFrame ordinal to poke at: after StartDuel_VSAIOpp, before the first turn")
+    duel_parser.add_argument("--deck", type=int, required=True,
+                             help="*_DECK_ID whose AI plays both sides (0 is Sam's scripted practice AI)")
+    duel_parser.add_argument("--seed", type=int, help="wRNG1/wRNG2 at the branch")
+    duel_parser.add_argument("--prizes", type=int, choices=range(1, 7))
+    duel_parser.add_argument("--period", type=int, default=24, help="DoFrames between A presses")
+    duel_parser.add_argument("--tail", type=int, default=1500, help="DoFrames kept after wDuelFinished")
+    duel_parser.add_argument("--goal", default="")
     args = parser.parse_args(argv)
     try:
         if args.command == "status":
@@ -761,6 +863,9 @@ def main(argv: list[str] | None = None) -> int:
             return derive(args.name, movie, args.goal or f"derived from {args.movie}")
         if args.command == "capture":
             return capture(args.name, args.routine, after=args.after, out=args.out)
+        if args.command == "ai-duel":
+            return ai_duel(args.name, base=args.base, at=args.at, deck=args.deck, seed=args.seed,
+                           prizes=args.prizes, period=args.period, tail=args.tail, goal=args.goal)
         name = args.name or lowest_confirmed()
         return verify(name, write=args.write_ratchet,
                       json_path=Path(args.json) if args.json else None)

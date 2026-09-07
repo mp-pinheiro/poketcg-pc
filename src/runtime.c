@@ -33,6 +33,9 @@ static RuntimeStateDumpCb g_ordinal_dump_callback;
 static const uint32_t *g_ordinal_dump_list;
 static size_t g_ordinal_dump_count;
 static uint32_t g_stop_ordinal;
+static const RuntimePoke *g_pokes;
+static size_t g_poke_count;
+static size_t g_poke_next;
 static const LagTrack *g_lag;
 /* Timer-ISR schedule progress within the current DoFrame interval. */
 static struct {
@@ -149,6 +152,13 @@ void runtime_set_state_dump_ordinals(
 void runtime_set_stop_ordinal(uint32_t ordinal)
 {
 	g_stop_ordinal = ordinal;
+}
+
+void runtime_set_pokes(const RuntimePoke *pokes, size_t count)
+{
+	g_pokes = pokes;
+	g_poke_count = count;
+	g_poke_next = 0;
 }
 
 typedef struct {
@@ -329,6 +339,13 @@ static void anchor(void *context)
 	 * and delivered at the game's counter writes (vblank_sync) and at the
 	 * interval's end (the host pass below). */
 	state->services = 0;
+	/* The reference's anchor digest includes its pokes (refstream.Core._exec
+	 * writes before the user callback runs), so poke before the digest. */
+	while (g_poke_next < g_poke_count && g_pokes[g_poke_next].ordinal <= ordinal) {
+		const RuntimePoke *poke = &g_pokes[g_poke_next++];
+		if (poke->ordinal == ordinal)
+			gb_write8(poke->address, poke->value);
+	}
 	if (g_record_sink) {
 		/* g_keys is hKeysHeld order; the timeline file is InputFrame order. */
 		fprintf(g_record_sink, "%u\n",

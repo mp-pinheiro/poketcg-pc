@@ -288,6 +288,64 @@ fail:
 	return -1;
 }
 
+/* Poke list: `<ordinal> <address> <value>` per line, any strtoul base, `#`
+ * comments, in ordinal order -- tools/completion/session.py writes it and
+ * refstream.Core replays the same file. */
+static int load_poke_list(const char *path, RuntimePoke **pokes_out, size_t *count_out)
+{
+	FILE *file = fopen(path, "r");
+	if (!file)
+		return -1;
+	RuntimePoke *pokes = NULL;
+	size_t count = 0, capacity = 0;
+	char line[256];
+	while (fgets(line, sizeof line, file)) {
+		char *hash = strchr(line, '#');
+		if (hash)
+			*hash = '\0';
+		char *cursor = line;
+		while (*cursor == ' ' || *cursor == '\t')
+			cursor++;
+		if (*cursor == '\0' || *cursor == '\n' || *cursor == '\r')
+			continue;
+		char *end;
+		unsigned long ordinal = strtoul(cursor, &end, 0);
+		if (end == cursor || ordinal == 0 || ordinal > UINT32_MAX)
+			goto fail;
+		cursor = end;
+		unsigned long address = strtoul(cursor, &end, 0);
+		if (end == cursor || address > 0xFFFFu)
+			goto fail;
+		cursor = end;
+		unsigned long value = strtoul(cursor, &end, 0);
+		if (end == cursor || value > 0xFFu)
+			goto fail;
+		while (*end == ' ' || *end == '\t' || *end == '\r' || *end == '\n')
+			end++;
+		if (*end != '\0')
+			goto fail;
+		if (count && pokes[count - 1].ordinal > ordinal)
+			goto fail;
+		if (count == capacity) {
+			capacity = capacity ? capacity * 2 : 16;
+			if (grow((void **)&pokes, capacity, sizeof *pokes) != 0)
+				goto fail;
+		}
+		pokes[count].ordinal = (uint32_t)ordinal;
+		pokes[count].address = (uint16_t)address;
+		pokes[count].value = (uint8_t)value;
+		count++;
+	}
+	fclose(file);
+	*pokes_out = pokes;
+	*count_out = count;
+	return 0;
+fail:
+	fclose(file);
+	free(pokes);
+	return -1;
+}
+
 static void state_dump_frames_callback(uint32_t frame, const RuntimeResult *result)
 {
 	char path[512];
@@ -325,6 +383,7 @@ int main(int argc, char **argv)
 	const char *input_path = NULL;
 	const char *input_ordinal_path = NULL;
 	const char *record_input_path = NULL;
+	const char *poke_ordinal_path = NULL;
 	const char *digest_out_path = NULL;
 	const char *lag_track_path = NULL;
 	const char *digest_mask_path = NULL;
@@ -370,6 +429,8 @@ int main(int argc, char **argv)
 			input_ordinal_path = argv[++i];
 		} else if (strcmp(argv[i], "--record-input") == 0 && i + 1 < argc) {
 			record_input_path = argv[++i];
+		} else if (strcmp(argv[i], "--poke-ordinal") == 0 && i + 1 < argc) {
+			poke_ordinal_path = argv[++i];
 		} else if (strcmp(argv[i], "--digest-out") == 0 && i + 1 < argc) {
 			digest_out_path = argv[++i];
 		} else if (strcmp(argv[i], "--lag-track") == 0 && i + 1 < argc) {
@@ -400,6 +461,7 @@ int main(int argc, char **argv)
 			       "[--require-data BANK:ADDR] [--load-save PATH] [--save PATH] "
 			       "[--dump-state PATH] [--dump-state-frames N[,N...]] "
 			       "[--input PATH] [--input-ordinal PATH] [--record-input PATH] "
+			       "[--poke-ordinal PATH] "
 			       "[--dump-state-ordinals N[,N...]] [--stop-ordinal N] "
 			       "[--digest-out PATH [--digest-mask FILE]] [--lag-track PATH] "
 			       "[--trace-entries PATH] [--trace-calls PATH] "
@@ -410,6 +472,9 @@ int main(int argc, char **argv)
 			       "past its end the keyboard takes over. They are exclusive\n");
 			printf("--record-input writes one decimal byte per DoFrame, the "
 			       "exact file --input-ordinal replays\n");
+			printf("--poke-ordinal applies `<ordinal> <address> <value>` bus "
+			       "writes at that DoFrame's anchor, the file a session's "
+			       "pokes.txt holds\n");
 			printf("--dump-state-ordinals and --stop-ordinal count DoFrames, "
 			       "not host frames\n");
 			printf("--digest-out writes 16 bytes per DoFrame: CRC-32 of WRAM, HRAM, "
@@ -479,10 +544,20 @@ int main(int argc, char **argv)
 		rom_pack_free();
 		return 2;
 	}
+	RuntimePoke *pokes = NULL;
+	size_t poke_count = 0;
+	if (poke_ordinal_path && load_poke_list(poke_ordinal_path, &pokes, &poke_count) != 0) {
+		fprintf(stderr, "cannot load poke list %s\n", poke_ordinal_path);
+		free(ordinal_buttons);
+		free(input_buttons);
+		rom_pack_free();
+		return 2;
+	}
 	LagTrack lag_track;
 	memset(&lag_track, 0, sizeof lag_track);
 	if (lag_track_path && load_lag_track(lag_track_path, &lag_track) != 0) {
 		fprintf(stderr, "cannot load lag track %s\n", lag_track_path);
+		free(pokes);
 		free(ordinal_buttons);
 		free(input_buttons);
 		rom_pack_free();
@@ -495,6 +570,7 @@ int main(int argc, char **argv)
 		if (!record_sink) {
 			fprintf(stderr, "cannot open --record-input %s: %s\n",
 			        record_input_path, strerror(errno));
+			free(pokes);
 			free(ordinal_buttons);
 			free(input_buttons);
 			rom_pack_free();
@@ -506,6 +582,7 @@ int main(int argc, char **argv)
 		        digest_out_path, strerror(errno));
 		if (record_sink)
 			fclose(record_sink);
+		free(pokes);
 		free(ordinal_buttons);
 		free(input_buttons);
 		rom_pack_free();
@@ -515,6 +592,7 @@ int main(int argc, char **argv)
 	if (!shell) {
 		if (record_sink)
 			fclose(record_sink);
+		free(pokes);
 		free(ordinal_buttons);
 		free(input_buttons);
 		rom_pack_free();
@@ -530,11 +608,13 @@ int main(int argc, char **argv)
 	runtime_set_ordinal_input(ordinal_buttons, ordinal_count);
 	runtime_set_record_input(record_sink);
 	runtime_set_stop_ordinal(stop_ordinal);
+	runtime_set_pokes(pokes, poke_count);
 	if (checkpoint_path) {
 		if (checkpoint_load(checkpoint_path) != 0) {
 			fprintf(stderr, "cannot load checkpoint %s\n", checkpoint_path);
 			if (record_sink)
 				fclose(record_sink);
+			free(pokes);
 			free(ordinal_buttons);
 			free(input_buttons);
 			shell_destroy(shell);
@@ -558,7 +638,9 @@ int main(int argc, char **argv)
 	}
 	runtime_set_record_input(NULL);
 	runtime_set_lag_track(NULL);
+	runtime_set_pokes(NULL, 0);
 	lag_track_free(&lag_track);
+	free(pokes);
 	free(ordinal_buttons);
 	free(input_buttons);
 	if (g_dump_frames_failed)

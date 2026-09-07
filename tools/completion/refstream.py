@@ -188,6 +188,8 @@ def _library() -> tuple[ctypes.CDLL, dict[str, Any]]:
     library.gambatte_setwritecallback.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
     library.gambatte_newstatelen.argtypes = [ctypes.c_void_p]
     library.gambatte_newstatelen.restype = ctypes.c_int
+    library.gambatte_cpuwrite.argtypes = [ctypes.c_void_p, ctypes.c_ushort, ctypes.c_ubyte]
+    library.gambatte_cpuwrite.restype = None
     return library, pins
 
 
@@ -202,8 +204,11 @@ def native_mask_to_gambatte(mask: int) -> int:
     return ((mask << 4) | (mask >> 4)) & 0xFF
 
 
+Pokes = dict[int, list[tuple[int, int]]]
+
+
 class Core:
-    def __init__(self, masks: list[int], *, gba: bool = False) -> None:
+    def __init__(self, masks: list[int], *, gba: bool = False, pokes: Pokes | None = None) -> None:
         self.library, self.pins = _library()
         import gambatte_runner
 
@@ -215,6 +220,12 @@ class Core:
         self._sound = (ctypes.c_int16 * ((SAMPLES_PER_FRAME + 2064) * 2))()
         self._registers = (ctypes.c_int * 10)()
         self._masks = masks
+        # {ordinal: [(address, value)]}, written at that DoFrame anchor right
+        # after the ordinal counts, the same point the native lane pokes
+        # (src/runtime.c anchor). A poke is a seeded state, exactly what a case
+        # fixture is; it lets a session start the ROM somewhere its scripts
+        # never would, such as an AI-versus-AI duel.
+        self._pokes: Pokes = pokes or {}
         self.frame = 0
         # Real time: stereo samples emitted at 2 MiHz, two cycles each, LCD on
         # or off. `frame` only counts rendered frames.
@@ -246,6 +257,8 @@ class Core:
         self._keepalive.append(identity)
         self.library.gambatte_settimemode(self.core, True)
         self.library.gambatte_settime(self.core, 0)
+        if self._pokes:
+            self.install_exec(None)  # pokes ride the anchor callback
 
     def hold(self, mask: int | None) -> None:
         """Drive input from an explicit mask instead of the scenario timeline,
@@ -268,6 +281,10 @@ class Core:
     def _exec(self, address: int, cycle: int) -> None:
         if address == DOFRAME_ANCHOR:
             self.ordinal += 1
+            writes = self._pokes.get(self.ordinal)
+            if writes:
+                for target, value in writes:
+                    self.library.gambatte_cpuwrite(self.core, target, value)
         if self._user_exec is not None:
             self._user_exec(address, cycle)
 
@@ -386,6 +403,31 @@ def load_masks(path: str | Path) -> list[int]:
     native --input flag consumes and tas_movie.py emits."""
     text = Path(path).read_text()
     return [int(part) for part in text.replace("\n", ",").split(",") if part.strip()]
+
+
+def load_pokes(path: str | Path) -> Pokes:
+    """`ordinal address value` per line, any int syntax, `#` comments. Bus
+    addresses only (WRAM/HRAM); the same file feeds the native --poke-ordinal."""
+    pokes: Pokes = {}
+    for number, line in enumerate(Path(path).read_text().splitlines(), 1):
+        text = line.split("#", 1)[0].strip()
+        if not text:
+            continue
+        parts = text.split()
+        if len(parts) != 3:
+            raise RefstreamError(f"{path}:{number}: expected `ordinal address value`")
+        ordinal, address, value = (int(part, 0) for part in parts)
+        if ordinal < 1 or not 0 <= address <= 0xFFFF or not 0 <= value <= 0xFF:
+            raise RefstreamError(f"{path}:{number}: out of range")
+        pokes.setdefault(ordinal, []).append((address, value))
+    return pokes
+
+
+def pokes_text(pokes: Pokes | None) -> str:
+    """Canonical form, for cache keys and for writing pokes.txt."""
+    return "".join(f"{ordinal} 0x{address:04X} 0x{value:02X}\n"
+                   for ordinal in sorted(pokes or {})
+                   for address, value in pokes[ordinal])
 
 
 def movie_profile(path: str | Path) -> dict[str, Any]:
@@ -594,7 +636,7 @@ EVENT_CAP = 8192
 def writers(
     scenario: str, frames: int, addresses: list[int], *, events: bool = False,
     masks: list[int] | None = None, axis: str | None = None,
-    ordinals: int | None = None,
+    ordinals: int | None = None, pokes: Pokes | None = None,
 ) -> list[dict[str, Any]]:
     """`ordinals` stops the replay once that many DoFrame anchors have fired.
     The write callback fires on every store, so an unbounded run over a long
@@ -608,7 +650,7 @@ def writers(
         address: {} for address in addresses
     }
     stream: dict[int, list[dict[str, Any]]] = {address: [] for address in addresses}
-    with Core(masks) as core:
+    with Core(masks, pokes=pokes) as core:
         core.input_axis = axis or ("frame" if movie else "ordinal")
 
         def on_write(address: int, _cycle: int) -> None:
@@ -676,7 +718,7 @@ def writer_before(entry: dict[str, Any], ordinal: int) -> dict[str, Any] | None:
 def routine_trace(
     scenario: str, frames: int, wanted: set[str] | None, *,
     ordinals: int | None = None, masks: list[int] | None = None,
-    axis: str | None = None,
+    axis: str | None = None, pokes: Pokes | None = None,
 ) -> dict[str, Any]:
     """Reference routine-entry counts. `ordinals` bounds the run by DoFrame
     anchors instead of PPU frames, which is the only axis comparable against
@@ -691,7 +733,7 @@ def routine_trace(
         masks = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     candidates, by_bank_address = routine_entry_addresses()
     events: list[tuple[int, str]] = []
-    with Core(masks) as core:
+    with Core(masks, pokes=pokes) as core:
         core.input_axis = axis or ("frame" if movie else "ordinal")
 
         def on_exec(address: int, _cycle: int) -> None:

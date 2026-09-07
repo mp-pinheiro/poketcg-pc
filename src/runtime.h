@@ -55,6 +55,17 @@ void runtime_set_record_input(FILE *sink);
 void runtime_set_state_dump_ordinals(
 	RuntimeStateDumpCb callback, const uint32_t *ordinals, size_t count);
 void runtime_set_stop_ordinal(uint32_t ordinal);
+/* Pokes: bus writes applied at the anchor of the named ordinal, right after
+ * the interval's VBlank services and before the digest and any dump, which
+ * is where refstream.Core applies the same file. Sorted by ordinal. A poke is
+ * a seeded state, the thing every oracle fixture is; it lets a session start
+ * the ROM somewhere its scripts never would, such as an AI-versus-AI duel. */
+typedef struct {
+	uint32_t ordinal;
+	uint16_t address;
+	uint8_t value;
+} RuntimePoke;
+void runtime_set_pokes(const RuntimePoke *pokes, size_t count);
 /* Lag track: for DoFrame k, entry k-1 is (cycles of real time, timer ISRs,
  * VBlank ISRs) the reference spent between anchors k-1 and k, read off the
  * ROM's own counters, plus the ISR schedule of that interval's timer sync
