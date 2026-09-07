@@ -118,9 +118,12 @@ void DefaultScreenAnimationUpdate(void)
 /* <<< factory DefaultScreenAnimationUpdate */
 
 /* >>> factory DoScreenAnimationUpdate */
+/* screen_effects.asm:75-83: one final tick of the registered update with the
+ * duration forced to 1, then the default update ends the animation. */
 void DoScreenAnimationUpdate(void)
 {
 	wScreenAnimDuration = 1u;
+	CallScreenAnimationUpdate();
 	DefaultScreenAnimationUpdate();
 }
 /* <<< factory DoScreenAnimationUpdate */
@@ -178,6 +181,27 @@ void Func_1ce03(uint8_t a)
 }
 /* <<< factory Func_1ce03 */
 
+/* screen_effects.asm:104-111 and 132-139: the per-frame shake, run through
+ * wScreenAnimUpdatePtr. UpdateShakeOffset leaves hl on the offset byte when
+ * it advanced (carry), which is added to the scroll register. */
+static void shake_screen_x_update(void)
+{
+	(void)DecrementScreenAnimDuration(0u);
+	UpdateShakeOffsetResult shake = UpdateShakeOffset();
+	if ((shake.f & 0x10u) != 0u)
+		hSCX = (uint8_t)(hSCX + gb_read8(shake.hl));
+	LoadDefaultScreenAnimationUpdateWhenFinished();
+}
+
+static void shake_screen_y_update(void)
+{
+	(void)DecrementScreenAnimDuration(0u);
+	UpdateShakeOffsetResult shake = UpdateShakeOffset();
+	if ((shake.f & 0x10u) != 0u)
+		hSCY = (uint8_t)(hSCY + gb_read8(shake.hl));
+	LoadDefaultScreenAnimationUpdateWhenFinished();
+}
+
 /* >>> factory ShakeScreenX_Big */
 void ShakeScreenX_Big(void)
 {
@@ -192,6 +216,17 @@ void ShakeScreenX_Small(void)
 }
 /* <<< factory ShakeScreenX_Small */
 
+/* screen_effects.asm:238-255: each BGScrollMod value lasts 8 ticks of the
+ * duration, walked from the last entry backwards. */
+static void distort_screen_update(void)
+{
+	static const uint8_t BGScrollModData[8] = {4u, 3u, 2u, 1u, 1u, 1u, 1u, 2u};
+	uint8_t duration = wScreenAnimDuration;
+	wBGScrollMod = BGScrollModData[(uint8_t)((duration >> 3) & 0x07u)];
+	(void)DecrementScreenAnimDuration(0u);
+	LoadDefaultScreenAnimationUpdateWhenFinished();
+}
+
 /* >>> factory DistortScreen */
 void DistortScreen(void)
 {
@@ -205,14 +240,22 @@ void DistortScreen(void)
 
 	/* .UpdateFunc: real asm has no ret before this label, so it executes
 	 * inline as part of the same call. */
-	uint8_t duration = wScreenAnimDuration;
-	uint8_t index = (uint8_t)((duration >> 3) & 0x07u);
-	static const uint8_t BGScrollModData[8] = {4u, 3u, 2u, 1u, 1u, 1u, 1u, 2u};
-	wBGScrollMod = BGScrollModData[index];
-	(void)DecrementScreenAnimDuration(0u);
-	LoadDefaultScreenAnimationUpdateWhenFinished();
+	distort_screen_update();
 }
 /* <<< factory DistortScreen */
+
+/* screen_effects.asm:208-221: restores the saved palettes when the flash
+ * runs out. */
+static void white_flash_screen_update(void)
+{
+	(void)DecrementScreenAnimDuration(0u);
+	if (wScreenAnimDuration != 0u)
+		return;
+	CopyDataHLtoDE_SaveRegisters(wTempBackgroundPalettesCGB_ADDR, wBackgroundPalettesCGB_ADDR, 64u);
+	SetBGP(wTempWhiteFlashBGP);
+	FlushAllPalettes();
+	DefaultScreenAnimationUpdate();
+}
 
 /* >>> factory WhiteFlashScreen */
 void WhiteFlashScreen(void)
@@ -227,13 +270,7 @@ void WhiteFlashScreen(void)
 
 	/* .UpdateFunc: real asm has no ret before this label, so it executes
 	 * inline as part of the same call. */
-	(void)DecrementScreenAnimDuration(0u);
-	if (wScreenAnimDuration != 0u)
-		return;
-	CopyDataHLtoDE_SaveRegisters(wTempBackgroundPalettesCGB_ADDR, wBackgroundPalettesCGB_ADDR, 64u);
-	SetBGP(wTempWhiteFlashBGP);
-	FlushAllPalettes();
-	DefaultScreenAnimationUpdate();
+	white_flash_screen_update();
 }
 /* <<< factory WhiteFlashScreen */
 
@@ -288,3 +325,22 @@ void InitScreenAnimation(void)
 	entry->handler();
 }
 /* <<< factory InitScreenAnimation */
+
+/* `call CallHL2` on wScreenAnimUpdatePtr (screen_effects.asm:82 and
+ * animations/core.asm:416-421). The pointer only ever holds one of the five
+ * update routines this file registers. */
+void CallScreenAnimationUpdate(void)
+{
+	uint16_t target = (uint16_t)(gb_read8(wScreenAnimUpdatePtr_ADDR) |
+	                             ((uint16_t)gb_read8((uint16_t)(wScreenAnimUpdatePtr_ADDR + 1u)) << 8));
+	switch (target) {
+	case SHAKE_SCREEN_X_UPDATE_FUNC_ADDR: shake_screen_x_update(); return;
+	case SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR: shake_screen_y_update(); return;
+	case WHITEFLASHSCREEN_UPDATEFUNC_ADDR: white_flash_screen_update(); return;
+	case DISTORTSCREEN_UPDATEFUNC_ADDR: distort_screen_update(); return;
+	case DEFAULT_SCREEN_ANIMATION_UPDATE_ADDR: DefaultScreenAnimationUpdate(); return;
+	default:
+		fprintf(stderr, "wScreenAnimUpdatePtr holds unknown target %04X\n", target);
+		abort();
+	}
+}

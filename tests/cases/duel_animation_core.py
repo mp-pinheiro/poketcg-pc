@@ -10,9 +10,11 @@ CONTRACT = {
         "compare": ("b", "c", "hl"),
         "preserve": ("b", "c", "hl"),
     },
+    # The sprite path pushes and pops bc/de/hl; the special path (`jp
+    # Func_1cb5e`, animations $61+) does not, and no caller reads them.
     "PlayLoadedDuelAnimation": {
-        "compare": ("b", "c", "d", "e", "hl"),
-        "preserve": ("b", "c", "d", "e", "hl"),
+        "compare": (),
+        "preserve": (),
     },
     "LoadDuelAnimationToBuffer": {
         "compare": ("a", "b", "c", "d", "e", "hl"),
@@ -40,6 +42,11 @@ CASES = {
          "expect": {0xD4BF: b"\x01"}},
         {"wram": {WDO_FRAME_FN: bytes([UPDATE_LO, 0x00]), 0xD422: b"\x01", 0xD421: b"\x00"},
          "expect": {0xD4BF: b"\x00"}, "read": {0xD4BF: 1}},
+        # DUEL_ANIM_SMALL_SHAKE_X ($61) is a screen animation, not a sprite
+        # table row: it registers ShakeScreenX's update and a 24-frame duration.
+        {"wram": {WDO_FRAME_FN: bytes([UPDATE_LO, UPDATE_HI]), 0xD422: b"\x61", 0xD421: b"\x00",
+                  0xD42A: b"\xff", 0xD4B9: b"\x00\x00\x00\x00\x00"},
+         "read": {0xD42A: 1, 0xD4B9: 5}},
     ],
     "LoadDuelAnimationToBuffer": [
         {"wram": {0xD4AC: b"\x00", 0xD4AD: b"\x00", 0xD422: b"\x01", 0xD4AE: b"\x02",
@@ -65,6 +72,12 @@ CASES = {
                            QUEUE: b"\x01\xff\x02\xff\x03\xff\x04"},
              expect={0xD4C0: b"\xff", QUEUE: b"\x01\xff\x02\xff\x03\xff\x04"},
              expect_regs={"a": 0xff}),
+        # A running shake ($61, ShakeScreenX's update at 06:4CFF) on its last
+        # frame: the update ends it, wActiveScreenAnim goes back to $ff and the
+        # empty buffer leaves a = $ff.
+        {"wram": {0xD42A: b"\x61", 0xD4C0: b"\xff", 0xD4B9: b"\xff\x4c\x01\x55\x4d",
+                  0xFF80: b"\x06", 0xFF92: b"\x00", 0xD4AC: b"\x00\x00", QUEUE: b"\xff" * 7},
+         "read": {0xD42A: 1, 0xD4B9: 5, 0xFF92: 1}},
     ],
     "ClearAndDisableQueuedAnimations": [
         {"wram": {WDO_FRAME_FN: bytes([UPDATE_LO, UPDATE_HI]), 0xD42A: b"\xFF",
@@ -155,9 +168,9 @@ MUTATIONS = {
     },
     "PlayLoadedDuelAnimation": {
         "source_symbol": "PlayLoadedDuelAnimation",
-        "before": "if (lo != (uint8_t)UPDATE_ADDR || hi != (uint8_t)(UPDATE_ADDR >> 8))\n        return;",
-        "after": "if (lo != (uint8_t)UPDATE_ADDR && hi != (uint8_t)(UPDATE_ADDR >> 8))\n        return;",
-        "case_ids": ["PlayLoadedDuelAnimation-3", "PlayLoadedDuelAnimation-zero"],
+        "before": "if (animation >= DUEL_SPECIAL_ANIMS) {",
+        "after": "if (animation >= 0x96u) {",
+        "case_ids": ["PlayLoadedDuelAnimation-4"],
     },
     "LoadDuelAnimationToBuffer": {
         "source_symbol": "LoadDuelAnimationToBuffer",
@@ -167,9 +180,9 @@ MUTATIONS = {
     },
     "_UpdateQueuedAnimations": {
         "source_symbol": "_UpdateQueuedAnimations",
-        "before": "accumulator &= read(queue_addr);",
-        "after": "accumulator |= read(queue_addr);",
-        "case_ids": ["_UpdateQueuedAnimations-1", "_UpdateQueuedAnimations-zero"],
+        "before": "        CallScreenAnimationUpdate();\n        active = read(wActiveScreenAnim_ADDR);",
+        "after": "        active = read(wActiveScreenAnim_ADDR);",
+        "case_ids": ["_UpdateQueuedAnimations-3"],
     },
     "ClearAndDisableQueuedAnimations": {
         "source_symbol": "ClearAndDisableQueuedAnimations",

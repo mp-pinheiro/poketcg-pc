@@ -8,6 +8,8 @@
 #include "home/sound.h"
 #include "home/play_animation.h"
 #include "mem.h"
+
+#define DUEL_SPECIAL_ANIMS 0x61u
 #include "home/lcd.h"
 
 #define QUEUE_ADDR 0xd423u
@@ -70,8 +72,13 @@ void PlayLoadedDuelAnimation(void)
         return;
     uint8_t animation = read(wTempAnimation_ADDR);
     write(wd4bf_ADDR, animation);
-    if (animation >= 0x96u) return;
-    if (animation == 0) return;
+    /* core.asm:42-43: everything from DUEL_SPECIAL_ANIMS up -- the screen
+     * shakes and distortions, the damage HUD, and the $96+ screen effects --
+     * is handled by Func_1cb5e, not the sprite animation table. */
+    if (animation >= DUEL_SPECIAL_ANIMS) {
+        Func_1cb5e(animation);
+        return;
+    }
     const uint8_t *anim = rom_ptr(ANIMATIONS_BANK, ANIMATIONS_ADDR) + (uint16_t)animation * ANIM_ENTRY_SIZE;
     uint8_t sprite_id  = anim[0];
     uint8_t palette_id = anim[1];
@@ -136,8 +143,15 @@ static uint8_t play_buffered_duel_animations(void)
 DuelAnimationUpdateResult _UpdateQueuedAnimations(uint16_t entry_hl)
 {
     uint8_t active = read(wActiveScreenAnim_ADDR);
-    if (active != 0xff)
-        return (DuelAnimationUpdateResult){active, entry_hl};
+    if (active != 0xff) {
+        /* core.asm:416-421: tick the screen animation; when it just ended,
+         * the buffered animations resume this same frame. */
+        CallScreenAnimationUpdate();
+        active = read(wActiveScreenAnim_ADDR);
+        if (active == 0xff)
+            active = play_buffered_duel_animations();
+        return (DuelAnimationUpdateResult){active, wScreenAnimUpdatePtr_ADDR + 1u};
+    }
     uint8_t accumulator = read(wd4c0_ADDR);
     if (accumulator == 0x80) {
         write(wd4c0_ADDR, 0xff);
@@ -170,6 +184,8 @@ DuelAnimationResult ClearAndDisableQueuedAnimations(void)
     if (lo != (uint8_t)UPDATE_ADDR || hi != (uint8_t)(UPDATE_ADDR >> 8))
         return (DuelAnimationResult){0, 0x10};
     write(wd4c0_ADDR, 0xff);
+    if (read(wActiveScreenAnim_ADDR) != 0xff)
+        DoScreenAnimationUpdate();
     for (uint8_t i = 0; i < QUEUE_LENGTH; i++) {
         uint16_t queue_addr = (uint16_t)(QUEUE_ADDR + i);
         uint8_t sprite = read(queue_addr);

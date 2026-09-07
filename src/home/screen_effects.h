@@ -56,4 +56,6 @@ void ShakeScreenY_Small(void);
 /* >>> factory InitScreenAnimation */
 void InitScreenAnimation(void);
 /* <<< factory InitScreenAnimation */
+
+void CallScreenAnimationUpdate(void);
 #endif /* POKETCG_HOME_SCREEN_EFFECTS_H */
