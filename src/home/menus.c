@@ -218,7 +218,11 @@ static HandleMenuInputResult DrawCursorRegs(uint8_t tile)
 
 	AdjustCoordinatesForBGScroll(&d, &e);
 	WriteByteToBGMap0(tile, d, e);
-	return (HandleMenuInputResult){tile, e, (tile == 0u) ? 0x80u : 0x00u};
+	/* menus.asm DrawCursor ends `or a` on what WriteByteToBGMap0 leaves:
+	 * the tile with the LCD off, and rSTAT's mode bits -- 0, HBlank asserted --
+	 * after HblankCopyDataHLtoDE with it on (bg_map.asm:52-88, hblank.asm:12-14). */
+	uint8_t a = (wLCDC & 0x80u) != 0u ? 0u : tile;
+	return (HandleMenuInputResult){a, e, (a == 0u) ? 0x80u : 0x00u};
 }
 
 void DrawCursor(uint8_t a)
