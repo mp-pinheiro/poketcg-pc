@@ -3051,9 +3051,8 @@ void PrintPlayAreaCardLocation(void)
 uint8_t CheckPrintPoisoned(uint8_t a, uint8_t b, uint8_t c)
 {
 	uint8_t status = a;
-	if ((status & POISONED) != 0u)
-		a = SYM_POISONED;
-	WriteByteToBGMap0(a, b, c);
+	/* `and POISONED` leaves a = 0 (SYM_SPACE) for every other status bit. */
+	WriteByteToBGMap0((status & POISONED) != 0u ? SYM_POISONED : SYM_SPACE, b, c);
 	return status;
 }
 /* <<< factory CheckPrintPoisoned */

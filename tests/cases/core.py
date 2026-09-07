@@ -912,6 +912,8 @@ CASES["CheckPrintPoisoned"] = [
     {"a": 0, "b": 1, "c": 2, "read": {0x9841: 1}},
     {"a": 0x80, "b": 2, "c": 3, "read": {0x9862: 1}},
     dict(POISON, a=0xC0, b=4, c=5, read={0x98A4: 1}),
+    # Paralyzed without poison: `and POISONED` prints SYM_SPACE, not the status byte.
+    dict(POISON, a=0x03, b=11, c=5, read={0x98AB: 1}),
 ]
 # <<< factory CheckPrintPoisoned
 
@@ -6044,9 +6046,9 @@ MUTATIONS["PrintPlayAreaCardLocation"] = {
 # >>> factory-mutation CheckPrintPoisoned
 MUTATIONS["CheckPrintPoisoned"] = {
     "source_symbol": "CheckPrintPoisoned",
-    "before": "if ((status & POISONED) != 0u)",
-    "after": "if ((status & POISONED) == 0u)",
-    "case_ids": ["CheckPrintPoisoned-1", "CheckPrintPoisoned-2"],
+    "before": "(status & POISONED) != 0u ? SYM_POISONED : SYM_SPACE",
+    "after": "(status & POISONED) != 0u ? SYM_POISONED : status",
+    "case_ids": ["CheckPrintPoisoned-3"],
 }
 # <<< factory-mutation CheckPrintPoisoned
 # >>> factory-mutation Func_14323
