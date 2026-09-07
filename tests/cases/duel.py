@@ -522,6 +522,11 @@ CASES = {
              read={0xC3BB: 1}),
     ],
     "EvolvePokemonCard": [
+        # The practice-duel state (tests/cases/_fixtures.py): Seaking (deck
+        # card 3, in hand) onto the arena Goldeen (card 6). Card 3 leaves the
+        # hand for CARD_LOCATION_ARENA, the hand list and count shrink, the
+        # arena card index, HP difference, flags and stage are rewritten.
+        dict(_attack_fixture(vram=False, **{"FF98": b"\x03", "FF9D": b"\x00"}), **_ATTACK_REGS),
         {"wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x08\x09",
                   0xC2BB: b"\x00", 0xC2C8: b"\x0a",
                   0xFF98: b"\x01", 0xFF9D: b"\x00"},
@@ -2029,6 +2034,7 @@ MUTATIONS = {
     },
 }
 # >>> factory-mutation GetFirstSetPrizeCard
+MUTATIONS["EvolvePokemonCard"] = {"source_symbol": "EvolvePokemonCard", "before": "\t(void)PutHandCardInPlayArea(card_idx, slot);", "after": "\t(void)card_idx;", "case_ids": ["EvolvePokemonCard-0"]}
 MUTATIONS["GetFirstSetPrizeCard"] = {"source_symbol": "GetFirstSetPrizeCard", "before": "\t\tif ((mask & prizes) != 0u)", "after": "\t\tif ((mask & prizes) == 0u)", "case_ids": ["GetFirstSetPrizeCard-1", "GetFirstSetPrizeCard-2", "GetFirstSetPrizeCard-6"]}
 # <<< factory-mutation GetFirstSetPrizeCard
 # >>> factory-mutation DrawCheckMenuCursor_YourOrOppPlayArea

@@ -1241,6 +1241,8 @@ EvolveResult EvolvePokemonCard(void)
 	(void)LoadCardDataToBuffer2_FromDeckIndex(pre_evo_idx);
 	gb_write8(arena_addr, card_idx);
 	(void)LoadCardDataToBuffer1_FromDeckIndex(card_idx);
+	/* duel.asm:837-838: the evolution card leaves the hand for the play area. */
+	(void)PutHandCardInPlayArea(card_idx, slot);
 
 	hp_addr = (uint16_t)(page | (uint8_t)(DUELVARS_ARENA_CARD_HP + slot));
 	old_hp2 = gb_read8(wLoadedCard2HP_ADDR);
