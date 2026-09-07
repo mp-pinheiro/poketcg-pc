@@ -2,6 +2,7 @@
 """Compare one schema-2 function case through GBRT and the native probe."""
 
 from __future__ import annotations
+
 import argparse
 import importlib
 import importlib.util
@@ -163,7 +164,7 @@ def main() -> int:
         seed_wram_spec = ";".join(seed_parts)
         seed_sram_spec = ";".join(seed_sram_parts)
         seed_vram_spec = ";".join(seed_vram_parts)
-        if mode == "pre-ret" and isinstance(completion_spec, dict):
+        if mode in ("pre-ret", "entry") and isinstance(completion_spec, dict):
             case["stop_pc"] = int(completion_spec["pc"])
         case["completion"] = mode
     else:
@@ -178,8 +179,14 @@ def main() -> int:
         raise SystemExit("SCHEMA case function does not match --fn")
     completion = case.get("completion")
     mode = completion.get("mode") if isinstance(completion, dict) else completion
-    if mode not in ("return", "pre-ret", "event") or not isinstance(case.get("registers"), dict):
-        raise SystemExit("SCHEMA case requires completion=return|pre-ret|event and registers")
+    # `entry` stops both lanes at a named callee's entry (tests/test_leaves.py):
+    # the reference at its pc like pre-ret, the native lane at the C symbol
+    # (src/probe.c stop_routine). Only the .py case modules declare it.
+    if mode not in ("return", "pre-ret", "event", "entry") or not isinstance(case.get("registers"), dict):
+        raise SystemExit("SCHEMA case requires completion=return|pre-ret|event|entry and registers")
+    if mode == "entry" and (args.case.suffix != ".py" or not isinstance(completion_spec, dict)
+                            or not isinstance(completion_spec.get("routine"), str)):
+        raise SystemExit("SCHEMA entry completion requires a .py case with pc, bank and routine")
     if not args.rom.is_absolute() or not args.symbols.is_absolute():
         raise SystemExit("SCHEMA --rom and --symbols must be absolute paths")
     if not args.rom.is_file() or not args.symbols.is_file():
@@ -193,7 +200,7 @@ def main() -> int:
     # `stack` and `entry_sp` are optional: only routines entered mid-frame or
     # reading their entry SP declare them.
     optional = {"stack", "entry_sp", "post_call_byte", "reason", "why"}
-    if mode == "pre-ret":
+    if mode in ("pre-ret", "entry"):
         required.add("stop_pc" if isinstance(completion, str) else "completion")
     if mode == "event":
         if isinstance(completion_spec, str) or args.case.suffix != ".py":
@@ -231,7 +238,7 @@ def main() -> int:
             raise SystemExit(f"SCHEMA invalid positive integer {name}")
     if case["entry"] > 0xffff or case["instruction_budget"] > 0xffffffff or case["cycle_budget"] > 0xffffffff:
         raise SystemExit("SCHEMA numeric field out of range")
-    if mode == "pre-ret" and (
+    if mode in ("pre-ret", "entry") and (
         isinstance(case["stop_pc"], bool) or not isinstance(case["stop_pc"], int)
         or not 0 <= case["stop_pc"] <= 0xffff
     ):
@@ -320,7 +327,7 @@ def main() -> int:
     # zero- or one-entry timeline.
     keys = case["input_events"][0]["keys"] if case["input_events"] else 0
     request = {
-        "completion": mode,
+        "completion": "pre-ret" if mode == "entry" else mode,
         "hardware": case["hardware"],
         "entry": int(case["entry"]),
         "instruction_budget": int(case["instruction_budget"]),
@@ -342,7 +349,7 @@ def main() -> int:
         request["stack"] = [int(word) for word in stack_words]
     if post_call_byte is not None:
         request["post_call_byte"] = post_call_byte
-    if mode == "pre-ret":
+    if mode in ("pre-ret", "entry"):
         request["stop_pc"] = int(case["stop_pc"] if isinstance(completion, str) else completion["pc"])
     if mode == "event":
         if isinstance(completion_spec, dict):
@@ -411,7 +418,7 @@ def main() -> int:
     if payload is None:
         raise SystemExit("BACKEND missing JSON result")
     reference = json.loads(payload)
-    if reference.get("status") != "REFERENCE_OK" or reference.get("completion") != mode:
+    if reference.get("status") != "REFERENCE_OK" or reference.get("completion") != ("pre-ret" if mode == "entry" else mode):
         raise SystemExit("BACKEND invalid completion result")
     pairs = {}
     for pair in ("af", "bc", "de"):
@@ -468,6 +475,8 @@ def main() -> int:
         probe_request["post_call_byte"] = post_call_byte
     if seed_native_rom_bank:
         probe_request["rom_bank"] = int(case["mapper"]["rom_bank"])
+    if mode == "entry":
+        probe_request["stop_routine"] = completion_spec["routine"]
     probe = subprocess.run(
         [str(args.probe)], input=json.dumps(probe_request),
         text=True, capture_output=True, check=False, timeout=30, env=env,
