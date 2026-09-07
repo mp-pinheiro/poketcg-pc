@@ -1,3 +1,4 @@
+from tests.cases._fixtures import in_play_area_b_exit_fixture as _in_play_area_b_exit_fixture, IN_PLAY_AREA_B_EXIT_REGS as _IN_PLAY_AREA_B_EXIT_REGS
 wOAM = 0xCA00
 wVBlankOAMCopyToggle = 0xCAC0
 OAM_SIZE = 160
@@ -41,6 +42,11 @@ MUTATIONS = {
 
 # >>> factory OpenInPlayAreaScreen_HandleInput
 CONTRACT["OpenInPlayAreaScreen_HandleInput"] = {"compare": ("a", "f"), "preserve": ()}
+# The routine reads the joypad snapshot without polling, so the frame's B press
+# (hDPadHeld, hKeysHeld, hKeysPressed) is seeded here; the fixture leaves it out.
+_B_EXIT = _in_play_area_b_exit_fixture(bank=6)
+_B_EXIT["wram"] = {**_B_EXIT["wram"], 0xFF8F: b"\x02", 0xFF90: b"\x02", 0xFF91: b"\x02"}
+_B_EXIT["read"] = {**_B_EXIT["read"], 0xCEA3: 1}
 CASES["OpenInPlayAreaScreen_HandleInput"] = [
     {
         "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
@@ -50,6 +56,7 @@ CASES["OpenInPlayAreaScreen_HandleInput"] = [
         "hram": {0xFF8F: b"\x00", 0xFF91: b"\x00"},   # hDPadHeld=0, hKeysPressed=0
         "expect_regs": {"a": 0x01, "f": 0x20},
     },
+    dict(_B_EXIT, **_IN_PLAY_AREA_B_EXIT_REGS),
 ]
 # <<< factory OpenInPlayAreaScreen_HandleInput
 
@@ -127,8 +134,8 @@ CASES["OpenInPlayAreaScreen_TurnHolderHand"] = [
 # backs out, clear on the Select-button skip.
 CONTRACT["OpenInPlayAreaScreen"] = {"compare": ("f",), "preserve": ()}
 CASES["OpenInPlayAreaScreen"] = [
-    {"keys": [0x00, 0x02], "hram": {hBankROM: b"\x01"}, "wram": {wInPlayAreaFromSelectButton: b"\x00", wInPlayAreaCurPosition: b"\xAA"}, "expect": {hBankROM: b"\x06", wInPlayAreaCurPosition: b"\x05"}, "read": {hBankROM: 1, wInPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1}, "oracle": False, "evidence": "primary", "why": "The frame/input bus timing is observable only on the primary trace; the bounded B exit checks the explicit terminal bank and cursor state.", "instruction_budget": 20000000, "cycle_budget": 100000000},
-    dict(POISON, keys=[0x00, 0x04], hram={hBankROM: b"\x01"}, wram={wInPlayAreaFromSelectButton: b"\x01", wInPlayAreaCurPosition: b"\xAA"}, expect={hBankROM: b"\x06", wInPlayAreaCurPosition: b"\x05"}, read={hBankROM: 1, wInPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1}, oracle=False, evidence="primary", why="The frame/input bus timing is observable only on the primary trace; the bounded SELECT exit checks the explicit terminal bank and cursor state.", instruction_budget=20000000, cycle_budget=100000000),
+    {"keys": [0x00, 0x02], "hram": {hBankROM: b"\x01"}, "wram": {wInPlayAreaFromSelectButton: b"\x00", wInPlayAreaCurPosition: b"\xAA"}, "expect": {hBankROM: b"\x06", wInPlayAreaCurPosition: b"\x05"}, "read": {hBankROM: 1, wInPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, keys=[0x00, 0x04], hram={hBankROM: b"\x01"}, wram={wInPlayAreaFromSelectButton: b"\x01", wInPlayAreaCurPosition: b"\xAA"}, expect={hBankROM: b"\x06", wInPlayAreaCurPosition: b"\x05"}, read={hBankROM: 1, wInPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1}, instruction_budget=20000000, cycle_budget=100000000),
 ]
 # <<< factory OpenInPlayAreaScreen
 

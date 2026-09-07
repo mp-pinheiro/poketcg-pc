@@ -177,6 +177,10 @@ OpenInPlayAreaScreenHandleInputResult OpenInPlayAreaScreen_HandleInput(void)
 		}
 	}
 
+	/* PlaySFXConfirmOrCancel and the farcall trampoline both `push af`/`pop af`
+	 * (deck_check.asm:131-143, farcall.asm:47-57), so the `scf` before each
+	 * `ret` lands on the flags of the last test before the farcall: `and PAD_A`
+	 * on the B path, `.draw_cursor`'s closing `or a` on the A path. */
 	uint8_t keys = (uint8_t)(hKeysPressed & (PAD_A | PAD_B));
 	if (keys != 0u) {
 		if (keys & PAD_A) {
@@ -188,11 +192,12 @@ OpenInPlayAreaScreenHandleInputResult OpenInPlayAreaScreen_HandleInput(void)
 				uint8_t attr = gb_read8((uint16_t)(entry + 2u));
 				SetOneObjectAttributes(y, x, 0u, attr);
 			}
+			uint8_t z_bit = wOAMOffset == 0u ? 0x80u : 0u;
 			PlaySFXConfirmOrCancel(MENU_CONFIRM);
-			return (OpenInPlayAreaScreenHandleInputResult){wInPlayAreaCurPosition, 0x10u};
+			return (OpenInPlayAreaScreenHandleInputResult){wInPlayAreaCurPosition, (uint8_t)(0x10u | z_bit)};
 		}
 		PlaySFXConfirmOrCancel(MENU_CANCEL);
-		return (OpenInPlayAreaScreenHandleInputResult){MENU_CANCEL, 0x10u};
+		return (OpenInPlayAreaScreenHandleInputResult){MENU_CANCEL, 0x90u};
 	}
 
 	uint8_t sfx = wMenuInputSFX;
@@ -206,8 +211,10 @@ OpenInPlayAreaScreenHandleInputResult OpenInPlayAreaScreen_HandleInput(void)
 		return (OpenInPlayAreaScreenHandleInputResult){masked, 0x20u};
 
 	if (wCheckMenuCursorBlinkCounter & (1u << B_CURSOR_BLINK_PERIOD)) {
+		/* ZeroObjectPositions' `dec c` runs out with Z and N set
+		 * (objects.asm:83-84); the Bank6 tail then loads TRUE. */
 		ZeroObjectPositionsAndToggleOAMCopy_Bank6();
-		return (OpenInPlayAreaScreenHandleInputResult){0u, 0x00u};
+		return (OpenInPlayAreaScreenHandleInputResult){TRUE, 0xC0u};
 	}
 
 	ZeroObjectPositions();
@@ -218,7 +225,10 @@ OpenInPlayAreaScreenHandleInputResult OpenInPlayAreaScreen_HandleInput(void)
 		uint8_t attr = gb_read8((uint16_t)(entry + 2u));
 		SetOneObjectAttributes(y, x, 0u, attr);
 	}
-	return (OpenInPlayAreaScreenHandleInputResult){0u, 0x00u};
+	/* `.draw_cursor` ends `or a` on SetOneObjectAttributes' a: the advanced
+	 * wOAMOffset (objects.asm:58-64). */
+	uint8_t drawn = wOAMOffset;
+	return (OpenInPlayAreaScreenHandleInputResult){drawn, drawn == 0u ? 0x80u : 0x00u};
 }
 /* <<< factory OpenInPlayAreaScreen_HandleInput */
 
@@ -322,7 +332,6 @@ OpenInPlayAreaScreenResult OpenInPlayAreaScreen(void)
 			if ((dpad & 0x08u) != 0u)
 				goto selection;
 			if (wInPlayAreaFromSelectButton != 0u && (dpad & 0x04u) != 0u) {
-				wCheckMenuCursorBlinkCounter = 9u;
 				ZeroObjectPositionsAndToggleOAMCopy_Bank6();
 				/* SetupText's clear loop ends on `inc l`
 				 * wrapping to zero (process_text.asm:154-159),
@@ -335,7 +344,6 @@ OpenInPlayAreaScreenResult OpenInPlayAreaScreen(void)
 			OpenInPlayAreaScreenHandleInputResult input = OpenInPlayAreaScreen_HandleInput();
 			if ((input.f & 0x10u) != 0u) {
 				if (input.a == 0xFFu) {
-					wCheckMenuCursorBlinkCounter = 9u;
 					ZeroObjectPositionsAndToggleOAMCopy_Bank6();
 					/* `scf` keeps SetupText's Z and clears H. */
 					(void)SetupText(0x38u, 0x9Fu);

@@ -170,6 +170,10 @@ NPC_MOVE_REGS = NPC_MOVE.regs
 # player opens the play area to use a Pokemon Power; the case's B press cancels.
 POWER_SCREEN = Fixture("tas-5530s-pkmn-power-screen-entry")
 POWER_SCREEN_REGS = POWER_SCREEN.regs
+# The TAS route's B press out of the In Play Area screen (DoFrame 61557): the
+# exit must leave wCheckMenuCursorBlinkCounter as the frame found it.
+IN_PLAY_AREA_B_EXIT = Fixture("tas-5530s-in-play-area-b-exit-entry")
+IN_PLAY_AREA_B_EXIT_REGS = IN_PLAY_AREA_B_EXIT.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -254,3 +258,7 @@ def npc_move_fixture(vram: bool = True, bank: int | None = None, **changes: byte
 
 def power_screen_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return POWER_SCREEN.case(vram=vram, bank=bank, **changes)
+
+
+def in_play_area_b_exit_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return IN_PLAY_AREA_B_EXIT.case(vram=vram, bank=bank, **changes)
