@@ -107,6 +107,7 @@ registration is a side effect of the cases module existing.
 ## 7. Definition of done
 
 - `just oracle-diff <Fn>` prints `PASS`.
+- `just lint-constants` prints no mismatch (every `#define` that names an asm symbol carries the asm's value).
 - Required case coverage exists (`docs/port-contract.md`): an all-zero case, a
   poisoned-register case, every boundary, **and every internal branch**. Cases
   that all land on one path leave the others unverified and both the oracle and

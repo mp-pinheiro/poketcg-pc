@@ -1417,7 +1417,7 @@ def command_hardware_removal() -> int:
         "frames": 1,
         "events": 0,
         "state_fields": fields,
-        "oracles": ["native", "oracle-diff-all", "adapter-lint"],
+        "oracles": ["native", "oracle-diff-all", "adapter-lint", "constant-lint"],
     }
     try:
         transform = (ROOT / "docs" / "phase1-transform.md").read_text(encoding="utf-8")
@@ -1432,6 +1432,7 @@ def command_hardware_removal() -> int:
         for name, command in (
             ("oracle_diff_all", ["just", "oracle-diff-all"]),
             ("adapter_lint", [sys.executable, str(ROOT / "tools" / "lint_adapters.py")]),
+            ("constant_lint", [sys.executable, str(ROOT / "tools" / "lint_constants.py")]),
         ):
             result = subprocess.run(
                 command, cwd=ROOT, capture_output=True, text=True,

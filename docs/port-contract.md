@@ -904,6 +904,25 @@ Enforced by `tools/lint_adapters.py` and the `quality` check in CI (`ci.yml`):
 The allowlist in `tools/lint_adapters.py` is deliberately tiny. A stale entry
 is itself a lint failure — do not add to it as a shortcut.
 
+## Constant rule
+
+Enforced by `tools/lint_constants.py` (`just lint-constants`, a prerequisite of
+`just oracle-diff-all` and a constituent of the completion audit):
+
+- A `#define` in `src/home` or `src/probe` whose name is an asm symbol carries
+  the asm's value. Constants resolve through `rgbasm` itself
+  (`macros.asm` + `constants.asm`), `NameText` ids through
+  `text/text_offsets.asm`, and names that are ROM labels through `poketcg.sym`.
+  Exact names only: no case folding, no snake-case guessing.
+
+The rule exists because the oracle only sees a wrong constant when a case
+observes the byte it lands in. One sweep found 33 hand-typed values that had
+sat under green diffs: TX_SYMBOL indices, the energy flag bits, six opponent
+deck ids, `CAN_EVOLVE_THIS_TURN`, `HAS_EVOLUTION`, `RNGVARS_SIZE`, two text
+ids and four data-table addresses pointing into code. Do not restate an asm
+constant from memory; if the lint cannot see it, name it exactly as the asm
+does so the lint can.
+
 ## Concurrency protocol
 
 ```sh
@@ -999,6 +1018,7 @@ contract from the asm alone (without reading the C) and check:
 ## Definition of done
 
 - `just oracle-diff <Fn>` prints `PASS`.
+- `just lint-constants` prints no mismatch.
 - A `CONTRACT` entry and the required coverage exist for every routine.
 - No stubs, no `TODO`, no dead routines added, no changes outside the four files.
 

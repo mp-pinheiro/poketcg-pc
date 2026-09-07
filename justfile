@@ -256,7 +256,7 @@ oracle-diff FN: build
     uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --fn {{FN}} --probe {{build_dir}}/poketcg_probe
 
 # Diff every routine in tests/routines.py. Non-zero if any fails or has no cases.
-oracle-diff-all: build lint-adapters
+oracle-diff-all: build lint-adapters lint-constants
     #!/usr/bin/env bash
     set -euo pipefail
     export POKETCG_ROM=poketcg/poketcg.gbc
@@ -265,6 +265,10 @@ oracle-diff-all: build lint-adapters
 # Reject probe adapters that reimplement the routine they marshal (issue #19).
 lint-adapters:
     python3 tools/lint_adapters.py
+
+# Reject hand-typed constants, text ids and data addresses that disagree with the disassembly.
+lint-constants:
+    python3 tools/lint_constants.py
 
 
 oracleb-regenerate:
