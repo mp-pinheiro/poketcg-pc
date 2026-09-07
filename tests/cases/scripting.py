@@ -1,4 +1,4 @@
-from tests.cases._fixtures import after_duel_fixture, AFTER_DUEL_REGS, load_map_fixture, LOAD_MAP_REGS
+from tests.cases._fixtures import after_duel_fixture, AFTER_DUEL_REGS, load_map_fixture, LOAD_MAP_REGS, npc_execute_fixture as _npc_execute_fixture, NPC_EXECUTE_REGS as _NPC_EXECUTE_REGS
 # >>> factory-cases-statics
 wScriptPointer = 0xD413
 wLoadedEventBits = 0xD3D1
@@ -1016,6 +1016,7 @@ CONTRACT["ExecuteNPCMovement"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"
 CASES["ExecuteNPCMovement"] = [
 	{"b": 0xC1, "c": 0x00, "wram": {0xC100: b"\xff"}, "read": {0xC100: 1}},
 	dict(POISON, b=0xC1, c=0x00, wram={0xC100: b"\xff", 0xD3AA: b"\x02"}, read={0xC100: 1}),
+    dict(_npc_execute_fixture(bank=3), **_NPC_EXECUTE_REGS),
 ]
 # <<< factory ExecuteNPCMovement
 

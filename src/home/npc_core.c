@@ -290,8 +290,10 @@ UpdateNPCSpritePositionResult UpdateNPCSpritePosition(uint16_t hl)
 	}
 	uint8_t b;
 	uint8_t c;
+	/* npc_core.asm .GetOffset: north and west negate the step, then share
+	 * south's and east's exits. A stopped NPC takes the north exit with step 0. */
 	if (direction == 0u) {
-		c = gb_read8(hSCY_ADDR);
+		c = (uint8_t)(gb_read8(hSCY_ADDR) + step);
 		b = gb_read8(hSCX_ADDR);
 	} else if (direction == 1u) {
 		b = (uint8_t)(gb_read8(hSCX_ADDR) - step);
@@ -300,8 +302,7 @@ UpdateNPCSpritePositionResult UpdateNPCSpritePosition(uint16_t hl)
 		c = (uint8_t)(gb_read8(hSCY_ADDR) - step);
 		b = gb_read8(hSCX_ADDR);
 	} else {
-		step = (uint8_t)(0u - step);
-		b = (uint8_t)(gb_read8(hSCX_ADDR) - step);
+		b = (uint8_t)(gb_read8(hSCX_ADDR) + step);
 		c = gb_read8(hSCY_ADDR);
 	}
 	uint16_t sprite = GetSpriteAnimBufferProperty(SPRITE_ANIM_COORD_X);

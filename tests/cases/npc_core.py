@@ -1,3 +1,4 @@
+from tests.cases._fixtures import npc_start_fixture as _npc_start_fixture, NPC_START_REGS as _NPC_START_REGS, npc_move_fixture as _npc_move_fixture, NPC_MOVE_REGS as _NPC_MOVE_REGS
 """Oracle-diff cases for poketcg/src/engine/overworld/npc_core.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -98,7 +99,8 @@ CASES["StartNPCMovement"] = [
 	{"b": 0xC1, "c": 0x82, "wram": {0xC103: b"\x06", 0xC182: b"\xf3\x80"}, "read": {0xC103: 1, 0xC182: 2}},  # jump -$80, 16-bit wraparound
 	dict(POISON, b=0xC1, c=0x00, wram={SCRATCH: b"\x01"}, read={SCRATCH: 1}),  # proves hl preserved, bc unchanged
 	dict(POISON, b=0xC1, c=0x02, wram={0xC102: b"\x81\x05"}, read={0xC102: 2}),  # preservation through rotation path
-	dict(POISON, b=0xC1, c=0x00, wram={SCRATCH: b"\xff"}, read={SCRATCH: 1}),  # preservation through stop path
+	dict(POISON, b=0xC1, c=0x00, wram={SCRATCH: b"\xff"}, read={SCRATCH: 1}),  # preservation through stop path,
+    dict(_npc_start_fixture(bank=7), **_NPC_START_REGS),
 ]
 # <<< factory StartNPCMovement
 
@@ -381,6 +383,7 @@ CASES["HandleAllNPCMovement"] = [
                        hSCX: b"\x00", hSCY: b"\x00"},
          read={wIsAnNPCMoving: 1, wLoadedNPCs: 12, wWhichSprite: 1,
                SPRITE_BUFFER + 3 * 16 + 1: 3, SPRITE_BUFFER + 3 * 16 + 15: 1}),
+    dict(_npc_move_fixture(bank=7), **_NPC_MOVE_REGS),
 ]
 # <<< factory HandleAllNPCMovement
 
