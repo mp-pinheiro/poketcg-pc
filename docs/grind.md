@@ -88,6 +88,20 @@ There is no length cap and no re-recording: the session is a function of the
 movie and the reference alone, and every fix re-verifies against the cached
 reference in a native-only run.
 
+The duel engine has a second source, the ROM's own AI. `just session-ai-duel
+ai-duel-NN DECK` branches `practice-win` at the practice duel's start
+(DoFrame 23227, after `StartDuel_VSAIOpp` and before the first turn), pokes
+both duelist types and `wDuelType` to `DUELIST_TYPE_AI_OPP | DECK`,
+`wOpponentDeckID` to `DECK` and `wIsPracticeDuel` to 0
+(`tests/sessions/<name>/pokes.txt`, applied by `--poke-ordinal` on the native
+lane and by `refstream.Core(pokes=...)` on the reference), then has the
+reference play the duel to `wDuelFinished` plus 1500 DoFrames of aftermath.
+Every turn of both duelists is then AI code under the digest, and every
+`AIDecide_*`, scoring and damage-estimate routine the deck pair reaches is
+verified byte for byte -- `ai-duel-02` alone named nine stubs and mis-branched
+bodies. `--seed`, `--prizes` and `--period` vary the run; one session per deck
+id is the natural matrix.
+
 `just play --record-input PATH` still records a human, and `session-meta`
 files it as a session; it is a way to reach a screen the movie does not, not
 the loop.

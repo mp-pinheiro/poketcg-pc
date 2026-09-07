@@ -466,6 +466,11 @@ session-meta NAME GOAL:
 session-derive NAME MOVIE *ARGS:
     python3 tools/completion/session.py derive "{{NAME}}" --movie "{{MOVIE}}" {{ARGS}}
 
+# Branch practice-win at the practice duel's start into an AI-versus-AI duel with deck DECK on
+# both sides; the reference plays it out and the recording becomes session NAME.
+session-ai-duel NAME DECK *ARGS:
+    python3 tools/completion/session.py ai-duel "{{NAME}}" --deck {{DECK}} {{ARGS}}
+
 # Count the composition defects per-routine verification cannot see.
 completion-composition-audit AUDIT="all":
     python3 tools/completion/composition_audit.py {{AUDIT}}
