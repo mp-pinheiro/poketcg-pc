@@ -17,7 +17,37 @@ static void adapt_FightingClubAfterDuel(ProbeState *s)
 }
 /* <<< factory FightingClubAfterDuel */
 
+/* >>> factory Preload_ChrisInFightingClub */
+static void adapt_Preload_ChrisInFightingClub(ProbeState *s)
+{
+	PreloadPupilInFightingClubResult r = Preload_ChrisInFightingClub();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Preload_ChrisInFightingClub */
+
+/* >>> factory Preload_MichaelInFightingClub */
+static void adapt_Preload_MichaelInFightingClub(ProbeState *s)
+{
+	PreloadPupilInFightingClubResult r = Preload_MichaelInFightingClub();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Preload_MichaelInFightingClub */
+
+/* >>> factory Preload_JessicaInFightingClub */
+static void adapt_Preload_JessicaInFightingClub(ProbeState *s)
+{
+	PreloadPupilInFightingClubResult r = Preload_JessicaInFightingClub();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Preload_JessicaInFightingClub */
+
 const ProbeEntry probe_entries_fighting_club[] = {
 	{ "FightingClubAfterDuel", adapt_FightingClubAfterDuel },
+	{ "Preload_ChrisInFightingClub", adapt_Preload_ChrisInFightingClub },
+	{ "Preload_MichaelInFightingClub", adapt_Preload_MichaelInFightingClub },
+	{ "Preload_JessicaInFightingClub", adapt_Preload_JessicaInFightingClub },
 	{ NULL, NULL },
 };
