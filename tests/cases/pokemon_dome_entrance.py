@@ -13,6 +13,18 @@ wCurTilemap = 0xD131
 wConsole = 0xCAB4
 wPermissionMap = 0xD133
 # <<< factory-cases-statics
+# >>> factory PokemonDomeEntranceLoadMap
+wEventVarByte_Dome = 0xD3E9
+wEventVarByte_NPC = 0xD3EA
+wReceivedLegendary = 0xD3D8
+wEventVarByte_Ronald = 0xD3EB
+CONTRACT["PokemonDomeEntranceLoadMap"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["PokemonDomeEntranceLoadMap"] = [
+    {"wram": {wEventVarByte_Dome: b"\xFF", wEventVarByte_NPC: b"\xFF", wEventVarByte_Ronald: b"\xFF", wReceivedLegendary: b"\x00"}},
+    {"wram": {wEventVarByte_Dome: b"\x08", wEventVarByte_NPC: b"\xFF", wEventVarByte_Ronald: b"\xFF", wReceivedLegendary: b"\x02"}},
+    dict(POISON, wram={wEventVarByte_Dome: b"\x00", wEventVarByte_NPC: b"\xFF", wEventVarByte_Ronald: b"\xFF", wReceivedLegendary: b"\x00"}),
+]
+# <<< factory PokemonDomeEntranceLoadMap
 
 # >>> factory PokemonDomeEntranceCloseTextBox
 CONTRACT["PokemonDomeEntranceCloseTextBox"] = {"compare": (), "preserve": ()}
@@ -33,3 +45,6 @@ MUTATIONS = {}
 # >>> factory-mutation PokemonDomeEntranceCloseTextBox
 MUTATIONS["PokemonDomeEntranceCloseTextBox"] = {"source_symbol": "PokemonDomeEntranceCloseTextBox", "before": "\tApplyOWMapEventChangeIfEventSet(MAP_EVENT_POKEMON_DOME_DOOR);", "after": "\tApplyOWMapEventChangeIfEventSet((uint8_t)(MAP_EVENT_POKEMON_DOME_DOOR + 1u));", "case_ids": ["PokemonDomeEntranceCloseTextBox-0", "PokemonDomeEntranceCloseTextBox-1"]}
 # <<< factory-mutation PokemonDomeEntranceCloseTextBox
+# >>> factory-mutation PokemonDomeEntranceLoadMap
+MUTATIONS["PokemonDomeEntranceLoadMap"] = {"source_symbol": "PokemonDomeEntranceLoadMap", "before": "ZeroOutEventValue(EVENT_POKEMON_DOME_STATE", "after": "ZeroOutEventValue(EVENT_HALL_OF_HONOR_DOORS_OPEN", "case_ids": ["PokemonDomeEntranceLoadMap-0"]}
+# <<< factory-mutation PokemonDomeEntranceLoadMap

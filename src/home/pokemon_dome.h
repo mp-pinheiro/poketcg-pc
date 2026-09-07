@@ -12,6 +12,21 @@ PokemonDomeResult PlacePokemonDomeOpponentAtDuelTable(uint8_t f);
 /* >>> factory Func_f77d */
 PokemonDomeResult Func_f77d(uint8_t b, uint8_t c, uint8_t f);
 /* <<< factory Func_f77d */
+/* >>> factory Preload_Courtney */
+PokemonDomeResult Preload_Courtney(void);
+/* <<< factory Preload_Courtney */
+/* >>> factory Preload_Steve */
+PokemonDomeResult Preload_Steve(void);
+/* <<< factory Preload_Steve */
+/* >>> factory Preload_Jack */
+PokemonDomeResult Preload_Jack(void);
+/* <<< factory Preload_Jack */
+/* >>> factory Preload_Rod */
+PokemonDomeResult Preload_Rod(void);
+/* <<< factory Preload_Rod */
+/* >>> factory Preload_Ronald1InPokemonDome */
+PokemonDomeResult Preload_Ronald1InPokemonDome(void);
+/* <<< factory Preload_Ronald1InPokemonDome */
 /* >>> factory PokemonDomeCloseTextBox */
 void PokemonDomeCloseTextBox(void);
 /* <<< factory PokemonDomeCloseTextBox */

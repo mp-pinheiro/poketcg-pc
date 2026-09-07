@@ -91,7 +91,11 @@ wEventVarByte_A = 0xD3E9
 wPCPacks_A = 0xD11E
 wNextScript_A = 0xD0C6
 # <<< factory-cases-statics
-
+wEventVarByte_Dome = 0xD3E9
+wEventVarByte_Masters = 0xD3E9
+wEventVarByte_GrandMasters = 0xD3E9
+wEventVarByte_NPC = 0xD3EA
+wEventVarByte_Ronald = 0xD3EB
 # >>> factory PokemonDomeCloseTextBox
 CONTRACT["PokemonDomeCloseTextBox"] = {"compare": (), "preserve": ()}
 CASES["PokemonDomeCloseTextBox"] = [
@@ -142,6 +146,54 @@ CASES["PokemonDomeAfterDuel"] = [
     dict(POISON, wram={0xD0C3: b"\x01", 0xD0C4: b"\x37"}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory PokemonDomeAfterDuel
+
+# >>> factory Preload_Courtney
+CONTRACT["Preload_Courtney"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Preload_Courtney"] = [
+    {"wram": {wEventVarByte_NPC: b"\x00", wEventVarByte_GrandMasters: b"\x00"}},
+    {"wram": {wEventVarByte_NPC: b"\x40", wEventVarByte_GrandMasters: b"\x00"}},
+    {"wram": {wEventVarByte_NPC: b"\x80", wEventVarByte_GrandMasters: b"\x00"}},
+    dict(POISON, wram={wEventVarByte_NPC: b"\x00", wEventVarByte_GrandMasters: b"\x40"}),
+]
+# <<< factory Preload_Courtney
+# >>> factory Preload_Steve
+CONTRACT["Preload_Steve"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Preload_Steve"] = [
+    {"wram": {wEventVarByte_NPC: b"\x00", wEventVarByte_GrandMasters: b"\x00"}},
+    {"wram": {wEventVarByte_NPC: b"\x10", wEventVarByte_GrandMasters: b"\x00"}},
+    {"wram": {wEventVarByte_NPC: b"\x20", wEventVarByte_GrandMasters: b"\x00"}},
+    dict(POISON, wram={wEventVarByte_NPC: b"\x00", wEventVarByte_GrandMasters: b"\x40"}),
+]
+# <<< factory Preload_Steve
+# >>> factory Preload_Jack
+CONTRACT["Preload_Jack"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Preload_Jack"] = [
+    {"wram": {wEventVarByte_NPC: b"\x00", wEventVarByte_GrandMasters: b"\x00"}},
+    {"wram": {wEventVarByte_NPC: b"\x04", wEventVarByte_GrandMasters: b"\x00"}},
+    {"wram": {wEventVarByte_NPC: b"\x08", wEventVarByte_GrandMasters: b"\x00"}},
+    dict(POISON, wram={wEventVarByte_NPC: b"\x00", wEventVarByte_GrandMasters: b"\x40"}),
+]
+# <<< factory Preload_Jack
+# >>> factory Preload_Rod
+CONTRACT["Preload_Rod"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Preload_Rod"] = [
+    {"wram": {wEventVarByte_NPC: b"\x00", wEventVarByte_Dome: b"\x00"}},
+    {"wram": {wEventVarByte_NPC: b"\x00", wEventVarByte_Dome: b"\x20"},
+     "read": {0xD3AC: 2}},
+    {"wram": {wEventVarByte_NPC: b"\x00", wEventVarByte_Dome: b"\x10"}},
+    dict(POISON, wram={wEventVarByte_NPC: b"\x01", wEventVarByte_Dome: b"\x00"}),
+]
+# <<< factory Preload_Rod
+# >>> factory Preload_Ronald1InPokemonDome
+CONTRACT["Preload_Ronald1InPokemonDome"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Preload_Ronald1InPokemonDome"] = [
+    {"wram": {wEventVarByte_Ronald: b"\x00", 0xD3B0: b"\x00"}},
+    {"wram": {wEventVarByte_Ronald: b"\x40", 0xD3B0: b"\x00"},
+     "read": {0xD111: 1}},
+    {"wram": {wEventVarByte_Ronald: b"\x80", 0xD3B0: b"\x00"}},
+    dict(POISON, wram={wEventVarByte_Ronald: b"\x00", 0xD3B0: b"\x00"}),
+]
+# <<< factory Preload_Ronald1InPokemonDome
 
 from tests.cases._schema_migration import legacy_to_schema
 
@@ -195,3 +247,18 @@ MUTATIONS["PokemonDomeAfterDuel"] = {
     "case_ids": ["PokemonDomeAfterDuel-0", "PokemonDomeAfterDuel-1"]
 }
 # <<< factory-mutation PokemonDomeAfterDuel
+# >>> factory-mutation Preload_Courtney
+MUTATIONS["Preload_Courtney"] = {"source_symbol": "Preload_Courtney", "before": "return preload_grand_master(EVENT_COURTNEY_STATE", "after": "return preload_grand_master(EVENT_STEVE_STATE", "case_ids": ["Preload_Courtney-1"]}
+# <<< factory-mutation Preload_Courtney
+# >>> factory-mutation Preload_Steve
+MUTATIONS["Preload_Steve"] = {"source_symbol": "Preload_Steve", "before": "return preload_grand_master(EVENT_STEVE_STATE", "after": "return preload_grand_master(EVENT_COURTNEY_STATE", "case_ids": ["Preload_Steve-1"]}
+# <<< factory-mutation Preload_Steve
+# >>> factory-mutation Preload_Jack
+MUTATIONS["Preload_Jack"] = {"source_symbol": "Preload_Jack", "before": "return preload_grand_master(EVENT_JACK_STATE", "after": "return preload_grand_master(EVENT_STEVE_STATE", "case_ids": ["Preload_Jack-1"]}
+# <<< factory-mutation Preload_Jack
+# >>> factory-mutation Preload_Rod
+MUTATIONS["Preload_Rod"] = {"source_symbol": "Preload_Rod", "before": "return Func_f782(0x10u", "after": "return Func_f782(0x11u", "case_ids": ["Preload_Rod-1"]}
+# <<< factory-mutation Preload_Rod
+# >>> factory-mutation Preload_Ronald1InPokemonDome
+MUTATIONS["Preload_Ronald1InPokemonDome"] = {"source_symbol": "Preload_Ronald1InPokemonDome", "before": "wDefaultSong = MUSIC_RONALD;", "after": "wDefaultSong = 0x10u;", "case_ids": ["Preload_Ronald1InPokemonDome-1"]}
+# <<< factory-mutation Preload_Ronald1InPokemonDome
