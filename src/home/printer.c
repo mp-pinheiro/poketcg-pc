@@ -47,9 +47,9 @@
 #include "home/process_text.h"
 #include "home/text_box.h"
 #define CARDPAGETYPE_NOT_PLAY_AREA 0x00u
-#define RetreatWeakResistData 0x4000u
+#define RetreatWeakResistData 0x6004u
 #define SYM_SPACE 0x00u
-#define SYM_No 0x01u
+#define SYM_No 0x13u
 #define TYPE_ENERGY 0x08u
 
 #include "home/menus.h"
@@ -124,7 +124,7 @@
 #include "home/tiles.h"
 #define TX_END 0x00u
 #define SYM_Lv 0x11u
-#define SYM_HP 0x0Cu
+#define SYM_HP 0x10u
 #define NowPrintingText 0x01a2u
 
 #include "generated/hram.h"
@@ -621,9 +621,9 @@ void DrawBottomCardInfoInSRAMGfxBuffer0(void)
 	CopyLine(&hl, 0x35u, 20u, 0x32u, 0x33u);
 	if (gb_read8(wLoadedCard1Type_ADDR) < TYPE_ENERGY) {
 		(void)PlaceTextItems(RetreatWeakResistData);
-		DisplayCardPage_PokemonOverview();
+		DisplayCardPage_PokemonOverview_Attacks(66u);
 		WriteByteToBGMap0(SYM_No, 15u, 72u);
-		WriteOneByteNumberInTxSymbol_PadSpace(gb_read8(wLoadedCard1PokedexNumber_ADDR), 15u, 73u, 0u, 0u, 0u);
+		WriteOneByteNumberInTxSymbol_PadSpace(gb_read8(wLoadedCard1PokedexNumber_ADDR), 16u, 72u, 0u, 0u, 0u);
 		return;
 	}
 	(void)SetNoLineSeparation();

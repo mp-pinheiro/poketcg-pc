@@ -7,7 +7,7 @@
 #include "home/switch_sram.h"
 #include "home/config.h"
 
-#define SYM_CURSOR_R 0x01u
+#define SYM_CURSOR_R 0x0Fu
 #define sTextSpeed_ADDR_L 0xA006u
 #define sAnimationsDisabled_ADDR_L 0xA007u
 #define sSkipDelayAllowed_ADDR_L 0xA009u

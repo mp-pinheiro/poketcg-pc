@@ -230,6 +230,13 @@ CONTRACT["DrawBottomCardInfoInSRAMGfxBuffer0"] = {"compare": (), "preserve": (),
 CASES["DrawBottomCardInfoInSRAMGfxBuffer0"] = [
     {"wram": {wLoadedCard1Type: b"\x08"}, "read": {wCardPageType: 1}},
     dict(POISON, wram={wLoadedCard1Type: b"\x08"}, read={wCardPageType: 1}),
+    # A grass Pokemon with no attacks, retreat cost 1, pokedex 7 (printer.asm:236-245):
+    # the Retreat/Weakness/Resistance labels land in sGfxBuffer0 rows 70-72, the
+    # colorless retreat symbol at (8,70) and SYM_No plus the number at (15,72)/(15,73).
+    dict(POISON, ramg=True, sram={0: {0xA000: b"\x00" * 0x400}},
+         wram={wLoadedCard1Type: b"\x00", 0xCC34: b"\x00\x00", 0xCC47: b"\x00\x00", 0xCC56: b"\x01",
+               0xCC57: b"\x00", 0xCC58: b"\x00", 0xCC5B: b"\x07"},
+         read={wCardPageType: 1}, sread={0: {0xA0C1: 8, 0xA0C8: 2, 0xA0E1: 8, 0xA101: 8, 0xA10F: 2, 0xA12F: 2}}),
 ]
 # <<< factory DrawBottomCardInfoInSRAMGfxBuffer0
 
@@ -464,7 +471,15 @@ CASES["SendPrinterInstructionPacket_1Sheet"] = [
 # carries the second packet's PRINT_INSTRUCTION bytes.
 CONTRACT["SendPrinterInstructionPacket_1Sheet_3LineFeeds"] = {"compare": (), "preserve": ()}
 CASES["SendPrinterInstructionPacket_1Sheet_3LineFeeds"] = [
-    {"wram": {0xCE99: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
+    # Non-ack device response ($CE6E=$00): the reference parks inside packet
+    # 1's transmission wait ($315D, no printer serial ISR ever fires) with the
+    # FIRST packet staged -- DataPtr=$0301, the instruction word. The port runs
+    # the state machine synchronously but aborts on device != $81 with carry,
+    # also stopping after packet 1. Both lanes therefore end with packet 1's
+    # staging in $CE6A/$CE6B, making the instruction word observable by this
+    # primary case.
+    {"wram": {0xCE99: b"\x00", 0xCE6E: b"\x00", 0xCE6F: b"\x00",
+              0xCE6A: b"\x00", 0xCE6B: b"\x00"},
      "read": {0xCE99: 1},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON,
@@ -930,7 +945,7 @@ MUTATIONS["DrawBottomCardInfoInSRAMGfxBuffer0"] = {
     "source_symbol": "DrawBottomCardInfoInSRAMGfxBuffer0",
     "before": "void DrawBottomCardInfoInSRAMGfxBuffer0(void)\n{\n\tFunc_1a025();\n\tgb_write8(wCardPageType_ADDR, CARDPAGETYPE_NOT_PLAY_AREA);",
     "after": "void DrawBottomCardInfoInSRAMGfxBuffer0(void)\n{\n\tFunc_1a025();\n\tgb_write8(wCardPageType_ADDR, 0x01u);",
-    "case_ids": ["DrawBottomCardInfoInSRAMGfxBuffer0-0", "DrawBottomCardInfoInSRAMGfxBuffer0-1"],
+    "case_ids": ["DrawBottomCardInfoInSRAMGfxBuffer0-0", "DrawBottomCardInfoInSRAMGfxBuffer0-1", "DrawBottomCardInfoInSRAMGfxBuffer0-2"],
 }
 # <<< factory-mutation DrawBottomCardInfoInSRAMGfxBuffer0
 # >>> factory-mutation ShowPrinterTransmitting
@@ -1022,8 +1037,8 @@ for _record in SCHEMA2_CASES["SendTilesToPrinter"]:
 MUTATIONS["SendPrinterInstructionPacket_1Sheet_3LineFeeds"] = {
     "source_symbol": "SendPrinterInstructionPacket_1Sheet_3LineFeeds",
     "before": "\t\tSendPrinterInstructionPacket(0x0301u, contrast.hl);",
-    "after": "\t\tSendPrinterInstructionPacket(0x0301u, (uint16_t)(contrast.hl + 1u));",
-    "case_ids": ["SendPrinterInstructionPacket_1Sheet_3LineFeeds-2"],
+    "after": "\t\tSendPrinterInstructionPacket(0x0302u, contrast.hl);",
+    "case_ids": ["SendPrinterInstructionPacket_1Sheet_3LineFeeds-0"],
 }
 # <<< factory-mutation SendPrinterInstructionPacket_1Sheet_3LineFeeds
 # >>> factory-completion SendPrinterInstructionPacket_1Sheet_3LineFeeds

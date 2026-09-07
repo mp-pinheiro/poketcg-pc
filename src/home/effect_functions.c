@@ -781,7 +781,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/menus.h"
 #include "home/serial.h"
 #include "home/sound.h"
-#define SYM_GRASS 0xC8u
+#define SYM_GRASS 0x02u
 #define SYM_SPACE 0x00u
 
 #define ProcedureForDamageSwapText 0x0137u
@@ -3046,8 +3046,8 @@ uint16_t LightScreenEffect(void)
 
 /* >>> factory Cowardice_CheckUseAndBench */
 /* effect_functions.asm:3391-3425 */
-#define CAN_EVOLVE_THIS_TURN 0x10u
-#define CannotBeUsedInTurnWhichWasPlayedText 0x00b6u
+#define CAN_EVOLVE_THIS_TURN 0x80u
+#define CannotBeUsedInTurnWhichWasPlayedText 0x00ccu
 CowardiceCheckUseAndBenchResult Cowardice_CheckUseAndBench(void)
 {
 	uint8_t location = hTempPlayAreaLocation_ff9d;

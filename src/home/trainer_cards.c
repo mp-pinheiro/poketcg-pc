@@ -119,7 +119,7 @@
 #define FIRE_CHARGE_DECK_ID 0x17u
 #define ROCK_CRUSHER_DECK_ID 0x11u
 #define WONDERS_OF_SCIENCE_DECK_ID 0x16u
-#define EXCAVATION_DECK_ID 0x15u
+#define EXCAVATION_DECK_ID 0x1Fu
 #define MYSTERIOUS_FOSSIL 0xccu
 #define WATER_ENERGY 0x03u
 #define TRUE 0x01u
@@ -248,7 +248,7 @@
 #define TYPE_ENERGY_FIRE 0x08u
 #define TYPE_ENERGY_GRASS 0x09u
 #define TYPE_ENERGY_LIGHTNING 0x0Au
-#define HEATED_BATTLE_DECK_ID 0x15u
+#define HEATED_BATTLE_DECK_ID 0x1Du
 
 #include "home/core.h"
 #include "home/substatus.h"
@@ -363,7 +363,7 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
-#define IMAKUNI_DECK_ID 0x2Au
+#define IMAKUNI_DECK_ID 0x34u
 
 #include "generated/hram.h"
 #include "generated/wram.h"

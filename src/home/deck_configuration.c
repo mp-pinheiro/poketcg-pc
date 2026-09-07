@@ -209,7 +209,7 @@
 
 #define SYM_CURSOR_U 0x0Cu
 #define SYM_CURSOR_D 0x2Fu
-#define Text_9a36 0x9A36u
+#define Text_9a36 0x5A36u
 #include "generated/wram.h"
 #include "home/deck_configuration.h"
 #include "home/menus.h"
@@ -224,7 +224,7 @@
 #define NUM_DECK_CONFIRMATION_VISIBLE_CARDS 0x07u
 static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 0x05u, 0x06u, 0x10u, 0x20u};
 
-#define Text_9a30 0x9A30u
+#define Text_9a30 0x5A30u
 #include "generated/wram.h"
 #include "home/deck_configuration.h"
 #include "home/menus.h"
@@ -339,7 +339,7 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define FILTERS_CARD_SELECTION_PARAMS_ADDR 0x5EAfu
+#define FILTERS_CARD_SELECTION_PARAMS_ADDR 0x5667u
 
 #include "home/deck_configuration.h"
 #include "home/menus.h"

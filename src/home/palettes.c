@@ -15,7 +15,7 @@
  * FLUSH_ALL_PALS (0xC0) pattern. Every single-palette flush request also has
  * FLUSH_ONE_PAL (bit 7) set, so masking with FLUSH_ALL_PALS instead of this
  * bit routed every CGB single-palette flush through FlushAllCGBPalettes. */
-#define FLUSH_ALL_PALS_F         0x40u
+#define FLUSH_ALL_PALS_F         6u
 #define PAL_SIZE                8u
 #define NUM_BACKGROUND_PALETTES 8u
 #define STAT_BUSY               0x02u
@@ -77,7 +77,7 @@ FlushPalettesIfRequestedResult FlushPalettesIfRequested_Registers(uint8_t b, uin
 	gb_write8(rOBP1, gb_read8(wOBP1_ADDR));
 	if (gb_read8(wConsole_ADDR) == CONSOLE_CGB) {
 		flags = gb_read8(wFlushPaletteFlags_ADDR);
-		if (flags & FLUSH_ALL_PALS_F) {
+		if (flags & (1u << FLUSH_ALL_PALS_F)) {
 			FlushAllCGBPalettesResult r = FlushAllCGBPalettes();
 			b = r.b;
 			c = r.c;

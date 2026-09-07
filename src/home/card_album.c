@@ -19,7 +19,7 @@
 #define TX_SYMBOL 0x05u
 #define VENUSAUR_LV64 0x0Au
 #define SYM_BOX_TOP_R 0x19u
-#define SYM_BOX_BTM_R 0x1Du
+#define SYM_BOX_BTM_R 0x1Bu
 #define SYM_CURSOR_U 0x0Cu
 #define SYM_CURSOR_D 0x2Fu
 
