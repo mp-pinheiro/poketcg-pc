@@ -25,7 +25,71 @@ jj commit <paths> -m "type(scope): subject"      # subject <= 50 chars, no body
 Another session shares this checkout. Files you did not change are not yours;
 never revert, stage, or commit them.
 
-## The loop
+## The session loop
+
+The primary gate. A human plays the port and everything they play is checked
+against the ROM one DoFrame at a time; the first disagreement names the byte,
+its RAM symbol and the reference routine that wrote it.
+
+```sh
+just build
+just play                                   # window; Z=A X=B Return=Start Backspace=Select, arrows
+just play --record-input /tmp/NAME.txt      # same, writing one byte per DoFrame
+mkdir -p tests/sessions/NAME && cp /tmp/NAME.txt tests/sessions/NAME/input.txt
+just session-meta NAME "one sentence: what this session reaches"
+just session-verify NAME                    # or bare: the session with the lowest confirmed ordinal
+just session-status
+```
+
+`just session-verify` prints one line, then the evidence:
+
+```text
+SESSION NAME status=<clean|diverged|native-short|ref-short> confirmed=<K> ordinals=<n>
+DIVERGE ordinal=<K+1> field=<f> address=0x<AAAA> symbol=<sym> native=<n> reference=<r> writer=<Routine>
+```
+
+`confirmed` is the number to move, per session, in
+`tools/completion/session_ratchet.json`. It may only rise; a fall is
+`REGRESSION` and exit 3, and the change that caused it does not land. Sessions
+are capped at 20,000 DoFrames (~5.5 minutes); longer play is a second session.
+
+To continue a session past its end without replaying by hand:
+`just play --input-ordinal tests/sessions/NAME/input.txt --record-input /tmp/NAME.txt`
+replays the recording at full speed, hands the keyboard over, and keeps
+recording; copy the result back over `input.txt` and refresh `session-meta`.
+
+Two recordings ship as the floor: `tests/sessions/boot-menu` (boot, skip the
+intro with A, start menu, New Game). When the loop landed it stood at
+`confirmed=47`, and two fixes it named -- `FadePalIntoAnother.GetFadedColor`
+leaving hffb6/hffb7 unwritten, and `PlayIntroSequence` calling
+`LoadOpeningScene` where `intro.asm:47` calls `LoadScene` -- took it to 538.
+
+The comparison covers WRAM, HRAM and OAM under `scenario.py`'s exclusion
+ledger plus one span of its own: `SECTION "WRAM Audio"` ($DD80-$DEE4). The
+sound driver runs from the timer interrupt (`time.asm:9-26`), asynchronous to
+DoFrame, so its counters sit a tick apart between lanes on a schedule no asm
+instruction decides; `audio-catalog` owns audio parity. IO readback and
+palette RAM are the scenario census's. Do not add to either list to move
+`confirmed`.
+
+### Session decision table
+
+| the line contains | what it means | what to do |
+|---|---|---|
+| `status=diverged` and `DIVERGE ... writer=R` | the reference's `R` produced a byte the port did not | read `R`'s asm against its C body; the defect is in `R` or in what `R` reads. Fix, `just oracle-diff R`, add a case that observes the byte (`read`), rerun `just session-verify NAME`; `confirmed` must rise |
+| `DIVERGE ... writer=` empty | no reference write to that address before that ordinal | the port invented a write. `just completion-trace-diff` style: run `build-trace/poketcg --input-ordinal ... --stop-ordinal K` twice (K-1 and K) with `--trace-calls` and diff the counts with `tools/completion/native_trace.native_counts`; the routines only the port entered are the suspects |
+| `status=diverged` and both lanes name the same routines | same code, different bytes | dump both lanes at K-1 and K (`--dump-state-ordinals`, `refstream.Stream.domain`) and read the writer's asm with those inputs |
+| `status=native-short` | the port aborted or hung before the session ended | the `NATIVE` lines carry stderr; take `blocked_by` from them and use the decision table below |
+| `status=ref-short` | the recording is stale: the port's trajectory changed under it | re-record from the confirmed prefix with `--input-ordinal` + `--record-input`, replace `input.txt`, refresh `session-meta` |
+| `status=clean` | the whole session is confirmed | record a longer one that goes further into the game |
+| `REGRESSION NAME key=confirmed_ordinal` | your change lowered a session's confirmed ordinal | revert your change; do not land it |
+
+## The TAS loop (secondary)
+
+A breadth signal over the 21-minute movie, kept because it reaches code no
+recorded session has yet. It cannot localise: past the first duel the movie
+desyncs for reasons that are not port defects (see "When the divergence is the
+movie"). Work the session loop first; run this to see nothing regressed.
 
 ```sh
 just build && just build-trace

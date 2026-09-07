@@ -131,6 +131,14 @@ build:
     cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=Debug -DPORT_FILES="{{port_files}}"
     ninja -C {{build_dir}}
 
+# Launch the port with a window. Requires `just build` and `just completion-data-pack`;
+# the configure step must have printed "SDL2 backend: compiled in". Extra arguments
+# pass through, e.g. `just play --input-ordinal tests/sessions/NAME/input.txt
+# --record-input /tmp/NAME.txt` replays a recorded prefix at full speed, then hands
+# the keyboard over and keeps recording.
+play *ARGS:
+    {{build_dir}}/poketcg --data-pack build/completion/data-pack.bin --frames 0 {{ARGS}}
+
 # Fixed central barrier build; ignores slice-scoped environment variables.
 build-barrier:
     cmake -G Ninja -B build-barrier -DCMAKE_BUILD_TYPE=Debug -DPORT_FILES=""
@@ -407,6 +415,21 @@ completion-tas-progress *ARGS:
 # Raise the ratchet to the values the last gate run measured.
 completion-tas-ratchet *ARGS:
     python3 tools/completion/tas_progress.py --skip-run --write-ratchet {{ARGS}}
+
+
+# Verify one recorded human session against the ROM, DoFrame by DoFrame. With no
+# NAME, the session with the lowest confirmed ordinal. Exit 0 clean, 1 diverged or
+# native-short, 3 ratchet regression, 4 the reference itself fell short.
+session-verify NAME="" *ARGS:
+    python3 tools/completion/session.py verify "{{NAME}}" {{ARGS}}
+
+# One row per session: length, confirmed ordinal, goal.
+session-status:
+    python3 tools/completion/session.py status
+
+# Write tests/sessions/NAME/session.json for a freshly recorded input.txt.
+session-meta NAME GOAL:
+    python3 tools/completion/session.py meta "{{NAME}}" --goal "{{GOAL}}"
 
 # Count the composition defects per-routine verification cannot see.
 completion-composition-audit AUDIT="all":

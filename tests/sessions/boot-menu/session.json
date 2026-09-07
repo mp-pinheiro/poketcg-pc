@@ -1,0 +1,8 @@
+{
+  "goal": "boot, pass the title, open the start menu and enter New Game",
+  "name": "boot-menu",
+  "ordinals": 1000,
+  "recorded": "2026-09-07T04:15:10+00:00",
+  "schema": 1,
+  "terminal_event": ""
+}
