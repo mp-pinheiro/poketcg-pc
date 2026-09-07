@@ -1361,15 +1361,18 @@ a movie our lane can replay from boot, not more porting -- `4189M` declares
 `GBC_Firmware_World` and needs the CGB boot ROM we do not load.
 
 The derived session `tas-5530s` does replay from boot, and it is byte-exact
-through the practice duel, the duel menu, every Check submenu and the glossary,
-to DoFrame 48,437. At 48,438 the movie presses Down+A in the In Play Area
-screen with the cursor on `INPLAYAREA_PLAYER_PLAY_AREA` ($10): the 16-entry
-`.PositionsJumpTable` (`play_area.asm:214`) is indexed past its end, the ROM
-jumps to `6:52FA` and executes `AttackAnimation_*` data, then bank 23 text, as
-instructions -- the Duel Escape glitch the run is built on. A port does not
-follow arbitrary code execution, so the session declares `ceiling: 48437` in
-its `session.json` and `session-verify` reports it `clean` there. Everything
-the movie does after that is the glitch's aftermath, not the game.
+through the practice duel, the duel menu, every Check submenu, the glossary,
+the save and the second duel, to DoFrame 69,494. At 69,495 the movie presses
+Down+A in the In Play Area screen with an empty bench, so the cursor moves to
+`INPLAYAREA_PLAYER_PLAY_AREA` ($10): the 16-entry `.PositionsJumpTable`
+(`play_area.asm:214`) is indexed past its end, the ROM jumps to `6:52FA` and
+executes `AttackAnimation_*` data, then bank 23 text, as instructions -- the
+Duel Escape glitch the run is built on. A port does not follow arbitrary code
+execution, so the session declares `ceiling: 69494` in its `session.json` and
+`session-verify` reports it `clean` there. Everything the movie does after that
+is the glitch's aftermath, not the game. (The reference stream is keyed by the
+boot ROM and the timer sync points; under the earlier key the same glitch fired
+at 48,438.)
 
 Coverage past that point comes from sessions that play the game. Two ways:
 

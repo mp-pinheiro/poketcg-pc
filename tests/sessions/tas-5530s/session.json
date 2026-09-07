@@ -10,5 +10,7 @@
   "ordinals": 72160,
   "recorded": "2026-09-07T20:43:19+00:00",
   "reference_frames": 78607,
-  "schema": 1
+  "schema": 1,
+  "ceiling": 69494,
+  "ceiling_reason": "Duel Escape glitch: at DoFrame 69495 the movie presses Down+A in the In Play Area screen with the cursor moved to INPLAYAREA_PLAYER_PLAY_AREA ($10); play_area.asm's 16-entry .PositionsJumpTable is indexed past its end and the ROM jumps to 6:52FA, executing AttackAnimation_* data and then bank 23 text as instructions. The port does not follow arbitrary code execution."
 }
