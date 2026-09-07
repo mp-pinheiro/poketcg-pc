@@ -2258,7 +2258,7 @@ MUTATIONS["_HandlePeekSelection"] = {
 }
 # <<< factory-mutation _HandlePeekSelection
 # >>> factory-mutation _OpenDuelCheckMenu
-MUTATIONS["_OpenDuelCheckMenu"] = {"source_symbol": "_OpenDuelCheckMenu", "before": "void _OpenDuelCheckMenu(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\twce5e = 0u;", "after": "void _OpenDuelCheckMenu(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\twce5e = 0x80u;", "case_ids": ["_OpenDuelCheckMenu-0", "_OpenDuelCheckMenu-1"]}
+MUTATIONS["_OpenDuelCheckMenu"] = {"source_symbol": "_OpenDuelCheckMenu", "before": "\t\twce5e = 0u;\n\t\t(void)DrawWideTextBox();", "after": "\t\twce5e = 1u;\n\t\t(void)DrawWideTextBox();", "case_ids": ["_OpenDuelCheckMenu-0", "_OpenDuelCheckMenu-1"]}
 # <<< factory-mutation _OpenDuelCheckMenu
 # >>> factory-mutation DuelCheckMenu_InPlayArea
 MUTATIONS["DuelCheckMenu_InPlayArea"] = {"source_symbol": "DuelCheckMenu_InPlayArea", "before": "void DuelCheckMenu_InPlayArea(void)\n{\n\twInPlayAreaFromSelectButton = 0u;", "after": "void DuelCheckMenu_InPlayArea(void)\n{\n\twInPlayAreaFromSelectButton = 1u;", "case_ids": ["DuelCheckMenu_InPlayArea-0", "DuelCheckMenu_InPlayArea-1"]}

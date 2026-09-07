@@ -546,7 +546,8 @@ TempListResult DrawCheckMenuCursor_YourOrOppPlayArea(uint8_t a);
 void ZeroObjectPositionsWithCopyToggleOn(void);
 /* <<< factory ZeroObjectPositionsWithCopyToggleOn */
 /* >>> factory YourOrOppPlayAreaScreen_HandleInput */
-void YourOrOppPlayAreaScreen_HandleInput(void);
+typedef struct { uint8_t a; uint8_t f; } YourOrOppPlayAreaScreenInputResult;
+YourOrOppPlayAreaScreenInputResult YourOrOppPlayAreaScreen_HandleInput(void);
 /* <<< factory YourOrOppPlayAreaScreen_HandleInput */
 /* >>> factory DrawPlayArea_BenchCards */
 void DrawPlayArea_BenchCards(uint8_t c, uint8_t d, uint8_t e);

@@ -628,7 +628,9 @@ static void adapt_ZeroObjectPositionsWithCopyToggleOn(ProbeState *s)
 static void adapt_YourOrOppPlayAreaScreen_HandleInput(ProbeState *s)
 {
 	(void)s;
-	YourOrOppPlayAreaScreen_HandleInput();
+	YourOrOppPlayAreaScreenInputResult r = YourOrOppPlayAreaScreen_HandleInput();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory YourOrOppPlayAreaScreen_HandleInput */
 

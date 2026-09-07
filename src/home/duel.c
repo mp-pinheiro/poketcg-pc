@@ -1823,7 +1823,10 @@ void ZeroObjectPositionsWithCopyToggleOn(void)
 
 /* >>> factory YourOrOppPlayAreaScreen_HandleInput */
 /* duel.asm:1701-1943 */
-void YourOrOppPlayAreaScreen_HandleInput(void)
+/* duel.asm:1701-1853. Carry (f bit 4) is a press: a = MENU_CANCEL for B, the
+ * cursor position for A. Without a press the exit flags come from the blink
+ * counter test (`and`, `bit`) and carry is clear. */
+YourOrOppPlayAreaScreenInputResult YourOrOppPlayAreaScreen_HandleInput(void)
 {
 	uint8_t next = 0u;
 
@@ -1922,10 +1925,10 @@ void YourOrOppPlayAreaScreen_HandleInput(void)
 		if (keys & YOPA_PAD_A) {
 			yoopa_draw_cursor();
 			PlaySFXConfirmOrCancel(YOPA_MENU_CONFIRM);
-		} else {
-			PlaySFXConfirmOrCancel(YOPA_MENU_CANCEL);
+			return (YourOrOppPlayAreaScreenInputResult){wYourOrOppPlayAreaCurPosition, 0x10u};
 		}
-		return;
+		PlaySFXConfirmOrCancel(YOPA_MENU_CANCEL);
+		return (YourOrOppPlayAreaScreenInputResult){YOPA_MENU_CANCEL, 0x10u};
 	}
 
 	if (wMenuInputSFX != 0u)
@@ -1933,13 +1936,15 @@ void YourOrOppPlayAreaScreen_HandleInput(void)
 
 	uint8_t cnt = wCheckMenuCursorBlinkCounter;
 	wCheckMenuCursorBlinkCounter = (uint8_t)(cnt + 1u);
-	if ((uint8_t)(cnt & YOPA_BLINK_MASK) != 0u)
-		return;
+	uint8_t masked = (uint8_t)(cnt & YOPA_BLINK_MASK);
+	if (masked != 0u)
+		return (YourOrOppPlayAreaScreenInputResult){masked, 0x00u};
 	if (wCheckMenuCursorBlinkCounter & YOPA_BLINK_BIT) {
 		ZeroObjectPositionsWithCopyToggleOn();
-		return;
+		return (YourOrOppPlayAreaScreenInputResult){masked, 0x00u};
 	}
 	yoopa_draw_cursor();
+	return (YourOrOppPlayAreaScreenInputResult){masked, 0x80u};
 }
 /* <<< factory YourOrOppPlayAreaScreen_HandleInput */
 
@@ -3240,9 +3245,14 @@ DealConfusionDamageToSelfResult DealRecoilDamageToSelf(uint8_t a, uint8_t f,
 /* <<< factory DealRecoilDamageToSelf */
 
 /* >>> factory DuelCheckMenu_Glossary */
+/* menus/duel.asm:43-45 `farcall OpenGlossaryScreen`: the glossary runs in
+ * bank 6 and reads its tables there. */
 void DuelCheckMenu_Glossary(void)
 {
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(6u);
 	OpenGlossaryScreen();
+	BankswitchROM(saved_bank);
 }
 /* <<< factory DuelCheckMenu_Glossary */
 
@@ -3343,19 +3353,11 @@ HandlePeekSelectionResult _HandlePeekSelection(void)
 		for (;;) {
 			wVBlankOAMCopyToggle = PEEK_TRUE;
 			DoFrame();
-			YourOrOppPlayAreaScreen_HandleInput();
-			/* That callee is void here, so its carry/a exit is rebuilt from
-			 * the state it leaves behind: carry iff A or B became pressed
-			 * this frame, a = MENU_CANCEL for B and the cursor position it
-			 * has just settled on for A. */
-			uint8_t pressed =
-				(uint8_t)(hKeysPressed & (PEEK_PAD_A | PEEK_PAD_B));
-
-			if (pressed == 0u)
+			YourOrOppPlayAreaScreenInputResult input = YourOrOppPlayAreaScreen_HandleInput();
+			if ((input.f & 0x10u) == 0u)
 				continue;
 
-			uint8_t selection = (pressed & PEEK_PAD_A) != 0u ?
-				wYourOrOppPlayAreaCurPosition : PEEK_MENU_CANCEL;
+			uint8_t selection = input.a;
 			uint8_t deck_index;
 
 			if (selection == PEEK_MENU_CANCEL) {
@@ -3415,18 +3417,22 @@ HandlePeekSelectionResult _HandlePeekSelection(void)
 /* <<< factory _HandlePeekSelection */
 
 /* >>> factory _OpenDuelCheckMenu */
+/* menus/duel.asm:1-34. A submenu's return is `jr _OpenDuelCheckMenu`: the
+ * whole menu -- cursor reset, text box, items -- is drawn again from the top,
+ * not merely polled. */
 void _OpenDuelCheckMenu(void)
 {
-	ResetCheckMenuCursorPositionAndBlink();
-	wce5e = 0u;
-	(void)DrawWideTextBox();
-	wCheckMenuCursorBlinkCounter = 0u;
-	(void)PlaceTextItems(CHECK_MENU_DATA_ADDR);
 	for (;;) {
-		DoFrame();
-		HandleCheckMenuInputResult input = HandleCheckMenuInput();
-		if ((input.f & 0x10u) == 0u)
-			continue;
+		ResetCheckMenuCursorPositionAndBlink();
+		wce5e = 0u;
+		(void)DrawWideTextBox();
+		wCheckMenuCursorBlinkCounter = 0u;
+		(void)PlaceTextItems(CHECK_MENU_DATA_ADDR);
+		HandleCheckMenuInputResult input;
+		do {
+			DoFrame();
+			input = HandleCheckMenuInput();
+		} while ((input.f & 0x10u) == 0u);
 		if (input.a == MENU_CANCEL)
 			return;
 		uint8_t selection = (uint8_t)(wCheckMenuCursorXPosition +

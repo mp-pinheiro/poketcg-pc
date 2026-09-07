@@ -2755,13 +2755,11 @@ void HandleSendDeckConfigurationMenu(void)
 	for (;;) {
 		wVBlankOAMCopyToggle = TRUE;
 		DoFrame();
-		YourOrOppPlayAreaScreen_HandleInput();
-		uint8_t keys = (uint8_t)(hKeysPressed & 0x03u);
-		if (keys == 0u)
+		YourOrOppPlayAreaScreenInputResult input = YourOrOppPlayAreaScreen_HandleInput();
+		if ((input.f & 0x10u) == 0u)
 			continue;
 
-		uint8_t selection = (keys & 0x01u) != 0u ?
-			wYourOrOppPlayAreaCurPosition : MENU_CANCEL;
+		uint8_t selection = input.a;
 		wced6 = selection;
 		if (selection == MENU_CANCEL) {
 			DrawCardTypeIconsAndPrintCardCounts();
@@ -2832,12 +2830,10 @@ void HandleDeckConfigurationMenu(void)
 	for (;;) {
 		wVBlankOAMCopyToggle = TRUE;
 		DoFrame();
-		YourOrOppPlayAreaScreen_HandleInput();
-		uint8_t keys = (uint8_t)(hKeysPressed & 0x03u);
-		if (keys == 0u)
+		YourOrOppPlayAreaScreenInputResult input = YourOrOppPlayAreaScreen_HandleInput();
+		if ((input.f & 0x10u) == 0u)
 			continue;
-		uint8_t selection = (keys & 0x01u) != 0u ?
-			wYourOrOppPlayAreaCurPosition : MENU_CANCEL;
+		uint8_t selection = input.a;
 		uint8_t selected_item = selection;
 		wced6 = selected_item;
 		if (selection == MENU_CANCEL) {
