@@ -209,6 +209,10 @@ class Oracle:
             log_level="CRITICAL",
         )
         self._hit: Result | None = None
+        # RAM as the routine under test enters it: after seeds and setup calls,
+        # before the first instruction. Diffed against the result by the
+        # blind-spot audit (tools/oracle/blind_spots.py).
+        self.entry_state: Result | None = None
         self._armed_addr: int | None = None
         self._armed_bank: int = 0
         self._key_timeline: list[int] = [0]
@@ -225,23 +229,30 @@ class Oracle:
     def __exit__(self, *_exc) -> None:
         self.close()
 
-    def _capture(self, _ctx) -> None:
+    def _snapshot(self, latch: bool = True) -> Result:
+        """RAM as it stands. `latch` opens RAMG for the unbanked SRAM view; the
+        entry snapshot must not, since a case may enter with RAM disabled, so it
+        carries the banked views only (the banked getter bypasses RAMG)."""
         pb = self.pyboy
         rf = pb.register_file
-        pb.memory[0x0000] = 0x0A
-        self._hit = Result(
+        if latch:
+            pb.memory[0x0000] = 0x0A
+        return Result(
             a=rf.A, f=rf.F, b=rf.B, c=rf.C, d=rf.D, e=rf.E,
             hl=rf.HL, sp=rf.SP, pc=rf.PC,
             wram=bytes(pb.memory[WRAM_BASE:WRAM_END]),
             hram=bytes(pb.memory[HRAM_BASE:HRAM_END]),
-            sram=bytes(pb.memory[SRAM_BASE:SRAM_END]),
+            sram=bytes(pb.memory[SRAM_BASE:SRAM_END]) if latch else b"",
             sram_banks=tuple(_read_bank(pb, bank, SRAM_BASE, SRAM_END) for bank in range(4)),
             vram=bytes(pb.memory[VRAM_BASE:VRAM_END]),
             vram_banks=tuple(_read_bank(pb, bank, VRAM_BASE, VRAM_END) for bank in range(2)),
             oam=bytes(pb.memory[OAM_BASE:OAM_END]),
             io=bytes(pb.memory[IO_BASE:IO_END]),
         )
-        rf.PC = SPIN
+
+    def _capture(self, _ctx) -> None:
+        self._hit = self._snapshot()
+        self.pyboy.register_file.PC = SPIN
 
     def _disarm(self) -> None:
         if self._armed_addr is not None:
@@ -468,6 +479,7 @@ class Oracle:
         for pre in setup or []:
             self._run(pre["fn"], pre)
 
+        self.entry_state = self._snapshot(latch=False)
         # Banked (non-home) routines run out of the $4000-$7FFF window; select the ROM
         # bank exactly as a farcall would, after _reset_ram's power-on bank=1 and before
         # jumping in. Home-bank (0) routines already sit in the always-mapped $0000-$3FFF.

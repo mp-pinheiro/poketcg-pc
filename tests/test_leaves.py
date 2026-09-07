@@ -199,6 +199,76 @@ def merged_spans(case: dict) -> tuple[dict[int, int], dict[int, dict[int, int]],
             {bank: dict(sorted(spans.items())) for bank, spans in sorted(vreads.items())})
 
 
+# Bytes auto-observation never compares: the synthesized call frame lives in
+# RESERVED, and these count frames or key edges. The probe renders no frames
+# and cycles the key timeline per joypad poll while the reference cycles it
+# per frame, so a routine that waits for a press sees a different number of
+# DoFrames on each lane; the counters below record exactly that number.
+#   $CAB8 wVBlankCounter  $CAC5-$CAC9 wPlayTimeCounter  $CD04 wcd04 (frame
+#   counter)  $CD0F wCursorBlinkCounter  $CEA3 wCheckMenuCursorBlinkCounter
+#   $FF8D-$FF91 hDPadRepeat, hKeysReleased, hDPadHeld, hKeysHeld, hKeysPressed
+AUTO_OBSERVE_IGNORED = frozenset(
+    {0xCAB8, 0xCD04, 0xCD0F, 0xCEA3} | set(range(0xCAC5, 0xCACA)) | set(range(0xFF8D, 0xFF92)))
+AUTO_OBSERVE_GAP = 32
+
+
+def changed_addresses(entry: Any, result: Any) -> dict[str, set[tuple[int, int]]]:
+    """(bank, address) of every byte the reference changed between the routine's
+    entry and its completion, per field: wram (which here covers HRAM and OAM
+    too, as `read` does), sram and vram."""
+    from pyboy_oracle import HRAM_BASE, OAM_BASE, RESERVED, SRAM_BASE, VRAM_BASE, WRAM_BASE
+    reserved = {address for block in RESERVED for address in block}
+    changed: dict[str, set[tuple[int, int]]] = {"wram": set(), "sram": set(), "vram": set()}
+
+    def diff(field: str, bank: int, base: int, before: bytes, after: bytes) -> None:
+        for offset, (old, new) in enumerate(zip(before, after)):
+            if old != new:
+                address = base + offset
+                if address in reserved or address in AUTO_OBSERVE_IGNORED:
+                    continue
+                changed[field].add((bank, address))
+
+    diff("wram", 0, WRAM_BASE, entry.wram, result.wram)
+    diff("wram", 0, HRAM_BASE, entry.hram, result.hram)
+    diff("wram", 0, OAM_BASE, entry.oam, result.oam)
+    for bank in range(4):
+        diff("sram", bank, SRAM_BASE, entry.sram_banks[bank], result.sram_banks[bank])
+    for bank in range(2):
+        diff("vram", bank, VRAM_BASE, entry.vram_banks[bank], result.vram_banks[bank])
+    return changed
+
+
+def coalesce(addresses: set[int], gap: int = AUTO_OBSERVE_GAP) -> dict[int, int]:
+    """{start: size} spans covering every address, bridging gaps up to `gap`
+    unless an ignored byte lies in the gap."""
+    spans: dict[int, int] = {}
+    start = end = None
+    for address in sorted(addresses):
+        if start is None:
+            start = end = address
+        elif address - end <= gap and not any(a in AUTO_OBSERVE_IGNORED for a in range(end + 1, address)):
+            end = address
+        else:
+            spans[start] = end - start + 1
+            start = end = address
+    if start is not None:
+        spans[start] = end - start + 1
+    return spans
+
+
+def auto_observe_spans(entry: Any, result: Any, reads: dict[int, int],
+                       sreads: dict[int, dict[int, int]], vreads: dict[int, dict[int, int]]) -> None:
+    """Widen a case's observation to everything the reference wrote."""
+    changed = changed_addresses(entry, result)
+    reads.update(coalesce({address for _, address in changed["wram"]}))
+    for field, target in (("sram", sreads), ("vram", vreads)):
+        by_bank: dict[int, set[int]] = {}
+        for bank, address in changed[field]:
+            by_bank.setdefault(bank, set()).add(address)
+        for bank, addresses in by_bank.items():
+            target.setdefault(bank, {}).update(coalesce(addresses))
+
+
 def compare_observables(ref: dict[str, Any], got: dict, fields: tuple[str, ...],
                         reads: dict[int, int], sreads: dict[int, dict[int, int]],
                         vreads: dict[int, dict[int, int]], prefix: str) -> list[str]:
@@ -227,7 +297,8 @@ def compare_observables(ref: dict[str, Any], got: dict, fields: tuple[str, ...],
     return bad
 
 
-def direct_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], case: dict) -> list[str]:
+def direct_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], case: dict,
+                auto_observe: bool = False) -> list[str]:
     if not case.get("oracle", True):
         if not case.get("why"):
             return ["oracle=False case must carry a `why` string"]
@@ -274,6 +345,8 @@ def direct_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], c
                       entry_sp=case.get("entry_sp"),
                       frames=pyboy_frames(case))
     reads, sreads, vreads = merged_spans(case)
+    if auto_observe:
+        auto_observe_spans(oracle.entry_state, ref, reads, sreads, vreads)
     got = run_probe(probe, fn, case, reads, sreads, vreads)
     reference = {"registers": {field: getattr(ref, field) for field in fields},
                  "wram": {str(addr): ref.mem(addr, n).hex() for addr, n in reads.items()},
@@ -467,6 +540,8 @@ def main() -> int:
     ap.add_argument("--rom", default=os.environ.get("POKETCG_ROM", str(ROOT / "poketcg" / "poketcg.gbc")))
     ap.add_argument("--report", type=Path, help="write gate record to JSON (requires --all)")
     ap.add_argument("--shard", help="I/K: run only sorted routines where index %% K == I")
+    ap.add_argument("--auto-observe", action="store_true",
+                    help="also compare every byte the reference wrote (live mode only)")
     args = ap.parse_args()
     if args.oracle_mode in ("refresh", "cache") and args.cache_dir is None:
         ap.error("--cache-dir is required for refresh and cache modes")
@@ -581,7 +656,7 @@ def main() -> int:
                             cache_reference(args.cache_dir, key, fn, fields, ref)
                             bad = compare_observables(ref, run_probe(args.probe, fn, case, reads, sreads, vreads), fields, reads, sreads, vreads, "oracle")
                         else:
-                            bad = direct_case(oracle, args.probe, fn, fields, case)
+                            bad = direct_case(oracle, args.probe, fn, fields, case, args.auto_observe)
                 except Exception as ex:
                     bad = [f"{type(ex).__name__}: {ex}"]
                 if bad:
