@@ -26,4 +26,14 @@ ClubEntranceAfterDuelResult ClubEntranceAfterDuel(void);
 typedef struct { uint8_t a; uint8_t f; } Func_e8a0Result;
 Func_e8a0Result Func_e8a0(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory Func_e8a0 */
+/* >>> factory Preload_Ronald1InClubEntrance */
+typedef struct { uint8_t a; uint8_t f; } PreloadRonaldInClubEntranceResult;
+PreloadRonaldInClubEntranceResult Preload_Ronald1InClubEntrance(void);
+/* <<< factory Preload_Ronald1InClubEntrance */
+/* >>> factory Preload_Ronald2InClubEntrance */
+PreloadRonaldInClubEntranceResult Preload_Ronald2InClubEntrance(uint8_t b, uint8_t c, uint8_t d, uint16_t hl);
+/* <<< factory Preload_Ronald2InClubEntrance */
+/* >>> factory Preload_Ronald3InClubEntrance */
+PreloadRonaldInClubEntranceResult Preload_Ronald3InClubEntrance(uint8_t b, uint8_t c, uint8_t d, uint16_t hl);
+/* <<< factory Preload_Ronald3InClubEntrance */
 #endif /* POKETCG_HOME_PSYCHIC_CLUB_ENTRANCE_H */

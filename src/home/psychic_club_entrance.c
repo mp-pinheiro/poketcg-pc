@@ -38,6 +38,9 @@
 #define EVENT_MEDAL_COUNT 0x2Eu
 #define RONALD_DUEL_WON 0x01u
 #define RONALD_DUEL_LOST 0x02u
+
+#define EVENT_RONALD_FIRST_CLUB_ENTRANCE_ENCOUNTER 0x4Bu
+#define TRUE 0x01u
 /* <<< factory statics */
 
 /* >>> factory TryFirstRonaldEncounter */
@@ -120,3 +123,39 @@ Func_e8a0Result Func_e8a0(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e,
 	return (Func_e8a0Result){medal_count, (uint8_t)((medal_count == 0u) ? 0x80u : 0x00u)};
 }
 /* <<< factory Func_e8a0 */
+
+/* >>> factory Preload_Ronald1InClubEntrance */
+PreloadRonaldInClubEntranceResult Preload_Ronald1InClubEntrance(void)
+{
+	/* psychic_club_entrance.asm:65-68: `cp TRUE` on the event value; carry --
+	 * the encounter has not happened -- loads Ronald. */
+	uint8_t a = GetEventValue(EVENT_RONALD_FIRST_CLUB_ENTRANCE_ENCOUNTER);
+	uint8_t f = 0x40u;
+	if (a == TRUE)
+		f |= 0x80u;
+	if ((a & 0x0Fu) < TRUE)
+		f |= 0x20u;
+	if (a < TRUE)
+		f |= 0x10u;
+	return (PreloadRonaldInClubEntranceResult){a, f};
+}
+/* <<< factory Preload_Ronald1InClubEntrance */
+
+/* >>> factory Preload_Ronald2InClubEntrance */
+PreloadRonaldInClubEntranceResult Preload_Ronald2InClubEntrance(uint8_t b, uint8_t c, uint8_t d, uint16_t hl)
+{
+	/* psychic_club_entrance.asm:99-101: e = 2, the medal requirement, then
+	 * falls through into Func_e8a0. */
+	Func_e8a0Result r = Func_e8a0(GetEventValue(EVENT_RONALD_FIRST_DUEL_STATE), b, c, d, 2u, hl);
+	return (PreloadRonaldInClubEntranceResult){r.a, r.f};
+}
+/* <<< factory Preload_Ronald2InClubEntrance */
+
+/* >>> factory Preload_Ronald3InClubEntrance */
+PreloadRonaldInClubEntranceResult Preload_Ronald3InClubEntrance(uint8_t b, uint8_t c, uint8_t d, uint16_t hl)
+{
+	/* psychic_club_entrance.asm:188-191: e = 5, then Func_e8a0. */
+	Func_e8a0Result r = Func_e8a0(GetEventValue(EVENT_RONALD_SECOND_DUEL_STATE), b, c, d, 5u, hl);
+	return (PreloadRonaldInClubEntranceResult){r.a, r.f};
+}
+/* <<< factory Preload_Ronald3InClubEntrance */

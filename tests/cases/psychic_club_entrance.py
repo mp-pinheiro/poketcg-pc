@@ -70,6 +70,39 @@ CASES["Func_e8a0"] = [
 ]
 # <<< factory Func_e8a0
 
+# Event var byte $13 (wEventVars + $13 = $D3E5): bit 7 EVENT_RONALD_FIRST_CLUB_ENTRANCE_ENCOUNTER,
+# bits 6-5 EVENT_RONALD_FIRST_DUEL_STATE, bits 4-3 EVENT_RONALD_SECOND_DUEL_STATE
+# (scripting.asm:465-467). TryGiveMedalPCPacks recounts EVENT_MEDAL_COUNT from the
+# medal flags in byte $00 ($D3D2), one bit per club master (scripting.asm:355-363).
+# >>> factory Preload_Ronald1InClubEntrance
+CONTRACT["Preload_Ronald1InClubEntrance"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Preload_Ronald1InClubEntrance"] = [
+    {"wram": {0xD3E5: b"\x00"}},
+    {"wram": {0xD3E5: b"\x80"}},
+    dict(POISON, wram={0xD3E5: b"\x7F"}),
+]
+# <<< factory Preload_Ronald1InClubEntrance
+
+# >>> factory Preload_Ronald2InClubEntrance
+CONTRACT["Preload_Ronald2InClubEntrance"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Preload_Ronald2InClubEntrance"] = [
+    {"wram": {0xD3E5: b"\x00", 0xD3D2: b"\x00"}, "read": {0xD3AC: 1, 0xD3AD: 1}},
+    {"wram": {0xD3E5: b"\x00", 0xD3D2: b"\xC0"}, "read": {0xD3AC: 1, 0xD3AD: 1}},
+    {"wram": {0xD3E5: b"\x20"}, "read": {0xD3AC: 1, 0xD3AD: 1}},
+    dict(POISON, wram={0xD3E5: b"\x40"}, read={0xD3AC: 1, 0xD3AD: 1}),
+]
+# <<< factory Preload_Ronald2InClubEntrance
+
+# >>> factory Preload_Ronald3InClubEntrance
+CONTRACT["Preload_Ronald3InClubEntrance"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Preload_Ronald3InClubEntrance"] = [
+    {"wram": {0xD3E5: b"\x00", 0xD3D2: b"\x00"}, "read": {0xD3AC: 1, 0xD3AD: 1}},
+    {"wram": {0xD3E5: b"\x00", 0xD3D2: b"\xF8"}, "read": {0xD3AC: 1, 0xD3AD: 1}},
+    {"wram": {0xD3E5: b"\x08"}, "read": {0xD3AC: 1, 0xD3AD: 1}},
+    dict(POISON, wram={0xD3E5: b"\x10"}, read={0xD3AC: 1, 0xD3AD: 1}),
+]
+# <<< factory Preload_Ronald3InClubEntrance
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -92,3 +125,12 @@ MUTATIONS["ClubEntranceAfterDuel"] = {"source_symbol": "ClubEntranceAfterDuel", 
 # >>> factory-mutation Func_e8a0
 MUTATIONS["Func_e8a0"] = {"source_symbol": "Func_e8a0", "before": "\t\twLoadNPCXPos = 0x08u;", "after": "\t\twLoadNPCXPos = 0x09u;", "case_ids": ["Func_e8a0-0"]}
 # <<< factory-mutation Func_e8a0
+# >>> factory-mutation Preload_Ronald1InClubEntrance
+MUTATIONS["Preload_Ronald1InClubEntrance"] = {"source_symbol": "Preload_Ronald1InClubEntrance", "before": "\tif (a < TRUE)\n\t\tf |= 0x10u;", "after": "\tif (a <= TRUE)\n\t\tf |= 0x10u;", "case_ids": ["Preload_Ronald1InClubEntrance-1"]}
+# <<< factory-mutation Preload_Ronald1InClubEntrance
+# >>> factory-mutation Preload_Ronald2InClubEntrance
+MUTATIONS["Preload_Ronald2InClubEntrance"] = {"source_symbol": "Preload_Ronald2InClubEntrance", "before": "GetEventValue(EVENT_RONALD_FIRST_DUEL_STATE), b, c, d, 2u, hl);", "after": "GetEventValue(EVENT_RONALD_FIRST_DUEL_STATE), b, c, d, 3u, hl);", "case_ids": ["Preload_Ronald2InClubEntrance-1"]}
+# <<< factory-mutation Preload_Ronald2InClubEntrance
+# >>> factory-mutation Preload_Ronald3InClubEntrance
+MUTATIONS["Preload_Ronald3InClubEntrance"] = {"source_symbol": "Preload_Ronald3InClubEntrance", "before": "GetEventValue(EVENT_RONALD_SECOND_DUEL_STATE), b, c, d, 5u, hl);", "after": "GetEventValue(EVENT_RONALD_SECOND_DUEL_STATE), b, c, d, 4u, hl);", "case_ids": ["Preload_Ronald3InClubEntrance-1"]}
+# <<< factory-mutation Preload_Ronald3InClubEntrance
