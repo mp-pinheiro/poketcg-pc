@@ -25,11 +25,22 @@ different labels):
 
 A negative asm value (``MENU_CANCEL`` is ``-1``) matches its 8- or 16-bit
 two's complement. Everything else is a mismatch and fails the build.
+
+A second check covers literals the first cannot name: a ``0x4000``-``0x7FFF``
+literal inside a banked routine's body is a switchable-ROM address in that
+routine's own bank, and it must land in a span the ROM inventory
+(``site/data/inventory.json``) classifies as data. ``DrawInPlayAreaScreen``
+shipped with its prize-card table pointing into the middle of
+``DrawPlayArea_IconWithValue``; both lanes read the same code bytes as
+coordinates, so the oracle stayed green. A literal on a line that compares it
+(``==``/``!=``) is a function-pointer dispatch and is exempt.
 """
 
 from __future__ import annotations
 
 import argparse
+import bisect
+import json
 import re
 import subprocess
 import sys
@@ -109,6 +120,67 @@ def rom_labels() -> dict[str, tuple[int, int]]:
     return labels
 
 
+ROM_LITERAL_RE = re.compile(r"\b0[xX]([4-7][0-9A-Fa-f]{3})[uU]?\b")
+FACTORY_RE = re.compile(r"/\* >>> factory (\w+) \*/\n(.*?)/\* <<< factory \1 \*/", re.S)
+COMMENT_RE = re.compile(r"/\*.*?\*/", re.S)
+
+# Literals that legitimately name code: the reason is the allowlist entry.
+ROM_LITERAL_ALLOWLIST = {
+    # scripts/pokemon_dome.asm:12 passes Script_f84c in bc; hl is whatever the
+    # caller held, and the port names the routine's own address for it.
+    ("PokemonDomeMovePlayer", 0x76C6),
+}
+
+
+def inventory_spans() -> dict[int, list[tuple[int, int, str, str | None]]]:
+    spans: dict[int, list[tuple[int, int, str, str | None]]] = {}
+    path = REPO_ROOT / "site" / "data" / "inventory.json"
+    for span in json.loads(path.read_text(encoding="utf-8"))["spans"]:
+        spans.setdefault(int(span.get("bank", 0)), []).append(
+            (span["address"], span["address"] + span["length"], span["kind"], span.get("symbol")))
+    for bank in spans:
+        spans[bank].sort()
+    return spans
+
+
+def span_kind(spans: dict[int, list[tuple[int, int, str, str | None]]], bank: int, address: int) -> tuple[str, str | None]:
+    table = spans.get(bank, [])
+    index = bisect.bisect_right(table, (address, 0x10000, "", None)) - 1
+    if index >= 0 and table[index][0] <= address < table[index][1]:
+        return table[index][2], table[index][3]
+    return "unknown", None
+
+
+def rom_literal_failures(roots: list[Path], labels: dict[str, tuple[int, int]]) -> list[str]:
+    spans = inventory_spans()
+    failures: list[str] = []
+    for root in roots:
+        paths = [root] if root.is_file() else sorted(root.rglob("*.c"))
+        for path in paths:
+            source = path.read_text(encoding="utf-8")
+            for block in FACTORY_RE.finditer(source):
+                name, body = block.group(1), block.group(2)
+                bank = labels.get(name, (0, 0))[0]
+                if bank == 0:
+                    continue
+                code = COMMENT_RE.sub(lambda m: " " * len(m.group(0)), body)
+                first_line = source[:block.start(2)].count("\n") + 1
+                for literal in ROM_LITERAL_RE.finditer(code):
+                    address = int(literal.group(1), 16)
+                    if (name, address) in ROM_LITERAL_ALLOWLIST:
+                        continue
+                    line_index = code[:literal.start()].count("\n")
+                    line = code.split("\n")[line_index]
+                    if "==" in line or "!=" in line:
+                        continue
+                    kind, symbol = span_kind(spans, bank, address)
+                    if kind == "code":
+                        failures.append(
+                            f"{path.relative_to(REPO_ROOT)}:{first_line + line_index}: {name} names "
+                            f"0x{address:04X} in bank {bank:02x}, which is code ({symbol})")
+    return failures
+
+
 def matches(c_value: int, asm_value: int) -> bool:
     if c_value == asm_value:
         return True
@@ -153,11 +225,14 @@ def main(argv: list[str] | None = None) -> int:
                     f"{path.relative_to(REPO_ROOT)}:{number}: {name} is 0x{value:X}, "
                     f"{source} says 0x{expected & 0xFFFFFFFF:X} ({expected})"
                 )
-    for failure in failures:
+    literal_failures = rom_literal_failures(roots, labels)
+    for failure in failures + literal_failures:
         print(failure)
+    bad = bool(failures or literal_failures)
     print(f"lint-constants: {checked} defines checked against the disassembly, "
-          f"{len(failures)} mismatched", file=sys.stderr if failures else sys.stdout)
-    return 1 if failures else 0
+          f"{len(failures)} mismatched; {len(literal_failures)} banked literals point into code",
+          file=sys.stderr if bad else sys.stdout)
+    return 1 if bad else 0
 
 
 if __name__ == "__main__":
