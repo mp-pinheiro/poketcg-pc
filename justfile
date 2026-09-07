@@ -431,6 +431,11 @@ session-status:
 session-meta NAME GOAL:
     python3 tools/completion/session.py meta "{{NAME}}" --goal "{{GOAL}}"
 
+# Turn a per-frame movie into a session by letting the reference play it and
+# logging what its DoFrames read. No human input; ~2 minutes for the full TAS.
+session-derive NAME MOVIE *ARGS:
+    python3 tools/completion/session.py derive "{{NAME}}" --movie "{{MOVIE}}" {{ARGS}}
+
 # Count the composition defects per-routine verification cannot see.
 completion-composition-audit AUDIT="all":
     python3 tools/completion/composition_audit.py {{AUDIT}}

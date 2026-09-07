@@ -27,64 +27,68 @@ never revert, stage, or commit them.
 
 ## The session loop
 
-The primary gate. A human plays the port and everything they play is checked
-against the ROM one DoFrame at a time; the first disagreement names the byte,
-its RAM symbol and the reference routine that wrote it.
+The primary gate. A session is one byte of input per DoFrame. The reference
+replays it once and caches a CRC-32 of the masked game state (WRAM, HRAM,
+OAM, VRAM) at every DoFrame; the port writes the same digest stream; the first
+ordinal whose digests differ is exact, found in one native run of ~30 s for
+the whole game. Only then does one targeted reference capture name the bytes,
+their RAM symbols and the routine that last wrote them.
+
+Sessions come from the ROM, not from a human:
 
 ```sh
-just build
-just play                                   # window; Z=A X=B Return=Start Backspace=Select, arrows
-just play --record-input /tmp/NAME.txt      # same, writing one byte per DoFrame
-mkdir -p tests/sessions/NAME && cp /tmp/NAME.txt tests/sessions/NAME/input.txt
-just session-meta NAME "one sentence: what this session reaches"
-just session-verify NAME                    # or bare: the session with the lowest confirmed ordinal
+just session-derive tas-5530s build/completion/tas/input.txt   # once; ~2 min
+just session-verify                                             # lowest confirmed session
 just session-status
 ```
+
+`derive` has the reference play the frame-indexed TAS and log the byte its own
+`ReadJoypad` read at every DoFrame; the log replayed on the DoFrame axis is
+digest-identical to the movie run (`axis_match=True`). The movie is 78,207
+frames and 71,396 DoFrames, boot to wherever the ROM goes on it: even past the
+point where luck manipulation stops matching the runner's intent the ROM is
+still executing legal input, and the port has to match it byte for byte.
+There is no length cap and no re-recording: the session is a function of the
+movie and the reference alone, and every fix re-verifies against the cached
+reference in a native-only run.
+
+`just play --record-input PATH` still records a human, and `session-meta`
+files it as a session; it is a way to reach a screen the movie does not, not
+the loop.
 
 `just session-verify` prints one line, then the evidence:
 
 ```text
 SESSION NAME status=<clean|diverged|native-short|ref-short> confirmed=<K> ordinals=<n>
+WINDOW ordinal=<K+1> regions=<wram,...> reference_frames=<f> reference_vblanks=<v> [LAG ...]
 DIVERGE ordinal=<K+1> field=<f> address=0x<AAAA> symbol=<sym> native=<n> reference=<r> writer=<Routine>
 ```
 
 `confirmed` is the number to move, per session, in
 `tools/completion/session_ratchet.json`. It may only rise; a fall is
-`REGRESSION` and exit 3, and the change that caused it does not land. Sessions
-are capped at 20,000 DoFrames (~5.5 minutes); longer play is a second session.
+`REGRESSION` and exit 3, and the change that caused it does not land.
 
-To continue a session past its end without replaying by hand:
-`just play --input-ordinal tests/sessions/NAME/input.txt --record-input /tmp/NAME.txt`
-replays the recording at full speed (title: `poketcg - replaying N/M`), then
-raises the window, takes the keyboard and retitles it `poketcg - your turn`;
-everything from there is recorded too. Copy the result back over `input.txt`
-and refresh `session-meta`. A recording whose tail is all zeros means the
-window never had the keyboard: click it before pressing anything.
-
-Two recordings ship as the floor: `tests/sessions/boot-menu` (boot, skip the
-intro with A, start menu, New Game). When the loop landed it stood at
-`confirmed=47`, and two fixes it named -- `FadePalIntoAnother.GetFadedColor`
-leaving hffb6/hffb7 unwritten, and `PlayIntroSequence` calling
-`LoadOpeningScene` where `intro.asm:47` calls `LoadScene` -- took it to 538.
-
-The comparison covers WRAM, HRAM and OAM under `scenario.py`'s exclusion
-ledger plus one span of its own: `SECTION "WRAM Audio"` ($DD80-$DEE4). The
-sound driver runs from the timer interrupt (`time.asm:9-26`), asynchronous to
-DoFrame, so its counters sit a tick apart between lanes on a schedule no asm
-instruction decides; `audio-catalog` owns audio parity. IO readback and
-palette RAM are the scenario census's. Do not add to either list to move
-`confirmed`.
+The comparison covers WRAM, HRAM, OAM and both VRAM banks under `scenario.py`'s
+exclusion ledger plus two spans of its own: `SECTION "WRAM Audio"`
+($DD80-$DEE4) and `wPlayTimeCounter` ($CAC5-$CAC9). The sound driver and the
+play-time clock run from the timer interrupt (`time.asm:9-26`), asynchronous
+to DoFrame, so their counters sit ticks apart between lanes on a schedule no
+asm instruction decides; `audio-catalog` owns audio parity. `hDPadRepeat` is
+compared even though the ledger excludes it: its exclusion is a frame-axis
+argument. IO readback and palette RAM are the scenario census's. Do not add to
+either list to move `confirmed`.
 
 ### Session decision table
 
 | the line contains | what it means | what to do |
 |---|---|---|
 | `status=diverged` and `DIVERGE ... writer=R` | the reference's `R` produced a byte the port did not | read `R`'s asm against its C body; the defect is in `R` or in what `R` reads. Fix, `just oracle-diff R`, add a case that observes the byte (`read`), rerun `just session-verify NAME`; `confirmed` must rise |
-| `DIVERGE ... writer=` empty | no reference write to that address before that ordinal | the port invented a write. `just completion-trace-diff` style: run `build-trace/poketcg --input-ordinal ... --stop-ordinal K` twice (K-1 and K) with `--trace-calls` and diff the counts with `tools/completion/native_trace.native_counts`; the routines only the port entered are the suspects |
-| `status=diverged` and both lanes name the same routines | same code, different bytes | dump both lanes at K-1 and K (`--dump-state-ordinals`, `refstream.Stream.domain`) and read the writer's asm with those inputs |
+| `WINDOW ... LAG` (`reference_frames` > 1) | the ROM spent extra VBlanks between these two DoFrames -- a routine heavy enough to lag, or an LCD-off stretch | if the divergent bytes are `wVBlankCounter`-timed (a `cp N` wait, `FadeScreenToTempPals`), model the extra VBlanks with `frame_boundary_consume_services(reference_vblanks - 1)` at the site, as `src/home/start.c:290` does |
+| `DIVERGE ... writer=` empty | no reference write to that address before that ordinal | the port invented a write. Run `build-trace/poketcg --input-ordinal ... --stop-ordinal K` for K-1 and K with `--trace-calls`, diff the counts with `tools/completion/native_trace.native_counts` against `refstream.routine_trace(..., ordinals=K, axis="ordinal")`; the routines only the port entered are the suspects |
+| `status=diverged` and both lanes name the same routines | same code, different bytes | dump both lanes at K-1 and K (`--dump-state-ordinals`, `session.reference_capture`) and read the writer's asm with those inputs |
 | `status=native-short` | the port aborted or hung before the session ended | the `NATIVE` lines carry stderr; take `blocked_by` from them and use the decision table below |
-| `status=ref-short` | the recording is stale: the port's trajectory changed under it | re-record from the confirmed prefix with `--input-ordinal` + `--record-input`, replace `input.txt`, refresh `session-meta` |
-| `status=clean` | the whole session is confirmed | record a longer one that goes further into the game |
+| `status=ref-short` | the reference produced fewer DoFrames than the session has entries | a hand recording outran its `reference_frames`; refresh `session-meta`. A derived session cannot do this |
+| `status=clean` | the whole session is confirmed | derive the next movie, or record a human session for a screen no movie reaches |
 | `REGRESSION NAME key=confirmed_ordinal` | your change lowered a session's confirmed ordinal | revert your change; do not land it |
 
 ## The TAS loop (secondary)

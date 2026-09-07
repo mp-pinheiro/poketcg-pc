@@ -1,0 +1,12 @@
+{
+  "axis_match": true,
+  "axis_mismatch_ordinal": null,
+  "derived_from": "build/completion/tas/input.txt",
+  "goal": "TASVideos 5530S replayed by the reference; the ROM's own route, boot to wherever it desyncs",
+  "movie_frames": 78207,
+  "name": "tas-5530s",
+  "ordinals": 71396,
+  "recorded": "2026-09-07T05:46:55+00:00",
+  "reference_frames": 78607,
+  "schema": 1
+}

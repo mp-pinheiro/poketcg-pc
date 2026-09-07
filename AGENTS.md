@@ -53,7 +53,8 @@ The commands that matter, from the `justfile`:
 | `uv sync --project tools/oracle --frozen` | install the pinned PyBoy oracle environment |
 | `just build` | configure + build the C side |
 | `just play` | open the port in a window; `--record-input PATH` writes one byte per DoFrame, `--input-ordinal PATH` replays one then hands over |
-| `just session-verify [NAME]` | **the primary gate.** Replay a recorded session on both lanes; first divergent DoFrame, its RAM symbol, the reference writer. Runbook: `docs/grind.md`, "The session loop" |
+| `just session-verify [NAME]` | **the primary gate.** Replay a session on both lanes; the exact first divergent DoFrame, its RAM symbol, the reference writer. ~30 s for the whole game. Runbook: `docs/grind.md`, "The session loop" |
+| `just session-derive NAME MOVIE` | make a session from a movie by letting the reference play it: no human input |
 | `just session-status` | one row per recorded session: length, confirmed ordinal, goal |
 | `just oracle-diff <Fn>` | diff one routine against the PyBoy oracle — the per-routine check |
 | `just oracle-release-gate` | **the gate.** Central barrier; the only producer of `site/data/gate.json` |

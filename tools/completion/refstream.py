@@ -544,7 +544,11 @@ EVENT_CAP = 8192
 def writers(
     scenario: str, frames: int, addresses: list[int], *, events: bool = False,
     masks: list[int] | None = None, axis: str | None = None,
+    ordinals: int | None = None,
 ) -> list[dict[str, Any]]:
+    """`ordinals` stops the replay once that many DoFrame anchors have fired.
+    The write callback fires on every store, so an unbounded run over a long
+    movie costs minutes for a divergence already known to sit at one ordinal."""
     movie = masks is not None
     masks = scenario_masks(scenario, frames, masks)
     resolve = label_resolver()
@@ -595,7 +599,7 @@ def writers(
 
         core.on_write(on_write)
         core.install_exec()
-        core.run(frames)
+        core.run(frames, stop=(None if ordinals is None else lambda: core.ordinal > ordinals))
     result = []
     for address in addresses:
         # The byte's value at the comparison point comes from the LAST write,
