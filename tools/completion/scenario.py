@@ -285,10 +285,17 @@ def fields_incomparable(
 #   divergent bytes is whichever routine pushed last (`refstream.py writers`
 #   named DrawSpriteAnimationFrame.loop for the boot-title timeline), which
 #   is the signature of stack traffic rather than a data region.
+# - wram[0xBE5..0xBE6] (wDuelReturnAddress): the Game Boy stack pointer at
+#   StartDuel/_ContinueDuel entry (core.asm:9-14, 55-59; `ld hl, sp+0`),
+#   consumed only by `ld sp, hl` unwinds (serial.asm:532). Its value is the
+#   depth of the asm call chain into the duel -- $FFFC from the practice duel's
+#   entry, $FFE8 through ExecuteGameEvent -> GameEvent_Duel -> StartDuel_VSAIOpp
+#   -- which the C port, having no Game Boy stack, cannot reproduce; the same
+#   class as the stack regions above.
 COMPARATOR_EXCLUDED_RANGES = {
     "hram": [(0, 1), (13, 14), (96, 128)],
     "wram": [(0xAA9, 0xAAA), (0xAB8, 0xAB9), (0xABA, 0xABD), (0xAC0, 0xAC2),
-             (0xAC3, 0xAC4), (0x1EE5, 0x2000)],
+             (0xAC3, 0xAC4), (0xBE5, 0xBE7), (0x1EE5, 0x2000)],
     "io": [(4, 6), (15, 16), (16, 64), (65, 66), (68, 70), (104, 108)],
 }
 

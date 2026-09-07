@@ -216,6 +216,9 @@ class Core:
         self._registers = (ctypes.c_int * 10)()
         self._masks = masks
         self.frame = 0
+        # Real time: stereo samples emitted at 2 MiHz, two cycles each, LCD on
+        # or off. `frame` only counts rendered frames.
+        self.samples = 0
         self.ordinal = 0
         self.override_mask: int | None = None
         self.input_axis = "ordinal"
@@ -284,6 +287,7 @@ class Core:
             rendered = self.library.gambatte_runfor(
                 self.core, self._framebuffer, WIDTH, self._sound, ctypes.byref(emitted)
             )
+            self.samples += int(emitted.value)
             if rendered >= 0:
                 return
         raise RefstreamError(f"no rendered frame after {MAX_SLICES_PER_FRAME} slices")

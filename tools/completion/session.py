@@ -46,35 +46,58 @@ SESSIONS = ROOT / "tests" / "sessions"
 CACHE = ROOT / "build" / "completion" / "sessions"
 RATCHET_PATH = ROOT / "tools" / "completion" / "session_ratchet.json"
 NATIVE_TIMEOUT = 1800
-DIGEST_FORMAT = "session-digest-v1"
-# wram, hram, oam, vram; then the reference's PPU frame and wVBlankCounter.
-REFERENCE_RECORD = struct.Struct("<4IIB")
-NATIVE_RECORD = struct.Struct("<4I")
-REGIONS = ("wram", "hram", "oam", "vram")
-REGION_LENGTHS = {"wram": 0x2000, "hram": 0x80, "oam": 0xA0, "vram": 0x4000}
-REGION_BASES = {"wram": 0xC000, "hram": 0xFF80, "oam": 0xFE00, "vram": 0x8000}
+DIGEST_FORMAT = "session-digest-v6"
+# wram, hram, oam, vram, audio; then the reference's real time at the anchor
+# in 2 MiHz units (emitted samples of completed slices plus the exec
+# callback's in-slice offset), wVBlankCounter and wTimerCounter.
+REFERENCE_RECORD = struct.Struct("<5IQBB")
+NATIVE_RECORD = struct.Struct("<5I")
+# One per timer sync point reached: the interval it fell in (anchors completed
+# so far), its real time and wTimerCounter, which is how the port learns at
+# which tick of the interval game code observed timer-ISR state. The sync
+# points are every routine through which game code reaches that state: the
+# home/sound.asm driver wrappers (StopMusic and PlaySFX_InvalidChoice fall
+# into PlaySong/PlaySFX, so one entry each) and the play-time counter's
+# readers and writers. The port calls frame_boundary_timer_sync at the same
+# entries (src/home/frames.h). Keyed by (bank, address); home routines are
+# bank-independent.
+CALL_RECORD = struct.Struct("<IQB")
+TIMER_SYNC = {
+    (None, 0x377F): "SetupSound", (None, 0x3785): "PlaySong",
+    (None, 0x378A): "AssertSongFinished", (None, 0x378F): "AssertSFXFinished",
+    (None, 0x3796): "PlaySFX", (None, 0x379B): "PauseSong", (None, 0x37A0): "ResumeSong",
+    (None, 0x383D): "ExecuteGameEvent",           # map.asm:26, enables the counter
+    (3, 0x41B1): "Func_c1b1",                     # overworld.asm:230, zeroes it
+    (4, 0x41CD): "PrintPlayTime",                 # print_stats.asm:115, reads it
+    (4, 0x5299): "CopyGeneralSaveDataToSRAM",     # save.asm:93, saves it
+}
+TIMER_SYNC_ADDRESSES = {address: bank for bank, address in TIMER_SYNC}
+# The first four gate `confirmed`; audio is SECTION "WRAM Audio" on its own,
+# reported but not gated: the sound driver runs from the timer ISR, which the
+# lag track schedules around the game's driver calls, but the reference APU
+# registers it writes are hardware the port does not model byte-for-byte.
+REGIONS = ("wram", "hram", "oam", "vram", "audio")
+GATED = 4
+REGION_LENGTHS = {"wram": 0x2000, "hram": 0x80, "oam": 0xA0, "vram": 0x4000, "audio": 0x165}
+REGION_BASES = {"wram": 0xC000, "hram": 0xFF80, "oam": 0xFE00, "vram": 0x8000, "audio": 0xDD80}
 
-# Timer-phase state on top of the scenario ledger. The whole sound driver runs
-# from the timer interrupt (time.asm:9-26: SoundTimerHandler on every fourth
-# TimerHandler, ~60.24 Hz), asynchronous to DoFrame, so at a DoFrame anchor
-# its command pointers and counters are one tick apart between lanes on a
-# schedule no asm instruction decides -- the same reason the ledger already
-# excludes wTimerCounter. The span is exactly SECTION "WRAM Audio"
-# (wram.asm:2992-3289, $DD80 up to the stack at $DEE5). Audio correctness is
-# the audio-catalog scenario's, compared as an APU write sequence.
-# wPlayTimeCounter ($CAC5-$CAC9) is the same ISR's other product
-# (time.asm:15-16): during a map load the ROM's timer keeps firing for the
-# frames the CPU is busy, ticks the port's batched timer cannot see, and
-# nothing but the diary reads the result. wPlayTimeCounterEnable ($CAC4)
-# stays compared: the game sets it, so it must match.
-TIMING_PHASE = {"wram": [(0xCAC5 - 0xC000, 0xCACA - 0xC000),
-                         (0xDD80 - 0xC000, 0xDEE5 - 0xC000)]}
-# Ledger entries whose justification is the frame axis. hDPadRepeat ($FF8D)
-# is excluded there because the reference's mid-processing VBlank services
-# shift its decay schedule against the native frame count; on the DoFrame
-# axis HandleDPadRepeat runs once per anchor on both lanes, so the counter is
-# exactly comparable, and hiding it only defers the divergence to hDPadHeld.
-COMPARE_DESPITE_LEDGER = {"hram": [(0x0D, 0x0E)]}
+# The lag track replays the ROM's own timer and VBlank ISR counts per DoFrame,
+# so the play-time clock and both ISR counters are compared. The sound
+# driver's SECTION "WRAM Audio" ($DD80-$DEE4, wram.asm:2992-3289) is carved
+# out of the gated wram digest and digested as the ungated `audio` region: its
+# ISR *count* per DoFrame is exact, but the port batches those ticks at the
+# frame boundary while the ROM interleaves them with game code, so a sound
+# requested between two ticks starts one update apart. Reported, not gated.
+TIMING_PHASE: dict[str, list[tuple[int, int]]] = {"wram": [(0xDD80 - 0xC000, 0xDEE5 - 0xC000)]}
+# Ledger entries whose justification is the frame axis, compared on this one:
+#   hram $FF8D hDPadRepeat   -- HandleDPadRepeat runs once per anchor on both lanes
+#   wram $CAB8 wVBlankCounter, $CAC3 wTimerCounter -- ISR counts replayed exactly
+#   wram $CABA-$CABC wRNG1/wRNG2/wRNGCounter -- a software LFSR advanced by game
+#     code only (random.asm), so with the same DoFrames and input it must match;
+#     every shuffle and coin flip rides on it
+#   wram $CAC0-$CAC1 wVBlankOAMCopyToggle -- consumed by the same ISR count
+COMPARE_DESPITE_LEDGER = {"hram": [(0x0D, 0x0E)],
+                          "wram": [(0xAB8, 0xAB9), (0xABA, 0xABD), (0xAC0, 0xAC2), (0xAC3, 0xAC4)]}
 
 
 class SessionError(RuntimeError):
@@ -175,24 +198,28 @@ def masked(data: bytes, table: bytes) -> bytes:
 
 
 def reference_regions(core: refstream.Core) -> dict[str, bytes]:
+    wram = core.area("WRAM")[:0x2000]
     return {
-        "wram": core.area("WRAM")[:0x2000],
+        "wram": wram,
         "hram": core.hram_block(),
         "oam": core.area("OAM")[:0xA0],
         "vram": core.area("VRAM")[:0x4000],
+        "audio": wram[0x1D80:0x1EE5],
     }
 
 
 def native_regions(dump: dict[str, Any]) -> dict[str, bytes]:
+    wram = bytes(dump["wram"])
     return {
-        "wram": bytes(dump["wram"]),
+        "wram": wram,
         "hram": bytes(dump["hram"]),
         "oam": bytes(dump["oam"]),
         "vram": bytes(dump["vram_bank_0"]) + bytes(dump["vram_bank_1"]),
+        "audio": wram[0x1D80:0x1EE5],
     }
 
 
-def digest(regions: dict[str, bytes], tables: dict[str, bytes]) -> tuple[int, int, int, int]:
+def digest(regions: dict[str, bytes], tables: dict[str, bytes]) -> tuple[int, ...]:
     return tuple(zlib.crc32(masked(regions[r], tables[r])) & 0xFFFFFFFF for r in REGIONS)
 
 
@@ -227,20 +254,27 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     tables = mask_tables()
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     records = bytearray()
+    calls = bytearray()
     inputs = bytearray()
     with refstream.Core(padded) as core:
         core.input_axis = axis
         read = core.library.gambatte_cpuread
         hits = 0
 
-        def on_exec(address: int, _cycle: int) -> None:
+        def on_exec(address: int, cycle: int) -> None:
             nonlocal hits
+            if address in TIMER_SYNC_ADDRESSES:
+                bank = TIMER_SYNC_ADDRESSES[address]
+                if bank is None or core.bank_of(address) == bank:
+                    calls.extend(CALL_RECORD.pack(hits, core.samples + cycle, read(core.core, 0xCAC3)))
+                return
             if address != refstream.DOFRAME_ANCHOR:
                 return
             hits += 1
             regions = reference_regions(core)
             crcs = digest(regions, tables)
-            records.extend(REFERENCE_RECORD.pack(*crcs, core.frame, regions["wram"][0xAB8]))
+            records.extend(REFERENCE_RECORD.pack(*crcs, core.samples + cycle, regions["wram"][0xAB8],
+                                                 regions["wram"][0xAC3]))
             if record_input:
                 held = read(core.core, 0xFF90)
                 inputs.append(((held << 4) | (held >> 4)) & 0xFF)
@@ -249,6 +283,8 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
         core.run(frames)
     directory.mkdir(parents=True, exist_ok=True)
     (directory / "digests.bin").write_bytes(bytes(records))
+    (directory / "calls.bin").write_bytes(bytes(calls))
+    (directory / "lag.txt").write_text(lag_track(bytes(records), bytes(calls)))
     meta = {
         "schema": 1, "format": DIGEST_FORMAT, "name": name, "axis": axis, "key": key,
         "frames": frames, "anchors": hits, "record": REFERENCE_RECORD.size,
@@ -265,8 +301,54 @@ def load_reference(meta: dict[str, Any]) -> bytes:
     return (ROOT / meta["directory"] / "digests.bin").read_bytes()
 
 
-def run_native(directory: Path, input_path: Path, n: int, *, digest_out: Path | None = None,
-               mask_path: Path | None = None, dump_ordinals: list[int] | None = None) -> tuple[Path, str]:
+TICK_CYCLES = 17408  # SetupTimer: TAC_16KHZ with TMA=-68 (time.asm:69-85)
+TICK_TIME = TICK_CYCLES // 2  # in the record's 2 MiHz units
+
+
+def unwrap(delta_mod: int, expected: float, modulus: int = 256) -> int:
+    """The byte counter's delta closest to the cycle-derived expectation."""
+    base = delta_mod % modulus
+    candidates = [base + modulus * m for m in range(-1, 4)]
+    return max(0, min(candidates, key=lambda c: abs(c - expected)))
+
+
+def lag_track(records: bytes, calls: bytes = b"") -> str:
+    """One line per DoFrame: `<cycles> <timer ISRs> <VBlank ISRs>` the ROM
+    spent between the previous anchor and this one, then one number per
+    timer sync point reached in that interval: the timer ISRs that had fired
+    before it. The port replays the schedule (src/runtime.c timer_sync): the ISR
+    counts come from the ROM's own wTimerCounter and wVBlankCounter,
+    unwrapped by the real time, so the port's interrupt handlers run exactly
+    as often as the ROM's did and the driver sees each call at the same tick.
+    Line 1 carries the boot's absolute counts."""
+    count = len(records) // REFERENCE_RECORD.size
+    by_interval: dict[int, list[tuple[int, int]]] = {}
+    for index in range(len(calls) // CALL_RECORD.size):
+        interval, time, counter = CALL_RECORD.unpack_from(calls, index * CALL_RECORD.size)
+        by_interval.setdefault(interval, []).append((time, counter))
+    lines = []
+    prev = (0, 0, 0)  # time, vblanks, ticks at the interval's start
+    for index in range(count):
+        row = REFERENCE_RECORD.unpack_from(records, index * REFERENCE_RECORD.size)
+        time, vblanks, ticks = row[5], row[6], row[7]
+        cycles = 2 * (time - prev[0])
+        if index == 0:
+            dt, dv = ticks, vblanks
+        else:
+            dt = unwrap(ticks - prev[2], cycles / TICK_CYCLES)
+            dv = unwrap(vblanks - prev[1], cycles / 70224)
+        offsets = [
+            min(dt, unwrap(counter - prev[2], (call_time - prev[0]) / TICK_TIME))
+            for call_time, counter in by_interval.get(index, ())
+        ]
+        lines.append(" ".join(str(n) for n in [max(1, cycles), dt, dv, *offsets]))
+        prev = (time, vblanks, ticks)
+    return "\n".join(lines) + "\n"
+
+
+def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
+               digest_out: Path | None = None, mask_path: Path | None = None,
+               dump_ordinals: list[int] | None = None) -> tuple[Path, str]:
     state_path = directory / "state.json"
     command = [
         str(scenario_module.BINARY), "--headless",
@@ -274,6 +356,7 @@ def run_native(directory: Path, input_path: Path, n: int, *, digest_out: Path | 
         "--frames", "0",
         "--stop-ordinal", str(n),
         "--input-ordinal", str(input_path),
+        "--lag-track", str(lag_path),
         "--dump-state", str(state_path),
     ]
     if digest_out:
@@ -293,16 +376,20 @@ def run_native(directory: Path, input_path: Path, n: int, *, digest_out: Path | 
     return state_path, ""
 
 
-def first_divergence(reference: bytes, native: bytes) -> tuple[int | None, int, list[str]]:
-    """(first divergent ordinal, native ordinals, regions that differ there)."""
+def first_divergence(reference: bytes, native: bytes) -> tuple[int | None, int, list[str], int | None]:
+    """(first gated divergent ordinal, native ordinals, gated regions that
+    differ there, first ordinal the ungated audio region differs)."""
     ref_count = len(reference) // REFERENCE_RECORD.size
     nat_count = len(native) // NATIVE_RECORD.size
+    audio_first = None
     for index in range(min(ref_count, nat_count)):
         ref = REFERENCE_RECORD.unpack_from(reference, index * REFERENCE_RECORD.size)
         nat = NATIVE_RECORD.unpack_from(native, index * NATIVE_RECORD.size)
-        if ref[:4] != nat:
-            return index + 1, nat_count, [REGIONS[i] for i in range(4) if ref[i] != nat[i]]
-    return None, nat_count, []
+        if audio_first is None and ref[GATED] != nat[GATED]:
+            audio_first = index + 1
+        if ref[:GATED] != nat[:GATED]:
+            return index + 1, nat_count, [REGIONS[i] for i in range(GATED) if ref[i] != nat[i]], audio_first
+    return None, nat_count, [], audio_first
 
 
 def reference_capture(name: str, masks: list[int], frames: int, ordinal: int) -> dict[str, bytes]:
@@ -333,9 +420,9 @@ def lag_between(reference: bytes, ordinal: int) -> dict[str, int]:
     pass (frame_boundary_consume_services) at whatever the game was doing."""
     this = REFERENCE_RECORD.unpack_from(reference, (ordinal - 1) * REFERENCE_RECORD.size)
     if ordinal < 2:
-        return {"frames": this[4], "vblanks": this[5]}
+        return {"frames": round(2 * this[5] / 70224, 2), "vblanks": this[6]}
     prev = REFERENCE_RECORD.unpack_from(reference, (ordinal - 2) * REFERENCE_RECORD.size)
-    return {"frames": this[4] - prev[4], "vblanks": (this[5] - prev[5]) & 0xFF}
+    return {"frames": round(2 * (this[5] - prev[5]) / 70224, 2), "vblanks": (this[6] - prev[6]) & 0xFF}
 
 
 def region_field(region: str, offset: int) -> tuple[str, int]:
@@ -349,7 +436,7 @@ def attribute(name: str, masks: list[int], frames: int, ordinal: int,
     tables = mask_tables()
     picked: list[tuple[str, int, int, int, str]] = []
     seen: set[str] = set()
-    for region in REGIONS:
+    for region in REGIONS[:GATED]:
         table = tables[region]
         nat, ref = native[region], reference[region]
         for offset in range(min(len(nat), len(ref))):
@@ -404,10 +491,11 @@ def verify(name: str, *, write: bool, json_path: Path | None) -> int:
         mask_path = directory / "mask.txt"
         mask_path.write_text(mask_text())
         digest_path = directory / "native.bin"
+        lag_path = ROOT / ref_meta["directory"] / "lag.txt"
         _state, failure = run_native(directory, session_dir(name) / "input.txt", n,
-                                     digest_out=digest_path, mask_path=mask_path)
+                                     lag_path=lag_path, digest_out=digest_path, mask_path=mask_path)
         native = digest_path.read_bytes() if digest_path.is_file() else b""
-        ordinal, reached, regions = first_divergence(reference, native)
+        ordinal, reached, regions, audio_first = first_divergence(reference, native)
         if ordinal is None and reached < n:
             status, confirmed = "native-short", reached
         elif ordinal is None:
@@ -415,19 +503,18 @@ def verify(name: str, *, write: bool, json_path: Path | None) -> int:
         else:
             status, confirmed = "diverged", ordinal - 1
         report.update(status=status, confirmed=confirmed, reached=reached, native_failure=failure,
-                      reference=ref_meta["directory"])
-        print(f"SESSION {name} status={status} confirmed={confirmed} ordinals={n}")
+                      reference=ref_meta["directory"], audio_first_divergence=audio_first)
+        print(f"SESSION {name} status={status} confirmed={confirmed} ordinals={n} "
+              f"audio_first_divergence={audio_first if audio_first is not None else 'none'}")
         if status == "diverged":
             lag = lag_between(reference, ordinal)
             report["divergence"] = {"ordinal": ordinal, "regions": regions, "lag": lag}
             print(f"WINDOW ordinal={ordinal} regions={','.join(regions)} "
-                  f"reference_frames={lag['frames']} reference_vblanks={lag['vblanks']}"
-                  + ("  LAG: the reference ran extra VBlanks here; model them with "
-                     "frame_boundary_consume_services" if lag["frames"] > 1 else ""))
+                  f"reference_frames={lag['frames']} reference_vblanks={lag['vblanks']}")
             capture_dir = directory / "capture"
             capture_dir.mkdir()
             state_path, cap_failure = run_native(capture_dir, session_dir(name) / "input.txt",
-                                                 ordinal, dump_ordinals=[ordinal])
+                                                 ordinal, lag_path=lag_path, dump_ordinals=[ordinal])
             dump_path = state_path.with_name(f"{state_path.stem}-f{ordinal}.json")
             if not dump_path.is_file():
                 raise SessionError(f"no native dump at ordinal {ordinal}: {cap_failure[-300:]}")
@@ -479,8 +566,8 @@ def derive(name: str, movie: Path, goal: str) -> int:
     session_digests = load_reference(session_run)
     mismatch = None
     for index in range(min(len(movie_digests), len(session_digests)) // REFERENCE_RECORD.size):
-        a = REFERENCE_RECORD.unpack_from(movie_digests, index * REFERENCE_RECORD.size)[:4]
-        b = REFERENCE_RECORD.unpack_from(session_digests, index * REFERENCE_RECORD.size)[:4]
+        a = REFERENCE_RECORD.unpack_from(movie_digests, index * REFERENCE_RECORD.size)[:GATED]
+        b = REFERENCE_RECORD.unpack_from(session_digests, index * REFERENCE_RECORD.size)[:GATED]
         if a != b:
             mismatch = index + 1
             break
