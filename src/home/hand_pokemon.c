@@ -45,6 +45,15 @@
 #include "home/duel.h"
 #define OPPACTION_PLAY_BASIC_PKMN 0x01u
 #define TYPE_ENERGY 0x08u
+#define AI_INFO_ENCOURAGE_EVO 0x02u
+#define MYSTERIOUS_FOSSIL 0xCCu
+#define OPPACTION_EVOLVE_PKMN 0x02u
+#define PIKACHU_ALT_LV16 0x63u
+#define PIKACHU_DECK_ID 0x27u
+#define PIKACHU_LV12 0x60u
+#define PIKACHU_LV14 0x61u
+#define PIKACHU_LV16 0x62u
+#define SECOND_ATTACK 0x01u
 /* <<< factory statics */
 
 /* >>> factory AIDecideSpecialEvolutions */
@@ -135,10 +144,131 @@ void AIDecideSpecialEvolutions(void)
 /* <<< factory AIDecideSpecialEvolutions */
 
 /* >>> factory AIDecideEvolution */
+/* hand_pokemon.asm:104-391. For every evolution card in hand and every play
+ * area card it can evolve, score the evolution against 128 and play it at 133. */
 uint8_t AIDecideEvolution(void)
 {
-	uint8_t result = 0xffu;
-	return result;
+	(void)CreateHandCardList(0u);
+	{
+		uint16_t src = wDuelTempList_ADDR;
+		uint16_t dst = wHandTempList_ADDR;
+		(void)CopyListWithFFTerminatorFromHLToDE_Bank5(&src, &dst);
+	}
+	uint16_t hand = wHandTempList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(hand++);
+		if (card == 0xFFu)
+			break;
+		wTempAIPokemonCard = card;
+		if (IsPrehistoricPowerActive(hand).f & 0x10u)
+			continue;
+		(void)LoadCardDataToBuffer1_FromDeckIndex(card);
+		if (wLoadedCard1Type >= TYPE_ENERGY || wLoadedCard1Stage == 0u)
+			continue;
+		uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+		for (uint8_t loc = 0u; count != 0u; ++loc, --count) {
+			if (CheckIfCanEvolveInto(card, loc).f & 0x10u)
+				continue;
+			wTempAI = loc;
+			hTempPlayAreaLocation_ff9d = loc;
+			wAIScore = 0x80u;
+			AIDecideSpecialEvolutions();
+			/* Whether the card as it stands can attack, and KO. wCurCardCanKO
+			 * is only cleared on the cannot-attack path, as in the asm. */
+			wSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;
+			uint8_t can_attack = (CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u).f & 0x10u) == 0u;
+			if (!can_attack) {
+				wSelectedAttack = SECOND_ATTACK;
+				can_attack = (CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u).f & 0x10u) == 0u;
+			}
+			if (can_attack) {
+				wCurCardCanAttack = 1u;
+				if ((CheckIfAnyAttackKnocksOutDefendingCard().f & 0x10u) != 0u
+				    && (CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u).f & 0x10u) == 0u)
+					wCurCardCanKO = 1u;
+			} else {
+				wCurCardCanAttack = 0u;
+				wCurCardCanKO = 0u;
+			}
+			/* .check_evolution_attacks: the evolution stands in for the card. */
+			DuelistVarResult slot = GetTurnDuelistVariable((uint8_t)(loc + DUELVARS_ARENA_CARD));
+			uint8_t original = slot.a;
+			gb_write8(slot.hl, card);
+			wSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;
+			uint8_t evolution_can_attack =
+				(CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u).f & 0x10u) == 0u;
+			if (!evolution_can_attack) {
+				wSelectedAttack = SECOND_ATTACK;
+				evolution_can_attack =
+					(CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u).f & 0x10u) == 0u;
+			}
+			if (evolution_can_attack) {
+				(void)AIEncourage(5u);
+			} else if (wCurCardCanAttack != 0u) {
+				AIDiscourage(2u);
+				if (wAlreadyPlayedEnergy == 0u && (LookForEnergyNeededInHand() & 0x10u) != 0u)
+					(void)AIEncourage(7u);
+			}
+			/* .check_evolution_ko */
+			if (wCurCardCanAttack != 0u && wTempAI == 0u) {
+				if ((CheckIfAnyAttackKnocksOutDefendingCard().f & 0x10u) != 0u
+				    && (CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u).f & 0x10u) == 0u)
+					(void)AIEncourage(5u);
+				else if (wCurCardCanKO != 0u)
+					AIDiscourage(20u);
+			}
+			/* .check_defending_can_ko_evolution */
+			if (wTempAI == 0u) {
+				hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+				if (CheckIfDefendingPokemonCanKnockOut(0u, 0u, 0u, 0u, 0u, 0u, 0u).f & 0x10u)
+					AIDiscourage(5u);
+			}
+			/* .check_mr_mime */
+			if ((CheckDamageToMrMime(wTempAI, 0u, 0u, 0u, 0u, 0u, 0u).f & 0x10u) == 0u)
+				AIDiscourage(20u);
+			/* .check_defending_can_ko: the card itself is back. */
+			slot = GetTurnDuelistVariable((uint8_t)(wTempAI + DUELVARS_ARENA_CARD));
+			gb_write8(slot.hl, original);
+			if (wTempAI == 0u) {
+				hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+				if (CheckIfDefendingPokemonCanKnockOut(0u, 0u, 0u, 0u, 0u, 0u, 0u).f & 0x10u)
+					(void)AIEncourage(5u);
+				if (GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a != 0u)
+					(void)AIEncourage(4u);
+			}
+			/* .check_2nd_stage_hand / .check_2nd_stage_deck */
+			if (CheckForEvolutionInList(card, 0u).f & 0x10u)
+				(void)AIEncourage(2u);
+			else if (CheckForEvolutionInDeck(card, 0u).f & 0x10u)
+				(void)AIEncourage(1u);
+			/* .check_damage: minus floor(damage / 40) */
+			CardDamageResult damage = GetCardDamageAndMaxHP(wTempAI);
+			if (damage.a != 0u)
+				AIDiscourage(ConvertHPToDamageCounters_Bank5((uint8_t)(damage.a >> 2)).a);
+			/* .check_mysterious_fossil */
+			slot = GetTurnDuelistVariable((uint8_t)(wTempAI + DUELVARS_ARENA_CARD));
+			(void)LoadCardDataToBuffer1_FromDeckIndex(slot.a);
+			if (wLoadedCard1ID == MYSTERIOUS_FOSSIL)
+				(void)AIEncourage(5u);
+			else if (wLoadedCard1AIInfo == AI_INFO_ENCOURAGE_EVO)
+				(void)AIEncourage(2u);
+			/* .pikachu_deck */
+			if (wOpponentDeckID == PIKACHU_DECK_ID) {
+				uint8_t id = wLoadedCard1ID;
+				if (id == PIKACHU_LV12 || id == PIKACHU_LV14 || id == PIKACHU_LV16 || id == PIKACHU_ALT_LV16)
+					AIDiscourage(3u);
+			}
+			/* .check_score */
+			if (wAIScore >= 133u) {
+				hTempPlayAreaLocation_ffa1 = wTempAI;
+				hTemp_ffa0 = wTempAIPokemonCard;
+				(void)AIMakeDecision(OPPACTION_EVOLVE_PKMN, 0u, 0u, 0u, 0u);
+				break;
+			}
+		}
+	}
+	/* .done: a is the list terminator, `or a` clears the carry. */
+	return 0xFFu;
 }
 /* <<< factory AIDecideEvolution */
 

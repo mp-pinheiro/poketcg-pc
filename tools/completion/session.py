@@ -465,10 +465,12 @@ def reference_capture(name: str, masks: list[int], frames: int, ordinal: int,
 FIXTURES = ROOT / "tests" / "fixtures"
 
 
-def capture(name: str, routine: str, *, after: int = 0, out: Path | None = None) -> int:
-    """The reference's live state at `routine`'s first entry (at or after DoFrame
+def capture(name: str, routine: str, *, after: int = 0, nth: int = 1, out: Path | None = None) -> int:
+    """The reference's live state at `routine`'s `nth` entry (at or after DoFrame
     `after`) while it replays session `name`, written as a case fixture
-    (tests/cases/_fixtures.py): registers, SP, WRAM, HRAM and VRAM bank 0."""
+    (tests/cases/_fixtures.py): registers, SP, WRAM, HRAM and VRAM bank 0.
+    The printed return chain names the caller, so a routine the turn enters
+    from several places can be captured at the wanted one."""
     masks, meta = load_session(name)
     frames = len(masks) * 2 + 400
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
@@ -478,16 +480,21 @@ def capture(name: str, routine: str, *, after: int = 0, out: Path | None = None)
         raise SessionError(f"{routine} is not a ported routine with a symbol")
     banks = {address: bank for (bank, address), label in by_bank_address.items() if label == routine}
     captured: dict[str, Any] = {}
+    entries = 0
     with refstream.Core(padded, pokes=meta["pokes"]) as core:
         core.input_axis = "ordinal"
         read = core.library.gambatte_cpuread
         registers = (ctypes.c_int * 10)()
 
         def on_exec(address: int, _cycle: int) -> None:
+            nonlocal entries
             if captured or address not in targets or core.ordinal < after:
                 return
             bank = 0 if address < 0x4000 else core.bank_of(address)
             if bank != banks[address]:
+                return
+            entries += 1
+            if entries < nth:
                 return
             core.library.gambatte_getregs(core.core, registers)
             regions = reference_regions(core)
@@ -504,14 +511,19 @@ def capture(name: str, routine: str, *, after: int = 0, out: Path | None = None)
         core.install_exec(on_exec)
         core.run(frames, stop=lambda: bool(captured))
     if not captured:
-        raise SessionError(f"{routine} was never entered in session {name} after ordinal {after}")
+        raise SessionError(f"{routine} entry {nth} was never reached in session {name} after ordinal {after} "
+                           f"({entries} entries)")
     path = out or FIXTURES / f"{name}-{routine}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(captured))
     regs = captured["regs"]
+    wram = bytes.fromhex(captured["wram"])
+    sp = captured["sp"]
+    chain = [wram[sp - 0xC000 + i] | (wram[sp - 0xC000 + i + 1] << 8) for i in range(0, 8, 2)
+             if 0xC000 <= sp + i + 1 < 0xE000]
     print(f"FIXTURE {path.relative_to(ROOT) if path.is_relative_to(ROOT) else path} ordinal={captured['ordinal']} "
           f"a={regs['a']:02x} f={regs['f']:02x} bc={regs['b']:02x}{regs['c']:02x} de={regs['d']:02x}{regs['e']:02x} "
-          f"hl={regs['hl']:04x} sp={captured['sp']:04x}")
+          f"hl={regs['hl']:04x} sp={sp:04x} stack={' '.join(f'{v:04x}' for v in chain)}")
     return 0
 
 
@@ -716,6 +728,45 @@ def lowest_confirmed() -> str:
     return min(names, key=lambda name: (ratchet.get(name, {}).get("confirmed_ordinal", -1), name))
 
 
+def diff(name: str, ordinal: int) -> int:
+    """Every gated byte the two lanes disagree on at one DoFrame ordinal, by
+    symbol: the whole picture behind a verify's first eight DIVERGE rows."""
+    masks, meta = load_session(name)
+    frames = reference_frames(masks, meta)
+    ref_meta = build_reference(name, masks, frames, pokes=meta["pokes"])
+    lag_path = ROOT / ref_meta["directory"] / "lag.txt"
+    with tempfile.TemporaryDirectory(prefix=f"session-{name}-") as tmp:
+        state_path, failure = run_native(Path(tmp), session_dir(name) / "input.txt", ordinal,
+                                         lag_path=lag_path, dump_ordinals=[ordinal])
+        dump_path = state_path.with_name(f"{state_path.stem}-f{ordinal}.json")
+        if not dump_path.is_file():
+            raise SessionError(f"no native dump at ordinal {ordinal}: {failure[-300:]}")
+        native = native_regions(json.loads(dump_path.read_text()))
+    reference = reference_capture(name, masks, frames, ordinal, meta["pokes"])
+    tables = mask_tables()
+    rows = 0
+    for region in REGIONS[:GATED]:
+        table = tables[region]
+        nat, ref = native[region], reference[region]
+        offset = 0
+        while offset < min(len(nat), len(ref)):
+            if table[offset] or nat[offset] == ref[offset]:
+                offset += 1
+                continue
+            end = offset
+            while end < min(len(nat), len(ref)) and not table[end] and nat[end] != ref[end]:
+                end += 1
+            field, field_offset = region_field(region, offset)
+            symbol, _base = refstream.resolve_region(field, field_offset)
+            address = refstream.FIELD_WINDOWS[field][0] + field_offset
+            print(f"DIFF ordinal={ordinal} field={field} address=0x{address:04X} symbol={symbol} "
+                  f"native={nat[offset:end].hex()} reference={ref[offset:end].hex()}")
+            rows += 1
+            offset = end
+    print(f"DIFF {name} ordinal={ordinal} runs={rows}")
+    return 0 if rows == 0 else 1
+
+
 def status() -> int:
     ratchet = read_ratchet()
     print(f"{'session':<24} {'ordinals':>8} {'confirmed':>9}  goal")
@@ -827,6 +878,9 @@ def main(argv: list[str] | None = None) -> int:
                                help="accept a lower confirmed ordinal")
     verify_parser.add_argument("--json")
     sub.add_parser("status")
+    diff_parser = sub.add_parser("diff", help="all gated bytes the lanes disagree on at one ordinal")
+    diff_parser.add_argument("name")
+    diff_parser.add_argument("ordinal", type=int)
     meta_parser = sub.add_parser("meta")
     meta_parser.add_argument("name")
     meta_parser.add_argument("--goal", default="")
@@ -839,6 +893,7 @@ def main(argv: list[str] | None = None) -> int:
     capture_parser.add_argument("name")
     capture_parser.add_argument("--routine", required=True)
     capture_parser.add_argument("--after", type=int, default=0, help="first DoFrame ordinal to consider")
+    capture_parser.add_argument("--nth", type=int, default=1, help="capture the nth entry at or after --after")
     capture_parser.add_argument("--out", type=Path)
     duel_parser = sub.add_parser("ai-duel", help="branch a session into an AI-versus-AI duel")
     duel_parser.add_argument("name")
@@ -856,13 +911,15 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command == "status":
             return status()
+        if args.command == "diff":
+            return diff(args.name, args.ordinal)
         if args.command == "meta":
             return record_meta(args.name, args.goal)
         if args.command == "derive":
             movie = args.movie if args.movie.is_absolute() else ROOT / args.movie
             return derive(args.name, movie, args.goal or f"derived from {args.movie}")
         if args.command == "capture":
-            return capture(args.name, args.routine, after=args.after, out=args.out)
+            return capture(args.name, args.routine, after=args.after, nth=args.nth, out=args.out)
         if args.command == "ai-duel":
             return ai_duel(args.name, base=args.base, at=args.at, deck=args.deck, seed=args.seed,
                            prizes=args.prizes, period=args.period, tail=args.tail, goal=args.goal)

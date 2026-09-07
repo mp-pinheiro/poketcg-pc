@@ -99,6 +99,39 @@ AFTER_DUEL_REGS = AFTER_DUEL.regs
 # LOAD_MAP slot is LoadOverworld (Func_d4fb, then Script_BeginGame).
 LOAD_MAP = Fixture("practice-win-load-map-entry")
 LOAD_MAP_REGS = LOAD_MAP.regs
+# AIProcessEnergyCards' entry in the AI-versus-AI session ai-duel-02 at DoFrame
+# 24437: the second duelist's turn, an energy card in hand, the reference
+# attaches it and the port did not.
+AI_ENERGY = Fixture("ai-duel-02-energy-entry")
+AI_ENERGY_REGS = AI_ENERGY.regs
+# CheckIfDefendingPokemonCanKnockOut's entry inside that same AIProcessEnergyCards
+# call, scoring the arena card.
+AI_DEFENDING_KO = Fixture("ai-duel-02-defending-ko-entry")
+AI_DEFENDING_KO_REGS = AI_DEFENDING_KO.regs
+# AITryToPlayEnergyCard's entry in that call: the arena card chosen, the
+# energy list built, one basic energy of the arena card's color in hand.
+AI_TRY_ENERGY = Fixture("ai-duel-02-try-energy-entry")
+AI_TRY_ENERGY_REGS = AI_TRY_ENERGY.regs
+# CheckIfEvolutionNeedsEnergyForAttack's entry at DoFrame 33500 of the same
+# session: neither of the arena card's attacks needs energy, so
+# AITryToPlayEnergyCard asks whether its evolution would.
+AI_EVOLUTION_ENERGY = Fixture("ai-duel-02-evolution-energy-entry")
+AI_EVOLUTION_ENERGY_REGS = AI_EVOLUTION_ENERGY.regs
+# The same AI turn after the energy attach, DoFrame 24548: AIDecidePlayPokemonCard's
+# second call and AIProcessAndTryToUseAttack's entry (AIProcessAttacks shares it).
+AI_PLAY_POKEMON = Fixture("ai-duel-02-play-pokemon-entry")
+AI_PLAY_POKEMON_REGS = AI_PLAY_POKEMON.regs
+AI_EVOLUTION = Fixture("ai-duel-02-evolution-entry")
+AI_EVOLUTION_REGS = AI_EVOLUTION.regs
+AI_ATTACK = Fixture("ai-duel-02-attack-entry")
+AI_ATTACK_REGS = AI_ATTACK.regs
+# GetAIScoreOfAttack's entry for the first attack in that same call.
+AI_ATTACK_SCORE = Fixture("ai-duel-02-attack-score-entry")
+AI_ATTACK_SCORE_REGS = AI_ATTACK_SCORE.regs
+# EstimateDamage_VersusDefendingCard's entry from AIProcessAttacks.execute in
+# that same turn: the chosen attack's damage against the player's arena card.
+AI_ESTIMATE = Fixture("ai-duel-02-estimate-entry")
+AI_ESTIMATE_REGS = AI_ESTIMATE.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -111,3 +144,39 @@ def after_duel_fixture(vram: bool = True, bank: int | None = None, **changes: by
 
 def load_map_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return LOAD_MAP.case(vram=vram, bank=bank, **changes)
+
+
+def ai_energy_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_ENERGY.case(vram=vram, bank=bank, **changes)
+
+
+def ai_defending_ko_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_DEFENDING_KO.case(vram=vram, bank=bank, **changes)
+
+
+def ai_try_energy_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_TRY_ENERGY.case(vram=vram, bank=bank, **changes)
+
+
+def ai_evolution_energy_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_EVOLUTION_ENERGY.case(vram=vram, bank=bank, **changes)
+
+
+def ai_play_pokemon_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_PLAY_POKEMON.case(vram=vram, bank=bank, **changes)
+
+
+def ai_evolution_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_EVOLUTION.case(vram=vram, bank=bank, **changes)
+
+
+def ai_attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_ATTACK.case(vram=vram, bank=bank, **changes)
+
+
+def ai_attack_score_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_ATTACK_SCORE.case(vram=vram, bank=bank, **changes)
+
+
+def ai_estimate_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_ESTIMATE.case(vram=vram, bank=bank, **changes)

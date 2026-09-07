@@ -1,3 +1,4 @@
+from tests.cases._fixtures import ai_estimate_fixture as _ai_estimate_fixture, AI_ESTIMATE_REGS as _AI_ESTIMATE_REGS
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -92,6 +93,7 @@ CASES["EstimateDamage_VersusDefendingCard"] = [
     _edvdc(b"\x01", extra={0xC2BC: b"\x00"}, a=0),
     _edvdc(b"\x00", extra={_edvdc_wLoadedAttackCategory: b"\x04"}, a=0),
     dict(POISON, **_edvdc(b"\x00")),
+    dict(_ai_estimate_fixture(bank=5), **_AI_ESTIMATE_REGS),
 ]
 # <<< factory EstimateDamage_VersusDefendingCard
 

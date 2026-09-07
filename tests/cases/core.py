@@ -1,4 +1,4 @@
-from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS
+from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_defending_ko_fixture as _ai_defending_ko_fixture, AI_DEFENDING_KO_REGS as _AI_DEFENDING_KO_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/core.asm."""
 
 from tests.cases._duel_setup import (
@@ -4572,6 +4572,7 @@ CASES["CheckIfDefendingPokemonCanKnockOut"] = [
     dict(POISON, wram={0xFF97: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x01", 0xC2BB: b"\x00", 0xC400: b"\x08", wSelectedAttack: b"\x01", 0xCC23: b"\x00"},
          sram={0: {}}, read={wAIFirstAttackDamage: 1, wAISecondAttackDamage: 1, hTempPlayAreaLocation_ff9d: 1},
          instruction_budget=8000000, cycle_budget=40000000),
+    dict(_ai_defending_ko_fixture(bank=5), **_AI_DEFENDING_KO_REGS),
 ]
 # <<< factory CheckIfDefendingPokemonCanKnockOut
 

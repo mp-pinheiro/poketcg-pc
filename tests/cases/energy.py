@@ -1,3 +1,4 @@
+from tests.cases._fixtures import ai_energy_fixture as _ai_energy_fixture, AI_ENERGY_REGS as _AI_ENERGY_REGS, ai_try_energy_fixture as _ai_try_energy_fixture, AI_TRY_ENERGY_REGS as _AI_TRY_ENERGY_REGS, ai_evolution_energy_fixture as _ai_evolution_energy_fixture, AI_EVOLUTION_ENERGY_REGS as _AI_EVOLUTION_ENERGY_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/ai/energy.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -101,11 +102,18 @@ CASES["GetEnergyCardForDiscardOrEnergyBoostAttack"] = [
 # <<< factory GetEnergyCardForDiscardOrEnergyBoostAttack
 
 # >>> factory CheckIfEvolutionNeedsEnergyForAttack
-CONTRACT["CheckIfEvolutionNeedsEnergyForAttack"] = {"compare": ("a", "f"), "preserve": ()}
+# b, c and e are CheckEnergyNeededForAttack's outputs for the evolution: the
+# basic energy still needed, the colorless still needed and the basic energy's
+# card ID, which AITryToPlayEnergyCard carries into .check_deck (energy.asm:849).
+CONTRACT["CheckIfEvolutionNeedsEnergyForAttack"] = {"compare": ("a", "f", "b", "c", "e"), "preserve": ()}
+# The three no-evolution exits leave through `or a / ret` with whatever
+# CheckCardEvolutionInHandOrDeck left in bc and de; the caller returns on that
+# no-carry without reading them, so they compare the verdict only.
 CASES["CheckIfEvolutionNeedsEnergyForAttack"] = [
-    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x07", 0xC200: b"\xFF" * 60}},
-    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x01", 0xC2BB: b"\x03", 0xC2BC: b"\x05", 0xC200: b"\xFF" * 60}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x07", 0xC200: b"\xFF" * 60}),
+    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x07", 0xC200: b"\xFF" * 60}, "compare": ("a", "f")},
+    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x01", 0xC2BB: b"\x03", 0xC2BC: b"\x05", 0xC200: b"\xFF" * 60}, "compare": ("a", "f")},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x07", 0xC200: b"\xFF" * 60}, compare=("a", "f")),
+    dict(_ai_evolution_energy_fixture(bank=5), **_AI_EVOLUTION_ENERGY_REGS),
 ]
 # <<< factory CheckIfEvolutionNeedsEnergyForAttack
 
@@ -114,6 +122,7 @@ CONTRACT["AITryToPlayEnergyCard"] = {"compare": ("a",), "preserve": ()}
 CASES["AITryToPlayEnergyCard"] = [
     {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC200: b"\xFF" * 60}},
     dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC200: b"\xFF" * 60}),
+    dict(_ai_try_energy_fixture(bank=5), **_AI_TRY_ENERGY_REGS),
 ]
 # <<< factory AITryToPlayEnergyCard
 
@@ -132,7 +141,8 @@ CASES["DetermineAIScoreOfAttackEnergyRequirement"] = [
 CONTRACT["AIProcessEnergyCards"]={"compare":("a","f"),"preserve":()}
 CASES["AIProcessEnergyCards"]=[
  {"a":0xAA,"f":0xF0,"b":0xBB,"c":0xCC,"d":0xDD,"e":0xEE,"hl":0x1234,"wram":{0xCDB2:b"\0\0",0xCDD8:b"\2",0xCDA7:b"\0",0xC2EF:b"\1",0xC2C8:b"\0",0xFF97:b"\xC2",0xCABB:b"\0",0xC510:b"\xff"},"read":{0xCDBF:6,0xCDE4:6},"setup":[{"fn":"CopyDMAFunction"},{"fn":"SetupText","d":0x20,"e":0x40}],"instruction_budget":20000000,"cycle_budget":80000000},
- {"wram":{0xCDD8:b"\2",0xC2EF:b"\1",0xC2C8:b"\0",0xFF97:b"\xC2",0xCABB:b"\0",0xC510:b"\xff"},"read":{0xCDBF:6,0xCDE4:6},"setup":[{"fn":"CopyDMAFunction"},{"fn":"SetupText","d":0x20,"e":0x40}],"instruction_budget":20000000,"cycle_budget":80000000}
+ {"wram":{0xCDD8:b"\2",0xC2EF:b"\1",0xC2C8:b"\0",0xFF97:b"\xC2",0xCABB:b"\0",0xC510:b"\xff"},"read":{0xCDBF:6,0xCDE4:6},"setup":[{"fn":"CopyDMAFunction"},{"fn":"SetupText","d":0x20,"e":0x40}],"instruction_budget":20000000,"cycle_budget":80000000},
+ dict(_ai_energy_fixture(bank=5), **_AI_ENERGY_REGS),
 ]
 # <<< factory AIProcessEnergyCards
 
@@ -198,13 +208,13 @@ MUTATIONS["GetEnergyCardForDiscardOrEnergyBoostAttack"] = {"source_symbol": "Get
 MUTATIONS["CheckIfEvolutionNeedsEnergyForAttack"] = {"source_symbol": "CheckIfEvolutionNeedsEnergyForAttack", "before": "uint8_t f_out = (evo.a == 0u) ? 0x80u : 0x00u;", "after": "uint8_t f_out = (evo.a == 0u) ? 0x00u : 0x80u;", "case_ids": ["CheckIfEvolutionNeedsEnergyForAttack-0", "CheckIfEvolutionNeedsEnergyForAttack-1"]}
 # <<< factory-mutation CheckIfEvolutionNeedsEnergyForAttack
 # >>> factory-mutation AITryToPlayEnergyCard
-MUTATIONS["AITryToPlayEnergyCard"] = {"source_symbol": "AITryToPlayEnergyCard", "before": "CheckIfEvolutionNeedsEnergyForAttackResult evo =\n\t\t\tCheckIfEvolutionNeedsEnergyForAttack(0u, 0u, 0u, 0u, 0u);\n\t\tif ((evo.f & 0x10u) == 0u)\n\t\t\treturn 0u;", "after": "CheckIfEvolutionNeedsEnergyForAttackResult evo =\n\t\t\tCheckIfEvolutionNeedsEnergyForAttack(0u, 0u, 0u, 0u, 0u);\n\t\tif ((evo.f & 0x10u) == 0u)\n\t\t\treturn 1u;", "case_ids": ["AITryToPlayEnergyCard-0"]}
+MUTATIONS["AITryToPlayEnergyCard"] = {"source_symbol": "AITryToPlayEnergyCard", "before": "\t\tif ((evo.f & 0x10u) == 0u)\n\t\t\treturn (AITryToPlayEnergyCardResult){evo.a, evo.f};", "after": "\t\tif ((evo.f & 0x10u) == 0u)\n\t\t\treturn (AITryToPlayEnergyCardResult){(uint8_t)(evo.a + 1u), evo.f};", "case_ids": ["AITryToPlayEnergyCard-0"]}
 # <<< factory-mutation AITryToPlayEnergyCard
 # >>> factory-mutation DetermineAIScoreOfAttackEnergyRequirement
 MUTATIONS["DetermineAIScoreOfAttackEnergyRequirement"] = {"source_symbol": "DetermineAIScoreOfAttackEnergyRequirement", "before": "void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a)\n{\n\twSelectedAttack = a;", "after": "void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a)\n{\n\twSelectedAttack = (uint8_t)(a ^ 1u);", "case_ids": ["DetermineAIScoreOfAttackEnergyRequirement-0", "DetermineAIScoreOfAttackEnergyRequirement-1", "DetermineAIScoreOfAttackEnergyRequirement-2"]}
 # <<< factory-mutation DetermineAIScoreOfAttackEnergyRequirement
 # >>> factory-mutation AIProcessEnergyCards
-MUTATIONS["AIProcessEnergyCards"]={"source_symbol":"AIProcessEnergyCards","before":"\tfor (uint8_t i=0; i<MAX_PLAY_AREA_POKEMON; ++i) gb_write8((uint16_t)(wPlayAreaEnergyAIScore_ADDR+i),0x80u);","after":"\tfor (uint8_t i=0; i<MAX_PLAY_AREA_POKEMON; ++i) gb_write8((uint16_t)(wPlayAreaEnergyAIScore_ADDR+i),0x81u);","case_ids":["AIProcessEnergyCards-0"]}
+MUTATIONS["AIProcessEnergyCards"] = {"source_symbol": "AIProcessEnergyCards", "before": "\t\tgb_write8((uint16_t)(wPlayAreaEnergyAIScore_ADDR + i), 0x80u);", "after": "\t\tgb_write8((uint16_t)(wPlayAreaEnergyAIScore_ADDR + i), 0x81u);", "case_ids": ["AIProcessEnergyCards-0", "AIProcessEnergyCards-2"]}
 # <<< factory-mutation AIProcessEnergyCards
 # >>> factory-mutation AIProcessAndTryToPlayEnergy
 MUTATIONS["AIProcessAndTryToPlayEnergy"] = {"source_symbol": "AIProcessAndTryToPlayEnergy", "before": "void AIProcessAndTryToPlayEnergy(void)\n{\n\twAIEnergyAttachLogicFlags = 0u;", "after": "void AIProcessAndTryToPlayEnergy(void)\n{\n\twAIEnergyAttachLogicFlags = 1u;", "case_ids": ["AIProcessAndTryToPlayEnergy-0", "AIProcessAndTryToPlayEnergy-1"]}

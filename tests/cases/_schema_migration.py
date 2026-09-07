@@ -258,6 +258,17 @@ def legacy_to_schema(cases: Mapping[str, Sequence[Mapping[str, Any]]], contract:
                 )
             if "ir_peer" in legacy:
                 record["ir_peer"] = bool(legacy["ir_peer"])
+            if "compare" in legacy:
+                # A case-level narrowing of the routine's compare set: an exit
+                # whose registers the caller never reads. Both lanes honor it.
+                narrowed = tuple(legacy["compare"])
+                allowed = tuple(contract[function]["compare"])
+                preserve = tuple(contract[function].get("preserve") or ())
+                if any(name not in allowed for name in narrowed) or any(name not in narrowed for name in preserve):
+                    raise ValueError(
+                        f"legacy case {function}[{index}].compare must be a subset of the contract "
+                        f"that still covers preserve")
+                record["compare"] = list(narrowed)
             reason = legacy.get("reason", legacy.get("why"))
             if evidence != "primary" and reason is not None:
                 record["reason"] = reason

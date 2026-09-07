@@ -1,3 +1,4 @@
+from tests.cases._fixtures import ai_play_pokemon_fixture as _ai_play_pokemon_fixture, AI_PLAY_POKEMON_REGS as _AI_PLAY_POKEMON_REGS, ai_evolution_fixture as _ai_evolution_fixture, AI_EVOLUTION_REGS as _AI_EVOLUTION_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/ai/hand_pokemon.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -40,7 +41,8 @@ CASES["AIDecideSpecialEvolutions"] = [
 CONTRACT["AIDecideEvolution"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecideEvolution"] = [
     {"expect_regs": {"a": 0xff, "f": 0x00}},
-    dict(POISON, expect_regs={"a": 0xff, "f": 0x00})
+    dict(POISON, expect_regs={"a": 0xff, "f": 0x00}),
+    dict(_ai_evolution_fixture(bank=5), **_AI_EVOLUTION_REGS),
 ]
 # <<< factory AIDecideEvolution
 
@@ -60,6 +62,7 @@ CONTRACT["AIDecidePlayPokemonCard"] = {"compare": (), "preserve": ()}
 CASES["AIDecidePlayPokemonCard"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00"}, "read": {0xC510: 1, 0xCEDA: 1}, "expect": {0xC510: b"\xFF", 0xCEDA: b"\xFF"}},
     dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00"}, read={0xC510: 1, 0xCEDA: 1}, expect={0xC510: b"\xFF", 0xCEDA: b"\xFF"}),
+    dict(_ai_play_pokemon_fixture(bank=5), **_AI_PLAY_POKEMON_REGS),
 ]
 # <<< factory AIDecidePlayPokemonCard
 
@@ -76,7 +79,7 @@ MUTATIONS["AIDecideSpecialEvolutions"] = {
 }
 # <<< factory-mutation AIDecideSpecialEvolutions
 # >>> factory-mutation AIDecideEvolution
-MUTATIONS["AIDecideEvolution"] = {"source_symbol": "AIDecideEvolution", "before": "uint8_t AIDecideEvolution(void)\n{\n\tuint8_t result = 0xffu;", "after": "uint8_t AIDecideEvolution(void)\n{\n\tuint8_t result = 0u;", "case_ids": ["AIDecideEvolution-0", "AIDecideEvolution-1"]}
+MUTATIONS["AIDecideEvolution"] = {"source_symbol": "AIDecideEvolution", "before": "\t\twTempAIPokemonCard = card;\n\t\tif (IsPrehistoricPowerActive(hand).f & 0x10u)", "after": "\t\twTempAIPokemonCard = (uint8_t)(card + 1u);\n\t\tif (IsPrehistoricPowerActive(hand).f & 0x10u)", "case_ids": ["AIDecideEvolution-2"]}
 # <<< factory-mutation AIDecideEvolution
 # >>> factory-mutation AIDecidePlayLegendaryBirds
 MUTATIONS["AIDecidePlayLegendaryBirds"] = {"source_symbol": "AIDecidePlayLegendaryBirds", "before": "void AIDecidePlayLegendaryBirds(void)\n{\n\tuint8_t deck = wOpponentDeckID;", "after": "void AIDecidePlayLegendaryBirds(void)\n{\n\tuint8_t deck = (uint8_t)(wOpponentDeckID + 1u);", "case_ids": ["AIDecidePlayLegendaryBirds-2"]}

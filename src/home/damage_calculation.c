@@ -73,12 +73,16 @@ static uint16_t calculate_versus_one(uint16_t damage)
             damage = (uint16_t)(damage & ~(uint16_t)(1u << (UNAFFECTED_BY_WEAKNESS_RESISTANCE_F + 8u)));
         } else {
             b = TranslateColorToWR(GetPlayAreaCardColor(location));
+            /* damage_calculation.asm:143-157: weakness and resistance are both
+             * the defending card's, each read inside its own SwapTurn pair. */
             SwapTurn();
             if (GetArenaCardWeakness() & b)
                 damage = (uint16_t)(damage << 1);
             SwapTurn();
+            SwapTurn();
             if (GetArenaCardResistance() & b)
                 damage = (uint16_t)(damage - 30u);
+            SwapTurn();
         }
         {
             PowerModifierResult r = ApplyAttachedPlusPower((uint8_t)(location + CARD_LOCATION_ARENA), damage);
@@ -106,7 +110,6 @@ static uint16_t calculate_from_one(uint16_t damage)
     uint8_t location = hTempPlayAreaLocation_ff9d;
     uint8_t b;
     uint8_t status;
-    uint8_t changed;
 
     SwapTurn();
     {
@@ -129,19 +132,23 @@ static uint16_t calculate_from_one(uint16_t damage)
     } else {
         b = TranslateColorToWR(GetArenaCardColor());
         SwapTurn();
-        changed = location == 0 ? GetTurnDuelistVariable(DUELVARS_ARENA_CARD_CHANGED_WEAKNESS).a : 0;
-        if (location != 0 || changed == 0) {
+        /* damage_calculation.asm .unchanged_weak/.unchanged_res: an arena card
+         * with a changed weakness or resistance uses that value, not its own. */
+        uint8_t weakness = location == 0u ? GetTurnDuelistVariable(DUELVARS_ARENA_CARD_CHANGED_WEAKNESS).a : 0u;
+        if (weakness == 0u) {
             uint8_t index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location)).a;
             LoadCardDataToBuffer2_FromDeckIndex(index);
+            weakness = wLoadedCard2Weakness;
         }
-        if (wLoadedCard2Weakness & b)
+        if (weakness & b)
             damage = (uint16_t)(damage << 1);
-        changed = location == 0 ? GetTurnDuelistVariable(DUELVARS_ARENA_CARD_CHANGED_RESISTANCE).a : 0;
-        if (location != 0 || changed == 0) {
+        uint8_t resistance = location == 0u ? GetTurnDuelistVariable(DUELVARS_ARENA_CARD_CHANGED_RESISTANCE).a : 0u;
+        if (resistance == 0u) {
             uint8_t index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location)).a;
             LoadCardDataToBuffer2_FromDeckIndex(index);
+            resistance = wLoadedCard2Resistance;
         }
-        if (wLoadedCard2Resistance & b)
+        if (resistance & b)
             damage = (uint16_t)(damage - 30u);
         SwapTurn();
     }

@@ -101,7 +101,12 @@ def main() -> int:
         contract = getattr(module, "CONTRACT", {}).get(args.fn, {})
         if not isinstance(contract, dict) or "compare" not in contract or "preserve" not in contract:
             raise SystemExit("SCHEMA contract must declare compare and preserve")
-        compare_fields = list(contract["compare"])
+        # A case may narrow the routine's compare set (tests/cases/*.py
+        # `"compare"`): an exit whose registers the caller never reads.
+        narrowed = case.get("compare")
+        compare_fields = list(narrowed if narrowed is not None else contract["compare"])
+        if not set(compare_fields).issubset(contract["compare"]):
+            raise SystemExit("SCHEMA case compare must be a subset of the contract")
         preserve_fields = list(contract["preserve"])
         entry = symbols[args.fn][1]
         case.update({

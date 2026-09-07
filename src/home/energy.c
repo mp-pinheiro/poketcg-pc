@@ -299,19 +299,21 @@ CheckIfEvolutionNeedsEnergyForAttackResult CheckIfEvolutionNeedsEnergyForAttack(
 	uint8_t saved_a = var2.a;
 	gb_write8(var2.hl, new_b);
 	CheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();
+	/* bc and de leave as CheckEnergyNeededForAttack set them (energy.asm
+	 * :783-801): GetTurnDuelistVariable and `pop af` touch neither. */
 	if (energy.f & 0x10u) {
 		uint8_t loc3 = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
 		DuelistVarResult var3 = GetTurnDuelistVariable((uint8_t)(loc3 + DUELVARS_ARENA_CARD_510));
 		gb_write8(var3.hl, saved_a);
 		uint8_t f_out2 = (uint8_t)((evo.f & 0x80u) | 0x10u);
-		return (CheckIfEvolutionNeedsEnergyForAttackResult){saved_a, f_out2, new_b, c, d, e, var3.hl};
+		return (CheckIfEvolutionNeedsEnergyForAttackResult){saved_a, f_out2, energy.b, energy.c, energy.d, energy.e, var3.hl};
 	}
 
 	uint8_t loc4 = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
 	DuelistVarResult var4 = GetTurnDuelistVariable((uint8_t)(loc4 + DUELVARS_ARENA_CARD_510));
 	gb_write8(var4.hl, saved_a);
 	uint8_t f_out3 = (saved_a == 0u) ? 0x80u : 0x00u;
-	return (CheckIfEvolutionNeedsEnergyForAttackResult){saved_a, f_out3, new_b, c, d, e, var4.hl};
+	return (CheckIfEvolutionNeedsEnergyForAttackResult){saved_a, f_out3, energy.b, energy.c, energy.d, energy.e, var4.hl};
 }
 /* <<< factory CheckIfEvolutionNeedsEnergyForAttack */
 
@@ -320,21 +322,35 @@ AITryToPlayEnergyCardResult AITryToPlayEnergyCard(void)
 {
 	uint8_t pending;
 	uint8_t attack;
+	/* b = basic energy still needed, c = colorless still needed, e = the
+	 * basic energy's card ID: CheckEnergyNeededForAttack's registers, which
+	 * every path into .check_deck carries there (energy.asm:849-910). */
+	uint8_t need_b;
+	uint8_t need_c;
+	uint8_t need_e;
 
 	gb_write8(wTempAI_ADDR, 0u);
 	gb_write8(wSelectedAttack_ADDR, FIRST_ATTACK_OR_PKMN_POWER_600);
 	CheckEnergyNeededForAttackResult r1 = CheckEnergyNeededForAttack();
 	if (r1.f & 0x10u) {
-		if (r1.b != 0u || r1.c != 0u)
+		if (r1.b != 0u || r1.c != 0u) {
+			need_b = r1.b;
+			need_c = r1.c;
+			need_e = r1.e;
 			goto check_deck;
+		}
 	}
 
 second_attack:
 	gb_write8(wSelectedAttack_ADDR, SECOND_ATTACK_600);
 	CheckEnergyNeededForAttackResult r2 = CheckEnergyNeededForAttack();
 	if (r2.f & 0x10u) {
-		if (r2.b != 0u || r2.c != 0u)
+		if (r2.b != 0u || r2.c != 0u) {
+			need_b = r2.b;
+			need_c = r2.c;
+			need_e = r2.e;
 			goto check_deck;
+		}
 	}
 
 	{
@@ -361,7 +377,11 @@ second_attack:
 			CheckIfEvolutionNeedsEnergyForAttack(0u, 0u, 0u, 0u, 0u);
 		if ((evo.f & 0x10u) == 0u)
 			return (AITryToPlayEnergyCardResult){evo.a, evo.f};
+		/* CreateEnergyCardListFromHand preserves bc and de (core.asm:622-654). */
 		(void)CreateEnergyCardListFromHand(evo.a);
+		need_b = evo.b;
+		need_c = evo.c;
+		need_e = evo.e;
 		goto check_deck;
 	}
 
@@ -371,29 +391,31 @@ energy_boost_or_discard_energy:
 			GetEnergyCardForDiscardOrEnergyBoostAttack(0u);
 		if ((g.f & 0x10u) == 0u)
 			return (AITryToPlayEnergyCardResult){g.a, g.f};
+		need_b = g.b;
+		need_c = g.c;
+		need_e = g.e;
 	}
 
 check_deck:
 	{
 		CheckSpecificDecksToAttachDoubleColorlessResult sd =
-			CheckSpecificDecksToAttachDoubleColorless(0u, 0u, 0u, 0u, 0u);
+			CheckSpecificDecksToAttachDoubleColorless(need_b, need_c, 0u, need_e, 0u);
 		if (sd.f & 0x10u)
 			goto play_energy_card;
 
-		if (sd.b != 0u) {
-			CoreCardListResult look = LookForCardIDInHand(sd.e);
+		if (need_b != 0u) {
+			CoreCardListResult look = LookForCardIDInHand(need_e);
 			gb_write8(hTemp_ffa0_ADDR, look.a);
 			if ((look.f & 0x10u) == 0u)
 				goto play_energy_card;
-			goto colorless_energy_fallthrough_look_for_any;
 		}
 
-	colorless_energy:
+		/* .colorless_energy */
 		if (gb_read8(hTempPlayAreaLocation_ff9d_ADDR) != 0u)
 			goto look_for_any_energy;
-		if (sd.c == 0u)
+		if (need_c == 0u)
 			goto check_if_done;
-		if (sd.c != 2u)
+		if (need_c != 2u)
 			goto look_for_any_energy;
 
 		{
@@ -411,14 +433,10 @@ check_deck:
 			}
 		}
 
-	colorless_energy_fallthrough_look_for_any:
-		goto colorless_energy;
-
 	look_for_any_energy:
 		{
 			uint16_t hl = wDuelTempList_ADDR;
-			(void)CountCardsInDuelTempList();
-			(void)ShuffleCards(0u, hl);
+			(void)ShuffleCards(CountCardsInDuelTempList().a, hl);
 			for (;;) {
 				uint8_t v = gb_read8(hl);
 				hl = (uint16_t)(hl + 1u);
@@ -463,87 +481,204 @@ check_if_done:
 /* <<< factory AITryToPlayEnergyCard */
 
 /* >>> factory DetermineAIScoreOfAttackEnergyRequirement */
+/* energy.asm .asm_166cd: the surplus-energy verdict came back "play more",
+ * and an ATTACHED_ENERGY_BOOST attack that one more energy would turn into a
+ * knockout is worth a lot more. */
+static void encourage_energy_boost_knockout(void)
+{
+	(void)AIEncourage(2u);
+	if ((CheckLoadedAttackFlag(ATTACK_FLAG2_ADDRESS | ATTACHED_ENERGY_BOOST_F).f & 0x10u) == 0u)
+		return;
+	(void)EstimateDamage_VersusDefendingCard(wSelectedAttack);
+	uint8_t hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a;
+	uint8_t damage = gb_read8(wDamage_ADDR);
+	if (hp <= damage)
+		return;
+	uint8_t boosted = (uint8_t)(damage + 10u);
+	if (hp > boosted)
+		return;
+	(void)AIEncourage(20u);
+	if (hTempPlayAreaLocation_ff9d == 0u)
+		(void)AIEncourage(10u);
+}
+
 void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a)
 {
 	wSelectedAttack = a;
 	CheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();
 	if (energy.f & 0x10u) {
-		uint8_t flag = ATTACK_FLAG2_ADDRESS | IGNORE_THIS_ATTACK_F;
-		if (CheckLoadedAttackFlag(flag).f & 0x10u)
+		/* .not_enough_energy */
+		if (CheckLoadedAttackFlag(ATTACK_FLAG2_ADDRESS | IGNORE_THIS_ATTACK_F).f & 0x10u)
 			AIDiscourage(5u);
-		if (energy.b != 0u) {
-			CoreCardListResult hand = LookForCardIDInHand(energy.e);
-			if ((hand.f & 0x10u) == 0u)
-				AIEncourage(4u);
+		uint8_t color_in_hand = energy.b != 0u
+			&& (LookForCardIDInHand(energy.e).f & 0x10u) == 0u;
+		if (color_in_hand) {
+			(void)AIEncourage(4u);
+		} else {
+			if (energy.c == 0u)
+				goto check_evolution;
+			(void)AIEncourage(3u);
 		}
-		if (energy.c != 0u)
-			AIEncourage(3u);
-		if ((uint8_t)(energy.b + energy.c - 1u) == 0u)
-			AIEncourage(3u);
-	} else {
-		uint8_t flag = ATTACK_FLAG2_ADDRESS | ATTACHED_ENERGY_BOOST_F;
-		if (CheckLoadedAttackFlag(flag).f & 0x10u) {
-			if (wLoadedAttackEffectParam == MAX_ENERGY_BOOST_IS_LIMITED) {
-				CheckIfNoSurplusEnergyResult surplus = CheckIfNoSurplusEnergyForAttack();
-				if ((surplus.f & 0x10u) != 0u || surplus.a < 3u)
-					AIEncourage(2u);
-				else
-					AIDiscourage(5u);
-			} else {
-				AIEncourage(0u);
-			}
-		}
-		flag = ATTACK_FLAG2_ADDRESS | DISCARD_ENERGY_F;
-		if (CheckLoadedAttackFlag(flag).f & 0x10u && wLoadedCard1ID != ZAPDOS_LV64) {
+		/* .check_total_needed */
+		if ((uint8_t)(energy.b + energy.c - 1u) != 0u)
+			goto check_evolution;
+		(void)AIEncourage(3u);
+		if (hTempPlayAreaLocation_ff9d != 0u)
+			goto check_evolution;
+		(void)EstimateDamage_VersusDefendingCard(wSelectedAttack);
+		if (GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a > gb_read8(wDamage_ADDR))
+			goto check_evolution;
+		(void)AIEncourage(20u);
+		/* The asm re-tests the location it just tested; it is the arena. */
+		(void)AIEncourage(10u);
+	} else if (CheckLoadedAttackFlag(ATTACK_FLAG2_ADDRESS | ATTACHED_ENERGY_BOOST_F).f & 0x10u) {
+		/* .attached_energy_boost: a holds the effect parameter. */
+		uint8_t param = wLoadedAttackEffectParam;
+		if (param != MAX_ENERGY_BOOST_IS_LIMITED) {
+			(void)AIEncourage(param);
+		} else {
 			CheckIfNoSurplusEnergyResult surplus = CheckIfNoSurplusEnergyForAttack();
-			if ((surplus.f & 0x10u) != 0u)
-				AIEncourage(2u);
+			if ((surplus.f & 0x10u) != 0u || surplus.a < 3u)
+				encourage_energy_boost_knockout();
+			else
+				AIDiscourage(5u);
+		}
+	} else if (CheckLoadedAttackFlag(ATTACK_FLAG2_ADDRESS | DISCARD_ENERGY_F).f & 0x10u) {
+		/* .discard_energy */
+		if (wLoadedCard1ID != ZAPDOS_LV64) {
+			if (CheckIfNoSurplusEnergyForAttack().f & 0x10u)
+				encourage_energy_boost_knockout();
 			else
 				AIDiscourage(5u);
 		}
 	}
 
-	uint8_t evolution = wTempAI;
-	if (evolution == 0xFFu)
-		return;
-	uint8_t location = hTempPlayAreaLocation_ff9d;
-	DuelistVarResult slot = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
-	uint8_t original = slot.a;
-	gb_write8(slot.hl, evolution);
-	CheckEnergyNeededForAttackResult evo_energy = CheckEnergyNeededForAttack();
-	if ((evo_energy.f & 0x10u) != 0u) {
-		uint8_t flag = ATTACK_FLAG2_ADDRESS | IGNORE_THIS_ATTACK_F;
-		if ((CheckLoadedAttackFlag(flag).f & 0x10u) == 0u) {
-			if (evo_energy.b != 0u) {
-				CoreCardListResult hand = LookForCardIDInHand(evo_energy.e);
-				if ((hand.f & 0x10u) == 0u)
-					AIEncourage(2u);
-			}
-			if (evo_energy.c != 0u)
-				AIEncourage(1u);
+check_evolution:
+	{
+		uint8_t evolution = wTempAI;
+		if (evolution == 0xFFu)
+			return;
+		uint8_t location = hTempPlayAreaLocation_ff9d;
+		DuelistVarResult slot = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
+		uint8_t original = slot.a;
+		gb_write8(slot.hl, evolution);
+		CheckEnergyNeededForAttackResult evo_energy = CheckEnergyNeededForAttack();
+		if ((evo_energy.f & 0x10u) != 0u
+		    && (CheckLoadedAttackFlag(ATTACK_FLAG2_ADDRESS | IGNORE_THIS_ATTACK_F).f & 0x10u) == 0u) {
+			if (evo_energy.b != 0u && (LookForCardIDInHand(evo_energy.e).f & 0x10u) == 0u)
+				(void)AIEncourage(2u);
+			else if (evo_energy.c != 0u)
+				(void)AIEncourage(1u);
 		}
+		gb_write8(slot.hl, original);
 	}
-	gb_write8(slot.hl, original);
 }
 /* <<< factory DetermineAIScoreOfAttackEnergyRequirement */
 
 /* >>> factory AIProcessEnergyCards */
 AIEnergyResult AIProcessEnergyCards(void)
 {
-	for (uint8_t i=0; i<MAX_PLAY_AREA_POKEMON; ++i) gb_write8((uint16_t)(wPlayAreaEnergyAIScore_ADDR+i),0x80u);
+	for (uint8_t i = 0; i < MAX_PLAY_AREA_POKEMON; ++i)
+		gb_write8((uint16_t)(wPlayAreaEnergyAIScore_ADDR + i), 0x80u);
 	HandleLegendaryArticunoEnergyScoring();
-	uint8_t count=GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
-	for(uint8_t loc=0; count; ++loc,--count){
-		hTempPlayAreaLocation_ff9d=loc; wAIScore=0x80u; wTempAI=0xffu;
-		if(!(wAIEnergyAttachLogicFlags&AI_ENERGY_FLAG_SKIP_EVOLUTION)){
-			(void)CreateHandCardList(count); wCurCardCanAttack=GetTurnDuelistVariable((uint8_t)(loc+DUELVARS_ARENA_CARD)).a;
-			EnergyFlagsResult need=CheckEnergyFlagsNeededInList(GetAttacksEnergyCostBits(wCurCardCanAttack).a);
-			if(need.carry){ CheckForEvolutionInListResult x=CheckForEvolutionInList(wCurCardCanAttack,0); if(x.f&0x10u){wTempAI=x.a;(void)AIEncourage(2);} else if(CheckForEvolutionInDeck(wCurCardCanAttack,0).f&0x10u)(void)AIEncourage(1); }
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	for (uint8_t loc = 0; count != 0u; ++loc, --count) {
+		hTempPlayAreaLocation_ff9d = loc;
+		wAIScore = 0x80u;
+		wTempAI = 0xFFu;
+		if ((wAIEnergyAttachLogicFlags & AI_ENERGY_FLAG_SKIP_EVOLUTION) == 0u) {
+			(void)CreateHandCardList(0u);
+			wCurCardCanAttack = GetTurnDuelistVariable((uint8_t)(loc + DUELVARS_ARENA_CARD)).a;
+			EnergyFlagsResult need =
+				CheckEnergyFlagsNeededInList(GetAttacksEnergyCostBits(wCurCardCanAttack).a);
+			/* energy.asm:149: a card whose energy is not in hand keeps the
+			 * neutral score; nothing below is evaluated for it. */
+			if (!need.carry)
+				goto store_score;
+			CheckForEvolutionInListResult in_hand = CheckForEvolutionInList(wCurCardCanAttack, 0u);
+			if (in_hand.f & 0x10u) {
+				wTempAI = in_hand.a;
+				(void)AIEncourage(2u);
+			} else if (CheckForEvolutionInDeck(wCurCardCanAttack, 0u).f & 0x10u) {
+				(void)AIEncourage(1u);
+			}
 		}
-		if(!(CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK).f&0x10u) && (CountTurnDuelistPokemonWithActivePkmnPower(VENUSAUR_LV67).f&0x10u))(void)AIEncourage(1);
-		if(!loc){if(wAIBarrierFlagCounter&(1u<<AI_MEWTWO_MILL_F))AIDiscourage(5);else(void)AIEncourage(4);uint8_t hp=ConvertHPToDamageCounters_Bank5(GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a).a;if(hp<3){uint8_t st=GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;if(st&(hp==2?DOUBLE_POISONED:POISONED))AIDiscourage(10);}}else{uint8_t hp=ConvertHPToDamageCounters_Bank5(GetTurnDuelistVariable((uint8_t)(loc+DUELVARS_ARENA_CARD_HP)).a).a;if(hp<3)AIDiscourage((uint8_t)(3-hp));}
-		if(CheckIfNotABossDeckID().carry==0){(void)HandleAIEnergyScoringForRepeatedBenchPokemon();uint8_t v=gb_read8((uint16_t)(wPlayAreaEnergyAIScore_ADDR+loc));if(v>=0x80)(void)AIEncourage((uint8_t)(v-0x80));else AIDiscourage((uint8_t)(0x80-v));}
-		(void)AIEncourage(1);DetermineAIScoreOfAttackEnergyRequirement(0);DetermineAIScoreOfAttackEnergyRequirement(1);gb_write8((uint16_t)(wPlayAreaAIScore_ADDR+loc),wAIScore);
+		/* .check_venusaur */
+		if ((CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK).f & 0x10u) == 0u
+		    && (CountTurnDuelistPokemonWithActivePkmnPower(VENUSAUR_LV67).f & 0x10u) != 0u)
+			(void)AIEncourage(1u);
+		if (loc == 0u) {
+			/* .check_bench is reached when poison will KO the arena card
+			 * or the defending Pokemon can. */
+			uint8_t threatened;
+			if (wAIBarrierFlagCounter & (1u << AI_MEWTWO_MILL_F)) {
+				AIDiscourage(5u);
+				threatened = 0u;
+			} else {
+				(void)AIEncourage(4u);
+				uint8_t hp = ConvertHPToDamageCounters_Bank5(
+					GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a).a;
+				threatened = hp < 3u
+					&& (GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a
+					    & (hp == 2u ? DOUBLE_POISONED : POISONED)) != 0u;
+			}
+			if (!threatened)
+				threatened = (CheckIfDefendingPokemonCanKnockOut(0u, 0u, 0u, 0u, 0u, 0u, 0u).f & 0x10u) != 0u;
+			if (threatened) {
+				AIDiscourage(10u);
+				if (GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a == 1u)
+					(void)AIEncourage(6u);
+			}
+		} else {
+			uint8_t hp = ConvertHPToDamageCounters_Bank5(
+				GetTurnDuelistVariable((uint8_t)(loc + DUELVARS_ARENA_CARD_HP)).a).a;
+			if (hp < 3u)
+				AIDiscourage((uint8_t)(3u - hp));
+		}
+		/* .ai_score_bonus: the deck's (card ID, energy target, score) list. */
+		if (gb_read8(wAICardListEnergyBonus_ADDR + 1u) != 0u) {
+			uint16_t list = (uint16_t)(gb_read8(wAICardListEnergyBonus_ADDR)
+					| (gb_read8(wAICardListEnergyBonus_ADDR + 1u) << 8));
+			uint8_t id = (uint8_t)GetCardIDFromDeckIndex(
+				GetTurnDuelistVariable((uint8_t)(loc + DUELVARS_ARENA_CARD)).a);
+			for (;;) {
+				uint8_t entry = gb_read8(list++);
+				if (entry == 0u)
+					break;
+				if (entry != id) {
+					list = (uint16_t)(list + 2u);
+					continue;
+				}
+				uint8_t target = gb_read8(list++);
+				(void)GetPlayAreaCardAttachedEnergies(loc);
+				if (wTotalAttachedEnergies >= target) {
+					/* energy.asm:242: `jr .store_score`, skipping the
+					 * rest of the scoring (the asm's own noted bug). */
+					AIDiscourage(10u);
+					goto store_score;
+				}
+				uint8_t score = gb_read8(list);
+				if (score >= 0x80u)
+					(void)AIEncourage((uint8_t)(score - 0x80u));
+				else
+					AIDiscourage((uint8_t)(0x80u - score));
+				break;
+			}
+		}
+		/* .check_boss_deck */
+		if (CheckIfNotABossDeckID().carry == 0u) {
+			(void)HandleAIEnergyScoringForRepeatedBenchPokemon();
+			uint8_t v = gb_read8((uint16_t)(wPlayAreaEnergyAIScore_ADDR + loc));
+			if (v >= 0x80u)
+				(void)AIEncourage((uint8_t)(v - 0x80u));
+			else
+				AIDiscourage((uint8_t)(0x80u - v));
+		}
+		(void)AIEncourage(1u);
+		DetermineAIScoreOfAttackEnergyRequirement(FIRST_ATTACK_OR_PKMN_POWER_600);
+		DetermineAIScoreOfAttackEnergyRequirement(SECOND_ATTACK_600);
+	store_score:
+		gb_write8((uint16_t)(wPlayAreaAIScore_ADDR + loc), wAIScore);
 	}
 	/* energy.asm:265-285. RetrievePlayAreaAIScoreFromBackup1 is push af ...
 	 * pop af (:71-85), so the carry each tail jump carries is this routine's:
