@@ -1,9 +1,9 @@
 {
   "fn": "DuelMenu_Retreat",
   "case": "tests/cases/core.py",
-  "index": 0,
+  "index": 2,
   "status": "RED",
-  "baseline": "{\"fn\": \"DuelMenu_Retreat\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"65440\": \"00\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"DuelMenu_Retreat\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"00\", \"native\": \"01\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[65440, 1]]}}}\n",
-  "restored": "{\"fn\": \"DuelMenu_Retreat\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"65440\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"DuelMenu_Retreat\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"49664\": \"100211\", \"49851\": \"0002\", \"49864\": \"2828\", \"49903\": \"0200\", \"50176\": \"080108\", \"51899\": \"80\", \"52171\": \"55\", \"52236\": \"00\", \"65431\": \"c2\", \"65440\": \"00\", \"65442\": \"01ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DuelMenu_Retreat\", \"mismatches\": {\"bus\": {\"address\": 49665, \"reference\": \"100211000228\", \"native\": \"101011000228\", \"reference_size\": 19, \"native_size\": 19, \"spans\": [[49664, 3], [49851, 2], [49864, 2], [49903, 2], [50176, 3], [51899, 1], [52171, 1], [52236, 1], [65431, 1], [65440, 1], [65442, 2]]}}}\n",
+  "restored": "{\"fn\": \"DuelMenu_Retreat\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"49664\": \"100211\", \"49851\": \"0002\", \"49864\": \"2828\", \"49903\": \"0200\", \"50176\": \"080108\", \"51899\": \"80\", \"52171\": \"55\", \"52236\": \"00\", \"65431\": \"c2\", \"65440\": \"00\", \"65442\": \"01ff\"}}, \"status\": \"PASS\"}\n"
 }

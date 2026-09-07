@@ -5009,17 +5009,25 @@ CASES["SetLinkDuelTransmissionFrameFunction"] = [
 
 # >>> factory OpenNonTurnHolderPlayAreaScreen
 CONTRACT["OpenNonTurnHolderPlayAreaScreen"] = {"compare": (), "preserve": ()}
+# core.asm:390-394. Opponent's arena Bulbasaur; B leaves the play area screen
+# and hWhoseTurn is swapped back.
 CASES["OpenNonTurnHolderPlayAreaScreen"] = [
-    {"wram": {0xFF97: b"\xC2"}, "read": {0xFF97: 1}},
-    dict(POISON, wram={0xFF97: b"\xC2"}, read={0xFF97: 1}),
+    dict(wram={0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC3F0: b"\x00", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFF97: 1, 0xCBC9: 1, 0xCC24: 2}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC3F0: b"\x00", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFF97: 1, 0xCBC9: 1, 0xCC24: 2}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory OpenNonTurnHolderPlayAreaScreen
 
 # >>> factory OpenTurnHolderPlayAreaScreen
 CONTRACT["OpenTurnHolderPlayAreaScreen"] = {"compare": ("a", "f"), "preserve": ()}
+# core.asm:397-399. Arena Bulbasaur; B leaves the play area screen with the
+# viewing exit's a/f.
 CASES["OpenTurnHolderPlayAreaScreen"] = [
-    {"wram": {0xFF97: b"\xC2"}},
-    dict(POISON, wram={0xFF97: b"\xC2"}),
+    dict(wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFF97: 1, 0xCBC9: 1, 0xCBD6: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFF97: 1, 0xCBC9: 1, 0xCBD6: 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory OpenTurnHolderPlayAreaScreen
 
@@ -5173,37 +5181,88 @@ CASES["PrintDuelMenuAndHandleInput"] = [
 
 # >>> factory DuelMenuShortcut_OpponentPlayArea
 CONTRACT["DuelMenuShortcut_OpponentPlayArea"] = {"compare": (), "preserve": ()}
-CASES["DuelMenuShortcut_OpponentPlayArea"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# core.asm:368-370. Opponent's arena Bulbasaur (deck index 0, id $08 at $C480,
+# 40 HP); B leaves the play area screen and DuelMainInterface (the stop) is
+# entered with hWhoseTurn swapped back.
+CASES["DuelMenuShortcut_OpponentPlayArea"] = [
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC3F0: b"\x00", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFF97: 1, 0xCBC9: 1, 0xCC24: 2}, instruction_budget=20000000, cycle_budget=80000000),
+]
 # <<< factory DuelMenuShortcut_OpponentPlayArea
 
 # >>> factory DuelMenuShortcut_PlayerPlayArea
 CONTRACT["DuelMenuShortcut_PlayerPlayArea"] = {"compare": (), "preserve": ()}
-CASES["DuelMenuShortcut_PlayerPlayArea"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# core.asm:373-375. Arena Bulbasaur; B leaves the play area screen for
+# DuelMainInterface (the stop).
+CASES["DuelMenuShortcut_PlayerPlayArea"] = [
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFF97: 1, 0xCBC9: 1, 0xCC24: 2}, instruction_budget=20000000, cycle_budget=80000000),
+]
 # <<< factory DuelMenuShortcut_PlayerPlayArea
 
 # >>> factory DuelMenuShortcut_OpponentDiscardPile
 CONTRACT["DuelMenuShortcut_OpponentDiscardPile"] = {"compare": (), "preserve": ()}
-CASES["DuelMenuShortcut_OpponentDiscardPile"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# core.asm:378-381. Case 0: the opponent's discard pile is empty, so the
+# NoCards box shows (A closes it) and the duel menu is re-entered (stop:
+# PrintDuelMenuAndHandleInput) with hWhoseTurn swapped back. Case 1: one card
+# in it (deck index 1, id $01, $C301 = $02, $C37E = 1, $C3ED = 1): B leaves
+# the list for DuelMainInterface (the stop) with the $FF-terminated list at
+# wDuelTempList.
+CASES["DuelMenuShortcut_OpponentDiscardPile"] = [
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC3F0: b"\x00", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x00", 0xC3ED: b"\x00", 0xC510: b"\x55", 0xCAC2: b"\x55"}, keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFF97: 1, 0xC510: 1, 0xCAC2: 1}, vread={0: {0x9980: 20}}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC3F0: b"\x00", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x00", 0xC3ED: b"\x01", 0xC37E: b"\x01", 0xC480: b"\x08\x01", 0xC300: b"\x10\x02", 0xC510: b"\x55\x55"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFF97: 1, 0xC510: 2}, instruction_budget=20000000, cycle_budget=80000000),
+]
 # <<< factory DuelMenuShortcut_OpponentDiscardPile
 
 # >>> factory DuelMenuShortcut_PlayerDiscardPile
 CONTRACT["DuelMenuShortcut_PlayerDiscardPile"] = {"compare": (), "preserve": ()}
-CASES["DuelMenuShortcut_PlayerDiscardPile"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# core.asm:384-387. Case 0: empty discard pile, NoCards box, A, back to the
+# duel menu (stop: PrintDuelMenuAndHandleInput). Case 1: one card in it (deck
+# index 1, id $01, $C201 = $02, $C27E = 1, $C2ED = 1): B leaves the list for
+# DuelMainInterface (the stop).
+CASES["DuelMenuShortcut_PlayerDiscardPile"] = [
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xC2ED: b"\x00", 0xC510: b"\x55", 0xCAC2: b"\x55"}, keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFF97: 1, 0xC510: 1, 0xCAC2: 1}, vread={0: {0x9980: 20}}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xC2ED: b"\x01", 0xC27E: b"\x01", 0xC400: b"\x08\x01", 0xC200: b"\x10\x02", 0xC510: b"\x55\x55"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFF97: 1, 0xC510: 2}, instruction_budget=20000000, cycle_budget=80000000),
+]
 # <<< factory DuelMenuShortcut_PlayerDiscardPile
 
 # >>> factory DuelMenuShortcut_OpponentActivePokemon
 CONTRACT["DuelMenuShortcut_OpponentActivePokemon"] = {"compare": (), "preserve": ()}
-CASES["DuelMenuShortcut_OpponentActivePokemon"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# core.asm:433-437. Case 0: no opponent arena card ($C3BB = $FF), straight to
+# DuelMainInterface (the stop) with hWhoseTurn swapped back. Case 1: opponent
+# Bulbasaur, B leaves its card page.
+CASES["DuelMenuShortcut_OpponentActivePokemon"] = [
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3BB: b"\xFF", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFF97: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC3F0: b"\x00", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFF97: 1, 0xCBC9: 2, 0xCC24: 4}, instruction_budget=20000000, cycle_budget=80000000),
+]
 # <<< factory DuelMenuShortcut_OpponentActivePokemon
 
 # >>> factory DuelMenuShortcut_PlayerActivePokemon
 CONTRACT["DuelMenuShortcut_PlayerActivePokemon"] = {"compare": (), "preserve": ()}
-CASES["DuelMenuShortcut_PlayerActivePokemon"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# core.asm:440-442. Case 0: no arena card, straight to DuelMainInterface (the
+# stop). Case 1: Bulbasaur, B leaves its card page with the card loaded.
+CASES["DuelMenuShortcut_PlayerActivePokemon"] = [
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFF97: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFF97: 1, 0xCBC9: 2, 0xCC24: 4}, instruction_budget=20000000, cycle_budget=80000000),
+]
 # <<< factory DuelMenuShortcut_PlayerActivePokemon
 
 # >>> factory DuelMenu_PkmnPower
 CONTRACT["DuelMenu_PkmnPower"] = {"compare": (), "preserve": ()}
-CASES["DuelMenu_PkmnPower"] = [dict(POISON, wram={0xCBC6: b"\x00"}, read={0xCBC6: 1}, expect={0xCBC6: b"\x00"})]
+# core.asm:460-464. Arena Bulbasaur (no Pokemon Power): B leaves the selection
+# screen for DuelMainInterface (the stop), wSelectedDuelSubMenuItem cleared.
+CASES["DuelMenu_PkmnPower"] = [
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xCBCF: b"\x55", 0xCAC2: b"\x55"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFF97: 1, 0xCBCF: 1, 0xCAC2: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
 # <<< factory DuelMenu_PkmnPower
 
 # >>> factory DuelMenu_Done
@@ -5225,7 +5284,27 @@ CASES["DuelMenu_Done"] = [
 
 # >>> factory DuelMenu_Retreat
 CONTRACT["DuelMenu_Retreat"] = {"compare": (), "preserve": ()}
-CASES["DuelMenu_Retreat"] = [dict(POISON, wram={0xFFA0: b"\x00"}, read={0xFFA0: 1}, expect={0xFFA0: b"\x00"})]
+# core.asm:478-537. hWhoseTurn $C2, arena Bulbasaur (deck index 0, id $08 at
+# $C400, 40 HP). Case 0: no bench, so CheckAbleToRetreat refuses; A closes the
+# box and the duel menu is re-entered (stop: PrintDuelMenuAndHandleInput) with
+# the status byte parked in hTemp_ffa0. Case 1: confused ($C2F0 = 1) after a
+# failed confusion check ($CC0C), the UnableToRetreat box, same stop. Case 2:
+# a bench Bulbasaur (deck index 2, $C202 = $11, bench HP at $C2C9) and one
+# grass energy on the arena card (deck index 1, $C201 = $10): A picks the
+# energy on the discard screen and A closes the switch prompt; the stop is
+# OpenPlayAreaScreenForSelection's entry, reached with the energy in the
+# discard pile ($C201 = $02) and hTempRetreatCostCards holding its index.
+CASES["DuelMenu_Retreat"] = [
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xFFA0: b"\x55"},
+         keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFFA0: 1}, vread={0: {0x9980: 20}}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x01", 0xCC0C: b"\x01", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xFFA0: b"\x55"},
+         keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFFA0: 1}, vread={0: {0x9980: 20}}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00\x02", 0xC2F0: b"\x00", 0xC2C8: b"\x28\x28", 0xC2EF: b"\x02", 0xC400: b"\x08\x01\x08", 0xC200: b"\x10\x10\x11", 0xCABB: b"\x00", 0xFFA0: b"\x55", 0xCBCB: b"\x55", 0xCC0C: b"\x00"},
+         keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xFFA0: 1, 0xC200: 3, 0xC2EF: 1, 0xFFA2: 2}, instruction_budget=40000000, cycle_budget=160000000),
+]
 # <<< factory DuelMenu_Retreat
 
 # >>> factory DuelMenu_Hand
@@ -7298,19 +7377,11 @@ MUTATIONS["SetLinkDuelTransmissionFrameFunction"] = {
 }
 # <<< factory-mutation SetLinkDuelTransmissionFrameFunction
 # >>> factory-mutation OpenNonTurnHolderPlayAreaScreen
-MUTATIONS["OpenNonTurnHolderPlayAreaScreen"] = {"source_symbol": "OpenNonTurnHolderPlayAreaScreen", "before": "void OpenNonTurnHolderPlayAreaScreen(void)\n{\n\thWhoseTurn = (hWhoseTurn == 0xC2u) ? 0xC3u : 0xC2u;", "after": "void OpenNonTurnHolderPlayAreaScreen(void)\n{\n\thWhoseTurn = 0xC2u;", "case_ids": ["OpenNonTurnHolderPlayAreaScreen-0", "OpenNonTurnHolderPlayAreaScreen-1"]}
+MUTATIONS["OpenNonTurnHolderPlayAreaScreen"] = {"source_symbol": "OpenNonTurnHolderPlayAreaScreen", "before": "\tSwapTurn();\n\t(void)OpenTurnHolderPlayAreaScreen();\n\tSwapTurn();", "after": "\t(void)OpenTurnHolderPlayAreaScreen();", "case_ids": ["OpenNonTurnHolderPlayAreaScreen-0", "OpenNonTurnHolderPlayAreaScreen-1"]}
 # <<< factory-mutation OpenNonTurnHolderPlayAreaScreen
-# >>> factory-completion OpenNonTurnHolderPlayAreaScreen
-for _record in SCHEMA2_CASES["OpenNonTurnHolderPlayAreaScreen"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x2383}
-# <<< factory-completion OpenNonTurnHolderPlayAreaScreen
 # >>> factory-mutation OpenTurnHolderPlayAreaScreen
-MUTATIONS["OpenTurnHolderPlayAreaScreen"] = {"source_symbol": "OpenTurnHolderPlayAreaScreen", "before": "return (HasAlivePokemonInPlayAreaResult){0x70u, 0xC0u};", "after": "return (HasAlivePokemonInPlayAreaResult){0x71u, 0xC0u};", "case_ids": ["OpenTurnHolderPlayAreaScreen-0", "OpenTurnHolderPlayAreaScreen-1"]}
+MUTATIONS["OpenTurnHolderPlayAreaScreen"] = {"source_symbol": "OpenTurnHolderPlayAreaScreen", "before": "\tHasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();\n\tPlayAreaScreenResult r = OpenPlayAreaScreenForViewing();", "after": "\tHasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();\n\tPlayAreaScreenResult r = OpenPlayAreaScreenForSelection();", "case_ids": ["OpenTurnHolderPlayAreaScreen-0", "OpenTurnHolderPlayAreaScreen-1"]}
 # <<< factory-mutation OpenTurnHolderPlayAreaScreen
-# >>> factory-completion OpenTurnHolderPlayAreaScreen
-for _record in SCHEMA2_CASES["OpenTurnHolderPlayAreaScreen"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x2383}
-# <<< factory-completion OpenTurnHolderPlayAreaScreen
 # >>> factory-mutation OpenVariousPlayAreaScreens_FromSelectPresses
 MUTATIONS["OpenVariousPlayAreaScreens_FromSelectPresses"] = {"source_symbol": "OpenVariousPlayAreaScreens_FromSelectPresses", "before": "return 0x20u;", "after": "return 0x21u;", "case_ids": ["OpenVariousPlayAreaScreens_FromSelectPresses-0", "OpenVariousPlayAreaScreens_FromSelectPresses-1"]}
 # <<< factory-mutation OpenVariousPlayAreaScreens_FromSelectPresses
@@ -7419,53 +7490,61 @@ SCHEMA2_CASES["PrintDuelMenuAndHandleInput"][2]["completion"] = {
     "routine": "DuelMenuShortcut_OpponentPlayArea"}
 # <<< factory-completion PrintDuelMenuAndHandleInput
 # >>> factory-mutation DuelMenuShortcut_OpponentPlayArea
-MUTATIONS["DuelMenuShortcut_OpponentPlayArea"] = {"source_symbol": "DuelMenuShortcut_OpponentPlayArea", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenuShortcut_OpponentPlayArea-0"]}
+MUTATIONS["DuelMenuShortcut_OpponentPlayArea"] = {"source_symbol": "DuelMenuShortcut_OpponentPlayArea", "before": "\tOpenNonTurnHolderPlayAreaScreen();\n\tDuelMainInterface();", "after": "\t(void)OpenTurnHolderPlayAreaScreen();\n\tDuelMainInterface();", "case_ids": ["DuelMenuShortcut_OpponentPlayArea-0"]}
 # <<< factory-mutation DuelMenuShortcut_OpponentPlayArea
 # >>> factory-completion DuelMenuShortcut_OpponentPlayArea
-for _record in SCHEMA2_CASES["DuelMenuShortcut_OpponentPlayArea"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+SCHEMA2_CASES["DuelMenuShortcut_OpponentPlayArea"][0]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
+                                                                     "routine": "DuelMainInterface"}
 # <<< factory-completion DuelMenuShortcut_OpponentPlayArea
 # >>> factory-mutation DuelMenuShortcut_PlayerPlayArea
-MUTATIONS["DuelMenuShortcut_PlayerPlayArea"] = {"source_symbol": "DuelMenuShortcut_PlayerPlayArea", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenuShortcut_PlayerPlayArea-0"]}
+MUTATIONS["DuelMenuShortcut_PlayerPlayArea"] = {"source_symbol": "DuelMenuShortcut_PlayerPlayArea", "before": "\t(void)OpenTurnHolderPlayAreaScreen();\n\tDuelMainInterface();", "after": "\tOpenNonTurnHolderPlayAreaScreen();\n\tDuelMainInterface();", "case_ids": ["DuelMenuShortcut_PlayerPlayArea-0"]}
 # <<< factory-mutation DuelMenuShortcut_PlayerPlayArea
 # >>> factory-completion DuelMenuShortcut_PlayerPlayArea
-for _record in SCHEMA2_CASES["DuelMenuShortcut_PlayerPlayArea"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+SCHEMA2_CASES["DuelMenuShortcut_PlayerPlayArea"][0]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
+                                                                   "routine": "DuelMainInterface"}
 # <<< factory-completion DuelMenuShortcut_PlayerPlayArea
 # >>> factory-mutation DuelMenuShortcut_OpponentDiscardPile
-MUTATIONS["DuelMenuShortcut_OpponentDiscardPile"] = {"source_symbol": "DuelMenuShortcut_OpponentDiscardPile", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenuShortcut_OpponentDiscardPile-0"]}
+MUTATIONS["DuelMenuShortcut_OpponentDiscardPile"] = {"source_symbol": "DuelMenuShortcut_OpponentDiscardPile", "before": "\tif ((OpenNonTurnHolderDiscardPileScreen(0u).f & 0x10u) != 0u) {", "after": "\tif ((OpenNonTurnHolderDiscardPileScreen(0u).f & 0x10u) == 0u) {", "case_ids": ["DuelMenuShortcut_OpponentDiscardPile-0", "DuelMenuShortcut_OpponentDiscardPile-1"]}
 # <<< factory-mutation DuelMenuShortcut_OpponentDiscardPile
 # >>> factory-completion DuelMenuShortcut_OpponentDiscardPile
-for _record in SCHEMA2_CASES["DuelMenuShortcut_OpponentDiscardPile"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+SCHEMA2_CASES["DuelMenuShortcut_OpponentDiscardPile"][0]["completion"] = {"mode": "entry", "pc": 0x4295, "bank": 1,
+                                                                        "routine": "PrintDuelMenuAndHandleInput"}
+SCHEMA2_CASES["DuelMenuShortcut_OpponentDiscardPile"][1]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
+                                                                        "routine": "DuelMainInterface"}
 # <<< factory-completion DuelMenuShortcut_OpponentDiscardPile
 # >>> factory-mutation DuelMenuShortcut_PlayerDiscardPile
-MUTATIONS["DuelMenuShortcut_PlayerDiscardPile"] = {"source_symbol": "DuelMenuShortcut_PlayerDiscardPile", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenuShortcut_PlayerDiscardPile-0"]}
+MUTATIONS["DuelMenuShortcut_PlayerDiscardPile"] = {"source_symbol": "DuelMenuShortcut_PlayerDiscardPile", "before": "\tif ((OpenTurnHolderDiscardPileScreen(0u).f & 0x10u) != 0u) {", "after": "\tif ((OpenTurnHolderDiscardPileScreen(0u).f & 0x10u) == 0u) {", "case_ids": ["DuelMenuShortcut_PlayerDiscardPile-0", "DuelMenuShortcut_PlayerDiscardPile-1"]}
 # <<< factory-mutation DuelMenuShortcut_PlayerDiscardPile
 # >>> factory-completion DuelMenuShortcut_PlayerDiscardPile
-for _record in SCHEMA2_CASES["DuelMenuShortcut_PlayerDiscardPile"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+SCHEMA2_CASES["DuelMenuShortcut_PlayerDiscardPile"][0]["completion"] = {"mode": "entry", "pc": 0x4295, "bank": 1,
+                                                                      "routine": "PrintDuelMenuAndHandleInput"}
+SCHEMA2_CASES["DuelMenuShortcut_PlayerDiscardPile"][1]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
+                                                                      "routine": "DuelMainInterface"}
 # <<< factory-completion DuelMenuShortcut_PlayerDiscardPile
 # >>> factory-mutation DuelMenuShortcut_OpponentActivePokemon
-MUTATIONS["DuelMenuShortcut_OpponentActivePokemon"] = {"source_symbol": "DuelMenuShortcut_OpponentActivePokemon", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenuShortcut_OpponentActivePokemon-0"]}
+MUTATIONS["DuelMenuShortcut_OpponentActivePokemon"] = {"source_symbol": "DuelMenuShortcut_OpponentActivePokemon", "before": "\tSwapTurn();\n\tOpenActivePokemonScreen();\n\tSwapTurn();\n\tDuelMainInterface();", "after": "\tOpenActivePokemonScreen();\n\tDuelMainInterface();", "case_ids": ["DuelMenuShortcut_OpponentActivePokemon-1"]}
 # <<< factory-mutation DuelMenuShortcut_OpponentActivePokemon
 # >>> factory-completion DuelMenuShortcut_OpponentActivePokemon
-for _record in SCHEMA2_CASES["DuelMenuShortcut_OpponentActivePokemon"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+SCHEMA2_CASES["DuelMenuShortcut_OpponentActivePokemon"][0]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
+                                                                          "routine": "DuelMainInterface"}
+SCHEMA2_CASES["DuelMenuShortcut_OpponentActivePokemon"][1]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
+                                                                          "routine": "DuelMainInterface"}
 # <<< factory-completion DuelMenuShortcut_OpponentActivePokemon
 # >>> factory-mutation DuelMenuShortcut_PlayerActivePokemon
-MUTATIONS["DuelMenuShortcut_PlayerActivePokemon"] = {"source_symbol": "DuelMenuShortcut_PlayerActivePokemon", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenuShortcut_PlayerActivePokemon-0"]}
+MUTATIONS["DuelMenuShortcut_PlayerActivePokemon"] = {"source_symbol": "DuelMenuShortcut_PlayerActivePokemon", "before": "\tOpenActivePokemonScreen();\n\tDuelMainInterface();\n}\n/* <<< factory DuelMenuShortcut_PlayerActivePokemon */", "after": "\tDuelMainInterface();\n}\n/* <<< factory DuelMenuShortcut_PlayerActivePokemon */", "case_ids": ["DuelMenuShortcut_PlayerActivePokemon-1"]}
 # <<< factory-mutation DuelMenuShortcut_PlayerActivePokemon
 # >>> factory-completion DuelMenuShortcut_PlayerActivePokemon
-for _record in SCHEMA2_CASES["DuelMenuShortcut_PlayerActivePokemon"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+SCHEMA2_CASES["DuelMenuShortcut_PlayerActivePokemon"][0]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
+                                                                        "routine": "DuelMainInterface"}
+SCHEMA2_CASES["DuelMenuShortcut_PlayerActivePokemon"][1]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
+                                                                        "routine": "DuelMainInterface"}
 # <<< factory-completion DuelMenuShortcut_PlayerActivePokemon
 # >>> factory-mutation DuelMenu_PkmnPower
-MUTATIONS["DuelMenu_PkmnPower"] = {"source_symbol": "DuelMenu_PkmnPower", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenu_PkmnPower-0"]}
+MUTATIONS["DuelMenu_PkmnPower"] = {"source_symbol": "DuelMenu_PkmnPower", "before": "\tif ((DisplayPlayAreaScreenToUsePkmnPower().f & 0x10u) == 0u)", "after": "\tif ((DisplayPlayAreaScreenToUsePkmnPower().f & 0x10u) != 0u)", "case_ids": ["DuelMenu_PkmnPower-0"]}
 # <<< factory-mutation DuelMenu_PkmnPower
 # >>> factory-completion DuelMenu_PkmnPower
-for _record in SCHEMA2_CASES["DuelMenu_PkmnPower"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x237D, "bank": 13}
+SCHEMA2_CASES["DuelMenu_PkmnPower"][0]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
+                                                      "routine": "DuelMainInterface"}
 # <<< factory-completion DuelMenu_PkmnPower
 # >>> factory-mutation DuelMenu_Done
 MUTATIONS["DuelMenu_Done"] = {"source_symbol": "DuelMenu_Done", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenu_Done-0"]}
@@ -7478,12 +7557,8 @@ for _record in SCHEMA2_CASES["DuelMenu_Done"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x43AA, "bank": 1}
 # <<< factory-completion DuelMenu_Done
 # >>> factory-mutation DuelMenu_Retreat
-MUTATIONS["DuelMenu_Retreat"] = {"source_symbol": "DuelMenu_Retreat", "before": "hTemp_ffa0 = 0u;", "after": "hTemp_ffa0 = 1u;", "case_ids": ["DuelMenu_Retreat-0"]}
+MUTATIONS["DuelMenu_Retreat"] = {"source_symbol": "DuelMenu_Retreat", "before": "\t(void)DiscardRetreatCostCards();\n", "after": "", "case_ids": ["DuelMenu_Retreat-2"]}
 # <<< factory-mutation DuelMenu_Retreat
-# >>> factory-completion DuelMenu_Retreat
-for _record in SCHEMA2_CASES["DuelMenu_Retreat"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x2385, "bank": 14}
-# <<< factory-completion DuelMenu_Retreat
 # >>> factory-mutation DuelMenu_Hand
 MUTATIONS["DuelMenu_Hand"] = {"source_symbol": "DuelMenu_Hand", "before": "\tif (GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a != 0u) {", "after": "\tif (GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a == 0u) {", "case_ids": ["DuelMenu_Hand-0"]}
 # <<< factory-mutation DuelMenu_Hand
@@ -7543,6 +7618,14 @@ for _record in SCHEMA2_CASES["DuelMenuShortcut_BothActivePokemon"]:
 # >>> factory-mutation DuelMenu_Attack
 MUTATIONS["DuelMenu_Attack"] = {"source_symbol": "DuelMenu_Attack", "before": "\t\t\twSelectedDuelSubMenuItem = input.a;", "after": "\t\t\twSelectedDuelSubMenuItem = (uint8_t)(input.a + 1u);", "case_ids": ["DuelMenu_Attack-2"]}
 # <<< factory-mutation DuelMenu_Attack
+# >>> factory-completion DuelMenu_Retreat
+SCHEMA2_CASES["DuelMenu_Retreat"][0]["completion"] = {"mode": "entry", "pc": 0x4295, "bank": 1,
+                                                      "routine": "PrintDuelMenuAndHandleInput"}
+SCHEMA2_CASES["DuelMenu_Retreat"][1]["completion"] = {"mode": "entry", "pc": 0x4295, "bank": 1,
+                                                      "routine": "PrintDuelMenuAndHandleInput"}
+SCHEMA2_CASES["DuelMenu_Retreat"][2]["completion"] = {"mode": "entry", "pc": 0x600C, "bank": 1,
+                                                      "routine": "OpenPlayAreaScreenForSelection"}
+# <<< factory-completion DuelMenu_Retreat
 # >>> factory-completion DuelMenu_Attack
 SCHEMA2_CASES["DuelMenu_Attack"][0]["completion"] = {"mode": "entry", "pc": 0x4295, "bank": 1,
                                                      "routine": "PrintDuelMenuAndHandleInput"}

@@ -2107,7 +2107,8 @@ static void adapt_HandleEnergyDiscardMenuInput(ProbeState *s)
 /* >>> factory DisplayRetreatScreen */
 static void adapt_DisplayRetreatScreen(ProbeState *s)
 {
-	DisplayRetreatScreen(s->a);
+	DisplayRetreatScreenResult r = DisplayRetreatScreen(s->a);
+	s->f = r.f;
 }
 /* <<< factory DisplayRetreatScreen */
 
@@ -2227,7 +2228,8 @@ static void adapt_OpenActivePokemonScreen(ProbeState *s)
 /* >>> factory DisplayPlayAreaScreenToUsePkmnPower */
 static void adapt_DisplayPlayAreaScreenToUsePkmnPower(ProbeState *s)
 {
-	DisplayPlayAreaScreenToUsePkmnPower();
+	DisplayPlayAreaScreenToUsePkmnPowerResult r = DisplayPlayAreaScreenToUsePkmnPower();
+	s->f = r.f;
 }
 /* <<< factory DisplayPlayAreaScreenToUsePkmnPower */
 

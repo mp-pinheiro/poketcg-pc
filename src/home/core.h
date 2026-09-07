@@ -951,7 +951,8 @@ typedef struct {
 HandleEnergyDiscardMenuInputResult HandleEnergyDiscardMenuInput(void);
 /* <<< factory HandleEnergyDiscardMenuInput */
 /* >>> factory DisplayRetreatScreen */
-void DisplayRetreatScreen(uint8_t a);
+typedef struct { uint8_t f; } DisplayRetreatScreenResult;
+DisplayRetreatScreenResult DisplayRetreatScreen(uint8_t a);
 /* <<< factory DisplayRetreatScreen */
 /* >>> factory PrintPracticeDuelInstructions_Fast */
 void PrintPracticeDuelInstructions_Fast(uint16_t hl);
@@ -998,7 +999,8 @@ void OppAction_PlayTrainerCard(void);
 void OpenActivePokemonScreen(void);
 /* <<< factory OpenActivePokemonScreen */
 /* >>> factory DisplayPlayAreaScreenToUsePkmnPower */
-void DisplayPlayAreaScreenToUsePkmnPower(void);
+typedef struct { uint8_t f; } DisplayPlayAreaScreenToUsePkmnPowerResult;
+DisplayPlayAreaScreenToUsePkmnPowerResult DisplayPlayAreaScreenToUsePkmnPower(void);
 /* <<< factory DisplayPlayAreaScreenToUsePkmnPower */
 /* >>> factory DisplayCardPage_PokemonOverview */
 void DisplayCardPage_PokemonOverview_Attacks(uint8_t c);

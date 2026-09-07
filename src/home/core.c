@@ -439,6 +439,7 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/core.h"
 #include "generated/hram.h"
 #define OPPACTION_PLAY_ENERGY 0x03u
+#define OPPACTION_ATTEMPT_RETREAT 0x04u
 
 #include "home/text_box.h"
 #include "home/empty_screen.h"
@@ -6935,12 +6936,14 @@ HandleEnergyDiscardMenuInputResult HandleEnergyDiscardMenuInput(void)
 /* <<< factory HandleEnergyDiscardMenuInput */
 
 /* >>> factory DisplayRetreatScreen */
-void DisplayRetreatScreen(uint8_t a)
+/* core.asm:837-889. Carry (f bit 4) is the B press that abandons the energy
+ * selection; both other exits leave it clear. */
+DisplayRetreatScreenResult DisplayRetreatScreen(uint8_t a)
 {
 	hTempRetreatCostCards = 0xFFu;
 	uint8_t required = wEnergyCardsRequiredToRetreat;
 	if (required == 0u)
-		return;
+		return (DisplayRetreatScreenResult){0x80u};
 	wNumRetreatEnergiesSelected = 0u;
 	(void)CreateArenaOrBenchEnergyCardList(a);
 	(void)SortCardsInDuelTempListByID(0u, 0u, wDuelTempList_ADDR);
@@ -6951,7 +6954,7 @@ void DisplayRetreatScreen(uint8_t a)
 		wEnergyDiscardMenuNumerator = wNumRetreatEnergiesSelected;
 		HandleEnergyDiscardMenuInputResult input = HandleEnergyDiscardMenuInput();
 		if ((input.f & 0x10u) != 0u)
-			return;
+			return (DisplayRetreatScreenResult){0x10u};
 		hTempCardIndex_ff98 = input.a;
 		(void)LoadCardDataToBuffer2_FromDeckIndex(hTempCardIndex_ff98);
 		uint8_t pos = wTempRetreatCostCardsPos;
@@ -6963,7 +6966,7 @@ void DisplayRetreatScreen(uint8_t a)
 		wNumRetreatEnergiesSelected = (uint8_t)(wNumRetreatEnergiesSelected + amount);
 		if (wNumRetreatEnergiesSelected >= wEnergyCardsRequiredToRetreat) {
 			gb_write8((uint16_t)(0xFF00u + wTempRetreatCostCardsPos), 0xFFu);
-			return;
+			return (DisplayRetreatScreenResult){0x00u};
 		}
 		(void)RemoveCardFromDuelTempList(hTempCardIndex_ff98);
 		DisplayEnergyDiscardMenu();
@@ -7182,9 +7185,11 @@ void OpenActivePokemonScreen(void)
 /* <<< factory OpenActivePokemonScreen */
 
 /* >>> factory DisplayPlayAreaScreenToUsePkmnPower */
-void DisplayPlayAreaScreenToUsePkmnPower(void)
+/* core.asm:5618-5675. Carry (f bit 4) is the B press that leaves without a
+ * power; a chosen power returns with it clear and hTemp_ffa0 holding the
+ * card's deck index. */
+DisplayPlayAreaScreenToUsePkmnPowerResult DisplayPlayAreaScreenToUsePkmnPower(void)
 {
-	/* DisplayPlayAreaScreenToUsePkmnPower */
 	gb_write8(wSelectedDuelSubMenuItem_ADDR, 0u);
 draw_screen:
 	ZeroObjectPositionsAndToggleOAMCopy();
@@ -7217,9 +7222,8 @@ draw_screen:
 		gb_write8(wHUDEnergyAndHPBarsX_ADDR, input.a);
 		if ((input.f & 0x10u) == 0u)
 			continue;
-		if (input.a == MENU_CANCEL) {
-			return;
-		}
+		if (input.a == MENU_CANCEL)
+			return (DisplayPlayAreaScreenToUsePkmnPowerResult){0x10u};
 		gb_write8(wSelectedDuelSubMenuItem_ADDR, input.a);
 		if ((hKeysPressed & PAD_START) != 0u) {
 			uint8_t item = (uint8_t)(hCurMenuItem + DUELVARS_ARENA_CARD);
@@ -7246,7 +7250,7 @@ draw_screen:
 		if ((answer.f & 0x10u) != 0u)
 			goto draw_screen;
 		gb_write8(hTemp_ffa0_ADDR, gb_read8(hTempCardIndex_ff98_ADDR));
-		return;
+		return (DisplayPlayAreaScreenToUsePkmnPowerResult){0x00u};
 	}
 }
 /* <<< factory DisplayPlayAreaScreenToUsePkmnPower */
@@ -9330,16 +9334,26 @@ void SetLinkDuelTransmissionFrameFunction(void)
 /* <<< factory SetLinkDuelTransmissionFrameFunction */
 
 /* >>> factory OpenNonTurnHolderPlayAreaScreen */
+/* core.asm:390-394 */
 void OpenNonTurnHolderPlayAreaScreen(void)
 {
-	hWhoseTurn = (hWhoseTurn == 0xC2u) ? 0xC3u : 0xC2u;
+	SwapTurn();
+	(void)OpenTurnHolderPlayAreaScreen();
+	SwapTurn();
 }
 /* <<< factory OpenNonTurnHolderPlayAreaScreen */
 
 /* >>> factory OpenTurnHolderPlayAreaScreen */
+/* core.asm:397-399. The screen's cancel exit (core.asm:5017-5022) is `pop af`
+ * then `scf`, so it hands back the flags this routine entered the screen with
+ * -- HasAlivePokemonInPlayArea's -- plus carry; the selection exit ends in
+ * `or a` and is the screen's own. */
 HasAlivePokemonInPlayAreaResult OpenTurnHolderPlayAreaScreen(void)
 {
-	return (HasAlivePokemonInPlayAreaResult){0x70u, 0xC0u};
+	HasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();
+	PlayAreaScreenResult r = OpenPlayAreaScreenForViewing();
+	uint8_t f = (r.f & 0x10u) != 0u ? (uint8_t)((alive.f & 0xE0u) | 0x10u) : r.f;
+	return (HasAlivePokemonInPlayAreaResult){r.a, f};
 }
 /* <<< factory OpenTurnHolderPlayAreaScreen */
 
@@ -9719,51 +9733,74 @@ static void duel_menu_items_printed(void)
 /* <<< factory PrintDuelMenuAndHandleInput */
 
 /* >>> factory DuelMenuShortcut_OpponentPlayArea */
+/* core.asm:368-370 */
 void DuelMenuShortcut_OpponentPlayArea(void)
 {
-	return;
+	OpenNonTurnHolderPlayAreaScreen();
+	DuelMainInterface();
 }
 /* <<< factory DuelMenuShortcut_OpponentPlayArea */
 
 /* >>> factory DuelMenuShortcut_PlayerPlayArea */
+/* core.asm:373-375 */
 void DuelMenuShortcut_PlayerPlayArea(void)
 {
-	return;
+	(void)OpenTurnHolderPlayAreaScreen();
+	DuelMainInterface();
 }
 /* <<< factory DuelMenuShortcut_PlayerPlayArea */
 
 /* >>> factory DuelMenuShortcut_OpponentDiscardPile */
+/* core.asm:378-381: the screen's carry (no cards) re-enters the menu. */
 void DuelMenuShortcut_OpponentDiscardPile(void)
 {
-	return;
+	if ((OpenNonTurnHolderDiscardPileScreen(0u).f & 0x10u) != 0u) {
+		PrintDuelMenuAndHandleInput();
+		return;
+	}
+	DuelMainInterface();
 }
 /* <<< factory DuelMenuShortcut_OpponentDiscardPile */
 
 /* >>> factory DuelMenuShortcut_PlayerDiscardPile */
+/* core.asm:384-387 */
 void DuelMenuShortcut_PlayerDiscardPile(void)
 {
-	return;
+	if ((OpenTurnHolderDiscardPileScreen(0u).f & 0x10u) != 0u) {
+		PrintDuelMenuAndHandleInput();
+		return;
+	}
+	DuelMainInterface();
 }
 /* <<< factory DuelMenuShortcut_PlayerDiscardPile */
 
 /* >>> factory DuelMenuShortcut_OpponentActivePokemon */
+/* core.asm:433-437 */
 void DuelMenuShortcut_OpponentActivePokemon(void)
 {
-	return;
+	SwapTurn();
+	OpenActivePokemonScreen();
+	SwapTurn();
+	DuelMainInterface();
 }
 /* <<< factory DuelMenuShortcut_OpponentActivePokemon */
 
 /* >>> factory DuelMenuShortcut_PlayerActivePokemon */
+/* core.asm:440-442 */
 void DuelMenuShortcut_PlayerActivePokemon(void)
 {
-	return;
+	OpenActivePokemonScreen();
+	DuelMainInterface();
 }
 /* <<< factory DuelMenuShortcut_PlayerActivePokemon */
 
 /* >>> factory DuelMenu_PkmnPower */
+/* core.asm:460-464 */
 void DuelMenu_PkmnPower(void)
 {
-	return;
+	if ((DisplayPlayAreaScreenToUsePkmnPower().f & 0x10u) == 0u)
+		(void)UseAttackOrPokemonPower(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	DuelMainInterface();
 }
 /* <<< factory DuelMenu_PkmnPower */
 
@@ -9782,7 +9819,71 @@ void DuelMenu_Done(void)
 /* <<< factory DuelMenu_Done */
 
 /* >>> factory DuelMenu_Retreat */
-void DuelMenu_Retreat(void) { hTemp_ffa0 = 0u; }
+/* core.asm:478-537. Every exit is a tail jump into DuelMainInterface or
+ * PrintDuelMenuAndHandleInput, so those loops' exits are this one's. */
+void DuelMenu_Retreat(void)
+{
+	uint8_t status = (uint8_t)(GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a & CNF_SLP_PRZ);
+	hTemp_ffa0 = status;
+	if (status == CONFUSED) {
+		if (wConfusionRetreatCheckWasUnsuccessful == 0u) {
+			CheckAbleToRetreatResult able = CheckAbleToRetreat();
+			if ((able.f & 0x10u) != 0u) {
+				(void)DrawWideTextBox_WaitForInput(able.hl);
+				PrintDuelMenuAndHandleInput();
+				return;
+			}
+			if ((DisplayRetreatScreen(status).f & 0x10u) != 0u) {
+				DuelMainInterface();
+				return;
+			}
+			(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);
+			PlayAreaScreenResult chosen = OpenPlayAreaScreenForSelection();
+			if ((chosen.f & 0x10u) != 0u) {
+				DuelMainInterface();
+				return;
+			}
+			wBenchSelectedPokemon = chosen.a;
+			hTempPlayAreaLocation_ffa1 = chosen.a;
+			(void)SetOppAction_SerialSendDuelData(OPPACTION_ATTEMPT_RETREAT, 0u);
+			if ((AttemptRetreat().f & 0x10u) == 0u) {
+				DuelMainInterface();
+				return;
+			}
+			DrawDuelMainScene();
+		}
+		(void)DrawWideTextBox_WaitForInput(UnableToRetreatText);
+		PrintDuelMenuAndHandleInput();
+		return;
+	}
+
+	/* Not confused: the cost is discarded, returned so the play area screen
+	 * lists the retreating Pokemon with its energies updated, then discarded
+	 * for good by AttemptRetreat (core.asm:511-516). */
+	CheckAbleToRetreatResult able = CheckAbleToRetreat();
+	if ((able.f & 0x10u) != 0u) {
+		(void)DrawWideTextBox_WaitForInput(able.hl);
+		PrintDuelMenuAndHandleInput();
+		return;
+	}
+	if ((DisplayRetreatScreen(status).f & 0x10u) != 0u) {
+		DuelMainInterface();
+		return;
+	}
+	(void)DiscardRetreatCostCards();
+	(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);
+	PlayAreaScreenResult chosen = OpenPlayAreaScreenForSelection();
+	wBenchSelectedPokemon = chosen.a;
+	hTempPlayAreaLocation_ffa1 = chosen.a;
+	(void)ReturnRetreatCostCardsToArena(0u, 0u, 0u, 0u, 0u);
+	if ((chosen.f & 0x10u) != 0u) {
+		DuelMainInterface();
+		return;
+	}
+	(void)SetOppAction_SerialSendDuelData(OPPACTION_ATTEMPT_RETREAT, 0u);
+	(void)AttemptRetreat();
+	DuelMainInterface();
+}
 /* <<< factory DuelMenu_Retreat */
 
 /* >>> factory DuelMenu_Hand */

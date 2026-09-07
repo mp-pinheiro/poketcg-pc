@@ -1,9 +1,9 @@
 {
   "fn": "DuelMenuShortcut_PlayerActivePokemon",
   "case": "tests/cases/core.py",
-  "index": 0,
+  "index": 1,
   "status": "RED",
-  "baseline": "{\"fn\": \"DuelMenuShortcut_PlayerActivePokemon\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52166\": \"00\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"DuelMenuShortcut_PlayerActivePokemon\", \"mismatches\": {\"bus\": {\"address\": 52166, \"reference\": \"00\", \"native\": \"01\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[52166, 1]]}}}\n",
-  "restored": "{\"fn\": \"DuelMenuShortcut_PlayerActivePokemon\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52166\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"DuelMenuShortcut_PlayerActivePokemon\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"49851\": \"00\", \"49864\": \"28\", \"49903\": \"0100\", \"50176\": \"08\", \"51899\": \"84\", \"52169\": \"0001\", \"52260\": \"01a7020a\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DuelMenuShortcut_PlayerActivePokemon\", \"mismatches\": {\"bus\": {\"address\": 51899, \"reference\": \"2801000884000101a7\", \"native\": \"280100080000000000\", \"reference_size\": 14, \"native_size\": 14, \"spans\": [[49664, 1], [49851, 1], [49864, 1], [49903, 2], [50176, 1], [51899, 1], [52169, 2], [52260, 4], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"DuelMenuShortcut_PlayerActivePokemon\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"49851\": \"00\", \"49864\": \"28\", \"49903\": \"0100\", \"50176\": \"08\", \"51899\": \"84\", \"52169\": \"0001\", \"52260\": \"01a7020a\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
 }
