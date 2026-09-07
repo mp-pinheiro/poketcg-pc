@@ -1,0 +1,373 @@
+# From fighting-club's end: out of the Fighting Club lobby, the overworld map north
+# twice to the Rock Club, through its entrance and lobby into the club room, down to
+# Andrew, accept his duel: Machop active, no bench, play second; two Fighting
+# Energies and a Low Kick, Machop is knocked out, Diglett takes the arena,
+# Growlithe is benched and evolved into Arcanine, Fire and Lightning Energy
+# attached, turns ended with DONE until Onix knocks Diglett out and Andrew draws
+# his first prize.
+hold DOWN 96
+idle
+press UP
+idle
+press UP
+idle
+press A
+idle
+hold UP 104
+idle
+hold UP 96
+idle
+hold LEFT 48
+idle
+hold DOWN 48
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press LEFT
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press DOWN
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press DOWN
+idle
+press DOWN
+idle
+press DOWN
+idle
+press DOWN
+idle
+press DOWN
+idle
+press B
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press DOWN
+idle
+press A
+idle
+press A
+idle
+press B
+idle
+press DOWN
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press B
+idle
+press RIGHT
+idle
+press RIGHT
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press DOWN
+idle
+press DOWN
+idle
+press DOWN
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press B
+idle
+press B
+idle
+press DOWN
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press DOWN
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press DOWN
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press DOWN
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press DOWN
+idle
+press DOWN
+idle
+press DOWN
+idle
+press DOWN
+idle
+press DOWN
+idle
+press DOWN
+idle
+press UP
+idle
+press A
+idle
+press A
+idle
+press DOWN
+idle
+press A
+idle
+press A
+idle
+press DOWN
+idle
+press RIGHT
+idle
+press RIGHT
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press DOWN
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press DOWN
+idle
+press A
+idle
+press A
+idle
+press DOWN
+idle
+press RIGHT
+idle
+press RIGHT
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press DOWN
+idle
+press RIGHT
+idle
+press RIGHT
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
