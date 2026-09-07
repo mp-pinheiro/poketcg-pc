@@ -1390,6 +1390,21 @@ Coverage past that point comes from sessions that play the game. Two ways:
 Every session verifies the same way (`just session-verify NAME`) and ratchets
 the same `confirmed_ordinal`.
 
+`fighting-club` (`tests/sessions/fighting-club/route.txt`) was piloted this
+way from `practice-win`: Dr. Mason's closing talk and the starter deck choice,
+out of the lab, the overworld map east to the Fighting Club, Ronald's entrance
+scene, up to Mitch and back to the lobby. Aim a walk with the script's `peek`
+verb -- it prints the player's tile, facing and map and every loaded NPC's
+tile -- rather than by reading sprites off a screenshot; the club room's
+"pupils" are floor tiles, and the pupils are only loaded once defeated
+(`Preload_*InFightingClub`). Walking runs 8 DoFrames per tile.
+
+The AI-versus-AI generator (`session.py ai-duel`) only produces a duel for
+deck id 2: it makes both duelists `DUELIST_TYPE_AI_OPP | deck` but leaves the
+player's cards as the practice deck, and every club deck's AI script hands the
+turn back to the human interface on that hand. A deck other than 2 needs the
+player's deck poked to the same card list first.
+
 ## The banks recipe
 
 The asm reaches a routine in another bank one of two ways.
