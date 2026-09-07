@@ -24,7 +24,7 @@ import json
 import subprocess
 import sys
 import tempfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -313,7 +313,7 @@ def status() -> int:
     for name in names:
         masks, meta = load_session(name)
         confirmed = ratchet.get(name, {}).get("confirmed_ordinal", "-")
-        print(f"{name:<24} {len(masks):>8} {str(confirmed):>9}  {meta.get('goal', '')}")
+        print(f"{name:<24} {len(masks):>8} {confirmed!s:>9}  {meta.get('goal', '')}")
     return 0
 
 
@@ -324,7 +324,7 @@ def record_meta(name: str, goal: str) -> int:
         "schema": 1, "name": name, "goal": goal or meta.get("goal", ""),
         "ordinals": len(masks),
         "terminal_event": meta.get("terminal_event", ""),
-        "recorded": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "recorded": datetime.now(UTC).isoformat(timespec="seconds"),
     })
     (session_dir(name) / "session.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
     print(f"SESSION {name} ordinals={len(masks)} goal={meta['goal']!r}")
