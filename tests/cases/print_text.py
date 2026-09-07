@@ -158,6 +158,14 @@ CASES.update({
                   HEADER + 5: b"\x0f\x00\x01\x00\xC1",
                   0xCE48: b"\x01", 0xC100: b"\x00"},
          "read": {HEADER: 10, 0xCE48: 1, 0xC100: 1}},
+        # TX_SYMBOL is a two-byte sequence (print_text.asm:292-293 writes back
+        # the handler's advanced pointer): one call consumes both, places the
+        # symbol tile at the text position and leaves the header on the space.
+        {"d": 0, "e": 0,
+         "wram": {HEADER: b"\x0f\x00\x01\x00\xC1", 0xCE48: b"\x00",
+                  0xC100: b"\x05\x07\x20\x6d\x00", 0xFFB0: b"\x00"},
+         "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}, {"fn": "InitTextPrinting", "d": 2, "e": 3}],
+         "read": {HEADER: 5, 0xC100: 5}, "vread": {0: {0x9800: 0x400}}},
     ],
     # The zero-ID early exit returns before any text processing, so it is the one
     # path of this pair the emulator can run end to end.
@@ -279,6 +287,12 @@ CASES["ProcessTextFromID"].append(
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
+    "ProcessTextHeader": {
+        "source_symbol": "ProcessTextHeader",
+        "before": "\t\tWriteToTextHeader(special.hl);",
+        "after": "\t\tWriteToTextHeader(text);",
+        "case_ids": ["ProcessTextHeader-2"],
+    },
     "CopyTextData_FromTextID": {
         "source_symbol": "CopyTextData_FromTextID",
         "before": "\tgb_write8(hff96_ADDR, a);\n\tuint16_t source = GetTextOffsetFromTextID(hl);",

@@ -277,8 +277,11 @@ ProcessTextHeaderResult ProcessTextHeader(uint8_t d, uint8_t e)
 				return ProcessTextHeader(d, e);
 			}
 		}
-		WriteToTextHeader(text);
-		return header_result(special.a, d, e, 0, text);
+		/* print_text.asm:292-295: the pointer the handler returns is written
+		 * back (one past the symbol byte for TX_SYMBOL); WriteToTextHeader
+		 * leaves a = hBankROM and hl on the header's last byte. */
+		WriteToTextHeader(special.hl);
+		return header_result(hBankROM, d, e, 0, (uint16_t)(wTextHeader1_ADDR + selector * 5u + 4u));
 	}
 	e = a;
 	d = gb_read8(text);
