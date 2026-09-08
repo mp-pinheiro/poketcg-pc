@@ -66,6 +66,49 @@ static ProductPackSpan *g_product_spans;
 static size_t g_product_span_count;
 static int g_product_mode;
 
+/* Per-bank byte map into the pack: pack offset + 1 for every ROM byte a span
+ * covers, 0 where the pack has nothing. Bank 0 maps $0000-$3FFF, every other
+ * bank $4000-$7FFF. Built once at load; a lookup is one index, where the span
+ * scan it replaces was 42% of a headless replay (gprof, rock-club). */
+#define PRODUCT_MAP_BANKS 256u
+#define PRODUCT_MAP_BANK_SIZE 0x4000u
+static uint32_t *g_product_map[PRODUCT_MAP_BANKS];
+
+static void product_map_free(void)
+{
+	for (size_t bank = 0; bank < PRODUCT_MAP_BANKS; bank++) {
+		free(g_product_map[bank]);
+		g_product_map[bank] = NULL;
+	}
+}
+
+static int product_map_build(const ProductPackSpan *spans, size_t count)
+{
+	for (size_t i = 0; i < count; i++) {
+		const ProductPackSpan *span = &spans[i];
+		uint32_t *map = g_product_map[span->bank];
+		if (!map) {
+			map = calloc(PRODUCT_MAP_BANK_SIZE, sizeof *map);
+			if (!map)
+				return -1;
+			g_product_map[span->bank] = map;
+		}
+		uint16_t base = span->bank == 0u ? 0u : 0x4000u;
+		for (uint32_t k = 0; k < span->length; k++)
+			map[span->address - base + k] = span->pack_offset + k + 1u;
+	}
+	return 0;
+}
+
+static inline uint32_t product_map_lookup(uint8_t bank, uint16_t addr)
+{
+	const uint32_t *map = g_product_map[bank];
+	uint16_t base = bank == 0u ? 0u : 0x4000u;
+	if (!map || addr < base || (uint32_t)addr - base >= PRODUCT_MAP_BANK_SIZE)
+		return 0;
+	return map[addr - base];
+}
+
 uint8_t g_rom_bank = 1;
 uint8_t g_sram_bank = 0;
 uint8_t g_vram_bank = 0;
@@ -398,6 +441,12 @@ int rom_pack_load(const char *path)
 		return -1;
 	}
 	rom_pack_free();
+	if (product_map_build(spans, count) != 0) {
+		product_map_free();
+		free(spans);
+		free(pack);
+		return -1;
+	}
 	g_product_pack = pack;
 	g_product_pack_size = size;
 	g_product_spans = spans;
@@ -407,6 +456,7 @@ int rom_pack_load(const char *path)
 
 void rom_pack_free(void)
 {
+	product_map_free();
 	free(g_product_spans);
 	free(g_product_pack);
 	g_product_spans = NULL;
@@ -477,15 +527,9 @@ static const uint8_t *missing_product_data(uint8_t bank, uint16_t addr)
 
 const uint8_t *rom_ptr_product(uint8_t bank, uint16_t addr)
 {
-	for (size_t i = 0; i < g_product_span_count; i++) {
-		const ProductPackSpan *span = &g_product_spans[i];
-		uint32_t end = (uint32_t)span->address + span->length;
-		if (span->bank == bank && addr >= span->address && addr < end) {
-			size_t offset = (size_t)span->pack_offset + addr - span->address;
-			if (offset < g_product_pack_size)
-				return g_product_pack + offset;
-		}
-	}
+	uint32_t slot = product_map_lookup(bank, addr);
+	if (slot != 0u && (size_t)slot - 1u < g_product_pack_size)
+		return g_product_pack + (slot - 1u);
 	return missing_product_data(bank, addr);
 }
 
@@ -498,15 +542,8 @@ int rom_byte_available(uint8_t bank, uint16_t addr)
 {
 	if (!g_product_mode)
 		return 1;
-	for (size_t i = 0; i < g_product_span_count; i++) {
-		const ProductPackSpan *span = &g_product_spans[i];
-		uint32_t end = (uint32_t)span->address + span->length;
-
-		if (span->bank == bank && addr >= span->address && addr < end)
-			return (size_t)span->pack_offset + addr - span->address
-			       < g_product_pack_size;
-	}
-	return 0;
+	uint32_t slot = product_map_lookup(bank, addr);
+	return slot != 0u && (size_t)slot - 1u < g_product_pack_size;
 }
 
 const uint8_t *rom_ptr(uint8_t bank, uint16_t addr)

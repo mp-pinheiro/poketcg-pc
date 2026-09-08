@@ -1,4 +1,5 @@
 #include "home/clear_sram.h"
+#include "home/game_loop.h"
 
 #include "home/switch_sram.h"
 #include "mem.h"

@@ -141,7 +141,7 @@ hatch-ratchet:
 
 # Configure + build the C side (gbmem, poketcg_probe).
 build:
-    cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=Debug -DPORT_FILES="{{port_files}}"
+    cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPORT_FILES="{{port_files}}"
     ninja -C {{build_dir}}
 
 # Launch the port with a window. Requires `just build` and `just completion-data-pack`;
@@ -154,7 +154,7 @@ play *ARGS:
 
 # Fixed central barrier build; ignores slice-scoped environment variables.
 build-barrier:
-    cmake -G Ninja -B build-barrier -DCMAKE_BUILD_TYPE=Debug -DPORT_FILES=""
+    cmake -G Ninja -B build-barrier -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPORT_FILES=""
     ninja -C build-barrier
 
 # Rebuild an already configured private tree without re-running CMake.
@@ -422,7 +422,7 @@ completion-frame-census SCENARIO *ARGS:
 
 # Instrumented lane for the bilateral call-count diff and the CFG audit producer.
 build-trace:
-    cmake -G Ninja -S . -B build-trace -DPOKETCG_TRACE=ON
+    cmake -G Ninja -S . -B build-trace -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPOKETCG_TRACE=ON
     ninja -C build-trace
 
 # Per-routine call-count diff, native against the reference stream.

@@ -321,8 +321,11 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
                 inputs.append(((held << 4) | (held >> 4)) & 0xFF)
 
         core.install_exec(on_exec)
+        directory.mkdir(parents=True, exist_ok=True)
+        for stale in directory.glob("checkpoint-*"):
+            stale.unlink()
+        core.checkpoint_dir = directory
         core.run(frames)
-    directory.mkdir(parents=True, exist_ok=True)
     (directory / "digests.bin").write_bytes(bytes(records))
     (directory / "calls.bin").write_bytes(bytes(calls))
     (directory / "vblank-writes.bin").write_bytes(bytes(vblank_writes))
@@ -456,13 +459,28 @@ def first_divergence(reference: bytes, native: bytes) -> tuple[int | None, int, 
     return None, nat_count, [], audio_first
 
 
+def checkpoint_directory(name: str, masks: list[int], frames: int,
+                         pokes: refstream.Pokes | None) -> Path:
+    """The cached stream's directory, where the build left its savestates. A
+    stream built before savestates existed gets them from one replay here."""
+    directory = ROOT / build_reference(name, masks, frames, pokes=pokes)["directory"]
+    if not any(directory.glob("checkpoint-*.bin")):
+        padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
+        with refstream.Core(padded, pokes=pokes) as core:
+            core.input_axis = "ordinal"
+            core.install_exec(None)
+            core.checkpoint_dir = directory
+            core.run(frames, stop=lambda: core.ordinal >= len(masks))
+    return directory
+
+
 def reference_capture(name: str, masks: list[int], frames: int, ordinal: int,
                       pokes: refstream.Pokes | None = None, *, sram: bool = False) -> dict[str, bytes]:
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     captured: dict[str, bytes] = {}
     with refstream.Core(padded, pokes=pokes) as core:
         core.input_axis = "ordinal"
-        hits = 0
+        hits = core.seek(checkpoint_directory(name, masks, frames, pokes), ordinal)
 
         def on_exec(address: int, _cycle: int) -> None:
             nonlocal hits
@@ -502,6 +520,8 @@ def capture(name: str, routine: str, *, after: int = 0, nth: int = 1, out: Path 
     entries = 0
     with refstream.Core(padded, pokes=meta["pokes"]) as core:
         core.input_axis = "ordinal"
+        if after > 0:
+            core.seek(checkpoint_directory(name, masks, frames, meta["pokes"]), after)
         read = core.library.gambatte_cpuread
         registers = (ctypes.c_int * 10)()
 
@@ -583,11 +603,23 @@ def attribute(name: str, masks: list[int], frames: int, ordinal: int,
             picked.append((field, field_offset, nat[offset], ref[offset], symbol))
     picked = picked[:16]
     addresses = sorted({refstream.FIELD_WINDOWS[f][0] + o for f, o, _n, _r, _s in picked})
-    writers = {
-        int(entry["address"], 16): entry
-        for entry in refstream.writers(f"session:{name}", frames, addresses, events=True,
-                                       masks=masks, axis="ordinal", ordinals=ordinal, pokes=pokes)
-    } if addresses else {}
+    # The last writer before the divergence is almost always inside the
+    # preceding stride, so watch the tail from a checkpoint first and fall
+    # back to a boot replay only for a byte nothing in that tail wrote.
+    writers: dict[int, Any] = {}
+    if addresses:
+        checkpoints = checkpoint_directory(name, masks, frames, pokes)
+        writers = {
+            int(entry["address"], 16): entry
+            for entry in refstream.writers(f"session:{name}", frames, addresses, events=True,
+                                           masks=masks, axis="ordinal", ordinals=ordinal, pokes=pokes,
+                                           checkpoints=checkpoints, window=refstream.Core.CHECKPOINT_STRIDE)
+        }
+        unwritten = [a for a in addresses if refstream.writer_before(writers.get(a), ordinal) is None]
+        if unwritten:
+            for entry in refstream.writers(f"session:{name}", frames, unwritten, events=True,
+                                           masks=masks, axis="ordinal", ordinals=ordinal, pokes=pokes):
+                writers[int(entry["address"], 16)] = entry
     out = []
     for field, offset, got, want, symbol in picked:
         address = refstream.FIELD_WINDOWS[field][0] + offset
@@ -836,6 +868,7 @@ def routines(name: str, ordinal: int, *, everything: bool) -> int:
     sequence: list[str] = []
     with refstream.Core(padded, pokes=meta["pokes"]) as core:
         core.input_axis = "ordinal"
+        core.seek(checkpoint_directory(name, masks, frames, meta["pokes"]), ordinal)
 
         def on_exec(address: int, _cycle: int) -> None:
             if address not in candidates or core.ordinal != ordinal:

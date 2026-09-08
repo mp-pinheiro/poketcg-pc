@@ -338,12 +338,71 @@ class Core:
                 return
         raise RefstreamError(f"frame not filled after {MAX_SLICES_PER_FRAME} slices")
 
+    # A Gambatte savestate every CHECKPOINT_STRIDE anchors, written by the
+    # stream build into the stream's directory. Every later replay of that
+    # input (capture, routines, diff, writers) seeks to the last checkpoint
+    # below its target instead of replaying from boot: a 340k-ordinal session
+    # cost ~100 s per replay before, a tail after.
+    CHECKPOINT_STRIDE = 5000
+    checkpoint_dir: Path | None = None
+    _next_checkpoint = CHECKPOINT_STRIDE
+
+    def snapshot(self) -> bytes:
+        library = self.library
+        library.gambatte_newstatesave.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_int]
+        library.gambatte_newstatesave.restype = ctypes.c_int
+        length = library.gambatte_newstatelen(self.core)
+        if length <= 0:
+            raise RefstreamError("gambatte_newstatelen returned no length")
+        buffer = ctypes.create_string_buffer(length)
+        if not library.gambatte_newstatesave(self.core, buffer, length):
+            raise RefstreamError("gambatte_newstatesave failed")
+        return buffer.raw
+
+    def restore(self, blob: bytes) -> None:
+        library = self.library
+        library.gambatte_newstateload.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_int]
+        library.gambatte_newstateload.restype = ctypes.c_int
+        if not library.gambatte_newstateload(self.core, blob, len(blob)):
+            raise RefstreamError("gambatte_newstateload failed")
+
+    def save_checkpoint(self) -> None:
+        assert self.checkpoint_dir is not None
+        path = self.checkpoint_dir / f"checkpoint-{self.ordinal:07d}.bin"
+        meta = {"ordinal": self.ordinal, "frame": self.frame, "samples": self.samples,
+                "frame_overflow": self._frame_overflow}
+        path.with_suffix(".json").write_text(json.dumps(meta))
+        path.write_bytes(self.snapshot())
+
+    def seek(self, directory: Path, ordinal: int) -> int:
+        """Restore the latest checkpoint whose anchor count is below `ordinal`,
+        so the replay that follows still observes anchor `ordinal`. Returns the
+        anchor count restored (0: no usable checkpoint, replay from boot).
+        Callers that count anchors themselves start their count here."""
+        best = None
+        for path in directory.glob("checkpoint-*.json"):
+            meta = json.loads(path.read_text())
+            if meta["ordinal"] < ordinal and (best is None or meta["ordinal"] > best["ordinal"]):
+                if path.with_suffix(".bin").is_file():
+                    best = meta
+        if best is None:
+            return 0
+        self.restore((directory / f"checkpoint-{best['ordinal']:07d}.bin").read_bytes())
+        self.ordinal = best["ordinal"]
+        self.frame = best["frame"]
+        self.samples = best["samples"]
+        self._frame_overflow = best["frame_overflow"]
+        return self.ordinal
+
     def run(self, frames: int, *, stop: Callable[[], bool] | None = None) -> int:
-        for index in range(frames):
+        for index in range(self.frame, frames):
             self.frame = index
             if stop is not None and stop():
                 return index
             self.step_frame()
+            if self.checkpoint_dir is not None and self.ordinal >= self._next_checkpoint:
+                self._next_checkpoint = (self.ordinal // self.CHECKPOINT_STRIDE + 1) * self.CHECKPOINT_STRIDE
+                self.save_checkpoint()
         return frames
 
     def area(self, name: str) -> bytes:
@@ -637,10 +696,13 @@ def writers(
     scenario: str, frames: int, addresses: list[int], *, events: bool = False,
     masks: list[int] | None = None, axis: str | None = None,
     ordinals: int | None = None, pokes: Pokes | None = None,
+    checkpoints: Path | None = None, window: int = 0,
 ) -> list[dict[str, Any]]:
     """`ordinals` stops the replay once that many DoFrame anchors have fired.
     The write callback fires on every store, so an unbounded run over a long
-    movie costs minutes for a divergence already known to sit at one ordinal."""
+    movie costs minutes for a divergence already known to sit at one ordinal.
+    `checkpoints` seeks the replay to the stream's last savestate more than
+    `window` anchors before `ordinals`, so only that tail is watched."""
     movie = masks is not None
     masks = scenario_masks(scenario, frames, masks)
     resolve = label_resolver()
@@ -652,6 +714,8 @@ def writers(
     stream: dict[int, list[dict[str, Any]]] = {address: [] for address in addresses}
     with Core(masks, pokes=pokes) as core:
         core.input_axis = axis or ("frame" if movie else "ordinal")
+        if checkpoints is not None and ordinals is not None:
+            core.seek(checkpoints, max(1, ordinals - window))
 
         def on_write(address: int, _cycle: int) -> None:
             nonlocal sequence
@@ -708,9 +772,11 @@ def writers(
     return result
 
 
-def writer_before(entry: dict[str, Any], ordinal: int) -> dict[str, Any] | None:
+def writer_before(entry: dict[str, Any] | None, ordinal: int) -> dict[str, Any] | None:
     """The last recorded reference write to this address strictly before an
     ordinal, which is the routine whose value the comparison should have seen."""
+    if entry is None:
+        return None
     prior = [event for event in entry.get("events", ()) if event["ordinal"] < ordinal]
     return prior[-1] if prior else None
 

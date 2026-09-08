@@ -371,6 +371,26 @@ static void anchor(void *context)
 	}
 }
 
+static int frame_dump_pending(uint32_t frame)
+{
+	if (!g_state_dump_callback)
+		return 0;
+	for (size_t i = 0; i < g_state_dump_frame_count; i++)
+		if (g_state_dump_frames[i] == frame)
+			return 1;
+	return 0;
+}
+
+static int ordinal_dump_pending(uint32_t ordinal)
+{
+	if (!g_ordinal_dump_callback)
+		return 0;
+	for (size_t i = 0; i < g_ordinal_dump_count; i++)
+		if (g_ordinal_dump_list[i] == ordinal)
+			return 1;
+	return 0;
+}
+
 int runtime_run_with_input(
 	Shell *shell, uint32_t frame_limit, const uint8_t *buttons,
 	size_t button_count, RuntimeResult *result)
@@ -524,7 +544,13 @@ int runtime_run_with_input(
 		apu_trace_set_tick(state.frames);
 		size_t pcm_count = apu_trace_render_pcm(
 			state.audio, AUDIO_SAMPLES_PER_FRAME);
-		ppu_render_frame(&state.ppu, state.framebuffer);
+		/* The framebuffer has two consumers: the window and a state dump
+		 * (this frame's, or the anchor dump of the DoFrame that follows).
+		 * A headless replay with neither skips the software PPU, which
+		 * was half of a verify's native pass (gprof, rock-club). */
+		if (shell_has_window(shell) || frame_dump_pending(state.frames) ||
+		    ordinal_dump_pending(ordinal + 1u))
+			ppu_render_frame(&state.ppu, state.framebuffer);
 		/* A recorded prefix replays at full speed; only live play is paced. */
 		if (!timeline_live)
 			shell_pace(shell);
@@ -557,8 +583,10 @@ int runtime_run_with_input(
 	frame_boundary_install(NULL, NULL);
 	if (g_record_sink)
 		fflush(g_record_sink);
-	if (result)
+	if (result) {
+		ppu_render_frame(&state.ppu, state.framebuffer);
 		fill_result(&state, frame_limit, result);
+	}
 	pthread_cond_destroy(&state.condition);
 	pthread_mutex_destroy(&state.lock);
 	return 0;
