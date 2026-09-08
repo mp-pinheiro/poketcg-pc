@@ -5902,11 +5902,11 @@ void InitAndPrintPlayAreaCardInformationAndLocation(void)
 /* <<< factory InitAndPrintPlayAreaCardInformationAndLocation */
 
 /* >>> factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox */
-void InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox(void)
+WaitForButtonAorBResult InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox(void)
 {
 	InitAndPrintPlayAreaCardInformationAndLocation();
 	uint8_t e = wCurPlayAreaY;
-	(void)SetCursorParametersForTextBox_Default(0u, e);
+	return (WaitForButtonAorBResult){SetCursorParametersForTextBox_Default(0u, e).f};
 }
 /* <<< factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox */
 
@@ -9483,7 +9483,10 @@ exit_selected:
 		hCurMenuItem == 0u ? 0x80u : 0x00u};
 
 exit_cancel:
-	/* `cp MENU_CANCEL` left Z set and `scf` only adds carry. */
+	/* core.asm:5016-5021: `pop af` restores the entry flags before `scf`, so
+	 * Z here is the caller's, not `cp MENU_CANCEL`'s. Callers test carry
+	 * alone; a caller that needs the exact byte rebuilds it from its own
+	 * entry flags (Potion_PlayerSelection). */
 	hTempCardIndex_ff98 = saved_index;
 	hCurMenuItem = hTempPlayAreaLocation_ff9d;
 	return (PlayAreaScreenResult){hCurMenuItem, 0x90u};

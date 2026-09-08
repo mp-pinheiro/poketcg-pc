@@ -5094,16 +5094,15 @@ CASES["OpenPlayAreaScreenForSelection"] = [
 # <<< factory OpenPlayAreaScreenForSelection
 
 # >>> factory DisplayPlayAreaScreen
-CONTRACT["DisplayPlayAreaScreen"] = {"compare": (), "preserve": ()}
-# Reaching the menu loop redraws the whole play area first, so the default
-# 240-frame allowance is not enough for either lane.
+CONTRACT["DisplayPlayAreaScreen"] = {"compare": ("a",), "preserve": ()}
+# Two Pokemon in play, a = PAD_START (the card-page key). A picks the arena;
+# B cancels with hCurMenuItem = MENU_CANCEL. The exit flags under the carry are
+# the entry flags (`pop af`), which this contract does not model.
+_PLAY_AREA = {"a": 0x08, "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC200: b"\x10\x11", 0xC2BB: b"\x00", 0xC2C8: b"\x28\x28", 0xC2CE: b"\x01\x01", 0xC2EF: b"\x02", 0xC400: b"\x09\x08", 0xCABB: b"\x80", 0xCBD4: b"\x00", 0xFF40: b"\x80"}, "read": {0xFF92: 1, 0xFF9D: 1, 0xCBC9: 1, 0xCBD4: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000}
 CASES["DisplayPlayAreaScreen"] = [
-    {"wram": {0xCBD4: b"\x55"}, "read": {0xCBD4: 1},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xCBD4: b"\xAA"}, read={0xCBD4: 1},
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000),
+    dict(_PLAY_AREA, keys=[0x00, 0x01]),
+    dict(_PLAY_AREA, keys=[0x00, 0x02]),
+    dict(POISON, **{k: v for k, v in _PLAY_AREA.items() if k != "a"}, keys=[0x00, 0x01]),
 ]
 # <<< factory DisplayPlayAreaScreen
 
@@ -6768,7 +6767,7 @@ MUTATIONS["DisplayUsePokemonPowerScreen"] = {"source_symbol": "DisplayUsePokemon
 MUTATIONS["InitAndPrintPlayAreaCardInformationAndLocation"] = {"source_symbol": "InitAndPrintPlayAreaCardInformationAndLocation", "before": "\twCurPlayAreaSlot = a;", "after": "\twCurPlayAreaSlot = (uint8_t)(a + 1u);", "case_ids": ["InitAndPrintPlayAreaCardInformationAndLocation-0", "InitAndPrintPlayAreaCardInformationAndLocation-1"]}
 # <<< factory-mutation InitAndPrintPlayAreaCardInformationAndLocation
 # >>> factory-mutation InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox
-MUTATIONS["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox"] = {"source_symbol": "InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox", "before": "\t(void)SetCursorParametersForTextBox_Default(0u, e);", "after": "\t(void)SetCursorParametersForTextBox_Default(1u, e);", "case_ids": ["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox-0", "InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox-1"]}
+MUTATIONS["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox"] = {"source_symbol": "InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox", "before": "\treturn (WaitForButtonAorBResult){SetCursorParametersForTextBox_Default(0u, e).f};", "after": "\treturn (WaitForButtonAorBResult){SetCursorParametersForTextBox_Default(1u, e).f};", "case_ids": ["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox-0", "InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox-1"]}
 # <<< factory-mutation InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox
 # >>> factory-mutation PrintPlayAreaCardList
 MUTATIONS["PrintPlayAreaCardList"] = {"source_symbol": "PrintPlayAreaCardList", "before": "\tb = saved_count;\n\tgb_write8(wNumPlayAreaItems_ADDR, b);\n\tif (gb_read8(wExcludeArenaPokemon_ADDR) == 0u)", "after": "\tb = (uint8_t)(saved_count + 1u);\n\tgb_write8(wNumPlayAreaItems_ADDR, b);\n\tif (gb_read8(wExcludeArenaPokemon_ADDR) == 0u)", "case_ids": ["PrintPlayAreaCardList-0", "PrintPlayAreaCardList-1"]}
@@ -7452,16 +7451,8 @@ for _record in SCHEMA2_CASES["OpenPlayAreaScreenForSelection"]:
                              "routine": "SelectingBenchPokemonMenu"}
 # <<< factory-completion OpenPlayAreaScreenForSelection
 # >>> factory-mutation DisplayPlayAreaScreen
-MUTATIONS["DisplayPlayAreaScreen"] = {"source_symbol": "DisplayPlayAreaScreen", "before": "void DisplayPlayAreaScreen(void)\n{\n\t(void)0;", "after": "void DisplayPlayAreaScreen(void)\n{\n\tgb_write8(0xCBD4u, 1u);", "case_ids": ["DisplayPlayAreaScreen-0", "DisplayPlayAreaScreen-1"]}
+MUTATIONS["DisplayPlayAreaScreen"] = {"source_symbol": "DisplayPlayAreaScreen", "before": "\t\twCurPlayAreaSlot = (uint8_t)(wExcludeArenaPokemon + input.e);", "after": "\t\twCurPlayAreaSlot = (uint8_t)(wExcludeArenaPokemon + input.e + 1u);", "case_ids": ["DisplayPlayAreaScreen-0", "DisplayPlayAreaScreen-1"]}
 # <<< factory-mutation DisplayPlayAreaScreen
-# >>> factory-completion DisplayPlayAreaScreen
-# The screen now runs its menu loop, which only exits on input, so a `pre-ret`
-# pc left the native lane running forever. Both lanes stop at the per-iteration
-# SelectingBenchPokemonMenu call, after the redraw and menu init.
-for _record in SCHEMA2_CASES["DisplayPlayAreaScreen"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x60DD, "bank": 1,
-                             "routine": "SelectingBenchPokemonMenu"}
-# <<< factory-completion DisplayPlayAreaScreen
 # >>> factory-mutation SelectingBenchPokemonMenu
 MUTATIONS["SelectingBenchPokemonMenu"] = {"source_symbol": "SelectingBenchPokemonMenu", "before": "return action == 0u ? 0x80u : (action == 2u ? 0xA0u : 0x80u);", "after": "return action == 0u ? 0x81u : (action == 2u ? 0xA0u : 0x80u);", "case_ids": ["SelectingBenchPokemonMenu-0", "SelectingBenchPokemonMenu-1"]}
 # <<< factory-mutation SelectingBenchPokemonMenu

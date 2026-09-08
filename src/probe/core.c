@@ -1686,8 +1686,7 @@ static void adapt_InitAndPrintPlayAreaCardInformationAndLocation(ProbeState *s)
 /* >>> factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox */
 static void adapt_InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox(ProbeState *s)
 {
-	(void)s;
-	InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox();
+	s->f = InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox().f;
 }
 /* <<< factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox */
 

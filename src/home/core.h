@@ -780,7 +780,9 @@ void DisplayUsePokemonPowerScreen(void);
 void InitAndPrintPlayAreaCardInformationAndLocation(void);
 /* <<< factory InitAndPrintPlayAreaCardInformationAndLocation */
 /* >>> factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox */
-void InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox(void);
+typedef struct { uint8_t f; } WaitForButtonAorBResult;
+/* Carry: B ended the wait (menus.asm:716-730). */
+WaitForButtonAorBResult InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox(void);
 /* <<< factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox */
 /* >>> factory PrintPlayAreaCardList */
 void PrintPlayAreaCardList(void);
