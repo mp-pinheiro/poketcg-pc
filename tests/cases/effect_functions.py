@@ -1,3 +1,4 @@
+from tests.cases._fixtures import foul_gas_fixture as _foul_gas_fixture, FOUL_GAS_REGS as _FOUL_GAS_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/effect_functions.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -7319,7 +7320,8 @@ CASES["FoulGas_PoisonOrConfusionEffect"] = [
                0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xEE\xDD"},
          read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCE4E: 2, 0xCAC2: 1},
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000)
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(_foul_gas_fixture(bank=0x0B), **_FOUL_GAS_REGS, keys=[0x00, 0x01], read={0xCCCD: 1, 0xCCCE: 3, 0xCACA: 3, 0xCD9C: 4}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory FoulGas_PoisonOrConfusionEffect
 
@@ -10965,7 +10967,7 @@ MUTATIONS["VenomPowder_PoisonConfusion50PercentEffect"] = {"source_symbol": "Ven
 MUTATIONS["ThunderstormEffect"] = {"source_symbol": "ThunderstormEffect", "before": "void ThunderstormEffect(void)\n{\n\thCurSelectionItem = 1u;", "after": "void ThunderstormEffect(void)\n{\n\thCurSelectionItem = 0u;", "case_ids": ["ThunderstormEffect-0", "ThunderstormEffect-1"]}
 # <<< factory-mutation ThunderstormEffect
 # >>> factory-mutation FoulGas_PoisonOrConfusionEffect
-MUTATIONS["FoulGas_PoisonOrConfusionEffect"] = {"source_symbol": "FoulGas_PoisonOrConfusionEffect", "before": "uint8_t FoulGas_PoisonOrConfusionEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(PoisonedIfHeadsConfusedIfTailsText, 0u);\n\tif ((toss.f & 0x10u) == 0u)", "after": "uint8_t FoulGas_PoisonOrConfusionEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(PoisonedIfHeadsConfusedIfTailsText, 0u);\n\tif ((toss.f & 0x10u) != 0u)", "case_ids": ["FoulGas_PoisonOrConfusionEffect-0", "FoulGas_PoisonOrConfusionEffect-1"]}
+MUTATIONS["FoulGas_PoisonOrConfusionEffect"] = {"source_symbol": "FoulGas_PoisonOrConfusionEffect", "before": "uint8_t FoulGas_PoisonOrConfusionEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(PoisonedIfHeadsConfusedIfTailsText, 0u);\n\tif ((toss.f & 0x10u) == 0u)", "after": "uint8_t FoulGas_PoisonOrConfusionEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(PoisonedIfHeadsConfusedIfTailsText, 0u);\n\tif ((toss.f & 0x10u) != 0u)", "case_ids": ["FoulGas_PoisonOrConfusionEffect-0", "FoulGas_PoisonOrConfusionEffect-1", "FoulGas_PoisonOrConfusionEffect-2"]}
 # <<< factory-mutation FoulGas_PoisonOrConfusionEffect
 # >>> factory-mutation Sprout_PlayerSelectEffect
 MUTATIONS["Sprout_PlayerSelectEffect"] = {"source_symbol": "Sprout_PlayerSelectEffect", "before": "Sprout_PlayerSelectEffectResult Sprout_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0xffu;", "after": "Sprout_PlayerSelectEffectResult Sprout_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0x00u;", "case_ids": ["Sprout_PlayerSelectEffect-0", "Sprout_PlayerSelectEffect-1"]}

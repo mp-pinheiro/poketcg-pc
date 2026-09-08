@@ -10398,7 +10398,7 @@ uint8_t FoulGas_PoisonOrConfusionEffect(void)
 {
 	TossCoin_BankBResult toss = TossCoin_BankB(PoisonedIfHeadsConfusedIfTailsText, 0u);
 	if ((toss.f & 0x10u) == 0u)
-		return toss.f;
+		return ConfusionEffect().f;
 	return PoisonEffect().f;
 }
 /* <<< factory FoulGas_PoisonOrConfusionEffect */

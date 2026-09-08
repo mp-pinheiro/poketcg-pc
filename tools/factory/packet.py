@@ -125,6 +125,10 @@ def load_constants() -> dict[str, str]:
         r"^\s*(?:DEF\s+)?([A-Za-z_][A-Za-z0-9_]*)\s+EQUS\s+\"(LOW|HIGH)\(([A-Za-z_][A-Za-z0-9_]*)\)\"")
     const_def = re.compile(r"^\s*const_def(?:\s+([^,]+?))?(?:\s*,\s*(\S+))?\s*$")
     const_line = re.compile(r"^\s*const\s+([A-Za-z_][A-Za-z0-9_]*)")
+    # deck_constants.asm's macro: `const \1` plus `\1_ID EQU const_value - 2`
+    # once the counter passes the two unnamed decks. Every *_DECK_ID was
+    # missing from this table before, and the port invented them as *_DECK.
+    deck_const = re.compile(r"^\s*deck_const\s+([A-Za-z_][A-Za-z0-9_]*)")
     const_skip = re.compile(r"^\s*const_skip(?:\s+(\S+))?")
 
     def record(name: str, value: int | None, text: str) -> None:
@@ -151,6 +155,13 @@ def load_constants() -> dict[str, str]:
                 continue
             match = const_line.match(line)
             if match:
+                record(match.group(1), current, f"${current:02x}")
+                current += step
+                continue
+            match = deck_const.match(line)
+            if match:
+                if current >= 2:
+                    record(match.group(1) + "_ID", current - 2, f"${current - 2:02x}")
                 record(match.group(1), current, f"${current:02x}")
                 current += step
                 continue

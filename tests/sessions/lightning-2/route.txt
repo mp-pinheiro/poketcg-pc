@@ -1,0 +1,21 @@
+# From jennifer-duel's end: west along the lower walkway, up the left side and
+# west again to stand below the member on the left platform; the duel to its
+# end under the pilot's WRAM policy, then the after-duel script.
+dismiss
+hold LEFT 64
+idle
+hold UP 64
+idle
+hold LEFT 32
+idle
+hold UP 4
+idle
+peek
+press A
+idle
+shot lightning-2-ask
+yes
+duel
+dismiss
+peek
+shot lightning-2-end

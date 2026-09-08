@@ -217,6 +217,19 @@ FULLY_POWERED_REGS = FULLY_POWERED.regs
 # evolutions by the bench deck index rather than the HP just read.
 BENCH_COUNT = Fixture("jennifer-duel-bench-count-entry")
 BENCH_COUNT_REGS = BENCH_COUNT.regs
+# lightning-2 at DoFrame 310249: Koffing's Foul Gas against the player; the
+# ROM's coin lands tails here, so the confusion branch runs.
+FOUL_GAS = Fixture("lightning-2-foul-gas-entry")
+FOUL_GAS_REGS = FOUL_GAS.regs
+# lightning-2 at DoFrame 313096: Weezing's AI weighs Smog against Selfdestruct
+# with three energies attached and the player's Machop in the arena.
+# lightning-2 at DoFrame 313096: Weezing's AI scores Smog (a=0) and then
+# Selfdestruct (a=1) with three energies attached and the player's Machop
+# in the arena.
+ATTACK_SCORE_SMOG = Fixture("lightning-2-attack-score-smog-entry")
+ATTACK_SCORE_SMOG_REGS = ATTACK_SCORE_SMOG.regs
+ATTACK_SCORE_SELFDESTRUCT = Fixture("lightning-2-attack-score-selfdestruct-entry")
+ATTACK_SCORE_SELFDESTRUCT_REGS = ATTACK_SCORE_SELFDESTRUCT.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -349,3 +362,15 @@ def fully_powered_fixture(vram: bool = True, bank: int | None = None, **changes:
 
 def bench_count_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return BENCH_COUNT.case(vram=vram, bank=bank, **changes)
+
+
+def foul_gas_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return FOUL_GAS.case(vram=vram, bank=bank, **changes)
+
+
+def attack_score_smog_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return ATTACK_SCORE_SMOG.case(vram=vram, bank=bank, **changes)
+
+
+def attack_score_selfdestruct_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return ATTACK_SCORE_SELFDESTRUCT.case(vram=vram, bank=bank, **changes)

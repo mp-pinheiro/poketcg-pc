@@ -372,7 +372,7 @@
 #define HIGH_RECOIL_F 0x06u
 #define LOW_RECOIL_F 0x04u
 #define AI_MEWTWO_MILL 0x80u
-#define GHOST_DECK_ID 0x2Du
+#define GHOST_DECK_ID 0x2Bu
 #define LASS 0xC7u
 #define MEOWTH_LV15 0xB2u
 #define ZUBAT 0x1Au
@@ -584,7 +584,7 @@ AIDecideParameterResult AIDecide_Recycle(void)
 AIDecideMaintenanceResult AIDecide_Maintenance(void)
 {
 	DuelistVarResult hand = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
-	if (wOpponentDeckID == 0x0Du) {
+	if (wOpponentDeckID == IMAKUNI_DECK_ID) {
 		if (Random(10u) >= 2u || hand.a < 3u)
 			return (AIDecideMaintenanceResult){hand.a,
 				(uint8_t)(hand.a == 0u ? 0x80u : 0u)};
@@ -676,7 +676,7 @@ AIDecidePokemonFluteResult AIDecide_PokemonFlute(uint8_t c)
 		wce06 = wLoadedCard1HP;
 		wce08 = index;
 	}
-	if (wOpponentDeckID == 0x34u) {
+	if (wOpponentDeckID == IMAKUNI_DECK_ID) {
 		if (Random(10u) >= 2u)
 			return (AIDecidePokemonFluteResult){0, 0};
 		return (AIDecidePokemonFluteResult){wce08, wce08 == 0xFFu ? 0u : 0x10u};

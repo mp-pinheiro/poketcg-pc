@@ -1,3 +1,4 @@
+from tests.cases._fixtures import attack_score_smog_fixture as _attack_score_smog_fixture, ATTACK_SCORE_SMOG_REGS as _ATTACK_SCORE_SMOG_REGS, attack_score_selfdestruct_fixture as _attack_score_selfdestruct_fixture, ATTACK_SCORE_SELFDESTRUCT_REGS as _ATTACK_SCORE_SELFDESTRUCT_REGS
 from tests.cases._fixtures import ai_attack_fixture as _ai_attack_fixture, AI_ATTACK_REGS as _AI_ATTACK_REGS, ai_attack_score_fixture as _ai_attack_score_fixture, AI_ATTACK_SCORE_REGS as _AI_ATTACK_SCORE_REGS
 """Oracle-diff cases for engine/duel/ai/attacks.asm."""
 
@@ -84,6 +85,8 @@ CASES["GetAIScoreOfAttack"] = [
     {"a": 0x5A, "wram": {hWhoseTurn: b"\xC2", 0xC2E8: b"\x05", wSelectedAttack: b"\x00", wAIScore: b"\x12"}, "expect": {wSelectedAttack: b"\x5A", wAIScore: b"\x00"}, "read": {wSelectedAttack: 1, wAIScore: 1}},
     dict(POISON, a=0xEE, wram={hWhoseTurn: b"\xC2", 0xC2E8: b"\x05", wSelectedAttack: b"\x00", wAIScore: b"\x44"}, expect={wSelectedAttack: b"\xEE", wAIScore: b"\x00"}, read={wSelectedAttack: 1, wAIScore: 1}),
     dict(_ai_attack_score_fixture(bank=5), **_AI_ATTACK_SCORE_REGS),
+    dict(_attack_score_smog_fixture(vram=False, bank=5), **_ATTACK_SCORE_SMOG_REGS, read={0xCC1C: 8, 0xCDB5: 3, 0xCDBE: 1, 0xCC23: 1, 0xCDB8: 6, 0xCACA: 3, 0xFF9D: 1}),
+    dict(_attack_score_selfdestruct_fixture(vram=False, bank=5), **_ATTACK_SCORE_SELFDESTRUCT_REGS, read={0xCC1C: 8, 0xCDB5: 3, 0xCDBE: 1, 0xCC23: 1, 0xCDB8: 6, 0xCACA: 3, 0xFF9D: 1}),
 ]
 # <<< factory GetAIScoreOfAttack
 
