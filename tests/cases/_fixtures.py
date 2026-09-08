@@ -278,6 +278,10 @@ CARD_LIST_SELECT_REGS = CARD_LIST_SELECT.regs
 # saved starter deck the player cannot build even by dismantling (SRAM seeded).
 DECK_ENTRY = Fixture("boot-deck-machine-deck-entry-entry")
 DECK_ENTRY_REGS = DECK_ENTRY.regs
+# boot-deck-machine at DoFrame 98631: the deck build screen lists the grass
+# filter of the player's collection (SRAM seeded).
+FILTERED_LIST = Fixture("boot-deck-machine-filtered-list-entry")
+FILTERED_LIST_REGS = FILTERED_LIST.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -454,3 +458,7 @@ def card_list_select_fixture(vram: bool = True, bank: int | None = None, **chang
 
 def deck_entry_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return DECK_ENTRY.case(vram=vram, bank=bank, **changes)
+
+
+def filtered_list_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return FILTERED_LIST.case(vram=vram, bank=bank, **changes)

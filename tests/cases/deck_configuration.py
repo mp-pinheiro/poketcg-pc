@@ -5,6 +5,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 from tests.cases._fixtures import card_list_select_fixture as _card_list_select_fixture, CARD_LIST_SELECT_REGS as _CARD_LIST_SELECT_REGS
 
+from tests.cases._fixtures import filtered_list_fixture as _filtered_list_fixture, FILTERED_LIST_REGS as _FILTERED_LIST_REGS
 CONTRACT = {}
 CASES = {}
 
@@ -773,6 +774,10 @@ CONTRACT["PrintFilteredCardList"] = {"compare": ("a", "f", "b", "c", "d", "e", "
 CASES["PrintFilteredCardList"] = [
     {"a": 0x00, "wram": {0xC000: b"\x00", 0xCECB: b"\x00", 0xCED0: b"\x00\x00"}, "sram": {0: {0xA100: b"\x00" * 0xFF}}, "read": {0xCECB: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, a=0x00, wram={0xC000: b"\x00", 0xCECB: b"\x00", 0xCED0: b"\x00\x00"}, sram={0: {0xA100: b"\x00" * 0xFF}}, read={0xCECB: 1}, instruction_budget=2000000, cycle_budget=8000000),
+    # The live grass filter: CardTypeFilters[0] is $01, so filter index 0 lists
+    # grass cards, not type $00 (fire).
+    dict(_filtered_list_fixture(bank=2), **_FILTERED_LIST_REGS,
+         read={0xC000: 0x100, 0xCEC4: 0x10, 0xCEDA: 0x20, 0xCF68: 0x20, 0xC590: 0x20}),
 ]
 # <<< factory PrintFilteredCardList
 
@@ -1496,9 +1501,9 @@ MUTATIONS["PrintDeckBuildingCardList"] = {
 # >>> factory-mutation PrintFilteredCardList
 MUTATIONS["PrintFilteredCardList"] = {
     "source_symbol": "PrintFilteredCardList",
-    "before": "\tgb_write8(wNumVisibleCardListEntries_ADDR, NUM_FILTERED_LIST_VISIBLE_CARDS);",
-    "after": "\tgb_write8(wNumVisibleCardListEntries_ADDR, 0x00u);",
-    "case_ids": ["PrintFilteredCardList-0", "PrintFilteredCardList-1"],
+    "before": "0x01u, 0x00u, 0x03u, 0x02u, 0x04u,",
+    "after": "0x00u, 0x01u, 0x02u, 0x03u, 0x04u,",
+    "case_ids": ["PrintFilteredCardList-2"],
 }
 # <<< factory-mutation PrintFilteredCardList
 # >>> factory-mutation Func_9ced

@@ -12,6 +12,7 @@
 
 #define SYM_0 0x20u
 #define FILTER_ENERGY 0x20u
+#define FILTER_TRAINER 0x10u
 #define TYPE_ENERGY 0x08u
 #define HFFB3 0xffb3u
 #include "home/deck_configuration.h"
@@ -1695,18 +1696,25 @@ PrintFilteredCardListResult PrintFilteredCardList(uint8_t a, uint8_t f, uint8_t 
 {
 	uint8_t saved_a = a;
 	uint8_t saved_f = f;
-	static const uint8_t card_type_filters[] = {0x00u, 0x01u, 0x02u, 0x03u, 0x04u, 0x05u, 0x06u, 0x07u, FILTER_ENERGY};
+	/* deck_configuration.asm:1469-1479 CardTypeFilters, verbatim: grass $01,
+	 * fire $00, water $03, lightning $02, fighting $04, psychic $05,
+	 * colorless $06, trainer $10, energy $20. */
+	static const uint8_t card_type_filters[] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u,
+	                                            0x05u, 0x06u, FILTER_TRAINER, FILTER_ENERGY};
 	uint8_t filter = (a < 9u) ? card_type_filters[a] : 0xFFu;
 	uint16_t src = sCardCollection_ADDR;
 	uint16_t dst = wTempCardCollection_ADDR;
 	EnableSRAM();
 	CopyNBytesFromHLToDE(&src, &dst, (uint8_t)(CARD_COLLECTION_SIZE - 1u));
 	DisableSRAM();
+	b = 0u;
+	c = 0u;
 	if (gb_read8(wIncludeCardsInDeck_ADDR) != 0u) {
 		dst = GetPointerToDeckCards();
 		IncrementDeckCardsInTempCollection(dst);
+		b = (uint8_t)(wTempCardCollection_ADDR >> 8);
 	}
-	CreateFilteredCardListResult filtered = CreateFilteredCardList(filter, saved_f, 0u, a, (uint8_t)(dst >> 8), (uint8_t)dst, src);
+	CreateFilteredCardListResult filtered = CreateFilteredCardList(filter, saved_f, b, c, (uint8_t)(dst >> 8), (uint8_t)dst, src);
 	a = filtered.a;
 	f = filtered.f;
 	b = filtered.b;
