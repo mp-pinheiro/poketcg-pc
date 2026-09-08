@@ -18,6 +18,11 @@ Func_c943 (engine/overworld/scripting.asm:41-49) copies each NPC record of the
 map's NPC table into wTempNPC and, when the record's pre-load pointer is not
 NULL, calls it through CallHL2; its carry decides whether the NPC is loaded.
 Those pointers are named in data/npc_map_data.asm and are ordinary routines.
+
+HandleMoveModeAPress (home/script.asm:1-45) stores a map object's handler in
+wNextScript for EnterScript's `jp hl`. Those handlers are the `dw` entries of
+data/map_objects.asm: PCMenu, PrintInteractableObjectText, Func_fc7a and the
+`Script_*` bytecode entries.
 """
 
 from __future__ import annotations
@@ -70,8 +75,15 @@ def npc_preload_targets(npc_map_data: Path) -> set[str]:
         if name != "NULL"
     }
 
+def object_handler_targets(map_objects: Path) -> set[str]:
+    return {
+        name for name in MAP_SCRIPT_TARGET.findall(map_objects.read_text())
+        if name != "NULL"
+    }
+
+
 def script_entries(sym_path: Path, rom_path: Path, map_scripts: Path,
-                   npc_map_data: Path) -> dict[int, tuple[int, int, list[str]]]:
+                   npc_map_data: Path, map_objects: Path) -> dict[int, tuple[int, int, list[str]]]:
     rom = rom_path.read_bytes()
     table = symbol_table(sym_path)
 
@@ -97,6 +109,7 @@ def script_entries(sym_path: Path, rom_path: Path, map_scripts: Path,
     }
     wanted |= map_script_code_targets(map_scripts)
     wanted |= npc_preload_targets(npc_map_data)
+    wanted |= object_handler_targets(map_objects)
     unresolved = sorted(name for name in wanted if name not in table)
     if unresolved:
         raise SystemExit(f"script entry targets missing from poketcg.sym: {unresolved}")
@@ -179,8 +192,8 @@ def thunk(name: str, owner: tuple[str, str, str], header_text: str) -> str:
 
 
 def render(sym_path: Path, rom_path: Path, home: Path, map_scripts: Path,
-           npc_map_data: Path) -> str:
-    entries = script_entries(sym_path, rom_path, map_scripts, npc_map_data)
+           npc_map_data: Path, map_objects: Path) -> str:
+    entries = script_entries(sym_path, rom_path, map_scripts, npc_map_data, map_objects)
     owners = ported_symbols(home)
     header_text = {p.name: p.read_text() for p in home.glob("*.h")}
 
@@ -293,9 +306,10 @@ def main() -> int:
     parser.add_argument("--home", type=Path, required=True)
     parser.add_argument("--map-scripts", type=Path, required=True)
     parser.add_argument("--npc-map-data", type=Path, required=True)
+    parser.add_argument("--map-objects", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    content = render(args.sym, args.rom, args.home, args.map_scripts, args.npc_map_data)
+    content = render(args.sym, args.rom, args.home, args.map_scripts, args.npc_map_data, args.map_objects)
     if not args.output.is_file() or args.output.read_text() != content:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(content)
