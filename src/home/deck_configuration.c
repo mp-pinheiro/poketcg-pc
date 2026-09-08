@@ -1,5 +1,8 @@
 #include "home/deck_configuration.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -394,6 +397,8 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #define CARD_LIST_DRAW_MACHINE_SCREEN_ADDR 0x7403u
 
 #define HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR 0x5667u
+#define DECK_CONFIGURATION_MENU_HANDLER 0x5480u
+#define SEND_DECK_CONFIGURATION_MENU_HANDLER 0x6201u
 #define HANDLE_DECK_BUILD_FILTERED_PARAMS_ADDR 0x5670u
 
 #include "home/deck_configuration.h"
@@ -723,7 +728,25 @@ void OpenDeckConfigurationMenu(void)
 	gb_write8(hl++, gb_read8(de++));
 	gb_write8(hl, gb_read8(de));
 	gb_write8(wDuelInitialPrizesUpperBitsSet_ADDR, 0xffu);
+	OpenDeckConfigurationMenu_SkipInit();
+}
+
+void OpenDeckConfigurationMenu_SkipInit(void)
+{
 	gb_write8(wCheckMenuCursorBlinkCounter_ADDR, 0u);
+	uint16_t handler = (uint16_t)(gb_read8(wDeckConfigurationMenuHandlerFunction_ADDR)
+	                              | (gb_read8((uint16_t)(wDeckConfigurationMenuHandlerFunction_ADDR + 1u)) << 8));
+	switch (handler) {
+	case DECK_CONFIGURATION_MENU_HANDLER:
+		HandleDeckConfigurationMenu();
+		break;
+	case SEND_DECK_CONFIGURATION_MENU_HANDLER:
+		HandleSendDeckConfigurationMenu();
+		break;
+	default:
+		fprintf(stderr, "wDeckConfigurationMenuHandlerFunction is $%04X\n", (unsigned)handler);
+		abort();
+	}
 }
 /* <<< factory OpenDeckConfigurationMenu */
 
@@ -2788,7 +2811,7 @@ void HandleSendDeckConfigurationMenu(void)
 
 		if (selection == 0u) {
 			ConfirmDeckConfiguration();
-			OpenDeckConfigurationMenu();
+			OpenDeckConfigurationMenu_SkipInit();
 			return;
 		}
 
@@ -2880,7 +2903,7 @@ void HandleDeckConfigurationMenu(void)
 		default:
 			break;
 		}
-		OpenDeckConfigurationMenu();
+		OpenDeckConfigurationMenu_SkipInit();
 		return;
 	}
 }

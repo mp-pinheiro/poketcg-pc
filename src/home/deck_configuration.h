@@ -53,6 +53,7 @@ void FillBGMapLineWithA(uint8_t a, uint8_t b, uint8_t c);
 /* <<< factory FillBGMapLineWithA */
 /* >>> factory OpenDeckConfigurationMenu */
 void OpenDeckConfigurationMenu(void);
+void OpenDeckConfigurationMenu_SkipInit(void);
 /* <<< factory OpenDeckConfigurationMenu */
 /* >>> factory PrintTotalNumberOfCardsInCollection */
 void PrintTotalNumberOfCardsInCollection(void);

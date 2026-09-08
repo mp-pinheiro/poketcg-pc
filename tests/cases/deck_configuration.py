@@ -355,10 +355,14 @@ CASES["FillBGMapLineWithA"] = [
 
 # >>> factory OpenDeckConfigurationMenu
 CONTRACT["OpenDeckConfigurationMenu"] = {"compare": (), "preserve": ()};
+_DECK_CONFIG_HANDLER = {0xCFD4: b"\x80\x54"}
+_SEND_DECK_CONFIG_HANDLER = {0xCFD4: b"\x80\x54"}
+_MENU_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
 CASES["OpenDeckConfigurationMenu"] = [
-    {"wram": {0xCE52: b"\xFF", 0xCEA3: b"\xFF"}, "read": {0xCE52: 1, 0xCE53: 2, 0xCE55: 1, 0xCEA3: 1}},
-    {"wram": {0xCE52: b"\x01", 0xCEA3: b"\x7F"}, "read": {0xCE52: 1, 0xCE53: 2, 0xCE55: 1, 0xCEA3: 1}},
-    dict(POISON, wram={0xCE52: b"\xA5", 0xCEA3: b"\x12"}, read={0xCE52: 1, 0xCE53: 2, 0xCE55: 1, 0xCEA3: 1}),
+    {"wram": {0xCE52: b"\xFF", 0xCEA3: b"\xFF", 0xCABB: b"\x00", **_DECK_CONFIG_HANDLER}, "setup": _MENU_SETUP, "keys": [0x00, 0x02], "read": {0xCE52: 1, 0xCE53: 2, 0xCE55: 1, 0xCEA3: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {0xCE52: b"\x01", 0xCEA3: b"\x7F", 0xCABB: b"\x00", **_SEND_DECK_CONFIG_HANDLER}, "setup": _MENU_SETUP, "keys": [0x00, 0x02], "read": {0xCE52: 1, 0xCE53: 2, 0xCE55: 1, 0xCEA3: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xCE52: b"\xA5", 0xCEA3: b"\x12", 0xCABB: b"\x00", **_DECK_CONFIG_HANDLER}, setup=_MENU_SETUP, keys=[0x00, 0x02], read={0xCE52: 1, 0xCE53: 2, 0xCE55: 1, 0xCEA3: 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory OpenDeckConfigurationMenu
 
@@ -1161,8 +1165,8 @@ CASES["HandleSelectUpAndDownInList"] = [
 # >>> factory HandleDeckBuildScreen
 CONTRACT["HandleDeckBuildScreen"] = {"compare": (), "preserve": ()}
 CASES["HandleDeckBuildScreen"] = [
-    {"wram": {0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x02], "read": {wCardListVisibleOffset: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xCABB: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x02], read={wCardListVisibleOffset: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"wram": {0xCABB: b"\x00", 0xCFD4: b"\x80\x54"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x02], "read": {wCardListVisibleOffset: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xCABB: b"\x00", 0xCFD4: b"\x80\x54"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x02], read={wCardListVisibleOffset: 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory HandleDeckBuildScreen
 
@@ -1267,6 +1271,14 @@ CASES["ModifyDeckConfiguration"] = [
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
+for _record in SCHEMA2_CASES["OpenDeckConfigurationMenu"]:
+    _record["completion"] = {"mode": "entry", "pc": 0x5480, "bank": 2,
+                             "routine": "HandleDeckConfigurationMenu"}
+
+for _record in SCHEMA2_CASES["HandleDeckBuildScreen"]:
+    _record["completion"] = {"mode": "entry", "pc": 0x5480, "bank": 2,
+                             "routine": "HandleDeckConfigurationMenu"}
+
 MUTATIONS = {}
 # >>> factory-mutation DecrementDeckCardsInCollection
 MUTATIONS["DecrementDeckCardsInCollection"] = {
@@ -1347,7 +1359,7 @@ MUTATIONS["CheckIfDeckHasCards"] = {"source_symbol": "CheckIfDeckHasCards", "bef
 MUTATIONS["FillBGMapLineWithA"] = {"source_symbol": "FillBGMapLineWithA", "before": "	FillDEWithA(0x04u, 20u, de);", "after": "	FillDEWithA(0x05u, 20u, de);", "case_ids": ["FillBGMapLineWithA-1", "FillBGMapLineWithA-2"]}
 # <<< factory-mutation FillBGMapLineWithA
 # >>> factory-mutation OpenDeckConfigurationMenu
-MUTATIONS["OpenDeckConfigurationMenu"] = {"source_symbol": "OpenDeckConfigurationMenu", "before": "gb_write8(wDuelInitialPrizesUpperBitsSet_ADDR, 0xffu);", "after": "gb_write8(wDuelInitialPrizesUpperBitsSet_ADDR, 0xfeu);", "case_ids": ["OpenDeckConfigurationMenu-0"]};
+MUTATIONS["OpenDeckConfigurationMenu"] = {"source_symbol": "OpenDeckConfigurationMenu", "before": "\tOpenDeckConfigurationMenu_SkipInit();", "after": "", "case_ids": ["OpenDeckConfigurationMenu-0", "OpenDeckConfigurationMenu-1", "OpenDeckConfigurationMenu-2"]}
 # <<< factory-mutation OpenDeckConfigurationMenu
 # >>> factory-mutation PrintTotalNumberOfCardsInCollection
 MUTATIONS["PrintTotalNumberOfCardsInCollection"] = {"source_symbol": "PrintTotalNumberOfCardsInCollection", "before": "uint8_t digit = 0u;", "after": "uint8_t digit = 1u;", "case_ids": ["PrintTotalNumberOfCardsInCollection-1", "PrintTotalNumberOfCardsInCollection-3"]}
