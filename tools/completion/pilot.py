@@ -19,6 +19,10 @@ Script lines, one step each (`#` comments allowed):
     shot name          write build/completion/pilot/<name>.png of the screen now
     peek               print the player's tile, facing and map, and every loaded
                        NPC's tile, so a walk can be aimed instead of guessed
+    dismiss            press A through text boxes until the ROM waits for the
+                       player in the overworld (an NPC's script has many pages)
+    yes                answer the open Yes/No question with Yes, wherever its
+                       cursor starts
     duel               play the player's side of the current duel from WRAM until
                        it ends: attach an energy the active Pokemon's first attack
                        needs, attack with the first affordable attack, otherwise
@@ -91,6 +95,10 @@ def parse_script(path: Path) -> list[tuple[str, int, str]]:
             steps.append(("peek", 0, ""))
         elif verb == "duel" and len(parts) == 1:
             steps.append(("duel", 0, ""))
+        elif verb == "dismiss" and len(parts) == 1:
+            steps.append(("dismiss", 0, ""))
+        elif verb == "yes" and len(parts) == 1:
+            steps.append(("yes", 0, ""))
         else:
             raise SystemExit(f"{path}:{number}: cannot parse {raw!r}")
     return steps
@@ -145,26 +153,33 @@ PLAYER_DECK = 0xC400
 DUEL_FINISHED, ALREADY_PLAYED_ENERGY, CUR_MENU_ITEM, DUEL_TURNS = 0xCC07, 0xCC0B, 0xCD10, 0xCC06
 WHOSE_TURN, BANK_ROM = 0xFF97, 0xFF80
 CARD_POINTERS_BANK, CARD_POINTERS = 0x0C, 0x4C5C
-CARD_TYPE, ATTACK1_COST, ATTACK1_DAMAGE, ATTACK2_COST, ATTACK2_DAMAGE = 0x00, 0x0C, 0x16, 0x1F, 0x29
+CARD_TYPE, CARD_STAGE, ATTACK1_COST, ATTACK1_DAMAGE, ATTACK2_COST, ATTACK2_DAMAGE = 0x00, 0x09, 0x0C, 0x16, 0x1F, 0x29
 TYPE_ENERGY_FIRE, TYPE_ENERGY_DOUBLE_COLORLESS, TYPE_TRAINER = 0x08, 0x0E, 0x10
 COLORS = ("fire", "grass", "lightning", "water", "fighting", "psychic")
+FRAME_WRAPPERS = {"DoFrame", "DoFrameIfLCDEnabled", "CallIndirect", "CallHL", "CallHL2", "DoAFrames"}
 # Where the ROM is when it waits for the player, by the routine that called
 # DoFrame (poketcg.sym), and what the policy presses there.
 PROMPTS = {
     "PrintDuelMenuAndHandleInput": "menu",
+    "CardListItemSelectionMenu": "play-check",
     "DisplayCardList": "hand",
-    "HandleDuelMenuInput": "hand",
     "DisplayPlayAreaScreen": "play-area",
-    "SelectAttackFromMenu": "attack",
+    "DuelMenu_Attack": "attack",
+    "HandleYesOrNoMenu": "yes-no",
+    "YesOrNoMenuWithText": "yes-no",
     "WaitForWideTextBoxInput": "text",
     "DrawWideTextBox_WaitForInput": "text",
     "WaitForButtonAorB": "text",
-    "HandleYesOrNoMenu": "yes-no",
-    "YesOrNoMenuWithText": "yes-no",
+    "WaitForPlayerToAdvanceText": "text",
+    "PrintScrollableText": "text",
     "DisplayDrawNCardsScreen": "text",
-    "DuelMainInterface": "text",
-    "MainDuelLoop": "text",
+    "LoadMap": "overworld",
 }
+
+
+def prompt_of(chain: list[str]) -> str:
+    """The innermost known wait on the stack, or "?"."""
+    return next((PROMPTS[name] for name in chain if name in PROMPTS), "?")
 
 
 class DuelReader:
@@ -216,6 +231,11 @@ class DuelReader:
             listed.append(index)
         return listed
 
+    def is_basic(self, card_id: int) -> bool:
+        entry = CARD_POINTERS + 2 * card_id
+        pointer = self.rom_byte(CARD_POINTERS_BANK, entry) | (self.rom_byte(CARD_POINTERS_BANK, entry + 1) << 8)
+        return self.rom_byte(CARD_POINTERS_BANK, pointer) < TYPE_ENERGY_FIRE and self.rom_byte(CARD_POINTERS_BANK, pointer + CARD_STAGE) == 0
+
     def hand(self) -> list[int]:
         count = self.var(NUMBER_OF_CARDS_IN_HAND)
         return [self.var(HAND + i) for i in range(count)]
@@ -242,19 +262,35 @@ class DuelReader:
             spare += have[color] - need[color]
         return spare + have["colorless"] >= need["colorless"]
 
-    def waiting_in(self) -> str:
-        """The routine that called DoFrame: the first ROM return address above
-        DoFrame's four pushes, resolved through the mapped bank."""
+    def waiting_chain(self) -> list[str]:
+        """The routines above DoFrame on the stack: every ROM-looking return
+        address past DoFrame's four pushes, resolved through the mapped bank."""
         self.core.library.gambatte_getregs(self.core.core, self.registers)
         sp = self.registers[1] & 0xFFFF
         bank = self.at(BANK_ROM)
+        chain = []
         for offset in range(8, 40, 2):
             address = self.at(sp + offset) | (self.at(sp + offset + 1) << 8)
-            if 0x0150 <= address < 0x8000:
+            if 0x0150 <= address < 0x8000 and self.follows_call(address, bank):
                 rows = self.labels.get(0 if address < 0x4000 else bank, [])
                 index = bisect_right(rows, (address, "\uffff")) - 1
-                if index >= 0:
-                    return rows[index][1]
+                if index >= 0 and (not chain or chain[-1] != rows[index][1]):
+                    chain.append(rows[index][1])
+        return chain
+
+    def follows_call(self, address: int, bank: int) -> bool:
+        """A return address sits right after `call nn`, `call cc,nn` or `rst`."""
+        code_bank = 0 if address < 0x4000 else bank
+        def byte(at: int) -> int:
+            return self.rom[code_bank * 0x4000 + (at - 0x4000 if at >= 0x4000 else at)] if at >= 0 else 0
+        if address >= 3 and byte(address - 3) in (0xCD, 0xC4, 0xCC, 0xD4, 0xDC):
+            return True
+        return address >= 1 and (byte(address - 1) & 0xC7) == 0xC7
+
+    def waiting_in(self) -> str:
+        for name in self.waiting_chain():
+            if name not in FRAME_WRAPPERS:
+                return name
         return "?"
 
     def describe(self, waiting: str) -> str:
@@ -298,6 +334,7 @@ class Driver:
         self._anchor = False
         self.reader: DuelReader | None = None
         self.waiting = "?"
+        self.chain: list[str] = []
         self.core.install_exec(self._on_exec)
         self.reader = DuelReader(self.core)
         table = bytearray(0x2000)
@@ -313,7 +350,9 @@ class Driver:
         if address == refstream.DOFRAME_ANCHOR:
             self._anchor = True
             # The CPU is inside DoFrame right now; by the frame's end it is not.
-            self.waiting = self.reader.waiting_in() if self.reader is not None else "?"
+            if self.reader is not None:
+                self.chain = self.reader.waiting_chain()
+                self.waiting = next((n for n in self.chain if n not in FRAME_WRAPPERS), "?")
             name = self.pending.pop(self.core.ordinal, None)
             if name is not None:
                 screenshot(self.core, SHOTS / f"{name}.png")
@@ -385,23 +424,42 @@ def play_duel(driver: "Driver", max_actions: int = 1200) -> None:
     goal: tuple | None = None
     failed_attaches: set[int] = set()
     seen: dict[str, int] = {}
+    # wDuelFinished keeps the last duel's verdict until the next duel starts:
+    # after the challenge is accepted, A through the challenger's last lines
+    # until the duel's own setup clears it.
+    for _ in range(40):
+        driver.idle()
+        if reader.at(DUEL_FINISHED) == 0:
+            break
+        prompt = prompt_of(driver.chain)
+        if prompt == "overworld":
+            raise SystemExit(f"duel: no duel started at ordinal {len(driver.masks)}")
+        driver.step(LEFT if prompt == "yes-no" and reader.at(CUR_MENU_ITEM) != 0 else A)
+        driver.step(0)
+    else:
+        raise SystemExit(f"duel: no duel in progress at ordinal {len(driver.masks)} "
+                         f"(stack {' < '.join(driver.chain)})")
     for _ in range(max_actions):
         if reader.at(DUEL_FINISHED) != 0:
             print(f"duel: finished at ordinal {len(driver.masks)} turns={reader.at(DUEL_TURNS)}")
             return
         driver.idle()
-        where = driver.waiting
-        key = (f"{where}:{reader.describe(where)}:{goal}:"
-               f"{reader.at(CUR_MENU_ITEM)}:{reader.at(LIST_SCROLL_OFFSET)}:{reader.at(CURRENT_DUEL_MENU_ITEM)}")
+        prompt = prompt_of(driver.chain)
+        # Text pages share their WRAM state, so the screen's tilemap is part
+        # of what "the same prompt" means.
+        key = (f"{prompt}:{reader.describe(driver.waiting)}:{goal}:"
+               f"{reader.at(CUR_MENU_ITEM)}:{reader.at(LIST_SCROLL_OFFSET)}:{reader.at(CURRENT_DUEL_MENU_ITEM)}:"
+               f"{zlib.crc32(bytes(driver.core.area('VRAM')[0x1800:0x1C00])):08x}")
         seen[key] = seen.get(key, 0) + 1
         if seen[key] >= 4:
             screenshot(driver.core, SHOTS / "duel-stuck.png")
-            raise SystemExit(f"duel: the same prompt four times in {where} (goal {goal}); "
-                             f"see build/completion/pilot/duel-stuck.png\n{reader.describe(where)}")
+            raise SystemExit(f"duel: the same prompt four times ({prompt}, goal {goal}, stack "
+                             f"{' < '.join(driver.chain)}); see build/completion/pilot/duel-stuck.png\n"
+                             f"{reader.describe(driver.waiting)}")
         press = A
         if reader.at(WHOSE_TURN) != 0xC2:
             goal = None
-        elif where == "PrintDuelMenuAndHandleInput":
+        elif prompt == "menu":
             if goal is not None and goal[0] == "attach":
                 if reader.at(ALREADY_PLAYED_ENERGY) == 0:
                     failed_attaches.add(goal[1])
@@ -411,21 +469,27 @@ def play_duel(driver: "Driver", max_actions: int = 1200) -> None:
                 print(f"duel: ordinal {len(driver.masks)} turn {reader.at(DUEL_TURNS)} goal {goal}")
             target = {"attach": MENU_HAND, "attack": MENU_ATTACK, "done": MENU_DONE}[goal[0]]
             press = menu_press(reader.at(CURRENT_DUEL_MENU_ITEM), target)
-        elif where == "DisplayCardList":
+        elif prompt == "hand":
             # The list shows wDuelTempList's order, which is the hand sorted by
             # id when the player turned sorting on; the goal names the card.
+            # Before the first turn the list is the arena/bench setup: place
+            # every Basic Pokemon it offers, then B to finish.
             listed = reader.temp_list()
-            if goal is None or goal[0] != "attach" or goal[1] not in listed:
+            wanted_card = goal[1] if goal is not None and goal[0] == "attach" else None
+            if wanted_card is None and reader.at(DUEL_TURNS) == 0:
+                basics = [index for index in listed if reader.is_basic(reader.at(PLAYER_DECK + index))]
+                wanted_card = basics[0] if basics else None
+            if wanted_card is None or wanted_card not in listed:
                 press = B
             else:
-                wanted = listed.index(goal[1])
+                wanted = listed.index(wanted_card)
                 current = reader.at(LIST_SCROLL_OFFSET) + reader.at(CUR_MENU_ITEM)
                 press = A if current == wanted else (DOWN if current < wanted else UP)
-        elif where == "CardListItemSelectionMenu":
-            press = A if goal is not None and goal[0] == "attach" else B
-        elif where == "DisplayPlayAreaScreen":
+        elif prompt == "play-check":
+            press = A if (goal is not None and goal[0] == "attach") or reader.at(DUEL_TURNS) == 0 else B
+        elif prompt == "play-area":
             press = A
-        elif where == "DuelMenu_Attack":
+        elif prompt == "attack":
             if goal is None or goal[0] != "attack":
                 press = B
             else:
@@ -433,15 +497,46 @@ def play_duel(driver: "Driver", max_actions: int = 1200) -> None:
                 press = A if current == goal[1] else (DOWN if current < goal[1] else UP)
                 if press == A:
                     goal = ("attacked",)
-        elif where in YES_NO_PROMPTS:
+        elif prompt == "yes-no":
             press = LEFT if reader.at(CUR_MENU_ITEM) != 0 else A
-        elif where in TEXT_PROMPTS:
+        elif prompt == "text":
             press = A
+        elif prompt == "overworld":
+            raise SystemExit(f"duel: the overworld took input at ordinal {len(driver.masks)} with the duel unfinished")
         else:
-            print(f"duel: ordinal {len(driver.masks)} unknown prompt in {where}, pressing A")
+            print(f"duel: ordinal {len(driver.masks)} unknown wait ({' < '.join(driver.chain)}), pressing A")
         driver.step(press)
         driver.step(0)
     raise SystemExit(f"duel: {max_actions} actions without the duel ending")
+
+
+def answer_yes(driver: "Driver") -> None:
+    driver.idle()
+    if prompt_of(driver.chain) != "yes-no":
+        raise SystemExit(f"yes: no question open at ordinal {len(driver.masks)} ({' < '.join(driver.chain)})")
+    if driver.reader.at(CUR_MENU_ITEM) != 0:
+        driver.step(LEFT)
+        driver.step(0)
+        driver.idle()
+    driver.step(A)
+    driver.step(0)
+
+
+def dismiss_text(driver: "Driver", max_pages: int = 60) -> None:
+    """A through text (and Yes on a question) until the overworld loop is the
+    innermost wait on the stack."""
+    for _ in range(max_pages):
+        driver.idle()
+        prompt = prompt_of(driver.chain)
+        if prompt == "overworld":
+            print(f"dismiss: ordinal {len(driver.masks)} overworld takes input")
+            return
+        if prompt == "yes-no":
+            driver.step(LEFT if driver.reader.at(CUR_MENU_ITEM) != 0 else A)
+        else:
+            driver.step(A)
+        driver.step(0)
+    raise SystemExit(f"dismiss: still waiting in {' < '.join(driver.chain)} after {max_pages} pages")
 
 
 def decide_turn(reader: DuelReader, failed_attaches: set[int]) -> tuple:
@@ -500,9 +595,13 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"shot {extra}: ordinal {len(driver.masks)} -> {SHOTS / (extra + '.png')}")
             elif verb == "peek":
                 print(f"peek: ordinal {len(driver.masks)}\n{peek(driver.core)}")
-                print(driver.reader.describe(driver.waiting))
+                print(driver.reader.describe(driver.waiting) + f"\nstack: {' < '.join(driver.chain)}")
             elif verb == "duel":
                 play_duel(driver)
+            elif verb == "dismiss":
+                dismiss_text(driver)
+            elif verb == "yes":
+                answer_yes(driver)
         masks = driver.masks
     finally:
         driver.close()

@@ -1,0 +1,20 @@
+# From andrew-duel's end: the rest of Andrew's text, up and east to Ryan, accept
+# his duel, the pilot's WRAM policy plays it out, then Ryan's after-duel script.
+dismiss
+hold UP 32
+idle
+hold RIGHT 104
+idle
+peek
+press A
+idle
+press A
+idle
+press A
+idle
+shot ryan-ask
+yes
+duel
+dismiss
+peek
+shot ryan-end
