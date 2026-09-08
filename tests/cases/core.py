@@ -1,3 +1,4 @@
+from tests.cases._fixtures import bench_switch_fixture as _bench_switch_fixture
 from tests.cases._fixtures import bench_count_fixture as _bench_count_fixture, BENCH_COUNT_REGS as _BENCH_COUNT_REGS
 from tests.cases._fixtures import fully_powered_fixture as _fully_powered_fixture, FULLY_POWERED_REGS as _FULLY_POWERED_REGS
 from tests.cases._fixtures import ai_trainer_phase5_fixture as _ai_trainer_phase5_fixture, AI_TRAINER_PHASE5_REGS as _AI_TRAINER_PHASE5_REGS
@@ -977,8 +978,10 @@ hTempPlayAreaLocation_ff9d = 0xFF9D
 wPlayAreaAIScore = 0xCDBF
 CASES["FindHighestBenchScore"] = [
     {"wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x01", wPlayAreaAIScore: b"\x00\x07"}, "expect": {hTempPlayAreaLocation_ff9d: b"\x00"}, "read": {hTempPlayAreaLocation_ff9d: 1}},
-    {"wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x04", wPlayAreaAIScore: b"\x00\x01\x09\x09\x02"}, "expect": {hTempPlayAreaLocation_ff9d: b"\x02"}, "read": {hTempPlayAreaLocation_ff9d: 1}},
+    # a tie goes to the later slot (core.asm:63 `jr c` skips only a lower score)
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x04", wPlayAreaAIScore: b"\x00\x01\x09\x09\x02"}, "expect": {hTempPlayAreaLocation_ff9d: b"\x03"}, "read": {hTempPlayAreaLocation_ff9d: 1}},
     dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2EF: b"\x03", wPlayAreaAIScore: b"\xAA\x00\xFF\x01\x02"}, expect={hTempPlayAreaLocation_ff9d: b"\x01"}, read={hTempPlayAreaLocation_ff9d: 1}),
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x03", wPlayAreaAIScore: b"\x50\x20\x30"}, "expect": {hTempPlayAreaLocation_ff9d: b"\x02"}, "read": {hTempPlayAreaLocation_ff9d: 1}},
 ]
 # <<< factory FindHighestBenchScore
 
@@ -4582,6 +4585,9 @@ CASES["CheckIfDefendingPokemonCanKnockOut"] = [
          sram={0: {}}, read={wAIFirstAttackDamage: 1, wAISecondAttackDamage: 1, hTempPlayAreaLocation_ff9d: 1},
          instruction_budget=8000000, cycle_budget=40000000),
     dict(_ai_defending_ko_fixture(bank=5), **_AI_DEFENDING_KO_REGS),
+    # ai-duel-13 bench slot 3 (30 HP) against an attack that overshoots it:
+    # the knockout is `sub` carry, not equality
+    dict(_bench_switch_fixture(vram=False, bank=5, FF9D=b"\x03"), a=0, f=0, b=0, c=0, d=0, e=0, hl=0, read={0xCE00: 2, 0xCCB9: 2, 0xFF9D: 1}),
 ]
 # <<< factory CheckIfDefendingPokemonCanKnockOut
 
@@ -6116,9 +6122,9 @@ MUTATIONS["ReturnRetreatCostCardsToArena"] = {"source_symbol": "ReturnRetreatCos
 # >>> factory-mutation FindHighestBenchScore
 MUTATIONS["FindHighestBenchScore"] = {
     "source_symbol": "FindHighestBenchScore",
-    "before": "if (value >= best)",
-    "after": "if (value > best)",
-    "case_ids": ["FindHighestBenchScore-1", "FindHighestBenchScore-2"],
+    "before": "\tfor (uint8_t slot = 1u; slot < count.a; slot++) {",
+    "after": "\tfor (uint8_t slot = 0u; slot < count.a; slot++) {",
+    "case_ids": ["FindHighestBenchScore-3"],
 }
 # <<< factory-mutation FindHighestBenchScore
 # >>> factory-mutation AIEncourage
@@ -7233,9 +7239,9 @@ MUTATIONS["PlayShuffleAndDrawCardsAnimation_BothDuelists"] = {"source_symbol": "
 # >>> factory-mutation CheckIfDefendingPokemonCanKnockOut
 MUTATIONS["CheckIfDefendingPokemonCanKnockOut"] = {
     "source_symbol": "CheckIfDefendingPokemonCanKnockOut",
-    "before": "CheckIfDefendingPokemonCanKnockOutResult CheckIfDefendingPokemonCanKnockOut(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\tuint8_t saved_location = hTempPlayAreaLocation_ff9d;",
-    "after": "CheckIfDefendingPokemonCanKnockOutResult CheckIfDefendingPokemonCanKnockOut(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\tuint8_t saved_location = 0u;",
-    "case_ids": ["CheckIfDefendingPokemonCanKnockOut-0", "CheckIfDefendingPokemonCanKnockOut-1"]
+    "before": "\t\tif (hp.a <= wDamage)\n\t\t\tsecond_can_ko = 1u;",
+    "after": "\t\tif (hp.a == wDamage)\n\t\t\tsecond_can_ko = 1u;",
+    "case_ids": ["CheckIfDefendingPokemonCanKnockOut-5"],
 }
 # <<< factory-mutation CheckIfDefendingPokemonCanKnockOut
 # >>> factory-mutation CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP

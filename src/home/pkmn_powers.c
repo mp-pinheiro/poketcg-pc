@@ -662,16 +662,145 @@ AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void
 /* <<< factory AIEnergyTransTransferEnergyToBench */
 
 /* >>> factory HandleAIEnergyTrans */
-/* Still a stub: pkmn_powers.asm continues past this point with the Energy Trans
- * scoring the `truncated` audit reports. Porting it needs `a` on the exits of
- * AIProcessAttacks and AIProcessEnergyCards, neither of which models it yet.
- * The two identical arms this replaced looked like a modelled branch and were
- * not one. */
+/* pkmn_powers.asm:107-268. AI logic for Venusaur Lv67's Energy Trans: a is the
+ * AI_ENERGY_TRANS_* mode, parked in wAINumberOfEnergyTransCards (wce06) until
+ * the transfer count replaces it. RETREAT moves enough Grass energy to the
+ * Arena card to pay its retreat cost, ATTACK enough for its second attack,
+ * TO_BENCH tail-jumps to AIEnergyTransTransferEnergyToBench. */
+#define AI_ENERGY_TRANS_RETREAT 0x09u
+#define AI_ENERGY_TRANS_TO_BENCH 0x0Eu
+#define EXEGGUTOR 0x29u
+#define CARD_LOCATION_BENCH_1 0x11u
+#define SECOND_ATTACK 0x01u
+
+/* .CountGrassEnergyInBench: Grass energy cards attached to bench cards. */
+static uint8_t energy_trans_count_grass_in_bench(void)
+{
+	uint8_t count = 0u;
+	for (uint8_t index = 0u; index < DECK_SIZE; index++) {
+		uint8_t location = (uint8_t)(GetTurnDuelistVariable(
+			(uint8_t)(DUELVARS_CARD_LOCATIONS + index)).a & 0x1Fu);
+		if (location < CARD_LOCATION_BENCH_1)
+			continue;
+		if ((uint8_t)GetCardIDFromDeckIndex(index) == GRASS_ENERGY)
+			count++;
+	}
+	return count;
+}
+
+/* .CheckEnoughGrassEnergyCardsForAttack: carry with the number of cards the
+ * Arena card's second attack still needs, when the bench holds that many. */
+static HandleAIEnergyTransResult energy_trans_check_attack(void)
+{
+	uint8_t arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+	if ((uint8_t)GetCardIDFromDeckIndex(arena) == EXEGGUTOR) {
+		/* .is_exeggutor: any Grass energy on the bench will do */
+		uint8_t count = energy_trans_count_grass_in_bench();
+		if (count == 0u)
+			return (HandleAIEnergyTransResult){0u, 0x80u};
+		return (HandleAIEnergyTransResult){count, 0x10u};
+	}
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	wSelectedAttack = SECOND_ATTACK;
+	CheckEnergyNeededForAttackResult need = CheckEnergyNeededForAttack();
+	if ((need.f & 0x10u) == 0u)
+		return (HandleAIEnergyTransResult){need.a, (uint8_t)(need.a == 0u ? 0x80u : 0u)};
+	uint8_t wanted = need.c;
+	if (wanted == 0u) {
+		if (need.b == 0u)
+			return (HandleAIEnergyTransResult){0u, 0x80u};
+		if (need.e != GRASS_ENERGY)
+			return (HandleAIEnergyTransResult){need.e, 0u};
+		wanted = need.b;
+	}
+	uint8_t count = energy_trans_count_grass_in_bench();
+	if (count < wanted)
+		return (HandleAIEnergyTransResult){count, (uint8_t)(count == 0u ? 0x80u : 0u)};
+	return (HandleAIEnergyTransResult){wanted, 0x10u};
+}
+
+/* .CheckEnoughGrassEnergyCardsForRetreatCost: carry with the number of cards
+ * the Arena card's retreat cost still needs, when the bench holds that many. */
+static HandleAIEnergyTransResult energy_trans_check_retreat(void)
+{
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	uint8_t cost = GetPlayAreaCardRetreatCost();
+	uint8_t attached = CountNumberOfEnergyCardsAttached(PLAY_AREA_ARENA).a;
+	if (attached >= cost)
+		return (HandleAIEnergyTransResult){attached, (uint8_t)(attached == 0u ? 0x80u : 0u)};
+	uint8_t needed = (uint8_t)(cost - attached);
+	uint8_t count = energy_trans_count_grass_in_bench();
+	if (count < needed)
+		return (HandleAIEnergyTransResult){count, (uint8_t)(count == 0u ? 0x80u : 0u)};
+	return (HandleAIEnergyTransResult){needed, 0x10u};
+}
+
 HandleAIEnergyTransResult HandleAIEnergyTrans(uint8_t a)
 {
 	wAINumberOfEnergyTransCards = a;
 	AIChooseRandomlyNotToDoActionResult skip = AIChooseRandomlyNotToDoAction();
+	if ((skip.f & 0x10u) != 0u)
+		return (HandleAIEnergyTransResult){skip.a, skip.f};
+	uint8_t in_play = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	if (in_play == 1u)
+		return (HandleAIEnergyTransResult){0u, 0xC0u};
+	PkmnPowerCountResult venusaur = CountTurnDuelistPokemonWithActivePkmnPower(VENUSAUR_LV67);
+	if ((venusaur.f & 0x10u) == 0u)
+		return (HandleAIEnergyTransResult){venusaur.a, venusaur.f};
+	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
+	if ((muk.f & 0x10u) != 0u)
+		return (HandleAIEnergyTransResult){muk.a, muk.f};
 
-	return (HandleAIEnergyTransResult){skip.a, skip.f};
+	uint8_t mode = wAINumberOfEnergyTransCards;
+	HandleAIEnergyTransResult needed;
+	if (mode == AI_ENERGY_TRANS_RETREAT) {
+		needed = energy_trans_check_retreat();
+	} else if (mode == AI_ENERGY_TRANS_TO_BENCH) {
+		AIEnergyTransTransferEnergyToBenchResult bench = AIEnergyTransTransferEnergyToBench();
+		return (HandleAIEnergyTransResult){bench.a, bench.f};
+	} else {
+		needed = energy_trans_check_attack();
+	}
+	if ((needed.f & 0x10u) == 0u)
+		return needed;
+
+	/* .TransferEnergyToArena */
+	wAINumberOfEnergyTransCards = needed.a;
+	uint8_t slot = (uint8_t)(in_play - 1u);
+	for (;;) {
+		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + slot)).a;
+		hTempCardIndex_ff9f = deck_index;
+		if ((uint8_t)GetCardIDFromDeckIndex(deck_index) == VENUSAUR_LV67)
+			break;
+		if (slot == 0u)
+			return (HandleAIEnergyTransResult){0u, 0x80u};
+		slot--;
+	}
+	/* .use_pkmn_power */
+	hTemp_ffa0 = slot;
+	(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
+	(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+	hAIEnergyTransPlayAreaLocation = PLAY_AREA_ARENA;
+	uint8_t remaining = wAINumberOfEnergyTransCards;
+	for (uint8_t index = 0u; index < DECK_SIZE; index++) {
+		uint8_t location = (uint8_t)(GetTurnDuelistVariable(
+			(uint8_t)(DUELVARS_CARD_LOCATIONS + index)).a & 0x1Fu);
+		if (location < CARD_LOCATION_BENCH_1)
+			continue;
+		hTempPlayAreaLocation_ffa1 = (uint8_t)(location & 0x0Fu);
+		if ((uint8_t)GetCardIDFromDeckIndex(index) != GRASS_ENERGY)
+			continue;
+		hAIEnergyTransEnergyCard = index;
+		for (uint8_t frame = 30u; frame != 0u; frame--)
+			DoFrame();
+		(void)AIMakeDecision(OPPACTION_6B15, 0u, 0u, 0u, 0u);
+		if (--remaining == 0u)
+			break;
+	}
+	/* .done_transfer */
+	for (uint8_t frame = 60u; frame != 0u; frame--)
+		DoFrame();
+	AIMakeDecisionResult scene = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
+	return (HandleAIEnergyTransResult){scene.a, scene.f};
 }
 /* <<< factory HandleAIEnergyTrans */

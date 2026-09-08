@@ -3100,7 +3100,9 @@ FindHighestBenchScoreResult FindHighestBenchScore(void)
 	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
 	uint8_t best = 0u;
 	uint8_t location = 0u;
-	for (uint8_t slot = 0u; slot < count.a; slot++) {
+	/* core.asm:52-73 starts at wPlayAreaAIScore + 1: the arena's own score
+	 * is never a candidate, and a tie goes to the later bench slot. */
+	for (uint8_t slot = 1u; slot < count.a; slot++) {
 		uint8_t value = gb_read8((uint16_t)(wPlayAreaAIScore_ADDR + slot));
 		if (value >= best) {
 			best = value;
@@ -8477,7 +8479,9 @@ CheckIfDefendingPokemonCanKnockOutResult CheckIfDefendingPokemonCanKnockOut(uint
 		DuelistVarResult hp =
 			GetTurnDuelistVariable((uint8_t)(saved_location + DUELVARS_ARENA_CARD_HP));
 		hl = wDamage_ADDR;
-		if (hp.a == wDamage)
+		/* core.asm .CheckAttack: `sub [hl]` then `jr z` / plain `ret`, so the
+		 * carry of HP - damage is the answer: a knockout at or above the HP. */
+		if (hp.a <= wDamage)
 			first_can_ko = 1u;
 	}
 	if (first_can_ko)
@@ -8504,7 +8508,7 @@ CheckIfDefendingPokemonCanKnockOutResult CheckIfDefendingPokemonCanKnockOut(uint
 		DuelistVarResult hp =
 			GetTurnDuelistVariable((uint8_t)(saved_location + DUELVARS_ARENA_CARD_HP));
 		hl = wDamage_ADDR;
-		if (hp.a == wDamage)
+		if (hp.a <= wDamage)
 			second_can_ko = 1u;
 	}
 	if (second_can_ko)

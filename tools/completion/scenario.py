@@ -292,10 +292,18 @@ def fields_incomparable(
 #   entry, $FFE8 through ExecuteGameEvent -> GameEvent_Duel -> StartDuel_VSAIOpp
 #   -- which the C port, having no Game Boy stack, cannot reproduce; the same
 #   class as the stack regions above.
+# - wram[0x1668] (wNextScrollLY): a beam-position readout. ApplyBackgroundScroll
+#   (scroll.asm:60-108, the STAT handler DistortScreen installs) stores
+#   `rLY + 1` after each per-line rSCX write and exits once LY reaches $60, so
+#   the byte left behind is the last scanline the busy-wait caught -- $60 when
+#   it caught every line, $5F when interrupt latency or an HBlank wait spanned
+#   two lines (ai-duel-13 at DoFrame 25318, against $60 on lightning-3). It is
+#   zeroed at the start of every run and read only inside that run; the
+#   io[68] ($FF44 LY) exclusion above is the same quantity one register over.
 COMPARATOR_EXCLUDED_RANGES = {
     "hram": [(0, 1), (13, 14), (96, 128)],
     "wram": [(0xAA9, 0xAAA), (0xAB8, 0xAB9), (0xABA, 0xABD), (0xAC0, 0xAC2),
-             (0xAC3, 0xAC4), (0xBE5, 0xBE7), (0x1EE5, 0x2000)],
+             (0xAC3, 0xAC4), (0xBE5, 0xBE7), (0x1668, 0x1669), (0x1EE5, 0x2000)],
     "io": [(4, 6), (15, 16), (16, 64), (65, 66), (68, 70), (104, 108)],
 }
 

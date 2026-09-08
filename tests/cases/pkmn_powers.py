@@ -1,3 +1,4 @@
+from tests.cases._fixtures import energy_trans_fixture as _energy_trans_fixture, ENERGY_TRANS_REGS as _ENERGY_TRANS_REGS
 from tests.cases._fixtures import cowardice_fixture as _cowardice_fixture, COWARDICE_REGS as _COWARDICE_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/ai/pkmn_powers.asm."""
 
@@ -142,10 +143,14 @@ CASES["AIEnergyTransTransferEnergyToBench"] = [
 
 # >>> factory HandleAIEnergyTrans
 # The first carry exit is fully seeded; deeper Venusaur/Muk and transfer paths drive live duel state and are omitted because they are not reproducibly exitable from this schema.
-CONTRACT["HandleAIEnergyTrans"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+# The stub preserved b/c/d/e/hl; the real body leaves each exit's callee
+# registers (hl is a duelist-variable pointer past the play-area count) and
+# every caller in general.c reads a and f alone.
+CONTRACT["HandleAIEnergyTrans"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["HandleAIEnergyTrans"] = [
 	{"a": 0x09, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\x00\xC5", 0xC3BC: b"\x01\xC5", 0xC400: b"\x27", 0xC480: b"\x27", 0xC500: b"\xFF", 0xC501: b"\xFF"}, "read": {wAINumberOfEnergyTransCards: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
 	dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\x00\xC5", 0xC3BC: b"\x01\xC5", 0xC400: b"\x27", 0xC480: b"\x27", 0xC500: b"\xFF", 0xC501: b"\xFF"}, read={wAINumberOfEnergyTransCards: 1}, instruction_budget=20000000, cycle_budget=80000000),
+	dict(_energy_trans_fixture(vram=False, bank=5), **_ENERGY_TRANS_REGS, read={0xCE06: 1, 0xCE7C: 1, 0xCACA: 3}),
 ]
 # <<< factory HandleAIEnergyTrans
 
@@ -204,5 +209,5 @@ MUTATIONS["HandleAICowardice"] = {"source_symbol": "HandleAICowardice", "before"
 MUTATIONS["AIEnergyTransTransferEnergyToBench"] = {"source_symbol": "AIEnergyTransTransferEnergyToBench", "before": "AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void)\n{\n\thTempPlayAreaLocation_ff9d = 0u;", "after": "AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["AIEnergyTransTransferEnergyToBench-0", "AIEnergyTransTransferEnergyToBench-1"]}
 # <<< factory-mutation AIEnergyTransTransferEnergyToBench
 # >>> factory-mutation HandleAIEnergyTrans
-MUTATIONS["HandleAIEnergyTrans"] = {"source_symbol": "HandleAIEnergyTrans", "before": "HandleAIEnergyTransResult HandleAIEnergyTrans(uint8_t a)\n{\n\twAINumberOfEnergyTransCards = a;", "after": "HandleAIEnergyTransResult HandleAIEnergyTrans(uint8_t a)\n{\n\twAINumberOfEnergyTransCards = (uint8_t)(a + 1u);", "case_ids": ["HandleAIEnergyTrans-0", "HandleAIEnergyTrans-1"]}
+MUTATIONS["HandleAIEnergyTrans"] = {"source_symbol": "HandleAIEnergyTrans", "before": "\tPkmnPowerCountResult venusaur = CountTurnDuelistPokemonWithActivePkmnPower(VENUSAUR_LV67);", "after": "\tPkmnPowerCountResult venusaur = CountTurnDuelistPokemonWithActivePkmnPower(MUK);", "case_ids": ["HandleAIEnergyTrans-2"]}
 # <<< factory-mutation HandleAIEnergyTrans

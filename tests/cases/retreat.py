@@ -1,3 +1,4 @@
+from tests.cases._fixtures import bench_switch_fixture as _bench_switch_fixture, BENCH_SWITCH_REGS as _BENCH_SWITCH_REGS
 from tests.cases._fixtures import retreat_stay_fixture as _retreat_stay_fixture, RETREAT_STAY_REGS as _RETREAT_STAY_REGS, retreat_gene_fixture as _retreat_gene_fixture, RETREAT_GENE_REGS as _RETREAT_GENE_REGS
 from tests.cases._fixtures import ai_ko_switch_fixture as _ai_ko_switch_fixture, AI_KO_SWITCH_REGS as _AI_KO_SWITCH_REGS, ai_retreat_decision_fixture as _ai_retreat_decision_fixture, AI_RETREAT_DECISION_REGS as _AI_RETREAT_DECISION_REGS, ai_retreat_switch_fixture as _ai_retreat_switch_fixture, AI_RETREAT_SWITCH_REGS as _AI_RETREAT_SWITCH_REGS, ai_try_retreat_fixture as _ai_try_retreat_fixture, AI_TRY_RETREAT_REGS as _AI_TRY_RETREAT_REGS
 """Oracle-diff cases for SetAIRetreatFlags (engine/duel/ai/retreat.asm:440-460)."""
@@ -157,6 +158,7 @@ CASES["AIDecideBenchPokemonToSwitchTo"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA: b"\x01"}, expect_regs={"a": 1, "f": 0x70}),
     dict(_ai_ko_switch_fixture(bank=5), **_AI_KO_SWITCH_REGS),
     dict(_ai_retreat_switch_fixture(bank=5), **_AI_RETREAT_SWITCH_REGS),
+    dict(_bench_switch_fixture(vram=False, bank=5), **_BENCH_SWITCH_REGS, read={0xCDBE: 1, 0xCDBF: 6, 0xCC23: 1, 0xFF9D: 1}),
 ]
 # <<< factory AIDecideBenchPokemonToSwitchTo
 

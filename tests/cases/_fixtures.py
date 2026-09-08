@@ -234,6 +234,14 @@ ATTACK_SCORE_SELFDESTRUCT_REGS = ATTACK_SCORE_SELFDESTRUCT.regs
 # with Weezing at 60 HP and one benched Pokemon on each side.
 SELFDESTRUCT = Fixture("lightning-2-selfdestruct-entry")
 SELFDESTRUCT_REGS = SELFDESTRUCT.regs
+# ai-duel-13 at DoFrame 25772: the AI's Energy Trans check for its second
+# attack with a bench but no Venusaur Lv67, so the Venusaur count is the exit.
+ENERGY_TRANS = Fixture("ai-duel-13-energy-trans-entry")
+ENERGY_TRANS_REGS = ENERGY_TRANS.regs
+# ai-duel-13 at DoFrame 28796: after a knockout the AI picks which of its
+# three benched Pokemon to bring out.
+BENCH_SWITCH = Fixture("ai-duel-13-bench-switch-entry")
+BENCH_SWITCH_REGS = BENCH_SWITCH.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -382,3 +390,11 @@ def attack_score_selfdestruct_fixture(vram: bool = True, bank: int | None = None
 
 def selfdestruct_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return SELFDESTRUCT.case(vram=vram, bank=bank, **changes)
+
+
+def energy_trans_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return ENERGY_TRANS.case(vram=vram, bank=bank, **changes)
+
+
+def bench_switch_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return BENCH_SWITCH.case(vram=vram, bank=bank, **changes)
