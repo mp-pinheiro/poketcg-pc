@@ -668,7 +668,9 @@ void CardAlbum(void)
 			(void)PrintCardSetListEntries();
 			EnableLCD();
 			list_params = CARD_ALBUM_BOOSTER_PACK_CARDS_MENU_PARAMS;
-			(void)InitCardSelectionParams(0u, &list_params);
+			/* card_album.asm:721-722 passes EnableLCD's a, the wLCDC value, as the
+			 * cursor position; the real position is restored below but hffb3 keeps it. */
+			(void)InitCardSelectionParams(wLCDC, &list_params);
 			wCardListNumCursorPositions = wTempCardListNumCursorPositions;
 			wCardListCursorPos = wTempCardListCursorPos;
 		}
