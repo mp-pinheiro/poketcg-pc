@@ -1,0 +1,24 @@
+# From rock-club's end: Andrew's duel played out by the pilot's WRAM policy (it
+# never assembles Arcanine's Fire Energy, so Onix wins on prizes), the result
+# screen and Andrew's after-duel script back in the club room.
+duel
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
