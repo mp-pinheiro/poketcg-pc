@@ -391,10 +391,20 @@ completion-capture SCENARIO *ARGS:
 completion-cfg-audit:
     python3 tools/completion/cfg.py --trace "${POKETCG_CFG_TRACE:?CFG trace is required}"
 
-completion-tracker-sync:
-    python3 tools/completion/sync_tracker.py --apply
-completion-tracker-check:
-    python3 tools/completion/sync_tracker.py --check
+# Reconcile the Forgejo tracker with the loop's latest facts: session
+# divergences, sweep rows and composition audits open and close their issues.
+issues-sync *ARGS:
+    python3 tools/completion/tracker.py sync {{ARGS}}
+# The highest-priority open issues with their repro commands: where to start.
+issues-next COUNT="5":
+    python3 tools/completion/tracker.py next {{COUNT}}
+# Milestones with their counts and the sessions that prove them.
+issues-status:
+    python3 tools/completion/tracker.py status
+# Open a route item, the one issue kind a human writes: the next content to
+# record, named by the session it will become. Closes itself when clean.
+issues-route SESSION TITLE HOW:
+    python3 tools/completion/tracker.py route {{SESSION}} "{{TITLE}}" "{{HOW}}"
 completion-scenario SCENARIO:
     python3 tools/completion/scenario.py "{{SCENARIO}}"
 

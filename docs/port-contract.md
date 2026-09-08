@@ -29,13 +29,8 @@ core, ROM, C ABI, memory domains, registers, trace schema, framebuffer schema,
 and no-BIOS mode. It also runs a bounded one-frame Gambatte capture; file-health
 alone is not accepted as a passing constituent.
 
-After the gate and progress publication are committed, project the current
-manifest and revision-keyed evidence into Forgejo, then verify that projection:
-
-```sh
-just completion-tracker-sync
-just completion-tracker-check
-```
+After the gate and progress publication are committed, `just issues-sync`
+reconciles the Forgejo issues with the measured facts (`docs/grind.md`, "Issues").
 
 `just oracle-diff` remains the live, configure-and-build authority command.
 `oracle-warm` captures PyBoy references; `oracle-diff-fast` compares only against

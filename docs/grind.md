@@ -25,6 +25,55 @@ jj commit <paths> -m "type(scope): subject"      # subject <= 50 chars, no body
 Another session shares this checkout. Files you did not change are not yours;
 never revert, stage, or commit them.
 
+## Issues: the worklist
+
+The Forgejo issues are the loop's worklist, and nothing else: every open issue
+is a measured fact with the command that reproduces it, opened and closed by
+`just issues-sync` from the tooling's own reports. Nobody writes progress into
+them and no plan is projected onto them - the two earlier trackers did that,
+nobody working the loop had a reason to read them, and both rotted in a week.
+
+```sh
+just issues-next          # the highest-priority open facts and their repro commands
+just issues-sync          # after a landing: opens new facts, closes resolved ones
+just issues-status        # milestones (the route, in play order) and their sessions
+just issues-route S T H   # a human's one issue kind: the next content to record
+```
+
+Four fact kinds, in priority order:
+
+| label | fact | source | closes when |
+|---|---|---|---|
+| `p0-divergence` | a session leaves the ROM's trajectory at DoFrame N | `just session-verify` | the session verifies clean past N |
+| `route` | content nobody has recorded yet (`session:` names the recording) | a human, `just issues-route` | that session verifies clean end to end |
+| `p1-memory` | a routine computes different game state from a live seed | `just session-sweep` | the latest sweep that enters it lists it ok |
+| `p2-registers` | a routine leaves different exit registers, memory agrees | `just session-sweep` | same |
+| `p3-audit` | a body is an echo, a stub or a cut | `composition_audit.py` | the audit no longer reports it |
+
+Within a priority the order is the route's play order, then the DoFrame the
+fact was seen at: `issues-next` starts at boot. A milestone is a region of the
+game (`Boot and Mason's lab`, `Fighting Club`, ... `Pokemon Dome and credits`,
+then `Engine` for facts no route session reaches); its counts answer "how far".
+
+Working an issue is the loop below with the issue's repro as the first command.
+Land the fix (fixture case at the real entry, red mutation, ratchet), then
+`just issues-sync`; the issue closes itself with the landing named. Two labels
+are yours to apply and hold an issue out of `issues-next` and out of the sync:
+`noise` (a harness artefact - say which, in a comment) and `wontfix`. Never
+close a fact issue by hand: if the fact is still in the latest report the next
+sync reopens it.
+
+The reports the sync reads live in `build/completion/tracker/` and are written
+by every `session-verify` and `session-sweep` run, so a sweep of a new session
+(`just session-sweep <name>`) is how a whole region's facts enter the tracker.
+
+The `ai-duel-*` sessions poke a duelist type at the practice duel's first turn,
+so they exercise a deck's AI *table* against the practice cards, not the deck:
+decks whose tables only differ in card lists the practice hand never matches
+play the identical duel (the reference call streams of `ai-duel-11`/`12`,
+`13`/`15` and `16`..`1a` were byte-identical; one of each is kept). Real
+boss-deck coverage is the route's own duels.
+
 ## The gates, every iteration
 
 Three mechanical checks, in this order, before a ratchet moves. Together they

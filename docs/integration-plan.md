@@ -546,8 +546,7 @@ is global; "after W1" means after Wave 1 has landed and passed its landing check
     edges; the full 15,828-edge enumeration stays in the report as informational.
     Drive the corpus until `uncovered_required_edges == 0`.
 37. Final: `just completion-mutation-campaign --report` exit 0; regenerate all 26
-    artifacts; `just oracle-release-gate` exit 0; `just completion-tracker-sync` +
-    `completion-tracker-check`; push. Release tag per repo convention.
+    artifacts; `just oracle-release-gate` exit 0; `just issues-sync`; push. Release tag per repo convention.
 
 ## Parallelization
 
@@ -573,8 +572,7 @@ Topology: **jj workspaces + serialized landing** (user-approved).
       `just oracle-release-gate` must pass before push; on failure, bisect the batch by
       splitting it in half and recursing (factory rejection discipline), quarantining
       the failing commit back to its lane with the diagnostic.
-  40. After each full-path landing: `just completion-tracker-sync` +
-      `completion-tracker-check`, release lock.
+  40. After each full-path landing: `just issues-sync`, release lock.
 - Concurrency budget: ≤16 concurrent agents total. Mechanical fan-out (receipts,
   campaign input authoring, per-function fix loops in Wave 2+) uses `task` batches
   inside a lane; each child gets basename-scoped instructions and skips validators.
@@ -616,7 +614,7 @@ End-to-end proof, in order (each step's PASS is the next step's gate):
 6. Phases (steps 24–35): `just completion-check <each of the 26 requirement ids>` PASS.
 7. Terminal (step 37): `just oracle-release-gate` exit 0 (all constituents PASS, cfg
    `uncovered_required_edges == 0`); `jj git push --bookmark main` clean;
-   `just completion-tracker-check` exit 0.
+   `just issues-sync` reports no drift (`writes=0` on a second run).
 
 Prerequisites for scenario work: `just build`, `just completion-data-pack`,
 `just oracleb-regenerate` (oracle-b binary), `uv sync --project tools/oracle --frozen`.
@@ -649,5 +647,5 @@ Prerequisite for cfg: a trace from the instrumented build via package-smoke
   (`time.c:18-19`); timer cadence (step 5) is what makes it observable — no separate
   work unless boot-title shows wPlayTime* drift after Wave 2.
 - Stale `local/full-game-findings.json` (v1 scaffold) is superseded by this plan; the
-  Forgejo tracker remains the projection of record — `completion-tracker-sync` keeps it
+  Forgejo tracker remains the projection of record — `just issues-sync` keeps it
   honest after every full-path landing wave.

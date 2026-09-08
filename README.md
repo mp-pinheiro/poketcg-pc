@@ -72,20 +72,17 @@ just factory-eta      # forecast from recorded landings
 See `docs/factory-workflow.md` for the loop and `docs/factory-contract.md` for
 translator constraints.
 
-## Completion issue projection
+## Issues
 
-After a gate or progress publication changes completion evidence, update the
-Forgejo completion issues and verify the projection:
+The Forgejo issues are the loop's worklist, projected from measured facts:
 
 ```sh
-just completion-tracker-sync
-just completion-tracker-check
+just issues-next       # where to start, with the commands that reproduce it
+just issues-sync       # after a landing: open new facts, close resolved ones
+just issues-status     # the route's milestones and the sessions that prove them
 ```
 
-The sync command writes `build/completion/tracker-backup.json` before changing
-issue bodies, milestone and lifecycle labels, or open/closed state. Issue
-lifecycle is derived from revision-keyed evidence; tracker state is not
-completion evidence.
+`docs/grind.md`, "Issues", is the contract. Tracker state is not evidence.
 
 ## GB Recompiled replay oracle
 

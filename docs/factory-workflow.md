@@ -123,17 +123,14 @@ and records `.factory/landings.jsonl`. Every rejection - gate, census, graft -
 splits the batch in half and recurses; a rejected singleton is quarantined with
 its `failure_class` and moves on.
 
-After every successful gate/progress publication, the orchestrator revises the
-Forgejo completion issues and verifies the resulting projection:
+After every successful gate/progress publication, the orchestrator reconciles
+the Forgejo issues with the loop's facts:
 
 ```sh
-just completion-tracker-sync
-just completion-tracker-check
+just issues-sync
 ```
 
-The sync writes `build/completion/tracker-backup.json` before changing issue
-bodies, milestone and lifecycle labels, or open/closed state. A requirement with
-passing evidence is closed; a non-complete requirement is kept or reopened.
+Issues open and close from measured facts only (`docs/grind.md`, "Issues").
 Tracker state does not contribute completion evidence.
 
 Keep `factory-land`'s `--batch` at its default 4; raise it only after a

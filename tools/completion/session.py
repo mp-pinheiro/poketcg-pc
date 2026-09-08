@@ -655,9 +655,13 @@ def sweep(name: str, *, after: int = 0, until: int | None = None, limit: int = 0
                   + " | ".join(m[:100] for m in row["mismatches"][:3]))
     print(f"SWEEP {name} after={after} until={until} routines={len(rows)} failing={failing} "
           f"errors={sum(r['status'] == 'error' for r in rows)} wedged={sum(r['status'] == 'wedged' for r in rows)}")
-    if json_path:
-        json_path.write_text(json.dumps({"schema": 1, "name": name, "after": after, "until": until,
-                                         "rows": rows}, indent=1))
+    report = {"schema": 1, "format": "session-sweep-v1", "name": name, "after": after, "until": until, "rows": rows}
+    # One tracker copy per window, so a bounded re-sweep refreshes the routines
+    # it entered without forgetting the rows of the full sweep.
+    for path in (json_path, TRACKER_DIR / f"sweep-{name}-{after}-{until if until is not None else 'end'}.json"):
+        if path:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(report, indent=1))
     return 0 if failing == 0 else 1
 
 
@@ -920,10 +924,16 @@ def derive(name: str, movie: Path, goal: str) -> int:
     return 0 if meta["axis_match"] else 1
 
 
+TRACKER_DIR = ROOT / "build" / "completion" / "tracker"
+
+
 def emit(report: dict[str, Any], json_path: Path | None) -> None:
-    if json_path:
-        json_path.parent.mkdir(parents=True, exist_ok=True)
-        json_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
+    """The report goes to the caller's path and to the tracker's copy, which
+    `tools/completion/tracker.py sync` projects onto the issue tracker."""
+    for path in (json_path, TRACKER_DIR / f"verify-{report['name']}.json"):
+        if path:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
 
 
 def session_names() -> list[str]:
