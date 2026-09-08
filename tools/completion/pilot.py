@@ -21,8 +21,8 @@ Script lines, one step each (`#` comments allowed):
                        NPC's tile, so a walk can be aimed instead of guessed
     dismiss            press A through text boxes until the ROM waits for the
                        player in the overworld (an NPC's script has many pages)
-    yes                answer the open Yes/No question with Yes, wherever its
-                       cursor starts
+    yes                A through the text up to the next Yes/No question and
+                       answer it Yes, wherever its cursor starts
     duel               play the player's side of the current duel from WRAM until
                        it ends: attach an energy the active Pokemon's first attack
                        needs, attack with the first affordable attack, otherwise
@@ -510,16 +510,24 @@ def play_duel(driver: "Driver", max_actions: int = 1200) -> None:
     raise SystemExit(f"duel: {max_actions} actions without the duel ending")
 
 
-def answer_yes(driver: "Driver") -> None:
-    driver.idle()
-    if prompt_of(driver.chain) != "yes-no":
-        raise SystemExit(f"yes: no question open at ordinal {len(driver.masks)} ({' < '.join(driver.chain)})")
-    if driver.reader.at(CUR_MENU_ITEM) != 0:
-        driver.step(LEFT)
-        driver.step(0)
+def answer_yes(driver: "Driver", max_pages: int = 40) -> None:
+    """A through the text leading up to a question, then answer it Yes."""
+    for _ in range(max_pages):
         driver.idle()
-    driver.step(A)
-    driver.step(0)
+        prompt = prompt_of(driver.chain)
+        if prompt == "yes-no":
+            if driver.reader.at(CUR_MENU_ITEM) != 0:
+                driver.step(LEFT)
+                driver.step(0)
+                driver.idle()
+            driver.step(A)
+            driver.step(0)
+            return
+        if prompt == "overworld":
+            raise SystemExit(f"yes: no question came at ordinal {len(driver.masks)}")
+        driver.step(A)
+        driver.step(0)
+    raise SystemExit(f"yes: still in {' < '.join(driver.chain)} after {max_pages} pages")
 
 
 def dismiss_text(driver: "Driver", max_pages: int = 60) -> None:

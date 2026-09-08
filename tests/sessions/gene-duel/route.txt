@@ -1,0 +1,23 @@
+# From ryan-duel's end: up and west to Gene at the top of the club room, accept
+# his duel, the pilot's WRAM policy plays it out, then his after-duel script.
+dismiss
+hold UP 56
+idle
+hold LEFT 48
+idle
+hold UP 8
+idle
+hold DOWN 24
+idle
+hold LEFT 16
+idle
+hold UP 4
+idle
+peek
+press A
+idle
+yes
+duel
+dismiss
+peek
+shot gene-end
