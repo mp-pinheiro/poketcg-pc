@@ -1585,6 +1585,7 @@ void BankswitchROM(uint8_t bank);
 
 #include "generated/hram.h"
 #include "generated/wram.h"
+#define HANDLE_COLOR_CHANGE_MENU_PARAMS 0x45B6u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6963,7 +6964,8 @@ HandleColorChangeScreenResult HandleColorChangeScreen(uint8_t a, uint8_t f, uint
 	WriteByteToBGMap0((uint8_t)(GetPlayAreaCardColor(location) + 1u), 15u, 9u);
 	PrintCardPageWeaknessesOrResistances(GetPlayAreaCardWeakness(location), 15u, 10u); PrintCardPageWeaknessesOrResistances(GetPlayAreaCardResistance(location), 15u, 11u); DrawWideTextBox();
 	(void)InitTextPrinting_ProcessTextFromID(4u, 1u, ColorListText); (void)InitTextPrinting_ProcessTextFromID(1u, 14u, 0u);
-	EnableLCD(); uint16_t menu = 0x0101u; InitializeMenuParameters(0u, &menu);
+	/* effect_functions.asm:1202-1205: the 8-byte block at .menu_params (0B:45B6). */
+	uint16_t menu = HANDLE_COLOR_CHANGE_MENU_PARAMS; InitializeMenuParameters(0u, &menu); EnableLCD();
 	for (;;) { DoFrame(); HandleMenuInputResult input = HandleMenuInput(); if (!(input.f & 0x10u)) continue; if (input.a == MENU_CANCEL) return (HandleColorChangeScreenResult){input.a, 0x10u}; uint8_t item = input.a; uint8_t color = (uint8_t)(item + 1u); uint8_t selected = (color <= NUM_COLORED_TYPES) ? (uint8_t[]){0x01u, 0x00u, 0x03u, 0x04u, 0x06u, 0x05u}[color - 1u] : 0u; if ((uint8_t)(item + 1u) == 0u) selected = color; return (HandleColorChangeScreenResult){selected, (selected == 0u) ? 0x80u : 0x00u}; }
 }
 /* <<< factory HandleColorChangeScreen */
@@ -11691,11 +11693,17 @@ TerrorStrike50PercentSelectSwitchPokemonResult TerrorStrike_50PercentSelectSwitc
 /* <<< factory TerrorStrike_50PercentSelectSwitchPokemon */
 
 /* >>> factory Potion_PlayerSelection */
-void Potion_PlayerSelection(void)
+/* effect_functions.asm:9241-9261: B on the selection screen returns its
+ * carry straight to PlayTrainerCard, which then drops the card unplayed. The
+ * screen's cancel exit is `pop af` then `scf` (core.asm:5016-5021), so the
+ * flags under the carry are the ones it was entered with: the alive check's. */
+Potion_PlayerSelectionResult Potion_PlayerSelection(void)
 {
-	(void)HasAlivePokemonInPlayArea();
+	HasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();
 	for (;;) {
-		OpenPlayAreaScreenForSelection();
+		PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
+		if ((screen.f & 0x10u) != 0u)
+			return (Potion_PlayerSelectionResult){screen.a, (uint8_t)((alive.f & 0x80u) | 0x10u)};
 		uint8_t location = hTempPlayAreaLocation_ff9d;
 		hTemp_ffa0 = location;
 		CardDamageResult damage = GetCardDamageAndMaxHP(location);
@@ -11705,7 +11713,8 @@ void Potion_PlayerSelection(void)
 		if (amount > 20u)
 			amount = 20u;
 		hTempPlayAreaLocation_ffa1 = amount;
-		return;
+		/* `or a` on the capped amount, which is never zero here. */
+		return (Potion_PlayerSelectionResult){amount, 0u};
 	}
 }
 /* <<< factory Potion_PlayerSelection */
@@ -11728,7 +11737,28 @@ void GengarDarkMind_PlayerSelectEffect(void)
 /* <<< factory GengarDarkMind_PlayerSelectEffect */
 
 /* >>> factory ScoopUp_PlayerSelection */
-void ScoopUp_PlayerSelection(void) { hTemp_ffa0 = 0u; hTempPlayAreaLocation_ffa1 = 0u; }
+/* effect_functions.asm:9912-9929. B on either selection screen returns its
+ * carry (the screen's `pop af`+`scf` over the alive check's flags); picking a
+ * bench card ends at `or a` on its location. */
+ScoopUp_PlayerSelectionResult ScoopUp_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChoosePokemonToScoopUpText);
+	HasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();
+	PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
+	if ((screen.f & 0x10u) != 0u)
+		return (ScoopUp_PlayerSelectionResult){screen.a, (uint8_t)((alive.f & 0x80u) | 0x10u)};
+	hTemp_ffa0 = screen.a;
+	if (screen.a != 0u)
+		return (ScoopUp_PlayerSelectionResult){screen.a, 0u};
+	EmptyScreen();
+	(void)DrawWideTextBox_WaitForInput(SelectPokemonToPlaceInTheArenaText);
+	HasAlivePokemonInPlayAreaResult bench = HasAlivePokemonInBench();
+	screen = OpenPlayAreaScreenForSelection();
+	hTempPlayAreaLocation_ffa1 = screen.a;
+	if ((screen.f & 0x10u) != 0u)
+		return (ScoopUp_PlayerSelectionResult){screen.a, (uint8_t)((bench.f & 0x80u) | 0x10u)};
+	return (ScoopUp_PlayerSelectionResult){screen.a, screen.a == 0u ? 0x80u : 0u};
+}
 /* <<< factory ScoopUp_PlayerSelection */
 
 /* >>> factory HypnoDarkMind_PlayerSelectEffect */
@@ -11823,8 +11853,31 @@ void DevolutionSpray_DevolutionEffect(void)
 /* <<< factory DevolutionSpray_DevolutionEffect */
 
 /* >>> factory PokemonBreeder_PlayerSelection */
-void PokemonBreeder_PlayerSelection(void)
+/* effect_functions.asm:9745-9771. B on the hand list or on the play area
+ * selection returns its carry; a Basic that the chosen Stage 2 can evolve ends
+ * at `or a` on CheckIfCanEvolveInto_BasicToStage2's a. */
+PokemonBreeder_PlayerSelectionResult PokemonBreeder_PlayerSelection(void)
 {
+	(void)CreatePlayableStage2PokemonCardListFromHand();
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistHandText, PleaseSelectCardText);
+	DisplayCardListResult list = DisplayCardList();
+	if ((list.f & 0x10u) != 0u)
+		return (PokemonBreeder_PlayerSelectionResult){list.a, list.f};
+	hTemp_ffa0 = hTempCardIndex_ff98;
+	(void)DrawWideTextBox_WaitForInput(ChooseBasicPokemonToEvolveText);
+	HasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();
+	for (;;) {
+		PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
+		if ((screen.f & 0x10u) != 0u)
+			return (PokemonBreeder_PlayerSelectionResult){screen.a, (uint8_t)((alive.f & 0x80u) | 0x10u)};
+		uint8_t location = hTempPlayAreaLocation_ff9d;
+		hTempPlayAreaLocation_ffa1 = location;
+		EvolveResult evolve = CheckIfCanEvolveInto_BasicToStage2(hTemp_ffa0, location);
+		if ((evolve.f & 0x10u) != 0u)
+			continue;
+		return (PokemonBreeder_PlayerSelectionResult){evolve.a, evolve.a == 0u ? 0x80u : 0u};
+	}
 }
 /* <<< factory PokemonBreeder_PlayerSelection */
 
@@ -12027,15 +12080,21 @@ HandlePokemonAndEnergySelectionScreenResult SuperEnergyRemoval_PlayerSelection(v
 /* <<< factory SuperEnergyRemoval_PlayerSelection */
 
 /* >>> factory DevolutionSpray_PlayerSelection */
-void DevolutionSpray_PlayerSelection(void)
+/* effect_functions.asm:10717-10804. Two ways out with carry: B on the
+ * selection screen (`ret c`, the screen's `pop af`+`scf` over the alive check's
+ * flags), and "No" at the confirmation, whose flags the closing pops leave
+ * untouched. Between them, B on the devolved card's page ends the chain. */
+DevolutionSpray_PlayerSelectionResult DevolutionSpray_PlayerSelection(void)
 {
 	(void)DrawWideTextBox_WaitForInput(ChooseEvolutionCardAndPressAButtonToDevolveText);
 	hCurSelectionItem = 1u;
-	(void)HasAlivePokemonInPlayArea();
+	HasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();
 
 	CardOneStageBelowResult below;
 	for (;;) {
-		OpenPlayAreaScreenForSelection();
+		PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
+		if ((screen.f & 0x10u) != 0u)
+			return (DevolutionSpray_PlayerSelectionResult){screen.a, (uint8_t)((alive.f & 0x80u) | 0x10u)};
 		below = GetCardOneStageBelow(0u, 0u);
 		if ((below.f & 0x10u) == 0u)
 			break;
@@ -12053,7 +12112,8 @@ void DevolutionSpray_PlayerSelection(void)
 		(void)LoadCardDataToBuffer2_FromDeckIndex(below.d);
 		if (wLoadedCard2Stage == 0u)
 			break;
-		InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox();
+		if ((InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox().f & 0x10u) != 0u)
+			break;
 		below = GetCardOneStageBelow(0u, 0u);
 	}
 
@@ -12068,9 +12128,10 @@ void DevolutionSpray_PlayerSelection(void)
 	EnableLCD();
 
 	gb_write8(card.hl, card.a);
-	(void)YesOrNoMenuWithText(IsThisOKText);
+	HandleYesOrNoMenuResult answer = YesOrNoMenuWithText(IsThisOKText);
 	gb_write8(stage.hl, stage.a);
 	gb_write8(hp.hl, hp.a);
+	return (DevolutionSpray_PlayerSelectionResult){answer.a, answer.f};
 }
 /* <<< factory DevolutionSpray_PlayerSelection */
 

@@ -7917,8 +7917,10 @@ CASES["TerrorStrike_50PercentSelectSwitchPokemon"] = [
 # <<< factory TerrorStrike_50PercentSelectSwitchPokemon
 
 # >>> factory Potion_PlayerSelection
-CONTRACT["Potion_PlayerSelection"] = {"compare": (), "preserve": ()}
+CONTRACT["Potion_PlayerSelection"] = {"compare": ("f",), "preserve": ()}
 CASES["Potion_PlayerSelection"] = [
+    # B on the selection screen: the cancel's carry is the card's "not played".
+    {"keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\x1E", 0xC2CE: b"\x01", 0xC400: b"\x08", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1, 0xFFA1: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
     {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\x1E", 0xC2CE: b"\x01", 0xC400: b"\x08", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1, 0xFFA1: 1}, "expect": {0xFFA0: b"\x00", 0xFFA1: b"\x0A"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
     {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\x0A", 0xC2CE: b"\x01", 0xC400: b"\x08", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1, 0xFFA1: 1}, "expect": {0xFFA0: b"\x00", 0xFFA1: b"\x14"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\x1E", 0xC2CE: b"\x01", 0xC400: b"\x08", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFFA0: 1, 0xFFA1: 1}, expect={0xFFA0: b"\x00", 0xFFA1: b"\x0A"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
@@ -7935,8 +7937,16 @@ CASES["GengarDarkMind_PlayerSelectEffect"] = [
 # <<< factory GengarDarkMind_PlayerSelectEffect
 
 # >>> factory ScoopUp_PlayerSelection
-CONTRACT["ScoopUp_PlayerSelection"] = {"compare": (), "preserve": ()}
-CASES["ScoopUp_PlayerSelection"] = [dict(POISON, read={0xFFA0: 1, 0xFFA1: 1}, expect={0xFFA0: b"\x00", 0xFFA1: b"\x00"})]
+CONTRACT["ScoopUp_PlayerSelection"] = {"compare": ("f",), "preserve": ()}
+# Two Pokemon in play: A on the first screen picks the arena, so the bench
+# screen opens; the bench pick lands at hTempPlayAreaLocation_ffa1. B on the
+# first screen is the cancel.
+_SCOOP_UP = {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xFFA0: b"\x77", 0xFFA1: b"\x77", 0xC200: b"\x10\x11", 0xC2BB: b"\x00", 0xC2C8: b"\x28\x28", 0xC2CE: b"\x01\x01", 0xC2EF: b"\x02", 0xC400: b"\x09\x08", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1, 0xFFA1: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000}
+CASES["ScoopUp_PlayerSelection"] = [
+    dict(_SCOOP_UP, keys=[0x00, 0x01, 0x00, 0x01]),
+    dict(_SCOOP_UP, keys=[0x00, 0x02]),
+    dict(POISON, **_SCOOP_UP, keys=[0x00, 0x01, 0x00, 0x01]),
+]
 # <<< factory ScoopUp_PlayerSelection
 
 # >>> factory HypnoDarkMind_PlayerSelectEffect
@@ -7978,10 +7988,14 @@ CASES["DevolutionSpray_DevolutionEffect"] = [
 # <<< factory DevolutionSpray_DevolutionEffect
 
 # >>> factory PokemonBreeder_PlayerSelection
-CONTRACT["PokemonBreeder_PlayerSelection"] = {"compare": (), "preserve": ()}
+CONTRACT["PokemonBreeder_PlayerSelection"] = {"compare": ("f",), "preserve": ()}
+# Charmander (deck index 0) in the arena, able to evolve; Charizard (deck index
+# 1) in hand. A on the hand list then A on the play area evolves; B cancels.
+_BREEDER = {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xFFA0: b"\x77", 0xFFA1: b"\x77", 0xC200: b"\x10\x01", 0xC242: b"\x01", 0xC2BB: b"\x00", 0xC2C2: b"\x80", 0xC2C8: b"\x28", 0xC2CE: b"\x00", 0xC2EE: b"\x01", 0xC2EF: b"\x01", 0xC400: b"\x30\x32", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1, 0xFFA1: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000}
 CASES["PokemonBreeder_PlayerSelection"] = [
-    {"wram": {0xFFA0: b"\x00"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x00"}},
-    dict(POISON, wram={0xFFA0: b"\x00"}, read={0xFFA0: 1}, expect={0xFFA0: b"\x00"})
+    dict(_BREEDER, keys=[0x00, 0x01]),
+    dict(_BREEDER, keys=[0x00, 0x02]),
+    dict(POISON, **_BREEDER, keys=[0x00, 0x01]),
 ]
 # <<< factory PokemonBreeder_PlayerSelection
 
@@ -8049,8 +8063,10 @@ CASES["SuperEnergyRemoval_PlayerSelection"] = [
 # <<< factory SuperEnergyRemoval_PlayerSelection
 
 # >>> factory DevolutionSpray_PlayerSelection
-CONTRACT["DevolutionSpray_PlayerSelection"] = {"compare": (), "preserve": ()}
+CONTRACT["DevolutionSpray_PlayerSelection"] = {"compare": ("f",), "preserve": ()}
 CASES["DevolutionSpray_PlayerSelection"] = [
+    # B on the selection screen: the cancel's carry is the card's "not played".
+    {"keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xFFA0: b"\x00", 0xC200: b"\x10\x10", 0xC2BB: b"\x00", 0xC2C8: b"\x28", 0xC2CE: b"\x01", 0xC2EF: b"\x01", 0xC400: b"\x09\x08", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 3}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
     {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xFFA0: b"\x00", 0xC200: b"\x10\x10", 0xC2BB: b"\x00", 0xC2C8: b"\x28", 0xC2CE: b"\x01", 0xC2EF: b"\x01", 0xC400: b"\x09\x08", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 3, 0xFF9D: 1, 0xCBC9: 2}, "expect": {0xFFA0: b"\x00\x00\xFF", 0xFF9D: b"\x00", 0xCBC9: b"\x00\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xFFA0: b"\x00", 0xC200: b"\x10\x10", 0xC2BB: b"\x00", 0xC2C8: b"\x28", 0xC2CE: b"\x01", 0xC2EF: b"\x01", 0xC400: b"\x09\x08", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFFA0: 3, 0xFF9D: 1, 0xCBC9: 2}, expect={0xFFA0: b"\x00\x00\xFF", 0xFF9D: b"\x00", 0xCBC9: b"\x00\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
 ]
@@ -11263,18 +11279,14 @@ MUTATIONS["VictreebelLure_SelectSwitchPokemon"] = {"source_symbol": "VictreebelL
 MUTATIONS["TerrorStrike_50PercentSelectSwitchPokemon"] = {"source_symbol": "TerrorStrike_50PercentSelectSwitchPokemon", "before": "TerrorStrike50PercentSelectSwitchPokemonResult TerrorStrike_50PercentSelectSwitchPokemon(void)\n{\n\thTemp_ffa0 = 0x00u;", "after": "TerrorStrike50PercentSelectSwitchPokemonResult TerrorStrike_50PercentSelectSwitchPokemon(void)\n{\n\thTemp_ffa0 = 0x01u;", "case_ids": ["TerrorStrike_50PercentSelectSwitchPokemon-0", "TerrorStrike_50PercentSelectSwitchPokemon-1"]}
 # <<< factory-mutation TerrorStrike_50PercentSelectSwitchPokemon
 # >>> factory-mutation Potion_PlayerSelection
-MUTATIONS["Potion_PlayerSelection"] = {"source_symbol": "Potion_PlayerSelection", "before": "void Potion_PlayerSelection(void)\n{\n\t(void)HasAlivePokemonInPlayArea();\n\tfor (;;) {\n\t\tOpenPlayAreaScreenForSelection();\n\t\tuint8_t location = hTempPlayAreaLocation_ff9d;\n\t\thTemp_ffa0 = location;", "after": "void Potion_PlayerSelection(void)\n{\n\t(void)HasAlivePokemonInPlayArea();\n\tfor (;;) {\n\t\tOpenPlayAreaScreenForSelection();\n\t\tuint8_t location = hTempPlayAreaLocation_ff9d;\n\t\thTemp_ffa0 = (uint8_t)(location + 1u);", "case_ids": ["Potion_PlayerSelection-0", "Potion_PlayerSelection-1", "Potion_PlayerSelection-2"]}
+MUTATIONS["Potion_PlayerSelection"] = {"source_symbol": "Potion_PlayerSelection", "before": "(uint8_t)((alive.f & 0x80u) | 0x10u)};", "after": "(uint8_t)(alive.f & 0x80u)};", "case_ids": ["Potion_PlayerSelection-0"]}
 # <<< factory-mutation Potion_PlayerSelection
 # >>> factory-mutation GengarDarkMind_PlayerSelectEffect
 MUTATIONS["GengarDarkMind_PlayerSelectEffect"] = {"source_symbol": "GengarDarkMind_PlayerSelectEffect", "before": "void GengarDarkMind_PlayerSelectEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xffu;", "after": "void GengarDarkMind_PlayerSelectEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xfeu;", "case_ids": ["GengarDarkMind_PlayerSelectEffect-0", "GengarDarkMind_PlayerSelectEffect-2"]}
 # <<< factory-mutation GengarDarkMind_PlayerSelectEffect
 # >>> factory-mutation ScoopUp_PlayerSelection
-MUTATIONS["ScoopUp_PlayerSelection"] = {"source_symbol": "ScoopUp_PlayerSelection", "before": "void ScoopUp_PlayerSelection(void) { hTemp_ffa0 = 0u; hTempPlayAreaLocation_ffa1 = 0u; }", "after": "void ScoopUp_PlayerSelection(void) { hTemp_ffa0 = 1u; hTempPlayAreaLocation_ffa1 = 0u; }", "case_ids": ["ScoopUp_PlayerSelection-0"]}
+MUTATIONS["ScoopUp_PlayerSelection"] = {"source_symbol": "ScoopUp_PlayerSelection", "before": "\thTempPlayAreaLocation_ffa1 = screen.a;", "after": "\thTempPlayAreaLocation_ffa1 = (uint8_t)(screen.a + 1u);", "case_ids": ["ScoopUp_PlayerSelection-0"]}
 # <<< factory-mutation ScoopUp_PlayerSelection
-# >>> factory-completion ScoopUp_PlayerSelection
-for _record in SCHEMA2_CASES["ScoopUp_PlayerSelection"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x237F, "bank": 14}
-# <<< factory-completion ScoopUp_PlayerSelection
 # >>> factory-mutation HypnoDarkMind_PlayerSelectEffect
 MUTATIONS["HypnoDarkMind_PlayerSelectEffect"] = {"source_symbol": "HypnoDarkMind_PlayerSelectEffect", "before": "void HypnoDarkMind_PlayerSelectEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xffu;", "after": "void HypnoDarkMind_PlayerSelectEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xfeu;", "case_ids": ["HypnoDarkMind_PlayerSelectEffect-0", "HypnoDarkMind_PlayerSelectEffect-2"]}
 # <<< factory-mutation HypnoDarkMind_PlayerSelectEffect
@@ -11284,27 +11296,23 @@ MUTATIONS["Spark_PlayerSelectEffect"] = {"source_symbol": "Spark_PlayerSelectEff
 # >>> factory-mutation DevolutionBeam_PlayerSelectEffect
 MUTATIONS["DevolutionBeam_PlayerSelectEffect"] = {"source_symbol": "DevolutionBeam_PlayerSelectEffect", "before": "\thTemp_ffa0 = selected_duelist;", "after": "\thTemp_ffa0 = (uint8_t)(selected_duelist + 1u);", "case_ids": ["DevolutionBeam_PlayerSelectEffect-0"]}
 # <<< factory-mutation DevolutionBeam_PlayerSelectEffect
-# >>> factory-mutation DevolutionSpray_DevolutionEffect
-MUTATIONS["DevolutionSpray_DevolutionEffect"] = {"source_symbol": "DevolutionSpray_DevolutionEffect", "before": "void DevolutionSpray_DevolutionEffect(void)\n{\n\tuint8_t location = hTempList;\n\thTempPlayAreaLocation_ff9d = location;", "after": "void DevolutionSpray_DevolutionEffect(void)\n{\n\tuint8_t location = hTempList;\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["DevolutionSpray_DevolutionEffect-0", "DevolutionSpray_DevolutionEffect-1"]}
-# <<< factory-mutation DevolutionSpray_DevolutionEffect
 # >>> factory-completion DevolutionSpray_DevolutionEffect
 for _record in SCHEMA2_CASES["DevolutionSpray_DevolutionEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x0C34, "bank": 13}
 # <<< factory-completion DevolutionSpray_DevolutionEffect
+# >>> factory-mutation DevolutionSpray_DevolutionEffect
+MUTATIONS["DevolutionSpray_DevolutionEffect"] = {"source_symbol": "DevolutionSpray_DevolutionEffect", "before": "void DevolutionSpray_DevolutionEffect(void)\n{\n\tuint8_t location = hTempList;\n\thTempPlayAreaLocation_ff9d = location;", "after": "void DevolutionSpray_DevolutionEffect(void)\n{\n\tuint8_t location = hTempList;\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["DevolutionSpray_DevolutionEffect-0", "DevolutionSpray_DevolutionEffect-1"]}
+# <<< factory-mutation DevolutionSpray_DevolutionEffect
 # >>> factory-mutation PokemonBreeder_PlayerSelection
-MUTATIONS["PokemonBreeder_PlayerSelection"] = {"source_symbol": "PokemonBreeder_PlayerSelection", "before": "void PokemonBreeder_PlayerSelection(void)\n{\n}", "after": "void PokemonBreeder_PlayerSelection(void)\n{\n\thTemp_ffa0 = 1u;\n}", "case_ids": ["PokemonBreeder_PlayerSelection-0"]}
+MUTATIONS["PokemonBreeder_PlayerSelection"] = {"source_symbol": "PokemonBreeder_PlayerSelection", "before": "\t\thTempPlayAreaLocation_ffa1 = location;", "after": "\t\thTempPlayAreaLocation_ffa1 = (uint8_t)(location + 1u);", "case_ids": ["PokemonBreeder_PlayerSelection-0"]}
 # <<< factory-mutation PokemonBreeder_PlayerSelection
-# >>> factory-completion PokemonBreeder_PlayerSelection
-for _record in SCHEMA2_CASES["PokemonBreeder_PlayerSelection"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x238C, "bank": 13}
-# <<< factory-completion PokemonBreeder_PlayerSelection
-# >>> factory-mutation Curse_TransferDamageEffect
-MUTATIONS["Curse_TransferDamageEffect"] = {"source_symbol": "Curse_TransferDamageEffect", "before": "void Curse_TransferDamageEffect(void)\n{\n\tuint8_t location = hTempList;\n\tDuelistVarResult flags = GetTurnDuelistVariable(\n\t\t(uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));\n\tgb_write8(flags.hl, (uint8_t)(flags.a | (1u << USED_PKMN_POWER_THIS_TURN_F)));", "after": "void Curse_TransferDamageEffect(void)\n{\n\tuint8_t location = hTempList;\n\tDuelistVarResult flags = GetTurnDuelistVariable(\n\t\t(uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));\n\tgb_write8(flags.hl, flags.a);", "case_ids": ["Curse_TransferDamageEffect-0", "Curse_TransferDamageEffect-1"]}
-# <<< factory-mutation Curse_TransferDamageEffect
 # >>> factory-completion Curse_TransferDamageEffect
 for _record in SCHEMA2_CASES["Curse_TransferDamageEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x2383, "bank": 13}
 # <<< factory-completion Curse_TransferDamageEffect
+# >>> factory-mutation Curse_TransferDamageEffect
+MUTATIONS["Curse_TransferDamageEffect"] = {"source_symbol": "Curse_TransferDamageEffect", "before": "void Curse_TransferDamageEffect(void)\n{\n\tuint8_t location = hTempList;\n\tDuelistVarResult flags = GetTurnDuelistVariable(\n\t\t(uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));\n\tgb_write8(flags.hl, (uint8_t)(flags.a | (1u << USED_PKMN_POWER_THIS_TURN_F)));", "after": "void Curse_TransferDamageEffect(void)\n{\n\tuint8_t location = hTempList;\n\tDuelistVarResult flags = GetTurnDuelistVariable(\n\t\t(uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));\n\tgb_write8(flags.hl, flags.a);", "case_ids": ["Curse_TransferDamageEffect-0", "Curse_TransferDamageEffect-1"]}
+# <<< factory-mutation Curse_TransferDamageEffect
 # >>> factory-mutation SuperPotion_PlayerSelectEffect
 MUTATIONS["SuperPotion_PlayerSelectEffect"] = {"source_symbol": "SuperPotion_PlayerSelectEffect", "before": "void SuperPotion_PlayerSelectEffect(void)\n{\n}", "after": "void SuperPotion_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 1u;\n}", "case_ids": ["SuperPotion_PlayerSelectEffect-0", "SuperPotion_PlayerSelectEffect-1"]}
 # <<< factory-mutation SuperPotion_PlayerSelectEffect
@@ -11331,7 +11339,7 @@ for _record in SCHEMA2_CASES["Heal_RemoveDamageEffect"]:
 MUTATIONS["SuperEnergyRemoval_PlayerSelection"] = {"source_symbol": "SuperEnergyRemoval_PlayerSelection", "before": "\thPlayAreaEffectTarget = hTempPlayAreaLocation_ff9d;", "after": "\thPlayAreaEffectTarget = (uint8_t)(hTempPlayAreaLocation_ff9d + 1u);", "case_ids": ["SuperEnergyRemoval_PlayerSelection-0", "SuperEnergyRemoval_PlayerSelection-1"]}
 # <<< factory-mutation SuperEnergyRemoval_PlayerSelection
 # >>> factory-mutation DevolutionSpray_PlayerSelection
-MUTATIONS["DevolutionSpray_PlayerSelection"] = {"source_symbol": "DevolutionSpray_PlayerSelection", "before": "void DevolutionSpray_PlayerSelection(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseEvolutionCardAndPressAButtonToDevolveText);\n\thCurSelectionItem = 1u;\n\t(void)HasAlivePokemonInPlayArea();\n\n\tCardOneStageBelowResult below;\n\tfor (;;) {\n\t\tOpenPlayAreaScreenForSelection();\n\t\tbelow = GetCardOneStageBelow(0u, 0u);\n\t\tif ((below.f & 0x10u) == 0u)\n\t\t\tbreak;\n\t}\n\n\tuint8_t location = hTempPlayAreaLocation_ff9d;\n\tDuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + location));\n\tDuelistVarResult stage = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_STAGE + location));\n\tDuelistVarResult card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location));\n\n\tfor (;;) {\n\t\tUpdateDevolvedCardHPAndStage(below.d);\n\t\tuint16_t position = GetNextPositionInTempList_TrainerEffects();\n\t\tgb_write8(position, below.e);\n\t\t(void)LoadCardDataToBuffer2_FromDeckIndex(below.d);\n\t\tif (wLoadedCard2Stage == 0u)\n\t\t\tbreak;\n\t\tInitAndPrintPlayAreaCardInformationAndLocation_WithTextBox();\n\t\tbelow = GetCardOneStageBelow(0u, 0u);\n\t}\n\n\tuint16_t terminator = GetNextPositionInTempList_TrainerEffects();\n\tgb_write8(terminator, 0xffu);\n\thTempList = location;", "after": "void DevolutionSpray_PlayerSelection(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseEvolutionCardAndPressAButtonToDevolveText);\n\thCurSelectionItem = 1u;\n\t(void)HasAlivePokemonInPlayArea();\n\n\tCardOneStageBelowResult below;\n\tfor (;;) {\n\t\tOpenPlayAreaScreenForSelection();\n\t\tbelow = GetCardOneStageBelow(0u, 0u);\n\t\tif ((below.f & 0x10u) == 0u)\n\t\t\tbreak;\n\t}\n\n\tuint8_t location = hTempPlayAreaLocation_ff9d;\n\tDuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + location));\n\tDuelistVarResult stage = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_STAGE + location));\n\tDuelistVarResult card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location));\n\n\tfor (;;) {\n\t\tUpdateDevolvedCardHPAndStage(below.d);\n\t\tuint16_t position = GetNextPositionInTempList_TrainerEffects();\n\t\tgb_write8(position, below.e);\n\t\t(void)LoadCardDataToBuffer2_FromDeckIndex(below.d);\n\t\tif (wLoadedCard2Stage == 0u)\n\t\t\tbreak;\n\t\tInitAndPrintPlayAreaCardInformationAndLocation_WithTextBox();\n\t\tbelow = GetCardOneStageBelow(0u, 0u);\n\t}\n\n\tuint16_t terminator = GetNextPositionInTempList_TrainerEffects();\n\tgb_write8(terminator, 0xffu);\n\thTempList = (uint8_t)(location + 1u);", "case_ids": ["DevolutionSpray_PlayerSelection-0", "DevolutionSpray_PlayerSelection-1"]}
+MUTATIONS["DevolutionSpray_PlayerSelection"] = {"source_symbol": "DevolutionSpray_PlayerSelection", "before": "return (DevolutionSpray_PlayerSelectionResult){screen.a, (uint8_t)((alive.f & 0x80u) | 0x10u)};", "after": "return (DevolutionSpray_PlayerSelectionResult){screen.a, (uint8_t)(alive.f & 0x80u)};", "case_ids": ["DevolutionSpray_PlayerSelection-0"]}
 # <<< factory-mutation DevolutionSpray_PlayerSelection
 # >>> factory-mutation EnergySpike_PlayerSelectEffect
 MUTATIONS["EnergySpike_PlayerSelectEffect"] = {"source_symbol": "EnergySpike_PlayerSelectEffect", "before": "void EnergySpike_PlayerSelectEffect(void)\n{\n\twLCDC = 0x80u;\n\thTemp_ffa0 = 0xffu;", "after": "void EnergySpike_PlayerSelectEffect(void)\n{\n\twLCDC = 0x80u;\n\thTemp_ffa0 = 0x00u;", "case_ids": ["EnergySpike_PlayerSelectEffect-0", "EnergySpike_PlayerSelectEffect-1"]}

@@ -2215,13 +2215,15 @@ typedef struct { uint8_t a; uint8_t f; } TerrorStrike50PercentSelectSwitchPokemo
 TerrorStrike50PercentSelectSwitchPokemonResult TerrorStrike_50PercentSelectSwitchPokemon(void);
 /* <<< factory TerrorStrike_50PercentSelectSwitchPokemon */
 /* >>> factory Potion_PlayerSelection */
-void Potion_PlayerSelection(void);
+typedef struct { uint8_t a; uint8_t f; } Potion_PlayerSelectionResult;
+Potion_PlayerSelectionResult Potion_PlayerSelection(void);
 /* <<< factory Potion_PlayerSelection */
 /* >>> factory GengarDarkMind_PlayerSelectEffect */
 void GengarDarkMind_PlayerSelectEffect(void);
 /* <<< factory GengarDarkMind_PlayerSelectEffect */
 /* >>> factory ScoopUp_PlayerSelection */
-void ScoopUp_PlayerSelection(void);
+typedef struct { uint8_t a; uint8_t f; } ScoopUp_PlayerSelectionResult;
+ScoopUp_PlayerSelectionResult ScoopUp_PlayerSelection(void);
 /* <<< factory ScoopUp_PlayerSelection */
 /* >>> factory HypnoDarkMind_PlayerSelectEffect */
 void HypnoDarkMind_PlayerSelectEffect(void);
@@ -2236,7 +2238,8 @@ void DevolutionBeam_PlayerSelectEffect(void);
 void DevolutionSpray_DevolutionEffect(void);
 /* <<< factory DevolutionSpray_DevolutionEffect */
 /* >>> factory PokemonBreeder_PlayerSelection */
-void PokemonBreeder_PlayerSelection(void);
+typedef struct { uint8_t a; uint8_t f; } PokemonBreeder_PlayerSelectionResult;
+PokemonBreeder_PlayerSelectionResult PokemonBreeder_PlayerSelection(void);
 /* <<< factory PokemonBreeder_PlayerSelection */
 /* >>> factory Curse_TransferDamageEffect */
 /* >>> factory Curse_TransferDamageEffect */
@@ -2255,7 +2258,8 @@ void Heal_RemoveDamageEffect(void);
 HandlePokemonAndEnergySelectionScreenResult SuperEnergyRemoval_PlayerSelection(void);
 /* <<< factory SuperEnergyRemoval_PlayerSelection */
 /* >>> factory DevolutionSpray_PlayerSelection */
-void DevolutionSpray_PlayerSelection(void);
+typedef struct { uint8_t a; uint8_t f; } DevolutionSpray_PlayerSelectionResult;
+DevolutionSpray_PlayerSelectionResult DevolutionSpray_PlayerSelection(void);
 /* <<< factory DevolutionSpray_PlayerSelection */
 /* >>> factory EnergySpike_PlayerSelectEffect */
 /* >>> factory EnergySpike_PlayerSelectEffect */

@@ -5441,8 +5441,9 @@ static void adapt_TerrorStrike_50PercentSelectSwitchPokemon(ProbeState *s)
 /* >>> factory Potion_PlayerSelection */
 static void adapt_Potion_PlayerSelection(ProbeState *s)
 {
-	(void)s;
-	Potion_PlayerSelection();
+	Potion_PlayerSelectionResult r = Potion_PlayerSelection();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory Potion_PlayerSelection */
 
@@ -5457,8 +5458,9 @@ static void adapt_GengarDarkMind_PlayerSelectEffect(ProbeState *s)
 /* >>> factory ScoopUp_PlayerSelection */
 static void adapt_ScoopUp_PlayerSelection(ProbeState *s)
 {
-	(void)s;
-	ScoopUp_PlayerSelection();
+	ScoopUp_PlayerSelectionResult r = ScoopUp_PlayerSelection();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory ScoopUp_PlayerSelection */
 
@@ -5497,8 +5499,9 @@ static void adapt_DevolutionSpray_DevolutionEffect(ProbeState *s)
 /* >>> factory PokemonBreeder_PlayerSelection */
 static void adapt_PokemonBreeder_PlayerSelection(ProbeState *s)
 {
-	(void)s;
-	PokemonBreeder_PlayerSelection();
+	PokemonBreeder_PlayerSelectionResult r = PokemonBreeder_PlayerSelection();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory PokemonBreeder_PlayerSelection */
 
@@ -5546,8 +5549,9 @@ static void adapt_SuperEnergyRemoval_PlayerSelection(ProbeState *s)
 /* >>> factory DevolutionSpray_PlayerSelection */
 static void adapt_DevolutionSpray_PlayerSelection(ProbeState *s)
 {
-	(void)s;
-	DevolutionSpray_PlayerSelection();
+	DevolutionSpray_PlayerSelectionResult r = DevolutionSpray_PlayerSelection();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory DevolutionSpray_PlayerSelection */
 
