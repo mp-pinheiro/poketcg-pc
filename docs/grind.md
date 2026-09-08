@@ -6,6 +6,56 @@ one, stop and report (see Stop conditions).
 
 The target is `docs/vision.md`: a native, playable port verified against the ROM.
 
+## The prompt
+
+Paste this into a fresh session. It is the whole brief; everything else is a
+lookup in this file.
+
+```text
+Advance the poketcg-pc native port by working its issue tracker.
+
+Read completely, in this order:
+  docs/grind.md          <- the runbook; authoritative. "Issues: the worklist" first,
+                            then "The session loop" and its decision table
+  docs/port-contract.md  <- case coverage, items 4 and 5 especially
+  AGENTS.md              <- file ownership and the command table
+
+The loop, until a stop condition in docs/grind.md holds or issues-next is empty:
+  1. just issues-next 1                 # the fact to work; its body carries the repro
+  2. run the repro; match the output to a decision-table row and do what it says
+  3. land it:
+     - the routine's C follows its asm (the asm is the truth, never the case or the C)
+     - a fixture case at the real entry (tests/cases/_fixtures.py; the capture command
+       is on the issue) and one red mutation for the line you changed
+     - just oracle-diff <Fn> PASS; just lint-constants clean
+     - p0: just session-verify <session named on the issue> - confirmed must rise
+       p1/p2: just session-sweep <session> --after <ordinal> --until <ordinal> lists it ok
+       p3: the composition audit named on the issue no longer reports it
+  4. jj commit <only your paths> -m "type(scope): subject"      # <= 50 chars, no body
+  5. just issues-sync                   # the issue closes itself; new facts open
+  6. back to 1
+
+Route items (label route): record exactly as the issue body says, with
+just session-pilot / session-ai-duel / session-derive; verify; then
+just session-sweep <name> so the region's facts enter the tracker. A route item that
+needs a human at the window is left open; take the next item and name it in the report.
+
+Rules:
+- Unattended: never ask; when two options exist take the boring one.
+- Memory: one reference lane at a time. Never run two of session-verify, session-sweep,
+  oracle-diff-all concurrently; leave no background job running when you stop.
+  WSL has OOM-crashed on this repo.
+- Never run just oracle-release-gate, a formatter, a linter or any git command.
+- Never widen an exclusion ledger (scenario.py, _fixtures.py _HOLES, test_leaves.py
+  AUTO_OBSERVE_IGNORED) and never edit a case to match the C.
+- Never hand-close a fact issue or write progress into one. noise / wontfix only with a
+  comment naming the harness artefact.
+- Files you did not change are not yours.
+
+Report at the end: issues closed (numbers), sessions whose ratchet moved (name, from -> to),
+issues the sync opened, items left open and why.
+```
+
 ## Setup, once per session
 
 ```sh
