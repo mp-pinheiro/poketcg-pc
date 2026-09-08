@@ -178,6 +178,10 @@ IN_PLAY_AREA_B_EXIT_REGS = IN_PLAY_AREA_B_EXIT.regs
 # the step left, so the step and its arrival (Func_c6dc) both run this frame.
 MOVE_STEP = Fixture("fighting-club-move-step-entry")
 MOVE_STEP_REGS = MOVE_STEP.regs
+# The rock-club route's B press on the Potion target screen (DoFrame 118590):
+# HandleMenuInput under PlayAreaScreenMenuFunction must report the cancel.
+PLAY_AREA_B = Fixture("rock-club-play-area-b-entry")
+PLAY_AREA_B_REGS = PLAY_AREA_B.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -270,3 +274,7 @@ def in_play_area_b_exit_fixture(vram: bool = True, bank: int | None = None, **ch
 
 def move_step_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return MOVE_STEP.case(vram=vram, bank=bank, **changes)
+
+
+def play_area_b_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return PLAY_AREA_B.case(vram=vram, bank=bank, **changes)

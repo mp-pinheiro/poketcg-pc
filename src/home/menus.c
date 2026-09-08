@@ -744,10 +744,10 @@ HandleMenuInputResult HandleMenuInput(void)
 		}
 		if ((update_f & 0x10u) == 0u)
 			return RefreshMenuCursor_CheckPlaySFXRegs();
-		DrawCursor2();
-		uint8_t drawn_tile = wMenuVisibleCursorTile;
-		uint8_t z_bit = (drawn_tile == 0u) ? 0x80u : 0u;
-		(void)PlayOpenOrExitScreenSFX(update_a, (uint8_t)(z_bit));
+		/* PlayOpenOrExitScreenSFX restores its entry flags, so the `scf`
+		 * below keeps DrawCursor2's Z (menus.asm:122-131). */
+		uint8_t z_bit = (uint8_t)(DrawCursorRegs(wMenuVisibleCursorTile).f & 0x80u);
+		(void)PlayOpenOrExitScreenSFX(update_a, z_bit);
 		uint8_t e2 = wCurMenuItem;
 		uint8_t a2 = hCurMenuItem;
 		return (HandleMenuInputResult){a2, e2, (uint8_t)(0x10u | z_bit)};
@@ -757,9 +757,7 @@ HandleMenuInputResult HandleMenuInput(void)
 	if (pressed == 0u)
 		return RefreshMenuCursor_CheckPlaySFXRegs();
 	if ((pressed & PAD_A) != 0u) {
-		DrawCursor2();
-		uint8_t drawn_tile = wMenuVisibleCursorTile;
-		uint8_t z_bit = (drawn_tile == 0u) ? 0x80u : 0u;
+		uint8_t z_bit = (uint8_t)(DrawCursorRegs(wMenuVisibleCursorTile).f & 0x80u);
 		(void)PlayOpenOrExitScreenSFX(0u, z_bit);
 		uint8_t e2 = wCurMenuItem;
 		uint8_t a2 = hCurMenuItem;

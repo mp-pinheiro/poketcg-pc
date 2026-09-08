@@ -1,3 +1,4 @@
+from tests.cases._fixtures import play_area_b_fixture as _play_area_b_fixture, PLAY_AREA_B_REGS as _PLAY_AREA_B_REGS
 SRC = 0xC100
 CURSOR_STATE = 0xCD0F
 
@@ -410,6 +411,9 @@ CASES["CardListMenuFunction"] = [
 
 # >>> factory HandleMenuInput
 CONTRACT["HandleMenuInput"] = {"compare": ("a", "e", "f"), "preserve": ()}
+_PLAY_AREA_B = _play_area_b_fixture(bank=1)
+_PLAY_AREA_B["wram"] = {**_PLAY_AREA_B["wram"], 0xFF8F: b"\x02", 0xFF90: b"\x02", 0xFF91: b"\x02"}
+_PLAY_AREA_B["read"] = {**_PLAY_AREA_B["read"], 0xFF92: 1, 0xCD10: 1}
 CASES["HandleMenuInput"] = [
     {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x01", 0xCD17: b"\x00\x00", 0xCD10: b"\x02", 0xCD14: b"\x04", 0xFFB1: b"\x02", 0xCD15: b"\x00", 0xCD99: b"\x99"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD99: 1}},
     {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCD17: b"\x00\x00", 0xCD10: b"\x03", 0xCD14: b"\x04", 0xFFB1: b"\x03", 0xCD15: b"\x00", 0xCD99: b"\x2A"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD99: 1}},
@@ -428,6 +432,7 @@ CASES["HandleMenuInput"] = [
     # function decides, differs on the counter or the flags.
     {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x08", 0xCD17: b"\xCE\x60", 0xCD10: b"\x02", 0xCD14: b"\x04", 0xFFB1: b"\x02", 0xCD15: b"\x00", 0xCD99: b"\x99", 0xCD0F: b"\x05", 0xFF80: b"\x01"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD99: 1, 0xCD0F: 1}},
     {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x00", 0xCD17: b"\xCE\x60", 0xCD10: b"\x02", 0xCD14: b"\x04", 0xFFB1: b"\x02", 0xCD15: b"\x00", 0xCD99: b"\x00", 0xCD0F: b"\x05", 0xFF80: b"\x01"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD99: 1, 0xCD0F: 1}},
+    dict(_PLAY_AREA_B, **_PLAY_AREA_B_REGS),
 ]
 # <<< factory HandleMenuInput
 
