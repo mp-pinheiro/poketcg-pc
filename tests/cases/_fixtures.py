@@ -57,6 +57,7 @@ class Fixture:
         self.wram = bytes.fromhex(data["wram"])
         self.hram = bytes.fromhex(data["hram"])
         self.vram = bytes.fromhex(data["vram0"])
+        self.sram = bytes.fromhex(data["sram"]) if "sram" in data else None
 
     def case(self, vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
         """The captured state with `changes` ({"C3C8": bytes} hex addresses)
@@ -106,6 +107,11 @@ class Fixture:
                 "keys": [0x00, 0x01], "instruction_budget": 40000000, "cycle_budget": 160000000}
         if vram:
             case["vread"] = {0: {0x9800: 0x400}}
+        if self.sram is not None:
+            # A capture taken with --sram seeds the two save banks against the
+            # game's own save. SRAM2/SRAM3 are gfx scratch (sram.asm:370,392)
+            # and would push the gbref request past its 64 KB field.
+            case["sram"] = {bank: {0xA000: self.sram[bank * 0x2000:(bank + 1) * 0x2000]} for bank in range(2)}
         return case
 
 
@@ -268,6 +274,10 @@ CARD_SET_LIST_REGS = CARD_SET_LIST.regs
 # InitCardSelectionParams reset the blink counter; the cursor must appear.
 CARD_LIST_SELECT = Fixture("boot-deck-machine-card-list-select-entry")
 CARD_LIST_SELECT_REGS = CARD_LIST_SELECT.regs
+# boot-deck-machine at DoFrame 96034: the deck save machine prints slot 1, a
+# saved starter deck the player cannot build even by dismantling (SRAM seeded).
+DECK_ENTRY = Fixture("boot-deck-machine-deck-entry-entry")
+DECK_ENTRY_REGS = DECK_ENTRY.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -440,3 +450,7 @@ def card_set_list_fixture(vram: bool = True, bank: int | None = None, **changes:
 
 def card_list_select_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return CARD_LIST_SELECT.case(vram=vram, bank=bank, **changes)
+
+
+def deck_entry_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return DECK_ENTRY.case(vram=vram, bank=bank, **changes)

@@ -665,7 +665,8 @@ def sweep(name: str, *, after: int = 0, until: int | None = None, limit: int = 0
     return 0 if failing == 0 else 1
 
 
-def capture(name: str, routine: str, *, after: int = 0, nth: int = 1, out: Path | None = None) -> int:
+def capture(name: str, routine: str, *, after: int = 0, nth: int = 1, out: Path | None = None,
+            sram: bool = False) -> int:
     """The reference's live state at `routine`'s `nth` entry (at or after DoFrame
     `after`) while it replays session `name`, written as a case fixture
     (tests/cases/_fixtures.py): registers, SP, WRAM, HRAM and VRAM bank 0.
@@ -709,6 +710,8 @@ def capture(name: str, routine: str, *, after: int = 0, nth: int = 1, out: Path 
                 "wram": regions["wram"].hex(), "hram": regions["hram"].hex(),
                 "vram0": regions["vram"][:0x2000].hex(),
             })
+            if sram:
+                captured["sram"] = core.area("CartRAM").hex()
 
         core.install_exec(on_exec)
         core.run(frames, stop=lambda: bool(captured))
@@ -1204,6 +1207,8 @@ def main(argv: list[str] | None = None) -> int:
     capture_parser.add_argument("--after", type=int, default=0, help="first DoFrame ordinal to consider")
     capture_parser.add_argument("--nth", type=int, default=1, help="capture the nth entry at or after --after")
     capture_parser.add_argument("--out", type=Path)
+    capture_parser.add_argument("--sram", action="store_true",
+                                help="also capture the four SRAM banks, for a routine that reads save data")
     duel_parser = sub.add_parser("ai-duel", help="branch a session into an AI-versus-AI duel")
     duel_parser.add_argument("name")
     duel_parser.add_argument("--from", dest="base", default="practice-win")
@@ -1235,7 +1240,7 @@ def main(argv: list[str] | None = None) -> int:
             movie = args.movie if args.movie.is_absolute() else ROOT / args.movie
             return derive(args.name, movie, args.goal or f"derived from {args.movie}")
         if args.command == "capture":
-            return capture(args.name, args.routine, after=args.after, nth=args.nth, out=args.out)
+            return capture(args.name, args.routine, after=args.after, nth=args.nth, out=args.out, sram=args.sram)
         if args.command == "ai-duel":
             return ai_duel(args.name, base=args.base, at=args.at, deck=args.deck, seed=args.seed,
                            prizes=args.prizes, period=args.period, tail=args.tail, goal=args.goal)
