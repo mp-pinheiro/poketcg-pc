@@ -1,3 +1,4 @@
+from tests.cases._fixtures import selfdestruct_fixture as _selfdestruct_fixture, SELFDESTRUCT_REGS as _SELFDESTRUCT_REGS
 from tests.cases._fixtures import foul_gas_fixture as _foul_gas_fixture, FOUL_GAS_REGS as _FOUL_GAS_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/effect_functions.asm."""
 
@@ -7602,14 +7603,21 @@ CASES["ComputerSearch_PlayerDeckSelection"] = [
 
 # >>> factory TakeDownEffect
 CONTRACT["TakeDownEffect"] = {"compare": ("a", "f"), "preserve": ()}
-CASES["TakeDownEffect"] = [_td_case(f=0x00), _td_case(f=0x10), _td_case(**POISON)]
+CASES["TakeDownEffect"] = [
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
 # <<< factory TakeDownEffect
 
 # >>> factory JigglypuffDoubleEdgeEffect
 CONTRACT["JigglypuffDoubleEdgeEffect"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["JigglypuffDoubleEdgeEffect"] = [
-    {"f": 0x00, "wram": {0xC2C8: b"\x40", 0xCCB9: b"\x00\x00", 0xCCC1: b"\x00", 0xCCC3: b"\x01", 0xCCC4: b"\x01", 0xCCC7: b"\x00", 0xD421: b"\x01", 0xCABB: b"\x00", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}, {"fn": "SwapTurn"}], "instruction_budget": 8000000, "cycle_budget": 32000000, "read": {0xC2C8: 1, 0xCCB8: 1, 0xCCB9: 2, 0xCCC1: 1, 0xCCC4: 1, 0xCCC7: 1}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xC2C8: b"\x40", 0xCCB9: b"\x00\x00", 0xCCC1: b"\x00", 0xCCC3: b"\x01", 0xCCC4: b"\x01", 0xCCC7: b"\x00", 0xD421: b"\x01", 0xCABB: b"\x00", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}, {"fn": "SwapTurn"}], "instruction_budget": 8000000, "cycle_budget": 32000000, "read": {0xC2C8: 1, 0xCCB8: 1, 0xCCB9: 2, 0xCCC1: 1, 0xCCC4: 1, 0xCCC7: 1}}
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory JigglypuffDoubleEdgeEffect
 
@@ -7624,17 +7632,20 @@ CASES["Recycle_PlayerSelection"] = [
 # >>> factory GolemSelfdestructEffect
 CONTRACT["GolemSelfdestructEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["GolemSelfdestructEffect"] = [
-    _gse_case(f=0x00),
-    _gse_case(a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234),
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory GolemSelfdestructEffect
 
 # >>> factory ChanseyDoubleEdgeEffect
 CONTRACT["ChanseyDoubleEdgeEffect"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["ChanseyDoubleEdgeEffect"] = [
-    _cde_case(f=0x00),
-    _cde_case(f=0x10),
-    _cde_case(**POISON),
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory ChanseyDoubleEdgeEffect
 
@@ -7645,31 +7656,52 @@ CASES["FriendshipSong_AddToBench50PercentEffect"] = [{}, dict(POISON)]
 
 # >>> factory SubmissionEffect
 CONTRACT["SubmissionEffect"]={"compare":("a","f"),"preserve":()}
-CASES["SubmissionEffect"]=[_se_case(a=16,f=0,d=0,e=0),_se_case(**_POISON)]
+CASES["SubmissionEffect"] = [
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
 # <<< factory SubmissionEffect
 
 # >>> factory MagnemiteSelfdestructEffect
 CONTRACT["MagnemiteSelfdestructEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["MagnemiteSelfdestructEffect"] = [
-    _mse_case(f=0x00),
-    _mse_case(f=0x10),
-    _mse_case(**POISON),
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory MagnemiteSelfdestructEffect
 
 # >>> factory Ram_RecoilSwitchEffect
 CONTRACT["Ram_RecoilSwitchEffect"] = {"compare": ("a", "f"), "preserve": ()}
-CASES["Ram_RecoilSwitchEffect"] = [_rrse(), _rrse(**POISON)]
+CASES["Ram_RecoilSwitchEffect"] = [
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B, FFA0=b"\x01", C2BC=b"\x38", C2C9=b"\x32", C238=b"\x11", C2EF=b"\x02"), **_SELFDESTRUCT_REGS, read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B, FFA0=b"\x01", C2BC=b"\x38", C2C9=b"\x32", C238=b"\x11", C2EF=b"\x02"), **dict(_SELFDESTRUCT_REGS, **POISON), read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
 # <<< factory Ram_RecoilSwitchEffect
 
 # >>> factory MagnetonLv35SelfdestructEffect
 CONTRACT["MagnetonLv35SelfdestructEffect"]={"compare":("a","f","b","c","d","e","hl"),"preserve":()}
-CASES["MagnetonLv35SelfdestructEffect"]=[_m(),_m(**POISON)]
+CASES["MagnetonLv35SelfdestructEffect"] = [
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
 # <<< factory MagnetonLv35SelfdestructEffect
 
 # >>> factory MagnetonLv28SelfdestructEffect
 CONTRACT["MagnetonLv28SelfdestructEffect"]={"compare":("a","f","b","c","d","e","hl"),"preserve":()}
-CASES["MagnetonLv28SelfdestructEffect"]=[_magneton(),_magneton(**POISON)]
+CASES["MagnetonLv28SelfdestructEffect"] = [
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
 # <<< factory MagnetonLv28SelfdestructEffect
 
 # >>> factory Scavenge_PlayerSelectTrainerEffect
@@ -7679,7 +7711,12 @@ CASES["Scavenge_PlayerSelectTrainerEffect"]=[{"keys":[0,1],"wram":{0xFF97:b"\xC2
 
 # >>> factory WeezingSelfdestructEffect
 CONTRACT["WeezingSelfdestructEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
-CASES["WeezingSelfdestructEffect"] = [_wsd_case(f=0x00), _wsd_case(**POISON)]
+CASES["WeezingSelfdestructEffect"] = [
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
 # <<< factory WeezingSelfdestructEffect
 
 # >>> factory PayDayEffect
@@ -7707,8 +7744,10 @@ CASES["StoneBarrage_MultiplierEffect"] = [
 # >>> factory EnergyConversion_AddToHandEffect
 CONTRACT["EnergyConversion_AddToHandEffect"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["EnergyConversion_AddToHandEffect"] = [
-    {"f": 0x00, "d": 0x00, "e": 0x00, "wram": {_EC_ARENA_HP: bytes((0x40,)), _EC_DAMAGE: bytes((0x00, 0x00)), _EC_DAMAGE_EFFECTIVENESS: bytes((0x00,)), _EC_TEMP_TURN: bytes((0x01,)), _EC_TEMP_NON_TURN: bytes((0x01,)), _EC_NO_DAMAGE_OR_EFFECT: bytes((0x00,)), _EC_ANIMATIONS_DISABLED: bytes((0x01,)), hTempList: bytes((0xFF,)), wDuelTempList: bytes((0x00,)), 0xFF97: bytes((0xC2,))}, "read": {hTempList: 1, wDuelTempList: 1, _EC_LOADED_ATTACK_ANIMATION: 1, _EC_DAMAGE: 2, _EC_DAMAGE_EFFECTIVENESS: 1, _EC_NO_DAMAGE_OR_EFFECT: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}, {"fn": "SwapTurn"}], "instruction_budget": 8000000, "cycle_budget": 32000000},
-    dict(POISON, wram={_EC_ARENA_HP: bytes((0x40,)), _EC_DAMAGE: bytes((0x00, 0x00)), _EC_DAMAGE_EFFECTIVENESS: bytes((0x00,)), _EC_TEMP_TURN: bytes((0x01,)), _EC_TEMP_NON_TURN: bytes((0x01,)), _EC_NO_DAMAGE_OR_EFFECT: bytes((0x00,)), _EC_ANIMATIONS_DISABLED: bytes((0x01,)), hTempList: bytes((0xFF,)), wDuelTempList: bytes((0x00,)), 0xFF97: bytes((0xC2,))}, read={hTempList: 1, wDuelTempList: 1, _EC_LOADED_ATTACK_ANIMATION: 1, _EC_DAMAGE: 2, _EC_DAMAGE_EFFECTIVENESS: 1, _EC_NO_DAMAGE_OR_EFFECT: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}, {"fn": "SwapTurn"}], instruction_budget=8000000, cycle_budget=32000000),
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B, FFA0=b"\xff"), **_SELFDESTRUCT_REGS, read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B, FFA0=b"\xff"), **dict(_SELFDESTRUCT_REGS, **POISON), read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory EnergyConversion_AddToHandEffect
 
@@ -11058,36 +11097,20 @@ for _record in SCHEMA2_CASES["PokemonCenter_HealDiscardEnergyEffect"]:
 MUTATIONS["ComputerSearch_PlayerDeckSelection"] = {"source_symbol": "ComputerSearch_PlayerDeckSelection", "before": "ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint8_t c, uint16_t de)\n{\n\t(void)CreateDeckCardList(c, de);\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(DuelistDeckText, ChooseCardToPlaceInHandText);\n\twLCDC = 0x80u;\n\tgb_write8(hKeysPressed_ADDR, 0x01u);\n\tuint8_t selected = gb_read8(wDuelTempList_ADDR);\n\tgb_write8((uint16_t)(hTempList_ADDR + 2u), selected);", "after": "ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint8_t c, uint16_t de)\n{\n\t(void)CreateDeckCardList(c, de);\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(DuelistDeckText, ChooseCardToPlaceInHandText);\n\twLCDC = 0x80u;\n\tgb_write8(hKeysPressed_ADDR, 0x01u);\n\tuint8_t selected = gb_read8(wDuelTempList_ADDR);\n\tgb_write8((uint16_t)(hTempList_ADDR + 2u), (uint8_t)(selected + 1u));", "case_ids": ["ComputerSearch_PlayerDeckSelection-0", "ComputerSearch_PlayerDeckSelection-1"]}
 # <<< factory-mutation ComputerSearch_PlayerDeckSelection
 # >>> factory-mutation TakeDownEffect
-MUTATIONS["TakeDownEffect"] = {"source_symbol": "TakeDownEffect", "before": "\twDamage = 30u;", "after": "\twDamage = 31u;", "case_ids": ["TakeDownEffect-0", "TakeDownEffect-1", "TakeDownEffect-2"]}
+MUTATIONS["TakeDownEffect"] = {"source_symbol": "TakeDownEffect", "before": "DealRecoilDamageToSelf(30u, f, d, e)", "after": "DealRecoilDamageToSelf(40u, f, d, e)", "case_ids": ["TakeDownEffect-0", "TakeDownEffect-1"]}
 # <<< factory-mutation TakeDownEffect
-# >>> factory-completion TakeDownEffect
-for _record in SCHEMA2_CASES["TakeDownEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
-# <<< factory-completion TakeDownEffect
 # >>> factory-mutation JigglypuffDoubleEdgeEffect
-MUTATIONS["JigglypuffDoubleEdgeEffect"] = {"source_symbol": "JigglypuffDoubleEdgeEffect", "before": "JigglypuffDoubleEdgeEffectResult JigglypuffDoubleEdgeEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\t(void)f;\n\t(void)d;\n\t(void)e;\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 20u;", "after": "JigglypuffDoubleEdgeEffectResult JigglypuffDoubleEdgeEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\t(void)f;\n\t(void)d;\n\t(void)e;\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 21u;", "case_ids": ["JigglypuffDoubleEdgeEffect-0"]}
+MUTATIONS["JigglypuffDoubleEdgeEffect"] = {"source_symbol": "JigglypuffDoubleEdgeEffect", "before": "DealRecoilDamageToSelf(20u, f, d, e)", "after": "DealRecoilDamageToSelf(30u, f, d, e)", "case_ids": ["JigglypuffDoubleEdgeEffect-0", "JigglypuffDoubleEdgeEffect-1"]}
 # <<< factory-mutation JigglypuffDoubleEdgeEffect
-# >>> factory-completion JigglypuffDoubleEdgeEffect
-for _record in SCHEMA2_CASES["JigglypuffDoubleEdgeEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
-# <<< factory-completion JigglypuffDoubleEdgeEffect
 # >>> factory-mutation Recycle_PlayerSelection
 MUTATIONS["Recycle_PlayerSelection"] = {"source_symbol": "Recycle_PlayerSelection", "before": "hTempList = 0xFFu;\n\treturn (RecyclePlayerSelectionResult){0xFFu, 0x00u};", "after": "hTempList = 0x00u;\n\treturn (RecyclePlayerSelectionResult){0xFFu, 0x00u};", "case_ids": ["Recycle_PlayerSelection-0"]}
 # <<< factory-mutation Recycle_PlayerSelection
 # >>> factory-mutation GolemSelfdestructEffect
-MUTATIONS["GolemSelfdestructEffect"] = {"source_symbol": "GolemSelfdestructEffect", "before": "DealDamageToAllBenchedPokemonResult GolemSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 100u;", "after": "DealDamageToAllBenchedPokemonResult GolemSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 0u;", "case_ids": ["GolemSelfdestructEffect-0", "GolemSelfdestructEffect-1"]}
+MUTATIONS["GolemSelfdestructEffect"] = {"source_symbol": "GolemSelfdestructEffect", "before": "DealDamageToAllBenchedPokemon(20u, recoil.f, 0u, 0u, 0u, 0u, 0u)", "after": "DealDamageToAllBenchedPokemon(10u, recoil.f, 0u, 0u, 0u, 0u, 0u)", "case_ids": ["GolemSelfdestructEffect-0", "GolemSelfdestructEffect-1"]}
 # <<< factory-mutation GolemSelfdestructEffect
-# >>> factory-completion GolemSelfdestructEffect
-for _record in SCHEMA2_CASES["GolemSelfdestructEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
-# <<< factory-completion GolemSelfdestructEffect
 # >>> factory-mutation ChanseyDoubleEdgeEffect
-MUTATIONS["ChanseyDoubleEdgeEffect"] = {"source_symbol": "ChanseyDoubleEdgeEffect", "before": "ChanseyDoubleEdgeEffectResult ChanseyDoubleEdgeEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 80u;", "after": "ChanseyDoubleEdgeEffectResult ChanseyDoubleEdgeEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 81u;", "case_ids": ["ChanseyDoubleEdgeEffect-0", "ChanseyDoubleEdgeEffect-1", "ChanseyDoubleEdgeEffect-2"]}
+MUTATIONS["ChanseyDoubleEdgeEffect"] = {"source_symbol": "ChanseyDoubleEdgeEffect", "before": "DealRecoilDamageToSelf(80u, f, d, e)", "after": "DealRecoilDamageToSelf(70u, f, d, e)", "case_ids": ["ChanseyDoubleEdgeEffect-0", "ChanseyDoubleEdgeEffect-1"]}
 # <<< factory-mutation ChanseyDoubleEdgeEffect
-# >>> factory-completion ChanseyDoubleEdgeEffect
-for _record in SCHEMA2_CASES["ChanseyDoubleEdgeEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
-# <<< factory-completion ChanseyDoubleEdgeEffect
 # >>> factory-mutation FriendshipSong_AddToBench50PercentEffect
 MUTATIONS["FriendshipSong_AddToBench50PercentEffect"] = {"source_symbol": "FriendshipSong_AddToBench50PercentEffect", "before": "FriendshipSong_AddToBench50PercentEffectResult FriendshipSong_AddToBench50PercentEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\treturn (FriendshipSong_AddToBench50PercentEffectResult){0x00u, 0xeeu};", "after": "FriendshipSong_AddToBench50PercentEffectResult FriendshipSong_AddToBench50PercentEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\treturn (FriendshipSong_AddToBench50PercentEffectResult){0x01u, 0xeeu};", "case_ids": ["FriendshipSong_AddToBench50PercentEffect-0", "FriendshipSong_AddToBench50PercentEffect-1"]}
 # <<< factory-mutation FriendshipSong_AddToBench50PercentEffect
@@ -11096,40 +11119,20 @@ for _record in SCHEMA2_CASES["FriendshipSong_AddToBench50PercentEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x407E, "bank": 11}
 # <<< factory-completion FriendshipSong_AddToBench50PercentEffect
 # >>> factory-mutation SubmissionEffect
-MUTATIONS["SubmissionEffect"]={"source_symbol":"SubmissionEffect","before":"\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 20u;","after":"\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 21u;","case_ids":["SubmissionEffect-0","SubmissionEffect-1"]}
+MUTATIONS["SubmissionEffect"] = {"source_symbol": "SubmissionEffect", "before": "DealRecoilDamageToSelf(20u, f, d, e)", "after": "DealRecoilDamageToSelf(30u, f, d, e)", "case_ids": ["SubmissionEffect-0", "SubmissionEffect-1"]}
 # <<< factory-mutation SubmissionEffect
-# >>> factory-completion SubmissionEffect
-for _record in SCHEMA2_CASES["SubmissionEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
-# <<< factory-completion SubmissionEffect
 # >>> factory-mutation MagnemiteSelfdestructEffect
-MUTATIONS["MagnemiteSelfdestructEffect"] = {"source_symbol": "MagnemiteSelfdestructEffect", "before": "MagnemiteSelfdestructEffectResult MagnemiteSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 40u;", "after": "MagnemiteSelfdestructEffectResult MagnemiteSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 41u;", "case_ids": ["MagnemiteSelfdestructEffect-0", "MagnemiteSelfdestructEffect-1", "MagnemiteSelfdestructEffect-2"]}
+MUTATIONS["MagnemiteSelfdestructEffect"] = {"source_symbol": "MagnemiteSelfdestructEffect", "before": "DealRecoilDamageToSelf(40u, f, d, e)", "after": "DealRecoilDamageToSelf(50u, f, d, e)", "case_ids": ["MagnemiteSelfdestructEffect-0", "MagnemiteSelfdestructEffect-1"]}
 # <<< factory-mutation MagnemiteSelfdestructEffect
-# >>> factory-completion MagnemiteSelfdestructEffect
-for _record in SCHEMA2_CASES["MagnemiteSelfdestructEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
-# <<< factory-completion MagnemiteSelfdestructEffect
 # >>> factory-mutation Ram_RecoilSwitchEffect
-MUTATIONS["Ram_RecoilSwitchEffect"] = {"source_symbol": "Ram_RecoilSwitchEffect", "before": "\twLoadedAttackAnimation = 0x7Au;", "after": "\twLoadedAttackAnimation = 0x00u;", "case_ids": ["Ram_RecoilSwitchEffect-0", "Ram_RecoilSwitchEffect-1"]}
+MUTATIONS["Ram_RecoilSwitchEffect"] = {"source_symbol": "Ram_RecoilSwitchEffect", "before": "DealRecoilDamageToSelf(20u, f, d, e)", "after": "DealRecoilDamageToSelf(30u, f, d, e)", "case_ids": ["Ram_RecoilSwitchEffect-0", "Ram_RecoilSwitchEffect-1"]}
 # <<< factory-mutation Ram_RecoilSwitchEffect
-# >>> factory-completion Ram_RecoilSwitchEffect
-for _record in SCHEMA2_CASES["Ram_RecoilSwitchEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
-# <<< factory-completion Ram_RecoilSwitchEffect
 # >>> factory-mutation MagnetonLv35SelfdestructEffect
-MUTATIONS["MagnetonLv35SelfdestructEffect"]={"source_symbol":"MagnetonLv35SelfdestructEffect","before":"\twDamage = 100u;","after":"\twDamage = 101u;","case_ids":["MagnetonLv35SelfdestructEffect-0","MagnetonLv35SelfdestructEffect-1"]}
+MUTATIONS["MagnetonLv35SelfdestructEffect"] = {"source_symbol": "MagnetonLv35SelfdestructEffect", "before": "DealRecoilDamageToSelf(100u, f, d, e)", "after": "DealRecoilDamageToSelf(90u, f, d, e)", "case_ids": ["MagnetonLv35SelfdestructEffect-0", "MagnetonLv35SelfdestructEffect-1"]}
 # <<< factory-mutation MagnetonLv35SelfdestructEffect
-# >>> factory-completion MagnetonLv35SelfdestructEffect
-for _record in SCHEMA2_CASES["MagnetonLv35SelfdestructEffect"]:
-    _record["completion"]={"mode":"pre-ret","pc":0x7469,"bank":1}
-# <<< factory-completion MagnetonLv35SelfdestructEffect
 # >>> factory-mutation MagnetonLv28SelfdestructEffect
-MUTATIONS["MagnetonLv28SelfdestructEffect"]={"source_symbol":"MagnetonLv28SelfdestructEffect","before":"return (MagnetonLv28SelfdestructEffectResult){0u,0xA0u,0u,0u,0u,80u,0x00C8u};","after":"return (MagnetonLv28SelfdestructEffectResult){0u,0xA0u,0u,0u,0u,0u,0x00C8u};","case_ids":["MagnetonLv28SelfdestructEffect-0","MagnetonLv28SelfdestructEffect-1"]}
+MUTATIONS["MagnetonLv28SelfdestructEffect"] = {"source_symbol": "MagnetonLv28SelfdestructEffect", "before": "DealRecoilDamageToSelf(80u, f, d, e)", "after": "DealRecoilDamageToSelf(90u, f, d, e)", "case_ids": ["MagnetonLv28SelfdestructEffect-0", "MagnetonLv28SelfdestructEffect-1"]}
 # <<< factory-mutation MagnetonLv28SelfdestructEffect
-# >>> factory-completion MagnetonLv28SelfdestructEffect
-for _record in SCHEMA2_CASES["MagnetonLv28SelfdestructEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
-# <<< factory-completion MagnetonLv28SelfdestructEffect
 # >>> factory-mutation Scavenge_PlayerSelectTrainerEffect
 MUTATIONS["Scavenge_PlayerSelectTrainerEffect"]={"source_symbol":"Scavenge_PlayerSelectTrainerEffect","before":"\tuint8_t selected = hTempCardIndex_ff98;\n\thTempPlayAreaLocation_ffa1 = selected;","after":"\tuint8_t selected = (uint8_t)(hTempCardIndex_ff98 + 1u);\n\thTempPlayAreaLocation_ffa1 = selected;","case_ids":["Scavenge_PlayerSelectTrainerEffect-0","Scavenge_PlayerSelectTrainerEffect-1"]}
 # <<< factory-mutation Scavenge_PlayerSelectTrainerEffect
@@ -11141,12 +11144,8 @@ for _record in SCHEMA2_CASES["Scavenge_PlayerSelectTrainerEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x5F5E, "bank": 11}
 # <<< factory-completion Scavenge_PlayerSelectTrainerEffect
 # >>> factory-mutation WeezingSelfdestructEffect
-MUTATIONS["WeezingSelfdestructEffect"] = {"source_symbol": "WeezingSelfdestructEffect", "before": "DealDamageToAllBenchedPokemonResult WeezingSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\t(void)b;\n\t(void)c;\n\t(void)d;\n\t(void)e;\n\t(void)hl;\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 60u;", "after": "DealDamageToAllBenchedPokemonResult WeezingSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\t(void)b;\n\t(void)c;\n\t(void)d;\n\t(void)e;\n\t(void)hl;\n\twLoadedAttackAnimation = 0x7Au;\n\twDamage = 61u;", "case_ids": ["WeezingSelfdestructEffect-0", "WeezingSelfdestructEffect-1"]}
+MUTATIONS["WeezingSelfdestructEffect"] = {"source_symbol": "WeezingSelfdestructEffect", "before": "DealDamageToAllBenchedPokemon(10u, recoil.f, 0u, 0u, 0u, 0u, 0u)", "after": "DealDamageToAllBenchedPokemon(20u, recoil.f, 0u, 0u, 0u, 0u, 0u)", "case_ids": ["WeezingSelfdestructEffect-0", "WeezingSelfdestructEffect-1"]}
 # <<< factory-mutation WeezingSelfdestructEffect
-# >>> factory-completion WeezingSelfdestructEffect
-for _record in SCHEMA2_CASES["WeezingSelfdestructEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
-# <<< factory-completion WeezingSelfdestructEffect
 # >>> factory-mutation PayDayEffect
 MUTATIONS["PayDayEffect"] = {"source_symbol":"PayDayEffect","before":"void PayDayEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDraw1CardFromDeckText, 0u);\n\tif ((toss.f & 0x10u) != 0u) {","after":"void PayDayEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDraw1CardFromDeckText, 0u);\n\tif ((toss.f & 0x10u) == 0u) {","case_ids":["PayDayEffect-0","PayDayEffect-1"]}
 # <<< factory-mutation PayDayEffect
@@ -11154,12 +11153,8 @@ MUTATIONS["PayDayEffect"] = {"source_symbol":"PayDayEffect","before":"void PayDa
 MUTATIONS["StoneBarrage_MultiplierEffect"] = {"source_symbol": "StoneBarrage_MultiplierEffect", "before": "\t*gb_ptr(0xCE4E) = 0x00u;", "after": "\t*gb_ptr(0xCE4E) = 0x01u;", "case_ids": ["StoneBarrage_MultiplierEffect-0", "StoneBarrage_MultiplierEffect-1"]}
 # <<< factory-mutation StoneBarrage_MultiplierEffect
 # >>> factory-mutation EnergyConversion_AddToHandEffect
-MUTATIONS["EnergyConversion_AddToHandEffect"] = {"source_symbol": "EnergyConversion_AddToHandEffect", "before": "EnergyConversionAddToHandEffectResult EnergyConversion_AddToHandEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\t(void)f;\n\t(void)d;\n\t(void)e;\n\twLoadedAttackAnimation = 0x7Au;", "after": "EnergyConversionAddToHandEffectResult EnergyConversion_AddToHandEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\t(void)f;\n\t(void)d;\n\t(void)e;\n\twLoadedAttackAnimation = 0u;", "case_ids": ["EnergyConversion_AddToHandEffect-0", "EnergyConversion_AddToHandEffect-1"]}
+MUTATIONS["EnergyConversion_AddToHandEffect"] = {"source_symbol": "EnergyConversion_AddToHandEffect", "before": "DealRecoilDamageToSelf(10u, f, d, e)", "after": "DealRecoilDamageToSelf(20u, f, d, e)", "case_ids": ["EnergyConversion_AddToHandEffect-0", "EnergyConversion_AddToHandEffect-1"]}
 # <<< factory-mutation EnergyConversion_AddToHandEffect
-# >>> factory-completion EnergyConversion_AddToHandEffect
-for _record in SCHEMA2_CASES["EnergyConversion_AddToHandEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7469, "bank": 1}
-# <<< factory-completion EnergyConversion_AddToHandEffect
 # >>> factory-mutation SolarPower_RemoveStatusEffect
 MUTATIONS["SolarPower_RemoveStatusEffect"]={"source_symbol":"SolarPower_RemoveStatusEffect","before":"gb_write8((uint16_t)((flags.hl & 0xff00u) | DUELVARS_ARENA_CARD_STATUS), NO_STATUS);","after":"gb_write8((uint16_t)((flags.hl & 0xff00u) | DUELVARS_ARENA_CARD_STATUS), 1u);","case_ids":["SolarPower_RemoveStatusEffect-0","SolarPower_RemoveStatusEffect-1"]}
 # <<< factory-mutation SolarPower_RemoveStatusEffect

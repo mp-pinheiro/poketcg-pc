@@ -230,6 +230,10 @@ ATTACK_SCORE_SMOG = Fixture("lightning-2-attack-score-smog-entry")
 ATTACK_SCORE_SMOG_REGS = ATTACK_SCORE_SMOG.regs
 ATTACK_SCORE_SELFDESTRUCT = Fixture("lightning-2-attack-score-selfdestruct-entry")
 ATTACK_SCORE_SELFDESTRUCT_REGS = ATTACK_SCORE_SELFDESTRUCT.regs
+# lightning-2 at DoFrame 313673: Weezing's Selfdestruct after-damage effect,
+# with Weezing at 60 HP and one benched Pokemon on each side.
+SELFDESTRUCT = Fixture("lightning-2-selfdestruct-entry")
+SELFDESTRUCT_REGS = SELFDESTRUCT.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -374,3 +378,7 @@ def attack_score_smog_fixture(vram: bool = True, bank: int | None = None, **chan
 
 def attack_score_selfdestruct_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return ATTACK_SCORE_SELFDESTRUCT.case(vram=vram, bank=bank, **changes)
+
+
+def selfdestruct_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return SELFDESTRUCT.case(vram=vram, bank=bank, **changes)

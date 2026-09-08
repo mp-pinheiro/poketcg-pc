@@ -11007,30 +11007,16 @@ ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint
 /* >>> factory TakeDownEffect */
 TakeDownEffectResult TakeDownEffect(uint8_t f, uint8_t d, uint8_t e)
 {
-	const uint8_t saved_no_damage = wNoDamageOrEffect;
-	wLoadedAttackAnimation = 0x7Au;
-	wDamage = 30u;
-	wDamage_PTR[1] = 0u;
-	wDamageEffectiveness = 0u;
-	wNoDamageOrEffect = 0u;
-	wTempNonTurnDuelistCardID = wTempTurnDuelistCardID;
-	return (TakeDownEffectResult){0x40u, 0xA0u};
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(30u, f, d, e);
+	return (TakeDownEffectResult){recoil.a, recoil.f};
 }
 /* <<< factory TakeDownEffect */
 
 /* >>> factory JigglypuffDoubleEdgeEffect */
 JigglypuffDoubleEdgeEffectResult JigglypuffDoubleEdgeEffect(uint8_t f, uint8_t d, uint8_t e)
 {
-	(void)f;
-	(void)d;
-	(void)e;
-	wLoadedAttackAnimation = 0x7Au;
-	wDamage = 20u;
-	wDamageEffectiveness = 0u;
-	gb_write8(0xCCC3u, 1u);
-	gb_write8(0xCCC4u, 1u);
-	wNoDamageOrEffect = 0u;
-	return (JigglypuffDoubleEdgeEffectResult){0x40u, 0xA0u};
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(20u, f, d, e);
+	return (JigglypuffDoubleEdgeEffectResult){recoil.a, recoil.f};
 }
 /* <<< factory JigglypuffDoubleEdgeEffect */
 
@@ -11057,27 +11043,28 @@ RecyclePlayerSelectionResult Recycle_PlayerSelection(void)
 /* >>> factory GolemSelfdestructEffect */
 DealDamageToAllBenchedPokemonResult GolemSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
-	wLoadedAttackAnimation = 0x7Au;
-	wDamage = 100u;
-	gb_write8((uint16_t)(wDamage_ADDR + 1u), 0u);
-	wDamageEffectiveness = 0u;
-	wTempTurnDuelistCardID = 1u;
-	wTempNonTurnDuelistCardID = 1u;
-	wNoDamageOrEffect = 0u;
-	return (DealDamageToAllBenchedPokemonResult){0xC8u, 0xA0u, 0u, 0u, 0u, 100u, 0xC2C8u};
+	(void)a;
+	(void)b;
+	(void)c;
+	(void)hl;
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(100u, f, d, e);
+	wIsDamageToSelf = TRUE;
+	DealDamageToAllBenchedPokemonResult own =
+		DealDamageToAllBenchedPokemon(20u, recoil.f, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+	wIsDamageToSelf = FALSE;
+	DealDamageToAllBenchedPokemonResult other =
+		DealDamageToAllBenchedPokemon(20u, own.f, own.b, own.c, own.d, own.e, own.hl);
+	SwapTurn();
+	return (DealDamageToAllBenchedPokemonResult){other.a, other.f, other.b, other.c, other.d, other.e, other.hl};
 }
 /* <<< factory GolemSelfdestructEffect */
 
 /* >>> factory ChanseyDoubleEdgeEffect */
 ChanseyDoubleEdgeEffectResult ChanseyDoubleEdgeEffect(uint8_t f, uint8_t d, uint8_t e)
 {
-	wLoadedAttackAnimation = 0x7Au;
-	wDamage = 80u;
-	wDamage_PTR[1] = 0u;
-	wDamageEffectiveness = 0u;
-	wNoDamageOrEffect = 0u;
-	wTempNonTurnDuelistCardID = wTempTurnDuelistCardID;
-	return (ChanseyDoubleEdgeEffectResult){0x40u, 0xA0u};
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(80u, f, d, e);
+	return (ChanseyDoubleEdgeEffectResult){recoil.a, recoil.f};
 }
 /* <<< factory ChanseyDoubleEdgeEffect */
 
@@ -11091,13 +11078,12 @@ FriendshipSong_AddToBench50PercentEffectResult FriendshipSong_AddToBench50Percen
 /* >>> factory SubmissionEffect */
 SubmissionEffectResult SubmissionEffect(uint8_t a,uint8_t f,uint8_t b,uint8_t c,uint8_t d,uint8_t e,uint16_t hl)
 {
-	wLoadedAttackAnimation = 0x7Au;
-	wDamage = 20u;
-	gb_write8((uint16_t)(wDamage_ADDR + 1u), 0u);
-	wDamageEffectiveness = 0u;
-	wNoDamageOrEffect = 0u;
-	wTempNonTurnDuelistCardID = wTempTurnDuelistCardID;
-	return (SubmissionEffectResult){GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a, 0xA0u};
+	(void)a;
+	(void)b;
+	(void)c;
+	(void)hl;
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(20u, f, d, e);
+	return (SubmissionEffectResult){recoil.a, recoil.f};
 }
 /* <<< factory SubmissionEffect */
 
@@ -11105,49 +11091,68 @@ SubmissionEffectResult SubmissionEffect(uint8_t a,uint8_t f,uint8_t b,uint8_t c,
 MagnemiteSelfdestructEffectResult MagnemiteSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	(void)a;
-	wLoadedAttackAnimation = 0x7Au;
-	wDamage = 40u;
-	wDamage_PTR[1] = 0u;
-	wDamageEffectiveness = 0u;
-	wNoDamageOrEffect = 0u;
-	wTempNonTurnDuelistCardID = wTempTurnDuelistCardID;
-	return (MagnemiteSelfdestructEffectResult){0x50u, 0xA0u, 0x00u, 0x00u, 0x00u, 40u, 0xC2C8u};
+	(void)b;
+	(void)c;
+	(void)hl;
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(40u, f, d, e);
+	wIsDamageToSelf = TRUE;
+	DealDamageToAllBenchedPokemonResult own =
+		DealDamageToAllBenchedPokemon(10u, recoil.f, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+	wIsDamageToSelf = FALSE;
+	DealDamageToAllBenchedPokemonResult other =
+		DealDamageToAllBenchedPokemon(10u, own.f, own.b, own.c, own.d, own.e, own.hl);
+	SwapTurn();
+	return (MagnemiteSelfdestructEffectResult){other.a, other.f, other.b, other.c, other.d, other.e, other.hl};
 }
 /* <<< factory MagnemiteSelfdestructEffect */
 
 /* >>> factory Ram_RecoilSwitchEffect */
 RamRecoilSwitchEffectResult Ram_RecoilSwitchEffect(uint8_t f, uint8_t d, uint8_t e)
 {
-	wLoadedAttackAnimation = 0x7Au;
-	wDamage = 20u;
-	wDamageEffectiveness = 0u;
-	wTempTurnDuelistCardID = 0u;
-	wTempNonTurnDuelistCardID = 0u;
-	wNoDamageOrEffect = 0u;
-	return (RamRecoilSwitchEffectResult){0x00u, 0xA0u};
+	(void)DealRecoilDamageToSelf(20u, f, d, e);
+	HandleSwitchDefendingPokemonEffectResult switched = HandleSwitchDefendingPokemonEffect(hTemp_ffa0);
+	return (RamRecoilSwitchEffectResult){switched.a, switched.f};
 }
 /* <<< factory Ram_RecoilSwitchEffect */
 
 /* >>> factory MagnetonLv35SelfdestructEffect */
-DealDamageToAllBenchedPokemonResult MagnetonLv35SelfdestructEffect(uint8_t a,uint8_t f,uint8_t b,uint8_t c,uint8_t d,uint8_t e,uint16_t hl)
+DealDamageToAllBenchedPokemonResult MagnetonLv35SelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	(void)a;
-	wLoadedAttackAnimation = 0x7Au;
-	wDamage = 100u;
-	wDamage_PTR[1] = 0u;
-	wDamageEffectiveness = 0u;
-	wNoDamageOrEffect = 0u;
-	wTempNonTurnDuelistCardID = wTempTurnDuelistCardID;
-	return (DealDamageToAllBenchedPokemonResult){0x00u, 0xA0u, 0x00u, 0x00u, 0x00u, 100u, 0x00C8u};
+	(void)b;
+	(void)c;
+	(void)hl;
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(100u, f, d, e);
+	wIsDamageToSelf = TRUE;
+	DealDamageToAllBenchedPokemonResult own =
+		DealDamageToAllBenchedPokemon(20u, recoil.f, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+	wIsDamageToSelf = FALSE;
+	DealDamageToAllBenchedPokemonResult other =
+		DealDamageToAllBenchedPokemon(20u, own.f, own.b, own.c, own.d, own.e, own.hl);
+	SwapTurn();
+	return (DealDamageToAllBenchedPokemonResult){other.a, other.f, other.b, other.c, other.d, other.e, other.hl};
 }
 /* <<< factory MagnetonLv35SelfdestructEffect */
 
 /* >>> factory MagnetonLv28SelfdestructEffect */
-MagnetonLv28SelfdestructEffectResult MagnetonLv28SelfdestructEffect(uint8_t a,uint8_t f,uint8_t b,uint8_t c,uint8_t d,uint8_t e,uint16_t hl)
+MagnetonLv28SelfdestructEffectResult MagnetonLv28SelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
-	(void)a; (void)f; (void)b; (void)c; (void)d; (void)e; (void)hl;
-	wIsDamageToSelf=0u;
-	return (MagnetonLv28SelfdestructEffectResult){0u,0xA0u,0u,0u,0u,80u,0x00C8u};
+	(void)a;
+	(void)b;
+	(void)c;
+	(void)hl;
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(80u, f, d, e);
+	wIsDamageToSelf = TRUE;
+	DealDamageToAllBenchedPokemonResult own =
+		DealDamageToAllBenchedPokemon(20u, recoil.f, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+	wIsDamageToSelf = FALSE;
+	DealDamageToAllBenchedPokemonResult other =
+		DealDamageToAllBenchedPokemon(20u, own.f, own.b, own.c, own.d, own.e, own.hl);
+	SwapTurn();
+	return (MagnetonLv28SelfdestructEffectResult){other.a, other.f, other.b, other.c, other.d, other.e, other.hl};
 }
 /* <<< factory MagnetonLv28SelfdestructEffect */
 
@@ -11178,21 +11183,19 @@ Scavenge_PlayerSelectTrainerEffectResult Scavenge_PlayerSelectTrainerEffect(void
 DealDamageToAllBenchedPokemonResult WeezingSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	(void)a;
-	(void)f;
 	(void)b;
 	(void)c;
-	(void)d;
-	(void)e;
 	(void)hl;
-	wLoadedAttackAnimation = 0x7Au;
-	wDamage = 60u;
-	wDamage_PTR[1] = 0u;
-	wDamageEffectiveness = 0u;
-	wTempTurnDuelistCardID = 1u;
-	wTempNonTurnDuelistCardID = 1u;
-	wNoDamageOrEffect = 0u;
-	wIsDamageToSelf = 0u;
-	return (DealDamageToAllBenchedPokemonResult){0xC8u, 0xA0u, 0u, 0u, 0u, 60u, 0xC2C8u};
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(60u, f, d, e);
+	wIsDamageToSelf = TRUE;
+	DealDamageToAllBenchedPokemonResult own =
+		DealDamageToAllBenchedPokemon(10u, recoil.f, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+	wIsDamageToSelf = FALSE;
+	DealDamageToAllBenchedPokemonResult other =
+		DealDamageToAllBenchedPokemon(10u, own.f, own.b, own.c, own.d, own.e, own.hl);
+	SwapTurn();
+	return (DealDamageToAllBenchedPokemonResult){other.a, other.f, other.b, other.c, other.d, other.e, other.hl};
 }
 /* <<< factory WeezingSelfdestructEffect */
 
@@ -11234,14 +11237,24 @@ void StoneBarrage_MultiplierEffect(void)
 /* >>> factory EnergyConversion_AddToHandEffect */
 EnergyConversionAddToHandEffectResult EnergyConversion_AddToHandEffect(uint8_t f, uint8_t d, uint8_t e)
 {
-	(void)f;
-	(void)d;
-	(void)e;
-	wLoadedAttackAnimation = 0x7Au;
-	wDamage = 10u;
-	wDamageEffectiveness = 0u;
-	wNoDamageOrEffect = 0u;
-	return (EnergyConversionAddToHandEffectResult){0u, 0xA0u};
+	(void)DealRecoilDamageToSelf(10u, f, d, e);
+	/* The chosen discard-pile cards in hTempList, copied to wDuelTempList
+	 * up to and including the $ff terminator, each moved to the hand. */
+	uint16_t src = hTempList_ADDR;
+	uint16_t dst = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(src++);
+		gb_write8(dst++, card);
+		if (card == 0xFFu)
+			break;
+		(void)MoveDiscardPileCardToHand(card);
+		AddCardToHand(card);
+	}
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if ((turn.f & 0x10u) != 0u)
+		return (EnergyConversionAddToHandEffectResult){turn.a, turn.f};
+	DisplayCardListDetailsResult shown = DisplayCardListDetails();
+	return (EnergyConversionAddToHandEffectResult){shown.a, shown.f};
 }
 /* <<< factory EnergyConversion_AddToHandEffect */
 
