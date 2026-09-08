@@ -1,3 +1,4 @@
+from tests.cases._fixtures import retreat_stay_fixture as _retreat_stay_fixture, RETREAT_STAY_REGS as _RETREAT_STAY_REGS
 from tests.cases._fixtures import ai_ko_switch_fixture as _ai_ko_switch_fixture, AI_KO_SWITCH_REGS as _AI_KO_SWITCH_REGS, ai_retreat_decision_fixture as _ai_retreat_decision_fixture, AI_RETREAT_DECISION_REGS as _AI_RETREAT_DECISION_REGS, ai_retreat_switch_fixture as _ai_retreat_switch_fixture, AI_RETREAT_SWITCH_REGS as _AI_RETREAT_SWITCH_REGS, ai_try_retreat_fixture as _ai_try_retreat_fixture, AI_TRY_RETREAT_REGS as _AI_TRY_RETREAT_REGS
 """Oracle-diff cases for SetAIRetreatFlags (engine/duel/ai/retreat.asm:440-460)."""
 
@@ -167,6 +168,7 @@ CASES["AIDecideWhetherToRetreat"] = [
     dict(POISON, wram={W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL: b"\x01"}, expect_regs={"a": 0x01, "f": 0x00}),
     {"a": 0x5c, "f": 0x40, "b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44, "hl": 0x89ab, "wram": {W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL: b"\xff"}, "expect_regs": {"a": 0xff, "f": 0x00}},
     dict(_ai_retreat_decision_fixture(bank=5), **_AI_RETREAT_DECISION_REGS),
+    dict(_retreat_stay_fixture(vram=False, bank=5), **_RETREAT_STAY_REGS, read={0xCDBE: 1, 0xCDDA: 2}),
 ]
 # <<< factory AIDecideWhetherToRetreat
 
@@ -197,5 +199,5 @@ MUTATIONS["AITryToRetreat"] = {
 MUTATIONS["AIDecideBenchPokemonToSwitchTo"] = {"source_symbol": "AIDecideBenchPokemonToSwitchTo", "before": "\tuint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;", "after": "\tuint8_t count = 0u;", "case_ids": ["AIDecideBenchPokemonToSwitchTo-0", "AIDecideBenchPokemonToSwitchTo-1"]}
 # <<< factory-mutation AIDecideBenchPokemonToSwitchTo
 # >>> factory-mutation AIDecideWhetherToRetreat
-MUTATIONS["AIDecideWhetherToRetreat"] = {"source_symbol": "AIDecideWhetherToRetreat", "before": "\t\treturn (AIDecideWhetherToRetreatResult){a, 0u};", "after": "\t\treturn (AIDecideWhetherToRetreatResult){0u, 0x80u};", "case_ids": ["AIDecideWhetherToRetreat-0", "AIDecideWhetherToRetreat-1", "AIDecideWhetherToRetreat-2", "AIDecideWhetherToRetreat-3"]}
+MUTATIONS["AIDecideWhetherToRetreat"] = {"source_symbol": "AIDecideWhetherToRetreat", "before": "\t\tif ((f & 0x10u) == 0u)\n\t\t\tgoto active_cant_use_atk;\n\t\tLookForEnergyNeededForAttackInHandResult energy", "after": "\t\tif ((f & 0x10u) == 0u)\n\t\t\tgoto active_cant_ko_1;\n\t\tLookForEnergyNeededForAttackInHandResult energy", "case_ids": ["AIDecideWhetherToRetreat-5"]}
 # <<< factory-mutation AIDecideWhetherToRetreat

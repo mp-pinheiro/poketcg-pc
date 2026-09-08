@@ -414,15 +414,17 @@ AIDecideWhetherToRetreatResult AIDecideWhetherToRetreat(void)
 	CheckIfAnyAttackKnocksOutDefendingCardResult any = CheckIfAnyAttackKnocksOutDefendingCard();
 	a = any.a;
 	f = any.f;
+	/* retreat.asm:39-49: an attack that knocks out and is usable, or
+	 * unusable only for an energy the hand holds, argues against retreating. */
 	if ((f & 0x10u) != 0u) {
 		CheckIfSelectedAttackIsUnusableResult unusable = CheckIfSelectedAttackIsUnusable(a, f, b, c, d, e, hl);
 		a = unusable.a; f = unusable.f; b = unusable.b; c = unusable.c; d = unusable.d; e = unusable.e; hl = unusable.hl;
-		if ((f & 0x10u) != 0u) {
-			LookForEnergyNeededForAttackInHandResult energy = LookForEnergyNeededForAttackInHand();
-			a = energy.a; f = energy.f;
-			if ((f & 0x10u) != 0u)
-				goto active_cant_use_atk;
-		}
+		if ((f & 0x10u) == 0u)
+			goto active_cant_use_atk;
+		LookForEnergyNeededForAttackInHandResult energy = LookForEnergyNeededForAttackInHand();
+		a = energy.a; f = energy.f;
+		if ((f & 0x10u) != 0u)
+			goto active_cant_use_atk;
 	}
 	goto active_cant_ko_1;
 

@@ -186,6 +186,9 @@ PLAY_AREA_B_REGS = PLAY_AREA_B.regs
 # Pokemon in play, so the scan restarts from the arena.
 COWARDICE = Fixture("andrew-duel-cowardice-entry")
 COWARDICE_REGS = COWARDICE.regs
+# ryan-duel at DoFrame 210731: Ryan's AI weighs a retreat and decides against it.
+RETREAT_STAY = Fixture("ryan-duel-retreat-decision-entry")
+RETREAT_STAY_REGS = RETREAT_STAY.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -286,3 +289,7 @@ def play_area_b_fixture(vram: bool = True, bank: int | None = None, **changes: b
 
 def cowardice_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return COWARDICE.case(vram=vram, bank=bank, **changes)
+
+
+def retreat_stay_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return RETREAT_STAY.case(vram=vram, bank=bank, **changes)
