@@ -127,6 +127,9 @@ AIMainTurnLogicResult AIMainTurnLogic(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 		HandleAIPkmnPowersResult powers3 = HandleAIPkmnPowers(); a = powers3.a; f = powers3.f;
 		if ((f & 0x10u) != 0u) return (AIMainTurnLogicResult){f};
 		HandleAIGoGoRainDanceEnergyResult rain3 = HandleAIGoGoRainDanceEnergy(); a = rain3.a; f = rain3.f;
+		/* general.asm:133-134: the Oak re-run also transfers energy for the
+		 * attack before the phase 13 trainers; its random skip advances the RNG. */
+		HandleAIEnergyTransResult energy3 = HandleAIEnergyTrans(AI_ENERGY_TRANS_ATTACK); a = energy3.a; f = energy3.f;
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_13); a = trainer.a; f = trainer.f;
 	}
 	HandleAIEnergyTransResult bench = HandleAIEnergyTrans(AI_ENERGY_TRANS_TO_BENCH); a = bench.a; f = bench.f;
