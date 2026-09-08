@@ -41,7 +41,7 @@ typedef struct {
 	uint8_t f;
 	uint16_t hl;
 } ProcessTextResult;
-void ProcessText(uint16_t *hl);
+ProcessTextResult ProcessText(uint16_t *hl);
 void InitTextPrinting_ProcessText(uint16_t *hl);
 uint16_t SetupText(uint8_t d, uint8_t e);
 void InitTextPrinting(uint8_t d, uint8_t e);

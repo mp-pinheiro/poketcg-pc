@@ -471,7 +471,7 @@ void InitTextPrintingInTextbox(uint8_t a, uint8_t d, uint8_t e)
 	hTextLineLength = a;
 }
 
-static void process_text_core(uint16_t *hl)
+static ProcessTextResult process_text_core(uint16_t *hl)
 {
 	InitTextFormat();
 	uint8_t a;
@@ -490,12 +490,12 @@ static void process_text_core(uint16_t *hl)
 		Func_22ca(d, e);
 		*hl = ProcessSpecialTextCharacter(0, *hl).hl;
 	}
-	TerminateHalfWidthText(0, 0, *hl);
+	return TerminateHalfWidthText(0, 0, *hl);
 }
 
-void ProcessText(uint16_t *hl)
+ProcessTextResult ProcessText(uint16_t *hl)
 {
-	process_text_core(hl);
+	return process_text_core(hl);
 }
 
 void InitTextPrinting_ProcessText(uint16_t *hl)
@@ -503,7 +503,7 @@ void InitTextPrinting_ProcessText(uint16_t *hl)
 	uint8_t d = gb_read8(*hl); (*hl)++;
 	uint8_t e = gb_read8(*hl); (*hl)++;
 	InitTextPrinting(d, e);
-	process_text_core(hl);
+	(void)process_text_core(hl);
 }
 
 CopyTextResult CopyTextData(uint8_t a, uint16_t hl, uint16_t de)
