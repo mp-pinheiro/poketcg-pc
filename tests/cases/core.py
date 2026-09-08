@@ -1,3 +1,4 @@
+from tests.cases._fixtures import bench_count_fixture as _bench_count_fixture, BENCH_COUNT_REGS as _BENCH_COUNT_REGS
 from tests.cases._fixtures import fully_powered_fixture as _fully_powered_fixture, FULLY_POWERED_REGS as _FULLY_POWERED_REGS
 from tests.cases._fixtures import ai_trainer_phase5_fixture as _ai_trainer_phase5_fixture, AI_TRAINER_PHASE5_REGS as _AI_TRAINER_PHASE5_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_defending_ko_fixture as _ai_defending_ko_fixture, AI_DEFENDING_KO_REGS as _AI_DEFENDING_KO_REGS, power_screen_fixture as _power_screen_fixture, POWER_SCREEN_REGS as _POWER_SCREEN_REGS
@@ -3505,6 +3506,7 @@ CONTRACT["CountNumberOfSetUpBenchPokemon"] = {"compare": ("a", "f", "b", "c", "d
 CASES["CountNumberOfSetUpBenchPokemon"] = [
     {"wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x03", wSelectedAttack: b"\x00", 0xC2BC: b"\xFF"}, "expect_regs": {"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x01, "d": 0x03, "e": 0x00, "hl": 0xC2BC}},
     dict(POISON, wram={hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x5A", wSelectedAttack: b"\x01", 0xC2BC: b"\xFF"}, expect_regs={"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x01, "d": 0x5A, "e": 0x01, "hl": 0xC2BC}),
+    dict(_bench_count_fixture(vram=False, bank=5), **_BENCH_COUNT_REGS, read={0xCC23: 1, 0xFF9D: 1}),
 ]
 # <<< factory CountNumberOfSetUpBenchPokemon
 
@@ -6861,9 +6863,9 @@ MUTATIONS["CheckForBenchIDAtHalfHPAndCanUseSecondAttack"] = {
 # >>> factory-mutation CountNumberOfSetUpBenchPokemon
 MUTATIONS["CountNumberOfSetUpBenchPokemon"] = {
     "source_symbol": "CountNumberOfSetUpBenchPokemon",
-    "before": "\ta = b;\n\tf = (uint8_t)(b == 0u ? 0x80u : 0x10u);\n\treturn (CountNumberOfSetUpBenchPokemonResult){a, f, b, c, saved_location, saved_attack, hl};",
-    "after": "\ta = b;\n\tf = (uint8_t)(b == 0u ? 0x00u : 0x10u);\n\treturn (CountNumberOfSetUpBenchPokemonResult){a, f, b, c, saved_location, saved_attack, hl};",
-    "case_ids": ["CountNumberOfSetUpBenchPokemon-0", "CountNumberOfSetUpBenchPokemon-1"],
+    "before": "\t\t\tCheckCardEvolutionInHandOrDeckResult evolution = CheckCardEvolutionInHandOrDeck(deck_index);",
+    "after": "\t\t\tCheckCardEvolutionInHandOrDeckResult evolution = CheckCardEvolutionInHandOrDeck(card.a);",
+    "case_ids": ["CountNumberOfSetUpBenchPokemon-2"],
 }
 # <<< factory-mutation CountNumberOfSetUpBenchPokemon
 # >>> factory-mutation HandleLegendaryArticunoEnergyScoring

@@ -6215,15 +6215,18 @@ CountNumberOfSetUpBenchPokemonResult CountNumberOfSetUpBenchPokemon(uint8_t a, u
 		uint8_t half_max_hp = (uint8_t)((wLoadedCard1HP >> 1) | (wLoadedCard1HP << 7));
 		if (half_max_hp >= d)
 			continue;
+		/* `pop de` restores the bench deck index into d before the
+		 * evolution search; the HP read is gone by then. */
+		d = deck_index;
 		if ((wLoadedCard1AIInfo & HAS_EVOLUTION) != 0u) {
-			CheckCardEvolutionInHandOrDeckResult evolution = CheckCardEvolutionInHandOrDeck(d);
+			CheckCardEvolutionInHandOrDeckResult evolution = CheckCardEvolutionInHandOrDeck(deck_index);
 			if ((evolution.f & 0x10u) != 0u)
 				continue;
 		}
 		hTempPlayAreaLocation_ff9d = c;
 		wSelectedAttack = SECOND_ATTACK;
 		CheckIfSelectedAttackIsUnusableResult unusable =
-			CheckIfSelectedAttackIsUnusable(SECOND_ATTACK, 0u, b, c, d, deck_index, hl);
+			CheckIfSelectedAttackIsUnusable(SECOND_ATTACK, 0u, b, c, deck_index, e, hl);
 		if ((unusable.f & 0x10u) != 0u)
 			continue;
 		b = (uint8_t)(b + 1u);

@@ -212,6 +212,11 @@ ENERGY_REMOVAL_REGS = ENERGY_REMOVAL.regs
 # evolution flagged, so the evolution search runs on the arena deck index.
 FULLY_POWERED = Fixture("gene-duel-fully-powered-entry")
 FULLY_POWERED_REGS = FULLY_POWERED.regs
+# jennifer-duel at DoFrame 259030: Jennifer's bench of three Pikachu, the
+# first at full HP with its Raichu in hand, so the set-up count must search
+# evolutions by the bench deck index rather than the HP just read.
+BENCH_COUNT = Fixture("jennifer-duel-bench-count-entry")
+BENCH_COUNT_REGS = BENCH_COUNT.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -340,3 +345,7 @@ def energy_removal_fixture(vram: bool = True, bank: int | None = None, **changes
 
 def fully_powered_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return FULLY_POWERED.case(vram=vram, bank=bank, **changes)
+
+
+def bench_count_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return BENCH_COUNT.case(vram=vram, bank=bank, **changes)

@@ -1,0 +1,32 @@
+# From gene-duel's end: out of the Rock Club, the overworld map to the Lightning
+# Club, into the club room, Jennifer's duel to its end under the pilot's WRAM
+# policy, then her after-duel script.
+dismiss
+hold DOWN 120
+idle
+hold DOWN 120
+idle
+hold DOWN 120
+idle
+hold DOWN 120
+idle
+press A
+idle
+dismiss
+hold UP 140
+idle
+dismiss
+hold UP 48
+idle
+hold RIGHT 16
+idle
+hold UP 4
+idle
+peek
+press A
+idle
+yes
+duel
+dismiss
+peek
+shot jennifer-end

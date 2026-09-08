@@ -423,6 +423,7 @@ def play_duel(driver: "Driver", max_actions: int = 1200) -> None:
     reader = driver.reader
     goal: tuple | None = None
     failed_attaches: set[int] = set()
+    attack_pressed = False
     seen: dict[str, int] = {}
     # wDuelFinished keeps the last duel's verdict until the next duel starts:
     # after the challenge is accepted, A through the challenger's last lines
@@ -464,11 +465,20 @@ def play_duel(driver: "Driver", max_actions: int = 1200) -> None:
                 if reader.at(ALREADY_PLAYED_ENERGY) == 0:
                     failed_attaches.add(goal[1])
                 goal = None
+            elif goal is not None and goal[0] in ("attack", "attacked") and attack_pressed:
+                # ATTACK came straight back to the menu: the active is asleep,
+                # paralyzed or under a can't-attack effect, or no attack is
+                # selectable. The turn ends.
+                print(f"duel: ordinal {len(driver.masks)} turn {reader.at(DUEL_TURNS)} attack refused, done")
+                goal = ("done",)
             if goal is None:
+                attack_pressed = False
                 goal = decide_turn(reader, failed_attaches)
                 print(f"duel: ordinal {len(driver.masks)} turn {reader.at(DUEL_TURNS)} goal {goal}")
             target = {"attach": MENU_HAND, "attack": MENU_ATTACK, "done": MENU_DONE}[goal[0]]
             press = menu_press(reader.at(CURRENT_DUEL_MENU_ITEM), target)
+            if press == A and target == MENU_ATTACK:
+                attack_pressed = True
         elif prompt == "hand":
             # The list shows wDuelTempList's order, which is the hand sorted by
             # id when the player turned sorting on; the goal names the card.
