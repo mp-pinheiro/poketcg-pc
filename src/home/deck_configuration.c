@@ -2082,17 +2082,22 @@ HandleDeckCardSelectionListResult HandleDeckCardSelectionList(void)
 		uint8_t count = wCardListNumCursorPositions;
 		if ((dpad & (1u << B_PAD_UP)) != 0u) {
 			wMenuInputSFX = SFX_CURSOR; a = (uint8_t)(cursor - 1u);
-			if ((a & 0x80u) != 0u && wCardListVisibleOffset != 0u) { --wCardListVisibleOffset; DispatchCardListUpdateFunction(); a = 0u; }
+			if ((a & 0x80u) != 0u) {
+				if (wCardListVisibleOffset == 0u) { wMenuInputSFX = FALSE; }
+				else { --wCardListVisibleOffset; DispatchCardListUpdateFunction(); }
+				a = 0u;
+			}
+			(void)DrawListCursor_Invisible(); wCardListCursorPos = a; wCheckMenuCursorBlinkCounter = 0u;
 		} else if ((dpad & (1u << B_PAD_DOWN)) != 0u) {
 			wMenuInputSFX = SFX_CURSOR; a = (uint8_t)(cursor + 1u);
 			if (a >= count) { if (wUnableToScrollDown == 0u) { ++wCardListVisibleOffset; DispatchCardListUpdateFunction(); --a; } else { --a; wMenuInputSFX = FALSE; } }
-		}
-		(void)DrawListCursor_Invisible(); wCardListCursorPos = a; wCheckMenuCursorBlinkCounter = 0u;
-	} else if (wced2 != 0u) {
-		if ((dpad & (1u << B_PAD_LEFT)) != 0u) {
-			uint8_t e = GetSelectedVisibleCardID(); RemoveCardFromDeckAndUpdateCount(out.b, out.c, out.d, e, out.hl);
-		} else if ((dpad & (1u << B_PAD_RIGHT)) != 0u) {
-			AddCardToDeckAndUpdateCount(GetSelectedVisibleCardID());
+			(void)DrawListCursor_Invisible(); wCardListCursorPos = a; wCheckMenuCursorBlinkCounter = 0u;
+		} else if (wced2 != 0u) {
+			if ((dpad & (1u << B_PAD_LEFT)) != 0u) {
+				uint8_t e = GetSelectedVisibleCardID(); RemoveCardFromDeckAndUpdateCount(out.b, out.c, out.d, e, out.hl);
+			} else if ((dpad & (1u << B_PAD_RIGHT)) != 0u) {
+				AddCardToDeckAndUpdateCount(GetSelectedVisibleCardID());
+			}
 		}
 	}
 	hffb3 = wCardListCursorPos;
@@ -2105,8 +2110,11 @@ HandleDeckCardSelectionListResult HandleDeckCardSelectionList(void)
 		hffb3 = MENU_CANCEL; PlaySFXConfirmOrCancel(MENU_CANCEL); out.a = MENU_CANCEL; out.f = 0x10u; return out;
 	}
 	if (wMenuInputSFX != 0u) PlaySFX(wMenuInputSFX);
-	uint8_t counter = (uint8_t)(wCheckMenuCursorBlinkCounter + 1u); wCheckMenuCursorBlinkCounter = counter;
-	if ((counter & CURSOR_BLINK_PERIOD_MASK) == 0u) { if ((counter & (1u << B_CURSOR_BLINK_PERIOD)) == 0u) DrawListCursor(wVisibleCursorTile); else DrawListCursor_Invisible(); }
+	/* deck_configuration.asm:1927-1935: the period test reads the counter
+	 * before the increment, the phase bit after it. */
+	uint8_t before = wCheckMenuCursorBlinkCounter;
+	uint8_t counter = (uint8_t)(before + 1u); wCheckMenuCursorBlinkCounter = counter;
+	if ((before & CURSOR_BLINK_PERIOD_MASK) == 0u) { if ((counter & (1u << B_CURSOR_BLINK_PERIOD)) == 0u) DrawListCursor(wVisibleCursorTile); else DrawListCursor_Invisible(); }
 	return out;
 }
 /* <<< factory HandleDeckCardSelectionList */

@@ -3,6 +3,8 @@
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
+from tests.cases._fixtures import card_list_select_fixture as _card_list_select_fixture, CARD_LIST_SELECT_REGS as _CARD_LIST_SELECT_REGS
+
 CONTRACT = {}
 CASES = {}
 
@@ -914,6 +916,14 @@ CASES["HandleDeckCardSelectionList"] = [
     {"wram": {hDPadHeld: b"\x40", hKeysPressed: b"\x00", wCardListCursorPos: b"\x02", wCardListNumCursorPositions: b"\x04", wCardListVisibleOffset: b"\x01", wCardListHandlerFunction: b"\x00", wCheckMenuCursorBlinkCounter: b"\x01"}, "read": {hffb3: 1}},
     {"wram": {hDPadHeld: b"\x00", hKeysPressed: b"\x01", wCardListCursorPos: b"\x03", wCardListHandlerFunction: b"\x00", wCheckMenuCursorBlinkCounter: b"\x01"}, "read": {hffb3: 1}},
     dict(POISON, wram={hDPadHeld: b"\x00", hKeysPressed: b"\x00", wCardListCursorPos: b"\x03", wCardListHandlerFunction: b"\x00", wCheckMenuCursorBlinkCounter: b"\x09"}, read={hffb3: 1}),
+    # Counter 0, no input: the period test passes on the pre-increment value and
+    # the visible cursor lands in the BG map (deck_configuration.asm:1927-1935).
+    dict(_card_list_select_fixture(bank=2), **_CARD_LIST_SELECT_REGS, read={0xCEA3: 1, 0xFFB3: 1}),
+    # UP at the top of an unscrolled list: the cursor stays at 0 and the cursor
+    # SFX is cancelled (.asm_9b5a), not left at 0xFF with the SFX armed.
+    {"wram": {hDPadHeld: b"\x40", hKeysPressed: b"\x00", wCardListCursorPos: b"\x00", wCardListNumCursorPositions: b"\x04", wCardListVisibleOffset: b"\x00", wCardListHandlerFunction: b"\x00", wCheckMenuCursorBlinkCounter: b"\x05"}, "read": {hffb3: 1, wCardListCursorPos: 1, wMenuInputSFX: 1, wCheckMenuCursorBlinkCounter: 1}},
+    # RIGHT with wced2 clear: neither a cursor move nor a counter reset.
+    {"wram": {hDPadHeld: b"\x10", hKeysPressed: b"\x00", wCardListCursorPos: b"\x02", wCardListNumCursorPositions: b"\x04", wCardListVisibleOffset: b"\x00", wCardListHandlerFunction: b"\x00", wCheckMenuCursorBlinkCounter: b"\x05", wced2: b"\x00"}, "read": {hffb3: 1, wCardListCursorPos: 1, wMenuInputSFX: 1, wCheckMenuCursorBlinkCounter: 1}},
 ]
 # <<< factory HandleDeckCardSelectionList
 
@@ -1535,7 +1545,7 @@ MUTATIONS["TryAddCardToDeck"] = {"source_symbol": "TryAddCardToDeck", "before": 
 MUTATIONS["AddCardToDeckAndUpdateCount"] = {"source_symbol": "AddCardToDeckAndUpdateCount", "before": "\t\treturn (AddCardToDeckAndUpdateCountResult){r.a, r.f, e};", "after": "\t\treturn (AddCardToDeckAndUpdateCountResult){r.a, r.f, r.a};", "case_ids": ["AddCardToDeckAndUpdateCount-0", "AddCardToDeckAndUpdateCount-1"]}
 # <<< factory-mutation AddCardToDeckAndUpdateCount
 # >>> factory-mutation HandleDeckCardSelectionList
-MUTATIONS["HandleDeckCardSelectionList"] = {"source_symbol": "HandleDeckCardSelectionList", "before": "HandleDeckCardSelectionListResult HandleDeckCardSelectionList(void)\n{\n\twMenuInputSFX = FALSE;", "after": "HandleDeckCardSelectionListResult HandleDeckCardSelectionList(void)\n{\n\twMenuInputSFX = FALSE;\n\twCardListCursorPos = 0x40u;", "case_ids": ["HandleDeckCardSelectionList-0", "HandleDeckCardSelectionList-2", "HandleDeckCardSelectionList-3"]}
+MUTATIONS["HandleDeckCardSelectionList"] = {"source_symbol": "HandleDeckCardSelectionList", "before": "\tif ((before & CURSOR_BLINK_PERIOD_MASK) == 0u)", "after": "\tif ((counter & CURSOR_BLINK_PERIOD_MASK) == 0u)", "case_ids": ["HandleDeckCardSelectionList-4"]}
 # <<< factory-mutation HandleDeckCardSelectionList
 # >>> factory-mutation PrintCurDeckNumberAndName
 MUTATIONS["PrintCurDeckNumberAndName"] = {
