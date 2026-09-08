@@ -104,7 +104,7 @@ INSTRUCTION = re.compile(r"^\s+[a-z][a-z0-9_.]*\b")
 LOOP_KEYWORDS = ("for (", "for(", "while (", "while(", "do {", "goto ")
 
 
-ASM_CALL = re.compile(r"^\s*(?:call|farcall)\b", re.IGNORECASE)
+ASM_CALL = re.compile(r"^\s*(?:call|farcall|bank1call|callfar)\b", re.IGNORECASE)
 
 
 def asm_shapes() -> tuple[set[str], dict[str, int], dict[str, int]]:
@@ -162,7 +162,12 @@ def audit_backedges(bodies: dict[str, tuple[str, str]],
 
 
 CALLEE = re.compile(r"\b([A-Za-z_]\w*)\s*\(")
-NOT_A_CALL = frozenset(("if", "while", "for", "switch", "sizeof", "return"))
+# Memory accessors and casts are not calls in the asm sense: a body made of
+# them alone has dropped every routine the asm calls.
+NOT_A_CALL = frozenset(("if", "while", "for", "switch", "sizeof", "return",
+                        "gb_read8", "gb_write8", "gb_read16", "gb_write16",
+                        "gb_ptr", "rom_ptr", "uint8_t", "uint16_t", "int",
+                        "defined", "static_assert", "assert"))
 
 
 def audit_stubs(bodies: dict[str, tuple[str, str]],
@@ -181,6 +186,35 @@ def audit_stubs(bodies: dict[str, tuple[str, str]],
                      "asm_calls": asm_calls.get(name, 0),
                      "c_calls": len(callees),
                      "dropped_calls": max(0, asm_calls.get(name, 0) - len(callees))})
+    return rows
+
+
+def audit_echoes(bodies: dict[str, tuple[str, str]],
+                 sizes: dict[str, int],
+                 asm_calls: dict[str, int]) -> list[dict[str, Any]]:
+    """Bodies of several statements that call nothing where the asm calls.
+
+    `stubs` catches the one-statement body. This is its larger cousin: a body
+    that writes the bytes the oracle observed and returns the registers it
+    reported, with no callee at all. WeezingSelfdestructEffect had nine such
+    statements for a thirteen-line asm routine whose work is three calls, and
+    a `pre-ret` cut at the third call's entry made the echo pass. Ranked by
+    the number of asm calls the body drops.
+    """
+    rows = []
+    for name, (filename, body) in sorted(bodies.items()):
+        calls = asm_calls.get(name, 0)
+        statements = sum(1 for line in body.splitlines() if line.strip().endswith(";"))
+        if calls < 2 or statements < 2:
+            continue
+        callees = {c for c in CALLEE.findall(body) if c not in NOT_A_CALL}
+        if callees:
+            continue
+        rows.append({"routine": name, "file": filename,
+                     "asm_instructions": sizes.get(name, 0),
+                     "c_statements": statements,
+                     "asm_calls": calls})
+    rows.sort(key=lambda row: (-row["asm_calls"], row["routine"]))
     return rows
 
 
@@ -293,17 +327,27 @@ def audit_cuts() -> list[dict[str, Any]]:
             if landing is None or landing == name or pc == address:
                 continue
             direct = targets.get(name, set())
-            # A cut can hide one level down: GameEvent_Duel `bank1call`s
-            # StartDuel_VSAIOpp and its pc lands in LoadPlayerDeck, which only
-            # the callee calls.
-            reachable = set(direct)
-            for callee in direct:
-                reachable |= targets.get(callee, set())
+            # A cut can hide any number of levels down: GameEvent_Duel
+            # `bank1call`s StartDuel_VSAIOpp and its pc lands in LoadPlayerDeck,
+            # which only the callee calls; the eleven recoil effects cut at
+            # PlayAttackAnimation_DealAttackDamageSimple three calls below them,
+            # and every one of their bodies was a hand-written echo of the
+            # prefix. Walk the call graph to a fixed point.
+            reachable: set[str] = set()
+            depth_of: dict[str, int] = {}
+            frontier = set(direct)
+            depth = 1
+            while frontier and depth <= 8:
+                for callee in frontier:
+                    depth_of.setdefault(callee, depth)
+                reachable |= frontier
+                frontier = set().union(*(targets.get(callee, set()) for callee in frontier)) - reachable
+                depth += 1
             if landing not in reachable:  # a tail jump, not a call
                 continue
             rows.append({"routine": name, "file": path.name, "pc": f"{pc:04X}",
                          "cuts_at": landing,
-                         "depth": 1 if landing in direct else 2})
+                         "depth": depth_of[landing]})
     return rows
 
 
@@ -457,7 +501,7 @@ def counts() -> dict[str, int]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("audit", choices=("loops", "banks", "jumps", "overrides",
-                                          "backedges", "stubs", "cuts",
+                                          "backedges", "stubs", "echoes", "cuts",
                                           "truncated", "shadows", "all"))
     args = parser.parse_args(argv)
 
@@ -473,10 +517,13 @@ def main(argv: list[str] | None = None) -> int:
         rows = audit_overrides()
     elif args.audit == "cuts":
         rows = audit_cuts()
-    elif args.audit in ("backedges", "stubs"):
+    elif args.audit in ("backedges", "stubs", "echoes"):
         looping, sizes, asm_calls = asm_shapes()
-        rows = (audit_backedges(bodies, looping) if args.audit == "backedges"
-                else audit_stubs(bodies, sizes, asm_calls))
+        rows = {
+            "backedges": lambda: audit_backedges(bodies, looping),
+            "stubs": lambda: audit_stubs(bodies, sizes, asm_calls),
+            "echoes": lambda: audit_echoes(bodies, sizes, asm_calls),
+        }[args.audit]()
     else:
         banks, jumps = asm_routines()
         rows = {

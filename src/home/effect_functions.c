@@ -11889,17 +11889,16 @@ PokemonBreeder_PlayerSelectionResult PokemonBreeder_PlayerSelection(void)
 	hTemp_ffa0 = hTempCardIndex_ff98;
 	(void)DrawWideTextBox_WaitForInput(ChooseBasicPokemonToEvolveText);
 	HasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();
-	for (;;) {
+	EvolveResult evolve;
+	do {
 		PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
 		if ((screen.f & 0x10u) != 0u)
 			return (PokemonBreeder_PlayerSelectionResult){screen.a, (uint8_t)((alive.f & 0x80u) | 0x10u)};
 		uint8_t location = hTempPlayAreaLocation_ff9d;
 		hTempPlayAreaLocation_ffa1 = location;
-		EvolveResult evolve = CheckIfCanEvolveInto_BasicToStage2(hTemp_ffa0, location);
-		if ((evolve.f & 0x10u) != 0u)
-			continue;
-		return (PokemonBreeder_PlayerSelectionResult){evolve.a, evolve.a == 0u ? 0x80u : 0u};
-	}
+		evolve = CheckIfCanEvolveInto_BasicToStage2(hTemp_ffa0, location);
+	} while ((evolve.f & 0x10u) != 0u);
+	return (PokemonBreeder_PlayerSelectionResult){evolve.a, evolve.a == 0u ? 0x80u : 0u};
 }
 /* <<< factory PokemonBreeder_PlayerSelection */
 
