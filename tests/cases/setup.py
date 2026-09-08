@@ -48,11 +48,14 @@ CASES = {
     ],
     "DetectConsole": [
         # DMG: entry a is not BOOTUP_A_CGB. rWBK seeded and must survive untouched.
-        {"a": 0x00, "wram": {RWBK: b"\xEE"},
+        # $FE is the CGB readback shape (bank 6, upper bits set): the native
+        # register model normalises every SVBK store (src/mem.c), PyBoy hands
+        # back the raw byte, so only a normalised seed compares on both lanes.
+        {"a": 0x00, "wram": {RWBK: b"\xFE"},
          "read": {WCONSOLE: 1, RWBK: 1},
          "evidence": "intentional-transform",
          "reason": "Phase 1 drops DetectSGB and InitSGB from the native console probe."},
-        dict(POISON, a=BOOTUP_A_DMG, wram={RWBK: b"\xEE"},
+        dict(POISON, a=BOOTUP_A_DMG, wram={RWBK: b"\xFE"},
              read={WCONSOLE: 1, RWBK: 1},
              evidence="intentional-transform",
              reason="Phase 1 drops DetectSGB and InitSGB from the native console probe."),

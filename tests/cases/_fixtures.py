@@ -39,6 +39,16 @@ class Fixture:
 
     def __init__(self, name: str):
         data = json.load(open(Path(__file__).resolve().parent.parent / "fixtures" / f"{name}.json"))
+        self._load(name, data)
+
+    @classmethod
+    def from_capture(cls, data: dict) -> "Fixture":
+        """A capture that never touched disk: the sweep's in-memory entries."""
+        fixture = cls.__new__(cls)
+        fixture._load(data.get("entry", "?"), data)
+        return fixture
+
+    def _load(self, name: str, data: dict) -> None:
         self.name = name
         self.ordinal = data["ordinal"]
         self.entry = data["entry"]

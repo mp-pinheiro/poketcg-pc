@@ -66,9 +66,14 @@ the next session divergence comes from.
 The primary gate. A session is one byte of input per DoFrame. The reference
 replays it once and caches a CRC-32 of the masked game state (WRAM, HRAM,
 OAM, VRAM) at every DoFrame; the port writes the same digest stream; the first
-ordinal whose digests differ is exact, found in one native run of ~30 s for
-the whole game. Only then does one targeted reference capture name the bytes,
-their RAM symbols and the routine that last wrote them.
+ordinal whose digests differ is exact, found in one native run (~5 s of CPU
+for 340k DoFrames: the lanes build `RelWithDebInfo`, the pack is a per-bank
+map, and a headless replay never renders). Only then does one targeted
+reference capture name the bytes, their RAM symbols and the routine that last
+wrote them; the reference seeks to a savestate checkpoint below the ordinal
+(every 5,000 anchors, written by the stream build), so a capture or a
+`routines` listing takes seconds, not a boot replay. A clean verify of the
+longest session is ~40 s wall; a diverged one about two minutes.
 
 Sessions come from the ROM, not from a human:
 
@@ -127,6 +132,43 @@ asm instruction decides; `audio-catalog` owns audio parity. `hDPadRepeat` is
 compared even though the ledger excludes it: its exclusion is a frame-axis
 argument. IO readback and palette RAM are the scenario census's. Do not add to
 either list to move `confirmed`.
+
+### The sweep: every routine the ROM ran, diffed at once
+
+```sh
+just session-sweep NAME [--after K] [--until K] [--json PATH]
+```
+
+One reference replay of the session (from its savestate checkpoints) captures
+the first entry of every ported routine the ROM enters in the window; each
+entry becomes a fixture case in memory and is oracle-diffed with the
+observation widened to every byte the reference wrote. ~1,100 routines in ~20
+minutes, no model in the loop. Rows come out with memory mismatches first:
+
+```
+ROW ordinal=<K> routine=<R> status=fail memory   $CCB9: oracle 2800 != C 1400 | ...
+ROW ordinal=<K> routine=<R> status=fail registers f: oracle $80 != C $00
+ROW ordinal=<K> routine=<R> status=error|wedged  OracleError: ...
+SWEEP <name> after=0 until=<n> routines=1140 failing=82 errors=15 wedged=6
+```
+
+Read the rows in this order:
+
+- `memory` rows are game state the port computes differently from a live
+  seed. A coin-toss routine (`PinMissile_MultiplierEffect`,
+  `HandleSandAttackOrSmokescreenSubstatus`) is noise here: the PyBoy lane runs
+  many DoFrames per tick, so `UpdateRNGSources` advances differently inside
+  the routine and the tosses land differently. Every other memory row is a
+  lead: `capture` the entry, build the fixture case, port from the asm.
+- `registers` rows are exit registers no caller may read (a screen routine's
+  leftovers threaded out of an effect). Real, low priority: the session loop
+  never reports them because WRAM is identical.
+- `error` rows hit the oracle's frame budget: the routine waits for input the
+  case's two-entry `keys` timeline does not supply. Not comparable this way.
+- `wedged` rows hung the PyBoy frame; the sweep marks them and moves on.
+
+The sweep is the worklist for a cheaper model: each row carries the routine,
+the ordinal to `capture` at, and the bytes that differ.
 
 ### Session decision table
 

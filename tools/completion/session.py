@@ -26,6 +26,7 @@ import argparse
 import ctypes
 import hashlib
 import json
+import os
 import struct
 import subprocess
 import sys
@@ -500,6 +501,164 @@ def reference_capture(name: str, masks: list[int], frames: int, ordinal: int,
 
 
 FIXTURES = ROOT / "tests" / "fixtures"
+
+
+# Interrupt-context and driver routines: entered from the timer or serial ISR
+# with the driver mid-note, so a standalone call from a live state never
+# returns (Music1_note wedged PyBoy for its whole wall budget). The audio digest
+# compares the driver's effect per anchor instead.
+SWEEP_SKIP_PREFIXES = ("Music", "Sound", "SFX", "Sfx", "Audio", "Timer", "Serial", "VBlank",
+                       "Func_fc26c", "PlaySong", "PlaySFX", "PauseSong", "ResumeSong")
+SWEEP_BUDGETS = {"instruction_budget": 10_000_000, "cycle_budget": 40_000_000}
+
+
+def sweep_entries(name: str, *, after: int, until: int | None, limit: int) -> tuple[list[dict[str, Any]], int]:
+    """One reference replay: the first entry (registers, SP, WRAM, HRAM, VRAM
+    bank 0) of every ported, comparable routine in the session window."""
+    sys.path.insert(0, str(ROOT / "tests"))
+    sys.path.insert(0, str(ROOT))
+    import test_leaves  # noqa: E402
+    cases, contracts = test_leaves.load_cases()
+    special = {fn for fn, rows in cases.items()
+               if any(row.get("_completion", {}).get("mode", "return") != "return"
+                      or not row.get("oracle", True)
+                      or (isinstance(row.get("keys"), list) and len(row["keys"]) > 2) for row in rows)}
+    setups = {fn: rows[0]["setup"] for fn, rows in cases.items() if rows and rows[0].get("setup")}
+    masks, meta = load_session(name)
+    frames = reference_frames(masks, meta)
+    until = until or len(masks)
+    padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
+    candidates, by_bank_address = refstream.routine_entry_addresses()
+    entries: dict[str, dict[str, Any]] = {}
+    with refstream.Core(padded, pokes=meta["pokes"]) as core:
+        core.input_axis = "ordinal"
+        if after > 0:
+            core.seek(checkpoint_directory(name, masks, frames, meta["pokes"]), after)
+        registers = (ctypes.c_int * 10)()
+
+        def on_exec(address: int, _cycle: int) -> None:
+            if address not in candidates or core.ordinal < after:
+                return
+            bank = 0 if address < 0x4000 else core.bank_of(address)
+            label = by_bank_address.get((bank, address))
+            if (label is None or label in entries or label not in contracts or label in special
+                    or label.startswith(SWEEP_SKIP_PREFIXES)):
+                return
+            core.library.gambatte_getregs(core.core, registers)
+            regions = reference_regions(core)
+            entries[label] = {
+                "session": name, "ordinal": core.ordinal, "entry": label, "bank": bank,
+                "fields": list(contracts[label]), "setup": setups.get(label),
+                "regs": {"a": registers[2] & 0xFF, "b": registers[3] & 0xFF, "c": registers[4] & 0xFF,
+                         "d": registers[5] & 0xFF, "e": registers[6] & 0xFF, "f": registers[7] & 0xF0,
+                         "hl": ((registers[8] & 0xFF) << 8) | (registers[9] & 0xFF)},
+                "sp": registers[1] & 0xFFFF,
+                "wram": regions["wram"].hex(), "hram": regions["hram"].hex(),
+                "vram0": regions["vram"][:0x2000].hex(),
+            }
+
+        core.install_exec(on_exec)
+        core.run(frames, stop=lambda: core.ordinal >= until or (limit and len(entries) >= limit))
+    return sorted(entries.values(), key=lambda e: e["ordinal"]), until
+
+
+def sweep_worker(entries_path: Path, start: int, out_path: Path) -> int:
+    """Oracle-diff entries[start:] in this process, one JSON line each,
+    flushed as it goes: a routine that wedges PyBoy takes the process with it,
+    and the parent reads how far it got."""
+    import importlib
+    sys.path.insert(0, str(ROOT / "tests"))
+    sys.path.insert(0, str(ROOT))
+    import test_leaves  # noqa: E402
+    from pyboy_oracle import Oracle  # noqa: E402
+    fixtures = importlib.import_module("tests.cases._fixtures")
+    entries = json.loads(entries_path.read_text())
+    rom = os.environ.get("POKETCG_ROM", str(ROOT / "poketcg" / "poketcg.gbc"))
+    os.environ.setdefault("POKETCG_ROM", rom)
+    probe = scenario_module.BINARY.with_name("poketcg_probe")
+    with Oracle(rom) as oracle, out_path.open("a") as out:
+        for index in range(start, len(entries)):
+            entry = entries[index]
+            label = entry["entry"]
+            fixture = fixtures.Fixture.from_capture(entry)
+            case = dict(fixture.case(bank=entry["bank"] or None), **entry["regs"], **SWEEP_BUDGETS)
+            if entry.get("setup"):
+                case["setup"] = entry["setup"]
+            try:
+                bad = test_leaves.direct_case(oracle, probe, label, tuple(entry["fields"]), case, auto_observe=True)
+                status = "fail" if bad else "ok"
+            except Exception as exc:  # noqa: BLE001 - a lane that could not run is a row, not a crash
+                bad = [f"{type(exc).__name__}: {str(exc)[:160]}"]
+                status = "error"
+            # A memory mismatch is game state the port computed differently; a
+            # register-only one is an exit value no caller may read. Rank them.
+            memory = any(m.lstrip().startswith(("$", "vram", "sram")) for m in bad)
+            out.write(json.dumps({"index": index, "ordinal": entry["ordinal"], "routine": label,
+                                  "bank": entry["bank"], "status": status, "memory": memory,
+                                  "mismatches": bad[:12]}) + "\n")
+            out.flush()
+    return 0
+
+
+def sweep(name: str, *, after: int = 0, until: int | None = None, limit: int = 0,
+          json_path: Path | None = None) -> int:
+    """Every ported routine the reference enters in a session, oracle-diffed at
+    its first entry there, in one pass and without a model in the loop.
+
+    The verify loop finds one divergence per iteration: the first byte the
+    native trajectory gets wrong. A sweep asks a different question of the same
+    recording -- for each routine the ROM ran, does the port run it the same
+    from that live state? -- so it also reaches routines the native trajectory
+    never got to, and a divergence deep in a duel turn is named directly rather
+    than through the scratch bytes the loop reports first. The reference is
+    replayed once (from its checkpoints), each entry becomes a fixture case in
+    memory, `tests/test_leaves.direct_case` widens the observation to every
+    byte the reference wrote (auto-observe), and rows come out in session
+    order. Routines whose committed cases need long `keys` timelines or a
+    completion override are skipped: their entries are not comparable from a
+    bare seed. The oracle runs in worker processes so a wedged PyBoy frame
+    costs one routine, marked `wedged`, not the sweep. Runs under the oracle
+    environment (`just session-sweep`)."""
+    entries, until = sweep_entries(name, after=after, until=until, limit=limit)
+    rows: list[dict[str, Any]] = []
+    with tempfile.TemporaryDirectory(prefix=f"sweep-{name}-") as tmp:
+        entries_path = Path(tmp) / "entries.json"
+        entries_path.write_text(json.dumps(entries))
+        results_path = Path(tmp) / "results.jsonl"
+        start = 0
+        env = dict(os.environ, POKETCG_ORACLE_WALL_FLOOR=os.environ.get("POKETCG_ORACLE_WALL_FLOOR", "30"))
+        while start < len(entries):
+            results_path.write_text("")
+            proc = subprocess.run([sys.executable, __file__, "sweep-worker", str(entries_path),
+                                   "--start", str(start), "--out", str(results_path)],
+                                  cwd=ROOT, env=env, capture_output=True, text=True)
+            done = [json.loads(line) for line in results_path.read_text().splitlines() if line.strip()]
+            rows.extend(done)
+            next_index = done[-1]["index"] + 1 if done else start
+            if proc.returncode != 0 or next_index < len(entries) and not done and next_index == start:
+                if next_index < len(entries):
+                    entry = entries[next_index]
+                    rows.append({"index": next_index, "ordinal": entry["ordinal"], "routine": entry["entry"],
+                                 "bank": entry["bank"], "status": "wedged",
+                                 "mismatches": [(proc.stderr or "").strip().splitlines()[-1][:160]
+                                                if proc.stderr else "worker died"]})
+                    next_index += 1
+            if next_index <= start:
+                break
+            start = next_index
+    rows.sort(key=lambda r: (not r.get("memory", False), r["ordinal"]))
+    failing = sum(r["status"] == "fail" for r in rows)
+    for row in rows:
+        if row["status"] != "ok":
+            kind = "memory" if row.get("memory") else "registers"
+            print(f"ROW ordinal={row['ordinal']} routine={row['routine']} status={row['status']} {kind} "
+                  + " | ".join(m[:100] for m in row["mismatches"][:3]))
+    print(f"SWEEP {name} after={after} until={until} routines={len(rows)} failing={failing} "
+          f"errors={sum(r['status'] == 'error' for r in rows)} wedged={sum(r['status'] == 'wedged' for r in rows)}")
+    if json_path:
+        json_path.write_text(json.dumps({"schema": 1, "name": name, "after": after, "until": until,
+                                         "rows": rows}, indent=1))
+    return 0 if failing == 0 else 1
 
 
 def capture(name: str, routine: str, *, after: int = 0, nth: int = 1, out: Path | None = None) -> int:
@@ -1004,6 +1163,16 @@ def main(argv: list[str] | None = None) -> int:
                                help="accept a lower confirmed ordinal")
     verify_parser.add_argument("--json")
     sub.add_parser("status")
+    sweep_parser = sub.add_parser("sweep", help="oracle-diff every ported routine at its first entry in a session")
+    sweep_parser.add_argument("name")
+    sweep_parser.add_argument("--after", type=int, default=0, help="first DoFrame ordinal to capture from")
+    sweep_parser.add_argument("--until", type=int, help="last DoFrame ordinal to capture through")
+    sweep_parser.add_argument("--limit", type=int, default=0, help="stop after this many routines")
+    sweep_parser.add_argument("--json", type=Path)
+    worker_parser = sub.add_parser("sweep-worker", help=argparse.SUPPRESS)
+    worker_parser.add_argument("entries", type=Path)
+    worker_parser.add_argument("--start", type=int, default=0)
+    worker_parser.add_argument("--out", type=Path, required=True)
     diff_parser = sub.add_parser("diff", help="all gated bytes the lanes disagree on at one ordinal")
     diff_parser.add_argument("name")
     diff_parser.add_argument("ordinal", type=int)
@@ -1043,6 +1212,11 @@ def main(argv: list[str] | None = None) -> int:
             return status()
         if args.command == "diff":
             return diff(args.name, args.ordinal)
+        if args.command == "sweep":
+            return sweep(args.name, after=args.after, until=args.until, limit=args.limit,
+                         json_path=args.json)
+        if args.command == "sweep-worker":
+            return sweep_worker(args.entries, args.start, args.out)
         if args.command == "routines":
             return routines(args.name, args.ordinal, everything=args.all)
         if args.command == "meta":

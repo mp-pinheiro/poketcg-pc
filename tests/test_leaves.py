@@ -207,8 +207,12 @@ def merged_spans(case: dict) -> tuple[dict[int, int], dict[int, dict[int, int]],
 #   $CAB8 wVBlankCounter  $CAC5-$CAC9 wPlayTimeCounter  $CD04 wcd04 (frame
 #   counter)  $CD0F wCursorBlinkCounter  $CEA3 wCheckMenuCursorBlinkCounter
 #   $FF8D-$FF91 hDPadRepeat, hKeysReleased, hDPadHeld, hKeysHeld, hKeysPressed
+# $DEE5-$DFFF is the game's CPU stack and $FFF2-$FFFF the boot stack's debris
+# (tools/completion/scenario.py's ledger): return addresses and pushed pairs the
+# C port, running on the host stack, cannot reproduce.
 AUTO_OBSERVE_IGNORED = frozenset(
-    {0xCAB8, 0xCD04, 0xCD0F, 0xCEA3} | set(range(0xCAC5, 0xCACA)) | set(range(0xFF8D, 0xFF92)))
+    {0xCAB8, 0xCD04, 0xCD0F, 0xCEA3} | set(range(0xCAC5, 0xCACA)) | set(range(0xFF8D, 0xFF92))
+    | set(range(0xDEE5, 0xE000)) | set(range(0xFFF2, 0x10000)))
 AUTO_OBSERVE_GAP = 32
 
 

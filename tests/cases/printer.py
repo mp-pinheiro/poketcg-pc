@@ -478,7 +478,10 @@ CASES["SendPrinterInstructionPacket_1Sheet_3LineFeeds"] = [
     # also stopping after packet 1. Both lanes therefore end with packet 1's
     # staging in $CE6A/$CE6B, making the instruction word observable by this
     # primary case.
-    {"wram": {0xCE99: b"\x00", 0xCE6E: b"\x00", 0xCE6F: b"\x00",
+    # wPrinterStatus ($CE6F) is not seeded: the port's synchronous state
+    # machine marks the non-ack $FF there while the reference parks in its
+    # transmission wait and never writes it (the transform case [2] below).
+    {"wram": {0xCE99: b"\x00", 0xCE6E: b"\x00",
               0xCE6A: b"\x00", 0xCE6B: b"\x00"},
      "read": {0xCE99: 1},
      "instruction_budget": 2000000, "cycle_budget": 8000000},

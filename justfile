@@ -471,6 +471,14 @@ session-derive NAME MOVIE *ARGS:
 session-ai-duel NAME DECK *ARGS:
     python3 tools/completion/session.py ai-duel "{{NAME}}" --deck {{DECK}} {{ARGS}}
 
+# Oracle-diff every ported routine at its first entry in a session, in one
+# reference pass: a worklist of failing routines with byte-level evidence.
+session-sweep NAME *ARGS: build
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export POKETCG_ROM=poketcg/poketcg.gbc
+    uv run --project tools/oracle --frozen --python 3.12.3 python tools/completion/session.py sweep "{{NAME}}" {{ARGS}}
+
 # Count the composition defects per-routine verification cannot see.
 completion-composition-audit AUDIT="all":
     python3 tools/completion/composition_audit.py {{AUDIT}}

@@ -40,8 +40,11 @@ CONTRACT["FinishQueuedAnimations"] = {"compare": (), "preserve": ()}
 CASES["FinishQueuedAnimations"] = [
 	{"wram": {_HBANK_ROM: b"\x04", _WDO_FRAME_FN: b"\x11\x22"},
 	 "read": {_HBANK_ROM: 1, _WDO_FRAME_FN: 2, _WVBL_TOGGLE: 1}},
+	# wScreenAnimUpdatePtr holds DefaultScreenAnimationUpdate ($4CBC), as it
+	# does in any live state: the update chain calls through it, and a zero
+	# pointer is a `call $0000` the ROM never makes.
 	{"wram": {_HBANK_ROM: b"\x04", _WDO_FRAME_FN: b"\xA2\x3B",
-	          _WANIM_QUEUE: b"\xff" * 7, _WBUF_POS: b"\x00\x00"},
+	          _WANIM_QUEUE: b"\xff" * 7, _WBUF_POS: b"\x00\x00", 0xD4B9: b"\xBC\x4C"},
 	 "read": {_HBANK_ROM: 1, _WDO_FRAME_FN: 2, _WVBL_TOGGLE: 1}},
 	dict(POISON, wram={_HBANK_ROM: b"\x07", _WDO_FRAME_FN: b"\x33\x44"},
 	     read={_HBANK_ROM: 1, _WDO_FRAME_FN: 2, _WVBL_TOGGLE: 1}),

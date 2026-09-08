@@ -625,6 +625,12 @@ int main(void)
 	if (romb >= 0) {
 		gb_write8(0x2000, (uint8_t)romb);
 		gb_write8(0xFF80, (uint8_t)romb);
+	} else if (gb_read8(0xFF80) != 0u) {
+		/* A seeded hBankROM is the game's shadow of the mapped bank; the
+		 * two never disagree on the ROM (BankswitchROM writes both), and the
+		 * bank guard restores from the mapped one on a farcall's return
+		 * (SaveGame's `farcall _SaveGame` hands back the entry bank). */
+		gb_write8(0x2000, gb_read8(0xFF80));
 	}
 	if (ramb >= 0) {
 		gb_write8(0xFF81, (uint8_t)ramb);
