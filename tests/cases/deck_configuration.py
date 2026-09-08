@@ -7,6 +7,7 @@ from tests.cases._fixtures import card_list_select_fixture as _card_list_select_
 
 from tests.cases._fixtures import filtered_list_fixture as _filtered_list_fixture, FILTERED_LIST_REGS as _FILTERED_LIST_REGS
 from tests.cases._fixtures import deck_info_header_fixture as _deck_info_header_fixture, DECK_INFO_HEADER_REGS as _DECK_INFO_HEADER_REGS
+from tests.cases._fixtures import confirm_list_fixture as _confirm_list_fixture, CONFIRM_LIST_REGS as _CONFIRM_LIST_REGS
 CONTRACT = {}
 CASES = {}
 
@@ -889,6 +890,9 @@ CONTRACT["PrintConfirmationCardList"] = {"compare": (), "preserve": ()}
 CASES["PrintConfirmationCardList"] = [
     {"a": 0x00, "d": 0x00, "e": 0x00, "hl": 0xC100, "wram": {0xCECB: b"\x00", 0xCED0: b"\x05\x02"}, "read": {0xCECD: 1}, "expect": {0xCECD: b"\x01"}},
     dict(POISON, wram={0xCECB: b"\x00", 0xCED0: b"\x05\x02"}, read={0xCECD: 1}, expect={0xCECD: b"\x01"}),
+    dict(_confirm_list_fixture(bank=2), **_CONFIRM_LIST_REGS,
+         read={0xCECD: 1, 0xC590: 0x20, 0xCEC4: 0x10, 0xFFAA: 4, 0xFFAD: 1},
+         vread={0: {0x9800: 0x400, 0x8800: 0x800}}),
 ]
 # <<< factory PrintConfirmationCardList
 
@@ -1553,7 +1557,7 @@ MUTATIONS["DrawCardTypeIcons"] = {
 MUTATIONS["PrintPlayersCardsHeaderInfo"] = {"source_symbol": "PrintPlayersCardsHeaderInfo", "before": "\tFillBGMapLineWithA(0x1Cu, 0u, 4u);", "after": "\tFillBGMapLineWithA(0x1Du, 0u, 4u);", "case_ids": ["PrintPlayersCardsHeaderInfo-0", "PrintPlayersCardsHeaderInfo-1"]}
 # <<< factory-mutation PrintPlayersCardsHeaderInfo
 # >>> factory-mutation PrintConfirmationCardList
-MUTATIONS["PrintConfirmationCardList"] = {"source_symbol": "PrintConfirmationCardList", "before": "/* PrintConfirmationCardList: set scroll guard */\n\t\twUnableToScrollDown = 1u;", "after": "/* PrintConfirmationCardList: set scroll guard */\n\t\twUnableToScrollDown = 0u;", "case_ids": ["PrintConfirmationCardList-0", "PrintConfirmationCardList-1"]}
+MUTATIONS["PrintConfirmationCardList"] = {"source_symbol": "PrintConfirmationCardList", "before": "\t\tInitTextPrinting(align, row);", "after": "\t\tInitTextPrinting(0u, (uint8_t)(align + 2u));", "case_ids": ["PrintConfirmationCardList-2"]}
 # <<< factory-mutation PrintConfirmationCardList
 # >>> factory-mutation CreateCurDeckUniqueCardList
 MUTATIONS["CreateCurDeckUniqueCardList"] = {"source_symbol": "CreateCurDeckUniqueCardList", "before": "CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)\n{\n\tuint8_t count = 0u;", "after": "CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)\n{\n\tuint8_t count = 1u;", "case_ids": ["CreateCurDeckUniqueCardList-0", "CreateCurDeckUniqueCardList-1"]}
