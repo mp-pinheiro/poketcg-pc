@@ -1,0 +1,190 @@
+# after the practice duel: take the Charmander & Friends starter deck, walk to the PC
+dismiss
+press A
+idle
+dismiss
+hold LEFT 100
+idle
+hold UP 60
+idle
+# PC on; card album: booster pack list, Evolution file, first card page
+press A
+idle
+press A
+idle
+press A
+idle
+press DOWN
+idle
+press A
+idle
+press A
+idle
+press B
+idle
+press B
+idle
+press B
+idle
+# read mail
+press DOWN
+wait 30
+press A
+wait 120
+press B
+wait 120
+# glossary: page 1 entry, page 2 entry
+press DOWN
+wait 30
+press A
+wait 120
+hold SELECT 4
+wait 60
+press DOWN
+wait 30
+press A
+wait 120
+hold B 4
+wait 60
+hold SELECT 4
+wait 60
+press A
+wait 120
+hold B 4
+wait 60
+hold B 4
+wait 60
+hold B 4
+wait 60
+hold B 4
+wait 60
+peek
+shot g3
+# shut down
+press DOWN
+wait 30
+press DOWN
+wait 30
+press A
+wait 120
+dismiss
+# to the deck machine room: the east warp at (24, 10)
+hold DOWN 60
+idle
+peek
+hold RIGHT 220
+idle
+peek
+shot d1
+hold RIGHT 24
+idle
+hold DOWN 80
+idle
+hold UP 4
+idle
+hold LEFT 40
+idle
+peek
+hold UP 4
+idle
+peek
+press A
+idle
+shot d2
+yes
+idle
+shot d3
+press A
+idle
+press DOWN
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press B
+idle
+peek
+shot d4
+dismiss
+peek
+shot d5
+# pause menu: status, then deck configuration
+press START
+idle
+shot p1
+press A
+idle
+shot p2
+press B
+idle
+press DOWN
+idle
+press DOWN
+idle
+press A
+idle
+shot p3
+# deck 1: modify it
+press A
+idle
+shot p4
+press A
+idle
+shot p5
+# the card list: scroll, open a card page, page through it, back out
+press DOWN
+idle
+press DOWN
+idle
+press DOWN
+idle
+hold DOWN 24
+idle
+shot p6
+press A
+idle
+shot p7
+press RIGHT
+idle
+press RIGHT
+idle
+shot p8
+press B
+idle
+shot p9
+peek
+press B
+idle
+shot p10
+peek
+press B
+idle
+shot p11
+# review the deck, then cancel out of the unchanged deck and the menus
+press A
+idle
+shot p12
+press B
+idle
+press RIGHT
+idle
+press RIGHT
+idle
+press DOWN
+idle
+shot p13
+press A
+idle
+shot p14
+peek
+press B
+idle
+shot p15
+peek
+press B
+idle
+shot p16
+wait 60
