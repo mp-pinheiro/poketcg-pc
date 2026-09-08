@@ -1,4 +1,4 @@
-from tests.cases._fixtures import retreat_stay_fixture as _retreat_stay_fixture, RETREAT_STAY_REGS as _RETREAT_STAY_REGS
+from tests.cases._fixtures import retreat_stay_fixture as _retreat_stay_fixture, RETREAT_STAY_REGS as _RETREAT_STAY_REGS, retreat_gene_fixture as _retreat_gene_fixture, RETREAT_GENE_REGS as _RETREAT_GENE_REGS
 from tests.cases._fixtures import ai_ko_switch_fixture as _ai_ko_switch_fixture, AI_KO_SWITCH_REGS as _AI_KO_SWITCH_REGS, ai_retreat_decision_fixture as _ai_retreat_decision_fixture, AI_RETREAT_DECISION_REGS as _AI_RETREAT_DECISION_REGS, ai_retreat_switch_fixture as _ai_retreat_switch_fixture, AI_RETREAT_SWITCH_REGS as _AI_RETREAT_SWITCH_REGS, ai_try_retreat_fixture as _ai_try_retreat_fixture, AI_TRY_RETREAT_REGS as _AI_TRY_RETREAT_REGS
 """Oracle-diff cases for SetAIRetreatFlags (engine/duel/ai/retreat.asm:440-460)."""
 
@@ -169,6 +169,7 @@ CASES["AIDecideWhetherToRetreat"] = [
     {"a": 0x5c, "f": 0x40, "b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44, "hl": 0x89ab, "wram": {W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL: b"\xff"}, "expect_regs": {"a": 0xff, "f": 0x00}},
     dict(_ai_retreat_decision_fixture(bank=5), **_AI_RETREAT_DECISION_REGS),
     dict(_retreat_stay_fixture(vram=False, bank=5), **_RETREAT_STAY_REGS, read={0xCDBE: 1, 0xCDDA: 2}),
+    dict(_retreat_gene_fixture(vram=False, bank=5), **_RETREAT_GENE_REGS, read={0xCDBE: 1, 0xCDDA: 2, 0xCE03: 1}),
 ]
 # <<< factory AIDecideWhetherToRetreat
 

@@ -189,6 +189,29 @@ COWARDICE_REGS = COWARDICE.regs
 # ryan-duel at DoFrame 210731: Ryan's AI weighs a retreat and decides against it.
 RETREAT_STAY = Fixture("ryan-duel-retreat-decision-entry")
 RETREAT_STAY_REGS = RETREAT_STAY.regs
+# gene-duel at DoFrame 224056: Gene's AI weighs a retreat with a fully powered
+# evolution line in hand.
+RETREAT_GENE = Fixture("gene-duel-retreat-decision-entry")
+RETREAT_GENE_REGS = RETREAT_GENE.regs
+# gene-duel at DoFrame 224056: Gene's AI picks an energy for its arena card and
+# shuffles the candidates before choosing one.
+AI_ENERGY_PLAY = Fixture("gene-duel-ai-energy-entry")
+AI_ENERGY_PLAY_REGS = AI_ENERGY_PLAY.regs
+AI_ENERGY_SCORING = Fixture("gene-duel-ai-energy-scoring-entry")
+AI_ENERGY_SCORING_REGS = AI_ENERGY_SCORING.regs
+# gene-duel at DoFrame 224056: the AI's trainer phase 5 (Energy Removal) with
+# the player's Machop energised; the ROM decides not to play it.
+AI_TRAINER_PHASE5 = Fixture("gene-duel-trainer-phase5-entry")
+AI_TRAINER_PHASE5_REGS = AI_TRAINER_PHASE5.regs
+# gene-duel at DoFrame 224056: the Energy Removal decision with the player's
+# arena Machop energised but short of an attack; the ROM's .default fallback
+# inspects the terminal (empty) slot and declines.
+ENERGY_REMOVAL = Fixture("gene-duel-energy-removal-entry")
+ENERGY_REMOVAL_REGS = ENERGY_REMOVAL.regs
+# gene-duel at DoFrame 224056: Gene's arena card above half HP with an
+# evolution flagged, so the evolution search runs on the arena deck index.
+FULLY_POWERED = Fixture("gene-duel-fully-powered-entry")
+FULLY_POWERED_REGS = FULLY_POWERED.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -293,3 +316,27 @@ def cowardice_fixture(vram: bool = True, bank: int | None = None, **changes: byt
 
 def retreat_stay_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return RETREAT_STAY.case(vram=vram, bank=bank, **changes)
+
+
+def retreat_gene_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return RETREAT_GENE.case(vram=vram, bank=bank, **changes)
+
+
+def ai_energy_play_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_ENERGY_PLAY.case(vram=vram, bank=bank, **changes)
+
+
+def ai_energy_scoring_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_ENERGY_SCORING.case(vram=vram, bank=bank, **changes)
+
+
+def ai_trainer_phase5_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_TRAINER_PHASE5.case(vram=vram, bank=bank, **changes)
+
+
+def energy_removal_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return ENERGY_REMOVAL.case(vram=vram, bank=bank, **changes)
+
+
+def fully_powered_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return FULLY_POWERED.case(vram=vram, bank=bank, **changes)

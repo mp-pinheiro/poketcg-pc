@@ -1,3 +1,4 @@
+from tests.cases._fixtures import energy_removal_fixture as _energy_removal_fixture, ENERGY_REMOVAL_REGS as _ENERGY_REMOVAL_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_bill_fixture as _ai_bill_fixture, AI_BILL_REGS as _AI_BILL_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/ai/trainer_cards.asm."""
 
@@ -995,6 +996,7 @@ CONTRACT["AIDecide_EnergyRemoval"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecide_EnergyRemoval"] = [
     {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC2BB: b"\xFF" * 60, 0xC3BB: b"\xFF" * 60}, "read": {0xCE0F: 1, 0xCE1A: 1, 0xCC23: 1, 0xFF9D: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC2BB: b"\xFF" * 60, 0xC3BB: b"\xFF" * 60}, read={0xCE0F: 1, 0xCE1A: 1, 0xCC23: 1, 0xFF9D: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(_energy_removal_fixture(vram=False, bank=8), **_ENERGY_REMOVAL_REGS, read={0xCE06: 1, 0xCE08: 1, 0xCE0F: 1, 0xCE1A: 1, 0xCC23: 1, 0xFF97: 1, 0xFF9D: 1}),
 ]
 # <<< factory AIDecide_EnergyRemoval
 
@@ -1495,7 +1497,7 @@ MUTATIONS["AIDecide_ScoopUp"] = {"source_symbol": "AIDecide_ScoopUp", "before": 
 MUTATIONS["AIDecide_FullHeal"] = {"source_symbol": "AIDecide_FullHeal", "before": "AIDecideFullHealResult AIDecide_FullHeal(void)\n{\n\tuint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;", "after": "AIDecideFullHealResult AIDecide_FullHeal(void)\n{\n\tuint8_t status = 0u;", "case_ids": ["AIDecide_FullHeal-1", "AIDecide_FullHeal-2"]}
 # <<< factory-mutation AIDecide_FullHeal
 # >>> factory-mutation AIDecide_EnergyRemoval
-MUTATIONS["AIDecide_EnergyRemoval"] = {"source_symbol": "AIDecide_EnergyRemoval", "before": "\tuint8_t start = PLAY_AREA_ARENA;\n\tif (ko.f & 0x10u) {", "after": "\tuint8_t start = PLAY_AREA_BENCH_1;\n\tif (ko.f & 0x10u) {", "case_ids": ["AIDecide_EnergyRemoval-0"]}
+MUTATIONS["AIDecide_EnergyRemoval"] = {"source_symbol": "AIDecide_EnergyRemoval", "before": "\t\t(void)GetPlayAreaCardAttachedEnergies(loc);\n\t\tif (wTotalAttachedEnergies != 0u) {\n\t\t\twce1a = PickAttachedEnergyCardToRemove(loc);", "after": "\t\t(void)GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);\n\t\tif (wTotalAttachedEnergies != 0u) {\n\t\t\twce1a = PickAttachedEnergyCardToRemove(PLAY_AREA_ARENA);"}
 # <<< factory-mutation AIDecide_EnergyRemoval
 # >>> factory-mutation AIDecide_PokemonCenter
 MUTATIONS["AIDecide_PokemonCenter"] = {"source_symbol": "AIDecide_PokemonCenter", "before": "\t\twce06 = (uint8_t)(wce06 + hp_counters);", "after": "\t\twce06 = (uint8_t)(wce06 + hp_counters + 1u);", "case_ids": ["AIDecide_PokemonCenter-0", "AIDecide_PokemonCenter-1"]}

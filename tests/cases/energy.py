@@ -1,3 +1,4 @@
+from tests.cases._fixtures import ai_energy_play_fixture as _ai_energy_play_fixture, AI_ENERGY_PLAY_REGS as _AI_ENERGY_PLAY_REGS, ai_energy_scoring_fixture as _ai_energy_scoring_fixture, AI_ENERGY_SCORING_REGS as _AI_ENERGY_SCORING_REGS
 from tests.cases._fixtures import ai_energy_fixture as _ai_energy_fixture, AI_ENERGY_REGS as _AI_ENERGY_REGS, ai_try_energy_fixture as _ai_try_energy_fixture, AI_TRY_ENERGY_REGS as _AI_TRY_ENERGY_REGS, ai_evolution_energy_fixture as _ai_evolution_energy_fixture, AI_EVOLUTION_ENERGY_REGS as _AI_EVOLUTION_ENERGY_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/ai/energy.asm."""
 
@@ -123,6 +124,7 @@ CASES["AITryToPlayEnergyCard"] = [
     {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC200: b"\xFF" * 60}},
     dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC200: b"\xFF" * 60}),
     dict(_ai_try_energy_fixture(bank=5), **_AI_TRY_ENERGY_REGS),
+    dict(_ai_energy_play_fixture(vram=False, bank=8), **_AI_ENERGY_PLAY_REGS, read={0xC510: 8, 0xCACA: 3, 0xFFA0: 2}),
 ]
 # <<< factory AITryToPlayEnergyCard
 
@@ -151,6 +153,7 @@ CONTRACT["AIProcessAndTryToPlayEnergy"] = {"compare": (), "preserve": ()}
 CASES["AIProcessAndTryToPlayEnergy"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCDBE: b"\x10" * 7, 0xCDBF: b"\x00" * 7}, "read": {0xCDBF: 7}},
     dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCDBE: b"\x20" * 7, 0xCDBF: b"\x00" * 7}, read={0xCDBF: 7}),
+    dict(_ai_energy_scoring_fixture(vram=False, bank=8), **_AI_ENERGY_SCORING_REGS, read={0xC510: 8, 0xCACA: 3, 0xFF9D: 1, 0xFFA0: 2, 0xCDBE: 6}),
 ]
 # <<< factory AIProcessAndTryToPlayEnergy
 

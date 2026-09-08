@@ -1,3 +1,5 @@
+from tests.cases._fixtures import fully_powered_fixture as _fully_powered_fixture, FULLY_POWERED_REGS as _FULLY_POWERED_REGS
+from tests.cases._fixtures import ai_trainer_phase5_fixture as _ai_trainer_phase5_fixture, AI_TRAINER_PHASE5_REGS as _AI_TRAINER_PHASE5_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_defending_ko_fixture as _ai_defending_ko_fixture, AI_DEFENDING_KO_REGS as _AI_DEFENDING_KO_REGS, power_screen_fixture as _power_screen_fixture, POWER_SCREEN_REGS as _POWER_SCREEN_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/core.asm."""
 
@@ -3460,6 +3462,7 @@ CONTRACT["AIProcessHandTrainerCards"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIProcessHandTrainerCards"] = [
     {"a": 0x00},
     dict(POISON, a=0xAA),
+    dict(_ai_trainer_phase5_fixture(vram=False, bank=5), **_AI_TRAINER_PHASE5_REGS, read={0xC200: 96, 0xC300: 96, 0xCACA: 3, 0xCDDA: 4}),
 ]
 # <<< factory AIProcessHandTrainerCards
 
@@ -3519,6 +3522,8 @@ CONTRACT["CheckIfArenaCardIsFullyPowered"] = {"compare": ("a", "f"), "preserve":
 CASES["CheckIfArenaCardIsFullyPowered"] = [
     {"hram": {0xFF97: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00"}, "wram": {0xC2BB: b"\xFF", wSelectedAttack: b"\x00"}, "sram": {0: {}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, hram={0xFF97: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00"}, wram={0xC2BB: b"\x0A", 0xC2C8: b"\x00", wSelectedAttack: b"\x00"}, sram={0: {}}, instruction_budget=2000000, cycle_budget=8000000),
+    dict(_fully_powered_fixture(vram=False, bank=5), **_FULLY_POWERED_REGS, read={0xC3BB: 1, 0xCC23: 1, 0xFF9D: 1}),
+    dict(_fully_powered_fixture(vram=False, bank=5, C4AD=b"\x8a", C3C2=b"\x80"), **_FULLY_POWERED_REGS, read={0xC3BB: 1, 0xCC23: 1, 0xFF9D: 1}),
 ]
 # <<< factory CheckIfArenaCardIsFullyPowered
 
@@ -6872,9 +6877,9 @@ MUTATIONS["HandleLegendaryArticunoEnergyScoring"] = {
 # >>> factory-mutation CheckIfArenaCardIsFullyPowered
 MUTATIONS["CheckIfArenaCardIsFullyPowered"] = {
     "source_symbol": "CheckIfArenaCardIsFullyPowered",
-    "before": "\tif (a >= d) {\n\t\tf = (uint8_t)(a == 0u ? 0x80u : 0x00u);\n\t\treturn (CheckIfArenaCardIsFullyPoweredResult){a, f};\n\t}",
-    "after": "\tif (a >= d) {\n\t\tf = 0xFFu;\n\t\treturn (CheckIfArenaCardIsFullyPoweredResult){a, f};\n\t}",
-    "case_ids": ["CheckIfArenaCardIsFullyPowered-0", "CheckIfArenaCardIsFullyPowered-1"],
+    "before": "\t\tCheckCardEvolutionInHandOrDeckResult evolution = CheckCardEvolutionInHandOrDeck(deck_index);",
+    "after": "\t\tCheckCardEvolutionInHandOrDeckResult evolution = CheckCardEvolutionInHandOrDeck(d);",
+    "case_ids": ["CheckIfArenaCardIsFullyPowered-2", "CheckIfArenaCardIsFullyPowered-3"],
 }
 # <<< factory-mutation CheckIfArenaCardIsFullyPowered
 # >>> factory-mutation SendCardAttrBlkPacket

@@ -3289,19 +3289,21 @@ AIDecideEnergyRemovalResult AIDecide_EnergyRemoval(void)
 	}
 	wce0f = start;
 	SwapTurn();
-	for (uint8_t loc = start;; loc++) {
+	uint8_t loc = start;
+	for (;; loc++) {
 		DuelistVarResult card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + loc));
 		if (card.a == 0xFFu)
 			break;
-		hTempPlayAreaLocation_ff9d = loc;
 		(void)GetPlayAreaCardAttachedEnergies(loc);
 		if (wTotalAttachedEnergies == 0u)
 			continue;
 		wSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;
+		hTempPlayAreaLocation_ff9d = loc;
 		CheckEnergyNeededForAttackResult first = CheckEnergyNeededForAttack();
 		uint8_t enough = (uint8_t)((first.f & 0x10u) == 0u);
 		if (!enough) {
 			wSelectedAttack = SECOND_ATTACK;
+			hTempPlayAreaLocation_ff9d = loc;
 			CheckEnergyNeededForAttackResult second = CheckEnergyNeededForAttack();
 			if ((second.f & 0x10u) == 0u) {
 				CheckIfNoSurplusEnergyResult surplus = CheckIfNoSurplusEnergyForAttack();
@@ -3314,33 +3316,35 @@ AIDecideEnergyRemovalResult AIDecide_EnergyRemoval(void)
 			return (AIDecideEnergyRemovalResult){loc, 0x10u};
 		}
 	}
+	/* trainer_cards.asm .default never resets e, so the ROM's "active card"
+	 * fallback inspects the loop's terminal slot - the first empty play-area
+	 * location - which carries no energy. Reproduced, not corrected: the
+	 * arena card is only ever picked through .check_bench_damage below. */
 	if (start == PLAY_AREA_ARENA) {
-		hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
-		(void)GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+		(void)GetPlayAreaCardAttachedEnergies(loc);
 		if (wTotalAttachedEnergies != 0u) {
-			wce1a = PickAttachedEnergyCardToRemove(PLAY_AREA_ARENA);
+			wce1a = PickAttachedEnergyCardToRemove(loc);
 			SwapTurn();
-			return (AIDecideEnergyRemovalResult){PLAY_AREA_ARENA, 0x10u};
+			return (AIDecideEnergyRemovalResult){loc, 0x10u};
 		}
 	}
 	wce06 = 0u;
 	wce08 = 0u;
-	for (uint8_t loc = PLAY_AREA_BENCH_1;; loc++) {
+	for (loc = PLAY_AREA_BENCH_1;; loc++) {
 		DuelistVarResult card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + loc));
 		if (card.a == 0xFFu)
 			break;
-		hTempPlayAreaLocation_ff9d = loc;
 		(void)GetPlayAreaCardAttachedEnergies(loc);
 		if (wTotalAttachedEnergies == 0u)
 			continue;
-		DamageCalculationResult first_damage = EstimateDamage_VersusDefendingCard(FIRST_ATTACK_OR_PKMN_POWER);
-		(void)first_damage;
+		hTempPlayAreaLocation_ff9d = loc;
+		(void)EstimateDamage_VersusDefendingCard(FIRST_ATTACK_OR_PKMN_POWER);
 		if (wDamage > wce06) {
 			wce06 = wDamage;
 			wce08 = loc;
 		}
-		DamageCalculationResult second_damage = EstimateDamage_VersusDefendingCard(SECOND_ATTACK);
-		(void)second_damage;
+		hTempPlayAreaLocation_ff9d = loc;
+		(void)EstimateDamage_VersusDefendingCard(SECOND_ATTACK);
 		if (wDamage > wce06) {
 			wce06 = wDamage;
 			wce08 = loc;

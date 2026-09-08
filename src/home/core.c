@@ -6262,7 +6262,9 @@ CheckIfArenaCardIsFullyPoweredResult CheckIfArenaCardIsFullyPowered(void)
 	}
 	a = (uint8_t)(wLoadedCard1AIInfo & HAS_EVOLUTION);
 	if (a != 0u) {
-		CheckCardEvolutionInHandOrDeckResult evolution = CheckCardEvolutionInHandOrDeck(d);
+		/* `pop de` restores the arena deck index into d before the call;
+		 * the HP read above is gone by then. */
+		CheckCardEvolutionInHandOrDeckResult evolution = CheckCardEvolutionInHandOrDeck(deck_index);
 		a = evolution.a;
 		f = evolution.f;
 		if ((f & 0x10u) != 0u) {
@@ -6273,7 +6275,7 @@ CheckIfArenaCardIsFullyPoweredResult CheckIfArenaCardIsFullyPowered(void)
 	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
 	wSelectedAttack = SECOND_ATTACK;
 	CheckIfSelectedAttackIsUnusableResult unusable =
-		CheckIfSelectedAttackIsUnusable(SECOND_ATTACK, 0u, 0u, 0u, d, 0u, hp.hl);
+		CheckIfSelectedAttackIsUnusable(SECOND_ATTACK, 0u, 0u, 0u, deck_index, 0u, hp.hl);
 	a = unusable.a;
 	f = unusable.f;
 	if ((f & 0x10u) != 0u) {
