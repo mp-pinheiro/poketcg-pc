@@ -282,6 +282,10 @@ DECK_ENTRY_REGS = DECK_ENTRY.regs
 # filter of the player's collection (SRAM seeded).
 FILTERED_LIST = Fixture("boot-deck-machine-filtered-list-entry")
 FILTERED_LIST_REGS = FILTERED_LIST.regs
+# boot-deck-machine at DoFrame 100325: the deck confirmation screen's header,
+# with the starter deck loaded and its 60 cards counted (SRAM seeded).
+DECK_INFO_HEADER = Fixture("boot-deck-machine-deck-info-header-entry")
+DECK_INFO_HEADER_REGS = DECK_INFO_HEADER.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -462,3 +466,7 @@ def deck_entry_fixture(vram: bool = True, bank: int | None = None, **changes: by
 
 def filtered_list_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return FILTERED_LIST.case(vram=vram, bank=bank, **changes)
+
+
+def deck_info_header_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return DECK_INFO_HEADER.case(vram=vram, bank=bank, **changes)

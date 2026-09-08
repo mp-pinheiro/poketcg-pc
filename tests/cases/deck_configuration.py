@@ -6,6 +6,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 from tests.cases._fixtures import card_list_select_fixture as _card_list_select_fixture, CARD_LIST_SELECT_REGS as _CARD_LIST_SELECT_REGS
 
 from tests.cases._fixtures import filtered_list_fixture as _filtered_list_fixture, FILTERED_LIST_REGS as _FILTERED_LIST_REGS
+from tests.cases._fixtures import deck_info_header_fixture as _deck_info_header_fixture, DECK_INFO_HEADER_REGS as _DECK_INFO_HEADER_REGS
 CONTRACT = {}
 CASES = {}
 
@@ -981,6 +982,8 @@ CASES["ShowDeckInfoHeader"] = [
          sram={0: {0xB700: b"\x00"}},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
          vread={0: {0x9821: 4}}, instruction_budget=2000000, cycle_budget=8000000),
+    dict(_deck_info_header_fixture(bank=2), **_DECK_INFO_HEADER_REGS,
+         read={0xC590: 0x20, 0xCE00: 0x40, 0xCEC0: 0x20, 0xFFAA: 4}),
 ]
 # <<< factory ShowDeckInfoHeader
 
