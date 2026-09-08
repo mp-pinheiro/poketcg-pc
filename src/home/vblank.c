@@ -7,6 +7,7 @@
 #include "home/indirect_dispatch.h"
 #include "home/load_animation.h"
 #include "home/palettes.h"
+#include "home/scroll.h"
 #include "home/setup.h"
 #include "mem.h"
 
@@ -22,6 +23,18 @@
  * (src/home/sprite_vblank.c). Anything else aborts through DispatchIndirect. */
 #define TRAMPOLINE_NOOP 0x0348u
 #define TRAMPOLINE_ALL_SPRITE_ANIMATIONS 0x3CB4u
+
+/* poketcg.sym (bank 0): the two targets games park in wLCDCFunctionTrampoline
+ * -- ApplyBackgroundScroll from DistortScreen (src/home/screen_effects.c) and
+ * Func_3e44 from the credits (src/home/credits.c). */
+#define LCDC_APPLY_BACKGROUND_SCROLL 0x3EA6u
+#define LCDC_FUNC_3E44 0x3E44u
+#define rSTAT 0xFF41u
+#define rLYC  0xFF45u
+#define rIE   0xFFFFu
+#define LCDC_ENABLE 0x80u
+#define STAT_LYC  0x40u
+#define IE_STAT   0x02u
 
 /* poketcg/src/home/vblank.asm:2-38: the VBlankHandler body between the
  * register save/restore. The native host calls it once per frame from the
@@ -72,4 +85,34 @@ void RuntimeVBlankHandler(void)
 	 * in the asm (fallthrough after `call wVBlankFunctionTrampoline`), so it
 	 * runs even when the trampoline is NoOp. */
 	FlushPalettesIfRequested();
+}
+
+void RuntimeLCDCHandler(void)
+{
+	for (unsigned fired = 0; fired < 16u; fired++) {
+		if (!(gb_read8(rLCDC) & LCDC_ENABLE))
+			return;
+		if (!(gb_read8(rIE) & IE_STAT) || !(gb_read8(rSTAT) & STAT_LYC))
+			return;
+		uint8_t line = gb_read8(rLYC);
+		if (line >= 154u)
+			return;
+		uint16_t target =
+			(uint16_t)(gb_read8((uint16_t)(wLCDCFunctionTrampoline_ADDR + 1u)) |
+				   (uint16_t)gb_read8((uint16_t)(wLCDCFunctionTrampoline_ADDR + 2u))
+					   << 8);
+		switch (target) {
+		case LCDC_APPLY_BACKGROUND_SCROLL:
+			ApplyBackgroundScroll();
+			break;
+		case LCDC_FUNC_3E44:
+			Func_3e44();
+			break;
+		default:
+			DispatchIndirect("wLCDCFunction", target);
+		}
+		/* Rearmed at or above this line: the next coincidence is next frame. */
+		if (gb_read8(rLYC) <= line)
+			return;
+	}
 }

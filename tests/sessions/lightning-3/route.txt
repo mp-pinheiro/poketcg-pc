@@ -1,0 +1,25 @@
+# From lightning-2's end: back east along the lower walkway, up the centre and
+# east onto the right platform beside Brandon; his duel to its end under the
+# pilot's WRAM policy, then the after-duel script.
+dismiss
+hold RIGHT 32
+idle
+hold DOWN 64
+idle
+hold RIGHT 96
+idle
+hold UP 48
+idle
+hold UP 4
+idle
+hold RIGHT 32
+idle
+peek
+press A
+idle
+shot lightning-3-ask
+yes
+duel
+dismiss
+peek
+shot lightning-3-end

@@ -63,6 +63,11 @@ uint32_t runtime_lag_schedule_mismatches(void)
  * through here, so the count per ordinal is exactly the services delivered. */
 static void vblank_service(void)
 {
+	/* The STAT coincidence of the frame that ends at this VBlank fired at
+	 * its line 0, with wVBlankCounter as the previous ISR left it: measured
+	 * on lightning-3 at ordinal 327345, where the reference's hSCX is
+	 * BGScrollData[counter - 1] at the anchor, not [counter]. */
+	RuntimeLCDCHandler();
 	RuntimeVBlankHandler();
 	gb_write8(wVBlankCounter_ADDR, (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 }
@@ -446,6 +451,7 @@ int runtime_run_with_input(
 			/* Mid-processing VBlank service: ISR-equivalent work only.
 			 * No input re-sample, no frame counter, no timer/clock
 			 * aging, no render -- the game made no DoFrame progress. */
+			RuntimeLCDCHandler();
 			RuntimeVBlankHandler();
 			pthread_mutex_lock(&state.lock);
 			state.resume = 1;
