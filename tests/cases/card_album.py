@@ -3,6 +3,9 @@
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
+from tests.cases._fixtures import card_album_fixture as _card_album_fixture, CARD_ALBUM_REGS as _CARD_ALBUM_REGS
+from tests.cases._fixtures import card_set_list_fixture as _card_set_list_fixture, CARD_SET_LIST_REGS as _CARD_SET_LIST_REGS
+
 CONTRACT = {}
 CASES = {}
 
@@ -49,6 +52,10 @@ CONTRACT["PrintCardSetListEntries"] = {"compare": ("hl",), "preserve": ()}
 CASES["PrintCardSetListEntries"] = [
     {"wram": {wCardListCoords: b"\x10\x08", wCardListVisibleOffset: b"\x00", wNumVisibleCardListEntries: b"\x00", wFilteredCardList: b"\x00\x00"}, "read": {wUnableToScrollDown: 1, wFilteredCardList: 2}},
     dict(POISON, wram={wCardListCoords: b"\x10\x08", wCardListVisibleOffset: b"\x00", wNumVisibleCardListEntries: b"\x00", wFilteredCardList: b"\x00\x00"}, read={wUnableToScrollDown: 1, wFilteredCardList: 2}),
+    # The live page: owned names, placeholder rows, the list index text and the
+    # down cursor, observed through the text buffers and the BG map.
+    dict(_card_set_list_fixture(bank=2), **_CARD_SET_LIST_REGS,
+         read={0xC590: 0x20, 0xCEB6: 2, 0xCEC0: 0x20, 0xCED0: 2, 0xCFB9: 0x10, 0xCC24: 0x41}),
 ]
 # <<< factory PrintCardSetListEntries
 
@@ -108,6 +115,11 @@ CASES["CardAlbum"] = [
         "cycle_budget": 80000000,
     },
     dict(POISON, keys=[0x02], wram={0xFFB1: b"\xFF", 0xCABB: b"\x00"}, read={0xCABB: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    # The live entry from the lab PC, cancelled at the booster pack menu. The
+    # file list and the card page are the session's to prove: a multi-press
+    # timeline lands on different polls per lane once the text print lags.
+    dict(_card_album_fixture(bank=2), **_CARD_ALBUM_REGS, keys=[0x00, 0x02],
+         read={0xC200: 0x200, 0xCC00: 0x100, 0xC600: 0x400, 0xCE00: 0x100}),
 ]
 # <<< factory CardAlbum
 
@@ -124,7 +136,7 @@ MUTATIONS["GetFirstOwnedCardIndex"] = {
 }
 # <<< factory-mutation GetFirstOwnedCardIndex
 # >>> factory-mutation PrintCardSetListEntries
-MUTATIONS["PrintCardSetListEntries"] = {"source_symbol": "PrintCardSetListEntries", "before": "gb_write8(wUnableToScrollDown_ADDR, TRUE);", "after": "gb_write8(wUnableToScrollDown_ADDR, FALSE);", "case_ids": ["PrintCardSetListEntries-0", "PrintCardSetListEntries-1"]}
+MUTATIONS["PrintCardSetListEntries"] = {"source_symbol": "PrintCardSetListEntries", "before": "\tif (tens == 0u)\n\t\ttens = SYM_0;", "after": "", "case_ids": ["PrintCardSetListEntries-2"]}
 # <<< factory-mutation PrintCardSetListEntries
 # >>> factory-mutation CreateCardSetList
 MUTATIONS["CreateCardSetList"] = {"source_symbol": "CreateCardSetList", "before": "void CreateCardSetList(uint8_t a)\n{\n\tuint8_t set = a;", "after": "void CreateCardSetList(uint8_t a)\n{\n\tuint8_t set = 0u;", "case_ids": ["CreateCardSetList-1"]}
@@ -149,8 +161,8 @@ MUTATIONS["CreateCardSetListAndInitListCoords"] = {
 # >>> factory-mutation CardAlbum
 MUTATIONS["CardAlbum"] = {
     "source_symbol": "CardAlbum",
-    "before": "if ((uint8_t)(item + 1u) == 0u)",
-    "after": "if ((uint8_t)(item + 2u) == 0u)",
-    "case_ids": ["CardAlbum-0", "CardAlbum-1"],
+    "before": "\t(void)DrawWideTextBox_PrintText(ViewWhichCardFileText);",
+    "after": "\t(void)DrawWideTextBox_PrintText(EmptyPromotionalCardText);",
+    "case_ids": ["CardAlbum-0", "CardAlbum-1", "CardAlbum-2"],
 }
 # <<< factory-mutation CardAlbum

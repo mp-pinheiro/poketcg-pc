@@ -22,6 +22,9 @@
 #define SYM_BOX_BTM_R 0x1Bu
 #define SYM_CURSOR_U 0x0Cu
 #define SYM_CURSOR_D 0x2Fu
+#define SYM_0 0x20u
+#define SYM_SPACE 0x00u
+#define TX_END 0x00u
 
 #include "home/deck_configuration.h"
 #include "home/card_data.h"
@@ -88,32 +91,104 @@ GetFirstOwnedCardIndexResult GetFirstOwnedCardIndex(void)
 /* <<< factory GetFirstOwnedCardIndex */
 
 /* >>> factory PrintCardSetListEntries */
+/* card_album.asm:270-460. The list index goes into wCurDeckName after the
+ * set's two-byte prefix; the energy rows print from that offset, the others
+ * from the prefix. Fullwidth "E" is $03,$34 and "×" is $6c in this charmap. */
+#define CARD_ALBUM_INDEX_E_HI 0x03u
+#define CARD_ALBUM_INDEX_E_LO 0x34u
+#define CARD_ALBUM_INDEX_PHANTOM 0x6Cu
+#define CARD_ALBUM_EMPTY_SLOT_DASH 0x6Bu
+#define CARD_ALBUM_EMPTY_SLOT_DASHES 13u
+
+static uint16_t card_album_append_list_index(uint16_t index, uint8_t b)
+{
+	uint8_t card = gb_read8((uint16_t)(wFilteredCardList_ADDR + index - 1u));
+	uint16_t hl = (uint16_t)(wCurDeckName_ADDR + 2u);
+	if (card <= DOUBLE_COLORLESS_ENERGY) {
+		CalculateOnesAndTensDigits(card);
+		uint8_t ones = gb_read8(wDecimalDigitsSymbols_ADDR);
+		gb_write8(hl++, CARD_ALBUM_INDEX_E_HI);
+		gb_write8(hl++, CARD_ALBUM_INDEX_E_LO);
+		gb_write8(hl++, TX_SYMBOL);
+		gb_write8(hl++, SYM_0);
+		gb_write8(hl++, TX_SYMBOL);
+		gb_write8(hl++, ones);
+		gb_write8(hl++, TX_SYMBOL);
+		gb_write8(hl++, SYM_SPACE);
+		gb_write8(hl, SYM_SPACE);
+		return (uint16_t)(wCurDeckName_ADDR + 2u);
+	}
+	if (card == VENUSAUR_LV64 || card == MEW_LV15) {
+		gb_write8(hl++, CARD_ALBUM_INDEX_PHANTOM);
+		gb_write8(hl++, CARD_ALBUM_INDEX_PHANTOM);
+		gb_write8(hl++, TX_SYMBOL);
+		gb_write8(hl++, SYM_SPACE);
+		gb_write8(hl, SYM_SPACE);
+		return wCurDeckName_ADDR;
+	}
+	uint8_t position = (uint8_t)(wNumVisibleCardListEntries - b + wCardListVisibleOffset + 1u);
+	CalculateOnesAndTensDigits(position);
+	uint8_t ones = gb_read8(wDecimalDigitsSymbols_ADDR);
+	uint8_t tens = gb_read8((uint16_t)(wDecimalDigitsSymbols_ADDR + 1u));
+	if (tens == 0u)
+		tens = SYM_0;
+	gb_write8(hl++, TX_SYMBOL);
+	gb_write8(hl++, tens);
+	gb_write8(hl++, TX_SYMBOL);
+	gb_write8(hl++, ones);
+	gb_write8(hl++, TX_SYMBOL);
+	gb_write8(hl++, SYM_SPACE);
+	gb_write8(hl, SYM_SPACE);
+	return wCurDeckName_ADDR;
+}
+
 PrintCardSetListEntriesResult PrintCardSetListEntries(void)
 {
-	uint16_t hl = wCardListCoords_ADDR;
-	uint8_t e = gb_read8(hl++);
-	uint8_t d = gb_read8(hl);
+	uint8_t y = gb_read8(wCardListCoords_ADDR);
+	uint8_t x = gb_read8((uint16_t)(wCardListCoords_ADDR + 1u));
 	uint8_t visible_offset = wCardListVisibleOffset;
-	uint8_t tile = visible_offset ? SYM_CURSOR_U : SYM_BOX_TOP_R;
-	WriteByteToBGMap0(tile, d, (uint8_t)(e - 2u));
-	hl = visible_offset;
-	uint8_t count = wNumVisibleCardListEntries;
-	while (count != 0u) {
-		uint8_t card = gb_read8((uint16_t)(wFilteredCardList_ADDR + hl));
-		hl = (uint16_t)(hl + 1u);
-		if (card == 0u) break;
-		--count;
+	(void)WriteByteToBGMap0(visible_offset != 0u ? SYM_CURSOR_U : SYM_BOX_TOP_R, 19u, (uint8_t)(y - 2u));
+	uint16_t index = visible_offset;
+	uint8_t b = wNumVisibleCardListEntries;
+	uint8_t tile;
+	for (;;) {
+		if (b == 0u) {
+			uint16_t hl = (uint16_t)(wFilteredCardList_ADDR + index);
+			if (gb_read8(hl) == 0u) {
+				wUnableToScrollDown = TRUE;
+				tile = SYM_BOX_BTM_R;
+			} else {
+				wUnableToScrollDown = FALSE;
+				tile = SYM_CURSOR_D;
+			}
+			(void)WriteByteToBGMap0(tile, 19u, 17u);
+			return (PrintCardSetListEntriesResult){ .hl = hl };
+		}
+		uint8_t card = gb_read8((uint16_t)(wFilteredCardList_ADDR + index));
+		index = (uint16_t)((index & 0xff00u) | ((index + 1u) & 0xffu));
+		if (card == 0u) {
+			wUnableToScrollDown = TRUE;
+			(void)WriteByteToBGMap0(SYM_BOX_BTM_R, 19u, 17u);
+			return (PrintCardSetListEntriesResult){ .hl = index };
+		}
+		AddCardIDToVisibleList(b, card);
+		LoadCardDataToBuffer1_FromCardID(card);
+		if (gb_read8((uint16_t)(wOwnedCardsCountList_ADDR + index - 1u)) == CARD_NOT_OWNED) {
+			uint16_t de = wDefaultText_ADDR;
+			for (uint8_t i = 0; i < CARD_ALBUM_EMPTY_SLOT_DASHES; i++)
+				gb_write8(de++, CARD_ALBUM_EMPTY_SLOT_DASH);
+			gb_write8(de, TX_END);
+		} else {
+			(void)CopyCardNameAndLevel(13u, b, (uint8_t)index, x, card);
+		}
+		InitTextPrinting(x, y);
+		uint16_t text = card_album_append_list_index(index, b);
+		ProcessText(&text);
+		text = wDefaultText_ADDR;
+		ProcessText(&text);
+		b--;
+		y = (uint8_t)(y + 2u);
 	}
-	hl = (uint16_t)(wFilteredCardList_ADDR + hl);
-	if (gb_read8(hl) == 0u) {
-		gb_write8(wUnableToScrollDown_ADDR, TRUE);
-		tile = SYM_BOX_BTM_R;
-	} else {
-		gb_write8(wUnableToScrollDown_ADDR, FALSE);
-		tile = SYM_CURSOR_D;
-	}
-	WriteByteToBGMap0(tile, 19u, 17u);
-	return (PrintCardSetListEntriesResult){ .hl = hl };
 }
 /* <<< factory PrintCardSetListEntries */
 
@@ -363,14 +438,241 @@ void CreateCardSetListAndInitListCoords(uint8_t a)
 }
 /* <<< factory CreateCardSetListAndInitListCoords */
 
+#include "home/credits_sequence_commands.h"
+#include "home/deck_check.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#include "home/empty_screen.h"
+#include "home/lcd.h"
+#include "home/menus.h"
+#include "home/objects.h"
+#include "home/print_text.h"
+#include "home/switch_sram.h"
+#include "home/text_box.h"
+#include "home/tiles.h"
+/* card_album.asm:685-688 parks PrintCardSetListEntries (02:66fa) in
+ * wCardListUpdateFunction; deck_configuration.c's CallIndirect registry
+ * dispatches it. */
+#define PRINT_CARD_SET_LIST_ENTRIES 0x66FAu
 /* >>> factory CardAlbum */
+#define CARD_ALBUM_BOOSTER_PACK_MENU_PARAMS 0x6A02u
+#define CARD_ALBUM_BOOSTER_PACK_CARDS_MENU_PARAMS 0x6A0Au
+#define CARD_ALBUM_BOOSTER_PACKS_MENU_DATA 0x6B62u
+#define MENU_CANCEL 0xFFu
+#define MENU_CONFIRM 0x01u
+#define PAD_B 0x02u
+#define PAD_START 0x08u
+#define NUM_CARD_SETS 0x05u
+#define NUM_CARDS_COLOSSEUM 0x38u
+#define NUM_CARDS_EVOLUTION 0x32u
+#define NUM_CARDS_MYSTERY 0x33u
+#define NUM_CARDS_LABORATORY 0x33u
+#define NUM_CARDS_PROMOTIONAL 0x14u
+#define VENUSAUR_OWNED_PHANTOM_F 0x00u
+#define MEW_OWNED_PHANTOM_F 0x01u
+#define SYM_SLASH 0x2Eu
+#define BoosterPackTitleText 0x0252u
+#define Item1ColosseumText 0x0253u
+#define Item2EvolutionText 0x0254u
+#define Item3MysteryText 0x0255u
+#define Item4LaboratoryText 0x0256u
+#define Item5PromotionalCardText 0x0257u
+#define ViewWhichCardFileText 0x0258u
+#define EmptyPromotionalCardText 0x0259u
+
+static uint8_t card_album_num_card_entries(void)
+{
+	uint8_t count = 0u;
+	for (uint16_t hl = wFilteredCardList_ADDR; gb_read8(hl) != 0u; hl++)
+		count++;
+	wNumCardListEntries = count;
+	return count;
+}
+
+static void card_album_count_owned_cards_in_set(void)
+{
+	uint8_t count = 0u;
+	for (uint16_t hl = wOwnedCardsCountList_ADDR;; hl++) {
+		uint8_t entry = gb_read8(hl);
+		if (entry == 0xffu)
+			break;
+		if (entry != CARD_NOT_OWNED)
+			count++;
+	}
+	wNumOwnedCardsInSet = count;
+}
+
+static void card_album_load_screen_tiles(void)
+{
+	wVBlankOAMCopyToggle = TRUE;
+	LoadCursorTile();
+	(void)LoadSymbolsFont();
+	(void)LoadDuelCardSymbolTiles();
+	SetDefaultConsolePalettes();
+	(void)SetupText(0x3cu, 0xffu);
+}
+
+static void card_album_print_card_count(void)
+{
+	Set_OBJ_8x8();
+	wTileMapFill = 0u;
+	ZeroObjectPositions();
+	EmptyScreen();
+	card_album_load_screen_tiles();
+	InitTextPrinting(1u, 1u);
+	uint16_t title;
+	uint8_t total;
+	switch (wSelectedCardSet) {
+	case CARD_SET_PROMOTIONAL:
+		title = Item5PromotionalCardText;
+		total = NUM_CARDS_PROMOTIONAL - 2u;
+		if ((wOwnedPhantomCardFlags & (1u << VENUSAUR_OWNED_PHANTOM_F)) != 0u)
+			total++;
+		if ((wOwnedPhantomCardFlags & (1u << MEW_OWNED_PHANTOM_F)) != 0u)
+			total++;
+		break;
+	case CARD_SET_LABORATORY:
+		title = Item4LaboratoryText;
+		total = NUM_CARDS_LABORATORY;
+		break;
+	case CARD_SET_MYSTERY:
+		title = Item3MysteryText;
+		total = NUM_CARDS_MYSTERY;
+		break;
+	case CARD_SET_EVOLUTION:
+		title = Item2EvolutionText;
+		total = NUM_CARDS_EVOLUTION;
+		break;
+	default:
+		title = Item1ColosseumText;
+		total = NUM_CARDS_COLOSSEUM;
+		break;
+	}
+	(void)ProcessTextFromID(title);
+	card_album_count_owned_cards_in_set();
+	InitTextPrinting(14u, 1u);
+	ConvertToNumericalDigitsResult digits = ConvertToNumericalDigits(wNumOwnedCardsInSet, wDefaultText_ADDR);
+	CalculateOnesAndTensDigits(digits.a);
+	uint16_t hl = digits.hl;
+	gb_write8(hl++, TX_SYMBOL);
+	gb_write8(hl++, SYM_SLASH);
+	digits = ConvertToNumericalDigits(total, hl);
+	gb_write8(digits.hl, TX_END);
+	uint16_t text = wDefaultText_ADDR;
+	ProcessText(&text);
+	uint16_t box = 0u;
+	DrawRegularTextBox(&box, 0u, 20u, 16u, 0u, 2u);
+	EnableLCD();
+}
+
+static void card_album_show_booster_pack_menu(void)
+{
+	wTileMapFill = 0u;
+	EmptyScreen();
+	if (hffb4 == 1u) {
+		hffb4 = 0u;
+		Set_OBJ_8x8();
+		ZeroObjectPositions();
+		card_album_load_screen_tiles();
+	}
+	uint16_t box = 0u;
+	DrawRegularTextBox(&box, 0u, 20u, 13u, 0u, 0u);
+	(void)PlaceTextItems(CARD_ALBUM_BOOSTER_PACKS_MENU_DATA);
+	ClearMemory_Bank2(NUM_CARD_SETS, wUnavailableAlbumCardSets_ADDR);
+	EnableSRAM();
+	uint8_t has_promotional = sHasPromotionalCards;
+	DisableSRAM();
+	if (has_promotional == 0u) {
+		CreateCardSetListAndInitListCoords(CARD_SET_PROMOTIONAL);
+		if (gb_read8(wFilteredCardList_ADDR) != 0u) {
+			EnableSRAM();
+			sHasPromotionalCards = TRUE;
+			DisableSRAM();
+		} else {
+			gb_write8((uint16_t)(wUnavailableAlbumCardSets_ADDR + CARD_SET_PROMOTIONAL), TRUE);
+			InitTextPrinting(5u, 11u);
+			(void)ProcessTextFromID(EmptyPromotionalCardText);
+		}
+	}
+	(void)DrawWideTextBox_PrintText(ViewWhichCardFileText);
+	EnableLCD();
+}
+
 void CardAlbum(void)
 {
-	uint8_t item = gb_read8(hCurMenuItem_ADDR);
-	if ((uint8_t)(item + 1u) == 0u) {
-		gb_write8(wLCDC_ADDR, 0x80u);
-		return;
+	hffb4 = 1u;
+	uint8_t cursor = 0u;
+	for (;;) { /* .booster_pack_menu */
+		uint16_t params = CARD_ALBUM_BOOSTER_PACK_MENU_PARAMS;
+		InitializeMenuParameters(cursor, &params);
+		card_album_show_booster_pack_menu();
+		uint8_t set;
+		for (;;) { /* .loop_input_1 */
+			DoFrame();
+			if ((HandleMenuInput().f & 0x10u) == 0u)
+				continue;
+			set = hCurMenuItem;
+			if (set == MENU_CANCEL)
+				return;
+			if (gb_read8((uint16_t)(wUnavailableAlbumCardSets_ADDR + set)) == 0u)
+				break;
+		}
+		wSelectedCardSet = set;
+		CreateCardSetListAndInitListCoords(set);
+		card_album_print_card_count();
+		wCardListVisibleOffset = 0u;
+		(void)PrintCardSetListEntries();
+		EnableLCD();
+		if (wNumEntriesInCurFilter == 0u) {
+			do { /* .loop_input_2 */
+				DoFrame();
+			} while ((hKeysPressed & PAD_B) == 0u);
+			PlaySFXConfirmOrCancel(MENU_CANCEL);
+			cursor = hCurMenuItem;
+			continue;
+		}
+		(void)card_album_num_card_entries();
+		uint16_t list_params = CARD_ALBUM_BOOSTER_PACK_CARDS_MENU_PARAMS;
+		(void)InitCardSelectionParams(0u, &list_params);
+		if (wNumEntriesInCurFilter < wNumVisibleCardListEntries)
+			wCardListNumCursorPositions = wNumEntriesInCurFilter;
+		gb_write8(wCardListUpdateFunction_ADDR, (uint8_t)PRINT_CARD_SET_LIST_ENTRIES);
+		gb_write8((uint16_t)(wCardListUpdateFunction_ADDR + 1u), (uint8_t)(PRINT_CARD_SET_LIST_ENTRIES >> 8));
+		wced2 = 0u;
+		for (;;) { /* .loop_input_3 */
+			DoFrame();
+			HandleDeckCardSelectionListResult selection = HandleDeckCardSelectionList();
+			if ((selection.f & 0x10u) != 0u) {
+				(void)DrawListCursor_Invisible();
+				wTempCardListCursorPos = wCardListCursorPos;
+				if (hffb3 == MENU_CANCEL)
+					break;
+			} else {
+				if ((HandleLeftRightInCardList().f & 0x10u) != 0u)
+					continue;
+				if ((hDPadHeld & PAD_START) == 0u)
+					continue;
+			}
+			/* .open_card_page */
+			PlaySFXConfirmOrCancel(MENU_CONFIRM);
+			wTempCardListNumCursorPositions = wCardListNumCursorPositions;
+			wTempCardListCursorPos = wCardListCursorPos;
+			uint8_t index = (uint8_t)(wCardListVisibleOffset + wCardListCursorPos);
+			if (gb_read8((uint16_t)(wOwnedCardsCountList_ADDR + index)) == CARD_NOT_OWNED)
+				continue;
+			gb_write8(wCurCardListPtr_ADDR, (uint8_t)wFilteredCardList_ADDR);
+			gb_write8((uint16_t)(wCurCardListPtr_ADDR + 1u), (uint8_t)(wFilteredCardList_ADDR >> 8));
+			(void)GetFirstOwnedCardIndex();
+			(void)HandleCardAlbumCardPage((uint8_t)(wFilteredCardList_ADDR >> 8), (uint8_t)wFilteredCardList_ADDR);
+			card_album_print_card_count();
+			(void)PrintCardSetListEntries();
+			EnableLCD();
+			list_params = CARD_ALBUM_BOOSTER_PACK_CARDS_MENU_PARAMS;
+			(void)InitCardSelectionParams(0u, &list_params);
+			wCardListNumCursorPositions = wTempCardListNumCursorPositions;
+			wCardListCursorPos = wTempCardListCursorPos;
+		}
+		cursor = hCurMenuItem;
 	}
-	gb_write8(wLCDC_ADDR, 0x00u);
 }
 /* <<< factory CardAlbum */

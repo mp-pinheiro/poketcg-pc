@@ -256,6 +256,18 @@ BENCH_SWITCH_REGS = BENCH_SWITCH.regs
 # InitAITurnVars through the attack. Professor Oak is not in this hand.
 RONALD_TURN = Fixture("ai-duel-1b-turn-entry")
 RONALD_TURN_REGS = RONALD_TURN.regs
+# boot-deck-machine at DoFrame 91322: the lab PC's Card Album opens on the
+# starter collection.
+CARD_ALBUM = Fixture("boot-deck-machine-card-album-entry")
+CARD_ALBUM_REGS = CARD_ALBUM.regs
+# boot-deck-machine at DoFrame 91671: the Evolution file's first page, seven
+# rows of owned names and "-------------" placeholders.
+CARD_SET_LIST = Fixture("boot-deck-machine-card-set-list-entry")
+CARD_SET_LIST_REGS = CARD_SET_LIST.regs
+# boot-deck-machine at DoFrame 91672: the first list poll after
+# InitCardSelectionParams reset the blink counter; the cursor must appear.
+CARD_LIST_SELECT = Fixture("boot-deck-machine-card-list-select-entry")
+CARD_LIST_SELECT_REGS = CARD_LIST_SELECT.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -416,3 +428,15 @@ def bench_switch_fixture(vram: bool = True, bank: int | None = None, **changes: 
 
 def ronald_turn_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return RONALD_TURN.case(vram=vram, bank=bank, **changes)
+
+
+def card_album_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return CARD_ALBUM.case(vram=vram, bank=bank, **changes)
+
+
+def card_set_list_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return CARD_SET_LIST.case(vram=vram, bank=bank, **changes)
+
+
+def card_list_select_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return CARD_LIST_SELECT.case(vram=vram, bank=bank, **changes)
