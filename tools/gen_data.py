@@ -51,6 +51,9 @@ NATIVE_DATA_SPANS = (
     ("intro_sequence", 7, 0x559D, 0x77),
     ("intro_sequence_lookahead", 7, 0x5614, 0x01),
     ("input_name_deck_keyboard", 6, 0x7019, 0xC1),
+    # card_data.asm:60-74 copies PKMN_CARD_DATA_LENGTH bytes for every card, so
+    # the trainer records at the end of bank $0C read the padding after RecycleCard.
+    ("card_data_tail", 12, 0x7FE1, 0x1F),
 )
 
 SECTION_RE = re.compile(

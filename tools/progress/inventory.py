@@ -178,7 +178,7 @@ def local_data_labels() -> set[str]:
                     pending = []
                 continue
             if stripped.startswith("."):
-                pending.append(f"{current or ''}{stripped.split()[0]}")
+                pending.append(f"{current or ''}{stripped.split()[0].rstrip(':')}")
                 continue
             if stripped.split()[0].upper() in SKIP_TOKENS:
                 if stripped.split()[0].upper() == "SECTION":
