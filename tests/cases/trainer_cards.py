@@ -100,10 +100,14 @@ CASES["AIDecide_PokemonFlute"] = [
 # <<< factory AIDecide_PokemonFlute
 # >>> factory AIDecide_ClefairyDollOrMysteriousFossil
 CONTRACT["AIDecide_ClefairyDollOrMysteriousFossil"] = {"compare": ("a", "f"), "preserve": ()}
+# hWhoseTurn defaults to the opponent's page ($C3): the count at $C3EF, the arena
+# deck index at $C3BB, the deck's card ids at $C480. Wigglytuff is card $B0.
 CASES["AIDecide_ClefairyDollOrMysteriousFossil"] = [
-    {"wram": {0xC3EF: b"\x06"}},
-    {"wram": {0xC3EF: b"\x03", 0xC2BB: b"\x00"}},
-    dict(POISON, wram={0xC3EF: b"\x03", 0xC2BB: b"\x00"}),
+    {"wram": {0xC3EF: b"\x06"}, "read": {0xCE06: 1}},
+    {"wram": {0xC3EF: b"\x03", 0xC3BB: b"\x00", 0xC480: b"\x30"}, "read": {0xCE06: 1}},
+    {"wram": {0xC3EF: b"\x05", 0xC3BB: b"\x00", 0xC480: b"\xB0"}, "read": {0xCE06: 1}},
+    {"wram": {0xC3EF: b"\x05", 0xC3BB: b"\x00", 0xC480: b"\x30"}, "read": {0xCE06: 1}},
+    dict(POISON, wram={0xC3EF: b"\x03", 0xC3BB: b"\x00", 0xC480: b"\x30"}, read={0xCE06: 1}),
 ]
 # <<< factory AIDecide_ClefairyDollOrMysteriousFossil
 # >>> factory AIDecide_Defender_Phase14
@@ -1344,12 +1348,7 @@ MUTATIONS["AIDecide_Recycle"] = {"source_symbol": "AIDecide_Recycle", "before": 
 # <<< factory-mutation AIDecide_Recycle
 
 # >>> factory-mutation AIDecide_ClefairyDollOrMysteriousFossil
-MUTATIONS["AIDecide_ClefairyDollOrMysteriousFossil"] = {
-    "source_symbol": "AIDecide_ClefairyDollOrMysteriousFossil",
-    "before": "return (AIDecidePokemonFluteResult){count, count < 4u ? 0x10u : 0};",
-    "after": "return (AIDecidePokemonFluteResult){count, 0u};",
-    "case_ids": ["AIDecide_ClefairyDollOrMysteriousFossil-0", "AIDecide_ClefairyDollOrMysteriousFossil-1"],
-}
+MUTATIONS["AIDecide_ClefairyDollOrMysteriousFossil"] = {"source_symbol": "AIDecide_ClefairyDollOrMysteriousFossil", "before": "\twce06 = count;", "after": "\twce06 = (uint8_t)(count + 1u);", "case_ids": ["AIDecide_ClefairyDollOrMysteriousFossil-1"]}
 # <<< factory-mutation AIDecide_ClefairyDollOrMysteriousFossil
 # >>> factory-mutation AIDecide_PokemonFlute
 MUTATIONS["AIDecide_PokemonFlute"] = {

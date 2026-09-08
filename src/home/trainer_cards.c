@@ -423,6 +423,8 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "home/core.h"
+#define WIGGLYTUFF 0xB0u
+#define MAX_PLAY_AREA_POKEMON 0x06u
 /* <<< factory statics */
 
 /* The exit F register of a `cp n` and of an `or a`, for the decisions whose
@@ -685,15 +687,22 @@ AIDecidePokemonFluteResult AIDecide_PokemonFlute(uint8_t c)
 }
 /* <<< factory AIDecide_PokemonFlute */
 /* >>> factory AIDecide_ClefairyDollOrMysteriousFossil */
+/* trainer_cards.asm:4784-4812. The play area count is parked in wce06 for
+ * the later phases; a Wigglytuff in the arena plays the card outright, with
+ * `cp WIGGLYTUFF`'s Z under the carry. */
 AIDecidePokemonFluteResult AIDecide_ClefairyDollOrMysteriousFossil(void)
 {
-	uint8_t count = GetTurnDuelistVariable(0xEFu).a;
-	if (count >= 6u)
-		return (AIDecidePokemonFluteResult){count, 0};
-	uint8_t arena = GetTurnDuelistVariable(0xBBu).a;
-	if ((uint8_t)GetCardIDFromDeckIndex(arena) == 0xB0u)
-		return (AIDecidePokemonFluteResult){arena, 0x10u};
-	return (AIDecidePokemonFluteResult){count, count < 4u ? 0x10u : 0};
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	if (count >= MAX_PLAY_AREA_POKEMON)
+		return (AIDecidePokemonFluteResult){count, count == 0u ? 0x80u : 0u};
+	wce06 = count;
+	uint8_t arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+	uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(arena);
+	if (card_id == WIGGLYTUFF)
+		return (AIDecidePokemonFluteResult){card_id, 0x90u};
+	if (count < 4u)
+		return (AIDecidePokemonFluteResult){count, 0x10u};
+	return (AIDecidePokemonFluteResult){count, count == 0u ? 0x80u : 0u};
 }
 /* <<< factory AIDecide_ClefairyDollOrMysteriousFossil */
 
