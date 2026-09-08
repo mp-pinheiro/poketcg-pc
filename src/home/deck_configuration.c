@@ -2250,7 +2250,7 @@ void ShowDeckInfoHeader(void)
 /* <<< factory ShowDeckInfoHeader */
 
 /* >>> factory DrawCardTypeIconsAndPrintCardCounts */
-void DrawCardTypeIconsAndPrintCardCounts(void)
+uint8_t DrawCardTypeIconsAndPrintCardCounts(void)
 {
 	Set_OBJ_8x8();
 	PrepareMenuGraphics();
@@ -2259,7 +2259,7 @@ void DrawCardTypeIconsAndPrintCardCounts(void)
 	PrintCardTypeCounts();
 	PrintTotalCardCount(15u, 0u);
 	PrintSlashSixty(17u, 0u);
-	EnableLCD();
+	return EnableLCD();
 }
 /* <<< factory DrawCardTypeIconsAndPrintCardCounts */
 
@@ -2375,9 +2375,9 @@ void ConfirmDeckConfiguration(void)
 	wCardListVisibleOffsetBackup = visible_offset;
 	HandleDeckConfirmationMenu();
 	wCardListVisibleOffset = wCardListVisibleOffsetBackup;
-	DrawCardTypeIconsAndPrintCardCounts();
+	uint8_t flush = DrawCardTypeIconsAndPrintCardCounts();
 	uint16_t params = FILTERS_CARD_SELECTION_PARAMS_ADDR;
-	(void)InitCardSelectionParams(0u, &params);
+	(void)InitCardSelectionParams(flush, &params);
 	wTempCardTypeFilter = wCurCardTypeFilter;
 	(void)DrawHorizontalListCursor_Visible();
 	(void)PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u, FILTERS_CARD_SELECTION_PARAMS_ADDR);
@@ -2568,12 +2568,16 @@ void HandleDeckBuildScreen(void)
 
 	wCardListVisibleOffset = 0u;
 	wCurCardTypeFilter = 0u;
-	(void)PrintFilteredCardList(0u, 0u, 0u, 0u, 0u, 0u,
+	PrintFilteredCardListResult printed = PrintFilteredCardList(0u, 0u, 0u, 0u, 0u, 0u,
 		HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR);
+	HandleDeckBuildScreen_SkipDraw(printed.a);
+}
 
+void HandleDeckBuildScreen_SkipDraw(uint8_t a)
+{
 	uint16_t params;
 	params = HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR;
-	(void)InitCardSelectionParams(0u, &params);
+	(void)InitCardSelectionParams(a, &params);
 
 	for (;;) {
 		DoFrame();
@@ -2883,8 +2887,10 @@ void HandleDeckConfigurationMenu(void)
 		wced6 = selected_item;
 		if (selection == MENU_CANCEL) {
 			DrawCardTypeIconsAndPrintCardCounts();
-			(void)PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u,
+			wCardListCursorPos = wTempCardListCursorPos;
+			PrintFilteredCardListResult printed = PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u,
 				FILTERS_CARD_SELECTION_PARAMS_ADDR);
+			HandleDeckBuildScreen_SkipDraw(printed.a);
 			return;
 		}
 		switch (selection) {

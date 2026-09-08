@@ -15,16 +15,17 @@
 #define FLUSH_ALL_PALS 0xC0u
 #define IE_VBLANK 0x01u
 
-void EnableLCD(void)
+uint8_t EnableLCD(void)
 {
 	uint8_t value = gb_read8(wLCDC_ADDR);
 
 	if (value & LCDC_ON)
-		return;
+		return value;
 	value |= LCDC_ON;
 	gb_write8(wLCDC_ADDR, value);
 	gb_write8(rLCDC, value);
 	gb_write8(wFlushPaletteFlags_ADDR, FLUSH_ALL_PALS);
+	return FLUSH_ALL_PALS;
 }
 
 /* poketcg/src/home/lcd.asm:30-56. The .wait_vblank loop busy-polls rLY

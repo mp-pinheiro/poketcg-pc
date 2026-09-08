@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_LCD_H
 #define POKETCG_HOME_LCD_H
 
-void EnableLCD(void);
+#include <stdint.h>
+
+uint8_t EnableLCD(void);
 void DisableLCD(void);
 void Set_OBJ_8x8(void);
 void Set_OBJ_8x16(void);

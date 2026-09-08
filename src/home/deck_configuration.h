@@ -266,7 +266,7 @@ void PrintSlashSixty(uint8_t d, uint8_t e);
 void ShowDeckInfoHeader(void);
 /* <<< factory ShowDeckInfoHeader */
 /* >>> factory DrawCardTypeIconsAndPrintCardCounts */
-void DrawCardTypeIconsAndPrintCardCounts(void);
+uint8_t DrawCardTypeIconsAndPrintCardCounts(void);
 /* <<< factory DrawCardTypeIconsAndPrintCardCounts */
 /* >>> factory ShowConfirmationCardScreen */
 void ShowConfirmationCardScreen(void);
@@ -299,6 +299,7 @@ HandleSelectUpAndDownInListResult HandleSelectUpAndDownInList(void);
 /* <<< factory HandleSelectUpAndDownInList */
 /* >>> factory HandleDeckBuildScreen */
 void HandleDeckBuildScreen(void);
+void HandleDeckBuildScreen_SkipDraw(uint8_t a);
 /* <<< factory HandleDeckBuildScreen */
 /* >>> factory HandlePlayersCardsScreen */
 void HandlePlayersCardsScreen(void);

@@ -1250,11 +1250,11 @@ CASES["ChangeDeckName"] = [
 # >>> factory HandleDeckConfigurationMenu
 CONTRACT["HandleDeckConfigurationMenu"] = {"compare": (), "preserve": ()}
 CASES["HandleDeckConfigurationMenu"] = [
-    {"wram": {0xCABB: b"\x00", 0xCED4: b"\x12", 0xCED3: b"\x00"},
+    {"wram": {0xCABB: b"\x00", 0xCED4: b"\x12", 0xCED3: b"\x00", 0xCFD4: b"\x80\x54"},
      "sram": {0: {}}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x02], "rom_bank": 2, "read": {0xCEA4: 1, 0xCED6: 1},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xCABB: b"\x00", 0xCED4: b"\x12", 0xCED3: b"\x00"},
+    dict(POISON, wram={0xCABB: b"\x00", 0xCED4: b"\x12", 0xCED3: b"\x00", 0xCFD4: b"\x80\x54"},
          sram={0: {}}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          keys=[0x00, 0x02], rom_bank=2, read={0xCEA4: 1, 0xCED6: 1},
          instruction_budget=20000000, cycle_budget=80000000),
@@ -1285,6 +1285,10 @@ for _record in SCHEMA2_CASES["OpenDeckConfigurationMenu"]:
 for _record in SCHEMA2_CASES["HandleDeckBuildScreen"]:
     _record["completion"] = {"mode": "entry", "pc": 0x5480, "bank": 2,
                              "routine": "HandleDeckConfigurationMenu"}
+
+for _record in SCHEMA2_CASES["HandleDeckConfigurationMenu"]:
+    _record["completion"] = {"mode": "entry", "pc": 0x5461, "bank": 2,
+                             "routine": "OpenDeckConfigurationMenu"}
 
 MUTATIONS = {}
 # >>> factory-mutation DecrementDeckCardsInCollection
@@ -1660,7 +1664,7 @@ for _rec in SCHEMA2_CASES["ChangeDeckName"]:
     _rec["completion"] = {"mode": "pre-ret", "pc": 0x55BC, "bank": 2}
 # <<< factory-completion ChangeDeckName
 # >>> factory-mutation HandleDeckConfigurationMenu
-MUTATIONS["HandleDeckConfigurationMenu"] = {"source_symbol": "HandleDeckConfigurationMenu", "before": "\t\tuint8_t selected_item = selection;\n\t\twced6 = selected_item;", "after": "\t\tuint8_t selected_item = selection;\n\t\twced6 = (uint8_t)(selected_item + 1u);", "case_ids": ["HandleDeckConfigurationMenu-0", "HandleDeckConfigurationMenu-1"]}
+MUTATIONS["HandleDeckConfigurationMenu"] = {"source_symbol": "HandleDeckConfigurationMenu", "before": "\t\t\tHandleDeckBuildScreen_SkipDraw(printed.a);\n\t\t\treturn;", "after": "\t\t\treturn;", "case_ids": ["HandleDeckConfigurationMenu-0", "HandleDeckConfigurationMenu-1"]}
 # <<< factory-mutation HandleDeckConfigurationMenu
 # >>> factory-mutation ModifyDeckConfiguration
 MUTATIONS["ModifyDeckConfiguration"] = {"source_symbol": "ModifyDeckConfiguration", "before": "\tDrawCardTypeIconsAndPrintCardCounts();", "after": "\tDrawCardTypeIconsAndPrintCardCounts();\n\twCardListCursorPos = 1u;", "case_ids": ["ModifyDeckConfiguration-0", "ModifyDeckConfiguration-1"]}
