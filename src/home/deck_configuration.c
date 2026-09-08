@@ -2006,7 +2006,13 @@ void PrintConfirmationCardList(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl)
 		uint16_t de = (uint16_t)((uint16_t)(align - 2u) << 8 | (uint8_t)(row - 1u));
 		FillRectangle(icon, 2u, 2u, de, 0x0102u);
 		GetCardTypeIconPaletteResult palette = GetCardTypeIconPalette(icon, 0u, 0u, 0u, 0u, 0u, de);
-		if (wConsole == CONSOLE_CGB) { gb_write8(0xFF4Fu, 1u); FillRectangle(palette.a, 2u, 2u, de, 0x0102u); gb_write8(0xFF4Fu, 0u); }
+		if (wConsole == CONSOLE_CGB) {
+			hBankVRAM = 1u;
+			gb_write8(0xFF4Fu, 1u);
+			FillRectangle(palette.a, 2u, 2u, de, 0x0000u);
+			hBankVRAM = 0u;
+			gb_write8(0xFF4Fu, 0u);
+		}
 		InitTextPrinting(align, row);
 		uint16_t text_ptr = wDefaultText_ADDR;
 		ProcessText(&text_ptr);
