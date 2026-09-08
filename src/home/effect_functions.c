@@ -8611,6 +8611,15 @@ void ProfessorOakEffect(void)
 	HandListResult hand = CreateHandCardList(0u);
 	uint16_t de = (uint16_t)(((uint16_t)hand.d << 8) | hand.e);
 	SortResult sorted = SortCardsInDuelTempListByID(hand.b, hand.c, de);
+	/* effect_functions.asm:9214-9221: the sorted hand goes to the discard
+	 * pile, lowest card id first. */
+	for (uint16_t entry = wDuelTempList_ADDR;; entry++) {
+		uint8_t card = gb_read8(entry);
+		if (card == 0xFFu)
+			break;
+		RemoveCardFromHand(card);
+		PutCardInDiscardPile(card);
+	}
 	uint8_t draw_count = 7u;
 	DisplayDrawNCardsScreen(draw_count, sorted.f, sorted.b, sorted.c, sorted.d, sorted.e, sorted.hl);
 	uint8_t remaining = 7u;

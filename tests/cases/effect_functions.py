@@ -5914,6 +5914,12 @@ CASES["FetchEffect"] = [
 # >>> factory ProfessorOakEffect
 CONTRACT["ProfessorOakEffect"] = {"compare": (), "preserve": ()}
 CASES["ProfessorOakEffect"] = [
+    # Three cards in hand (deck indices 5, 2, 9 at locations $01): all three
+    # reach the discard pile in id order before the draw.
+    {"wram": {0xFF97: b"\xC2", 0xC202: b"\x01", 0xC205: b"\x01", 0xC209: b"\x01", 0xC242: b"\x05\x02\x09", 0xC2EE: b"\x03", 0xC2BA: b"\x00", 0xC400: b"\x08\x08\x30\x08\x08\x31\x08\x08\x08\x32", 0xCABB: b"\x00"},
+     "read": {0xC200: 12, 0xC242: 8, 0xC2BA: 1, 0xC2EE: 1, 0xC510: 4, 0xCBE8: 1, 0xCBE9: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
     {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xC2BA: b"\x00", 0xCABB: b"\x00"},
      "read": {0xC510: 2, 0xCBE8: 1, 0xCBE9: 1},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
@@ -10636,7 +10642,7 @@ MUTATIONS["MewtwoEnergyAbsorption_PlayerSelectEffect"] = {"source_symbol": "Mewt
 MUTATIONS["FetchEffect"] = {"source_symbol": "FetchEffect", "before": "void FetchEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(Draw1CardFromTheDeckText);\n\tDisplayDrawOneCardScreen(0u, 0u, 0u, 0u, 0u, 0u, 0u);\n\tDrawCardResult draw = DrawCardFromDeck();\n\tif ((draw.f & 0x10u) != 0u)\n\t\treturn;\n\tAddCardToHand(draw.a);", "after": "void FetchEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(Draw1CardFromTheDeckText);\n\tDisplayDrawOneCardScreen(0u, 0u, 0u, 0u, 0u, 0u, 0u);\n\tDrawCardResult draw = DrawCardFromDeck();\n\tif ((draw.f & 0x10u) != 0u)\n\t\treturn;\n\tAddCardToHand((uint8_t)(draw.a + 1u));", "case_ids": ["FetchEffect-0", "FetchEffect-1", "FetchEffect-2"]}
 # <<< factory-mutation FetchEffect
 # >>> factory-mutation ProfessorOakEffect
-MUTATIONS["ProfessorOakEffect"] = {"source_symbol": "ProfessorOakEffect", "before": "\tuint8_t draw_count = 7u;", "after": "\tuint8_t draw_count = 6u;", "case_ids": ["ProfessorOakEffect-0", "ProfessorOakEffect-1"]}
+MUTATIONS["ProfessorOakEffect"] = {"source_symbol": "ProfessorOakEffect", "before": "\t\tPutCardInDiscardPile(card);", "after": "\t\t(void)card;", "case_ids": ["ProfessorOakEffect-0"]}
 # <<< factory-mutation ProfessorOakEffect
 # >>> factory-mutation Maintenance_ReturnToDeckAndDrawEffect
 MUTATIONS["Maintenance_ReturnToDeckAndDrawEffect"] = {"source_symbol": "Maintenance_ReturnToDeckAndDrawEffect", "before": "MaintenanceReturnToDeckAndDrawEffectResult Maintenance_ReturnToDeckAndDrawEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t first = hTempList;", "after": "MaintenanceReturnToDeckAndDrawEffectResult Maintenance_ReturnToDeckAndDrawEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t first = (uint8_t)(hTempList + 1u);", "case_ids": ["Maintenance_ReturnToDeckAndDrawEffect-0", "Maintenance_ReturnToDeckAndDrawEffect-1"]}
