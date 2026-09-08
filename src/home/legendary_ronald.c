@@ -84,15 +84,15 @@ AIDoTurn_LegendaryRonaldResult AIDoTurn_LegendaryRonald(uint8_t a, uint8_t f, ui
 				}
 			}
 		}
+		AIDecidePlayPokemonCard();
+		AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_05);
+		AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_07);
+		AIProcessRetreat();
+		AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_10);
+		if (wAlreadyPlayedEnergy == 0u)
+			AIProcessAndTryToPlayEnergy();
+		AIDecidePlayPokemonCard();
 	}
-	AIDecidePlayPokemonCard();
-	AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_05);
-	AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_07);
-	AIProcessRetreat();
-	AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_10);
-	if (wAlreadyPlayedEnergy == 0u)
-		AIProcessAndTryToPlayEnergy();
-	AIDecidePlayPokemonCard();
 	AIProcessAttacksResult attack = AIProcessAndTryToUseAttack();
 	if ((attack.f & 0x10u) != 0u)
 		return (AIDoTurn_LegendaryRonaldResult){attack.f};

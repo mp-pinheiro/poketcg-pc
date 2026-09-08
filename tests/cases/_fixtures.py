@@ -252,6 +252,10 @@ ENERGY_TRANS_REGS = ENERGY_TRANS.regs
 # three benched Pokemon to bring out.
 BENCH_SWITCH = Fixture("ai-duel-13-bench-switch-entry")
 BENCH_SWITCH_REGS = BENCH_SWITCH.regs
+# ai-duel-1b at DoFrame 25685: Legendary Ronald's whole AI turn, from
+# InitAITurnVars through the attack. Professor Oak is not in this hand.
+RONALD_TURN = Fixture("ai-duel-1b-turn-entry")
+RONALD_TURN_REGS = RONALD_TURN.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -408,3 +412,7 @@ def energy_trans_fixture(vram: bool = True, bank: int | None = None, **changes: 
 
 def bench_switch_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return BENCH_SWITCH.case(vram=vram, bank=bank, **changes)
+
+
+def ronald_turn_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return RONALD_TURN.case(vram=vram, bank=bank, **changes)
