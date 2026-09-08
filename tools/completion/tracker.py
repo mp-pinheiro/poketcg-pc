@@ -40,6 +40,7 @@ import session
 API = "https://forgejo.yfrit.com/api/v1"
 REPO = "fairfruit/poketcg-pc"
 TRACKER_DIR = ROOT / "build" / "completion" / "tracker"
+SYNC_STAMP = TRACKER_DIR / ".synced"
 KEY_MARK = re.compile(r"<!-- tracker-key: ([^ ]+) -->")
 ORDINAL_MARK = re.compile(r"<!-- tracker-ordinal: (\d+) -->")
 SESSION_MARK = re.compile(r"^session:\s*`?([a-z0-9_-]+)`?", re.MULTILINE | re.IGNORECASE)
@@ -541,10 +542,23 @@ def sync(dry_run: bool, retire_plan: bool) -> int:
                 api.call("PATCH", f"/repos/{REPO}/milestones/{row['id']}", {"state": "closed"})
     print(f"TRACKER desired={len(desired)} created={created} updated={updated} reopened={reopened} "
           f"closed={closed} writes={api.writes}{' (dry run)' if dry_run else ''}")
+    if not dry_run:
+        TRACKER_DIR.mkdir(parents=True, exist_ok=True)
+        SYNC_STAMP.touch()
     return 0
 
 
+def warn_if_stale() -> None:
+    """A report written after the last sync is a fact the tracker does not
+    show yet; say so before listing, so nobody works from a stale list."""
+    since = SYNC_STAMP.stat().st_mtime if SYNC_STAMP.is_file() else 0.0
+    stale = sum(1 for path in TRACKER_DIR.glob("*.json") if path.stat().st_mtime > since)
+    if stale:
+        print(f"STALE reports={stale} newer than the last sync; run: just issues-sync")
+
+
 def next_issues(count: int) -> int:
+    warn_if_stale()
     api = Forgejo()
     rows = api.paged(f"/repos/{REPO}/issues?state=open&type=issues")
     ranked = []
@@ -603,6 +617,7 @@ def route(name: str, title: str, how: str) -> int:
 
 
 def status() -> int:
+    warn_if_stale()
     api = Forgejo()
     milestones = api.milestones()
     ratchet = session.read_ratchet()
