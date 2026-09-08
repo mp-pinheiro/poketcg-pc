@@ -1,3 +1,4 @@
+from tests.cases._fixtures import cowardice_fixture as _cowardice_fixture, COWARDICE_REGS as _COWARDICE_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/ai/pkmn_powers.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -126,6 +127,7 @@ CASES["HandleAICowardice"] = [
 	{"wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\x00\xC5", 0xC3BC: b"\x01\xC5", 0xC400: b"\x27", 0xC480: b"\x27", 0xC500: b"\xFF", 0xC501: b"\xFF"}, "read": {0xCE7C: 1}},
 	{"a": 0x11, "f": 0xE0, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x6789, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\x00\xC5", 0xC3BC: b"\x01\xC5", 0xC400: b"\x27", 0xC480: b"\x27", 0xC500: b"\xFF", 0xC501: b"\xFF"}, "read": {0xCE7C: 1}},
 	dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\x00\xC5", 0xC3BC: b"\x01\xC5", 0xC400: b"\x27", 0xC480: b"\x27", 0xC500: b"\xFF", 0xC501: b"\xFF"}, read={0xCE7C: 1}),
+    dict(_cowardice_fixture(bank=8), **_COWARDICE_REGS, read={0xCE08: 1, 0xC3BB: 6, 0xC3C8: 6}),
 ]
 # <<< factory HandleAICowardice
 
@@ -196,7 +198,7 @@ MUTATIONS["HandleAIPkmnPowers"] = {"source_symbol": "HandleAIPkmnPowers", "befor
 MUTATIONS["HandleAIGoGoRainDanceEnergy"] = {"source_symbol": "HandleAIGoGoRainDanceEnergy", "before": "\t\treturn (HandleAIGoGoRainDanceEnergyResult){deck, f};", "after": "\t\treturn (HandleAIGoGoRainDanceEnergyResult){deck, (uint8_t)(f ^ 0x10u)};", "case_ids": ["HandleAIGoGoRainDanceEnergy-0", "HandleAIGoGoRainDanceEnergy-1", "HandleAIGoGoRainDanceEnergy-2", "HandleAIGoGoRainDanceEnergy-3"]}
 # <<< factory-mutation HandleAIGoGoRainDanceEnergy
 # >>> factory-mutation HandleAICowardice
-MUTATIONS["HandleAICowardice"] = {"source_symbol": "HandleAICowardice", "before": "HandleAICowardiceResult HandleAICowardice(void)\n{\n\tPkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);\n\tif (muk.f & 0x10u)\n\t\treturn (HandleAICowardiceResult){muk.a, muk.f};", "after": "HandleAICowardiceResult HandleAICowardice(void)\n{\n\tPkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(TENTACOOL);\n\tif (muk.f & 0x10u)\n\t\treturn (HandleAICowardiceResult){muk.a, muk.f};", "case_ids": ["HandleAICowardice-0", "HandleAICowardice-1", "HandleAICowardice-2"]}
+MUTATIONS["HandleAICowardice"] = {"source_symbol": "HandleAICowardice", "before": "\t\tuint8_t used = card_id < TENTACOOL;", "after": "\t\tuint8_t used = 0u;", "case_ids": ["HandleAICowardice-3"]}
 # <<< factory-mutation HandleAICowardice
 # >>> factory-mutation AIEnergyTransTransferEnergyToBench
 MUTATIONS["AIEnergyTransTransferEnergyToBench"] = {"source_symbol": "AIEnergyTransTransferEnergyToBench", "before": "AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void)\n{\n\thTempPlayAreaLocation_ff9d = 0u;", "after": "AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["AIEnergyTransTransferEnergyToBench-0", "AIEnergyTransTransferEnergyToBench-1"]}

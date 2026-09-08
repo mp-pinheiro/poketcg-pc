@@ -182,6 +182,10 @@ MOVE_STEP_REGS = MOVE_STEP.regs
 # HandleMenuInput under PlayAreaScreenMenuFunction must report the cancel.
 PLAY_AREA_B = Fixture("rock-club-play-area-b-entry")
 PLAY_AREA_B_REGS = PLAY_AREA_B.regs
+# andrew-duel at DoFrame 163975: the AI's Tentacool uses Cowardice with more
+# Pokemon in play, so the scan restarts from the arena.
+COWARDICE = Fixture("andrew-duel-cowardice-entry")
+COWARDICE_REGS = COWARDICE.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -278,3 +282,7 @@ def move_step_fixture(vram: bool = True, bank: int | None = None, **changes: byt
 
 def play_area_b_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return PLAY_AREA_B.case(vram=vram, bank=bank, **changes)
+
+
+def cowardice_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return COWARDICE.case(vram=vram, bank=bank, **changes)

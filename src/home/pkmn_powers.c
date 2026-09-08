@@ -511,12 +511,19 @@ HandleAICowardiceResult HandleAICowardice(void)
 	uint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;
 	if (status & CNF_SLP_PRZ)
 		c++;
+	/* pkmn_powers.asm:968-993: after a Tentacool uses Cowardice the scan
+	 * restarts from the arena with one Pokemon fewer, and stops with `cp b`'s
+	 * flags once only one is left; the plain end of the scan is `cp b`'s Z. */
 	for (;;) {
 		if (c == b)
-			return (HandleAICowardiceResult){c, 0x80u};
+			return (HandleAICowardiceResult){c, 0xC0u};
 		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + c)).a;
 		wce08 = deck_index;
 		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+		/* `cp TENTACOOL` then `jr nc, .next`: a card whose id is below
+		 * Tentacool's leaves carry set and takes the "used Cowardice" path
+		 * without using anything (the ROM's own bug, kept). */
+		uint8_t used = card_id < TENTACOOL;
 		if (card_id == TENTACOOL) {
 			hTemp_ffa0 = c;
 			CardDamageResult damage = GetCardDamageAndMaxHP(c);
@@ -535,8 +542,15 @@ HandleAICowardiceResult HandleAICowardice(void)
 				hAIPkmnPowerEffectParam = effect_param;
 				(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
 				(void)AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
-				return (HandleAICowardiceResult){OPPACTION_DUEL_MAIN_SCENE, 0x10u};
+				used = 1u;
 			}
+		}
+		if (used) {
+			b--;
+			if (b == 1u)
+				return (HandleAICowardiceResult){1u, 0xC0u};
+			c = PLAY_AREA_ARENA;
+			continue;
 		}
 		c++;
 	}
