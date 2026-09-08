@@ -1,5 +1,8 @@
 #include "home/overworld.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "home/script_entry_dispatch.h"
 
 #include "generated/hram.h"
@@ -258,6 +261,10 @@
 #include "generated/wram.h"
 #define MUSIC_PAUSE_MENU 0x05u
 #define DISPLAY_PAUSE_MENU 0x4797u
+#define DISPLAY_PC_MENU 0x484Eu
+#define MUSIC_PC_MAIN_MENU 0x06u
+#define TurnedPCOnText 0x0352u
+#define TurnedPCOffText 0x0353u
 
 #include "home/overworld.h"
 #include "generated/hram.h"
@@ -1134,10 +1141,21 @@ uint8_t ReturnToOverworld(void)
 	Func_12c5e();
 	SetAllNPCTilePermissions();
 	wOverworldNPCFlags &= (uint8_t)~(1u << HIDE_ALL_NPC_SPRITES);
-	uint8_t callback_lo = gb_read8(wReloadOverworldCallbackPtr_ADDR);
-	uint8_t callback_hi = gb_read8(wReloadOverworldCallbackPtr_ADDR + 1u);
-	(void)callback_lo;
-	(void)callback_hi;
+	uint16_t callback = (uint16_t)(gb_read8(wReloadOverworldCallbackPtr_ADDR)
+	                               | (gb_read8(wReloadOverworldCallbackPtr_ADDR + 1u) << 8));
+	switch (callback) {
+	case 0u:
+		break;
+	case DISPLAY_PAUSE_MENU:
+		DisplayPauseMenu();
+		break;
+	case DISPLAY_PC_MENU:
+		DisplayPCMenu();
+		break;
+	default:
+		fprintf(stderr, "ReturnToOverworld: unknown callback $%04X\n", (unsigned)callback);
+		abort();
+	}
 	return FadeScreenFromWhite();
 }
 /* <<< factory ReturnToOverworld */
@@ -1441,7 +1459,6 @@ void PauseMenu(void)
 			break;
 		}
 		(void)ReturnToOverworldWithCallback(DISPLAY_PAUSE_MENU);
-		DisplayPauseMenu();
 	}
 }
 /* <<< factory PauseMenu */
@@ -1611,7 +1628,44 @@ void PCMenu_Print(void)
 /* >>> factory PCMenu */
 void PCMenu(void)
 {
-	wLCDC = 0x80u;
-	wConfigDuelAnimationCursorPos = 0u;
+	PlaySong(MUSIC_PC_MAIN_MENU);
+	Func_c241();
+	(void)Func_c915();
+	DoFrameIfLCDEnabled();
+	(void)PrintScrollableText_NoTextBoxLabel(TurnedPCOnText);
+	DisplayPCMenu();
+	for (;;) {
+		(void)SetOverworldNPCFlags((uint8_t)(1u << AUTO_CLOSE_TEXTBOX));
+		HandleMenuInputResult input;
+		do {
+			DoFrameIfLCDEnabled();
+			input = HandleMenuInput();
+		} while ((input.f & 0x10u) == 0u);
+		wSelectedPCMenuItem = input.e;
+		if (hCurMenuItem != input.e || input.e == 0x04u)
+			break;
+		Func_c2a3();
+		switch (wSelectedPCMenuItem) {
+		case 0u:
+			PCMenu_CardAlbum();
+			break;
+		case 1u:
+			(void)PCMenu_ReadMail();
+			break;
+		case 2u:
+			PCMenu_Glossary();
+			break;
+		default:
+			PCMenu_Print();
+			break;
+		}
+		(void)ReturnToOverworldWithCallback(DISPLAY_PC_MENU);
+	}
+	CloseTextBox();
+	DoFrameIfLCDEnabled();
+	Func_c891(TurnedPCOffText);
+	CloseAdvancedDialogueBox();
+	wSongOverride = 0u;
+	(void)PlayDefaultSong();
 }
 /* <<< factory PCMenu */

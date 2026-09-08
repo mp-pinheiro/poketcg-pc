@@ -808,6 +808,8 @@ CASES["ReturnToOverworld"] = [
     {"wram": {0xD0C1: b"\xFF", 0xD10F: b"\x00\x00", 0xD111: b"\x37"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD111: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
     {"wram": {0xD0C1: b"\x80", 0xD10F: b"\x00\x00", 0xD111: b"\xA5"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD111: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, wram={0xD0C1: b"\x55", 0xD10F: b"\x00\x00", 0xD111: b"\x00"}, read={0xFF97: 1, 0xD0C1: 1, 0xD111: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    # wReloadOverworldCallbackPtr set: the pause menu redraw runs through CallHL2.
+    {"setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xD0C1: b"\x80", 0xD10F: b"\x97\x47", 0xD111: b"\xA5", 0xD0B8: b"\x03"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD111: 1, 0xC600: 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory ReturnToOverworld
 
@@ -841,9 +843,11 @@ CASES["ReturnToOverworldNoCallback"] = [
 # >>> factory ReturnToOverworldWithCallback
 CONTRACT["ReturnToOverworldWithCallback"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["ReturnToOverworldWithCallback"] = [
-    {"hl": 0x1234, "wram": {0xD0C1: b"\xFF", 0xD10F: b"\x00\x00", 0xD111: b"\x37"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD10F: 2, 0xD111: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"hl": 0xABCD, "wram": {0xD0C1: b"\x80", 0xD10F: b"\x12\x34", 0xD111: b"\xA5"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD10F: 2, 0xD111: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xD0C1: b"\x55", 0xD10F: b"\xFE\xED", 0xD111: b"\x00"}, read={0xFF97: 1, 0xD0C1: 1, 0xD10F: 2, 0xD111: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    # The game passes exactly two callbacks (overworld.asm: PauseMenu and PCMenu),
+    # both menu redraws, so a case needs the text setup a menu draw relies on.
+    {"hl": 0x4797, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xD0C1: b"\xFF", 0xD10F: b"\x00\x00", 0xD111: b"\x37", 0xD0B8: b"\x02"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD10F: 2, 0xD111: 1, 0xC600: 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"hl": 0x484E, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xD0C1: b"\x80", 0xD10F: b"\x12\x34", 0xD111: b"\xA5", 0xD0B9: b"\x01"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD10F: 2, 0xD111: 1, 0xC600: 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, hl=0x4797, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xD0C1: b"\x55", 0xD10F: b"\xFE\xED", 0xD111: b"\x00", 0xD0B8: b"\x05"}, read={0xFF97: 1, 0xD0C1: 1, 0xD10F: 2, 0xD111: 1, 0xC600: 0x400}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory ReturnToOverworldWithCallback
 
@@ -1125,8 +1129,10 @@ CASES["PCMenu_Print"] = [
 # >>> factory PCMenu
 CONTRACT["PCMenu"] = {"compare": (), "preserve": ()}
 CASES["PCMenu"] = [
-    {"keys": [0x00, 0x02], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xD0B9: b"\x00", 0xFFB1: b"\x00", 0xD112: b"\xAA", 0xCABB: b"\x00"}, "read": {0xCABB: 1}, "expect": {0xCABB: b"\x80"}, "instruction_budget": 20000000, "cycle_budget": 100000000},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x02], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xD0B9: b"\x00", 0xFFB1: b"\x00", 0xD112: b"\xAA", 0xCABB: b"\x00"}, "read": {0xCABB: 1}, "expect": {0xCABB: b"\x80"}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+    # B cancels the menu at once, so the routine runs to its `ret`: the on/off
+    # texts, the menu draw, the NPC flags and the song override reset.
+    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xD0B9: b"\x00", 0xD112: b"\x09", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xD0B9: 1, 0xD112: 1, 0xD0BF: 3, 0xC600: 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xD0B9: b"\x03", 0xD112: b"\x09", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xD0B9: 1, 0xD112: 1, 0xD0BF: 3, 0xC600: 0x400}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PCMenu
 
@@ -1406,7 +1412,7 @@ MUTATIONS["CloseTextBox"] = {"source_symbol": "CloseTextBox", "before": "\tflags
 MUTATIONS["Func_c891"] = {"source_symbol": "Func_c891", "before": "void Func_c891(uint16_t hl)\n{\n\tif ((wOverworldNPCFlags & (1u << AUTO_CLOSE_TEXTBOX)) != 0u &&\n\t    (wd3b9 != 0u || gb_read8((uint16_t)(wd3b9_ADDR + 1u)) != 0u)) {\n\t\tCloseTextBox();\n\t}\n\twd3b9 = 0u;\n\tgb_write8((uint16_t)(wd3b9_ADDR + 1u), 0u);", "after": "void Func_c891(uint16_t hl)\n{\n\tif ((wOverworldNPCFlags & (1u << AUTO_CLOSE_TEXTBOX)) != 0u &&\n\t    (wd3b9 != 0u || gb_read8((uint16_t)(wd3b9_ADDR + 1u)) != 0u)) {\n\t\tCloseTextBox();\n\t}\n\twd3b9 = 0xFFu;\n\tgb_write8((uint16_t)(wd3b9_ADDR + 1u), 0u);", "case_ids": ["Func_c891-0", "Func_c891-1", "Func_c891-2"]}
 # <<< factory-mutation Func_c891
 # >>> factory-mutation ReturnToOverworld
-MUTATIONS["ReturnToOverworld"] = {"source_symbol": "ReturnToOverworld", "before": "uint8_t ReturnToOverworld(void)\n{\n\tDisableLCD();\n\tSet_OBJ_8x8();\n\tEnableAndClearSpriteAnimations();\n\tFunc_12bcd();\n\thWhoseTurn = PLAYER_TURN;", "after": "uint8_t ReturnToOverworld(void)\n{\n\tDisableLCD();\n\tSet_OBJ_8x8();\n\tEnableAndClearSpriteAnimations();\n\tFunc_12bcd();\n\thWhoseTurn = 0x00u;", "case_ids": ["ReturnToOverworld-0", "ReturnToOverworld-1", "ReturnToOverworld-2"]}
+MUTATIONS["ReturnToOverworld"] = {"source_symbol": "ReturnToOverworld", "before": "\tcase DISPLAY_PAUSE_MENU:\n\t\tDisplayPauseMenu();\n\t\tbreak;", "after": "\tcase DISPLAY_PAUSE_MENU:\n\t\tbreak;", "case_ids": ["ReturnToOverworld-3"]}
 # <<< factory-mutation ReturnToOverworld
 # >>> factory-mutation CloseAdvancedDialogueBox
 MUTATIONS["CloseAdvancedDialogueBox"] = {"source_symbol": "CloseAdvancedDialogueBox", "before": "\twOverworldNPCFlags = 0u;\n\twOverworldMode = wOverworldModeBackup;", "after": "\twOverworldNPCFlags = 0xFFu;\n\twOverworldMode = wOverworldModeBackup;", "case_ids": ["CloseAdvancedDialogueBox-0", "CloseAdvancedDialogueBox-1", "CloseAdvancedDialogueBox-2"]}
@@ -1506,9 +1512,5 @@ for _record in SCHEMA2_CASES["PCMenu_Print"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x056F}
 # <<< factory-completion PCMenu_Print
 # >>> factory-mutation PCMenu
-MUTATIONS["PCMenu"] = {"source_symbol": "PCMenu", "before": "void PCMenu(void)\n{\n\twLCDC = 0x80u;\n\twConfigDuelAnimationCursorPos = 0u;", "after": "void PCMenu(void)\n{\n\twLCDC = 0u;\n\twConfigDuelAnimationCursorPos = 0u;", "case_ids": ["PCMenu-0", "PCMenu-1"]}
+MUTATIONS["PCMenu"] = {"source_symbol": "PCMenu", "before": "\tFunc_c891(TurnedPCOffText);", "after": "\tFunc_c891(TurnedPCOnText);", "case_ids": ["PCMenu-0", "PCMenu-1"]}
 # <<< factory-mutation PCMenu
-# >>> factory-completion PCMenu
-for _record in SCHEMA2_CASES["PCMenu"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x0271, "bank": 3}
-# <<< factory-completion PCMenu
