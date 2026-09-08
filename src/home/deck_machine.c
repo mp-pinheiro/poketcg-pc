@@ -550,36 +550,92 @@ DeckBuildCheckResult CheckIfCanBuildSavedDeck(uint8_t a, uint8_t b)
 /* <<< factory CheckIfCanBuildSavedDeck */
 
 /* >>> factory PrintDeckMachineEntry */
+/* deck_machine.asm:1107-1230. The build symbols are fullwidth "○" $03,$5F,
+ * "※" $03,$60 and "×" $00,$6C; .text is six TX_SYMBOL spaces. */
+#define DECK_MACHINE_CAN_BUILD_HI 0x03u
+#define DECK_MACHINE_CAN_BUILD_LO 0x5Fu
+#define DECK_MACHINE_DISMANTLE_HI 0x03u
+#define DECK_MACHINE_DISMANTLE_LO 0x60u
+#define DECK_MACHINE_CANNOT_BUILD_HI 0x00u
+#define DECK_MACHINE_CANNOT_BUILD_LO 0x6Cu
+
+static uint8_t deck_machine_num_cards_missing(uint8_t b)
+{
+	SafelySwitchToSRAM0();
+	CreateCardCollectionListWithDeckCards(0u);
+	SafelySwitchToTempSRAMBank();
+	uint16_t table = (uint16_t)(wMachineDeckPtrs_ADDR + (uint16_t)((uint8_t)(b << 1)));
+	uint16_t hl = (uint16_t)(gb_read8(table) | (uint16_t)gb_read8((uint16_t)(table + 1u)) << 8);
+	hl = (uint16_t)(hl + DECK_NAME_SIZE);
+	EnableSRAM();
+	uint8_t missing = 0u;
+	for (uint8_t index = 1u; index <= DECK_SIZE; index++) {
+		uint8_t card = gb_read8(hl++);
+		uint16_t slot = (uint16_t)(wTempCardCollection_ADDR + card);
+		uint8_t count = (uint8_t)(gb_read8(slot) & CARD_COUNT_MASK);
+		if (count == 0u)
+			missing++;
+		else
+			gb_write8(slot, (uint8_t)(count - 1u));
+	}
+	DisableSRAM();
+	return missing;
+}
+
 PrintDeckMachineEntryResult PrintDeckMachineEntry(uint8_t a, uint8_t d, uint8_t e)
 {
 	uint8_t deck_index = a;
 	uint16_t hl = wDefaultText_ADDR;
-	uint8_t num = (uint8_t)(a + 1u);
-	ConvertToNumericalDigitsResult cd = ConvertToNumericalDigits(num, hl);
+	ConvertToNumericalDigitsResult cd = ConvertToNumericalDigits((uint8_t)(a + 1u), hl);
 	hl = cd.hl;
 	gb_write8(hl, 0x77u);
-	hl = (uint16_t)(hl + 1u);
-	gb_write8(hl, TX_END);
+	gb_write8((uint16_t)(hl + 1u), TX_END);
 	InitTextPrinting(d, e);
 	hl = wDefaultText_ADDR;
 	ProcessText(&hl);
 
 	uint16_t table_addr = (uint16_t)(wMachineDeckPtrs_ADDR + (uint16_t)((uint8_t)(deck_index << 1)));
 	uint16_t ptr = (uint16_t)(gb_read8(table_addr) | (uint16_t)gb_read8((uint16_t)(table_addr + 1u)) << 8);
-
-	uint8_t d2 = (uint8_t)(d + 3u);
-	uint8_t af_result = AppendDeckName(ptr, d2, e);
-	if (af_result & 0x10u) {
-		InitTextPrinting(d2, e);
+	uint8_t x = (uint8_t)(d + 3u);
+	if ((AppendDeckName(ptr, x, e) & 0x10u) != 0u) {
+		InitTextPrinting(x, e);
 		(void)ProcessTextFromID(EmptyDeckNameText);
-		uint8_t e2 = (uint8_t)(e + 1u);
-		InitTextPrinting(13u, e2);
+		InitTextPrinting(13u, (uint8_t)(e + 1u));
 		uint16_t text_hl = PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR;
 		ProcessText(&text_hl);
 		return (PrintDeckMachineEntryResult){0u, 0x90u};
 	}
 
-	return (PrintDeckMachineEntryResult){0u, 0u};
+	InitTextPrinting(18u, e);
+	uint8_t symbol_hi;
+	uint8_t symbol_lo;
+	if ((CheckIfCanBuildSavedDeck(0u, deck_index).f & 0x10u) == 0u) {
+		symbol_hi = DECK_MACHINE_CAN_BUILD_HI;
+		symbol_lo = DECK_MACHINE_CAN_BUILD_LO;
+	} else if ((CheckIfCanBuildSavedDeck(ALL_DECKS, deck_index).f & 0x10u) == 0u) {
+		symbol_hi = DECK_MACHINE_DISMANTLE_HI;
+		symbol_lo = DECK_MACHINE_DISMANTLE_LO;
+	} else {
+		Func_22ca(DECK_MACHINE_CANNOT_BUILD_HI, DECK_MACHINE_CANNOT_BUILD_LO);
+		InitTextPrinting(17u, (uint8_t)(e + 1u));
+		CalculateOnesAndTensDigits(deck_machine_num_cards_missing(deck_index));
+		uint8_t ones = gb_read8(wDecimalDigitsSymbols_ADDR);
+		uint8_t tens = gb_read8((uint16_t)(wDecimalDigitsSymbols_ADDR + 1u));
+		hl = wDefaultText_ADDR;
+		gb_write8(hl++, TX_SYMBOL);
+		gb_write8(hl++, tens);
+		gb_write8(hl++, TX_SYMBOL);
+		gb_write8(hl++, ones);
+		gb_write8(hl, TX_END);
+		hl = wDefaultText_ADDR;
+		ProcessTextResult printed = ProcessText(&hl);
+		return (PrintDeckMachineEntryResult){printed.a, (uint8_t)(printed.f & 0x80u)};
+	}
+	Func_22ca(symbol_hi, symbol_lo);
+	InitTextPrinting(13u, (uint8_t)(e + 1u));
+	uint16_t text_hl = PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR;
+	ProcessTextResult printed = ProcessText(&text_hl);
+	return (PrintDeckMachineEntryResult){printed.a, (uint8_t)(printed.f & 0x80u)};
 }
 /* <<< factory PrintDeckMachineEntry */
 

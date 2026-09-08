@@ -3,6 +3,8 @@
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
+from tests.cases._fixtures import deck_entry_fixture as _deck_entry_fixture, DECK_ENTRY_REGS as _DECK_ENTRY_REGS
+
 CONTRACT = {}
 CASES = {}
 
@@ -378,6 +380,10 @@ CASES["PrintDeckMachineEntry"] = [
          ramg=False,
          sram={0: {0xA200: b"\xFF"}},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    # The live slot 1: name, the "×" build symbol and the missing-card count.
+    dict(_deck_entry_fixture(bank=2), **_DECK_ENTRY_REGS,
+         read={0xC000: 0x100, 0xC590: 0x20, 0xCEB6: 2, 0xC200: 0x200, 0xCC00: 0x100},
+         vread={0: {0x9800: 0x400, 0x8800: 0x800}}),
 ]
 # <<< factory PrintDeckMachineEntry
 
@@ -777,12 +783,7 @@ MUTATIONS["CheckIfCanBuildSavedDeck"] = {
 }
 # <<< factory-mutation CheckIfCanBuildSavedDeck
 # >>> factory-mutation PrintDeckMachineEntry
-MUTATIONS["PrintDeckMachineEntry"] = {
-    "source_symbol": "PrintDeckMachineEntry",
-    "before": "if (af_result & 0x10u) {",
-    "after": "if (af_result & 0x20u) {",
-    "case_ids": ["PrintDeckMachineEntry-0", "PrintDeckMachineEntry-1"],
-}
+MUTATIONS["PrintDeckMachineEntry"] = {"source_symbol": "PrintDeckMachineEntry", "before": "\tProcessTextResult printed = ProcessText(&text_hl);\n\treturn (PrintDeckMachineEntryResult){printed.a, (uint8_t)(printed.f & 0x80u)};", "after": "\tProcessTextResult printed = ProcessText(&text_hl);\n\treturn (PrintDeckMachineEntryResult){printed.a, 0u};", "case_ids": ["PrintDeckMachineEntry-2"]}
 # <<< factory-mutation PrintDeckMachineEntry
 # >>> factory-mutation ShowReceivedCardsList
 MUTATIONS["ShowReceivedCardsList"] = {"source_symbol": "ShowReceivedCardsList", "before": "gb_write8(wTxRam2_ADDR, 0x00u);", "after": "gb_write8(wTxRam2_ADDR, 0x01u);", "case_ids": ["ShowReceivedCardsList-0", "ShowReceivedCardsList-1"]}
