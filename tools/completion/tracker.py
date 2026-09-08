@@ -20,11 +20,14 @@ Milestones are the game's route, so a milestone's counts answer "how far".
 from __future__ import annotations
 
 import argparse
+import fcntl
 import json
 import os
 import re
+import socket
 import subprocess
 import sys
+from datetime import datetime, timezone
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -41,6 +44,10 @@ API = "https://forgejo.yfrit.com/api/v1"
 REPO = "fairfruit/poketcg-pc"
 TRACKER_DIR = ROOT / "build" / "completion" / "tracker"
 SYNC_STAMP = TRACKER_DIR / ".synced"
+SYNC_LOCK = TRACKER_DIR / ".lock"
+CLAIM_LABEL = "claimed"
+CLAIM_MARK = re.compile(r"^claimed (\S+) by (.+)$")
+CLAIM_TTL = 6 * 3600  # seconds a claim keeps an issue out of other sessions' issues-next
 KEY_MARK = re.compile(r"<!-- tracker-key: ([^ ]+) -->")
 ORDINAL_MARK = re.compile(r"<!-- tracker-ordinal: (\d+) -->")
 SESSION_MARK = re.compile(r"^session:\s*`?([a-z0-9_-]+)`?", re.MULTILINE | re.IGNORECASE)
@@ -52,6 +59,7 @@ LABELS = {
     "p3-audit": ("c5def5", "a body the composition audits rank as hollow, an echo or a cut"),
     "route": ("0e8a16", "the next content to record; closes when its session is clean"),
     "tooling": ("5319e7", "loop machinery"),
+    "claimed": ("ededed", "a session is on it (comment names who and when; expires after 6 h)"),
     "wontfix": ("ffffff", "the fact stands and is accepted; the tracker leaves it closed"),
     "noise": ("ffffff", "a harness artefact, not a port defect; the tracker leaves it closed"),
 }
@@ -449,6 +457,14 @@ def last_landing(routine: str, c: dict[str, str]) -> str:
 
 
 def sync(dry_run: bool, retire_plan: bool) -> int:
+    TRACKER_DIR.mkdir(parents=True, exist_ok=True)
+    with SYNC_LOCK.open("w") as lock:
+        # Two sessions syncing at once would both create the same new fact.
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        return locked_sync(dry_run, retire_plan)
+
+
+def locked_sync(dry_run: bool, retire_plan: bool) -> int:
     api = Forgejo(dry_run=dry_run)
     desired, resolved = load_desired()
     c = c_locations()
@@ -516,6 +532,10 @@ def sync(dry_run: bool, retire_plan: bool) -> int:
 
     for issue in existing:
         labels = {label["name"] for label in issue.get("labels", [])}
+        if issue["state"] == "open" and CLAIM_LABEL in labels and not dry_run:
+            age = claim_age(api, issue)
+            if age is not None and age >= CLAIM_TTL:
+                release_claim(api, issue, label_ids)
         if issue["state"] == "open" and "route" in labels:
             match = SESSION_MARK.search(issue.get("body") or "")
             if match:
@@ -557,7 +577,37 @@ def warn_if_stale() -> None:
         print(f"STALE reports={stale} newer than the last sync; run: just issues-sync")
 
 
-def next_issues(count: int) -> int:
+def claimant() -> str:
+    return os.environ.get("POKETCG_SESSION") or f"{socket.gethostname()}:{os.getppid()}"
+
+
+def claim_age(api: Forgejo, issue: dict[str, Any]) -> float | None:
+    """Seconds since the newest `claimed <ISO time> by <who>` comment, or None
+    when the issue carries no live claim."""
+    if CLAIM_LABEL not in {label["name"] for label in issue.get("labels", [])}:
+        return None
+    newest = None
+    for comment in api.paged(f"/repos/{REPO}/issues/{issue['number']}/comments?"):
+        match = CLAIM_MARK.match(comment.get("body") or "")
+        if match:
+            newest = datetime.fromisoformat(match.group(1))
+    return (datetime.now(timezone.utc) - newest).total_seconds() if newest else float("inf")
+
+
+def claim_issue(api: Forgejo, issue: dict[str, Any], label_ids: dict[str, int]) -> None:
+    labels = {label["name"] for label in issue.get("labels", [])} | {CLAIM_LABEL}
+    api.comment(issue["number"], f"claimed {datetime.now(timezone.utc).isoformat(timespec='seconds')} by {claimant()}")
+    api.set_labels(issue["number"], [label_ids[name] for name in sorted(labels) if name in label_ids])
+
+
+def release_claim(api: Forgejo, issue: dict[str, Any], label_ids: dict[str, int]) -> None:
+    labels = {label["name"] for label in issue.get("labels", [])} - {CLAIM_LABEL}
+    api.set_labels(issue["number"], [label_ids[name] for name in sorted(labels) if name in label_ids])
+
+
+def next_issues(count: int, claim: bool) -> int:
+    """The open facts in priority order. An issue another session claimed less
+    than CLAIM_TTL ago is skipped; `claim` takes the first one listed."""
     warn_if_stale()
     api = Forgejo()
     rows = api.paged(f"/repos/{REPO}/issues?state=open&type=issues")
@@ -565,6 +615,9 @@ def next_issues(count: int) -> int:
     for issue in rows:
         labels = {label["name"] for label in issue.get("labels", [])}
         if labels & HOLD_LABELS:
+            continue
+        age = claim_age(api, issue)
+        if age is not None and age < CLAIM_TTL:
             continue
         # Divergences block a session; recording the next content is how new
         # divergences are found; sweep and audit rows come after.
@@ -576,16 +629,40 @@ def next_issues(count: int) -> int:
         # Within a priority: play order, then the DoFrame the fact was seen at.
         ranked.append((priority, position, int(match.group(1)) if match else 1 << 30, issue))
     ranked.sort(key=lambda row: row[:3])
-    for _priority, _position, _ordinal, issue in ranked[:count]:
-        labels = ", ".join(sorted(label["name"] for label in issue.get("labels", [])))
+    if claim and ranked:
+        claim_issue(api, ranked[0][3], api.ensure_labels())
+    for index, (_priority, _position, _ordinal, issue) in enumerate(ranked[:count]):
+        labels = sorted(label["name"] for label in issue.get("labels", []) if label["name"] != CLAIM_LABEL)
         milestone = (issue.get("milestone") or {}).get("title", "-")
-        print(f"#{issue['number']} [{labels}] {milestone}\n  {issue['title']}")
+        claimed = " claimed" if claim and index == 0 else ""
+        print(f"#{issue['number']} [{', '.join(labels)}] {milestone}{claimed}\n  {issue['title']}")
         text = issue.get("body") or ""
         repro = re.search(r"\*\*Repro:\*\*\n```sh\n(.*?)```", text, re.DOTALL)
         if repro:
             for line in repro.group(1).strip().splitlines():
                 print(f"    $ {line}")
         print(f"  https://forgejo.yfrit.com/{REPO}/issues/{issue['number']}")
+    return 0
+
+
+def claim(number: int) -> int:
+    """(Re)claim one issue by number: renews the clock for work past CLAIM_TTL."""
+    api = Forgejo()
+    issue = api.call("GET", f"/repos/{REPO}/issues/{number}")
+    if issue.get("state") != "open":
+        raise TrackerError(f"#{number} is not open")
+    claim_issue(api, issue, api.ensure_labels())
+    print(f"#{number} claimed by {claimant()}")
+    return 0
+
+
+def release(number: int) -> int:
+    """Give an issue back: the next issues-next anywhere may take it."""
+    api = Forgejo()
+    issue = api.call("GET", f"/repos/{REPO}/issues/{number}")
+    release_claim(api, issue, api.labels())
+    api.comment(issue["number"], f"released by {claimant()}")
+    print(f"#{number} released")
     return 0
 
 
@@ -647,6 +724,11 @@ def main(argv: list[str] | None = None) -> int:
                              help="close the plan-shaped issues and milestones of the earlier trackers")
     next_parser = sub.add_parser("next", help="the highest-priority open issues with their repro commands")
     next_parser.add_argument("count", type=int, nargs="?", default=5)
+    next_parser.add_argument("--claim", action="store_true", help="mark the first one as this session's")
+    claim_parser = sub.add_parser("claim", help="(re)claim one issue by number")
+    claim_parser.add_argument("number", type=int)
+    release_parser = sub.add_parser("release", help="give a claimed issue back")
+    release_parser.add_argument("number", type=int)
     sub.add_parser("status", help="milestones with their counts and sessions")
     route_parser = sub.add_parser("route", help="open a route item: the next content to record")
     route_parser.add_argument("session", help="the session name the recording will use")
@@ -657,7 +739,11 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "sync":
             return sync(args.dry_run, args.retire_plan)
         if args.command == "next":
-            return next_issues(args.count)
+            return next_issues(args.count, args.claim)
+        if args.command == "claim":
+            return claim(args.number)
+        if args.command == "release":
+            return release(args.number)
         if args.command == "route":
             return route(args.session, args.title, args.how)
         return status()

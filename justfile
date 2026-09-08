@@ -396,8 +396,16 @@ completion-cfg-audit:
 issues-sync *ARGS:
     python3 tools/completion/tracker.py sync {{ARGS}}
 # The highest-priority open issues with their repro commands: where to start.
-issues-next COUNT="5":
-    python3 tools/completion/tracker.py next {{COUNT}}
+# `--claim` marks the first as this session's so parallel sessions take
+# different items; a claim expires after six hours.
+issues-next COUNT="5" *ARGS:
+    python3 tools/completion/tracker.py next {{COUNT}} {{ARGS}}
+# (Re)claim one issue by number: renews the six-hour clock on long work.
+issues-claim NUMBER:
+    python3 tools/completion/tracker.py claim {{NUMBER}}
+# Give a claimed issue back to the pool.
+issues-release NUMBER:
+    python3 tools/completion/tracker.py release {{NUMBER}}
 # Milestones with their counts and the sessions that prove them.
 issues-status:
     python3 tools/completion/tracker.py status

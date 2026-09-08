@@ -56,7 +56,7 @@ The commands that matter, from the `justfile`:
 | `just session-verify [NAME]` | **the primary gate.** Replay a session on both lanes; the exact first divergent DoFrame, its RAM symbol, the reference writer. ~30 s for the whole game. Runbook: `docs/grind.md`, "The session loop" |
 | `just session-derive NAME MOVIE` | make a session from a movie by letting the reference play it: no human input |
 | `just session-status` | one row per recorded session: length, confirmed ordinal, goal |
-| `just issues-next` | **where to start.** The highest-priority open facts on the Forgejo tracker with their repro commands |
+| `just issues-next [N] [--claim]` | **where to start.** The highest-priority open facts on the Forgejo tracker with their repro commands; `--claim` marks the first as this session's so parallel sessions take different items |
 | `just issues-sync` | after a landing: reconcile the tracker with the loop's reports; facts open and close themselves |
 | `just issues-status` | the route's milestones, their counts, the sessions that prove them |
 | `just session-sweep NAME` | every routine a session enters, diffed once from its live entry; the worklist generator |

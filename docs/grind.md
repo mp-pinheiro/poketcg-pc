@@ -20,8 +20,11 @@ Read completely, in this order:
   docs/port-contract.md  <- case coverage, items 4 and 5 especially
   AGENTS.md              <- file ownership and the command table
 
+Before the loop, once: export POKETCG_BUILD=build-<your name> POKETCG_SESSION=<your name>
+(a private build directory; the tracker's claims carry the name). just build.
+
 The loop, until a stop condition in docs/grind.md holds or issues-next is empty:
-  1. just issues-next 1                 # the fact to work; its body carries the repro
+  1. just issues-next 1 --claim         # the fact to work, marked yours; its body has the repro
   2. run the repro; match the output to a decision-table row and do what it says
   3. land it:
      - the routine's C follows its asm (the asm is the truth, never the case or the C)
@@ -33,7 +36,8 @@ The loop, until a stop condition in docs/grind.md holds or issues-next is empty:
        p3: the composition audit named on the issue no longer reports it
   4. jj commit <only your paths> -m "type(scope): subject"      # <= 50 chars, no body
   5. just issues-sync                   # the issue closes itself; new facts open
-  6. back to 1
+  6. back to 1. Giving an item up: just issues-release <N>. Past six hours on one
+     item: just issues-claim <N> renews it.
 
 Route items (label route): record exactly as the issue body says, with
 just session-pilot / session-ai-duel / session-derive; verify; then
@@ -42,9 +46,9 @@ needs a human at the window is left open; take the next item and name it in the 
 
 Rules:
 - Unattended: never ask; when two options exist take the boring one.
-- Memory: one reference lane at a time. Never run two of session-verify, session-sweep,
-  oracle-diff-all concurrently; leave no background job running when you stop.
-  WSL has OOM-crashed on this repo.
+- Memory: one reference lane at a time in this session. Never run two of session-verify,
+  session-sweep, oracle-diff-all concurrently; leave no background job running when you
+  stop. WSL has OOM-crashed on this repo.
 - Never run just oracle-release-gate, a formatter, a linter or any git command.
 - Never widen an exclusion ledger (scenario.py, _fixtures.py _HOLES, test_leaves.py
   AUTO_OBSERVE_IGNORED) and never edit a case to match the C.
@@ -116,6 +120,30 @@ sync reopens it.
 The reports the sync reads live in `build/completion/tracker/` and are written
 by every `session-verify` and `session-sweep` run, so a sweep of a new session
 (`just session-sweep <name>`) is how a whole region's facts enter the tracker.
+
+### Parallel sessions
+
+Several sessions can work the tracker at once; each is one process on this
+box and the tracker is the only coordination they need:
+
+- `just issues-next --claim` labels the item `claimed` with a comment naming the
+  session (`POKETCG_SESSION`, else host:pid) and the time; other sessions'
+  `issues-next` skip it for six hours, `just issues-claim N` renews, `just
+  issues-release N` gives it back, and the sync drops expired claims. Two
+  sessions never hold the same item unless one outlives its claim.
+- `issues-sync` takes a file lock (`build/completion/tracker/.lock`), so two
+  syncs cannot create the same fact twice.
+- Each session builds in its own `POKETCG_BUILD` directory (`justfile:4-7`;
+  `tools/completion/scenario.py` reads it for the binary and the pack). The
+  reference caches under `build/completion/sessions/` are shared on purpose:
+  a stream is keyed by its inputs and identical when rebuilt, so a race costs
+  time, not truth.
+- One checkout, one working copy: commit only your own paths with `jj commit
+  <paths>`; a colleague's uncommitted edits stay in the working copy.
+- The box, not the tooling, sets the count: 15 GB, and every agent session is
+  about 1 GB before it runs anything, a PyBoy probe a few hundred MB more. Check
+  `free -g` before adding a session and stop stale sessions first; the reference
+  lane's OOM crashes took WSL down, not just the run.
 
 The `ai-duel-*` sessions poke a duelist type at the practice duel's first turn,
 so they exercise a deck's AI *table* against the practice cards, not the deck:
