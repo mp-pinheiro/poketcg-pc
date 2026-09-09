@@ -1,5 +1,6 @@
-from tests.cases._fixtures import (ADVANCE_TEXT_REGS, SCROLL_LABEL_REGS,
-                                   SCROLL_TEXT_REGS, advance_text_fixture,
+from tests.cases._fixtures import (ADVANCE_TEXT_REGS, PROCESS_TEXT_HEADER_REGS,
+                                   SCROLL_LABEL_REGS, SCROLL_TEXT_REGS,
+                                   advance_text_fixture, process_text_header_fixture,
                                    scroll_label_fixture, scroll_text_fixture)
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -170,6 +171,9 @@ CASES.update({
                   0xC100: b"\x05\x07\x20\x6d\x00", 0xFFB0: b"\x00"},
          "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}, {"fn": "InitTextPrinting", "d": 2, "e": 3}],
          "read": {HEADER: 5, 0xC100: 5}, "vread": {0: {0x9800: 0x400}}},
+
+        dict(process_text_header_fixture(vram=False), **PROCESS_TEXT_HEADER_REGS,
+             read={HEADER: 5}),
     ],
     # The zero-ID early exit returns before any text processing, so it is the one
     # path of this pair the emulator can run end to end.
@@ -297,9 +301,9 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
     "ProcessTextHeader": {
         "source_symbol": "ProcessTextHeader",
-        "before": "\t\tWriteToTextHeader(special.hl);",
-        "after": "\t\tWriteToTextHeader(text);",
-        "case_ids": ["ProcessTextHeader-2"],
+        "before": "\treturn header_result(hBankROM, printed.d, printed.e,\n\t\t\t     (uint8_t)(hBankROM == 0u ? 0x80u : 0x00u), done.hl);",
+        "after": "\treturn header_result(hBankROM, d, e,\n\t\t\t     (uint8_t)(hBankROM == 0u ? 0x80u : 0x00u), done.hl);",
+        "case_ids": ["ProcessTextHeader-3"],
     },
     "CopyTextData_FromTextID": {
         "source_symbol": "CopyTextData_FromTextID",

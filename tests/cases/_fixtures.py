@@ -983,3 +983,11 @@ DIGIT_CHAR_REGS = DIGIT_CHAR.regs
 
 def digit_char_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return DIGIT_CHAR.case(vram=vram, bank=bank, **changes)
+
+
+PROCESS_TEXT_HEADER = Fixture("water-master-process-text-header-entry")
+PROCESS_TEXT_HEADER_REGS = PROCESS_TEXT_HEADER.regs
+
+
+def process_text_header_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return PROCESS_TEXT_HEADER.case(vram=vram, bank=bank, **changes)

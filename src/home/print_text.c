@@ -280,8 +280,9 @@ ProcessTextHeaderResult ProcessTextHeader(uint8_t d, uint8_t e)
 		/* print_text.asm:292-295: the pointer the handler returns is written
 		 * back (one past the symbol byte for TX_SYMBOL); WriteToTextHeader
 		 * leaves a = hBankROM and hl on the header's last byte. */
-		WriteToTextHeader(special.hl);
-		return header_result(hBankROM, d, e, 0, (uint16_t)(wTextHeader1_ADDR + selector * 5u + 4u));
+		TextHeaderWrite done = WriteToTextHeader(special.hl);
+		return header_result(hBankROM, d, e,
+				     (uint8_t)(hBankROM == 0u ? 0x80u : 0x00u), done.hl);
 	}
 	e = a;
 	d = gb_read8(text);
@@ -290,9 +291,10 @@ ProcessTextHeaderResult ProcessTextHeader(uint8_t d, uint8_t e)
 	if (carry & 0x10)
 		text++;
 	Func_22ca(d, e);
-	ProcessSpecialTextCharacter(0, text);
-	WriteToTextHeader(text);
-	return header_result(0, d, e, 0, text);
+	ProcessTextResult printed = ProcessSpecialTextCharacter(0, text);
+	TextHeaderWrite done = WriteToTextHeader(text);
+	return header_result(hBankROM, printed.d, printed.e,
+			     (uint8_t)(hBankROM == 0u ? 0x80u : 0x00u), done.hl);
 }
 
 /* print_text.asm:43-50: `push af` at entry, `pop af / call BankswitchROM` at
