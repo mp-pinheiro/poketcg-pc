@@ -7604,15 +7604,8 @@ SCHEMA2_CASES["DuelMenu_PkmnPower"][0]["completion"] = {"mode": "entry", "pc": 0
                                                       "routine": "DuelMainInterface"}
 # <<< factory-completion DuelMenu_PkmnPower
 # >>> factory-mutation DuelMenu_Done
-MUTATIONS["DuelMenu_Done"] = {"source_symbol": "DuelMenu_Done", "before": "return;", "after": "wCurrentDuelMenuItem = 1u;", "case_ids": ["DuelMenu_Done-0"]}
+MUTATIONS["DuelMenu_Done"] = {"source_symbol": "DuelMenu_Done", "before": "\tClearNonTurnTemporaryDuelvars();\n}", "after": "}", "case_ids": ["DuelMenu_Done-0"]}
 # <<< factory-mutation DuelMenu_Done
-# >>> factory-completion DuelMenu_Done
-for _record in SCHEMA2_CASES["DuelMenu_Done"]:
-    # core.asm:475, the routine's own `ret`. The pc was
-    # DoPracticeDuelAction's entry, its first call, so the reference stopped
-    # before either write.
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x43AA, "bank": 1}
-# <<< factory-completion DuelMenu_Done
 # >>> factory-mutation DuelMenu_Retreat
 MUTATIONS["DuelMenu_Retreat"] = {"source_symbol": "DuelMenu_Retreat", "before": "\t(void)DiscardRetreatCostCards();\n", "after": "", "case_ids": ["DuelMenu_Retreat-2"]}
 # <<< factory-mutation DuelMenu_Retreat
