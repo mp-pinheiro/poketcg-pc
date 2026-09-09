@@ -58,6 +58,7 @@ class Fixture:
         self.hram = bytes.fromhex(data["hram"])
         self.vram = bytes.fromhex(data["vram0"])
         self.sram = bytes.fromhex(data["sram"]) if "sram" in data else None
+        self.rom_bank = data.get("rom_bank")
 
     def case(self, vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
         """The captured state with `changes` ({"C3C8": bytes} hex addresses)
@@ -102,7 +103,12 @@ class Fixture:
         # The game's own SP: the gbref lane otherwise parks the stack at $FFFE, and
         # a deep call plus real interrupt frames would grow it down through
         # hKeysHeld and the rest of HRAM.
+        # The mapped ROM bank is the one gambatte had in the $4000-$7FFF window,
+        # which a capture records; the probe otherwise forces the routine's own
+        # symbol bank and a home routine then reads bank 0 for its caller's data.
+        # hBankROM is only the game's shadow of it and can disagree at boot.
         case = {"wram": spans, "entry_sp": self.sp,
+                "rom_bank": bank if bank is not None else (self.rom_bank if self.rom_bank is not None else hram[0]),
                 "read": {0xC200: 0x200, 0xCC00: 0x100},
                 "keys": [0x00, 0x01], "instruction_budget": 40000000, "cycle_budget": 160000000}
         if vram:
@@ -290,6 +296,10 @@ DECK_INFO_HEADER_REGS = DECK_INFO_HEADER.regs
 # 29 unique cards from row 5 at align 3, scroll cursor on the last row.
 CONFIRM_LIST = Fixture("boot-deck-machine-confirm-list-entry")
 CONFIRM_LIST_REGS = CONFIRM_LIST.regs
+# lightning-3 at DoFrame 0: the boot tile copy, 0x38 blocks of 0x10 bytes from
+# the caller's banked gfx table into VRAM $9000.
+BOOT_GFX = Fixture("lightning-3-boot-gfx-entry")
+BOOT_GFX_REGS = BOOT_GFX.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -478,3 +488,7 @@ def deck_info_header_fixture(vram: bool = True, bank: int | None = None, **chang
 
 def confirm_list_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return CONFIRM_LIST.case(vram=vram, bank=bank, **changes)
+
+
+def boot_gfx_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return BOOT_GFX.case(vram=vram, bank=bank, **changes)

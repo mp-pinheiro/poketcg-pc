@@ -321,15 +321,20 @@ class Oracle:
     def _run(self, symbol: str, regs: dict, stop_pc: int | None = None,
              stop_bank: int | None = None, stack: Sequence[int] | None = None, cycle: bool = False,
              hbank_rom: int | None = None, frames: int | None = None,
-             post_call_byte: int | None = None, entry_sp: int | None = None) -> Result:
+             post_call_byte: int | None = None, entry_sp: int | None = None,
+             rom_bank: int | None = None) -> Result:
         """Drive one routine to its requested completion point."""
         pb = self.pyboy
         fn_bank, addr = pb.symbol_lookup(symbol)
 
-        if fn_bank != 0:
-            pb.memory[0x2000] = fn_bank & 0xFF
-            pb.memory[0x3000] = (fn_bank >> 8) & 1
-            pb.memory[0xFF80] = fn_bank & 0xFF
+        # A home routine reads its caller's data through the $4000-$7FFF window,
+        # so the case's bank decides what is mapped there; PyBoy would otherwise
+        # keep its power-on bank 1 while the gbref lane maps the declared one.
+        window_bank = fn_bank if fn_bank != 0 else rom_bank
+        if window_bank:
+            pb.memory[0x2000] = window_bank & 0xFF
+            pb.memory[0x3000] = (window_bank >> 8) & 1
+            pb.memory[0xFF80] = window_bank & 0xFF
         # A routine that re-reads hBankROM as data cannot be tested against its
         # own symbol bank, so let the case name the value without disturbing the
         # $4000-$7FFF paging above.
@@ -430,7 +435,8 @@ class Oracle:
              hbank_rom: int | None = None,
              frames: int | None = None,
              post_call_byte: int | None = None,
-             entry_sp: int | None = None) -> Result:
+             entry_sp: int | None = None,
+             rom_bank: int | None = None) -> Result:
         pb = self.pyboy
         self._baseline.seek(0)
         pb.load_state(self._baseline)
@@ -491,6 +497,7 @@ class Oracle:
             stack,
             cycle=True,
             hbank_rom=hbank_rom,
+            rom_bank=rom_bank,
             frames=frames,
             post_call_byte=post_call_byte,
             entry_sp=entry_sp,

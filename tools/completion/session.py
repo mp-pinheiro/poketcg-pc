@@ -709,6 +709,7 @@ def capture(name: str, routine: str, *, after: int = 0, nth: int = 1, out: Path 
                 "sp": registers[1] & 0xFFFF,
                 "wram": regions["wram"].hex(), "hram": regions["hram"].hex(),
                 "vram0": regions["vram"][:0x2000].hex(),
+                "rom_bank": core.bank_of(0x4000),
             })
             if sram:
                 captured["sram"] = core.area("CartRAM").hex()

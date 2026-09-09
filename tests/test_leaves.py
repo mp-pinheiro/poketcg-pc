@@ -346,6 +346,7 @@ def direct_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], c
                       stop_pc=completion.get("pc") if completion.get("mode") in ("pre-ret", "entry") else None,
                       stop_bank=completion.get("bank") if completion.get("mode") in ("pre-ret", "entry") else None,
                       stack=case.get("stack"), hbank_rom=case.get("hbank_rom"),
+                      rom_bank=case.get("rom_bank"),
                       post_call_byte=case.get("post_call_byte"),
                       entry_sp=case.get("entry_sp"),
                       frames=pyboy_frames(case))
