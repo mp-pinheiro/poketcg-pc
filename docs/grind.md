@@ -1922,6 +1922,13 @@ block to the working copy so it does not shadow the commit. Check the
 committed file equals the verified one (`jj file show -r @- $f > /tmp/c; cmp /tmp/c ../poketcg-verify/$f`).
 The editor only sees files that already differ in the working copy: a file
 with no foreign hunks is not in `$right`, so copy it over and commit it by
-path instead, or the commit lands empty. Never `jj abandon` that empty commit
+path instead, or the commit lands empty. "No foreign hunks" is not "safe to
+copy": if the other session landed while your workspace sat on an older base,
+the workspace file lacks their commit and copying it reverts them (measured:
+`duel.c` lost the substatus call sites, `main` did not build). Before any
+copy, rebase the workspace onto the current head (`jj new <head>`, re-apply
+your blocks as a script), or compose the file as `jj file show -r <head>`
+plus your factory blocks. Afterwards check every file of their last landing
+still equals `HEAD` except the ones you meant to touch. Never `jj abandon` that empty commit
 while `main` sits on it -- the bookmark goes with it; `jj bookmark set main -r <head>`
 brings it back.
