@@ -1,5 +1,7 @@
 """Oracle-diff cases for poketcg/src/engine/input_name.asm."""
 
+from tests.cases._fixtures import NAME_CURSOR_REGS, name_cursor_fixture
+
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -111,6 +113,12 @@ CASES["PlayerNamingScreen_DrawCursor"] = [
     dict(POISON, a=0x17,
          wram={0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"},
          expect_regs={"a": 0x17, "f": 0x00, "b": 0x01, "c": 0x04, "d": 0xDD, "e": 0x17, "hl": 0x6BB0}),
+    # The live entry: the LCD is on, so the map byte is staged and the tail's
+    # `or a` sees WriteByteToBGMap0's 0, not the cursor tile it was given.
+    # vram=False: with the LCD on the ROM stages the byte for the HBlank copy
+    # and the port writes the map directly (docs/phase1-transform.md), so the
+    # map byte itself is not a comparable observation at this `ret`.
+    dict(name_cursor_fixture(vram=False), **NAME_CURSOR_REGS),
 ]
 # <<< factory PlayerNamingScreen_DrawCursor
 
@@ -124,6 +132,9 @@ CASES["DeckNamingScreen_DrawCursor"] = [
     dict(POISON, a=0x11,
          wram={0xD006: b"\x00", 0xCEA4: b"\x01", 0xCEA9: b"\x05"},
          expect_regs={"a": 0x11, "f": 0x00, "b": 0x01, "c": 0x06, "d": 0xDD, "e": 0x11}),
+    # LCD on (wLCDC bit 7): the same tail hands back the map writer's 0.
+    {"a": 0x11, "d": 0x22, "wram": {0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x05",
+                                    0xCABB: b"\x80"}},
 ]
 # <<< factory DeckNamingScreen_DrawCursor
 
@@ -649,3 +660,10 @@ MUTATIONS["InputDeckName"] = {
 for _rec in SCHEMA2_CASES["InputDeckName"]:
     _rec["completion"] = {"mode": "pre-ret", "pc": 0x6E1B}
 # <<< factory-completion InputDeckName
+
+MUTATIONS["PlayerNamingScreen_DrawCursor"] = {
+    "source_symbol": "PlayerNamingScreen_DrawCursor",
+    "before": "\tuint8_t out_a = WriteByteToBGMap0(saved_a, b, c);",
+    "after": "\tuint8_t out_a = (WriteByteToBGMap0(saved_a, b, c), saved_a);",
+    "case_ids": ["PlayerNamingScreen_DrawCursor-3"],
+}

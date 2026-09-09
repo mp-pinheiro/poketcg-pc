@@ -295,8 +295,11 @@ PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_DrawCursor(uint8_t a, uin
 	c = tile;
 	b = (uint8_t)(rom_ptr(6u, char_info)[0] - 1u);
 	PlayerNamingScreen_AdjustCursorPosition(saved_a);
-	WriteByteToBGMap0(saved_a, b, c);
-	return (PlayerNamingScreen_DrawCursorResult){saved_a, (uint8_t)(saved_a == 0u ? 0x80u : 0u), b, c, d, saved_a, char_info};
+	/* input_name.asm:494-496: the tail is `call WriteByteToBGMap0 / or a / ret`,
+	 * so a is the map writer's return (0 whenever the LCD is on and the byte is
+	 * staged in wTempByte) and the flags are that value's. */
+	uint8_t out_a = WriteByteToBGMap0(saved_a, b, c);
+	return (PlayerNamingScreen_DrawCursorResult){out_a, (uint8_t)(out_a == 0u ? 0x80u : 0u), b, c, d, saved_a, char_info};
 }
 /* <<< factory PlayerNamingScreen_DrawCursor */
 
@@ -313,8 +316,8 @@ DeckNamingScreen_DrawCursorResult DeckNamingScreen_DrawCursor(uint8_t a, uint8_t
 	c = tile;
 	b = (uint8_t)(rom_ptr(6u, char_info)[0] - 1u);
 	DeckNamingScreen_AdjustCursorPosition(saved_a);
-	WriteByteToBGMap0(saved_a, b, c);
-	return (DeckNamingScreen_DrawCursorResult){saved_a, (uint8_t)(saved_a == 0u ? 0x80u : 0u), b, c, d, saved_a, char_info};
+	uint8_t out_a = WriteByteToBGMap0(saved_a, b, c);
+	return (DeckNamingScreen_DrawCursorResult){out_a, (uint8_t)(out_a == 0u ? 0x80u : 0u), b, c, d, saved_a, char_info};
 }
 /* <<< factory DeckNamingScreen_DrawCursor */
 

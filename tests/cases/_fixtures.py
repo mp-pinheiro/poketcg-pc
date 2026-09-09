@@ -304,6 +304,11 @@ BOOT_GFX_REGS = BOOT_GFX.regs
 # out of the font bank into wTextTileBuffer.
 FONT_TILE = Fixture("lightning-3-font-tile-entry")
 FONT_TILE_REGS = FONT_TILE.regs
+# lightning-3 at DoFrame 516: the naming screen draws the cursor with the LCD
+# on, so WriteByteToBGMap0 stages the byte and hands back a = 0.
+NAME_CURSOR = Fixture("lightning-3-name-cursor-entry")
+NAME_CURSOR_REGS = NAME_CURSOR.regs
+
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -500,3 +505,7 @@ def boot_gfx_fixture(vram: bool = True, bank: int | None = None, **changes: byte
 
 def font_tile_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return FONT_TILE.case(vram=vram, bank=bank, **changes)
+
+
+def name_cursor_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return NAME_CURSOR.case(vram=vram, bank=bank, **changes)
