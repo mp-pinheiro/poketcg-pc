@@ -7549,9 +7549,9 @@ CASES["PokeBall_AddToHandEffect"] = [
 # >>> factory HealPlayAreaCardHP
 CONTRACT["HealPlayAreaCardHP"] = {"compare": (), "preserve": ()}
 CASES["HealPlayAreaCardHP"] = [
-    {"a": 0x14, "wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: b"\x20", wPlayerDeck: b"\x08", wLCDC: b"\x00", wAnimationsDisabled: b"\x01", wLoadedAttackAnimation: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "read": {wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: 1, wLoadedAttackAnimation: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: b"\x3F", wPlayerDeck: b"\x08", wLCDC: b"\x00", wAnimationsDisabled: b"\x01", wLoadedAttackAnimation: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "read": {wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: 1, wLoadedAttackAnimation: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: b"\x10", wPlayerDeck: b"\x08", wLCDC: b"\x00", wAnimationsDisabled: b"\x01", wLoadedAttackAnimation: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], read={wLoadedAttackAnimation: 1}, instruction_budget=20000000, cycle_budget=80000000)
+    {"a": 0x14, "wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: b"\x20", wPlayerDeck: b"\x08", wLCDC: b"\x00", wAnimationsDisabled: b"\x01", wLoadedAttackAnimation: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "read": {wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: 1, wLoadedAttackAnimation: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000, "entry_sp": 0xDCBE},
+    {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: b"\x3F", wPlayerDeck: b"\x08", wLCDC: b"\x00", wAnimationsDisabled: b"\x01", wLoadedAttackAnimation: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "read": {wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: 1, wLoadedAttackAnimation: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000, "entry_sp": 0xDCBE},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: b"\x10", wPlayerDeck: b"\x08", wLCDC: b"\x00", wAnimationsDisabled: b"\x01", wLoadedAttackAnimation: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], read={wLoadedAttackAnimation: 1}, instruction_budget=20000000, cycle_budget=80000000, entry_sp=0xDCBE)
 ]
 # <<< factory HealPlayAreaCardHP
 
@@ -7570,7 +7570,7 @@ _POT_BASE = {
 _POT_READ = {0xFF9D: 1, 0xCCB8: 1, 0xCE7E: 1,
              wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: 1}
 _POT_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
-_POT_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000}
+_POT_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000, "entry_sp": 0xDCBE}
 CASES["Potion_HealEffect"] = [
     dict(_POT_BUDGET, a=0x10, f=0x80,
          wram={**_POT_BASE, 0xFFA0: b"\x00", 0xFFA1: b"\x14",
@@ -7584,14 +7584,22 @@ CASES["Potion_HealEffect"] = [
          wram={**_POT_BASE, 0xFFA0: b"\x00", 0xFFA1: b"\x01",
                0xFF9D: b"\x05", 0xCCB8: b"\x00", 0xCE7E: b"\x01"},
          setup=_POT_SETUP, keys=[0x00, 0x01], read=dict(_POT_READ), **_POT_BUDGET),
+    # Bench 1 is the target: the arena card's HP is untouched.
+    dict(_POT_BUDGET, a=0x10, f=0x80,
+         wram={**_POT_BASE, wPlayerDuelVariables + DUELVARS_ARENA_CARD: b"\x00\x01",
+               wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: b"\x20\x20", wPlayerDeck: b"\x08\x08",
+               0xFFA0: b"\x01", 0xFFA1: b"\x10", 0xFF9D: b"\x00", 0xCCB8: b"\x00", 0xCE7E: b"\x01"},
+         setup=_POT_SETUP, keys=[0x00, 0x01],
+         read={**_POT_READ, wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: 2},
+         expect={wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: b"\x20\x30"}),
 ]
 # <<< factory Potion_HealEffect
 
 # >>> factory SuperPotion_HealEffect
 CONTRACT["SuperPotion_HealEffect"] = {"compare": (), "preserve": ()}
 CASES["SuperPotion_HealEffect"] = [
-    {"a": 0x10, "f": 0x80, "wram": {0xFF97: b"\xC2", 0xFFA0: b"\x12", 0xFFA1: b"\x03", 0xFFA2: b"\x01", 0xFF9D: b"\x07", 0xC2ED: b"\x00", 0xD421: b"\x01", 0xCCB8: b"\x00", 0xCE7E: b"\x00"}, "read": {0xC212: 1, 0xC27E: 1, 0xC2ED: 1, 0xFF9D: 1, 0xCCB8: 1, 0xCE7E: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xFFA0: b"\x34", 0xFFA1: b"\x05", 0xFFA2: b"\x02", 0xFF9D: b"\x09", 0xC2ED: b"\x01", 0xD421: b"\x01", 0xCCB8: b"\x00", 0xCE7E: b"\x00"}, read={0xC234: 1, 0xC27F: 1, 0xC2ED: 1, 0xFF9D: 1, 0xCCB8: 1, 0xCE7E: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000)
+    {"a": 0x10, "f": 0x80, "wram": {0xFF97: b"\xC2", 0xFFA0: b"\x12", 0xFFA1: b"\x03", 0xFFA2: b"\x01", 0xFF9D: b"\x07", 0xC2ED: b"\x00", 0xD421: b"\x01", 0xCCB8: b"\x00", 0xCE7E: b"\x00"}, "read": {0xC212: 1, 0xC27E: 1, 0xC2ED: 1, 0xFF9D: 1, 0xCCB8: 1, 0xCE7E: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "entry_sp": 0xDCBE},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFFA0: b"\x34", 0xFFA1: b"\x05", 0xFFA2: b"\x02", 0xFF9D: b"\x09", 0xC2ED: b"\x01", 0xD421: b"\x01", 0xCCB8: b"\x00", 0xCE7E: b"\x00"}, read={0xC234: 1, 0xC27F: 1, 0xC2ED: 1, 0xFF9D: 1, 0xCCB8: 1, 0xCE7E: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000, entry_sp=0xDCBE)
 ]
 # <<< factory SuperPotion_HealEffect
 
@@ -7617,7 +7625,7 @@ _PC_READ = {wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: 2,
             wPlayerDuelVariables + 0x00: 2,
             hTempPlayAreaLocation_ff9d: 1}
 _PC_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
-_PC_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000}
+_PC_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000, "entry_sp": 0xDCBE}
 CASES["PokemonCenter_HealDiscardEnergyEffect"] = [
     dict(_PC_BUDGET, wram={**_PC_BASE, 0xC2EF: b"\x01"}, setup=_PC_SETUP,
          keys=[0x00, 0x01], read=dict(_PC_READ)),
@@ -8072,12 +8080,17 @@ CASES["DevolutionBeam_PlayerSelectEffect"] = [
 # >>> factory DevolutionSpray_DevolutionEffect
 CONTRACT["DevolutionSpray_DevolutionEffect"] = {"compare": (), "preserve": ()}
 CASES["DevolutionSpray_DevolutionEffect"] = [
-    {"keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "wram": {0xFF97: b"\xC2", 0xFFA0: b"\x00\xFF", 0xC2BB: b"\x01", 0xC2C8: b"\x30", 0xC2EF: b"\x00", 0xC400: b"\x08\x09", 0xC590: b"\x00", 0xCE3F: b"\x00\x00\x00\x00"},
-     "read": {0xFF9D: 1, 0xCE3F: 4}},
-    dict(POISON, keys=0x01, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         wram={0xFF97: b"\xC2", 0xFFA0: b"\x00\xFF", 0xC2BB: b"\x01", 0xC2C8: b"\x30", 0xC2EF: b"\x00", 0xC400: b"\x08\x09", 0xC590: b"\x00", 0xCE3F: b"\x00\x00\x00\x00"},
-         read={0xFF9D: 1, 0xCE3F: 4}),
+    # Kadabra (60/60) devolves to Abra: the Kadabra card is discarded, Abra keeps 30 HP, no knockout.
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x01\xFF\xFF\xFF\xFF\xFF", 0xC2EF: b"\x01", 0xC200: b"\x10\x10", 0xC400: b"\x8E\x8F", 0xC3BB: b"\x00\xFF\xFF\xFF\xFF\xFF", 0xC3EF: b"\x01", 0xC3C8: b"\x28", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\x00\x01\xFF", 0xC2C8: b"\x3C"}, "setup": DISPLAY_SETUP,
+     "read": {0xC2BB: 1, 0xC2C8: 1, 0xC200: 2, 0xC2EF: 1}, "expect": {0xC2BB: b"\x00", 0xC2C8: b"\x1E", 0xC200: b"\x10\x00", 0xC2EF: b"\x01"},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2BB: b"\x01\xFF\xFF\xFF\xFF\xFF", 0xC2EF: b"\x01", 0xC200: b"\x10\x10", 0xC400: b"\x8E\x8F", 0xC3BB: b"\x00\xFF\xFF\xFF\xFF\xFF", 0xC3EF: b"\x01", 0xC3C8: b"\x28", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\x00\x01\xFF", 0xC2C8: b"\x3C"}, setup=DISPLAY_SETUP,
+         read={0xC2BB: 1, 0xC2C8: 1, 0xC200: 2, 0xC2EF: 1}, expect={0xC2BB: b"\x00", 0xC2C8: b"\x1E", 0xC200: b"\x10\x00", 0xC2EF: b"\x01"},
+         instruction_budget=20000000, cycle_budget=80000000),
+    # Empty devolution list: only the text and the knockout check run.
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x01\xFF\xFF\xFF\xFF\xFF", 0xC2EF: b"\x01", 0xC200: b"\x10\x10", 0xC400: b"\x8E\x8F", 0xC3BB: b"\x00\xFF\xFF\xFF\xFF\xFF", 0xC3EF: b"\x01", 0xC3C8: b"\x28", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\x00\xFF", 0xC2C8: b"\x3C"}, "setup": DISPLAY_SETUP,
+     "read": {0xC2BB: 1, 0xC2C8: 1}, "expect": {0xC2BB: b"\x01", 0xC2C8: b"\x3C"},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory DevolutionSpray_DevolutionEffect
 
@@ -8096,13 +8109,11 @@ CASES["PokemonBreeder_PlayerSelection"] = [
 # >>> factory Curse_TransferDamageEffect
 CONTRACT["Curse_TransferDamageEffect"] = {"compare": (), "preserve": ()}
 CASES["Curse_TransferDamageEffect"] = [
-    {"wram": {0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xFFA2: b"\x00", 0xC2C2: b"\x00", 0xC2F1: b"\x00", 0xC3BB: b"\xFF", 0xC3C8: b"\x28", 0xC3C9: b"\x32", 0xC3EF: b"\x01"},
-     "read": {0xC2C2: 1, 0xC3C8: 1, 0xC3C9: 1},
-     "expect": {0xC2C2: b"\x20", 0xC3C8: b"\x1E", 0xC3C9: b"\x3C"}},
-    dict(POISON,
-         wram={0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xFFA2: b"\x00", 0xC2C2: b"\x00", 0xC2F1: b"\x00", 0xC3BB: b"\xFF", 0xC3C8: b"\x28", 0xC3C9: b"\x32", 0xC3EF: b"\x01"},
-         read={0xC2C2: 1, 0xC3C8: 1, 0xC3C9: 1},
-         expect={0xC2C2: b"\x20", 0xC3C8: b"\x1E", 0xC3C9: b"\x3C"}),
+    # Player used Curse: no play area redraw, 10 HP moves from the opponent's arena card to bench 1.
+    {"wram": {0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xFFA2: b"\x00", 0xC2BB: b"\x00\xFF\xFF\xFF\xFF\xFF", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC2C2: b"\x00", 0xC400: b"\x08", 0xC3BB: b"\x00\x01\xFF\xFF\xFF\xFF", 0xC3C8: b"\x28\x32", 0xC3EF: b"\x02", 0xC480: b"\x08\x09", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xC2F1: b"\x00"}, "read": {0xC2C2: 1, 0xC3C8: 1, 0xC3C9: 1}, "expect": {0xC2C2: b"\x20", 0xC3C8: b"\x1E", 0xC3C9: b"\x3C"}, "setup": DISPLAY_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xFFA2: b"\x00", 0xC2BB: b"\x00\xFF\xFF\xFF\xFF\xFF", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC2C2: b"\x00", 0xC400: b"\x08", 0xC3BB: b"\x00\x01\xFF\xFF\xFF\xFF", 0xC3C8: b"\x28\x32", 0xC3EF: b"\x02", 0xC480: b"\x08\x09", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xC2F1: b"\x00"}, read={0xC2C2: 1, 0xC3C8: 1, 0xC3C9: 1}, expect={0xC2C2: b"\x20", 0xC3C8: b"\x1E", 0xC3C9: b"\x3C"}, setup=DISPLAY_SETUP, instruction_budget=20000000, cycle_budget=80000000),
+    # AI used Curse: the player's play area is drawn and the target's card box waits for A.
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xFFA2: b"\x00", 0xC2BB: b"\x00\xFF\xFF\xFF\xFF\xFF", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC2C2: b"\x00", 0xC400: b"\x08", 0xC3BB: b"\x00\x01\xFF\xFF\xFF\xFF", 0xC3C8: b"\x28\x32", 0xC3EF: b"\x02", 0xC480: b"\x08\x09", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xC2F1: b"\x02"}, "read": {0xC2C2: 1, 0xC3C8: 1, 0xC3C9: 1}, "expect": {0xC2C2: b"\x20", 0xC3C8: b"\x1E", 0xC3C9: b"\x3C"}, "setup": DISPLAY_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory Curse_TransferDamageEffect
 
@@ -10865,41 +10876,15 @@ MUTATIONS["PokeBall_AddToHandEffect"] = {"source_symbol": "PokeBall_AddToHandEff
 # >>> factory-mutation HealPlayAreaCardHP
 MUTATIONS["HealPlayAreaCardHP"] = {"source_symbol": "HealPlayAreaCardHP", "before": "\twLoadedAttackAnimation = ATK_ANIM_HEALING_WIND_PLAY_AREA;", "after": "\twLoadedAttackAnimation = (uint8_t)(ATK_ANIM_HEALING_WIND_PLAY_AREA + 1u);", "case_ids": ["HealPlayAreaCardHP-0", "HealPlayAreaCardHP-1", "HealPlayAreaCardHP-2"]}
 # <<< factory-mutation HealPlayAreaCardHP
-# >>> factory-completion HealPlayAreaCardHP
-for _record in SCHEMA2_CASES["HealPlayAreaCardHP"]:
-    # effect_functions.asm:11222, the routine's own `ret`. The pc used to be
-    # PlayAttackAnimation's entry, its first bank1call, so the reference stopped
-    # before the heal write and the seeded HP compared unchanged on both lanes.
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7F02, "bank": 11}
-# <<< factory-completion HealPlayAreaCardHP
 # >>> factory-mutation Potion_HealEffect
-MUTATIONS["Potion_HealEffect"] = {"source_symbol": "Potion_HealEffect", "before": "void Potion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\thTempPlayAreaLocation_ff9d = hTemp_ffa0;", "after": "void Potion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\thTempPlayAreaLocation_ff9d = 0u;", "case_ids": ["Potion_HealEffect-0", "Potion_HealEffect-1", "Potion_HealEffect-2"]}
+MUTATIONS["Potion_HealEffect"] = {"source_symbol": "Potion_HealEffect", "before": "\thTempPlayAreaLocation_ff9d = hTemp_ffa0;", "after": "\thTempPlayAreaLocation_ff9d = 0u;", "case_ids": ["Potion_HealEffect-3"]}
 # <<< factory-mutation Potion_HealEffect
-# >>> factory-completion Potion_HealEffect
-for _record in SCHEMA2_CASES["Potion_HealEffect"]:
-    # the routine's own `ret`; the pc was HealPlayAreaCardHP's entry, its only
-    # call, so the reference stopped before the heal ran.
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x73F8, "bank": 11}
-# <<< factory-completion Potion_HealEffect
 # >>> factory-mutation SuperPotion_HealEffect
 MUTATIONS["SuperPotion_HealEffect"] = {"source_symbol": "SuperPotion_HealEffect", "before": "void SuperPotion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tPutCardInDiscardPile(hTemp_ffa0);\n\thTempPlayAreaLocation_ff9d = hTempPlayAreaLocation_ffa1;", "after": "void SuperPotion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tPutCardInDiscardPile(hTemp_ffa0);\n\thTempPlayAreaLocation_ff9d = 0u;", "case_ids": ["SuperPotion_HealEffect-0", "SuperPotion_HealEffect-1"]}
 # <<< factory-mutation SuperPotion_HealEffect
-# >>> factory-completion SuperPotion_HealEffect
-for _record in SCHEMA2_CASES["SuperPotion_HealEffect"]:
-    # the routine's own `ret`; the pc was HealPlayAreaCardHP's entry, its only
-    # call, so the reference stopped before the heal ran.
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x71C3, "bank": 11}
-# <<< factory-completion SuperPotion_HealEffect
 # >>> factory-mutation PokemonCenter_HealDiscardEnergyEffect
-MUTATIONS["PokemonCenter_HealDiscardEnergyEffect"] = {"source_symbol": "PokemonCenter_HealDiscardEnergyEffect", "before": "void PokemonCenter_HealDiscardEnergyEffect(void)\n{\n\thTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;\n}", "after": "void PokemonCenter_HealDiscardEnergyEffect(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;\n}", "case_ids": ["PokemonCenter_HealDiscardEnergyEffect-0", "PokemonCenter_HealDiscardEnergyEffect-1"]}
+MUTATIONS["PokemonCenter_HealDiscardEnergyEffect"] = {"source_symbol": "PokemonCenter_HealDiscardEnergyEffect", "before": "\t\t\tPutCardInDiscardPile(index);", "after": "\t\t\t(void)index;", "case_ids": ["PokemonCenter_HealDiscardEnergyEffect-0"]}
 # <<< factory-mutation PokemonCenter_HealDiscardEnergyEffect
-# >>> factory-completion PokemonCenter_HealDiscardEnergyEffect
-for _record in SCHEMA2_CASES["PokemonCenter_HealDiscardEnergyEffect"]:
-    # effect_functions.asm:11281, the routine's own `ret`. The pc used to be
-    # GetCardDamageAndMaxHP's entry, the first call inside the loop, so the
-    # reference stopped before a single iteration ran.
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7658, "bank": 11}
-# <<< factory-completion PokemonCenter_HealDiscardEnergyEffect
 # >>> factory-mutation ComputerSearch_PlayerDeckSelection
 MUTATIONS["ComputerSearch_PlayerDeckSelection"] = {"source_symbol": "ComputerSearch_PlayerDeckSelection", "before": "ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint8_t c, uint16_t de)\n{\n\t(void)CreateDeckCardList(c, de);\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(DuelistDeckText, ChooseCardToPlaceInHandText);\n\twLCDC = 0x80u;\n\tgb_write8(hKeysPressed_ADDR, 0x01u);\n\tuint8_t selected = gb_read8(wDuelTempList_ADDR);\n\tgb_write8((uint16_t)(hTempList_ADDR + 2u), selected);", "after": "ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint8_t c, uint16_t de)\n{\n\t(void)CreateDeckCardList(c, de);\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(DuelistDeckText, ChooseCardToPlaceInHandText);\n\twLCDC = 0x80u;\n\tgb_write8(hKeysPressed_ADDR, 0x01u);\n\tuint8_t selected = gb_read8(wDuelTempList_ADDR);\n\tgb_write8((uint16_t)(hTempList_ADDR + 2u), (uint8_t)(selected + 1u));", "case_ids": ["ComputerSearch_PlayerDeckSelection-0", "ComputerSearch_PlayerDeckSelection-1"]}
 # <<< factory-mutation ComputerSearch_PlayerDeckSelection
@@ -10939,13 +10924,6 @@ MUTATIONS["MagnetonLv28SelfdestructEffect"] = {"source_symbol": "MagnetonLv28Sel
 # >>> factory-mutation Scavenge_PlayerSelectTrainerEffect
 MUTATIONS["Scavenge_PlayerSelectTrainerEffect"]={"source_symbol":"Scavenge_PlayerSelectTrainerEffect","before":"\tuint8_t selected = hTempCardIndex_ff98;\n\thTempPlayAreaLocation_ffa1 = selected;","after":"\tuint8_t selected = (uint8_t)(hTempCardIndex_ff98 + 1u);\n\thTempPlayAreaLocation_ffa1 = selected;","case_ids":["Scavenge_PlayerSelectTrainerEffect-0","Scavenge_PlayerSelectTrainerEffect-1"]}
 # <<< factory-mutation Scavenge_PlayerSelectTrainerEffect
-# >>> factory-completion Scavenge_PlayerSelectTrainerEffect
-for _record in SCHEMA2_CASES["Scavenge_PlayerSelectTrainerEffect"]:
-    # effect_functions.asm:5710, the routine's own `ret`. The pc was
-    # DisplayCardList's entry, so the reference stopped at the first pass of
-    # `.loop_input` and the selection the loop exists to make was never made.
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x5F5E, "bank": 11}
-# <<< factory-completion Scavenge_PlayerSelectTrainerEffect
 # >>> factory-mutation WeezingSelfdestructEffect
 MUTATIONS["WeezingSelfdestructEffect"] = {"source_symbol": "WeezingSelfdestructEffect", "before": "DealDamageToAllBenchedPokemon(10u, recoil.f, 0u, 0u, 0u, 0u, 0u)", "after": "DealDamageToAllBenchedPokemon(20u, recoil.f, 0u, 0u, 0u, 0u, 0u)", "case_ids": ["WeezingSelfdestructEffect-0", "WeezingSelfdestructEffect-1"]}
 # <<< factory-mutation WeezingSelfdestructEffect
@@ -11101,22 +11079,14 @@ MUTATIONS["Spark_PlayerSelectEffect"] = {"source_symbol": "Spark_PlayerSelectEff
 # >>> factory-mutation DevolutionBeam_PlayerSelectEffect
 MUTATIONS["DevolutionBeam_PlayerSelectEffect"] = {"source_symbol": "DevolutionBeam_PlayerSelectEffect", "before": "\thTemp_ffa0 = selected_duelist;", "after": "\thTemp_ffa0 = (uint8_t)(selected_duelist + 1u);", "case_ids": ["DevolutionBeam_PlayerSelectEffect-0"]}
 # <<< factory-mutation DevolutionBeam_PlayerSelectEffect
-# >>> factory-completion DevolutionSpray_DevolutionEffect
-for _record in SCHEMA2_CASES["DevolutionSpray_DevolutionEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x0C34, "bank": 13}
-# <<< factory-completion DevolutionSpray_DevolutionEffect
 # >>> factory-mutation DevolutionSpray_DevolutionEffect
-MUTATIONS["DevolutionSpray_DevolutionEffect"] = {"source_symbol": "DevolutionSpray_DevolutionEffect", "before": "void DevolutionSpray_DevolutionEffect(void)\n{\n\tuint8_t location = hTempList;\n\thTempPlayAreaLocation_ff9d = location;", "after": "void DevolutionSpray_DevolutionEffect(void)\n{\n\tuint8_t location = hTempList;\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["DevolutionSpray_DevolutionEffect-0", "DevolutionSpray_DevolutionEffect-1"]}
+MUTATIONS["DevolutionSpray_DevolutionEffect"] = {"source_symbol": "DevolutionSpray_DevolutionEffect", "before": "\t\tPutCardInDiscardPile(card);", "after": "\t\t(void)card;", "case_ids": ["DevolutionSpray_DevolutionEffect-0"]}
 # <<< factory-mutation DevolutionSpray_DevolutionEffect
 # >>> factory-mutation PokemonBreeder_PlayerSelection
 MUTATIONS["PokemonBreeder_PlayerSelection"] = {"source_symbol": "PokemonBreeder_PlayerSelection", "before": "\t\thTempPlayAreaLocation_ffa1 = location;", "after": "\t\thTempPlayAreaLocation_ffa1 = (uint8_t)(location + 1u);", "case_ids": ["PokemonBreeder_PlayerSelection-0"]}
 # <<< factory-mutation PokemonBreeder_PlayerSelection
-# >>> factory-completion Curse_TransferDamageEffect
-for _record in SCHEMA2_CASES["Curse_TransferDamageEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x2383, "bank": 13}
-# <<< factory-completion Curse_TransferDamageEffect
 # >>> factory-mutation Curse_TransferDamageEffect
-MUTATIONS["Curse_TransferDamageEffect"] = {"source_symbol": "Curse_TransferDamageEffect", "before": "void Curse_TransferDamageEffect(void)\n{\n\tuint8_t location = hTempList;\n\tDuelistVarResult flags = GetTurnDuelistVariable(\n\t\t(uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));\n\tgb_write8(flags.hl, (uint8_t)(flags.a | (1u << USED_PKMN_POWER_THIS_TURN_F)));", "after": "void Curse_TransferDamageEffect(void)\n{\n\tuint8_t location = hTempList;\n\tDuelistVarResult flags = GetTurnDuelistVariable(\n\t\t(uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));\n\tgb_write8(flags.hl, flags.a);", "case_ids": ["Curse_TransferDamageEffect-0", "Curse_TransferDamageEffect-1"]}
+MUTATIONS["Curse_TransferDamageEffect"] = {"source_symbol": "Curse_TransferDamageEffect", "before": "\tgb_write8(target.hl, (uint8_t)(target.a - 10u));", "after": "\tgb_write8(target.hl, (uint8_t)(target.a - 20u));", "case_ids": ["Curse_TransferDamageEffect-0"]}
 # <<< factory-mutation Curse_TransferDamageEffect
 # >>> factory-mutation SuperPotion_PlayerSelectEffect
 MUTATIONS["SuperPotion_PlayerSelectEffect"] = {"source_symbol": "SuperPotion_PlayerSelectEffect", "before": "\tif (amount > 40u)\n\t\tamount = 40u;", "after": "\tif (amount > 50u)\n\t\tamount = 50u;", "case_ids": ["SuperPotion_PlayerSelectEffect-2"]}
