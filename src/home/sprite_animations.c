@@ -145,7 +145,7 @@ void TryHandleSpriteAnimationFrame(uint16_t hl)
 	counter = (uint8_t)(counter - decrement);
 	gb_write8((uint16_t)(hl + ANIM_COUNTER), counter);
 	if (counter == 0 || counter > (uint8_t)(0xffu - decrement))
-		HandleAnimationFrame(hl);
+		(void)HandleAnimationFrame(hl);
 }
 
 void StartNewSpriteAnimation(uint8_t a)
@@ -156,10 +156,10 @@ void StartNewSpriteAnimation(uint8_t a)
 	StartSpriteAnimation(a);
 }
 
-void StartSpriteAnimation(uint8_t a)
+uint8_t StartSpriteAnimation(uint8_t a)
 {
 	uint16_t slot = LoadSpriteAnimPointers(a);
-	HandleAnimationFrame(slot);
+	return HandleAnimationFrame(slot);
 }
 
 void Func_12ac9(uint8_t a, uint8_t c)
@@ -187,7 +187,7 @@ uint16_t LoadSpriteAnimPointers(uint8_t a)
 	return slot;
 }
 
-void HandleAnimationFrame(uint16_t hl)
+uint8_t HandleAnimationFrame(uint16_t hl)
 {
 	for (;;) {
 		uint16_t frame_ptr_addr = (uint16_t)(hl + ANIM_FRAME_POINTER);
@@ -212,8 +212,9 @@ void HandleAnimationFrame(uint16_t hl)
 		uint16_t xaddr = (uint16_t)(hl + ANIM_COORD_X);
 		gb_write8(xaddr, (uint8_t)(gb_read8(xaddr) + x));
 		uint16_t yaddr = (uint16_t)(hl + ANIM_COORD_Y);
-		gb_write8(yaddr, (uint8_t)(gb_read8(yaddr) + y));
-		return;
+		uint8_t out = (uint8_t)(gb_read8(yaddr) + y);
+		gb_write8(yaddr, out);
+		return out;
 	}
 }
 

@@ -56,7 +56,7 @@ static void adapt_StartNewSpriteAnimation(ProbeState *s)
 
 static void adapt_StartSpriteAnimation(ProbeState *s)
 {
-	StartSpriteAnimation(s->a);
+	s->a = StartSpriteAnimation(s->a);
 }
 
 static void adapt_Func_12ac9(ProbeState *s)
@@ -71,7 +71,7 @@ static void adapt_LoadSpriteAnimPointers(ProbeState *s)
 
 static void adapt_HandleAnimationFrame(ProbeState *s)
 {
-	HandleAnimationFrame(s->hl);
+	s->a = HandleAnimationFrame(s->hl);
 }
 
 static void adapt_GetAnimFramePointerFromOffset(ProbeState *s)

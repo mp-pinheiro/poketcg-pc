@@ -61,7 +61,7 @@ CONTRACT = {
         "preserve": ("hl",),
     },
     "StartSpriteAnimation": {
-        "compare": ("b", "c", "d", "e", "hl"),
+        "compare": ("a", "b", "c", "d", "e", "hl"),
         "preserve": ("b", "c", "hl"),
     },
     "Func_12ac9": {
@@ -73,7 +73,7 @@ CONTRACT = {
         "preserve": ("b", "c"),
     },
     "HandleAnimationFrame": {
-        "compare": ("b", "c", "d", "e", "hl"),
+        "compare": ("a", "b", "c", "d", "e", "hl"),
         "preserve": ("b", "c", "d", "e", "hl"),
     },
     "GetAnimFramePointerFromOffset": {
@@ -314,4 +314,11 @@ MUTATIONS = {
         "after": "gb_write8(slot_addr(i, 0), 1);",
         "case_ids": ["_ClearSpriteAnimations-0", "_ClearSpriteAnimations-1", "_ClearSpriteAnimations-2"],
     },
+}
+
+MUTATIONS["HandleAnimationFrame"] = {
+    "source_symbol": "HandleAnimationFrame",
+    "before": "\t\treturn out;",
+    "after": "\t\treturn (uint8_t)(out + 1u);",
+    "case_ids": ["HandleAnimationFrame-0"],
 }

@@ -1,5 +1,7 @@
 """Oracle-diff cases for poketcg/src/engine/sequences/intro_sequence_commands.asm."""
 
+from tests.cases._fixtures import TITLE_ORB_REGS, title_orb_fixture
+
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -16,6 +18,7 @@ CASES["AnimateRandomTitleScreenOrb"] = [
      "read": {0xD4CF: 1}},
     dict(POISON, wram={0xD635: b"\x3F", 0xCAB4: b"\x02", 0xD629: b"\x06\x05\x04\x03\x02\x01\x00"},
          read={0xD4CF: 1}),
+    dict(title_orb_fixture(vram=False, bank=7), **TITLE_ORB_REGS),
 ]
 # <<< factory AnimateRandomTitleScreenOrb
 

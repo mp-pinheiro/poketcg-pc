@@ -150,8 +150,7 @@ uint8_t AnimateRandomTitleScreenOrb(void)
 	hl++;
 	gb_write8(hl, 14u);
 	a = (wConsole == CONSOLE_CGB) ? SPRITE_ANIM_216 : SPRITE_ANIM_215;
-	StartSpriteAnimation(a);
-	return a;
+	return StartSpriteAnimation(a);
 }
 /* <<< factory AnimateRandomTitleScreenOrb */
 

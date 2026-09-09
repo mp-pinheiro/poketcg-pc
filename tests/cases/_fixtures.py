@@ -318,6 +318,8 @@ NAME_FINAL = Fixture("lightning-3-name-final-entry")
 NAME_FINAL_REGS = NAME_FINAL.regs
 SCROLL_TEXT = Fixture("lightning-3-scroll-text-entry")
 SCROLL_TEXT_REGS = SCROLL_TEXT.regs
+TITLE_ORB = Fixture("lightning-3-title-orb-entry")
+TITLE_ORB_REGS = TITLE_ORB.regs
 
 
 
@@ -531,3 +533,7 @@ def name_final_fixture(vram: bool = True, bank: int | None = None, **changes: by
 
 def scroll_text_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return SCROLL_TEXT.case(vram=vram, bank=bank, **changes)
+
+
+def title_orb_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return TITLE_ORB.case(vram=vram, bank=bank, **changes)
