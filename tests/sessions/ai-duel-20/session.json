@@ -1,0 +1,14 @@
+{
+  "ai_deck": 32,
+  "branch_ordinal": 23227,
+  "derived_from": "practice-win",
+  "duel_finished_ordinal": 39500,
+  "duel_turns": 17,
+  "goal": "AI-versus-AI duel, deck id 32, branched from practice-win at 23227",
+  "name": "ai-duel-20",
+  "ordinals": 41000,
+  "prizes": null,
+  "recorded": "2026-09-09T13:14:03+00:00",
+  "schema": 1,
+  "seed": null
+}
