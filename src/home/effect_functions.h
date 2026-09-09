@@ -97,7 +97,10 @@ void DodrioRage_DamageBoostEffect(void);
 void DragonairSlam_AIEffect(void);
 /* <<< factory DragonairSlam_AIEffect */
 /* >>> factory CheckIfPlayAreaHasAnyDamage */
-typedef struct { uint8_t f; uint16_t hl; } CheckIfPlayAreaHasAnyDamageResult;
+/* effect_functions.asm:517-531: a is the damage found (or 0), c the max HP of
+ * the last card read, d the play area count still to scan and e that card's
+ * slot. */
+typedef struct { uint8_t a; uint8_t c; uint8_t d; uint8_t e; uint8_t f; uint16_t hl; } CheckIfPlayAreaHasAnyDamageResult;
 CheckIfPlayAreaHasAnyDamageResult CheckIfPlayAreaHasAnyDamage(void);
 /* <<< factory CheckIfPlayAreaHasAnyDamage */
 /* >>> factory CreateEnergyCardListFromDiscardPile_OnlyBasic */
@@ -1007,8 +1010,8 @@ typedef struct { uint8_t f; } MirrorMoveExecuteStatusEffectResult;
 MirrorMoveExecuteStatusEffectResult MirrorMove_ExecuteStatusEffect(uint8_t a);
 /* <<< factory MirrorMove_ExecuteStatusEffect */
 /* >>> factory Curse_CheckDamageAndBench */
-typedef struct { uint8_t f; uint16_t hl; } CurseCheckDamageAndBenchResult;
-CurseCheckDamageAndBenchResult Curse_CheckDamageAndBench(void);
+typedef struct { uint8_t f; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } CurseCheckDamageAndBenchResult;
+CurseCheckDamageAndBenchResult Curse_CheckDamageAndBench(uint8_t c, uint8_t d, uint8_t e);
 /* <<< factory Curse_CheckDamageAndBench */
 /* >>> factory SpearowMirrorMove_AIEffect */
 void SpearowMirrorMove_AIEffect(void);

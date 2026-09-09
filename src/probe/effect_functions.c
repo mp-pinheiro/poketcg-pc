@@ -2403,8 +2403,11 @@ static void adapt_MirrorMove_ExecuteStatusEffect(ProbeState *s)
 /* >>> factory Curse_CheckDamageAndBench */
 static void adapt_Curse_CheckDamageAndBench(ProbeState *s)
 {
-	CurseCheckDamageAndBenchResult result = Curse_CheckDamageAndBench();
+	CurseCheckDamageAndBenchResult result = Curse_CheckDamageAndBench(s->c, s->d, s->e);
 	s->f = result.f;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
 	s->hl = result.hl;
 }
 /* <<< factory Curse_CheckDamageAndBench */

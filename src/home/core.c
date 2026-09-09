@@ -2057,7 +2057,7 @@ AIMakeDecisionResult AIMakeDecision(uint8_t a, uint8_t b, uint8_t c, uint8_t d, 
 	case 0x0Au: OppAction_PlayAttackAnimationDealAttackDamage(); break;
 	case 0x0Bu: (void)OppAction_DrawCard(); break;
 	case 0x0Cu: OppAction_UsePokemonPower(); break;
-	case 0x0Du: (void)OppAction_ExecutePokemonPowerEffect(b, d, e); break;
+		case 0x0Du: (void)OppAction_ExecutePokemonPowerEffect(b, d, e); break;
 	case 0x0Eu: OppAction_ForceSwitchActive(); break;
 	case 0x0Fu:
 	case 0x10u:

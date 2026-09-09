@@ -3430,12 +3430,16 @@ CASES["MirrorMove_ExecuteStatusEffect"] = [
 # <<< factory MirrorMove_ExecuteStatusEffect
 
 # >>> factory Curse_CheckDamageAndBench
-CONTRACT["Curse_CheckDamageAndBench"] = {"compare": ("f", "hl", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e"), "hram_out": True}
+CONTRACT["Curse_CheckDamageAndBench"] = {"compare": ("f", "hl", "b", "c", "d", "e"), "preserve": ("b",), "hram_out": True}
 CASES["Curse_CheckDamageAndBench"] = [
     {"wram": {0xFF9D: b"\x00", 0xC2C2: b"\x20"}, "expect": {0xFFA0: b"\x00"}},
     {"wram": {0xFF9D: b"\x00", 0xC2C2: b"\x00", 0xC3EF: b"\x01"}, "expect": {0xFFA0: b"\x00"}},
     {"wram": {0xFF9D: b"\x00", 0xC2C2: b"\x00", 0xC3EF: b"\x02", 0xC3BB: b"\x00", 0xC3BC: b"\x00", 0xC3C8: b"\x00", 0xC3C9: b"\x00"}, "expect": {0xFFA0: b"\x00"}},
     dict(POISON, wram={0xFF9D: b"\x01", 0xC2C3: b"\x20"}, expect={0xFFA0: b"\x01"}),
+    # Two opposing Pokemon, the arena one damaged: the scan stops at slot 0 with
+    # its max HP in c and the whole count still in d (effect_functions.asm:517-525).
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2C2: b"\x00", 0xC3EF: b"\x02", 0xC3BB: b"\x00", 0xC3BC: b"\x01\xFF",
+                       0xC3C8: b"\x10\x30"}, expect={0xFFA0: b"\x00"}),
 ]
 # <<< factory Curse_CheckDamageAndBench
 
@@ -9885,7 +9889,7 @@ MUTATIONS["MirrorMove_ExecuteStatusEffect"] = {
 }
 # <<< factory-mutation MirrorMove_ExecuteStatusEffect
 # >>> factory-mutation Curse_CheckDamageAndBench
-MUTATIONS["Curse_CheckDamageAndBench"] = {"source_symbol": "Curse_CheckDamageAndBench", "before": "if ((flags.a & USED_PKMN_POWER_THIS_TURN) != 0u)", "after": "if ((flags.a & USED_PKMN_POWER_THIS_TURN) == 0u)", "case_ids": ["Curse_CheckDamageAndBench-0", "Curse_CheckDamageAndBench-1", "Curse_CheckDamageAndBench-2", "Curse_CheckDamageAndBench-3"]}
+MUTATIONS["Curse_CheckDamageAndBench"] = {"source_symbol": "Curse_CheckDamageAndBench", "before": "\treturn (CurseCheckDamageAndBenchResult){incapable.f, damage.c, damage.d, damage.e, incapable.hl};", "after": "\treturn (CurseCheckDamageAndBenchResult){incapable.f, damage.c, d, damage.e, incapable.hl};", "case_ids": ["Curse_CheckDamageAndBench-4"]}
 # <<< factory-mutation Curse_CheckDamageAndBench
 # >>> factory-mutation SpearowMirrorMove_AIEffect
 MUTATIONS["SpearowMirrorMove_AIEffect"] = {

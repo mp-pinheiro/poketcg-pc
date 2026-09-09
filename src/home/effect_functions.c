@@ -1993,14 +1993,17 @@ CheckIfPlayAreaHasAnyDamageResult CheckIfPlayAreaHasAnyDamage(void)
 	/* DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA = 0xEFu (duel_constants.asm);
 	 * not the local macro of the same name, which is defined wrong above. */
 	DuelistVarResult count = GetTurnDuelistVariable(0xEFu);
-	uint32_t n = count.a ? count.a : 0x100u;
+	uint8_t d = count.a;
 	uint8_t e = PLAY_AREA_ARENA;
-	for (uint32_t i = 0; i < n; i++) {
-		if (GetCardDamageAndMaxHP(e).a != 0u)
-			return (CheckIfPlayAreaHasAnyDamageResult){0x00u, count.hl};
+	CardDamageResult card = {0u, 0u, 0u};
+	do {
+		card = GetCardDamageAndMaxHP(e);
+		if (card.a != 0u)
+			return (CheckIfPlayAreaHasAnyDamageResult){card.a, card.c, d, e, 0x00u, count.hl};
 		e++;
-	}
-	return (CheckIfPlayAreaHasAnyDamageResult){0x90u, count.hl};
+		d--;
+	} while (d != 0u);
+	return (CheckIfPlayAreaHasAnyDamageResult){0u, card.c, 0u, e, 0x90u, count.hl};
 }
 /* <<< factory CheckIfPlayAreaHasAnyDamage */
 
@@ -5455,29 +5458,31 @@ MirrorMoveExecuteStatusEffectResult MirrorMove_ExecuteStatusEffect(uint8_t a)
 /* <<< factory MirrorMove_ExecuteStatusEffect */
 
 /* >>> factory Curse_CheckDamageAndBench */
-CurseCheckDamageAndBenchResult Curse_CheckDamageAndBench(void)
+CurseCheckDamageAndBenchResult Curse_CheckDamageAndBench(uint8_t c, uint8_t d, uint8_t e)
 {
 	uint8_t location = hTempPlayAreaLocation_ff9d;
 	hTemp_ffa0 = location;
 	DuelistVarResult flags = GetTurnDuelistVariable(
 		(uint8_t)(location + DUELVARS_ARENA_CARD_FLAGS));
 	if ((flags.a & USED_PKMN_POWER_THIS_TURN) != 0u)
-		return (CurseCheckDamageAndBenchResult){0x10u, OnlyOncePerTurnText};
+		return (CurseCheckDamageAndBenchResult){0x10u, c, d, e, OnlyOncePerTurnText};
 
 	SwapTurn();
 	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
 	SwapTurn();
 	if (count.a < 2u)
-		return (CurseCheckDamageAndBenchResult){0x10u, CannotUseSinceTheresOnly1PkmnText};
+		return (CurseCheckDamageAndBenchResult){0x10u, c, d, e, CannotUseSinceTheresOnly1PkmnText};
 
+	/* effect_functions.asm:4386-4395: the damage scan's c, d and e are what
+	 * the incapable check (substatus.asm:495-516, bc/de kept) returns. */
 	SwapTurn();
 	CheckIfPlayAreaHasAnyDamageResult damage = CheckIfPlayAreaHasAnyDamage();
 	SwapTurn();
 	if ((damage.f & 0x10u) != 0u)
-		return (CurseCheckDamageAndBenchResult){0x10u, NoPokemonWithDamageCountersText};
+		return (CurseCheckDamageAndBenchResult){0x10u, damage.c, damage.d, damage.e, NoPokemonWithDamageCountersText};
 
 	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(location);
-	return (CurseCheckDamageAndBenchResult){incapable.f, incapable.hl};
+	return (CurseCheckDamageAndBenchResult){incapable.f, damage.c, damage.d, damage.e, incapable.hl};
 }
 /* <<< factory Curse_CheckDamageAndBench */
 
