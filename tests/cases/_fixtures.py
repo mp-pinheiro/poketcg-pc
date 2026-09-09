@@ -334,6 +334,8 @@ DM_ENTRIES = Fixture("boot-deck-machine-visible-entries-entry")
 DM_ENTRIES_REGS = DM_ENTRIES.regs
 HIGH_RECOIL = Fixture("lightning-3-high-recoil-entry")
 HIGH_RECOIL_REGS = HIGH_RECOIL.regs
+SAND_ATTACK = Fixture("lightning-3-sand-attack-entry")
+SAND_ATTACK_REGS = SAND_ATTACK.regs
 DAMAGE_REDUCTION = Fixture("lightning-3-damage-reduction-entry")
 DAMAGE_REDUCTION_REGS = DAMAGE_REDUCTION.regs
 SCROLL_LABEL = Fixture("lightning-3-scroll-label-entry")
@@ -585,6 +587,10 @@ def dm_entries_fixture(vram: bool = True, bank: int | None = None, **changes: by
 
 def high_recoil_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return HIGH_RECOIL.case(vram=vram, bank=bank, **changes)
+
+
+def sand_attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return SAND_ATTACK.case(vram=vram, bank=bank, **changes)
 
 
 def damage_reduction_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:

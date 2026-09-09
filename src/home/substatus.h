@@ -44,6 +44,7 @@ uint16_t HandleDoubleDamageSubstatus(uint16_t de);
  * doubling the high byte instead of halving it -- and the result sticks even
  * when the parity check afterward takes the early return. */
 uint16_t HandleDamageReductionExceptSubstatus2(uint16_t de);
+uint16_t HandleDamageReductionExceptSubstatus2_PkmnPower(uint16_t de);
 
 uint16_t HandleDamageReduction(uint16_t de);
 
@@ -80,6 +81,7 @@ typedef struct {
 	uint16_t hl;
 } NoDamageOrEffectResult;
 NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus(uint8_t e, uint16_t hl);
+NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus_PkmnPower(uint8_t e, uint16_t hl);
 
 /* substatus.asm:448-474. Carry is always set on this path. hl is the resolved
  * id from NoDamageOrEffectTextIDTable, $0000 if bit 7 already marked the text
@@ -189,7 +191,7 @@ typedef struct {
 HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult HandleDamageReductionOrNoDamageFromPkmnPowerEffects(uint16_t de, uint16_t hl);
 /* <<< factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects */
 /* >>> factory HandleSandAttackOrSmokescreenSubstatus */
-typedef struct { uint8_t a; uint8_t f; uint16_t de; uint16_t hl; } HandleSandAttackOrSmokescreenSubstatusResult;
+typedef struct { uint8_t a; uint8_t f; uint16_t de; uint16_t hl; uint16_t bc; } HandleSandAttackOrSmokescreenSubstatusResult;
 HandleSandAttackOrSmokescreenSubstatusResult HandleSandAttackOrSmokescreenSubstatus(uint16_t de, uint16_t hl);
 /* <<< factory HandleSandAttackOrSmokescreenSubstatus */
 #endif

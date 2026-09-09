@@ -237,6 +237,10 @@ static void adapt_HandleSandAttackOrSmokescreenSubstatus(ProbeState *s)
 	s->d = (uint8_t)(result.de >> 8);
 	s->e = (uint8_t)result.de;
 	s->hl = result.hl;
+	if (result.f & 0x10u) {
+		s->b = (uint8_t)(result.bc >> 8);
+		s->c = (uint8_t)result.bc;
+	}
 }
 /* <<< factory HandleSandAttackOrSmokescreenSubstatus */
 

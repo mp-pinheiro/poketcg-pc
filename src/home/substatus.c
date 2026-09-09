@@ -275,6 +275,11 @@ uint16_t HandleDamageReductionExceptSubstatus2(uint16_t de)
 
 	if (CheckIsIncapableOfUsingPkmnPower_ArenaCard().f & 0x10u)
 		return de;
+	return HandleDamageReductionExceptSubstatus2_PkmnPower(de);
+}
+
+uint16_t HandleDamageReductionExceptSubstatus2_PkmnPower(uint16_t de)
+{
 	if (gb_read8(wLoadedAttackCategory_ADDR) == POKEMON_POWER)
 		return de;
 	uint8_t defender = gb_read8(wTempNonTurnDuelistCardID_ADDR);
@@ -362,7 +367,11 @@ NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus(uint8_t e, uint16_t hl)
 	hl = incapable.hl;
 	if (incapable.f & 0x10u)
 		return (NoDamageOrEffectResult){0x00u, e, hl};
+	return HandleNoDamageOrEffectSubstatus_PkmnPower(e, hl);
+}
 
+NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus_PkmnPower(uint8_t e, uint16_t hl)
+{
 	uint8_t defender = gb_read8(wTempNonTurnDuelistCardID_ADDR);
 	if (defender != MEW_LV8)
 		return (NoDamageOrEffectResult){defender == 0 ? 0x80u : 0x00u, e, hl};
@@ -759,10 +768,10 @@ HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult HandleDamageReductionO
 
 	uint8_t location = wTempPlayAreaLocation_cceb;
 	if (location != 0)
-		de = HandleDamageReductionExceptSubstatus2(de);
+		de = HandleDamageReductionExceptSubstatus2_PkmnPower(de);
 
 	uint16_t damage = de;
-	NoDamageOrEffectResult no_damage = HandleNoDamageOrEffectSubstatus(location, hl);
+	NoDamageOrEffectResult no_damage = HandleNoDamageOrEffectSubstatus_PkmnPower(location, hl);
 	uint8_t f = no_damage.f;
 	hl = no_damage.hl;
 	if (!(f & 0x10u)) {
@@ -789,6 +798,8 @@ HandleSandAttackOrSmokescreenSubstatusResult HandleSandAttackOrSmokescreenSubsta
 	if ((toss.f & 0x10u) != 0u)
 		return (HandleSandAttackOrSmokescreenSubstatusResult){toss.a, (uint8_t)(toss.f & 0x80u), check.de, toss.hl};
 	WaitResult wait = DrawWideTextBox_WaitForInput(AttackUnsuccessfulText);
-	return (HandleSandAttackOrSmokescreenSubstatusResult){0u, (uint8_t)((wait.f & 0x80u) | 0x10u), AttackUnsuccessfulText, AttackUnsuccessfulText};
+	return (HandleSandAttackOrSmokescreenSubstatusResult){wait.a, (uint8_t)((wait.f & 0x80u) | 0x10u),
+		(uint16_t)((uint16_t)wait.d << 8 | wait.e), wait.hl,
+		(uint16_t)((uint16_t)wait.b << 8 | wait.c)};
 }
 /* <<< factory HandleSandAttackOrSmokescreenSubstatus */

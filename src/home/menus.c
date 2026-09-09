@@ -210,19 +210,24 @@ CursorTileResult SetCursorParametersForTextBox_Default(uint8_t d, uint8_t e)
  * computed BG coordinate -- not garbage. HandleMenuInput's tail jumps into
  * RefreshMenuCursor_CheckPlaySFX (menus.asm:122,135) need that exit state,
  * so it is kept here instead of discarded. */
-static HandleMenuInputResult DrawCursorRegs(uint8_t tile)
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } CursorRegs;
+
+static CursorRegs draw_cursor(uint8_t tile)
 {
 	uint16_t product = HtimesL((uint16_t)((uint16_t)wCurMenuItem << 8 | wMenuYSeparation));
 	uint8_t d = wMenuCursorXOffset;
 	uint8_t e = (uint8_t)((uint8_t)product + wMenuCursorYOffset);
 
 	AdjustCoordinatesForBGScroll(&d, &e);
-	WriteByteToBGMap0(tile, d, e);
-	/* menus.asm DrawCursor ends `or a` on what WriteByteToBGMap0 leaves:
-	 * the tile with the LCD off, and rSTAT's mode bits -- 0, HBlank asserted --
-	 * after HblankCopyDataHLtoDE with it on (bg_map.asm:52-88, hblank.asm:12-14). */
-	uint8_t a = (wLCDC & 0x80u) != 0u ? 0u : tile;
-	return (HandleMenuInputResult){a, e, (a == 0u) ? 0x80u : 0x00u, d};
+	uint8_t a = WriteByteToBGMap0(tile, d, e);
+	return (CursorRegs){a, (a == 0u) ? 0x80u : 0x00u, d, e, d, e,
+		(uint16_t)(wMenuCursorXOffset_ADDR + 1u)};
+}
+
+static HandleMenuInputResult DrawCursorRegs(uint8_t tile)
+{
+	CursorRegs r = draw_cursor(tile);
+	return (HandleMenuInputResult){r.a, r.e, r.f, r.d};
 }
 
 void DrawCursor(uint8_t a)
@@ -431,8 +436,8 @@ WaitResult WaitForWideTextBoxInput(void)
 		RefreshMenuCursor();
 		uint8_t keys = gb_read8(hKeysPressed_ADDR);
 		if (keys & (PAD_A | PAD_B)) {
-			EraseCursor();
-			return (WaitResult){0x80u};
+			CursorRegs r = draw_cursor(wMenuInvisibleCursorTile);
+			return (WaitResult){r.f, r.a, r.b, r.c, r.d, r.e, r.hl};
 		}
 	}
 }
