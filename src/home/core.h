@@ -1299,7 +1299,8 @@ typedef struct { uint8_t a; uint8_t f; } BenchPokemonMenuResult;
 BenchPokemonMenuResult SelectingBenchPokemonMenu(void);
 /* <<< factory SelectingBenchPokemonMenu */
 /* >>> factory HandleSpecialDuelMainSceneHotkeys */
-uint8_t HandleSpecialDuelMainSceneHotkeys(void);
+typedef struct { uint8_t a; uint8_t f; } HandleSpecialDuelMainSceneHotkeysResult;
+HandleSpecialDuelMainSceneHotkeysResult HandleSpecialDuelMainSceneHotkeys(uint8_t a);
 /* <<< factory HandleSpecialDuelMainSceneHotkeys */
 /* >>> factory ReplaceKnockedOutPokemon */
 typedef struct { uint8_t a, f, b, c, d, e; uint16_t hl; } ReplaceKnockedOutPokemonResult;

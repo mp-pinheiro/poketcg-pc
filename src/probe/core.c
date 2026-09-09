@@ -2836,7 +2836,9 @@ static void adapt_SelectingBenchPokemonMenu(ProbeState *s)
 /* >>> factory HandleSpecialDuelMainSceneHotkeys */
 static void adapt_HandleSpecialDuelMainSceneHotkeys(ProbeState *s)
 {
-	s->f = HandleSpecialDuelMainSceneHotkeys();
+	HandleSpecialDuelMainSceneHotkeysResult r = HandleSpecialDuelMainSceneHotkeys(s->a);
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory HandleSpecialDuelMainSceneHotkeys */
 

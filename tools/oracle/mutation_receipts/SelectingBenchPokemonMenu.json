@@ -1,9 +1,9 @@
 {
   "fn": "SelectingBenchPokemonMenu",
   "case": "tests/cases/core.py",
-  "index": 0,
+  "index": 2,
   "status": "RED",
-  "baseline": "{\"fn\": \"SelectingBenchPokemonMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52180\": \"00\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"SelectingBenchPokemonMenu\", \"mismatches\": {\"f\": [128, 129]}}\n",
-  "restored": "{\"fn\": \"SelectingBenchPokemonMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52180\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"SelectingBenchPokemonMenu\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"1011\", \"49851\": \"0001\", \"49864\": \"2828\", \"49903\": \"0200\", \"50176\": \"0809\", \"51899\": \"80\", \"52166\": \"00\", \"52180\": \"01\", \"65425\": \"04\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SelectingBenchPokemonMenu\", \"mismatches\": {\"bus\": {\"address\": 52180, \"reference\": \"080980000104c2\", \"native\": \"080980000204c2\", \"reference_size\": 15, \"native_size\": 15, \"spans\": [[49664, 2], [49851, 2], [49864, 2], [49903, 2], [50176, 2], [51899, 1], [52166, 1], [52180, 1], [65425, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"SelectingBenchPokemonMenu\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"1011\", \"49851\": \"0001\", \"49864\": \"2828\", \"49903\": \"0200\", \"50176\": \"0809\", \"51899\": \"80\", \"52166\": \"00\", \"52180\": \"01\", \"65425\": \"04\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
 }

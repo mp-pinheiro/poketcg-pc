@@ -196,6 +196,8 @@ static uint32_t duel_save_total_size(void)
 
 #define NUM_TYPES 0x08u
 #define SYM_SPACE 0x00u
+#define SYM_CURSOR_R 0x0Fu
+#define SelectingBenchPokemonHandExamineBackText 0x0059u
 #define SYM_FIRE 0x01u
 #define SYM_PLUS 0x2Bu
 
@@ -9503,14 +9505,40 @@ exit_cancel:
 /* <<< factory DisplayPlayAreaScreen */
 
 /* >>> factory SelectingBenchPokemonMenu */
-/* core.asm:5052-5088. `ret z` twice on the way in, then `.return_carry` when
- * the action is 2: `cp $02` leaves Z set and the `scf` adds carry, so that exit
- * is a=2 with Z and C. The menu loop past those three exits is not ported yet,
- * so this reports the action byte with the "not allowed" flags rather than
- * pretending to have run it. */
+/* core.asm:5122-5135 (.InitMenu): the cursor sits under the current item of
+ * the three-item "Hand / Examine / Back" text box row. */
+static void SelectingBenchPokemonMenu_InitMenu(void)
+{
+	uint8_t item = wCurrentDuelMenuItem;
+	(void)SetCursorParametersForTextBox((uint8_t)(item * 6u + 2u), 16u, SYM_CURSOR_R, SYM_SPACE);
+}
+
+/* core.asm:5096-5121 (.HandleInput): left/right move between the three
+ * items with wraparound; a held B blocks the move. */
+static void SelectingBenchPokemonMenu_HandleInput(void)
+{
+	uint8_t held = hDPadHeld;
+	if ((held & PAD_B) != 0u)
+		return;
+	held &= (uint8_t)(PAD_RIGHT | PAD_LEFT);
+	if (held == 0u)
+		return;
+	uint8_t item = wCurrentDuelMenuItem;
+	if ((held & PAD_LEFT) != 0u)
+		item = (item == 0u) ? 2u : (uint8_t)(item - 1u);
+	else
+		item = (item >= 2u) ? 0u : (uint8_t)(item + 1u);
+	wCurrentDuelMenuItem = item;
+	EraseCursor();
+	SelectingBenchPokemonMenu_InitMenu();
+}
+
+/* core.asm:5052-5095. Select on the bench selection screen opens a three-item
+ * menu over the duel main scene; Back (or a Select-closed hotkey screen)
+ * returns carry with wPlayAreaSelectAction = 1 so the caller redraws. */
 BenchPokemonMenuResult SelectingBenchPokemonMenu(void)
 {
-	uint8_t action = gb_read8(wPlayAreaSelectAction_ADDR);
+	uint8_t action = wPlayAreaSelectAction;
 
 	if (action == 0u)
 		return (BenchPokemonMenuResult){0u, 0x80u};
@@ -9520,14 +9548,87 @@ BenchPokemonMenuResult SelectingBenchPokemonMenu(void)
 		return (BenchPokemonMenuResult){0u, 0xA0u};
 	if (action == 2u)
 		return (BenchPokemonMenuResult){2u, 0x90u};
-	return (BenchPokemonMenuResult){action, 0x80u};
+	wCurrentDuelMenuItem = 0u;
+	for (;;) {
+		DrawDuelMainScene();
+		(void)DrawWideTextBox_PrintTextNoDelay(SelectingBenchPokemonHandExamineBackText);
+		SelectingBenchPokemonMenu_InitMenu();
+		for (;;) {
+			DoFrame();
+			if ((hKeysPressed & PAD_A) != 0u) {
+				uint8_t item = wCurrentDuelMenuItem;
+				if (item == 2u)
+					goto back;
+				if (item == 0u)
+					(void)OpenTurnHolderHandScreen_Simple();
+				else
+					OpenDuelCheckMenu();
+				break;
+			}
+			SelectingBenchPokemonMenu_HandleInput();
+			RefreshMenuCursor();
+			HandleSpecialDuelMainSceneHotkeysResult hotkey = HandleSpecialDuelMainSceneHotkeys(0u);
+			if ((hotkey.f & 0x10u) == 0u)
+				continue;
+			if ((hKeysPressed & PAD_SELECT) != 0u)
+				goto back;
+			break;
+		}
+	}
+back:;
+	HasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInBench();
+	wPlayAreaSelectAction = 1u;
+	return (BenchPokemonMenuResult){1u, (uint8_t)((alive.f & 0x80u) | 0x10u)};
 }
 /* <<< factory SelectingBenchPokemonMenu */
 
 /* >>> factory HandleSpecialDuelMainSceneHotkeys */
-uint8_t HandleSpecialDuelMainSceneHotkeys(void)
+/* core.asm:6340-6397. Start opens the arena card's page, Select the play area
+ * screens (a decides which), and B + a direction one of the four play area or
+ * discard pile screens. Every screen exit reports carry; the a it leaves is
+ * that screen's residue, which no caller reads. */
+HandleSpecialDuelMainSceneHotkeysResult HandleSpecialDuelMainSceneHotkeys(uint8_t a)
 {
-	return 0xA0u;
+	wDuelMainSceneSelectHotkeyAction = a;
+	uint8_t pressed = hKeysPressed;
+	if ((pressed & PAD_START) != 0u) {
+		uint8_t arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+		if (arena == 0xffu)
+			return (HandleSpecialDuelMainSceneHotkeysResult){arena, 0x90u};
+		uint16_t card_id = GetCardIDFromDeckIndex(arena);
+		LoadCardDataToBuffer1_FromCardID((uint8_t)card_id);
+		wCurPlayAreaSlot = 0u;
+		wCurPlayAreaY = 0u;
+		OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)card_id, card_id);
+		return (HandleSpecialDuelMainSceneHotkeysResult){0u, 0x10u};
+	}
+	if ((pressed & PAD_SELECT) != 0u) {
+		if (wDuelMainSceneSelectHotkeyAction != 0u)
+			(void)OpenVariousPlayAreaScreens_FromSelectPresses();
+		else
+			(void)OpenInPlayAreaScreen_FromSelectButton();
+		return (HandleSpecialDuelMainSceneHotkeysResult){0u, 0x10u};
+	}
+	if ((hKeysHeld & PAD_B) == 0u)
+		return (HandleSpecialDuelMainSceneHotkeysResult){0u, 0xA0u};
+	pressed = hKeysPressed;
+	if ((pressed & PAD_DOWN) != 0u) {
+		(void)OpenTurnHolderPlayAreaScreen();
+		return (HandleSpecialDuelMainSceneHotkeysResult){0u, 0x10u};
+	}
+	if ((pressed & PAD_LEFT) != 0u) {
+		(void)OpenTurnHolderDiscardPileScreen(0u);
+		return (HandleSpecialDuelMainSceneHotkeysResult){0u, 0x10u};
+	}
+	if ((pressed & PAD_UP) != 0u) {
+		OpenNonTurnHolderPlayAreaScreen();
+		return (HandleSpecialDuelMainSceneHotkeysResult){0u, 0x10u};
+	}
+	if ((pressed & PAD_RIGHT) != 0u) {
+		(void)OpenNonTurnHolderDiscardPileScreen(0u);
+		return (HandleSpecialDuelMainSceneHotkeysResult){0u, 0x10u};
+	}
+	return (HandleSpecialDuelMainSceneHotkeysResult){pressed, (uint8_t)(pressed == 0u ? 0x80u : 0x00u)};
 }
 /* <<< factory HandleSpecialDuelMainSceneHotkeys */
 

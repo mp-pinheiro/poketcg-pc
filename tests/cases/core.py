@@ -5126,6 +5126,9 @@ CONTRACT["SelectingBenchPokemonMenu"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["SelectingBenchPokemonMenu"] = [
     {"wram": {0xCBD4: b"\x00"}},
     dict(POISON, wram={0xCBD4: b"\x02"}),
+    # Select opens the Hand/Examine/Back menu; Select again opens the in-play-area
+    # screen through the hotkey, and the Select that closes it returns here.
+    {"keys": [0x04, 0x00, 0x04], "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00\x01", 0xC2F0: b"\x00", 0xC2C8: b"\x28\x28", 0xC2EF: b"\x02", 0xC400: b"\x08\x09", 0xC200: b"\x10\x11", 0xCABB: b"\x00", 0xCBD4: b"\x01", 0xFF91: b"\x04"}, "setup": FRAME_SETUP, "read": {0xCBD4: 1, 0xCBC6: 1}, "expect": {0xCBD4: b"\x01", 0xCBC6: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory SelectingBenchPokemonMenu
 
@@ -5134,6 +5137,16 @@ CONTRACT["HandleSpecialDuelMainSceneHotkeys"] = {"compare": ("f",), "preserve": 
 CASES["HandleSpecialDuelMainSceneHotkeys"] = [
     {},
     dict(POISON),
+    # B held without a direction: nothing opens, the direction test leaves Z clear.
+    {"a": 0x00, "wram": {0xFF90: b"\x02", 0xFF91: b"\x02"}, "read": {0xCBFF: 1}, "expect": {0xCBFF: b"\x00"}},
+    # Start with no arena card: carry straight back.
+    {"a": 0x01, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xFF91: b"\x08"}, "read": {0xCBFF: 1}, "expect": {0xCBFF: b"\x01"}},
+    # Start opens the arena card's page; the next B closes it.
+    {"a": 0x00, "keys": [0x08, 0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xFF91: b"\x08"}, "setup": FRAME_SETUP, "read": {0xCBC9: 1, 0xCBCF: 1}, "expect": {0xCBC9: b"\x00", 0xCBCF: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    # B + Down opens the turn holder's play area screen until B.
+    {"a": 0x00, "keys": [0x82, 0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xFF90: b"\x82", 0xFF91: b"\x82"}, "setup": FRAME_SETUP, "read": {0xFF97: 1, 0xCBC9: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    # B + Up opens the opponent's play area screen until B.
+    {"a": 0x00, "keys": [0x42, 0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xFF90: b"\x42", 0xFF91: b"\x42", 0xC3EF: b"\x01", 0xC3BB: b"\x00", 0xC3C8: b"\x28", 0xC480: b"\x08", 0xC300: b"\x10"}, "setup": FRAME_SETUP, "read": {0xFF97: 1, 0xCBC9: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory HandleSpecialDuelMainSceneHotkeys
 
@@ -7467,10 +7480,20 @@ for _record in SCHEMA2_CASES["OpenPlayAreaScreenForSelection"]:
 MUTATIONS["DisplayPlayAreaScreen"] = {"source_symbol": "DisplayPlayAreaScreen", "before": "\t\twCurPlayAreaSlot = (uint8_t)(wExcludeArenaPokemon + input.e);", "after": "\t\twCurPlayAreaSlot = (uint8_t)(wExcludeArenaPokemon + input.e + 1u);", "case_ids": ["DisplayPlayAreaScreen-0", "DisplayPlayAreaScreen-1"]}
 # <<< factory-mutation DisplayPlayAreaScreen
 # >>> factory-mutation SelectingBenchPokemonMenu
-MUTATIONS["SelectingBenchPokemonMenu"] = {"source_symbol": "SelectingBenchPokemonMenu", "before": "return action == 0u ? 0x80u : (action == 2u ? 0xA0u : 0x80u);", "after": "return action == 0u ? 0x81u : (action == 2u ? 0xA0u : 0x80u);", "case_ids": ["SelectingBenchPokemonMenu-0", "SelectingBenchPokemonMenu-1"]}
+MUTATIONS["SelectingBenchPokemonMenu"] = {
+    "source_symbol": "SelectingBenchPokemonMenu",
+    "before": "\twPlayAreaSelectAction = 1u;\n\treturn (BenchPokemonMenuResult){1u, (uint8_t)((alive.f & 0x80u) | 0x10u)};",
+    "after": "\twPlayAreaSelectAction = 2u;\n\treturn (BenchPokemonMenuResult){1u, (uint8_t)((alive.f & 0x80u) | 0x10u)};",
+    "case_ids": ["SelectingBenchPokemonMenu-2"],
+}
 # <<< factory-mutation SelectingBenchPokemonMenu
 # >>> factory-mutation HandleSpecialDuelMainSceneHotkeys
-MUTATIONS["HandleSpecialDuelMainSceneHotkeys"] = {"source_symbol": "HandleSpecialDuelMainSceneHotkeys", "before": "return 0xA0u;", "after": "return 0x90u;", "case_ids": ["HandleSpecialDuelMainSceneHotkeys-0", "HandleSpecialDuelMainSceneHotkeys-1"]}
+MUTATIONS["HandleSpecialDuelMainSceneHotkeys"] = {
+    "source_symbol": "HandleSpecialDuelMainSceneHotkeys",
+    "before": "\twDuelMainSceneSelectHotkeyAction = a;",
+    "after": "\twDuelMainSceneSelectHotkeyAction = 0u;",
+    "case_ids": ["HandleSpecialDuelMainSceneHotkeys-3"],
+}
 # <<< factory-mutation HandleSpecialDuelMainSceneHotkeys
 # >>> factory-mutation ReplaceKnockedOutPokemon
 MUTATIONS["ReplaceKnockedOutPokemon"] = {"source_symbol": "ReplaceKnockedOutPokemon", "before": "\t(void)SwapPlayAreaPokemon(hTempPlayAreaLocation_ff9d, PLAY_AREA_ARENA);", "after": "", "case_ids": ["ReplaceKnockedOutPokemon-0"]}
