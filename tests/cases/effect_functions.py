@@ -8066,10 +8066,25 @@ CASES["Curse_TransferDamageEffect"] = [
 # <<< factory Curse_TransferDamageEffect
 
 # >>> factory SuperPotion_PlayerSelectEffect
-CONTRACT["SuperPotion_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CONTRACT["SuperPotion_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+_SUPER_POTION_WRAM = {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2BB: b"\x00", 0xC2CE: b"\x01", 0xC400: b"\x08\x01", 0xC200: b"\x10\x10", 0xCABB: b"\x80", 0xFF40: b"\x80"}
+_SUPER_POTION_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 CASES["SuperPotion_PlayerSelectEffect"] = [
-    {"wram": {hTemp_ffa0: b"\x00"}, "read": {hTemp_ffa0: 1}, "expect": {hTemp_ffa0: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={hTemp_ffa0: b"\x00"}, read={hTemp_ffa0: 1}, expect={hTemp_ffa0: b"\x00"}, instruction_budget=20000000, cycle_budget=80000000),
+    # A dismisses the prompt, B on the selection screen cancels: the card is not played.
+    {"keys": [0x00, 0x01, 0x00, 0x02], "wram": {**_SUPER_POTION_WRAM, 0xC2C8: b"\x1E"},
+     "read": {0xFFA0: 1, 0xFFA1: 1, 0xFFA2: 1}, "setup": _SUPER_POTION_SETUP,
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    # A on the damaged arena card with one Grass Energy attached, A discards it: 30 damage healed.
+    {"keys": [0x00, 0x01, 0x00, 0x01, 0x00, 0x01], "wram": {**_SUPER_POTION_WRAM, 0xC2C8: b"\x1E"},
+     "read": {0xFFA0: 1, 0xFFA1: 1, 0xFFA2: 1}, "setup": _SUPER_POTION_SETUP,
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    # 80 damage caps the heal at 40.
+    {"keys": [0x00, 0x01, 0x00, 0x01, 0x00, 0x01], "wram": {**_SUPER_POTION_WRAM, 0xC2C8: b"\x50"},
+     "read": {0xFFA0: 1, 0xFFA1: 1, 0xFFA2: 1}, "setup": _SUPER_POTION_SETUP,
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01, 0x00, 0x01, 0x00, 0x01], wram={**_SUPER_POTION_WRAM, 0xC2C8: b"\x1E"},
+         read={0xFFA0: 1, 0xFFA1: 1, 0xFFA2: 1}, setup=_SUPER_POTION_SETUP,
+         instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory SuperPotion_PlayerSelectEffect
 
@@ -8101,9 +8116,24 @@ CASES["Wail_FillBenchEffect"] = [
 
 # >>> factory Heal_RemoveDamageEffect
 CONTRACT["Heal_RemoveDamageEffect"] = {"compare": (), "preserve": ()}
+_HEAL_WRAM = {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xFFA0: b"\x00", 0xFFA1: b"\x00", 0xFFA2: b"\x00",
+              0xC2BB: b"\x00", 0xC2C2: b"\x00", 0xC2C8: b"\x1E", 0xC2CE: b"\x01", 0xC2EF: b"\x01",
+              0xC400: b"\x08", 0xC200: b"\x10", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+              0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01"}
+_HEAL_READ = {0xC2C0: 9, 0xFFA0: 3}
+_HEAL_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 CASES["Heal_RemoveDamageEffect"] = [
-    {"wram": {hAIPkmnPowerEffectParam: b"\x00"}, "read": {hAIPkmnPowerEffectParam: 1}, "expect": {hAIPkmnPowerEffectParam: b"\x00"}},
-    dict(POISON, wram={hAIPkmnPowerEffectParam: b"\x00"}, read={hAIPkmnPowerEffectParam: 1}, expect={hAIPkmnPowerEffectParam: b"\x00"})
+    # AI opponent, tails: the power is still flagged as used, nothing heals.
+    {"keys": [0x00, 0x01], "wram": {**_HEAL_WRAM, 0xC2F1: b"\x80", 0xCACA: b"\x00\x00\x80"},
+     "read": _HEAL_READ, "setup": _HEAL_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    # AI opponent, heads: the target it chose beforehand heals one counter.
+    {"keys": [0x00, 0x01], "wram": {**_HEAL_WRAM, 0xC2F1: b"\x80", 0xCACA: b"\x00\x00\x00"},
+     "read": _HEAL_READ, "setup": _HEAL_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    # Player, heads: A dismisses the prompt and A picks the damaged arena card.
+    {"keys": [0x00, 0x01, 0x00, 0x01, 0x00, 0x01], "wram": {**_HEAL_WRAM, 0xC2F1: b"\x00", 0xCACA: b"\x00\x00\x00"},
+     "read": _HEAL_READ, "setup": _HEAL_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={**_HEAL_WRAM, 0xC2F1: b"\x80", 0xCACA: b"\x00\x00\x80"},
+         read=_HEAL_READ, setup=_HEAL_SETUP, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory Heal_RemoveDamageEffect
 
@@ -11045,12 +11075,8 @@ for _record in SCHEMA2_CASES["Curse_TransferDamageEffect"]:
 MUTATIONS["Curse_TransferDamageEffect"] = {"source_symbol": "Curse_TransferDamageEffect", "before": "void Curse_TransferDamageEffect(void)\n{\n\tuint8_t location = hTempList;\n\tDuelistVarResult flags = GetTurnDuelistVariable(\n\t\t(uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));\n\tgb_write8(flags.hl, (uint8_t)(flags.a | (1u << USED_PKMN_POWER_THIS_TURN_F)));", "after": "void Curse_TransferDamageEffect(void)\n{\n\tuint8_t location = hTempList;\n\tDuelistVarResult flags = GetTurnDuelistVariable(\n\t\t(uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));\n\tgb_write8(flags.hl, flags.a);", "case_ids": ["Curse_TransferDamageEffect-0", "Curse_TransferDamageEffect-1"]}
 # <<< factory-mutation Curse_TransferDamageEffect
 # >>> factory-mutation SuperPotion_PlayerSelectEffect
-MUTATIONS["SuperPotion_PlayerSelectEffect"] = {"source_symbol": "SuperPotion_PlayerSelectEffect", "before": "void SuperPotion_PlayerSelectEffect(void)\n{\n}", "after": "void SuperPotion_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 1u;\n}", "case_ids": ["SuperPotion_PlayerSelectEffect-0", "SuperPotion_PlayerSelectEffect-1"]}
+MUTATIONS["SuperPotion_PlayerSelectEffect"] = {"source_symbol": "SuperPotion_PlayerSelectEffect", "before": "\tif (amount > 40u)\n\t\tamount = 40u;", "after": "\tif (amount > 50u)\n\t\tamount = 50u;", "case_ids": ["SuperPotion_PlayerSelectEffect-2"]}
 # <<< factory-mutation SuperPotion_PlayerSelectEffect
-# >>> factory-completion SuperPotion_PlayerSelectEffect
-for _record in SCHEMA2_CASES["SuperPotion_PlayerSelectEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x238A, "bank": 14}
-# <<< factory-completion SuperPotion_PlayerSelectEffect
 # >>> factory-mutation Wail_FillBenchEffect
 MUTATIONS["Wail_FillBenchEffect"] = {
     "source_symbol": "Wail_FillBenchEffect",
@@ -11060,12 +11086,8 @@ MUTATIONS["Wail_FillBenchEffect"] = {
 }
 # <<< factory-mutation Wail_FillBenchEffect
 # >>> factory-mutation Heal_RemoveDamageEffect
-MUTATIONS["Heal_RemoveDamageEffect"] = {"source_symbol": "Heal_RemoveDamageEffect", "before": "void Heal_RemoveDamageEffect(void)\n{\n}", "after": "void Heal_RemoveDamageEffect(void)\n{\n\thAIPkmnPowerEffectParam = 1u;\n}", "case_ids": ["Heal_RemoveDamageEffect-0", "Heal_RemoveDamageEffect-1"]}
+MUTATIONS["Heal_RemoveDamageEffect"] = {"source_symbol": "Heal_RemoveDamageEffect", "before": "\tgb_write8(hp.hl, (uint8_t)(hp.a + 10u));", "after": "\tgb_write8(hp.hl, (uint8_t)(hp.a + 20u));", "case_ids": ["Heal_RemoveDamageEffect-1", "Heal_RemoveDamageEffect-2"]}
 # <<< factory-mutation Heal_RemoveDamageEffect
-# >>> factory-completion Heal_RemoveDamageEffect
-for _record in SCHEMA2_CASES["Heal_RemoveDamageEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x2380, "bank": 13}
-# <<< factory-completion Heal_RemoveDamageEffect
 # >>> factory-mutation SuperEnergyRemoval_PlayerSelection
 MUTATIONS["SuperEnergyRemoval_PlayerSelection"] = {"source_symbol": "SuperEnergyRemoval_PlayerSelection", "before": "\thPlayAreaEffectTarget = hTempPlayAreaLocation_ff9d;", "after": "\thPlayAreaEffectTarget = (uint8_t)(hTempPlayAreaLocation_ff9d + 1u);", "case_ids": ["SuperEnergyRemoval_PlayerSelection-0", "SuperEnergyRemoval_PlayerSelection-1"]}
 # <<< factory-mutation SuperEnergyRemoval_PlayerSelection

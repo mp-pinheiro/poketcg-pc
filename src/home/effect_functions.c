@@ -11938,8 +11938,44 @@ void Curse_TransferDamageEffect(void)
 /* <<< factory Curse_TransferDamageEffect */
 
 /* >>> factory SuperPotion_PlayerSelectEffect */
-void SuperPotion_PlayerSelectEffect(void)
+#define ChoosePokemonToRemoveDamageCounterFromText 0x0150u
+SuperPotion_PlayerSelectEffectResult SuperPotion_PlayerSelectEffect(void)
 {
+	(void)DrawWideTextBox_WaitForInput(ChoosePokemonToRemoveDamageCounterFromText);
+	for (;;) {
+		HasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();
+		uint8_t chosen = 0u;
+		for (;;) {
+			PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
+			if ((screen.f & 0x10u) != 0u)
+				return (SuperPotion_PlayerSelectEffectResult){screen.a,
+					(uint8_t)((alive.f & 0x80u) | 0x10u)};
+			if (GetCardDamageAndMaxHP(screen.a).a == 0u)
+				continue;
+			(void)GetPlayAreaCardAttachedEnergies(hCurMenuItem);
+			if (gb_read8(wTotalAttachedEnergies_ADDR) != 0u) {
+				chosen = 1u;
+				break;
+			}
+			(void)DrawWideTextBox_WaitForInput(NoEnergyCardsText);
+			break;
+		}
+		if (chosen)
+			break;
+	}
+	(void)CreateArenaOrBenchEnergyCardList(hCurMenuItem);
+	DisplayEnergyDiscardScreen(hCurMenuItem);
+	HandleEnergyDiscardMenuInputResult discard = HandleEnergyDiscardMenuInput();
+	if ((discard.f & 0x10u) != 0u)
+		return (SuperPotion_PlayerSelectEffectResult){discard.a, discard.f};
+	hTemp_ffa0 = hTempCardIndex_ff98;
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	hTempPlayAreaLocation_ffa1 = location;
+	uint8_t amount = GetCardDamageAndMaxHP(location).a;
+	if (amount > 40u)
+		amount = 40u;
+	gb_write8(hPlayAreaEffectTarget_ADDR, amount);
+	return (SuperPotion_PlayerSelectEffectResult){amount, (uint8_t)(amount == 0u ? 0x80u : 0x00u)};
 }
 /* <<< factory SuperPotion_PlayerSelectEffect */
 
@@ -12011,8 +12047,39 @@ void Wail_FillBenchEffect(void)
 /* <<< factory Wail_FillBenchEffect */
 
 /* >>> factory Heal_RemoveDamageEffect */
+#define IfHeadsHealIsSuccessfulText 0x00ecu
+#define ChoosePkmnToRemoveDamageCounterText 0x0130u
 void Heal_RemoveDamageEffect(void)
 {
+	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadsHealIsSuccessfulText, 0u);
+	gb_write8(hAIPkmnPowerEffectParam_ADDR, toss.a);
+	if ((toss.f & 0x10u) != 0u) {
+		uint8_t duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE).a;
+		if (duelist == DUELIST_TYPE_LINK_OPP) {
+			gb_write8(hPlayAreaEffectTarget_ADDR, SerialRecv8Bytes().a);
+		} else if ((duelist & DUELIST_TYPE_AI_OPP) == 0u) {
+			(void)DrawWideTextBox_WaitForInput(ChoosePkmnToRemoveDamageCounterText);
+			(void)HasAlivePokemonInPlayArea();
+			for (;;) {
+				if ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u)
+					continue;
+				uint8_t location = hTempPlayAreaLocation_ff9d;
+				gb_write8(hPlayAreaEffectTarget_ADDR, location);
+				if (GetCardDamageAndMaxHP(location).a != 0u)
+					break;
+			}
+			SerialSend8Bytes(hTempPlayAreaLocation_ff9d, 0u, 0u, 0u, 0u, 0u);
+		}
+	}
+	DuelistVarResult flags = GetTurnDuelistVariable((uint8_t)(hTemp_ffa0 + DUELVARS_ARENA_CARD_FLAGS));
+	gb_write8(flags.hl, (uint8_t)(flags.a | (1u << USED_PKMN_POWER_THIS_TURN_F)));
+	if (gb_read8(hAIPkmnPowerEffectParam_ADDR) == 0u)
+		return;
+	uint8_t target = gb_read8(hPlayAreaEffectTarget_ADDR);
+	DuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(target + DUELVARS_ARENA_CARD_HP));
+	gb_write8(hp.hl, (uint8_t)(hp.a + 10u));
+	DrawPlayAreaScreenToShowChanges(target);
+	(void)ExchangeRNG(0u, 0u, 0u, 0u);
 }
 /* <<< factory Heal_RemoveDamageEffect */
 

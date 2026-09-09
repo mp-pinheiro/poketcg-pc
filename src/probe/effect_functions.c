@@ -5516,8 +5516,9 @@ static void adapt_Curse_TransferDamageEffect(ProbeState *s)
 /* >>> factory SuperPotion_PlayerSelectEffect */
 static void adapt_SuperPotion_PlayerSelectEffect(ProbeState *s)
 {
-	(void)s;
-	SuperPotion_PlayerSelectEffect();
+	SuperPotion_PlayerSelectEffectResult r = SuperPotion_PlayerSelectEffect();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory SuperPotion_PlayerSelectEffect */
 

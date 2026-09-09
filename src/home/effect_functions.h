@@ -2246,7 +2246,8 @@ PokemonBreeder_PlayerSelectionResult PokemonBreeder_PlayerSelection(void);
 void Curse_TransferDamageEffect(void);
 /* <<< factory Curse_TransferDamageEffect */
 /* >>> factory SuperPotion_PlayerSelectEffect */
-void SuperPotion_PlayerSelectEffect(void);
+typedef struct { uint8_t a; uint8_t f; } SuperPotion_PlayerSelectEffectResult;
+SuperPotion_PlayerSelectEffectResult SuperPotion_PlayerSelectEffect(void);
 /* <<< factory SuperPotion_PlayerSelectEffect */
 /* >>> factory Wail_FillBenchEffect */
 void Wail_FillBenchEffect(void);

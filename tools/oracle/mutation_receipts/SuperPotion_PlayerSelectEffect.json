@@ -1,9 +1,9 @@
 {
   "fn": "SuperPotion_PlayerSelectEffect",
   "case": "tests/cases/effect_functions.py",
-  "index": 0,
+  "index": 2,
   "status": "RED",
-  "baseline": "{\"fn\": \"SuperPotion_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"65440\": \"00\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"SuperPotion_PlayerSelectEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"00\", \"native\": \"01\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[65440, 1]]}}}\n",
-  "restored": "{\"fn\": \"SuperPotion_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"65440\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"SuperPotion_PlayerSelectEffect\", \"registers\": {\"a\": 40, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"1010\", \"49851\": \"00\", \"49864\": \"50\", \"49870\": \"01\", \"49903\": \"01\", \"50176\": \"0801\", \"51899\": \"80\", \"65344\": \"80\", \"65431\": \"c2\", \"65437\": \"00\", \"65440\": \"010028\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SuperPotion_PlayerSelectEffect\", \"mismatches\": {\"a\": [40, 50], \"bus\": {\"address\": 65442, \"reference\": \"c200010028\", \"native\": \"c200010032\", \"reference_size\": 15, \"native_size\": 15, \"spans\": [[49664, 2], [49851, 1], [49864, 1], [49870, 1], [49903, 1], [50176, 2], [51899, 1], [65344, 1], [65431, 1], [65437, 1], [65440, 3]]}}}\n",
+  "restored": "{\"fn\": \"SuperPotion_PlayerSelectEffect\", \"registers\": {\"a\": 40, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"1010\", \"49851\": \"00\", \"49864\": \"50\", \"49870\": \"01\", \"49903\": \"01\", \"50176\": \"0801\", \"51899\": \"80\", \"65344\": \"80\", \"65431\": \"c2\", \"65437\": \"00\", \"65440\": \"010028\"}}, \"status\": \"PASS\"}\n"
 }
