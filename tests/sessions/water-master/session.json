@@ -1,0 +1,27 @@
+{
+  "goal": "from Joshua's duel: Amy's duel to its end under the pilot's WRAM policy and her after-duel script, with Joshua's defeated state poked",
+  "name": "water-master",
+  "ordinals": 526236,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ]
+  },
+  "recorded": "2026-09-09T01:52:02+00:00",
+  "schema": 1
+}

@@ -1303,8 +1303,9 @@ ScriptCommand_JumpIfActiveNPCCoordsMatchResult ScriptCommand_JumpIfActiveNPCCoor
 	wLoadedNPCTempIndex = wScriptNPC;
 	NPCPositionResult position = GetNPCPosition();
 	if (e != position.c || d != position.b) {
-		ScriptCommand_JumpIfEventEqualResult result = ScriptCommand_JumpIfEventEqual(b, c, hl);
-		return (ScriptCommand_JumpIfActiveNPCCoordsMatchResult){result.a, result.f, position.b, result.c, d, e, result.hl};
+		(void)SetScriptControlByteFail();
+		IncreaseScriptPointerResult pointer = IncreaseScriptPointerBy5();
+		return (ScriptCommand_JumpIfActiveNPCCoordsMatchResult){pointer.a, pointer.f, position.b, pointer.c, d, e, hl};
 	}
 	(void)SetScriptControlBytePass();
 	GetScriptArgsAfterPointerResult args = GetScriptArgs3AfterPointer();

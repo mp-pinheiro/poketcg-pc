@@ -334,6 +334,8 @@ DM_ENTRIES = Fixture("boot-deck-machine-visible-entries-entry")
 DM_ENTRIES_REGS = DM_ENTRIES.regs
 HIGH_RECOIL = Fixture("lightning-3-high-recoil-entry")
 HIGH_RECOIL_REGS = HIGH_RECOIL.regs
+DAMAGE_REDUCTION = Fixture("lightning-3-damage-reduction-entry")
+DAMAGE_REDUCTION_REGS = DAMAGE_REDUCTION.regs
 SCROLL_LABEL = Fixture("lightning-3-scroll-label-entry")
 SCROLL_LABEL_REGS = SCROLL_LABEL.regs
 WAIT_KEYS = Fixture("boot-deck-machine-wait-keys-entry")
@@ -585,6 +587,10 @@ def high_recoil_fixture(vram: bool = True, bank: int | None = None, **changes: b
     return HIGH_RECOIL.case(vram=vram, bank=bank, **changes)
 
 
+def damage_reduction_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return DAMAGE_REDUCTION.case(vram=vram, bank=bank, **changes)
+
+
 def scroll_label_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return SCROLL_LABEL.case(vram=vram, bank=bank, **changes)
 
@@ -599,3 +605,11 @@ PKMN_POWER_REGS = PKMN_POWER.regs
 
 def pkmn_power_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return PKMN_POWER.case(vram=vram, bank=bank, **changes)
+
+
+NPC_COORDS = Fixture("water-master-npc-coords-entry")
+NPC_COORDS_REGS = NPC_COORDS.regs
+
+
+def npc_coords_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return NPC_COORDS.case(vram=vram, bank=bank, **changes)

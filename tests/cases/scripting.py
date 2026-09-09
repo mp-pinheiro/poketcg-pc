@@ -1,4 +1,5 @@
 from tests.cases._fixtures import after_duel_fixture, AFTER_DUEL_REGS, load_map_fixture, LOAD_MAP_REGS, npc_execute_fixture as _npc_execute_fixture, NPC_EXECUTE_REGS as _NPC_EXECUTE_REGS
+from tests.cases._fixtures import npc_coords_fixture as _npc_coords_fixture, NPC_COORDS_REGS as _NPC_COORDS_REGS
 # >>> factory-cases-statics
 wScriptPointer = 0xD413
 wLoadedEventBits = 0xD3D1
@@ -999,6 +1000,8 @@ CASES["ScriptCommand_JumpIfActiveNPCCoordsMatch"] = [
      "wram": {wScriptNPC: b"\x01", wLoadedNPCTempIndex: b"\xFF", 0xD358: b"\x12\x34", wEventVars + 0x12: b"\x34", wScriptPointer: b"\x00\xC5", 0xC503: b"\x00\x00\x00"},
      "read": {wScriptPointer: 2, wLoadedNPCTempIndex: 1}},
     dict(POISON, b=0x34, c=0x12, wram={wScriptNPC: b"\x01", wLoadedNPCTempIndex: b"\xFF", 0xD358: b"\x12\x34", wEventVars + 0x12: b"\x34", wScriptPointer: b"\x00\xC5", 0xC503: b"\x00\x00\x00"}, read={wScriptPointer: 2, wLoadedNPCTempIndex: 1}),
+    dict(_npc_coords_fixture(vram=False), read={wScriptPointer: 2, wLoadedEventBits: 1, wLoadedNPCTempIndex: 1},
+         **_NPC_COORDS_REGS),
 ]
 # <<< factory ScriptCommand_JumpIfActiveNPCCoordsMatch
 
@@ -2531,7 +2534,7 @@ MUTATIONS["ScriptCommand_IncrementEventValue"] = {"source_symbol": "ScriptComman
 MUTATIONS["ScriptCommand_JumpIfPlayerCoordsMatch"] = {"source_symbol": "ScriptCommand_JumpIfPlayerCoordsMatch", "before": "if (wPlayerXCoord != c) {", "after": "if (wPlayerXCoord == c) {", "case_ids": ["ScriptCommand_JumpIfPlayerCoordsMatch-0", "ScriptCommand_JumpIfPlayerCoordsMatch-1", "ScriptCommand_JumpIfPlayerCoordsMatch-2", "ScriptCommand_JumpIfPlayerCoordsMatch-3"]}
 # <<< factory-mutation ScriptCommand_JumpIfPlayerCoordsMatch
 # >>> factory-mutation ScriptCommand_JumpIfActiveNPCCoordsMatch
-MUTATIONS["ScriptCommand_JumpIfActiveNPCCoordsMatch"] = {"source_symbol": "ScriptCommand_JumpIfActiveNPCCoordsMatch", "before": "\t\treturn (ScriptCommand_JumpIfActiveNPCCoordsMatchResult){pointer.a, pointer.f, 0u, pointer.c, d, e, hl};", "after": "\t\treturn (ScriptCommand_JumpIfActiveNPCCoordsMatchResult){pointer.a, pointer.f, 0xFFu, pointer.c, d, e, hl};", "case_ids": ["ScriptCommand_JumpIfActiveNPCCoordsMatch-2"]}
+MUTATIONS["ScriptCommand_JumpIfActiveNPCCoordsMatch"] = {"source_symbol": "ScriptCommand_JumpIfActiveNPCCoordsMatch", "before": "\t\t(void)SetScriptControlByteFail();", "after": "\t\t(void)GetEventValueBC(b, c);\n\t\t(void)SetScriptControlByteFail();", "case_ids": ["ScriptCommand_JumpIfActiveNPCCoordsMatch-4"]}
 # <<< factory-mutation ScriptCommand_JumpIfActiveNPCCoordsMatch
 # >>> factory-mutation SetNextNPCAndScript
 MUTATIONS["SetNextNPCAndScript"] = {"source_symbol": "SetNextNPCAndScript", "before": "wScriptNPC = wLoadedNPCTempIndex;", "after": "wScriptNPC = (uint8_t)(wLoadedNPCTempIndex + 1u);", "case_ids": ["SetNextNPCAndScript-0", "SetNextNPCAndScript-1", "SetNextNPCAndScript-2"]}
