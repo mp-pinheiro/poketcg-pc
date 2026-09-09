@@ -919,3 +919,11 @@ ANIMATION_NEXT_COMMAND_REGS = ANIMATION_NEXT_COMMAND.regs
 
 def animation_next_command_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return ANIMATION_NEXT_COMMAND.case(vram=vram, bank=bank, **changes)
+
+
+FIRST_OR_NEXT_PAGE = Fixture("water-club-first-or-next-page-entry")
+FIRST_OR_NEXT_PAGE_REGS = FIRST_OR_NEXT_PAGE.regs
+
+
+def first_or_next_page_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return FIRST_OR_NEXT_PAGE.case(vram=vram, bank=bank, **changes)

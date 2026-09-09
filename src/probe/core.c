@@ -1293,7 +1293,7 @@ static void adapt_PrintNextPracticeDuelInstruction(ProbeState *s)
 /* >>> factory GoToFirstOrNextCardPage */
 static void adapt_GoToFirstOrNextCardPage(ProbeState *s)
 {
-	CardPageNavigationResult r = GoToFirstOrNextCardPage();
+	CardPageNavigationResult r = GoToFirstOrNextCardPage(s->b);
 	s->a = r.a;
 	s->f = r.f;
 	s->b = r.b;
@@ -1370,7 +1370,7 @@ static void adapt_PlayTurnDuelistDrawAnimation(ProbeState *s)
 /* >>> factory DrawCardPageSet2AndRarityIcons */
 static void adapt_DrawCardPageSet2AndRarityIcons(ProbeState *s)
 {
-	DrawCardPageSet2AndRarityIconsResult r = DrawCardPageSet2AndRarityIcons();
+	DrawCardPageSet2AndRarityIconsResult r = DrawCardPageSet2AndRarityIcons(s->b);
 	s->hl = r.hl;
 }
 /* <<< factory DrawCardPageSet2AndRarityIcons */
@@ -1593,7 +1593,7 @@ static void adapt_DisplayFirstOrNextCardPage(ProbeState *s)
 /* >>> factory PrintAttackOrCardDescription */
 static void adapt_PrintAttackOrCardDescription(ProbeState *s)
 {
-	PrintAttackOrCardDescriptionResult r = PrintAttackOrCardDescription(s->hl, s->d, s->e);
+	PrintAttackOrCardDescriptionResult r = PrintAttackOrCardDescription(s->b, s->hl, s->d, s->e);
 	s->a = r.a; s->hl = r.hl;
 }
 /* <<< factory PrintAttackOrCardDescription */
@@ -1609,7 +1609,7 @@ static void adapt_PrintAttackOrPkmnPowerInformation(ProbeState *s)
 /* >>> factory PrintAttackOrNonPokemonCardDescription */
 static void adapt_PrintAttackOrNonPokemonCardDescription(ProbeState *s)
 {
-	PrintAttackOrCardDescriptionResult r = PrintAttackOrNonPokemonCardDescription(s->hl, s->d, s->e);
+	PrintAttackOrCardDescriptionResult r = PrintAttackOrNonPokemonCardDescription(s->b, s->hl, s->d, s->e);
 	s->a = r.a; s->f = r.f; s->d = r.d; s->e = r.e; s->hl = r.hl;
 }
 /* <<< factory PrintAttackOrNonPokemonCardDescription */

@@ -455,7 +455,9 @@ uint8_t DecideLinkDuelVariables(void);
 void DisplayAttackPage(void);
 /* <<< factory DisplayAttackPage */
 /* >>> factory DisplayCardPage */
-void DisplayCardPage(void);
+/* duel/core.asm:3665-3671: the page's own exit b, then EnableLCD and `or a`. */
+typedef struct { uint8_t a; uint8_t f; uint8_t b; } DisplayCardPageResult;
+DisplayCardPageResult DisplayCardPage(void);
 /* <<< factory DisplayCardPage */
 /* >>> factory DoPracticeDuelAction */
 uint8_t DoPracticeDuelAction(uint8_t a);
@@ -617,7 +619,7 @@ PrintPracticeDuelNumberedInstructionResult PrintPracticeDuelNumberedInstruction(
 void PrintNextPracticeDuelInstruction(void);
 /* <<< factory PrintNextPracticeDuelInstruction */
 /* >>> factory GoToFirstOrNextCardPage */
-CardPageNavigationResult GoToFirstOrNextCardPage(void);
+CardPageNavigationResult GoToFirstOrNextCardPage(uint8_t b);
 /* <<< factory GoToFirstOrNextCardPage */
 /* >>> factory PrintPracticeDuelInstructions */
 void PrintPracticeDuelInstructions(uint16_t hl);
@@ -645,8 +647,8 @@ typedef struct { uint8_t e; uint8_t f; } PlayTurnDuelistDrawAnimationResult;
 PlayTurnDuelistDrawAnimationResult PlayTurnDuelistDrawAnimation(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint16_t hl);
 /* <<< factory PlayTurnDuelistDrawAnimation */
 /* >>> factory DrawCardPageSet2AndRarityIcons */
-typedef struct { uint16_t hl; } DrawCardPageSet2AndRarityIconsResult;
-DrawCardPageSet2AndRarityIconsResult DrawCardPageSet2AndRarityIcons(void);
+typedef struct { uint8_t b; uint16_t hl; } DrawCardPageSet2AndRarityIconsResult;
+DrawCardPageSet2AndRarityIconsResult DrawCardPageSet2AndRarityIcons(uint8_t b);
 /* <<< factory DrawCardPageSet2AndRarityIcons */
 /* >>> factory CountOppEnergyCardsInHandAndAttached */
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } CountOppEnergyCardsInHandAndAttachedResult;
@@ -740,15 +742,15 @@ CheckEnergyNeededForAttackAfterDiscardResult CheckEnergyNeededForAttackAfterDisc
 CardPageNavigationResult DisplayFirstOrNextCardPage(uint8_t b);
 /* <<< factory DisplayFirstOrNextCardPage */
 /* >>> factory PrintAttackOrCardDescription */
-typedef struct { uint8_t a; uint8_t d; uint8_t e; uint8_t f; uint16_t hl; } PrintAttackOrCardDescriptionResult;
-PrintAttackOrCardDescriptionResult PrintAttackOrCardDescription(uint16_t hl, uint8_t d, uint8_t e);
+typedef struct { uint8_t a; uint8_t b; uint8_t d; uint8_t e; uint8_t f; uint16_t hl; } PrintAttackOrCardDescriptionResult;
+PrintAttackOrCardDescriptionResult PrintAttackOrCardDescription(uint8_t b, uint16_t hl, uint8_t d, uint8_t e);
 /* <<< factory PrintAttackOrCardDescription */
 /* >>> factory PrintAttackOrPkmnPowerInformation */
 typedef struct { uint8_t a; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint8_t f; uint16_t hl; } PrintAttackOrPkmnPowerInformationResult;
 PrintAttackOrPkmnPowerInformationResult PrintAttackOrPkmnPowerInformation(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory PrintAttackOrPkmnPowerInformation */
 /* >>> factory PrintAttackOrNonPokemonCardDescription */
-PrintAttackOrCardDescriptionResult PrintAttackOrNonPokemonCardDescription(uint16_t hl, uint8_t d, uint8_t e);
+PrintAttackOrCardDescriptionResult PrintAttackOrNonPokemonCardDescription(uint8_t b, uint16_t hl, uint8_t d, uint8_t e);
 /* <<< factory PrintAttackOrNonPokemonCardDescription */
 /* >>> factory DisplayCardPageOnLeftOrRightPressed */
 void DisplayCardPageOnLeftOrRightPressed(uint8_t a);
@@ -860,7 +862,7 @@ void DrawLargePictureOfCard(void);
 void DrawCardPageSurroundingBox(void);
 /* <<< factory DrawCardPageSurroundingBox */
 /* >>> factory PrintPokemonCardPageGenericInformation */
-typedef struct { uint16_t hl; } PrintPokemonCardPageGenericInformationResult;
+typedef struct { uint8_t b; uint16_t hl; } PrintPokemonCardPageGenericInformationResult;
 PrintPokemonCardPageGenericInformationResult PrintPokemonCardPageGenericInformation(void);
 /* <<< factory PrintPokemonCardPageGenericInformation */
 /* >>> factory DrawDuelHUD */
@@ -911,19 +913,19 @@ void DisplayNoBasicPokemonInHandScreen(void);
 uint8_t PrintAndLoadAttacksToDuelTempList(void);
 /* <<< factory PrintAndLoadAttacksToDuelTempList */
 /* >>> factory DisplayPokemonAttackCardPage */
-void DisplayPokemonAttackCardPage(uint8_t b, uint8_t c, uint8_t d, uint16_t de, uint16_t hl);
+uint8_t DisplayPokemonAttackCardPage(uint8_t b, uint8_t c, uint8_t d, uint16_t de, uint16_t hl);
 /* <<< factory DisplayPokemonAttackCardPage */
 /* >>> factory DisplayCardPage_PokemonAttack2Page2 */
-void DisplayCardPage_PokemonAttack2Page2(uint8_t b, uint8_t c, uint8_t d);
+uint8_t DisplayCardPage_PokemonAttack2Page2(uint8_t b, uint8_t c, uint8_t d);
 /* <<< factory DisplayCardPage_PokemonAttack2Page2 */
 /* >>> factory DisplayCardPage_PokemonAttack1Page1 */
-void DisplayCardPage_PokemonAttack1Page1(uint8_t b, uint8_t c, uint8_t d);
+uint8_t DisplayCardPage_PokemonAttack1Page1(uint8_t b, uint8_t c, uint8_t d);
 /* <<< factory DisplayCardPage_PokemonAttack1Page1 */
 /* >>> factory DisplayCardPage_PokemonAttack1Page2 */
-void DisplayCardPage_PokemonAttack1Page2(uint8_t b, uint8_t c, uint8_t d);
+uint8_t DisplayCardPage_PokemonAttack1Page2(uint8_t b, uint8_t c, uint8_t d);
 /* <<< factory DisplayCardPage_PokemonAttack1Page2 */
 /* >>> factory DisplayCardPage_PokemonAttack2Page1 */
-void DisplayCardPage_PokemonAttack2Page1(uint8_t b, uint8_t c, uint8_t d);
+uint8_t DisplayCardPage_PokemonAttack2Page1(uint8_t b, uint8_t c, uint8_t d);
 /* <<< factory DisplayCardPage_PokemonAttack2Page1 */
 /* >>> factory DisplayAttackPage_Attack1Page1 */
 void DisplayAttackPage_Attack1Page1(uint8_t b, uint8_t c, uint8_t d);
@@ -1006,8 +1008,8 @@ typedef struct { uint8_t f; } DisplayPlayAreaScreenToUsePkmnPowerResult;
 DisplayPlayAreaScreenToUsePkmnPowerResult DisplayPlayAreaScreenToUsePkmnPower(void);
 /* <<< factory DisplayPlayAreaScreenToUsePkmnPower */
 /* >>> factory DisplayCardPage_PokemonOverview */
-void DisplayCardPage_PokemonOverview_Attacks(uint8_t c);
-void DisplayCardPage_PokemonOverview(void);
+uint8_t DisplayCardPage_PokemonOverview_Attacks(uint8_t c);
+uint8_t DisplayCardPage_PokemonOverview(void);
 /* <<< factory DisplayCardPage_PokemonOverview */
 /* >>> factory DisplayEnergyOrTrainerCardPage */
 PrintAttackOrCardDescriptionResult DisplayEnergyOrTrainerCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
@@ -1197,7 +1199,7 @@ typedef struct {
 PrintPokemonCardWeightResult PrintPokemonCardWeight(uint8_t b, uint8_t c, uint16_t hl);
 /* <<< factory PrintPokemonCardWeight */
 /* >>> factory DisplayCardPage_PokemonDescription */
-typedef struct { uint8_t a; uint8_t f; } DisplayCardPage_PokemonDescriptionResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t b; } DisplayCardPage_PokemonDescriptionResult;
 DisplayCardPage_PokemonDescriptionResult DisplayCardPage_PokemonDescription(void);
 /* <<< factory DisplayCardPage_PokemonDescription */
 /* >>> factory RequestToPrintCards_SelectStartCard */

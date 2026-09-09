@@ -3634,38 +3634,39 @@ void DisplayAttackPage(void)
 #define CARDPAGE_POKEMON_ATTACK2_2 0x05u
 #define CARDPAGE_ENERGY_2 0x0Au
 #define CARDPAGE_TABLE_LAST 0x0Fu
-void DisplayCardPage(void)
+DisplayCardPageResult DisplayCardPage(void)
 {
 	uint8_t page = wCardPageNumber;
+	uint8_t b = 0u;
 
 	switch (page) {
 	case CARDPAGE_POKEMON_OVERVIEW:
-		DisplayCardPage_PokemonOverview();
+		b = DisplayCardPage_PokemonOverview();
 		break;
 	case CARDPAGE_POKEMON_ATTACK1_1:
-		DisplayCardPage_PokemonAttack1Page1(0u, 0u, 0u);
+		b = DisplayCardPage_PokemonAttack1Page1(0u, 0u, 0u);
 		break;
 	case CARDPAGE_POKEMON_ATTACK1_2:
-		DisplayCardPage_PokemonAttack1Page2(0u, 0u, 0u);
+		b = DisplayCardPage_PokemonAttack1Page2(0u, 0u, 0u);
 		break;
 	case CARDPAGE_POKEMON_ATTACK2_1:
-		DisplayCardPage_PokemonAttack2Page1(0u, 0u, 0u);
+		b = DisplayCardPage_PokemonAttack2Page1(0u, 0u, 0u);
 		break;
 	case CARDPAGE_POKEMON_ATTACK2_2:
-		DisplayCardPage_PokemonAttack2Page2(0u, 0u, 0u);
+		b = DisplayCardPage_PokemonAttack2Page2(0u, 0u, 0u);
 		break;
 	case CARDPAGE_POKEMON_DESCRIPTION:
-		(void)DisplayCardPage_PokemonDescription();
+		b = DisplayCardPage_PokemonDescription().b;
 		break;
 	case CARDPAGE_ENERGY:
 	case CARDPAGE_ENERGY_2:
-		(void)DisplayCardPage_Energy(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		b = DisplayCardPage_Energy(0u, 0u, 0u, 0u, 0u, 0u, 0u).b;
 		break;
 	case CARDPAGE_TRAINER_1:
-		(void)DisplayCardPage_TrainerPage1(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		b = DisplayCardPage_TrainerPage1(0u, 0u, 0u, 0u, 0u, 0u, 0u).b;
 		break;
 	case CARDPAGE_TRAINER_2:
-		(void)DisplayCardPage_TrainerPage2(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		b = DisplayCardPage_TrainerPage2(0u, 0u, 0u, 0u, 0u, 0u, 0u).b;
 		break;
 	default:
 		if (page > CARDPAGE_TABLE_LAST)
@@ -3673,7 +3674,10 @@ void DisplayCardPage(void)
 		DrawDuelMainScene();
 		break;
 	}
-	EnableLCD();
+	/* duel/core.asm:3669-3671: EnableLCD's a (wLCDC, or FLUSH_ALL_PALS when
+	 * it just turned the screen on), then `or a`. */
+	uint8_t a = EnableLCD();
+	return (DisplayCardPageResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), b};
 }
 /* <<< factory DisplayCardPage */
 
@@ -4599,9 +4603,11 @@ void PrintNextPracticeDuelInstruction(void)
 /* <<< factory PrintNextPracticeDuelInstruction */
 
 /* >>> factory GoToFirstOrNextCardPage */
-CardPageNavigationResult GoToFirstOrNextCardPage(void)
+CardPageNavigationResult GoToFirstOrNextCardPage(uint8_t b)
 {
 	uint8_t page = wCardPageNumber;
+	/* duel/core.asm:3723-3735: the advance path never touches b (SwitchCardPage
+	 * keeps it); the initial page loads the card type into it. */
 	if (page == 0u) {
 		uint8_t type = wLoadedCard1Type;
 		uint8_t initial_page = CARDPAGE_POKEMON_OVERVIEW;
@@ -4618,10 +4624,10 @@ CardPageNavigationResult GoToFirstOrNextCardPage(void)
 		CardPageResult r = SwitchCardPage(next_page);
 		if (r.carry) {
 			wCardPageNumber = r.a;
-			return (CardPageNavigationResult){r.a, 0x10u, 0u};
+			return (CardPageNavigationResult){r.a, 0x10u, b};
 		}
 		if (r.a != 0u)
-			return (CardPageNavigationResult){r.a, 0u, 0u};
+			return (CardPageNavigationResult){r.a, 0u, b};
 	}
 }
 /* <<< factory GoToFirstOrNextCardPage */
@@ -4742,17 +4748,22 @@ PlayTurnDuelistDrawAnimationResult PlayTurnDuelistDrawAnimation(uint8_t f, uint8
 /* <<< factory PlayTurnDuelistDrawAnimation */
 
 /* >>> factory DrawCardPageSet2AndRarityIcons */
-DrawCardPageSet2AndRarityIconsResult DrawCardPageSet2AndRarityIcons(void)
+DrawCardPageSet2AndRarityIconsResult DrawCardPageSet2AndRarityIcons(uint8_t b)
 {
 	TileCopyResult tiles = LoadCardSet2Tiles(wLoadedCard1Set);
-	if (tiles.hl >= DUEL_OTHER_GFX)
+	if (tiles.hl >= DUEL_OTHER_GFX) {
+		/* tiles.asm:230-233 copied four tiles (CopyGfxData counts b down to
+		 * 0); FillRectangle then keeps the `lb bc, 2, 2` it was given. */
 		FillRectangle(0xfcu, 2u, 2u, 0x0f08u, 0x0102u);
+		b = 2u;
+	}
 	uint8_t rarity = wLoadedCard1Rarity;
 	if (rarity != PROMOSTAR) {
+		/* duel/core.asm:4617-4624: `ld b, $00` before the icon's text. */
 		ProcessTextHeaderResult result = PrintCardPageRarityIcon(rarity, 18u, 9u, CardRarityTextIDs_ADDR);
-		return (DrawCardPageSet2AndRarityIconsResult){result.hl};
+		return (DrawCardPageSet2AndRarityIconsResult){0u, result.hl};
 	}
-	return (DrawCardPageSet2AndRarityIconsResult){CardRarityTextIDs_ADDR};
+	return (DrawCardPageSet2AndRarityIconsResult){b, CardRarityTextIDs_ADDR};
 }
 /* <<< factory DrawCardPageSet2AndRarityIcons */
 
@@ -5554,17 +5565,19 @@ CheckEnergyNeededForAttackAfterDiscardResult CheckEnergyNeededForAttackAfterDisc
  * through into DisplayCardPage. */
 CardPageNavigationResult DisplayFirstOrNextCardPage(uint8_t b)
 {
-	CardPageNavigationResult r = GoToFirstOrNextCardPage();
+	CardPageNavigationResult r = GoToFirstOrNextCardPage(b);
 
-	r.b = b;
-	if ((r.f & 0x10u) == 0u)
-		DisplayCardPage();
-	return r;
+	/* duel/core.asm:3659-3661: `ret c` keeps the navigation's registers;
+	 * otherwise the page's exit and EnableLCD's are the caller's. */
+	if ((r.f & 0x10u) != 0u)
+		return r;
+	DisplayCardPageResult page = DisplayCardPage();
+	return (CardPageNavigationResult){page.a, page.f, page.b};
 }
 /* <<< factory DisplayFirstOrNextCardPage */
 
 /* >>> factory PrintAttackOrCardDescription */
-PrintAttackOrCardDescriptionResult PrintAttackOrCardDescription(uint16_t hl, uint8_t d, uint8_t e)
+PrintAttackOrCardDescriptionResult PrintAttackOrCardDescription(uint8_t b, uint16_t hl, uint8_t d, uint8_t e)
 {
 	(void)SetNoLineSeparation();
 	uint16_t text_id = (uint16_t)(gb_read8(hl) | ((uint16_t)gb_read8((uint16_t)(hl + 1u)) << 8));
@@ -5576,7 +5589,7 @@ PrintAttackOrCardDescriptionResult PrintAttackOrCardDescription(uint16_t hl, uin
 	ProcessTextHeaderResult text = ProcessTextFromID(text_id);
 	/* core.asm:5772 SetOneLineSeparation: `xor a` -- a is 0 and only Z is set. */
 	(void)SetOneLineSeparation();
-	return (PrintAttackOrCardDescriptionResult){0u, d, e, 0x80u, text.hl};
+	return (PrintAttackOrCardDescriptionResult){0u, b, d, e, 0x80u, text.hl};
 }
 /* <<< factory PrintAttackOrCardDescription */
 
@@ -5645,17 +5658,16 @@ PrintAttackOrPkmnPowerInformationResult PrintAttackOrPkmnPowerInformation(uint8_
 /* <<< factory PrintAttackOrPkmnPowerInformation */
 
 /* >>> factory PrintAttackOrNonPokemonCardDescription */
-PrintAttackOrCardDescriptionResult PrintAttackOrNonPokemonCardDescription(uint16_t hl, uint8_t d, uint8_t e)
+PrintAttackOrCardDescriptionResult PrintAttackOrNonPokemonCardDescription(uint8_t b, uint16_t hl, uint8_t d, uint8_t e)
 {
 	uint8_t a = gb_read8(hl);
 	hl = (uint16_t)(hl + 1u);
-	uint8_t b = gb_read8(hl);
-	a = (uint8_t)(a | b);
+	a = (uint8_t)(a | gb_read8(hl));
 	if (a == 0u) {
-		return (PrintAttackOrCardDescriptionResult){a, d, e, 0x80u, hl};
+		return (PrintAttackOrCardDescriptionResult){a, b, d, e, 0x80u, hl};
 	}
 	hl = (uint16_t)(hl - 1u);
-	return PrintAttackOrCardDescription(hl, 1u, 11u);
+	return PrintAttackOrCardDescription(b, hl, 1u, 11u);
 }
 /* <<< factory PrintAttackOrNonPokemonCardDescription */
 
@@ -5909,7 +5921,7 @@ void DisplayUsePokemonPowerScreen(void)
 	uint16_t hl = wLoadedCard1Atk1Name_ADDR;
 	(void)InitTextPrinting_ProcessTextFromPointerToID(1u, 4u, hl);
 	hl = wLoadedCard1Atk1Description_ADDR;
-	(void)PrintAttackOrCardDescription(hl, 1u, 6u);
+	(void)PrintAttackOrCardDescription(0u, hl, 1u, 6u);
 }
 /* <<< factory DisplayUsePokemonPowerScreen */
 
@@ -6408,8 +6420,8 @@ PrintPokemonCardPageGenericInformationResult PrintPokemonCardPageGenericInformat
 		color = wLoadedCard1Type;
 
 	JPWriteByteToBGMap0((uint8_t)(color + 1u), 18u, 1u);
-	DrawCardPageSet2AndRarityIconsResult result = DrawCardPageSet2AndRarityIcons();
-	return (PrintPokemonCardPageGenericInformationResult){result.hl};
+	DrawCardPageSet2AndRarityIconsResult result = DrawCardPageSet2AndRarityIcons(18u);
+	return (PrintPokemonCardPageGenericInformationResult){result.b, result.hl};
 }
 /* <<< factory PrintPokemonCardPageGenericInformation */
 
@@ -6775,40 +6787,40 @@ uint8_t PrintAndLoadAttacksToDuelTempList(void)
 /* <<< factory PrintAndLoadAttacksToDuelTempList */
 
 /* >>> factory DisplayPokemonAttackCardPage */
-void DisplayPokemonAttackCardPage(uint8_t b, uint8_t c, uint8_t d, uint16_t de, uint16_t hl)
+uint8_t DisplayPokemonAttackCardPage(uint8_t b, uint8_t c, uint8_t d, uint16_t de, uint16_t hl)
 {
-	(void)PrintPokemonCardPageGenericInformation();
+	PrintPokemonCardPageGenericInformationResult generic = PrintPokemonCardPageGenericInformation();
+	b = generic.b;
 	PrintAttackOrPkmnPowerInformationResult printed = PrintAttackOrPkmnPowerInformation(b, c, d, 2u, hl);
-	(void)printed;
-	PrintAttackOrNonPokemonCardDescription(de, 1u, 11u);
+	return PrintAttackOrNonPokemonCardDescription(printed.b, de, 1u, 11u).b;
 }
 /* <<< factory DisplayPokemonAttackCardPage */
 
 /* >>> factory DisplayCardPage_PokemonAttack2Page2 */
-void DisplayCardPage_PokemonAttack2Page2(uint8_t b, uint8_t c, uint8_t d)
+uint8_t DisplayCardPage_PokemonAttack2Page2(uint8_t b, uint8_t c, uint8_t d)
 {
-	DisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk2Description_ADDR + 2u), wLoadedCard1Atk2Name_ADDR);
+	return DisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk2Description_ADDR + 2u), wLoadedCard1Atk2Name_ADDR);
 }
 /* <<< factory DisplayCardPage_PokemonAttack2Page2 */
 
 /* >>> factory DisplayCardPage_PokemonAttack1Page1 */
-void DisplayCardPage_PokemonAttack1Page1(uint8_t b, uint8_t c, uint8_t d)
+uint8_t DisplayCardPage_PokemonAttack1Page1(uint8_t b, uint8_t c, uint8_t d)
 {
-	DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk1Description_ADDR, wLoadedCard1Atk1Name_ADDR);
+	return DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk1Description_ADDR, wLoadedCard1Atk1Name_ADDR);
 }
 /* <<< factory DisplayCardPage_PokemonAttack1Page1 */
 
 /* >>> factory DisplayCardPage_PokemonAttack1Page2 */
-void DisplayCardPage_PokemonAttack1Page2(uint8_t b, uint8_t c, uint8_t d)
+uint8_t DisplayCardPage_PokemonAttack1Page2(uint8_t b, uint8_t c, uint8_t d)
 {
-	DisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u), wLoadedCard1Atk1Name_ADDR);
+	return DisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u), wLoadedCard1Atk1Name_ADDR);
 }
 /* <<< factory DisplayCardPage_PokemonAttack1Page2 */
 
 /* >>> factory DisplayCardPage_PokemonAttack2Page1 */
-void DisplayCardPage_PokemonAttack2Page1(uint8_t b, uint8_t c, uint8_t d)
+uint8_t DisplayCardPage_PokemonAttack2Page1(uint8_t b, uint8_t c, uint8_t d)
 {
-	DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk2Description_ADDR, wLoadedCard1Atk2Name_ADDR);
+	return DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk2Description_ADDR, wLoadedCard1Atk2Name_ADDR);
 }
 /* <<< factory DisplayCardPage_PokemonAttack2Page1 */
 
@@ -7295,7 +7307,7 @@ draw_screen:
 /* core.asm:4280 `.attacks`: the tail of the overview page from the first
  * attack line down, parameterised by its starting row so the printer can lay
  * the same block into the SRAM gfx buffer at row 66. */
-void DisplayCardPage_PokemonOverview_Attacks(uint8_t c)
+uint8_t DisplayCardPage_PokemonOverview_Attacks(uint8_t c)
 {
 	uint8_t page_type = gb_read8(wCardPageType_ADDR);
 	uint8_t b, e, retreat;
@@ -7323,9 +7335,12 @@ void DisplayCardPage_PokemonOverview_Attacks(uint8_t c)
 	}
 	PrintCardPageWeaknessesOrResistances(retreat, 8u, c);
 	PrintCardPageWeaknessesOrResistances(e, 8u, (uint8_t)(c + 1u));
+	/* duel/core.asm:4312-4336: both printers push and pop bc, so b is the
+	 * retreat loop's count. */
+	return b;
 }
 
-void DisplayCardPage_PokemonOverview(void)
+uint8_t DisplayCardPage_PokemonOverview(void)
 {
 	uint8_t page_type = gb_read8(wCardPageType_ADDR);
 	uint16_t hl, de;
@@ -7338,7 +7353,9 @@ void DisplayCardPage_PokemonOverview(void)
 		de = 0u; data_a = 0u; data_b = 0u; data_c = 0u;
 		WriteDataBlocksToBGMap0(&hl, &de, &data_a, &data_b, &data_c);
 		gb_write8(wCurPlayAreaY_ADDR, 1u);
-		(void)DrawCardPageSet2AndRarityIcons();
+		/* b here is WriteDataBlocksToBGMap0's leftover; the overview's own exit
+		 * b is the retreat count set below, so the icons' input does not matter. */
+		(void)DrawCardPageSet2AndRarityIcons(0u);
 		PrintPlayAreaCardInformationAndLocation();
 	} else {
 		(void)PrintPokemonCardPageGenericInformation();
@@ -7353,7 +7370,7 @@ void DisplayCardPage_PokemonOverview(void)
 		WriteOneByteNumberInTxSymbol_PadSpace(gb_read8(wLoadedCard1HP_ADDR), 16u, 2u, 0u, 0u, 0u);
 	}
 	WriteOneByteNumberInTxSymbol_PadSpace(gb_read8(wLoadedCard1PokedexNumber_ADDR), 16u, 16u, 0u, 0u, 0u);
-	DisplayCardPage_PokemonOverview_Attacks(10u);
+	return DisplayCardPage_PokemonOverview_Attacks(10u);
 }
 /* <<< factory DisplayCardPage_PokemonOverview */
 
@@ -7370,10 +7387,11 @@ PrintAttackOrCardDescriptionResult DisplayEnergyOrTrainerCardPage(uint8_t a, uin
 	SendCardAttrBlkPacketResult image = ApplyBGP6OrSGB3ToCardImage(a, f, b, c, d, e, hl);
 	a = image.a; f = image.f; b = image.b; c = image.c; d = image.d; e = image.e; hl = image.hl;
 	FillRectangle(0xE0u, 8u, 2u, 0x0601u, 0x0108u);
-	DrawCardPageSet2AndRarityIconsResult icons = DrawCardPageSet2AndRarityIcons();
+	/* duel/core.asm:4697-4700: `lb bc, 8, 2` for the fill, then the icons. */
+	DrawCardPageSet2AndRarityIconsResult icons = DrawCardPageSet2AndRarityIcons(8u);
 	hl = icons.hl;
 	d = 18u; e = 9u;
-	return PrintAttackOrNonPokemonCardDescription(saved_hl, d, e);
+	return PrintAttackOrNonPokemonCardDescription(icons.b, saved_hl, d, e);
 }
 /* <<< factory DisplayEnergyOrTrainerCardPage */
 
@@ -7858,7 +7876,7 @@ void DisplayOpponentUsedAttackScreen(void)
 		hl = wLoadedCard1Atk2Name_ADDR;
 	}
 	(void)PrintAttackOrPkmnPowerInformation(0u, 0u, 0u, 1u, hl);
-	(void)PrintAttackOrCardDescription(wLoadedAttackDescription_ADDR, 1u, 4u);
+	(void)PrintAttackOrCardDescription(0u, wLoadedAttackDescription_ADDR, 1u, 4u);
 }
 /* <<< factory DisplayOpponentUsedAttackScreen */
 
@@ -8959,8 +8977,9 @@ DisplayCardPage_PokemonDescriptionResult DisplayCardPage_PokemonDescription(void
 	(void)ProcessTextFromPointerToID(wLoadedCard1Description_ADDR);
 
 	separation = SetOneLineSeparation();
-	return (DisplayCardPage_PokemonDescriptionResult){separation,
-		(uint8_t)(separation == 0u ? FLAG_Z : 0u)};
+	/* duel/core.asm:4586 `lb bc, 5, 12` for the weight; every later call
+	 * pushes and pops bc. */
+	return (DisplayCardPage_PokemonDescriptionResult){separation, (uint8_t)(separation == 0u ? FLAG_Z : 0u), 5u};
 }
 /* <<< factory DisplayCardPage_PokemonDescription */
 

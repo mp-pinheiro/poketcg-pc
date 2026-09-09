@@ -12,6 +12,7 @@ from tests.cases._fixtures import sort_temp_hand_fixture as _sort_temp_hand_fixt
 from tests.cases._fixtures import card_description_fixture as _card_description_fixture, CARD_DESCRIPTION_REGS as _CARD_DESCRIPTION_REGS
 from tests.cases._fixtures import attack_information_fixture as _attack_information_fixture, ATTACK_INFORMATION_REGS as _ATTACK_INFORMATION_REGS
 from tests.cases._fixtures import play_area_card_info_fixture as _play_area_card_info_fixture, PLAY_AREA_CARD_INFO_REGS as _PLAY_AREA_CARD_INFO_REGS
+from tests.cases._fixtures import first_or_next_page_fixture as _first_or_next_page_fixture, FIRST_OR_NEXT_PAGE_REGS as _FIRST_OR_NEXT_PAGE_REGS
 from tests.cases._fixtures import card_page_energy_fixture as _card_page_energy_fixture, CARD_PAGE_ENERGY_REGS as _CARD_PAGE_ENERGY_REGS
 from tests.cases._fixtures import card_page_trainer_fixture as _card_page_trainer_fixture, CARD_PAGE_TRAINER_REGS as _CARD_PAGE_TRAINER_REGS
 from tests.cases._fixtures import energy_or_trainer_page_fixture as _energy_or_trainer_page_fixture, ENERGY_OR_TRAINER_PAGE_REGS as _ENERGY_OR_TRAINER_PAGE_REGS
@@ -3121,6 +3122,9 @@ CASES["CheckEnergyNeededForAttackAfterDiscard"] = [
 # >>> factory DisplayFirstOrNextCardPage
 CONTRACT["DisplayFirstOrNextCardPage"] = {"compare": ("a", "f", "b"), "preserve": ()}
 CASES["DisplayFirstOrNextCardPage"] = [
+    # water-club 314910: a trainer card's first page from the practice duel; the
+    # exit is EnableLCD's wLCDC with `or a`, and b is the rarity icon's `ld b, 0`.
+    dict(_first_or_next_page_fixture(vram=True, bank=1), **_FIRST_OR_NEXT_PAGE_REGS, read={0xCBC7: 1, 0xCABB: 1}),
     {"wram": {wCardPageNumber: b"\xFF"}, "read": {wCardPageNumber: 1}},
     dict(POISON, wram={wCardPageNumber: b"\xFF"}, read={wCardPageNumber: 1}),
 ]
@@ -6811,7 +6815,7 @@ MUTATIONS["Func_7364"] = {"source_symbol": "Func_7364", "before": "\t\tif (b & (
 MUTATIONS["CheckEnergyNeededForAttackAfterDiscard"] = {"source_symbol": "CheckEnergyNeededForAttackAfterDiscard", "before": "uint8_t final_f = (uint8_t)((colorless_needed2 == 0u ? 0x80u : 0u) | 0x10u);", "after": "uint8_t final_f = (uint8_t)((colorless_needed2 == 0u ? 0x20u : 0u) | 0x10u);", "case_ids": ["CheckEnergyNeededForAttackAfterDiscard-0"]}
 # <<< factory-mutation CheckEnergyNeededForAttackAfterDiscard
 # >>> factory-mutation DisplayFirstOrNextCardPage
-MUTATIONS["DisplayFirstOrNextCardPage"] = {"source_symbol": "DisplayFirstOrNextCardPage", "before": "\tCardPageNavigationResult r = GoToFirstOrNextCardPage();\n\tr.b = b;", "after": "\tCardPageNavigationResult r = GoToFirstOrNextCardPage();\n\tr.b = (uint8_t)(b + 1u);", "case_ids": ["DisplayFirstOrNextCardPage-0", "DisplayFirstOrNextCardPage-1"]}
+MUTATIONS["DisplayFirstOrNextCardPage"] = {"source_symbol": "DisplayCardPage", "before": "\tuint8_t a = EnableLCD();\n\treturn (DisplayCardPageResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), b};", "after": "\tuint8_t a = EnableLCD();\n\treturn (DisplayCardPageResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), (uint8_t)(b + 1u)};", "case_ids": ["DisplayFirstOrNextCardPage-0"]}
 # <<< factory-mutation DisplayFirstOrNextCardPage
 # >>> factory-mutation PrintAttackOrCardDescription
 MUTATIONS["PrintAttackOrCardDescription"] = {"source_symbol": "PrintAttackOrCardDescription", "before": "\treturn (PrintAttackOrCardDescriptionResult){text.a, text.d, text.e, text.f, text.hl};", "after": "\treturn (PrintAttackOrCardDescriptionResult){(uint8_t)(text.a + 1u), text.d, text.e, text.f, text.hl};", "case_ids": ["PrintAttackOrCardDescription-0", "PrintAttackOrCardDescription-1"]}
