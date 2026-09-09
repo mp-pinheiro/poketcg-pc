@@ -340,14 +340,33 @@ def divergence_issues(sessions: list[tuple[str, int, str]]) -> dict[str, dict[st
 
 def sweep_issues(sessions: list[tuple[str, int, str]], asm: dict[str, str], c: dict[str, str],
                  resolved: set[str]) -> dict[str, dict[str, Any]]:
-    """One issue per routine the newest sweep row reports failing; a routine
-    seen passing in a newer sweep is resolved even if an older sweep failed it."""
-    latest: dict[str, tuple[float, str, dict[str, Any]]] = {}
+    """One issue per routine the newest sweep row reports failing. A routine
+    seen passing in a newer sweep is resolved even if an older sweep failed it,
+    and so is one a newer sweep of the same session covered without emitting a
+    row at all: that sweep either passed it or stopped comparing it, and either
+    way the older row is no longer evidence."""
+    reports: list[tuple[float, dict[str, Any]]] = []
     for path in TRACKER_DIR.glob("sweep-*.json"):
-        report = json.loads(path.read_text())
-        stamp = path.stat().st_mtime
+        reports.append((path.stat().st_mtime, json.loads(path.read_text())))
+
+    def superseded(stamp: float, name: str, row: dict[str, Any]) -> bool:
+        for other_stamp, other in reports:
+            if other_stamp <= stamp or other.get("name") != name:
+                continue
+            until = other.get("until")
+            if until is None or not other.get("after", 0) <= row["ordinal"] <= until:
+                continue
+            if all(seen["routine"] != row["routine"] for seen in other.get("rows", [])):
+                return True
+        return False
+
+    latest: dict[str, tuple[float, str, dict[str, Any]]] = {}
+    for stamp, report in reports:
         for row in report.get("rows", []):
             routine = row["routine"]
+            if superseded(stamp, report["name"], row):
+                resolved.add(f"sweep:{routine}")
+                continue
             if routine not in latest or latest[routine][0] < stamp:
                 latest[routine] = (stamp, report["name"], row)
     out: dict[str, dict[str, Any]] = {}
