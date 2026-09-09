@@ -895,3 +895,11 @@ ATTACK_INFORMATION_REGS = ATTACK_INFORMATION.regs
 
 def attack_information_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return ATTACK_INFORMATION.case(vram=vram, bank=bank, **changes)
+
+
+PLAY_AREA_CARD_INFO = Fixture("water-master-play-area-card-info-entry")
+PLAY_AREA_CARD_INFO_REGS = PLAY_AREA_CARD_INFO.regs
+
+
+def play_area_card_info_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return PLAY_AREA_CARD_INFO.case(vram=vram, bank=bank, **changes)

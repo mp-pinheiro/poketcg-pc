@@ -11,6 +11,7 @@ from tests.cases._fixtures import energy_needed_in_hand_fixture as _energy_neede
 from tests.cases._fixtures import sort_temp_hand_fixture as _sort_temp_hand_fixture, SORT_TEMP_HAND_REGS as _SORT_TEMP_HAND_REGS
 from tests.cases._fixtures import card_description_fixture as _card_description_fixture, CARD_DESCRIPTION_REGS as _CARD_DESCRIPTION_REGS
 from tests.cases._fixtures import attack_information_fixture as _attack_information_fixture, ATTACK_INFORMATION_REGS as _ATTACK_INFORMATION_REGS
+from tests.cases._fixtures import play_area_card_info_fixture as _play_area_card_info_fixture, PLAY_AREA_CARD_INFO_REGS as _PLAY_AREA_CARD_INFO_REGS
 from tests.cases._fixtures import card_page_energy_fixture as _card_page_energy_fixture, CARD_PAGE_ENERGY_REGS as _CARD_PAGE_ENERGY_REGS
 from tests.cases._fixtures import card_page_trainer_fixture as _card_page_trainer_fixture, CARD_PAGE_TRAINER_REGS as _CARD_PAGE_TRAINER_REGS
 from tests.cases._fixtures import energy_or_trainer_page_fixture as _energy_or_trainer_page_fixture, ENERGY_OR_TRAINER_PAGE_REGS as _ENERGY_OR_TRAINER_PAGE_REGS
@@ -3256,6 +3257,8 @@ CASES["OppAction_6b30"] = [
 # >>> factory PrintPlayAreaCardInformation
 CONTRACT["PrintPlayAreaCardInformation"] = {"compare": ("hl",), "preserve": ()}
 CASES["PrintPlayAreaCardInformation"] = [
+    # water-master 422309: a live play-area row; hl ends past wDefaultText's copy.
+    dict(_play_area_card_info_fixture(vram=True, bank=1), **_PLAY_AREA_CARD_INFO_REGS, read={0xC590: 12}),
     {"keys": 0, "instruction_budget": 4000000, "cycle_budget": 16000000,
      "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x04",
               wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
@@ -6840,7 +6843,7 @@ MUTATIONS["PlayDeckShuffleAnimation"] = {"source_symbol": "PlayDeckShuffleAnimat
 MUTATIONS["OppAction_6b30"] = {"source_symbol": "OppAction_6b30", "before": "\treturn saved;", "after": "\treturn hTemp_ffa0;", "case_ids": ["OppAction_6b30-0", "OppAction_6b30-1"]}
 # <<< factory-mutation OppAction_6b30
 # >>> factory-mutation PrintPlayAreaCardInformation
-MUTATIONS["PrintPlayAreaCardInformation"] = {"source_symbol": "PrintPlayAreaCardInformation", "before": "\t\tProcessTextHeaderResult r = InitTextPrinting_ProcessTextFromID(kd, ke, KnockOutText);", "after": "\t\tProcessTextHeaderResult r = InitTextPrinting_ProcessTextFromID(kd, ke, 0u);", "case_ids": ["PrintPlayAreaCardInformation-0", "PrintPlayAreaCardInformation-1"]}
+MUTATIONS["PrintPlayAreaCardInformation"] = {"source_symbol": "PrintPlayAreaCardInformation", "before": "\treturn (PrintPlayAreaCardInformationResult){hl};\n}", "after": "\treturn (PrintPlayAreaCardInformationResult){(uint16_t)(hl - 1u)};\n}", "case_ids": ["PrintPlayAreaCardInformation-0"]}
 # <<< factory-mutation PrintPlayAreaCardInformation
 # >>> factory-mutation PrintPlayAreaCardInformationAndLocation
 MUTATIONS["PrintPlayAreaCardInformationAndLocation"] = {"source_symbol": "PrintPlayAreaCardInformationAndLocation", "before": "\tDuelistVarResult r = GetTurnDuelistVariable((uint8_t)(slot + DUELVARS_ARENA_CARD));\n\tif (r.a == 0xFFu)", "after": "\tDuelistVarResult r = GetTurnDuelistVariable((uint8_t)(slot + DUELVARS_ARENA_CARD));\n\tif (r.a != 0xFFu)", "case_ids": ["PrintPlayAreaCardInformationAndLocation-0", "PrintPlayAreaCardInformationAndLocation-1"]}

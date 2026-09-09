@@ -5877,7 +5877,8 @@ PrintPlayAreaCardInformationResult PrintPlayAreaCardInformation(void)
 	uint16_t de = BCCoordToBGMap0Address(b, c);
 	uint16_t hl = wDefaultText_ADDR;
 	SafeCopyDataHLtoDE(&hl, &de, 12u);
-	return (PrintPlayAreaCardInformationResult){0u};
+	/* core.asm:5370-5371: hl is left past the twelve copied bytes. */
+	return (PrintPlayAreaCardInformationResult){hl};
 }
 /* <<< factory PrintPlayAreaCardInformation */
 
