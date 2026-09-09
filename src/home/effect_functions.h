@@ -652,7 +652,8 @@ uint8_t ThickSkinnedEffect(uint8_t f);
 uint8_t HealingWind_InitialEffect(uint8_t f);
 /* <<< factory HealingWind_InitialEffect */
 /* >>> factory PickRandomBasicCardFromDeck */
-uint8_t PickRandomBasicCardFromDeck(void);
+typedef struct { uint8_t a; uint8_t f; uint8_t d; uint8_t e; } PickRandomBasicCardResult;
+PickRandomBasicCardResult PickRandomBasicCardFromDeck(void);
 /* <<< factory PickRandomBasicCardFromDeck */
 /* >>> factory GustOfWind_BenchCheck */
 IsPlayerTurnResult GustOfWind_BenchCheck(void);
@@ -1788,7 +1789,7 @@ typedef struct { uint8_t a; uint8_t f; uint16_t hl; } TossCoin_BankBResult;
 TossCoin_BankBResult TossCoin_BankB(uint16_t de, uint16_t hl);
 /* <<< factory TossCoin_BankB */
 /* >>> factory GustOfWind_SwitchEffect */
-void GustOfWind_SwitchEffect(void);
+void GustOfWind_SwitchEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory GustOfWind_SwitchEffect */
 /* >>> factory Confusion50PercentEffect */
 uint8_t Confusion50PercentEffect(void);
@@ -2014,7 +2015,7 @@ Sprout_PlayerSelectEffectResult Sprout_PlayerSelectEffect(void);
 void FullHeal_ClearStatusEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory FullHeal_ClearStatusEffect */
 /* >>> factory ImakuniEffect */
-void ImakuniEffect(void);
+void ImakuniEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory ImakuniEffect */
 /* >>> factory GamblerEffect */
 void GamblerEffect(void);

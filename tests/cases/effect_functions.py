@@ -1,3 +1,4 @@
+from tests.cases._fixtures import ai_gust_of_wind_fixture as _ai_gust_of_wind_fixture, AI_GUST_OF_WIND_REGS as _AI_GUST_OF_WIND_REGS
 from tests.cases._fixtures import peal_of_thunder_fixture as _peal_of_thunder_fixture, PEAL_OF_THUNDER_REGS as _PEAL_OF_THUNDER_REGS
 from tests.cases._fixtures import selfdestruct_fixture as _selfdestruct_fixture, SELFDESTRUCT_REGS as _SELFDESTRUCT_REGS
 from tests.cases._fixtures import ZAPDOS_RECOIL_REGS, zapdos_recoil_fixture
@@ -1899,11 +1900,14 @@ CASES["HealingWind_InitialEffect"] = [{}, dict(POISON)]
 # <<< factory HealingWind_InitialEffect
 
 # >>> factory PickRandomBasicCardFromDeck
-CONTRACT["PickRandomBasicCardFromDeck"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["PickRandomBasicCardFromDeck"] = {"compare": ("a", "f", "d", "e"), "preserve": ()}
 CASES["PickRandomBasicCardFromDeck"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3C"}},
     {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xC27E: b"\x00\xFF", 0xC400: b"\x02"}},
     dict(POISON),
+    # ai-duel-23 26354: a full deck of basics is shuffled by its card count before the pick,
+    # so the pick and the shuffled list depend on the seed.
+    {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x07", 0xC27E: bytes(range(60)), 0xC400: bytes([0x08] * 60), 0xCACA: b"\x5A\xA5\x3C"}, "read": {0xC510: 8, 0xCACA: 3}},
 ]
 # <<< factory PickRandomBasicCardFromDeck
 
@@ -6339,9 +6343,11 @@ CASES["TossCoin_BankB"] = [
 # >>> factory GustOfWind_SwitchEffect
 CONTRACT["GustOfWind_SwitchEffect"] = {"compare": (), "preserve": ()}
 CASES["GustOfWind_SwitchEffect"] = [
-    {"wram": {0xCAC2: b"\x05", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xCAC2: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"wram": {0xCAC2: b"\xFF", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xCAC2: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xCAC2: b"\x03", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xCAC2: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+    {"wram": {0xCAC2: b"\x05", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xCE7F: 2, 0xCAC2: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {0xCAC2: b"\xFF", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xCE7F: 2, 0xCAC2: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xCAC2: b"\x03", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xCE7F: 2, 0xCAC2: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    # ai-duel-19 33788: the AI's Gust of Wind arrives with the decide routine's de = $0001, which the animation stores.
+    dict(_ai_gust_of_wind_fixture(vram=False, bank=6), **_AI_GUST_OF_WIND_REGS, read={0xCE7F: 2}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory GustOfWind_SwitchEffect
 
@@ -7388,11 +7394,11 @@ CASES["FullHeal_ClearStatusEffect"] = [
 # >>> factory ImakuniEffect
 CONTRACT["ImakuniEffect"] = {"compare": (), "preserve": ()}
 CASES["ImakuniEffect"] = [
-    {"wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((BULBASAUR,)), wArenaCardStatus: b"\x00"}, "read": {wArenaCardStatus: 1}, **dict(FRAME_BUDGET), "setup": FRAME_SETUP, "keys": [0x00, 0x01]},
-    {"wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((CLEFAIRY_DOLL,)), wArenaCardStatus: b"\x00"}, "read": {wArenaCardStatus: 1}, **dict(FRAME_BUDGET), "setup": FRAME_SETUP, "keys": [0x00, 0x01]},
-    {"wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((MYSTERIOUS_FOSSIL,)), wArenaCardStatus: b"\x00"}, "read": {wArenaCardStatus: 1}, **dict(FRAME_BUDGET), "setup": FRAME_SETUP, "keys": [0x00, 0x01]},
-    {"wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((BULBASAUR,)), wArenaCardStatus: b"\xF0"}, "read": {wArenaCardStatus: 1}, **dict(FRAME_BUDGET), "setup": FRAME_SETUP, "keys": [0x00, 0x01]},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((BULBASAUR,)), wArenaCardStatus: b"\xF0"}, read={wArenaCardStatus: 1}, **dict(FRAME_BUDGET), setup=FRAME_SETUP, keys=[0x00, 0x01]),
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((BULBASAUR,)), wArenaCardStatus: b"\x00"}, "read": {0xCE7F: 2, wArenaCardStatus: 1}, **dict(FRAME_BUDGET), "setup": FRAME_SETUP, "keys": [0x00, 0x01]},
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((CLEFAIRY_DOLL,)), wArenaCardStatus: b"\x00"}, "read": {0xCE7F: 2, wArenaCardStatus: 1}, **dict(FRAME_BUDGET), "setup": FRAME_SETUP, "keys": [0x00, 0x01]},
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((MYSTERIOUS_FOSSIL,)), wArenaCardStatus: b"\x00"}, "read": {0xCE7F: 2, wArenaCardStatus: 1}, **dict(FRAME_BUDGET), "setup": FRAME_SETUP, "keys": [0x00, 0x01]},
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((BULBASAUR,)), wArenaCardStatus: b"\xF0"}, "read": {0xCE7F: 2, wArenaCardStatus: 1}, **dict(FRAME_BUDGET), "setup": FRAME_SETUP, "keys": [0x00, 0x01]},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((BULBASAUR,)), wArenaCardStatus: b"\xF0"}, read={0xCE7F: 2, wArenaCardStatus: 1}, **dict(FRAME_BUDGET), setup=FRAME_SETUP, keys=[0x00, 0x01]),
 ]
 # <<< factory ImakuniEffect
 
@@ -10749,7 +10755,7 @@ MUTATIONS["NidoranFCallForFamily_PlayerSelectEffect"] = {"source_symbol": "Nidor
 MUTATIONS["TossCoin_BankB"] = {"source_symbol": "TossCoin_BankB", "before": "TossCoin_BankBResult TossCoin_BankB(uint16_t de, uint16_t hl)\n{\n\tTossCoinRoutineResult result = TossCoin(de, hl);\n\treturn (TossCoin_BankBResult){result.a, result.f, result.hl};", "after": "TossCoin_BankBResult TossCoin_BankB(uint16_t de, uint16_t hl)\n{\n\tTossCoinRoutineResult result = TossCoin(de, hl);\n\treturn (TossCoin_BankBResult){(uint8_t)(result.a + 1u), result.f, result.hl};", "case_ids": ["TossCoin_BankB-0", "TossCoin_BankB-1", "TossCoin_BankB-2"]}
 # <<< factory-mutation TossCoin_BankB
 # >>> factory-mutation GustOfWind_SwitchEffect
-MUTATIONS["GustOfWind_SwitchEffect"] = {"source_symbol": "GustOfWind_SwitchEffect", "before": "void GustOfWind_SwitchEffect(void)\n{\n\tPlayTrainerEffectAnimation(ATK_ANIM_GUST_OF_WIND, 0u, 0u, 0u, 0u, 0u, 0u);\n\tSwapTurn();\n\tuint8_t e = hTemp_ffa0;\n\t(void)SwapArenaWithBenchPokemon(e);\n\tSwapTurn();\n\tClearDamageReductionSubstatus2();\n\twDuelDisplayedScreen = 0u;", "after": "void GustOfWind_SwitchEffect(void)\n{\n\tPlayTrainerEffectAnimation(ATK_ANIM_GUST_OF_WIND, 0u, 0u, 0u, 0u, 0u, 0u);\n\tSwapTurn();\n\tuint8_t e = hTemp_ffa0;\n\t(void)SwapArenaWithBenchPokemon(e);\n\tSwapTurn();\n\tClearDamageReductionSubstatus2();\n\twDuelDisplayedScreen = 1u;", "case_ids": ["GustOfWind_SwitchEffect-0", "GustOfWind_SwitchEffect-1", "GustOfWind_SwitchEffect-2"]}
+MUTATIONS["GustOfWind_SwitchEffect"] = {"source_symbol": "GustOfWind_SwitchEffect", "before": "\tPlayTrainerEffectAnimation(ATK_ANIM_GUST_OF_WIND, f, b, c, d, e, hl);", "after": "\tPlayTrainerEffectAnimation(ATK_ANIM_GUST_OF_WIND, f, b, c, 0u, 0u, hl);", "case_ids": ["GustOfWind_SwitchEffect-2"]}
 # <<< factory-mutation GustOfWind_SwitchEffect
 # >>> factory-mutation Confusion50PercentEffect
 MUTATIONS["Confusion50PercentEffect"] = {"source_symbol": "Confusion50PercentEffect", "before": "uint8_t Confusion50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(ConfusionCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;\n\treturn ConfusionEffect().f;", "after": "uint8_t Confusion50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(ConfusionCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;\n\treturn (uint8_t)(ConfusionEffect().f ^ 0x10u);", "case_ids": ["Confusion50PercentEffect-0", "Confusion50PercentEffect-1"]}
@@ -11370,7 +11376,7 @@ MUTATIONS["Gale_LoadAnimation"] = {"source_symbol": "Gale_LoadAnimation", "befor
 MUTATIONS["CreatePlayableStage2PokemonCardListFromHand"] = {"source_symbol": "CreatePlayableStage2PokemonCardListFromHand", "before": "gb_write8(dst, 0xffu);", "after": "gb_write8(dst, 0xfeu);", "case_ids": ["CreatePlayableStage2PokemonCardListFromHand-0", "CreatePlayableStage2PokemonCardListFromHand-1"]}
 # <<< factory-mutation CreatePlayableStage2PokemonCardListFromHand
 # >>> factory-mutation PickRandomBasicCardFromDeck
-MUTATIONS["PickRandomBasicCardFromDeck"] = {"source_symbol": "PickRandomBasicCardFromDeck", "before": "if (list.f & 0x10u)\n\t\treturn 0xFFu;", "after": "if (list.f & 0x10u)\n\t\treturn 0x00u;", "case_ids": ["PickRandomBasicCardFromDeck-0", "PickRandomBasicCardFromDeck-1"]}
+MUTATIONS["PickRandomBasicCardFromDeck"] = {"source_symbol": "PickRandomBasicCardFromDeck", "before": "\t(void)ShuffleCards(list.a, wDuelTempList_ADDR);", "after": "\t(void)ShuffleCards(0u, wDuelTempList_ADDR);", "case_ids": ["PickRandomBasicCardFromDeck-3"]}
 # <<< factory-mutation PickRandomBasicCardFromDeck
 # >>> factory-mutation StepIn_SwitchEffect
 MUTATIONS["StepIn_SwitchEffect"] = {"source_symbol": "StepIn_SwitchEffect", "before": "SwapArenaWithBenchPokemon(hTemp_ffa0)", "after": "SwapArenaWithBenchPokemon((uint8_t)(hTemp_ffa0 + 1u))", "case_ids": ["StepIn_SwitchEffect-0"]}

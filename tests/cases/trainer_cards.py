@@ -942,7 +942,7 @@ CASES["AIDecide_PlusPower_Phase14"] = [
 # <<< factory AIDecide_PlusPower_Phase14
 
 # >>> factory AIDecide_GustOfWind
-CONTRACT["AIDecide_GustOfWind"] = {"compare": ("a", "f", "d"), "preserve": ()}
+CONTRACT["AIDecide_GustOfWind"] = {"compare": ("a", "f", "d", "e"), "preserve": ()}
 CASES["AIDecide_GustOfWind"] = [
     {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x01"}},
     {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x03", 0xCE20: b"\x10"}},
@@ -1468,19 +1468,19 @@ MUTATIONS["AIDecide_EnergySearch"] = {
 }
 # <<< factory-mutation AIDecide_EnergySearch
 # >>> factory-mutation _AIProcessHandTrainerCards
-MUTATIONS["_AIProcessHandTrainerCards"] = {"source_symbol": "_AIProcessHandTrainerCards", "before": "\t\t\t(void)logic->play();", "after": "\t\t\t(void)logic;", "case_ids": ["_AIProcessHandTrainerCards-0"]}
+MUTATIONS["_AIProcessHandTrainerCards"] = {'source_symbol': '_AIProcessHandTrainerCards', 'before': '\t\t\t(void)logic->play(phase, e);', 'after': '\t\t\t(void)logic;', 'case_ids': ['_AIProcessHandTrainerCards-0']}
 # <<< factory-mutation _AIProcessHandTrainerCards
 # >>> factory-mutation AIPlay_Pokeball
-MUTATIONS["AIPlay_Pokeball"] = {"source_symbol": "AIPlay_Pokeball", "before": "AIPlayPokeballResult AIPlay_Pokeball(void)\n{\n\tuint8_t card = wAITrainerCardToPlay;\n\thTempCardIndex_ff9f = card;", "after": "AIPlayPokeballResult AIPlay_Pokeball(void)\n{\n\tuint8_t card = wAITrainerCardParameter;\n\thTempCardIndex_ff9f = card;", "case_ids": ["AIPlay_Pokeball-0", "AIPlay_Pokeball-1", "AIPlay_Pokeball-2"]}
+MUTATIONS["AIPlay_Pokeball"] = {"source_symbol": "AIPlay_Pokeball", "before": "AIPlayPokeballResult AIPlay_Pokeball(uint8_t d, uint8_t e)\n{\n\tuint8_t card = wAITrainerCardToPlay;\n\thTempCardIndex_ff9f = card;", "after": "AIPlayPokeballResult AIPlay_Pokeball(uint8_t d, uint8_t e)\n{\n\tuint8_t card = wAITrainerCardParameter;\n\thTempCardIndex_ff9f = card;", "case_ids": ["AIPlay_Pokeball-0", "AIPlay_Pokeball-1", "AIPlay_Pokeball-2"]}
 # <<< factory-mutation AIPlay_Pokeball
 # >>> factory-mutation AIPlay_Recycle
-MUTATIONS["AIPlay_Recycle"] = {"source_symbol": "AIPlay_Recycle", "before": "AIDecideResult AIPlay_Recycle(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIDecideResult AIPlay_Recycle(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardParameter;", "case_ids": ["AIPlay_Recycle-0", "AIPlay_Recycle-1", "AIPlay_Recycle-2"]}
+MUTATIONS["AIPlay_Recycle"] = {"source_symbol": "AIPlay_Recycle", "before": "AIDecideResult AIPlay_Recycle(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIDecideResult AIPlay_Recycle(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardParameter;", "case_ids": ["AIPlay_Recycle-0", "AIPlay_Recycle-1", "AIPlay_Recycle-2"]}
 # <<< factory-mutation AIPlay_Recycle
 # >>> factory-mutation AIDecide_PlusPower_Phase14
 MUTATIONS["AIDecide_PlusPower_Phase14"] = {"source_symbol": "AIDecide_PlusPower_Phase14", "before": "\tif ((unusable.f & 0x10u) != 0u)\n\t\treturn (AIDecideParameterResult){unusable.a, or_a_flags(unusable.a), d};\n\td = EstimateDamage_VersusDefendingCard(wSelectedAttack).d;\n\tuint8_t hp", "after": "\tif ((unusable.f & 0x10u) != 0u)\n\t\treturn (AIDecideParameterResult){(uint8_t)(unusable.a + 1u), or_a_flags(unusable.a), d};\n\td = EstimateDamage_VersusDefendingCard(wSelectedAttack).d;\n\tuint8_t hp", "case_ids": ["AIDecide_PlusPower_Phase14-0", "AIDecide_PlusPower_Phase14-1"]}
 # <<< factory-mutation AIDecide_PlusPower_Phase14
 # >>> factory-mutation AIDecide_GustOfWind
-MUTATIONS["AIDecide_GustOfWind"] = {"source_symbol": "AIDecide_GustOfWind", "before": "\tif (bench_count == 0u)\n\t\treturn (AIDecideParameterResult){0u, 0x80u, d};", "after": "\tif (bench_count == 0u)\n\t\treturn (AIDecideParameterResult){0u, 0x90u, d};", "case_ids": ["AIDecide_GustOfWind-0"]}
+MUTATIONS["AIDecide_GustOfWind"] = {'source_symbol': 'AIDecide_GustOfWind', 'before': '\tif (bench_count == 0u)\n\t\treturn (AIDecideGustOfWindResult){0u, 0x80u, d, e};', 'after': '\tif (bench_count == 0u)\n\t\treturn (AIDecideGustOfWindResult){0u, 0x90u, d, e};', 'case_ids': ['AIDecide_GustOfWind-0']}
 # <<< factory-mutation AIDecide_GustOfWind
 # >>> factory-mutation AIDecide_Defender_Phase13
 MUTATIONS["AIDecide_Defender_Phase13"] = {"source_symbol": "AIDecide_Defender_Phase13", "before": "\t * the selected damage, then the damage minus Defender's 20. */\n\thTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;", "after": "\t * the selected damage, then the damage minus Defender's 20. */\n\thTempPlayAreaLocation_ff9d = PLAY_AREA_BENCH_1;", "case_ids": ["AIDecide_Defender_Phase13-0", "AIDecide_Defender_Phase13-1"]}
@@ -1514,93 +1514,93 @@ MUTATIONS["AIDecide_PlusPower_Phase13"] = {
 
 # >>> factory-mutation AIPlay_Bill
 MUTATIONS["AIPlay_Bill"] = {"source_symbol": "AIPlay_Bill",
-    "before": "AIDecideResult AIPlay_Bill(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
-    "after": "AIDecideResult AIPlay_Bill(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "before": "AIDecideResult AIPlay_Bill(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_Bill(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
     "case_ids": ["AIPlay_Bill-0"]}
 # <<< factory-mutation AIPlay_Bill
 # >>> factory-mutation AIPlay_Defender
 MUTATIONS["AIPlay_Defender"] = {"source_symbol": "AIPlay_Defender",
-    "before": "AIDecideResult AIPlay_Defender(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
-    "after": "AIDecideResult AIPlay_Defender(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "before": "AIDecideResult AIPlay_Defender(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_Defender(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
     "case_ids": ["AIPlay_Defender-0"]}
 # <<< factory-mutation AIPlay_Defender
 # >>> factory-mutation AIPlay_Imakuni
 MUTATIONS["AIPlay_Imakuni"] = {"source_symbol": "AIPlay_Imakuni",
-    "before": "AIDecideResult AIPlay_Imakuni(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
-    "after": "AIDecideResult AIPlay_Imakuni(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "before": "AIDecideResult AIPlay_Imakuni(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_Imakuni(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
     "case_ids": ["AIPlay_Imakuni-0"]}
 # <<< factory-mutation AIPlay_Imakuni
 # >>> factory-mutation AIPlay_FullHeal
 MUTATIONS["AIPlay_FullHeal"] = {"source_symbol": "AIPlay_FullHeal",
-    "before": "AIDecideResult AIPlay_FullHeal(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
-    "after": "AIDecideResult AIPlay_FullHeal(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "before": "AIDecideResult AIPlay_FullHeal(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_FullHeal(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
     "case_ids": ["AIPlay_FullHeal-0"]}
 # <<< factory-mutation AIPlay_FullHeal
 # >>> factory-mutation AIPlay_ClefairyDollOrMysteriousFossil
 MUTATIONS["AIPlay_ClefairyDollOrMysteriousFossil"] = {"source_symbol": "AIPlay_ClefairyDollOrMysteriousFossil",
-    "before": "AIDecideResult AIPlay_ClefairyDollOrMysteriousFossil(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
-    "after": "AIDecideResult AIPlay_ClefairyDollOrMysteriousFossil(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "before": "AIDecideResult AIPlay_ClefairyDollOrMysteriousFossil(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_ClefairyDollOrMysteriousFossil(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
     "case_ids": ["AIPlay_ClefairyDollOrMysteriousFossil-0"]}
 # <<< factory-mutation AIPlay_ClefairyDollOrMysteriousFossil
 # >>> factory-mutation AIPlay_ImposterProfessorOak
 MUTATIONS["AIPlay_ImposterProfessorOak"] = {"source_symbol": "AIPlay_ImposterProfessorOak",
-    "before": "AIDecideResult AIPlay_ImposterProfessorOak(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
-    "after": "AIDecideResult AIPlay_ImposterProfessorOak(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "before": "AIDecideResult AIPlay_ImposterProfessorOak(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_ImposterProfessorOak(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
     "case_ids": ["AIPlay_ImposterProfessorOak-0"]}
 # <<< factory-mutation AIPlay_ImposterProfessorOak
 # >>> factory-mutation AIPlay_PokemonCenter
 MUTATIONS["AIPlay_PokemonCenter"] = {"source_symbol": "AIPlay_PokemonCenter",
-    "before": "AIDecideResult AIPlay_PokemonCenter(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
-    "after": "AIDecideResult AIPlay_PokemonCenter(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "before": "AIDecideResult AIPlay_PokemonCenter(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_PokemonCenter(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
     "case_ids": ["AIPlay_PokemonCenter-0"]}
 # <<< factory-mutation AIPlay_PokemonCenter
 # >>> factory-mutation AIPlay_PlusPower
 MUTATIONS["AIPlay_PlusPower"] = {
     "source_symbol": "AIPlay_PlusPower",
-    "before": "AIDecideResult AIPlay_PlusPower(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_USED_PLUSPOWER);\n\twAIPlusPowerAttack = wAITrainerCardParameter;",
-    "after": "AIDecideResult AIPlay_PlusPower(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_USED_PLUSPOWER);\n\twAIPlusPowerAttack = wAITrainerCardToPlay;",
+    "before": "AIDecideResult AIPlay_PlusPower(uint8_t d, uint8_t e)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_USED_PLUSPOWER);\n\twAIPlusPowerAttack = wAITrainerCardParameter;",
+    "after": "AIDecideResult AIPlay_PlusPower(uint8_t d, uint8_t e)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_USED_PLUSPOWER);\n\twAIPlusPowerAttack = wAITrainerCardToPlay;",
     "case_ids": ["AIPlay_PlusPower-0", "AIPlay_PlusPower-1", "AIPlay_PlusPower-2"]
 }
 # <<< factory-mutation AIPlay_PlusPower
 # >>> factory-mutation AIPlay_Potion
-MUTATIONS["AIPlay_Potion"] = {"source_symbol": "AIPlay_Potion", "before": "AIDecideResult AIPlay_Potion(void)\n{\n\tuint8_t card = wAITrainerCardToPlay;\n\thTempCardIndex_ff9f = card;", "after": "AIDecideResult AIPlay_Potion(void)\n{\n\tuint8_t card = wAITrainerCardParameter;\n\thTempCardIndex_ff9f = card;", "case_ids": ["AIPlay_Potion-0", "AIPlay_Potion-1", "AIPlay_Potion-2"]}
+MUTATIONS["AIPlay_Potion"] = {"source_symbol": "AIPlay_Potion", "before": "AIDecideResult AIPlay_Potion(uint8_t d, uint8_t e)\n{\n\tuint8_t card = wAITrainerCardToPlay;\n\thTempCardIndex_ff9f = card;", "after": "AIDecideResult AIPlay_Potion(uint8_t d, uint8_t e)\n{\n\tuint8_t card = wAITrainerCardParameter;\n\thTempCardIndex_ff9f = card;", "case_ids": ["AIPlay_Potion-0", "AIPlay_Potion-1", "AIPlay_Potion-2"]}
 # <<< factory-mutation AIPlay_Potion
 # >>> factory-mutation AIPlay_GustOfWind
-MUTATIONS["AIPlay_GustOfWind"] = {"source_symbol": "AIPlay_GustOfWind", "before": "AIDecideResult AIPlay_GustOfWind(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags |= 0x10u;", "after": "AIDecideResult AIPlay_GustOfWind(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags |= 0u;", "case_ids": ["AIPlay_GustOfWind-0", "AIPlay_GustOfWind-1", "AIPlay_GustOfWind-2"]}
+MUTATIONS["AIPlay_GustOfWind"] = {"source_symbol": "AIPlay_GustOfWind", "before": "AIDecideResult AIPlay_GustOfWind(uint8_t d, uint8_t e)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags |= 0x10u;", "after": "AIDecideResult AIPlay_GustOfWind(uint8_t d, uint8_t e)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags |= 0u;", "case_ids": ["AIPlay_GustOfWind-0", "AIPlay_GustOfWind-1", "AIPlay_GustOfWind-2"]}
 # <<< factory-mutation AIPlay_GustOfWind
 # >>> factory-mutation AIPlay_Switch
-MUTATIONS["AIPlay_Switch"] = {"source_symbol": "AIPlay_Switch", "before": "AIDecideResult AIPlay_Switch(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_USED_SWITCH);", "after": "AIDecideResult AIPlay_Switch(void)\n{\n\twCurrentAIFlags = 0u;", "case_ids": ["AIPlay_Switch-0", "AIPlay_Switch-1", "AIPlay_Switch-2"]}
+MUTATIONS["AIPlay_Switch"] = {"source_symbol": "AIPlay_Switch", "before": "AIDecideResult AIPlay_Switch(uint8_t d, uint8_t e)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_USED_SWITCH);", "after": "AIDecideResult AIPlay_Switch(uint8_t d, uint8_t e)\n{\n\twCurrentAIFlags = 0u;", "case_ids": ["AIPlay_Switch-0", "AIPlay_Switch-1", "AIPlay_Switch-2"]}
 # <<< factory-mutation AIPlay_Switch
 # >>> factory-mutation AIPlay_Maintenance
-MUTATIONS["AIPlay_Maintenance"] = {"source_symbol": "AIPlay_Maintenance", "before": "AIDecideResult AIPlay_Maintenance(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);", "after": "AIDecideResult AIPlay_Maintenance(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | 0u);", "case_ids": ["AIPlay_Maintenance-0"]}
+MUTATIONS["AIPlay_Maintenance"] = {"source_symbol": "AIPlay_Maintenance", "before": "AIDecideResult AIPlay_Maintenance(uint8_t d, uint8_t e)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);", "after": "AIDecideResult AIPlay_Maintenance(uint8_t d, uint8_t e)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | 0u);", "case_ids": ["AIPlay_Maintenance-0"]}
 # <<< factory-mutation AIPlay_Maintenance
 # >>> factory-mutation AIPlay_ComputerSearch
 MUTATIONS["AIPlay_ComputerSearch"] = {
     "source_symbol": "AIPlay_ComputerSearch",
-    "before": "AIDecideResult AIPlay_ComputerSearch(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags = (uint8_t)(flags | AI_FLAG_MODIFIED_HAND);",
-    "after": "AIDecideResult AIPlay_ComputerSearch(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags = (uint8_t)(flags | 0u);",
+    "before": "AIDecideResult AIPlay_ComputerSearch(uint8_t d, uint8_t e)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags = (uint8_t)(flags | AI_FLAG_MODIFIED_HAND);",
+    "after": "AIDecideResult AIPlay_ComputerSearch(uint8_t d, uint8_t e)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags = (uint8_t)(flags | 0u);",
     "case_ids": ["AIPlay_ComputerSearch-0", "AIPlay_ComputerSearch-1", "AIPlay_ComputerSearch-2"]
 }
 # <<< factory-mutation AIPlay_ComputerSearch
 # >>> factory-mutation AIPlay_ItemFinder
-MUTATIONS["AIPlay_ItemFinder"] = {"source_symbol": "AIPlay_ItemFinder", "before": "AIDecideResult AIPlay_ItemFinder(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags |= AI_FLAG_MODIFIED_HAND;", "after": "AIDecideResult AIPlay_ItemFinder(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags |= 0u;", "case_ids": ["AIPlay_ItemFinder-0"]}
+MUTATIONS["AIPlay_ItemFinder"] = {"source_symbol": "AIPlay_ItemFinder", "before": "AIDecideResult AIPlay_ItemFinder(uint8_t d, uint8_t e)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags |= AI_FLAG_MODIFIED_HAND;", "after": "AIDecideResult AIPlay_ItemFinder(uint8_t d, uint8_t e)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags |= 0u;", "case_ids": ["AIPlay_ItemFinder-0"]}
 # <<< factory-mutation AIPlay_ItemFinder
 # >>> factory-mutation AIPlay_Pokedex
-MUTATIONS["AIPlay_Pokedex"] = {"source_symbol": "AIPlay_Pokedex", "before": "AIDecideResult AIPlay_Pokedex(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIDecideResult AIPlay_Pokedex(void)\n{\n\thTempCardIndex_ff9f = 0u;", "case_ids": ["AIPlay_Pokedex-1"]}
+MUTATIONS["AIPlay_Pokedex"] = {"source_symbol": "AIPlay_Pokedex", "before": "AIDecideResult AIPlay_Pokedex(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIDecideResult AIPlay_Pokedex(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = 0u;", "case_ids": ["AIPlay_Pokedex-1"]}
 # <<< factory-mutation AIPlay_Pokedex
 # >>> factory-mutation AIPlay_Gambler
 MUTATIONS["AIPlay_Gambler"] = {
     "source_symbol": "AIPlay_Gambler",
-    "before": "AIDecideResult AIPlay_Gambler(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);",
-    "after": "AIDecideResult AIPlay_Gambler(void)\n{\n\twCurrentAIFlags = wCurrentAIFlags;",
+    "before": "AIDecideResult AIPlay_Gambler(uint8_t d, uint8_t e)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);",
+    "after": "AIDecideResult AIPlay_Gambler(uint8_t d, uint8_t e)\n{\n\twCurrentAIFlags = wCurrentAIFlags;",
     "case_ids": ["AIPlay_Gambler-0"]
 }
 # <<< factory-mutation AIPlay_Gambler
 # >>> factory-mutation AIPlay_EnergyRetrieval
-MUTATIONS["AIPlay_EnergyRetrieval"] = {"source_symbol": "AIPlay_EnergyRetrieval", "before": "AIDecideResult AIPlay_EnergyRetrieval(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);", "after": "AIDecideResult AIPlay_EnergyRetrieval(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | 0u);", "case_ids": ["AIPlay_EnergyRetrieval-0"]}
+MUTATIONS["AIPlay_EnergyRetrieval"] = {"source_symbol": "AIPlay_EnergyRetrieval", "before": "AIDecideResult AIPlay_EnergyRetrieval(uint8_t d, uint8_t e)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);", "after": "AIDecideResult AIPlay_EnergyRetrieval(uint8_t d, uint8_t e)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | 0u);", "case_ids": ["AIPlay_EnergyRetrieval-0"]}
 # <<< factory-mutation AIPlay_EnergyRetrieval
 # >>> factory-mutation AIPlay_SuperEnergyRemoval
-MUTATIONS["AIPlay_SuperEnergyRemoval"] = {"source_symbol": "AIPlay_SuperEnergyRemoval", "before": "AIDecideResult AIPlay_SuperEnergyRemoval(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIDecideResult AIPlay_SuperEnergyRemoval(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);", "case_ids": ["AIPlay_SuperEnergyRemoval-0", "AIPlay_SuperEnergyRemoval-1", "AIPlay_SuperEnergyRemoval-2"]}
+MUTATIONS["AIPlay_SuperEnergyRemoval"] = {"source_symbol": "AIPlay_SuperEnergyRemoval", "before": "AIDecideResult AIPlay_SuperEnergyRemoval(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIDecideResult AIPlay_SuperEnergyRemoval(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);", "case_ids": ["AIPlay_SuperEnergyRemoval-0", "AIPlay_SuperEnergyRemoval-1", "AIPlay_SuperEnergyRemoval-2"]}
 # <<< factory-mutation AIPlay_SuperEnergyRemoval
 # >>> factory-mutation AIDecide_SuperPotion_Phase11
 MUTATIONS["AIDecide_SuperPotion_Phase11"] = {"source_symbol": "AIDecide_SuperPotion_Phase11", "before": "\t\tif (card == 0xffu)\n\t\t\treturn (AIDecideSuperPotionPhase11Result){0xffu, 0xC0u, d};", "after": "\t\tif (card == 0xffu)\n\t\t\treturn (AIDecideSuperPotionPhase11Result){0u, 0xC0u, d};", "case_ids": ["AIDecide_SuperPotion_Phase11-0"]}
@@ -1608,36 +1608,36 @@ MUTATIONS["AIDecide_SuperPotion_Phase11"] = {"source_symbol": "AIDecide_SuperPot
 # >>> factory-mutation AIPlay_EnergySearch
 MUTATIONS["AIPlay_EnergySearch"] = {
     "source_symbol": "AIPlay_EnergySearch",
-    "before": "AIDecideResult AIPlay_EnergySearch(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
-    "after": "AIDecideResult AIPlay_EnergySearch(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardParameter;",
+    "before": "AIDecideResult AIPlay_EnergySearch(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_EnergySearch(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardParameter;",
     "case_ids": ["AIPlay_EnergySearch-0"]
 }
 # <<< factory-mutation AIPlay_EnergySearch
 # >>> factory-mutation AIPlay_ScoopUp
 MUTATIONS["AIPlay_ScoopUp"] = {
     "source_symbol": "AIPlay_ScoopUp",
-    "before": "AIDecideResult AIPlay_ScoopUp(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
-    "after": "AIDecideResult AIPlay_ScoopUp(void)\n{\n\thTempCardIndex_ff9f = 0u;",
+    "before": "AIDecideResult AIPlay_ScoopUp(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_ScoopUp(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = 0u;",
     "case_ids": ["AIPlay_ScoopUp-1"]
 }
 # <<< factory-mutation AIPlay_ScoopUp
 # >>> factory-mutation AIPlay_PokemonBreeder
-MUTATIONS["AIPlay_PokemonBreeder"] = {"source_symbol": "AIPlay_PokemonBreeder", "before": "AIDecideResult AIPlay_PokemonBreeder(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIDecideResult AIPlay_PokemonBreeder(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);", "case_ids": ["AIPlay_PokemonBreeder-0"]}
+MUTATIONS["AIPlay_PokemonBreeder"] = {"source_symbol": "AIPlay_PokemonBreeder", "before": "AIDecideResult AIPlay_PokemonBreeder(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIDecideResult AIPlay_PokemonBreeder(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);", "case_ids": ["AIPlay_PokemonBreeder-0"]}
 # <<< factory-mutation AIPlay_PokemonBreeder
 # >>> factory-mutation AIPlay_PokemonFlute
-MUTATIONS["AIPlay_PokemonFlute"] = {"source_symbol": "AIPlay_PokemonFlute", "before": "AIDecideResult AIPlay_PokemonFlute(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;\n\thTemp_ffa0 = wAITrainerCardParameter;", "after": "AIDecideResult AIPlay_PokemonFlute(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);\n\thTemp_ffa0 = wAITrainerCardParameter;", "case_ids": ["AIPlay_PokemonFlute-0"]}
+MUTATIONS["AIPlay_PokemonFlute"] = {"source_symbol": "AIPlay_PokemonFlute", "before": "AIDecideResult AIPlay_PokemonFlute(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;\n\thTemp_ffa0 = wAITrainerCardParameter;", "after": "AIDecideResult AIPlay_PokemonFlute(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);\n\thTemp_ffa0 = wAITrainerCardParameter;", "case_ids": ["AIPlay_PokemonFlute-0"]}
 # <<< factory-mutation AIPlay_PokemonFlute
 # >>> factory-mutation AIPlay_ProfessorOak
-MUTATIONS["AIPlay_ProfessorOak"] = {"source_symbol": "AIPlay_ProfessorOak", "before": "AIDecideResult AIPlay_ProfessorOak(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags = (uint8_t)(flags | AI_FLAG_USED_PROFESSOR_OAK | AI_FLAG_MODIFIED_HAND);\n\twCurrentAIFlags = flags;", "after": "AIDecideResult AIPlay_ProfessorOak(void)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags = (uint8_t)(flags | AI_FLAG_MODIFIED_HAND);\n\twCurrentAIFlags = flags;", "case_ids": ["AIPlay_ProfessorOak-0"]}
+MUTATIONS["AIPlay_ProfessorOak"] = {"source_symbol": "AIPlay_ProfessorOak", "before": "AIDecideResult AIPlay_ProfessorOak(uint8_t d, uint8_t e)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags = (uint8_t)(flags | AI_FLAG_USED_PROFESSOR_OAK | AI_FLAG_MODIFIED_HAND);\n\twCurrentAIFlags = flags;", "after": "AIDecideResult AIPlay_ProfessorOak(uint8_t d, uint8_t e)\n{\n\tuint8_t flags = wCurrentAIFlags;\n\tflags = (uint8_t)(flags | AI_FLAG_MODIFIED_HAND);\n\twCurrentAIFlags = flags;", "case_ids": ["AIPlay_ProfessorOak-0"]}
 # <<< factory-mutation AIPlay_ProfessorOak
 # >>> factory-mutation AIPlay_PokemonTrader
-MUTATIONS["AIPlay_PokemonTrader"] = {"source_symbol": "AIPlay_PokemonTrader", "before": "AIMakeDecisionResult AIPlay_PokemonTrader(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIMakeDecisionResult AIPlay_PokemonTrader(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardParameter;", "case_ids": ["AIPlay_PokemonTrader-0"]}
+MUTATIONS["AIPlay_PokemonTrader"] = {"source_symbol": "AIPlay_PokemonTrader", "before": "AIMakeDecisionResult AIPlay_PokemonTrader(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIMakeDecisionResult AIPlay_PokemonTrader(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardParameter;", "case_ids": ["AIPlay_PokemonTrader-0"]}
 # <<< factory-mutation AIPlay_PokemonTrader
 # >>> factory-mutation AIPlay_EnergyRemoval
 MUTATIONS["AIPlay_EnergyRemoval"] = {
     "source_symbol": "AIPlay_EnergyRemoval",
-    "before": "AIDecideResult AIPlay_EnergyRemoval(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
-    "after": "AIDecideResult AIPlay_EnergyRemoval(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "before": "AIDecideResult AIPlay_EnergyRemoval(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_EnergyRemoval(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
     "case_ids": ["AIPlay_EnergyRemoval-0", "AIPlay_EnergyRemoval-1", "AIPlay_EnergyRemoval-2"]
 }
 # <<< factory-mutation AIPlay_EnergyRemoval
@@ -1650,7 +1650,7 @@ MUTATIONS["AIDecide_Potion_Phase10"] = {
 }
 # <<< factory-mutation AIDecide_Potion_Phase10
 # >>> factory-mutation AIPlay_SuperPotion
-MUTATIONS["AIPlay_SuperPotion"] = {"source_symbol": "AIPlay_SuperPotion", "before": "AIDecideResult AIPlay_SuperPotion(void)\n{\n\tuint8_t card = wAITrainerCardToPlay;\n\thTempCardIndex_ff9f = card;", "after": "AIDecideResult AIPlay_SuperPotion(void)\n{\n\tuint8_t card = wAITrainerCardParameter;\n\thTempCardIndex_ff9f = card;", "case_ids": ["AIPlay_SuperPotion-0", "AIPlay_SuperPotion-1", "AIPlay_SuperPotion-2"]}
+MUTATIONS["AIPlay_SuperPotion"] = {"source_symbol": "AIPlay_SuperPotion", "before": "AIDecideResult AIPlay_SuperPotion(uint8_t d, uint8_t e)\n{\n\tuint8_t card = wAITrainerCardToPlay;\n\thTempCardIndex_ff9f = card;", "after": "AIDecideResult AIPlay_SuperPotion(uint8_t d, uint8_t e)\n{\n\tuint8_t card = wAITrainerCardParameter;\n\thTempCardIndex_ff9f = card;", "case_ids": ["AIPlay_SuperPotion-0", "AIPlay_SuperPotion-1", "AIPlay_SuperPotion-2"]}
 # <<< factory-mutation AIPlay_SuperPotion
 # >>> factory-mutation AIDecide_Potion_Phase07
 MUTATIONS["AIDecide_Potion_Phase07"] = {
@@ -1663,18 +1663,18 @@ MUTATIONS["AIDecide_Potion_Phase07"] = {
 # >>> factory-mutation AIPlay_Revive
 MUTATIONS["AIPlay_Revive"] = {
     "source_symbol": "AIPlay_Revive",
-    "before": "AIDecideResult AIPlay_Revive(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;\n\thTemp_ffa0 = wAITrainerCardParameter;",
-    "after": "AIDecideResult AIPlay_Revive(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardParameter;\n\thTemp_ffa0 = wAITrainerCardParameter;",
+    "before": "AIDecideResult AIPlay_Revive(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;\n\thTemp_ffa0 = wAITrainerCardParameter;",
+    "after": "AIDecideResult AIPlay_Revive(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardParameter;\n\thTemp_ffa0 = wAITrainerCardParameter;",
     "case_ids": ["AIPlay_Revive-0"]
 }
 # <<< factory-mutation AIPlay_Revive
 # >>> factory-mutation AIPlay_Lass
-MUTATIONS["AIPlay_Lass"] = {"source_symbol": "AIPlay_Lass", "before": "AIDecideResult AIPlay_Lass(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);", "after": "AIDecideResult AIPlay_Lass(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | 0u);", "case_ids": ["AIPlay_Lass-0"]}
+MUTATIONS["AIPlay_Lass"] = {"source_symbol": "AIPlay_Lass", "before": "AIDecideResult AIPlay_Lass(uint8_t d, uint8_t e)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);", "after": "AIDecideResult AIPlay_Lass(uint8_t d, uint8_t e)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | 0u);", "case_ids": ["AIPlay_Lass-0"]}
 # <<< factory-mutation AIPlay_Lass
 # >>> factory-mutation AIPlay_MrFuji
 MUTATIONS["AIPlay_MrFuji"] = {"source_symbol": "AIPlay_MrFuji",
-    "before": "AIDecideResult AIPlay_MrFuji(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
-    "after": "AIDecideResult AIPlay_MrFuji(void)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
+    "before": "AIDecideResult AIPlay_MrFuji(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;",
+    "after": "AIDecideResult AIPlay_MrFuji(uint8_t d, uint8_t e)\n{\n\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);",
     "case_ids": ["AIPlay_MrFuji-0"]}
 # <<< factory-mutation AIPlay_MrFuji
 # >>> factory-mutation AIDecide_SuperPotion_Phase08
@@ -1683,8 +1683,8 @@ MUTATIONS["AIDecide_SuperPotion_Phase08"] = {"source_symbol": "AIDecide_SuperPot
 # >>> factory-mutation AIPlay_SuperEnergyRetrieval
 MUTATIONS["AIPlay_SuperEnergyRetrieval"] = {
     "source_symbol": "AIPlay_SuperEnergyRetrieval",
-    "before": "AIDecideResult AIPlay_SuperEnergyRetrieval(void)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);",
-    "after": "AIDecideResult AIPlay_SuperEnergyRetrieval(void)\n{\n\twCurrentAIFlags = wCurrentAIFlags;",
+    "before": "AIDecideResult AIPlay_SuperEnergyRetrieval(uint8_t d, uint8_t e)\n{\n\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_MODIFIED_HAND);",
+    "after": "AIDecideResult AIPlay_SuperEnergyRetrieval(uint8_t d, uint8_t e)\n{\n\twCurrentAIFlags = wCurrentAIFlags;",
     "case_ids": ["AIPlay_SuperEnergyRetrieval-0"]
 }
 # <<< factory-mutation AIPlay_SuperEnergyRetrieval

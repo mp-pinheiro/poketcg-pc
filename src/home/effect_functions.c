@@ -4033,22 +4033,27 @@ uint8_t HealingWind_InitialEffect(uint8_t f)
 
 /* >>> factory PickRandomBasicCardFromDeck */
 /* effect_functions.asm:8712-8750 */
-uint8_t PickRandomBasicCardFromDeck(void)
+PickRandomBasicCardResult PickRandomBasicCardFromDeck(void)
 {
+	/* de is CreateDeckCardList's: it exits past the list's terminator and
+	 * nothing after it (ShuffleCards pushes de, the card loads preserve it)
+	 * touches it. Callers store that de through PlayAttackAnimation. */
 	CardListResult list = CreateDeckCardList(0u, 0u);
 	if (list.f & 0x10u)
-		return 0xFFu;
-	(void)ShuffleCards(0u, wDuelTempList_ADDR);
+		return (PickRandomBasicCardResult){0xFFu, 0x90u, list.d, list.e};
+	/* duel.asm:422 leaves the list's card count in a: that is how many
+	 * cards ShuffleCards shuffles (a count of 0 shuffles nothing). */
+	(void)ShuffleCards(list.a, wDuelTempList_ADDR);
 	uint16_t hl = wDuelTempList_ADDR;
 	for (;;) {
 		uint8_t index = gb_read8(hl++);
 		hTempCardIndex_ff98 = index;
 		if (index == 0xFFu)
-			return 0xFFu;
+			return (PickRandomBasicCardResult){0xFFu, 0x90u, list.d, list.e};
 		LoadCardDataToBuffer2_FromDeckIndex(index);
 		if (wLoadedCard2Type >= TYPE_ENERGY || wLoadedCard2Stage != 0u)
 			continue;
-		return index;
+		return (PickRandomBasicCardResult){index, (uint8_t)(index == 0u ? 0x80u : 0u), list.d, list.e};
 	}
 }
 /* <<< factory PickRandomBasicCardFromDeck */
@@ -9644,11 +9649,14 @@ TossCoin_BankBResult TossCoin_BankB(uint16_t de, uint16_t hl)
 /* <<< factory TossCoin_BankB */
 
 /* >>> factory GustOfWind_SwitchEffect */
-void GustOfWind_SwitchEffect(void)
+void GustOfWind_SwitchEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
-	PlayTrainerEffectAnimation(ATK_ANIM_GUST_OF_WIND, 0u, 0u, 0u, 0u, 0u, 0u);
+	/* The asm never sets de before the animation: PlayAttackAnimation stores
+	 * the entry de into wDamageAnimAmount, so the leftover has to flow through. */
+	(void)a;
+	PlayTrainerEffectAnimation(ATK_ANIM_GUST_OF_WIND, f, b, c, d, e, hl);
 	SwapTurn();
-	uint8_t e = hTemp_ffa0;
+	e = hTemp_ffa0;
 	(void)SwapArenaWithBenchPokemon(e);
 	SwapTurn();
 	ClearDamageReductionSubstatus2();
@@ -10628,25 +10636,28 @@ void FullHeal_ClearStatusEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint
 /* <<< factory FullHeal_ClearStatusEffect */
 
 /* >>> factory ImakuniEffect */
-void ImakuniEffect(void)
+void ImakuniEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	/* Every path keeps the entry de (the card load and the power check push
+	 * and pop it) and PlayAttackAnimation stores it into wDamageAnimAmount. */
+	(void)a;
 	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	(void)LoadCardDataToBuffer1_FromDeckIndex(arena.a);
 	uint8_t card = wLoadedCard1ID;
 	if (card == CLEFAIRY_DOLL || card == MYSTERIOUS_FOSSIL) {
-		PlayTrainerEffectAnimation(ATK_ANIM_OWN_CONFUSION, 0u, 0u, 0u, 0u, 0u, 0u);
+		PlayTrainerEffectAnimation(ATK_ANIM_OWN_CONFUSION, f, b, c, d, e, hl);
 		(void)DrawWideTextBox_WaitForInput(ThereWasNoEffectText);
 		return;
 	}
 	if (card == SNORLAX) {
 		PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(PLAY_AREA_ARENA);
 		if ((incapable.f & 0x10u) == 0u) {
-			PlayTrainerEffectAnimation(ATK_ANIM_OWN_CONFUSION, 0u, 0u, 0u, 0u, 0u, 0u);
+			PlayTrainerEffectAnimation(ATK_ANIM_OWN_CONFUSION, f, b, c, d, e, hl);
 			(void)DrawWideTextBox_WaitForInput(ThereWasNoEffectText);
 			return;
 		}
 	}
-	PlayTrainerEffectAnimation(ATK_ANIM_OWN_CONFUSION, 0u, 0u, 0u, 0u, 0u, 0u);
+	PlayTrainerEffectAnimation(ATK_ANIM_OWN_CONFUSION, f, b, c, d, e, hl);
 	DuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
 	status.a = (uint8_t)((status.a & PSN_DBLPSN) | CONFUSED);
 	gb_write8(status.hl, status.a);
@@ -11243,8 +11254,11 @@ FriendshipSong_AddToBench50PercentEffectResult FriendshipSong_AddToBench50Percen
 		WaitResult none = DrawWideTextBox_WaitForInput(NoneCameText);
 		return (FriendshipSong_AddToBench50PercentEffectResult){none.d, none.e};
 	}
-	uint8_t picked = PickRandomBasicCardFromDeck();
-	if (picked == 0xFFu) {
+	PickRandomBasicCardResult pick = PickRandomBasicCardFromDeck();
+	uint8_t picked = pick.a;
+	d = pick.d;
+	e = pick.e;
+	if ((pick.f & 0x10u) != 0u) {
 		PlayAttackAnimationOverAttackingPokemon(ATK_ANIM_FRIENDSHIP_SONG, 0u, b, c, d, e, hl);
 		WaitResult none = DrawWideTextBox_WaitForInput(NoneCameText);
 		ShuffleCardsInDeckResult shuffled = ShuffleCardsInDeck(none.b, none.c,
@@ -11253,7 +11267,10 @@ FriendshipSong_AddToBench50PercentEffectResult FriendshipSong_AddToBench50Percen
 	}
 	SearchCardInDeckAndAddToHand(picked);
 	AddCardToHand(picked);
-	(void)PutHandPokemonCardInPlayArea(picked, 0u);
+	/* duel.asm:1003-1047: the slot the card went to stays in e, and the
+	 * animation stores that de into wDamageAnimAmount. */
+	PutHandPokemonResult put = PutHandPokemonCardInPlayArea(picked, 0u);
+	e = put.a;
 	PlayAttackAnimationOverAttackingPokemon(ATK_ANIM_FRIENDSHIP_SONG, 0u, b, c, d, e, hl);
 	(void)DisplayCardDetailScreen(hTempCardIndex_ff98, CameToTheBenchText);
 	ShuffleCardsInDeckResult shuffled = ShuffleCardsInDeck(b, c, (uint16_t)((uint16_t)d << 8 | e), hl);

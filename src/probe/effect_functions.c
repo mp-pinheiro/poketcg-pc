@@ -1591,7 +1591,7 @@ static void adapt_ThickSkinnedEffect(ProbeState *s) { s->f = ThickSkinnedEffect(
 static void adapt_HealingWind_InitialEffect(ProbeState *s) { s->f = HealingWind_InitialEffect(s->f); }
 /* <<< factory HealingWind_InitialEffect */
 /* >>> factory PickRandomBasicCardFromDeck */
-static void adapt_PickRandomBasicCardFromDeck(ProbeState *s) { s->a = PickRandomBasicCardFromDeck(); s->f = s->a == 0xFFu ? 0x90u : (s->a == 0u ? 0x80u : 0u); }
+static void adapt_PickRandomBasicCardFromDeck(ProbeState *s) { PickRandomBasicCardResult r = PickRandomBasicCardFromDeck(); s->a = r.a; s->f = r.f; s->d = r.d; s->e = r.e; }
 /* <<< factory PickRandomBasicCardFromDeck */
 
 /* >>> factory GustOfWind_BenchCheck */
@@ -4341,8 +4341,7 @@ static void adapt_TossCoin_BankB(ProbeState *s)
 /* >>> factory GustOfWind_SwitchEffect */
 static void adapt_GustOfWind_SwitchEffect(ProbeState *s)
 {
-	(void)s;
-	GustOfWind_SwitchEffect();
+	GustOfWind_SwitchEffect(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
 }
 /* <<< factory GustOfWind_SwitchEffect */
 
@@ -4904,8 +4903,7 @@ static void adapt_FullHeal_ClearStatusEffect(ProbeState *s)
 /* >>> factory ImakuniEffect */
 static void adapt_ImakuniEffect(ProbeState *s)
 {
-	(void)s;
-	ImakuniEffect();
+	ImakuniEffect(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
 }
 /* <<< factory ImakuniEffect */
 

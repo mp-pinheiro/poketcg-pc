@@ -2553,6 +2553,10 @@ CONTRACT["ShuffleDeckAndDrawSevenCards"] = {"compare": ("a", "f"), "preserve": (
 CASES["ShuffleDeckAndDrawSevenCards"] = [
     {"wram": {0xFF97: b"\xC2", 0xCC09: b"\x80"}},
     dict(POISON, wram={0xFF97: b"\xC2", 0xCC09: b"\x80"}),
+    # ai-duel-23 23741: a practice-type draw (no shuffle) whose only Pokemon-like card is a
+    # Mysterious Fossil is redrawn - core.asm:2032 skips the Fossil/Doll exception.
+    {"wram": {0xFF97: b"\xC2", 0xCC09: b"\x80", 0xC400: b"\xCC\x02\x02\x03\x03\x02\x03"}, "read": {0xC242: 8}},
+    {"wram": {0xFF97: b"\xC2", 0xCC09: b"\x80", 0xC400: b"\xCB\x02\x02\x03\x08\x02\x03"}, "read": {0xC242: 8}},
 ]
 # <<< factory ShuffleDeckAndDrawSevenCards
 
@@ -4342,7 +4346,7 @@ CASES["Func_5542"] = [
 # <<< factory Func_5542
 
 # >>> factory CheckIfCanDamageDefendingPokemon
-CONTRACT["CheckIfCanDamageDefendingPokemon"] = {"compare": ("a", "f", "d"), "preserve": ()}
+CONTRACT["CheckIfCanDamageDefendingPokemon"] = {"compare": ("a", "f", "d", "e"), "preserve": ()}
 CASES["CheckIfCanDamageDefendingPokemon"] = [
     {"a": 0x00, "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00"},
      "sram": {0: {}}, "instruction_budget": 4000000, "cycle_budget": 20000000},
@@ -4613,7 +4617,7 @@ CASES["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP"] = [
 # <<< factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP
 
 # >>> factory CheckIfAnyAttackKnocksOutDefendingCard
-CONTRACT["CheckIfAnyAttackKnocksOutDefendingCard"] = {"compare": ("a", "f", "d"), "preserve": ()}
+CONTRACT["CheckIfAnyAttackKnocksOutDefendingCard"] = {"compare": ("a", "f", "d", "e"), "preserve": ()}
 CASES["CheckIfAnyAttackKnocksOutDefendingCard"] = [
     _kaod_case(),
     _kaod_case(location=b"\x01", extra={_kaod_wPlayerBench: b"\x00"}),
@@ -6609,7 +6613,7 @@ MUTATIONS["PracticeDuelVerify_Turn6"] = {"source_symbol": "PracticeDuelVerify_Tu
 MUTATIONS["PracticeDuelVerify_Turn4"] = {"source_symbol": "PracticeDuelVerify_Turn4", "before": "if (gb_read8(wPlayerNumberOfPokemonInPlayArea_ADDR) != 3u)", "after": "if (gb_read8(wPlayerNumberOfPokemonInPlayArea_ADDR) == 3u)", "case_ids": ["PracticeDuelVerify_Turn4-0", "PracticeDuelVerify_Turn4-1", "PracticeDuelVerify_Turn4-2", "PracticeDuelVerify_Turn4-3", "PracticeDuelVerify_Turn4-4"]}
 # <<< factory-mutation PracticeDuelVerify_Turn4
 # >>> factory-mutation ShuffleDeckAndDrawSevenCards
-MUTATIONS["ShuffleDeckAndDrawSevenCards"] = {"source_symbol": "ShuffleDeckAndDrawSevenCards", "before": "if (basic.a != 0u)", "after": "if (basic.a == 0u)", "case_ids": ["ShuffleDeckAndDrawSevenCards-0", "ShuffleDeckAndDrawSevenCards-1"]}
+MUTATIONS["ShuffleDeckAndDrawSevenCards"] = {"source_symbol": "ShuffleDeckAndDrawSevenCards", "before": "if (wLoadedCard1Type < TYPE_ENERGY && wLoadedCard1Stage == 0u)", "after": "if (wLoadedCard1ID == 0xCCu || (wLoadedCard1Type < TYPE_ENERGY && wLoadedCard1Stage == 0u))", "case_ids": ["ShuffleDeckAndDrawSevenCards-2"]}
 # <<< factory-mutation ShuffleDeckAndDrawSevenCards
 # >>> factory-mutation WriteTwoDigitNumberInTxSymbol_PadSpace
 MUTATIONS["WriteTwoDigitNumberInTxSymbol_PadSpace"] = {
@@ -7198,7 +7202,7 @@ MUTATIONS["DisplayCardList"] = {"source_symbol": "DisplayCardList", "before": "\
 MUTATIONS["Func_5542"] = {"source_symbol": "Func_5542", "before": "Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl)\n{\n\tCardListResult discard = CreateDiscardPileCardList(c);", "after": "Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl)\n{\n\tCardListResult discard = CreateDiscardPileCardList((uint8_t)(c + 1u));", "case_ids": ["Func_5542-0", "Func_5542-1"]}
 # <<< factory-mutation Func_5542
 # >>> factory-mutation CheckIfCanDamageDefendingPokemon
-MUTATIONS["CheckIfCanDamageDefendingPokemon"] = {"source_symbol": "CheckIfCanDamageDefendingPokemon", "before": "\tf = (a == 0u) ? 0x80u : 0x00u;\n\treturn (CheckIfCanDamageDefendingPokemonResult){a, f, d};", "after": "\tf = (a == 0u) ? 0x00u : 0x80u;\n\treturn (CheckIfCanDamageDefendingPokemonResult){a, f, d};", "case_ids": ["CheckIfCanDamageDefendingPokemon-0"]}
+MUTATIONS["CheckIfCanDamageDefendingPokemon"] = {'source_symbol': 'CheckIfCanDamageDefendingPokemon', 'before': '\tf = (a == 0u) ? 0x80u : 0x00u;\n\treturn (CheckIfCanDamageDefendingPokemonResult){a, f, d, e};', 'after': '\tf = (a == 0u) ? 0x00u : 0x80u;\n\treturn (CheckIfCanDamageDefendingPokemonResult){a, f, d, e};', 'case_ids': ['CheckIfCanDamageDefendingPokemon-0']}
 # <<< factory-mutation CheckIfCanDamageDefendingPokemon
 # >>> factory-mutation OpenDiscardPileScreen
 MUTATIONS["OpenDiscardPileScreen"] = {"source_symbol": "OpenDiscardPileScreen", "before": "\tSetDiscardPileScreenTexts();\n\twNoItemSelectionMenuKeys = 0x09u;", "after": "\tSetDiscardPileScreenTexts();\n\twNoItemSelectionMenuKeys = 0x00u;", "case_ids": ["OpenDiscardPileScreen-1"]}
@@ -7268,7 +7272,7 @@ MUTATIONS["CheckIfDefendingPokemonCanKnockOut"] = {
 MUTATIONS["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP"] = {"source_symbol": "CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP", "before": "\tif (difference == 0u)\n\t\treturn (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, 0x90u, d};\n\tif ((flags & 0x10u) != 0u)", "after": "\tif (difference == 0u)\n\t\treturn (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, 0x80u, d};\n\tif ((flags & 0x10u) != 0u)", "case_ids": ["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP-0", "CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP-3"]}
 # <<< factory-mutation CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP
 # >>> factory-mutation CheckIfAnyAttackKnocksOutDefendingCard
-MUTATIONS["CheckIfAnyAttackKnocksOutDefendingCard"] = {"source_symbol": "CheckIfAnyAttackKnocksOutDefendingCard", "before": "\tuint8_t d = EstimateDamage_VersusDefendingCard(FIRST_ATTACK_OR_PKMN_POWER).d;\n\tDuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tuint8_t damage = wDamage;", "after": "\tuint8_t d = EstimateDamage_VersusDefendingCard(FIRST_ATTACK_OR_PKMN_POWER).d;\n\tDuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tuint8_t damage = (uint8_t)(wDamage + 1u);", "case_ids": ["CheckIfAnyAttackKnocksOutDefendingCard-0", "CheckIfAnyAttackKnocksOutDefendingCard-1", "CheckIfAnyAttackKnocksOutDefendingCard-2", "CheckIfAnyAttackKnocksOutDefendingCard-3"]}
+MUTATIONS["CheckIfAnyAttackKnocksOutDefendingCard"] = {'source_symbol': 'CheckIfAnyAttackKnocksOutDefendingCard', 'before': '\tDuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tuint8_t damage = wDamage;\n\tuint8_t difference = (uint8_t)(hp.a - damage);\n\t/* `sub [hl]` always sets N', 'after': '\tDuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tuint8_t damage = (uint8_t)(wDamage + 1u);\n\tuint8_t difference = (uint8_t)(hp.a - damage);\n\t/* `sub [hl]` always sets N', 'case_ids': ['CheckIfAnyAttackKnocksOutDefendingCard-0', 'CheckIfAnyAttackKnocksOutDefendingCard-1', 'CheckIfAnyAttackKnocksOutDefendingCard-2', 'CheckIfAnyAttackKnocksOutDefendingCard-3']}
 # <<< factory-mutation CheckIfAnyAttackKnocksOutDefendingCard
 # >>> factory-mutation CheckIfActiveCardCanKnockOut
 MUTATIONS["CheckIfActiveCardCanKnockOut"] = {

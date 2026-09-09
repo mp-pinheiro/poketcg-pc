@@ -1,9 +1,9 @@
 {
   "fn": "HandleAICurse",
   "case": "tests/cases/pkmn_powers.py",
-  "index": 0,
+  "index": 1,
   "status": "RED",
-  "baseline": "{\"fn\": \"HandleAICurse\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"71\", \"49903\": \"01\", \"50176\": \"01\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"HandleAICurse\", \"mismatches\": {\"a\": [1, 2]}}\n",
-  "restored": "{\"fn\": \"HandleAICurse\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"71\", \"49903\": \"01\", \"50176\": \"01\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"HandleAICurse\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"0001ff\", \"49864\": \"1e28\", \"49903\": \"02\", \"50107\": \"00ff\", \"50159\": \"01\", \"50176\": \"0808\", \"50304\": \"08\", \"65431\": \"c3\", \"65440\": \"000009\", \"65442\": \"09\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleAICurse\", \"mismatches\": {\"a\": [1, 2], \"bus\": {\"address\": 65442, \"reference\": \"08c3000009\", \"native\": \"08c3000000\", \"reference_size\": 16, \"native_size\": 16, \"spans\": [[49851, 3], [49864, 2], [49903, 1], [50107, 2], [50159, 1], [50176, 2], [50304, 1], [65431, 1], [65440, 3]]}}}\n",
+  "restored": "{\"fn\": \"HandleAICurse\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"0001ff\", \"49864\": \"1e28\", \"49903\": \"02\", \"50107\": \"00ff\", \"50159\": \"01\", \"50176\": \"0808\", \"50304\": \"08\", \"65431\": \"c3\", \"65440\": \"000009\", \"65442\": \"09\"}}, \"status\": \"PASS\"}\n"
 }

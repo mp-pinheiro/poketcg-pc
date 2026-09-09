@@ -64,6 +64,21 @@ CASES["HandleAICurse"] = [
         "expect_regs": {"a": 0x01, "f": 0x00},
         "expect": {0xFFA0: b"\xCC", 0xFF97: b"\xC3"},
     },
+    # ai-duel-2b 40109: one damaged card in the player's play area is not enough for Curse
+    # (pkmn_powers.asm:887 wants two); hTempRetreatCostCards keeps the retreat's card index.
+    {
+        "c": 0x00,
+        "wram": {0xC2EF: b"\x02", 0xC2BB: b"\x00\x01\xFF", 0xC2C8: b"\x1E\x28", 0xC400: b"\x08\x08", 0xC3EF: b"\x01", 0xC3BB: b"\x00\xFF", 0xC480: b"\x08"},
+        "hram": {0xFF97: b"\xC3", 0xFFA2: b"\x09"},
+        "read": {0xFFA0: 3},
+    },
+    # Two damaged player cards: the lowest-HP one is stored before the second scan.
+    {
+        "c": 0x00,
+        "wram": {0xC2EF: b"\x02", 0xC2BB: b"\x00\x01\xFF", 0xC2C8: b"\x1E\x14", 0xC400: b"\x08\x08", 0xC3EF: b"\x01", 0xC3BB: b"\x00\xFF", 0xC480: b"\x08", 0xC3C8: b"\x28"},
+        "hram": {0xFF97: b"\xC3", 0xFFA2: b"\x09"},
+        "read": {0xFFA0: 3},
+    },
 ]
 # <<< factory HandleAICurse
 
@@ -190,9 +205,9 @@ MUTATIONS["HandleAIStrangeBehavior"] = {"source_symbol": "HandleAIStrangeBehavio
 # >>> factory-mutation HandleAICurse
 MUTATIONS["HandleAICurse"] = {
     "source_symbol": "HandleAICurse",
-    "before": "return (HandleAICurseResult){1u, 0x00u};",
-    "after": "return (HandleAICurseResult){2u, 0x00u};",
-    "case_ids": ["HandleAICurse-0"],
+    "before": "if (found <= 1u) {",
+    "after": "if (found == 0u) {",
+    "case_ids": ["HandleAICurse-1"],
 }
 # <<< factory-mutation HandleAICurse
 # >>> factory-mutation HandleAIDamageSwap

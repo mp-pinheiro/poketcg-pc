@@ -169,36 +169,36 @@ AIProcessHandTrainerCardsResult _AIProcessHandTrainerCards(uint8_t a);
 /* <<< factory _AIProcessHandTrainerCards */
 /* >>> factory AIPlay_Pokeball */
 typedef struct { uint8_t f; } AIPlayPokeballResult;
-AIPlayPokeballResult AIPlay_Pokeball(void);
+AIPlayPokeballResult AIPlay_Pokeball(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_Pokeball */
 /* >>> factory AIPlay_Recycle */
-AIDecideResult AIPlay_Recycle(void);
+AIDecideResult AIPlay_Recycle(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_Recycle */
 
 /* >>> factory AIPlay_Bill */
 /* trainer_cards.asm:1420-1425. Stage-only twin: wAITrainerCardToPlay goes to
  * hTempCardIndex_ff9f, then the OPPACTION_EXECUTE_TRAINER_EFFECTS dispatch;
  * exit f is AIMakeDecision's carry. */
-AIDecideResult AIPlay_Bill(void);
+AIDecideResult AIPlay_Bill(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_Bill */
 /* >>> factory AIPlay_Defender */
 /* trainer_cards.asm:594-601. Stage-only twin of AIPlay_Bill with the extra
  * PLAY_AREA_ARENA byte: wAITrainerCardToPlay goes to hTempCardIndex_ff9f and
  * 0 to hTemp_ffa0, then the OPPACTION_EXECUTE_TRAINER_EFFECTS dispatch; exit f
  * is AIMakeDecision's carry. */
-AIDecideResult AIPlay_Defender(void);
+AIDecideResult AIPlay_Defender(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_Defender */
 /* >>> factory AIPlay_Imakuni */
 /* trainer_cards.asm:4520-4525. Stage-only twin: wAITrainerCardToPlay goes to
  * hTempCardIndex_ff9f, then the OPPACTION_EXECUTE_TRAINER_EFFECTS dispatch;
  * exit f is AIMakeDecision's carry. */
-AIDecideResult AIPlay_Imakuni(void);
+AIDecideResult AIPlay_Imakuni(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_Imakuni */
 /* >>> factory AIPlay_FullHeal */
 /* trainer_cards.asm:3771-3776. Stage-only twin: wAITrainerCardToPlay goes to
  * hTempCardIndex_ff9f, then the OPPACTION_EXECUTE_TRAINER_EFFECTS dispatch;
  * exit f is AIMakeDecision's carry. */
-AIDecideResult AIPlay_FullHeal(void);
+AIDecideResult AIPlay_FullHeal(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_FullHeal */
 /* >>> factory AIDecide_ProfessorOak */
 AIDecideParameterResult AIDecide_ProfessorOak(uint8_t d);
@@ -207,26 +207,27 @@ AIDecideParameterResult AIDecide_ProfessorOak(uint8_t d);
 /* trainer_cards.asm:4776-4781. Stage-only twin: wAITrainerCardToPlay goes to
  * hTempCardIndex_ff9f, then the OPPACTION_EXECUTE_TRAINER_EFFECTS dispatch;
  * exit f is AIMakeDecision's carry. */
-AIDecideResult AIPlay_ClefairyDollOrMysteriousFossil(void);
+AIDecideResult AIPlay_ClefairyDollOrMysteriousFossil(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_ClefairyDollOrMysteriousFossil */
 /* >>> factory AIPlay_ImposterProfessorOak */
 /* trainer_cards.asm:3182-3187. Stage-only twin: wAITrainerCardToPlay goes to
  * hTempCardIndex_ff9f, then the OPPACTION_EXECUTE_TRAINER_EFFECTS dispatch;
  * exit f is AIMakeDecision's carry. */
-AIDecideResult AIPlay_ImposterProfessorOak(void);
+AIDecideResult AIPlay_ImposterProfessorOak(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_ImposterProfessorOak */
 /* >>> factory AIPlay_PokemonCenter */
 /* trainer_cards.asm:3083-3088. Stage-only twin: wAITrainerCardToPlay goes to
  * hTempCardIndex_ff9f, then the OPPACTION_EXECUTE_TRAINER_EFFECTS dispatch;
  * exit f is AIMakeDecision's carry. */
-AIDecideResult AIPlay_PokemonCenter(void);
+AIDecideResult AIPlay_PokemonCenter(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_PokemonCenter */
 /* >>> factory AIDecide_PlusPower_Phase14 */
 AIDecideParameterResult AIDecide_PlusPower_Phase14(uint8_t d);
 /* <<< factory AIDecide_PlusPower_Phase14 */
 /* >>> factory AIDecide_GustOfWind */
 /* >>> factory AIDecide_GustOfWind */
-AIDecideParameterResult AIDecide_GustOfWind(uint8_t d);
+typedef struct { uint8_t a; uint8_t f; uint8_t d; uint8_t e; } AIDecideGustOfWindResult;
+AIDecideGustOfWindResult AIDecide_GustOfWind(uint8_t d, uint8_t e);
 /* <<< factory AIDecide_GustOfWind */
 /* >>> factory AIDecide_Defender_Phase13 */
 AIDecideParameterResult AIDecide_Defender_Phase13(uint8_t d);
@@ -262,39 +263,39 @@ typedef struct { uint8_t a; uint8_t f; uint8_t d; } AIDecide_PlusPower_Phase13Re
 AIDecide_PlusPower_Phase13Result AIDecide_PlusPower_Phase13(uint8_t d);
 /* <<< factory AIDecide_PlusPower_Phase13 */
 /* >>> factory AIPlay_PlusPower */
-AIDecideResult AIPlay_PlusPower(void);
+AIDecideResult AIPlay_PlusPower(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_PlusPower */
 /* >>> factory AIPlay_Potion */
 /* >>> factory AIPlay_Potion */
-AIDecideResult AIPlay_Potion(void);
+AIDecideResult AIPlay_Potion(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_Potion */
 /* >>> factory AIPlay_GustOfWind */
-AIDecideResult AIPlay_GustOfWind(void);
+AIDecideResult AIPlay_GustOfWind(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_GustOfWind */
 /* >>> factory AIPlay_Switch */
-AIDecideResult AIPlay_Switch(void);
+AIDecideResult AIPlay_Switch(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_Switch */
 /* >>> factory AIPlay_Maintenance */
 /* >>> factory AIPlay_Maintenance */
-AIDecideResult AIPlay_Maintenance(void);
+AIDecideResult AIPlay_Maintenance(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_Maintenance */
 /* >>> factory AIPlay_ComputerSearch */
-AIDecideResult AIPlay_ComputerSearch(void);
+AIDecideResult AIPlay_ComputerSearch(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_ComputerSearch */
 /* >>> factory AIPlay_ItemFinder */
-AIDecideResult AIPlay_ItemFinder(void);
+AIDecideResult AIPlay_ItemFinder(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_ItemFinder */
 /* >>> factory AIPlay_Pokedex */
-AIDecideResult AIPlay_Pokedex(void);
+AIDecideResult AIPlay_Pokedex(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_Pokedex */
 /* >>> factory AIPlay_Gambler */
-AIDecideResult AIPlay_Gambler(void);
+AIDecideResult AIPlay_Gambler(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_Gambler */
 /* >>> factory AIPlay_EnergyRetrieval */
-AIDecideResult AIPlay_EnergyRetrieval(void);
+AIDecideResult AIPlay_EnergyRetrieval(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_EnergyRetrieval */
 /* >>> factory AIPlay_SuperEnergyRemoval */
-AIDecideResult AIPlay_SuperEnergyRemoval(void);
+AIDecideResult AIPlay_SuperEnergyRemoval(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_SuperEnergyRemoval */
 /* >>> factory AIDecide_SuperPotion_Phase11 */
 typedef struct { uint8_t a; uint8_t f; uint8_t d; } AIDecideSuperPotionPhase11Result;
@@ -302,51 +303,51 @@ AIDecideSuperPotionPhase11Result AIDecide_SuperPotion_Phase11(uint8_t d);
 /* <<< factory AIDecide_SuperPotion_Phase11 */
 /* >>> factory AIPlay_EnergySearch */
 /* trainer_cards.asm:3218-3233 */
-AIDecideResult AIPlay_EnergySearch(void);
+AIDecideResult AIPlay_EnergySearch(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_EnergySearch */
 /* >>> factory AIPlay_ScoopUp */
-AIDecideResult AIPlay_ScoopUp(void);
+AIDecideResult AIPlay_ScoopUp(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_ScoopUp */
 /* >>> factory AIPlay_PokemonBreeder */
-AIDecideResult AIPlay_PokemonBreeder(void);
+AIDecideResult AIPlay_PokemonBreeder(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_PokemonBreeder */
 /* >>> factory AIPlay_PokemonFlute */
-AIDecideResult AIPlay_PokemonFlute(void);
+AIDecideResult AIPlay_PokemonFlute(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_PokemonFlute */
 /* >>> factory AIPlay_ProfessorOak */
-AIDecideResult AIPlay_ProfessorOak(void);
+AIDecideResult AIPlay_ProfessorOak(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_ProfessorOak */
 /* >>> factory AIPlay_PokemonTrader */
-AIMakeDecisionResult AIPlay_PokemonTrader(void);
+AIMakeDecisionResult AIPlay_PokemonTrader(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_PokemonTrader */
 /* >>> factory AIPlay_EnergyRemoval */
-AIDecideResult AIPlay_EnergyRemoval(void);
+AIDecideResult AIPlay_EnergyRemoval(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_EnergyRemoval */
 /* >>> factory AIDecide_Potion_Phase10 */
 typedef struct { uint8_t a; uint8_t f; uint8_t d; } AIDecidePotionPhase10Result;
 AIDecidePotionPhase10Result AIDecide_Potion_Phase10(uint8_t d);
 /* <<< factory AIDecide_Potion_Phase10 */
 /* >>> factory AIPlay_SuperPotion */
-AIDecideResult AIPlay_SuperPotion(void);
+AIDecideResult AIPlay_SuperPotion(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_SuperPotion */
 /* >>> factory AIDecide_Potion_Phase07 */
 typedef struct { uint8_t a; uint8_t f; uint8_t d; } AIDecidePotionPhase07Result;
 AIDecidePotionPhase07Result AIDecide_Potion_Phase07(uint8_t d);
 /* <<< factory AIDecide_Potion_Phase07 */
 /* >>> factory AIPlay_Revive */
-AIDecideResult AIPlay_Revive(void);
+AIDecideResult AIPlay_Revive(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_Revive */
 /* >>> factory AIPlay_Lass */
-AIDecideResult AIPlay_Lass(void);
+AIDecideResult AIPlay_Lass(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_Lass */
 /* >>> factory AIPlay_MrFuji */
-AIDecideResult AIPlay_MrFuji(void);
+AIDecideResult AIPlay_MrFuji(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_MrFuji */
 /* >>> factory AIDecide_SuperPotion_Phase08 */
 typedef struct { uint8_t a; uint8_t f; uint8_t d; } AIDecideSuperPotionPhase08Result;
 AIDecideSuperPotionPhase08Result AIDecide_SuperPotion_Phase08(uint8_t d);
 /* <<< factory AIDecide_SuperPotion_Phase08 */
 /* >>> factory AIPlay_SuperEnergyRetrieval */
-AIDecideResult AIPlay_SuperEnergyRetrieval(void);
+AIDecideResult AIPlay_SuperEnergyRetrieval(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_SuperEnergyRetrieval */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

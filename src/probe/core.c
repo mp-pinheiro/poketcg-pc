@@ -2411,6 +2411,7 @@ static void adapt_CheckIfCanDamageDefendingPokemon(ProbeState *s)
 	s->a = r.a;
 	s->f = r.f;
 	s->d = r.d;
+	s->e = r.e;
 }
 /* <<< factory CheckIfCanDamageDefendingPokemon */
 
@@ -2577,6 +2578,7 @@ static void adapt_CheckIfAnyAttackKnocksOutDefendingCard(ProbeState *s)
 	s->a = result.a;
 	s->f = result.f;
 	s->d = result.d;
+	s->e = result.e;
 }
 /* <<< factory CheckIfAnyAttackKnocksOutDefendingCard */
 

@@ -693,6 +693,14 @@ def begin_use_attack_fixture(vram: bool = True, bank: int | None = None, **chang
     return BEGIN_USE_ATTACK.case(vram=vram, bank=bank, **changes)
 
 
+AI_GUST_OF_WIND = Fixture("ai-duel-19-gust-of-wind-entry")
+AI_GUST_OF_WIND_REGS = AI_GUST_OF_WIND.regs
+
+
+def ai_gust_of_wind_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_GUST_OF_WIND.case(vram=vram, bank=bank, **changes)
+
+
 DOME_RONALD = Fixture("ronald-3-dome-ronald-entry")
 DOME_RONALD_REGS = DOME_RONALD.regs
 

@@ -4325,8 +4325,10 @@ ShuffleDeckAndDrawSevenCardsResult ShuffleDeckAndDrawSevenCards(void)
 	for (uint8_t i = 0; i < 7u; i++) {
 		uint8_t card = gb_read8(cursor++);
 		(void)LoadCardDataToBuffer1_FromDeckIndex(card);
-		IsLoadedCard1BasicPokemonResult basic = IsLoadedCard1BasicPokemon();
-		if (basic.a != 0u)
+		/* core.asm:2032 enters IsLoadedCard1BasicPokemon at
+		 * .skip_mysterious_fossil_clefairy_doll: an opening hand whose only
+		 * "Pokemon" is a Mysterious Fossil or Clefairy Doll is redrawn. */
+		if (wLoadedCard1Type < TYPE_ENERGY && wLoadedCard1Stage == 0u)
 			any = 1u;
 	}
 	return any != 0u ? (ShuffleDeckAndDrawSevenCardsResult){1u, 0x00u}
@@ -8017,7 +8019,7 @@ CheckIfCanDamageDefendingPokemonResult CheckIfCanDamageDefendingPokemon(uint8_t 
 		hl = estimate.hl;
 		a = wDamage;
 		if (a != 0u)
-			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u, d};
+			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u, d, e};
 		f = 0x80u; /* `or a` on a zero damage byte */
 	}
 
@@ -8028,16 +8030,19 @@ CheckIfCanDamageDefendingPokemonResult CheckIfCanDamageDefendingPokemon(uint8_t 
 	a = second.a;
 	f = second.f;
 	d = second.d;
+	e = second.e;
 	if ((f & 0x10u) == 0u) {
-		d = EstimateDamage_VersusDefendingCard(SECOND_ATTACK).d;
+		DamageCalculationResult estimate = EstimateDamage_VersusDefendingCard(SECOND_ATTACK);
+		d = estimate.d;
+		e = estimate.e;
 		a = wDamage;
 		if (a != 0u)
-			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u, d};
+			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u, d, e};
 	}
 
 	/* .no_carry */
 	f = (a == 0u) ? 0x80u : 0x00u;
-	return (CheckIfCanDamageDefendingPokemonResult){a, f, d};
+	return (CheckIfCanDamageDefendingPokemonResult){a, f, d, e};
 }
 /* <<< factory CheckIfCanDamageDefendingPokemon */
 
@@ -8574,7 +8579,10 @@ CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult CheckIfAnyDefendingPok
 /* >>> factory CheckIfAnyAttackKnocksOutDefendingCard */
 CheckIfAnyAttackKnocksOutDefendingCardResult CheckIfAnyAttackKnocksOutDefendingCard(void)
 {
-	uint8_t d = EstimateDamage_VersusDefendingCard(FIRST_ATTACK_OR_PKMN_POWER).d;
+	/* de is whatever the last damage estimate left; nothing after it touches e. */
+	DamageCalculationResult estimate = EstimateDamage_VersusDefendingCard(FIRST_ATTACK_OR_PKMN_POWER);
+	uint8_t d = estimate.d;
+	uint8_t e = estimate.e;
 	DuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
 	uint8_t damage = wDamage;
 	uint8_t difference = (uint8_t)(hp.a - damage);
@@ -8588,13 +8596,15 @@ CheckIfAnyAttackKnocksOutDefendingCardResult CheckIfAnyAttackKnocksOutDefendingC
 	   `ret nz` / `scf` tail can be tested in either order.  `scf` clears N and H
 	   but leaves Z, so the exact-KO exit is Z|C = $90. */
 	if (difference == 0u)
-		return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, 0x90u, d};
+		return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, 0x90u, d, e};
 	if ((flags & 0x10u) != 0u)
-		return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, flags, d};
+		return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, flags, d, e};
 
 	/* `ld a, SECOND_ATTACK` falls into .CheckAttack rather than calling it, so
 	   this second pass returns straight to the routine's own caller. */
-	d = EstimateDamage_VersusDefendingCard(SECOND_ATTACK).d;
+	estimate = EstimateDamage_VersusDefendingCard(SECOND_ATTACK);
+	d = estimate.d;
+	e = estimate.e;
 	hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
 	damage = wDamage;
 	difference = (uint8_t)(hp.a - damage);
@@ -8604,8 +8614,8 @@ CheckIfAnyAttackKnocksOutDefendingCardResult CheckIfAnyAttackKnocksOutDefendingC
 	if (hp.a < damage)
 		flags = (uint8_t)(flags | 0x10u);
 	if (difference == 0u)
-		return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, 0x90u, d};
-	return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, flags, d};
+		return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, 0x90u, d, e};
+	return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, flags, d, e};
 }
 /* <<< factory CheckIfAnyAttackKnocksOutDefendingCard */
 

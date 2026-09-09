@@ -313,7 +313,11 @@ HandleAICurseResult HandleAICurse(uint8_t c)
 		e++;
 	} while (e != d);
 
-	if (found == 0u) {
+	/* pkmn_powers.asm:887-889: `ld a, 1 / cp b / jr nc, .failed` - Curse
+	 * needs two damaged cards, one to take the counter from and one to
+	 * give it to; a single damaged card fails before hTempRetreatCostCards
+	 * is written. */
+	if (found <= 1u) {
 		SwapTurn();
 		return (HandleAICurseResult){1u, 0x00u};
 	}
@@ -589,10 +593,13 @@ HandleAICowardiceResult HandleAICowardice(void)
 				if (c != PLAY_AREA_ARENA) {
 					effect_param = 0xffu;
 				} else {
+					/* pkmn_powers.asm:1015-1029: `push af` keeps the decide
+					 * routine's a, the bench card to switch to, and that is
+					 * the effect parameter the power receives. */
 					AIDecideBenchPokemonToSwitchToResult retreat = AIDecideBenchPokemonToSwitchTo(0u);
 					if (retreat.f & 0x10u)
 						continue;
-					effect_param = 0u;
+					effect_param = retreat.a;
 				}
 				hTempCardIndex_ff9f = wce08;
 				(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
