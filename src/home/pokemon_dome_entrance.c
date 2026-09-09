@@ -42,7 +42,7 @@ void PokemonDomeEntranceCloseTextBox(void)
 }
 /* <<< factory PokemonDomeEntranceCloseTextBox */
 
-/* >>> factory Script_f631_ows_f63c */
+/* >>> factory Script_f631.ows_f63c */
 /* pokemon_dome_entrance.asm Script_f631.ows_f63c, up to its `start_script`:
  * the medal count refreshed by TryGiveMedalPCPacks goes to wTxRam3 and, plus
  * one, to wTxRam3_b as 16-bit numbers for the text that follows. `xor a`
@@ -57,4 +57,4 @@ ScriptF631OwsF63cResult Script_f631_ows_f63c(uint8_t b, uint8_t c, uint8_t d, ui
 	gb_write8((uint16_t)(wTxRam3_b_ADDR + 1u), 0u);
 	return (ScriptF631OwsF63cResult){0u, 0x80u, packs.b, packs.c, packs.d, packs.e, packs.hl};
 }
-/* <<< factory Script_f631_ows_f63c */
+/* <<< factory Script_f631.ows_f63c */
