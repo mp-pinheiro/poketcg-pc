@@ -821,20 +821,22 @@ uint8_t TranslateColorToWR(uint8_t a)
 	return rom_ptr(0u, 0x1A1Au)[a];
 }
 
-/* duel.asm:1290-1315. Entry hl must already hold the card-locations page; the
- * routine only walks l from 0 to 60. `ld a, c / pop bc` leaves a = the count and
- * restores bc, so the only other exit is hl = page + 60. */
+/* duel.asm:1290-1315. `ld l, DUELVARS_CARD_LOCATIONS` replaces the caller's low
+ * byte, so only h selects the duelist and the walk always starts at the page's
+ * card-location block. `ld a, c / pop bc` leaves a = the count and restores bc,
+ * so the only other exit is page + 60. */
 CardLocationCountResult CountCardIDInLocation(uint8_t b, uint8_t e, uint16_t hl)
 {
+	uint16_t base = (uint16_t)((hl & 0xFF00u) | DUELVARS_CARD_LOCATIONS);
 	uint8_t count = 0;
 	for (uint8_t l = 0; l < DECK_SIZE; l++) {
-		if (gb_read8((uint16_t)(hl + l)) != b)
+		if (gb_read8((uint16_t)(base + l)) != b)
 			continue;
 		if (_GetCardIDFromDeckIndex(l).a != e)
 			continue;
 		count++;
 	}
-	return (CardLocationCountResult){count, (uint16_t)(hl + DECK_SIZE)};
+	return (CardLocationCountResult){count, (uint16_t)(base + DECK_SIZE)};
 }
 
 /* duel.asm:2331-2357. PowersOf2 (00:11B7) is `db $01..$80`. The rra x3 folds a's

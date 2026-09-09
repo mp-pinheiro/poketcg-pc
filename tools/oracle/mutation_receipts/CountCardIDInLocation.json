@@ -1,0 +1,9 @@
+{
+  "fn": "CountCardIDInLocation",
+  "case": "tests/cases/duel.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CountCardIDInLocation\", \"registers\": {\"a\": 2, \"b\": 16, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49724, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"100010\", \"50176\": \"010201\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CountCardIDInLocation\", \"mismatches\": {\"a\": [2, 0], \"hl\": [49724, 49740]}}\n",
+  "restored": "{\"fn\": \"CountCardIDInLocation\", \"registers\": {\"a\": 2, \"b\": 16, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49724, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"100010\", \"50176\": \"010201\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

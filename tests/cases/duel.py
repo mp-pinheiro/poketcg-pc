@@ -332,6 +332,11 @@ CASES = {
         dict(POISON, b=0x10, e=0x01, hl=0xC200,
              wram={hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01\x01\x01",
                    0xC200: b"\x10\x10\x00"}),
+        # ai-duel-12 33860: entry hl carries a non-zero low byte, which `ld l` discards,
+        # so the walk starts at the page's card-location block either way.
+        {"b": 0x10, "e": 0x01, "hl": 0xC210,
+         "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01\x02\x01",
+                  0xC200: b"\x10\x00\x10"}},
     ],
     # Attack flag: a = group<<3 | bit. wLoadedAttackFlag1 = $CCB4.
     "CheckLoadedAttackFlag": [
@@ -2007,6 +2012,12 @@ CASES["Func_82b6"] = [
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
 MUTATIONS = {
+    "CountCardIDInLocation": {
+        "source_symbol": "CountCardIDInLocation",
+        "before": "\tuint16_t base = (uint16_t)((hl & 0xFF00u) | DUELVARS_CARD_LOCATIONS);",
+        "after": "\tuint16_t base = hl;",
+        "case_ids": ["CountCardIDInLocation-3"],
+    },
     "SortCardsInListByID": {
         "source_symbol": "SortCardsInListByID",
         "before": "\t\tgb_write8(hTempCardID_ff9b_ADDR, (uint8_t)lowest_id);\n\t\tgb_write8((uint16_t)(hTempCardID_ff9b_ADDR + 1u), (uint8_t)(lowest_id >> 8));\n\t\tuint16_t scan",
