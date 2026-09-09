@@ -3190,7 +3190,7 @@ DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon(uint8_t b, uint16_
 		de = defender.de;
 	}
 	if (b == 0u) {
-		NoDamageOrEffectResult no_damage = HandleNoDamageOrEffectSubstatus((uint8_t)de, hl);
+		NoDamageOrEffectResult no_damage = HandleNoDamageOrEffectSubstatus((uint8_t)(de >> 8), (uint8_t)de, hl);
 		hl = no_damage.hl;
 		de = HandleDamageReduction(de);
 	}
@@ -3686,8 +3686,8 @@ HandleAfterDamageEffectsResult PlayAttackAnimation_DealAttackDamage(uint8_t a, u
 	ResetAttackAnimationIsPlaying();
 	if ((wLoadedAttackCategory & RESIDUAL) == 0u) {
 		SwapTurn();
-		NoDamageOrEffectResult none = HandleNoDamageOrEffectSubstatus(e, hl);
-		f = none.f; e = none.e; hl = none.hl;
+		NoDamageOrEffectResult none = HandleNoDamageOrEffectSubstatus(d, e, hl);
+		f = none.f; d = none.d; e = none.e; hl = none.hl;
 		SwapTurn();
 	}
 	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
