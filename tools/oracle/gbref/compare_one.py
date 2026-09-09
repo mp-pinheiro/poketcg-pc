@@ -495,6 +495,8 @@ def main() -> int:
         for name in case["compare"]
         if reference.get(name) != native.get(name)
     }
+    if mode == "entry" and not native.get("stop_reached"):
+        mismatches["completion"] = (completion_spec["routine"], "return")
 
     def reference_spans(field: str, base: int, spans: tuple[tuple[int, int], ...]) -> str:
         data = bytes.fromhex(reference[field])

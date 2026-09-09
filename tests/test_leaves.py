@@ -183,6 +183,8 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
         raise RuntimeError(f"probe emitted non-JSON: {out.stdout!r} {out.stderr.strip()}")
     if "error" in result:
         raise RuntimeError(f"probe error: {result['error']}")
+    if "stop_routine" in req and not result.get("stop_reached"):
+        raise RuntimeError(f"port returned before entering {req['stop_routine']}")
     return result
 
 
