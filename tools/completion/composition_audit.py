@@ -207,6 +207,14 @@ NOT_A_CALL = frozenset(("if", "while", "for", "switch", "sizeof", "return",
 def audit_stubs(bodies: dict[str, tuple[str, str]],
                 sizes: dict[str, int],
                 asm_calls: dict[str, int]) -> list[dict[str, Any]]:
+    """One-statement bodies for routines the asm builds from many instructions.
+
+    A body whose one statement hands the whole routine to a helper in the same
+    file is not a stub: `ProcessText` is `return process_text_core(hl);`, and
+    the loop the asm describes lives in that helper (the two entry points
+    share it exactly as the asm shares `.char_loop`). Such a body is audited
+    through the helper it delegates to.
+    """
     rows = []
     for name, (filename, body) in sorted(bodies.items()):
         asm_instructions = sizes.get(name, 0)
@@ -214,6 +222,13 @@ def audit_stubs(bodies: dict[str, tuple[str, str]],
         if asm_instructions < 8 or statements > 1:
             continue
         callees = {c for c in CALLEE.findall(body) if c not in NOT_A_CALL}
+        helpers = [c for c in callees if c in bodies and bodies[c][0] == filename and c not in sizes]
+        if len(callees) == 1 and helpers:
+            helper = bodies[helpers[0]][1]
+            statements = sum(1 for line in helper.splitlines() if line.strip().endswith(";"))
+            callees = {c for c in CALLEE.findall(helper) if c not in NOT_A_CALL}
+            if statements > 1:
+                continue
         rows.append({"routine": name, "file": filename,
                      "asm_instructions": asm_instructions,
                      "c_statements": statements,
