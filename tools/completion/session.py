@@ -734,9 +734,10 @@ def sweep_worker(entries_path: Path, start: int, out_path: Path) -> int:
                 status = "fail" if bad else "ok"
                 if bad and vblanks:
                     status = "frames"
-            except Exception as exc:  # noqa: BLE001 - a lane that could not run is a row, not a crash
+            except Exception as exc:  # noqa: BLE001
                 bad = [f"{type(exc).__name__}: {str(exc)[:160]}"]
-                status = "error"
+                vblanks = oracle.vblanks
+                status = "frames" if vblanks else "error"
             memory = any(m.lstrip().startswith(("$", "vram", "sram")) for m in bad)
             out.write(json.dumps({"index": index, "ordinal": entry["ordinal"], "routine": label,
                                   "bank": entry["bank"], "status": status, "memory": memory,
