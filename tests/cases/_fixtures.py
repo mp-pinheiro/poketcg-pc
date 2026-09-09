@@ -835,3 +835,11 @@ ENERGY_NEEDED_IN_HAND_REGS = ENERGY_NEEDED_IN_HAND.regs
 
 def energy_needed_in_hand_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return ENERGY_NEEDED_IN_HAND.case(vram=vram, bank=bank, **changes)
+
+
+SPECIAL_AI_ATTACKS = Fixture("water-master-special-ai-attacks-entry")
+SPECIAL_AI_ATTACKS_REGS = SPECIAL_AI_ATTACKS.regs
+
+
+def special_ai_attacks_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return SPECIAL_AI_ATTACKS.case(vram=vram, bank=bank, **changes)

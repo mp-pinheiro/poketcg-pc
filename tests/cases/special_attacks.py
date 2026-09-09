@@ -1,4 +1,5 @@
 from tests.cases._fixtures import SPECIAL_ATTACK_REGS, special_attack_fixture
+from tests.cases._fixtures import SPECIAL_AI_ATTACKS_REGS, special_ai_attacks_fixture
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -83,6 +84,9 @@ CONTRACT["HandleSpecialAIAttacks"] = {"compare": ("a", "f"), "preserve": ()}
 _SPECIAL_ARENA = {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC2BC: b"\xFF",
                   0xC3BB: b"\xFF", 0xC3BC: b"\xFF"}
 CASES["HandleSpecialAIAttacks"] = [
+    # water-master 437339: Scyther in the arena; Swords Dance is unusable (the
+    # second attack is not powered), so the score is $85 with that carry.
+    dict(special_ai_attacks_fixture(vram=False, bank=8), **SPECIAL_AI_ATTACKS_REGS, read={0xCC23: 1, 0xCCBF: 2}),
     {},
     dict(POISON),
     dict(special_attack_fixture(vram=False, bank=5), **SPECIAL_ATTACK_REGS),
@@ -109,10 +113,5 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS["CheckWhetherToSwitchToFirstAttack"] = {"source_symbol": "CheckWhetherToSwitchToFirstAttack", "before": "\tif (first_score < 0x50u) {\n\t\twSelectedAttack = SECOND_ATTACK;", "after": "\tif (first_score < 0x50u) {\n\t\twSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;", "case_ids": ["CheckWhetherToSwitchToFirstAttack-0", "CheckWhetherToSwitchToFirstAttack-1", "CheckWhetherToSwitchToFirstAttack-2"]}
 # <<< factory-mutation CheckWhetherToSwitchToFirstAttack
 # >>> factory-mutation HandleSpecialAIAttacks
-MUTATIONS["HandleSpecialAIAttacks"] = {
-    "source_symbol": "HandleSpecialAIAttacks",
-    "before": "\treturn (HandleSpecialAIAttacksResult){(uint8_t)(0x80u + limit - n.a), 0x00u};",
-    "after": "\treturn (HandleSpecialAIAttacksResult){(uint8_t)(0x80u + limit), 0x00u};",
-    "case_ids": ["HandleSpecialAIAttacks-8"],
-}
+MUTATIONS["HandleSpecialAIAttacks"] = {"source_symbol": "HandleSpecialAIAttacks", "before": "\t\tif (u.f & 0x10u)\n\t\t\treturn (HandleSpecialAIAttacksResult){0x85u, u.f};", "after": "\t\tif (u.f & 0x10u)\n\t\t\treturn (HandleSpecialAIAttacksResult){0x84u, u.f};", "case_ids": ["HandleSpecialAIAttacks-0"]}
 # <<< factory-mutation HandleSpecialAIAttacks
