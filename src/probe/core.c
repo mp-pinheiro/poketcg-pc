@@ -820,7 +820,7 @@ static void adapt_GetAttacksEnergyCostBits(ProbeState *s)
 /* >>> factory CheckForEvolutionInList */
 static void adapt_CheckForEvolutionInList(ProbeState *s)
 {
-	CheckForEvolutionInListResult r = CheckForEvolutionInList(s->a, s->f);
+	CheckForEvolutionInListResult r = CheckForEvolutionInList(s->a, s->f, s->d, s->e);
 	s->a = r.a;
 	s->b = r.b;
 	s->d = r.d;

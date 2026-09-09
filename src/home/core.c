@@ -3315,7 +3315,7 @@ EnergyCostBitsResult GetAttacksEnergyCostBits(uint8_t a)
 /* <<< factory GetAttacksEnergyCostBits */
 
 /* >>> factory CheckForEvolutionInList */
-CheckForEvolutionInListResult CheckForEvolutionInList(uint8_t a, uint8_t f)
+CheckForEvolutionInListResult CheckForEvolutionInList(uint8_t a, uint8_t f, uint8_t d, uint8_t e)
 {
 	uint8_t target = a;
 	DuelistVarResult arena_var = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
@@ -3326,14 +3326,19 @@ CheckForEvolutionInListResult CheckForEvolutionInList(uint8_t a, uint8_t f)
 	for (;;) {
 		uint8_t candidate = gb_read8(scan++);
 		if (candidate == 0xffu) {
-			uint8_t f = original == 0u ? 0x80u : 0u;
+			/* ai/core.asm:1763-1769 `.no_carry`: `or a` on the restored
+			 * arena card; d and e are the last candidate's (`pop de`). */
 			gb_write8(arena, original);
-			return (CheckForEvolutionInListResult){original, target, 0u, 0u,
-				f, arena};
+			return (CheckForEvolutionInListResult){original, target, d, e,
+				(uint8_t)(original == 0u ? 0x80u : 0u), arena};
 		}
+		d = candidate;
+		e = PLAY_AREA_ARENA;
 		EvolveResult check = CheckIfCanEvolveInto(candidate, PLAY_AREA_ARENA);
 		if (check.f & 0x10u)
 			continue;
+		/* ai/core.asm:1757-1761: `pop af` restores the entry flags and `scf`
+		 * keeps only their Z, clearing N and H. */
 		gb_write8(arena, original);
 		return (CheckForEvolutionInListResult){candidate, target, candidate,
 			PLAY_AREA_ARENA, (uint8_t)((f & FLAG_Z) | FLAG_C), arena};

@@ -269,7 +269,7 @@ HandleSpecialAIAttacksResult HandleSpecialAIAttacks(void)
 			if (index == 0xFFu)
 				return special_zero_score();
 			SwapTurn();
-			CheckForEvolutionInListResult r = CheckForEvolutionInList(index, 0u);
+			CheckForEvolutionInListResult r = CheckForEvolutionInList(index, 0u, 0u, 0u);
 			SwapTurn();
 			if (r.f & 0x10u)
 				return (HandleSpecialAIAttacksResult){0x83u, r.f};

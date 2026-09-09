@@ -595,7 +595,7 @@ AIEnergyResult AIProcessEnergyCards(void)
 			 * neutral score; nothing below is evaluated for it. */
 			if (!need.carry)
 				goto store_score;
-			CheckForEvolutionInListResult in_hand = CheckForEvolutionInList(wCurCardCanAttack, 0u);
+			CheckForEvolutionInListResult in_hand = CheckForEvolutionInList(wCurCardCanAttack, 0u, 0u, 0u);
 			if (in_hand.f & 0x10u) {
 				wTempAI = in_hand.a;
 				(void)AIEncourage(2u);

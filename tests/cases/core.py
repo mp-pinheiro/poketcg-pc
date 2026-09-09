@@ -4,6 +4,7 @@ from tests.cases._fixtures import bench_switch_fixture as _bench_switch_fixture
 from tests.cases._fixtures import bench_count_fixture as _bench_count_fixture, BENCH_COUNT_REGS as _BENCH_COUNT_REGS
 from tests.cases._fixtures import bench_half_hp_fixture as _bench_half_hp_fixture, BENCH_HALF_HP_REGS as _BENCH_HALF_HP_REGS
 from tests.cases._fixtures import special_attack_params_fixture as _special_attack_params_fixture, SPECIAL_ATTACK_PARAMS_REGS as _SPECIAL_ATTACK_PARAMS_REGS
+from tests.cases._fixtures import evolution_in_list_fixture as _evolution_in_list_fixture, EVOLUTION_IN_LIST_REGS as _EVOLUTION_IN_LIST_REGS
 from tests.cases._fixtures import fully_powered_fixture as _fully_powered_fixture, FULLY_POWERED_REGS as _FULLY_POWERED_REGS
 from tests.cases._fixtures import ai_trainer_phase5_fixture as _ai_trainer_phase5_fixture, AI_TRAINER_PHASE5_REGS as _AI_TRAINER_PHASE5_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_defending_ko_fixture as _ai_defending_ko_fixture, AI_DEFENDING_KO_REGS as _AI_DEFENDING_KO_REGS, power_screen_fixture as _power_screen_fixture, POWER_SCREEN_REGS as _POWER_SCREEN_REGS
@@ -1132,6 +1133,9 @@ CASES["CheckForEvolutionInList"] = [
     {"a": 0, "wram": {wDuelTempList: b"\xff", hWhoseTurn: b"\xc2", wPlayerDuelVariables + 0xbb: b"\x00"}},
     {"a": 0, "wram": {wDuelTempList: b"\x01\xff", hWhoseTurn: b"\xc2", wPlayerDuelVariables + 0xbb: b"\x08", wPlayerDuelVariables + 0xc2: b"\x80"}},
     dict(POISON, a=0, wram={wDuelTempList: b"\x01\xff", hWhoseTurn: b"\xc2", wPlayerDuelVariables + 0xbb: b"\x08", wPlayerDuelVariables + 0xc2: b"\x80"}),
+    # dome-5 829338: Ronald's hand list holds no evolution of the card; the
+    # `.no_carry` exit leaves d as the last candidate examined.
+    dict(_evolution_in_list_fixture(vram=False, bank=5), **_EVOLUTION_IN_LIST_REGS, read={0xC510: 12, 0xC3BB: 1}),
 ]
 # <<< factory CheckForEvolutionInList
 # >>> factory CountNumberOfEnergyCardsAttached
@@ -6248,12 +6252,7 @@ MUTATIONS["DrawWideTextBox_WaitForInput_Bank1"] = {
 # <<< factory-mutation DrawWideTextBox_WaitForInput_Bank1
 
 # >>> factory-mutation CheckForEvolutionInList
-MUTATIONS["CheckForEvolutionInList"] = {
-    "source_symbol": "CheckForEvolutionInList",
-    "before": "return (CheckForEvolutionInListResult){candidate, target, candidate,",
-    "after": "return (CheckForEvolutionInListResult){original, target, candidate,",
-    "case_ids": ["CheckForEvolutionInList-0", "CheckForEvolutionInList-1"],
-}
+MUTATIONS["CheckForEvolutionInList"] = {"source_symbol": "CheckForEvolutionInList", "before": "\t\t\treturn (CheckForEvolutionInListResult){original, target, d, e,", "after": "\t\t\treturn (CheckForEvolutionInListResult){original, target, 0u, e,", "case_ids": ["CheckForEvolutionInList-4"]}
 # <<< factory-mutation CheckForEvolutionInList
 # >>> factory-mutation CheckIfEnergyIsUseful
 MUTATIONS["CheckIfEnergyIsUseful"] = {

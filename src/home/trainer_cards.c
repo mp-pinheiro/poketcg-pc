@@ -4290,7 +4290,7 @@ AIDecideParameterResult AIDecide_ProfessorOak(uint8_t d)
 			uint8_t evolves = 0u;
 			for (uint8_t location = PLAY_AREA_ARENA; location != count; location++) {
 				uint8_t card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location)).a;
-				if (CheckForEvolutionInList(card, 0u).f & 0x10u) {
+				if (CheckForEvolutionInList(card, 0u, 0u, 0u).f & 0x10u) {
 					evolves = 1u;
 					break;
 				}

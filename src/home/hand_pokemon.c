@@ -237,7 +237,7 @@ uint8_t AIDecideEvolution(void)
 					(void)AIEncourage(4u);
 			}
 			/* .check_2nd_stage_hand / .check_2nd_stage_deck */
-			if (CheckForEvolutionInList(card, 0u).f & 0x10u)
+			if (CheckForEvolutionInList(card, 0u, 0u, 0u).f & 0x10u)
 				(void)AIEncourage(2u);
 			else if (CheckForEvolutionInDeck(card, 0u).f & 0x10u)
 				(void)AIEncourage(1u);
@@ -384,7 +384,7 @@ AIDecidePlayPokemonCardResult AIDecidePlayPokemonCard(void)
 		if (energy.carry)
 			(void)AIEncourage(20u);
 		CheckForEvolutionInListResult hand_evo =
-			CheckForEvolutionInList(wTempAIPokemonCard, 0u);
+			CheckForEvolutionInList(wTempAIPokemonCard, 0u, 0u, 0u);
 		if (hand_evo.f & 0x10u)
 			(void)AIEncourage(20u);
 		CheckForEvolutionInDeckResult deck_evo =

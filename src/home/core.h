@@ -383,7 +383,7 @@ typedef struct {
 	uint8_t f;
 	uint16_t hl;
 } CheckForEvolutionInListResult;
-CheckForEvolutionInListResult CheckForEvolutionInList(uint8_t a, uint8_t f);
+CheckForEvolutionInListResult CheckForEvolutionInList(uint8_t a, uint8_t f, uint8_t d, uint8_t e);
 /* <<< factory CheckForEvolutionInList */
 /* >>> factory CountNumberOfEnergyCardsAttached */
 typedef struct { uint8_t a; uint8_t f; } CountNumberOfEnergyCardsAttachedResult;

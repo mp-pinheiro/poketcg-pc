@@ -803,3 +803,11 @@ AI_PKMN_POWERS_MASTER_REGS = AI_PKMN_POWERS_MASTER.regs
 
 def ai_pkmn_powers_master_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return AI_PKMN_POWERS_MASTER.case(vram=vram, bank=bank, **changes)
+
+
+EVOLUTION_IN_LIST = Fixture("dome-5-evolution-in-list-entry")
+EVOLUTION_IN_LIST_REGS = EVOLUTION_IN_LIST.regs
+
+
+def evolution_in_list_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return EVOLUTION_IN_LIST.case(vram=vram, bank=bank, **changes)
