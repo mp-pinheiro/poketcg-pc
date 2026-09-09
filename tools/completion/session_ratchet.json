@@ -125,6 +125,15 @@
   "ai-duel-34": {
     "confirmed_ordinal": 37880
   },
+  "ai-flower": {
+    "confirmed_ordinal": 45872
+  },
+  "ai-ghost": {
+    "confirmed_ordinal": 40832
+  },
+  "ai-science": {
+    "confirmed_ordinal": 41984
+  },
   "andrew-duel": {
     "confirmed_ordinal": 177028
   },
@@ -139,6 +148,9 @@
   },
   "club-explore": {
     "confirmed_ordinal": 149363
+  },
+  "credits-1": {
+    "confirmed_ordinal": 864424
   },
   "deck-explore": {
     "confirmed_ordinal": 108848
