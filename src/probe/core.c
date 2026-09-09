@@ -1730,9 +1730,10 @@ static void adapt_FlushAllPalettesOrSendPal23Packet(ProbeState *s)
 /* >>> factory CheckIfCardCanBePlayed */
 static void adapt_CheckIfCardCanBePlayed(ProbeState *s)
 {
-	CheckIfCardCanBePlayedResult r = CheckIfCardCanBePlayed(s->a);
+	CheckIfCardCanBePlayedResult r = CheckIfCardCanBePlayed(s->a, s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory CheckIfCardCanBePlayed */
 

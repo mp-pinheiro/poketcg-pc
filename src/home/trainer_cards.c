@@ -464,7 +464,7 @@ void RemoveCardFromList(uint16_t *hl)
 
 /* >>> factory FindDuplicateCards */
 /* trainer_cards.asm:2788-2859 */
-FindDupResult FindDuplicateCards(uint16_t hl)
+FindDupResult FindDuplicateCards(uint16_t hl, uint8_t d)
 {
 	wce0f = 0xFFu;
 	gb_write8((uint16_t)(wce0f_ADDR + 1u), 0xFFu);
@@ -474,6 +474,7 @@ FindDupResult FindDuplicateCards(uint16_t hl)
 		outer = (uint16_t)(outer + 1u);
 		if (idx == 0xFFu)
 			break;
+		d = 0u;
 		uint8_t b = (uint8_t)GetCardIDFromDeckIndex(idx);
 		uint16_t inner = outer;
 		for (;;) {
@@ -493,9 +494,9 @@ FindDupResult FindDuplicateCards(uint16_t hl)
 	uint8_t lo = wce0f;
 	uint8_t hi = gb_read8((uint16_t)(wce0f_ADDR + 1u));
 	if (lo == 0xFFu && hi == 0xFFu)
-		return (FindDupResult){0xFFu, 0x90u, outer};
+		return (FindDupResult){0xFFu, 0x90u, outer, d};
 	uint8_t a = (lo != 0xFFu) ? lo : hi;
-	return (FindDupResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u), outer};
+	return (FindDupResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u), outer, d};
 }
 /* <<< factory FindDuplicateCards */
 
@@ -542,13 +543,13 @@ PickPokedexResult PickPokedexCards(void)
 }
 /* <<< factory PickPokedexCards */
 /* >>> factory AIDecide_Recycle */
-AIDecideParameterResult AIDecide_Recycle(void)
+AIDecideParameterResult AIDecide_Recycle(uint8_t d)
 {
 	/* trainer_cards.asm AIDecide_Recycle: the five priority slots live in
 	 * wce08..wce0c and the first one filled is the card to recycle. */
 	CardListResult discard = CreateDiscardPileCardList(0);
 	if (discard.f & 0x10u)
-		return (AIDecideParameterResult){discard.a, or_a_flags(discard.a)};
+		return (AIDecideParameterResult){discard.a, or_a_flags(discard.a), 0xC5u};
 	for (uint8_t i = 0; i < 5u; i++)
 		gb_write8((uint16_t)(wce08_ADDR + i), 0xFFu);
 	uint16_t list = wDuelTempList_ADDR;
@@ -574,20 +575,20 @@ AIDecideParameterResult AIDecide_Recycle(void)
 	for (uint8_t i = 0; i < 5u; i++) {
 		uint8_t chosen = gb_read8((uint16_t)(wce08_ADDR + i));
 		if (chosen != 0xFFu)
-			return (AIDecideParameterResult){chosen, 0x10u};
+			return (AIDecideParameterResult){chosen, 0x10u, 0xC5u};
 	}
-	return (AIDecideParameterResult){0xFFu, 0x00u};
+	return (AIDecideParameterResult){0xFFu, 0x00u, 0xC5u};
 }
 /* <<< factory AIDecide_Recycle */
 
 /* >>> factory AIDecide_Maintenance */
-AIDecideMaintenanceResult AIDecide_Maintenance(void)
+AIDecideMaintenanceResult AIDecide_Maintenance(uint8_t d)
 {
 	DuelistVarResult hand = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
 	if (wOpponentDeckID == IMAKUNI_DECK_ID) {
 		if (Random(10u) >= 2u || hand.a < 3u)
 			return (AIDecideMaintenanceResult){hand.a,
-				(uint8_t)(hand.a == 0u ? 0x80u : 0u)};
+				(uint8_t)(hand.a == 0u ? 0x80u : 0u), d};
 		(void)CreateHandCardList(0);
 		TempListResult count = CountCardsInDuelTempList();
 		(void)ShuffleCards(count.a, wDuelTempList_ADDR);
@@ -596,73 +597,73 @@ AIDecideMaintenanceResult AIDecide_Maintenance(void)
 		while (found < 2u) {
 			uint8_t card = gb_read8(p++);
 			if (card == 0xFFu)
-				return (AIDecideMaintenanceResult){0, 0x00u};
+				return (AIDecideMaintenanceResult){0, 0x00u, 0xCEu};
 			if (card == target)
 				continue;
 			gb_write8((uint16_t)(wce1a_ADDR + out++), card);
 			found++;
 		}
-		return (AIDecideMaintenanceResult){0, 0x10u};
+		return (AIDecideMaintenanceResult){0, 0x10u, 0xCEu};
 	}
 	if (hand.a < 4u)
 		return (AIDecideMaintenanceResult){hand.a,
-			(uint8_t)(hand.a == 0u ? 0x80u : 0u)};
+			(uint8_t)(hand.a == 0u ? 0x80u : 0u), d};
 	(void)CreateHandCardList(0);
 	FindAndRemoveCardFromList(wAITrainerCardToPlay, wDuelTempList_ADDR);
-	FindDupResult first = FindDuplicateCards(wDuelTempList_ADDR);
+	FindDupResult first = FindDuplicateCards(wDuelTempList_ADDR, 0xC5u);
 	if (first.a == 0xFFu)
-		return (AIDecideMaintenanceResult){first.a, 0x00u};
+		return (AIDecideMaintenanceResult){first.a, 0x00u, first.d};
 	wce1a = first.a;
 	FindAndRemoveCardFromList(first.a, wDuelTempList_ADDR);
-	FindDupResult second = FindDuplicateCards(wDuelTempList_ADDR);
+	FindDupResult second = FindDuplicateCards(wDuelTempList_ADDR, first.d);
 	if (second.a == 0xFFu)
-		return (AIDecideMaintenanceResult){second.a, 0x00u};
+		return (AIDecideMaintenanceResult){second.a, 0x00u, second.d};
 	wce1b = second.a;
-	return (AIDecideMaintenanceResult){second.a, 0x10u};
+	return (AIDecideMaintenanceResult){second.a, 0x10u, second.d};
 }
 /* <<< factory AIDecide_Maintenance */
 /* >>> factory AIDecide_Lass */
-AIDecideParameterResult AIDecide_Lass(void)
+AIDecideParameterResult AIDecide_Lass(uint8_t d)
 {
 	uint8_t hand_count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a;
 	if (hand_count < 7u)
-		return (AIDecideParameterResult){hand_count, or_a_flags(hand_count)};
+		return (AIDecideParameterResult){hand_count, or_a_flags(hand_count), d};
 	(void)CreateHandCardList(hand_count);
 	uint16_t list = wDuelTempList_ADDR;
 	for (;;) {
 		uint8_t deck_index = gb_read8(list++);
 		if (deck_index == 0xFFu)
-			return (AIDecideParameterResult){0xFFu, 0x90u};
+			return (AIDecideParameterResult){0xFFu, 0x90u, 0xC5u};
 		uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(deck_index);
 		if (card_id == LASS)
 			continue;
 		uint8_t type = gb_read8(wLoadedCard1Type_ADDR);
 		if (type == TYPE_TRAINER)
-			return (AIDecideParameterResult){type, 0x00u};
+			return (AIDecideParameterResult){type, 0x00u, 0xC5u};
 	}
 }
 /* <<< factory AIDecide_Lass */
 
 /* >>> factory AIDecide_Imakuni */
-AIDecideParameterResult AIDecide_Imakuni(void)
+AIDecideParameterResult AIDecide_Imakuni(uint8_t d)
 {
 	uint8_t status = (uint8_t)(GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a & CNF_SLP_PRZ);
 	if (status == CONFUSED)
-		return (AIDecideParameterResult){status, 0x00u};
-	return (AIDecideParameterResult){status, 0x10u};
+		return (AIDecideParameterResult){status, 0x00u, d};
+	return (AIDecideParameterResult){status, 0x10u, d};
 }
 /* <<< factory AIDecide_Imakuni */
 /* >>> factory AIDecide_PokemonFlute */
-AIDecidePokemonFluteResult AIDecide_PokemonFlute(uint8_t c)
+AIDecidePokemonFluteResult AIDecide_PokemonFlute(uint8_t c, uint8_t d)
 {
 	SwapTurn();
 	CardListResult discard = CreateDiscardPileCardList(c);
 	SwapTurn();
 	if (discard.f & 0x10u)
-		return (AIDecidePokemonFluteResult){discard.a, (uint8_t)(discard.a == 0u ? 0x80u : 0u)};
+		return (AIDecidePokemonFluteResult){discard.a, (uint8_t)(discard.a == 0u ? 0x80u : 0u), 0xC5u};
 	uint8_t count = GetNonTurnDuelistVariable(0xEFu).a;
 	if (count >= 6u)
-		return (AIDecidePokemonFluteResult){count, (uint8_t)(count == 0u ? 0x80u : 0u)};
+		return (AIDecidePokemonFluteResult){count, (uint8_t)(count == 0u ? 0x80u : 0u), 0xC5u};
 	wce06 = 0xFFu;
 	wce08 = 0xFFu;
 	for (uint16_t p = wDuelTempList_ADDR;; p++) {
@@ -678,36 +679,36 @@ AIDecidePokemonFluteResult AIDecide_PokemonFlute(uint8_t c)
 	}
 	if (wOpponentDeckID == IMAKUNI_DECK_ID) {
 		if (Random(10u) >= 2u)
-			return (AIDecidePokemonFluteResult){0, 0};
-		return (AIDecidePokemonFluteResult){wce08, wce08 == 0xFFu ? 0u : 0x10u};
+			return (AIDecidePokemonFluteResult){0, 0, 0xC5u};
+		return (AIDecidePokemonFluteResult){wce08, wce08 == 0xFFu ? 0u : 0x10u, 0xC5u};
 	}
 	if (wce06 >= 50u)
-		return (AIDecidePokemonFluteResult){wce06, 0};
-	return (AIDecidePokemonFluteResult){wce08, 0x10u};
+		return (AIDecidePokemonFluteResult){wce06, 0, 0xC5u};
+	return (AIDecidePokemonFluteResult){wce08, 0x10u, 0xC5u};
 }
 /* <<< factory AIDecide_PokemonFlute */
 /* >>> factory AIDecide_ClefairyDollOrMysteriousFossil */
 /* trainer_cards.asm:4784-4812. The play area count is parked in wce06 for
  * the later phases; a Wigglytuff in the arena plays the card outright, with
  * `cp WIGGLYTUFF`'s Z under the carry. */
-AIDecidePokemonFluteResult AIDecide_ClefairyDollOrMysteriousFossil(void)
+AIDecidePokemonFluteResult AIDecide_ClefairyDollOrMysteriousFossil(uint8_t d)
 {
 	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
 	if (count >= MAX_PLAY_AREA_POKEMON)
-		return (AIDecidePokemonFluteResult){count, count == 0u ? 0x80u : 0u};
+		return (AIDecidePokemonFluteResult){count, count == 0u ? 0x80u : 0u, d};
 	wce06 = count;
 	uint8_t arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
 	uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(arena);
 	if (card_id == WIGGLYTUFF)
-		return (AIDecidePokemonFluteResult){card_id, 0x90u};
+		return (AIDecidePokemonFluteResult){card_id, 0x90u, 0u};
 	if (count < 4u)
-		return (AIDecidePokemonFluteResult){count, 0x10u};
-	return (AIDecidePokemonFluteResult){count, count == 0u ? 0x80u : 0u};
+		return (AIDecidePokemonFluteResult){count, 0x10u, 0u};
+	return (AIDecidePokemonFluteResult){count, count == 0u ? 0x80u : 0u, 0u};
 }
 /* <<< factory AIDecide_ClefairyDollOrMysteriousFossil */
 
 /* >>> factory AIDecide_Defender_Phase14 */
-AIDecideParameterResult AIDecide_Defender_Phase14(void)
+AIDecideParameterResult AIDecide_Defender_Phase14(uint8_t d)
 {
 	/* trainer_cards.asm AIDecide_Defender_Phase14: play Defender when the
 	 * chosen attack's recoil, after the card's own weakness and resistance
@@ -741,70 +742,70 @@ AIDecideParameterResult AIDecide_Defender_Phase14(void)
 /* <<< factory AIDecide_Defender_Phase14 */
 
 /* >>> factory AIDecide_Bill */
-AIDecideParameterResult AIDecide_Bill(void)
+AIDecideParameterResult AIDecide_Bill(uint8_t d)
 {
 	/* trainer_cards.asm:1428-1432: a is the count the cp leaves. */
 	uint8_t remaining = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK).a;
-	return (AIDecideParameterResult){remaining, cp_flags(remaining, DECK_SIZE - 9u)};
+	return (AIDecideParameterResult){remaining, cp_flags(remaining, DECK_SIZE - 9u), d};
 }
 /* <<< factory AIDecide_Bill */
 
 /* >>> factory AIDecide_Gambler */
-AIDecideParameterResult AIDecide_Gambler(void)
+AIDecideParameterResult AIDecide_Gambler(uint8_t d)
 {
 	if (wOpponentDeckID == IMAKUNI_DECK_ID) {
 		/* .imakuni: play it two times in ten; a is the roll either way. */
 		uint8_t roll = Random(10u);
 		if (roll < 2u)
-			return (AIDecideParameterResult){roll, 0x10u};
-		return (AIDecideParameterResult){roll, or_a_flags(roll)};
+			return (AIDecideParameterResult){roll, 0x10u, d};
+		return (AIDecideParameterResult){roll, or_a_flags(roll), d};
 	}
 	uint8_t mill = (uint8_t)(wAIBarrierFlagCounter & AI_MEWTWO_MILL);
 	if (mill == 0u)
-		return (AIDecideParameterResult){0u, 0x80u};
+		return (AIDecideParameterResult){0u, 0x80u, d};
 	uint8_t remaining = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK).a;
 	if (remaining >= DECK_SIZE - 4u)
-		return (AIDecideParameterResult){remaining, (uint8_t)((remaining == DECK_SIZE - 4u ? 0x80u : 0u) | 0x10u)};
-	return (AIDecideParameterResult){remaining, or_a_flags(remaining)};
+		return (AIDecideParameterResult){remaining, (uint8_t)((remaining == DECK_SIZE - 4u ? 0x80u : 0u) | 0x10u), d};
+	return (AIDecideParameterResult){remaining, or_a_flags(remaining), d};
 }
 /* <<< factory AIDecide_Gambler */
 
 /* >>> factory AIDecide_Revive */
-AIDecideReviveResult AIDecide_Revive(void)
+AIDecideReviveResult AIDecide_Revive(uint8_t d)
 {
 	CardListResult discard = CreateDiscardPileCardList(0);
 	if (discard.f & 0x10u)
-		return (AIDecideReviveResult){discard.a, 0x80u};
+		return (AIDecideReviveResult){discard.a, 0x80u, 0xC5u};
 	if (GetTurnDuelistVariable(0xEFu).a >= 4u) {
 		uint8_t count = GetTurnDuelistVariable(0xEFu).a;
-		return (AIDecideReviveResult){count, 0};
+		return (AIDecideReviveResult){count, 0, 0xC5u};
 	}
 	for (uint16_t p = wDuelTempList_ADDR;; p++) {
 		uint8_t index = gb_read8(p);
 		if (index == 0xFFu)
-			return (AIDecideReviveResult){0xFFu, 0};
+			return (AIDecideReviveResult){0xFFu, 0, 0xC5u};
 		uint8_t card = LoadCardDataToBuffer1_FromDeckIndex(index);
 		if (card == 0x88u || card == 0x87u)
-			return (AIDecideReviveResult){index, 0x90u};
+			return (AIDecideReviveResult){index, 0x90u, 0xC5u};
 		if (card == 0xBAu)
-			return (AIDecideReviveResult){0, 0x10u};
+			return (AIDecideReviveResult){0, 0x10u, 0xC5u};
 	}
 }
 /* <<< factory AIDecide_Revive */
 
 /* >>> factory AIDecide_ImposterProfessorOak */
-AIDecideParameterResult AIDecide_ImposterProfessorOak(void)
+AIDecideParameterResult AIDecide_ImposterProfessorOak(uint8_t d)
 {
 	uint8_t remaining = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK).a;
 	uint8_t hand = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a;
 	if (remaining < DECK_SIZE - 14u) {
 		if (hand < 9u)
-			return (AIDecideParameterResult){hand, or_a_flags(hand)};
-		return (AIDecideParameterResult){hand, (uint8_t)((hand == 9u ? 0x80u : 0u) | 0x10u)};
+			return (AIDecideParameterResult){hand, or_a_flags(hand), d};
+		return (AIDecideParameterResult){hand, (uint8_t)((hand == 9u ? 0x80u : 0u) | 0x10u), d};
 	}
 	if (hand < 6u)
-		return (AIDecideParameterResult){hand, 0x10u};
-	return (AIDecideParameterResult){hand, or_a_flags(hand)};
+		return (AIDecideParameterResult){hand, 0x10u, d};
+	return (AIDecideParameterResult){hand, or_a_flags(hand), d};
 }
 /* <<< factory AIDecide_ImposterProfessorOak */
 
@@ -839,7 +840,7 @@ PickPokedexResult PickPokedexCards_Unreferenced(void)
 /* <<< factory PickPokedexCards_Unreferenced */
 
 /* >>> factory AIDecide_Pokedex */
-AIDecidePokedexResult AIDecide_Pokedex(void)
+AIDecidePokedexResult AIDecide_Pokedex(uint8_t d)
 {
 	uint8_t counter = wAIPokedexCounter;
 	if (counter < 6u)
@@ -856,10 +857,11 @@ AIDecidePokedexResult AIDecide_Pokedex(void)
 /* <<< factory AIDecide_Pokedex */
 
 /* >>> factory AIDecide_ItemFinder */
-AIDecide_ItemFinderResult AIDecide_ItemFinder(void)
+AIDecide_ItemFinderResult AIDecide_ItemFinder(uint8_t d)
 {
 	CardListResult discard = CreateDiscardPileCardList(0u);
 	uint8_t a = discard.a;
+	d = 0xC5u;
 	if (!(discard.f & 0x10u)) {
 		uint16_t hl = wDuelTempList_ADDR;
 		uint8_t deck_index = 0u;
@@ -893,26 +895,28 @@ AIDecide_ItemFinderResult AIDecide_ItemFinder(void)
 			}
 
 			FindAndRemoveCardFromList(wAITrainerCardToPlay, wDuelTempList_ADDR);
-			FindDupResult dup1 = FindDuplicateCards(wDuelTempList_ADDR);
+			FindDupResult dup1 = FindDuplicateCards(wDuelTempList_ADDR, d);
 			a = dup1.a;
+			d = dup1.d;
 			if (!(dup1.f & 0x10u)) {
 				wce1a = dup1.a;
 				FindAndRemoveCardFromList(dup1.a, wDuelTempList_ADDR);
-				FindDupResult dup2 = FindDuplicateCards(wDuelTempList_ADDR);
+				FindDupResult dup2 = FindDuplicateCards(wDuelTempList_ADDR, d);
 				a = dup2.a;
+				d = dup2.d;
 				if (!(dup2.f & 0x10u)) {
 					wce1b = dup2.a;
-					return (AIDecide_ItemFinderResult){wce06, 0x10u};
+					return (AIDecide_ItemFinderResult){wce06, 0x10u, d};
 				}
 			}
 		}
 	}
-	return (AIDecide_ItemFinderResult){a, (uint8_t)(a == 0u ? 0x80u : 0u)};
+	return (AIDecide_ItemFinderResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), d};
 }
 /* <<< factory AIDecide_ItemFinder */
 
 /* >>> factory AIDecide_EnergyRetrieval */
-AIDecideEnergyRetrievalResult AIDecide_EnergyRetrieval(uint8_t a)
+AIDecideEnergyRetrievalResult AIDecide_EnergyRetrieval(uint8_t a, uint8_t d)
 {
 	CoreCardListResult hand_energy = CreateEnergyCardListFromHand(a);
 	if (!(hand_energy.f & 0x10u))
@@ -928,7 +932,7 @@ AIDecideEnergyRetrievalResult AIDecide_EnergyRetrieval(uint8_t a)
 	}
 
 	(void)CreateHandCardList(0u);
-	FindDupResult dup = FindDuplicateCards(wDuelTempList_ADDR);
+	FindDupResult dup = FindDuplicateCards(wDuelTempList_ADDR, 0xC5u);
 	if (dup.f & 0x10u)
 		return (AIDecideEnergyRetrievalResult){dup.a, (uint8_t)(dup.a == 0u ? 0x80u : 0u)};
 	uint8_t saved_card = dup.a;
@@ -941,7 +945,7 @@ AIDecideEnergyRetrievalResult AIDecide_EnergyRetrieval(uint8_t a)
 	wce1b = 0xFFu;
 	wce1c = 0xFFu;
 
-	uint8_t d = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	d = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
 	uint8_t e = PLAY_AREA_ARENA;
 	while (d != 0u) {
 		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e)).a;
@@ -991,7 +995,7 @@ AIDecideEnergyRetrievalResult AIDecide_EnergyRetrieval(uint8_t a)
 /* <<< factory AIDecide_EnergyRetrieval */
 
 /* >>> factory AIDecide_SuperEnergyRetrieval */
-AIDecideSuperEnergyRetrievalResult AIDecide_SuperEnergyRetrieval(uint8_t a)
+AIDecideSuperEnergyRetrievalResult AIDecide_SuperEnergyRetrieval(uint8_t a, uint8_t d)
 {
 	CoreCardListResult hand_energy = CreateEnergyCardListFromHand(a);
 	if (!(hand_energy.f & 0x10u))
@@ -1007,13 +1011,13 @@ AIDecideSuperEnergyRetrievalResult AIDecide_SuperEnergyRetrieval(uint8_t a)
 	}
 
 	(void)CreateHandCardList(0u);
-	FindDupResult dup1 = FindDuplicateCards(wDuelTempList_ADDR);
+	FindDupResult dup1 = FindDuplicateCards(wDuelTempList_ADDR, 0xC5u);
 	if (dup1.f & 0x10u)
 		return (AIDecideSuperEnergyRetrievalResult){dup1.a, (uint8_t)(dup1.a == 0u ? 0x80u : 0u)};
 	wce06 = dup1.a;
 
 	FindAndRemoveCardFromList(wce06, wDuelTempList_ADDR);
-	FindDupResult dup2 = FindDuplicateCards(wDuelTempList_ADDR);
+	FindDupResult dup2 = FindDuplicateCards(wDuelTempList_ADDR, dup1.d);
 	if (dup2.f & 0x10u)
 		return (AIDecideSuperEnergyRetrievalResult){dup2.a, (uint8_t)(dup2.a == 0u ? 0x80u : 0u)};
 	wce08 = dup2.a;
@@ -1028,7 +1032,7 @@ AIDecideSuperEnergyRetrievalResult AIDecide_SuperEnergyRetrieval(uint8_t a)
 	wce1e = 0xFFu;
 	wce1f = 0xFFu;
 
-	uint8_t d = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	d = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
 	uint8_t e = PLAY_AREA_ARENA;
 	while (d != 0u) {
 		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e)).a;
@@ -1096,7 +1100,7 @@ AIDecideSuperEnergyRetrievalResult AIDecide_SuperEnergyRetrieval(uint8_t a)
 /* <<< factory AIDecide_SuperEnergyRetrieval */
 
 /* >>> factory AIDecide_PokemonBreeder */
-AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in)
+AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in, uint8_t d)
 {
 	PrehistoricPowerResult power = IsPrehistoricPowerActive(hl_in);
 	if (power.f & 0x10u)
@@ -1239,43 +1243,43 @@ AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in)
 /* <<< factory AIDecide_PokemonBreeder */
 
 /* >>> factory AIDecide_PokemonTrader_LegendaryMoltres */
-AIDecide_PokemonTrader_LegendaryMoltresResult AIDecide_PokemonTrader_LegendaryMoltres(void)
+AIDecide_PokemonTrader_LegendaryMoltresResult AIDecide_PokemonTrader_LegendaryMoltres(uint8_t d)
 {
 	LookForCardIDToTradeWithDifferentHandCardResult r = LookForCardIDToTradeWithDifferentHandCard(MOLTRES_LV37, MOLTRES_LV35);
 	if (!(r.f & 0x10u)) {
 		uint8_t f = (r.a == 0u) ? 0x80u : 0u;
-		return (AIDecide_PokemonTrader_LegendaryMoltresResult){r.a, f};
+		return (AIDecide_PokemonTrader_LegendaryMoltresResult){r.a, f, r.d};
 	}
 	wce1a = r.a;
-	return (AIDecide_PokemonTrader_LegendaryMoltresResult){r.e, 0x10u};
+	return (AIDecide_PokemonTrader_LegendaryMoltresResult){r.e, 0x10u, r.d};
 }
 /* <<< factory AIDecide_PokemonTrader_LegendaryMoltres */
 
 /* >>> factory AIDecide_PokemonTrader_StrangePower */
-AIDecide_PokemonTrader_StrangePowerResult AIDecide_PokemonTrader_StrangePower(void)
+AIDecide_PokemonTrader_StrangePowerResult AIDecide_PokemonTrader_StrangePower(uint8_t d)
 {
 	LookForCardIDToTradeWithDifferentHandCardResult r = LookForCardIDToTradeWithDifferentHandCard(MR_MIME, MR_MIME);
 	if (!(r.f & 0x10u)) {
 		uint8_t f = (r.a == 0u) ? 0x80u : 0u;
-		return (AIDecide_PokemonTrader_StrangePowerResult){r.a, f};
+		return (AIDecide_PokemonTrader_StrangePowerResult){r.a, f, r.d};
 	}
 	wce1a = r.a;
-	return (AIDecide_PokemonTrader_StrangePowerResult){r.e, 0x10u};
+	return (AIDecide_PokemonTrader_StrangePowerResult){r.e, 0x10u, r.d};
 }
 /* <<< factory AIDecide_PokemonTrader_StrangePower */
 
 /* >>> factory AIDecide_PokemonTrader_LegendaryArticuno */
-AIDecide_PokemonTrader_LegendaryArticunoResult AIDecide_PokemonTrader_LegendaryArticuno(void)
+AIDecide_PokemonTrader_LegendaryArticunoResult AIDecide_PokemonTrader_LegendaryArticuno(uint8_t d)
 {
 	LookForCardIDInHandAndPlayAreaResult r = LookForCardIDInHandAndPlayArea(ARTICUNO_LV35);
 	if (r.f & 0x10u) {
 		uint8_t f = (r.a == 0u) ? 0x80u : 0u;
-		return (AIDecide_PokemonTrader_LegendaryArticunoResult){r.a, f};
+		return (AIDecide_PokemonTrader_LegendaryArticunoResult){r.a, f, 0xC5u};
 	}
 	r = LookForCardIDInHandAndPlayArea(LAPRAS);
 	if (r.f & 0x10u) {
 		uint8_t f = (r.a == 0u) ? 0x80u : 0u;
-		return (AIDecide_PokemonTrader_LegendaryArticunoResult){r.a, f};
+		return (AIDecide_PokemonTrader_LegendaryArticunoResult){r.a, f, 0xC5u};
 	}
 	r = LookForCardIDInHandAndPlayArea(SEEL);
 	uint8_t found_in_deck = 0u;
@@ -1290,158 +1294,179 @@ AIDecide_PokemonTrader_LegendaryArticunoResult AIDecide_PokemonTrader_LegendaryA
 		r = LookForCardIDInHandAndPlayArea(DEWGONG);
 		if (r.f & 0x10u) {
 			uint8_t f = (r.a == 0u) ? 0x80u : 0u;
-			return (AIDecide_PokemonTrader_LegendaryArticunoResult){r.a, f};
+			return (AIDecide_PokemonTrader_LegendaryArticunoResult){r.a, f, 0xC5u};
 		}
 		LookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, DEWGONG);
 		if (!(loc.f & 0x10u)) {
 			uint8_t f = (loc.a == 0u) ? 0x80u : 0u;
-			return (AIDecide_PokemonTrader_LegendaryArticunoResult){loc.a, f};
+			return (AIDecide_PokemonTrader_LegendaryArticunoResult){loc.a, f, 0u};
 		}
 		wce1a = loc.a;
 	}
 	CheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(CHANSEY);
 	if (h.f & 0x10u)
-		return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u};
+		return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u, 0xC5u};
 	h = CheckIfHasCardIDInHand(DITTO);
 	if (h.f & 0x10u)
-		return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u};
+		return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u, 0xC5u};
 	h = CheckIfHasCardIDInHand(ARTICUNO_LV37);
 	if (h.f & 0x10u)
-		return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u};
+		return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u, 0xC5u};
 	uint8_t f = (h.a == 0u) ? 0x80u : 0u;
-	return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, f};
+	return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, f, 0xC5u};
 }
 /* <<< factory AIDecide_PokemonTrader_LegendaryArticuno */
 
 /* >>> factory AIDecide_ComputerSearch_FireCharge */
-AIDecide_ComputerSearch_FireChargeResult AIDecide_ComputerSearch_FireCharge(uint8_t b, uint8_t c)
+AIDecide_ComputerSearch_FireChargeResult AIDecide_ComputerSearch_FireCharge(uint8_t b, uint8_t c, uint8_t d)
 {
 	uint8_t target;
 	LookForCardIDInHandListResult h = LookForCardIDInHandList_Bank8(CHANSEY);
+	d = 0xC5u;
 	if (!(h.f & 0x10u)) {
 		target = CHANSEY;
 	} else {
 		h = LookForCardIDInHandList_Bank8(TAUROS);
+		d = 0xC5u;
 		if (!(h.f & 0x10u)) {
 			target = TAUROS;
 		} else {
 			h = LookForCardIDInHandList_Bank8(JIGGLYPUFF_LV12);
+			d = 0xC5u;
 			if (!(h.f & 0x10u)) {
 				target = JIGGLYPUFF_LV12;
 			} else {
 				uint8_t f = (h.a == 0u) ? 0x80u : 0u;
-				return (AIDecide_ComputerSearch_FireChargeResult){h.a, f};
+				return (AIDecide_ComputerSearch_FireChargeResult){h.a, f, d};
 			}
 		}
 	}
 
 	LookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, target);
+d = 0u;
 	if (!(loc.f & 0x10u)) {
 		uint8_t f = (loc.a == 0u) ? 0x80u : 0u;
-		return (AIDecide_ComputerSearch_FireChargeResult){loc.a, f};
+		return (AIDecide_ComputerSearch_FireChargeResult){loc.a, f, d};
 	}
 	wce06 = loc.a;
 
 	(void)CreateHandCardList(0u);
+d = 0xC5u;
 	uint8_t trainer_to_play = wAITrainerCardToPlay;
 	RemoveFromListDifferentCardOfGivenTypeResult r1 =
 		RemoveFromListDifferentCardOfGivenType(b, c, 0u, trainer_to_play, wDuelTempList_ADDR);
+	d = r1.d;
 	if (!(r1.f & 0x10u)) {
 		uint8_t f = (r1.a == 0u) ? 0x80u : 0u;
-		return (AIDecide_ComputerSearch_FireChargeResult){r1.a, f};
+		return (AIDecide_ComputerSearch_FireChargeResult){r1.a, f, d};
 	}
 	wce1a = r1.a;
 	RemoveFromListDifferentCardOfGivenTypeResult r2 =
 		RemoveFromListDifferentCardOfGivenType(r1.b, r1.c, r1.d, r1.e, r1.hl);
+	d = r2.d;
 	if (!(r2.f & 0x10u)) {
 		uint8_t f = (r2.a == 0u) ? 0x80u : 0u;
-		return (AIDecide_ComputerSearch_FireChargeResult){r2.a, f};
+		return (AIDecide_ComputerSearch_FireChargeResult){r2.a, f, d};
 	}
 	wce1b = r2.a;
-	return (AIDecide_ComputerSearch_FireChargeResult){wce06, 0x90u};
+	return (AIDecide_ComputerSearch_FireChargeResult){wce06, 0x90u, d};
 }
 /* <<< factory AIDecide_ComputerSearch_FireCharge */
 
 /* >>> factory AIDecide_ComputerSearch_Anger */
-AIDecide_ComputerSearch_AngerResult AIDecide_ComputerSearch_Anger(uint8_t b, uint8_t c)
+AIDecide_ComputerSearch_AngerResult AIDecide_ComputerSearch_Anger(uint8_t b, uint8_t c, uint8_t d)
 {
 	uint8_t a_val;
 	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r;
 	LookForCardIDInDeck_GivenCardIDInHandResult r2;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(RATICATE, RATTATA);
+d = r.d;
 	a_val = r.a;
 	if (r.f & 0x10u) goto find_discard_cards;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(RATTATA, RATICATE);
+d = r2.d;
 	a_val = r2.a;
 	if (r2.f & 0x10u) goto find_discard_cards;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(ARCANINE_LV34, GROWLITHE);
+d = r.d;
 	a_val = r.a;
 	if (r.f & 0x10u) goto find_discard_cards;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(GROWLITHE, ARCANINE_LV34);
+d = r2.d;
 	a_val = r2.a;
 	if (r2.f & 0x10u) goto find_discard_cards;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(DODRIO, DODUO);
+d = r.d;
 	a_val = r.a;
 	if (r.f & 0x10u) goto find_discard_cards;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(DODUO, DODRIO);
+d = r2.d;
 	a_val = r2.a;
 	if (r2.f & 0x10u) goto find_discard_cards;
 
 	{
 		uint8_t f = (a_val == 0u) ? 0x80u : 0u;
-		return (AIDecide_ComputerSearch_AngerResult){a_val, f};
+		return (AIDecide_ComputerSearch_AngerResult){a_val, f, d};
 	}
 
 find_discard_cards:
 	wce06 = a_val;
 	(void)CreateHandCardList(0u);
+	d = 0xC5u;
 	uint8_t trainer_to_play = wAITrainerCardToPlay;
 	RemoveFromListDifferentCardOfGivenTypeResult rm1 =
 		RemoveFromListDifferentCardOfGivenType(b, c, 0u, trainer_to_play, wDuelTempList_ADDR);
+	d = rm1.d;
 	if (!(rm1.f & 0x10u)) {
 		uint8_t f = (rm1.a == 0u) ? 0x80u : 0u;
-		return (AIDecide_ComputerSearch_AngerResult){rm1.a, f};
+		return (AIDecide_ComputerSearch_AngerResult){rm1.a, f, d};
 	}
 	wce1a = rm1.a;
 	RemoveFromListDifferentCardOfGivenTypeResult rm2 =
 		RemoveFromListDifferentCardOfGivenType(rm1.b, rm1.c, rm1.d, rm1.e, rm1.hl);
+	d = rm2.d;
 	if (!(rm2.f & 0x10u)) {
 		uint8_t f = (rm2.a == 0u) ? 0x80u : 0u;
-		return (AIDecide_ComputerSearch_AngerResult){rm2.a, f};
+		return (AIDecide_ComputerSearch_AngerResult){rm2.a, f, d};
 	}
 	wce1b = rm2.a;
-	return (AIDecide_ComputerSearch_AngerResult){wce06, 0x90u};
+	return (AIDecide_ComputerSearch_AngerResult){wce06, 0x90u, d};
 }
 /* <<< factory AIDecide_ComputerSearch_Anger */
 
 /* >>> factory AIDecide_ComputerSearch_WondersOfScience */
-AIDecide_ComputerSearch_WondersOfScienceResult AIDecide_ComputerSearch_WondersOfScience(uint8_t b, uint8_t c)
+AIDecide_ComputerSearch_WondersOfScienceResult AIDecide_ComputerSearch_WondersOfScience(uint8_t b, uint8_t c, uint8_t d)
 {
 	uint8_t a_val;
 	DuelistVarResult hand_count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
 	if (hand_count.a < 5u) {
 		LookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, PROFESSOR_OAK);
+		d = 0u;
 		a_val = loc.a;
 		if (loc.f & 0x10u) goto find_discard_cards;
 	}
 
 	{
 		LookForCardIDInHandListResult h = LookForCardIDInHandList_Bank8(GRIMER);
+		d = 0xC5u;
 		if (!(h.f & 0x10u)) {
 			LookForCardIDInLocationBank8Result loc2 = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, GRIMER);
+			d = 0u;
 			a_val = loc2.a;
 			if (loc2.f & 0x10u) goto find_discard_cards;
 			goto no_carry;
 		}
 		h = LookForCardIDInHandList_Bank8(MUK);
+		d = 0xC5u;
 		if (!(h.f & 0x10u)) {
 			LookForCardIDInLocationBank8Result loc3 = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, MUK);
+			d = 0u;
 			a_val = loc3.a;
 			if (loc3.f & 0x10u) goto find_discard_cards;
 			goto no_carry;
@@ -1452,38 +1477,42 @@ AIDecide_ComputerSearch_WondersOfScienceResult AIDecide_ComputerSearch_WondersOf
 no_carry: ;
 	{
 		uint8_t f = (a_val == 0u) ? 0x80u : 0u;
-		return (AIDecide_ComputerSearch_WondersOfScienceResult){a_val, f};
+		return (AIDecide_ComputerSearch_WondersOfScienceResult){a_val, f, d};
 	}
 
 find_discard_cards:
 	wce06 = a_val;
 	(void)CreateHandCardList(0u);
+	d = 0xC5u;
 	uint8_t trainer_to_play = wAITrainerCardToPlay;
 	RemoveFromListDifferentCardOfGivenTypeResult rm1 =
 		RemoveFromListDifferentCardOfGivenType(b, c, 0u, trainer_to_play, wDuelTempList_ADDR);
+	d = rm1.d;
 	if (!(rm1.f & 0x10u)) {
 		uint8_t f = (rm1.a == 0u) ? 0x80u : 0u;
-		return (AIDecide_ComputerSearch_WondersOfScienceResult){rm1.a, f};
+		return (AIDecide_ComputerSearch_WondersOfScienceResult){rm1.a, f, d};
 	}
 	wce1a = rm1.a;
 	RemoveFromListDifferentCardOfGivenTypeResult rm2 =
 		RemoveFromListDifferentCardOfGivenType(rm1.b, rm1.c, rm1.d, rm1.e, rm1.hl);
+	d = rm2.d;
 	if (!(rm2.f & 0x10u)) {
 		uint8_t f = (rm2.a == 0u) ? 0x80u : 0u;
-		return (AIDecide_ComputerSearch_WondersOfScienceResult){rm2.a, f};
+		return (AIDecide_ComputerSearch_WondersOfScienceResult){rm2.a, f, d};
 	}
 	wce1b = rm2.a;
-	return (AIDecide_ComputerSearch_WondersOfScienceResult){wce06, 0x90u};
+	return (AIDecide_ComputerSearch_WondersOfScienceResult){wce06, 0x90u, d};
 }
 /* <<< factory AIDecide_ComputerSearch_WondersOfScience */
 
 /* >>> factory AIDecide_ComputerSearch_RockCrusher */
-AIDecide_ComputerSearch_RockCrusherResult AIDecide_ComputerSearch_RockCrusher(uint8_t b, uint8_t c)
+AIDecide_ComputerSearch_RockCrusherResult AIDecide_ComputerSearch_RockCrusher(uint8_t b, uint8_t c, uint8_t d)
 {
 	uint8_t final_a;
 	DuelistVarResult hand_count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
 	if (hand_count.a == 3u) {
 		LookForCardIDInLocationBank8Result oak = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, PROFESSOR_OAK);
+		d = 0u;
 		if (!(oak.f & 0x10u)) {
 			final_a = oak.a;
 			goto no_carry;
@@ -1492,8 +1521,10 @@ AIDecide_ComputerSearch_RockCrusherResult AIDecide_ComputerSearch_RockCrusher(ui
 		wce1a = 0xFFu;
 		wce1b = 0xFFu;
 		(void)CreateHandCardList(c);
+		d = 0xC5u;
 		uint16_t scan = wDuelTempList_ADDR;
 		uint16_t store = wce1a_ADDR;
+		d = 0xCEu;
 		uint8_t trainer_to_play = wAITrainerCardToPlay;
 		for (;;) {
 			uint8_t idx = gb_read8(scan);
@@ -1513,20 +1544,24 @@ AIDecide_ComputerSearch_RockCrusherResult AIDecide_ComputerSearch_RockCrusher(ui
 			store = (uint16_t)(store + 1u);
 		}
 		if (gb_read8(wce1b_ADDR) != 0xFFu)
-			return (AIDecide_ComputerSearch_RockCrusherResult){wce06, 0x10u};
+			return (AIDecide_ComputerSearch_RockCrusherResult){wce06, 0x10u, d};
 		final_a = 0xFFu;
 		goto no_carry;
 	}
 
 	{
 		LookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, GRAVELER);
+		d = 0u;
 		if (loc.f & 0x10u) {
 			wce06 = loc.a;
 			LookForCardIDInHandAndPlayAreaResult geo = LookForCardIDInHandAndPlayArea(GEODUDE);
+			d = 0xC5u;
 			if (geo.f & 0x10u) {
 				LookForCardIDInHandListResult grav_hand = LookForCardIDInHandList_Bank8(GRAVELER);
+				d = 0xC5u;
 				if (!(grav_hand.f & 0x10u)) {
 					(void)CreateHandCardList(c);
+					d = 0xC5u;
 					uint16_t hl = wDuelTempList_ADDR;
 					(void)RemoveCardIDInList(&hl, GEODUDE);
 					goto find_discard_cards_2;
@@ -1537,13 +1572,16 @@ AIDecide_ComputerSearch_RockCrusherResult AIDecide_ComputerSearch_RockCrusher(ui
 
 	{
 		LookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, GOLEM);
+		d = 0u;
 		if (loc.f & 0x10u) {
 			wce06 = loc.a;
 			LookForCardIDInPlayAreaResult grav_pa = LookForCardIDInPlayArea_Bank8(GRAVELER, b);
 			if (grav_pa.f & 0x10u) {
 				LookForCardIDInHandListResult golem_hand = LookForCardIDInHandList_Bank8(GOLEM);
+				d = 0xC5u;
 				if (!(golem_hand.f & 0x10u)) {
 					(void)CreateHandCardList(c);
+					d = 0xC5u;
 					goto find_discard_cards_2;
 				}
 			}
@@ -1552,6 +1590,7 @@ AIDecide_ComputerSearch_RockCrusherResult AIDecide_ComputerSearch_RockCrusher(ui
 
 	{
 		LookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, DUGTRIO);
+		d = 0u;
 		if (!(loc.f & 0x10u)) {
 			final_a = loc.a;
 			goto no_carry;
@@ -1563,18 +1602,20 @@ AIDecide_ComputerSearch_RockCrusherResult AIDecide_ComputerSearch_RockCrusher(ui
 			goto no_carry;
 		}
 		LookForCardIDInHandListResult dug_hand = LookForCardIDInHandList_Bank8(DUGTRIO);
+		d = 0xC5u;
 		if (dug_hand.f & 0x10u) {
 			final_a = dug_hand.a;
 			goto no_carry;
 		}
 		(void)CreateHandCardList(c);
+		d = 0xC5u;
 		goto find_discard_cards_2;
 	}
 
 no_carry: ;
 	{
 		uint8_t f = (final_a == 0u) ? 0x80u : 0u;
-		return (AIDecide_ComputerSearch_RockCrusherResult){final_a, f};
+		return (AIDecide_ComputerSearch_RockCrusherResult){final_a, f, d};
 	}
 
 find_discard_cards_2:
@@ -1582,7 +1623,7 @@ find_discard_cards_2:
 	wce1b = 0xFFu;
 	{
 		uint16_t bc_ptr = wce1a_ADDR;
-		uint8_t d = 0u;
+		d = 0u;
 		uint8_t trainer_to_play2 = wAITrainerCardToPlay;
 		for (;;) {
 			RemoveFromListDifferentCardOfGivenTypeResult r =
@@ -1591,7 +1632,7 @@ find_discard_cards_2:
 				gb_write8(bc_ptr, r.a);
 				bc_ptr = (uint16_t)(bc_ptr + 1u);
 				if (gb_read8(wce1b_ADDR) != 0xFFu)
-					return (AIDecide_ComputerSearch_RockCrusherResult){wce06, 0x10u};
+					return (AIDecide_ComputerSearch_RockCrusherResult){wce06, 0x10u, d};
 				continue;
 			}
 			d = (uint8_t)(d + 1u);
@@ -1605,79 +1646,89 @@ find_discard_cards_2:
 /* <<< factory AIDecide_ComputerSearch_RockCrusher */
 
 /* >>> factory AIDecide_ComputerSearch */
-AIDecide_ComputerSearchResult AIDecide_ComputerSearch(uint8_t b, uint8_t c)
+AIDecide_ComputerSearchResult AIDecide_ComputerSearch(uint8_t b, uint8_t c, uint8_t d)
 {
 	DuelistVarResult hand_count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
 	if (hand_count.a < 3u) {
 		uint8_t f = (hand_count.a == 0u) ? 0x80u : 0u;
-		return (AIDecide_ComputerSearchResult){hand_count.a, f};
+		return (AIDecide_ComputerSearchResult){hand_count.a, f, d};
 	}
 	uint8_t deck_id = wOpponentDeckID;
 	if (deck_id == ROCK_CRUSHER_DECK_ID) {
-		AIDecide_ComputerSearch_RockCrusherResult r = AIDecide_ComputerSearch_RockCrusher(b, c);
-		return (AIDecide_ComputerSearchResult){r.a, r.f};
+		AIDecide_ComputerSearch_RockCrusherResult r = AIDecide_ComputerSearch_RockCrusher(b, c, d);
+		return (AIDecide_ComputerSearchResult){r.a, r.f, r.d};
 	}
 	if (deck_id == WONDERS_OF_SCIENCE_DECK_ID) {
-		AIDecide_ComputerSearch_WondersOfScienceResult r = AIDecide_ComputerSearch_WondersOfScience(b, c);
-		return (AIDecide_ComputerSearchResult){r.a, r.f};
+		AIDecide_ComputerSearch_WondersOfScienceResult r = AIDecide_ComputerSearch_WondersOfScience(b, c, d);
+		return (AIDecide_ComputerSearchResult){r.a, r.f, r.d};
 	}
 	if (deck_id == FIRE_CHARGE_DECK_ID) {
-		AIDecide_ComputerSearch_FireChargeResult r = AIDecide_ComputerSearch_FireCharge(b, c);
-		return (AIDecide_ComputerSearchResult){r.a, r.f};
+		AIDecide_ComputerSearch_FireChargeResult r = AIDecide_ComputerSearch_FireCharge(b, c, d);
+		return (AIDecide_ComputerSearchResult){r.a, r.f, r.d};
 	}
 	if (deck_id == ANGER_DECK_ID) {
-		AIDecide_ComputerSearch_AngerResult r = AIDecide_ComputerSearch_Anger(b, c);
-		return (AIDecide_ComputerSearchResult){r.a, r.f};
+		AIDecide_ComputerSearch_AngerResult r = AIDecide_ComputerSearch_Anger(b, c, d);
+		return (AIDecide_ComputerSearchResult){r.a, r.f, r.d};
 	}
 	uint8_t f = (deck_id == 0u) ? 0x80u : 0u;
-	return (AIDecide_ComputerSearchResult){deck_id, f};
+	return (AIDecide_ComputerSearchResult){deck_id, f, d};
 }
 /* <<< factory AIDecide_ComputerSearch */
 
 /* >>> factory AIDecide_PokemonTrader_LegendaryRonald */
-AIDecide_PokemonTrader_LegendaryRonaldResult AIDecide_PokemonTrader_LegendaryRonald(void)
+AIDecide_PokemonTrader_LegendaryRonaldResult AIDecide_PokemonTrader_LegendaryRonald(uint8_t d)
 {
 	uint8_t target_a;
 	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r;
 	LookForCardIDInDeck_GivenCardIDInHandResult r2;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(FLAREON_LV22, EEVEE);
+	d = r.d;
 	target_a = r.a;
 	if (r.f & 0x10u) goto choose_hand;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(VAPOREON_LV29, EEVEE);
+	d = r.d;
 	target_a = r.a;
 	if (r.f & 0x10u) goto choose_hand;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(JOLTEON_LV24, EEVEE);
+	d = r.d;
 	target_a = r.a;
 	if (r.f & 0x10u) goto choose_hand;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(EEVEE, FLAREON_LV22);
+	d = r2.d;
 	target_a = r2.a;
 	if (r2.f & 0x10u) goto choose_hand;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(EEVEE, VAPOREON_LV29);
+	d = r2.d;
 	target_a = r2.a;
 	if (r2.f & 0x10u) goto choose_hand;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(EEVEE, JOLTEON_LV24);
+	d = r2.d;
 	target_a = r2.a;
 	if (r2.f & 0x10u) goto choose_hand;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(DRAGONAIR, DRATINI);
+	d = r.d;
 	target_a = r.a;
 	if (r.f & 0x10u) goto choose_hand;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(DRAGONITE_LV41, DRAGONAIR);
+	d = r.d;
 	target_a = r.a;
 	if (r.f & 0x10u) goto choose_hand;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(DRATINI, DRAGONAIR);
+	d = r2.d;
 	target_a = r2.a;
 	if (r2.f & 0x10u) goto choose_hand;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(DRAGONAIR, DRAGONITE_LV41);
+	d = r2.d;
 	target_a = r2.a;
 	if (r2.f & 0x10u) goto choose_hand;
 
@@ -1687,69 +1738,82 @@ choose_hand: ;
 	wce1a = target_a;
 	{
 		LookForCardIDInHandListResult h = LookForCardIDInHandList_Bank8(ZAPDOS_LV68);
+		d = 0xC5u;
 		if (h.f & 0x10u)
-			return (AIDecide_PokemonTrader_LegendaryRonaldResult){h.a, 0x90u};
+			return (AIDecide_PokemonTrader_LegendaryRonaldResult){h.a, 0x90u, d};
 		h = LookForCardIDInHandList_Bank8(ARTICUNO_LV37);
+		d = 0xC5u;
 		if (h.f & 0x10u)
-			return (AIDecide_PokemonTrader_LegendaryRonaldResult){h.a, 0x90u};
+			return (AIDecide_PokemonTrader_LegendaryRonaldResult){h.a, 0x90u, d};
 		h = LookForCardIDInHandList_Bank8(MOLTRES_LV37);
+		d = 0xC5u;
 		if (h.f & 0x10u)
-			return (AIDecide_PokemonTrader_LegendaryRonaldResult){h.a, 0x90u};
+			return (AIDecide_PokemonTrader_LegendaryRonaldResult){h.a, 0x90u, d};
 		target_a = h.a;
 	}
 
 no_carry: ;
 	{
 		uint8_t f = (target_a == 0u) ? 0x80u : 0u;
-		return (AIDecide_PokemonTrader_LegendaryRonaldResult){target_a, f};
+		return (AIDecide_PokemonTrader_LegendaryRonaldResult){target_a, f, d};
 	}
 }
 /* <<< factory AIDecide_PokemonTrader_LegendaryRonald */
 
 /* >>> factory AIDecide_PokemonTrader_SoundOfTheWaves */
-AIDecide_PokemonTrader_SoundOfTheWavesResult AIDecide_PokemonTrader_SoundOfTheWaves(void)
+AIDecide_PokemonTrader_SoundOfTheWavesResult AIDecide_PokemonTrader_SoundOfTheWaves(uint8_t d)
 {
 	uint8_t target_a;
 	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r;
 	LookForCardIDInDeck_GivenCardIDInHandResult r2;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(DEWGONG, SEEL);
+	d = r.d;
 	target_a = r.a;
 	if (r.f & 0x10u) goto choose_hand;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(SEEL, DEWGONG);
+	d = r2.d;
 	target_a = r2.a;
 	if (r2.f & 0x10u) goto choose_hand;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(KINGLER, KRABBY);
+	d = r.d;
 	target_a = r.a;
 	if (r.f & 0x10u) goto choose_hand;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(KRABBY, KINGLER);
+	d = r2.d;
 	target_a = r2.a;
 	if (r2.f & 0x10u) goto choose_hand;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(CLOYSTER, SHELLDER);
+	d = r.d;
 	target_a = r.a;
 	if (r.f & 0x10u) goto choose_hand;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(SHELLDER, CLOYSTER);
+	d = r2.d;
 	target_a = r2.a;
 	if (r2.f & 0x10u) goto choose_hand;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(SEADRA, HORSEA);
+	d = r.d;
 	target_a = r.a;
 	if (r.f & 0x10u) goto choose_hand;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(HORSEA, SEADRA);
+	d = r2.d;
 	target_a = r2.a;
 	if (r2.f & 0x10u) goto choose_hand;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(TENTACRUEL, TENTACOOL);
+	d = r.d;
 	target_a = r.a;
 	if (r.f & 0x10u) goto choose_hand;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(TENTACOOL, TENTACRUEL);
+	d = r2.d;
 	target_a = r2.a;
 	if (r2.f & 0x10u) goto choose_hand;
 
@@ -1759,41 +1823,48 @@ choose_hand: ;
 	wce1a = target_a;
 	{
 		CheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(SEEL);
+		d = 0xC5u;
 		if (h.f & 0x10u)
-			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f};
+			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(KRABBY);
+		d = 0xC5u;
 		if (h.f & 0x10u)
-			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f};
+			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(HORSEA);
+		d = 0xC5u;
 		if (h.f & 0x10u)
-			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f};
+			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(SHELLDER);
+		d = 0xC5u;
 		if (h.f & 0x10u)
-			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f};
+			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(TENTACOOL);
+		d = 0xC5u;
 		if (h.f & 0x10u)
-			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f};
+			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f, d};
 		target_a = h.a;
 	}
 
 no_carry: ;
 	{
 		uint8_t f = (target_a == 0u) ? 0x80u : 0u;
-		return (AIDecide_PokemonTrader_SoundOfTheWavesResult){target_a, f};
+		return (AIDecide_PokemonTrader_SoundOfTheWavesResult){target_a, f, d};
 	}
 }
 /* <<< factory AIDecide_PokemonTrader_SoundOfTheWaves */
 
 /* >>> factory AIDecide_PokemonTrader_LegendaryDragonite */
-AIDecide_PokemonTrader_LegendaryDragoniteResult AIDecide_PokemonTrader_LegendaryDragonite(void)
+AIDecide_PokemonTrader_LegendaryDragoniteResult AIDecide_PokemonTrader_LegendaryDragonite(uint8_t d)
 {
 	uint8_t final_a;
 	CountOppEnergyCardsInHandAndAttachedResult energy = CountOppEnergyCardsInHandAndAttached();
+	d = 0u;
 	uint8_t need_kangaskhan = 0u;
 	if (energy.a < 5u) {
 		need_kangaskhan = 1u;
 	} else {
 		uint8_t pokemon_count = CountPokemonCardsInHandAndInPlayArea(0u);
+		d = (gb_read8(wDuelTempList_ADDR) != 0xFFu) ? 0u : 0xC5u;
 		if (pokemon_count < 5u)
 			need_kangaskhan = 1u;
 	}
@@ -1803,42 +1874,52 @@ AIDecide_PokemonTrader_LegendaryDragoniteResult AIDecide_PokemonTrader_Legendary
 		LookForCardIDInDeck_GivenCardIDInHandResult r2;
 
 		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(GYARADOS, MAGIKARP);
+		d = r.d;
 		final_a = r.a;
 		if (r.f & 0x10u) goto choose_hand;
 
 		r2 = LookForCardIDInDeck_GivenCardIDInHand(MAGIKARP, GYARADOS);
+		d = r2.d;
 		final_a = r2.a;
 		if (r2.f & 0x10u) goto choose_hand;
 
 		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(DRAGONAIR, DRATINI);
+		d = r.d;
 		final_a = r.a;
 		if (r.f & 0x10u) goto choose_hand;
 
 		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(DRAGONITE_LV41, DRAGONAIR);
+		d = r.d;
 		final_a = r.a;
 		if (r.f & 0x10u) goto choose_hand;
 
 		r2 = LookForCardIDInDeck_GivenCardIDInHand(DRATINI, DRAGONAIR);
+		d = r2.d;
 		final_a = r2.a;
 		if (r2.f & 0x10u) goto choose_hand;
 
 		r2 = LookForCardIDInDeck_GivenCardIDInHand(DRAGONAIR, DRAGONITE_LV41);
+		d = r2.d;
 		final_a = r2.a;
 		if (r2.f & 0x10u) goto choose_hand;
 
 		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(CHARMELEON, CHARMANDER);
+		d = r.d;
 		final_a = r.a;
 		if (r.f & 0x10u) goto choose_hand;
 
 		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(CHARIZARD, CHARMELEON);
+		d = r.d;
 		final_a = r.a;
 		if (r.f & 0x10u) goto choose_hand;
 
 		r2 = LookForCardIDInDeck_GivenCardIDInHand(CHARMANDER, CHARMELEON);
+		d = r2.d;
 		final_a = r2.a;
 		if (r2.f & 0x10u) goto choose_hand;
 
 		r2 = LookForCardIDInDeck_GivenCardIDInHand(CHARMELEON, CHARIZARD);
+		d = r2.d;
 		final_a = r2.a;
 		if (r2.f & 0x10u) goto choose_hand;
 
@@ -1847,6 +1928,7 @@ AIDecide_PokemonTrader_LegendaryDragoniteResult AIDecide_PokemonTrader_Legendary
 
 	{
 		LookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, KANGASKHAN);
+		d = 0u;
 		if (!(loc.f & 0x10u)) {
 			final_a = loc.a;
 			goto no_carry;
@@ -1858,71 +1940,88 @@ choose_hand: ;
 	wce1a = final_a;
 	{
 		CheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(DRAGONAIR);
+		d = 0xC5u;
 		if (h.f & 0x10u)
-			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f};
+			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(CHARMELEON);
+		d = 0xC5u;
 		if (h.f & 0x10u)
-			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f};
+			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(GYARADOS);
+		d = 0xC5u;
 		if (h.f & 0x10u)
-			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f};
+			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(MAGIKARP);
+		d = 0xC5u;
 		if (h.f & 0x10u)
-			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f};
+			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(CHARMANDER);
+		d = 0xC5u;
 		if (h.f & 0x10u)
-			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f};
+			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(DRATINI);
+		d = 0xC5u;
 		if (h.f & 0x10u)
-			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f};
+			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f, d};
 		final_a = h.a;
 	}
 
 no_carry: ;
 	{
 		uint8_t f = (final_a == 0u) ? 0x80u : 0u;
-		return (AIDecide_PokemonTrader_LegendaryDragoniteResult){final_a, f};
+		return (AIDecide_PokemonTrader_LegendaryDragoniteResult){final_a, f, d};
 	}
 }
 /* <<< factory AIDecide_PokemonTrader_LegendaryDragonite */
 
 /* >>> factory AIDecide_Pokeball */
-AIDecide_PokeballResult AIDecide_Pokeball(void)
+AIDecide_PokeballResult AIDecide_Pokeball(uint8_t d)
 {
 	uint8_t deck_id = wOpponentDeckID;
 
 	if (deck_id == FIRE_CHARGE_DECK_ID) {
 		LookForCardIDInLocationBank8Result r;
 		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, CHANSEY);
-		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		d = 0u;
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, TAUROS);
-		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		d = 0u;
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, JIGGLYPUFF_LV12);
-		return (AIDecide_PokeballResult){r.a, r.f};
+		d = 0u;
+		return (AIDecide_PokeballResult){r.a, r.f, d};
 	}
 
 	if (deck_id == HARD_POKEMON_DECK_ID) {
 		LookForCardIDInLocationBank8Result r;
 		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, RHYHORN);
-		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		d = 0u;
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, RHYDON);
-		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		d = 0u;
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, ONIX);
-		return (AIDecide_PokeballResult){r.a, r.f};
+		d = 0u;
+		return (AIDecide_PokeballResult){r.a, r.f, d};
 	}
 
 	if (deck_id == PIKACHU_DECK_ID) {
 		LookForCardIDInLocationBank8Result r;
 		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, PIKACHU_LV14);
-		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		d = 0u;
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, PIKACHU_LV16);
-		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		d = 0u;
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, PIKACHU_ALT_LV16);
-		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		d = 0u;
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, PIKACHU_LV12);
-		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		d = 0u;
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, FLYING_PIKACHU);
-		return (AIDecide_PokeballResult){r.a, r.f};
+		d = 0u;
+		return (AIDecide_PokeballResult){r.a, r.f, d};
 	}
 
 	if (deck_id == ETCETERA_DECK_ID) {
@@ -1930,63 +2029,83 @@ AIDecide_PokeballResult AIDecide_Pokeball(void)
 		LookForCardIDInLocationBank8Result r;
 
 		h = LookForCardIDInHandList_Bank8(FIRE_ENERGY);
+		d = 0xC5u;
 		if (h.f & 0x10u) {
 			h = LookForCardIDInHandList_Bank8(CHARMANDER);
+			d = 0xC5u;
 			if (!(h.f & 0x10u)) {
 				h = LookForCardIDInHandList_Bank8(MAGMAR_LV31);
+				d = 0xC5u;
 				if (!(h.f & 0x10u)) {
 					r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, CHARMANDER);
-					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+					d = 0u;
+					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 					r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, MAGMAR_LV31);
-					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+					d = 0u;
+					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 				}
 			}
 		}
 
 		h = LookForCardIDInHandList_Bank8(LIGHTNING_ENERGY);
+		d = 0xC5u;
 		if (h.f & 0x10u) {
 			h = LookForCardIDInHandList_Bank8(PIKACHU_LV12);
+			d = 0xC5u;
 			if (!(h.f & 0x10u)) {
 				h = LookForCardIDInHandList_Bank8(MAGNEMITE_LV13);
+				d = 0xC5u;
 				if (!(h.f & 0x10u)) {
 					r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, PIKACHU_LV12);
-					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+					d = 0u;
+					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 					r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, MAGNEMITE_LV13);
-					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+					d = 0u;
+					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 				}
 			}
 		}
 
 		h = LookForCardIDInHandList_Bank8(FIGHTING_ENERGY);
+		d = 0xC5u;
 		if (h.f & 0x10u) {
 			h = LookForCardIDInHandList_Bank8(DIGLETT);
+			d = 0xC5u;
 			if (!(h.f & 0x10u)) {
 				h = LookForCardIDInHandList_Bank8(MACHOP);
+				d = 0xC5u;
 				if (!(h.f & 0x10u)) {
 					r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, DIGLETT);
-					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+					d = 0u;
+					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 					r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, MACHOP);
-					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+					d = 0u;
+					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 				}
 			}
 		}
 
 		h = LookForCardIDInHandList_Bank8(PSYCHIC_ENERGY);
+		d = 0xC5u;
 		if (h.f & 0x10u) {
 			h = LookForCardIDInHandList_Bank8(GASTLY_LV8);
+			d = 0xC5u;
 			if (!(h.f & 0x10u)) {
 				h = LookForCardIDInHandList_Bank8(JYNX);
+				d = 0xC5u;
 				if (!(h.f & 0x10u)) {
 					r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, GASTLY_LV8);
-					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+					d = 0u;
+					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 					r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, JYNX);
-					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+					d = 0u;
+					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 				}
 			}
 		}
 
 		uint8_t f = (deck_id == 0u) ? 0x80u : 0u;
-		return (AIDecide_PokeballResult){deck_id, f};
+		return (AIDecide_PokeballResult){deck_id, f, d};
 	}
 
 	if (deck_id == LOVELY_NIDORAN_DECK_ID) {
@@ -1994,30 +2113,38 @@ AIDecide_PokeballResult AIDecide_Pokeball(void)
 		LookForCardIDInDeck_GivenCardIDInHandResult r2;
 
 		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(NIDORINO, NIDORANM);
-		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		d = r.d;
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(NIDOKING, NIDORINO);
-		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		d = r.d;
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 		r2 = LookForCardIDInDeck_GivenCardIDInHand(NIDORANM, NIDORINO);
-		if (r2.f & 0x10u) return (AIDecide_PokeballResult){r2.a, r2.f};
+		d = r2.d;
+		if (r2.f & 0x10u) return (AIDecide_PokeballResult){r2.a, r2.f, d};
 		r2 = LookForCardIDInDeck_GivenCardIDInHand(NIDORINO, NIDOKING);
-		if (r2.f & 0x10u) return (AIDecide_PokeballResult){r2.a, r2.f};
+		d = r2.d;
+		if (r2.f & 0x10u) return (AIDecide_PokeballResult){r2.a, r2.f, d};
 		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(NIDORINA, NIDORANF);
-		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		d = r.d;
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(NIDOQUEEN, NIDORINA);
-		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		d = r.d;
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f, d};
 		r2 = LookForCardIDInDeck_GivenCardIDInHand(NIDORANF, NIDORINA);
-		if (r2.f & 0x10u) return (AIDecide_PokeballResult){r2.a, r2.f};
+		d = r2.d;
+		if (r2.f & 0x10u) return (AIDecide_PokeballResult){r2.a, r2.f, d};
 		r2 = LookForCardIDInDeck_GivenCardIDInHand(NIDORINA, NIDOQUEEN);
-		return (AIDecide_PokeballResult){r2.a, r2.f};
+		d = r2.d;
+		return (AIDecide_PokeballResult){r2.a, r2.f, d};
 	}
 
 	uint8_t f = (deck_id == 0u) ? 0x80u : 0u;
-	return (AIDecide_PokeballResult){deck_id, f};
+	return (AIDecide_PokeballResult){deck_id, f, d};
 }
 /* <<< factory AIDecide_Pokeball */
 
 /* >>> factory AIDecide_MrFuji */
-AIDecideParameterResult AIDecide_MrFuji(void)
+AIDecideParameterResult AIDecide_MrFuji(uint8_t d)
 {
 	gb_write8(0xCE06u, 0xFFu);
 	gb_write8(0xCE08u, 0xFFu);
@@ -2025,9 +2152,9 @@ AIDecideParameterResult AIDecide_MrFuji(void)
 	DuelistVarResult r1 = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
 	uint8_t count = r1.a;
 	if (count == 1u)
-		return (AIDecideParameterResult){count, 0xC0u};
+		return (AIDecideParameterResult){count, 0xC0u, d};
 
-	uint8_t d = (uint8_t)(count - 1u);
+	d = (uint8_t)(count - 1u);
 	uint8_t e = PLAY_AREA_BENCH_1;
 
 	while (d != 0u) {
@@ -2051,13 +2178,13 @@ AIDecideParameterResult AIDecide_MrFuji(void)
 
 	uint8_t chosen = gb_read8(0xCE06u);
 	if (chosen == 0xFFu)
-		return (AIDecideParameterResult){chosen, 0xC0u};
-	return (AIDecideParameterResult){chosen, 0x10u};
+		return (AIDecideParameterResult){chosen, 0xC0u, 0u};
+	return (AIDecideParameterResult){chosen, 0x10u, 0u};
 }
 /* <<< factory AIDecide_MrFuji */
 
 /* >>> factory AIDecide_PokemonTrader_BlisteringPokemon */
-AIDecide_PokemonTrader_BlisteringPokemonResult AIDecide_PokemonTrader_BlisteringPokemon(void)
+AIDecide_PokemonTrader_BlisteringPokemonResult AIDecide_PokemonTrader_BlisteringPokemon(uint8_t d)
 {
 	uint8_t a;
 	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r1 =
@@ -2084,7 +2211,7 @@ AIDecide_PokemonTrader_BlisteringPokemonResult AIDecide_PokemonTrader_Blistering
 							LookForCardIDInDeck_GivenCardIDInHand(PONYTA, RAPIDASH);
 						a = r6.a;
 						if (!(r6.f & 0x10u))
-							return (AIDecide_PokemonTrader_BlisteringPokemonResult){a, 0x00u};
+							return (AIDecide_PokemonTrader_BlisteringPokemonResult){a, 0x00u, r6.d};
 					}
 				}
 			}
@@ -2093,56 +2220,66 @@ AIDecide_PokemonTrader_BlisteringPokemonResult AIDecide_PokemonTrader_Blistering
 	wce1a = a;
 	FindDuplicatePokemonCardsResult dup = FindDuplicatePokemonCards();
 	if (dup.f & 0x10u)
-		return (AIDecide_PokemonTrader_BlisteringPokemonResult){dup.a, 0x10u};
-	return (AIDecide_PokemonTrader_BlisteringPokemonResult){dup.a, 0x00u};
+		return (AIDecide_PokemonTrader_BlisteringPokemonResult){dup.a, 0x10u, dup.d};
+	return (AIDecide_PokemonTrader_BlisteringPokemonResult){dup.a, 0x00u, dup.d};
 }
 /* <<< factory AIDecide_PokemonTrader_BlisteringPokemon */
 
 /* >>> factory AIDecide_PokemonTrader_Flamethrower */
-AIDecide_PokemonTrader_FlamethrowerResult AIDecide_PokemonTrader_Flamethrower(void)
+AIDecide_PokemonTrader_FlamethrowerResult AIDecide_PokemonTrader_Flamethrower(uint8_t d)
 {
 	uint8_t a;
 	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r1 =
 		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(CHARMELEON, CHARMANDER);
+	d = r1.d;
 	a = r1.a;
 	if (!(r1.f & 0x10u)) {
 		LookForCardIDInDeck_GivenCardIDInHandResult r2 =
 			LookForCardIDInDeck_GivenCardIDInHand(CHARMANDER, CHARMELEON);
+		d = r2.d;
 		a = r2.a;
 		if (!(r2.f & 0x10u)) {
 			LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r3 =
 				LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(CHARIZARD, CHARMELEON);
+			d = r3.d;
 			a = r3.a;
 			if (!(r3.f & 0x10u)) {
 				LookForCardIDInDeck_GivenCardIDInHandResult r4 =
 					LookForCardIDInDeck_GivenCardIDInHand(CHARMELEON, CHARIZARD);
+				d = r4.d;
 				a = r4.a;
 				if (!(r4.f & 0x10u)) {
 					LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r5 =
 						LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(NINETALES_LV32, VULPIX);
+					d = r5.d;
 					a = r5.a;
 					if (!(r5.f & 0x10u)) {
 						LookForCardIDInDeck_GivenCardIDInHandResult r6 =
 							LookForCardIDInDeck_GivenCardIDInHand(VULPIX, NINETALES_LV32);
+						d = r6.d;
 						a = r6.a;
 						if (!(r6.f & 0x10u)) {
 							LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r7 =
 								LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(ARCANINE_LV45, GROWLITHE);
+							d = r7.d;
 							a = r7.a;
 							if (!(r7.f & 0x10u)) {
 								LookForCardIDInDeck_GivenCardIDInHandResult r8 =
 									LookForCardIDInDeck_GivenCardIDInHand(GROWLITHE, ARCANINE_LV45);
+								d = r8.d;
 								a = r8.a;
 								if (!(r8.f & 0x10u)) {
 									LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r9 =
 										LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(FLAREON_LV28, EEVEE);
+									d = r9.d;
 									a = r9.a;
 									if (!(r9.f & 0x10u)) {
 										LookForCardIDInDeck_GivenCardIDInHandResult r10 =
 											LookForCardIDInDeck_GivenCardIDInHand(EEVEE, FLAREON_LV28);
+										d = r10.d;
 										a = r10.a;
 										if (!(r10.f & 0x10u)) {
-											return (AIDecide_PokemonTrader_FlamethrowerResult){a, 0x00u};
+											return (AIDecide_PokemonTrader_FlamethrowerResult){a, 0x00u, d};
 										}
 									}
 								}
@@ -2155,161 +2292,191 @@ AIDecide_PokemonTrader_FlamethrowerResult AIDecide_PokemonTrader_Flamethrower(vo
 	}
 	wce1a = a;
 	FindDuplicatePokemonCardsResult dup = FindDuplicatePokemonCards();
+	d = dup.d;
 	if (dup.f & 0x10u)
-		return (AIDecide_PokemonTrader_FlamethrowerResult){dup.a, 0x10u};
-	return (AIDecide_PokemonTrader_FlamethrowerResult){dup.a, 0x00u};
+		return (AIDecide_PokemonTrader_FlamethrowerResult){dup.a, 0x10u, d};
+	return (AIDecide_PokemonTrader_FlamethrowerResult){dup.a, 0x00u, d};
 }
 /* <<< factory AIDecide_PokemonTrader_Flamethrower */
 
 /* >>> factory AIDecide_PokemonTrader_FlowerGarden */
-AIDecide_PokemonTrader_FlowerGardenResult AIDecide_PokemonTrader_FlowerGarden(void)
+AIDecide_PokemonTrader_FlowerGardenResult AIDecide_PokemonTrader_FlowerGarden(uint8_t d)
 {
 	uint8_t a;
 	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r;
 	LookForCardIDInDeck_GivenCardIDInHandResult r2;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(IVYSAUR, BULBASAUR);
+	d = r.d;
 	a = r.a;
 	if (r.f & 0x10u) goto find_duplicates;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(VENUSAUR_LV67, IVYSAUR);
+	d = r.d;
 	a = r.a;
 	if (r.f & 0x10u) goto find_duplicates;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(BULBASAUR, IVYSAUR);
+	d = r2.d;
 	a = r2.a;
 	if (r2.f & 0x10u) goto find_duplicates;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(IVYSAUR, VENUSAUR_LV67);
+	d = r2.d;
 	a = r2.a;
 	if (r2.f & 0x10u) goto find_duplicates;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(WEEPINBELL, BELLSPROUT);
+	d = r.d;
 	a = r.a;
 	if (r.f & 0x10u) goto find_duplicates;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(VICTREEBEL, WEEPINBELL);
+	d = r.d;
 	a = r.a;
 	if (r.f & 0x10u) goto find_duplicates;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(BELLSPROUT, WEEPINBELL);
+	d = r2.d;
 	a = r2.a;
 	if (r2.f & 0x10u) goto find_duplicates;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(WEEPINBELL, VICTREEBEL);
+	d = r2.d;
 	a = r2.a;
 	if (r2.f & 0x10u) goto find_duplicates;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(GLOOM, ODDISH);
+	d = r.d;
 	a = r.a;
 	if (r.f & 0x10u) goto find_duplicates;
 
 	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(VILEPLUME, GLOOM);
+	d = r.d;
 	a = r.a;
 	if (r.f & 0x10u) goto find_duplicates;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(ODDISH, GLOOM);
+	d = r2.d;
 	a = r2.a;
 	if (r2.f & 0x10u) goto find_duplicates;
 
 	r2 = LookForCardIDInDeck_GivenCardIDInHand(GLOOM, VILEPLUME);
+	d = r2.d;
 	a = r2.a;
 	if (r2.f & 0x10u) goto find_duplicates;
 
-	return (AIDecide_PokemonTrader_FlowerGardenResult){a, 0x00u};
+	return (AIDecide_PokemonTrader_FlowerGardenResult){a, 0x00u, d};
 
 find_duplicates:
 	wce1a = a;
 	{
 		FindDuplicatePokemonCardsResult dup = FindDuplicatePokemonCards();
+		d = dup.d;
 		if (dup.f & 0x10u)
-			return (AIDecide_PokemonTrader_FlowerGardenResult){dup.a, 0x10u};
-		return (AIDecide_PokemonTrader_FlowerGardenResult){dup.a, 0x00u};
+			return (AIDecide_PokemonTrader_FlowerGardenResult){dup.a, 0x10u, d};
+		return (AIDecide_PokemonTrader_FlowerGardenResult){dup.a, 0x00u, d};
 	}
 }
 /* <<< factory AIDecide_PokemonTrader_FlowerGarden */
 
 /* >>> factory AIDecide_PokemonTrader_PowerGenerator */
-AIDecide_PokemonTrader_PowerGeneratorResult AIDecide_PokemonTrader_PowerGenerator(void)
+AIDecide_PokemonTrader_PowerGeneratorResult AIDecide_PokemonTrader_PowerGenerator(uint8_t d)
 {
 	uint8_t a = 0u;
 	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r1 =
 		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(RAICHU_LV40, PIKACHU_LV14);
+	d = r1.d;
 	a = r1.a;
 	if (r1.f & 0x10u) goto find_duplicates;
 
 	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r2 =
 		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(RAICHU_LV40, PIKACHU_LV12);
+		d = r2.d;
 	a = r2.a;
 	if (r2.f & 0x10u) goto find_duplicates;
 
 	LookForCardIDInDeck_GivenCardIDInHandResult r3 =
 		LookForCardIDInDeck_GivenCardIDInHand(PIKACHU_LV14, RAICHU_LV40);
+		d = r3.d;
 	a = r3.a;
 	if (r3.f & 0x10u) goto find_duplicates;
 
 	LookForCardIDInDeck_GivenCardIDInHandResult r4 =
 		LookForCardIDInDeck_GivenCardIDInHand(PIKACHU_LV12, RAICHU_LV40);
+		d = r4.d;
 	a = r4.a;
 	if (r4.f & 0x10u) goto find_duplicates;
 
 	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r5 =
 		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(ELECTRODE_LV42, VOLTORB);
+		d = r5.d;
 	a = r5.a;
 	if (r5.f & 0x10u) goto find_duplicates;
 
 	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r6 =
 		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(ELECTRODE_LV35, VOLTORB);
+		d = r6.d;
 	a = r6.a;
 	if (r6.f & 0x10u) goto find_duplicates;
 
 	LookForCardIDInDeck_GivenCardIDInHandResult r7 =
 		LookForCardIDInDeck_GivenCardIDInHand(VOLTORB, ELECTRODE_LV42);
+		d = r7.d;
 	a = r7.a;
 	if (r7.f & 0x10u) goto find_duplicates;
 
 	LookForCardIDInDeck_GivenCardIDInHandResult r8 =
 		LookForCardIDInDeck_GivenCardIDInHand(VOLTORB, ELECTRODE_LV35);
+		d = r8.d;
 	a = r8.a;
 	if (r8.f & 0x10u) goto find_duplicates;
 
 	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r9 =
 		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(MAGNETON_LV35, MAGNEMITE_LV13);
+		d = r9.d;
 	a = r9.a;
 	if (r9.f & 0x10u) goto find_duplicates;
 
 	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r10 =
 		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(MAGNETON_LV35, MAGNEMITE_LV15);
+		d = r10.d;
 	a = r10.a;
 	if (r10.f & 0x10u) goto find_duplicates;
 
 	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r11 =
 		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(MAGNETON_LV28, MAGNEMITE_LV13);
+		d = r11.d;
 	a = r11.a;
 	if (r11.f & 0x10u) goto find_duplicates;
 
 	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r12 =
 		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(MAGNETON_LV28, MAGNEMITE_LV15);
+		d = r12.d;
 	a = r12.a;
 	if (r12.f & 0x10u) goto find_duplicates;
 
 	LookForCardIDInDeck_GivenCardIDInHandResult r13 =
 		LookForCardIDInDeck_GivenCardIDInHand(MAGNEMITE_LV15, MAGNETON_LV35);
+		d = r13.d;
 	a = r13.a;
 	if (r13.f & 0x10u) goto find_duplicates;
 
 	LookForCardIDInDeck_GivenCardIDInHandResult r14 =
 		LookForCardIDInDeck_GivenCardIDInHand(MAGNEMITE_LV13, MAGNETON_LV35);
+		d = r14.d;
 	a = r14.a;
 	if (r14.f & 0x10u) goto find_duplicates;
 
 	LookForCardIDInDeck_GivenCardIDInHandResult r15 =
 		LookForCardIDInDeck_GivenCardIDInHand(MAGNEMITE_LV15, MAGNETON_LV28);
+		d = r15.d;
 	a = r15.a;
 	if (r15.f & 0x10u) goto find_duplicates;
 
 	LookForCardIDInDeck_GivenCardIDInHandResult r16 =
 		LookForCardIDInDeck_GivenCardIDInHand(MAGNEMITE_LV13, MAGNETON_LV28);
+		d = r16.d;
 	a = r16.a;
 	if (r16.f & 0x10u) goto find_duplicates;
 
@@ -2317,66 +2484,66 @@ find_duplicates:
 	wce1a = a;
 	{
 		FindDuplicatePokemonCardsResult dup = FindDuplicatePokemonCards();
+		d = dup.d;
 		if (dup.f & 0x10u)
-			return (AIDecide_PokemonTrader_PowerGeneratorResult){dup.a, 0x10u};
-		return (AIDecide_PokemonTrader_PowerGeneratorResult){dup.a, 0x00u};
+			return (AIDecide_PokemonTrader_PowerGeneratorResult){dup.a, 0x10u, d};
+		return (AIDecide_PokemonTrader_PowerGeneratorResult){dup.a, 0x00u, d};
 	}
 }
 /* <<< factory AIDecide_PokemonTrader_PowerGenerator */
 
 /* >>> factory AIDecide_PokemonTrader */
-AIDecide_PokemonTraderResult AIDecide_PokemonTrader(void)
+AIDecide_PokemonTraderResult AIDecide_PokemonTrader(uint8_t d)
 {
 	uint8_t deck_id = wOpponentDeckID;
 	if (deck_id == LEGENDARY_MOLTRES_DECK_ID) {
-		AIDecide_PokemonTrader_LegendaryMoltresResult r = AIDecide_PokemonTrader_LegendaryMoltres();
-		return (AIDecide_PokemonTraderResult){r.a, r.f};
+		AIDecide_PokemonTrader_LegendaryMoltresResult r = AIDecide_PokemonTrader_LegendaryMoltres(d);
+		return (AIDecide_PokemonTraderResult){r.a, r.f, r.d};
 	}
 	if (deck_id == LEGENDARY_ARTICUNO_DECK_ID) {
-		AIDecide_PokemonTrader_LegendaryArticunoResult r = AIDecide_PokemonTrader_LegendaryArticuno();
-		return (AIDecide_PokemonTraderResult){r.a, r.f};
+		AIDecide_PokemonTrader_LegendaryArticunoResult r = AIDecide_PokemonTrader_LegendaryArticuno(d);
+		return (AIDecide_PokemonTraderResult){r.a, r.f, r.d};
 	}
 	if (deck_id == LEGENDARY_DRAGONITE_DECK_ID) {
-		AIDecide_PokemonTrader_LegendaryDragoniteResult r = AIDecide_PokemonTrader_LegendaryDragonite();
-		return (AIDecide_PokemonTraderResult){r.a, r.f};
+		AIDecide_PokemonTrader_LegendaryDragoniteResult r = AIDecide_PokemonTrader_LegendaryDragonite(d);
+		return (AIDecide_PokemonTraderResult){r.a, r.f, r.d};
 	}
 	if (deck_id == LEGENDARY_RONALD_DECK_ID) {
-		AIDecide_PokemonTrader_LegendaryRonaldResult r = AIDecide_PokemonTrader_LegendaryRonald();
-		return (AIDecide_PokemonTraderResult){r.a, r.f};
+		AIDecide_PokemonTrader_LegendaryRonaldResult r = AIDecide_PokemonTrader_LegendaryRonald(d);
+		return (AIDecide_PokemonTraderResult){r.a, r.f, r.d};
 	}
 	if (deck_id == BLISTERING_POKEMON_DECK_ID) {
-		AIDecide_PokemonTrader_BlisteringPokemonResult r = AIDecide_PokemonTrader_BlisteringPokemon();
-		return (AIDecide_PokemonTraderResult){r.a, r.f};
+		AIDecide_PokemonTrader_BlisteringPokemonResult r = AIDecide_PokemonTrader_BlisteringPokemon(d);
+		return (AIDecide_PokemonTraderResult){r.a, r.f, r.d};
 	}
 	if (deck_id == SOUND_OF_THE_WAVES_DECK_ID) {
-		AIDecide_PokemonTrader_SoundOfTheWavesResult r = AIDecide_PokemonTrader_SoundOfTheWaves();
-		return (AIDecide_PokemonTraderResult){r.a, r.f};
+		AIDecide_PokemonTrader_SoundOfTheWavesResult r = AIDecide_PokemonTrader_SoundOfTheWaves(d);
+		return (AIDecide_PokemonTraderResult){r.a, r.f, r.d};
 	}
 	if (deck_id == POWER_GENERATOR_DECK_ID) {
-		AIDecide_PokemonTrader_PowerGeneratorResult r = AIDecide_PokemonTrader_PowerGenerator();
-		return (AIDecide_PokemonTraderResult){r.a, r.f};
+		AIDecide_PokemonTrader_PowerGeneratorResult r = AIDecide_PokemonTrader_PowerGenerator(d);
+		return (AIDecide_PokemonTraderResult){r.a, r.f, r.d};
 	}
 	if (deck_id == FLOWER_GARDEN_DECK_ID) {
-		AIDecide_PokemonTrader_FlowerGardenResult r = AIDecide_PokemonTrader_FlowerGarden();
-		return (AIDecide_PokemonTraderResult){r.a, r.f};
+		AIDecide_PokemonTrader_FlowerGardenResult r = AIDecide_PokemonTrader_FlowerGarden(d);
+		return (AIDecide_PokemonTraderResult){r.a, r.f, r.d};
 	}
 	if (deck_id == STRANGE_POWER_DECK_ID) {
-		AIDecide_PokemonTrader_StrangePowerResult r = AIDecide_PokemonTrader_StrangePower();
-		return (AIDecide_PokemonTraderResult){r.a, r.f};
+		AIDecide_PokemonTrader_StrangePowerResult r = AIDecide_PokemonTrader_StrangePower(d);
+		return (AIDecide_PokemonTraderResult){r.a, r.f, r.d};
 	}
 	if (deck_id == FLAMETHROWER_DECK_ID) {
-		AIDecide_PokemonTrader_FlamethrowerResult r = AIDecide_PokemonTrader_Flamethrower();
-		return (AIDecide_PokemonTraderResult){r.a, r.f};
+		AIDecide_PokemonTrader_FlamethrowerResult r = AIDecide_PokemonTrader_Flamethrower(d);
+		return (AIDecide_PokemonTraderResult){r.a, r.f, r.d};
 	}
-	return (AIDecide_PokemonTraderResult){deck_id, (uint8_t)(deck_id == 0u ? 0x80u : 0x00u)};
+	return (AIDecide_PokemonTraderResult){deck_id, (uint8_t)(deck_id == 0u ? 0x80u : 0x00u), d};
 }
 /* <<< factory AIDecide_PokemonTrader */
 
 /* >>> factory AIDecide_EnergySearch */
-AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a)
+AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a, uint8_t d)
 {
 	CoreCardListResult hand = CreateEnergyCardListFromHand(a);
-	uint8_t d;
 	uint8_t e;
 	uint8_t mode;
 	uint8_t found;
@@ -2400,7 +2567,7 @@ AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a)
 					break;
 				CheckIfEnergyIsUsefulResult useful = CheckIfEnergyIsUseful(entry);
 				if (useful.f & 0x10u)
-					return (AIDecideEnergySearchResult){entry, (uint8_t)(entry == 0u ? 0x80u : 0x00u)};
+					return (AIDecideEnergySearchResult){entry, (uint8_t)(entry == 0u ? 0x80u : 0x00u), d};
 			}
 			e++;
 			if (e == d)
@@ -2417,7 +2584,7 @@ AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a)
 
 	FindBasicEnergyCardsInLocationResult deck = FindBasicEnergyCardsInLocation(CARD_LOCATION_DECK);
 	if (deck.f & 0x10u)
-		return (AIDecideEnergySearchResult){0u, 0x80u};
+		return (AIDecideEnergySearchResult){0u, 0x80u, deck.d};
 
 	d = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
 	e = PLAY_AREA_ARENA;
@@ -2441,7 +2608,7 @@ AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a)
 			if (useful.f & 0x10u) {
 				found = entry;
 				found_flags = (uint8_t)(entry == 0u ? 0x90u : 0x10u);
-				return (AIDecideEnergySearchResult){found, (uint8_t)(found_flags | 0x10u)};
+				return (AIDecideEnergySearchResult){found, (uint8_t)(found_flags | 0x10u), d};
 			}
 		}
 
@@ -2452,8 +2619,8 @@ AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a)
 	}
 
 	if (mode == 1u)
-		return (AIDecideEnergySearchResult){d, (uint8_t)(d == 0u ? 0x80u : 0x00u)};
-	return (AIDecideEnergySearchResult){wDuelTempList, 0x90u};
+		return (AIDecideEnergySearchResult){d, (uint8_t)(d == 0u ? 0x80u : 0x00u), d};
+	return (AIDecideEnergySearchResult){wDuelTempList, 0x90u, d};
 }
 /* <<< factory AIDecide_EnergySearch */
 
@@ -2462,43 +2629,43 @@ AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a)
  * in wAITrainerCardParameter on carry -- and every play routine yields f.
  * Register arguments the C signatures still carry are the asm's incidental
  * inputs; the loop hands them the scratch values it has. */
-typedef struct { uint8_t a; uint8_t f; } TrainerDecision;
-static TrainerDecision decide_AIDecide_Bill(void) { AIDecideParameterResult r = AIDecide_Bill(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_ClefairyDollOrMysteriousFossil(void) { AIDecidePokemonFluteResult r = AIDecide_ClefairyDollOrMysteriousFossil(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_ComputerSearch(void) { AIDecide_ComputerSearchResult r = AIDecide_ComputerSearch(0u, 0u); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_Defender_Phase13(void) { AIDecideParameterResult r = AIDecide_Defender_Phase13(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_Defender_Phase14(void) { AIDecideParameterResult r = AIDecide_Defender_Phase14(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_EnergyRemoval(void) { AIDecideEnergyRemovalResult r = AIDecide_EnergyRemoval(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_EnergyRetrieval(void) { AIDecideEnergyRetrievalResult r = AIDecide_EnergyRetrieval(0u); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_EnergySearch(void) { AIDecideEnergySearchResult r = AIDecide_EnergySearch(0u); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_FullHeal(void) { AIDecideFullHealResult r = AIDecide_FullHeal(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_Gambler(void) { AIDecideParameterResult r = AIDecide_Gambler(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_GustOfWind(void) { AIDecideParameterResult r = AIDecide_GustOfWind(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_Imakuni(void) { AIDecideParameterResult r = AIDecide_Imakuni(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_ImposterProfessorOak(void) { AIDecideParameterResult r = AIDecide_ImposterProfessorOak(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_ItemFinder(void) { AIDecide_ItemFinderResult r = AIDecide_ItemFinder(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_Lass(void) { AIDecideParameterResult r = AIDecide_Lass(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_Maintenance(void) { AIDecideMaintenanceResult r = AIDecide_Maintenance(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_MrFuji(void) { AIDecideParameterResult r = AIDecide_MrFuji(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_PlusPower_Phase13(void) { AIDecide_PlusPower_Phase13Result r = AIDecide_PlusPower_Phase13(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_PlusPower_Phase14(void) { AIDecideParameterResult r = AIDecide_PlusPower_Phase14(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_Pokeball(void) { AIDecide_PokeballResult r = AIDecide_Pokeball(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_Pokedex(void) { AIDecidePokedexResult r = AIDecide_Pokedex(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_PokemonBreeder(void) { AIDecidePokemonBreederResult r = AIDecide_PokemonBreeder(0u); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_PokemonCenter(void) { AIDecideParameterResult r = AIDecide_PokemonCenter(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_PokemonFlute(void) { AIDecidePokemonFluteResult r = AIDecide_PokemonFlute(0u); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_PokemonTrader(void) { AIDecide_PokemonTraderResult r = AIDecide_PokemonTrader(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_Potion_Phase07(void) { AIDecidePotionPhase07Result r = AIDecide_Potion_Phase07(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_Potion_Phase10(void) { AIDecidePotionPhase10Result r = AIDecide_Potion_Phase10(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_ProfessorOak(void) { AIDecideParameterResult r = AIDecide_ProfessorOak(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_Recycle(void) { AIDecideParameterResult r = AIDecide_Recycle(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_Revive(void) { AIDecideReviveResult r = AIDecide_Revive(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_ScoopUp(void) { AIDecide_ScoopUpResult r = AIDecide_ScoopUp(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_SuperEnergyRemoval(void) { AIDecideParameterResult r = AIDecide_SuperEnergyRemoval(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_SuperEnergyRetrieval(void) { AIDecideSuperEnergyRetrievalResult r = AIDecide_SuperEnergyRetrieval(0u); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_SuperPotion_Phase08(void) { AIDecideSuperPotionPhase08Result r = AIDecide_SuperPotion_Phase08(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_SuperPotion_Phase11(void) { AIDecideSuperPotionPhase11Result r = AIDecide_SuperPotion_Phase11(); return (TrainerDecision){r.a, r.f}; }
-static TrainerDecision decide_AIDecide_Switch(void) { AIDecide_SwitchResult r = AIDecide_Switch(); return (TrainerDecision){r.a, r.f}; }
+typedef struct { uint8_t a; uint8_t f; uint8_t d; } TrainerDecision;
+static TrainerDecision decide_AIDecide_Bill(uint8_t d) { AIDecideParameterResult r = AIDecide_Bill(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_ClefairyDollOrMysteriousFossil(uint8_t d) { AIDecidePokemonFluteResult r = AIDecide_ClefairyDollOrMysteriousFossil(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_ComputerSearch(uint8_t d) { AIDecide_ComputerSearchResult r = AIDecide_ComputerSearch(0u, 0u, d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_Defender_Phase13(uint8_t d) { AIDecideParameterResult r = AIDecide_Defender_Phase13(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_Defender_Phase14(uint8_t d) { AIDecideParameterResult r = AIDecide_Defender_Phase14(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_EnergyRemoval(uint8_t d) { AIDecideEnergyRemovalResult r = AIDecide_EnergyRemoval(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_EnergyRetrieval(uint8_t d) { AIDecideEnergyRetrievalResult r = AIDecide_EnergyRetrieval(0u, d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_EnergySearch(uint8_t d) { AIDecideEnergySearchResult r = AIDecide_EnergySearch(0u, d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_FullHeal(uint8_t d) { AIDecideFullHealResult r = AIDecide_FullHeal(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_Gambler(uint8_t d) { AIDecideParameterResult r = AIDecide_Gambler(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_GustOfWind(uint8_t d) { AIDecideParameterResult r = AIDecide_GustOfWind(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_Imakuni(uint8_t d) { AIDecideParameterResult r = AIDecide_Imakuni(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_ImposterProfessorOak(uint8_t d) { AIDecideParameterResult r = AIDecide_ImposterProfessorOak(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_ItemFinder(uint8_t d) { AIDecide_ItemFinderResult r = AIDecide_ItemFinder(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_Lass(uint8_t d) { AIDecideParameterResult r = AIDecide_Lass(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_Maintenance(uint8_t d) { AIDecideMaintenanceResult r = AIDecide_Maintenance(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_MrFuji(uint8_t d) { AIDecideParameterResult r = AIDecide_MrFuji(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_PlusPower_Phase13(uint8_t d) { AIDecide_PlusPower_Phase13Result r = AIDecide_PlusPower_Phase13(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_PlusPower_Phase14(uint8_t d) { AIDecideParameterResult r = AIDecide_PlusPower_Phase14(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_Pokeball(uint8_t d) { AIDecide_PokeballResult r = AIDecide_Pokeball(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_Pokedex(uint8_t d) { AIDecidePokedexResult r = AIDecide_Pokedex(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_PokemonBreeder(uint8_t d) { AIDecidePokemonBreederResult r = AIDecide_PokemonBreeder(0u, d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_PokemonCenter(uint8_t d) { AIDecideParameterResult r = AIDecide_PokemonCenter(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_PokemonFlute(uint8_t d) { AIDecidePokemonFluteResult r = AIDecide_PokemonFlute(0u, d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_PokemonTrader(uint8_t d) { AIDecide_PokemonTraderResult r = AIDecide_PokemonTrader(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_Potion_Phase07(uint8_t d) { AIDecidePotionPhase07Result r = AIDecide_Potion_Phase07(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_Potion_Phase10(uint8_t d) { AIDecidePotionPhase10Result r = AIDecide_Potion_Phase10(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_ProfessorOak(uint8_t d) { AIDecideParameterResult r = AIDecide_ProfessorOak(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_Recycle(uint8_t d) { AIDecideParameterResult r = AIDecide_Recycle(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_Revive(uint8_t d) { AIDecideReviveResult r = AIDecide_Revive(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_ScoopUp(uint8_t d) { AIDecide_ScoopUpResult r = AIDecide_ScoopUp(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_SuperEnergyRemoval(uint8_t d) { AIDecideParameterResult r = AIDecide_SuperEnergyRemoval(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_SuperEnergyRetrieval(uint8_t d) { AIDecideSuperEnergyRetrievalResult r = AIDecide_SuperEnergyRetrieval(0u, d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_SuperPotion_Phase08(uint8_t d) { AIDecideSuperPotionPhase08Result r = AIDecide_SuperPotion_Phase08(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_SuperPotion_Phase11(uint8_t d) { AIDecideSuperPotionPhase11Result r = AIDecide_SuperPotion_Phase11(d); return (TrainerDecision){r.a, r.f, r.d}; }
+static TrainerDecision decide_AIDecide_Switch(uint8_t d) { AIDecide_SwitchResult r = AIDecide_Switch(d); return (TrainerDecision){r.a, r.f, r.d}; }
 static uint8_t play_AIPlay_Bill(void) { return AIPlay_Bill().f; }
 static uint8_t play_AIPlay_ClefairyDollOrMysteriousFossil(void) { return AIPlay_ClefairyDollOrMysteriousFossil().f; }
 static uint8_t play_AIPlay_ComputerSearch(void) { return AIPlay_ComputerSearch().f; }
@@ -2535,7 +2702,7 @@ static uint8_t play_AIPlay_Switch(void) { return AIPlay_Switch().f; }
 typedef struct {
 	uint8_t phase;
 	uint8_t card;
-	TrainerDecision (*decide)(void);
+	TrainerDecision (*decide)(uint8_t d);
 	uint8_t (*play)(void);
 } TrainerLogic;
 
@@ -2624,7 +2791,7 @@ AIProcessHandTrainerCardsResult _AIProcessHandTrainerCards(uint8_t a)
 				continue;
 			if ((AIChooseRandomlyNotToDoAction().f & 0x10u) != 0u)
 				continue;
-			TrainerDecision decision = logic->decide();
+			TrainerDecision decision = logic->decide(phase);
 			if ((decision.f & 0x10u) == 0u)
 				continue;
 			wAITrainerCardParameter = decision.a;
@@ -2747,7 +2914,7 @@ AIDecideResult AIPlay_PokemonCenter(void)
 
 
 /* >>> factory AIDecide_PlusPower_Phase14 */
-AIDecideParameterResult AIDecide_PlusPower_Phase14(void)
+AIDecideParameterResult AIDecide_PlusPower_Phase14(uint8_t d)
 {
 	/* trainer_cards.asm AIDecide_PlusPower_Phase14: a usable attack that does
 	 * not already knock out, a 30% roll, and no Mr. Mime wall past 30 damage. */
@@ -2903,7 +3070,7 @@ static uint8_t gust_find_bench_card_with_weakness(uint8_t color, uint8_t *locati
 	}
 }
 
-AIDecideParameterResult AIDecide_GustOfWind(void)
+AIDecideParameterResult AIDecide_GustOfWind(uint8_t d)
 {
 	uint8_t bench_count = (uint8_t)(GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a - 1u);
 	if (bench_count == 0u)
@@ -2984,7 +3151,7 @@ AIDecideParameterResult AIDecide_GustOfWind(void)
 /* <<< factory AIDecide_GustOfWind */
 
 /* >>> factory AIDecide_Defender_Phase13 */
-AIDecideParameterResult AIDecide_Defender_Phase13(void)
+AIDecideParameterResult AIDecide_Defender_Phase13(uint8_t d)
 {
 	/* trainer_cards.asm AIDecide_Defender_Phase13: play Defender when the
 	 * player's strongest usable attack would knock the arena card out only
@@ -3039,13 +3206,15 @@ AIDecideParameterResult AIDecide_Defender_Phase13(void)
 /* <<< factory AIDecide_Defender_Phase13 */
 
 /* >>> factory AIDecide_Switch */
-AIDecide_SwitchResult AIDecide_Switch(void)
+AIDecide_SwitchResult AIDecide_Switch(uint8_t d)
 {
 	uint8_t cost;
 	uint8_t attached;
 	if (wAIPlayEnergyCardForRetreat != 0u) {
 		hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
 		cost = GetPlayAreaCardRetreatCost();
+		if (GetTurnDuelistVariable(DUELVARS_BENCH).a != 0xFFu)
+			d = 0u;
 		attached = CountNumberOfEnergyCardsAttached(PLAY_AREA_ARENA).a;
 		uint8_t difference = (uint8_t)(cost - attached);
 		if (cost < attached)
@@ -3057,17 +3226,21 @@ AIDecide_SwitchResult AIDecide_Switch(void)
 check_cost_amount:
 	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
 	cost = GetPlayAreaCardRetreatCost();
+	if (GetTurnDuelistVariable(DUELVARS_BENCH).a != 0xFFu)
+		d = 0u;
 	if (cost >= 3u)
 		goto do_switch;
 	attached = CountNumberOfEnergyCardsAttached(PLAY_AREA_ARENA).a;
 	if (attached < cost)
 		goto do_switch;
-	return (AIDecide_SwitchResult){attached, (uint8_t)((attached == cost ? 0x80u : 0u) | 0x40u | ((attached & 0x0Fu) < (cost & 0x0Fu) ? 0x20u : 0u))};
+	return (AIDecide_SwitchResult){attached, (uint8_t)((attached == cost ? 0x80u : 0u) | 0x40u | ((attached & 0x0Fu) < (cost & 0x0Fu) ? 0x20u : 0u)), d};
 
 do_switch:
 	{
 		AIDecideBenchPokemonToSwitchToResult r = AIDecideBenchPokemonToSwitchTo();
-		return (AIDecide_SwitchResult){r.a, (uint8_t)((r.f & 0x80u) | ((r.f & 0x10u) ? 0u : 0x10u))};
+		if ((r.f & 0x10u) == 0u)
+			d = r.a;
+		return (AIDecide_SwitchResult){r.a, (uint8_t)((r.f & 0x80u) | ((r.f & 0x10u) ? 0u : 0x10u)), d};
 	}
 }
 /* <<< factory AIDecide_Switch */
@@ -3135,7 +3308,7 @@ static uint8_t ser_has_basic_energy(uint8_t location)
 	}
 }
 
-AIDecideParameterResult AIDecide_SuperEnergyRemoval(void)
+AIDecideParameterResult AIDecide_SuperEnergyRemoval(uint8_t d)
 {
 	/* A card of the AI's own with a basic energy to pay the cost. */
 	uint8_t own = PLAY_AREA_BENCH_1;
@@ -3197,7 +3370,7 @@ AIDecideParameterResult AIDecide_SuperEnergyRemoval(void)
 /* <<< factory AIDecide_SuperEnergyRemoval */
 
 /* >>> factory AIDecide_ScoopUp */
-AIDecide_ScoopUpResult AIDecide_ScoopUp(void)
+AIDecide_ScoopUpResult AIDecide_ScoopUp(uint8_t d)
 {
 	hTempPlayAreaLocation_ff9d = 0u;
 	DuelistVarResult count = GetTurnDuelistVariable(0xEFu);
@@ -3229,7 +3402,7 @@ AIDecide_ScoopUpResult AIDecide_ScoopUp(void)
 /* <<< factory AIDecide_ScoopUp */
 
 /* >>> factory AIDecide_FullHeal */
-AIDecideFullHealResult AIDecide_FullHeal(void)
+AIDecideFullHealResult AIDecide_FullHeal(uint8_t d)
 {
 	uint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;
 	status &= CNF_SLP_PRZ;
@@ -3249,7 +3422,7 @@ AIDecideFullHealResult AIDecide_FullHeal(void)
 	if (status == PARALYZED || status == ASLEEP || status == CONFUSED) {
 		LookForCardIDInHandListResult hand = LookForCardIDInHandList_Bank8(SCOOP_UP);
 		if (hand.f & 0x10u) {
-			AIDecide_ScoopUpResult scoop = AIDecide_ScoopUp();
+			AIDecide_ScoopUpResult scoop = AIDecide_ScoopUp(d);
 			if (scoop.f & 0x10u)
 				return (AIDecideFullHealResult){scoop.a, (uint8_t)(scoop.a == 0u ? 0x80u : 0u)};
 		}
@@ -3271,7 +3444,7 @@ AIDecideFullHealResult AIDecide_FullHeal(void)
 /* <<< factory AIDecide_FullHeal */
 
 /* >>> factory AIDecide_EnergyRemoval */
-AIDecideEnergyRemovalResult AIDecide_EnergyRemoval(void)
+AIDecideEnergyRemovalResult AIDecide_EnergyRemoval(uint8_t d)
 {
 	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
 	CheckIfAnyAttackKnocksOutDefendingCardResult ko = CheckIfAnyAttackKnocksOutDefendingCard();
@@ -3361,7 +3534,7 @@ AIDecideEnergyRemovalResult AIDecide_EnergyRemoval(void)
 /* <<< factory AIDecide_EnergyRemoval */
 
 /* >>> factory AIDecide_PokemonCenter */
-AIDecideParameterResult AIDecide_PokemonCenter(void)
+AIDecideParameterResult AIDecide_PokemonCenter(uint8_t d)
 {
 	/* trainer_cards.asm AIDecide_PokemonCenter: not when a knockout is within
 	 * reach this turn; otherwise when the damage to heal outweighs the energy
@@ -3380,7 +3553,7 @@ AIDecideParameterResult AIDecide_PokemonCenter(void)
 	wce06 = 0u;
 	wce08 = 0u;
 	wce0f = 0u;
-	uint8_t d = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	d = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
 	uint8_t e = PLAY_AREA_ARENA;
 	for (;;) {
 		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e)).a;
@@ -3415,7 +3588,7 @@ AIDecideParameterResult AIDecide_PokemonCenter(void)
 /* <<< factory AIDecide_PokemonCenter */
 
 /* >>> factory AIDecide_PlusPower_Phase13 */
-AIDecide_PlusPower_Phase13Result AIDecide_PlusPower_Phase13(void)
+AIDecide_PlusPower_Phase13Result AIDecide_PlusPower_Phase13(uint8_t d)
 {
 	/* The `xor a` / `ldh` pair is written twice in the source ("this is
 	   mistakenly duplicated"); both stores are kept. */
@@ -3683,7 +3856,7 @@ AIDecideResult AIPlay_SuperEnergyRemoval(void)
 /* <<< factory AIPlay_SuperEnergyRemoval */
 
 /* >>> factory AIDecide_SuperPotion_Phase11 */
-AIDecideSuperPotionPhase11Result AIDecide_SuperPotion_Phase11(void)
+AIDecideSuperPotionPhase11Result AIDecide_SuperPotion_Phase11(uint8_t d)
 {
 	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
 	CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(0u, 0u, 0u, 0u, 0u, 0u, 0u);
@@ -3783,18 +3956,19 @@ static uint8_t oak_evolution_in_hand(uint8_t location)
 	return 0u;
 }
 
-AIDecideParameterResult AIDecide_ProfessorOak(void)
+AIDecideParameterResult AIDecide_ProfessorOak(uint8_t d)
 {
 	/* trainer_cards.asm AIDecide_ProfessorOak: a score in wce06 against 60. */
 	uint8_t remaining = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK).a;
 	if (remaining >= DECK_SIZE - 6u)
-		return (AIDecideParameterResult){remaining, cp_flags(remaining, DECK_SIZE - 6u)};
+		return (AIDecideParameterResult){remaining, cp_flags(remaining, DECK_SIZE - 6u), d};
 
 	uint8_t deck_id = wOpponentDeckID;
 	if (deck_id == LEGENDARY_ARTICUNO_DECK_ID) {
 		/* .HandleLegendaryArticunoDeck */
 		uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
 		if (count < 3u) {
+			d = count;
 			(void)CreateHandCardList(0u);
 			uint8_t evolves = 0u;
 			for (uint8_t location = PLAY_AREA_ARENA; location != count; location++) {
@@ -3805,44 +3979,49 @@ AIDecideParameterResult AIDecide_ProfessorOak(void)
 				}
 			}
 			if (!evolves)
-				return (AIDecideParameterResult){count, 0x90u};
+				return (AIDecideParameterResult){count, 0x90u, count};
 		}
 		/* .check_playable_cards */
 		CountOppEnergyResult energy = CountOppEnergyCardsInHand(0u, 0u);
 		if (energy.a >= 4u)
-			return (AIDecideParameterResult){energy.a, or_a_flags(energy.a)};
+			return (AIDecideParameterResult){energy.a, or_a_flags(energy.a), d};
 		(void)CreateHandCardList(0u);
+		d = 0xC5u;
 		uint16_t list = wDuelTempList_ADDR;
 		(void)RemoveCardIDInList(&list, PROFESSOR_OAK);
 		(void)RemoveCardIDInList(&list, PROFESSOR_OAK);
 		for (;;) {
 			uint8_t index = gb_read8(list++);
 			if (index == 0xFFu)
-				return (AIDecideParameterResult){0xFFu, 0x90u};
-			CheckIfCardCanBePlayedResult playable = CheckIfCardCanBePlayed(index);
+				return (AIDecideParameterResult){0xFFu, 0x90u, d};
+			CheckIfCardCanBePlayedResult playable = CheckIfCardCanBePlayed(index, d);
+			d = playable.d;
 			if ((playable.f & 0x10u) == 0u)
-				return (AIDecideParameterResult){playable.a, or_a_flags(playable.a)};
+				return (AIDecideParameterResult){playable.a, or_a_flags(playable.a), d};
 		}
 	}
 
 	if (deck_id == EXCAVATION_DECK_ID) {
 		/* .HandleExcavationDeck */
 		if (remaining >= 46u)
-			return (AIDecideParameterResult){remaining, cp_flags(remaining, 46u)};
+			return (AIDecideParameterResult){remaining, cp_flags(remaining, 46u), d};
 		LookForCardIDInHandAndPlayAreaResult fossil = LookForCardIDInHandAndPlayArea(MYSTERIOUS_FOSSIL);
+		d = 0xC5u;
 		wce06 = (fossil.f & 0x10u) ? 0x1Eu : 0x50u;
 	} else {
 		if (deck_id == WONDERS_OF_SCIENCE_DECK_ID) {
 			/* .HandleWondersOfScienceDeck */
 			LookForCardIDInHandListResult found = LookForCardIDInHandList_Bank8(GRIMER);
+			d = 0xC5u;
 			if ((found.f & 0x10u) == 0u)
 				found = LookForCardIDInHandList_Bank8(MUK);
+				d = 0xC5u;
 			if (found.f & 0x10u)
-				return (AIDecideParameterResult){found.a, or_a_flags(found.a)};
+				return (AIDecideParameterResult){found.a, or_a_flags(found.a), d};
 		}
 		/* .general_logic */
 		if (remaining >= DECK_SIZE - 14u)
-			return (AIDecideParameterResult){remaining, cp_flags(remaining, DECK_SIZE - 14u)};
+			return (AIDecideParameterResult){remaining, cp_flags(remaining, DECK_SIZE - 14u), d};
 		wce06 = 30u;
 	}
 	/* .general_logic_got_initial_score */
@@ -3887,8 +4066,8 @@ AIDecideParameterResult AIDecide_ProfessorOak(void)
 	/* .check_score */
 	uint8_t score = wce06;
 	if (score >= 60u)
-		return (AIDecideParameterResult){score, (uint8_t)((score == 60u ? 0x80u : 0u) | 0x10u)};
-	return (AIDecideParameterResult){score, or_a_flags(score)};
+		return (AIDecideParameterResult){score, (uint8_t)((score == 60u ? 0x80u : 0u) | 0x10u), 0u};
+	return (AIDecideParameterResult){score, or_a_flags(score), 0u};
 }
 /* <<< factory AIDecide_ProfessorOak */
 
@@ -3926,7 +4105,7 @@ AIDecideResult AIPlay_EnergyRemoval(void)
 /* <<< factory AIPlay_EnergyRemoval */
 
 /* >>> factory AIDecide_Potion_Phase10 */
-AIDecidePotionPhase10Result AIDecide_Potion_Phase10(void)
+AIDecidePotionPhase10Result AIDecide_Potion_Phase10(uint8_t d)
 {
 	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
 	CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(0u, 0u, 0u, 0u, 0u, 0u, 0u);
@@ -4009,7 +4188,7 @@ AIDecideResult AIPlay_SuperPotion(void)
 /* <<< factory AIPlay_SuperPotion */
 
 /* >>> factory AIDecide_Potion_Phase07 */
-AIDecidePotionPhase07Result AIDecide_Potion_Phase07(void)
+AIDecidePotionPhase07Result AIDecide_Potion_Phase07(uint8_t d)
 {
 	AIDecideWhetherToRetreatResult retreat = AIDecideWhetherToRetreat();
 	if ((retreat.f & 0x10u) != 0u)
@@ -4021,7 +4200,7 @@ AIDecidePotionPhase07Result AIDecide_Potion_Phase07(void)
 	CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(0u, 0u, 0u, 0u, 0u, 0u, 0u);
 	if ((ko.f & 0x10u) == 0u)
 		return (AIDecidePotionPhase07Result){ko.a, (uint8_t)(ko.a == 0u ? 0x80u : 0u)};
-	uint8_t d = ko.a;
+	d = ko.a;
 	uint8_t hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a;
 	uint8_t damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA).a;
 	uint8_t heal = damage < 21u ? damage : 20u;
@@ -4067,7 +4246,7 @@ AIDecideResult AIPlay_MrFuji(void)
 /* <<< factory AIPlay_MrFuji */
 
 /* >>> factory AIDecide_SuperPotion_Phase08 */
-AIDecideSuperPotionPhase08Result AIDecide_SuperPotion_Phase08(void)
+AIDecideSuperPotionPhase08Result AIDecide_SuperPotion_Phase08(uint8_t d)
 {
 	AIDecideWhetherToRetreatResult retreat = AIDecideWhetherToRetreat();
 	if ((retreat.f & 0x10u) != 0u)
@@ -4083,7 +4262,7 @@ AIDecideSuperPotionPhase08Result AIDecide_SuperPotion_Phase08(void)
 	CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(0u, 0u, 0u, 0u, 0u, 0u, 0u);
 	if ((ko.f & 0x10u) == 0u)
 		return (AIDecideSuperPotionPhase08Result){ko.a, (uint8_t)(ko.a == 0u ? 0x80u : 0u)};
-	uint8_t d = ko.a;
+	d = ko.a;
 	uint8_t hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a;
 	uint8_t damage = GetCardDamageAndMaxHP(e).a;
 	if (damage >= 41u)

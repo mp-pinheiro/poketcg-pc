@@ -3430,7 +3430,7 @@ CASES["FlushAllPalettesOrSendPal23Packet"] = [
 # <<< factory FlushAllPalettesOrSendPal23Packet
 
 # >>> factory CheckIfCardCanBePlayed
-CONTRACT["CheckIfCardCanBePlayed"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["CheckIfCardCanBePlayed"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["CheckIfCardCanBePlayed"] = [
     {"a": 0x00, "wram": {0xCC0B: b"\x01", 0xCC24: b"\x08", 0xCC2D: b"\x00"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, wram={0xCC0B: b"\x01", 0xCC24: b"\x08", 0xCC2D: b"\x00"}, instruction_budget=2000000, cycle_budget=8000000),

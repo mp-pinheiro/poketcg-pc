@@ -21,7 +21,7 @@ CASES["RemoveCardFromList"] = [
 
 
 # >>> factory FindDuplicateCards
-CONTRACT["FindDuplicateCards"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CONTRACT["FindDuplicateCards"] = {"compare": ("a", "f", "hl", "d"), "preserve": ()}
 CASES["FindDuplicateCards"] = [
     {"hl": 0xC900, "wram": {0xC900: b"\xff", 0xCE0F: b"\x00\x00"}},
     {"hl": 0xC900, "wram": {0xC900: b"\x00\x01\xff", 0xCE0F: b"\x00\x00"}},
@@ -53,7 +53,7 @@ CASES["PickPokedexCards"] = [
 # <<< factory PickPokedexCards
 
 # >>> factory AIDecide_Maintenance
-CONTRACT["AIDecide_Maintenance"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_Maintenance"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_Maintenance"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2BE: b"\x03", 0xCC0E: b"\x01",
               0xCE16: b"\x00"}},
@@ -63,7 +63,7 @@ CASES["AIDecide_Maintenance"] = [
 # <<< factory AIDecide_Maintenance
 
 # >>> factory AIDecide_Lass
-CONTRACT["AIDecide_Lass"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_Lass"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_Lass"] = [
     {"wram": {0xFF97: b"\xC2", 0xC3EE: b"\x06"}},
     {"wram": {0xFF97: b"\xC2", 0xC3EE: b"\x07",
@@ -75,7 +75,7 @@ CASES["AIDecide_Lass"] = [
 # <<< factory AIDecide_Lass
 
 # >>> factory AIDecide_Recycle
-CONTRACT["AIDecide_Recycle"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_Recycle"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_Recycle"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00"}},
     dict(POISON, wram={0xFF97: b"\xC2", 0xC2ED: b"\x00"}),
@@ -83,7 +83,7 @@ CASES["AIDecide_Recycle"] = [
 # <<< factory AIDecide_Recycle
 
 # >>> factory AIDecide_Imakuni
-CONTRACT["AIDecide_Imakuni"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_Imakuni"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_Imakuni"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2F0: b"\x01"}},
     {"wram": {0xFF97: b"\xC2", 0xC2F0: b"\x00"}},
@@ -91,7 +91,7 @@ CASES["AIDecide_Imakuni"] = [
 ]
 # <<< factory AIDecide_Imakuni
 # >>> factory AIDecide_PokemonFlute
-CONTRACT["AIDecide_PokemonFlute"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_PokemonFlute"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_PokemonFlute"] = [
     {"c": 0, "wram": {0xFF97: b"\xC2", 0xC3EF: b"\x06", 0xC3ED: b"\x01", 0xC37F: b"\x00",
                       0xC510: b"\x00\xff"}},
@@ -102,7 +102,7 @@ CASES["AIDecide_PokemonFlute"] = [
 ]
 # <<< factory AIDecide_PokemonFlute
 # >>> factory AIDecide_ClefairyDollOrMysteriousFossil
-CONTRACT["AIDecide_ClefairyDollOrMysteriousFossil"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_ClefairyDollOrMysteriousFossil"] = {"compare": ("a", "f", "d"), "preserve": ()}
 # hWhoseTurn defaults to the opponent's page ($C3): the count at $C3EF, the arena
 # deck index at $C3BB, the deck's card ids at $C480. Wigglytuff is card $B0.
 CASES["AIDecide_ClefairyDollOrMysteriousFossil"] = [
@@ -125,7 +125,7 @@ CASES["AIDecide_Defender_Phase14"] = [
 # <<< factory AIDecide_Defender_Phase14
 
 # >>> factory AIDecide_Bill
-CONTRACT["AIDecide_Bill"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_Bill"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_Bill"] = [
     dict(POISON, wram={0xC3BA: b"\x00"}),
     dict(POISON, wram={0xC3BA: b"\x03"}),
@@ -137,7 +137,7 @@ CASES["AIDecide_Bill"] = [
 
 
 # >>> factory AIDecide_Gambler
-CONTRACT["AIDecide_Gambler"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_Gambler"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_Gambler"] = [
     {"wram": {0xFF97: b"\xC2", 0xCC0E: b"\x34"}},
     {"wram": {0xFF97: b"\xC2", 0xCC0E: b"\x00", 0xCDA7: b"\x80", 0xC2BA: b"\x38"}},
@@ -147,7 +147,7 @@ CASES["AIDecide_Gambler"] = [
 # <<< factory AIDecide_Gambler
 
 # >>> factory AIDecide_Revive
-CONTRACT["AIDecide_Revive"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_Revive"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_Revive"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00"}},
     {"wram": {0xFF97: b"\xC2", 0xC2ED: b"\x01", 0xC2EF: b"\x00", 0xC400: b"\x88"}},
@@ -162,7 +162,7 @@ CASES["AIDecide_Revive"] = [
 # <<< factory AIDecide_Revive
 
 # >>> factory AIDecide_ImposterProfessorOak
-CONTRACT["AIDecide_ImposterProfessorOak"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_ImposterProfessorOak"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_ImposterProfessorOak"] = [
     {"wram": {0xFF97: b"\xC2", 0xC3BA: b"\x2E", 0xC3EE: b"\x05"}},
     {"wram": {0xFF97: b"\xC2", 0xC3BA: b"\x2E", 0xC3EE: b"\x06"}},
@@ -203,7 +203,7 @@ CASES["AIDecide_Pokedex"] = [
 # <<< factory AIDecide_Pokedex
 
 # >>> factory AIDecide_ItemFinder
-CONTRACT["AIDecide_ItemFinder"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_ItemFinder"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_ItemFinder"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00"}},
     dict(POISON, wram={0xFF97: b"\xC2", 0xC2ED: b"\x00"}),
@@ -448,7 +448,7 @@ wTotalAttachedEnergies = 0xCC23
 # <<< factory-cases-statics
 
 # >>> factory AIDecide_PokemonTrader_LegendaryMoltres
-CONTRACT["AIDecide_PokemonTrader_LegendaryMoltres"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CONTRACT["AIDecide_PokemonTrader_LegendaryMoltres"] = {"compare": ("a", "f", "d"), "preserve": (), "wram_out": True}
 CASES["AIDecide_PokemonTrader_LegendaryMoltres"] = [
     {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}},
     {"wram": {
@@ -464,7 +464,7 @@ CASES["AIDecide_PokemonTrader_LegendaryMoltres"] = [
 # <<< factory AIDecide_PokemonTrader_LegendaryMoltres
 
 # >>> factory AIDecide_PokemonTrader_StrangePower
-CONTRACT["AIDecide_PokemonTrader_StrangePower"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CONTRACT["AIDecide_PokemonTrader_StrangePower"] = {"compare": ("a", "f", "d"), "preserve": (), "wram_out": True}
 CASES["AIDecide_PokemonTrader_StrangePower"] = [
     {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}},
     {"wram": {
@@ -480,7 +480,7 @@ CASES["AIDecide_PokemonTrader_StrangePower"] = [
 # <<< factory AIDecide_PokemonTrader_StrangePower
 
 # >>> factory AIDecide_PokemonTrader_LegendaryArticuno
-CONTRACT["AIDecide_PokemonTrader_LegendaryArticuno"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CONTRACT["AIDecide_PokemonTrader_LegendaryArticuno"] = {"compare": ("a", "f", "d"), "preserve": (), "wram_out": True}
 CASES["AIDecide_PokemonTrader_LegendaryArticuno"] = [
     {"wram": {
         hWhoseTurn: b"\xC2",
@@ -514,7 +514,7 @@ CASES["AIDecide_PokemonTrader_LegendaryArticuno"] = [
 # <<< factory AIDecide_PokemonTrader_LegendaryArticuno
 
 # >>> factory AIDecide_ComputerSearch_FireCharge
-CONTRACT["AIDecide_ComputerSearch_FireCharge"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CONTRACT["AIDecide_ComputerSearch_FireCharge"] = {"compare": ("a", "f", "d"), "preserve": (), "wram_out": True}
 CASES["AIDecide_ComputerSearch_FireCharge"] = [
     {"b": 0x00, "c": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}, "read": {0xC510: 32}},
     {"b": 0x00, "c": 0x00, "wram": {
@@ -534,7 +534,7 @@ CASES["AIDecide_ComputerSearch_FireCharge"] = [
 # <<< factory AIDecide_ComputerSearch_FireCharge
 
 # >>> factory AIDecide_ComputerSearch_Anger
-CONTRACT["AIDecide_ComputerSearch_Anger"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CONTRACT["AIDecide_ComputerSearch_Anger"] = {"compare": ("a", "f", "d"), "preserve": (), "wram_out": True}
 CASES["AIDecide_ComputerSearch_Anger"] = [
     {"b": 0x00, "c": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00", 0xC2BB: b"\xFF"}, "read": {0xC510: 32}},
     {"b": 0x00, "c": 0x00, "wram": {
@@ -558,7 +558,7 @@ CASES["AIDecide_ComputerSearch_Anger"] = [
 # <<< factory AIDecide_ComputerSearch_Anger
 
 # >>> factory AIDecide_ComputerSearch_WondersOfScience
-CONTRACT["AIDecide_ComputerSearch_WondersOfScience"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CONTRACT["AIDecide_ComputerSearch_WondersOfScience"] = {"compare": ("a", "f", "d"), "preserve": (), "wram_out": True}
 CASES["AIDecide_ComputerSearch_WondersOfScience"] = [
     {"b": 0x00, "c": 0x00, "wram": {
         hWhoseTurn: b"\xC2",
@@ -614,7 +614,7 @@ CASES["AIDecide_ComputerSearch_WondersOfScience"] = [
 # <<< factory AIDecide_ComputerSearch_WondersOfScience
 
 # >>> factory AIDecide_ComputerSearch_RockCrusher
-CONTRACT["AIDecide_ComputerSearch_RockCrusher"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CONTRACT["AIDecide_ComputerSearch_RockCrusher"] = {"compare": ("a", "f", "d"), "preserve": (), "wram_out": True}
 CASES["AIDecide_ComputerSearch_RockCrusher"] = [
     {"b": 0x00, "c": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}, "read": {0xC510: 32}},
     {"b": 0x00, "c": 0x00, "wram": {
@@ -636,7 +636,7 @@ CASES["AIDecide_ComputerSearch_RockCrusher"] = [
 # <<< factory AIDecide_ComputerSearch_RockCrusher
 
 # >>> factory AIDecide_ComputerSearch
-CONTRACT["AIDecide_ComputerSearch"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_ComputerSearch"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_ComputerSearch"] = [
     {"b": 0x00, "c": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}},
     {"b": 0x00, "c": 0x00, "wram": {
@@ -655,7 +655,7 @@ CASES["AIDecide_ComputerSearch"] = [
 # <<< factory AIDecide_ComputerSearch
 
 # >>> factory AIDecide_PokemonTrader_LegendaryRonald
-CONTRACT["AIDecide_PokemonTrader_LegendaryRonald"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CONTRACT["AIDecide_PokemonTrader_LegendaryRonald"] = {"compare": ("a", "f", "d"), "preserve": (), "wram_out": True}
 CASES["AIDecide_PokemonTrader_LegendaryRonald"] = [
     {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00", 0xC2BB: b"\xFF"}, "read": {0xC510: 32}},
     {"wram": {
@@ -675,7 +675,7 @@ CASES["AIDecide_PokemonTrader_LegendaryRonald"] = [
 # <<< factory AIDecide_PokemonTrader_LegendaryRonald
 
 # >>> factory AIDecide_PokemonTrader_SoundOfTheWaves
-CONTRACT["AIDecide_PokemonTrader_SoundOfTheWaves"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CONTRACT["AIDecide_PokemonTrader_SoundOfTheWaves"] = {"compare": ("a", "f", "d"), "preserve": (), "wram_out": True}
 CASES["AIDecide_PokemonTrader_SoundOfTheWaves"] = [
     {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00", 0xC2BB: b"\xFF"}, "read": {0xC510: 32}},
     {"wram": {
@@ -698,7 +698,7 @@ CASES["AIDecide_PokemonTrader_SoundOfTheWaves"] = [
 # <<< factory AIDecide_PokemonTrader_SoundOfTheWaves
 
 # >>> factory AIDecide_PokemonTrader_LegendaryDragonite
-CONTRACT["AIDecide_PokemonTrader_LegendaryDragonite"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CONTRACT["AIDecide_PokemonTrader_LegendaryDragonite"] = {"compare": ("a", "f", "d"), "preserve": (), "wram_out": True}
 CASES["AIDecide_PokemonTrader_LegendaryDragonite"] = [
     {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00", 0xC2EF: b"\x01"}, "read": {0xC510: 32}},
     {"wram": {
@@ -718,7 +718,7 @@ CASES["AIDecide_PokemonTrader_LegendaryDragonite"] = [
 # <<< factory AIDecide_PokemonTrader_LegendaryDragonite
 
 # >>> factory AIDecide_Pokeball
-CONTRACT["AIDecide_Pokeball"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_Pokeball"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_Pokeball"] = [
     {"wram": {wOpponentDeckID: b"\x00"}},
     {"wram": {hWhoseTurn: b"\xC2", wOpponentDeckID: b"\x17", 0xC405: b"\xB8"}, "read": {0xC510: 32}},
@@ -746,7 +746,7 @@ CASES["AIDecide_Pokeball"] = [
 # <<< factory AIDecide_Pokeball
 
 # >>> factory AIDecide_MrFuji
-CONTRACT["AIDecide_MrFuji"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CONTRACT["AIDecide_MrFuji"] = {"compare": ("a", "f", "d"), "preserve": (), "wram_out": True}
 CASES["AIDecide_MrFuji"] = [
     {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA: b"\x01"},
      "read": {wce06: 1, wce08: 1}},
@@ -766,7 +766,7 @@ CASES["AIDecide_MrFuji"] = [
 # <<< factory AIDecide_MrFuji
 
 # >>> factory AIDecide_PokemonTrader_BlisteringPokemon
-CONTRACT["AIDecide_PokemonTrader_BlisteringPokemon"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_PokemonTrader_BlisteringPokemon"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_PokemonTrader_BlisteringPokemon"] = [
     {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00}},
     dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00}),
@@ -774,7 +774,7 @@ CASES["AIDecide_PokemonTrader_BlisteringPokemon"] = [
 # <<< factory AIDecide_PokemonTrader_BlisteringPokemon
 
 # >>> factory AIDecide_PokemonTrader_Flamethrower
-CONTRACT["AIDecide_PokemonTrader_Flamethrower"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_PokemonTrader_Flamethrower"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_PokemonTrader_Flamethrower"] = [
     {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00}},
     dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00}),
@@ -782,7 +782,7 @@ CASES["AIDecide_PokemonTrader_Flamethrower"] = [
 # <<< factory AIDecide_PokemonTrader_Flamethrower
 
 # >>> factory AIDecide_PokemonTrader_FlowerGarden
-CONTRACT["AIDecide_PokemonTrader_FlowerGarden"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_PokemonTrader_FlowerGarden"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_PokemonTrader_FlowerGarden"] = [
     {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00}},
     dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00}),
@@ -790,7 +790,7 @@ CASES["AIDecide_PokemonTrader_FlowerGarden"] = [
 # <<< factory AIDecide_PokemonTrader_FlowerGarden
 
 # >>> factory AIDecide_PokemonTrader_PowerGenerator
-CONTRACT["AIDecide_PokemonTrader_PowerGenerator"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_PokemonTrader_PowerGenerator"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_PokemonTrader_PowerGenerator"] = [
     {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
@@ -800,7 +800,7 @@ CASES["AIDecide_PokemonTrader_PowerGenerator"] = [
 # <<< factory AIDecide_PokemonTrader_PowerGenerator
 
 # >>> factory AIDecide_PokemonTrader
-CONTRACT["AIDecide_PokemonTrader"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_PokemonTrader"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_PokemonTrader"] = [
     {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, wOpponentDeckID: b"\xFF"}},
     {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, wOpponentDeckID: b"\x0C"}},
@@ -809,7 +809,7 @@ CASES["AIDecide_PokemonTrader"] = [
 # <<< factory AIDecide_PokemonTrader
 
 # >>> factory AIDecide_EnergySearch
-CONTRACT["AIDecide_EnergySearch"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_EnergySearch"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_EnergySearch"] = [
     {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000,
      "wram": {hWhoseTurn: b"\xC2", wOpponentDeckID: b"\x00", 0xC200: b"\x01" * 0x3C},
@@ -960,7 +960,7 @@ CASES["AIDecide_Defender_Phase13"] = [
 # <<< factory AIDecide_Defender_Phase13
 
 # >>> factory AIDecide_Switch
-CONTRACT["AIDecide_Switch"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_Switch"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_Switch"] = [
     {"wram": {hWhoseTurn: b"\xC2", wAIPlayEnergyCardForRetreat: b"\x00", ARENA_COUNT: b"\x01", ARENA_CARD: b"\x00", PLAYER_DECK: b"\x01", 0xC2C1: b"\xFF", ARENA_VARS: b"\x10"}, "instruction_budget": 5000000, "cycle_budget": 20000000},
     {"wram": {hWhoseTurn: b"\xC2", wAIPlayEnergyCardForRetreat: b"\x01", ARENA_COUNT: b"\x01", ARENA_CARD: b"\x00", PLAYER_DECK: b"\x01", 0xC2C1: b"\xFF", ARENA_VARS: b"\x10"}, "instruction_budget": 5000000, "cycle_budget": 20000000},
@@ -1253,7 +1253,7 @@ CASES["AIPlay_MrFuji"] = [
 # <<< factory AIPlay_MrFuji
 
 # >>> factory AIDecide_ProfessorOak
-CONTRACT["AIDecide_ProfessorOak"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecide_ProfessorOak"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecide_ProfessorOak"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x36"}},
     dict(POISON, wram={0xFF97: b"\xC2", 0xC2BA: b"\x36"}),

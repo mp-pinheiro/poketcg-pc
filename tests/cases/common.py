@@ -281,7 +281,7 @@ CASES["LookForCardIDInHandAndPlayArea"] = [
 # <<< factory LookForCardIDInHandAndPlayArea
 
 # >>> factory LookForCardIDToTradeWithDifferentHandCard
-CONTRACT["LookForCardIDToTradeWithDifferentHandCard"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["LookForCardIDToTradeWithDifferentHandCard"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["LookForCardIDToTradeWithDifferentHandCard"] = [
     {"a": 0x01, "e": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC200: b"\x00", wPlayerDeck: b"\x01"}, "read": {0xC510: 32}},
     {"a": 0xAB, "e": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}},
@@ -292,7 +292,7 @@ CASES["LookForCardIDToTradeWithDifferentHandCard"] = [
 # <<< factory LookForCardIDToTradeWithDifferentHandCard
 
 # >>> factory LookForCardIDInDeck_GivenCardIDInHand
-CONTRACT["LookForCardIDInDeck_GivenCardIDInHand"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["LookForCardIDInDeck_GivenCardIDInHand"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["LookForCardIDInDeck_GivenCardIDInHand"] = [
     {"a": 0xAB, "b": 0x01, "wram": {hWhoseTurn: b"\xC2"}},
     {"a": 0x00, "b": 0xAB, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}, "read": {0xC510: 32}},
@@ -316,7 +316,7 @@ CASES["LookForCardIDInDeck_GivenCardIDInHand"] = [
 # <<< factory LookForCardIDInDeck_GivenCardIDInHand
 
 # >>> factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea
-CONTRACT["LookForCardIDInDeck_GivenCardIDInHandAndPlayArea"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["LookForCardIDInDeck_GivenCardIDInHandAndPlayArea"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["LookForCardIDInDeck_GivenCardIDInHandAndPlayArea"] = [
     {"a": 0xAB, "b": 0x01, "wram": {hWhoseTurn: b"\xC2"}},
     {"a": 0x00, "b": 0xAB, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00", 0xC2BB: b"\xFF"}, "read": {0xC510: 32}},
@@ -354,7 +354,7 @@ CASES["AddStarterDeck"] = [
 # <<< factory AddStarterDeck
 
 # >>> factory FindDuplicatePokemonCards
-CONTRACT["FindDuplicatePokemonCards"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CONTRACT["FindDuplicatePokemonCards"] = {"compare": ("a", "f", "d"), "preserve": (), "wram_out": True}
 CASES["FindDuplicatePokemonCards"] = [
     {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xEE: b"\x02",
               wPlayerDuelVariables + 0x42: bytes((5, 6)),

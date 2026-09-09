@@ -167,6 +167,7 @@ static void adapt_LookForCardIDToTradeWithDifferentHandCard(ProbeState *s)
 	LookForCardIDToTradeWithDifferentHandCardResult r = LookForCardIDToTradeWithDifferentHandCard(s->a, s->e);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 	s->e = r.e;
 }
 /* <<< factory LookForCardIDToTradeWithDifferentHandCard */
@@ -177,6 +178,7 @@ static void adapt_LookForCardIDInDeck_GivenCardIDInHand(ProbeState *s)
 	LookForCardIDInDeck_GivenCardIDInHandResult r = LookForCardIDInDeck_GivenCardIDInHand(s->a, s->b);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory LookForCardIDInDeck_GivenCardIDInHand */
 
@@ -186,6 +188,7 @@ static void adapt_LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(ProbeState *s
 	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(s->a, s->b);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea */
 
@@ -202,6 +205,7 @@ static void adapt_FindDuplicatePokemonCards(ProbeState *s)
 	FindDuplicatePokemonCardsResult r = FindDuplicatePokemonCards();
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory FindDuplicatePokemonCards */
 

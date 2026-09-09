@@ -14,10 +14,11 @@ static void adapt_RemoveCardFromList(ProbeState *s)
 /* >>> factory FindDuplicateCards */
 static void adapt_FindDuplicateCards(ProbeState *s)
 {
-	FindDupResult r = FindDuplicateCards(s->hl);
+	FindDupResult r = FindDuplicateCards(s->hl, s->d);
 	s->a = r.a;
 	s->f = r.f;
 	s->hl = r.hl;
+	s->d = r.d;
 }
 /* <<< factory FindDuplicateCards */
 
@@ -39,68 +40,76 @@ static void adapt_PickPokedexCards(ProbeState *s)
 /* >>> factory AIDecide_Recycle */
 static void adapt_AIDecide_Recycle(ProbeState *s)
 {
-	AIDecideParameterResult r = AIDecide_Recycle();
+	AIDecideParameterResult r = AIDecide_Recycle(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_Recycle */
 /* >>> factory AIDecide_Maintenance */
 static void adapt_AIDecide_Maintenance(ProbeState *s)
 {
-	AIDecideMaintenanceResult r = AIDecide_Maintenance();
+	AIDecideMaintenanceResult r = AIDecide_Maintenance(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_Maintenance */
 
 /* >>> factory AIDecide_Lass */
 static void adapt_AIDecide_Lass(ProbeState *s)
 {
-	AIDecideParameterResult r = AIDecide_Lass();
+	AIDecideParameterResult r = AIDecide_Lass(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_Lass */
 
 /* >>> factory AIDecide_Imakuni */
 static void adapt_AIDecide_Imakuni(ProbeState *s)
 {
-	AIDecideParameterResult r = AIDecide_Imakuni();
+	AIDecideParameterResult r = AIDecide_Imakuni(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_Imakuni */
 /* >>> factory AIDecide_PokemonFlute */
 static void adapt_AIDecide_PokemonFlute(ProbeState *s)
 {
-	AIDecidePokemonFluteResult r = AIDecide_PokemonFlute(s->c);
+	AIDecidePokemonFluteResult r = AIDecide_PokemonFlute(s->c, s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_PokemonFlute */
 /* >>> factory AIDecide_ClefairyDollOrMysteriousFossil */
 static void adapt_AIDecide_ClefairyDollOrMysteriousFossil(ProbeState *s)
 {
-	AIDecidePokemonFluteResult r = AIDecide_ClefairyDollOrMysteriousFossil();
+	AIDecidePokemonFluteResult r = AIDecide_ClefairyDollOrMysteriousFossil(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_ClefairyDollOrMysteriousFossil */
 /* >>> factory AIDecide_Defender_Phase14 */
 static void adapt_AIDecide_Defender_Phase14(ProbeState *s)
 {
-	AIDecideParameterResult r = AIDecide_Defender_Phase14();
+	AIDecideParameterResult r = AIDecide_Defender_Phase14(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_Defender_Phase14 */
 
 /* >>> factory AIDecide_Bill */
 static void adapt_AIDecide_Bill(ProbeState *s)
 {
-	AIDecideParameterResult r = AIDecide_Bill();
+	AIDecideParameterResult r = AIDecide_Bill(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_Bill */
 
@@ -108,27 +117,30 @@ static void adapt_AIDecide_Bill(ProbeState *s)
 /* >>> factory AIDecide_Gambler */
 static void adapt_AIDecide_Gambler(ProbeState *s)
 {
-	AIDecideParameterResult r = AIDecide_Gambler();
+	AIDecideParameterResult r = AIDecide_Gambler(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_Gambler */
 
 /* >>> factory AIDecide_Revive */
 static void adapt_AIDecide_Revive(ProbeState *s)
 {
-	AIDecideReviveResult result = AIDecide_Revive();
+	AIDecideReviveResult result = AIDecide_Revive(s->d);
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
 }
 /* <<< factory AIDecide_Revive */
 
 /* >>> factory AIDecide_ImposterProfessorOak */
 static void adapt_AIDecide_ImposterProfessorOak(ProbeState *s)
 {
-	AIDecideParameterResult r = AIDecide_ImposterProfessorOak();
+	AIDecideParameterResult r = AIDecide_ImposterProfessorOak(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_ImposterProfessorOak */
 
@@ -144,152 +156,168 @@ static void adapt_PickPokedexCards_Unreferenced(ProbeState *s)
 /* >>> factory AIDecide_Pokedex */
 static void adapt_AIDecide_Pokedex(ProbeState *s)
 {
-	AIDecidePokedexResult r = AIDecide_Pokedex();
+	AIDecidePokedexResult r = AIDecide_Pokedex(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_Pokedex */
 
 /* >>> factory AIDecide_ItemFinder */
 static void adapt_AIDecide_ItemFinder(ProbeState *s)
 {
-	AIDecide_ItemFinderResult r = AIDecide_ItemFinder();
-	s->a = r.a; s->f = r.f;
+	AIDecide_ItemFinderResult r = AIDecide_ItemFinder(s->d);
+	s->a = r.a; s->f = r.f; s->d = r.d;
 }
 /* <<< factory AIDecide_ItemFinder */
 
 /* >>> factory AIDecide_EnergyRetrieval */
 static void adapt_AIDecide_EnergyRetrieval(ProbeState *s)
 {
-	AIDecideEnergyRetrievalResult r = AIDecide_EnergyRetrieval(s->a);
+	AIDecideEnergyRetrievalResult r = AIDecide_EnergyRetrieval(s->a, s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_EnergyRetrieval */
 
 /* >>> factory AIDecide_SuperEnergyRetrieval */
 static void adapt_AIDecide_SuperEnergyRetrieval(ProbeState *s)
 {
-	AIDecideSuperEnergyRetrievalResult r = AIDecide_SuperEnergyRetrieval(s->a);
+	AIDecideSuperEnergyRetrievalResult r = AIDecide_SuperEnergyRetrieval(s->a, s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_SuperEnergyRetrieval */
 
 /* >>> factory AIDecide_PokemonBreeder */
 static void adapt_AIDecide_PokemonBreeder(ProbeState *s)
 {
-	AIDecidePokemonBreederResult r = AIDecide_PokemonBreeder(s->hl);
+	AIDecidePokemonBreederResult r = AIDecide_PokemonBreeder(s->hl, s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_PokemonBreeder */
 
 /* >>> factory AIDecide_PokemonTrader_LegendaryMoltres */
 static void adapt_AIDecide_PokemonTrader_LegendaryMoltres(ProbeState *s)
 {
-	AIDecide_PokemonTrader_LegendaryMoltresResult r = AIDecide_PokemonTrader_LegendaryMoltres();
+	AIDecide_PokemonTrader_LegendaryMoltresResult r = AIDecide_PokemonTrader_LegendaryMoltres(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_PokemonTrader_LegendaryMoltres */
 
 /* >>> factory AIDecide_PokemonTrader_StrangePower */
 static void adapt_AIDecide_PokemonTrader_StrangePower(ProbeState *s)
 {
-	AIDecide_PokemonTrader_StrangePowerResult r = AIDecide_PokemonTrader_StrangePower();
+	AIDecide_PokemonTrader_StrangePowerResult r = AIDecide_PokemonTrader_StrangePower(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_PokemonTrader_StrangePower */
 
 /* >>> factory AIDecide_PokemonTrader_LegendaryArticuno */
 static void adapt_AIDecide_PokemonTrader_LegendaryArticuno(ProbeState *s)
 {
-	AIDecide_PokemonTrader_LegendaryArticunoResult r = AIDecide_PokemonTrader_LegendaryArticuno();
+	AIDecide_PokemonTrader_LegendaryArticunoResult r = AIDecide_PokemonTrader_LegendaryArticuno(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_PokemonTrader_LegendaryArticuno */
 
 /* >>> factory AIDecide_ComputerSearch_FireCharge */
 static void adapt_AIDecide_ComputerSearch_FireCharge(ProbeState *s)
 {
-	AIDecide_ComputerSearch_FireChargeResult r = AIDecide_ComputerSearch_FireCharge(s->b, s->c);
+	AIDecide_ComputerSearch_FireChargeResult r = AIDecide_ComputerSearch_FireCharge(s->b, s->c, s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_ComputerSearch_FireCharge */
 
 /* >>> factory AIDecide_ComputerSearch_Anger */
 static void adapt_AIDecide_ComputerSearch_Anger(ProbeState *s)
 {
-	AIDecide_ComputerSearch_AngerResult r = AIDecide_ComputerSearch_Anger(s->b, s->c);
+	AIDecide_ComputerSearch_AngerResult r = AIDecide_ComputerSearch_Anger(s->b, s->c, s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_ComputerSearch_Anger */
 
 /* >>> factory AIDecide_ComputerSearch_WondersOfScience */
 static void adapt_AIDecide_ComputerSearch_WondersOfScience(ProbeState *s)
 {
-	AIDecide_ComputerSearch_WondersOfScienceResult r = AIDecide_ComputerSearch_WondersOfScience(s->b, s->c);
+	AIDecide_ComputerSearch_WondersOfScienceResult r = AIDecide_ComputerSearch_WondersOfScience(s->b, s->c, s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_ComputerSearch_WondersOfScience */
 
 /* >>> factory AIDecide_ComputerSearch_RockCrusher */
 static void adapt_AIDecide_ComputerSearch_RockCrusher(ProbeState *s)
 {
-	AIDecide_ComputerSearch_RockCrusherResult r = AIDecide_ComputerSearch_RockCrusher(s->b, s->c);
+	AIDecide_ComputerSearch_RockCrusherResult r = AIDecide_ComputerSearch_RockCrusher(s->b, s->c, s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_ComputerSearch_RockCrusher */
 
 /* >>> factory AIDecide_ComputerSearch */
 static void adapt_AIDecide_ComputerSearch(ProbeState *s)
 {
-	AIDecide_ComputerSearchResult r = AIDecide_ComputerSearch(s->b, s->c);
+	AIDecide_ComputerSearchResult r = AIDecide_ComputerSearch(s->b, s->c, s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_ComputerSearch */
 
 /* >>> factory AIDecide_PokemonTrader_LegendaryRonald */
 static void adapt_AIDecide_PokemonTrader_LegendaryRonald(ProbeState *s)
 {
-	AIDecide_PokemonTrader_LegendaryRonaldResult r = AIDecide_PokemonTrader_LegendaryRonald();
+	AIDecide_PokemonTrader_LegendaryRonaldResult r = AIDecide_PokemonTrader_LegendaryRonald(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_PokemonTrader_LegendaryRonald */
 
 /* >>> factory AIDecide_PokemonTrader_SoundOfTheWaves */
 static void adapt_AIDecide_PokemonTrader_SoundOfTheWaves(ProbeState *s)
 {
-	AIDecide_PokemonTrader_SoundOfTheWavesResult r = AIDecide_PokemonTrader_SoundOfTheWaves();
+	AIDecide_PokemonTrader_SoundOfTheWavesResult r = AIDecide_PokemonTrader_SoundOfTheWaves(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_PokemonTrader_SoundOfTheWaves */
 
 /* >>> factory AIDecide_PokemonTrader_LegendaryDragonite */
 static void adapt_AIDecide_PokemonTrader_LegendaryDragonite(ProbeState *s)
 {
-	AIDecide_PokemonTrader_LegendaryDragoniteResult r = AIDecide_PokemonTrader_LegendaryDragonite();
+	AIDecide_PokemonTrader_LegendaryDragoniteResult r = AIDecide_PokemonTrader_LegendaryDragonite(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_PokemonTrader_LegendaryDragonite */
 
 /* >>> factory AIDecide_Pokeball */
 static void adapt_AIDecide_Pokeball(ProbeState *s)
 {
-	AIDecide_PokeballResult r = AIDecide_Pokeball();
+	AIDecide_PokeballResult r = AIDecide_Pokeball(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_Pokeball */
 
@@ -297,63 +325,70 @@ static void adapt_AIDecide_Pokeball(ProbeState *s)
 static void adapt_AIDecide_MrFuji(ProbeState *s)
 {
 	(void)s;
-	AIDecideParameterResult r = AIDecide_MrFuji();
+	AIDecideParameterResult r = AIDecide_MrFuji(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_MrFuji */
 
 /* >>> factory AIDecide_PokemonTrader_BlisteringPokemon */
 static void adapt_AIDecide_PokemonTrader_BlisteringPokemon(ProbeState *s)
 {
-	AIDecide_PokemonTrader_BlisteringPokemonResult r = AIDecide_PokemonTrader_BlisteringPokemon();
+	AIDecide_PokemonTrader_BlisteringPokemonResult r = AIDecide_PokemonTrader_BlisteringPokemon(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_PokemonTrader_BlisteringPokemon */
 
 /* >>> factory AIDecide_PokemonTrader_Flamethrower */
 static void adapt_AIDecide_PokemonTrader_Flamethrower(ProbeState *s)
 {
-	AIDecide_PokemonTrader_FlamethrowerResult r = AIDecide_PokemonTrader_Flamethrower();
+	AIDecide_PokemonTrader_FlamethrowerResult r = AIDecide_PokemonTrader_Flamethrower(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_PokemonTrader_Flamethrower */
 
 /* >>> factory AIDecide_PokemonTrader_FlowerGarden */
 static void adapt_AIDecide_PokemonTrader_FlowerGarden(ProbeState *s)
 {
-	AIDecide_PokemonTrader_FlowerGardenResult r = AIDecide_PokemonTrader_FlowerGarden();
+	AIDecide_PokemonTrader_FlowerGardenResult r = AIDecide_PokemonTrader_FlowerGarden(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_PokemonTrader_FlowerGarden */
 
 /* >>> factory AIDecide_PokemonTrader_PowerGenerator */
 static void adapt_AIDecide_PokemonTrader_PowerGenerator(ProbeState *s)
 {
-	AIDecide_PokemonTrader_PowerGeneratorResult r = AIDecide_PokemonTrader_PowerGenerator();
+	AIDecide_PokemonTrader_PowerGeneratorResult r = AIDecide_PokemonTrader_PowerGenerator(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_PokemonTrader_PowerGenerator */
 
 /* >>> factory AIDecide_PokemonTrader */
 static void adapt_AIDecide_PokemonTrader(ProbeState *s)
 {
-	AIDecide_PokemonTraderResult r = AIDecide_PokemonTrader();
+	AIDecide_PokemonTraderResult r = AIDecide_PokemonTrader(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_PokemonTrader */
 
 /* >>> factory AIDecide_EnergySearch */
 static void adapt_AIDecide_EnergySearch(ProbeState *s)
 {
-	AIDecideEnergySearchResult r = AIDecide_EnergySearch(s->a);
+	AIDecideEnergySearchResult r = AIDecide_EnergySearch(s->a, s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_EnergySearch */
 
@@ -442,90 +477,100 @@ static void adapt_AIPlay_PokemonCenter(ProbeState *s)
 /* >>> factory AIDecide_PlusPower_Phase14 */
 static void adapt_AIDecide_PlusPower_Phase14(ProbeState *s)
 {
-	AIDecideParameterResult result = AIDecide_PlusPower_Phase14();
+	AIDecideParameterResult result = AIDecide_PlusPower_Phase14(s->d);
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
 }
 /* <<< factory AIDecide_PlusPower_Phase14 */
 
 /* >>> factory AIDecide_GustOfWind */
 static void adapt_AIDecide_GustOfWind(ProbeState *s)
 {
-	AIDecideParameterResult r = AIDecide_GustOfWind();
+	AIDecideParameterResult r = AIDecide_GustOfWind(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_GustOfWind */
 
 /* >>> factory AIDecide_Defender_Phase13 */
 static void adapt_AIDecide_Defender_Phase13(ProbeState *s)
 {
-	AIDecideParameterResult r = AIDecide_Defender_Phase13();
+	AIDecideParameterResult r = AIDecide_Defender_Phase13(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_Defender_Phase13 */
 
 /* >>> factory AIDecide_Switch */
 static void adapt_AIDecide_Switch(ProbeState *s)
 {
-	AIDecide_SwitchResult r = AIDecide_Switch();
+	AIDecide_SwitchResult r = AIDecide_Switch(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_Switch */
 
 /* >>> factory AIDecide_SuperEnergyRemoval */
 static void adapt_AIDecide_SuperEnergyRemoval(ProbeState *s)
 {
-	AIDecideParameterResult r = AIDecide_SuperEnergyRemoval();
+	AIDecideParameterResult r = AIDecide_SuperEnergyRemoval(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_SuperEnergyRemoval */
 
 /* >>> factory AIDecide_ScoopUp */
 static void adapt_AIDecide_ScoopUp(ProbeState *s)
 {
-	AIDecide_ScoopUpResult r = AIDecide_ScoopUp();
+	AIDecide_ScoopUpResult r = AIDecide_ScoopUp(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_ScoopUp */
 
 /* >>> factory AIDecide_FullHeal */
 static void adapt_AIDecide_FullHeal(ProbeState *s)
 {
-	AIDecideFullHealResult result = AIDecide_FullHeal();
+	AIDecideFullHealResult result = AIDecide_FullHeal(s->d);
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
 }
 /* <<< factory AIDecide_FullHeal */
 
 /* >>> factory AIDecide_EnergyRemoval */
 static void adapt_AIDecide_EnergyRemoval(ProbeState *s)
 {
-	AIDecideEnergyRemovalResult r = AIDecide_EnergyRemoval();
+	AIDecideEnergyRemovalResult r = AIDecide_EnergyRemoval(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_EnergyRemoval */
 
 /* >>> factory AIDecide_PokemonCenter */
 static void adapt_AIDecide_PokemonCenter(ProbeState *s)
 {
-	AIDecideParameterResult r = AIDecide_PokemonCenter();
+	AIDecideParameterResult r = AIDecide_PokemonCenter(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_PokemonCenter */
 
 /* >>> factory AIDecide_PlusPower_Phase13 */
 static void adapt_AIDecide_PlusPower_Phase13(ProbeState *s)
 {
-	AIDecide_PlusPower_Phase13Result result = AIDecide_PlusPower_Phase13();
+	AIDecide_PlusPower_Phase13Result result = AIDecide_PlusPower_Phase13(s->d);
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
 }
 /* <<< factory AIDecide_PlusPower_Phase13 */
 
@@ -620,9 +665,10 @@ static void adapt_AIPlay_SuperEnergyRemoval(ProbeState *s)
 /* >>> factory AIDecide_SuperPotion_Phase11 */
 static void adapt_AIDecide_SuperPotion_Phase11(ProbeState *s)
 {
-	AIDecideSuperPotionPhase11Result r = AIDecide_SuperPotion_Phase11();
+	AIDecideSuperPotionPhase11Result r = AIDecide_SuperPotion_Phase11(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecide_SuperPotion_Phase11 */
 
@@ -684,9 +730,10 @@ static void adapt_AIPlay_EnergyRemoval(ProbeState *s)
 /* >>> factory AIDecide_Potion_Phase10 */
 static void adapt_AIDecide_Potion_Phase10(ProbeState *s)
 {
-	AIDecidePotionPhase10Result result = AIDecide_Potion_Phase10();
+	AIDecidePotionPhase10Result result = AIDecide_Potion_Phase10(s->d);
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
 }
 /* <<< factory AIDecide_Potion_Phase10 */
 
@@ -701,9 +748,10 @@ static void adapt_AIPlay_SuperPotion(ProbeState *s)
 /* >>> factory AIDecide_Potion_Phase07 */
 static void adapt_AIDecide_Potion_Phase07(ProbeState *s)
 {
-	AIDecidePotionPhase07Result result = AIDecide_Potion_Phase07();
+	AIDecidePotionPhase07Result result = AIDecide_Potion_Phase07(s->d);
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
 }
 /* <<< factory AIDecide_Potion_Phase07 */
 
@@ -734,18 +782,20 @@ static void adapt_AIPlay_MrFuji(ProbeState *s)
 /* >>> factory AIDecide_ProfessorOak */
 static void adapt_AIDecide_ProfessorOak(ProbeState *s)
 {
-	AIDecideParameterResult result = AIDecide_ProfessorOak();
+	AIDecideParameterResult result = AIDecide_ProfessorOak(s->d);
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
 }
 /* <<< factory AIDecide_ProfessorOak */
 
 /* >>> factory AIDecide_SuperPotion_Phase08 */
 static void adapt_AIDecide_SuperPotion_Phase08(ProbeState *s)
 {
-	AIDecideSuperPotionPhase08Result result = AIDecide_SuperPotion_Phase08();
+	AIDecideSuperPotionPhase08Result result = AIDecide_SuperPotion_Phase08(s->d);
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
 }
 /* <<< factory AIDecide_SuperPotion_Phase08 */
 

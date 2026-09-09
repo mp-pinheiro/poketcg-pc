@@ -542,12 +542,12 @@ LookForCardIDToTradeWithDifferentHandCardResult LookForCardIDToTradeWithDifferen
 	LookForCardIDInHandListResult r1 = LookForCardIDInHandList_Bank8(a);
 	if (r1.f & 0x10u) {
 		uint8_t f = (r1.a == 0u) ? 0x80u : 0u;
-		return (LookForCardIDToTradeWithDifferentHandCardResult){r1.a, f, e};
+		return (LookForCardIDToTradeWithDifferentHandCardResult){r1.a, f, e, 0xC5u};
 	}
 	LookForCardIDInLocationBank8Result r2 = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, wTempAI);
 	if (!(r2.f & 0x10u)) {
 		uint8_t f = (r2.a == 0u) ? 0x80u : 0u;
-		return (LookForCardIDToTradeWithDifferentHandCardResult){r2.a, f, e};
+		return (LookForCardIDToTradeWithDifferentHandCardResult){r2.a, f, e, 0u};
 	}
 	wTempAI = r2.a;
 	uint8_t c = wCurCardCanAttack;
@@ -556,13 +556,13 @@ LookForCardIDToTradeWithDifferentHandCardResult LookForCardIDToTradeWithDifferen
 	for (;;) {
 		uint8_t index = *scan++;
 		if (index == 0xFFu)
-			return (LookForCardIDToTradeWithDifferentHandCardResult){0xFFu, 0x00u, e};
+			return (LookForCardIDToTradeWithDifferentHandCardResult){0xFFu, 0x00u, e, 0xC5u};
 		uint8_t b = index;
 		uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(index);
 		if (card_id == c)
 			continue;
 		if (wLoadedCard1Type < TYPE_ENERGY)
-			return (LookForCardIDToTradeWithDifferentHandCardResult){wTempAI, 0x10u, b};
+			return (LookForCardIDToTradeWithDifferentHandCardResult){wTempAI, 0x10u, b, 0xC5u};
 	}
 }
 /* <<< factory LookForCardIDToTradeWithDifferentHandCard */
@@ -574,18 +574,18 @@ LookForCardIDInDeck_GivenCardIDInHandResult LookForCardIDInDeck_GivenCardIDInHan
 	wCurCardCanAttack = a;
 	LookForCardIDInLocationBank8Result r1 = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, a);
 	if (!(r1.f & 0x10u))
-		return (LookForCardIDInDeck_GivenCardIDInHandResult){r1.a, r1.f};
+		return (LookForCardIDInDeck_GivenCardIDInHandResult){r1.a, r1.f, 0u};
 	wTempAIPokemonCard = r1.a;
 	LookForCardIDInHandListResult r2 = LookForCardIDInHandList_Bank8(wTempAI);
 	if (!(r2.f & 0x10u))
-		return (LookForCardIDInDeck_GivenCardIDInHandResult){r2.a, r2.f};
+		return (LookForCardIDInDeck_GivenCardIDInHandResult){r2.a, r2.f, 0xC5u};
 	LookForCardIDInHandAndPlayAreaResult r3 = LookForCardIDInHandAndPlayArea(wCurCardCanAttack);
 	if (r3.f & 0x10u) {
 		uint8_t f = (r3.a == 0u) ? 0x80u : 0u;
-		return (LookForCardIDInDeck_GivenCardIDInHandResult){r3.a, f};
+		return (LookForCardIDInDeck_GivenCardIDInHandResult){r3.a, f, 0xC5u};
 	}
 	uint8_t f = (uint8_t)((r3.f & 0x80u) | 0x10u);
-	return (LookForCardIDInDeck_GivenCardIDInHandResult){wTempAIPokemonCard, f};
+	return (LookForCardIDInDeck_GivenCardIDInHandResult){wTempAIPokemonCard, f, 0xC5u};
 }
 /* <<< factory LookForCardIDInDeck_GivenCardIDInHand */
 
@@ -596,18 +596,18 @@ LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult LookForCardIDInDeck_Given
 	wCurCardCanAttack = a;
 	LookForCardIDInLocationBank8Result r1 = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, a);
 	if (!(r1.f & 0x10u))
-		return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r1.a, r1.f};
+		return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r1.a, r1.f, 0u};
 	wTempAIPokemonCard = r1.a;
 	LookForCardIDInHandAndPlayAreaResult r2 = LookForCardIDInHandAndPlayArea(wTempAI);
 	if (!(r2.f & 0x10u))
-		return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r2.a, r2.f};
+		return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r2.a, r2.f, 0xC5u};
 	LookForCardIDInHandAndPlayAreaResult r3 = LookForCardIDInHandAndPlayArea(wCurCardCanAttack);
 	if (r3.f & 0x10u) {
 		uint8_t f = (r3.a == 0u) ? 0x80u : 0u;
-		return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r3.a, f};
+		return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r3.a, f, 0xC5u};
 	}
 	uint8_t f = (uint8_t)((r3.f & 0x80u) | 0x10u);
-	return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){wTempAIPokemonCard, f};
+	return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){wTempAIPokemonCard, f, 0xC5u};
 }
 /* <<< factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea */
 
@@ -649,9 +649,10 @@ FindDuplicatePokemonCardsResult FindDuplicatePokemonCards(void)
 	}
 
 	uint8_t final_val = wTempAI;
+	uint8_t d = gb_read8(wDuelTempList_ADDR) != 0xFFu ? 0u : 0xC5u;
 	if (final_val == 0xFFu)
-		return (FindDuplicatePokemonCardsResult){final_val, 0x00u};
-	return (FindDuplicatePokemonCardsResult){final_val, 0x10u};
+		return (FindDuplicatePokemonCardsResult){final_val, 0x00u, d};
+	return (FindDuplicatePokemonCardsResult){final_val, 0x10u, d};
 }
 /* <<< factory FindDuplicatePokemonCards */
 

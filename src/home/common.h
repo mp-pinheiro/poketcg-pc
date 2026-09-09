@@ -78,22 +78,22 @@ typedef struct { uint8_t a; uint8_t f; } LookForCardIDInHandAndPlayAreaResult;
 LookForCardIDInHandAndPlayAreaResult LookForCardIDInHandAndPlayArea(uint8_t a);
 /* <<< factory LookForCardIDInHandAndPlayArea */
 /* >>> factory LookForCardIDToTradeWithDifferentHandCard */
-typedef struct { uint8_t a; uint8_t f; uint8_t e; } LookForCardIDToTradeWithDifferentHandCardResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t e; uint8_t d; } LookForCardIDToTradeWithDifferentHandCardResult;
 LookForCardIDToTradeWithDifferentHandCardResult LookForCardIDToTradeWithDifferentHandCard(uint8_t a, uint8_t e);
 /* <<< factory LookForCardIDToTradeWithDifferentHandCard */
 /* >>> factory LookForCardIDInDeck_GivenCardIDInHand */
-typedef struct { uint8_t a; uint8_t f; } LookForCardIDInDeck_GivenCardIDInHandResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t d; } LookForCardIDInDeck_GivenCardIDInHandResult;
 LookForCardIDInDeck_GivenCardIDInHandResult LookForCardIDInDeck_GivenCardIDInHand(uint8_t a, uint8_t b);
 /* <<< factory LookForCardIDInDeck_GivenCardIDInHand */
 /* >>> factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea */
-typedef struct { uint8_t a; uint8_t f; } LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t d; } LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult;
 LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(uint8_t a, uint8_t b);
 /* <<< factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea */
 /* >>> factory AddStarterDeck */
 void AddStarterDeck(uint8_t a);
 /* <<< factory AddStarterDeck */
 /* >>> factory FindDuplicatePokemonCards */
-typedef struct { uint8_t a; uint8_t f; } FindDuplicatePokemonCardsResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t d; } FindDuplicatePokemonCardsResult;
 FindDuplicatePokemonCardsResult FindDuplicatePokemonCards(void);
 /* <<< factory FindDuplicatePokemonCards */
 /* >>> factory AIPickEnergyCardToDiscard */

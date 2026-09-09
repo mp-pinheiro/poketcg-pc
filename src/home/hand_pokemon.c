@@ -395,7 +395,7 @@ void AIDecidePlayPokemonCard(void)
 			continue;
 		}
 		hTemp_ffa0 = wTempAIPokemonCard;
-		CheckIfCardCanBePlayedResult playable = CheckIfCardCanBePlayed(wTempAIPokemonCard);
+		CheckIfCardCanBePlayedResult playable = CheckIfCardCanBePlayed(wTempAIPokemonCard, 0u);
 		if (playable.f & 0x10u) {
 			hl = saved_hl;
 			continue;

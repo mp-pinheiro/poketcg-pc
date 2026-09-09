@@ -6018,7 +6018,7 @@ void FlushAllPalettesOrSendPal23Packet(void)
 /* <<< factory FlushAllPalettesOrSendPal23Packet */
 
 /* >>> factory CheckIfCardCanBePlayed */
-CheckIfCardCanBePlayedResult CheckIfCardCanBePlayed(uint8_t a)
+CheckIfCardCanBePlayedResult CheckIfCardCanBePlayed(uint8_t a, uint8_t d)
 {
 	hTempCardIndex_ff9f = a;
 	(void)LoadCardDataToBuffer1_FromDeckIndex(a);
@@ -6031,11 +6031,11 @@ CheckIfCardCanBePlayedResult CheckIfCardCanBePlayed(uint8_t a)
 			if ((count.a & 0x0Fu) < (MAX_PLAY_AREA_POKEMON & 0x0Fu)) f |= 0x20u;
 			if (count.a < MAX_PLAY_AREA_POKEMON) f |= 0x10u;
 			f ^= 0x10u;
-			return (CheckIfCardCanBePlayedResult){count.a, f};
+			return (CheckIfCardCanBePlayedResult){count.a, f, d};
 		}
 		PrehistoricPowerResult power = IsPrehistoricPowerActive(0u);
 		if (power.f & 0x10u)
-			return (CheckIfCardCanBePlayedResult){power.a, power.f};
+			return (CheckIfCardCanBePlayedResult){power.a, power.f, d};
 		DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
 		uint8_t remaining = count.a;
 		uint8_t last_a = count.a;
@@ -6045,21 +6045,21 @@ CheckIfCardCanBePlayedResult CheckIfCardCanBePlayed(uint8_t a)
 			last_a = check.a;
 			last_f = check.f;
 			if ((check.f & 0x10u) == 0u)
-				return (CheckIfCardCanBePlayedResult){check.a, check.f};
+				return (CheckIfCardCanBePlayedResult){check.a, check.f, a};
 		}
-		return (CheckIfCardCanBePlayedResult){last_a, (uint8_t)((last_f & 0x80u) | 0x10u)};
+		return (CheckIfCardCanBePlayedResult){last_a, (uint8_t)((last_f & 0x80u) | 0x10u), remaining != 0u ? a : d};
 	}
 	if (type == TYPE_TRAINER) {
 		TrainerEffectResult blocked = CheckCantUseTrainerDueToEffect();
 		if (blocked.f & 0x10u)
-			return (CheckIfCardCanBePlayedResult){0u, blocked.f};
+			return (CheckIfCardCanBePlayedResult){0u, blocked.f, d};
 		LoadEffectResult loaded = LoadNonPokemonCardEffectCommands();
-		TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1, 0u, 0u, 0u);
-		return (CheckIfCardCanBePlayedResult){effect.a, effect.f};
+		TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1, 0u, (uint8_t)(loaded.de >> 8), (uint8_t)loaded.de);
+		return (CheckIfCardCanBePlayedResult){effect.a, effect.f, effect.d};
 	}
 	uint8_t energy = wAlreadyPlayedEnergy;
 	uint8_t f = (energy == 0u) ? 0x80u : 0x10u;
-	return (CheckIfCardCanBePlayedResult){energy, f};
+	return (CheckIfCardCanBePlayedResult){energy, f, d};
 }
 /* <<< factory CheckIfCardCanBePlayed */
 
