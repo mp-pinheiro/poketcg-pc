@@ -179,6 +179,23 @@ the adapter. Flag-preservation guarantees belong in `CONTRACT` only when every
 instruction on the path is flag-neutral; seed `f=0xF0` (the low nibble is always
 0 on hardware, and both probe and oracle mask it).
 
+**What a case observes is wider than its `read` map, and narrower than it
+looks.** `compare_one.py` builds the compared bus as the union of every `read`
+probe *and every seeded WRAM/HRAM span*, then adds `vread` for VRAM and the
+`CONTRACT` registers. So seeding a byte is enough to compare it — which is how
+a routine with `compare: ()` and no `read` is checked at all — and a byte that
+is neither seeded, read, nor in `compare` is invisible no matter how central it
+is to the routine. Two corollaries that have each cost a session:
+
+- `expect` is inert for an oracle-backed case. `_schema_migration.py:218-234`
+  never copies it into the schema record and no lane reads it, so an `expect`
+  entry showing a byte preserved is not evidence that the arm writing it was
+  skipped. Read the case's `_completion` record instead.
+- A case whose `_completion` is `{"mode": "entry", "routine": R}` stops both
+  lanes at `R`'s entry. Only statements *above* that call run, so a contract
+  claim, a case expectation or a mutation anchored below it is unverifiable by
+  construction.
+
 ### Case-key reference
 
 One line each, matching `diff_case` (`tests/test_leaves.py:95-169`), the
@@ -890,6 +907,14 @@ meaning corrupted (flip a comparison, drop a term, swap an operand) — run
 `just oracle-diff <Fn>`, confirm it goes RED, restore the body, confirm PASS.
 Record the mutation and the result. A routine whose cases cannot go red is
 not done.
+
+`tools/audit_mutations.py` re-resolves every declared anchor against today's
+source, and `just oracle-release-gate` runs it as the `mutations` constituent.
+It was not wired into the gate until 2026-09-09, and by then 45 anchors named
+text that later edits had rewritten: a canary whose `before` no longer resolves
+is skipped, so the routine it guarded was unguarded while the gate stayed
+green. Re-anchoring one means finding a line that still exists, proving the new
+`after` RED against a real case, and recording the receipt.
 
 ## Adapter rules
 

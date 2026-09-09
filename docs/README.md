@@ -1,14 +1,17 @@
 # docs/
 
-Six documents, each with one job. Nothing here is a task list — work is selected
+Nine documents, each with one job. Nothing here is a task list — work is selected
 deterministically by the factory from open Forgejo work issues.
 
 | doc | role |
 |---|---|
 | `port-contract.md` | **Normative.** The porting contract: memory model, the three C rules, adapter rules, required case coverage, mutation testing, exclusion taxonomy. Read in full before writing any C. |
 | `factory-contract.md` | **Normative.** The exact `CONTRACT` / `CASES` / `MUTATIONS` blocks a translator lane must emit. |
+| `grind.md` | The porting runbook: the loop, the decision table, one row per failure class. Every branch is a lookup; a branch that needs a design decision is a stop condition. |
 | `factory-workflow.md` | The orchestrator runbook: preflight, the loop, reconciliation, escalation, invariants. The `start` trigger reads this and nothing else. |
 | `jj-workflow.md` | VCS workflow and Forgejo authentication (Cloudflare Access + PAT helper). |
+| `tas-progress-loop.md` | Reference for one tool, `just completion-tas-progress`: replaying the completion TAS on both lanes. Not the runbook; `grind.md` is. |
+| `integration-plan.md` | The program for closing the 26 `completion:v2` requirements and `vision.md` phases 3-8. Its ranked root causes are dated; the state block names which are closed. |
 | `vision.md` | Descriptive: architecture, phase order, prior-art rationale. Not normative. |
 | `phase1-transform.md` | Per-routine delete/dissolve/port verdicts for the hardware-removal transform. |
 

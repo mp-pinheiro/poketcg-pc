@@ -1,7 +1,7 @@
 # The TAS progress loop
 
-The runbook for advancing the native port. One number, one ordered worklist, no
-judgement calls about what to work on next.
+Reference for one tool. `docs/grind.md` is the runbook; this file documents what
+`just completion-tas-progress` measures and where its depth limit comes from.
 
 ## The gate
 
@@ -24,7 +24,11 @@ At `reached_ordinal == reference_ordinals` with `frontier_misses == 0`, the port
 plays the game from boot to the end of the movie.
 
 Baseline when this loop was written: **ordinal 15,379 / 70,999 = 21.66%**, 362 of
-898 comparable routines reached, 466 frontier misses.
+898 comparable routines reached, 466 frontier misses. That number is historical:
+the ratchet in `tools/completion/tas_ratchet.json` is the live floor, and this
+movie is no longer how depth is measured — `tests/sessions/` holds 79 recorded
+routes gated by `just session-verify`, which reach the credits (`credits-1`,
+864,424 anchors) where the movie cannot (see "Two limits" below).
 
 ## Running the loop
 

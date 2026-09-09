@@ -1954,3 +1954,79 @@ plus your factory blocks. Afterwards check every file of their last landing
 still equals `HEAD` except the ones you meant to touch. Never `jj abandon` that empty commit
 while `main` sits on it -- the bookmark goes with it; `jj bookmark set main -r <head>`
 brings it back.
+
+## Canaries rot silently: re-anchor whatever you rewrite
+
+A `MUTATIONS` entry names its target by a literal `before` string. Rewrite the
+body it points at and the anchor stops resolving — `tools/run_mutation.py`
+refuses to run it and `tools/audit_mutations.py` counts it, but nothing else
+notices, so the routine sits unguarded while every other number stays green.
+Measured on 2026-09-09: 45 of 2529 declared canaries were dead, and the release
+gate had never run the audit at all. It is a `mutations` constituent of
+`just oracle-release-gate` now, so the count is enforced.
+
+The loop for one dead anchor:
+
+```sh
+python3 tools/audit_mutations.py | grep '^MUTATION anchor'   # the list
+python3 tools/run_mutation.py <Fn> tests/cases/<mod>.py --index <i>
+```
+
+`MUTATION_RED` is the only accepted outcome. Four rules earn it:
+
+| symptom | cause | action |
+|---|---|---|
+| `anchor is not unique: 0 occurrences` | the body was rewritten | pick a line that exists now, keep the same defect class |
+| `anchor is not unique: N occurrences` | siblings share the line | extend the anchor with an adjacent line until it is unique inside the factory block |
+| `MUTATION_GREEN` on every index | nothing observes the byte the defect moves | seed it, or add it to `read`; the compared bus is every seeded span plus `read` plus `vread` plus `CONTRACT` registers |
+| `MUTATION_GREEN` and the line looks observable | the case stops before the line | read the case's `_completion` record: `mode: entry` stops both lanes at a named callee's *entry*, so only lines above that call are provable |
+
+Two traps that cost a session each. A case's `expect` map is inert for an
+oracle-backed case (`tests/cases/_schema_migration.py:218-234` never copies it
+into the schema record and `compare_one.py` never reads it), so an `expect`
+showing a byte preserved proves nothing about which arm ran. And a seed can be
+*degenerate*: `DisplayCardPageOnLeftOrRightPressed` seeded page `0x0E`, whose
+LEFT and RIGHT handlers both answer `0x0D`, so inverting the branch changed
+nothing — page `0x0C` separates them.
+
+## Never run two mutation sweeps at once
+
+`run_mutation.py` edits the source file in place, rebuilds, compares, restores.
+Two sweeps in one checkout therefore compile each other's corruption: verdicts
+flip between runs (measured — the same canary reported RED, GREEN and
+`EXECUTION_FAILED` across three overlapping sweeps). The same applies to a
+sweep racing `just session-verify` or `just oracle-diff-all`, which build the
+same tree. Parallelise the *analysis* — a read-only agent per case module works
+well — and keep every prover run serial.
+
+## `MUTATION_BASELINE_FAILED`: the two references disagree, not the port
+
+The mutation lane compares the native probe against **gbref** (statically
+recompiled ROM), while `just oracle-diff` compares it against **PyBoy**. When a
+case passes `oracle-diff` and its mutation baseline fails, the port is not the
+suspect — read the mismatch and classify:
+
+| mismatched byte | class | action |
+|---|---|---|
+| `0xCAB8` (wVBlankCounter), `0xCD0F`, `0xCEA3` | frame counters the two lanes service differently, already listed in `tests/cases/_fixtures.py` `_HOLES` | stop seeding it in the case; a fixture never seeds it either |
+| the case's own seed, unchanged in native | the probe stopped before the reference did | check the case's completion record; an `entry` stop and a frame cap are two terminators and the cap can truncate the run |
+| a live game byte on a link/serial path | gbref and PyBoy model serial differently | leave the canary declared and unproven, and say so |
+
+Worked example of the last row: `StartDuel_VSLinkOpp` case 0 seeds `hWhoseTurn`
+(`0xFF97`), so it is compared. gbref leaves `0x01` there; PyBoy and the native
+port both leave `0xC2`, and `just oracle-diff StartDuel_VSLinkOpp` passes. Two
+references disagreeing on one ROM is a lane defect, so the honest disposition is
+to record it here rather than delete the seed and weaken a real case. It is the
+one canary of 2529 that is declared, anchored and unproven.
+
+## What the audit still cannot see
+
+`audit_mutations.py` proves an anchor *resolves*; it cannot prove the canary was
+ever red. A receipt exists per routine
+(`tools/oracle/mutation_receipts/<Fn>.json`, 2530 of them) but records only
+`fn`/`case`/`index`/`status` and the three payloads — never the `before`/`after`
+it was produced from. So a declaration can be rewritten and its receipt still
+says RED about text that no longer exists. Closing that means adding the
+declaration's digest to the receipt and regenerating all 2529, which is a
+migration, not a fix; until then "0 failures" means "every anchor resolves",
+and nothing more.

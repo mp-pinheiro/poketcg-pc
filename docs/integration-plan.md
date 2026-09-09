@@ -3,12 +3,37 @@
 ## Context
 
 poketcg-pc has all 2,960 ROM routines ported to C (~133k asm lines) and per-function
-byte-verified, but the composed native game does not behave like the ROM. This plan is
-the integration program that closes `docs/vision.md` phases 2–8 and the release gate:
-a playable, byte-equivalent-at-scene-level native port, then widescreen strictly on top.
-It runs the mutation-receipt closure loop in parallel as one of its lanes.
+byte-verified. This plan is the integration program that closes `docs/vision.md`
+phases 2–8 and the release gate: a playable, byte-equivalent-at-scene-level
+native port, then widescreen strictly on top. It runs the mutation-receipt
+closure loop in parallel as one of its lanes.
 
-Assessment this plan is built on (all verified this session, file:line in each step):
+**State as of 2026-09-09, which overtakes the assessment below.** The premise
+"the composed native game does not behave like the ROM" no longer holds as
+written: 79 recorded routes now replay byte-identical on WRAM, HRAM, OAM and
+both VRAM banks at every DoFrame anchor, through boot, naming, Mason's lab, the
+practice duel, the deck machine and editor, all eight clubs, the Challenge Hall,
+the Pokémon Dome and the credits. Against the ranked root causes below:
+
+- 1 (VBlank work absent — palettes pinned white, `g_oam` never populated):
+  closed. OAM is one of the four gated regions and every route matches it.
+- 3 (boot loop truncated, "the game cannot structurally progress"): closed. The
+  routes traverse the main menu into the overworld and out to the credits.
+- 4 (intro/menu divergences): closed on the recorded routes.
+- 2 (timer cadence and APU divergence): open, and the sharpest remaining item.
+  `session.py:142-143` gates on four of five regions and excludes `audio`, so
+  no route proves an APU write. This is Phase 3 and it has no verification.
+- 5 (parked indirect dispatch): partly closed — the dispatch the routes touch
+  works; what no route reaches is unproven, which is the coverage problem, not
+  a dispatch problem.
+
+The live numbers, which always win over this prose: `just oracle-diff-all`
+(3012/3012), `just session-verify <name>` per route, `tools/completion/completion.py audit`
+(requirements and milestone gates), `site/data/gate.json` (last central gate).
+The requirement counts quoted below (5/26 PASS) are a stale snapshot; the audit
+reported 0 of 26 satisfied on 2026-09-09, with 24 artifacts never produced.
+
+Assessment this plan is built on (verified when it was written, file:line in each step):
 
 - **Forgejo tracker (fj, `fairfruit/poketcg-pc`)**: 34 open issues = projection of the 26
   `completion:v2` requirements. Failing set (`lifecycle/failing`): #3178 reference-state

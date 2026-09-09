@@ -2,16 +2,41 @@
 
 ## Status
 
+"Open" below means the phase's *gate evidence* is unproduced, which is not the
+same as its code being unwritten. As of 2026-09-09 the port is 3012/3012
+routines oracle-clean against the ROM, and 79 recorded routes replay
+byte-identical on WRAM, HRAM, OAM and both VRAM banks at every DoFrame anchor —
+boot, naming, Mason's lab, the practice duel, the deck machine and editor, all
+eight clubs, Ronald and the Challenge Hall, the Pokémon Dome and the credits
+(`credits-1`, 864,424 anchors). What no phase has is its
+`completion:v2` artifact: `just completion-check <id>` has ever completed for 2
+of 26 requirements, so `just oracle-release-gate` reports 0/9 milestone gates.
+
 - **Phase 0 — Substrate** (#1): closed.
 - **Phase 1 — Delete the hardware** (#2): transform recorded in
   `docs/phase1-transform.md`; applied per-slice as each routine ports.
 - **Phase 2 — Leaves and save** (#3): closed.
-- **Phase 3 — Timer, APU, audio** (#4): open.
-- **Phase 4 — Text, tiles, menus** (#5, #18): open.
-- **Phase 5 — Duel engine** (#6): open.
-- **Phase 6 — Overworld and scripts** (#7): open.
-- **Phase 7 — Link, IR, printer** (#8): open.
-- **Phase 8 — Widescreen and features** (#9): open.
+- **Phase 3 — Timer, APU, audio** (#4): open, and the only phase with no
+  verification at all. `tools/completion/session.py:142-143` compares five
+  regions and gates on four: `audio` is measured and excluded, so every session
+  reports `audio_first_divergence=1`. Nothing proves the APU writes match.
+- **Phase 4 — Text, tiles, menus** (#5, #18): code lands and replays; evidence
+  artifact unproduced. The deck editor, card album, naming screen and glossary
+  are all on recorded routes.
+- **Phase 5 — Duel engine** (#6): code lands and replays; evidence artifact
+  unproduced. 40+ recorded AI duels plus every club match.
+- **Phase 6 — Overworld and scripts** (#7): code lands and replays; evidence
+  artifact unproduced.
+- **Phase 7 — Link, IR, printer** (#8): open. Unreachable from a single-console
+  route, so unexercised by every session; the p3 audit rows name the stubs.
+- **Phase 8 — Widescreen and features** (#9): open, and strictly on top — 5 of
+  the 26 requirements. Not port distance.
+
+The measured gap between "replays byte-exact" and "done" is coverage: of 2320
+ported routines carrying symbols, roughly 1062 are never executed by any
+recorded route (412 of them card effects). `tools/completion/explore.py
+--seed-session <name>` is the machine for closing that, and its first two runs
+produced one route that exposed five real defects and one that was clean.
 
 
 A native PC/Linux port of Pokémon Trading Card Game (Game Boy Color), hand-ported
