@@ -14,6 +14,8 @@ POISON_SRC = 0x1234
 
 PAT = bytes((i * 7 + 3) & 0xFF for i in range(512))
 
+from tests.cases._fixtures import boot_gfx_fixture as _boot_gfx_fixture, BOOT_GFX_REGS as _BOOT_GFX_REGS
+
 CONTRACT = {
     "CopyGfxData": {
         "compare": ("c", "d", "e", "hl"),
@@ -50,6 +52,9 @@ CASES = {
         # wLCDC bit 7 set takes .hblank_copy in the asm; the C has one path.
         {"b": 4, "c": 8, "hl": SRC, "d": DST >> 8, "e": DST & 0xFF,
          "wram": {wLCDC: b"\x80", SRC: PAT[:32]}, "read": {DST: 36}},
+        # The boot tile copy: 0x38 blocks of 0x10 bytes read out of the caller's
+        # banked gfx table (hBankROM $1D) into VRAM $9000.
+        dict(_boot_gfx_fixture(), **_BOOT_GFX_REGS, vread={0: {0x9000: 0x400}}),
         # WRAM -> VRAM ($8000); reads back through the VRAM window, not WRAM.
         {"b": 3, "c": 0x10, "hl": SRC, "d": VRAM_DST >> 8, "e": VRAM_DST & 0xFF,
          "wram": {SRC: PAT[:0x30]}, "read": {VRAM_DST: 0x34}},
@@ -189,6 +194,12 @@ SCHEMA2_CASES["CopyGfxData"].extend([
         {"wram": {SRC: PAT[:256], DST: b"\x00" * 256}},
     ),
 ])
+# The live boot copy is declared as a legacy case; migrate that one record so the
+# mutation harness, which reads SCHEMA2_CASES, sees it too.
+_BOOT_GFX_CASE = next(case for case in CASES["CopyGfxData"] if case.get("rom_bank") is not None)
+SCHEMA2_CASES["CopyGfxData"].append(
+    legacy_to_schema({"CopyGfxData": [_BOOT_GFX_CASE]}, CONTRACT)["CopyGfxData"][0])
+
 SCHEMA2_CASES["CopyDataHLtoDE"].extend([
     _copy_primary("CopyDataHLtoDE-zero", {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}, {}, 2_000_000, {"mode": "pre-ret", "pc": 0x0744}, "native-stress"),
     _copy_primary(
@@ -217,6 +228,12 @@ SCHEMA2_CASES["CopyDataHLtoDE_SaveRegisters"].extend([
 ])
 
 MUTATIONS = {
+    "CopyGfxData": {
+        "source_symbol": "CopyGfxData",
+        "before": "\t\tuint32_t n = len;",
+        "after": "\t\tuint32_t n = len - 1u;",
+        "case_ids": ["CopyGfxData-0"],
+    },
     "CopyDataHLtoDE": {
         "source_symbol": "CopyDataHLtoDE",
         "before": "\tdo {\n\t\tgb_write8(dst++, gb_read8(src++));",
