@@ -66,6 +66,16 @@ CASES["AIDecide_Maintenance"] = [
     *[{"wram": {0xFF97: b"\xC3", 0xC3EE: b"\x03", 0xC342: b"\x00\x01\x02\xFF", 0xCC0E: b"\x34",
                 0xCE16: b"\x00", 0xC480: b"\x08\x30\x30", 0xCACA: seed}, "read": {0xCE1A: 2}}
       for seed in (b"\x00\x00\x00", b"\x3C\xA5\x5A", b"\x91\x12\x07", b"\xFF\x00\x80")],
+    # Imakuni (trainer_cards.asm:4204-4246): the roll passes (wRNG1/2/counter 0 make
+    # UpdateRNGSources 0), four cards in hand, the Maintenance card ($05) skipped;
+    # the two cards picked land in wce1a and the exit is `scf` with the last one in a.
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x04", 0xCC0E: b"\x34", 0xCE16: b"\x05",
+                       0xC242: b"\x05\x11\x22\x33", 0xCACA: b"\x00\x00\x00", 0xCE1A: b"\xAA\xAA"},
+         read={0xCE1A: 2, 0xC510: 6, 0xCACA: 3}),
+    # Imakuni with only two cards in hand: the count exit, `or a` on it.
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x02", 0xCC0E: b"\x34", 0xCE16: b"\x05",
+                       0xC242: b"\x05\x11", 0xCACA: b"\x00\x00\x00"},
+         read={0xCACA: 3}),
 ]
 # <<< factory AIDecide_Maintenance
 
@@ -1328,6 +1338,9 @@ MUTATIONS["AIDecide_Defender_Phase14"] = {
     "case_ids": ["AIDecide_Defender_Phase14-0"],
 }
 # <<< factory-mutation AIDecide_Defender_Phase14
+# >>> factory-mutation AIDecide_Maintenance
+MUTATIONS["AIDecide_Maintenance"] = {"source_symbol": "AIDecide_Maintenance", "before": "\t\treturn (AIDecideMaintenanceResult){card, 0x90u, 0xCEu};", "after": "\t\treturn (AIDecideMaintenanceResult){0u, 0x10u, 0xCEu};", "case_ids": ["AIDecide_Maintenance-2"]}
+# <<< factory-mutation AIDecide_Maintenance
 # >>> factory-mutation AIDecide_Lass
 MUTATIONS["AIDecide_Lass"] = {"source_symbol": "AIDecide_Lass", "before": "\tif (hand_count < 7u)\n\t\treturn (AIDecideParameterResult){hand_count, or_a_flags(hand_count), d};", "after": "\tif (hand_count < 7u)\n\t\treturn (AIDecideParameterResult){hand_count, 0x00u, d};", "case_ids": ["AIDecide_Lass-3"]}
 # <<< factory-mutation AIDecide_Lass

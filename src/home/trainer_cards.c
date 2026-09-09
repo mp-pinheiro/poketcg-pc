@@ -588,10 +588,13 @@ AIDecideMaintenanceResult AIDecide_Maintenance(uint8_t d)
 {
 	DuelistVarResult hand = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
 	if (wOpponentDeckID == IMAKUNI_DECK_ID) {
-		/* .no_carry's `or a` reports the roll that refused, or the hand count. */
+		/* trainer_cards.asm:4204-4246 `.imakuni`: every `.no_carry` exit is
+		 * `or a` on the value in hand -- the roll, the hand count or the
+		 * list's $ff -- and the found-two exit is `scf` after `dec c`. */
 		uint8_t roll = Random(10u);
 		if (roll >= 2u)
-			return (AIDecideMaintenanceResult){roll, (uint8_t)(roll == 0u ? 0x80u : 0u), d};
+			return (AIDecideMaintenanceResult){roll, 0x00u, d};
+		hand = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
 		if (hand.a < 3u)
 			return (AIDecideMaintenanceResult){hand.a,
 				(uint8_t)(hand.a == 0u ? 0x80u : 0u), d};
@@ -599,11 +602,10 @@ AIDecideMaintenanceResult AIDecide_Maintenance(uint8_t d)
 		TempListResult count = CountCardsInDuelTempList();
 		(void)ShuffleCards(count.a, wDuelTempList_ADDR);
 		uint16_t p = wDuelTempList_ADDR;
-		uint8_t target = wAITrainerCardToPlay, found = 0, out = 0;
 		/* trainer_cards.asm:4232-4245: a is the hand card just read - the
 		 * $ff terminator on the refusal, the second chosen card on the carry
 		 * exit, which the caller stores as wAITrainerCardParameter. */
-		uint8_t card;
+		uint8_t target = wAITrainerCardToPlay, found = 0, out = 0, card = 0;
 		while (found < 2u) {
 			card = gb_read8(p++);
 			if (card == 0xFFu)
