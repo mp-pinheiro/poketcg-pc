@@ -223,6 +223,12 @@ def audit_stubs(bodies: dict[str, tuple[str, str]],
     return rows
 
 
+BANK_NEUTRAL = {
+    "BankswitchROM", "BankpushROM", "BankpushROM2", "BankpopROM",
+    "EnableSRAM", "DisableSRAM", "BankswitchSRAM",
+}
+
+
 def audit_echoes(bodies: dict[str, tuple[str, str]],
                  sizes: dict[str, int],
                  asm_calls: dict[str, int]) -> list[dict[str, Any]]:
@@ -234,7 +240,15 @@ def audit_echoes(bodies: dict[str, tuple[str, str]],
     statements for a thirteen-line asm routine whose work is three calls, and
     a `pre-ret` cut at the third call's entry made the echo pass. Ranked by
     the number of asm calls the body drops.
+
+    Two call shapes are not droppable work. A `call .local` is the routine's
+    own block, which C states inline (`SwapPlayAreaPokemon` calls
+    `.swap_duelvar` seven times). Bank and SRAM switches around a ROM read are
+    what the Phase 1 transform deletes (docs/phase1-transform.md): the port
+    reads through `rom_ptr` and the pair was net zero, as in
+    `GetMapScriptPointer` and `GetCardPointer`.
     """
+    targets = asm_call_targets()
     rows = []
     for name, (filename, body) in sorted(bodies.items()):
         calls = asm_calls.get(name, 0)
@@ -243,6 +257,9 @@ def audit_echoes(bodies: dict[str, tuple[str, str]],
             continue
         callees = {c for c in CALLEE.findall(body) if c not in NOT_A_CALL}
         if callees:
+            continue
+        dropped = targets.get(name, set()) - BANK_NEUTRAL
+        if not dropped:
             continue
         rows.append({"routine": name, "file": filename,
                      "asm_instructions": sizes.get(name, 0),
