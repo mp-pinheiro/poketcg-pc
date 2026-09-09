@@ -730,7 +730,7 @@ AIEnergyResult AIProcessButDontPlayEnergy_SkipEvolution(void)
 		hl = (uint16_t)(hl + 1u);
 		de = (uint16_t)(de + 1u);
 	}
-	wAIScore = gb_read8(hl);
+	gb_write8(de, wAIScore);
 	return AIProcessEnergyCards();
 }
 /* <<< factory AIProcessButDontPlayEnergy_SkipEvolution */
