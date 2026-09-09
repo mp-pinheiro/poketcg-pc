@@ -3533,13 +3533,14 @@ SortTempHandResult SortTempHandByIDList(uint8_t b, uint8_t c, uint8_t d, uint8_t
 
 
 /* >>> factory ApplyCardCGBAttributes */
-void ApplyCardCGBAttributes(uint8_t a, uint16_t de)
+ApplyCardCGBAttributesResult ApplyCardCGBAttributes(uint8_t a, uint16_t de)
 {
 	hBankVRAM = 1u;
 	gb_write8(0xFF4Fu, 1u);
-	FillRectangle(a, 8u, 6u, de, 0u);
+	uint16_t hl = FillRectangle(a, 8u, 6u, de, 0u);
 	hBankVRAM = 0u;
 	gb_write8(0xFF4Fu, 0u);
+	return (ApplyCardCGBAttributesResult){8u, 0u, hl};
 }
 
 
@@ -6358,8 +6359,10 @@ SendCardAttrBlkPacketResult ApplyBGP6OrSGB3ToCardImage(uint8_t a, uint8_t f, uin
 	}
 	a = 0x06u;
 	f = 0x40u;
-	ApplyCardCGBAttributes(a, (uint16_t)((uint16_t)d << 8 | e));
-	return (SendCardAttrBlkPacketResult){a, f, b, c, d, e, hl};
+	/* The flags are FillRectangle's `add sp, $24` (tiles.asm:45), a function of
+	 * the stack pointer the port does not have; b, c and hl are its exit. */
+	ApplyCardCGBAttributesResult attributes = ApplyCardCGBAttributes(a, (uint16_t)((uint16_t)d << 8 | e));
+	return (SendCardAttrBlkPacketResult){a, f, attributes.b, attributes.c, d, e, attributes.hl};
 }
 /* <<< factory ApplyBGP6OrSGB3ToCardImage */
 
@@ -6549,8 +6552,10 @@ SendCardAttrBlkPacketResult ApplyBGP7OrSGB2ToCardImage(uint8_t a, uint8_t f, uin
 	}
 	a = 0x07u;
 	f = 0x40u;
-	ApplyCardCGBAttributes(a, (uint16_t)((uint16_t)d << 8 | e));
-	return (SendCardAttrBlkPacketResult){a, f, b, c, d, e, hl};
+	/* The flags are FillRectangle's `add sp, $24` (tiles.asm:45), a function of
+	 * the stack pointer the port does not have; b, c and hl are its exit. */
+	ApplyCardCGBAttributesResult attributes = ApplyCardCGBAttributes(a, (uint16_t)((uint16_t)d << 8 | e));
+	return (SendCardAttrBlkPacketResult){a, f, attributes.b, attributes.c, d, e, attributes.hl};
 }
 /* <<< factory ApplyBGP7OrSGB2ToCardImage */
 

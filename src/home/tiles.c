@@ -21,7 +21,7 @@ static uint16_t bg_map0_address(uint16_t xy)
 	return (uint16_t)(0x9800u + (uint16_t)y * TILEMAP_W + x);
 }
 
-void FillRectangle(uint8_t a, uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
+uint16_t FillRectangle(uint8_t a, uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
 {
 	uint16_t dst = bg_map0_address(de);
 	uint8_t row_tile = a;
@@ -42,6 +42,7 @@ void FillRectangle(uint8_t a, uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
 		dst = (uint16_t)(dst + TILEMAP_W);
 		row_tile = (uint8_t)(row_tile + row_step);
 	} while (--rows);
+	return dst;
 }
 
 void Copy1bppTiles(uint16_t *hl, uint16_t *de)

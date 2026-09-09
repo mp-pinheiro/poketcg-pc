@@ -3605,7 +3605,7 @@ CASES["SendCardAttrBlkPacket"] = [
 # <<< factory SendCardAttrBlkPacket
 
 # >>> factory ApplyBGP6OrSGB3ToCardImage
-CONTRACT["ApplyBGP6OrSGB3ToCardImage"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CONTRACT["ApplyBGP6OrSGB3ToCardImage"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e")}
 CASES["ApplyBGP6OrSGB3ToCardImage"] = [
     {"wram": {0xCAB4: b"\x00"}},
     dict(POISON, wram={0xCAB4: b"\x00"}),

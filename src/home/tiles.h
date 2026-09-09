@@ -3,7 +3,10 @@
 
 #include <stdint.h>
 
-void FillRectangle(uint8_t a, uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
+/* tiles.asm:1-47: exits with hl one row past the rectangle (the last
+ * `add hl, de` of TILEMAP_WIDTH), b as given and c counted down to 0; de is
+ * popped back. The flags are `add sp, $24`'s and are not modelled. */
+uint16_t FillRectangle(uint8_t a, uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
 void Copy1bppTiles(uint16_t *hl, uint16_t *de);
 
 typedef struct {
