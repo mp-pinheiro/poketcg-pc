@@ -24,9 +24,13 @@ static void adapt_HandleAIPeek(ProbeState *s)
 /* >>> factory HandleAIStrangeBehavior */
 static void adapt_HandleAIStrangeBehavior(ProbeState *s)
 {
-	HandleAIStrangeBehaviorResult r = HandleAIStrangeBehavior(s->c);
+	HandleAIStrangeBehaviorResult r = HandleAIStrangeBehavior(s->c, s->d, s->e, s->hl);
 	s->a = r.a;
 	s->f = r.f;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
 }
 /* <<< factory HandleAIStrangeBehavior */
 

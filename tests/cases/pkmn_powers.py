@@ -1,3 +1,4 @@
+from tests.cases._fixtures import strange_behavior_fixture as _strange_behavior_fixture, STRANGE_BEHAVIOR_REGS as _STRANGE_BEHAVIOR_REGS
 from tests.cases._fixtures import energy_trans_fixture as _energy_trans_fixture, ENERGY_TRANS_REGS as _ENERGY_TRANS_REGS
 from tests.cases._fixtures import AI_PKMN_POWERS_REGS, ai_pkmn_powers_fixture
 from tests.cases._fixtures import AI_PKMN_POWERS_MASTER_REGS, ai_pkmn_powers_master_fixture
@@ -48,10 +49,11 @@ CASES["HandleAIPeek"] = [
 # <<< factory HandleAIPeek
 
 # >>> factory HandleAIStrangeBehavior
-CONTRACT["HandleAIStrangeBehavior"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CONTRACT["HandleAIStrangeBehavior"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b",)}
 CASES["HandleAIStrangeBehavior"] = [
 	{"c": 0},
 	dict(POISON, c=0),
+	dict(_strange_behavior_fixture(vram=False), **_STRANGE_BEHAVIOR_REGS),
 ]
 # <<< factory HandleAIStrangeBehavior
 
@@ -203,7 +205,7 @@ MUTATIONS["HandleAIPeek"] = {
 }
 # <<< factory-mutation HandleAIPeek
 # >>> factory-mutation HandleAIStrangeBehavior
-MUTATIONS["HandleAIStrangeBehavior"] = {"source_symbol": "HandleAIStrangeBehavior", "before": "\tif (c == 0u)", "after": "\tif (c != 0u)", "case_ids": ["HandleAIStrangeBehavior-1"]}
+MUTATIONS["HandleAIStrangeBehavior"] = {"source_symbol": "HandleAIStrangeBehavior", "before": "\t\treturn (HandleAIStrangeBehaviorResult){damage.a, 0x80u, damage.c, d, e, hl};", "after": "\t\treturn (HandleAIStrangeBehaviorResult){damage.a, 0x80u, c, d, e, hl};", "case_ids": ["HandleAIStrangeBehavior-2"]}
 # <<< factory-mutation HandleAIStrangeBehavior
 # >>> factory-mutation HandleAICurse
 MUTATIONS["HandleAICurse"] = {

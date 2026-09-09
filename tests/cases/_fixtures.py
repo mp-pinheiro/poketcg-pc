@@ -943,3 +943,11 @@ ENERGY_SEARCH_FLOWER_REGS = ENERGY_SEARCH_FLOWER.regs
 
 def energy_search_flower_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return ENERGY_SEARCH_FLOWER.case(vram=vram, bank=bank, **changes)
+
+
+STRANGE_BEHAVIOR = Fixture("ai-ghost-strange-behavior-entry")
+STRANGE_BEHAVIOR_REGS = STRANGE_BEHAVIOR.regs
+
+
+def strange_behavior_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return STRANGE_BEHAVIOR.case(vram=vram, bank=bank, **changes)

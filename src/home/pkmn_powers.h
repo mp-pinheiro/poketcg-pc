@@ -12,8 +12,8 @@ typedef struct { uint8_t a; uint8_t f; } AIPeekResult;
 AIPeekResult HandleAIPeek(uint8_t c);
 /* <<< factory HandleAIPeek */
 /* >>> factory HandleAIStrangeBehavior */
-typedef struct { uint8_t a; uint8_t f; } HandleAIStrangeBehaviorResult;
-HandleAIStrangeBehaviorResult HandleAIStrangeBehavior(uint8_t c);
+typedef struct { uint8_t a; uint8_t f; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } HandleAIStrangeBehaviorResult;
+HandleAIStrangeBehaviorResult HandleAIStrangeBehavior(uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory HandleAIStrangeBehavior */
 /* >>> factory HandleAICurse */
 typedef struct { uint8_t a; uint8_t f; } HandleAICurseResult;

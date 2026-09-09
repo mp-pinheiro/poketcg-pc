@@ -250,21 +250,22 @@ AIPeekResult HandleAIPeek(uint8_t c)
 /* <<< factory HandleAIPeek */
 
 /* >>> factory HandleAIStrangeBehavior */
-HandleAIStrangeBehaviorResult HandleAIStrangeBehavior(uint8_t c)
+HandleAIStrangeBehaviorResult HandleAIStrangeBehavior(uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	if (c == 0u)
-		return (HandleAIStrangeBehaviorResult){c, 0x80u};
+		return (HandleAIStrangeBehaviorResult){c, 0x80u, c, d, e, hl};
 
 	hTemp_ffa0 = c;
-	CardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	e = PLAY_AREA_ARENA;
+	CardDamageResult damage = GetCardDamageAndMaxHP(e);
 	if (damage.a == 0u)
-		return (HandleAIStrangeBehaviorResult){damage.a, 0x80u};
+		return (HandleAIStrangeBehaviorResult){damage.a, 0x80u, damage.c, d, e, hl};
 
 	wce06 = damage.a;
-	uint8_t hp = GetTurnDuelistVariable((uint8_t)(c + DUELVARS_ARENA_CARD_HP)).a;
-	hp = (uint8_t)(hp - 10u);
+	DuelistVarResult remaining = GetTurnDuelistVariable((uint8_t)(c + DUELVARS_ARENA_CARD_HP));
+	uint8_t hp = (uint8_t)(remaining.a - 10u);
 	if (hp == 0u)
-		return (HandleAIStrangeBehaviorResult){hp, 0x80u};
+		return (HandleAIStrangeBehaviorResult){hp, 0xC0u, damage.c, d, e, remaining.hl};
 
 	uint8_t counters = hp;
 	if (hp >= wce06)
@@ -276,16 +277,19 @@ HandleAIStrangeBehaviorResult HandleAIStrangeBehavior(uint8_t c)
 	(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
 
 	counters = ConvertHPToDamageCounters_Bank8(counters);
-	for (uint8_t e = counters; e != 0u; e--) {
-		for (uint8_t d = 30u; d != 0u; d--)
+	e = counters;
+	do {
+		for (d = 30u; d != 0u; d--)
 			DoFrame();
 		(void)AIMakeDecision(OPPACTION_6B15, 0u, 0u, 0u, 0u);
-	}
+		e--;
+	} while (e != 0u);
 
-	for (uint8_t d = 60u; d != 0u; d--)
+	for (d = 60u; d != 0u; d--)
 		DoFrame();
 	AIMakeDecisionResult result = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
-	return (HandleAIStrangeBehaviorResult){OPPACTION_DUEL_MAIN_SCENE, result.f};
+	return (HandleAIStrangeBehaviorResult){OPPACTION_DUEL_MAIN_SCENE, result.f,
+		result.c, result.d, result.e, hl};
 }
 /* <<< factory HandleAIStrangeBehavior */
 
@@ -519,7 +523,7 @@ HandleAIPkmnPowersResult HandleAIPkmnPowers(void)
 				else if (card_id == MANKEY)
 					(void)HandleAIPeek(c);
 				else if (card_id == SLOWBRO)
-					(void)HandleAIStrangeBehavior(c);
+					(void)HandleAIStrangeBehavior(c, 0u, 0u, 0u);
 				else if (card_id == GENGAR) {
 					HandleAICurseResult curse = HandleAICurse(c);
 					if (curse.f & 0x10u)
