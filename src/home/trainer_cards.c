@@ -588,7 +588,11 @@ AIDecideMaintenanceResult AIDecide_Maintenance(uint8_t d)
 {
 	DuelistVarResult hand = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
 	if (wOpponentDeckID == IMAKUNI_DECK_ID) {
-		if (Random(10u) >= 2u || hand.a < 3u)
+		/* .no_carry's `or a` reports the roll that refused, or the hand count. */
+		uint8_t roll = Random(10u);
+		if (roll >= 2u)
+			return (AIDecideMaintenanceResult){roll, (uint8_t)(roll == 0u ? 0x80u : 0u), d};
+		if (hand.a < 3u)
 			return (AIDecideMaintenanceResult){hand.a,
 				(uint8_t)(hand.a == 0u ? 0x80u : 0u), d};
 		(void)CreateHandCardList(0);
@@ -596,16 +600,21 @@ AIDecideMaintenanceResult AIDecide_Maintenance(uint8_t d)
 		(void)ShuffleCards(count.a, wDuelTempList_ADDR);
 		uint16_t p = wDuelTempList_ADDR;
 		uint8_t target = wAITrainerCardToPlay, found = 0, out = 0;
+		/* trainer_cards.asm:4232-4245: a is the hand card just read - the
+		 * $ff terminator on the refusal, the second chosen card on the carry
+		 * exit, which the caller stores as wAITrainerCardParameter. */
+		uint8_t card;
 		while (found < 2u) {
-			uint8_t card = gb_read8(p++);
+			card = gb_read8(p++);
 			if (card == 0xFFu)
-				return (AIDecideMaintenanceResult){0, 0x00u, 0xCEu};
+				return (AIDecideMaintenanceResult){card, 0x00u, 0xCEu};
 			if (card == target)
 				continue;
 			gb_write8((uint16_t)(wce1a_ADDR + out++), card);
 			found++;
 		}
-		return (AIDecideMaintenanceResult){0, 0x10u, 0xCEu};
+		/* `dec c` reached zero and `scf` keeps its Z: Z|C. */
+		return (AIDecideMaintenanceResult){card, 0x90u, 0xCEu};
 	}
 	if (hand.a < 4u)
 		return (AIDecideMaintenanceResult){hand.a,

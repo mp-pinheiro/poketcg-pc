@@ -1278,7 +1278,10 @@ def deck_cards(deck_id: int) -> list[int]:
     while rom[cursor] != 0:
         cards.extend([rom[cursor + 1]] * rom[cursor])
         cursor += 2
-    if len(cards) != DECK_SIZE:
+    # ReshuffleDeck lists 63 cards (data/decks.asm:1823) and CopyDeckData
+    # writes every one of them past the 60-card array, so a longer list is
+    # written whole; a shorter one is the incomplete deck LoadDeck rejects.
+    if len(cards) < DECK_SIZE:
         raise SessionError(f"deck id {deck_id} expands to {len(cards)} cards")
     return cards
 WRAM = {"wDuelTurns": 0x0C06, "wDuelFinished": 0x0C07}

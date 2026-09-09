@@ -60,6 +60,12 @@ CASES["AIDecide_Maintenance"] = [
               0xCE16: b"\x00"}},
     dict(POISON, wram={0xFF97: b"\xC2", 0xC2BE: b"\x03", 0xCC0E: b"\x01",
                        0xCE16: b"\x00"}),
+    # ai-duel-34 28278: Imakuni?'s own Maintenance - two of the three hand cards other than
+    # the Maintenance itself go to wce1a, and a carries the second one out. Seeds cover
+    # both the 2-in-10 roll and its refusal.
+    *[{"wram": {0xFF97: b"\xC3", 0xC3EE: b"\x03", 0xC342: b"\x00\x01\x02\xFF", 0xCC0E: b"\x34",
+                0xCE16: b"\x00", 0xC480: b"\x08\x30\x30", 0xCACA: seed}, "read": {0xCE1A: 2}}
+      for seed in (b"\x00\x00\x00", b"\x3C\xA5\x5A", b"\x91\x12\x07", b"\xFF\x00\x80")],
 ]
 # <<< factory AIDecide_Maintenance
 
@@ -1692,3 +1698,11 @@ MUTATIONS["AIPlay_SuperEnergyRetrieval"] = {
     "case_ids": ["AIPlay_SuperEnergyRetrieval-0"]
 }
 # <<< factory-mutation AIPlay_SuperEnergyRetrieval
+# >>> factory-mutation AIDecide_Maintenance
+MUTATIONS["AIDecide_Maintenance"] = {
+    "source_symbol": "AIDecide_Maintenance",
+    "before": "\t\treturn (AIDecideMaintenanceResult){card, 0x90u, 0xCEu};",
+    "after": "\t\treturn (AIDecideMaintenanceResult){0u, 0x90u, 0xCEu};",
+    "case_ids": ["AIDecide_Maintenance-2", "AIDecide_Maintenance-4", "AIDecide_Maintenance-5"],
+}
+# <<< factory-mutation AIDecide_Maintenance
