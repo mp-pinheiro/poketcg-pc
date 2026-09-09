@@ -10,6 +10,7 @@ from tests.cases._fixtures import alive_in_play_area_fixture as _alive_in_play_a
 from tests.cases._fixtures import energy_needed_in_hand_fixture as _energy_needed_in_hand_fixture, ENERGY_NEEDED_IN_HAND_REGS as _ENERGY_NEEDED_IN_HAND_REGS
 from tests.cases._fixtures import sort_temp_hand_fixture as _sort_temp_hand_fixture, SORT_TEMP_HAND_REGS as _SORT_TEMP_HAND_REGS
 from tests.cases._fixtures import card_description_fixture as _card_description_fixture, CARD_DESCRIPTION_REGS as _CARD_DESCRIPTION_REGS
+from tests.cases._fixtures import attack_information_fixture as _attack_information_fixture, ATTACK_INFORMATION_REGS as _ATTACK_INFORMATION_REGS
 from tests.cases._fixtures import card_page_energy_fixture as _card_page_energy_fixture, CARD_PAGE_ENERGY_REGS as _CARD_PAGE_ENERGY_REGS
 from tests.cases._fixtures import card_page_trainer_fixture as _card_page_trainer_fixture, CARD_PAGE_TRAINER_REGS as _CARD_PAGE_TRAINER_REGS
 from tests.cases._fixtures import energy_or_trainer_page_fixture as _energy_or_trainer_page_fixture, ENERGY_OR_TRAINER_PAGE_REGS as _ENERGY_OR_TRAINER_PAGE_REGS
@@ -3133,8 +3134,11 @@ CASES["PrintAttackOrCardDescription"] = [
 # <<< factory PrintAttackOrCardDescription
 
 # >>> factory PrintAttackOrPkmnPowerInformation
-CONTRACT["PrintAttackOrPkmnPowerInformation"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CONTRACT["PrintAttackOrPkmnPowerInformation"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["PrintAttackOrPkmnPowerInformation"] = [
+    # credits-1 858300: a legendary card's Pokemon Power on the received-card page;
+    # the exit is ProcessTextFromID's `pop af` after InitTextPrinting's `xor a`.
+    dict(_attack_information_fixture(vram=True, bank=1), **_ATTACK_INFORMATION_REGS, read={0xCC34: 0x20}),
     {"hl": 0xC500, "wram": {0xC500: b"\x00\x00"}},
     dict(POISON, hl=0xC500, wram={0xC500: b"\x00\x00"}),
 ]
@@ -6810,7 +6814,7 @@ MUTATIONS["DisplayFirstOrNextCardPage"] = {"source_symbol": "DisplayFirstOrNextC
 MUTATIONS["PrintAttackOrCardDescription"] = {"source_symbol": "PrintAttackOrCardDescription", "before": "\treturn (PrintAttackOrCardDescriptionResult){text.a, text.d, text.e, text.f, text.hl};", "after": "\treturn (PrintAttackOrCardDescriptionResult){(uint8_t)(text.a + 1u), text.d, text.e, text.f, text.hl};", "case_ids": ["PrintAttackOrCardDescription-0", "PrintAttackOrCardDescription-1"]}
 # <<< factory-mutation PrintAttackOrCardDescription
 # >>> factory-mutation PrintAttackOrPkmnPowerInformation
-MUTATIONS["PrintAttackOrPkmnPowerInformation"] = {"source_symbol": "PrintAttackOrPkmnPowerInformation", "before": "\tif ((uint8_t)(lo | hi) == 0u) {", "after": "\tif ((uint8_t)(lo | hi) == 1u) {", "case_ids": ["PrintAttackOrPkmnPowerInformation-0", "PrintAttackOrPkmnPowerInformation-1"]}
+MUTATIONS["PrintAttackOrPkmnPowerInformation"] = {"source_symbol": "PrintAttackOrPkmnPowerInformation", "before": "\t\tProcessTextHeaderResult text = InitTextPrinting_ProcessTextFromID(2u, e, text_hl);\n\t\treturn (PrintAttackOrPkmnPowerInformationResult){text.a, b, c, text.d, text.e, text.f, text.hl};", "after": "\t\tProcessTextHeaderResult text = InitTextPrinting_ProcessTextFromID(2u, e, text_hl);\n\t\treturn (PrintAttackOrPkmnPowerInformationResult){text.a, b, c, text.d, text.e, 0x00u, text.hl};", "case_ids": ["PrintAttackOrPkmnPowerInformation-0"]}
 # <<< factory-mutation PrintAttackOrPkmnPowerInformation
 # >>> factory-mutation PrintAttackOrNonPokemonCardDescription
 MUTATIONS["PrintAttackOrNonPokemonCardDescription"] = {"source_symbol": "PrintAttackOrNonPokemonCardDescription", "before": "\treturn PrintAttackOrCardDescription(hl, 1u, 11u);", "after": "\treturn PrintAttackOrCardDescription(hl, 1u, 12u);", "case_ids": ["PrintAttackOrNonPokemonCardDescription-0"]}

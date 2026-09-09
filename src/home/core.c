@@ -5623,6 +5623,7 @@ PrintAttackOrPkmnPowerInformationResult PrintAttackOrPkmnPowerInformation(uint8_
 	}
 
 	hl = (uint16_t)(hl - 11u);
+	uint8_t saved_c = c;
 	c = e;
 	uint8_t row = 2u;
 	uint8_t running_e = 0u;
@@ -5637,7 +5638,9 @@ PrintAttackOrPkmnPowerInformationResult PrintAttackOrPkmnPowerInformation(uint8_
 		PrintEnergiesResult r2 = PrintEnergiesOfColor(byte2, row, c, running_e);
 		row = r2.b; running_e = r2.e; last_a = r2.a;
 	}
-	return (PrintAttackOrPkmnPowerInformationResult){last_a, b, c, 0u, running_e, 0u, hl};
+	/* core.asm:4402-4404: `dec d` to zero (Z and N), then `pop bc` restores
+	 * the caller's bc. */
+	return (PrintAttackOrPkmnPowerInformationResult){last_a, b, saved_c, 0u, running_e, 0xC0u, hl};
 }
 /* <<< factory PrintAttackOrPkmnPowerInformation */
 

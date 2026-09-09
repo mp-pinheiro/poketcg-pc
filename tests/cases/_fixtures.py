@@ -887,3 +887,11 @@ def card_page_trainer_fixture(vram: bool = True, bank: int | None = None, **chan
 
 def energy_or_trainer_page_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return ENERGY_OR_TRAINER_PAGE.case(vram=vram, bank=bank, **changes)
+
+
+ATTACK_INFORMATION = Fixture("credits-1-attack-information-entry")
+ATTACK_INFORMATION_REGS = ATTACK_INFORMATION.regs
+
+
+def attack_information_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return ATTACK_INFORMATION.case(vram=vram, bank=bank, **changes)

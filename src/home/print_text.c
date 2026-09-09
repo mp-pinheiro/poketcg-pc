@@ -295,13 +295,16 @@ ProcessTextHeaderResult ProcessTextHeader(uint8_t d, uint8_t e)
 	return header_result(0, d, e, 0, text);
 }
 
+/* print_text.asm:43-50: `push af` at entry, `pop af / call BankswitchROM` at
+ * exit -- a is the bank restored and f the caller's flags; only the wrappers
+ * below know theirs (InitTextPrinting ends in `xor a`). */
 ProcessTextHeaderResult ProcessTextFromID(uint16_t hl)
 {
 	uint8_t saved = hBankROM;
 	uint16_t text = GetTextOffsetFromTextID(hl);
 	ProcessText(&text);
 	BankswitchROM(saved);
-	return header_result(0, 0, 0, 0, text);
+	return header_result(saved, 0, 0, 0, text);
 }
 
 ProcessTextHeaderResult ProcessTextFromPointerToID(uint16_t hl)
@@ -321,6 +324,7 @@ ProcessTextHeaderResult InitTextPrinting_ProcessTextFromID(uint8_t d, uint8_t e,
 	ProcessTextHeaderResult r = ProcessTextFromID(hl);
 	r.d = d;
 	r.e = e;
+	r.f = 0x80u;
 	return r;
 }
 
