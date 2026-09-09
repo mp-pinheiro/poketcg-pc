@@ -1,0 +1,89 @@
+{
+  "goal": "From dome-4's end at the Dome entrance: the chain poked past Rod (in-menu, the four Grand Masters defeated, Ronald challenged), so the Dome resumes at Ronald's challenge; his duel to its end under the pilot's duel policy, then his after-duel script",
+  "name": "dome-5",
+  "ordinals": 854293,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ],
+    "582677": [
+      [
+        54226,
+        24
+      ]
+    ],
+    "603055": [
+      [
+        54226,
+        59
+      ]
+    ],
+    "635103": [
+      [
+        54226,
+        255
+      ]
+    ],
+    "682396": [
+      [
+        54249,
+        88
+      ],
+      [
+        54250,
+        144
+      ]
+    ],
+    "715633": [
+      [
+        54249,
+        88
+      ],
+      [
+        54250,
+        164
+      ]
+    ],
+    "759317": [
+      [
+        54249,
+        88
+      ],
+      [
+        54250,
+        169
+      ]
+    ],
+    "823090": [
+      [
+        54249,
+        92
+      ],
+      [
+        54250,
+        170
+      ],
+      [
+        54251,
+        64
+      ]
+    ]
+  },
+  "recorded": "2026-09-09T12:27:20+00:00",
+  "schema": 1
+}
