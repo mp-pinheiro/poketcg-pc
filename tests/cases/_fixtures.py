@@ -843,3 +843,11 @@ SPECIAL_AI_ATTACKS_REGS = SPECIAL_AI_ATTACKS.regs
 
 def special_ai_attacks_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return SPECIAL_AI_ATTACKS.case(vram=vram, bank=bank, **changes)
+
+
+STRIKES_BACK_RESIDUAL = Fixture("dome-5-strikes-back-residual-entry")
+STRIKES_BACK_RESIDUAL_REGS = STRIKES_BACK_RESIDUAL.regs
+
+
+def strikes_back_residual_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return STRIKES_BACK_RESIDUAL.case(vram=vram, bank=bank, **changes)

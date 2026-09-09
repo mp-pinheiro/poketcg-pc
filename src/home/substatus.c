@@ -630,7 +630,9 @@ HandleStrikesBackResidualResult HandleStrikesBack_AgainstResidualAttack(void)
 {
 	uint8_t card_id = wTempNonTurnDuelistCardID;
 	if (card_id != MACHAMP) {
-		uint8_t f = 0x50u;
+		/* substatus.asm:788-790 `cp MACHAMP / ret`: N, and H or C as the
+		 * compare borrows; the carry is not implied. */
+		uint8_t f = 0x40u;
 		if ((card_id & 0x0Fu) < (MACHAMP & 0x0Fu))
 			f |= 0x20u;
 		if (card_id < MACHAMP)

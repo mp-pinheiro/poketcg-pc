@@ -1,4 +1,5 @@
 from tests.cases._fixtures import SAND_ATTACK_REGS, sand_attack_fixture
+from tests.cases._fixtures import STRIKES_BACK_RESIDUAL_REGS, strikes_back_residual_fixture
 from tests.cases._fixtures import DAMAGE_REDUCTION_REGS, damage_reduction_fixture
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -504,6 +505,9 @@ CASES["ApplyStrikesBack_AgainstResidualAttack"] = [
 # >>> factory HandleStrikesBack_AgainstResidualAttack
 CONTRACT["HandleStrikesBack_AgainstResidualAttack"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["HandleStrikesBack_AgainstResidualAttack"] = [
+    # dome-5 830990: the defender is not Machamp; `cp MACHAMP` borrows in the
+    # low nibble only (N and H, no carry).
+    dict(strikes_back_residual_fixture(vram=False, bank=0), **STRIKES_BACK_RESIDUAL_REGS, read={0xCCC4: 1}),
     {"wram": {wTempNonTurnDuelistCardID: b"\x01"}},
     {"wram": {wTempNonTurnDuelistCardID: b"\x7f", wLoadedAttackCategory: b"\x80"}},
     {"wram": {wTempNonTurnDuelistCardID: b"\x7f", wLoadedAttackCategory: b"\x00", wDealtDamage: b"\x00"}},
@@ -583,7 +587,7 @@ MUTATIONS = {
 MUTATIONS["ApplyStrikesBack_AgainstResidualAttack"] = {"source_symbol": "ApplyStrikesBack_AgainstResidualAttack", "before": "\tuint8_t card_id = wTempTurnDuelistCardID;", "after": "\tuint8_t card_id = 0;", "case_ids": ["ApplyStrikesBack_AgainstResidualAttack-0", "ApplyStrikesBack_AgainstResidualAttack-1", "ApplyStrikesBack_AgainstResidualAttack-2"]}
 # <<< factory-mutation ApplyStrikesBack_AgainstResidualAttack
 # >>> factory-mutation HandleStrikesBack_AgainstResidualAttack
-MUTATIONS["HandleStrikesBack_AgainstResidualAttack"] = {"source_symbol": "HandleStrikesBack_AgainstResidualAttack", "before": "\tuint8_t card_id = wTempNonTurnDuelistCardID;", "after": "\tuint8_t card_id = 0u;", "case_ids": ["HandleStrikesBack_AgainstResidualAttack-0", "HandleStrikesBack_AgainstResidualAttack-1", "HandleStrikesBack_AgainstResidualAttack-2", "HandleStrikesBack_AgainstResidualAttack-3", "HandleStrikesBack_AgainstResidualAttack-4"]}
+MUTATIONS["HandleStrikesBack_AgainstResidualAttack"] = {"source_symbol": "HandleStrikesBack_AgainstResidualAttack", "before": "\t\tuint8_t f = 0x40u;\n\t\tif ((card_id & 0x0Fu) < (MACHAMP & 0x0Fu))", "after": "\t\tuint8_t f = 0x50u;\n\t\tif ((card_id & 0x0Fu) < (MACHAMP & 0x0Fu))", "case_ids": ["HandleStrikesBack_AgainstResidualAttack-0"]}
 # <<< factory-mutation HandleStrikesBack_AgainstResidualAttack
 # >>> factory-mutation HandleDestinyBondSubstatus
 MUTATIONS["HandleDestinyBondSubstatus"] = {"source_symbol": "HandleDestinyBondSubstatus", "before": "DestinyBondResult HandleDestinyBondSubstatus(void)\n{\n\tDuelistVarResult substatus = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS1);", "after": "DestinyBondResult HandleDestinyBondSubstatus(void)\n{\n\tDuelistVarResult substatus = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);", "case_ids": ["HandleDestinyBondSubstatus-0", "HandleDestinyBondSubstatus-4"]}
