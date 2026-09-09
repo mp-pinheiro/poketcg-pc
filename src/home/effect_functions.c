@@ -783,6 +783,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/sound.h"
 #define SYM_GRASS 0x02u
 #define SYM_SPACE 0x00u
+#define SYM_LIGHTNING 0x03u
 
 #define ProcedureForDamageSwapText 0x0137u
 
@@ -3960,9 +3961,15 @@ MrFujiBenchCheckResult MrFuji_BenchCheck(void)
 /* effect_functions.asm:7708-7718 */
 SolarPowerCheckUseResult StepIn_BenchCheck(void)
 {
-	if (hTempPlayAreaLocation_ff9d == PLAY_AREA_ARENA)
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	hTemp_ffa0 = location;
+	if (location == PLAY_AREA_ARENA)
 		return (SolarPowerCheckUseResult){0x90u, 0x00D1u};
-	return (SolarPowerCheckUseResult){0x80u, 0x00D4u};
+	uint8_t flags = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD_FLAGS)).a;
+	if ((flags & (1u << USED_PKMN_POWER_THIS_TURN_F)) != 0u)
+		return (SolarPowerCheckUseResult){0x10u, OnlyOncePerTurnText};
+	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(location);
+	return (SolarPowerCheckUseResult){incapable.f, incapable.hl};
 }
 /* <<< factory StepIn_BenchCheck */
 /* >>> factory Peek_OncePerTurnCheck */
@@ -7617,6 +7624,20 @@ void DamageSwap_SelectAndSwapEffect(void)
 /* <<< factory DamageSwap_SelectAndSwapEffect */
 
 /* >>> factory Gigashock_PlayerSelectEffect */
+/* effect_functions.asm:6803-6906. Returns carry if the bench Pokemon in
+ * register a was already picked into hTempList. */
+static uint8_t Gigashock_CheckIfChosenAlready(uint8_t a)
+{
+	uint8_t c = (uint8_t)(a + 1u);
+	uint8_t b = (uint8_t)(hCurSelectionItem + 1u);
+	uint16_t hl = hTempList_ADDR;
+	while (--b != 0u) {
+		if (gb_read8(hl++) == c)
+			return 0x10u;
+	}
+	return 0u;
+}
+
 void Gigashock_PlayerSelectEffect(void)
 {
 	SwapTurn();
@@ -7626,7 +7647,57 @@ void Gigashock_PlayerSelectEffect(void)
 		hTempList = 0xffu;
 		return;
 	}
-	SwapTurn();
+	(void)DrawWideTextBox_WaitForInput(ChooseUpTo3PkmnOnBenchToGiveDamageText);
+	hCurSelectionItem = 0u;
+	wCurGigashockItem = 0u;
+	SetupPlayAreaScreen();
+	for (;;) {
+		uint8_t items = PrintPlayAreaCardList_EnableLCD().a;
+		uint16_t menu_parameters = 0x46e8u;
+		InitializeMenuParameters(wCurGigashockItem, &menu_parameters);
+		wNumMenuItems = (uint8_t)(items - 1u);
+		HandleMenuInputResult input;
+		for (;;) {
+			DoFrame();
+			input = HandleMenuInput();
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			if (input.a == MENU_CANCEL)
+				break;
+			wCurGigashockItem = input.a;
+			if ((Gigashock_CheckIfChosenAlready(input.a) & 0x10u) != 0u) {
+				PlaySFX_InvalidChoice();
+				continue;
+			}
+			break;
+		}
+		if (input.a != MENU_CANCEL) {
+			DrawSymbolOnPlayAreaCursor((uint8_t)(hCurMenuItem + 1u), SYM_LIGHTNING);
+			gb_write8(GetNextPositionInTempList(), (uint8_t)(hCurMenuItem + 1u));
+			uint8_t chosen = hCurSelectionItem;
+			if (chosen < 3u) {
+				uint8_t bench = (uint8_t)(GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a - 1u);
+				if (bench != chosen)
+					continue;
+			}
+			DrawPlayAreaScreenToShowChanges((uint8_t)(hCurMenuItem + 1u));
+			if ((hKeysPressed & PAD_B) == 0u) {
+				SwapTurn();
+				gb_write8(GetNextPositionInTempList(), 0xffu);
+				return;
+			}
+		}
+		/* .try_cancel: undo the last selection, or loop back if none. */
+		uint8_t selected = hCurSelectionItem;
+		if (selected == 0u)
+			continue;
+		selected--;
+		hCurSelectionItem = selected;
+		uint8_t location = gb_read8((uint16_t)(hTempList_ADDR + selected));
+		DrawSymbolOnPlayAreaCursor(location, SYM_SPACE);
+		EraseCursor();
+		wCurGigashockItem = (uint8_t)(location - 1u);
+	}
 }
 /* <<< factory Gigashock_PlayerSelectEffect */
 
@@ -11471,7 +11542,9 @@ HandleEvolvedCardSelectionResult HandleEvolvedCardSelection(void)
 {
 	(void)HasAlivePokemonInPlayArea();
 	for (;;) {
-		OpenPlayAreaScreenForSelection();
+		PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
+		if ((screen.f & 0x10u) != 0u)
+			return (HandleEvolvedCardSelectionResult){screen.f};
 		uint8_t location = hTempPlayAreaLocation_ff9d;
 		DuelistVarResult stage = GetTurnDuelistVariable(
 			(uint8_t)(DUELVARS_ARENA_CARD_STAGE + location));
@@ -11503,7 +11576,8 @@ DuelistSelectForcedSwitchResult DuelistSelectForcedSwitch(uint8_t a, uint8_t f, 
 		SwapTurn();
 		(void)HasAlivePokemonInBench();
 		wPlayAreaSelectAction = 1u;
-		OpenPlayAreaScreenForSelection();
+		while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+		}
 		uint8_t selected = hTempPlayAreaLocation_ff9d;
 		SwapTurn();
 		return (DuelistSelectForcedSwitchResult){selected, selected == 0u ? 0x80u : 0x00u};
@@ -11528,7 +11602,11 @@ HandlePokemonAndEnergySelectionScreenResult HandlePokemonAndEnergySelectionScree
 		BankswitchROM(saved);
 
 		BankswitchROM(0x01u);
-		OpenPlayAreaScreenForSelection();
+		PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
+		if ((screen.f & 0x10u) != 0u) {
+			BankswitchROM(saved);
+			return (HandlePokemonAndEnergySelectionScreenResult){screen.a, screen.f};
+		}
 		BankswitchROM(saved);
 		uint8_t location = hCurMenuItem;
 		(void)GetPlayAreaCardAttachedEnergies(location);
@@ -11592,7 +11670,10 @@ void Cowardice_PlayerSelectEffect(void)
 {
 	if (hTemp_ffa0 != 0u)
 		return;
-	hAIPkmnPowerEffectParam = 0xFFu;
+	(void)DrawWideTextBox_WaitForInput(SelectPokemonToPlaceInTheArenaText);
+	(void)HasAlivePokemonInBench();
+	(void)OpenPlayAreaScreenForSelection();
+	hAIPkmnPowerEffectParam = hTempPlayAreaLocation_ff9d;
 }
 /* <<< factory Cowardice_PlayerSelectEffect */
 
@@ -11675,7 +11756,8 @@ void Teleport_PlayerSelectEffect(void)
 	(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);
 	(void)HasAlivePokemonInBench();
 	wPlayAreaSelectAction = 1u;
-	OpenPlayAreaScreenForSelection();
+	while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+	}
 	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
 }
 /* <<< factory Teleport_PlayerSelectEffect */
@@ -11686,7 +11768,8 @@ void NinetalesLure_PlayerSelectEffect(void)
 	(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);
 	SwapTurn();
 	(void)HasAlivePokemonInBench();
-	OpenPlayAreaScreenForSelection();
+	while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+	}
 	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
 	SwapTurn();
 }
@@ -11698,7 +11781,8 @@ void StretchKick_PlayerSelectEffect(void)
 	(void)DrawWideTextBox_WaitForInput(ChoosePkmnInTheBenchToGiveDamageText);
 	SwapTurn();
 	(void)HasAlivePokemonInBench();
-	OpenPlayAreaScreenForSelection();
+	while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+	}
 	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
 	SwapTurn();
 }
@@ -11710,7 +11794,8 @@ void VictreebelLure_SelectSwitchPokemon(void)
 	(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);
 	SwapTurn();
 	(void)HasAlivePokemonInBench();
-	OpenPlayAreaScreenForSelection();
+	while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+	}
 	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
 	SwapTurn();
 }
@@ -11779,7 +11864,8 @@ void GengarDarkMind_PlayerSelectEffect(void)
 	(void)DrawWideTextBox_WaitForInput(ChoosePkmnInTheBenchToGiveDamageText);
 	SwapTurn();
 	(void)HasAlivePokemonInBench();
-	OpenPlayAreaScreenForSelection();
+	while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+	}
 	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
 	SwapTurn();
 }
@@ -11821,7 +11907,8 @@ void HypnoDarkMind_PlayerSelectEffect(void)
 	(void)DrawWideTextBox_WaitForInput(ChoosePkmnInTheBenchToGiveDamageText);
 	SwapTurn();
 	(void)HasAlivePokemonInBench();
-	OpenPlayAreaScreenForSelection();
+	while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+	}
 	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
 	SwapTurn();
 }
@@ -11838,7 +11925,8 @@ void Spark_PlayerSelectEffect(void)
 	SwapTurn();
 	(void)HasAlivePokemonInBench();
 	hTempPlayAreaLocation_ff9d = PLAY_AREA_BENCH_1;
-	OpenPlayAreaScreenForSelection();
+	while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+	}
 	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
 	SwapTurn();
 }
@@ -12127,7 +12215,8 @@ HandlePokemonAndEnergySelectionScreenResult SuperEnergyRemoval_PlayerSelection(v
 
 		saved_bank = hBankROM;
 		BankswitchROM(0x01u);
-		OpenPlayAreaScreenForSelection();
+		while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+		}
 		BankswitchROM(saved_bank);
 		uint8_t location = hCurMenuItem;
 		if (location == 0xffu) {
@@ -12251,10 +12340,53 @@ DevolutionSpray_PlayerSelectionResult DevolutionSpray_PlayerSelection(void)
 /* <<< factory DevolutionSpray_PlayerSelection */
 
 /* >>> factory EnergySpike_PlayerSelectEffect */
+#define ChoosePokemonToAttachEnergyCardText 0x011du
+static uint8_t energy_spike_is_basic_energy(uint8_t deck_index)
+{
+	uint8_t type = GetCardType((uint8_t)GetCardIDFromDeckIndex(deck_index));
+	return (uint8_t)(type < TYPE_ENERGY_DOUBLE_COLORLESS && (type & TYPE_ENERGY) != 0u);
+}
+
 void EnergySpike_PlayerSelectEffect(void)
 {
-	wLCDC = 0x80u;
 	hTemp_ffa0 = 0xffu;
-	return;
+	CardListResult deck = CreateDeckCardList(0u, 0u);
+	LookForCardsInDeckResult search = LookForCardsInDeck(
+		deck.a, (uint8_t)(BasicEnergyText >> 8), (uint8_t)BasicEnergyText,
+		SEARCHEFFECT_BASIC_ENERGY, 0u, Choose1BasicEnergyCardFromDeckText);
+	if ((search.f & 0x10u) != 0u)
+		return;
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChooseBasicEnergyCardText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) == 0u) {
+			if (!energy_spike_is_basic_energy(display.a))
+				continue;
+			hTemp_ffa0 = hTempCardIndex_ff98;
+			EmptyScreen();
+			(void)DrawWideTextBox_WaitForInput(ChoosePokemonToAttachEnergyCardText);
+			(void)HasAlivePokemonInPlayArea();
+			while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+			}
+			hTempPlayAreaLocation_ffa1 = hTempPlayAreaLocation_ff9d;
+			return;
+		}
+		uint8_t forced = 0u;
+		for (uint8_t index = 0u; index < DECK_SIZE; index++) {
+			if (GetTurnDuelistVariable((uint8_t)(DUELVARS_CARD_LOCATIONS + index)).a != CARD_LOCATION_DECK)
+				continue;
+			if (energy_spike_is_basic_energy(index)) {
+				forced = 1u;
+				break;
+			}
+		}
+		if (forced) {
+			PlaySFX_InvalidChoice();
+			continue;
+		}
+		hTemp_ffa0 = 0xffu;
+		return;
+	}
 }
 /* <<< factory EnergySpike_PlayerSelectEffect */
