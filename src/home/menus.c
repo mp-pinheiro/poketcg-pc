@@ -222,7 +222,7 @@ static HandleMenuInputResult DrawCursorRegs(uint8_t tile)
 	 * the tile with the LCD off, and rSTAT's mode bits -- 0, HBlank asserted --
 	 * after HblankCopyDataHLtoDE with it on (bg_map.asm:52-88, hblank.asm:12-14). */
 	uint8_t a = (wLCDC & 0x80u) != 0u ? 0u : tile;
-	return (HandleMenuInputResult){a, e, (a == 0u) ? 0x80u : 0x00u};
+	return (HandleMenuInputResult){a, e, (a == 0u) ? 0x80u : 0x00u, d};
 }
 
 void DrawCursor(uint8_t a)
@@ -746,22 +746,24 @@ HandleMenuInputResult HandleMenuInput(void)
 			return RefreshMenuCursor_CheckPlaySFXRegs();
 		/* PlayOpenOrExitScreenSFX restores its entry flags, so the `scf`
 		 * below keeps DrawCursor2's Z (menus.asm:122-131). */
-		uint8_t z_bit = (uint8_t)(DrawCursorRegs(wMenuVisibleCursorTile).f & 0x80u);
+		HandleMenuInputResult drawn = DrawCursorRegs(wMenuVisibleCursorTile);
+		uint8_t z_bit = (uint8_t)(drawn.f & 0x80u);
 		(void)PlayOpenOrExitScreenSFX(update_a, z_bit);
 		uint8_t e2 = wCurMenuItem;
 		uint8_t a2 = hCurMenuItem;
-		return (HandleMenuInputResult){a2, e2, (uint8_t)(0x10u | z_bit)};
+		return (HandleMenuInputResult){a2, e2, (uint8_t)(0x10u | z_bit), drawn.d};
 	}
 
 	uint8_t pressed = (uint8_t)(hKeysPressed & (PAD_A | PAD_B));
 	if (pressed == 0u)
 		return RefreshMenuCursor_CheckPlaySFXRegs();
 	if ((pressed & PAD_A) != 0u) {
-		uint8_t z_bit = (uint8_t)(DrawCursorRegs(wMenuVisibleCursorTile).f & 0x80u);
+		HandleMenuInputResult drawn = DrawCursorRegs(wMenuVisibleCursorTile);
+		uint8_t z_bit = (uint8_t)(drawn.f & 0x80u);
 		(void)PlayOpenOrExitScreenSFX(0u, z_bit);
 		uint8_t e2 = wCurMenuItem;
 		uint8_t a2 = hCurMenuItem;
-		return (HandleMenuInputResult){a2, e2, (uint8_t)(0x10u | z_bit)};
+		return (HandleMenuInputResult){a2, e2, (uint8_t)(0x10u | z_bit), drawn.d};
 	}
 	uint8_t e2 = wCurMenuItem;
 	hCurMenuItem = 0xFFu;
@@ -774,7 +776,7 @@ HandleMenuInputResult HandleMenuInput(void)
 HandleCardListInputResult HandleCardListInput(void)
 {
 	HandleMenuInputResult input = HandleMenuInput();
-	HandleCardListInputResult result = {input.a, 0u, input.e, input.f};
+	HandleCardListInputResult result = {input.a, input.d, input.e, input.f};
 	if ((input.f & 0x10u) == 0u)
 		return result;
 	result.d = wListScrollOffset;

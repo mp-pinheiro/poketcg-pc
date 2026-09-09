@@ -80,7 +80,7 @@ typedef struct { uint8_t a; uint8_t f; } CardListMenuFunctionResult;
 CardListMenuFunctionResult CardListMenuFunction(void);
 /* <<< factory CardListMenuFunction */
 /* >>> factory HandleMenuInput */
-typedef struct { uint8_t a; uint8_t e; uint8_t f; } HandleMenuInputResult;
+typedef struct { uint8_t a; uint8_t e; uint8_t f; uint8_t d; } HandleMenuInputResult;
 HandleMenuInputResult HandleMenuInput(void);
 /* <<< factory HandleMenuInput */
 /* >>> factory HandleCardListInput */

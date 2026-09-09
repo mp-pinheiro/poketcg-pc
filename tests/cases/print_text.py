@@ -1,5 +1,6 @@
-from tests.cases._fixtures import (ADVANCE_TEXT_REGS, SCROLL_TEXT_REGS,
-                                   advance_text_fixture, scroll_text_fixture)
+from tests.cases._fixtures import (ADVANCE_TEXT_REGS, SCROLL_LABEL_REGS,
+                                   SCROLL_TEXT_REGS, advance_text_fixture,
+                                   scroll_label_fixture, scroll_text_fixture)
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -283,6 +284,7 @@ CASES.update({
                   0xCD0F: b"\x05", 0xCD10: b"\x04", 0xCD16: b"\x22"},
          "read": {0xCE4B: 1, 0xCE4C: 2, 0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
          "vread": {0: {0x9980: 1}}},
+        dict(scroll_label_fixture(vram=False), **SCROLL_LABEL_REGS, keys=[0x00, 0x01]),
     ],
 })
 # GenerateTextTile's product is the tile itself, copied into VRAM. Without a vread

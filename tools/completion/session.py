@@ -508,7 +508,8 @@ FIXTURES = ROOT / "tests" / "fixtures"
 # returns (Music1_note wedged PyBoy for its whole wall budget). The audio digest
 # compares the driver's effect per anchor instead.
 SWEEP_SKIP_PREFIXES = ("Music", "Sound", "SFX", "Sfx", "Audio", "Timer", "Serial", "VBlank",
-                       "Func_fc26c", "PlaySong", "PlaySFX", "PauseSong", "ResumeSong")
+                       "Func_fc26c", "PlaySong", "PlaySFX", "PauseSong", "ResumeSong",
+                       "WaitForSong", "AssertSong")
 SWEEP_BUDGETS = {"instruction_budget": 10_000_000, "cycle_budget": 40_000_000}
 
 

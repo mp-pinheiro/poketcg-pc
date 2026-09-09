@@ -34,8 +34,8 @@ DrawCheckMenuCursorResult DrawCheckMenuCursor(uint8_t a)
 	uint8_t b = (uint8_t)(product + 1u);
 	uint8_t c = (uint8_t)((uint8_t)(wCheckMenuCursorYPosition << 1) + 14u);
 
-	WriteByteToBGMap0(a, b, c);
-	return (DrawCheckMenuCursorResult){a, a, a == 0 ? 0x80u : 0};
+	uint8_t out = WriteByteToBGMap0(a, b, c);
+	return (DrawCheckMenuCursorResult){out, a, out == 0 ? 0x80u : 0};
 }
 
 void PlaySFXConfirmOrCancel(uint8_t a)

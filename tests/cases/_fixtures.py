@@ -326,6 +326,14 @@ BUTTON_AB = Fixture("boot-deck-machine-button-ab-entry")
 BUTTON_AB_REGS = BUTTON_AB.regs
 YES_NO = Fixture("boot-deck-machine-yes-no-entry")
 YES_NO_REGS = YES_NO.regs
+CARD_LIST_INPUT = Fixture("isaac-duel-card-list-input-entry")
+CARD_LIST_INPUT_REGS = CARD_LIST_INPUT.regs
+CHECK_CURSOR = Fixture("boot-deck-machine-check-cursor-entry")
+CHECK_CURSOR_REGS = CHECK_CURSOR.regs
+SCROLL_LABEL = Fixture("lightning-3-scroll-label-entry")
+SCROLL_LABEL_REGS = SCROLL_LABEL.regs
+WAIT_KEYS = Fixture("boot-deck-machine-wait-keys-entry")
+WAIT_KEYS_REGS = WAIT_KEYS.regs
 
 
 
@@ -555,3 +563,19 @@ def button_ab_fixture(vram: bool = True, bank: int | None = None, **changes: byt
 
 def yes_no_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return YES_NO.case(vram=vram, bank=bank, **changes)
+
+
+def card_list_input_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return CARD_LIST_INPUT.case(vram=vram, bank=bank, **changes)
+
+
+def check_cursor_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return CHECK_CURSOR.case(vram=vram, bank=bank, **changes)
+
+
+def scroll_label_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return SCROLL_LABEL.case(vram=vram, bank=bank, **changes)
+
+
+def wait_keys_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return WAIT_KEYS.case(vram=vram, bank=bank, **changes)

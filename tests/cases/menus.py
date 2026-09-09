@@ -1,4 +1,5 @@
 from tests.cases._fixtures import play_area_b_fixture as _play_area_b_fixture, PLAY_AREA_B_REGS as _PLAY_AREA_B_REGS
+from tests.cases._fixtures import CARD_LIST_INPUT_REGS as _CARD_LIST_INPUT_REGS, card_list_input_fixture as _card_list_input_fixture
 from tests.cases._fixtures import BUTTON_AB_REGS as _BUTTON_AB_REGS, button_ab_fixture as _button_ab_fixture
 from tests.cases._fixtures import YES_NO_REGS as _YES_NO_REGS, yes_no_fixture as _yes_no_fixture
 SRC = 0xC100
@@ -445,6 +446,7 @@ CASES["HandleCardListInput"] = [
     {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x01", 0xCD17: b"\x00\x00", 0xCD10: b"\x02", 0xCD14: b"\x04", 0xFFB1: b"\x02", 0xCD15: b"\x00", 0xCD19: b"\x03"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD19: 1}},
     {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCD17: b"\x00\x00", 0xCD10: b"\x03", 0xCD14: b"\x04", 0xFFB1: b"\x03", 0xCD15: b"\x00", 0xCD19: b"\x01"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD19: 1}},
     dict(POISON, wram={0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCD17: b"\x00\x00", 0xCD10: b"\x01", 0xCD14: b"\x04", 0xFFB1: b"\x01", 0xCD15: b"\x00", 0xCD19: b"\x07"}, read={0xFFB1: 1, 0xCD10: 1, 0xCD19: 1}),
+    dict(_card_list_input_fixture(vram=False), **_CARD_LIST_INPUT_REGS),
 ]
 # <<< factory HandleCardListInput
 
@@ -646,17 +648,11 @@ MUTATIONS["CardListMenuFunction"] = {"source_symbol": "CardListMenuFunction", "b
 MUTATIONS["HandleMenuInput"] = {"source_symbol": "HandleMenuInput", "before": "\t\t} else if (update == PLAY_AREA_SCREEN_MENU_FUNCTION) {\n\t\t\tupdate_f = PlayAreaScreenMenuFunction();", "after": "\t\t} else if (update == PLAY_AREA_SCREEN_MENU_FUNCTION) {\n\t\t\tupdate_f = CardListMenuFunction().f;", "case_ids": ["HandleMenuInput-4"]}
 # <<< factory-mutation HandleMenuInput
 # >>> factory-mutation HandleCardListInput
-MUTATIONS["HandleCardListInput"] = {"source_symbol": "HandleCardListInput", "before": "\tresult.d = wListScrollOffset;", "after": "\tresult.d = (uint8_t)(wListScrollOffset + 1u);", "case_ids": ["HandleCardListInput-0", "HandleCardListInput-1", "HandleCardListInput-2"]}
-# <<< factory-mutation HandleCardListInput
-# >>> factory-mutation HandleDuelMenuInput
-MUTATIONS["HandleDuelMenuInput"] = {"source_symbol": "HandleDuelMenuInput", "before": "\tif (masked != 0u)\n\t\treturn (HandleMenuInputResult){masked, e, 0x20u};", "after": "\tif (masked != 0u)\n\t\treturn (HandleMenuInputResult){masked, e, 0x00u};", "case_ids": ["HandleDuelMenuInput-2"]}
-# <<< factory-mutation HandleDuelMenuInput
-# >>> factory-mutation YesOrNoMenuWithText_LeftAligned
-MUTATIONS["YesOrNoMenuWithText_LeftAligned"] = {
-    "source_symbol": "YesOrNoMenuWithText_LeftAligned",
-    "before": "\treturn HandleYesOrNoMenu(2u, 16u, b, c);",
-    "after": "\treturn (HandleYesOrNoMenuResult){0u, 0x80u};",
-    "case_ids": ["YesOrNoMenuWithText_LeftAligned-0", "YesOrNoMenuWithText_LeftAligned-1"],
+MUTATIONS["HandleCardListInput"] = {
+    "source_symbol": "HandleCardListInput",
+    "before": "\tHandleCardListInputResult result = {input.a, input.d, input.e, input.f};",
+    "after": "\tHandleCardListInputResult result = {input.a, 0u, input.e, input.f};",
+    "case_ids": ["HandleCardListInput-3"],
 }
 # <<< factory-mutation YesOrNoMenuWithText_LeftAligned
 # >>> factory-mutation TwoItemHorizontalMenu

@@ -1,4 +1,6 @@
 HRAM_KEYS_HELD = 0xFF90
+
+from tests.cases._fixtures import WAIT_KEYS_REGS, wait_keys_fixture
 HRAM_KEYS_PRESSED = 0xFF91
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -33,6 +35,7 @@ CASES = {
          "setup": [{"fn": "DisableLCD"}],
          "wram": {HRAM_KEYS_HELD: b"\x03", HRAM_KEYS_PRESSED: b"\x01"},
          "read": {HRAM_KEYS_PRESSED: 1}},
+        dict(wait_keys_fixture(vram=False), **WAIT_KEYS_REGS, keys=[0x00, 0x0B]),
     ],
 }
 from tests.cases._schema_migration import legacy_to_schema

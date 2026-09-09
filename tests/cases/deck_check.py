@@ -1,3 +1,5 @@
+from tests.cases._fixtures import CHECK_CURSOR_REGS, check_cursor_fixture
+
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -22,6 +24,7 @@ CASES = {
              read={0x9800 + 16 * 32 + 11: 1}),
         {"a": 0x33, "wram": {X_POSITION: b"\xFF", Y_POSITION: b"\xFF"},
          "read": {0x9800 + 12 * 32 + 247: 1}},
+        dict(check_cursor_fixture(vram=False), **CHECK_CURSOR_REGS),
     ],
     "PlaySFXConfirmOrCancel": [
         {"a": 0, "read": {0xDD82: 1, 0xDD83: 1}},
@@ -119,3 +122,10 @@ MUTATIONS["DisplayCheckMenuCursor"] = {
 # >>> factory-mutation HandleCheckMenuInput
 MUTATIONS["HandleCheckMenuInput"] = {"source_symbol": "HandleCheckMenuInput", "before": "return (HandleCheckMenuInputResult){MENU_CONFIRM, 0x10u};", "after": "return (HandleCheckMenuInputResult){MENU_CANCEL, 0x10u};", "case_ids": ["HandleCheckMenuInput-1"]}
 # <<< factory-mutation HandleCheckMenuInput
+
+MUTATIONS["DrawCheckMenuCursor"] = {
+    "source_symbol": "DrawCheckMenuCursor",
+    "before": "\tuint8_t out = WriteByteToBGMap0(a, b, c);",
+    "after": "\tuint8_t out = (WriteByteToBGMap0(a, b, c), a);",
+    "case_ids": ["DrawCheckMenuCursor-3"],
+}
