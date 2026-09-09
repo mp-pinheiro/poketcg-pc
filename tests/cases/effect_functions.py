@@ -7903,16 +7903,18 @@ CASES["EnergyRemoval_PlayerSelection"] = [
 # >>> factory MrFuji_PlayerSelection
 CONTRACT["MrFuji_PlayerSelection"] = {"compare": (), "preserve": ()}
 CASES["MrFuji_PlayerSelection"] = [
-    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFFA0: 1}, expect={0xFFA0: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    # Prompt, then bench 1 is chosen to return to the deck.
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x02", 0xC2BB: b"\x00\x00", 0xC2C8: b"\x01\x01", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\xFF"}, "read": {0xFFA0: 1, 0xFF9D: 1}, "expect": {0xFFA0: b"\x01", 0xFF9D: b"\x01"}, "setup": DISPLAY_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x02", 0xC2BB: b"\x00\x00", 0xC2C8: b"\x01\x01", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\xFF"}, read={0xFFA0: 1, 0xFF9D: 1}, expect={0xFFA0: b"\x01", 0xFF9D: b"\x01"}, setup=DISPLAY_SETUP, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory MrFuji_PlayerSelection
 
 # >>> factory Switch_PlayerSelection
 CONTRACT["Switch_PlayerSelection"] = {"compare": (), "preserve": ()}
 CASES["Switch_PlayerSelection"] = [
-    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFFA0: 1}, expect={0xFFA0: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    # Prompt, then bench 1 is chosen for the switch.
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x02", 0xC2BB: b"\x00\x00", 0xC2C8: b"\x01\x01", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\xFF"}, "read": {0xFFA0: 1, 0xFF9D: 1}, "expect": {0xFFA0: b"\x01", 0xFF9D: b"\x01"}, "setup": DISPLAY_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x02", 0xC2BB: b"\x00\x00", 0xC2C8: b"\x01\x01", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\xFF"}, read={0xFFA0: 1, 0xFF9D: 1}, expect={0xFFA0: b"\x01", 0xFF9D: b"\x01"}, setup=DISPLAY_SETUP, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory Switch_PlayerSelection
 
@@ -7936,14 +7938,11 @@ CASES["PealOfThunder_RandomlyDamageEffect"] = [
 
 # >>> factory TrainerCardAsPokemon_PlayerSelectSwitch
 CONTRACT["TrainerCardAsPokemon_PlayerSelectSwitch"] = {"compare": (), "preserve": ()}
-CASES["TrainerCardAsPokemon_PlayerSelectSwitch"] = [dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFF9D: b"\x00", 0xFFA1: b"\xFF", 0xC2EF: b"\x01", 0xC2C8: b"\x01", 0xC2CE: b"\x01", 0xC2BB: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xFFA1: 1}, expect={0xFFA1: b"\x00"}, instruction_budget=20000000, cycle_budget=80000000)]
-# <<< factory TrainerCardAsPokemon_PlayerSelectSwitch
-
-# >>> factory ButterfreeWhirlwind_CheckBench
-CONTRACT["ButterfreeWhirlwind_CheckBench"] = {"compare": ("a", "f"), "preserve": ()}
-CASES["ButterfreeWhirlwind_CheckBench"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x01", 0xFFA0: b"\x5A"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\xFF"}, "expect_regs": {"a": 0xFF, "f": 0x70}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC3EF: b"\x01", 0xFFA0: b"\xA5"}, read={0xFFA0: 1}, expect={0xFFA0: b"\xFF"}, expect_regs={"a": 0xFF, "f": 0x70}),
+CASES["TrainerCardAsPokemon_PlayerSelectSwitch"] = [
+    # The arena card leaves: prompt, then bench 1 replaces it.
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x02", 0xC2BB: b"\x00\x00", 0xC2C8: b"\x01\x01", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\x00", 0xFFA1: b"\xFF"}, "read": {0xFFA1: 1}, "expect": {0xFFA1: b"\x01"}, "setup": DISPLAY_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    # A bench card leaves: nothing to select.
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x02", 0xC2BB: b"\x00\x00", 0xC2C8: b"\x01\x01", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\x01", 0xFFA1: b"\xFF"}, read={0xFFA1: 1}, expect={0xFFA1: b"\xFF"}),
 ]
 # <<< factory ButterfreeWhirlwind_CheckBench
 
@@ -7973,16 +7972,10 @@ CASES["Ram_SelectSwitchEffect"] = [
 
 # >>> factory GustOfWind_PlayerSelection
 CONTRACT["GustOfWind_PlayerSelection"] = {"compare": (), "preserve": ()}
-CASES["GustOfWind_PlayerSelection"] = [dict(POISON, wram={0xFF97: b"\xC2", 0xFFA0: b"\x00"}, read={0xFFA0: 1}, expect={0xFFA0: b"\x00"})]
-# <<< factory GustOfWind_PlayerSelection
-
-# >>> factory Teleport_PlayerSelectEffect
-CONTRACT["Teleport_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
-CASES["Teleport_PlayerSelectEffect"] = [
-    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x01", 0xC2EF: b"\x02", 0xC2BB: b"\x00\x00", 0xC2C8: b"\x01\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9D: b"\x01", 0xC2EF: b"\x02", 0xC2BB: b"\x00\x00", 0xC2C8: b"\x01\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFFA0: 1}, expect={0xFFA0: b"\x01"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
-    # B on the selection screen only re-opens it; the next A still selects.
-    {"keys": [0x00, 0x01, 0x00, 0x02, 0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x01", 0xC2EF: b"\x02", 0xC2BB: b"\x00\x00", 0xC2C8: b"\x01\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+CASES["GustOfWind_PlayerSelection"] = [
+    # Prompt, then the opponent's bench 1 is chosen; the turn swaps back.
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC3EF: b"\x02", 0xC3BB: b"\x00\x01", 0xC3C8: b"\x20\x20", 0xC480: b"\x08\x09", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\xFF"}, "read": {0xFFA0: 1, 0xFF97: 1}, "expect": {0xFFA0: b"\x01", 0xFF97: b"\xC2"}, "setup": DISPLAY_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC3EF: b"\x02", 0xC3BB: b"\x00\x01", 0xC3C8: b"\x20\x20", 0xC480: b"\x08\x09", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\xFF"}, read={0xFFA0: 1, 0xFF97: 1}, expect={0xFFA0: b"\x01", 0xFF97: b"\xC2"}, setup=DISPLAY_SETUP, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory Teleport_PlayerSelectEffect
 
@@ -10994,19 +10987,11 @@ MUTATIONS["Defender_PlayerSelection"] = {"source_symbol": "Defender_PlayerSelect
 MUTATIONS["EnergyRemoval_PlayerSelection"] = {"source_symbol": "EnergyRemoval_PlayerSelection", "before": "HandlePokemonAndEnergySelectionScreen()", "after": "(HandlePokemonAndEnergySelectionScreenResult){0u, 0u}", "case_ids": ["EnergyRemoval_PlayerSelection-0"]}
 # <<< factory-mutation EnergyRemoval_PlayerSelection
 # >>> factory-mutation MrFuji_PlayerSelection
-MUTATIONS["MrFuji_PlayerSelection"] = {"source_symbol": "MrFuji_PlayerSelection", "before": "void MrFuji_PlayerSelection(void)\n{\n\thTemp_ffa0 = 0u;\n}", "after": "void MrFuji_PlayerSelection(void)\n{\n\thTemp_ffa0 = 1u;\n}", "case_ids": ["MrFuji_PlayerSelection-0"]}
+MUTATIONS["MrFuji_PlayerSelection"] = {"source_symbol": "MrFuji_PlayerSelection", "before": "\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;\n}", "after": "\thTemp_ffa0 = 0u;\n}", "case_ids": ["MrFuji_PlayerSelection-0"]}
 # <<< factory-mutation MrFuji_PlayerSelection
-# >>> factory-completion MrFuji_PlayerSelection
-for _record in SCHEMA2_CASES["MrFuji_PlayerSelection"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x271, "bank": 1}
-# <<< factory-completion MrFuji_PlayerSelection
 # >>> factory-mutation Switch_PlayerSelection
-MUTATIONS["Switch_PlayerSelection"] = {"source_symbol": "Switch_PlayerSelection", "before": "void Switch_PlayerSelection(void)\n{\n\thTemp_ffa0 = 0u;\n}", "after": "void Switch_PlayerSelection(void)\n{\n\thTemp_ffa0 = 1u;\n}", "case_ids": ["Switch_PlayerSelection-0"]}
+MUTATIONS["Switch_PlayerSelection"] = {"source_symbol": "Switch_PlayerSelection", "before": "\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;\n}", "after": "\thTemp_ffa0 = 0u;\n}", "case_ids": ["Switch_PlayerSelection-0"]}
 # <<< factory-mutation Switch_PlayerSelection
-# >>> factory-completion Switch_PlayerSelection
-for _record in SCHEMA2_CASES["Switch_PlayerSelection"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x592, "bank": 1}
-# <<< factory-completion Switch_PlayerSelection
 # >>> factory-mutation Cowardice_PlayerSelectEffect
 MUTATIONS["Cowardice_PlayerSelectEffect"] = {"source_symbol": "Cowardice_PlayerSelectEffect", "before": "\thAIPkmnPowerEffectParam = hTempPlayAreaLocation_ff9d;", "after": "\thAIPkmnPowerEffectParam = 0xFFu;", "case_ids": ["Cowardice_PlayerSelectEffect-0"]}
 # <<< factory-mutation Cowardice_PlayerSelectEffect
@@ -11021,12 +11006,8 @@ for _record in SCHEMA2_CASES["PealOfThunder_RandomlyDamageEffect"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x1325, "bank": 11}
 # <<< factory-completion PealOfThunder_RandomlyDamageEffect
 # >>> factory-mutation TrainerCardAsPokemon_PlayerSelectSwitch
-MUTATIONS["TrainerCardAsPokemon_PlayerSelectSwitch"] = {"source_symbol": "TrainerCardAsPokemon_PlayerSelectSwitch", "before": "void TrainerCardAsPokemon_PlayerSelectSwitch(void) { if (hTemp_ffa0 != 0u) return; hTempPlayAreaLocation_ffa1 = 0xFFu; }", "after": "void TrainerCardAsPokemon_PlayerSelectSwitch(void) { if (hTemp_ffa0 != 0u) return; hTempPlayAreaLocation_ffa1 = 0u; }", "case_ids": ["TrainerCardAsPokemon_PlayerSelectSwitch-0"]}
+MUTATIONS["TrainerCardAsPokemon_PlayerSelectSwitch"] = {"source_symbol": "TrainerCardAsPokemon_PlayerSelectSwitch", "before": "\thTempPlayAreaLocation_ffa1 = hTempPlayAreaLocation_ff9d;", "after": "\thTempPlayAreaLocation_ffa1 = 0u;", "case_ids": ["TrainerCardAsPokemon_PlayerSelectSwitch-0"]}
 # <<< factory-mutation TrainerCardAsPokemon_PlayerSelectSwitch
-# >>> factory-completion TrainerCardAsPokemon_PlayerSelectSwitch
-for _record in SCHEMA2_CASES["TrainerCardAsPokemon_PlayerSelectSwitch"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x270E, "bank": 1}
-# <<< factory-completion TrainerCardAsPokemon_PlayerSelectSwitch
 # >>> factory-mutation ButterfreeWhirlwind_CheckBench
 MUTATIONS["ButterfreeWhirlwind_CheckBench"] = {"source_symbol": "ButterfreeWhirlwind_CheckBench", "before": "ButterfreeWhirlwind_CheckBenchResult ButterfreeWhirlwind_CheckBench(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xFFu;", "after": "ButterfreeWhirlwind_CheckBenchResult ButterfreeWhirlwind_CheckBench(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0x00u;", "case_ids": ["ButterfreeWhirlwind_CheckBench-0", "ButterfreeWhirlwind_CheckBench-1"]}
 # <<< factory-mutation ButterfreeWhirlwind_CheckBench
@@ -11040,12 +11021,8 @@ MUTATIONS["PidgeyWhirlwind_SelectEffect"] = {"source_symbol": "PidgeyWhirlwind_S
 MUTATIONS["Ram_SelectSwitchEffect"] = {"source_symbol": "Ram_SelectSwitchEffect", "before": "Ram_SelectSwitchEffectResult Ram_SelectSwitchEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xFFu;", "after": "Ram_SelectSwitchEffectResult Ram_SelectSwitchEffect(void)\n{\n\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u) {\n\t\thTemp_ffa0 = 0xFEu;", "case_ids": ["Ram_SelectSwitchEffect-0", "Ram_SelectSwitchEffect-1"]}
 # <<< factory-mutation Ram_SelectSwitchEffect
 # >>> factory-mutation GustOfWind_PlayerSelection
-MUTATIONS["GustOfWind_PlayerSelection"] = {"source_symbol": "GustOfWind_PlayerSelection", "before": "void GustOfWind_PlayerSelection(void) { hTemp_ffa0 = 0u; }", "after": "void GustOfWind_PlayerSelection(void) { hTemp_ffa0 = 1u; }", "case_ids": ["GustOfWind_PlayerSelection-0"]}
+MUTATIONS["GustOfWind_PlayerSelection"] = {"source_symbol": "GustOfWind_PlayerSelection", "before": "\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;\n\tSwapTurn();", "after": "\thTemp_ffa0 = 0u;\n\tSwapTurn();", "case_ids": ["GustOfWind_PlayerSelection-0"]}
 # <<< factory-mutation GustOfWind_PlayerSelection
-# >>> factory-completion GustOfWind_PlayerSelection
-for _record in SCHEMA2_CASES["GustOfWind_PlayerSelection"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x237F, "bank": 14}
-# <<< factory-completion GustOfWind_PlayerSelection
 # >>> factory-mutation Teleport_PlayerSelectEffect
 MUTATIONS["Teleport_PlayerSelectEffect"] = {"source_symbol": "Teleport_PlayerSelectEffect", "before": "\twhile ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {\n\t}", "after": "\t(void)OpenPlayAreaScreenForSelection();", "case_ids": ["Teleport_PlayerSelectEffect-2"]}
 # <<< factory-mutation Teleport_PlayerSelectEffect

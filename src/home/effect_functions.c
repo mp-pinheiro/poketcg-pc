@@ -11713,14 +11713,20 @@ HandlePokemonAndEnergySelectionScreenResult EnergyRemoval_PlayerSelection(void)
 /* >>> factory MrFuji_PlayerSelection */
 void MrFuji_PlayerSelection(void)
 {
-	hTemp_ffa0 = 0u;
+	(void)DrawWideTextBox_WaitForInput(ChoosePokemonToReturnToTheDeckText);
+	(void)HasAlivePokemonInBench();
+	(void)OpenPlayAreaScreenForSelection();
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
 }
 /* <<< factory MrFuji_PlayerSelection */
 
 /* >>> factory Switch_PlayerSelection */
 void Switch_PlayerSelection(void)
 {
-	hTemp_ffa0 = 0u;
+	(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);
+	(void)HasAlivePokemonInBench();
+	(void)OpenPlayAreaScreenForSelection();
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
 }
 /* <<< factory Switch_PlayerSelection */
 
@@ -11741,7 +11747,15 @@ PealOfThunderRandomlyDamageEffectResult PealOfThunder_RandomlyDamageEffect(uint8
 /* <<< factory PealOfThunder_RandomlyDamageEffect */
 
 /* >>> factory TrainerCardAsPokemon_PlayerSelectSwitch */
-void TrainerCardAsPokemon_PlayerSelectSwitch(void) { if (hTemp_ffa0 != 0u) return; hTempPlayAreaLocation_ffa1 = 0xFFu; }
+void TrainerCardAsPokemon_PlayerSelectSwitch(void)
+{
+	if (hTemp_ffa0 != 0u)
+		return;
+	(void)DrawWideTextBox_WaitForInput(SelectPokemonToPlaceInTheArenaText);
+	(void)HasAlivePokemonInBench();
+	(void)OpenPlayAreaScreenForSelection();
+	hTempPlayAreaLocation_ffa1 = hTempPlayAreaLocation_ff9d;
+}
 /* <<< factory TrainerCardAsPokemon_PlayerSelectSwitch */
 
 /* >>> factory ButterfreeWhirlwind_CheckBench */
@@ -11806,7 +11820,15 @@ Ram_SelectSwitchEffectResult Ram_SelectSwitchEffect(void)
 /* <<< factory Ram_SelectSwitchEffect */
 
 /* >>> factory GustOfWind_PlayerSelection */
-void GustOfWind_PlayerSelection(void) { hTemp_ffa0 = 0u; }
+void GustOfWind_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseAPokemonToSwitchWithActivePokemonText);
+	SwapTurn();
+	(void)HasAlivePokemonInBench();
+	(void)OpenPlayAreaScreenForSelection();
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	SwapTurn();
+}
 /* <<< factory GustOfWind_PlayerSelection */
 
 /* >>> factory Teleport_PlayerSelectEffect */
