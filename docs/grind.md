@@ -1858,3 +1858,64 @@ expected `EnableLCD`'s `$80`, which the body `{ EnableLCD(); }` satisfies
 trivially, and its mutation receipt corrupted that same call. Both passed for
 the life of the port. Re-derive the matrix from the asm's branches, and retarget
 the mutation at a line the real body owns.
+
+## Menus under a bare seed: the PyBoy lane spins
+
+The PyBoy lane services `WaitForVBlank` by skipping the `halt`
+(`pyboy_oracle.py`, `_VBLANK_HALT`), so one rendered frame -- one entry of
+the case's `keys` timeline -- holds as many `DoFrame`s as the CPU fits in it.
+Two consequences for any routine that polls a menu:
+
+- A held direction auto-repeats inside one rendered frame (`HandleDPadRepeat`
+  counts polls, not frames): one `DOWN` entry moves the cursor `1 + k` items on
+  that lane and exactly one on the port and on gbref. Which item an `A` lands
+  on is therefore not lane-independent.
+- The ROM spends rendered frames where the port spends none:
+  `SetupPlayAreaScreen` under `DisableLCD`, every `PrintPlayAreaCardList`
+  redraw. Edges that fall inside those frames are lost on the reference and
+  seen by the port, so the phase of a cycled timeline differs per lane.
+
+A menu case is admissible only when its end state is the same from every phase
+and under any number of dropped edges. What passes that bar: `[0, A]` on a
+screen whose first `A` completes it; `[0, A, 0, DOWN]` on a multi-pick whose
+*count* and terminator are read but whose pick *order* is not; a Select-closed
+screen driven by `[SELECT, 0, SELECT]`. What does not: any cycle that contains
+`B` on a screen where `B` undoes a pick -- a pick/undo alternation exists for
+some dead-time pattern, proven by simulating the asm's state machine over all
+phases and deterministic dead times 0-7 (`Gigashock_PlayerSelectEffect`). Such
+a branch is left uncased with the reason at the case block, and the sessions
+are its evidence. Reading the PyBoy lane's real cadence is a ten-line hook on
+`HandleMenuInput` (`pb.hook_register`, log `pb.frame_count` and `hKeysPressed`);
+do that before tuning a timeline by trial.
+
+`hollow-ratio` names suspects, not stubs: `LookForCardThatIsKnockedOutOnDevolution`
+and `PlayerNamingScreen_GetCharInfoFromPos` are complete ports written on
+three lines. Read the C before rewriting.
+
+## Two sessions, one checkout: verify in a workspace, commit by hunk
+
+With another session editing the same tree, `session-verify` measures the
+union of both in-flight edits, and a shared file (`core.c`, `core.h`, the
+probe adapters, `tests/cases/core.py`) cannot be committed by path without
+taking the other session's hunks along. The pattern that keeps a landing
+honest:
+
+```sh
+jj workspace add --name verify ../poketcg-verify -r <main head>
+cd ../poketcg-verify && ln -s ../poketcg/poketcg poketcg && mkdir build && ln -s ../poketcg/build/completion build/completion
+# copy in, or re-apply as a script, only your own hunks; then
+just build && just build-trace && just session-verify <session>    # each session, in isolation
+```
+
+To commit only your hunks of a shared file, hand `jj commit -i` a scripted
+diff editor that copies the workspace's file over jj's right-hand tree:
+
+```sh
+jj commit -i --tool pick --config 'merge-tools.pick.program="/tmp/pick.sh"' \
+  --config 'merge-tools.pick.edit-args=["$left","$right"]' <paths> -m "..."
+```
+
+where `pick.sh` does `cp ../poketcg-verify/$f "$2/$f"` for each path. The other
+session's hunks stay in the working copy untouched; afterwards re-apply your
+block to the working copy so it does not shadow the commit. Check the
+committed file equals the verified one (`jj file show -r @- $f | cmp - ../poketcg-verify/$f`).
