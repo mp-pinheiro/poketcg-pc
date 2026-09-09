@@ -2898,6 +2898,11 @@ void HandleDeckConfigurationMenu(void)
 			HandleDeckBuildScreen_SkipDraw(printed.a);
 			return;
 		}
+		/* deck_configuration.asm:585-591: the cursor is drawn and the OAM
+		 * copy armed before the table dispatch, for every selection but
+		 * MENU_CANCEL. */
+		YourOrOppPlayAreaScreen_DrawCursor();
+		wVBlankOAMCopyToggle = TRUE;
 		switch (selection) {
 		case 0u:
 			ConfirmDeckConfiguration();
@@ -2934,8 +2939,14 @@ void HandleDeckConfigurationMenu(void)
 void ModifyDeckConfiguration(uint16_t w0)
 {
 	(void)w0;
+	/* deck_configuration.asm:624-626: `add sp, $2` drops the caller's return
+	 * address and the routine falls into HandleDeckConfigurationMenu's
+	 * .draw_icons, whose tail is `jp HandleDeckBuildScreen.skip_draw`. The
+	 * caller returns straight after this call for that unwind. */
 	DrawCardTypeIconsAndPrintCardCounts();
-	(void)PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u,
+	wCardListCursorPos = wTempCardListCursorPos;
+	PrintFilteredCardListResult printed = PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u,
 		FILTERS_CARD_SELECTION_PARAMS_ADDR);
+	HandleDeckBuildScreen_SkipDraw(printed.a);
 }
 /* <<< factory ModifyDeckConfiguration */

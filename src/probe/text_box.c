@@ -15,7 +15,7 @@ static void split(uint16_t value, uint8_t *hi, uint8_t *lo)
 static void adapt_SafeCopyDataDEtoHL(ProbeState *s)
 {
 	uint16_t de = pair(s->d, s->e);
-	SafeCopyDataDEtoHL(&de, &s->hl, s->c);
+	s->a = SafeCopyDataDEtoHL(&de, &s->hl, s->c);
 	split(de, &s->d, &s->e);
 }
 

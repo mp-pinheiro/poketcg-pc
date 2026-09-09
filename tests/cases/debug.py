@@ -296,11 +296,12 @@ MUTATIONS["DebugCGBTest"] = {
 MUTATIONS["DebugCreateBoosterPack"] = {"source_symbol": "DebugCreateBoosterPack", "before": "\tuint8_t selected = wDebugBoosterSelection;", "after": "\tuint8_t selected = (uint8_t)(wDebugBoosterSelection + 1u);", "case_ids": ["DebugCreateBoosterPack-0", "DebugCreateBoosterPack-1", "DebugCreateBoosterPack-2"]}
 # <<< factory-mutation DebugCreateBoosterPack
 # >>> factory-mutation DebugCredits
-MUTATIONS["DebugCredits"] = {"source_symbol": "DebugCredits", "before": "void DebugCredits(void)\n{\n}", "after": "void DebugCredits(void)\n{\n\tPlaySong(0u);\n}", "case_ids": ["DebugCredits-0", "DebugCredits-1"]}
+MUTATIONS["DebugCredits"] = {"source_symbol": "DebugCredits", "before": "\t(void)PlayCreditsSequence();", "after": "\tf = f;", "case_ids": ["DebugCredits-0", "DebugCredits-1"]}
 # <<< factory-mutation DebugCredits
 # >>> factory-completion DebugCredits
 for _record in SCHEMA2_CASES["DebugCredits"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x56AD, "bank": 7}
+    _record["completion"] = {"mode": "entry", "pc": 0x56AD, "bank": 7,
+                             "routine": "PlayCreditsSequence"}
 # <<< factory-completion DebugCredits
 # >>> factory-mutation _DebugLookAtSprite
 MUTATIONS["_DebugLookAtSprite"] = {

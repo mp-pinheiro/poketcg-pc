@@ -318,8 +318,9 @@ static uint16_t yoopa_table_ptr(void)
 		(uint16_t)gb_read8((uint16_t)(wTransitionTablePtr_ADDR + 1u)) << 8);
 }
 
-/* duel.asm:1701-1943 .draw_cursor */
-static void yoopa_draw_cursor(void)
+/* duel.asm:1701-1943 .draw_cursor, which deck_configuration.asm:586 calls
+ * across modules (`call YourOrOppPlayAreaScreen_HandleInput.draw_cursor`). */
+void YourOrOppPlayAreaScreen_DrawCursor(void)
 {
 	ZeroObjectPositions();
 	uint16_t de = yoopa_table_ptr();
@@ -1928,7 +1929,7 @@ YourOrOppPlayAreaScreenInputResult YourOrOppPlayAreaScreen_HandleInput(void)
 	uint8_t keys = (uint8_t)(hKeysPressed & (YOPA_PAD_A | YOPA_PAD_B));
 	if (keys != 0u) {
 		if (keys & YOPA_PAD_A) {
-			yoopa_draw_cursor();
+			YourOrOppPlayAreaScreen_DrawCursor();
 			PlaySFXConfirmOrCancel(YOPA_MENU_CONFIRM);
 			return (YourOrOppPlayAreaScreenInputResult){wYourOrOppPlayAreaCurPosition, 0x10u};
 		}
@@ -1948,7 +1949,7 @@ YourOrOppPlayAreaScreenInputResult YourOrOppPlayAreaScreen_HandleInput(void)
 		ZeroObjectPositionsWithCopyToggleOn();
 		return (YourOrOppPlayAreaScreenInputResult){masked, 0x00u};
 	}
-	yoopa_draw_cursor();
+	YourOrOppPlayAreaScreen_DrawCursor();
 	return (YourOrOppPlayAreaScreenInputResult){masked, 0x80u};
 }
 /* <<< factory YourOrOppPlayAreaScreen_HandleInput */
@@ -2710,7 +2711,7 @@ void _DrawAIPeekScreen(uint8_t b)
 	else
 		wYourOrOppPlayAreaCurPosition = 0x06u;
 
-	yoopa_draw_cursor();
+	YourOrOppPlayAreaScreen_DrawCursor();
 	wVBlankOAMCopyToggle = 1u;
 	if (wIsSwapTurnPending != 0u)
 		SwapTurn();

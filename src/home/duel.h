@@ -548,6 +548,7 @@ void ZeroObjectPositionsWithCopyToggleOn(void);
 /* >>> factory YourOrOppPlayAreaScreen_HandleInput */
 typedef struct { uint8_t a; uint8_t f; } YourOrOppPlayAreaScreenInputResult;
 YourOrOppPlayAreaScreenInputResult YourOrOppPlayAreaScreen_HandleInput(void);
+void YourOrOppPlayAreaScreen_DrawCursor(void);
 /* <<< factory YourOrOppPlayAreaScreen_HandleInput */
 /* >>> factory DrawPlayArea_BenchCards */
 void DrawPlayArea_BenchCards(uint8_t c, uint8_t d, uint8_t e);

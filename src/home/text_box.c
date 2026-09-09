@@ -16,7 +16,7 @@
 #define FW_SPACE 0x70
 #define CONSOLE_CGB 0x02
 
-void SafeCopyDataDEtoHL(uint16_t *de, uint16_t *hl, uint8_t c)
+uint8_t SafeCopyDataDEtoHL(uint16_t *de, uint16_t *hl, uint8_t c)
 {
 	uint32_t count = c ? c : 0x100;
 	uint16_t source = *de;
@@ -28,6 +28,14 @@ void SafeCopyDataDEtoHL(uint16_t *de, uint16_t *hl, uint8_t c)
 
 	*de = source;
 	*hl = destination;
+	/* text_box.asm:4-16. With the LCD off the loop's last `ld a, [de]` leaves
+	 * the byte copied; with it on the copy runs through
+	 * HblankCopyDataDEtoHL (hblank.asm:24-43), whose last instruction to
+	 * touch a is `ldh a, [rSTAT] / and STAT_MODE`, and the loop only leaves
+	 * when that is zero. */
+	if ((wLCDC & 0x80u) != 0u)
+		return 0u;
+	return gb_read8((uint16_t)(source - 1u));
 }
 
 uint16_t DECoordToBGMap0Address(uint8_t d, uint8_t e)

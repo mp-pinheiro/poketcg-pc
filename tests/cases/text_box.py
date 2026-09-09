@@ -7,7 +7,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 CONTRACT = {
-    "SafeCopyDataDEtoHL": {"compare": ("b", "d", "e", "hl"), "preserve": ("b",)},
+    "SafeCopyDataDEtoHL": {"compare": ("a", "b", "d", "e", "hl"), "preserve": ("b",)},
     "DECoordToBGMap0Address": {"compare": ("d", "e", "hl"), "preserve": ("d", "e")},
     "AdjustCoordinatesForBGScroll": {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ("a", "f", "b", "c")},
     "CopyLine": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c")},
@@ -24,6 +24,10 @@ CONTRACT = {
 CASES = {
     "SafeCopyDataDEtoHL": [
         {"read": {DST: 1}},
+        # deck-explore 105873: with the LCD on the copy runs through
+        # HblankCopyDataDEtoHL, whose exit a is the STAT mode it waited for.
+        {"c": 2, "d": SRC >> 8, "e": SRC & 0xff, "hl": DST,
+         "wram": {SRC: PAT[:2], 0xCD3B: b"\x80"}, "read": {DST: 2}},
         dict(POISON, c=1, d=SRC >> 8, e=SRC & 0xff, hl=DST,
              wram={SRC: PAT[:1]}, read={DST: 1}),
         {"c": 0, "d": SRC >> 8, "e": SRC & 0xff, "hl": DST,
@@ -122,6 +126,6 @@ MUTATIONS = {
         "source_symbol": "SafeCopyDataDEtoHL",
         "before": "*de = source;",
         "after": "*de = (uint16_t)(source + 1u);",
-        "case_ids": ["SafeCopyDataDEtoHL-0", "SafeCopyDataDEtoHL-1", "SafeCopyDataDEtoHL-2", "SafeCopyDataDEtoHL-3"],
+        "case_ids": ["SafeCopyDataDEtoHL-0", "SafeCopyDataDEtoHL-2", "SafeCopyDataDEtoHL-3", "SafeCopyDataDEtoHL-4"],
     },
 }

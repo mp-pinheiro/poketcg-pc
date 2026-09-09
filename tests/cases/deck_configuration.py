@@ -1264,6 +1264,8 @@ CASES["HandleDeckConfigurationMenu"] = [
 # >>> factory ModifyDeckConfiguration
 CONTRACT["ModifyDeckConfiguration"] = {"compare": (), "preserve": ()}
 CASES["ModifyDeckConfiguration"] = [
+    # deck-explore 105873: the routine unwinds into HandleDeckBuildScreen.skip_draw,
+    # whose loop re-opens the configuration menu, so its handler has to be seeded.
     {"stack": [0], "wram": {0xCABB: b"\x00", 0xCED4: b"\x12", 0xCED3: b"\x00"},
      "sram": {0: {}}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x02], "rom_bank": 2, "read": {0xCEA4: 1},
@@ -1277,6 +1279,11 @@ CASES["ModifyDeckConfiguration"] = [
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+# >>> factory-completion ModifyDeckConfiguration
+for _record in SCHEMA2_CASES["ModifyDeckConfiguration"]:
+    _record["completion"] = {"mode": "entry", "pc": 0x5358, "bank": 2,
+                             "routine": "HandleDeckBuildScreen_SkipDraw"}
+# <<< factory-completion ModifyDeckConfiguration
 
 for _record in SCHEMA2_CASES["OpenDeckConfigurationMenu"]:
     _record["completion"] = {"mode": "entry", "pc": 0x5480, "bank": 2,
@@ -1664,8 +1671,8 @@ for _rec in SCHEMA2_CASES["ChangeDeckName"]:
     _rec["completion"] = {"mode": "pre-ret", "pc": 0x55BC, "bank": 2}
 # <<< factory-completion ChangeDeckName
 # >>> factory-mutation HandleDeckConfigurationMenu
-MUTATIONS["HandleDeckConfigurationMenu"] = {"source_symbol": "HandleDeckConfigurationMenu", "before": "\t\t\tHandleDeckBuildScreen_SkipDraw(printed.a);", "after": "\t\t\tHandleDeckBuildScreen_SkipDraw(0u);", "case_ids": ["HandleDeckConfigurationMenu-0", "HandleDeckConfigurationMenu-1"]}
+MUTATIONS["HandleDeckConfigurationMenu"] = {"source_symbol": "HandleDeckConfigurationMenu", "before": "\t\twced6 = selected_item;", "after": "\t\twced6 = (uint8_t)(selected_item + 1u);", "case_ids": ["HandleDeckConfigurationMenu-0", "HandleDeckConfigurationMenu-1"]}
 # <<< factory-mutation HandleDeckConfigurationMenu
 # >>> factory-mutation ModifyDeckConfiguration
-MUTATIONS["ModifyDeckConfiguration"] = {"source_symbol": "ModifyDeckConfiguration", "before": "\tDrawCardTypeIconsAndPrintCardCounts();", "after": "\tDrawCardTypeIconsAndPrintCardCounts();\n\twCardListCursorPos = 1u;", "case_ids": ["ModifyDeckConfiguration-0", "ModifyDeckConfiguration-1"]}
+MUTATIONS["ModifyDeckConfiguration"] = {"source_symbol": "ModifyDeckConfiguration", "before": "\twCardListCursorPos = wTempCardListCursorPos;", "after": "\twCardListCursorPos = (uint8_t)(wTempCardListCursorPos + 1u);", "case_ids": ["ModifyDeckConfiguration-0", "ModifyDeckConfiguration-1"]}
 # <<< factory-mutation ModifyDeckConfiguration

@@ -211,8 +211,7 @@ uint8_t GenerateTextTile(uint8_t b, uint8_t d, uint8_t e)
 		destination = tile.hl;
 		c = TILE_SIZE;
 	}
-	SafeCopyDataDEtoHL(&source, &destination, c);
-	return gb_read8((uint16_t)(source - 1));
+	return SafeCopyDataDEtoHL(&source, &destination, c);
 }
 
 
@@ -365,7 +364,7 @@ PlaceTextResult PlaceNextTextTile(uint8_t a)
 	gb_write8(0xffabu, (uint8_t)(address >> 8));
 	uint16_t destination = (uint16_t)(address - 1);
 	uint16_t source = wCurTextTile_ADDR;
-	SafeCopyDataDEtoHL(&source, &destination, 1);
+	(void)SafeCopyDataDEtoHL(&source, &destination, 1);
 	hTextLineCurPos++;
 	return (PlaceTextResult){a, 0, 0, (uint8_t)(source >> 8), (uint8_t)source, hTextLineCurPos_ADDR};
 }

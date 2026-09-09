@@ -319,9 +319,15 @@ void InputCurDeckName(void)
 	else if (deck == 2u)
 		question = INPUT_CUR_DECK_DECK3_DATA;
 
-	g_rom_bank = 6u;
+	/* deck_selection.asm:331 `farcall InputDeckName`: bank 6 for the call and
+	 * the caller's bank back after it. Writing g_rom_bank alone desynced
+	 * hBankROM, so a callee's own save/restore put the caller's bank back
+	 * mid-call and the naming screen read its question text from bank 2. */
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(6u);
 	(void)InputDeckName(MAX_DECK_NAME_LENGTH, 4u, 1u,
 		(uint8_t)(wCurDeckName_ADDR >> 8), (uint8_t)wCurDeckName_ADDR, question);
+	BankswitchROM(saved_bank);
 	if (gb_read8(wCurDeckName_ADDR) != 0u)
 		return;
 

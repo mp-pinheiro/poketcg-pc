@@ -2783,7 +2783,8 @@ MUTATIONS["ScriptCommand_ShowCardReceivedScreen"] = {"source_symbol": "ScriptCom
 # both observed bytes have been written. legacy_to_schema always emits
 # completion "return", so the split is applied after migration.
 for _record in SCHEMA2_CASES["ScriptCommand_ShowCardReceivedScreen"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x378A}
+    _record["completion"] = {"mode": "entry", "pc": 0x378A, "bank": 0,
+                             "routine": "AssertSongFinished"}
 # <<< factory-completion ScriptCommand_ShowCardReceivedScreen
 # >>> factory-mutation ScriptCommand_ShowMedalReceivedScreen
 MUTATIONS["ScriptCommand_ShowMedalReceivedScreen"] = {"source_symbol": "ScriptCommand_ShowMedalReceivedScreen", "before": "IncreaseScriptPointerResult ScriptCommand_ShowMedalReceivedScreen(uint8_t c)\n{\n\tuint8_t medal_id = c;", "after": "IncreaseScriptPointerResult ScriptCommand_ShowMedalReceivedScreen(uint8_t c)\n{\n\tuint8_t medal_id = (uint8_t)(c + 1u);", "case_ids": ["ScriptCommand_ShowMedalReceivedScreen-0", "ScriptCommand_ShowMedalReceivedScreen-2"]}
@@ -2803,7 +2804,8 @@ MUTATIONS["ScriptCommand_ShowMedalReceivedScreen"] = {"source_symbol": "ScriptCo
 # is the wait, after every observed byte has been written. legacy_to_schema
 # always emits completion "return", so the split is applied after migration.
 for _record in SCHEMA2_CASES["ScriptCommand_ShowMedalReceivedScreen"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x378A}
+    _record["completion"] = {"mode": "entry", "pc": 0x378A, "bank": 0,
+                             "routine": "AssertSongFinished"}
 # <<< factory-completion ScriptCommand_ShowMedalReceivedScreen
 # >>> factory-mutation ScriptCommand_GiveBoosterPacks
 MUTATIONS["ScriptCommand_GiveBoosterPacks"] = {"source_symbol": "ScriptCommand_GiveBoosterPacks", "before": "IncreaseScriptPointerResult ScriptCommand_GiveBoosterPacks(uint8_t b, uint8_t c)\n{\n\twAnotherBoosterPack = 0u;\n\tFunc_c2a3();\n\t(void)GiveBoosterPack(c, 0u);", "after": "IncreaseScriptPointerResult ScriptCommand_GiveBoosterPacks(uint8_t b, uint8_t c)\n{\n\twAnotherBoosterPack = 0u;\n\tFunc_c2a3();\n\t(void)c;", "case_ids": ["ScriptCommand_GiveBoosterPacks-0", "ScriptCommand_GiveBoosterPacks-1"]}

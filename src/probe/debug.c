@@ -100,8 +100,15 @@ static void adapt_DebugCreateBoosterPack(ProbeState *s)
 /* >>> factory DebugCredits */
 static void adapt_DebugCredits(ProbeState *s)
 {
-	(void)s;
-	DebugCredits();
+	DebugCreditsResult result = DebugCredits(s->a, s->f, s->b, s->c,
+		s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
 }
 /* <<< factory DebugCredits */
 

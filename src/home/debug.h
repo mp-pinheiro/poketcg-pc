@@ -80,7 +80,8 @@ DebugCGBTestResult DebugCGBTest(uint8_t a, uint8_t f, uint8_t b,
 void DebugCreateBoosterPack(void);
 /* <<< factory DebugCreateBoosterPack */
 /* >>> factory DebugCredits */
-void DebugCredits(void);
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } DebugCreditsResult;
+DebugCreditsResult DebugCredits(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory DebugCredits */
 /* >>> factory _DebugLookAtSprite */
 void _DebugLookAtSprite(void);

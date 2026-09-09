@@ -251,8 +251,14 @@ void DebugCreateBoosterPack(void)
 /* <<< factory DebugCreateBoosterPack */
 
 /* >>> factory DebugCredits */
-void DebugCredits(void)
+/* engine/menus/debug.asm:68-71. Plays the credits and sets carry: `scf`
+ * clears N and H and leaves Z, so only f's low nibble changes. */
+DebugCreditsResult DebugCredits(uint8_t a, uint8_t f, uint8_t b,
+	uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)PlayCreditsSequence();
+	f = (uint8_t)((f & 0x80u) | 0x10u);
+	return (DebugCreditsResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory DebugCredits */
 
