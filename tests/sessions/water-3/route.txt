@@ -1,0 +1,16 @@
+idle
+hold UP 200
+idle
+hold LEFT 16
+idle
+hold UP 200
+idle
+peek
+press A
+idle
+shot water-3-ask
+yes
+duel
+dismiss
+peek
+shot water-3-end

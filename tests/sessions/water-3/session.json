@@ -1,0 +1,21 @@
+{
+  "goal": "from Amanda's duel: Joshua's duel to its end under the pilot's WRAM policy and his after-duel script, with Sara's and Amanda's beat bits poked",
+  "name": "water-3",
+  "ordinals": 494926,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ]
+  },
+  "recorded": "2026-09-09T01:48:33+00:00",
+  "schema": 1
+}
