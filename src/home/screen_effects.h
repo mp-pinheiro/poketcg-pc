@@ -30,6 +30,7 @@ void ShakeScreenX(uint16_t hl);
 /* <<< factory ShakeScreenX */
 /* >>> factory Func_1ce03 */
 void Func_1ce03(uint8_t a);
+void (*ScreenEffectForAddress(uint16_t address))(void);
 /* <<< factory Func_1ce03 */
 /* >>> factory ShakeScreenX_Big */
 void ShakeScreenX_Big(void);

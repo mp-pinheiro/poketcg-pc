@@ -164,14 +164,29 @@ static void screen_effect_set_screen(void)
 	SetScreenForDuelAnimation(0u);
 }
 
+static void (*const screen_effects[8])(void) = {
+	screen_effect_set_screen,  /* DUEL_ANIM_SET_SCREEN */
+	screen_effect_print_damage, /* DUEL_ANIM_PRINT_DAMAGE */
+	UpdateMainSceneHUD,        /* DUEL_ANIM_UPDATE_HUD */
+	DuelAnim153, DuelAnim154, DuelAnim155, DuelAnim156, DuelAnim157,
+};
+
+/* .pointer_table's targets by their bank-6 address (poketcg.sym), for a
+ * caller that holds the asm pointer rather than the animation id. */
+void (*ScreenEffectForAddress(uint16_t address))(void)
+{
+	static const uint16_t addresses[8] = {
+		0x50F4u, 0x5132u, 0x5199u, 0x51A3u, 0x51A3u, 0x51A3u, 0x51A3u, 0x51A3u,
+	};
+	for (size_t i = 0; i < 8u; i++)
+		if (addresses[i] == address)
+			return screen_effects[i];
+	return NULL;
+}
+
 void Func_1ce03(uint8_t a)
 {
-	static void (*const effects[8])(void) = {
-		screen_effect_set_screen,  /* DUEL_ANIM_SET_SCREEN */
-		screen_effect_print_damage, /* DUEL_ANIM_PRINT_DAMAGE */
-		UpdateMainSceneHUD,        /* DUEL_ANIM_UPDATE_HUD */
-		DuelAnim153, DuelAnim154, DuelAnim155, DuelAnim156, DuelAnim157,
-	};
+	void (*const *effects)(void) = screen_effects;
 	if (a == 0x9eu) {
 		uint16_t target = (uint16_t)(wDuelAnimDamage | ((uint16_t)gb_read8((uint16_t)(wDuelAnimDamage_ADDR + 1u)) << 8));
 		fprintf(stderr, "DUEL_ANIM_158_UNUSED dispatches raw pointer %04X\n", target);

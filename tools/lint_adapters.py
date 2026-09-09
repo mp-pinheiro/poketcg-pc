@@ -65,6 +65,15 @@ ALLOWLIST: dict[str, dict[str, str]] = {
 			"needs the menus slice to widen GetCardSymbolData's return struct."
 		),
 	},
+	"adapt_Func_3bb5": {
+		"R3": (
+			"Func_3bb5 (play_animation.asm:75-88) runs the routine hl points at "
+			"through CallHL2; its C form takes a callback. ScreenEffectForAddress "
+			"is the marshalling of that pointer: Func_1ce03's .pointer_table "
+			"targets by bank-6 address, nothing computed. Without it the probe "
+			"skips the effect on every live entry and the sweep rows lie."
+		),
+	},
 }
 
 ADAPTER_SIG_RE = re.compile(r"\bstatic\s+void\s+(adapt_\w+)\s*\([^)]*\)\s*\{")

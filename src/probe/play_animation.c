@@ -1,4 +1,5 @@
 #include "home/play_animation.h"
+#include "home/screen_effects.h"
 #include "probe.h"
 
 static void adapt_CheckAnyAnimationPlaying(ProbeState *s)
@@ -48,9 +49,12 @@ static void adapt_UpdateQueuedAnimations(ProbeState *s)
 /* >>> factory Func_3bb5 */
 static void probe_no_effect(void) { }
 
+/* hl is the effect routine `CallHL2` runs: one of Func_1ce03's .pointer_table
+ * targets on every live entry, a no-op for the bare cases that seed none. */
 static void adapt_Func_3bb5(ProbeState *s)
 {
-	Func_3bb5(probe_no_effect);
+	void (*effect)(void) = ScreenEffectForAddress(s->hl);
+	Func_3bb5(effect ? effect : probe_no_effect);
 	s->a = 0x80u;
 	s->f = 0x80u;
 }
