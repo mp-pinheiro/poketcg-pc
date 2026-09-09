@@ -11071,9 +11071,34 @@ ChanseyDoubleEdgeEffectResult ChanseyDoubleEdgeEffect(uint8_t f, uint8_t d, uint
 /* <<< factory ChanseyDoubleEdgeEffect */
 
 /* >>> factory FriendshipSong_AddToBench50PercentEffect */
+#define SuccessCheckIfHeadsAttackIsSuccessfulText 0x00eeu
+#define NoneCameText 0x0176u
+#define CameToTheBenchText 0x0177u
+#define ATK_ANIM_FRIENDSHIP_SONG 0x6au
 FriendshipSong_AddToBench50PercentEffectResult FriendshipSong_AddToBench50PercentEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
-	return (FriendshipSong_AddToBench50PercentEffectResult){0x00u, 0xeeu};
+	(void)a;
+	(void)f;
+	TossCoin_BankBResult toss = TossCoin_BankB(SuccessCheckIfHeadsAttackIsSuccessfulText, hl);
+	if ((toss.f & 0x10u) == 0u) {
+		WaitResult none = DrawWideTextBox_WaitForInput(NoneCameText);
+		return (FriendshipSong_AddToBench50PercentEffectResult){none.d, none.e};
+	}
+	uint8_t picked = PickRandomBasicCardFromDeck();
+	if (picked == 0xFFu) {
+		PlayAttackAnimationOverAttackingPokemon(ATK_ANIM_FRIENDSHIP_SONG, 0u, b, c, d, e, hl);
+		WaitResult none = DrawWideTextBox_WaitForInput(NoneCameText);
+		ShuffleCardsInDeckResult shuffled = ShuffleCardsInDeck(none.b, none.c,
+			(uint16_t)((uint16_t)none.d << 8 | none.e), none.hl);
+		return (FriendshipSong_AddToBench50PercentEffectResult){shuffled.d, shuffled.e};
+	}
+	SearchCardInDeckAndAddToHand(picked);
+	AddCardToHand(picked);
+	(void)PutHandPokemonCardInPlayArea(picked, 0u);
+	PlayAttackAnimationOverAttackingPokemon(ATK_ANIM_FRIENDSHIP_SONG, 0u, b, c, d, e, hl);
+	(void)DisplayCardDetailScreen(hTempCardIndex_ff98, CameToTheBenchText);
+	ShuffleCardsInDeckResult shuffled = ShuffleCardsInDeck(b, c, (uint16_t)((uint16_t)d << 8 | e), hl);
+	return (FriendshipSong_AddToBench50PercentEffectResult){shuffled.d, shuffled.e};
 }
 /* <<< factory FriendshipSong_AddToBench50PercentEffect */
 

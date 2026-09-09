@@ -3,7 +3,7 @@
   "case": "tests/cases/effect_functions.py",
   "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"FriendshipSong_AddToBench50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 238, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"FriendshipSong_AddToBench50PercentEffect\", \"mismatches\": {\"d\": [0, 1]}}\n",
-  "restored": "{\"fn\": \"FriendshipSong_AddToBench50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 238, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"FriendshipSong_AddToBench50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 18, \"e\": 17, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"00000000\", \"49850\": \"0000\", \"49851\": \"00\", \"49903\": \"01\", \"49905\": \"00\", \"50176\": \"08010101\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52233\": \"00\", \"52636\": \"01000002\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FriendshipSong_AddToBench50PercentEffect\", \"mismatches\": {\"e\": [17, 52]}}\n",
+  "restored": "{\"fn\": \"FriendshipSong_AddToBench50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 18, \"e\": 17, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"00000000\", \"49850\": \"0000\", \"49851\": \"00\", \"49903\": \"01\", \"49905\": \"00\", \"50176\": \"08010101\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52233\": \"00\", \"52636\": \"01000002\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
 }

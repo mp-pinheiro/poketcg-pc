@@ -7657,17 +7657,25 @@ CASES["ChanseyDoubleEdgeEffect"] = [
 
 # >>> factory FriendshipSong_AddToBench50PercentEffect
 CONTRACT["FriendshipSong_AddToBench50PercentEffect"] = {"compare": ("d", "e"), "preserve": ()}
-CASES["FriendshipSong_AddToBench50PercentEffect"] = [{}, dict(POISON)]
-# <<< factory FriendshipSong_AddToBench50PercentEffect
-
-# >>> factory SubmissionEffect
-CONTRACT["SubmissionEffect"]={"compare":("a","f"),"preserve":()}
-CASES["SubmissionEffect"] = [
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
-         instruction_budget=20000000, cycle_budget=80000000),
+CASES["FriendshipSong_AddToBench50PercentEffect"] = [
+    # Tails: "None came" and the deck is untouched. Heads plays the attack
+    # animation, which the primary oracle cannot run from a bare seed.
+    {"d": 0x12, "e": 0x34, "keys": [0x00, 0x01, 0x00, 0x01],
+     "wram": {0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+              0xCACA: b"\x00\x00\x80", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01",
+              0xC2EF: b"\x01", 0xC2BB: b"\x00", 0xC400: b"\x08\x01\x01\x01"},
+     "read": {0xC2EF: 1, 0xC2BA: 1, 0xC200: 4},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "entry_sp": 0xDCBE, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01, 0x00, 0x01],
+         wram={0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x80", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01",
+               0xC2EF: b"\x01", 0xC2BB: b"\x00", 0xC400: b"\x08\x01\x01\x01"},
+         read={0xC2EF: 1, 0xC2BA: 1, 0xC200: 4},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         entry_sp=0xDCBE, instruction_budget=20000000, cycle_budget=80000000),
 ]
+
 # <<< factory SubmissionEffect
 
 # >>> factory MagnemiteSelfdestructEffect
@@ -8125,15 +8133,15 @@ _HEAL_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x
 CASES["Heal_RemoveDamageEffect"] = [
     # AI opponent, tails: the power is still flagged as used, nothing heals.
     {"keys": [0x00, 0x01], "wram": {**_HEAL_WRAM, 0xC2F1: b"\x80", 0xCACA: b"\x00\x00\x80"},
-     "read": _HEAL_READ, "setup": _HEAL_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
+     "read": _HEAL_READ, "setup": _HEAL_SETUP, "entry_sp": 0xDCBE, "instruction_budget": 20000000, "cycle_budget": 80000000},
     # AI opponent, heads: the target it chose beforehand heals one counter.
     {"keys": [0x00, 0x01], "wram": {**_HEAL_WRAM, 0xC2F1: b"\x80", 0xCACA: b"\x00\x00\x00"},
-     "read": _HEAL_READ, "setup": _HEAL_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
+     "read": _HEAL_READ, "setup": _HEAL_SETUP, "entry_sp": 0xDCBE, "instruction_budget": 20000000, "cycle_budget": 80000000},
     # Player, heads: A dismisses the prompt and A picks the damaged arena card.
     {"keys": [0x00, 0x01, 0x00, 0x01, 0x00, 0x01], "wram": {**_HEAL_WRAM, 0xC2F1: b"\x00", 0xCACA: b"\x00\x00\x00"},
-     "read": _HEAL_READ, "setup": _HEAL_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
+     "read": _HEAL_READ, "setup": _HEAL_SETUP, "entry_sp": 0xDCBE, "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, keys=[0x00, 0x01], wram={**_HEAL_WRAM, 0xC2F1: b"\x80", 0xCACA: b"\x00\x00\x80"},
-         read=_HEAL_READ, setup=_HEAL_SETUP, instruction_budget=20000000, cycle_budget=80000000),
+         read=_HEAL_READ, setup=_HEAL_SETUP, entry_sp=0xDCBE, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory Heal_RemoveDamageEffect
 
@@ -10870,12 +10878,8 @@ MUTATIONS["GolemSelfdestructEffect"] = {"source_symbol": "GolemSelfdestructEffec
 MUTATIONS["ChanseyDoubleEdgeEffect"] = {"source_symbol": "ChanseyDoubleEdgeEffect", "before": "DealRecoilDamageToSelf(80u, f, d, e)", "after": "DealRecoilDamageToSelf(70u, f, d, e)", "case_ids": ["ChanseyDoubleEdgeEffect-0", "ChanseyDoubleEdgeEffect-1"]}
 # <<< factory-mutation ChanseyDoubleEdgeEffect
 # >>> factory-mutation FriendshipSong_AddToBench50PercentEffect
-MUTATIONS["FriendshipSong_AddToBench50PercentEffect"] = {"source_symbol": "FriendshipSong_AddToBench50PercentEffect", "before": "FriendshipSong_AddToBench50PercentEffectResult FriendshipSong_AddToBench50PercentEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\treturn (FriendshipSong_AddToBench50PercentEffectResult){0x00u, 0xeeu};", "after": "FriendshipSong_AddToBench50PercentEffectResult FriendshipSong_AddToBench50PercentEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\treturn (FriendshipSong_AddToBench50PercentEffectResult){0x01u, 0xeeu};", "case_ids": ["FriendshipSong_AddToBench50PercentEffect-0", "FriendshipSong_AddToBench50PercentEffect-1"]}
+MUTATIONS["FriendshipSong_AddToBench50PercentEffect"] = {"source_symbol": "FriendshipSong_AddToBench50PercentEffect", "before": "\t\tWaitResult none = DrawWideTextBox_WaitForInput(NoneCameText);\n\t\treturn (FriendshipSong_AddToBench50PercentEffectResult){none.d, none.e};", "after": "\t\tWaitResult none = DrawWideTextBox_WaitForInput(NoneCameText);\n\t\treturn (FriendshipSong_AddToBench50PercentEffectResult){d, e};", "case_ids": ["FriendshipSong_AddToBench50PercentEffect-0"]}
 # <<< factory-mutation FriendshipSong_AddToBench50PercentEffect
-# >>> factory-completion FriendshipSong_AddToBench50PercentEffect
-for _record in SCHEMA2_CASES["FriendshipSong_AddToBench50PercentEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x407E, "bank": 11}
-# <<< factory-completion FriendshipSong_AddToBench50PercentEffect
 # >>> factory-mutation SubmissionEffect
 MUTATIONS["SubmissionEffect"] = {"source_symbol": "SubmissionEffect", "before": "DealRecoilDamageToSelf(20u, f, d, e)", "after": "DealRecoilDamageToSelf(30u, f, d, e)", "case_ids": ["SubmissionEffect-0", "SubmissionEffect-1"]}
 # <<< factory-mutation SubmissionEffect
@@ -11086,7 +11090,7 @@ MUTATIONS["Wail_FillBenchEffect"] = {
 }
 # <<< factory-mutation Wail_FillBenchEffect
 # >>> factory-mutation Heal_RemoveDamageEffect
-MUTATIONS["Heal_RemoveDamageEffect"] = {"source_symbol": "Heal_RemoveDamageEffect", "before": "\tgb_write8(hp.hl, (uint8_t)(hp.a + 10u));", "after": "\tgb_write8(hp.hl, (uint8_t)(hp.a + 20u));", "case_ids": ["Heal_RemoveDamageEffect-1", "Heal_RemoveDamageEffect-2"]}
+MUTATIONS["Heal_RemoveDamageEffect"] = {"source_symbol": "Heal_RemoveDamageEffect", "before": "\tgb_write8(flags.hl, (uint8_t)(flags.a | (1u << USED_PKMN_POWER_THIS_TURN_F)));", "after": "\tgb_write8(flags.hl, flags.a);", "case_ids": ["Heal_RemoveDamageEffect-0"]}
 # <<< factory-mutation Heal_RemoveDamageEffect
 # >>> factory-mutation SuperEnergyRemoval_PlayerSelection
 MUTATIONS["SuperEnergyRemoval_PlayerSelection"] = {"source_symbol": "SuperEnergyRemoval_PlayerSelection", "before": "\thPlayAreaEffectTarget = hTempPlayAreaLocation_ff9d;", "after": "\thPlayAreaEffectTarget = (uint8_t)(hTempPlayAreaLocation_ff9d + 1u);", "case_ids": ["SuperEnergyRemoval_PlayerSelection-0", "SuperEnergyRemoval_PlayerSelection-1"]}
