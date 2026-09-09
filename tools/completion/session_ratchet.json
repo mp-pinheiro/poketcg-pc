@@ -44,6 +44,9 @@
   "boot-menu": {
     "confirmed_ordinal": 1000
   },
+  "challenge-hall": {
+    "confirmed_ordinal": 702945
+  },
   "fighting-club": {
     "confirmed_ordinal": 108594
   },

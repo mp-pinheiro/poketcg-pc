@@ -1,0 +1,74 @@
+# From ronald-3's end (the Pokemon Dome entrance): out to the overworld map,
+# one cursor step north to the Challenge Hall, up through its entrance into the
+# hall; five medals made Challenge Cup 2 ready, so Clerk12's invitation (yes)
+# walks the player to the stage. Round one under the pilot's duel policy, the
+# between-rounds menu (B) and deck question (no), round two, and the cup's
+# after-duel scripts until the hall takes input again.
+idle
+hold LEFT 40
+idle
+hold DOWN 120
+idle
+press UP
+idle
+press A
+idle
+peek
+hold UP 120
+idle
+peek
+hold UP 40
+idle
+hold LEFT 40
+idle
+hold RIGHT 12
+idle
+press UP
+idle
+peek
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+shot challenge-hall-ask
+yes
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+duel
+dismiss
+peek
+press B
+idle
+press A
+idle
+shot challenge-hall-deck
+press RIGHT
+idle
+press A
+idle
+press A
+idle
+duel
+dismiss
+peek
+shot challenge-hall-end

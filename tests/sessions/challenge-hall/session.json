@@ -1,0 +1,39 @@
+{
+  "goal": "From the Dome entrance: the Challenge Hall with five medals, Clerk12's Challenge Cup 2 invitation, round one and round two under the pilot's duel policy, and the cup's after-duel scripts",
+  "name": "challenge-hall",
+  "ordinals": 702945,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ],
+    "582677": [
+      [
+        54226,
+        24
+      ]
+    ],
+    "603055": [
+      [
+        54226,
+        59
+      ]
+    ]
+  },
+  "recorded": "2026-09-09T09:25:54+00:00",
+  "schema": 1
+}

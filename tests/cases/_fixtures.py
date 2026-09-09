@@ -699,3 +699,11 @@ DOME_RONALD_REGS = DOME_RONALD.regs
 
 def dome_ronald_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return DOME_RONALD.case(vram=vram, bank=bank, **changes)
+
+
+CLERK9 = Fixture("challenge-hall-clerk9-entry")
+CLERK9_REGS = CLERK9.regs
+
+
+def clerk9_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return CLERK9.case(vram=vram, bank=bank, **changes)
