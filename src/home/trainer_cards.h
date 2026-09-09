@@ -21,7 +21,7 @@ FindDupResult FindDuplicateCards(uint16_t hl, uint8_t d);
 void FindAndRemoveCardFromList(uint8_t a, uint16_t hl);
 /* <<< factory FindAndRemoveCardFromList */
 /* >>> factory PickPokedexCards */
-typedef struct { uint8_t a, f; } PickPokedexResult;
+typedef struct { uint8_t a, f, d; } PickPokedexResult;
 PickPokedexResult PickPokedexCards(void);
 /* <<< factory PickPokedexCards */
 /* >>> factory AIDecide_Maintenance */

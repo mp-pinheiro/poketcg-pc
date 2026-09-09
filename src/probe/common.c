@@ -32,6 +32,7 @@ static void adapt_PickTwoAttachedEnergyCards(ProbeState *s)
 {
 	PickTwoResult r = PickTwoAttachedEnergyCards(s->a);
 	s->a = r.a;
+	s->d = r.d;
 	if (r.b_valid)
 		s->b = r.b;
 	s->f = r.f;
@@ -48,7 +49,9 @@ static void adapt_ClearMemory_Bank8(ProbeState *s)
 /* >>> factory PickAttachedEnergyCardToRemove */
 static void adapt_PickAttachedEnergyCardToRemove(ProbeState *s)
 {
-	s->a = PickAttachedEnergyCardToRemove(s->a);
+	PickEnergyResult r = PickAttachedEnergyCardToRemove(s->a);
+	s->a = r.a;
+	s->d = r.d;
 }
 /* <<< factory PickAttachedEnergyCardToRemove */
 
@@ -149,6 +152,7 @@ static void adapt_LookForCardIDInHandList_Bank8(ProbeState *s)
 	LookForCardIDInHandListResult r = LookForCardIDInHandList_Bank8(s->a);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory LookForCardIDInHandList_Bank8 */
 
@@ -212,7 +216,9 @@ static void adapt_FindDuplicatePokemonCards(ProbeState *s)
 /* >>> factory AIPickEnergyCardToDiscard */
 static void adapt_AIPickEnergyCardToDiscard(ProbeState *s)
 {
-	s->a = AIPickEnergyCardToDiscard(s->a);
+	PickEnergyResult r = AIPickEnergyCardToDiscard(s->a);
+	s->a = r.a;
+	s->d = r.d;
 }
 /* <<< factory AIPickEnergyCardToDiscard */
 
@@ -245,6 +251,7 @@ static void adapt_AICheckIfAttackIsHighRecoil(ProbeState *s)
 {
 	AICheckIfAttackIsHighRecoilResult r = AICheckIfAttackIsHighRecoil();
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AICheckIfAttackIsHighRecoil */
 

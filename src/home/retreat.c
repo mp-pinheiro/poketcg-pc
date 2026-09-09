@@ -232,12 +232,13 @@ end_retreat_list:
 /* retreat.asm AIDecideBenchPokemonToSwitchTo. Scores every bench card from
  * 50 and hands the scores to FindHighestBenchScore; the arena card keeps 50
  * unscored. */
-AIDecideBenchPokemonToSwitchToResult AIDecideBenchPokemonToSwitchTo(void)
+AIDecideBenchPokemonToSwitchToResult AIDecideBenchPokemonToSwitchTo(uint8_t d)
 {
 	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
 	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	/* `cp 2; ret c` keeps the entry d; every other exit is FindHighestBenchScore's. */
 	if (count < 2u)
-		return (AIDecideBenchPokemonToSwitchToResult){count, 0x70u};
+		return (AIDecideBenchPokemonToSwitchToResult){count, 0x70u, d};
 	(void)SetAIRetreatFlags();
 	LoadDefendingPokemonColorWRAndPrizeCards();
 	wAIScore = 50u;
@@ -364,23 +365,24 @@ AIDecideBenchPokemonToSwitchToResult AIDecideBenchPokemonToSwitchTo(void)
 	}
 	wAIRetreatScore = 0u;
 	FindHighestBenchScoreResult best = FindHighestBenchScore();
-	return (AIDecideBenchPokemonToSwitchToResult){best.a, best.f};
+	return (AIDecideBenchPokemonToSwitchToResult){best.a, best.f, best.d};
 }
 /* <<< factory AIDecideBenchPokemonToSwitchTo */
 
 /* >>> factory AIDecideWhetherToRetreat */
-AIDecideWhetherToRetreatResult AIDecideWhetherToRetreat(void)
+AIDecideWhetherToRetreatResult AIDecideWhetherToRetreat(uint8_t d)
 {
 	uint8_t a = wConfusionRetreatCheckWasUnsuccessful;
 	uint8_t f;
 	uint8_t b = 0u;
 	uint8_t c = 0u;
-	uint8_t d = 0u;
 	uint8_t e = 0u;
 	uint16_t hl = 0u;
 	if (a != 0u) {
-		/* .no_carry: the second `or a` clears carry and sets Z only for zero. */
-		return (AIDecideWhetherToRetreatResult){a, 0u};
+		/* .no_carry: the second `or a` clears carry and sets Z only for zero;
+		 * the entry d survives. Every later exit passes GetCardIDFromDeckIndex
+		 * at .check_active_id, whose `ld d, $0` clears it. */
+		return (AIDecideWhetherToRetreatResult){a, 0u, d};
 	}
 	wAIPlayEnergyCardForRetreat = 0u;
 	LoadDefendingPokemonColorWRAndPrizeCards();
@@ -679,13 +681,14 @@ check_retreat_cost:
 check_active_id:
 	v = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	uint8_t active_id = (uint8_t)GetCardIDFromDeckIndex(v.a);
+	d = 0u;
 	if (active_id == MYSTERIOUS_FOSSIL || active_id == CLEFAIRY_DOLL) {
 		e = 0u;
 		for (;;) {
 			++e;
 			v = GetTurnDuelistVariable((uint8_t)(e + DUELVARS_ARENA_CARD));
 			if (v.a == 0xFFu)
-				return (AIDecideWhetherToRetreatResult){0xFFu, 0u};
+				return (AIDecideWhetherToRetreatResult){0xFFu, 0u, d};
 			hTempPlayAreaLocation_ff9d = e;
 			CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(a, f, b, c, d, e, hl);
 			a = ko.a; f = ko.f;
@@ -694,12 +697,12 @@ check_active_id:
 			CheckIfCanDamageDefendingPokemonResult damage = CheckIfCanDamageDefendingPokemon(e, f, b, c, d, e, hl);
 			a = damage.a; f = damage.f;
 			if ((f & 0x10u) != 0u)
-				return (AIDecideWhetherToRetreatResult){a, (uint8_t)((f & 0x80u) | 0x10u)};
+				return (AIDecideWhetherToRetreatResult){a, (uint8_t)((f & 0x80u) | 0x10u), d};
 		}
 	}
 	a = wAIScore;
 	if (a >= 131u)
-		return (AIDecideWhetherToRetreatResult){a, (uint8_t)((a == 131u ? 0x80u : 0u) | 0x10u)};
-	return (AIDecideWhetherToRetreatResult){a, (uint8_t)(a == 0u ? 0x80u : 0u)};
+		return (AIDecideWhetherToRetreatResult){a, (uint8_t)((a == 131u ? 0x80u : 0u) | 0x10u), d};
+	return (AIDecideWhetherToRetreatResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), d};
 }
 /* <<< factory AIDecideWhetherToRetreat */

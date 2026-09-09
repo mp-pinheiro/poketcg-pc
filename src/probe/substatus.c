@@ -81,8 +81,9 @@ static void adapt_HandleAmnesiaSubstatus(ProbeState *s)
 
 static void adapt_HandleNoDamageOrEffectSubstatus(ProbeState *s)
 {
-	NoDamageOrEffectResult r = HandleNoDamageOrEffectSubstatus(s->e, s->hl);
+	NoDamageOrEffectResult r = HandleNoDamageOrEffectSubstatus(s->d, s->e, s->hl);
 	s->f = r.f;
+	s->d = r.d;
 	s->e = r.e;
 	s->hl = r.hl;
 }

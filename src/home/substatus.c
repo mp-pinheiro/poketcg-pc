@@ -334,11 +334,11 @@ AmnesiaResult HandleAmnesiaSubstatus(void)
 	return (AmnesiaResult){0x90u, UNABLE_TO_USE_ATTACK_DUE_TO_AMNESIA_TEXT_ID};
 }
 
-NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus(uint8_t e, uint16_t hl)
+NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus(uint8_t d, uint8_t e, uint16_t hl)
 {
 	gb_write8(wNoDamageOrEffect_ADDR, 0);
 	if (gb_read8(wLoadedAttackCategory_ADDR) == POKEMON_POWER)
-		return (NoDamageOrEffectResult){0xC0u, e, hl};
+		return (NoDamageOrEffectResult){0xC0u, d, e, hl};
 
 	DuelistVarResult sub1 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS1);
 
@@ -346,48 +346,50 @@ NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus(uint8_t e, uint16_t hl)
 	hl = NO_DAMAGE_OR_EFFECT_DUE_TO_FLY_TEXT_ID;
 	if (sub1.a == SUBSTATUS1_FLY) {
 		gb_write8(wNoDamageOrEffect_ADDR, e);
-		return (NoDamageOrEffectResult){0x90u, e, hl};
+		return (NoDamageOrEffectResult){0x90u, d, e, hl};
 	}
 
 	e = NO_DAMAGE_OR_EFFECT_BARRIER;
 	hl = NO_DAMAGE_OR_EFFECT_DUE_TO_BARRIER_TEXT_ID;
 	if (sub1.a == SUBSTATUS1_BARRIER) {
 		gb_write8(wNoDamageOrEffect_ADDR, e);
-		return (NoDamageOrEffectResult){0x90u, e, hl};
+		return (NoDamageOrEffectResult){0x90u, d, e, hl};
 	}
 
 	e = NO_DAMAGE_OR_EFFECT_AGILITY;
 	hl = NO_DAMAGE_OR_EFFECT_DUE_TO_AGILITY_TEXT_ID;
 	if (sub1.a == SUBSTATUS1_AGILITY) {
 		gb_write8(wNoDamageOrEffect_ADDR, e);
-		return (NoDamageOrEffectResult){0x90u, e, hl};
+		return (NoDamageOrEffectResult){0x90u, d, e, hl};
 	}
 
 	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower_ArenaCard();
 	hl = incapable.hl;
 	if (incapable.f & 0x10u)
-		return (NoDamageOrEffectResult){0x00u, e, hl};
-	return HandleNoDamageOrEffectSubstatus_PkmnPower(e, hl);
+		return (NoDamageOrEffectResult){0x00u, d, e, hl};
+	return HandleNoDamageOrEffectSubstatus_PkmnPower(d, e, hl);
 }
 
-NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus_PkmnPower(uint8_t e, uint16_t hl)
+NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus_PkmnPower(uint8_t d, uint8_t e, uint16_t hl)
 {
 	uint8_t defender = gb_read8(wTempNonTurnDuelistCardID_ADDR);
 	if (defender != MEW_LV8)
-		return (NoDamageOrEffectResult){defender == 0 ? 0x80u : 0x00u, e, hl};
+		return (NoDamageOrEffectResult){defender == 0 ? 0x80u : 0x00u, d, e, hl};
 
 	if (gb_read8(wIsDamageToSelf_ADDR) != 0)
-		return (NoDamageOrEffectResult){0x00u, e, hl};
+		return (NoDamageOrEffectResult){0x00u, d, e, hl};
 
+	/* `ld e, a; ld d, $0`: the card id is loaded through de. */
 	e = gb_read8(wTempTurnDuelistCardID_ADDR);
+	d = 0u;
 	LoadCardDataToBuffer2_FromCardID(e);
 	if (gb_read8(wLoadedCard2Stage_ADDR) == 0)
-		return (NoDamageOrEffectResult){0x80u, e, hl};
+		return (NoDamageOrEffectResult){0x80u, d, e, hl};
 
 	e = NO_DAMAGE_OR_EFFECT_NSHIELD;
 	hl = NO_DAMAGE_OR_EFFECT_DUE_TO_NSHIELD_TEXT_ID;
 	gb_write8(wNoDamageOrEffect_ADDR, e);
-	return (NoDamageOrEffectResult){0x10u, e, hl};
+	return (NoDamageOrEffectResult){0x10u, d, e, hl};
 }
 
 NoDamageOrEffectCheckResult CheckNoDamageOrEffect(uint16_t hl)
@@ -771,7 +773,7 @@ HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult HandleDamageReductionO
 		de = HandleDamageReductionExceptSubstatus2_PkmnPower(de);
 
 	uint16_t damage = de;
-	NoDamageOrEffectResult no_damage = HandleNoDamageOrEffectSubstatus_PkmnPower(location, hl);
+	NoDamageOrEffectResult no_damage = HandleNoDamageOrEffectSubstatus_PkmnPower((uint8_t)(de >> 8), location, hl);
 	uint8_t f = no_damage.f;
 	hl = no_damage.hl;
 	if (!(f & 0x10u)) {

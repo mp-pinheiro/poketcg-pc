@@ -63,7 +63,7 @@ static uint16_t calculate_versus_one(uint16_t damage)
     uint8_t status;
 
     load_attacker_and_defender(location);
-    blocked = HandleNoDamageOrEffectSubstatus((uint8_t)damage, 0);
+    blocked = HandleNoDamageOrEffectSubstatus((uint8_t)(damage >> 8), (uint8_t)damage, 0);
     if (!(blocked.f & 0x10u)) {
         if (location == 0)
             damage = HandleDoubleDamageSubstatus(damage);

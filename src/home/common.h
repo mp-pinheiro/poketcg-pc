@@ -16,14 +16,16 @@ uint16_t CalculateWordTensDigit(uint16_t hl);
 /* >>> factory PickTwoAttachedEnergyCards */
 /* f is the exit F register: the `cp` that chose the exit, which a caller
  * that pushes af around its own work (AIDecide_SuperEnergyRemoval) keeps. */
-typedef struct { uint8_t a; uint8_t b; uint8_t b_valid; uint8_t f; } PickTwoResult;
+typedef struct { uint8_t a; uint8_t b; uint8_t b_valid; uint8_t f; uint8_t d; } PickTwoResult;
 PickTwoResult PickTwoAttachedEnergyCards(uint8_t a);
 /* <<< factory PickTwoAttachedEnergyCards */
 /* >>> factory ClearMemory_Bank8 */
 void ClearMemory_Bank8(uint8_t a, uint16_t hl);
 /* <<< factory ClearMemory_Bank8 */
 /* >>> factory PickAttachedEnergyCardToRemove */
-uint8_t PickAttachedEnergyCardToRemove(uint8_t a);
+/* d is the energy list's page while it stays empty, else GetCardIDFromDeckIndex's 0. */
+typedef struct { uint8_t a; uint8_t d; } PickEnergyResult;
+PickEnergyResult PickAttachedEnergyCardToRemove(uint8_t a);
 /* <<< factory PickAttachedEnergyCardToRemove */
 /* >>> factory CopyListWithFFTerminatorFromHLToDE_Bank8 */
 typedef struct { uint8_t a; uint8_t f; } CopyListBank8Result;
@@ -70,7 +72,7 @@ typedef struct { uint8_t a; uint8_t f; } LookForCardIDInLocationBank8Result;
 LookForCardIDInLocationBank8Result LookForCardIDInLocation_Bank8(uint8_t location, uint8_t card_id_byte);
 /* <<< factory LookForCardIDInLocation_Bank8 */
 /* >>> factory LookForCardIDInHandList_Bank8 */
-typedef struct { uint8_t a; uint8_t f; } LookForCardIDInHandListResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t d; } LookForCardIDInHandListResult;
 LookForCardIDInHandListResult LookForCardIDInHandList_Bank8(uint8_t a);
 /* <<< factory LookForCardIDInHandList_Bank8 */
 /* >>> factory LookForCardIDInHandAndPlayArea */
@@ -97,7 +99,7 @@ typedef struct { uint8_t a; uint8_t f; uint8_t d; } FindDuplicatePokemonCardsRes
 FindDuplicatePokemonCardsResult FindDuplicatePokemonCards(void);
 /* <<< factory FindDuplicatePokemonCards */
 /* >>> factory AIPickEnergyCardToDiscard */
-uint8_t AIPickEnergyCardToDiscard(uint8_t a);
+PickEnergyResult AIPickEnergyCardToDiscard(uint8_t a);
 /* <<< factory AIPickEnergyCardToDiscard */
 /* >>> factory HandleAIAntiMewtwoDeckStrategy */
 typedef struct { uint8_t a; uint8_t f; } HandleAIAntiMewtwoDeckStrategyResult;
@@ -115,7 +117,7 @@ void OpenBoosterPack(void);
 uint8_t PreparePrinterConnection(uint16_t hl);
 /* <<< factory PreparePrinterConnection */
 /* >>> factory AICheckIfAttackIsHighRecoil */
-typedef struct { uint8_t f; } AICheckIfAttackIsHighRecoilResult;
+typedef struct { uint8_t f; uint8_t d; } AICheckIfAttackIsHighRecoilResult;
 AICheckIfAttackIsHighRecoilResult AICheckIfAttackIsHighRecoil(void);
 /* <<< factory AICheckIfAttackIsHighRecoil */
 /* >>> factory PrintDeckConfiguration */

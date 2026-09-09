@@ -9198,7 +9198,7 @@ void DevolutionBeam_DevolveEffect(void)
 	wTempNonTurnDuelistCardID = wLoadedCard1ID;
 	uint16_t hl = var.hl;
 	if (hTempPlayAreaLocation_ff9d == 0u) {
-		NoDamageOrEffectResult substatus = HandleNoDamageOrEffectSubstatus(0u, hl);
+		NoDamageOrEffectResult substatus = HandleNoDamageOrEffectSubstatus(0u, 0u, hl);
 		if ((substatus.f & 0x10u) == 0u)
 			hl = substatus.hl;
 	}

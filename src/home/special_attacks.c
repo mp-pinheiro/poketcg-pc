@@ -177,7 +177,7 @@ HandleSpecialAIAttacksResult HandleSpecialAIAttacks(void)
 			return special_zero_score();
 		return special_bench_slots_score(MAX_PLAY_AREA_POKEMON);
 	case EXEGGUTOR: {
-		AIDecideWhetherToRetreatResult r = AIDecideWhetherToRetreat();
+		AIDecideWhetherToRetreatResult r = AIDecideWhetherToRetreat(0u);
 		if (!(r.f & 0x10u))
 			return special_zero_score();
 		return (HandleSpecialAIAttacksResult){0x8Au, r.f};

@@ -77,11 +77,12 @@ AmnesiaResult HandleAmnesiaSubstatus(void);
  * LoadCardDataToBuffer2_FromCardID call. */
 typedef struct {
 	uint8_t f;
+	uint8_t d;
 	uint8_t e;
 	uint16_t hl;
 } NoDamageOrEffectResult;
-NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus(uint8_t e, uint16_t hl);
-NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus_PkmnPower(uint8_t e, uint16_t hl);
+NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus(uint8_t d, uint8_t e, uint16_t hl);
+NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus_PkmnPower(uint8_t d, uint8_t e, uint16_t hl);
 
 /* substatus.asm:448-474. Carry is always set on this path. hl is the resolved
  * id from NoDamageOrEffectTextIDTable, $0000 if bit 7 already marked the text

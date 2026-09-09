@@ -714,6 +714,7 @@ static void adapt_FindHighestBenchScore(ProbeState *s)
 	FindHighestBenchScoreResult r = FindHighestBenchScore();
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory FindHighestBenchScore */
 
@@ -984,6 +985,7 @@ static void adapt_CheckIfNoSurplusEnergyForAttack(ProbeState *s)
 	CheckIfNoSurplusEnergyResult r = CheckIfNoSurplusEnergyForAttack();
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory CheckIfNoSurplusEnergyForAttack */
 
@@ -2408,6 +2410,7 @@ static void adapt_CheckIfCanDamageDefendingPokemon(ProbeState *s)
 		CheckIfCanDamageDefendingPokemon(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory CheckIfCanDamageDefendingPokemon */
 
@@ -2534,6 +2537,7 @@ static void adapt_LookForEnergyNeededForAttackInHand(ProbeState *s)
 	LookForEnergyNeededForAttackInHandResult result = LookForEnergyNeededForAttackInHand();
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
 }
 /* <<< factory LookForEnergyNeededForAttackInHand */
 
@@ -2552,6 +2556,7 @@ static void adapt_CheckIfDefendingPokemonCanKnockOut(ProbeState *s)
 	CheckIfDefendingPokemonCanKnockOutResult r = CheckIfDefendingPokemonCanKnockOut(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory CheckIfDefendingPokemonCanKnockOut */
 
@@ -2561,6 +2566,7 @@ static void adapt_CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP(ProbeState
 	CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult result = CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP();
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
 }
 /* <<< factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP */
 
@@ -2570,6 +2576,7 @@ static void adapt_CheckIfAnyAttackKnocksOutDefendingCard(ProbeState *s)
 	CheckIfAnyAttackKnocksOutDefendingCardResult result = CheckIfAnyAttackKnocksOutDefendingCard();
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
 }
 /* <<< factory CheckIfAnyAttackKnocksOutDefendingCard */
 

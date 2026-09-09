@@ -213,14 +213,14 @@ uint8_t AIDoAction(uint8_t a)
 			if (sam && sam_scripted())
 				action = PickRandomBenchPokemon();
 			else
-				action = AIDecideBenchPokemonToSwitchTo().a;
+				action = AIDecideBenchPokemonToSwitchTo(0u).a;
 			break;
 		case AIACTION_KO_SWITCH:
 			if (sam && sam_scripted()) {
 				GetPlayAreaLocationOfRaticateOrRattata();
 				action = hTempPlayAreaLocation_ff9d;
 			} else {
-				action = AIDecideBenchPokemonToSwitchTo().a;
+				action = AIDecideBenchPokemonToSwitchTo(0u).a;
 			}
 			break;
 		case AIACTION_TAKE_PRIZE:

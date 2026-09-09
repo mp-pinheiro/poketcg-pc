@@ -35,6 +35,7 @@ static void adapt_PickPokedexCards(ProbeState *s)
 	PickPokedexResult r = PickPokedexCards();
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory PickPokedexCards */
 /* >>> factory AIDecide_Recycle */

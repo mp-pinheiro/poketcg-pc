@@ -20,9 +20,10 @@ static void adapt_AITryToRetreat(ProbeState *s)
 /* >>> factory AIDecideBenchPokemonToSwitchTo */
 static void adapt_AIDecideBenchPokemonToSwitchTo(ProbeState *s)
 {
-	AIDecideBenchPokemonToSwitchToResult r = AIDecideBenchPokemonToSwitchTo();
+	AIDecideBenchPokemonToSwitchToResult r = AIDecideBenchPokemonToSwitchTo(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecideBenchPokemonToSwitchTo */
 
@@ -30,9 +31,10 @@ static void adapt_AIDecideBenchPokemonToSwitchTo(ProbeState *s)
 /* >>> factory AIDecideWhetherToRetreat */
 static void adapt_AIDecideWhetherToRetreat(ProbeState *s)
 {
-	AIDecideWhetherToRetreatResult r = AIDecideWhetherToRetreat();
+	AIDecideWhetherToRetreatResult r = AIDecideWhetherToRetreat(s->d);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
 }
 /* <<< factory AIDecideWhetherToRetreat */
 

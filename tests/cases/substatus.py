@@ -96,7 +96,7 @@ CONTRACT = {
         "preserve": ("b", "c", "d", "e"),
     },
     "HandleNoDamageOrEffectSubstatus": {
-        "compare": ("f", "e", "hl", "b", "c"),
+        "compare": ("f", "d", "e", "hl", "b", "c"),
         "preserve": (),
     },
     "CheckNoDamageOrEffect": {
@@ -316,6 +316,9 @@ CASES = {
              {wTempNonTurnDuelistCardID: bytes([MEW_LV8]), wTempTurnDuelistCardID: bytes([GRIMER])})},
         # Capable, defender MEW_LV8, attacker is non-Basic (stage 1): Neutralizing Shield triggers.
         {"e": 0x99, "hl": 0x1234, "wram": mw(PLAYER_TURN, BENCH_DONE,
+             {wTempNonTurnDuelistCardID: bytes([MEW_LV8]), wTempTurnDuelistCardID: bytes([MUK])})},
+        # Neutralizing Shield path with a nonzero entry d: `ld d, $0` clears it.
+        {"d": 0x5A, "e": 0x99, "hl": 0x1234, "wram": mw(PLAYER_TURN, BENCH_DONE,
              {wTempNonTurnDuelistCardID: bytes([MEW_LV8]), wTempTurnDuelistCardID: bytes([MUK])})},
         dict(POISON, wram=mw(PLAYER_TURN, BENCH_DONE)),
     ],
@@ -594,11 +597,14 @@ MUTATIONS["HandleTransparency"] = {"source_symbol": "HandleTransparency", "befor
 # >>> factory-mutation HandleDamageReductionOrNoDamageFromPkmnPowerEffects
 MUTATIONS["HandleDamageReductionOrNoDamageFromPkmnPowerEffects"] = {
     "source_symbol": "HandleDamageReductionOrNoDamageFromPkmnPowerEffects",
-    "before": "\tNoDamageOrEffectResult no_damage = HandleNoDamageOrEffectSubstatus_PkmnPower(location, hl);",
-    "after": "\tNoDamageOrEffectResult no_damage = HandleNoDamageOrEffectSubstatus(location, hl);",
+    "before": "\tNoDamageOrEffectResult no_damage = HandleNoDamageOrEffectSubstatus_PkmnPower((uint8_t)(de >> 8), location, hl);",
+    "after": "\tNoDamageOrEffectResult no_damage = HandleNoDamageOrEffectSubstatus((uint8_t)(de >> 8), location, hl);",
     "case_ids": ["HandleDamageReductionOrNoDamageFromPkmnPowerEffects-3"],
 }
 # <<< factory-mutation HandleDamageReductionOrNoDamageFromPkmnPowerEffects
 # >>> factory-mutation HandleSandAttackOrSmokescreenSubstatus
 MUTATIONS["HandleSandAttackOrSmokescreenSubstatus"] = {"source_symbol": "HandleSandAttackOrSmokescreenSubstatus", "before": "\t\t(uint16_t)((uint16_t)wait.d << 8 | wait.e), wait.hl,", "after": "\t\tAttackUnsuccessfulText, wait.hl,", "case_ids": ["HandleSandAttackOrSmokescreenSubstatus-4"]}
 # <<< factory-mutation HandleSandAttackOrSmokescreenSubstatus
+# >>> factory-mutation HandleNoDamageOrEffectSubstatus
+MUTATIONS["HandleNoDamageOrEffectSubstatus"] = {"source_symbol": "HandleNoDamageOrEffectSubstatus_PkmnPower", "before": "\te = gb_read8(wTempTurnDuelistCardID_ADDR);\n\td = 0u;\n\tLoadCardDataToBuffer2_FromCardID(e);", "after": "\te = gb_read8(wTempTurnDuelistCardID_ADDR);\n\tLoadCardDataToBuffer2_FromCardID(e);", "case_ids": ["HandleNoDamageOrEffectSubstatus-10"]}
+# <<< factory-mutation HandleNoDamageOrEffectSubstatus

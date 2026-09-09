@@ -47,11 +47,11 @@ AIProcessRetreatResult AIProcessRetreat(void)
 	if (already_retreated != 0u)
 		return (AIProcessRetreatResult){already_retreated, 0x00u};
 
-	AIDecideWhetherToRetreatResult retreat = AIDecideWhetherToRetreat();
+	AIDecideWhetherToRetreatResult retreat = AIDecideWhetherToRetreat(0u);
 	if ((retreat.f & 0x10u) == 0u)
 		return (AIProcessRetreatResult){retreat.a, retreat.f};
 
-	AIDecideBenchPokemonToSwitchToResult bench = AIDecideBenchPokemonToSwitchTo();
+	AIDecideBenchPokemonToSwitchToResult bench = AIDecideBenchPokemonToSwitchTo(0u);
 	if ((bench.f & 0x10u) != 0u)
 		return (AIProcessRetreatResult){bench.a, bench.f};
 

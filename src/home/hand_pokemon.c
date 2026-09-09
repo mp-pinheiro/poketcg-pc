@@ -298,7 +298,7 @@ void AIDecidePlayLegendaryBirds(void)
 			AIDiscourage(100u);
 			return;
 		}
-		AIDecideWhetherToRetreatResult retreat = AIDecideWhetherToRetreat();
+		AIDecideWhetherToRetreatResult retreat = AIDecideWhetherToRetreat(0u);
 		if ((retreat.f & 0x10u) != 0u) {
 			AIDiscourage(100u);
 			return;

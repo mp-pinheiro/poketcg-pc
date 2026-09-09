@@ -49,7 +49,7 @@ CASES["CalculateWordTensDigit"] = [
 # <<< factory CalculateWordTensDigit
 
 # >>> factory PickTwoAttachedEnergyCards
-CONTRACT["PickTwoAttachedEnergyCards"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["PickTwoAttachedEnergyCards"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["PickTwoAttachedEnergyCards"] = [
     {"a": 0, "read": {0xCDF1: 2, 0xCDB9: 2, 0xC510: 8}},
     {"a": 1, "read": {0xCDF1: 2, 0xCDB9: 2, 0xC510: 8}},
@@ -71,7 +71,7 @@ CASES["ClearMemory_Bank8"] = [
 # <<< factory ClearMemory_Bank8
 
 # >>> factory PickAttachedEnergyCardToRemove
-CONTRACT["PickAttachedEnergyCardToRemove"] = {"compare": ("a",), "preserve": ()}
+CONTRACT["PickAttachedEnergyCardToRemove"] = {"compare": ("a", "d"), "preserve": ()}
 CASES["PickAttachedEnergyCardToRemove"] = [
     {"a": 0, "wram": {0xFF97: b"\xC2", 0xC200: b"\x00" * 60}, "read": {0xC200: 60, 0xC510: 32}},
     {"a": 1, "wram": {0xFF97: b"\xC2", 0xC200: b"\x00" * 60}, "read": {0xC200: 60, 0xC510: 32}},
@@ -263,7 +263,7 @@ CASES["LookForCardIDInLocation_Bank8"] = [
 # <<< factory LookForCardIDInLocation_Bank8
 
 # >>> factory LookForCardIDInHandList_Bank8
-CONTRACT["LookForCardIDInHandList_Bank8"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["LookForCardIDInHandList_Bank8"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["LookForCardIDInHandList_Bank8"] = [
     {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}, "read": {0xC510: 32}},
     {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC200: b"\x00", wPlayerDeck: b"\x01"}, "read": {0xC510: 32}},
@@ -370,7 +370,7 @@ CASES["FindDuplicatePokemonCards"] = [
 # <<< factory FindDuplicatePokemonCards
 
 # >>> factory AIPickEnergyCardToDiscard
-CONTRACT["AIPickEnergyCardToDiscard"] = {"compare": ("a",), "preserve": ()}
+CONTRACT["AIPickEnergyCardToDiscard"] = {"compare": ("a", "d"), "preserve": ()}
 CASES["AIPickEnergyCardToDiscard"] = [
     {"a": 0, "wram": {0xFF97: b"\xC2", 0xC200: b"\x00" * 60}, "read": {0xC510: 32}},
     {"a": 3, "wram": {0xFF97: b"\xC2", 0xC200: b"\x00" * 60}, "read": {0xC510: 32}},
@@ -428,7 +428,7 @@ CASES["PreparePrinterConnection"] = [
 # <<< factory PreparePrinterConnection
 
 # >>> factory AICheckIfAttackIsHighRecoil
-CONTRACT["AICheckIfAttackIsHighRecoil"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["AICheckIfAttackIsHighRecoil"] = {"compare": ("f", "d"), "preserve": ()}
 CASES["AICheckIfAttackIsHighRecoil"] = [
     {"wram": {wAIBarrierFlagCounter: b"\x80", wAIExecuteProcessedAttack: b"\x00", wAIScore: b"\x10", wTempAIScore: b"\x00", wPlayAreaAIScore: b"\x01\x02\x03\x04\x05\x06", wTempPlayAreaAIScore: b"\x00\x00\x00\x00\x00\x00"}, "expect": {wAIExecuteProcessedAttack: b"\x01"}, "expect_regs": {"f": 0x00}, "read": {wAIExecuteProcessedAttack: 1}},
     {"wram": {wAIBarrierFlagCounter: b"\x80", wAIExecuteProcessedAttack: b"\xff", wAIScore: b"\x7f", wTempAIScore: b"\x00", wPlayAreaAIScore: b"\x20\x30\x40\x50\x60\x70", wTempPlayAreaAIScore: b"\xaa\xbb\xcc\xdd\xee\xff"}, "expect": {wAIExecuteProcessedAttack: b"\x01"}, "expect_regs": {"f": 0x00}, "read": {wAIExecuteProcessedAttack: 1}},
@@ -658,7 +658,7 @@ MUTATIONS["CalculateWordTensDigit"] = {
 }
 # <<< factory-mutation CalculateWordTensDigit
 # >>> factory-mutation PickTwoAttachedEnergyCards
-MUTATIONS["PickTwoAttachedEnergyCards"] = {"source_symbol": "PickTwoAttachedEnergyCards", "before": "\t\treturn (PickTwoResult){0xffu, 0u, 0u, pick_two_cp_flags(attached, 2u)};", "after": "\t\treturn (PickTwoResult){0xfeu, 0u, 0u, pick_two_cp_flags(attached, 2u)};", "case_ids": ["PickTwoAttachedEnergyCards-0", "PickTwoAttachedEnergyCards-1", "PickTwoAttachedEnergyCards-2", "PickTwoAttachedEnergyCards-3", "PickTwoAttachedEnergyCards-4"]}
+MUTATIONS["PickTwoAttachedEnergyCards"] = {"source_symbol": "PickTwoAttachedEnergyCards", "before": "\t\treturn (PickTwoResult){0xffu, 0u, 0u, pick_two_cp_flags(attached, 2u), d};", "after": "\t\treturn (PickTwoResult){0xfeu, 0u, 0u, pick_two_cp_flags(attached, 2u), d};", "case_ids": ["PickTwoAttachedEnergyCards-0", "PickTwoAttachedEnergyCards-1", "PickTwoAttachedEnergyCards-2", "PickTwoAttachedEnergyCards-3", "PickTwoAttachedEnergyCards-4"]}
 # <<< factory-mutation PickTwoAttachedEnergyCards
 # >>> factory-mutation ClearMemory_Bank8
 MUTATIONS["ClearMemory_Bank8"] = {
@@ -669,7 +669,7 @@ MUTATIONS["ClearMemory_Bank8"] = {
 }
 # <<< factory-mutation ClearMemory_Bank8
 # >>> factory-mutation PickAttachedEnergyCardToRemove
-MUTATIONS["PickAttachedEnergyCardToRemove"] = {"source_symbol": "PickAttachedEnergyCardToRemove", "before": "\t\treturn 0xffu;", "after": "\t\treturn 0xfeu;", "case_ids": ["PickAttachedEnergyCardToRemove-0", "PickAttachedEnergyCardToRemove-1", "PickAttachedEnergyCardToRemove-2", "PickAttachedEnergyCardToRemove-3"]}
+MUTATIONS["PickAttachedEnergyCardToRemove"] = {"source_symbol": "PickAttachedEnergyCardToRemove", "before": "\t\treturn (PickEnergyResult){0xffu, d};", "after": "\t\treturn (PickEnergyResult){0xfeu, d};", "case_ids": ["PickAttachedEnergyCardToRemove-0", "PickAttachedEnergyCardToRemove-1", "PickAttachedEnergyCardToRemove-2", "PickAttachedEnergyCardToRemove-3"]}
 # <<< factory-mutation PickAttachedEnergyCardToRemove
 # >>> factory-mutation CopyListWithFFTerminatorFromHLToDE_Bank8
 MUTATIONS["CopyListWithFFTerminatorFromHLToDE_Bank8"] = {"source_symbol": "CopyListWithFFTerminatorFromHLToDE_Bank8", "before": "\t\tif (a == 0xFFu)", "after": "\t\tif (a == 0xFEu)", "case_ids": ["CopyListWithFFTerminatorFromHLToDE_Bank8-0", "CopyListWithFFTerminatorFromHLToDE_Bank8-1", "CopyListWithFFTerminatorFromHLToDE_Bank8-2"]}
@@ -719,7 +719,7 @@ MUTATIONS["LookForCardIDInLocation_Bank8"] = {
 }
 # <<< factory-mutation LookForCardIDInLocation_Bank8
 # >>> factory-mutation LookForCardIDInHandList_Bank8
-MUTATIONS["LookForCardIDInHandList_Bank8"] = {"source_symbol": "LookForCardIDInHandList_Bank8", "before": "\t\t\treturn (LookForCardIDInHandListResult){hTempCardIndex_ff98, 0x90u};", "after": "\t\t\treturn (LookForCardIDInHandListResult){hTempCardIndex_ff98, 0x10u};", "case_ids": ["LookForCardIDInHandList_Bank8-1"]}
+MUTATIONS["LookForCardIDInHandList_Bank8"] = {"source_symbol": "LookForCardIDInHandList_Bank8", "before": "\t\t\treturn (LookForCardIDInHandListResult){hTempCardIndex_ff98, 0x90u, d};", "after": "\t\t\treturn (LookForCardIDInHandListResult){hTempCardIndex_ff98, 0x10u, d};", "case_ids": ["LookForCardIDInHandList_Bank8-1"]}
 # <<< factory-mutation LookForCardIDInHandList_Bank8
 # >>> factory-mutation LookForCardIDInHandAndPlayArea
 MUTATIONS["LookForCardIDInHandAndPlayArea"] = {"source_symbol": "LookForCardIDInHandAndPlayArea", "before": "\tif (r1.f & 0x10u)", "after": "\tif (r1.f & 0x20u)", "case_ids": ["LookForCardIDInHandAndPlayArea-0"]}
@@ -731,7 +731,7 @@ MUTATIONS["LookForCardIDToTradeWithDifferentHandCard"] = {"source_symbol": "Look
 MUTATIONS["LookForCardIDInDeck_GivenCardIDInHand"] = {"source_symbol": "LookForCardIDInDeck_GivenCardIDInHand", "before": "\tuint8_t f = (uint8_t)((r3.f & 0x80u) | 0x10u);", "after": "\tuint8_t f = (uint8_t)((r3.f & 0x80u) | 0x00u);", "case_ids": ["LookForCardIDInDeck_GivenCardIDInHand-2"]}
 # <<< factory-mutation LookForCardIDInDeck_GivenCardIDInHand
 # >>> factory-mutation LookForCardIDInDeck_GivenCardIDInHandAndPlayArea
-MUTATIONS["LookForCardIDInDeck_GivenCardIDInHandAndPlayArea"] = {"source_symbol": "LookForCardIDInDeck_GivenCardIDInHandAndPlayArea", "before": '\tif (r3.f & 0x10u) {\n\t\tuint8_t f = (r3.a == 0u) ? 0x80u : 0u;\n\t\treturn (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r3.a, f};\n\t}\n\tuint8_t f = (uint8_t)((r3.f & 0x80u) | 0x10u);', "after": '\tif (r3.f & 0x10u) {\n\t\tuint8_t f = (r3.a == 0u) ? 0x80u : 0u;\n\t\treturn (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r3.a, f};\n\t}\n\tuint8_t f = (uint8_t)((r3.f & 0x80u) | 0x00u);', "case_ids": ["LookForCardIDInDeck_GivenCardIDInHandAndPlayArea-2"]}
+MUTATIONS["LookForCardIDInDeck_GivenCardIDInHandAndPlayArea"] = {"source_symbol": "LookForCardIDInDeck_GivenCardIDInHandAndPlayArea", "before": "\tif (r3.f & 0x10u) {\n\t\tuint8_t f = (r3.a == 0u) ? 0x80u : 0u;\n\t\treturn (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r3.a, f, 0xC5u};\n\t}\n\tuint8_t f = (uint8_t)((r3.f & 0x80u) | 0x10u);", "after": "\tif (r3.f & 0x10u) {\n\t\tuint8_t f = (r3.a == 0u) ? 0x80u : 0u;\n\t\treturn (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r3.a, f, 0xC5u};\n\t}\n\tuint8_t f = (uint8_t)((r3.f & 0x80u) | 0x00u);", "case_ids": ["LookForCardIDInDeck_GivenCardIDInHandAndPlayArea-2"]}
 # <<< factory-mutation LookForCardIDInDeck_GivenCardIDInHandAndPlayArea
 # >>> factory-mutation AddStarterDeck
 MUTATIONS["AddStarterDeck"] = {"source_symbol": "AddStarterDeck", "before": "\t_AddStarterDeck(a);", "after": "\t_AddStarterDeck((uint8_t)(a + 1u));", "case_ids": ["AddStarterDeck-0", "AddStarterDeck-1"]}
@@ -740,7 +740,7 @@ MUTATIONS["AddStarterDeck"] = {"source_symbol": "AddStarterDeck", "before": "\t_
 MUTATIONS["FindDuplicatePokemonCards"] = {"source_symbol": "FindDuplicatePokemonCards", "before": "wTempAI = inner_idx;", "after": "wTempAI = outer_idx;", "case_ids": ["FindDuplicatePokemonCards-0"]}
 # <<< factory-mutation FindDuplicatePokemonCards
 # >>> factory-mutation AIPickEnergyCardToDiscard
-MUTATIONS["AIPickEnergyCardToDiscard"] = {"source_symbol": "AIPickEnergyCardToDiscard", "before": "if (total == 0u)\n\t\treturn 0xFFu;", "after": "if (total == 0u)\n\t\treturn 0xFEu;", "case_ids": ["AIPickEnergyCardToDiscard-0", "AIPickEnergyCardToDiscard-1"]}
+MUTATIONS["AIPickEnergyCardToDiscard"] = {"source_symbol": "AIPickEnergyCardToDiscard", "before": "if (total == 0u)\n\t\treturn (PickEnergyResult){0xFFu, d};", "after": "if (total == 0u)\n\t\treturn (PickEnergyResult){0xFEu, d};", "case_ids": ["AIPickEnergyCardToDiscard-0", "AIPickEnergyCardToDiscard-1"]}
 # <<< factory-mutation AIPickEnergyCardToDiscard
 # >>> factory-mutation HandleAIAntiMewtwoDeckStrategy
 MUTATIONS["HandleAIAntiMewtwoDeckStrategy"] = {
@@ -773,8 +773,8 @@ for _record in SCHEMA2_CASES["PreparePrinterConnection"]:
 # >>> factory-mutation AICheckIfAttackIsHighRecoil
 MUTATIONS["AICheckIfAttackIsHighRecoil"] = {
     "source_symbol": "AICheckIfAttackIsHighRecoil",
-    "before": "\t\t(uint8_t)((flag.f & 0x80u) | ((flag.f & 0x10u) ^ 0x10u))};",
-    "after": "\t\t(uint8_t)(flag.f ^ 0x10u)};",
+    "before": "\t\t(uint8_t)((flag.f & 0x80u) | ((flag.f & 0x10u) ^ 0x10u)), d};",
+    "after": "\t\t(uint8_t)(flag.f ^ 0x10u), d};",
     "case_ids": ["AICheckIfAttackIsHighRecoil-3"],
 }
 # <<< factory-mutation ShowPromotionalCardScreen

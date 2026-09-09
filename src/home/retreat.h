@@ -20,12 +20,12 @@ typedef struct {
 AITryToRetreatResult AITryToRetreat(uint8_t entry_a, uint8_t entry_f);
 /* <<< factory AITryToRetreat */
 /* >>> factory AIDecideBenchPokemonToSwitchTo */
-typedef struct { uint8_t a; uint8_t f; } AIDecideBenchPokemonToSwitchToResult;
-AIDecideBenchPokemonToSwitchToResult AIDecideBenchPokemonToSwitchTo(void);
+typedef struct { uint8_t a; uint8_t f; uint8_t d; } AIDecideBenchPokemonToSwitchToResult;
+AIDecideBenchPokemonToSwitchToResult AIDecideBenchPokemonToSwitchTo(uint8_t d);
 /* <<< factory AIDecideBenchPokemonToSwitchTo */
 /* >>> factory AIDecideWhetherToRetreat */
 /* >>> factory AIDecideWhetherToRetreat */
-typedef struct { uint8_t a; uint8_t f; } AIDecideWhetherToRetreatResult;
-AIDecideWhetherToRetreatResult AIDecideWhetherToRetreat(void);
+typedef struct { uint8_t a; uint8_t f; uint8_t d; } AIDecideWhetherToRetreatResult;
+AIDecideWhetherToRetreatResult AIDecideWhetherToRetreat(uint8_t d);
 /* <<< factory AIDecideWhetherToRetreat */
 #endif /* POKETCG_HOME_RETREAT_H */

@@ -589,7 +589,7 @@ HandleAICowardiceResult HandleAICowardice(void)
 				if (c != PLAY_AREA_ARENA) {
 					effect_param = 0xffu;
 				} else {
-					AIDecideBenchPokemonToSwitchToResult retreat = AIDecideBenchPokemonToSwitchTo();
+					AIDecideBenchPokemonToSwitchToResult retreat = AIDecideBenchPokemonToSwitchTo(0u);
 					if (retreat.f & 0x10u)
 						continue;
 					effect_param = 0u;

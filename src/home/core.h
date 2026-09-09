@@ -318,7 +318,7 @@ ReturnRetreatCostCardsToArenaResult ReturnRetreatCostCardsToArena(
 	uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory ReturnRetreatCostCardsToArena */
 /* >>> factory FindHighestBenchScore */
-typedef struct { uint8_t a; uint8_t f; } FindHighestBenchScoreResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t d; } FindHighestBenchScoreResult;
 FindHighestBenchScoreResult FindHighestBenchScore(void);
 /* <<< factory FindHighestBenchScore */
 /* >>> factory AIEncourage */
@@ -474,7 +474,7 @@ typedef struct { uint8_t f; } PracticeDuelInitialPlayResult;
 PracticeDuelInitialPlayResult PracticeDuel_VerifyInitialPlay(void);
 /* <<< factory PracticeDuel_VerifyInitialPlay */
 /* >>> factory CheckIfNoSurplusEnergyForAttack */
-typedef struct { uint8_t a; uint8_t f; } CheckIfNoSurplusEnergyResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t d; } CheckIfNoSurplusEnergyResult;
 CheckIfNoSurplusEnergyResult CheckIfNoSurplusEnergyForAttack(void);
 /* <<< factory CheckIfNoSurplusEnergyForAttack */
 /* >>> factory Func_1585b */
@@ -1088,7 +1088,7 @@ typedef struct {
 Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl);
 /* <<< factory Func_5542 */
 /* >>> factory CheckIfCanDamageDefendingPokemon */
-typedef struct { uint8_t a; uint8_t f; } CheckIfCanDamageDefendingPokemonResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t d; } CheckIfCanDamageDefendingPokemonResult;
 CheckIfCanDamageDefendingPokemonResult CheckIfCanDamageDefendingPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory CheckIfCanDamageDefendingPokemon */
 /* >>> factory OpenDiscardPileScreen */
@@ -1142,7 +1142,7 @@ void OppAction_ExecuteTrainerCardEffectCommands(uint8_t b, uint8_t d, uint8_t e)
 void OppAction_UseMetronomeAttack(void);
 /* <<< factory OppAction_UseMetronomeAttack */
 /* >>> factory LookForEnergyNeededForAttackInHand */
-typedef struct { uint8_t a; uint8_t f; } LookForEnergyNeededForAttackInHandResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t d; } LookForEnergyNeededForAttackInHandResult;
 LookForEnergyNeededForAttackInHandResult LookForEnergyNeededForAttackInHand(void);
 /* <<< factory LookForEnergyNeededForAttackInHand */
 /* >>> factory PlayShuffleAndDrawCardsAnimation_BothDuelists */
@@ -1150,15 +1150,15 @@ typedef struct { uint8_t b, c; } PlayShuffleAndDrawCardsAnimation_BothDuelistsRe
 PlayShuffleAndDrawCardsAnimation_BothDuelistsResult PlayShuffleAndDrawCardsAnimation_BothDuelists(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory PlayShuffleAndDrawCardsAnimation_BothDuelists */
 /* >>> factory CheckIfDefendingPokemonCanKnockOut */
-typedef struct { uint8_t a; uint8_t f; } CheckIfDefendingPokemonCanKnockOutResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t d; } CheckIfDefendingPokemonCanKnockOutResult;
 CheckIfDefendingPokemonCanKnockOutResult CheckIfDefendingPokemonCanKnockOut(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory CheckIfDefendingPokemonCanKnockOut */
 /* >>> factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP */
-typedef struct { uint8_t a; uint8_t f; } CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t d; } CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult;
 CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP(void);
 /* <<< factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP */
 /* >>> factory CheckIfAnyAttackKnocksOutDefendingCard */
-typedef struct { uint8_t a; uint8_t f; } CheckIfAnyAttackKnocksOutDefendingCardResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t d; } CheckIfAnyAttackKnocksOutDefendingCardResult;
 CheckIfAnyAttackKnocksOutDefendingCardResult CheckIfAnyAttackKnocksOutDefendingCard(void);
 /* <<< factory CheckIfAnyAttackKnocksOutDefendingCard */
 /* >>> factory CheckIfActiveCardCanKnockOut */

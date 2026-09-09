@@ -161,16 +161,17 @@ static uint8_t pick_two_cp_flags(uint8_t a, uint8_t n)
 PickTwoResult PickTwoAttachedEnergyCards(uint8_t a)
 {
 	hTempPlayAreaLocation_ff9d = a;
-	(void)CreateArenaOrBenchEnergyCardList(a);
+	uint8_t d = CreateArenaOrBenchEnergyCardList(a).d;
 	uint8_t loc = hTempPlayAreaLocation_ff9d;
 	uint8_t attached = CountNumberOfEnergyCardsAttached(loc).a;
 	if (attached < 2u)
-		return (PickTwoResult){0xffu, 0u, 0u, pick_two_cp_flags(attached, 2u)};
+		return (PickTwoResult){0xffu, 0u, 0u, pick_two_cp_flags(attached, 2u), d};
 	uint8_t exit_f;
 
 	loc = hTempPlayAreaLocation_ff9d;
 	uint8_t deckindex = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + loc)).a;
 	uint16_t id = GetCardIDFromDeckIndex(deckindex);
+	d = (uint8_t)(id >> 8);
 	wTempCardID = (uint8_t)id;
 	LoadCardDataToBuffer1_FromCardID((uint8_t)id);
 	wTempCardType = (uint8_t)(wLoadedCard1Type | TYPE_ENERGY);
@@ -231,7 +232,7 @@ PickTwoResult PickTwoAttachedEnergyCards(uint8_t a)
 	}
 
 done:
-	return (PickTwoResult){wTempAI, wCurCardCanAttack, 1u, exit_f};
+	return (PickTwoResult){wTempAI, wCurCardCanAttack, 1u, exit_f, d};
 }
 /* <<< factory PickTwoAttachedEnergyCards */
 
@@ -246,17 +247,19 @@ void ClearMemory_Bank8(uint8_t a, uint16_t hl)
 /* <<< factory ClearMemory_Bank8 */
 
 /* >>> factory PickAttachedEnergyCardToRemove */
-uint8_t PickAttachedEnergyCardToRemove(uint8_t a)
+PickEnergyResult PickAttachedEnergyCardToRemove(uint8_t a)
 {
 	hTempPlayAreaLocation_ff9d = a;
-	(void)CreateArenaOrBenchEnergyCardList(a);
+	uint8_t d = CreateArenaOrBenchEnergyCardList(a).d;
 	uint8_t loc = hTempPlayAreaLocation_ff9d;
 	(void)GetPlayAreaCardAttachedEnergies(loc);
 	if (wTotalAttachedEnergies == 0u)
-		return 0xffu;
+		return (PickEnergyResult){0xffu, d};
 
 	uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + loc)).a;
-	uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+	uint16_t id = GetCardIDFromDeckIndex(deck_index);
+	d = (uint8_t)(id >> 8);
+	uint8_t card_id = (uint8_t)id;
 	wTempCardID = card_id;
 	LoadCardDataToBuffer1_FromCardID(card_id);
 	wTempCardType = (uint8_t)(wLoadedCard1Type | TYPE_ENERGY);
@@ -267,7 +270,7 @@ uint8_t PickAttachedEnergyCardToRemove(uint8_t a)
 		if (deck == 0xffu)
 			break;
 		if ((uint8_t)GetCardIDFromDeckIndex(deck) == DOUBLE_COLORLESS_ENERGY)
-			return deck;
+			return (PickEnergyResult){deck, d};
 		hl = (uint16_t)(hl + 1u);
 	}
 
@@ -277,11 +280,11 @@ uint8_t PickAttachedEnergyCardToRemove(uint8_t a)
 		if (deck == 0xffu)
 			break;
 		if (CheckIfEnergyIsUseful(deck).f & 0x10u)
-			return deck;
+			return (PickEnergyResult){deck, d};
 		hl = (uint16_t)(hl + 1u);
 	}
 
-	return gb_read8(wDuelTempList_ADDR);
+	return (PickEnergyResult){gb_read8(wDuelTempList_ADDR), d};
 }
 /* <<< factory PickAttachedEnergyCardToRemove */
 
@@ -507,15 +510,18 @@ LookForCardIDInHandListResult LookForCardIDInHandList_Bank8(uint8_t a)
 {
 	wTempCardIDToLook = a;
 	(void)CreateHandCardList(0u);
+	/* CreateHandCardList fills wDuelTempList through de and leaves it there;
+	 * the hand holds at most 60 entries, so d is the list's page. */
+	uint8_t d = (uint8_t)(wDuelTempList_ADDR >> 8);
 	uint8_t *scan = wDuelTempList_PTR;
 	for (;;) {
 		uint8_t index = *scan++;
 		if (index == 0xFFu)
-			return (LookForCardIDInHandListResult){0xFFu, 0xC0u};
+			return (LookForCardIDInHandListResult){0xFFu, 0xC0u, d};
 		hTempCardIndex_ff98 = index;
 		uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(index);
 		if (card_id == wTempCardIDToLook)
-			return (LookForCardIDInHandListResult){hTempCardIndex_ff98, 0x90u};
+			return (LookForCardIDInHandListResult){hTempCardIndex_ff98, 0x90u, d};
 	}
 }
 /* <<< factory LookForCardIDInHandList_Bank8 */
@@ -657,19 +663,20 @@ FindDuplicatePokemonCardsResult FindDuplicatePokemonCards(void)
 /* <<< factory FindDuplicatePokemonCards */
 
 /* >>> factory AIPickEnergyCardToDiscard */
-uint8_t AIPickEnergyCardToDiscard(uint8_t a)
+PickEnergyResult AIPickEnergyCardToDiscard(uint8_t a)
 {
 	gb_write8(hTempPlayAreaLocation_ff9d_ADDR, a);
-	(void)CreateArenaOrBenchEnergyCardList(a);
+	uint8_t d = CreateArenaOrBenchEnergyCardList(a).d;
 	uint8_t loc = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
 	(void)GetPlayAreaCardAttachedEnergies(loc);
 	uint8_t total = gb_read8(wTotalAttachedEnergies_ADDR);
 	if (total == 0u)
-		return 0xFFu;
+		return (PickEnergyResult){0xFFu, d};
 
 	uint8_t b = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
 	DuelistVarResult var = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_480 + b));
 	uint16_t id16 = GetCardIDFromDeckIndex(var.a);
+	d = (uint8_t)(id16 >> 8);
 	uint8_t card_id = (uint8_t)id16;
 	gb_write8(wTempCardID_ADDR, card_id);
 	LoadCardDataToBuffer1_FromCardID(card_id);
@@ -680,10 +687,10 @@ uint8_t AIPickEnergyCardToDiscard(uint8_t a)
 	for (;;) {
 		uint8_t v = gb_read8(hl);
 		if (v == 0xFFu)
-			return gb_read8(wDuelTempList_ADDR);
+			return (PickEnergyResult){gb_read8(wDuelTempList_ADDR), d};
 		CheckIfEnergyIsUsefulResult r = CheckIfEnergyIsUseful(v);
 		if ((r.f & 0x10u) == 0u)
-			return v;
+			return (PickEnergyResult){v, d};
 		hl = (uint16_t)(hl + 1u);
 	}
 }
@@ -744,14 +751,19 @@ uint8_t PreparePrinterConnection(uint16_t hl)
 AICheckIfAttackIsHighRecoilResult AICheckIfAttackIsHighRecoil(void)
 {
 	AIProcessAttacksResult processed = AIProcessButDontUseAttack();
+	/* AIProcessButDontUseAttack always leaves through
+	 * RetrievePlayAreaAIScoreFromBackup2, whose copy loop ends with
+	 * de = wPlayAreaAIScore + MAX_PLAY_AREA_POKEMON. */
+	uint8_t d = (uint8_t)((wPlayAreaAIScore_ADDR + MAX_PLAY_AREA_POKEMON) >> 8);
 	if ((processed.f & 0x10u) == 0u)
-		return (AICheckIfAttackIsHighRecoilResult){processed.f};
+		return (AICheckIfAttackIsHighRecoilResult){processed.f, d};
 	uint8_t selected_attack = wSelectedAttack;
 	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	(void)CopyAttackDataAndDamage_FromDeckIndex(arena.a, selected_attack);
+	AttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(arena.a, selected_attack);
+	d = (uint8_t)(copy.de >> 8);
 	AttackFlagResult flag = CheckLoadedAttackFlag(ATTACK_FLAG1_ADDRESS | HIGH_RECOIL_F);
 	return (AICheckIfAttackIsHighRecoilResult){
-		(uint8_t)((flag.f & 0x80u) | ((flag.f & 0x10u) ^ 0x10u))};
+		(uint8_t)((flag.f & 0x80u) | ((flag.f & 0x10u) ^ 0x10u)), d};
 }
 /* <<< factory AICheckIfAttackIsHighRecoil */
 

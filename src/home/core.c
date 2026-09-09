@@ -3112,7 +3112,8 @@ FindHighestBenchScoreResult FindHighestBenchScore(void)
 		}
 	}
 	hTempPlayAreaLocation_ff9d = location;
-	return (FindHighestBenchScoreResult){location, location == 0u ? 0x80u : 0u};
+	/* `ld d, c` tracks the best slot; `ld a, d` reports it. */
+	return (FindHighestBenchScoreResult){location, location == 0u ? 0x80u : 0u, location};
 }
 /* <<< factory FindHighestBenchScore */
 
@@ -3789,14 +3790,14 @@ CheckIfNoSurplusEnergyResult CheckIfNoSurplusEnergyForAttack(void)
 {
 	uint8_t d = GetTurnDuelistVariable((uint8_t)(hTempPlayAreaLocation_ff9d + DUELVARS_ARENA_CARD)).a;
 	uint8_t e = wSelectedAttack;
-	CopyAttackDataAndDamage_FromDeckIndex(d, e);
+	d = (uint8_t)(CopyAttackDataAndDamage_FromDeckIndex(d, e).de >> 8);
 
 	uint8_t n0 = gb_read8(wLoadedAttackName_ADDR);
 	uint8_t n1 = gb_read8((uint16_t)(wLoadedAttackName_ADDR + 1u));
 	if ((uint8_t)(n0 | n1) == 0u)
-		return (CheckIfNoSurplusEnergyResult){0u, 0x90u};
+		return (CheckIfNoSurplusEnergyResult){0u, 0x90u, d};
 	if (wLoadedAttackCategory == POKEMON_POWER)
-		return (CheckIfNoSurplusEnergyResult){POKEMON_POWER, 0x90u};
+		return (CheckIfNoSurplusEnergyResult){POKEMON_POWER, 0x90u, d};
 
 	GetPlayAreaCardAttachedEnergies(hTempPlayAreaLocation_ff9d);
 	HandleEnergyBurn();
@@ -3821,6 +3822,8 @@ CheckIfNoSurplusEnergyResult CheckIfNoSurplusEnergyForAttack(void)
 	}
 
 	b = (uint8_t)((gb_read8(de) >> 4) & 0x0Fu);
+	/* The cost walk leaves de on wLoadedAttackEnergyCost's last byte. */
+	d = (uint8_t)(de >> 8);
 	uint8_t a1 = (uint8_t)(wTotalAttachedEnergies - wTempLoadedAttackEnergyCost);
 	uint8_t a2 = (uint8_t)(a1 - b);
 	uint8_t f = (uint8_t)(0x40u
@@ -3828,10 +3831,10 @@ CheckIfNoSurplusEnergyResult CheckIfNoSurplusEnergyForAttack(void)
 		| (((a1 & 0x0Fu) < (b & 0x0Fu)) ? 0x20u : 0u)
 		| ((a1 < b) ? 0x10u : 0u));
 	if (a1 < b)
-		return (CheckIfNoSurplusEnergyResult){a2, f};
+		return (CheckIfNoSurplusEnergyResult){a2, f, d};
 	if (a2 != 0u)
-		return (CheckIfNoSurplusEnergyResult){a2, f};
-	return (CheckIfNoSurplusEnergyResult){0u, 0x90u};
+		return (CheckIfNoSurplusEnergyResult){a2, f, d};
+	return (CheckIfNoSurplusEnergyResult){0u, 0x90u, d};
 }
 /* <<< factory CheckIfNoSurplusEnergyForAttack */
 
@@ -5457,7 +5460,7 @@ CheckEnergyNeededForAttackAfterDiscardResult CheckEnergyNeededForAttackAfterDisc
 		return (CheckEnergyNeededForAttackAfterDiscardResult){0u, 0u, d, 0u, 0x90u};
 
 	uint8_t discard_loc = hTempPlayAreaLocation_ff9d;
-	uint8_t discarded = AIPickEnergyCardToDiscard(discard_loc);
+	uint8_t discarded = AIPickEnergyCardToDiscard(discard_loc).a;
 	uint8_t deck_idx = LoadCardDataToBuffer1_FromDeckIndex(discarded);
 	if (deck_idx == DOUBLE_COLORLESS_ENERGY) {
 		uint16_t hl0 = (uint16_t)(wAttachedEnergies_ADDR + COLORLESS);
@@ -8010,7 +8013,7 @@ CheckIfCanDamageDefendingPokemonResult CheckIfCanDamageDefendingPokemon(uint8_t 
 		hl = estimate.hl;
 		a = wDamage;
 		if (a != 0u)
-			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u};
+			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u, d};
 		f = 0x80u; /* `or a` on a zero damage byte */
 	}
 
@@ -8020,16 +8023,17 @@ CheckIfCanDamageDefendingPokemonResult CheckIfCanDamageDefendingPokemon(uint8_t 
 		CheckIfSelectedAttackIsUnusable(SECOND_ATTACK, f, b, c, d, e, hl);
 	a = second.a;
 	f = second.f;
+	d = second.d;
 	if ((f & 0x10u) == 0u) {
-		(void)EstimateDamage_VersusDefendingCard(SECOND_ATTACK);
+		d = EstimateDamage_VersusDefendingCard(SECOND_ATTACK).d;
 		a = wDamage;
 		if (a != 0u)
-			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u};
+			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u, d};
 	}
 
 	/* .no_carry */
 	f = (a == 0u) ? 0x80u : 0x00u;
-	return (CheckIfCanDamageDefendingPokemonResult){a, f};
+	return (CheckIfCanDamageDefendingPokemonResult){a, f, d};
 }
 /* <<< factory CheckIfCanDamageDefendingPokemon */
 
@@ -8408,27 +8412,28 @@ void OppAction_UseMetronomeAttack(void)
 LookForEnergyNeededForAttackInHandResult LookForEnergyNeededForAttackInHand(void)
 {
 	CheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();
+	uint8_t d = energy.d;
 	uint8_t total = (uint8_t)(energy.b + energy.c);
 	if (total == 1u) {
 		if (energy.b == 0u) {
 			CoreCardListResult list = CreateEnergyCardListFromHand(0u);
 			if ((list.f & 0x10u) != 0u)
-				return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)(list.a == 0u ? 0x80u : 0u)};
-			return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)((list.f & 0x80u) | 0x10u)};
+				return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)(list.a == 0u ? 0x80u : 0u), d};
+			return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)((list.f & 0x80u) | 0x10u), d};
 		}
 		CoreCardListResult list = LookForCardIDInHandList_Bank5(energy.e);
 		if ((list.f & 0x10u) != 0u)
-			return (LookForEnergyNeededForAttackInHandResult){list.a, list.f};
-		return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)(list.a == 0u ? 0x80u : 0u)};
+			return (LookForEnergyNeededForAttackInHandResult){list.a, list.f, 0xC5u};
+		return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)(list.a == 0u ? 0x80u : 0u), 0xC5u};
 	}
 	if (total != 2u)
-		return (LookForEnergyNeededForAttackInHandResult){total, (uint8_t)(total == 0u ? 0x80u : 0u)};
+		return (LookForEnergyNeededForAttackInHandResult){total, (uint8_t)(total == 0u ? 0x80u : 0u), d};
 	if (energy.c != 2u)
-		return (LookForEnergyNeededForAttackInHandResult){energy.c, (uint8_t)(energy.c == 0u ? 0x80u : 0u)};
+		return (LookForEnergyNeededForAttackInHandResult){energy.c, (uint8_t)(energy.c == 0u ? 0x80u : 0u), d};
 	CoreCardListResult list = LookForCardIDInHandList_Bank5(DOUBLE_COLORLESS_ENERGY);
 	if ((list.f & 0x10u) != 0u)
-		return (LookForEnergyNeededForAttackInHandResult){list.a, list.f};
-	return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)(list.a == 0u ? 0x80u : 0u)};
+		return (LookForEnergyNeededForAttackInHandResult){list.a, list.f, 0xC5u};
+	return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)(list.a == 0u ? 0x80u : 0u), 0xC5u};
 }
 /* <<< factory LookForEnergyNeededForAttackInHand */
 
@@ -8518,20 +8523,20 @@ CheckIfDefendingPokemonCanKnockOutResult CheckIfDefendingPokemonCanKnockOut(uint
 
 	uint8_t first_damage = wAIFirstAttackDamage;
 	if (!second_can_ko && first_damage == 0u)
-		return (CheckIfDefendingPokemonCanKnockOutResult){0u, 0x80u};
+		return (CheckIfDefendingPokemonCanKnockOutResult){0u, 0x80u, d};
 
 	uint8_t second_damage = wAISecondAttackDamage;
 	if (second_damage >= first_damage)
 		return (CheckIfDefendingPokemonCanKnockOutResult){second_damage,
-			(uint8_t)(second_damage == first_damage ? 0x90u : 0x10u)};
-	return (CheckIfDefendingPokemonCanKnockOutResult){first_damage, 0x10u};
+			(uint8_t)(second_damage == first_damage ? 0x90u : 0x10u), d};
+	return (CheckIfDefendingPokemonCanKnockOutResult){first_damage, 0x10u, d};
 }
 /* <<< factory CheckIfDefendingPokemonCanKnockOut */
 
 /* >>> factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP */
 CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP(void)
 {
-	(void)EstimateDamage_FromDefendingPokemon(FIRST_ATTACK_OR_PKMN_POWER);
+	uint8_t d = EstimateDamage_FromDefendingPokemon(FIRST_ATTACK_OR_PKMN_POWER).d;
 	DuelistVarResult hp = GetTurnDuelistVariable(
 		(uint8_t)(hTempPlayAreaLocation_ff9d + DUELVARS_ARENA_CARD_HP));
 	uint8_t damage = wDamage;
@@ -8542,11 +8547,11 @@ CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult CheckIfAnyDefendingPok
 	if (hp.a < damage)
 		flags = (uint8_t)(flags | 0x10u);
 	if (difference == 0u)
-		return (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, 0x90u};
+		return (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, 0x90u, d};
 	if ((flags & 0x10u) != 0u)
-		return (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, flags};
+		return (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, flags, d};
 
-	(void)EstimateDamage_FromDefendingPokemon(SECOND_ATTACK);
+	d = EstimateDamage_FromDefendingPokemon(SECOND_ATTACK).d;
 	hp = GetTurnDuelistVariable(
 		(uint8_t)(hTempPlayAreaLocation_ff9d + DUELVARS_ARENA_CARD_HP));
 	damage = wDamage;
@@ -8557,15 +8562,15 @@ CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult CheckIfAnyDefendingPok
 	if (hp.a < damage)
 		flags = (uint8_t)(flags | 0x10u);
 	if (difference == 0u)
-		return (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, 0x90u};
-	return (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, flags};
+		return (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, 0x90u, d};
+	return (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, flags, d};
 }
 /* <<< factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP */
 
 /* >>> factory CheckIfAnyAttackKnocksOutDefendingCard */
 CheckIfAnyAttackKnocksOutDefendingCardResult CheckIfAnyAttackKnocksOutDefendingCard(void)
 {
-	(void)EstimateDamage_VersusDefendingCard(FIRST_ATTACK_OR_PKMN_POWER);
+	uint8_t d = EstimateDamage_VersusDefendingCard(FIRST_ATTACK_OR_PKMN_POWER).d;
 	DuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
 	uint8_t damage = wDamage;
 	uint8_t difference = (uint8_t)(hp.a - damage);
@@ -8579,13 +8584,13 @@ CheckIfAnyAttackKnocksOutDefendingCardResult CheckIfAnyAttackKnocksOutDefendingC
 	   `ret nz` / `scf` tail can be tested in either order.  `scf` clears N and H
 	   but leaves Z, so the exact-KO exit is Z|C = $90. */
 	if (difference == 0u)
-		return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, 0x90u};
+		return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, 0x90u, d};
 	if ((flags & 0x10u) != 0u)
-		return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, flags};
+		return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, flags, d};
 
 	/* `ld a, SECOND_ATTACK` falls into .CheckAttack rather than calling it, so
 	   this second pass returns straight to the routine's own caller. */
-	(void)EstimateDamage_VersusDefendingCard(SECOND_ATTACK);
+	d = EstimateDamage_VersusDefendingCard(SECOND_ATTACK).d;
 	hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
 	damage = wDamage;
 	difference = (uint8_t)(hp.a - damage);
@@ -8595,8 +8600,8 @@ CheckIfAnyAttackKnocksOutDefendingCardResult CheckIfAnyAttackKnocksOutDefendingC
 	if (hp.a < damage)
 		flags = (uint8_t)(flags | 0x10u);
 	if (difference == 0u)
-		return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, 0x90u};
-	return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, flags};
+		return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, 0x90u, d};
+	return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, flags, d};
 }
 /* <<< factory CheckIfAnyAttackKnocksOutDefendingCard */
 
@@ -8648,7 +8653,7 @@ AISelectSpecialAttackParametersResult AISelectSpecialAttackParameters(void)
 		}
 	} else if (card_id == EXEGGUTOR) {
 		if (selected_attack == 0u) {
-			AIDecideBenchPokemonToSwitchToResult r = AIDecideBenchPokemonToSwitchTo();
+			AIDecideBenchPokemonToSwitchToResult r = AIDecideBenchPokemonToSwitchTo(0u);
 			if (!(r.f & 0x10u)) {
 				hTemp_ffa0 = r.a;
 				flags = 0x10u;

@@ -113,7 +113,7 @@ void GetAIScoreOfAttack(uint8_t a)
 	wTempTurnDuelistCardID = (uint8_t)GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
 	SwapTurn();
 	wTempNonTurnDuelistCardID = (uint8_t)GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
-	NoDamageOrEffectResult no_damage = HandleNoDamageOrEffectSubstatus(0u, 0u);
+	NoDamageOrEffectResult no_damage = HandleNoDamageOrEffectSubstatus(0u, 0u, 0u);
 	SwapTurn();
 	if (no_damage.f & 0x10u) {
 		wAICannotDamage = 1u;

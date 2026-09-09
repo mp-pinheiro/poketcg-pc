@@ -152,7 +152,7 @@ CASES["AITryToRetreat"] = [
 # <<< factory AITryToRetreat
 
 # >>> factory AIDecideBenchPokemonToSwitchTo
-CONTRACT["AIDecideBenchPokemonToSwitchTo"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecideBenchPokemonToSwitchTo"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecideBenchPokemonToSwitchTo"] = [
     {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA: b"\x01"}, "expect_regs": {"a": 1, "f": 0x70}},
     dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA: b"\x01"}, expect_regs={"a": 1, "f": 0x70}),
@@ -163,7 +163,7 @@ CASES["AIDecideBenchPokemonToSwitchTo"] = [
 # <<< factory AIDecideBenchPokemonToSwitchTo
 
 # >>> factory AIDecideWhetherToRetreat
-CONTRACT["AIDecideWhetherToRetreat"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIDecideWhetherToRetreat"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["AIDecideWhetherToRetreat"] = [
     {"wram": {W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL: b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x00}},
     {"wram": {W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL: b"\x80"}, "expect_regs": {"a": 0x80, "f": 0x00}},
