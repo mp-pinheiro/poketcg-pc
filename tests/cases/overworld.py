@@ -1,4 +1,5 @@
 from tests.cases._fixtures import after_duel_fixture, AFTER_DUEL_REGS, move_step_fixture as _move_step_fixture, MOVE_STEP_REGS as _MOVE_STEP_REGS
+from tests.cases._fixtures import MAP_SCRIPT_REGS, map_script_fixture
 """Oracle-diff cases for poketcg/src/engine/overworld/overworld.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -892,7 +893,8 @@ CASES["PCMenu_Glossary"] = [
 CONTRACT["Func_c17a"] = {"compare": ("a", "f", "hl"), "preserve": ()}
 CASES["Func_c17a"] = [
     {"hl": 0x0000, "wram": {0xD0BF: b"\x03"}, "read": {0xD0BF: 1}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD0BF: b"\x03"}, "read": {0xD0BF: 1}}
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD0BF: b"\x03"}, "read": {0xD0BF: 1}},
+    dict(map_script_fixture(vram=False, bank=3), **MAP_SCRIPT_REGS),
 ]
 # <<< factory Func_c17a
 
@@ -1439,7 +1441,13 @@ MUTATIONS["HandlePlayerMoveModeInput"] = {"source_symbol": "HandlePlayerMoveMode
 MUTATIONS["PCMenu_Glossary"] = {"source_symbol": "PCMenu_Glossary", "before": "void PCMenu_Glossary(void)\n{\n\t_PCMenu_Glossary();", "after": "void PCMenu_Glossary(void)\n{\n\t(void)0;", "case_ids": ["PCMenu_Glossary-0", "PCMenu_Glossary-1"]}
 # <<< factory-mutation PCMenu_Glossary
 # >>> factory-mutation Func_c17a
-MUTATIONS["Func_c17a"] = {"source_symbol": "Func_c17a", "before": "FuncC17aResult Func_c17a(uint16_t hl)\n{\n\tif (wOverworldMode == OWMODE_SCRIPT) {", "after": "FuncC17aResult Func_c17a(uint16_t hl)\n{\n\tif (wOverworldMode != OWMODE_SCRIPT) {", "case_ids": ["Func_c17a-0", "Func_c17a-1"]}
+MUTATIONS["Func_c17a"] = {
+    "source": "src/home/scripting.c",
+    "source_symbol": "CallMapScriptPointerIfExists",
+    "before": "\treturn (CallMapScriptResult){entered.a, entered.f, entered.hl};",
+    "after": "\treturn (CallMapScriptResult){r.a, entered.f, r.hl};",
+    "case_ids": ["Func_c17a-2"],
+}
 # <<< factory-mutation Func_c17a
 # >>> factory-mutation Func_c53d
 MUTATIONS["Func_c53d"] = {"source_symbol": "Func_c53d", "before": "void Func_c53d(void)\n{\n\twWhichSprite = wPlayerSpriteIndex;", "after": "void Func_c53d(void)\n{\n\twWhichSprite = (uint8_t)(wPlayerSpriteIndex ^ 0x01u);", "case_ids": ["Func_c53d-0", "Func_c53d-1", "Func_c53d-2"]}

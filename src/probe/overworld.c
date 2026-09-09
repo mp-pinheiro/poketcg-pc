@@ -624,8 +624,13 @@ static void adapt_PauseMenu_Card(ProbeState *s)
 /* >>> factory EnterScript */
 static void adapt_EnterScript(ProbeState *s)
 {
-	EnterScriptResult result = EnterScript();
+	EnterScriptResult result = EnterScript(s->f, s->b, s->c, s->d, s->e);
 	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
 	s->hl = result.hl;
 }
 /* <<< factory EnterScript */

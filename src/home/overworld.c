@@ -1384,10 +1384,11 @@ void PauseMenu_Card(void)
 /* <<< factory PauseMenu_Card */
 
 /* >>> factory EnterScript */
-EnterScriptResult EnterScript(void)
+EnterScriptResult EnterScript(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
 	uint16_t target = (uint16_t)(wNextScript | ((uint16_t)wNextScript_PTR[1] << 8));
-	return (EnterScriptResult){(uint8_t)target, target};
+	ScriptEntryRegs r = ScriptEntryEnterWith(target, f, b, c, d, e);
+	return (EnterScriptResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }
 /* <<< factory EnterScript */
 
@@ -1517,9 +1518,7 @@ void HandleOverworldMode(uint16_t hl)
 		(void)SetScriptData(hl);
 		/* overworld.asm:120 falls through with `jr EnterScript` */
 	case 3u: {
-		EnterScriptResult entered = EnterScript();
-
-		(void)ScriptEntryEnter(entered.hl);
+		(void)EnterScript(0u, 0u, 0u, 0u, 0u);
 		break;
 	}
 	default:

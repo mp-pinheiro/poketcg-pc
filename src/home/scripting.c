@@ -1646,7 +1646,7 @@ IncreaseScriptPointerResult ScriptCommand_SetChallengeHallNPCCoords(uint8_t b, u
 /* <<< factory ScriptCommand_SetChallengeHallNPCCoords */
 
 /* >>> factory LoadOverworld */
-void LoadOverworld(void)
+LoadOverworldResult LoadOverworld(uint8_t b, uint8_t c)
 {
 	(void)ZeroOutEventValue(EVENT_PLAYER_ENTERED_CHALLENGE_CUP, 0u, 0u, 0u);
 	(void)ZeroOutEventValue(EVENT_CHALLENGE_CUP_OPPONENT_CHOSEN, 0u, 0u, 0u);
@@ -1662,9 +1662,12 @@ void LoadOverworld(void)
 		(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, CHALLENGE_CUP_OVER);
 	}
 
-	if (GetEventValue(EVENT_MASON_LAB_STATE) != 0u)
-		return;
+	uint8_t state = GetEventValue(EVENT_MASON_LAB_STATE);
+	if (state != 0u)
+		return (LoadOverworldResult){state, 0x00u, b, c};
 	SetNextScript(Script_BeginGame);
+	return (LoadOverworldResult){0x03u, 0x80u,
+		(uint8_t)(Script_BeginGame >> 8), (uint8_t)Script_BeginGame};
 }
 /* <<< factory LoadOverworld */
 
@@ -1862,7 +1865,8 @@ CallMapScriptResult CallMapScriptPointerIfExists(uint8_t l)
 	MapScriptResult r = GetMapScriptPointer(l);
 	if ((r.f & 0x10u) == 0u)
 		return (CallMapScriptResult){r.a, r.f, r.hl};
-	return (CallMapScriptResult){r.a, ScriptEntryEnter(r.hl), r.hl};
+	ScriptEntryRegs entered = ScriptEntryEnter(r.hl);
+	return (CallMapScriptResult){entered.a, entered.f, entered.hl};
 }
 /* <<< factory CallMapScriptPointerIfExists */
 
@@ -2053,7 +2057,7 @@ Func_c943Result Func_c943(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d,
 			 * table resolves the pointer to its C body at build time. */
 			uint16_t preload = (uint16_t)(wLoadNPCFunction |
 				((uint16_t)gb_read8((uint16_t)(wLoadNPCFunction_ADDR + 1u)) << 8));
-			if (preload == 0u || (ScriptEntryEnter(preload) & 0x10u) != 0u) {
+			if (preload == 0u || (ScriptEntryEnter(preload).f & 0x10u) != 0u) {
 				LoadNPCSpriteDataResult sprite = LoadNPCSpriteData(wTempNPC, b, c, d, e, hl);
 				a = sprite.a;
 				f = sprite.f;

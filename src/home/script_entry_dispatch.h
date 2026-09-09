@@ -8,8 +8,18 @@
  * the targets that take them return them untouched without reading them, so the
  * dispatcher passes zero for each
  * and hl = the target address, which is what hl holds at the jump. */
-typedef uint8_t (*ScriptEntryFn)(uint8_t b, uint8_t c, uint8_t d, uint8_t e,
-                                 uint16_t hl);
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} ScriptEntryRegs;
+
+typedef ScriptEntryRegs (*ScriptEntryFn)(uint8_t b, uint8_t c, uint8_t d, uint8_t e,
+                                         uint16_t hl);
 
 /* A script entry is reached by `jp hl` from EnterScript
  * (engine/overworld/overworld.asm:122-127) with hl read out of wNextScript, so
@@ -46,6 +56,8 @@ const ScriptEntryRow *ScriptEntryLookup(uint16_t address);
  * (poketcg/src/home/script.asm:52-57). Aborts on an address that is not a known
  * script entry, or one whose routine is unported, so a whole-game run fails
  * loudly instead of silently skipping a script. */
-uint8_t ScriptEntryEnter(uint16_t target);
+ScriptEntryRegs ScriptEntryEnter(uint16_t target);
+ScriptEntryRegs ScriptEntryEnterWith(uint16_t target, uint8_t f, uint8_t b, uint8_t c,
+                                     uint8_t d, uint8_t e);
 
 #endif

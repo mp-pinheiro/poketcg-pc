@@ -174,20 +174,21 @@ def thunk(name: str, owner: tuple[str, str, str], header_text: str) -> str:
             "only b, c, d, e and hl are live at the jump"
         )
     call_args = ", ".join(declared)
-    lines = [f"static uint8_t enter_{name}({', '.join(
+    lines = [f"static ScriptEntryRegs enter_{name}({', '.join(
         ('uint16_t hl' if p == 'hl' else f'uint8_t {p}') for p in THUNK_PARAMETERS
     )})", "{"]
-    lines += [f"\t(void){p};" for p in THUNK_PARAMETERS if p not in declared]
+    lines.append("\tScriptEntryRegs out = {(uint8_t)hl, 0u, b, c, d, e, hl};")
     members = struct_members(header_text, ret) if ret != "void" else set()
     if ret == "void":
-        lines += [f"\t{name}({call_args});", "\treturn 0u;"]
-    elif "f" in members:
-        lines.append(f"\treturn {name}({call_args}).f;")
-    elif "carry" in members:
-        lines.append(f"\treturn {name}({call_args}).carry ? 0x10u : 0u;")
+        lines.append(f"\t{name}({call_args});")
     else:
-        lines += [f"\t(void){name}({call_args});", "\treturn 0u;"]
-    lines.append("}\n")
+        lines.append(f"\t{ret} r = {name}({call_args});")
+        for member in ("a", "f", "b", "c", "d", "e", "hl"):
+            if member in members:
+                lines.append(f"\tout.{member} = r.{member};")
+        if "f" not in members and "carry" in members:
+            lines.append("\tout.f = r.carry ? 0x10u : 0u;")
+    lines += ["\treturn out;", "}\n"]
     return "\n".join(lines)
 
 
@@ -254,11 +255,22 @@ const ScriptEntryRow *ScriptEntryLookup(uint16_t address)
 \treturn NULL;
 }}
 
-uint8_t ScriptEntryEnter(uint16_t target)
+static ScriptEntryRegs script_entry_regs_from_rst20(RST20Result r)
+{{
+\treturn (ScriptEntryRegs){{r.a, r.f, r.b, r.c, r.d, r.e, r.hl}};
+}}
+
+ScriptEntryRegs ScriptEntryEnter(uint16_t target)
+{{
+\treturn ScriptEntryEnterWith(target, 0u, 0u, 0u, 0u, 0u);
+}}
+
+ScriptEntryRegs ScriptEntryEnterWith(uint16_t target, uint8_t f, uint8_t b, uint8_t c,
+                                     uint8_t d, uint8_t e)
 {{
 \tconst ScriptEntryRow *row;
 \tuint8_t saved_bank;
-\tuint8_t flags;
+\tScriptEntryRegs regs;
 
 \t/* Every shipped script entry is in ROM, so a RAM target only happens under
 \t * a probe case that stubs the jump destination. RAM is readable through the
@@ -269,9 +281,10 @@ uint8_t ScriptEntryEnter(uint16_t target)
 \t\tuint8_t opcode = gb_read8(target);
 
 \t\tif (opcode == 0xC9u)
-\t\t\treturn 0u;
+\t\t\treturn (ScriptEntryRegs){{(uint8_t)target, f, b, c, d, e, target}};
 \t\tif (opcode == 0xE7u)
-\t\t\treturn RST20(0u, 0u, 0u, 0u, 0u, 0u, (uint16_t)(target + 1u)).f;
+\t\t\treturn script_entry_regs_from_rst20(
+\t\t\t\tRST20((uint8_t)target, f, b, c, d, e, (uint16_t)(target + 1u)));
 \t\tfprintf(stderr, "script entry ram opcode=$%02X target=$%04X\\n",
 \t\t        (unsigned)opcode, (unsigned)target);
 \t\tabort();
@@ -290,11 +303,12 @@ uint8_t ScriptEntryEnter(uint16_t target)
 \tsaved_bank = hBankROM;
 \tBankswitchROM(row->bank);
 \tif (row->kind == SCRIPT_ENTRY_BYTECODE)
-\t\tflags = RST20(0u, 0u, 0u, 0u, 0u, 0u, (uint16_t)(target + 1u)).f;
+\t\tregs = script_entry_regs_from_rst20(
+\t\t\tRST20((uint8_t)target, f, b, c, d, e, (uint16_t)(target + 1u)));
 \telse
-\t\tflags = row->function(0u, 0u, 0u, 0u, target);
+\t\tregs = row->function(b, c, d, e, target);
 \tBankswitchROM(saved_bank);
-\treturn flags;
+\treturn regs;
 }}
 '''
 

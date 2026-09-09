@@ -2059,8 +2059,8 @@ CASES["GetStackEventValue"] = [
 # >>> factory RST20
 CONTRACT["RST20"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["RST20"] = [
-    {"stack": [0xC500], "wram": {0xC500: b"\x0F", 0xCABB: b"\x00"}, "read": {wBreakScriptLoop: 1, wScriptPointer: 2}, "instruction_budget": 1000000, "cycle_budget": 4000000},
-    dict(POISON, stack=[0xC500], wram={0xC500: b"\x0F", 0xCABB: b"\x00"}, read={wBreakScriptLoop: 1, wScriptPointer: 2}, instruction_budget=1000000, cycle_budget=4000000),
+    {"stack": [0xC500], "wram": {0xC500: b"\x00\xC9", 0xCABB: b"\x00"}, "read": {wBreakScriptLoop: 1, wScriptPointer: 2}, "instruction_budget": 1000000, "cycle_budget": 4000000},
+    dict(POISON, stack=[0xC500], wram={0xC500: b"\x00\xC9", 0xCABB: b"\x00"}, read={wBreakScriptLoop: 1, wScriptPointer: 2}, instruction_budget=1000000, cycle_budget=4000000),
 ]
 # <<< factory RST20
 

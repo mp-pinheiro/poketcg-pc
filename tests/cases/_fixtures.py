@@ -342,6 +342,8 @@ AI_PKMN_POWERS = Fixture("lightning-3-ai-pkmn-powers-entry")
 AI_PKMN_POWERS_REGS = AI_PKMN_POWERS.regs
 ZAPDOS_RECOIL = Fixture("lightning-3-zapdos-recoil-entry")
 ZAPDOS_RECOIL_REGS = ZAPDOS_RECOIL.regs
+MAP_SCRIPT = Fixture("lightning-3-map-script-entry")
+MAP_SCRIPT_REGS = MAP_SCRIPT.regs
 SCROLL_LABEL = Fixture("lightning-3-scroll-label-entry")
 SCROLL_LABEL_REGS = SCROLL_LABEL.regs
 WAIT_KEYS = Fixture("boot-deck-machine-wait-keys-entry")
@@ -607,6 +609,10 @@ def ai_pkmn_powers_fixture(vram: bool = True, bank: int | None = None, **changes
 
 def zapdos_recoil_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return ZAPDOS_RECOIL.case(vram=vram, bank=bank, **changes)
+
+
+def map_script_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return MAP_SCRIPT.case(vram=vram, bank=bank, **changes)
 
 
 def scroll_label_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:

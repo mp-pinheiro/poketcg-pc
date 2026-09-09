@@ -937,7 +937,11 @@ static void adapt_ScriptCommand_SetChallengeHallNPCCoords(ProbeState *s)
 static void adapt_LoadOverworld(ProbeState *s)
 {
 	(void)s;
-	LoadOverworld();
+	LoadOverworldResult r = LoadOverworld(s->b, s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
 }
 /* <<< factory LoadOverworld */
 
