@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 import ctypes
+import functools
 import hashlib
 import json
 import os
@@ -93,6 +94,27 @@ VBLANK_RECORD = struct.Struct("<IQBB")
 VBLANK_INCREMENT = 0x01D7
 STAT_VECTOR = 0x0048
 STAT_MASK_BITS = 8
+CARD_COPY_ENTRY = 0x2F14
+CARD_COPY_RET = 0x2F31
+CARD_POINTERS = (0x0C, 0x4C5C)
+PKMN_CARD_DATA_LENGTH = 65
+
+
+@functools.lru_cache(maxsize=None)
+def card_overreads() -> dict[int, int]:
+    """card id -> bytes of its 65-byte copy that lie past $7FFF, from the
+    CardPointers table in the ROM: the two last cards of the bank spill into
+    VRAM, which the CPU reads as $FF during mode 3 (card_data.asm:59-81)."""
+    rom = (ROOT / "poketcg" / "poketcg.gbc").read_bytes()
+    bank, address = CARD_POINTERS
+    base = bank * 0x4000 + (address - 0x4000)
+    result = {}
+    for card in range(1, 256):
+        low, high = rom[base + 2 * card], rom[base + 2 * card + 1]
+        pointer = low | high << 8
+        if 0x4000 <= pointer < 0x8000 and pointer + PKMN_CARD_DATA_LENGTH > 0x8000:
+            result[card] = pointer + PKMN_CARD_DATA_LENGTH - 0x8000
+    return result
 # The first four gate `confirmed`; audio is SECTION "WRAM Audio" on its own,
 # reported but not gated: the sound driver runs from the timer ISR, which the
 # lag track schedules around the game's driver calls, but the reference APU
@@ -298,6 +320,7 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     stat_mask = 0
     increments = 0
     inputs = bytearray()
+    overreads = OverreadRecorder()
     with refstream.Core(padded, gba=gba, pokes=pokes) as core:
         core.input_axis = axis
         core.frame_mode = frame_mode
@@ -312,6 +335,9 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
                 return
             if address == STAT_VECTOR:
                 stat_mask |= 1 << min(increments, STAT_MASK_BITS - 1)
+                return
+            if address == CARD_COPY_ENTRY or address == CARD_COPY_RET:
+                overreads.on_exec(core, registers, address, hits)
                 return
             if address in TIMER_SYNC_ADDRESSES:
                 bank = TIMER_SYNC_ADDRESSES[address]
@@ -353,6 +379,7 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     (directory / "calls.bin").write_bytes(bytes(calls))
     (directory / "vblank-writes.bin").write_bytes(bytes(vblank_writes))
     (directory / "stats.bin").write_bytes(bytes(stats))
+    (directory / "overreads.txt").write_text(overreads.text())
     (directory / "lag.txt").write_text(lag_track(bytes(records), bytes(calls), bytes(vblank_writes),
                                                  bytes(stats)))
     meta = {
@@ -367,22 +394,57 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     return meta
 
 
+class OverreadRecorder:
+    """The bytes LoadCardDataToHL_FromCardID copies from past $7FFF: the
+    copy's entry names the destination and the spill (card_overreads), its
+    `ret` is where the spilled tail is read back out of WRAM. The port replays
+    the tail under a track (src/home/card_data.c), since which of those VRAM
+    reads the PPU answered with $FF is the LCD phase of each `ld a, [hli]`.
+    One line per copy: `<interval> <hex tail>`."""
+
+    def __init__(self) -> None:
+        self.spills = card_overreads()
+        self.pending: tuple[int, int] | None = None
+        self.lines: list[str] = []
+
+    def on_exec(self, core: "refstream.Core", registers: Any, address: int, hits: int) -> None:
+        if address == CARD_COPY_ENTRY:
+            core.library.gambatte_getregs(core.core, registers)
+            spill = self.spills.get(registers[6] & 0xFF)
+            if spill:
+                self.pending = (((registers[8] & 0xFF) << 8) | (registers[9] & 0xFF), spill)
+            return
+        if address == CARD_COPY_RET and self.pending is not None:
+            destination, spill = self.pending
+            self.pending = None
+            read = core.library.gambatte_cpuread
+            start = destination + PKMN_CARD_DATA_LENGTH - spill
+            tail = bytes(read(core.core, (start + i) & 0xFFFF) for i in range(spill))
+            self.lines.append(f"{hits} {tail.hex()}")
+
+    def text(self) -> str:
+        return "".join(line + "\n" for line in self.lines)
+
+
 def ensure_stat_track(directory: Path, masks: list[int], frames: int, *, axis: str,
                       frame_mode: str, gba: bool, pokes: refstream.Pokes | None) -> None:
-    """A reference cached before the lag track carried STAT ISRs: replay it
-    once more recording only the interrupt vectors and the anchors, then
-    rewrite lag.txt with the column. The replay is the same deterministic
-    stream, so its anchors are the cached digests' anchors."""
+    """A reference cached before the lag track carried STAT ISRs or the
+    over-read track existed: replay it once more recording only those and the
+    anchors, then rewrite lag.txt with the column. The replay is the same
+    deterministic stream, so its anchors are the cached digests' anchors."""
     stats_path = directory / "stats.bin"
-    if stats_path.is_file():
+    overreads_path = directory / "overreads.txt"
+    if stats_path.is_file() and overreads_path.is_file():
         return
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     stats = bytearray()
     stat_mask = 0
     increments = 0
+    overreads = OverreadRecorder()
     with refstream.Core(padded, gba=gba, pokes=pokes) as core:
         core.input_axis = axis
         core.frame_mode = frame_mode
+        registers = (ctypes.c_int * 10)()
 
         def on_exec(address: int, _cycle: int) -> None:
             nonlocal stat_mask, increments
@@ -390,6 +452,8 @@ def ensure_stat_track(directory: Path, masks: list[int], frames: int, *, axis: s
                 increments += 1
             elif address == STAT_VECTOR:
                 stat_mask |= 1 << min(increments, STAT_MASK_BITS - 1)
+            elif address == CARD_COPY_ENTRY or address == CARD_COPY_RET:
+                overreads.on_exec(core, registers, address, len(stats))
             elif address == refstream.DOFRAME_ANCHOR:
                 stats.append(stat_mask)
                 stat_mask = 0
@@ -402,6 +466,7 @@ def ensure_stat_track(directory: Path, masks: list[int], frames: int, *, axis: s
         raise SessionError(f"stat track replay reached {len(stats)} anchors, "
                            f"the cached digests {len(records) // REFERENCE_RECORD.size}")
     stats_path.write_bytes(bytes(stats))
+    overreads_path.write_text(overreads.text())
     (directory / "lag.txt").write_text(lag_track(records, (directory / "calls.bin").read_bytes(),
                                                  (directory / "vblank-writes.bin").read_bytes(),
                                                  bytes(stats)))
@@ -497,6 +562,9 @@ def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
     pokes_path = input_path.with_name("pokes.txt")
     if pokes_path.is_file():
         command += ["--poke-ordinal", str(pokes_path)]
+    overreads_path = lag_path.with_name("overreads.txt")
+    if overreads_path.is_file():
+        command += ["--overread-track", str(overreads_path)]
     if digest_out:
         command += ["--digest-out", str(digest_out)]
         if mask_path:

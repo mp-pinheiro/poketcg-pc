@@ -66,6 +66,15 @@ typedef struct {
 	uint8_t value;
 } RuntimePoke;
 void runtime_set_pokes(const RuntimePoke *pokes, size_t count);
+#define RUNTIME_OVERREAD_MAX 64
+typedef struct {
+	uint32_t interval;
+	uint8_t length;
+	uint8_t tail[RUNTIME_OVERREAD_MAX];
+} RuntimeOverread;
+void runtime_set_overreads(const RuntimeOverread *list, size_t count);
+int runtime_overread_tail(uint32_t interval, uint8_t *out, size_t length);
+uint32_t runtime_overread_mismatches(void);
 /* Lag track: for DoFrame k, entry k-1 is (cycles of real time, timer ISRs,
  * VBlank ISRs) the reference spent between anchors k-1 and k, read off the
  * ROM's own counters, plus the ISR schedule of that interval's timer sync

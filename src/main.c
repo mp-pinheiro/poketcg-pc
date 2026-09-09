@@ -7,6 +7,7 @@
 #include "digest.h"
 #include "trace.h"
 
+#include <ctype.h>
 #include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -358,6 +359,57 @@ fail:
 	return -1;
 }
 
+static int load_overread_track(const char *path, RuntimeOverread **out, size_t *count_out)
+{
+	FILE *file = fopen(path, "r");
+	if (!file)
+		return -1;
+	RuntimeOverread *list = NULL;
+	size_t count = 0, capacity = 0;
+	char line[256];
+	while (fgets(line, sizeof line, file)) {
+		char *cursor = line, *end;
+		if (*cursor == '\n' || *cursor == '\r')
+			continue;
+		unsigned long interval = strtoul(cursor, &end, 10);
+		if (end == cursor || interval > UINT32_MAX)
+			goto fail;
+		cursor = end;
+		while (*cursor == ' ' || *cursor == '\t')
+			cursor++;
+		size_t length = 0;
+		uint8_t tail[RUNTIME_OVERREAD_MAX];
+		while (isxdigit((unsigned char)cursor[0]) && isxdigit((unsigned char)cursor[1])) {
+			if (length == RUNTIME_OVERREAD_MAX)
+				goto fail;
+			char pair[3] = {cursor[0], cursor[1], '\0'};
+			tail[length++] = (uint8_t)strtoul(pair, NULL, 16);
+			cursor += 2;
+		}
+		while (*cursor == ' ' || *cursor == '\t' || *cursor == '\r' || *cursor == '\n')
+			cursor++;
+		if (*cursor != '\0' || length == 0)
+			goto fail;
+		if (count == capacity) {
+			capacity = capacity ? capacity * 2 : 64;
+			if (grow((void **)&list, capacity, sizeof *list) != 0)
+				goto fail;
+		}
+		list[count].interval = (uint32_t)interval;
+		list[count].length = (uint8_t)length;
+		memcpy(list[count].tail, tail, length);
+		count++;
+	}
+	fclose(file);
+	*out = list;
+	*count_out = count;
+	return 0;
+fail:
+	fclose(file);
+	free(list);
+	return -1;
+}
+
 static void state_dump_frames_callback(uint32_t frame, const RuntimeResult *result)
 {
 	char path[512];
@@ -396,6 +448,7 @@ int main(int argc, char **argv)
 	const char *input_ordinal_path = NULL;
 	const char *record_input_path = NULL;
 	const char *poke_ordinal_path = NULL;
+	const char *overread_track_path = NULL;
 	const char *digest_out_path = NULL;
 	const char *lag_track_path = NULL;
 	const char *digest_mask_path = NULL;
@@ -443,6 +496,8 @@ int main(int argc, char **argv)
 			record_input_path = argv[++i];
 		} else if (strcmp(argv[i], "--poke-ordinal") == 0 && i + 1 < argc) {
 			poke_ordinal_path = argv[++i];
+		} else if (strcmp(argv[i], "--overread-track") == 0 && i + 1 < argc) {
+			overread_track_path = argv[++i];
 		} else if (strcmp(argv[i], "--digest-out") == 0 && i + 1 < argc) {
 			digest_out_path = argv[++i];
 		} else if (strcmp(argv[i], "--lag-track") == 0 && i + 1 < argc) {
@@ -473,7 +528,7 @@ int main(int argc, char **argv)
 			       "[--require-data BANK:ADDR] [--load-save PATH] [--save PATH] "
 			       "[--dump-state PATH] [--dump-state-frames N[,N...]] "
 			       "[--input PATH] [--input-ordinal PATH] [--record-input PATH] "
-			       "[--poke-ordinal PATH] "
+			       "[--poke-ordinal PATH] [--overread-track PATH] "
 			       "[--dump-state-ordinals N[,N...]] [--stop-ordinal N] "
 			       "[--digest-out PATH [--digest-mask FILE]] [--lag-track PATH] "
 			       "[--trace-entries PATH] [--trace-calls PATH] "
@@ -487,6 +542,9 @@ int main(int argc, char **argv)
 			printf("--poke-ordinal applies `<ordinal> <address> <value>` bus "
 			       "writes at that DoFrame's anchor, the file a session's "
 			       "pokes.txt holds\n");
+			printf("--overread-track replays `<interval> <hex>` per card copy that "
+			       "reads past $7FFF: the tail the reference's PPU answered, since "
+			       "a VRAM read during mode 3 is $FF (session.py OverreadRecorder)\n");
 			printf("--dump-state-ordinals and --stop-ordinal count DoFrames, "
 			       "not host frames\n");
 			printf("--digest-out writes 16 bytes per DoFrame: CRC-32 of WRAM, HRAM, "
@@ -576,6 +634,18 @@ int main(int argc, char **argv)
 		return 2;
 	}
 	runtime_set_lag_track(&lag_track);
+	RuntimeOverread *overreads = NULL;
+	size_t overread_count = 0;
+	if (overread_track_path && load_overread_track(overread_track_path, &overreads, &overread_count) != 0) {
+		fprintf(stderr, "cannot load overread track %s\n", overread_track_path);
+		lag_track_free(&lag_track);
+		free(pokes);
+		free(ordinal_buttons);
+		free(input_buttons);
+		rom_pack_free();
+		return 2;
+	}
+	runtime_set_overreads(overreads, overread_count);
 	FILE *record_sink = NULL;
 	if (record_input_path) {
 		record_sink = fopen(record_input_path, "w");
@@ -651,7 +721,9 @@ int main(int argc, char **argv)
 	runtime_set_record_input(NULL);
 	runtime_set_lag_track(NULL);
 	runtime_set_pokes(NULL, 0);
+	runtime_set_overreads(NULL, 0);
 	lag_track_free(&lag_track);
+	free(overreads);
 	free(pokes);
 	free(ordinal_buttons);
 	free(input_buttons);
@@ -675,6 +747,9 @@ int main(int argc, char **argv)
 		fprintf(stderr, "cannot write native call trace %s\n", trace_calls_path);
 		status = 1;
 	}
+	if (runtime_overread_mismatches())
+		fprintf(stderr, "overread track: %u card copies off schedule\n",
+		        (unsigned)runtime_overread_mismatches());
 	if (status != 0)
 		fprintf(stderr, "runtime rendezvous failed\n");
 	else

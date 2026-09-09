@@ -86,6 +86,7 @@ CASES["LoadCardDataToHL_FromCardID"] = [
     {"e": 0xE4, "hl": 0xC200, "stack": [0xC200], "wram": {0xC200: b"\xAA" * CARD_DATA_LENGTH}, "read": {0xC200: 0x41}},
     dict(POISON, stack=[0x1234]),
     dict(POISON, e=1, hl=0xC300, stack=[0xC300], wram={0xC300: b"\xAA" * CARD_DATA_LENGTH}, read={0xC300: 0x41}),
+    {"e": 0x10, "hl": 0xC100, "stack": [0xC100], "wram": {0xC100: b"\xAA" * CARD_DATA_LENGTH, 0xFF80: b"\x03"}, "read": {0xC100: 0x41, 0xFF80: 1}, "rom_bank": 3},
 ]
 # <<< factory LoadCardDataToHL_FromCardID
 

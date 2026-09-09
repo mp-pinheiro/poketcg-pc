@@ -3,6 +3,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/copy.h"
+#include "home/frames.h"
 #include "home/switch_rom.h"
 #include "mem.h"
 /* >>> factory statics */
@@ -57,18 +58,9 @@ CardTRS GetCardTypeRarityAndSet(uint8_t a)
 	return (CardTRS){p[CARD_DATA_TYPE], p[CARD_DATA_RARITY], p[CARD_DATA_SET]};
 }
 
-/* card_data.asm:48-81. Both buffer wrappers fall through to LoadCardDataToHL, which is
- * not directly callable (it pops one more word than it pushes; the wrappers' leading
- * push hl balances it). Inlined as a single copy. Read via the switched bank, not
- * rom_ptr: the last card's 0x41-byte copy runs hl past $7fff into VRAM ($8000+). */
 static void load_card_data(uint8_t cardid, uint16_t dest)
 {
-	uint8_t saved = hBankROM;
-	BankswitchROM(BANK_CARD_DATA);
-	uint16_t ptr = get_card_pointer(cardid);
-	for (uint8_t i = 0; i < PKMN_CARD_DATA_LEN; i++)
-		gb_write8((uint16_t)(dest + i), gb_read8((uint16_t)(ptr + i)));
-	BankswitchROM(saved);
+	LoadCardDataToHL_FromCardID(cardid, &dest, dest);
 }
 
 /* card_data.asm:1-45. Scans CardPointers[1..] (skipping the leading NULL) for the
@@ -144,16 +136,20 @@ void LoadCardDataToHL_FromCardID(uint8_t e, uint16_t *hl, uint16_t saved_hl)
 		*hl = saved_hl;
 		return;
 	}
+	uint16_t bank_stack = (uint16_t)((uint16_t)hBankROM << 8);
 	BankpushROM2Result pushed = BankpushROM2(BANK_CARD_DATA, 0u, 0u, 0u, 0u, e, card.hl);
 	uint16_t src = pushed.hl;
 	uint8_t copy_length = PKMN_CARD_DATA_LENGTH;
+	uint8_t spill[PKMN_CARD_DATA_LENGTH];
+	size_t spilled = (size_t)(src + PKMN_CARD_DATA_LENGTH > 0x8000u ? src + PKMN_CARD_DATA_LENGTH - 0x8000u : 0u);
+	int recorded = spilled != 0u && frame_boundary_overread(spill, spilled);
 	for (uint8_t i = 0u; i < copy_length; i++) {
-		uint8_t a = gb_read8(src);
+		uint8_t a = recorded && src >= 0x8000u ? spill[src - 0x8000u] : gb_read8(src);
 		gb_write8(de, a);
 		src = (uint16_t)(src + 1u);
 		de = (uint16_t)(de + 1u);
 	}
-	(void)BankpopROM(0u, 0u, 0u, 0u, src, 0u, 0u);
+	(void)BankpopROM(0u, 0u, 0u, 0u, src, bank_stack, 0u);
 	*hl = saved_hl;
 }
 /* <<< factory LoadCardDataToHL_FromCardID */

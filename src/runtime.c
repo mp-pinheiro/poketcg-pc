@@ -170,6 +170,43 @@ void runtime_set_pokes(const RuntimePoke *pokes, size_t count)
 	g_poke_next = 0;
 }
 
+static const RuntimeOverread *g_overreads;
+static size_t g_overread_count;
+static size_t g_overread_next;
+static uint32_t g_overread_mismatches;
+
+void runtime_set_overreads(const RuntimeOverread *list, size_t count)
+{
+	g_overreads = list;
+	g_overread_count = count;
+	g_overread_next = 0;
+	g_overread_mismatches = 0;
+}
+
+static int overread_hook(void *context, uint32_t interval, uint8_t *out, size_t length)
+{
+	(void)context;
+	return runtime_overread_tail(interval, out, length);
+}
+
+int runtime_overread_tail(uint32_t interval, uint8_t *out, size_t length)
+{
+	if (!g_overreads || g_overread_next >= g_overread_count)
+		return 0;
+	const RuntimeOverread *entry = &g_overreads[g_overread_next++];
+	if (entry->interval != interval || entry->length != length) {
+		g_overread_mismatches++;
+		return 0;
+	}
+	memcpy(out, entry->tail, length);
+	return 1;
+}
+
+uint32_t runtime_overread_mismatches(void)
+{
+	return g_overread_mismatches;
+}
+
 typedef struct {
 	pthread_mutex_t lock;
 	pthread_cond_t condition;
@@ -427,8 +464,10 @@ int runtime_run_with_input(
 	frame_boundary_install_anchor(anchor, &state);
 	frame_boundary_install_timer_sync(timer_sync, &state);
 	frame_boundary_install_vblank_sync(vblank_sync, &state);
+	frame_boundary_install_overread(g_overreads ? overread_hook : NULL, NULL);
 	pthread_t worker;
 	if (pthread_create(&worker, NULL, run_game, &state) != 0) {
+		frame_boundary_install_overread(NULL, NULL);
 		frame_boundary_install_timer_sync(NULL, NULL);
 		frame_boundary_install_vblank_sync(NULL, NULL);
 		frame_boundary_install_anchor(NULL, NULL);
@@ -583,6 +622,7 @@ int runtime_run_with_input(
 		pthread_mutex_unlock(&state.lock);
 	}
 	pthread_join(worker, NULL);
+	frame_boundary_install_overread(NULL, NULL);
 	frame_boundary_install_timer_sync(NULL, NULL);
 	frame_boundary_install_vblank_sync(NULL, NULL);
 	frame_boundary_install_anchor(NULL, NULL);

@@ -1,6 +1,7 @@
 #ifndef POKETCG_HOME_FRAMES_H
 #define POKETCG_HOME_FRAMES_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 typedef void (*FrameBoundaryHook)(void *context);
@@ -29,6 +30,9 @@ int frame_boundary_is_installed(void);
 uint32_t frame_boundary_doframe_ordinal(void);
 void frame_boundary_reset_ordinal(void);
 void frame_boundary_install_anchor(FrameBoundaryHook hook, void *context);
+typedef int (*FrameOverreadHook)(void *context, uint32_t interval, uint8_t *out, size_t length);
+void frame_boundary_install_overread(FrameOverreadHook hook, void *context);
+int frame_boundary_overread(uint8_t *out, size_t length);
 /* True while the boundary pass a DoFrame's own halt reached is running, as
  * opposed to DisableLCD's rLY poll (src/home/lcd.c): only the former is the
  * VBlank the ROM's DoFrame waits for. */

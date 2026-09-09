@@ -114,6 +114,22 @@ void frame_boundary_install_anchor(FrameBoundaryHook hook, void *context)
 	g_frame_anchor_context = context;
 }
 
+static FrameOverreadHook g_overread_hook;
+static void *g_overread_context;
+
+void frame_boundary_install_overread(FrameOverreadHook hook, void *context)
+{
+	g_overread_hook = hook;
+	g_overread_context = context;
+}
+
+int frame_boundary_overread(uint8_t *out, size_t length)
+{
+	if (!g_overread_hook)
+		return 0;
+	return g_overread_hook(g_overread_context, g_doframe_ordinal, out, length);
+}
+
 static FrameBoundaryHook g_timer_sync_hook;
 static void *g_timer_sync_context;
 
