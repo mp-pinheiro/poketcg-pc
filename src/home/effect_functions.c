@@ -3937,7 +3937,8 @@ ComputerSearchHandDeckCheckResult ComputerSearch_HandDeckCheck(void)
 	r = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
 	return (ComputerSearchHandDeckCheckResult){
 		r.a,
-		(uint8_t)(effect_compare(r.a, DECK_SIZE) ^ 0x10u),
+		(uint8_t)((effect_compare(r.a, DECK_SIZE) & 0x80u)
+		          | ((effect_compare(r.a, DECK_SIZE) & 0x10u) ^ 0x10u)),
 		NoCardsLeftInTheDeckText
 	};
 }

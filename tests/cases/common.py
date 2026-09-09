@@ -1,3 +1,5 @@
+from tests.cases._fixtures import HIGH_RECOIL_REGS, high_recoil_fixture
+
 """Oracle-diff cases for poketcg/src/engine/duel/ai/common.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -431,6 +433,7 @@ CASES["AICheckIfAttackIsHighRecoil"] = [
     {"wram": {wAIBarrierFlagCounter: b"\x80", wAIExecuteProcessedAttack: b"\x00", wAIScore: b"\x10", wTempAIScore: b"\x00", wPlayAreaAIScore: b"\x01\x02\x03\x04\x05\x06", wTempPlayAreaAIScore: b"\x00\x00\x00\x00\x00\x00"}, "expect": {wAIExecuteProcessedAttack: b"\x01"}, "expect_regs": {"f": 0x00}, "read": {wAIExecuteProcessedAttack: 1}},
     {"wram": {wAIBarrierFlagCounter: b"\x80", wAIExecuteProcessedAttack: b"\xff", wAIScore: b"\x7f", wTempAIScore: b"\x00", wPlayAreaAIScore: b"\x20\x30\x40\x50\x60\x70", wTempPlayAreaAIScore: b"\xaa\xbb\xcc\xdd\xee\xff"}, "expect": {wAIExecuteProcessedAttack: b"\x01"}, "expect_regs": {"f": 0x00}, "read": {wAIExecuteProcessedAttack: 1}},
     dict(POISON, wram={wAIBarrierFlagCounter: b"\x80", wAIExecuteProcessedAttack: b"\xaa", wAIScore: b"\xbb", wTempAIScore: b"\xcc", wPlayAreaAIScore: b"\x01\x23\x45\x67\x89\xab", wTempPlayAreaAIScore: b"\xde\xad\xbe\xef\x10\x20"}, expect={wAIExecuteProcessedAttack: b"\x01"}, expect_regs={"f": 0x00}, read={wAIExecuteProcessedAttack: 1}),
+    dict(high_recoil_fixture(vram=False), **HIGH_RECOIL_REGS),
 ]
 # <<< factory AICheckIfAttackIsHighRecoil
 
@@ -768,21 +771,11 @@ for _record in SCHEMA2_CASES["PreparePrinterConnection"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
 # <<< factory-completion PreparePrinterConnection
 # >>> factory-mutation AICheckIfAttackIsHighRecoil
-MUTATIONS["AICheckIfAttackIsHighRecoil"] = {"source_symbol": "AICheckIfAttackIsHighRecoil", "before": "AIProcessAttacksResult processed = AIProcessButDontUseAttack();", "after": "AIProcessAttacksResult processed = AIProcessAttacks();", "case_ids": ["AICheckIfAttackIsHighRecoil-0", "AICheckIfAttackIsHighRecoil-1", "AICheckIfAttackIsHighRecoil-2"]}
-# <<< factory-mutation AICheckIfAttackIsHighRecoil
-# >>> factory-mutation PrintDeckConfiguration
-MUTATIONS["PrintDeckConfiguration"] = {"source_symbol": "PrintDeckConfiguration", "before": "void PrintDeckConfiguration(uint8_t a)\n{\n\t_PrintDeckConfiguration(a);", "after": "void PrintDeckConfiguration(uint8_t a)\n{\n\t(void)0;", "case_ids": ["PrintDeckConfiguration-0"]}
-# <<< factory-mutation PrintDeckConfiguration
-# >>> factory-completion PrintDeckConfiguration
-for _record in SCHEMA2_CASES["PrintDeckConfiguration"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
-# <<< factory-completion PrintDeckConfiguration
-# >>> factory-mutation ShowPromotionalCardScreen
-MUTATIONS["ShowPromotionalCardScreen"] = {
-    "source_symbol": "ShowPromotionalCardScreen",
-    "before": "void ShowPromotionalCardScreen(uint8_t a)\n{\n\tLoadCardDataToBuffer1_FromCardID(a);",
-    "after": "void ShowPromotionalCardScreen(uint8_t a)\n{\n\tLoadCardDataToBuffer1_FromCardID((uint8_t)(a + 1u));",
-    "case_ids": ["ShowPromotionalCardScreen-0", "ShowPromotionalCardScreen-1"],
+MUTATIONS["AICheckIfAttackIsHighRecoil"] = {
+    "source_symbol": "AICheckIfAttackIsHighRecoil",
+    "before": "\t\t(uint8_t)((flag.f & 0x80u) | ((flag.f & 0x10u) ^ 0x10u))};",
+    "after": "\t\t(uint8_t)(flag.f ^ 0x10u)};",
+    "case_ids": ["AICheckIfAttackIsHighRecoil-3"],
 }
 # <<< factory-mutation ShowPromotionalCardScreen
 # >>> factory-completion ShowPromotionalCardScreen

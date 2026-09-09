@@ -749,7 +749,8 @@ AICheckIfAttackIsHighRecoilResult AICheckIfAttackIsHighRecoil(void)
 	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	(void)CopyAttackDataAndDamage_FromDeckIndex(arena.a, selected_attack);
 	AttackFlagResult flag = CheckLoadedAttackFlag(ATTACK_FLAG1_ADDRESS | HIGH_RECOIL_F);
-	return (AICheckIfAttackIsHighRecoilResult){(uint8_t)(flag.f ^ 0x10u)};
+	return (AICheckIfAttackIsHighRecoilResult){
+		(uint8_t)((flag.f & 0x80u) | ((flag.f & 0x10u) ^ 0x10u))};
 }
 /* <<< factory AICheckIfAttackIsHighRecoil */
 

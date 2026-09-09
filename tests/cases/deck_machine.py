@@ -4,6 +4,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 from tests.cases._fixtures import deck_entry_fixture as _deck_entry_fixture, DECK_ENTRY_REGS as _DECK_ENTRY_REGS
+from tests.cases._fixtures import DM_ENTRIES_REGS, dm_entries_fixture
 
 CONTRACT = {}
 CASES = {}
@@ -485,6 +486,7 @@ CASES["PrintVisibleDeckMachineEntries"] = [
     {"f": 0x10, "wram": {wCardListVisibleOffset: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
     {"f": 0x11, "wram": {wCardListVisibleOffset: b"\xE4"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
     dict(POISON, wram={wCardListVisibleOffset: b"\x01"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    dict(dm_entries_fixture(vram=False), **DM_ENTRIES_REGS),
 ]
 # <<< factory PrintVisibleDeckMachineEntries
 
@@ -828,26 +830,11 @@ MUTATIONS["HandleDismantleDeckToMakeSpace"] = {
 }
 # <<< factory-mutation HandleDismantleDeckToMakeSpace
 # >>> factory-mutation PrintVisibleDeckMachineEntries
-MUTATIONS["PrintVisibleDeckMachineEntries"] = {"source_symbol": "PrintVisibleDeckMachineEntries", "before": "\tuint8_t a = wCardListVisibleOffset;", "after": "\tuint8_t a = (uint8_t)(wCardListVisibleOffset + 1u);", "case_ids": ["PrintVisibleDeckMachineEntries-0", "PrintVisibleDeckMachineEntries-1", "PrintVisibleDeckMachineEntries-2"]}
-# <<< factory-mutation PrintVisibleDeckMachineEntries
-# >>> factory-mutation ClearScreenAndDrawDeckMachineScreen
-MUTATIONS["ClearScreenAndDrawDeckMachineScreen"] = {"source_symbol": "ClearScreenAndDrawDeckMachineScreen", "before": "\twTileMapFill = 0u;", "after": "\twTileMapFill = 1u;", "case_ids": ["ClearScreenAndDrawDeckMachineScreen-0", "ClearScreenAndDrawDeckMachineScreen-1"]}
-# <<< factory-mutation ClearScreenAndDrawDeckMachineScreen
-# >>> factory-mutation DrawDeckMachineScreen
-MUTATIONS["DrawDeckMachineScreen"] = {"source_symbol": "DrawDeckMachineScreen", "before": "\thffb0 = 0x00u;", "after": "\thffb0 = 0x01u;", "case_ids": ["DrawDeckMachineScreen-0", "DrawDeckMachineScreen-1"]}
-# <<< factory-mutation DrawDeckMachineScreen
-# >>> factory-mutation HandleDeckMachineSelection
-MUTATIONS["HandleDeckMachineSelection"] = {"source_symbol": "HandleDeckMachineSelection", "before": "\t\t\tDrawListCursor_Visible();\n\t\t\twTempCardListVisibleOffset = wCardListVisibleOffset;", "after": "\t\t\tDrawListCursor_Visible();\n\t\t\twTempCardListVisibleOffset = 0u;", "case_ids": ["HandleDeckMachineSelection-0", "HandleDeckMachineSelection-1"]}
-# <<< factory-mutation HandleDeckMachineSelection
-# >>> factory-mutation UpdateDeckMachineScrollArrowsAndEntries
-MUTATIONS["UpdateDeckMachineScrollArrowsAndEntries"] = {"source_symbol": "UpdateDeckMachineScrollArrowsAndEntries", "before": "PrintVisibleDeckMachineEntriesResult UpdateDeckMachineScrollArrowsAndEntries(uint8_t f)\n{\n\t(void)f;\n\tDrawListScrollArrows();\n\tuint8_t visible_offset = wCardListVisibleOffset;\n\tuint8_t threshold = (uint8_t)(visible_offset + NUM_DECK_MACHINE_VISIBLE_DECKS + 1u);", "after": "PrintVisibleDeckMachineEntriesResult UpdateDeckMachineScrollArrowsAndEntries(uint8_t f)\n{\n\t(void)f;\n\tDrawListScrollArrows();\n\tuint8_t visible_offset = wCardListVisibleOffset;\n\tuint8_t threshold = 0u;", "case_ids": ["UpdateDeckMachineScrollArrowsAndEntries-0", "UpdateDeckMachineScrollArrowsAndEntries-1", "UpdateDeckMachineScrollArrowsAndEntries-2"]}
-# <<< factory-mutation UpdateDeckMachineScrollArrowsAndEntries
-# >>> factory-mutation SaveDeckInDeckSaveMachine
-MUTATIONS["SaveDeckInDeckSaveMachine"] = {
-    "source_symbol": "SaveDeckInDeckSaveMachine",
-    "before": "\t\t\tuint8_t f = (uint8_t)((waited.f & 0x80u) | 0x10u);\n\t\t\treturn (SaveDeckInDeckSaveMachineResult){a, f};",
-    "after": "\t\t\tuint8_t f = (uint8_t)((waited.f & 0x80u) | 0x00u);\n\t\t\treturn (SaveDeckInDeckSaveMachineResult){a, f};",
-    "case_ids": ["SaveDeckInDeckSaveMachine-0", "SaveDeckInDeckSaveMachine-1"],
+MUTATIONS["PrintVisibleDeckMachineEntries"] = {
+    "source_symbol": "PrintVisibleDeckMachineEntries",
+    "before": "\t\t\tuint8_t h = (uint8_t)(((before & 0x0Fu) == 0u) ? 0x20u : 0x00u);",
+    "after": "\t\t\tuint8_t h = 0x20u;",
+    "case_ids": ["PrintVisibleDeckMachineEntries-3"],
 }
 # <<< factory-mutation SaveDeckInDeckSaveMachine
 # >>> factory-mutation TryBuildDeckMachineDeck

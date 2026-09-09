@@ -24,7 +24,7 @@ from pathlib import Path
 # $CFF0-$CFF5 and $DC30-$DCFF are the PyBoy oracle's synthesized call frame
 # (tools/oracle/pyboy_oracle.py RESERVED); $DD80+ is the sound driver's.
 _HOLES = (0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCD0F, 0xCEA3)
-_SPANS = ((0xC000, 0xCD20), (0xCD26, 0xDC30), (0xDD00, 0xDD80))
+_SPANS = ((0xC000, 0xCFF0), (0xD000, 0xDC30), (0xDD00, 0xDD80))
 # The joypad snapshot hDPadRepeat..hKeysPressed ($FF8D-$FF91) is the `keys`
 # timeline as each lane injects it: the probe advances it per completed poll,
 # PyBoy per frame, so a routine that polls inside its own DoFrame loop
@@ -330,6 +330,10 @@ CARD_LIST_INPUT = Fixture("isaac-duel-card-list-input-entry")
 CARD_LIST_INPUT_REGS = CARD_LIST_INPUT.regs
 CHECK_CURSOR = Fixture("boot-deck-machine-check-cursor-entry")
 CHECK_CURSOR_REGS = CHECK_CURSOR.regs
+DM_ENTRIES = Fixture("boot-deck-machine-visible-entries-entry")
+DM_ENTRIES_REGS = DM_ENTRIES.regs
+HIGH_RECOIL = Fixture("lightning-3-high-recoil-entry")
+HIGH_RECOIL_REGS = HIGH_RECOIL.regs
 SCROLL_LABEL = Fixture("lightning-3-scroll-label-entry")
 SCROLL_LABEL_REGS = SCROLL_LABEL.regs
 WAIT_KEYS = Fixture("boot-deck-machine-wait-keys-entry")
@@ -571,6 +575,14 @@ def card_list_input_fixture(vram: bool = True, bank: int | None = None, **change
 
 def check_cursor_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return CHECK_CURSOR.case(vram=vram, bank=bank, **changes)
+
+
+def dm_entries_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return DM_ENTRIES.case(vram=vram, bank=bank, **changes)
+
+
+def high_recoil_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return HIGH_RECOIL.case(vram=vram, bank=bank, **changes)
 
 
 def scroll_label_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:

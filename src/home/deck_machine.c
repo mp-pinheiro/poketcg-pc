@@ -946,9 +946,12 @@ PrintVisibleDeckMachineEntriesResult PrintVisibleDeckMachineEntries(uint8_t f)
 		(void)PrintDeckMachineEntry(a, 2u, e);
 		if (f & 0x10u)
 			return (PrintVisibleDeckMachineEntriesResult){a, f};
+		uint8_t before = b;
 		b--;
-		if (b == 0u)
-			return (PrintVisibleDeckMachineEntriesResult){a, (uint8_t)((f & 0x10u) | 0xE0u)};
+		if (b == 0u) {
+			uint8_t h = (uint8_t)(((before & 0x0Fu) == 0u) ? 0x20u : 0x00u);
+			return (PrintVisibleDeckMachineEntriesResult){a, (uint8_t)(0xC0u | h)};
+		}
 		a++;
 		e = (uint8_t)(e + 2u);
 	}
