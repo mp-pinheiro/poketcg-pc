@@ -942,7 +942,10 @@ AIDecideEnergyRetrievalResult AIDecide_EnergyRetrieval(uint8_t a, uint8_t d)
 	d = dup.d;
 	if (dup.f & 0x10u)
 		return (AIDecideEnergyRetrievalResult){dup.a, (uint8_t)(dup.a == 0u ? 0x80u : 0u), d};
+	/* trainer_cards.asm:2649: the duplicate goes to wce06 before the discard
+	 * pile is searched, so a refusal there still leaves it written. */
 	uint8_t saved_card = dup.a;
+	wce06 = saved_card;
 
 	FindBasicEnergyCardsInLocationResult discard = FindBasicEnergyCardsInLocation(CARD_LOCATION_DISCARD_PILE);
 	d = discard.d;

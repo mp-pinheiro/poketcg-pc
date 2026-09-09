@@ -1,3 +1,4 @@
+from tests.cases._fixtures import ai_energy_retrieval_fixture as _ai_energy_retrieval_fixture, AI_ENERGY_RETRIEVAL_REGS as _AI_ENERGY_RETRIEVAL_REGS
 from tests.cases._fixtures import energy_removal_fixture as _energy_removal_fixture, ENERGY_REMOVAL_REGS as _ENERGY_REMOVAL_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_bill_fixture as _ai_bill_fixture, AI_BILL_REGS as _AI_BILL_REGS
 from tests.cases._fixtures import energy_search_fixture as _energy_search_fixture, ENERGY_SEARCH_REGS as _ENERGY_SEARCH_REGS
@@ -224,6 +225,9 @@ CASES["AIDecide_EnergyRetrieval"] = [
         "hram": {0xFF97: b"\xC2"},
         "expect_regs": {"a": 0xFF, "f": 0x80},
     },
+
+    # ai-duel-2d 34709: a duplicate in hand but no basic energy in the discard pile still writes the duplicate to wce06.
+    dict(_ai_energy_retrieval_fixture(vram=False, bank=8), **_AI_ENERGY_RETRIEVAL_REGS, read={0xCE06: 1}),
 ]
 # <<< factory AIDecide_EnergyRetrieval
 
@@ -1384,9 +1388,9 @@ MUTATIONS["AIDecide_ItemFinder"] = {"source_symbol": "AIDecide_ItemFinder", "bef
 # >>> factory-mutation AIDecide_EnergyRetrieval
 MUTATIONS["AIDecide_EnergyRetrieval"] = {
     "source_symbol": "AIDecide_EnergyRetrieval",
-    "before": "return (AIDecideEnergyRetrievalResult){hand_energy.a, (uint8_t)(hand_energy.a == 0u ? 0x80u : 0u), d};",
-    "after": "return (AIDecideEnergyRetrievalResult){hand_energy.a, 0u, d};",
-    "case_ids": ["AIDecide_EnergyRetrieval-0"],
+    "before": "\tuint8_t saved_card = dup.a;\n\twce06 = saved_card;",
+    "after": "\tuint8_t saved_card = dup.a;",
+    "case_ids": ["AIDecide_EnergyRetrieval-1"],
 }
 # <<< factory-mutation AIDecide_EnergyRetrieval
 # >>> factory-mutation AIDecide_SuperEnergyRetrieval

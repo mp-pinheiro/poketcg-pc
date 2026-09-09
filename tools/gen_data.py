@@ -54,6 +54,11 @@ NATIVE_DATA_SPANS = (
     # card_data.asm:60-74 copies PKMN_CARD_DATA_LENGTH bytes for every card, so
     # the trainer records at the end of bank $0C read the padding after RecycleCard.
     ("card_data_tail", 12, 0x7FE1, 0x1F),
+    # CardPointers[0] is NULL and GetCardPointer accepts card id 0, so a stale
+    # wPlayerAttackingCardID of 0 (an AI-versus-AI forced switch,
+    # effect_functions.asm:1015) copies PKMN_CARD_DATA_LENGTH bytes of the rst
+    # vectors at $0000 into the card buffer. The ROM reads them; so does the port.
+    ("null_card", 0, 0x0000, 0x41),
 )
 
 SECTION_RE = re.compile(

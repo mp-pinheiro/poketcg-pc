@@ -701,6 +701,14 @@ def ai_gust_of_wind_fixture(vram: bool = True, bank: int | None = None, **change
     return AI_GUST_OF_WIND.case(vram=vram, bank=bank, **changes)
 
 
+AI_ENERGY_RETRIEVAL = Fixture("ai-duel-2d-energy-retrieval-entry")
+AI_ENERGY_RETRIEVAL_REGS = AI_ENERGY_RETRIEVAL.regs
+
+
+def ai_energy_retrieval_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_ENERGY_RETRIEVAL.case(vram=vram, bank=bank, **changes)
+
+
 DOME_RONALD = Fixture("ronald-3-dome-ronald-entry")
 DOME_RONALD_REGS = DOME_RONALD.regs
 
