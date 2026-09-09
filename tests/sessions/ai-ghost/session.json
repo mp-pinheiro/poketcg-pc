@@ -1,0 +1,14 @@
+{
+  "ai_deck": 45,
+  "branch_ordinal": 23227,
+  "derived_from": "practice-win",
+  "duel_finished_ordinal": 39332,
+  "duel_turns": 22,
+  "goal": "AI-versus-AI duel with the Ghost deck; Gengar's Curse power on both sides",
+  "name": "ai-ghost",
+  "ordinals": 40832,
+  "prizes": null,
+  "recorded": "2026-09-09T17:21:32+00:00",
+  "schema": 1,
+  "seed": null
+}

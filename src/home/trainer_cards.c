@@ -954,9 +954,9 @@ AIDecideEnergyRetrievalResult AIDecide_EnergyRetrieval(uint8_t a, uint8_t d)
 	if (dup.f & 0x10u)
 		return (AIDecideEnergyRetrievalResult){dup.a, (uint8_t)(dup.a == 0u ? 0x80u : 0u), d};
 	/* trainer_cards.asm:2649: the duplicate goes to wce06 before the discard
-	 * pile is searched, so a refusal there still leaves it written. */
-	uint8_t saved_card = dup.a;
-	wce06 = saved_card;
+	 * pile is searched, so a refusal there still leaves it written, and
+	 * `.set_carry` reads it back from there. */
+	wce06 = dup.a;
 
 	FindBasicEnergyCardsInLocationResult discard = FindBasicEnergyCardsInLocation(CARD_LOCATION_DISCARD_PILE);
 	d = discard.d;
@@ -986,7 +986,7 @@ AIDecideEnergyRetrievalResult AIDecide_EnergyRetrieval(uint8_t a, uint8_t d)
 				continue;
 			if (wce1a != 0xFFu) {
 				wce1b = entry;
-				return (AIDecideEnergyRetrievalResult){saved_card, 0x10u, d};
+				return (AIDecideEnergyRetrievalResult){wce06, 0x10u, d};
 			}
 			wce1a = entry;
 			RemoveCardFromList(&hl);
@@ -1004,14 +1004,14 @@ AIDecideEnergyRetrievalResult AIDecide_EnergyRetrieval(uint8_t a, uint8_t d)
 			break;
 		if (wce1a != 0xFFu) {
 			wce1b = entry;
-			return (AIDecideEnergyRetrievalResult){saved_card, 0x10u, d};
+			return (AIDecideEnergyRetrievalResult){wce06, 0x10u, d};
 		}
 		wce1a = entry;
 		RemoveCardFromList(&hl2);
 	}
 
 	if (wce1a != 0xFFu)
-		return (AIDecideEnergyRetrievalResult){saved_card, 0x10u, d};
+		return (AIDecideEnergyRetrievalResult){wce06, 0x10u, d};
 	return (AIDecideEnergyRetrievalResult){wce1a, (uint8_t)(wce1a == 0u ? 0x80u : 0u), d};
 }
 /* <<< factory AIDecide_EnergyRetrieval */

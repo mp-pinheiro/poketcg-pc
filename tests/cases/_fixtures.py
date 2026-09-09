@@ -927,3 +927,11 @@ FIRST_OR_NEXT_PAGE_REGS = FIRST_OR_NEXT_PAGE.regs
 
 def first_or_next_page_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return FIRST_OR_NEXT_PAGE.case(vram=vram, bank=bank, **changes)
+
+
+ENERGY_RETRIEVAL = Fixture("ai-ghost-energy-retrieval-entry")
+ENERGY_RETRIEVAL_REGS = ENERGY_RETRIEVAL.regs
+
+
+def energy_retrieval_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return ENERGY_RETRIEVAL.case(vram=vram, bank=bank, **changes)

@@ -1,5 +1,6 @@
 from tests.cases._fixtures import ai_energy_retrieval_fixture as _ai_energy_retrieval_fixture, AI_ENERGY_RETRIEVAL_REGS as _AI_ENERGY_RETRIEVAL_REGS
 from tests.cases._fixtures import energy_removal_fixture as _energy_removal_fixture, ENERGY_REMOVAL_REGS as _ENERGY_REMOVAL_REGS
+from tests.cases._fixtures import energy_retrieval_fixture as _energy_retrieval_fixture, ENERGY_RETRIEVAL_REGS as _ENERGY_RETRIEVAL_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_bill_fixture as _ai_bill_fixture, AI_BILL_REGS as _AI_BILL_REGS
 from tests.cases._fixtures import energy_search_fixture as _energy_search_fixture, ENERGY_SEARCH_REGS as _ENERGY_SEARCH_REGS
 from tests.cases._fixtures import professor_oak_fixture as _professor_oak_fixture, PROFESSOR_OAK_REGS as _PROFESSOR_OAK_REGS
@@ -244,6 +245,9 @@ CASES["AIDecide_EnergyRetrieval"] = [
 
     # ai-duel-2d 34709: a duplicate in hand but no basic energy in the discard pile still writes the duplicate to wce06.
     dict(_ai_energy_retrieval_fixture(vram=False, bank=8), **_AI_ENERGY_RETRIEVAL_REGS, read={0xCE06: 1}),
+    # ai-ghost DoFrame 34709: the Ghost deck's AI holds two Psychic energies and
+    # a damaged bench, so the duplicate scan writes wce06 (asm:2649).
+    dict(_energy_retrieval_fixture(vram=False), **_ENERGY_RETRIEVAL_REGS),
 ]
 # <<< factory AIDecide_EnergyRetrieval
 
@@ -1405,12 +1409,7 @@ MUTATIONS["AIDecide_Pokedex"] = {"source_symbol": "AIDecide_Pokedex", "before": 
 MUTATIONS["AIDecide_ItemFinder"] = {"source_symbol": "AIDecide_ItemFinder", "before": "return (AIDecide_ItemFinderResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), d};", "after": "return (AIDecide_ItemFinderResult){a, (uint8_t)(a == 1u ? 0x80u : 0u), d};", "case_ids": ["AIDecide_ItemFinder-0", "AIDecide_ItemFinder-1"]}
 # <<< factory-mutation AIDecide_ItemFinder
 # >>> factory-mutation AIDecide_EnergyRetrieval
-MUTATIONS["AIDecide_EnergyRetrieval"] = {
-    "source_symbol": "AIDecide_EnergyRetrieval",
-    "before": "\tuint8_t saved_card = dup.a;\n\twce06 = saved_card;",
-    "after": "\tuint8_t saved_card = dup.a;",
-    "case_ids": ["AIDecide_EnergyRetrieval-1"],
-}
+MUTATIONS["AIDecide_EnergyRetrieval"] = {"source_symbol": "AIDecide_EnergyRetrieval", "before": "\twce06 = dup.a;", "after": "\twce06 = 0u;", "case_ids": ["AIDecide_EnergyRetrieval-1"]}
 # <<< factory-mutation AIDecide_EnergyRetrieval
 # >>> factory-mutation AIDecide_SuperEnergyRetrieval
 MUTATIONS["AIDecide_SuperEnergyRetrieval"] = {
