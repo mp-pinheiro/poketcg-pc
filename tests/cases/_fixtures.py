@@ -659,3 +659,11 @@ PROFESSOR_OAK_REGS = PROFESSOR_OAK.regs
 
 def professor_oak_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return PROFESSOR_OAK.case(vram=vram, bank=bank, **changes)
+
+
+GRASS_RETREAT = Fixture("grass-club-retreat-entry")
+GRASS_RETREAT_REGS = GRASS_RETREAT.regs
+
+
+def grass_retreat_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return GRASS_RETREAT.case(vram=vram, bank=bank, **changes)

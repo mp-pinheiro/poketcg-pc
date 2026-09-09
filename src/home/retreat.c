@@ -512,6 +512,10 @@ check_resistance_2:
 		AIDiscourage(3u);
 
 check_weakness_2:
+	/* retreat.asm:137-167. The first bench card whose type is the player's
+	 * weakness scores 2 and ends the scan: a Porygon arena that can damage
+	 * adds 10 and skips .check_weakness_3, any other arena goes to it; a
+	 * bench without such a card jumps straight to .check_resistance_3. */
 	b = wAIPlayerWeakness;
 	v = GetTurnDuelistVariable(DUELVARS_BENCH);
 	hl = v.hl;
@@ -520,7 +524,7 @@ check_weakness_2:
 		++e;
 		a = gb_read8(hl++);
 		if (a == 0xFFu)
-			break;
+			goto check_resistance_3;
 		uint8_t saved_e = e;
 		LoadCardDataToBuffer1_FromDeckIndex(a);
 		a = TranslateColorToWR(wLoadedCard1Type);
@@ -528,18 +532,18 @@ check_weakness_2:
 		if ((a & b) == 0u)
 			continue;
 		AIEncourageResult r = AIEncourage(2u);
-		(a = r.a); f = r.f;
+		a = r.a; f = r.f;
 		DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
 		uint8_t arena_id = (uint8_t)GetCardIDFromDeckIndex(arena.a);
-		if (arena_id == PORYGON) {
-			CheckIfCanDamageDefendingPokemonResult damage = CheckIfCanDamageDefendingPokemon(e, f, b, c, d, e, hl);
-			a = damage.a; f = damage.f;
-			if ((f & 0x10u) != 0u) {
-				r = AIEncourage(10u);
-				a = r.a; f = r.f;
-				break;
-			}
-		}
+		if (arena_id != PORYGON)
+			goto check_weakness_3;
+		CheckIfCanDamageDefendingPokemonResult damage = CheckIfCanDamageDefendingPokemon(e, f, b, c, d, e, hl);
+		a = damage.a; f = damage.f;
+		if ((f & 0x10u) == 0u)
+			goto check_weakness_3;
+		r = AIEncourage(10u);
+		a = r.a; f = r.f;
+		goto check_resistance_3;
 	}
 
 check_weakness_3:
