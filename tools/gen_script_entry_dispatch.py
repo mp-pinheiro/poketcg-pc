@@ -23,6 +23,18 @@ HandleMoveModeAPress (home/script.asm:1-45) stores a map object's handler in
 wNextScript for EnterScript's `jp hl`. Those handlers are the `dw` entries of
 data/map_objects.asm: PCMenu, PrintInteractableObjectText, Func_fc7a and the
 `Script_*` bytecode entries.
+
+ScriptCommand_SetNextNPCAndScript (engine/overworld/scripting.asm) stores a
+script's `set_next_npc_and_script` operand in wNextScript the same way, so a
+local label named there is an entry too, even when it opens with ordinary
+instructions (Script_f631.ows_f63c starts with `call TryGiveMedalPCPacks`).
+Those are named in the scripts sources handed in with --scripts.
+
+A routine entry whose code portion ends at a `start_script` continues into
+the bytecode after it: the port's header declares the rst's address as
+`#define <CName>_START_SCRIPT 0x....u`, and the thunk hands RST20 the byte
+after it, the return address the rst pushes. A dotted symbol's C name replaces
+the dot with an underscore.
 """
 
 from __future__ import annotations
@@ -35,6 +47,13 @@ OPCODE_RST_20 = 0xE7
 SYM_LINE = re.compile(r"^([0-9A-Fa-f]{2}):([0-9A-Fa-f]{4})\s+(\S+)\s*$")
 DECL = re.compile(r"^[A-Za-z_][\w ]*\**\s*\b(\w+)\s*\(\s*void\s*\)\s*;", re.MULTILINE)
 MAP_SCRIPT_TARGET = re.compile(r"^\tdw\s+(\w+)\s*$", re.MULTILINE)
+GLOBAL_LABEL = re.compile(r"^([A-Za-z_]\w*):")
+NEXT_SCRIPT_TARGET = re.compile(r"^\tset_next_npc_and_script\s+\w+,\s*(\.?\w+(?:\.\w+)?)\s*(?:;.*)?$")
+START_SCRIPT = re.compile(r"^#define\s+(\w+)_START_SCRIPT\s+0x([0-9A-Fa-f]+)u", re.MULTILINE)
+
+
+def c_name(symbol: str) -> str:
+    return symbol.replace(".", "_")
 
 
 def symbol_table(sym_path: Path) -> dict[str, tuple[int, int]]:
@@ -82,8 +101,26 @@ def object_handler_targets(map_objects: Path) -> set[str]:
     }
 
 
+def next_script_targets(scripts: list[Path]) -> set[str]:
+    """`set_next_npc_and_script NPC, target` operands; a `.local` operand names
+    the enclosing global label's local, as the assembler resolves it."""
+    targets: set[str] = set()
+    for path in scripts:
+        parent = ""
+        for line in path.read_text().splitlines():
+            label = GLOBAL_LABEL.match(line)
+            if label:
+                parent = label.group(1)
+            match = NEXT_SCRIPT_TARGET.match(line)
+            if match:
+                target = match.group(1)
+                targets.add(f"{parent}{target}" if target.startswith(".") else target)
+    return targets
+
+
 def script_entries(sym_path: Path, rom_path: Path, map_scripts: Path,
-                   npc_map_data: Path, map_objects: Path) -> dict[int, tuple[int, int, list[str]]]:
+                   npc_map_data: Path, map_objects: Path,
+                   scripts: list[Path]) -> dict[int, tuple[int, int, list[str]]]:
     rom = rom_path.read_bytes()
     table = symbol_table(sym_path)
 
@@ -110,6 +147,7 @@ def script_entries(sym_path: Path, rom_path: Path, map_scripts: Path,
     wanted |= map_script_code_targets(map_scripts)
     wanted |= npc_preload_targets(npc_map_data)
     wanted |= object_handler_targets(map_objects)
+    wanted |= next_script_targets(scripts)
     unresolved = sorted(name for name in wanted if name not in table)
     if unresolved:
         raise SystemExit(f"script entry targets missing from poketcg.sym: {unresolved}")
@@ -164,6 +202,7 @@ THUNK_PARAMETERS = ("b", "c", "d", "e", "hl")
 
 def thunk(name: str, owner: tuple[str, str, str], header_text: str) -> str:
     _header, ret, args = owner
+    continuation = dict(START_SCRIPT.findall(header_text)).get(name)
     declared = [] if not args or args == "void" else [
         parameter.split()[-1].lstrip("*") for parameter in args.split(",")
     ]
@@ -188,13 +227,19 @@ def thunk(name: str, owner: tuple[str, str, str], header_text: str) -> str:
                 lines.append(f"\tout.{member} = r.{member};")
         if "f" not in members and "carry" in members:
             lines.append("\tout.f = r.carry ? 0x10u : 0u;")
+    if continuation is not None:
+        rst = int(continuation, 16)
+        lines.append(
+            f"\tout = script_entry_regs_from_rst20(RST20(out.a, out.f, out.b, out.c, "
+            f"out.d, out.e, 0x{rst + 1:04X}u));"
+        )
     lines += ["\treturn out;", "}\n"]
     return "\n".join(lines)
 
 
 def render(sym_path: Path, rom_path: Path, home: Path, map_scripts: Path,
-           npc_map_data: Path, map_objects: Path) -> str:
-    entries = script_entries(sym_path, rom_path, map_scripts, npc_map_data, map_objects)
+           npc_map_data: Path, map_objects: Path, scripts: list[Path]) -> str:
+    entries = script_entries(sym_path, rom_path, map_scripts, npc_map_data, map_objects, scripts)
     owners = ported_symbols(home)
     header_text = {p.name: p.read_text() for p in home.glob("*.h")}
 
@@ -202,15 +247,15 @@ def render(sym_path: Path, rom_path: Path, home: Path, map_scripts: Path,
     headers = {"scripting.h"}
     for offset in sorted(entries):
         bank, opcode, names = entries[offset]
-        ported = sorted(name for name in names if name in owners)
+        ported = sorted(name for name in names if c_name(name) in owners)
         name = ported[0] if ported else sorted(names)[0]
         if opcode == OPCODE_RST_20:
             rows.append(f'\t{{ 0x{offset:04X}u, "{name}", SCRIPT_ENTRY_BYTECODE, 0x{bank:02X}u, NULL }},')
         elif ported:
-            owner = owners[name]
+            owner = owners[c_name(name)]
             headers.add(owner[0])
-            thunks.append(thunk(name, owner, header_text[owner[0]]))
-            rows.append(f'\t{{ 0x{offset:04X}u, "{name}", SCRIPT_ENTRY_ROUTINE, 0x{bank:02X}u, enter_{name} }},')
+            thunks.append(thunk(c_name(name), owner, header_text[owner[0]]))
+            rows.append(f'\t{{ 0x{offset:04X}u, "{name}", SCRIPT_ENTRY_ROUTINE, 0x{bank:02X}u, enter_{c_name(name)} }},')
         else:
             rows.append(f'\t{{ 0x{offset:04X}u, "{name}", SCRIPT_ENTRY_UNPORTED, 0x{bank:02X}u, NULL }},')
 
@@ -228,6 +273,8 @@ def render(sym_path: Path, rom_path: Path, home: Path, map_scripts: Path,
 #include "mem.h"
 
 {include_lines}
+
+static ScriptEntryRegs script_entry_regs_from_rst20(RST20Result r);
 
 {body}
 static const ScriptEntryRow kScriptEntries[] = {{
@@ -321,9 +368,12 @@ def main() -> int:
     parser.add_argument("--map-scripts", type=Path, required=True)
     parser.add_argument("--npc-map-data", type=Path, required=True)
     parser.add_argument("--map-objects", type=Path, required=True)
+    parser.add_argument("--scripts", type=Path, nargs="+", required=True,
+                        help="script sources whose set_next_npc_and_script operands are entries")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    content = render(args.sym, args.rom, args.home, args.map_scripts, args.npc_map_data, args.map_objects)
+    content = render(args.sym, args.rom, args.home, args.map_scripts, args.npc_map_data,
+                     args.map_objects, args.scripts)
     if not args.output.is_file() or args.output.read_text() != content:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(content)

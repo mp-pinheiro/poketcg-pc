@@ -69,6 +69,8 @@ add_custom_command(
 # The table classifies a target by whether src/home declares it, so a new
 # declaration has to reconfigure it.
 file(GLOB HOME_HEADERS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/home/*.h")
+file(GLOB SCRIPT_SOURCES "${CMAKE_SOURCE_DIR}/poketcg/src/scripts/*.asm")
+list(APPEND SCRIPT_SOURCES "${CMAKE_SOURCE_DIR}/poketcg/src/engine/overworld/scripting.asm")
 set(SCRIPT_ENTRY_SOURCE "${CMAKE_BINARY_DIR}/script_entry_dispatch_generated.c")
 add_custom_command(
   OUTPUT "${SCRIPT_ENTRY_SOURCE}"
@@ -79,12 +81,14 @@ add_custom_command(
           --map-scripts "${CMAKE_SOURCE_DIR}/poketcg/src/data/map_scripts.asm"
           --npc-map-data "${CMAKE_SOURCE_DIR}/poketcg/src/data/npc_map_data.asm"
           --map-objects "${CMAKE_SOURCE_DIR}/poketcg/src/data/map_objects.asm"
+          --scripts ${SCRIPT_SOURCES}
           --output "${SCRIPT_ENTRY_SOURCE}"
   DEPENDS "${CMAKE_SOURCE_DIR}/tools/gen_script_entry_dispatch.py"
           "${CMAKE_SOURCE_DIR}/poketcg/poketcg.sym"
           "${CMAKE_SOURCE_DIR}/poketcg/src/data/map_scripts.asm"
           "${CMAKE_SOURCE_DIR}/poketcg/src/data/npc_map_data.asm"
           "${CMAKE_SOURCE_DIR}/poketcg/src/data/map_objects.asm"
+          ${SCRIPT_SOURCES}
           ${HOME_HEADERS}
   COMMENT "gen_script_entry_dispatch: poketcg.sym + rom -> script entry table"
   VERBATIM)

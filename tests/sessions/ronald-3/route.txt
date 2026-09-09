@@ -1,0 +1,49 @@
+# From ronald-2's end (the Grass Club entrance): out to the overworld map, two
+# cursor steps west to the Pokemon Dome, and its entrance: the Plate of Legends
+# (18,0)/(20,0) read from (20,2); with fewer than seven medals Ronald walks up,
+# asks whether the medals were collected (yes), and leaves.
+idle
+hold DOWN 120
+idle
+press LEFT
+idle
+press LEFT
+idle
+press A
+idle
+peek
+hold UP 120
+idle
+hold RIGHT 40
+idle
+press UP
+idle
+peek
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+shot ronald-3-ask
+yes
+press A
+idle
+press A
+idle
+press A
+idle
+peek
+shot ronald-3-end

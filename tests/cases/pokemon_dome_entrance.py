@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/scripts/pokemon_dome_entrance.asm."""
+from tests.cases._fixtures import dome_ronald_fixture as _dome_ronald_fixture, DOME_RONALD_REGS as _DOME_RONALD_REGS
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -38,8 +39,35 @@ CASES["PokemonDomeEntranceCloseTextBox"] = [
 ]
 # <<< factory PokemonDomeEntranceCloseTextBox
 
+# >>> factory Script_f631.ows_f63c
+# The code portion of Script_f631's .ows_f63c local, entered by `jp hl` from
+# EnterScript after `set_next_npc_and_script NPC_RONALD1, .ows_f63c`; its
+# `start_script` rst at $7651 ends the code, so every case completes pre-ret
+# there (the split applied after migration, below). Compared: a and f at the
+# rst (`xor a`), the medal count and its successor written to wTxRam3 and
+# wTxRam3_b, and EVENT_MEDAL_COUNT's byte refreshed by TryGiveMedalPCPacks.
+wTxRam3 = 0xCE43
+wEventVarByte_MedalCount = 0xD3DC
+CONTRACT["Script_f631.ows_f63c"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["Script_f631.ows_f63c"] = [
+    # ronald-3 632724: the live entry, five medals (Mitch, Gene, Amy, Isaac, Ken poked).
+    dict(_dome_ronald_fixture(vram=False, bank=3), **_DOME_RONALD_REGS,
+         read={wTxRam3: 4, wEventVarByte_MedalCount: 1}),
+    # No medals at all: the count and its successor are 0 and 1.
+    dict(_dome_ronald_fixture(vram=False, bank=3, **{"D3D2": b"\x00"}), **_DOME_RONALD_REGS,
+         read={wTxRam3: 4, wEventVarByte_MedalCount: 1}),
+    # Eight medals: the count refresh gives every pack, and the successor is 9.
+    dict(_dome_ronald_fixture(vram=False, bank=3, **{"D3D2": b"\xff"}), **_DOME_RONALD_REGS,
+         read={wTxRam3: 4, wEventVarByte_MedalCount: 1}),
+]
+# <<< factory Script_f631.ows_f63c
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+# >>> factory-completion Script_f631.ows_f63c
+for _rec in SCHEMA2_CASES["Script_f631.ows_f63c"]:
+    _rec["completion"] = {"mode": "pre-ret", "pc": 0x7651}
+# <<< factory-completion Script_f631.ows_f63c
 
 MUTATIONS = {}
 # >>> factory-mutation PokemonDomeEntranceCloseTextBox
@@ -48,3 +76,6 @@ MUTATIONS["PokemonDomeEntranceCloseTextBox"] = {"source_symbol": "PokemonDomeEnt
 # >>> factory-mutation PokemonDomeEntranceLoadMap
 MUTATIONS["PokemonDomeEntranceLoadMap"] = {"source_symbol": "PokemonDomeEntranceLoadMap", "before": "ZeroOutEventValue(EVENT_POKEMON_DOME_STATE", "after": "ZeroOutEventValue(EVENT_HALL_OF_HONOR_DOORS_OPEN", "case_ids": ["PokemonDomeEntranceLoadMap-0"]}
 # <<< factory-mutation PokemonDomeEntranceLoadMap
+# >>> factory-mutation Script_f631.ows_f63c
+MUTATIONS["Script_f631.ows_f63c"] = {"source_symbol": "Script_f631_ows_f63c", "before": "\twTxRam3_b = (uint8_t)(count + 1u);", "after": "\twTxRam3_b = count;", "case_ids": ["Script_f631.ows_f63c-0", "Script_f631.ows_f63c-1", "Script_f631.ows_f63c-2"]}
+# <<< factory-mutation Script_f631.ows_f63c

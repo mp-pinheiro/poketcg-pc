@@ -691,3 +691,11 @@ BEGIN_USE_ATTACK_REGS = BEGIN_USE_ATTACK.regs
 
 def begin_use_attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return BEGIN_USE_ATTACK.case(vram=vram, bank=bank, **changes)
+
+
+DOME_RONALD = Fixture("ronald-3-dome-ronald-entry")
+DOME_RONALD_REGS = DOME_RONALD.regs
+
+
+def dome_ronald_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return DOME_RONALD.case(vram=vram, bank=bank, **changes)

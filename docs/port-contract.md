@@ -611,6 +611,13 @@ That framing is too coarse; measured, the boundary sits elsewhere.
   Declaring `completion = {"mode": "pre-ret", "pc": <rst addr>}` verifies the whole
   code portion faithfully — no simplification, no scene state, no frame budget.
   Running past the `rst` needs ambient overworld state a probed call cannot supply.
+  The whole-game run still needs the bytecode: the routine's header declares the
+  rst as `#define <CName>_START_SCRIPT 0x....u` next to its prototype, and
+  `tools/gen_script_entry_dispatch.py` makes the dispatcher's thunk hand RST20 the
+  byte after it once the C body returns (`Script_f631.ows_f63c` in
+  `pokemon_dome_entrance.h` is the worked example; a dotted local label's C name
+  replaces the dot with an underscore, and its probe entry, cases and mutation key
+  keep the sym name).
   The harness gap this exposed: `pyboy_oracle.py::_arm` registered every hook as
   `hook_register(0, addr, …)`. PyBoy keys hooks on `(bank, address)`, and a hook in
   the switchable `$4000-$7FFF` window only fires while that bank is mapped — so a

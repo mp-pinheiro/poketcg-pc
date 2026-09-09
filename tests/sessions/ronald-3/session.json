@@ -1,0 +1,39 @@
+{
+  "goal": "From the second Ronald duel: the overworld map to the Pokemon Dome entrance, the Plate of Legends, and Ronald's medal question answered yes until he leaves",
+  "name": "ronald-3",
+  "ordinals": 634953,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ],
+    "582677": [
+      [
+        54226,
+        24
+      ]
+    ],
+    "603055": [
+      [
+        54226,
+        59
+      ]
+    ]
+  },
+  "recorded": "2026-09-09T08:51:31+00:00",
+  "schema": 1
+}
