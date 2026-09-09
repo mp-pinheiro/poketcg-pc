@@ -5574,8 +5574,9 @@ PrintAttackOrCardDescriptionResult PrintAttackOrCardDescription(uint16_t hl, uin
 	}
 	InitTextPrintingInTextbox(19u, d, e);
 	ProcessTextHeaderResult text = ProcessTextFromID(text_id);
+	/* core.asm:5772 SetOneLineSeparation: `xor a` -- a is 0 and only Z is set. */
 	(void)SetOneLineSeparation();
-	return (PrintAttackOrCardDescriptionResult){text.a, d, e, text.f, text.hl};
+	return (PrintAttackOrCardDescriptionResult){0u, d, e, 0x80u, text.hl};
 }
 /* <<< factory PrintAttackOrCardDescription */
 

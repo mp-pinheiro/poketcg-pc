@@ -1610,7 +1610,7 @@ static void adapt_PrintAttackOrPkmnPowerInformation(ProbeState *s)
 static void adapt_PrintAttackOrNonPokemonCardDescription(ProbeState *s)
 {
 	PrintAttackOrCardDescriptionResult r = PrintAttackOrNonPokemonCardDescription(s->hl, s->d, s->e);
-	s->a = r.a; s->f = r.f; s->hl = r.hl;
+	s->a = r.a; s->f = r.f; s->d = r.d; s->e = r.e; s->hl = r.hl;
 }
 /* <<< factory PrintAttackOrNonPokemonCardDescription */
 

@@ -9,6 +9,10 @@ from tests.cases._fixtures import card_can_be_played_fixture as _card_can_be_pla
 from tests.cases._fixtures import alive_in_play_area_fixture as _alive_in_play_area_fixture, ALIVE_IN_PLAY_AREA_REGS as _ALIVE_IN_PLAY_AREA_REGS
 from tests.cases._fixtures import energy_needed_in_hand_fixture as _energy_needed_in_hand_fixture, ENERGY_NEEDED_IN_HAND_REGS as _ENERGY_NEEDED_IN_HAND_REGS
 from tests.cases._fixtures import sort_temp_hand_fixture as _sort_temp_hand_fixture, SORT_TEMP_HAND_REGS as _SORT_TEMP_HAND_REGS
+from tests.cases._fixtures import card_description_fixture as _card_description_fixture, CARD_DESCRIPTION_REGS as _CARD_DESCRIPTION_REGS
+from tests.cases._fixtures import card_page_energy_fixture as _card_page_energy_fixture, CARD_PAGE_ENERGY_REGS as _CARD_PAGE_ENERGY_REGS
+from tests.cases._fixtures import card_page_trainer_fixture as _card_page_trainer_fixture, CARD_PAGE_TRAINER_REGS as _CARD_PAGE_TRAINER_REGS
+from tests.cases._fixtures import energy_or_trainer_page_fixture as _energy_or_trainer_page_fixture, ENERGY_OR_TRAINER_PAGE_REGS as _ENERGY_OR_TRAINER_PAGE_REGS
 from tests.cases._fixtures import fully_powered_fixture as _fully_powered_fixture, FULLY_POWERED_REGS as _FULLY_POWERED_REGS
 from tests.cases._fixtures import ai_trainer_phase5_fixture as _ai_trainer_phase5_fixture, AI_TRAINER_PHASE5_REGS as _AI_TRAINER_PHASE5_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_defending_ko_fixture as _ai_defending_ko_fixture, AI_DEFENDING_KO_REGS as _AI_DEFENDING_KO_REGS, power_screen_fixture as _power_screen_fixture, POWER_SCREEN_REGS as _POWER_SCREEN_REGS
@@ -3137,8 +3141,11 @@ CASES["PrintAttackOrPkmnPowerInformation"] = [
 # <<< factory PrintAttackOrPkmnPowerInformation
 
 # >>> factory PrintAttackOrNonPokemonCardDescription
-CONTRACT["PrintAttackOrNonPokemonCardDescription"] = {"compare": ("a", "f", "hl", "d", "e"), "preserve": ("d", "e")}
+CONTRACT["PrintAttackOrNonPokemonCardDescription"] = {"compare": ("a", "f", "hl", "d", "e"), "preserve": ()}
 CASES["PrintAttackOrNonPokemonCardDescription"] = [
+    # credits-1 858300: a legendary card's page; the description prints and the
+    # exit is SetOneLineSeparation's `xor a` with de at (1, 11).
+    dict(_card_description_fixture(vram=False, bank=1), **_CARD_DESCRIPTION_REGS, read={0xCC36: 2, 0xCD00: 1}),
     {"hl": 0xC500, "wram": {0xC500: b"\x00\x00"}},
     dict(POISON, hl=0xC500, wram={0xC500: b"\x00\x00"}),
 ]
@@ -4115,6 +4122,8 @@ CASES["DisplayCardPage_PokemonOverview"] = [
 # >>> factory DisplayEnergyOrTrainerCardPage
 CONTRACT["DisplayEnergyOrTrainerCardPage"] = {"compare": ("a", "f", "hl", "d", "e"), "preserve": ()}
 CASES["DisplayEnergyOrTrainerCardPage"] = [
+    # dome-5 834713: the trainer page drawn from the live state.
+    dict(_energy_or_trainer_page_fixture(vram=True, bank=1), **_ENERGY_OR_TRAINER_PAGE_REGS, read={0xCD08: 1, 0xC000: 0x100}),
     {"hl": 0xC500, "wram": {0xC500: b"\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, "setup": SETUP_TEXT, "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, hl=0xC500, wram={0xC500: b"\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, setup=SETUP_TEXT, instruction_budget=2000000, cycle_budget=8000000),
 ]
@@ -4123,6 +4132,9 @@ CASES["DisplayEnergyOrTrainerCardPage"] = [
 # >>> factory DisplayCardPage_Energy
 CONTRACT["DisplayCardPage_Energy"] = {"compare": ("a", "f", "hl", "d", "e"), "preserve": ()}
 CASES["DisplayCardPage_Energy"] = [
+    # dome-4 778085: an energy card's page from the duel; the exit is the
+    # description printer's `xor a`.
+    dict(_card_page_energy_fixture(vram=True, bank=1), **_CARD_PAGE_ENERGY_REGS, read={0xCD08: 1, 0xC000: 0x100}),
     {"wram": {0xCC2E: b"\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, "setup": SETUP_TEXT, "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, wram={0xCC2E: b"\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, setup=SETUP_TEXT, instruction_budget=2000000, cycle_budget=8000000),
 ]
@@ -4139,6 +4151,8 @@ CASES["DisplayCardPage_TrainerPage2"] = [
 # >>> factory DisplayCardPage_TrainerPage1
 CONTRACT["DisplayCardPage_TrainerPage1"] = {"compare": ("a", "f", "hl", "d", "e"), "preserve": ()}
 CASES["DisplayCardPage_TrainerPage1"] = [
+    # dome-5 834713: a trainer card's first page from the duel.
+    dict(_card_page_trainer_fixture(vram=True, bank=1), **_CARD_PAGE_TRAINER_REGS, read={0xCD08: 1, 0xC000: 0x100}),
     {"wram": {0xCC2E: b"\x00\x00\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, "setup": SETUP_TEXT, "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, wram={0xCC2E: b"\x00\x00\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, setup=SETUP_TEXT, instruction_budget=2000000, cycle_budget=8000000),
 ]
@@ -6799,12 +6813,7 @@ MUTATIONS["PrintAttackOrCardDescription"] = {"source_symbol": "PrintAttackOrCard
 MUTATIONS["PrintAttackOrPkmnPowerInformation"] = {"source_symbol": "PrintAttackOrPkmnPowerInformation", "before": "\tif ((uint8_t)(lo | hi) == 0u) {", "after": "\tif ((uint8_t)(lo | hi) == 1u) {", "case_ids": ["PrintAttackOrPkmnPowerInformation-0", "PrintAttackOrPkmnPowerInformation-1"]}
 # <<< factory-mutation PrintAttackOrPkmnPowerInformation
 # >>> factory-mutation PrintAttackOrNonPokemonCardDescription
-MUTATIONS["PrintAttackOrNonPokemonCardDescription"] = {
-    "source_symbol": "PrintAttackOrNonPokemonCardDescription",
-    "before": "\t\treturn (PrintAttackOrCardDescriptionResult){a, d, e, 0x80u, hl};",
-    "after": "\t\treturn (PrintAttackOrCardDescriptionResult){a, d, e, 0x00u, hl};",
-    "case_ids": ["PrintAttackOrNonPokemonCardDescription-0", "PrintAttackOrNonPokemonCardDescription-1"],
-}
+MUTATIONS["PrintAttackOrNonPokemonCardDescription"] = {"source_symbol": "PrintAttackOrNonPokemonCardDescription", "before": "\treturn PrintAttackOrCardDescription(hl, 1u, 11u);", "after": "\treturn PrintAttackOrCardDescription(hl, 1u, 12u);", "case_ids": ["PrintAttackOrNonPokemonCardDescription-0"]}
 # <<< factory-mutation PrintAttackOrNonPokemonCardDescription
 # >>> factory-mutation DisplayCardPageOnLeftOrRightPressed
 MUTATIONS["DisplayCardPageOnLeftOrRightPressed"] = {
@@ -7140,21 +7149,16 @@ MUTATIONS["DisplayCardPage_PokemonOverview"] = {
 }
 # <<< factory-mutation DisplayCardPage_PokemonOverview
 # >>> factory-mutation DisplayEnergyOrTrainerCardPage
-MUTATIONS["DisplayEnergyOrTrainerCardPage"] = {
-    "source_symbol": "DisplayEnergyOrTrainerCardPage",
-    "before": "\treturn PrintAttackOrNonPokemonCardDescription(saved_hl, d, e);",
-    "after": "\treturn PrintAttackOrNonPokemonCardDescription(saved_hl, 1u, 1u);",
-    "case_ids": ["DisplayEnergyOrTrainerCardPage-0", "DisplayEnergyOrTrainerCardPage-1"],
-}
+MUTATIONS["DisplayEnergyOrTrainerCardPage"] = {"source_symbol": "DisplayEnergyOrTrainerCardPage", "before": "\tDrawRegularTextBox(&box_hl, 0u, 20u, 18u, 0u, 0u);", "after": "\tDrawRegularTextBox(&box_hl, 0u, 20u, 17u, 0u, 0u);", "case_ids": ["DisplayEnergyOrTrainerCardPage-0"]}
 # <<< factory-mutation DisplayEnergyOrTrainerCardPage
 # >>> factory-mutation DisplayCardPage_Energy
-MUTATIONS["DisplayCardPage_Energy"] = {"source_symbol": "DisplayCardPage_Energy", "before": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_ENERGY, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);", "after": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_ENERGY, f, b, c, d, e, 0u);", "case_ids": ["DisplayCardPage_Energy-0", "DisplayCardPage_Energy-1"]}
+MUTATIONS["DisplayCardPage_Energy"] = {"source_symbol": "DisplayCardPage_Energy", "before": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_ENERGY, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);", "after": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);", "case_ids": ["DisplayCardPage_Energy-0"]}
 # <<< factory-mutation DisplayCardPage_Energy
 # >>> factory-mutation DisplayCardPage_TrainerPage2
 MUTATIONS["DisplayCardPage_TrainerPage2"] = {"source_symbol": "DisplayCardPage_TrainerPage2", "before": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR + 2u);", "after": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, 0u);", "case_ids": ["DisplayCardPage_TrainerPage2-0", "DisplayCardPage_TrainerPage2-1"]}
 # <<< factory-mutation DisplayCardPage_TrainerPage2
 # >>> factory-mutation DisplayCardPage_TrainerPage1
-MUTATIONS["DisplayCardPage_TrainerPage1"] = {"source_symbol": "DisplayCardPage_TrainerPage1", "before": "PrintAttackOrCardDescriptionResult DisplayCardPage_TrainerPage1(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);", "after": "PrintAttackOrCardDescriptionResult DisplayCardPage_TrainerPage1(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, 0u);", "case_ids": ["DisplayCardPage_TrainerPage1-0", "DisplayCardPage_TrainerPage1-1"]}
+MUTATIONS["DisplayCardPage_TrainerPage1"] = {"source_symbol": "DisplayCardPage_TrainerPage1", "before": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);\n\treturn result;\n}\n/* <<< factory DisplayCardPage_TrainerPage1", "after": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_ENERGY, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);\n\treturn result;\n}\n/* <<< factory DisplayCardPage_TrainerPage1", "case_ids": ["DisplayCardPage_TrainerPage1-0"]}
 # <<< factory-mutation DisplayCardPage_TrainerPage1
 # >>> factory-mutation PrintPracticeDuelInstructionsForCurrentTurn
 MUTATIONS["PrintPracticeDuelInstructionsForCurrentTurn"] = {

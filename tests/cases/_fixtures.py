@@ -859,3 +859,31 @@ SORT_TEMP_HAND_REGS = SORT_TEMP_HAND.regs
 
 def sort_temp_hand_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return SORT_TEMP_HAND.case(vram=vram, bank=bank, **changes)
+
+
+CARD_DESCRIPTION = Fixture("credits-1-card-description-entry")
+CARD_DESCRIPTION_REGS = CARD_DESCRIPTION.regs
+
+
+def card_description_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return CARD_DESCRIPTION.case(vram=vram, bank=bank, **changes)
+
+
+CARD_PAGE_ENERGY = Fixture("dome-4-card-page-energy-entry")
+CARD_PAGE_ENERGY_REGS = CARD_PAGE_ENERGY.regs
+CARD_PAGE_TRAINER = Fixture("dome-5-card-page-trainer-entry")
+CARD_PAGE_TRAINER_REGS = CARD_PAGE_TRAINER.regs
+ENERGY_OR_TRAINER_PAGE = Fixture("dome-5-energy-or-trainer-page-entry")
+ENERGY_OR_TRAINER_PAGE_REGS = ENERGY_OR_TRAINER_PAGE.regs
+
+
+def card_page_energy_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return CARD_PAGE_ENERGY.case(vram=vram, bank=bank, **changes)
+
+
+def card_page_trainer_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return CARD_PAGE_TRAINER.case(vram=vram, bank=bank, **changes)
+
+
+def energy_or_trainer_page_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return ENERGY_OR_TRAINER_PAGE.case(vram=vram, bank=bank, **changes)
