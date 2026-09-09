@@ -1,0 +1,15 @@
+{
+  "goal": "from Brandon's duel: Isaac's duel to its end under the pilot's WRAM policy and his after-duel script, with the three Lightning members' event bits poked",
+  "name": "isaac-duel",
+  "ordinals": 410870,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ]
+  },
+  "recorded": "2026-09-09T00:28:53+00:00",
+  "schema": 1
+}

@@ -1,0 +1,16 @@
+idle
+hold UP 200
+idle
+hold DOWN 16
+idle
+hold LEFT 200
+idle
+peek
+press A
+idle
+shot isaac-ask
+yes
+duel
+dismiss
+peek
+shot isaac-end

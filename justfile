@@ -472,8 +472,8 @@ session-status:
     python3 tools/completion/session.py status
 
 # Extend a session by scripting the reference: `just session-pilot first-duel route.txt lab-pc "goal"`.
-session-pilot FROM SCRIPT OUT GOAL="":
-    python3 tools/completion/pilot.py --from {{FROM}} --script {{SCRIPT}} --out tests/sessions/{{OUT}} --goal "{{GOAL}}"
+session-pilot FROM SCRIPT OUT GOAL="" *ARGS:
+    python3 tools/completion/pilot.py --from {{FROM}} --script {{SCRIPT}} --out tests/sessions/{{OUT}} --goal "{{GOAL}}" {{ARGS}}
 
 # Write tests/sessions/NAME/session.json for a freshly recorded input.txt.
 session-meta NAME GOAL:

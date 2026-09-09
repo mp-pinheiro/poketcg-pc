@@ -322,9 +322,10 @@ def screenshot(core: refstream.Core, path: Path) -> None:
 class Driver:
     """Runs the reference one DoFrame at a time under script control."""
 
-    def __init__(self, base_masks: list[int], budget: int) -> None:
+    def __init__(self, base_masks: list[int], budget: int,
+                 pokes: refstream.Pokes | None = None) -> None:
         self.masks = list(base_masks)
-        self.core = refstream.Core([0] * budget)
+        self.core = refstream.Core([0] * budget, pokes=pokes)
         self.core.input_axis = "ordinal"
         self.core.override_mask = 0
         self.budget = budget
@@ -588,13 +589,19 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out", type=Path, required=True, help="new session directory")
     parser.add_argument("--goal", default="")
     parser.add_argument("--base-ordinals", type=int, help="use only the first N inputs of the base session")
+    parser.add_argument("--pokes", type=Path,
+                        help="pokes.txt applied on the reference and copied into the new session")
     args = parser.parse_args(argv)
 
-    base_masks, _meta = session.load_session(args.base)
+    base_masks, base_meta = session.load_session(args.base)
     if args.base_ordinals is not None:
         base_masks = base_masks[:args.base_ordinals]
+    pokes: refstream.Pokes = {k: list(v) for k, v in base_meta["pokes"].items()}
+    if args.pokes is not None:
+        for ordinal, writes in refstream.load_pokes(args.pokes).items():
+            pokes.setdefault(ordinal, []).extend(writes)
     steps = parse_script(args.script)
-    driver = Driver([], budget=(len(base_masks) + 80000) * 2 + 400)
+    driver = Driver([], budget=(len(base_masks) + 80000) * 2 + 400, pokes=pokes)
     try:
         driver.replay(base_masks)
         start = len(driver.masks)
@@ -625,6 +632,8 @@ def main(argv: list[str] | None = None) -> int:
         driver.close()
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / "input.txt").write_text("\n".join(str(m) for m in masks) + "\n", encoding="utf-8")
+    if pokes:
+        (args.out / "pokes.txt").write_text(refstream.pokes_text(pokes), encoding="utf-8")
     print(f"wrote {args.out / 'input.txt'}: {len(masks)} DoFrames ({len(masks) - start} new)")
     if args.goal:
         session.record_meta(args.out.name, args.goal)
