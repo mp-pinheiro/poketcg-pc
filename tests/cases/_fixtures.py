@@ -935,3 +935,11 @@ ENERGY_RETRIEVAL_REGS = ENERGY_RETRIEVAL.regs
 
 def energy_retrieval_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return ENERGY_RETRIEVAL.case(vram=vram, bank=bank, **changes)
+
+
+ENERGY_SEARCH_FLOWER = Fixture("ai-flower-energy-search-entry")
+ENERGY_SEARCH_FLOWER_REGS = ENERGY_SEARCH_FLOWER.regs
+
+
+def energy_search_flower_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return ENERGY_SEARCH_FLOWER.case(vram=vram, bank=bank, **changes)

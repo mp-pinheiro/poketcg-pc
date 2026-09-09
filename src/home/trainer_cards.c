@@ -2572,86 +2572,62 @@ AIDecide_PokemonTraderResult AIDecide_PokemonTrader(uint8_t d)
 /* <<< factory AIDecide_PokemonTrader */
 
 /* >>> factory AIDecide_EnergySearch */
-AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a, uint8_t d)
+static AIEnergySearchScanResult energy_search_scan(uint8_t type_filter)
 {
-	CoreCardListResult hand = CreateEnergyCardListFromHand(a);
-	uint8_t e;
-	uint8_t mode;
-	uint8_t found;
-	uint8_t found_flags;
-	uint16_t hl;
-
-	if (!(hand.f & 0x10u)) {
-		d = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
-		e = PLAY_AREA_ARENA;
-		for (;;) {
-			uint8_t slot = (uint8_t)(DUELVARS_ARENA_CARD + e);
-			uint8_t deck_index = GetTurnDuelistVariable(slot).a;
-			uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
-			wTempCardID = card_id;
-			LoadCardDataToBuffer1_FromCardID(card_id);
-			wTempCardType = (uint8_t)(wLoadedCard1Type | TYPE_ENERGY);
-			hl = wDuelTempList_ADDR;
-			for (;;) {
-				uint8_t entry = gb_read8(hl++);
-				if (entry == 0xFFu)
-					break;
-				CheckIfEnergyIsUsefulResult useful = CheckIfEnergyIsUseful(entry);
-				if (useful.f & 0x10u)
-					return (AIDecideEnergySearchResult){entry, (uint8_t)(entry == 0u ? 0x80u : 0x00u), d};
-			}
-			e++;
-			if (e == d)
-				break;
-		}
-	}
-
-	if (wOpponentDeckID == HEATED_BATTLE_DECK_ID)
-		mode = 1u;
-	else if (wOpponentDeckID == WONDERS_OF_SCIENCE_DECK_ID)
-		mode = 1u;
-	else
-		mode = 0u;
-
-	FindBasicEnergyCardsInLocationResult deck = FindBasicEnergyCardsInLocation(CARD_LOCATION_DECK);
-	if (deck.f & 0x10u)
-		return (AIDecideEnergySearchResult){0u, 0x80u, deck.d};
-
-	d = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
-	e = PLAY_AREA_ARENA;
+	uint8_t d = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	uint8_t e = PLAY_AREA_ARENA;
 	for (;;) {
-		uint8_t slot = (uint8_t)(DUELVARS_ARENA_CARD + e);
-		uint8_t deck_index = GetTurnDuelistVariable(slot).a;
+		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e)).a;
 		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
 		wTempCardID = card_id;
 		LoadCardDataToBuffer1_FromCardID(card_id);
-		wTempCardType = (uint8_t)(wLoadedCard1Type | TYPE_ENERGY);
-		if (mode == 1u && wTempCardType != TYPE_ENERGY_FIRE && wTempCardType != TYPE_ENERGY_LIGHTNING)
-			goto next_play_area;
-		if (mode == 2u && wTempCardType != TYPE_ENERGY_GRASS)
-			goto next_play_area;
-		hl = wDuelTempList_ADDR;
-		for (;;) {
-			uint8_t entry = gb_read8(hl++);
-			if (entry == 0xFFu)
-				break;
-			CheckIfEnergyIsUsefulResult useful = CheckIfEnergyIsUseful(entry);
-			if (useful.f & 0x10u) {
-				found = entry;
-				found_flags = (uint8_t)(entry == 0u ? 0x90u : 0x10u);
-				return (AIDecideEnergySearchResult){found, (uint8_t)(found_flags | 0x10u), d};
+		uint8_t type = (uint8_t)(wLoadedCard1Type | TYPE_ENERGY);
+		if (type_filter == ENERGY_SEARCH_ANY_TYPE
+		    || type == type_filter
+		    || (type_filter == TYPE_ENERGY_FIRE && type == TYPE_ENERGY_LIGHTNING)) {
+			wTempCardType = type;
+			uint16_t hl = wDuelTempList_ADDR;
+			for (;;) {
+				uint8_t entry = gb_read8(hl);
+				hl++;
+				if (entry == 0xFFu)
+					break;
+				if (CheckIfEnergyIsUseful(entry).f & 0x10u)
+					return (AIEnergySearchScanResult){entry,
+						(uint8_t)(entry == 0u ? 0x80u : 0x00u), d, e};
 			}
 		}
-
-	next_play_area:
 		e++;
 		if (e == d)
-			break;
+			return (AIEnergySearchScanResult){e, (uint8_t)(0xC0u | 0x10u), d, e};
+	}
+}
+
+AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a, uint8_t d)
+{
+	CoreCardListResult hand = CreateEnergyCardListFromHand(a);
+	if (!(hand.f & 0x10u)) {
+		AIEnergySearchScanResult useful = energy_search_scan(ENERGY_SEARCH_ANY_TYPE);
+		d = useful.d;
+		if (!(useful.f & 0x10u))
+			return (AIDecideEnergySearchResult){useful.a, useful.f, d};
 	}
 
-	if (mode == 1u)
-		return (AIDecideEnergySearchResult){d, (uint8_t)(d == 0u ? 0x80u : 0x00u), d};
-	return (AIDecideEnergySearchResult){wDuelTempList, 0x90u, d};
+	uint8_t deck_id = wOpponentDeckID;
+	uint8_t filter = (deck_id == HEATED_BATTLE_DECK_ID || deck_id == WONDERS_OF_SCIENCE_DECK_ID)
+		? TYPE_ENERGY_FIRE : ENERGY_SEARCH_ANY_TYPE;
+
+	FindBasicEnergyCardsInLocationResult deck = FindBasicEnergyCardsInLocation(CARD_LOCATION_DECK);
+	if (deck.f & 0x10u)
+		return (AIDecideEnergySearchResult){deck.a, (uint8_t)(deck.a == 0u ? 0x80u : 0x00u), deck.d};
+
+	AIEnergySearchScanResult scan = energy_search_scan(filter);
+	if (!(scan.f & 0x10u))
+		return (AIDecideEnergySearchResult){scan.a, (uint8_t)(scan.f | 0x10u), scan.d};
+	if (filter != ENERGY_SEARCH_ANY_TYPE)
+		return (AIDecideEnergySearchResult){scan.a,
+			(uint8_t)(scan.a == 0u ? 0x80u : 0x00u), scan.d};
+	return (AIDecideEnergySearchResult){wDuelTempList, scan.f, scan.d};
 }
 /* <<< factory AIDecide_EnergySearch */
 

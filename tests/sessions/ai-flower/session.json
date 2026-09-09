@@ -1,0 +1,14 @@
+{
+  "ai_deck": 22,
+  "branch_ordinal": 23227,
+  "derived_from": "practice-win",
+  "duel_finished_ordinal": 44372,
+  "duel_turns": 21,
+  "goal": "AI-versus-AI duel with the Flower Power deck; the AI plays Venusaur's Energy Trans power",
+  "name": "ai-flower",
+  "ordinals": 45872,
+  "prizes": null,
+  "recorded": "2026-09-09T17:24:00+00:00",
+  "schema": 1,
+  "seed": null
+}

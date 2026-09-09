@@ -3,6 +3,7 @@ from tests.cases._fixtures import energy_removal_fixture as _energy_removal_fixt
 from tests.cases._fixtures import energy_retrieval_fixture as _energy_retrieval_fixture, ENERGY_RETRIEVAL_REGS as _ENERGY_RETRIEVAL_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_bill_fixture as _ai_bill_fixture, AI_BILL_REGS as _AI_BILL_REGS
 from tests.cases._fixtures import energy_search_fixture as _energy_search_fixture, ENERGY_SEARCH_REGS as _ENERGY_SEARCH_REGS
+from tests.cases._fixtures import energy_search_flower_fixture as _energy_search_flower_fixture, ENERGY_SEARCH_FLOWER_REGS as _ENERGY_SEARCH_FLOWER_REGS
 from tests.cases._fixtures import professor_oak_fixture as _professor_oak_fixture, PROFESSOR_OAK_REGS as _PROFESSOR_OAK_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/ai/trainer_cards.asm."""
 
@@ -841,6 +842,9 @@ CASES["AIDecide_EnergySearch"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", wOpponentDeckID: b"\x00", 0xC200: b"\x01" * 0x3C},
          instruction_budget=2000000, cycle_budget=8000000),
     dict(_energy_search_fixture(vram=False), **_ENERGY_SEARCH_REGS),
+    # ai-flower DoFrame 41180: the Flower Power AI's turn, energy in hand and a
+    # Grass arena card, the state whose wTempCardType write diverged.
+    dict(_energy_search_flower_fixture(vram=False), **_ENERGY_SEARCH_FLOWER_REGS),
 ]
 # <<< factory AIDecide_EnergySearch
 
@@ -1482,12 +1486,7 @@ MUTATIONS["AIDecide_PokemonTrader_PowerGenerator"] = {"source_symbol": "AIDecide
 MUTATIONS["AIDecide_PokemonTrader"] = {"source_symbol": "AIDecide_PokemonTrader", "before": "return (AIDecide_PokemonTraderResult){deck_id, (uint8_t)(deck_id == 0u ? 0x80u : 0x00u), d};", "after": "return (AIDecide_PokemonTraderResult){deck_id, 0xFFu, d};", "case_ids": ["AIDecide_PokemonTrader-0", "AIDecide_PokemonTrader-2"]}
 # <<< factory-mutation AIDecide_PokemonTrader
 # >>> factory-mutation AIDecide_EnergySearch
-MUTATIONS["AIDecide_EnergySearch"] = {
-    "source_symbol": "AIDecide_EnergySearch",
-    "before": "\t\t\t\t\treturn (AIDecideEnergySearchResult){entry, (uint8_t)(entry == 0u ? 0x80u : 0x00u), d};",
-    "after": "\t\t\t\t\treturn (AIDecideEnergySearchResult){entry, (uint8_t)(entry == 0u ? 0x90u : 0x10u), d};",
-    "case_ids": ["AIDecide_EnergySearch-2"],
-}
+MUTATIONS["AIDecide_EnergySearch"] = {"source_symbol": "AIDecide_EnergySearch", "before": "\t\treturn (AIDecideEnergySearchResult){scan.a,\n\t\t\t(uint8_t)(scan.a == 0u ? 0x80u : 0x00u), scan.d};", "after": "\t\treturn (AIDecideEnergySearchResult){scan.a, scan.f, scan.d};", "case_ids": ["AIDecide_EnergySearch-3"]}
 # <<< factory-mutation AIDecide_EnergySearch
 # >>> factory-mutation _AIProcessHandTrainerCards
 MUTATIONS["_AIProcessHandTrainerCards"] = {'source_symbol': '_AIProcessHandTrainerCards', 'before': '\t\t\t(void)logic->play(phase, e);', 'after': '\t\t\t(void)logic;', 'case_ids': ['_AIProcessHandTrainerCards-0']}

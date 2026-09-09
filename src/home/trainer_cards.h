@@ -161,6 +161,8 @@ AIDecide_PokemonTraderResult AIDecide_PokemonTrader(uint8_t d);
 /* <<< factory AIDecide_PokemonTrader */
 /* >>> factory AIDecide_EnergySearch */
 typedef struct { uint8_t a; uint8_t f; uint8_t d; } AIDecideEnergySearchResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t d; uint8_t e; } AIEnergySearchScanResult;
+#define ENERGY_SEARCH_ANY_TYPE 0xFFu
 AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a, uint8_t d);
 /* <<< factory AIDecide_EnergySearch */
 /* >>> factory _AIProcessHandTrainerCards */
