@@ -66,12 +66,19 @@ def path_to_masks(path: list[str], seed_masks: list[int]) -> list[int]:
 
 class Explorer:
     def __init__(self, budget: int, seed_masks: list[int], seed: int = 20260902,
-                 checkpoint_dir: Path | None = None) -> None:
+                 checkpoint_dir: Path | None = None, pokes: Any | None = None,
+                 axis: str = "frame") -> None:
         self.rng = random.Random(seed)
         self.checkpoint_dir = checkpoint_dir
         if checkpoint_dir is not None:
             checkpoint_dir.mkdir(parents=True, exist_ok=True)
-        self.core = refstream.Core(seed_masks)
+        # `axis` is the unit an action counts in. A boot search counts emulator
+        # frames, which is what scenario.boot_input is indexed by. A search
+        # seeded from a recorded session must count DoFrame anchors instead:
+        # that is the axis session input.txt and the native --input-ordinal use,
+        # so the path it emits appends to the session's own timeline.
+        self.axis = axis
+        self.core = refstream.Core(seed_masks, pokes=pokes)
         library = self.core.library
         library.gambatte_newstatesave.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_int]
         library.gambatte_newstatesave.restype = ctypes.c_int
@@ -127,24 +134,42 @@ class Explorer:
             },
         }
 
+    def _advance_units(self, count: int) -> None:
+        if self.axis == "frame":
+            for _ in range(count):
+                self.core.step_frame()
+            return
+        # One unit is one DoFrame anchor. The frame cap is the ROM's worst
+        # case per anchor (an LCD-off stretch renders no frames at all), so a
+        # wedged anchor ends the action instead of the search.
+        target = self.core.ordinal + count
+        budget = count * 24 + 240
+        while self.core.ordinal < target and budget > 0:
+            self.core.step_frame()
+            budget -= 1
+
     def advance(self, mask: int, press: int, settle: int, repeats: int = 1) -> set[str]:
         """Run one action, repeated, and return the routines it newly reached."""
         self.hits = set()
         for _ in range(repeats):
             if press:
                 self.core.hold(mask)
-                for _ in range(press):
-                    self.core.step_frame()
+                self._advance_units(press)
             self.core.hold(0)
-            for _ in range(settle):
-                self.core.step_frame()
+            self._advance_units(settle)
         return self.hits - self.seen
 
     def seed(self, masks: list[int]) -> tuple[bytes, int]:
         """Replay a known-good prefix so the search starts past the intro."""
         self.hits = set()
         self.core.hold(None)
-        self.core.run(len(masks))
+        if self.axis == "frame":
+            self.core.run(len(masks))
+        else:
+            # A session timeline is one mask per anchor: run frames until the
+            # anchors are spent, the same bound reference_frames gives a verify.
+            self.core.input_axis = "ordinal"
+            self.core.run(len(masks) * 2 + 400, stop=lambda: self.core.ordinal >= len(masks))
         self.seen |= self.hits
         return self.snapshot(), len(masks)
 
@@ -152,6 +177,10 @@ class Explorer:
                max_depth: int) -> dict[str, Any]:
         start = time.perf_counter()
         blob, frames = self.seed(seed_masks)
+        # The depth cap bounds the search, not the prefix: a session seed is
+        # already tens of thousands of anchors deep, and an absolute cap drops
+        # every child before it runs.
+        max_depth += frames
         # Every reachable state stays in the frontier, prioritised by what its
         # action just discovered. Dropping zero-gain children starves the search
         # immediately: navigating a menu needs a DOWN that reveals nothing
@@ -270,16 +299,30 @@ def main(argv: list[str] | None = None) -> int:
                         help="drop children past this frame depth")
     parser.add_argument("--json")
     parser.add_argument("--corpus", help="directory for checkpoints and replay scripts")
+    parser.add_argument("--seed-session",
+                        help="recorded session whose timeline is the prefix; the search "
+                             "then runs on the DoFrame axis and its scripts append to it")
     args = parser.parse_args(argv)
 
     import scenario as scenario_module
 
-    seed_masks = scenario_module.boot_input(args.seed_frames)
+    pokes = None
+    axis = "frame"
+    if args.seed_session:
+        import session as session_module
+
+        seed_masks, meta = session_module.load_session(args.seed_session)
+        pokes = meta.get("pokes") or None
+        axis = "ordinal"
+        print(f"  seed session={args.seed_session} ordinals={len(seed_masks)}", file=sys.stderr)
+    else:
+        seed_masks = scenario_module.boot_input(args.seed_frames)
     corpus = Path(args.corpus) if args.corpus else None
     if corpus is not None and not corpus.is_absolute():
         corpus = ROOT / corpus
     explorer = Explorer(args.budget, seed_masks,
-                        checkpoint_dir=(corpus / "checkpoints") if corpus else None)
+                        checkpoint_dir=(corpus / "checkpoints") if corpus else None,
+                        pokes=pokes, axis=axis)
     try:
         result = explorer.search(seed_masks, args.report_every, args.frontier_cap,
                                  args.max_depth)
