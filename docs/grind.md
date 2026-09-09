@@ -276,8 +276,9 @@ minutes, no model in the loop. Rows come out with memory mismatches first:
 ```
 ROW ordinal=<K> routine=<R> status=fail memory   $CCB9: oracle 2800 != C 1400 | ...
 ROW ordinal=<K> routine=<R> status=fail registers f: oracle $80 != C $00
+ROW ordinal=<K> routine=<R> status=frames memory $C000: oracle ... | $CAB8: ...
 ROW ordinal=<K> routine=<R> status=error|wedged  OracleError: ...
-SWEEP <name> after=0 until=<n> routines=1140 failing=82 errors=15 wedged=6
+SWEEP <name> after=0 until=<n> routines=1140 failing=82 frames=12 errors=15 wedged=6
 ```
 
 Read the rows in this order:
@@ -291,6 +292,15 @@ Read the rows in this order:
 - `registers` rows are exit registers no caller may read (a screen routine's
   leftovers threaded out of an effect). Real, low priority: the session loop
   never reports them because WRAM is identical.
+- `frames` rows looped on DoFrame: the PyBoy lane skips the halt and runs its
+  own VBlank service in place of the ISR, so such a routine counts frames,
+  advances the RNG and animates sprites unlike the probe, and every
+  frame-driven byte differs (`HandleYesOrNoMenu`, the script `AskQuestion`
+  commands). Not comparable this way; the session loop is their gate, and the
+  tracker does not open an issue for them.
+- every entry carries the two save banks, so a routine that reads or writes
+  SRAM (`PrintSortNumberInCardList_CallFromPointer`) compares against the
+  game's own save, not an empty one.
 - `error` rows hit the oracle's frame budget: the routine waits for input the
   case's two-entry `keys` timeline does not supply. Not comparable this way.
 - `wedged` rows hung the PyBoy frame; the sweep marks them and moves on.
