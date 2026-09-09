@@ -107,47 +107,81 @@ LOOP_KEYWORDS = ("for (", "for(", "while (", "while(", "do {", "goto ")
 ASM_CALL = re.compile(r"^\s*(?:call|farcall|bank1call|callfar)\b", re.IGNORECASE)
 
 
+TERMINATOR = re.compile(r"^\s+(?:ret|reti|jp|jr)\s*(?:[A-Za-z_.][\w.]*\s*)?$")
+
+
 def asm_shapes() -> tuple[set[str], dict[str, int], dict[str, int]]:
-    """Routines whose asm branches backwards, plus per-routine instruction and call counts."""
+    """Routines whose asm branches backwards, plus per-routine instruction and
+    call counts over the blocks the entry can reach.
+
+    A routine's span runs to the next global label, so it also holds locals
+    the routine itself never enters: `ShakeScreenX.UpdateFunc`
+    (screen_effects.asm:104) is a callback installed in wScreenAnimUpdatePtr
+    and sits past ShakeScreenX's own `ret`. Counting it made a faithful
+    two-write routine look like a body that dropped two calls."""
     looping: set[str] = set()
     sizes: dict[str, int] = {}
     asm_calls: dict[str, int] = {}
 
-    def close(name: str | None, labels: dict[str, int], branches: list[tuple[int, str]],
-              count: int, calls: int) -> None:
-        if name is None:
-            return
-        sizes[name] = max(sizes.get(name, 0), count)
-        asm_calls[name] = max(asm_calls.get(name, 0), calls)
-        for position, target in branches:
-            if target.startswith(".") and labels.get(target, position) < position:
-                looping.add(name)
-                return
-
-    for path in sorted(ASM_ROOT.rglob("*.asm")):
-        current, labels, branches, count, step, calls = None, {}, [], 0, 0, 0
-        for raw in path.read_text(errors="replace").splitlines():
-            line = raw.split(";", 1)[0]
-            label = LABEL.match(line)
-            if label:
-                close(current, labels, branches, count, calls)
-                current, labels, branches, count, step, calls = label.group(1), {}, [], 0, 0, 0
+    def shape(lines: list[tuple[str, str | None]]) -> tuple[int, int, bool]:
+        starts = {label: index for index, (_line, label) in enumerate(lines) if label}
+        reachable: set[int] = set()
+        loops = False
+        pending = [0]
+        while pending:
+            index = pending.pop()
+            while index < len(lines) and index not in reachable:
+                reachable.add(index)
+                line, label = lines[index]
+                if label is not None:
+                    index += 1
+                    continue
+                branch = BRANCH.match(line)
+                if branch and branch.group(1).startswith("."):
+                    target = starts.get(branch.group(1))
+                    if target is not None:
+                        if target < index:
+                            loops = True
+                        pending.append(target)
+                if TERMINATOR.match(line):
+                    break
+                index += 1
+        count = calls = 0
+        for index in sorted(reachable):
+            line, label = lines[index]
+            if label is not None:
                 continue
-            if current is None:
-                continue
-            step += 1
-            local = LOCAL_LABEL.match(line.strip()) if line.strip().startswith(".") else None
-            if local:
-                labels.setdefault(local.group(1), step)
-                continue
-            branch = BRANCH.match(line)
-            if branch:
-                branches.append((step, branch.group(1)))
             if ASM_CALL.match(line):
                 calls += 1
             if INSTRUCTION.match(line):
                 count += 1
-        close(current, labels, branches, count, calls)
+        return count, calls, loops
+
+    def close(name: str | None, lines: list[tuple[str, str | None]]) -> None:
+        if name is None:
+            return
+        count, calls, loops = shape(lines)
+        sizes[name] = max(sizes.get(name, 0), count)
+        asm_calls[name] = max(asm_calls.get(name, 0), calls)
+        if loops:
+            looping.add(name)
+
+    for path in sorted(ASM_ROOT.rglob("*.asm")):
+        current: str | None = None
+        lines: list[tuple[str, str | None]] = []
+        for raw in path.read_text(errors="replace").splitlines():
+            line = raw.split(";", 1)[0]
+            label = LABEL.match(line)
+            if label:
+                close(current, lines)
+                current, lines = label.group(1), []
+                continue
+            if current is None:
+                continue
+            stripped = line.strip()
+            local = LOCAL_LABEL.match(stripped) if stripped.startswith(".") else None
+            lines.append((line, local.group(1) if local else None))
+        close(current, lines)
     return looping, sizes, asm_calls
 
 
