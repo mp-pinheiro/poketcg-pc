@@ -903,3 +903,19 @@ PLAY_AREA_CARD_INFO_REGS = PLAY_AREA_CARD_INFO.regs
 
 def play_area_card_info_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return PLAY_AREA_CARD_INFO.case(vram=vram, bank=bank, **changes)
+
+
+ATTACK_ANIMATION_COMMANDS = Fixture("dome-2-attack-animation-commands-entry")
+ATTACK_ANIMATION_COMMANDS_REGS = ATTACK_ANIMATION_COMMANDS.regs
+
+
+def attack_animation_commands_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return ATTACK_ANIMATION_COMMANDS.case(vram=vram, bank=bank, **changes)
+
+
+ANIMATION_NEXT_COMMAND = Fixture("dome-2-animation-next-command-entry")
+ANIMATION_NEXT_COMMAND_REGS = ANIMATION_NEXT_COMMAND.regs
+
+
+def animation_next_command_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return ANIMATION_NEXT_COMMAND.case(vram=vram, bank=bank, **changes)

@@ -7770,7 +7770,7 @@ void PlayAttackAnimation(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, 
 		loaded_animation = ATK_ANIM_BIG_HIT;
 		wLoadedAttackAnimation = loaded_animation;
 	}
-	(void)PlayAttackAnimationCommands(wLoadedAttackAnimation, d, e);
+	(void)PlayAttackAnimationCommands(wLoadedAttackAnimation, 0u, 0u, d, e);
 	hWhoseTurn = saved_h_whose_turn;
 	(void)a;
 	(void)f;
@@ -7812,7 +7812,7 @@ void PlayStatusConditionQueueAnimations(void)
 		}
 		wLoadedAttackAnimation = animation;
 		wDuelAnimLocationParam = 0u;
-		(void)PlayAttackAnimationCommands(animation, d, animation);
+		(void)PlayAttackAnimationCommands(animation, 0u, 0u, d, animation);
 	}
 }
 /* <<< factory PlayStatusConditionQueueAnimations */

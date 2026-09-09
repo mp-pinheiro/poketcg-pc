@@ -36,27 +36,31 @@ void DuelAnim156(void);
 uint16_t GetDamageText(uint16_t hl);
 /* <<< factory GetDamageText */
 /* >>> factory PlayAttackAnimationCommands_NextCommand */
+/* commands.asm: the interpreter's exit bc is the last shake command's pair
+ * (PlayDuelAnimation pushes and pops bc); otherwise the caller's. */
 typedef struct {
+	uint8_t b;
+	uint8_t c;
 	uint8_t d;
 	uint8_t e;
 } PlayAttackAnimationCommands_NextCommandResult;
 
-PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands_NextCommand(uint8_t a, uint8_t d, uint8_t e);
+PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands_NextCommand(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 /* <<< factory PlayAttackAnimationCommands_NextCommand */
 /* >>> factory AnimationCommand_AnimNormal */
-PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimNormal(uint8_t d, uint8_t e);
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimNormal(uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 /* <<< factory AnimationCommand_AnimNormal */
 /* >>> factory AnimationCommand_AnimPlayer */
-PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimPlayer(uint8_t d, uint8_t e);
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimPlayer(uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 /* <<< factory AnimationCommand_AnimPlayer */
 /* >>> factory AnimationCommand_AnimOpponent */
-PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimOpponent(uint8_t d, uint8_t e);
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimOpponent(uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 /* <<< factory AnimationCommand_AnimOpponent */
 /* >>> factory AnimationCommand_AnimPlayArea */
-PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimPlayArea(uint8_t d, uint8_t e);
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimPlayArea(uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 /* <<< factory AnimationCommand_AnimPlayArea */
 /* >>> factory AnimationCommand_AnimScreen */
-PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimScreen(uint8_t d, uint8_t e);
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimScreen(uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 /* <<< factory AnimationCommand_AnimScreen */
 /* >>> factory DuelAnim157 */
 /* poketcg/src/engine/duel/animations/commands.asm */
@@ -81,6 +85,6 @@ void UpdateMainSceneHUD(void);
 void SetScreenForDuelAnimation(uint16_t hl);
 /* <<< factory SetScreenForDuelAnimation */
 /* >>> factory PlayAttackAnimationCommands */
-PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands(uint8_t a, uint8_t d, uint8_t e);
+PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 /* <<< factory PlayAttackAnimationCommands */
 #endif

@@ -68,7 +68,9 @@ static void adapt_GetDamageText(ProbeState *s)
 /* >>> factory PlayAttackAnimationCommands_NextCommand */
 static void adapt_PlayAttackAnimationCommands_NextCommand(ProbeState *s)
 {
-	PlayAttackAnimationCommands_NextCommandResult r = PlayAttackAnimationCommands_NextCommand(s->a, s->d, s->e);
+	PlayAttackAnimationCommands_NextCommandResult r = PlayAttackAnimationCommands_NextCommand(s->a, s->b, s->c, s->d, s->e);
+	s->b = r.b;
+	s->c = r.c;
 	s->d = r.d;
 	s->e = r.e;
 }
@@ -77,7 +79,9 @@ static void adapt_PlayAttackAnimationCommands_NextCommand(ProbeState *s)
 /* >>> factory AnimationCommand_AnimNormal */
 static void adapt_AnimationCommand_AnimNormal(ProbeState *s)
 {
-	PlayAttackAnimationCommands_NextCommandResult r = AnimationCommand_AnimNormal(s->d, s->e);
+	PlayAttackAnimationCommands_NextCommandResult r = AnimationCommand_AnimNormal(s->b, s->c, s->d, s->e);
+	s->b = r.b;
+	s->c = r.c;
 	s->d = r.d;
 	s->e = r.e;
 }
@@ -86,7 +90,9 @@ static void adapt_AnimationCommand_AnimNormal(ProbeState *s)
 /* >>> factory AnimationCommand_AnimPlayer */
 static void adapt_AnimationCommand_AnimPlayer(ProbeState *s)
 {
-	PlayAttackAnimationCommands_NextCommandResult r = AnimationCommand_AnimPlayer(s->d, s->e);
+	PlayAttackAnimationCommands_NextCommandResult r = AnimationCommand_AnimPlayer(s->b, s->c, s->d, s->e);
+	s->b = r.b;
+	s->c = r.c;
 	s->d = r.d;
 	s->e = r.e;
 }
@@ -95,7 +101,9 @@ static void adapt_AnimationCommand_AnimPlayer(ProbeState *s)
 /* >>> factory AnimationCommand_AnimOpponent */
 static void adapt_AnimationCommand_AnimOpponent(ProbeState *s)
 {
-	PlayAttackAnimationCommands_NextCommandResult r = AnimationCommand_AnimOpponent(s->d, s->e);
+	PlayAttackAnimationCommands_NextCommandResult r = AnimationCommand_AnimOpponent(s->b, s->c, s->d, s->e);
+	s->b = r.b;
+	s->c = r.c;
 	s->d = r.d;
 	s->e = r.e;
 }
@@ -104,7 +112,9 @@ static void adapt_AnimationCommand_AnimOpponent(ProbeState *s)
 /* >>> factory AnimationCommand_AnimPlayArea */
 static void adapt_AnimationCommand_AnimPlayArea(ProbeState *s)
 {
-	PlayAttackAnimationCommands_NextCommandResult r = AnimationCommand_AnimPlayArea(s->d, s->e);
+	PlayAttackAnimationCommands_NextCommandResult r = AnimationCommand_AnimPlayArea(s->b, s->c, s->d, s->e);
+	s->b = r.b;
+	s->c = r.c;
 	s->d = r.d;
 	s->e = r.e;
 }
@@ -113,7 +123,9 @@ static void adapt_AnimationCommand_AnimPlayArea(ProbeState *s)
 /* >>> factory AnimationCommand_AnimScreen */
 static void adapt_AnimationCommand_AnimScreen(ProbeState *s)
 {
-	PlayAttackAnimationCommands_NextCommandResult r = AnimationCommand_AnimScreen(s->d, s->e);
+	PlayAttackAnimationCommands_NextCommandResult r = AnimationCommand_AnimScreen(s->b, s->c, s->d, s->e);
+	s->b = r.b;
+	s->c = r.c;
 	s->d = r.d;
 	s->e = r.e;
 }
@@ -157,7 +169,9 @@ static void adapt_SetScreenForDuelAnimation(ProbeState *s)
 /* >>> factory PlayAttackAnimationCommands */
 static void adapt_PlayAttackAnimationCommands(ProbeState *s)
 {
-	PlayAttackAnimationCommands_NextCommandResult r = PlayAttackAnimationCommands(s->a, s->d, s->e);
+	PlayAttackAnimationCommands_NextCommandResult r = PlayAttackAnimationCommands(s->a, s->b, s->c, s->d, s->e);
+	s->b = r.b;
+	s->c = r.c;
 	s->d = r.d;
 	s->e = r.e;
 }

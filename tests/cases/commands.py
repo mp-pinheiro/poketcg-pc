@@ -13,6 +13,9 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory AnimationCommand_AnimEnd
+from tests.cases._fixtures import attack_animation_commands_fixture as _attack_animation_commands_fixture, ATTACK_ANIMATION_COMMANDS_REGS as _ATTACK_ANIMATION_COMMANDS_REGS
+from tests.cases._fixtures import animation_next_command_fixture as _animation_next_command_fixture, ANIMATION_NEXT_COMMAND_REGS as _ANIMATION_NEXT_COMMAND_REGS
+
 CONTRACT["AnimationCommand_AnimEnd"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
 CASES["AnimationCommand_AnimEnd"] = [{"wram": {0xC100: b"\x00"}}, dict(POISON, wram={0xC100: b"\xAA"})]
 # <<< factory AnimationCommand_AnimEnd
@@ -121,8 +124,10 @@ CASES["GetDamageText"] = [
 # <<< factory GetDamageText
 
 # >>> factory PlayAttackAnimationCommands_NextCommand
-CONTRACT["PlayAttackAnimationCommands_NextCommand"] = {"compare": ("b", "c", "d", "e"), "preserve": ("b", "c")}
+CONTRACT["PlayAttackAnimationCommands_NextCommand"] = {"compare": ("b", "c", "d", "e"), "preserve": ()}
 CASES["PlayAttackAnimationCommands_NextCommand"] = [
+    # dome-2 693453: the first command of Peal of Thunder's list, run to the end.
+    dict(_animation_next_command_fixture(vram=False, bank=6), **_ANIMATION_NEXT_COMMAND_REGS, read={0xD4AE: 8}),
     dict(POISON, a=8),
     dict(POISON, a=9),
     dict(POISON, a=10),
@@ -254,8 +259,11 @@ CASES["AnimationCommand_AnimScreen"] = [
 # <<< factory AnimationCommand_AnimScreen
 
 # >>> factory PlayAttackAnimationCommands
-CONTRACT["PlayAttackAnimationCommands"] = {"compare": ("b", "c", "d", "e"), "preserve": ("b", "c")}
+CONTRACT["PlayAttackAnimationCommands"] = {"compare": ("b", "c", "d", "e"), "preserve": ()}
 CASES["PlayAttackAnimationCommands"] = [
+    # dome-2 693453: Peal of Thunder's play-area animation; the command list ends
+    # with a small shake, so bc leaves as ($63, $61).
+    dict(_attack_animation_commands_fixture(vram=False, bank=6), **_ATTACK_ANIMATION_COMMANDS_REGS, read={0xD4AE: 8}),
     {"d": 0xC1, "e": 0x22, "wram": {0xCCB8: b"\x00", 0xD4AE: b"\xA1", 0xD4B0: b"\xB2", 0xD4B3: b"\xC3"}, "read": {0xD4AE: 1, 0xD4B0: 1, 0xD4B3: 1}},
     dict(POISON, wram={0xCCB8: b"\x00", 0xD4AE: b"\xA1", 0xD4B0: b"\xB2", 0xD4B3: b"\xC3"}, read={0xD4AE: 1, 0xD4B0: 1, 0xD4B3: 1}),
     {"d": 0xC1, "e": 0x24, "wram": {0xCCB8: b"\x8F", 0xFF80: b"\x06"}, "read": {0xD4AE: 1, 0xD4B0: 1, 0xD4B3: 1}},
@@ -314,7 +322,7 @@ MUTATIONS["GetDamageText"] = {
 }
 # <<< factory-mutation GetDamageText
 # >>> factory-mutation PlayAttackAnimationCommands_NextCommand
-MUTATIONS["PlayAttackAnimationCommands_NextCommand"] = {"source_symbol": "PlayAttackAnimationCommands_NextCommand", "before": "\tuint8_t opcode = gb_read8(de);\n\tde++;", "after": "\tuint8_t opcode = gb_read8(de);\n\tde += 2u;", "case_ids": ["PlayAttackAnimationCommands_NextCommand-0", "PlayAttackAnimationCommands_NextCommand-1", "PlayAttackAnimationCommands_NextCommand-2", "PlayAttackAnimationCommands_NextCommand-3", "PlayAttackAnimationCommands_NextCommand-4"]}
+MUTATIONS["PlayAttackAnimationCommands_NextCommand"] = {"source_symbol": "AnimationCommand_AnimNormal", "before": "\t\tif (cmd == DUEL_ANIM_SHAKE1) {\n\t\t\tc = DUEL_ANIM_SMALL_SHAKE_X;\n\t\t\tb = DUEL_ANIM_SMALL_SHAKE_Y;", "after": "\t\tif (cmd == DUEL_ANIM_SHAKE1) {\n\t\t\tc = DUEL_ANIM_SMALL_SHAKE_X;\n\t\t\tb = DUEL_ANIM_BIG_SHAKE_Y;", "case_ids": ["PlayAttackAnimationCommands_NextCommand-0"]}
 # <<< factory-mutation PlayAttackAnimationCommands_NextCommand
 # >>> factory-mutation DuelAnim157
 MUTATIONS["DuelAnim157"] = {"source_symbol": "DuelAnim157", "before": "\treturn; /* DuelAnim157 */", "after": "\tgb_write8(0xC100u, 1u); /* DuelAnim157 */", "case_ids": ["DuelAnim157-2"]}
@@ -349,5 +357,5 @@ MUTATIONS["AnimationCommand_AnimPlayArea"] = {"source_symbol": "AnimationCommand
 MUTATIONS["AnimationCommand_AnimScreen"] = {"source_symbol": "AnimationCommand_AnimScreen", "before": "\tgb_write8(wDuelAnimSetScreen_ADDR, screen);", "after": "\tgb_write8(wDuelAnimSetScreen_ADDR, (uint8_t)(screen + 1u));", "case_ids": ["AnimationCommand_AnimScreen-0", "AnimationCommand_AnimScreen-1", "AnimationCommand_AnimScreen-2"]}
 # <<< factory-mutation AnimationCommand_AnimScreen
 # >>> factory-mutation PlayAttackAnimationCommands
-MUTATIONS["PlayAttackAnimationCommands"] = {"source_symbol": "PlayAttackAnimationCommands", "before": "\t\treturn (PlayAttackAnimationCommands_NextCommandResult){d, e};", "after": "\t\treturn (PlayAttackAnimationCommands_NextCommandResult){(uint8_t)(d + 1u), e};", "case_ids": ["PlayAttackAnimationCommands-0", "PlayAttackAnimationCommands-1"]}
+MUTATIONS["PlayAttackAnimationCommands"] = {"source_symbol": "AnimationCommand_AnimNormal", "before": "\t\tif (cmd == DUEL_ANIM_SHAKE1) {\n\t\t\tc = DUEL_ANIM_SMALL_SHAKE_X;\n\t\t\tb = DUEL_ANIM_SMALL_SHAKE_Y;", "after": "\t\tif (cmd == DUEL_ANIM_SHAKE1) {\n\t\t\tc = DUEL_ANIM_SMALL_SHAKE_X;\n\t\t\tb = DUEL_ANIM_BIG_SHAKE_Y;", "case_ids": ["PlayAttackAnimationCommands-0"]}
 # <<< factory-mutation PlayAttackAnimationCommands

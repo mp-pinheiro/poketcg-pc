@@ -224,7 +224,7 @@ uint16_t GetDamageText(uint16_t hl)
  * re-entering here, which is how the asm's tail-jumps compose into a loop.
  * Opcodes >= NUM_ANIM_COMMANDS index past the table in the real ROM, so they are
  * outside the contract; they terminate here as the END entries do. */
-PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands_NextCommand(uint8_t a, uint8_t d, uint8_t e)
+PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands_NextCommand(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
 	(void)a;
 	uint16_t de = (uint16_t)(((uint16_t)d << 8) | e);
@@ -234,19 +234,19 @@ PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands_NextCo
 	uint8_t ne = (uint8_t)de;
 	switch (opcode) {
 	case ANIMCMD_NORMAL:
-		return AnimationCommand_AnimNormal(nd, ne);
+		return AnimationCommand_AnimNormal(b, c, nd, ne);
 	case ANIMCMD_PLAYER_SIDE:
-		return AnimationCommand_AnimPlayer(nd, ne);
+		return AnimationCommand_AnimPlayer(b, c, nd, ne);
 	case ANIMCMD_OPP_SIDE:
-		return AnimationCommand_AnimOpponent(nd, ne);
+		return AnimationCommand_AnimOpponent(b, c, nd, ne);
 	case ANIMCMD_SET_SCREEN:
-		return AnimationCommand_AnimScreen(nd, ne);
+		return AnimationCommand_AnimScreen(b, c, nd, ne);
 	case ANIMCMD_PLAY_AREA:
-		return AnimationCommand_AnimPlayArea(nd, ne);
+		return AnimationCommand_AnimPlayArea(b, c, nd, ne);
 	case ANIMCMD_END:
 	case ANIMCMD_END_UNUSED:
 	default:
-		return (PlayAttackAnimationCommands_NextCommandResult){nd, ne};
+		return (PlayAttackAnimationCommands_NextCommandResult){b, c, nd, ne};
 	}
 }
 /* <<< factory PlayAttackAnimationCommands_NextCommand */
@@ -255,7 +255,7 @@ PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands_NextCo
 /* commands.asm:81-149. Reads the animation id from the stream; four ids take
  * dedicated paths, everything else plays the id as-is. `.check_duelist` picks
  * `c` when it is the player's turn or wDuelType is 0, otherwise `b`. */
-PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimNormal(uint8_t d, uint8_t e)
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimNormal(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
 	uint16_t de = (uint16_t)(((uint16_t)d << 8) | e);
 	uint8_t cmd = gb_read8(de);
@@ -274,13 +274,12 @@ PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimNormal(uint8_
 		(void)PlayDuelAnimation(DUEL_ANIM_DAMAGE_HUD);
 		if (gb_read8(wDuelDisplayedScreen_ADDR) == DUEL_MAIN_SCENE)
 			(void)PlayDuelAnimation(DUEL_ANIM_UPDATE_HUD);
-		return PlayAttackAnimationCommands_NextCommand(0u, nd, ne);
+		return PlayAttackAnimationCommands_NextCommand(0u, b, c, nd, ne);
 	}
 
 	uint8_t anim = cmd;
 	if (cmd == DUEL_ANIM_SHAKE1 || cmd == DUEL_ANIM_SHAKE2
 			|| cmd == DUEL_ANIM_SHAKE3) {
-		uint8_t c, b;
 		if (cmd == DUEL_ANIM_SHAKE1) {
 			c = DUEL_ANIM_SMALL_SHAKE_X;
 			b = DUEL_ANIM_SMALL_SHAKE_Y;
@@ -301,48 +300,48 @@ PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimNormal(uint8_
 
 	/* .play_anim */
 	(void)PlayDuelAnimation(anim);
-	return PlayAttackAnimationCommands_NextCommand(0u, nd, ne);
+	return PlayAttackAnimationCommands_NextCommand(0u, b, c, nd, ne);
 }
 /* <<< factory AnimationCommand_AnimNormal */
 
 /* >>> factory AnimationCommand_AnimPlayer */
 /* commands.asm:50-58. Records the acting side then falls into AnimNormal. */
-PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimPlayer(uint8_t d, uint8_t e)
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimPlayer(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
 	gb_write8(wDuelAnimDuelistSide_ADDR, gb_read8(hWhoseTurn_ADDR));
 	if (gb_read8(wDuelType_ADDR) == 0u)
 		gb_write8(wDuelAnimDuelistSide_ADDR, PLAYER_TURN);
-	return AnimationCommand_AnimNormal(d, e);
+	return AnimationCommand_AnimNormal(b, c, d, e);
 }
 /* <<< factory AnimationCommand_AnimPlayer */
 
 /* >>> factory AnimationCommand_AnimOpponent */
 /* commands.asm:60-70. Same as AnimPlayer but reads hWhoseTurn between two
  * SwapTurn calls, so it records the NON-turn holder. */
-PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimOpponent(uint8_t d, uint8_t e)
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimOpponent(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
 	SwapTurn();
 	gb_write8(wDuelAnimDuelistSide_ADDR, gb_read8(hWhoseTurn_ADDR));
 	SwapTurn();
 	if (gb_read8(wDuelType_ADDR) == 0u)
 		gb_write8(wDuelAnimDuelistSide_ADDR, OPPONENT_TURN);
-	return AnimationCommand_AnimNormal(d, e);
+	return AnimationCommand_AnimNormal(b, c, d, e);
 }
 /* <<< factory AnimationCommand_AnimOpponent */
 
 /* >>> factory AnimationCommand_AnimPlayArea */
 /* commands.asm:72-76. */
-PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimPlayArea(uint8_t d, uint8_t e)
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimPlayArea(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
 	uint8_t location = (uint8_t)(gb_read8(wDamageAnimPlayAreaLocation_ADDR) & 0x7Fu);
 	gb_write8(wDuelAnimLocationParam_ADDR, location);
-	return AnimationCommand_AnimNormal(d, e);
+	return AnimationCommand_AnimNormal(b, c, d, e);
 }
 /* <<< factory AnimationCommand_AnimPlayArea */
 
 /* >>> factory AnimationCommand_AnimScreen */
 /* commands.asm:151-160. */
-PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimScreen(uint8_t d, uint8_t e)
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimScreen(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
 	uint16_t de = (uint16_t)(((uint16_t)d << 8) | e);
 	uint8_t screen = gb_read8(de);
@@ -352,7 +351,7 @@ PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimScreen(uint8_
 		gb_read8(wDamageAnimPlayAreaLocation_ADDR));
 	(void)UpdateDuelAnimationScreen(0u);
 	(void)PlayDuelAnimation(DUEL_ANIM_SET_SCREEN_CMD);
-	return PlayAttackAnimationCommands_NextCommand(0u, (uint8_t)(de >> 8), (uint8_t)de);
+	return PlayAttackAnimationCommands_NextCommand(0u, b, c, (uint8_t)(de >> 8), (uint8_t)de);
 }
 /* <<< factory AnimationCommand_AnimScreen */
 
@@ -427,12 +426,12 @@ void SetScreenForDuelAnimation(uint16_t hl)
 /* <<< factory SetScreenForDuelAnimation */
 
 /* >>> factory PlayAttackAnimationCommands */
-PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands(uint8_t a, uint8_t d, uint8_t e)
+PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
 	(void)a;
 	uint8_t loaded_animation = wLoadedAttackAnimation;
 	if (loaded_animation == 0u)
-		return (PlayAttackAnimationCommands_NextCommandResult){d, e};
+		return (PlayAttackAnimationCommands_NextCommandResult){b, c, d, e};
 
 	uint16_t table_address = (uint16_t)(POINTER_TABLE_ATTACK_ANIMATION
 		+ (uint16_t)loaded_animation * 2u);
@@ -449,7 +448,7 @@ PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands(uint8_
 			(void)PlayDuelAnimation(DUEL_ANIM_SET_SCREEN);
 	}
 
-	return PlayAttackAnimationCommands_NextCommand(0u,
+	return PlayAttackAnimationCommands_NextCommand(0u, b, c,
 		(uint8_t)(de >> 8), (uint8_t)de);
 }
 /* <<< factory PlayAttackAnimationCommands */
