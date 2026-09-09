@@ -7819,8 +7819,10 @@ CASES["Prophecy_PlayerSelectEffect"] = [
 # >>> factory PokemonTrader_PlayerDeckSelection
 CONTRACT["PokemonTrader_PlayerDeckSelection"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["PokemonTrader_PlayerDeckSelection"] = [
-    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3A", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC2F1: b"\x00", 0xC2F9: b"\x01", 0xFFA0: b"\x01", 0xFFA1: b"\x00", 0xCABB: b"\x00", 0xC400: b"\x08", 0xC401: b"\x08"}, "read": {0xFFA1: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2BA: b"\x3A", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC2F1: b"\x00", 0xC2F9: b"\x01", 0xFFA0: b"\x01", 0xFFA1: b"\x00", 0xCABB: b"\x00", 0xC400: b"\x08", 0xC401: b"\x08"}, read={0xFFA1: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    # The parked hand card joins the deck list; the first A takes the first
+    # Pokemon in it (the parked card itself) and the parked card returns to hand.
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC200: b"\x01\x00\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC400: b"\x60\x60", 0xFFA0: b"\x00", 0xFFA1: b"\xFF", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA1: 1, 0xC200: 2, 0xC2BA: 1, 0xC2EE: 1}, "expect": {0xFFA1: b"\x00", 0xC200: b"\x01\x00", 0xC2BA: b"\x3B", 0xC2EE: b"\x01"}, "setup": DISPLAY_SETUP, "entry_sp": 0xDCBE, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC200: b"\x01\x00\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC400: b"\x60\x60", 0xFFA0: b"\x00", 0xFFA1: b"\xFF", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFFA1: 1, 0xC200: 2, 0xC2BA: 1, 0xC2EE: 1}, expect={0xFFA1: b"\x00", 0xC200: b"\x01\x00", 0xC2BA: b"\x3B", 0xC2EE: b"\x01"}, setup=DISPLAY_SETUP, entry_sp=0xDCBE, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PokemonTrader_PlayerDeckSelection
 
@@ -7841,20 +7843,15 @@ CASES["PokeBall_PlayerSelection"] = [
 # <<< factory PokeBall_PlayerSelection
 
 # >>> factory PokemonTrader_TradeCardsEffect
-CONTRACT["PokemonTrader_TradeCardsEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+# The exit registers are ShuffleCardsInDeck's, whose own contract claims a/f:
+# c/e are ShuffleCards' loop residue and the effect dispatcher reads only carry.
+CONTRACT["PokemonTrader_TradeCardsEffect"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["PokemonTrader_TradeCardsEffect"] = [
-    {"b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000,
-     "wram": {hTemp_ffa0: b"\x00", hTempPlayAreaLocation_ffa1: b"\x01", hWhoseTurn: b"\xC2", DUELIST_TYPE: b"\x00",
-              HAND_COUNT: b"\x01", HAND: b"\x00", NOT_IN_DECK: b"\x30", DECK_TOP + 1: b"\x01"},
-     "read": {HAND_COUNT: 1, HAND: 2, CARD0_LOCATION: 1, CARD1_LOCATION: 1, DECK_TOP: 2},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 3000000, "cycle_budget": 10000000},
-    dict(POISON,
-         wram={hTemp_ffa0: b"\x00", hTempPlayAreaLocation_ffa1: b"\x01", hWhoseTurn: b"\xC2", DUELIST_TYPE: b"\x00",
-               HAND_COUNT: b"\x01", HAND: b"\x00", NOT_IN_DECK: b"\x30", DECK_TOP + 1: b"\x01"},
-         read={HAND_COUNT: 1, HAND: 2, CARD0_LOCATION: 1, CARD1_LOCATION: 1, DECK_TOP: 2},
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=3000000, cycle_budget=10000000)
+    # Player's turn: the swap happens silently and the deck is shuffled.
+    {"wram": {0xFF97: b"\xC2", 0xC200: b"\x01\x00\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC400: b"\x60\x60", 0xC2F1: b"\x00", 0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xC200: 2, 0xC2BA: 1, 0xC2EE: 1, 0xC242: 1}, "expect": {0xC200: b"\x00\x01", 0xC2BA: b"\x3B", 0xC2EE: b"\x01", 0xC242: b"\x01"}, "setup": DISPLAY_SETUP, "entry_sp": 0xDCBE, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC200: b"\x01\x00\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC400: b"\x60\x60", 0xC2F1: b"\x00", 0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xC200: 2, 0xC2BA: 1, 0xC2EE: 1, 0xC242: 1}, expect={0xC200: b"\x00\x01", 0xC2BA: b"\x3B", 0xC2EE: b"\x01", 0xC242: b"\x01"}, setup=DISPLAY_SETUP, entry_sp=0xDCBE, instruction_budget=20000000, cycle_budget=80000000),
+    # Opponent's turn: both card detail screens are shown and closed with A.
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC3", 0xC300: b"\x01\x00\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02", 0xC3BA: b"\x3B", 0xC3B9: b"\x01", 0xC3EE: b"\x01", 0xC342: b"\x00", 0xC480: b"\x60\x60", 0xC3F1: b"\x80", 0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xC300: 2, 0xC3BA: 1, 0xC3EE: 1, 0xC342: 1}, "expect": {0xC300: b"\x00\x01", 0xC3BA: b"\x3B", 0xC3EE: b"\x01", 0xC342: b"\x01"}, "setup": DISPLAY_SETUP, "entry_sp": 0xDCBE, "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory PokemonTrader_TradeCardsEffect
 
@@ -10948,14 +10945,8 @@ for _index, _record in enumerate(SCHEMA2_CASES["Prophecy_PlayerSelectEffect"]):
         _record["completion"] = {"mode": "pre-ret", "pc": 0x5A2E, "bank": 0x0B}
 # <<< factory-completion Prophecy_PlayerSelectEffect
 # >>> factory-mutation PokemonTrader_PlayerDeckSelection
-MUTATIONS["PokemonTrader_PlayerDeckSelection"] = {"source_symbol": "PokemonTrader_PlayerDeckSelection", "before": "\treturn (PokemonTrader_PlayerDeckSelectionResult){hTemp_ffa0, (hTemp_ffa0 == 0u) ? 0x80u : 0x00u};", "after": "\treturn (PokemonTrader_PlayerDeckSelectionResult){(uint8_t)(hTemp_ffa0 + 1u), (hTemp_ffa0 == 0u) ? 0x80u : 0x00u};", "case_ids": ["PokemonTrader_PlayerDeckSelection-0"]}
+MUTATIONS["PokemonTrader_PlayerDeckSelection"] = {"source_symbol": "PokemonTrader_PlayerDeckSelection", "before": "\thTempPlayAreaLocation_ffa1 = hTempCardIndex_ff98;", "after": "\thTempPlayAreaLocation_ffa1 = 0xffu;", "case_ids": ["PokemonTrader_PlayerDeckSelection-0"]}
 # <<< factory-mutation PokemonTrader_PlayerDeckSelection
-# >>> factory-completion PokemonTrader_PlayerDeckSelection
-# effect_functions.asm:10075. The port's pc was DisplayCardList's entry, inside
-# the `.read_input` loop the port did not have, so nothing after the pick ran.
-for _record in SCHEMA2_CASES["PokemonTrader_PlayerDeckSelection"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x788C, "bank": 0x0B}
-# <<< factory-completion PokemonTrader_PlayerDeckSelection
 # >>> factory-mutation Quickfreeze_Paralysis50PercentEffect
 MUTATIONS["Quickfreeze_Paralysis50PercentEffect"] = {"source_symbol": "Quickfreeze_Paralysis50PercentEffect", "before": "uint8_t Quickfreeze_Paralysis50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(ParalysisCheckText, 0u);\n\tuint8_t result_f;\n\tif ((toss.f & 0x10u) == 0u) {\n\t\tSetWasUnsuccessful();\n\t\tDrawDuelMainScene();\n\t\t(void)PrintFailedEffectText();\n\t\tresult_f = WaitForWideTextBoxInput().f;\n\t} else {\n\t\tQueueStatusConditionResult paralysis = ParalysisEffect();\n\t\tuint8_t location = hTempPlayAreaLocation_ff9d;\n\t\tuint8_t turn = hWhoseTurn;\n\t\tuint16_t animation_hl = (uint16_t)(((uint16_t)turn << 8) | (wStatusConditionQueueIndex_ADDR & 0xffu));\n\t\tPlayAttackAnimation(turn, paralysis.f, location, 0u, 0u, 0u, animation_hl);\n\t\tPlayStatusConditionQueueAnimations();\n\t\tWaitAttackAnimation();\n\t\t(void)ApplyStatusConditionQueue();\n\t\tDrawDuelHUDs();\n\t\tPrintFailedEffectTextResult failed = PrintFailedEffectText();\n\t\tresult_f = failed.f;\n\t\tif ((failed.f & 0x10u) != 0u)\n\t\t\tresult_f = WaitForWideTextBoxInput().f;\n\t}\n\treturn result_f;\n}", "after": "uint8_t Quickfreeze_Paralysis50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(ParalysisCheckText, 0u);\n\tuint8_t result_f;\n\tif ((toss.f & 0x10u) == 0u) {\n\t\tSetWasUnsuccessful();\n\t\tDrawDuelMainScene();\n\t\t(void)PrintFailedEffectText();\n\t\tresult_f = WaitForWideTextBoxInput().f;\n\t} else {\n\t\tQueueStatusConditionResult paralysis = ParalysisEffect();\n\t\tuint8_t location = hTempPlayAreaLocation_ff9d;\n\t\tuint8_t turn = hWhoseTurn;\n\t\tuint16_t animation_hl = (uint16_t)(((uint16_t)turn << 8) | (wStatusConditionQueueIndex_ADDR & 0xffu));\n\t\tPlayAttackAnimation(turn, paralysis.f, location, 0u, 0u, 0u, animation_hl);\n\t\tPlayStatusConditionQueueAnimations();\n\t\tWaitAttackAnimation();\n\t\t(void)ApplyStatusConditionQueue();\n\t\tDrawDuelHUDs();\n\t\tPrintFailedEffectTextResult failed = PrintFailedEffectText();\n\t\tresult_f = failed.f;\n\t\tif ((failed.f & 0x10u) != 0u)\n\t\t\tresult_f = WaitForWideTextBoxInput().f;\n\t}\n\treturn 0x00u;\n}", "case_ids": ["Quickfreeze_Paralysis50PercentEffect-0", "Quickfreeze_Paralysis50PercentEffect-1"]}
 # <<< factory-mutation Quickfreeze_Paralysis50PercentEffect
@@ -10963,14 +10954,8 @@ MUTATIONS["Quickfreeze_Paralysis50PercentEffect"] = {"source_symbol": "Quickfree
 MUTATIONS["PokeBall_PlayerSelection"] = {"source_symbol": "PokeBall_PlayerSelection", "before": "PokeBallPlayerSelectionResult PokeBall_PlayerSelection(void)\n{\n\tSerialTossCoinATimesResult toss = Serial_TossCoin(1u, 0u, 0u, 0u, 0u, TrainerCardSuccessCheckText, 0u);\n\thTempList = toss.a;", "after": "PokeBallPlayerSelectionResult PokeBall_PlayerSelection(void)\n{\n\tSerialTossCoinATimesResult toss = Serial_TossCoin(1u, 0u, 0u, 0u, 0u, TrainerCardSuccessCheckText, 0u);\n\thTempList = (uint8_t)(toss.a ^ 1u);", "case_ids": ["PokeBall_PlayerSelection-0"]}
 # <<< factory-mutation PokeBall_PlayerSelection
 # >>> factory-mutation PokemonTrader_TradeCardsEffect
-MUTATIONS["PokemonTrader_TradeCardsEffect"] = {"source_symbol": "PokemonTrader_TradeCardsEffect", "before": "ShuffleCardsInDeckResult PokemonTrader_TradeCardsEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t hand_card = hTemp_ffa0;", "after": "ShuffleCardsInDeckResult PokemonTrader_TradeCardsEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t hand_card = hTempPlayAreaLocation_ffa1;", "case_ids": ["PokemonTrader_TradeCardsEffect-0", "PokemonTrader_TradeCardsEffect-1"]}
+MUTATIONS["PokemonTrader_TradeCardsEffect"] = {"source_symbol": "PokemonTrader_TradeCardsEffect", "before": "\tSearchCardInDeckAndAddToHand(deck_card);\n\tAddCardToHand(deck_card);", "after": "\tSearchCardInDeckAndAddToHand(deck_card);", "case_ids": ["PokemonTrader_TradeCardsEffect-0"]}
 # <<< factory-mutation PokemonTrader_TradeCardsEffect
-# >>> factory-completion PokemonTrader_TradeCardsEffect
-# effect_functions.asm:10099. The port's pc was DisplayCardDetailScreen's entry,
-# so the reference stopped before ShuffleCardsInDeck set the exit registers.
-for _record in SCHEMA2_CASES["PokemonTrader_TradeCardsEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x78B5, "bank": 0x0B}
-# <<< factory-completion PokemonTrader_TradeCardsEffect
 # >>> factory-mutation HandleEvolvedCardSelection
 MUTATIONS["HandleEvolvedCardSelection"] = {"source_symbol": "HandleEvolvedCardSelection", "before": "\t\t\treturn (HandleEvolvedCardSelectionResult){0x00u};", "after": "\t\t\treturn (HandleEvolvedCardSelectionResult){0x10u};", "case_ids": ["HandleEvolvedCardSelection-0"]}
 # <<< factory-mutation HandleEvolvedCardSelection
