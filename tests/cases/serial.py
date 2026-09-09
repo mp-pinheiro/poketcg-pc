@@ -427,10 +427,15 @@ CASES["UnreferencedGoToSerialReturnAddress"] = [{}, dict(POISON)]
 # <<< factory UnreferencedGoToSerialReturnAddress
 
 # >>> factory UnreferencedSaveSerialReturnAddress
-CONTRACT["UnreferencedSaveSerialReturnAddress"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
+# Dead code in the ROM. It saves the caller's SP and return address; the C has
+# no Game Boy stack, so both lanes only ever see their harness's synthesized
+# return word (the oracle's sentinel, the probe's constant). That word is not
+# game state: only the SP save is observed, and a/hl (derived from it) are not
+# compared.
+CONTRACT["UnreferencedSaveSerialReturnAddress"] = {"compare": ("f", "b", "c", "d", "e"), "preserve": ("b", "c")}
 CASES["UnreferencedSaveSerialReturnAddress"] = [
-    {"entry_sp": 0xFFFC, "wram": {0xCB79: b"\x00\x00", 0xCB7B: b"\x00\x00"}, "read": {0xCB79: 2, 0xCB7B: 2}},
-    dict(POISON, entry_sp=0xFFFC, wram={0xCB79: b"\x00\x00", 0xCB7B: b"\x00\x00"}, read={0xCB79: 2, 0xCB7B: 2}),
+    {"entry_sp": 0xFFFC, "wram": {0xCB79: b"\x00\x00"}, "read": {0xCB79: 2}},
+    dict(POISON, entry_sp=0xFFFC, wram={0xCB79: b"\x00\x00"}, read={0xCB79: 2}),
 ]
 # <<< factory UnreferencedSaveSerialReturnAddress
 

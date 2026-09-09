@@ -151,12 +151,16 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
         req["stack"] = [int(word) for word in case["stack"]]
     if case.get("post_call_byte") is not None:
         req["post_call_byte"] = int(case["post_call_byte"])
-    if case.get("rom_bank") is not None:
+    # A banked routine runs out of its own bank, exactly as the PyBoy lane
+    # (pyboy_oracle.py `window_bank`) and gbref (mapper mode `symbol`) map it;
+    # a case's `rom_bank` only names the window a home routine reads through.
+    default_bank = symbol_bank(fn)
+    if default_bank:
+        req["rom_bank"] = default_bank
+    elif case.get("rom_bank") is not None:
         req["rom_bank"] = int(case["rom_bank"])
-    else:
-        default_bank = symbol_bank(fn)
-        if default_bank is not None:
-            req["rom_bank"] = default_bank
+    elif default_bank is not None:
+        req["rom_bank"] = default_bank
     try:
         out = subprocess.run(
             [str(probe)],
