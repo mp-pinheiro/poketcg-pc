@@ -281,16 +281,17 @@ void HandleDeckConfirmationMenu(void);
 void ConfirmDeckConfiguration(void);
 /* <<< factory ConfirmDeckConfiguration */
 /* >>> factory SaveDeckConfiguration */
-typedef struct { uint8_t a; uint8_t f; } SaveDeckConfigurationResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t unwound; } SaveDeckConfigurationResult;
 SaveDeckConfigurationResult SaveDeckConfiguration(uint16_t w0);
 /* <<< factory SaveDeckConfiguration */
 /* >>> factory DismantleDeck */
 /* deck_configuration.asm:684 -- JumpToFunctionInTable target: w0 is the
  * caller-pushed word that the `add sp, $2` exit discards. */
-uint8_t DismantleDeck(uint16_t w0);
+typedef struct { uint8_t a; uint8_t unwound; } DismantleDeckResult;
+DismantleDeckResult DismantleDeck(uint16_t w0);
 /* <<< factory DismantleDeck */
 /* >>> factory CancelDeckModifications */
-typedef struct { uint8_t a; uint8_t f; } CancelDeckModificationsResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t unwound; } CancelDeckModificationsResult;
 CancelDeckModificationsResult CancelDeckModifications(uint16_t w0);
 /* <<< factory CancelDeckModifications */
 /* >>> factory HandleSelectUpAndDownInList */
@@ -299,6 +300,7 @@ HandleSelectUpAndDownInListResult HandleSelectUpAndDownInList(void);
 /* <<< factory HandleSelectUpAndDownInList */
 /* >>> factory HandleDeckBuildScreen */
 void HandleDeckBuildScreen(void);
+void HandleDeckBuildScreen_SkipCount(void);
 void HandleDeckBuildScreen_SkipDraw(uint8_t a);
 /* <<< factory HandleDeckBuildScreen */
 /* >>> factory HandlePlayersCardsScreen */

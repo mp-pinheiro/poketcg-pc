@@ -676,7 +676,7 @@ static void adapt_SaveDeckConfiguration(ProbeState *s)
 /* >>> factory DismantleDeck */
 static void adapt_DismantleDeck(ProbeState *s)
 {
-	s->a = DismantleDeck(s->stack[0]);
+	s->a = DismantleDeck(s->stack[0]).a;
 }
 /* <<< factory DismantleDeck */
 

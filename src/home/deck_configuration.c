@@ -2401,7 +2401,7 @@ SaveDeckConfigurationResult SaveDeckConfiguration(uint16_t w0)
 			/* add sp, $2 / or a / ret */
 			uint8_t or_a = keep.a;
 			return (SaveDeckConfigurationResult){
-				or_a, (uint8_t)(or_a == 0u ? 0x80u : 0x00u)};
+				or_a, (uint8_t)(or_a == 0u ? 0x80u : 0x00u), 1u};
 		}
 		(void)DrawWideTextBox_WaitForInput(TheDeckMustInclude60CardsText);
 	} else {
@@ -2412,7 +2412,7 @@ SaveDeckConfigurationResult SaveDeckConfiguration(uint16_t w0)
 			if ((basic.f & 0x10u) != 0u) {
 				/* add sp, $2 / scf / ret: scf keeps Z, clears N and H */
 				return (SaveDeckConfigurationResult){
-					basic.a, (uint8_t)((basic.f & 0x80u) | 0x10u)};
+					basic.a, (uint8_t)((basic.f & 0x80u) | 0x10u), 1u};
 			}
 			(void)DrawWideTextBox_WaitForInput(ThereAreNoBasicPokemonInThisDeckText);
 			(void)DrawWideTextBox_WaitForInput(YouMustIncludeABasicPokemonInTheDeckText);
@@ -2426,13 +2426,13 @@ SaveDeckConfigurationResult SaveDeckConfiguration(uint16_t w0)
 	PrintDeckBuildingCardList();
 	uint8_t cursor = wced6;
 	wCardListCursorPos = cursor;
-	return (SaveDeckConfigurationResult){cursor, 0u};
+	return (SaveDeckConfigurationResult){cursor, 0u, 0u};
 }
 /* <<< factory SaveDeckConfiguration */
 
 /* >>> factory DismantleDeck */
 /* deck_configuration.asm:684-716 */
-uint8_t DismantleDeck(uint16_t w0)
+DismantleDeckResult DismantleDeck(uint16_t w0)
 {
 	/* Entered through JumpToFunctionInTable, so the word at sp is the return
 	 * address back into HandleDeckConfigurationMenu; the `add sp, $2` on the
@@ -2448,7 +2448,7 @@ uint8_t DismantleDeck(uint16_t w0)
 		PrintDeckBuildingCardList();
 		uint8_t back = wced6;
 		wCardListCursorPos = back;
-		return back;
+		return (DismantleDeckResult){back, 0u};
 	}
 
 	if ((CheckIfHasOtherValidDecks() & 0x10u) != 0u) {
@@ -2465,7 +2465,7 @@ uint8_t DismantleDeck(uint16_t w0)
 		EnableLCD();
 		uint8_t cursor = wced6;
 		wCardListCursorPos = cursor;
-		return cursor;
+		return (DismantleDeckResult){cursor, 0u};
 	}
 
 	/* .Dismantle */
@@ -2480,7 +2480,7 @@ uint8_t DismantleDeck(uint16_t w0)
 		ClearMemory_Bank2(DECK_SIZE, cards);
 	}
 	DisableSRAM();
-	return a;
+	return (DismantleDeckResult){a, 1u};
 }
 /* <<< factory DismantleDeck */
 
@@ -2509,13 +2509,13 @@ CancelDeckModificationsResult CancelDeckModifications(uint16_t w0)
 			PrintDeckBuildingCardList();
 			uint8_t cursor = wced6;
 			wCardListCursorPos = cursor;
-			return (CancelDeckModificationsResult){cursor, 0u};
+			return (CancelDeckModificationsResult){cursor, 0u, 0u};
 		}
 		a = quit.a;
 	}
 
 	/* .cancel_modification: add sp, $2 / or a / ret */
-	return (CancelDeckModificationsResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u)};
+	return (CancelDeckModificationsResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u), 1u};
 }
 /* <<< factory CancelDeckModifications */
 
@@ -2564,7 +2564,12 @@ void HandleDeckBuildScreen(void)
 {
 	(void)WriteCardListsTerminatorBytes();
 	CountNumberOfCardsForEachCardType();
-	DrawCardTypeIconsAndPrintCardCounts();
+	HandleDeckBuildScreen_SkipCount();
+}
+
+void HandleDeckBuildScreen_SkipCount(void)
+{
+	(void)DrawCardTypeIconsAndPrintCardCounts();
 
 	wCardListVisibleOffset = 0u;
 	wCurCardTypeFilter = 0u;
@@ -2897,21 +2902,25 @@ void HandleDeckConfigurationMenu(void)
 		case 0u:
 			ConfirmDeckConfiguration();
 			break;
+		case 3u:
+			if (SaveDeckConfiguration(0u).unwound)
+				return;
+			break;
+		case 4u:
+			if (DismantleDeck(0u).unwound)
+				return;
+			break;
+		case 5u:
+			if (CancelDeckModifications(0u).unwound)
+				return;
+			break;
 		case 1u:
 			ModifyDeckConfiguration(0u);
 			return;
 		case 2u:
 			ChangeDeckName();
-			break;
-		case 3u:
-			(void)SaveDeckConfiguration(0u);
-			break;
-		case 4u:
-			(void)DismantleDeck(0u);
-			break;
-		case 5u:
-			(void)CancelDeckModifications(0u);
-			break;
+			HandleDeckBuildScreen_SkipCount();
+			return;
 		default:
 			break;
 		}

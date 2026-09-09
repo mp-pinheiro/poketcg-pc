@@ -1664,7 +1664,7 @@ for _rec in SCHEMA2_CASES["ChangeDeckName"]:
     _rec["completion"] = {"mode": "pre-ret", "pc": 0x55BC, "bank": 2}
 # <<< factory-completion ChangeDeckName
 # >>> factory-mutation HandleDeckConfigurationMenu
-MUTATIONS["HandleDeckConfigurationMenu"] = {"source_symbol": "HandleDeckConfigurationMenu", "before": "\t\t\tHandleDeckBuildScreen_SkipDraw(printed.a);\n\t\t\treturn;", "after": "\t\t\treturn;", "case_ids": ["HandleDeckConfigurationMenu-0", "HandleDeckConfigurationMenu-1"]}
+MUTATIONS["HandleDeckConfigurationMenu"] = {"source_symbol": "HandleDeckConfigurationMenu", "before": "\t\t\tHandleDeckBuildScreen_SkipDraw(printed.a);", "after": "\t\t\tHandleDeckBuildScreen_SkipDraw(0u);", "case_ids": ["HandleDeckConfigurationMenu-0", "HandleDeckConfigurationMenu-1"]}
 # <<< factory-mutation HandleDeckConfigurationMenu
 # >>> factory-mutation ModifyDeckConfiguration
 MUTATIONS["ModifyDeckConfiguration"] = {"source_symbol": "ModifyDeckConfiguration", "before": "\tDrawCardTypeIconsAndPrintCardCounts();", "after": "\tDrawCardTypeIconsAndPrintCardCounts();\n\twCardListCursorPos = 1u;", "case_ids": ["ModifyDeckConfiguration-0", "ModifyDeckConfiguration-1"]}
