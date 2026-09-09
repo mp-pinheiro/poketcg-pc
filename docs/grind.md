@@ -1918,4 +1918,9 @@ jj commit -i --tool pick --config 'merge-tools.pick.program="/tmp/pick.sh"' \
 where `pick.sh` does `cp ../poketcg-verify/$f "$2/$f"` for each path. The other
 session's hunks stay in the working copy untouched; afterwards re-apply your
 block to the working copy so it does not shadow the commit. Check the
-committed file equals the verified one (`jj file show -r @- $f | cmp - ../poketcg-verify/$f`).
+committed file equals the verified one (`jj file show -r @- $f > /tmp/c; cmp /tmp/c ../poketcg-verify/$f`).
+The editor only sees files that already differ in the working copy: a file
+with no foreign hunks is not in `$right`, so copy it over and commit it by
+path instead, or the commit lands empty. Never `jj abandon` that empty commit
+while `main` sits on it -- the bookmark goes with it; `jj bookmark set main -r <head>`
+brings it back.
