@@ -344,6 +344,8 @@ ZAPDOS_RECOIL = Fixture("lightning-3-zapdos-recoil-entry")
 ZAPDOS_RECOIL_REGS = ZAPDOS_RECOIL.regs
 MAP_SCRIPT = Fixture("lightning-3-map-script-entry")
 MAP_SCRIPT_REGS = MAP_SCRIPT.regs
+SPECIAL_ATTACK = Fixture("water-master-special-attack-entry")
+SPECIAL_ATTACK_REGS = SPECIAL_ATTACK.regs
 SCROLL_LABEL = Fixture("lightning-3-scroll-label-entry")
 SCROLL_LABEL_REGS = SCROLL_LABEL.regs
 WAIT_KEYS = Fixture("boot-deck-machine-wait-keys-entry")
@@ -613,6 +615,10 @@ def zapdos_recoil_fixture(vram: bool = True, bank: int | None = None, **changes:
 
 def map_script_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return MAP_SCRIPT.case(vram=vram, bank=bank, **changes)
+
+
+def special_attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return SPECIAL_ATTACK.case(vram=vram, bank=bank, **changes)
 
 
 def scroll_label_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:

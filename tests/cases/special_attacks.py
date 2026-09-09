@@ -1,3 +1,5 @@
+from tests.cases._fixtures import SPECIAL_ATTACK_REGS, special_attack_fixture
+
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -78,9 +80,26 @@ CASES["CheckWhetherToSwitchToFirstAttack"] = [
 
 # >>> factory HandleSpecialAIAttacks
 CONTRACT["HandleSpecialAIAttacks"] = {"compare": ("a", "f"), "preserve": ()}
+_SPECIAL_ARENA = {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC2BC: b"\xFF",
+                  0xC3BB: b"\xFF", 0xC3BC: b"\xFF"}
 CASES["HandleSpecialAIAttacks"] = [
     {},
     dict(POISON),
+    dict(special_attack_fixture(vram=False, bank=5), **SPECIAL_ATTACK_REGS),
+    # Big Thunder: the score is unconditional, the flags are the matching `cp`.
+    {"wram": {**_SPECIAL_ARENA, 0xC400: b"\x76"}},
+    # Fetch: 10 cards used keeps the attack; 45 dismisses it.
+    {"wram": {**_SPECIAL_ARENA, 0xC400: b"\xB9", 0xC2BA: b"\x0A"}},
+    {"wram": {**_SPECIAL_ARENA, 0xC400: b"\xB9", 0xC2BA: b"\x2D"}},
+    # Hyper Beam with nothing attached to the player's arena card.
+    {"wram": {**_SPECIAL_ARENA, 0xC400: b"\x45"}},
+    # Conversion 1 with an empty bench: fewer than two set-up Pokemon.
+    {"wram": {**_SPECIAL_ARENA, 0xC400: b"\xBD", 0xC2F0: b"\x00", 0xCCC6: b"\x00"}},
+    # Call for Family: a second Oddish still in the deck, one Pokemon in play.
+    {"wram": {**_SPECIAL_ARENA, 0xC400: b"\x1C\x1C", 0xC2EF: b"\x01"}},
+    # Earthquake with an empty bench: six prizes left versus no KOs.
+    {"wram": {**_SPECIAL_ARENA, 0xC400: b"\x7A", 0xC2EC: b"\x3F"}},
+    {"wram": {**_SPECIAL_ARENA, 0xC400: b"\x7A", 0xC2EC: b"\x00"}},
 ]
 # <<< factory HandleSpecialAIAttacks
 
@@ -90,5 +109,10 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS["CheckWhetherToSwitchToFirstAttack"] = {"source_symbol": "CheckWhetherToSwitchToFirstAttack", "before": "\tif (first_score < 0x50u) {\n\t\twSelectedAttack = SECOND_ATTACK;", "after": "\tif (first_score < 0x50u) {\n\t\twSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;", "case_ids": ["CheckWhetherToSwitchToFirstAttack-0", "CheckWhetherToSwitchToFirstAttack-1", "CheckWhetherToSwitchToFirstAttack-2"]}
 # <<< factory-mutation CheckWhetherToSwitchToFirstAttack
 # >>> factory-mutation HandleSpecialAIAttacks
-MUTATIONS["HandleSpecialAIAttacks"] = {"source_symbol": "HandleSpecialAIAttacks", "before": "\tuint8_t score = 0u;\n\tuint8_t flags = 0x80u;", "after": "\tuint8_t score = 0x01u;\n\tuint8_t flags = 0x80u;", "case_ids": ["HandleSpecialAIAttacks-0", "HandleSpecialAIAttacks-1"]}
+MUTATIONS["HandleSpecialAIAttacks"] = {
+    "source_symbol": "HandleSpecialAIAttacks",
+    "before": "\treturn (HandleSpecialAIAttacksResult){(uint8_t)(0x80u + limit - n.a), 0x00u};",
+    "after": "\treturn (HandleSpecialAIAttacksResult){(uint8_t)(0x80u + limit), 0x00u};",
+    "case_ids": ["HandleSpecialAIAttacks-8"],
+}
 # <<< factory-mutation HandleSpecialAIAttacks
