@@ -1,5 +1,6 @@
 #include "home/process_text.h"
 #include "home/switch_rom.h"
+#define BANK_FONTS 0x1Du
 #include "home/text_box.h"
 
 #include "home/copy.h"
@@ -169,24 +170,28 @@ return (FontTileResult){0x24, 0, 0, wTextTileBuffer_ADDR,
 
 FontTileResult CreateFullWidthFontTile(uint16_t hl)
 {
+	/* BankpushROM maps hl into the $4000-$7FFF window and adds hl's own top two
+	 * bits to the bank, so the tile index selects both bank and address
+	 * (switch_rom.asm:1-3). */
 	uint8_t saved_bank = hBankROM;
-	BankswitchROM(0x1d);
+	BankpushROMResult pushed = BankpushROM(BANK_FONTS, 0u, 0u, 0u, 0u, 0u, hl);
+	uint16_t src = pushed.hl;
 	for (uint8_t i = 0; i < TILE_SIZE_1BPP; i++) {
-		uint8_t v = font_byte((uint16_t)(hl + i));
+		uint8_t v = font_byte((uint16_t)(src + i));
 		uint16_t dst = (uint16_t)(wTextTileBuffer_ADDR + i * 2);
 		gb_write8(dst, v);
 		gb_write8((uint16_t)(dst + 1), v);
 	}
 	BankswitchROM(saved_bank);
 return (FontTileResult){0x25, 0, 0, wTextTileBuffer_ADDR,
-	(uint16_t)(hl + TILE_SIZE_1BPP)};
+	(uint16_t)(src + TILE_SIZE_1BPP)};
 }
 
 FontTileResult CreateFullWidthFontTile_ConvertToTileDataAddress(uint8_t d, uint8_t e,
 	uint8_t b)
 {
 	uint16_t offset = GetFullWidthFontTileOffset(d, e);
-	CreateFullWidthFontTile((uint16_t)(0x4000u + offset));
+	CreateFullWidthFontTile(offset);
 	uint8_t c = TILE_SIZE;
 	uint16_t address = ConvertTileNumberToTileDataAddress(&b, &c);
 return (FontTileResult){wTilePatternSelector, wTilePatternSelector, c,

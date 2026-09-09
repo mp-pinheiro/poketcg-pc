@@ -300,6 +300,10 @@ CONFIRM_LIST_REGS = CONFIRM_LIST.regs
 # the caller's banked gfx table into VRAM $9000.
 BOOT_GFX = Fixture("lightning-3-boot-gfx-entry")
 BOOT_GFX_REGS = BOOT_GFX.regs
+# lightning-3 at DoFrame 515: the naming screen builds one full-width font tile
+# out of the font bank into wTextTileBuffer.
+FONT_TILE = Fixture("lightning-3-font-tile-entry")
+FONT_TILE_REGS = FONT_TILE.regs
 
 
 def attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
@@ -492,3 +496,7 @@ def confirm_list_fixture(vram: bool = True, bank: int | None = None, **changes: 
 
 def boot_gfx_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return BOOT_GFX.case(vram=vram, bank=bank, **changes)
+
+
+def font_tile_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return FONT_TILE.case(vram=vram, bank=bank, **changes)

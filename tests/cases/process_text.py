@@ -2,6 +2,8 @@ SRC = 0xC100
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
+from tests.cases._fixtures import font_tile_fixture as _font_tile_fixture, FONT_TILE_REGS as _FONT_TILE_REGS
+
 CONTRACT = {
     "InitTextFormat": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ()},
     "CaseHalfWidthLetter": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ()},
@@ -50,7 +52,8 @@ CASES = {
         {"b": 0x20, "wram": {0xCD06: b"\x88", 0xCD07: b"\x80"}}],
     "CopyHalfWidthCharacterToDE": [{"a": 0x20, "d": 0xC1, "e": 0}, dict(POISON, a=0x41, d=0xC1, e=0)],
     "CreateHalfWidthFontTile": [{"d": 0x20, "e": 0x20}, dict(POISON, d=0x41, e=0x42)],
-    "CreateFullWidthFontTile": [{"hl": 0x4000}, dict(POISON, hl=0x4000)],
+    "CreateFullWidthFontTile": [{"hl": 0x4000}, dict(POISON, hl=0x4000),
+                                dict(_font_tile_fixture(), **_FONT_TILE_REGS, read={0xCCF6: 0x20})],
     "CreateFullWidthFontTile_ConvertToTileDataAddress": [{"d": 0, "e": 1}, dict(POISON, d=0x0F, e=0x20)],
     "GenerateTextTile": [{"b": 0, "d": 0x20, "e": 0x20}, {"b": 1, "d": 0x20, "e": 0x20}],
     "TwoByteNumberToTxSymbol_PadSpace": [{"hl": 0}, {"hl": 1}, {"hl": 0xFFFF}, dict(POISON, hl=12345)],
@@ -164,6 +167,12 @@ CASES.update({
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
+    "CreateFullWidthFontTile": {
+        "source_symbol": "CreateFullWidthFontTile",
+        "before": "\tuint16_t src = pushed.hl;",
+        "after": "\tuint16_t src = hl;",
+        "case_ids": ["CreateFullWidthFontTile-2"],
+    },
     "InitTextFormat": {
         "source_symbol": "InitTextFormat",
         "before": "\twHalfWidthPrintState = 0;\n\thJapaneseSyllabary = TX_KATAKANA;",
