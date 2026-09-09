@@ -7720,6 +7720,16 @@ CASES["FriendshipSong_AddToBench50PercentEffect"] = [
          entry_sp=0xDCBE, instruction_budget=20000000, cycle_budget=80000000),
 ]
 
+# <<< factory FriendshipSong_AddToBench50PercentEffect
+
+# >>> factory SubmissionEffect
+CONTRACT["SubmissionEffect"]={"compare":("a","f"),"preserve":()}
+CASES["SubmissionEffect"] = [
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={0xCAD3: 2, 0xCC24: 8, 0xCCB8: 3, 0xCCC3: 2, 0xCCE6: 1, 0xC3C8: 1, 0xC3C9: 5, 0xC2C8: 1, 0xC2C9: 5, 0xC2EF: 1, 0xC3EF: 1, 0xCE7E: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
 # <<< factory SubmissionEffect
 
 # >>> factory MagnemiteSelfdestructEffect
@@ -7948,6 +7958,14 @@ CASES["TrainerCardAsPokemon_PlayerSelectSwitch"] = [
     # A bench card leaves: nothing to select.
     dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2EF: b"\x02", 0xC2BB: b"\x00\x00", 0xC2C8: b"\x01\x01", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\x01", 0xFFA1: b"\xFF"}, read={0xFFA1: 1}, expect={0xFFA1: b"\xFF"}),
 ]
+# <<< factory TrainerCardAsPokemon_PlayerSelectSwitch
+
+# >>> factory ButterfreeWhirlwind_CheckBench
+CONTRACT["ButterfreeWhirlwind_CheckBench"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ButterfreeWhirlwind_CheckBench"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x01", 0xFFA0: b"\x5A"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\xFF"}, "expect_regs": {"a": 0xFF, "f": 0x70}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3EF: b"\x01", 0xFFA0: b"\xA5"}, read={0xFFA0: 1}, expect={0xFFA0: b"\xFF"}, expect_regs={"a": 0xFF, "f": 0x70}),
+]
 # <<< factory ButterfreeWhirlwind_CheckBench
 
 # >>> factory PidgeottoWhirlwind_SelectEffect
@@ -7980,6 +7998,16 @@ CASES["GustOfWind_PlayerSelection"] = [
     # Prompt, then the opponent's bench 1 is chosen; the turn swaps back.
     {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC3EF: b"\x02", 0xC3BB: b"\x00\x01", 0xC3C8: b"\x20\x20", 0xC480: b"\x08\x09", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\xFF"}, "read": {0xFFA0: 1, 0xFF97: 1}, "expect": {0xFFA0: b"\x01", 0xFF97: b"\xC2"}, "setup": DISPLAY_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC3EF: b"\x02", 0xC3BB: b"\x00\x01", 0xC3C8: b"\x20\x20", 0xC480: b"\x08\x09", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\xFF"}, read={0xFFA0: 1, 0xFF97: 1}, expect={0xFFA0: b"\x01", 0xFF97: b"\xC2"}, setup=DISPLAY_SETUP, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory GustOfWind_PlayerSelection
+
+# >>> factory Teleport_PlayerSelectEffect
+CONTRACT["Teleport_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CASES["Teleport_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x01", 0xC2EF: b"\x02", 0xC2BB: b"\x00\x00", 0xC2C8: b"\x01\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9D: b"\x01", 0xC2EF: b"\x02", 0xC2BB: b"\x00\x00", 0xC2C8: b"\x01\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFFA0: 1}, expect={0xFFA0: b"\x01"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    # B on the selection screen only re-opens it; the next A still selects.
+    {"keys": [0x00, 0x01, 0x00, 0x02, 0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x01", 0xC2EF: b"\x02", 0xC2BB: b"\x00\x00", 0xC2C8: b"\x01\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory Teleport_PlayerSelectEffect
 
@@ -9091,6 +9119,7 @@ MUTATIONS["ClefairyDoll_PlaceInPlayAreaEffect"] = {
     "after": "PutHandPokemonCardInPlayArea((uint8_t)(hTempCardIndex_ff9f + 1u), 0x00u);",
     "case_ids": ["ClefairyDoll_PlaceInPlayAreaEffect-0"],
 }
+# <<< factory-mutation ClefairyDoll_PlaceInPlayAreaEffect
 
 # >>> factory Fly_AIEffect
 CONTRACT["Fly_AIEffect"] = {"compare": (), "preserve": ()}
@@ -9110,6 +9139,7 @@ MUTATIONS["Fly_AIEffect"] = {"source_symbol": "Fly_AIEffect", "before": "SetExpe
 # >>> factory-mutation Gigashock_AISelectEffect
 MUTATIONS["Gigashock_AISelectEffect"] = {"source_symbol": "Gigashock_AISelectEffect", "before": "gb_write8((uint16_t)(hTempList_ADDR + 3u), 0xffu);", "after": "gb_write8((uint16_t)(hTempList_ADDR + 3u), 0u);", "case_ids": ["Gigashock_AISelectEffect-0", "Gigashock_AISelectEffect-1"]}
 # <<< factory-mutation Gigashock_AISelectEffect
+# >>> factory-mutation Wildfire_DiscardDeckEffect
 MUTATIONS["Wildfire_DiscardDeckEffect"] = {
     "source_symbol": "Wildfire_DiscardDeckEffect",
     "before": "if (cards_left < count)",
@@ -9143,7 +9173,123 @@ MUTATIONS["FlareonRage_DamageBoostEffect"] = {
 # <<< factory-mutation FlareonRage_DamageBoostEffect
 
 
-SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)# >>> factory-mutation Shift_OncePerTurnCheck
+# >>> factory DreamEaterEffect
+CONTRACT["DreamEaterEffect"] = {"compare": ("a", "f", "hl", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CASES["DreamEaterEffect"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory DreamEaterEffect
+
+# >>> factory JynxMeditate_DamageBoostEffect
+CONTRACT["JynxMeditate_DamageBoostEffect"] = {"compare": (), "preserve": ()}
+CASES["JynxMeditate_DamageBoostEffect"] = [
+	{"wram": {0xFF97: b"\xC3", 0xC2BB: b"\x00", 0xC2C8: b"\x0A",
+	          0xC400: b"\x08", 0xCCB9: b"\x00\x00"}, "read": {0xCCB9: 2}},
+	{},
+	dict(POISON),
+]
+# <<< factory JynxMeditate_DamageBoostEffect
+
+# >>> factory KadabraRecover_CheckEnergyHP
+CONTRACT["KadabraRecover_CheckEnergyHP"] = {"compare": ("a", "f", "b", "c", "d", "hl"), "preserve": ("b", "d")}
+CASES["KadabraRecover_CheckEnergyHP"] = [
+	{"wram": {0xFF97: b"\xC2", 0xC200: b"\x10", 0xC2BB: b"\x00",
+	          0xC2C8: b"\x0A", 0xC400: b"\x06"}, "read": {0xCC65: 64}},
+	{},
+	dict(POISON),
+]
+# <<< factory KadabraRecover_CheckEnergyHP
+
+# >>> factory MewtwoAltEnergyAbsorption_AddToHandEffect
+CONTRACT["MewtwoAltEnergyAbsorption_AddToHandEffect"] = {"compare": (), "preserve": ()}
+CASES["MewtwoAltEnergyAbsorption_AddToHandEffect"] = [{"wram": {0xFF97: b"\xC2", 0xFFA0: b"\xFF", 0xC2FF: b"\x00"}, "read": {0xC2FF: 1}}, dict(POISON, wram={0xFFA0: b"\xFF"})]
+# <<< factory MewtwoAltEnergyAbsorption_AddToHandEffect
+
+# >>> factory MewtwoEnergyAbsorption_AddToHandEffect
+CONTRACT["MewtwoEnergyAbsorption_AddToHandEffect"] = {"compare": (), "preserve": ()}
+CASES["MewtwoEnergyAbsorption_AddToHandEffect"] = [{"wram": {0xFF97: b"\xC2", 0xFFA0: b"\xFF", 0xC2FF: b"\x00"}, "read": {0xC2FF: 1}}, dict(POISON, wram={0xFFA0: b"\xFF"})]
+# <<< factory MewtwoEnergyAbsorption_AddToHandEffect
+
+# >>> factory NeutralizingShieldEffect
+CONTRACT["NeutralizingShieldEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["NeutralizingShieldEffect"] = [{}, dict(POISON)]
+# <<< factory NeutralizingShieldEffect
+
+# >>> factory PealOfThunder_InitialEffect
+CONTRACT["PealOfThunder_InitialEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["PealOfThunder_InitialEffect"] = [{}, dict(POISON)]
+# <<< factory PealOfThunder_InitialEffect
+
+# >>> factory PrehistoricPowerEffect
+CONTRACT["PrehistoricPowerEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["PrehistoricPowerEffect"] = [{}, dict(POISON)]
+# <<< factory PrehistoricPowerEffect
+
+# >>> factory Scavenge_DiscardEffect
+CONTRACT["Scavenge_DiscardEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
+CASES["Scavenge_DiscardEffect"] = [{"wram": {0xFF97: b"\xC2", 0xFFA0: b"\x05", 0xC205: b"\x00", 0xC2ED: b"\x00", 0xC27E: b"\x00"}, "read": {0xC205: 1, 0xC2ED: 1, 0xC27E: 1}}, dict(POISON, wram={0xFFA0: b"\x05"})]
+# <<< factory Scavenge_DiscardEffect
+
+# >>> factory LeekSlap_OncePerDuelCheck
+CONTRACT["LeekSlap_OncePerDuelCheck"] = {"compare": ("f",), "preserve": ()}
+CASES["LeekSlap_OncePerDuelCheck"] = [{"wram": {0xFF97: b"\xC2", 0xC2C2: b"\x40"}}, {}]
+# <<< factory LeekSlap_OncePerDuelCheck
+
+# >>> factory LeekSlap_SetUsedThisDuelFlag
+CONTRACT["LeekSlap_SetUsedThisDuelFlag"] = {"compare": (), "preserve": ()}
+CASES["LeekSlap_SetUsedThisDuelFlag"] = [{"wram": {0xFF97: b"\xC2", 0xC2C2: b"\x00"}}]
+# <<< factory LeekSlap_SetUsedThisDuelFlag
+
+# >>> factory PlusPowerEffect
+CONTRACT["PlusPowerEffect"] = {"compare": (), "preserve": ()}
+CASES["PlusPowerEffect"] = [{"wram": {0xFF97: b"\xC2", 0xFF9F: b"\x01", 0xC2EE: b"\x00", 0xC2E0: b"\x00"}, "read": {0xC2E0: 1}}]
+# <<< factory PlusPowerEffect
+
+# >>> factory StrikesBackEffect
+CONTRACT["StrikesBackEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["StrikesBackEffect"] = [{}, dict(POISON)]
+# <<< factory StrikesBackEffect
+
+# >>> factory Switch_BenchCheck
+CONTRACT["Switch_BenchCheck"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["Switch_BenchCheck"] = [{"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x02"}}, {"a": 2}, {"a": 6}]
+# <<< factory Switch_BenchCheck
+
+# >>> factory Switch_SwitchEffect
+CONTRACT["Switch_SwitchEffect"] = {"compare": (), "preserve": ()}
+CASES["Switch_SwitchEffect"] = [{"wram": {0xFF97: b"\xC2", 0xFFA0: b"\x01", 0xC2BB: b"\x01", 0xC2BC: b"\x02", 0xC2BD: b"\x03", 0xC200: b"\x10", 0xC201: b"\x11", 0xC202: b"\x12"}, "read": {0xC2BB: 1, 0xC2BC: 1, 0xC2BD: 1, 0xC200: 3}}]
+# <<< factory Switch_SwitchEffect
+
+# >>> factory TryGiveDamageCounter_StrangeBehavior
+CONTRACT["TryGiveDamageCounter_StrangeBehavior"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["TryGiveDamageCounter_StrangeBehavior"] = [
+    {"wram": {0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xC2C8: b"\x0A", 0xC2C9: b"\x20"}, "read": {0xC2C8: 2}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xC2C8: b"\x0B", 0xC2C9: b"\x20"}, read={0xC2C8: 2}),
+    {"wram": {0xFF97: b"\xC2", 0xFFA0: b"\x01", 0xFFA1: b"\x00", 0xC2C8: b"\x20", 0xC2C9: b"\x30"}, "read": {0xC2C8: 2}},
+]
+# <<< factory TryGiveDamageCounter_StrangeBehavior
+
+# >>> factory SpacingOut_CheckDamage
+CONTRACT["SpacingOut_CheckDamage"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "d")}
+CASES["SpacingOut_CheckDamage"] = [
+    {"wram": {0xC0BB: b"\x01", 0xC0C8: b"\x00"}},
+    dict(POISON, wram={0xC0BB: b"\x01", 0xC0C8: b"\x0A"}),
+    {"wram": {0xC0BB: b"\x01", 0xC0C8: b"\x14"}},
+]
+# <<< factory SpacingOut_CheckDamage
+
+# >>> factory SpacingOut_HealEffect
+CONTRACT["SpacingOut_HealEffect"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["SpacingOut_HealEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xFFA0: b"\x01", 0xC2BB: b"\x01", 0xC2C8: b"\x20", 0xC401: b"\x7D"}, "read": {0xC2C8: 1}},
+    dict(POISON, wram={0xFFA0: b"\x01", 0xC0BB: b"\x01", 0xC0C8: b"\x20"}),
+    {"a": 1, "f": 0x10, "wram": {0xFFA0: b"\x01", 0xC0BB: b"\x01", 0xC0C8: b"\x00"}},
+]
+# <<< factory SpacingOut_HealEffect
+
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+# >>> factory-mutation Shift_OncePerTurnCheck
 MUTATIONS["Shift_OncePerTurnCheck"] = {
     "source_symbol": "Shift_OncePerTurnCheck",
     "before": "return (ShiftOncePerTurnCheckResult){0x10u, OnlyOncePerTurnText};",
@@ -9405,7 +9551,7 @@ MUTATIONS["ComputerSearch_HandDeckCheck"] = {
     "after": "\t\t(uint8_t)((effect_compare(r.a, DECK_SIZE) & 0xE0u)",
     "case_ids": ["ComputerSearch_HandDeckCheck-6"],
 }
-# <<< factory-mutation Whirlpool_AISelectEffect
+# <<< factory-mutation ComputerSearch_HandDeckCheck
 # >>> factory-mutation Whirlpool_DiscardEffect
 MUTATIONS["Whirlpool_DiscardEffect"] = {
 	"source_symbol": "Whirlpool_DiscardEffect",
@@ -11089,3 +11235,176 @@ for _index, _record in enumerate(SCHEMA2_CASES["EnergySpike_PlayerSelectEffect"]
         _record["completion"] = {"mode": "entry", "pc": 0x3794, "bank": 0,
                                  "routine": "PlaySFX_InvalidChoice"}
 # <<< factory-completion EnergySpike_PlayerSelectEffect
+# >>> factory-mutation MrFuji_BenchCheck
+MUTATIONS["MrFuji_BenchCheck"] = {"source_symbol": "MrFuji_BenchCheck", "before": "#define EffectNoPokemonOnTheBenchText 0x00b7u", "after": "#define EffectNoPokemonOnTheBenchText 0x00b1u", "case_ids": ["MrFuji_BenchCheck-0", "MrFuji_BenchCheck-1", "MrFuji_BenchCheck-2", "MrFuji_BenchCheck-3", "MrFuji_BenchCheck-4"]}
+# <<< factory-mutation MrFuji_BenchCheck
+# >>> factory-mutation DrawSymbolOnPlayAreaCursor
+MUTATIONS["DrawSymbolOnPlayAreaCursor"] = {"source_symbol": "DrawSymbolOnPlayAreaCursor", "before": "uint8_t row = (uint8_t)(a * 3u + 2u);", "after": "uint8_t row = (uint8_t)(a * 3u + 3u);", "case_ids": ["DrawSymbolOnPlayAreaCursor-0", "DrawSymbolOnPlayAreaCursor-1", "DrawSymbolOnPlayAreaCursor-2"]}
+# <<< factory-mutation DrawSymbolOnPlayAreaCursor
+# >>> factory-mutation GustOfWind_BenchCheck
+MUTATIONS["GustOfWind_BenchCheck"] = {"source_symbol": "GustOfWind_BenchCheck", "before": "uint8_t flags = 0x40u;", "after": "uint8_t flags = 0x00u;", "case_ids": ["GustOfWind_BenchCheck-0", "GustOfWind_BenchCheck-1", "GustOfWind_BenchCheck-2"]}
+# <<< factory-mutation GustOfWind_BenchCheck
+# >>> factory-mutation MarowakCallForFamily_AISelectEffect
+MUTATIONS["MarowakCallForFamily_AISelectEffect"] = {"source_symbol": "MarowakCallForFamily_AISelectEffect", "before": "if (gb_read8(wLoadedCard2Stage_ADDR) == 0u)", "after": "if (gb_read8(wLoadedCard2Stage_ADDR) != 0u)", "case_ids": ["MarowakCallForFamily_AISelectEffect-0", "MarowakCallForFamily_AISelectEffect-1"]}
+# <<< factory-mutation MarowakCallForFamily_AISelectEffect
+# >>> factory-mutation Peek_OncePerTurnCheck
+MUTATIONS["Peek_OncePerTurnCheck"] = {"source_symbol": "Peek_OncePerTurnCheck", "before": "if (flags.a & USED_PKMN_POWER_THIS_TURN)", "after": "if (!(flags.a & USED_PKMN_POWER_THIS_TURN))", "case_ids": ["Peek_OncePerTurnCheck-0"]}
+# <<< factory-mutation Peek_OncePerTurnCheck
+# >>> factory-mutation Wail_BenchCheck
+MUTATIONS["Wail_BenchCheck"] = {"source_symbol": "Wail_BenchCheck", "before": "if (turn.a < 6u)", "after": "if (turn.a < 5u)", "case_ids": ["Wail_BenchCheck-0", "Wail_BenchCheck-2"]}
+# <<< factory-mutation Wail_BenchCheck
+# >>> factory-mutation ThickSkinnedEffect
+MUTATIONS["ThickSkinnedEffect"] = {"source_symbol": "ThickSkinnedEffect", "before": "0x10u", "after": "0x00u", "case_ids": ["ThickSkinnedEffect-0"]}
+# <<< factory-mutation ThickSkinnedEffect
+# >>> factory-mutation HealingWind_InitialEffect
+MUTATIONS["HealingWind_InitialEffect"] = {"source_symbol": "HealingWind_InitialEffect", "before": "0x10u", "after": "0x00u", "case_ids": ["HealingWind_InitialEffect-0"]}
+# <<< factory-mutation HealingWind_InitialEffect
+# >>> factory-mutation DreamEaterEffect
+MUTATIONS["DreamEaterEffect"] = {"source_symbol": "DreamEaterEffect", "before": "if (masked == ASLEEP)", "after": "if (masked != ASLEEP)", "case_ids": ["DreamEaterEffect-0", "DreamEaterEffect-1"]}
+# <<< factory-mutation DreamEaterEffect
+# >>> factory-mutation JynxMeditate_DamageBoostEffect
+MUTATIONS["JynxMeditate_DamageBoostEffect"] = {"source_symbol": "JynxMeditate_DamageBoostEffect", "before": "AddToDamage(damage.a);", "after": "AddToDamage((uint8_t)(damage.a + 1u));", "case_ids": ["JynxMeditate_DamageBoostEffect-0", "JynxMeditate_DamageBoostEffect-1"]}
+# <<< factory-mutation JynxMeditate_DamageBoostEffect
+# >>> factory-mutation KadabraRecover_CheckEnergyHP
+MUTATIONS["KadabraRecover_CheckEnergyHP"] = {"source_symbol": "KadabraRecover_CheckEnergyHP", "before": "if (energy < 1u)\n\t\treturn (KadabraRecoverCheckEnergyHPResult){energy, f, 0u, 0u, hl};", "after": "if (energy < 2u)\n\t\treturn (KadabraRecoverCheckEnergyHPResult){energy, f, 0u, 0u, hl};", "case_ids": ["KadabraRecover_CheckEnergyHP-0", "KadabraRecover_CheckEnergyHP-1"]}
+# <<< factory-mutation KadabraRecover_CheckEnergyHP
+# >>> factory-mutation MewtwoAltEnergyAbsorption_AddToHandEffect
+MUTATIONS["MewtwoAltEnergyAbsorption_AddToHandEffect"] = {"source_symbol": "MewtwoAltEnergyAbsorption_AddToHandEffect", "before": "if (card == 0xffu)", "after": "if (card != 0xffu)", "case_ids": ["MewtwoAltEnergyAbsorption_AddToHandEffect-0", "MewtwoAltEnergyAbsorption_AddToHandEffect-1"]}
+# <<< factory-mutation MewtwoAltEnergyAbsorption_AddToHandEffect
+# >>> factory-mutation MewtwoEnergyAbsorption_AddToHandEffect
+MUTATIONS["MewtwoEnergyAbsorption_AddToHandEffect"] = {"source_symbol": "MewtwoEnergyAbsorption_AddToHandEffect", "before": "MewtwoAltEnergyAbsorption_AddToHandEffect();", "after": "MoveDiscardPileCardToHand(0xffu);", "case_ids": ["MewtwoEnergyAbsorption_AddToHandEffect-0", "MewtwoEnergyAbsorption_AddToHandEffect-1"]}
+# <<< factory-mutation MewtwoEnergyAbsorption_AddToHandEffect
+# >>> factory-mutation NeutralizingShieldEffect
+MUTATIONS["NeutralizingShieldEffect"] = {"source_symbol": "NeutralizingShieldEffect", "before": "return 0x10u;", "after": "return 0x00u;", "case_ids": ["NeutralizingShieldEffect-0", "NeutralizingShieldEffect-1"]}
+# <<< factory-mutation NeutralizingShieldEffect
+# >>> factory-mutation PealOfThunder_InitialEffect
+MUTATIONS["PealOfThunder_InitialEffect"] = {"source_symbol": "PealOfThunder_InitialEffect", "before": "return 0x10u;", "after": "return 0x00u;", "case_ids": ["PealOfThunder_InitialEffect-0", "PealOfThunder_InitialEffect-1"]}
+# <<< factory-mutation PealOfThunder_InitialEffect
+# >>> factory-mutation PrehistoricPowerEffect
+MUTATIONS["PrehistoricPowerEffect"] = {"source_symbol": "PrehistoricPowerEffect", "before": "return 0x10u;", "after": "return 0x00u;", "case_ids": ["PrehistoricPowerEffect-0", "PrehistoricPowerEffect-1"]}
+# <<< factory-mutation PrehistoricPowerEffect
+# >>> factory-mutation Scavenge_DiscardEffect
+MUTATIONS["Scavenge_DiscardEffect"] = {"source_symbol": "Scavenge_DiscardEffect", "before": "PutCardInDiscardPile(card);", "after": "PutCardInDiscardPile(0u);", "case_ids": ["Scavenge_DiscardEffect-0", "Scavenge_DiscardEffect-1"]}
+# <<< factory-mutation Scavenge_DiscardEffect
+# >>> factory-mutation CreateListOfFireEnergyAttachedToArena
+MUTATIONS["CreateListOfFireEnergyAttachedToArena"] = {"source_symbol": "CreateListOfFireEnergyAttachedToArena", "before": "return CreateListOfEnergyAttachedToArena(0x08u);", "after": "return CreateListOfEnergyAttachedToArena(0x03u);", "case_ids": ["CreateListOfFireEnergyAttachedToArena-0", "CreateListOfFireEnergyAttachedToArena-1"]}
+# <<< factory-mutation CreateListOfFireEnergyAttachedToArena
+# >>> factory-mutation CreateEnergyCardListFromDiscardPile_AllEnergy
+MUTATIONS["CreateEnergyCardListFromDiscardPile_AllEnergy"] = {"source_symbol": "CreateEnergyCardListFromDiscardPile_AllEnergy", "before": "return CreateEnergyCardListFromDiscardPile(0x00u);", "after": "return CreateEnergyCardListFromDiscardPile(0x01u);", "case_ids": ["CreateEnergyCardListFromDiscardPile_AllEnergy-0", "CreateEnergyCardListFromDiscardPile_AllEnergy-1"]}
+# <<< factory-mutation CreateEnergyCardListFromDiscardPile_AllEnergy
+# >>> factory-mutation CheckIfDeckIsEmpty
+MUTATIONS["CheckIfDeckIsEmpty"] = {"source_symbol": "CheckIfDeckIsEmpty", "before": "if (count.a == DECK_SIZE)", "after": "if (count.a != DECK_SIZE)", "case_ids": ["CheckIfDeckIsEmpty-0", "CheckIfDeckIsEmpty-1"]}
+# <<< factory-mutation CheckIfDeckIsEmpty
+# >>> factory-mutation Toxic_DoublePoisonEffect
+MUTATIONS["Toxic_DoublePoisonEffect"] = {"source_symbol": "Toxic_DoublePoisonEffect", "before": "return DoublePoisonEffect();", "after": "return PoisonEffect();", "case_ids": ["Toxic_DoublePoisonEffect-0", "Toxic_DoublePoisonEffect-1"]}
+# <<< factory-mutation Toxic_DoublePoisonEffect
+# >>> factory-mutation NinetalesLure_CheckBench
+MUTATIONS["NinetalesLure_CheckBench"] = {"source_symbol": "NinetalesLure_CheckBench", "before": "effect_compare(count.a, 2u)", "after": "effect_compare(count.a, 3u)", "case_ids": ["NinetalesLure_CheckBench-0", "NinetalesLure_CheckBench-1"]}
+# <<< factory-mutation NinetalesLure_CheckBench
+# >>> factory-mutation ScoopUp_BenchCheck
+MUTATIONS["ScoopUp_BenchCheck"] = {"source_symbol": "ScoopUp_BenchCheck", "before": "effect_compare(count.a, 2u)", "after": "effect_compare(count.a, 3u)", "case_ids": ["ScoopUp_BenchCheck-0", "ScoopUp_BenchCheck-1"]}
+# <<< factory-mutation ScoopUp_BenchCheck
+# >>> factory-mutation MysteriousFossil_BenchCheck
+MUTATIONS["MysteriousFossil_BenchCheck"] = {"source_symbol": "MysteriousFossil_BenchCheck", "before": "count.a == 6u", "after": "count.a == 5u", "case_ids": ["MysteriousFossil_BenchCheck-0", "MysteriousFossil_BenchCheck-1"]}
+# <<< factory-mutation MysteriousFossil_BenchCheck
+# >>> factory-mutation TrainerCardAsPokemon_BenchCheck
+MUTATIONS["TrainerCardAsPokemon_BenchCheck"] = {"source_symbol": "TrainerCardAsPokemon_BenchCheck", "before": "effect_compare(count.a, 2u)", "after": "effect_compare(count.a, 3u)", "case_ids": ["TrainerCardAsPokemon_BenchCheck-0", "TrainerCardAsPokemon_BenchCheck-1"]}
+# <<< factory-mutation TrainerCardAsPokemon_BenchCheck
+# >>> factory-mutation VictreebelLure_AssertPokemonInBench
+MUTATIONS["VictreebelLure_AssertPokemonInBench"] = {"source_symbol": "VictreebelLure_AssertPokemonInBench", "before": "effect_compare(count.a, 2u)", "after": "effect_compare(count.a, 3u)", "case_ids": ["VictreebelLure_AssertPokemonInBench-0", "VictreebelLure_AssertPokemonInBench-1"]}
+# <<< factory-mutation VictreebelLure_AssertPokemonInBench
+# >>> factory-mutation ThunderboltEffect
+MUTATIONS["ThunderboltEffect"] = {"source_symbol": "ThunderboltEffect", "before": "PutCardInDiscardPile(card);", "after": "PutCardInDiscardPile(0u);", "case_ids": ["ThunderboltEffect-0", "ThunderboltEffect-1"]}
+# <<< factory-mutation ThunderboltEffect
+# >>> factory-mutation TrainerCardAsPokemon_DiscardEffect
+MUTATIONS["TrainerCardAsPokemon_DiscardEffect"] = {"source_symbol": "TrainerCardAsPokemon_DiscardEffect", "before": "if (location == PLAY_AREA_ARENA)", "after": "if (location != PLAY_AREA_ARENA)", "case_ids": ["TrainerCardAsPokemon_DiscardEffect-0", "TrainerCardAsPokemon_DiscardEffect-1"]}
+# <<< factory-mutation TrainerCardAsPokemon_DiscardEffect
+# >>> factory-mutation MysteriousFossil_PlaceInPlayAreaEffect
+MUTATIONS["MysteriousFossil_PlaceInPlayAreaEffect"] = {"source_symbol": "MysteriousFossil_PlaceInPlayAreaEffect", "before": "hTempCardIndex_ff9f", "after": "hTempCardIndex_ff9f + 1u", "case_ids": ["MysteriousFossil_PlaceInPlayAreaEffect-0", "MysteriousFossil_PlaceInPlayAreaEffect-1"]}
+# <<< factory-mutation MysteriousFossil_PlaceInPlayAreaEffect
+# >>> factory-mutation LeekSlap_OncePerDuelCheck
+MUTATIONS["LeekSlap_OncePerDuelCheck"] = {"source_symbol": "LeekSlap_OncePerDuelCheck", "before": "USED_LEEK_SLAP_THIS_DUEL_F", "after": "USED_LEEK_SLAP_THIS_DUEL_F + 1u", "case_ids": ["LeekSlap_OncePerDuelCheck-0"]}
+# <<< factory-mutation LeekSlap_OncePerDuelCheck
+# >>> factory-mutation LeekSlap_SetUsedThisDuelFlag
+MUTATIONS["LeekSlap_SetUsedThisDuelFlag"] = {"source_symbol": "LeekSlap_SetUsedThisDuelFlag", "before": "USED_LEEK_SLAP_THIS_DUEL_F", "after": "USED_LEEK_SLAP_THIS_DUEL_F + 1u", "case_ids": ["LeekSlap_SetUsedThisDuelFlag-0"]}
+# <<< factory-mutation LeekSlap_SetUsedThisDuelFlag
+# >>> factory-mutation PlusPowerEffect
+MUTATIONS["PlusPowerEffect"] = {"source_symbol": "PlusPowerEffect", "before": " + 1u", "after": " + 2u", "case_ids": ["PlusPowerEffect-0"]}
+# <<< factory-mutation PlusPowerEffect
+# >>> factory-mutation StrikesBackEffect
+MUTATIONS["StrikesBackEffect"] = {"source_symbol": "StrikesBackEffect", "before": "0x10u", "after": "0x00u", "case_ids": ["StrikesBackEffect-0"]}
+# <<< factory-mutation StrikesBackEffect
+# >>> factory-mutation Switch_BenchCheck
+MUTATIONS["Switch_BenchCheck"] = {"source_symbol": "Switch_BenchCheck", "before": "effect_compare(count.a, 2u)", "after": "effect_compare(count.a, 3u)", "case_ids": ["Switch_BenchCheck-0", "Switch_BenchCheck-1", "Switch_BenchCheck-2"]}
+# <<< factory-mutation Switch_BenchCheck
+# >>> factory-mutation Switch_SwitchEffect
+MUTATIONS["Switch_SwitchEffect"] = {"source_symbol": "Switch_SwitchEffect", "before": "hTemp_ffa0", "after": "hTemp_ffa0 + 1u", "case_ids": ["Switch_SwitchEffect-0"]}
+# <<< factory-mutation Switch_SwitchEffect
+# >>> factory-mutation TryGiveDamageCounter_StrangeBehavior
+MUTATIONS["TryGiveDamageCounter_StrangeBehavior"] = {"source_symbol": "TryGiveDamageCounter_StrangeBehavior", "before": "if (remaining == 0u)", "after": "if (remaining == 1u)", "case_ids": ["TryGiveDamageCounter_StrangeBehavior-0", "TryGiveDamageCounter_StrangeBehavior-1", "TryGiveDamageCounter_StrangeBehavior-2"]}
+# <<< factory-mutation TryGiveDamageCounter_StrangeBehavior
+# >>> factory-mutation SpacingOut_CheckDamage
+MUTATIONS["SpacingOut_CheckDamage"] = {"source_symbol": "SpacingOut_CheckDamage", "before": "effect_compare(damage.a, 10u)", "after": "effect_compare(damage.a, 20u)", "case_ids": ["SpacingOut_CheckDamage-0", "SpacingOut_CheckDamage-1", "SpacingOut_CheckDamage-2"]}
+# <<< factory-mutation SpacingOut_CheckDamage
+# >>> factory-mutation SpacingOut_HealEffect
+MUTATIONS["SpacingOut_HealEffect"] = {"source_symbol": "SpacingOut_HealEffect", "before": "uint8_t new_hp = (uint8_t)(10u + hp.a);", "after": "uint8_t new_hp = (uint8_t)(20u + hp.a);", "case_ids": ["SpacingOut_HealEffect-0", "SpacingOut_HealEffect-1", "SpacingOut_HealEffect-2"]}
+# <<< factory-mutation SpacingOut_HealEffect
+# >>> factory-mutation CheckIfCardIsBasicEnergy
+MUTATIONS["CheckIfCardIsBasicEnergy"] = {"source_symbol": "CheckIfCardIsBasicEnergy", "before": "if (type >= TYPE_ENERGY_DOUBLE_COLORLESS)", "after": "if (type > TYPE_ENERGY_DOUBLE_COLORLESS)", "case_ids": ["CheckIfCardIsBasicEnergy-2"]}
+# <<< factory-mutation CheckIfCardIsBasicEnergy
+# >>> factory-mutation CopyPlayAreaHPToBackup_Unreferenced
+MUTATIONS["CopyPlayAreaHPToBackup_Unreferenced"] = {"source_symbol": "CopyPlayAreaHPToBackup_Unreferenced", "before": "wBackupPlayerAreaHP_ADDR + i", "after": "wBackupPlayerAreaHP_ADDR + i + 1u", "case_ids": ["CopyPlayAreaHPToBackup_Unreferenced-0"]}
+# <<< factory-mutation CopyPlayAreaHPToBackup_Unreferenced
+# >>> factory-mutation CopyPlayAreaHPFromBackup_Unreferenced
+MUTATIONS["CopyPlayAreaHPFromBackup_Unreferenced"] = {"source_symbol": "CopyPlayAreaHPFromBackup_Unreferenced", "before": "gb_read8((uint16_t)(wBackupPlayerAreaHP_ADDR + i))", "after": "gb_read8((uint16_t)(wBackupPlayerAreaHP_ADDR + i + 1u))", "case_ids": ["CopyPlayAreaHPFromBackup_Unreferenced-0"]}
+# <<< factory-mutation CopyPlayAreaHPFromBackup_Unreferenced
+# >>> factory-mutation EnergySearch_DeckCheck
+MUTATIONS["EnergySearch_DeckCheck"] = {"source_symbol": "EnergySearch_DeckCheck", "before": "count.a == DECK_SIZE", "after": "count.a != DECK_SIZE", "case_ids": ["EnergySearch_DeckCheck-0", "EnergySearch_DeckCheck-1"]}
+# <<< factory-mutation EnergySearch_DeckCheck
+# >>> factory-mutation Gale_LoadAnimation
+MUTATIONS["Gale_LoadAnimation"] = {"source_symbol": "Gale_LoadAnimation", "before": "wLoadedAttackAnimation = 0x87u;", "after": "wLoadedAttackAnimation = 0x88u;", "case_ids": ["Gale_LoadAnimation-0", "Gale_LoadAnimation-1"]}
+# <<< factory-mutation Gale_LoadAnimation
+# >>> factory-mutation CreatePlayableStage2PokemonCardListFromHand
+MUTATIONS["CreatePlayableStage2PokemonCardListFromHand"] = {"source_symbol": "CreatePlayableStage2PokemonCardListFromHand", "before": "gb_write8(dst, 0xffu);", "after": "gb_write8(dst, 0xfeu);", "case_ids": ["CreatePlayableStage2PokemonCardListFromHand-0", "CreatePlayableStage2PokemonCardListFromHand-1"]}
+# <<< factory-mutation CreatePlayableStage2PokemonCardListFromHand
+# >>> factory-mutation PickRandomBasicCardFromDeck
+MUTATIONS["PickRandomBasicCardFromDeck"] = {"source_symbol": "PickRandomBasicCardFromDeck", "before": "if (list.f & 0x10u)\n\t\treturn 0xFFu;", "after": "if (list.f & 0x10u)\n\t\treturn 0x00u;", "case_ids": ["PickRandomBasicCardFromDeck-0", "PickRandomBasicCardFromDeck-1"]}
+# <<< factory-mutation PickRandomBasicCardFromDeck
+# >>> factory-mutation StepIn_SwitchEffect
+MUTATIONS["StepIn_SwitchEffect"] = {"source_symbol": "StepIn_SwitchEffect", "before": "SwapArenaWithBenchPokemon(hTemp_ffa0)", "after": "SwapArenaWithBenchPokemon((uint8_t)(hTemp_ffa0 + 1u))", "case_ids": ["StepIn_SwitchEffect-0"]}
+# <<< factory-mutation StepIn_SwitchEffect
+# >>> factory-mutation Barrier_DiscardEffect
+MUTATIONS["Barrier_DiscardEffect"] = {"source_symbol": "Barrier_DiscardEffect", "before": "\treturn value;", "after": "\treturn 0u;", "case_ids": ["Barrier_DiscardEffect-1", "Barrier_DiscardEffect-2", "Barrier_DiscardEffect-3"]}
+# <<< factory-mutation Barrier_DiscardEffect
+# >>> factory-mutation DestinyBond_DiscardEffect
+MUTATIONS["DestinyBond_DiscardEffect"] = {"source_symbol": "DestinyBond_DiscardEffect", "before": "gb_read8(hTempList_ADDR)", "after": "gb_read8((uint16_t)(hTempList_ADDR + 1u))", "case_ids": ["DestinyBond_DiscardEffect-0", "DestinyBond_DiscardEffect-1"]}
+# <<< factory-mutation DestinyBond_DiscardEffect
+# >>> factory-mutation Ember_DiscardEffect
+MUTATIONS["Ember_DiscardEffect"] = {"source_symbol": "Ember_DiscardEffect", "before": "PutCardInDiscardPile(hTemp_ffa0);", "after": "PutCardInDiscardPile(0u);", "case_ids": ["Ember_DiscardEffect-0", "Ember_DiscardEffect-1"]}
+# <<< factory-mutation Ember_DiscardEffect
+# >>> factory-mutation FireBlast_DiscardEffect
+MUTATIONS["FireBlast_DiscardEffect"] = {"source_symbol": "FireBlast_DiscardEffect", "before": "PutCardInDiscardPile(hTemp_ffa0);", "after": "PutCardInDiscardPile(0u);", "case_ids": ["FireBlast_DiscardEffect-0", "FireBlast_DiscardEffect-1"]}
+# <<< factory-mutation FireBlast_DiscardEffect
+# >>> factory-mutation FireSpin_AISelectEffect
+MUTATIONS["FireSpin_AISelectEffect"] = {"source_symbol": "FireSpin_AISelectEffect", "before": "\tgb_write8(hTempList_ADDR, gb_read8(wDuelTempList_ADDR", "after": "\tgb_write8(hTempList_ADDR, gb_read8((uint16_t)(wDuelTempList_ADDR + 1u)", "case_ids": ["FireSpin_AISelectEffect-0", "FireSpin_AISelectEffect-1"]}
+# <<< factory-mutation FireSpin_AISelectEffect
+# >>> factory-mutation FireSpin_DiscardEffect
+MUTATIONS["FireSpin_DiscardEffect"] = {"source_symbol": "FireSpin_DiscardEffect", "before": "\tPutCardInDiscardPile(gb_read8(hTempList_ADDR", "after": "\tPutCardInDiscardPile(gb_read8((uint16_t)(hTempList_ADDR + 1u)", "case_ids": ["FireSpin_DiscardEffect-0", "FireSpin_DiscardEffect-1"]}
+# <<< factory-mutation FireSpin_DiscardEffect
+# >>> factory-mutation ClefairyMetronome_CheckAttacks
+MUTATIONS["ClefairyMetronome_CheckAttacks"] = {"source_symbol": "ClefairyMetronome_CheckAttacks", "before": "\treturn (ClefairyMetronomeCheckAttacksResult){r.f, NoAttackMayBeChoosenText};", "after": "\treturn (ClefairyMetronomeCheckAttacksResult){r.f, 0};", "case_ids": ["ClefairyMetronome_CheckAttacks-0", "ClefairyMetronome_CheckAttacks-1"]}
+# <<< factory-mutation ClefairyMetronome_CheckAttacks
+# >>> factory-mutation Psychic_DamageBoostEffect
+MUTATIONS["Psychic_DamageBoostEffect"] = {"source_symbol": "Psychic_DamageBoostEffect", "before": "\tgb_write8((uint16_t)(wDamage_ADDR + 1u), (uint8_t)(sum >> 8));", "after": "\tgb_write8(wDamage_ADDR, (uint8_t)(sum >> 8));", "case_ids": ["Psychic_DamageBoostEffect-1", "Psychic_DamageBoostEffect-2"]}
+# <<< factory-mutation Psychic_DamageBoostEffect
+# >>> factory-mutation Barrier_AISelectEffect
+MUTATIONS["Barrier_AISelectEffect"] = {"source_symbol": "Barrier_AISelectEffect", "before": "\tuint8_t value = gb_read8(wDuelTempList_ADDR);", "after": "\tuint8_t value = gb_read8(hTemp_ffa0_ADDR);", "case_ids": ["Barrier_AISelectEffect-1", "Barrier_AISelectEffect-2"]}
+# <<< factory-mutation Barrier_AISelectEffect
+# >>> factory-mutation Whirlpool_AISelectEffect
+MUTATIONS["Whirlpool_AISelectEffect"] = {
+	"source_symbol": "Whirlpool_AISelectEffect",
+	"before": "uint8_t a = AIPickEnergyCardToDiscardFromDefendingPokemon().a;\n\thTemp_ffa0 = a;",
+	"after": "uint8_t a = AIPickEnergyCardToDiscardFromDefendingPokemon().a;\n\thTemp_ffa0 = (uint8_t)~a;",
+	"case_ids": ["Whirlpool_AISelectEffect-0", "Whirlpool_AISelectEffect-1", "Whirlpool_AISelectEffect-2"],
+}
+# <<< factory-mutation Whirlpool_AISelectEffect

@@ -836,7 +836,7 @@ MUTATIONS["PrintVisibleDeckMachineEntries"] = {
     "after": "\t\t\tuint8_t h = 0x20u;",
     "case_ids": ["PrintVisibleDeckMachineEntries-3"],
 }
-# <<< factory-mutation SaveDeckInDeckSaveMachine
+# <<< factory-mutation PrintVisibleDeckMachineEntries
 # >>> factory-mutation TryBuildDeckMachineDeck
 MUTATIONS["TryBuildDeckMachineDeck"] = {
     "source_symbol": "TryBuildDeckMachineDeck",
@@ -895,3 +895,23 @@ MUTATIONS["HandleGiftCenter"] = {"source_symbol": "HandleGiftCenter", "before": 
 for _record in SCHEMA2_CASES["HandleGiftCenter"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x7C04, "bank": 2}
 # <<< factory-completion HandleGiftCenter
+# >>> factory-mutation ClearScreenAndDrawDeckMachineScreen
+MUTATIONS["ClearScreenAndDrawDeckMachineScreen"] = {"source_symbol": "ClearScreenAndDrawDeckMachineScreen", "before": "\twTileMapFill = 0u;", "after": "\twTileMapFill = 1u;", "case_ids": ["ClearScreenAndDrawDeckMachineScreen-0", "ClearScreenAndDrawDeckMachineScreen-1"]}
+# <<< factory-mutation ClearScreenAndDrawDeckMachineScreen
+# >>> factory-mutation DrawDeckMachineScreen
+MUTATIONS["DrawDeckMachineScreen"] = {"source_symbol": "DrawDeckMachineScreen", "before": "\thffb0 = 0x00u;", "after": "\thffb0 = 0x01u;", "case_ids": ["DrawDeckMachineScreen-0", "DrawDeckMachineScreen-1"]}
+# <<< factory-mutation DrawDeckMachineScreen
+# >>> factory-mutation HandleDeckMachineSelection
+MUTATIONS["HandleDeckMachineSelection"] = {"source_symbol": "HandleDeckMachineSelection", "before": "\t\t\tDrawListCursor_Visible();\n\t\t\twTempCardListVisibleOffset = wCardListVisibleOffset;", "after": "\t\t\tDrawListCursor_Visible();\n\t\t\twTempCardListVisibleOffset = 0u;", "case_ids": ["HandleDeckMachineSelection-0", "HandleDeckMachineSelection-1"]}
+# <<< factory-mutation HandleDeckMachineSelection
+# >>> factory-mutation UpdateDeckMachineScrollArrowsAndEntries
+MUTATIONS["UpdateDeckMachineScrollArrowsAndEntries"] = {"source_symbol": "UpdateDeckMachineScrollArrowsAndEntries", "before": "PrintVisibleDeckMachineEntriesResult UpdateDeckMachineScrollArrowsAndEntries(uint8_t f)\n{\n\t(void)f;\n\tDrawListScrollArrows();\n\tuint8_t visible_offset = wCardListVisibleOffset;\n\tuint8_t threshold = (uint8_t)(visible_offset + NUM_DECK_MACHINE_VISIBLE_DECKS + 1u);", "after": "PrintVisibleDeckMachineEntriesResult UpdateDeckMachineScrollArrowsAndEntries(uint8_t f)\n{\n\t(void)f;\n\tDrawListScrollArrows();\n\tuint8_t visible_offset = wCardListVisibleOffset;\n\tuint8_t threshold = 0u;", "case_ids": ["UpdateDeckMachineScrollArrowsAndEntries-0", "UpdateDeckMachineScrollArrowsAndEntries-1", "UpdateDeckMachineScrollArrowsAndEntries-2"]}
+# <<< factory-mutation UpdateDeckMachineScrollArrowsAndEntries
+# >>> factory-mutation SaveDeckInDeckSaveMachine
+MUTATIONS["SaveDeckInDeckSaveMachine"] = {
+    "source_symbol": "SaveDeckInDeckSaveMachine",
+    "before": "\t\t\tuint8_t f = (uint8_t)((waited.f & 0x80u) | 0x10u);\n\t\t\treturn (SaveDeckInDeckSaveMachineResult){a, f};",
+    "after": "\t\t\tuint8_t f = (uint8_t)((waited.f & 0x80u) | 0x00u);\n\t\t\treturn (SaveDeckInDeckSaveMachineResult){a, f};",
+    "case_ids": ["SaveDeckInDeckSaveMachine-0", "SaveDeckInDeckSaveMachine-1"],
+}
+# <<< factory-mutation SaveDeckInDeckSaveMachine

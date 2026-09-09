@@ -777,7 +777,7 @@ MUTATIONS["AICheckIfAttackIsHighRecoil"] = {
     "after": "\t\t(uint8_t)(flag.f ^ 0x10u), d};",
     "case_ids": ["AICheckIfAttackIsHighRecoil-3"],
 }
-# <<< factory-mutation ShowPromotionalCardScreen
+# <<< factory-mutation AICheckIfAttackIsHighRecoil
 # >>> factory-completion ShowPromotionalCardScreen
 # The reference never returns: the farcall reaches _ShowPromotionalCardScreen,
 # whose `.loop` (06:6680) waits on AssertSongFinished, which only reports done
@@ -878,3 +878,18 @@ MUTATIONS["SetUpAndStartLinkDuel"] = {
 for _rec, _comp in zip(SCHEMA2_CASES["SetUpAndStartLinkDuel"], ({"mode": "pre-ret", "pc": 0x2382}, {"mode": "pre-ret", "pc": 0x2382})):
     _rec["completion"] = dict(_comp)
 # <<< factory-completion SetUpAndStartLinkDuel
+# >>> factory-mutation PrintDeckConfiguration
+MUTATIONS["PrintDeckConfiguration"] = {"source_symbol": "PrintDeckConfiguration", "before": "void PrintDeckConfiguration(uint8_t a)\n{\n\t_PrintDeckConfiguration(a);", "after": "void PrintDeckConfiguration(uint8_t a)\n{\n\t(void)0;", "case_ids": ["PrintDeckConfiguration-0"]}
+# <<< factory-mutation PrintDeckConfiguration
+# >>> factory-completion PrintDeckConfiguration
+for _record in SCHEMA2_CASES["PrintDeckConfiguration"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+# <<< factory-completion PrintDeckConfiguration
+# >>> factory-mutation ShowPromotionalCardScreen
+MUTATIONS["ShowPromotionalCardScreen"] = {
+    "source_symbol": "ShowPromotionalCardScreen",
+    "before": "void ShowPromotionalCardScreen(uint8_t a)\n{\n\t_ShowPromotionalCardScreen(a);",
+    "after": "void ShowPromotionalCardScreen(uint8_t a)\n{\n\t_ShowPromotionalCardScreen((uint8_t)(a + 1u));",
+    "case_ids": ["ShowPromotionalCardScreen-0", "ShowPromotionalCardScreen-1"],
+}
+# <<< factory-mutation ShowPromotionalCardScreen
