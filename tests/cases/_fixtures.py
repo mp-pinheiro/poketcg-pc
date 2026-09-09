@@ -707,3 +707,19 @@ CLERK9_REGS = CLERK9.regs
 
 def clerk9_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return CLERK9.case(vram=vram, bank=bank, **changes)
+
+
+DOME_LOAD_MAP = Fixture("dome-1-load-map-entry")
+DOME_LOAD_MAP_REGS = DOME_LOAD_MAP.regs
+
+
+def dome_load_map_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return DOME_LOAD_MAP.case(vram=vram, bank=bank, **changes)
+
+
+DOME_AFTER_DUEL = Fixture("dome-1-after-duel-entry")
+DOME_AFTER_DUEL_REGS = DOME_AFTER_DUEL.regs
+
+
+def dome_after_duel_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return DOME_AFTER_DUEL.case(vram=vram, bank=bank, **changes)

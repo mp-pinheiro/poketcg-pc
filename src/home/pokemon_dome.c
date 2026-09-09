@@ -20,6 +20,7 @@
 #define EVENT_JACK_STATE 0x6Au
 #define EVENT_ROD_STATE 0x6Bu
 #define EVENT_RONALD_POKEMON_DOME_STATE 0x6Cu
+#define EVENT_POKEMON_DOME_IN_MENU 0x66u
 #define COURTNEY_CHALLENGED 0x01u
 #define COURTNEY_DEFEATED 0x02u
 #define STEVE_CHALLENGED 0x01u
@@ -176,8 +177,9 @@ void PokemonDomeMovePlayer(void)
 void PokemonDomeLoadMap(void)
 {
 	TryGivePCPack(0x0Du);
-	uint8_t value = (uint8_t)((gb_read8(0xD3E9u) & 0x08u) >> 3);
-	if (value == 0u)
+	/* pokemon_dome.asm PokemonDomeLoadMap: `get_event_value` goes through
+	 * GetEventVar, which leaves the event's mask in wLoadedEventBits. */
+	if (GetEventValue(EVENT_POKEMON_DOME_IN_MENU) == 0u)
 		return;
 	SetNextScript(0x780Bu);
 }
@@ -187,8 +189,9 @@ void PokemonDomeLoadMap(void)
 PokemonDomeAfterDuelResult PokemonDomeAfterDuel(void)
 {
 	gb_write8(0x2000u, 0x03u);
+	/* pokemon_dome.asm PokemonDomeAfterDuel: the table lookup and `ret`; the
+	 * map's load-map script is not part of it. */
 	FindEndOfDuelScriptResult r = FindEndOfDuelScript(PokemonDomeAfterDuelTable);
-	PokemonDomeLoadMap();
 	return (PokemonDomeAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }
 /* <<< factory PokemonDomeAfterDuel */

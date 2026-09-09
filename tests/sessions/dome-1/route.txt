@@ -1,0 +1,65 @@
+# From ronald-3's end (the Dome entrance, after Ronald's question): the poke
+# gives all eight medals, so the Mysterious Voice door (22,0), read from (22,2),
+# opens into the Pokemon Dome; stepping onto row 22 in front of the Grand
+# Masters starts Rod's challenge (yes), the ceremony, and Courtney's duel
+# (LEGENDARY_MOLTRES_DECK, 6 prizes) under the pilot's duel policy, then her
+# after-duel script back to the entrance.
+idle
+hold RIGHT 16
+idle
+hold UP 16
+idle
+press UP
+idle
+peek
+press A
+idle
+press A
+idle
+press A
+idle
+peek
+hold UP 30
+idle
+hold UP 8
+idle
+press A
+idle
+press A
+idle
+shot dome-1-ask
+yes
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+duel
+dismiss
+peek
+shot dome-1-end

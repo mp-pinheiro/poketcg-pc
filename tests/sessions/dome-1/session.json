@@ -1,0 +1,45 @@
+{
+  "goal": "From Ronald's question at the Dome entrance: eight medals poked, the Mysterious Voice door, the Grand Masters' challenge accepted, and Courtney's duel to its end under the pilot's duel policy, then her after-duel script",
+  "name": "dome-1",
+  "ordinals": 682246,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ],
+    "582677": [
+      [
+        54226,
+        24
+      ]
+    ],
+    "603055": [
+      [
+        54226,
+        59
+      ]
+    ],
+    "635103": [
+      [
+        54226,
+        255
+      ]
+    ]
+  },
+  "recorded": "2026-09-09T10:02:09+00:00",
+  "schema": 1
+}

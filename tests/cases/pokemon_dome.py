@@ -1,3 +1,5 @@
+from tests.cases._fixtures import dome_load_map_fixture as _dome_load_map_fixture, DOME_LOAD_MAP_REGS as _DOME_LOAD_MAP_REGS
+from tests.cases._fixtures import dome_after_duel_fixture as _dome_after_duel_fixture, DOME_AFTER_DUEL_REGS as _DOME_AFTER_DUEL_REGS
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -130,11 +132,16 @@ CASES["PokemonDomeMovePlayer"] = [
 
 # >>> factory PokemonDomeLoadMap
 CONTRACT["PokemonDomeLoadMap"] = {"compare": (), "preserve": (), "wram_out": True}
+wLoadedEventBits_A = 0xD3D1
 CASES["PokemonDomeLoadMap"] = [
     {"wram": {wEventVarByte_A: b"\x00", wPCPacks_A: bytes(15)},
-     "read": {wPCPacks_A: 15, wNextScript_A: 2}},
+     "read": {wPCPacks_A: 15, wNextScript_A: 2, wLoadedEventBits_A: 1}},
     dict(POISON, wram={wEventVarByte_A: b"\x08", wPCPacks_A: bytes(15)},
-         read={wPCPacks_A: 15, wNextScript_A: 2}),
+         read={wPCPacks_A: 15, wNextScript_A: 2, wLoadedEventBits_A: 1}),
+    # dome-1 636216: the live entry through the opened door; get_event_value leaves
+    # EVENT_POKEMON_DOME_IN_MENU's mask in wLoadedEventBits.
+    dict(_dome_load_map_fixture(vram=False, bank=3), **_DOME_LOAD_MAP_REGS,
+         read={wPCPacks_A: 15, wNextScript_A: 2, wLoadedEventBits_A: 1}),
 ]
 # <<< factory PokemonDomeLoadMap
 
@@ -144,6 +151,10 @@ CASES["PokemonDomeAfterDuel"] = [
     {"wram": {0xD0C3: b"\x00", 0xD0C4: b"\x00"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
     {"wram": {0xD0C3: b"\x00", 0xD0C4: b"\x37"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, wram={0xD0C3: b"\x01", 0xD0C4: b"\x37"}, instruction_budget=2000000, cycle_budget=8000000),
+    # dome-1 681052: Courtney's duel lost; the dispatcher is the table lookup alone,
+    # so the PC packs and the event scratch (wLoadedEventBits) stay as the duel left them.
+    dict(_dome_after_duel_fixture(vram=False, bank=3), **_DOME_AFTER_DUEL_REGS,
+         read={0xD3D1: 1, wPCPacks_A: 15, 0xD3E9: 1}),
 ]
 # <<< factory PokemonDomeAfterDuel
 
@@ -237,15 +248,10 @@ MUTATIONS["PokemonDomeCloseTextBox"] = {"source_symbol": "PokemonDomeCloseTextBo
 MUTATIONS["PokemonDomeMovePlayer"] = {"source_symbol": "PokemonDomeMovePlayer", "before": "gb_write8(0xD3ABu, 0x3Au);", "after": "gb_write8(0xD3ABu, 0x3Bu);", "case_ids": ["PokemonDomeMovePlayer-3"]}
 # <<< factory-mutation PokemonDomeMovePlayer
 # >>> factory-mutation PokemonDomeLoadMap
-MUTATIONS["PokemonDomeLoadMap"] = {"source_symbol": "PokemonDomeLoadMap", "before": "\tSetNextScript(0x780Bu);", "after": "\tSetNextScript(0x780Cu);", "case_ids": ["PokemonDomeLoadMap-1"]}
+MUTATIONS["PokemonDomeLoadMap"] = {"source_symbol": "PokemonDomeLoadMap", "before": "\tif (GetEventValue(EVENT_POKEMON_DOME_IN_MENU) == 0u)\n\t\treturn;", "after": "\tif ((uint8_t)((gb_read8(0xD3E9u) & 0x08u) >> 3) == 0u)\n\t\treturn;", "case_ids": ["PokemonDomeLoadMap-2"]}
 # <<< factory-mutation PokemonDomeLoadMap
 # >>> factory-mutation PokemonDomeAfterDuel
-MUTATIONS["PokemonDomeAfterDuel"] = {
-    "source_symbol": "PokemonDomeAfterDuel",
-    "before": "\tFindEndOfDuelScriptResult r = FindEndOfDuelScript(PokemonDomeAfterDuelTable);",
-    "after": "\tFindEndOfDuelScriptResult r = FindEndOfDuelScript((uint16_t)(PokemonDomeAfterDuelTable + 1u));",
-    "case_ids": ["PokemonDomeAfterDuel-0", "PokemonDomeAfterDuel-1"]
-}
+MUTATIONS["PokemonDomeAfterDuel"] = {"source_symbol": "PokemonDomeAfterDuel", "before": "\tFindEndOfDuelScriptResult r = FindEndOfDuelScript(PokemonDomeAfterDuelTable);\n\treturn", "after": "\tFindEndOfDuelScriptResult r = FindEndOfDuelScript(PokemonDomeAfterDuelTable);\n\tPokemonDomeLoadMap();\n\treturn", "case_ids": ["PokemonDomeAfterDuel-3"]}
 # <<< factory-mutation PokemonDomeAfterDuel
 # >>> factory-mutation Preload_Courtney
 MUTATIONS["Preload_Courtney"] = {"source_symbol": "Preload_Courtney", "before": "return preload_grand_master(EVENT_COURTNEY_STATE", "after": "return preload_grand_master(EVENT_STEVE_STATE", "case_ids": ["Preload_Courtney-1"]}
