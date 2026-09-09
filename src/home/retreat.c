@@ -604,15 +604,18 @@ bench_ko_success:
 		CheckIfNotABossDeckIDResult boss = CheckIfNotABossDeckID();
 		a = boss.a; f = boss.carry ? 0x10u : 0u;
 		if (!boss.carry) {
+			/* retreat.asm:262-270: an arena that cannot knock out, or whose
+			 * knockout attack is unusable, scores 40 (.active_cant_ko_2);
+			 * only a usable knockout skips to .check_defending_id. */
 			hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
 			CheckIfAnyAttackKnocksOutDefendingCardResult k = CheckIfAnyAttackKnocksOutDefendingCard();
 			a = k.a; f = k.f;
-			if ((f & 0x10u) == 0u)
-				goto check_defending_id;
-			CheckIfSelectedAttackIsUnusableResult u = CheckIfSelectedAttackIsUnusable(a, f, b, c, d, e, hl);
-			a = u.a; f = u.f; b = u.b; c = u.c; d = u.d; e = u.e; hl = u.hl;
-			if ((f & 0x10u) == 0u)
-				goto check_defending_id;
+			if ((f & 0x10u) != 0u) {
+				CheckIfSelectedAttackIsUnusableResult u = CheckIfSelectedAttackIsUnusable(a, f, b, c, d, e, hl);
+				a = u.a; f = u.f; b = u.b; c = u.c; d = u.d; e = u.e; hl = u.hl;
+				if ((f & 0x10u) == 0u)
+					goto check_defending_id;
+			}
 			AIEncourageResult r = AIEncourage(40u);
 			a = r.a; f = r.f;
 			wAIPlayEnergyCardForRetreat = TRUE;

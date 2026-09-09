@@ -677,6 +677,14 @@ def grass_retreat_2_fixture(vram: bool = True, bank: int | None = None, **change
     return GRASS_RETREAT_2.case(vram=vram, bank=bank, **changes)
 
 
+AI_DUEL_RETREAT = Fixture("ai-duel-12-retreat-entry")
+AI_DUEL_RETREAT_REGS = AI_DUEL_RETREAT.regs
+
+
+def ai_duel_retreat_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_DUEL_RETREAT.case(vram=vram, bank=bank, **changes)
+
+
 BEGIN_USE_ATTACK = Fixture("psychic-club-begin-use-attack-entry")
 BEGIN_USE_ATTACK_REGS = BEGIN_USE_ATTACK.regs
 
