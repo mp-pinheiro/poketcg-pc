@@ -292,13 +292,18 @@ uint8_t GameEvent_Duel(void)
 /* <<< factory GameEvent_Duel */
 
 /* >>> factory GameEvent_ChallengeMachine */
-void GameEvent_ChallengeMachine(void)
+uint8_t GameEvent_ChallengeMachine(void)
 {
 	wDefaultSong = MUSIC_PC_MAIN_MENU;
 	(void)PlayDefaultSong();
 	EnableSRAM();
 	sPlayerInChallengeMachine = 0u;
 	DisableSRAM();
+	/* map.asm:123-129 .asm_38ed, the tail GameEvent_ContinueDuel jumps into. */
+	ChallengeMachine_Start();
+	wDefaultSong = MUSIC_OVERWORLD;
+	SongResult result = PlayDefaultSong();
+	return (uint8_t)((result.f & 0x80u) | 0x10u);
 }
 /* <<< factory GameEvent_ChallengeMachine */
 
@@ -376,6 +381,7 @@ uint8_t _ExecuteGameEvent(void)
 		return result.f;
 	}
 	case GAME_EVENT_CHALLENGE_MACHINE:
+		return GameEvent_ChallengeMachine();
 	default:
 		wDefaultSong = 0x06u;
 		return 0x10u;

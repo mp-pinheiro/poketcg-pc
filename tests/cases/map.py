@@ -384,11 +384,12 @@ for _record in SCHEMA2_CASES["GameEvent_Duel"]:
                              "routine": "ChooseInitialArenaAndBenchPokemon"}
 # <<< factory-completion GameEvent_Duel
 # >>> factory-mutation GameEvent_ChallengeMachine
-MUTATIONS["GameEvent_ChallengeMachine"] = {"source_symbol": "GameEvent_ChallengeMachine", "before": "void GameEvent_ChallengeMachine(void)\n{\n\twDefaultSong = MUSIC_PC_MAIN_MENU;\n\t(void)PlayDefaultSong();\n\tEnableSRAM();\n\tsPlayerInChallengeMachine = 0u;", "after": "void GameEvent_ChallengeMachine(void)\n{\n\twDefaultSong = MUSIC_PC_MAIN_MENU;\n\t(void)PlayDefaultSong();\n\tEnableSRAM();\n\tsPlayerInChallengeMachine = 1u;" , "case_ids": ["GameEvent_ChallengeMachine-0", "GameEvent_ChallengeMachine-1"]}
+MUTATIONS["GameEvent_ChallengeMachine"] = {"source_symbol": "GameEvent_ChallengeMachine", "before": "uint8_t GameEvent_ChallengeMachine(void)\n{\n\twDefaultSong = MUSIC_PC_MAIN_MENU;", "after": "uint8_t GameEvent_ChallengeMachine(void)\n{\n\twDefaultSong = MUSIC_OVERWORLD;", "case_ids": ["GameEvent_ChallengeMachine-0", "GameEvent_ChallengeMachine-1"]}
 # <<< factory-mutation GameEvent_ChallengeMachine
 # >>> factory-completion GameEvent_ChallengeMachine
 for _record in SCHEMA2_CASES["GameEvent_ChallengeMachine"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x71D3, "bank": 4}
+    _record["completion"] = {"mode": "entry", "pc": 0x71D3, "bank": 4,
+                             "routine": "ChallengeMachine_Start"}
 # <<< factory-completion GameEvent_ChallengeMachine
 # >>> factory-mutation GameEvent_GiftCenter
 MUTATIONS["GameEvent_GiftCenter"] = {"source_symbol": "GameEvent_GiftCenter", "before": "wActiveGameEvent = GAME_EVENT_GIFT_CENTER;", "after": "wActiveGameEvent = 0x04u;", "case_ids": ["GameEvent_GiftCenter-0", "GameEvent_GiftCenter-1"]}

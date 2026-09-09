@@ -116,7 +116,7 @@ static void adapt_GameEvent_Duel(ProbeState *s)
 /* >>> factory GameEvent_ChallengeMachine */
 static void adapt_GameEvent_ChallengeMachine(ProbeState *s)
 {
-	GameEvent_ChallengeMachine();
+	(void)GameEvent_ChallengeMachine();
 	(void)s;
 }
 /* <<< factory GameEvent_ChallengeMachine */

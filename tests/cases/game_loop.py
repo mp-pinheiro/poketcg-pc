@@ -100,5 +100,6 @@ MUTATIONS["GameLoop"] = {"source_symbol": "GameLoop", "before": "void GameLoop(v
 # <<< factory-mutation GameLoop
 # >>> factory-completion GameLoop
 for _record in SCHEMA2_CASES["GameLoop"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x66D1, "bank": 4}
+    _record["completion"] = {"mode": "entry", "pc": 0x66D1, "bank": 4,
+                             "routine": "_GameLoop"}
 # <<< factory-completion GameLoop

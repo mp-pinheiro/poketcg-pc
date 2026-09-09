@@ -3,7 +3,7 @@
   "case": "tests/cases/map.py",
   "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"GameEvent_ChallengeMachine\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {\"0\": {\"47684\": \"00\"}}, \"vram\": {}, \"wram\": {\"53521\": \"06\", \"56704\": \"06\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"GameEvent_ChallengeMachine\", \"mismatches\": {\"sram\": {\"byte\": 0, \"reference\": \"00\", \"native\": \"01\"}}}\n",
-  "restored": "{\"fn\": \"GameEvent_ChallengeMachine\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {\"0\": {\"47684\": \"00\"}}, \"vram\": {}, \"wram\": {\"53521\": \"06\", \"56704\": \"06\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"GameEvent_ChallengeMachine\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"47684\": \"00\"}}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"53521\": \"06\", \"56704\": \"06\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GameEvent_ChallengeMachine\", \"mismatches\": {\"bus\": {\"address\": 53521, \"reference\": \"0606\", \"native\": \"0909\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[53521, 1], [56704, 1]]}}}\n",
+  "restored": "{\"fn\": \"GameEvent_ChallengeMachine\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"47684\": \"00\"}}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"53521\": \"06\", \"56704\": \"06\"}}, \"status\": \"PASS\"}\n"
 }

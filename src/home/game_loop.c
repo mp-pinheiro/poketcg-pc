@@ -57,13 +57,6 @@ void GameLoop(void)
 	wUppercaseHalfWidthLetters = 1u;
 	StubbedUnusedSaveDataValidation();
 	if (hKeysHeld != (PAD_A | PAD_B)) {
-		if (!frame_boundary_is_installed()) {
-			/* Probe world: the oracle stops GameLoop pre-ret at the
-			 * _GameLoop dispatch (game_loop.asm:22), so run the bounded
-			 * prefix exactly once instead of looping. */
-			_GameLoop();
-			return;
-		}
 		for (;;)
 			_GameLoop(); /* game_loop.asm:22-23 */
 	}
