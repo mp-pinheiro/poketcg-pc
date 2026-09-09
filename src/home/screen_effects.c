@@ -171,19 +171,6 @@ static void (*const screen_effects[8])(void) = {
 	DuelAnim153, DuelAnim154, DuelAnim155, DuelAnim156, DuelAnim157,
 };
 
-/* .pointer_table's targets by their bank-6 address (poketcg.sym), for a
- * caller that holds the asm pointer rather than the animation id. */
-void (*ScreenEffectForAddress(uint16_t address))(void)
-{
-	static const uint16_t addresses[8] = {
-		0x50F4u, 0x5132u, 0x5199u, 0x51A3u, 0x51A3u, 0x51A3u, 0x51A3u, 0x51A3u,
-	};
-	for (size_t i = 0; i < 8u; i++)
-		if (addresses[i] == address)
-			return screen_effects[i];
-	return NULL;
-}
-
 void Func_1ce03(uint8_t a)
 {
 	void (*const *effects)(void) = screen_effects;
@@ -195,6 +182,20 @@ void Func_1ce03(uint8_t a)
 	Func_3bb5(effects[(uint8_t)(a - 0x96u)]);
 }
 /* <<< factory Func_1ce03 */
+
+/* Probe support: .pointer_table's targets by their bank-6 address
+ * (poketcg.sym), for an adapter holding the asm pointer rather than the
+ * animation id. Not part of any routine's port. */
+void (*ScreenEffectForAddress(uint16_t address))(void)
+{
+	static const uint16_t addresses[8] = {
+		0x50F4u, 0x5132u, 0x5199u, 0x51A3u, 0x51A3u, 0x51A3u, 0x51A3u, 0x51A3u,
+	};
+	for (size_t i = 0; i < 8u; i++)
+		if (addresses[i] == address)
+			return screen_effects[i];
+	return NULL;
+}
 
 /* screen_effects.asm:104-111 and 132-139: the per-frame shake, run through
  * wScreenAnimUpdatePtr. UpdateShakeOffset leaves hl on the offset byte when
