@@ -189,8 +189,8 @@ MUTATIONS["HandlePeekSelection"] = {
 }
 # <<< factory-mutation HandlePeekSelection
 # >>> factory-mutation OpenDuelCheckMenu
-MUTATIONS["OpenDuelCheckMenu"] = {"source_symbol": "OpenDuelCheckMenu", "before": "void OpenDuelCheckMenu(void)\n{\n\tuint8_t saved_bank = hBankROM;\n\tBankswitchROM(2u);\n\tBankswitchROM(saved_bank);", "after": "void OpenDuelCheckMenu(void)\n{\n\tuint8_t saved_bank = hBankROM;\n\tBankswitchROM(2u);\n\tBankswitchROM((uint8_t)(saved_bank ^ 1u));", "case_ids": ["OpenDuelCheckMenu-0", "OpenDuelCheckMenu-1"]}
+MUTATIONS["OpenDuelCheckMenu"] = {"source_symbol": "OpenDuelCheckMenu", "before": "\tBankswitchROM(saved_bank);", "after": "\tBankswitchROM((uint8_t)(saved_bank ^ 1u));", "case_ids": ["OpenDuelCheckMenu-0", "OpenDuelCheckMenu-1"]}
 # <<< factory-mutation OpenDuelCheckMenu
 # >>> factory-mutation OpenInPlayAreaScreen_FromSelectButton
-MUTATIONS["OpenInPlayAreaScreen_FromSelectButton"] = {"source_symbol": "OpenInPlayAreaScreen_FromSelectButton", "before": "void OpenInPlayAreaScreen_FromSelectButton(void)\n{\n\tuint8_t saved_bank = hBankROM;\n\tBankswitchROM(6u);\n\twInPlayAreaFromSelectButton = 1u;", "after": "void OpenInPlayAreaScreen_FromSelectButton(void)\n{\n\tuint8_t saved_bank = hBankROM;\n\tBankswitchROM(6u);\n\twInPlayAreaFromSelectButton = 2u;", "case_ids": ["OpenInPlayAreaScreen_FromSelectButton-0", "OpenInPlayAreaScreen_FromSelectButton-1"]}
+MUTATIONS["OpenInPlayAreaScreen_FromSelectButton"] = {"source_symbol": "OpenInPlayAreaScreen_FromSelectButton", "before": "\twInPlayAreaFromSelectButton = 1u;", "after": "\twInPlayAreaFromSelectButton = 2u;", "case_ids": ["OpenInPlayAreaScreen_FromSelectButton-0", "OpenInPlayAreaScreen_FromSelectButton-1"]}
 # <<< factory-mutation OpenInPlayAreaScreen_FromSelectButton

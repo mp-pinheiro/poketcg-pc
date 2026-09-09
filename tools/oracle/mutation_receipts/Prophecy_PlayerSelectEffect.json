@@ -1,9 +1,9 @@
 {
   "fn": "Prophecy_PlayerSelectEffect",
   "case": "tests/cases/effect_functions.py",
-  "index": 1,
+  "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"Prophecy_PlayerSelectEffect\", \"registers\": {\"a\": 59, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"49849\": \"013b\", \"50105\": \"013b\", \"50177\": \"08\", \"51899\": \"80\", \"52176\": \"00\", \"52634\": \"00\", \"65431\": \"c3\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"Prophecy_PlayerSelectEffect\", \"mismatches\": {\"a\": [59, 60]}}\n",
-  "restored": "{\"fn\": \"Prophecy_PlayerSelectEffect\", \"registers\": {\"a\": 59, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"49849\": \"013b\", \"50105\": \"013b\", \"50177\": \"08\", \"51899\": \"80\", \"52176\": \"00\", \"52634\": \"00\", \"65431\": \"c3\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"Prophecy_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 1, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49849\": \"013b\", \"50177\": \"08\", \"51899\": \"80\", \"52176\": \"00\", \"52634\": \"00\", \"65431\": \"c2\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Prophecy_PlayerSelectEffect\", \"mismatches\": {\"bus\": {\"address\": 65431, \"reference\": \"08800000c200\", \"native\": \"08800000c301\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[49849, 2], [50177, 1], [51899, 1], [52176, 1], [52634, 1], [65431, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"Prophecy_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 1, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49849\": \"013b\", \"50177\": \"08\", \"51899\": \"80\", \"52176\": \"00\", \"52634\": \"00\", \"65431\": \"c2\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n"
 }

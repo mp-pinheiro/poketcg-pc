@@ -188,10 +188,5 @@ MUTATIONS = {
         "after": "        active = read(wActiveScreenAnim_ADDR);",
         "case_ids": ["_UpdateQueuedAnimations-3"],
     },
-    "ClearAndDisableQueuedAnimations": {
-        "source_symbol": "ClearAndDisableQueuedAnimations",
-        "before": "write(wd4c0_ADDR, 0xff);\n    for (uint8_t i = 0; i < QUEUE_LENGTH; i++) {",
-        "after": "write(wd4c0_ADDR, 0x00);\n    for (uint8_t i = 0; i < QUEUE_LENGTH; i++) {",
-        "case_ids": ["ClearAndDisableQueuedAnimations-0", "ClearAndDisableQueuedAnimations-zero"],
-    },
+    "ClearAndDisableQueuedAnimations": {"source_symbol": "ClearAndDisableQueuedAnimations", "before": "    write(wd4c0_ADDR, 0xff);\n    if (read(wActiveScreenAnim_ADDR) != 0xff)", "after": "    write(wd4c0_ADDR, 0x00);\n    if (read(wActiveScreenAnim_ADDR) != 0xff)", "case_ids": ["ClearAndDisableQueuedAnimations-0", "ClearAndDisableQueuedAnimations-zero"]},
 }

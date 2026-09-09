@@ -39,5 +39,5 @@ MUTATIONS = {
     },
 }
 # >>> factory-mutation CopyDMAFunction
-MUTATIONS["CopyDMAFunction"] = {"source_symbol": "CopyDMAFunction", "before": "void CopyDMAFunction(void)\n{\n\tconst uint8_t *stub = rom_ptr(0u, DMA_ROM_ADDR);", "after": "void CopyDMAFunction(void)\n{\n\tconst uint8_t *stub = rom_ptr(0u, (uint16_t)(DMA_ROM_ADDR + 1u));", "case_ids": ["CopyDMAFunction-0", "CopyDMAFunction-1"]}
+MUTATIONS["CopyDMAFunction"] = {"source_symbol": "CopyDMAFunction", "before": "\t\tgb_write8((uint16_t)(hDMAFunction_ADDR + i), dma_stub[i]);", "after": "\t\tgb_write8((uint16_t)(hDMAFunction_ADDR + i + 1u), dma_stub[i]);", "case_ids": ["CopyDMAFunction-0", "CopyDMAFunction-1"]}
 # <<< factory-mutation CopyDMAFunction

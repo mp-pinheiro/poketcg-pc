@@ -1373,7 +1373,7 @@ MUTATIONS["Func_c280"] = {"source_symbol": "Func_c280", "before": "\tFunc_12871(
 MUTATIONS["UpdateOverworldMap"] = {"source_symbol": "UpdateOverworldMap", "before": "\tOverworldMap_Update();", "after": "\t(void)0;", "case_ids": ["UpdateOverworldMap-0", "UpdateOverworldMap-1", "UpdateOverworldMap-2"]}
 # <<< factory-mutation UpdateOverworldMap
 # >>> factory-mutation DisplayPauseMenu
-MUTATIONS["DisplayPauseMenu"] = {"source_symbol": "DisplayPauseMenu", "before": "void DisplayPauseMenu(void)\n{\n\tuint8_t selected = wSelectedPauseMenuItem;\n\tInitAndPrintMenu(PAUSE_MENU_PARAMS, selected);", "after": "void DisplayPauseMenu(void)\n{\n\tuint8_t selected = wSelectedPauseMenuItem;\n\tInitAndPrintMenu(PAUSE_MENU_PARAMS, (uint8_t)(selected ^ 1u));", "case_ids": ["DisplayPauseMenu-0", "DisplayPauseMenu-1", "DisplayPauseMenu-2"]}
+MUTATIONS["DisplayPauseMenu"] = {"source_symbol": "DisplayPauseMenu", "before": "\tInitAndPrintMenu(PAUSE_MENU_PARAMS, selected);", "after": "\tInitAndPrintMenu(PAUSE_MENU_PARAMS, (uint8_t)(selected ^ 1u));", "case_ids": ["DisplayPauseMenu-0", "DisplayPauseMenu-1", "DisplayPauseMenu-2"]}
 # <<< factory-mutation DisplayPauseMenu
 # >>> factory-mutation Func_c8ed
 MUTATIONS["Func_c8ed"] = {"source_symbol": "Func_c8ed", "before": "\tgb_write8(wd3b9_ADDR, 0u);", "after": "\tgb_write8(wd3b9_ADDR, 0xFFu);", "case_ids": ["Func_c8ed-1", "Func_c8ed-2"]}
@@ -1382,7 +1382,7 @@ MUTATIONS["Func_c8ed"] = {"source_symbol": "Func_c8ed", "before": "\tgb_write8(w
 MUTATIONS["PauseMenu_Diary"] = {"source_symbol": "PauseMenu_Diary", "before": "\t_PauseMenu_Diary();", "after": "\twd291 = 0xFFu;", "case_ids": ["PauseMenu_Diary-0", "PauseMenu_Diary-1"]}
 # <<< factory-mutation PauseMenu_Diary
 # >>> factory-mutation DisplayPCMenu
-MUTATIONS["DisplayPCMenu"] = {"source_symbol": "DisplayPCMenu", "before": "void DisplayPCMenu(void)\n{\n\tuint8_t selected = wSelectedPCMenuItem;\n\tuint8_t saved_bank = hBankROM;\n\tBankswitchROM(PC_MENU_BANK);\n\tInitAndPrintMenu(PC_MENU_PARAMS, selected);", "after": "void DisplayPCMenu(void)\n{\n\tuint8_t selected = wSelectedPCMenuItem;\n\tuint8_t saved_bank = hBankROM;\n\tBankswitchROM(PC_MENU_BANK);\n\tInitAndPrintMenu(PC_MENU_PARAMS, (uint8_t)(selected ^ 1u));", "case_ids": ["DisplayPCMenu-0", "DisplayPCMenu-1", "DisplayPCMenu-2"]}
+MUTATIONS["DisplayPCMenu"] = {"source_symbol": "DisplayPCMenu", "before": "\tInitAndPrintMenu(PC_MENU_PARAMS, selected);", "after": "\tInitAndPrintMenu(PC_MENU_PARAMS, (uint8_t)(selected ^ 1u));", "case_ids": ["DisplayPCMenu-0", "DisplayPCMenu-1", "DisplayPCMenu-2"]}
 # <<< factory-mutation DisplayPCMenu
 # >>> factory-mutation Func_c268
 MUTATIONS["Func_c268"] = {
@@ -1456,12 +1456,7 @@ MUTATIONS["Func_c53d"] = {"source_symbol": "Func_c53d", "before": "void Func_c53
 MUTATIONS["PCMenu_CardAlbum"] = {"source_symbol": "PCMenu_CardAlbum", "before": "void PCMenu_CardAlbum(void)\n{\n\thSCX = 0u;", "after": "void PCMenu_CardAlbum(void)\n{\n\thSCX = 1u;", "case_ids": ["PCMenu_CardAlbum-0", "PCMenu_CardAlbum-1"]}
 # <<< factory-mutation PCMenu_CardAlbum
 # >>> factory-mutation PauseMenu_Config
-MUTATIONS["PauseMenu_Config"] = {
-    "source_symbol": "PauseMenu_Config",
-    "before": "void PauseMenu_Config(void)\n{\n\t_PauseMenu_Config();",
-    "after": "void PauseMenu_Config(void)\n{\n\t(void)0;",
-    "case_ids": ["PauseMenu_Config-0", "PauseMenu_Config-1"],
-}
+MUTATIONS["PauseMenu_Config"] = {"source_symbol": "PauseMenu_Config", "before": "\t_PauseMenu_Config();", "after": "\t(void)0;", "case_ids": ["PauseMenu_Config-0", "PauseMenu_Config-1"]}
 # <<< factory-mutation PauseMenu_Config
 # >>> factory-mutation PCMenu_ReadMail
 MUTATIONS["PCMenu_ReadMail"] = {

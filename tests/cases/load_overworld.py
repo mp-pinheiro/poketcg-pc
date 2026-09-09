@@ -43,12 +43,7 @@ MUTATIONS = {}
 MUTATIONS["LoadMapTilesAndPals"] = {"source_symbol": "LoadMapTilesAndPals", "before": "\twWhichBGPalIndex = wd291;\n\tuint8_t pal = wCurMapPalette;", "after": "\twWhichBGPalIndex = (uint8_t)(wd291 + 1u);\n\tuint8_t pal = wCurMapPalette;", "case_ids": ["LoadMapTilesAndPals-0", "LoadMapTilesAndPals-1"]}
 # <<< factory-mutation LoadMapTilesAndPals
 # >>> factory-mutation ReloadMapAfterTextClose
-MUTATIONS["ReloadMapAfterTextClose"] = {
-    "source_symbol": "ReloadMapAfterTextClose",
-    "before": "void ReloadMapAfterTextClose(void)\n{\n\tClearSRAMBGMaps();\n\tLoadTilemap_ToSRAM(0u, 0u);\n\tFunc_c9c7();\n\tSafelyCopyBGMapFromSRAMToVRAM();\n\tFunc_c3ee();",
-    "after": "void ReloadMapAfterTextClose(void)\n{\n\tClearSRAMBGMaps();\n\tLoadTilemap_ToSRAM(0u, 0u);\n\tFunc_c9c7();\n\tSafelyCopyBGMapFromSRAMToVRAM();\n\t(void)0;",
-    "case_ids": ["ReloadMapAfterTextClose-1"]
-}
+MUTATIONS["ReloadMapAfterTextClose"] = {"source_symbol": "ReloadMapAfterTextClose", "before": "\tFunc_c3ee();", "after": "\tFunc_c3ff();", "case_ids": ["ReloadMapAfterTextClose-1"]}
 # <<< factory-mutation ReloadMapAfterTextClose
 # >>> factory-mutation LoadMapGfxAndPermissions
 MUTATIONS["LoadMapGfxAndPermissions"] = {"source_symbol": "LoadMapGfxAndPermissions", "before": "void LoadMapGfxAndPermissions(void)\n{\n\tClearSRAMBGMaps();\n\twTextBoxFrameType = 0u;", "after": "void LoadMapGfxAndPermissions(void)\n{\n\tClearSRAMBGMaps();\n\twTextBoxFrameType = 1u;", "case_ids": ["LoadMapGfxAndPermissions-0", "LoadMapGfxAndPermissions-1", "LoadMapGfxAndPermissions-2"]}

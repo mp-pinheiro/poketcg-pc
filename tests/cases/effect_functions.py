@@ -7657,8 +7657,8 @@ CASES["PokemonCenter_HealDiscardEnergyEffect"] = [
 # >>> factory ComputerSearch_PlayerDeckSelection
 CONTRACT["ComputerSearch_PlayerDeckSelection"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["ComputerSearch_PlayerDeckSelection"] = [
-    {"c": 0x00, "d": 0x00, "e": 0x00, "keys": DISPLAY_KEYS, "wram": {hWhoseTurn: b"\xC2", wTurnCardsNotInDeck: b"\x3B", wPlayerDeck + 0x3B: b"\x01", **DISPLAY_SEED}, "setup": DISPLAY_SETUP, "read": {hTempList + 2: 1, 0xCABB: 1, 0xFF91: 1}, "expect": {hTempList + 2: b"\x01", 0xCABB: b"\x80", 0xFF91: b"\x01"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, c=0xCC, keys=DISPLAY_KEYS, wram={hWhoseTurn: b"\xC2", wTurnCardsNotInDeck: b"\x3B", wPlayerDeck + 0x3B: b"\x01", **DISPLAY_SEED}, setup=DISPLAY_SETUP, read={hTempList + 2: 1, 0xCABB: 1, 0xFF91: 1}, expect={hTempList + 2: b"\x01", 0xCABB: b"\x80", 0xFF91: b"\x01"}, instruction_budget=20000000, cycle_budget=80000000),
+    {"c": 0x00, "d": 0x00, "e": 0x00, "keys": DISPLAY_KEYS, "wram": {hWhoseTurn: b"\xC2", wTurnCardsNotInDeck: b"\x3B", 0xC2B9: b"\x01", **DISPLAY_SEED}, "setup": DISPLAY_SETUP, "read": {hTempList + 2: 1, 0xCABB: 1, 0xFF91: 1}, "expect": {hTempList + 2: b"\x01", 0xCABB: b"\x80", 0xFF91: b"\x01"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, c=0xCC, keys=DISPLAY_KEYS, wram={hWhoseTurn: b"\xC2", wTurnCardsNotInDeck: b"\x3B", 0xC2B9: b"\x01", **DISPLAY_SEED}, setup=DISPLAY_SETUP, read={hTempList + 2: 1, 0xCABB: 1, 0xFF91: 1}, expect={hTempList + 2: b"\x01", 0xCABB: b"\x80", 0xFF91: b"\x01"}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory ComputerSearch_PlayerDeckSelection
 
@@ -8650,12 +8650,7 @@ MUTATIONS["CreateListOfEnergyAttachedToArena"] = {
 }
 # <<< factory-mutation CreateListOfEnergyAttachedToArena
 # >>> factory-mutation HandleNoDamageOrEffect
-MUTATIONS["HandleNoDamageOrEffect"] = {
-    "source_symbol": "HandleNoDamageOrEffect",
-    "before": "return (HandleNoDamageOrEffectResult){(uint8_t)(0x10u | (check.hl == 0u ? 0x80u : 0x00u)), check.hl};",
-    "after": "return (HandleNoDamageOrEffectResult){0x00u, check.hl};",
-    "case_ids": ["HandleNoDamageOrEffect-1", "HandleNoDamageOrEffect-2"],
-}
+MUTATIONS["HandleNoDamageOrEffect"] = {"source_symbol": "HandleNoDamageOrEffect", "before": "\t\treturn (HandleNoDamageOrEffectResult){0x90u, check.hl};", "after": "\t\treturn (HandleNoDamageOrEffectResult){0x00u, check.hl};", "case_ids": ["HandleNoDamageOrEffect-1", "HandleNoDamageOrEffect-2"]}
 # <<< factory-mutation HandleNoDamageOrEffect
 # >>> factory-mutation ArcanineFlamethrower_CheckEnergy
 MUTATIONS["ArcanineFlamethrower_CheckEnergy"] = {"source_symbol": "ArcanineFlamethrower_CheckEnergy", "before": "\tuint16_t hl = NotEnoughFireEnergyText;", "after": "\tuint16_t hl = (uint16_t)(NotEnoughFireEnergyText + 1u);", "case_ids": ["ArcanineFlamethrower_CheckEnergy-0", "ArcanineFlamethrower_CheckEnergy-1"]}
@@ -10131,7 +10126,7 @@ MUTATIONS["SpearowMirrorMove_AfterDamage"] = {
 MUTATIONS["Func_2c0a8"] = {"source_symbol": "Func_2c0a8", "before": "\thTemp_ffa0 = saved;", "after": "\thTemp_ffa0 = hWhoseTurn;", "case_ids": ["Func_2c0a8-0", "Func_2c0a8-1"]}
 # <<< factory-mutation Func_2c0a8
 # >>> factory-mutation ShuffleCardsInDeck
-MUTATIONS["ShuffleCardsInDeck"] = {"source_symbol": "ShuffleCardsInDeck", "before": "\tShuffleDeckResult sd = ShuffleDeck(r.c, anim.e);", "after": "\tShuffleDeckResult sd = ShuffleDeck(r.c, (uint8_t)r.de);", "case_ids": ["ShuffleCardsInDeck-0", "ShuffleCardsInDeck-1"]}
+MUTATIONS["ShuffleCardsInDeck"] = {"source_symbol": "ShuffleCardsInDeck", "before": "\treturn (ShuffleCardsInDeckResult){sd.a, sd.b, sd.c, sd.d, sd.e, sd.f, sd.hl};", "after": "\treturn (ShuffleCardsInDeckResult){anim.a, sd.b, sd.c, sd.d, sd.e, sd.f, sd.hl};", "case_ids": ["ShuffleCardsInDeck-0", "ShuffleCardsInDeck-1"]}
 # <<< factory-mutation ShuffleCardsInDeck
 # >>> factory-mutation DrawPlayAreaScreenToShowChanges
 MUTATIONS["DrawPlayAreaScreenToShowChanges"] = {
@@ -10287,12 +10282,7 @@ MUTATIONS["Scavenge_PlayerSelectEnergyEffect"] = {
 }
 # <<< factory-mutation Scavenge_PlayerSelectEnergyEffect
 # >>> factory-mutation PlayerPickFireEnergyCardToDiscard
-MUTATIONS["PlayerPickFireEnergyCardToDiscard"] = {
- "source_symbol": "PlayerPickFireEnergyCardToDiscard",
- "before": "\treturn (PlayerPickFireEnergyCardToDiscardResult){card, 0x90u};",
- "after": "\treturn (PlayerPickFireEnergyCardToDiscardResult){card, 0u};",
- "case_ids": ["PlayerPickFireEnergyCardToDiscard-0", "PlayerPickFireEnergyCardToDiscard-1"],
-}
+MUTATIONS["PlayerPickFireEnergyCardToDiscard"] = {"source_symbol": "PlayerPickFireEnergyCardToDiscard", "before": "\thTemp_ffa0 = card;", "after": "\thTemp_ffa0 = (uint8_t)(card + 1u);", "case_ids": ["PlayerPickFireEnergyCardToDiscard-0", "PlayerPickFireEnergyCardToDiscard-1"]}
 # <<< factory-mutation PlayerPickFireEnergyCardToDiscard
 # >>> factory-mutation ArcanineFlamethrower_PlayerSelectEffect
 MUTATIONS["ArcanineFlamethrower_PlayerSelectEffect"] = {"source_symbol": "ArcanineFlamethrower_PlayerSelectEffect", "before": "PlayerPickFireEnergyCardToDiscardResult ArcanineFlamethrower_PlayerSelectEffect(void)\n{\n\treturn PlayerPickFireEnergyCardToDiscard();\n}", "after": "PlayerPickFireEnergyCardToDiscardResult ArcanineFlamethrower_PlayerSelectEffect(void)\n{\n\treturn (PlayerPickFireEnergyCardToDiscardResult){0u, 0u};\n}", "case_ids": ["ArcanineFlamethrower_PlayerSelectEffect-0", "ArcanineFlamethrower_PlayerSelectEffect-1"]}
@@ -11048,7 +11038,7 @@ MUTATIONS["SuperPotion_HealEffect"] = {"source_symbol": "SuperPotion_HealEffect"
 MUTATIONS["PokemonCenter_HealDiscardEnergyEffect"] = {"source_symbol": "PokemonCenter_HealDiscardEnergyEffect", "before": "\t\t\tPutCardInDiscardPile(index);", "after": "\t\t\t(void)index;", "case_ids": ["PokemonCenter_HealDiscardEnergyEffect-0"]}
 # <<< factory-mutation PokemonCenter_HealDiscardEnergyEffect
 # >>> factory-mutation ComputerSearch_PlayerDeckSelection
-MUTATIONS["ComputerSearch_PlayerDeckSelection"] = {"source_symbol": "ComputerSearch_PlayerDeckSelection", "before": "ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint8_t c, uint16_t de)\n{\n\t(void)CreateDeckCardList(c, de);\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(DuelistDeckText, ChooseCardToPlaceInHandText);\n\twLCDC = 0x80u;\n\tgb_write8(hKeysPressed_ADDR, 0x01u);\n\tuint8_t selected = gb_read8(wDuelTempList_ADDR);\n\tgb_write8((uint16_t)(hTempList_ADDR + 2u), selected);", "after": "ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint8_t c, uint16_t de)\n{\n\t(void)CreateDeckCardList(c, de);\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(DuelistDeckText, ChooseCardToPlaceInHandText);\n\twLCDC = 0x80u;\n\tgb_write8(hKeysPressed_ADDR, 0x01u);\n\tuint8_t selected = gb_read8(wDuelTempList_ADDR);\n\tgb_write8((uint16_t)(hTempList_ADDR + 2u), (uint8_t)(selected + 1u));", "case_ids": ["ComputerSearch_PlayerDeckSelection-0", "ComputerSearch_PlayerDeckSelection-1"]}
+MUTATIONS["ComputerSearch_PlayerDeckSelection"] = {"source_symbol": "ComputerSearch_PlayerDeckSelection", "before": "\tgb_write8((uint16_t)(hTempList_ADDR + 2u), display.a);", "after": "\tgb_write8((uint16_t)(hTempList_ADDR + 1u), display.a);", "case_ids": ["ComputerSearch_PlayerDeckSelection-0", "ComputerSearch_PlayerDeckSelection-1"]}
 # <<< factory-mutation ComputerSearch_PlayerDeckSelection
 # >>> factory-mutation TakeDownEffect
 MUTATIONS["TakeDownEffect"] = {"source_symbol": "TakeDownEffect", "before": "DealRecoilDamageToSelf(30u, f, d, e)", "after": "DealRecoilDamageToSelf(40u, f, d, e)", "case_ids": ["TakeDownEffect-0", "TakeDownEffect-1"]}
@@ -11084,7 +11074,7 @@ MUTATIONS["MagnetonLv35SelfdestructEffect"] = {"source_symbol": "MagnetonLv35Sel
 MUTATIONS["MagnetonLv28SelfdestructEffect"] = {"source_symbol": "MagnetonLv28SelfdestructEffect", "before": "DealRecoilDamageToSelf(80u, f, d, e)", "after": "DealRecoilDamageToSelf(90u, f, d, e)", "case_ids": ["MagnetonLv28SelfdestructEffect-0", "MagnetonLv28SelfdestructEffect-1"]}
 # <<< factory-mutation MagnetonLv28SelfdestructEffect
 # >>> factory-mutation Scavenge_PlayerSelectTrainerEffect
-MUTATIONS["Scavenge_PlayerSelectTrainerEffect"]={"source_symbol":"Scavenge_PlayerSelectTrainerEffect","before":"\tuint8_t selected = hTempCardIndex_ff98;\n\thTempPlayAreaLocation_ffa1 = selected;","after":"\tuint8_t selected = (uint8_t)(hTempCardIndex_ff98 + 1u);\n\thTempPlayAreaLocation_ffa1 = selected;","case_ids":["Scavenge_PlayerSelectTrainerEffect-0","Scavenge_PlayerSelectTrainerEffect-1"]}
+MUTATIONS["Scavenge_PlayerSelectTrainerEffect"]={"source_symbol": "Scavenge_PlayerSelectTrainerEffect", "before": "\tuint8_t selected = hTempCardIndex_ff98;", "after": "\tuint8_t selected = (uint8_t)(hTempCardIndex_ff98 + 1u);", "case_ids": ["Scavenge_PlayerSelectTrainerEffect-0", "Scavenge_PlayerSelectTrainerEffect-1"]}
 # <<< factory-mutation Scavenge_PlayerSelectTrainerEffect
 # >>> factory-mutation WeezingSelfdestructEffect
 MUTATIONS["WeezingSelfdestructEffect"] = {"source_symbol": "WeezingSelfdestructEffect", "before": "DealDamageToAllBenchedPokemon(10u, recoil.f, 0u, 0u, 0u, 0u, 0u)", "after": "DealDamageToAllBenchedPokemon(20u, recoil.f, 0u, 0u, 0u, 0u, 0u)", "case_ids": ["WeezingSelfdestructEffect-0", "WeezingSelfdestructEffect-1"]}
@@ -11102,7 +11092,7 @@ MUTATIONS["EnergyConversion_AddToHandEffect"] = {"source_symbol": "EnergyConvers
 MUTATIONS["SolarPower_RemoveStatusEffect"]={"source_symbol":"SolarPower_RemoveStatusEffect","before":"gb_write8((uint16_t)((flags.hl & 0xff00u) | DUELVARS_ARENA_CARD_STATUS), NO_STATUS);","after":"gb_write8((uint16_t)((flags.hl & 0xff00u) | DUELVARS_ARENA_CARD_STATUS), 1u);","case_ids":["SolarPower_RemoveStatusEffect-0","SolarPower_RemoveStatusEffect-1"]}
 # <<< factory-mutation SolarPower_RemoveStatusEffect
 # >>> factory-mutation Prophecy_PlayerSelectEffect
-MUTATIONS["Prophecy_PlayerSelectEffect"] = {"source_symbol": "Prophecy_PlayerSelectEffect", "before": "\t\t\tSwapTurn();\n\t\t\treturn (ProphecyScreenResult){deck.a, 0x70u};", "after": "\t\t\tSwapTurn();\n\t\t\treturn (ProphecyScreenResult){(uint8_t)(deck.a + 1u), 0x70u};", "case_ids": ["Prophecy_PlayerSelectEffect-1", "Prophecy_PlayerSelectEffect-2"]}
+MUTATIONS["Prophecy_PlayerSelectEffect"] = {"source_symbol": "Prophecy_PlayerSelectEffect", "before": "\t\t\thTempList = hCurMenuItem;", "after": "\t\t\thTempList = (uint8_t)(hCurMenuItem + 1u);", "case_ids": ["Prophecy_PlayerSelectEffect-1", "Prophecy_PlayerSelectEffect-2"]}
 # <<< factory-mutation Prophecy_PlayerSelectEffect
 # >>> factory-completion Prophecy_PlayerSelectEffect
 # Two exits: asm:4746 at 0b:5A2E (non-turn, after the trailing SwapTurn) and
@@ -11180,13 +11170,13 @@ MUTATIONS["GustOfWind_PlayerSelection"] = {"source_symbol": "GustOfWind_PlayerSe
 MUTATIONS["Teleport_PlayerSelectEffect"] = {"source_symbol": "Teleport_PlayerSelectEffect", "before": "\twhile ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {\n\t}", "after": "\t(void)OpenPlayAreaScreenForSelection();", "case_ids": ["Teleport_PlayerSelectEffect-2"]}
 # <<< factory-mutation Teleport_PlayerSelectEffect
 # >>> factory-mutation NinetalesLure_PlayerSelectEffect
-MUTATIONS["NinetalesLure_PlayerSelectEffect"] = {"source_symbol": "NinetalesLure_PlayerSelectEffect", "before": "void NinetalesLure_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\tOpenPlayAreaScreenForSelection();\n\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;", "after": "void NinetalesLure_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\tOpenPlayAreaScreenForSelection();\n\thTemp_ffa0 = (uint8_t)(hTempPlayAreaLocation_ff9d + 1u);", "case_ids": ["NinetalesLure_PlayerSelectEffect-0"]}
+MUTATIONS["NinetalesLure_PlayerSelectEffect"] = {"source_symbol": "NinetalesLure_PlayerSelectEffect", "before": "\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;", "after": "\thTemp_ffa0 = (uint8_t)(hTempPlayAreaLocation_ff9d + 1u);", "case_ids": ["NinetalesLure_PlayerSelectEffect-0"]}
 # <<< factory-mutation NinetalesLure_PlayerSelectEffect
 # >>> factory-mutation StretchKick_PlayerSelectEffect
-MUTATIONS["StretchKick_PlayerSelectEffect"] = {"source_symbol": "StretchKick_PlayerSelectEffect", "before": "void StretchKick_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChoosePkmnInTheBenchToGiveDamageText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\tOpenPlayAreaScreenForSelection();\n\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;\n\tSwapTurn();\n}", "after": "void StretchKick_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChoosePkmnInTheBenchToGiveDamageText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\tOpenPlayAreaScreenForSelection();\n\thTemp_ffa0 = (uint8_t)(hTempPlayAreaLocation_ff9d + 1u);\n\tSwapTurn();\n}", "case_ids": ["StretchKick_PlayerSelectEffect-0"]}
+MUTATIONS["StretchKick_PlayerSelectEffect"] = {"source_symbol": "StretchKick_PlayerSelectEffect", "before": "\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;\n\tSwapTurn();\n}", "after": "\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;\n}", "case_ids": ["StretchKick_PlayerSelectEffect-0"]}
 # <<< factory-mutation StretchKick_PlayerSelectEffect
 # >>> factory-mutation VictreebelLure_SelectSwitchPokemon
-MUTATIONS["VictreebelLure_SelectSwitchPokemon"] = {"source_symbol": "VictreebelLure_SelectSwitchPokemon", "before": "void VictreebelLure_SelectSwitchPokemon(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\tOpenPlayAreaScreenForSelection();\n\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;\n\tSwapTurn();\n}", "after": "void VictreebelLure_SelectSwitchPokemon(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\tOpenPlayAreaScreenForSelection();\n\thTemp_ffa0 = (uint8_t)(hTempPlayAreaLocation_ff9d + 1u);\n\tSwapTurn();\n}", "case_ids": ["VictreebelLure_SelectSwitchPokemon-0"]}
+MUTATIONS["VictreebelLure_SelectSwitchPokemon"] = {"source_symbol": "VictreebelLure_SelectSwitchPokemon", "before": "\thTemp_ffa0 = hTempPlayAreaLocation_ff9d;", "after": "\thTemp_ffa0 = 0x00u;", "case_ids": ["VictreebelLure_SelectSwitchPokemon-0"]}
 # <<< factory-mutation VictreebelLure_SelectSwitchPokemon
 # >>> factory-mutation TerrorStrike_50PercentSelectSwitchPokemon
 MUTATIONS["TerrorStrike_50PercentSelectSwitchPokemon"] = {"source_symbol": "TerrorStrike_50PercentSelectSwitchPokemon", "before": "TerrorStrike50PercentSelectSwitchPokemonResult TerrorStrike_50PercentSelectSwitchPokemon(void)\n{\n\thTemp_ffa0 = 0x00u;", "after": "TerrorStrike50PercentSelectSwitchPokemonResult TerrorStrike_50PercentSelectSwitchPokemon(void)\n{\n\thTemp_ffa0 = 0x01u;", "case_ids": ["TerrorStrike_50PercentSelectSwitchPokemon-0", "TerrorStrike_50PercentSelectSwitchPokemon-1"]}

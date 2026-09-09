@@ -2063,13 +2063,7 @@ MUTATIONS = {
         "case_ids": ["UpdateArenaCardIDsAndClearTwoTurnDuelVars-0",
                      "UpdateArenaCardIDsAndClearTwoTurnDuelVars-1"],
     },
-    "ClearNonTurnTemporaryDuelvars_ResetCarry": {
-        "source_symbol": "ClearNonTurnTemporaryDuelvars_ResetCarry",
-        "before": "ClearNonTurnTemporaryDuelvars();",
-        "after": "(void)0;",
-        "case_ids": ["ClearNonTurnTemporaryDuelvars_ResetCarry-0",
-                     "ClearNonTurnTemporaryDuelvars_ResetCarry-1"],
-    },
+    "ClearNonTurnTemporaryDuelvars_ResetCarry": {"source_symbol": "ClearNonTurnTemporaryDuelvars_ResetCarry", "before": "\tClearNonTurnTemporaryDuelvars();\n\t(void)a;", "after": "\t(void)0;\n\t(void)a;", "case_ids": ["ClearNonTurnTemporaryDuelvars_ResetCarry-0", "ClearNonTurnTemporaryDuelvars_ResetCarry-1"]},
     "PrintKnockedOutIfHLZero": {
         "source_symbol": "PrintKnockedOutIfHLZero",
         "before": "\t(void)PrintKnockedOut();\n\treturn 0x90u;",
@@ -2309,7 +2303,7 @@ MUTATIONS["OpenYourOrOppPlayAreaScreen_TurnHolderHand"] = {"source_symbol": "Ope
 MUTATIONS["DealRecoilDamageToSelf"] = {"source_symbol": "DealRecoilDamageToSelf", "before": "\twLoadedAttackAnimation = ATK_ANIM_RECOIL_HIT;", "after": "\twLoadedAttackAnimation = 0u;", "case_ids": ["DealRecoilDamageToSelf-0", "DealRecoilDamageToSelf-2", "DealRecoilDamageToSelf-3"]}
 # <<< factory-mutation DealRecoilDamageToSelf
 # >>> factory-mutation DuelCheckMenu_Glossary
-MUTATIONS["DuelCheckMenu_Glossary"] = {"source_symbol": "DuelCheckMenu_Glossary", "before": "void DuelCheckMenu_Glossary(void)\n{\n\tOpenGlossaryScreen();", "after": "void DuelCheckMenu_Glossary(void)\n{", "case_ids": ["DuelCheckMenu_Glossary-1"]}
+MUTATIONS["DuelCheckMenu_Glossary"] = {"source_symbol": "DuelCheckMenu_Glossary", "before": "\tOpenGlossaryScreen();", "after": "\t(void)0;", "case_ids": ["DuelCheckMenu_Glossary-1"]}
 # <<< factory-mutation DuelCheckMenu_Glossary
 # >>> factory-mutation OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile
 MUTATIONS["OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile"] = {"source_symbol": "OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile", "before": "void OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile(uint8_t c)\n{\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;", "after": "void OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile(uint8_t c)\n{\n\tuint8_t saved_hWhoseTurn = 0u;", "case_ids": ["OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile-0", "OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile-1", "OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile-2"]}

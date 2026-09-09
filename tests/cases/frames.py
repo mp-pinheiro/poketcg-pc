@@ -52,12 +52,7 @@ from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
 MUTATIONS = {
-    "DoFrame": {
-        "source_symbol": "DoFrame",
-        "before": "\tif ((gb_read8(wLCDC_ADDR) & 0x80u) != 0u)\n\t\tgb_write8(wVBlankCounter_ADDR,",
-        "after": "\tif (1)\n\t\tgb_write8(wVBlankCounter_ADDR,",
-        "case_ids": ["DoFrame-3"],
-    },
+    "DoFrame": {"source_symbol": "DoFrame", "before": "\tif (!frame_boundary_is_installed() && (gb_read8(wLCDC_ADDR) & 0x80u) != 0u)", "after": "\tif (!frame_boundary_is_installed() && (gb_read8(wLCDC_ADDR) & 0x80u) == 0u)", "case_ids": ["DoFrame-3"]},
     "DoAFrames": {
         "source_symbol": "DoAFrames",
         "before": "uint16_t count = a ? a : 0x100u;",

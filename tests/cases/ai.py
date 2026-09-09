@@ -185,5 +185,5 @@ MUTATIONS["AIDoAction_StartDuel"] = {"source_symbol": "AIDoAction_StartDuel", "b
 MUTATIONS["AIDoAction_TakePrize"] = {"source_symbol": "AIDoAction_TakePrize", "before": "uint8_t AIDoAction_TakePrize(void)\n{\n\treturn AIDoAction(AIACTION_TAKE_PRIZE);", "after": "uint8_t AIDoAction_TakePrize(void)\n{\n\treturn AIDoAction(0x03u);", "case_ids": ["AIDoAction_TakePrize-0"]}
 # <<< factory-mutation AIDoAction_TakePrize
 # >>> factory-mutation AIDoAction_Turn
-MUTATIONS['AIDoAction_Turn'] = {'source_symbol': 'AIDoAction_Turn', 'before': 'uint8_t AIDoAction_Turn(void)\n{\n\tuint8_t result = AIDoAction(AIACTION_DO_TURN);', 'after': 'uint8_t AIDoAction_Turn(void)\n{\n\tuint8_t result = AIDoAction(0x02u);', 'case_ids': ['AIDoAction_Turn-0']}
+MUTATIONS['AIDoAction_Turn'] = {"source_symbol": "AIDoAction_Turn", "before": "uint8_t AIDoAction_Turn(void)\n{\n\treturn AIDoAction(AIACTION_DO_TURN);", "after": "uint8_t AIDoAction_Turn(void)\n{\n\treturn AIDoAction(AIACTION_KO_SWITCH);", "case_ids": ["AIDoAction_Turn-0"]}
 # <<< factory-mutation AIDoAction_Turn

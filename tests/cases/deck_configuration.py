@@ -1636,12 +1636,7 @@ MUTATIONS["DismantleDeck"] = {
 }
 # <<< factory-mutation DismantleDeck
 # >>> factory-mutation CancelDeckModifications
-MUTATIONS["CancelDeckModifications"] = {
-    "source_symbol": "CancelDeckModifications",
-    "before": "\t/* .cancel_modification: add sp, $2 / or a / ret */\n\treturn (CancelDeckModificationsResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u)};",
-    "after": "\t/* .cancel_modification: add sp, $2 / or a / ret */\n\treturn (CancelDeckModificationsResult){(uint8_t)(a + 1u), (uint8_t)(a == 0u ? 0x80u : 0x00u)};",
-    "case_ids": ["CancelDeckModifications-0", "CancelDeckModifications-1"],
-}
+MUTATIONS["CancelDeckModifications"] = {"source_symbol": "CancelDeckModifications", "before": "\t\ta = quit.a;", "after": "\t\t(void)quit.a;", "case_ids": ["CancelDeckModifications-0", "CancelDeckModifications-1"]}
 # <<< factory-mutation CancelDeckModifications
 # >>> factory-mutation HandleSelectUpAndDownInList
 MUTATIONS["HandleSelectUpAndDownInList"] = {

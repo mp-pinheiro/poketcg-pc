@@ -107,12 +107,7 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
 MUTATIONS = {}
 # >>> factory-mutation DrawPauseMenuPlayerPortrait
-MUTATIONS["DrawPauseMenuPlayerPortrait"] = {
-    "source_symbol": "DrawPauseMenuPlayerPortrait",
-    "before": "\tDrawPlayerPortrait();",
-    "after": "\t(void)0;",
-    "case_ids": ["DrawPauseMenuPlayerPortrait-0", "DrawPauseMenuPlayerPortrait-1"],
-}
+MUTATIONS["DrawPauseMenuPlayerPortrait"] = {"source_symbol": "DrawPauseMenuPlayerPortrait", "before": "\tDrawPlayerPortrait(b, c);", "after": "\t(void)b;\n\t(void)c;", "case_ids": ["DrawPauseMenuPlayerPortrait-0", "DrawPauseMenuPlayerPortrait-1"]}
 # <<< factory-mutation DrawPauseMenuPlayerPortrait
 # >>> factory-mutation FlashReceivedMedal
 MUTATIONS["FlashReceivedMedal"] = {"source_symbol": "FlashReceivedMedal", "before": "\twCurTilemap = tilemap;", "after": "\twCurTilemap = 0u;", "case_ids": ["FlashReceivedMedal-0"]}

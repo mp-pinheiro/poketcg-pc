@@ -3,7 +3,7 @@
   "case": "tests/cases/core.py",
   "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"PrintAttackOrCardDescription\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 1, \"e\": 14, \"f\": 0, \"hl\": 16385, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"0000\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"PrintAttackOrCardDescription\", \"mismatches\": {\"a\": [0, 1]}}\n",
-  "restored": "{\"fn\": \"PrintAttackOrCardDescription\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 1, \"e\": 14, \"f\": 0, \"hl\": 16385, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"PrintAttackOrCardDescription\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 1, \"e\": 14, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 16385, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintAttackOrCardDescription\", \"mismatches\": {\"hl\": [16385, 16386]}}\n",
+  "restored": "{\"fn\": \"PrintAttackOrCardDescription\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 1, \"e\": 14, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 16385, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"0000\"}}, \"status\": \"PASS\"}\n"
 }

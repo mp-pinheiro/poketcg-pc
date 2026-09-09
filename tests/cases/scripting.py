@@ -2424,12 +2424,7 @@ MUTATIONS["ScriptCommand_ZeroOutEventValue"] = {
 }
 # <<< factory-mutation ScriptCommand_ZeroOutEventValue
 # >>> factory-mutation ScriptCommand_SetEventValue
-MUTATIONS["ScriptCommand_SetEventValue"] = {
-    "source_symbol": "ScriptCommand_SetEventValue",
-    "before": "\t(void)SetEventValue(c, f, b, c);",
-    "after": "\t(void)SetEventValue((uint8_t)(c + 1u), f, b, c);",
-    "case_ids": ["ScriptCommand_SetEventValue-0", "ScriptCommand_SetEventValue-1", "ScriptCommand_SetEventValue-2", "ScriptCommand_SetEventValue-3", "ScriptCommand_SetEventValue-4"],
-}
+MUTATIONS["ScriptCommand_SetEventValue"] = {"source_symbol": "ScriptCommand_SetEventValue", "before": "\t(void)SetEventValue(c, f, b, b);", "after": "\t(void)SetEventValue(c, f, b, c);", "case_ids": ["ScriptCommand_SetEventValue-0", "ScriptCommand_SetEventValue-1", "ScriptCommand_SetEventValue-2", "ScriptCommand_SetEventValue-3", "ScriptCommand_SetEventValue-4"]}
 # <<< factory-mutation ScriptCommand_SetEventValue
 # >>> factory-mutation ScriptCommand_TryGivePCPack
 MUTATIONS["ScriptCommand_TryGivePCPack"] = {"source_symbol": "ScriptCommand_TryGivePCPack", "before": "\tTryGivePCPack(c);", "after": "\tTryGivePCPack((uint8_t)(c + 1u));", "case_ids": ["ScriptCommand_TryGivePCPack-0", "ScriptCommand_TryGivePCPack-1", "ScriptCommand_TryGivePCPack-2", "ScriptCommand_TryGivePCPack-4"]}
@@ -2735,7 +2730,7 @@ MUTATIONS["ScriptCommand_ChooseStarterDeckMultichoice"] = {"source_symbol": "Scr
 MUTATIONS["ScriptCommand_ShowSamNormalMultichoice"] = {"source_symbol": "ScriptCommand_ShowSamNormalMultichoice", "before": "IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)\n{\n\tBankswitchROM(3u);\n\tShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, 0x530Cu);\n\tuint8_t choice = wMultichoiceTextboxResult_Sam;", "after": "IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)\n{\n\tBankswitchROM(3u);\n\tShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, 0x530Cu);\n\tuint8_t choice = (uint8_t)(wMultichoiceTextboxResult_Sam ^ 1u);", "case_ids": ["ScriptCommand_ShowSamNormalMultichoice-0", "ScriptCommand_ShowSamNormalMultichoice-1", "ScriptCommand_ShowSamNormalMultichoice-2"]}
 # <<< factory-mutation ScriptCommand_ShowSamNormalMultichoice
 # >>> factory-mutation ScriptCommand_ShowSamRulesMultichoice
-MUTATIONS["ScriptCommand_ShowSamRulesMultichoice"] = {"source_symbol": "ScriptCommand_ShowSamRulesMultichoice", "before": "IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)\n{\n\tShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, 0xC500u);", "after": "IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)\n{\n\tShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, 0xC501u);", "case_ids": ["ScriptCommand_ShowSamRulesMultichoice-0", "ScriptCommand_ShowSamRulesMultichoice-1"]}
+MUTATIONS["ScriptCommand_ShowSamRulesMultichoice"] = {"source_symbol": "ScriptCommand_ShowSamRulesMultichoice", "before": "\t(void)SetEventValue(0x75u, 0u, 0u, choice);\n\treturn IncreaseScriptPointerBy1();", "after": "\t(void)SetEventValue(0x75u, 0u, 0u, choice);\n\treturn IncreaseScriptPointerBy2();", "case_ids": ["ScriptCommand_ShowSamRulesMultichoice-0", "ScriptCommand_ShowSamRulesMultichoice-1"]}
 # <<< factory-mutation ScriptCommand_ShowSamRulesMultichoice
 # >>> factory-mutation ScriptCommand_ChooseDeckToDuelAgainstMultichoice
 MUTATIONS["ScriptCommand_ChooseDeckToDuelAgainstMultichoice"] = {"source_symbol": "ScriptCommand_ChooseDeckToDuelAgainstMultichoice", "before": "IncreaseScriptPointerResult ScriptCommand_ChooseDeckToDuelAgainstMultichoice(void)\n{\n\tBankswitchROM(3u);\n\t(void)ShowMultichoiceTextbox(0u, 0x525Eu);\n\tuint8_t choice = wMultichoiceTextboxResult_ChooseDeckToDuelAgainst;\n\t(void)SetEventValue(EVENT_AARON_DECK_MENU_CHOICE, 0u, 0u, choice);\n\treturn IncreaseScriptPointerBy1();\n}", "after": "IncreaseScriptPointerResult ScriptCommand_ChooseDeckToDuelAgainstMultichoice(void)\n{\n\tBankswitchROM(3u);\n\t(void)ShowMultichoiceTextbox(0u, 0x525Eu);\n\tuint8_t choice = wMultichoiceTextboxResult_ChooseDeckToDuelAgainst;\n\t(void)SetEventValue(EVENT_AARON_DECK_MENU_CHOICE, 0u, 0u, choice);\n\treturn IncreaseScriptPointerBy3();\n}", "case_ids": ["ScriptCommand_ChooseDeckToDuelAgainstMultichoice-0", "ScriptCommand_ChooseDeckToDuelAgainstMultichoice-1"]}

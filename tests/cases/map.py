@@ -419,7 +419,7 @@ MUTATIONS["GameEvent_ContinueDuel"] = {"source_symbol": "GameEvent_ContinueDuel"
 MUTATIONS["_ExecuteGameEvent"] = {"source_symbol": "_ExecuteGameEvent", "before": "uint8_t _ExecuteGameEvent(void)\n{\n\tuint8_t event = wGameEvent;", "after": "uint8_t _ExecuteGameEvent(void)\n{\n\tuint8_t event = 7u;", "case_ids": ["_ExecuteGameEvent-0"]}
 # <<< factory-mutation _ExecuteGameEvent
 # >>> factory-mutation ExecuteGameEvent
-MUTATIONS["ExecuteGameEvent"] = {"source_symbol": "ExecuteGameEvent", "before": "void ExecuteGameEvent(void)\n{\n\twPlayTimeCounterEnable = 1u;", "after": "void ExecuteGameEvent(void)\n{\n\twPlayTimeCounterEnable = 0u;", "case_ids": ["ExecuteGameEvent-0", "ExecuteGameEvent-1"]}
+MUTATIONS["ExecuteGameEvent"] = {"source_symbol": "ExecuteGameEvent", "before": "\twPlayTimeCounterEnable = 1u;", "after": "\twPlayTimeCounterEnable = 0u;", "case_ids": ["ExecuteGameEvent-0", "ExecuteGameEvent-1"]}
 # <<< factory-mutation ExecuteGameEvent
 # >>> factory-completion ExecuteGameEvent
 for _record in SCHEMA2_CASES["ExecuteGameEvent"]:

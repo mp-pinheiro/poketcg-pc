@@ -130,12 +130,7 @@ from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
 MUTATIONS = {
-    "CalculateDamage_VersusDefendingPokemon": {
-        "source_symbol": "CalculateDamage_VersusDefendingPokemon",
-        "before": "damage = HandleDoubleDamageSubstatus(damage);\n        if (!(damage & (1u << UNAFFECTED_BY_WEAKNESS_RESISTANCE_F))) {",
-        "after": "damage = (uint16_t)(damage + 1u);\n        if (!(damage & (1u << UNAFFECTED_BY_WEAKNESS_RESISTANCE_F))) {",
-        "case_ids": ["CalculateDamage_VersusDefendingPokemon-1"],
-    },
+    "CalculateDamage_VersusDefendingPokemon": {"source_symbol": "CalculateDamage_VersusDefendingPokemon", "before": "((status & (DOUBLE_POISONED & (POISONED ^ 0xFFu))) ? 20u : 10u)", "after": "((status & (DOUBLE_POISONED & (POISONED ^ 0xFFu))) ? 10u : 20u)", "case_ids": ["CalculateDamage_VersusDefendingPokemon-1"]},
     "CalculateDamage_FromDefendingPokemon": {
         "source_symbol": "CalculateDamage_FromDefendingPokemon",
         "before": "    if (damage & (1u << (UNAFFECTED_BY_WEAKNESS_RESISTANCE_F + 8u))) {\n        damage = (uint16_t)(damage & ~(uint16_t)(1u << (UNAFFECTED_BY_WEAKNESS_RESISTANCE_F + 8u)));",

@@ -236,7 +236,7 @@ MUTATIONS["HandleAIGoGoRainDanceEnergy"] = {"source_symbol": "HandleAIGoGoRainDa
 MUTATIONS["HandleAICowardice"] = {"source_symbol": "HandleAICowardice", "before": "\t\tuint8_t used = card_id < TENTACOOL;", "after": "\t\tuint8_t used = 0u;", "case_ids": ["HandleAICowardice-3"]}
 # <<< factory-mutation HandleAICowardice
 # >>> factory-mutation AIEnergyTransTransferEnergyToBench
-MUTATIONS["AIEnergyTransTransferEnergyToBench"] = {"source_symbol": "AIEnergyTransTransferEnergyToBench", "before": "AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void)\n{\n\thTempPlayAreaLocation_ff9d = 0u;", "after": "AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["AIEnergyTransTransferEnergyToBench-0", "AIEnergyTransTransferEnergyToBench-1"]}
+MUTATIONS["AIEnergyTransTransferEnergyToBench"] = {"source_symbol": "AIEnergyTransTransferEnergyToBench", "before": "AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void)\n{\n\thTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;", "after": "AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["AIEnergyTransTransferEnergyToBench-0", "AIEnergyTransTransferEnergyToBench-1"]}
 # <<< factory-mutation AIEnergyTransTransferEnergyToBench
 # >>> factory-mutation HandleAIEnergyTrans
 MUTATIONS["HandleAIEnergyTrans"] = {"source_symbol": "HandleAIEnergyTrans", "before": "\tPkmnPowerCountResult venusaur = CountTurnDuelistPokemonWithActivePkmnPower(VENUSAUR_LV67);", "after": "\tPkmnPowerCountResult venusaur = CountTurnDuelistPokemonWithActivePkmnPower(MUK);", "case_ids": ["HandleAIEnergyTrans-2"]}
