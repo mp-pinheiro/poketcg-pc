@@ -56,7 +56,9 @@ AIDoTurn_LegendaryMoltresResult AIDoTurn_LegendaryMoltres(uint8_t a, uint8_t f, 
 				}
 			}
 		}
-		AIDecidePlayPokemonCard();
+		AIDecidePlayPokemonCardResult played = AIDecidePlayPokemonCard();
+		if ((played.f & 0x10u) != 0u)
+			return (AIDoTurn_LegendaryMoltresResult){played.f}; /* turn ended */
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_05); a = trainer.a; f = trainer.f;
 		AIProcessRetreatResult retreat = AIProcessRetreat(); a = retreat.a; f = retreat.f;
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_10); a = trainer.a; f = trainer.f;
@@ -73,7 +75,7 @@ AIDoTurn_LegendaryMoltresResult AIDoTurn_LegendaryMoltres(uint8_t a, uint8_t f, 
 				}
 			} else AIProcessAndTryToPlayEnergy();
 		}
-		AIDecidePlayPokemonCard();
+		(void)AIDecidePlayPokemonCard();
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_13); a = trainer.a; f = trainer.f;
 	}
 	AIProcessAttacksResult attack = AIProcessAndTryToUseAttack();

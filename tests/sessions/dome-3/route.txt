@@ -1,0 +1,31 @@
+# From dome-2's end (the Dome entrance, sent out after losing to Steve): the
+# poke sets the chain as if Courtney and Steve were beaten and the deck menu had
+# been opened (EVENT_POKEMON_DOME_IN_MENU, COURTNEY and STEVE DEFEATED,
+# EVENT_JACK_STATE=CHALLENGED), so PokemonDomeLoadMap resumes at Jack's
+# challenge (Script_f80b .ows_f82b); "Prepare for the duel?" answered no.
+hold UP 16
+idle
+press UP
+idle
+peek
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+shot dome-3-ask
+press RIGHT
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+duel
+dismiss
+peek
+shot dome-3-end

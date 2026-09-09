@@ -6177,9 +6177,11 @@ CheckForBenchIDAtHalfHPAndCanUseSecondAttackResult CheckForBenchIDAtHalfHPAndCan
 		uint8_t deck_index = gb_read8(hl++);
 		if (deck_index == 0xFFu)
 			break;
-		DuelistVarResult card = GetTurnDuelistVariable((uint8_t)(0xBBu + c));
 		(void)LoadCardDataToBuffer1_FromDeckIndex(deck_index);
-		uint8_t current_hp = card.a;
+		/* ai/core.asm:2538-2540: `ld a, c / add DUELVARS_ARENA_CARD_HP`, with c
+		 * already one past this card's slot, so the HP read is the next slot's;
+		 * the slot after the last Pokemon holds 0 and never passes. */
+		uint8_t current_hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + c)).a;
 		uint8_t half_max_hp = (uint8_t)((wLoadedCard1HP >> 1) | (wLoadedCard1HP << 7));
 		if (half_max_hp >= current_hp || wLoadedCard1ID != wSamePokemonCardID)
 			continue;

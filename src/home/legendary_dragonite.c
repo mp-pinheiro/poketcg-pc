@@ -41,7 +41,9 @@ AIDoTurn_LegendaryDragoniteResult AIDoTurn_LegendaryDragonite(uint8_t a, uint8_t
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_02);
 		a = trainer.a;
 		f = trainer.f;
-		AIDecidePlayPokemonCard();
+		AIDecidePlayPokemonCardResult played = AIDecidePlayPokemonCard();
+		if ((played.f & 0x10u) != 0u)
+			return (AIDoTurn_LegendaryDragoniteResult){played.f}; /* turn ended */
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_07);
 		a = trainer.a;
 		f = trainer.f;
@@ -74,7 +76,7 @@ AIDoTurn_LegendaryDragoniteResult AIDoTurn_LegendaryDragonite(uint8_t a, uint8_t
 			if (skip_energy == 0u)
 				AIProcessAndTryToPlayEnergy();
 		}
-		AIDecidePlayPokemonCard();
+		(void)AIDecidePlayPokemonCard();
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_15);
 		a = trainer.a;
 		f = trainer.f;
@@ -85,7 +87,9 @@ AIDoTurn_LegendaryDragoniteResult AIDoTurn_LegendaryDragonite(uint8_t a, uint8_t
 			trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_02);
 			a = trainer.a;
 			f = trainer.f;
-			AIDecidePlayPokemonCard();
+			played = AIDecidePlayPokemonCard();
+			if ((played.f & 0x10u) != 0u)
+				return (AIDoTurn_LegendaryDragoniteResult){played.f}; /* turn ended */
 			trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_07);
 			a = trainer.a;
 			f = trainer.f;
@@ -100,7 +104,7 @@ AIDoTurn_LegendaryDragoniteResult AIDoTurn_LegendaryDragonite(uint8_t a, uint8_t
 			f = trainer.f;
 			if (wAlreadyPlayedEnergy == 0u)
 				AIProcessAndTryToPlayEnergy();
-			AIDecidePlayPokemonCard();
+			(void)AIDecidePlayPokemonCard();
 		}
 	}
 	AIProcessAttacksResult attack = AIProcessAndTryToUseAttack();

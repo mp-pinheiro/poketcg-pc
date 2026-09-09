@@ -15,6 +15,7 @@ uint8_t AIDecideEvolution(void);
 void AIDecidePlayLegendaryBirds(void);
 /* <<< factory AIDecidePlayLegendaryBirds */
 /* >>> factory AIDecidePlayPokemonCard */
-void AIDecidePlayPokemonCard(void);
+typedef struct { uint8_t a; uint8_t f; } AIDecidePlayPokemonCardResult;
+AIDecidePlayPokemonCardResult AIDecidePlayPokemonCard(void);
 /* <<< factory AIDecidePlayPokemonCard */
 #endif /* POKETCG_HOME_HAND_POKEMON_H */

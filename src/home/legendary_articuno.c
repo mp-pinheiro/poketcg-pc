@@ -57,9 +57,12 @@ void ScoreLegendaryArticunoCards(void)
 		LookResult found = LookForCardIDInPlayArea_Bank5(LAPRAS, PLAY_AREA_BENCH_1);
 		if (found.f & 0x10u) {
 			CountNumberOfEnergyCardsAttachedResult energy = CountNumberOfEnergyCardsAttached(found.a);
-			if (energy.a < 3u)
+			if (energy.a < 3u) {
 				(void)RaiseAIScoreToAllMatchingIDsInBench(LAPRAS);
-			return;
+				return;
+			}
+			/* legendary_articuno.asm .lapras: `cp 3 / jr nc, .articuno` -- a Lapras
+			 * with three energies falls through to the Articuno scoring. */
 		}
 	}
 
@@ -93,18 +96,16 @@ AIDoTurn_LegendaryArticunoResult AIDoTurn_LegendaryArticuno(uint8_t a, uint8_t f
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_02);
 		a = trainer.a;
 		f = trainer.f;
-		AIDecidePlayPokemonCard();
-		AIProcessRetreatResult retreat = AIProcessRetreat();
-		a = retreat.a;
-		f = retreat.f;
-		if ((f & 0x10u) != 0u)
-			return (AIDoTurn_LegendaryArticunoResult){f};
+		AIDecidePlayPokemonCardResult played = AIDecidePlayPokemonCard();
+		if ((played.f & 0x10u) != 0u)
+			return (AIDoTurn_LegendaryArticunoResult){played.f}; /* turn ended */
+		(void)AIProcessRetreat();
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_10);
 		a = trainer.a;
 		f = trainer.f;
 		if (wAlreadyPlayedEnergy == 0u)
 			AIProcessAndTryToPlayEnergy();
-		AIDecidePlayPokemonCard();
+		(void)AIDecidePlayPokemonCard();
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_13);
 		a = trainer.a;
 		f = trainer.f;
@@ -118,18 +119,16 @@ AIDoTurn_LegendaryArticunoResult AIDoTurn_LegendaryArticuno(uint8_t a, uint8_t f
 			trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_02);
 			a = trainer.a;
 			f = trainer.f;
-			AIDecidePlayPokemonCard();
-			retreat = AIProcessRetreat();
-			a = retreat.a;
-			f = retreat.f;
-			if ((f & 0x10u) != 0u)
-				return (AIDoTurn_LegendaryArticunoResult){f};
+			played = AIDecidePlayPokemonCard();
+			if ((played.f & 0x10u) != 0u)
+				return (AIDoTurn_LegendaryArticunoResult){played.f}; /* turn ended */
+			(void)AIProcessRetreat();
 			trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_10);
 			a = trainer.a;
 			f = trainer.f;
 			if (wAlreadyPlayedEnergy == 0u)
 				AIProcessAndTryToPlayEnergy();
-			AIDecidePlayPokemonCard();
+			(void)AIDecidePlayPokemonCard();
 		}
 	}
 	AIProcessAttacksResult attack = AIProcessAndTryToUseAttack();

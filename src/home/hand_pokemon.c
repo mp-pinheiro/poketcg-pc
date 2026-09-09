@@ -345,7 +345,7 @@ void AIDecidePlayLegendaryBirds(void)
 /* <<< factory AIDecidePlayLegendaryBirds */
 
 /* >>> factory AIDecidePlayPokemonCard */
-void AIDecidePlayPokemonCard(void)
+AIDecidePlayPokemonCardResult AIDecidePlayPokemonCard(void)
 {
 	(void)CreateHandCardList(0u);
 	(void)SortTempHandByIDList();
@@ -356,8 +356,9 @@ void AIDecidePlayPokemonCard(void)
 	for (;;) {
 		uint8_t card = gb_read8(hl++);
 		if (card == 0xFFu) {
-			(void)AIDecideEvolution();
-			return;
+			/* hand_pokemon.asm:14 `jp z, AIDecideEvolution`: its `.done` is `or a / ret`. */
+			uint8_t last = AIDecideEvolution();
+			return (AIDecidePlayPokemonCardResult){last, (uint8_t)(last == 0u ? 0x80u : 0u)};
 		}
 		wTempAIPokemonCard = card;
 		uint16_t saved_hl = hl;
@@ -402,7 +403,7 @@ void AIDecidePlayPokemonCard(void)
 		}
 		AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_BASIC_PKMN, 0u, 0u, 0u, 0u);
 		if (decision.f & 0x10u)
-			return;
+			return (AIDecidePlayPokemonCardResult){decision.a, decision.f}; /* turn ended */
 		hl = saved_hl;
 	}
 }

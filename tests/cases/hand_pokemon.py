@@ -58,7 +58,7 @@ CASES["AIDecidePlayLegendaryBirds"] = [
 # <<< factory AIDecidePlayLegendaryBirds
 
 # >>> factory AIDecidePlayPokemonCard
-CONTRACT["AIDecidePlayPokemonCard"] = {"compare": (), "preserve": ()}
+CONTRACT["AIDecidePlayPokemonCard"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecidePlayPokemonCard"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00"}, "read": {0xC510: 1, 0xCEDA: 1}, "expect": {0xC510: b"\xFF", 0xCEDA: b"\xFF"}},
     dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00"}, read={0xC510: 1, 0xCEDA: 1}, expect={0xC510: b"\xFF", 0xCEDA: b"\xFF"}),

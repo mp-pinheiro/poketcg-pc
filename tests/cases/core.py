@@ -1,6 +1,7 @@
 from tests.cases._fixtures import begin_use_attack_fixture as _begin_use_attack_fixture, BEGIN_USE_ATTACK_REGS as _BEGIN_USE_ATTACK_REGS
 from tests.cases._fixtures import bench_switch_fixture as _bench_switch_fixture
 from tests.cases._fixtures import bench_count_fixture as _bench_count_fixture, BENCH_COUNT_REGS as _BENCH_COUNT_REGS
+from tests.cases._fixtures import bench_half_hp_fixture as _bench_half_hp_fixture, BENCH_HALF_HP_REGS as _BENCH_HALF_HP_REGS
 from tests.cases._fixtures import fully_powered_fixture as _fully_powered_fixture, FULLY_POWERED_REGS as _FULLY_POWERED_REGS
 from tests.cases._fixtures import ai_trainer_phase5_fixture as _ai_trainer_phase5_fixture, AI_TRAINER_PHASE5_REGS as _AI_TRAINER_PHASE5_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_defending_ko_fixture as _ai_defending_ko_fixture, AI_DEFENDING_KO_REGS as _AI_DEFENDING_KO_REGS, power_screen_fixture as _power_screen_fixture, POWER_SCREEN_REGS as _POWER_SCREEN_REGS
@@ -3503,6 +3504,13 @@ CONTRACT["CheckForBenchIDAtHalfHPAndCanUseSecondAttack"] = {"compare": ("a", "f"
 CASES["CheckForBenchIDAtHalfHPAndCanUseSecondAttack"] = [
     {"a": 0x12, "wram": {hWhoseTurn: b"\xC2", wArenaCard: b"\xFF", hTempPlayAreaLocation_ff9d: b"\x03", wSelectedAttack: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x01, "d": 0x03, "e": 0x00, "hl": 0xC2BC}},
     dict(POISON, wram={hWhoseTurn: b"\xC2", wArenaCard: b"\xFF", hTempPlayAreaLocation_ff9d: b"\x5A", wSelectedAttack: b"\x01"}, expect_regs={"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x01, "d": 0x5A, "e": 0x01, "hl": 0xC2BC}),
+    # dome-3 722200: Jack's Articuno scoring scans a two-Pokemon play area; the
+    # HP read is one slot past the card (the asm's `add DUELVARS_ARENA_CARD_HP`
+    # after `inc c`), so the last card compares against the empty slot's 0.
+    dict(_bench_half_hp_fixture(vram=False, bank=5), **_BENCH_HALF_HP_REGS, read={0xCC23: 1, 0xFF9D: 1, 0xCDF9: 1}),
+    # The same state asked for ARTICUNO_LV35, the last Pokemon (bench 1): its HP read
+    # lands on the empty slot, so the ROM never inspects the slot after it.
+    dict(_bench_half_hp_fixture(vram=False, bank=5), **dict(_BENCH_HALF_HP_REGS, a=0x5E), read={0xCC23: 1, 0xFF9D: 1, 0xCDF9: 1}),
 ]
 # <<< factory CheckForBenchIDAtHalfHPAndCanUseSecondAttack
 
@@ -6881,12 +6889,7 @@ MUTATIONS["CheckIfSelectedAttackIsUnusable"] = {
 }
 # <<< factory-mutation CheckIfSelectedAttackIsUnusable
 # >>> factory-mutation CheckForBenchIDAtHalfHPAndCanUseSecondAttack
-MUTATIONS["CheckForBenchIDAtHalfHPAndCanUseSecondAttack"] = {
-    "source_symbol": "CheckForBenchIDAtHalfHPAndCanUseSecondAttack",
-    "before": "\tf = (uint8_t)(b == 0u ? 0x80u : 0x10u);",
-    "after": "\tf = (uint8_t)(b == 0u ? 0x00u : 0x10u);",
-    "case_ids": ["CheckForBenchIDAtHalfHPAndCanUseSecondAttack-0", "CheckForBenchIDAtHalfHPAndCanUseSecondAttack-1"],
-}
+MUTATIONS["CheckForBenchIDAtHalfHPAndCanUseSecondAttack"] = {"source_symbol": "CheckForBenchIDAtHalfHPAndCanUseSecondAttack", "before": "\t\tuint8_t current_hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + c)).a;", "after": "\t\tuint8_t current_hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + c - 1u)).a;", "case_ids": ["CheckForBenchIDAtHalfHPAndCanUseSecondAttack-3"]}
 # <<< factory-mutation CheckForBenchIDAtHalfHPAndCanUseSecondAttack
 # >>> factory-mutation CountNumberOfSetUpBenchPokemon
 MUTATIONS["CountNumberOfSetUpBenchPokemon"] = {

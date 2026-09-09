@@ -41,7 +41,9 @@ AIDoTurn_LegendaryZapdosResult AIDoTurn_LegendaryZapdos(uint8_t a, uint8_t f, ui
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_04);
 		a = trainer.a;
 		f = trainer.f;
-		AIDecidePlayPokemonCard();
+		AIDecidePlayPokemonCardResult played = AIDecidePlayPokemonCard();
+		if ((played.f & 0x10u) != 0u)
+			return (AIDoTurn_LegendaryZapdosResult){played.f}; /* turn ended */
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_07);
 		a = trainer.a;
 		f = trainer.f;
@@ -78,7 +80,9 @@ AIDoTurn_LegendaryZapdosResult AIDoTurn_LegendaryZapdos(uint8_t a, uint8_t f, ui
 			if (skip_energy == 0u)
 				AIProcessAndTryToPlayEnergy();
 		}
-		AIDecidePlayPokemonCard();
+		played = AIDecidePlayPokemonCard();
+		if ((played.f & 0x10u) != 0u)
+			return (AIDoTurn_LegendaryZapdosResult){played.f}; /* turn ended */
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_13);
 		a = trainer.a;
 		f = trainer.f;

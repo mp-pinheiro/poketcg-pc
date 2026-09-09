@@ -731,3 +731,27 @@ PEAL_OF_THUNDER_REGS = PEAL_OF_THUNDER.regs
 
 def peal_of_thunder_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return PEAL_OF_THUNDER.case(vram=vram, bank=bank, **changes)
+
+
+BENCH_HALF_HP = Fixture("dome-3-bench-half-hp-entry")
+BENCH_HALF_HP_REGS = BENCH_HALF_HP.regs
+
+
+def bench_half_hp_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return BENCH_HALF_HP.case(vram=vram, bank=bank, **changes)
+
+
+ARTICUNO_TURN = Fixture("dome-3-articuno-turn-entry")
+ARTICUNO_TURN_REGS = ARTICUNO_TURN.regs
+
+
+def articuno_turn_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return ARTICUNO_TURN.case(vram=vram, bank=bank, **changes)
+
+
+ARTICUNO_SCORING = Fixture("dome-3-articuno-scoring-entry")
+ARTICUNO_SCORING_REGS = ARTICUNO_SCORING.regs
+
+
+def articuno_scoring_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return ARTICUNO_SCORING.case(vram=vram, bank=bank, **changes)

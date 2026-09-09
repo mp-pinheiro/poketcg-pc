@@ -55,14 +55,18 @@ AIDoTurn_LegendaryRonaldResult AIDoTurn_LegendaryRonald(uint8_t a, uint8_t f, ui
 			}
 		}
 	}
-	AIDecidePlayPokemonCard();
+	AIDecidePlayPokemonCardResult played = AIDecidePlayPokemonCard();
+	if ((played.f & 0x10u) != 0u)
+		return (AIDoTurn_LegendaryRonaldResult){played.f}; /* turn ended */
 	AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_05);
 	AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_07);
 	AIProcessRetreat();
 	AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_10);
 	if (wAlreadyPlayedEnergy == 0u)
 		AIProcessAndTryToPlayEnergy();
-	AIDecidePlayPokemonCard();
+	played = AIDecidePlayPokemonCard();
+	if ((played.f & 0x10u) != 0u)
+		return (AIDoTurn_LegendaryRonaldResult){played.f}; /* turn ended */
 	AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_15);
 	if ((wPreviousAIFlags & AI_FLAG_USED_PROFESSOR_OAK) != 0u) {
 		AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_01);
@@ -84,14 +88,18 @@ AIDoTurn_LegendaryRonaldResult AIDoTurn_LegendaryRonald(uint8_t a, uint8_t f, ui
 				}
 			}
 		}
-		AIDecidePlayPokemonCard();
+		played = AIDecidePlayPokemonCard();
+		if ((played.f & 0x10u) != 0u)
+			return (AIDoTurn_LegendaryRonaldResult){played.f}; /* turn ended */
 		AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_05);
 		AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_07);
 		AIProcessRetreat();
 		AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_10);
 		if (wAlreadyPlayedEnergy == 0u)
 			AIProcessAndTryToPlayEnergy();
-		AIDecidePlayPokemonCard();
+		played = AIDecidePlayPokemonCard();
+		if ((played.f & 0x10u) != 0u)
+			return (AIDoTurn_LegendaryRonaldResult){played.f}; /* turn ended */
 	}
 	AIProcessAttacksResult attack = AIProcessAndTryToUseAttack();
 	if ((attack.f & 0x10u) != 0u)

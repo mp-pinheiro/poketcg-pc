@@ -30,8 +30,9 @@ static void adapt_AIDecidePlayLegendaryBirds(ProbeState *s)
 /* >>> factory AIDecidePlayPokemonCard */
 static void adapt_AIDecidePlayPokemonCard(ProbeState *s)
 {
-	(void)s;
-	AIDecidePlayPokemonCard();
+	AIDecidePlayPokemonCardResult r = AIDecidePlayPokemonCard();
+	s->a = r.a;
+	s->f = r.f;
 }
 /* <<< factory AIDecidePlayPokemonCard */
 
