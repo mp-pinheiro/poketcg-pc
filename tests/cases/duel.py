@@ -1,3 +1,5 @@
+from tests.cases._fixtures import init_duelvar_fixture as _init_duelvar_fixture, INIT_DUELVAR_REGS as _INIT_DUELVAR_REGS
+from tests.cases._fixtures import swap_duelvar_fixture as _swap_duelvar_fixture, SWAP_DUELVAR_REGS as _SWAP_DUELVAR_REGS
 from tests.cases._fixtures import count_card_id_fixture as _count_card_id_fixture, COUNT_CARD_ID_REGS as _COUNT_CARD_ID_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS
 from tests.cases._fixtures import pkmn_power_fixture as _pkmn_power_fixture, PKMN_POWER_REGS as _PKMN_POWER_REGS
@@ -75,6 +77,8 @@ CONTRACT = {
     "PutHandCardInPlayArea": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ()},
     "PutHandPokemonCardInPlayArea": {"compare": ("a", "b", "c", "d", "f", "hl"), "preserve": ()},
     "EmptyPlayAreaSlot": {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ()},
+    "EmptyPlayAreaSlot.init_duelvar": {"compare": ("a", "f", "hl"), "preserve": ()},
+    "SwapPlayAreaPokemon.swap_duelvar": {"compare": ("a", "c", "f", "hl"), "preserve": ()},
     "SwapPlayAreaPokemon": {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     "SwapArenaWithBenchPokemon": {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ()},
     "ShiftTurnPokemonToFirstPlayAreaSlots": {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ()},
@@ -574,6 +578,26 @@ CASES = {
                                    0xC3EE: b"\x01", 0xC342: b"\x00",
                                    wOpponentDeck: b"\x08"},
              read={0xC3EF: 1, 0xC3BD: 1}),
+    ],
+    "EmptyPlayAreaSlot.init_duelvar": [
+        {"a": 0xBB, "d": 0xFF, "e": 0x00, "hl": 0xC200, "wram": {0xC2BB: b"\x00"},
+         "read": {0xC2BB: 1}},
+        {"a": 0xC8, "d": 0x00, "e": 0x03, "hl": 0xC200, "wram": {0xC2CB: b"\x77"},
+         "read": {0xC2CB: 1}},
+        dict(POISON, a=0xE0, d=0x00, e=0x05, hl=0xC300, wram={0xC3E5: b"\x42"},
+             read={0xC3E5: 1}),
+
+        dict(_init_duelvar_fixture(vram=False), **_INIT_DUELVAR_REGS, read={0xC3C9: 1}),
+    ],
+    "SwapPlayAreaPokemon.swap_duelvar": [
+        {"a": 0xBB, "b": 0xC2, "d": 0x00, "e": 0x01, "hl": 0xC200,
+         "wram": {0xC2BB: b"\x01\x02"}, "read": {0xC2BB: 2}},
+        {"a": 0xC8, "b": 0xC2, "d": 0x02, "e": 0x04, "hl": 0xC200,
+         "wram": {0xC2CA: b"\x10", 0xC2CC: b"\x20"}, "read": {0xC2CA: 3}},
+        dict(POISON, a=0xBB, b=0xC3, d=0x01, e=0x00, hl=0xC300,
+             wram={0xC3BB: b"\x05\x06"}, read={0xC3BB: 2}),
+
+        dict(_swap_duelvar_fixture(vram=False), **_SWAP_DUELVAR_REGS, read={0xC3BB: 2}),
     ],
     "EmptyPlayAreaSlot": [
         {"e": 0x00, "wram": {hWhoseTurn: b"\xC2"},
@@ -2054,6 +2078,8 @@ MUTATIONS = {
     },
 }
 # >>> factory-mutation GetFirstSetPrizeCard
+MUTATIONS['EmptyPlayAreaSlot.init_duelvar'] = {"source_symbol": "EmptyPlayAreaSlot_init_duelvar", "before": "\tuint16_t addr = (uint16_t)((hl & 0xFF00u) | offset);", "after": "\tuint16_t addr = (uint16_t)((hl & 0xFF00u) | a);", "case_ids": ["EmptyPlayAreaSlot.init_duelvar-3"]}
+MUTATIONS['SwapPlayAreaPokemon.swap_duelvar'] = {"source_symbol": "SwapPlayAreaPokemon_swap_duelvar", "before": "\tuint8_t held = gb_read8(addr_second);", "after": "\tuint8_t held = gb_read8(addr_first);", "case_ids": ["SwapPlayAreaPokemon.swap_duelvar-3"]}
 MUTATIONS["CountCardIDInLocation"] = {"source_symbol": "CountCardIDInLocation", "before": "\treturn (CardLocationCountResult){count, (uint16_t)(page | DECK_SIZE)};", "after": "\treturn (CardLocationCountResult){count, (uint16_t)(hl + DECK_SIZE)};", "case_ids": ["CountCardIDInLocation-3"]}
 MUTATIONS["EvolvePokemonCard"] = {"source_symbol": "EvolvePokemonCard", "before": "\t(void)PutHandCardInPlayArea(card_idx, slot);", "after": "\t(void)card_idx;", "case_ids": ["EvolvePokemonCard-0"]}
 MUTATIONS["GetFirstSetPrizeCard"] = {"source_symbol": "GetFirstSetPrizeCard", "before": "\t\tif ((mask & prizes) != 0u)", "after": "\t\tif ((mask & prizes) == 0u)", "case_ids": ["GetFirstSetPrizeCard-1", "GetFirstSetPrizeCard-2", "GetFirstSetPrizeCard-6"]}

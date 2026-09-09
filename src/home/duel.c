@@ -1329,29 +1329,34 @@ PutHandPokemonResult PutHandPokemonCardInPlayArea(uint8_t a, uint8_t f)
 	return (PutHandPokemonResult){slot, slot ? 0x00u : 0x80u, stage_addr};
 }
 
+/* duel.asm:1106-1111: `add e / ld l, a / ld [hl], d`, so exit a and the flags
+ * are the offset addition's and hl is the duelvar written. */
+InitDuelvarResult EmptyPlayAreaSlot_init_duelvar(uint8_t a, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t offset = (uint8_t)(a + e);
+	uint8_t f = (uint8_t)((offset == 0u ? 0x80u : 0x00u)
+		| (((a & 0x0Fu) + (e & 0x0Fu)) > 0x0Fu ? 0x20u : 0x00u)
+		| (((uint16_t)a + e) > 0xFFu ? 0x10u : 0x00u));
+	uint16_t addr = (uint16_t)((hl & 0xFF00u) | offset);
+
+	gb_write8(addr, d);
+	return (InitDuelvarResult){offset, f, addr};
+}
+
 /* duel.asm:1091-1111. */
 EmptySlotResult EmptyPlayAreaSlot(uint8_t e)
 {
-	uint16_t page = (uint16_t)((uint16_t)hWhoseTurn << 8);
-	uint8_t last;
-	uint16_t last_addr;
-	uint8_t f;
+	uint16_t hl = (uint16_t)((uint16_t)hWhoseTurn << 8);
 
-	gb_write8((uint16_t)(page | (uint8_t)(DUELVARS_ARENA_CARD + e)), 0xFFu);
-	gb_write8((uint16_t)(page | (uint8_t)(DUELVARS_ARENA_CARD_HP + e)), 0);
-	gb_write8((uint16_t)(page | (uint8_t)(DUELVARS_ARENA_CARD_STAGE + e)), 0);
-	gb_write8((uint16_t)(page | (uint8_t)(DUELVARS_ARENA_CARD_CHANGED_TYPE + e)), 0);
-	gb_write8((uint16_t)(page | (uint8_t)(DUELVARS_ARENA_CARD_ATTACHED_DEFENDER + e)), 0);
-	last = (uint8_t)(DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER + e);
-	last_addr = (uint16_t)(page | last);
-	gb_write8(last_addr, 0);
+	(void)EmptyPlayAreaSlot_init_duelvar(DUELVARS_ARENA_CARD, 0xFFu, e, hl);
+	(void)EmptyPlayAreaSlot_init_duelvar(DUELVARS_ARENA_CARD_HP, 0x00u, e, hl);
+	(void)EmptyPlayAreaSlot_init_duelvar(DUELVARS_ARENA_CARD_STAGE, 0x00u, e, hl);
+	(void)EmptyPlayAreaSlot_init_duelvar(DUELVARS_ARENA_CARD_CHANGED_TYPE, 0x00u, e, hl);
+	(void)EmptyPlayAreaSlot_init_duelvar(DUELVARS_ARENA_CARD_ATTACHED_DEFENDER, 0x00u, e, hl);
+	InitDuelvarResult last = EmptyPlayAreaSlot_init_duelvar(
+		DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER, 0x00u, e, hl);
 
-	f = last ? 0x00u : 0x80u;
-	if ((uint8_t)(DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER & 0x0Fu) + (e & 0x0Fu) > 0x0Fu)
-		f |= 0x20u;
-	if ((uint32_t)DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER + e > 0xFFu)
-		f |= 0x10u;
-	return (EmptySlotResult){last, 0, f, last_addr};
+	return (EmptySlotResult){last.a, 0, last.f, last.hl};
 }
 
 /* duel.asm:1068-1087. */
@@ -1374,6 +1379,21 @@ MoveAreaResult MovePlayAreaCardToDiscardPile(uint8_t e)
 	return (MoveAreaResult){DECK_SIZE, 0, 0xC0u, (uint16_t)(page | DECK_SIZE)};
 }
 
+/* duel.asm:1201-1215: c ends as the second card's duelvar offset and hl as the
+ * first card's address; the swap itself goes through both. */
+SwapDuelvarResult SwapPlayAreaPokemon_swap_duelvar(uint8_t a, uint8_t b, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t first = (uint8_t)(a + e);
+	uint8_t second = (uint8_t)(a + d);
+	uint16_t addr_first = (uint16_t)((hl & 0xFF00u) | first);
+	uint16_t addr_second = (uint16_t)(((uint16_t)b << 8) | second);
+	uint8_t held = gb_read8(addr_second);
+
+	gb_write8(addr_second, gb_read8(addr_first));
+	gb_write8(addr_first, held);
+	return (SwapDuelvarResult){held, 0x00u, second, addr_first};
+}
+
 /* duel.asm:1148-1215 / 1143-1146. */
 SwapAreaResult SwapPlayAreaPokemon(uint8_t d, uint8_t e)
 {
@@ -1388,14 +1408,8 @@ SwapAreaResult SwapPlayAreaPokemon(uint8_t d, uint8_t e)
 	};
 	uint8_t marked_d, marked_e;
 
-	for (int i = 0; i < 7; i++) {
-		uint16_t addr_e = (uint16_t)(page | (uint8_t)(fields[i] + e));
-		uint16_t addr_d = (uint16_t)(page | (uint8_t)(fields[i] + d));
-		uint8_t tmp = gb_read8(addr_d);
-
-		gb_write8(addr_d, gb_read8(addr_e));
-		gb_write8(addr_e, tmp);
-	}
+	for (int i = 0; i < 7; i++)
+		(void)SwapPlayAreaPokemon_swap_duelvar(fields[i], hWhoseTurn, d, e, page);
 	marked_d = (uint8_t)(d | PLAY_AREA_MASK);
 	marked_e = (uint8_t)(e | PLAY_AREA_MASK);
 	for (uint8_t l = 0; l < DECK_SIZE; l++) {

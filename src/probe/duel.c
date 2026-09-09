@@ -402,6 +402,23 @@ static void adapt_PutHandPokemonCardInPlayArea(ProbeState *s)
 	s->hl = r.hl;
 }
 
+static void adapt_EmptyPlayAreaSlot_init_duelvar(ProbeState *s)
+{
+	InitDuelvarResult r = EmptyPlayAreaSlot_init_duelvar(s->a, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_SwapPlayAreaPokemon_swap_duelvar(ProbeState *s)
+{
+	SwapDuelvarResult r = SwapPlayAreaPokemon_swap_duelvar(s->a, s->b, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+
 static void adapt_EmptyPlayAreaSlot(ProbeState *s)
 {
 	EmptySlotResult r = EmptyPlayAreaSlot(s->e);
@@ -1173,6 +1190,8 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "PutHandCardInPlayArea", adapt_PutHandCardInPlayArea },
 	{ "PutHandPokemonCardInPlayArea", adapt_PutHandPokemonCardInPlayArea },
 	{ "EmptyPlayAreaSlot", adapt_EmptyPlayAreaSlot },
+	{ "EmptyPlayAreaSlot.init_duelvar", adapt_EmptyPlayAreaSlot_init_duelvar },
+	{ "SwapPlayAreaPokemon.swap_duelvar", adapt_SwapPlayAreaPokemon_swap_duelvar },
 	{ "MovePlayAreaCardToDiscardPile", adapt_MovePlayAreaCardToDiscardPile },
 	{ "SwapPlayAreaPokemon", adapt_SwapPlayAreaPokemon },
 	{ "SwapArenaWithBenchPokemon", adapt_SwapArenaWithBenchPokemon },

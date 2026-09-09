@@ -991,3 +991,19 @@ PROCESS_TEXT_HEADER_REGS = PROCESS_TEXT_HEADER.regs
 
 def process_text_header_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return PROCESS_TEXT_HEADER.case(vram=vram, bank=bank, **changes)
+
+
+INIT_DUELVAR = Fixture("practice-win-init-duelvar-entry")
+INIT_DUELVAR_REGS = INIT_DUELVAR.regs
+
+
+def init_duelvar_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return INIT_DUELVAR.case(vram=vram, bank=bank, **changes)
+
+
+SWAP_DUELVAR = Fixture("practice-win-swap-duelvar-entry")
+SWAP_DUELVAR_REGS = SWAP_DUELVAR.regs
+
+
+def swap_duelvar_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return SWAP_DUELVAR.case(vram=vram, bank=bank, **changes)
