@@ -8677,8 +8677,9 @@ ZapdosThunder_RecoilEffectResult ZapdosThunder_RecoilEffect(uint8_t f, uint8_t d
 	uint8_t coin = hTemp_ffa0;
 	if (coin != 0u)
 		return (ZapdosThunder_RecoilEffectResult){coin, 0x00u};
+	(void)f;
 	DealConfusionDamageToSelfResult result =
-		DealRecoilDamageToSelf(30u, f, d, e);
+		DealRecoilDamageToSelf(30u, 0x80u, d, e);
 	return (ZapdosThunder_RecoilEffectResult){result.a, result.f};
 }
 /* <<< factory ZapdosThunder_RecoilEffect */

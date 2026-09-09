@@ -1,4 +1,5 @@
 from tests.cases._fixtures import selfdestruct_fixture as _selfdestruct_fixture, SELFDESTRUCT_REGS as _SELFDESTRUCT_REGS
+from tests.cases._fixtures import ZAPDOS_RECOIL_REGS, zapdos_recoil_fixture
 from tests.cases._fixtures import foul_gas_fixture as _foul_gas_fixture, FOUL_GAS_REGS as _FOUL_GAS_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/effect_functions.asm."""
 
@@ -5962,6 +5963,7 @@ CASES["ZapdosThunder_RecoilEffect"] = [
      "read": {0xFFA0: 1, 0xCE43: 2}},
     dict(POISON, wram={0xFFA0: b"\x01", 0xCABB: b"\x00"},
          read={0xFFA0: 1, 0xCE43: 2}),
+    dict(zapdos_recoil_fixture(vram=False), **ZAPDOS_RECOIL_REGS, keys=[0x00, 0x01]),
 ]
 # <<< factory ZapdosThunder_RecoilEffect
 
@@ -10413,7 +10415,12 @@ MUTATIONS["Maintenance_ReturnToDeckAndDrawEffect"] = {"source_symbol": "Maintena
 MUTATIONS["ThunderJolt_RecoilEffect"] = {"source_symbol": "ThunderJolt_RecoilEffect", "before": "ThunderJolt_RecoilEffectResult ThunderJolt_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tLoadTxRam3(10u);", "after": "ThunderJolt_RecoilEffectResult ThunderJolt_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tLoadTxRam3(11u);", "case_ids": ["ThunderJolt_RecoilEffect-0", "ThunderJolt_RecoilEffect-1"]}
 # <<< factory-mutation ThunderJolt_RecoilEffect
 # >>> factory-mutation ZapdosThunder_RecoilEffect
-MUTATIONS["ZapdosThunder_RecoilEffect"] = {"source_symbol": "ZapdosThunder_RecoilEffect", "before": "ZapdosThunder_RecoilEffectResult ZapdosThunder_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tLoadTxRam3(30u);", "after": "ZapdosThunder_RecoilEffectResult ZapdosThunder_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tLoadTxRam3(31u);", "case_ids": ["ZapdosThunder_RecoilEffect-0", "ZapdosThunder_RecoilEffect-1"]}
+MUTATIONS["ZapdosThunder_RecoilEffect"] = {
+    "source_symbol": "ZapdosThunder_RecoilEffect",
+    "before": "\t\tDealRecoilDamageToSelf(30u, 0x80u, d, e);",
+    "after": "\t\tDealRecoilDamageToSelf(30u, f, d, e);",
+    "case_ids": ["ZapdosThunder_RecoilEffect-2"],
+}
 # <<< factory-mutation ZapdosThunder_RecoilEffect
 # >>> factory-mutation BillEffect
 MUTATIONS["BillEffect"] = {"source_symbol": "BillEffect", "before": "void BillEffect(void)\n{\n\tDisplayDrawNCardsScreen(2u, 0u, 0u, 0u, 0u, 0u, 0u);\n\tuint8_t remaining = 2u;", "after": "void BillEffect(void)\n{\n\tDisplayDrawNCardsScreen(2u, 0u, 0u, 0u, 0u, 0u, 0u);\n\tuint8_t remaining = 1u;", "case_ids": ["BillEffect-0", "BillEffect-1", "BillEffect-2"]}

@@ -466,7 +466,7 @@ HandleAIPkmnPowersResult HandleAIPkmnPowers(void)
 		}
 		c++;
 	}
-	return (HandleAIPkmnPowersResult){0u, 0x80u};
+	return (HandleAIPkmnPowersResult){c, 0xC0u};
 }
 /* <<< factory HandleAIPkmnPowers */
 
