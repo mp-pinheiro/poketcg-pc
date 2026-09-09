@@ -85,6 +85,14 @@ TIMER_SYNC_HL = {0x52FD: 0xCAC5}
 VBLANK_SYNC = {(1, 0x427D): "DuelMainInterface", (1, 0x67EE): "AIMakeDecision"}
 VBLANK_SYNC_ADDRESSES = {address: bank for bank, address in VBLANK_SYNC}
 VBLANK_RECORD = struct.Struct("<IQBB")
+# The VBlank ISR's `inc [hl]` on wVBlankCounter (vblank.asm:35) and the STAT
+# vector (home.asm `call wLCDCFunctionTrampoline`): per interval, a bitmask of
+# the VBlank services a STAT ISR followed, bit n set when a STAT fired after n
+# increments. The port runs its LCDC handler on that schedule (src/runtime.c
+# stat_wanted). Written as one byte per anchor; bit 7 saturates.
+VBLANK_INCREMENT = 0x01D7
+STAT_VECTOR = 0x0048
+STAT_MASK_BITS = 8
 # The first four gate `confirmed`; audio is SECTION "WRAM Audio" on its own,
 # reported but not gated: the sound driver runs from the timer ISR, which the
 # lag track schedules around the game's driver calls, but the reference APU
@@ -278,12 +286,17 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
         meta = json.loads(meta_path.read_text())
         if meta.get("format") == DIGEST_FORMAT:
             meta["cached"] = True
+            ensure_stat_track(directory, masks, frames, axis=axis, frame_mode=frame_mode,
+                              gba=gba, pokes=pokes)
             return meta
     tables = mask_tables()
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     records = bytearray()
     calls = bytearray()
     vblank_writes = bytearray()
+    stats = bytearray()
+    stat_mask = 0
+    increments = 0
     inputs = bytearray()
     with refstream.Core(padded, gba=gba, pokes=pokes) as core:
         core.input_axis = axis
@@ -293,7 +306,13 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
         hits = 0
 
         def on_exec(address: int, cycle: int) -> None:
-            nonlocal hits
+            nonlocal hits, stat_mask, increments
+            if address == VBLANK_INCREMENT:
+                increments += 1
+                return
+            if address == STAT_VECTOR:
+                stat_mask |= 1 << min(increments, STAT_MASK_BITS - 1)
+                return
             if address in TIMER_SYNC_ADDRESSES:
                 bank = TIMER_SYNC_ADDRESSES[address]
                 if bank is None or core.bank_of(address) == bank:
@@ -313,6 +332,9 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
             if address != refstream.DOFRAME_ANCHOR:
                 return
             hits += 1
+            stats.append(stat_mask)
+            stat_mask = 0
+            increments = 0
             regions = reference_regions(core)
             crcs = digest(regions, tables)
             records.extend(REFERENCE_RECORD.pack(*crcs, core.samples + cycle, regions["wram"][0xAB8],
@@ -330,7 +352,9 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     (directory / "digests.bin").write_bytes(bytes(records))
     (directory / "calls.bin").write_bytes(bytes(calls))
     (directory / "vblank-writes.bin").write_bytes(bytes(vblank_writes))
-    (directory / "lag.txt").write_text(lag_track(bytes(records), bytes(calls), bytes(vblank_writes)))
+    (directory / "stats.bin").write_bytes(bytes(stats))
+    (directory / "lag.txt").write_text(lag_track(bytes(records), bytes(calls), bytes(vblank_writes),
+                                                 bytes(stats)))
     meta = {
         "schema": 1, "format": DIGEST_FORMAT, "name": name, "axis": axis, "key": key,
         "frames": frames, "anchors": hits, "record": REFERENCE_RECORD.size,
@@ -341,6 +365,46 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     meta_path.write_text(json.dumps({k: v for k, v in meta.items() if k != "inputs"},
                                     sort_keys=True) + "\n")
     return meta
+
+
+def ensure_stat_track(directory: Path, masks: list[int], frames: int, *, axis: str,
+                      frame_mode: str, gba: bool, pokes: refstream.Pokes | None) -> None:
+    """A reference cached before the lag track carried STAT ISRs: replay it
+    once more recording only the interrupt vectors and the anchors, then
+    rewrite lag.txt with the column. The replay is the same deterministic
+    stream, so its anchors are the cached digests' anchors."""
+    stats_path = directory / "stats.bin"
+    if stats_path.is_file():
+        return
+    padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
+    stats = bytearray()
+    stat_mask = 0
+    increments = 0
+    with refstream.Core(padded, gba=gba, pokes=pokes) as core:
+        core.input_axis = axis
+        core.frame_mode = frame_mode
+
+        def on_exec(address: int, _cycle: int) -> None:
+            nonlocal stat_mask, increments
+            if address == VBLANK_INCREMENT:
+                increments += 1
+            elif address == STAT_VECTOR:
+                stat_mask |= 1 << min(increments, STAT_MASK_BITS - 1)
+            elif address == refstream.DOFRAME_ANCHOR:
+                stats.append(stat_mask)
+                stat_mask = 0
+                increments = 0
+
+        core.install_exec(on_exec)
+        core.run(frames)
+    records = (directory / "digests.bin").read_bytes()
+    if len(stats) != len(records) // REFERENCE_RECORD.size:
+        raise SessionError(f"stat track replay reached {len(stats)} anchors, "
+                           f"the cached digests {len(records) // REFERENCE_RECORD.size}")
+    stats_path.write_bytes(bytes(stats))
+    (directory / "lag.txt").write_text(lag_track(records, (directory / "calls.bin").read_bytes(),
+                                                 (directory / "vblank-writes.bin").read_bytes(),
+                                                 bytes(stats)))
 
 
 def load_reference(meta: dict[str, Any]) -> bytes:
@@ -358,12 +422,16 @@ def unwrap(delta_mod: int, expected: float, modulus: int = 256) -> int:
     return max(0, min(candidates, key=lambda c: abs(c - expected)))
 
 
-def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"") -> str:
+def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"", stats: bytes = b"") -> str:
     """One line per DoFrame: `<cycles> <timer ISRs> <VBlank ISRs>` the ROM
     spent between the previous anchor and this one, then one number per
     timer sync point reached in that interval: the timer ISRs that had fired
     before it; then, after a `v`, one number per game write to wVBlankCounter
-    in the interval: the VBlank ISRs that had fired before it. The port
+    in the interval: the VBlank ISRs that had fired before it; then `s<mask>`
+    when the interval's STAT ISRs did not fall one per VBlank service: bit n
+    of the mask is set when a STAT ISR fired after n of the interval's VBlank
+    increments, bit <VBlank ISRs> meaning the next frame's LYC coincidence
+    landed before the anchor (the VBlank ISR ran that long). The port
     replays the schedule (src/runtime.c timer_sync, vblank_sync): the ISR
     counts come from the ROM's own wTimerCounter and wVBlankCounter, unwrapped
     by the real time and followed through the game's own resets of the VBlank
@@ -406,6 +474,8 @@ def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"") ->
         fields = [max(1, cycles), dt, dv, *offsets]
         if offsets_v:
             fields += ["v", *offsets_v]
+        if 0 < index < len(stats) and stats[index] != (1 << min(dv, STAT_MASK_BITS)) - 1:
+            fields.append(f"s{stats[index]}")
         lines.append(" ".join(str(n) for n in fields))
         prev = (time, vblanks, ticks)
     return "\n".join(lines) + "\n"

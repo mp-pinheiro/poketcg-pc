@@ -85,6 +85,7 @@ typedef struct {
 	uint16_t *call_ticks;
 	uint32_t *write_start; /* count + 1 entries: game writes to wVBlankCounter */
 	uint16_t *write_vblanks; /* VBlank ISRs of the interval fired before each write */
+	uint8_t *stat_masks; /* bit n: a STAT ISR followed the interval's n-th VBlank increment */
 	size_t count;
 } LagTrack;
 void runtime_set_lag_track(const LagTrack *track);

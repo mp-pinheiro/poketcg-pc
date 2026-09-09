@@ -61,13 +61,17 @@ uint32_t runtime_lag_schedule_mismatches(void)
 /* One VBlank ISR: the halt-return work (vblank.asm:2-46) and the counter it
  * keeps (vblank.asm:35). Every increment of wVBlankCounter under a host goes
  * through here, so the count per ordinal is exactly the services delivered. */
-static void vblank_service(void)
+static int stat_wanted(uint32_t interval, unsigned index)
 {
-	/* The STAT coincidence of the frame that ends at this VBlank fired at
-	 * its line 0, with wVBlankCounter as the previous ISR left it: measured
-	 * on lightning-3 at ordinal 327345, where the reference's hSCX is
-	 * BGScrollData[counter - 1] at the anchor, not [counter]. */
-	RuntimeLCDCHandler();
+	if (!g_lag || interval >= g_lag->count)
+		return 1;
+	return (g_lag->stat_masks[interval] >> (index < 7u ? index : 7u)) & 1u;
+}
+
+static void vblank_service(uint32_t interval, unsigned index)
+{
+	if (stat_wanted(interval, index))
+		RuntimeLCDCHandler();
 	RuntimeVBlankHandler();
 	gb_write8(wVBlankCounter_ADDR, (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 }
@@ -313,7 +317,7 @@ static void vblank_sync(void *context)
 	}
 	uint16_t target = g_lag->write_vblanks[g_vschedule.write++];
 	while (state->services < target) {
-		vblank_service();
+		vblank_service(ordinal, state->services);
 		state->services++;
 	}
 }
@@ -333,9 +337,11 @@ static void anchor(void *context)
 		 * boundary passes delivered: nonzero only when the closing
 		 * DoFrame ran with the LCD off and had no service of its own. */
 		while (state->services < g_lag->vblanks[ordinal - 1u]) {
-			vblank_service();
+			vblank_service(ordinal - 1u, state->services);
 			state->services++;
 		}
+		if (stat_wanted(ordinal - 1u, state->services))
+			RuntimeLCDCHandler();
 		if (g_vschedule.ordinal == ordinal - 1u &&
 		    g_vschedule.write != g_lag->write_start[ordinal])
 			g_schedule_mismatches++;
@@ -523,7 +529,7 @@ int runtime_run_with_input(
 			 * nothing -- the anchor's remainder. */
 			if (frame_boundary_pass_is_doframe()) {
 				while (state.services + 1u < g_lag->vblanks[ordinal]) {
-					vblank_service();
+					vblank_service(ordinal, state.services);
 					state.services++;
 				}
 			}
@@ -538,7 +544,7 @@ int runtime_run_with_input(
 		 * Without a track DisableLCD's pass is a service as well. */
 		if ((gb_read8(0xFF40u) & 0x80u) != 0u &&
 		    (frame_boundary_pass_is_doframe() || !g_lag)) {
-			vblank_service();
+			vblank_service(ordinal, state.services);
 			state.services++;
 		}
 		apu_trace_set_tick(state.frames);

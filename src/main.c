@@ -133,6 +133,7 @@ static void lag_track_free(LagTrack *track)
 	free(track->call_ticks);
 	free(track->write_start);
 	free(track->write_vblanks);
+	free(track->stat_masks);
 	memset(track, 0, sizeof *track);
 }
 
@@ -176,7 +177,8 @@ static int load_lag_track(const char *path, LagTrack *track)
 			    grow((void **)&track->ticks, capacity, sizeof *track->ticks) != 0 ||
 			    grow((void **)&track->vblanks, capacity, sizeof *track->vblanks) != 0 ||
 			    grow((void **)&track->call_start, capacity + 1, sizeof *track->call_start) != 0 ||
-			    grow((void **)&track->write_start, capacity + 1, sizeof *track->write_start) != 0)
+			    grow((void **)&track->write_start, capacity + 1, sizeof *track->write_start) != 0 ||
+			    grow((void **)&track->stat_masks, capacity, sizeof *track->stat_masks) != 0)
 				goto fail;
 		}
 		track->cycles[track->count] = (uint32_t)f;
@@ -216,6 +218,16 @@ static int load_lag_track(const char *path, LagTrack *track)
 				}
 				track->write_vblanks[writes++] = (uint16_t)o;
 			}
+		}
+		while (*cursor == ' ' || *cursor == '\t')
+			cursor++;
+		if (*cursor == 's') {
+			unsigned long m = strtoul(cursor + 1, &end, 10);
+			if (end == cursor + 1 || m > 255)
+				goto fail;
+			track->stat_masks[track->count] = (uint8_t)m;
+		} else {
+			track->stat_masks[track->count] = (uint8_t)((v < 8 ? (1u << v) : 256u) - 1u);
 		}
 		track->count++;
 	}
