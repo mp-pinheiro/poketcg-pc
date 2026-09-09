@@ -654,7 +654,8 @@ SWEEP_BUDGETS = {"instruction_budget": 10_000_000, "cycle_budget": 40_000_000}
 
 def sweep_entries(name: str, *, after: int, until: int | None, limit: int) -> tuple[list[dict[str, Any]], int]:
     """One reference replay: the first entry (registers, SP, WRAM, HRAM, VRAM
-    bank 0) of every ported, comparable routine in the session window."""
+    bank 0, the two save banks of SRAM) of every ported, comparable routine
+    in the session window."""
     sys.path.insert(0, str(ROOT / "tests"))
     sys.path.insert(0, str(ROOT))
     import test_leaves  # noqa: E402
@@ -696,6 +697,7 @@ def sweep_entries(name: str, *, after: int, until: int | None, limit: int) -> tu
                 "sp": registers[1] & 0xFFFF,
                 "wram": regions["wram"].hex(), "hram": regions["hram"].hex(),
                 "vram0": regions["vram"][:0x2000].hex(),
+                "sram": core.area("CartRAM")[:0x4000].hex(),
             }
 
         core.install_exec(on_exec)
