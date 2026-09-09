@@ -53,9 +53,14 @@ CASES["Func_1d705"] = [
 
 # >>> factory PlayCreditsSequence
 CONTRACT["PlayCreditsSequence"] = {"compare": (), "preserve": ()}
+_CREDITS_READ = {0xD324: 1, 0xDD80: 1, 0xD3BB: 10, 0xCAD3: 2, 0xD648: 1, 0xD657: 1, 0xFF41: 1, 0xFF45: 1}
 CASES["PlayCreditsSequence"] = [
-    dict(oracle=False, evidence="primary", why="The bounded credits setup resets the overworld event byte and selects credits music before the frame-driven command loop.", wram={0xDD80: b"\x7F", 0xD324: b"\xFF"}, read={0xDD80: 1, 0xD324: 1}, expect={0xDD80: b"\x12", 0xD324: b"\x00"}, instruction_budget=20000000, cycle_budget=80000000),
-    dict(POISON, oracle=False, evidence="primary", why="The bounded credits setup selects credits music with poisoned entry registers before the frame-driven command loop.", wram={0xDD80: b"\x7F"}, read={0xDD80: 1}, expect={0xDD80: b"\x12"}, instruction_budget=20000000, cycle_budget=80000000),
+    {"wram": {0xDD80: b"\x7F", 0xD324: b"\xFF", 0xD3BB: b"\x00" * 10, 0xCABB: b"\xC3", 0xFF40: b"\xC3"},
+     "read": _CREDITS_READ, "ramg": True, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xDD80: b"\x7F", 0xD324: b"\xFF", 0xD3BB: b"\x03\x07\x00" + b"\x00" * 7, 0xCABB: b"\xC3", 0xFF40: b"\xC3"},
+         read=_CREDITS_READ, ramg=True, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PlayCreditsSequence
 
@@ -81,9 +86,10 @@ MUTATIONS["Func_1d705"] = {
 }
 # <<< factory-mutation Func_1d705
 # >>> factory-mutation PlayCreditsSequence
-MUTATIONS["PlayCreditsSequence"] = {"source_symbol": "PlayCreditsSequence", "before": "\tgb_write8((uint16_t)(wOWMapEvents_ADDR + 1u), 0u);", "after": "\tgb_write8((uint16_t)(wOWMapEvents_ADDR + 1u), 1u);", "case_ids": ["PlayCreditsSequence-0", "PlayCreditsSequence-1"]}
+MUTATIONS["PlayCreditsSequence"] = {"source_symbol": "PlayCreditsSequence", "before": "\t(void)AddAllMastersToMastersBeatenList(&f);", "after": "\t(void)f;", "case_ids": ["PlayCreditsSequence-0", "PlayCreditsSequence-1"]}
 # <<< factory-mutation PlayCreditsSequence
 # >>> factory-completion PlayCreditsSequence
 for _record in SCHEMA2_CASES["PlayCreditsSequence"]:
-    _record["completion"] = {"mode": "event", "predicate": "mem:0xdd80==0x12&0xff"}
+    _record["completion"] = {"mode": "entry", "pc": 0x4031, "bank": 4,
+                             "routine": "FlashWhiteScreen"}
 # <<< factory-completion PlayCreditsSequence

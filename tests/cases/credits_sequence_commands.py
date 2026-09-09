@@ -8,7 +8,7 @@ CONTRACT = {
     "SetCreditsSequenceCmdPtr": {"compare": ("b", "c", "d", "e", "hl"),
                                   "preserve": ("b", "c", "d", "e", "hl")},
     "ExecuteCreditsSequenceCmd": {"compare": ("b", "c", "d", "e", "hl"),
-                                  "preserve": ("b", "c", "d", "e", "hl")},
+                                  "preserve": ()},
     "AdvanceCreditsSequenceCmdPtr": {"compare": ("b", "c", "d", "e", "hl"),
                                      "preserve": ("b", "c", "d", "e", "hl")},
 }
@@ -22,10 +22,10 @@ CASES = {
         dict(POISON, wram={wSequenceDelay: b"\xFF"}, read={wSequenceDelay: 1}),
         {"wram": {wSequenceDelay: b"\x01"}, "read": {wSequenceDelay: 1}},
         {"wram": {wSequenceDelay: b"\x02"}, "read": {wSequenceDelay: 1}},
-        {"wram": {wSequenceDelay: b"\x00", wSequenceCmdPtr: b"\x00\xC1"},
-         "oracle": False,
-         "why": "zero delay dispatches through CallHL2 into an unported credits command",
-         "expect": {wSequenceDelay: b"\x00"}},
+        {"wram": {wSequenceDelay: b"\x00", wSequenceCmdPtr: b"\xC1\x61"}, "compare": (),
+         "read": {wSequenceDelay: 1, wSequenceCmdPtr: 2}},
+        dict(POISON, wram={wSequenceDelay: b"\x00", wSequenceCmdPtr: b"\x0C\x5B"}, compare=(),
+             read={wSequenceDelay: 1, wSequenceCmdPtr: 2}),
     ],
     "AdvanceCreditsSequenceCmdPtr": [
         {"a": 0, "wram": {wSequenceCmdPtr: b"\x00\x00"},
@@ -399,9 +399,9 @@ MUTATIONS = {
     },
     "ExecuteCreditsSequenceCmd": {
         "source_symbol": "ExecuteCreditsSequenceCmd",
-        "before": "gb_write8(wSequenceDelay_ADDR, (uint8_t)(delay - 1u));",
-        "after": "gb_write8(wSequenceDelay_ADDR, (uint8_t)(delay - 2u));",
-        "case_ids": ["ExecuteCreditsSequenceCmd-2", "ExecuteCreditsSequenceCmd-3"],
+        "before": "\t\t\targs[i] = gb_read8((uint16_t)(ptr + 2u + i));",
+        "after": "\t\t\targs[i] = gb_read8((uint16_t)(ptr + 3u + i));",
+        "case_ids": ["ExecuteCreditsSequenceCmd-4", "ExecuteCreditsSequenceCmd-5"],
     },
     "AdvanceCreditsSequenceCmdPtr": {
         "source_symbol": "AdvanceCreditsSequenceCmdPtr",

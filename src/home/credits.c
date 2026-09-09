@@ -29,6 +29,10 @@
 #include "home/init_menu.h"
 #include "home/color.h"
 #include "home/play_animation.h"
+#include "home/color.h"
+#include "home/init_menu.h"
+#include "home/lcd.h"
+#include "home/load_animation.h"
 #include "generated/wram.h"
 #include "mem.h"
 
@@ -151,11 +155,36 @@ void Func_1d705(void)
 
 /* <<< factory Func_1d705 */
 /* >>> factory PlayCreditsSequence */
+#define MUSIC_STOP 0x00u
+#define MUSIC_CREDITS 0x12u
+#define PAD_START 0x08u
 PlayCreditsSequenceResult PlayCreditsSequence(void)
 {
+	PlaySong(MUSIC_STOP);
+	Func_1d705();
 	uint8_t f = 0u;
+	(void)AddAllMastersToMastersBeatenList(&f);
 	gb_write8((uint16_t)(wOWMapEvents_ADDR + 1u), 0u);
-	gb_write8(wCurSongID_ADDR, 0x12u);
-	return (PlayCreditsSequenceResult){0u, f, 0u};
+	PlaySong(MUSIC_CREDITS);
+	(void)FlashWhiteScreen();
+	SetCreditsSequenceCmdPtr();
+	do {
+		DoFrameIfLCDEnabled();
+		(void)Func_1d765();
+		ExecuteCreditsSequenceCmd();
+	} while (gb_read8(wSequenceDelay_ADDR) != 0xffu);
+	WaitForSongToFinish();
+	(void)WaitUntilKeysArePressed(PAD_START);
+	PlaySong(MUSIC_STOP);
+	FadeScreenToWhite();
+	ClearSpriteAnimations();
+	SetWindowOff();
+	Func_1d758();
+	(void)EnableLCD();
+	DoFrameIfLCDEnabled();
+	DisableLCD();
+	gb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) | (1u << B_LCDC_OBJS)));
+	(void)ResetDoFrameFunction(wLCDC_ADDR);
+	return (PlayCreditsSequenceResult){0u, 0x80u, wLCDC_ADDR};
 }
 /* <<< factory PlayCreditsSequence */

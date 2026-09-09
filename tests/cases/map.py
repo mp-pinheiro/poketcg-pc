@@ -277,9 +277,14 @@ CASES["GameEvent_GiftCenter"] = [
 
 # >>> factory GameEvent_Credits
 CONTRACT["GameEvent_Credits"] = {"compare": (), "preserve": ()}
+_CREDITS_READ = {0xD324: 1, 0xDD80: 1, 0xD3BB: 10, 0xCAD3: 2, 0xD648: 1, 0xD657: 1, 0xFF41: 1, 0xFF45: 1}
 CASES["GameEvent_Credits"] = [
-    dict(oracle=False, evidence="primary", why="The bounded event wrapper stops at the nested credits routine entry; no event-wrapper state changes occur before that farcall.", wram={0xDD80: b"\x7F"}, read={0xDD80: 1}, expect={0xDD80: b"\x7F"}, instruction_budget=2000000, cycle_budget=8000000),
-    dict(POISON, oracle=False, evidence="primary", why="The event wrapper has no pre-call state effects and remains unchanged with poisoned entry registers.", wram={0xDD80: b"\x7F"}, read={0xDD80: 1}, expect={0xDD80: b"\x7F"}, instruction_budget=2000000, cycle_budget=8000000),
+    {"wram": {0xDD80: b"\x7F", 0xD324: b"\xFF", 0xD3BB: b"\x00" * 10, 0xCABB: b"\xC3", 0xFF40: b"\xC3"},
+     "read": _CREDITS_READ, "ramg": True, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xDD80: b"\x7F", 0xD324: b"\xFF", 0xD3BB: b"\x03\x07\x00" + b"\x00" * 7, 0xCABB: b"\xC3", 0xFF40: b"\xC3"},
+         read=_CREDITS_READ, ramg=True, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory GameEvent_Credits
 
@@ -393,11 +398,11 @@ for _record in SCHEMA2_CASES["GameEvent_GiftCenter"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x7177, "bank": 2}
 # <<< factory-completion GameEvent_GiftCenter
 # >>> factory-mutation GameEvent_Credits
-MUTATIONS["GameEvent_Credits"] = {"source_symbol": "GameEvent_Credits", "before": "void GameEvent_Credits(void)\n{\n}", "after": "void GameEvent_Credits(void)\n{\n\tPlaySong(0u);\n}", "case_ids": ["GameEvent_Credits-0", "GameEvent_Credits-1"]}
+MUTATIONS["GameEvent_Credits"] = {"source_symbol": "GameEvent_Credits", "before": "\t(void)PlayCreditsSequence();", "after": "\tPlaySong(0u);", "case_ids": ["GameEvent_Credits-0", "GameEvent_Credits-1"]}
 # <<< factory-mutation GameEvent_Credits
 # >>> factory-completion GameEvent_Credits
 for _record in SCHEMA2_CASES["GameEvent_Credits"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x56AD, "bank": 7}
+    _record["completion"] = {"mode": "entry", "pc": 0x4031, "bank": 4, "routine": "FlashWhiteScreen"}
 # <<< factory-completion GameEvent_Credits
 # >>> factory-mutation GameEvent_BattleCenter
 MUTATIONS["GameEvent_BattleCenter"] = {"source_symbol": "GameEvent_BattleCenter", "before": "uint8_t GameEvent_BattleCenter(void)\n{\n\twActiveGameEvent = GAME_EVENT_BATTLE_CENTER;", "after": "uint8_t GameEvent_BattleCenter(void)\n{\n\twActiveGameEvent = 0u;", "case_ids": ["GameEvent_BattleCenter-0", "GameEvent_BattleCenter-1"]}

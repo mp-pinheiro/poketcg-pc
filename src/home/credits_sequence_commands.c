@@ -1,4 +1,5 @@
 #include "home/credits_sequence_commands.h"
+#include "home/indirect_dispatch.h"
 
 #include "generated/wram.h"
 #include "mem.h"
@@ -76,69 +77,84 @@ void SetCreditsSequenceCmdPtr(void)
 
 void ExecuteCreditsSequenceCmd(void)
 {
-	static const uint16_t cmd_wait = 0x5853u;
-	static const uint16_t cmd_load_scene = 0x585au;
-	static const uint16_t cmd_load_booster = 0x5878u;
-	static const uint16_t cmd_load_club_map = 0x5897u;
-	static const uint16_t cmd_load_ow_map = 0x59d5u;
-	static const uint16_t cmd_disable_lcd = 0x59dbu;
-	static const uint16_t cmd_fade_in = 0x59e1u;
-	static const uint16_t cmd_fade_out = 0x59eeu;
-	static const uint16_t cmd_draw_rectangle = 0x5a04u;
-	static const uint16_t cmd_print_text = 0x5a17u;
-	static const uint16_t cmd_print_text_box = 0x5a2cu;
-	static const uint16_t cmd_init_overlay = 0x5a3eu;
-	static const uint16_t cmd_load_npc = 0x5a54u;
-	static const uint16_t cmd_init_volcano_sprite = 0x5a9eu;
-	static const uint16_t cmd_transform_overlay = 0x5aa5u;
-
-	uint8_t delay = gb_read8(wSequenceDelay_ADDR);
-	if (delay == 0xffu)
-		return;
-	if (delay != 0u) {
-		gb_write8(wSequenceDelay_ADDR, (uint8_t)(delay - 1u));
-		return;
-	}
-
-	uint16_t ptr = (uint16_t)(gb_read8(wSequenceCmdPtr_ADDR) |
-		((uint16_t)gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u)) << 8));
-	uint16_t cmd = (uint16_t)(gb_read8(ptr) |
-		((uint16_t)gb_read8((uint16_t)(ptr + 1u)) << 8));
-	uint8_t c = gb_read8((uint16_t)(ptr + 2u));
-	uint8_t b = gb_read8((uint16_t)(ptr + 3u));
-	uint8_t e = gb_read8((uint16_t)(ptr + 4u));
-	uint8_t d = gb_read8((uint16_t)(ptr + 5u));
-
-	if (cmd == cmd_wait) {
-		CreditsSequenceCmd_Wait(c);
-	} else if (cmd == cmd_load_scene) {
-		(void)CreditsSequenceCmd_LoadScene(d, 0u, b, c, d, e, cmd);
-	} else if (cmd == cmd_load_booster) {
-		CreditsSequenceCmd_LoadBooster(b, c, d, e);
-	} else if (cmd == cmd_load_club_map) {
-		CreditsSequenceCmd_LoadClubMap(c);
-	} else if (cmd == cmd_load_ow_map) {
-		CreditsSequenceCmd_LoadOWMap(b, c, d, e);
-	} else if (cmd == cmd_disable_lcd) {
-		CreditsSequenceCmd_DisableLCD();
-	} else if (cmd == cmd_fade_in) {
-		CreditsSequenceCmd_FadeIn();
-	} else if (cmd == cmd_fade_out) {
-		CreditsSequenceCmd_FadeOut();
-	} else if (cmd == cmd_draw_rectangle) {
-		(void)CreditsSequenceCmd_DrawRectangle(b, c);
-	} else if (cmd == cmd_print_text) {
-		CreditsSequenceCmd_PrintText(b, c, (uint16_t)(((uint16_t)d << 8) | e));
-	} else if (cmd == cmd_print_text_box) {
-		CreditsSequenceCmd_PrintTextBox(b, c, d, e);
-	} else if (cmd == cmd_init_overlay) {
-		CreditsSequenceCmd_InitOverlay(b, c, d, e);
-	} else if (cmd == cmd_load_npc) {
-		CreditsSequenceCmd_LoadNPC(b, c, d, e);
-	} else if (cmd == cmd_init_volcano_sprite) {
-		CreditsSequenceCmd_InitVolcanoSprite(d);
-	} else if (cmd == cmd_transform_overlay) {
-		CreditsSequenceCmd_TransformOverlay(b, c, d, e);
+	static const struct {
+		uint16_t address;
+		uint8_t arity;
+	} commands[] = {
+		{0x5853u, 1u}, {0x585au, 3u}, {0x5878u, 3u}, {0x5897u, 1u}, {0x59d5u, 3u},
+		{0x59dbu, 0u}, {0x59e1u, 0u}, {0x59eeu, 0u}, {0x5a04u, 2u}, {0x5a17u, 4u},
+		{0x5a2cu, 4u}, {0x5a3eu, 4u}, {0x5a54u, 4u}, {0x5a9eu, 0u}, {0x5aa5u, 4u},
+	};
+	for (;;) {
+		uint8_t delay = gb_read8(wSequenceDelay_ADDR);
+		if (delay == 0xffu)
+			return;
+		if (delay != 0u) {
+			gb_write8(wSequenceDelay_ADDR, (uint8_t)(delay - 1u));
+			return;
+		}
+		uint16_t ptr = (uint16_t)(gb_read8(wSequenceCmdPtr_ADDR) |
+			((uint16_t)gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u)) << 8));
+		uint16_t cmd = (uint16_t)(gb_read8(ptr) |
+			((uint16_t)gb_read8((uint16_t)(ptr + 1u)) << 8));
+		size_t index = 0u;
+		while (index < sizeof commands / sizeof commands[0] && commands[index].address != cmd)
+			index++;
+		if (index == sizeof commands / sizeof commands[0]) {
+			DispatchIndirect("CreditsSequenceCmd", cmd);
+			return;
+		}
+		uint8_t args[4] = {0u, 0u, 0u, 0u};
+		for (uint8_t i = 0u; i < commands[index].arity; i++)
+			args[i] = gb_read8((uint16_t)(ptr + 2u + i));
+		uint8_t c = args[0], b = args[1], e = args[2], d = args[3];
+		switch (cmd) {
+		case 0x5853u:
+			CreditsSequenceCmd_Wait(c);
+			break;
+		case 0x585au:
+			(void)CreditsSequenceCmd_LoadScene(d, 0u, b, c, d, e, cmd);
+			break;
+		case 0x5878u:
+			CreditsSequenceCmd_LoadBooster(b, c, d, e);
+			break;
+		case 0x5897u:
+			CreditsSequenceCmd_LoadClubMap(c);
+			break;
+		case 0x59d5u:
+			CreditsSequenceCmd_LoadOWMap(b, c, d, e);
+			break;
+		case 0x59dbu:
+			CreditsSequenceCmd_DisableLCD();
+			break;
+		case 0x59e1u:
+			CreditsSequenceCmd_FadeIn();
+			break;
+		case 0x59eeu:
+			CreditsSequenceCmd_FadeOut();
+			break;
+		case 0x5a04u:
+			(void)CreditsSequenceCmd_DrawRectangle(b, c);
+			break;
+		case 0x5a17u:
+			CreditsSequenceCmd_PrintText(b, c, (uint16_t)(((uint16_t)d << 8) | e));
+			break;
+		case 0x5a2cu:
+			CreditsSequenceCmd_PrintTextBox(b, c, d, e);
+			break;
+		case 0x5a3eu:
+			CreditsSequenceCmd_InitOverlay(b, c, d, e);
+			break;
+		case 0x5a54u:
+			CreditsSequenceCmd_LoadNPC(b, c, d, e);
+			break;
+		case 0x5a9eu:
+			CreditsSequenceCmd_InitVolcanoSprite(d);
+			break;
+		default:
+			CreditsSequenceCmd_TransformOverlay(b, c, d, e);
+			break;
+		}
 	}
 }
 

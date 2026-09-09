@@ -1,3 +1,4 @@
+#include "home/credits.h"
 #include "home/map.h"
 
 #include "generated/hram.h"
@@ -314,6 +315,7 @@ void GameEvent_GiftCenter(void)
 /* >>> factory GameEvent_Credits */
 void GameEvent_Credits(void)
 {
+	(void)PlayCreditsSequence();
 }
 /* <<< factory GameEvent_Credits */
 
