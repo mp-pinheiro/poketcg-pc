@@ -193,6 +193,7 @@ oracle-diff-fast FN: build-incremental
     #!/usr/bin/env bash
     set -euo pipefail
     export POKETCG_ROM=poketcg/poketcg.gbc
+    python3 tools/audit_oracle_cases.py --stage routine
     uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --fn {{FN}} --oracle-mode cache --cache-dir {{build_dir}}/oracle-cache --probe {{build_dir}}/poketcg_probe
 
 oracle-diff-fast-group GROUP: build-incremental
@@ -268,6 +269,7 @@ oracle-diff FN *ARGS: build
     #!/usr/bin/env bash
     set -euo pipefail
     export POKETCG_ROM=poketcg/poketcg.gbc
+    python3 tools/audit_oracle_cases.py --stage routine
     uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --fn {{FN}} --probe {{build_dir}}/poketcg_probe {{ARGS}}
 
 # Which of a routine's writes no case observes (--all sweeps every routine).
