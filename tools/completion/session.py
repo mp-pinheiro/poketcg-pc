@@ -1245,13 +1245,42 @@ def record_meta(name: str, goal: str) -> int:
 # both sides of a duel by itself. The poke lands at the first anchor after
 # StartDuel_VSAIOpp/InitVariablesToBeginDuel have run and before
 # ChooseInitialArenaAndBenchPokemon reads the type (practice-win: 23,226 and
-# 23,840). Text boxes still wait for a press, so the tail mashes A.
+# 23,840). StartDuel_VSAIOpp copies wNPCDuelDeckID into wOpponentDeckID and
+# loads that deck (core.asm:31-42) in the interval before the branch anchor,
+# so the deck id is poked one anchor earlier as well and the opponent plays
+# the deck's own cards, not the practice deck it would otherwise keep. Text
+# boxes still wait for a press, so the tail mashes A.
 AI_DUEL = {
     "wPlayerDuelistType": 0xC2F1, "wOpponentDuelistType": 0xC3F1,
     "wDuelType": 0xCC09, "wOpponentDeckID": 0xCC0E, "wIsPracticeDuel": 0xCC13,
+    "wNPCDuelDeckID": 0xCC19, "wPlayerDeck": 0xC400,
     "wDuelInitialPrizes": 0xCC08, "wRNG1": 0xCACA, "wRNG2": 0xCACB,
 }
 DUELIST_TYPE_AI_OPP = 0x80
+DECK_POINTERS = (0x0C, 0x4000)
+DECK_SIZE = 60
+
+
+def deck_cards(deck_id: int) -> list[int]:
+    """The 60 card ids of a deck, expanded from its (count, card) list in
+    the ROM exactly as CopyDeckData does (home/duel.asm:60-88). Deck ids are
+    the AI's *_DECK_ID values, two below the DeckPointers index
+    (home/ai.asm LoadOpponentDeck)."""
+    rom = (ROOT / "poketcg" / "poketcg.gbc").read_bytes()
+    bank, table = DECK_POINTERS
+    base = bank * 0x4000
+    entry = base + (table - 0x4000) + 2 * (deck_id + 2)
+    pointer = rom[entry] | rom[entry + 1] << 8
+    if pointer == 0:
+        raise SessionError(f"deck id {deck_id} has no deck list")
+    cursor = base + (pointer - 0x4000)
+    cards: list[int] = []
+    while rom[cursor] != 0:
+        cards.extend([rom[cursor + 1]] * rom[cursor])
+        cursor += 2
+    if len(cards) != DECK_SIZE:
+        raise SessionError(f"deck id {deck_id} expands to {len(cards)} cards")
+    return cards
 WRAM = {"wDuelTurns": 0x0C06, "wDuelFinished": 0x0C07}
 AI_DUEL_MAX_ORDINALS = 80_000
 
@@ -1277,6 +1306,8 @@ def ai_duel(name: str, *, base: str, at: int, deck: int, seed: int | None, prize
     if seed is not None:
         writes += [(AI_DUEL["wRNG1"], seed & 0xFF), (AI_DUEL["wRNG2"], (seed >> 8) & 0xFF)]
     pokes.setdefault(at, []).extend(writes)
+    pokes.setdefault(at - 1, []).append((AI_DUEL["wNPCDuelDeckID"], deck))
+    pokes[at].extend((AI_DUEL["wPlayerDeck"] + index, card) for index, card in enumerate(deck_cards(deck)))
     prefix = base_masks[:at]
     mash = [0x10 if (i % period) < 4 else 0 for i in range(AI_DUEL_MAX_ORDINALS - at)]
     masks = prefix + mash
