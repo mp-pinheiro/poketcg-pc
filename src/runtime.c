@@ -61,17 +61,41 @@ uint32_t runtime_lag_schedule_mismatches(void)
 /* One VBlank ISR: the halt-return work (vblank.asm:2-46) and the counter it
  * keeps (vblank.asm:35). Every increment of wVBlankCounter under a host goes
  * through here, so the count per ordinal is exactly the services delivered. */
-static int stat_wanted(uint32_t interval, unsigned index)
+static unsigned stat_count(uint32_t interval, unsigned index)
 {
+	unsigned segment = index < 7u ? index : 7u;
 	if (!g_lag || interval >= g_lag->count)
-		return 1;
-	return (g_lag->stat_masks[interval] >> (index < 7u ? index : 7u)) & 1u;
+		return 1u;
+	if (!((g_lag->stat_masks[interval] >> segment) & 1u))
+		return 0u;
+	size_t lo = 0, hi = g_lag->repeats;
+	while (lo < hi) {
+		size_t mid = lo + (hi - lo) / 2u;
+		if (g_lag->repeat_interval[mid] < interval)
+			lo = mid + 1u;
+		else
+			hi = mid;
+	}
+	for (; lo < g_lag->repeats && g_lag->repeat_interval[lo] == interval; lo++)
+		if (g_lag->repeat_segment[lo] == segment)
+			return g_lag->repeat_count[lo];
+	return 1u;
+}
+
+static void stat_service(uint32_t interval, unsigned index)
+{
+	unsigned n = stat_count(interval, index);
+	if (g_lag && g_lag->exact_stats) {
+		while (n--)
+			RuntimeLCDCHandlerOnce();
+	} else if (n) {
+		RuntimeLCDCHandler();
+	}
 }
 
 static void vblank_service(uint32_t interval, unsigned index)
 {
-	if (stat_wanted(interval, index))
-		RuntimeLCDCHandler();
+	stat_service(interval, index);
 	RuntimeVBlankHandler();
 	gb_write8(wVBlankCounter_ADDR, (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 }
@@ -377,8 +401,7 @@ static void anchor(void *context)
 			vblank_service(ordinal - 1u, state->services);
 			state->services++;
 		}
-		if (stat_wanted(ordinal - 1u, state->services))
-			RuntimeLCDCHandler();
+		stat_service(ordinal - 1u, state->services);
 		if (g_vschedule.ordinal == ordinal - 1u &&
 		    g_vschedule.write != g_lag->write_start[ordinal])
 			g_schedule_mismatches++;
@@ -515,8 +538,11 @@ int runtime_run_with_input(
 		if (frame_boundary_take_service_pass()) {
 			/* Mid-processing VBlank service: ISR-equivalent work only.
 			 * No input re-sample, no frame counter, no timer/clock
-			 * aging, no render -- the game made no DoFrame progress. */
-			RuntimeLCDCHandler();
+			 * aging, no render -- the game made no DoFrame progress. A
+			 * track that counts STAT ISRs delivers them at the segment
+			 * boundaries (stat_service), so only the chain model fires here. */
+			if (!(g_lag && g_lag->exact_stats))
+				RuntimeLCDCHandler();
 			RuntimeVBlankHandler();
 			pthread_mutex_lock(&state.lock);
 			state.resume = 1;

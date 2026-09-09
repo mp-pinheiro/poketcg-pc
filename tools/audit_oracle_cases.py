@@ -77,7 +77,12 @@ def uncased_routines(modules: list[tuple[Path, object]]) -> list[tuple[str, str]
     nor an exclusion: the oracle never runs them, so a lost block is silent."""
     cased: set[str] = set()
     for _path, module in modules:
-        cased.update(getattr(module, "SCHEMA2_CASES", {}) or getattr(module, "CASES", {}))
+        for fn in getattr(module, "SCHEMA2_CASES", {}) or getattr(module, "CASES", {}):
+            cased.add(fn)
+            # A local-label entry (`Script_f631.ows_f63c`, docs/port-contract.md's
+            # script entry continuation) is cased under the ROM symbol; its C
+            # block carries the identifier form.
+            cased.add(fn.replace(".", "_"))
     excluded = {fn for entries in EXCLUSIONS.values() if isinstance(entries, dict) for fn in entries}
     missing = []
     for source in sorted((ROOT / "src/home").glob("*.c")):

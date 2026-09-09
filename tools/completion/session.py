@@ -90,10 +90,30 @@ VBLANK_RECORD = struct.Struct("<IQBB")
 # vector (home.asm `call wLCDCFunctionTrampoline`): per interval, a bitmask of
 # the VBlank services a STAT ISR followed, bit n set when a STAT fired after n
 # increments. The port runs its LCDC handler on that schedule (src/runtime.c
-# stat_wanted). Written as one byte per anchor; bit 7 saturates.
+# stat_count). Written as one byte per anchor; bit 7 saturates. A segment
+# where more than one STAT ISR fired (LYC=0 armed as the LCD turns on fires at
+# line 0 and again at line 153, which reads as 0: credits.asm .Func_1d73a) is
+# listed in stat-repeats.txt as `<anchor> <segment> <count>` and emitted as
+# `S<segment>:<count>`; a stream cached without the file has no repeats.
 VBLANK_INCREMENT = 0x01D7
 STAT_VECTOR = 0x0048
 STAT_MASK_BITS = 8
+STAT_REPEATS = "stat-repeats.txt"
+
+
+def stat_repeats_text(repeats: dict[int, dict[int, int]]) -> str:
+    return "".join(f"{anchor} {segment} {count}\n"
+                   for anchor in sorted(repeats) for segment, count in sorted(repeats[anchor].items()))
+
+
+def load_stat_repeats(path: Path) -> dict[int, dict[int, int]]:
+    repeats: dict[int, dict[int, int]] = {}
+    if path.is_file():
+        for line in path.read_text().split("\n"):
+            if line:
+                anchor, segment, count = (int(x) for x in line.split())
+                repeats.setdefault(anchor, {})[segment] = count
+    return repeats
 CARD_COPY_ENTRY = 0x2F14
 CARD_COPY_RET = 0x2F31
 CARD_POINTERS = (0x0C, 0x4C5C)
@@ -318,6 +338,8 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     vblank_writes = bytearray()
     stats = bytearray()
     stat_mask = 0
+    stat_segments: dict[int, int] = {}
+    stat_repeats: dict[int, dict[int, int]] = {}
     increments = 0
     inputs = bytearray()
     overreads = OverreadRecorder()
@@ -334,7 +356,9 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
                 increments += 1
                 return
             if address == STAT_VECTOR:
-                stat_mask |= 1 << min(increments, STAT_MASK_BITS - 1)
+                segment = min(increments, STAT_MASK_BITS - 1)
+                stat_mask |= 1 << segment
+                stat_segments[segment] = stat_segments.get(segment, 0) + 1
                 return
             if address == CARD_COPY_ENTRY or address == CARD_COPY_RET:
                 overreads.on_exec(core, registers, address, hits)
@@ -358,8 +382,12 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
             if address != refstream.DOFRAME_ANCHOR:
                 return
             hits += 1
+            repeated = {segment: count for segment, count in stat_segments.items() if count > 1}
+            if repeated:
+                stat_repeats[len(stats)] = repeated
             stats.append(stat_mask)
             stat_mask = 0
+            stat_segments.clear()
             increments = 0
             regions = reference_regions(core)
             crcs = digest(regions, tables)
@@ -379,9 +407,10 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     (directory / "calls.bin").write_bytes(bytes(calls))
     (directory / "vblank-writes.bin").write_bytes(bytes(vblank_writes))
     (directory / "stats.bin").write_bytes(bytes(stats))
+    (directory / STAT_REPEATS).write_text(stat_repeats_text(stat_repeats))
     (directory / "overreads.txt").write_text(overreads.text())
     (directory / "lag.txt").write_text(lag_track(bytes(records), bytes(calls), bytes(vblank_writes),
-                                                 bytes(stats)))
+                                                 bytes(stats), stat_repeats))
     meta = {
         "schema": 1, "format": DIGEST_FORMAT, "name": name, "axis": axis, "key": key,
         "frames": frames, "anchors": hits, "record": REFERENCE_RECORD.size,
@@ -439,6 +468,8 @@ def ensure_stat_track(directory: Path, masks: list[int], frames: int, *, axis: s
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     stats = bytearray()
     stat_mask = 0
+    stat_segments: dict[int, int] = {}
+    stat_repeats: dict[int, dict[int, int]] = {}
     increments = 0
     overreads = OverreadRecorder()
     with refstream.Core(padded, gba=gba, pokes=pokes) as core:
@@ -451,12 +482,18 @@ def ensure_stat_track(directory: Path, masks: list[int], frames: int, *, axis: s
             if address == VBLANK_INCREMENT:
                 increments += 1
             elif address == STAT_VECTOR:
-                stat_mask |= 1 << min(increments, STAT_MASK_BITS - 1)
+                segment = min(increments, STAT_MASK_BITS - 1)
+                stat_mask |= 1 << segment
+                stat_segments[segment] = stat_segments.get(segment, 0) + 1
             elif address == CARD_COPY_ENTRY or address == CARD_COPY_RET:
                 overreads.on_exec(core, registers, address, len(stats))
             elif address == refstream.DOFRAME_ANCHOR:
+                repeated = {segment: count for segment, count in stat_segments.items() if count > 1}
+                if repeated:
+                    stat_repeats[len(stats)] = repeated
                 stats.append(stat_mask)
                 stat_mask = 0
+                stat_segments.clear()
                 increments = 0
 
         core.install_exec(on_exec)
@@ -466,10 +503,11 @@ def ensure_stat_track(directory: Path, masks: list[int], frames: int, *, axis: s
         raise SessionError(f"stat track replay reached {len(stats)} anchors, "
                            f"the cached digests {len(records) // REFERENCE_RECORD.size}")
     stats_path.write_bytes(bytes(stats))
+    (directory / STAT_REPEATS).write_text(stat_repeats_text(stat_repeats))
     overreads_path.write_text(overreads.text())
     (directory / "lag.txt").write_text(lag_track(records, (directory / "calls.bin").read_bytes(),
                                                  (directory / "vblank-writes.bin").read_bytes(),
-                                                 bytes(stats)))
+                                                 bytes(stats), stat_repeats))
 
 
 def load_reference(meta: dict[str, Any]) -> bytes:
@@ -487,7 +525,8 @@ def unwrap(delta_mod: int, expected: float, modulus: int = 256) -> int:
     return max(0, min(candidates, key=lambda c: abs(c - expected)))
 
 
-def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"", stats: bytes = b"") -> str:
+def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"", stats: bytes = b"",
+              repeats: dict[int, dict[int, int]] | None = None) -> str:
     """One line per DoFrame: `<cycles> <timer ISRs> <VBlank ISRs>` the ROM
     spent between the previous anchor and this one, then one number per
     timer sync point reached in that interval: the timer ISRs that had fired
@@ -496,7 +535,11 @@ def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"", st
     when the interval's STAT ISRs did not fall one per VBlank service: bit n
     of the mask is set when a STAT ISR fired after n of the interval's VBlank
     increments, bit <VBlank ISRs> meaning the next frame's LYC coincidence
-    landed before the anchor (the VBlank ISR ran that long). The port
+    landed before the anchor (the VBlank ISR ran that long), and
+    `S<segment>:<count>` for a segment where the STAT ISR fired more than
+    once (`STAT_REPEATS`); line 1 ends in `X` when the track counted STAT
+    ISRs, and the port then runs its LCDC handler exactly that many times per
+    segment instead of chaining on rLYC. The port
     replays the schedule (src/runtime.c timer_sync, vblank_sync): the ISR
     counts come from the ROM's own wTimerCounter and wVBlankCounter, unwrapped
     by the real time and followed through the game's own resets of the VBlank
@@ -541,6 +584,10 @@ def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"", st
             fields += ["v", *offsets_v]
         if 0 < index < len(stats) and stats[index] != (1 << min(dv, STAT_MASK_BITS)) - 1:
             fields.append(f"s{stats[index]}")
+        for segment, count in sorted((repeats or {}).get(index, {}).items()):
+            fields.append(f"S{segment}:{count}")
+        if index == 0 and repeats is not None:
+            fields.append("X")  # the STAT counts are exact (src/runtime.c stat_service)
         lines.append(" ".join(str(n) for n in fields))
         prev = (time, vblanks, ticks)
     return "\n".join(lines) + "\n"

@@ -95,6 +95,14 @@ typedef struct {
 	uint32_t *write_start; /* count + 1 entries: game writes to wVBlankCounter */
 	uint16_t *write_vblanks; /* VBlank ISRs of the interval fired before each write */
 	uint8_t *stat_masks; /* bit n: a STAT ISR followed the interval's n-th VBlank increment */
+	/* Sparse, sorted by interval: segments where more than one STAT ISR fired
+	 * (LYC=0 armed as the LCD turns on fires at line 0 and again at line 153,
+	 * which reads as 0: credits.asm .Func_1d73a). */
+	uint32_t *repeat_interval;
+	uint8_t *repeat_segment;
+	uint8_t *repeat_count;
+	size_t repeats;
+	int exact_stats; /* the track counts STAT ISRs: run exactly that many, no chain */
 	size_t count;
 } LagTrack;
 void runtime_set_lag_track(const LagTrack *track);

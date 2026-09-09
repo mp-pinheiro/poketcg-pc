@@ -87,32 +87,42 @@ void RuntimeVBlankHandler(void)
 	FlushPalettesIfRequested();
 }
 
+/* One STAT ISR (the LYC coincidence vector): returns the line it fired on, or
+ * -1 when the interrupt is not armed. */
+int RuntimeLCDCHandlerOnce(void)
+{
+	if (!(gb_read8(rLCDC) & LCDC_ENABLE))
+		return -1;
+	if (!(gb_read8(rIE) & IE_STAT) || !(gb_read8(rSTAT) & STAT_LYC))
+		return -1;
+	uint8_t line = gb_read8(rLYC);
+	if (line >= 154u)
+		return -1;
+	uint16_t target =
+		(uint16_t)(gb_read8((uint16_t)(wLCDCFunctionTrampoline_ADDR + 1u)) |
+			   (uint16_t)gb_read8((uint16_t)(wLCDCFunctionTrampoline_ADDR + 2u))
+				   << 8);
+	switch (target) {
+	case LCDC_APPLY_BACKGROUND_SCROLL:
+		ApplyBackgroundScroll();
+		break;
+	case LCDC_FUNC_3E44:
+		Func_3e44();
+		break;
+	default:
+		DispatchIndirect("wLCDCFunction", target);
+	}
+	return line;
+}
+
+/* A frame's STAT ISRs when the track does not count them: the chain the
+ * handler arms by raising rLYC, until it is rearmed at or below the line it
+ * fired on (the next coincidence is next frame's). */
 void RuntimeLCDCHandler(void)
 {
 	for (unsigned fired = 0; fired < 16u; fired++) {
-		if (!(gb_read8(rLCDC) & LCDC_ENABLE))
-			return;
-		if (!(gb_read8(rIE) & IE_STAT) || !(gb_read8(rSTAT) & STAT_LYC))
-			return;
-		uint8_t line = gb_read8(rLYC);
-		if (line >= 154u)
-			return;
-		uint16_t target =
-			(uint16_t)(gb_read8((uint16_t)(wLCDCFunctionTrampoline_ADDR + 1u)) |
-				   (uint16_t)gb_read8((uint16_t)(wLCDCFunctionTrampoline_ADDR + 2u))
-					   << 8);
-		switch (target) {
-		case LCDC_APPLY_BACKGROUND_SCROLL:
-			ApplyBackgroundScroll();
-			break;
-		case LCDC_FUNC_3E44:
-			Func_3e44();
-			break;
-		default:
-			DispatchIndirect("wLCDCFunction", target);
-		}
-		/* Rearmed at or above this line: the next coincidence is next frame. */
-		if (gb_read8(rLYC) <= line)
+		int line = RuntimeLCDCHandlerOnce();
+		if (line < 0 || gb_read8(rLYC) <= (uint8_t)line)
 			return;
 	}
 }

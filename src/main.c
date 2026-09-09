@@ -135,6 +135,9 @@ static void lag_track_free(LagTrack *track)
 	free(track->write_start);
 	free(track->write_vblanks);
 	free(track->stat_masks);
+	free(track->repeat_interval);
+	free(track->repeat_segment);
+	free(track->repeat_count);
 	memset(track, 0, sizeof *track);
 }
 
@@ -147,19 +150,41 @@ static int grow(void **block, size_t capacity, size_t size)
 	return 0;
 }
 
+/* One lag-track line per DoFrame; a line lists every driver call of the
+ * interval, and a save or the credits' set-up runs thousands of them between
+ * two DoFrames (credits-1: 10,277 calls, 36 KB), so the line buffer grows. */
+static int read_line(FILE *file, char **line, size_t *size)
+{
+	size_t used = 0;
+	for (;;) {
+		if (*size - used < 2) {
+			size_t grown = *size ? *size * 2 : 4096;
+			if (grow((void **)line, grown, 1) != 0)
+				return -1;
+			*size = grown;
+		}
+		if (!fgets(*line + used, (int)(*size - used), file))
+			return used ? 1 : 0;
+		used += strlen(*line + used);
+		if (used && (*line)[used - 1] == '\n')
+			return 1;
+		if (feof(file))
+			return 1;
+	}
+}
+
 static int load_lag_track(const char *path, LagTrack *track)
 {
 	FILE *file = fopen(path, "r");
-	char line[4096];
-	size_t capacity = 0, call_capacity = 0, calls = 0, write_capacity = 0, writes = 0;
+	char *line = NULL;
+	size_t line_size = 0;
+	size_t capacity = 0, call_capacity = 0, calls = 0, write_capacity = 0, writes = 0, repeat_capacity = 0;
 	memset(track, 0, sizeof *track);
 	if (!file)
 		return -1;
-	while (fgets(line, sizeof line, file)) {
+	while (read_line(file, &line, &line_size) == 1) {
 		char *cursor = line, *end;
 		unsigned long f, t, v;
-		if (!strchr(line, '\n') && !feof(file))
-			goto fail;
 		f = strtoul(cursor, &end, 10);
 		if (end == cursor)
 			goto fail;
@@ -227,12 +252,43 @@ static int load_lag_track(const char *path, LagTrack *track)
 			if (end == cursor + 1 || m > 255)
 				goto fail;
 			track->stat_masks[track->count] = (uint8_t)m;
+			cursor = end;
 		} else {
 			track->stat_masks[track->count] = (uint8_t)((v < 8 ? (1u << v) : 256u) - 1u);
+		}
+		while (*cursor == ' ' || *cursor == '\t')
+			cursor++;
+		while (*cursor == 'S') {
+			unsigned long segment = strtoul(cursor + 1, &end, 10), repeat;
+			if (end == cursor + 1 || segment > 7 || *end != ':')
+				goto fail;
+			cursor = end + 1;
+			repeat = strtoul(cursor, &end, 10);
+			if (end == cursor || repeat < 2 || repeat > 255)
+				goto fail;
+			cursor = end;
+			if (track->repeats == repeat_capacity) {
+				repeat_capacity = repeat_capacity ? repeat_capacity * 2 : 16;
+				if (grow((void **)&track->repeat_interval, repeat_capacity, sizeof *track->repeat_interval) != 0 ||
+				    grow((void **)&track->repeat_segment, repeat_capacity, sizeof *track->repeat_segment) != 0 ||
+				    grow((void **)&track->repeat_count, repeat_capacity, sizeof *track->repeat_count) != 0)
+					goto fail;
+			}
+			track->repeat_interval[track->repeats] = (uint32_t)track->count;
+			track->repeat_segment[track->repeats] = (uint8_t)segment;
+			track->repeat_count[track->repeats] = (uint8_t)repeat;
+			track->repeats++;
+			while (*cursor == ' ' || *cursor == '\t')
+				cursor++;
+		}
+		if (*cursor == 'X') {
+			track->exact_stats = 1;
+			cursor++;
 		}
 		track->count++;
 	}
 	fclose(file);
+	free(line);
 	if (!track->count)
 		goto fail_closed;
 	track->call_start[track->count] = (uint32_t)calls;
@@ -240,6 +296,7 @@ static int load_lag_track(const char *path, LagTrack *track)
 	return 0;
 fail:
 	fclose(file);
+	free(line);
 fail_closed:
 	lag_track_free(track);
 	return -1;

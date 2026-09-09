@@ -15,5 +15,6 @@ void RuntimeVBlankHandler(void);
  * line until the table wraps. Every rearm forward within the frame is
  * followed, so the per-frame handler count matches the ROM's. */
 void RuntimeLCDCHandler(void);
+int RuntimeLCDCHandlerOnce(void);
 
 #endif
