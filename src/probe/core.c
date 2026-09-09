@@ -1753,10 +1753,13 @@ static void adapt_OppAction_6b15(ProbeState *s)
 /* >>> factory OppAction_ExecutePokemonPowerEffect */
 static void adapt_OppAction_ExecutePokemonPowerEffect(ProbeState *s)
 {
-	OppAction_ExecutePokemonPowerEffectResult r = OppAction_ExecutePokemonPowerEffect();
+	OppAction_ExecutePokemonPowerEffectResult r = OppAction_ExecutePokemonPowerEffect(s->b, s->d, s->e);
 	s->a = r.a;
 	s->f = r.f;
+	s->b = r.b;
 	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
 	s->hl = r.hl;
 }
 /* <<< factory OppAction_ExecutePokemonPowerEffect */

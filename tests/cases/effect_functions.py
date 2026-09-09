@@ -1167,7 +1167,7 @@ CASES["Cowardice_CheckUseAndBench"] = [
 
 
 # >>> factory Cowardice_ReturnToHandEffect
-CONTRACT["Cowardice_ReturnToHandEffect"] = {"compare": ("a",), "preserve": ()}
+CONTRACT["Cowardice_ReturnToHandEffect"] = {"compare": ("a", "f", "d", "e", "hl"), "preserve": ()}
 CASES["Cowardice_ReturnToHandEffect"] = [
     {"wram": {0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xCAC2: b"\x05", 0xFF97: b"\xC2", 0xC2EF: b"\x02", 0xC2BB: b"\x01\x02\xFF\xFF\xFF\xFF\xFF", 0xC3BB: b"\xFF\xFF\xFF\xFF\xFF\xFF", 0xC2ED: b"\x00", 0xC27E: b"\xFF"}},
     {"wram": {0xFFA0: b"\x01", 0xFFA1: b"\x02", 0xCAC2: b"\xFF", 0xFF97: b"\xC2", 0xC2EF: b"\x02", 0xC2BB: b"\x01\x02\xFF\xFF\xFF\xFF\xFF", 0xC3BB: b"\xFF\xFF\xFF\xFF\xFF\xFF", 0xC2ED: b"\x00", 0xC27E: b"\xFF"}},
@@ -9000,7 +9000,7 @@ MUTATIONS["Cowardice_CheckUseAndBench"] = {"source_symbol": "Cowardice_CheckUseA
 # <<< factory-mutation Cowardice_CheckUseAndBench
 
 # >>> factory-mutation Cowardice_ReturnToHandEffect
-MUTATIONS["Cowardice_ReturnToHandEffect"] = {"source_symbol": "Cowardice_ReturnToHandEffect", "before": "\t(void)ShiftAllPokemonToFirstPlayAreaSlots();\n\twDuelDisplayedScreen = 0u;", "after": "\t(void)ShiftAllPokemonToFirstPlayAreaSlots();\n\twDuelDisplayedScreen = 1u;", "case_ids": ["Cowardice_ReturnToHandEffect-0"]}
+MUTATIONS["Cowardice_ReturnToHandEffect"] = {"source_symbol": "Cowardice_ReturnToHandEffect", "before": "\tShiftResult shifted = ShiftAllPokemonToFirstPlayAreaSlots();", "after": "\tShiftResult shifted = {0};", "case_ids": ["Cowardice_ReturnToHandEffect-0"]}
 # <<< factory-mutation Cowardice_ReturnToHandEffect
 # >>> factory-mutation CheckIfCardHasGrassEnergyAttached
 MUTATIONS["CheckIfCardHasGrassEnergyAttached"] = {

@@ -709,6 +709,14 @@ def ai_energy_retrieval_fixture(vram: bool = True, bank: int | None = None, **ch
     return AI_ENERGY_RETRIEVAL.case(vram=vram, bank=bank, **changes)
 
 
+AI_POWER_EFFECT = Fixture("ai-duel-24-power-effect-entry")
+AI_POWER_EFFECT_REGS = AI_POWER_EFFECT.regs
+
+
+def ai_power_effect_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_POWER_EFFECT.case(vram=vram, bank=bank, **changes)
+
+
 DOME_RONALD = Fixture("ronald-3-dome-ronald-entry")
 DOME_RONALD_REGS = DOME_RONALD.regs
 

@@ -361,7 +361,8 @@ typedef struct { uint8_t f; uint16_t hl; } CowardiceCheckUseAndBenchResult;
 CowardiceCheckUseAndBenchResult Cowardice_CheckUseAndBench(void);
 /* <<< factory Cowardice_CheckUseAndBench */
 /* >>> factory Cowardice_ReturnToHandEffect */
-void Cowardice_ReturnToHandEffect(void);
+typedef struct { uint8_t a; uint8_t f; uint8_t d; uint8_t e; uint16_t hl; } CowardiceReturnResult;
+CowardiceReturnResult Cowardice_ReturnToHandEffect(void);
 /* <<< factory Cowardice_ReturnToHandEffect */
 
 /* >>> factory CheckIfCardHasGrassEnergyAttached */

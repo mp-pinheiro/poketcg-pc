@@ -3080,7 +3080,7 @@ CowardiceCheckUseAndBenchResult Cowardice_CheckUseAndBench(void)
 
 /* >>> factory Cowardice_ReturnToHandEffect */
 /* effect_functions.asm:3428-3467 */
-void Cowardice_ReturnToHandEffect(void)
+CowardiceReturnResult Cowardice_ReturnToHandEffect(void)
 {
 	uint8_t location = hTemp_ffa0;
 	uint8_t card = GetTurnDuelistVariable(
@@ -3090,8 +3090,14 @@ void Cowardice_ReturnToHandEffect(void)
 		(void)SwapArenaWithBenchPokemon(hAIPkmnPowerEffectParam);
 	(void)MoveDiscardPileCardToHand(card);
 	AddCardToHand(card);
-	(void)ShiftAllPokemonToFirstPlayAreaSlots();
+	/* The shift's own exit registers are the effect's: it ends with `xor a`,
+	 * which only rewrites a and the flags (duel.asm:1122-1137 leaves
+	 * d = MAX_PLAY_AREA_POKEMON, e = the occupied slot count and hl one past
+	 * the non-turn duelist's last play area slot). */
+	ShiftResult shifted = ShiftAllPokemonToFirstPlayAreaSlots();
 	wDuelDisplayedScreen = 0u;
+	/* `xor a` is the last instruction: a = 0 with Z set. */
+	return (CowardiceReturnResult){0u, 0x80u, shifted.d, shifted.e, shifted.hl};
 }
 /* <<< factory Cowardice_ReturnToHandEffect */
 

@@ -1,3 +1,4 @@
+from tests.cases._fixtures import ai_power_effect_fixture as _ai_power_effect_fixture, AI_POWER_EFFECT_REGS as _AI_POWER_EFFECT_REGS
 from tests.cases._fixtures import begin_use_attack_fixture as _begin_use_attack_fixture, BEGIN_USE_ATTACK_REGS as _BEGIN_USE_ATTACK_REGS
 from tests.cases._fixtures import bench_switch_fixture as _bench_switch_fixture
 from tests.cases._fixtures import bench_count_fixture as _bench_count_fixture, BENCH_COUNT_REGS as _BENCH_COUNT_REGS
@@ -3453,10 +3454,13 @@ CASES["OppAction_6b15"] = [
 # <<< factory OppAction_6b15
 
 # >>> factory OppAction_ExecutePokemonPowerEffect
-CONTRACT["OppAction_ExecutePokemonPowerEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "d", "e")}
+CONTRACT["OppAction_ExecutePokemonPowerEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["OppAction_ExecutePokemonPowerEffect"] = [
     {"wram": {wSkipDuelistIsThinkingDelay: b"\x00"}, "expect_wram": {wSkipDuelistIsThinkingDelay: b"\x01"}, "sram": {0: {}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, wram={wSkipDuelistIsThinkingDelay: b"\x00"}, expect_wram={wSkipDuelistIsThinkingDelay: b"\x01"}, sram={0: {}}, instruction_budget=2000000, cycle_budget=8000000),
+
+    # ai-duel-24 25580: Cowardice's effect receives the caller's b, d and e and leaves its own.
+    dict(_ai_power_effect_fixture(vram=False, bank=1), **_AI_POWER_EFFECT_REGS),
 ]
 # <<< factory OppAction_ExecutePokemonPowerEffect
 
@@ -6853,12 +6857,7 @@ MUTATIONS["OppAction_6b15"] = {
 }
 # <<< factory-mutation OppAction_6b15
 # >>> factory-mutation OppAction_ExecutePokemonPowerEffect
-MUTATIONS["OppAction_ExecutePokemonPowerEffect"] = {
-    "source_symbol": "OppAction_ExecutePokemonPowerEffect",
-    "before": "\twSkipDuelistIsThinkingDelay = 0x01u;\n\treturn (OppAction_ExecutePokemonPowerEffectResult){0x01u, effect.f, effect.c, effect.hl};",
-    "after": "\twSkipDuelistIsThinkingDelay = 0x00u;\n\treturn (OppAction_ExecutePokemonPowerEffectResult){0x01u, effect.f, effect.c, effect.hl};",
-    "case_ids": ["OppAction_ExecutePokemonPowerEffect-0", "OppAction_ExecutePokemonPowerEffect-1"],
-}
+MUTATIONS["OppAction_ExecutePokemonPowerEffect"] = {"source_symbol": "OppAction_ExecutePokemonPowerEffect", "before": "\t\teffect.c, effect.d, effect.e, effect.hl};", "after": "\t\teffect.c, effect.d, effect.e, 0u};", "case_ids": ["OppAction_ExecutePokemonPowerEffect-2"]}
 # <<< factory-mutation OppAction_ExecutePokemonPowerEffect
 # >>> factory-mutation LoadSelectedCardGfx
 MUTATIONS["LoadSelectedCardGfx"] = {

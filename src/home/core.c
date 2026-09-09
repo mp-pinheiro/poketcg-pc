@@ -2057,7 +2057,7 @@ AIMakeDecisionResult AIMakeDecision(uint8_t a, uint8_t b, uint8_t c, uint8_t d, 
 	case 0x0Au: OppAction_PlayAttackAnimationDealAttackDamage(); break;
 	case 0x0Bu: (void)OppAction_DrawCard(); break;
 	case 0x0Cu: OppAction_UsePokemonPower(); break;
-	case 0x0Du: (void)OppAction_ExecutePokemonPowerEffect(); break;
+	case 0x0Du: (void)OppAction_ExecutePokemonPowerEffect(b, d, e); break;
 	case 0x0Eu: OppAction_ForceSwitchActive(); break;
 	case 0x0Fu:
 	case 0x10u:
@@ -6080,12 +6080,16 @@ OppAction_6b15Result OppAction_6b15(void)
 /* <<< factory OppAction_6b15 */
 
 /* >>> factory OppAction_ExecutePokemonPowerEffect */
-OppAction_ExecutePokemonPowerEffectResult OppAction_ExecutePokemonPowerEffect(void)
+OppAction_ExecutePokemonPowerEffectResult OppAction_ExecutePokemonPowerEffect(uint8_t b, uint8_t d, uint8_t e)
 {
 	ResetAttackAnimationIsPlaying();
-	TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_BEFORE_DAMAGE, 0u, 0u, 0u);
+	/* core.asm:6725-6731: the caller's b, d and e reach the effect through
+	 * TryExecuteEffectCommandFunction, and `ld a, $01` at the tail touches
+	 * neither the flags nor the pair the effect left. */
+	TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_BEFORE_DAMAGE, b, d, e);
 	wSkipDuelistIsThinkingDelay = 0x01u;
-	return (OppAction_ExecutePokemonPowerEffectResult){0x01u, effect.f, effect.c, effect.hl};
+	return (OppAction_ExecutePokemonPowerEffectResult){0x01u, effect.f, effect.b,
+		effect.c, effect.d, effect.e, effect.hl};
 }
 /* <<< factory OppAction_ExecutePokemonPowerEffect */
 

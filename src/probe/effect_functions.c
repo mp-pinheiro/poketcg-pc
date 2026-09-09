@@ -873,8 +873,12 @@ static void adapt_Cowardice_CheckUseAndBench(ProbeState *s)
 /* >>> factory Cowardice_ReturnToHandEffect */
 static void adapt_Cowardice_ReturnToHandEffect(ProbeState *s)
 {
-	Cowardice_ReturnToHandEffect();
-	s->a = gb_read8(wDuelDisplayedScreen_ADDR);
+	CowardiceReturnResult r = Cowardice_ReturnToHandEffect();
+	s->a = r.a;
+	s->f = r.f;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
 }
 /* <<< factory Cowardice_ReturnToHandEffect */
 
