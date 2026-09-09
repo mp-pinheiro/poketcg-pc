@@ -94,6 +94,9 @@ CASES["EstimateDamage_VersusDefendingCard"] = [
     _edvdc(b"\x00", extra={_edvdc_wLoadedAttackCategory: b"\x04"}, a=0),
     dict(POISON, **_edvdc(b"\x00")),
     dict(_ai_estimate_fixture(bank=5), **_AI_ESTIMATE_REGS),
+    # A benched Charmander's Scratch against Bulbasaur: the bench branch returns the
+    # calculation's de (the 10 damage), not zero.
+    _edvdc(b"\x01", extra={0xC2BC: b"\x01", 0xC400: b"\x08\x30", 0xC3BB: b"\x00", 0xC480: b"\x08", 0xC3EF: b"\x01", 0xC2EF: b"\x02"}, a=0),
 ]
 # <<< factory EstimateDamage_VersusDefendingCard
 

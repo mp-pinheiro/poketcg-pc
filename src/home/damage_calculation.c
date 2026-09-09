@@ -245,12 +245,14 @@ DamageCalculationResult EstimateDamage_VersusDefendingCard(uint8_t a)
 	const uint8_t v3 = gb_read8(resist);
 	gb_write8(resist, 0u);
 
-	(void)CalculateDamage_VersusDefendingPokemon();
+	/* The pops restore hl and af only: de stays the calculation's, the
+	 * damage it left in de. */
+	DamageCalculationResult calc = CalculateDamage_VersusDefendingPokemon();
 
 	gb_write8(resist, v3);
 	gb_write8(sub2, v2);
 	gb_write8(sub1, v1);
-	return (DamageCalculationResult){v1, 0x00u, 0u, 0u, sub1};
+	return (DamageCalculationResult){v1, 0x00u, calc.d, calc.e, sub1};
 }
 /* <<< factory EstimateDamage_VersusDefendingCard */
 
