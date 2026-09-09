@@ -20,6 +20,7 @@
 #define OPPACTION_DUEL_MAIN_SCENE           0x16u
 /* wce08: AI scratch byte holding the deck index the Pkmn Power acts on. */
 #define WCE08_ADDR                          0xce08u
+#define WCE06_ADDR                          0xce06u
 
 /* pkmn_powers.asm:618-729 (.CheckWhetherTurnDuelistHasColor). Returns 1 with
  * carry set if the turn duelist has a card in play whose color matches the
@@ -345,6 +346,34 @@ HandleAICurseResult HandleAICurse(uint8_t c)
 /* <<< factory HandleAICurse */
 
 /* >>> factory HandleAIDamageSwap */
+/* pkmn_powers.asm .CheckForDamageSwapTargetInBench. Looks through the bench for
+ * a Chansey, Kangaskhan, Snorlax or Mr. Mime with at least 20 HP, preferring
+ * one with no energy attached. Returns carry when there is none; otherwise a
+ * is the target's play area location with Z clear. */
+static HandleAIDamageSwapResult HandleAIDamageSwap_CheckForTargetInBench(void)
+{
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	uint8_t with_energy = 0xffu;
+	uint8_t without_energy = 0xffu;
+	for (uint8_t location = PLAY_AREA_BENCH_1; location != count; location++) {
+		uint8_t index = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD)).a;
+		uint8_t id = (uint8_t)GetCardIDFromDeckIndex(index);
+		if (id != CHANSEY && id != KANGASKHAN && id != SNORLAX && id != MR_MIME)
+			continue;
+		if (GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + location)).a < 20u)
+			continue;
+		with_energy = location;
+		if (CountNumberOfEnergyCardsAttached(location).a != 0u)
+			continue;
+		without_energy = location;
+	}
+	if (without_energy != 0xffu)
+		return (HandleAIDamageSwapResult){without_energy, 0x00u};
+	if (with_energy != 0xffu)
+		return (HandleAIDamageSwapResult){with_energy, 0x00u};
+	return (HandleAIDamageSwapResult){0xffu, 0x90u};
+}
+
 HandleAIDamageSwapResult HandleAIDamageSwap(uint8_t f)
 {
 	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
@@ -354,13 +383,13 @@ HandleAIDamageSwapResult HandleAIDamageSwap(uint8_t f)
 
 	AIChooseRandomlyNotToDoActionResult skip = AIChooseRandomlyNotToDoAction();
 	if (skip.f & 0x10u)
-		return (HandleAIDamageSwapResult){0u, 0x10u};
+		return (HandleAIDamageSwapResult){skip.a, skip.f};
 	PkmnPowerCountResult alakazam = CountTurnDuelistPokemonWithActivePkmnPower(ALAKAZAM);
 	if (!(alakazam.f & 0x10u))
-		return (HandleAIDamageSwapResult){0u, 0x00u};
+		return (HandleAIDamageSwapResult){alakazam.a, alakazam.f};
 	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
 	if (muk.f & 0x10u)
-		return (HandleAIDamageSwapResult){0u, 0x10u};
+		return (HandleAIDamageSwapResult){muk.a, muk.f};
 	uint8_t arena_index = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
 	uint8_t arena_id = (uint8_t)GetCardIDFromDeckIndex(arena_index);
 	if (arena_id != ALAKAZAM && arena_id != KADABRA && arena_id != ABRA && arena_id != MR_MIME) {
@@ -368,7 +397,35 @@ HandleAIDamageSwapResult HandleAIDamageSwap(uint8_t f)
 		uint8_t borrow = (uint8_t)(arena_id < MR_MIME);
 		return (HandleAIDamageSwapResult){arena_id, (uint8_t)(0x40u | (half_borrow << 5) | (borrow << 4))};
 	}
-	return (HandleAIDamageSwapResult){0u, 0x00u};
+	CardDamageResult arena = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	if (arena.a == 0u)
+		return (HandleAIDamageSwapResult){0u, 0x80u};
+	gb_write8(WCE06_ADDR, ConvertHPToDamageCounters_Bank8(arena.a));
+	LookResult alakazam_at = LookForCardIDInPlayArea_Bank5(ALAKAZAM, PLAY_AREA_BENCH_1);
+	gb_write8(WCE08_ADDR, (alakazam_at.f & 0x10u) != 0u ? alakazam_at.a : PLAY_AREA_ARENA);
+	HandleAIDamageSwapResult target = HandleAIDamageSwap_CheckForTargetInBench();
+	if ((target.f & 0x10u) != 0u)
+		return target;
+
+	uint8_t alakazam_location = gb_read8(WCE08_ADDR);
+	hTempCardIndex_ff9f = GetTurnDuelistVariable((uint8_t)(alakazam_location + DUELVARS_ARENA_CARD)).a;
+	hTemp_ffa0 = alakazam_location;
+	(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
+	(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+	for (uint8_t counters = gb_read8(WCE06_ADDR); counters != 0u; counters--) {
+		for (uint8_t delay = 30u; delay != 0u; delay--)
+			DoFrame();
+		target = HandleAIDamageSwap_CheckForTargetInBench();
+		if ((target.f & 0x10u) != 0u)
+			break;
+		hTempRetreatCostCards = target.a;
+		hAIPkmnPowerEffectParam = PLAY_AREA_ARENA;
+		(void)AIMakeDecision(OPPACTION_6B15, 0u, 0u, 0u, 0u);
+	}
+	for (uint8_t delay = 60u; delay != 0u; delay--)
+		DoFrame();
+	AIMakeDecisionResult scene = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
+	return (HandleAIDamageSwapResult){scene.a, scene.f};
 }
 /* <<< factory HandleAIDamageSwap */
 

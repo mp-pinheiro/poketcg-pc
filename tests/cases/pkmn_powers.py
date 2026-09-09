@@ -90,6 +90,14 @@ CONTRACT["HandleAIDamageSwap"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["HandleAIDamageSwap"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xEF: b"\x01"}),
     {"a": 0x11, "f": 0xE0, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x6789, "wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xEF: b"\x01"}},
+    # Boss deck (never skips), bench present, no Alakazam with an active power.
+    {"wram": {hWhoseTurn: b"\xC2", wOpponentDeckID: b"\x0E", wPlayerDuelVariables + 0xEF: b"\x02", wPlayerDuelVariables + 0xBB: b"\x00\x01\xFF", wPlayerDuelVariables + 0x00: b"\x01\x11", wPlayerDuelVariables + 0xC8: b"\x50\x78", 0xC400: b"\x60\xB8"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    # Alakazam in the arena at full HP: nothing to swap.
+    {"wram": {hWhoseTurn: b"\xC2", wOpponentDeckID: b"\x0E", wPlayerDuelVariables + 0xEF: b"\x02", wPlayerDuelVariables + 0xBB: b"\x00\x01\xFF", wPlayerDuelVariables + 0x00: b"\x01\x11", wPlayerDuelVariables + 0xC8: b"\x50\x78", 0xC400: b"\x90\xB8"}, "read": {0xCE06: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    # Damaged Alakazam, but the only benched card cannot take counters.
+    {"wram": {hWhoseTurn: b"\xC2", wOpponentDeckID: b"\x0E", wPlayerDuelVariables + 0xEF: b"\x02", wPlayerDuelVariables + 0xBB: b"\x00\x01\xFF", wPlayerDuelVariables + 0x00: b"\x01\x11", wPlayerDuelVariables + 0xC8: b"\x30\x28", 0xC400: b"\x90\x60"}, "read": {0xCE06: 1, 0xCE08: 1}, "expect": {0xCE06: b"\x05", 0xCE08: b"\x00"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    # Damaged Alakazam, a benched Chansey with only 10 HP left is skipped.
+    {"wram": {hWhoseTurn: b"\xC2", wOpponentDeckID: b"\x0E", wPlayerDuelVariables + 0xEF: b"\x02", wPlayerDuelVariables + 0xBB: b"\x00\x01\xFF", wPlayerDuelVariables + 0x00: b"\x01\x11", wPlayerDuelVariables + 0xC8: b"\x30\x0A", 0xC400: b"\x90\xB8"}, "read": {0xCE06: 1, 0xCE08: 1}, "expect": {0xCE06: b"\x05", 0xCE08: b"\x00"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
 ]
 # <<< factory HandleAIDamageSwap
 
@@ -190,9 +198,9 @@ MUTATIONS["HandleAICurse"] = {
 # >>> factory-mutation HandleAIDamageSwap
 MUTATIONS["HandleAIDamageSwap"] = {
     "source_symbol": "HandleAIDamageSwap",
-    "before": "\t\treturn (HandleAIDamageSwapResult){0u, (uint8_t)(0xc0u | (f & 0x10u))};",
-    "after": "\t\treturn (HandleAIDamageSwapResult){1u, (uint8_t)(0xc0u | (f & 0x10u))};",
-    "case_ids": ["HandleAIDamageSwap-0", "HandleAIDamageSwap-1"],
+    "before": "\tgb_write8(WCE06_ADDR, ConvertHPToDamageCounters_Bank8(arena.a));",
+    "after": "\tgb_write8(WCE06_ADDR, (uint8_t)(ConvertHPToDamageCounters_Bank8(arena.a) + 1u));",
+    "case_ids": ["HandleAIDamageSwap-4", "HandleAIDamageSwap-5"],
 }
 # <<< factory-mutation HandleAIDamageSwap
 # >>> factory-mutation HandleAIHeal
