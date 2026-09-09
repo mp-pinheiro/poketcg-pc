@@ -1,0 +1,44 @@
+# From grass-club's end (Brittany beaten, in the Grass Club lobby): out of the
+# lobby, through the entrance, up into the club room; the poke there gives the
+# player the Lightning and Water medals (EVENT_BEAT_ISAAC | EVENT_BEAT_AMY, two
+# medals exactly), so walking back down into the entrance loads Ronald and
+# Script_FirstRonaldDuel runs: his text, the duel (IM_RONALD_DECK, 6 prizes),
+# and the after-duel script.
+idle
+hold LEFT 40
+idle
+hold DOWN 200
+idle
+hold RIGHT 40
+idle
+hold UP 64
+idle
+hold UP 40
+idle
+hold RIGHT 120
+idle
+hold UP 40
+idle
+hold RIGHT 120
+idle
+hold UP 80
+idle
+peek
+hold DOWN 80
+idle
+peek
+shot ronald-1-ask
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+duel
+dismiss
+peek
+shot ronald-1-end

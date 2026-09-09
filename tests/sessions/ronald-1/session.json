@@ -1,0 +1,33 @@
+{
+  "goal": "From Brittany's duel: out of the Grass Club lobby into the club room, two medals poked, and Ronald's first duel in the entrance to its end under the pilot's WRAM policy, then his after-duel script",
+  "name": "ronald-1",
+  "ordinals": 602675,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ],
+    "582677": [
+      [
+        54226,
+        24
+      ]
+    ]
+  },
+  "recorded": "2026-09-09T08:10:41+00:00",
+  "schema": 1
+}
