@@ -522,7 +522,7 @@ def sweep_entries(name: str, *, after: int, until: int | None, limit: int) -> tu
     special = {fn for fn, rows in cases.items()
                if any(row.get("_completion", {}).get("mode", "return") != "return"
                       or not row.get("oracle", True)
-                      or (isinstance(row.get("keys"), list) and len(row["keys"]) > 2) for row in rows)}
+                      or (isinstance(row.get("keys"), list) and len(row["keys"]) > 1) for row in rows)}
     setups = {fn: rows[0]["setup"] for fn, rows in cases.items() if rows and rows[0].get("setup")}
     masks, meta = load_session(name)
     frames = reference_frames(masks, meta)

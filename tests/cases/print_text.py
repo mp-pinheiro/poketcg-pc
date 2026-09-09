@@ -1,3 +1,5 @@
+from tests.cases._fixtures import SCROLL_TEXT_REGS, scroll_text_fixture
+
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 HEADER = 0xCE2B
@@ -258,6 +260,7 @@ CASES.update({
         {"a": 0, "hl": 1, "keys": 0x02, "setup": SETUP,
          "read": {**CACHE_READ, **PLACEMENT_READ},
          "vread": VRAM_READ},
+        dict(scroll_text_fixture(vram=False), **SCROLL_TEXT_REGS, keys=[0x00, 0x01]),
     ],
     "PrintScrollableText_NoTextBoxLabel": [
         {"hl": 0, "keys": 0x01,
@@ -265,6 +268,7 @@ CASES.update({
                   0xCD10: b"\x04", 0xCD16: b"\x22"},
          "read": {0xCE4B: 1, 0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
          "vread": {0: {0x9A32: 1}}},
+        dict(scroll_text_fixture(vram=False), **SCROLL_TEXT_REGS, keys=[0x00, 0x01]),
     ],
     "PrintScrollableText_WithTextBoxLabel_NoWait": [
         {"hl": 0, "d": 0x34, "e": 0x12,

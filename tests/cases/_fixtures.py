@@ -316,6 +316,8 @@ NAME_INPUT_REGS = NAME_INPUT.regs
 # out of wNamingScreenBuffer into the caller's destination buffer.
 NAME_FINAL = Fixture("lightning-3-name-final-entry")
 NAME_FINAL_REGS = NAME_FINAL.regs
+SCROLL_TEXT = Fixture("lightning-3-scroll-text-entry")
+SCROLL_TEXT_REGS = SCROLL_TEXT.regs
 
 
 
@@ -525,3 +527,7 @@ def name_input_fixture(vram: bool = True, bank: int | None = None, **changes: by
 
 def name_final_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return NAME_FINAL.case(vram=vram, bank=bank, **changes)
+
+
+def scroll_text_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return SCROLL_TEXT.case(vram=vram, bank=bank, **changes)
