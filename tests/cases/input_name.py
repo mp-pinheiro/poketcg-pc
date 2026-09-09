@@ -1,6 +1,7 @@
 """Oracle-diff cases for poketcg/src/engine/input_name.asm."""
 
-from tests.cases._fixtures import NAME_CURSOR_REGS, name_cursor_fixture
+from tests.cases._fixtures import (NAME_CURSOR_REGS, NAME_INPUT_REGS,
+                                   name_cursor_fixture, name_input_fixture)
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -281,6 +282,7 @@ CONTRACT["PlayerNamingScreen_ProcessInput"] = {"compare": ("a", "f"), "preserve"
 CASES["PlayerNamingScreen_ProcessInput"] = [
     {"wram": {0xD006: b"\x00", 0xCEA4: b"\x05", 0xCEA9: b"\x06", 0xD009: b"\x00"}, "rom_bank": 6},
     dict(POISON, wram={0xD006: b"\x00", 0xCEA4: b"\x05", 0xCEA9: b"\x06", 0xD009: b"\x00"}, rom_bank=6),
+    dict(name_input_fixture(vram=False), **NAME_INPUT_REGS),
 ]
 # <<< factory PlayerNamingScreen_ProcessInput
 
@@ -666,4 +668,11 @@ MUTATIONS["PlayerNamingScreen_DrawCursor"] = {
     "before": "\tuint8_t out_a = WriteByteToBGMap0(saved_a, b, c);",
     "after": "\tuint8_t out_a = (WriteByteToBGMap0(saved_a, b, c), saved_a);",
     "case_ids": ["PlayerNamingScreen_DrawCursor-3"],
+}
+
+MUTATIONS["PlayerNamingScreen_ProcessInput"] = {
+    "source_symbol": "PlayerNamingScreen_ProcessInput",
+    "before": "\tuint8_t exit_a = PrintPlayerNameFromInput();",
+    "after": "\tuint8_t exit_a = (PrintPlayerNameFromInput(), 1u);",
+    "case_ids": ["PlayerNamingScreen_ProcessInput-2"],
 }

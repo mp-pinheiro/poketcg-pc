@@ -308,6 +308,10 @@ FONT_TILE_REGS = FONT_TILE.regs
 # on, so WriteByteToBGMap0 stages the byte and hands back a = 0.
 NAME_CURSOR = Fixture("lightning-3-name-cursor-entry")
 NAME_CURSOR_REGS = NAME_CURSOR.regs
+# lightning-3 at DoFrame 593: A is pressed on a keyboard character, so the
+# routine transforms it and appends it to wNamingScreenBuffer.
+NAME_INPUT = Fixture("lightning-3-name-input-entry")
+NAME_INPUT_REGS = NAME_INPUT.regs
 
 
 
@@ -509,3 +513,7 @@ def font_tile_fixture(vram: bool = True, bank: int | None = None, **changes: byt
 
 def name_cursor_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return NAME_CURSOR.case(vram=vram, bank=bank, **changes)
+
+
+def name_input_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return NAME_INPUT.case(vram=vram, bank=bank, **changes)

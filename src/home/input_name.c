@@ -598,7 +598,9 @@ DeckNamingScreen_DrawCursorResult DeckNamingScreen_CheckButtonState(void)
 /* <<< factory DeckNamingScreen_CheckButtonState */
 
 /* >>> factory PrintPlayerNameFromInput */
-void PrintPlayerNameFromInput(void)
+/* input_name.asm:1063-1084 ends `call ProcessText / ret`, so a is the text
+ * printer's, and every caller's `or a` tests that value. */
+uint8_t PrintPlayerNameFromInput(void)
 {
 	uint8_t saved_bank = hBankROM;
 	BankswitchROM(6u);
@@ -613,13 +615,16 @@ void PrintPlayerNameFromInput(void)
 
 	InitTextPrinting(d, e);
 	uint16_t buf_hl = wNamingScreenBuffer_ADDR;
-	ProcessText(&buf_hl);
+	ProcessTextResult printed = ProcessText(&buf_hl);
 	BankswitchROM(saved_bank);
+	return printed.a;
 }
 /* <<< factory PrintPlayerNameFromInput */
 
 /* >>> factory DrawPlayerNamingScreenBG */
-void DrawPlayerNamingScreenBG(void)
+/* The tail is `call EnableLCD / ret` (input_name.asm:1055-1060): a is the LCD
+ * enabler's flush byte, which PlayerNamingScreen_ProcessInput's `or a` tests. */
+uint8_t DrawPlayerNamingScreenBG(void)
 {
 	uint16_t box_hl;
 	DrawTextboxForKeyboard(&box_hl, wd009);
@@ -638,8 +643,9 @@ void DrawPlayerNamingScreenBG(void)
 
 	InitTextPrinting(2u, 4u);
 	(void)ProcessTextFromID(PlayerNameKeyboardText);
-	EnableLCD();
+	uint8_t out_a = EnableLCD();
 	BankswitchROM(saved_bank);
+	return out_a;
 }
 /* <<< factory DrawPlayerNamingScreenBG */
 
@@ -672,8 +678,7 @@ PlayerNamingScreen_ProcessInputResult PlayerNamingScreen_ProcessInput(void)
 			a2 = 0u;
 		}
 		wd009 = a2;
-		DrawPlayerNamingScreenBG();
-		uint8_t exit_a = gb_read8(wLCDC_ADDR);
+		uint8_t exit_a = DrawPlayerNamingScreenBG();
 		return (PlayerNamingScreen_ProcessInputResult){exit_a, (uint8_t)((exit_a == 0u) ? 0x80u : 0x00u)};
 	}
 
@@ -688,8 +693,7 @@ PlayerNamingScreen_ProcessInputResult PlayerNamingScreen_ProcessInput(void)
 			a2 = 1u;
 		}
 		wd009 = a2;
-		DrawPlayerNamingScreenBG();
-		uint8_t exit_a = gb_read8(wLCDC_ADDR);
+		uint8_t exit_a = DrawPlayerNamingScreenBG();
 		return (PlayerNamingScreen_ProcessInputResult){exit_a, (uint8_t)((exit_a == 0u) ? 0x80u : 0x00u)};
 	}
 
@@ -753,8 +757,9 @@ PlayerNamingScreen_ProcessInputResult PlayerNamingScreen_ProcessInput(void)
 	gb_write8(insert_addr, final_d);
 	gb_write8((uint16_t)(insert_addr + 1u), final_e);
 	gb_write8((uint16_t)(insert_addr + 2u), 0x00u);
-	PrintPlayerNameFromInput();
-	return (PlayerNamingScreen_ProcessInputResult){0u, 0x00u};
+	uint8_t exit_a = PrintPlayerNameFromInput();
+	return (PlayerNamingScreen_ProcessInputResult){exit_a,
+		(uint8_t)((exit_a == 0u) ? 0x80u : 0x00u)};
 }
 /* <<< factory PlayerNamingScreen_ProcessInput */
 

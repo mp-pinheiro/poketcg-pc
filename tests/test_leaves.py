@@ -245,13 +245,18 @@ def changed_addresses(entry: Any, result: Any) -> dict[str, set[tuple[int, int]]
 
 def coalesce(addresses: set[int], gap: int = AUTO_OBSERVE_GAP) -> dict[int, int]:
     """{start: size} spans covering every address, bridging gaps up to `gap`
-    unless an ignored byte lies in the gap."""
+    unless an ignored or reserved byte lies in the gap. Reserved bytes are the
+    reference lane's own sentinel/spin stub and relocated stack
+    (pyboy_oracle.RESERVED); a span that bridged them would compare the
+    harness's scaffolding, which the port never writes."""
+    from pyboy_oracle import RESERVED
+    skip = AUTO_OBSERVE_IGNORED | {a for block in RESERVED for a in block}
     spans: dict[int, int] = {}
     start = end = None
     for address in sorted(addresses):
         if start is None:
             start = end = address
-        elif address - end <= gap and not any(a in AUTO_OBSERVE_IGNORED for a in range(end + 1, address)):
+        elif address - end <= gap and not any(a in skip for a in range(end + 1, address)):
             end = address
         else:
             spans[start] = end - start + 1

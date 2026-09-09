@@ -166,14 +166,14 @@ static void adapt_DeckNamingScreen_CheckButtonState(ProbeState *s)
 /* >>> factory PrintPlayerNameFromInput */
 static void adapt_PrintPlayerNameFromInput(ProbeState *s)
 {
-	PrintPlayerNameFromInput();
+	s->a = PrintPlayerNameFromInput();
 }
 /* <<< factory PrintPlayerNameFromInput */
 
 /* >>> factory DrawPlayerNamingScreenBG */
 static void adapt_DrawPlayerNamingScreenBG(ProbeState *s)
 {
-	DrawPlayerNamingScreenBG();
+	s->a = DrawPlayerNamingScreenBG();
 }
 /* <<< factory DrawPlayerNamingScreenBG */
 

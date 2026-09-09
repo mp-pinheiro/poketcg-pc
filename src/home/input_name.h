@@ -58,10 +58,10 @@ PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_DrawVisibleCursor(uint8_t
 PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_CheckButtonState(void);
 /* <<< factory PlayerNamingScreen_CheckButtonState */
 /* >>> factory PrintPlayerNameFromInput */
-void PrintPlayerNameFromInput(void);
+uint8_t PrintPlayerNameFromInput(void);
 /* <<< factory PrintPlayerNameFromInput */
 /* >>> factory DrawPlayerNamingScreenBG */
-void DrawPlayerNamingScreenBG(void);
+uint8_t DrawPlayerNamingScreenBG(void);
 /* <<< factory DrawPlayerNamingScreenBG */
 /* >>> factory PlayerNamingScreen_ProcessInput */
 typedef struct { uint8_t a; uint8_t f; } PlayerNamingScreen_ProcessInputResult;
