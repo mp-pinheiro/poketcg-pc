@@ -1,6 +1,7 @@
 from tests.cases._fixtures import bench_switch_fixture as _bench_switch_fixture, BENCH_SWITCH_REGS as _BENCH_SWITCH_REGS
 from tests.cases._fixtures import retreat_stay_fixture as _retreat_stay_fixture, RETREAT_STAY_REGS as _RETREAT_STAY_REGS, retreat_gene_fixture as _retreat_gene_fixture, RETREAT_GENE_REGS as _RETREAT_GENE_REGS
 from tests.cases._fixtures import grass_retreat_fixture as _grass_retreat_fixture, GRASS_RETREAT_REGS as _GRASS_RETREAT_REGS
+from tests.cases._fixtures import grass_retreat_2_fixture as _grass_retreat_2_fixture, GRASS_RETREAT_2_REGS as _GRASS_RETREAT_2_REGS
 from tests.cases._fixtures import ai_ko_switch_fixture as _ai_ko_switch_fixture, AI_KO_SWITCH_REGS as _AI_KO_SWITCH_REGS, ai_retreat_decision_fixture as _ai_retreat_decision_fixture, AI_RETREAT_DECISION_REGS as _AI_RETREAT_DECISION_REGS, ai_retreat_switch_fixture as _ai_retreat_switch_fixture, AI_RETREAT_SWITCH_REGS as _AI_RETREAT_SWITCH_REGS, ai_try_retreat_fixture as _ai_try_retreat_fixture, AI_TRY_RETREAT_REGS as _AI_TRY_RETREAT_REGS
 """Oracle-diff cases for SetAIRetreatFlags (engine/duel/ai/retreat.asm:440-460)."""
 
@@ -175,6 +176,8 @@ CASES["AIDecideWhetherToRetreat"] = [
     dict(_retreat_gene_fixture(vram=False, bank=5), **_RETREAT_GENE_REGS, read={0xCDBE: 1, 0xCDDA: 2, 0xCE03: 1}),
     # grass-club 549326: Brittany's AI at the retreat decision the port scores 129 and the ROM higher.
     dict(_grass_retreat_fixture(vram=False, bank=5), **_GRASS_RETREAT_REGS, read={0xCDBE: 1, 0xCDDA: 2, 0xCE03: 1}),
+    # grass-club 570930: two set-up bench Pokemon score by their count, not by one.
+    dict(_grass_retreat_2_fixture(vram=False, bank=5), **_GRASS_RETREAT_2_REGS, read={0xCDBE: 1, 0xCDDA: 2, 0xCE03: 1}),
 ]
 # <<< factory AIDecideWhetherToRetreat
 
@@ -205,5 +208,5 @@ MUTATIONS["AITryToRetreat"] = {
 MUTATIONS["AIDecideBenchPokemonToSwitchTo"] = {"source_symbol": "AIDecideBenchPokemonToSwitchTo", "before": "\tuint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;", "after": "\tuint8_t count = 0u;", "case_ids": ["AIDecideBenchPokemonToSwitchTo-0", "AIDecideBenchPokemonToSwitchTo-1"]}
 # <<< factory-mutation AIDecideBenchPokemonToSwitchTo
 # >>> factory-mutation AIDecideWhetherToRetreat
-MUTATIONS["AIDecideWhetherToRetreat"] = {"source_symbol": "AIDecideWhetherToRetreat", "before": "\t\tif (a == 0xFFu)\n\t\t\tgoto check_resistance_3;\n\t\tuint8_t saved_e = e;", "after": "\t\tif (a == 0xFFu)\n\t\t\tbreak;\n\t\tuint8_t saved_e = e;", "case_ids": ["AIDecideWhetherToRetreat-7"]}
+MUTATIONS["AIDecideWhetherToRetreat"] = {"source_symbol": "AIDecideWhetherToRetreat", "before": "\t\tif (a >= 2u)\n\t\t\tAIEncourage(a);", "after": "\t\tif (a >= 2u)\n\t\t\tAIEncourage(1u);", "case_ids": ["AIDecideWhetherToRetreat-8"]}
 # <<< factory-mutation AIDecideWhetherToRetreat

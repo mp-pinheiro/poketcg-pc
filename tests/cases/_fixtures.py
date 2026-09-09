@@ -667,3 +667,11 @@ GRASS_RETREAT_REGS = GRASS_RETREAT.regs
 
 def grass_retreat_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return GRASS_RETREAT.case(vram=vram, bank=bank, **changes)
+
+
+GRASS_RETREAT_2 = Fixture("grass-club-retreat-entry-2")
+GRASS_RETREAT_2_REGS = GRASS_RETREAT_2.regs
+
+
+def grass_retreat_2_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return GRASS_RETREAT_2.case(vram=vram, bank=bank, **changes)

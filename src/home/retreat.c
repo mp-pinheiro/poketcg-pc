@@ -659,8 +659,9 @@ check_retreat_cost:
 	if ((f & 0x10u) == 0u) {
 		CountNumberOfSetUpBenchPokemonResult count = CountNumberOfSetUpBenchPokemon(a, f, b, c, d, e, hl);
 		a = count.a; f = count.f; b = count.b; c = count.c; d = count.d; e = count.e; hl = count.hl;
+		/* retreat.asm:350-353: `call AIEncourage` with the count still in a. */
 		if (a >= 2u)
-			AIEncourage(1u);
+			AIEncourage(a);
 	}
 	v = GetTurnDuelistVariable(DUELVARS_BENCH);
 	hl = v.hl; e = 0u;
