@@ -1347,7 +1347,7 @@ MUTATIONS["AIDecide_Defender_Phase14"] = {
 }
 # <<< factory-mutation AIDecide_Defender_Phase14
 # >>> factory-mutation AIDecide_Maintenance
-MUTATIONS["AIDecide_Maintenance"] = {"source_symbol": "AIDecide_Maintenance", "before": "\t\treturn (AIDecideMaintenanceResult){card, 0x90u, 0xCEu};", "after": "\t\treturn (AIDecideMaintenanceResult){0u, 0x10u, 0xCEu};", "case_ids": ["AIDecide_Maintenance-2"]}
+MUTATIONS["AIDecide_Maintenance"] = {"source_symbol": "AIDecide_Maintenance", "before": "\t\treturn (AIDecideMaintenanceResult){card, 0x90u, 0xCEu};", "after": "\t\treturn (AIDecideMaintenanceResult){0u, 0x10u, 0xCEu};", "case_ids": ["AIDecide_Maintenance-2", "AIDecide_Maintenance-5"]}
 # <<< factory-mutation AIDecide_Maintenance
 # >>> factory-mutation AIDecide_Lass
 MUTATIONS["AIDecide_Lass"] = {"source_symbol": "AIDecide_Lass", "before": "\tif (hand_count < 7u)\n\t\treturn (AIDecideParameterResult){hand_count, or_a_flags(hand_count), d};", "after": "\tif (hand_count < 7u)\n\t\treturn (AIDecideParameterResult){hand_count, 0x00u, d};", "case_ids": ["AIDecide_Lass-3"]}
@@ -1413,7 +1413,7 @@ MUTATIONS["AIDecide_Pokedex"] = {"source_symbol": "AIDecide_Pokedex", "before": 
 MUTATIONS["AIDecide_ItemFinder"] = {"source_symbol": "AIDecide_ItemFinder", "before": "return (AIDecide_ItemFinderResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), d};", "after": "return (AIDecide_ItemFinderResult){a, (uint8_t)(a == 1u ? 0x80u : 0u), d};", "case_ids": ["AIDecide_ItemFinder-0", "AIDecide_ItemFinder-1"]}
 # <<< factory-mutation AIDecide_ItemFinder
 # >>> factory-mutation AIDecide_EnergyRetrieval
-MUTATIONS["AIDecide_EnergyRetrieval"] = {"source_symbol": "AIDecide_EnergyRetrieval", "before": "\twce06 = dup.a;", "after": "\twce06 = 0u;", "case_ids": ["AIDecide_EnergyRetrieval-1"]}
+MUTATIONS["AIDecide_EnergyRetrieval"] = {"source_symbol": "AIDecide_EnergyRetrieval", "before": "\twce06 = dup.a;", "after": "\twce06 = 0u;", "case_ids": ["AIDecide_EnergyRetrieval-1", "AIDecide_EnergyRetrieval-2"]}
 # <<< factory-mutation AIDecide_EnergyRetrieval
 # >>> factory-mutation AIDecide_SuperEnergyRetrieval
 MUTATIONS["AIDecide_SuperEnergyRetrieval"] = {

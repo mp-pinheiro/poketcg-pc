@@ -1,3 +1,4 @@
+from tests.cases._fixtures import card_page_attack2_fixture as _card_page_attack2_fixture, CARD_PAGE_ATTACK2_REGS as _CARD_PAGE_ATTACK2_REGS
 from tests.cases._fixtures import ai_power_effect_fixture as _ai_power_effect_fixture, AI_POWER_EFFECT_REGS as _AI_POWER_EFFECT_REGS
 from tests.cases._fixtures import damage_number_chars_fixture as _damage_number_chars_fixture, DAMAGE_NUMBER_CHARS_REGS as _DAMAGE_NUMBER_CHARS_REGS
 from tests.cases._fixtures import digit_char_fixture as _digit_char_fixture, DIGIT_CHAR_REGS as _DIGIT_CHAR_REGS
@@ -3846,6 +3847,12 @@ CONTRACT["DisplayCardPage_PokemonAttack2Page2"] = {"compare": (), "preserve": ()
 CASES["DisplayCardPage_PokemonAttack2Page2"] = [
     {"b": 0x01, "c": 0x02, "d": 0x03, "wram": {0xCEA0: b"\x00\x00", 0xCC47: b"\x00\x00", 0xCC4B: b"\x00\x00", 0xCC4D: b"\x01", 0xFF80: b"\x01", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCC27: 1}, "vread": {0: {0x9800: 0x400}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, b=0xBB, c=0xCC, d=0xDD, wram={0xCEA0: b"\x00\x00", 0xCC47: b"\x00\x00", 0xCC4B: b"\x00\x00", 0xCC4D: b"\x01", 0xFF80: b"\x01", 0xCABB: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xCC27: 1}, vread={0: {0x9800: 0x400}}, instruction_budget=2000000, cycle_budget=8000000),
+    # deck-explore 99717: the card-page screen with a real Pokemon loaded (attack 2
+    # page 1's entry, same screen), so which description address the page picks is
+    # observable in the redrawn BG map instead of rendering nothing.
+    dict(_card_page_attack2_fixture(vram=False, bank=1), **_CARD_PAGE_ATTACK2_REGS,
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory DisplayCardPage_PokemonAttack2Page2
 
@@ -6120,12 +6127,7 @@ MUTATIONS["RaiseAIScoreToAllMatchingIDsInBench"] = {"source_symbol": "RaiseAISco
 # <<< factory-mutation RaiseAIScoreToAllMatchingIDsInBench
 # >>> factory-mutation GetDamageNumberChars
 MUTATIONS["GetDamageNumberChars.ConvertDigitToCharTile"] = {"source_symbol": "GetDamageNumberChars_ConvertDigitToCharTile", "before": "\treturn (DamageDigitResult){new_hi, f, de, (uint16_t)(((uint16_t)new_hi << 8) | new_lo)};", "after": "\treturn (DamageDigitResult){new_hi, f, de, value};", "case_ids": ["GetDamageNumberChars.ConvertDigitToCharTile-4"]}
-MUTATIONS["GetDamageNumberChars"] = {
-	"source_symbol": "GetDamageNumberChars",
-	"before": "digit = (uint8_t)(digit + 1u);",
-	"after": "digit = (uint8_t)(digit + 2u);",
-	"case_ids": ["GetDamageNumberChars-0", "GetDamageNumberChars-1", "GetDamageNumberChars-2", "GetDamageNumberChars-3"],
-}
+MUTATIONS["GetDamageNumberChars"] = {"source_symbol": "GetDamageNumberChars", "before": "\tgb_write8(digit.de, (uint8_t)((uint8_t)digit.hl + SPRITE_ANIM_79));", "after": "\tgb_write8(digit.de, (uint8_t)((uint8_t)digit.hl));", "case_ids": ["GetDamageNumberChars-0"]}
 # <<< factory-mutation GetDamageNumberChars
 # >>> factory-mutation CardPageSwitch_PokemonAttack2Page2
 MUTATIONS["CardPageSwitch_PokemonAttack2Page2"] = {"source_symbol": "CardPageSwitch_PokemonAttack2Page2", "before": "\tuint16_t hl = (uint16_t)(wLoadedCard1Atk2Description_ADDR + 2u);", "after": "\tuint16_t hl = (uint16_t)(wLoadedCard1Atk2Description_ADDR + 3u);", "case_ids": ["CardPageSwitch_PokemonAttack2Page2-1", "CardPageSwitch_PokemonAttack2Page2-2", "CardPageSwitch_PokemonAttack2Page2-3"]}
@@ -6438,12 +6440,7 @@ MUTATIONS["DisplayAttackPage"] = {
 }
 # <<< factory-mutation DisplayAttackPage
 # >>> factory-mutation DisplayCardPage
-MUTATIONS["DisplayCardPage"] = {
-    "source_symbol": "DisplayCardPage",
-    "before": "\tcase CARDPAGE_TRAINER_1:\n\t\t(void)DisplayCardPage_TrainerPage1(0u, 0u, 0u, 0u, 0u, 0u, 0u);",
-    "after": "\tcase CARDPAGE_TRAINER_1:\n\t\t(void)DisplayCardPage_TrainerPage2(0u, 0u, 0u, 0u, 0u, 0u, 0u);",
-    "case_ids": ["DisplayCardPage-1"],
-}
+MUTATIONS["DisplayCardPage"] = {"source_symbol": "DisplayCardPage", "before": "\t\tb = DisplayCardPage_TrainerPage1(0u, 0u, 0u, 0u, 0u, 0u, 0u).b;", "after": "\t\tb = 0u;", "case_ids": ["DisplayCardPage-1"]}
 # <<< factory-mutation DisplayCardPage
 # >>> factory-mutation DoPracticeDuelAction
 MUTATIONS["DoPracticeDuelAction"] = {
@@ -6843,7 +6840,7 @@ MUTATIONS["PrintAttackOrCardDescription"] = {"source_symbol": "PrintAttackOrCard
 MUTATIONS["PrintAttackOrPkmnPowerInformation"] = {"source_symbol": "PrintAttackOrPkmnPowerInformation", "before": "\t\tProcessTextHeaderResult text = InitTextPrinting_ProcessTextFromID(2u, e, text_hl);\n\t\treturn (PrintAttackOrPkmnPowerInformationResult){text.a, b, c, text.d, text.e, text.f, text.hl};", "after": "\t\tProcessTextHeaderResult text = InitTextPrinting_ProcessTextFromID(2u, e, text_hl);\n\t\treturn (PrintAttackOrPkmnPowerInformationResult){text.a, b, c, text.d, text.e, 0x00u, text.hl};", "case_ids": ["PrintAttackOrPkmnPowerInformation-0"]}
 # <<< factory-mutation PrintAttackOrPkmnPowerInformation
 # >>> factory-mutation PrintAttackOrNonPokemonCardDescription
-MUTATIONS["PrintAttackOrNonPokemonCardDescription"] = {"source_symbol": "PrintAttackOrNonPokemonCardDescription", "before": "\treturn PrintAttackOrCardDescription(hl, 1u, 11u);", "after": "\treturn PrintAttackOrCardDescription(hl, 1u, 12u);", "case_ids": ["PrintAttackOrNonPokemonCardDescription-0"]}
+MUTATIONS["PrintAttackOrNonPokemonCardDescription"] = {"source_symbol": "PrintAttackOrNonPokemonCardDescription", "before": "\treturn PrintAttackOrCardDescription(b, hl, 1u, 11u);", "after": "\treturn PrintAttackOrCardDescription(b, hl, 1u, 12u);", "case_ids": ["PrintAttackOrNonPokemonCardDescription-0"]}
 # <<< factory-mutation PrintAttackOrNonPokemonCardDescription
 # >>> factory-mutation DisplayCardPageOnLeftOrRightPressed
 MUTATIONS["DisplayCardPageOnLeftOrRightPressed"] = {
@@ -7067,16 +7064,16 @@ MUTATIONS["PrintAndLoadAttacksToDuelTempList"] = {"source_symbol": "PrintAndLoad
 MUTATIONS["DisplayPokemonAttackCardPage"] = {"source_symbol": "DisplayPokemonAttackCardPage", "before": "\tPrintAttackOrPkmnPowerInformationResult printed = PrintAttackOrPkmnPowerInformation(b, c, d, 2u, hl);", "after": "\tPrintAttackOrPkmnPowerInformationResult printed = PrintAttackOrPkmnPowerInformation(b, c, d, 3u, hl);", "case_ids": ["DisplayPokemonAttackCardPage-0", "DisplayPokemonAttackCardPage-1"]}
 # <<< factory-mutation DisplayPokemonAttackCardPage
 # >>> factory-mutation DisplayCardPage_PokemonAttack2Page2
-MUTATIONS["DisplayCardPage_PokemonAttack2Page2"] = {"source_symbol": "DisplayCardPage_PokemonAttack2Page2", "before": "\tDisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk2Description_ADDR + 2u), wLoadedCard1Atk2Name_ADDR);", "after": "\tDisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk2Description_ADDR + 3u), wLoadedCard1Atk2Name_ADDR);", "case_ids": ["DisplayCardPage_PokemonAttack2Page2-0", "DisplayCardPage_PokemonAttack2Page2-1"]}
+MUTATIONS["DisplayCardPage_PokemonAttack2Page2"] = {"source_symbol": "DisplayCardPage_PokemonAttack2Page2", "before": "\treturn DisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk2Description_ADDR + 2u), wLoadedCard1Atk2Name_ADDR);", "after": "\treturn DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk2Description_ADDR, wLoadedCard1Atk2Name_ADDR);", "case_ids": ["DisplayCardPage_PokemonAttack2Page2-2"]}
 # <<< factory-mutation DisplayCardPage_PokemonAttack2Page2
 # >>> factory-mutation DisplayCardPage_PokemonAttack1Page1
-MUTATIONS["DisplayCardPage_PokemonAttack1Page1"] = {"source_symbol": "DisplayCardPage_PokemonAttack1Page1", "before": "\tDisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk1Description_ADDR, wLoadedCard1Atk1Name_ADDR);", "after": "\tDisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk1Description_ADDR + 1u), wLoadedCard1Atk1Name_ADDR);", "case_ids": ["DisplayCardPage_PokemonAttack1Page1-0", "DisplayCardPage_PokemonAttack1Page1-1"]}
+MUTATIONS["DisplayCardPage_PokemonAttack1Page1"] = {"source_symbol": "DisplayCardPage_PokemonAttack1Page1", "before": "\treturn DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk1Description_ADDR, wLoadedCard1Atk1Name_ADDR);", "after": "\treturn DisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u), wLoadedCard1Atk1Name_ADDR);", "case_ids": ["DisplayCardPage_PokemonAttack1Page1-1"]}
 # <<< factory-mutation DisplayCardPage_PokemonAttack1Page1
 # >>> factory-mutation DisplayCardPage_PokemonAttack1Page2
-MUTATIONS["DisplayCardPage_PokemonAttack1Page2"] = {"source_symbol": "DisplayCardPage_PokemonAttack1Page2", "before": "\tDisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u), wLoadedCard1Atk1Name_ADDR);", "after": "\tDisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk1Description_ADDR + 3u), wLoadedCard1Atk1Name_ADDR);", "case_ids": ["DisplayCardPage_PokemonAttack1Page2-0", "DisplayCardPage_PokemonAttack1Page2-1"]}
+MUTATIONS["DisplayCardPage_PokemonAttack1Page2"] = {"source_symbol": "DisplayCardPage_PokemonAttack1Page2", "before": "\treturn DisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u), wLoadedCard1Atk1Name_ADDR);", "after": "\treturn DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk1Description_ADDR, wLoadedCard1Atk1Name_ADDR);", "case_ids": ["DisplayCardPage_PokemonAttack1Page2-1"]}
 # <<< factory-mutation DisplayCardPage_PokemonAttack1Page2
 # >>> factory-mutation DisplayCardPage_PokemonAttack2Page1
-MUTATIONS["DisplayCardPage_PokemonAttack2Page1"] = {"source_symbol": "DisplayCardPage_PokemonAttack2Page1", "before": "\tDisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk2Description_ADDR, wLoadedCard1Atk2Name_ADDR);", "after": "\tDisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk2Description_ADDR + 1u), wLoadedCard1Atk2Name_ADDR);", "case_ids": ["DisplayCardPage_PokemonAttack2Page1-0", "DisplayCardPage_PokemonAttack2Page1-1"]}
+MUTATIONS["DisplayCardPage_PokemonAttack2Page1"] = {"source_symbol": "DisplayCardPage_PokemonAttack2Page1", "before": "\treturn DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk2Description_ADDR, wLoadedCard1Atk2Name_ADDR);", "after": "\treturn DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk1Description_ADDR, wLoadedCard1Atk2Name_ADDR);", "case_ids": ["DisplayCardPage_PokemonAttack2Page1-0"]}
 # <<< factory-mutation DisplayCardPage_PokemonAttack2Page1
 # >>> factory-mutation DisplayAttackPage_Attack1Page1
 MUTATIONS["DisplayAttackPage_Attack1Page1"] = {"source_symbol": "DisplayAttackPage_Attack1Page1", "before": "void DisplayAttackPage_Attack1Page1(uint8_t b, uint8_t c, uint8_t d)\n{\n\tDisplayCardPage_PokemonAttack1Page1(b, c, d);\n\tSwitchAttackPage();", "after": "void DisplayAttackPage_Attack1Page1(uint8_t b, uint8_t c, uint8_t d)\n{\n\tDisplayCardPage_PokemonAttack1Page1(b, c, d);\n\t(void)0;", "case_ids": ["DisplayAttackPage_Attack1Page1-0", "DisplayAttackPage_Attack1Page1-1"]}

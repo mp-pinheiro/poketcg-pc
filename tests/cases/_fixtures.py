@@ -1007,3 +1007,11 @@ SWAP_DUELVAR_REGS = SWAP_DUELVAR.regs
 
 def swap_duelvar_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return SWAP_DUELVAR.case(vram=vram, bank=bank, **changes)
+
+
+CARD_PAGE_ATTACK2 = Fixture("deck-explore-cardpage-attack2-entry")
+CARD_PAGE_ATTACK2_REGS = CARD_PAGE_ATTACK2.regs
+
+
+def card_page_attack2_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return CARD_PAGE_ATTACK2.case(vram=vram, bank=bank, **changes)

@@ -131,12 +131,7 @@ MUTATIONS["PlayDuelAnimation"] = {
 }
 # <<< factory-mutation PlayDuelAnimation
 # >>> factory-mutation UpdateQueuedAnimations
-MUTATIONS["UpdateQueuedAnimations"] = {
-    "source_symbol": "UpdateQueuedAnimations",
-    "before": "_UpdateQueuedAnimations(hl)",
-    "after": "_UpdateQueuedAnimations(0)",
-    "case_ids": ["UpdateQueuedAnimations-1", "UpdateQueuedAnimations-2"],
-}
+MUTATIONS["UpdateQueuedAnimations"] = {"source_symbol": "UpdateQueuedAnimations", "before": "_UpdateQueuedAnimations(0u, hl)", "after": "_UpdateQueuedAnimations(0u, 0u)", "case_ids": ["UpdateQueuedAnimations-1"]}
 # <<< factory-mutation UpdateQueuedAnimations
 # >>> factory-mutation Func_3bb5
 MUTATIONS["Func_3bb5"] = {

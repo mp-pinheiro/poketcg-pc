@@ -2080,7 +2080,7 @@ MUTATIONS = {
 # >>> factory-mutation GetFirstSetPrizeCard
 MUTATIONS['EmptyPlayAreaSlot.init_duelvar'] = {"source_symbol": "EmptyPlayAreaSlot_init_duelvar", "before": "\tuint16_t addr = (uint16_t)((hl & 0xFF00u) | offset);", "after": "\tuint16_t addr = (uint16_t)((hl & 0xFF00u) | a);", "case_ids": ["EmptyPlayAreaSlot.init_duelvar-3"]}
 MUTATIONS['SwapPlayAreaPokemon.swap_duelvar'] = {"source_symbol": "SwapPlayAreaPokemon_swap_duelvar", "before": "\tuint8_t held = gb_read8(addr_second);", "after": "\tuint8_t held = gb_read8(addr_first);", "case_ids": ["SwapPlayAreaPokemon.swap_duelvar-3"]}
-MUTATIONS["CountCardIDInLocation"] = {"source_symbol": "CountCardIDInLocation", "before": "\treturn (CardLocationCountResult){count, (uint16_t)(page | DECK_SIZE)};", "after": "\treturn (CardLocationCountResult){count, (uint16_t)(hl + DECK_SIZE)};", "case_ids": ["CountCardIDInLocation-3"]}
+MUTATIONS["CountCardIDInLocation"] = {"source_symbol": "CountCardIDInLocation", "before": "\tuint16_t base = (uint16_t)((hl & 0xFF00u) | DUELVARS_CARD_LOCATIONS);", "after": "\tuint16_t base = hl;", "case_ids": ["CountCardIDInLocation-3"]}
 MUTATIONS["EvolvePokemonCard"] = {"source_symbol": "EvolvePokemonCard", "before": "\t(void)PutHandCardInPlayArea(card_idx, slot);", "after": "\t(void)card_idx;", "case_ids": ["EvolvePokemonCard-0"]}
 MUTATIONS["GetFirstSetPrizeCard"] = {"source_symbol": "GetFirstSetPrizeCard", "before": "\t\tif ((mask & prizes) != 0u)", "after": "\t\tif ((mask & prizes) == 0u)", "case_ids": ["GetFirstSetPrizeCard-1", "GetFirstSetPrizeCard-2", "GetFirstSetPrizeCard-6"]}
 # <<< factory-mutation GetFirstSetPrizeCard
