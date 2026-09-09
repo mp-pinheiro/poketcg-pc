@@ -197,7 +197,7 @@ def load_cases_module(lane: Path, basename: str):
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # Mirrors tools/oracle/pyboy_oracle.py RESERVED; keep the two in step.
-RESERVED = (range(0xCD20, 0xCD26), range(0xDC30, 0xDD00))
+RESERVED = (range(0xCFF0, 0xCFF6), range(0xDC30, 0xDD00))
 
 
 def reserved_overlap(address: int, size: int) -> range | None:

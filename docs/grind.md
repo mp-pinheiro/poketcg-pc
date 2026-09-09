@@ -561,18 +561,27 @@ Fixtures cannot paper over it. `_fixtures._SPANS` skips the reserved window on
 both lanes, so the port reads its own zeros while PyBoy reads the trap byte,
 and a case that seeds the window is rejected outright by `_reserved_overlap`.
 
-The stub now lives at `$CD20-$CD25`, inside the unlabelled `ds $78` pad at
-`$CD1F-$CD96` in pret's WRAM map: no symbol names it, so no ported routine
-writes it. Four files carry the address and must move together --
-`pyboy_oracle.SENTINEL`/`SPIN`/`RESERVED`, the `verify.py` mirror,
-`_fixtures._SPANS`, and the return PC `gbref/runner.c` pushes.
+Every fixed-WRAM address is live game state, so relocating the stub inside WRAM
+only moves the collision: `$CD20` (the unlabelled `ds $78` pad) broke the cases
+that seed `$C000+3840` and any routine that clears the `$CD00` page, and the
+naming buffer's dead tail is wiped wholesale by `InitializeInputName`'s
+24-byte clear, which kills the hook and wedges the lane. HRAM's `$FFB8` tail is
+already the gbref runner's setup stack.
 
-A routine that clears its own stub window kills the hook and wedges the lane.
-The naming cases used to compensate by seeding `\x18\xfe` at the exact source
-offset whose copy reinstated the spin at `$CFF4`; with the stub outside the
-buffer that data is gone. If a future case wedges only on the PyBoy lane,
-check whether the routine writes through `$CD20-$CD25` before suspecting the
-port.
+The return address is now `$3F80`, inside bank 0's `$FF` padding: the patched
+byte is ROM, which is not game state, so no routine can read it. `_capture`
+snapshots inside the hook callback and only then parks the CPU, so the park
+needs execution but not hooking -- it sits at `$DCF0`, inside the reserved
+relocated-stack window, where no comparison and no seed reaches it. A
+`post_call_byte` case still needs a writable, hookable return address for the
+opcode it executes after the `ret`, so those cases alone keep `$CFF0`.
+
+Four files carry the address and must move together --
+`pyboy_oracle.SENTINEL`/`SPIN`/`POST_CALL_SENTINEL`/`RESERVED`, the
+`verify.py` mirror, `_fixtures._SPANS`, and the return PC `gbref/runner.c`
+pushes. The naming cases used to seed `\x18\xfe` at the exact source offset
+whose copy reinstated the spin at `$CFF4`; that compensation is gone with the
+stub out of WRAM.
 
 ## Push a narrowing down to the routine that owns the gap
 

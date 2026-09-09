@@ -509,7 +509,8 @@ FIXTURES = ROOT / "tests" / "fixtures"
 # compares the driver's effect per anchor instead.
 SWEEP_SKIP_PREFIXES = ("Music", "Sound", "SFX", "Sfx", "Audio", "Timer", "Serial", "VBlank",
                        "Func_fc26c", "PlaySong", "PlaySFX", "PauseSong", "ResumeSong",
-                       "WaitForSong", "AssertSong")
+                       "WaitForSong", "AssertSong",
+                       "ScriptCommand_WaitForSong")
 SWEEP_BUDGETS = {"instruction_budget": 10_000_000, "cycle_budget": 40_000_000}
 
 
