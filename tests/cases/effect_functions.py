@@ -4400,7 +4400,14 @@ CONTRACT["LookForCardsInDeck"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["LookForCardsInDeck"] = [
     {"a": 0x01, "d": 0x00, "e": 0x12, "hl": 0x1234, "wram": {0xC510: b"\xff", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000},
     dict(POISON, wram={0xC510: b"\xff", 0xCABB: b"\x80", 0xFF40: b"\x80"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000),
-    {"a": 0x00, "d": 0x04, "e": 0x00, "hl": 0x0000, "wram": {0xC510: b"\xff", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000}
+    {"a": 0x00, "d": 0x04, "e": 0x00, "hl": 0x0000, "wram": {0xC510: b"\xff", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000},
+    # A card of the wanted id is in the list: the found text waits for A, no carry.
+    {"a": 0x01, "d": 0x00, "e": 0x60, "hl": 0x013b, "wram": {0xC510: b"\x00\xff", 0xC400: b"\x60", 0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": DISPLAY_SETUP, "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000},
+    # The list has cards but none of the wanted id: the refusal, then "check the
+    # deck?" answered Yes (the cursor starts on Yes), no carry.
+    {"a": 0x01, "b": 0x00, "c": 0x46, "d": 0x00, "e": 0x61, "hl": 0x013b, "wram": {0xC510: b"\x00\xff", 0xC400: b"\x60", 0xFF97: b"\xC2", 0xCD9A: b"\xff", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": DISPLAY_SETUP, "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000},
+    # Basic energy search over a list holding only a Double Colorless: refused.
+    {"a": 0x01, "b": 0x01, "c": 0x44, "d": 0x03, "e": 0x00, "hl": 0x011c, "wram": {0xC510: b"\x00\xff", 0xC400: b"\x07", 0xFF97: b"\xC2", 0xCD9A: b"\xff", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": DISPLAY_SETUP, "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000},
 ]
 # <<< factory LookForCardsInDeck
 
@@ -8210,6 +8217,9 @@ CASES["EnergySpike_PlayerSelectEffect"] = [
     dict(POISON, keys=DISPLAY_KEYS, wram={**_ENERGY_SPIKE_WRAM, 0xC401: b"\x01"},
          read={0xFFA0: 1, 0xFFA1: 1}, setup=DISPLAY_SETUP, entry_sp=0xDCBE,
          instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x01, 0x00, 0x02], "wram": {**_ENERGY_SPIKE_WRAM, 0xC401: b"\x07", 0xC200: b"\x10\x00" + b"\x02" * 58},
+     "read": {0xFFA0: 1, 0xFFA1: 1}, "setup": DISPLAY_SETUP, "entry_sp": 0xDCBE,
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory EnergySpike_PlayerSelectEffect
 
@@ -10096,7 +10106,7 @@ MUTATIONS["StrangeBehavior_SelectAndSwapEffect"] = {"source_symbol": "StrangeBeh
 MUTATIONS["PidgeottoMirrorMove_PlayerSelection"] = {"source_symbol": "PidgeottoMirrorMove_PlayerSelection", "before": "void PidgeottoMirrorMove_PlayerSelection(void)\n{\n\tMirrorMove_PlayerSelection();\n}", "after": "void PidgeottoMirrorMove_PlayerSelection(void)\n{\n\t(void)0;\n}", "case_ids": ["PidgeottoMirrorMove_PlayerSelection-0"]}
 # <<< factory-mutation PidgeottoMirrorMove_PlayerSelection
 # >>> factory-mutation LookForCardsInDeck
-MUTATIONS["LookForCardsInDeck"] = {"source_symbol": "LookForCardsInDeck", "before": "\tuint8_t no_cards = (wDuelTempList == 0xffu);", "after": "\tuint8_t no_cards = (wDuelTempList != 0xffu);", "case_ids": ["LookForCardsInDeck-0", "LookForCardsInDeck-1", "LookForCardsInDeck-2"]}
+MUTATIONS["LookForCardsInDeck"] = {"source_symbol": "LookForCardsInDeck", "before": "\tif (wDuelTempList != 0xffu && LookForCardsInDeck_Found(d, e)) {", "after": "\tif (wDuelTempList != 0xffu) {", "case_ids": ["LookForCardsInDeck-4"]}
 # <<< factory-mutation LookForCardsInDeck
 # >>> factory-mutation KadabraRecover_PlayerSelectEffect
 MUTATIONS["KadabraRecover_PlayerSelectEffect"] = {
@@ -11073,3 +11083,9 @@ MUTATIONS["DevolutionSpray_PlayerSelection"] = {"source_symbol": "DevolutionSpra
 # >>> factory-mutation EnergySpike_PlayerSelectEffect
 MUTATIONS["EnergySpike_PlayerSelectEffect"] = {"source_symbol": "EnergySpike_PlayerSelectEffect", "before": "\t\t\thTemp_ffa0 = hTempCardIndex_ff98;", "after": "\t\t\thTemp_ffa0 = 0xffu;", "case_ids": ["EnergySpike_PlayerSelectEffect-0"]}
 # <<< factory-mutation EnergySpike_PlayerSelectEffect
+# >>> factory-completion EnergySpike_PlayerSelectEffect
+for _index, _record in enumerate(SCHEMA2_CASES["EnergySpike_PlayerSelectEffect"]):
+    if _index == 2:
+        _record["completion"] = {"mode": "entry", "pc": 0x3794, "bank": 0,
+                                 "routine": "PlaySFX_InvalidChoice"}
+# <<< factory-completion EnergySpike_PlayerSelectEffect

@@ -6765,23 +6765,52 @@ void PidgeottoMirrorMove_PlayerSelection(void)
 /* <<< factory PidgeottoMirrorMove_PlayerSelection */
 
 /* >>> factory LookForCardsInDeck */
+/* effect_functions.asm:680-780. d selects the search over wDuelTempList (the
+ * deck), b/c name the card kind for the "There is no X in the deck" text and
+ * hl the text shown when one is found. A search that finds nothing -- or an
+ * empty list -- ends in that refusal plus the "check the deck?" Yes/No, whose
+ * answer is the exit: carry means No. */
+static uint8_t LookForCardsInDeck_Found(uint8_t d, uint8_t e)
+{
+	for (uint16_t at = wDuelTempList_ADDR;; at++) {
+		uint8_t index = gb_read8(at);
+		if (index == 0xffu)
+			return 0u;
+		switch (d) {
+		case SEARCHEFFECT_CARD_ID:
+			if ((uint8_t)GetCardIDFromDeckIndex(index) == e)
+				return 1u;
+			break;
+		case SEARCHEFFECT_NIDORAN: {
+			uint8_t id = (uint8_t)GetCardIDFromDeckIndex(index);
+			if (id == NIDORANF || id == NIDORANM)
+				return 1u;
+			break;
+		}
+		case SEARCHEFFECT_BASIC_FIGHTING:
+			(void)LoadCardDataToBuffer2_FromDeckIndex(index);
+			if (wLoadedCard2Type == TYPE_PKMN_FIGHTING && wLoadedCard2Stage == BASIC)
+				return 1u;
+			break;
+		case SEARCHEFFECT_BASIC_ENERGY: {
+			uint8_t type = GetCardType((uint8_t)GetCardIDFromDeckIndex(index));
+			if (type != TYPE_ENERGY_DOUBLE_COLORLESS && (type & TYPE_ENERGY) != 0u)
+				return 1u;
+			break;
+		}
+		default: /* SEARCHEFFECT_POKEMON */
+			if (GetCardType((uint8_t)GetCardIDFromDeckIndex(index)) < TYPE_ENERGY)
+				return 1u;
+			break;
+		}
+	}
+}
+
 LookForCardsInDeckResult LookForCardsInDeck(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
-	uint8_t no_cards = (wDuelTempList == 0xffu);
-	if (!no_cards) {
-		uint8_t found = 0u;
-		for (uint8_t i = 0u; i < 60u; ++i) {
-			uint8_t index = gb_read8((uint16_t)(wDuelTempList_ADDR + i));
-			if (index == 0xffu) break;
-			if (d == SEARCHEFFECT_CARD_ID) { uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(index); if (card_id == e) { found = 1u; break; } }
-			else if (d == SEARCHEFFECT_NIDORAN) { uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(index); if (card_id == NIDORANF || card_id == NIDORANM) { found = 1u; break; } }
-			else if (d == SEARCHEFFECT_BASIC_FIGHTING) { (void)LoadCardDataToBuffer2_FromDeckIndex(index); if (wLoadedCard2Type == TYPE_PKMN_FIGHTING && wLoadedCard2Stage == BASIC) { found = 1u; break; } }
-			else if (d == SEARCHEFFECT_BASIC_ENERGY) { uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(index); uint8_t type = GetCardType(card_id); if (type != TYPE_ENERGY_DOUBLE_COLORLESS && (type & TYPE_ENERGY) != 0u) { found = 1u; break; } }
-			else if (d == SEARCHEFFECT_POKEMON) { uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(index); if (GetCardType(card_id) < TYPE_ENERGY) { found = 1u; break; } }
-		}
-		if (!found) return (LookForCardsInDeckResult){a, 0x10u};
+	if (wDuelTempList != 0xffu && LookForCardsInDeck_Found(d, e)) {
 		WaitResult waited = DrawWideTextBox_WaitForInput(hl);
-		return (LookForCardsInDeckResult){a, waited.f};
+		return (LookForCardsInDeckResult){waited.a, (uint8_t)(waited.a == 0u ? 0x80u : 0x00u)};
 	}
 	LoadTxRam2((uint16_t)(((uint16_t)b << 8) | c));
 	(void)DrawWideTextBox_WaitForInput(ThereIsNoInTheDeckText);
@@ -12457,7 +12486,7 @@ void EnergySpike_PlayerSelectEffect(void)
 		for (uint8_t index = 0u; index < DECK_SIZE; index++) {
 			if (GetTurnDuelistVariable((uint8_t)(DUELVARS_CARD_LOCATIONS + index)).a != CARD_LOCATION_DECK)
 				continue;
-			if (energy_spike_is_basic_energy(index)) {
+			if ((GetCardType((uint8_t)GetCardIDFromDeckIndex(index)) & TYPE_ENERGY) != 0u) {
 				forced = 1u;
 				break;
 			}
