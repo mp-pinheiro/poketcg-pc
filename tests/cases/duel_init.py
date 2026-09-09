@@ -64,7 +64,3 @@ MUTATIONS = {}
 # >>> factory-mutation Duel_Init
 MUTATIONS["Duel_Init"] = {"source_symbol": "Duel_Init", "before": "\twTextBoxFrameType = 4u;", "after": "\twTextBoxFrameType = 5u;", "case_ids": ["Duel_Init-0", "Duel_Init-1", "Duel_Init-2", "Duel_Init-3"]}
 # <<< factory-mutation Duel_Init
-# >>> factory-completion Duel_Init
-for _record in SCHEMA2_CASES["Duel_Init"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x4450, "bank": 4}
-# <<< factory-completion Duel_Init
