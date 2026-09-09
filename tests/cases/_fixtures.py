@@ -579,3 +579,11 @@ def scroll_label_fixture(vram: bool = True, bank: int | None = None, **changes: 
 
 def wait_keys_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return WAIT_KEYS.case(vram=vram, bank=bank, **changes)
+
+
+PKMN_POWER = Fixture("water-2-pkmnpower-entry")
+PKMN_POWER_REGS = PKMN_POWER.regs
+
+
+def pkmn_power_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return PKMN_POWER.case(vram=vram, bank=bank, **changes)

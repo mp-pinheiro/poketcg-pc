@@ -599,7 +599,8 @@ def main(argv: list[str] | None = None) -> int:
     pokes: refstream.Pokes = {k: list(v) for k, v in base_meta["pokes"].items()}
     if args.pokes is not None:
         for ordinal, writes in refstream.load_pokes(args.pokes).items():
-            pokes.setdefault(ordinal, []).extend(writes)
+            merged = pokes.setdefault(ordinal, [])
+            merged.extend(write for write in writes if write not in merged)
     steps = parse_script(args.script)
     driver = Driver([], budget=(len(base_masks) + 80000) * 2 + 400, pokes=pokes)
     try:

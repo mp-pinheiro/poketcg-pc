@@ -2922,7 +2922,8 @@ DuelRoutineResult ProcessPlayedPokemonCard(uint8_t a, uint8_t f, uint8_t b, uint
 	}
 	DisplayUsePokemonPowerScreen();
 	(void)LoadCardDataToBuffer1_FromDeckIndex(index);
-	hl = (uint16_t)(wLoadedCard1Name_ADDR | ((uint16_t)gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)) << 8));
+	hl = (uint16_t)(gb_read8(wLoadedCard1Name_ADDR)
+			| ((uint16_t)gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)) << 8));
 	LoadTxRam2(hl);
 	hl = HavePokemonPowerText;
 	WaitResult wait = DrawWideTextBox_WaitForInput(hl);
@@ -2940,7 +2941,8 @@ DuelRoutineResult ProcessPlayedPokemonCard(uint8_t a, uint8_t f, uint8_t b, uint
 			return (DuelRoutineResult){rng.a, rng.f, rng.b, rng.c, (uint8_t)(rng.de >> 8), (uint8_t)rng.de, rng.hl};
 		}
 	}
-	hl = (uint16_t)(wLoadedAttackEffectCommands_ADDR | ((uint16_t)gb_read8((uint16_t)(wLoadedAttackEffectCommands_ADDR + 1u)) << 8));
+	hl = (uint16_t)(gb_read8(wLoadedAttackEffectCommands_ADDR)
+			| ((uint16_t)gb_read8((uint16_t)(wLoadedAttackEffectCommands_ADDR + 1u)) << 8));
 	EffectCmdLookup command = CheckMatchingCommand(EFFECTCMDTYPE_PKMN_POWER_TRIGGER, hl);
 	hl = command.hl;
 	if (command.carry) { f |= 0x10u; return (DuelRoutineResult){a, f, b, c, d, e, hl}; }

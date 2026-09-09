@@ -1,4 +1,7 @@
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS
+from tests.cases._fixtures import pkmn_power_fixture as _pkmn_power_fixture, PKMN_POWER_REGS as _PKMN_POWER_REGS
+
+_wTxRam2 = 0xCE3F
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -1688,6 +1691,8 @@ CONTRACT["ProcessPlayedPokemonCard"] = {"compare": ("a", "f", "b", "c", "d", "e"
 CASES["ProcessPlayedPokemonCard"] = [
     {"a": 0x11, "f": 0x20, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x4567, "wram": {hTempCardIndex_ff98: b"\x00", hWhoseTurn: b"\xC2", wPlayerDeck: b"\x08"}, "read": {wTempTurnDuelistCardID: 1, hTempCardIndex_ff9f: 1}},
     dict(POISON, a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, wram={hTempCardIndex_ff98: b"\x01", hWhoseTurn: b"\xC2", wPlayerDeck: b"\x08"}, read={wTempTurnDuelistCardID: 1, hTempCardIndex_ff9f: 1}),
+    dict(_pkmn_power_fixture(), read={_wTxRam2: 4, wTempTurnDuelistCardID: 1, hTempCardIndex_ff9f: 1},
+         **_PKMN_POWER_REGS, **{"compare": ()}),
 ]
 # <<< factory ProcessPlayedPokemonCard
 
@@ -2213,7 +2218,7 @@ MUTATIONS["DrawInPlayAreaScreen"] = {
 MUTATIONS["DrawDuelMainScene_PrintPokemonsAttackText"] = {"source_symbol": "DrawDuelMainScene_PrintPokemonsAttackText", "before": "\treturn PrintPokemonsAttackText();", "after": "\treturn (PrintPokemonsAttackTextResult){0};", "case_ids": ["DrawDuelMainScene_PrintPokemonsAttackText-0", "DrawDuelMainScene_PrintPokemonsAttackText-1"]}
 # <<< factory-mutation DrawDuelMainScene_PrintPokemonsAttackText
 # >>> factory-mutation ProcessPlayedPokemonCard
-MUTATIONS["ProcessPlayedPokemonCard"] = {"source_symbol": "ProcessPlayedPokemonCard", "before": "\twTempTurnDuelistCardID = e;", "after": "\twTempTurnDuelistCardID = d;", "case_ids": ["ProcessPlayedPokemonCard-0", "ProcessPlayedPokemonCard-1"]}
+MUTATIONS["ProcessPlayedPokemonCard"] = {"source_symbol": "ProcessPlayedPokemonCard", "before": "\thl = (uint16_t)(gb_read8(wLoadedCard1Name_ADDR)", "after": "\thl = (uint16_t)(wLoadedCard1Name_ADDR", "case_ids": ["ProcessPlayedPokemonCard-2"]}
 # <<< factory-mutation ProcessPlayedPokemonCard
 # >>> factory-mutation _SelectPrizeCards
 MUTATIONS["_SelectPrizeCards"] = {"source_symbol": "_SelectPrizeCards", "before": "\t\tAddCardToHand(deck_index);", "after": "", "case_ids": ["_SelectPrizeCards-0"]}
