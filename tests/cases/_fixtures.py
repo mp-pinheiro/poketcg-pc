@@ -827,3 +827,11 @@ ALIVE_IN_PLAY_AREA_REGS = ALIVE_IN_PLAY_AREA.regs
 
 def alive_in_play_area_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return ALIVE_IN_PLAY_AREA.case(vram=vram, bank=bank, **changes)
+
+
+ENERGY_NEEDED_IN_HAND = Fixture("grass-club-energy-needed-in-hand-entry")
+ENERGY_NEEDED_IN_HAND_REGS = ENERGY_NEEDED_IN_HAND.regs
+
+
+def energy_needed_in_hand_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return ENERGY_NEEDED_IN_HAND.case(vram=vram, bank=bank, **changes)

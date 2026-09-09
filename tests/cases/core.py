@@ -7,6 +7,7 @@ from tests.cases._fixtures import special_attack_params_fixture as _special_atta
 from tests.cases._fixtures import evolution_in_list_fixture as _evolution_in_list_fixture, EVOLUTION_IN_LIST_REGS as _EVOLUTION_IN_LIST_REGS
 from tests.cases._fixtures import card_can_be_played_fixture as _card_can_be_played_fixture, CARD_CAN_BE_PLAYED_REGS as _CARD_CAN_BE_PLAYED_REGS
 from tests.cases._fixtures import alive_in_play_area_fixture as _alive_in_play_area_fixture, ALIVE_IN_PLAY_AREA_REGS as _ALIVE_IN_PLAY_AREA_REGS
+from tests.cases._fixtures import energy_needed_in_hand_fixture as _energy_needed_in_hand_fixture, ENERGY_NEEDED_IN_HAND_REGS as _ENERGY_NEEDED_IN_HAND_REGS
 from tests.cases._fixtures import fully_powered_fixture as _fully_powered_fixture, FULLY_POWERED_REGS as _FULLY_POWERED_REGS
 from tests.cases._fixtures import ai_trainer_phase5_fixture as _ai_trainer_phase5_fixture, AI_TRAINER_PHASE5_REGS as _AI_TRAINER_PHASE5_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_defending_ko_fixture as _ai_defending_ko_fixture, AI_DEFENDING_KO_REGS as _AI_DEFENDING_KO_REGS, power_screen_fixture as _power_screen_fixture, POWER_SCREEN_REGS as _POWER_SCREEN_REGS
@@ -3075,6 +3076,9 @@ CASES["CheckAbleToRetreat"] = [
 # >>> factory LookForEnergyNeededInHand
 CONTRACT["LookForEnergyNeededInHand"] = {"compare": ("f",), "preserve": ()}
 CASES["LookForEnergyNeededInHand"] = [
+    # grass-club 549326: the first attack needs one energy the hand lacks, so the
+    # `.no_carry` exit tests LookForCardIDInHandList's a: nonzero, Z clear.
+    dict(_energy_needed_in_hand_fixture(vram=False, bank=5), **_ENERGY_NEEDED_IN_HAND_REGS, read={0xCC23: 1, 0xC510: 8}),
     {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCC23: b"\x00"},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCC23: b"\x00"},
@@ -6778,7 +6782,7 @@ MUTATIONS["Func_15886"] = {"source_symbol": "Func_15886", "before": "\tif (check
 MUTATIONS["CheckAbleToRetreat"] = {"source_symbol": "CheckAbleToRetreat", "before": "\tif (r1.f & 0x10u) {", "after": "\tif (r1.f & 0x20u) {", "case_ids": ["CheckAbleToRetreat-0", "CheckAbleToRetreat-1"]}
 # <<< factory-mutation CheckAbleToRetreat
 # >>> factory-mutation LookForEnergyNeededInHand
-MUTATIONS["LookForEnergyNeededInHand"] = {"source_symbol": "LookForEnergyNeededInHand", "before": "\t}\n\treturn 0x80u;\n}", "after": "\t}\n\treturn 0x00u;\n}", "case_ids": ["LookForEnergyNeededInHand-0", "LookForEnergyNeededInHand-1"]}
+MUTATIONS["LookForEnergyNeededInHand"] = {"source_symbol": "LookForEnergyNeededInHand", "before": "\t\treturn last == 0u ? 0x80u : 0x00u;\n\t}\n\tif (total1 == 2u", "after": "\t\treturn 0x80u;\n\t}\n\tif (total1 == 2u", "case_ids": ["LookForEnergyNeededInHand-0"]}
 # <<< factory-mutation LookForEnergyNeededInHand
 # >>> factory-mutation Func_7364
 MUTATIONS["Func_7364"] = {"source_symbol": "Func_7364", "before": "\t\tif (b & (1u << B_PAD_B)) {\n\t\t\treturn (Func_7364Result){0u, 0x10u};", "after": "\t\tif (b & (1u << B_PAD_B)) {\n\t\t\treturn (Func_7364Result){0u, 0x20u};", "case_ids": ["Func_7364-0", "Func_7364-1"]}

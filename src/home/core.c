@@ -5335,29 +5335,32 @@ CheckAbleToRetreatResult CheckAbleToRetreat(void)
 /* >>> factory LookForEnergyNeededInHand */
 uint8_t LookForEnergyNeededInHand(void)
 {
+	/* ai/core.asm:1445-1447 `.no_carry: or a / ret`: Z comes from the value
+	 * `a` carries there (the energy total, the colorless count, or a callee's
+	 * exit), never a constant. `scf` (asm:1461) keeps the callee's Z. */
+	uint8_t last;
 	wSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;
 	CheckEnergyNeededForAttackResult r1 = CheckEnergyNeededForAttack();
 	uint8_t total1 = (uint8_t)(r1.b + r1.c);
 	if (total1 == 1u) {
 		if (r1.b == 0u) {
 			CoreCardListResult cr = CreateEnergyCardListFromHand(0u);
-			if (!(cr.f & 0x10u)) {
-				return 0x90u;
-			}
+			if (!(cr.f & 0x10u))
+				return (uint8_t)((cr.f & 0x80u) | 0x10u);
+			last = cr.a;
 		} else {
 			CoreCardListResult cr = LookForCardIDInHandList_Bank5(r1.e);
-			if (cr.f & 0x10u) {
+			if (cr.f & 0x10u)
 				return cr.f;
-			}
+			last = cr.a;
 		}
-		return 0x80u;
+		return last == 0u ? 0x80u : 0x00u;
 	}
 	if (total1 == 2u && r1.c == 2u) {
 		CoreCardListResult cr = LookForCardIDInHandList_Bank5(DOUBLE_COLORLESS_ENERGY);
-		if (cr.f & 0x10u) {
+		if (cr.f & 0x10u)
 			return cr.f;
-		}
-		return 0x80u;
+		return cr.a == 0u ? 0x80u : 0x00u;
 	}
 
 	wSelectedAttack = SECOND_ATTACK;
@@ -5366,25 +5369,26 @@ uint8_t LookForEnergyNeededInHand(void)
 	if (total2 == 1u) {
 		if (r2.b == 0u) {
 			CoreCardListResult cr = CreateEnergyCardListFromHand(0u);
-			if (!(cr.f & 0x10u)) {
-				return 0x90u;
-			}
+			if (!(cr.f & 0x10u))
+				return (uint8_t)((cr.f & 0x80u) | 0x10u);
+			last = cr.a;
 		} else {
 			CoreCardListResult cr = LookForCardIDInHandList_Bank5(r2.e);
-			if (cr.f & 0x10u) {
+			if (cr.f & 0x10u)
 				return cr.f;
-			}
+			last = cr.a;
 		}
-		return 0x80u;
+		return last == 0u ? 0x80u : 0x00u;
 	}
-	if (total2 == 2u && r2.c == 2u) {
+	if (total2 != 2u)
+		return total2 == 0u ? 0x80u : 0x00u;
+	if (r2.c == 2u) {
 		CoreCardListResult cr = LookForCardIDInHandList_Bank5(DOUBLE_COLORLESS_ENERGY);
-		if (cr.f & 0x10u) {
+		if (cr.f & 0x10u)
 			return cr.f;
-		}
-		return 0x80u;
+		return cr.a == 0u ? 0x80u : 0x00u;
 	}
-	return 0x80u;
+	return r2.c == 0u ? 0x80u : 0x00u;
 }
 /* <<< factory LookForEnergyNeededInHand */
 
