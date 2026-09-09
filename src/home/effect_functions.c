@@ -1587,6 +1587,10 @@ void BankswitchROM(uint8_t bank);
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define HANDLE_COLOR_CHANGE_MENU_PARAMS 0x45B6u
+#define CONSOLE_CGB 0x02u
+#define SHIFT_MENU_DATA 0x46A1u /* ShiftMenuData, bank $0b */
+#define COLOR_TILE_AND_BGP 0x46AEu /* ColorTileAndBGP, bank $0b */
+#define SHIFT_LIST_ITEM_TO_COLOR 0x46BAu /* ShiftListItemToColor, bank $0b */
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6955,26 +6959,81 @@ void FlamesOfRage_PlayerSelectEffect(void)
 /* <<< factory FlamesOfRage_PlayerSelectEffect */
 
 /* >>> factory HandleColorChangeScreen */
-HandleColorChangeScreenResult HandleColorChangeScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+/* effect_functions.asm:1233-1319 (.DrawScreen). Draws the color-change screen
+ * for the card at play area location a & $7f; hl is the text printed in the
+ * bottom box. Bank $0b data tables are read through the mapped window. */
+static void HandleColorChangeScreen_DrawScreen(uint8_t a, uint16_t hl)
 {
-	(void)f; (void)b; (void)c; (void)d; (void)e; (void)hl;
+	EmptyScreen();
+	ZeroObjectPositions();
+	(void)LoadDuelCardSymbolTiles();
 	uint8_t location = (uint8_t)(a & 0x7Fu);
-	if (a == 0u) SwapTurn();
-	EmptyScreen(); ZeroObjectPositions(); (void)LoadDuelCardSymbolTiles();
 	gb_write8(wTempPlayAreaLocation_cceb_ADDR, location);
 	DuelistVarResult arena = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
 	(void)LoadCardDataToBuffer1_FromDeckIndex(arena.a);
-	uint16_t gfx = (uint16_t)(gb_read8(wLoadedCard1Gfx_ADDR) | ((uint16_t)gb_read8((uint16_t)(wLoadedCard1Gfx_ADDR + 1u)) << 8));
-	LoadCardGfx(gfx, 0x8820u, 0x30u, 0x08u); SetBGP6OrSGB3ToCardPalette(); FlushAllPalettesOrSendPal23Packet();
-	FillRectangle(0xA0u, 0x01u, 0x06u, 0x0902u, 0x0601u); (void)ApplyBGP6OrSGB3ToCardImage(0xA0u, 0u, 0u, 0u, 0u, 0u, 0u);
-	CopyCardNameAndLevelResult name = CopyCardNameAndLevel(16u, 0u, 0u, 0u, 0u); gb_write8(name.hl, TX_END);
-	InitTextPrinting(7u, 0u); uint16_t text = wDefaultText_ADDR; ProcessText(&text); (void)PlaceTextItems(0u);
-	WriteByteToBGMap0((uint8_t)(GetPlayAreaCardColor(location) + 1u), 15u, 9u);
-	PrintCardPageWeaknessesOrResistances(GetPlayAreaCardWeakness(location), 15u, 10u); PrintCardPageWeaknessesOrResistances(GetPlayAreaCardResistance(location), 15u, 11u); DrawWideTextBox();
-	(void)InitTextPrinting_ProcessTextFromID(4u, 1u, ColorListText); (void)InitTextPrinting_ProcessTextFromID(1u, 14u, 0u);
-	/* effect_functions.asm:1202-1205: the 8-byte block at .menu_params (0B:45B6). */
-	uint16_t menu = HANDLE_COLOR_CHANGE_MENU_PARAMS; InitializeMenuParameters(0u, &menu); EnableLCD();
-	for (;;) { DoFrame(); HandleMenuInputResult input = HandleMenuInput(); if (!(input.f & 0x10u)) continue; if (input.a == MENU_CANCEL) return (HandleColorChangeScreenResult){input.a, 0x10u}; uint8_t item = input.a; uint8_t color = (uint8_t)(item + 1u); uint8_t selected = (color <= NUM_COLORED_TYPES) ? (uint8_t[]){0x01u, 0x00u, 0x03u, 0x04u, 0x06u, 0x05u}[color - 1u] : 0u; if ((uint8_t)(item + 1u) == 0u) selected = color; return (HandleColorChangeScreenResult){selected, (selected == 0u) ? 0x80u : 0x00u}; }
+	uint16_t gfx = (uint16_t)(gb_read8(wLoadedCard1Gfx_ADDR) |
+		(uint16_t)gb_read8((uint16_t)(wLoadedCard1Gfx_ADDR + 1u)) << 8);
+	LoadCardGfx(gfx, 0x8A00u, 0x30u, 0x10u);
+	SetBGP6OrSGB3ToCardPalette();
+	FlushAllPalettesOrSendPal23Packet();
+	FillRectangle(0xA0u, 8u, 6u, 0x0902u, 0x0601u);
+	(void)ApplyBGP6OrSGB3ToCardImage(0xA0u, 0u, 8u, 6u, 9u, 2u, 0x0601u);
+	CopyCardNameAndLevelResult name = CopyCardNameAndLevel(16u, 0u, 0u, 0u, 0u);
+	gb_write8(name.hl, TX_END);
+	InitTextPrinting(7u, 0u);
+	uint16_t text = wDefaultText_ADDR;
+	(void)ProcessText(&text);
+	(void)PlaceTextItems(SHIFT_MENU_DATA);
+	(void)WriteByteToBGMap0((uint8_t)(GetPlayAreaCardColor(location) + 1u), 15u, 9u);
+	PrintCardPageWeaknessesOrResistances(GetPlayAreaCardWeakness(location), 15u, 10u);
+	PrintCardPageWeaknessesOrResistances(GetPlayAreaCardResistance(location), 15u, 11u);
+	(void)DrawWideTextBox();
+	(void)InitTextPrinting_ProcessTextFromID(4u, 1u, ColorListText);
+	(void)InitTextPrinting_ProcessTextFromID(1u, 14u, hl);
+	/* Color icons: a 2x2 tile block per type, with its BG palette on CGB. */
+	uint16_t entry = COLOR_TILE_AND_BGP;
+	uint8_t y = 0u;
+	for (uint8_t remaining = NUM_COLORED_TYPES; remaining != 0u; remaining--) {
+		uint8_t tile = gb_read8(entry);
+		uint16_t de = (uint16_t)(0x0200u | y);
+		FillRectangle(tile, 2u, 2u, de, 0x0102u);
+		if (gb_read8(wConsole_ADDR) == CONSOLE_CGB) {
+			uint8_t palette = gb_read8((uint16_t)(entry + 1u));
+			hBankVRAM = 1u;
+			gb_write8(0xFF4Fu, 1u);
+			FillRectangle(palette, 2u, 2u, de, 0u);
+			hBankVRAM = 0u;
+			gb_write8(0xFF4Fu, 0u);
+		}
+		entry += 2u;
+		y += 2u;
+	}
+}
+
+HandleColorChangeScreenResult HandleColorChangeScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)f; (void)b; (void)c; (void)d; (void)e;
+	/* `or a` / `call z, SwapTurn`: location 0 with the high bit clear means the
+	 * opponent's arena card, so the screen is drawn from the other side. */
+	uint8_t swapped = (a == 0u);
+	if (swapped)
+		SwapTurn();
+	HandleColorChangeScreen_DrawScreen(a, hl);
+	if (swapped)
+		SwapTurn();
+	uint16_t menu = HANDLE_COLOR_CHANGE_MENU_PARAMS;
+	InitializeMenuParameters(0u, &menu);
+	EnableLCD();
+	for (;;) {
+		DoFrame();
+		HandleMenuInputResult input = HandleMenuInput();
+		if ((input.f & 0x10u) == 0u)
+			continue;
+		if (input.a == MENU_CANCEL)
+			return (HandleColorChangeScreenResult){MENU_CANCEL, 0x90u};
+		uint8_t color = gb_read8((uint16_t)(SHIFT_LIST_ITEM_TO_COLOR + input.a));
+		return (HandleColorChangeScreenResult){color, (uint8_t)(color == 0u ? 0x80u : 0x00u)};
+	}
 }
 /* <<< factory HandleColorChangeScreen */
 

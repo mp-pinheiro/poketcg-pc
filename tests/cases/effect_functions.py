@@ -4660,6 +4660,10 @@ CONTRACT["HandleColorChangeScreen"] = {"compare": ("a", "f"), "preserve": (), "w
 CASES["HandleColorChangeScreen"] = [
     {"a": 0x01, "f": 0x00, "wram": {0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": FRAME_SETUP, "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {0xCCEB: 1, 0xCE3F: 1, 0xCE41: 1}},
     dict(POISON, a=0x00, wram={0xCABB: b"\x80", 0xFF40: b"\x80"}, setup=FRAME_SETUP, keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000, read={0xCCEB: 1, 0xCE3F: 1, 0xCE41: 1}),
+    # B cancels: MENU_CANCEL comes back with carry.
+    {"a": 0x01, "f": 0x00, "wram": {0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": FRAME_SETUP, "keys": [0x00, 0x02], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {0xCCEB: 1}, "expect": {0xCCEB: b"\x01"}},
+    # CGB: the color icons also get their BG palette attributes in VRAM bank 1.
+    {"a": 0x81, "f": 0x00, "wram": {0xCABB: b"\x80", 0xFF40: b"\x80", 0xCAB4: b"\x02"}, "setup": FRAME_SETUP, "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {0xCCEB: 1, 0xCE3F: 1, 0xCE41: 1}},
 ]
 # <<< factory HandleColorChangeScreen
 
@@ -10141,7 +10145,7 @@ MUTATIONS["DestinyBond_PlayerSelectEffect"] = {"source_symbol": "DestinyBond_Pla
 MUTATIONS["FlamesOfRage_PlayerSelectEffect"] = {"source_symbol": "FlamesOfRage_PlayerSelectEffect", "before": "void FlamesOfRage_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2FireEnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateListOfFireEnergyAttachedToArena();\n\t{ uint8_t saved = hBankROM; BankswitchROM(0x01); DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);", "after": "void FlamesOfRage_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2FireEnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateListOfFireEnergyAttachedToArena();\n\t{ uint8_t saved = hBankROM; BankswitchROM(0x01); DisplayEnergyDiscardScreen(0x01);", "case_ids": ["FlamesOfRage_PlayerSelectEffect-0", "FlamesOfRage_PlayerSelectEffect-1"]}
 # <<< factory-mutation FlamesOfRage_PlayerSelectEffect
 # >>> factory-mutation HandleColorChangeScreen
-MUTATIONS["HandleColorChangeScreen"] = {"source_symbol": "HandleColorChangeScreen", "before": "uint8_t color = (uint8_t)(item + 1u);", "after": "uint8_t color = (uint8_t)(item + 2u);", "case_ids": ["HandleColorChangeScreen-0", "HandleColorChangeScreen-1"]}
+MUTATIONS["HandleColorChangeScreen"] = {"source_symbol": "HandleColorChangeScreen", "before": "\t\tuint8_t color = gb_read8((uint16_t)(SHIFT_LIST_ITEM_TO_COLOR + input.a));", "after": "\t\tuint8_t color = gb_read8((uint16_t)(SHIFT_LIST_ITEM_TO_COLOR + input.a + 1u));", "case_ids": ["HandleColorChangeScreen-0"]}
 # <<< factory-mutation HandleColorChangeScreen
 # >>> factory-mutation Ember_PlayerSelectEffect
 MUTATIONS["Ember_PlayerSelectEffect"] = {"source_symbol": "Ember_PlayerSelectEffect", "before": "PlayerPickFireEnergyCardToDiscardResult Ember_PlayerSelectEffect(void)\n{\n\treturn PlayerPickFireEnergyCardToDiscard();\n}", "after": "PlayerPickFireEnergyCardToDiscardResult Ember_PlayerSelectEffect(void)\n{\n\tPlayerPickFireEnergyCardToDiscardResult r = PlayerPickFireEnergyCardToDiscard();\n\treturn (PlayerPickFireEnergyCardToDiscardResult){r.a, (uint8_t)(r.f ^ 0x01u)};\n}", "case_ids": ["Ember_PlayerSelectEffect-0", "Ember_PlayerSelectEffect-1"]}
