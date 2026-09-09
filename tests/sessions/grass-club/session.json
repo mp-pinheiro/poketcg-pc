@@ -1,0 +1,27 @@
+{
+  "goal": "from Amy's duel: the overworld map to the Grass Club lobby and Brittany's duel to its end under the pilot's WRAM policy, then her after-duel script",
+  "name": "grass-club",
+  "ordinals": 580415,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ]
+  },
+  "recorded": "2026-09-09T03:07:08+00:00",
+  "schema": 1
+}

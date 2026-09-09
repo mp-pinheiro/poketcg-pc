@@ -631,3 +631,11 @@ NPC_COORDS_REGS = NPC_COORDS.regs
 
 def npc_coords_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return NPC_COORDS.case(vram=vram, bank=bank, **changes)
+
+
+ENERGY_SEARCH = Fixture("grass-club-energy-search-entry")
+ENERGY_SEARCH_REGS = ENERGY_SEARCH.regs
+
+
+def energy_search_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return ENERGY_SEARCH.case(vram=vram, bank=bank, **changes)

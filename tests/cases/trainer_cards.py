@@ -1,5 +1,6 @@
 from tests.cases._fixtures import energy_removal_fixture as _energy_removal_fixture, ENERGY_REMOVAL_REGS as _ENERGY_REMOVAL_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_bill_fixture as _ai_bill_fixture, AI_BILL_REGS as _AI_BILL_REGS
+from tests.cases._fixtures import energy_search_fixture as _energy_search_fixture, ENERGY_SEARCH_REGS as _ENERGY_SEARCH_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/ai/trainer_cards.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -814,6 +815,7 @@ CASES["AIDecide_EnergySearch"] = [
      "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, wram={hWhoseTurn: b"\xC2", wOpponentDeckID: b"\x00", 0xC200: b"\x01" * 0x3C},
          instruction_budget=2000000, cycle_budget=8000000),
+    dict(_energy_search_fixture(vram=False), **_ENERGY_SEARCH_REGS),
 ]
 # <<< factory AIDecide_EnergySearch
 
@@ -1461,9 +1463,9 @@ MUTATIONS["AIDecide_PokemonTrader"] = {"source_symbol": "AIDecide_PokemonTrader"
 # >>> factory-mutation AIDecide_EnergySearch
 MUTATIONS["AIDecide_EnergySearch"] = {
     "source_symbol": "AIDecide_EnergySearch",
-    "before": "\treturn (AIDecideEnergySearchResult){0u, 0x80u};",
-    "after": "\treturn (AIDecideEnergySearchResult){0u, 0x00u};",
-    "case_ids": ["AIDecide_EnergySearch-0", "AIDecide_EnergySearch-1"],
+    "before": "\t\t\t\t\treturn (AIDecideEnergySearchResult){entry, (uint8_t)(entry == 0u ? 0x80u : 0x00u)};",
+    "after": "\t\t\t\t\treturn (AIDecideEnergySearchResult){entry, (uint8_t)(entry == 0u ? 0x90u : 0x10u)};",
+    "case_ids": ["AIDecide_EnergySearch-2"],
 }
 # <<< factory-mutation AIDecide_EnergySearch
 # >>> factory-mutation _AIProcessHandTrainerCards

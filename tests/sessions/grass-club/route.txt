@@ -1,0 +1,28 @@
+idle
+hold DOWN 200
+idle
+hold LEFT 48
+idle
+hold DOWN 200
+idle
+press UP
+idle
+press A
+idle
+hold UP 48
+idle
+hold LEFT 64
+idle
+hold LEFT 96
+idle
+hold DOWN 4
+idle
+peek
+press A
+idle
+shot grass-club-ask
+yes
+duel
+dismiss
+peek
+shot grass-club-end

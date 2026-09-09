@@ -2399,11 +2399,8 @@ AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a)
 				if (entry == 0xFFu)
 					break;
 				CheckIfEnergyIsUsefulResult useful = CheckIfEnergyIsUseful(entry);
-				if (useful.f & 0x10u) {
-					found = entry;
-					found_flags = (uint8_t)(entry == 0u ? 0x90u : 0x10u);
-					return (AIDecideEnergySearchResult){found, found_flags};
-				}
+				if (useful.f & 0x10u)
+					return (AIDecideEnergySearchResult){entry, (uint8_t)(entry == 0u ? 0x80u : 0x00u)};
 			}
 			e++;
 			if (e == d)
@@ -2454,6 +2451,8 @@ AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a)
 			break;
 	}
 
+	if (mode == 1u)
+		return (AIDecideEnergySearchResult){d, (uint8_t)(d == 0u ? 0x80u : 0x00u)};
 	return (AIDecideEnergySearchResult){wDuelTempList, 0x90u};
 }
 /* <<< factory AIDecide_EnergySearch */
