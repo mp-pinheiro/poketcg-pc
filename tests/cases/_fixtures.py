@@ -320,6 +320,12 @@ SCROLL_TEXT = Fixture("lightning-3-scroll-text-entry")
 SCROLL_TEXT_REGS = SCROLL_TEXT.regs
 TITLE_ORB = Fixture("lightning-3-title-orb-entry")
 TITLE_ORB_REGS = TITLE_ORB.regs
+ADVANCE_TEXT = Fixture("boot-deck-machine-advance-text-entry")
+ADVANCE_TEXT_REGS = ADVANCE_TEXT.regs
+BUTTON_AB = Fixture("boot-deck-machine-button-ab-entry")
+BUTTON_AB_REGS = BUTTON_AB.regs
+YES_NO = Fixture("boot-deck-machine-yes-no-entry")
+YES_NO_REGS = YES_NO.regs
 
 
 
@@ -537,3 +543,15 @@ def scroll_text_fixture(vram: bool = True, bank: int | None = None, **changes: b
 
 def title_orb_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return TITLE_ORB.case(vram=vram, bank=bank, **changes)
+
+
+def advance_text_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return ADVANCE_TEXT.case(vram=vram, bank=bank, **changes)
+
+
+def button_ab_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return BUTTON_AB.case(vram=vram, bank=bank, **changes)
+
+
+def yes_no_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return YES_NO.case(vram=vram, bank=bank, **changes)

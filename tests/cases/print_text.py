@@ -1,4 +1,5 @@
-from tests.cases._fixtures import SCROLL_TEXT_REGS, scroll_text_fixture
+from tests.cases._fixtures import (ADVANCE_TEXT_REGS, SCROLL_TEXT_REGS,
+                                   advance_text_fixture, scroll_text_fixture)
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -253,6 +254,7 @@ CASES.update({
         {"keys": 0x01, "vread": {0: {0x9A32: 1}}},
         {"keys": 0x02, "vread": {0: {0x9A32: 1}}},
         dict(POISON, keys=0x01, vread={0: {0x9A32: 1}}),
+        dict(advance_text_fixture(vram=False), **ADVANCE_TEXT_REGS, keys=[0x00, 0x01]),
     ],
     "PrintScrollableText": [
         {"a": 0, "hl": 0, "keys": 0x01,

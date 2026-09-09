@@ -1,4 +1,6 @@
 from tests.cases._fixtures import play_area_b_fixture as _play_area_b_fixture, PLAY_AREA_B_REGS as _PLAY_AREA_B_REGS
+from tests.cases._fixtures import BUTTON_AB_REGS as _BUTTON_AB_REGS, button_ab_fixture as _button_ab_fixture
+from tests.cases._fixtures import YES_NO_REGS as _YES_NO_REGS, yes_no_fixture as _yes_no_fixture
 SRC = 0xC100
 CURSOR_STATE = 0xCD0F
 
@@ -227,6 +229,7 @@ CASES.update({
          ysep=0, invis=0x11), "vread": {0: {0x9884: 1}}},
         dict(POISON, keys=0x01, wram=menu_state(counter=0, item=2, xoff=1, yoff=2,
              ysep=0, invis=0x33), vread={0: {0x9841: 1}}),
+        dict(_button_ab_fixture(vram=False), **_BUTTON_AB_REGS, keys=[0x00, 0x01]),
     ],
     "DrawWideTextBox_PrintTextNoDelay_Wait": [
         {"hl": 0, "keys": 0x01,
@@ -499,6 +502,7 @@ CASES["YesOrNoMenu"] = [
          vread=VRAM_READ,
          expect_regs={"a": 0x00, "f": 0x80},
          instruction_budget=2000000, cycle_budget=8000000),
+    dict(_yes_no_fixture(vram=False), **_YES_NO_REGS, keys=[0x00, 0x01]),
 ]
 # <<< factory YesOrNoMenu
 
