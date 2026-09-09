@@ -1,3 +1,4 @@
+from tests.cases._fixtures import peal_of_thunder_fixture as _peal_of_thunder_fixture, PEAL_OF_THUNDER_REGS as _PEAL_OF_THUNDER_REGS
 from tests.cases._fixtures import selfdestruct_fixture as _selfdestruct_fixture, SELFDESTRUCT_REGS as _SELFDESTRUCT_REGS
 from tests.cases._fixtures import ZAPDOS_RECOIL_REGS, zapdos_recoil_fixture
 from tests.cases._fixtures import foul_gas_fixture as _foul_gas_fixture, FOUL_GAS_REGS as _FOUL_GAS_REGS
@@ -7945,8 +7946,13 @@ CASES["Cowardice_PlayerSelectEffect"] = [
 # >>> factory PealOfThunder_RandomlyDamageEffect
 CONTRACT["PealOfThunder_RandomlyDamageEffect"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["PealOfThunder_RandomlyDamageEffect"] = [
-    dict(a=0x01, f=0x20, b=0x00, c=0x00, d=0x00, e=0x14, hl=0x0000, wram={0xFF97: b"\xC2"}, read={}, expect_regs={"a": 0x01, "f": 0x20}),
-    dict(POISON, wram={0xFF97: b"\xC2"}, read={}, expect_regs={"a": 0x01, "f": 0x20}, oracle=False, why="The thunder effect's hardware text wait is independent of poisoned registers; preserve its observed return flags.")
+    # dome-2 693453: Steve's Zapdos enters play; the power rolls a side and a
+    # Pokemon, deals 30 with the thunder animation, then the between-turn KO
+    # check. Both play areas and the RNG are observed.
+    dict(_peal_of_thunder_fixture(vram=False, bank=0x0B), **_PEAL_OF_THUNDER_REGS,
+         read={0xC200: 0x100, 0xC300: 0x100, 0xCACA: 2, 0xCE7E: 1, 0xCC24: 8}),
+    dict(_peal_of_thunder_fixture(vram=False, bank=0x0B), **dict(_PEAL_OF_THUNDER_REGS, **POISON),
+         read={0xC200: 0x100, 0xC300: 0x100, 0xCACA: 2, 0xCE7E: 1, 0xCC24: 8}),
 ]
 # <<< factory PealOfThunder_RandomlyDamageEffect
 
@@ -11140,12 +11146,8 @@ MUTATIONS["Cowardice_PlayerSelectEffect"] = {"source_symbol": "Cowardice_PlayerS
 MUTATIONS["StepIn_BenchCheck"] = {"source_symbol": "StepIn_BenchCheck", "before": "\tif ((flags & (1u << USED_PKMN_POWER_THIS_TURN_F)) != 0u)", "after": "\tif ((flags & (1u << USED_PKMN_POWER_THIS_TURN_F)) == 0u)", "case_ids": ["StepIn_BenchCheck-2"]}
 # <<< factory-mutation StepIn_BenchCheck
 # >>> factory-mutation PealOfThunder_RandomlyDamageEffect
-MUTATIONS["PealOfThunder_RandomlyDamageEffect"] = {"source_symbol": "PealOfThunder_RandomlyDamageEffect", "before": "PealOfThunderRandomlyDamageEffectResult PealOfThunder_RandomlyDamageEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl) { gb_write8(0xFF97u, 0xC3u); return (PealOfThunderRandomlyDamageEffectResult){0u, 0u}; }", "after": "PealOfThunderRandomlyDamageEffectResult PealOfThunder_RandomlyDamageEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl) { gb_write8(0xFF97u, 0xC3u); return (PealOfThunderRandomlyDamageEffectResult){1u, 0u}; }", "case_ids": ["PealOfThunder_RandomlyDamageEffect-0"]}
+MUTATIONS["PealOfThunder_RandomlyDamageEffect"] = {"source_symbol": "PealOfThunder_RandomlyDamageEffect", "before": "\t(void)RandomlyDamagePlayAreaPokemon(30u);", "after": "\t(void)RandomlyDamagePlayAreaPokemon(20u);", "case_ids": ["PealOfThunder_RandomlyDamageEffect-0"]}
 # <<< factory-mutation PealOfThunder_RandomlyDamageEffect
-# >>> factory-completion PealOfThunder_RandomlyDamageEffect
-for _record in SCHEMA2_CASES["PealOfThunder_RandomlyDamageEffect"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x1325, "bank": 11}
-# <<< factory-completion PealOfThunder_RandomlyDamageEffect
 # >>> factory-mutation TrainerCardAsPokemon_PlayerSelectSwitch
 MUTATIONS["TrainerCardAsPokemon_PlayerSelectSwitch"] = {"source_symbol": "TrainerCardAsPokemon_PlayerSelectSwitch", "before": "\thTempPlayAreaLocation_ffa1 = hTempPlayAreaLocation_ff9d;", "after": "\thTempPlayAreaLocation_ffa1 = 0u;", "case_ids": ["TrainerCardAsPokemon_PlayerSelectSwitch-0"]}
 # <<< factory-mutation TrainerCardAsPokemon_PlayerSelectSwitch

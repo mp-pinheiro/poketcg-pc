@@ -1,0 +1,31 @@
+# From dome-1's end (the Dome entrance, sent out after losing to Courtney): the
+# poke sets the chain as if Courtney were beaten and the deck menu had been
+# opened (EVENT_POKEMON_DOME_IN_MENU, EVENT_COURTNEY_STATE=DEFEATED,
+# EVENT_STEVE_STATE=CHALLENGED), so PokemonDomeLoadMap resumes at Steve's
+# challenge (Script_f80b); the question is "Prepare for the duel?" answered no.
+hold UP 16
+idle
+press UP
+idle
+peek
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+shot dome-2-ask
+press RIGHT
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+duel
+dismiss
+peek
+shot dome-2-end

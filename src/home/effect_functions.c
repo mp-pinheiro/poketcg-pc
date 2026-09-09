@@ -11772,7 +11772,13 @@ void Cowardice_PlayerSelectEffect(void)
 /* <<< factory Cowardice_PlayerSelectEffect */
 
 /* >>> factory PealOfThunder_RandomlyDamageEffect */
-PealOfThunderRandomlyDamageEffectResult PealOfThunder_RandomlyDamageEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl) { gb_write8(0xFF97u, 0xC3u); return (PealOfThunderRandomlyDamageEffectResult){0u, 0u}; }
+PealOfThunderRandomlyDamageEffectResult PealOfThunder_RandomlyDamageEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
+{
+	(void)ExchangeRNG(b, c, de, hl);
+	(void)RandomlyDamagePlayAreaPokemon(30u);
+	HandleBetweenTurnKnockOutsResult r = HandleDestinyBondAndBetweenTurnKnockOuts();
+	return (PealOfThunderRandomlyDamageEffectResult){r.a, r.f};
+}
 /* <<< factory PealOfThunder_RandomlyDamageEffect */
 
 /* >>> factory TrainerCardAsPokemon_PlayerSelectSwitch */

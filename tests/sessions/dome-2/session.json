@@ -1,0 +1,55 @@
+{
+  "goal": "From dome-1's end at the Dome entrance: the chain poked past Courtney (in-menu, Courtney defeated, Steve challenged), so the Dome resumes at Steve's challenge; his duel to its end under the pilot's duel policy, then his after-duel script",
+  "name": "dome-2",
+  "ordinals": 715483,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ],
+    "582677": [
+      [
+        54226,
+        24
+      ]
+    ],
+    "603055": [
+      [
+        54226,
+        59
+      ]
+    ],
+    "635103": [
+      [
+        54226,
+        255
+      ]
+    ],
+    "682396": [
+      [
+        54249,
+        88
+      ],
+      [
+        54250,
+        144
+      ]
+    ]
+  },
+  "recorded": "2026-09-09T10:43:55+00:00",
+  "schema": 1
+}

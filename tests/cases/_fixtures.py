@@ -723,3 +723,11 @@ DOME_AFTER_DUEL_REGS = DOME_AFTER_DUEL.regs
 
 def dome_after_duel_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return DOME_AFTER_DUEL.case(vram=vram, bank=bank, **changes)
+
+
+PEAL_OF_THUNDER = Fixture("dome-2-peal-of-thunder-entry")
+PEAL_OF_THUNDER_REGS = PEAL_OF_THUNDER.regs
+
+
+def peal_of_thunder_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return PEAL_OF_THUNDER.case(vram=vram, bank=bank, **changes)
