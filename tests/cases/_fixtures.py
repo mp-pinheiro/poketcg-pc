@@ -675,3 +675,11 @@ GRASS_RETREAT_2_REGS = GRASS_RETREAT_2.regs
 
 def grass_retreat_2_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return GRASS_RETREAT_2.case(vram=vram, bank=bank, **changes)
+
+
+BEGIN_USE_ATTACK = Fixture("psychic-club-begin-use-attack-entry")
+BEGIN_USE_ATTACK_REGS = BEGIN_USE_ATTACK.regs
+
+
+def begin_use_attack_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return BEGIN_USE_ATTACK.case(vram=vram, bank=bank, **changes)

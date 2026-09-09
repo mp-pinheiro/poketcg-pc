@@ -1,3 +1,4 @@
+from tests.cases._fixtures import begin_use_attack_fixture as _begin_use_attack_fixture, BEGIN_USE_ATTACK_REGS as _BEGIN_USE_ATTACK_REGS
 from tests.cases._fixtures import bench_switch_fixture as _bench_switch_fixture
 from tests.cases._fixtures import bench_count_fixture as _bench_count_fixture, BENCH_COUNT_REGS as _BENCH_COUNT_REGS
 from tests.cases._fixtures import fully_powered_fixture as _fully_powered_fixture, FULLY_POWERED_REGS as _FULLY_POWERED_REGS
@@ -4234,6 +4235,7 @@ CONTRACT["OppAction_BeginUseAttack"] = {"compare": ("a", "f", "b", "c", "d", "e"
 CASES["OppAction_BeginUseAttack"] = [
     {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": 0x00, "wram": {hTempCardIndex_ff9f: b"\x00", hTemp_ffa0: b"\x00", hWhoseTurn: b"\x00", wLCDC: b"\x00", wSkipDuelistIsThinkingDelay: b"\x00"}, "read": {wSkipDuelistIsThinkingDelay: 1}, "instruction_budget": 6000000, "cycle_budget": 24000000},
     dict(POISON, keys=0x00, wram={hTempCardIndex_ff9f: b"\x00", hTemp_ffa0: b"\x00", hWhoseTurn: b"\x00", wLCDC: b"\x00", wSkipDuelistIsThinkingDelay: b"\x00"}, read={wSkipDuelistIsThinkingDelay: 1}, instruction_budget=6000000, cycle_budget=24000000),
+    dict(_begin_use_attack_fixture(vram=False, bank=1), **_BEGIN_USE_ATTACK_REGS, read={0xCC24: 0x41, 0xCCA6: 0x1C, 0xCCC2: 1, 0xCCC6: 1, wSkipDuelistIsThinkingDelay: 1}),
 ]
 # <<< factory OppAction_BeginUseAttack
 
@@ -7166,7 +7168,7 @@ MUTATIONS["AttemptRetreat"] = {
 }
 # <<< factory-mutation AttemptRetreat
 # >>> factory-mutation OppAction_BeginUseAttack
-MUTATIONS["OppAction_BeginUseAttack"] = {"source_symbol": "OppAction_BeginUseAttack", "before": "OppActionBeginUseAttackResult OppAction_BeginUseAttack(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tAttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(d, e);\n\ta = copy.a;\n\tc = copy.c;\n\tf = copy.f;\n\thl = copy.hl;\n\td = (uint8_t)(copy.de >> 8);\n\te = (uint8_t)copy.de;\n\tDuelRoutineResult updated = UpdateArenaCardIDsAndClearTwoTurnDuelVars(a, f, b, c, d, e, hl);\n\ta = updated.a;\n\tf = updated.f;\n\tb = updated.b;\n\tc = updated.c;\n\td = updated.d;\n\te = updated.e;\n\thl = updated.hl;\nwSkipDuelistIsThinkingDelay = 0x01u;", "after": "OppActionBeginUseAttackResult OppAction_BeginUseAttack(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tAttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(d, e);\n\ta = copy.a;\n\tc = copy.c;\n\tf = copy.f;\n\thl = copy.hl;\n\td = (uint8_t)(copy.de >> 8);\n\te = (uint8_t)copy.de;\n\tDuelRoutineResult updated = UpdateArenaCardIDsAndClearTwoTurnDuelVars(a, f, b, c, d, e, hl);\n\ta = updated.a;\n\tf = updated.f;\n\tb = updated.b;\n\tc = updated.c;\n\td = updated.d;\n\te = updated.e;\n\thl = updated.hl;\nwSkipDuelistIsThinkingDelay = 0x00u;", "case_ids": ["OppAction_BeginUseAttack-0", "OppAction_BeginUseAttack-1"]}
+MUTATIONS["OppAction_BeginUseAttack"] = {'source_symbol': 'OppAction_BeginUseAttack', 'before': '\td = hTempCardIndex_ff9f;\n\te = hTemp_ffa0;\n\tAttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(d, e);', 'after': '\td = hTempCardIndex_ff9f;\n\te = hTemp_ffa0;\n\tAttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(e, d);', 'case_ids': ['OppAction_BeginUseAttack-2']}
 # <<< factory-mutation OppAction_BeginUseAttack
 # >>> factory-mutation OppAction_TossCoinATimes
 MUTATIONS["OppAction_TossCoinATimes"] = {"source_symbol": "OppAction_TossCoinATimes", "before": "OppAction_TossCoinATimesResult OppAction_TossCoinATimes(void)\n{\n\tSerialRecv8BytesResult recv = SerialRecv8Bytes();\n\tTossCoinATimesResult toss = TossCoinATimes(recv.a, recv.f, recv.b, recv.c, recv.d, recv.e, recv.hl);\n\twSkipDuelistIsThinkingDelay = 1u;", "after": "OppAction_TossCoinATimesResult OppAction_TossCoinATimes(void)\n{\n\tSerialRecv8BytesResult recv = SerialRecv8Bytes();\n\tTossCoinATimesResult toss = TossCoinATimes(recv.a, recv.f, recv.b, recv.c, recv.d, recv.e, recv.hl);\n\twSkipDuelistIsThinkingDelay = 0u;", "case_ids": ["OppAction_TossCoinATimes-0", "OppAction_TossCoinATimes-1"]}
