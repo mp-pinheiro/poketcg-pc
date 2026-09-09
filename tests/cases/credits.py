@@ -6,6 +6,8 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 CONTRACT = {}
 CASES = {}
 
+from tests.cases._fixtures import credits_scroll_table_fixture as _credits_scroll_table_fixture, CREDITS_SCROLL_TABLE_REGS as _CREDITS_SCROLL_TABLE_REGS
+
 # >>> factory Func_1d758
 CONTRACT["Func_1d758"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
 CASES["Func_1d758"] = [
@@ -17,11 +19,15 @@ CASES["Func_1d758"] = [
 # >>> factory Func_1d765
 CONTRACT["Func_1d765"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["Func_1d765"] = [
-    {"wram": {0xD647: b"\x00\x00\x00\x00", 0xD659: b"\x00\x00\x00\x00", 0xD65F: b"\x00\x00\x00\x00", 0xD665: b"\x00", 0xCABB: b"\x00"}, "read": {0xD659: 4, 0xD65F: 4, 0xD665: 1, 0xCABB: 1, 0xFF94: 1, 0xFF95: 1}},
-    dict(POISON, wram={0xD647: b"\x02\x01\x05\x01", 0xD659: b"\xAA\xAA\xAA\xAA", 0xD65F: b"\xAA\xAA\xAA\xAA", 0xD665: b"\xAA", 0xCABB: b"\x00"}, read={0xD659: 4, 0xD65F: 4, 0xD665: 1, 0xCABB: 1, 0xFF94: 1, 0xFF95: 1}),
-    {"wram": {0xD647: b"\x01\x00\x00\x00", 0xD659: b"\xAA\xAA\xAA\xAA", 0xD65F: b"\xAA\xAA\xAA\xAA", 0xD665: b"\x00", 0xCABB: b"\x00"}, "read": {0xD659: 4, 0xD65F: 4, 0xD665: 1, 0xCABB: 1, 0xFF94: 1, 0xFF95: 1}},
-    {"wram": {0xD647: b"\x01\x01\x01\x00", 0xD659: b"\xAA\xAA\xAA\xAA", 0xD65F: b"\xAA\xAA\xAA\xAA", 0xD665: b"\x00", 0xCABB: b"\x00"}, "read": {0xD659: 4, 0xD65F: 4, 0xD665: 1, 0xCABB: 1, 0xFF94: 1, 0xFF95: 1}},
-    {"wram": {0xD647: b"\x03\x02\x05\x02", 0xD659: b"\xAA\xAA\xAA\xAA", 0xD65F: b"\xAA\xAA\xAA\xAA", 0xD665: b"\x00", 0xCABB: b"\x00"}, "read": {0xD659: 4, 0xD65F: 4, 0xD665: 1, 0xCABB: 1, 0xFF94: 1, 0xFF95: 1}},
+    {"wram": {0xD647: b"\x00\x00\x00\x00", 0xD659: b"\x00\x00\x00\x00", 0xD65F: b"\x00\x00\x00\x00", 0xD665: b"\x00", 0xCABB: b"\x00"}, "read": {0xD659: 6, 0xD65F: 6, 0xD665: 1, 0xCABB: 1, 0xFF94: 1, 0xFF95: 1}},
+    dict(POISON, wram={0xD647: b"\x02\x01\x05\x01", 0xD659: b"\xAA\xAA\xAA\xAA", 0xD65F: b"\xAA\xAA\xAA\xAA", 0xD665: b"\xAA", 0xCABB: b"\x00"}, read={0xD659: 6, 0xD65F: 6, 0xD665: 1, 0xCABB: 1, 0xFF94: 1, 0xFF95: 1}),
+    {"wram": {0xD647: b"\x01\x00\x00\x00", 0xD659: b"\xAA\xAA\xAA\xAA", 0xD65F: b"\xAA\xAA\xAA\xAA", 0xD665: b"\x00", 0xCABB: b"\x00"}, "read": {0xD659: 6, 0xD65F: 6, 0xD665: 1, 0xCABB: 1, 0xFF94: 1, 0xFF95: 1}},
+    {"wram": {0xD647: b"\x01\x01\x01\x00", 0xD659: b"\xAA\xAA\xAA\xAA", 0xD65F: b"\xAA\xAA\xAA\xAA", 0xD665: b"\x00", 0xCABB: b"\x00"}, "read": {0xD659: 6, 0xD65F: 6, 0xD665: 1, 0xCABB: 1, 0xFF94: 1, 0xFF95: 1}},
+    {"wram": {0xD647: b"\x03\x02\x05\x02", 0xD659: b"\xAA\xAA\xAA\xAA", 0xD65F: b"\xAA\xAA\xAA\xAA", 0xD665: b"\x00", 0xCABB: b"\x00"}, "read": {0xD659: 6, 0xD65F: 6, 0xD665: 1, 0xCABB: 1, 0xFF94: 1, 0xFF95: 1}},
+    # credits-1 863612: the first credits window (wd647=0, wd648=2, wd649=144,
+    # wd64a=0): one split, and with no second window the list ends after it
+    # (credits.asm:155 `jr z, .asm_1d7e2`), the terminator at wd65f+1.
+    dict(_credits_scroll_table_fixture(vram=False, bank=7), **_CREDITS_SCROLL_TABLE_REGS, read={0xD659: 6, 0xD65F: 6, 0xD665: 1, 0xFF94: 1, 0xFF95: 1, 0xCABB: 1}),
 ]
 # <<< factory Func_1d765
 
@@ -72,7 +78,7 @@ MUTATIONS = {}
 MUTATIONS["Func_1d758"] = {"source_symbol": "Func_1d758", "before": "\tgb_write8(R_STAT, (uint8_t)(gb_read8(R_STAT) & (uint8_t)~STAT_LYC_MASK));", "after": "\tgb_write8(R_STAT, (uint8_t)(gb_read8(R_STAT) | STAT_LYC_MASK));", "case_ids": ["Func_1d758-0", "Func_1d758-1"]}
 # <<< factory-mutation Func_1d758
 # >>> factory-mutation Func_1d765
-MUTATIONS["Func_1d765"] = {"source_symbol": "Func_1d765", "before": "if (gb_read8(wd648_ADDR) == 0x00u)", "after": "if (gb_read8(wd648_ADDR) == 0x01u)", "case_ids": ["Func_1d765-0", "Func_1d765-1", "Func_1d765-2", "Func_1d765-3", "Func_1d765-4"]}
+MUTATIONS["Func_1d765"] = {"source_symbol": "Func_1d765", "before": "\t\t\tif (gb_read8(wd64a_ADDR) == 0x00u)\n\t\t\t\tgoto terminate;\n\t\t\ta = (uint8_t)(gb_read8(wd649_ADDR) - 1u);\n\t\t\tgb_write8(de, a);\n\t\t\tde = (uint16_t)(de + 1u);\n\t\t\tgb_write8(hl, 0x07u);\n\t\t\thl = (uint16_t)(hl + 1u);\n\t\t}", "after": "\t\t\tif (gb_read8(wd64a_ADDR) != 0x00u) {\n\t\t\ta = (uint8_t)(gb_read8(wd649_ADDR) - 1u);\n\t\t\tgb_write8(de, a);\n\t\t\tde = (uint16_t)(de + 1u);\n\t\t\tgb_write8(hl, 0x07u);\n\t\t\thl = (uint16_t)(hl + 1u);\n\t\t\t}\n\t\t}", "case_ids": ["Func_1d765-5"]}
 # <<< factory-mutation Func_1d765
 # >>> factory-mutation Func_1d7ee
 MUTATIONS["Func_1d7ee"] = {"source_symbol": "Func_1d7ee", "before": "FillRectangle(0x00u, 20u, 18u, 0x0020u, 0x0000u);", "after": "FillRectangle(0x01u, 20u, 18u, 0x0020u, 0x0000u);", "case_ids": ["Func_1d7ee-0", "Func_1d7ee-1"]}

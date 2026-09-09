@@ -779,3 +779,11 @@ ARTICUNO_SCORING_REGS = ARTICUNO_SCORING.regs
 
 def articuno_scoring_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return ARTICUNO_SCORING.case(vram=vram, bank=bank, **changes)
+
+
+CREDITS_SCROLL_TABLE = Fixture("credits-1-scroll-table-entry")
+CREDITS_SCROLL_TABLE_REGS = CREDITS_SCROLL_TABLE.regs
+
+
+def credits_scroll_table_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return CREDITS_SCROLL_TABLE.case(vram=vram, bank=bank, **changes)

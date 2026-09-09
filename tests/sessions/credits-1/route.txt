@@ -1,0 +1,104 @@
+# From dome-5's end (the Dome entrance, sent out after losing to Ronald): the
+# poke sets the ending state (EVENT_HALL_OF_HONOR_DOORS_OPEN, the Dome and all
+# five duelists DEFEATED, EVENT_CHALLENGED_RONALD) and the Hall of Honor door's
+# map event (wOWMapEvents+1), which the Dome applies when Rod's text box closes.
+# Into the Dome, north to Rod's "not the way" text, around the table to the
+# top door, into the Hall of Honor, and A on the Legendary Cards: the four cards
+# are received, the screen flashes, the game saves, and PlayCreditsSequence
+# starts; the recording holds fifteen seconds of the credits.
+hold UP 16
+idle
+press UP
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+peek
+hold UP 80
+idle
+press A
+idle
+press A
+idle
+hold UP 16
+idle
+hold LEFT 32
+idle
+hold UP 80
+idle
+hold RIGHT 32
+idle
+hold UP 64
+idle
+hold UP 24
+idle
+peek
+hold UP 48
+idle
+press UP
+idle
+shot credits-plate
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+wait 900
+shot credits-1-end

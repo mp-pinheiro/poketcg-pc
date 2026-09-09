@@ -98,13 +98,15 @@ uint8_t Func_1d765(void)
 			gb_write8(hl, 0xA7u);
 			hl = (uint16_t)(hl + 1u);
 
-			if (gb_read8(wd64a_ADDR) != 0x00u) {
-				a = (uint8_t)(gb_read8(wd649_ADDR) - 1u);
-				gb_write8(de, a);
-				de = (uint16_t)(de + 1u);
-				gb_write8(hl, 0x07u);
-				hl = (uint16_t)(hl + 1u);
-			}
+			/* credits.asm:196-198 `or a / jr z, .asm_1d7e2`: with no
+			 * second window the list ends here, before .asm_1d7d4. */
+			if (gb_read8(wd64a_ADDR) == 0x00u)
+				goto terminate;
+			a = (uint8_t)(gb_read8(wd649_ADDR) - 1u);
+			gb_write8(de, a);
+			de = (uint16_t)(de + 1u);
+			gb_write8(hl, 0x07u);
+			hl = (uint16_t)(hl + 1u);
 		}
 
 		c = (uint8_t)(gb_read8(wd649_ADDR) - 1u);
@@ -115,6 +117,7 @@ uint8_t Func_1d765(void)
 		hl = (uint16_t)(hl + 1u);
 	}
 
+terminate:
 	gb_write8(de, 0xFFu);
 	wd665 = 0x01u;
 	return 0x01u;
