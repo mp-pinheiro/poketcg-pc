@@ -42,6 +42,50 @@ def load_modules(only: str | None = None) -> list[tuple[Path, object]]:
         result.append((path, module))
     return result
 
+MARKER = re.compile(r"^# (>>>|<<<) (factory(?:-mutation|-completion|-cases-statics)?) (\w+)[ \t]*$")
+C_BLOCK = re.compile(r"^/\* >>> factory (\w+) \*/$", re.M)
+
+
+def marker_faults(path: Path) -> list[str]:
+    """Every `# >>> kind fn` closed by its own `# <<< kind fn` before the next
+    opener: a whole-file copy from a stale workspace erases sibling blocks and
+    leaves exactly these orphans behind."""
+    faults = []
+    open_block = None
+    for number, line in enumerate(path.read_text().splitlines(), 1):
+        match = MARKER.match(line)
+        if match is None:
+            continue
+        side, kind, fn = match.groups()
+        if side == ">>>":
+            if open_block is not None:
+                faults.append(f"{open_block[0]} {open_block[1]} opened at line {open_block[2]} is never closed")
+            open_block = (kind, fn, number)
+        elif open_block is None or (kind, fn) != open_block[:2]:
+            faults.append(f"line {number}: `# <<< {kind} {fn}` closes "
+                          f"{'nothing' if open_block is None else f'{open_block[0]} {open_block[1]}'}")
+            open_block = None
+        else:
+            open_block = None
+    if open_block is not None:
+        faults.append(f"{open_block[0]} {open_block[1]} opened at line {open_block[2]} is never closed")
+    return faults
+
+
+def uncased_routines(modules: list[tuple[Path, object]]) -> list[tuple[str, str]]:
+    """Routines with a factory C body and no case in their basename's module
+    nor an exclusion: the oracle never runs them, so a lost block is silent."""
+    cased: set[str] = set()
+    for _path, module in modules:
+        cased.update(getattr(module, "SCHEMA2_CASES", {}) or getattr(module, "CASES", {}))
+    excluded = {fn for entries in EXCLUSIONS.values() if isinstance(entries, dict) for fn in entries}
+    missing = []
+    for source in sorted((ROOT / "src/home").glob("*.c")):
+        for fn in C_BLOCK.findall(source.read_text()):
+            if fn != "statics" and fn not in cased and fn not in excluded:
+                missing.append((source.name, fn))
+    return missing
+
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -93,6 +137,14 @@ def main() -> int:
             if args.stage == "release" and exclusion["kind"] == "dependency-pending":
                 print(f"EXCLUSION dependency-pending blocks release {basename}:{fn}")
                 failures += 1
+    for path in sorted((ROOT / "tests/cases").glob("*.py")):
+        for fault in marker_faults(path):
+            print(f"MARKERS {path.name}: {fault}")
+            failures += 1
+    if args.only is None:
+        for source, fn in uncased_routines(all_modules):
+            print(f"UNCASED {source}: {fn} has a factory body and no case")
+            failures += 1
     for path, module in modules:
         if not hasattr(module, "SCHEMA2_CASES") and getattr(module, "CASES", {}):
             print(f"MIGRATION_PENDING {path}: legacy CASES has no SCHEMA2_CASES")

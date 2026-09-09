@@ -17,12 +17,12 @@ EVIDENCE = frozenset({
     "native-stress",
     "dependency-blocked",
 })
-COMPLETIONS = frozenset({"return", "pre-ret", "event"})
+COMPLETIONS = frozenset({"return", "pre-ret", "event", "entry"})
 
 _CASE_KEYS = frozenset({
     "id", "hardware", "mapper", "registers", "bus", "seeds", "state", "snapshot",
     "setup", "input_events", "instruction_budget", "cycle_budget", "completion",
-    "evidence", "reason", "stack", "entry_sp", "post_call_byte", "ir_peer",
+    "evidence", "reason", "stack", "entry_sp", "post_call_byte", "ir_peer", "compare",
 })
 
 _MAPPER_KEYS = frozenset({
@@ -257,24 +257,30 @@ def validate_case(case: Mapping[str, Any], *, case_id: str | None = None) -> Map
         _integer(case["post_call_byte"], "case.post_call_byte", maximum=0xFF)
     if "ir_peer" in case and not isinstance(case["ir_peer"], bool):
         _fail("case.ir_peer", "must be a boolean")
+    if "compare" in case:
+        if not isinstance(case["compare"], (list, tuple)) or any(name not in _REGISTER_NAMES for name in case["compare"]):
+            _fail("case.compare", "must list register names")
     _integer(case.get("instruction_budget"), "case.instruction_budget", minimum=1)
     _integer(case.get("cycle_budget"), "case.cycle_budget", minimum=1)
 
     completion = _mapping(case.get("completion"), "case.completion")
     mode = completion.get("mode")
     if mode not in COMPLETIONS:
-        _fail("case.completion.mode", "must be one of return, pre-ret, event")
+        _fail("case.completion.mode", "must be one of return, pre-ret, event, entry")
     allowed = (
         {"mode", "pc", "bank"} if mode == "pre-ret"
+        else {"mode", "pc", "bank", "routine"} if mode == "entry"
         else {"mode", "predicate"} if mode == "event"
         else {"mode"}
     )
     _check_unknown(completion, frozenset(allowed), "case.completion")
-    if mode == "pre-ret":
+    if mode in ("pre-ret", "entry"):
         _integer(completion.get("pc"), "case.completion.pc", maximum=0xFFFF)
         if "bank" in completion:
             _integer(completion["bank"], "case.completion.bank", maximum=0xFFFF)
-    elif mode == "event" and (not isinstance(completion.get("predicate"), str) or not completion["predicate"].strip()):
+    if mode == "entry" and (not isinstance(completion.get("routine"), str) or not completion["routine"].strip()):
+        _fail("case.completion.routine", "must be a non-empty string")
+    if mode == "event" and (not isinstance(completion.get("predicate"), str) or not completion["predicate"].strip()):
         _fail("case.completion.predicate", "must be a non-empty string")
     evidence = case.get("evidence")
     if evidence not in EVIDENCE:
