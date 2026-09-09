@@ -170,6 +170,9 @@
   "dome-5": {
     "confirmed_ordinal": 854293
   },
+  "dome-explore": {
+    "confirmed_ordinal": 856837
+  },
   "fighting-club": {
     "confirmed_ordinal": 108594
   },
@@ -184,6 +187,9 @@
   },
   "grass-club": {
     "confirmed_ordinal": 580415
+  },
+  "hall-explore": {
+    "confirmed_ordinal": 712809
   },
   "isaac-duel": {
     "confirmed_ordinal": 410870

@@ -1,0 +1,39 @@
+{
+  "goal": "from the Challenge Hall: the coverage search's deepest new-code path (explore.py --seed-session challenge-hall, +38 routines)",
+  "name": "hall-explore",
+  "ordinals": 712809,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ],
+    "582677": [
+      [
+        54226,
+        24
+      ]
+    ],
+    "603055": [
+      [
+        54226,
+        59
+      ]
+    ]
+  },
+  "recorded": "2026-09-09T22:18:35+00:00",
+  "schema": 1
+}
