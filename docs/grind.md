@@ -291,7 +291,13 @@ Read the rows in this order:
   lead: `capture` the entry, build the fixture case, port from the asm.
 - `registers` rows are exit registers no caller may read (a screen routine's
   leftovers threaded out of an effect). Real, low priority: the session loop
-  never reports them because WRAM is identical.
+  never reports them because WRAM is identical. One shape inside this class is
+  not portable at all: a routine whose tail is `FillRectangle` exits with
+  `add sp, $24`'s flags (`tiles.asm:40`), whose H and C come from the stack
+  pointer's own low byte, so the byte encodes the call depth rather than
+  anything the routine computed (`ApplyBGP6OrSGB3ToCardImage` on its CGB path:
+  the reference leaves `f=$20`, and its two DMG cases pass). Leave the row;
+  widening the C body cannot reach it without modelling SP.
 - `frames` rows looped on DoFrame: the PyBoy lane skips the halt and runs its
   own VBlank service in place of the ISR, so such a routine counts frames,
   advances the RNG and animates sprites unlike the probe, and every
