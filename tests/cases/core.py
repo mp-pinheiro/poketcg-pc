@@ -1,4 +1,6 @@
 from tests.cases._fixtures import ai_power_effect_fixture as _ai_power_effect_fixture, AI_POWER_EFFECT_REGS as _AI_POWER_EFFECT_REGS
+from tests.cases._fixtures import damage_number_chars_fixture as _damage_number_chars_fixture, DAMAGE_NUMBER_CHARS_REGS as _DAMAGE_NUMBER_CHARS_REGS
+from tests.cases._fixtures import digit_char_fixture as _digit_char_fixture, DIGIT_CHAR_REGS as _DIGIT_CHAR_REGS
 from tests.cases._fixtures import begin_use_attack_fixture as _begin_use_attack_fixture, BEGIN_USE_ATTACK_REGS as _BEGIN_USE_ATTACK_REGS
 from tests.cases._fixtures import bench_switch_fixture as _bench_switch_fixture
 from tests.cases._fixtures import bench_count_fixture as _bench_count_fixture, BENCH_COUNT_REGS as _BENCH_COUNT_REGS
@@ -846,8 +848,24 @@ CASES["GetDamageNumberChars"] = [
 	{"wram": {wDuelAnimDamage: b"\x01\x00", wDecimalChars: b"\xAA\xAA\xAA"}, "read": {wDecimalChars: 3}},
 	{"wram": {wDuelAnimDamage: b"\x2C\x01", wDecimalChars: b"\xAA\xAA\xAA"}, "read": {wDecimalChars: 3}},
 	dict(POISON, wram={wDuelAnimDamage: b"\xFF\x00", wDecimalChars: b"\xAA\xAA\xAA"}, read={wDecimalChars: 3}),
+	dict(_damage_number_chars_fixture(vram=False), **_DAMAGE_NUMBER_CHARS_REGS, read={wDecimalChars: 3}),
 ]
 # <<< factory GetDamageNumberChars
+
+# >>> factory GetDamageNumberChars.ConvertDigitToCharTile
+CONTRACT["GetDamageNumberChars.ConvertDigitToCharTile"] = {"compare": ("a", "f", "d", "e", "hl"), "preserve": ()}
+CASES["GetDamageNumberChars.ConvertDigitToCharTile"] = [
+    {"b": 0xFF, "c": 0x9C, "d": (wDecimalChars >> 8) & 0xFF, "e": wDecimalChars & 0xFF, "hl": 0x0000,
+     "wram": {wDecimalChars: b"\xAA\xAA\xAA"}, "read": {wDecimalChars: 3}},
+    {"b": 0xFF, "c": 0x9C, "d": (wDecimalChars >> 8) & 0xFF, "e": wDecimalChars & 0xFF, "hl": 0x012C,
+     "wram": {wDecimalChars: b"\xAA\xAA\xAA"}, "read": {wDecimalChars: 3}},
+    {"b": 0xFF, "c": 0xF6, "d": (wDecimalChars >> 8) & 0xFF, "e": (wDecimalChars & 0xFF) + 1, "hl": 0x004B,
+     "wram": {wDecimalChars: b"\xAA\xAA\xAA"}, "read": {wDecimalChars: 3}},
+    dict(POISON, b=0xFF, c=0xF6, d=(wDecimalChars >> 8) & 0xFF, e=(wDecimalChars & 0xFF) + 1, hl=0x0009,
+         wram={wDecimalChars: b"\xAA\xAA\xAA"}, read={wDecimalChars: 3}),
+    dict(_digit_char_fixture(vram=False), **_DIGIT_CHAR_REGS, read={wDecimalChars: 3}),
+]
+# <<< factory GetDamageNumberChars.ConvertDigitToCharTile
 
 # >>> factory CardPageSwitch_PokemonAttack2Page2
 CONTRACT["CardPageSwitch_PokemonAttack2Page2"] = {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
@@ -6101,6 +6119,7 @@ MUTATIONS["CheckIfOpponentHasBossDeckID"] = {"source_symbol": "CheckIfOpponentHa
 MUTATIONS["RaiseAIScoreToAllMatchingIDsInBench"] = {"source_symbol": "RaiseAIScoreToAllMatchingIDsInBench", "before": "bench.hl = (uint16_t)(bench.hl + 1u);", "after": "bench.hl = (uint16_t)(bench.hl + 2u);", "case_ids": ["RaiseAIScoreToAllMatchingIDsInBench-0", "RaiseAIScoreToAllMatchingIDsInBench-1", "RaiseAIScoreToAllMatchingIDsInBench-2"]}
 # <<< factory-mutation RaiseAIScoreToAllMatchingIDsInBench
 # >>> factory-mutation GetDamageNumberChars
+MUTATIONS["GetDamageNumberChars.ConvertDigitToCharTile"] = {"source_symbol": "GetDamageNumberChars_ConvertDigitToCharTile", "before": "\treturn (DamageDigitResult){new_hi, f, de, (uint16_t)(((uint16_t)new_hi << 8) | new_lo)};", "after": "\treturn (DamageDigitResult){new_hi, f, de, value};", "case_ids": ["GetDamageNumberChars.ConvertDigitToCharTile-4"]}
 MUTATIONS["GetDamageNumberChars"] = {
 	"source_symbol": "GetDamageNumberChars",
 	"before": "digit = (uint8_t)(digit + 1u);",

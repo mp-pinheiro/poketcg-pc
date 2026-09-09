@@ -11,6 +11,7 @@
 #define HP_BAR_LENGTH 12u
 #define SYM_HP_OK 0x16u
 #define SYM_HP_NOK 0x17u
+#define SPRITE_ANIM_79 0x4Fu
 #include "home/duel.h"
 
 /* core.asm:55-58 records the GB stack pointer at StartDuel's entry so
@@ -2939,30 +2940,52 @@ uint16_t RaiseAIScoreToAllMatchingIDsInBench(uint8_t a)
 }
 /* <<< factory RaiseAIScoreToAllMatchingIDsInBench */
 
+/* >>> factory GetDamageNumberChars.ConvertDigitToCharTile */
+DamageDigitResult GetDamageNumberChars_ConvertDigitToCharTile(uint16_t bc, uint16_t de, uint16_t hl)
+{
+	uint8_t chr = SPRITE_ANIM_79 - 1u;
+	uint16_t value = hl;
+	for (;;) {
+		chr = (uint8_t)(chr + 1u);
+		uint32_t sum = (uint32_t)value + (uint32_t)bc;
+		value = (uint16_t)sum;
+		if (!(sum & 0x10000u))
+			break;
+	}
+	gb_write8(de, chr);
+	de = (uint16_t)(de + 1u);
+
+	uint8_t c = (uint8_t)bc;
+	uint8_t b = (uint8_t)(bc >> 8);
+	uint8_t lo = (uint8_t)value;
+	uint8_t hi = (uint8_t)(value >> 8);
+	uint8_t borrow = (uint8_t)(lo < c);
+	uint8_t new_lo = (uint8_t)(lo - c);
+	uint8_t new_hi = (uint8_t)(hi - b - borrow);
+	uint8_t f = (uint8_t)(0x40u
+		| (new_hi == 0u ? 0x80u : 0u)
+		| (((hi & 0x0Fu) < ((b & 0x0Fu) + borrow)) ? 0x20u : 0u)
+		| (((uint16_t)hi < (uint16_t)b + borrow) ? 0x10u : 0u));
+	return (DamageDigitResult){new_hi, f, de, (uint16_t)(((uint16_t)new_hi << 8) | new_lo)};
+}
+/* <<< factory GetDamageNumberChars.ConvertDigitToCharTile */
+
 /* >>> factory GetDamageNumberChars */
 void GetDamageNumberChars(void)
 {
-	uint16_t value = (uint16_t)(wDuelAnimDamage |
+	uint16_t hl = (uint16_t)(wDuelAnimDamage |
 		((uint16_t)gb_read8((uint16_t)(wDuelAnimDamage_ADDR + 1u)) << 8));
-	uint16_t divisors[2] = {100u, 10u};
-	uint16_t dst = wDecimalChars_ADDR;
-	for (uint8_t i = 0; i < 2u; i++) {
-		uint8_t digit = 0x4Eu;
-		for (;;) {
-			digit = (uint8_t)(digit + 1u);
-			uint16_t next = (uint16_t)(value - divisors[i]);
-			if (next > value)
-				break;
-			value = next;
-		}
-		gb_write8(dst, digit);
-		dst = (uint16_t)(dst + 1u);
-	}
-	gb_write8(dst, (uint8_t)(value + 0x4Fu));
-	for (uint8_t i = 0; i < 2u; i++) {
-		if (gb_read8((uint16_t)(wDecimalChars_ADDR + i)) != 0x4Fu)
+	DamageDigitResult digit = GetDamageNumberChars_ConvertDigitToCharTile(
+		(uint16_t)-100, wDecimalChars_ADDR, hl);
+	digit = GetDamageNumberChars_ConvertDigitToCharTile((uint16_t)-10, digit.de, digit.hl);
+	gb_write8(digit.de, (uint8_t)((uint8_t)digit.hl + SPRITE_ANIM_79));
+
+	uint16_t scan = wDecimalChars_ADDR;
+	for (uint8_t count = 2u; count != 0u; count--) {
+		if (gb_read8(scan) != SPRITE_ANIM_79)
 			break;
-		gb_write8((uint16_t)(wDecimalChars_ADDR + i), 0u);
+		gb_write8(scan, 0x00u);
+		scan = (uint16_t)(scan + 1u);
 	}
 }
 /* <<< factory GetDamageNumberChars */

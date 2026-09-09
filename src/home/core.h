@@ -271,6 +271,10 @@ CheckIfOpponentHasBossDeckIDResult CheckIfOpponentHasBossDeckID(uint8_t a);
 /* >>> factory RaiseAIScoreToAllMatchingIDsInBench */
 uint16_t RaiseAIScoreToAllMatchingIDsInBench(uint8_t a);
 /* <<< factory RaiseAIScoreToAllMatchingIDsInBench */
+/* >>> factory GetDamageNumberChars.ConvertDigitToCharTile */
+typedef struct { uint8_t a; uint8_t f; uint16_t de; uint16_t hl; } DamageDigitResult;
+DamageDigitResult GetDamageNumberChars_ConvertDigitToCharTile(uint16_t bc, uint16_t de, uint16_t hl);
+/* <<< factory GetDamageNumberChars.ConvertDigitToCharTile */
 /* >>> factory GetDamageNumberChars */
 void GetDamageNumberChars(void);
 /* <<< factory GetDamageNumberChars */

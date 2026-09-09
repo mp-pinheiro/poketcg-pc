@@ -1,0 +1,9 @@
+{
+  "fn": "GetDamageNumberChars.ConvertDigitToCharTile",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetDamageNumberChars.ConvertDigitToCharTile\", \"registers\": {\"a\": 0, \"b\": 255, \"c\": 156, \"d\": 212, \"e\": 181, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54452\": \"4faaaa\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetDamageNumberChars.ConvertDigitToCharTile\", \"mismatches\": {\"hl\": [0, 65436]}}\n",
+  "restored": "{\"fn\": \"GetDamageNumberChars.ConvertDigitToCharTile\", \"registers\": {\"a\": 0, \"b\": 255, \"c\": 156, \"d\": 212, \"e\": 181, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54452\": \"4faaaa\"}}, \"status\": \"PASS\"}\n"
+}

@@ -967,3 +967,19 @@ QUEUED_ANIMATIONS_REGS = QUEUED_ANIMATIONS.regs
 
 def queued_animations_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return QUEUED_ANIMATIONS.case(vram=vram, bank=bank, **changes)
+
+
+DAMAGE_NUMBER_CHARS = Fixture("water-master-damage-number-chars-entry")
+DAMAGE_NUMBER_CHARS_REGS = DAMAGE_NUMBER_CHARS.regs
+
+
+def damage_number_chars_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return DAMAGE_NUMBER_CHARS.case(vram=vram, bank=bank, **changes)
+
+
+DIGIT_CHAR = Fixture("water-master-digit-char-entry")
+DIGIT_CHAR_REGS = DIGIT_CHAR.regs
+
+
+def digit_char_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return DIGIT_CHAR.case(vram=vram, bank=bank, **changes)

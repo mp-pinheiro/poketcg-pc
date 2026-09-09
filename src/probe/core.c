@@ -255,6 +255,19 @@ static void adapt_GetAnimCoordsAndFlags(ProbeState *s)
 /* <<< factory GetAnimCoordsAndFlags */
 
 
+/* >>> factory GetDamageNumberChars.ConvertDigitToCharTile */
+static void adapt_GetDamageNumberChars_ConvertDigitToCharTile(ProbeState *s)
+{
+	DamageDigitResult r = GetDamageNumberChars_ConvertDigitToCharTile(
+		(uint16_t)(((uint16_t)s->b << 8) | s->c), (uint16_t)(((uint16_t)s->d << 8) | s->e), s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+	s->hl = r.hl;
+}
+/* <<< factory GetDamageNumberChars.ConvertDigitToCharTile */
+
 /* >>> factory PlayBufferedDuelAnimations */
 static void adapt_PlayBufferedDuelAnimations(ProbeState *s)
 {
@@ -3209,6 +3222,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CalculateParticularAttachedEnergyNeeded", adapt_CalculateParticularAttachedEnergyNeeded },
 	{ "GetAnimCoordsAndFlags", adapt_GetAnimCoordsAndFlags },
 	{ "PlayBufferedDuelAnimations", adapt_PlayBufferedDuelAnimations },
+	{ "GetDamageNumberChars.ConvertDigitToCharTile", adapt_GetDamageNumberChars_ConvertDigitToCharTile },
 	{ "SwitchCardPage", adapt_SwitchCardPage },
 	{ "CardPageSwitch_00", adapt_CardPageSwitch_00 },
 	{ "CheckForEvolutionInDeck", adapt_CheckForEvolutionInDeck },
