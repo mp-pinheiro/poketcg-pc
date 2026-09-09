@@ -1888,16 +1888,18 @@ CASES["DuelCheckMenu_YourPlayArea"] = [
 # >>> factory OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea
 CONTRACT["OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea"] = {"compare": (), "preserve": ()}
 CASES["OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea"] = [
-    {"wram": {0xFF97: b"\xC2"}},
-    dict(POISON, wram={0xFF97: b"\xC2"}),
+    # The turn holder's play area screen until B; hWhoseTurn survives.
+    {"keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00"}, "read": {0xFF97: 1, 0xCBC9: 1, 0xCAC2: 1}, "expect": {0xFF97: b"\xC2"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00"}, read={0xFF97: 1, 0xCBC9: 1, 0xCAC2: 1}, expect={0xFF97: b"\xC2"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea
 
 # >>> factory OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea
 CONTRACT["OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea"] = {"compare": (), "preserve": ()}
 CASES["OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea"] = [
-    {"wram": {0xFF97: b"\xC2"}},
-    dict(POISON, wram={0xFF97: b"\xC2"}),
+    # The opponent's play area screen until B; hWhoseTurn survives the swap inside.
+    {"keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC3F0: b"\x00", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x00"}, "read": {0xFF97: 1, 0xCBC9: 1, 0xCAC2: 1}, "expect": {0xFF97: b"\xC2"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], wram={0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC3F0: b"\x00", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x00"}, read={0xFF97: 1, 0xCBC9: 1, 0xCAC2: 1}, expect={0xFF97: b"\xC2"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea
 
@@ -2298,19 +2300,11 @@ for _record in SCHEMA2_CASES["DuelCheckMenu_InPlayArea"]:
 MUTATIONS["DuelCheckMenu_YourPlayArea"] = {"source_symbol": "DuelCheckMenu_YourPlayArea", "before": "void DuelCheckMenu_YourPlayArea(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\twce5e = 0u;", "after": "void DuelCheckMenu_YourPlayArea(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\twce5e = 0x80u;", "case_ids": ["DuelCheckMenu_YourPlayArea-0", "DuelCheckMenu_YourPlayArea-1"]}
 # <<< factory-mutation DuelCheckMenu_YourPlayArea
 # >>> factory-mutation OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea
-MUTATIONS["OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea"] = {"source_symbol": "OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea", "before": "void OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea(void)\n{\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;", "after": "void OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea(void)\n{\n\thWhoseTurn = 0u;\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;", "case_ids": ["OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea-0", "OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea-1"]}
+MUTATIONS["OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea"] = {"source_symbol": "OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea", "before": "\t(void)OpenTurnHolderPlayAreaScreen();", "after": "", "case_ids": ["OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea-0"]}
 # <<< factory-mutation OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea
-# >>> factory-completion OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea
-for _record in SCHEMA2_CASES["OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x238A}
-# <<< factory-completion OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea
 # >>> factory-mutation OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea
-MUTATIONS["OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea"] = {"source_symbol": "OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea", "before": "void OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea(void)\n{\n\thWhoseTurn = 0xC3u;", "after": "void OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea(void)\n{\n\thWhoseTurn = 0xC2u;", "case_ids": ["OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea-0", "OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea-1"]}
+MUTATIONS["OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea"] = {"source_symbol": "OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea", "before": "\tOpenNonTurnHolderPlayAreaScreen();", "after": "", "case_ids": ["OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea-0"]}
 # <<< factory-mutation OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea
-# >>> factory-completion OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea
-for _record in SCHEMA2_CASES["OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x238A}
-# <<< factory-completion OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea
 # >>> factory-mutation DuelCheckMenu_OppPlayArea
 MUTATIONS["DuelCheckMenu_OppPlayArea"] = {"source_symbol": "DuelCheckMenu_OppPlayArea", "before": "void DuelCheckMenu_OppPlayArea(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\tPkmnPowerCountResult clairvoyance = IsClairvoyanceActive();\n\twce5e = (clairvoyance.f & 0x10u) != 0u ? 0u : 0x80u;", "after": "void DuelCheckMenu_OppPlayArea(void)\n{\n\tResetCheckMenuCursorPositionAndBlink();\n\tPkmnPowerCountResult clairvoyance = IsClairvoyanceActive();\n\twce5e = (clairvoyance.f & 0x10u) != 0u ? 0u : 0x81u;", "case_ids": ["DuelCheckMenu_OppPlayArea-0", "DuelCheckMenu_OppPlayArea-1"]}
 # <<< factory-mutation DuelCheckMenu_OppPlayArea

@@ -1,9 +1,9 @@
 {
   "fn": "OpenVariousPlayAreaScreens_FromSelectPresses",
   "case": "tests/cases/core.py",
-  "index": 0,
+  "index": 2,
   "status": "RED",
-  "baseline": "{\"fn\": \"OpenVariousPlayAreaScreens_FromSelectPresses\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 32, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"OpenVariousPlayAreaScreens_FromSelectPresses\", \"mismatches\": {\"f\": [32, 33]}}\n",
-  "restored": "{\"fn\": \"OpenVariousPlayAreaScreens_FromSelectPresses\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 32, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"OpenVariousPlayAreaScreens_FromSelectPresses\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 160, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"49851\": \"00\", \"49864\": \"28\", \"49903\": \"0100\", \"50176\": \"08\", \"51899\": \"80\", \"52180\": \"02\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OpenVariousPlayAreaScreens_FromSelectPresses\", \"mismatches\": {\"f\": [160, 32]}}\n",
+  "restored": "{\"fn\": \"OpenVariousPlayAreaScreens_FromSelectPresses\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 160, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"49851\": \"00\", \"49864\": \"28\", \"49903\": \"0100\", \"50176\": \"08\", \"51899\": \"80\", \"52180\": \"02\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
 }
