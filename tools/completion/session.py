@@ -135,22 +135,11 @@ def card_overreads() -> dict[int, int]:
         if 0x4000 <= pointer < 0x8000 and pointer + PKMN_CARD_DATA_LENGTH > 0x8000:
             result[card] = pointer + PKMN_CARD_DATA_LENGTH - 0x8000
     return result
-# The first four gate `confirmed`; audio is SECTION "WRAM Audio" on its own,
-# reported but not gated: the sound driver runs from the timer ISR, which the
-# lag track schedules around the game's driver calls, but the reference APU
-# registers it writes are hardware the port does not model byte-for-byte.
 REGIONS = ("wram", "hram", "oam", "vram", "audio")
 GATED = 4
 REGION_LENGTHS = {"wram": 0x2000, "hram": 0x80, "oam": 0xA0, "vram": 0x4000, "audio": 0x165}
 REGION_BASES = {"wram": 0xC000, "hram": 0xFF80, "oam": 0xFE00, "vram": 0x8000, "audio": 0xDD80}
 
-# The lag track replays the ROM's own timer and VBlank ISR counts per DoFrame,
-# so the play-time clock and both ISR counters are compared. The sound
-# driver's SECTION "WRAM Audio" ($DD80-$DEE4, wram.asm:2992-3289) is carved
-# out of the gated wram digest and digested as the ungated `audio` region: its
-# ISR *count* per DoFrame is exact, but the port batches those ticks at the
-# frame boundary while the ROM interleaves them with game code, so a sound
-# requested between two ticks starts one update apart. Reported, not gated.
 TIMING_PHASE: dict[str, list[tuple[int, int]]] = {"wram": [(0xDD80 - 0xC000, 0xDEE5 - 0xC000)]}
 # Ledger entries whose justification is the frame axis, compared on this one:
 #   hram $FF8D hDPadRepeat   -- HandleDPadRepeat runs once per anchor on both lanes
@@ -575,10 +564,13 @@ def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"", st
                 offsets_v.append(dv)
                 cursor_time, cursor_value = write_time, written
             dv += unwrap(vblanks - cursor_value, 2 * (time - cursor_time) / 70224)
-        offsets = [
-            min(dt, unwrap(counter - prev[2], (call_time - prev[0]) / TICK_TIME))
-            for call_time, counter in by_interval.get(index, ())
-        ]
+        if index == 0:
+            offsets = [min(dt, counter) for _call_time, counter in by_interval.get(0, ())]
+        else:
+            offsets = [
+                min(dt, unwrap(counter - prev[2], (call_time - prev[0]) / TICK_TIME))
+                for call_time, counter in by_interval.get(index, ())
+            ]
         fields = [max(1, cycles), dt, dv, *offsets]
         if offsets_v:
             fields += ["v", *offsets_v]
@@ -638,7 +630,7 @@ def first_divergence(reference: bytes, native: bytes) -> tuple[int | None, int, 
     for index in range(min(ref_count, nat_count)):
         ref = REFERENCE_RECORD.unpack_from(reference, index * REFERENCE_RECORD.size)
         nat = NATIVE_RECORD.unpack_from(native, index * NATIVE_RECORD.size)
-        if audio_first is None and ref[GATED] != nat[GATED]:
+        if GATED < len(REGIONS) and audio_first is None and ref[GATED] != nat[GATED]:
             audio_first = index + 1
         if ref[:GATED] != nat[:GATED]:
             return index + 1, nat_count, [REGIONS[i] for i in range(GATED) if ref[i] != nat[i]], audio_first
