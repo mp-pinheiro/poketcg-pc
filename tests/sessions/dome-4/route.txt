@@ -1,0 +1,29 @@
+# From dome-3's end (the Dome entrance, sent out after losing to Jack): the
+# poke sets the chain as if the first three masters were beaten and the deck
+# menu had been opened (EVENT_POKEMON_DOME_IN_MENU, COURTNEY, STEVE and JACK
+# DEFEATED, EVENT_ROD_STATE=CHALLENGED), so PokemonDomeLoadMap resumes at
+# Rod's challenge (Script_f80b .ows_f836); "Prepare for the duel?" answered no.
+hold UP 16
+idle
+press UP
+idle
+peek
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+shot dome-4-ask
+press RIGHT
+idle
+press A
+idle
+press A
+idle
+duel
+dismiss
+peek
+shot dome-4-end

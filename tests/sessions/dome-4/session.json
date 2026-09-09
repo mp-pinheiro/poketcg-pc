@@ -1,0 +1,75 @@
+{
+  "goal": "From dome-3's end at the Dome entrance: the chain poked past Jack (in-menu, Courtney, Steve and Jack defeated, Rod challenged), so the Dome resumes at Rod's challenge; his duel to its end under the pilot's duel policy, then his after-duel script",
+  "name": "dome-4",
+  "ordinals": 822940,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ],
+    "582677": [
+      [
+        54226,
+        24
+      ]
+    ],
+    "603055": [
+      [
+        54226,
+        59
+      ]
+    ],
+    "635103": [
+      [
+        54226,
+        255
+      ]
+    ],
+    "682396": [
+      [
+        54249,
+        88
+      ],
+      [
+        54250,
+        144
+      ]
+    ],
+    "715633": [
+      [
+        54249,
+        88
+      ],
+      [
+        54250,
+        164
+      ]
+    ],
+    "759317": [
+      [
+        54249,
+        88
+      ],
+      [
+        54250,
+        169
+      ]
+    ]
+  },
+  "recorded": "2026-09-09T12:02:04+00:00",
+  "schema": 1
+}
