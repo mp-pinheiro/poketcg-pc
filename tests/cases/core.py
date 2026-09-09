@@ -5,6 +5,7 @@ from tests.cases._fixtures import bench_count_fixture as _bench_count_fixture, B
 from tests.cases._fixtures import bench_half_hp_fixture as _bench_half_hp_fixture, BENCH_HALF_HP_REGS as _BENCH_HALF_HP_REGS
 from tests.cases._fixtures import special_attack_params_fixture as _special_attack_params_fixture, SPECIAL_ATTACK_PARAMS_REGS as _SPECIAL_ATTACK_PARAMS_REGS
 from tests.cases._fixtures import evolution_in_list_fixture as _evolution_in_list_fixture, EVOLUTION_IN_LIST_REGS as _EVOLUTION_IN_LIST_REGS
+from tests.cases._fixtures import card_can_be_played_fixture as _card_can_be_played_fixture, CARD_CAN_BE_PLAYED_REGS as _CARD_CAN_BE_PLAYED_REGS
 from tests.cases._fixtures import fully_powered_fixture as _fully_powered_fixture, FULLY_POWERED_REGS as _FULLY_POWERED_REGS
 from tests.cases._fixtures import ai_trainer_phase5_fixture as _ai_trainer_phase5_fixture, AI_TRAINER_PHASE5_REGS as _AI_TRAINER_PHASE5_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_defending_ko_fixture as _ai_defending_ko_fixture, AI_DEFENDING_KO_REGS as _AI_DEFENDING_KO_REGS, power_screen_fixture as _power_screen_fixture, POWER_SCREEN_REGS as _POWER_SCREEN_REGS
@@ -3445,6 +3446,9 @@ CASES["FlushAllPalettesOrSendPal23Packet"] = [
 # >>> factory CheckIfCardCanBePlayed
 CONTRACT["CheckIfCardCanBePlayed"] = {"compare": ("a", "f", "d"), "preserve": ()}
 CASES["CheckIfCardCanBePlayed"] = [
+    # water-club 116111: a basic Pokemon with one Pokemon in play: `cp / ccf`
+    # leaves no N or H, carry clear.
+    dict(_card_can_be_played_fixture(vram=False, bank=5), **_CARD_CAN_BE_PLAYED_REGS, read={0xFF9F: 1, 0xCC24: 1}),
     {"a": 0x00, "wram": {0xCC0B: b"\x01", 0xCC24: b"\x08", 0xCC2D: b"\x00"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, wram={0xCC0B: b"\x01", 0xCC24: b"\x08", 0xCC2D: b"\x00"}, instruction_budget=2000000, cycle_budget=8000000),
 ]
@@ -6849,7 +6853,7 @@ MUTATIONS["FlushAllPalettesOrSendPal23Packet"] = {
 }
 # <<< factory-mutation FlushAllPalettesOrSendPal23Packet
 # >>> factory-mutation CheckIfCardCanBePlayed
-MUTATIONS["CheckIfCardCanBePlayed"] = {"source_symbol": "CheckIfCardCanBePlayed", "before": "\tuint8_t f = (energy == 0u) ? 0x80u : 0x10u;\n\treturn (CheckIfCardCanBePlayedResult){energy, f, d};", "after": "\tuint8_t f = (energy == 0u) ? 0x80u : 0x00u;\n\treturn (CheckIfCardCanBePlayedResult){energy, f, d};", "case_ids": ["CheckIfCardCanBePlayed-0", "CheckIfCardCanBePlayed-1"]}
+MUTATIONS["CheckIfCardCanBePlayed"] = {"source_symbol": "CheckIfCardCanBePlayed", "before": "\t\t\t                      (count.a < MAX_PLAY_AREA_POKEMON ? 0u : 0x10u));", "after": "\t\t\t                      (count.a < MAX_PLAY_AREA_POKEMON ? 0u : 0x10u) | 0x40u);", "case_ids": ["CheckIfCardCanBePlayed-0"]}
 # <<< factory-mutation CheckIfCardCanBePlayed
 # >>> factory-mutation OppAction_6b15
 MUTATIONS["OppAction_6b15"] = {

@@ -6038,11 +6038,10 @@ CheckIfCardCanBePlayedResult CheckIfCardCanBePlayed(uint8_t a, uint8_t d)
 	if (type < TYPE_ENERGY) {
 		if (wLoadedCard1Stage == 0u) {
 			DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
-			uint8_t f = 0x40u;
-			if (count.a == MAX_PLAY_AREA_POKEMON) f |= 0x80u;
-			if ((count.a & 0x0Fu) < (MAX_PLAY_AREA_POKEMON & 0x0Fu)) f |= 0x20u;
-			if (count.a < MAX_PLAY_AREA_POKEMON) f |= 0x10u;
-			f ^= 0x10u;
+			/* ai/core.asm:585-587 `cp MAX_PLAY_AREA_POKEMON / ccf`: ccf flips
+			 * the carry and clears N and H; only Z survives the compare. */
+			uint8_t f = (uint8_t)((count.a == MAX_PLAY_AREA_POKEMON ? 0x80u : 0u) |
+			                      (count.a < MAX_PLAY_AREA_POKEMON ? 0u : 0x10u));
 			return (CheckIfCardCanBePlayedResult){count.a, f, d};
 		}
 		PrehistoricPowerResult power = IsPrehistoricPowerActive(0u);

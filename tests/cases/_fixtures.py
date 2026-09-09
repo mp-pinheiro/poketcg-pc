@@ -811,3 +811,11 @@ EVOLUTION_IN_LIST_REGS = EVOLUTION_IN_LIST.regs
 
 def evolution_in_list_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return EVOLUTION_IN_LIST.case(vram=vram, bank=bank, **changes)
+
+
+CARD_CAN_BE_PLAYED = Fixture("water-club-card-can-be-played-entry")
+CARD_CAN_BE_PLAYED_REGS = CARD_CAN_BE_PLAYED.regs
+
+
+def card_can_be_played_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return CARD_CAN_BE_PLAYED.case(vram=vram, bank=bank, **changes)
