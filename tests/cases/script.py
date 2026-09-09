@@ -149,6 +149,7 @@ MUTATIONS = {
         "case_ids": ["GetMapScriptPointer-2", "GetMapScriptPointer-0", "GetMapScriptPointer-1", "GetMapScriptPointer-3", "GetMapScriptPointer-4"],
     },
 }
+# <<< factory RunOverworldScript
 # >>> factory-mutation RunOverworldScript
 MUTATIONS["RunOverworldScript"] = {
     "source_symbol": "RunOverworldScript",

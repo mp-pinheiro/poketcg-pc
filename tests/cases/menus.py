@@ -654,6 +654,14 @@ MUTATIONS["HandleCardListInput"] = {
     "after": "\tHandleCardListInputResult result = {input.a, 0u, input.e, input.f};",
     "case_ids": ["HandleCardListInput-3"],
 }
+# <<< factory-mutation HandleCardListInput
+# >>> factory-mutation YesOrNoMenuWithText_LeftAligned
+MUTATIONS["YesOrNoMenuWithText_LeftAligned"] = {
+    "source_symbol": "YesOrNoMenuWithText_LeftAligned",
+    "before": "\treturn HandleYesOrNoMenu(2u, 16u, b, c);",
+    "after": "\treturn (HandleYesOrNoMenuResult){0u, 0x80u};",
+    "case_ids": ["YesOrNoMenuWithText_LeftAligned-0", "YesOrNoMenuWithText_LeftAligned-1"],
+}
 # <<< factory-mutation YesOrNoMenuWithText_LeftAligned
 # >>> factory-mutation TwoItemHorizontalMenu
 MUTATIONS["TwoItemHorizontalMenu"] = {"source_symbol": "TwoItemHorizontalMenu", "before": "\tEnableLCD();\n\t/* jp target lands inside .refresh_menu, whose own xor $1 flips */\n\t/* wCurMenuItem unconditionally before the wait loop begins. */\n\twCurMenuItem = (uint8_t)(wCurMenuItem ^ 1u);", "after": "\tEnableLCD();\n\t/* jp target lands inside .refresh_menu, whose own xor $1 flips */\n\t/* wCurMenuItem unconditionally before the wait loop begins. */\n", "case_ids": ["TwoItemHorizontalMenu-0", "TwoItemHorizontalMenu-1"]}

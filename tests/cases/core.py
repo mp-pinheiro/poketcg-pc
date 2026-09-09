@@ -1033,6 +1033,7 @@ CASES["PracticeDuel_PlayGoldeen"] = [
     dict(POISON, hl=0x4567, wram={0xCC2B: b"\x53"}),
 ]
 # <<< factory PracticeDuel_PlayGoldeen
+# >>> factory Func_6ba2
 CONTRACT["Func_6ba2"] = {"compare": (), "preserve": ()}
 CASES["Func_6ba2"] = [
     {"hl": 0x0000, "keys": [0x00, 0x01],
@@ -6119,7 +6120,8 @@ MUTATIONS["ValidateSavedDuelDataFromHL"] = {
     "after": "if (valid == 0u)",
     "case_ids": ["ValidateSavedDuelDataFromHL-0", "ValidateSavedDuelDataFromHL-1"],
 }
-# <<< factory-mutation ValidateSavedDuelDataFromHL# >>> factory-mutation ResetDoFrameFunction_Bank1
+# <<< factory-mutation ValidateSavedDuelDataFromHL
+# >>> factory-mutation ResetDoFrameFunction_Bank1
 MUTATIONS["ResetDoFrameFunction_Bank1"] = {
     "source_symbol": "ResetDoFrameFunction_Bank1",
     "before": "gb_write8(wDoFrameFunction_ADDR, 0u);",
@@ -6178,6 +6180,7 @@ MUTATIONS["HandleFailedToContinueDuel"] = {
     "case_ids": ["HandleFailedToContinueDuel-0", "HandleFailedToContinueDuel-1"],
 }
 # <<< factory-mutation HandleFailedToContinueDuel
+# >>> factory-mutation PracticeDuel_PlayGoldeen
 MUTATIONS["PracticeDuel_PlayGoldeen"] = {
     "source_symbol": "PracticeDuel_PlayGoldeen",
     "before": "return (PracticeDuelPlayGoldeenResult){0xC0u};",
@@ -6209,7 +6212,8 @@ MUTATIONS["Func_6ba2"] = {
     "after": "wDuelistType == DUELIST_TYPE_LINK_OPP",
     "case_ids": ["Func_6ba2-0", "Func_6ba2-1"],
 }
-# <<< factory-mutation Func_6ba2# >>> factory-mutation TwoByteNumberToTxSymbol_PadSpace_Bank1
+# <<< factory-mutation Func_6ba2
+# >>> factory-mutation TwoByteNumberToTxSymbol_PadSpace_Bank1
 MUTATIONS["TwoByteNumberToTxSymbol_PadSpace_Bank1"] = {"source_symbol": "TwoByteNumberToTxSymbol_PadSpace_Bank1", "before": "gb_write8((uint16_t)(wStringBuffer_ADDR + i), SYM_SPACE);", "after": "gb_write8((uint16_t)(wStringBuffer_ADDR + i), SYM_FIRE);", "case_ids": ["TwoByteNumberToTxSymbol_PadSpace_Bank1-0", "TwoByteNumberToTxSymbol_PadSpace_Bank1-1", "TwoByteNumberToTxSymbol_PadSpace_Bank1-2"]}
 # <<< factory-mutation TwoByteNumberToTxSymbol_PadSpace_Bank1
 # >>> factory-mutation DrawWideTextBox_WaitForInput_Bank1
@@ -6414,6 +6418,7 @@ MUTATIONS["PrintSortNumberInCardList_CallFromPointer"] = {
     "after": "\tif (target == 0u)\n\t\ttarget = PRINT_SORT_NUMBER_IN_CARD_LIST;",
     "case_ids": ["PrintSortNumberInCardList_CallFromPointer-1"],
 }
+# <<< factory-mutation PrintSortNumberInCardList_CallFromPointer
 # >>> factory CanArenaCardUseNonResidualAttack
 CONTRACT["CanArenaCardUseNonResidualAttack"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["CanArenaCardUseNonResidualAttack"] = [
@@ -6441,6 +6446,7 @@ CASES["PrintDeckAndHandIconsAndNumberOfCards"] = [
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # <<< factory-mutation PrintSortNumberInCardList_CallFromPointer# >>> factory-mutation PracticeDuel_VerifyInitialPlay
+# >>> factory-mutation PracticeDuel_VerifyInitialPlay
 MUTATIONS["PracticeDuel_VerifyInitialPlay"] = {
     "source_symbol": "PracticeDuel_VerifyInitialPlay",
     "before": "\tPrintPracticeDuelDrMasonInstructions(ChooseStaryuPracticeDuelText);\n\treturn (PracticeDuelInitialPlayResult){0x10u};",

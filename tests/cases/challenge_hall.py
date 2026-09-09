@@ -153,6 +153,7 @@ MUTATIONS["ChallengeHallLoadMap"] = {"source_symbol": "ChallengeHallLoadMap", "b
 # <<< factory-mutation ChallengeHallLoadMap
 # >>> factory-mutation Preload_Guide
 MUTATIONS["Preload_Guide"] = {"source_symbol": "Preload_Guide", "before": "if (event != 0u) {", "after": "if (event == 0u) {", "case_ids": ["Preload_Guide-1", "Preload_Guide-2"]}
+# <<< factory-mutation Preload_Guide
 # >>> factory-mutation Preload_ChallengeHallOpponent
 MUTATIONS["Preload_ChallengeHallOpponent"] = {"source_symbol": "Preload_ChallengeHallOpponent", "before": "starting == 0u", "after": "starting != 0u", "case_ids": ["Preload_ChallengeHallOpponent-0", "Preload_ChallengeHallOpponent-1"]}
 # <<< factory-mutation Preload_ChallengeHallOpponent

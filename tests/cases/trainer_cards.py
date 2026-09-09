@@ -1318,11 +1318,13 @@ MUTATIONS["AIDecide_Defender_Phase14"] = {
     "case_ids": ["AIDecide_Defender_Phase14-0"],
 }
 # <<< factory-mutation AIDecide_Defender_Phase14
+# >>> factory-mutation AIDecide_Lass
 MUTATIONS["AIDecide_Lass"] = {"source_symbol": "AIDecide_Lass", "before": "\tif (hand_count < 7u)\n\t\treturn (AIDecideParameterResult){hand_count, or_a_flags(hand_count), d};", "after": "\tif (hand_count < 7u)\n\t\treturn (AIDecideParameterResult){hand_count, 0x00u, d};", "case_ids": ["AIDecide_Lass-3"]}
 # <<< factory-mutation AIDecide_Lass
 # >>> factory-mutation AIDecide_Imakuni
 MUTATIONS["AIDecide_Imakuni"] = {"source_symbol": "AIDecide_Imakuni", "before": "\t\treturn (AIDecideParameterResult){status, 0x00u, d};\n\treturn (AIDecideParameterResult){status, 0x10u, d};", "after": "\t\treturn (AIDecideParameterResult){status, 0x00u, d};\n\treturn (AIDecideParameterResult){status, 0x00u, d};", "case_ids": ["AIDecide_Imakuni-1"]}
-# <<< factory-mutation AIDecide_Imakuni# >>> factory-mutation AIDecide_Gambler
+# <<< factory-mutation AIDecide_Imakuni
+# >>> factory-mutation AIDecide_Gambler
 MUTATIONS["AIDecide_Gambler"] = {"source_symbol": "AIDecide_Gambler", "before": "\t\treturn (AIDecideParameterResult){remaining, (uint8_t)((remaining == DECK_SIZE - 4u ? 0x80u : 0u) | 0x10u), d};", "after": "\t\treturn (AIDecideParameterResult){remaining, (uint8_t)((remaining == DECK_SIZE - 4u ? 0x80u : 0u) | 0x00u), d};", "case_ids": ["AIDecide_Gambler-1"]}
 # <<< factory-mutation AIDecide_Gambler
 # >>> factory-mutation AIDecide_Revive

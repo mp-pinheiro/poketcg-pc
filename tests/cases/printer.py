@@ -1172,14 +1172,12 @@ MUTATIONS["PrinterMenu_PokemonCards"] = {
 MUTATIONS["HandlePrinterMenu"] = {"source_symbol": "HandlePrinterMenu", "before": "void HandlePrinterMenu(void)\n{\n\t(void)0;", "after": "void HandlePrinterMenu(void)\n{\n\t(void)0;\n\twSelectedPrinterMenuItem = 1u;", "case_ids": ["HandlePrinterMenu-0", "HandlePrinterMenu-1"]}
 # <<< factory-mutation HandlePrinterMenu
 # >>> factory-completion HandlePrinterMenu
-# >>> factory-completion HandlePrinterMenu
 for _record in SCHEMA2_CASES["HandlePrinterMenu"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
 # <<< factory-completion HandlePrinterMenu
 # >>> factory-mutation PrinterMenu_PrintQuality
 MUTATIONS["PrinterMenu_PrintQuality"] = {"source_symbol": "PrinterMenu_PrintQuality", "before": "\t\t\tsPrinterContrastLevel = selected;", "after": "\t\t\tsPrinterContrastLevel = (uint8_t)(selected + 1u);", "case_ids": ["PrinterMenu_PrintQuality-0", "PrinterMenu_PrintQuality-1"]}
 # <<< factory-mutation PrinterMenu_PrintQuality
-# >>> factory-completion PrinterMenu_PrintQuality
 # >>> factory-completion PrinterMenu_PrintQuality
 for _record in SCHEMA2_CASES["PrinterMenu_PrintQuality"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x6DE2, "bank": 2}

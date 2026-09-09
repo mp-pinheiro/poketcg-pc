@@ -869,7 +869,6 @@ CASES["ScriptCommand_JumpIfAnyEnergyCardsInCollection"] = [
 # <<< factory ScriptCommand_JumpIfAnyEnergyCardsInCollection
 
 # >>> factory ScriptCommand_JumpBasedOnFightingClubPupilStatus
-# >>> factory ScriptCommand_JumpBasedOnFightingClubPupilStatus
 CONTRACT["ScriptCommand_JumpBasedOnFightingClubPupilStatus"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e")}
 CASES["ScriptCommand_JumpBasedOnFightingClubPupilStatus"] = [
     {"wram": {wScriptPointer: b"\x00\xD4", 0xD3D3: b"\x00", 0xD3D5: b"\x10", 0xD3D8: b"\x10", 0xD401: b"\x34\x12"}, "read": {wScriptPointer: 2}},
@@ -878,7 +877,6 @@ CASES["ScriptCommand_JumpBasedOnFightingClubPupilStatus"] = [
     {"wram": {wScriptPointer: b"\x00\xD4", 0xD3D3: b"\x80", 0xD3D5: b"\x80", 0xD3D8: b"\x80", 0xD409: b"\xF0\xDE"}, "read": {wScriptPointer: 2}},
     dict(POISON, wram={wScriptPointer: b"\x00\xD4", 0xD3D3: b"\x10", 0xD3D5: b"\x80", 0xD3D8: b"\x10", 0xD405: b"\x11\x22"}, read={wScriptPointer: 2}),
 ]
-# <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus
 # <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus
 
 # >>> factory GetEventValue
@@ -2469,14 +2467,12 @@ MUTATIONS["ScriptCommand_JumpIfAnyEnergyCardsInCollection"] = {
 }
 # <<< factory-mutation ScriptCommand_JumpIfAnyEnergyCardsInCollection
 # >>> factory-mutation ScriptCommand_JumpBasedOnFightingClubPupilStatus
-# >>> factory-mutation ScriptCommand_JumpBasedOnFightingClubPupilStatus
 MUTATIONS["ScriptCommand_JumpBasedOnFightingClubPupilStatus"] = {
     "source_symbol": "ScriptCommand_JumpBasedOnFightingClubPupilStatus",
     "before": "\tif (michael == PUPIL_INACTIVE) {",
     "after": "\tif (michael != PUPIL_INACTIVE) {",
     "case_ids": ["ScriptCommand_JumpBasedOnFightingClubPupilStatus-0", "ScriptCommand_JumpBasedOnFightingClubPupilStatus-4"],
 }
-# <<< factory-mutation ScriptCommand_JumpBasedOnFightingClubPupilStatus
 # <<< factory-mutation ScriptCommand_JumpBasedOnFightingClubPupilStatus
 # >>> factory-mutation GetEventValue
 MUTATIONS["GetEventValue"] = {
