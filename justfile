@@ -150,7 +150,7 @@ build:
 # --record-input /tmp/NAME.txt` replays a recorded prefix at full speed, then hands
 # the keyboard over and keeps recording.
 play *ARGS:
-    {{build_dir}}/poketcg --data-pack build/completion/data-pack.bin --frames 0 {{ARGS}}
+    {{build_dir}}/poketcg --data-pack {{build_dir}}/completion/data-pack.bin --frames 0 {{ARGS}}
 
 # Fixed central barrier build; ignores slice-scoped environment variables.
 build-barrier:
@@ -440,8 +440,8 @@ completion-frame-census SCENARIO *ARGS:
 
 # Instrumented lane for the bilateral call-count diff and the CFG audit producer.
 build-trace:
-    cmake -G Ninja -S . -B build-trace -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPOKETCG_TRACE=ON
-    ninja -C build-trace
+    cmake -G Ninja -S . -B {{build_dir}}-trace -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPOKETCG_TRACE=ON
+    ninja -C {{build_dir}}-trace
 
 # Per-routine call-count diff, native against the reference stream.
 completion-trace-diff SCENARIO *ARGS:

@@ -134,7 +134,8 @@ box and the tracker is the only coordination they need:
 - `issues-sync` takes a file lock (`build/completion/tracker/.lock`), so two
   syncs cannot create the same fact twice.
 - Each session builds in its own `POKETCG_BUILD` directory (`justfile:4-7`;
-  `tools/completion/scenario.py` reads it for the binary and the pack). The
+  `tools/completion/scenario.py` reads it for the binary and the pack, and
+  `just build-trace` builds `$POKETCG_BUILD-trace`). The
   reference caches under `build/completion/sessions/` are shared on purpose:
   a stream is keyed by its inputs and identical when rebuilt, so a race costs
   time, not truth.

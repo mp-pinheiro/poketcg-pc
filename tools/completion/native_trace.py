@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import json
 import struct
 import subprocess
@@ -142,7 +143,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("scenario")
     parser.add_argument("--frames", type=int, default=2000)
-    parser.add_argument("--binary", default="build-trace/poketcg")
+    parser.add_argument("--binary",
+                        default=os.environ.get("POKETCG_BUILD", "build") + "-trace/poketcg")
     parser.add_argument("--trace", required=True)
     parser.add_argument("--limit", type=int, default=40)
     parser.add_argument("--json")

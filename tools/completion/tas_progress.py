@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import json
 import signal
 import subprocess
@@ -246,7 +247,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--reference", default="build/completion/tas/ref-5530b.json")
     parser.add_argument("--masks", default="build/completion/tas/input.txt")
-    parser.add_argument("--binary", default="build-trace/poketcg")
+    parser.add_argument("--binary",
+                        default=os.environ.get("POKETCG_BUILD", "build") + "-trace/poketcg")
     parser.add_argument("--pack", default="build/completion/data-pack.bin")
     parser.add_argument("--trace", default="build/completion/tas/native-progress.bin")
     parser.add_argument("--frames", type=int, default=78207)
