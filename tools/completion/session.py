@@ -657,18 +657,20 @@ def sweep_worker(entries_path: Path, start: int, out_path: Path) -> int:
             case = dict(fixture.case(bank=entry["bank"] or None), **entry["regs"], **SWEEP_BUDGETS)
             if entry.get("setup"):
                 case["setup"] = entry["setup"]
+            vblanks = 0
             try:
                 bad = test_leaves.direct_case(oracle, probe, label, tuple(entry["fields"]), case, auto_observe=True)
+                vblanks = oracle.vblanks
                 status = "fail" if bad else "ok"
+                if bad and vblanks:
+                    status = "frames"
             except Exception as exc:  # noqa: BLE001 - a lane that could not run is a row, not a crash
                 bad = [f"{type(exc).__name__}: {str(exc)[:160]}"]
                 status = "error"
-            # A memory mismatch is game state the port computed differently; a
-            # register-only one is an exit value no caller may read. Rank them.
             memory = any(m.lstrip().startswith(("$", "vram", "sram")) for m in bad)
             out.write(json.dumps({"index": index, "ordinal": entry["ordinal"], "routine": label,
                                   "bank": entry["bank"], "status": status, "memory": memory,
-                                  "mismatches": bad[:12]}) + "\n")
+                                  "vblanks": vblanks, "mismatches": bad[:12]}) + "\n")
             out.flush()
     return 0
 
@@ -689,7 +691,12 @@ def sweep(name: str, *, after: int = 0, until: int | None = None, limit: int = 0
     byte the reference wrote (auto-observe), and rows come out in session
     order. Routines whose committed cases need long `keys` timelines or a
     completion override are skipped: their entries are not comparable from a
-    bare seed. The oracle runs in worker processes so a wedged PyBoy frame
+    bare seed. A row whose reference serviced a VBlank is `frames`, not
+    `fail`: the PyBoy lane skips the halt and runs its VBlank service in
+    place of the ISR, so a routine looping on DoFrame counts frames and
+    runs the VBlank trampoline unlike the probe, and every frame-animated
+    byte differs; the session verify is the gate for those routines. The
+    oracle runs in worker processes so a wedged PyBoy frame
     costs one routine, marked `wedged`, not the sweep. Runs under the oracle
     environment (`just session-sweep`)."""
     entries, until = sweep_entries(name, after=after, until=until, limit=limit)
@@ -727,6 +734,7 @@ def sweep(name: str, *, after: int = 0, until: int | None = None, limit: int = 0
             print(f"ROW ordinal={row['ordinal']} routine={row['routine']} status={row['status']} {kind} "
                   + " | ".join(m[:100] for m in row["mismatches"][:3]))
     print(f"SWEEP {name} after={after} until={until} routines={len(rows)} failing={failing} "
+          f"frames={sum(r['status'] == 'frames' for r in rows)} "
           f"errors={sum(r['status'] == 'error' for r in rows)} wedged={sum(r['status'] == 'wedged' for r in rows)}")
     report = {"schema": 1, "format": "session-sweep-v1", "name": name, "after": after, "until": until, "rows": rows}
     # One tracker copy per window, so a bounded re-sweep refreshes the routines

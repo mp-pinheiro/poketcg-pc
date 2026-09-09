@@ -148,6 +148,7 @@ class Result:
     vram_banks: tuple[bytes, ...] = field(repr=False)
     oam: bytes = field(repr=False)
     io: bytes = field(repr=False)
+    vblanks: int = 0
 
     def mem(self, addr: int, n: int = 1, *, bank: int | None = None) -> bytes:
         if VRAM_BASE <= addr and addr + n <= VRAM_END:
@@ -212,6 +213,7 @@ class Oracle:
         self._armed_addr: int | None = None
         self._armed_bank: int = 0
         self._key_timeline: list[int] = [0]
+        self.vblanks = 0
         self._baseline = io.BytesIO()
         self._reset_ram()
         self.pyboy.save_state(self._baseline)
@@ -244,6 +246,7 @@ class Oracle:
             vram_banks=tuple(_read_bank(pb, bank, VRAM_BASE, VRAM_END) for bank in range(2)),
             oam=bytes(pb.memory[OAM_BASE:OAM_END]),
             io=bytes(pb.memory[IO_BASE:IO_END]),
+            vblanks=self.vblanks,
         )
 
     def _capture(self, _ctx) -> None:
@@ -300,6 +303,7 @@ class Oracle:
     def _service_vblank(self, _ctx) -> None:
         pb = self.pyboy
         pb.memory[self._WVBLANK_COUNTER] = (pb.memory[self._WVBLANK_COUNTER] + 1) & 0xFF
+        self.vblanks += 1
         self.pyboy.register_file.PC = self._VBLANK_NOP
 
     def _apply_keys(self, old: int, new: int) -> None:
@@ -368,6 +372,7 @@ class Oracle:
         rf.HL = regs.get("hl", 0)
 
         self._hit = None
+        self.vblanks = 0
         if stop_pc is None:
             self._arm(POST_CALL_SENTINEL + 1 if post_call_byte is not None else return_pc)
         else:
