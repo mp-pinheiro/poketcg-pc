@@ -1,0 +1,14 @@
+{
+  "ai_deck": 24,
+  "branch_ordinal": 23227,
+  "derived_from": "practice-win",
+  "duel_finished_ordinal": 40484,
+  "duel_turns": 23,
+  "goal": "AI-versus-AI duel with the Wonders of Science deck; the AI plays Maintenance and Muk's Toxic Gas",
+  "name": "ai-science",
+  "ordinals": 41984,
+  "prizes": null,
+  "recorded": "2026-09-09T17:26:36+00:00",
+  "schema": 1,
+  "seed": null
+}
