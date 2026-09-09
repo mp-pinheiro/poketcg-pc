@@ -1,0 +1,27 @@
+{
+  "goal": "from Amy's duel: the overworld map to the Science Club and Erik's duel to its end under the pilot's WRAM policy, then his after-duel script and booster packs",
+  "name": "science-club",
+  "ordinals": 548706,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ]
+  },
+  "recorded": "2026-09-09T04:14:30+00:00",
+  "schema": 1
+}

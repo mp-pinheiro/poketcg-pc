@@ -239,6 +239,10 @@ CASES["OverworldMap_HandleDPad"] = [
     {"wram": {wOverworldMapSelection: b"\x01", wPlayerDirection: b"\x02"}, "stack": [0xBBCC, 0xDDEE], "expect": {wOverworldMapSelection: b"\x01"}},
     {"wram": {wOverworldMapSelection: b"\x01", wPlayerDirection: b"\x00"}, "stack": [0xBBCC, 0xDDEE], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "expect": {wOverworldMapSelection: b"\x06"}},
     dict(POISON, wram={wOverworldMapSelection: b"\x01", wPlayerDirection: b"\x02"}, stack=[0xBBCC, 0xDDEE], expect={wOverworldMapSelection: b"\x01"}),
+    {"wram": {wOverworldMapSelection: b"\x07", wPlayerDirection: b"\x00"}, "stack": [0xBBCC, 0xDDEE], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    {"wram": {wOverworldMapSelection: b"\x08", wPlayerDirection: b"\x00"}, "stack": [0xBBCC, 0xDDEE], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    {"wram": {wOverworldMapSelection: b"\x08", wPlayerDirection: b"\x01"}, "stack": [0xBBCC, 0xDDEE], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    {"wram": {wOverworldMapSelection: b"\x09", wPlayerDirection: b"\x00"}, "stack": [0xBBCC, 0xDDEE], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
 ]
 # <<< factory OverworldMap_HandleDPad
 
@@ -315,9 +319,9 @@ MUTATIONS["OverworldMap_UpdatePlayerWalkingAnimation"] = {"source_symbol": "Over
 # >>> factory-mutation OverworldMap_HandleDPad
 MUTATIONS["OverworldMap_HandleDPad"] = {
     "source_symbol": "OverworldMap_HandleDPad",
-    "before": "\twOverworldMapSelection = next;",
-    "after": "\twOverworldMapSelection = 0u;",
-    "case_ids": ["OverworldMap_HandleDPad-1"],
+    "before": "\t{0x09u, 0x00u, 0x05u, 0x08u},",
+    "after": "\t{0x00u, 0x00u, 0x05u, 0x08u},",
+    "case_ids": ["OverworldMap_HandleDPad-3"],
 }
 # <<< factory-mutation OverworldMap_HandleDPad
 # >>> factory-mutation OverworldMap_HandleKeyPress

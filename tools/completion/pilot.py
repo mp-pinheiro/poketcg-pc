@@ -552,6 +552,8 @@ def dismiss_text(driver: "Driver", max_pages: int = 60) -> None:
             return
         if prompt == "yes-no":
             driver.step(LEFT if driver.reader.at(CUR_MENU_ITEM) != 0 else A)
+        elif prompt == "hand":
+            driver.step(B)
         else:
             driver.step(A)
         driver.step(0)
