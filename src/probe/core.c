@@ -899,7 +899,7 @@ static void adapt_RemoveCardIDInList(ProbeState *s)
 /* >>> factory SortTempHandByIDList */
 static void adapt_SortTempHandByIDList(ProbeState *s)
 {
-	SortTempHandResult r = SortTempHandByIDList();
+	SortTempHandResult r = SortTempHandByIDList(s->b, s->c, s->d, s->e, s->hl);
 	s->a = r.a;
 	s->f = r.f;
 	s->b = r.b;

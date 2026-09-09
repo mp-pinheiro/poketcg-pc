@@ -348,7 +348,7 @@ void AIDecidePlayLegendaryBirds(void)
 AIDecidePlayPokemonCardResult AIDecidePlayPokemonCard(void)
 {
 	(void)CreateHandCardList(0u);
-	(void)SortTempHandByIDList();
+	(void)SortTempHandByIDList(0u, 0u, 0u, 0u, 0u);
 	uint16_t hl = wDuelTempList_ADDR;
 	uint16_t de = wHandTempList_ADDR;
 	(void)CopyListWithFFTerminatorFromHLToDE_Bank5(&hl, &de);

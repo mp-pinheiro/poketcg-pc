@@ -8,6 +8,7 @@ from tests.cases._fixtures import evolution_in_list_fixture as _evolution_in_lis
 from tests.cases._fixtures import card_can_be_played_fixture as _card_can_be_played_fixture, CARD_CAN_BE_PLAYED_REGS as _CARD_CAN_BE_PLAYED_REGS
 from tests.cases._fixtures import alive_in_play_area_fixture as _alive_in_play_area_fixture, ALIVE_IN_PLAY_AREA_REGS as _ALIVE_IN_PLAY_AREA_REGS
 from tests.cases._fixtures import energy_needed_in_hand_fixture as _energy_needed_in_hand_fixture, ENERGY_NEEDED_IN_HAND_REGS as _ENERGY_NEEDED_IN_HAND_REGS
+from tests.cases._fixtures import sort_temp_hand_fixture as _sort_temp_hand_fixture, SORT_TEMP_HAND_REGS as _SORT_TEMP_HAND_REGS
 from tests.cases._fixtures import fully_powered_fixture as _fully_powered_fixture, FULLY_POWERED_REGS as _FULLY_POWERED_REGS
 from tests.cases._fixtures import ai_trainer_phase5_fixture as _ai_trainer_phase5_fixture, AI_TRAINER_PHASE5_REGS as _AI_TRAINER_PHASE5_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_defending_ko_fixture as _ai_defending_ko_fixture, AI_DEFENDING_KO_REGS as _AI_DEFENDING_KO_REGS, power_screen_fixture as _power_screen_fixture, POWER_SCREEN_REGS as _POWER_SCREEN_REGS
@@ -1247,6 +1248,9 @@ CASES["RemoveCardIDInList"] = [
 # >>> factory SortTempHandByIDList
 CONTRACT["SortTempHandByIDList"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["SortTempHandByIDList"] = [
+    # water-master 437339: Amy's deck has no play-from-hand priority list, so the
+    # sort returns at once with the caller's b, c, de and hl.
+    dict(_sort_temp_hand_fixture(vram=False, bank=5), **_SORT_TEMP_HAND_REGS, read={0xC510: 12}),
     {"wram": {0xCDAE: b"\x00\xC6", 0xC600: b"\x20\x10\x00", 0xC510: b"\x00\x01\xFF", 0xC400: b"\x10\x20"}, "read": {0xC510: 3, 0xC600: 3, 0xCDAE: 2}},
     {"wram": {0xCDAE: b"\x00\xC6", 0xC600: b"\x00", 0xC510: b"\x00\xFF"}, "read": {0xC510: 2, 0xC600: 1, 0xCDAE: 2}},
     dict(POISON, wram={0xCDAE: b"\x00\xC6", 0xC600: b"\x20\x00", 0xC510: b"\x01\xFF", 0xC400: b"\x10\x20"}, read={0xC510: 2, 0xC600: 2, 0xCDAE: 2}),
@@ -6325,12 +6329,7 @@ MUTATIONS["RemoveCardIDInList"] = {
 }
 # <<< factory-mutation RemoveCardIDInList
 # >>> factory-mutation SortTempHandByIDList
-MUTATIONS["SortTempHandByIDList"] = {
-    "source_symbol": "SortTempHandByIDList",
-    "before": "if (b == 0u)",
-    "after": "if (b != 0u)",
-    "case_ids": ["SortTempHandByIDList-0", "SortTempHandByIDList-1"],
-}
+MUTATIONS["SortTempHandByIDList"] = {"source_symbol": "SortTempHandByIDList", "before": "\t\treturn (SortTempHandResult){0u, 0x80u, b, c, d, e, hl};", "after": "\t\treturn (SortTempHandResult){0u, 0x80u, b, 0u, d, e, hl};", "case_ids": ["SortTempHandByIDList-0"]}
 # <<< factory-mutation SortTempHandByIDList
 # >>> factory-mutation ApplyCardCGBAttributes
 MUTATIONS["ApplyCardCGBAttributes"] = {

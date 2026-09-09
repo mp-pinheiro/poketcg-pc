@@ -3495,23 +3495,22 @@ RemoveCardIDResult RemoveCardIDInList(uint16_t *hl, uint8_t e)
 /* <<< factory RemoveCardIDInList */
 
 /* >>> factory SortTempHandByIDList */
-SortTempHandResult SortTempHandByIDList(void)
+SortTempHandResult SortTempHandByIDList(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	uint16_t priority = (uint16_t)(gb_read8(wAICardListPlayFromHandPriority_ADDR) |
 		((uint16_t)gb_read8((uint16_t)(wAICardListPlayFromHandPriority_ADDR + 1u)) << 8));
+	/* ai/core.asm:1521-1523: no list -- `or a / ret z` leaves every other
+	 * register as the caller had it. */
 	if (gb_read8((uint16_t)(wAICardListPlayFromHandPriority_ADDR + 1u)) == 0u)
-		return (SortTempHandResult){0u, 0x80u, 0u, 0u,
-			0u, gb_read8(wAICardListPlayFromHandPriority_ADDR), 0u};
+		return (SortTempHandResult){0u, 0x80u, b, c, d, e, hl};
 	uint16_t list_id = priority;
-	uint8_t c = 0u;
-	uint16_t hl = 0u;
-	uint8_t b = 0u;
+	c = 0u;
 	for (;;) {
-		b = gb_read8(list_id);
-		if (b == 0u)
-			return (SortTempHandResult){0u, 0x80u,
-				(uint8_t)gb_read8((uint16_t)(list_id - 1u)), c,
+		uint8_t id = gb_read8(list_id);
+		if (id == 0u)
+			return (SortTempHandResult){0u, 0x80u, b, c,
 				(uint8_t)(list_id >> 8), (uint8_t)list_id, hl};
+		b = id;
 		list_id++;
 		hl = wDuelTempList_ADDR;
 		for (;;) {

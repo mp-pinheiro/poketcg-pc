@@ -851,3 +851,11 @@ STRIKES_BACK_RESIDUAL_REGS = STRIKES_BACK_RESIDUAL.regs
 
 def strikes_back_residual_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return STRIKES_BACK_RESIDUAL.case(vram=vram, bank=bank, **changes)
+
+
+SORT_TEMP_HAND = Fixture("water-master-sort-temp-hand-entry")
+SORT_TEMP_HAND_REGS = SORT_TEMP_HAND.regs
+
+
+def sort_temp_hand_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return SORT_TEMP_HAND.case(vram=vram, bank=bank, **changes)
