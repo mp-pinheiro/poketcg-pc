@@ -20,8 +20,9 @@ static void adapt_LoadDuelAnimationToBuffer(ProbeState *s)
 
 static void adapt_UpdateQueuedAnimations(ProbeState *s)
 {
-    DuelAnimationUpdateResult result = _UpdateQueuedAnimations(s->hl);
+    DuelAnimationUpdateResult result = _UpdateQueuedAnimations(s->c, s->hl);
     s->a = result.a;
+    s->c = result.c;
     s->hl = result.hl;
 }
 

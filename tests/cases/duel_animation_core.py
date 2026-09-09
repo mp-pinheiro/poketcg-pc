@@ -1,3 +1,4 @@
+from tests.cases._fixtures import queued_animations_fixture as _queued_animations_fixture, QUEUED_ANIMATIONS_REGS as _QUEUED_ANIMATIONS_REGS
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 QUEUE = 0xD423
@@ -6,6 +7,7 @@ WDO_FRAME_FN = 0xCAD3
 UPDATE_LO = 0xA2
 UPDATE_HI = 0x3B
 CONTRACT = {
+    "_UpdateQueuedAnimations": {"source_symbol": "_UpdateQueuedAnimations", "before": "    return (DuelAnimationUpdateResult){accumulator, 0u, (uint16_t)(QUEUE_ADDR + QUEUE_LENGTH)};", "after": "    return (DuelAnimationUpdateResult){accumulator, entry_c, (uint16_t)(QUEUE_ADDR + QUEUE_LENGTH)};", "case_ids": ["_UpdateQueuedAnimations-3"]},
     "_ResetAnimationQueue": {
         "compare": ("b", "c", "hl"),
         "preserve": ("b", "c", "hl"),
@@ -78,6 +80,8 @@ CASES = {
         {"wram": {0xD42A: b"\x61", 0xD4C0: b"\xff", 0xD4B9: b"\xff\x4c\x01\x55\x4d",
                   0xFF80: b"\x06", 0xFF92: b"\x00", 0xD4AC: b"\x00\x00", QUEUE: b"\xff" * 7},
          "read": {0xD42A: 1, 0xD4B9: 5, 0xFF92: 1}},
+
+        dict(_queued_animations_fixture(vram=False), **_QUEUED_ANIMATIONS_REGS),
     ],
     "ClearAndDisableQueuedAnimations": [
         {"wram": {WDO_FRAME_FN: bytes([UPDATE_LO, UPDATE_HI]), 0xD42A: b"\xFF",

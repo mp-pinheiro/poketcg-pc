@@ -951,3 +951,19 @@ STRANGE_BEHAVIOR_REGS = STRANGE_BEHAVIOR.regs
 
 def strange_behavior_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return STRANGE_BEHAVIOR.case(vram=vram, bank=bank, **changes)
+
+
+COUNT_CARD_ID = Fixture("ai-ghost-count-card-id-entry")
+COUNT_CARD_ID_REGS = COUNT_CARD_ID.regs
+
+
+def count_card_id_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return COUNT_CARD_ID.case(vram=vram, bank=bank, **changes)
+
+
+QUEUED_ANIMATIONS = Fixture("ai-science-queued-animations-entry")
+QUEUED_ANIMATIONS_REGS = QUEUED_ANIMATIONS.regs
+
+
+def queued_animations_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return QUEUED_ANIMATIONS.case(vram=vram, bank=bank, **changes)

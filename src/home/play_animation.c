@@ -80,7 +80,7 @@ UpdateQueuedAnimationsResult UpdateQueuedAnimations(uint16_t hl)
 {
 	uint8_t saved = gb_read8(hBankROM_ADDR);
 	BankswitchROM(BANK_UPDATE_QUEUED_ANIMATIONS);
-	DuelAnimationUpdateResult result = _UpdateQueuedAnimations(hl);
+	DuelAnimationUpdateResult result = _UpdateQueuedAnimations(0u, hl);
 	HandleAllSpriteAnimations();
 	BankswitchROM(saved);
 	return (UpdateQueuedAnimationsResult){saved, result.hl};

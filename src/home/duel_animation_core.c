@@ -140,7 +140,7 @@ static uint8_t play_buffered_duel_animations(void)
     return read(wDuelAnimBufferCurPos_ADDR);
 }
 
-DuelAnimationUpdateResult _UpdateQueuedAnimations(uint16_t entry_hl)
+DuelAnimationUpdateResult _UpdateQueuedAnimations(uint8_t entry_c, uint16_t entry_hl)
 {
     uint8_t active = read(wActiveScreenAnim_ADDR);
     if (active != 0xff) {
@@ -150,16 +150,16 @@ DuelAnimationUpdateResult _UpdateQueuedAnimations(uint16_t entry_hl)
         active = read(wActiveScreenAnim_ADDR);
         if (active == 0xff)
             active = play_buffered_duel_animations();
-        return (DuelAnimationUpdateResult){active, wScreenAnimUpdatePtr_ADDR + 1u};
+        return (DuelAnimationUpdateResult){active, entry_c, wScreenAnimUpdatePtr_ADDR + 1u};
     }
     uint8_t accumulator = read(wd4c0_ADDR);
     if (accumulator == 0x80) {
         write(wd4c0_ADDR, 0xff);
         uint8_t a = play_buffered_duel_animations();
-        return (DuelAnimationUpdateResult){a, entry_hl};
+        return (DuelAnimationUpdateResult){a, entry_c, entry_hl};
     }
     if (accumulator == 0)
-        return (DuelAnimationUpdateResult){0, entry_hl};
+        return (DuelAnimationUpdateResult){0, entry_c, entry_hl};
     for (uint8_t i = 0; i < QUEUE_LENGTH; i++) {
         uint16_t queue_addr = (uint16_t)(QUEUE_ADDR + i);
         uint8_t sprite = read(queue_addr);
@@ -174,7 +174,7 @@ DuelAnimationUpdateResult _UpdateQueuedAnimations(uint16_t entry_hl)
     }
     if (accumulator == 0xff)
         accumulator = play_buffered_duel_animations();
-    return (DuelAnimationUpdateResult){accumulator, (uint16_t)(QUEUE_ADDR + QUEUE_LENGTH)};
+    return (DuelAnimationUpdateResult){accumulator, 0u, (uint16_t)(QUEUE_ADDR + QUEUE_LENGTH)};
 }
 
 DuelAnimationResult ClearAndDisableQueuedAnimations(void)

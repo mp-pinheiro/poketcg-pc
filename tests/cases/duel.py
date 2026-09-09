@@ -1,3 +1,4 @@
+from tests.cases._fixtures import count_card_id_fixture as _count_card_id_fixture, COUNT_CARD_ID_REGS as _COUNT_CARD_ID_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS
 from tests.cases._fixtures import pkmn_power_fixture as _pkmn_power_fixture, PKMN_POWER_REGS as _PKMN_POWER_REGS
 
@@ -337,6 +338,7 @@ CASES = {
         {"b": 0x10, "e": 0x01, "hl": 0xC210,
          "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01\x02\x01",
                   0xC200: b"\x10\x00\x10"}},
+        dict(_count_card_id_fixture(vram=False), **_COUNT_CARD_ID_REGS),
     ],
     # Attack flag: a = group<<3 | bit. wLoadedAttackFlag1 = $CCB4.
     "CheckLoadedAttackFlag": [
@@ -2052,6 +2054,7 @@ MUTATIONS = {
     },
 }
 # >>> factory-mutation GetFirstSetPrizeCard
+MUTATIONS["CountCardIDInLocation"] = {"source_symbol": "CountCardIDInLocation", "before": "\treturn (CardLocationCountResult){count, (uint16_t)(page | DECK_SIZE)};", "after": "\treturn (CardLocationCountResult){count, (uint16_t)(hl + DECK_SIZE)};", "case_ids": ["CountCardIDInLocation-3"]}
 MUTATIONS["EvolvePokemonCard"] = {"source_symbol": "EvolvePokemonCard", "before": "\t(void)PutHandCardInPlayArea(card_idx, slot);", "after": "\t(void)card_idx;", "case_ids": ["EvolvePokemonCard-0"]}
 MUTATIONS["GetFirstSetPrizeCard"] = {"source_symbol": "GetFirstSetPrizeCard", "before": "\t\tif ((mask & prizes) != 0u)", "after": "\t\tif ((mask & prizes) == 0u)", "case_ids": ["GetFirstSetPrizeCard-1", "GetFirstSetPrizeCard-2", "GetFirstSetPrizeCard-6"]}
 # <<< factory-mutation GetFirstSetPrizeCard

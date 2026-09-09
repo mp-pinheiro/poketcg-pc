@@ -821,10 +821,10 @@ uint8_t TranslateColorToWR(uint8_t a)
 	return rom_ptr(0u, 0x1A1Au)[a];
 }
 
-/* duel.asm:1290-1315. `ld l, DUELVARS_CARD_LOCATIONS` replaces the caller's low
- * byte, so only h selects the duelist and the walk always starts at the page's
- * card-location block. `ld a, c / pop bc` leaves a = the count and restores bc,
- * so the only other exit is page + 60. */
+/* duel.asm:1290-1315. Entry hl supplies the page only: `ld l,
+ * DUELVARS_CARD_LOCATIONS` overwrites the low byte before the walk, so only h
+ * selects the duelist and the exit is page + 60 whatever l held. `ld a, c /
+ * pop bc` leaves a = the count and restores bc. */
 CardLocationCountResult CountCardIDInLocation(uint8_t b, uint8_t e, uint16_t hl)
 {
 	uint16_t base = (uint16_t)((hl & 0xFF00u) | DUELVARS_CARD_LOCATIONS);
