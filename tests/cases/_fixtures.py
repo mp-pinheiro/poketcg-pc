@@ -795,3 +795,11 @@ SPECIAL_ATTACK_PARAMS_REGS = SPECIAL_ATTACK_PARAMS.regs
 
 def special_attack_params_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return SPECIAL_ATTACK_PARAMS.case(vram=vram, bank=bank, **changes)
+
+
+AI_PKMN_POWERS_MASTER = Fixture("water-master-ai-pkmn-powers-entry")
+AI_PKMN_POWERS_MASTER_REGS = AI_PKMN_POWERS_MASTER.regs
+
+
+def ai_pkmn_powers_master_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_PKMN_POWERS_MASTER.case(vram=vram, bank=bank, **changes)

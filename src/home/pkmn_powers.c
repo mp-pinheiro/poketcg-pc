@@ -487,13 +487,15 @@ check_bench:
 /* >>> factory HandleAIPkmnPowers */
 HandleAIPkmnPowersResult HandleAIPkmnPowers(void)
 {
+	/* pkmn_powers.asm:413-420: `ccf / ret nc` keeps the callee's Z and clears
+	 * N, H and the flipped carry. */
 	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
 	if (muk.f & 0x10u)
-		return (HandleAIPkmnPowersResult){muk.a, 0x00u};
+		return (HandleAIPkmnPowersResult){muk.a, (uint8_t)(muk.f & 0x80u)};
 
 	AIChooseRandomlyNotToDoActionResult skip = AIChooseRandomlyNotToDoAction();
 	if (skip.f & 0x10u)
-		return (HandleAIPkmnPowersResult){skip.a, 0x00u};
+		return (HandleAIPkmnPowersResult){skip.a, (uint8_t)(skip.f & 0x80u)};
 
 	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
 	uint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;
