@@ -1,0 +1,26 @@
+idle
+hold DOWN 200
+idle
+hold LEFT 48
+idle
+hold DOWN 200
+idle
+press UP
+idle
+press UP
+idle
+press UP
+idle
+press A
+idle
+hold UP 200
+idle
+peek
+press A
+idle
+shot fire-club-ask
+yes
+duel
+dismiss
+peek
+shot fire-club-end

@@ -1,0 +1,27 @@
+{
+  "goal": "from Amy's duel: the overworld map to the Fire Club and John's duel to its end under the pilot's WRAM policy, then his after-duel script",
+  "name": "fire-club",
+  "ordinals": 583578,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ]
+  },
+  "recorded": "2026-09-09T04:48:32+00:00",
+  "schema": 1
+}
