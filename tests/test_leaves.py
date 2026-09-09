@@ -26,6 +26,7 @@ sys.path.insert(0, str(ROOT / "tools" / "oracle"))
 sys.path.insert(0, str(ROOT / "tests" / "cases"))
 sys.path.insert(0, str(ROOT / "tests"))
 
+from lane_frames import lane_frames  # noqa: E402
 from routines import ALL, EXCLUSIONS, ROUTINES  # noqa: E402
 CACHE_SEMANTICS = 2
 REGS = ("a", "f", "b", "c", "d", "e", "hl")
@@ -89,23 +90,8 @@ def load_cases() -> tuple[dict[str, list[dict]], dict[str, tuple[str, ...]]]:
 
 
 def pyboy_frames(case: dict) -> int | None:
-    """Frame allowance for the PyBoy backend, derived from the case's own budget.
-
-    gbref bounds a run by `cycle_budget`; PyBoy bounds it by ticks. A case that
-    declares a large cycle budget is asking for that much time on BOTH backends,
-    so convert it (70224 cycles per DMG frame, the same boundary runner.c uses)
-    and let the default 240 stand for everything else.
-    """
-    budget = case.get("cycle_budget")
-    if not budget:
-        return None
-    try:
-        from pyboy_oracle import MAX_FRAMES
-    except ImportError:
-        # Some gate shards import this module without PyBoy available; they never
-        # reach a reference call, so the default is only needed for the arithmetic.
-        MAX_FRAMES = 240
-    return max(MAX_FRAMES, int(budget) // 70224 + 1)
+    """Frame allowance for the PyBoy backend; see `tests/lane_frames.py`."""
+    return lane_frames(case)
 
 
 def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],

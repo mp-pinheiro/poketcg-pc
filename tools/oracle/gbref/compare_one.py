@@ -14,9 +14,31 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "tests" / "cases"))
+sys.path.insert(0, str(ROOT / "tests"))
 sys.path.insert(0, str(ROOT))
 
+from lane_frames import lane_frames  # noqa: E402
+
 REGISTERS = ("a", "f", "b", "c", "d", "e", "hl")
+LANE_TIMEOUT_FLOOR = 30.0
+LANE_TIMEOUT_CEILING = 600.0
+
+
+def lane_timeout(case: dict) -> float:
+    """Wall seconds a lane may spend on one case, from its declared budget.
+
+    A case that raises `instruction_budget` above the 10M default is asking a
+    lane to execute proportionally more work, and `ExecuteGameEvent` (20M) needs
+    more than the 30 s that used to be hardcoded here: its canary could not be
+    proven at all, because the baseline run timed out before the mutation was
+    ever applied.
+    """
+    budget = case.get("instruction_budget") or 10_000_000
+    scaled = LANE_TIMEOUT_FLOOR * (float(budget) / 10_000_000.0)
+    override = os.environ.get("POKETCG_LANE_TIMEOUT")
+    if override:
+        scaled = float(override)
+    return min(LANE_TIMEOUT_CEILING, max(LANE_TIMEOUT_FLOOR, scaled))
 
 def _merge_spans(spans):
     merged = []
@@ -414,7 +436,7 @@ def main() -> int:
     primary = subprocess.run(
         [str(args.runner), "--rom", str(args.rom.resolve())],
         input=json.dumps(request), text=True, capture_output=True, check=False,
-        timeout=30, env=env,
+        timeout=lane_timeout(case), env=env,
     )
     if primary.returncode != 0:
         raise SystemExit(primary.stdout or primary.stderr)
@@ -480,11 +502,15 @@ def main() -> int:
         probe_request["post_call_byte"] = post_call_byte
     if seed_native_rom_bank:
         probe_request["rom_bank"] = int(case["mapper"]["rom_bank"])
+    frames = lane_frames(case)
     if mode == "entry":
         probe_request["stop_routine"] = completion_spec["routine"]
+    elif frames is not None:
+        probe_request["frame_budget"] = int(frames)
     probe = subprocess.run(
         [str(args.probe)], input=json.dumps(probe_request),
-        text=True, capture_output=True, check=False, timeout=30, env=env,
+        text=True, capture_output=True, check=False,
+        timeout=lane_timeout(case), env=env,
     )
     if probe.returncode != 0:
         raise SystemExit(probe.stderr or probe.stdout or
