@@ -8645,8 +8645,13 @@ AISelectSpecialAttackParametersResult AISelectSpecialAttackParameters(void)
 	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(arena.a);
 	uint8_t flags = 0x00u;
+	/* ai/core.asm:2049 `.no_carry: or a / ret`: the flags come from whatever
+	 * `a` held on the way there -- the card id, wSelectedAttack, or a
+	 * callee's exit -- never from wSelectedAttack alone. */
+	uint8_t last_a = card_id;
 
 	if (card_id == MEW_LV23) {
+		last_a = selected_attack;
 		if (selected_attack != 0u) {
 			hTemp_ffa0 = 0x01u;
 			LookForCardThatIsKnockedOutOnDevolutionResult r = LookForCardThatIsKnockedOutOnDevolution(0x00u);
@@ -8654,6 +8659,7 @@ AISelectSpecialAttackParametersResult AISelectSpecialAttackParameters(void)
 			flags = 0x10u;
 		}
 	} else if (card_id == MEWTWO_ALT_LV60 || card_id == MEWTWO_LV60) {
+		last_a = selected_attack;
 		if (selected_attack == 0u) {
 			hTempPlayAreaLocation_ffa1 = 0xFFu;
 			hTempRetreatCostCards = 0xFFu;
@@ -8670,27 +8676,35 @@ AISelectSpecialAttackParametersResult AISelectSpecialAttackParameters(void)
 			flags = 0x10u;
 		}
 	} else if (card_id == EXEGGUTOR) {
+		last_a = selected_attack;
 		if (selected_attack == 0u) {
 			AIDecideBenchPokemonToSwitchToResult r = AIDecideBenchPokemonToSwitchTo(0u);
+			last_a = r.a;
 			if (!(r.f & 0x10u)) {
 				hTemp_ffa0 = r.a;
 				flags = 0x10u;
 			}
 		}
 	} else if (card_id == ELECTRODE_LV35) {
+		last_a = selected_attack;
 		if (selected_attack != 0u) {
 			LookForCardIDInLocationResult lightning = LookForCardIDInLocation_Bank5(CARD_LOCATION_DECK, LIGHTNING_ENERGY);
 			hTemp_ffa0 = lightning.a;
+			last_a = lightning.a;
 			if (lightning.f & 0x10u) {
-				AIProcessButDontPlayEnergy_SkipEvolution();
-				hTempPlayAreaLocation_ffa1 = hTempPlayAreaLocation_ff9d;
-				flags = 0x10u;
+				/* ai/core.asm:2141-2142: no Pokemon to attach to is `.no_carry`. */
+				AIEnergyResult attach = AIProcessButDontPlayEnergy_SkipEvolution();
+				last_a = attach.a;
+				if (attach.f & 0x10u) {
+					hTempPlayAreaLocation_ffa1 = hTempPlayAreaLocation_ff9d;
+					flags = 0x10u;
+				}
 			}
 		}
 	}
 	wSelectedAttack = selected_attack;
 	if (flags == 0u)
-		flags = selected_attack == 0u ? 0x80u : 0x00u;
+		flags = last_a == 0u ? 0x80u : 0x00u;
 	return (AISelectSpecialAttackParametersResult){selected_attack, flags};
 }
 /* <<< factory AISelectSpecialAttackParameters */

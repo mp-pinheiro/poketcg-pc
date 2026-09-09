@@ -787,3 +787,11 @@ CREDITS_SCROLL_TABLE_REGS = CREDITS_SCROLL_TABLE.regs
 
 def credits_scroll_table_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return CREDITS_SCROLL_TABLE.case(vram=vram, bank=bank, **changes)
+
+
+SPECIAL_ATTACK_PARAMS = Fixture("challenge-hall-special-attack-params-entry")
+SPECIAL_ATTACK_PARAMS_REGS = SPECIAL_ATTACK_PARAMS.regs
+
+
+def special_attack_params_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return SPECIAL_ATTACK_PARAMS.case(vram=vram, bank=bank, **changes)

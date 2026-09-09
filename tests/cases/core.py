@@ -3,6 +3,7 @@ from tests.cases._fixtures import begin_use_attack_fixture as _begin_use_attack_
 from tests.cases._fixtures import bench_switch_fixture as _bench_switch_fixture
 from tests.cases._fixtures import bench_count_fixture as _bench_count_fixture, BENCH_COUNT_REGS as _BENCH_COUNT_REGS
 from tests.cases._fixtures import bench_half_hp_fixture as _bench_half_hp_fixture, BENCH_HALF_HP_REGS as _BENCH_HALF_HP_REGS
+from tests.cases._fixtures import special_attack_params_fixture as _special_attack_params_fixture, SPECIAL_ATTACK_PARAMS_REGS as _SPECIAL_ATTACK_PARAMS_REGS
 from tests.cases._fixtures import fully_powered_fixture as _fully_powered_fixture, FULLY_POWERED_REGS as _FULLY_POWERED_REGS
 from tests.cases._fixtures import ai_trainer_phase5_fixture as _ai_trainer_phase5_fixture, AI_TRAINER_PHASE5_REGS as _AI_TRAINER_PHASE5_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_defending_ko_fixture as _ai_defending_ko_fixture, AI_DEFENDING_KO_REGS as _AI_DEFENDING_KO_REGS, power_screen_fixture as _power_screen_fixture, POWER_SCREEN_REGS as _POWER_SCREEN_REGS
@@ -4643,7 +4644,10 @@ CONTRACT["AISelectSpecialAttackParameters"] = {"compare": ("a", "f"), "preserve"
 CASES["AISelectSpecialAttackParameters"] = [
     {"a": 0x00, "wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBB: b"\x00", wPlayerDeck: b"\x00", wSelectedAttack: b"\x00"}},
     {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBB: b"\x00", wPlayerDeck: b"\x01", wSelectedAttack: b"\x01"}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBB: b"\x00", wPlayerDeck: b"\x01", wSelectedAttack: b"\x01"})
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBB: b"\x00", wPlayerDeck: b"\x01", wSelectedAttack: b"\x01"}),
+    # challenge-hall 645877: an ordinary arena card with the first attack
+    # selected: `.no_carry`'s `or a` tests the card id, so Z is clear.
+    dict(_special_attack_params_fixture(vram=False, bank=5), **_SPECIAL_ATTACK_PARAMS_REGS, read={0xCC23: 1, 0xFFA0: 2}),
 ]
 # <<< factory AISelectSpecialAttackParameters
 
@@ -7282,7 +7286,7 @@ MUTATIONS["CheckIfActiveCardCanKnockOut"] = {
 }
 # <<< factory-mutation CheckIfActiveCardCanKnockOut
 # >>> factory-mutation AISelectSpecialAttackParameters
-MUTATIONS["AISelectSpecialAttackParameters"] = {"source_symbol": "AISelectSpecialAttackParameters", "before": "\tuint8_t selected_attack = wSelectedAttack;\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);", "after": "\tuint8_t selected_attack = 0u;\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);", "case_ids": ["AISelectSpecialAttackParameters-1", "AISelectSpecialAttackParameters-2"]}
+MUTATIONS["AISelectSpecialAttackParameters"] = {"source_symbol": "AISelectSpecialAttackParameters", "before": "\t\tflags = last_a == 0u ? 0x80u : 0x00u;", "after": "\t\tflags = selected_attack == 0u ? 0x80u : 0x00u;", "case_ids": ["AISelectSpecialAttackParameters-3"]}
 # <<< factory-mutation AISelectSpecialAttackParameters
 # >>> factory-mutation OppAction_EvolvePokemonCard
 MUTATIONS["OppAction_EvolvePokemonCard"] = {"source_symbol": "OppAction_EvolvePokemonCard", "before": "void OppAction_EvolvePokemonCard(void)\n{\n\tuint8_t play_area = hTempPlayAreaLocation_ffa1;", "after": "void OppAction_EvolvePokemonCard(void)\n{\n\tuint8_t play_area = 0u;", "case_ids": ["OppAction_EvolvePokemonCard-0", "OppAction_EvolvePokemonCard-1"]}
