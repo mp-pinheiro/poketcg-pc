@@ -3018,7 +3018,9 @@ uint8_t SetOneLineSeparation(void)
 HasAlivePokemonInPlayAreaResult _HasAlivePokemonInPlayArea(uint8_t a)
 {
 	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
-	uint8_t slots = (uint8_t)(count - a + 1u);
+	/* core.asm:4900-4918: c = count - b, `inc c` then `dec c` before the first
+	 * read, so exactly count - b HP bytes are read. */
+	uint8_t slots = (uint8_t)(count - a);
 	uint8_t alive = 0u;
 	wExcludeArenaPokemon = a;
 	wPlayAreaScreenLoaded = 0u;
@@ -3027,7 +3029,8 @@ HasAlivePokemonInPlayAreaResult _HasAlivePokemonInPlayArea(uint8_t a)
 		if (GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + slot)).a != 0u)
 			alive++;
 	}
-	return (HasAlivePokemonInPlayAreaResult){alive, alive == 0u ? FLAG_C : 0u};
+	/* core.asm:4919-4923: `or a / ret nz`, else `scf`: Z and C together. */
+	return (HasAlivePokemonInPlayAreaResult){alive, alive == 0u ? (uint8_t)(FLAG_Z | FLAG_C) : 0u};
 }
 /* <<< factory _HasAlivePokemonInPlayArea */
 

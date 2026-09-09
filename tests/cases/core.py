@@ -6,6 +6,7 @@ from tests.cases._fixtures import bench_half_hp_fixture as _bench_half_hp_fixtur
 from tests.cases._fixtures import special_attack_params_fixture as _special_attack_params_fixture, SPECIAL_ATTACK_PARAMS_REGS as _SPECIAL_ATTACK_PARAMS_REGS
 from tests.cases._fixtures import evolution_in_list_fixture as _evolution_in_list_fixture, EVOLUTION_IN_LIST_REGS as _EVOLUTION_IN_LIST_REGS
 from tests.cases._fixtures import card_can_be_played_fixture as _card_can_be_played_fixture, CARD_CAN_BE_PLAYED_REGS as _CARD_CAN_BE_PLAYED_REGS
+from tests.cases._fixtures import alive_in_play_area_fixture as _alive_in_play_area_fixture, ALIVE_IN_PLAY_AREA_REGS as _ALIVE_IN_PLAY_AREA_REGS
 from tests.cases._fixtures import fully_powered_fixture as _fully_powered_fixture, FULLY_POWERED_REGS as _FULLY_POWERED_REGS
 from tests.cases._fixtures import ai_trainer_phase5_fixture as _ai_trainer_phase5_fixture, AI_TRAINER_PHASE5_REGS as _AI_TRAINER_PHASE5_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_defending_ko_fixture as _ai_defending_ko_fixture, AI_DEFENDING_KO_REGS as _AI_DEFENDING_KO_REGS, power_screen_fixture as _power_screen_fixture, POWER_SCREEN_REGS as _POWER_SCREEN_REGS
@@ -893,6 +894,11 @@ CASES["SetOneLineSeparation"] = [
 # >>> factory _HasAlivePokemonInPlayArea
 CONTRACT["_HasAlivePokemonInPlayArea"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["_HasAlivePokemonInPlayArea"] = [
+    # dome-5 832872: the live entry (a=0, the whole play area); the slot past the
+    # last Pokemon is never read (the stale 50 HP past it stays unseen), and a
+    # KO'd play area answers Z with the carry.
+    dict(_alive_in_play_area_fixture(vram=False, bank=1), **dict(_ALIVE_IN_PLAY_AREA_REGS, a=0), read={0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1}),
+    dict(_alive_in_play_area_fixture(vram=False, bank=1, **{"C2C8": b"\x00\x32"}), **dict(_ALIVE_IN_PLAY_AREA_REGS, a=0), read={0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1}),
     {"a": 0, "wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xC2C8: b"\x10"},
      "read": {0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1}},
     {"a": 1, "wram": {0xFF97: b"\xC2", 0xC2EF: b"\x03",
@@ -2408,6 +2414,11 @@ CASES["DrawWholeScreenTextBox"] = [
 # >>> factory HasAlivePokemonInPlayArea
 CONTRACT["HasAlivePokemonInPlayArea"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["HasAlivePokemonInPlayArea"] = [
+    # dome-5 832872: the live entry (a=0, the whole play area); the slot past the
+    # last Pokemon is never read (the stale 50 HP past it stays unseen), and a
+    # KO'd play area answers Z with the carry.
+    dict(_alive_in_play_area_fixture(vram=False, bank=1), **dict(_ALIVE_IN_PLAY_AREA_REGS), read={0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1}),
+    dict(_alive_in_play_area_fixture(vram=False, bank=1, **{"C2C8": b"\x00\x32"}), **dict(_ALIVE_IN_PLAY_AREA_REGS), read={0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1}),
     {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xC2C8: b"\x10"},
      "read": {0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1}},
     {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x03",
@@ -6095,12 +6106,7 @@ MUTATIONS["SetOneLineSeparation"] = {
 }
 # <<< factory-mutation SetOneLineSeparation
 # >>> factory-mutation _HasAlivePokemonInPlayArea
-MUTATIONS["_HasAlivePokemonInPlayArea"] = {
-    "source_symbol": "_HasAlivePokemonInPlayArea",
-    "before": "wPlayAreaSelectAction = 0u;",
-    "after": "wPlayAreaSelectAction = 1u;",
-    "case_ids": ["_HasAlivePokemonInPlayArea-0", "_HasAlivePokemonInPlayArea-1"],
-}
+MUTATIONS["_HasAlivePokemonInPlayArea"] = {"source_symbol": "_HasAlivePokemonInPlayArea", "before": "\tuint8_t slots = (uint8_t)(count - a);", "after": "\tuint8_t slots = (uint8_t)(count - a + 1u);", "case_ids": ["_HasAlivePokemonInPlayArea-1"]}
 # <<< factory-mutation _HasAlivePokemonInPlayArea
 # >>> factory-mutation PrintPlayAreaCardLocation
 MUTATIONS["PrintPlayAreaCardLocation"] = {

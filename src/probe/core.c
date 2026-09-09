@@ -654,7 +654,7 @@ static void adapt__HasAlivePokemonInPlayArea(ProbeState *s)
 {
 	HasAlivePokemonInPlayAreaResult r = _HasAlivePokemonInPlayArea(s->a);
 	s->a = r.a;
-	s->f = (uint8_t)((s->f & 0x80u) | r.f);
+	s->f = r.f;
 }
 /* <<< factory _HasAlivePokemonInPlayArea */
 
@@ -1115,7 +1115,7 @@ static void adapt_HasAlivePokemonInPlayArea(ProbeState *s)
 {
 	HasAlivePokemonInPlayAreaResult r = HasAlivePokemonInPlayArea();
 	s->a = r.a;
-	s->f = (uint8_t)((s->f & 0x80u) | r.f);
+	s->f = r.f;
 }
 /* <<< factory HasAlivePokemonInPlayArea */
 

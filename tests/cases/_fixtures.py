@@ -819,3 +819,11 @@ CARD_CAN_BE_PLAYED_REGS = CARD_CAN_BE_PLAYED.regs
 
 def card_can_be_played_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return CARD_CAN_BE_PLAYED.case(vram=vram, bank=bank, **changes)
+
+
+ALIVE_IN_PLAY_AREA = Fixture("dome-5-alive-in-play-area-entry")
+ALIVE_IN_PLAY_AREA_REGS = ALIVE_IN_PLAY_AREA.regs
+
+
+def alive_in_play_area_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return ALIVE_IN_PLAY_AREA.case(vram=vram, bank=bank, **changes)
