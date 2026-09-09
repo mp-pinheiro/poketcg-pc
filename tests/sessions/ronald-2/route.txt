@@ -1,0 +1,27 @@
+# From ronald-1's end (the Grass Club entrance, first Ronald duel lost): up into
+# the club room; the poke there makes five medals (Mitch, Gene, Amy, Isaac,
+# Ken), so walking back down loads Ronald3 and Script_SecondRonaldDuel runs:
+# his text, the duel (POWERFUL_RONALD_DECK, 6 prizes), and the after-duel
+# script.
+idle
+hold UP 80
+idle
+peek
+hold DOWN 80
+idle
+peek
+shot ronald-2-ask
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+duel
+dismiss
+peek
+shot ronald-2-end

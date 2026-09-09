@@ -1,0 +1,39 @@
+{
+  "goal": "From the first Ronald duel: into the Grass Club room, five medals poked, and Ronald's second duel in the entrance to its end under the pilot's WRAM policy, then his after-duel script",
+  "name": "ronald-2",
+  "ordinals": 630079,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ],
+    "582677": [
+      [
+        54226,
+        24
+      ]
+    ],
+    "603055": [
+      [
+        54226,
+        59
+      ]
+    ]
+  },
+  "recorded": "2026-09-09T08:30:19+00:00",
+  "schema": 1
+}
