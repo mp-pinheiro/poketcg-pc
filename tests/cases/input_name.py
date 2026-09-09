@@ -612,18 +612,6 @@ MUTATIONS["InitializeInputName"] = {
     "case_ids": ["InitializeInputName-0", "InitializeInputName-1", "InitializeInputName-2", "InitializeInputName-3", "InitializeInputName-4"],
 }
 # <<< factory-mutation InitializeInputName
-# >>> factory-completion InitializeInputName
-# The routine clears $CFE7-$CFFE, which covers the PyBoy oracle's sentinel stub
-# at $CFF0-$CFF5, so by the time it returns the injected breakpoint opcode at
-# the sentinel is a zero byte and the run never completes -- the reference dies
-# on the 240-frame allowance rather than on anything the port did. $687F is
-# this routine's own `ret`: entry $6846 plus its 58 bytes lands on
-# FinalizeInputName at $6880, so the last byte is $687F. Completing there puts
-# the hook in bank 6 ROM instead of the wiped WRAM stub, and every store the
-# contract observes (including wNamingScreenBufferLength) has already run.
-for _rec in SCHEMA2_CASES["InitializeInputName"]:
-    _rec["completion"] = {"mode": "pre-ret", "pc": 0x687F}
-# <<< factory-completion InitializeInputName
 # >>> factory-mutation FinalizeInputName
 MUTATIONS["FinalizeInputName"] = {"source_symbol": "FinalizeInputName", "before": "\tuint16_t copy_count = (uint16_t)wNamingScreenBufferMaxLength + 1u;", "after": "\tuint16_t copy_count = 2u;", "case_ids": ["FinalizeInputName-0"]}
 # <<< factory-mutation FinalizeInputName
@@ -635,19 +623,6 @@ MUTATIONS["InputPlayerName"] = {
     "case_ids": ["InputPlayerName-0", "InputPlayerName-1"],
 }
 # <<< factory-mutation InputPlayerName
-# >>> factory-completion InputPlayerName
-# InitializeInputName clears $CFE7-$CFFE, so by the time this routine returns the
-# PyBoy oracle's sentinel at $CFF0 is a zero byte and the injected hook never
-# fires -- the run dies on the watchdog rather than on anything the port did.
-# $682A is this routine's own `ret`: `06:67a3 InputPlayerName` plus its 163
-# bytes lands on `06:6846 InitializeInputName`, and `06:682b
-# InputPlayerName.on_b_button` is the byte straight after the `ret`. Completing
-# there puts the hook in bank 6 ROM, which nothing can wipe, and every store the
-# contract observes -- including FinalizeInputName's copy into the destination --
-# has already run.
-for _rec in SCHEMA2_CASES["InputPlayerName"]:
-    _rec["completion"] = {"mode": "pre-ret", "pc": 0x682A}
-# <<< factory-completion InputPlayerName
 
 # >>> factory-mutation DeckNamingScreen_CheckButtonState
 MUTATIONS["DeckNamingScreen_CheckButtonState"] = {"source_symbol": "DeckNamingScreen_CheckButtonState", "before": "\t\tif (d_reg == 2u)", "after": "\t\tif (d_reg == 0x41u)", "case_ids": ["DeckNamingScreen_CheckButtonState-0"]}
@@ -660,10 +635,6 @@ MUTATIONS["InputDeckName"] = {
     "case_ids": ["InputDeckName-0", "InputDeckName-1"],
 }
 # <<< factory-mutation InputDeckName
-# >>> factory-completion InputDeckName
-for _rec in SCHEMA2_CASES["InputDeckName"]:
-    _rec["completion"] = {"mode": "pre-ret", "pc": 0x6E1B}
-# <<< factory-completion InputDeckName
 
 MUTATIONS["PlayerNamingScreen_DrawCursor"] = {
     "source_symbol": "PlayerNamingScreen_DrawCursor",

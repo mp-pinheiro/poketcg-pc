@@ -62,13 +62,3 @@ MUTATIONS["DisplayPlayerNamingScreen"] = {
 	"case_ids": ["DisplayPlayerNamingScreen-0", "DisplayPlayerNamingScreen-1"],
 }
 # <<< factory-mutation DisplayPlayerNamingScreen
-# >>> factory-completion DisplayPlayerNamingScreen
-# InputPlayerName's InitializeInputName clears $CFE7-$CFFE, which wipes the
-# oracle call frame at $CFF0-$CFF5, so the default completion hook never fires
-# and the run dies on the watchdog. $68EA is this routine's own `ret`:
-# `04:68a9 DisplayPlayerNamingScreen` plus its 66 code bytes end at `04:68eb
-# .default_name`, and every store the contract observes -- the 16-byte
-# sPlayerName copy and both RNG checksum bytes -- has already run there.
-for _rec in SCHEMA2_CASES["DisplayPlayerNamingScreen"]:
-    _rec["completion"] = {"mode": "pre-ret", "pc": 0x68EA}
-# <<< factory-completion DisplayPlayerNamingScreen

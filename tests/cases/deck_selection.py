@@ -379,10 +379,6 @@ MUTATIONS["HandleStartButtonInDeckSelectionMenu"] = {"source_symbol": "HandleSta
 # >>> factory-mutation InputCurDeckName
 MUTATIONS["InputCurDeckName"] = {"source_symbol": "InputCurDeckName", "before": "\telse if (deck == 2u)\n\t\tquestion = INPUT_CUR_DECK_DECK3_DATA;", "after": "\telse if (deck == 2u)\n\t\tquestion = INPUT_CUR_DECK_DECK1_DATA;", "case_ids": ["InputCurDeckName-1"]}
 # <<< factory-mutation InputCurDeckName
-# >>> factory-completion InputCurDeckName
-for _rec in SCHEMA2_CASES["InputCurDeckName"]:
-    _rec["completion"] = {"mode": "pre-ret", "pc": 0x6E1B, "bank": 6}
-# <<< factory-completion InputCurDeckName
 # >>> factory-mutation DeckSelectionMenu
 MUTATIONS["DeckSelectionMenu"] = {"source_symbol": "DeckSelectionMenu", "before": "\tDrawDecksScreen(ALL_DECKS);", "after": "\tDrawDecksScreen(ALL_DECKS);\n\twCurDeck = 1u;", "case_ids": ["DeckSelectionMenu-0", "DeckSelectionMenu-1"]}
 # <<< factory-mutation DeckSelectionMenu
