@@ -24,7 +24,7 @@ from pathlib import Path
 # $CFF0-$CFF5 and $DC30-$DCFF are the PyBoy oracle's synthesized call frame
 # (tools/oracle/pyboy_oracle.py RESERVED); $DD80+ is the sound driver's.
 _HOLES = (0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCD0F, 0xCEA3)
-_SPANS = ((0xC000, 0xCFF0), (0xD000, 0xDC30), (0xDD00, 0xDD80))
+_SPANS = ((0xC000, 0xCD20), (0xCD26, 0xDC30), (0xDD00, 0xDD80))
 # The joypad snapshot hDPadRepeat..hKeysPressed ($FF8D-$FF91) is the `keys`
 # timeline as each lane injects it: the probe advances it per completed poll,
 # PyBoy per frame, so a routine that polls inside its own DoFrame loop
@@ -312,6 +312,10 @@ NAME_CURSOR_REGS = NAME_CURSOR.regs
 # routine transforms it and appends it to wNamingScreenBuffer.
 NAME_INPUT = Fixture("lightning-3-name-input-entry")
 NAME_INPUT_REGS = NAME_INPUT.regs
+# lightning-3 at DoFrame 735: "End" is chosen, so the finished name is copied
+# out of wNamingScreenBuffer into the caller's destination buffer.
+NAME_FINAL = Fixture("lightning-3-name-final-entry")
+NAME_FINAL_REGS = NAME_FINAL.regs
 
 
 
@@ -517,3 +521,7 @@ def name_cursor_fixture(vram: bool = True, bank: int | None = None, **changes: b
 
 def name_input_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return NAME_INPUT.case(vram=vram, bank=bank, **changes)
+
+
+def name_final_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return NAME_FINAL.case(vram=vram, bank=bank, **changes)

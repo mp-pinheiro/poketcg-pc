@@ -677,7 +677,7 @@ int main(int argc, char **argv) {
         ctx->sp = (uint16_t)(entry_sp + 2u);
     else
         ctx->sp = 0xfffe;
-    gb_push16(ctx, entry_sp_state == 1 ? 0xcff0 : 0xfea0);
+    gb_push16(ctx, entry_sp_state == 1 ? 0xcd20 : 0xfea0);
     /* Sentinel first, so it stays the deepest word: the routine's final `ret`
      * must still land on it after popping every caller-pushed save below. */
     for (size_t i = 0; i < stack_count; i++)
@@ -691,7 +691,7 @@ int main(int argc, char **argv) {
                               ? stop_pc
                               : (post_call_state == 1
                                  ? (entry_sp_state == 1 ? 0xcff1 : 0xfea1)
-                                 : (entry_sp_state == 1 ? 0xcff0 : 0xfea0)))) {
+                                 : (entry_sp_state == 1 ? 0xcd20 : 0xfea0)))) {
         if (steps >= instruction_budget || cycles >= cycle_budget) {
             /* A budget death parked in a halt is the common trap, and pc alone
              * cannot tell a spin apart from a wait for an interrupt that can

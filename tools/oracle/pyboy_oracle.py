@@ -34,16 +34,11 @@ from pyboy import PyBoy
 # It used to occupy $CF30-$CFFF, hiding live deck/card scratch symbols from the
 # oracle. Measured stack low-water over the 31 largest routines was 86 bytes
 # below entry SP; this window provides 143 bytes below STACK_TOP.
-#
-# PyBoy can hook execution only in fixed WRAM, not $D000-$DFFF. Keep the tiny
-# sentinel/spin stub at its original fixed-WRAM address for immediate capture;
-# only the stack moves. The stub overlaps six bytes of wNamingScreenBuffer, but
-# every deck/card blocker symbol through $CFD2 remains case-addressable.
-SENTINEL = 0xCFF0
-SPIN = 0xCFF4
+SENTINEL = 0xCD20
+SPIN = 0xCD24
 STACK_TOP = 0xDCC0
 
-RESERVED = (range(0xCFF0, 0xCFF6), range(0xDC30, 0xDD00))
+RESERVED = (range(0xCD20, 0xCD26), range(0xDC30, 0xDD00))
 
 
 def _reserved_overlap(address: int, size: int) -> range | None:

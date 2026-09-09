@@ -547,6 +547,33 @@ before re-reading the asm. Here `ShuffleCards` -> `ShuffleDeck` ->
 `ShuffleCardsInDeck` all propagated `f=$C0` correctly and the port still
 reported `$70`, which is only possible below the port.
 
+## The reference lane's stub is game state
+
+PyBoy stops a probed routine by hooking its synthesized return address, and
+`hook_register` implements that by patching the target byte to `$DB`. The stub
+is therefore live memory the ROM can read: it sat at `$CFF0-$CFF5`, twelve bytes
+into the 24-byte `wNamingScreenBuffer`, so every routine that copied a player
+or deck name copied `$DB` out of the middle of it. `FinalizeInputName` produced
+`$C509 = $DB` on the PyBoy lane while gbref and the port both produced `$00`;
+two references disagreeing is the signature of this class.
+
+Fixtures cannot paper over it. `_fixtures._SPANS` skips the reserved window on
+both lanes, so the port reads its own zeros while PyBoy reads the trap byte,
+and a case that seeds the window is rejected outright by `_reserved_overlap`.
+
+The stub now lives at `$CD20-$CD25`, inside the unlabelled `ds $78` pad at
+`$CD1F-$CD96` in pret's WRAM map: no symbol names it, so no ported routine
+writes it. Four files carry the address and must move together --
+`pyboy_oracle.SENTINEL`/`SPIN`/`RESERVED`, the `verify.py` mirror,
+`_fixtures._SPANS`, and the return PC `gbref/runner.c` pushes.
+
+A routine that clears its own stub window kills the hook and wedges the lane.
+The naming cases used to compensate by seeding `\x18\xfe` at the exact source
+offset whose copy reinstated the spin at `$CFF4`; with the stub outside the
+buffer that data is gone. If a future case wedges only on the PyBoy lane,
+check whether the routine writes through `$CD20-$CD25` before suspecting the
+port.
+
 ## Push a narrowing down to the routine that owns the gap
 
 The trade row shipped for one turn with `c` narrowed away on a case, blamed on

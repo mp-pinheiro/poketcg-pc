@@ -20,7 +20,7 @@ wRNGCounter = 0xCACC
 # opcode (`ld bc,d16`) swallows $D00A, so the slide resumes at $D00B:
 # `18 fe 00` spins at every alignment and keeps the park harmless. Nothing in
 # this routine's call graph writes $D00A-$D015.
-DPNS_PARK = b"\x18\xfe\x00" * 4
+DPNS_PARK = b"\x00\x00\x00" * 4
 
 # CopyDMAFunction installs hDMAFunction (VBlankHandler calls it once
 # wVBlankOAMCopyToggle is set); SetupText zeroes the glyph cache the naming

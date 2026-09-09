@@ -1,7 +1,8 @@
 """Oracle-diff cases for poketcg/src/engine/input_name.asm."""
 
-from tests.cases._fixtures import (NAME_CURSOR_REGS, NAME_INPUT_REGS,
-                                   name_cursor_fixture, name_input_fixture)
+from tests.cases._fixtures import (NAME_CURSOR_REGS, NAME_FINAL_REGS, NAME_INPUT_REGS,
+                                   name_cursor_fixture, name_final_fixture,
+                                   name_input_fixture)
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -343,7 +344,7 @@ wNamingScreenKeyboardHeight = 0xCEA9
 # GetTextLengthInTiles never reaches them and the measured length is unaffected.
 def _naming_source(text):
     body = bytes(text) + b"\x00" * (24 - len(text))
-    return body[:13] + b"\x18\xfe" + body[15:]
+    return body[:13] + b"\x00\x00" + body[15:]
 
 wNamingScreenBuffer = 0xCFE7
 wNamingScreenDestPointer = 0xD000
@@ -366,7 +367,7 @@ wNamingScreenBufferMaxLength = 0xD004
 # harmlessly instead of running into a HALT or an rLCDC write. Nothing in this
 # routine's call graph writes $D00A-$D015 (wMachineDeckPtrs is deck-machine
 # only), so the implicit comparison on the seed is a free identity check.
-IPN_PARK = b"\x18\xfe\x00" * 4
+IPN_PARK = b"\x00\x00\x00" * 4
 
 # Destination high bytes are restricted to one-byte opcodes for the same slide:
 # $C1 is POP BC and $C5 is PUSH BC, while $C2/$C4 would decode as a three-byte
@@ -432,7 +433,8 @@ CONTRACT["FinalizeInputName"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl")
 CASES["FinalizeInputName"] = [
     {"wram": {0xCFE7: b"\x61\x62\x63\x00", 0xD000: b"\x00\xC2", 0xD004: b"\x03"}, "read": {0xC200: 4}},
     {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCFE7: b"\x61\x00", 0xD000: b"\x00\xC3", 0xD004: b"\x01"}, "read": {0xC300: 2}},
-    {"wram": {0xCFE7: b"\x00", 0xD000: b"\x00\xC4", 0xD004: b"\x00"}, "read": {0xC400: 1}}
+    {"wram": {0xCFE7: b"\x00", 0xD000: b"\x00\xC4", 0xD004: b"\x00"}, "read": {0xC400: 1}},
+    dict(name_final_fixture(vram=False), **NAME_FINAL_REGS),
 ]
 # <<< factory FinalizeInputName
 
