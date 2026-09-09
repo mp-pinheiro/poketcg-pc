@@ -1,0 +1,27 @@
+{
+  "goal": "from Amy's duel: the overworld map to the Psychic Club lobby and Robert's duel to its end under the pilot's WRAM policy, then his after-duel script",
+  "name": "psychic-club",
+  "ordinals": 609719,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ]
+  },
+  "recorded": "2026-09-09T03:41:42+00:00",
+  "schema": 1
+}

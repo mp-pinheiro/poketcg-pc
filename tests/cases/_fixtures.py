@@ -645,3 +645,11 @@ ENERGY_SEARCH_REGS = ENERGY_SEARCH.regs
 
 def energy_search_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return ENERGY_SEARCH.case(vram=vram, bank=bank, **changes)
+
+
+PROFESSOR_OAK = Fixture("psychic-club-professor-oak-entry")
+PROFESSOR_OAK_REGS = PROFESSOR_OAK.regs
+
+
+def professor_oak_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return PROFESSOR_OAK.case(vram=vram, bank=bank, **changes)

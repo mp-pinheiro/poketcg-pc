@@ -1,0 +1,30 @@
+idle
+hold DOWN 200
+idle
+hold LEFT 48
+idle
+hold DOWN 200
+idle
+press UP
+idle
+press LEFT
+idle
+press A
+idle
+hold UP 48
+idle
+hold LEFT 64
+idle
+hold LEFT 32
+idle
+hold UP 200
+idle
+peek
+press A
+idle
+shot psychic-club-ask
+yes
+duel
+dismiss
+peek
+shot psychic-club-end

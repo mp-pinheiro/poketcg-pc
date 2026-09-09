@@ -1,6 +1,7 @@
 from tests.cases._fixtures import energy_removal_fixture as _energy_removal_fixture, ENERGY_REMOVAL_REGS as _ENERGY_REMOVAL_REGS
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_bill_fixture as _ai_bill_fixture, AI_BILL_REGS as _AI_BILL_REGS
 from tests.cases._fixtures import energy_search_fixture as _energy_search_fixture, ENERGY_SEARCH_REGS as _ENERGY_SEARCH_REGS
+from tests.cases._fixtures import professor_oak_fixture as _professor_oak_fixture, PROFESSOR_OAK_REGS as _PROFESSOR_OAK_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/ai/trainer_cards.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -1256,6 +1257,7 @@ CONTRACT["AIDecide_ProfessorOak"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecide_ProfessorOak"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x36"}},
     dict(POISON, wram={0xFF97: b"\xC2", 0xC2BA: b"\x36"}),
+    dict(_professor_oak_fixture(vram=False), **_PROFESSOR_OAK_REGS),
 ]
 # <<< factory AIDecide_ProfessorOak
 
