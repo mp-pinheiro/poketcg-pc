@@ -1,0 +1,39 @@
+{
+  "goal": "From Ronald's third duel: the coverage search's deepest new-code path (explore.py --seed-session ronald-3)",
+  "name": "ronald-explore",
+  "ordinals": 651681,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ],
+    "582677": [
+      [
+        54226,
+        24
+      ]
+    ],
+    "603055": [
+      [
+        54226,
+        59
+      ]
+    ]
+  },
+  "recorded": "2026-09-10T17:36:00+00:00",
+  "schema": 1
+}
