@@ -48,7 +48,7 @@ uint8_t GameEvent_Duel(void);
 uint8_t GameEvent_ChallengeMachine(void);
 /* <<< factory GameEvent_ChallengeMachine */
 /* >>> factory GameEvent_GiftCenter */
-void GameEvent_GiftCenter(void);
+uint8_t GameEvent_GiftCenter(void);
 /* <<< factory GameEvent_GiftCenter */
 /* >>> factory GameEvent_Credits */
 void GameEvent_Credits(void);

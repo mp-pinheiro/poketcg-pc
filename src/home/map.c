@@ -308,12 +308,19 @@ uint8_t GameEvent_ChallengeMachine(void)
 /* <<< factory GameEvent_ChallengeMachine */
 
 /* >>> factory GameEvent_GiftCenter */
-void GameEvent_GiftCenter(void)
+uint8_t GameEvent_GiftCenter(void)
 {
+	uint8_t saved = hBankROM;
+
 	PauseSong();
 	PlaySong(MUSIC_CARD_POP);
 	wActiveGameEvent = GAME_EVENT_GIFT_CENTER;
 	wGiftCenterChoice = (uint8_t)(wGiftCenterChoice | 0x10u);
+	HandleGiftCenter();
+	wGiftCenterChoice = (uint8_t)(wGiftCenterChoice & 0xEFu);
+	ResumeSong();
+	BankswitchROM(saved);
+	return 0x10u;
 }
 /* <<< factory GameEvent_GiftCenter */
 
@@ -371,8 +378,7 @@ uint8_t _ExecuteGameEvent(void)
 	case 2u:
 		return GameEvent_BattleCenter();
 	case 3u:
-		GameEvent_GiftCenter();
-		return 0x10u;
+		return GameEvent_GiftCenter();
 	case 4u:
 		GameEvent_Credits();
 		return 0x80u;

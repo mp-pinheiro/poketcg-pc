@@ -270,8 +270,13 @@ CASES["GameEvent_ChallengeMachine"] = [
 # >>> factory GameEvent_GiftCenter
 CONTRACT["GameEvent_GiftCenter"] = {"compare": (), "preserve": ()}
 CASES["GameEvent_GiftCenter"] = [
-    {"oracle": False, "evidence": "primary", "why": "The bounded event prefix pauses the prior song, starts Card Pop music, and marks the gift-center event before the external handler entry; event bytes are asserted.", "wram": {0xD0C2: b"\xff", 0xD10E: b"\x02", 0xDD80: b"\xff"}, "read": {0xD0C2: 1, 0xD10E: 1, 0xDD80: 1}, "expect": {0xD0C2: b"\x03", 0xD10E: b"\x12", 0xDD80: b"\x08"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"oracle": False, "evidence": "primary", "why": "The bounded event prefix marks the gift-center event with poisoned registers before the external handler entry; event bytes are asserted.", "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD0C2: b"\xff", 0xD10E: b"\x02", 0xDD80: b"\xff"}, "read": {0xD0C2: 1, 0xD10E: 1, 0xDD80: 1}, "expect": {0xD0C2: b"\x03", 0xD10E: b"\x12", 0xDD80: b"\x08"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"evidence": "primary", "wram": {0xD0C2: b"\xff", 0xD10E: b"\x02", 0xDD80: b"\xff"},
+     "read": {0xD0C2: 1, 0xD10E: 1, 0xDD80: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, evidence="primary",
+         wram={0xD0C2: b"\xff", 0xD10E: b"\x02", 0xDD80: b"\xff"},
+         read={0xD0C2: 1, 0xD10E: 1, 0xDD80: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory GameEvent_GiftCenter
 
@@ -396,7 +401,8 @@ MUTATIONS["GameEvent_GiftCenter"] = {"source_symbol": "GameEvent_GiftCenter", "b
 # <<< factory-mutation GameEvent_GiftCenter
 # >>> factory-completion GameEvent_GiftCenter
 for _record in SCHEMA2_CASES["GameEvent_GiftCenter"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7177, "bank": 2}
+    _record["completion"] = {"mode": "entry", "pc": 0x7177, "bank": 2,
+                             "routine": "HandleGiftCenter"}
 # <<< factory-completion GameEvent_GiftCenter
 # >>> factory-mutation GameEvent_Credits
 MUTATIONS["GameEvent_Credits"] = {"source_symbol": "GameEvent_Credits", "before": "\t(void)PlayCreditsSequence();", "after": "\tPlaySong(0u);", "case_ids": ["GameEvent_Credits-0", "GameEvent_Credits-1"]}

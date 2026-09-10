@@ -124,8 +124,7 @@ static void adapt_GameEvent_ChallengeMachine(ProbeState *s)
 /* >>> factory GameEvent_GiftCenter */
 static void adapt_GameEvent_GiftCenter(ProbeState *s)
 {
-	GameEvent_GiftCenter();
-	(void)s;
+	s->f = GameEvent_GiftCenter();
 }
 /* <<< factory GameEvent_GiftCenter */
 
