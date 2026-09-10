@@ -179,8 +179,17 @@
   "dome-explore": {
     "confirmed_ordinal": 856837
   },
+  "effect-kadabra-1": {
+    "confirmed_ordinal": 49808
+  },
+  "effect-mew-lv23-2": {
+    "confirmed_ordinal": 29816
+  },
   "effect-pidgeotto-2": {
     "confirmed_ordinal": 29312
+  },
+  "effect-spearow-2": {
+    "confirmed_ordinal": 32336
   },
   "fighting-club": {
     "confirmed_ordinal": 108594
