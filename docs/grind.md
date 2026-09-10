@@ -2030,3 +2030,84 @@ says RED about text that no longer exists. Closing that means adding the
 declaration's digest to the receipt and regenerating all 2529, which is a
 migration, not a fix; until then "0 failures" means "every anchor resolves",
 and nothing more.
+
+## The audio exclusion hid four defects
+
+`GATED` is 4, so `SECTION "WRAM Audio"` ($DD80-$DEE4) is digested as the
+`audio` region and reported, not gated. The stated reason until 2026-09-09 was
+that the port batches timer ISRs at the frame boundary while the ROM
+interleaves them with game code. That reason was wrong: the lag track already
+replays the ISR count per interval and `src/runtime.c` `schedule_close`
+delivers an interval's remainder before the digest, so the region was
+comparable all along. Flipping `GATED` to 5 and sweeping the sessions is the
+measurement -- it found four real defects, three fixed below. Six `ai-duel-*`
+sessions still diverge on the fourth, so the flip does not land yet: it would
+drop their ratcheted floors.
+
+**The remaining one is the $3F SFX driver.** `ai-duel-0c` is byte-exact
+through anchor 30831 and at 30832 the port's `wSFXCommandPointers` for channel
+1 is six bytes ahead of the ROM's ($DE4D `0xd7` against `0xd1`) with
+`wde2b + 1` at `0x80` against `0x00` -- an envelope command the ROM had not
+reached. It begins exactly where the duel's SFX id changes ($DD82 `0x91` ->
+`0xb4`, so a new sound's header is loaded) and oscillates for the rest of the
+sound; the other five sessions diverge on the same two bytes.
+
+Ruled out by reading, all faithful to the asm: the dispatch table
+(`sfx.asm:103-138`, high nibble, unused 9-14 re-dispatching), every handler's
+operand length (frequency, envelope, pitch-offset, wait and pan take one byte,
+duty and wave none), `SFX_Play`'s mask walk -- which advances `de` but not the
+header pointer for a channel whose bit is clear -- and both loop commands,
+including `SFX_endloop` leaving `wde3f` unwritten on the finishing pass.
+
+What the two lanes disagree on is how many command batches run per interval,
+not how long a command is. The port's channel-1 trace inside one interval is
+`5ec8 80`, `5eca 28`, `5ecb 30`, `5ecd 10`, `5ecf 07`, then a fresh batch
+`5ed1 10`, `5ed3 50`, `5ed5 60`, storing `5ed7`; the ROM stops at `5ed1`,
+which is one `SFX_frequency` store. So the port runs an extra `SFX_Update` for
+that channel somewhere around the new sound's first tick. Next measurement:
+break on `sfx.c:336` with `(bc & 0xff) == 1` on both sides of anchor 30832 and
+count batches per interval -- `gdb`'s `commands`/`printf`/`continue` prints the
+sequence in one run -- then compare against the ROM's `wde33` countdown.
+Do not re-read the interpreter; it matches.
+
+**The boot interval's sync offsets were clamped.** `lag_track` derives each
+driver call's tick offset with `unwrap(counter - prev, elapsed / TICK_TIME)`.
+At index 0 `prev` is zero and `elapsed` spans the whole boot, but the timer is
+only enabled for its last stretch: 14 ticks against an 840-tick estimate, so
+`unwrap` added three modulus turns and `min(dt, ...)` pinned every offset to
+`dt`. The port then ran all 14 ticks at the first driver call, before
+`HandleTitleScreen`'s `PlaySong(MUSIC_STOP)`, where the ROM runs ISRs 2-5 after
+that write and its driver marks the song finished. One byte, `wCurSongID`
+`0x00` against `0x80`, at anchor 1 of every session. Index 0's counters are
+absolute, so they need no unwrapping at all.
+
+**`Music1_UpdateVibrato` is a pure function and the port stored its result.**
+The asm returns the modulated pitch in `de` (`music1.asm:1437-1465`) and leaves
+`wMusicCh1CurPitch` holding the base pitch; the port wrote the modulated value
+back, so vibrato accumulated into the base and the high byte lost its `and $7`
+mask. `Music1_f490b` then read the pitch from WRAM instead of taking `de`. Both
+signatures now match the asm. Its four cases all seeded a zero vibrato delay,
+so every modulated arm was unreachable by construction, and the probe adapter
+read the result back out of WRAM -- the port and its adapter written to the same
+wrong assumption, which no case matrix can catch. Six cases now cover positive
+and negative deltas, the carry into the masked high byte, the `$80` chain and
+the `$80,$80` restart.
+
+**Channel 3's stop arm writes channel 1's tie byte.** `Music1_f479c`'s
+instrument-zero exit is `ld hl, wMusicTie` -- offset zero (`music1.asm:1271`) --
+where `f4714` writes `wMusicTie` and `f475a` writes `wMusicTie + 1`. The port
+folded all four channels into one helper keyed by `wMusicTie_PTR[ch]`, so it
+wrote `+2` and left `+0` alone, which is the ROM's behaviour inverted on two
+bytes at once. The same fold also tested the instrument before the wave-change
+block, where the asm loads the wave instrument first. Both copies of the driver
+(`music1.c`, `music2.c` -- parallel ROM banks, not a duplication defect) had it.
+
+A ROM asymmetry between four parallel routines is exactly what a shared helper
+erases. When the port collapses `Music1_f4714`/`f475a`/`f479c`/`f480a` into one
+body, diff each arm against its own asm before trusting the parameterisation.
+
+`tools/run_mutation.py` compared its baseline before rebuilding, so a source
+edit not yet compiled into `build-barrier` was attributed to the mutation: the
+first canary run here reported `MUTATION_BASELINE_FAILED` naming the *old*
+body's output. It rebuilds first now.
+
