@@ -2351,7 +2351,13 @@ replay. And prefer bytes to call counts: `wram` at two anchors settles what a
 count comparison only suggests, and it is the same evidence the gate uses.
 
 `credits-1` remains diverged at 858,149 on `wMusicChannelPointers`,
-`wMusicCh1CurPitch` and `wMusicCh3CurOctave` for the reason already recorded
-above -- a 66-frame LCD-off interval whose ~264 timer ISRs the port delivers in
-one `schedule_close` batch -- and it is still the one session blocking
-`GATED = 5`.
+`wMusicCh1CurPitch` and `wMusicCh3CurOctave`, and the schedule is not the
+suspect any more: the interval's `lag.txt` record carries 266 ticks and 9,884
+sync offsets, the run reports no `lag track: ... off schedule` row, so the port
+called `frame_boundary_timer_sync()` at every recorded point and delivered
+every tick. What is left is sub-sync-point granularity -- inside the last
+stretch between two recorded sync points the ROM's ISRs land between
+instructions that the port runs in one block. Closing it needs a *new* sync
+site, which re-keys `stream_key` and costs a full re-derivation (~2 h at four
+workers), and the site has to be found first: the order-sensitive driver store
+between two existing sync points. It is the one session blocking `GATED = 5`.
