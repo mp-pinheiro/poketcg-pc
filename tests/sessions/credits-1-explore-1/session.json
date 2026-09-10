@@ -1,0 +1,10 @@
+{
+  "derived_from": "credits-1",
+  "goal": "Coverage search from credits-1: 8 routines no session had executed (AskToContinueFromDiaryWithDuelData, Func_c1ed, LoadBackupCardAndDeckSaveData, LoadBackupGeneralSaveData)",
+  "input_sha256": "047dc0fd5a09132015a077914d1c0e3aaa1b1d2f959533a3b1200c078491ef3a",
+  "name": "credits-1-explore-1",
+  "ordinals": 876358,
+  "recorded": "2026-09-10T20:32:16+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-credits-1/scripts/s00-A-8.txt"
+}

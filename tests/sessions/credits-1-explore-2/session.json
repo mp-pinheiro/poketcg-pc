@@ -1,0 +1,10 @@
+{
+  "derived_from": "credits-1",
+  "goal": "Coverage search from credits-1: 4 routines no session had executed (PauseMenu_Diary, PrintMedalCount, YesOrNoMenuWithText_SetCursorToYes, _PauseMenu_Diary)",
+  "input_sha256": "750df357b601173a8566c86a06abd534af0c4454f52af9b1e88e84b913b70164",
+  "name": "credits-1-explore-2",
+  "ordinals": 909358,
+  "recorded": "2026-09-10T21:05:34+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-credits-1/scripts/s01-A-4.txt"
+}
