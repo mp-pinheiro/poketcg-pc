@@ -2059,16 +2059,47 @@ duty and wave none), `SFX_Play`'s mask walk -- which advances `de` but not the
 header pointer for a channel whose bit is clear -- and both loop commands,
 including `SFX_endloop` leaving `wde3f` unwritten on the finishing pass.
 
-What the two lanes disagree on is how many command batches run per interval,
-not how long a command is. The port's channel-1 trace inside one interval is
-`5ec8 80`, `5eca 28`, `5ecb 30`, `5ecd 10`, `5ecf 07`, then a fresh batch
-`5ed1 10`, `5ed3 50`, `5ed5 60`, storing `5ed7`; the ROM stops at `5ed1`,
-which is one `SFX_frequency` store. So the port runs an extra `SFX_Update` for
-that channel somewhere around the new sound's first tick. Next measurement:
-break on `sfx.c:336` with `(bc & 0xff) == 1` on both sides of anchor 30832 and
-count batches per interval -- `gdb`'s `commands`/`printf`/`continue` prints the
-sequence in one run -- then compare against the ROM's `wde33` countdown.
-Do not re-read the interpreter; it matches.
+The cause is the sync model, not the SFX driver, and it is proven. A sync
+point is recorded and replayed at the *home wrapper's entry*
+(`TIMER_SYNC` `(None, 0x3796)` `PlaySFX`), but the store the driver makes is
+several instructions later, in bank $3d, and on hardware a timer ISR fits in
+between. Traced on the reference across the interval closed by anchor 30832,
+whose lag line is `86450 5 1 0` -- five ticks, one sync at offset zero:
+
+```text
+SYNC PlaySFX ticks_so_far=0 counter=0x28 sfx=0x91
+ISR #1 counter=0x28 sfx=0x91      <- old id still stored, so this update
+ISR #2 counter=0x29 sfx=0x34         runs the old stream (0x4ae8...)
+```
+
+`0x28 & 3 == 0`, so ISR #1 *is* a sound update, and it ran before the request
+became visible. The port has no interrupts inside a C statement: it delivers
+the recorded zero ticks, stores the id atomically, then delivers all five at
+`schedule_close`, so its first update already sees `0x34` and starts the new
+sound one update early. Six bytes of stream is what that one update consumes.
+
+The fix is to record and replay the sync at the store instead of at the
+wrapper: `3d:4028`/`3e:4028` for `wCurSongID` and `3d:4048`/`3e:4048` for
+`wCurSfxID` (found by searching the bank for `EA 80 DD` / `EA 82 DD` inside
+the routine's span; `poketcg.sym` names labels, not instructions), with
+`frame_boundary_timer_sync()` moved to just before the store in
+`Music1_PlaySong`/`Music1_PlaySFX` and their music2 twins. Two details make it
+more than a two-line change: `TIMER_SYNC_ADDRESSES` is keyed by address, so
+the parallel $3d/$3e copies at identical offsets collide and it has to hold a
+set of banks per address; and the port's `Music1_PlaySFX` stores the id on two
+paths where the asm has one (`.play_sfx` handles SFX_STOP with `b = 0`), so it
+wants restructuring to a single store before a sync is attached to it.
+
+**The cost is a full reference re-derivation, which is why it is not done
+here.** `calls.bin` only holds hits for addresses that were hooked when the
+stream was built, so every cached session has to replay to record the new
+sites -- roughly 3.9M anchors across the 81 sessions, about three hours
+single-threaded, parallelisable per session because each cache is keyed by its
+own inputs. Landing the sync move without that regeneration would leave every
+session's port calling `timer_sync` at a site its track has no offset for, so
+it must be one change: banks-per-address, the store sites, the port's two
+restructured stores, delete `build/completion/sessions/*`, re-derive, then
+`GATED = 5`.
 
 **The boot interval's sync offsets were clamped.** `lag_track` derives each
 driver call's tick offset with `unwrap(counter - prev, elapsed / TICK_TIME)`.
