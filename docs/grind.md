@@ -2045,17 +2045,40 @@ sessions clean *with audio gated* -- `challenge-hall` byte-exact through all
 702,945 of its ordinals, sound driver included.
 
 **The flip does not land yet: `credits-1` diverges at 858,149 of 864,424.**
-Its window is `reference_frames=65.99`, one interval spanning 66 frames of the
-credits' LCD-off stretch, so ~264 timer ISRs land in a single
-`schedule_close` batch while the ROM interleaves them with the credits code.
-The bytes are `wMusicChannelPointers` (51 against 26), `wMusicCh1CurPitch` and
-`wMusicCh3CurOctave`, i.e. the stream is at a different note, and no
-`lag track: N sync points off schedule` row appears, so the port delivered
-exactly the recorded schedule. It is the same class as the `PlaySFX` fix
-below -- a game write to driver state mid-interval that the port applies at a
-different tick -- and closing it means another sync point, which means another
-full re-derivation. Landing `GATED = 5` before that would drop `credits-1`'s
-ratcheted floor from 864,424 to 858,148.
+Landing `GATED = 5` before it is fixed would drop that session's ratcheted
+floor from 864,424 to 858,148. What is measured about that one interval:
+
+- it spans 4,634,254 cycles (`reference_frames=65.99`), the credits' LCD-off
+  stretch, with `dt = 266` timer ISRs and `dv = 62` VBlank ISRs;
+- the lag line carries **9,884 sync offsets**, climbing 0,0,... to 266: the
+  credits' `WaitForSongToFinish` polls `AssertSongFinished` that many times,
+  so the schedule inside this interval is dense, not batched;
+- both lanes run `Music1_Update` exactly 67 times and `TimerHandler` 266
+  times, and no `lag track: ... off schedule` row appears, so the port
+  followed the recorded schedule;
+- the ROM runs `Music1_UpdateChannel1` **61** times in bank `$3d` and
+  dispatches the other ~6 updates into bank `$3e`, because at tick 242 of 266
+  its driver writes `wCurSongID` `0x80` then `0x91` and `wCurSongBank` `0x3e`
+  -- a song transition into the second song bank. The port stays in `$3d` for
+  all 67 and never reaches that transition;
+- there is **no** game-bank write to $DD80-$DEE4 anywhere in the interval, so
+  the earlier "game writes driver state mid-interval" reading is wrong for
+  this row.
+
+And the two lanes are in different *game* code for that whole interval, which
+is the actual finding. Those 9,884 sync points are `WaitForSongToFinish`
+polling `AssertSongFinished` with the LCD off -- `DoFrameIfLCDEnabled` is a
+no-op there, which is why 66 frames pass under one anchor. The port's
+`--trace-calls` delta for the same interval contains no driver wrapper at all
+and one `DoFrame`, so it is not in that wait: it ran `SFX_Play` once and
+`ExecuteNextSFXCommand` 25 times where the ROM ran both **zero** times, and
+the SFX driver shares `wMusicTie`/pitch/channel-pointer WRAM with the music
+driver, which is what the three divergent bytes are.
+
+So this is a credits control-flow row, not an audio-model row: chase why the
+port leaves `WaitForSongToFinish` early (its `wCurSongID` reaches `$80`
+before the ROM's does) rather than adding a sync point. Nothing here needs a
+re-derivation -- the schedule inside the interval is already dense and exact.
 
 **The $3F SFX driver row is fixed, and it was the sync model.** `ai-duel-0c`
 was byte-exact through anchor 30831 and at 30832 the port's
