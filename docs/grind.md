@@ -2367,7 +2367,12 @@ replay (2,263 -> 1,970 anchors/s), 72 distinct sites in a 3,000-anchor window,
   coordinates land two units off at ordinal 55: the ISR fell inside a routine
   body, and no routine-level hook is inside a body.
 
-So a derived placement *trades* clean intervals rather than adding them: the
+- at the *start* of every interval that has no sync point, from the counts
+  `lag.txt` already carries (no new recorded data, no re-derivation):
+  `boot-menu`, `first-duel` and `practice-win` all fall to confirmed 0.
+
+So the boundary is empirically the best global placement, and a derived one
+*trades* clean intervals rather than adding them: the
 ISR's real position is a cycle count, and the port is frame-batched by design
 (`docs/vision.md`). The recording stays as a diagnostic, off by default:
 
