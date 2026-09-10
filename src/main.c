@@ -1,5 +1,6 @@
 #include "mem.h"
 #include "link.h"
+#include "isr.h"
 #include "persistence.h"
 #include "state_dump.h"
 #include "runtime.h"
@@ -9,6 +10,7 @@
 #include "trace.h"
 
 #include <ctype.h>
+#include <dlfcn.h>
 #include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -172,6 +174,94 @@ static int read_line(FILE *file, char **line, size_t *size)
 		if (feof(file))
 			return 1;
 	}
+}
+
+static void isr_track_free(IsrTrack *track)
+{
+	free(track->start);
+	free(track->site);
+	free(track->nth);
+	free(track->kind);
+	free((void *)track->site_fn);
+	memset(track, 0, sizeof *track);
+}
+
+static int load_isr_sites(const char *path, IsrTrack *track)
+{
+	FILE *file = fopen(path, "r");
+	char *line = NULL;
+	size_t line_size = 0, capacity = 0;
+
+	if (!file)
+		return -1;
+	while (read_line(file, &line, &line_size) == 1) {
+		char *end = line + strlen(line);
+
+		while (end > line && (end[-1] == '\n' || end[-1] == '\r' || end[-1] == ' '))
+			end--;
+		*end = '\0';
+		if (end == line)
+			continue;
+		if (track->sites == capacity) {
+			capacity = capacity ? capacity * 2 : 64;
+			if (grow((void **)&track->site_fn, capacity, sizeof *track->site_fn) != 0) {
+				fclose(file);
+				free(line);
+				return -1;
+			}
+		}
+		track->site_fn[track->sites++] = dlsym(RTLD_DEFAULT, line);
+	}
+	fclose(file);
+	free(line);
+	return 0;
+}
+
+static int load_isr_track(const char *path, uint32_t intervals, IsrTrack *track)
+{
+	FILE *file = fopen(path, "rb");
+	uint8_t record[9];
+	uint32_t previous = 0;
+	size_t capacity = 0;
+
+	if (!file)
+		return -1;
+	if (grow((void **)&track->start, (size_t)intervals + 1u, sizeof *track->start) != 0) {
+		fclose(file);
+		return -1;
+	}
+	track->start[0] = 0;
+	track->count = intervals;
+	while (fread(record, sizeof record, 1, file) == 1) {
+		uint32_t interval = (uint32_t)record[0] | (uint32_t)record[1] << 8
+		                  | (uint32_t)record[2] << 16 | (uint32_t)record[3] << 24;
+		uint16_t site = (uint16_t)(record[4] | record[5] << 8);
+		uint16_t nth = (uint16_t)(record[6] | record[7] << 8);
+
+		if (interval >= intervals || interval < previous) {
+			fclose(file);
+			return -1;
+		}
+		while (previous < interval)
+			track->start[++previous] = (uint32_t)track->records;
+		if (track->records == capacity) {
+			capacity = capacity ? capacity * 2 : 4096;
+			if (grow((void **)&track->site, capacity, sizeof *track->site) != 0 ||
+			    grow((void **)&track->nth, capacity, sizeof *track->nth) != 0 ||
+			    grow((void **)&track->kind, capacity, sizeof *track->kind) != 0) {
+				fclose(file);
+				return -1;
+			}
+		}
+		track->site[track->records] = site;
+		track->nth[track->records] = nth;
+		track->kind[track->records] = record[8];
+		track->records++;
+	}
+	fclose(file);
+	while (previous < intervals)
+		track->start[++previous] = (uint32_t)track->records;
+	return 0;
 }
 
 static int load_lag_track(const char *path, LagTrack *track)
@@ -517,6 +607,7 @@ int main(int argc, char **argv)
 	const char *trace_entries_path = NULL;
 	const char *trace_calls_path = NULL;
 	const char *checkpoint_path = NULL;
+	const char *isr_track_path = NULL;
 	int link_fd = -1;
 	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "--headless") == 0) {
@@ -580,6 +671,8 @@ int main(int argc, char **argv)
 		} else if (strcmp(argv[i], "--trace-calls") == 0 && i + 1 < argc) {
 			trace_calls_path = argv[++i];
 			trace_flush_on_abort(trace_calls_path);
+		} else if (strcmp(argv[i], "--isr-track") == 0 && i + 1 < argc) {
+			isr_track_path = argv[++i];
 		} else if (strcmp(argv[i], "--link-fd") == 0 && i + 1 < argc) {
 			link_fd = atoi(argv[++i]);
 		} else if (strcmp(argv[i], "--load-checkpoint") == 0 && i + 1 < argc) {
@@ -593,7 +686,7 @@ int main(int argc, char **argv)
 			       "[--dump-state-ordinals N[,N...]] [--stop-ordinal N] "
 			       "[--digest-out PATH [--digest-mask FILE]] [--lag-track PATH] "
 			       "[--trace-entries PATH] [--trace-calls PATH] "
-			       "[--load-checkpoint PATH] [--link-fd N]\n");
+			       "[--load-checkpoint PATH] [--link-fd N] [--isr-track PATH]\n");
 			printf("--frames 0 runs until the window closes\n");
 			printf("--input is one byte per host frame (a movie axis); "
 			       "--input-ordinal is one byte per DoFrame and never wraps: "
@@ -690,7 +783,9 @@ int main(int argc, char **argv)
 		return 2;
 	}
 	LagTrack lag_track;
+	IsrTrack isr_track;
 	memset(&lag_track, 0, sizeof lag_track);
+	memset(&isr_track, 0, sizeof isr_track);
 	if (lag_track_path && load_lag_track(lag_track_path, &lag_track) != 0) {
 		fprintf(stderr, "cannot load lag track %s\n", lag_track_path);
 		free(pokes);
@@ -700,6 +795,30 @@ int main(int argc, char **argv)
 		return 2;
 	}
 	runtime_set_lag_track(&lag_track);
+	if (isr_track_path) {
+		char sites_path[4096];
+		const char *slash = strrchr(isr_track_path, '/');
+		size_t prefix = slash ? (size_t)(slash - isr_track_path) + 1u : 0u;
+
+		if (prefix + sizeof "isr-sites.txt" > sizeof sites_path) {
+			fprintf(stderr, "isr track path is too long\n");
+			return 1;
+		}
+		memcpy(sites_path, isr_track_path, prefix);
+		memcpy(sites_path + prefix, "isr-sites.txt", sizeof "isr-sites.txt");
+		if (load_isr_sites(sites_path, &isr_track) != 0 ||
+		    load_isr_track(isr_track_path, (uint32_t)lag_track.count, &isr_track) != 0) {
+			fprintf(stderr, "cannot read isr track %s\n", isr_track_path);
+			isr_track_free(&isr_track);
+			return 1;
+		}
+		size_t resolved = 0;
+		for (size_t i = 0; i < isr_track.sites; i++)
+			resolved += isr_track.site_fn[i] != NULL;
+		fprintf(stderr, "isr track: records=%zu sites=%zu resolved=%zu\n",
+		        isr_track.records, isr_track.sites, resolved);
+		isr_set_track(&isr_track);
+	}
 	RuntimeOverread *overreads = NULL;
 	size_t overread_count = 0;
 	if (overread_track_path && load_overread_track(overread_track_path, &overreads, &overread_count) != 0) {
@@ -786,6 +905,11 @@ int main(int argc, char **argv)
 	}
 	runtime_set_record_input(NULL);
 	runtime_set_lag_track(NULL);
+	if (isr_active()) {
+		fprintf(stderr, "isr track: placed=%u unplaced=%u\n", isr_placed(), isr_unplaced());
+		isr_set_track(NULL);
+		isr_track_free(&isr_track);
+	}
 	runtime_set_pokes(NULL, 0);
 	runtime_set_overreads(NULL, 0);
 	lag_track_free(&lag_track);

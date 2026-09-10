@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "bank_guard.h"
+#include "isr.h"
 
 /* The gate consumes one count and one first frame per routine, never the call
  * sequence, so the tracer aggregates instead of logging. A 20,000,000-record
@@ -82,6 +83,7 @@ NOTRACE void __cyg_profile_func_enter(void *this_fn, void *call_site)
 {
 	bank_guard_enter(this_fn);
 	(void)call_site;
+	isr_on_entry(this_fn);
 	if (this_fn == g_stop_fn && g_stop_hit)
 		g_stop_hit();
 #ifdef POKETCG_TRACE

@@ -1,4 +1,5 @@
 #include "runtime.h"
+#include "isr.h"
 
 #include "bank_guard.h"
 #include "digest.h"
@@ -85,6 +86,8 @@ static unsigned stat_count(uint32_t interval, unsigned index)
 static void stat_service(uint32_t interval, unsigned index)
 {
 	unsigned n = stat_count(interval, index);
+	if (isr_active())
+		return;
 	if (g_lag && g_lag->exact_stats) {
 		while (n--)
 			RuntimeLCDCHandlerOnce();
@@ -96,6 +99,8 @@ static void stat_service(uint32_t interval, unsigned index)
 static void vblank_service(uint32_t interval, unsigned index)
 {
 	stat_service(interval, index);
+	if (isr_active())
+		return;
 	RuntimeVBlankHandler();
 	gb_write8(wVBlankCounter_ADDR, (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 }
@@ -393,6 +398,8 @@ static void anchor(void *context)
 
 	/* Ordinal k's anchor closes interval k-1 (frames.c increments first). */
 	schedule_close(ordinal - 1u);
+	if (isr_active() && ordinal >= 1u)
+		state->services += isr_close_interval();
 	if (g_lag && ordinal >= 1u && ordinal - 1u < g_lag->count) {
 		/* The ROM's VBlank count for the interval, less what the
 		 * boundary passes delivered: nonzero only when the closing
@@ -410,6 +417,7 @@ static void anchor(void *context)
 	 * and delivered at the game's counter writes (vblank_sync) and at the
 	 * interval's end (the host pass below). */
 	state->services = 0;
+	isr_begin_interval(ordinal);
 	/* The reference's anchor digest includes its pokes (refstream.Core._exec
 	 * writes before the user callback runs), so poke before the digest. */
 	while (g_poke_next < g_poke_count && g_pokes[g_poke_next].ordinal <= ordinal) {

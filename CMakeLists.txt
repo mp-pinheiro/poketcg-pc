@@ -138,7 +138,7 @@ add_custom_command(
   VERBATIM)
 
 set(GBMEM_SOURCES src/mem.c src/ppu.c src/runtime_events.c src/trace.c
-                  src/bank_guard.c src/link.c ${HOME_SOURCES})
+                  src/bank_guard.c src/link.c src/isr.c ${HOME_SOURCES})
 if(NOT PORT_FILES)
   list(APPEND GBMEM_SOURCES "${BANK_GUARD_SOURCE}")
 endif()
@@ -154,7 +154,7 @@ target_compile_options(gbmem PRIVATE -Wall -Wextra)
 # record count by two orders of magnitude without naming a single routine.
 target_compile_options(gbmem PRIVATE
   -finstrument-functions
-  -finstrument-functions-exclude-file-list=mem.c,ppu.c,runtime_events.c,trace.c,bank_guard.c,bank_guard_generated.c,link.c)
+  -finstrument-functions-exclude-file-list=mem.c,ppu.c,runtime_events.c,trace.c,bank_guard.c,bank_guard_generated.c,link.c,isr.c)
 
 # Frame-tagged function-entry recording for the bilateral call-count diff
 # against the reference stream, and the producer for the CFG audit's edges.
@@ -222,6 +222,7 @@ endif()
 
 set(POKETCG_SHELL_SOURCES src/main.c src/checkpoint.c src/digest.c src/persistence.c src/runtime.c src/shell.c src/state_dump.c)
 add_executable(poketcg ${POKETCG_SHELL_SOURCES})
+set_target_properties(poketcg PROPERTIES ENABLE_EXPORTS ON)
 target_include_directories(poketcg PRIVATE "${CMAKE_SOURCE_DIR}/src")
 target_link_libraries(poketcg PRIVATE Threads::Threads)
 target_link_libraries(poketcg PRIVATE gbmem)

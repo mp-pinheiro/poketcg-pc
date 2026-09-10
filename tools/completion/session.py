@@ -89,6 +89,9 @@ TIMER_SYNC_HL = {0x52FD: 0xCAC5}
 VBLANK_SYNC = {(1, 0x427D): "DuelMainInterface", (1, 0x67EE): "AIMakeDecision"}
 VBLANK_SYNC_ADDRESSES = {address: bank for bank, address in VBLANK_SYNC}
 VBLANK_RECORD = struct.Struct("<IQBB")
+ISR_RECORD = struct.Struct("<IHHB")
+ISR_TRACK = "isr.bin"
+ISR_SITES = "isr-sites.txt"
 # The VBlank ISR's `inc [hl]` on wVBlankCounter (vblank.asm:35) and the STAT
 # vector (home.asm `call wLCDCFunctionTrampoline`): per interval, a bitmask of
 # the VBlank services a STAT ISR followed, bit n set when a STAT fired after n
@@ -98,6 +101,8 @@ VBLANK_RECORD = struct.Struct("<IQBB")
 # line 0 and again at line 153, which reads as 0: credits.asm .Func_1d73a) is
 # listed in stat-repeats.txt as `<anchor> <segment> <count>` and emitted as
 # `S<segment>:<count>`; a stream cached without the file has no repeats.
+INTERRUPT_VECTORS = (0x0040, 0x0048, 0x0050, 0x0058, 0x0060)
+REG_SP = 1
 VBLANK_INCREMENT = 0x01D7
 STAT_VECTOR = 0x0048
 STAT_MASK_BITS = 8
@@ -339,6 +344,14 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     stat_repeats: dict[int, dict[int, int]] = {}
     increments = 0
     inputs = bytearray()
+    isr = bytearray()
+    site_names: list[str] = []
+    site_ids: dict[str, int] = {}
+    site_counts: dict[int, int] = {}
+    pending: list[int] = []
+    isr_depth = [0]
+    isr_sites = bool(os.environ.get("POKETCG_ISR_SITES"))
+    entry_addresses, entry_names = refstream.routine_entry_addresses() if isr_sites else (frozenset(), {})
     overreads = OverreadRecorder()
     with refstream.Core(padded, gba=gba, pokes=pokes, save=save) as core:
         core.input_axis = axis
@@ -347,15 +360,49 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
         registers = (ctypes.c_int * 10)()
         hits = 0
 
+        def isr_flush(address: int) -> None:
+            """Place the interval's pending ISRs just before the next routine
+            entry the ROM made after them, on the one axis both lanes share:
+            the routine and which of its entries this interval is on. Placing
+            them at the *next* entry rather than inside the routine they
+            interrupted means an ISR is never delivered before the state it
+            observed existed; an ISR with no later entry in its interval keeps
+            the boundary placement it has today."""
+            if not pending:
+                return
+            bank = 0 if address < 0x4000 else core.bank_of(address)
+            routine = entry_names.get((bank, address))
+            if routine is None:
+                return
+            index = site_ids.get(routine)
+            if index is None:
+                index = len(site_names)
+                site_ids[routine] = index
+                site_names.append(routine)
+            nth = min(site_counts[address], 0xFFFF)
+            for kind in pending:
+                isr.extend(ISR_RECORD.pack(hits, index, nth, kind))
+            pending.clear()
+
+        def sp() -> int:
+            core.library.gambatte_getregs(core.core, registers)
+            return registers[REG_SP] & 0xFFFF
+
         def on_exec(address: int, cycle: int) -> None:
             nonlocal hits, stat_mask, increments
+            if isr_sites and address in INTERRUPT_VECTORS and not isr_depth[0]:
+                isr_depth[0] = sp()
             if address == VBLANK_INCREMENT:
                 increments += 1
+                if isr_sites:
+                    pending.append(0)
                 return
             if address == STAT_VECTOR:
                 segment = min(increments, STAT_MASK_BITS - 1)
                 stat_mask |= 1 << segment
                 stat_segments[segment] = stat_segments.get(segment, 0) + 1
+                if isr_sites:
+                    pending.append(1)
                 return
             if address == CARD_COPY_ENTRY or address == CARD_COPY_RET:
                 overreads.on_exec(core, registers, address, hits)
@@ -376,6 +423,19 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
                     vblank_writes.extend(VBLANK_RECORD.pack(hits, core.samples + cycle,
                                                             read(core.core, 0xCAB8), registers[2] & 0xFF))
                 return
+            if address in entry_addresses:
+                # An entry made by an interrupt handler is not on the axis the
+                # port shares: the ROM's ISR bodies call routines the port
+                # inlines or never calls. The handler pushed a return address,
+                # so it is still running while SP sits below the vector's.
+                if isr_depth[0]:
+                    if sp() <= isr_depth[0]:
+                        return
+                    isr_depth[0] = 0
+                site_counts[address] = site_counts.get(address, 0) + 1
+                if pending:
+                    isr_flush(address)
+                return
             if address != refstream.DOFRAME_ANCHOR:
                 return
             hits += 1
@@ -386,6 +446,9 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
             stat_mask = 0
             stat_segments.clear()
             increments = 0
+            site_counts.clear()
+            pending.clear()
+            isr_depth[0] = 0
             regions = reference_regions(core)
             crcs = digest(regions, tables)
             records.extend(REFERENCE_RECORD.pack(*crcs, core.samples + cycle, regions["wram"][0xAB8],
@@ -405,6 +468,9 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     (directory / "vblank-writes.bin").write_bytes(bytes(vblank_writes))
     (directory / "stats.bin").write_bytes(bytes(stats))
     (directory / STAT_REPEATS).write_text(stat_repeats_text(stat_repeats))
+    if isr_sites:
+        (directory / ISR_TRACK).write_bytes(bytes(isr))
+        (directory / ISR_SITES).write_text("".join(name + "\n" for name in site_names))
     (directory / "overreads.txt").write_text(overreads.text())
     (directory / "lag.txt").write_text(lag_track(bytes(records), bytes(calls), bytes(vblank_writes),
                                                  bytes(stats), stat_repeats))
@@ -630,6 +696,9 @@ def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
     overreads_path = lag_path.with_name("overreads.txt")
     if overreads_path.is_file():
         command += ["--overread-track", str(overreads_path)]
+    isr_path = lag_path.with_name(ISR_TRACK)
+    if os.environ.get("POKETCG_ISR_PLACEMENT") and isr_path.is_file() and isr_path.stat().st_size:
+        command += ["--isr-track", str(isr_path)]
     if digest_out:
         command += ["--digest-out", str(digest_out)]
         if mask_path:

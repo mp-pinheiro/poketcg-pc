@@ -2340,6 +2340,50 @@ open consumes enough frames that the poll never lands on the newly pressed
 entry of a short `keys` cycle. The prover for that class is the session, not
 `oracle-diff`.
 
+## ISR placement cannot be derived at routine granularity
+
+The port batches an interval's VBlank and STAT ISRs at the DoFrame boundary,
+because that is the only point it shares with the reference: **99.5% of
+intervals** (1,714,380 of 1,723,117 in `credits-1-explore-1`) contain no timer
+sync point and no game write to `wVBlankCounter`, so there is no other hook in
+them. The recorded routes are byte-exact anyway, because in almost every
+interval the placement is not observable. Where it is observable, the port is
+wrong: `credits-1-explore-1` diverges at 871,295 because the ROM's two STAT
+ISRs fire before `Func_1d765` (`engine/credits.asm:177`) arms `wd665 = 1`,
+while the port's fire after it, so the port's `Func_3e44` consumes the pending
+window swap a frame early (`wd651` 5 against 7, `wd665` 0 against 1).
+
+Deriving the position was tried and rejected on measurement. The reference can
+record, per ISR, the routine it fell between and which entry of that routine
+the interval was on -- an axis both lanes share, costing 13% on the reference
+replay (2,263 -> 1,970 anchors/s), 72 distinct sites in a 3,000-anchor window,
+1 unresolved record in 11,020. Two placements were measured against it:
+
+- at the entry of the *interrupted* routine: too early. `boot-menu` diverges
+  at ordinal 3 on OAM, the port's VBlank copying the buffer before the game
+  filled it.
+- at the entry of the *next* routine after the ISR: never earlier than the
+  truth, and it moved `boot-menu` from 1000/1000 clean to 54. Sprite
+  coordinates land two units off at ordinal 55: the ISR fell inside a routine
+  body, and no routine-level hook is inside a body.
+
+So a derived placement *trades* clean intervals rather than adding them: the
+ISR's real position is a cycle count, and the port is frame-batched by design
+(`docs/vision.md`). The recording stays as a diagnostic, off by default:
+
+```sh
+POKETCG_ISR_SITES=1 just session-verify <name>   # writes isr.bin, isr-sites.txt
+POKETCG_ISR_PLACEMENT=1 just session-verify <name>  # replays that placement
+```
+
+`isr.bin` is `(interval, site id, nth entry, kind)` records and `isr-sites.txt`
+the site names; together they answer "which routine did this ISR interrupt",
+which is what picks the sync site a fix needs. Two rules follow. An ISR-placement
+divergence is a **sync-site** fact, not a body fact -- the bodies (`Func_3e44`,
+`ApplyBackgroundScroll`) are oracle-clean. And a new sync site re-keys
+`stream_key`, so it costs a full re-derivation of every recorded reference;
+name it from the diagnostic, not from a guess.
+
 ## An ad-hoc native run must carry the whole session argument set
 
 `session.py run_native` passes `--input-ordinal`, `--lag-track`,
