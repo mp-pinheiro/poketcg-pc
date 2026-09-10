@@ -308,11 +308,15 @@ def routine_lines(routine: str, asm: dict[str, str], c: dict[str, str]) -> list[
 def divergence_issues(sessions: list[tuple[str, int, str]]) -> dict[str, dict[str, Any]]:
     """One issue per session whose latest verify is not clean."""
     out: dict[str, dict[str, Any]] = {}
+    recorded = set(session.session_names())
     for path in TRACKER_DIR.glob("verify-*.json"):
         report = json.loads(path.read_text())
         name = report["name"]
         status = report.get("status")
         if status not in ("diverged", "native-short"):
+            continue
+        if name not in recorded:
+            path.unlink()
             continue
         confirmed = report.get("confirmed", 0)
         ordinal = report.get("divergence", {}).get("ordinal", confirmed + 1)
@@ -360,8 +364,13 @@ def sweep_issues(sessions: list[tuple[str, int, str]], asm: dict[str, str], c: d
     row at all: that sweep either passed it or stopped comparing it, and either
     way the older row is no longer evidence."""
     reports: list[tuple[float, dict[str, Any]]] = []
+    recorded = set(session.session_names())
     for path in TRACKER_DIR.glob("sweep-*.json"):
-        reports.append((path.stat().st_mtime, json.loads(path.read_text())))
+        report = json.loads(path.read_text())
+        if report.get("name") not in recorded:
+            path.unlink()
+            continue
+        reports.append((path.stat().st_mtime, report))
 
     def superseded(stamp: float, name: str, row: dict[str, Any]) -> bool:
         for other_stamp, other in reports:
