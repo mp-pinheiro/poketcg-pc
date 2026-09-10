@@ -141,7 +141,7 @@
     "confirmed_ordinal": 101648
   },
   "boot-menu": {
-    "confirmed_ordinal": 0
+    "confirmed_ordinal": 54
   },
   "challenge-hall": {
     "confirmed_ordinal": 702945
@@ -178,6 +178,9 @@
   },
   "dome-explore": {
     "confirmed_ordinal": 856837
+  },
+  "effect-charizard-2-seed": {
+    "confirmed_ordinal": 23227
   },
   "effect-kadabra-1": {
     "confirmed_ordinal": 49808
