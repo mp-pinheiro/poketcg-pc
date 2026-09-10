@@ -1820,14 +1820,12 @@ handle_input:
 		cursor = (uint8_t)(cursor + 1u);
 		if (cursor < count)
 			goto reopen_card_page;
-		list_ptr = (uint16_t)gb_read8(wCurCardListPtr_ADDR);
-		list_ptr |= (uint16_t)((uint16_t)gb_read8((uint16_t)(wCurCardListPtr_ADDR + 1u)) << 8);
-		cursor = gb_read8(wCardListCursorPos_ADDR);
-		list_ptr = (uint16_t)(list_ptr + cursor);
+		uint16_t probe = (uint16_t)gb_read8(wCurCardListPtr_ADDR);
+		probe |= (uint16_t)((uint16_t)gb_read8((uint16_t)(wCurCardListPtr_ADDR + 1u)) << 8);
+		probe = (uint16_t)(probe + gb_read8(wCardListCursorPos_ADDR));
 		offset = (uint8_t)(gb_read8(wCardListVisibleOffset_ADDR) + 1u);
-		list_ptr = (uint16_t)(list_ptr + offset);
-		if (gb_read8(list_ptr) != 0u) {
-			offset = (uint8_t)(gb_read8(wCardListVisibleOffset_ADDR) + 1u);
+		probe = (uint16_t)(probe + offset);
+		if (gb_read8(probe) != 0u) {
 			gb_write8(wCardListVisibleOffset_ADDR, offset);
 			cursor = (uint8_t)(cursor - 1u);
 			goto reopen_card_page;
