@@ -352,6 +352,8 @@ WAIT_KEYS = Fixture("boot-deck-machine-wait-keys-entry")
 WAIT_KEYS_REGS = WAIT_KEYS.regs
 FIND_NPC = Fixture("water-club-findnpc-entry")
 FIND_NPC_REGS = FIND_NPC.regs
+TEXT_TILE = Fixture("water-master-placenexttexttile-entry")
+TEXT_TILE_REGS = TEXT_TILE.regs
 
 
 
@@ -633,6 +635,10 @@ def wait_keys_fixture(vram: bool = True, bank: int | None = None, **changes: byt
 
 def find_npc_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return FIND_NPC.case(vram=vram, bank=bank, **changes)
+
+
+def text_tile_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return TEXT_TILE.case(vram=vram, bank=bank, **changes)
 
 
 PKMN_POWER = Fixture("water-2-pkmnpower-entry")

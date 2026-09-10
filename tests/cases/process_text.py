@@ -3,6 +3,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 from tests.cases._fixtures import font_tile_fixture as _font_tile_fixture, FONT_TILE_REGS as _FONT_TILE_REGS
+from tests.cases._fixtures import text_tile_fixture as _text_tile_fixture, TEXT_TILE_REGS as _TEXT_TILE_REGS
 
 CONTRACT = {
     "InitTextFormat": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ()},
@@ -84,7 +85,8 @@ CASES.update({
     "InitTextPrinting": [{"d": 0, "e": 0}, dict(POISON, d=3, e=4)],
     "InitTextPrintingInTextbox": [{"a": 1, "d": 0, "e": 0},
                                    dict(POISON, a=2, d=3, e=4)],
-    "PlaceNextTextTile": [{"a": 0, "wram": {0xffaa: b"\x00", 0xffab: b"\xc0",
+    "PlaceNextTextTile": [dict(_text_tile_fixture(bank=0), **_TEXT_TILE_REGS),
+                          {"a": 0, "wram": {0xffaa: b"\x00", 0xffab: b"\xc0",
                                                0xcd05: b"\x22", 0xc000: b"\x00"}},
                            dict(POISON, a=0x44, wram={0xffaa: b"\x00", 0xffab: b"\xc0",
                                                       0xcd05: b"\x33", 0xc000: b"\x00"})],
@@ -180,3 +182,4 @@ MUTATIONS = {
         "case_ids": ["InitTextFormat-0", "InitTextFormat-1"],
     },
 }
+MUTATIONS["PlaceNextTextTile"] = {"source_symbol": "PlaceNextTextTile", "before": "\tuint8_t restored_c = (wLCDC & 0x80u) != 0u ? 1u : 0u;", "after": "\tuint8_t restored_c = 0u;", "case_ids": ["PlaceNextTextTile-0", "PlaceNextTextTile-1", "PlaceNextTextTile-2"]}

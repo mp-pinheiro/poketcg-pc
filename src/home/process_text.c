@@ -364,9 +364,11 @@ PlaceTextResult PlaceNextTextTile(uint8_t a)
 	gb_write8(0xffabu, (uint8_t)(address >> 8));
 	uint16_t destination = (uint16_t)(address - 1);
 	uint16_t source = wCurTextTile_ADDR;
-	(void)SafeCopyDataDEtoHL(&source, &destination, 1);
+	uint8_t copied = SafeCopyDataDEtoHL(&source, &destination, 1);
+	uint8_t restored_c = (wLCDC & 0x80u) != 0u ? 1u : 0u;
 	hTextLineCurPos++;
-	return (PlaceTextResult){a, 0, 0, (uint8_t)(source >> 8), (uint8_t)source, hTextLineCurPos_ADDR};
+	return (PlaceTextResult){copied, 0, restored_c,
+		(uint8_t)(source >> 8), (uint8_t)source, hTextLineCurPos_ADDR};
 }
 
 ProcessTextResult TerminateHalfWidthText(uint8_t d, uint8_t e, uint16_t hl)
