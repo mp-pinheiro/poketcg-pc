@@ -807,6 +807,9 @@ int main(int argc, char **argv)
 	if (runtime_overread_mismatches())
 		fprintf(stderr, "overread track: %u card copies off schedule\n",
 		        (unsigned)runtime_overread_mismatches());
+	if (runtime_lag_schedule_mismatches())
+		fprintf(stderr, "lag track: %u sync points off schedule\n",
+		        (unsigned)runtime_lag_schedule_mismatches());
 	if (status != 0)
 		fprintf(stderr, "runtime rendezvous failed\n");
 	else

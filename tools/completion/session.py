@@ -55,15 +55,6 @@ DIGEST_FORMAT = "session-digest-v7"
 # callback's in-slice offset), wVBlankCounter and wTimerCounter.
 REFERENCE_RECORD = struct.Struct("<5IQBB")
 NATIVE_RECORD = struct.Struct("<5I")
-# One per timer sync point reached: the interval it fell in (anchors completed
-# so far), its real time and wTimerCounter, which is how the port learns at
-# which tick of the interval game code observed timer-ISR state. The sync
-# points are every routine through which game code reaches that state: the
-# home/sound.asm driver wrappers (StopMusic and PlaySFX_InvalidChoice fall
-# into PlaySong/PlaySFX, so one entry each) and the play-time counter's
-# readers and writers. The port calls frame_boundary_timer_sync at the same
-# entries (src/home/frames.h). Keyed by (bank, address); home routines are
-# bank-independent.
 CALL_RECORD = struct.Struct("<IQB")
 TIMER_SYNC = {
     (None, 0x377F): "SetupSound", (None, 0x3785): "PlaySong",
@@ -73,8 +64,19 @@ TIMER_SYNC = {
     (3, 0x41B1): "Func_c1b1",                     # overworld.asm:230, zeroes it
     (4, 0x41CD): "PrintPlayTime",                 # print_stats.asm:115, reads it
     (4, 0x52FD): "CopyGeneralSaveDataToSRAM",     # save.asm .loop_bytes `ld a, [hli]`: saves it
+    (0x3D, 0x4028): "Music1_PlaySong_store", (0x3D, 0x4048): "Music1_PlaySFX_store",
+    (0x3E, 0x4028): "Music2_PlaySong_store", (0x3E, 0x4048): "Music2_PlaySFX_store",
 }
-TIMER_SYNC_ADDRESSES = {address: bank for bank, address in TIMER_SYNC}
+
+
+def _sync_addresses(table: dict[tuple[int | None, int], str]) -> dict[int, frozenset[int | None]]:
+    banks: dict[int, set[int | None]] = {}
+    for bank, address in table:
+        banks.setdefault(address, set()).add(bank)
+    return {address: frozenset(found) for address, found in banks.items()}
+
+
+TIMER_SYNC_ADDRESSES = _sync_addresses(TIMER_SYNC)
 # A sync point inside a copy loop fires once per byte; only the read of the
 # play-time counter's first byte is the sync (the port syncs at that read).
 TIMER_SYNC_HL = {0x52FD: 0xCAC5}
@@ -353,8 +355,8 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
                 overreads.on_exec(core, registers, address, hits)
                 return
             if address in TIMER_SYNC_ADDRESSES:
-                bank = TIMER_SYNC_ADDRESSES[address]
-                if bank is None or core.bank_of(address) == bank:
+                banks = TIMER_SYNC_ADDRESSES[address]
+                if None in banks or core.bank_of(address) in banks:
                     wanted_hl = TIMER_SYNC_HL.get(address)
                     if wanted_hl is not None:
                         core.library.gambatte_getregs(core.core, registers)
@@ -618,6 +620,9 @@ def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
         return state_path, f"HANG no exit within {NATIVE_TIMEOUT}s\n{text}"
     if result.returncode != 0:
         return state_path, result.stderr.strip()[-2000:] or f"exit {result.returncode}"
+    for line in result.stderr.splitlines():
+        if "off schedule" in line:
+            print(f"NATIVE {line.strip()}")
     return state_path, ""
 
 
@@ -938,6 +943,8 @@ def lag_between(reference: bytes, ordinal: int) -> dict[str, int]:
 def region_field(region: str, offset: int) -> tuple[str, int]:
     if region == "vram":
         return ("vram_bank_1", offset - 0x2000) if offset >= 0x2000 else ("vram_bank_0", offset)
+    if region == "audio":
+        return "wram", REGION_BASES["audio"] - REGION_BASES["wram"] + offset
     return region, offset
 
 
