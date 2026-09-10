@@ -2329,33 +2329,29 @@ open consumes enough frames that the poll never lands on the newly pressed
 entry of a short `keys` cycle. The prover for that class is the session, not
 `oracle-diff`.
 
-## Cross-lane call counts are not evidence; state is
+## An ad-hoc native run must carry the whole session argument set
 
-`install_exec` counts on the reference and `--trace-calls` counts on the port
-agree only when the compared routine is entered from another translation unit.
-`PlayLoadedDuelAnimation` reads 2,378 on the reference against 883 in the port
-for the same anchor range, and `CreateSpriteAndAnimBufferEntry` 2,147 against
-807, while every gated byte matches at every one of those 858,148 anchors --
-the sprite and queue buffers those routines write are gated, so the difference
-cannot be real. Interval-gated counts do agree (`Music1_Update` 67 on both
-sides of the credits interval; cumulative 9 against 9 at ordinal 30,811), and
-so does a `-fno-inline` rebuild for attribution *within* one lane.
+`session.py run_native` passes `--input-ordinal`, `--lag-track`,
+`--overread-track` **and** `--poke-ordinal` together. Drop the pokes from a
+hand-written invocation and the lane still runs, still reaches the ordinal you
+asked for, and is quietly a different game: measuring `credits-1` that way
+reported the port sitting on song `0x02` with a pending SFX request while the
+ROM played `0x1d` then `0x11`, plus an SFX start inside the divergent interval
+that no `PlaySFX` had asked for. With the pokes restored, `$DD80-$DD8D` is
+byte-identical to the reference at both 858,148 and 858,149, and the port
+matches the ROM at all 159 of the session's song changes. Every count taken
+from that lane -- `PlayLoadedDuelAnimation` 2,378 against 883,
+`Func_fc26c` 67 against 42, `PlaySFX` 2,407 against 2,171 -- measured the
+mis-invoked run, not the port.
 
-Read the bytes instead. At the two anchors around the `credits-1` divergence:
+Two habits follow. Build the argv from `run_native` rather than by hand; the
+cheapest version is `--dump-state-ordinals`, which writes `<base>-f<ordinal>.json`
+for a whole list of anchors in one run, so a 159-point timeline costs one
+replay. And prefer bytes to call counts: `wram` at two anchors settles what a
+count comparison only suggests, and it is the same evidence the gate uses.
 
-```text
-           wCurSongID  wCurSongBank  wCurSfxID  wSfxPriority
-ROM  858148   0x9d         0x3d        0x80        0x00
-port 858148   0x82         0x3d        0x02        0x0a
-ROM  858149   0x91         0x3e        0x80        0x00
-port 858149   0x82         0x3d        0x80        0x00
-```
-
-The port carries a pending SFX request the ROM does not, consumes it inside the
-interval -- one `SFX_Play` and 25 `ExecuteNextSFXCommand` with no `PlaySFX`
-call to ask for it -- and that is what moves `wMusicChannelPointers`,
-`wMusicCh1CurPitch` and `wMusicCh3CurOctave`. Underneath it is a larger fact:
-the ROM is playing song `0x1d` and then `0x11` out of two different driver
-banks while the port has been playing song `0x02`. All four of those bytes live
-in `$DD80-$DEE4`, which `GATED = 4` excludes, so nothing catches it today.
-That, not the schedule, is the first thing the `GATED = 5` flip will report.
+`credits-1` remains diverged at 858,149 on `wMusicChannelPointers`,
+`wMusicCh1CurPitch` and `wMusicCh3CurOctave` for the reason already recorded
+above -- a 66-frame LCD-off interval whose ~264 timer ISRs the port delivers in
+one `schedule_close` batch -- and it is still the one session blocking
+`GATED = 5`.
