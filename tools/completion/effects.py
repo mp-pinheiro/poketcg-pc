@@ -168,17 +168,18 @@ def evolution_chain(card: dict[str, Any], cards: dict[str, dict[str, Any]]) -> l
     """The carrier's pre-evolutions, lowest stage first."""
     by_name: dict[str, list[dict[str, Any]]] = {}
     for other in cards.values():
-        if other["type"].startswith("TYPE_PKMN"):
-            by_name.setdefault(other["name"], []).append(other)
+        by_name.setdefault(other["name"], []).append(other)
     chain: list[dict[str, Any]] = []
     current = card
     while current.get("pre_evo"):
         candidates = [c for c in by_name.get(current["pre_evo"], [])
-                      if c["stage"] in ("BASIC", "STAGE1")]
+                      if c.get("stage", "BASIC") in ("BASIC", "STAGE1")]
         if not candidates:
             raise EffectsError(f"{card['id_name']}: no card named {current['pre_evo']} to evolve from")
-        current = min(candidates, key=lambda c: (c["stage"] != "BASIC", c["id"]))
+        current = min(candidates, key=lambda c: (c.get("stage", "BASIC") != "BASIC", c["id"]))
         chain.insert(0, current)
+        if not current["type"].startswith("TYPE_PKMN"):
+            break
     return chain
 
 
@@ -233,7 +234,10 @@ def build_deck(card_name: str, *, attack_slot: int | None = None) -> list[int]:
     for filler in fillers:
         if len(deck) >= DECK_SIZE:
             break
-        deck += [filler["id"]] * min(COPIES - deck.count(filler["id"]), DECK_SIZE - len(deck))
+        room = min(COPIES - deck.count(filler["id"]), DECK_SIZE - len(deck))
+        deck += [filler["id"]] * max(0, room)
+    while len(deck) < DECK_SIZE:
+        deck.append(ENERGY_BY_TYPE[typed[0]])
     if len(deck) != DECK_SIZE:
         raise EffectsError(f"{card_name}: built {len(deck)} cards, not {DECK_SIZE}")
     return deck

@@ -526,8 +526,12 @@ def target(names: list[str], *, land: bool, limit: int) -> int:
         name = f"effect-{session_slug(card)}" + (f"-{slot}" if slot else "")
         if name in existing or f"{name}-seed" in existing:
             continue
+        try:
+            deck = effects.build_deck(card, attack_slot=slot)
+        except effects.EffectsError as exc:
+            print(f"TARGET skip card={card} slot={slot}: {exc}")
+            continue
         done += 1
-        deck = effects.build_deck(card, attack_slot=slot)
         deck_path = TARGETS_PATH.parent / f"{name}.deck"
         deck_path.parent.mkdir(parents=True, exist_ok=True)
         deck_path.write_text("\n".join(str(c) for c in deck) + "\n")
