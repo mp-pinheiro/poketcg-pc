@@ -67,7 +67,7 @@ def path_to_masks(path: list[str], seed_masks: list[int]) -> list[int]:
 class Explorer:
     def __init__(self, budget: int, seed_masks: list[int], seed: int = 20260902,
                  checkpoint_dir: Path | None = None, pokes: Any | None = None,
-                 axis: str = "frame") -> None:
+                 axis: str = "frame", known: set[str] | None = None) -> None:
         self.rng = random.Random(seed)
         self.checkpoint_dir = checkpoint_dir
         if checkpoint_dir is not None:
@@ -85,7 +85,8 @@ class Explorer:
         library.gambatte_newstateload.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_int]
         library.gambatte_newstateload.restype = ctypes.c_int
         self.candidates, self.by_bank_address = refstream.routine_entry_addresses()
-        self.seen: set[str] = set()
+        self.seen: set[str] = set(known or ())
+        self.known = len(self.seen)
         self.hits: set[str] = set()
         self.budget = budget
         self.expansions = 0
@@ -224,7 +225,7 @@ class Explorer:
                     entry = {
                         "action": label, "new_routines": len(found),
                         "total": len(self.seen), "depth": child_depth,
-                        "path": path + [label],
+                        "path": path + [label], "routines": sorted(found),
                     }
                     if self.checkpoint_dir is not None:
                         stem = f"ck{len(timeline):04d}-{label}-{len(found)}"
@@ -259,6 +260,8 @@ class Explorer:
         return {
             "expansions": self.expansions,
             "covered": len(self.seen),
+            "known": self.known,
+            "new": len(self.seen) - self.known,
             "seconds": round(time.perf_counter() - start, 2),
             "discoveries": timeline,
             "deepest_path": best_path,
@@ -302,6 +305,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--seed-session",
                         help="recorded session whose timeline is the prefix; the search "
                              "then runs on the DoFrame axis and its scripts append to it")
+    parser.add_argument("--known",
+                        help="coverage ledger (site/data/coverage.json); routines it lists as "
+                             "executed count as seen, so discoveries are new to every session")
     args = parser.parse_args(argv)
 
     import scenario as scenario_module
@@ -320,9 +326,15 @@ def main(argv: list[str] | None = None) -> int:
     corpus = Path(args.corpus) if args.corpus else None
     if corpus is not None and not corpus.is_absolute():
         corpus = ROOT / corpus
+    known = None
+    if args.known:
+        import coverage_ledger
+
+        known = coverage_ledger.executed_set(json.loads(Path(args.known).read_text()))
+        print(f"  known routines={len(known)} from {args.known}", file=sys.stderr)
     explorer = Explorer(args.budget, seed_masks,
                         checkpoint_dir=(corpus / "checkpoints") if corpus else None,
-                        pokes=pokes, axis=axis)
+                        pokes=pokes, axis=axis, known=known)
     try:
         result = explorer.search(seed_masks, args.report_every, args.frontier_cap,
                                  args.max_depth)
@@ -346,6 +358,7 @@ def main(argv: list[str] | None = None) -> int:
                 "script": f"scripts/{name}", "frames": len(masks),
                 "new_routines": row["new_routines"], "action": row["action"],
                 "checkpoint": row.get("checkpoint"), "path": row["path"],
+                "routines": row["routines"],
             })
         (corpus / "corpus.json").write_text(
             json.dumps({"schema": 1, "format": "input-corpus-v1",

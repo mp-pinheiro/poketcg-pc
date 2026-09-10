@@ -798,43 +798,44 @@ def routine_trace(
     else:
         masks = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     candidates, by_bank_address = routine_entry_addresses()
-    events: list[tuple[int, str]] = []
+    per_routine: dict[str, int] = {}
+    first_seen: dict[str, int] = {}
+    first_events: list[dict[str, Any]] = []
+    events = 0
     with Core(masks, pokes=pokes) as core:
         core.input_axis = axis or ("frame" if movie else "ordinal")
 
         def on_exec(address: int, _cycle: int) -> None:
+            nonlocal events
             if address not in candidates:
                 return
             bank = 0 if address < 0x4000 else core.bank_of(address)
             name = by_bank_address.get((bank, address))
-            if name is None:
+            if name is None or (wanted is not None and name not in wanted):
                 return
-            if wanted is None or name in wanted:
-                events.append((core.ordinal, name))
+            events += 1
+            per_routine[name] = per_routine.get(name, 0) + 1
+            if name not in first_seen:
+                first_seen[name] = core.ordinal
+            if len(first_events) < 16:
+                first_events.append({"ordinal": core.ordinal, "routine": name})
 
         core.install_exec(on_exec)
         core.run(frames, stop=(None if ordinals is None else lambda: core.ordinal > ordinals))
         reached = core.ordinal
-    per_routine: dict[str, int] = {}
-    first_seen: dict[str, int] = {}
-    for ordinal, name in events:
-        per_routine[name] = per_routine.get(name, 0) + 1
-        first_seen.setdefault(name, ordinal)
     return {
         "scenario": scenario,
         "frames": frames,
         "ordinal_bound": ordinals,
         "ordinals_reached": reached,
-        "events": len(events),
+        "events": events,
         "distinct_routines": len(per_routine),
         "calls": sorted(
             ({"routine": name, "count": count, "first_ordinal": first_seen[name]}
              for name, count in per_routine.items()),
             key=lambda row: (-row["count"], row["routine"]),
         ),
-        "first_events": [
-            {"ordinal": ordinal, "routine": name} for ordinal, name in events[:16]
-        ],
+        "first_events": first_events,
     }
 
 

@@ -82,9 +82,16 @@ ROUTE = [
     ("Ronald and the Challenge Hall", [], ("ronald-", "challenge-")),
     ("Pokemon Dome and credits", [], ("dome-", "credits-")),
 ]
+FAMILIES = [
+    ("Card effects", ("effect-",)),
+    ("Seeded content", ("seed-",)),
+    ("Audio", ("audio-",)),
+    ("Transport", ("link-", "printer-", "ir-")),
+]
 ENGINE = "Engine"
 TOOLING = "Tooling"
-MILESTONES = [row[0] for row in ROUTE] + [ENGINE, TOOLING]
+ROUTE_MILESTONES = [row[0] for row in ROUTE]
+MILESTONES = ROUTE_MILESTONES + [row[0] for row in FAMILIES] + [ENGINE, TOOLING]
 COIN_TOSS_NOISE = ("PinMissile", "HandleSandAttackOrSmokescreen", "TossCoin", "Fury", "Rage")
 
 
@@ -216,11 +223,18 @@ class Forgejo:
         self.call("POST", f"/repos/{REPO}/issues/{number}/comments", {"body": text})
 
 
+def family_of(name: str) -> str | None:
+    for milestone, prefixes in FAMILIES:
+        if name.startswith(prefixes):
+            return milestone
+    return None
+
+
 def route_of(name: str) -> str:
     for milestone, names, prefixes in ROUTE:
         if name in names or name.startswith(prefixes):
             return milestone
-    return ENGINE
+    return family_of(name) or ENGINE
 
 
 def session_total(name: str) -> int | None:
@@ -237,7 +251,7 @@ def route_sessions() -> list[tuple[str, int, str]]:
             continue
         milestone = route_of(name)
         total = session_total(name)
-        if milestone != ENGINE and total:
+        if milestone in ROUTE_MILESTONES and total:
             rows.append((name, total, milestone))
     rows.sort(key=lambda row: row[1])
     return rows
@@ -378,7 +392,8 @@ def sweep_issues(sessions: list[tuple[str, int, str]], asm: dict[str, str], c: d
         memory = bool(row.get("memory"))
         noise = memory and routine.startswith(COIN_TOSS_NOISE)
         ordinal = row["ordinal"]
-        milestone = ENGINE if name.startswith("ai-duel") else milestone_for_ordinal(ordinal, sessions)
+        milestone = family_of(name) or (ENGINE if name.startswith("ai-duel")
+                                        else milestone_for_ordinal(ordinal, sessions))
         lines = [
             f"**Fact:** `just session-sweep {name}` -> `{routine}` fails from its live entry at DoFrame {ordinal}: "
             + ("game state differs" if memory else "exit registers differ, memory agrees") + ".",
@@ -722,9 +737,9 @@ def status() -> int:
     for title in MILESTONES:
         row = milestones.get(title, {})
         names = [name for name, _end, milestone in sessions if milestone == title]
-        if title == ENGINE:
+        if title not in ROUTE_MILESTONES:
             names = sorted(name for name in session.session_names()
-                           if route_of(name) == ENGINE and not name.startswith("_"))
+                           if route_of(name) == title and not name.startswith("_"))
         marks = []
         for name in names:
             total = session_total(name) or 0

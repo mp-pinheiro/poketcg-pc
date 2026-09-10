@@ -505,6 +505,40 @@ completion-composition-audit AUDIT="all":
 # Coverage-guided input search with savestate checkpoints.
 completion-explore *ARGS:
     python3 tools/completion/explore.py {{ARGS}}
+
+# The coverage ledger (site/data/coverage.json): every session's ROM-side routine set through its confirmed ordinal; ratchet on executed.
+coverage-ledger *ARGS:
+    python3 tools/completion/coverage_ledger.py ledger {{ARGS}}
+# Files ranked by the routines no session executes.
+coverage-status *ARGS:
+    python3 tools/completion/coverage_ledger.py status {{ARGS}}
+# Coverage searches from ledger-ranked seeds (or the named ones), scored against the ledger; one corpus per seed.
+coverage-discover *ARGS:
+    python3 tools/completion/coverage_ledger.py discover {{ARGS}}
+# Record a seed's best corpus scripts as sessions and verify each; `--land` commits, else prints the commit line.
+coverage-intake SEED *ARGS:
+    python3 tools/completion/coverage_ledger.py intake "{{SEED}}" {{ARGS}}
+# Arranged AI duels for the card effects no session executes (or the named routines/file stems); verify and land each.
+coverage-target *ARGS:
+    python3 tools/completion/coverage_ledger.py target {{ARGS}}
+# The card-to-effect map: `map`, `carriers <Routine>`, `deck <CARD> [--attack N] [--out FILE]`.
+effects *ARGS:
+    python3 tools/completion/effects.py {{ARGS}}
+# Sound-driver seeds from the recorded sessions: every K-th tick and the first after each request (build/audio/seeds).
+audio-seeds *ARGS:
+    python3 tools/audio/tickdiff.py seeds {{ARGS}}
+# The tick oracle: N ticks from every seed on gbref and the native probe, driver state and APU writes compared per tick.
+audio-tickdiff *ARGS: build oracle-build-gbref
+    python3 tools/audio/tickdiff.py diff {{ARGS}}
+# The sessions a change to these routines (or a pret file stem) can move.
+sessions-affected +TARGETS:
+    python3 tools/completion/coverage_ledger.py affected {{TARGETS}}
+# session-verify the affected sessions, one reference lane at a time.
+sessions-verify-affected +TARGETS:
+    python3 tools/completion/coverage_ledger.py verify-affected {{TARGETS}}
+# session-verify every recorded session serially: the landing-batch sweep.
+sessions-sweep *ARGS:
+    python3 tools/completion/coverage_ledger.py sweep {{ARGS}}
 # Recompute site/data/progress.json + history point from the registry and gate record.
 progress:
     python3 tools/progress/report.py build

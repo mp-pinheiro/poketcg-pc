@@ -589,7 +589,8 @@ def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"", st
 
 def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
                digest_out: Path | None = None, mask_path: Path | None = None,
-               dump_ordinals: list[int] | None = None) -> tuple[Path, str]:
+               dump_ordinals: list[int] | None = None) -> tuple[Path, str, int]:
+    """(state path, failure text, count of `off schedule` rows the lane printed)."""
     state_path = directory / "state.json"
     command = [
         str(scenario_module.BINARY), "--headless",
@@ -617,13 +618,15 @@ def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
                                 timeout=NATIVE_TIMEOUT, check=False)
     except subprocess.TimeoutExpired as exc:
         text = exc.stderr.decode(errors="replace") if isinstance(exc.stderr, bytes) else str(exc.stderr or "")
-        return state_path, f"HANG no exit within {NATIVE_TIMEOUT}s\n{text}"
+        return state_path, f"HANG no exit within {NATIVE_TIMEOUT}s\n{text}", 0
     if result.returncode != 0:
-        return state_path, result.stderr.strip()[-2000:] or f"exit {result.returncode}"
+        return state_path, result.stderr.strip()[-2000:] or f"exit {result.returncode}", 0
+    off_schedule = 0
     for line in result.stderr.splitlines():
         if "off schedule" in line:
+            off_schedule += 1
             print(f"NATIVE {line.strip()}")
-    return state_path, ""
+    return state_path, "", off_schedule
 
 
 def first_divergence(reference: bytes, native: bytes) -> tuple[int | None, int, list[str], int | None]:
@@ -1002,6 +1005,27 @@ def attribute(name: str, masks: list[int], frames: int, ordinal: int,
     return out
 
 
+AUDIO_REQUESTS = {0xDD80: "wCurSongID", 0xDD81: "wCurSongBank", 0xDD82: "wCurSfxID", 0xDD83: "wSfxPriority"}
+
+
+def audio_requests(name: str, masks: list[int], frames: int, ordinal: int,
+                   pokes: refstream.Pokes | None, lag_path: Path) -> list[dict[str, Any]]:
+    """The four bytes game code asks the sound driver through, on both lanes
+    at the first anchor the audio region differs: same bytes mean the driver
+    was asked the same thing and diverged on its own."""
+    with tempfile.TemporaryDirectory(prefix=f"audio-{name}-") as tmp:
+        state_path, failure, _off = run_native(Path(tmp), session_dir(name) / "input.txt", ordinal,
+                                               lag_path=lag_path, dump_ordinals=[ordinal])
+        dump_path = state_path.with_name(f"{state_path.stem}-f{ordinal}.json")
+        if not dump_path.is_file():
+            raise SessionError(f"no native dump at ordinal {ordinal}: {failure[-300:]}")
+        native = native_regions(json.loads(dump_path.read_text()))["audio"]
+    reference = reference_capture(name, masks, frames, ordinal, pokes)["audio"]
+    return [{"address": f"0x{address:04X}", "symbol": symbol,
+             "native": native[address - 0xDD80], "reference": reference[address - 0xDD80]}
+            for address, symbol in AUDIO_REQUESTS.items()]
+
+
 def verify(name: str, *, write: bool, json_path: Path | None) -> int:
     masks, meta = load_session(name)
     n = len(masks)
@@ -1023,8 +1047,9 @@ def verify(name: str, *, write: bool, json_path: Path | None) -> int:
         mask_path.write_text(mask_text())
         digest_path = directory / "native.bin"
         lag_path = ROOT / ref_meta["directory"] / "lag.txt"
-        _state, failure = run_native(directory, session_dir(name) / "input.txt", n,
-                                     lag_path=lag_path, digest_out=digest_path, mask_path=mask_path)
+        _state, failure, off_schedule = run_native(directory, session_dir(name) / "input.txt", n,
+                                                   lag_path=lag_path, digest_out=digest_path,
+                                                   mask_path=mask_path)
         native = digest_path.read_bytes() if digest_path.is_file() else b""
         ordinal, reached, regions, audio_first = first_divergence(reference, native)
         # A session may declare a ceiling: the last ordinal the ROM's own
@@ -1045,9 +1070,17 @@ def verify(name: str, *, write: bool, json_path: Path | None) -> int:
         else:
             status, confirmed = "diverged", ordinal - 1
         report.update(status=status, confirmed=confirmed, reached=reached, native_failure=failure,
-                      reference=ref_meta["directory"], audio_first_divergence=audio_first)
+                      reference=ref_meta["directory"], audio_first_divergence=audio_first,
+                      schedule_mismatches=off_schedule)
         print(f"SESSION {name} status={status} confirmed={confirmed} ordinals={n} "
               f"audio_first_divergence={audio_first if audio_first is not None else 'none'}")
+        print(f"SCHEDULE {name} off_schedule={off_schedule}")
+        if audio_first is not None and (ordinal is None or audio_first < ordinal):
+            report["audio_requests"] = audio_requests(name, masks, frames, audio_first, pokes, lag_path)
+            rows = report["audio_requests"]
+            same = all(row["native"] == row["reference"] for row in rows)
+            print(f"AUDIO ordinal={audio_first} requests={'same' if same else 'differ'} "
+                  + " ".join(f"{row['symbol']}={row['native']:02x}/{row['reference']:02x}" for row in rows))
         if status == "diverged":
             lag = lag_between(reference, ordinal)
             report["divergence"] = {"ordinal": ordinal, "regions": regions, "lag": lag}
@@ -1055,8 +1088,8 @@ def verify(name: str, *, write: bool, json_path: Path | None) -> int:
                   f"reference_frames={lag['frames']} reference_vblanks={lag['vblanks']}")
             capture_dir = directory / "capture"
             capture_dir.mkdir()
-            state_path, cap_failure = run_native(capture_dir, session_dir(name) / "input.txt",
-                                                 ordinal, lag_path=lag_path, dump_ordinals=[ordinal])
+            state_path, cap_failure, _off = run_native(capture_dir, session_dir(name) / "input.txt",
+                                                       ordinal, lag_path=lag_path, dump_ordinals=[ordinal])
             dump_path = state_path.with_name(f"{state_path.stem}-f{ordinal}.json")
             if not dump_path.is_file():
                 raise SessionError(f"no native dump at ordinal {ordinal}: {cap_failure[-300:]}")
@@ -1074,6 +1107,8 @@ def verify(name: str, *, write: bool, json_path: Path | None) -> int:
     ratchet = read_ratchet()
     previous = ratchet.get(name, {}).get("confirmed_ordinal")
     exit_code = {"clean": 0, "diverged": 1, "native-short": 1}[status]
+    if off_schedule:
+        exit_code = max(exit_code, 1)
     if previous is not None and confirmed < previous and not write:
         print(f"REGRESSION {name} key=confirmed_ordinal was={previous} now={confirmed}")
         report["regression"] = {"was": previous, "now": confirmed}
@@ -1160,8 +1195,8 @@ def diff(name: str, ordinal: int) -> int:
     ref_meta = build_reference(name, masks, frames, pokes=meta["pokes"])
     lag_path = ROOT / ref_meta["directory"] / "lag.txt"
     with tempfile.TemporaryDirectory(prefix=f"session-{name}-") as tmp:
-        state_path, failure = run_native(Path(tmp), session_dir(name) / "input.txt", ordinal,
-                                         lag_path=lag_path, dump_ordinals=[ordinal])
+        state_path, failure, _off = run_native(Path(tmp), session_dir(name) / "input.txt", ordinal,
+                                               lag_path=lag_path, dump_ordinals=[ordinal])
         dump_path = state_path.with_name(f"{state_path.stem}-f{ordinal}.json")
         if not dump_path.is_file():
             raise SessionError(f"no native dump at ordinal {ordinal}: {failure[-300:]}")
@@ -1335,12 +1370,51 @@ WRAM = {"wDuelTurns": 0x0C06, "wDuelFinished": 0x0C07}
 AI_DUEL_MAX_ORDINALS = 80_000
 
 
+def load_cards(path: Path) -> list[int]:
+    """Sixty card ids from a deck file, one per line or comma-separated."""
+    cards = refstream.load_masks(path)
+    if len(cards) != DECK_SIZE or not all(1 <= card <= 0xFF for card in cards):
+        raise SessionError(f"{path} must hold exactly {DECK_SIZE} card ids in 1..255")
+    return cards
+
+
+DRAW_CARD_FROM_DECK = 0x10CF
+PLAYER_DECK_CARDS = 0x027E
+PLAYER_TURN = 0xC2
+ARRANGE_WINDOW = 4000
+
+
+def draw_order(masks: list[int], pokes: refstream.Pokes, at: int) -> list[int]:
+    """The player's shuffled deck-index order at the first draw after `at`:
+    the ROM draws DUELVARS_DECK_CARDS front to back, so the card ids poked
+    at those indices are the opening hand and the draws that follow."""
+    order: list[int] = []
+    with refstream.Core(masks[:at + ARRANGE_WINDOW], pokes=pokes) as core:
+        core.input_axis = "ordinal"
+        read = core.library.gambatte_cpuread
+
+        def on_exec(address: int, _cycle: int) -> None:
+            if address == DRAW_CARD_FROM_DECK and not order and core.ordinal > at \
+                    and read(core.core, 0xFF97) == PLAYER_TURN:
+                order.extend(core.area("WRAM")[PLAYER_DECK_CARDS:PLAYER_DECK_CARDS + DECK_SIZE])
+
+        core.install_exec(on_exec)
+        core.run((at + ARRANGE_WINDOW) * 2 + 400, stop=lambda: bool(order) or core.ordinal > at + ARRANGE_WINDOW)
+    if len(order) != DECK_SIZE or sorted(order) != list(range(DECK_SIZE)):
+        raise SessionError(f"no player draw within {ARRANGE_WINDOW} ordinals of {at}")
+    return order
+
+
 def ai_duel(name: str, *, base: str, at: int, deck: int, seed: int | None, prizes: int | None,
-            period: int, tail: int, goal: str) -> int:
+            period: int, tail: int, goal: str, cards: list[int] | None = None,
+            watch: set[str] | None = None, arrange: bool = False) -> int:
     """Branch `base` at DoFrame `at` into an AI-versus-AI duel and record the
     session the reference plays: the base's input through `at`, the pokes,
     then A every `period` DoFrames until wDuelFinished is set plus `tail`
-    more, so the result screen and the post-duel script are in the session."""
+    more, so the result screen and the post-duel script are in the session.
+    With `arrange`, `cards` is a draw order: the player's shuffled deck is
+    read from one short reference pass and the list is poked so that the
+    first entries are the opening hand and the next ones the turn draws."""
     base_masks, base_meta = load_session(base)
     if not 1 <= at <= len(base_masks):
         raise SessionError(f"--at must be within {base}'s {len(base_masks)} ordinals")
@@ -1357,16 +1431,39 @@ def ai_duel(name: str, *, base: str, at: int, deck: int, seed: int | None, prize
         writes += [(AI_DUEL["wRNG1"], seed & 0xFF), (AI_DUEL["wRNG2"], (seed >> 8) & 0xFF)]
     pokes.setdefault(at, []).extend(writes)
     pokes.setdefault(at - 1, []).append((AI_DUEL["wNPCDuelDeckID"], deck))
-    pokes[at].extend((AI_DUEL["wPlayerDeck"] + index, card) for index, card in enumerate(deck_cards(deck)))
+    player_cards = cards if cards is not None else deck_cards(deck)
     prefix = base_masks[:at]
     mash = [0x10 if (i % period) < 4 else 0 for i in range(AI_DUEL_MAX_ORDINALS - at)]
     masks = prefix + mash
+    if arrange:
+        if cards is None:
+            raise SessionError("--arrange needs --cards")
+        order = draw_order(masks, pokes, at)
+        arranged = [0] * DECK_SIZE
+        for position, index in enumerate(order):
+            arranged[index] = cards[position]
+        player_cards = arranged
+    pokes[at].extend((AI_DUEL["wPlayerDeck"] + index, card) for index, card in enumerate(player_cards))
     finished_at: int | None = None
     turns = 0
     end = len(masks)
+    reached: dict[str, int] = {}
     with refstream.Core(masks, pokes=pokes) as core:
         core.input_axis = "ordinal"
-        core.install_exec(None)
+        if watch:
+            candidates, by_bank_address = refstream.routine_entry_addresses()
+
+            def on_exec(address: int, _cycle: int) -> None:
+                if address not in candidates or core.ordinal <= at:
+                    return
+                bank = 0 if address < 0x4000 else core.bank_of(address)
+                routine = by_bank_address.get((bank, address))
+                if routine in watch and routine not in reached:
+                    reached[routine] = core.ordinal
+
+            core.install_exec(on_exec)
+        else:
+            core.install_exec(None)
 
         def stop() -> bool:
             nonlocal finished_at, turns, end
@@ -1394,10 +1491,91 @@ def ai_duel(name: str, *, base: str, at: int, deck: int, seed: int | None, prize
         "prizes": prizes, "duel_finished_ordinal": finished_at, "duel_turns": turns,
         "recorded": datetime.now(UTC).isoformat(timespec="seconds"),
     }
+    if cards is not None:
+        meta["player_cards"] = list(cards)
+    if watch:
+        meta["watched"] = {routine: reached.get(routine) for routine in sorted(watch)}
     (directory / "session.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
     print(f"SESSION {name} ordinals={end} duel_finished={finished_at} turns={turns} "
           f"deck={deck} seed={seed} prizes={prizes}")
     return 0
+
+
+def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goal: str) -> int:
+    """A player-controlled duel against deck `deck`'s AI with `cards` as the
+    player's deck: the base's input through `at` and the pokes, nothing
+    more. A coverage search seeded from it presses the buttons."""
+    base_masks, base_meta = load_session(base)
+    if not 1 <= at <= len(base_masks):
+        raise SessionError(f"--at must be within {base}'s {len(base_masks)} ordinals")
+    if not 0 <= deck <= 0x7F:
+        raise SessionError("deck id must be 0..127")
+    pokes: refstream.Pokes = {k: list(v) for k, v in base_meta["pokes"].items() if k < at}
+    kind = DUELIST_TYPE_AI_OPP | deck
+    pokes.setdefault(at - 1, []).append((AI_DUEL["wNPCDuelDeckID"], deck))
+    pokes.setdefault(at, []).extend([(AI_DUEL["wOpponentDuelistType"], kind), (AI_DUEL["wDuelType"], kind),
+                                     (AI_DUEL["wOpponentDeckID"], deck), (AI_DUEL["wIsPracticeDuel"], 0)])
+    pokes[at].extend((AI_DUEL["wPlayerDeck"] + index, card) for index, card in enumerate(cards))
+    masks = base_masks[:at]
+    directory = session_dir(name)
+    directory.mkdir(parents=True, exist_ok=True)
+    (directory / "input.txt").write_text("\n".join(str(m) for m in masks) + "\n")
+    (directory / "pokes.txt").write_text(refstream.pokes_text(pokes))
+    meta = {
+        "schema": 1, "name": name, "ordinals": len(masks),
+        "goal": goal or f"Player-controlled duel against deck id {deck} with a poked deck, branched from {base} at {at}",
+        "derived_from": base, "branch_ordinal": at, "ai_deck": deck, "player_cards": list(cards),
+        "recorded": datetime.now(UTC).isoformat(timespec="seconds"),
+    }
+    (directory / "session.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
+    print(f"SESSION {name} ordinals={len(masks)} deck={deck} player_cards={len(cards)}")
+    return 0
+
+
+def script_goal(seed: str, script: Path) -> str:
+    """The corpus entry's summary when the script came from explore.py."""
+    index = script.parent.parent / "corpus.json"
+    if index.is_file():
+        for entry in json.loads(index.read_text()).get("entries", []):
+            if (script.parent.parent / entry["script"]).resolve() == script.resolve():
+                sample = ", ".join(entry.get("routines", [])[:4])
+                return (f"Coverage search from {seed}: {entry['new_routines']} routines no session "
+                        f"had executed ({sample})")
+    return f"Coverage search from {seed}: {script.name}"
+
+
+def from_script(name: str, *, seed: str, script: Path, goal: str) -> int:
+    """A session from a coverage-search script. The script is the seed's own
+    input plus a suffix, so the seed's pokes apply at the same ordinals and the
+    new session is the seed's world driven further."""
+    seed_masks, seed_meta = load_session(seed)
+    masks = refstream.load_masks(script)
+    if masks[:len(seed_masks)] != seed_masks:
+        raise SessionError(f"{script} does not start with {seed}'s {len(seed_masks)} ordinals")
+    if len(masks) <= len(seed_masks):
+        raise SessionError(f"{script} adds no ordinals past {seed}")
+    input_sha256 = hashlib.sha256(bytes(m & 0xFF for m in masks)).hexdigest()
+    for other in session_names():
+        other_meta = json.loads((session_dir(other) / "session.json").read_text()) \
+            if (session_dir(other) / "session.json").is_file() else {}
+        if other != name and other_meta.get("input_sha256") == input_sha256:
+            raise SessionError(f"{other} already records this script")
+    directory = session_dir(name)
+    directory.mkdir(parents=True, exist_ok=True)
+    (directory / "input.txt").write_text("\n".join(str(m) for m in masks) + "\n")
+    if seed_meta["pokes"]:
+        (directory / "pokes.txt").write_text(refstream.pokes_text(seed_meta["pokes"]))
+    relative = script.relative_to(ROOT) if script.is_absolute() and script.is_relative_to(ROOT) else script
+    meta = {
+        "schema": 1, "name": name, "ordinals": len(masks),
+        "goal": goal or script_goal(seed, script),
+        "derived_from": seed, "script": str(relative), "input_sha256": input_sha256,
+        "recorded": datetime.now(UTC).isoformat(timespec="seconds"),
+    }
+    (directory / "session.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
+    print(f"SESSION {name} ordinals={len(masks)} seed={seed} added={len(masks) - len(seed_masks)}")
+    return 0
+
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -1454,6 +1632,25 @@ def main(argv: list[str] | None = None) -> int:
     duel_parser.add_argument("--period", type=int, default=24, help="DoFrames between A presses")
     duel_parser.add_argument("--tail", type=int, default=1500, help="DoFrames kept after wDuelFinished")
     duel_parser.add_argument("--goal", default="")
+    duel_parser.add_argument("--cards", type=Path,
+                             help="deck file of 60 card ids poked as the player's deck (default: the deck's own list)")
+    duel_parser.add_argument("--watch", action="append", default=[],
+                             help="routine to watch for during the duel; its first ordinal goes to session.json")
+    duel_parser.add_argument("--arrange", action="store_true",
+                             help="treat --cards as a draw order: opening hand first, then the turn draws")
+    seed_parser = sub.add_parser("deck-seed", help="a player-controlled duel with a poked deck, as a search seed")
+    seed_parser.add_argument("name")
+    seed_parser.add_argument("--from", dest="base", default="practice-win")
+    seed_parser.add_argument("--at", type=int, default=23227)
+    seed_parser.add_argument("--deck", type=int, required=True, help="*_DECK_ID the opponent plays")
+    seed_parser.add_argument("--cards", type=Path, required=True, help="deck file of 60 card ids for the player")
+    seed_parser.add_argument("--goal", default="")
+    script_parser = sub.add_parser("from-script", help="record a coverage-search script as a session")
+    script_parser.add_argument("name")
+    script_parser.add_argument("--seed", required=True, help="the session the script extends")
+    script_parser.add_argument("--script", required=True, type=Path,
+                               help="explore.py corpus script: the seed's input plus a suffix")
+    script_parser.add_argument("--goal", default="")
     args = parser.parse_args(argv)
     try:
         if args.command == "status":
@@ -1476,7 +1673,15 @@ def main(argv: list[str] | None = None) -> int:
             return capture(args.name, args.routine, after=args.after, nth=args.nth, out=args.out, sram=args.sram)
         if args.command == "ai-duel":
             return ai_duel(args.name, base=args.base, at=args.at, deck=args.deck, seed=args.seed,
-                           prizes=args.prizes, period=args.period, tail=args.tail, goal=args.goal)
+                           prizes=args.prizes, period=args.period, tail=args.tail, goal=args.goal,
+                           cards=load_cards(args.cards) if args.cards else None,
+                           watch=set(args.watch) or None, arrange=args.arrange)
+        if args.command == "deck-seed":
+            return deck_seed(args.name, base=args.base, at=args.at, deck=args.deck,
+                             cards=load_cards(args.cards), goal=args.goal)
+        if args.command == "from-script":
+            script = args.script if args.script.is_absolute() else ROOT / args.script
+            return from_script(args.name, seed=args.seed, script=script, goal=args.goal)
         name = args.name or lowest_confirmed()
         return verify(name, write=args.write_ratchet,
                       json_path=Path(args.json) if args.json else None)
