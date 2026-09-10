@@ -34,9 +34,18 @@ static void adapt_Script_f631_ows_f63c(ProbeState *s)
 }
 /* <<< factory Script_f631.ows_f63c */
 
+/* >>> factory Script_f631 */
+static void adapt_Script_f631(ProbeState *s)
+{
+	(void)s;
+	Script_f631();
+}
+/* <<< factory Script_f631 */
+
 const ProbeEntry probe_entries_pokemon_dome_entrance[] = {
 	{ "PokemonDomeEntranceLoadMap", adapt_PokemonDomeEntranceLoadMap },
 	{ "PokemonDomeEntranceCloseTextBox", adapt_PokemonDomeEntranceCloseTextBox },
 	{ "Script_f631.ows_f63c", adapt_Script_f631_ows_f63c },
+	{ "Script_f631", adapt_Script_f631 },
 	{ NULL, NULL },
 };

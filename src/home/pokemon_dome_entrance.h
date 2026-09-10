@@ -19,4 +19,7 @@ typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t 
 ScriptF631OwsF63cResult Script_f631_ows_f63c(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 #define Script_f631_ows_f63c_START_SCRIPT 0x7651u
 /* <<< factory Script_f631_ows_f63c */
+/* >>> factory Script_f631 */
+void Script_f631(void);
+/* <<< factory Script_f631 */
 #endif /* POKETCG_HOME_POKEMON_DOME_ENTRANCE_H */

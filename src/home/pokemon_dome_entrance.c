@@ -58,3 +58,9 @@ ScriptF631OwsF63cResult Script_f631_ows_f63c(uint8_t b, uint8_t c, uint8_t d, ui
 	return (ScriptF631OwsF63cResult){0u, 0x80u, packs.b, packs.c, packs.d, packs.e, packs.hl};
 }
 /* <<< factory Script_f631.ows_f63c */
+
+/* >>> factory Script_f631 */
+void Script_f631(void)
+{
+}
+/* <<< factory Script_f631 */

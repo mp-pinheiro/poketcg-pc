@@ -39,8 +39,8 @@ CFG_OUTPUT = COMPLETION_DIR / "cfg.json"
 MAPPING_PATH = COMPLETION_DIR / "routine-mapping.json"
 EVIDENCE_DIR = COMPLETION_DIR / "evidence"
 ROM_SIZE = 0x100000
-EXPECTED_PROVISIONAL = 158
-EXPECTED_EXTRA_REGISTRATIONS = 9
+EXPECTED_PROVISIONAL = 106
+EXPECTED_EXTRA_REGISTRATIONS = 14
 ALLOWED_SPAN_KINDS = {"code", "data", "header/metadata", "padding", "unclassified"}
 REQUIRED_RELATION_FIELDS = {
     "wram", "hram", "sram_bank_0", "sram_bank_1", "sram_bank_2",

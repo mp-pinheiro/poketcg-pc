@@ -62,12 +62,24 @@ CASES["Script_f631.ows_f63c"] = [
 ]
 # <<< factory Script_f631.ows_f63c
 
+# >>> factory Script_f631
+CONTRACT["Script_f631"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["Script_f631"] = [
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0, "read": {wTxRam3: 4}},
+    dict(POISON, read={wTxRam3: 4}),
+]
+# <<< factory Script_f631
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-completion Script_f631.ows_f63c
 for _rec in SCHEMA2_CASES["Script_f631.ows_f63c"]:
     _rec["completion"] = {"mode": "pre-ret", "pc": 0x7651}
 # <<< factory-completion Script_f631.ows_f63c
+# >>> factory-completion Script_f631
+for _rec in SCHEMA2_CASES["Script_f631"]:
+    _rec["completion"] = {"mode": "pre-ret", "pc": 0x7631}
+# <<< factory-completion Script_f631
 
 MUTATIONS = {}
 # >>> factory-mutation PokemonDomeEntranceCloseTextBox
@@ -79,3 +91,6 @@ MUTATIONS["PokemonDomeEntranceLoadMap"] = {"source_symbol": "PokemonDomeEntrance
 # >>> factory-mutation Script_f631.ows_f63c
 MUTATIONS["Script_f631.ows_f63c"] = {"source_symbol": "Script_f631_ows_f63c", "before": "\twTxRam3_b = (uint8_t)(count + 1u);", "after": "\twTxRam3_b = count;", "case_ids": ["Script_f631.ows_f63c-0", "Script_f631.ows_f63c-1", "Script_f631.ows_f63c-2"]}
 # <<< factory-mutation Script_f631.ows_f63c
+# >>> factory-mutation Script_f631
+MUTATIONS["Script_f631"] = {"source_symbol": "Script_f631", "before": "void Script_f631(void)\n{\n}", "after": "void Script_f631(void)\n{\n\twTxRam3 = 1u;\n}", "case_ids": ["Script_f631-0", "Script_f631-1"]}
+# <<< factory-mutation Script_f631

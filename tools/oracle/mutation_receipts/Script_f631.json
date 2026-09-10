@@ -1,0 +1,9 @@
+{
+  "fn": "Script_f631",
+  "case": "tests/cases/pokemon_dome_entrance.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Script_f631\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52803\": \"00000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Script_f631\", \"mismatches\": {\"bus\": {\"address\": 52803, \"reference\": \"00000000\", \"native\": \"01000000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52803, 4]]}}}\n",
+  "restored": "{\"fn\": \"Script_f631\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52803\": \"00000000\"}}, \"status\": \"PASS\"}\n"
+}

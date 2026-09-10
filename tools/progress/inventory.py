@@ -213,12 +213,14 @@ def process_asm_files(map_labels: dict[str, dict]) -> tuple[dict[str, dict], dic
         cur_top: str | None = None
         last_body: str | None = None
         prev_kind: str | None = None
+        local_seen = False
 
         for lineno, raw in enumerate(lines, start=1):
             stripped = raw.split(";", 1)[0].strip()
             if not stripped:
                 continue
             if stripped.startswith("."):
+                local_seen = True
                 continue
             m = LAB_RE.match(stripped)
             if m:
@@ -259,8 +261,13 @@ def process_asm_files(map_labels: dict[str, dict]) -> tuple[dict[str, dict], dic
                 cur_top = parent_name(pending_labels[-1][0])
                 prev_kind = kind
                 pending_labels = []
+                local_seen = False
             else:
                 kind = classify_line(stripped)
+                if (kind == "code" and local_seen and cur_top in defs
+                        and defs[cur_top]["kind"] == "data" and stripped.lower() != "ret"
+                        and rel.startswith("src/scripts/")):
+                    defs[cur_top]["kind"] = "code"
             callee = extract_callee(stripped, set(), cur_top or "")
             if callee and cur_top and cur_top in defs:
                 defs[cur_top]["deps"].add(callee)
