@@ -5,6 +5,7 @@
 #include "home/switch_rom.h"
 #include "home/music2.h"
 #include "home/sfx.h"
+#include "home/frames.h"
 /* >>> factory statics */
 #include "home/music1.h"
 #include "mem.h"
@@ -96,20 +97,23 @@ void Music1_PlaySong(uint8_t a)
 {
 	g_rom_bank = MUSIC1_BANK;
 	if (a >= gb_read8(ADR_NumberOfSongs1)) return;
+	frame_boundary_timer_sync();
 	wCurSongID = a;
 }
 
 void Music1_PlaySFX(uint8_t a)
 {
+	uint8_t priority = 0u;
+
 	g_rom_bank = MUSIC1_BANK;
-	if (a == 0) { wSfxPriority = 0; wCurSfxID = 0; return; }
-	{
-		uint8_t prio = gb_read8(ADR_SFXPriorities + a);
-		if (wSfxPriority == 0 || wSfxPriority >= prio) {
-			wSfxPriority = prio;
-			wCurSfxID = a;
-		}
+	if (a != 0u) {
+		priority = gb_read8(ADR_SFXPriorities + a);
+		if (wSfxPriority != 0u && wSfxPriority < priority)
+			return;
 	}
+	frame_boundary_timer_sync();
+	wSfxPriority = priority;
+	wCurSfxID = a;
 }
 
 uint8_t Music1_AssertSongFinished(void)

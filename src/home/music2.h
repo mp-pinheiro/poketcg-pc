@@ -71,8 +71,8 @@ void Music2_f4866(void);
 void Music2_LoadWaveInstrument(void);
 
 /* Vibrato. */
-void Music2_UpdateVibrato(uint8_t ch);
-void Music2_f490b(uint8_t ch);
+uint16_t Music2_UpdateVibrato(uint8_t ch);
+void Music2_f490b(uint8_t ch, uint16_t de);
 void Music2_f4967(uint8_t ch);
 
 /* Pause / resume. */

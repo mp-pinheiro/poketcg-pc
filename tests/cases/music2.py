@@ -265,6 +265,30 @@ CASES["Music2_UpdateVibrato"] = [
      "read": {0xDDA5: 2, 0xDDE3: 1, 0xDDDB: 1}},
     dict(POISON, b=0, c=2, wram={0xDDE1: b"\x00", 0xDDA9: b"\x2C\x00"},
          read={0xDDA9: 2}),
+    {"c": 0, "wram": {0xDDDF: b"\x01", 0xDDE3: b"\x01",
+                       0xDDD3: b"\x01", 0xDDDB: b"\x01",
+                       0xDDA5: b"\x2C\x00"},
+     "read": {0xDDA5: 2, 0xDDD3: 1, 0xDDDB: 1}},
+    {"c": 0, "wram": {0xDDDF: b"\x01", 0xDDE3: b"\x01",
+                       0xDDD3: b"\x01", 0xDDDB: b"\x05",
+                       0xDDA5: b"\x2C\x00"},
+     "read": {0xDDA5: 2, 0xDDD3: 1, 0xDDDB: 1}},
+    {"c": 0, "wram": {0xDDDF: b"\x01", 0xDDE3: b"\x01",
+                       0xDDD3: b"\x01", 0xDDDB: b"\x00",
+                       0xDDA5: b"\xFF\x0C"},
+     "read": {0xDDA5: 2, 0xDDD3: 1, 0xDDDB: 1}},
+    {"c": 0, "wram": {0xDDDF: b"\x01", 0xDDE3: b"\x01",
+                       0xDDD3: b"\x02", 0xDDDB: b"\x0C",
+                       0xDDA5: b"\x2C\x00"},
+     "read": {0xDDA5: 2, 0xDDD3: 1, 0xDDDB: 1}},
+    {"c": 0, "wram": {0xDDDF: b"\x01", 0xDDE3: b"\x01",
+                       0xDDD3: b"\x01", 0xDDDB: b"\x08",
+                       0xDDA5: b"\x2C\x00"},
+     "read": {0xDDA5: 2, 0xDDD3: 1, 0xDDDB: 1}},
+    {"c": 1, "wram": {0xDDE0: b"\x01", 0xDDE4: b"\x01",
+                       0xDDD4: b"\x01", 0xDDDC: b"\x05",
+                       0xDDA7: b"\x00\x01"},
+     "read": {0xDDA7: 2, 0xDDD4: 1, 0xDDDC: 1}},
 ]
 
 CONTRACT["Music2_f490b"] = {"compare": (), "preserve": ()}
@@ -1371,3 +1395,4 @@ MUTATIONS["Music2_PlayNextNote_pop"] = {"source_symbol": "Music2_PlayNextNote_po
 # >>> factory-mutation Music2_note
 MUTATIONS["Music2_note"] = {"source_symbol": "Music2_note", "before": "void Music2_note(uint16_t *hl, uint8_t note, uint8_t instrument, uint8_t ch)\n{\n\t(void)instrument;\n\tpnn_note(hl, note, ch);", "after": "void Music2_note(uint16_t *hl, uint8_t note, uint8_t instrument, uint8_t ch)\n{\n\t(void)instrument;\n\tpnn_note(hl, (uint8_t)(note ^ 0x01u), ch);", "case_ids": ["Music2_note-1", "Music2_note-3"]}
 # <<< factory-mutation Music2_note
+MUTATIONS["Music2_UpdateVibrato"] = {"source_symbol": "Music2_UpdateVibrato", "before": "\t\treturn (uint16_t)((uint16_t)(hi & 0x07u) << 8 | lo);", "after": "\t\treturn (uint16_t)((uint16_t)(hi & 0x0Fu) << 8 | lo);", "case_ids": ["Music2_UpdateVibrato-6"]}
