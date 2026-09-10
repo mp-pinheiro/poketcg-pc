@@ -243,6 +243,7 @@ int main(void)
 
 	char fn[MAX_NAME] = { 0 };
 	struct span spans[MAX_SPANS];
+	uint8_t observed[MAX_SPANS] = { 0 };
 	size_t nspans = 0;
 	struct sread_span sreads[MAX_SPANS];
 	size_t nsreads = 0;
@@ -256,6 +257,7 @@ int main(void)
 	long vramb = -1;
 	long keys = 0; /* hKeysHeld bit layout; applied after every seed, like ramg */
 	long frame_budget = 0;
+	long repeat = 1;
 	char stop_routine[MAX_NAME] = "";
 	ProbeState st = { 0 };
 	/* Routines that need warm state a single call cannot build -- the text engine's
@@ -339,6 +341,10 @@ int main(void)
 				jstr(stop_routine, sizeof stop_routine);
 			} else if (strcmp(key, "frame_budget") == 0) {
 				frame_budget = jnum();
+			} else if (strcmp(key, "repeat") == 0) {
+				repeat = jnum();
+				if (repeat < 1 || repeat > 1000000)
+					die("repeat out of range");
 			} else if (strcmp(key, "keys") == 0) {
 				keys = jnum();
 			} else if (strcmp(key, "input_events") == 0) {
@@ -444,6 +450,7 @@ int main(void)
 						spans[nspans].addr =
 							(uint16_t)strtoul(addr_s, NULL, 10);
 						spans[nspans].len = (uint16_t)n;
+						observed[nspans] = 1;
 						nspans++;
 					} while (eat(','));
 					need('}');
@@ -667,6 +674,30 @@ int main(void)
 		trace_set_stop(target, stop_hit);
 	}
 
+	if (repeat > 1) {
+		printf("{\"ticks\":[");
+		for (long tick = 0; tick < repeat; tick++) {
+			apu_trace_clear();
+			apu_trace_set_tick((uint32_t)tick);
+			call(&st);
+			printf("%s{\"bus\":\"", tick ? "," : "");
+			for (size_t i = 0; i < nspans; i++) {
+				if (!observed[i])
+					continue;
+				for (uint16_t k = 0; k < spans[i].len; k++)
+					printf("%02x", gb_read8((uint16_t)(spans[i].addr + k)));
+			}
+			printf("\",\"writes\":\"");
+			const ApuWrite *writes = apu_trace_data();
+			for (size_t i = 0; i < apu_trace_count(); i++)
+				printf("%02x%02x", writes[i].address & 0xffu, writes[i].value);
+			printf("\"}");
+		}
+		printf("],\"repeat\":%ld}\n", repeat);
+		free(input);
+		rom_free();
+		return 0;
+	}
 	if (setjmp(g_stop_env) == 0) {
 		if (frame_budget > 0) {
 			g_frames_remaining = frame_budget;

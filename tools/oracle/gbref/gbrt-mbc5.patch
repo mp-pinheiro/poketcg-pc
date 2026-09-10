@@ -106,3 +106,20 @@ diff --git a/src/gbrt.c b/src/gbrt.c
              }
              return;
          }
+diff --git a/include/gbrt.h b/include/gbrt.h
+--- a/include/gbrt.h
++++ b/include/gbrt.h
+@@ -337,2 +337,3 @@
+     GBHostConfigurationContract host_configuration_contract; /**< Host-only configuration validation service */
++    void (*oracle_apu_hook)(struct GBContext* ctx, uint16_t addr, uint8_t value);
+     const char* host_configuration_path; /**< Host-only persistence destination; never serialized or logged */
+diff --git a/src/gbrt.c b/src/gbrt.c
+--- a/src/gbrt.c
++++ b/src/gbrt.c
+@@ -3103,4 +3103,6 @@
+         if (addr >= 0xFF10 && addr <= 0xFF3F) {
+             gbrt_audio_sync(ctx);
++            if (ctx->oracle_apu_hook)
++                ctx->oracle_apu_hook(ctx, addr, value);
+             gb_audio_write(ctx, addr, value);
+             return;

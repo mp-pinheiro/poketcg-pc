@@ -425,6 +425,31 @@ static void print_result(const GBContext *ctx, const char *completion,
     printf("\",\"instructions\":%" PRIu64 ",\"cycles\":%" PRIu64 "}\n",
            steps, cycles);
 }
+#define TICK_WRITE_CAPACITY 65536u
+static uint8_t g_tick_writes[TICK_WRITE_CAPACITY][2];
+static size_t g_tick_write_count;
+
+static void capture_apu_write(GBContext *ctx, uint16_t addr, uint8_t value) {
+    (void)ctx;
+    if (g_tick_write_count < TICK_WRITE_CAPACITY) {
+        g_tick_writes[g_tick_write_count][0] = (uint8_t)(addr & 0xffu);
+        g_tick_writes[g_tick_write_count][1] = value;
+        g_tick_write_count++;
+    }
+}
+
+static void print_tick(const GBContext *ctx, uint64_t index,
+                       const uint16_t *bus_addresses, const uint16_t *bus_sizes,
+                       size_t bus_count) {
+    printf("%s{\"bus\":\"", index ? "," : "");
+    print_bus_spans(ctx, bus_addresses, bus_sizes, bus_count);
+    printf("\",\"writes\":\"");
+    for (size_t i = 0; i < g_tick_write_count; i++)
+        printf("%02x%02x", g_tick_writes[i][0], g_tick_writes[i][1]);
+    printf("\"}");
+    g_tick_write_count = 0;
+}
+
 static int parse_bus_spans(char *spec, uint16_t *addresses, uint16_t *sizes,
                            size_t *count, size_t cap) {
     size_t used = 0;
@@ -453,10 +478,13 @@ int main(int argc, char **argv) {
     char completion[16];
     if (json_string(request, "completion", completion, sizeof completion) != 1 ||
         (strcmp(completion, "return") != 0 && strcmp(completion, "pre-ret") != 0 &&
-         strcmp(completion, "event") != 0)) {
+         strcmp(completion, "event") != 0 && strcmp(completion, "tick") != 0)) {
         free(request);
-        fail("SCHEMA", "completion must be return, pre-ret, or event");
+        fail("SCHEMA", "completion must be return, pre-ret, event, or tick");
     }
+    int tick_mode = strcmp(completion, "tick") == 0;
+    uint64_t repeat = 1;
+    int repeat_state = json_number(request, "repeat", &repeat);
     char hardware[4] = "dmg";
     int hardware_state = json_string(request, "hardware", hardware, sizeof hardware);
 
@@ -556,6 +584,8 @@ int main(int argc, char **argv) {
         entry_state != 1 || entry > 0xffff ||
         entry_sp_state < 0 || (entry_sp_state == 1 &&
                                (entry_sp < 2 || entry_sp > 0xfffd)) ||
+        repeat_state < 0 || repeat == 0 || repeat > 1000000u ||
+        (repeat != 1 && !tick_mode) ||
         instruction_budget == 0 || cycle_budget == 0 ||
         instruction_budget > UINT32_MAX || cycle_budget > UINT32_MAX ||
         instruction_state < 0 || cycle_state < 0 ||
@@ -580,7 +610,7 @@ int main(int argc, char **argv) {
     GBConfig config = {0};
     config.model = strcmp(hardware, "cgb") == 0 ? GB_MODEL_CGB : GB_MODEL_DMG;
     config.speed_percent = 100;
-    config.enable_audio = false;
+    config.enable_audio = tick_mode ? true : false;
     config.enable_serial = false;
     config.native_presentation_enabled = false;
     GBContext *ctx = gb_context_create(&config);
@@ -669,7 +699,12 @@ int main(int argc, char **argv) {
     if (mapper_hbank_state == 1)
         gb_write8(ctx, 0xFF80, (uint8_t)mapper_hbank_rom);
     int vblank_scheduler_armed = input_count > 0 || (gb_read8(ctx, 0xff40) & 0x80);
-    if (vblank_scheduler_armed) {
+    if (tick_mode) {
+        vblank_scheduler_armed = 1;
+        ctx->ime = 0;
+        ctx->oracle_apu_hook = capture_apu_write;
+        printf("{\"ticks\":[");
+    } else if (vblank_scheduler_armed) {
         gb_write8(ctx, 0xffff, (uint8_t)(gb_read8(ctx, 0xffff) | 0x01));
         ctx->ime = 1;
     }
@@ -684,6 +719,14 @@ int main(int argc, char **argv) {
         gb_push16(ctx, stack_words[i]);
     ctx->pc = (uint16_t)entry;
     set_call_registers(ctx, reg_a, reg_f, reg_b, reg_c, reg_d, reg_e, reg_hl);
+    for (uint64_t iteration = 0; iteration < repeat; iteration++) {
+    if (iteration) {
+        ctx->sp = 0xfffe;
+        gb_push16(ctx, 0xfea0);
+        ctx->pc = (uint16_t)entry;
+        steps = 0;
+        cycles = 0;
+    }
     while (strcmp(completion, "event") == 0
                ? ((gb_read8(ctx, (uint16_t)event_addr) & (uint8_t)event_mask)
                   != (uint8_t)event_value)
@@ -693,13 +736,17 @@ int main(int argc, char **argv) {
                                  ? (entry_sp_state == 1 ? 0xcff1 : 0xfea1)
                                  : (entry_sp_state == 1 ? 0x3f80 : 0xfea0)))) {
         if (steps >= instruction_budget || cycles >= cycle_budget) {
+            if (tick_mode)
+                printf("],\"tick\":%" PRIu64 ",", iteration);
+            else
+                printf("{");
             /* A budget death parked in a halt is the common trap, and pc alone
              * cannot tell a spin apart from a wait for an interrupt that can
              * never arrive. Report the machine state that decides it: rLCDC
              * gates whether the PPU still publishes VBlank at all, and IF/IE
              * with halted say whether the wake condition is merely masked. */
             const GBPPU *view = (const GBPPU *)ctx->ppu;
-            fprintf(stdout, "{\"status\":\"BUDGET_EXHAUSTED\",\"pc\":%u,\"sp\":%u,"
+            fprintf(stdout, "\"status\":\"BUDGET_EXHAUSTED\",\"pc\":%u,\"sp\":%u,"
                     "\"rom_bank\":%u,\"hbank_rom\":%u,"
                     "\"instructions\":%" PRIu64 ",\"cycles\":%" PRIu64 ","
                     "\"lcdc\":%u,\"if\":%u,\"ie\":%u,\"ime\":%u,\"halted\":%u,"
@@ -764,7 +811,14 @@ int main(int argc, char **argv) {
             }
         }
     }
-    print_result(ctx, completion, steps, cycles, bus_addresses, bus_sizes, bus_count);
+    if (tick_mode)
+        print_tick(ctx, iteration, bus_addresses, bus_sizes, bus_count);
+    }
+    if (tick_mode) {
+        printf("],\"repeat\":%" PRIu64 ",\"status\":\"REFERENCE_OK\",\"completion\":\"tick\"}\n", repeat);
+    } else {
+        print_result(ctx, completion, steps, cycles, bus_addresses, bus_sizes, bus_count);
+    }
     gb_context_destroy(ctx);
     free(rom);
     return 0;
