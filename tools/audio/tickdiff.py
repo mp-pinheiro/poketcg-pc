@@ -257,6 +257,7 @@ def diff(digests: list[str], *, ticks: int, jobs: int, json_path: Path | None) -
 
 
 def main(argv: list[str] | None = None) -> int:
+    sys.stdout.reconfigure(line_buffering=True)
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
     seeds_parser = sub.add_parser("seeds", help="take driver seeds from recorded sessions")
