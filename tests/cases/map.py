@@ -410,7 +410,8 @@ MUTATIONS["GameEvent_BattleCenter"] = {"source_symbol": "GameEvent_BattleCenter"
 # <<< factory-mutation GameEvent_BattleCenter
 # >>> factory-completion GameEvent_BattleCenter
 for _record in SCHEMA2_CASES["GameEvent_BattleCenter"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x0264}
+    _record["completion"] = {"mode": "entry", "pc": 0x758F, "bank": 1,
+                             "routine": "SetUpAndStartLinkDuel"}
 # <<< factory-completion GameEvent_BattleCenter
 # >>> factory-mutation GameEvent_ContinueDuel
 MUTATIONS["GameEvent_ContinueDuel"] = {"source_symbol": "GameEvent_ContinueDuel", "before": "SongResult GameEvent_ContinueDuel(void)\n{\n\twSongOverride = 0u;", "after": "SongResult GameEvent_ContinueDuel(void)\n{\n\twSongOverride = 1u;", "case_ids": ["GameEvent_ContinueDuel-0", "GameEvent_ContinueDuel-1"]}
