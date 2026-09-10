@@ -1026,7 +1026,8 @@ static void update_ch_output(uint8_t ch)
 			d = K_RESTART;
 		}
 		wMusicTie_PTR[ch] = 2;
-		gb_write8(APU_AUD1SWEEP, K_SWEEP_DOWN);
+		if (ch == 0)
+			gb_write8(APU_AUD1SWEEP, K_SWEEP_DOWN);
 		uint8_t duty = gb_read8(wMusicDuty1_ADDR + ch);
 		gb_write8(ch == 0 ? APU_AUD1LEN : APU_AUD2LEN, duty);
 		gb_write8(ch == 0 ? APU_AUD1LOW : APU_AUD2LOW,
