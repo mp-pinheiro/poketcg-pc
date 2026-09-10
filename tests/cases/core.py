@@ -4011,6 +4011,28 @@ CASES["OpenCardPage"] = [
 ]
 # <<< factory OpenCardPage
 
+CONTRACT["OpenCardPage.input_loop"] = {"compare": (), "preserve": ()}
+CASES["OpenCardPage.input_loop"] = [
+    {"b": 0x00, "keys": [0x00, 0x01], "wram": {wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {wCardPageType: 1, wCardPageNumber: 1},
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    {"b": 0x00, "keys": [0x00, 0x02], "wram": {wCardPageExitKeys: b"\x02", 0xCABB: b"\x00",
+                                               wCardPageNumber: b"\x03"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {wCardPageType: 1, wCardPageNumber: 1},
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    {"b": 0x00, "keys": [0x01, 0x02], "wram": {wCardPageExitKeys: b"\x02", 0xCABB: b"\x00",
+                                               wCardPageNumber: b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {wCardPageType: 1, wCardPageNumber: 1},
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, keys=[0x00, 0x01], wram={wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={wCardPageType: 1, wCardPageNumber: 1},
+         instruction_budget=4000000, cycle_budget=16000000),
+]
+
 # >>> factory DisplayCardDetailScreen
 CONTRACT["DisplayCardDetailScreen"] = {"compare": ("f",), "preserve": ()}
 CASES["DisplayCardDetailScreen"] = [
@@ -7124,6 +7146,9 @@ MUTATIONS["_DisplayCardDetailScreen"] = {"source_symbol": "_DisplayCardDetailScr
 # >>> factory-mutation OpenCardPage
 MUTATIONS["OpenCardPage"] = {"source_symbol": "OpenCardPage", "before": "void OpenCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageType_ADDR, a);", "after": "void OpenCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageType_ADDR, 0u);", "case_ids": ["OpenCardPage-0", "OpenCardPage-1"]}
 # <<< factory-mutation OpenCardPage
+# >>> factory-mutation OpenCardPage.input_loop
+MUTATIONS["OpenCardPage.input_loop"] = {"source_symbol": "OpenCardPage_input_loop", "before": "\t\tif ((hKeysPressed & (PAD_START | PAD_A)) != 0u) {", "after": "\t\tif ((hKeysPressed & PAD_START) != 0u) {", "case_ids": ["OpenCardPage.input_loop-2"]}
+# <<< factory-mutation OpenCardPage.input_loop
 # >>> factory-mutation DisplayCardDetailScreen
 MUTATIONS["DisplayCardDetailScreen"] = {
  "source_symbol": "DisplayCardDetailScreen",

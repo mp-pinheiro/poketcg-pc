@@ -7107,25 +7107,38 @@ void OpenCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t
 		ApplyBGP6OrSGB3ToCardImage(place_a, 0u, b, 0u, 6u, 4u, oam_hl);
 	b = image.b;
 	gb_write8(wCardPageNumber_ADDR, 0u);
-	for (;;) {
+	{
 		CardPageNavigationResult page = DisplayFirstOrNextCardPage(b);
+
 		if ((page.f & 0x10u) != 0u)
 			return;
 		EnableLCD();
-		for (;;) {
-			DoFrame();
-			if ((gb_read8(wCardPageExitKeys_ADDR) & hDPadHeld) != 0u)
-				return;
-			uint8_t pressed = (uint8_t)(hKeysPressed & (PAD_START | PAD_A));
-			if (pressed != 0u)
-				break;
-			pressed = (uint8_t)(hKeysPressed & (PAD_RIGHT | PAD_LEFT));
-			if (pressed != 0u)
-				DisplayCardPageOnLeftOrRightPressed(pressed);
-		}
 	}
+	OpenCardPage_input_loop(b);
 }
 /* <<< factory OpenCardPage */
+
+void OpenCardPage_input_loop(uint8_t b)
+{
+	for (;;) {
+		DoFrame();
+		b = hDPadHeld;
+		if ((gb_read8(wCardPageExitKeys_ADDR) & b) != 0u)
+			return;
+		if ((hKeysPressed & (PAD_START | PAD_A)) != 0u) {
+			CardPageNavigationResult page = DisplayFirstOrNextCardPage(b);
+
+			if ((page.f & 0x10u) != 0u)
+				return;
+			EnableLCD();
+			continue;
+		}
+		uint8_t pressed = (uint8_t)(hKeysPressed & (PAD_RIGHT | PAD_LEFT));
+
+		if (pressed != 0u)
+			DisplayCardPageOnLeftOrRightPressed(pressed);
+	}
+}
 
 /* >>> factory DisplayCardDetailScreen */
 WaitResult DisplayCardDetailScreen(uint8_t a, uint16_t hl)

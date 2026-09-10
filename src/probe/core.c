@@ -2160,6 +2160,11 @@ static void adapt_OpenCardPage(ProbeState *s)
 }
 /* <<< factory OpenCardPage */
 
+static void adapt_OpenCardPage_input_loop(ProbeState *s)
+{
+	OpenCardPage_input_loop(s->b);
+}
+
 /* >>> factory DisplayCardDetailScreen */
 static void adapt_DisplayCardDetailScreen(ProbeState *s)
 {
@@ -3407,6 +3412,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "SendCardAttrBlkPacket", adapt_SendCardAttrBlkPacket },
 	{ "_DisplayCardDetailScreen", adapt__DisplayCardDetailScreen },
 	{ "OpenCardPage", adapt_OpenCardPage },
+	{ "OpenCardPage.input_loop", adapt_OpenCardPage_input_loop },
 	{ "PracticeDuel_RepeatInstructions", adapt_PracticeDuel_RepeatInstructions },
 	{ "DisplayCardDetailScreen", adapt_DisplayCardDetailScreen },
 	{ "OpenCardPage_FromHand", adapt_OpenCardPage_FromHand },

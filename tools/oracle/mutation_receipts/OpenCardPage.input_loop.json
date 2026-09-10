@@ -1,0 +1,9 @@
+{
+  "fn": "OpenCardPage.input_loop",
+  "case": "tests/cases/core.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OpenCardPage.input_loop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52167\": \"01\", \"52177\": \"00\", \"52183\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OpenCardPage.input_loop\", \"mismatches\": {\"bus\": {\"address\": 51899, \"reference\": \"80010002\", \"native\": \"00000002\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[51899, 1], [52167, 1], [52177, 1], [52183, 1]]}}}\n",
+  "restored": "{\"fn\": \"OpenCardPage.input_loop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52167\": \"01\", \"52177\": \"00\", \"52183\": \"02\"}}, \"status\": \"PASS\"}\n"
+}

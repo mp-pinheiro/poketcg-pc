@@ -1839,7 +1839,7 @@ handle_regular_card_page_input:
 		uint8_t saved = hBankROM;
 
 		BankswitchROM(0x01u);
-		OpenCardPage(0u, 0u, 0u, 0u, 0u, card_id, 0u);
+		OpenCardPage_input_loop(0u);
 		BankswitchROM(saved);
 	}
 	goto handle_input;
