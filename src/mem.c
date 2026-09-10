@@ -1,5 +1,7 @@
 #include "mem.h"
 
+#include "link.h"
+
 #include "generated/wram.h"
 
 #include <errno.h>
@@ -577,6 +579,7 @@ static void watch_poll(void);
 uint8_t gb_read8(uint16_t addr)
 {
 	watch_poll();
+	link_pump();
 	if (addr >= 0xA000 && addr < 0xC000 && !g_sram_enabled)
 		return 0xFF; /* open bus, as on hardware */
 	/* STAT bit 7 is unused and reads back as 1 on real hardware, so a
@@ -842,8 +845,10 @@ void gb_write8(uint16_t addr, uint8_t v)
 	/* SC ($FF02): unused bits 2-6 read 1; bit 1 is the CGB fast-clock select.
 	 * Serial transfer ticking itself is not modeled -- only the register
 	 * shape the state dump sees. */
-	if (addr == 0xFF02u)
+	if (addr == 0xFF02u) {
 		v = (uint8_t)(0x7Cu | (v & 0x83u));
+		link_note_sc_write(v);
+	}
 	/* BGPI/OBPI: bit 6 is unused and reads back as 1 (PPU-owned register;
 	 * modeled unconditionally, matching the reference's PPU write path). */
 	if (addr == 0xFF68u || addr == 0xFF6Au)

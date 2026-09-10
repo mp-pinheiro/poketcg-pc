@@ -532,6 +532,12 @@ coverage-target *ARGS:
 # The card-to-effect map: `map`, `carriers <Routine>`, `deck <CARD> [--attack N] [--out FILE]`.
 effects *ARGS:
     python3 tools/completion/effects.py {{ARGS}}
+# Two native consoles over one serial link: the bytes cross, both ISRs run, no ROM timeout (docs/reach-harness.md).
+peer-loopback *ARGS: build
+    python3 tools/completion/peer.py loopback {{ARGS}}
+# One native against a scripted printer responder on the same transport.
+peer-printer *ARGS: build
+    python3 tools/completion/peer.py printer {{ARGS}}
 # Sound-driver seeds from the recorded sessions: every K-th tick and the first after each request (build/audio/seeds).
 audio-seeds *ARGS:
     python3 tools/audio/tickdiff.py seeds {{ARGS}}

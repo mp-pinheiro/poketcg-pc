@@ -1,4 +1,5 @@
 #include "mem.h"
+#include "link.h"
 #include "persistence.h"
 #include "state_dump.h"
 #include "runtime.h"
@@ -516,6 +517,7 @@ int main(int argc, char **argv)
 	const char *trace_entries_path = NULL;
 	const char *trace_calls_path = NULL;
 	const char *checkpoint_path = NULL;
+	int link_fd = -1;
 	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "--headless") == 0) {
 			config.headless = 1;
@@ -578,6 +580,8 @@ int main(int argc, char **argv)
 		} else if (strcmp(argv[i], "--trace-calls") == 0 && i + 1 < argc) {
 			trace_calls_path = argv[++i];
 			trace_flush_on_abort(trace_calls_path);
+		} else if (strcmp(argv[i], "--link-fd") == 0 && i + 1 < argc) {
+			link_fd = atoi(argv[++i]);
 		} else if (strcmp(argv[i], "--load-checkpoint") == 0 && i + 1 < argc) {
 			checkpoint_path = argv[++i];
 		} else if (strcmp(argv[i], "--help") == 0) {
@@ -589,7 +593,7 @@ int main(int argc, char **argv)
 			       "[--dump-state-ordinals N[,N...]] [--stop-ordinal N] "
 			       "[--digest-out PATH [--digest-mask FILE]] [--lag-track PATH] "
 			       "[--trace-entries PATH] [--trace-calls PATH] "
-			       "[--load-checkpoint PATH]\n");
+			       "[--load-checkpoint PATH] [--link-fd N]\n");
 			printf("--frames 0 runs until the window closes\n");
 			printf("--input is one byte per host frame (a movie axis); "
 			       "--input-ordinal is one byte per DoFrame and never wraps: "
@@ -644,6 +648,11 @@ int main(int argc, char **argv)
 	}
 	if (require_data)
 		(void)rom_ptr_product(required_bank, required_address);
+	if (link_fd >= 0 && link_open(link_fd) != 0) {
+		fprintf(stderr, "cannot use link fd %d: %s\n", link_fd, strerror(errno));
+		rom_pack_free();
+		return 1;
+	}
 	if (load_save_path && sram_load(load_save_path) != 0) {
 		fprintf(stderr, "cannot load save %s: %s\n",
 		        load_save_path, strerror(errno));
@@ -803,6 +812,13 @@ int main(int argc, char **argv)
 	if (status == 0 && trace_calls_path && trace_write_raw(trace_calls_path) != 0) {
 		fprintf(stderr, "cannot write native call trace %s\n", trace_calls_path);
 		status = 1;
+	}
+	if (link_active()) {
+		link_drain();
+		fprintf(stderr, "link: exchanges=%u timeouts=%u drained=%u first=%d\n",
+		        link_exchanges(), link_timeouts(), link_drain_timeouts(),
+		        link_first_received());
+		link_close();
 	}
 	if (runtime_overread_mismatches())
 		fprintf(stderr, "overread track: %u card copies off schedule\n",
