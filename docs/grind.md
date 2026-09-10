@@ -2243,3 +2243,60 @@ bottom-up region port with `b` threaded from the deck machine down, and
 everything below `LoadLinkConnectingScene`'s entry is transcription-only for
 the same reason `ChallengeMachine_Duel` is: no IR peer answers, so no lane can
 reach those exits.
+
+## What is actually unexercised, measured
+
+`site/data/progress.json` publishes no execution data, so the "1,062 routines
+never executed" figure had no live source. The union of the trace lane over
+every recorded route does (`build-trace/poketcg --trace-calls` per session,
+`native_trace.native_counts`, union the names): **1,906 of 3,061 non-excluded
+routines execute, 62.3%**. Ranked by what never runs:
+
+| miss | exec/total | file |
+| --- | --- | --- |
+| 400 | 268/668 | `engine/duel/effect_functions.asm` |
+| 60 | 15/75 | `audio/music2.asm` |
+| 58 | 262/320 | `engine/duel/core.asm` |
+| 51 | 106/157 | `engine/overworld/scripting.asm` |
+| 44 | 31/75 | `audio/music1.asm` |
+| 30 | 0/30 | `engine/link/printer.asm` |
+| 25 | 0/25 | `engine/link/ir_core.asm` |
+| 23 | 65/88 | `engine/duel/ai/trainer_cards.asm` |
+| 22 | 17/39 | `engine/menus/deck_machine.asm` |
+| 22 | 2/24 | `engine/challenge_machine.asm` |
+| 19 | 0/19 | `engine/sgb.asm` |
+
+Card effects are the whole story: 400 of the 1,155 unexercised routines are
+one file. They fire when their card is played, so the lever is the AI-duel
+matrix -- and `session.py ai-duel` already pokes the player's deck card list
+(`wPlayerDeck`), so the note in "When the divergence is the movie" about deck
+ids other than 2 needing a hand-poked player deck is stale. 42 of the ~53
+deck ids have a session; the missing ids are the club leaders' decks, which
+the route sessions already play. Covering the rest needs decks that contain
+the unexercised cards, not more of the same decks.
+
+The link/IR/printer/SGB rows (94 routines at zero) are the capability wall: a
+second console or a printer answering on the serial line.
+
+## A coverage search found a wrong-bank read
+
+`explore.py --seed-session water-master` reached the deck editor's card page
+and the port aborted `MISSING_DATA 02:5E1A`. `CardRarityTextIDs` is at
+`01:5e14` and `wLoadedCard1Rarity` was 2, so `PrintCardPageRarityIcon`
+computed the right offset -- `hl + (rarity + 1) * 2` -- with **bank 2**
+mapped, and the bank-1 table read as code. The ROM reaches that screen with
+`bank1call OpenCardPage.input_loop`
+(`menus/deck_configuration.asm` `.handle_regular_card_page_input`); the port
+called `OpenCardPage` directly, and the generated guard only carries
+whole-routine targets (`OpenCardPage_FromHand` and the two other `_From*`
+variants), never a dotted label. A `bank1call` to a dotted label therefore
+needs the switch written at the call site by hand.
+
+With the switch the abort is gone and `master-explore` reaches 542,461, where
+it diverges on the glyph-cache pages `wc600`/`wc700` with writer `Func_2325`:
+the port runs *all* of `OpenCardPage`, which re-prints the page and inserts
+glyphs, where the ROM enters at `.input_loop` and only handles input. Closing
+that means porting the dotted label as its own entry
+(`OpenCardPage_input_loop`, registered under the sym name) and calling it from
+`OpenCardPageFromCardList`. The session is left registered and diverged on
+purpose: that is how the fact enters the tracker.
