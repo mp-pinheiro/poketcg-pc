@@ -2031,7 +2031,7 @@ declaration's digest to the receipt and regenerating all 2529, which is a
 migration, not a fix; until then "0 failures" means "every anchor resolves",
 and nothing more.
 
-## The audio exclusion hid four defects
+## The audio exclusion hid six defects
 
 `GATED` is 4, so `SECTION "WRAM Audio"` ($DD80-$DEE4) is digested as the
 `audio` region and reported, not gated. The stated reason until 2026-09-09 was
@@ -2039,18 +2039,31 @@ that the port batches timer ISRs at the frame boundary while the ROM
 interleaves them with game code. That reason was wrong: the lag track already
 replays the ISR count per interval and `src/runtime.c` `schedule_close`
 delivers an interval's remainder before the digest, so the region was
-comparable all along. Flipping `GATED` to 5 and sweeping the sessions is the
-measurement -- it found four real defects, three fixed below. Six `ai-duel-*`
-sessions still diverge on the fourth, so the flip does not land yet: it would
-drop their ratcheted floors.
+comparable all along. Flipping `GATED` to 5 and sweeping is the measurement,
+and it found six defects. Five are fixed and the sweep now stands at 80 of 81
+sessions clean *with audio gated* -- `challenge-hall` byte-exact through all
+702,945 of its ordinals, sound driver included.
 
-**The remaining one is the $3F SFX driver.** `ai-duel-0c` is byte-exact
-through anchor 30831 and at 30832 the port's `wSFXCommandPointers` for channel
-1 is six bytes ahead of the ROM's ($DE4D `0xd7` against `0xd1`) with
-`wde2b + 1` at `0x80` against `0x00` -- an envelope command the ROM had not
-reached. It begins exactly where the duel's SFX id changes ($DD82 `0x91` ->
-`0xb4`, so a new sound's header is loaded) and oscillates for the rest of the
-sound; the other five sessions diverge on the same two bytes.
+**The flip does not land yet: `credits-1` diverges at 858,149 of 864,424.**
+Its window is `reference_frames=65.99`, one interval spanning 66 frames of the
+credits' LCD-off stretch, so ~264 timer ISRs land in a single
+`schedule_close` batch while the ROM interleaves them with the credits code.
+The bytes are `wMusicChannelPointers` (51 against 26), `wMusicCh1CurPitch` and
+`wMusicCh3CurOctave`, i.e. the stream is at a different note, and no
+`lag track: N sync points off schedule` row appears, so the port delivered
+exactly the recorded schedule. It is the same class as the `PlaySFX` fix
+below -- a game write to driver state mid-interval that the port applies at a
+different tick -- and closing it means another sync point, which means another
+full re-derivation. Landing `GATED = 5` before that would drop `credits-1`'s
+ratcheted floor from 864,424 to 858,148.
+
+**The $3F SFX driver row is fixed, and it was the sync model.** `ai-duel-0c`
+was byte-exact through anchor 30831 and at 30832 the port's
+`wSFXCommandPointers` for channel 1 sat six bytes ahead of the ROM's ($DE4D
+`0xd7` against `0xd1`) with `wde2b + 1` at `0x80` against `0x00` -- an
+envelope command the ROM had not reached. It began exactly where the duel's
+SFX id changes ($DD82 `0x91` -> `0xb4`) and oscillated for the rest of the
+sound; five other sessions diverged on the same two bytes.
 
 Ruled out by reading, all faithful to the asm: the dispatch table
 (`sfx.asm:103-138`, high nibble, unused 9-14 re-dispatching), every handler's
@@ -2078,17 +2091,33 @@ the recorded zero ticks, stores the id atomically, then delivers all five at
 `schedule_close`, so its first update already sees `0x34` and starts the new
 sound one update early. Six bytes of stream is what that one update consumes.
 
-The fix is to record and replay the sync at the store instead of at the
+The sync is recorded and replayed at the driver's store instead of at the
 wrapper: `3d:4028`/`3e:4028` for `wCurSongID` and `3d:4048`/`3e:4048` for
-`wCurSfxID` (found by searching the bank for `EA 80 DD` / `EA 82 DD` inside
-the routine's span; `poketcg.sym` names labels, not instructions), with
-`frame_boundary_timer_sync()` moved to just before the store in
-`Music1_PlaySong`/`Music1_PlaySFX` and their music2 twins. Two details make it
-more than a two-line change: `TIMER_SYNC_ADDRESSES` is keyed by address, so
-the parallel $3d/$3e copies at identical offsets collide and it has to hold a
-set of banks per address; and the port's `Music1_PlaySFX` stores the id on two
-paths where the asm has one (`.play_sfx` handles SFX_STOP with `b = 0`), so it
-wants restructuring to a single store before a sync is attached to it.
+`wCurSfxID`, found by searching the bank for `EA 80 DD` / `EA 82 DD` inside
+the routine's span, since `poketcg.sym` names labels and not instructions.
+`TIMER_SYNC_ADDRESSES` had to become a set of banks per address, because the
+parallel $3d/$3e copies sit at identical offsets and a plain
+`{address: bank}` map silently kept only one of them.
+
+**Place the port's `frame_boundary_timer_sync()` before the routine's *first*
+store, not before the one the reference records.** `Music1_PlaySFX` writes
+`wSfxPriority` and then `wCurSfxID`; syncing between them delivers the
+interval's ticks after the priority write, and the driver update inside that
+tick runs `Func_fc26c`, which clears `wSfxPriority` because no SFX channel is
+claimed yet. `challenge-hall` caught it at 186,470: `wSfxPriority` 0 against
+the ROM's 10, writer `Music1_PlaySFX`. The recorded count is "ticks before the
+last store", so delivering them before the first store is right whenever no
+tick falls between the two -- and when one does, the reference shows the same
+clobber. The port's `Music1_PlaySFX` also stored the id on two paths where the
+asm has one (`.play_sfx` handles SFX_STOP with `b = 0`); it is one store now,
+which is what a sync point can attach to.
+
+**A gated region needs an attribution mapping or its divergence is silent.**
+`region_field` knew `vram` and nothing else, so with `audio` gated `attribute`
+raised `KeyError: 'audio'` after printing `WINDOW` and every audio divergence
+reported zero `DIVERGE` rows. It maps `audio` onto the `wram` field now, which
+is where those bytes live, and the rows name `wSfxPriority` and friends with
+their writers.
 
 **The regeneration is automatic, and that is by design.** `stream_key` hashes
 `TIMER_SYNC`, `TIMER_SYNC_HL` and `VBLANK_SYNC` (`session.py:296`), so moving
@@ -2101,6 +2130,14 @@ once the key was read properly. What it costs is the replay: the sessions run
 all 81 with four workers is hours of wall time. Warm them in parallel before a
 sweep (`build_reference` per session in a process pool) instead of letting a
 serial sweep pay for it one session at a time.
+
+**Fix both driver copies, and check the other one before believing a sweep.**
+`Music1_UpdateVibrato` and `Music2_UpdateVibrato` are the same routine in two
+song banks. Only music1's was purified in the first pass, and the gated sweep
+put 29 sessions at the identical ordinal 100,243 -- one shared cause on the
+common route prefix -- with `wMusicCh1CurPitch` two off. A watchpoint on
+`g_wram[0x1DA5]` named `Music2_UpdateVibrato` in one stop. An identical
+ordinal across many sessions means one defect on the shared prefix, not many.
 
 **The boot interval's sync offsets were clamped.** `lag_track` derives each
 driver call's tick offset with `unwrap(counter - prev, elapsed / TICK_TIME)`.
