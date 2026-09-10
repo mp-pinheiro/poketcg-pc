@@ -1390,3 +1390,4 @@ MUTATIONS["Music1_note"] = {"source_symbol": "Music1_note", "before": "void Musi
 # <<< factory-mutation Music1_note
 MUTATIONS["Music1_UpdateVibrato"] = {"source_symbol": "Music1_UpdateVibrato", "before": "\t\treturn (uint16_t)((uint16_t)(hi & 0x07u) << 8 | lo);", "after": "\t\treturn (uint16_t)((uint16_t)(hi & 0x0Fu) << 8 | lo);", "case_ids": ["Music1_UpdateVibrato-6"]}
 MUTATIONS["Music1_f479c"] = {"source_symbol": "Music1_f479c", "before": "\t\t\twMusicTie_PTR[0] = 0;\n\t\t\tgb_write8(APU_AUD3ENA, 0);", "after": "\t\t\twMusicTie_PTR[2] = 0;\n\t\t\tgb_write8(APU_AUD3ENA, 0);", "case_ids": ["Music1_f479c-1"]}
+MUTATIONS["Music1_CheckForNewSound"] = {"source_symbol": "Music1_CheckForNewSound", "before": "\t\twCurSongID = (uint8_t)(wCurSongID | 0x80u);", "after": "\t\twCurSongID = (uint8_t)(wCurSongID | 0x40u);", "case_ids": ["Music1_CheckForNewSound-1"]}

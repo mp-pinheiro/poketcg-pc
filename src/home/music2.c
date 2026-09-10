@@ -1289,20 +1289,17 @@ void Music2_CheckForNewSound(void);
 
 void Music2_CheckForNewSound(void)
 {
-	uint8_t sid;
 	g_rom_bank = MUSIC2_BANK;
 
-	sid = wCurSongID;
-	if (!(sid & 0x80)) {
+	if (!(wCurSongID & 0x80u)) {
 		Music2_StopAllChannels();
-		Music2_BeginSong(sid);
-		wCurSongID = (uint8_t)(sid | 0x80);
+		Music2_BeginSong(wCurSongID);
+		wCurSongID = (uint8_t)(wCurSongID | 0x80u);
 	}
 
-	sid = wCurSfxID;
-	if (!(sid & 0x80)) {
-		SFX_Play(sid);
-		wCurSfxID = (uint8_t)(sid | 0x80);
+	if (!(wCurSfxID & 0x80u)) {
+		SFX_Play(wCurSfxID);
+		wCurSfxID = (uint8_t)(wCurSfxID | 0x80u);
 	}
 }
 
