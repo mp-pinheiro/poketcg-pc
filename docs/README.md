@@ -1,7 +1,8 @@
 # docs/
 
-Nine documents, each with one job. Nothing here is a task list — work is selected
-deterministically by the factory from open Forgejo work issues.
+Twelve documents, each with one job. Nothing here is a task list — work is
+selected deterministically: the factory from open Forgejo work issues, the
+grind from `just issues-next`, the coverage program from `just coverage-status`.
 
 | doc | role |
 |---|---|
@@ -11,7 +12,10 @@ deterministically by the factory from open Forgejo work issues.
 | `factory-workflow.md` | The orchestrator runbook: preflight, the loop, reconciliation, escalation, invariants. The `start` trigger reads this and nothing else. |
 | `jj-workflow.md` | VCS workflow and Forgejo authentication (Cloudflare Access + PAT helper). |
 | `tas-progress-loop.md` | Reference for one tool, `just completion-tas-progress`: replaying the completion TAS on both lanes. Not the runbook; `grind.md` is. |
-| `integration-plan.md` | The program for closing the 26 `completion:v2` requirements and `vision.md` phases 3-8. Its ranked root causes are dated; the state block names which are closed. |
+| `coverage-program.md` | The five loops that turn "no route executes this routine" into recorded, verified, landed sessions: ledger, discover, intake, target, prove. Supersedes `integration-plan.md` waves 2-7. |
+| `audio-harness.md` | Phase 3's proof: the sound driver as a closed state machine under a per-tick oracle, plus the request-window and placement rows of `session-verify`. |
+| `reach-harness.md` | The parts no button search reaches: save-seeded sessions (packs, deck machines, credits variants, gift center) and the link/IR/printer peer, with the SGB decision. |
+| `integration-plan.md` | The 2026-09-09 integration program. Its state block is current; waves 2-7 are superseded by the three documents above and kept for history. |
 | `vision.md` | Descriptive: architecture, phase order, prior-art rationale. Not normative. |
 | `phase1-transform.md` | Per-routine delete/dissolve/port verdicts for the hardware-removal transform. |
 

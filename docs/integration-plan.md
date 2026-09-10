@@ -8,30 +8,31 @@ phases 2–8 and the release gate: a playable, byte-equivalent-at-scene-level
 native port, then widescreen strictly on top. It runs the mutation-receipt
 closure loop in parallel as one of its lanes.
 
-**State as of 2026-09-09, which overtakes the assessment below.** The premise
-"the composed native game does not behave like the ROM" no longer holds as
-written: 79 recorded routes now replay byte-identical on WRAM, HRAM, OAM and
-both VRAM banks at every DoFrame anchor, through boot, naming, Mason's lab, the
-practice duel, the deck machine and editor, all eight clubs, the Challenge Hall,
-the Pokémon Dome and the credits. Against the ranked root causes below:
+**State as of 2026-09-10, which overtakes the assessment below.** 3,013
+registrations oracle-clean per routine; 84 of 85 recorded routes byte-exact on
+WRAM, HRAM, OAM and VRAM at every DoFrame anchor from boot to the credits
+(`ronald-explore` diverges at 638,492 of 651,681 on the glyph cache); 1,991 of
+3,012 in-scope routines execute on some route, measured on the reference
+(`site/data/coverage.json`); the release gate passes 4 of 26 producers and 7
+requirements have no producer (p5:duel-state, p6:script-vm, p7:printer, four
+p8). Against the ranked root causes below:
 
-- 1 (VBlank work absent — palettes pinned white, `g_oam` never populated):
-  closed. OAM is one of the four gated regions and every route matches it.
-- 3 (boot loop truncated, "the game cannot structurally progress"): closed. The
-  routes traverse the main menu into the overworld and out to the credits.
-- 4 (intro/menu divergences): closed on the recorded routes.
-- 2 (timer cadence and APU divergence): open, and the sharpest remaining item.
-  `session.py:142-143` gates on four of five regions and excludes `audio`, so
-  no route proves an APU write. This is Phase 3 and it has no verification.
-- 5 (parked indirect dispatch): partly closed — the dispatch the routes touch
-  works; what no route reaches is unproven, which is the coverage problem, not
-  a dispatch problem.
+- 1 (VBlank work absent), 3 (boot loop truncated), 4 (intro/menu
+  divergences): closed; the routes traverse boot to the credits.
+- 2 (timer cadence and APU divergence): the driver-level harness
+  (`docs/audio-harness.md`) proves the sound driver per tick from every seed
+  the sessions give it and gates tick placement per session; anchor-level
+  audio is byte-exact on every session but `credits-1`. Its first run fixed a
+  register write no anchor could see.
+- 5 (parked indirect dispatch): what the routes touch works; what no route
+  reaches is the coverage program's worklist (`docs/coverage-program.md`).
 
-The live numbers, which always win over this prose: `just oracle-diff-all`
-(3012/3012), `just session-verify <name>` per route, `tools/completion/completion.py audit`
-(requirements and milestone gates), `site/data/gate.json` (last central gate).
-The requirement counts quoted below (5/26 PASS) are a stale snapshot; the audit
-reported 0 of 26 satisfied on 2026-09-09, with 24 artifacts never produced.
+Waves 2-7 below are superseded: the coverage program (Discover, Intake,
+Target, Prove) replaces waves 2, 4 and 5, the audio harness replaces wave 3,
+and `docs/reach-harness.md` replaces wave 6 with save-seeded sessions and the
+peer decision. They are kept for history. The live numbers always win over
+this prose: `just oracle-diff-all`, `just session-verify <name>`, `just
+coverage-status`, `tools/completion/completion.py audit`, `site/data/gate.json`.
 
 Assessment this plan is built on (verified when it was written, file:line in each step):
 

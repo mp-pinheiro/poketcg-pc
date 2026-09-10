@@ -60,6 +60,11 @@ The commands that matter, from the `justfile`:
 | `just issues-sync` | after a landing: reconcile the tracker with the loop's reports; facts open and close themselves |
 | `just issues-status` | the route's milestones, their counts, the sessions that prove them |
 | `just session-sweep NAME` | every routine a session enters, diffed once from its live entry; the worklist generator |
+| `just coverage-status` | files ranked by the routines no recorded route executes; the ledger is `just coverage-ledger` (`docs/coverage-program.md`) |
+| `just coverage-target [--limit N] [--land]` | one arranged AI duel per carrier card for the card effects no session executes; verified, landed |
+| `just coverage-discover` / `just coverage-intake SEED` | button search from ledger-ranked seeds; its best scripts recorded, verified, landed |
+| `just sessions-verify-affected <Fn\|stem...>` | after a fix, verify exactly the sessions the ledger says execute it |
+| `just audio-tickdiff` | the sound driver per tick from every seed, both lanes, APU writes compared (`docs/audio-harness.md`) |
 | `just oracle-diff <Fn>` | diff one routine against the PyBoy oracle — the per-routine check |
 | `just oracle-release-gate` | **the gate.** Central barrier; the only producer of `site/data/gate.json` |
 | `just completion-scenario <id>` | run one whole-game scenario; emits `comparison.census` — every differing byte grouped by owning RAM symbol |

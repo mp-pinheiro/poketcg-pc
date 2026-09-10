@@ -3,40 +3,59 @@
 ## Status
 
 "Open" below means the phase's *gate evidence* is unproduced, which is not the
-same as its code being unwritten. As of 2026-09-09 the port is 3012/3012
-routines oracle-clean against the ROM, and 79 recorded routes replay
-byte-identical on WRAM, HRAM, OAM and both VRAM banks at every DoFrame anchor —
-boot, naming, Mason's lab, the practice duel, the deck machine and editor, all
-eight clubs, Ronald and the Challenge Hall, the Pokémon Dome and the credits
-(`credits-1`, 864,424 anchors). What no phase has is its
-`completion:v2` artifact: `just completion-check <id>` has ever completed for 2
-of 26 requirements, so `just oracle-release-gate` reports 0/9 milestone gates.
+same as its code being unwritten. As of 2026-09-10 (main `985e3d57` and after)
+the port is 3,013 registrations oracle-clean per routine (`oracle-diff-all`
+clean, `audit_mutations` 2,534 receipts, 0 failures), and 84 of 85 recorded
+routes replay byte-identical on WRAM, HRAM, OAM and both VRAM banks at every
+DoFrame anchor — boot, naming, Mason's lab, the practice duel, the deck
+machine and editor, all eight clubs, Ronald and the Challenge Hall, the
+Pokémon Dome and the credits (`credits-1`, 864,424 anchors); `ronald-explore`
+diverges at 638,492 of 651,681 on the glyph cache. The release gate has 4 of
+26 producers passing (baseline, rom-coverage, p0:substrate,
+p1:hardware-removal); the bijection producer fails only on the 12 routines
+not yet registered.
+
+Coverage, measured on the reference (`docs/coverage-program.md`): 1,991 of
+3,012 in-scope routines execute on some recorded route (66%); of the 1,021
+that never do, 400 are card effects in `duel/effect_functions.asm`, 349 of
+those carried by a card the Target loop can put in play.
 
 - **Phase 0 — Substrate** (#1): closed.
 - **Phase 1 — Delete the hardware** (#2): transform recorded in
   `docs/phase1-transform.md`; applied per-slice as each routine ports.
 - **Phase 2 — Leaves and save** (#3): closed.
-- **Phase 3 — Timer, APU, audio** (#4): open, and the only phase with no
-  verification at all. `tools/completion/session.py:142-143` compares five
-  regions and gates on four: `audio` is measured and excluded, so every session
-  reports `audio_first_divergence=1`. Nothing proves the APU writes match.
+- **Phase 3 — Timer, APU, audio** (#4): driver-level harness
+  (`docs/audio-harness.md`): the tick oracle proves the sound driver from
+  every seed the recorded sessions give it, `session-verify` gates tick
+  placement (`SCHEDULE`) and names the request bytes when the audio region
+  diverges (`AUDIO`). Its first run found and fixed the port writing
+  `rAUD1SWEEP` on the channel-2 path in both drivers. Anchor-level audio
+  (`GATED = 5`) remains an integration check; `credits-1` is the one session
+  that fails it, on ISR interleaving inside one LCD-off block. `p3:audio-pcm`
+  still has no producer.
 - **Phase 4 — Text, tiles, menus** (#5, #18): code lands and replays; evidence
   artifact unproduced. The deck editor, card album, naming screen and glossary
   are all on recorded routes.
-- **Phase 5 — Duel engine** (#6): code lands and replays; evidence artifact
-  unproduced. 40+ recorded AI duels plus every club match.
-- **Phase 6 — Overworld and scripts** (#7): code lands and replays; evidence
-  artifact unproduced.
-- **Phase 7 — Link, IR, printer** (#8): open. Unreachable from a single-console
-  route, so unexercised by every session; the p3 audit rows name the stubs.
+- **Phase 5 — Duel engine** (#6): the coverage program's Target loop
+  (`just coverage-target`): one arranged AI duel per carrier card for the
+  effect routines no session executes, verified and landed as
+  `effect-<card>` sessions. `p5:duel-state`'s duel vectors are those
+  sessions. 40+ AI duels and every club match already replay.
+- **Phase 6 — Overworld and scripts** (#7): code lands and replays; the
+  Discover and Intake loops (`just coverage-discover`, `just
+  coverage-intake`) record the routes button search finds; save-seeded
+  sessions (`docs/reach-harness.md`) open the packs, deck machines, credits
+  variants and gift center.
+- **Phase 7 — Link, IR, printer** (#8): blocked on a peer. Unreachable from a
+  single-console route; no oracle has a serial partner. The native-only
+  loopback and the reference-side dual-core link are in
+  `docs/reach-harness.md`.
 - **Phase 8 — Widescreen and features** (#9): open, and strictly on top — 5 of
   the 26 requirements. Not port distance.
 
-The measured gap between "replays byte-exact" and "done" is coverage: of 2320
-ported routines carrying symbols, roughly 1062 are never executed by any
-recorded route (412 of them card effects). `tools/completion/explore.py
---seed-session <name>` is the machine for closing that, and its first two runs
-produced one route that exposed five real defects and one that was clean.
+SGB (`engine/sgb.asm`, 19 routines) is excluded as hardware-only in
+`tools/progress/scope.toml`: the CGB target never takes the path and neither
+oracle emulates the Super Game Boy.
 
 
 A native PC/Linux port of Pokémon Trading Card Game (Game Boy Color), hand-ported
