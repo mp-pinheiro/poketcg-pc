@@ -1233,7 +1233,9 @@ FindNPCOrObjectResult FindNPCOrObject(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 		if ((npc.f & 0x10u) == 0u) {
 			wScriptNPC = wLoadedNPCTempIndex;
 			wOverworldMode = OWMODE_START_SCRIPT;
-			return (FindNPCOrObjectResult){OWMODE_START_SCRIPT, 0x10u, npc.b, npc.c, npc.d, npc.e, npc.hl};
+			return (FindNPCOrObjectResult){OWMODE_START_SCRIPT,
+				(uint8_t)(0x10u | (npc.f & 0x80u)),
+				npc.b, npc.c, npc.d, npc.e, npc.hl};
 		}
 		next_a = npc.a;
 		next_f = npc.f;
@@ -1247,7 +1249,9 @@ FindNPCOrObjectResult FindNPCOrObject(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 	if ((move.f & 0x10u) == 0u)
 		return (FindNPCOrObjectResult){move.a, (move.a == 0u) ? 0x80u : 0u, move.b, move.c, move.d, move.e, move.hl};
 	wOverworldMode = OWMODE_SCRIPT;
-	return (FindNPCOrObjectResult){OWMODE_SCRIPT, 0x10u, move.b, move.c, move.d, move.e, move.hl};
+	return (FindNPCOrObjectResult){OWMODE_SCRIPT,
+		(uint8_t)(0x10u | (move.f & 0x80u)),
+		move.b, move.c, move.d, move.e, move.hl};
 }
 /* <<< factory FindNPCOrObject */
 

@@ -1,5 +1,6 @@
 from tests.cases._fixtures import after_duel_fixture, AFTER_DUEL_REGS, move_step_fixture as _move_step_fixture, MOVE_STEP_REGS as _MOVE_STEP_REGS
-from tests.cases._fixtures import MAP_SCRIPT_REGS, map_script_fixture
+from tests.cases._fixtures import (FIND_NPC_REGS, MAP_SCRIPT_REGS, find_npc_fixture,
+                                   map_script_fixture)
 """Oracle-diff cases for poketcg/src/engine/overworld/overworld.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -855,6 +856,9 @@ CASES["ReturnToOverworldWithCallback"] = [
 # >>> factory FindNPCOrObject
 CONTRACT["FindNPCOrObject"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["FindNPCOrObject"] = [
+    # water-club 91959: the live entry whose `.set_mode` exit carries the Z the
+    # callee left set, which `scf` preserves and the port used to drop.
+    dict(find_npc_fixture(vram=False, bank=3), **FIND_NPC_REGS),
     {"keys": [0x00], "wram": {0xD3B6: b"\x00", 0xD0BF: b"\x55", 0xD334: b"\x00", 0xD330: b"\x00", 0xD331: b"\x00"}, "read": {0xD3B6: 1, 0xD0BF: 1}},
     dict(POISON, keys=[0x00], wram={0xD3B6: b"\x00", 0xD0BF: b"\x55", 0xD334: b"\x00", 0xD330: b"\x00", 0xD331: b"\x00"}, read={0xD3B6: 1, 0xD0BF: 1}),
 ]
@@ -1429,7 +1433,7 @@ MUTATIONS["ReturnToOverworldNoCallback"] = {"source_symbol": "ReturnToOverworldN
 MUTATIONS["ReturnToOverworldWithCallback"] = {"source_symbol": "ReturnToOverworldWithCallback", "before": "uint8_t ReturnToOverworldWithCallback(uint16_t hl)\n{\n\twReloadOverworldCallbackPtr = (uint8_t)hl;", "after": "uint8_t ReturnToOverworldWithCallback(uint16_t hl)\n{\n\twReloadOverworldCallbackPtr = 0xFFu;", "case_ids": ["ReturnToOverworldWithCallback-0", "ReturnToOverworldWithCallback-1", "ReturnToOverworldWithCallback-2"]}
 # <<< factory-mutation ReturnToOverworldWithCallback
 # >>> factory-mutation FindNPCOrObject
-MUTATIONS["FindNPCOrObject"] = {"source_symbol": "FindNPCOrObject", "before": "\twScriptNPC = 0xffu;\n\tFindPlayerMovementWithOffsetResult movement = FindPlayerMovementFromDirection();", "after": "\twScriptNPC = 0x00u;\n\tFindPlayerMovementWithOffsetResult movement = FindPlayerMovementFromDirection();", "case_ids": ["FindNPCOrObject-0", "FindNPCOrObject-1"]}
+MUTATIONS["FindNPCOrObject"] = {"source_symbol": "FindNPCOrObject", "before": "\t\t\t\t(uint8_t)(0x10u | (npc.f & 0x80u)),", "after": "\t\t\t\t0x10u,", "case_ids": ["FindNPCOrObject-0", "FindNPCOrObject-1", "FindNPCOrObject-2"]}
 # <<< factory-mutation FindNPCOrObject
 # >>> factory-mutation Func_c6dc
 MUTATIONS["Func_c6dc"] = {"source_symbol": "Func_c6dc", "before": "FuncC6dcResult Func_c6dc(uint16_t saved_hl)\n{\n\tuint16_t movement_hl = 0xD335u;\n\twPlayerCurrentlyMoving = (uint8_t)(wPlayerCurrentlyMoving & (uint8_t)~0x03u);", "after": "FuncC6dcResult Func_c6dc(uint16_t saved_hl)\n{\n\tuint16_t movement_hl = 0xD335u;\n\twPlayerCurrentlyMoving = (uint8_t)(wPlayerCurrentlyMoving & (uint8_t)~0x01u);", "case_ids": ["Func_c6dc-0", "Func_c6dc-1", "Func_c6dc-3", "Func_c6dc-4"]}
