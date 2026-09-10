@@ -141,7 +141,7 @@
     "confirmed_ordinal": 101648
   },
   "boot-menu": {
-    "confirmed_ordinal": 1000
+    "confirmed_ordinal": 0
   },
   "challenge-hall": {
     "confirmed_ordinal": 702945
@@ -196,6 +196,9 @@
   },
   "effect-spearow-2": {
     "confirmed_ordinal": 32336
+  },
+  "effect-starmie-1-seed": {
+    "confirmed_ordinal": 23227
   },
   "fighting-club": {
     "confirmed_ordinal": 108594
