@@ -1,0 +1,18 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Seeded save with three PC booster packs, three medals and a Charmander pair: the overworld from Continue, for the packs coverage search (#3388)",
+  "name": "seed-packs",
+  "ordinals": 1564,
+  "recorded": "2026-09-10T21:58:00+00:00",
+  "save": "packs.sav",
+  "save_sha256": "759607dc047ac2a2c05da96b4851e100cd084949deec3d069e72df5b21335458",
+  "schema": 1,
+  "then": [
+    "A",
+    "Ax5",
+    "WAIT",
+    "Ax5",
+    "WAIT",
+    "Ax5"
+  ]
+}
