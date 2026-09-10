@@ -1,0 +1,15 @@
+{
+  "goal": "From Isaac's club duel: the coverage search's deepest new-code path (explore.py --seed-session isaac-duel)",
+  "name": "isaac-explore",
+  "ordinals": 421694,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ]
+  },
+  "recorded": "2026-09-10T17:27:10+00:00",
+  "schema": 1
+}
