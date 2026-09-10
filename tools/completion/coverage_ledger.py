@@ -141,7 +141,15 @@ def trace_worker(name: str) -> tuple[str, str]:
 def collect(names: list[str], *, jobs: int, forced: set[str]) -> dict[str, dict[str, Any]]:
     """Every named session's trace record, tracing the stale and the forced
     ones in worker processes, one reference core each."""
-    plans = {name: trace_plan(name) for name in names}
+    plans: dict[str, dict[str, Any]] = {}
+    pending: list[str] = []
+    for name in names:
+        try:
+            plans[name] = trace_plan(name)
+        except CoverageError:
+            pending.append(name)
+    if pending:
+        print(f"SKIP unverified={len(pending)}: {', '.join(pending[:6])}", file=sys.stderr)
     records: dict[str, dict[str, Any]] = {}
     stale: list[str] = []
     for name, plan in plans.items():
