@@ -1,0 +1,8 @@
+{
+  "goal": "from the deck machine: the coverage search's deepest new-code path (explore.py --seed-session boot-deck-machine)",
+  "name": "deck-explore",
+  "ordinals": 108944,
+  "pokes": {},
+  "recorded": "2026-09-10T13:51:10+00:00",
+  "schema": 1
+}

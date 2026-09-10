@@ -1,0 +1,27 @@
+{
+  "goal": "from the water master: the coverage search's deepest new-code path (explore.py --seed-session water-master)",
+  "name": "master-explore",
+  "ordinals": 546348,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ]
+  },
+  "recorded": "2026-09-10T13:51:11+00:00",
+  "schema": 1
+}
