@@ -49,6 +49,10 @@ Rules:
 - Memory: one reference lane at a time in this session. Never run two of session-verify,
   session-sweep, oracle-diff-all concurrently; leave no background job running when you
   stop. WSL has OOM-crashed on this repo.
+- Never rebuild the binary while a loop is verifying: a substrate experiment compiled
+  under a running coverage-target produced two false `diverged` facts (wVBlankCounter
+  off by one at ordinal 1). A divergence at a tiny ordinal on wVBlankCounter is
+  contamination; re-verify before reporting it.
 - Never run just oracle-release-gate, a formatter, a linter or any git command.
 - Never widen an exclusion ledger (scenario.py, _fixtures.py _HOLES, test_leaves.py
   AUTO_OBSERVE_IGNORED) and never edit a case to match the C.

@@ -14,6 +14,79 @@ Target ───┘
 The Fix loop is `docs/grind.md`, unchanged: it is the one loop with judgement
 in it. Everything else here is mechanical.
 
+## The prompt
+
+Paste this into a fresh session. Work selection is deterministic; every branch
+is a lookup here or in `docs/grind.md`.
+
+```text
+Advance the poketcg-pc native port by closing coverage. Read completely, in
+this order: docs/coverage-program.md (this file), docs/grind.md ("Issues: the
+worklist", "The session loop" and its decision table), AGENTS.md (file
+ownership, commands).
+
+Once, before the loop: export POKETCG_BUILD=build-<your name>
+POKETCG_SESSION=<your name>; just build.
+
+The loop, until a stop condition holds:
+  1. just issues-next 1 --claim
+     A p0/p1/p2/p3 fact that is NOT an ISR-placement fact: work it per
+     docs/grind.md, land the fix, just issues-sync, back to 1.
+     ISR-placement facts (a divergence whose writer is an interrupt body and
+     whose interval has no sync point: #3387, #3392, #3393) are BLOCKED on a
+     user decision -- they need a new sync site and a full re-derivation.
+     Skip them; do not start one.
+  2. No workable fact: just coverage-status. While
+     src/engine/duel/effect_functions.asm still misses routines:
+     just coverage-target --limit 20 --land
+     Each carrier becomes one arranged AI duel, verified and landed; a carrier
+     the AI never plays becomes an effect-<card>-seed search seed instead.
+  3. Then the search loops, from the ranked clean seeds:
+     just coverage-discover --limit 2 --jobs 2
+     just coverage-intake <seed> --top 3 --land
+  4. Then the seeded content route items (just issues-next, label route):
+     just savegen base NAME --from SESSION --at N
+     just savegen edit <sav> --out <sav> --medals N --pack 0=1 --event EVENT_X=1
+     just session-seeded NAME <sav> --then A,Ax5   (then verify, land, and use
+     it as a coverage-discover seed)
+  5. After every landing: just coverage-ledger --jobs 3 (folds the new
+     sessions in, ratchets `executed`), then just issues-sync.
+
+Proof obligations per landing:
+  - a C fix: just oracle-diff <Fn> PASS, just lint-constants clean, a fixture
+    case at the real entry and one red mutation, then
+    just sessions-verify-affected <Fn>   (the ledger picks the sessions)
+  - a sound-driver change: just audio-tickdiff  (66 seeds, must be all clean)
+  - a new session: just session-verify <name>; land it clean OR diverged --
+    a diverged session is how a fact enters the tracker.
+  - a landing batch: just sessions-sweep
+
+Rules:
+- Unattended: never ask; when two options exist take the boring one.
+- ONE reference lane at a time. Never run two of session-verify, session-sweep,
+  oracle-diff-all, coverage-target, coverage-intake concurrently.
+- NEVER rebuild the binary (just build, build-trace, oracle-build-gbref) while
+  any loop is verifying. It fabricates facts: a substrate experiment compiled
+  under a running coverage-target produced two false `diverged` reports whose
+  signature was wVBlankCounter off by one at ordinal 1. If you see a
+  divergence at a tiny ordinal on wVBlankCounter, it is contamination --
+  re-verify, do not report it.
+- Never run just oracle-release-gate, a formatter, a linter, or any git
+  command. Commit with jj only, naming your own paths:
+  jj commit <paths> -m "type(scope): subject"   (subject <= 50 chars)
+- Never widen an exclusion ledger and never edit a case to match the C.
+- Never hand-close a fact issue.
+
+Report at the end: sessions landed (name, clean/diverged), the ledger's
+executed count before and after, issues closed and opened, and anything left
+open with the reason.
+```
+
+Stop conditions: `coverage-status` shows only routines with a reason in
+`tools/progress/scope.toml` or a peer-harness dependency
+(`docs/reach-harness.md`); `issues-next` is empty apart from blocked
+placement facts; or a gate needs a decision the loop cannot take.
+
 ## Ledger — `just coverage-ledger`
 
 `site/data/coverage.json`: per session the routines it executes, per routine
