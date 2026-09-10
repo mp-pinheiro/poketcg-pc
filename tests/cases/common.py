@@ -853,11 +853,12 @@ MUTATIONS["ReceiveDeckConfiguration"] = {"source_symbol": "ReceiveDeckConfigurat
 MUTATIONS["DoCardPop"] = {"source_symbol": "DoCardPop", "before": "void DoCardPop(void)\n{\n\t_DoCardPop();", "after": "void DoCardPop(void)\n{\n\thWhoseTurn = 1u;", "case_ids": ["DoCardPop-0", "DoCardPop-1"]}
 # <<< factory-mutation DoCardPop
 # >>> factory-mutation SendCard
-MUTATIONS["SendCard"] = {"source_symbol": "SendCard", "before": "void SendCard(void)\n{\n}", "after": "void SendCard(void)\n{\n\tStopMusic();\n}", "case_ids": ["SendCard-0", "SendCard-1"]}
+MUTATIONS["SendCard"] = {"source_symbol": "SendCard", "before": "void SendCard(void)\n{\n\t_SendCard();\n}", "after": "void SendCard(void)\n{\n\t(void)0;\n}", "case_ids": ["SendCard-0", "SendCard-1"]}
 # <<< factory-mutation SendCard
 # >>> factory-completion SendCard
 for _record in SCHEMA2_CASES["SendCard"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x5B41, "bank": 6}
+    _record["completion"] = {"mode": "entry", "pc": 0x5B41, "bank": 6,
+                             "routine": "_SendCard"}
 # <<< factory-completion SendCard
 # >>> factory-mutation SendDeckConfiguration
 MUTATIONS["SendDeckConfiguration"] = {"source_symbol": "SendDeckConfiguration", "before": "void SendDeckConfiguration(void)\n{\n\t_SendDeckConfiguration();\n}", "after": "void SendDeckConfiguration(void)\n{\n\t(void)0;\n}", "case_ids": ["SendDeckConfiguration-0", "SendDeckConfiguration-1"]}

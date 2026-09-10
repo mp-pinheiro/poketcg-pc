@@ -847,6 +847,7 @@ void DoCardPop(void)
 /* >>> factory SendCard */
 void SendCard(void)
 {
+	_SendCard();
 }
 /* <<< factory SendCard */
 
