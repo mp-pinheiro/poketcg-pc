@@ -2300,3 +2300,62 @@ that means porting the dotted label as its own entry
 (`OpenCardPage_input_loop`, registered under the sym name) and calling it from
 `OpenCardPageFromCardList`. The session is left registered and diverged on
 purpose: that is how the fact enters the tracker.
+
+## The scroll arm that re-opened the same card
+
+Porting `OpenCardPage.input_loop` cleared the `MISSING_DATA` abort but
+`master-explore` still diverged at 542,462, now on `vram` plus the glyph pages.
+Interval counts named it: the ROM ran four `InitTextPrinting_ProcessTextFromPointerToID`
+and nine `JPWriteByteToBGMap0` where the port ran three and four, and a
+reference log of the interval showed the ROM calling
+`LoadCardDataToBuffer1_FromCardID` with `e=0x2f` while the port loaded nothing.
+Both lanes held the same card at 542,461, so the ROM had *advanced* the
+selection and the port had not.
+
+`OpenCardPageFromCardList` `.check_d_down` keeps the incremented cursor on the
+stack across the probe of the next list entry (`push af` / `pop af` / `dec a`),
+so scrolling the window down writes back the *unchanged* cursor. The port
+re-read `wCardListCursorPos` into the same variable to build the probe pointer
+and then decremented that, writing `cursor - 1`: the window advanced and the
+selection moved back one row, which is the same card. `master-explore` now runs
+clean to its end (546,348 ordinals) and the ratchet holds there.
+
+Two rules fall out of it. A `push af` around a store is load-bearing: the value
+that comes back is not always what the same address now holds. And that arm is
+**unreachable from the case harness** -- a case that seeds a list, a cursor at
+the window edge and a held `PAD_DOWN` passes with the defect reintroduced, and
+passes with a deliberately catastrophic write in its place, because the page
+open consumes enough frames that the poll never lands on the newly pressed
+entry of a short `keys` cycle. The prover for that class is the session, not
+`oracle-diff`.
+
+## Cross-lane call counts are not evidence; state is
+
+`install_exec` counts on the reference and `--trace-calls` counts on the port
+agree only when the compared routine is entered from another translation unit.
+`PlayLoadedDuelAnimation` reads 2,378 on the reference against 883 in the port
+for the same anchor range, and `CreateSpriteAndAnimBufferEntry` 2,147 against
+807, while every gated byte matches at every one of those 858,148 anchors --
+the sprite and queue buffers those routines write are gated, so the difference
+cannot be real. Interval-gated counts do agree (`Music1_Update` 67 on both
+sides of the credits interval; cumulative 9 against 9 at ordinal 30,811), and
+so does a `-fno-inline` rebuild for attribution *within* one lane.
+
+Read the bytes instead. At the two anchors around the `credits-1` divergence:
+
+```text
+           wCurSongID  wCurSongBank  wCurSfxID  wSfxPriority
+ROM  858148   0x9d         0x3d        0x80        0x00
+port 858148   0x82         0x3d        0x02        0x0a
+ROM  858149   0x91         0x3e        0x80        0x00
+port 858149   0x82         0x3d        0x80        0x00
+```
+
+The port carries a pending SFX request the ROM does not, consumes it inside the
+interval -- one `SFX_Play` and 25 `ExecuteNextSFXCommand` with no `PlaySFX`
+call to ask for it -- and that is what moves `wMusicChannelPointers`,
+`wMusicCh1CurPitch` and `wMusicCh3CurOctave`. Underneath it is a larger fact:
+the ROM is playing song `0x1d` and then `0x11` out of two different driver
+banks while the port has been playing song `0x02`. All four of those bytes live
+in `$DD80-$DEE4`, which `GATED = 4` excludes, so nothing catches it today.
+That, not the schedule, is the first thing the `GATED = 5` flip will report.
