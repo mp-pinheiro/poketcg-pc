@@ -193,6 +193,12 @@ CONTRACT["Music2_f479c"] = {"compare": (), "preserve": ()}
 CASES["Music2_f479c"] = [
     {"wram": {0xDD8C: b"\x00", 0xDDB9: b"\x00", 0xDD8B: b"\x00", 0xDD93: b"\x00"},
      "read": {0xDD93: 1}},
+    {"wram": {0xDD8C: b"\x00", 0xDDB9: b"\x00", 0xDD8B: b"\x00",
+              0xDD91: b"\x55", 0xDD93: b"\x01"},
+     "read": {0xDD91: 1, 0xDD93: 1}},
+    {"wram": {0xDD8C: b"\x00", 0xDDB9: b"\x00", 0xDD8B: b"\x01",
+              0xDD91: b"\x55", 0xDD93: b"\x01"},
+     "read": {0xDD91: 1, 0xDD93: 1, 0xDD8B: 1}},
     {"wram": {0xDD8C: b"\x04", 0xDDB9: b"\x00"},
      "read": {0xDD93: 1, 0xDDB9: 1}},
     {"wram": {0xDD8C: b"\x00", 0xDDB9: b"\x10", 0xDD93: b"\x80",

@@ -186,14 +186,14 @@ static void adapt_Music1_LoadWaveInstrument(ProbeState *s)
 
 static void adapt_Music1_UpdateVibrato(ProbeState *s)
 {
-	uint8_t ch = s->c;
-	Music1_UpdateVibrato(ch);
-	s->e = gb_read8(wMusicCh1CurPitch_ADDR + ((uint16_t)ch << 1));
-	s->d = gb_read8(wMusicCh1CurPitch_ADDR + ((uint16_t)ch << 1) + 1);
+	uint16_t de = Music1_UpdateVibrato(s->c);
+
+	s->e = (uint8_t)de;
+	s->d = (uint8_t)(de >> 8);
 }
 
 static void adapt_Music1_f490b(ProbeState *s)
-{ Music1_f490b(s->a); }
+{ Music1_f490b(s->a, (uint16_t)((uint16_t)s->d << 8 | s->e)); }
 
 static void adapt_Music1_f4967(ProbeState *s)
 {

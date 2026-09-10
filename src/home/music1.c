@@ -998,29 +998,18 @@ static void update_ch_output(uint8_t ch)
 	if (wdd8c & (1 << (ch == 3 ? 3 : ch))) return;
 	if (ch == 3) { Music1_f480a(); return; }
 
-	{
-		uint8_t instr = wddb7_PTR[ch];
-		if (instr == 0) {
-			/* Instrument 0: stop channel. */
-			wMusicTie_PTR[ch] = 0;
-			if (ch == 2) {
-				gb_write8(APU_AUD3ENA, 0);
-				return;
-			}
-			/* Ch 1-2: envelope up, restart. */
-			gb_write8(ch == 0 ? APU_AUD1ENV : APU_AUD2ENV, K_AUDENV_UP);
-			gb_write8(ch == 0 ? APU_AUD1HIGH : APU_AUD2HIGH, K_RESTART);
-			return;
-		}
-	}
-
 	if (ch == 2) {
-		/* Channel 3 output. */
 		uint8_t d = 0;
+
 		if (wMusicWaveChange) {
 			gb_write8(APU_AUD3ENA, 0);
 			Music1_LoadWaveInstrument();
 			d = 0x80;
+		}
+		if (wddb7_PTR[2] == 0) {
+			wMusicTie_PTR[0] = 0;
+			gb_write8(APU_AUD3ENA, 0);
+			return;
 		}
 		if (wMusicTie_PTR[ch] != 0x80) {
 			uint8_t vol = wMusicVolume_PTR[ch];
@@ -1036,6 +1025,12 @@ static void update_ch_output(uint8_t ch)
 	} else {
 		/* Channel 1 or 2 output. */
 		uint8_t d = 0;
+		if (wddb7_PTR[ch] == 0) {
+			wMusicTie_PTR[ch] = 0;
+			gb_write8(ch == 0 ? APU_AUD1ENV : APU_AUD2ENV, K_AUDENV_UP);
+			gb_write8(ch == 0 ? APU_AUD1HIGH : APU_AUD2HIGH, K_RESTART);
+			return;
+		}
 		if (wMusicTie_PTR[ch] != 0x80) {
 			uint8_t vol = wMusicVolume_PTR[ch];
 			gb_write8(ch == 0 ? APU_AUD1ENV : APU_AUD2ENV, vol);
@@ -1098,9 +1093,10 @@ void Music1_f4839(void)
 
 void Music1_f485a(uint8_t ch)
 {
+	uint16_t de;
 	g_rom_bank = MUSIC1_BANK;
-	Music1_UpdateVibrato(ch);
-	Music1_f490b(ch);
+	de = Music1_UpdateVibrato(ch);
+	Music1_f490b(ch, de);
 }
 
 /* ======================================================================
@@ -1153,80 +1149,73 @@ void Music1_LoadWaveInstrument(void)
  * Music1_UpdateVibrato
  * ====================================================================== */
 
-void Music1_UpdateVibrato(uint8_t ch)
+static uint16_t base_pitch(uint8_t ch)
+{
+	return (uint16_t)((uint16_t)wMusicCh1CurPitch_PTR[ch * 2 + 1] << 8
+			  | wMusicCh1CurPitch_PTR[ch * 2]);
+}
+
+uint16_t Music1_UpdateVibrato(uint8_t ch)
 {
 	uint8_t delay;
 	g_rom_bank = MUSIC1_BANK;
 	delay = wMusicVibratoDelay_PTR[ch];
-	if (delay == 0) goto no_vibrato;
+	if (delay == 0u)
+		return base_pitch(ch);
 
 	if (wdde3_PTR[ch] != delay) {
 		wdde3_PTR[ch]++;
-		goto no_vibrato;
+		return base_pitch(ch);
 	}
 
-	{
-		uint8_t vtype = wMusicVibratoType_PTR[ch];
-		uint16_t vt_addr;
-		uint16_t vt_ptr;
-		uint8_t vpos;
-		int8_t delta;
+	for (;;) {
+		uint16_t table = ADR_VibratoTypes
+			+ ((uint16_t)wMusicVibratoType_PTR[ch] << 1);
+		uint16_t entry = (uint16_t)gb_read8((uint16_t)(table + 1u)) << 8
+			| gb_read8(table);
+		uint8_t vpos = wdddb_PTR[ch];
+		uint16_t de = base_pitch(ch);
+		uint8_t lo = (uint8_t)de;
+		uint8_t hi = (uint8_t)(de >> 8);
+		uint8_t delta;
 
-		vt_addr = ADR_VibratoTypes + ((uint16_t)vtype << 1);
-		vt_ptr = (uint16_t)gb_read8(vt_addr + 1) << 8 | gb_read8(vt_addr);
-
-		vpos = wdddb_PTR[ch];
-		wdddb_PTR[ch]++;
-
-		delta = (int8_t)gb_read8(vt_ptr + vpos);
-		if (delta == (int8_t)0x80) {
-			/* End of vibrato pattern: check for continuation. */
-			vpos++;
-			delta = (int8_t)gb_read8(vt_ptr + vpos);
-			if (delta == (int8_t)0x80) {
-				wdddb_PTR[ch] = 0;
-				goto no_vibrato;
-			}
-			/* Chain to next vibrato type. */
-			wMusicVibratoType_PTR[ch] = (uint8_t)delta;
-			goto no_vibrato;
+		wdddb_PTR[ch] = (uint8_t)(vpos + 1u);
+		entry = (uint16_t)(entry + vpos);
+		delta = gb_read8(entry);
+		if (delta == 0x80u) {
+			wdddb_PTR[ch] = 0u;
+			delta = gb_read8((uint16_t)(entry + 1u));
+			if (delta != 0x80u)
+				wMusicVibratoType_PTR[ch] = delta;
+			continue;
 		}
 
-		{
-			uint16_t de = (uint16_t)wMusicCh1CurPitch_PTR[ch * 2 + 1] << 8
-			              | wMusicCh1CurPitch_PTR[ch * 2];
-			if (delta < 0) {
-				de = (uint16_t)(de - (uint16_t)(delta ^ 0xFF));
-			} else {
-				de = (uint16_t)(de + (uint16_t)delta);
-			}
-			/* Store back. Note: the ASM returns de via d/e registers;
-			 * f490b then reads them. We update wMusicCh*CurPitch inline. */
-			wMusicCh1CurPitch_PTR[ch * 2] = (uint8_t)de;
-			wMusicCh1CurPitch_PTR[ch * 2 + 1] = (uint8_t)(de >> 8);
+		if ((delta & 0x80u) == 0u) {
+			uint16_t sum = (uint16_t)delta + lo;
+			hi = (uint8_t)(hi + (uint8_t)(sum >> 8));
+			lo = (uint8_t)sum;
+		} else {
+			uint8_t magnitude = (uint8_t)((uint8_t)(delta ^ 0xFFu) + 1u);
+			hi = (uint8_t)(hi - (uint8_t)(lo < magnitude));
+			lo = (uint8_t)(lo - magnitude);
 		}
-		return;
+		return (uint16_t)((uint16_t)(hi & 0x07u) << 8 | lo);
 	}
-
-no_vibrato:
-	/* Return current pitch without modification. */
-	;
 }
 
 /* ======================================================================
  * Music1_f490b — write frequency to APU
  * ====================================================================== */
 
-void Music1_f490b(uint8_t ch)
+void Music1_f490b(uint8_t ch, uint16_t de)
 {
-	uint8_t lo, hi;
+	uint8_t lo = (uint8_t)de;
+	uint8_t hi = (uint8_t)(de >> 8);
 	g_rom_bank = MUSIC1_BANK;
 
 	if (ch != 0) goto not_ch1;
 	if (wMusicVibratoDelay_PTR[0] == 0) return;
 	if (wdd8c & 0x01) return;
-	lo = wMusicCh1CurPitch_PTR[0];
-	hi = wMusicCh1CurPitch_PTR[1];
 	gb_write8(APU_AUD1LOW, lo);
 	gb_write8(APU_AUD1LEN, (uint8_t)(gb_read8(APU_AUD1LEN) & ~K_LEN_TIMER));
 	gb_write8(APU_AUD1HIGH, (uint8_t)(hi & K_LEN_TIMER));
@@ -1236,8 +1225,6 @@ not_ch1:
 	if (ch != 1) goto not_ch2;
 	if (wMusicVibratoDelay_PTR[1] == 0) return;
 	if (wdd8c & 0x02) return;
-	lo = wMusicCh2CurPitch_PTR[0];
-	hi = wMusicCh2CurPitch_PTR[1];
 	gb_write8(APU_AUD2LOW, lo);
 	gb_write8(APU_AUD2LEN, (uint8_t)(gb_read8(APU_AUD2LEN) & ~K_LEN_TIMER));
 	gb_write8(APU_AUD2HIGH, hi);
@@ -1247,8 +1234,6 @@ not_ch2:
 	if (ch != 2) return;
 	if (wMusicVibratoDelay_PTR[2] == 0) return;
 	if (wdd8c & 0x04) return;
-	lo = wMusicCh3CurPitch_PTR[0];
-	hi = wMusicCh3CurPitch_PTR[1];
 	gb_write8(APU_AUD3LOW, lo);
 	gb_write8(APU_AUD3LEN, 0);
 	gb_write8(APU_AUD3HIGH, hi);

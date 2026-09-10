@@ -983,29 +983,18 @@ static void update_ch_output(uint8_t ch)
 	if (wdd8c & (1 << (ch == 3 ? 3 : ch))) return;
 	if (ch == 3) { Music2_f480a(); return; }
 
-	{
-		uint8_t instr = wddb7_PTR[ch];
-		if (instr == 0) {
-			/* Instrument 0: stop channel. */
-			wMusicTie_PTR[ch] = 0;
-			if (ch == 2) {
-				gb_write8(APU_AUD3ENA, 0);
-				return;
-			}
-			/* Ch 1-2: envelope up, restart. */
-			gb_write8(ch == 0 ? APU_AUD1ENV : APU_AUD2ENV, K_AUDENV_UP);
-			gb_write8(ch == 0 ? APU_AUD1HIGH : APU_AUD2HIGH, K_RESTART);
-			return;
-		}
-	}
-
 	if (ch == 2) {
-		/* Channel 3 output. */
 		uint8_t d = 0;
+
 		if (wMusicWaveChange) {
 			gb_write8(APU_AUD3ENA, 0);
 			Music2_LoadWaveInstrument();
 			d = 0x80;
+		}
+		if (wddb7_PTR[2] == 0) {
+			wMusicTie_PTR[0] = 0;
+			gb_write8(APU_AUD3ENA, 0);
+			return;
 		}
 		if (wMusicTie_PTR[ch] != 0x80) {
 			uint8_t vol = wMusicVolume_PTR[ch];
@@ -1021,6 +1010,12 @@ static void update_ch_output(uint8_t ch)
 	} else {
 		/* Channel 1 or 2 output. */
 		uint8_t d = 0;
+		if (wddb7_PTR[ch] == 0) {
+			wMusicTie_PTR[ch] = 0;
+			gb_write8(ch == 0 ? APU_AUD1ENV : APU_AUD2ENV, K_AUDENV_UP);
+			gb_write8(ch == 0 ? APU_AUD1HIGH : APU_AUD2HIGH, K_RESTART);
+			return;
+		}
 		if (wMusicTie_PTR[ch] != 0x80) {
 			uint8_t vol = wMusicVolume_PTR[ch];
 			gb_write8(ch == 0 ? APU_AUD1ENV : APU_AUD2ENV, vol);

@@ -183,6 +183,12 @@ CONTRACT["Music1_f479c"] = {"compare": (), "preserve": ()}
 CASES["Music1_f479c"] = [
     {"wram": {0xDD8C: b"\x00", 0xDDB9: b"\x00", 0xDD8B: b"\x00", 0xDD93: b"\x00"},
      "read": {0xDD93: 1}},
+    {"wram": {0xDD8C: b"\x00", 0xDDB9: b"\x00", 0xDD8B: b"\x00",
+              0xDD91: b"\x55", 0xDD93: b"\x01"},
+     "read": {0xDD91: 1, 0xDD93: 1}},
+    {"wram": {0xDD8C: b"\x00", 0xDDB9: b"\x00", 0xDD8B: b"\x01",
+              0xDD91: b"\x55", 0xDD93: b"\x01"},
+     "read": {0xDD91: 1, 0xDD93: 1, 0xDD8B: 1}},
     {"wram": {0xDD8C: b"\x04", 0xDDB9: b"\x00"},
      "read": {0xDD93: 1, 0xDDB9: 1}},
     {"wram": {0xDD8C: b"\x00", 0xDDB9: b"\x10", 0xDD93: b"\x80",
@@ -249,6 +255,30 @@ CASES["Music1_UpdateVibrato"] = [
      "read": {0xDDA5: 2, 0xDDE3: 1, 0xDDDB: 1}},
     dict(POISON, b=0, c=2, wram={0xDDE1: b"\x00", 0xDDA9: b"\x2C\x00"},
          read={0xDDA9: 2}),
+    {"c": 0, "wram": {0xDDDF: b"\x01", 0xDDE3: b"\x01",
+                       0xDDD3: b"\x01", 0xDDDB: b"\x01",
+                       0xDDA5: b"\x2C\x00"},
+     "read": {0xDDA5: 2, 0xDDD3: 1, 0xDDDB: 1}},
+    {"c": 0, "wram": {0xDDDF: b"\x01", 0xDDE3: b"\x01",
+                       0xDDD3: b"\x01", 0xDDDB: b"\x05",
+                       0xDDA5: b"\x2C\x00"},
+     "read": {0xDDA5: 2, 0xDDD3: 1, 0xDDDB: 1}},
+    {"c": 0, "wram": {0xDDDF: b"\x01", 0xDDE3: b"\x01",
+                       0xDDD3: b"\x01", 0xDDDB: b"\x00",
+                       0xDDA5: b"\xFF\x0C"},
+     "read": {0xDDA5: 2, 0xDDD3: 1, 0xDDDB: 1}},
+    {"c": 0, "wram": {0xDDDF: b"\x01", 0xDDE3: b"\x01",
+                       0xDDD3: b"\x02", 0xDDDB: b"\x0C",
+                       0xDDA5: b"\x2C\x00"},
+     "read": {0xDDA5: 2, 0xDDD3: 1, 0xDDDB: 1}},
+    {"c": 0, "wram": {0xDDDF: b"\x01", 0xDDE3: b"\x01",
+                       0xDDD3: b"\x01", 0xDDDB: b"\x08",
+                       0xDDA5: b"\x2C\x00"},
+     "read": {0xDDA5: 2, 0xDDD3: 1, 0xDDDB: 1}},
+    {"c": 1, "wram": {0xDDE0: b"\x01", 0xDDE4: b"\x01",
+                       0xDDD4: b"\x01", 0xDDDC: b"\x05",
+                       0xDDA7: b"\x00\x01"},
+     "read": {0xDDA7: 2, 0xDDD4: 1, 0xDDDC: 1}},
 ]
 
 CONTRACT["Music1_f490b"] = {"compare": (), "preserve": ()}
@@ -1358,3 +1388,5 @@ MUTATIONS["Music1_PlayNextNote_pop"] = {"source_symbol": "Music1_PlayNextNote_po
 # >>> factory-mutation Music1_note
 MUTATIONS["Music1_note"] = {"source_symbol": "Music1_note", "before": "void Music1_note(uint16_t *hl, uint8_t note, uint8_t instrument, uint8_t ch)\n{\n\t(void)instrument;\n\tpnn_note(hl, note, ch);", "after": "void Music1_note(uint16_t *hl, uint8_t note, uint8_t instrument, uint8_t ch)\n{\n\t(void)instrument;\n\tpnn_note(hl, (uint8_t)(note ^ 0x01u), ch);", "case_ids": ["Music1_note-1", "Music1_note-3"]}
 # <<< factory-mutation Music1_note
+MUTATIONS["Music1_UpdateVibrato"] = {"source_symbol": "Music1_UpdateVibrato", "before": "\t\treturn (uint16_t)((uint16_t)(hi & 0x07u) << 8 | lo);", "after": "\t\treturn (uint16_t)((uint16_t)(hi & 0x0Fu) << 8 | lo);", "case_ids": ["Music1_UpdateVibrato-6"]}
+MUTATIONS["Music1_f479c"] = {"source_symbol": "Music1_f479c", "before": "\t\t\twMusicTie_PTR[0] = 0;\n\t\t\tgb_write8(APU_AUD3ENA, 0);", "after": "\t\t\twMusicTie_PTR[2] = 0;\n\t\t\tgb_write8(APU_AUD3ENA, 0);", "case_ids": ["Music1_f479c-1"]}
