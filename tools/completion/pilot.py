@@ -323,9 +323,9 @@ class Driver:
     """Runs the reference one DoFrame at a time under script control."""
 
     def __init__(self, base_masks: list[int], budget: int,
-                 pokes: refstream.Pokes | None = None) -> None:
+                 pokes: refstream.Pokes | None = None, save: bytes | None = None) -> None:
         self.masks = list(base_masks)
-        self.core = refstream.Core([0] * budget, pokes=pokes)
+        self.core = refstream.Core([0] * budget, pokes=pokes, save=save)
         self.core.input_axis = "ordinal"
         self.core.override_mask = 0
         self.budget = budget
@@ -604,7 +604,7 @@ def main(argv: list[str] | None = None) -> int:
             merged = pokes.setdefault(ordinal, [])
             merged.extend(write for write in writes if write not in merged)
     steps = parse_script(args.script)
-    driver = Driver([], budget=(len(base_masks) + 80000) * 2 + 400, pokes=pokes)
+    driver = Driver([], budget=(len(base_masks) + 80000) * 2 + 400, pokes=pokes, save=base_meta["save"])
     try:
         driver.replay(base_masks)
         start = len(driver.masks)
@@ -637,6 +637,7 @@ def main(argv: list[str] | None = None) -> int:
     (args.out / "input.txt").write_text("\n".join(str(m) for m in masks) + "\n", encoding="utf-8")
     if pokes:
         (args.out / "pokes.txt").write_text(refstream.pokes_text(pokes), encoding="utf-8")
+    session.inherit_save(args.out, base_meta["save"])
     print(f"wrote {args.out / 'input.txt'}: {len(masks)} DoFrames ({len(masks) - start} new)")
     if args.goal:
         session.record_meta(args.out.name, args.goal)

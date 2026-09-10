@@ -76,7 +76,7 @@ def take_seeds(name: str, *, every: int) -> tuple[int, int]:
     ticks = 0
     written = 0
     requested = False
-    with refstream.Core(padded, pokes=meta["pokes"] or None) as core:
+    with refstream.Core(padded, pokes=meta["pokes"] or None, save=meta["save"]) as core:
         core.input_axis = "ordinal"
         read = core.library.gambatte_cpuread
 

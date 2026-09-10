@@ -48,6 +48,7 @@ import scenario as scenario_module
 SESSIONS = ROOT / "tests" / "sessions"
 CACHE = ROOT / "build" / "completion" / "sessions"
 RATCHET_PATH = ROOT / "tools" / "completion" / "session_ratchet.json"
+SAVE_FILE = "save.sav"
 NATIVE_TIMEOUT = 1800
 DIGEST_FORMAT = "session-digest-v7"
 # wram, hram, oam, vram, audio; then the reference's real time at the anchor
@@ -172,6 +173,8 @@ def load_session(name: str) -> tuple[list[int], dict[str, Any]]:
     meta = json.loads(meta_path.read_text()) if meta_path.is_file() else {}
     pokes_path = directory / "pokes.txt"
     meta["pokes"] = refstream.load_pokes(pokes_path) if pokes_path.is_file() else {}
+    save_path = directory / SAVE_FILE
+    meta["save"] = save_path.read_bytes() if save_path.is_file() else None
     return masks, meta
 
 
@@ -279,7 +282,8 @@ def digest(regions: dict[str, bytes], tables: dict[str, bytes]) -> tuple[int, ..
     return tuple(zlib.crc32(masked(regions[r], tables[r])) & 0xFFFFFFFF for r in REGIONS)
 
 
-def stream_key(masks: list[int], frames: int, axis: str, pokes: refstream.Pokes | None = None) -> str:
+def stream_key(masks: list[int], frames: int, axis: str, pokes: refstream.Pokes | None = None,
+               save: bytes | None = None) -> str:
     import gambatte_runner
 
     pins = gambatte_runner.load_pins()
@@ -289,6 +293,8 @@ def stream_key(masks: list[int], frames: int, axis: str, pokes: refstream.Pokes 
     h.update(struct.pack("<I", frames))
     h.update(bytes(m & 0xFF for m in masks))
     h.update(refstream.pokes_text(pokes).encode())
+    if save is not None:
+        h.update(b"save:" + hashlib.sha256(save).digest())
     h.update(mask_text().encode())
     # The lag track in the stream directory is shaped by the sync points, so
     # a change to them rebuilds the reference rather than replaying against
@@ -304,7 +310,7 @@ def stream_key(masks: list[int], frames: int, axis: str, pokes: refstream.Pokes 
 
 def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "ordinal",
                     record_input: bool = False, frame_mode: str = "vblank", gba: bool = False,
-                    pokes: refstream.Pokes | None = None) -> dict[str, Any]:
+                    pokes: refstream.Pokes | None = None, save: bytes | None = None) -> dict[str, Any]:
     """One reference replay: a digest record per DoFrame anchor, cached by
     input. With `record_input` the byte ReadJoypad saw at each anchor is
     returned as well, in InputFrame order, which is how a movie becomes a
@@ -312,7 +318,7 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     profile = axis if frame_mode == "vblank" else f"{axis}:{frame_mode}"
     if gba:
         profile += ":gba"
-    key = stream_key(masks, frames, profile, pokes)
+    key = stream_key(masks, frames, profile, pokes, save)
     directory = CACHE / name / key
     meta_path = directory / "meta.json"
     if meta_path.is_file() and not record_input:
@@ -320,7 +326,7 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
         if meta.get("format") == DIGEST_FORMAT:
             meta["cached"] = True
             ensure_stat_track(directory, masks, frames, axis=axis, frame_mode=frame_mode,
-                              gba=gba, pokes=pokes)
+                              gba=gba, pokes=pokes, save=save)
             return meta
     tables = mask_tables()
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
@@ -334,7 +340,7 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     increments = 0
     inputs = bytearray()
     overreads = OverreadRecorder()
-    with refstream.Core(padded, gba=gba, pokes=pokes) as core:
+    with refstream.Core(padded, gba=gba, pokes=pokes, save=save) as core:
         core.input_axis = axis
         core.frame_mode = frame_mode
         read = core.library.gambatte_cpuread
@@ -447,7 +453,8 @@ class OverreadRecorder:
 
 
 def ensure_stat_track(directory: Path, masks: list[int], frames: int, *, axis: str,
-                      frame_mode: str, gba: bool, pokes: refstream.Pokes | None) -> None:
+                      frame_mode: str, gba: bool, pokes: refstream.Pokes | None,
+                      save: bytes | None = None) -> None:
     """A reference cached before the lag track carried STAT ISRs or the
     over-read track existed: replay it once more recording only those and the
     anchors, then rewrite lag.txt with the column. The replay is the same
@@ -463,7 +470,7 @@ def ensure_stat_track(directory: Path, masks: list[int], frames: int, *, axis: s
     stat_repeats: dict[int, dict[int, int]] = {}
     increments = 0
     overreads = OverreadRecorder()
-    with refstream.Core(padded, gba=gba, pokes=pokes) as core:
+    with refstream.Core(padded, gba=gba, pokes=pokes, save=save) as core:
         core.input_axis = axis
         core.frame_mode = frame_mode
         registers = (ctypes.c_int * 10)()
@@ -587,6 +594,17 @@ def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"", st
     return "\n".join(lines) + "\n"
 
 
+def native_save_file(image: bytes) -> bytes:
+    """The port's save container (src/persistence.c): `PKSR`, version 1, the
+    payload size and an FNV-1a checksum, then the 32 KiB cartridge RAM."""
+    if len(image) != refstream.SAVE_SIZE:
+        raise SessionError(f"a save image is {refstream.SAVE_SIZE} bytes, not {len(image)}")
+    digest = 2166136261
+    for byte in image:
+        digest = ((digest ^ byte) * 16777619) & 0xFFFFFFFF
+    return b"PKSR" + struct.pack("<III", 1, len(image), digest) + image
+
+
 def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
                digest_out: Path | None = None, mask_path: Path | None = None,
                dump_ordinals: list[int] | None = None) -> tuple[Path, str, int]:
@@ -604,6 +622,11 @@ def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
     pokes_path = input_path.with_name("pokes.txt")
     if pokes_path.is_file():
         command += ["--poke-ordinal", str(pokes_path)]
+    save_path = input_path.with_name(SAVE_FILE)
+    if save_path.is_file():
+        wrapped = directory / "save.pksr"
+        wrapped.write_bytes(native_save_file(save_path.read_bytes()))
+        command += ["--load-save", str(wrapped)]
     overreads_path = lag_path.with_name("overreads.txt")
     if overreads_path.is_file():
         command += ["--overread-track", str(overreads_path)]
@@ -646,13 +669,13 @@ def first_divergence(reference: bytes, native: bytes) -> tuple[int | None, int, 
 
 
 def checkpoint_directory(name: str, masks: list[int], frames: int,
-                         pokes: refstream.Pokes | None) -> Path:
+                         pokes: refstream.Pokes | None, save: bytes | None = None) -> Path:
     """The cached stream's directory, where the build left its savestates. A
     stream built before savestates existed gets them from one replay here."""
-    directory = ROOT / build_reference(name, masks, frames, pokes=pokes)["directory"]
+    directory = ROOT / build_reference(name, masks, frames, pokes=pokes, save=save)["directory"]
     if not any(directory.glob("checkpoint-*.bin")):
         padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
-        with refstream.Core(padded, pokes=pokes) as core:
+        with refstream.Core(padded, pokes=pokes, save=save) as core:
             core.input_axis = "ordinal"
             core.install_exec(None)
             core.checkpoint_dir = directory
@@ -661,12 +684,13 @@ def checkpoint_directory(name: str, masks: list[int], frames: int,
 
 
 def reference_capture(name: str, masks: list[int], frames: int, ordinal: int,
-                      pokes: refstream.Pokes | None = None, *, sram: bool = False) -> dict[str, bytes]:
+                      pokes: refstream.Pokes | None = None, *, sram: bool = False,
+                      save: bytes | None = None) -> dict[str, bytes]:
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     captured: dict[str, bytes] = {}
-    with refstream.Core(padded, pokes=pokes) as core:
+    with refstream.Core(padded, pokes=pokes, save=save) as core:
         core.input_axis = "ordinal"
-        hits = core.seek(checkpoint_directory(name, masks, frames, pokes), ordinal)
+        hits = core.seek(checkpoint_directory(name, masks, frames, pokes, save), ordinal)
 
         def on_exec(address: int, _cycle: int) -> None:
             nonlocal hits
@@ -719,10 +743,10 @@ def sweep_entries(name: str, *, after: int, until: int | None, limit: int) -> tu
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     candidates, by_bank_address = refstream.routine_entry_addresses()
     entries: dict[str, dict[str, Any]] = {}
-    with refstream.Core(padded, pokes=meta["pokes"]) as core:
+    with refstream.Core(padded, pokes=meta["pokes"], save=meta["save"]) as core:
         core.input_axis = "ordinal"
         if after > 0:
-            core.seek(checkpoint_directory(name, masks, frames, meta["pokes"]), after)
+            core.seek(checkpoint_directory(name, masks, frames, meta["pokes"], meta["save"]), after)
         registers = (ctypes.c_int * 10)()
 
         def on_exec(address: int, _cycle: int) -> None:
@@ -881,10 +905,10 @@ def capture(name: str, routine: str, *, after: int = 0, nth: int = 1, out: Path 
     banks = {address: bank for (bank, address), label in by_bank_address.items() if label == routine}
     captured: dict[str, Any] = {}
     entries = 0
-    with refstream.Core(padded, pokes=meta["pokes"]) as core:
+    with refstream.Core(padded, pokes=meta["pokes"], save=meta["save"]) as core:
         core.input_axis = "ordinal"
         if after > 0:
-            core.seek(checkpoint_directory(name, masks, frames, meta["pokes"]), after)
+            core.seek(checkpoint_directory(name, masks, frames, meta["pokes"], meta["save"]), after)
         read = core.library.gambatte_cpuread
         registers = (ctypes.c_int * 10)()
 
@@ -953,7 +977,7 @@ def region_field(region: str, offset: int) -> tuple[str, int]:
 
 def attribute(name: str, masks: list[int], frames: int, ordinal: int,
               native: dict[str, bytes], reference: dict[str, bytes],
-              pokes: refstream.Pokes | None = None) -> list[dict[str, Any]]:
+              pokes: refstream.Pokes | None = None, save: bytes | None = None) -> list[dict[str, Any]]:
     tables = mask_tables()
     picked: list[tuple[str, int, int, int, str]] = []
     seen: set[str] = set()
@@ -976,17 +1000,19 @@ def attribute(name: str, masks: list[int], frames: int, ordinal: int,
     # back to a boot replay only for a byte nothing in that tail wrote.
     writers: dict[int, Any] = {}
     if addresses:
-        checkpoints = checkpoint_directory(name, masks, frames, pokes)
+        checkpoints = checkpoint_directory(name, masks, frames, pokes, save)
         writers = {
             int(entry["address"], 16): entry
             for entry in refstream.writers(f"session:{name}", frames, addresses, events=True,
                                            masks=masks, axis="ordinal", ordinals=ordinal, pokes=pokes,
-                                           checkpoints=checkpoints, window=refstream.Core.CHECKPOINT_STRIDE)
+                                           checkpoints=checkpoints, window=refstream.Core.CHECKPOINT_STRIDE,
+                                           save=save)
         }
         unwritten = [a for a in addresses if refstream.writer_before(writers.get(a), ordinal) is None]
         if unwritten:
             for entry in refstream.writers(f"session:{name}", frames, unwritten, events=True,
-                                           masks=masks, axis="ordinal", ordinals=ordinal, pokes=pokes):
+                                           masks=masks, axis="ordinal", ordinals=ordinal, pokes=pokes,
+                                           save=save):
                 writers[int(entry["address"], 16)] = entry
     out = []
     for field, offset, got, want, symbol in picked:
@@ -1009,7 +1035,8 @@ AUDIO_REQUESTS = {0xDD80: "wCurSongID", 0xDD81: "wCurSongBank", 0xDD82: "wCurSfx
 
 
 def audio_requests(name: str, masks: list[int], frames: int, ordinal: int,
-                   pokes: refstream.Pokes | None, lag_path: Path) -> list[dict[str, Any]]:
+                   pokes: refstream.Pokes | None, lag_path: Path,
+                   save: bytes | None = None) -> list[dict[str, Any]]:
     """The four bytes game code asks the sound driver through, on both lanes
     at the first anchor the audio region differs: same bytes mean the driver
     was asked the same thing and diverged on its own."""
@@ -1020,7 +1047,7 @@ def audio_requests(name: str, masks: list[int], frames: int, ordinal: int,
         if not dump_path.is_file():
             raise SessionError(f"no native dump at ordinal {ordinal}: {failure[-300:]}")
         native = native_regions(json.loads(dump_path.read_text()))["audio"]
-    reference = reference_capture(name, masks, frames, ordinal, pokes)["audio"]
+    reference = reference_capture(name, masks, frames, ordinal, pokes, save=save)["audio"]
     return [{"address": f"0x{address:04X}", "symbol": symbol,
              "native": native[address - 0xDD80], "reference": reference[address - 0xDD80]}
             for address, symbol in AUDIO_REQUESTS.items()]
@@ -1033,7 +1060,8 @@ def verify(name: str, *, write: bool, json_path: Path | None) -> int:
     report: dict[str, Any] = {"schema": 2, "format": "session-verify-v2", "name": name,
                               "ordinals": n, "goal": meta.get("goal", "")}
     pokes = meta["pokes"]
-    ref_meta = build_reference(name, masks, frames, pokes=pokes)
+    save = meta["save"]
+    ref_meta = build_reference(name, masks, frames, pokes=pokes, save=save)
     reference = load_reference(ref_meta)
     ref_count = len(reference) // REFERENCE_RECORD.size
     if ref_count < n:
@@ -1076,7 +1104,8 @@ def verify(name: str, *, write: bool, json_path: Path | None) -> int:
               f"audio_first_divergence={audio_first if audio_first is not None else 'none'}")
         print(f"SCHEDULE {name} off_schedule={off_schedule}")
         if audio_first is not None and (ordinal is None or audio_first < ordinal):
-            report["audio_requests"] = audio_requests(name, masks, frames, audio_first, pokes, lag_path)
+            report["audio_requests"] = audio_requests(name, masks, frames, audio_first, pokes, lag_path,
+                                                      save=save)
             rows = report["audio_requests"]
             same = all(row["native"] == row["reference"] for row in rows)
             print(f"AUDIO ordinal={audio_first} requests={'same' if same else 'differ'} "
@@ -1094,8 +1123,8 @@ def verify(name: str, *, write: bool, json_path: Path | None) -> int:
             if not dump_path.is_file():
                 raise SessionError(f"no native dump at ordinal {ordinal}: {cap_failure[-300:]}")
             native_state = native_regions(json.loads(dump_path.read_text()))
-            reference_state = reference_capture(name, masks, frames, ordinal, pokes)
-            details = attribute(name, masks, frames, ordinal, native_state, reference_state, pokes)
+            reference_state = reference_capture(name, masks, frames, ordinal, pokes, save=save)
+            details = attribute(name, masks, frames, ordinal, native_state, reference_state, pokes, save)
             report["divergence"]["rows"] = details
             for row in details[:8]:
                 print(f"DIVERGE ordinal={ordinal} field={row['field']} address={row['address']} "
@@ -1192,7 +1221,7 @@ def diff(name: str, ordinal: int) -> int:
     symbol: the whole picture behind a verify's first eight DIVERGE rows."""
     masks, meta = load_session(name)
     frames = reference_frames(masks, meta)
-    ref_meta = build_reference(name, masks, frames, pokes=meta["pokes"])
+    ref_meta = build_reference(name, masks, frames, pokes=meta["pokes"], save=meta["save"])
     lag_path = ROOT / ref_meta["directory"] / "lag.txt"
     with tempfile.TemporaryDirectory(prefix=f"session-{name}-") as tmp:
         state_path, failure, _off = run_native(Path(tmp), session_dir(name) / "input.txt", ordinal,
@@ -1203,7 +1232,7 @@ def diff(name: str, ordinal: int) -> int:
         dump = json.loads(dump_path.read_text())
         native = native_regions(dump)
         native["sram"] = b"".join(bytes(dump[f"sram_bank_{bank}"]) for bank in range(4))
-    reference = reference_capture(name, masks, frames, ordinal, meta["pokes"], sram=True)
+    reference = reference_capture(name, masks, frames, ordinal, meta["pokes"], sram=True, save=meta["save"])
     tables = mask_tables()
     rows = 0
     # SRAM is not digested (a save is compared through the checksum the game
@@ -1272,9 +1301,9 @@ def routines(name: str, ordinal: int, *, everything: bool) -> int:
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     candidates, by_bank_address = refstream.routine_entry_addresses()
     sequence: list[str] = []
-    with refstream.Core(padded, pokes=meta["pokes"]) as core:
+    with refstream.Core(padded, pokes=meta["pokes"], save=meta["save"]) as core:
         core.input_axis = "ordinal"
-        core.seek(checkpoint_directory(name, masks, frames, meta["pokes"]), ordinal)
+        core.seek(checkpoint_directory(name, masks, frames, meta["pokes"], meta["save"]), ordinal)
 
         def on_exec(address: int, _cycle: int) -> None:
             if address not in candidates or core.ordinal != ordinal:
@@ -1343,6 +1372,11 @@ DECK_POINTERS = (0x0C, 0x4000)
 DECK_SIZE = 60
 
 
+def inherit_save(directory: Path, save: bytes | None) -> None:
+    if save is not None:
+        (directory / SAVE_FILE).write_bytes(save)
+
+
 def deck_cards(deck_id: int) -> list[int]:
     """The 60 card ids of a deck, expanded from its (count, card) list in
     the ROM exactly as CopyDeckData does (home/duel.asm:60-88). Deck ids are
@@ -1384,12 +1418,12 @@ PLAYER_TURN = 0xC2
 ARRANGE_WINDOW = 4000
 
 
-def draw_order(masks: list[int], pokes: refstream.Pokes, at: int) -> list[int]:
+def draw_order(masks: list[int], pokes: refstream.Pokes, at: int, save: bytes | None = None) -> list[int]:
     """The player's shuffled deck-index order at the first draw after `at`:
     the ROM draws DUELVARS_DECK_CARDS front to back, so the card ids poked
     at those indices are the opening hand and the draws that follow."""
     order: list[int] = []
-    with refstream.Core(masks[:at + ARRANGE_WINDOW], pokes=pokes) as core:
+    with refstream.Core(masks[:at + ARRANGE_WINDOW], pokes=pokes, save=save) as core:
         core.input_axis = "ordinal"
         read = core.library.gambatte_cpuread
 
@@ -1438,7 +1472,7 @@ def ai_duel(name: str, *, base: str, at: int, deck: int, seed: int | None, prize
     if arrange:
         if cards is None:
             raise SessionError("--arrange needs --cards")
-        order = draw_order(masks, pokes, at)
+        order = draw_order(masks, pokes, at, base_meta["save"])
         arranged = [0] * DECK_SIZE
         for position, index in enumerate(order):
             arranged[index] = cards[position]
@@ -1448,7 +1482,7 @@ def ai_duel(name: str, *, base: str, at: int, deck: int, seed: int | None, prize
     turns = 0
     end = len(masks)
     reached: dict[str, int] = {}
-    with refstream.Core(masks, pokes=pokes) as core:
+    with refstream.Core(masks, pokes=pokes, save=base_meta["save"]) as core:
         core.input_axis = "ordinal"
         if watch:
             candidates, by_bank_address = refstream.routine_entry_addresses()
@@ -1484,6 +1518,7 @@ def ai_duel(name: str, *, base: str, at: int, deck: int, seed: int | None, prize
     directory.mkdir(parents=True, exist_ok=True)
     (directory / "input.txt").write_text("\n".join(str(m) for m in masks[:end]) + "\n")
     (directory / "pokes.txt").write_text(refstream.pokes_text(pokes))
+    inherit_save(directory, base_meta["save"])
     meta = {
         "schema": 1, "name": name, "ordinals": end,
         "goal": goal or f"AI-versus-AI duel, deck id {deck}, branched from {base} at {at}",
@@ -1521,6 +1556,7 @@ def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goa
     directory.mkdir(parents=True, exist_ok=True)
     (directory / "input.txt").write_text("\n".join(str(m) for m in masks) + "\n")
     (directory / "pokes.txt").write_text(refstream.pokes_text(pokes))
+    inherit_save(directory, base_meta["save"])
     meta = {
         "schema": 1, "name": name, "ordinals": len(masks),
         "goal": goal or f"Player-controlled duel against deck id {deck} with a poked deck, branched from {base} at {at}",
@@ -1529,6 +1565,37 @@ def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goa
     }
     (directory / "session.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
     print(f"SESSION {name} ordinals={len(masks)} deck={deck} player_cards={len(cards)}")
+    return 0
+
+
+def seeded(name: str, *, save: Path, base: str, prefix: int | None, then: list[str], goal: str) -> int:
+    """A session that starts from a save image: `base`'s input through
+    `prefix` ordinals (boot to the title, where a valid save adds Continue to
+    the menu), then explore.py action labels, both lanes seeded with the save."""
+    import explore
+
+    image = save.read_bytes()
+    if len(image) != refstream.SAVE_SIZE:
+        raise SessionError(f"{save} is {len(image)} bytes, not {refstream.SAVE_SIZE}")
+    base_masks, _base_meta = load_session(base)
+    masks = base_masks[:prefix] if prefix is not None else list(base_masks)
+    table = {label for label, _mask, _press, _settle, _repeats in explore.actions()}
+    unknown = [label for label in then if label not in table]
+    if unknown:
+        raise SessionError(f"unknown action labels: {', '.join(unknown)}")
+    masks = explore.path_to_masks(then, masks)
+    directory = session_dir(name)
+    directory.mkdir(parents=True, exist_ok=True)
+    (directory / "input.txt").write_text("\n".join(str(m) for m in masks) + "\n")
+    (directory / SAVE_FILE).write_bytes(image)
+    meta = {
+        "schema": 1, "name": name, "ordinals": len(masks),
+        "goal": goal or f"Seeded from {save.name}: {base}[:{len(base_masks) if prefix is None else prefix}] then {' '.join(then)}",
+        "derived_from": base, "save": save.name, "save_sha256": hashlib.sha256(image).hexdigest(),
+        "then": list(then), "recorded": datetime.now(UTC).isoformat(timespec="seconds"),
+    }
+    (directory / "session.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
+    print(f"SESSION {name} ordinals={len(masks)} save={save.name} base={base}")
     return 0
 
 
@@ -1565,6 +1632,7 @@ def from_script(name: str, *, seed: str, script: Path, goal: str) -> int:
     (directory / "input.txt").write_text("\n".join(str(m) for m in masks) + "\n")
     if seed_meta["pokes"]:
         (directory / "pokes.txt").write_text(refstream.pokes_text(seed_meta["pokes"]))
+    inherit_save(directory, seed_meta["save"])
     relative = script.relative_to(ROOT) if script.is_absolute() and script.is_relative_to(ROOT) else script
     meta = {
         "schema": 1, "name": name, "ordinals": len(masks),
@@ -1645,6 +1713,13 @@ def main(argv: list[str] | None = None) -> int:
     seed_parser.add_argument("--deck", type=int, required=True, help="*_DECK_ID the opponent plays")
     seed_parser.add_argument("--cards", type=Path, required=True, help="deck file of 60 card ids for the player")
     seed_parser.add_argument("--goal", default="")
+    seeded_parser = sub.add_parser("seeded", help="a session that starts from a save image")
+    seeded_parser.add_argument("name")
+    seeded_parser.add_argument("--save", type=Path, required=True, help="32 KiB cartridge RAM image (savegen.py)")
+    seeded_parser.add_argument("--from", dest="base", default="boot-menu")
+    seeded_parser.add_argument("--prefix", type=int, help="ordinals of the base to keep; default all")
+    seeded_parser.add_argument("--then", default="", help="comma-separated explore.py action labels, e.g. A,DOWN,Ax5")
+    seeded_parser.add_argument("--goal", default="")
     script_parser = sub.add_parser("from-script", help="record a coverage-search script as a session")
     script_parser.add_argument("name")
     script_parser.add_argument("--seed", required=True, help="the session the script extends")
@@ -1679,6 +1754,10 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "deck-seed":
             return deck_seed(args.name, base=args.base, at=args.at, deck=args.deck,
                              cards=load_cards(args.cards), goal=args.goal)
+        if args.command == "seeded":
+            save = args.save if args.save.is_absolute() else ROOT / args.save
+            return seeded(args.name, save=save, base=args.base, prefix=args.prefix,
+                          then=[label for label in args.then.split(",") if label], goal=args.goal)
         if args.command == "from-script":
             script = args.script if args.script.is_absolute() else ROOT / args.script
             return from_script(args.name, seed=args.seed, script=script, goal=args.goal)

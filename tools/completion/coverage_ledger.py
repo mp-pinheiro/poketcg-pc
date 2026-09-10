@@ -62,8 +62,8 @@ def trace_plan(name: str) -> dict[str, Any]:
         raise CoverageError(f"{name} has never been verified: run `just session-verify {name}` first")
     frames = session.reference_frames(masks, meta)
     return {"name": name, "masks": masks, "frames": frames, "pokes": meta["pokes"], "meta": meta,
-            "ordinals": min(len(masks), int(ratchet["confirmed_ordinal"])),
-            "key": session.stream_key(masks, frames, "ordinal", meta["pokes"])}
+            "save": meta["save"], "ordinals": min(len(masks), int(ratchet["confirmed_ordinal"])),
+            "key": session.stream_key(masks, frames, "ordinal", meta["pokes"], meta["save"])}
 
 
 def routine_files() -> tuple[dict[str, str], dict[str, str]]:
@@ -110,7 +110,8 @@ def trace_session(name: str) -> dict[str, Any]:
     events = 0
     if plan["ordinals"] > 0:
         trace = refstream.routine_trace(name, plan["frames"], None, ordinals=plan["ordinals"],
-                                        masks=plan["masks"], axis="ordinal", pokes=plan["pokes"] or None)
+                                        masks=plan["masks"], axis="ordinal", pokes=plan["pokes"] or None,
+                                        save=plan["save"])
         if trace["ordinals_reached"] < plan["ordinals"]:
             raise CoverageError(f"{name}: the reference reached {trace['ordinals_reached']} of "
                                 f"{plan['ordinals']} ordinals")

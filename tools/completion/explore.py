@@ -67,7 +67,8 @@ def path_to_masks(path: list[str], seed_masks: list[int]) -> list[int]:
 class Explorer:
     def __init__(self, budget: int, seed_masks: list[int], seed: int = 20260902,
                  checkpoint_dir: Path | None = None, pokes: Any | None = None,
-                 axis: str = "frame", known: set[str] | None = None) -> None:
+                 axis: str = "frame", known: set[str] | None = None,
+                 save: bytes | None = None) -> None:
         self.rng = random.Random(seed)
         self.checkpoint_dir = checkpoint_dir
         if checkpoint_dir is not None:
@@ -78,7 +79,7 @@ class Explorer:
         # that is the axis session input.txt and the native --input-ordinal use,
         # so the path it emits appends to the session's own timeline.
         self.axis = axis
-        self.core = refstream.Core(seed_masks, pokes=pokes)
+        self.core = refstream.Core(seed_masks, pokes=pokes, save=save)
         library = self.core.library
         library.gambatte_newstatesave.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_int]
         library.gambatte_newstatesave.restype = ctypes.c_int
@@ -313,12 +314,14 @@ def main(argv: list[str] | None = None) -> int:
     import scenario as scenario_module
 
     pokes = None
+    save = None
     axis = "frame"
     if args.seed_session:
         import session as session_module
 
         seed_masks, meta = session_module.load_session(args.seed_session)
         pokes = meta.get("pokes") or None
+        save = meta.get("save")
         axis = "ordinal"
         print(f"  seed session={args.seed_session} ordinals={len(seed_masks)}", file=sys.stderr)
     else:
@@ -334,7 +337,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  known routines={len(known)} from {args.known}", file=sys.stderr)
     explorer = Explorer(args.budget, seed_masks,
                         checkpoint_dir=(corpus / "checkpoints") if corpus else None,
-                        pokes=pokes, axis=axis, known=known)
+                        pokes=pokes, axis=axis, known=known, save=save)
     try:
         result = explorer.search(seed_masks, args.report_every, args.frontier_cap,
                                  args.max_depth)

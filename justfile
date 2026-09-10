@@ -477,6 +477,14 @@ session-status:
 session-pilot FROM SCRIPT OUT GOAL="" *ARGS:
     python3 tools/completion/pilot.py --from {{FROM}} --script {{SCRIPT}} --out tests/sessions/{{OUT}} --goal "{{GOAL}}" {{ARGS}}
 
+# A session that starts from a save image: `just session-seeded NAME build/completion/saves/X.sav --then A,DOWN,Ax5`.
+session-seeded NAME SAVE *ARGS:
+    python3 tools/completion/session.py seeded "{{NAME}}" --save "{{SAVE}}" {{ARGS}}
+
+# Save images for seeded sessions: `base NAME --from SESSION --at N`, `edit SAVE --out FILE --medals 3 --pack 0=1 --event EVENT_X=1`, `show SAVE`.
+savegen *ARGS:
+    python3 tools/completion/savegen.py {{ARGS}}
+
 # Write tests/sessions/NAME/session.json for a freshly recorded input.txt.
 session-meta NAME GOAL:
     python3 tools/completion/session.py meta "{{NAME}}" --goal "{{GOAL}}"

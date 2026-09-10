@@ -207,8 +207,12 @@ def native_mask_to_gambatte(mask: int) -> int:
 Pokes = dict[int, list[tuple[int, int]]]
 
 
+SAVE_SIZE = 0x8000
+
+
 class Core:
-    def __init__(self, masks: list[int], *, gba: bool = False, pokes: Pokes | None = None) -> None:
+    def __init__(self, masks: list[int], *, gba: bool = False, pokes: Pokes | None = None,
+                 save: bytes | None = None) -> None:
         self.library, self.pins = _library()
         import gambatte_runner
 
@@ -257,6 +261,8 @@ class Core:
         self._keepalive.append(identity)
         self.library.gambatte_settimemode(self.core, True)
         self.library.gambatte_settime(self.core, 0)
+        if save is not None:
+            self.load_save(save)
         if self._pokes:
             self.install_exec(None)  # pokes ride the anchor callback
 
@@ -409,6 +415,23 @@ class Core:
         import gambatte_runner
 
         return gambatte_runner.memory_area(self.library, self.core, name)
+
+    def load_save(self, save: bytes) -> None:
+        """Seed the cartridge RAM before the first instruction, the way a save
+        file on the cartridge is there at power-on; the native lane's
+        --load-save is the same seed."""
+        import gambatte_runner
+
+        if len(save) != SAVE_SIZE:
+            raise RefstreamError(f"a save image is {SAVE_SIZE} bytes, not {len(save)}")
+        pointer = ctypes.c_void_p()
+        length = ctypes.c_int()
+        if not self.library.gambatte_getmemoryarea(self.core, gambatte_runner.AREA_IDS["CartRAM"],
+                                                    ctypes.byref(pointer), ctypes.byref(length)):
+            raise RefstreamError("Gambatte does not expose CartRAM")
+        if length.value < SAVE_SIZE or not pointer.value:
+            raise RefstreamError(f"Gambatte CartRAM holds {length.value} bytes")
+        ctypes.memmove(pointer.value, save, SAVE_SIZE)
 
     def hram_block(self) -> bytes:
         """gambatte's HRAM area stops at $FFFE; the native g_hram is
@@ -696,7 +719,7 @@ def writers(
     scenario: str, frames: int, addresses: list[int], *, events: bool = False,
     masks: list[int] | None = None, axis: str | None = None,
     ordinals: int | None = None, pokes: Pokes | None = None,
-    checkpoints: Path | None = None, window: int = 0,
+    checkpoints: Path | None = None, window: int = 0, save: bytes | None = None,
 ) -> list[dict[str, Any]]:
     """`ordinals` stops the replay once that many DoFrame anchors have fired.
     The write callback fires on every store, so an unbounded run over a long
@@ -712,7 +735,7 @@ def writers(
         address: {} for address in addresses
     }
     stream: dict[int, list[dict[str, Any]]] = {address: [] for address in addresses}
-    with Core(masks, pokes=pokes) as core:
+    with Core(masks, pokes=pokes, save=save) as core:
         core.input_axis = axis or ("frame" if movie else "ordinal")
         if checkpoints is not None and ordinals is not None:
             core.seek(checkpoints, max(1, ordinals - window))
@@ -784,7 +807,7 @@ def writer_before(entry: dict[str, Any] | None, ordinal: int) -> dict[str, Any] 
 def routine_trace(
     scenario: str, frames: int, wanted: set[str] | None, *,
     ordinals: int | None = None, masks: list[int] | None = None,
-    axis: str | None = None, pokes: Pokes | None = None,
+    axis: str | None = None, pokes: Pokes | None = None, save: bytes | None = None,
 ) -> dict[str, Any]:
     """Reference routine-entry counts. `ordinals` bounds the run by DoFrame
     anchors instead of PPU frames, which is the only axis comparable against
@@ -802,7 +825,7 @@ def routine_trace(
     first_seen: dict[str, int] = {}
     first_events: list[dict[str, Any]] = []
     events = 0
-    with Core(masks, pokes=pokes) as core:
+    with Core(masks, pokes=pokes, save=save) as core:
         core.input_axis = axis or ("frame" if movie else "ordinal")
 
         def on_exec(address: int, _cycle: int) -> None:
