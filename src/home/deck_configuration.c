@@ -1835,7 +1835,13 @@ handle_input:
 	}
 
 handle_regular_card_page_input:
-	OpenCardPage(0u, 0u, 0u, 0u, 0u, card_id, 0u);
+	{
+		uint8_t saved = hBankROM;
+
+		BankswitchROM(0x01u);
+		OpenCardPage(0u, 0u, 0u, 0u, 0u, card_id, 0u);
+		BankswitchROM(saved);
+	}
 	goto handle_input;
 
 reopen_card_page:
