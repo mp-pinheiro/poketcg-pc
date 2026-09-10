@@ -2090,16 +2090,17 @@ set of banks per address; and the port's `Music1_PlaySFX` stores the id on two
 paths where the asm has one (`.play_sfx` handles SFX_STOP with `b = 0`), so it
 wants restructuring to a single store before a sync is attached to it.
 
-**The cost is a full reference re-derivation, which is why it is not done
-here.** `calls.bin` only holds hits for addresses that were hooked when the
-stream was built, so every cached session has to replay to record the new
-sites -- roughly 3.9M anchors across the 81 sessions, about three hours
-single-threaded, parallelisable per session because each cache is keyed by its
-own inputs. Landing the sync move without that regeneration would leave every
-session's port calling `timer_sync` at a site its track has no offset for, so
-it must be one change: banks-per-address, the store sites, the port's two
-restructured stores, delete `build/completion/sessions/*`, re-derive, then
-`GATED = 5`.
+**The regeneration is automatic, and that is by design.** `stream_key` hashes
+`TIMER_SYNC`, `TIMER_SYNC_HL` and `VBLANK_SYNC` (`session.py:296`), so moving
+a sync point changes every session's stream key and the next `session-verify`
+re-derives that session from boot rather than replaying against a schedule the
+port no longer follows. There is nothing to invalidate by hand and no
+call-track patcher to write -- one was written here and deleted as dead code
+once the key was read properly. What it costs is the replay: the sessions run
+0.8M to 1.7M anchors each, about 1750 anchors per second per worker, so warming
+all 81 with four workers is hours of wall time. Warm them in parallel before a
+sweep (`build_reference` per session in a process pool) instead of letting a
+serial sweep pay for it one session at a time.
 
 **The boot interval's sync offsets were clamped.** `lag_track` derives each
 driver call's tick offset with `unwrap(counter - prev, elapsed / TICK_TIME)`.
@@ -2142,3 +2143,43 @@ edit not yet compiled into `build-barrier` was attributed to the mutation: the
 first canary run here reported `MUTATION_BASELINE_FAILED` naming the *old*
 body's output. It rebuilds first now.
 
+
+## `entry` mode is the discriminator a `cuts` row needs
+
+A `cuts` row whose recorded pc is a callee's entry is usually declared
+`pre-ret`, and that declaration hides a truncated body: the reference stops at
+the callee while the native lane runs on to its own return, and with
+`compare: ()` and no observable write in between the row passes. Re-declaring
+the same pc as `entry` -- same address, same bank, plus the callee's name --
+makes `compare_one.py` compare the two lanes' stop points, and a body that
+never reaches the call fails with `mismatches: {"completion": ["<callee>",
+"return"]}`. That is a real discriminator for the truncation, and it needs no
+new case.
+
+Converting the seven `cuts` rows this way found six truncated bodies. Two are
+fixed: `SendCard` was an empty body where the asm is `farcall _SendCard`
+(`menus/common.asm`), and `GameEvent_GiftCenter` was missing
+`farcall HandleGiftCenter`, the `wGiftCenterChoice & $ef` clear, `ResumeSong`,
+the bank restore and the `scf` -- its cases were `oracle: False`, so no lane
+had ever compared it to the ROM; they are oracle-backed at the handler's entry
+now and the dispatch returns its carry like `GameEvent_BattleCenter` does.
+
+**Boundary and body land together.** The other four (`_SendCard`,
+`_SendDeckConfiguration`, `GiftCenter_SendCard`, `GiftCenter_SendDeck`) were
+reverted to `pre-ret` rather than left in `entry` mode with a failing baseline:
+a canary whose baseline fails cannot run at all, and `audit_mutations` only
+proves that an anchor resolves, so leaving them converted would have left four
+routines silently unguarded.
+
+They are blocked on an entry-register contract, not on missing callees -- all
+sixteen callees of the four tails are ported. `RequestDataReceivalThroughIR`
+reaches `TransmitRegistersThroughIR`, which stores *every* register into
+`wIRDataBuffer` and transmits it, and the caller then does `add b`
+(`link/ir_core.asm`), so `b` at `_SendDeckConfiguration`'s entry is observable
+on the wire. The asm never sets it: it belongs to the deck-machine caller
+(`menus/deck_machine.asm:2202`, `bank1call SendDeckConfiguration` then
+`ret c`), whose own body is one of the four truncations. So this is one
+bottom-up region port with `b` threaded from the deck machine down, and
+everything below `LoadLinkConnectingScene`'s entry is transcription-only for
+the same reason `ChallengeMachine_Duel` is: no IR peer answers, so no lane can
+reach those exits.
