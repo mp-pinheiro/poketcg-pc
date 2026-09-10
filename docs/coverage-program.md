@@ -61,6 +61,12 @@ search.
 
 ## Intake — `just coverage-intake <seed> [--top K] [--land]`
 
+The seed must be clean: a session extending a diverged seed can only
+re-report the seed's fact, which two recorded `ronald-explore-explore-*`
+sessions demonstrated before the guard existed. Diverged sessions are also
+scored 0 as Discover seeds, so the ranked frontier stays on seeds whose
+scripts can land clean.
+
 Greedy over the seed's corpus: the script whose found routines add most to the
 ledger's executed set, then the next given that one landed, up to `--top`
 (default 3), stopping when nothing new is left. Each becomes a session
@@ -109,6 +115,14 @@ then searches with the player pressing the buttons. Every outcome is written
 to `build/completion/effects/targets.json`. This loop is the
 `completion:v2:p5:duel-state` producer's input: its duel vectors are the
 sessions it lands.
+
+## Peer and seeded content
+
+`docs/reach-harness.md` covers what neither Discover nor Target can reach:
+save-seeded sessions (`just savegen`, `just session-seeded`) for the packs,
+deck machines, credits variants and gift center, and the native serial
+transport (`just peer-loopback`, `just peer-printer`) for link, IR and
+printer.
 
 ## Prove — `just sessions-affected` / `sessions-verify-affected` / `sessions-sweep`
 

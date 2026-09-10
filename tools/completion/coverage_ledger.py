@@ -28,7 +28,6 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import native_trace
 import refstream
 import session
 from tools.completion.revision import current_source_revision
@@ -336,6 +335,20 @@ def corpus_current(seed: str, digest: str) -> bool:
     return json.loads(json_path.read_text()).get("ledger_digest") == digest
 
 
+def session_total(name: str) -> int:
+    """The session's own length, which the ledger's confirmed-capped `ordinals` is not."""
+    path = session.session_dir(name) / "session.json"
+    if path.is_file():
+        total = json.loads(path.read_text()).get("ordinals")
+        if isinstance(total, int) and total > 0:
+            return total
+    return len(session.load_session(name)[0])
+
+
+def is_clean(name: str) -> bool:
+    return session.read_ratchet().get(name, {}).get("confirmed_ordinal", 0) >= session_total(name)
+
+
 def rank_seeds(ledger: dict[str, Any]) -> list[tuple[str, int]]:
     """Sessions by how many unexecuted routines sit in the files they already
     touch: a search from a seed explores the screens around that seed."""
@@ -347,7 +360,10 @@ def rank_seeds(ledger: dict[str, Any]) -> list[tuple[str, int]]:
     for entry in ledger["routines"].values():
         for position in entry["sessions"]:
             files[names[position]].add(entry["file"])
-    rows = [(name, sum(missing.get(file, 0) for file in touched)) for name, touched in files.items()]
+    rows = []
+    for name, touched in files.items():
+        score = sum(missing.get(file, 0) for file in touched) if is_clean(name) else 0
+        rows.append((name, score))
     rows.sort(key=lambda row: (-row[1], -ledger["sessions"][row[0]]["routines"], row[0]))
     return rows
 
@@ -411,6 +427,11 @@ def intake(seed: str, *, top: int, land: bool) -> int:
     executes, verify each, and land it either way: a diverged session is how
     a fact enters the tracker."""
     ledger = load_ledger()
+    if not is_clean(seed):
+        confirmed = session.read_ratchet().get(seed, {}).get("confirmed_ordinal", 0)
+        raise CoverageError(
+            f"{seed} is diverged at {confirmed + 1} of {session_total(seed)}: a session extending it "
+            f"can only re-report that fact. Fix it first, or intake from a clean seed.")
     _json_path, corpus = explore_paths(seed)
     index = corpus / "corpus.json"
     if not index.is_file():
@@ -543,6 +564,7 @@ def target(names: list[str], *, land: bool, limit: int) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    sys.stdout.reconfigure(line_buffering=True)
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
     ledger_parser = sub.add_parser("ledger", help="trace stale sessions and rebuild the ledger")
