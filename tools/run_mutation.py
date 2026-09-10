@@ -129,6 +129,7 @@ def main() -> int:
         if built.returncode != 0:
             raise SystemExit(f"MUTATION_BUILD_FAILED: {built.stdout}{built.stderr}")
 
+    rebuild()
     baseline = compare()
     if baseline.returncode != 0 or comparison_status(baseline) != "PASS":
         raise SystemExit(f"MUTATION_BASELINE_FAILED: {baseline.stdout or baseline.stderr}")
