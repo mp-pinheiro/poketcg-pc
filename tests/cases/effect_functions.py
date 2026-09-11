@@ -10267,7 +10267,7 @@ MUTATIONS["StrangeBehavior_SelectAndSwapEffect"] = {"source_symbol": "StrangeBeh
 MUTATIONS["PidgeottoMirrorMove_PlayerSelection"] = {"source_symbol": "PidgeottoMirrorMove_PlayerSelection", "before": "void PidgeottoMirrorMove_PlayerSelection(void)\n{\n\tMirrorMove_PlayerSelection();\n}", "after": "void PidgeottoMirrorMove_PlayerSelection(void)\n{\n\t(void)0;\n}", "case_ids": ["PidgeottoMirrorMove_PlayerSelection-0"]}
 # <<< factory-mutation PidgeottoMirrorMove_PlayerSelection
 # >>> factory-mutation LookForCardsInDeck
-MUTATIONS["LookForCardsInDeck"] = {"source_symbol": "LookForCardsInDeck", "before": "\tif (wDuelTempList != 0xffu && LookForCardsInDeck_Found(d, e)) {", "after": "\tif (wDuelTempList != 0xffu) {", "case_ids": ["LookForCardsInDeck-4"]}
+MUTATIONS["LookForCardsInDeck"] = {"source_symbol": "LookForCardsInDeck", "before": "	if (wDuelTempList != 0xffu && LookForCardsInDeck_Found(d, e)) {", "after": "	if (wDuelTempList != 0xffu || LookForCardsInDeck_Found(d, e)) {", "case_ids": ["LookForCardsInDeck-4", "LookForCardsInDeck-5"]}
 # <<< factory-mutation LookForCardsInDeck
 # >>> factory-mutation KadabraRecover_PlayerSelectEffect
 MUTATIONS["KadabraRecover_PlayerSelectEffect"] = {
@@ -10747,7 +10747,7 @@ MUTATIONS["EnergySearch_PlayerSelection"] = {"source_symbol": "EnergySearch_Play
 MUTATIONS["KrabbyCallForFamily_PlayerSelectEffect"] = {"source_symbol": "KrabbyCallForFamily_PlayerSelectEffect", "before": "KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0xffu;", "after": "KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0x00u;", "case_ids": ["KrabbyCallForFamily_PlayerSelectEffect-0", "KrabbyCallForFamily_PlayerSelectEffect-1"]}
 # <<< factory-mutation KrabbyCallForFamily_PlayerSelectEffect
 # >>> factory-mutation NidoranFCallForFamily_PlayerSelectEffect
-MUTATIONS["NidoranFCallForFamily_PlayerSelectEffect"] = {"source_symbol": "NidoranFCallForFamily_PlayerSelectEffect", "before": "NidoranFCallForFamily_PlayerSelectEffectResult NidoranFCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0xffu;", "after": "NidoranFCallForFamily_PlayerSelectEffectResult NidoranFCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0x00u;", "case_ids": ["NidoranFCallForFamily_PlayerSelectEffect-0", "NidoranFCallForFamily_PlayerSelectEffect-1"]}
+MUTATIONS["NidoranFCallForFamily_PlayerSelectEffect"] = {"source_symbol": "NidoranFCallForFamily_PlayerSelectEffect", "before": "	hTemp_ffa0 = 0xffu;", "after": "	hTemp_ffa0 = 0x00u;", "case_ids": ["NidoranFCallForFamily_PlayerSelectEffect-0", "NidoranFCallForFamily_PlayerSelectEffect-1"]}
 # <<< factory-mutation NidoranFCallForFamily_PlayerSelectEffect
 # >>> factory-mutation TossCoin_BankB
 MUTATIONS["TossCoin_BankB"] = {"source_symbol": "TossCoin_BankB", "before": "TossCoin_BankBResult TossCoin_BankB(uint16_t de, uint16_t hl)\n{\n\tTossCoinRoutineResult result = TossCoin(de, hl);\n\treturn (TossCoin_BankBResult){result.a, result.f, result.hl};", "after": "TossCoin_BankBResult TossCoin_BankB(uint16_t de, uint16_t hl)\n{\n\tTossCoinRoutineResult result = TossCoin(de, hl);\n\treturn (TossCoin_BankBResult){(uint8_t)(result.a + 1u), result.f, result.hl};", "case_ids": ["TossCoin_BankB-0", "TossCoin_BankB-1", "TossCoin_BankB-2"]}

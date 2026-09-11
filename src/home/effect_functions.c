@@ -9563,8 +9563,8 @@ KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEff
 	hTemp_ffa0 = 0xffu;
 	CardListResult deck = CreateDeckCardList(0u, 0u);
 	LookForCardsInDeckResult search = LookForCardsInDeck(
-		deck.a, (uint8_t)(ChooseAKrabbyFromDeckText >> 8),
-		(uint8_t)ChooseAKrabbyFromDeckText, SEARCHEFFECT_CARD_ID,
+		deck.a, (uint8_t)(KrabbyText >> 8),
+		(uint8_t)KrabbyText, SEARCHEFFECT_CARD_ID,
 		KRABBY, ChooseAKrabbyFromDeckText);
 	if ((search.f & 0x10u) != 0u)
 		return (KrabbyCallForFamily_PlayerSelectEffectResult){search.a, search.f};
@@ -9615,13 +9615,13 @@ NidoranFCallForFamily_PlayerSelectEffectResult NidoranFCallForFamily_PlayerSelec
 	hTemp_ffa0 = 0xffu;
 	CardListResult deck = CreateDeckCardList(0u, 0u);
 	LookForCardsInDeckResult search = LookForCardsInDeck(deck.a,
-		(uint8_t)(ChooseNidoranFromDeckText >> 8),
-		(uint8_t)ChooseNidoranFromDeckText, SEARCHEFFECT_NIDORAN, 0u,
-		NidoranMNidoranFText);
+		(uint8_t)(NidoranMNidoranFText >> 8),
+		(uint8_t)NidoranMNidoranFText, SEARCHEFFECT_NIDORAN, 0u,
+		ChooseNidoranFromDeckText);
 	if ((search.f & 0x10u) != 0u)
 		return (NidoranFCallForFamily_PlayerSelectEffectResult){search.a, search.f};
 	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
-	SetCardListHeaderText(NidoranMNidoranFText, ChooseNidoranText);
+	SetCardListHeaderText(DuelistDeckText, ChooseNidoranText);
 	for (;;) {
 		DisplayCardListResult display = DisplayCardList();
 		if ((display.f & 0x10u) == 0u) {
