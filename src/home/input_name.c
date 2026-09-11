@@ -1054,7 +1054,7 @@ FinalizeInputNameResult InputDeckName(uint8_t a, uint8_t b, uint8_t c,
 			PlaySFXConfirmOrCancel_Bank6(0x01u);
 			(void)DeckNamingScreen_DrawInvisibleCursor(0u, 0u, 0u, 0u, 0u, 0u);
 			wNamingScreenCursorX = 6u;
-			wNamingScreenCursorY = 0u;
+			wNamingScreenCursorY = 6u;
 			(void)DeckNamingScreen_DrawVisibleCursor(0u, 0u, 0u, 0u, 0u, 0u);
 			continue;
 		}
