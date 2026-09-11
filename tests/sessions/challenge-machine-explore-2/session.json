@@ -1,0 +1,10 @@
+{
+  "derived_from": "challenge-machine",
+  "goal": "Coverage search from challenge-machine: 1 routines no session had executed (GetDamageNumberChars.ConvertDigitToCharTile)",
+  "input_sha256": "3996d22e4de609882251f013d8383c49a5240346666aaaf35db3b3d8e6c9ac54",
+  "name": "challenge-machine-explore-2",
+  "ordinals": 8584,
+  "recorded": "2026-09-11T23:42:25+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-challenge-machine/scripts/s01-WAIT5-1.txt"
+}
