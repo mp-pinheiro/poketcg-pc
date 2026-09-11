@@ -230,6 +230,9 @@
   "effect-marowak-lv26-2": {
     "confirmed_ordinal": 32288
   },
+  "effect-mew-lv15-1": {
+    "confirmed_ordinal": 29480
+  },
   "effect-mew-lv23-2": {
     "confirmed_ordinal": 29816
   },
@@ -244,6 +247,9 @@
   },
   "effect-moltres-lv35-1": {
     "confirmed_ordinal": 32048
+  },
+  "effect-nidoking-1-seed": {
+    "confirmed_ordinal": 23227
   },
   "effect-ninetales-lv32-1": {
     "confirmed_ordinal": 29816
