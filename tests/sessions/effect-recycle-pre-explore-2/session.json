@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-recycle-pre",
+  "goal": "Coverage search from effect-recycle-pre: 1 routines no session had executed (DuelCheckMenu_Glossary)",
+  "input_sha256": "707ecc2fb2308fe2e48ce10c0e2137051a26852ad44c304d0088b4ebaf5971ea",
+  "name": "effect-recycle-pre-explore-2",
+  "ordinals": 72979,
+  "recorded": "2026-09-11T19:28:28+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-effect-recycle-pre/scripts/s01-A-1.txt"
+}
