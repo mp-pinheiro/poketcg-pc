@@ -62,7 +62,15 @@ worker processes.
 After every tick both lanes emit the driver WRAM and the (address, value)
 write stream; the first tick where either differs is reported with the RAM
 symbols and both write streams. `build/audio/tickdiff.json` holds the rows.
-The corpus runs in seconds: 66 seeds at 4096 ticks is 15 s at `--jobs 3`.
+The corpus runs in seconds: 128 seeds at 4096 ticks is 20 s at `--jobs 3`.
+
+Corpus *breadth* is a real gate, not a formality. For its first week the
+corpus was 66 seeds taken from one session (`first-duel`), so the driver was
+proven only on the states that session reaches. `just audio-seeds ai-duel-01
+boot-menu` added 62 more (46 and 16) and all 128 stay clean, which is what
+exonerated the driver for #3415: that session's own seeds prove its own
+states. When a driver-state fact cannot be localised, add its session to the
+corpus before suspecting the driver.
 
 The first run found a defect no anchor gate could: `update_ch_output` in
 `src/home/music1.c` and `src/home/music2.c` wrote `rAUD1SWEEP` on the
@@ -98,6 +106,25 @@ the wrong song, which is an ordinary `DIVERGE`-class fact.
   #3393, ISR-placement, deferred). Audio is a tolerance class only if the tick
   oracle proves state equivalence under both interleavings; otherwise it is a
   new sync site, paid once.
+- #3415 (`ai-duel-01`, DoFrame 32,336) is the same class reached from a
+  different direction, and its chain is worth keeping because every link was
+  measured. The gated symptom is game state: `wSongOverride` 0 against 9 and
+  `wCursorBlinkCounter` 22 against 0. `MainDuelLoop`'s duel-end wait is `do
+  DoFrame while (AssertSongFinished())`, and the reference leaves that loop one
+  frame before the port, so only the reference runs `PlayDefaultSong`,
+  `GetDefaultSong`, `PlaySong` and `InitializeMenuParameters` in that interval
+  (per-routine interval counts, reference 1 against native 0 for each).
+  `AssertSongFinished` reads `wCurSongID`, which `Music1_CheckForEndOfSong`
+  sets from `wMusicIsPlaying[0..3]`; both routines are faithful. Those flags
+  follow the per-channel counters `wddbb`/`wddc3`, which already differ at the
+  session's *second* DoFrame, and the root byte is
+  `wSFXCommandPointers + 2`: a constant +2 in the port from ordinal 2 onward,
+  one 2-byte SFX command consumed early on one channel. The driver is
+  exonerated - `SFX_Play`, `SFX_Update`, `ExecuteNextSFXCommand`,
+  `SFX_ApplyPitchOffset` and `Func_fc26c` all pass `oracle-diff
+  --auto-observe`, and 128/128 tick seeds are clean including 46 from this
+  session - so what is left is where the tick lands relative to the game
+  block, which is ISR placement.
 - `p3:audio-pcm`: from the APU write stream with tick timestamps through a
   deterministic APU model, against gambatte's PCM. The write stream is what
   the tick oracle already compares; the model is the one producer still to
