@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-energy-retrieval-pre",
+  "goal": "Coverage search from effect-energy-retrieval-pre: 1 routines no session had executed (SwapPlayAreaPokemon.swap_duelvar)",
+  "input_sha256": "da6be0fde57ab5bb66180f892da738c63b676d1fa6d2cd4dd325363e141cd851",
+  "name": "effect-energy-retrieval-pre-explore-2",
+  "ordinals": 34363,
+  "recorded": "2026-09-11T19:25:11+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-effect-energy-retrieval-pre/scripts/s01-Ax20-1.txt"
+}
