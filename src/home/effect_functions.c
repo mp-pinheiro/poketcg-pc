@@ -73,7 +73,7 @@
 #define COLOR_TEXT_FIGHTING  0x4bu
 #define COLOR_TEXT_PSYCHIC   0x4cu
 
-static const uint8_t color_to_text[] = {
+static const uint16_t color_to_text[] = {
 	COLOR_TEXT_FIRE,
 	COLOR_TEXT_GRASS,
 	COLOR_TEXT_LIGHTNING,
@@ -2055,14 +2055,14 @@ QueueStatusConditionResult DoublePoisonEffect(void)
 /* effect_functions.asm:1345-1371 */
 void LoadCardNameAndInputColor(uint8_t a, uint8_t d, uint8_t e)
 {
-	uint8_t color = color_to_text[a];
+	uint16_t symbol = color_to_text[(uint8_t)((uint8_t)(a + a) >> 1)];
 	uint8_t name_lo = gb_read8(wLoadedCard1Name_ADDR);
 	uint8_t name_hi = gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u));
 
 	wTxRam2 = name_lo;
 	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), name_hi);
-	wTxRam2_b = color;
-	gb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), 0u);
+	wTxRam2_b = (uint8_t)symbol;
+	gb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), (uint8_t)(symbol >> 8));
 }
 /* <<< factory LoadCardNameAndInputColor */
 

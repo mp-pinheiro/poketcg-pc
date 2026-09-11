@@ -757,6 +757,14 @@ def discard_basic_list_fixture(vram: bool = True, bank: int | None = None, **cha
     return DISCARD_BASIC_LIST.case(vram=vram, bank=bank, **changes)
 
 
+COLOR_NAME = Fixture("effect-venomoth-1-colorname-entry")
+COLOR_NAME_REGS = COLOR_NAME.regs
+
+
+def color_name_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return COLOR_NAME.case(vram=vram, bank=bank, **changes)
+
+
 AI_POWER_EFFECT = Fixture("ai-duel-24-power-effect-entry")
 AI_POWER_EFFECT_REGS = AI_POWER_EFFECT.regs
 

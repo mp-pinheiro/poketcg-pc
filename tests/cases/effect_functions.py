@@ -1,3 +1,4 @@
+from tests.cases._fixtures import color_name_fixture as _color_name_fixture, COLOR_NAME_REGS as _COLOR_NAME_REGS
 from tests.cases._fixtures import discard_basic_list_fixture as _discard_basic_list_fixture, DISCARD_BASIC_LIST_REGS as _DISCARD_BASIC_LIST_REGS
 from tests.cases._fixtures import ai_gust_of_wind_fixture as _ai_gust_of_wind_fixture, AI_GUST_OF_WIND_REGS as _AI_GUST_OF_WIND_REGS
 from tests.cases._fixtures import peal_of_thunder_fixture as _peal_of_thunder_fixture, PEAL_OF_THUNDER_REGS as _PEAL_OF_THUNDER_REGS
@@ -478,6 +479,7 @@ CASES["LoadCardNameAndInputColor"] = [
 	{"a": 4, "wram": {0xCC27: b"\x56\x78"}, "read": {0xCE3F: 4}},
 	{"a": 5, "wram": {0xCC27: b"\xDE\xF0"}, "read": {0xCE3F: 4}},
 	dict(POISON, a=2, wram={0xCC27: b"\x9A\xBC"}, read={0xCE3F: 4}),
+	dict(_color_name_fixture(vram=False, bank=11), **_COLOR_NAME_REGS),
 ]
 # <<< factory LoadCardNameAndInputColor
 
@@ -8590,7 +8592,7 @@ MUTATIONS["DoublePoisonEffect"] = {
 }
 # <<< factory-mutation DoublePoisonEffect
 # >>> factory-mutation LoadCardNameAndInputColor
-MUTATIONS["LoadCardNameAndInputColor"] = {"source_symbol": "LoadCardNameAndInputColor", "before": "\tCOLOR_TEXT_LIGHTNING,", "after": "\tCOLOR_TEXT_WATER,", "case_ids": ["LoadCardNameAndInputColor-2", "LoadCardNameAndInputColor-3"]}
+MUTATIONS["LoadCardNameAndInputColor"] = {"source_symbol": "LoadCardNameAndInputColor", "before": "color_to_text[(uint8_t)((uint8_t)(a + a) >> 1)]", "after": "color_to_text[(uint8_t)(a % 6u)]", "case_ids": ["LoadCardNameAndInputColor-7"]}
 # <<< factory-mutation LoadCardNameAndInputColor
 # >>> factory-mutation AIPickEnergyCardToDiscardFromDefendingPokemon
 MUTATIONS["AIPickEnergyCardToDiscardFromDefendingPokemon"] = {
