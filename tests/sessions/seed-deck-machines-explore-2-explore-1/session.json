@@ -1,0 +1,10 @@
+{
+  "derived_from": "seed-deck-machines-explore-2",
+  "goal": "Coverage search from seed-deck-machines-explore-2: 3 routines no session had executed (PauseMenu_Diary, PrintMedalCount, _PauseMenu_Diary)",
+  "input_sha256": "51a7f424f4c00ef960a4ecb361b03601cb03a5220a8d26312dddbd42f99d6349",
+  "name": "seed-deck-machines-explore-2-explore-1",
+  "ordinals": 4696,
+  "recorded": "2026-09-11T18:31:55+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-seed-deck-machines-explore-2/scripts/s00-A-3.txt"
+}
