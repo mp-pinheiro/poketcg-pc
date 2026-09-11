@@ -356,6 +356,8 @@ TEXT_TILE = Fixture("water-master-placenexttexttile-entry")
 TEXT_TILE_REGS = TEXT_TILE.regs
 HALF_WIDTH_END = Fixture("grass-club-terminate-halfwidth-entry")
 HALF_WIDTH_END_REGS = HALF_WIDTH_END.regs
+MAP_WARP = Fixture("ronald-1-handlemapwarp-entry")
+MAP_WARP_REGS = MAP_WARP.regs
 
 
 
@@ -645,6 +647,10 @@ def text_tile_fixture(vram: bool = True, bank: int | None = None, **changes: byt
 
 def half_width_end_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return HALF_WIDTH_END.case(vram=vram, bank=bank, **changes)
+
+
+def map_warp_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return MAP_WARP.case(vram=vram, bank=bank, **changes)
 
 
 PKMN_POWER = Fixture("water-2-pkmnpower-entry")
