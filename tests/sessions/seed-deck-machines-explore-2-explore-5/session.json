@@ -1,0 +1,10 @@
+{
+  "derived_from": "seed-deck-machines-explore-2",
+  "goal": "Coverage search from seed-deck-machines-explore-2: 1 routines no session had executed (ConfigScreenDPadRight)",
+  "input_sha256": "4e55488cd20d68533445dbb1523f3c43782361c14dba0515b90a3e09a2f6ae28",
+  "name": "seed-deck-machines-explore-2-explore-5",
+  "ordinals": 7456,
+  "recorded": "2026-09-11T21:14:16+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-seed-deck-machines-explore-2/scripts/s02-RIGHT-1.txt"
+}
