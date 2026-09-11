@@ -1,0 +1,32 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Seeded all-cards save: Continue into Mason Lab, walk to the deck machine room and open a deck machine (#3389)",
+  "name": "seed-deck-machines",
+  "ordinals": 2584,
+  "recorded": "2026-09-11T00:58:11+00:00",
+  "save": "decks.sav",
+  "save_sha256": "fc049fb5ea4db68ee3be61b55cab1cd67d27250ed4e5cef951aceeb46e8f2f26",
+  "schema": 1,
+  "then": [
+    "A",
+    "WAIT",
+    "A",
+    "WAIT",
+    "A",
+    "WAIT",
+    "A",
+    "WAIT",
+    "RIGHTx5",
+    "DOWN",
+    "RIGHTx5",
+    "UPx5",
+    "A",
+    "WAIT",
+    "Ax5",
+    "WAIT",
+    "Ax5",
+    "WAIT",
+    "Bx5",
+    "WAIT"
+  ]
+}
