@@ -20,6 +20,7 @@ import os
 import shutil
 import subprocess
 import sys
+import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 from pathlib import Path
@@ -403,9 +404,21 @@ def is_clean(name: str) -> bool:
     return session.read_ratchet().get(name, {}).get("confirmed_ordinal", 0) >= session_total(name)
 
 
+EXPLORE_TIMEOUT = 2700
+
+
+def ledger_ordinals(seed: str) -> int:
+    return int(load_ledger()["sessions"].get(seed, {}).get("ordinals", 0))
+
+
+REPLAY_UNIT = 25_000
+
+
 def rank_seeds(ledger: dict[str, Any]) -> list[tuple[str, int]]:
-    """Sessions by how many unexecuted routines sit in the files they already
-    touch: a search from a seed explores the screens around that seed."""
+    """Sessions by unexecuted routines in the files they touch, divided by what
+    a search from them costs: every expansion replays the seed's timeline, so a
+    876k-ordinal route pays ~35x a 23k one for the same screens. Ranking on the
+    raw count alone picked `credits-1` and spent 40 minutes on zero expansions."""
     missing: dict[str, int] = {}
     for file in unexecuted(ledger).values():
         missing[file] = missing.get(file, 0) + 1
@@ -416,9 +429,11 @@ def rank_seeds(ledger: dict[str, Any]) -> list[tuple[str, int]]:
             files[names[position]].add(entry["file"])
     rows = []
     for name, touched in files.items():
-        score = sum(missing.get(file, 0) for file in touched) if is_clean(name) else 0
+        reach = sum(missing.get(file, 0) for file in touched) if is_clean(name) else 0
+        ordinals = ledger["sessions"][name].get("ordinals", 0)
+        score = round(reach * REPLAY_UNIT / (REPLAY_UNIT + ordinals))
         rows.append((name, score))
-    rows.sort(key=lambda row: (-row[1], -ledger["sessions"][row[0]]["routines"], row[0]))
+    rows.sort(key=lambda row: (-row[1], ledger["sessions"][row[0]].get("ordinals", 0), row[0]))
     return rows
 
 
@@ -429,9 +444,16 @@ def explore_seed(seed: str, *, budget: int, digest: str) -> tuple[str, str, str]
     command = [sys.executable, str(ROOT / "tools" / "completion" / "explore.py"),
                "--seed-session", seed, "--budget", str(budget), "--known", str(LEDGER),
                "--corpus", str(corpus), "--json", str(json_path)]
-    result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
+    started = time.monotonic()
+    print(f"DISCOVER start {seed} ordinals={ledger_ordinals(seed)} budget={budget}",
+          file=sys.stderr, flush=True)
+    try:
+        result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True,
+                                check=False, timeout=EXPLORE_TIMEOUT)
+    except subprocess.TimeoutExpired:
+        return seed, "timeout", f"no result in {EXPLORE_TIMEOUT}s"
     if result.returncode != 0 or not json_path.is_file():
-        return seed, "failed", result.stderr.strip()[-400:]
+        return seed, "failed", f"{time.monotonic() - started:.0f}s {result.stderr.strip()[-360:]}"
     data = json.loads(json_path.read_text())
     data["seed_session"] = seed
     data["ledger_digest"] = digest
