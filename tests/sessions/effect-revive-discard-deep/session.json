@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-revive-discard",
+  "goal": "player confirms Revive and the basic enters the play area",
+  "input_sha256": "bc432b6e313cebd11bd06f24ecb97bc73d4a48361e8ca1b9fbe03da18029be91",
+  "name": "effect-revive-discard-deep",
+  "ordinals": 29515,
+  "recorded": "2026-09-11T19:52:48+00:00",
+  "schema": 1,
+  "script": "/tmp/script-effect-revive-discard-deep.txt"
+}

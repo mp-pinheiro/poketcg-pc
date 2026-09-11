@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-super-energy-retrieval-discard",
+  "goal": "player plays Super Energy Retrieval and picks from hand and discard pile",
+  "input_sha256": "e1c242d388abe74cc18deb7302643ca7d94ca35535a930e1bc8b3e3ff67a4bdd",
+  "name": "effect-super-energy-retrieval-discard-play",
+  "ordinals": 29515,
+  "recorded": "2026-09-11T19:52:48+00:00",
+  "schema": 1,
+  "script": "/tmp/script-effect-super-energy-retrieval-discard.txt"
+}

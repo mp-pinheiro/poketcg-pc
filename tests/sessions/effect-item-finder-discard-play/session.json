@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-item-finder-discard",
+  "goal": "player plays Item Finder and picks the Trainer from the discard pile",
+  "input_sha256": "f6edcb384cff6410a5aba4db552e6984c5ce375a675a23efd47f1ed6022b641d",
+  "name": "effect-item-finder-discard-play",
+  "ordinals": 29515,
+  "recorded": "2026-09-11T19:52:48+00:00",
+  "schema": 1,
+  "script": "/tmp/script-effect-item-finder-discard.txt"
+}

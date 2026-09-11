@@ -545,6 +545,9 @@
   "effect-energy-retrieval-discard": {
     "confirmed_ordinal": 23227
   },
+  "effect-energy-retrieval-discard-deep": {
+    "confirmed_ordinal": 29515
+  },
   "effect-energy-retrieval-discard-play": {
     "confirmed_ordinal": 29035
   },
@@ -745,6 +748,12 @@
   },
   "effect-item-finder": {
     "confirmed_ordinal": 27824
+  },
+  "effect-item-finder-discard": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-item-finder-discard-play": {
+    "confirmed_ordinal": 29515
   },
   "effect-item-finder-pre": {
     "confirmed_ordinal": 27979
@@ -1289,6 +1298,9 @@
   "effect-revive-discard": {
     "confirmed_ordinal": 23227
   },
+  "effect-revive-discard-deep": {
+    "confirmed_ordinal": 29515
+  },
   "effect-revive-discard-play": {
     "confirmed_ordinal": 29035
   },
@@ -1369,6 +1381,12 @@
   },
   "effect-super-energy-removal-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-super-energy-retrieval-discard": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-super-energy-retrieval-discard-play": {
+    "confirmed_ordinal": 29515
   },
   "effect-super-energy-retrieval-pre": {
     "confirmed_ordinal": 27979
