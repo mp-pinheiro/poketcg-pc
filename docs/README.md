@@ -20,10 +20,12 @@ grind from `just issues-next`, the coverage program from `just coverage-status`.
 | `phase1-transform.md` | Per-routine delete/dissolve/port verdicts for the hardware-removal transform. |
 
 Machine-readable state lives outside `docs/` and always wins over prose:
-`site/data/gate.json` (last central gate), `site/data/progress.json` (work
-records), `tools/progress/scope.toml` (exclusions), and the Forgejo issue
-ledger itself. `.factory/` holds only rebuildable caches: the issue snapshot,
-verified artifacts, and issued prompts.
+`site/data/coverage.json` (which routines every recorded session executes, and
+the `unmeasurable` ones no replay can report), `site/data/gate.json` (last
+central gate), `site/data/progress.json` (work records),
+`tools/progress/scope.toml` (exclusions), and the Forgejo issue ledger itself.
+`.factory/` holds only rebuildable caches: the issue snapshot, verified
+artifacts, and issued prompts.
 
 The Forgejo issues are a projection of the loop's measured facts - session
 divergences, sweep rows, composition audits - kept by `just issues-sync`

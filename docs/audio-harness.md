@@ -87,12 +87,17 @@ the wrong song, which is an ordinary `DIVERGE`-class fact.
 
 ## What is left
 
-- `credits-1` diverges at 858,149 on driver state inside a 66-frame LCD-off
-  block where the ROM's ISRs land between instructions the port runs in one
-  block (`docs/grind.md`, "An ad-hoc native run"). Requests and placement are
-  correct there; the tick oracle proves the driver from every seed it has. It
-  is a tolerance class only if the tick oracle proves state equivalence under
-  both interleavings; otherwise it is a new sync site, paid once.
+- `credits-1` itself is clean to its last ordinal (864,424). The residue is in
+  its two extensions, `credits-1-explore-1` and `-2`, which confirm to
+  871,294 and report `audio_first_divergence=858149`: driver state inside a
+  66-frame LCD-off block where the ROM's ISRs land between instructions the
+  port runs in one block (`docs/grind.md`, "An ad-hoc native run"). Requests
+  and placement are correct there and the tick oracle proves the driver from
+  every seed it has. Note the audio address is *not* the gated fact: both
+  sessions' recorded divergence is at 871,295 on `CopyDataHLtoDE` (#3392,
+  #3393, ISR-placement, deferred). Audio is a tolerance class only if the tick
+  oracle proves state equivalence under both interleavings; otherwise it is a
+  new sync site, paid once.
 - `p3:audio-pcm`: from the APU write stream with tick timestamps through a
   deterministic APU model, against gambatte's PCM. The write stream is what
   the tick oracle already compares; the model is the one producer still to

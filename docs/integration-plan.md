@@ -8,14 +8,23 @@ phases 2–8 and the release gate: a playable, byte-equivalent-at-scene-level
 native port, then widescreen strictly on top. It runs the mutation-receipt
 closure loop in parallel as one of its lanes.
 
-**State as of 2026-09-10, which overtakes the assessment below.** 3,013
-registrations oracle-clean per routine; 84 of 85 recorded routes byte-exact on
-WRAM, HRAM, OAM and VRAM at every DoFrame anchor from boot to the credits
-(`ronald-explore` diverges at 638,492 of 651,681 on the glyph cache); 1,991 of
-3,012 in-scope routines execute on some route, measured on the reference
-(`site/data/coverage.json`); the release gate passes 4 of 26 producers and 7
-requirements have no producer (p5:duel-state, p6:script-vm, p7:printer, four
-p8). Against the ranked root causes below:
+**State as of 2026-09-11, which overtakes the assessment below.** Oracle-clean
+per routine over 3,014 registrations; 493 recorded sessions byte-exact on
+WRAM, HRAM, OAM and VRAM at every DoFrame anchor from boot to the credits,
+with four diverged and each an open fact (`ronald-explore` 638,492,
+`credits-1-explore-1`/`-2` 871,295, all ISR-placement and deferred;
+`deck-machine-auto` 3,714, #3410); 2,333 of 3,012 in-scope routines execute on
+some session, measured on the reference (`site/data/coverage.json`), with 26
+of the remainder `unmeasurable` — no entry address in the reference tracer, a
+registration gap rather than coverage. Milestones, audited per requirement at
+content key `f911fc50`: **4 pass** (`reset:baseline`, `reset:rom-coverage`,
+`p0:substrate`, `p1:hardware-removal`), **2 failing**
+(`reset:routine-bijection` on `logical_routines` 3,000 vs 3,012 and the 12
+unregistered routines, orphans now 0; `p2:boot-title` on 31 bytes in 23
+regions, 27 of them in the ungated sound-driver WRAM window `$DDBB`-`$DDE3`
+and 2 at `sPlayerName`), and **20 missing** — no evidence artifact exists at
+all, which is the real distance to the release gate. `docs/vision.md`
+"Status" carries the table. Against the ranked root causes below:
 
 - 1 (VBlank work absent), 3 (boot loop truncated), 4 (intro/menu
   divergences): closed; the routes traverse boot to the credits.

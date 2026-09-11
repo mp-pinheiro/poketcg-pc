@@ -46,22 +46,28 @@ needs a human at the window is left open; take the next item and name it in the 
 
 Rules:
 - Unattended: never ask; when two options exist take the boring one.
-- Memory: one reference lane at a time in this session. Never run two of session-verify,
-  session-sweep, oracle-diff-all concurrently; leave no background job running when you
-  stop. WSL has OOM-crashed on this repo.
-- The batch loops snapshot the binary into `build/completion/verify-lane` and run
-  their workers against that, so editing and building while one runs is safe. A bare
-  `just session-verify` uses the live build directory and is not protected: a substrate
-  experiment compiled under a running loop produced two false `diverged` facts
-  (wVBlankCounter off by one at ordinal 1). A divergence at a tiny ordinal on
+- Verification is parallel and measured. just sessions-verify-affected <Fn> --jobs 5
+  and just sessions-sweep --jobs 8 --write-ratchet freeze the binary and the data pack
+  into build/completion/verify-lane first, so editing and building while one runs is
+  safe: 26 sessions in 1m15s against 17 min serial, all 470 in 7m04s. Never hand-roll
+  a serial verify loop in bash.
+- just session-sweep (singular, per-routine, forks its own PyBoy workers) runs alone,
+  and never next to a batch. just sessions-sweep (plural, batch verify) is the parallel
+  one. A bare just session-verify uses the live build directory and is not protected:
+  a substrate experiment compiled under a running loop produced two false `diverged`
+  facts (wVBlankCounter off by one at ordinal 1). A divergence at a tiny ordinal on
   wVBlankCounter is contamination; re-verify before reporting it.
-- Parallelism is measured, not assumed: a verify is one native process against a cached
-  reference (107 sessions, 9m28s at --jobs 5 against ~35 min serial), and the ratchet is
-  updated under a file lock. `session-sweep` is the exception -- it forks four PyBoy
-  workers of its own, so it runs alone.
-- Never run just oracle-release-gate, a formatter, a linter or any git command.
+- Never pass --force to just coverage-ledger after a C fix. The ledger replays the
+  reference, keyed by stream key plus confirmed ordinal, so coverage is ROM-derived
+  and a C fix cannot invalidate it. Two forced re-traces cost 3 h and changed nothing.
+- Never run just oracle-release-gate, a formatter, a linter or any git command. An
+  individual producer (just completion-routine-mapping, just completion-substrate) is
+  fine and is how you check one milestone.
 - Never widen an exclusion ledger (scenario.py, _fixtures.py _HOLES, test_leaves.py
   AUTO_OBSERVE_IGNORED) and never edit a case to match the C.
+- A defect no case can observe (an invented call, a byte outside the compared set) is
+  landed with its real proof named - just coverage-probe, or the session - and no fake
+  mutation. Deleting a green mutation that proves nothing is correct.
 - Never hand-close a fact issue or write progress into one. noise / wontfix only with a
   comment naming the harness artefact.
 - Files you did not change are not yours.
@@ -352,15 +358,34 @@ The labels are `explore.py`'s, so a winning tail records verbatim through
 `session.py seeded --then` / `board-seed --then` — no re-derivation between
 finding an input and landing it.
 
-Two measurement traps this tool exists to avoid:
+Three measurement traps, each found by running the probe against sessions the
+ledger already folded — a landed session should reach nothing new, so whatever
+it does reach is a defect in the port or in the measurement:
 
 - the native binary defines ~130 C helpers the ROM has no routine for, so a
   raw new-symbol count from `native_trace.native_counts` overstates reach by a
-  constant and ranks noise; `probe.py` intersects with the ledger's routine set
-  and subtracts its executed set, which is exact.
-- `DMA` is always reported unexecuted: the ROM copies it to HRAM and calls it
-  there, so the reference tracer never records an entry. It is the whole noise
-  floor — one name.
+  constant and ranks noise. `probe.py` intersects with the ledger's routine set
+  and subtracts the executed and `unmeasurable` sets, which is exact.
+- **26 inventory routines the reference tracer has no entry address for**
+  (`coverage_ledger.unnameable`): the 12 the registration bijection still
+  misses, the four `DuelAnim15*` slots, `FadePalIntoAnother`, the Man1 and
+  legendary-card script commands, `SetOBP1OrSGB3ToCardPalette`. No replay can
+  ever report them, so they are a registration gap, not coverage work: the
+  ledger marks them `unmeasurable`, `coverage-status` prints an
+  `UNMEASURABLE` row and a per-file count, and `unexecuted()` holds them out
+  of the worklist. `scripting.asm` went from 44 apparent misses to 27 real
+  ones this way.
+- `DMA` is the entire remaining noise floor — one name. The ROM copies it into
+  HRAM (`CopyDMAFunction`) and calls it at `$FF83`, so no ROM-address entry is
+  ever recorded while the native lane enters the C function every frame.
+
+What this found on its first run: `duel-screens`, a landed clean session,
+reached `Func_14323` — a routine the asm marks `; unreferenced`. The port's
+`ConvertColorToEnergyCardID` ended with `(void)Func_14323();`, the next label
+in `ai/core.asm` swept into a body that `ret`s at `core.asm:523`. Invented
+calls are invisible to the per-routine oracle (the callee only reads WRAM, so
+no case can observe it) and to the session digests; reach is the only proof
+class that sees them. Deleted; the probe now reports the session clean.
 
 Named marks are the search objective; a routine name is exact where a score is
 not. `duel-screens` (8 screen routines in one session) and the three

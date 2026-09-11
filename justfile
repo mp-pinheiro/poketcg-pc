@@ -485,6 +485,16 @@ session-seeded NAME SAVE *ARGS:
 savegen *ARGS:
     python3 tools/completion/savegen.py {{ARGS}}
 
+
+# One session that pokes a duel board and then plays it: `just session-board-seed effect-x --card EXEGGUTOR --attack 2 --then "Bx5,DOWN,A,DOWN,A,Ax5"`.
+# A seed recorded without its play tail has its pokes fire past its own length and is inert.
+session-board-seed NAME *ARGS:
+    python3 tools/completion/session.py board-seed "{{NAME}}" {{ARGS}}
+
+# The same for a player-controlled duel against a poked deck: `just session-deck-seed NAME --cards FILE --deck 2 --then ...`.
+session-deck-seed NAME *ARGS:
+    python3 tools/completion/session.py deck-seed "{{NAME}}" {{ARGS}}
+
 # Write tests/sessions/NAME/session.json for a freshly recorded input.txt.
 session-meta NAME GOAL:
     python3 tools/completion/session.py meta "{{NAME}}" --goal "{{GOAL}}"

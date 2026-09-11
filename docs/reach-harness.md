@@ -4,7 +4,7 @@ The parts of the game no button search reaches, and what reaches them.
 
 | class | why unreachable | mechanism | state |
 |---|---|---|---|
-| booster packs, auto deck machines, credits variants, gift center | need state: packs owned, collection, medals, event flags | save-seeded sessions | built |
+| booster packs, auto deck machines, credits variants, gift center | need state: packs owned, collection, medals, event flags | save-seeded sessions | built; the deck machines are landed (below), packs and gift center open |
 | link duels, Card Pop (IR) | need a peer console | native peer transport, two-console loopback | transport built and smoke-verified; the duel needs a route to the Battle Center (#3390) |
 | printer | needs a printer peer | scripted printer responder on the same transport | responder built; the packet sequence needs the printer menu (#3391) |
 | SGB | only when `wConsole == CONSOLE_SGB`; the ROM on CGB hardware never takes it | excluded, hardware-only | decided |
@@ -39,6 +39,20 @@ verifies clean on both lanes, and both lanes read the same SRAM at ordinal
 Seeded sessions are ordinary Discover seeds afterwards: `just
 coverage-discover seed-packs` searches the buttons from the poked world.
 Route items #3388 (packs) and #3389 (deck machines) name the first two.
+
+**Landed from this mechanism.** `seed-deck-machines` walks the machine room
+from a save with decks, and `seed-deck-machines-explore-1..3` extend it. The
+individual machines needed one more step: their scripts are separate routines
+per object (`Script_d932` at x=4, `Script_d93f` at x=6, `Script_d995` at x=10,
+`Script_d9c2` at x=14 — `deck_machine_room.asm`), so one session reaches
+exactly one of them. `just coverage-probe seed-deck-machines --tail
+"Bx20,Bx20,DOWN,RIGHT,UP,Ax5,Ax20" --mark Script_d93f` found the walk in
+seconds (the two `Bx20` exit the machine the base session left open, `DOWN`
+steps off the counter row, each `RIGHT` is two tiles), and
+`deck-machine-fighting`, `-water` and `-auto` are the three recorded
+sessions — two clean, `-auto` diverged at 3,714 and is #3410. Chaining all
+three visits into one session does *not* work: the later visits never enter
+their script, so one session per machine is the shape.
 
 ## The peer: link, IR, printer
 
