@@ -440,6 +440,14 @@ control-flow fact from a tick-placement one: that interval's game-code order
 is identical on both lanes, so the divergence is in the driver's tick
 placement (`docs/audio-harness.md`), not in a branch.
 
+Counts are only comparable *inside* the anchored slice, which is what `--json`
+writes: an unanchored window spans the ordinals on either side and inflates
+every native count by up to three times. Read from the slice and the two
+lenses agree - on #3417 the ROM draws 18 rectangles and 28 coordinate
+conversions where the port draws 10 and 10, while both run `ProcessText` 10
+times, so the lanes are in two different list-drawing routines rather than one
+routine looping a different number of times.
+
 ### Throughput rules
 
 Three faults that cost hours each, with their measurements:
