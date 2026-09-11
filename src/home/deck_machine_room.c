@@ -160,75 +160,29 @@ DeckMachineRoomAfterDuelResult DeckMachineRoomAfterDuel(void)
 /* <<< factory DeckMachineRoomAfterDuel */
 
 /* >>> factory Script_da76 */
-void Script_da76(void)
+FuncD96cResult Script_da76(void)
 {
-	(void)Func_d96c(0x08u);
-	uint8_t copy_length = PKMN_CARD_DATA_LENGTH;
-	gb_write8(wLCDC_ADDR, (uint8_t)(0x80u | (uint8_t)(copy_length == PKMN_CARD_DATA_LENGTH ? 0u : 1u)));
+	return Func_d96c(0x08u);
 }
 /* <<< factory Script_da76 */
 
 /* >>> factory Script_da1c */
-void Script_da1c(void)
+FuncD96cResult Script_da1c(void)
 {
-	FuncD96cResult result = Func_d96c(0x06u);
-	if (GetEventValue(EVENT_GRASS_DECK_MACHINE_ACTIVE) == 0u &&
-	    GetEventValue(EVENT_BEAT_NIKKI) != 0u) {
-		(void)MaxOutEventValue(EVENT_GRASS_DECK_MACHINE_ACTIVE, 0u, 0u, 0u);
-		ApplyOWMapEventChangeIfEventSet(MAP_EVENT_GRASS_DECK_MACHINE);
-	}
-	wLCDC = 0x80u;
-	gb_write8(0xff40u, 0x80u);
-	(void)result;
+	return Func_d96c(0x06u);
 }
 /* <<< factory Script_da1c */
 
 /* >>> factory Script_d9c2 */
-void Script_d9c2(void)
+FuncD96cResult Script_d9c2(void)
 {
-	FuncD96cResult card = Func_d96c(4u);
-	(void)card;
-	(void)PrintScrollableText_NoTextBoxLabel(0x0607u);
-	if (GetEventValue(EVENT_WATER_DECK_MACHINE_ACTIVE) == 0u) {
-		(void)PrintScrollableText_NoTextBoxLabel(0x0608u);
-		if (GetEventValue(EVENT_BEAT_AMY) == 0u)
-			return;
-		HandleYesOrNoMenuResult first = YesOrNoMenuWithText(0x0609u);
-		if ((first.f & 0x10u) != 0u)
-			return;
-		(void)MaxOutEventValue(EVENT_WATER_DECK_MACHINE_ACTIVE, 0u, 0u, 0u);
-		SetOWMapEvent(MAP_EVENT_WATER_DECK_MACHINE);
-		(void)PrintScrollableText_NoTextBoxLabel(0x060au);
-	}
-	HandleYesOrNoMenuResult second = YesOrNoMenuWithText(0x060bu);
-	if ((second.f & 0x10u) != 0u)
-		return;
-	PlaySFX(SFX_INTRO_ORB_TITLE);
-	gb_write8(wLCDC_ADDR, 0x80u);
+	return Func_d96c(0x04u);
 }
 /* <<< factory Script_d9c2 */
 
 /* >>> factory Script_d9ef */
-void Script_d9ef(void)
+FuncD96cResult Script_d9ef(void)
 {
-	FuncD96cResult card = Func_d96c(5u);
-	(void)card;
-	(void)PrintScrollableText_NoTextBoxLabel(0x0607u);
-	if (GetEventValue(EVENT_LIGHTNING_DECK_MACHINE_ACTIVE) == 0u) {
-		(void)PrintScrollableText_NoTextBoxLabel(0x0608u);
-		if (GetEventValue(EVENT_BEAT_ISAAC) == 0u)
-			return;
-		HandleYesOrNoMenuResult first = YesOrNoMenuWithText(0x0609u);
-		if ((first.f & 0x10u) != 0u)
-			return;
-		(void)MaxOutEventValue(EVENT_LIGHTNING_DECK_MACHINE_ACTIVE, 0u, 0u, 0u);
-		SetOWMapEvent(MAP_EVENT_LIGHTNING_DECK_MACHINE);
-		(void)PrintScrollableText_NoTextBoxLabel(0x060au);
-	}
-	HandleYesOrNoMenuResult second = YesOrNoMenuWithText(0x060bu);
-	if ((second.f & 0x10u) != 0u)
-		return;
-	PlaySFX(SFX_INTRO_ORB_TITLE);
-	gb_write8(wLCDC_ADDR, 0x80u);
+	return Func_d96c(0x05u);
 }
 /* <<< factory Script_d9ef */

@@ -27,16 +27,16 @@ typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t 
 DeckMachineRoomAfterDuelResult DeckMachineRoomAfterDuel(void);
 /* <<< factory DeckMachineRoomAfterDuel */
 /* >>> factory Script_da76 */
-void Script_da76(void);
+FuncD96cResult Script_da76(void);
 /* <<< factory Script_da76 */
 /* >>> factory Script_da1c */
-void Script_da1c(void);
+FuncD96cResult Script_da1c(void);
 /* <<< factory Script_da1c */
 /* >>> factory Script_d9c2 */
-void Script_d9c2(void);
+FuncD96cResult Script_d9c2(void);
 /* <<< factory Script_d9c2 */
 /* >>> factory Script_d9ef */
-void Script_d9ef(void);
+FuncD96cResult Script_d9ef(void);
 /* <<< factory Script_d9ef */
 #define Script_BeatAaron_START_SCRIPT 0x590bu
 #define Script_d93f_START_SCRIPT 0x5944u

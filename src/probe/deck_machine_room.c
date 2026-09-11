@@ -90,32 +90,44 @@ static void adapt_DeckMachineRoomAfterDuel(ProbeState *s)
 /* >>> factory Script_da76 */
 static void adapt_Script_da76(ProbeState *s)
 {
-	(void)s;
-	Script_da76();
+	FuncD96cResult r = Script_da76();
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
 }
 /* <<< factory Script_da76 */
 
 /* >>> factory Script_da1c */
 static void adapt_Script_da1c(ProbeState *s)
 {
-	(void)s;
-	Script_da1c();
+	FuncD96cResult r = Script_da1c();
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
 }
 /* <<< factory Script_da1c */
 
 /* >>> factory Script_d9c2 */
 static void adapt_Script_d9c2(ProbeState *s)
 {
-	(void)s;
-	Script_d9c2();
+	FuncD96cResult r = Script_d9c2();
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
 }
 /* <<< factory Script_d9c2 */
 
 /* >>> factory Script_d9ef */
 static void adapt_Script_d9ef(ProbeState *s)
 {
-	(void)s;
-	Script_d9ef();
+	FuncD96cResult r = Script_d9ef();
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
 }
 /* <<< factory Script_d9ef */
 

@@ -38,34 +38,38 @@ CASES["DeckMachineRoomAfterDuel"] = [
 # <<< factory DeckMachineRoomAfterDuel
 
 # >>> factory Script_da76
-CONTRACT["Script_da76"] = {"compare": (), "preserve": ()}
+CONTRACT["Script_da76"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("d", "e")}
 CASES["Script_da76"] = [
-    {"keys": [0x00, 0x01], "wram": {0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xCABB: 1, 0xCE3F: 3}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01], wram={0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xCABB: 1, 0xCE3F: 3}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
+     "wram": {wTxRam2: b"\xff\xff\xff"}, "read": {wTxRam2: 3}},
+    dict(POISON, wram={wTxRam2: b"\xff\xff\xff"}, read={wTxRam2: 3}),
 ]
 # <<< factory Script_da76
 
 # >>> factory Script_da1c
-CONTRACT["Script_da1c"] = {"compare": (), "preserve": ()}
+CONTRACT["Script_da1c"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("d", "e")}
 CASES["Script_da1c"] = [
-    {"keys": [0x00, 0x01], "wram": {0xCABB: b"\x00", 0xFF40: b"\x00", 0xCE3F: b"\xFF\xFF\xFF"}, "read": {0xCE3F: 3, 0xFF40: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"keys": [0x00, 0x01], "wram": {0xCABB: b"\x00", 0xFF40: b"\x00", 0xCE3F: b"\xFF\xFF\xFF"}, "read": {0xCE3F: 3, 0xFF40: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01], wram={0xCABB: b"\x00", 0xFF40: b"\x00", 0xCE3F: b"\xFF\xFF\xFF"}, read={0xCE3F: 3, 0xFF40: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)]
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
+     "wram": {wTxRam2: b"\xff\xff\xff"}, "read": {wTxRam2: 3}},
+    dict(POISON, wram={wTxRam2: b"\xff\xff\xff"}, read={wTxRam2: 3}),
+]
 # <<< factory Script_da1c
 
 # >>> factory Script_d9c2
-CONTRACT["Script_d9c2"] = {"compare": (), "preserve": ()}
+CONTRACT["Script_d9c2"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("d", "e")}
 CASES["Script_d9c2"] = [
-    {"keys": [0x00, 0x01, 0x00, 0x01], "wram": {wEventVars: b"\x00" * 0x40, wLCDC: b"\x00", wTxRam2: b"\x00\x00\x00"}, "read": {wEventVars: 0x40, wLCDC: 1, wTxRam2: 3}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01, 0x00, 0x01], wram={wEventVars: b"\x00" * 0x40, wLCDC: b"\x00", wTxRam2: b"\x00\x00\x00"}, read={wEventVars: 0x40, wLCDC: 1, wTxRam2: 3}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
+     "wram": {wTxRam2: b"\xff\xff\xff"}, "read": {wTxRam2: 3}},
+    dict(POISON, wram={wTxRam2: b"\xff\xff\xff"}, read={wTxRam2: 3}),
 ]
 # <<< factory Script_d9c2
 
 # >>> factory Script_d9ef
-CONTRACT["Script_d9ef"] = {"compare": (), "preserve": ()}
+CONTRACT["Script_d9ef"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("d", "e")}
 CASES["Script_d9ef"] = [
-    {"keys": [0x00, 0x01, 0x00, 0x01], "wram": {wEventVars: b"\x00" * 0x40, wLCDC: b"\x00", wTxRam2: b"\x00\x00\x00"}, "read": {wEventVars: 0x40, wLCDC: 1, wTxRam2: 3}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01, 0x00, 0x01], wram={wEventVars: b"\x00" * 0x40, wLCDC: b"\x00", wTxRam2: b"\x00\x00\x00"}, read={wEventVars: 0x40, wLCDC: 1, wTxRam2: 3}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
+     "wram": {wTxRam2: b"\xff\xff\xff"}, "read": {wTxRam2: 3}},
+    dict(POISON, wram={wTxRam2: b"\xff\xff\xff"}, read={wTxRam2: 3}),
 ]
 # <<< factory Script_d9ef
 
@@ -174,12 +178,14 @@ CASES["Script_daa3"] = [
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES=legacy_to_schema(CASES,CONTRACT)
 # >>> factory-completion deck-machine script entries
-# legacy_to_schema always emits completion "return"; these four routines end at
-# their `rst $20`, so the split is applied after migration.
 for _fn, _pc in (
         ("Script_d93f", 0x5944),
         ("Script_d995", 0x599A),
+        ("Script_d9c2", 0x59C7),
+        ("Script_d9ef", 0x59F4),
+        ("Script_da1c", 0x5A21),
         ("Script_da49", 0x5A4E),
+        ("Script_da76", 0x5A7B),
         ("Script_daa3", 0x5AA8),
 ):
     for _rec in SCHEMA2_CASES[_fn]:
@@ -200,16 +206,16 @@ MUTATIONS["DeckMachineRoomCloseTextBox"] = {"source_symbol": "DeckMachineRoomClo
 MUTATIONS["DeckMachineRoomAfterDuel"] = {"source_symbol": "DeckMachineRoomAfterDuel", "before": "\tFindEndOfDuelScriptResult r = FindEndOfDuelScript(DeckMachineRoomAfterDuelTable);", "after": "\tFindEndOfDuelScriptResult r = FindEndOfDuelScript((uint16_t)(DeckMachineRoomAfterDuelTable + 1u));", "case_ids": ["DeckMachineRoomAfterDuel-0", "DeckMachineRoomAfterDuel-1"]}
 # <<< factory-mutation DeckMachineRoomAfterDuel
 # >>> factory-mutation Script_da76
-MUTATIONS["Script_da76"] = {"source_symbol": "Script_da76", "before": "\tuint8_t copy_length = PKMN_CARD_DATA_LENGTH;", "after": "\tuint8_t copy_length = 0x40u;", "case_ids": ["Script_da76-0", "Script_da76-1"]}
+MUTATIONS["Script_da76"] = {"source_symbol": "Script_da76", "before": "FuncD96cResult Script_da76(void)\n{\n\treturn Func_d96c(0x08u);", "after": "FuncD96cResult Script_da76(void)\n{\n\treturn Func_d96c(0x09u);", "case_ids": ["Script_da76-0", "Script_da76-1"]}
 # <<< factory-mutation Script_da76
 # >>> factory-mutation Script_da1c
-MUTATIONS["Script_da1c"] = {"source_symbol": "Script_da1c", "before": "\tFuncD96cResult result = Func_d96c(0x06u);", "after": "\tFuncD96cResult result = Func_d96c(0x07u);", "case_ids": ["Script_da1c-0", "Script_da1c-1", "Script_da1c-2"]}
+MUTATIONS["Script_da1c"] = {"source_symbol": "Script_da1c", "before": "FuncD96cResult Script_da1c(void)\n{\n\treturn Func_d96c(0x06u);", "after": "FuncD96cResult Script_da1c(void)\n{\n\treturn Func_d96c(0x05u);", "case_ids": ["Script_da1c-0", "Script_da1c-1"]}
 # <<< factory-mutation Script_da1c
 # >>> factory-mutation Script_d9c2
-MUTATIONS["Script_d9c2"] = {"source_symbol": "Script_d9c2", "before": "\tFuncD96cResult card = Func_d96c(4u);", "after": "\tFuncD96cResult card = Func_d96c(3u);", "case_ids": ["Script_d9c2-0", "Script_d9c2-1"]}
+MUTATIONS["Script_d9c2"] = {"source_symbol": "Script_d9c2", "before": "FuncD96cResult Script_d9c2(void)\n{\n\treturn Func_d96c(0x04u);", "after": "FuncD96cResult Script_d9c2(void)\n{\n\treturn Func_d96c(0x03u);", "case_ids": ["Script_d9c2-0", "Script_d9c2-1"]}
 # <<< factory-mutation Script_d9c2
 # >>> factory-mutation Script_d9ef
-MUTATIONS["Script_d9ef"] = {"source_symbol": "Script_d9ef", "before": "void Script_d9ef(void)\n{\n\tFuncD96cResult card = Func_d96c(5u);", "after": "void Script_d9ef(void)\n{\n\tFuncD96cResult card = Func_d96c(6u);", "case_ids": ["Script_d9ef-0", "Script_d9ef-1"]}
+MUTATIONS["Script_d9ef"] = {"source_symbol": "Script_d9ef", "before": "FuncD96cResult Script_d9ef(void)\n{\n\treturn Func_d96c(0x05u);", "after": "FuncD96cResult Script_d9ef(void)\n{\n\treturn Func_d96c(0x06u);", "case_ids": ["Script_d9ef-0", "Script_d9ef-1"]}
 # <<< factory-mutation Script_d9ef
 # >>> factory-mutation Script_BeatAaron
 MUTATIONS["Script_BeatAaron"] = {
