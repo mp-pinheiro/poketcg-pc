@@ -344,10 +344,19 @@
   "effect-pidgeotto-2": {
     "confirmed_ordinal": 29312
   },
+  "effect-pokemon-breeder-seed": {
+    "confirmed_ordinal": 23227
+  },
   "effect-pokemon-flute": {
     "confirmed_ordinal": 27824
   },
+  "effect-pokemon-trader-seed": {
+    "confirmed_ordinal": 23227
+  },
   "effect-poliwhirl-1-seed": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-poliwhirl-2-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-poliwrath-2-seed": {
