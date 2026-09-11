@@ -1451,7 +1451,7 @@ def record_meta(name: str, goal: str) -> int:
 AI_DUEL = {
     "wPlayerDuelistType": 0xC2F1, "wOpponentDuelistType": 0xC3F1,
     "wDuelType": 0xCC09, "wOpponentDeckID": 0xCC0E, "wIsPracticeDuel": 0xCC13,
-    "wNPCDuelDeckID": 0xCC19, "wPlayerDeck": 0xC400,
+    "wNPCDuelDeckID": 0xCC19, "wPlayerDeck": 0xC400, "wOpponentDeck": 0xC480,
     "wDuelInitialPrizes": 0xCC08, "wRNG1": 0xCACA, "wRNG2": 0xCACB,
 }
 DUELIST_TYPE_AI_OPP = 0x80
@@ -1626,7 +1626,8 @@ def ai_duel(name: str, *, base: str, at: int, deck: int, seed: int | None, prize
 def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goal: str,
               then: list[str] | None = None, discard: list[str] | None = None,
               poke_at: int | None = None, status: int | None = None, stage: int | None = None,
-              opponent_discard: list[str] | None = None) -> int:
+              opponent_discard: list[str] | None = None,
+              opponent_cards: list[int] | None = None) -> int:
     """A player-controlled duel against deck `deck`'s AI with `cards` as the
     player's deck: the base's input through `at` and the pokes, nothing
     more. A coverage search seeded from it presses the buttons."""
@@ -1641,6 +1642,11 @@ def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goa
     pokes.setdefault(at, []).extend([(AI_DUEL["wOpponentDuelistType"], kind), (AI_DUEL["wDuelType"], 0),
                                      (AI_DUEL["wOpponentDeckID"], deck), (AI_DUEL["wIsPracticeDuel"], 0)])
     pokes[at].extend((AI_DUEL["wPlayerDeck"] + index, card) for index, card in enumerate(cards))
+    if opponent_cards:
+        if len(opponent_cards) != DECK_SIZE:
+            raise SessionError(f"--opponent-cards needs {DECK_SIZE} card ids")
+        pokes[at].extend((AI_DUEL["wOpponentDeck"] + index, card)
+                         for index, card in enumerate(opponent_cards))
     if discard:
         import effects
 
@@ -1974,6 +1980,8 @@ def main(argv: list[str] | None = None) -> int:
                              help="ordinal the discard pile is poked at, after the deal")
     seed_parser.add_argument("--opponent-discard", default="",
                              help="card id names to relocate into the opponent's discard pile")
+    seed_parser.add_argument("--opponent-cards", type=Path, default=None,
+                             help="deck file of 60 card ids the AI plays instead of its own")
     seed_parser.add_argument("--status", type=int, default=None,
                              help="DUELVARS_ARENA_CARD_STATUS value for the player's arena card")
     seed_parser.add_argument("--stage", type=int, default=None,
@@ -2038,7 +2046,8 @@ def main(argv: list[str] | None = None) -> int:
                              then=[label for label in args.then.split(",") if label],
                              discard=[card for card in args.discard.split(",") if card],
                              poke_at=args.poke_at, status=args.status, stage=args.stage,
-                             opponent_discard=[card for card in args.opponent_discard.split(",") if card])
+                             opponent_discard=[card for card in args.opponent_discard.split(",") if card],
+                             opponent_cards=load_cards(args.opponent_cards) if args.opponent_cards else None)
         if args.command == "board-seed":
             return board_seed(args.name, card=args.card, attack=args.attack, base=args.base,
                               at=args.at, deck=args.deck, poke_at=args.poke_at, goal=args.goal,
