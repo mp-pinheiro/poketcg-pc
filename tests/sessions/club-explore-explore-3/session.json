@@ -1,0 +1,10 @@
+{
+  "derived_from": "club-explore",
+  "goal": "Coverage search from club-explore: 1 routines no session had executed (OpenInPlayAreaScreen_NonTurnHolderPlayArea)",
+  "input_sha256": "3cf924b5459636a09eb4f6e397943431ef7854e5613acde6dded9afba93f9d09",
+  "name": "club-explore-explore-3",
+  "ordinals": 153275,
+  "recorded": "2026-09-11T23:50:29+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-club-explore/scripts/s02-A-1.txt"
+}
