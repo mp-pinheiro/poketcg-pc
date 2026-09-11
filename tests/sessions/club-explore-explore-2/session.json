@@ -1,0 +1,10 @@
+{
+  "derived_from": "club-explore",
+  "goal": "Coverage search from club-explore: 1 routines no session had executed (HandleSpecialDuelMainSceneHotkeys)",
+  "input_sha256": "9b08d9444b7f2d5a7ef8060ea4169fb34e1605c5d45b4f373574fe56e25f47f8",
+  "name": "club-explore-explore-2",
+  "ordinals": 149387,
+  "recorded": "2026-09-11T23:47:15+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-club-explore/scripts/s01-SELECT-1.txt"
+}
