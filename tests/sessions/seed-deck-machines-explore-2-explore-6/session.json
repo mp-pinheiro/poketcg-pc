@@ -1,0 +1,10 @@
+{
+  "derived_from": "seed-deck-machines-explore-2",
+  "goal": "Coverage search from seed-deck-machines-explore-2: 1 routines no session had executed (CheckIfCurDeckIsValid)",
+  "input_sha256": "10d9bca820cec4c08f2b978c7051341a2df53c4aaa0a401918840e44e1894473",
+  "name": "seed-deck-machines-explore-2-explore-6",
+  "ordinals": 6616,
+  "recorded": "2026-09-11T22:21:46+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-seed-deck-machines-explore-2/scripts/s02-STARTx5-1.txt"
+}
