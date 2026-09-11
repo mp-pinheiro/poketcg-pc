@@ -1635,7 +1635,7 @@ void PrintCardSelectionList(void)
 			LoadCardDataToBuffer1_FromCardID(card_id);
 			CopyCardNameAndLevelResult name = CopyCardNameAndLevel(14u, b, c, d, card_id);
 			AppendOwnedCardCountNumber(name.hl, card_id);
-			InitTextPrinting(d, card_id);
+			InitTextPrinting(d, e);
 			uint16_t text = wDefaultText_ADDR;
 			ProcessText(&text);
 		} else {

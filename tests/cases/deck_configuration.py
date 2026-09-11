@@ -755,9 +755,14 @@ CASES["RemoveCardFromDeckAndUpdateCount"] = [
 # >>> factory PrintCardSelectionList
 CONTRACT["PrintCardSelectionList"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["PrintCardSelectionList"] = [
-    {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x00", 0xCECB: b"\x00", 0xCEDA: b"\x00"}, "read": {0xCECD: 1}, "vread": {0: {0x9833: 1, 0x9873: 1}}},
-    {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x01", 0xCECB: b"\x00", 0xCEDA: b"\x00\x01"}, "read": {0xCECD: 1}, "vread": {0: {0x9833: 1, 0x9873: 1}}},
-    dict(POISON, wram={0xCED0: b"\x03\x04", 0xCEA1: b"\x01", 0xCECB: b"\x00", 0xCEDA: b"\x00\x01"}, read={0xCECD: 1}, vread={0: {0x9833: 1, 0x9873: 1}}),
+    {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x00", 0xCECB: b"\x00", 0xCEDA: b"\x00"}, "read": {0xCECD: 1}, "vread": {0: {0x9833: 1, 0x9873: 1, 0x9864: 10, 0x98A4: 10}}},
+    {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x01", 0xCECB: b"\x00", 0xCEDA: b"\x00\x01"}, "read": {0xCECD: 1}, "vread": {0: {0x9833: 1, 0x9873: 1, 0x9864: 10, 0x98A4: 10}}},
+    dict(POISON, wram={0xCED0: b"\x03\x04", 0xCEA1: b"\x01", 0xCECB: b"\x00", 0xCEDA: b"\x00\x01"}, read={0xCECD: 1}, vread={0: {0x9833: 1, 0x9873: 1, 0x9864: 10, 0x98A4: 10}}),
+    {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x00", 0xCECB: b"\x02",
+              0xCEDA: b"\x01\x02\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xCECD: 1}, "vread": {0: {0x9864: 12, 0x98A4: 12}},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory PrintCardSelectionList
 
@@ -1516,9 +1521,9 @@ MUTATIONS["RemoveCardFromDeckAndUpdateCount"] = {"source_symbol": "RemoveCardFro
 # >>> factory-mutation PrintCardSelectionList
 MUTATIONS["PrintCardSelectionList"] = {
     "source_symbol": "PrintCardSelectionList",
-    "before": "\t\ttile = SYM_CURSOR_U;",
-    "after": "\t\ttile = SYM_CURSOR_D;",
-    "case_ids": ["PrintCardSelectionList-1", "PrintCardSelectionList-2"],
+    "before": "\t\t\tAppendOwnedCardCountNumber(name.hl, card_id);\n\t\t\tInitTextPrinting(d, e);",
+    "after": "\t\t\tAppendOwnedCardCountNumber(name.hl, card_id);\n\t\t\tInitTextPrinting(d, (uint8_t)(e + 2u));",
+    "case_ids": ["PrintCardSelectionList-3"],
 }
 # <<< factory-mutation PrintCardSelectionList
 # >>> factory-mutation PrintFilteredCardSelectionList
