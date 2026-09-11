@@ -296,6 +296,9 @@
   "effect-marowak-lv26-2": {
     "confirmed_ordinal": 32288
   },
+  "effect-marowak-lv32-2": {
+    "confirmed_ordinal": 69632
+  },
   "effect-mew-lv15-1": {
     "confirmed_ordinal": 29480
   },
@@ -317,6 +320,12 @@
   "effect-nidoking-1-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-nidoking-2-seed": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-nidorina-2": {
+    "confirmed_ordinal": 30464
+  },
   "effect-ninetales-lv32-1": {
     "confirmed_ordinal": 29816
   },
@@ -325,6 +334,9 @@
   },
   "effect-oddish-2": {
     "confirmed_ordinal": 29984
+  },
+  "effect-pidgeot-lv38-2-seed": {
+    "confirmed_ordinal": 23227
   },
   "effect-pidgeotto-2": {
     "confirmed_ordinal": 29312
