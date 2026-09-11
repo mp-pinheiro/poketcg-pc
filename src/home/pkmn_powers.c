@@ -440,17 +440,13 @@ HandleAIDamageSwapResult HandleAIDamageSwap(uint8_t f)
 /* >>> factory HandleAIHeal */
 HandleAIHealResult HandleAIHeal(uint8_t c)
 {
-	uint8_t copy_length = PKMN_CARD_DATA_LENGTH;
-	if (copy_length == PKMN_CARD_DATA_LENGTH)
-		hTemp_ffa0 = c;
-	else
-		hTemp_ffa0 = 0u;
+	hTemp_ffa0 = c;
 	CardDamageResult arena = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
 	if (arena.a != 0u) {
 		hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
 		CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(PLAY_AREA_ARENA, arena.f, 0u, arena.c, 0u, PLAY_AREA_ARENA, 0u);
 		if (!(ko.f & 0x10u))
-			return (HandleAIHealResult){PLAY_AREA_ARENA, ko.f};
+			goto heal_arena;
 		uint8_t damage = ko.a;
 		uint8_t hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a;
 		uint8_t remaining = GetCardDamageAndMaxHP(PLAY_AREA_ARENA).a;
@@ -460,12 +456,13 @@ HandleAIHealResult HandleAIHeal(uint8_t c)
 		uint8_t after = (uint8_t)(hp + heal - damage);
 		if (after == 0u || (uint8_t)(hp + heal) < damage)
 			goto check_bench;
+heal_arena:
 		hTempCardIndex_ff9f = gb_read8(0xce08u);
 		(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
 		hPlayAreaEffectTarget = PLAY_AREA_ARENA;
 		(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
 		AIMakeDecisionResult result = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
-		return (HandleAIHealResult){OPPACTION_DUEL_MAIN_SCENE, result.f};
+		return (HandleAIHealResult){result.a, result.f};
 	}
 check_bench:
 	{
@@ -483,7 +480,7 @@ check_bench:
 		hPlayAreaEffectTarget = best_location;
 		(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
 		AIMakeDecisionResult result = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
-		return (HandleAIHealResult){OPPACTION_DUEL_MAIN_SCENE, result.f};
+		return (HandleAIHealResult){result.a, result.f};
 	}
 }
 /* <<< factory HandleAIHeal */

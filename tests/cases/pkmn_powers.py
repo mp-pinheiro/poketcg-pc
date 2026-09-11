@@ -1,3 +1,4 @@
+from tests.cases._fixtures import ai_heal_fixture as _ai_heal_fixture, AI_HEAL_REGS as _AI_HEAL_REGS
 from tests.cases._fixtures import strange_behavior_fixture as _strange_behavior_fixture, STRANGE_BEHAVIOR_REGS as _STRANGE_BEHAVIOR_REGS
 from tests.cases._fixtures import energy_trans_fixture as _energy_trans_fixture, ENERGY_TRANS_REGS as _ENERGY_TRANS_REGS
 from tests.cases._fixtures import AI_PKMN_POWERS_REGS, ai_pkmn_powers_fixture
@@ -126,7 +127,8 @@ CASES["HandleAIHeal"] = [
     {"c": 1, "wram": {0xFF97: b"\xC2", 0xC200: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\xC9", 0xC2EF: b"\x01"}, "read": {0xFFA0: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
     {"c": 0xE4, "wram": {0xFF97: b"\xC2", 0xC200: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\xC9", 0xC2EF: b"\x01"}, "read": {0xFFA0: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, c=0xCC, wram={0xFF97: b"\xC2", 0xC200: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\xC9", 0xC2EF: b"\x01"}, read={0xFFA0: 1}, instruction_budget=20000000, cycle_budget=80000000),
-    {"c": 1, "wram": {0xFF97: b"\xC2", 0xC200: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\xC9", 0xC2EF: b"\x01"}, "read": {0xFFA0: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000}
+    {"c": 1, "wram": {0xFF97: b"\xC2", 0xC200: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\xC9", 0xC2EF: b"\x01"}, "read": {0xFFA0: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(_ai_heal_fixture(vram=False, bank=8), **_AI_HEAL_REGS, instruction_budget=20000000, cycle_budget=80000000)
 ]
 # <<< factory HandleAIHeal
 
@@ -224,7 +226,7 @@ MUTATIONS["HandleAIDamageSwap"] = {
 }
 # <<< factory-mutation HandleAIDamageSwap
 # >>> factory-mutation HandleAIHeal
-MUTATIONS["HandleAIHeal"] = {"source_symbol": "HandleAIHeal", "before": "\tuint8_t copy_length = PKMN_CARD_DATA_LENGTH;", "after": "\tuint8_t copy_length = 0x40u;", "case_ids": ["HandleAIHeal-1", "HandleAIHeal-2", "HandleAIHeal-4"]}
+MUTATIONS["HandleAIHeal"] = {"source_symbol": "HandleAIHeal", "before": "\t\t\tgoto heal_arena;", "after": "\t\t\treturn (HandleAIHealResult){PLAY_AREA_ARENA, ko.f};", "case_ids": ["HandleAIHeal-5"]}
 # <<< factory-mutation HandleAIHeal
 # >>> factory-mutation HandleAIPkmnPowers
 MUTATIONS["HandleAIPkmnPowers"] = {"source_symbol": "HandleAIPkmnPowers", "before": "\treturn (HandleAIPkmnPowersResult){c, 0xC0u};", "after": "\treturn (HandleAIPkmnPowersResult){c, 0x80u};", "case_ids": ["HandleAIPkmnPowers-0"]}

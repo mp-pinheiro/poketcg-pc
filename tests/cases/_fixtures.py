@@ -765,6 +765,14 @@ def color_name_fixture(vram: bool = True, bank: int | None = None, **changes: by
     return COLOR_NAME.case(vram=vram, bank=bank, **changes)
 
 
+AI_HEAL = Fixture("effect-vileplume-1-aiheal-entry")
+AI_HEAL_REGS = AI_HEAL.regs
+
+
+def ai_heal_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return AI_HEAL.case(vram=vram, bank=bank, **changes)
+
+
 AI_POWER_EFFECT = Fixture("ai-duel-24-power-effect-entry")
 AI_POWER_EFFECT_REGS = AI_POWER_EFFECT.regs
 
