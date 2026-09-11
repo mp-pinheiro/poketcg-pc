@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-lickitung-2-board",
+  "goal": "Board-seeded duel: LICKITUNG attack 2 (LickitungSupersonicEffect)",
+  "input_sha256": "cc69816c8843bbf8addd1675552eccfca898b835436c3c0afa8ffe5745063386",
+  "name": "effect-lickitung-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T11:53:22+00:00",
+  "schema": 1,
+  "script": "/tmp/board-lickitung-2.txt"
+}

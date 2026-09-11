@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-kakuna-1-board",
+  "goal": "Board-seeded duel: KAKUNA attack 1 (KakunaStiffenEffect)",
+  "input_sha256": "f8fe5f291e11d7bdbd273782fd9153587130641c550fcc9796fd7d5c66a0f48d",
+  "name": "effect-kakuna-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T11:53:22+00:00",
+  "schema": 1,
+  "script": "/tmp/board-kakuna-1.txt"
+}

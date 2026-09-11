@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-dragonite-lv41-1-board",
+  "goal": "Board-seeded duel: DRAGONITE_LV41 attack 1 (HealingWind_InitialEffect)",
+  "input_sha256": "aea564b5e06e6827e1b07b64c2cd65fa020fb18ef3b659e751e1470cd12c7256",
+  "name": "effect-dragonite-lv41-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T11:53:21+00:00",
+  "schema": 1,
+  "script": "/tmp/board-dragonite-lv41-1.txt"
+}

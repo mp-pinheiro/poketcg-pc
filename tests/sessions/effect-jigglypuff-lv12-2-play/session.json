@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-jigglypuff-lv12-2-board",
+  "goal": "Board-seeded duel: JIGGLYPUFF_LV12 attack 2 (JigglypuffDoubleEdgeEffect)",
+  "input_sha256": "3579dfde10fcc3a8456c089f4c8fc8b99f24d0875bd5ff02490cf6f2be46ddaa",
+  "name": "effect-jigglypuff-lv12-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T11:53:22+00:00",
+  "schema": 1,
+  "script": "/tmp/board-jigglypuff-lv12-2.txt"
+}

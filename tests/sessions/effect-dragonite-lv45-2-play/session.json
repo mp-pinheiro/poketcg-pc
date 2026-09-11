@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-dragonite-lv45-2-board",
+  "goal": "Board-seeded duel: DRAGONITE_LV45 attack 2 (DragoniteLv45Slam_MultiplierEffect)",
+  "input_sha256": "f2618093a66a1385ec560dcd12668b9bfff8d812a2567429f757e66fe59358a9",
+  "name": "effect-dragonite-lv45-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T11:53:21+00:00",
+  "schema": 1,
+  "script": "/tmp/board-dragonite-lv45-2.txt"
+}

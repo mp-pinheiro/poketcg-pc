@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-hypno-1-board",
+  "goal": "Board-seeded duel: HYPNO attack 1 (Prophecy_PlayerSelectEffect)",
+  "input_sha256": "1b07dda6dedd037af7f5856b4672b9c2b4e1e6d2604866c447898758640538cc",
+  "name": "effect-hypno-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T11:53:22+00:00",
+  "schema": 1,
+  "script": "/tmp/board-hypno-1.txt"
+}

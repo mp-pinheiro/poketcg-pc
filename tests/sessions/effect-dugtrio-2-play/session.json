@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-dugtrio-2-board",
+  "goal": "Board-seeded duel: DUGTRIO attack 2 (EarthquakeEffect)",
+  "input_sha256": "0fc32680436745935096b8b2f2b5c85c15eccc1bf4832c7d573c8c9c8dd5a436",
+  "name": "effect-dugtrio-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T11:53:21+00:00",
+  "schema": 1,
+  "script": "/tmp/board-dugtrio-2.txt"
+}

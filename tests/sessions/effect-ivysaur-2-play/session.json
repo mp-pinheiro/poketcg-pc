@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-ivysaur-2-board",
+  "goal": "Board-seeded duel: IVYSAUR attack 2 (IvysaurPoisonPowder_AIEffect)",
+  "input_sha256": "d292407647ad053b552be590ee12b28bed99adb6b5bac30336680667fc6d44a4",
+  "name": "effect-ivysaur-2-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T11:53:22+00:00",
+  "schema": 1,
+  "script": "/tmp/board-ivysaur-2.txt"
+}

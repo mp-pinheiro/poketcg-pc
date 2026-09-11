@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-kabutops-2-board",
+  "goal": "Board-seeded duel: KABUTOPS attack 2 (AbsorbEffect)",
+  "input_sha256": "3b26dabf704fc3c39efbc2472b9cd118893f39a0a73318f6ce125e844c11f4d4",
+  "name": "effect-kabutops-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T11:53:22+00:00",
+  "schema": 1,
+  "script": "/tmp/board-kabutops-2.txt"
+}

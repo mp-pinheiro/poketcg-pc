@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-exeggutor-2-board",
+  "goal": "Board-seeded duel: EXEGGUTOR attack 2 (BigEggsplosion_MultiplierEffect)",
+  "input_sha256": "3e9ece979afaaa3a1850f99fc5b9f08fe955630da1ad1cd16fd80f12e38d4e2f",
+  "name": "effect-exeggutor-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T11:53:21+00:00",
+  "schema": 1,
+  "script": "/tmp/board-exeggutor-2.txt"
+}

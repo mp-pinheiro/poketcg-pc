@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-golem-2-board",
+  "goal": "Board-seeded duel: GOLEM attack 2 (GolemSelfdestructEffect)",
+  "input_sha256": "73cbd7aa02707262664b3f2c4921f33cc5c7cafc4f7ac29a8f3791ac8c7e8734",
+  "name": "effect-golem-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T11:53:21+00:00",
+  "schema": 1,
+  "script": "/tmp/board-golem-2.txt"
+}

@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-graveler-1-board",
+  "goal": "Board-seeded duel: GRAVELER attack 1 (GravelerHardenEffect)",
+  "input_sha256": "d1e1d194f1e0f13abe8e6e4a476ea85fbef565f283970bb125406b3b917122c3",
+  "name": "effect-graveler-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T11:53:22+00:00",
+  "schema": 1,
+  "script": "/tmp/board-graveler-1.txt"
+}

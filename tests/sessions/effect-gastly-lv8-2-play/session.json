@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-gastly-lv8-2-board",
+  "goal": "Board-seeded duel: GASTLY_LV8 attack 2 (DestinyBond_DestinyBondEffect)",
+  "input_sha256": "4746534e7ff2873487969be38b823b3586df9ce75ec62c20065ec78d6ec9a213",
+  "name": "effect-gastly-lv8-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T11:53:21+00:00",
+  "schema": 1,
+  "script": "/tmp/board-gastly-lv8-2.txt"
+}

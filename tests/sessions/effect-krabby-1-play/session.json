@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-krabby-1-board",
+  "goal": "Board-seeded duel: KRABBY attack 1 (KrabbyCallForFamily_PlayerSelectEffect)",
+  "input_sha256": "8aa0d0225e29c07b4d2e94ec66f363c8286503dc8956c7075547a0e22f4b6983",
+  "name": "effect-krabby-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T11:53:22+00:00",
+  "schema": 1,
+  "script": "/tmp/board-krabby-1.txt"
+}

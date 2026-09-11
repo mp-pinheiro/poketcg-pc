@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-flareon-lv28-2-board",
+  "goal": "Board-seeded duel: FLAREON_LV28 attack 2 (FlareonFlamethrower_PlayerSelectEffect)",
+  "input_sha256": "9d948739c74da7e4b0092ca6d05dfb0c63ec2557243c1382289f77a5eb67f164",
+  "name": "effect-flareon-lv28-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T11:53:21+00:00",
+  "schema": 1,
+  "script": "/tmp/board-flareon-lv28-2.txt"
+}

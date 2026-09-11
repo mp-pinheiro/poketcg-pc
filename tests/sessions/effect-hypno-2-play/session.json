@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-hypno-2-board",
+  "goal": "Board-seeded duel: HYPNO attack 2 (HypnoDarkMind_PlayerSelectEffect)",
+  "input_sha256": "eeccefa60b3cf9f1a05beef3bddde466bfa873440984e6e28472d0ff04f89bef",
+  "name": "effect-hypno-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T11:53:22+00:00",
+  "schema": 1,
+  "script": "/tmp/board-hypno-2.txt"
+}

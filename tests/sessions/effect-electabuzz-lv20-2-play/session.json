@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-electabuzz-lv20-2-board",
+  "goal": "Board-seeded duel: ELECTABUZZ_LV20 attack 2 (ElectabuzzQuickAttack_DamageBoostEffect)",
+  "input_sha256": "5d037880dd209e5358ba4b8b6b930a31af2468567ee79bff4bd7357103f586ba",
+  "name": "effect-electabuzz-lv20-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T11:53:21+00:00",
+  "schema": 1,
+  "script": "/tmp/board-electabuzz-lv20-2.txt"
+}

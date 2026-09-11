@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-kabuto-1-board",
+  "goal": "Board-seeded duel: KABUTO attack 1 (KabutoArmorEffect)",
+  "input_sha256": "785fe18a9054a3c280d2511288ab43ad0a714103132f023354bc2fc2d68313ce",
+  "name": "effect-kabuto-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T11:53:22+00:00",
+  "schema": 1,
+  "script": "/tmp/board-kabuto-1.txt"
+}

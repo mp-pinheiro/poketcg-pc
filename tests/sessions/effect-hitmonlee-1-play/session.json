@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-hitmonlee-1-board",
+  "goal": "Board-seeded duel: HITMONLEE attack 1 (StretchKick_PlayerSelectEffect)",
+  "input_sha256": "114a75f0f317c75494ede8e96236248566a1846ded0bfa3760199811c83cfb49",
+  "name": "effect-hitmonlee-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T11:53:22+00:00",
+  "schema": 1,
+  "script": "/tmp/board-hitmonlee-1.txt"
+}

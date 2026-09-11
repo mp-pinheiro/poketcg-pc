@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-dragonite-lv41-2-board",
+  "goal": "Board-seeded duel: DRAGONITE_LV41 attack 2 (DragoniteLv41Slam_AIEffect)",
+  "input_sha256": "a7328cfbdeb0ba2604cda53f01f0c3de27c534910b48b2244ba41e27d92d65ab",
+  "name": "effect-dragonite-lv41-2-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T11:53:21+00:00",
+  "schema": 1,
+  "script": "/tmp/board-dragonite-lv41-2.txt"
+}

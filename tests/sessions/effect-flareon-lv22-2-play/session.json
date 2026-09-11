@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-flareon-lv22-2-board",
+  "goal": "Board-seeded duel: FLAREON_LV22 attack 2 (FlareonRage_AIEffect)",
+  "input_sha256": "601b64c38a45043d0d1e3d36a73add54b5ba9412bf2a0385a562e6561e771159",
+  "name": "effect-flareon-lv22-2-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T11:53:21+00:00",
+  "schema": 1,
+  "script": "/tmp/board-flareon-lv22-2.txt"
+}

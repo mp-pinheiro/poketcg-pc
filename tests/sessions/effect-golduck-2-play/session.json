@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-golduck-2-board",
+  "goal": "Board-seeded duel: GOLDUCK attack 2 (GolduckHyperBeam_PlayerSelectEffect)",
+  "input_sha256": "1b03574c8cda8c722e4083f8b2e6bb4228c99dd7e51154a8ee8481a936e76284",
+  "name": "effect-golduck-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T11:53:21+00:00",
+  "schema": 1,
+  "script": "/tmp/board-golduck-2.txt"
+}

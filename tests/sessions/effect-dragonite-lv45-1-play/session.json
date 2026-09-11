@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-dragonite-lv45-1-board",
+  "goal": "Board-seeded duel: DRAGONITE_LV45 attack 1 (StepIn_BenchCheck)",
+  "input_sha256": "ac52f99c3490cba5ce66b32e211d744e44f8c0336e9344f09087bcc745e85679",
+  "name": "effect-dragonite-lv45-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T11:53:21+00:00",
+  "schema": 1,
+  "script": "/tmp/board-dragonite-lv45-1.txt"
+}

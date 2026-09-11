@@ -434,23 +434,59 @@
   "effect-dragonair-2-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-dragonite-lv41-1-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-dragonite-lv41-1-play": {
+    "confirmed_ordinal": 29131
+  },
   "effect-dragonite-lv41-1-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-dragonite-lv41-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-dragonite-lv41-2-play": {
+    "confirmed_ordinal": 29131
   },
   "effect-dragonite-lv41-2-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-dragonite-lv45-1-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-dragonite-lv45-1-play": {
+    "confirmed_ordinal": 29131
+  },
   "effect-dragonite-lv45-1-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-dragonite-lv45-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-dragonite-lv45-2-play": {
+    "confirmed_ordinal": 29155
+  },
   "effect-dragonite-lv45-2-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-dugtrio-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-dugtrio-2-play": {
+    "confirmed_ordinal": 29155
   },
   "effect-dugtrio-2-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-electabuzz-lv20-2": {
     "confirmed_ordinal": 28088
+  },
+  "effect-electabuzz-lv20-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-electabuzz-lv20-2-play": {
+    "confirmed_ordinal": 29155
   },
   "effect-electabuzz-lv20-2-seed": {
     "confirmed_ordinal": 23227
@@ -488,14 +524,32 @@
   "effect-exeggutor-1-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-exeggutor-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-exeggutor-2-play": {
+    "confirmed_ordinal": 29155
+  },
   "effect-exeggutor-2-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-fearow-1": {
     "confirmed_ordinal": 48800
   },
+  "effect-flareon-lv22-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-flareon-lv22-2-play": {
+    "confirmed_ordinal": 29131
+  },
   "effect-flareon-lv22-2-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-flareon-lv28-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-flareon-lv28-2-play": {
+    "confirmed_ordinal": 29155
   },
   "effect-flareon-lv28-2-seed": {
     "confirmed_ordinal": 23227
@@ -515,6 +569,12 @@
   "effect-gastly-lv17-2-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-gastly-lv8-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-gastly-lv8-2-play": {
+    "confirmed_ordinal": 29155
+  },
   "effect-gastly-lv8-2-seed": {
     "confirmed_ordinal": 23227
   },
@@ -523,6 +583,12 @@
   },
   "effect-gengar-1-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-gengar-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-gengar-2-play": {
+    "confirmed_ordinal": 29155
   },
   "effect-gengar-2-seed": {
     "confirmed_ordinal": 23227
@@ -536,14 +602,38 @@
   "effect-golbat-2": {
     "confirmed_ordinal": 47024
   },
+  "effect-golduck-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-golduck-2-play": {
+    "confirmed_ordinal": 29155
+  },
   "effect-golduck-2-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-golem-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-golem-2-play": {
+    "confirmed_ordinal": 29155
   },
   "effect-golem-2-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-graveler-1-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-graveler-1-play": {
+    "confirmed_ordinal": 29131
+  },
   "effect-graveler-1-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-grimer-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-grimer-2-play": {
+    "confirmed_ordinal": 29155
   },
   "effect-grimer-2-seed": {
     "confirmed_ordinal": 23227
@@ -560,11 +650,29 @@
   "effect-hitmonlee-1": {
     "confirmed_ordinal": 29312
   },
+  "effect-hitmonlee-1-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-hitmonlee-1-play": {
+    "confirmed_ordinal": 29131
+  },
   "effect-hitmonlee-1-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-hypno-1-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-hypno-1-play": {
+    "confirmed_ordinal": 29131
+  },
   "effect-hypno-1-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-hypno-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-hypno-2-play": {
+    "confirmed_ordinal": 29155
   },
   "effect-hypno-2-seed": {
     "confirmed_ordinal": 23227
@@ -581,11 +689,23 @@
   "effect-item-finder-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-ivysaur-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-ivysaur-2-play": {
+    "confirmed_ordinal": 29131
+  },
   "effect-ivysaur-2-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-jigglypuff-lv12-1": {
     "confirmed_ordinal": 28136
+  },
+  "effect-jigglypuff-lv12-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-jigglypuff-lv12-2-play": {
+    "confirmed_ordinal": 29155
   },
   "effect-jigglypuff-lv12-2-seed": {
     "confirmed_ordinal": 23227
@@ -593,8 +713,20 @@
   "effect-jolteon-lv24-1-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-kabuto-1-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-kabuto-1-play": {
+    "confirmed_ordinal": 29131
+  },
   "effect-kabuto-1-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-kabutops-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-kabutops-2-play": {
+    "confirmed_ordinal": 29155
   },
   "effect-kabutops-2-seed": {
     "confirmed_ordinal": 23227
@@ -605,8 +737,20 @@
   "effect-kadabra-1-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-kakuna-1-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-kakuna-1-play": {
+    "confirmed_ordinal": 29131
+  },
   "effect-kakuna-1-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-kakuna-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-kakuna-2-play": {
+    "confirmed_ordinal": 29131
   },
   "effect-kakuna-2-seed": {
     "confirmed_ordinal": 23227
@@ -617,6 +761,12 @@
   "effect-krabby-1": {
     "confirmed_ordinal": 29144
   },
+  "effect-krabby-1-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-krabby-1-play": {
+    "confirmed_ordinal": 29131
+  },
   "effect-krabby-1-seed": {
     "confirmed_ordinal": 23227
   },
@@ -625,6 +775,12 @@
   },
   "effect-lass-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-lickitung-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-lickitung-2-play": {
+    "confirmed_ordinal": 29155
   },
   "effect-lickitung-2-seed": {
     "confirmed_ordinal": 23227

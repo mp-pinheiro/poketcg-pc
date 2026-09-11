@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-grimer-2-board",
+  "goal": "Board-seeded duel: GRIMER attack 2 (GrimerMinimizeEffect)",
+  "input_sha256": "2e7bb0706564ff75d862ded80a56ba494e1f1b3fdc73350c8698daeb8d0ee8b0",
+  "name": "effect-grimer-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T11:53:22+00:00",
+  "schema": 1,
+  "script": "/tmp/board-grimer-2.txt"
+}
