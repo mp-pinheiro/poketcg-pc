@@ -461,6 +461,24 @@ def explore_seed(seed: str, *, budget: int, digest: str) -> tuple[str, str, str]
     return seed, "explored", f"new={data['new']} entries={data.get('corpus_entries', 0)} seconds={data['seconds']}"
 
 
+def distinct_prefixes(ledger: dict[str, Any], ranked: list[str], limit: int) -> list[str]:
+    """One seed per replayed prefix. Every `effect-*` seed is the same
+    practice-win branch with a different deck, so two of them search the same
+    screens and the second's discoveries are all duplicates the intake drops."""
+    picked: list[str] = []
+    seen: set[str] = set()
+    for name in ranked:
+        entry = ledger["sessions"][name]
+        family = entry.get("seed") or name
+        if family in seen:
+            continue
+        seen.add(family)
+        picked.append(name)
+        if len(picked) >= limit:
+            break
+    return picked
+
+
 def discover(seeds: list[str], *, budget: int, jobs: int, limit: int) -> int:
     ledger = load_ledger()
     digest = executed_digest(ledger)
@@ -469,9 +487,8 @@ def discover(seeds: list[str], *, budget: int, jobs: int, limit: int) -> int:
         raise CoverageError(f"not in the ledger: {', '.join(unknown)}")
     if not seeds:
         ranked = [name for name, score in rank_seeds(ledger) if score > 0]
-        seeds = [name for name in ranked if not corpus_current(name, digest)]
-        if limit:
-            seeds = seeds[:limit]
+        fresh = [name for name in ranked if not corpus_current(name, digest)]
+        seeds = distinct_prefixes(ledger, fresh, limit) if limit else fresh
     if not seeds:
         print(f"DISCOVER ledger={digest} seeds=0: every ranked seed has a corpus at this ledger")
         return 0
