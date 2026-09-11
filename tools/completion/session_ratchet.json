@@ -233,7 +233,19 @@
   "effect-butterfree-1-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-butterfree-2": {
+    "confirmed_ordinal": 51824
+  },
+  "effect-chansey-2-seed": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-charizard-1-seed": {
+    "confirmed_ordinal": 23227
+  },
   "effect-charizard-2-seed": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-charmander-2-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-charmeleon-2-seed": {
