@@ -40,6 +40,13 @@ GENERAL_END = 0xB900
 GENERAL_MAGIC = (0x08, 0x00)
 MEDAL_COUNT = 0xB808
 PC_PACKS = 0xB82D
+BUILT_DECKS = 0xA200
+DECK_NAME_SIZE = 24
+DECK_SIZE = 60
+DECK_STRUCT_SIZE = DECK_NAME_SIZE + DECK_SIZE
+NUM_BUILT_DECKS = 4
+SAVED_DECKS = 0xA350
+NUM_SAVED_DECKS = 60
 NUM_PC_PACKS = 15
 EVENT_VARS = 0xB87B
 EVENT_MASKS = re.compile(r"^\s*event_def\s+\$([0-9a-fA-F]+),\s*%([01]{8})")
@@ -131,8 +138,29 @@ def base(name: str, *, source: str, at: int) -> int:
     return 0
 
 
+def deck_name(text: str) -> bytes:
+    """A deck name as the game stores it: halfwidth text, terminated, padded to
+    DECK_NAME_SIZE. A slot whose first byte is zero is an empty slot
+    (deck_machine.asm GetSavedDeckCount), so a seeded deck needs a real name."""
+    body = bytes([0x0E]) + text.upper().encode("ascii")[:DECK_NAME_SIZE - 2]
+    return body + b"\x00" * (DECK_NAME_SIZE - len(body))
+
+
+def write_deck(image: bytearray, slot: int, cards: list[int], name: str,
+               saved: bool = False) -> None:
+    limit = NUM_SAVED_DECKS if saved else NUM_BUILT_DECKS
+    if not 1 <= slot <= limit:
+        raise SaveError(f"deck slot must be 1..{limit}, got {slot}")
+    if len(cards) != DECK_SIZE:
+        raise SaveError(f"a deck wants {DECK_SIZE} card ids, got {len(cards)}")
+    base = offset(SAVED_DECKS if saved else BUILT_DECKS) + (slot - 1) * DECK_STRUCT_SIZE
+    image[base:base + DECK_NAME_SIZE] = deck_name(name)
+    image[base + DECK_NAME_SIZE:base + DECK_STRUCT_SIZE] = bytes(cards)
+
+
 def edit(path: Path, *, out: Path, cards: list[str], events: list[str], medals: int | None,
-         packs: list[str], all_cards: int | None) -> int:
+         packs: list[str], all_cards: int | None, decks: list[str] | None = None,
+         saved_decks: list[str] | None = None) -> int:
     image = bytearray(path.read_bytes())
     if len(image) != 0x8000:
         raise SaveError(f"{path} is {len(image)} bytes, not 32768")
@@ -161,6 +189,20 @@ def edit(path: Path, *, out: Path, cards: list[str], events: list[str], medals: 
         shift = (mask & -mask).bit_length() - 1
         cell = offset(EVENT_VARS) + byte
         image[cell] = (image[cell] & ~mask & 0xFF) | ((int(value, 0) << shift) & mask)
+    for spec in decks or []:
+        slot, _, deck_file = spec.partition("=")
+        if not deck_file:
+            raise SaveError(f"--deck wants SLOT=FILE with a 60-card id file, got {spec}")
+        ids = [int(line.split("#", 1)[0]) for line in Path(deck_file).read_text().splitlines()
+               if line.split("#", 1)[0].strip()]
+        write_deck(image, int(slot, 0), ids, f"SEEDED{slot}")
+    for spec in saved_decks or []:
+        slot, _, deck_file = spec.partition("=")
+        if not deck_file:
+            raise SaveError(f"--saved-deck wants SLOT=FILE with a 60-card id file, got {spec}")
+        ids = [int(line.split("#", 1)[0]) for line in Path(deck_file).read_text().splitlines()
+               if line.split("#", 1)[0].strip()]
+        write_deck(image, int(slot, 0), ids, f"MACHINE{slot}", saved=True)
     seal(image)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_bytes(bytes(image))
@@ -185,6 +227,10 @@ def main(argv: list[str] | None = None) -> int:
     edit_parser.add_argument("--event", action="append", default=[], help="EVENT_X=VALUE")
     edit_parser.add_argument("--medals", type=int)
     edit_parser.add_argument("--pack", action="append", default=[], help="SLOT=PACK id in the PC")
+    edit_parser.add_argument("--deck", action="append", default=[],
+                             help="SLOT=FILE writing a built deck (name plus 60 card ids)")
+    edit_parser.add_argument("--saved-deck", action="append", default=[],
+                             help="SLOT=FILE writing a deck save machine slot")
     show_parser = sub.add_parser("show", help="validate a save image")
     show_parser.add_argument("save", type=Path)
     args = parser.parse_args(argv)
@@ -193,7 +239,8 @@ def main(argv: list[str] | None = None) -> int:
             return base(args.name, source=args.source, at=args.at)
         if args.command == "edit":
             return edit(args.save, out=args.out, cards=args.card, events=args.event, medals=args.medals,
-                        packs=args.pack, all_cards=args.all_cards)
+                        packs=args.pack, all_cards=args.all_cards, decks=args.deck,
+                    saved_decks=args.saved_deck)
         print(json.dumps(validate(args.save.read_bytes()), indent=1))
         return 0
     except (SaveError, session.SessionError, effects.EffectsError, OSError, ValueError) as exc:
