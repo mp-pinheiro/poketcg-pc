@@ -530,6 +530,9 @@
   "effect-persian-2-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-pidgeot-lv38-1": {
+    "confirmed_ordinal": 31136
+  },
   "effect-pidgeot-lv38-2-seed": {
     "confirmed_ordinal": 23227
   },
@@ -538,6 +541,9 @@
   },
   "effect-pidgeotto-2": {
     "confirmed_ordinal": 29312
+  },
+  "effect-pidgey-1-seed": {
+    "confirmed_ordinal": 23227
   },
   "effect-pokemon-breeder-seed": {
     "confirmed_ordinal": 23227
