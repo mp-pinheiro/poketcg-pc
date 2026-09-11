@@ -182,10 +182,16 @@
   "dome-explore": {
     "confirmed_ordinal": 856837
   },
+  "effect-aerodactyl-1-seed": {
+    "confirmed_ordinal": 23227
+  },
   "effect-alakazam-1-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-arbok-1-seed": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-arbok-2-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-arcanine-lv45-1-seed": {
@@ -409,6 +415,9 @@
   },
   "effect-victreebel-1-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-vileplume-1": {
+    "confirmed_ordinal": 28868
   },
   "fighting-club": {
     "confirmed_ordinal": 108594
