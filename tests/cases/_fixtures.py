@@ -354,6 +354,8 @@ FIND_NPC = Fixture("water-club-findnpc-entry")
 FIND_NPC_REGS = FIND_NPC.regs
 TEXT_TILE = Fixture("water-master-placenexttexttile-entry")
 TEXT_TILE_REGS = TEXT_TILE.regs
+HALF_WIDTH_END = Fixture("grass-club-terminate-halfwidth-entry")
+HALF_WIDTH_END_REGS = HALF_WIDTH_END.regs
 
 
 
@@ -639,6 +641,10 @@ def find_npc_fixture(vram: bool = True, bank: int | None = None, **changes: byte
 
 def text_tile_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return TEXT_TILE.case(vram=vram, bank=bank, **changes)
+
+
+def half_width_end_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return HALF_WIDTH_END.case(vram=vram, bank=bank, **changes)
 
 
 PKMN_POWER = Fixture("water-2-pkmnpower-entry")

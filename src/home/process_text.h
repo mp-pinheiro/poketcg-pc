@@ -67,6 +67,6 @@ typedef struct {
 } CopyTextResult;
 CopyTextResult CopyTextData(uint8_t a, uint16_t hl, uint16_t de);
 
-void Func_22ca(uint8_t d, uint8_t e);
+uint8_t Func_22ca(uint8_t d, uint8_t e);
 
 #endif

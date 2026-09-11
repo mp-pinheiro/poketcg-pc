@@ -339,19 +339,20 @@ ProcessTextResult Func_2325(uint8_t d, uint8_t e)
 
 /* Exported: four callers outside this file (print_text.asm:289,
  * deck_machine.asm:970/1002, printer.asm:715). */
-void Func_22ca(uint8_t d, uint8_t e)
+uint8_t Func_22ca(uint8_t d, uint8_t e)
 {
-	if (hffb0 & 1) {
-		Func_235e(d, e);
-		return;
-	}
+	if (hffb0 & 1)
+		return Func_235e(d, e).a;
 	ProcessTextResult out = Func_2325(d, e);
 	if (!(out.f & 0x10)) {
-		if (out.a) return;
+		if (out.a)
+			return out.a;
 		GenerateTextTile(hffa9, out.d, out.e);
 	}
-	if (!(hffb0 & 2))
-		PlaceNextTextTile(gb_read8(hffa9_ADDR));
+	uint8_t gate = (uint8_t)(hffb0 & 2u);
+	if (gate)
+		return gate;
+	return PlaceNextTextTile(gb_read8(hffa9_ADDR)).a;
 }
 
 PlaceTextResult PlaceNextTextTile(uint8_t a)
@@ -377,8 +378,8 @@ ProcessTextResult TerminateHalfWidthText(uint8_t d, uint8_t e, uint16_t hl)
 	 * flag is set on the way out; callers scf on top of it. */
 	if (!wFontWidth || !wHalfWidthPrintState) return text_result(0, d, e, 0x80, hl);
 	uint8_t pair = ' ';
-	Func_22ca(d, pair);
-	return text_result(0, d, e, 0, hl);
+	uint8_t exit_a = Func_22ca(d, pair);
+	return text_result(exit_a, d, e, 0, hl);
 }
 
 /* hTextBGMap0Address is a 16-bit pair at $FFAA/$FFAB; the asm carries the low-byte

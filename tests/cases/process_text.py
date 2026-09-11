@@ -4,6 +4,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 from tests.cases._fixtures import font_tile_fixture as _font_tile_fixture, FONT_TILE_REGS as _FONT_TILE_REGS
 from tests.cases._fixtures import text_tile_fixture as _text_tile_fixture, TEXT_TILE_REGS as _TEXT_TILE_REGS
+from tests.cases._fixtures import half_width_end_fixture as _half_width_end_fixture, HALF_WIDTH_END_REGS as _HALF_WIDTH_END_REGS
 
 CONTRACT = {
     "InitTextFormat": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ()},
@@ -92,7 +93,8 @@ CASES.update({
                                                       0xcd05: b"\x33", 0xc000: b"\x00"})],
     "ProcessSpecialTextCharacter": [{"a": 0, "hl": SRC},
                                      dict(POISON, a=0, hl=SRC)],
-    "TerminateHalfWidthText": [{}, dict(POISON)],
+    "TerminateHalfWidthText": [dict(_half_width_end_fixture(bank=0), **_HALF_WIDTH_END_REGS),
+                               {}, dict(POISON)],
     # Both maintain the generated-tile cache as a linked list over $C6 key1,
     # $C7 key2, $C8 next and $C9 prev, with index 0 reserved as the terminator.
     # Without reading those pages back the list surgery is invisible, so each
@@ -183,3 +185,4 @@ MUTATIONS = {
     },
 }
 MUTATIONS["PlaceNextTextTile"] = {"source_symbol": "PlaceNextTextTile", "before": "\tuint8_t restored_c = (wLCDC & 0x80u) != 0u ? 1u : 0u;", "after": "\tuint8_t restored_c = 0u;", "case_ids": ["PlaceNextTextTile-0", "PlaceNextTextTile-1", "PlaceNextTextTile-2"]}
+MUTATIONS["TerminateHalfWidthText"] = {"source_symbol": "TerminateHalfWidthText", "before": "\tuint8_t exit_a = Func_22ca(d, pair);", "after": "\tuint8_t exit_a = 0u;\n\t(void)Func_22ca(d, pair);", "case_ids": ["TerminateHalfWidthText-0", "TerminateHalfWidthText-1", "TerminateHalfWidthText-2"]}
