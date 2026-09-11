@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-recycle-discard",
+  "goal": "player plays recycle from hand and reaches Recycle_PlayerSelection",
+  "input_sha256": "ea25cc78120bbbe597976840d6d7906d88aafb18265f78b372d904a3681b3e68",
+  "name": "effect-recycle-discard-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T19:48:51+00:00",
+  "schema": 1,
+  "script": "/tmp/final-recycle.txt"
+}

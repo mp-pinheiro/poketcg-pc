@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-energy-retrieval-discard",
+  "goal": "player plays energy-retrieval from hand and reaches EnergyRetrieval_PlayerHandSelection",
+  "input_sha256": "8bbdd13a79f8c7492dc19a618454b22c9a233c2875d83024de9e37ed8ca745d9",
+  "name": "effect-energy-retrieval-discard-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T19:48:51+00:00",
+  "schema": 1,
+  "script": "/tmp/final-energy-retrieval.txt"
+}

@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-revive-discard",
+  "goal": "player plays revive from hand and reaches Revive_PlayerSelection",
+  "input_sha256": "d20fd57f4be6175440b86251628a1e0b2d00f02d389294e367290188b3e043f7",
+  "name": "effect-revive-discard-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T19:48:51+00:00",
+  "schema": 1,
+  "script": "/tmp/final-revive.txt"
+}
