@@ -15,4 +15,5 @@ ScriptNikkiResult Script_Nikki(void);
 typedef struct { uint8_t a; uint8_t f; } PreloadNikkiInGrassClubResult;
 PreloadNikkiInGrassClubResult Preload_NikkiInGrassClub(void);
 /* <<< factory Preload_NikkiInGrassClub */
+#define Script_Nikki_START_SCRIPT 0x67a6u
 #endif /* POKETCG_HOME_GRASS_CLUB_H */

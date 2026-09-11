@@ -38,4 +38,13 @@ void Script_d9c2(void);
 /* >>> factory Script_d9ef */
 void Script_d9ef(void);
 /* <<< factory Script_d9ef */
+#define Script_BeatAaron_START_SCRIPT 0x590bu
+#define Script_d93f_START_SCRIPT 0x5944u
+#define Script_d995_START_SCRIPT 0x599au
+#define Script_d9c2_START_SCRIPT 0x59c7u
+#define Script_d9ef_START_SCRIPT 0x59f4u
+#define Script_da1c_START_SCRIPT 0x5a21u
+#define Script_da49_START_SCRIPT 0x5a4eu
+#define Script_da76_START_SCRIPT 0x5a7bu
+#define Script_daa3_START_SCRIPT 0x5aa8u
 #endif

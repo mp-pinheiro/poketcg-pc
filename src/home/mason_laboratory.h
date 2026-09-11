@@ -33,4 +33,5 @@ MasonLabPressedAResult MasonLabPressedA(uint8_t b, uint8_t c, uint8_t d, uint8_t
 typedef struct { uint8_t a; uint8_t b; uint8_t c; uint16_t hl; } ScriptTech1Result;
 ScriptTech1Result Script_Tech1(void);
 /* <<< factory Script_Tech1 */
+#define Script_Tech1_START_SCRIPT 0x5597u
 #endif /* POKETCG_HOME_MASON_LABORATORY_H */

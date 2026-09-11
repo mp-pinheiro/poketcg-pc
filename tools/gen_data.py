@@ -59,6 +59,19 @@ NATIVE_DATA_SPANS = (
     # effect_functions.asm:1015) copies PKMN_CARD_DATA_LENGTH bytes of the rst
     # vectors at $0000 into the card buffer. The ROM reads them; so does the port.
     ("null_card", 0, 0x0000, 0x41),
+    ("script_bytecode_beat_aaron", 3, 0x590C, 0x22),
+    ("script_bytecode_d93f", 3, 0x5945, 0x27),
+    ("script_bytecode_d995", 3, 0x599B, 0x27),
+    ("script_bytecode_d9c2", 3, 0x59C8, 0x27),
+    ("script_bytecode_d9ef", 3, 0x59F5, 0x27),
+    ("script_bytecode_da1c", 3, 0x5A22, 0x27),
+    ("script_bytecode_da49", 3, 0x5A4F, 0x27),
+    ("script_bytecode_da76", 3, 0x5A7C, 0x27),
+    ("script_bytecode_daa3", 3, 0x5AA9, 0x27),
+    ("script_bytecode_fc7a", 3, 0x7C83, 0x2A),
+    ("script_bytecode_nikki", 3, 0x67A7, 0x2C),
+    ("script_bytecode_tech1", 3, 0x5598, 0x2C),
+    ("script_bytecode_specs2", 3, 0x6BDE, 0x09),
 )
 
 SECTION_RE = re.compile(
