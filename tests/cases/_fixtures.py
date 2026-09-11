@@ -741,6 +741,14 @@ def effect_dispatch_fixture(vram: bool = True, bank: int | None = None, **change
     return EFFECT_DISPATCH.case(vram=vram, bank=bank, **changes)
 
 
+MASON_PRELOAD = Fixture("challenge-machine-preload-drmason-entry")
+MASON_PRELOAD_REGS = MASON_PRELOAD.regs
+
+
+def mason_preload_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return MASON_PRELOAD.case(vram=vram, bank=bank, **changes)
+
+
 AI_POWER_EFFECT = Fixture("ai-duel-24-power-effect-entry")
 AI_POWER_EFFECT_REGS = AI_POWER_EFFECT.regs
 

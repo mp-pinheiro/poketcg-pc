@@ -9,11 +9,6 @@
 #define ENERGY_CARD_LIST_BANK 3u
 #define ENERGY_CARD_LIST_LEN 6u
 #define MASON_LAB_IN_PRACTICE_DUEL 0x01u
-/* EVENT_MASON_LAB_STATE bitfield location (scripting.asm EventVarMasks): byte
- * wEventVars+0x0D, bits 1-3. */
-#define EVENT_MASON_LAB_STATE_BYTE_OFFSET 0x0Du
-#define EVENT_MASON_LAB_STATE_MASK 0x0Eu
-#define EVENT_MASON_LAB_STATE_SHIFT 1u
 
 #include "home/grass_club_entrance.h"
 #define MasonLaboratoryAfterDuelTable 0x5542u
@@ -22,6 +17,7 @@
 #include "home/map.h"
 #include "home/overworld.h"
 #include "home/scripting.h"
+#include "home/map_events.h"
 #define EVENT_MASON_LAB_STATE 0x3Eu
 #define EVENT_RECEIVED_LEGENDARY_CARDS 0x22u
 #define MASON_LAB_RECEIVED_STARTER_DECK 0x03u
@@ -34,13 +30,12 @@
 /* <<< factory statics */
 
 /* >>> factory Preload_DrMason */
-/* mason_laboratory.asm:276-287. Func_d703's SetOWMapEvent branch (unported;
- * map_events.asm) never affects this routine's a/f or wLoadNPCXPos/Y and is
- * not reproduced. */
 PreloadDrMasonResult Preload_DrMason(void)
 {
-	uint8_t event_byte = gb_read8((uint16_t)(wEventVars_ADDR + EVENT_MASON_LAB_STATE_BYTE_OFFSET));
-	uint8_t state = (uint8_t)((event_byte & EVENT_MASON_LAB_STATE_MASK) >> EVENT_MASON_LAB_STATE_SHIFT);
+	if (GetEventValue(EVENT_RECEIVED_LEGENDARY_CARDS) != 0u)
+		(void)SetOWMapEvent(MAP_EVENT_CHALLENGE_MACHINE);
+
+	uint8_t state = GetEventValue(EVENT_MASON_LAB_STATE);
 	uint8_t a = state;
 	uint8_t f = 0x10u;
 

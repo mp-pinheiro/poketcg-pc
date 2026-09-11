@@ -3,6 +3,8 @@
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
+from tests.cases._fixtures import mason_preload_fixture as _mason_preload_fixture, MASON_PRELOAD_REGS as _MASON_PRELOAD_REGS
+
 CONTRACT = {}
 CASES = {}
 
@@ -47,6 +49,7 @@ CASES["Preload_DrMason"] = [
     {"wram": npc_pos(0x02), "read": NPC_POS_READ},
     dict(POISON, wram=npc_pos(0xF2), read=NPC_POS_READ),
     {"wram": npc_pos(0x04), "read": NPC_POS_READ},
+    dict(_mason_preload_fixture(vram=False, bank=1), **_MASON_PRELOAD_REGS),
 ]
 # <<< factory Preload_DrMason
 
@@ -243,10 +246,10 @@ MUTATIONS = {}
 # >>> factory-mutation Preload_DrMason
 MUTATIONS["Preload_DrMason"] = {
     "source_symbol": "Preload_DrMason",
-    "before": "if (state == MASON_LAB_IN_PRACTICE_DUEL) {",
-    "after": "if (state != MASON_LAB_IN_PRACTICE_DUEL) {",
+    "before": "	if (GetEventValue(EVENT_RECEIVED_LEGENDARY_CARDS) != 0u)",
+    "after": "	if (GetEventValue(EVENT_RECEIVED_LEGENDARY_CARDS) == 0u)",
     "case_ids": ["Preload_DrMason-0", "Preload_DrMason-1", "Preload_DrMason-2",
-                 "Preload_DrMason-3", "Preload_DrMason-4"],
+                 "Preload_DrMason-3", "Preload_DrMason-4", "Preload_DrMason-5"],
 }
 # <<< factory-mutation Preload_DrMason
 # >>> factory-mutation Preload_Sam
