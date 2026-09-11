@@ -1,0 +1,10 @@
+{
+  "derived_from": "seed-deck-machines-explore-2",
+  "goal": "Coverage search from seed-deck-machines-explore-2: 8 routines no session had executed (AppendOwnedCardCountNumber, HandlePlayersCardsScreen, PauseMenu_Card, PrintCardSelectionList)",
+  "input_sha256": "5d11832de7af681a033b183836b9f0fd4de14772d37ada2e9a44050dc03bf846",
+  "name": "seed-deck-machines-explore-2-explore-4",
+  "ordinals": 47626,
+  "recorded": "2026-09-11T21:12:42+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-seed-deck-machines-explore-2/scripts/s00-A-8.txt"
+}
