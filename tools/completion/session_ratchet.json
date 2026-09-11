@@ -164,6 +164,15 @@
   "deck-explore": {
     "confirmed_ordinal": 108944
   },
+  "deck-machine-auto": {
+    "confirmed_ordinal": 3714
+  },
+  "deck-machine-fighting": {
+    "confirmed_ordinal": 6400
+  },
+  "deck-machine-water": {
+    "confirmed_ordinal": 6448
+  },
   "dome-1": {
     "confirmed_ordinal": 682246
   },
