@@ -1625,7 +1625,8 @@ def ai_duel(name: str, *, base: str, at: int, deck: int, seed: int | None, prize
 
 def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goal: str,
               then: list[str] | None = None, discard: list[str] | None = None,
-              poke_at: int | None = None) -> int:
+              poke_at: int | None = None, status: int | None = None, stage: int | None = None,
+              opponent_discard: list[str] | None = None) -> int:
     """A player-controlled duel against deck `deck`'s AI with `cards` as the
     player's deck: the base's input through `at` and the pokes, nothing
     more. A coverage search seeded from it presses the buttons."""
@@ -1658,6 +1659,36 @@ def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goa
             [(PLAYER_DUEL_VARS + DUEL_BOARD["locations"] + index, CARD_LOCATION_DISCARD_PILE)
              for index in indices]
             + [(PLAYER_DUEL_VARS + DUEL_BOARD["cards_in_discard"], len(indices))])
+    if opponent_discard:
+        import effects
+
+        if poke_at is None:
+            raise SessionError("--poke-at names the ordinal the discard pile is poked at")
+        data = effects.load_map()["card_data"]
+        ids = {entry["id_name"]: entry["id"] for entry in data.values()}
+        opponent = deck_cards(deck)
+        taken: list[int] = []
+        for discard_card in opponent_discard:
+            if discard_card not in data:
+                raise SessionError(f"{discard_card} is not a card")
+            index = next((i for i, value in enumerate(opponent)
+                          if value == ids[discard_card] and i not in taken), None)
+            if index is None:
+                raise SessionError(f"deck id {deck} does not hold {discard_card}")
+            taken.append(index)
+        pokes.setdefault(poke_at, []).extend(
+            [(OPPONENT_DUEL_VARS + DUEL_BOARD["locations"] + index, CARD_LOCATION_DISCARD_PILE)
+             for index in taken]
+            + [(OPPONENT_DUEL_VARS + DUEL_BOARD["cards_in_discard"], len(taken))])
+    if status is not None or stage is not None:
+        if poke_at is None:
+            raise SessionError("--poke-at names the ordinal the arena card is poked at")
+        if status is not None:
+            pokes.setdefault(poke_at, []).append(
+                (PLAYER_DUEL_VARS + DUEL_BOARD["arena_status"], status))
+        if stage is not None:
+            pokes.setdefault(poke_at, []).append(
+                (PLAYER_DUEL_VARS + DUEL_BOARD["arena_stage"], stage))
     masks = base_masks[:at]
     then = then or []
     if then:
@@ -1682,8 +1713,9 @@ def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goa
 
 DUEL_BOARD = {"locations": 0x00, "not_in_deck": 0xBA, "arena_card": 0xBB, "arena_flags": 0xC2,
               "arena_hp": 0xC8, "arena_stage": 0xCE, "in_play_area": 0xEF, "cards_in_hand": 0xEE,
-              "cards_in_discard": 0xED}
+              "cards_in_discard": 0xED, "arena_status": 0xF0}
 PLAYER_DUEL_VARS = 0xC200
+OPPONENT_DUEL_VARS = 0xC300
 CARD_LOCATION_ARENA = 0x10
 CARD_LOCATION_HAND = 0x01
 CARD_LOCATION_DISCARD_PILE = 0x02
@@ -1940,6 +1972,12 @@ def main(argv: list[str] | None = None) -> int:
                              help="card id names to relocate into the player's discard pile")
     seed_parser.add_argument("--poke-at", type=int, default=None,
                              help="ordinal the discard pile is poked at, after the deal")
+    seed_parser.add_argument("--opponent-discard", default="",
+                             help="card id names to relocate into the opponent's discard pile")
+    seed_parser.add_argument("--status", type=int, default=None,
+                             help="DUELVARS_ARENA_CARD_STATUS value for the player's arena card")
+    seed_parser.add_argument("--stage", type=int, default=None,
+                             help="DUELVARS_ARENA_CARD_STAGE value for the player's arena card")
     seed_parser.add_argument("--goal", default="")
     board_parser = sub.add_parser("board-seed", help="a player-controlled duel whose board is poked: carrier active with energy")
     board_parser.add_argument("name")
@@ -1999,7 +2037,8 @@ def main(argv: list[str] | None = None) -> int:
                              cards=load_cards(args.cards), goal=args.goal,
                              then=[label for label in args.then.split(",") if label],
                              discard=[card for card in args.discard.split(",") if card],
-                             poke_at=args.poke_at)
+                             poke_at=args.poke_at, status=args.status, stage=args.stage,
+                             opponent_discard=[card for card in args.opponent_discard.split(",") if card])
         if args.command == "board-seed":
             return board_seed(args.name, card=args.card, attack=args.attack, base=args.base,
                               at=args.at, deck=args.deck, poke_at=args.poke_at, goal=args.goal,
