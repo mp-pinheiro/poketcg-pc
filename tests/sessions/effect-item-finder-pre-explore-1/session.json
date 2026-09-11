@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-item-finder-pre",
+  "goal": "Coverage search from effect-item-finder-pre: 2 routines no session had executed (OpenInPlayAreaScreen_TurnHolderDiscardPile, SetDiscardPileScreenTexts)",
+  "input_sha256": "bde7737b7d15efd1dd94d9479236892694ee98594fce1b060efd8d5554306ae1",
+  "name": "effect-item-finder-pre-explore-1",
+  "ordinals": 73003,
+  "recorded": "2026-09-11T19:20:50+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-effect-item-finder-pre/scripts/s00-A-2.txt"
+}
