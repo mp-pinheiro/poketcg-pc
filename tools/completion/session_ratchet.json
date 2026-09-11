@@ -614,6 +614,12 @@
   "effect-full-heal-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-full-heal-status": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-full-heal-status-play": {
+    "confirmed_ordinal": 29012
+  },
   "effect-gambler-play": {
     "confirmed_ordinal": 29035
   },
@@ -1183,6 +1189,12 @@
   },
   "effect-pokemon-flute": {
     "confirmed_ordinal": 27824
+  },
+  "effect-pokemon-flute-opponent": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-pokemon-flute-opponent-play": {
+    "confirmed_ordinal": 29515
   },
   "effect-pokemon-flute-seed": {
     "confirmed_ordinal": 23227

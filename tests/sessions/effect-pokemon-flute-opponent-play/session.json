@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-pokemon-flute-opponent",
+  "goal": "player plays Pokemon Flute and places the basic in the opponent play area",
+  "input_sha256": "538cce92c1eba1eb55695e2567242567cc751a2ab4d121b57acaa3f47a41d46a",
+  "name": "effect-pokemon-flute-opponent-play",
+  "ordinals": 29515,
+  "recorded": "2026-09-11T20:03:56+00:00",
+  "schema": 1,
+  "script": "/tmp/script-effect-pokemon-flute-opponent.txt"
+}

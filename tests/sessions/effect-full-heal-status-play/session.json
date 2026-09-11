@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-full-heal-status",
+  "goal": "player plays Full Heal and the status clears",
+  "input_sha256": "037cd68cb8e0ccf74f09ee8c88b842b4adac53d60cfa8069c90a1580c388a3ec",
+  "name": "effect-full-heal-status-play",
+  "ordinals": 29515,
+  "recorded": "2026-09-11T20:03:56+00:00",
+  "schema": 1,
+  "script": "/tmp/script-effect-full-heal-status.txt"
+}
