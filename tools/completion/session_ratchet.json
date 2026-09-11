@@ -542,6 +542,9 @@
   "effect-energy-removal-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-energy-retrieval-pre": {
+    "confirmed_ordinal": 27979
+  },
   "effect-energy-retrieval-seed": {
     "confirmed_ordinal": 23227
   },
@@ -730,6 +733,9 @@
   },
   "effect-item-finder": {
     "confirmed_ordinal": 27824
+  },
+  "effect-item-finder-pre": {
+    "confirmed_ordinal": 27979
   },
   "effect-item-finder-seed": {
     "confirmed_ordinal": 23227
@@ -1241,11 +1247,17 @@
   "effect-rapidash-2-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-recycle-pre": {
+    "confirmed_ordinal": 27979
+  },
   "effect-recycle-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-revive": {
     "confirmed_ordinal": 27824
+  },
+  "effect-revive-pre": {
+    "confirmed_ordinal": 27979
   },
   "effect-revive-seed": {
     "confirmed_ordinal": 23227
@@ -1315,6 +1327,9 @@
   },
   "effect-super-energy-removal-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-super-energy-retrieval-pre": {
+    "confirmed_ordinal": 27979
   },
   "effect-super-energy-retrieval-seed": {
     "confirmed_ordinal": 23227
