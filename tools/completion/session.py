@@ -1662,9 +1662,12 @@ def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goa
     return 0
 
 DUEL_BOARD = {"locations": 0x00, "not_in_deck": 0xBA, "arena_card": 0xBB, "arena_flags": 0xC2,
-              "arena_hp": 0xC8, "arena_stage": 0xCE, "in_play_area": 0xEF}
+              "arena_hp": 0xC8, "arena_stage": 0xCE, "in_play_area": 0xEF, "cards_in_hand": 0xEE,
+              "cards_in_discard": 0xED}
 PLAYER_DUEL_VARS = 0xC200
 CARD_LOCATION_ARENA = 0x10
+CARD_LOCATION_HAND = 0x01
+CARD_LOCATION_DISCARD_PILE = 0x02
 ENERGY_FOR_COLOUR = {"FIRE": "FIRE_ENERGY", "GRASS": "GRASS_ENERGY", "WATER": "WATER_ENERGY",
                      "LIGHTNING": "LIGHTNING_ENERGY", "PSYCHIC": "PSYCHIC_ENERGY",
                      "FIGHTING": "FIGHTING_ENERGY", "COLORLESS": "DOUBLE_COLORLESS_ENERGY"}
@@ -1672,7 +1675,8 @@ BOARD_ENERGY_SLOTS = 6
 
 
 def board_seed(name: str, *, card: str, attack: int | None, base: str, at: int, deck: int,
-               poke_at: int, goal: str, then: list[str] | None = None) -> int:
+               poke_at: int, goal: str, then: list[str] | None = None,
+               hand: list[str] | None = None, discard: list[str] | None = None) -> int:
     """A `deck_seed` whose duel board is poked as well: the carrier is the arena
     card and enough energy cards are located there to pay its attack.
 
@@ -1706,17 +1710,45 @@ def board_seed(name: str, *, card: str, attack: int | None, base: str, at: int, 
         if len(energy_indices) >= BOARD_ENERGY_SLOTS:
             break
 
+    def place(wanted_cards: list[str], taken: list[int]) -> list[int]:
+        placed: list[int] = []
+        for wanted_card in wanted_cards:
+            if wanted_card not in data:
+                raise SessionError(f"{wanted_card} is not a card")
+            for index in range(len(cards)):
+                if index != arena_index and index not in energy_indices and index not in taken:
+                    cards[index] = ids[wanted_card]
+                    placed.append(index)
+                    taken.append(index)
+                    break
+            else:
+                raise SessionError(f"no free deck slot for {wanted_card}")
+        return placed
+
+    taken: list[int] = []
+    hand_indices = place(hand or [], taken)
+    discard_indices = place(discard or [], taken)
+
     deck_seed(name, base=base, at=at, deck=deck, cards=cards, goal=goal)
     directory = session_dir(name)
     pokes = refstream.load_pokes(directory / "pokes.txt")
     writes = [(PLAYER_DUEL_VARS + DUEL_BOARD["locations"] + index, CARD_LOCATION_ARENA)
               for index in [arena_index] + energy_indices]
+    writes += [(PLAYER_DUEL_VARS + DUEL_BOARD["locations"] + index, CARD_LOCATION_HAND)
+               for index in hand_indices]
+    writes += [(PLAYER_DUEL_VARS + DUEL_BOARD["locations"] + index, CARD_LOCATION_DISCARD_PILE)
+               for index in discard_indices]
     writes += [(PLAYER_DUEL_VARS + DUEL_BOARD["arena_card"], arena_index),
                (PLAYER_DUEL_VARS + DUEL_BOARD["arena_hp"], data[card]["hp"]),
                (PLAYER_DUEL_VARS + DUEL_BOARD["arena_stage"], 0),
                (PLAYER_DUEL_VARS + DUEL_BOARD["arena_flags"], 0),
                (PLAYER_DUEL_VARS + DUEL_BOARD["in_play_area"], 1),
-               (PLAYER_DUEL_VARS + DUEL_BOARD["not_in_deck"], len(energy_indices) + 1)]
+               (PLAYER_DUEL_VARS + DUEL_BOARD["not_in_deck"],
+                len(energy_indices) + 1 + len(hand_indices) + len(discard_indices))]
+    if hand_indices:
+        writes.append((PLAYER_DUEL_VARS + DUEL_BOARD["cards_in_hand"], len(hand_indices)))
+    if discard_indices:
+        writes.append((PLAYER_DUEL_VARS + DUEL_BOARD["cards_in_discard"], len(discard_indices)))
     pokes.setdefault(poke_at, []).extend(writes)
     (directory / "pokes.txt").write_text(refstream.pokes_text(pokes))
     masks = refstream.load_masks(directory / "input.txt")
@@ -1729,6 +1761,8 @@ def board_seed(name: str, *, card: str, attack: int | None, base: str, at: int, 
     meta = json.loads((directory / "session.json").read_text())
     meta.update({"board_card": card, "board_attack": attack, "board_poke_ordinal": poke_at,
                  "board_arena_index": arena_index, "board_energy_indices": energy_indices,
+                 "board_hand": list(hand or []), "board_hand_indices": hand_indices,
+                 "board_discard": list(discard or []), "board_discard_indices": discard_indices,
                  "ordinals": len(masks), "then": list(then)})
     (directory / "session.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
     print(f"BOARD {name} card={card} attack={attack} arena={arena_index} "
@@ -1894,6 +1928,10 @@ def main(argv: list[str] | None = None) -> int:
     board_parser.add_argument("--poke-at", type=int, default=27900, help="ordinal the board is poked at, after setup")
     board_parser.add_argument("--then", default="",
                               help="explore.py action labels appended to the branch prefix")
+    board_parser.add_argument("--hand", default="",
+                              help="card id names to place in the player's hand, comma separated")
+    board_parser.add_argument("--discard", default="",
+                              help="card id names to place in the player's discard pile")
     board_parser.add_argument("--goal", default="")
     seeded_parser = sub.add_parser("seeded", help="a session that starts from a save image")
     seeded_parser.add_argument("name")
@@ -1940,7 +1978,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "board-seed":
             return board_seed(args.name, card=args.card, attack=args.attack, base=args.base,
                               at=args.at, deck=args.deck, poke_at=args.poke_at, goal=args.goal,
-                              then=[label for label in args.then.split(",") if label])
+                              then=[label for label in args.then.split(",") if label],
+                              hand=[card for card in args.hand.split(",") if card],
+                              discard=[card for card in args.discard.split(",") if card])
         if args.command == "seeded":
             save = args.save if args.save.is_absolute() else ROOT / args.save
             return seeded(args.name, save=save, base=args.base, prefix=args.prefix,
