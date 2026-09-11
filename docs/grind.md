@@ -420,33 +420,47 @@ structural difference rather than a taste call:
 - Bank plumbing (`BankswitchROM` and its relatives) is inlined differently and
   is dropped.
 - Both streams keep only the vocabulary they *share* in that interval. A name
-  on one lane only is structure, not order: the ROM's repeat wrappers
-  (`SetOneObjectAttributesx4` against four `SetOneObjectAttributes`) and the
-  accessors the translator inlines (`GetSpriteAnimBufferProperty`) are exactly
-  this, and they dominated the diff before the rule existed.
-- Runs of one name collapse to a single entry, and the two streams are anchored
-  on the `DoFrame` entry they both contain. The slice length after that anchor
-  is a heuristic, so a block touching either end is a slice artefact, never
-  evidence.
+  on one lane only is structure, not order: the accessors the translator
+  inlines (`GetSpriteAnimBufferProperty`) are exactly this, and they dominated
+  the diff before the rule existed.
+- A whole repeat-wrapper family is dropped from both lanes, detected
+  automatically as any name with an `x<count>` sibling: the ROM calls
+  `SetOneObjectAttributesx4` where the translator emits four
+  `SetOneObjectAttributes` calls, and that is how a lane structures
+  repetition, never which routine ran first. The family must be detected on
+  the *raw* reference listing, before the shared-vocabulary filter removes the
+  wrapper name and leaves only its expansion.
+- The two streams are anchored on the `DoFrame` entry they both contain, and a
+  block is significant only when it contains a name whose count differs across
+  the slice. The slice length after the anchor is a heuristic, so a block
+  touching either end is a slice artefact, never evidence.
 
-The baseline that makes a report meaningful: seven clean intervals
-(`boot-menu` 900, `first-duel` 5,000, `practice-win`-derived plays,
-`deck-machine-auto` 4,000, `ai-duel-04` 20,000) report **0 significant
-blocks**. On the two open deck-configuration facts it reports 10 each, the
-first being the ROM's palette flush chain against the port already running
-`IncrementDeckCardsInTempCollection` - the port is ahead into the next
-screen's work. On #3415 it reports **0**, which is what separates a
-control-flow fact from a tick-placement one: that interval's game-code order
-is identical on both lanes, so the divergence is in the driver's tick
-placement (`docs/audio-harness.md`), not in a branch.
+Collapsing runs of one name was tried first and is wrong: where the ROM's two
+`FillRectangle` calls are separated by the `DECoordToBGMap0Address` the port
+inlines, collapsing merges the port's two adjacent calls into one and
+fabricates a missing draw. It cost an hour chasing a CGB palette branch that
+turned out to be correct.
+
+The baseline that makes a report meaningful: eight clean intervals
+(`boot-menu` 900, `first-duel` 5,000, `deck-machine-auto` 4,000, `ai-duel-04`
+and `ai-duel-09` 20,000, two landed `*-play` sessions, and `credits-1` at
+500,000) report **0 significant blocks**. On #3415 it also reports 0, which is
+what separates a control-flow fact from a tick-placement one: that interval's
+game-code order is identical on both lanes, so the divergence is in the
+driver's tick placement (`docs/audio-harness.md`), not in a branch.
 
 Counts are only comparable *inside* the anchored slice, which is what `--json`
 writes: an unanchored window spans the ordinals on either side and inflates
-every native count by up to three times. Read from the slice and the two
-lenses agree - on #3417 the ROM draws 18 rectangles and 28 coordinate
-conversions where the port draws 10 and 10, while both run `ProcessText` 10
-times, so the lanes are in two different list-drawing routines rather than one
-routine looping a different number of times.
+every native count by up to three times.
+
+What it found on #3417: two blocks, the second being five
+`ProcessSpecialTextCharacter`/`PlaceNextTextTile` triples the port never ran.
+`PrintTotalNumberOfCardsInCollection` builds its string at
+`wTempCardCollection` and the asm prints it with `ld hl, wTempCardCollection`;
+the port walked its own cursor to the trailing `TX_END` and passed *that*, so
+it printed an empty string where the ROM printed the collection total. The
+four cases compared the built string and passed - the drawn tiles were outside
+their `vread` set, which is why only an ordered trace saw it.
 
 ### Throughput rules
 

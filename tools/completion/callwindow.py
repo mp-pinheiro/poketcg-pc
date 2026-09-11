@@ -15,6 +15,8 @@ divergence.
 from __future__ import annotations
 
 import argparse
+import collections
+import re
 import difflib
 import json
 import struct
@@ -133,6 +135,20 @@ def reference_order(name: str, ordinal: int) -> list[str]:
     return rows
 
 
+def wrapper_families(vocabulary: set[str]) -> set[str]:
+    """Names in a repeat-wrapper family. The ROM has `SetOneObjectAttributesx4`
+    where the translator emits four `SetOneObjectAttributes` calls, so the family
+    carries how a lane structures repetition, never which routine ran first.
+    A family is a name with an `x<count>` sibling; both sides of it are dropped."""
+    out = set()
+    for name in vocabulary:
+        match = re.fullmatch(r"(.+?)x(\d+)", name)
+        if match and match.group(1) in vocabulary:
+            out.add(name)
+            out.add(match.group(1))
+    return out
+
+
 def game_only(names: list[str], files: dict[str, str]) -> list[str]:
     """The order the game code ran in: the ROM interleaves its ISR bodies between
     instructions the port runs in one block, so the driver and the interrupt
@@ -162,7 +178,9 @@ def main(argv: list[str] | None = None) -> int:
     files = {name: info.get("file", "") for name, info in inventory.items()}
     defined = native_symbols()
     known &= defined
-    reference = game_only([n for n in reference_order(args.name, args.ordinal) if n in known], files)
+    raw_reference = reference_order(args.name, args.ordinal)
+    families = wrapper_families(set(raw_reference) | defined)
+    reference = game_only([n for n in raw_reference if n in known], files)
     try:
         by_frame = native_order(args.name, args.ordinal - 1, args.ordinal + 1)
     except (WindowError, OSError) as exc:
@@ -175,13 +193,6 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"status": "FAIL", "detail": "the window recorded no calls"}), file=sys.stderr)
         return 2
 
-    def collapse(names: list[str]) -> list[str]:
-        out: list[str] = []
-        for name in names:
-            if not out or out[-1] != name:
-                out.append(name)
-        return out
-
     anchor = reference.index("DoFrame") if "DoFrame" in reference else 0
     candidates = [n - anchor for n, name in enumerate(native) if name == "DoFrame"]
     candidates = [c for c in candidates if c >= 0] or [0]
@@ -192,14 +203,20 @@ def main(argv: list[str] | None = None) -> int:
 
     start = max(candidates, key=score)
     native = native[start:start + len(reference)]
+    reference = [n for n in reference if n not in families]
+    native = [n for n in native if n not in families]
     shared = set(reference) & set(native)
-    reference = collapse([n for n in reference if n in shared])
-    native = collapse([n for n in native if n in shared])
+    reference = [n for n in reference if n in shared]
+    native = [n for n in native if n in shared]
+    counts = collections.Counter(reference)
+    counts.subtract(collections.Counter(native))
+    moved = {name for name, delta in counts.items() if abs(delta) >= args.min_block}
     matcher = difflib.SequenceMatcher(None, reference, native, autojunk=False)
     blocks = [op for op in matcher.get_opcodes() if op[0] != "equal"]
     significant = [op for op in blocks
                    if max(op[2] - op[1], op[4] - op[3]) >= args.min_block
-                   and op[2] < len(reference) and op[4] < len(native)]
+                   and op[2] < len(reference) and op[4] < len(native)
+                   and (moved & set(reference[op[1]:op[2]] + native[op[3]:op[4]]))]
     equal = sum(op[2] - op[1] for op in matcher.get_opcodes() if op[0] == "equal")
     print(f"WINDOW {args.name} ordinal={args.ordinal} anchored_at={start} reference={len(reference)} "
           f"native={len(native)} equal={equal} blocks={len(blocks)} "
