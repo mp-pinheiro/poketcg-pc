@@ -1,0 +1,10 @@
+{
+  "derived_from": "seed-deck-machines",
+  "goal": "Coverage search from seed-deck-machines: 1 routines no session had executed (HideConfigMenuCursor)",
+  "input_sha256": "2ec2bd358e100c34a4028630349908333443b7dd47b3baad8ccee3bcf9efc161",
+  "name": "seed-deck-machines-explore-5",
+  "ordinals": 5104,
+  "recorded": "2026-09-11T18:31:37+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-seed-deck-machines/scripts/s02-Ax5-1.txt"
+}
