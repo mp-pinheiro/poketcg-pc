@@ -1635,7 +1635,7 @@ def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goa
     pokes: refstream.Pokes = {k: list(v) for k, v in base_meta["pokes"].items() if k < at}
     kind = DUELIST_TYPE_AI_OPP | deck
     pokes.setdefault(at - 1, []).append((AI_DUEL["wNPCDuelDeckID"], deck))
-    pokes.setdefault(at, []).extend([(AI_DUEL["wOpponentDuelistType"], kind), (AI_DUEL["wDuelType"], kind),
+    pokes.setdefault(at, []).extend([(AI_DUEL["wOpponentDuelistType"], kind), (AI_DUEL["wDuelType"], 0),
                                      (AI_DUEL["wOpponentDeckID"], deck), (AI_DUEL["wIsPracticeDuel"], 0)])
     pokes[at].extend((AI_DUEL["wPlayerDeck"] + index, card) for index, card in enumerate(cards))
     masks = base_masks[:at]
