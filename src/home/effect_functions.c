@@ -5465,13 +5465,13 @@ CurseCheckDamageAndBenchResult Curse_CheckDamageAndBench(uint8_t c, uint8_t d, u
 	DuelistVarResult flags = GetTurnDuelistVariable(
 		(uint8_t)(location + DUELVARS_ARENA_CARD_FLAGS));
 	if ((flags.a & USED_PKMN_POWER_THIS_TURN) != 0u)
-		return (CurseCheckDamageAndBenchResult){0x10u, c, d, e, OnlyOncePerTurnText};
+		return (CurseCheckDamageAndBenchResult){(uint8_t)(flags.a & USED_PKMN_POWER_THIS_TURN), 0x10u, c, d, e, OnlyOncePerTurnText};
 
 	SwapTurn();
 	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
 	SwapTurn();
 	if (count.a < 2u)
-		return (CurseCheckDamageAndBenchResult){0x10u, c, d, e, CannotUseSinceTheresOnly1PkmnText};
+		return (CurseCheckDamageAndBenchResult){count.a, 0x10u, c, d, e, CannotUseSinceTheresOnly1PkmnText};
 
 	/* effect_functions.asm:4386-4395: the damage scan's c, d and e are what
 	 * the incapable check (substatus.asm:495-516, bc/de kept) returns. */
@@ -5479,10 +5479,10 @@ CurseCheckDamageAndBenchResult Curse_CheckDamageAndBench(uint8_t c, uint8_t d, u
 	CheckIfPlayAreaHasAnyDamageResult damage = CheckIfPlayAreaHasAnyDamage();
 	SwapTurn();
 	if ((damage.f & 0x10u) != 0u)
-		return (CurseCheckDamageAndBenchResult){0x10u, damage.c, damage.d, damage.e, NoPokemonWithDamageCountersText};
+		return (CurseCheckDamageAndBenchResult){damage.a, 0x10u, damage.c, damage.d, damage.e, NoPokemonWithDamageCountersText};
 
 	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(location);
-	return (CurseCheckDamageAndBenchResult){incapable.f, damage.c, damage.d, damage.e, incapable.hl};
+	return (CurseCheckDamageAndBenchResult){incapable.a, incapable.f, damage.c, damage.d, damage.e, incapable.hl};
 }
 /* <<< factory Curse_CheckDamageAndBench */
 

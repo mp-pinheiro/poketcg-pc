@@ -3430,7 +3430,7 @@ CASES["MirrorMove_ExecuteStatusEffect"] = [
 # <<< factory MirrorMove_ExecuteStatusEffect
 
 # >>> factory Curse_CheckDamageAndBench
-CONTRACT["Curse_CheckDamageAndBench"] = {"compare": ("f", "hl", "b", "c", "d", "e"), "preserve": ("b",), "hram_out": True}
+CONTRACT["Curse_CheckDamageAndBench"] = {"compare": ("a", "f", "hl", "b", "c", "d", "e"), "preserve": ("b",), "hram_out": True}
 CASES["Curse_CheckDamageAndBench"] = [
     {"wram": {0xFF9D: b"\x00", 0xC2C2: b"\x20"}, "expect": {0xFFA0: b"\x00"}},
     {"wram": {0xFF9D: b"\x00", 0xC2C2: b"\x00", 0xC3EF: b"\x01"}, "expect": {0xFFA0: b"\x00"}},
@@ -9884,7 +9884,7 @@ MUTATIONS["MirrorMove_ExecuteStatusEffect"] = {
 }
 # <<< factory-mutation MirrorMove_ExecuteStatusEffect
 # >>> factory-mutation Curse_CheckDamageAndBench
-MUTATIONS["Curse_CheckDamageAndBench"] = {"source_symbol": "Curse_CheckDamageAndBench", "before": "\treturn (CurseCheckDamageAndBenchResult){incapable.f, damage.c, damage.d, damage.e, incapable.hl};", "after": "\treturn (CurseCheckDamageAndBenchResult){incapable.f, damage.c, d, damage.e, incapable.hl};", "case_ids": ["Curse_CheckDamageAndBench-4"]}
+MUTATIONS["Curse_CheckDamageAndBench"] = {"source_symbol": "Curse_CheckDamageAndBench", "before": "\treturn (CurseCheckDamageAndBenchResult){incapable.a, incapable.f, damage.c, damage.d, damage.e, incapable.hl};", "after": "\treturn (CurseCheckDamageAndBenchResult){0u, incapable.f, damage.c, d, damage.e, incapable.hl};", "case_ids": ["Curse_CheckDamageAndBench-4"]}
 # <<< factory-mutation Curse_CheckDamageAndBench
 # >>> factory-mutation SpearowMirrorMove_AIEffect
 MUTATIONS["SpearowMirrorMove_AIEffect"] = {

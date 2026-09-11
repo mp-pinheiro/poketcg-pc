@@ -2404,6 +2404,7 @@ static void adapt_MirrorMove_ExecuteStatusEffect(ProbeState *s)
 static void adapt_Curse_CheckDamageAndBench(ProbeState *s)
 {
 	CurseCheckDamageAndBenchResult result = Curse_CheckDamageAndBench(s->c, s->d, s->e);
+	s->a = result.a;
 	s->f = result.f;
 	s->c = result.c;
 	s->d = result.d;

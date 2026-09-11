@@ -69,11 +69,11 @@ CONTRACT = {
         "preserve": (),
     },
     "CheckIsIncapableOfUsingPkmnPower": {
-        "compare": ("f", "hl", "b", "c", "d", "e"),
+        "compare": ("a", "f", "hl", "b", "c", "d", "e"),
         "preserve": (),
     },
     "CheckIsIncapableOfUsingPkmnPower_ArenaCard": {
-        "compare": ("f", "hl", "b", "c", "d", "e"),
+        "compare": ("a", "f", "hl", "b", "c", "d", "e"),
         "preserve": (),
     },
     "HandleDoubleDamageSubstatus": {

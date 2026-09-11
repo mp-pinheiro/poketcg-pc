@@ -213,10 +213,10 @@ PkmnPowerIncapableResult CheckIsIncapableOfUsingPkmnPower(uint8_t a)
 	if (a == PLAY_AREA_ARENA) {
 		DuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
 		if (status.a & CNF_SLP_PRZ)
-			return (PkmnPowerIncapableResult){0x10u, CANNOT_USE_DUE_TO_STATUS_TEXT_ID};
+			return (PkmnPowerIncapableResult){(uint8_t)(status.a & CNF_SLP_PRZ), 0x10u, CANNOT_USE_DUE_TO_STATUS_TEXT_ID};
 	}
 	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
-	return (PkmnPowerIncapableResult){muk.f, UNABLE_DUE_TO_TOXIC_GAS_TEXT_ID};
+	return (PkmnPowerIncapableResult){muk.a, muk.f, UNABLE_DUE_TO_TOXIC_GAS_TEXT_ID};
 }
 
 PkmnPowerIncapableResult CheckIsIncapableOfUsingPkmnPower_ArenaCard(void)

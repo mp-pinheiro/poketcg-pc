@@ -33,6 +33,7 @@ static void adapt_CountPokemonWithActivePkmnPowerInBothPlayAreas(ProbeState *s)
 static void adapt_CheckIsIncapableOfUsingPkmnPower(ProbeState *s)
 {
 	PkmnPowerIncapableResult r = CheckIsIncapableOfUsingPkmnPower(s->a);
+	s->a = r.a;
 	s->f = r.f;
 	s->hl = r.hl;
 }
@@ -40,6 +41,7 @@ static void adapt_CheckIsIncapableOfUsingPkmnPower(ProbeState *s)
 static void adapt_CheckIsIncapableOfUsingPkmnPower_ArenaCard(ProbeState *s)
 {
 	PkmnPowerIncapableResult r = CheckIsIncapableOfUsingPkmnPower_ArenaCard();
+	s->a = r.a;
 	s->f = r.f;
 	s->hl = r.hl;
 }

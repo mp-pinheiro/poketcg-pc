@@ -25,9 +25,8 @@ typedef struct {
 PkmnPowerCountResult CountTurnDuelistPokemonWithActivePkmnPower(uint8_t a);
 PkmnPowerCountResult CountPokemonWithActivePkmnPowerInBothPlayAreas(uint8_t a);
 
-/* substatus.asm:495-516. hl is the text id shown; `a` is scratch, never a
- * documented output. b/c/d/e preserved. */
 typedef struct {
+	uint8_t a;
 	uint8_t f;
 	uint16_t hl;
 } PkmnPowerIncapableResult;

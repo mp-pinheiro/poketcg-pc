@@ -17,6 +17,8 @@ EFFECTCMDTYPE_BEFORE_DAMAGE = 0x03
 EFFECTCMDTYPE_AI = 0x09
 EFFECTCMDTYPE_INITIAL_EFFECT_1 = 0x01
 
+from tests.cases._fixtures import effect_dispatch_fixture as _effect_dispatch_fixture, EFFECT_DISPATCH_REGS as _EFFECT_DISPATCH_REGS
+
 CONTRACT = {
     "CheckMatchingCommand": {
         "compare": ("f", "b", "c", "d", "e", "hl"),
@@ -65,6 +67,7 @@ CASES["TryExecuteEffectCommandFunction"] = [
      "wram": {wLoadedAttackEffectCommands: b"\xE8\xC0", 0xC0E8: b"\x05\xC7\x40\x00", 0xC2F1: b"\x00", wEffectFunctionsBank: b"\x00"},
      "sram": {0: {}}, "expect_regs": {"a": 0x00, "f": 0x90, "b": 0x00, "c": 0x90, "d": 0x34, "e": 0x56, "hl": 0xC2F1},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(_effect_dispatch_fixture(vram=False, bank=1), **_EFFECT_DISPATCH_REGS),
 ]
 # <<< factory TryExecuteEffectCommandFunction
 

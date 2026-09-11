@@ -1010,7 +1010,7 @@ typedef struct { uint8_t f; } MirrorMoveExecuteStatusEffectResult;
 MirrorMoveExecuteStatusEffectResult MirrorMove_ExecuteStatusEffect(uint8_t a);
 /* <<< factory MirrorMove_ExecuteStatusEffect */
 /* >>> factory Curse_CheckDamageAndBench */
-typedef struct { uint8_t f; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } CurseCheckDamageAndBenchResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } CurseCheckDamageAndBenchResult;
 CurseCheckDamageAndBenchResult Curse_CheckDamageAndBench(uint8_t c, uint8_t d, uint8_t e);
 /* <<< factory Curse_CheckDamageAndBench */
 /* >>> factory SpearowMirrorMove_AIEffect */
