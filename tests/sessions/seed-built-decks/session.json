@@ -1,0 +1,32 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Seeded save with a built deck and two deck save machine slots, four medals: the dismantle and deck machine screens need decks to exist",
+  "name": "seed-built-decks",
+  "ordinals": 2584,
+  "recorded": "2026-09-11T23:12:19+00:00",
+  "save": "builtdeck.sav",
+  "save_sha256": "457d69ef39266bedf3c219544f0c57f1bb3b783b3b5a0dc70250d06f91a13cf9",
+  "schema": 1,
+  "then": [
+    "A",
+    "WAIT",
+    "A",
+    "WAIT",
+    "A",
+    "WAIT",
+    "A",
+    "WAIT",
+    "RIGHTx5",
+    "DOWN",
+    "RIGHTx5",
+    "UPx5",
+    "A",
+    "WAIT",
+    "Ax5",
+    "WAIT",
+    "Ax5",
+    "WAIT",
+    "Bx5",
+    "WAIT"
+  ]
+}
