@@ -51,6 +51,7 @@ CLAIM_TTL = 6 * 3600  # seconds a claim keeps an issue out of other sessions' is
 KEY_MARK = re.compile(r"<!-- tracker-key: ([^ ]+) -->")
 ORDINAL_MARK = re.compile(r"<!-- tracker-ordinal: (\d+) -->")
 SESSION_MARK = re.compile(r"^session:\s*`?([a-z0-9_-]+)`?", re.MULTILINE | re.IGNORECASE)
+SWEEP_REPRO = re.compile(r"session\.py capture ([a-z0-9_-]+) --routine (\S+) --after (\d+)")
 
 LABELS = {
     "p0-divergence": ("e11d21", "a recorded session leaves the ROM's trajectory here"),
@@ -356,6 +357,25 @@ def divergence_issues(sessions: list[tuple[str, int, str]]) -> dict[str, dict[st
     return out
 
 
+def swept_clean(body: str) -> bool:
+    """True when some sweep report covers the session and ordinal this issue's
+    repro names and lists no row for its routine."""
+    match = SWEEP_REPRO.search(body)
+    if not match:
+        return False
+    name, routine, ordinal = match.group(1), match.group(2), int(match.group(3))
+    for path in TRACKER_DIR.glob(f"sweep-{name}-*.json"):
+        report = json.loads(path.read_text())
+        until = report.get("until")
+        if report.get("name") != name or until is None:
+            continue
+        if not report.get("after", 0) <= ordinal <= until:
+            continue
+        if all(row["routine"] != routine for row in report.get("rows", [])):
+            return True
+    return False
+
+
 def sweep_issues(sessions: list[tuple[str, int, str]], asm: dict[str, str], c: dict[str, str],
                  resolved: set[str]) -> dict[str, dict[str, Any]]:
     """One issue per routine the newest sweep row reports failing. A routine
@@ -560,8 +580,12 @@ def locked_sync(dry_run: bool, retire_plan: bool) -> int:
             continue
         have_labels = {label["name"] for label in have.get("labels", [])}
         if key.startswith("sweep:") and key not in resolved:
-            # The routine was not entered by any newer sweep: no evidence either way.
-            continue
+            # No live row: either no newer sweep entered the routine, or the report
+            # the issue was raised from is gone. The body still names the session
+            # and ordinal, so a covering sweep with no row for it is the same
+            # evidence the row-based path uses.
+            if not swept_clean(have.get("body") or ""):
+                continue
         routine = key.split(":")[-1]
         landing = last_landing(routine, c) if key.split(":")[0] in ("sweep", "audit") else ""
         reason = {
