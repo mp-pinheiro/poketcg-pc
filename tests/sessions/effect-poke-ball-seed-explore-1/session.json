@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-poke-ball-seed",
+  "goal": "Coverage search from effect-poke-ball-seed: 1 routines no session had executed (OpenCardPage.input_loop)",
+  "input_sha256": "da0667fd812af420754d780b1df07617931214aac96968354a08a0a5cc4220be",
+  "name": "effect-poke-ball-seed-explore-1",
+  "ordinals": 24691,
+  "recorded": "2026-09-11T04:16:57+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-effect-poke-ball-seed/scripts/s00-START-1.txt"
+}
