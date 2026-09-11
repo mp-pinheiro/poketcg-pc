@@ -263,7 +263,13 @@
   "effect-pidgeotto-2": {
     "confirmed_ordinal": 29312
   },
+  "effect-pokemon-flute": {
+    "confirmed_ordinal": 25244
+  },
   "effect-poliwhirl-1-seed": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-poliwrath-2-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-slowpoke-lv18-2-seed": {
