@@ -1,6 +1,30 @@
 {
+  "ai-duel-01": {
+    "confirmed_ordinal": 32335
+  },
   "ai-duel-02": {
     "confirmed_ordinal": 37184
+  },
+  "ai-duel-03": {
+    "confirmed_ordinal": 39080
+  },
+  "ai-duel-04": {
+    "confirmed_ordinal": 41048
+  },
+  "ai-duel-05": {
+    "confirmed_ordinal": 40784
+  },
+  "ai-duel-06": {
+    "confirmed_ordinal": 37256
+  },
+  "ai-duel-08": {
+    "confirmed_ordinal": 38072
+  },
+  "ai-duel-09": {
+    "confirmed_ordinal": 38936
+  },
+  "ai-duel-0b": {
+    "confirmed_ordinal": 38192
   },
   "ai-duel-0c": {
     "confirmed_ordinal": 34400
