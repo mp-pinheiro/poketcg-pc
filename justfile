@@ -544,13 +544,16 @@ audio-seeds *ARGS:
 # The tick oracle: N ticks from every seed on gbref and the native probe, driver state and APU writes compared per tick.
 audio-tickdiff *ARGS: build oracle-build-gbref
     python3 tools/audio/tickdiff.py diff {{ARGS}}
+# Which unexecuted routines an input tail reaches: one native run per tail, no reference replay. Reach, never proof.
+coverage-probe BASE *ARGS: build-trace
+    python3 tools/completion/probe.py "{{BASE}}" {{ARGS}}
 # The sessions a change to these routines (or a pret file stem) can move.
 sessions-affected +TARGETS:
     python3 tools/completion/coverage_ledger.py affected {{TARGETS}}
-# session-verify the affected sessions, one reference lane at a time.
+# session-verify the affected sessions in parallel against a frozen lane (--jobs N, --write-ratchet).
 sessions-verify-affected +TARGETS:
     python3 tools/completion/coverage_ledger.py verify-affected {{TARGETS}}
-# session-verify every recorded session serially: the landing-batch sweep.
+# session-verify every recorded session (or the named ones) in parallel: the landing-batch sweep (--jobs N, --write-ratchet).
 sessions-sweep *ARGS:
     python3 tools/completion/coverage_ledger.py sweep {{ARGS}}
 # Recompute site/data/progress.json + history point from the registry and gate record.

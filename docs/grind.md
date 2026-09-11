@@ -335,6 +335,60 @@ Read the rows in this order:
 The sweep is the worklist for a cheaper model: each row carries the routine,
 the ordinal to `capture` at, and the bytes that differ.
 
+### Reach: what an input tail touches, before recording anything
+
+```sh
+just coverage-probe BASE --tail "Bx20,Bx20,DOWN,RIGHT,UP,Ax5,Ax20" --mark Script_d93f
+```
+
+One native run per `--tail` (~0.5 s, no reference replay): the base session's
+input plus a suffix of `explore.py` action labels, reporting the routines the
+ledger has never executed that the run reaches, and which `--mark` routines
+ran. Repeat `--tail` to compare candidates in parallel. This is reach, never
+proof: a hit only says the input arrives somewhere new, and the proof is the
+recorded session's own `session-verify`.
+
+The labels are `explore.py`'s, so a winning tail records verbatim through
+`session.py seeded --then` / `board-seed --then` — no re-derivation between
+finding an input and landing it.
+
+Two measurement traps this tool exists to avoid:
+
+- the native binary defines ~130 C helpers the ROM has no routine for, so a
+  raw new-symbol count from `native_trace.native_counts` overstates reach by a
+  constant and ranks noise; `probe.py` intersects with the ledger's routine set
+  and subtracts its executed set, which is exact.
+- `DMA` is always reported unexecuted: the ROM copies it to HRAM and calls it
+  there, so the reference tracer never records an entry. It is the whole noise
+  floor — one name.
+
+Named marks are the search objective; a routine name is exact where a score is
+not. `duel-screens` (8 screen routines in one session) and the three
+`deck-machine-*` sessions were both found this way, at seconds per candidate.
+Note what the landed `duel-screens` input actually is: plain `A`/`DOWN` menu
+navigation through the Check menu and the play-area screens. `B+direction`
+shortcut combos are *not* in `explore.py`'s action table, so neither the probe
+nor `--then` can express one; reaching those shortcuts needs a new action row,
+not a hand-written mask.
+
+### Throughput rules
+
+Three faults that cost hours each, with their measurements:
+
+- **Never hand-roll a serial verify loop in bash.** `sessions-sweep <names>
+  --jobs N --write-ratchet` and `sessions-verify-affected <Fn> --jobs N` verify
+  against a frozen lane (a snapshot of the binary and the data pack), so a
+  batch cannot be moved under them mid-flight. Measured: 26 sessions 17 min
+  serial -> **1m15s**; 57 in **10m47s**; all 470 at `--jobs 8` in **7m04s**.
+- **Never `coverage-ledger --force` after a C fix.** `trace_session` replays
+  the *reference*, cached by stream key plus confirmed ordinal: coverage is
+  ROM-derived, so a C fix cannot invalidate it. Two forced re-traces cost
+  3 h and changed nothing. An ordinary fold is 32 s to 2 min.
+- **One session per target, not a seed plus a play session.** A seed recorded
+  separately from its play tail has its pokes fire past its own length and is
+  inert; `board-seed --then` / `deck-seed --then` write one complete session,
+  halving verify and trace cost per carrier.
+
 ### Session decision table
 
 | the line contains | what it means | what to do |
