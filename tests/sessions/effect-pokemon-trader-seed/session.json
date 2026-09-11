@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: POKEMON_TRADER in hand, the AI never played it (PokemonTrader_PlayerDeckSelection, PokemonTrader_PlayerHandSelection)",
+  "goal": "Search seed: POKEMON_TRADER in hand, player-controlled duel",
   "name": "effect-pokemon-trader-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     64,
     64
   ],
-  "recorded": "2026-09-11T01:54:30+00:00",
+  "recorded": "2026-09-11T07:10:35+00:00",
   "schema": 1
 }

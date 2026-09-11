@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: SUPER_ENERGY_REMOVAL in hand, the AI never played it (SuperEnergyRemoval_PlayerSelection)",
+  "goal": "Search seed: SUPER_ENERGY_REMOVAL in hand, player-controlled duel",
   "name": "effect-super-energy-removal-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     64,
     64
   ],
-  "recorded": "2026-09-11T02:51:55+00:00",
+  "recorded": "2026-09-11T07:11:14+00:00",
   "schema": 1
 }

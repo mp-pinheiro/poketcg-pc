@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-energy-removal-seed",
+  "goal": "Player-controlled duel: plays the card from hand",
+  "input_sha256": "e763149a2681d3b9a0efd48188141e100ed6a2b3dd5b8172c4b450f398d1759d",
+  "name": "effect-energy-removal-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T07:11:43+00:00",
+  "schema": 1,
+  "script": "/tmp/play-energy-removal.txt"
+}

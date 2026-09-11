@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: GAMBLER in hand, the AI never played it (GamblerEffect)",
+  "goal": "Search seed: GAMBLER in hand, player-controlled duel",
   "name": "effect-gambler-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     64,
     64
   ],
-  "recorded": "2026-09-11T02:10:12+00:00",
+  "recorded": "2026-09-11T07:09:37+00:00",
   "schema": 1
 }

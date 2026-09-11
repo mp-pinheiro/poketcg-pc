@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: COMPUTER_SEARCH in hand, the AI never played it (ComputerSearch_PlayerDeckSelection, ComputerSearch_PlayerDiscardHandSelection)",
+  "goal": "Search seed: COMPUTER_SEARCH in hand, player-controlled duel",
   "name": "effect-computer-search-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     64,
     64
   ],
-  "recorded": "2026-09-11T01:10:56+00:00",
+  "recorded": "2026-09-11T07:08:54+00:00",
   "schema": 1
 }

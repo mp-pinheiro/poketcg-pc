@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-gambler-seed",
+  "goal": "Player-controlled duel: plays the card from hand",
+  "input_sha256": "2d42fc0fffba1467bb226a327303b47caa7c31aa21dc553435059810741ae84c",
+  "name": "effect-gambler-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T07:11:43+00:00",
+  "schema": 1,
+  "script": "/tmp/play-gambler.txt"
+}

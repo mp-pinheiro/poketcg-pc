@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: DEVOLUTION_SPRAY in hand, the AI never played it (DevolutionSpray_DevolutionEffect, DevolutionSpray_PlayAreaEvolutionCheck, DevolutionSpray_PlayerSelection)",
+  "goal": "Search seed: DEVOLUTION_SPRAY in hand, player-controlled duel",
   "name": "effect-devolution-spray-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     64,
     64
   ],
-  "recorded": "2026-09-11T00:10:01+00:00",
+  "recorded": "2026-09-11T07:08:58+00:00",
   "schema": 1
 }

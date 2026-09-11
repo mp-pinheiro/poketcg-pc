@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-pokemon-trader-seed",
+  "goal": "Player-controlled duel: plays the card from hand",
+  "input_sha256": "81430edd9254ba68c6ac241d3f57196248ed18dae6a4ef44013fe236efea93e2",
+  "name": "effect-pokemon-trader-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T07:11:44+00:00",
+  "schema": 1,
+  "script": "/tmp/play-pokemon-trader.txt"
+}

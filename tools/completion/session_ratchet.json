@@ -266,11 +266,20 @@
   "effect-cloyster-2": {
     "confirmed_ordinal": 34352
   },
+  "effect-computer-search-play": {
+    "confirmed_ordinal": 29035
+  },
   "effect-computer-search-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-defender-play": {
+    "confirmed_ordinal": 29035
+  },
   "effect-defender-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-devolution-spray-play": {
+    "confirmed_ordinal": 29035
   },
   "effect-devolution-spray-seed": {
     "confirmed_ordinal": 23227
@@ -311,11 +320,17 @@
   "effect-electrode-lv42-2-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-energy-removal-play": {
+    "confirmed_ordinal": 29035
+  },
   "effect-energy-removal-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-energy-retrieval-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-energy-search-play": {
+    "confirmed_ordinal": 29035
   },
   "effect-energy-search-seed": {
     "confirmed_ordinal": 23227
@@ -340,6 +355,9 @@
   },
   "effect-full-heal-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-gambler-play": {
+    "confirmed_ordinal": 29035
   },
   "effect-gambler-seed": {
     "confirmed_ordinal": 23227
@@ -377,6 +395,9 @@
   "effect-grimer-2-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-gust-of-wind-play": {
+    "confirmed_ordinal": 29035
+  },
   "effect-gust-of-wind-seed": {
     "confirmed_ordinal": 23227
   },
@@ -391,6 +412,9 @@
   },
   "effect-hypno-2-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-imposter-professor-oak-play": {
+    "confirmed_ordinal": 29035
   },
   "effect-imposter-professor-oak-seed": {
     "confirmed_ordinal": 23227
@@ -430,6 +454,9 @@
   },
   "effect-krabby-1": {
     "confirmed_ordinal": 29144
+  },
+  "effect-lass-play": {
+    "confirmed_ordinal": 29035
   },
   "effect-lass-seed": {
     "confirmed_ordinal": 23227
@@ -596,6 +623,9 @@
   "effect-pokemon-flute": {
     "confirmed_ordinal": 27824
   },
+  "effect-pokemon-trader-play": {
+    "confirmed_ordinal": 29035
+  },
   "effect-pokemon-trader-seed": {
     "confirmed_ordinal": 23227
   },
@@ -650,6 +680,9 @@
   "effect-rhydon-2": {
     "confirmed_ordinal": 33080
   },
+  "effect-scoop-up-play": {
+    "confirmed_ordinal": 29035
+  },
   "effect-scoop-up-seed": {
     "confirmed_ordinal": 23227
   },
@@ -680,11 +713,17 @@
   "effect-starmie-1-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-super-energy-removal-play": {
+    "confirmed_ordinal": 29035
+  },
   "effect-super-energy-removal-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-super-energy-retrieval-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-super-potion-play": {
+    "confirmed_ordinal": 29035
   },
   "effect-super-potion-seed": {
     "confirmed_ordinal": 23227

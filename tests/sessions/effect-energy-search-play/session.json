@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-energy-search-seed",
+  "goal": "Player-controlled duel: plays the card from hand",
+  "input_sha256": "072dfea00bb6ef56fcece72831cbcfda26c34d870d631c6b58da42567caa5341",
+  "name": "effect-energy-search-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T07:11:43+00:00",
+  "schema": 1,
+  "script": "/tmp/play-energy-search.txt"
+}

@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-lass-seed",
+  "goal": "Player-controlled duel: plays the card from hand",
+  "input_sha256": "471f10d68da7d2a45261716d5d8ff29897be9c93c955fccce680f7f8a9b781c2",
+  "name": "effect-lass-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T07:11:44+00:00",
+  "schema": 1,
+  "script": "/tmp/play-lass.txt"
+}

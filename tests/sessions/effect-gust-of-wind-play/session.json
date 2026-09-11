@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-gust-of-wind-seed",
+  "goal": "Player-controlled duel: plays the card from hand",
+  "input_sha256": "b44b8f6b3ada3e523a61925b6dd927354686593be499d04a8f154a90ccabd584",
+  "name": "effect-gust-of-wind-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T07:11:43+00:00",
+  "schema": 1,
+  "script": "/tmp/play-gust-of-wind.txt"
+}

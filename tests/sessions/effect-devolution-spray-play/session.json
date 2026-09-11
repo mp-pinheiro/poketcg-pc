@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-devolution-spray-seed",
+  "goal": "Player-controlled duel: plays the card from hand",
+  "input_sha256": "c9ad55dbee459f0ae4a7fe36c3f154780930b0d0195e6c757fe4143054ce1ad4",
+  "name": "effect-devolution-spray-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T07:11:43+00:00",
+  "schema": 1,
+  "script": "/tmp/play-devolution-spray.txt"
+}

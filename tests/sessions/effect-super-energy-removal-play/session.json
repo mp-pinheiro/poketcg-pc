@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-super-energy-removal-seed",
+  "goal": "Player-controlled duel: plays the card from hand",
+  "input_sha256": "84faee12fb6e12558dc9d582c51e0d0d4f4d100313541f9300d347e893f8138b",
+  "name": "effect-super-energy-removal-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T07:11:44+00:00",
+  "schema": 1,
+  "script": "/tmp/play-super-energy-removal.txt"
+}

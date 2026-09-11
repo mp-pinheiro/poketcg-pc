@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-scoop-up-seed",
+  "goal": "Player-controlled duel: plays the card from hand",
+  "input_sha256": "53e872ed8e87e0d54b7b86f6356849beed5895373f8e4785302af50716ab19b4",
+  "name": "effect-scoop-up-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T07:11:44+00:00",
+  "schema": 1,
+  "script": "/tmp/play-scoop-up.txt"
+}

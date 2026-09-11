@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-defender-seed",
+  "goal": "Player-controlled duel: plays the card from hand",
+  "input_sha256": "6739c18b0d32c6887f409b46f85d2f5d243472de235661513dfbcd748b797173",
+  "name": "effect-defender-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T07:11:43+00:00",
+  "schema": 1,
+  "script": "/tmp/play-defender.txt"
+}

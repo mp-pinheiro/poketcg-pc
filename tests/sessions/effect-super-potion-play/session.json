@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-super-potion-seed",
+  "goal": "Player-controlled duel: plays the card from hand",
+  "input_sha256": "df4d9b86398e7c21f35278861098f6f75d9db40063237576c49fc8067f2a76ba",
+  "name": "effect-super-potion-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T07:11:44+00:00",
+  "schema": 1,
+  "script": "/tmp/play-super-potion.txt"
+}

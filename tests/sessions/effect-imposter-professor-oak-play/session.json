@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-imposter-professor-oak-seed",
+  "goal": "Player-controlled duel: plays the card from hand",
+  "input_sha256": "8851706cd5729591b27ea01d64623263298056bf2c33e2c86916537bbc4f69ed",
+  "name": "effect-imposter-professor-oak-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T07:11:44+00:00",
+  "schema": 1,
+  "script": "/tmp/play-imposter-professor-oak.txt"
+}
