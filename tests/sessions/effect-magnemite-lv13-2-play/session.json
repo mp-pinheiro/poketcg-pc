@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-magnemite-lv13-2-board",
+  "goal": "Board-seeded duel: MAGNEMITE_LV13 attack 2 (MagnemiteSelfdestructEffect)",
+  "input_sha256": "8bfcdf3c9ff06b5c7c8a05b60f1c9b0ae2d94a7dccc1931ae8f16d2a27074437",
+  "name": "effect-magnemite-lv13-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T12:49:39+00:00",
+  "schema": 1,
+  "script": "/tmp/board-magnemite-lv13-2.txt"
+}

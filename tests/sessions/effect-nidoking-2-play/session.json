@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-nidoking-2-board",
+  "goal": "Board-seeded duel: NIDOKING attack 2 (Toxic_DoublePoisonEffect)",
+  "input_sha256": "f57ec268e4c159b0b5cebd8ebf868be9f3aec2be902333f2b4fd8b0c88a72daf",
+  "name": "effect-nidoking-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T12:49:39+00:00",
+  "schema": 1,
+  "script": "/tmp/board-nidoking-2.txt"
+}

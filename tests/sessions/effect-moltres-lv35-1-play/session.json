@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-moltres-lv35-1-board",
+  "goal": "Board-seeded duel: MOLTRES_LV35 attack 1 (Wildfire_DiscardDeckEffect)",
+  "input_sha256": "fbe79f2bef127fb0b71bd04a9ab8331b4efac0fd5a592fda94553be60e9c84ad",
+  "name": "effect-moltres-lv35-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T12:49:39+00:00",
+  "schema": 1,
+  "script": "/tmp/board-moltres-lv35-1.txt"
+}

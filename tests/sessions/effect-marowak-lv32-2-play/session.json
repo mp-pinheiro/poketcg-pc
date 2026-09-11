@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-marowak-lv32-2-board",
+  "goal": "Board-seeded duel: MAROWAK_LV32 attack 2 (Wail_FillBenchEffect)",
+  "input_sha256": "3dd97e18ad69203aab23322e80d811effbbcb2aed13c0994b8e2cadd6c3ddd4c",
+  "name": "effect-marowak-lv32-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T12:49:39+00:00",
+  "schema": 1,
+  "script": "/tmp/board-marowak-lv32-2.txt"
+}

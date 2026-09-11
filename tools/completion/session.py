@@ -1665,7 +1665,7 @@ BOARD_ENERGY_SLOTS = 6
 
 
 def board_seed(name: str, *, card: str, attack: int | None, base: str, at: int, deck: int,
-               poke_at: int, goal: str) -> int:
+               poke_at: int, goal: str, then: list[str] | None = None) -> int:
     """A `deck_seed` whose duel board is poked as well: the carrier is the arena
     card and enough energy cards are located there to pay its attack.
 
@@ -1712,14 +1712,21 @@ def board_seed(name: str, *, card: str, attack: int | None, base: str, at: int, 
                (PLAYER_DUEL_VARS + DUEL_BOARD["not_in_deck"], len(energy_indices) + 1)]
     pokes.setdefault(poke_at, []).extend(writes)
     (directory / "pokes.txt").write_text(refstream.pokes_text(pokes))
+    masks = refstream.load_masks(directory / "input.txt")
+    then = then or []
+    if then:
+        import explore
+
+        masks = explore.path_to_masks(then, masks)
+        (directory / "input.txt").write_text("\n".join(str(m) for m in masks) + "\n")
     meta = json.loads((directory / "session.json").read_text())
     meta.update({"board_card": card, "board_attack": attack, "board_poke_ordinal": poke_at,
-                 "board_arena_index": arena_index, "board_energy_indices": energy_indices})
+                 "board_arena_index": arena_index, "board_energy_indices": energy_indices,
+                 "ordinals": len(masks), "then": list(then)})
     (directory / "session.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
     print(f"BOARD {name} card={card} attack={attack} arena={arena_index} "
-          f"energy={len(energy_indices)} poke_at={poke_at}")
+          f"energy={len(energy_indices)} poke_at={poke_at} ordinals={len(masks)}")
     return 0
-
 
 def seeded(name: str, *, save: Path, base: str, prefix: int | None, then: list[str], goal: str) -> int:
     """A session that starts from a save image: `base`'s input through
@@ -1876,6 +1883,8 @@ def main(argv: list[str] | None = None) -> int:
     board_parser.add_argument("--at", type=int, default=23227)
     board_parser.add_argument("--deck", type=int, default=2, help="*_DECK_ID the opponent plays")
     board_parser.add_argument("--poke-at", type=int, default=27900, help="ordinal the board is poked at, after setup")
+    board_parser.add_argument("--then", default="",
+                              help="explore.py action labels appended to the branch prefix")
     board_parser.add_argument("--goal", default="")
     seeded_parser = sub.add_parser("seeded", help="a session that starts from a save image")
     seeded_parser.add_argument("name")
@@ -1920,7 +1929,8 @@ def main(argv: list[str] | None = None) -> int:
                              cards=load_cards(args.cards), goal=args.goal)
         if args.command == "board-seed":
             return board_seed(args.name, card=args.card, attack=args.attack, base=args.base,
-                              at=args.at, deck=args.deck, poke_at=args.poke_at, goal=args.goal)
+                              at=args.at, deck=args.deck, poke_at=args.poke_at, goal=args.goal,
+                              then=[label for label in args.then.split(",") if label])
         if args.command == "seeded":
             save = args.save if args.save.is_absolute() else ROOT / args.save
             return seeded(args.name, save=save, base=args.base, prefix=args.prefix,

@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-nidorina-1-board",
+  "goal": "Board-seeded duel: NIDORINA attack 1 (NidorinaSupersonicEffect)",
+  "input_sha256": "3f14978d1dc5c858992f61d6fab11d56e55efe236ab27300263428d49afed767",
+  "name": "effect-nidorina-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T12:49:39+00:00",
+  "schema": 1,
+  "script": "/tmp/board-nidorina-1.txt"
+}

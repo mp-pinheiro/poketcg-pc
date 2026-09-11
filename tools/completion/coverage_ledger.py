@@ -343,8 +343,10 @@ def freeze_lane() -> Path:
     return LANE
 
 
-def verify_worker(name: str, lane: Path) -> tuple[str, int, str]:
+def verify_worker(name: str, lane: Path, ratchet: bool = False) -> tuple[str, int, str]:
     command = [sys.executable, str(ROOT / "tools" / "completion" / "session.py"), "verify", name]
+    if ratchet:
+        command.append("--write-ratchet")
     result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False,
                             env=dict(os.environ, POKETCG_BUILD=str(lane.relative_to(ROOT))))
     lines = [line for line in result.stdout.splitlines()
@@ -352,7 +354,8 @@ def verify_worker(name: str, lane: Path) -> tuple[str, int, str]:
     return name, result.returncode, "\n".join(lines) or result.stderr.strip()[-300:]
 
 
-def verify_affected(names: list[str], *, jobs: int = DEFAULT_VERIFY_JOBS, sample: int = 0) -> int:
+def verify_affected(names: list[str], *, jobs: int = DEFAULT_VERIFY_JOBS, sample: int = 0,
+                    ratchet: bool = False) -> int:
     """Verify the named sessions in parallel against a frozen lane. `sample`
     keeps only the cheapest N (fewest ordinals): an exit-register fix cannot
     change a digest the sweep already proved, so the full set is the landing
@@ -364,7 +367,7 @@ def verify_affected(names: list[str], *, jobs: int = DEFAULT_VERIFY_JOBS, sample
     lane = freeze_lane()
     worst = 0
     with ThreadPoolExecutor(max_workers=max(1, jobs)) as pool:
-        for name, code, text in pool.map(lambda name: verify_worker(name, lane), ordered):
+        for name, code, text in pool.map(lambda name: verify_worker(name, lane, ratchet), ordered):
             worst = max(worst, code)
             for line in text.splitlines():
                 if not line.startswith("SESSION") or "status=clean" not in line:
@@ -715,6 +718,8 @@ def main(argv: list[str] | None = None) -> int:
     sweep_parser = sub.add_parser("sweep", help="session-verify every recorded session in parallel")
     sweep_parser.add_argument("names", nargs="*")
     sweep_parser.add_argument("--jobs", type=int, default=DEFAULT_VERIFY_JOBS)
+    sweep_parser.add_argument("--write-ratchet", action="store_true",
+                              help="record each session's confirmed ordinal; needed for new sessions")
     discover_parser = sub.add_parser("discover", help="coverage searches from ledger-ranked seeds")
     discover_parser.add_argument("seeds", nargs="*", help="seed sessions; default the ranked frontier")
     discover_parser.add_argument("--budget", type=int, default=DISCOVER_BUDGET)
@@ -769,7 +774,8 @@ def main(argv: list[str] | None = None) -> int:
             record = trace_session(args.name)
             print(f"TRACED {args.name} ordinals={record['ordinals']} routines={len(record['routines'])}")
             return 0
-        return verify_affected(args.names or ledger_sessions(), jobs=args.jobs)
+        return verify_affected(args.names or ledger_sessions(), jobs=args.jobs,
+                               ratchet=getattr(args, "write_ratchet", False))
     except (CoverageError, session.SessionError, refstream.RefstreamError,
             OSError, ValueError) as exc:
         print(json.dumps({"status": "FAIL", "detail": str(exc)}), file=sys.stderr)

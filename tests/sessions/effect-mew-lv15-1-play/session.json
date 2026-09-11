@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-mew-lv15-1-board",
+  "goal": "Board-seeded duel: MEW_LV15 attack 1 (MysteryAttack_RandomEffect)",
+  "input_sha256": "9db0e265a852f218af350e05c452b9eb0bf59f21d351ba59923b73b4d69cba64",
+  "name": "effect-mew-lv15-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T12:49:39+00:00",
+  "schema": 1,
+  "script": "/tmp/board-mew-lv15-1.txt"
+}

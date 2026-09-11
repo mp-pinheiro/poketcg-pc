@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-nidoranf-2-board",
+  "goal": "Board-seeded duel: NIDORANF attack 2 (NidoranFCallForFamily_PlayerSelectEffect)",
+  "input_sha256": "5d2217dc3999f818bd37c5569da6dde6e1bdd73b5392e3ad207684c25dda36ee",
+  "name": "effect-nidoranf-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T12:49:39+00:00",
+  "schema": 1,
+  "script": "/tmp/board-nidoranf-2.txt"
+}

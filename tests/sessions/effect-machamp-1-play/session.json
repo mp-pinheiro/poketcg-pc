@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-machamp-1-board",
+  "goal": "Board-seeded duel: MACHAMP attack 1 (StrikesBackEffect)",
+  "input_sha256": "d30ae70d3ff865611b468b43fa7798c446f064e6fb1ba6d6a59d3139553070b2",
+  "name": "effect-machamp-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T12:49:38+00:00",
+  "schema": 1,
+  "script": "/tmp/board-machamp-1.txt"
+}

@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-magmar-lv24-2-board",
+  "goal": "Board-seeded duel: MAGMAR_LV24 attack 2 (MagmarFlamethrower_PlayerSelectEffect)",
+  "input_sha256": "1f20becd106324e8db29455d3ff40b464094e3359dda071261441d02ae10e2cb",
+  "name": "effect-magmar-lv24-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T12:49:38+00:00",
+  "schema": 1,
+  "script": "/tmp/board-magmar-lv24-2.txt"
+}

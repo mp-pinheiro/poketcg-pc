@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-mewtwo-lv53-2-board",
+  "goal": "Board-seeded duel: MEWTWO_LV53 attack 2 (Barrier_BarrierEffect)",
+  "input_sha256": "fd53a141e5f7e884df10716e9e838f780fc9790041de80c4666c0c064c20b75f",
+  "name": "effect-mewtwo-lv53-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T12:49:39+00:00",
+  "schema": 1,
+  "script": "/tmp/board-mewtwo-lv53-2.txt"
+}

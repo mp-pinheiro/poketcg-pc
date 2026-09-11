@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-marowak-lv26-2-board",
+  "goal": "Board-seeded duel: MAROWAK_LV26 attack 2 (MarowakCallForFamily_PlayerSelectEffect)",
+  "input_sha256": "70db3201a3dad6d299a36154e599391158029a7cd326d8c28a6266d6a6e3ae77",
+  "name": "effect-marowak-lv26-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T12:49:39+00:00",
+  "schema": 1,
+  "script": "/tmp/board-marowak-lv26-2.txt"
+}

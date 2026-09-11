@@ -785,8 +785,20 @@
   "effect-lickitung-2-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-machamp-1-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-machamp-1-play": {
+    "confirmed_ordinal": 29131
+  },
   "effect-machamp-1-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-magmar-lv24-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-magmar-lv24-2-play": {
+    "confirmed_ordinal": 29155
   },
   "effect-magmar-lv24-2-seed": {
     "confirmed_ordinal": 23227
@@ -794,8 +806,20 @@
   "effect-magmar-lv31-1": {
     "confirmed_ordinal": 35144
   },
+  "effect-magnemite-lv13-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-magnemite-lv13-2-play": {
+    "confirmed_ordinal": 29155
+  },
   "effect-magnemite-lv13-2-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-magnemite-lv15-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-magnemite-lv15-2-play": {
+    "confirmed_ordinal": 29155
   },
   "effect-magnemite-lv15-2-seed": {
     "confirmed_ordinal": 23227
@@ -815,17 +839,35 @@
   "effect-marowak-lv26-2": {
     "confirmed_ordinal": 32288
   },
+  "effect-marowak-lv26-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-marowak-lv26-2-play": {
+    "confirmed_ordinal": 29155
+  },
   "effect-marowak-lv26-2-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-marowak-lv32-2": {
     "confirmed_ordinal": 69632
   },
+  "effect-marowak-lv32-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-marowak-lv32-2-play": {
+    "confirmed_ordinal": 29155
+  },
   "effect-metapod-1": {
     "confirmed_ordinal": 35168
   },
   "effect-mew-lv15-1": {
     "confirmed_ordinal": 29480
+  },
+  "effect-mew-lv15-1-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-mew-lv15-1-play": {
+    "confirmed_ordinal": 29131
   },
   "effect-mew-lv23-2": {
     "confirmed_ordinal": 29816
@@ -839,6 +881,12 @@
   "effect-mewtwo-alt-lv60-1-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-mewtwo-lv53-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-mewtwo-lv53-2-play": {
+    "confirmed_ordinal": 29155
+  },
   "effect-mewtwo-lv53-2-seed": {
     "confirmed_ordinal": 23227
   },
@@ -850,6 +898,12 @@
   },
   "effect-moltres-lv35-1": {
     "confirmed_ordinal": 32048
+  },
+  "effect-moltres-lv35-1-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-moltres-lv35-1-play": {
+    "confirmed_ordinal": 29131
   },
   "effect-moltres-lv37-1": {
     "confirmed_ordinal": 48776
@@ -863,8 +917,20 @@
   "effect-mr-fuji-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-nidoking-1-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-nidoking-1-play": {
+    "confirmed_ordinal": 29131
+  },
   "effect-nidoking-1-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-nidoking-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-nidoking-2-play": {
+    "confirmed_ordinal": 29155
   },
   "effect-nidoking-2-seed": {
     "confirmed_ordinal": 23227
@@ -872,8 +938,20 @@
   "effect-nidoqueen-1": {
     "confirmed_ordinal": 34112
   },
+  "effect-nidoranf-2-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-nidoranf-2-play": {
+    "confirmed_ordinal": 28268
+  },
   "effect-nidoranf-2-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-nidorina-1-board": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-nidorina-1-play": {
+    "confirmed_ordinal": 29131
   },
   "effect-nidorina-1-seed": {
     "confirmed_ordinal": 23227

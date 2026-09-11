@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-nidoking-1-board",
+  "goal": "Board-seeded duel: NIDOKING attack 1 (Thrash_ModifierEffect)",
+  "input_sha256": "dd155859b15bee1248b69986b33996735f30c904bb1e316b8f3103f3e75a6d43",
+  "name": "effect-nidoking-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T12:49:39+00:00",
+  "schema": 1,
+  "script": "/tmp/board-nidoking-1.txt"
+}

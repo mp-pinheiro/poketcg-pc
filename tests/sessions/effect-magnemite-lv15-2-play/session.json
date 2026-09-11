@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-magnemite-lv15-2-board",
+  "goal": "Board-seeded duel: MAGNEMITE_LV15 attack 2 (MagneticStormEffect)",
+  "input_sha256": "8b80b7957026d5e6b117b8a739b3f0c03ead2d3961fa38e9038dcf0d23cefe7b",
+  "name": "effect-magnemite-lv15-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T12:49:39+00:00",
+  "schema": 1,
+  "script": "/tmp/board-magnemite-lv15-2.txt"
+}
