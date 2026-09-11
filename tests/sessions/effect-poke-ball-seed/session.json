@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: POKE_BALL in hand, the AI never played it (PokeBall_PlayerSelection)",
+  "goal": "Search seed: POKE_BALL in hand, player-controlled duel (PokeBall_PlayerSelection)",
   "name": "effect-poke-ball-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     64,
     64
   ],
-  "recorded": "2026-09-11T02:45:49+00:00",
+  "recorded": "2026-09-11T06:53:10+00:00",
   "schema": 1
 }

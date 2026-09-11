@@ -1,10 +1,10 @@
 {
   "derived_from": "effect-poke-ball-seed",
-  "goal": "Player-driven duel from the Poke Ball seed: setup placed, 151 setup routines",
-  "input_sha256": "613cece0b1e7098e8fb16a690cee72fe3ac845b09d8492380e6880190b194ac0",
+  "goal": "Player-controlled duel: plays POKE_BALL from hand (PokeBall_PlayerSelection)",
+  "input_sha256": "1f289ae163df5f95b9e3ad63104e92f5ef9c1a4ea47b9d7e0f15cdc376c1db82",
   "name": "effect-poke-ball-play",
-  "ordinals": 26539,
-  "recorded": "2026-09-11T06:44:53+00:00",
+  "ordinals": 29083,
+  "recorded": "2026-09-11T06:53:20+00:00",
   "schema": 1,
-  "script": "/tmp/pokeball-play.txt"
+  "script": "/tmp/pb-play.txt"
 }
