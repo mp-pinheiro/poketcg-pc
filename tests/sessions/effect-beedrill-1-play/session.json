@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-beedrill-1-board",
+  "goal": "Board-seeded duel: BEEDRILL attack 1 (Twineedle_MultiplierEffect)",
+  "input_sha256": "7f5c6b69752674788f1febbeae396cfb4ae611210b6db608f4bdea972e279fa2",
+  "name": "effect-beedrill-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T09:10:11+00:00",
+  "schema": 1,
+  "script": "/tmp/board-beedrill-1.txt"
+}

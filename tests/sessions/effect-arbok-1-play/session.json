@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-arbok-1-board",
+  "goal": "Board-seeded duel: ARBOK attack 1 (TerrorStrike_50PercentSelectSwitchPokemon)",
+  "input_sha256": "91f8b59c8e6d10ec47be5265b3149afaaf83bfe4084752ae345625d97e2800e4",
+  "name": "effect-arbok-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T09:10:11+00:00",
+  "schema": 1,
+  "script": "/tmp/board-arbok-1.txt"
+}

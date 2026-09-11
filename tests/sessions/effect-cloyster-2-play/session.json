@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-cloyster-2-board",
+  "goal": "Board-seeded duel: CLOYSTER attack 2 (CloysterSpikeCannon_MultiplierEffect)",
+  "input_sha256": "44a6c5c322cb8c01afd2211c18eda1c5c78b0ed375e4c9d42790e510cc2299fc",
+  "name": "effect-cloyster-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T09:10:12+00:00",
+  "schema": 1,
+  "script": "/tmp/board-cloyster-2.txt"
+}

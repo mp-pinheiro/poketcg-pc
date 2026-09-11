@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-bulbasaur-1-board",
+  "goal": "Board-seeded duel: BULBASAUR attack 1 (BulbasaurLeechSeedEffect)",
+  "input_sha256": "f120c991094a1ed72e8caf3f4ef365f192c43d556df93846f3b3e9583f1bd887",
+  "name": "effect-bulbasaur-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T09:10:11+00:00",
+  "schema": 1,
+  "script": "/tmp/board-bulbasaur-1.txt"
+}

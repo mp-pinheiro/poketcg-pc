@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-charmander-2-board",
+  "goal": "Board-seeded duel: CHARMANDER attack 2 (Ember_PlayerSelectEffect)",
+  "input_sha256": "84f1b2ab7e7ff045b7cb843bdd477231ee22b6c1a45e5fda7a5a09a4d8786e01",
+  "name": "effect-charmander-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T09:10:12+00:00",
+  "schema": 1,
+  "script": "/tmp/board-charmander-2.txt"
+}

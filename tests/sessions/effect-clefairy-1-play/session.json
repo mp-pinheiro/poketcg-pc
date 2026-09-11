@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-clefairy-1-board",
+  "goal": "Board-seeded duel: CLEFAIRY attack 1 (SingEffect)",
+  "input_sha256": "27b144577a1672aa2d6574cc8d4726099fbb01e31d585ca58022dc94fb963dd2",
+  "name": "effect-clefairy-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T09:10:12+00:00",
+  "schema": 1,
+  "script": "/tmp/board-clefairy-1.txt"
+}

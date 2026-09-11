@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-charizard-1-board",
+  "goal": "Board-seeded duel: CHARIZARD attack 1 (EnergyBurnEffect)",
+  "input_sha256": "b7a41f4645cd1c41fa6df4bc05e13aa637cd47a83d81d44dc4812b4f5b6cd7e2",
+  "name": "effect-charizard-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T09:10:12+00:00",
+  "schema": 1,
+  "script": "/tmp/board-charizard-1.txt"
+}

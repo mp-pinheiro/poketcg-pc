@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-ditto-2-board",
+  "goal": "Board-seeded duel: DITTO attack 2 (MorphEffect)",
+  "input_sha256": "fdfac6c6ebb715c408fd8faffa83bd38943394ba6df6fe5000d5a5aaf1c52496",
+  "name": "effect-ditto-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T09:10:12+00:00",
+  "schema": 1,
+  "script": "/tmp/board-ditto-2.txt"
+}

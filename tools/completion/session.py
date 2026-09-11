@@ -1654,6 +1654,72 @@ def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goa
     print(f"SESSION {name} ordinals={len(masks)} deck={deck} player_cards={len(cards)}")
     return 0
 
+DUEL_BOARD = {"locations": 0x00, "not_in_deck": 0xBA, "arena_card": 0xBB, "arena_flags": 0xC2,
+              "arena_hp": 0xC8, "arena_stage": 0xCE, "in_play_area": 0xEF}
+PLAYER_DUEL_VARS = 0xC200
+CARD_LOCATION_ARENA = 0x10
+ENERGY_FOR_COLOUR = {"FIRE": "FIRE_ENERGY", "GRASS": "GRASS_ENERGY", "WATER": "WATER_ENERGY",
+                     "LIGHTNING": "LIGHTNING_ENERGY", "PSYCHIC": "PSYCHIC_ENERGY",
+                     "FIGHTING": "FIGHTING_ENERGY", "COLORLESS": "DOUBLE_COLORLESS_ENERGY"}
+BOARD_ENERGY_SLOTS = 6
+
+
+def board_seed(name: str, *, card: str, attack: int | None, base: str, at: int, deck: int,
+               poke_at: int, goal: str) -> int:
+    """A `deck_seed` whose duel board is poked as well: the carrier is the arena
+    card and enough energy cards are located there to pay its attack.
+
+    A button search cannot build that board -- the opening hand decides what can
+    be played, an evolution needs its pre-evolution in play a turn earlier, and
+    the attack menu refuses a cost it cannot pay. Attached energy is not a
+    counter: an energy card attached to the arena Pokemon simply has
+    CARD_LOCATION_ARENA in its DUELVARS_CARD_LOCATIONS byte, so the board is
+    expressible as pokes at an ordinal after the setup phase."""
+    import effects
+
+    cards = effects.build_deck(card, attack_slot=attack)
+    data = effects.load_map()["card_data"]
+    ids = {entry["id_name"]: entry["id"] for entry in data.values()}
+    if card not in data:
+        raise SessionError(f"{card} is not a card")
+    arena_index = cards.index(ids[card])
+    cost: dict[str, int] = {}
+    for entry in data[card].get("attacks", ()):
+        if attack is None or entry["slot"] == attack:
+            cost = entry.get("energy") or {}
+            break
+    wanted = [ENERGY_FOR_COLOUR.get(colour, "DOUBLE_COLORLESS_ENERGY") for colour in cost]
+    energy_indices: list[int] = []
+    for energy_name in (wanted or ["DOUBLE_COLORLESS_ENERGY"]) * BOARD_ENERGY_SLOTS:
+        energy_id = ids.get(energy_name)
+        for index, value in enumerate(cards):
+            if value == energy_id and index != arena_index and index not in energy_indices:
+                energy_indices.append(index)
+                break
+        if len(energy_indices) >= BOARD_ENERGY_SLOTS:
+            break
+
+    deck_seed(name, base=base, at=at, deck=deck, cards=cards, goal=goal)
+    directory = session_dir(name)
+    pokes = refstream.load_pokes(directory / "pokes.txt")
+    writes = [(PLAYER_DUEL_VARS + DUEL_BOARD["locations"] + index, CARD_LOCATION_ARENA)
+              for index in [arena_index] + energy_indices]
+    writes += [(PLAYER_DUEL_VARS + DUEL_BOARD["arena_card"], arena_index),
+               (PLAYER_DUEL_VARS + DUEL_BOARD["arena_hp"], data[card]["hp"]),
+               (PLAYER_DUEL_VARS + DUEL_BOARD["arena_stage"], 0),
+               (PLAYER_DUEL_VARS + DUEL_BOARD["arena_flags"], 0),
+               (PLAYER_DUEL_VARS + DUEL_BOARD["in_play_area"], 1),
+               (PLAYER_DUEL_VARS + DUEL_BOARD["not_in_deck"], len(energy_indices) + 1)]
+    pokes.setdefault(poke_at, []).extend(writes)
+    (directory / "pokes.txt").write_text(refstream.pokes_text(pokes))
+    meta = json.loads((directory / "session.json").read_text())
+    meta.update({"board_card": card, "board_attack": attack, "board_poke_ordinal": poke_at,
+                 "board_arena_index": arena_index, "board_energy_indices": energy_indices})
+    (directory / "session.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
+    print(f"BOARD {name} card={card} attack={attack} arena={arena_index} "
+          f"energy={len(energy_indices)} poke_at={poke_at}")
+    return 0
+
 
 def seeded(name: str, *, save: Path, base: str, prefix: int | None, then: list[str], goal: str) -> int:
     """A session that starts from a save image: `base`'s input through
@@ -1802,6 +1868,15 @@ def main(argv: list[str] | None = None) -> int:
     seed_parser.add_argument("--deck", type=int, required=True, help="*_DECK_ID the opponent plays")
     seed_parser.add_argument("--cards", type=Path, required=True, help="deck file of 60 card ids for the player")
     seed_parser.add_argument("--goal", default="")
+    board_parser = sub.add_parser("board-seed", help="a player-controlled duel whose board is poked: carrier active with energy")
+    board_parser.add_argument("name")
+    board_parser.add_argument("--card", required=True, help="carrier card id name, e.g. EXEGGUTOR")
+    board_parser.add_argument("--attack", type=int, help="attack slot the energy must pay for")
+    board_parser.add_argument("--from", dest="base", default="practice-win")
+    board_parser.add_argument("--at", type=int, default=23227)
+    board_parser.add_argument("--deck", type=int, default=2, help="*_DECK_ID the opponent plays")
+    board_parser.add_argument("--poke-at", type=int, default=27900, help="ordinal the board is poked at, after setup")
+    board_parser.add_argument("--goal", default="")
     seeded_parser = sub.add_parser("seeded", help="a session that starts from a save image")
     seeded_parser.add_argument("name")
     seeded_parser.add_argument("--save", type=Path, required=True, help="32 KiB cartridge RAM image (savegen.py)")
@@ -1843,6 +1918,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "deck-seed":
             return deck_seed(args.name, base=args.base, at=args.at, deck=args.deck,
                              cards=load_cards(args.cards), goal=args.goal)
+        if args.command == "board-seed":
+            return board_seed(args.name, card=args.card, attack=args.attack, base=args.base,
+                              at=args.at, deck=args.deck, poke_at=args.poke_at, goal=args.goal)
         if args.command == "seeded":
             save = args.save if args.save.is_absolute() else ROOT / args.save
             return seeded(args.name, save=save, base=args.base, prefix=args.prefix,

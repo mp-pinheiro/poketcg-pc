@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-arcanine-lv45-1-board",
+  "goal": "Board-seeded duel: ARCANINE_LV45 attack 1 (ArcanineFlamethrower_DiscardEffect)",
+  "input_sha256": "6ae688ab0a49d5a89a2b86f9c6fc02671981881e14eaaba796fbcc0651e80d16",
+  "name": "effect-arcanine-lv45-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T09:10:11+00:00",
+  "schema": 1,
+  "script": "/tmp/board-arcanine-lv45-1.txt"
+}

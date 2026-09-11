@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-clefable-1-board",
+  "goal": "Board-seeded duel: CLEFABLE attack 1 (ClefableMetronome_CheckAttacks)",
+  "input_sha256": "b23f92eab85474ee1638abe74aecfc4a1ebb7efd069e6815977419b4498b971b",
+  "name": "effect-clefable-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T09:10:12+00:00",
+  "schema": 1,
+  "script": "/tmp/board-clefable-1.txt"
+}

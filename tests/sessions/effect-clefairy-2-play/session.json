@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-clefairy-2-board",
+  "goal": "Board-seeded duel: CLEFAIRY attack 2 (ClefairyMetronome_UseAttackEffect)",
+  "input_sha256": "3cce7a4140a81a41f81765e1e21ce7debe90bd370fe7e5f4f8dae700d6b2274d",
+  "name": "effect-clefairy-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T09:10:12+00:00",
+  "schema": 1,
+  "script": "/tmp/board-clefairy-2.txt"
+}

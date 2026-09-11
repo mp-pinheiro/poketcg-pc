@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-bellsprout-2-board",
+  "goal": "Board-seeded duel: BELLSPROUT attack 2 (BellsproutCallForFamily_PlayerSelectEffect)",
+  "input_sha256": "54fe9db216e2c64266472b53c8eeb69840883bab8b90322fd630f5e4e85fcb4d",
+  "name": "effect-bellsprout-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T09:10:11+00:00",
+  "schema": 1,
+  "script": "/tmp/board-bellsprout-2.txt"
+}

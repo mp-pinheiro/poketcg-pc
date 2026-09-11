@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-charizard-2-board",
+  "goal": "Board-seeded duel: CHARIZARD attack 2 (FireSpin_CheckEnergy)",
+  "input_sha256": "74d9bb9ef823ed9bb723a75e47d4ef3d49adb7234d86d1130417d039c9064980",
+  "name": "effect-charizard-2-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T09:10:12+00:00",
+  "schema": 1,
+  "script": "/tmp/board-charizard-2.txt"
+}

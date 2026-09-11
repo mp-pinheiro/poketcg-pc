@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-butterfree-1-board",
+  "goal": "Board-seeded duel: BUTTERFREE attack 1 (ButterfreeWhirlwind_CheckBench)",
+  "input_sha256": "41817b8a1c50a16a06252698a22134ab9fc117b32176e662667ea14afbbe27eb",
+  "name": "effect-butterfree-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T09:10:11+00:00",
+  "schema": 1,
+  "script": "/tmp/board-butterfree-1.txt"
+}

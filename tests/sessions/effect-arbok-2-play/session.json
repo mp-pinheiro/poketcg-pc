@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-arbok-2-board",
+  "goal": "Board-seeded duel: ARBOK attack 2 (PoisonFang_AIEffect)",
+  "input_sha256": "301782435449b94eb8af340ff413cad17da3d226d32ac10a37bd3949344af554",
+  "name": "effect-arbok-2-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T09:10:11+00:00",
+  "schema": 1,
+  "script": "/tmp/board-arbok-2.txt"
+}

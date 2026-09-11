@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-clefable-2-board",
+  "goal": "Board-seeded duel: CLEFABLE attack 2 (ClefableMinimizeEffect)",
+  "input_sha256": "5ac59ba6cd0183a5597bc9048ecb62ba37bb1c99242058b78a5107b3b5921416",
+  "name": "effect-clefable-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T09:10:12+00:00",
+  "schema": 1,
+  "script": "/tmp/board-clefable-2.txt"
+}

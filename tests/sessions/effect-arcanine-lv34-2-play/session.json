@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-arcanine-lv34-2-board",
+  "goal": "Board-seeded duel: ARCANINE_LV34 attack 2 (FlamesOfRage_PlayerSelectEffect)",
+  "input_sha256": "98a0f46a7caf973364841202cebbe6ccc6a975f177c60ff79a378019c21e5139",
+  "name": "effect-arcanine-lv34-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T09:10:11+00:00",
+  "schema": 1,
+  "script": "/tmp/board-arcanine-lv34-2.txt"
+}

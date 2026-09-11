@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-arcanine-lv45-2-board",
+  "goal": "Board-seeded duel: ARCANINE_LV45 attack 2 (TakeDownEffect)",
+  "input_sha256": "ab0432eec4e027ed28abf85490099a3d2db71255851a625c84dbb77f84320e6a",
+  "name": "effect-arcanine-lv45-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T09:10:11+00:00",
+  "schema": 1,
+  "script": "/tmp/board-arcanine-lv45-2.txt"
+}

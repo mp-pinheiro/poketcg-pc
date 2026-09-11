@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-chansey-2-board",
+  "goal": "Board-seeded duel: CHANSEY attack 2 (ChanseyDoubleEdgeEffect)",
+  "input_sha256": "e1497d5e55e63392c0016b7cd84bf2c25aad5a602e971060bab6e0e97d981a86",
+  "name": "effect-chansey-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T09:10:12+00:00",
+  "schema": 1,
+  "script": "/tmp/board-chansey-2.txt"
+}

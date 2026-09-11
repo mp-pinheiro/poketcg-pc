@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-dragonair-2-board",
+  "goal": "Board-seeded duel: DRAGONAIR attack 2 (DragonairHyperBeam_DiscardEffect)",
+  "input_sha256": "e9940177a67faba49a287f7b753de4714fd47112075a57cd72fe8e79c92b7fd3",
+  "name": "effect-dragonair-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T09:10:12+00:00",
+  "schema": 1,
+  "script": "/tmp/board-dragonair-2.txt"
+}

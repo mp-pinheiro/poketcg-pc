@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-aerodactyl-1-board",
+  "goal": "Board-seeded duel: AERODACTYL attack 1 (PrehistoricPowerEffect)",
+  "input_sha256": "7e681c9680e058d0aedbe06df8bc1adf22419cf3cb14dda2935ae21cfe81f875",
+  "name": "effect-aerodactyl-1-play",
+  "ordinals": 29131,
+  "recorded": "2026-09-11T09:10:11+00:00",
+  "schema": 1,
+  "script": "/tmp/board-aerodactyl-1.txt"
+}

@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-charmeleon-2-board",
+  "goal": "Board-seeded duel: CHARMELEON attack 2 (CharmeleonFlamethrower_DiscardEffect)",
+  "input_sha256": "d020855c725d146d7df900040371011ef54bfb78d55e540df05244a37db4c14c",
+  "name": "effect-charmeleon-2-play",
+  "ordinals": 29155,
+  "recorded": "2026-09-11T09:10:12+00:00",
+  "schema": 1,
+  "script": "/tmp/board-charmeleon-2.txt"
+}
