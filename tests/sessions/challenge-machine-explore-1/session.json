@@ -1,0 +1,10 @@
+{
+  "derived_from": "challenge-machine",
+  "goal": "Coverage search from challenge-machine: 1 routines no session had executed (OpenCardPage.input_loop)",
+  "input_sha256": "ce4e2245e49dafbb7d204e0d0e8e365f22210ba55cb70ae42807cea497f026ca",
+  "name": "challenge-machine-explore-1",
+  "ordinals": 3814,
+  "recorded": "2026-09-11T23:42:19+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-challenge-machine/scripts/s00-START-1.txt"
+}
