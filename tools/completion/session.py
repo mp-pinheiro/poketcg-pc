@@ -1623,7 +1623,8 @@ def ai_duel(name: str, *, base: str, at: int, deck: int, seed: int | None, prize
     return 0
 
 
-def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goal: str) -> int:
+def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goal: str,
+              then: list[str] | None = None) -> int:
     """A player-controlled duel against deck `deck`'s AI with `cards` as the
     player's deck: the base's input through `at` and the pokes, nothing
     more. A coverage search seeded from it presses the buttons."""
@@ -1639,6 +1640,11 @@ def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goa
                                      (AI_DUEL["wOpponentDeckID"], deck), (AI_DUEL["wIsPracticeDuel"], 0)])
     pokes[at].extend((AI_DUEL["wPlayerDeck"] + index, card) for index, card in enumerate(cards))
     masks = base_masks[:at]
+    then = then or []
+    if then:
+        import explore
+
+        masks = explore.path_to_masks(then, masks)
     directory = session_dir(name)
     directory.mkdir(parents=True, exist_ok=True)
     (directory / "input.txt").write_text("\n".join(str(m) for m in masks) + "\n")
@@ -1648,6 +1654,7 @@ def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goa
         "schema": 1, "name": name, "ordinals": len(masks),
         "goal": goal or f"Player-controlled duel against deck id {deck} with a poked deck, branched from {base} at {at}",
         "derived_from": base, "branch_ordinal": at, "ai_deck": deck, "player_cards": list(cards),
+        "then": list(then),
         "recorded": datetime.now(UTC).isoformat(timespec="seconds"),
     }
     (directory / "session.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
@@ -1874,6 +1881,8 @@ def main(argv: list[str] | None = None) -> int:
     seed_parser.add_argument("--at", type=int, default=23227)
     seed_parser.add_argument("--deck", type=int, required=True, help="*_DECK_ID the opponent plays")
     seed_parser.add_argument("--cards", type=Path, required=True, help="deck file of 60 card ids for the player")
+    seed_parser.add_argument("--then", default="",
+                             help="explore.py action labels appended to the branch prefix")
     seed_parser.add_argument("--goal", default="")
     board_parser = sub.add_parser("board-seed", help="a player-controlled duel whose board is poked: carrier active with energy")
     board_parser.add_argument("name")
@@ -1926,7 +1935,8 @@ def main(argv: list[str] | None = None) -> int:
                            watch=set(args.watch) or None, arrange=args.arrange)
         if args.command == "deck-seed":
             return deck_seed(args.name, base=args.base, at=args.at, deck=args.deck,
-                             cards=load_cards(args.cards), goal=args.goal)
+                             cards=load_cards(args.cards), goal=args.goal,
+                             then=[label for label in args.then.split(",") if label])
         if args.command == "board-seed":
             return board_seed(args.name, card=args.card, attack=args.attack, base=args.base,
                               at=args.at, deck=args.deck, poke_at=args.poke_at, goal=args.goal,
