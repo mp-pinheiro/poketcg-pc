@@ -1,0 +1,10 @@
+{
+  "derived_from": "seed-deck-machines",
+  "goal": "Coverage search from seed-deck-machines: 2 routines no session had executed (ConfigScreenHandleDPadInput, UpdateConfigMenuCursor)",
+  "input_sha256": "a0b9ecee332b61f88c5855d1e621911e4cd638020dca1ea39f945206b3515197",
+  "name": "seed-deck-machines-explore-4",
+  "ordinals": 5008,
+  "recorded": "2026-09-11T18:31:19+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-seed-deck-machines/scripts/s00-A-2.txt"
+}
