@@ -557,6 +557,10 @@ audio-tickdiff *ARGS: build oracle-build-gbref
 # Which unexecuted routines an input tail reaches: one native run per tail, no reference replay. Reach, never proof.
 coverage-probe BASE *ARGS: build-trace
     python3 tools/completion/probe.py "{{BASE}}" {{ARGS}}
+# The first call an interval runs differently, in order: the native lane logs a
+# windowed (frame, callee) trace and this aligns it with the reference's list.
+call-window NAME ORDINAL *ARGS: build-trace
+    python3 tools/completion/callwindow.py "{{NAME}}" "{{ORDINAL}}" {{ARGS}}
 # The sessions a change to these routines (or a pret file stem) can move.
 sessions-affected +TARGETS:
     python3 tools/completion/coverage_ledger.py affected {{TARGETS}}

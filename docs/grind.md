@@ -396,6 +396,50 @@ shortcut combos are *not* in `explore.py`'s action table, so neither the probe
 nor `--then` can express one; reaching those shortcuts needs a new action row,
 not a hand-written mask.
 
+### Order: which call an interval ran differently
+
+```sh
+just call-window NAME ORDINAL [--min-block N]
+```
+
+Reach answers *whether* a routine ran; this answers *in what order*, which is
+the question left when both lanes enter an interval byte-identical and then do
+different work. `--trace-calls` aggregates per routine by design (the uncapped
+ordered log once filled its 20,000,000-entry buffer and reported the buffer
+instead of the port), so the native lane records an ordered `(ordinal, callee)`
+log for a DoFrame window only: `--trace-window LO HI --trace-window-out PATH`,
+tagged with the DoFrame ordinal, bounded at 2^20 entries, compiled in the trace
+lane alone.
+
+Four filters make the two streams comparable, and each one is forced by a real
+structural difference rather than a taste call:
+
+- The ROM interleaves its ISR bodies between instructions the port runs in one
+  block, so the interrupt entries and everything in `src/audio/` carry no order
+  information and are dropped from both lanes.
+- Bank plumbing (`BankswitchROM` and its relatives) is inlined differently and
+  is dropped.
+- Both streams keep only the vocabulary they *share* in that interval. A name
+  on one lane only is structure, not order: the ROM's repeat wrappers
+  (`SetOneObjectAttributesx4` against four `SetOneObjectAttributes`) and the
+  accessors the translator inlines (`GetSpriteAnimBufferProperty`) are exactly
+  this, and they dominated the diff before the rule existed.
+- Runs of one name collapse to a single entry, and the two streams are anchored
+  on the `DoFrame` entry they both contain. The slice length after that anchor
+  is a heuristic, so a block touching either end is a slice artefact, never
+  evidence.
+
+The baseline that makes a report meaningful: seven clean intervals
+(`boot-menu` 900, `first-duel` 5,000, `practice-win`-derived plays,
+`deck-machine-auto` 4,000, `ai-duel-04` 20,000) report **0 significant
+blocks**. On the two open deck-configuration facts it reports 10 each, the
+first being the ROM's palette flush chain against the port already running
+`IncrementDeckCardsInTempCollection` - the port is ahead into the next
+screen's work. On #3415 it reports **0**, which is what separates a
+control-flow fact from a tick-placement one: that interval's game-code order
+is identical on both lanes, so the divergence is in the driver's tick
+placement (`docs/audio-harness.md`), not in a branch.
+
 ### Throughput rules
 
 Three faults that cost hours each, with their measurements:
