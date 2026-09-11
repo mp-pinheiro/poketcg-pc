@@ -772,6 +772,11 @@ CASES["PrintFilteredCardSelectionList"] = [
     {"a": 0x00, "f": 0x00, "wram": {0xC000: b"\x00" * 240, 0xCECB: b"\x00"}, "read": {0xCECB: 1}, "instruction_budget": 8000000, "cycle_budget": 32000000},
     dict(POISON, a=0x00, wram={0xC000: b"\x00" * 240, 0xCECB: b"\x00"}, read={0xCECB: 1}, instruction_budget=8000000, cycle_budget=32000000),
     {"a": 0x08, "f": 0x80, "wram": {0xC000: b"\x00" * 240, 0xCECB: b"\x00"}, "read": {0xCECB: 1}, "instruction_budget": 8000000, "cycle_budget": 32000000},
+    {"a": 0x00, "f": 0x00,
+     "wram": {0xC000: b"\x00" * 240, 0xCECB: b"\x02", 0xCED0: b"\x03\x04",
+              0xCEA1: b"\x00", 0xCEDA: b"\x01\x02\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCECB: 1, 0xCECD: 1}, "vread": {0: {0x9864: 12, 0x98A4: 12}},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory PrintFilteredCardSelectionList
 
@@ -781,6 +786,9 @@ CASES["PrintDeckBuildingCardList"] = [
     {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x00", 0xCECB: b"\x00", 0xCEDA: b"\x00"}, "read": {0xCECD: 1}, "vread": {0: {0x9853: 0, 0x9833: 0}}},
     {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x01", 0xCECB: b"\x00", 0xCEDA: b"\x00"}, "read": {0xCECD: 1}, "vread": {0: {0x9853: 0x0C, 0x9833: 0}}},
     dict(POISON, wram={0xCED0: b"\x03\x04", 0xCEA1: b"\x01", 0xCECB: b"\x00", 0xCEDA: b"\x00"}, read={0xCECD: 1}, vread={0: {0x9853: 0x0C, 0x9833: 0}}),
+    {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x00", 0xCECB: b"\x02", 0xCEDA: b"\x01\x02\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCECD: 1}, "vread": {0: {0x9864: 12, 0x98A4: 12}},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory PrintDeckBuildingCardList
 
@@ -899,6 +907,12 @@ CONTRACT["PrintConfirmationCardList"] = {"compare": (), "preserve": ()}
 CASES["PrintConfirmationCardList"] = [
     {"a": 0x00, "d": 0x00, "e": 0x00, "hl": 0xC100, "wram": {0xCECB: b"\x00", 0xCED0: b"\x05\x02"}, "read": {0xCECD: 1}, "expect": {0xCECD: b"\x01"}},
     dict(POISON, wram={0xCECB: b"\x00", 0xCED0: b"\x05\x02"}, read={0xCECD: 1}, expect={0xCECD: b"\x01"}),
+    {"a": 0x00, "d": 0x00, "e": 0x00, "hl": 0xC100,
+     "wram": {0xCECB: b"\x02", 0xCED0: b"\x05\x02", 0xCEA1: b"\x00",
+              0xCF68: b"\x01\x02\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xCECD: 1}, "vread": {0: {0x98A2: 14, 0x98E2: 14}},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(_confirm_list_fixture(bank=2), **_CONFIRM_LIST_REGS,
          read={0xCECD: 1, 0xC590: 0x20, 0xCEC4: 0x10, 0xFFAA: 4, 0xFFAD: 1},
          vread={0: {0x9800: 0x400, 0x8800: 0x800}}),
