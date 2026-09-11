@@ -282,6 +282,8 @@ CARD_LIST_SELECT = Fixture("boot-deck-machine-card-list-select-entry")
 CARD_LIST_SELECT_REGS = CARD_LIST_SELECT.regs
 # boot-deck-machine at DoFrame 96034: the deck save machine prints slot 1, a
 # saved starter deck the player cannot build even by dismantling (SRAM seeded).
+FULL_HEAL_TRAINER = Fixture("full-heal-trainer-entry")
+FULL_HEAL_TRAINER_REGS = FULL_HEAL_TRAINER.regs
 DECK_ENTRY = Fixture("boot-deck-machine-deck-entry-entry")
 DECK_ENTRY_REGS = DECK_ENTRY.regs
 # boot-deck-machine at DoFrame 98631: the deck build screen lists the grass
@@ -531,6 +533,10 @@ def card_set_list_fixture(vram: bool = True, bank: int | None = None, **changes:
 
 def card_list_select_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return CARD_LIST_SELECT.case(vram=vram, bank=bank, **changes)
+
+
+def full_heal_trainer_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return FULL_HEAL_TRAINER.case(vram=vram, bank=bank, **changes)
 
 
 def deck_entry_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:

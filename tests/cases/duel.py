@@ -1,3 +1,4 @@
+from tests.cases._fixtures import full_heal_trainer_fixture as _full_heal_trainer_fixture, FULL_HEAL_TRAINER_REGS as _FULL_HEAL_TRAINER_REGS
 from tests.cases._fixtures import init_duelvar_fixture as _init_duelvar_fixture, INIT_DUELVAR_REGS as _INIT_DUELVAR_REGS
 from tests.cases._fixtures import swap_duelvar_fixture as _swap_duelvar_fixture, SWAP_DUELVAR_REGS as _SWAP_DUELVAR_REGS
 from tests.cases._fixtures import count_card_id_fixture as _count_card_id_fixture, COUNT_CARD_ID_REGS as _COUNT_CARD_ID_REGS
@@ -1742,6 +1743,9 @@ CASES["_SelectPrizeCards"] = [
 # >>> factory PlayTrainerCard
 CONTRACT["PlayTrainerCard"] = {"compare": ("f",), "preserve": ()}
 CASES["PlayTrainerCard"] = [
+    dict(_full_heal_trainer_fixture(vram=False), **_FULL_HEAL_TRAINER_REGS, keys=[0x00, 0x01],
+         read={0xCE7F: 1, hTempCardIndex_ff9f: 1}, instruction_budget=20000000,
+         cycle_budget=80000000),
     dict(POISON, keys=[0x00, 0x01], wram={hWhoseTurn: b"\xC2", 0xC2EB: b"\x02", hTempCardIndex_ff98: b"\x01", hTempCardIndex_ff9f: b"\x55", wLCDC: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={hTempCardIndex_ff9f: 1}, expect={hTempCardIndex_ff9f: b"\x55"}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PlayTrainerCard
@@ -2260,7 +2264,7 @@ MUTATIONS["ProcessPlayedPokemonCard"] = {"source_symbol": "ProcessPlayedPokemonC
 MUTATIONS["_SelectPrizeCards"] = {"source_symbol": "_SelectPrizeCards", "before": "\t\tAddCardToHand(deck_index);", "after": "", "case_ids": ["_SelectPrizeCards-0"]}
 # <<< factory-mutation _SelectPrizeCards
 # >>> factory-mutation PlayTrainerCard
-MUTATIONS["PlayTrainerCard"] = {"source_symbol": "PlayTrainerCard", "before": "PlayTrainerCardResult PlayTrainerCard(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tTrainerEffectResult blocked = CheckCantUseTrainerDueToEffect();\n\tf = blocked.f;\n\thl = blocked.hl;\n\tif ((f & 0x10u) != 0u) {", "after": "PlayTrainerCardResult PlayTrainerCard(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tTrainerEffectResult blocked = CheckCantUseTrainerDueToEffect();\n\tf = blocked.f;\n\thl = blocked.hl;\n\tif ((f & 0x10u) == 0u) {", "case_ids": ["PlayTrainerCard-0"]}
+MUTATIONS["PlayTrainerCard"] = {"source_symbol": "PlayTrainerCard", "before": "\tWaitResult used = DisplayUsedTrainerCardDetailScreen();\n\ta = used.a;\n\tb = used.b;\n\tc = used.c;\n\td = used.d;\n\te = used.e;", "after": "\tWaitResult used = DisplayUsedTrainerCardDetailScreen();\n\ta = used.a;\n\tb = used.b;\n\tc = used.c;\n\t(void)used.d;\n\t(void)used.e;", "case_ids": ["PlayTrainerCard-0"]}
 # <<< factory-mutation PlayTrainerCard
 # >>> factory-mutation CheckSelfConfusionDamage
 MUTATIONS["CheckSelfConfusionDamage"] = {"source_symbol": "CheckSelfConfusionDamage", "before": "\twConfusionAttackCheckWasUnsuccessful = 0u;", "after": "\twConfusionAttackCheckWasUnsuccessful = 0x40u;", "case_ids": ["CheckSelfConfusionDamage-0", "CheckSelfConfusionDamage-2"]}

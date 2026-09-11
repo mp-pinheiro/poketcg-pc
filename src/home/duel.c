@@ -3080,8 +3080,14 @@ PlayTrainerCardResult PlayTrainerCard(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 	f = sent.f;
 	d = (uint8_t)(sent.de >> 8);
 	e = (uint8_t)sent.de;
-	(void)DisplayUsedTrainerCardDetailScreen();
-	ExchangeRNGResult rng = ExchangeRNG(b, c, sent.de, hl);
+	WaitResult used = DisplayUsedTrainerCardDetailScreen();
+	a = used.a;
+	b = used.b;
+	c = used.c;
+	d = used.d;
+	e = used.e;
+	hl = used.hl;
+	ExchangeRNGResult rng = ExchangeRNG(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
 	a = rng.a;
 	b = rng.b;
 	c = rng.c;
