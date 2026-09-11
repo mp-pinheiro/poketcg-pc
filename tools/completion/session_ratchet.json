@@ -278,6 +278,9 @@
   "effect-raichu-lv45-1-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-revive": {
+    "confirmed_ordinal": 25133
+  },
   "effect-slowpoke-lv18-2-seed": {
     "confirmed_ordinal": 23227
   },
@@ -285,6 +288,9 @@
     "confirmed_ordinal": 32336
   },
   "effect-starmie-1-seed": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-super-energy-retrieval-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-venusaur-lv67-1-seed": {
