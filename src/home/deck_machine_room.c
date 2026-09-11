@@ -42,7 +42,7 @@
 #define CLUB_MAP_NAMES_BANK 3u
 #define EVENT_AARON_BOOSTER_REWARD_OFFSET 0x1Au
 #define EVENT_AARON_BOOSTER_REWARD_MASK 0x03u
-FuncD96cResult Func_d96c(uint8_t a){uint8_t offset=(uint8_t)((uint8_t)(a-2u)<<1);uint16_t hl=(uint16_t)(CLUB_MAP_NAMES+offset);const uint8_t *entry=rom_ptr(CLUB_MAP_NAMES_BANK,hl);uint8_t lo=entry[0],hi=entry[1];gb_write8(wTxRam2_ADDR,lo);gb_write8(wTxRam2_b_ADDR,lo);gb_write8((uint16_t)(wTxRam2_ADDR+1u),hi);return (FuncD96cResult){hi,0,offset,(uint16_t)(hl+1u)};}
+FuncD96cResult Func_d96c(uint8_t a){uint8_t offset=(uint8_t)((uint8_t)(a-2u)<<1);uint16_t hl=(uint16_t)(CLUB_MAP_NAMES+offset);const uint8_t *entry=rom_ptr(CLUB_MAP_NAMES_BANK,hl);uint8_t lo=entry[0],hi=entry[1];gb_write8(wTxRam2_ADDR,lo);gb_write8(wTxRam2_b_ADDR,lo);gb_write8((uint16_t)(wTxRam2_ADDR+1u),hi);gb_write8((uint16_t)(wTxRam2_b_ADDR+1u),hi);return (FuncD96cResult){hi,0,offset,(uint16_t)(hl+1u)};}
 /* >>> factory Script_BeatAaron */
 /* deck_machine_room.asm:62-65 -- the routine's entire CODE portion, 8 bytes:
  *   ld a, [wMultichoiceTextboxResult_ChooseDeckToDuelAgainst] / ld c, a

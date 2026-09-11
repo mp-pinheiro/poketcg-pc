@@ -773,6 +773,14 @@ def ai_heal_fixture(vram: bool = True, bank: int | None = None, **changes: bytes
     return AI_HEAL.case(vram=vram, bank=bank, **changes)
 
 
+CLUB_MAP_NAME = Fixture("deck-machine-clubname-entry")
+CLUB_MAP_NAME_REGS = CLUB_MAP_NAME.regs
+
+
+def club_map_name_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return CLUB_MAP_NAME.case(vram=vram, bank=bank, **changes)
+
+
 AI_POWER_EFFECT = Fixture("ai-duel-24-power-effect-entry")
 AI_POWER_EFFECT_REGS = AI_POWER_EFFECT.regs
 
