@@ -1880,13 +1880,16 @@ def from_script(name: str, *, seed: str, script: Path, goal: str) -> int:
     if len(masks) <= len(seed_masks):
         raise SessionError(f"{script} adds no ordinals past {seed}")
     poke_text = refstream.pokes_text(seed_meta.get("pokes") or {})
+    save_sha256 = hashlib.sha256(seed_meta.get("save") or b"").hexdigest()
     input_sha256 = hashlib.sha256(bytes(m & 0xFF for m in masks)
                                   + poke_text.encode()).hexdigest()
     for other in session_names():
         other_meta = json.loads((session_dir(other) / "session.json").read_text()) \
             if (session_dir(other) / "session.json").is_file() else {}
-        if other != name and other_meta.get("input_sha256") == input_sha256:
-            raise SessionError(f"{other} already records this script")
+        if (other != name and other_meta.get("input_sha256") == input_sha256
+                and hashlib.sha256(load_session(other)[1].get("save") or b"").hexdigest()
+                == save_sha256):
+            raise SessionError(f"{other} already records this script from the same save")
     directory = session_dir(name)
     directory.mkdir(parents=True, exist_ok=True)
     (directory / "input.txt").write_text("\n".join(str(m) for m in masks) + "\n")

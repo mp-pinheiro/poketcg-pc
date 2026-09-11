@@ -28,7 +28,13 @@ sum over the mapped block). `just savegen edit SAVE --out FILE` changes the
 collection (`--card CHARMANDER=2`, `--all-cards 4`), the PC packs
 (`--pack 0=1`), the medal count (`--medals 3`) and event variables
 (`--event EVENT_BEAT_MITCH=1`, decoded through `EventVarMasks` in
-`overworld/scripting.asm`), then recomputes the checksum and refreshes the
+`overworld/scripting.asm`), and the decks themselves - `--deck 1=FILE` writes
+one of the four built decks (`sBuiltDecks`, a 24-byte name then 60 card ids)
+and `--saved-deck 1=FILE` writes a deck save machine slot (`sSavedDecks`,
+sixty slots of the same struct). A slot whose first name byte is zero is
+empty, so a seeded deck needs a name; the card and deck block carries no
+checksum of its own, only the SRAM2 copy that `seal` already refreshes. Then
+it recomputes the checksum and refreshes the
 SRAM2 backups the game falls back to. `just session-seeded NAME SAVE --then
 A,Ax5` records the session: the boot prefix (`boot-menu`, where a valid save
 adds Continue to the menu) plus `explore.py` action labels. Measured: a
