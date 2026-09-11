@@ -599,10 +599,16 @@
   "effect-psyduck-1": {
     "confirmed_ordinal": 28952
   },
+  "effect-psyduck-2": {
+    "confirmed_ordinal": 30344
+  },
   "effect-raichu-lv40-1-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-raichu-lv45-1-seed": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-rapidash-1-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-revive": {
