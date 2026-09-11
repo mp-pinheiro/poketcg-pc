@@ -16,6 +16,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
+import shutil
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
@@ -29,6 +31,7 @@ if str(ROOT) not in sys.path:
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import refstream
+import scenario as scenario_module
 import session
 from tools.completion.revision import current_source_revision
 from tools.progress.report import load_scope, resolve_scope
@@ -41,6 +44,7 @@ LEDGER_FORMAT = "coverage-ledger-v1"
 TRACE_FORMAT = "coverage-trace-v1"
 CORE_SESSIONS = ("boot-menu", "first-duel")
 DEFAULT_JOBS = 4
+DEFAULT_VERIFY_JOBS = 4
 EXPLORE_DIR = ROOT / "build" / "completion"
 DISCOVER_BUDGET = 6000
 DISCOVER_JOBS = 2
@@ -319,12 +323,54 @@ def status(limit: int) -> int:
     return 0
 
 
-def verify_affected(names: list[str]) -> int:
+LANE = ROOT / "build" / "completion" / "verify-lane"
+
+
+def freeze_lane() -> Path:
+    """A snapshot of the binary and the data pack the verifies run against.
+    A verify batch takes minutes; without a frozen copy, a rebuild landing
+    mid-batch swaps the lane under it and fabricates divergences (measured:
+    two false facts, docs/grind.md "ISR placement"). With one, editing and
+    building are safe while a batch runs."""
+    binary = scenario_module.BINARY
+    pack = scenario_module.PACK
+    if not binary.is_file() or not pack.is_file():
+        raise CoverageError(f"no lane to freeze: build {binary.name} and the data pack first")
+    (LANE / "completion").mkdir(parents=True, exist_ok=True)
+    shutil.copy2(binary, LANE / binary.name)
+    shutil.copy2(pack, LANE / "completion" / pack.name)
+    return LANE
+
+
+def verify_worker(name: str, lane: Path) -> tuple[str, int, str]:
+    command = [sys.executable, str(ROOT / "tools" / "completion" / "session.py"), "verify", name]
+    result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False,
+                            env=dict(os.environ, POKETCG_BUILD=str(lane.relative_to(ROOT))))
+    lines = [line for line in result.stdout.splitlines()
+             if line.startswith(("SESSION", "REGRESSION", "NATIVE", "SCHEDULE", "WINDOW"))]
+    return name, result.returncode, "\n".join(lines) or result.stderr.strip()[-300:]
+
+
+def verify_affected(names: list[str], *, jobs: int = DEFAULT_VERIFY_JOBS, sample: int = 0) -> int:
+    """Verify the named sessions in parallel against a frozen lane. `sample`
+    keeps only the cheapest N (fewest ordinals): an exit-register fix cannot
+    change a digest the sweep already proved, so the full set is the landing
+    batch's job, not every fix's."""
+    ledger = load_ledger()
+    ordered = sorted(names, key=lambda name: ledger["sessions"].get(name, {}).get("ordinals", 0))
+    if sample:
+        ordered = ordered[:sample]
+    lane = freeze_lane()
     worst = 0
-    for name in names:
-        code = session.verify(name, write=False, json_path=None)
-        worst = max(worst, code)
-    print(f"AFFECTED sessions={len(names)} exit={worst}")
+    with ThreadPoolExecutor(max_workers=max(1, jobs)) as pool:
+        for name, code, text in pool.map(lambda name: verify_worker(name, lane), ordered):
+            worst = max(worst, code)
+            for line in text.splitlines():
+                if not line.startswith("SESSION") or "status=clean" not in line:
+                    print(line)
+            if code == 0:
+                print(f"CLEAN {name}")
+    print(f"AFFECTED sessions={len(ordered)} jobs={jobs} exit={worst}")
     return worst
 
 
@@ -500,10 +546,56 @@ def session_slug(card: str) -> str:
     return card.lower().replace("_", "-")
 
 
-def target(names: list[str], *, land: bool, limit: int) -> int:
+def target_one(card: str, slot: int | None, routines: list[str]) -> dict[str, Any]:
+    """One carrier: build its deck, record the arranged duel, fall back to a
+    player-controlled seed when the AI never played the card, and verify.
+    Landing stays with the parent: two `jj commit` runs would race."""
+    import effects
+
+    name = f"effect-{session_slug(card)}" + (f"-{slot}" if slot else "")
+    deck = effects.build_deck(card, attack_slot=slot)
+    deck_path = TARGETS_PATH.parent / f"{name}.deck"
+    deck_path.parent.mkdir(parents=True, exist_ok=True)
+    deck_path.write_text("\n".join(str(c) for c in deck) + "\n")
+    goal = (f"Card effect target: {card} attack {slot}" if slot else f"Card effect target: {card}") \
+        + f" ({', '.join(sorted(routines)[:4])})"
+    session.ai_duel(name, base=TARGET_BASE, at=TARGET_AT, deck=TARGET_OPPONENT, seed=None,
+                    prizes=TARGET_PRIZES, period=24, tail=1500, goal=goal, cards=deck,
+                    watch=set(routines), arrange=True)
+    watched = json.loads((session.session_dir(name) / "session.json").read_text())["watched"]
+    reached = {routine: ordinal for routine, ordinal in watched.items() if ordinal is not None}
+    if not reached:
+        for path in session.session_dir(name).iterdir():
+            path.unlink()
+        session.session_dir(name).rmdir()
+        name = f"{name}-seed"
+        session.deck_seed(name, base=TARGET_BASE, at=TARGET_AT, deck=TARGET_OPPONENT, cards=deck,
+                          goal=f"Search seed: {card} in hand, the AI never played it "
+                               f"({', '.join(sorted(routines)[:4])})")
+    code = session.verify(name, write=False, json_path=None)
+    return {"card": card, "slot": slot, "session": name, "routines": sorted(routines),
+            "reached": reached, "deck": str(deck_path.relative_to(ROOT)), "verify": code}
+
+
+def target_worker(item: tuple[str, int | None, list[str]], lane: Path) -> dict[str, Any]:
+    card, slot, routines = item
+    command = [sys.executable, str(ROOT / "tools" / "completion" / "coverage_ledger.py"),
+               "target-one", card, "--routines", ",".join(routines)]
+    if slot:
+        command += ["--slot", str(slot)]
+    result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False,
+                            env=dict(os.environ, POKETCG_BUILD=str(lane.relative_to(ROOT))))
+    for line in reversed(result.stdout.splitlines()):
+        if line.startswith("{"):
+            return json.loads(line)
+    return {"card": card, "slot": slot, "session": None, "routines": routines,
+            "error": (result.stderr.strip() or result.stdout.strip())[-300:]}
+
+
+def target(names: list[str], *, land: bool, limit: int, jobs: int = DEFAULT_VERIFY_JOBS) -> int:
     """One arranged AI duel per carrier card for the effect routines no
-    session executes; each is verified and landed, and a carrier the AI never
-    plays becomes a player-controlled search seed with that deck poked."""
+    session executes, run in parallel against a frozen lane; each is verified
+    here and landed serially."""
     import effects
 
     ledger = load_ledger()
@@ -520,58 +612,38 @@ def target(names: list[str], *, land: bool, limit: int) -> int:
         carrier = effects.carriers(routine)[0]
         slot = int(carrier["slot"][-1]) if carrier["slot"].startswith("attack") else None
         groups.setdefault((carrier["card"], slot), set()).add(routine)
-    if not groups:
-        print("TARGET none: every carried effect routine is executed by a session")
-        return 0
     record = json.loads(TARGETS_PATH.read_text()) if TARGETS_PATH.is_file() else {}
     existing = set(session.session_names())
-    ordered = sorted(groups.items(), key=lambda item: (-len(item[1]), item[0]))
-    worst = 0
-    done = 0
-    for (card, slot), routines in ordered:
-        if limit and done >= limit:
-            break
+    queue: list[tuple[str, int | None, list[str]]] = []
+    for (card, slot), routines in sorted(groups.items(), key=lambda item: (-len(item[1]), item[0])):
         name = f"effect-{session_slug(card)}" + (f"-{slot}" if slot else "")
         if name in existing or f"{name}-seed" in existing:
             continue
-        try:
-            deck = effects.build_deck(card, attack_slot=slot)
-        except effects.EffectsError as exc:
-            print(f"TARGET skip card={card} slot={slot}: {exc}")
-            continue
-        done += 1
-        deck_path = TARGETS_PATH.parent / f"{name}.deck"
-        deck_path.parent.mkdir(parents=True, exist_ok=True)
-        deck_path.write_text("\n".join(str(c) for c in deck) + "\n")
-        goal = (f"Card effect target: {card} attack {slot}" if slot else f"Card effect target: {card}") \
-            + f" ({', '.join(sorted(routines)[:4])})"
-        session.ai_duel(name, base=TARGET_BASE, at=TARGET_AT, deck=TARGET_OPPONENT, seed=None,
-                        prizes=TARGET_PRIZES, period=24, tail=1500, goal=goal, cards=deck,
-                        watch=routines, arrange=True)
-        watched = json.loads((session.session_dir(name) / "session.json").read_text())["watched"]
-        reached = {routine: ordinal for routine, ordinal in watched.items() if ordinal is not None}
-        for routine in routines:
-            record[routine] = {"card": card, "slot": slot, "session": name,
-                               "reached": reached.get(routine), "deck": str(deck_path.relative_to(ROOT))}
-        TARGETS_PATH.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")
-        if not reached:
-            for path in (session.session_dir(name)).iterdir():
-                path.unlink()
-            session.session_dir(name).rmdir()
-            name = f"{name}-seed"
-            session.deck_seed(name, base=TARGET_BASE, at=TARGET_AT, deck=TARGET_OPPONENT, cards=deck,
-                              goal=f"Search seed: {card} in hand, the AI never played it "
-                                   f"({', '.join(sorted(routines)[:4])})")
-            for routine in routines:
-                record[routine]["session"] = name
+        queue.append((card, slot, sorted(routines)))
+        if limit and len(queue) >= limit:
+            break
+    if not queue:
+        print("TARGET none: every carried effect routine has a session")
+        return 0
+    lane = freeze_lane()
+    worst = 0
+    print(f"TARGET carriers={len(queue)} jobs={jobs}", file=sys.stderr)
+    with ThreadPoolExecutor(max_workers=max(1, jobs)) as pool:
+        for row in pool.map(lambda item: target_worker(item, lane), queue):
+            if row.get("error"):
+                print(f"TARGET skip card={row['card']} slot={row['slot']}: {row['error']}")
+                continue
+            for routine in row["routines"]:
+                record[routine] = {"card": row["card"], "slot": row["slot"], "session": row["session"],
+                                   "reached": row["reached"].get(routine), "deck": row["deck"]}
             TARGETS_PATH.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")
-        code = session.verify(name, write=False, json_path=None)
-        print(f"TARGET {name} card={card} routines={len(routines)} reached={len(reached)} "
-              f"verify={VERIFY_STATUS.get(code, code)}")
-        if code in (2, 4):
-            worst = max(worst, code)
-            continue
-        land_session(name, land=land)
+            code = row["verify"]
+            print(f"TARGET {row['session']} card={row['card']} routines={len(row['routines'])} "
+                  f"reached={len(row['reached'])} verify={VERIFY_STATUS.get(code, code)}")
+            if code in (2, 4):
+                worst = max(worst, code)
+                continue
+            land_session(row["session"], land=land)
     return worst
 
 
@@ -588,10 +660,14 @@ def main(argv: list[str] | None = None) -> int:
     status_parser.add_argument("--limit", type=int, default=20)
     affected_parser = sub.add_parser("affected", help="sessions a change to these routines can move")
     affected_parser.add_argument("targets", nargs="+")
-    verify_parser = sub.add_parser("verify-affected", help="session-verify the affected sessions, serially")
+    verify_parser = sub.add_parser("verify-affected", help="session-verify the affected sessions in parallel")
     verify_parser.add_argument("targets", nargs="+")
-    sweep_parser = sub.add_parser("sweep", help="session-verify every recorded session, serially")
+    verify_parser.add_argument("--jobs", type=int, default=DEFAULT_VERIFY_JOBS)
+    verify_parser.add_argument("--sample", type=int, default=0,
+                               help="verify only the cheapest N affected sessions")
+    sweep_parser = sub.add_parser("sweep", help="session-verify every recorded session in parallel")
     sweep_parser.add_argument("names", nargs="*")
+    sweep_parser.add_argument("--jobs", type=int, default=DEFAULT_VERIFY_JOBS)
     discover_parser = sub.add_parser("discover", help="coverage searches from ledger-ranked seeds")
     discover_parser.add_argument("seeds", nargs="*", help="seed sessions; default the ranked frontier")
     discover_parser.add_argument("--budget", type=int, default=DISCOVER_BUDGET)
@@ -606,6 +682,11 @@ def main(argv: list[str] | None = None) -> int:
     target_parser.add_argument("names", nargs="*", help="effect routines or pret file stems; default every unexecuted carried effect")
     target_parser.add_argument("--limit", type=int, default=0, help="carrier decks to record this run; 0 for all")
     target_parser.add_argument("--land", action="store_true", help="jj commit each session")
+    target_parser.add_argument("--jobs", type=int, default=DEFAULT_VERIFY_JOBS)
+    one_parser = sub.add_parser("target-one", help=argparse.SUPPRESS)
+    one_parser.add_argument("card")
+    one_parser.add_argument("--slot", type=int)
+    one_parser.add_argument("--routines", required=True)
     trace_parser = sub.add_parser("trace", help=argparse.SUPPRESS)
     trace_parser.add_argument("name")
     args = parser.parse_args(argv)
@@ -626,18 +707,22 @@ def main(argv: list[str] | None = None) -> int:
                 for name in names:
                     print(name)
                 return 0
-            return verify_affected(names)
+            return verify_affected(names, jobs=args.jobs, sample=args.sample)
         if args.command == "discover":
             return discover(args.seeds, budget=args.budget, jobs=args.jobs, limit=args.limit)
         if args.command == "intake":
             return intake(args.seed, top=args.top, land=args.land)
         if args.command == "target":
-            return target(args.names, land=args.land, limit=args.limit)
+            return target(args.names, land=args.land, limit=args.limit, jobs=args.jobs)
+        if args.command == "target-one":
+            row = target_one(args.card, args.slot, args.routines.split(","))
+            print(json.dumps(row, sort_keys=True))
+            return 0
         if args.command == "trace":
             record = trace_session(args.name)
             print(f"TRACED {args.name} ordinals={record['ordinals']} routines={len(record['routines'])}")
             return 0
-        return verify_affected(args.names or ledger_sessions())
+        return verify_affected(args.names or ledger_sessions(), jobs=args.jobs)
     except (CoverageError, session.SessionError, refstream.RefstreamError,
             OSError, ValueError) as exc:
         print(json.dumps({"status": "FAIL", "detail": str(exc)}), file=sys.stderr)

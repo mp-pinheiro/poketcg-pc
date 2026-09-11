@@ -49,10 +49,16 @@ Rules:
 - Memory: one reference lane at a time in this session. Never run two of session-verify,
   session-sweep, oracle-diff-all concurrently; leave no background job running when you
   stop. WSL has OOM-crashed on this repo.
-- Never rebuild the binary while a loop is verifying: a substrate experiment compiled
-  under a running coverage-target produced two false `diverged` facts (wVBlankCounter
-  off by one at ordinal 1). A divergence at a tiny ordinal on wVBlankCounter is
-  contamination; re-verify before reporting it.
+- The batch loops snapshot the binary into `build/completion/verify-lane` and run
+  their workers against that, so editing and building while one runs is safe. A bare
+  `just session-verify` uses the live build directory and is not protected: a substrate
+  experiment compiled under a running loop produced two false `diverged` facts
+  (wVBlankCounter off by one at ordinal 1). A divergence at a tiny ordinal on
+  wVBlankCounter is contamination; re-verify before reporting it.
+- Parallelism is measured, not assumed: a verify is one native process against a cached
+  reference (107 sessions, 9m28s at --jobs 5 against ~35 min serial), and the ratchet is
+  updated under a file lock. `session-sweep` is the exception -- it forks four PyBoy
+  workers of its own, so it runs alone.
 - Never run just oracle-release-gate, a formatter, a linter or any git command.
 - Never widen an exclusion ledger (scenario.py, _fixtures.py _HOLES, test_leaves.py
   AUTO_OBSERVE_IGNORED) and never edit a case to match the C.

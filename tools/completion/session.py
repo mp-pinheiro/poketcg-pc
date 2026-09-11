@@ -23,7 +23,9 @@ after the increment; reference, the count of $0552 anchor hits.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import ctypes
+import fcntl
 import functools
 import hashlib
 import json
@@ -188,6 +190,21 @@ def reference_frames(masks: list[int], meta: dict[str, Any]) -> int:
     length; a recording gets twice its DoFrames, DoFrames being the sparser
     axis (refstream.py: 78,207 movie frames hold 55,080 DoFrames)."""
     return int(meta.get("reference_frames") or len(masks) * 2 + 400)
+
+
+@contextlib.contextmanager
+def ratchet_lock():
+    """The ratchet is one file and every verify updates it, so parallel
+    verifies of different sessions must not read-modify-write over each
+    other. The lock is held across the read and the write, and the caller
+    re-reads inside it."""
+    handle = open(RATCHET_PATH.with_suffix(".lock"), "w")
+    try:
+        fcntl.flock(handle, fcntl.LOCK_EX)
+        yield
+    finally:
+        fcntl.flock(handle, fcntl.LOCK_UN)
+        handle.close()
 
 
 def read_ratchet() -> dict[str, dict[str, int]]:
@@ -1202,18 +1219,19 @@ def verify(name: str, *, write: bool, json_path: Path | None) -> int:
         if status == "native-short" and failure:
             for line in failure.strip().splitlines()[-3:]:
                 print(f"NATIVE {line}")
-    ratchet = read_ratchet()
-    previous = ratchet.get(name, {}).get("confirmed_ordinal")
     exit_code = {"clean": 0, "diverged": 1, "native-short": 1}[status]
     if off_schedule:
         exit_code = max(exit_code, 1)
-    if previous is not None and confirmed < previous and not write:
-        print(f"REGRESSION {name} key=confirmed_ordinal was={previous} now={confirmed}")
-        report["regression"] = {"was": previous, "now": confirmed}
-        exit_code = 3
-    elif previous is None or confirmed > previous or write:
-        ratchet[name] = {"confirmed_ordinal": confirmed}
-        write_ratchet(ratchet)
+    with ratchet_lock():
+        ratchet = read_ratchet()
+        previous = ratchet.get(name, {}).get("confirmed_ordinal")
+        if previous is not None and confirmed < previous and not write:
+            print(f"REGRESSION {name} key=confirmed_ordinal was={previous} now={confirmed}")
+            report["regression"] = {"was": previous, "now": confirmed}
+            exit_code = 3
+        elif previous is None or confirmed > previous or write:
+            ratchet[name] = {"confirmed_ordinal": confirmed}
+            write_ratchet(ratchet)
     emit(report, json_path)
     return exit_code
 

@@ -51,3 +51,6 @@ saves/
 !.factory/blocked.toml
 .wrangler/
 .cloudflare/
+
+# concurrency locks (tools/completion)
+*.lock

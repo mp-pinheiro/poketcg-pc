@@ -54,8 +54,10 @@ The loop, until a stop condition holds:
 
 Proof obligations per landing:
   - a C fix: just oracle-diff <Fn> PASS, just lint-constants clean, a fixture
-    case at the real entry and one red mutation, then
-    just sessions-verify-affected <Fn>   (the ledger picks the sessions)
+    case at the real entry and one red mutation, then the sweep window that
+    reported it must come back with the routine gone, and
+    just sessions-verify-affected <Fn> --sample 8   (exit-register fix)
+    or without --sample (anything touching shared state)
   - a sound-driver change: just audio-tickdiff  (66 seeds, must be all clean)
   - a new session: just session-verify <name>; land it clean OR diverged --
     a diverged session is how a fact enters the tracker.
@@ -63,14 +65,14 @@ Proof obligations per landing:
 
 Rules:
 - Unattended: never ask; when two options exist take the boring one.
-- ONE reference lane at a time. Never run two of session-verify, session-sweep,
-  oracle-diff-all, coverage-target, coverage-intake concurrently.
-- NEVER rebuild the binary (just build, build-trace, oracle-build-gbref) while
-  any loop is verifying. It fabricates facts: a substrate experiment compiled
-  under a running coverage-target produced two false `diverged` reports whose
-  signature was wVBlankCounter off by one at ordinal 1. If you see a
-  divergence at a tiny ordinal on wVBlankCounter, it is contamination --
-  re-verify, do not report it.
+- The batch loops (sessions-verify-affected, sessions-sweep, coverage-target,
+  coverage-ledger, coverage-discover) are parallel and safe to run while you
+  edit and build: they snapshot the binary into build/completion/verify-lane
+  first. Do not run two batches at once, and never run session-sweep (which
+  forks its own PyBoy workers) next to one.
+- A bare `just session-verify <name>` uses the live build directory, so do not
+  start one while a build is running. A divergence at a tiny ordinal on
+  wVBlankCounter is that contamination, not a fact: re-verify.
 - Never run just oracle-release-gate, a formatter, a linter, or any git
   command. Commit with jj only, naming your own paths:
   jj commit <paths> -m "type(scope): subject"   (subject <= 50 chars)
@@ -198,6 +200,29 @@ transport (`just peer-loopback`, `just peer-printer`) for link, IR and
 printer.
 
 ## Prove — `just sessions-affected` / `sessions-verify-affected` / `sessions-sweep`
+
+These run **in parallel against a frozen lane**. A verify is one native
+process reading a cached reference, so sessions are independent; the only
+shared mutable state is `session_ratchet.json`, which every verify now updates
+under a file lock (`session.py ratchet_lock`). Measured on 107 sessions:
+9m28s at `--jobs 5` against ~35 min serial. `coverage-target` parallelises the
+same way (8 carriers: 3m23s against ~12 min serial), with `jj commit` kept in
+the parent because two concurrent commits would race the repo.
+
+The lane is a snapshot of the binary and the data pack in
+`build/completion/verify-lane/`, taken when the batch starts and used by every
+worker through `POKETCG_BUILD`. That removes the hazard by construction: a
+rebuild landing mid-batch can no longer swap the binary under a running
+verify, which is what fabricated two false facts earlier
+(`docs/grind.md`, "ISR placement"). Editing and building are safe while a
+batch runs.
+
+`--sample N` verifies only the cheapest N affected sessions. An exit-register
+fix cannot change a digest the sweep has already proved at the routine's live
+entries, so the full set belongs to the landing batch (`sessions-sweep`), not
+to every fix. Changes to timing, audio, the AI or anything shared still take
+the full set.
+
 
 `just sessions-affected <Routine|stem...>` lists, from the ledger, every
 session executing one of the routines (a pret file stem such as
