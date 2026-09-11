@@ -1,3 +1,4 @@
+from tests.cases._fixtures import discard_basic_list_fixture as _discard_basic_list_fixture, DISCARD_BASIC_LIST_REGS as _DISCARD_BASIC_LIST_REGS
 from tests.cases._fixtures import ai_gust_of_wind_fixture as _ai_gust_of_wind_fixture, AI_GUST_OF_WIND_REGS as _AI_GUST_OF_WIND_REGS
 from tests.cases._fixtures import peal_of_thunder_fixture as _peal_of_thunder_fixture, PEAL_OF_THUNDER_REGS as _PEAL_OF_THUNDER_REGS
 from tests.cases._fixtures import selfdestruct_fixture as _selfdestruct_fixture, SELFDESTRUCT_REGS as _SELFDESTRUCT_REGS
@@ -834,6 +835,7 @@ CASES["CreateBasicPokemonCardListFromDiscardPile"] = [
     {"wram": {0xC37E: b"\x00"}, "read": {0xC510: 1}},
     dict(POISON, wram={0xC37E: b"\x00"}),
     {"wram": {0xC37E: b"\x01", 0xC510: b"\x00"}},
+    dict(_discard_basic_list_fixture(vram=False, bank=11), **_DISCARD_BASIC_LIST_REGS),
 ]
 # <<< factory CreateBasicPokemonCardListFromDiscardPile
 
@@ -8801,7 +8803,7 @@ MUTATIONS["CreateBasicPokemonCardListFromDiscardPile"] = {
     "source_symbol": "CreateBasicPokemonCardListFromDiscardPile",
     "before": "return (CreateBasicPokemonCardListFromDiscardPileResult){0x90u};",
     "after": "return (CreateBasicPokemonCardListFromDiscardPileResult){0x80u};",
-    "case_ids": ["CreateBasicPokemonCardListFromDiscardPile-0", "CreateBasicPokemonCardListFromDiscardPile-1", "CreateBasicPokemonCardListFromDiscardPile-2"],
+    "case_ids": ["CreateBasicPokemonCardListFromDiscardPile-0", "CreateBasicPokemonCardListFromDiscardPile-1", "CreateBasicPokemonCardListFromDiscardPile-2", "CreateBasicPokemonCardListFromDiscardPile-3"],
 }
 # <<< factory-mutation CreateBasicPokemonCardListFromDiscardPile
 # >>> factory-mutation CreatePokemonCardListFromHand

@@ -2631,14 +2631,15 @@ CreateBasicPokemonCardListFromDiscardPileResult CreateBasicPokemonCardListFromDi
 	uint16_t hl = (uint16_t)((count.hl & 0xFF00u) |
 		(uint8_t)(count.a + DUELVARS_DECK_CARDS));
 	uint16_t de = wDuelTempList_ADDR;
-	while (b != 0u) {
+	for (;;) {
+		hl = (uint16_t)((hl & 0xFF00u) | (uint8_t)((uint8_t)hl - 1u));
+		if (--b == 0u)
+			break;
 		uint8_t card = gb_read8(hl);
 		LoadCardDataToBuffer2_FromDeckIndex(card);
 		if (gb_read8(wLoadedCard2Type_ADDR) < TYPE_ENERGY &&
 			gb_read8(wLoadedCard2Stage_ADDR) == 0u)
 			gb_write8(de++, card);
-		hl = (uint16_t)((hl & 0xFF00u) | (uint8_t)((uint8_t)hl - 1u));
-		b--;
 	}
 	gb_write8(de, 0xFFu);
 	if (gb_read8(wDuelTempList_ADDR) == 0xFFu)
