@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-item-finder-pre",
+  "goal": "Coverage search from effect-item-finder-pre: 1 routines no session had executed (SwapPlayAreaPokemon.swap_duelvar)",
+  "input_sha256": "ff90a526497de1f68e85e667403b0a0bafb319033c815dae5e73b73606d63c11",
+  "name": "effect-item-finder-pre-explore-2",
+  "ordinals": 38587,
+  "recorded": "2026-09-11T19:22:59+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-effect-item-finder-pre/scripts/s01-Ax20-1.txt"
+}
