@@ -59,19 +59,6 @@ NATIVE_DATA_SPANS = (
     # effect_functions.asm:1015) copies PKMN_CARD_DATA_LENGTH bytes of the rst
     # vectors at $0000 into the card buffer. The ROM reads them; so does the port.
     ("null_card", 0, 0x0000, 0x41),
-    ("script_bytecode_beat_aaron", 3, 0x590C, 0x22),
-    ("script_bytecode_d93f", 3, 0x5945, 0x27),
-    ("script_bytecode_d995", 3, 0x599B, 0x27),
-    ("script_bytecode_d9c2", 3, 0x59C8, 0x27),
-    ("script_bytecode_d9ef", 3, 0x59F5, 0x27),
-    ("script_bytecode_da1c", 3, 0x5A22, 0x27),
-    ("script_bytecode_da49", 3, 0x5A4F, 0x27),
-    ("script_bytecode_da76", 3, 0x5A7C, 0x27),
-    ("script_bytecode_daa3", 3, 0x5AA9, 0x27),
-    ("script_bytecode_fc7a", 3, 0x7C83, 0x2A),
-    ("script_bytecode_nikki", 3, 0x67A7, 0x2C),
-    ("script_bytecode_tech1", 3, 0x5598, 0x2C),
-    ("script_bytecode_specs2", 3, 0x6BDE, 0x09),
 )
 
 SECTION_RE = re.compile(
@@ -163,6 +150,41 @@ def slices(schema: tuple[dict[str, str], ...], sections: dict[str, Section], sym
         result.append((entry, section, rom[start:end]))
     return result
 
+def script_entry_spans(rom: bytes, sym_path: Path) -> list[tuple[str, int, int, int]]:
+    """Every script entry's bytes, which the interpreter reads as data.
+
+    A script entry is either a lone `rst $20` followed by commands, or a C-ported
+    prologue ending in one (tools/gen_script_entry_dispatch.py). The port reads
+    the commands through the bus, so the pack has to carry the whole entry: a
+    span runs from the entry symbol to the next global symbol in its bank. Before
+    this, only entries some route had already executed were packed, and enabling
+    the prologue entries turned the unpacked ones into MISSING_DATA aborts.
+    """
+    sym_line = re.compile(r"^([0-9A-Fa-f]{2}):([0-9A-Fa-f]{4})\s+(\S+)\s*$")
+    entries: dict[str, tuple[int, int]] = {}
+    per_bank: dict[int, list[int]] = {}
+    for line in sym_path.read_text().splitlines():
+        match = sym_line.match(line.strip())
+        if not match:
+            continue
+        bank, address, name = int(match.group(1), 16), int(match.group(2), 16), match.group(3)
+        entries.setdefault(name, (bank, address))
+        if "." not in name:
+            per_bank.setdefault(bank, []).append(address)
+    for addresses in per_bank.values():
+        addresses.sort()
+    spans = []
+    for name, (bank, address) in sorted(entries.items()):
+        if not re.match(r"^(Script_|Func_)", name) or "." in name:
+            continue
+        if bank == 0 or not 0x4000 <= address < 0x8000:
+            continue
+        following = [value for value in per_bank.get(bank, ()) if value > address]
+        end = following[0] if following else 0x8000
+        spans.append((f"script_entry_{name.lower()}", bank, address, end - address))
+    return spans
+
+
 def sparse_items(
     rom: bytes,
 ) -> list[tuple[dict[str, str], Section, bytes]]:
@@ -193,7 +215,8 @@ def sparse_items(
         section = Section(f"inventory-span-{index:05d}", bank, address, address + length - 1)
         entry = {"name": name, "section": section.name, "ctype": "uint8_t"}
         result.append((entry, section, rom[start:end]))
-    for name, bank, address, length in NATIVE_DATA_SPANS:
+    for name, bank, address, length in (
+            tuple(NATIVE_DATA_SPANS) + tuple(script_entry_spans(rom, Path("poketcg/poketcg.sym")))):
         start = rom_offset(bank, address)
         end = start + length
         if length < 1 or end > len(rom):
