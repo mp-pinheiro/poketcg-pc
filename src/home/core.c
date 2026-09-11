@@ -4573,7 +4573,6 @@ uint8_t ConvertColorToEnergyCardID(uint8_t a)
 		DOUBLE_COLORLESS_ENERGY,
 	};
 	uint8_t result = card_id[a];
-	(void)Func_14323();
 	return result;
 }
 /* <<< factory ConvertColorToEnergyCardID */
