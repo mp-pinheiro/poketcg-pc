@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-super-potion-seed",
+  "goal": "player heals with Super Potion and discards the energy",
+  "input_sha256": "1757993c08e8fc036b16ccf524e120ad64918d5307ea15edf0ae21c2b622ef1b",
+  "name": "effect-super-potion-deep",
+  "ordinals": 29515,
+  "recorded": "2026-09-11T19:56:45+00:00",
+  "schema": 1,
+  "script": "/tmp/deep-effect-super-potion.txt"
+}

@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-scoop-up-seed",
+  "goal": "player scoops the Pokemon back into the hand",
+  "input_sha256": "eeafdbb2a3f616429246483150a3a7676d20e4bc664031e5028532fdd8bb13d8",
+  "name": "effect-scoop-up-deep",
+  "ordinals": 29515,
+  "recorded": "2026-09-11T19:56:45+00:00",
+  "schema": 1,
+  "script": "/tmp/deep-effect-scoop-up.txt"
+}

@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-imposter-professor-oak-seed",
+  "goal": "player plays Imposter Professor Oak and its effect resolves",
+  "input_sha256": "ddb77d93a1259172f5153dd172004ae6383153490e963bcdad79cefc915810e9",
+  "name": "effect-imposter-professor-oak-deep",
+  "ordinals": 29515,
+  "recorded": "2026-09-11T19:56:45+00:00",
+  "schema": 1,
+  "script": "/tmp/deep-effect-imposter-professor-oak.txt"
+}

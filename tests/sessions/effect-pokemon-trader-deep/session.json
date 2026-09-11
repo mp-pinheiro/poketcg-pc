@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-pokemon-trader-seed",
+  "goal": "player picks the Pokemon to trade from the deck list",
+  "input_sha256": "53f01c1fc46651c2b712db01131b96b8713d47dd3195dfc97b1fc1b4f83f11a8",
+  "name": "effect-pokemon-trader-deep",
+  "ordinals": 29515,
+  "recorded": "2026-09-11T19:56:45+00:00",
+  "schema": 1,
+  "script": "/tmp/deep-effect-pokemon-trader.txt"
+}

@@ -740,6 +740,9 @@
   "effect-hypno-2-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-imposter-professor-oak-deep": {
+    "confirmed_ordinal": 29515
+  },
   "effect-imposter-professor-oak-play": {
     "confirmed_ordinal": 29035
   },
@@ -1184,6 +1187,9 @@
   "effect-pokemon-flute-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-pokemon-trader-deep": {
+    "confirmed_ordinal": 29515
+  },
   "effect-pokemon-trader-play": {
     "confirmed_ordinal": 29035
   },
@@ -1322,6 +1328,9 @@
   "effect-rhydon-2-board": {
     "confirmed_ordinal": 29155
   },
+  "effect-scoop-up-deep": {
+    "confirmed_ordinal": 29515
+  },
   "effect-scoop-up-play": {
     "confirmed_ordinal": 29035
   },
@@ -1393,6 +1402,9 @@
   },
   "effect-super-energy-retrieval-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-super-potion-deep": {
+    "confirmed_ordinal": 29515
   },
   "effect-super-potion-play": {
     "confirmed_ordinal": 29035
