@@ -329,7 +329,16 @@
   "effect-exeggutor-2-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-fearow-1": {
+    "confirmed_ordinal": 48800
+  },
   "effect-flareon-lv22-2-seed": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-flareon-lv28-2-seed": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-full-heal-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-gastly-lv17-2": {
