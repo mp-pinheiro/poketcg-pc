@@ -350,6 +350,12 @@
   "effect-gastly-lv8-2-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-gengar-1-p2": {
+    "confirmed_ordinal": 37040
+  },
+  "effect-gengar-2-p2": {
+    "confirmed_ordinal": 37040
+  },
   "effect-gloom-1": {
     "confirmed_ordinal": 32744
   },
@@ -373,6 +379,9 @@
   },
   "effect-gust-of-wind-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-haunter-lv17-1-p2": {
+    "confirmed_ordinal": 47792
   },
   "effect-hitmonlee-1": {
     "confirmed_ordinal": 29312
