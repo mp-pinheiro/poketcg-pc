@@ -1106,7 +1106,9 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/hram.h"
 #include "home/core.h"
 #define ATTACKPAGE_ATTACK1_1 0x00u
+#define ATTACKPAGE_ATTACK1_2 0x01u
 #define ATTACKPAGE_ATTACK2_1 0x02u
+#define ATTACKPAGE_ATTACK2_2 0x03u
 #define PAD_RIGHT 0x10u
 #define PAD_LEFT 0x20u
 
@@ -3630,19 +3632,17 @@ uint8_t DecideLinkDuelVariables(void)
 void DisplayAttackPage(void)
 {
 	switch (wAttackPageNumber) {
-	case 0u:
-	case 2u:
-		SwitchAttackPage();
+	case ATTACKPAGE_ATTACK1_1:
+		DisplayAttackPage_Attack1Page1(0u, 0u, 0u);
 		break;
-	case 1u:
-		if (gb_read8((uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u)) ||
-		    gb_read8((uint16_t)(wLoadedCard1Atk1Description_ADDR + 3u)))
-			SwitchAttackPage();
+	case ATTACKPAGE_ATTACK1_2:
+		DisplayAttackPage_Attack1Page2(0u, 0u, 0u);
 		break;
-	case 3u:
-		if (gb_read8((uint16_t)(wLoadedCard1Atk2Description_ADDR + 2u)) ||
-		    gb_read8((uint16_t)(wLoadedCard1Atk2Description_ADDR + 3u)))
-			SwitchAttackPage();
+	case ATTACKPAGE_ATTACK2_1:
+		DisplayAttackPage_Attack2Page1(0u, 0u, 0u);
+		break;
+	case ATTACKPAGE_ATTACK2_2:
+		DisplayAttackPage_Attack2Page2(0u, 0u, 0u);
 		break;
 	default:
 		break;
