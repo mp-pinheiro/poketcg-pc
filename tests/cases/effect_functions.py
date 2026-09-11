@@ -1,3 +1,4 @@
+from tests.cases._fixtures import trainer_discard_list_fixture as _trainer_discard_list_fixture, TRAINER_DISCARD_LIST_REGS as _TRAINER_DISCARD_LIST_REGS
 from tests.cases._fixtures import color_name_fixture as _color_name_fixture, COLOR_NAME_REGS as _COLOR_NAME_REGS
 from tests.cases._fixtures import discard_basic_list_fixture as _discard_basic_list_fixture, DISCARD_BASIC_LIST_REGS as _DISCARD_BASIC_LIST_REGS
 from tests.cases._fixtures import ai_gust_of_wind_fixture as _ai_gust_of_wind_fixture, AI_GUST_OF_WIND_REGS as _AI_GUST_OF_WIND_REGS
@@ -201,6 +202,7 @@ CASES["CreateTrainerCardListFromDiscardPile"] = [
 	{"wram": {0xC37E: b"\x00"}, "read": {0xC510: 4}},
 	dict(POISON, wram={0xC37E: b"\x00"}),
 	{"wram": {0xC510: b"\x00\x00\x00\x00"}},
+	dict(_trainer_discard_list_fixture(vram=False, bank=11), **_TRAINER_DISCARD_LIST_REGS),
 ]
 # <<< factory CreateTrainerCardListFromDiscardPile
 
@@ -8448,9 +8450,9 @@ MUTATIONS["SetDamageToATimes20"] = {
 # >>> factory-mutation CreateTrainerCardListFromDiscardPile
 MUTATIONS["CreateTrainerCardListFromDiscardPile"] = {
 	"source_symbol": "CreateTrainerCardListFromDiscardPile",
-	"before": "return (CreateTrainerCardListFromDiscardPileResult){TX_ThereAreNoTrainerCardsInDiscardPileText, 0x90u};",
-	"after": "return (CreateTrainerCardListFromDiscardPileResult){TX_ThereAreNoTrainerCardsInDiscardPileText, 0x10u};",
-	"case_ids": ["CreateTrainerCardListFromDiscardPile-0", "CreateTrainerCardListFromDiscardPile-1", "CreateTrainerCardListFromDiscardPile-2"],
+	"before": "\tb = (uint8_t)(b + 1u);",
+	"after": "\tb = (uint8_t)(b + 2u);",
+	"case_ids": ["CreateTrainerCardListFromDiscardPile-3"],
 }
 # <<< factory-mutation CreateTrainerCardListFromDiscardPile
 # >>> factory-mutation CreateEnergyCardListFromDiscardPile

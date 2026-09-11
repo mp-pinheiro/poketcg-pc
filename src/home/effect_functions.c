@@ -1813,17 +1813,16 @@ CreateTrainerCardListFromDiscardPileResult CreateTrainerCardListFromDiscardPile(
 	uint16_t de = wDuelTempList_ADDR;
 	b = (uint8_t)(b + 1u);
 
-	while (b != 0u) {
-		uint8_t l = (uint8_t)hl;
+	for (;;) {
+		hl = (uint16_t)((hl & 0xFF00u) | (uint8_t)((uint8_t)hl - 1u));
+		if (--b == 0u)
+			break;
 		uint8_t card = gb_read8(hl);
 		(void)LoadCardDataToBuffer2_FromDeckIndex(card);
 		if (gb_read8(wLoadedCard2Type_ADDR) == TYPE_TRAINER) {
 			gb_write8(de, card);
 			de++;
 		}
-		l--;
-		hl = (uint16_t)((hl & 0xFF00u) | l);
-		b--;
 	}
 
 	gb_write8(de, 0xFFu);
