@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-revive-pre",
+  "goal": "Coverage search from effect-revive-pre: 2 routines no session had executed (OpenInPlayAreaScreen_TurnHolderDiscardPile, SetDiscardPileScreenTexts)",
+  "input_sha256": "47983461f1cfe06a8203e64de385ac6c9b308b805a9dcfca74c744f0b9d4a926",
+  "name": "effect-revive-pre-explore-1",
+  "ordinals": 73003,
+  "recorded": "2026-09-11T19:30:26+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-effect-revive-pre/scripts/s00-A-2.txt"
+}
