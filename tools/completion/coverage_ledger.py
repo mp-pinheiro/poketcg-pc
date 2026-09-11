@@ -540,6 +540,7 @@ TARGET_BASE = "practice-win"
 TARGET_AT = 23227
 TARGET_OPPONENT = 2
 TARGET_PRIZES = 6
+TARGET_STALL_PRIZES = 2
 
 
 def session_slug(card: str) -> str:
@@ -559,9 +560,16 @@ def target_one(card: str, slot: int | None, routines: list[str]) -> dict[str, An
     deck_path.write_text("\n".join(str(c) for c in deck) + "\n")
     goal = (f"Card effect target: {card} attack {slot}" if slot else f"Card effect target: {card}") \
         + f" ({', '.join(sorted(routines)[:4])})"
-    session.ai_duel(name, base=TARGET_BASE, at=TARGET_AT, deck=TARGET_OPPONENT, seed=None,
-                    prizes=TARGET_PRIZES, period=24, tail=1500, goal=goal, cards=deck,
-                    watch=set(routines), arrange=True)
+    try:
+        session.ai_duel(name, base=TARGET_BASE, at=TARGET_AT, deck=TARGET_OPPONENT, seed=None,
+                        prizes=TARGET_PRIZES, period=24, tail=1500, goal=goal, cards=deck,
+                        watch=set(routines), arrange=True)
+    except session.SessionError as exc:
+        if "did not finish" not in str(exc):
+            raise
+        session.ai_duel(name, base=TARGET_BASE, at=TARGET_AT, deck=TARGET_OPPONENT, seed=None,
+                        prizes=TARGET_STALL_PRIZES, period=24, tail=1500, goal=goal, cards=deck,
+                        watch=set(routines), arrange=True)
     watched = json.loads((session.session_dir(name) / "session.json").read_text())["watched"]
     reached = {routine: ordinal for routine, ordinal in watched.items() if ordinal is not None}
     if not reached:

@@ -2,11 +2,9 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "duel_finished_ordinal": 35540,
-  "duel_turns": 12,
-  "goal": "Arranged AI duel for GENGAR attack 2 (2 prizes)",
-  "name": "effect-gengar-2-p2",
-  "ordinals": 37040,
+  "goal": "Search seed: GENGAR in hand, the AI never played it (GengarDarkMind_PlayerSelectEffect)",
+  "name": "effect-gengar-2-seed",
+  "ordinals": 23227,
   "player_cards": [
     148,
     6,
@@ -69,8 +67,6 @@
     149,
     149
   ],
-  "prizes": 2,
-  "recorded": "2026-09-11T03:18:41+00:00",
-  "schema": 1,
-  "seed": null
+  "recorded": "2026-09-11T03:27:11+00:00",
+  "schema": 1
 }

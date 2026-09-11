@@ -2,11 +2,11 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "duel_finished_ordinal": 46292,
-  "duel_turns": 20,
-  "goal": "Arranged AI duel for HAUNTER_LV17 attack 1 (2 prizes)",
-  "name": "effect-haunter-lv17-1-p2",
-  "ordinals": 47792,
+  "duel_finished_ordinal": 43484,
+  "duel_turns": 14,
+  "goal": "Card effect target: HAUNTER_LV17 attack 1 (TransparencyEffect)",
+  "name": "effect-haunter-lv17-1",
+  "ordinals": 44984,
   "player_cards": [
     148,
     6,
@@ -70,7 +70,10 @@
     153
   ],
   "prizes": 2,
-  "recorded": "2026-09-11T03:19:04+00:00",
+  "recorded": "2026-09-11T03:27:08+00:00",
   "schema": 1,
-  "seed": null
+  "seed": null,
+  "watched": {
+    "TransparencyEffect": 27044
+  }
 }
