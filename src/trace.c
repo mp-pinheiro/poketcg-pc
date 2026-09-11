@@ -27,6 +27,14 @@ typedef struct {
 	uint64_t calls;
 } TraceRecord;
 
+#define TRACE_WINDOW_SLOTS (1u << 20)
+#define TRACE_WINDOW_MAGIC "PTCGWND1"
+
+typedef struct {
+	uint32_t frame;
+	uint32_t callee;
+} TraceWindowRecord;
+
 #ifdef POKETCG_TRACE
 /* The entry hook itself is always compiled because the bank guard rides on it. */
 static TraceRecord g_records[TRACE_SLOTS];
@@ -35,6 +43,14 @@ static uint32_t g_used;
 static uint64_t g_count;
 static uint32_t g_frame;
 static int g_overflow;
+static uint32_t g_ordinal;
+static uint32_t g_window_lo;
+static uint32_t g_window_hi;
+static int g_window_on;
+#ifdef POKETCG_TRACE
+static TraceWindowRecord g_window[TRACE_WINDOW_SLOTS];
+static uint32_t g_window_used;
+#endif
 
 #ifdef POKETCG_TRACE
 /* Offsets are taken against this translation unit's own entry point so the
@@ -48,6 +64,18 @@ NOTRACE static uintptr_t trace_base(void)
 NOTRACE void trace_set_frame(uint32_t frame)
 {
 	g_frame = frame;
+}
+
+NOTRACE void trace_set_ordinal(uint32_t ordinal)
+{
+	g_ordinal = ordinal;
+}
+
+NOTRACE void trace_set_window(uint32_t lo, uint32_t hi)
+{
+	g_window_lo = lo;
+	g_window_hi = hi;
+	g_window_on = 1;
 }
 
 NOTRACE void trace_reset(void)
@@ -92,6 +120,12 @@ NOTRACE void __cyg_profile_func_enter(void *this_fn, void *call_site)
 	 * function alignment, so the low bits carry no entropy; mix them out. */
 	uint32_t slot = (callee ^ (callee >> 13)) & (TRACE_SLOTS - 1u);
 
+	if (g_window_on && g_ordinal >= g_window_lo && g_ordinal <= g_window_hi
+	    && g_window_used < TRACE_WINDOW_SLOTS) {
+		g_window[g_window_used].frame = g_ordinal;
+		g_window[g_window_used].callee = callee;
+		g_window_used++;
+	}
 	g_count++;
 	for (uint32_t probe = 0; probe < TRACE_SLOTS; probe++) {
 		TraceRecord *record = &g_records[slot];
@@ -166,6 +200,30 @@ NOTRACE int trace_write_raw(const char *path)
 			continue;
 		ok = fwrite(&g_records[slot], sizeof g_records[slot], 1, file) == 1;
 	}
+	if (fclose(file) != 0)
+		ok = 0;
+	return ok ? 0 : -1;
+#endif
+}
+
+NOTRACE int trace_write_window(const char *path)
+{
+#ifndef POKETCG_TRACE
+	(void)path;
+	return -1;
+#else
+	if (!path)
+		return -1;
+	FILE *file = fopen(path, "wb");
+	if (!file)
+		return -1;
+	uint64_t base = (uint64_t)trace_base();
+	uint64_t used = (uint64_t)g_window_used;
+	int ok = fwrite(TRACE_WINDOW_MAGIC, 8, 1, file) == 1
+	      && fwrite(&base, sizeof base, 1, file) == 1
+	      && fwrite(&used, sizeof used, 1, file) == 1;
+	for (uint32_t index = 0; ok && index < g_window_used; index++)
+		ok = fwrite(&g_window[index], sizeof g_window[index], 1, file) == 1;
 	if (fclose(file) != 0)
 		ok = 0;
 	return ok ? 0 : -1;

@@ -22,6 +22,10 @@ int trace_overflowed(void);
  * tools/completion/native_trace.py against the same binary's symbol table. */
 int trace_write_raw(const char *path);
 
+void trace_set_window(uint32_t lo, uint32_t hi);
+void trace_set_ordinal(uint32_t ordinal);
+int trace_write_window(const char *path);
+
 /* Writes the trace if the run aborts, so a failed run is still measurable. */
 void trace_flush_on_abort(const char *path);
 

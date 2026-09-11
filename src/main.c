@@ -606,6 +606,7 @@ int main(int argc, char **argv)
 	uint32_t stop_ordinal = 0;
 	const char *trace_entries_path = NULL;
 	const char *trace_calls_path = NULL;
+	const char *trace_window_path = NULL;
 	const char *checkpoint_path = NULL;
 	const char *isr_track_path = NULL;
 	int link_fd = -1;
@@ -671,6 +672,16 @@ int main(int argc, char **argv)
 		} else if (strcmp(argv[i], "--trace-calls") == 0 && i + 1 < argc) {
 			trace_calls_path = argv[++i];
 			trace_flush_on_abort(trace_calls_path);
+		} else if (strcmp(argv[i], "--trace-window") == 0 && i + 2 < argc) {
+			unsigned long lo = strtoul(argv[++i], NULL, 10);
+			unsigned long hi = strtoul(argv[++i], NULL, 10);
+			if (hi < lo) {
+				fprintf(stderr, "invalid --trace-window range\n");
+				return 2;
+			}
+			trace_set_window((uint32_t)lo, (uint32_t)hi);
+		} else if (strcmp(argv[i], "--trace-window-out") == 0 && i + 1 < argc) {
+			trace_window_path = argv[++i];
 		} else if (strcmp(argv[i], "--isr-track") == 0 && i + 1 < argc) {
 			isr_track_path = argv[++i];
 		} else if (strcmp(argv[i], "--link-fd") == 0 && i + 1 < argc) {
@@ -686,6 +697,7 @@ int main(int argc, char **argv)
 			       "[--dump-state-ordinals N[,N...]] [--stop-ordinal N] "
 			       "[--digest-out PATH [--digest-mask FILE]] [--lag-track PATH] "
 			       "[--trace-entries PATH] [--trace-calls PATH] "
+			       "[--trace-window LO HI --trace-window-out PATH] "
 			       "[--load-checkpoint PATH] [--link-fd N] [--isr-track PATH]\n");
 			printf("--frames 0 runs until the window closes\n");
 			printf("--input is one byte per host frame (a movie axis); "
@@ -931,6 +943,10 @@ int main(int argc, char **argv)
 	}
 	if (status == 0 && trace_entries_path && runtime_write_trace(trace_entries_path, &runtime) != 0) {
 		fprintf(stderr, "cannot write native trace %s\n", trace_entries_path);
+		status = 1;
+	}
+	if (status == 0 && trace_window_path && trace_write_window(trace_window_path) != 0) {
+		fprintf(stderr, "cannot write native window trace %s\n", trace_window_path);
 		status = 1;
 	}
 	if (status == 0 && trace_calls_path && trace_write_raw(trace_calls_path) != 0) {

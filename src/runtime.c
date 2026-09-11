@@ -563,6 +563,7 @@ int runtime_run_with_input(
 		 * pass belongs to will read -- the same index refstream.Core
 		 * serves at its anchor. Past the end, the shell's input stands. */
 		uint32_t ordinal = frame_boundary_doframe_ordinal();
+		trace_set_ordinal(ordinal);
 		int timeline_live = g_ordinal_buttons && ordinal < g_ordinal_count;
 		if (timeline_live) {
 			input.buttons = g_ordinal_buttons[ordinal];
