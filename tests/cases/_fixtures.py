@@ -781,6 +781,22 @@ def club_map_name_fixture(vram: bool = True, bank: int | None = None, **changes:
     return CLUB_MAP_NAME.case(vram=vram, bank=bank, **changes)
 
 
+CARD_ENERGIES = Fixture("charizard-energies-entry")
+CARD_ENERGIES_REGS = CARD_ENERGIES.regs
+
+
+def card_energies_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return CARD_ENERGIES.case(vram=vram, bank=bank, **changes)
+
+
+ATTACK_LIST = Fixture("charizard-attacklist-entry")
+ATTACK_LIST_REGS = ATTACK_LIST.regs
+
+
+def attack_list_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return ATTACK_LIST.case(vram=vram, bank=bank, **changes)
+
+
 AI_POWER_EFFECT = Fixture("ai-duel-24-power-effect-entry")
 AI_POWER_EFFECT_REGS = AI_POWER_EFFECT.regs
 

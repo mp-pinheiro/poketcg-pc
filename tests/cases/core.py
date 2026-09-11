@@ -1,3 +1,4 @@
+from tests.cases._fixtures import card_energies_fixture as _card_energies_fixture, CARD_ENERGIES_REGS as _CARD_ENERGIES_REGS, attack_list_fixture as _attack_list_fixture, ATTACK_LIST_REGS as _ATTACK_LIST_REGS
 from tests.cases._fixtures import card_page_attack2_fixture as _card_page_attack2_fixture, CARD_PAGE_ATTACK2_REGS as _CARD_PAGE_ATTACK2_REGS
 from tests.cases._fixtures import ai_power_effect_fixture as _ai_power_effect_fixture, AI_POWER_EFFECT_REGS as _AI_POWER_EFFECT_REGS
 from tests.cases._fixtures import damage_number_chars_fixture as _damage_number_chars_fixture, DAMAGE_NUMBER_CHARS_REGS as _DAMAGE_NUMBER_CHARS_REGS
@@ -133,7 +134,7 @@ CASES["SetBGP7OrSGB2ToCardPalette"] = [
 # <<< factory SetBGP7OrSGB2ToCardPalette
 
 # >>> factory JPWriteByteToBGMap0
-CONTRACT["JPWriteByteToBGMap0"] = {"compare": (), "preserve": ()}
+CONTRACT["JPWriteByteToBGMap0"] = {"compare": ("a",), "preserve": ()}
 CASES["JPWriteByteToBGMap0"] = [
 	{"a": 0x41, "b": 0, "c": 0, "read": {0x9800: 1}},
 	dict(POISON, a=0x50, b=5, c=3, read={0x9800 + 3 * 32 + 5: 1}),
@@ -573,6 +574,7 @@ CASES["PrintEnergiesOfColor"] = [
     {"a": 1, "b": 0, "c": 0, "e": 0x20, "read": {0x9800: 1}},
     {"a": 2, "b": 0, "c": 0, "e": 0x30, "read": {0x9800: 2}},
     dict(POISON, a=0x0F, b=0, c=0, e=0x40, read={0x9800: 15}),
+    dict(_card_energies_fixture(vram=False, bank=1), **_CARD_ENERGIES_REGS),
 ]
 # <<< factory PrintEnergiesOfColor
 
@@ -3831,6 +3833,7 @@ CONTRACT["PrintAndLoadAttacksToDuelTempList"] = {"compare": ("a",), "preserve": 
 CASES["PrintAndLoadAttacksToDuelTempList"] = [
     {"setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x07"}, "read": {0xC510: 4, 0xCBC7: 1}, "instruction_budget": 200000, "cycle_budget": 2000000},
     dict(POISON, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x07"}, read={0xC510: 4, 0xCBC7: 1}, instruction_budget=200000, cycle_budget=2000000),
+    dict(_attack_list_fixture(vram=False, bank=1), **_ATTACK_LIST_REGS, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory PrintAndLoadAttacksToDuelTempList
 
@@ -6046,9 +6049,9 @@ MUTATIONS["PrintSortNumberInCardList_SetPointer"] = {
 # >>> factory-mutation PrintEnergiesOfColor
 MUTATIONS["PrintEnergiesOfColor"] = {
     "source_symbol": "PrintEnergiesOfColor",
-    "before": "count = (uint8_t)(a & 0x0Fu);",
-    "after": "count = (uint8_t)(a & 0x0Eu);",
-    "case_ids": ["PrintEnergiesOfColor-2", "PrintEnergiesOfColor-3", "PrintEnergiesOfColor-4"],
+    "before": "\t\twritten = JPWriteByteToBGMap0(value, b, c);",
+    "after": "\t\tJPWriteByteToBGMap0(value, b, c);",
+    "case_ids": ["PrintEnergiesOfColor-5"],
 }
 # <<< factory-mutation PrintEnergiesOfColor
 # >>> factory-mutation PrintCardPageWeaknessesOrResistances
@@ -7080,7 +7083,7 @@ MUTATIONS["RedrawTurnDuelistsMainSceneOrDuelHUD"] = {"source_symbol": "RedrawTur
 MUTATIONS["DisplayNoBasicPokemonInHandScreen"] = {"source_symbol": "DisplayNoBasicPokemonInHandScreen", "before": "void DisplayNoBasicPokemonInHandScreen(void)\n{\n\tEmptyScreen();\n\tTileCopyResult tiles = LoadDuelCardSymbolTiles();\n\tuint16_t box = tiles.hl;\n\tDrawRegularTextBox(&box, 0u, 20u, 18u, 0u, 0u);\n\t(void)CreateHandCardList(0u);\n\tuint8_t count = CountCardsInDuelTempList().a;", "after": "void DisplayNoBasicPokemonInHandScreen(void)\n{\n\tEmptyScreen();\n\tTileCopyResult tiles = LoadDuelCardSymbolTiles();\n\tuint16_t box = tiles.hl;\n\tDrawRegularTextBox(&box, 0u, 20u, 18u, 0u, 0u);\n\t(void)CreateHandCardList(0u);\n\tuint8_t count = (uint8_t)(CountCardsInDuelTempList().a + 1u);", "case_ids": ["DisplayNoBasicPokemonInHandScreen-0", "DisplayNoBasicPokemonInHandScreen-1"]}
 # <<< factory-mutation DisplayNoBasicPokemonInHandScreen
 # >>> factory-mutation PrintAndLoadAttacksToDuelTempList
-MUTATIONS["PrintAndLoadAttacksToDuelTempList"] = {"source_symbol": "PrintAndLoadAttacksToDuelTempList", "before": "\t\tc = (uint8_t)(c + 1u);\n\t\t(void)PrintAttackOrPkmnPowerInformation(b, c, 0u, b, wLoadedCard1Atk1Name_ADDR);", "after": "\t\t(void)PrintAttackOrPkmnPowerInformation(b, c, 0u, b, wLoadedCard1Atk1Name_ADDR);", "case_ids": ["PrintAndLoadAttacksToDuelTempList-0", "PrintAndLoadAttacksToDuelTempList-1"]}
+MUTATIONS["PrintAndLoadAttacksToDuelTempList"] = {"source_symbol": "PrintAndLoadAttacksToDuelTempList", "before": "de + (CARD_DATA_ATTACK1_CATEGORY - CARD_DATA_ATTACK1_NAME)", "after": "de + (CARD_DATA_ATTACK1_CATEGORY - CARD_DATA_ATTACK1_NAME + 1u)", "case_ids": ["PrintAndLoadAttacksToDuelTempList-2"]}
 # <<< factory-mutation PrintAndLoadAttacksToDuelTempList
 # >>> factory-mutation DisplayPokemonAttackCardPage
 MUTATIONS["DisplayPokemonAttackCardPage"] = {"source_symbol": "DisplayPokemonAttackCardPage", "before": "\tPrintAttackOrPkmnPowerInformationResult printed = PrintAttackOrPkmnPowerInformation(b, c, d, 2u, hl);", "after": "\tPrintAttackOrPkmnPowerInformationResult printed = PrintAttackOrPkmnPowerInformation(b, c, d, 3u, hl);", "case_ids": ["DisplayPokemonAttackCardPage-0", "DisplayPokemonAttackCardPage-1"]}

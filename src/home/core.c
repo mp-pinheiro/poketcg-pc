@@ -1971,9 +1971,9 @@ void SetBGP7OrSGB2ToCardPalette(void)
 
 /* >>> factory JPWriteByteToBGMap0 */
 /* core.asm:4219-4221 */
-void JPWriteByteToBGMap0(uint8_t a, uint8_t b, uint8_t c)
+uint8_t JPWriteByteToBGMap0(uint8_t a, uint8_t b, uint8_t c)
 {
-	WriteByteToBGMap0(a, b, c);
+	return WriteByteToBGMap0(a, b, c);
 }
 /* <<< factory JPWriteByteToBGMap0 */
 
@@ -2527,15 +2527,16 @@ PrintEnergiesResult PrintEnergiesOfColor(uint8_t a, uint8_t b, uint8_t c, uint8_
 	e = (uint8_t)(e + 1u);
 	count = (uint8_t)(a & 0x0Fu);
 	if (count == 0u)
-		return (PrintEnergiesResult){a, b, e};
+		return (PrintEnergiesResult){count, b, e};
 
 	value = e;
+	uint8_t written = value;
 	do {
-		JPWriteByteToBGMap0(value, b, c);
+		written = JPWriteByteToBGMap0(value, b, c);
 		b = (uint8_t)(b + 1u);
 	} while (--count);
 
-	return (PrintEnergiesResult){value, b, e};
+	return (PrintEnergiesResult){written, b, e};
 }
 /* <<< factory PrintEnergiesOfColor */
 
@@ -6781,7 +6782,7 @@ static uint8_t check_attack_slot_empty_or_pkmn_power(uint16_t de)
 	uint8_t hi = gb_read8((uint16_t)(de + 1u));
 	if ((uint8_t)(lo | hi) == 0u)
 		return 1u;
-	uint8_t category = gb_read8((uint16_t)(de + (CARD_DATA_ATTACK1_CATEGORY - CARD_DATA_ATTACK1_NAME + 1u)));
+	uint8_t category = gb_read8((uint16_t)(de + (CARD_DATA_ATTACK1_CATEGORY - CARD_DATA_ATTACK1_NAME)));
 	category = (uint8_t)(category & (uint8_t)~RESIDUAL);
 	return (uint8_t)(category == POKEMON_POWER);
 }

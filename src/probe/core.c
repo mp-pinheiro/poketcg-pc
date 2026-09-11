@@ -79,7 +79,7 @@ static void adapt_SetBGP7OrSGB2ToCardPalette(ProbeState *s)
 /* >>> factory JPWriteByteToBGMap0 */
 static void adapt_JPWriteByteToBGMap0(ProbeState *s)
 {
-	JPWriteByteToBGMap0(s->a, s->b, s->c);
+	s->a = JPWriteByteToBGMap0(s->a, s->b, s->c);
 }
 /* <<< factory JPWriteByteToBGMap0 */
 
