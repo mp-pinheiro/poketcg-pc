@@ -1,10 +1,10 @@
 {
   "derived_from": "effect-computer-search-seed",
-  "goal": "Player-controlled duel: plays the card from hand",
-  "input_sha256": "013fd8034853d93fcbe42dbf33ba3fcd26e234ac7f9dc28094018d8776b4d798",
+  "goal": "Player-controlled duel: Computer Search deck selection",
+  "input_sha256": "e51c6474ab18d0cedd287ddac7bc2013d25274fd35d518b9de29b13f04983ed5",
   "name": "effect-computer-search-play",
-  "ordinals": 29035,
-  "recorded": "2026-09-11T07:11:43+00:00",
+  "ordinals": 28723,
+  "recorded": "2026-09-11T08:41:25+00:00",
   "schema": 1,
   "script": "/tmp/play-computer-search.txt"
 }

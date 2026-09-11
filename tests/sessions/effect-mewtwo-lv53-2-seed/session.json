@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: MEWTWO_LV53 in hand, the AI never played it (Barrier_AISelectEffect, Barrier_BarrierEffect, Barrier_DiscardEffect, Barrier_PlayerSelectEffect)",
+  "goal": "Search seed: MEWTWO_LV53 in hand, player-controlled duel",
   "name": "effect-mewtwo-lv53-2-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     153,
     153
   ],
-  "recorded": "2026-09-10T22:06:29+00:00",
+  "recorded": "2026-09-11T08:39:58+00:00",
   "schema": 1
 }

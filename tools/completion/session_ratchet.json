@@ -276,7 +276,7 @@
     "confirmed_ordinal": 23227
   },
   "effect-computer-search-play": {
-    "confirmed_ordinal": 29035
+    "confirmed_ordinal": 28723
   },
   "effect-computer-search-seed": {
     "confirmed_ordinal": 23227
@@ -380,11 +380,17 @@
   "effect-gastly-lv17-2": {
     "confirmed_ordinal": 44048
   },
+  "effect-gastly-lv17-2-seed": {
+    "confirmed_ordinal": 23227
+  },
   "effect-gastly-lv8-2-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-gengar-1": {
     "confirmed_ordinal": 53360
+  },
+  "effect-gengar-1-seed": {
+    "confirmed_ordinal": 23227
   },
   "effect-gengar-2-seed": {
     "confirmed_ordinal": 23227
@@ -421,6 +427,9 @@
   },
   "effect-hitmonlee-1": {
     "confirmed_ordinal": 29312
+  },
+  "effect-hitmonlee-1-seed": {
+    "confirmed_ordinal": 23227
   },
   "effect-hypno-1-seed": {
     "confirmed_ordinal": 23227
@@ -461,6 +470,9 @@
   "effect-kadabra-1": {
     "confirmed_ordinal": 49808
   },
+  "effect-kadabra-1-seed": {
+    "confirmed_ordinal": 23227
+  },
   "effect-kakuna-1-seed": {
     "confirmed_ordinal": 23227
   },
@@ -472,6 +484,9 @@
   },
   "effect-krabby-1": {
     "confirmed_ordinal": 29144
+  },
+  "effect-krabby-1-seed": {
+    "confirmed_ordinal": 23227
   },
   "effect-lass-play": {
     "confirmed_ordinal": 29035
@@ -512,6 +527,9 @@
   "effect-marowak-lv26-2": {
     "confirmed_ordinal": 32288
   },
+  "effect-marowak-lv26-2-seed": {
+    "confirmed_ordinal": 23227
+  },
   "effect-marowak-lv32-2": {
     "confirmed_ordinal": 69632
   },
@@ -524,14 +542,23 @@
   "effect-mew-lv23-2": {
     "confirmed_ordinal": 29816
   },
+  "effect-mew-lv23-2-seed": {
+    "confirmed_ordinal": 23227
+  },
   "effect-mewtwo-alt-lv60-1": {
     "confirmed_ordinal": 31280
+  },
+  "effect-mewtwo-alt-lv60-1-seed": {
+    "confirmed_ordinal": 23227
   },
   "effect-mewtwo-lv53-2-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-mewtwo-lv60-1": {
     "confirmed_ordinal": 31280
+  },
+  "effect-mewtwo-lv60-1-seed": {
+    "confirmed_ordinal": 23227
   },
   "effect-moltres-lv35-1": {
     "confirmed_ordinal": 32048

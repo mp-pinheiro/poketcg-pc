@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: HYPNO in hand, the AI never played it (HypnoDarkMind_PlayerSelectEffect)",
+  "goal": "Search seed: HYPNO in hand, player-controlled duel",
   "name": "effect-hypno-2-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     149,
     149
   ],
-  "recorded": "2026-09-11T02:14:59+00:00",
+  "recorded": "2026-09-11T08:37:46+00:00",
   "schema": 1
 }

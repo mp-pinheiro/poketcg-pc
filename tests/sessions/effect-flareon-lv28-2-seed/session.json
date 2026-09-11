@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: FLAREON_LV28 in hand, the AI never played it (FlareonFlamethrower_PlayerSelectEffect)",
+  "goal": "Search seed: FLAREON_LV28 in hand, player-controlled duel",
   "name": "effect-flareon-lv28-2-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     63,
     63
   ],
-  "recorded": "2026-09-11T02:09:08+00:00",
+  "recorded": "2026-09-11T08:35:15+00:00",
   "schema": 1
 }

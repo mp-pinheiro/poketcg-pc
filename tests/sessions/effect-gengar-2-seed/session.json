@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: GENGAR in hand, the AI never played it (GengarDarkMind_PlayerSelectEffect)",
+  "goal": "Search seed: GENGAR in hand, player-controlled duel",
   "name": "effect-gengar-2-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     149,
     149
   ],
-  "recorded": "2026-09-11T03:27:11+00:00",
+  "recorded": "2026-09-11T08:36:30+00:00",
   "schema": 1
 }
