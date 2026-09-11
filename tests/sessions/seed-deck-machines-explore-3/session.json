@@ -1,0 +1,10 @@
+{
+  "derived_from": "seed-deck-machines",
+  "goal": "Coverage search from seed-deck-machines: 1 routines no session had executed (OpenCardPage.input_loop)",
+  "input_sha256": "64fe2e14a39bc889e1ec5aaca5edb81ed8383dc06cc40f9fa444a6de0ffe3ac2",
+  "name": "seed-deck-machines-explore-3",
+  "ordinals": 3064,
+  "recorded": "2026-09-11T04:32:14+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-seed-deck-machines/scripts/s01-Ax20-1.txt"
+}

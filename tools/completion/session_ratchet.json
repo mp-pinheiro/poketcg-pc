@@ -791,6 +791,15 @@
   "seed-deck-machines": {
     "confirmed_ordinal": 2584
   },
+  "seed-deck-machines-explore-1": {
+    "confirmed_ordinal": 11706
+  },
+  "seed-deck-machines-explore-2": {
+    "confirmed_ordinal": 2608
+  },
+  "seed-deck-machines-explore-3": {
+    "confirmed_ordinal": 3064
+  },
   "seed-packs": {
     "confirmed_ordinal": 1564
   },

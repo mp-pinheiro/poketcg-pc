@@ -1,0 +1,10 @@
+{
+  "derived_from": "seed-deck-machines",
+  "goal": "Coverage search from seed-deck-machines: 2 routines no session had executed (Func_d96c, Script_da49)",
+  "input_sha256": "43dd47a932246cb198f27bdc6e04e519eceef1e3104f0f17a78b79c12c36e608",
+  "name": "seed-deck-machines-explore-1",
+  "ordinals": 11728,
+  "recorded": "2026-09-11T04:31:24+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-seed-deck-machines/scripts/s00-A-2.txt"
+}
