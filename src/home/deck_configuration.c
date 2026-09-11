@@ -791,7 +791,8 @@ void PrintTotalNumberOfCardsInCollection(void)
 	gb_write8(text, TX_END);
 
 	InitTextPrinting(13u, 0u);
-	ProcessText(&text);
+	uint16_t printed = wTempCardCollection_ADDR;
+	ProcessText(&printed);
 }
 /* <<< factory PrintTotalNumberOfCardsInCollection */
 

@@ -371,10 +371,14 @@ CASES["OpenDeckConfigurationMenu"] = [
 # >>> factory PrintTotalNumberOfCardsInCollection
 CONTRACT["PrintTotalNumberOfCardsInCollection"] = {"compare": (), "preserve": ()}
 CASES["PrintTotalNumberOfCardsInCollection"] = [
-    {"sram": {0: {0xA100: b"\x00" * 255}}, "read": {0xC000: 12, 0xCEB6: 5}},
-    {"sram": {0: {0xA100: b"\x00\x01" + b"\x00" * 253}}, "read": {0xC000: 12, 0xCEB6: 5}},
-    {"sram": {0: {0xA100: b"\x00\xff" + b"\x00" * 253}}, "read": {0xC000: 12, 0xCEB6: 5}},
-    dict(POISON, sram={0: {0xA100: b"\x00\x7f" + b"\x00" * 253}}, read={0xC000: 12, 0xCEB6: 5}),
+    {"sram": {0: {0xA100: b"\x00" * 255}}, "read": {0xC000: 12, 0xCEB6: 5},
+     "vread": {0: {0x980D: 12}}},
+    {"sram": {0: {0xA100: b"\x00\x01" + b"\x00" * 253}}, "read": {0xC000: 12, 0xCEB6: 5},
+     "vread": {0: {0x980D: 12}}},
+    {"sram": {0: {0xA100: b"\x00\xff" + b"\x00" * 253}}, "read": {0xC000: 12, 0xCEB6: 5},
+     "vread": {0: {0x980D: 12}}},
+    dict(POISON, sram={0: {0xA100: b"\x00\x7f" + b"\x00" * 253}}, read={0xC000: 12, 0xCEB6: 5},
+         vread={0: {0x980D: 12}}),
 ]
 # <<< factory PrintTotalNumberOfCardsInCollection
 
@@ -1380,7 +1384,7 @@ MUTATIONS["FillBGMapLineWithA"] = {"source_symbol": "FillBGMapLineWithA", "befor
 MUTATIONS["OpenDeckConfigurationMenu"] = {"source_symbol": "OpenDeckConfigurationMenu", "before": "\tOpenDeckConfigurationMenu_SkipInit();", "after": "", "case_ids": ["OpenDeckConfigurationMenu-0", "OpenDeckConfigurationMenu-1", "OpenDeckConfigurationMenu-2"]}
 # <<< factory-mutation OpenDeckConfigurationMenu
 # >>> factory-mutation PrintTotalNumberOfCardsInCollection
-MUTATIONS["PrintTotalNumberOfCardsInCollection"] = {"source_symbol": "PrintTotalNumberOfCardsInCollection", "before": "uint8_t digit = 0u;", "after": "uint8_t digit = 1u;", "case_ids": ["PrintTotalNumberOfCardsInCollection-1", "PrintTotalNumberOfCardsInCollection-3"]}
+MUTATIONS["PrintTotalNumberOfCardsInCollection"] = {"source_symbol": "PrintTotalNumberOfCardsInCollection", "before": "\tuint16_t printed = wTempCardCollection_ADDR;", "after": "\tuint16_t printed = (uint16_t)(wTempCardCollection_ADDR + 2u);", "case_ids": ["PrintTotalNumberOfCardsInCollection-1", "PrintTotalNumberOfCardsInCollection-3"]}
 # <<< factory-mutation PrintTotalNumberOfCardsInCollection
 # >>> factory-mutation DrawHorizontalListCursor
 MUTATIONS["DrawHorizontalListCursor"] = {
