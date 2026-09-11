@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: AERODACTYL in hand, the AI never played it (PrehistoricPowerEffect)",
+  "goal": "Search seed: AERODACTYL in hand, player-controlled duel",
   "name": "effect-aerodactyl-1-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     135,
     135
   ],
-  "recorded": "2026-09-11T01:58:46+00:00",
+  "recorded": "2026-09-11T07:39:12+00:00",
   "schema": 1
 }

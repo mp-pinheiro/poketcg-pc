@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: CHARMANDER in hand, the AI never played it (Ember_PlayerSelectEffect)",
+  "goal": "Search seed: CHARMANDER in hand, player-controlled duel",
   "name": "effect-charmander-2-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     2,
     2
   ],
-  "recorded": "2026-09-11T02:04:01+00:00",
+  "recorded": "2026-09-11T07:46:40+00:00",
   "schema": 1
 }

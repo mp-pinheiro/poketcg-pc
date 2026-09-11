@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: ELECTRODE_LV35 in hand, the AI never played it (ElectrodeSonicboom_NullEffect)",
+  "goal": "Search seed: ELECTRODE_LV35 in hand, player-controlled duel",
   "name": "effect-electrode-lv35-1-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     102,
     102
   ],
-  "recorded": "2026-09-11T02:06:45+00:00",
+  "recorded": "2026-09-11T07:54:37+00:00",
   "schema": 1
 }

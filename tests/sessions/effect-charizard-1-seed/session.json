@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: CHARIZARD in hand, the AI never played it (EnergyBurnEffect)",
+  "goal": "Search seed: CHARIZARD in hand, player-controlled duel",
   "name": "effect-charizard-1-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     63,
     63
   ],
-  "recorded": "2026-09-11T02:03:53+00:00",
+  "recorded": "2026-09-11T07:45:44+00:00",
   "schema": 1
 }

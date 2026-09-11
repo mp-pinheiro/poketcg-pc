@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: POKEMON_BREEDER in hand, the AI never played it (PokemonBreeder_EvolveEffect, PokemonBreeder_PlayerSelection)",
+  "goal": "Search seed: POKEMON_BREEDER in hand, player-controlled duel",
   "name": "effect-pokemon-breeder-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     64,
     64
   ],
-  "recorded": "2026-09-11T01:54:31+00:00",
+  "recorded": "2026-09-11T07:10:01+00:00",
   "schema": 1
 }

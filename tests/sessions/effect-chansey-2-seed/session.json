@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: CHANSEY in hand, the AI never played it (ChanseyDoubleEdgeEffect)",
+  "goal": "Search seed: CHANSEY in hand, player-controlled duel",
   "name": "effect-chansey-2-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     64,
     64
   ],
-  "recorded": "2026-09-11T02:03:48+00:00",
+  "recorded": "2026-09-11T07:45:16+00:00",
   "schema": 1
 }

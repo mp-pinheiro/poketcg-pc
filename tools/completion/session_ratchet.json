@@ -209,6 +209,9 @@
   "effect-articuno-lv37-1": {
     "confirmed_ordinal": 34160
   },
+  "effect-articuno-lv37-1-seed": {
+    "confirmed_ordinal": 23227
+  },
   "effect-articuno-lv37-2": {
     "confirmed_ordinal": 34160
   },
@@ -263,8 +266,14 @@
   "effect-clefairy-2": {
     "confirmed_ordinal": 26888
   },
+  "effect-clefairy-2-seed": {
+    "confirmed_ordinal": 23227
+  },
   "effect-cloyster-2": {
     "confirmed_ordinal": 34352
+  },
+  "effect-cloyster-2-seed": {
+    "confirmed_ordinal": 23227
   },
   "effect-computer-search-play": {
     "confirmed_ordinal": 29035
@@ -311,6 +320,9 @@
   "effect-electabuzz-lv20-2": {
     "confirmed_ordinal": 28088
   },
+  "effect-electabuzz-lv20-2-seed": {
+    "confirmed_ordinal": 23227
+  },
   "effect-electrode-lv35-1-seed": {
     "confirmed_ordinal": 23227
   },
@@ -340,6 +352,9 @@
   },
   "effect-exeggutor-1": {
     "confirmed_ordinal": 30128
+  },
+  "effect-exeggutor-1-seed": {
+    "confirmed_ordinal": 23227
   },
   "effect-exeggutor-2-seed": {
     "confirmed_ordinal": 23227
@@ -421,6 +436,9 @@
   },
   "effect-item-finder": {
     "confirmed_ordinal": 27824
+  },
+  "effect-item-finder-seed": {
+    "confirmed_ordinal": 23227
   },
   "effect-ivysaur-2-seed": {
     "confirmed_ordinal": 23227
@@ -623,6 +641,9 @@
   "effect-pokemon-flute": {
     "confirmed_ordinal": 27824
   },
+  "effect-pokemon-flute-seed": {
+    "confirmed_ordinal": 23227
+  },
   "effect-pokemon-trader-play": {
     "confirmed_ordinal": 29035
   },
@@ -676,6 +697,9 @@
   },
   "effect-revive": {
     "confirmed_ordinal": 27824
+  },
+  "effect-revive-seed": {
+    "confirmed_ordinal": 23227
   },
   "effect-rhydon-2": {
     "confirmed_ordinal": 33080

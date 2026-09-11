@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: BEEDRILL in hand, the AI never played it (Twineedle_AIEffect, Twineedle_MultiplierEffect)",
+  "goal": "Search seed: BEEDRILL in hand, player-controlled duel",
   "name": "effect-beedrill-1-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     31,
     31
   ],
-  "recorded": "2026-09-11T01:09:08+00:00",
+  "recorded": "2026-09-11T07:42:56+00:00",
   "schema": 1
 }

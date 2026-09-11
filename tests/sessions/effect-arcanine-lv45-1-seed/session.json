@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: ARCANINE_LV45 in hand, the AI never played it (ArcanineFlamethrower_AISelectEffect, ArcanineFlamethrower_DiscardEffect, ArcanineFlamethrower_PlayerSelectEffect)",
+  "goal": "Search seed: ARCANINE_LV45 in hand, player-controlled duel",
   "name": "effect-arcanine-lv45-1-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     64,
     64
   ],
-  "recorded": "2026-09-11T00:08:35+00:00",
+  "recorded": "2026-09-11T07:41:32+00:00",
   "schema": 1
 }

@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: ARCANINE_LV34 in hand, the AI never played it (FlamesOfRage_PlayerSelectEffect)",
+  "goal": "Search seed: ARCANINE_LV34 in hand, player-controlled duel",
   "name": "effect-arcanine-lv34-2-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     64,
     64
   ],
-  "recorded": "2026-09-11T02:00:15+00:00",
+  "recorded": "2026-09-11T07:41:04+00:00",
   "schema": 1
 }

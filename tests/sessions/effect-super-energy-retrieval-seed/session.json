@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: SUPER_ENERGY_RETRIEVAL in hand, the AI never played it (SuperEnergyRetrieval_DiscardAndAddToHandEffect, SuperEnergyRetrieval_PlayerDiscardPileSelection, SuperEnergyRetrieval_PlayerHandSelection)",
+  "goal": "Search seed: SUPER_ENERGY_RETRIEVAL in hand, player-controlled duel",
   "name": "effect-super-energy-retrieval-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     64,
     64
   ],
-  "recorded": "2026-09-11T01:05:54+00:00",
+  "recorded": "2026-09-11T07:11:16+00:00",
   "schema": 1
 }

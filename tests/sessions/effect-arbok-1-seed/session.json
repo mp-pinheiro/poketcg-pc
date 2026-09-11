@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: ARBOK in hand, the AI never played it (TerrorStrike_50PercentSelectSwitchPokemon, TerrorStrike_SwitchDefendingPokemon)",
+  "goal": "Search seed: ARBOK in hand, player-controlled duel",
   "name": "effect-arbok-1-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     33,
     33
   ],
-  "recorded": "2026-09-11T01:07:20+00:00",
+  "recorded": "2026-09-11T07:40:08+00:00",
   "schema": 1
 }

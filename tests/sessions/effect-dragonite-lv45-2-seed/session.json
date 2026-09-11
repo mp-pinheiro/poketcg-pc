@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: DRAGONITE_LV45 in hand, the AI never played it (DragoniteLv45Slam_AIEffect, DragoniteLv45Slam_MultiplierEffect)",
+  "goal": "Search seed: DRAGONITE_LV45 in hand, player-controlled duel",
   "name": "effect-dragonite-lv45-2-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,6 +67,6 @@
     60,
     60
   ],
-  "recorded": "2026-09-11T01:13:26+00:00",
+  "recorded": "2026-09-11T07:53:13+00:00",
   "schema": 1
 }
