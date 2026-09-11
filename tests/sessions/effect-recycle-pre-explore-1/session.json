@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-recycle-pre",
+  "goal": "Coverage search from effect-recycle-pre: 2 routines no session had executed (OpenInPlayAreaScreen_TurnHolderDiscardPile, SetDiscardPileScreenTexts)",
+  "input_sha256": "8cef60d8be6184d0d21b2c699d4c548474e94cf6fc312fe3c34fecd04dc0c7ed",
+  "name": "effect-recycle-pre-explore-1",
+  "ordinals": 73003,
+  "recorded": "2026-09-11T19:26:14+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-effect-recycle-pre/scripts/s00-A-2.txt"
+}
