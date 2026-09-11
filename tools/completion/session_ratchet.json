@@ -707,6 +707,12 @@
   "effect-zapdos-lv40-1": {
     "confirmed_ordinal": 31952
   },
+  "effect-zapdos-lv64-2": {
+    "confirmed_ordinal": 50912
+  },
+  "effect-zapdos-lv68-2": {
+    "confirmed_ordinal": 38000
+  },
   "fighting-club": {
     "confirmed_ordinal": 108594
   },
