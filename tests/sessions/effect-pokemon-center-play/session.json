@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-pokemon-center-seed",
+  "goal": "Player-controlled duel: plays the card from hand",
+  "input_sha256": "a2ae58943108c859ba20e1830d6b0654cf54352b08feacab677ba708b2c1bc59",
+  "name": "effect-pokemon-center-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T06:56:28+00:00",
+  "schema": 1,
+  "script": "/tmp/pokemon-center-play.txt"
+}

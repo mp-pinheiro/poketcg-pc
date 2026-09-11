@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-pokedex-seed",
+  "goal": "Player-controlled duel: plays the card from hand",
+  "input_sha256": "2608b19ce97cae403b1d14762e5973ab982361f303327de680616b0c6a14991a",
+  "name": "effect-pokedex-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T06:56:28+00:00",
+  "schema": 1,
+  "script": "/tmp/pokedex-play.txt"
+}

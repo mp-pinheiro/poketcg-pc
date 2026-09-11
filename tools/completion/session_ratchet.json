@@ -458,6 +458,9 @@
   "effect-magneton-lv35-2-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-maintenance-play": {
+    "confirmed_ordinal": 29035
+  },
   "effect-maintenance-seed": {
     "confirmed_ordinal": 23227
   },
@@ -493,6 +496,9 @@
   },
   "effect-moltres-lv37-2": {
     "confirmed_ordinal": 48776
+  },
+  "effect-mr-fuji-play": {
+    "confirmed_ordinal": 29035
   },
   "effect-mr-fuji-seed": {
     "confirmed_ordinal": 23227
@@ -572,11 +578,17 @@
   "effect-poke-ball-seed-explore-1": {
     "confirmed_ordinal": 24691
   },
+  "effect-pokedex-play": {
+    "confirmed_ordinal": 29035
+  },
   "effect-pokedex-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-pokemon-breeder-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-pokemon-center-play": {
+    "confirmed_ordinal": 29035
   },
   "effect-pokemon-center-seed": {
     "confirmed_ordinal": 23227
@@ -676,6 +688,9 @@
   },
   "effect-super-potion-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-switch-play": {
+    "confirmed_ordinal": 29035
   },
   "effect-switch-seed": {
     "confirmed_ordinal": 23227

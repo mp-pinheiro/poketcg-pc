@@ -1708,7 +1708,9 @@ def from_script(name: str, *, seed: str, script: Path, goal: str) -> int:
         raise SessionError(f"{script} does not start with {seed}'s {len(seed_masks)} ordinals")
     if len(masks) <= len(seed_masks):
         raise SessionError(f"{script} adds no ordinals past {seed}")
-    input_sha256 = hashlib.sha256(bytes(m & 0xFF for m in masks)).hexdigest()
+    poke_text = refstream.pokes_text(seed_meta.get("pokes") or {})
+    input_sha256 = hashlib.sha256(bytes(m & 0xFF for m in masks)
+                                  + poke_text.encode()).hexdigest()
     for other in session_names():
         other_meta = json.loads((session_dir(other) / "session.json").read_text()) \
             if (session_dir(other) / "session.json").is_file() else {}

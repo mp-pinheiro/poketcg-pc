@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-mr-fuji-seed",
+  "goal": "Player-controlled duel: plays the card from hand",
+  "input_sha256": "9dd93034fc290f61cdb4a0a9a89ada3de43d5000cf44f1d9607e90408e86b9eb",
+  "name": "effect-mr-fuji-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T06:56:28+00:00",
+  "schema": 1,
+  "script": "/tmp/mr-fuji-play.txt"
+}

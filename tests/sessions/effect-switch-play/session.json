@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-switch-seed",
+  "goal": "Player-controlled duel: plays the card from hand",
+  "input_sha256": "fd0843e5f65b3a079cfa29326b3b0cfac2fdcd24eeb084c1202b6a84f87219ba",
+  "name": "effect-switch-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T06:56:28+00:00",
+  "schema": 1,
+  "script": "/tmp/switch-play.txt"
+}

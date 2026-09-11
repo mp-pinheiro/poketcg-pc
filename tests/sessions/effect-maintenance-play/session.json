@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-maintenance-seed",
+  "goal": "Player-controlled duel: plays the card from hand",
+  "input_sha256": "3a92b37a6544e7959584bc1ef5b2bc61d581e457aebdca665b8143a96663773e",
+  "name": "effect-maintenance-play",
+  "ordinals": 29035,
+  "recorded": "2026-09-11T06:56:28+00:00",
+  "schema": 1,
+  "script": "/tmp/maintenance-play.txt"
+}
