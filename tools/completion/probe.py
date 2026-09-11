@@ -98,7 +98,8 @@ def probe(base: str, tail: list[str], ledger: dict[str, Any], executed: set[str]
     routines = ledger["routines"]
     reached = sorted(
         name for name in counts
-        if name in routines and not routines[name].get("excluded") and name not in executed
+        if name in routines and not routines[name].get("excluded")
+        and not routines[name].get("unmeasurable") and name not in executed
     )
     return {
         "tail": ",".join(tail),

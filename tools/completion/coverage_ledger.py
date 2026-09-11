@@ -80,6 +80,18 @@ def routine_files() -> tuple[dict[str, str], dict[str, str]]:
             {name: row["kind"] for name, row in excluded.items()})
 
 
+def unnameable() -> set[str]:
+    """Inventory routines the reference tracer has no entry address for, so no
+    replay can ever report them: the 12 the registration bijection still
+    misses plus the labels whose entry the trace table does not carry (duel
+    animation slots, `FadePalIntoAnother`, the Man1/legendary script
+    commands). They are not coverage work and must not enter the worklist -
+    closing one means registering it, not recording a session."""
+    _addresses, table = refstream.routine_entry_addresses()
+    named = set(table.values())
+    return {name for name in routine_files()[0] if name not in named}
+
+
 def ledger_sessions() -> list[str]:
     return [name for name in session.session_names() if not name.startswith("_")]
 
@@ -195,15 +207,20 @@ def assemble(records: dict[str, dict[str, Any]]) -> dict[str, Any]:
             by_routine.setdefault(routine, []).append(index[name])
     routines: dict[str, dict[str, Any]] = {}
     per_file: dict[str, dict[str, int]] = {}
+    blind = unnameable()
     for routine in sorted(files):
         entry: dict[str, Any] = {"file": files[routine], "sessions": by_routine.get(routine, [])}
         if routine in excluded:
             entry["excluded"] = excluded[routine]
+        elif routine in blind:
+            entry["unmeasurable"] = "tracer-unnamed"
         routines[routine] = entry
         if routine in excluded:
             continue
         row = per_file.setdefault(files[routine], {"executed": 0, "total": 0})
         row["total"] += 1
+        if routine in blind:
+            row["unmeasurable"] = row.get("unmeasurable", 0) + 1
         if entry["sessions"]:
             row["executed"] += 1
     executed = sum(row["executed"] for row in per_file.values())
@@ -243,9 +260,19 @@ def executed_set(ledger: dict[str, Any]) -> set[str]:
 
 
 def unexecuted(ledger: dict[str, Any]) -> dict[str, str]:
-    """routine -> file for every in-scope routine no session executes."""
+    """routine -> file for every in-scope routine no session executes and a
+    replay could report. `unmeasurable` routines are held out: the reference
+    tracer has no entry address for them, so they are a registration gap, not
+    a coverage gap (`unnameable`)."""
     return {routine: entry["file"] for routine, entry in ledger["routines"].items()
-            if not entry["sessions"] and "excluded" not in entry}
+            if not entry["sessions"] and "excluded" not in entry
+            and "unmeasurable" not in entry}
+
+
+def unmeasurable(ledger: dict[str, Any]) -> dict[str, str]:
+    """routine -> reason for the routines no replay can report."""
+    return {routine: entry["unmeasurable"] for routine, entry in ledger["routines"].items()
+            if entry.get("unmeasurable")}
 
 
 def read_ratchet() -> dict[str, int]:
@@ -313,14 +340,19 @@ def build(names: list[str], *, jobs: int, forced: set[str], write_ratchet: bool)
 def status(limit: int) -> int:
     ledger = load_ledger()
     totals = ledger["totals"]
+    blind = unmeasurable(ledger)
     print(f"LEDGER revision={ledger['revision'][:12]} sessions={totals['sessions']} "
           f"executed={totals['executed']}/{totals['total']}")
+    if blind:
+        print(f"UNMEASURABLE routines={len(blind)} reason=tracer-unnamed "
+              f"(a registration gap, not coverage: {', '.join(sorted(blind)[:4])}, ...)")
     rows = sorted(ledger["files"].items(), key=lambda row: (row[1]["executed"] - row[1]["total"], row[0]))
     for file, row in rows[:limit]:
         miss = row["total"] - row["executed"]
         if miss == 0:
             break
-        print(f"FILE miss={miss} executed={row['executed']}/{row['total']} {file}")
+        print(f"FILE miss={miss} executed={row['executed']}/{row['total']} {file}"
+              + (f" unmeasurable={row['unmeasurable']}" if row.get("unmeasurable") else ""))
     return 0
 
 

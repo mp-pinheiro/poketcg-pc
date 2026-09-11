@@ -86,6 +86,8 @@ ROUTE = [
 FAMILIES = [
     ("Card effects", ("effect-",)),
     ("Seeded content", ("seed-",)),
+    ("Deck machines", ("deck-machine-",)),
+    ("Duel surface", ("duel-",)),
     ("Audio", ("audio-",)),
     ("Transport", ("link-", "printer-", "ir-")),
 ]
