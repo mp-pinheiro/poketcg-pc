@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-energy-retrieval-pre",
+  "goal": "Coverage search from effect-energy-retrieval-pre: 2 routines no session had executed (OpenInPlayAreaScreen_TurnHolderDiscardPile, SetDiscardPileScreenTexts)",
+  "input_sha256": "7c436529ffed41eecd48d42bbdebfe3af6a814daf8ad7d7ca529b54ea64c7fbb",
+  "name": "effect-energy-retrieval-pre-explore-1",
+  "ordinals": 31531,
+  "recorded": "2026-09-11T19:24:05+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-effect-energy-retrieval-pre/scripts/s00-A-2.txt"
+}
