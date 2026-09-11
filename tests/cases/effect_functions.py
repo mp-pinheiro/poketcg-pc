@@ -7842,9 +7842,9 @@ CASES["SolarPower_RemoveStatusEffect"] = [{"a":0x00,"f":0x00,"b":0x00,"c":0x00,"
 # >>> factory Prophecy_PlayerSelectEffect
 CONTRACT["Prophecy_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["Prophecy_PlayerSelectEffect"] = [
-    {"compare": (), "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xCBD0: b"\x00", 0xCD9A: b"\x01", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC401: b"\x08"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"keys": [0x00, 0x10, 0x01], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xCBD0: b"\x00", 0xCD9A: b"\x01", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC3BA: b"\x3B", 0xC3B9: b"\x01", 0xC401: b"\x08"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x10, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xCBD0: b"\x00", 0xCD9A: b"\x01", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC3BA: b"\x3B", 0xC3B9: b"\x01", 0xC401: b"\x08"}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+    {"keys": [0x0, 0x20, 0x0, 0x1], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xCBD0: b"\x00", 0xCD9A: b"\x01", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC3BA: b"\x3B", 0xC3B9: b"\x01", 0xC401: b"\x08"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 80000000, "cycle_budget": 320000000},
+    {"keys": [0x00, 0x10, 0x01], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xCBD0: b"\x00", 0xCD9A: b"\x01", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC3BA: b"\x3B", 0xC3B9: b"\x01", 0xC401: b"\x08"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 80000000, "cycle_budget": 320000000},
+    dict(POISON, keys=[0x00, 0x10, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xCBD0: b"\x00", 0xCD9A: b"\x01", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC3BA: b"\x3B", 0xC3B9: b"\x01", 0xC401: b"\x08"}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=80000000, cycle_budget=320000000)
 ]
 # <<< factory Prophecy_PlayerSelectEffect
 
@@ -11096,20 +11096,8 @@ MUTATIONS["EnergyConversion_AddToHandEffect"] = {"source_symbol": "EnergyConvers
 MUTATIONS["SolarPower_RemoveStatusEffect"]={"source_symbol":"SolarPower_RemoveStatusEffect","before":"gb_write8((uint16_t)((flags.hl & 0xff00u) | DUELVARS_ARENA_CARD_STATUS), NO_STATUS);","after":"gb_write8((uint16_t)((flags.hl & 0xff00u) | DUELVARS_ARENA_CARD_STATUS), 1u);","case_ids":["SolarPower_RemoveStatusEffect-0","SolarPower_RemoveStatusEffect-1"]}
 # <<< factory-mutation SolarPower_RemoveStatusEffect
 # >>> factory-mutation Prophecy_PlayerSelectEffect
-MUTATIONS["Prophecy_PlayerSelectEffect"] = {"source_symbol": "Prophecy_PlayerSelectEffect", "before": "\t\t\thTempList = hCurMenuItem;", "after": "\t\t\thTempList = (uint8_t)(hCurMenuItem + 1u);", "case_ids": ["Prophecy_PlayerSelectEffect-1", "Prophecy_PlayerSelectEffect-2"]}
+MUTATIONS["Prophecy_PlayerSelectEffect"] = {"source_symbol": "Prophecy_PlayerSelectEffect", "before": "\t\t\thTempList = hCurMenuItem;", "after": "\t\t\thTempList = (uint8_t)(hCurMenuItem + 1u);", "case_ids": ["Prophecy_PlayerSelectEffect-0", "Prophecy_PlayerSelectEffect-1", "Prophecy_PlayerSelectEffect-2"]}
 # <<< factory-mutation Prophecy_PlayerSelectEffect
-# >>> factory-completion Prophecy_PlayerSelectEffect
-# Two exits: asm:4746 at 0b:5A2E (non-turn, after the trailing SwapTurn) and
-# asm:4754 at 0b:5A3B (turn duelist). Case 0 reaches neither -- its menu
-# selection lands on the non-turn branch and HandleProphecyScreen never
-# completes under any seed tried -- so it stops at that callee's entry and
-# narrows its comparison, since a mid-flight stop has no comparable registers.
-for _index, _record in enumerate(SCHEMA2_CASES["Prophecy_PlayerSelectEffect"]):
-    if _index == 0:
-        _record["completion"] = {"mode": "pre-ret", "pc": 0x5A76, "bank": 0x0B}
-    else:
-        _record["completion"] = {"mode": "pre-ret", "pc": 0x5A2E, "bank": 0x0B}
-# <<< factory-completion Prophecy_PlayerSelectEffect
 # >>> factory-mutation PokemonTrader_PlayerDeckSelection
 MUTATIONS["PokemonTrader_PlayerDeckSelection"] = {"source_symbol": "PokemonTrader_PlayerDeckSelection", "before": "\thTempPlayAreaLocation_ffa1 = hTempCardIndex_ff98;", "after": "\thTempPlayAreaLocation_ffa1 = 0xffu;", "case_ids": ["PokemonTrader_PlayerDeckSelection-0"]}
 # <<< factory-mutation PokemonTrader_PlayerDeckSelection
