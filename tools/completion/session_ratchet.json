@@ -179,6 +179,12 @@
   "dome-explore": {
     "confirmed_ordinal": 856837
   },
+  "effect-alakazam-1-seed": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-arbok-1-seed": {
+    "confirmed_ordinal": 23227
+  },
   "effect-arcanine-lv45-1-seed": {
     "confirmed_ordinal": 23227
   },
@@ -292,6 +298,9 @@
   },
   "effect-super-energy-retrieval-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-venomoth-1": {
+    "confirmed_ordinal": 32228
   },
   "effect-venusaur-lv67-1-seed": {
     "confirmed_ordinal": 23227
