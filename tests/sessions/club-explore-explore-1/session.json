@@ -1,0 +1,10 @@
+{
+  "derived_from": "club-explore",
+  "goal": "Coverage search from club-explore: 4 routines no session had executed (DisplayAttackPage, DisplayAttackPage_Attack1Page1, OpenAttackPage, SwitchAttackPage)",
+  "input_sha256": "4c7dbf02b523b22604bd2c65a134b39b2bdbddead572be24875768f0303f30ff",
+  "name": "club-explore-explore-1",
+  "ordinals": 194387,
+  "recorded": "2026-09-11T23:42:54+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-club-explore/scripts/s00-START-4.txt"
+}
