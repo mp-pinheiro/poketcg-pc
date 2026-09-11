@@ -1,0 +1,10 @@
+{
+  "derived_from": "seed-deck-machines-explore-2-explore-7",
+  "goal": "Coverage search from seed-deck-machines-explore-2-explore-7: 1 routines no session had executed (SaveDeckConfiguration)",
+  "input_sha256": "04d96fbf93e680816d433c797dd668b58e1d69e49a9ba763ec01b0e9a108cfff",
+  "name": "seed-deck-machines-explore-2-explore-7-explore-1",
+  "ordinals": 55816,
+  "recorded": "2026-09-11T22:58:24+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-seed-deck-machines-explore-2-explore-7/scripts/s00-A-1.txt"
+}
