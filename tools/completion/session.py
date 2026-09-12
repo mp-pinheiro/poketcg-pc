@@ -1738,7 +1738,7 @@ BOARD_ENERGY_SLOTS = 6
 def board_seed(name: str, *, card: str, attack: int | None, base: str, at: int, deck: int,
                poke_at: int, goal: str, then: list[str] | None = None,
                hand: list[str] | None = None, discard: list[str] | None = None,
-               bench: list[str] | None = None) -> int:
+               bench: list[str] | None = None, arena_hp: int | None = None) -> int:
     """A `deck_seed` whose duel board is poked as well: the carrier is the arena
     card and enough energy cards are located there to pay its attack.
 
@@ -1817,7 +1817,8 @@ def board_seed(name: str, *, card: str, attack: int | None, base: str, at: int, 
                    (PLAYER_DUEL_VARS + DUEL_BOARD["bench_stage"] + slot,
                     CARD_STAGE.get(data[piece].get("stage") or "BASIC", 0))]
     writes += [(PLAYER_DUEL_VARS + DUEL_BOARD["arena_card"], arena_index),
-               (PLAYER_DUEL_VARS + DUEL_BOARD["arena_hp"], data[card]["hp"]),
+               (PLAYER_DUEL_VARS + DUEL_BOARD["arena_hp"],
+                data[card]["hp"] if arena_hp is None else arena_hp),
                (PLAYER_DUEL_VARS + DUEL_BOARD["arena_stage"], 0),
                (PLAYER_DUEL_VARS + DUEL_BOARD["arena_flags"], 0),
                (PLAYER_DUEL_VARS + DUEL_BOARD["in_play_area"], 1 + len(bench_indices)),
@@ -1843,6 +1844,7 @@ def board_seed(name: str, *, card: str, attack: int | None, base: str, at: int, 
                  "board_hand": list(hand or []), "board_hand_indices": hand_indices,
                  "board_discard": list(discard or []), "board_discard_indices": discard_indices,
                  "board_bench": list(bench or []), "board_bench_indices": bench_indices,
+                 "board_arena_hp": arena_hp,
                  "ordinals": len(masks), "then": list(then)})
     (directory / "session.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
     print(f"BOARD {name} card={card} attack={attack} arena={arena_index} "
@@ -2030,6 +2032,8 @@ def main(argv: list[str] | None = None) -> int:
                               help="card id names to place in the player's discard pile")
     board_parser.add_argument("--bench", default="",
                               help="CARD or CARD:HP entries for the player's bench, comma separated")
+    board_parser.add_argument("--arena-hp", type=int, default=None,
+                              help="remaining HP of the arena card, for effects that heal or move damage")
     board_parser.add_argument("--goal", default="")
     seeded_parser = sub.add_parser("seeded", help="a session that starts from a save image")
     seeded_parser.add_argument("name")
@@ -2083,7 +2087,8 @@ def main(argv: list[str] | None = None) -> int:
                               then=[label for label in args.then.split(",") if label],
                               hand=[card for card in args.hand.split(",") if card],
                               discard=[card for card in args.discard.split(",") if card],
-                              bench=[item for item in args.bench.split(",") if item])
+                              bench=[item for item in args.bench.split(",") if item],
+                              arena_hp=args.arena_hp)
         if args.command == "seeded":
             save = args.save if args.save.is_absolute() else ROOT / args.save
             return seeded(args.name, save=save, base=args.base, prefix=args.prefix,
