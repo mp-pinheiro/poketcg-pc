@@ -1,0 +1,10 @@
+{
+  "derived_from": "deck-explore",
+  "goal": "deck machine: complete the add-deck dialog, hitting the collection counters",
+  "input_sha256": "fc447259c658ff5fba20913bc99467891d07e8640a583511b3ad66d40930aa9f",
+  "name": "deck-collection",
+  "ordinals": 109064,
+  "recorded": "2026-09-12T14:34:19+00:00",
+  "schema": 1,
+  "script": "/tmp/deck-ext.txt"
+}
