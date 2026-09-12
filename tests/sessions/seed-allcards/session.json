@@ -1,0 +1,19 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Seeded from allcards.sav: boot-menu[:1000] then A WAIT A WAIT A Ax5 Ax20",
+  "name": "seed-allcards",
+  "ordinals": 1852,
+  "recorded": "2026-09-12T04:18:52+00:00",
+  "save": "allcards.sav",
+  "save_sha256": "e04b06a19b21011ecba17c0d6a0f4c72a840ff88b02110dafb6bdd8a34b16ec0",
+  "schema": 1,
+  "then": [
+    "A",
+    "WAIT",
+    "A",
+    "WAIT",
+    "A",
+    "Ax5",
+    "Ax20"
+  ]
+}
