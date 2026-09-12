@@ -338,13 +338,21 @@ at all (`HealingWind_PlayAreaHealEffect`, `Quickfreeze_Paralysis50PercentEffect`
 |`CheckIsIncapableOfUsingPkmnPower` then `and CAN_EVOLVE_THIS_TURN`|`--arena-flags 128`; every power needs it, and the poke used to zero the byte|
 |`CanOnlyBeUsedOnTheBenchText` (`hTempPlayAreaLocation_ff9d` non-zero)|carrier also on the bench, and `DOWN` in the play-area screen before `A`|
 |`EnergyTrans_CheckPlayArea` scanning for `TYPE_ENERGY_GRASS` in play|`--bench CARD:HP:COUNT` attaches energy; `--attack 2` picks the colour the cost names|
+|`Curse_CheckDamageAndBench` wanting 2+ opponent Pokemon, one damaged|`--opponent-hp 20`; the AI already benches, so damage alone is enough|
+|`Scavenge_CheckDiscardPile` calling `CreateTrainerCardListFromDiscardPile`|`--discard POTION,BILL,GUST_OF_WIND`; one trainer is not enough for its list|
 
-Still open: an opponent-side board (`Curse_CheckDamageAndBench` wants damage on
-the opponent's bench, and no poke writes `OPPONENT_DUEL_VARS` yet), the two swap
-halves (`DamageSwap_SwapEffect`, `StrangeBehavior_SwapEffect` — the selection
-runs, `TryGiveDamageCounter` refuses), and `Scavenge_*`, whose
-`CheckDiscardPile` wants a trainer and a basic energy in a discard pile the
-`--discard` poke apparently does not satisfy.
+Two levers came out of those rows: `--opponent-bench CARD[:HP]` and
+`--opponent-hp N` write `OPPONENT_DUEL_VARS` the same way `--bench` writes the
+player's.
+
+Still open, and typed rather than guessed: the three second halves of a
+damage-counter swap (`DamageSwap_SwapEffect`, `StrangeBehavior_SwapEffect`,
+`Curse_TransferDamageEffect`) — the select routine runs and
+`TryGiveDamageCounter` is entered from it, so what is missing is a selection
+that returns without carry, which twelve walks did not produce. In
+`scripting.asm`, `ScriptCommand_BattleCenter` and `ScriptCommand_GiftCenter`
+set `GAME_EVENT_BATTLE_CENTER` and `GAME_EVENT_GIFT_CENTER`: those are the link
+centres, so they belong to the transport class, not to button search.
 
 ## Milestones
 
