@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-slowbro-1-power",
+  "goal": "Coverage search from effect-slowbro-1-power: 1 routines no session had executed (OpenInPlayAreaScreen_NonTurnHolderDiscardPile)",
+  "input_sha256": "e585dbca8207a69deb689b1696630b3d13a6c19ec4d3397190e2c2dac500ea4a",
+  "name": "effect-slowbro-1-power-explore-3",
+  "ordinals": 74275,
+  "recorded": "2026-09-12T03:35:40+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-effect-slowbro-1-power/scripts/s02-A-1.txt"
+}
