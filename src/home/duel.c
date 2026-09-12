@@ -1720,7 +1720,10 @@ uint8_t PrintKnockedOut(void)
 		| (uint16_t)gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)) << 8);
 	LoadTxRam2(name);
 	DrawWideTextBox_PrintText(WAS_KNOCKED_OUT_TEXT);
-	DoAFrames(40);
+	uint8_t wait_frames = 40u;
+	do {
+		DoFrame();
+	} while (--wait_frames);
 	return 0x90u;
 }
 KnockoutCheckResult PrintPlayAreaCardKnockedOutIfNoHP(uint8_t a)
