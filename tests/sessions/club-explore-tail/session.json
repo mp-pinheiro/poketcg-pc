@@ -1,0 +1,10 @@
+{
+  "derived_from": "club-explore",
+  "goal": "club-explore-explore-1 plus a 600-frame wait tail: does the card page re-converge",
+  "input_sha256": "35d5709f997d8820df16ce55296468b062f19e4a5203e30134739e27a7bbcfab",
+  "name": "club-explore-tail",
+  "ordinals": 194987,
+  "recorded": "2026-09-12T00:14:15+00:00",
+  "schema": 1,
+  "script": "/tmp/club-tail.txt"
+}
