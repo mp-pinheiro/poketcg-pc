@@ -286,6 +286,33 @@ Until then `just coverage-status` is the worklist and the order is Target
 (largest file, deterministic), Intake of the ranked seeds, then Discover again
 against the new ledger.
 
+### What the unexecuted set is made of
+
+Measured at ledger revision `f012a64a` (619 unexecuted of 3,012, 574 sessions),
+by counting every reference to each routine name in the disassembly outside its
+own definition line — macro-driven tables count, which a `call|jp|dw` regex
+misses and which reports 213 false deads instead of 79:
+
+|count|class|what unblocks it|
+|---|---|---|
+|266|reachable game code|Discover/Intake/Target: the worklist|
+|108|transport|a peer console; the oracle needs a linked reference build|
+|106|card effects|board state per card, not tail variation (below)|
+|79|dead: no reference anywhere|`scope.toml` rows, e.g. `DoAFrames`, `*_Unreferenced`, `CommentedOut_2c086`|
+|26|unmeasurable|a tracer registration gap, never coverage|
+|23|`music2` entries|bank-parallel driver copies, `docs/audio-harness.md`|
+|11|debug menu|unreachable: its entry `Func_12661` in `debug_main.asm` has no reference either|
+
+So 266 of 619 are coverage work; the rest are typed. The card-effect residue is
+not a tail problem: 27 carrier/slot pairs were recorded with the board poke and
+both attack-menu shapes (`Bx5,DOWN,A,Ax20,Ax20` for slot 1, the extra `DOWN` for
+slot 2) and probed for their own effect routines — **zero** new hits. Those
+effects fail a precondition the board poke does not express: a basic Pokémon
+left in the deck (`KrabbyCallForFamily_PutInPlayAreaEffect`), an evolved
+Pokémon in play (`DevolutionBeam_*`, `PokemonBreeder_*`), damage on the bench
+(`DamageSwap_*`), or a populated discard pile (`Scavenge_*`). The next lever is
+`--hand`/`--discard` plus a bench poke, one shape per precondition class.
+
 ## Milestones
 
 `tools/completion/tracker.py` files sessions by prefix: `effect-` under *Card
