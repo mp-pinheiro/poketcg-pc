@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-alakazam-1-power",
+  "goal": "Coverage search from effect-alakazam-1-power: 1 routines no session had executed (TryGiveDamageCounter_DamageSwap)",
+  "input_sha256": "2509a091de24b0b6a75fea7270c89c268227efa1a229ff85eb5ad847a5c06530",
+  "name": "effect-alakazam-1-power-explore-1",
+  "ordinals": 29851,
+  "recorded": "2026-09-12T03:37:31+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-effect-alakazam-1-power/scripts/s00-Ax5-1.txt"
+}
