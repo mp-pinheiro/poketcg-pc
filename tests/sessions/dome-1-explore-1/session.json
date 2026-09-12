@@ -1,0 +1,10 @@
+{
+  "derived_from": "dome-1",
+  "goal": "Coverage search from dome-1: 1 routines no session had executed (PrintInteractableObjectText)",
+  "input_sha256": "549715ec0274446d44013551290cfef136c1b789474135e2c5b7270348227e43",
+  "name": "dome-1-explore-1",
+  "ordinals": 688534,
+  "recorded": "2026-09-12T04:42:38+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-dome-1/scripts/s00-A-1.txt"
+}
