@@ -677,23 +677,36 @@ AIDecidePokemonFluteResult AIDecide_PokemonFlute(uint8_t c, uint8_t d)
 	uint8_t count = GetNonTurnDuelistVariable(0xEFu).a;
 	if (count >= 6u)
 		return (AIDecidePokemonFluteResult){count, (uint8_t)(count == 0u ? 0x80u : 0u), 0xC5u};
+	if (wOpponentDeckID == IMAKUNI_DECK_ID) {
+		uint8_t roll = Random(10u);
+		if (roll >= 2u)
+			return (AIDecidePokemonFluteResult){roll, 0, 0xC5u};
+		for (uint16_t p = wDuelTempList_ADDR;; p++) {
+			uint8_t index = gb_read8(p);
+			if (index == 0xFFu)
+				return (AIDecidePokemonFluteResult){index, 0, 0xC5u};
+			SwapTurn();
+			(void)LoadCardDataToBuffer1_FromDeckIndex(index);
+			SwapTurn();
+			if (wLoadedCard1Type >= TYPE_ENERGY || wLoadedCard1Stage != 0u)
+				continue;
+			return (AIDecidePokemonFluteResult){index, 0x10u, 0xC5u};
+		}
+	}
 	wce06 = 0xFFu;
 	wce08 = 0xFFu;
 	for (uint16_t p = wDuelTempList_ADDR;; p++) {
 		uint8_t index = gb_read8(p);
 		if (index == 0xFFu)
 			break;
+		SwapTurn();
 		(void)LoadCardDataToBuffer1_FromDeckIndex(index);
+		SwapTurn();
 		if (wLoadedCard1Type >= TYPE_ENERGY || wLoadedCard1Stage != 0u ||
 		    wLoadedCard1HP >= wce06)
 			continue;
 		wce06 = wLoadedCard1HP;
 		wce08 = index;
-	}
-	if (wOpponentDeckID == IMAKUNI_DECK_ID) {
-		if (Random(10u) >= 2u)
-			return (AIDecidePokemonFluteResult){0, 0, 0xC5u};
-		return (AIDecidePokemonFluteResult){wce08, wce08 == 0xFFu ? 0u : 0x10u, 0xC5u};
 	}
 	if (wce06 >= 50u)
 		return (AIDecidePokemonFluteResult){wce06, 0, 0xC5u};
