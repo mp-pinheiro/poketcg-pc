@@ -93,6 +93,25 @@ means the driver was asked the same thing on both lanes and diverged on its
 own, which the tick oracle then localises; `differ` means game code asked for
 the wrong song, which is an ordinary `DIVERGE`-class fact.
 
+`src/audio/music2.asm` reports 34 unexecuted routines and **none of them is
+coverage work**, which is worth stating once with the measurement because the
+file otherwise sits near the top of `coverage-status`. The two drivers are
+parallel ROM copies at identical bank offsets (`poketcg.sym`: `3d:40e9`
+Music1_Update, `3e:40e9` Music2_Update), and ten songs are banked `$3e`
+(`audio/music2_headers.asm`: PC main menu, Pokemon Dome, Challenge Hall,
+Club 1-3, Ronald, Imakuni, Hall of Honor, Credits). A song *starts* through
+`_PlaySong` in driver 1's bank and only the per-tick update chain banks into
+`wCurSongBank`, so the `$3e` copy is only ever entered at the update offset.
+That is why 41 of 75 execute and the rest do not: of the 34, three are the
+`_2` trampolines at `3e:400c`, `3e:4015` and `3e:4018` that nothing in the
+disassembly references, and the remaining entry points (`Music2_Init`,
+`Music2_PlaySong`, `Music2_BeginSong`, `Music2_StopAllChannels`,
+`Music2_PauseSong`, `Music2_ResumeSong`, the `Assert*` pair,
+`Music2_CheckForNewSound`, `Music2_Update` itself) are reachable only through
+those trampolines. 31 of the 34 share their bank offset with a Music1 twin,
+and 16 of those twins already execute - the same instructions, entered in the
+other bank. This is the `sgb.asm` shape: a scope row, not a session to record.
+
 ## What is left
 
 - `credits-1` itself is clean to its last ordinal (864,424). The residue is in
