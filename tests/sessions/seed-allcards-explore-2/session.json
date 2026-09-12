@@ -1,0 +1,10 @@
+{
+  "derived_from": "seed-allcards",
+  "goal": "Coverage search from seed-allcards: 1 routines no session had executed (OpenCardPage.input_loop)",
+  "input_sha256": "d2ac8645e304963e87ea71fcef4171da9a2ab83a2a7fb7937b191a4ce29ab317",
+  "name": "seed-allcards-explore-2",
+  "ordinals": 11572,
+  "recorded": "2026-09-12T04:42:15+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-seed-allcards/scripts/s01-Ax20-1.txt"
+}
