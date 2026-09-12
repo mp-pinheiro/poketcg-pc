@@ -148,6 +148,19 @@ them `unmeasurable`, holds them out of the worklist, and counts them per file.
 `scripting.asm` reads 27 real misses instead of 44 because of it. Closing one
 means registering the routine, not recording a session.
 
+An audit of the set (all 76 raw unnameables, of which scope removes the 50
+pure-plumbing ones) found no registration gap left: every name has an exact
+`poketcg.sym` label. What remains splits three ways - infra routines whose
+semantics are the harness's own service model (`VBlankHandler`,
+`WaitForVBlank`, the bank-switch and jump-table plumbing; a CONTRACT for them
+would re-declare what the frame boundary replaces), four `DuelAnim15*` slots
+that share one sym address (06:51a3) and so are unattributable by entry
+alone, and Man1/Challenge-Cup/legendary-card script commands that are caseless
+because no reachable input observes them. `FadePalIntoAnother` is a same-bank
+address collision: its registered label lost `by_bank_address` to a later
+duplicate. None can be closed by renaming; each needs either harness-level
+semantics or content that no session can reach.
+
 ## Reach — `just coverage-probe <session> --tail <labels> --mark <Fn>`
 
 The cheapest question in the program, and the only proof class that sees an
