@@ -303,15 +303,30 @@ misses and which reports 213 false deads instead of 79:
 |23|`music2` entries|bank-parallel driver copies, `docs/audio-harness.md`|
 |11|debug menu|unreachable: its entry `Func_12661` in `debug_main.asm` has no reference either|
 
-So 266 of 619 are coverage work; the rest are typed. The card-effect residue is
-not a tail problem: 27 carrier/slot pairs were recorded with the board poke and
-both attack-menu shapes (`Bx5,DOWN,A,Ax20,Ax20` for slot 1, the extra `DOWN` for
-slot 2) and probed for their own effect routines — **zero** new hits. Those
-effects fail a precondition the board poke does not express: a basic Pokémon
-left in the deck (`KrabbyCallForFamily_PutInPlayAreaEffect`), an evolved
-Pokémon in play (`DevolutionBeam_*`, `PokemonBreeder_*`), damage on the bench
-(`DamageSwap_*`), or a populated discard pile (`Scavenge_*`). The next lever is
-`--hand`/`--discard` plus a bench poke, one shape per precondition class.
+So 266 of 619 are coverage work; the rest are typed. The card-effect residue was
+both a precondition problem and a tail problem, and the two were measured apart.
+`session.py board-seed` grew three board levers — `--bench CARD[:HP]`
+(`DUELVARS_BENCH`, its HP and stage bytes, plus the play-area count),
+`--arena-hp N` and `--arena-status N` — and the duel menu needs three tail
+shapes, since its grid is Hand/Check/Retreat over Attack/PkmnPower/Done:
+
+|shape|reaches|
+|---|---|
+|`Bx5,DOWN,A,Ax20,Ax20`|attack 1|
+|`Bx5,DOWN,A,DOWN,A,Ax20,Ax20`|attack 2|
+|`Bx5,DOWN,RIGHT,A,A,LEFT,A,LEFT,A,Ax20,Ax20`|a Pokémon Power|
+
+The power shape is not guessable: `DisplayPlayAreaScreenToUsePkmnPower` gates on
+the selected play-area entry's `wLoadedCard1Atk1Category` being `POKEMON_POWER`
+and then asks `UseThisPokemonPowerText` through `YesOrNoMenuWithText`, whose
+cursor sits on the `wDefaultYesOrNo` item — so an A-mash answers No forever and
+each `LEFT,A` pair answers one prompt. With the levers and the shapes, 21 of
+the 29 player-side carrier/slot pairs landed 35 routines in one pass; the ones
+that still miss want an opponent-side board (`Curse_PlayerSelectEffect`), a
+deck-reorder walk (`Prophecy_ReorderDeckEffect`), a retreat (`Cowardice_*`), a
+trainer in the discard (`Scavenge_*`) or a play-trigger power
+(`Quickfreeze_*`, whose command is `EFFECTCMDTYPE_PKMN_POWER_TRIGGER` and which
+no menu can invoke).
 
 ## Milestones
 
