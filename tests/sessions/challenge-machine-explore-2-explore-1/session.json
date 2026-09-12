@@ -1,0 +1,10 @@
+{
+  "derived_from": "challenge-machine-explore-2",
+  "goal": "Coverage search from challenge-machine-explore-2: 1 routines no session had executed (SwapPlayAreaPokemon.swap_duelvar)",
+  "input_sha256": "b74575f3bdb50fd4fe125f8325712e4a7b31e7d0d0c78eb005e7ff3ca13cf531",
+  "name": "challenge-machine-explore-2-explore-1",
+  "ordinals": 28864,
+  "recorded": "2026-09-12T01:31:42+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-challenge-machine-explore-2/scripts/s00-Ax20-1.txt"
+}
