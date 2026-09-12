@@ -160,6 +160,19 @@ session the ledger already folded must come back with nothing but `DMA`;
 `ConvertColorToEnergyCardID`. `docs/grind.md` "Reach" has the full rules and
 the three measurement traps.
 
+`explore.py`'s labels are one button each, so a chord is unreachable through
+`--tail` or `--then`. The duel menu's shortcuts are chords: `PrintDuelMenuAndHandleInput`
+(`core.asm:316-339`) reads `hKeysHeld & PAD_B` and then the pressed bit, so
+`DuelMenuShortcut_OpponentActivePokemon` wants B held with START, and the
+`*ActivePokemon` pair wants bare START and SELECT. For those, write the mask
+timeline directly — the harness encoding is low nibble d-pad, high nibble
+buttons (`A` `$10`, `B` `$20`, `SELECT` `$40`, `START` `$80`, right/left/up/down
+`$01/$02/$04/$08`), so B+START is `$A0` — append `[mask]*8 + [0]*24` groups to a
+landed session's `input.txt` and record it with
+`session.py from-script <name> --seed <session> --script <file>`. That is how
+`duel-shortcuts` reached `DuelMenuShortcut_OpponentActivePokemon`, which three
+turns of label search could not express.
+
 
 ## Discover — `just coverage-discover [SEED...]`
 
