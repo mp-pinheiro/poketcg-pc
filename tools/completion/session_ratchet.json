@@ -917,6 +917,9 @@
   "effect-kadabra-1-board": {
     "confirmed_ordinal": 29131
   },
+  "effect-kadabra-1-hurt": {
+    "confirmed_ordinal": 29683
+  },
   "effect-kadabra-1-seed": {
     "confirmed_ordinal": 23227
   },
@@ -1504,6 +1507,9 @@
   },
   "effect-starmie-1-board": {
     "confirmed_ordinal": 29131
+  },
+  "effect-starmie-1-hurt": {
+    "confirmed_ordinal": 29683
   },
   "effect-starmie-1-seed": {
     "confirmed_ordinal": 23227
