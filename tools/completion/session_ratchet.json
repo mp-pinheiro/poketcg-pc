@@ -1079,6 +1079,9 @@
   "effect-mew-lv23-2-board": {
     "confirmed_ordinal": 29131
   },
+  "effect-mew-lv23-2-devolve": {
+    "confirmed_ordinal": 28868
+  },
   "effect-mew-lv23-2-evolved": {
     "confirmed_ordinal": 29155
   },
@@ -1582,6 +1585,9 @@
   },
   "effect-venusaur-lv64-1-board": {
     "confirmed_ordinal": 29131
+  },
+  "effect-venusaur-lv64-1-poisoned": {
+    "confirmed_ordinal": 28268
   },
   "effect-venusaur-lv64-1-power": {
     "confirmed_ordinal": 29251
