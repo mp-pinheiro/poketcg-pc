@@ -1745,7 +1745,7 @@ void BigEggsplosion_MultiplierEffect(void);
 void PokemonFlute_PlayerSelection(void);
 /* <<< factory PokemonFlute_PlayerSelection */
 /* >>> factory DevolutionBeam_DevolveEffect */
-void DevolutionBeam_DevolveEffect(void);
+void DevolutionBeam_DevolveEffect(uint8_t d, uint8_t e);
 /* <<< factory DevolutionBeam_DevolveEffect */
 /* >>> factory MarowakCallForFamily_PlayerSelectEffect */
 typedef struct { uint8_t a; uint8_t f; } MarowakCallForFamily_PlayerSelectEffectResult;

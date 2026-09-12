@@ -6452,7 +6452,7 @@ PrintPokemonCardPageGenericInformationResult PrintPokemonCardPageGenericInformat
 /* <<< factory PrintPokemonCardPageGenericInformation */
 
 /* >>> factory DrawDuelHUD */
-void DrawDuelHUD(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+uint16_t DrawDuelHUD(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
 	wHUDEnergyAndHPBarsX = b;
 	wHUDEnergyAndHPBarsY = c;
@@ -6467,7 +6467,7 @@ void DrawDuelHUD(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 	icon_b++;
 	WriteByteToBGMap0((uint8_t)(CountPrizes() + SYM_0), icon_b, icon_c);
 	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	if (arena.a == 0xFFu) return;
+	if (arena.a == 0xFFu) return (uint16_t)(((uint16_t)name_d << 8) | name_e);
 	(void)LoadCardDataToBuffer1_FromDeckIndex(arena.a);
 	CopyCardNameAndLevelResult copied = CopyCardNameAndLevel(32u, icon_b, icon_c, name_d, name_e);
 	gb_write8(copied.hl, TX_END);
@@ -6495,11 +6495,12 @@ void DrawDuelHUD(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 	if (plus != 0u) { WriteByteToBGMap0(SYM_PLUSPOWER, attr_b, attr_c); WriteByteToBGMap0((uint8_t)(plus + SYM_0), (uint8_t)(attr_b + 1u), attr_c); }
 	uint8_t defender = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_ATTACHED_DEFENDER).a;
 	if (defender != 0u) { attr_c++; WriteByteToBGMap0(SYM_DEFENDER, attr_b, attr_c); WriteByteToBGMap0((uint8_t)(defender + SYM_0), (uint8_t)(attr_b + 1u), attr_c); }
+	return dst;
 }
 /* <<< factory DrawDuelHUD */
 
 /* >>> factory DrawDuelHUDs */
-void DrawDuelHUDs(void)
+uint16_t DrawDuelHUDs(void)
 {
 	DuelistVarResult turn = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
 	if (turn.a != DUELIST_TYPE_PLAYER) {
@@ -6512,14 +6513,14 @@ void DrawDuelHUDs(void)
 		a = CheckPrintDoublePoisoned(a, 8u, 7u);
 		SwapTurn();
 		(void)GetNonTurnDuelistVariable(a);
-		DrawDuelHUD(3u, 1u, 7u, 0u);
+		uint16_t hud_de = DrawDuelHUD(3u, 1u, 7u, 0u);
 		status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
 		CheckPrintCnfSlpPrz(status.a, 11u, 6u);
 		a = CheckPrintPoisoned(status.a, 11u, 5u);
 		(void)CheckPrintDoublePoisoned(a, 11u, 4u);
 		SwapTurn();
 		hWhoseTurn = saved_turn;
-		return;
+		return hud_de;
 	}
 	DrawDuelHUD(11u, 8u, 1u, 11u);
 	DuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
@@ -6528,12 +6529,13 @@ void DrawDuelHUDs(void)
 	a = CheckPrintDoublePoisoned(a, 8u, 7u);
 	SwapTurn();
 	(void)GetNonTurnDuelistVariable(a);
-	DrawDuelHUD(3u, 1u, 7u, 0u);
+	uint16_t hud_de = DrawDuelHUD(3u, 1u, 7u, 0u);
 	status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
 	CheckPrintCnfSlpPrz(status.a, 11u, 6u);
 	a = CheckPrintPoisoned(status.a, 11u, 5u);
 	(void)CheckPrintDoublePoisoned(a, 11u, 4u);
 	SwapTurn();
+	return hud_de;
 }
 /* <<< factory DrawDuelHUDs */
 

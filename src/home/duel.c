@@ -3731,10 +3731,11 @@ HandleAfterDamageEffectsResult PlayAttackAnimation_DealAttackDamage(uint8_t a, u
 	PlayStatusConditionQueueAnimations();
 	WaitAttackAnimation();
 	(void)SubtractHP(hp.hl, de);
+	uint16_t after = de;
 	if (wDuelDisplayedScreen == DUEL_MAIN_SCENE)
-		DrawDuelHUDs();
+		after = DrawDuelHUDs();
 	(void)PrintKnockedOutIfHLZero(hp.hl);
-	return HandleAfterDamageEffects(0u, 0u, b, c, (uint8_t)(de >> 8), (uint8_t)de, hp.hl);
+	return HandleAfterDamageEffects(0u, 0u, b, c, (uint8_t)(after >> 8), (uint8_t)after, hp.hl);
 }
 /* <<< factory PlayAttackAnimation_DealAttackDamage */
 

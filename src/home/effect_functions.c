@@ -9215,7 +9215,7 @@ void PokemonFlute_PlayerSelection(void)
 
 /* >>> factory DevolutionBeam_DevolveEffect */
 /* effect_functions.asm:5237-5364 */
-void DevolutionBeam_DevolveEffect(void)
+void DevolutionBeam_DevolveEffect(uint8_t d, uint8_t e)
 {
 	uint8_t target = hTemp_ffa0;
 	if (target == 0xffu) {
@@ -9234,7 +9234,7 @@ void DevolutionBeam_DevolveEffect(void)
 	}
 	wLoadedAttackAnimation = ATK_ANIM_DEVOLUTION_BEAM;
 	uint8_t location = hTempPlayAreaLocation_ffa1;
-	PlayAttackAnimation(hWhoseTurn, 0u, location, 0u, 0u, 0u, (uint16_t)(((uint16_t)hWhoseTurn << 8) | location));
+	PlayAttackAnimation(hWhoseTurn, 0u, location, 0u, d, e, (uint16_t)(((uint16_t)hWhoseTurn << 8) | location));
 	WaitAttackAnimation();
 	hTempPlayAreaLocation_ff9d = location;
 	wTempPlayAreaLocation_cceb = location;

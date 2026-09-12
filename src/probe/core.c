@@ -1906,7 +1906,9 @@ static void adapt_PrintPokemonCardPageGenericInformation(ProbeState *s)
 /* >>> factory DrawDuelHUD */
 static void adapt_DrawDuelHUD(ProbeState *s)
 {
-	DrawDuelHUD(s->b, s->c, s->d, s->e);
+	uint16_t de = DrawDuelHUD(s->b, s->c, s->d, s->e);
+	s->d = (uint8_t)(de >> 8);
+	s->e = (uint8_t)de;
 }
 /* <<< factory DrawDuelHUD */
 
@@ -1914,7 +1916,9 @@ static void adapt_DrawDuelHUD(ProbeState *s)
 static void adapt_DrawDuelHUDs(ProbeState *s)
 {
 	(void)s;
-	DrawDuelHUDs();
+	uint16_t de = DrawDuelHUDs();
+	s->d = (uint8_t)(de >> 8);
+	s->e = (uint8_t)de;
 }
 /* <<< factory DrawDuelHUDs */
 

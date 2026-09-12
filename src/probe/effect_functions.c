@@ -4219,7 +4219,7 @@ static void adapt_PokemonFlute_PlayerSelection(ProbeState *s)
 /* >>> factory DevolutionBeam_DevolveEffect */
 static void adapt_DevolutionBeam_DevolveEffect(ProbeState *s)
 {
-	DevolutionBeam_DevolveEffect();
+	DevolutionBeam_DevolveEffect(s->d, s->e);
 }
 /* <<< factory DevolutionBeam_DevolveEffect */
 

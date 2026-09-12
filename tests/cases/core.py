@@ -3673,7 +3673,7 @@ CASES["PrintPokemonCardPageGenericInformation"] = [
 # <<< factory PrintPokemonCardPageGenericInformation
 
 # >>> factory DrawDuelHUD
-CONTRACT["DrawDuelHUD"] = {"compare": (), "preserve": ()}
+CONTRACT["DrawDuelHUD"] = {"compare": ("d", "e"), "preserve": ()}
 CASES["DrawDuelHUD"] = [
     {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "wram": {0xC2BB: b"\xFF", 0xC2EC: b"\x00", 0xC2EF: b"\x00", hWhoseTurn: b"\xC2"}, "read": {wHUDEnergyAndHPBarsX: 1, wHUDEnergyAndHPBarsY: 1}},
     dict(POISON, wram={0xC2BB: b"\xFF", 0xC2EC: b"\x00", 0xC2EF: b"\x00", hWhoseTurn: b"\xC2"}, read={wHUDEnergyAndHPBarsX: 1, wHUDEnergyAndHPBarsY: 1}),
@@ -3693,7 +3693,7 @@ CASES["DrawDuelHUD"] = [
 # <<< factory DrawDuelHUD
 
 # >>> factory DrawDuelHUDs
-CONTRACT["DrawDuelHUDs"] = {"compare": (), "preserve": ()}
+CONTRACT["DrawDuelHUDs"] = {"compare": ("d", "e"), "preserve": ()}
 CASES["DrawDuelHUDs"] = [
     {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00"}, "vread": {0: {HUD_TILE: 1}}},
     dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00"}, vread={0: {HUD_TILE: 1}}),
