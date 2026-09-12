@@ -1,0 +1,19 @@
+idle
+hold LEFT 200
+idle
+hold UP 200
+idle
+peek
+hold DOWN 16
+idle
+hold RIGHT 200
+idle
+peek
+press A
+idle
+shot water-master-ask
+yes
+duel
+dismiss
+peek
+shot water-master-end

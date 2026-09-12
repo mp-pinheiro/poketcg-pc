@@ -1,0 +1,57 @@
+{
+  "goal": "Amy's duel: player prizes zeroed and Amy's active HP zeroed from 508000 - the player's next KO takes a prize into a 0 count, duel ends player-won, Script_BeatAmy runs",
+  "name": "mw-win",
+  "ordinals": 526236,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ],
+    "508000": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "510000": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "512000": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ]
+  },
+  "recorded": "2026-09-09T01:52:02+00:00",
+  "schema": 1
+}
