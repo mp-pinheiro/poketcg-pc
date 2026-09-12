@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-alakazam-1-power",
+  "goal": "Coverage search from effect-alakazam-1-power: 1 routines no session had executed (SwapPlayAreaPokemon.swap_duelvar)",
+  "input_sha256": "a8493ee26fca3492b9fea9b695d36f2449598d0007bffec64d0b9de2d98b957d",
+  "name": "effect-alakazam-1-power-explore-2",
+  "ordinals": 40075,
+  "recorded": "2026-09-12T03:38:24+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-effect-alakazam-1-power/scripts/s01-Ax20-1.txt"
+}
