@@ -1,0 +1,10 @@
+{
+  "derived_from": "club-explore-explore-3",
+  "goal": "Coverage search from club-explore-explore-3: 1 routines no session had executed (DisplayAttackPage_Attack2Page2)",
+  "input_sha256": "085d5560900eeafa52f08b7f72dc2b95e73b26b5e211996deda1a7842b937aa8",
+  "name": "club-explore-explore-3-explore-3",
+  "ordinals": 198323,
+  "recorded": "2026-09-12T00:58:59+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-club-explore-explore-3/scripts/s02-RIGHT-1.txt"
+}
