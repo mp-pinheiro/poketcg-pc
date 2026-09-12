@@ -7588,7 +7588,6 @@ void ScoopUp_ReturnToHandEffect(void)
 			continue;
 		hTempCardIndex_ff98 = index;
 		AddCardToHand(index);
-		break;
 	}
 	(void)MovePlayAreaCardToDiscardPile(location);
 	if (location == PLAY_AREA_ARENA)
