@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-slowbro-1-power",
+  "goal": "Coverage search from effect-slowbro-1-power: 1 routines no session had executed (SwapPlayAreaPokemon.swap_duelvar)",
+  "input_sha256": "faaa44e6fc3f1c34b273c8ecc340a6682b0875ec790bad59a37044699c525ed1",
+  "name": "effect-slowbro-1-power-explore-2",
+  "ordinals": 31285,
+  "recorded": "2026-09-12T03:34:44+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-effect-slowbro-1-power/scripts/s01-WAIT-1.txt"
+}
