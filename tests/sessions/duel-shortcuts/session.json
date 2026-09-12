@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-gengar-1-opponent",
+  "goal": "Duel menu B-combo shortcuts the explore labels cannot express",
+  "input_sha256": "da5cccefaff3a1d062e8caeb716aec83ab57be2de61925571cda6d9233af0519",
+  "name": "duel-shortcuts",
+  "ordinals": 30019,
+  "recorded": "2026-09-12T06:05:42+00:00",
+  "schema": 1,
+  "script": "/tmp/shortcut.txt"
+}
