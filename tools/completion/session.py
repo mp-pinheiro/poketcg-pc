@@ -1739,7 +1739,7 @@ def board_seed(name: str, *, card: str, attack: int | None, base: str, at: int, 
                poke_at: int, goal: str, then: list[str] | None = None,
                hand: list[str] | None = None, discard: list[str] | None = None,
                bench: list[str] | None = None, arena_hp: int | None = None,
-               arena_status: int | None = None) -> int:
+               arena_status: int | None = None, arena_flags: int | None = None) -> int:
     """A `deck_seed` whose duel board is poked as well: the carrier is the arena
     card and enough energy cards are located there to pay its attack.
 
@@ -1791,13 +1791,21 @@ def board_seed(name: str, *, card: str, attack: int | None, base: str, at: int, 
     taken: list[int] = []
     hand_indices = place(hand or [], taken)
     discard_indices = place(discard or [], taken)
-    bench_entries: list[tuple[str, int | None]] = []
+    bench_entries: list[tuple[str, int | None, int]] = []
     for item in bench or []:
-        piece, _, hp_text = item.partition(":")
-        bench_entries.append((piece, int(hp_text) if hp_text else None))
+        parts = item.split(":")
+        piece = parts[0]
+        hp_text = parts[1] if len(parts) > 1 else ""
+        energy_text = parts[2] if len(parts) > 2 else ""
+        bench_entries.append((piece, int(hp_text) if hp_text else None,
+                              int(energy_text) if energy_text else 0))
     if len(bench_entries) > BENCH_SLOTS:
         raise SessionError(f"{len(bench_entries)} bench cards, {BENCH_SLOTS} slots")
-    bench_indices = place([piece for piece, _hp in bench_entries], taken)
+    bench_indices = place([piece for piece, _hp, _energy in bench_entries], taken)
+    bench_energy: list[list[int]] = []
+    energy_name = wanted[0] if wanted else "DOUBLE_COLORLESS_ENERGY"
+    for _piece, _hp, wanted_energy in bench_entries:
+        bench_energy.append(place([energy_name] * wanted_energy, taken))
 
     deck_seed(name, base=base, at=at, deck=deck, cards=cards, goal=goal)
     directory = session_dir(name)
@@ -1811,7 +1819,10 @@ def board_seed(name: str, *, card: str, attack: int | None, base: str, at: int, 
     writes += [(PLAYER_DUEL_VARS + DUEL_BOARD["locations"] + index,
                 CARD_LOCATION_BENCH_1 + slot)
                for slot, index in enumerate(bench_indices)]
-    for slot, (index, (piece, hp)) in enumerate(zip(bench_indices, bench_entries, strict=True)):
+    for slot, attached in enumerate(bench_energy):
+        writes += [(PLAYER_DUEL_VARS + DUEL_BOARD["locations"] + index,
+                    CARD_LOCATION_BENCH_1 + slot) for index in attached]
+    for slot, (index, (piece, hp, _energy)) in enumerate(zip(bench_indices, bench_entries, strict=True)):
         writes += [(PLAYER_DUEL_VARS + DUEL_BOARD["bench"] + slot, index),
                    (PLAYER_DUEL_VARS + DUEL_BOARD["bench_hp"] + slot,
                     data[piece]["hp"] if hp is None else hp),
@@ -1821,11 +1832,12 @@ def board_seed(name: str, *, card: str, attack: int | None, base: str, at: int, 
                (PLAYER_DUEL_VARS + DUEL_BOARD["arena_hp"],
                 data[card]["hp"] if arena_hp is None else arena_hp),
                (PLAYER_DUEL_VARS + DUEL_BOARD["arena_stage"], 0),
-               (PLAYER_DUEL_VARS + DUEL_BOARD["arena_flags"], 0),
+               (PLAYER_DUEL_VARS + DUEL_BOARD["arena_flags"],
+                0 if arena_flags is None else arena_flags),
                (PLAYER_DUEL_VARS + DUEL_BOARD["in_play_area"], 1 + len(bench_indices)),
                (PLAYER_DUEL_VARS + DUEL_BOARD["not_in_deck"],
                 len(energy_indices) + 1 + len(hand_indices) + len(discard_indices)
-                + len(bench_indices))]
+                + len(bench_indices) + sum(len(a) for a in bench_energy))]
     if hand_indices:
         writes.append((PLAYER_DUEL_VARS + DUEL_BOARD["cards_in_hand"], len(hand_indices)))
     if discard_indices:
@@ -1848,6 +1860,7 @@ def board_seed(name: str, *, card: str, attack: int | None, base: str, at: int, 
                  "board_discard": list(discard or []), "board_discard_indices": discard_indices,
                  "board_bench": list(bench or []), "board_bench_indices": bench_indices,
                  "board_arena_hp": arena_hp, "board_arena_status": arena_status,
+                 "board_arena_flags": arena_flags,
                  "ordinals": len(masks), "then": list(then)})
     (directory / "session.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
     print(f"BOARD {name} card={card} attack={attack} arena={arena_index} "
@@ -2034,9 +2047,11 @@ def main(argv: list[str] | None = None) -> int:
     board_parser.add_argument("--discard", default="",
                               help="card id names to place in the player's discard pile")
     board_parser.add_argument("--bench", default="",
-                              help="CARD or CARD:HP entries for the player's bench, comma separated")
+                              help="CARD, CARD:HP or CARD:HP:ENERGY entries for the player's bench, comma separated")
     board_parser.add_argument("--arena-hp", type=int, default=None,
                               help="remaining HP of the arena card, for effects that heal or move damage")
+    board_parser.add_argument("--arena-flags", type=int, default=None,
+                              help="DUELVARS_ARENA_CARD_FLAGS byte; bit 7 is CAN_EVOLVE_THIS_TURN, which every Pokemon Power check requires")
     board_parser.add_argument("--arena-status", type=int, default=None,
                               help="DUELVARS_ARENA_CARD_STATUS byte, for effects that clear a condition")
     board_parser.add_argument("--goal", default="")
@@ -2093,7 +2108,8 @@ def main(argv: list[str] | None = None) -> int:
                               hand=[card for card in args.hand.split(",") if card],
                               discard=[card for card in args.discard.split(",") if card],
                               bench=[item for item in args.bench.split(",") if item],
-                              arena_hp=args.arena_hp, arena_status=args.arena_status)
+                              arena_hp=args.arena_hp, arena_status=args.arena_status,
+                              arena_flags=args.arena_flags)
         if args.command == "seeded":
             save = args.save if args.save.is_absolute() else ROOT / args.save
             return seeded(args.name, save=save, base=args.base, prefix=args.prefix,
