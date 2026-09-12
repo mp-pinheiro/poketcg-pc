@@ -272,6 +272,9 @@
   "effect-alakazam-1-board": {
     "confirmed_ordinal": 29131
   },
+  "effect-alakazam-1-power": {
+    "confirmed_ordinal": 29251
+  },
   "effect-alakazam-1-seed": {
     "confirmed_ordinal": 23227
   },
@@ -547,6 +550,9 @@
   },
   "effect-dragonite-lv45-1-play": {
     "confirmed_ordinal": 29131
+  },
+  "effect-dragonite-lv45-1-power": {
+    "confirmed_ordinal": 29251
   },
   "effect-dragonite-lv45-1-seed": {
     "confirmed_ordinal": 23227
@@ -1466,6 +1472,9 @@
   "effect-slowbro-1-board": {
     "confirmed_ordinal": 29131
   },
+  "effect-slowbro-1-power": {
+    "confirmed_ordinal": 29251
+  },
   "effect-slowbro-1-seed": {
     "confirmed_ordinal": 23227
   },
@@ -1559,11 +1568,17 @@
   "effect-venomoth-1-board": {
     "confirmed_ordinal": 29131
   },
+  "effect-venomoth-1-power": {
+    "confirmed_ordinal": 29251
+  },
   "effect-venonat-2": {
     "confirmed_ordinal": 29792
   },
   "effect-venusaur-lv64-1-board": {
     "confirmed_ordinal": 29131
+  },
+  "effect-venusaur-lv64-1-power": {
+    "confirmed_ordinal": 29251
   },
   "effect-venusaur-lv64-1-seed": {
     "confirmed_ordinal": 23227
@@ -1576,6 +1591,9 @@
   },
   "effect-venusaur-lv67-1-board": {
     "confirmed_ordinal": 29131
+  },
+  "effect-venusaur-lv67-1-power": {
+    "confirmed_ordinal": 29251
   },
   "effect-venusaur-lv67-1-seed": {
     "confirmed_ordinal": 23227
