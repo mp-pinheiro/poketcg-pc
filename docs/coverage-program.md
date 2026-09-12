@@ -345,11 +345,16 @@ Two levers came out of those rows: `--opponent-bench CARD[:HP]` and
 `--opponent-hp N` write `OPPONENT_DUEL_VARS` the same way `--bench` writes the
 player's.
 
-Still open, and typed rather than guessed: the three second halves of a
-damage-counter swap (`DamageSwap_SwapEffect`, `StrangeBehavior_SwapEffect`,
-`Curse_TransferDamageEffect`) — the select routine runs and
-`TryGiveDamageCounter` is entered from it, so what is missing is a selection
-that returns without carry, which twelve walks did not produce. In
+`Curse_TransferDamageEffect` then closed with the opponent bench poked
+explicitly (`--opponent-bench MACHOP,RATTATA`): its select loop requires a
+second pick on a *different* slot (`cp [hl]` / `jr z`), and the AI's own bench
+was not usable for that. `DamageSwap_SwapEffect` and
+`StrangeBehavior_SwapEffect` are the opposite answer and are now typed, not
+open: `effect_commands.asm` files both under `EFFECTCMDTYPE_AFTER_DAMAGE` on a
+Pokemon Power, which `UsePokemonPower` never dispatches, so the select loop
+applies the swap in place and no menu walk can reach the routine. A session
+recorded with the cancel exit (`effect-alakazam-1-swap`) verifies clean and
+adds nothing, which is that answer measured rather than argued. In
 `scripting.asm`, `ScriptCommand_BattleCenter` and `ScriptCommand_GiftCenter`
 set `GAME_EVENT_BATTLE_CENTER` and `GAME_EVENT_GIFT_CENTER`: those are the link
 centres, so they belong to the transport class, not to button search.
