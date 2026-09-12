@@ -173,6 +173,21 @@ landed session's `input.txt` and record it with
 `duel-shortcuts` reached `DuelMenuShortcut_OpponentActivePokemon`, which three
 turns of label search could not express.
 
+The probes are native-lane only, so a tail can light routines the reference
+tracer never records. Three behave this way in `deck-explore`-derived
+sessions: the port runs `AddDeckToCollection` and
+`DecrementDeckCardsInCollection` once and `CardPageSwitch_EnergyOrTrainerPage1`
+five times around ordinal 101k, the ledger credits none of them in any of the
+627 sessions, and `session.py diff` at the flip ordinal reports `runs=0` - every
+gated byte including SRAM is identical. Identical SRAM means the ROM ran the
+same writes, so the routine is executed-but-unnamed on the reference side, the
+`unmeasurable` failure mode reached from the other direction: there the
+registration gap is native (`nm`), here it is the reference entry table. Treat
+a probe mark on such a routine as unprovable until a reference-side trace can
+name it; do not record sessions to chase them and do not hand-mark them
+unmeasurable - the marking is derived, and the gap needs the registration fix
+like the `nm` 26.
+
 
 ## Discover — `just coverage-discover [SEED...]`
 
