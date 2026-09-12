@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-mew-lv23-2-devolve",
+  "goal": "Coverage search from effect-mew-lv23-2-devolve: 1 routines no session had executed (OpenInPlayAreaScreen_NonTurnHolderDiscardPile)",
+  "input_sha256": "894837adaeed7ecd4fe0e9a31abc62b8f90b6544bed0a4c306c52e3c5afafce3",
+  "name": "effect-mew-lv23-2-devolve-explore-1",
+  "ordinals": 74851,
+  "recorded": "2026-09-12T03:39:29+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-effect-mew-lv23-2-devolve/scripts/s00-A-1.txt"
+}
