@@ -1574,6 +1574,9 @@
   "effect-tentacool-1-board": {
     "confirmed_ordinal": 29131
   },
+  "effect-tentacool-1-power": {
+    "confirmed_ordinal": 29251
+  },
   "effect-tentacool-1-seed": {
     "confirmed_ordinal": 23227
   },
@@ -1627,6 +1630,9 @@
   },
   "effect-venusaur-lv67-1-seed": {
     "confirmed_ordinal": 23227
+  },
+  "effect-venusaur-lv67-1-trans": {
+    "confirmed_ordinal": 29251
   },
   "effect-victreebel-1-board": {
     "confirmed_ordinal": 29131
