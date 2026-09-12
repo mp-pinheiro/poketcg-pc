@@ -321,12 +321,30 @@ the selected play-area entry's `wLoadedCard1Atk1Category` being `POKEMON_POWER`
 and then asks `UseThisPokemonPowerText` through `YesOrNoMenuWithText`, whose
 cursor sits on the `wDefaultYesOrNo` item — so an A-mash answers No forever and
 each `LEFT,A` pair answers one prompt. With the levers and the shapes, 21 of
-the 29 player-side carrier/slot pairs landed 35 routines in one pass; the ones
-that still miss want an opponent-side board (`Curse_PlayerSelectEffect`), a
-deck-reorder walk (`Prophecy_ReorderDeckEffect`), a retreat (`Cowardice_*`), a
-trainer in the discard (`Scavenge_*`) or a play-trigger power
-(`Quickfreeze_*`, whose command is `EFFECTCMDTYPE_PKMN_POWER_TRIGGER` and which
-no menu can invoke).
+the 29 player-side carrier/slot pairs landed 35 routines in one pass.
+
+Blind tail permutation then stops paying: three grids of 4-5 new shapes over the
+residue returned 0, 0 and 1. What works instead is reading the effect's gate.
+`effect_commands.asm` names each carrier's `EFFECTCMDTYPE_INITIAL_EFFECT_2` (or
+`CHECK_USE`) routine, that routine's `ret c` conditions are the board the seed
+must express, and `UsePokemonPower` (`home/duel.asm`) dispatches only
+`INITIAL_EFFECT_2`, `REQUIRE_SELECTION` and `BEFORE_DAMAGE` — so an
+`AFTER_DAMAGE` or `PKMN_POWER_TRIGGER` command on a power is not menu-reachable
+at all (`HealingWind_PlayAreaHealEffect`, `Quickfreeze_Paralysis50PercentEffect`,
+`Prophecy_ReorderDeckEffect`). Read that way, three gates fell in one pass:
+
+|gate|board|
+|---|---|
+|`CheckIsIncapableOfUsingPkmnPower` then `and CAN_EVOLVE_THIS_TURN`|`--arena-flags 128`; every power needs it, and the poke used to zero the byte|
+|`CanOnlyBeUsedOnTheBenchText` (`hTempPlayAreaLocation_ff9d` non-zero)|carrier also on the bench, and `DOWN` in the play-area screen before `A`|
+|`EnergyTrans_CheckPlayArea` scanning for `TYPE_ENERGY_GRASS` in play|`--bench CARD:HP:COUNT` attaches energy; `--attack 2` picks the colour the cost names|
+
+Still open: an opponent-side board (`Curse_CheckDamageAndBench` wants damage on
+the opponent's bench, and no poke writes `OPPONENT_DUEL_VARS` yet), the two swap
+halves (`DamageSwap_SwapEffect`, `StrangeBehavior_SwapEffect` — the selection
+runs, `TryGiveDamageCounter` refuses), and `Scavenge_*`, whose
+`CheckDiscardPile` wants a trainer and a basic energy in a discard pile the
+`--discard` poke apparently does not satisfy.
 
 ## Milestones
 
