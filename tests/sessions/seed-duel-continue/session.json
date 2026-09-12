@@ -1,0 +1,28 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Seeded from duelclub.sav: boot-menu[:1000] then A WAIT A WAIT A WAIT Ax20 Ax20 Ax20 Ax20 Ax20 Ax20 Ax20 Ax20 Ax20 Ax20",
+  "name": "seed-duel-continue",
+  "ordinals": 6142,
+  "recorded": "2026-09-12T06:10:30+00:00",
+  "save": "duelclub.sav",
+  "save_sha256": "48ad76061603defe2111362a3a9b1c079391430a28ec52719520a88e3719dff6",
+  "schema": 1,
+  "then": [
+    "A",
+    "WAIT",
+    "A",
+    "WAIT",
+    "A",
+    "WAIT",
+    "Ax20",
+    "Ax20",
+    "Ax20",
+    "Ax20",
+    "Ax20",
+    "Ax20",
+    "Ax20",
+    "Ax20",
+    "Ax20",
+    "Ax20"
+  ]
+}
