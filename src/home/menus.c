@@ -490,11 +490,11 @@ HandleYesOrNoMenuResult HandleYesOrNoMenu(uint8_t d, uint8_t e, uint8_t b, uint8
 			hCurMenuItem = wCurMenuItem;
 			if (wCurMenuItem == 0u) {
 				wDefaultYesOrNo = 0u;
-				return (HandleYesOrNoMenuResult){0u, 0x80u};
+				return (HandleYesOrNoMenuResult){0u, 0x80u, wMenuCursorXOffset, e};
 			}
 			wDefaultYesOrNo = 0u;
 			hCurMenuItem = 1u;
-			return (HandleYesOrNoMenuResult){1u, 0x90u};
+			return (HandleYesOrNoMenuResult){1u, 0x90u, wMenuCursorXOffset, e};
 		}
 		if ((hDPadHeld & (PAD_RIGHT | PAD_LEFT)) == 0u)
 			continue;
@@ -870,11 +870,11 @@ HandleYesOrNoMenuResult TwoItemHorizontalMenu(uint16_t hl)
 			hCurMenuItem = wCurMenuItem;
 			if (wCurMenuItem == 0u) {
 				wDefaultYesOrNo = 0u;
-				return (HandleYesOrNoMenuResult){0u, 0x80u};
+				return (HandleYesOrNoMenuResult){0u, 0x80u, wMenuCursorXOffset, 16u};
 			}
 			wDefaultYesOrNo = 0u;
 			hCurMenuItem = 1u;
-			return (HandleYesOrNoMenuResult){1u, 0x90u};
+			return (HandleYesOrNoMenuResult){1u, 0x90u, wMenuCursorXOffset, 16u};
 		}
 		if ((hDPadHeld & (PAD_RIGHT | PAD_LEFT)) == 0u)
 			continue;

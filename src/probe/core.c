@@ -2254,6 +2254,8 @@ static void adapt_DisplayPlayAreaScreenToUsePkmnPower(ProbeState *s)
 {
 	DisplayPlayAreaScreenToUsePkmnPowerResult r = DisplayPlayAreaScreenToUsePkmnPower();
 	s->f = r.f;
+	s->d = r.d;
+	s->e = r.e;
 }
 /* <<< factory DisplayPlayAreaScreenToUsePkmnPower */
 

@@ -1013,7 +1013,7 @@ void OppAction_PlayTrainerCard(void);
 void OpenActivePokemonScreen(void);
 /* <<< factory OpenActivePokemonScreen */
 /* >>> factory DisplayPlayAreaScreenToUsePkmnPower */
-typedef struct { uint8_t f; } DisplayPlayAreaScreenToUsePkmnPowerResult;
+typedef struct { uint8_t f; uint8_t d; uint8_t e; } DisplayPlayAreaScreenToUsePkmnPowerResult;
 DisplayPlayAreaScreenToUsePkmnPowerResult DisplayPlayAreaScreenToUsePkmnPower(void);
 /* <<< factory DisplayPlayAreaScreenToUsePkmnPower */
 /* >>> factory DisplayCardPage_PokemonOverview */

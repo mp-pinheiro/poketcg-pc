@@ -11482,13 +11482,11 @@ void SolarPower_RemoveStatusEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, u
 	PlayAttackAnimation(turn, f, location, 0u, d, e, (uint16_t)(((uint16_t)turn << 8) | (hl & 0xffu)));
 	WaitAttackAnimation();
 	DuelistVarResult flags = GetTurnDuelistVariable((uint8_t)(hTemp_ffa0 + DUELVARS_ARENA_CARD_FLAGS));
+	gb_write8(flags.hl, (uint8_t)(gb_read8(flags.hl) | (1u << USED_PKMN_POWER_THIS_TURN_F)));
 	gb_write8((uint16_t)((flags.hl & 0xff00u) | DUELVARS_ARENA_CARD_STATUS), NO_STATUS);
 	DuelistVarResult status = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
 	gb_write8(status.hl, NO_STATUS);
 	DrawDuelHUDs();
-	hTempPlayAreaLocation_ff9d = 0x10u;
-	hTemp_ffa0 = 0x40u;
-	*(uint8_t *)(g_wram + (0xC2C2u - 0xC000u)) |= (1u << USED_PKMN_POWER_THIS_TURN_F);
 	(void)a; (void)b; (void)c;
 }
 /* <<< factory SolarPower_RemoveStatusEffect */

@@ -190,6 +190,8 @@ static void adapt_HandleYesOrNoMenu(ProbeState *s)
 	HandleYesOrNoMenuResult result = HandleYesOrNoMenu(s->d, s->e, s->b, s->c);
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
+	s->e = result.e;
 }
 /* <<< factory HandleYesOrNoMenu */
 
@@ -276,6 +278,8 @@ static void adapt_YesOrNoMenuWithText_LeftAligned(ProbeState *s)
 	HandleYesOrNoMenuResult r = YesOrNoMenuWithText_LeftAligned(s->hl, s->b, s->c);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
+	s->e = r.e;
 }
 /* <<< factory YesOrNoMenuWithText_LeftAligned */
 
@@ -285,6 +289,8 @@ static void adapt_TwoItemHorizontalMenu(ProbeState *s)
 	HandleYesOrNoMenuResult r = TwoItemHorizontalMenu(s->hl);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
+	s->e = r.e;
 }
 /* <<< factory TwoItemHorizontalMenu */
 
@@ -295,6 +301,8 @@ static void adapt_YesOrNoMenu(ProbeState *s)
 	HandleYesOrNoMenuResult r = YesOrNoMenu();
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
+	s->e = r.e;
 }
 /* <<< factory YesOrNoMenu */
 
@@ -304,6 +312,8 @@ static void adapt_YesOrNoMenuWithText(ProbeState *s)
 	HandleYesOrNoMenuResult result = YesOrNoMenuWithText(s->hl);
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
+	s->e = result.e;
 }
 /* <<< factory YesOrNoMenuWithText */
 

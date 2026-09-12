@@ -4165,7 +4165,7 @@ CASES["OpenActivePokemonScreen"] = [
 # <<< factory OpenActivePokemonScreen
 
 # >>> factory DisplayPlayAreaScreenToUsePkmnPower
-CONTRACT["DisplayPlayAreaScreenToUsePkmnPower"] = {"compare": (), "preserve": (), "wram_out": True}
+CONTRACT["DisplayPlayAreaScreenToUsePkmnPower"] = {"compare": ("d", "e"), "preserve": (), "wram_out": True}
 CASES["DisplayPlayAreaScreenToUsePkmnPower"] = [
     {"keys": [0x00, 0x02], "instruction_budget": 5000000, "cycle_budget": 20000000, "wram": {0xFF97: b"\x00", 0xC2EF: b"\x00", 0xCABB: b"\x00"}, "read": {0xCBCF: 1}, "expect": {0xCBCF: b"\x00"}},
     dict(POISON, keys=[0x00, 0x02], instruction_budget=5000000, cycle_budget=20000000, wram={0xFF97: b"\x00", 0xC2EF: b"\x00", 0xCABB: b"\x00"}, read={0xCBCF: 1}, expect={0xCBCF: b"\x00"}),

@@ -7312,7 +7312,7 @@ draw_screen:
 		if ((input.f & 0x10u) == 0u)
 			continue;
 		if (input.a == MENU_CANCEL)
-			return (DisplayPlayAreaScreenToUsePkmnPowerResult){0x10u};
+			return (DisplayPlayAreaScreenToUsePkmnPowerResult){0x10u, 0u, 0u};
 		gb_write8(wSelectedDuelSubMenuItem_ADDR, input.a);
 		if ((hKeysPressed & PAD_START) != 0u) {
 			uint8_t item = (uint8_t)(hCurMenuItem + DUELVARS_ARENA_CARD);
@@ -7339,7 +7339,7 @@ draw_screen:
 		if ((answer.f & 0x10u) != 0u)
 			goto draw_screen;
 		gb_write8(hTemp_ffa0_ADDR, gb_read8(hTempCardIndex_ff98_ADDR));
-		return (DisplayPlayAreaScreenToUsePkmnPowerResult){0x00u};
+		return (DisplayPlayAreaScreenToUsePkmnPowerResult){0x00u, answer.d, answer.e};
 	}
 }
 /* <<< factory DisplayPlayAreaScreenToUsePkmnPower */
@@ -10101,8 +10101,9 @@ void DuelMenuShortcut_PlayerActivePokemon(void)
 /* core.asm:460-464 */
 void DuelMenu_PkmnPower(void)
 {
-	if ((DisplayPlayAreaScreenToUsePkmnPower().f & 0x10u) == 0u)
-		(void)UseAttackOrPokemonPower(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	DisplayPlayAreaScreenToUsePkmnPowerResult chosen = DisplayPlayAreaScreenToUsePkmnPower();
+	if ((chosen.f & 0x10u) == 0u)
+		(void)UseAttackOrPokemonPower(0u, 0u, 0u, 0u, chosen.d, chosen.e, 0u);
 	DuelMainInterface();
 }
 /* <<< factory DuelMenu_PkmnPower */

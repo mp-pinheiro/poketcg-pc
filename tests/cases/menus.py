@@ -325,7 +325,7 @@ wDuelTheme = 0xCC1A
 # <<< factory-cases-statics
 
 # >>> factory HandleYesOrNoMenu
-CONTRACT["HandleYesOrNoMenu"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["HandleYesOrNoMenu"] = {"compare": ("a", "f", "d", "e"), "preserve": ()}
 CASES["HandleYesOrNoMenu"] = [
     {"d": 0x20, "e": 0x10, "b": 0xAA, "c": 0xBB, "keys": 0x01,
      "wram": {wDefaultYesOrNo: b"\x00"},
@@ -460,7 +460,7 @@ CASES["HandleDuelMenuInput"] = [
 # <<< factory HandleDuelMenuInput
 
 # >>> factory YesOrNoMenuWithText_LeftAligned
-CONTRACT["YesOrNoMenuWithText_LeftAligned"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["YesOrNoMenuWithText_LeftAligned"] = {"compare": ("a", "f", "d", "e"), "preserve": ()}
 CASES["YesOrNoMenuWithText_LeftAligned"] = [
     {"hl": 1, "b": 0x12, "c": 0x34, "keys": 0x01,
      "setup": SETUP,
@@ -480,7 +480,7 @@ CASES["YesOrNoMenuWithText_LeftAligned"] = [
 # <<< factory YesOrNoMenuWithText_LeftAligned
 
 # >>> factory TwoItemHorizontalMenu
-CONTRACT["TwoItemHorizontalMenu"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["TwoItemHorizontalMenu"] = {"compare": ("a", "f", "d", "e"), "preserve": ()}
 CASES["TwoItemHorizontalMenu"] = [
     {"hl": 0, "keys": 0x01, "wram": {0xFF97: b"\xC2"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "expect_regs": {"a": 0, "f": 0x80}, "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, hl=0, keys=0x01, wram={0xFF97: b"\xC2"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], expect_regs={"a": 0, "f": 0x80}, instruction_budget=2000000, cycle_budget=8000000),
@@ -509,7 +509,7 @@ CASES["YesOrNoMenu"] = [
 # <<< factory YesOrNoMenu
 
 # >>> factory YesOrNoMenuWithText
-CONTRACT["YesOrNoMenuWithText"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["YesOrNoMenuWithText"] = {"compare": ("a", "f", "d", "e"), "preserve": ()}
 CASES["YesOrNoMenuWithText"] = [
     {"hl": 1, "keys": 0x01,
      "setup": SETUP,

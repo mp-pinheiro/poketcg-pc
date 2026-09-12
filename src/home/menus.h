@@ -56,7 +56,7 @@ typedef struct { uint8_t a; uint8_t f; } PlayOpenOrExitScreenSFXResult;
 PlayOpenOrExitScreenSFXResult PlayOpenOrExitScreenSFX(uint8_t a, uint8_t f);
 /* <<< factory PlayOpenOrExitScreenSFX */
 /* >>> factory HandleYesOrNoMenu */
-typedef struct { uint8_t a; uint8_t f; } HandleYesOrNoMenuResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t d; uint8_t e; } HandleYesOrNoMenuResult;
 HandleYesOrNoMenuResult HandleYesOrNoMenu(uint8_t d, uint8_t e, uint8_t b, uint8_t c);
 /* <<< factory HandleYesOrNoMenu */
 /* >>> factory CopyCardNameAndLevel */
