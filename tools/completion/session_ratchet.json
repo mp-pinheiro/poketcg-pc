@@ -155,6 +155,18 @@
   "ai-ghost": {
     "confirmed_ordinal": 40832
   },
+  "ai-s4242-d20": {
+    "confirmed_ordinal": 42128
+  },
+  "ai-s7-d11": {
+    "confirmed_ordinal": 33800
+  },
+  "ai-s7-d20": {
+    "confirmed_ordinal": 33824
+  },
+  "ai-s99-d11": {
+    "confirmed_ordinal": 36296
+  },
   "ai-science": {
     "confirmed_ordinal": 41984
   },
