@@ -1,0 +1,10 @@
+{
+  "derived_from": "effect-slowbro-1-power",
+  "goal": "Coverage search from effect-slowbro-1-power: 1 routines no session had executed (TryGiveDamageCounter_StrangeBehavior)",
+  "input_sha256": "0a5dfd02f4ff393c3168c997b0ff17c4e8a244b564d367c6e0bbfe952801317a",
+  "name": "effect-slowbro-1-power-explore-1",
+  "ordinals": 29755,
+  "recorded": "2026-09-12T03:33:50+00:00",
+  "schema": 1,
+  "script": "build/completion/explore-effect-slowbro-1-power/scripts/s00-A-1.txt"
+}
