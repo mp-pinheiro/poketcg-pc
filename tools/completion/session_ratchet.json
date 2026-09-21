@@ -1490,6 +1490,9 @@
   "effect-porygon-1-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-porygon-2-ai": {
+    "confirmed_ordinal": 39132
+  },
   "effect-porygon-2-board": {
     "confirmed_ordinal": 29155
   },
@@ -1629,6 +1632,9 @@
     "confirmed_ordinal": 74275
   },
   "effect-slowbro-1-seed": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-slowpoke-lv18-2-ai-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-slowpoke-lv18-2-board": {
