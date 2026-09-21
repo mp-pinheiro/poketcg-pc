@@ -1475,6 +1475,9 @@
   "effect-poliwrath-1-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-poliwrath-2-ai-seed": {
+    "confirmed_ordinal": 23227
+  },
   "effect-poliwrath-2-board": {
     "confirmed_ordinal": 29155
   },
@@ -1515,6 +1518,9 @@
     "confirmed_ordinal": 29131
   },
   "effect-raichu-lv40-1-seed": {
+    "confirmed_ordinal": 23227
+  },
+  "effect-raichu-lv45-1-ai-seed": {
     "confirmed_ordinal": 23227
   },
   "effect-raichu-lv45-1-board": {
