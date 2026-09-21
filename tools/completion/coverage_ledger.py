@@ -621,29 +621,37 @@ def session_slug(card: str) -> str:
     return card.lower().replace("_", "-")
 
 
-def target_one(card: str, slot: int | None, routines: list[str]) -> dict[str, Any]:
-    """One carrier: build its deck, record the arranged duel, fall back to a
-    player-controlled seed when the AI never played the card, and verify.
-    Landing stays with the parent: two `jj commit` runs would race."""
+def target_one(card: str, slot: int | None, routines: list[str], ai: bool = False) -> dict[str, Any]:
     import effects
 
-    name = f"effect-{session_slug(card)}" + (f"-{slot}" if slot else "")
+    suffix = f"-{slot}" if slot else ""
+    if ai:
+        suffix += "-ai"
+    name = f"effect-{session_slug(card)}{suffix}"
     deck = effects.build_deck(card, attack_slot=slot)
     deck_path = TARGETS_PATH.parent / f"{name}.deck"
     deck_path.parent.mkdir(parents=True, exist_ok=True)
     deck_path.write_text("\n".join(str(c) for c in deck) + "\n")
     goal = (f"Card effect target: {card} attack {slot}" if slot else f"Card effect target: {card}") \
-        + f" ({', '.join(sorted(routines)[:4])})"
+        + (" AI selection" if ai else "") + f" ({', '.join(sorted(routines)[:4])})"
+    options = {
+        "seed": 1 if ai else None,
+        "prizes": 1 if ai else TARGET_PRIZES,
+        "period": 8 if ai else 24,
+        "tail": 3000 if ai else 1500,
+    }
     try:
-        session.ai_duel(name, base=TARGET_BASE, at=TARGET_AT, deck=TARGET_OPPONENT, seed=None,
-                        prizes=TARGET_PRIZES, period=24, tail=1500, goal=goal, cards=deck,
-                        watch=set(routines), arrange=True)
+        session.ai_duel(name, base=TARGET_BASE, at=TARGET_AT, deck=TARGET_OPPONENT,
+                        goal=goal, cards=deck, watch=set(routines), arrange=True,
+                        **options)
     except session.SessionError as exc:
         if "did not finish" not in str(exc):
             raise
-        session.ai_duel(name, base=TARGET_BASE, at=TARGET_AT, deck=TARGET_OPPONENT, seed=None,
-                        prizes=TARGET_STALL_PRIZES, period=24, tail=1500, goal=goal, cards=deck,
-                        watch=set(routines), arrange=True)
+        stall_options = dict(options)
+        stall_options["prizes"] = TARGET_STALL_PRIZES
+        session.ai_duel(name, base=TARGET_BASE, at=TARGET_AT, deck=TARGET_OPPONENT,
+                        goal=goal, cards=deck, watch=set(routines), arrange=True,
+                        **stall_options)
     watched = json.loads((session.session_dir(name) / "session.json").read_text())["watched"]
     reached = {routine: ordinal for routine, ordinal in watched.items() if ordinal is not None}
     if not reached:
@@ -655,29 +663,26 @@ def target_one(card: str, slot: int | None, routines: list[str]) -> dict[str, An
                           goal=f"Search seed: {card} in hand, the AI never played it "
                                f"({', '.join(sorted(routines)[:4])})")
     code = session.verify(name, write=False, json_path=None)
-    return {"card": card, "slot": slot, "session": name, "routines": sorted(routines),
+    return {"card": card, "slot": slot, "ai": ai, "session": name, "routines": sorted(routines),
             "reached": reached, "deck": str(deck_path.relative_to(ROOT)), "verify": code}
 
-
-def target_worker(item: tuple[str, int | None, list[str]], lane: Path) -> dict[str, Any]:
-    card, slot, routines = item
+def target_worker(item: tuple[str, int | None, list[str], bool], lane: Path) -> dict[str, Any]:
+    card, slot, routines, ai = item
     command = [sys.executable, str(ROOT / "tools" / "completion" / "coverage_ledger.py"),
                "target-one", card, "--routines", ",".join(routines)]
     if slot:
         command += ["--slot", str(slot)]
+    if ai:
+        command.append("--ai")
     result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False,
                             env=dict(os.environ, POKETCG_BUILD=str(lane.relative_to(ROOT))))
     for line in reversed(result.stdout.splitlines()):
         if line.startswith("{"):
             return json.loads(line)
-    return {"card": card, "slot": slot, "session": None, "routines": routines,
+    return {"card": card, "slot": slot, "ai": ai, "session": None, "routines": routines,
             "error": (result.stderr.strip() or result.stdout.strip())[-300:]}
 
-
 def target(names: list[str], *, land: bool, limit: int, jobs: int = DEFAULT_VERIFY_JOBS) -> int:
-    """One arranged AI duel per carrier card for the effect routines no
-    session executes, run in parallel against a frozen lane; each is verified
-    here and landed serially."""
     import effects
 
     ledger = load_ledger()
@@ -687,21 +692,25 @@ def target(names: list[str], *, land: bool, limit: int, jobs: int = DEFAULT_VERI
         wanted = expand_targets(ledger, names)
     else:
         wanted = sorted(routine for routine in unexecuted(ledger) if routine in by_routine)
-    groups: dict[tuple[str, int | None], set[str]] = {}
+    groups: dict[tuple[str, int | None, bool], set[str]] = {}
     for routine in wanted:
         if routine in executed or routine not in by_routine:
             continue
         carrier = effects.carriers(routine)[0]
         slot = int(carrier["slot"][-1]) if carrier["slot"].startswith("attack") else None
-        groups.setdefault((carrier["card"], slot), set()).add(routine)
+        ai = carrier["command"] == "EFFECTCMDTYPE_AI_SELECTION"
+        groups.setdefault((carrier["card"], slot, ai), set()).add(routine)
     record = json.loads(TARGETS_PATH.read_text()) if TARGETS_PATH.is_file() else {}
     existing = set(session.session_names())
-    queue: list[tuple[str, int | None, list[str]]] = []
-    for (card, slot), routines in sorted(groups.items(), key=lambda item: (-len(item[1]), item[0])):
-        name = f"effect-{session_slug(card)}" + (f"-{slot}" if slot else "")
+    queue: list[tuple[str, int | None, list[str], bool]] = []
+    for (card, slot, ai), routines in sorted(groups.items(), key=lambda item: (-len(item[1]), item[0])):
+        suffix = f"-{slot}" if slot else ""
+        if ai:
+            suffix += "-ai"
+        name = f"effect-{session_slug(card)}{suffix}"
         if name in existing or f"{name}-seed" in existing:
             continue
-        queue.append((card, slot, sorted(routines)))
+        queue.append((card, slot, sorted(routines), ai))
         if limit and len(queue) >= limit:
             break
     if not queue:
@@ -716,8 +725,9 @@ def target(names: list[str], *, land: bool, limit: int, jobs: int = DEFAULT_VERI
                 print(f"TARGET skip card={row['card']} slot={row['slot']}: {row['error']}")
                 continue
             for routine in row["routines"]:
-                record[routine] = {"card": row["card"], "slot": row["slot"], "session": row["session"],
-                                   "reached": row["reached"].get(routine), "deck": row["deck"]}
+                record[routine] = {"card": row["card"], "slot": row["slot"], "ai": row.get("ai", False),
+                                   "session": row["session"], "reached": row["reached"].get(routine),
+                                   "deck": row["deck"]}
             TARGETS_PATH.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")
             code = row["verify"]
             print(f"TARGET {row['session']} card={row['card']} routines={len(row['routines'])} "
@@ -771,6 +781,7 @@ def main(argv: list[str] | None = None) -> int:
     one_parser.add_argument("card")
     one_parser.add_argument("--slot", type=int)
     one_parser.add_argument("--routines", required=True)
+    one_parser.add_argument("--ai", action="store_true")
     trace_parser = sub.add_parser("trace", help=argparse.SUPPRESS)
     trace_parser.add_argument("name")
     args = parser.parse_args(argv)
@@ -799,7 +810,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "target":
             return target(args.names, land=args.land, limit=args.limit, jobs=args.jobs)
         if args.command == "target-one":
-            row = target_one(args.card, args.slot, args.routines.split(","))
+            row = target_one(args.card, args.slot, args.routines.split(","), args.ai)
             print(json.dumps(row, sort_keys=True))
             return 0
         if args.command == "trace":
