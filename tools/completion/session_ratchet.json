@@ -734,6 +734,9 @@
   "effect-exeggutor-1": {
     "confirmed_ordinal": 30128
   },
+  "effect-exeggutor-1-ai-seed": {
+    "confirmed_ordinal": 23227
+  },
   "effect-exeggutor-1-bench": {
     "confirmed_ordinal": 29107
   },
