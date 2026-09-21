@@ -1,3 +1,4 @@
+from tests.cases._fixtures import Fixture
 from tests.cases._fixtures import card_energies_fixture as _card_energies_fixture, CARD_ENERGIES_REGS as _CARD_ENERGIES_REGS, attack_list_fixture as _attack_list_fixture, ATTACK_LIST_REGS as _ATTACK_LIST_REGS
 from tests.cases._fixtures import card_page_attack2_fixture as _card_page_attack2_fixture, CARD_PAGE_ATTACK2_REGS as _CARD_PAGE_ATTACK2_REGS
 from tests.cases._fixtures import ai_power_effect_fixture as _ai_power_effect_fixture, AI_POWER_EFFECT_REGS as _AI_POWER_EFFECT_REGS
@@ -2390,6 +2391,7 @@ CASES["CheckIfEnoughEnergiesForGivenAttack"] = [
 	{"d": 0x00, "e": 0x00, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x10", wAttachedEnergies: b"\x00\x00\x00\x00", wTotalAttachedEnergies: b"\x00"}},
 	{"d": 0x01, "e": 0x01, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck + 1: b"\x20", wAttachedEnergies: b"\x11\x11\x11\x00", wTotalAttachedEnergies: b"\x03"}},
 	dict(POISON, d=0x05, e=0x01, wram={hWhoseTurn: b"\xC2", wPlayerDeck + 5: b"\x20", wAttachedEnergies: b"\x22\x22\x22\x00", wTotalAttachedEnergies: b"\x06"}),
+	Fixture("effect-poliwhirl-1-ai-energy-check-entry").case(vram=False),
 ]
 # <<< factory CheckIfEnoughEnergiesForGivenAttack
 
@@ -6614,7 +6616,7 @@ MUTATIONS["ValidateSavedNonLinkDuelData"] = {"source_symbol": "ValidateSavedNonL
 MUTATIONS["SetupPlayAreaScreen"] = {"source_symbol": "SetupPlayAreaScreen", "before": "if (wDuelDisplayedScreen == PLAY_AREA_CARD_LIST)", "after": "if (wDuelDisplayedScreen != PLAY_AREA_CARD_LIST)", "case_ids": ["SetupPlayAreaScreen-1", "SetupPlayAreaScreen-2"]}
 # <<< factory-mutation SetupPlayAreaScreen
 # >>> factory-mutation CheckIfEnoughEnergiesForGivenAttack
-MUTATIONS["CheckIfEnoughEnergiesForGivenAttack"] = {"source_symbol": "CheckIfEnoughEnergiesForGivenAttack", "before": "if (category == 0x04u) {", "after": "if (category != 0x04u) {", "case_ids": ["CheckIfEnoughEnergiesForGivenAttack-0", "CheckIfEnoughEnergiesForGivenAttack-1"]}
+MUTATIONS["CheckIfEnoughEnergiesForGivenAttack"] = {"source_symbol": "CheckIfEnoughEnergiesForGivenAttack", "before": "if (category == 0x04u) {", "after": "if (category != 0x04u) {", "case_ids": ["CheckIfEnoughEnergiesForGivenAttack-0", "CheckIfEnoughEnergiesForGivenAttack-1", "CheckIfEnoughEnergiesForGivenAttack-3"]}
 # <<< factory-mutation CheckIfEnoughEnergiesForGivenAttack
 # >>> factory-mutation SaveDuelData
 MUTATIONS["SaveDuelData"] = {"source_symbol": "SaveDuelData", "before": "SaveDuelDataToDE(sCurrentDuel_ADDR);", "after": "SaveDuelDataToDE((uint16_t)(sCurrentDuel_ADDR + 1u));", "case_ids": ["SaveDuelData-1"]}

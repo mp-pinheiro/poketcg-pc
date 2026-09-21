@@ -4072,7 +4072,7 @@ CheckIfEnoughEnergiesForGivenAttackResult CheckIfEnoughEnergiesForGivenAttack(ui
 	r.a = name;
 	r.hl = (uint16_t)(hl + 1u);
 	if (name == 0u) {
-		r.f = 0x80u;
+		r.f = 0x90u;
 		return r;
 	}
 	hl = (uint16_t)(cost + (0x17u - 0x0cu));
@@ -4080,7 +4080,7 @@ CheckIfEnoughEnergiesForGivenAttackResult CheckIfEnoughEnergiesForGivenAttack(ui
 	r.a = category;
 	r.hl = hl;
 	if (category == 0x04u) {
-		r.f = 0xc0u;
+		r.f = 0x90u;
 		return r;
 	}
 	gb_write8(wAttachedEnergiesAccum_ADDR, 0u);
@@ -4093,15 +4093,19 @@ CheckIfEnoughEnergiesForGivenAttackResult CheckIfEnoughEnergiesForGivenAttack(ui
 		r.f = check.f;
 		r.hl = check.hl;
 		hl = check.hl;
-		if ((check.f & 0x10u) != 0u)
+		if ((check.f & 0x10u) != 0u) {
+			r.c = count;
 			return r;
+		}
 		check = CheckIfEnoughEnergiesOfType(gb_read8(cost), hl);
 		r.a = check.a;
 		r.f = check.f;
 		r.hl = check.hl;
 		hl = check.hl;
-		if ((check.f & 0x10u) != 0u)
+		if ((check.f & 0x10u) != 0u) {
+			r.c = count;
 			return r;
+		}
 		cost = (uint16_t)(cost + 1u);
 		count--;
 	}

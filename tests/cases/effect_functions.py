@@ -1,3 +1,4 @@
+from tests.cases._fixtures import Fixture
 from tests.cases._fixtures import trainer_discard_list_fixture as _trainer_discard_list_fixture, TRAINER_DISCARD_LIST_REGS as _TRAINER_DISCARD_LIST_REGS
 from tests.cases._fixtures import color_name_fixture as _color_name_fixture, COLOR_NAME_REGS as _COLOR_NAME_REGS
 from tests.cases._fixtures import discard_basic_list_fixture as _discard_basic_list_fixture, DISCARD_BASIC_LIST_REGS as _DISCARD_BASIC_LIST_REGS
@@ -3128,6 +3129,7 @@ WFB_EXCLUDE_ARENA = 0xCBD2
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 hAIPkmnPowerEffectParam = 0xFFA1
+wLoadedCard2Atk1Name_ADDR = 0xCC75
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 FRAME_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
@@ -3139,6 +3141,8 @@ CASES["AIPickAttackForAmnesia"] = [
     {"wram": {hWhoseTurn: b"\xC2", wOpponentDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wOpponentDeck: bytes((BULBASAUR,))}, "read": {hWhoseTurn: 1}},
     {"wram": {hWhoseTurn: b"\xC2", wOpponentDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wOpponentDeck: bytes((SNORLAX,))}, "read": {hWhoseTurn: 1}},
     dict(POISON, wram={hWhoseTurn: b"\xC2", wOpponentDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wOpponentDeck: bytes((SNORLAX,))}, read={hWhoseTurn: 1}),
+    {"wram": {hWhoseTurn: b"\xC2", wOpponentDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wOpponentDeck: bytes((MYSTERIOUS_FOSSIL,))}, "read": {hWhoseTurn: 1, wLoadedCard2Atk1Name_ADDR: 2}},
+    Fixture("effect-poliwhirl-1-ai-aipick-entry").case(vram=False),
 ]
 # <<< factory AIPickAttackForAmnesia
 
@@ -9740,7 +9744,7 @@ MUTATIONS["EnergyConversion_AISelectEffect"] = {"source_symbol": "EnergyConversi
 MUTATIONS["HypnoDarkMind_AISelectEffect"] = {"source_symbol": "HypnoDarkMind_AISelectEffect", "before": "gb_write8(hTemp_ffa0_ADDR, 0xffu);", "after": "gb_write8(hTemp_ffa0_ADDR, 0u);", "case_ids": ["HypnoDarkMind_AISelectEffect-0", "HypnoDarkMind_AISelectEffect-1", "HypnoDarkMind_AISelectEffect-2"]}
 # <<< factory-mutation HypnoDarkMind_AISelectEffect
 # >>> factory-mutation AIPickAttackForAmnesia
-MUTATIONS["AIPickAttackForAmnesia"] = {"source_symbol": "AIPickAttackForAmnesia", "before": "\t\tif (check.f & 0x10u) {", "after": "\t\tif (!(check.f & 0x10u)) {", "case_ids": ["AIPickAttackForAmnesia-0", "AIPickAttackForAmnesia-1"]}
+MUTATIONS["AIPickAttackForAmnesia"] = {"source_symbol": "AIPickAttackForAmnesia", "before": "\t\tif ((check.f & 0x10u) == 0u) {", "after": "\t\tif ((check.f & 0x10u) != 0u) {", "case_ids": ["AIPickAttackForAmnesia-0", "AIPickAttackForAmnesia-1", "AIPickAttackForAmnesia-4"]}
 # <<< factory-mutation AIPickAttackForAmnesia
 # >>> factory-mutation MirrorMove_AISelection
 MUTATIONS["MirrorMove_AISelection"] = {

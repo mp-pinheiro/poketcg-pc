@@ -5151,12 +5151,14 @@ uint8_t AIPickAttackForAmnesia(void)
 	HandleEnergyBurn();
 	uint8_t arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
 	LoadCardDataToBuffer2_FromDeckIndex(arena);
-	if ((uint16_t)wLoadedCard2Atk1Name_ADDR == 0u)
+	uint16_t attack_name = (uint16_t)(gb_read8(wLoadedCard2Atk1Name_ADDR)
+		| (uint16_t)gb_read8((uint16_t)(wLoadedCard2Atk1Name_ADDR + 1u)) << 8);
+	if (attack_name == 0u)
 		goto chosen;
 	{
 		CheckIfEnoughEnergiesForGivenAttackResult check =
 			CheckIfEnoughEnergiesForGivenAttack(arena, SECOND_ATTACK);
-		if (check.f & 0x10u) {
+		if ((check.f & 0x10u) == 0u) {
 			attack = SECOND_ATTACK;
 			goto chosen;
 		}
