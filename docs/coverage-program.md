@@ -38,31 +38,31 @@ The loop, until a stop condition holds:
      verification) and link/IR audit facts (#3217-#3252 - they need a
      dual-core linked reference build, a capability this repo does not have).
      Say so in the report; do not open either.
-  2. No workable fact: just coverage-status. It prints an UNMEASURABLE row -
-     those routines are a registration gap, never coverage work. While
-     src/engine/duel/effect_functions.asm still misses routines:
-     just coverage-target --limit 20 --land
-     A carrier the AI refuses to play needs a board, not button search:
-     just session-board-seed <name> --card <CARD> --attack N --then
-     "Bx5,DOWN,A,DOWN,A,Ax5"   records the seed and the play in ONE session
-     (a seed recorded separately has its pokes fire past its own length and is
-     inert); 22 of the first 25 attack carriers hit on that tail.
-  3. Cheap reach search before recording anything new:
+  2. No workable fact: just coverage-next
+     It prints exactly one branch and its command:
+       kind=target   -> run the printed coverage-target command
+       kind=intake   -> run the printed coverage-intake command
+       kind=discover -> run the printed coverage-discover command
+       kind=done     -> exit 2; the documented coverage stop condition holds
+       kind=gate     -> exit 3; untyped routines remain but every producer is
+                        exhausted, so stop for a route/harness decision
+     Execute only that branch, then return to 1. `TARGET none`, `scripts=0`
+     and `seeds=0` are producer-local facts, never completion.
+  3. A target carrier the AI refuses to play becomes one recorded board-search
+     seed. Discover owns it next. Do not retry arbitrary RNG seeds: a recorded
+     target outcome is terminal for Target at that ledger state.
+  4. Cheap reach search is a diagnostic for an explicit gate, before recording
+     a new route:
      just coverage-probe <landed session> --tail "<explore labels>" --mark <Fn>
      One native run per tail (~0.5 s, no reference replay), reporting the
-     unexecuted routines it reaches. Iterate tails, then record the winner
-     with the same labels (session.py seeded/board-seed --then) and verify.
-     Probing a session the ledger already folded must report nothing but DMA;
-     anything else is a port defect (an invented call) or a measurement gap.
-  4. Then the search loops, from the ranked clean seeds:
-     just coverage-discover --limit 2 --jobs 2
-     just coverage-intake <seed> --top 3 --land
-  5. Seeded content route items (just issues-next, label route):
+     unexecuted routines it reaches. Record a winner with the same labels and
+     verify it. A miss is not permission to permute seeds.
+  5. Seeded content route items still come from just issues-next (label route):
      just savegen base NAME --from SESSION --at N
      just savegen edit <sav> --out <sav> --medals N --pack 0=1 --event EVENT_X=1
-     just session-seeded NAME <sav> --then A,Ax5   (verify, land, then use it
-     as a coverage-discover seed)
+     just session-seeded NAME <sav> --then A,Ax5
   6. After every landing: just coverage-ledger --jobs 8, then just issues-sync.
+     Then return to 1; never yield at a phase boundary.
 
 Proof obligations per landing:
   - a C fix: just oracle-diff <Fn> PASS, just lint-constants clean, a fixture
@@ -99,16 +99,28 @@ Rules:
     jj commit <paths> -m "type(scope): subject"   (subject <= 50 chars)
   - Never widen an exclusion ledger and never edit a case to match the C.
   - Never hand-close a fact issue.
+  - Never overwrite, delete or retarget an existing recorded session.
+    coverage-target refuses canonical-name collisions.
+  - Never invent seed matrices. Target, Intake and Discover are the only
+    coverage producers; coverage-next is their deterministic dispatcher.
+  - A steering reminder such as "remember loop reqs" means resume with
+    issues-next/coverage-next. Do not answer it with an acknowledgement or
+    status summary while either command reports work.
 
 Report at the end: sessions landed (name, clean/diverged), the ledger's
 executed count before and after, issues closed and opened, and anything left
 open with the reason.
 ```
 
-Stop conditions: `coverage-status` shows only routines with a reason in
-`tools/progress/scope.toml` or a peer-harness dependency
-(`docs/reach-harness.md`); `issues-next` is empty apart from blocked
-placement facts; or a gate needs a decision the loop cannot take.
+Stop conditions are mechanical:
+- `just coverage-next` exits 2 with `kind=done`: every in-scope routine is
+  covered or already removed from the denominator.
+- It exits 3 with `kind=gate`: in-scope routines remain, but Target, Intake and
+  Discover have no unconsumed work at the current executed-set digest. Report
+  the exact gate; never convert it into completion.
+- `issues-next` is empty apart from explicitly deferred placement/peer facts.
+
+Individual producer no-ops are never stop conditions.
 
 ## Ledger — `just coverage-ledger`
 
@@ -276,6 +288,11 @@ to `build/completion/effects/targets.json`. This loop is the
 `completion:v2:p5:duel-state` producer's input: its duel vectors are the
 sessions it lands.
 
+A `reached: null` target record is a complete Target outcome: the canonical
+`effect-*-seed` is the next Discover input. Target never retries that carrier,
+changes its RNG seed, or rewrites its session. Re-targeting requires a new
+explicit route design and a new session name; it is not part of this loop.
+
 ## Peer and seeded content
 
 `docs/reach-harness.md` covers what neither Discover nor Target can reach:
@@ -320,12 +337,22 @@ sweep everything: a change to the driver is executed by every session.
 
 ## Stop condition
 
-The ledger's unexecuted set contains only routines with a reason in
-`tools/progress/scope.toml` (SGB hardware-only, the Phase-1 transform,
-dead code) or a peer-harness dependency named in `docs/reach-harness.md`.
-Until then `just coverage-status` is the worklist and the order is Target
-(largest file, deterministic), Intake of the ranked seeds, then Discover again
-against the new ledger.
+Run `just coverage-next`. It derives its answer from the ledger, target records,
+recorded-session identities and digest-keyed Discover corpora; it writes
+nothing. Its decision order is Target, current-corpus Intake, then Discover.
+
+`kind=done` (exit 2) is completion. `kind=gate` (exit 3) is not completion: it
+means uncovered routines remain but no current producer can reach them. The
+same ledger state always yields the same answer, so a no-op producer is never
+recommended twice.
+
+Loop invariants:
+- recorded sessions are immutable and target names are collision-checked;
+- derived search state is keyed by the executed-set digest;
+- missing or stale derived state fails open; inconsistent authoritative target
+  records fail loudly;
+- arbitrary seed permutations are not a producer;
+- coverage-next is read-only and never invokes a producer itself.
 
 ### What the unexecuted set is made of
 

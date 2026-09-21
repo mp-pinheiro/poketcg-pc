@@ -137,16 +137,16 @@ The reports the sync reads live in `build/completion/tracker/` and are written
 by every `session-verify` and `session-sweep` run, so a sweep of a new session
 (`just session-sweep <name>`) is how a whole region's facts enter the tracker.
 
-When `issues-next` is empty the facts have run out, not the work: new facts
-come from new sessions, and `docs/coverage-program.md` is the machine that
-records them. `just coverage-status` ranks the files no route executes;
-`just coverage-target` records one arranged AI duel per carrier card for the
-card effects, `just coverage-discover` and `just coverage-intake` record what
-button search finds from the ranked seeds, and every landed session's
-`session-verify` report feeds the next `issues-sync`. After a fix, `just
-sessions-verify-affected <Routine|stem>` verifies exactly the sessions the
-ledger says execute it; `just sessions-sweep` is the landing-batch check. A
-sound-driver change is proven by `just audio-tickdiff` (`docs/audio-harness.md`).
+When `issues-next` has no workable non-deferred fact, the facts have run out,
+not the work. Run `just coverage-next`; it deterministically selects Target,
+current-corpus Intake, or Discover from the coverage ledger. Execute only the
+printed branch. `kind=done` is completion; `kind=gate` is an evidence-backed
+route/harness decision boundary, not completion.
+
+Producer-local no-ops (`TARGET none`, `scripts=0`, `seeds=0`) never stop the
+whole loop and never justify arbitrary seed permutations. A steering reminder
+to resume the loop means run `issues-next`/`coverage-next`, not answer with a
+status summary.
 
 ### Parallel sessions
 

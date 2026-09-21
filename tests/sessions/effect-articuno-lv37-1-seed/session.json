@@ -2,7 +2,7 @@
   "ai_deck": 2,
   "branch_ordinal": 23227,
   "derived_from": "practice-win",
-  "goal": "Search seed: ARTICUNO_LV37 in hand, the AI never played it (Quickfreeze_Paralysis50PercentEffect)",
+  "goal": "Search seed: ARTICUNO_LV37 in hand, player-controlled duel",
   "name": "effect-articuno-lv37-1-seed",
   "ordinals": 23227,
   "player_cards": [
@@ -67,7 +67,6 @@
     85,
     85
   ],
-  "recorded": "2026-09-21T07:57:18+00:00",
-  "schema": 1,
-  "then": []
+  "recorded": "2026-09-11T07:42:28+00:00",
+  "schema": 1
 }

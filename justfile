@@ -530,6 +530,9 @@ coverage-ledger *ARGS:
 # Files ranked by the routines no session executes.
 coverage-status *ARGS:
     python3 tools/completion/coverage_ledger.py status {{ARGS}}
+# Print exactly one next coverage producer, DONE, or an evidence-backed decision gate.
+coverage-next:
+    python3 tools/completion/coverage_ledger.py next
 # Coverage searches from ledger-ranked seeds (or the named ones), scored against the ledger; one corpus per seed.
 coverage-discover *ARGS:
     python3 tools/completion/coverage_ledger.py discover {{ARGS}}

@@ -346,6 +346,12 @@ def status(limit: int) -> int:
     if blind:
         print(f"UNMEASURABLE routines={len(blind)} reason=tracer-unnamed "
               f"(a registration gap, not coverage: {', '.join(sorted(blind)[:4])}, ...)")
+    frontier = target_frontier(ledger, [])
+    if frontier["stale"]:
+        raise CoverageError(
+            "target records disagree with recorded sessions: " + "; ".join(frontier["stale"]))
+    print(f"PRODUCER target pending_groups={len(frontier['pending'])} "
+          f"attempted_groups={len(frontier['attempted'])}")
     rows = sorted(ledger["files"].items(), key=lambda row: (row[1]["executed"] - row[1]["total"], row[0]))
     for file, row in rows[:limit]:
         miss = row["total"] - row["executed"]
@@ -420,9 +426,16 @@ def explore_paths(seed: str) -> tuple[Path, Path]:
 
 def corpus_current(seed: str, digest: str) -> bool:
     json_path, corpus = explore_paths(seed)
-    if not json_path.is_file() or not (corpus / "corpus.json").is_file():
+    index_path = corpus / "corpus.json"
+    if not json_path.is_file() or not index_path.is_file():
         return False
-    return json.loads(json_path.read_text()).get("ledger_digest") == digest
+    try:
+        summary = json.loads(json_path.read_text())
+        entries = json.loads(index_path.read_text()).get("entries", [])
+    except (json.JSONDecodeError, OSError):
+        return False
+    return (summary.get("ledger_digest") == digest
+            and all(isinstance(entry, dict) and "routines" in entry for entry in entries))
 
 
 def session_total(name: str) -> int:
@@ -513,6 +526,13 @@ def distinct_prefixes(ledger: dict[str, Any], ranked: list[str], limit: int) -> 
             break
     return picked
 
+def discover_frontier(ledger: dict[str, Any], limit: int) -> tuple[str, list[str]]:
+    """The ranked seeds that still need a corpus at the current executed set."""
+    digest = executed_digest(ledger)
+    ranked = [name for name, score in rank_seeds(ledger) if score > 0]
+    fresh = [name for name in ranked if not corpus_current(name, digest)]
+    seeds = distinct_prefixes(ledger, fresh, limit) if limit else fresh
+    return digest, seeds
 
 def discover(seeds: list[str], *, budget: int, jobs: int, limit: int) -> int:
     ledger = load_ledger()
@@ -521,9 +541,7 @@ def discover(seeds: list[str], *, budget: int, jobs: int, limit: int) -> int:
     if unknown:
         raise CoverageError(f"not in the ledger: {', '.join(unknown)}")
     if not seeds:
-        ranked = [name for name, score in rank_seeds(ledger) if score > 0]
-        fresh = [name for name in ranked if not corpus_current(name, digest)]
-        seeds = distinct_prefixes(ledger, fresh, limit) if limit else fresh
+        digest, seeds = discover_frontier(ledger, limit)
     if not seeds:
         print(f"DISCOVER ledger={digest} seeds=0: every ranked seed has a corpus at this ledger")
         return 0
@@ -549,12 +567,37 @@ def commit_line(name: str) -> list[str]:
     return ["jj", "commit", f"tests/sessions/{name}", "tools/completion/session_ratchet.json",
             "-m", f"feat(session): record {name}"]
 
+def session_save_digest(name: str) -> str:
+    save = session.session_dir(name) / session.SAVE_FILE
+    return hashlib.sha256(save.read_bytes() if save.is_file() else b"").hexdigest()
 
-def intake(seed: str, *, top: int, land: bool) -> int:
-    """Record the seed's corpus scripts that reach the most routines no session
-    executes, verify each, and land it either way: a diverged session is how
-    a fact enters the tracker."""
-    ledger = load_ledger()
+
+def recorded_script_identities() -> set[tuple[str, str]]:
+    identities: set[tuple[str, str]] = set()
+    for name in session.session_names():
+        metadata = session.session_dir(name) / "session.json"
+        if not metadata.is_file():
+            continue
+        input_digest = json.loads(metadata.read_text()).get("input_sha256")
+        if isinstance(input_digest, str):
+            identities.add((input_digest, session_save_digest(name)))
+    return identities
+
+
+def script_identity(seed: str, script: Path,
+                    seed_data: tuple[list[int], dict[str, Any]] | None = None) -> tuple[str, str]:
+    seed_masks, seed_meta = seed_data or session.load_session(seed)
+    masks = refstream.load_masks(script)
+    if masks[:len(seed_masks)] != seed_masks:
+        raise CoverageError(f"{script} does not start with {seed}'s {len(seed_masks)} ordinals")
+    poke_text = refstream.pokes_text(seed_meta.get("pokes") or {})
+    input_digest = hashlib.sha256(bytes(mask & 0xff for mask in masks)
+                                      + poke_text.encode()).hexdigest()
+    save_digest = hashlib.sha256(seed_meta.get("save") or b"").hexdigest()
+    return input_digest, save_digest
+
+
+def intake_entries(seed: str, ledger: dict[str, Any]) -> tuple[Path, list[dict[str, Any]]]:
     if not is_clean(seed):
         confirmed = session.read_ratchet().get(seed, {}).get("confirmed_ordinal", 0)
         raise CoverageError(
@@ -567,9 +610,22 @@ def intake(seed: str, *, top: int, land: bool) -> int:
     entries = json.loads(index.read_text()).get("entries", [])
     if any("routines" not in entry for entry in entries):
         raise CoverageError(f"{index.relative_to(ROOT)} predates ledger scoring: rerun `just coverage-discover {seed}`")
+    missing = set(unexecuted(ledger))
+    recorded = recorded_script_identities()
+    seed_data = session.load_session(seed)
+    eligible = [
+        entry for entry in entries
+        if set(entry["routines"]) & missing
+        and script_identity(seed, corpus / entry["script"], seed_data) not in recorded
+    ]
+    return corpus, eligible
+
+def intake(seed: str, *, top: int, land: bool) -> int:
+    """Record the seed's unrecorded scripts that add the most missing routines."""
+    ledger = load_ledger()
+    corpus, remaining = intake_entries(seed, ledger)
     covered = executed_set(ledger)
     chosen: list[tuple[dict[str, Any], int]] = []
-    remaining = list(entries)
     while remaining and len(chosen) < top:
         best = max(remaining, key=lambda entry: (len(set(entry["routines"]) - covered), -entry["frames"]))
         gain = len(set(best["routines"]) - covered)
@@ -579,7 +635,7 @@ def intake(seed: str, *, top: int, land: bool) -> int:
         covered |= set(best["routines"])
         remaining.remove(best)
     if not chosen:
-        print(f"INTAKE {seed} scripts=0: the corpus reaches nothing the ledger lacks")
+        print(f"INTAKE {seed} scripts=0: no unrecorded script reaches a routine the ledger lacks")
         return 0
     worst = 0
     for entry, gain in chosen:
@@ -620,14 +676,78 @@ TARGET_STALL_PRIZES = 2
 def session_slug(card: str) -> str:
     return card.lower().replace("_", "-")
 
+def target_name(card: str, slot: int | None, ai: bool) -> str:
+    suffix = f"-{slot}" if slot else ""
+    if ai:
+        suffix += "-ai"
+    return f"effect-{session_slug(card)}{suffix}"
+
+
+def load_target_records() -> dict[str, dict[str, Any]]:
+    return json.loads(TARGETS_PATH.read_text()) if TARGETS_PATH.is_file() else {}
+
+
+def target_groups(ledger: dict[str, Any], names: list[str],
+                  by_routine: dict[str, list[dict[str, Any]]] | None = None
+                  ) -> dict[tuple[str, int | None, bool], set[str]]:
+    if by_routine is None:
+        import effects
+        by_routine = effects.load_map()["by_routine"]
+    wanted = expand_targets(ledger, names) if names else sorted(unexecuted(ledger))
+    groups: dict[tuple[str, int | None, bool], set[str]] = {}
+    for routine in wanted:
+        carriers = by_routine.get(routine)
+        if not carriers or ledger["routines"][routine]["sessions"]:
+            continue
+        carrier = carriers[0]
+        slot = int(carrier["slot"][-1]) if carrier["slot"].startswith("attack") else None
+        ai = carrier["command"] == "EFFECTCMDTYPE_AI_SELECTION"
+        groups.setdefault((carrier["card"], slot, ai), set()).add(routine)
+    return groups
+
+
+def target_frontier(ledger: dict[str, Any], names: list[str],
+                    *, records: dict[str, dict[str, Any]] | None = None,
+                    existing: set[str] | None = None,
+                    by_routine: dict[str, list[dict[str, Any]]] | None = None
+                    ) -> dict[str, list[tuple[str, int | None, list[str], bool]] | list[str]]:
+    records = load_target_records() if records is None else records
+    existing = set(session.session_names()) if existing is None else existing
+    pending: list[tuple[str, int | None, list[str], bool]] = []
+    attempted: list[tuple[str, int | None, list[str], bool]] = []
+    stale: list[str] = []
+    groups = target_groups(ledger, names, by_routine)
+    for (card, slot, ai), routines_set in sorted(
+            groups.items(), key=lambda item: (-len(item[1]), item[0])):
+        routines = sorted(routines_set)
+        recorded = [records[routine] for routine in routines if routine in records]
+        for row in recorded:
+            recorded_session = row.get("session")
+            if not isinstance(recorded_session, str) or recorded_session not in existing:
+                stale.append(f"{card}:{slot or 'trainer'} record points to {recorded_session!r}")
+        name = target_name(card, slot, ai)
+        item = (card, slot, routines, ai)
+        if recorded or name in existing or f"{name}-seed" in existing:
+            attempted.append(item)
+        else:
+            pending.append(item)
+    return {"pending": pending, "attempted": attempted, "stale": stale}
+
+
+def ensure_target_destinations_available(name: str) -> None:
+    collisions = [
+        candidate for candidate in (name, f"{name}-seed")
+        if session.session_dir(candidate).exists()
+    ]
+    if collisions:
+        raise CoverageError(
+            "refusing to overwrite recorded target session(s): " + ", ".join(collisions))
 
 def target_one(card: str, slot: int | None, routines: list[str], ai: bool = False) -> dict[str, Any]:
     import effects
 
-    suffix = f"-{slot}" if slot else ""
-    if ai:
-        suffix += "-ai"
-    name = f"effect-{session_slug(card)}{suffix}"
+    name = target_name(card, slot, ai)
+    ensure_target_destinations_available(name)
     deck = effects.build_deck(card, attack_slot=slot)
     deck_path = TARGETS_PATH.parent / f"{name}.deck"
     deck_path.parent.mkdir(parents=True, exist_ok=True)
@@ -640,6 +760,7 @@ def target_one(card: str, slot: int | None, routines: list[str], ai: bool = Fals
         "period": 8 if ai else 24,
         "tail": 3000 if ai else 1500,
     }
+    session.session_dir(name).mkdir()
     try:
         session.ai_duel(name, base=TARGET_BASE, at=TARGET_AT, deck=TARGET_OPPONENT,
                         goal=goal, cards=deck, watch=set(routines), arrange=True,
@@ -659,6 +780,7 @@ def target_one(card: str, slot: int | None, routines: list[str], ai: bool = Fals
             path.unlink()
         session.session_dir(name).rmdir()
         name = f"{name}-seed"
+        session.session_dir(name).mkdir()
         session.deck_seed(name, base=TARGET_BASE, at=TARGET_AT, deck=TARGET_OPPONENT, cards=deck,
                           goal=f"Search seed: {card} in hand, the AI never played it "
                                f"({', '.join(sorted(routines)[:4])})")
@@ -683,42 +805,24 @@ def target_worker(item: tuple[str, int | None, list[str], bool], lane: Path) -> 
             "error": (result.stderr.strip() or result.stdout.strip())[-300:]}
 
 def target(names: list[str], *, land: bool, limit: int, jobs: int = DEFAULT_VERIFY_JOBS) -> int:
-    import effects
-
     ledger = load_ledger()
-    executed = executed_set(ledger)
-    by_routine = effects.load_map()["by_routine"]
-    if names:
-        wanted = expand_targets(ledger, names)
-    else:
-        wanted = sorted(routine for routine in unexecuted(ledger) if routine in by_routine)
-    groups: dict[tuple[str, int | None, bool], set[str]] = {}
-    for routine in wanted:
-        if routine in executed or routine not in by_routine:
-            continue
-        carrier = effects.carriers(routine)[0]
-        slot = int(carrier["slot"][-1]) if carrier["slot"].startswith("attack") else None
-        ai = carrier["command"] == "EFFECTCMDTYPE_AI_SELECTION"
-        groups.setdefault((carrier["card"], slot, ai), set()).add(routine)
-    record = json.loads(TARGETS_PATH.read_text()) if TARGETS_PATH.is_file() else {}
-    existing = set(session.session_names())
-    queue: list[tuple[str, int | None, list[str], bool]] = []
-    for (card, slot, ai), routines in sorted(groups.items(), key=lambda item: (-len(item[1]), item[0])):
-        suffix = f"-{slot}" if slot else ""
-        if ai:
-            suffix += "-ai"
-        name = f"effect-{session_slug(card)}{suffix}"
-        if name in existing or f"{name}-seed" in existing:
-            continue
-        queue.append((card, slot, sorted(routines), ai))
-        if limit and len(queue) >= limit:
-            break
+    frontier = target_frontier(ledger, names)
+    stale = frontier["stale"]
+    if stale:
+        raise CoverageError("target records disagree with recorded sessions: " + "; ".join(stale))
+    pending = frontier["pending"]
+    attempted = frontier["attempted"]
+    queue = pending[:limit] if limit else pending
     if not queue:
-        print("TARGET none: every carried effect routine has a session")
+        attempted_routines = sum(len(item[2]) for item in attempted)
+        print(f"TARGET none: pending=0 attempted_groups={len(attempted)} "
+              f"attempted_routines={attempted_routines}; this producer is exhausted. "
+              "Run `just coverage-next`.")
         return 0
+    record = load_target_records()
     lane = freeze_lane()
     worst = 0
-    print(f"TARGET carriers={len(queue)} jobs={jobs}", file=sys.stderr)
+    print(f"TARGET carriers={len(queue)} pending={len(pending)} jobs={jobs}", file=sys.stderr)
     with ThreadPoolExecutor(max_workers=max(1, jobs)) as pool:
         for row in pool.map(lambda item: target_worker(item, lane), queue):
             if row.get("error"):
@@ -738,6 +842,53 @@ def target(names: list[str], *, land: bool, limit: int, jobs: int = DEFAULT_VERI
             land_session(row["session"], land=land)
     return worst
 
+def current_intake_seed(ledger: dict[str, Any]) -> str | None:
+    digest = executed_digest(ledger)
+    for seed, score in rank_seeds(ledger):
+        if score <= 0 or not corpus_current(seed, digest):
+            continue
+        _corpus, entries = intake_entries(seed, ledger)
+        if entries:
+            return seed
+    return None
+
+
+def choose_coverage_step(*, missing: int, pending_targets: int,
+                         intake_seed: str | None, discover_seeds: list[str],
+                         attempted_targets: int) -> tuple[str, int, str]:
+    """Pure decision table for the coverage producers."""
+    if pending_targets:
+        return ("target", 0, "just coverage-target --limit 20 --land")
+    if intake_seed is not None:
+        return ("intake", 0, f"just coverage-intake {intake_seed} --top 3 --land")
+    if discover_seeds:
+        return ("discover", 0, "just coverage-discover --limit 2 --jobs 2")
+    if missing == 0:
+        return ("done", 2, "all in-scope routines have recorded coverage")
+    return ("gate", 3, (
+        f"{missing} in-scope routines remain; target exhausted "
+        f"({attempted_targets} attempted groups), and no intake or discovery work remains"))
+
+
+def next_action() -> int:
+    ledger = load_ledger()
+    missing = len(unexecuted(ledger))
+    frontier = target_frontier(ledger, [])
+    stale = frontier["stale"]
+    if stale:
+        raise CoverageError("target records disagree with recorded sessions: " + "; ".join(stale))
+    intake_seed = current_intake_seed(ledger)
+    _digest, discover_seeds = discover_frontier(ledger, 2)
+    kind, code, detail = choose_coverage_step(
+        missing=missing,
+        pending_targets=len(frontier["pending"]),
+        intake_seed=intake_seed,
+        discover_seeds=discover_seeds,
+        attempted_targets=len(frontier["attempted"]),
+    )
+    print(f"NEXT kind={kind} missing={missing} detail={detail}")
+    return code
+
 
 def main(argv: list[str] | None = None) -> int:
     sys.stdout.reconfigure(line_buffering=True)
@@ -750,6 +901,7 @@ def main(argv: list[str] | None = None) -> int:
     ledger_parser.add_argument("--write-ratchet", action="store_true", help="accept a lower executed count")
     status_parser = sub.add_parser("status", help="files ranked by routines no session executes")
     status_parser.add_argument("--limit", type=int, default=20)
+    sub.add_parser("next", help="print the next coverage producer, done, or decision gate")
     affected_parser = sub.add_parser("affected", help="sessions a change to these routines can move")
     affected_parser.add_argument("targets", nargs="+")
     verify_parser = sub.add_parser("verify-affected", help="session-verify the affected sessions in parallel")
@@ -795,6 +947,8 @@ def main(argv: list[str] | None = None) -> int:
             return build(names, jobs=args.jobs, forced=forced, write_ratchet=args.write_ratchet)
         if args.command == "status":
             return status(args.limit)
+        if args.command == "next":
+            return next_action()
         if args.command in ("affected", "verify-affected"):
             ledger = load_ledger()
             names = affected(ledger, expand_targets(ledger, args.targets))
