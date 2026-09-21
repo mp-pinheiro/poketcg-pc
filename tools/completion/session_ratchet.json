@@ -497,6 +497,9 @@
   "effect-charmeleon-2-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-clefable-1-ai-seed": {
+    "confirmed_ordinal": 23227
+  },
   "effect-clefable-1-board": {
     "confirmed_ordinal": 29131
   },
@@ -526,6 +529,9 @@
   },
   "effect-clefairy-2": {
     "confirmed_ordinal": 26888
+  },
+  "effect-clefairy-2-ai-seed": {
+    "confirmed_ordinal": 23227
   },
   "effect-clefairy-2-board": {
     "confirmed_ordinal": 29131
@@ -577,6 +583,9 @@
   },
   "effect-dodrio-2": {
     "confirmed_ordinal": 38840
+  },
+  "effect-dragonair-2-ai-seed": {
+    "confirmed_ordinal": 23227
   },
   "effect-dragonair-2-board": {
     "confirmed_ordinal": 29131
