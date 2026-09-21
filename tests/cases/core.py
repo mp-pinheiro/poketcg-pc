@@ -7680,7 +7680,7 @@ SCHEMA2_CASES["DuelMenuShortcut_PlayerActivePokemon"][1]["completion"] = {"mode"
                                                                         "routine": "DuelMainInterface"}
 # <<< factory-completion DuelMenuShortcut_PlayerActivePokemon
 # >>> factory-mutation DuelMenu_PkmnPower
-MUTATIONS["DuelMenu_PkmnPower"] = {"source_symbol": "DuelMenu_PkmnPower", "before": "\tif ((DisplayPlayAreaScreenToUsePkmnPower().f & 0x10u) == 0u)", "after": "\tif ((DisplayPlayAreaScreenToUsePkmnPower().f & 0x10u) != 0u)", "case_ids": ["DuelMenu_PkmnPower-0"]}
+MUTATIONS["DuelMenu_PkmnPower"] = {"source_symbol": "DuelMenu_PkmnPower", "before": "\tif ((chosen.f & 0x10u) == 0u)", "after": "\tif ((chosen.f & 0x10u) != 0u)", "case_ids": ["DuelMenu_PkmnPower-0"]}
 # <<< factory-mutation DuelMenu_PkmnPower
 # >>> factory-completion DuelMenu_PkmnPower
 SCHEMA2_CASES["DuelMenu_PkmnPower"][0]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
