@@ -692,6 +692,9 @@
   "effect-electrode-lv42-2-seed": {
     "confirmed_ordinal": 23227
   },
+  "effect-energy-removal-ai-seed": {
+    "confirmed_ordinal": 23227
+  },
   "effect-energy-removal-play": {
     "confirmed_ordinal": 29035
   },
