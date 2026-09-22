@@ -2,30 +2,938 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.220.0 - 2026-09-03
+## v0.221.0 - 2026-09-22
 
 ### Bug Fixes
 
-- *(runtime)* Grant single vblank per disable lcd
-- *(tools)* Exclude free-running div from io compare
-- *(tools)* Exclude timer and if latches from io compare
-- *(tools)* Exclude hardware timing fabric from io compare
-- *(tools)* Correct vblank counter exclusion offset
-- *(port)* Consume menu print vblank at init
-- *(tools)* Exclude stat and audio fabric from io compare
-- *(tools)* Widen input presses for frame axis fidelity
-- *(port)* Use overworld map names table
-- *(runtime)* Restore asm doframe boundary order
-- *(tools)* Exclude timer counter from wram compare
-- *(runtime)* Declare service pass accessor
-- *(port)* Use full font index for glyph offset
-- *(runtime)* Sample input one scanout late
+- *(port)* Dispatch menu description by table index
+- *(tools)* Rank byte writers by last write
+- *(port)* Propagate menu cursor tail-jump regs
+- *(port)* Continue sfx stream after loop ends
+- *(port)* Store raw music call stack pointer
+- *(tools)* Drop io from per-frame census default
+- *(port)* Flush one cgb palette on bit six only
+- *(port)* Keep music pointer on stream end exit
+- *(port)* Skip cgb palette size byte on load
+- *(runtime)* Float unmapped io reads high
+- *(port)* Repair the second music driver
+- *(port)* Dispatch audio tick to the banked driver
+- *(tools)* Bound reference trace by doframe count
+- *(runtime)* Defer io unused bits to the routine oracle
+- *(overworld)* Farcall menu bank before label reads
+- *(scripting)* Pass sam rules multichoice args
+- *(data)* Pack tables embedded in code sections
+- *(sound)* Restore caller bank after audio calls
+- *(map)* Loop game event dispatch as the asm does
+- *(bg_map)* Stage the hblank byte and exit a
+- *(core)* Port the duel entry chain
+- *(duel_init)* Port the opponent intro screen
+- *(audit)* Read cuts blocks without a bank
+- *(scripting)* Read map names from the real table
+- *(trace)* Aggregate calls instead of logging them
+- *(tools)* Map the anchor stream instead of reading it
+- *(gate)* Report misses without the ordinal filter
+- *(map)* Enter the duel from the game event
+- *(core)* Read item menu params from its table
+- *(core)* Display the card page via its wrappers
+- *(core)* Dispatch every card page switch entry
+- *(gate)* Stop ratcheting a max-based ordinal
+- *(effect_functions)* Port the play area heal
+- *(core)* Always dispatch the attack animation
+- *(common)* Run the promotional card screen
+- *(core)* Finish the duel menu done action
+- *(effect_functions)* Loop the scavenge selection
+- *(effect_functions)* Call the prophecy screen
+- *(effect_functions)* Loop the trader deck pick
+- *(effect_functions)* Shuffle after the trade
+- *(core)* Report the shuffle animation c output
+- *(give_booster_pack)* Finish the pack sequence
+- *(challenge_machine)* Enter the duel after the song
+- *(tools)* Expand truncation audit through helpers
+- *(effect_functions)* Draw the no-effect text box
+- *(tools)* Skip local-label call targets
+- *(duel_core)* Send the default sgb palettes
+- *(start)* Wait for input on the card pop notice
+- *(effect_functions)* Loop the computer search list
+- *(effect_functions)* Run the fire discard input
+- *(duel_animation_core)* Drop the sprite anim shadow
+- *(duel_animation_core)* Drop the screen update shadow
+- *(duel_animation_core)* Drop the coords shadows
+- *(duel)* Open the in play area screen
+- *(duel_menus)* Open the duel check menu
+- *(core)* Open the check menu from the duel menu
+- *(core)* Derive the bench menu early exits
+- *(duel_menus)* Report the select button carry
+- *(play_area)* Derive the screen exit flags
+- *(scripting)* Return the multichoice b-press value
+- *(core)* Draw the duel scene tile data
+- *(core)* Start the duel after ai setup
+- *(core)* Restart the practice duel turn
+- *(map)* Map bank one for the duel
+- *(refstream)* Bind movie in writers, add axis
+- *(color)* Park faded components in hram
+- *(intro)* Skip to the title through LoadScene
+- *(animation)* Fetch OW frame tiles from bank 32
+- *(division)* Park the loop counter in hffb6
+- *(npc_core)* Step NPC tiles by two units
+- *(frames)* Mask the d-pad while repeat counts down
+- *(oracle)* Accept entry completion in gbref lane
+- *(home)* Match hand-typed constants to the asm
+- *(home)* Track the first duel into the play area
+- *(duel)* Draw the in-play-area screen from its tables
+- *(mem)* Model the hardware as a Game Boy Color
+- *(core)* Place the card page image at (6,4)
+- *(glossary)* Port the glossary screen from the asm
+- *(animations)* Dispatch the screen effect table
+- *(animations)* Run the screen animations
+- *(text)* Consume the symbol byte of tx_symbol
+- *(duel)* Move the evolution card out of the hand
+- *(duel)* Verify practice turns through the table
+- *(duel)* Print a blank when not poisoned
+- *(text)* Keep the coordinates across text prints
+- *(overworld)* Jump into map scripts from the callee
+- *(progress)* Count event-macro openers as code
+- *(ai)* Port energy, evolution and attack scoring
+- *(ai)* Trainer decisions carry their parameter
+- *(ai)* Retreat decisions follow the asm branches
+- *(save)* Sync the timer at the play-time read
+- *(npc)* Step sprites along the walk direction
+- *(menus)* Model the cursor draw exit register
+- *(core)* Init the power screen menu parameters
+- *(play_area)* Leave the blink counter on exit
+- *(overworld)* Arrive in the frame the step ends
+- *(menus)* Keep the cursor draw's zero on menu exits
+- *(core)* Return the text box wait's carry
+- *(effects)* Honour cancel in the trainer selections
+- *(effects)* Discard the hand for professor oak
+- *(ai)* Transfer energy in the oak re-run
+- *(ai)* Keep cowardice's below-tentacool restart
+- *(ai)* Park the play area count for clefairy doll
+- *(ai)* Discourage retreat when the knockout is usable
+- *(ai)* Only moltres stores a retreat bonus list
+- *(ai)* Keep the rom's energy removal and evolution index
+- *(ai)* Count set-up bench by deck index
+- *(ai)* Deck ids are two below the deck constants
+- *(effects)* Run the recoil attacks instead of echoing them
+- *(ai)* Knock out at or above hp, search the bench only
+- *(oracle)* Exclude the boot stack from auto-observe
+- *(ai)* Keep ronald's oak re-run inside its branch
+- *(scripts)* Dispatch the map object handlers
+- *(data)* Carry colon-labelled tables and the card tail
+- *(deck_configuration)* List cursor blink and d-pad
+- *(card_album)* Keep the lcdc byte in hffb3 after a card page
+- *(deck_configuration)* Use the rom card type filters
+- *(deck_configuration)* Confirm list row and align
+- *(deck_configuration)* Icon palette rect stride
+- *(deck_configuration)* Thread the lcd flush byte
+- *(lanes)* Make the trace lane and pack per-session
+- *(deck_configuration)* Unwind the menu func table exits
+- *(oracle)* Map the captured rom bank on both lanes
+- *(process_text)* Map the font tile through bankpush
+- *(input_name)* Return the map writer's a
+- *(input_name)* Thread the naming screen exits
+- *(oracle)* Move the lane stub out of wram data
+- *(sprites)* Return the animation frame's y
+- *(tools)* Retire sweep rows a newer sweep skipped
+- *(menus)* Thread the cursor exit registers
+- *(duel)* Deref card name for pkmn power text
+- *(port)* Clear the complemented carry flags
+- *(oracle)* Hook the return address in rom
+- *(scripting)* Npc coords miss takes .fail only
+- *(substatus)* Enter the pkmn power sub-labels
+- *(effects)* Thread the ai power and recoil exits
+- *(ai)* Energy search skips useful hand energy
+- *(scripting)* Return the script entry registers
+- *(ai)* Port the special attack scores in full
+- *(overworld_map)* Cursor table rows from asm
+- *(effects)* Draw the color change screen in full
+- *(effects)* Case the curse and heal family to ret
+- *(duel_init)* Case the duel intro to ret
+- *(input_name)* Case the naming screens to ret
+- *(core)* Case the done menu item to ret
+- *(tests)* Map a banked routine's own bank in the probe
+- *(ai)* Trainer loop rescans with the decide exit d
+- *(duel)* Restore the substatus call sites
+- *(effects)* Case the pokemon trader to ret
+- *(retreat)* Weakness scan exits as the asm
+- *(retreat)* Set-up bench count scores the retreat
+- *(effects)* Force energy spike for any energy
+- *(oracle)* Fail an entry case the port returns from
+- *(runtime)* Schedule the stat isr from the track
+- *(tests)* Restore the cases stale copies dropped
+- *(tests)* Repair the case marker pairs
+- *(sweep)* Rank a doframe-looping row as frames
+- *(card_data)* Replay the vram spill of a card copy
+- *(core)* Load the attack begin indices from hram
+- *(sweep)* Seed the save banks in every entry
+- *(retreat)* Score the arena that cannot knock out
+- *(challenge_hall)* Five medals close cup one
+- *(pokemon_dome)* Event read and after-duel
+- *(effects)* Port peal of thunder from the asm
+- *(ai)* Deck turns return on the play, not retreat
+- *(cases)* Dotted dome marker, re-anchored mutations
+- *(ai)* Five deck-batch divergences
+- *(damage)* Bench estimate returns the damage in de
+- *(ai)* Retrieval scratch write, null card span
+- *(ai)* Imakuni maintenance reports its card
+- *(probe)* Run the animation hook's effect
+- *(probe)* Keep the effect table out of the block
+- *(sweep)* A budget-exhausted row is frames
+- *(audit)* Count only reachable asm blocks
+- *(audit)* Own locals and bank pairs are not echoes
+- *(audit)* A delegating statement is not a stub
+- *(deck)* The editor's unwind, cursor and bank
+- *(core)* Thread the power effect's registers
+- *(duel)* Count from the duelist page's start
+- *(harness)* Count STAT ISRs and grow lag lines
+- *(credits)* One window ends the scroll list
+- *(ai)* Special attack flags follow the asm's a
+- *(pkmn_powers)* Early exits keep the callee's Z
+- *(ai)* Evolution scan leaves the last candidate in d
+- *(ai)* Playable check flags follow ccf
+- *(duel)* Alive scan reads count slots, flags asm
+- *(ai)* Energy-in-hand Z follows the tested value
+- *(substatus)* Strikes-back compare implies no carry
+- *(ai)* Hand sort keeps the caller's registers
+- *(duel)* Card description exit is xor a
+- *(duel)* Attack info exits as the asm's dec d
+- *(duel)* Play area row leaves hl past the copy
+- *(animations)* Shakes leave their pair in bc
+- *(duel)* Card pages return the asm's exit registers
+- *(duel)* Card image attributes leave the fill's bc, hl
+- *(trainer)* Imakuni's Maintenance exits as the asm
+- *(effects)* Curse and power effect keep bc/de
+- *(ai)* Energy retrieval parks the dupe in wce06
+- *(ai)* Energy search follows the asm exits
+- *(ai)* Strange behavior returns the damage regs
+- *(duel)* Location count and queue keep hl and c
+- *(text)* Header exit is the writer's a and hl
+- *(cases)* Re-anchor the canaries the merge invalidated
+- *(energy)* Store the ai score into the backup
+- *(oracle)* Cap the mutation lane by the case budget
+- *(cases)* Re-anchor every dead canary
+- *(session)* Tick the boot interval at anchor one
+- *(oracle)* Build before the mutation baseline
+- *(music1)* Purify vibrato and channel 3 stop
+- *(map)* Verify the battle center to the link call
+- *(common)* Send the card through the ir wrapper
+- *(map)* Run the gift center handler
+- *(session)* Sync the timer at the driver store
+- *(music2)* Purify the vibrato twin
+- *(music1)* Re-read the ids after a sound starts
+- *(deck)* Bank one for the card page input loop
+- *(deck)* Keep the scrolled cursor row
+- *(completion)* Re-pin the inventory digest
+- *(completion)* Count Script_f631 and re-pin bijection
+- *(audio)* Write the sweep register on ch1 only
+- *(coverage)* Intake only from a clean seed
+- *(audio)* Line-buffer the tickdiff report
+- *(tracker)* Drop reports of deleted sessions
+- *(effects)* Fossil pre-evos and energy padding
+- *(coverage)* Skip unverified sessions in the ledger
+- *(overworld)* Keep Z at FindNPCOrObject's scf exits
+- *(process_text)* PlaceNextTextTile exit a and c
+- *(process_text)* Return Func_22ca's exit a
+- *(tracker)* Close facts whose report was pruned
+- *(warp)* Z at the warp list terminator exit
+- *(effects)* Thread the effect exit a to the dispatcher
+- *(mason-lab)* Apply the challenge machine map event
+- *(effects)* Discard-pile scan reads the ROM's window
+- *(effects)* Colour symbol index wraps like the ROM
+- *(ai)* Heal the arena when the defender cannot KO
+- *(cases)* Run prophecy select to its real ret
+- *(discover)* Rank seeds by yield per replay cost
+- *(discover)* One seed per replayed prefix
+- *(deck-machine)* Write both club name text slots
+- *(scripts)* Enter the bytecode after a prologue
+- *(pack)* Carry every script entry's bytecode
+- *(seed)* Poke a normal duel type, not a duelist
+- *(core)* Attack slot category byte and write exit
+- *(effects)* Deck search prompt and name texts
+- *(effects)* Trainer discard scan reads the ROM window
+- *(ai)* Drop an invented call in color conversion
+- *(scripts)* Let deck machine scripts run their bytecode
+- *(config)* Print the config screen labels
+- *(duel)* Keep the trainer detail screen's registers
+- *(deck)* Print the collection total from its start
+- *(tools)* Drop repeat-wrapper families, not runs
+- *(deck)* Print each card row at its own y
+- *(naming)* Jump the deck name cursor to 6,6
+- *(session)* Dedup scripts per save, not input alone
+- *(duel)* Draw the attack page, not just its toggle
+- *(duel)* Inline the knocked-out wait, no DoAFrames
+- *(duel)* Thread the power menu de, drop invented writes
+- *(duel)* Thread the HUD pointer into after-damage
+- *(effect)* Scoop up scans the whole play area
+- *(ai)* Swap turn to read the flute discard pile
+- *(coverage)* Target ai effects
+- *(port)* Align ai attack selection
+- *(tests)* Refresh DuelMenu mutation anchor
+- *(coverage)* Make loop deterministic
 
 ### Documentation
 
-- *(plan)* Add integration program plan
+- Record census results and 86pct program
+- Record per-frame census and io comparability
+- Require cases observe what a routine writes
+- Record call-count diff and music bank find
+- Add the tas progress loop runbook
+- Record farcall bank bugs and two blockers
+- Record script entry table and probe budget
+- Add the grind runbook
+- Name the frame to attribute a miss to
+- Add hang and divergence recipes
+- Order stub work from the leaves up
+- Name the luck-manipulation divergence class
+- Record the entry mode limits
+- Record the multi-exit contract blocker
+- Record the card list seeding technique
+- Record closing the narrowed field
+- Record the coin toss de contract
+- Attribute the toss de to the audio driver
+- Record the truncated body class
+- Record the truncation audit
+- Record the truncation audit refinement
+- Record the sgb branch and ai blocker
+- Enumerate the ai energy carry exits
+- Close the ai energy carry chain
+- Correct the ai blocker status
+- Name the ai a-register blocker
+- Triage the remaining truncation rows
+- Record the seed masking hazard
+- Bottom out the ai register chain
+- Record the threaded attack contracts
+- Close the ai register chain
+- Record the first ai body port
+- Record the failed ai seed attempt
+- Record the cursor counter lead
+- Retract the cursor counter lead
+- Record the duplicated animation routines
+- Record the shadow audit
+- Record the shadow removal gate jump
+- Record the duel loop port
+- Record the orphaned play area chain
+- Scope the select button register chain
+- Record the select path floor
+- Record the bench menu flag detail
+- Record the play area screen port
+- Record the duel menu region root
+- Correct the ratchet trade rationale
+- Name the overworld spin as the blocker
+- Record the multichoice and scene fixes
+- Record the player turn fallthroughs
+- Run every gate each iteration
+- Record the ai-duel session generator
+- Move the tas ceiling to the duel escape
+- Record the fighting club route and pilot peek
+- The loop prompt
+- *(grind)* Trainer-loop phase quirk row
+- *(grind)* Scanline-raced scroll row
+- *(grind)* Menu cadence and workspace landing
+- *(grind)* Rebase before copying a shared file
+- *(grind)* The hscx slip is the stat schedule
+- *(grind)* The card copy spill is tracked
+- *(grind)* The frames sweep row and seeded saves
+- *(grind)* The ai deck batch's four classes
+- *(grind)* The stack-arithmetic flag class
+- Record the four audio defects
+- Root-cause the sfx sync offset
+- Record the cuts discriminator
+- Record the audio sync findings
+- Localise the credits audio row
+- Measure coverage and the bank find
+- Record the scroll arm and the count trap
+- Correct the credits audio finding
+- Clear the schedule as credits suspect
+- Coverage program, audio and reach harnesses
+- *(grind)* Record the ISR placement measurements
+- *(coverage)* Add the loop prompt
+- Audit state, milestones and both prompts
+- *(audio)* Corpus breadth and the 3415 chain
+- *(grind)* Counts are slice-relative
+- *(audio)* Music2 entry points are unreachable
+- *(coverage)* Decompose the unexecuted set
+- *(coverage)* Board levers and duel menu tails
+- *(coverage)* Read the effect gate, not the tail
+- *(coverage)* Opponent board lever and residue
+- *(coverage)* Type the swap halves as unreachable
+- *(coverage)* Chord inputs need a mask script
+- *(coverage)* Probe-only routine visibility trap
+- *(coverage)* Unmeasurable set has no registration gap
 
 ### Features
 
-- *(runtime)* Classify service and frame boundary passes
+- *(tools)* Count and attribute scene divergence
+- *(tools)* Report scene divergence burn-down
+- *(tools)* Census divergence per anchor ordinal
+- *(tools)* Diff native call counts against rom
+- *(tools)* Search inputs for coverage and inject state
+- *(tools)* Gate port progress on a completion tas
+- *(probe)* Bound non-returning routines by frame
+- *(script)* Derive the script entry jump table
+- *(port)* Give farcall targets their own bank
+- *(script)* Dispatch every computed script jump
+- *(gate)* Ratchet tas progress and audit counts
+- *(audit)* Find dropped loops and stub bodies
+- *(audit)* Rank stubs by dropped asm calls
+- *(audit)* Find stub-shaped completion pcs
+- *(mem)* Watch a wram byte for its writer
+- *(tools)* Census and verify the movie input axis
+- *(probe)* Stop a case at a routine entry
+- *(tests)* Let a case narrow its comparison
+- *(tools)* Audit probe register overrides
+- *(tools)* Audit prefix-truncated bodies
+- *(energy)* Report the ai energy carry
+- *(core)* Report the ai decision a output
+- *(attacks)* Thread the ai attack a output
+- *(energy)* Report the ai energy a output
+- *(pkmn_powers)* Port the energy trans transfer
+- *(tools)* Audit duplicate rom routine bodies
+- *(core)* Port the main duel loop
+- *(play_area)* Report the in play area carry
+- *(core)* Port the play area screen
+- *(duel_menus)* Report the select button carry
+- *(core)* Port the duel menu select shortcut
+- *(core)* Port the duel menu input handler
+- *(core)* Port the main duel interface
+- *(tools)* Trade unmatched execution for matched
+- *(shell)* Hold keys and pace frames for play
+- *(runtime)* Record and replay input per DoFrame
+- *(completion)* Verify recorded play sessions
+- *(scripting)* Run NPC pre-load functions
+- *(completion)* First human session, per-symbol writers
+- *(shell)* Take focus when a replay hands over
+- *(completion)* Compare VRAM and the repeat counter
+- *(runtime)* Per-DoFrame state digest stream
+- *(completion)* Derive sessions from the ROM, exact digests
+- *(runtime)* Replay the reference lag track
+- *(completion)* Verify sessions on the lag track
+- *(tools)* Lint hand-typed constants against asm
+- *(core)* Port the duel menu retreat and shortcuts
+- *(tools)* Reject banked literals that name code
+- *(oracle)* Auto-observe writes and audit blind spots
+- *(completion)* Declare a session ceiling
+- *(completion)* Pilot sessions on the reference
+- *(duel)* Port the attack damage and knockout path
+- *(ai)* Dispatch the deck ai and trainer cards
+- *(runtime)* Schedule vblank services at the game's counter writes
+- *(tests)* Capture any routine entry as a fixture
+- *(gate)* Reject acceptance escape hatches
+- *(gate)* Ratchet the unaudited hatch count
+- *(oracle)* Replay movies with their own boot and clock
+- *(session)* Poke primitive and ai-versus-ai duel generator
+- *(tools)* Key streams by sync points and boot
+- *(sessions)* Route to the fighting club
+- *(scripts)* Port the club entrance preloads
+- *(scripts)* Port the fighting club pupil preloads
+- *(scripts)* Port the challenge hall preloads
+- *(scripts)* Port the pokemon dome preloads
+- *(scripts)* Port the club and house preloads
+- *(scripts)* Port the club lobby preloads
+- *(sessions)* Route to the rock club and Andrew's duel
+- *(pilot)* Play duels from wram
+- *(pilot)* Dismiss, yes and duel setup verbs
+- *(sessions)* Gene's duel
+- *(tools)* Audit echo bodies and deep cuts
+- *(runtime)* Dispatch the stat interrupt trampoline
+- *(completion)* Sweep every routine a session enters
+- *(sessions)* The ai-duel matrix, one per duel
+- *(tools)* Project the loop's facts onto the tracker
+- *(tools)* Warn when reports outrun the tracker
+- *(tools)* Claim issues across parallel sessions
+- *(sessions)* The lab pc and the deck machines
+- *(overworld)* Port the pc menu and its reload callback
+- *(card_album)* Port the album and its set list
+- *(sessions)* Capture sram for save-reading routines
+- *(process_text)* Return the text terminator flags
+- *(deck_machine)* Port the entry build status
+- *(deck_configuration)* Dispatch the menu handler pointer
+- *(session)* Record isaac-duel route
+- *(session)* Record water-club route
+- *(session)* Record water-3 route
+- *(session)* Record psychic-club route
+- *(effects)* Port super potion and heal in full
+- *(effects)* Port friendship song and prove heal
+- *(session)* Record fire-club route
+- *(effects)* Port the bench selection effects
+- *(ai)* Exit d on 32 trainer decide routines
+- *(ai)* Port the damage swap decision
+- *(core)* Port the duel scene hotkeys and select menu
+- *(effects)* Port the bench switch selections
+- *(duel)* Open the play area screens from the check menu
+- *(audit)* Fail on lost case blocks and markers
+- *(credits)* Play the credits sequence
+- *(session)* Ai duels load the deck's own cards
+- *(session)* Record ronald-1, the first duel
+- *(session)* Record ronald-2, the second duel
+- *(session)* Record ronald-3, Ronald at the Dome
+- *(session)* Record dome-4, Rod's duel
+- *(session)* Record dome-5, Ronald at the Dome
+- *(session)* Record every ai deck duel
+- *(explore)* Search from a recorded session
+- *(map)* Finish the challenge machine event
+- *(session)* Record the deck editor route
+- *(session)* Record the club-state route
+- *(session)* Record ai-science, Wonders of Science
+- *(gate)* Enforce the mutation audit
+- *(session)* Record two coverage-search routes
+- *(session)* Record two editor coverage routes
+- *(core)* Port the card page input loop
+- *(session)* Record the isaac coverage route
+- *(session)* Record the ronald coverage route
+- *(coverage)* Ledger, discover, intake, target
+- *(audio)* Driver-level tick oracle
+- *(session)* Record effect-pidgeotto-2
+- *(session)* Save-seeded sessions and savegen
+- *(link)* Serial transport and console loopback
+- *(session)* Record two credits coverage routes
+- *(session)* Record three card-effect targets
+- *(session)* Record effect-moltres-lv35-1
+- *(session)* Record effect-slowpoke-lv18-2-seed
+- *(session)* Record effect-starmie-1-seed
+- *(session)* Record effect-charizard-2-seed
+- *(diag)* Record which routine each ISR interrupts
+- *(session)* Record effect-exeggutor-1
+- *(session)* Record seed-packs from a save image
+- *(session)* Record effect-gastly-lv17-2
+- *(session)* Record effect-gastly-lv8-2-seed
+- *(session)* Record effect-hitmonlee-1
+- *(session)* Record effect-krabby-1
+- *(session)* Record effect-mewtwo-alt-lv60-1
+- *(session)* Record effect-mewtwo-lv53-2-seed
+- *(session)* Record effect-mewtwo-lv60-1
+- *(session)* Record effect-ninetales-lv32-1
+- *(session)* Record effect-ninetales-lv32-2
+- *(session)* Record effect-oddish-2
+- *(session)* Record effect-poliwhirl-1-seed
+- *(session)* Record effect-venusaur-lv67-1-seed
+- *(session)* Record effect-victreebel-1-seed
+- *(session)* Record effect-arcanine-lv45-1-seed
+- *(session)* Record effect-charmeleon-2-seed
+- *(session)* Record effect-clefable-1-seed
+- *(session)* Record effect-clefairy-2
+- *(session)* Record effect-devolution-spray-seed
+- *(session)* Record effect-dragonair-2-seed
+- *(session)* Record the auto deck machine route
+- *(session)* Record effect-electrode-lv35-2-seed
+- *(session)* Record effect-hypno-1-seed
+- *(session)* Record effect-item-finder
+- *(session)* Record effect-marowak-lv26-2
+- *(session)* Record effect-mew-lv15-1
+- *(session)* Record effect-nidoking-1-seed
+- *(session)* Record effect-pokemon-flute
+- *(session)* Record effect-poliwrath-2-seed
+- *(session)* Record effect-porygon-2-seed
+- *(session)* Record effect-raichu-lv45-1-seed
+- *(session)* Record effect-revive
+- *(session)* Record effect-super-energy-retrieval-seed
+- *(session)* Record effect-venomoth-1
+- *(session)* Record effect-alakazam-1-seed
+- *(session)* Record effect-arbok-1-seed
+- *(session)* Record effect-articuno-lv35-2
+- *(session)* Record effect-articuno-lv37-1
+- *(session)* Record effect-articuno-lv37-2
+- *(session)* Record effect-beedrill-1-seed
+- *(session)* Record effect-butterfree-1-seed
+- *(session)* Record effect-cloyster-2
+- *(session)* Record effect-computer-search-seed
+- *(session)* Record effect-dodrio-2
+- *(session)* Record effect-dragonite-lv41-1-seed
+- *(session)* Record effect-dragonite-lv41-2-seed
+- *(session)* Record effect-dragonite-lv45-1-seed
+- *(session)* Record effect-dragonite-lv45-2-seed
+- *(session)* Record effect-electabuzz-lv20-2
+- *(session)* Record effect-energy-removal-seed
+- *(session)* Record effect-energy-retrieval-seed
+- *(session)* Record effect-flareon-lv22-2-seed
+- *(session)* Record effect-jigglypuff-lv12-1
+- *(session)* Record effect-jolteon-lv24-1-seed
+- *(session)* Record effect-kingler-1
+- *(session)* Record effect-magneton-lv35-1-seed
+- *(session)* Record effect-marowak-lv32-2
+- *(session)* Record effect-nidoking-2-seed
+- *(session)* Record effect-nidorina-2
+- *(session)* Record effect-pidgeot-lv38-2-seed
+- *(session)* Record the challenge machine route
+- *(session)* Record effect-pokemon-breeder-seed
+- *(session)* Record effect-pokemon-trader-seed
+- *(session)* Record effect-poliwhirl-2-seed
+- *(session)* Record effect-primeape-1-seed
+- *(session)* Record effect-rhydon-2
+- *(session)* Record effect-scoop-up-seed
+- *(session)* Record effect-slowbro-1-seed
+- *(session)* Record effect-super-potion-seed
+- *(session)* Record effect-venusaur-lv64-1-seed
+- *(session)* Record effect-vileplume-1
+- *(session)* Record effect-vileplume-2
+- *(session)* Record effect-aerodactyl-1-seed
+- *(session)* Record effect-arbok-2-seed
+- *(session)* Record effect-arcanine-lv34-2-seed
+- *(session)* Record effect-arcanine-lv45-2-seed
+- *(session)* Record effect-beedrill-2-seed
+- *(session)* Record effect-bellsprout-2-seed
+- *(session)* Record effect-blastoise-1
+- *(session)* Record effect-blastoise-2
+- *(session)* Record effect-bulbasaur-1-seed
+- *(session)* Record effect-butterfree-2
+- *(session)* Record effect-chansey-2-seed
+- *(session)* Record effect-charizard-1-seed
+- *(session)* Record effect-charmander-2-seed
+- *(session)* Record effect-clefable-2-seed
+- *(session)* Record effect-clefairy-1-seed
+- *(session)* Record effect-defender-seed
+- *(session)* Record effect-ditto-2-seed
+- *(session)* Record effect-dugtrio-2-seed
+- *(session)* Record effect-electrode-lv35-1-seed
+- *(session)* Record effect-electrode-lv42-2-seed
+- *(session)* Record effect-energy-search-seed
+- *(session)* Record effect-exeggcute-2
+- *(session)* Record effect-exeggutor-2-seed
+- *(session)* Record effect-fearow-1
+- *(session)* Record effect-flareon-lv28-2-seed
+- *(session)* Record effect-full-heal-seed
+- *(session)* Record effect-gambler-seed
+- *(session)* Record effect-gloom-1
+- *(session)* Record effect-gloom-2
+- *(session)* Record effect-golbat-2
+- *(session)* Record effect-golduck-2-seed
+- *(session)* Record effect-golem-2-seed
+- *(session)* Record effect-graveler-1-seed
+- *(session)* Record effect-grimer-2-seed
+- *(session)* Record effect-gust-of-wind-seed
+- *(session)* Record effect-hypno-2-seed
+- *(session)* Record effect-imposter-professor-oak-seed
+- *(session)* Record effect-ivysaur-2-seed
+- *(session)* Record effect-jigglypuff-lv12-2-seed
+- *(session)* Record effect-kabuto-1-seed
+- *(session)* Record effect-kabutops-2-seed
+- *(session)* Record effect-kakuna-1-seed
+- *(session)* Record effect-kakuna-2-seed
+- *(session)* Record effect-lass-seed
+- *(session)* Record effect-lickitung-2-seed
+- *(session)* Record effect-machamp-1-seed
+- *(session)* Record effect-magmar-lv24-2-seed
+- *(session)* Record effect-magmar-lv31-1
+- *(session)* Record effect-magnemite-lv13-2-seed
+- *(session)* Record effect-magnemite-lv15-2-seed
+- *(session)* Record effect-magneton-lv35-2-seed
+- *(session)* Record effect-maintenance-seed
+- *(session)* Record effect-metapod-1
+- *(session)* Record effect-moltres-lv37-1
+- *(session)* Record effect-moltres-lv37-2
+- *(session)* Record effect-mr-fuji-seed
+- *(session)* Record effect-nidoqueen-1
+- *(session)* Record effect-nidoranf-2-seed
+- *(session)* Record effect-nidorina-1-seed
+- *(session)* Record effect-ninetales-lv35-1-seed
+- *(session)* Record effect-ninetales-lv35-2-seed
+- *(session)* Record effect-omanyte-1-seed
+- *(session)* Record effect-onix-2-seed
+- *(session)* Record effect-persian-2-seed
+- *(session)* Record effect-pidgeotto-1-seed
+- *(session)* Record effect-pidgeot-lv38-1
+- *(session)* Record effect-pidgeot-lv40-2
+- *(session)* Record effect-pidgey-1-seed
+- *(session)* Record effect-pikachu-alt-lv16-1
+- *(session)* Record effect-pikachu-lv14-1-seed
+- *(session)* Record effect-pokedex-seed
+- *(session)* Record effect-pokemon-center-seed
+- *(session)* Record effect-poke-ball-seed
+- *(session)* Record effect-poliwrath-1-seed
+- *(session)* Record effect-porygon-1-seed
+- *(session)* Record effect-primeape-2-seed
+- *(session)* Record effect-psyduck-1
+- *(session)* Record effect-psyduck-2
+- *(session)* Record effect-raichu-lv40-1-seed
+- *(session)* Record effect-rapidash-1-seed
+- *(session)* Record effect-rapidash-2-seed
+- *(session)* Record effect-recycle-seed
+- *(session)* Record effect-seadra-1
+- *(session)* Record effect-seadra-2
+- *(session)* Record effect-shellder-1-seed
+- *(session)* Record effect-slowpoke-lv9-2-seed
+- *(session)* Record effect-squirtle-2-seed
+- *(session)* Record effect-super-energy-removal-seed
+- *(session)* Record effect-switch-seed
+- *(session)* Record effect-tangela-lv8-2
+- *(session)* Record effect-tentacool-1-seed
+- *(session)* Record effect-tentacruel-1-seed
+- *(session)* Record effect-vaporeon-lv29-1-seed
+- *(session)* Record effect-venonat-2
+- *(session)* Record effect-venusaur-lv64-2-seed
+- *(session)* Record effect-victreebel-2-seed
+- *(session)* Record effect-zapdos-lv40-1
+- *(session)* Record effect-zapdos-lv64-2
+- *(session)* Record effect-zapdos-lv68-2
+- *(session)* Record the stalling carriers at 2 prizes
+- *(target)* Retry a stalled duel at two prizes
+- *(session)* Record effect-poke-ball-seed-explore-1
+- *(session)* Record three deck machine routes
+- *(session)* Drive a seeded duel through setup
+- *(session)* Play a trainer card from hand
+- *(session)* Play five trainer cards from hand
+- *(session)* Play thirteen trainer cards
+- *(session)* Regenerate seeds with a real duel type
+- *(session)* Computer search play and fresh seeds
+- *(seed)* Poke a duel board for attack carriers
+- *(session)* Board-seed twenty-six more carriers
+- *(session)* Board-seed 57 attack carriers
+- *(session)* Land nineteen board carriers
+- *(session)* Tour the duel check and play-area screens
+- *(session)* Visit the three deck machines
+- *(probe)* Reach search against the ledger
+- *(coverage)* Label the tracer's unmeasurable set
+- *(session)* Reach five pokemon power effects
+- *(session)* Record seed-deck-machines-explore-4
+- *(session)* Record seed-deck-machines-explore-5
+- *(session)* Record seed-deck-machines-explore-2-explore-1
+- *(session)* Record seed-deck-machines-explore-2-explore-2
+- *(session)* Record seed-deck-machines-explore-2-explore-3
+- *(harness)* Record a deck seed's input tail
+- *(session)* Reach the doubleslap multiplier
+- *(harness)* Seed a duel hand and discard pile
+- *(session)* Five trainer precondition seeds
+- *(session)* Record effect-item-finder-pre-explore-1
+- *(session)* Record effect-item-finder-pre-explore-2
+- *(session)* Record effect-energy-retrieval-pre-explore-1
+- *(session)* Record effect-energy-retrieval-pre-explore-2
+- *(session)* Record effect-recycle-pre-explore-1
+- *(session)* Record effect-recycle-pre-explore-2
+- *(session)* Record effect-revive-pre-explore-1
+- *(session)* Record effect-revive-pre-explore-2
+- *(harness)* Poke a deck seed's discard pile
+- *(session)* Three player trainer selections
+- *(session)* Five more trainer selections
+- *(session)* Four trainer effects resolve
+- *(harness)* Poke status, stage and opponent discard
+- *(session)* Pokemon flute and full heal plays
+- *(harness)* Poke the opponent deck list
+- *(session)* Eight club deck AI duels
+- *(session)* Record seed-deck-machines-explore-6
+- *(session)* Record seed-deck-machines-explore-7
+- *(session)* Record seed-deck-machines-explore-2-explore-4
+- *(session)* Record seed-deck-machines-explore-2-explore-5
+- *(session)* Record seed-deck-machines-explore-2-explore-3-explore-1
+- *(trace)* Windowed ordered call log
+- *(tools)* First divergent call in an interval
+- *(session)* Record seed-deck-machines-explore-8
+- *(session)* Record seed-deck-machines-explore-9
+- *(session)* Record seed-deck-machines-explore-2-explore-6
+- *(session)* Record seed-deck-machines-explore-2-explore-7
+- *(session)* Record seed-deck-machines-explore-8-explore-1
+- *(session)* Record seed-deck-machines-explore-8-explore-2
+- *(session)* Record seed-deck-machines-explore-2-explore-7-explore-1
+- *(session)* Record seed-deck-machines-explore-2-explore-7-explore-2
+- *(savegen)* Seed built and saved decks
+- *(session)* Seeded save with built decks
+- *(session)* Record seed-built-decks-explore-1
+- *(session)* Record challenge-machine-explore-1
+- *(session)* Record challenge-machine-explore-2
+- *(session)* Record challenge-machine-explore-3
+- *(session)* Record club-explore-explore-1
+- *(session)* Record club-explore-explore-2
+- *(session)* Record club-explore-explore-3
+- *(session)* Record club-explore-tail
+- *(session)* Record club-explore-explore-3-explore-1
+- *(session)* Record club-explore-explore-3-explore-2
+- *(session)* Record club-explore-explore-3-explore-3
+- *(session)* Record club-explore-tail-explore-1
+- *(session)* Record challenge-machine-explore-1-explore-1
+- *(session)* Record challenge-machine-explore-2-explore-1
+- *(session)* Poke a bench into a board seed
+- *(session)* Board seeds with preconditions
+- *(session)* Power-path board seeds
+- *(session)* Poke the arena card's remaining HP
+- *(session)* Damaged-arena board seeds
+- *(session)* Status poke and second-selection seeds
+- *(session)* Record effect-slowbro-1-power-explore-1
+- *(session)* Record effect-slowbro-1-power-explore-2
+- *(session)* Record effect-slowbro-1-power-explore-3
+- *(session)* Record effect-alakazam-1-power-explore-1
+- *(session)* Record effect-alakazam-1-power-explore-2
+- *(session)* Record effect-mew-lv23-2-devolve-explore-1
+- *(session)* Arena flags and bench energy pokes
+- *(session)* Power boards for Cowardice and Trans
+- *(session)* Bench-slot power board for Step In
+- *(session)* Poke the opponent board too
+- *(session)* Curse and Scavenge board seeds
+- *(session)* Seeded save with the full collection
+- *(session)* Damage swap board seed
+- *(session)* Curse transfer with a poked opponent
+- *(session)* Record seed-allcards-explore-1
+- *(session)* Record seed-allcards-explore-2
+- *(session)* Record dome-1-explore-1
+- *(session)* AI duel with a trainer-heavy deck
+- *(session)* AI trainer duels across three decks
+- *(session)* AI trainer duels against decks 20 and 28
+- *(session)* Seeded AI trainer duels
+- *(session)* Duel menu B-combo shortcuts
+- *(session)* Seed from a save captured mid-duel
+- *(session)* Deck machine collection counters
+- *(session)* Forced master win branch divergence
+- *(coverage)* Add arcanine ai route
+- *(coverage)* Add ninetales ai route
+- *(session)* Record effect-charizard-2-ai-seed
+- *(session)* Record effect-charmeleon-2-ai-seed
+- *(session)* Record effect-clefable-1-ai-seed
+- *(session)* Record effect-clefairy-2-ai-seed
+- *(session)* Record effect-dragonair-2-ai-seed
+- *(session)* Record effect-electrode-lv35-2-ai-seed
+- *(session)* Record effect-energy-removal-ai-seed
+- *(session)* Record effect-exeggutor-1-ai-seed
+- *(session)* Record effect-gastly-lv17-2-ai-seed
+- *(session)* Record effect-gastly-lv8-2-ai-seed
+- *(session)* Record effect-hypno-1-ai-seed
+- *(session)* Record effect-kadabra-1-ai-seed
+- *(session)* Record effect-krabby-1-ai
+- *(session)* Record effect-mewtwo-alt-lv60-1-ai-seed
+- *(session)* Record effect-mewtwo-lv53-2-ai-seed
+- *(session)* Record effect-mewtwo-lv60-1-ai-seed
+- *(session)* Record effect-mew-lv23-2-ai-seed
+- *(session)* Record effect-moltres-lv35-1-ai-seed
+- *(session)* Record effect-ninetales-lv32-1-ai-seed
+- *(session)* Record effect-pidgeotto-2-ai-seed
+- *(session)* Record effect-poliwhirl-1-ai
+- *(session)* Record effect-poliwrath-2-ai-seed
+- *(session)* Record effect-porygon-2-ai
+- *(session)* Record effect-raichu-lv45-1-ai-seed
+- *(session)* Record effect-slowpoke-lv18-2-ai-seed
+- *(session)* Record effect-starmie-1-ai-seed
+- *(session)* Record effect-victreebel-1-ai-seed
+- *(coverage)* Land beedrill ai route
+- *(coverage)* Land charmeleon ai route
+- *(coverage)* Land jolteon ai route
+- *(coverage)* Record dragonite ai fact
+- *(coverage)* Land nidoking ai route
+- *(coverage)* Land charizard ai route
+- *(coverage)* Land dragonite ai route
+- *(coverage)* Land dragonair ai route
+- *(session)* Record effect-devolution-spray-seed
+- *(session)* Record effect-alakazam-1-seed
+- *(session)* Record effect-articuno-lv37-1-seed
+- *(session)* Record effect-clefable-1-ai-seed
+- *(omp)* Add loop start alias
+
+### Miscellaneous
+
+- *(just)* Add tas progress and explore recipes
+- *(gambatte)* Repin locally built core hash
+- Raise the tas ratchet
+- Raise the tas ratchet
+- Raise the tas ratchet
+- Raise the tas ratchet
+- *(completion)* First-duel session confirmed clean
+- Raise the tas ratchet
+- Raise the session ratchet
+- Raise the session ratchet
+- Confirm both sessions to their ends
+- Ratchet the practice-win session
+- Ratchet the practice-win session
+- Ratchet practice-win and refresh receipts
+- Ratchet practice-win
+- Ratchet practice-win
+- Ratchet practice-win
+- Ratchet practice-win
+- Ratchet practice-win
+- Practice-win is clean
+- Record the preload mutation receipts
+- Record the preload mutation receipts
+- Raise the tas ratchet
+- Record the ronald turn mutation receipt
+- Record the mutation receipts
+- Refresh a mutation receipt
+- Lower the hatch ratchet to 139
+- Lower the hatch ratchet to 132
+- Lower the hatch ratchet to 125
+- Lower the hatch ratchet to 123
+- Audit the cases before each oracle diff
+- Raise the session ratchet
+- Drop the unrecorded ai duel ratchet
+- Refresh the trainer loop receipt
+- Ratchet the deck editor route
+- Ignore the disassembly symlink
+- Ratchet the second lane's sessions
+- *(oracle)* Record the battle center receipt
+- *(coverage)* Ledger at 1998 executed routines
+- *(coverage)* Ledger at 2037 executed routines
+- *(coverage)* Ledger at 2106 executed routines
+- *(session)* Ratchet the flute route clean
+- *(coverage)* Fold the second carrier batch
+- *(coverage)* Fold the third carrier batch
+- *(coverage)* Fold the search intake
+- *(coverage)* Re-trace after the script fix
+- *(coverage)* Fold the card-play sessions
+- *(coverage)* Fold the trainer play batch
+- *(coverage)* Fold the player-select batch
+- *(coverage)* Fold the board-seed batch
+- *(coverage)* Re-trace after the core fixes
+- *(coverage)* Fold the second board batch
+- *(coverage)* Fold the 57-carrier batch
+- *(coverage)* Fold after the text fix
+- *(coverage)* Fold the screens tour
+- *(coverage)* Fold the deck machine visits
+- *(coverage)* Fold the loop's sessions
+- *(coverage)* Fold the trainer sessions
+- *(coverage)* Fold the trainer and AI duel batch
+- *(coverage)* Fold the deck machine intake
+- *(oracle)* Refresh the mutation receipt
+- *(coverage)* Fold the deck machine intake
+- *(coverage)* Fold the naming fix sessions
+- *(coverage)* Fold the built deck seeds
+- *(coverage)* Fold the club-explore intake
+- *(coverage)* Fold the club-explore descendants
+- *(coverage)* Fold the challenge machine intake
+- *(coverage)* Fold the precondition seeds
+- *(coverage)* Fold after the power fix
+- *(coverage)* Fold after the HUD fix
+- *(coverage)* Fold the effect board search
+- *(coverage)* Fold the power board seeds
+- *(coverage)* Fold the opponent board seeds
+- *(coverage)* Fold the seeded overworld intake
+- *(coverage)* Fold the AI trainer duels
+- *(coverage)* Fold after the scoop up fix
+- *(coverage)* Fold the deck 20 and 28 duels
+- *(coverage)* Fold after the flute fix
+- *(coverage)* Fold the duel-continue seed
+- *(coverage)* Ratchet the deck machine session
+- *(coverage)* Fold the forced master win
+- *(coverage)* Ratchet the master win session
+- *(coverage)* Fold verified ai route
+- *(coverage)* Fold frontier ledger
+- *(coverage)* Fold dragonite fact
+- *(coverage)* Fold discovery pass
+
+### Performance
+
+- *(lanes)* Map the pack, skip headless rendering, checkpoint the reference
+- *(loops)* Parallel verifies against a frozen lane
+- *(loops)* Parallel batch verify, one-shot board seed
+
+### Refactor
+
+- *(pkmn_powers)* Drop the dead energy trans arm
+
+### Styling
+
+- *(completion)* Satisfy ruff in session.py
+
+### Tests
+
+- *(music1)* Cover the music2 song bank tick
+- *(sprite)* Cover the anim counter idle sentinel
+- Match the song-wait completion boundary
+- *(scripting)* Stop both booster lanes together
+- *(scripting)* Observe the booster pack flag
+- *(menus)* Stop continue duel at the interface
+- *(deck_configuration)* Case the live deck info header
+- *(copy)* Case the boot tile copy
+- *(print_text)* Case the live scroller entries
+- *(menus)* Case the live input waits
+- *(ai)* Case the special attacks at a live entry
+- *(deck)* Exercise the card list print loops
+
+### Port
+
+- *(core)* Damage digits call the char converter
+- *(duel)* Slot writes go through the duelvar helpers
 
