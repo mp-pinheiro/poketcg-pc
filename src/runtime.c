@@ -119,6 +119,7 @@ static void schedule_deliver(uint32_t ordinal, uint16_t target)
 	if (target > g_lag->ticks[ordinal])
 		target = g_lag->ticks[ordinal];
 	while (g_schedule.delivered < target) {
+		apu_trace_note_timer_tick();
 		TimerHandler();
 		g_schedule.delivered++;
 	}
@@ -163,6 +164,7 @@ static void age_cycles(uint32_t *timer_cycles, uint32_t cycles)
 	mem_advance_hardware_clock(cycles);
 	*timer_cycles += cycles;
 	while (*timer_cycles >= 17408u) {
+		apu_trace_note_timer_tick();
 		TimerHandler();
 		*timer_cycles -= 17408u;
 	}
@@ -177,6 +179,13 @@ void runtime_set_ordinal_input(const uint8_t *buttons, size_t count)
 void runtime_set_record_input(FILE *sink)
 {
 	g_record_sink = sink;
+}
+
+static FILE *g_pcm_sink;
+
+void runtime_set_pcm_sink(FILE *sink)
+{
+	g_pcm_sink = sink;
 }
 
 void runtime_set_state_dump_ordinals(
@@ -636,6 +645,11 @@ int runtime_run_with_input(
 			shell_pace(shell);
 		shell_present(shell, state.framebuffer);
 		shell_queue_audio(shell, state.audio, pcm_count);
+		if (g_pcm_sink) {
+			uint32_t tag = ordinal ? ordinal - 1u : 0u;
+			fwrite(&tag, sizeof tag, 1, g_pcm_sink);
+			fwrite(state.audio, sizeof state.audio[0], pcm_count, g_pcm_sink);
+		}
 		if (g_state_dump_callback) {
 			for (size_t i = 0; i < g_state_dump_frame_count; i++) {
 				if (state.frames != g_state_dump_frames[i])

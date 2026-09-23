@@ -8,8 +8,11 @@ compared byte for byte across the requirement's representation fields.
 
 from __future__ import annotations
 
+import array
 import hashlib
 import json
+import math
+import re
 import struct
 import tempfile
 from dataclasses import dataclass
@@ -31,6 +34,7 @@ EVENT_NAMES = {
     3: "START_MENU_READY",
     4: "NEW_GAME_ENTERED",
     5: "OVERWORLD_READY",
+    6: "CREDITS_REACHED",
 }
 IO_COMPARED = (
     0x00, 0x01, 0x02, 0x06, 0x07,
@@ -38,6 +42,7 @@ IO_COMPARED = (
     0x51, 0x52, 0x53, 0x54, 0x55, 0x56,
     0x68, 0x6A, 0x70,
 )
+IO_BITS = {0x07: 0x07}
 APU_FIRST, APU_LAST = 0xFF10, 0xFF3F
 APU_READBACK = {
     0xFF10: (0x80, 0xFF), 0xFF11: (0x3F, 0xFF), 0xFF12: (0x00, 0xFF), 0xFF13: (0xFF, 0x00),
@@ -51,6 +56,24 @@ NR52 = 0xFF26
 BOOT_ROM_PCS = ((0x0000, 0x0100), (0x0200, 0x0900))
 
 
+class WitnessError(RuntimeError):
+    pass
+
+
+WRAM_HEADER = ROOT / "include" / "generated" / "wram.h"
+
+
+def wram_offset(symbol: str) -> int:
+    match = re.search(rf"#define\s+{re.escape(symbol)}_ADDR\s+0x([0-9A-Fa-f]+)u?", WRAM_HEADER.read_text(encoding="utf-8"))
+    if match is None:
+        raise WitnessError(f"{symbol}_ADDR is absent from {WRAM_HEADER}")
+    return int(match.group(1), 16) - 0xC000
+
+
+DUEL_FINISHED_OFFSET = wram_offset("wDuelFinished")
+RNG_OFFSET = wram_offset("wRNG1")
+
+
 @dataclass(frozen=True)
 class Spec:
     sessions: tuple[str, ...]
@@ -58,6 +81,7 @@ class Spec:
     terminal: str
     event: str | None = None
     samples: int = 24
+    checks: tuple[str, ...] = ()
 
 
 SPECS: dict[str, Spec] = {
@@ -85,11 +109,31 @@ SPECS: dict[str, Spec] = {
         fields=("apu_state", "apu_trace", "timer_frame_counters"),
         terminal="AUDIO_TRACE_CLOSED",
     ),
+    "audio-pcm": Spec(
+        sessions=("boot-menu", "seed-deck-machines", "challenge-machine"),
+        fields=("apu_trace", "framebuffer"),
+        terminal="PCM_WINDOW_CLOSED",
+        checks=("pcm",),
+    ),
+    "duel-state": Spec(
+        sessions=(
+            "practice-win", "ai-duel-02", "ai-duel-03", "ai-duel-0c",
+            "effect-clefairy-2", "effect-item-finder", "effect-psyduck-1",
+        ),
+        fields=("wram", "rng", "input_latch"),
+        terminal="DUEL_VECTOR_CLOSED",
+    ),
+    "seeded-duel": Spec(
+        sessions=(
+            "effect-clefairy-2", "effect-item-finder", "effect-pokemon-flute",
+            "effect-revive", "effect-electabuzz-lv20-2", "effect-psyduck-1",
+        ),
+        fields=("wram", "rng", "framebuffer", "save"),
+        terminal="DUEL_TERMINAL_OUTCOME",
+        checks=("duel_finished",),
+    ),
 }
 
-
-class WitnessError(RuntimeError):
-    pass
 
 
 def apu_readback(address: int, value: int) -> int:
@@ -128,6 +172,7 @@ def reference_pass(
     want_frames: bool,
     want_apu: bool,
     want_save: bool,
+    pcm_sink: Any = None,
 ) -> dict[str, Any]:
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     count = anchors[-1]
@@ -135,6 +180,7 @@ def reference_pass(
     captured: dict[int, dict[str, Any]] = {}
     stable: dict[int, bool] = {}
     apu_writes: list[tuple[int, int, int]] = []
+    anchor_samples: list[int] = []
     with refstream.Core(padded, pokes=meta["pokes"], save=meta["save"]) as core:
         core.input_axis = "ordinal"
         hits = 0
@@ -152,6 +198,7 @@ def reference_pass(
             if address != refstream.DOFRAME_ANCHOR:
                 return
             hits += 1
+            anchor_samples.append(core.samples)
             if want_frames:
                 frame = bytes(core._framebuffer)
                 if pending is not None:
@@ -173,18 +220,165 @@ def reference_pass(
 
         if want_apu:
             core.on_write(on_write)
+        if pcm_sink is not None:
+            core.pcm_sink = pcm_sink
         core.install_exec(on_exec)
         core.run(frames, stop=lambda: hits > count)
         if pending is not None:
             stable[pending] = False
     if len(captured) != len(wanted):
         raise WitnessError(f"reference reached {len(captured)} of {len(wanted)} anchors for {name}")
-    return {"anchors": captured, "stable": stable, "apu_writes": apu_writes}
+    return {"anchors": captured, "stable": stable, "apu_writes": apu_writes, "anchor_samples": anchor_samples}
 
 
-def native_pass(name: str, count: int, anchors: list[int], lag_path: Path, directory: Path) -> dict[int, dict[str, Any]]:
+REFERENCE_PCM_RATE = 2097152
+NATIVE_PCM_RATE = 44100
+NATIVE_PCM_BLOCK = 1470
+PCM_WINDOW_ORDINALS = 4
+PCM_WINDOWS = 40
+PCM_FFT_SIZE = 2048
+PCM_SILENCE_RMS = 100.0
+PCM_AGREE_COSINE = 0.7
+PCM_MEDIAN_COSINE = 0.8
+PCM_AGREE_FRACTION = 0.9
+PCM_ENVELOPE_CORRELATION = 0.9
+
+
+def _fft(values: list[complex]) -> list[complex]:
+    size = len(values)
+    if size == 1:
+        return values
+    even = _fft(values[0::2])
+    odd = _fft(values[1::2])
+    out = [0j] * size
+    for k in range(size // 2):
+        twiddle = complex(math.cos(-2 * math.pi * k / size), math.sin(-2 * math.pi * k / size)) * odd[k]
+        out[k] = even[k] + twiddle
+        out[k + size // 2] = even[k] - twiddle
+    return out
+
+
+def _mono(samples: array.array) -> list[float]:
+    return [(samples[2 * i] + samples[2 * i + 1]) / 2.0 for i in range(len(samples) // 2)]
+
+
+def _rms(values: list[float]) -> float:
+    if not values:
+        return 0.0
+    mean = sum(values) / len(values)
+    return math.sqrt(sum((v - mean) ** 2 for v in values) / len(values))
+
+
+def _spectrum(values: list[float]) -> list[float]:
+    values = values[:PCM_FFT_SIZE]
+    mean = sum(values) / len(values) if values else 0.0
+    padded = [complex(v - mean) for v in values] + [0j] * (PCM_FFT_SIZE - len(values))
+    return [abs(c) for c in _fft(padded)[: PCM_FFT_SIZE // 2]]
+
+
+def _cosine(left: list[float], right: list[float]) -> float:
+    num = sum(a * b for a, b in zip(left, right))
+    da = math.sqrt(sum(a * a for a in left))
+    db = math.sqrt(sum(b * b for b in right))
+    return num / (da * db) if da and db else 0.0
+
+
+def _correlation(left: list[float], right: list[float]) -> float:
+    size = min(len(left), len(right))
+    if size < 2:
+        return 0.0
+    ml = sum(left[:size]) / size
+    mr = sum(right[:size]) / size
+    num = sum((left[i] - ml) * (right[i] - mr) for i in range(size))
+    dl = math.sqrt(sum((left[i] - ml) ** 2 for i in range(size)))
+    dr = math.sqrt(sum((right[i] - mr) ** 2 for i in range(size)))
+    return num / (dl * dr) if dl and dr else 0.0
+
+
+def _reference_window(raw: bytes, anchor_samples: list[int], start: int, length: int) -> list[float]:
+    begin = anchor_samples[start - 1] if start >= 1 else 0
+    end = anchor_samples[start + length - 1]
+    frames_in = end - begin
+    stereo = array.array("h", raw[begin * 4 : end * 4])
+    frames_out = frames_in * NATIVE_PCM_RATE // REFERENCE_PCM_RATE
+    out: list[float] = []
+    for index in range(frames_out):
+        source = index * frames_in // frames_out
+        out.append((stereo[2 * source] + stereo[2 * source + 1]) / 2.0)
+    return out
+
+
+def _native_blocks(raw: bytes) -> dict[int, array.array]:
+    blocks: dict[int, array.array] = {}
+    offset = 0
+    stride = 4 + NATIVE_PCM_BLOCK * 2
+    while offset + stride <= len(raw):
+        tag = struct.unpack_from("<I", raw, offset)[0]
+        blocks.setdefault(tag, array.array("h")).extend(array.array("h", raw[offset + 4 : offset + stride]))
+        offset += stride
+    return blocks
+
+
+def compare_pcm(reference_raw: bytes, anchor_samples: list[int], native_raw: bytes, count: int) -> dict[str, Any]:
+    blocks = _native_blocks(native_raw)
+    step = max(1, (count - PCM_WINDOW_ORDINALS) // PCM_WINDOWS)
+    cosines: list[float] = []
+    reference_rms: list[float] = []
+    native_rms: list[float] = []
+    silent = 0
+    for start in range(1, count - PCM_WINDOW_ORDINALS, step):
+        reference = _reference_window(reference_raw, anchor_samples, start, PCM_WINDOW_ORDINALS)
+        native_samples = array.array("h")
+        for ordinal in range(start, start + PCM_WINDOW_ORDINALS):
+            native_samples.extend(blocks.get(ordinal, array.array("h")))
+        native = _mono(native_samples)
+        left = _rms(reference)
+        right = _rms(native)
+        reference_rms.append(left)
+        native_rms.append(right)
+        if left < PCM_SILENCE_RMS and right < PCM_SILENCE_RMS:
+            silent += 1
+            continue
+        cosines.append(_cosine(_spectrum(reference), _spectrum(native)))
+    ordered = sorted(cosines)
+    median = ordered[len(ordered) // 2] if ordered else 0.0
+    agreeing = sum(1 for value in cosines if value >= PCM_AGREE_COSINE) / len(cosines) if cosines else 0.0
+    envelope = _correlation(reference_rms, native_rms)
+    passed = (
+        bool(cosines)
+        and median >= PCM_MEDIAN_COSINE
+        and agreeing >= PCM_AGREE_FRACTION
+        and envelope >= PCM_ENVELOPE_CORRELATION
+    )
+    return {
+        "windows": len(reference_rms),
+        "silent_windows": silent,
+        "window_ordinals": PCM_WINDOW_ORDINALS,
+        "median_cosine": round(median, 4),
+        "agreeing_fraction": round(agreeing, 4),
+        "envelope_correlation": round(envelope, 4),
+        "thresholds": {
+            "agree_cosine": PCM_AGREE_COSINE,
+            "median_cosine": PCM_MEDIAN_COSINE,
+            "agree_fraction": PCM_AGREE_FRACTION,
+            "envelope_correlation": PCM_ENVELOPE_CORRELATION,
+        },
+        "status": "PASS" if passed else "FAIL",
+    }
+
+
+def native_pass(
+    name: str,
+    count: int,
+    anchors: list[int],
+    lag_path: Path,
+    directory: Path,
+    *,
+    pcm_out: Path | None = None,
+) -> dict[int, dict[str, Any]]:
     state_path, failure, _off = session.run_native(
-        directory, session.session_dir(name) / "input.txt", count, lag_path=lag_path, dump_ordinals=anchors
+        directory, session.session_dir(name) / "input.txt", count, lag_path=lag_path,
+        dump_ordinals=anchors, pcm_out=pcm_out,
     )
     dumps: dict[int, dict[str, Any]] = {}
     for ordinal in anchors:
@@ -226,17 +420,22 @@ def compare_anchor(
         return count_diff(bytes(native["palette_ram"]), reference["palette_ram"])
     if field == "io":
         readback = native["io_readback"]
-        return sum(1 for offset in IO_COMPARED if readback[offset] != reference["io"][offset])
+        return sum(
+            1
+            for offset in IO_COMPARED
+            if (readback[offset] & IO_BITS.get(offset, 0xFF))
+            != (reference["io"][offset] & IO_BITS.get(offset, 0xFF))
+        )
     if field == "framebuffer":
         if not stable:
             return None
         pixels = struct.unpack(f"<{FRAME_PIXELS}I", reference["framebuffer"])
         return sum(1 for a, b in zip(native["framebuffer"], pixels) if (a & 0x7FFF) != (b & 0x7FFF))
     if field == "input_latch":
-        expected = masks[ordinal - 1] if ordinal - 1 < len(masks) else 0
-        return int(native["input_latch"] != expected)
+        mask = masks[ordinal - 1] if ordinal - 1 < len(masks) else 0
+        return int(native["input_latch"] != ((mask << 4) | (mask >> 4)) & 0xFF)
     if field == "rng":
-        return count_diff(bytes(native["rng"]), reference["wram"][0xABA:0xABD])
+        return count_diff(bytes(native["rng"]), reference["wram"][RNG_OFFSET : RNG_OFFSET + 3])
     if field in {"save", "sram_bank_0", "sram_bank_1", "sram_bank_2", "sram_bank_3"}:
         if "save" not in reference:
             return None
@@ -310,18 +509,42 @@ def witness_session(name: str, spec: Spec) -> dict[str, Any]:
         row["status"] = "FAIL"
         return row
     anchors = sample_anchors(count, spec.samples)
+    if "duel_finished" in spec.checks:
+        finished = meta.get("duel_finished_ordinal")
+        if not isinstance(finished, int) or finished < 1 or finished > count:
+            row["status"] = "FAIL"
+            row["failures"] = [f"session records no duel outcome inside {count} ordinals"]
+            return row
+        anchors = sorted(set(anchors) | {min(finished + 1, count)})
     fields = set(spec.fields)
     want_frames = "framebuffer" in fields
     want_apu = bool(fields & {"apu_trace", "apu_state"})
     want_save = bool(fields & {"save", "sram_bank_0", "sram_bank_1", "sram_bank_2", "sram_bank_3"})
-    reference = reference_pass(
-        name, masks, meta, frames, anchors,
-        want_frames=want_frames, want_apu=want_apu, want_save=want_save,
-    )
-    ref_meta = session.build_reference(name, masks, frames, pokes=meta["pokes"], save=meta["save"])
-    lag_path = ROOT / ref_meta["directory"] / "lag.txt"
+    want_pcm = "pcm" in spec.checks
     with tempfile.TemporaryDirectory(prefix=f"witness-native-{name}-") as directory:
-        native = native_pass(name, count, anchors, lag_path, Path(directory))
+        lane = Path(directory)
+        reference_pcm = b""
+        native_pcm = b""
+        if want_pcm:
+            with (lane / "reference.pcm").open("wb") as sink:
+                reference = reference_pass(
+                    name, masks, meta, frames, anchors,
+                    want_frames=want_frames, want_apu=want_apu, want_save=want_save, pcm_sink=sink,
+                )
+            reference_pcm = (lane / "reference.pcm").read_bytes()
+        else:
+            reference = reference_pass(
+                name, masks, meta, frames, anchors,
+                want_frames=want_frames, want_apu=want_apu, want_save=want_save,
+            )
+        ref_meta = session.build_reference(name, masks, frames, pokes=meta["pokes"], save=meta["save"])
+        lag_path = ROOT / ref_meta["directory"] / "lag.txt"
+        native = native_pass(
+            name, count, anchors, lag_path, lane,
+            pcm_out=(lane / "native.pcm") if want_pcm else None,
+        )
+        if want_pcm:
+            native_pcm = (lane / "native.pcm").read_bytes()
     tables = session.mask_tables()
     census: dict[str, dict[str, int]] = {}
     failures: list[str] = []
@@ -342,6 +565,21 @@ def witness_session(name: str, spec: Spec) -> dict[str, Any]:
         census[field] = {"anchors": compared, "differing": differing}
         if compared == 0 or differing:
             failures.append(f"{field}: {differing} differing over {compared} anchors")
+    if "pcm" in spec.checks:
+        pcm = compare_pcm(reference_pcm, reference["anchor_samples"], native_pcm, count)
+        row["pcm"] = pcm
+        census["apu_pcm"] = {"anchors": pcm["windows"], "differing": 0 if pcm["status"] == "PASS" else 1}
+        if pcm["status"] != "PASS":
+            failures.append(
+                f"pcm: median cosine {pcm['median_cosine']}, agreeing {pcm['agreeing_fraction']}, "
+                f"envelope {pcm['envelope_correlation']}"
+            )
+    if "duel_finished" in spec.checks:
+        finished = min(int(meta["duel_finished_ordinal"]) + 1, count)
+        flag = native[finished]["wram"][DUEL_FINISHED_OFFSET]
+        row["duel_finished"] = {"ordinal": finished, "flag": flag}
+        if not flag:
+            failures.append(f"duel outcome flag clear at ordinal {finished}")
     if "timer_frame_counters" in fields:
         census["timer_frame_counters"] = {
             "anchors": count,

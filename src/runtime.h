@@ -15,6 +15,7 @@ typedef enum {
 	RUNTIME_EVENT_START_MENU_READY = 3,
 	RUNTIME_EVENT_NEW_GAME_ENTERED = 4,
 	RUNTIME_EVENT_OVERWORLD_READY = 5,
+	RUNTIME_EVENT_CREDITS_REACHED = 6,
 } RuntimeEvent;
 
 typedef struct {
@@ -52,6 +53,7 @@ void runtime_set_state_dump_frames(
  *  - stop ordinal: the run ends once that many DoFrames completed. */
 void runtime_set_ordinal_input(const uint8_t *buttons, size_t count);
 void runtime_set_record_input(FILE *sink);
+void runtime_set_pcm_sink(FILE *sink);
 void runtime_set_state_dump_ordinals(
 	RuntimeStateDumpCb callback, const uint32_t *ordinals, size_t count);
 void runtime_set_stop_ordinal(uint32_t ordinal);

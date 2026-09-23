@@ -238,6 +238,7 @@ class Core:
         self.override_mask: int | None = None
         self.input_axis = "ordinal"
         self.frame_mode = "vblank"
+        self.pcm_sink = None
         self._frame_overflow = 0
         self._user_exec: Callable[[int, int], None] | None = None
         self._keepalive: list[Any] = []
@@ -330,6 +331,7 @@ class Core:
                 self.core, self._framebuffer, WIDTH, self._sound, ctypes.byref(emitted)
             )
             self.samples += int(emitted.value)
+            self._sink_sound(int(emitted.value))
             return
         remaining = SAMPLES_PER_FRAME - self._frame_overflow
         for _ in range(MAX_SLICES_PER_FRAME):
@@ -338,11 +340,16 @@ class Core:
                 self.core, self._framebuffer, WIDTH, self._sound, ctypes.byref(emitted)
             )
             self.samples += int(emitted.value)
+            self._sink_sound(int(emitted.value))
             remaining -= int(emitted.value)
             if remaining <= 0:
                 self._frame_overflow = -remaining
                 return
         raise RefstreamError(f"frame not filled after {MAX_SLICES_PER_FRAME} slices")
+
+    def _sink_sound(self, emitted: int) -> None:
+        if self.pcm_sink is not None and emitted > 0:
+            self.pcm_sink.write(bytes(memoryview(self._sound).cast("B")[: emitted * 4]))
 
     # A Gambatte savestate every CHECKPOINT_STRIDE anchors, written by the
     # stream build into the stream's directory. Every later replay of that

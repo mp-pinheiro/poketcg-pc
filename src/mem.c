@@ -1,4 +1,5 @@
 #include "mem.h"
+#include "apu.h"
 
 #include "link.h"
 
@@ -257,16 +258,28 @@ uint8_t g_scratch[MEM_SCRATCH_SIZE];
 static ApuWrite g_apu_trace[APU_TRACE_CAPACITY];
 static size_t g_apu_trace_count;
 static uint32_t g_apu_trace_tick;
+static ApuFrameWrite g_apu_frame[APU_FRAME_WRITE_CAPACITY];
+static size_t g_apu_frame_count;
+static uint8_t g_apu_phase;
 
 void apu_trace_clear(void)
 {
 	g_apu_trace_count = 0;
 	g_apu_trace_tick = 0;
+	g_apu_frame_count = 0;
+	g_apu_phase = 0;
+	apu_reset();
 }
 
 void apu_trace_set_tick(uint32_t tick)
 {
 	g_apu_trace_tick = tick;
+}
+
+void apu_trace_note_timer_tick(void)
+{
+	if (g_apu_phase < 255u)
+		g_apu_phase++;
 }
 
 size_t apu_trace_count(void)
@@ -283,18 +296,10 @@ size_t apu_trace_render_pcm(int16_t *samples, size_t count)
 {
 	if (!samples)
 		return 0;
-	size_t trace_count = g_apu_trace_count;
-	for (size_t i = 0; i < count; i++) {
-		if (!trace_count) {
-			samples[i] = 0;
-			continue;
-		}
-		size_t index = (i * trace_count) / count;
-		if (index >= trace_count)
-			index = trace_count - 1;
-		int amplitude = ((int)(g_apu_trace[index].value & 0x0Fu) - 8) * 2048;
-		samples[i] = (int16_t)amplitude;
-	}
+	apu_render_frame(samples, count / 2u, g_apu_frame, g_apu_frame_count,
+	                 (unsigned)g_apu_phase + 1u);
+	g_apu_frame_count = 0;
+	g_apu_phase = 0;
 	return count;
 }
 
@@ -303,9 +308,10 @@ static void apu_trace_record(uint16_t addr, uint8_t value)
 	if (!((addr >= 0xFF10u && addr <= 0xFF26u) ||
 	      (addr >= 0xFF30u && addr <= 0xFF3Fu)))
 		return;
-	if (g_apu_trace_count < APU_TRACE_CAPACITY) {
+	if (g_apu_trace_count < APU_TRACE_CAPACITY)
 		g_apu_trace[g_apu_trace_count++] = (ApuWrite){g_apu_trace_tick, addr, value};
-	}
+	if (g_apu_frame_count < APU_FRAME_WRITE_CAPACITY)
+		g_apu_frame[g_apu_frame_count++] = (ApuFrameWrite){addr, value, g_apu_phase};
 }
 
 int rom_load(const char *path)
@@ -599,10 +605,6 @@ uint8_t gb_read8(uint16_t addr)
 		return (uint8_t)(*gb_ptr(addr) | 0x7Cu);
 	if (addr == 0xFF0Fu)
 		return (uint8_t)(*gb_ptr(addr) | 0xE0u);
-	if (addr == 0xFF07u)
-		return (uint8_t)(*gb_ptr(addr) | 0xF8u);
-	if (addr == 0xFF75u)
-		return (uint8_t)((*gb_ptr(addr) & 0x70u) | 0x8Fu);
 	if (addr >= 0xFF10u && addr <= 0xFF25u)
 		return (uint8_t)(*gb_ptr(addr) | APU_READ_OR[addr - 0xFF10u]);
 	if (addr == 0xFF26u)

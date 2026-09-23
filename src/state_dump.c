@@ -49,6 +49,8 @@ static const char *runtime_event_name(RuntimeEvent event)
 		return "NEW_GAME_ENTERED";
 	case RUNTIME_EVENT_OVERWORLD_READY:
 		return "OVERWORLD_READY";
+	case RUNTIME_EVENT_CREDITS_REACHED:
+		return "CREDITS_REACHED";
 	default:
 		return "NONE";
 	}

@@ -141,9 +141,10 @@ _REGISTRY: dict[str, dict[str, Any]] = {
     ),
     "completion:v2:p3:audio-pcm": _descriptor(
         "audio-pcm",
-        None,
-        producer_files=_SCENARIO + ["tools/audio"],
-        comparator_files=["tools/audio", "tools/oracle/gbrecomp_oracle.py"],
+        "scenario:audio-pcm",
+        producer_files=_WITNESS,
+        comparator_files=_WITNESS_COMPARATORS,
+        corpus=witness.corpus("audio-pcm"),
     ),
     "completion:v2:p4:ui-corpus": _descriptor(
         "ui-corpus",
@@ -161,21 +162,17 @@ _REGISTRY: dict[str, dict[str, Any]] = {
     ),
     "completion:v2:p5:duel-state": _descriptor(
         "duel-state",
-        None,
-        producer_files=_SCENARIO + ["tools/completion/session.py"],
-        comparator_files=[
-            "tools/completion/session.py",
-            "tools/completion/refstream.py",
-        ],
+        "scenario:duel-state",
+        producer_files=_WITNESS,
+        comparator_files=_WITNESS_COMPARATORS,
+        corpus=witness.corpus("duel-state"),
     ),
     "completion:v2:p5:seeded-duel": _descriptor(
         "seeded-duel",
         "scenario:seeded-duel",
-        producer_files=_SCENARIO,
-        comparator_files=[
-            "tools/oracle/gbrecomp_oracle.py",
-            "tools/completion/session.py",
-        ],
+        producer_files=_WITNESS,
+        comparator_files=_WITNESS_COMPARATORS,
+        corpus=witness.corpus("seeded-duel"),
     ),
     "completion:v2:p6:script-vm": _descriptor(
         "script-vm",

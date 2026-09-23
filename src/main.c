@@ -609,6 +609,7 @@ int main(int argc, char **argv)
 	const char *trace_window_path = NULL;
 	const char *checkpoint_path = NULL;
 	const char *isr_track_path = NULL;
+	const char *dump_pcm_path = NULL;
 	int link_fd = -1;
 	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "--headless") == 0) {
@@ -645,6 +646,8 @@ int main(int argc, char **argv)
 			input_ordinal_path = argv[++i];
 		} else if (strcmp(argv[i], "--record-input") == 0 && i + 1 < argc) {
 			record_input_path = argv[++i];
+		} else if (strcmp(argv[i], "--dump-pcm") == 0 && i + 1 < argc) {
+			dump_pcm_path = argv[++i];
 		} else if (strcmp(argv[i], "--poke-ordinal") == 0 && i + 1 < argc) {
 			poke_ordinal_path = argv[++i];
 		} else if (strcmp(argv[i], "--overread-track") == 0 && i + 1 < argc) {
@@ -698,7 +701,7 @@ int main(int argc, char **argv)
 			       "[--digest-out PATH [--digest-mask FILE]] [--lag-track PATH] "
 			       "[--trace-entries PATH] [--trace-calls PATH] "
 			       "[--trace-window LO HI --trace-window-out PATH] "
-			       "[--load-checkpoint PATH] [--link-fd N] [--isr-track PATH]\n");
+			       "[--load-checkpoint PATH] [--link-fd N] [--isr-track PATH] [--dump-pcm PATH]\n");
 			printf("--frames 0 runs until the window closes\n");
 			printf("--input is one byte per host frame (a movie axis); "
 			       "--input-ordinal is one byte per DoFrame and never wraps: "
@@ -843,6 +846,19 @@ int main(int argc, char **argv)
 		return 2;
 	}
 	runtime_set_overreads(overreads, overread_count);
+	FILE *pcm_sink = NULL;
+	if (dump_pcm_path) {
+		pcm_sink = fopen(dump_pcm_path, "wb");
+		if (!pcm_sink) {
+			fprintf(stderr, "cannot open --dump-pcm %s: %s\n", dump_pcm_path, strerror(errno));
+			free(pokes);
+			free(ordinal_buttons);
+			free(input_buttons);
+			rom_pack_free();
+			return 2;
+		}
+		runtime_set_pcm_sink(pcm_sink);
+	}
 	FILE *record_sink = NULL;
 	if (record_input_path) {
 		record_sink = fopen(record_input_path, "w");
@@ -916,6 +932,11 @@ int main(int argc, char **argv)
 		status = 1;
 	}
 	runtime_set_record_input(NULL);
+	runtime_set_pcm_sink(NULL);
+	if (pcm_sink && fclose(pcm_sink) != 0) {
+		fprintf(stderr, "cannot finish --dump-pcm %s: %s\n", dump_pcm_path, strerror(errno));
+		status = 1;
+	}
 	runtime_set_lag_track(NULL);
 	if (isr_active()) {
 		fprintf(stderr, "isr track: placed=%u unplaced=%u\n", isr_placed(), isr_unplaced());

@@ -7,6 +7,7 @@
 #include "home/switch_rom.h"
 #include "home/copy.h"
 #include "mem.h"
+#include "runtime.h"
 #include "home/frames.h"
 /* >>> factory statics */
 #include "home/warp.h"
@@ -327,6 +328,7 @@ uint8_t GameEvent_GiftCenter(void)
 /* >>> factory GameEvent_Credits */
 void GameEvent_Credits(void)
 {
+	runtime_mark_event(RUNTIME_EVENT_CREDITS_REACHED);
 	(void)PlayCreditsSequence();
 }
 /* <<< factory GameEvent_Credits */

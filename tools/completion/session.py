@@ -690,7 +690,7 @@ def native_save_file(image: bytes) -> bytes:
 
 def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
                digest_out: Path | None = None, mask_path: Path | None = None,
-               dump_ordinals: list[int] | None = None) -> tuple[Path, str, int]:
+               dump_ordinals: list[int] | None = None, pcm_out: Path | None = None) -> tuple[Path, str, int]:
     """(state path, failure text, count of `off schedule` rows the lane printed)."""
     state_path = directory / "state.json"
     command = [
@@ -722,6 +722,8 @@ def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
             command += ["--digest-mask", str(mask_path)]
     if dump_ordinals:
         command += ["--dump-state-ordinals", ",".join(str(v) for v in dump_ordinals)]
+    if pcm_out:
+        command += ["--dump-pcm", str(pcm_out)]
     try:
         result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True,
                                 timeout=NATIVE_TIMEOUT, check=False)

@@ -86,8 +86,10 @@ typedef struct {
 } ApuWrite;
 
 #define APU_TRACE_CAPACITY 65536u
+#define APU_FRAME_WRITE_CAPACITY 4096u
 void apu_trace_clear(void);
 void apu_trace_set_tick(uint32_t tick);
+void apu_trace_note_timer_tick(void);
 size_t apu_trace_count(void);
 const ApuWrite *apu_trace_data(void);
 size_t apu_trace_render_pcm(int16_t *samples, size_t count);
