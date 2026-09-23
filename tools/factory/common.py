@@ -25,7 +25,7 @@ import tempfile
 import threading
 import time
 import uuid
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -163,11 +163,34 @@ def _stop_process_tree(process: subprocess.Popen) -> None:
     _signal_groups(groups, signal.SIGKILL)
     process.wait()
 
+def _notify_start(
+    process: subprocess.Popen,
+    callback: Callable[[subprocess.Popen], None] | None,
+) -> None:
+    if callback is None:
+        return
+    try:
+        callback(process)
+    except BaseException:
+        _stop_process_tree(process)
+        raise
 
-def run_bounded(command: list[str], *, cwd: Path, cap: float,
-                deadline: float | None = None, check: bool = False,
-                output_limit: int = 1_048_576,
-                input_text: str | None = None) -> subprocess.CompletedProcess[str]:
+
+def run_bounded(
+    command: list[str],
+    *,
+    cwd: Path,
+    cap: float,
+    deadline: float | None = None,
+    check: bool = False,
+    output_limit: int = 1_048_576,
+    input_text: str | None = None,
+    env: dict[str, str] | None = None,
+    inherit_env: bool = True,
+    log_dir: Path | None = None,
+    stdout_sink: Callable[[str], None] | None = None,
+    on_start: Callable[[subprocess.Popen], None] | None = None,
+) -> subprocess.CompletedProcess[str]:
     if cap <= 0:
         raise ValueError("cap must be positive")
     if output_limit <= 0:
@@ -177,33 +200,114 @@ def run_bounded(command: list[str], *, cwd: Path, cap: float,
     effective = cap if deadline is None else min(cap, deadline - time.monotonic())
     if effective <= 0:
         raise WaveDeadlineExpired("wave deadline expired before command")
-    with (
-        tempfile.TemporaryFile() as stdin,
-        tempfile.TemporaryFile() as stdout,
-        tempfile.TemporaryFile() as stderr,
-    ):
+    environment = (
+        None
+        if env is None and inherit_env
+        else ({**os.environ, **(env or {})} if inherit_env else dict(env or {}))
+    )
+    with tempfile.TemporaryFile() as stdin:
         if input_text is not None:
             stdin.write(input_text.encode())
             stdin.seek(0)
-        process = subprocess.Popen(
-            command, cwd=cwd, stdin=stdin, stdout=stdout, stderr=stderr,
-            start_new_session=True,
-        )
-        try:
-            process.wait(timeout=effective)
-        except subprocess.TimeoutExpired:
-            _stop_process_tree(process)
-            if deadline is not None and time.monotonic() >= deadline:
-                raise WaveDeadlineExpired("wave deadline expired during command")
-            raise PhaseTimeout(command, cap)
-        except BaseException:
-            _stop_process_tree(process)
-            raise
-        result = subprocess.CompletedProcess(
-            command, process.returncode,
-            _bounded_output(stdout, output_limit),
-            _bounded_output(stderr, output_limit),
-        )
+        if stdout_sink is not None:
+            if log_dir is None:
+                raise ValueError("stdout_sink requires log_dir")
+            log_dir.mkdir(parents=True, exist_ok=True)
+            stdout_path = log_dir / "stdout.log"
+            stderr_path = log_dir / "stderr.log"
+            with stdout_path.open("wb") as stdout, stderr_path.open("wb") as stderr:
+                process = subprocess.Popen(
+                    command,
+                    cwd=cwd,
+                    stdin=stdin,
+                    stdout=subprocess.PIPE,
+                    stderr=stderr,
+                    start_new_session=True,
+                    env=environment,
+                )
+                _notify_start(process, on_start)
+
+                def consume() -> None:
+                    if process.stdout is None:
+                        return
+                    for line in iter(process.stdout.readline, b""):
+                        stdout.write(line)
+                        stdout.flush()
+                        stdout_sink(line.decode(errors="replace"))
+
+                reader = threading.Thread(target=consume, daemon=True)
+                reader.start()
+                try:
+                    process.wait(timeout=effective)
+                    reader.join(timeout=PROCESS_TERM_GRACE_S)
+                except subprocess.TimeoutExpired:
+                    _stop_process_tree(process)
+                    reader.join(timeout=PROCESS_TERM_GRACE_S)
+                    if deadline is not None and time.monotonic() >= deadline:
+                        raise WaveDeadlineExpired("wave deadline expired during command")
+                    raise PhaseTimeout(command, cap)
+                except BaseException:
+                    _stop_process_tree(process)
+                    reader.join(timeout=PROCESS_TERM_GRACE_S)
+                    raise
+                finally:
+                    if process.stdout is not None:
+                        process.stdout.close()
+            with stdout_path.open("rb") as stdout, stderr_path.open("rb") as stderr:
+                result = subprocess.CompletedProcess(
+                    command,
+                    process.returncode,
+                    _bounded_output(stdout, output_limit),
+                    _bounded_output(stderr, output_limit),
+                )
+        elif log_dir is None:
+            with tempfile.TemporaryFile() as stdout, tempfile.TemporaryFile() as stderr:
+                process = subprocess.Popen(
+                    command, cwd=cwd, stdin=stdin, stdout=stdout, stderr=stderr,
+                    start_new_session=True, env=environment,
+                )
+                _notify_start(process, on_start)
+                try:
+                    process.wait(timeout=effective)
+                except subprocess.TimeoutExpired:
+                    _stop_process_tree(process)
+                    if deadline is not None and time.monotonic() >= deadline:
+                        raise WaveDeadlineExpired("wave deadline expired during command")
+                    raise PhaseTimeout(command, cap)
+                except BaseException:
+                    _stop_process_tree(process)
+                    raise
+                result = subprocess.CompletedProcess(
+                    command, process.returncode,
+                    _bounded_output(stdout, output_limit),
+                    _bounded_output(stderr, output_limit),
+                )
+        else:
+            log_dir.mkdir(parents=True, exist_ok=True)
+            stdout_path = log_dir / "stdout.log"
+            stderr_path = log_dir / "stderr.log"
+            with stdout_path.open("wb") as stdout, stderr_path.open("wb") as stderr:
+                process = subprocess.Popen(
+                    command, cwd=cwd, stdin=stdin, stdout=stdout, stderr=stderr,
+                    start_new_session=True, env=environment,
+                )
+                _notify_start(process, on_start)
+                try:
+                    process.wait(timeout=effective)
+                except subprocess.TimeoutExpired:
+                    _stop_process_tree(process)
+                    if deadline is not None and time.monotonic() >= deadline:
+                        raise WaveDeadlineExpired("wave deadline expired during command")
+                    raise PhaseTimeout(command, cap)
+                except BaseException:
+                    _stop_process_tree(process)
+                    raise
+            with stdout_path.open("rb") as stdout, stderr_path.open("rb") as stderr:
+                result = subprocess.CompletedProcess(
+                    command, process.returncode,
+                    _bounded_output(stdout, output_limit),
+                    _bounded_output(stderr, output_limit),
+                )
     if check and result.returncode:
         raise subprocess.CalledProcessError(
             result.returncode, command, output=result.stdout, stderr=result.stderr,

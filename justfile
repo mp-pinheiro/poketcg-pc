@@ -215,15 +215,14 @@ oracle-fn FN CASE INDEX="0": oracle-build-gbref build-barrier
     python3 tools/oracle/gbref/compare_one.py --fn {{FN}} --index {{INDEX}} --case {{CASE}} --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
 # Fixed GBRT primary inventory barrier.
 oracle-fn-all: oracle-build-gbref build-barrier lint-adapters
-    mkdir -p site/data
-    python3 tools/oracle/fn_all.py --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)" --report site/data/gate.json
+    mkdir -p .factory/runtime/checks/function-gate
+    python3 tools/oracle/fn_all.py --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)" --report .factory/runtime/checks/function-gate/functions.json
 # Primary function gate: GBRT health, adapters, schema, and inventory.
 oracle-fn-gate: oracle-health-gbref oracle-fn-all
     python3 tools/audit_oracle_cases.py --stage routine
     python3 tools/audit_hatches.py --stage routine
 
 
-# Run the GBRT primary gate and regenerate the progress report from the result.
 gate-report: oracle-fn-all
     python3 tools/progress/report.py build
 
@@ -352,6 +351,8 @@ completion-status *ARGS:
     python3 tools/completion/completion.py status {{ARGS}}
 completion-check ID:
     python3 tools/completion/completion.py check "{{ID}}"
+completion-produce ID *ARGS:
+    python3 tools/completion/completion.py produce "{{ID}}" {{ARGS}}
 completion-baseline:
     python3 tools/completion/completion.py baseline
 completion-rom-coverage:
@@ -597,83 +598,8 @@ publish-dashboard:
     fi
     npx wrangler@4 pages deploy site/ --project-name poketcg-pc --branch main
 
-# Rehearse the real pipeline on a landed routine: packet, prompt, reply
-# validation, surgery. Offline, no compiler, no model, no Forgejo.
-factory-smoke:
-    python3 tools/factory/smoke.py
-
-# The same rehearsal plus lane build, oracle verify, artifact bundle, and the
-# landing driver against a throwaway git remote.
-factory-smoke-full:
-    python3 tools/factory/smoke.py --full
-
-
-# One routine, k candidates, the real verifier. No Forgejo, no ledger.
-factory-try FN:
-    python3 tools/factory/try_one.py --fn {{FN}}
-
-
-# Next N ready routines (blocked.toml respected), prompts prepared.
-factory-next N="4":
-    python3 tools/factory/try_one.py --next {{N}}
-
-
-# Reconcile the ledgers against the tree: reap issued attempts that can never be
-# verified, re-offer landings whose content is missing, retire exhausted reds.
-# Writes .factory/blocked.toml (tracked) when a red is retired; an operational
-# blocker is an input to the derived work records, so the snapshot is rebuilt in
-# the same breath and both are committed together.
-factory-heal:
-    python3 tools/factory/heal.py --apply
-    python3 tools/progress/report.py build
-
-# What the ledgers would repair, without touching anything.
-factory-heal-dry:
-    python3 tools/factory/heal.py
-
-# Rank the remaining obstructions by how many routines clearing each one frees.
-factory-capabilities N="5":
-    python3 tools/factory/try_one.py --capabilities {{N}}
-
-# Land every verified artifact: gate, commit, push, record.
-factory-land:
-    python3 tools/factory/land.py --all
-
-# Forecast from recorded landings only.
-factory-eta:
-    python3 tools/factory/land.py --eta
-
-# Prove the push credential without a browser prompt.
 forgejo-auth-check:
     git ls-remote origin main
-
-
-# Autonomous port factory: one persistent OMP session driving claimed work.
-launch-port:
-    tools/factory/run.sh
-
-
-
-# Supervised loop: auto-restarts until `.factory/STOP` exists (500 max).
-launch-port-supervised:
-    tools/factory/supervise.sh
-
-
-# Start N supervised loop sessions in a dedicated detached tmux session.
-fleet-start panes="4":
-    tools/factory/fleet.sh start {{panes}}
-
-# Graceful fleet stop: every loop session exits after its current pass.
-fleet-stop:
-    tools/factory/fleet.sh stop
-
-# Immediate fleet stop: also terminates in-flight sessions (state is safe).
-fleet-halt:
-    tools/factory/fleet.sh halt
-
-# Loop-session count, STOP-file state, and fleet tmux session state.
-fleet-status:
-    tools/factory/fleet.sh status
 
 # Print the next version git-cliff derives from unreleased Conventional Commits.
 next-version:

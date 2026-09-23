@@ -17,11 +17,13 @@ import tempfile
 import time
 import tomllib
 import importlib.util
+import sqlite3
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT))
 from tools.completion.revision import current_source_revision
+from tools.oracle.release_gate import GateError, validate_attestation
 INVENTORY = ROOT / "site" / "data" / "inventory.json"
 SCOPE = ROOT / "tools" / "progress" / "scope.toml"
 REGISTRY = ROOT / "tests" / "routines.py"
@@ -33,7 +35,7 @@ COMPLETION_TOOL = ROOT / "tools" / "completion" / "completion.py"
 
 TIER_BOUNDS = ((1, 0, 100), (2, 100, 300), (3, 300, 800), (4, 800, None))
 LIFECYCLE_STATES = (
-    "ready", "blocked", "active", "awaiting-gate", "failing", "complete",
+    "ready", "blocked", "active", "awaiting-check", "failing", "complete",
     "excluded",
 )
 
@@ -94,67 +96,17 @@ def gate_input_trees() -> dict[str, str] | None:
 
 
 def gate_is_trusted(gate_data: dict | None) -> bool:
-    """Return true only for a complete, structurally valid gate."""
-    if not gate_data or not gate_data.get("complete"):
+    if not isinstance(gate_data, dict):
         return False
-    schema = gate_data.get("schema")
-    if schema in {2, 3}:
-        if gate_data.get("revision") != current_source_revision(ROOT):
-            return False
-        counts = gate_data.get("counts") or {}
-        final = counts.get("final_routines") or {}
-        production = counts.get("production_integration") or {}
-        requirements = counts.get("requirements") or {}
-        milestones = counts.get("milestone_gates") or {}
-        trusted = counts.get("trusted_oracle_evidence") or {}
-        if (
-            counts.get("unclassified_bytes") != 0
-            or counts.get("orphan_registrations") != 0
-            or final.get("count") != final.get("total")
-            or production.get("roots") != production.get("root_total")
-            or production.get("uncovered_required_edges") != 0
-            or requirements.get("passing") != requirements.get("total")
-            or milestones.get("passing") != milestones.get("total")
-            or trusted.get("count") != trusted.get("total")
-        ):
-            return False
-        constituents = gate_data.get("constituents")
-        return isinstance(constituents, dict) and bool(constituents) and all(
-            isinstance(item, dict) and item.get("status") == "PASS"
-            for item in constituents.values()
+    try:
+        valid, _reason = validate_attestation(
+            gate_data,
+            ROOT,
+            current_source_revision(ROOT),
         )
-    if schema != 1:
+    except (GateError, OSError, ValueError):
         return False
-    inventory = gate_data.get("inventory") or {}
-    count = inventory.get("routines")
-    if (
-        not isinstance(count, int)
-        or count <= 0
-        or inventory.get("failures", 0)
-        or inventory.get("primary_missing", 0)
-    ):
-        return False
-    routines = gate_data.get("routines")
-    if (
-        not isinstance(routines, dict)
-        or not routines
-        or len(routines) != count
-        or any(
-            not isinstance(entry, dict)
-            or entry.get("status") not in {"pass", "fail"}
-            for entry in routines.values()
-        )
-    ):
-        return False
-    if not gate_data.get("commit"):
-        return False
-    recorded_trees = gate_data.get("input_trees")
-    if not isinstance(recorded_trees, dict) or not recorded_trees:
-        return False
-    computed_trees = gate_input_trees()
-    if computed_trees is None:
-        return False
-    return recorded_trees == computed_trees
+    return valid
 
 
 def load_operational_blockers() -> dict[str, dict]:
@@ -184,7 +136,7 @@ def project_work_records(
 ) -> list[dict]:
     """Project report rows into stable, issue-sized desired work records."""
     trusted = gate_is_trusted(gate_data)
-    gate_complete = trusted and gate_data.get("schema") in {2, 3}
+    gate_complete = trusted
     gate_routines = (gate_data or {}).get("routines") or {}
     operational = load_operational_blockers()
     active_packets = active_packets or {}
@@ -209,12 +161,14 @@ def project_work_records(
         }
         if work["excluded"]:
             work["state"] = "excluded"
-        elif gate_complete or (trusted and gate_routines.get(name, {}).get("status") == "pass"):
+        elif gate_complete or gate_routines.get(name, {}).get("status") == "pass":
             work["state"] = "complete"
-        elif trusted and gate_routines.get(name, {}).get("status") == "fail":
+        elif gate_routines.get(name, {}).get("status") == "fail" or function["status"] == "failing":
             work["state"] = "failing"
-        elif function["status"] in ("ported", "verified", "failing"):
-            work["state"] = "awaiting-gate"
+        elif function["status"] == "verified":
+            work["state"] = "complete"
+        elif function["status"] == "ported":
+            work["state"] = "awaiting-check"
         elif work["packet"] and work["packet"].get("state") in {
             "pending", "translated", "verifying", "repair", "green",
         }:
@@ -380,6 +334,67 @@ def load_completion_status() -> dict | None:
         )
         value["complete"] = False
     return value
+
+
+def _read_json(path: Path, default: dict) -> dict:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return default
+    return value if isinstance(value, dict) else default
+
+
+def workflow_axes(completion: dict | None, functions: list[dict]) -> dict:
+    mapping = _read_json(ROOT / "build" / "completion" / "routine-mapping.json", {})
+    coverage = _read_json(ROOT / "site" / "data" / "coverage.json", {})
+    ratchet = _read_json(ROOT / "tools" / "completion" / "session_ratchet.json", {})
+    pending_publication = 0
+    journal = ROOT / ".factory" / "workflow.sqlite3"
+    if journal.is_file():
+        try:
+            with sqlite3.connect(f"file:{journal}?mode=ro", uri=True) as database:
+                pending_publication = int(database.execute(
+                    "SELECT COUNT(*) FROM publications WHERE phase != 'published'"
+                ).fetchone()[0])
+        except sqlite3.Error:
+            pending_publication = -1
+    requirements = (completion or {}).get("counts", {}).get("requirements", {})
+    milestones = (completion or {}).get("counts", {}).get("milestone_gates", {})
+    routines = coverage.get("routines", {}) if isinstance(coverage, dict) else {}
+    unmeasurable = [
+        name for name, row in routines.items()
+        if isinstance(row, dict) and row.get("unmeasurable")
+    ] if isinstance(routines, dict) else []
+    totals = coverage.get("totals", {}) if isinstance(coverage, dict) else {}
+    confirmed = [
+        int(row.get("confirmed_ordinal", 0))
+        for row in ratchet.values()
+        if isinstance(row, dict)
+    ] if isinstance(ratchet, dict) else []
+    return {
+        "source_finality": {
+            "debt": len(mapping.get("finality_debt", [])),
+            "final": mapping.get("final_routines"),
+            "logical": mapping.get("logical_routines"),
+        },
+        "routine_checks": {
+            "verified": sum(row.get("status") == "verified" for row in functions),
+            "total": len(functions),
+        },
+        "session_prefixes": {
+            "sessions": len(confirmed),
+            "confirmed_ordinals": sum(confirmed),
+        },
+        "reference_coverage": {
+            "executed": totals.get("executed") if isinstance(totals, dict) else None,
+            "total": totals.get("total") if isinstance(totals, dict) else None,
+            "unmeasurable": len(unmeasurable),
+        },
+        "requirements": requirements,
+        "milestones": milestones,
+        "pending_publication": pending_publication,
+        "final_release": gate_is_trusted(load_gate()),
+    }
 
 
 def jj_commit_short() -> str | None:
@@ -672,6 +687,7 @@ def subcommand_build():
     if completion is not None:
         report["completion"] = completion
     report["recent"] = recent_ports(inv)
+    report["workflow_axes"] = workflow_axes(completion, report["functions"])
     previous_report = None
     if PROGRESS.exists():
         try:
@@ -682,7 +698,7 @@ def subcommand_build():
         previous_report.get(key) == report.get(key)
         for key in (
             "measures", "categories", "units", "functions", "work_records",
-            "id_migrations", "completion", "recent",
+            "id_migrations", "completion", "recent", "workflow_axes",
         )
     )
     if unchanged and previous_report.get("commit"):
@@ -731,6 +747,11 @@ def subcommand_check():
     routines_set, _ = load_routines()
     gate_data = load_gate()
     current = compute(inv, routines_set, gate_data)
+    completion = load_completion_status()
+    if completion is not None:
+        current["completion"] = completion
+    current["recent"] = recent_ports(inv)
+    current["workflow_axes"] = workflow_axes(completion, current["functions"])
     committed = None
     if PROGRESS.exists():
         with open(PROGRESS) as f:
@@ -740,7 +761,7 @@ def subcommand_check():
     diffs = []
     for key in (
         "measures", "categories", "units", "functions", "work_records",
-        "id_migrations",
+        "id_migrations", "completion", "recent", "workflow_axes",
     ):
         a = json.dumps(current.get(key), sort_keys=True)
         b = json.dumps(committed.get(key), sort_keys=True)

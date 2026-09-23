@@ -482,9 +482,12 @@ def _length_mismatch_offset(
     return min(len(_state_field(reference, field)), len(_state_field(native, field)))
 
 def current_key() -> str:
-    from completion import content_key, load_toml
+    from tools.completion.completion import content_key, load_toml
 
-    return content_key(load_toml(ROOT / "tools/completion/baseline.toml"), load_toml(ROOT / "tools/completion/requirements.toml"))
+    return content_key(
+        load_toml(ROOT / "tools/completion/baseline.toml"),
+        load_toml(ROOT / "tools/completion/requirements.toml"),
+    )
 
 
 def evidence_path(requirement: str) -> Path:
@@ -545,6 +548,7 @@ def main(argv: list[str] | None = None) -> int:
         with tempfile.TemporaryDirectory(prefix="poketcg-scenario-") as directory:
             state_path = Path(directory) / "state.json"
             trace_path = Path(directory) / "trace.json"
+            reference_trace = Path(directory) / "reference-audio.json"
             input_path = None
             if args.scenario in {"boot-title", "boot-title-negative"}:
                 input_path = Path(directory) / "input.txt"
@@ -717,6 +721,10 @@ def main(argv: list[str] | None = None) -> int:
                         artifact["status"] = "PASS"
                         artifact["terminal_event"] = "FIRST_MISMATCH"
                         artifact["events"] = 1
+                        artifact["comparison"] = {
+                            "status": "PASS",
+                            "kind": "first-mismatch",
+                        }
                         artifact["first_mismatch_frame"] = finding["frame"]
                         artifact["first_mismatch_region"] = finding["field"]
                         artifact["first_mismatch_offset"] = finding["offset"]
@@ -826,6 +834,12 @@ def main(argv: list[str] | None = None) -> int:
                             direction_native_to_reference,
                             direction_reference_to_native,
                         ],
+                        "status": (
+                            "PASS"
+                            if direction_native_to_reference["status"] == "PASS"
+                            and direction_reference_to_native["status"] == "PASS"
+                            else "FAIL"
+                        ),
                     }
                     artifact["state_fields"] = [
                         "save", "sram_bank_0", "sram_bank_1", "sram_bank_2", "sram_bank_3",
@@ -843,12 +857,27 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         artifact["failure"] = "SCENARIO_ERROR"
         artifact["detail"] = str(exc)
-    path = evidence_path(requirement)
-    path.write_text(json.dumps(artifact, sort_keys=True, separators=(",", ":")) + "\n")
-    print(json.dumps({"status": artifact["status"], "scenario": args.scenario, **{
-        key: artifact[key] for key in ("failure", "content_key", "frames", "covered_edges")
-        if key in artifact
-    }}, sort_keys=True))
+    from tools.completion.completion import check_evidence, requirement_by_id, write_evidence_artifact
+
+    write_evidence_artifact(requirement, artifact)
+    status, reason = check_evidence(requirement_by_id(requirement))
+    output = {
+        "status": artifact["status"],
+        "scenario": args.scenario,
+        "validation": status,
+        **{
+            key: artifact[key]
+            for key in ("failure", "content_key", "frames", "covered_edges")
+            if key in artifact
+        },
+    }
+    if reason:
+        output["reason"] = reason
+    print(json.dumps(output, sort_keys=True))
+    if status == "pass":
+        return 0
+    if status in {"unavailable", "unsupported"}:
+        return 3
     return 2
 
 

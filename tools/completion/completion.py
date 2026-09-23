@@ -21,7 +21,9 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
+from tools.completion import evidence
 from tools.completion.revision import current_source_revision
+
 BASELINE_PATH = ROOT / "tools" / "completion" / "baseline.toml"
 MANIFEST_PATH = ROOT / "tools" / "completion" / "requirements.toml"
 INVENTORY_PATH = ROOT / "site" / "data" / "inventory.json"
@@ -38,16 +40,34 @@ CFG_TOOL = ROOT / "tools" / "completion" / "cfg.py"
 CFG_OUTPUT = COMPLETION_DIR / "cfg.json"
 MAPPING_PATH = COMPLETION_DIR / "routine-mapping.json"
 EVIDENCE_DIR = COMPLETION_DIR / "evidence"
+FINALITY_DIR = COMPLETION_DIR / "finality"
 ROM_SIZE = 0x100000
-EXPECTED_PROVISIONAL = 106
 EXPECTED_EXTRA_REGISTRATIONS = 14
 ALLOWED_SPAN_KINDS = {"code", "data", "header/metadata", "padding", "unclassified"}
 REQUIRED_RELATION_FIELDS = {
-    "wram", "hram", "sram_bank_0", "sram_bank_1", "sram_bank_2",
-    "sram_bank_3", "vram_bank_0", "vram_bank_1", "oam", "io", "palette_ram",
-    "mapper_state", "input_latch", "timer_frame_counters", "rng", "apu_state",
-    "apu_trace", "framebuffer", "save", "transport", "printer",
-    "sm83_registers_function_boundary", "hardware_exclusions",
+    "wram",
+    "hram",
+    "sram_bank_0",
+    "sram_bank_1",
+    "sram_bank_2",
+    "sram_bank_3",
+    "vram_bank_0",
+    "vram_bank_1",
+    "oam",
+    "io",
+    "palette_ram",
+    "mapper_state",
+    "input_latch",
+    "timer_frame_counters",
+    "rng",
+    "apu_state",
+    "apu_trace",
+    "framebuffer",
+    "save",
+    "transport",
+    "printer",
+    "sm83_registers_function_boundary",
+    "hardware_exclusions",
 }
 P8_IDS = {
     "completion:v2:p8:ppu:span-widening",
@@ -105,6 +125,7 @@ def sha256_path(path: Path) -> str:
         raise AuditError(f"cannot hash {path}: {exc}") from exc
     return digest.hexdigest()
 
+
 def load_completion_sibling(name: str) -> Any:
     path = ROOT / "tools" / "completion" / f"{name}.py"
     spec = importlib.util.spec_from_file_location(f"completion_{name}", path)
@@ -120,7 +141,8 @@ def load_completion_sibling(name: str) -> Any:
 
 
 def current_revision() -> str:
-    return current_source_revision(ROOT)
+    controller_revision = os.environ.get("POKETCG_CONTROLLER_REVISION")
+    return controller_revision or current_source_revision(ROOT)
 
 
 def load_rom_inventory_module() -> Any:
@@ -156,6 +178,7 @@ def run_source_inventory() -> dict[str, Any]:
         )
     return load_json(INVENTORY_PATH)
 
+
 def run_cfg_audit() -> dict[str, Any]:
     trace_text = os.environ.get("POKETCG_CFG_TRACE")
     if not trace_text:
@@ -164,8 +187,12 @@ def run_cfg_audit() -> dict[str, Any]:
     try:
         result = subprocess.run(
             [
-                sys.executable, str(CFG_TOOL), "--trace", str(trace_path),
-                "--output", str(CFG_OUTPUT),
+                sys.executable,
+                str(CFG_TOOL),
+                "--trace",
+                str(trace_path),
+                "--output",
+                str(CFG_OUTPUT),
             ],
             cwd=ROOT,
             capture_output=True,
@@ -178,12 +205,15 @@ def run_cfg_audit() -> dict[str, Any]:
     if not CFG_OUTPUT.is_file():
         detail = (result.stderr or result.stdout).strip().splitlines()
         raise AuditError(
-            "CFG audit produced no report: " + (detail[-1] if detail else "unknown error")
+            "CFG audit produced no report: "
+            + (detail[-1] if detail else "unknown error")
         )
     report = load_json(CFG_OUTPUT)
     if not isinstance(report.get("uncovered_required_edges"), int):
         raise AuditError("CFG report has no uncovered edge count")
     return report
+
+
 def read_rom_sha1() -> str:
     try:
         text = ROM_SHA1_PATH.read_text(encoding="utf-8")
@@ -201,9 +231,19 @@ def validate_baseline(baseline: dict[str, Any], inventory: dict[str, Any]) -> li
     if not isinstance(values, dict):
         return ["baseline table is missing"]
     required = {
-        "epoch", "pret_commit", "rom_sha1", "rom_sha256", "rom_size", "rom_banks",
-        "map_sha256", "symbol_sha256", "inventory_sha256", "inventory_schema",
-        "map_parser", "symbol_parser", "inventory_parser",
+        "epoch",
+        "pret_commit",
+        "rom_sha1",
+        "rom_sha256",
+        "rom_size",
+        "rom_banks",
+        "map_sha256",
+        "symbol_sha256",
+        "inventory_sha256",
+        "inventory_schema",
+        "map_parser",
+        "symbol_parser",
+        "inventory_parser",
     }
     missing = sorted(required - values.keys())
     if missing:
@@ -223,17 +263,21 @@ def validate_baseline(baseline: dict[str, Any], inventory: dict[str, Any]) -> li
         actual_size = -1
     if values["pret_commit"] != "0e7157e885c03d68b3b44410d3adc5aede385627":
         errors.append("pret commit is not the frozen epoch")
-    try:
-        pret = subprocess.run(
-            ["git", "-C", str(ROOT / "poketcg"), "rev-parse", "HEAD"],
-            capture_output=True,
-            text=True,
-            timeout=10,
-            check=False,
-        )
-        actual_pret = pret.stdout.strip()
-    except (OSError, subprocess.TimeoutExpired):
-        actual_pret = ""
+    pinned_pret = ROOT / "poketcg" / ".pret-commit"
+    if pinned_pret.is_file():
+        actual_pret = pinned_pret.read_text(encoding="utf-8").strip()
+    else:
+        try:
+            pret = subprocess.run(
+                ["git", "-C", str(ROOT / "poketcg"), "rev-parse", "HEAD"],
+                capture_output=True,
+                text=True,
+                timeout=10,
+                check=False,
+            )
+            actual_pret = pret.stdout.strip()
+        except (OSError, subprocess.TimeoutExpired):
+            actual_pret = ""
     if actual_pret != values["pret_commit"]:
         errors.append("pret checkout revision differs from baseline")
     if actual_size != values["rom_size"] or actual_size != ROM_SIZE:
@@ -317,8 +361,11 @@ def validate_manifest(manifest: dict[str, Any], baseline: dict[str, Any]) -> lis
     if missing_relation:
         errors.append("missing representation fields: " + ",".join(missing_relation))
     exclusion = next(
-        (row for row in representation if isinstance(row, dict)
-         and row.get("field") == "hardware_exclusions"),
+        (
+            row
+            for row in representation
+            if isinstance(row, dict) and row.get("field") == "hardware_exclusions"
+        ),
         None,
     )
     refinement = exclusion.get("refinement", "") if exclusion else ""
@@ -342,7 +389,12 @@ def validate_manifest(manifest: dict[str, Any], baseline: dict[str, Any]) -> lis
         ids.append(req_id)
         by_id[req_id] = req
         for field in (
-            "anchor", "milestone", "command", "terminal_event", "artifact_schema",
+            "anchor",
+            "milestone",
+            "command",
+            "producer",
+            "terminal_event",
+            "artifact_schema",
         ):
             if not isinstance(req.get(field), str) or not req[field]:
                 errors.append(f"{req_id} missing {field}")
@@ -365,10 +417,41 @@ def validate_manifest(manifest: dict[str, Any], baseline: dict[str, Any]) -> lis
         issue = req.get("tracker_issue")
         if not isinstance(issue, int) or issue < 0:
             errors.append(f"{req_id} has invalid tracker_issue")
+        try:
+            from tools.completion import producers
+        except ImportError as exc:
+            errors.append(f"{req_id} has no producer descriptor: {exc}")
+        else:
+            try:
+                descriptor = producers.describe(req_id)
+            except producers.ProducerUnavailable as exc:
+                errors.append(f"{req_id} has no producer descriptor: {exc}")
+            else:
+                if req.get("producer") != descriptor.get("producer"):
+                    errors.append(f"{req_id} producer does not match registry")
     for req_id, req in by_id.items():
         for dep in req.get("deps", []):
             if dep not in by_id:
                 errors.append(f"{req_id} depends on unknown {dep}")
+    try:
+        from tools.completion import producers
+
+        descriptor_ids = set(producers.ids())
+    except ImportError as exc:
+        errors.append(f"producer registry is unavailable: {exc}")
+    else:
+        missing_descriptors = sorted(set(by_id) - descriptor_ids)
+        extra_descriptors = sorted(descriptor_ids - set(by_id))
+        if missing_descriptors:
+            errors.append(
+                "requirements without producer descriptors: "
+                + ",".join(missing_descriptors)
+            )
+        if extra_descriptors:
+            errors.append(
+                "producer descriptors without requirements: "
+                + ",".join(extra_descriptors)
+            )
     visiting: set[str] = set()
     visited: set[str] = set()
 
@@ -391,7 +474,10 @@ def validate_manifest(manifest: dict[str, Any], baseline: dict[str, Any]) -> lis
         errors.append(str(exc))
     boot = by_id.get("completion:v2:p2:boot-title")
     if boot:
-        if boot.get("min_frames") != 600 or boot.get("terminal_event") != "NEW_GAME_ENTERED":
+        if (
+            boot.get("min_frames") != 600
+            or boot.get("terminal_event") != "NEW_GAME_ENTERED"
+        ):
             errors.append("boot-title requirement was weakened")
         fields = set(boot.get("state_fields", []))
         if not {"wram", "framebuffer"} <= fields:
@@ -402,10 +488,15 @@ def validate_manifest(manifest: dict[str, Any], baseline: dict[str, Any]) -> lis
     if not P8_IDS <= set(by_id):
         errors.append("Phase 8 stable obligations are incomplete")
     scenarios = manifest.get("scenario")
-    scenarios_by_id = {
-        scenario.get("id"): scenario
-        for scenario in scenarios if isinstance(scenario, dict)
-    } if isinstance(scenarios, list) else {}
+    scenarios_by_id = (
+        {
+            scenario.get("id"): scenario
+            for scenario in scenarios
+            if isinstance(scenario, dict)
+        }
+        if isinstance(scenarios, list)
+        else {}
+    )
     for scenario_id in ("boot-title", "boot-title-negative"):
         scenario = scenarios_by_id.get(scenario_id)
         if scenario is None:
@@ -414,8 +505,11 @@ def validate_manifest(manifest: dict[str, Any], baseline: dict[str, Any]) -> lis
         if scenario.get("requirement") not in by_id:
             errors.append(f"{scenario_id} points at unknown requirement")
         for field in (
-            "start_state", "input_schema", "terminal_event",
-            "raw_checkpoint_schema", "comparison",
+            "start_state",
+            "input_schema",
+            "terminal_event",
+            "raw_checkpoint_schema",
+            "comparison",
         ):
             if not isinstance(scenario.get(field), str) or not scenario[field]:
                 errors.append(f"{scenario_id} missing {field}")
@@ -455,7 +549,9 @@ def validate_mapped_spans(spans: list[dict[str, Any]]) -> int:
     return total
 
 
-def validate_physical_spans(spans: list[dict[str, Any]], expected_end: int) -> dict[str, int]:
+def validate_physical_spans(
+    spans: list[dict[str, Any]], expected_end: int
+) -> dict[str, int]:
     cursor = 0
     totals: dict[str, int] = {}
     for span in sorted(spans, key=lambda item: int(item.get("offset", -1))):
@@ -470,7 +566,9 @@ def validate_physical_spans(spans: list[dict[str, Any]], expected_end: int) -> d
         cursor = end
         totals[kind] = totals.get(kind, 0) + end - start
     if cursor != expected_end:
-        raise AuditError(f"physical span union ends at 0x{cursor:06x}, expected 0x{expected_end:06x}")
+        raise AuditError(
+            f"physical span union ends at 0x{cursor:06x}, expected 0x{expected_end:06x}"
+        )
     return totals
 
 
@@ -507,7 +605,9 @@ def load_registry() -> tuple[list[str], dict[str, list[str]]]:
     return registrations, grouped
 
 
-def load_scope_exclusions(inventory_functions: dict[str, Any] | None = None) -> set[str]:
+def load_scope_exclusions(
+    inventory_functions: dict[str, Any] | None = None,
+) -> set[str]:
     if not SCOPE_PATH.is_file():
         return set()
     scope = load_toml(SCOPE_PATH)
@@ -519,7 +619,9 @@ def load_scope_exclusions(inventory_functions: dict[str, Any] | None = None) -> 
         exclusions.update(symbol for symbol in symbols if isinstance(symbol, str))
         if inventory_functions is None:
             continue
-        patterns = [pattern for pattern in rule.get("files", []) if isinstance(pattern, str)]
+        patterns = [
+            pattern for pattern in rule.get("files", []) if isinstance(pattern, str)
+        ]
         for name, info in inventory_functions.items():
             file_name = info.get("file") if isinstance(info, dict) else None
             if isinstance(file_name, str) and any(
@@ -530,76 +632,212 @@ def load_scope_exclusions(inventory_functions: dict[str, Any] | None = None) -> 
 
 
 def native_definitions() -> set[str]:
-    definitions: set[str] = set()
+    return set(native_bodies())
+
+
+def native_bodies() -> dict[str, tuple[Path, str]]:
+    bodies: dict[str, tuple[Path, str]] = {}
     for path in sorted((ROOT / "src" / "home").glob("*.c")):
         try:
             text = path.read_text(encoding="utf-8", errors="replace")
         except OSError as exc:
             raise AuditError(f"cannot read {path}: {exc}") from exc
-        definitions.update(C_FUNCTION_RE.findall(text))
-    return definitions
+        for match in C_FUNCTION_RE.finditer(text):
+            depth = 0
+            end = None
+            for index in range(match.end() - 1, len(text)):
+                if text[index] == "{":
+                    depth += 1
+                elif text[index] == "}":
+                    depth -= 1
+                    if depth == 0:
+                        end = index + 1
+                        break
+            if end is not None:
+                bodies.setdefault(match.group(1), (path, text[match.start() : end]))
+    return bodies
+
+
+def _json_case_value(value: Any) -> Any:
+    if isinstance(value, bytes):
+        return {"bytes": value.hex()}
+    if isinstance(value, dict):
+        return {str(key): _json_case_value(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_case_value(item) for item in value]
+    if isinstance(value, set):
+        return sorted(_json_case_value(item) for item in value)
+    return value
+
+
+def finality_path(routine: str) -> Path:
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+", routine):
+        raise AuditError(f"unsafe routine finality path: {routine!r}")
+    return FINALITY_DIR / f"{routine}.json"
+
+
+def _stored_finality(routine: str) -> dict[str, Any] | None:
+    path = finality_path(routine)
+    if not path.is_file():
+        return None
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise AuditError(f"cannot load finality record {path}: {exc}") from exc
+    if not isinstance(value, dict):
+        raise AuditError(f"finality record is not an object: {path}")
+    return value
+
+
+def _finality_for(
+    routine: str,
+    primary_case: dict[str, Any] | None,
+    primary_source: Path | None,
+    native_body: tuple[Path, str] | None,
+) -> tuple[str, dict[str, Any] | None, str | None]:
+    if primary_case is None:
+        return "debt", None, "missing primary completion contract"
+    if native_body is None:
+        return "debt", None, "missing native body"
+    body_sha256 = hashlib.sha256(native_body[1].encode("utf-8")).hexdigest()
+    contract_sha256 = hashlib.sha256(
+        evidence.canonical_bytes(_json_case_value(primary_case))
+    ).hexdigest()
+    mode = primary_case.get("completion", {}).get("mode")
+    if mode == "return":
+        if primary_source is None:
+            return "debt", None, "missing primary proof source"
+        record: dict[str, Any] = {
+            "schema": "routine-finality-v1",
+            "routine": routine,
+            "body_sha256": body_sha256,
+            "contract_sha256": contract_sha256,
+            "kind": "return",
+            "evidence_refs": [evidence.file_identity(ROOT, primary_source)],
+        }
+    else:
+        record = _stored_finality(routine)
+        if record is None:
+            return "debt", None, "missing event or transform finality evidence"
+    valid, reason = evidence.validate_finality_record(
+        ROOT,
+        record,
+        routine=routine,
+        body_sha256=body_sha256,
+        contract_sha256=contract_sha256,
+    )
+    return ("resolved", record, None) if valid else ("debt", record, reason)
+
+
 def build_mapping(inventory: dict[str, Any]) -> dict[str, Any]:
     registrations, grouped = load_registry()
     inventory_functions = inventory.get("functions")
     if not isinstance(inventory_functions, dict):
         raise AuditError("inventory functions are missing")
     excluded = load_scope_exclusions(inventory_functions)
-    canonical_inventory = {
-        name for name in inventory_functions
-        if name not in excluded
-    }
+    canonical_inventory = {name for name in inventory_functions if name not in excluded}
     canonical_registry = set(grouped)
-    native = native_definitions()
+    bodies = native_bodies()
     rows: list[dict[str, Any]] = []
     missing_native: list[str] = []
     provisional: list[str] = []
+    finality_debt: list[dict[str, str]] = []
     for name in sorted(canonical_registry):
         info = inventory_functions.get(name)
-        span = None if info is None else {
-            "bank": info.get("bank"), "address": info.get("addr"), "length": info.get("size"),
-        }
-        candidate_names = (name, name.replace(".", "_"), *NATIVE_EQUIVALENTS.get(name, ()))
-        candidates = [candidate for candidate in candidate_names if candidate in native]
+        span = (
+            None
+            if info is None
+            else {
+                "bank": info.get("bank"),
+                "address": info.get("addr"),
+                "length": info.get("size"),
+            }
+        )
+        candidate_names = (
+            name,
+            name.replace(".", "_"),
+            *NATIVE_EQUIVALENTS.get(name, ()),
+        )
+        candidates = [candidate for candidate in candidate_names if candidate in bodies]
         primary = candidates[0] if candidates else None
+        native_body = bodies.get(primary) if primary else None
         if primary is None and name not in excluded:
             missing_native.append(name)
-        primary_case = primary_case_for(name)
+        case_name = name
+        primary_case = primary_case_for(case_name)
         if primary_case is None:
-            primary_case = next(
-                (primary_case_for(registration) for registration in grouped[name]
-                 if primary_case_for(registration) is not None),
-                None,
+            case_name = next(
+                (
+                    registration
+                    for registration in grouped[name]
+                    if primary_case_for(registration) is not None
+                ),
+                name,
             )
+            primary_case = primary_case_for(case_name)
         mode = primary_case.get("completion", {}).get("mode") if primary_case else None
-        if mode != "return" and name not in excluded:
-            provisional.append(name)
-        disposition = "source-unreachable" if name in excluded else (
-            "native-implementation-provisional" if mode != "return" else "native-implementation-final"
+        if name in excluded:
+            finality_state, finality_record, finality_reason = "excluded", None, None
+        else:
+            finality_state, finality_record, finality_reason = _finality_for(
+                name,
+                primary_case,
+                primary_case_source(case_name),
+                native_body,
+            )
+            if finality_state != "resolved":
+                provisional.append(name)
+                finality_debt.append(
+                    {
+                        "routine": name,
+                        "reason": finality_reason or "unresolved finality",
+                    }
+                )
+        disposition = (
+            "source-unreachable"
+            if name in excluded
+            else (
+                "native-implementation-final"
+                if finality_state == "resolved"
+                else "native-implementation-provisional"
+            )
         )
-        rows.append({
-            "canonical": name,
-            "registrations": grouped[name],
-            "native_symbols": candidates,
-            "disposition": disposition if primary is not None or name in excluded else "missing-native",
-            "completion_mode": mode,
-            "span": span,
-        })
+        rows.append(
+            {
+                "canonical": name,
+                "registrations": grouped[name],
+                "native_symbols": candidates,
+                "disposition": disposition
+                if primary is not None or name in excluded
+                else "missing-native",
+                "completion_mode": mode,
+                "finality": finality_state,
+                "finality_reason": finality_reason,
+                "finality_record": finality_record,
+                "span": span,
+            }
+        )
     orphan = sorted(
-        name for name in registrations
+        name
+        for name in registrations
         if canonical_name(name) not in inventory_functions
     )
     unregistered = sorted(canonical_inventory - canonical_registry)
     registration_rows = []
     for name in registrations:
         canonical = canonical_name(name)
-        registration_rows.append({
-            "registration": name,
-            "canonical": canonical,
-            "subentry_of": canonical if "." in name else None,
-            "span": next((row["span"] for row in rows if row["canonical"] == canonical), None),
-        })
+        registration_rows.append(
+            {
+                "registration": name,
+                "canonical": canonical,
+                "subentry_of": canonical if "." in name else None,
+                "span": next(
+                    (row["span"] for row in rows if row["canonical"] == canonical), None
+                ),
+            }
+        )
     return {
-        "schema": 1,
+        "schema": 2,
         "registrations": len(registrations),
         "logical_routines": len(canonical_registry),
         "expected_logical_routines": len(canonical_inventory),
@@ -614,23 +852,28 @@ def build_mapping(inventory: dict[str, Any]) -> dict[str, Any]:
         "final_routines": len(canonical_registry) - len(provisional),
         "provisional_routines": len(provisional),
         "provisional_names": provisional,
+        "finality_debt": finality_debt,
         "rows": rows,
         "registration_rows": registration_rows,
     }
 
 
 _PRIMARY_CASES: dict[str, dict[str, Any]] | None = None
+_PRIMARY_CASE_SOURCES: dict[str, Path] | None = None
 
 
 def primary_case_for(name: str) -> dict[str, Any] | None:
-    global _PRIMARY_CASES
+    global _PRIMARY_CASES, _PRIMARY_CASE_SOURCES
     if _PRIMARY_CASES is None:
         _PRIMARY_CASES = {}
+        _PRIMARY_CASE_SOURCES = {}
         case_dir = ROOT / "tests" / "cases"
         for path in sorted(case_dir.glob("*.py")):
             if path.name.startswith("_") or path.name == "__init__.py":
                 continue
-            spec = importlib.util.spec_from_file_location(f"completion_case_{path.stem}", path)
+            spec = importlib.util.spec_from_file_location(
+                f"completion_case_{path.stem}", path
+            )
             if spec is None or spec.loader is None:
                 raise AuditError(f"cannot load case module {path}")
             module = importlib.util.module_from_spec(spec)
@@ -639,14 +882,22 @@ def primary_case_for(name: str) -> dict[str, Any] | None:
             except Exception as exc:
                 raise AuditError(f"cannot load case module {path}: {exc}") from exc
             for routine, records in getattr(module, "SCHEMA2_CASES", {}).items():
-                primary = [record for record in records if record.get("evidence") == "primary"]
+                primary = [
+                    record for record in records if record.get("evidence") == "primary"
+                ]
                 if primary:
                     _PRIMARY_CASES[routine] = primary[0]
+                    _PRIMARY_CASE_SOURCES[routine] = path
     return _PRIMARY_CASES.get(name)
 
 
-def evidence_path(req_id: str) -> Path:
-    return EVIDENCE_DIR / f"{req_id}.json"
+def primary_case_source(name: str) -> Path | None:
+    primary_case_for(name)
+    return (_PRIMARY_CASE_SOURCES or {}).get(name)
+
+
+def evidence_path(req_id: str, *, root: Path = ROOT) -> Path:
+    return root.resolve() / "build" / "completion" / "evidence" / f"{req_id}.json"
 
 
 def scene_divergence_counts() -> dict[str, Any]:
@@ -677,61 +928,267 @@ def scene_divergence_counts() -> dict[str, Any]:
     }
 
 
-def check_evidence(req: dict[str, Any], content_key: str) -> tuple[str, str | None]:
-    path = evidence_path(req["id"])
+def requirement_by_id(
+    req_id: str, manifest: dict[str, Any] | None = None
+) -> dict[str, Any]:
+    value = manifest if manifest is not None else load_toml(MANIFEST_PATH)
+    requirements = value.get("requirement", [])
+    for requirement in requirements if isinstance(requirements, list) else []:
+        if isinstance(requirement, dict) and requirement.get("id") == req_id:
+            return requirement
+    raise AuditError(f"unknown completion requirement: {req_id}")
+
+
+def requirement_descriptor(requirement: dict[str, Any]) -> dict[str, Any]:
+    descriptor: dict[str, Any] = {
+        "producer_files": ["tools/completion"],
+        "comparator_files": ["tools/completion"],
+    }
+    if requirement["id"].startswith("completion:v2:reset:"):
+        descriptor["native"] = {"files": []}
+        descriptor["reference"] = {"files": []}
+    try:
+        from tools.completion import producers
+    except ImportError:
+        return descriptor
+    try:
+        described = producers.describe(requirement["id"])
+    except producers.ProducerUnavailable:
+        return descriptor
+    for key in (
+        "producer_files",
+        "comparator_files",
+        "runtime",
+        "native",
+        "reference",
+        "corpus",
+    ):
+        if key in described:
+            descriptor[key] = described[key]
+    return descriptor
+
+
+def _artifact_dependency_identities(
+    requirement: dict[str, Any], *, root: Path = ROOT
+) -> list[dict[str, Any]]:
+    root = root.resolve()
+    identities: list[dict[str, Any]] = []
+    for dependency in requirement.get("deps", []):
+        if not isinstance(dependency, str):
+            raise AuditError(f"{requirement['id']} has malformed dependency")
+        path = evidence_path(dependency, root=root)
+        if not path.is_file():
+            raise AuditError(f"missing dependency artifact: {path.relative_to(root)}")
+        artifact = load_json(path)
+        input_digest = artifact.get("input_digest")
+        payload = artifact.get("payload_sha256")
+        if not isinstance(input_digest, str) or not isinstance(payload, str):
+            raise AuditError(f"dependency lacks semantic identity: {dependency}")
+        identities.append(
+            {
+                "id": dependency,
+                "input_digest": input_digest,
+                "payload_sha256": payload,
+            }
+        )
+    return identities
+
+
+def requirement_input_manifest(
+    requirement: dict[str, Any],
+    *,
+    root: Path = ROOT,
+    lane_manifest: dict[str, Any] | None = None,
+    corpus: list[dict[str, Any]] | None = None,
+    dependencies: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    root = root.resolve()
+    configured = dict(requirement)
+    configured.update(requirement_descriptor(requirement))
+    return evidence.input_manifest(
+        root,
+        configured,
+        lane_manifest=lane_manifest,
+        corpus=corpus if corpus is not None else configured.get("corpus", []),
+        dependencies=(
+            dependencies
+            if dependencies is not None
+            else _artifact_dependency_identities(requirement, root=root)
+        ),
+    )
+
+
+def _validation_receipt_path(path: Path) -> Path:
+    return path.with_suffix(path.suffix + ".validation.json")
+
+
+def _check_validation_receipt(
+    path: Path, artifact: dict[str, Any]
+) -> tuple[str, str | None]:
+    receipt_path = _validation_receipt_path(path)
+    if not receipt_path.is_file():
+        return "stale", "artifact has no validation receipt"
+    try:
+        receipt = load_json(receipt_path)
+    except AuditError as exc:
+        return "invalid", str(exc)
+    if receipt.get("schema") != "validation-receipt-v1":
+        return "invalid", "validation receipt schema differs"
+    if receipt.get("input_digest") != artifact.get("input_digest"):
+        return "invalid", "validation receipt input differs"
+    if receipt.get("payload_sha256") != evidence.payload_sha256(artifact):
+        return "invalid", "validation receipt payload differs"
+    if (
+        not isinstance(receipt.get("validated_revision"), str)
+        or not receipt["validated_revision"]
+    ):
+        return "invalid", "validation receipt has no revision"
+    return "pass", None
+
+
+def check_evidence(
+    req: dict[str, Any],
+    content_key: str | None = None,
+    *,
+    root: Path = ROOT,
+    expected_manifest: dict[str, Any] | None = None,
+    lane_manifest: dict[str, Any] | None = None,
+) -> tuple[str, str | None]:
+    del content_key
+    root = root.resolve()
+    path = evidence_path(req["id"], root=root)
     if not path.is_file():
-        return "missing", f"missing artifact {path.relative_to(ROOT)}"
+        return "missing", f"missing artifact {path.relative_to(root)}"
     try:
         artifact = load_json(path)
     except AuditError as exc:
         return "invalid", str(exc)
-    if artifact.get("schema") != req["artifact_schema"]:
-        return "stale", "artifact schema does not match requirement"
-    if artifact.get("status") != "PASS":
-        return "failing", "artifact status is not PASS"
-    if artifact.get("content_key") != content_key:
-        return "stale", "artifact content key differs from current revision"
-    if artifact.get("terminal_event") != req["terminal_event"]:
-        return "failing", "required terminal event is absent"
-    if not isinstance(artifact.get("frames"), int) or artifact["frames"] < req["min_frames"]:
-        return "failing", "minimum frame bound is not met"
-    if not isinstance(artifact.get("events"), int) or artifact["events"] < req["min_events"]:
-        return "failing", "minimum event bound is not met"
-    fields = artifact.get("state_fields")
-    if not isinstance(fields, list) or not set(req["state_fields"]) <= set(fields):
-        return "failing", "representation fields are incomplete"
-    oracles = artifact.get("oracles")
-    if not isinstance(oracles, list) or not oracles:
-        return "unsupported", "artifact has no oracle identities"
-    if artifact.get("unsupported") or artifact.get("timeout") or artifact.get("partial"):
-        return "failing", "artifact records unsupported, timeout, or partial evidence"
-    return "pass", None
+    try:
+        expected = (
+            expected_manifest
+            if expected_manifest is not None
+            else requirement_input_manifest(
+                req,
+                root=root,
+                lane_manifest=lane_manifest,
+            )
+        )
+    except (AuditError, evidence.EvidenceError, OSError) as exc:
+        return "unavailable", str(exc)
+    status, reason = evidence.validate_requirement(root, req, artifact, expected)
+    if status != "pass":
+        return status, reason
+    return _check_validation_receipt(path, artifact)
 
 
-def content_key(baseline: dict[str, Any], manifest: dict[str, Any]) -> str:
-    values = baseline["baseline"]
-    digest = hashlib.sha256()
-    for value in (
-        values["epoch"], values["pret_commit"], values["rom_sha256"], values["map_sha256"],
-        values["symbol_sha256"], values["inventory_sha256"], manifest["manifest"]["version"],
-        manifest["manifest"]["source_sha256"], current_revision(),
-    ):
-        digest.update(str(value).encode("utf-8"))
-        digest.update(b"\0")
-    digest.update(json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode("utf-8"))
-    digest.update(b"\0")
-    return digest.hexdigest()[:24]
+def content_key(
+    baseline: dict[str, Any],
+    manifest: dict[str, Any],
+    requirement: dict[str, Any] | None = None,
+) -> str:
+    if requirement is not None:
+        return evidence.canonical_digest(requirement_input_manifest(requirement))
+    values = baseline.get("baseline", {})
+    table = manifest.get("manifest", {})
+    return evidence.canonical_digest({"baseline": values, "manifest": table})
+
+
+def write_evidence_artifact(
+    req_id: str,
+    artifact: dict[str, Any],
+    *,
+    raw_observation: dict[str, Any] | None = None,
+    lane_manifest: dict[str, Any] | None = None,
+    corpus: list[dict[str, Any]] | None = None,
+) -> Path:
+    path = evidence_path(req_id)
+    try:
+        requirement = requirement_by_id(req_id)
+        dependencies = _artifact_dependency_identities(requirement)
+        manifest = requirement_input_manifest(
+            requirement,
+            lane_manifest=lane_manifest,
+            corpus=corpus,
+            dependencies=dependencies,
+        )
+        digest = evidence.canonical_digest(manifest)
+        artifact["input_manifest"] = manifest
+        artifact["input_digest"] = digest
+        artifact["produced_revision"] = current_revision()
+        artifact["dependencies"] = dependencies
+        if artifact.get("status") == "PASS":
+            raw_dir = (
+                EVIDENCE_DIR
+                / "raw"
+                / hashlib.sha256(req_id.encode("utf-8")).hexdigest()
+            )
+            raw_dir.mkdir(parents=True, exist_ok=True)
+            raw_path = raw_dir / f"{digest}.json"
+            raw_payload = (
+                raw_observation
+                if raw_observation is not None
+                else {
+                    key: value
+                    for key, value in artifact.items()
+                    if key
+                    not in {
+                        "input_manifest",
+                        "input_digest",
+                        "payload_sha256",
+                        "observations",
+                    }
+                }
+            )
+            raw_path.write_text(
+                json.dumps(
+                    raw_payload,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                    ensure_ascii=False,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            artifact["observations"] = [evidence.file_identity(ROOT, raw_path)]
+        artifact["payload_sha256"] = evidence.payload_sha256(artifact)
+    except (AuditError, evidence.EvidenceError, OSError, TypeError, ValueError) as exc:
+        artifact["status"] = "FAIL"
+        artifact["failure"] = "EVIDENCE_IDENTITY_ERROR"
+        artifact["detail"] = str(exc)
+    EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(artifact, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+        + "\n",
+        encoding="utf-8",
+    )
+    if artifact.get("status") == "PASS":
+        evidence.write_validation_receipt(
+            ROOT,
+            path,
+            artifact,
+            artifact["input_digest"],
+            current_revision(),
+        )
+    return path
 
 
 def run_negative_fixtures() -> dict[str, dict[str, Any]]:
     results: dict[str, dict[str, Any]] = {}
     checks = {
         "overlap": lambda: validate_physical_spans(
-            [{"kind": "code", "offset": 0, "length": 2},
-             {"kind": "data", "offset": 1, "length": 3}], 4),
+            [
+                {"kind": "code", "offset": 0, "length": 2},
+                {"kind": "data", "offset": 1, "length": 3},
+            ],
+            4,
+        ),
         "missing": lambda: validate_physical_spans(
-            [{"kind": "code", "offset": 0, "length": 2},
-             {"kind": "padding", "offset": 3, "length": 1}], 4),
+            [
+                {"kind": "code", "offset": 0, "length": 2},
+                {"kind": "padding", "offset": 3, "length": 1},
+            ],
+            4,
+        ),
     }
     for name, check in checks.items():
         try:
@@ -755,7 +1212,8 @@ def run_negative_fixtures() -> dict[str, dict[str, Any]]:
         manifest_errors = validate_manifest(weakened, {"baseline": {"epoch": 2}})
     except AuditError as exc:
         results["weakened_requirement"] = {
-            "status": "FAIL", "observed": f"fixture error: {exc}",
+            "status": "FAIL",
+            "observed": f"fixture error: {exc}",
         }
     else:
         rejected = "boot-title requirement was weakened" in manifest_errors
@@ -764,9 +1222,15 @@ def run_negative_fixtures() -> dict[str, dict[str, Any]]:
             "observed": "rejected" if rejected else "accepted",
         }
     try:
-        validate_manifest_source({"manifest": {
-            "source": "docs/vision.md", "source_sha256": "0" * 64,
-        }}, sha256_path(ROOT / "docs" / "vision.md"))
+        validate_manifest_source(
+            {
+                "manifest": {
+                    "source": "docs/vision.md",
+                    "source_sha256": "0" * 64,
+                }
+            },
+            sha256_path(ROOT / "docs" / "vision.md"),
+        )
     except AuditError:
         results["stale_source_hash"] = {"status": "PASS", "observed": "rejected"}
     else:
@@ -788,7 +1252,9 @@ def collect_report() -> dict[str, Any]:
         inventory = run_source_inventory()
     except AuditError as exc:
         return {
-            "schema": 2, "complete": False, "errors": [str(exc)],
+            "schema": 2,
+            "complete": False,
+            "errors": [str(exc)],
             "counts": {"rom_bytes": ROM_SIZE, "unclassified_bytes": None},
         }
     baseline_errors = validate_baseline(baseline, inventory)
@@ -819,13 +1285,17 @@ def collect_report() -> dict[str, Any]:
         span_interval(span) for span in source_spans if isinstance(span, dict)
     ]
     independent_mapped_intervals = [
-        span_interval(span) for span in independent_spans
+        span_interval(span)
+        for span in independent_spans
         if isinstance(span, dict) and span.get("kind") != "padding"
     ]
-    if merge_intervals(source_mapped_intervals) != merge_intervals(independent_mapped_intervals):
+    if merge_intervals(source_mapped_intervals) != merge_intervals(
+        independent_mapped_intervals
+    ):
         errors.append("source and independent mapped ROM unions disagree")
     source_unclassified = sum(
-        int(span.get("length", 0)) for span in source_spans
+        int(span.get("length", 0))
+        for span in source_spans
         if isinstance(span, dict) and span.get("kind") == "unclassified"
     )
     independent_unclassified = int(independent.get("unclassified_bytes", 0) or 0)
@@ -839,7 +1309,11 @@ def collect_report() -> dict[str, Any]:
     try:
         cfg = run_cfg_audit()
     except AuditError as exc:
-        cfg = {"required_edges": 0, "covered_edges": 0, "uncovered_required_edges": None}
+        cfg = {
+            "required_edges": 0,
+            "covered_edges": 0,
+            "uncovered_required_edges": None,
+        }
         errors.append(str(exc))
     if cfg.get("uncovered_required_edges"):
         errors.append(
@@ -849,8 +1323,11 @@ def collect_report() -> dict[str, Any]:
         mapping = build_mapping(inventory)
     except AuditError as exc:
         mapping = {
-            "registrations": 0, "logical_routines": 0, "final_routines": 0,
-            "provisional_routines": 0, "orphan_registrations": 0,
+            "registrations": 0,
+            "logical_routines": 0,
+            "final_routines": 0,
+            "provisional_routines": 0,
+            "orphan_registrations": 0,
         }
         errors.append(str(exc))
     COMPLETION_DIR.mkdir(parents=True, exist_ok=True)
@@ -861,7 +1338,9 @@ def collect_report() -> dict[str, Any]:
     if mapping.get("orphan_registrations"):
         errors.append(f"orphan registrations: {mapping['orphan_registrations']}")
     if mapping.get("unregistered_inventory"):
-        errors.append(f"unregistered canonical routines: {mapping['unregistered_inventory']}")
+        errors.append(
+            f"unregistered canonical routines: {mapping['unregistered_inventory']}"
+        )
     if mapping.get("missing_native"):
         errors.append(f"missing native implementations: {mapping['missing_native']}")
     if mapping.get("logical_routines") != mapping.get("expected_logical_routines"):
@@ -872,11 +1351,8 @@ def collect_report() -> dict[str, Any]:
             f"registrations={mapping.get('registrations')}, "
             f"extra={mapping.get('extra_registrations')}, expected_extra={EXPECTED_EXTRA_REGISTRATIONS}"
         )
-    if mapping.get("provisional_routines") != EXPECTED_PROVISIONAL:
-        errors.append(
-            f"provisional routine count is {mapping.get('provisional_routines')}, "
-            f"expected {EXPECTED_PROVISIONAL}"
-        )
+    if mapping.get("finality_debt"):
+        errors.append(f"unresolved routine finality: {len(mapping['finality_debt'])}")
     baseline_values = baseline.get("baseline", {})
     manifest_values = manifest.get("manifest", {})
     key = content_key(baseline, manifest)
@@ -886,13 +1362,18 @@ def collect_report() -> dict[str, Any]:
         if not isinstance(req, dict) or not isinstance(req.get("id"), str):
             continue
         status, reason = check_evidence(req, key)
-        row = {"status": status, "artifact": str(evidence_path(req["id"]).relative_to(ROOT))}
+        row = {
+            "status": status,
+            "artifact": str(evidence_path(req["id"]).relative_to(ROOT)),
+        }
         if reason:
             row["reason"] = reason
         requirement_rows[req["id"]] = row
         if status != "pass":
             errors.append(f"requirement {req['id']}: {status}")
-    passing_requirements = sum(row["status"] == "pass" for row in requirement_rows.values())
+    passing_requirements = sum(
+        row["status"] == "pass" for row in requirement_rows.values()
+    )
     milestone_pass = {
         milestone: all(
             requirement_rows.get(req.get("id"), {}).get("status") == "pass"
@@ -928,11 +1409,13 @@ def collect_report() -> dict[str, Any]:
     except AuditError:
         gate = {}
     in_flight_gate = os.environ.get("POKETCG_RELEASE_GATE_IN_FLIGHT") == "1"
-    trusted_gate = in_flight_gate or (
-        gate.get("schema") in {2, 3}
-        and gate.get("complete") is True
-        and (gate.get("commit") or gate.get("revision")) == current_revision()
-    )
+    try:
+        from tools.oracle.release_gate import GateError, validate_attestation
+
+        gate_valid, _gate_reason = validate_attestation(gate, ROOT, current_revision())
+    except (GateError, OSError, ValueError):
+        gate_valid = False
+    trusted_gate = in_flight_gate or gate_valid
     if not trusted_gate:
         errors.append("trusted oracle evidence is empty or stale")
     fixtures = run_negative_fixtures()
@@ -994,9 +1477,15 @@ def collect_report() -> dict[str, Any]:
         "mapping": {
             key: mapping[key]
             for key in (
-                "registrations", "logical_routines", "expected_logical_routines",
-                "extra_registrations", "expected_extra_registrations", "orphan_registrations",
-                "unregistered_inventory", "missing_native", "final_routines",
+                "registrations",
+                "logical_routines",
+                "expected_logical_routines",
+                "extra_registrations",
+                "expected_extra_registrations",
+                "orphan_registrations",
+                "unregistered_inventory",
+                "missing_native",
+                "final_routines",
                 "provisional_routines",
             )
             if key in mapping
@@ -1019,7 +1508,8 @@ def command_status() -> int:
     report["eta"] = {"p50": "insufficient-data", "p90": "insufficient-data"}
     report["remaining_obligations"] = report["counts"]["requirements"]["remaining"]
     report["critical_path"] = [
-        req_id for req_id, row in report.get("requirements", {}).items()
+        req_id
+        for req_id, row in report.get("requirements", {}).items()
         if row.get("status") != "pass"
     ]
     print(json.dumps(report, sort_keys=True, indent=2))
@@ -1030,11 +1520,19 @@ def command_check(req_id: str) -> int:
     manifest = load_toml(MANIFEST_PATH)
     requirements = manifest.get("requirement", [])
     req = next(
-        (item for item in requirements if isinstance(item, dict) and item.get("id") == req_id),
+        (
+            item
+            for item in requirements
+            if isinstance(item, dict) and item.get("id") == req_id
+        ),
         None,
     )
     if req is None:
-        print(json.dumps({"status": "FAIL", "id": req_id, "reason": "unknown requirement"}))
+        print(
+            json.dumps(
+                {"status": "FAIL", "id": req_id, "reason": "unknown requirement"}
+            )
+        )
         return 2
     baseline = load_toml(BASELINE_PATH)
     key = content_key(baseline, manifest)
@@ -1045,6 +1543,7 @@ def command_check(req_id: str) -> int:
     print(json.dumps(payload, sort_keys=True))
     return 0 if status == "pass" else 2
 
+
 def command_baseline() -> int:
     baseline = load_toml(BASELINE_PATH)
     manifest = load_toml(MANIFEST_PATH)
@@ -1054,7 +1553,10 @@ def command_baseline() -> int:
         "frames": 0,
         "events": 0,
         "state_fields": [
-            "rom_sha1", "rom_sha256", "map_sha256", "symbol_sha256",
+            "rom_sha1",
+            "rom_sha256",
+            "map_sha256",
+            "symbol_sha256",
             "inventory_sha256",
         ],
         "oracles": ["baseline.toml", "source-inventory"],
@@ -1079,17 +1581,21 @@ def command_baseline() -> int:
         artifact["failure"] = "BASELINE_ERROR"
         artifact["detail"] = str(exc)
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
-    path = evidence_path("completion:v2:reset:baseline")
-    path.write_text(json.dumps(artifact, sort_keys=True, separators=(",", ":")) + "\n")
-    print(json.dumps({
-        "status": artifact["status"],
-        "artifact": str(path.relative_to(ROOT)),
-        **{
-            key: artifact[key]
-            for key in ("failure", "content_key", "events")
-            if key in artifact
-        },
-    }, sort_keys=True))
+    path = write_evidence_artifact("completion:v2:reset:baseline", artifact)
+    print(
+        json.dumps(
+            {
+                "status": artifact["status"],
+                "artifact": str(path.relative_to(ROOT)),
+                **{
+                    key: artifact[key]
+                    for key in ("failure", "content_key", "events")
+                    if key in artifact
+                },
+            },
+            sort_keys=True,
+        )
+    )
     return 0 if artifact["status"] == "PASS" else 2
 
 
@@ -1112,8 +1618,11 @@ def command_rom_coverage() -> int:
         "frames": 0,
         "events": 0,
         "state_fields": [
-            "rom_bytes", "code_spans", "data_spans",
-            "header_spans", "padding_spans",
+            "rom_bytes",
+            "code_spans",
+            "data_spans",
+            "header_spans",
+            "padding_spans",
         ],
         "oracles": ["source-inventory", "independent-rom-inventory"],
     }
@@ -1130,18 +1639,19 @@ def command_rom_coverage() -> int:
             raise AuditError("independent inventory has no spans")
         independent_totals = validate_physical_spans(independent_spans, ROM_SIZE)
         source_intervals = [
-            span_interval(span) for span in source_spans
-            if isinstance(span, dict)
+            span_interval(span) for span in source_spans if isinstance(span, dict)
         ]
         independent_intervals = [
-            span_interval(span) for span in independent_spans
+            span_interval(span)
+            for span in independent_spans
             if isinstance(span, dict) and span.get("kind") != "padding"
         ]
         errors: list[str] = []
         if merge_intervals(source_intervals) != merge_intervals(independent_intervals):
             errors.append("source and independent mapped ROM unions disagree")
         source_unclassified = sum(
-            int(span["length"]) for span in source_spans
+            int(span["length"])
+            for span in source_spans
             if span.get("kind") == "unclassified"
         )
         independent_unclassified = int(independent.get("unclassified_bytes", 0) or 0)
@@ -1179,23 +1689,60 @@ def command_rom_coverage() -> int:
         artifact["failure"] = "ROM_COVERAGE_ERROR"
         artifact["detail"] = str(exc)
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
-    path = evidence_path("completion:v2:reset:rom-coverage")
-    path.write_text(json.dumps(artifact, sort_keys=True, separators=(",", ":")) + "\n")
-    print(json.dumps({
-        "status": artifact["status"],
-        "artifact": str(path.relative_to(ROOT)),
-        **{
-            key: artifact[key]
-            for key in ("failure", "content_key", "events")
-            if key in artifact
-        },
-    }, sort_keys=True))
+    path = write_evidence_artifact("completion:v2:reset:rom-coverage", artifact)
+    print(
+        json.dumps(
+            {
+                "status": artifact["status"],
+                "artifact": str(path.relative_to(ROOT)),
+                **{
+                    key: artifact[key]
+                    for key in ("failure", "content_key", "events")
+                    if key in artifact
+                },
+            },
+            sort_keys=True,
+        )
+    )
     return 0 if artifact["status"] == "PASS" else 2
 
 
 def mapping_digest(value: object) -> str:
     encoded = json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
     return hashlib.sha256(encoded).hexdigest()
+
+
+def command_routine_mapping_snapshot(output: Path) -> int:
+    try:
+        mapping = build_mapping(run_source_inventory())
+    except (AuditError, KeyError, OSError, TypeError, ValueError) as exc:
+        print(
+            json.dumps(
+                {
+                    "schema": "routine-mapping-snapshot-v1",
+                    "status": "FAIL",
+                    "detail": str(exc),
+                },
+                sort_keys=True,
+            )
+        )
+        return 2
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(
+        json.dumps(mapping, sort_keys=True, separators=(",", ":")) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        json.dumps(
+            {
+                "schema": "routine-mapping-snapshot-v1",
+                "status": "OK",
+                "mapping_path": str(output),
+            },
+            sort_keys=True,
+        )
+    )
+    return 0
 
 
 def command_routine_mapping() -> int:
@@ -1207,8 +1754,11 @@ def command_routine_mapping() -> int:
         "frames": 0,
         "events": 0,
         "state_fields": [
-            "canonical_routine", "registration",
-            "native_disposition", "span",
+            "canonical_routine",
+            "registration",
+            "native_disposition",
+            "finality",
+            "span",
         ],
         "oracles": ["source-inventory", "native-registration"],
     }
@@ -1224,13 +1774,21 @@ def command_routine_mapping() -> int:
             errors.append("missing native implementations")
         if mapping["orphan_registrations"] or mapping["unregistered_inventory"]:
             errors.append("routine mapping is not bijective")
+        if mapping["finality_debt"]:
+            errors.append("routine finality remains unresolved")
         artifact["mapping"] = {
             key: mapping[key]
             for key in (
-                "registrations", "logical_routines", "expected_logical_routines",
-                "extra_registrations", "expected_extra_registrations",
-                "orphan_registrations", "unregistered_inventory",
-                "final_routines", "provisional_routines",
+                "registrations",
+                "logical_routines",
+                "expected_logical_routines",
+                "extra_registrations",
+                "expected_extra_registrations",
+                "orphan_registrations",
+                "unregistered_inventory",
+                "final_routines",
+                "provisional_routines",
+                "finality_debt",
             )
         }
         artifact["canonical_routine"] = {
@@ -1243,26 +1801,29 @@ def command_routine_mapping() -> int:
         }
         artifact["native_disposition"] = {
             "count": len(rows),
-            "sha256": mapping_digest([
-                {
-                    "canonical": row["canonical"],
-                    "disposition": row["disposition"],
-                    "completion_mode": row["completion_mode"],
-                    "native_symbols": row["native_symbols"],
-                }
-                for row in rows
-            ]),
+            "sha256": mapping_digest(
+                [
+                    {
+                        "canonical": row["canonical"],
+                        "disposition": row["disposition"],
+                        "completion_mode": row["completion_mode"],
+                        "finality": row["finality"],
+                        "native_symbols": row["native_symbols"],
+                    }
+                    for row in rows
+                ]
+            ),
         }
         artifact["span"] = {
             "count": len(rows),
-            "sha256": mapping_digest([
-                {"canonical": row["canonical"], "span": row["span"]}
-                for row in rows
-            ]),
+            "sha256": mapping_digest(
+                [{"canonical": row["canonical"], "span": row["span"]} for row in rows]
+            ),
         }
         artifact["validation"] = {
             "errors": errors,
             "missing_native": mapping["missing_native_names"],
+            "finality_debt": mapping["finality_debt"],
         }
         if errors:
             artifact["failure"] = "ROUTINE_MAPPING_INVALID"
@@ -1276,22 +1837,22 @@ def command_routine_mapping() -> int:
         artifact["failure"] = "ROUTINE_MAPPING_ERROR"
         artifact["detail"] = str(exc)
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
-    path = evidence_path("completion:v2:reset:routine-bijection")
-    path.write_text(json.dumps(artifact, sort_keys=True, separators=(",", ":")) + "\n")
-    print(json.dumps({
-        "status": artifact["status"],
-        "artifact": str(path.relative_to(ROOT)),
-        **{
-            key: artifact[key]
-            for key in ("failure", "content_key", "events")
-            if key in artifact
-        },
-    }, sort_keys=True))
+    path = write_evidence_artifact("completion:v2:reset:routine-bijection", artifact)
+    print(
+        json.dumps(
+            {
+                "status": artifact["status"],
+                "artifact": str(path.relative_to(ROOT)),
+                **{
+                    key: artifact[key]
+                    for key in ("failure", "content_key", "events")
+                    if key in artifact
+                },
+            },
+            sort_keys=True,
+        )
+    )
     return 0 if artifact["status"] == "PASS" else 2
-
-
-
-
 
 
 def command_substrate() -> int:
@@ -1344,10 +1905,16 @@ def command_substrate() -> int:
             native_trace_path = directory_path / "native-trace.json"
             native = subprocess.run(
                 [
-                    str(ROOT / "build" / "poketcg"), "--headless",
-                    "--data-pack", str(ROOT / "build" / "completion" / "data-pack.bin"),
-                    "--frames", "1", "--dump-state", str(native_state_path),
-                    "--trace-entries", str(native_trace_path),
+                    str(ROOT / "build" / "poketcg"),
+                    "--headless",
+                    "--data-pack",
+                    str(ROOT / "build" / "completion" / "data-pack.bin"),
+                    "--frames",
+                    "1",
+                    "--dump-state",
+                    str(native_state_path),
+                    "--trace-entries",
+                    str(native_trace_path),
                 ],
                 cwd=ROOT,
                 capture_output=True,
@@ -1393,17 +1960,21 @@ def command_substrate() -> int:
         artifact["failure"] = "SUBSTRATE_ERROR"
         artifact["detail"] = str(exc)
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
-    path = evidence_path("completion:v2:p0:substrate")
-    path.write_text(json.dumps(artifact, sort_keys=True, separators=(",", ":")) + "\n")
-    print(json.dumps({
-        "status": artifact["status"],
-        "artifact": str(path.relative_to(ROOT)),
-        **{
-            key: artifact[key]
-            for key in ("failure", "content_key", "events")
-            if key in artifact
-        },
-    }, sort_keys=True))
+    path = write_evidence_artifact("completion:v2:p0:substrate", artifact)
+    print(
+        json.dumps(
+            {
+                "status": artifact["status"],
+                "artifact": str(path.relative_to(ROOT)),
+                **{
+                    key: artifact[key]
+                    for key in ("failure", "content_key", "events")
+                    if key in artifact
+                },
+            },
+            sort_keys=True,
+        )
+    )
     return 0 if artifact["status"] == "PASS" else 2
 
 
@@ -1422,8 +1993,11 @@ def command_hardware_removal() -> int:
     try:
         transform = (ROOT / "docs" / "phase1-transform.md").read_text(encoding="utf-8")
         required_rows = (
-            "Bank1Call", "FarCall", "HblankCopyDataHLtoDE",
-            "VBlankHandler", "SwitchToCGBDoubleSpeed",
+            "Bank1Call",
+            "FarCall",
+            "HblankCopyDataHLtoDE",
+            "VBlankHandler",
+            "SwitchToCGBDoubleSpeed",
         )
         missing_rows = [row for row in required_rows if f"`{row}`" not in transform]
         if missing_rows:
@@ -1431,30 +2005,53 @@ def command_hardware_removal() -> int:
         checks: dict[str, str] = {}
         for name, command in (
             ("oracle_diff_all", ["just", "oracle-diff-all"]),
-            ("adapter_lint", [sys.executable, str(ROOT / "tools" / "lint_adapters.py")]),
-            ("constant_lint", [sys.executable, str(ROOT / "tools" / "lint_constants.py")]),
+            (
+                "adapter_lint",
+                [sys.executable, str(ROOT / "tools" / "lint_adapters.py")],
+            ),
+            (
+                "constant_lint",
+                [sys.executable, str(ROOT / "tools" / "lint_constants.py")],
+            ),
         ):
             result = subprocess.run(
-                command, cwd=ROOT, capture_output=True, text=True,
-                timeout=300, check=False,
+                command,
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+                timeout=300,
+                check=False,
             )
             if result.returncode:
                 detail = (result.stderr or result.stdout).strip().splitlines()
-                raise AuditError(f"{name} failed: {detail[-1] if detail else 'unknown error'}")
+                raise AuditError(
+                    f"{name} failed: {detail[-1] if detail else 'unknown error'}"
+                )
             checks[name] = "PASS"
         with tempfile.TemporaryDirectory(prefix="poketcg-transform-") as directory:
             directory_path = Path(directory)
             state_path = directory_path / "state.json"
             result = subprocess.run(
                 [
-                    str(ROOT / "build" / "poketcg"), "--headless",
-                    "--data-pack", str(ROOT / "build" / "completion" / "data-pack.bin"),
-                    "--frames", "1", "--dump-state", str(state_path),
+                    str(ROOT / "build" / "poketcg"),
+                    "--headless",
+                    "--data-pack",
+                    str(ROOT / "build" / "completion" / "data-pack.bin"),
+                    "--frames",
+                    "1",
+                    "--dump-state",
+                    str(state_path),
                 ],
-                cwd=ROOT, capture_output=True, text=True, timeout=60, check=False,
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+                timeout=60,
+                check=False,
             )
             if result.returncode:
-                raise AuditError(result.stderr.strip() or "native transform smoke failed")
+                raise AuditError(
+                    result.stderr.strip() or "native transform smoke failed"
+                )
             state = load_json(state_path)
             missing_fields = [field for field in fields if field not in state]
             if missing_fields:
@@ -1467,21 +2064,32 @@ def command_hardware_removal() -> int:
         artifact["status"] = "PASS"
         artifact["events"] = 1
         artifact["terminal_event"] = "HARDWARE_TRANSFORM_CLOSED"
-    except (AuditError, KeyError, OSError, TypeError, ValueError, subprocess.TimeoutExpired) as exc:
+    except (
+        AuditError,
+        KeyError,
+        OSError,
+        TypeError,
+        ValueError,
+        subprocess.TimeoutExpired,
+    ) as exc:
         artifact["failure"] = "TRANSFORM_ERROR"
         artifact["detail"] = str(exc)
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
-    path = evidence_path("completion:v2:p1:hardware-removal")
-    path.write_text(json.dumps(artifact, sort_keys=True, separators=(",", ":")) + "\n")
-    print(json.dumps({
-        "status": artifact["status"],
-        "artifact": str(path.relative_to(ROOT)),
-        **{
-            key: artifact[key]
-            for key in ("failure", "content_key", "events")
-            if key in artifact
-        },
-    }, sort_keys=True))
+    path = write_evidence_artifact("completion:v2:p1:hardware-removal", artifact)
+    print(
+        json.dumps(
+            {
+                "status": artifact["status"],
+                "artifact": str(path.relative_to(ROOT)),
+                **{
+                    key: artifact[key]
+                    for key in ("failure", "content_key", "events")
+                    if key in artifact
+                },
+            },
+            sort_keys=True,
+        )
+    )
     return 0 if artifact["status"] == "PASS" else 2
 
 
@@ -1498,7 +2106,10 @@ def command_leaves() -> int:
     baseline = load_toml(BASELINE_PATH)
     manifest = load_toml(MANIFEST_PATH)
     fields = [
-        "wram", "hram", "sram_bank_0", "vram_bank_0",
+        "wram",
+        "hram",
+        "sram_bank_0",
+        "vram_bank_0",
         "sm83_registers_function_boundary",
     ]
     artifact: dict[str, Any] = {
@@ -1511,6 +2122,7 @@ def command_leaves() -> int:
     }
     try:
         from tests.routines import ALL, ROUTINES
+
         campaign = load_completion_sibling("mutation_campaign")
         registered = sorted(ALL)
         without_primary = [
@@ -1519,9 +2131,7 @@ def command_leaves() -> int:
         targets = campaign.targets()
         report = campaign.receipt_report(targets)
         receipt_universe = {fn for fn, _case, _index in targets}
-        without_receipt = [
-            name for name in registered if name not in receipt_universe
-        ]
+        without_receipt = [name for name in registered if name not in receipt_universe]
         artifact["corpus"] = {
             "registered_routines": len(registered),
             "registered_basenames": len(ROUTINES),
@@ -1531,8 +2141,12 @@ def command_leaves() -> int:
         artifact["receipts"] = {
             key: report[key]
             for key in (
-                "total_primary", "receipt_red", "receipt_missing",
-                "receipt_invalid", "missing_names", "invalid_names",
+                "total_primary",
+                "receipt_red",
+                "receipt_missing",
+                "receipt_invalid",
+                "missing_names",
+                "invalid_names",
             )
         }
         errors = []
@@ -1565,17 +2179,21 @@ def command_leaves() -> int:
         artifact["failure"] = "LEAF_CORPUS_ERROR"
         artifact["detail"] = str(exc)
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
-    path = evidence_path("completion:v2:p2:leaves")
-    path.write_text(json.dumps(artifact, sort_keys=True, separators=(",", ":")) + "\n")
-    print(json.dumps({
-        "status": artifact["status"],
-        "artifact": str(path.relative_to(ROOT)),
-        **{
-            key: artifact[key]
-            for key in ("failure", "content_key", "events")
-            if key in artifact
-        },
-    }, sort_keys=True))
+    path = write_evidence_artifact("completion:v2:p2:leaves", artifact)
+    print(
+        json.dumps(
+            {
+                "status": artifact["status"],
+                "artifact": str(path.relative_to(ROOT)),
+                **{
+                    key: artifact[key]
+                    for key in ("failure", "content_key", "events")
+                    if key in artifact
+                },
+            },
+            sort_keys=True,
+        )
+    )
     return 0 if artifact["status"] == "PASS" else 2
 
 
@@ -1614,9 +2232,9 @@ def command_package() -> int:
             if contents != ["data-pack.bin", "poketcg"]:
                 raise AuditError(f"package contents differ: {contents}")
             forbidden = [
-                path.as_posix() for path in package_dir.rglob("*")
-                if path.is_file()
-                and path.suffix.casefold() in smoke.FORBIDDEN_SUFFIXES
+                path.as_posix()
+                for path in package_dir.rglob("*")
+                if path.is_file() and path.suffix.casefold() in smoke.FORBIDDEN_SUFFIXES
             ]
             if forbidden:
                 raise AuditError(
@@ -1624,8 +2242,11 @@ def command_package() -> int:
                 )
             check = subprocess.run(
                 [
-                    sys.executable, str(ROOT / "tools" / "gen_data.py"), "--pack-check",
-                    "--pack", str(staged_pack),
+                    sys.executable,
+                    str(ROOT / "tools" / "gen_data.py"),
+                    "--pack-check",
+                    "--pack",
+                    str(staged_pack),
                 ],
                 cwd=ROOT,
                 capture_output=True,
@@ -1668,24 +2289,124 @@ def command_package() -> int:
             artifact["events"] = 1
             artifact["terminal_event"] = "PACKAGE_ROM_FREE"
     except (
-        AuditError, KeyError, OSError, TypeError, ValueError,
+        AuditError,
+        KeyError,
+        OSError,
+        TypeError,
+        ValueError,
         subprocess.TimeoutExpired,
     ) as exc:
         artifact["failure"] = "PACKAGE_ERROR"
         artifact["detail"] = str(exc)
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
-    path = evidence_path("completion:v2:faithful-4x3:package")
-    path.write_text(json.dumps(artifact, sort_keys=True, separators=(",", ":")) + "\n")
-    print(json.dumps({
-        "status": artifact["status"],
-        "artifact": str(path.relative_to(ROOT)),
-        **{
-            key: artifact[key]
-            for key in ("failure", "content_key", "events")
-            if key in artifact
-        },
-    }, sort_keys=True))
+    path = write_evidence_artifact("completion:v2:faithful-4x3:package", artifact)
+    print(
+        json.dumps(
+            {
+                "status": artifact["status"],
+                "artifact": str(path.relative_to(ROOT)),
+                **{
+                    key: artifact[key]
+                    for key in ("failure", "content_key", "events")
+                    if key in artifact
+                },
+            },
+            sort_keys=True,
+        )
+    )
     return 0 if artifact["status"] == "PASS" else 2
+
+
+def command_produce(req_id: str, context_path: Path) -> int:
+    try:
+        context = load_json(context_path)
+    except AuditError as exc:
+        print(
+            json.dumps(
+                {
+                    "schema": "producer-result-v1",
+                    "outcome": "invalid",
+                    "diagnostic": str(exc),
+                }
+            )
+        )
+        return 2
+    try:
+        from tools.completion import producers
+    except ImportError as exc:
+        result = {
+            "schema": "producer-result-v1",
+            "work_id": context.get("work_id"),
+            "input_digest": context.get("input_digest"),
+            "outcome": "infra-error",
+            "artifact_refs": [],
+            "diagnostic": str(exc),
+            "blocked_by": [],
+        }
+    else:
+        controller_revision = context.get("source_revision")
+        previous_revision = os.environ.get("POKETCG_CONTROLLER_REVISION")
+        if isinstance(controller_revision, str) and controller_revision:
+            os.environ["POKETCG_CONTROLLER_REVISION"] = controller_revision
+        try:
+            result = producers.produce(req_id, context=context)
+        except producers.ProducerUnavailable as exc:
+            result = {
+                "schema": "producer-result-v1",
+                "work_id": context.get("work_id"),
+                "input_digest": context.get("input_digest"),
+                "outcome": "no-progress",
+                "artifact_refs": [],
+                "diagnostic": str(exc),
+                "blocked_by": [f"implement-producer/{req_id}"],
+            }
+        finally:
+            if previous_revision is None:
+                os.environ.pop("POKETCG_CONTROLLER_REVISION", None)
+            else:
+                os.environ["POKETCG_CONTROLLER_REVISION"] = previous_revision
+    if not isinstance(result, dict) or result.get("schema") != "producer-result-v1":
+        print(
+            json.dumps(
+                {
+                    "schema": "producer-result-v1",
+                    "outcome": "invalid",
+                    "diagnostic": "producer returned malformed result",
+                }
+            )
+        )
+        return 2
+    output = context.get("output")
+    if isinstance(output, str) and output:
+        path = Path(output)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = path.with_name(f".{path.name}.tmp")
+        temporary.write_text(
+            json.dumps(result, sort_keys=True, separators=(",", ":")) + "\n",
+            encoding="utf-8",
+        )
+        temporary.replace(path)
+    print(json.dumps(result, sort_keys=True, separators=(",", ":")))
+    outcome = result.get("outcome")
+    if outcome in {"progress", "no-progress"}:
+        return 0
+    if outcome == "timeout":
+        return 4
+    if outcome == "infra-error":
+        return 3
+    return 2
+
+
+def command_validate_requirements() -> int:
+    manifest = load_toml(MANIFEST_PATH)
+    requirements = manifest.get("requirement", [])
+    if not isinstance(requirements, list) or not all(
+        isinstance(requirement, dict) and isinstance(requirement.get("id"), str)
+        for requirement in requirements
+    ):
+        raise AuditError("requirements manifest has malformed requirement rows")
+    print(json.dumps({"requirements": len(requirements)}, sort_keys=True))
+    return 0
 
 
 def command_next() -> int:
@@ -1717,11 +2438,19 @@ def main(argv: list[str] | None = None) -> int:
     subparsers.add_parser("baseline")
     subparsers.add_parser("rom-coverage")
     subparsers.add_parser("routine-mapping")
+    mapping_snapshot = subparsers.add_parser(
+        "routine-mapping-snapshot", help=argparse.SUPPRESS
+    )
+    mapping_snapshot.add_argument("--output", type=Path, required=True)
     subparsers.add_parser("substrate")
     subparsers.add_parser("hardware-removal")
     subparsers.add_parser("leaves")
     subparsers.add_parser("package")
     subparsers.add_parser("next")
+    subparsers.add_parser("validate-requirements", help=argparse.SUPPRESS)
+    produce = subparsers.add_parser("produce")
+    produce.add_argument("id")
+    produce.add_argument("--context", type=Path, required=True)
     args = parser.parse_args(argv)
     if args.command == "audit":
         return command_audit()
@@ -1737,12 +2466,18 @@ def main(argv: list[str] | None = None) -> int:
         return command_substrate()
     if args.command == "routine-mapping":
         return command_routine_mapping()
+    if args.command == "routine-mapping-snapshot":
+        return command_routine_mapping_snapshot(args.output)
     if args.command == "rom-coverage":
         return command_rom_coverage()
     if args.command == "baseline":
         return command_baseline()
     if args.command == "check":
         return command_check(args.id)
+    if args.command == "produce":
+        return command_produce(args.id, args.context)
+    if args.command == "validate-requirements":
+        return command_validate_requirements()
     return command_next()
 
 

@@ -65,7 +65,8 @@ def compile_cause(output: str) -> str:
     push the actual cause out of the trimmed repair feedback."""
     lines = output.splitlines()
     faults = [
-        index for index, line in enumerate(lines)
+        index
+        for index, line in enumerate(lines)
         if "error:" in line or "undefined reference" in line
     ]
     if faults:
@@ -75,28 +76,48 @@ def compile_cause(output: str) -> str:
                 keep.append(lines[index - 1])
             keep.append(lines[index])
             keep.extend(
-                line for line in lines[index + 1:index + 3]
+                line
+                for line in lines[index + 1 : index + 3]
                 if line[:1].isspace() and "|" in line
             )
         return "\n".join(keep)
-    return "\n".join(
-        line for line in lines
-        if ("warning:" in line or line.startswith("src/") or "In function" in line)
-        and " -o " not in line
-    ) or output
+    return (
+        "\n".join(
+            line
+            for line in lines
+            if ("warning:" in line or line.startswith("src/") or "In function" in line)
+            and " -o " not in line
+        )
+        or output
+    )
 
 
 _FAILURE_CLASSES = {
-    "compile": "code", "cases": "translation", "schema": "schema",
-    "primary": "code", "diff": "code", "mutation": "code", "lint": "harness",
-    "timeout": "infrastructure", "infra-timeout": "infrastructure",
-    "infra-error": "infrastructure", "bundle": "bundle", "green": None,
+    "compile": "code",
+    "cases": "translation",
+    "schema": "schema",
+    "primary": "code",
+    "diff": "code",
+    "mutation": "code",
+    "lint": "harness",
+    "timeout": "infrastructure",
+    "infra-timeout": "infrastructure",
+    "infra-error": "infrastructure",
+    "bundle": "bundle",
+    "green": None,
 }
 
 
-def verdict(kind: str, detail: str, routine: str | None = None,
-            *, phase: str | None = None, failure_class: str | None = None,
-            failing: list[str] | None = None, retryable: bool | None = None) -> dict:
+def verdict(
+    kind: str,
+    detail: str,
+    routine: str | None = None,
+    *,
+    phase: str | None = None,
+    failure_class: str | None = None,
+    failing: list[str] | None = None,
+    retryable: bool | None = None,
+) -> dict:
     """Return the stable wire format consumed by recovery and journaling."""
     text = _tail(detail)
     if failure_class is None:
@@ -105,13 +126,28 @@ def verdict(kind: str, detail: str, routine: str | None = None,
         retryable = kind not in {"green"} and failure_class not in {"provider"}
     names = list(failing or ([routine] if routine else []))
     fingerprint = hashlib.sha256(
-        json.dumps({"status": kind, "phase": phase or kind,
-                    "failure_class": failure_class, "detail": text,
-                    "routine": routine, "failing": names},
-                   sort_keys=True).encode()).hexdigest()
-    return {"status": kind, "phase": phase or kind, "failure_class": failure_class,
-            "detail": text, "routine": routine, "failing": names,
-            "fingerprint": fingerprint, "retryable": bool(retryable)}
+        json.dumps(
+            {
+                "status": kind,
+                "phase": phase or kind,
+                "failure_class": failure_class,
+                "detail": text,
+                "routine": routine,
+                "failing": names,
+            },
+            sort_keys=True,
+        ).encode()
+    ).hexdigest()
+    return {
+        "status": kind,
+        "phase": phase or kind,
+        "failure_class": failure_class,
+        "detail": text,
+        "routine": routine,
+        "failing": names,
+        "fingerprint": fingerprint,
+        "retryable": bool(retryable),
+    }
 
 
 _DIAGNOSTIC_LIMIT = 8
@@ -129,11 +165,12 @@ def _normalize_diagnostic(value: object) -> str:
 
 def _bounded_diagnostics(detail: object) -> list[str]:
     lines = [_normalize_diagnostic(line) for line in str(detail or "").splitlines()]
-    return [line for line in lines if line][: _DIAGNOSTIC_LIMIT]
+    return [line for line in lines if line][:_DIAGNOSTIC_LIMIT]
 
 
-def _comparator_witness(output: str, *, routine: str | None = None,
-                        index: int | None = None) -> dict:
+def _comparator_witness(
+    output: str, *, routine: str | None = None, index: int | None = None
+) -> dict:
     """Extract the comparator's final JSON object without retaining its log."""
     payload = None
     for line in reversed(output.splitlines()):
@@ -159,7 +196,9 @@ def _comparator_witness(output: str, *, routine: str | None = None,
             for key, value in list(mismatches.items())[:_DIAGNOSTIC_LIMIT]
         }
     elif isinstance(mismatches, list):
-        mismatches = [_normalize_diagnostic(item) for item in mismatches[:_DIAGNOSTIC_LIMIT]]
+        mismatches = [
+            _normalize_diagnostic(item) for item in mismatches[:_DIAGNOSTIC_LIMIT]
+        ]
     else:
         mismatches = _normalize_diagnostic(mismatches)
     witness = {"mismatches": mismatches}
@@ -168,9 +207,11 @@ def _comparator_witness(output: str, *, routine: str | None = None,
     return witness
 
 
-def run(command: list[str], cwd: Path, timeout: float = 600,
-        deadline: float | None = None) -> subprocess.CompletedProcess[str]:
+def run(
+    command: list[str], cwd: Path, timeout: float = 600, deadline: float | None = None
+) -> subprocess.CompletedProcess[str]:
     return run_bounded(command, cwd=cwd, cap=timeout, deadline=deadline, check=False)
+
 
 def witness_index(mutation_block: dict) -> int:
     ids = mutation_block.get("case_ids") or []
@@ -183,6 +224,7 @@ def witness_index(mutation_block: dict) -> int:
 
 def load_cases_module(lane: Path, basename: str):
     import importlib.util
+
     path = lane / "tests" / "cases" / f"{basename}.py"
     spec = importlib.util.spec_from_file_location(f"verify_cases_{basename}", path)
     module = importlib.util.module_from_spec(spec)
@@ -195,20 +237,39 @@ def load_cases_module(lane: Path, basename: str):
     return module
 
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 # Mirrors tools/oracle/pyboy_oracle.py RESERVED; keep the two in step.
 RESERVED = (range(0xCFF0, 0xCFF6), range(0xDC30, 0xDD00))
 
 
 def reserved_overlap(address: int, size: int) -> range | None:
-    return next((region for region in RESERVED
-                 if address < region.stop and address + size > region.start), None)
+    return next(
+        (
+            region
+            for region in RESERVED
+            if address < region.stop and address + size > region.start
+        ),
+        None,
+    )
+
 
 def format_reserved() -> str:
-    return ", ".join(f"${region.start:04X}-${region.stop - 1:04X}" for region in RESERVED)
+    return ", ".join(
+        f"${region.start:04X}-${region.stop - 1:04X}" for region in RESERVED
+    )
 
-def case_lint(lane: Path, basename: str, routine_names: list[str],
-              module=None) -> dict[str, list[str]]:
+
+def case_lint(
+    lane: Path, basename: str, routine_names: list[str], module=None
+) -> dict[str, list[str]]:
     """Mechanical, PyBoy-free checks. Deliberately does not trust the case
     module to import cleanly: an undefined name in it (e.g. a stray C
     `_ADDR` macro referenced as a bare Python identifier — those macros do
@@ -225,8 +286,14 @@ def case_lint(lane: Path, basename: str, routine_names: list[str],
         try:
             module = load_cases_module(lane, basename)
         except (
-            AttributeError, ImportError, NameError, OSError, RuntimeError,
-            SyntaxError, TypeError, ValueError,
+            AttributeError,
+            ImportError,
+            NameError,
+            OSError,
+            RuntimeError,
+            SyntaxError,
+            TypeError,
+            ValueError,
         ) as exc:
             for fn in routine_names:
                 fail(fn, f"case module fails to import: {exc}")
@@ -240,32 +307,49 @@ def case_lint(lane: Path, basename: str, routine_names: list[str],
         if fn not in contract:
             fail(fn, f"CONTRACT[{fn!r}] is missing")
             continue
-        if not any(sum(1 for reg, value in POISON.items()
-                       if c.get(reg) == value) >= 4 for c in fn_cases):
-            fail(fn, f"CASES[{fn!r}] has no poisoned-register case "
-                     f"(need >=4 of a=0xAA f=0xF0 b=0xBB c=0xCC d=0xDD e=0xEE hl=0x1234)")
+        if not any(
+            sum(1 for reg, value in POISON.items() if c.get(reg) == value) >= 4
+            for c in fn_cases
+        ):
+            fail(
+                fn,
+                f"CASES[{fn!r}] has no poisoned-register case "
+                f"(need >=4 of a=0xAA f=0xF0 b=0xBB c=0xCC d=0xDD e=0xEE hl=0x1234)",
+            )
         for i, c in enumerate(fn_cases):
             for key in ("wram", "read", "expect"):
                 for addr, value in (c.get(key, {}) or {}).items():
                     size = int(value) if key == "read" else len(value)
                     overlap = reserved_overlap(int(addr), size)
                     if overlap is not None:
-                        fail(fn, f"CASES[{fn!r}][{i}].{key} overlaps reserved "
-                                 f"${overlap.start:04X}-${overlap.stop - 1:04X}")
+                        fail(
+                            fn,
+                            f"CASES[{fn!r}][{i}].{key} overlaps reserved "
+                            f"${overlap.start:04X}-${overlap.stop - 1:04X}",
+                        )
             if c.get("oracle") is False:
                 why = c.get("why")
                 expects = ("expect", "expect_regs", "expect_sram", "expect_vram")
                 if not (isinstance(why, str) and why.strip()):
-                    fail(fn, f"CASES[{fn!r}][{i}] has oracle=False without a non-empty why")
+                    fail(
+                        fn,
+                        f"CASES[{fn!r}][{i}] has oracle=False without a non-empty why",
+                    )
                 if not any(c.get(k) for k in expects):
-                    fail(fn, f"CASES[{fn!r}][{i}] has oracle=False without any of {expects}")
+                    fail(
+                        fn,
+                        f"CASES[{fn!r}][{i}] has oracle=False without any of {expects}",
+                    )
         block = mutations.get(fn)
         if block:
             for case_id in block.get("case_ids") or []:
                 match = re.fullmatch(rf"{re.escape(fn)}-(\d+)", str(case_id))
                 if not match or not (0 <= int(match.group(1)) < len(fn_cases)):
-                    fail(fn, f"MUTATIONS[{fn!r}][case_ids] has invalid id {case_id!r} "
-                             f"for {len(fn_cases)} cases")
+                    fail(
+                        fn,
+                        f"MUTATIONS[{fn!r}][case_ids] has invalid id {case_id!r} "
+                        f"for {len(fn_cases)} cases",
+                    )
     return violations
 
 
@@ -315,14 +399,28 @@ def primary_compare(
                 )
         for index in indices:
             compared = run(
-                [sys.executable, "tools/oracle/gbref/compare_one.py",
-                 "--fn", fn, "--index", str(index),
-                 "--case", f"tests/cases/{basename}.py",
-                 "--rom", str(ROOT / "poketcg/poketcg.gbc"),
-                 "--symbols", str(ROOT / "poketcg/poketcg.sym"),
-                 "--probe", str(lane / "build" / "poketcg_probe"),
-                 "--runner", str(RUNNER)],
-                lane, timeout=300, deadline=deadline)
+                [
+                    sys.executable,
+                    "tools/oracle/gbref/compare_one.py",
+                    "--fn",
+                    fn,
+                    "--index",
+                    str(index),
+                    "--case",
+                    f"tests/cases/{basename}.py",
+                    "--rom",
+                    str(ROOT / "poketcg/poketcg.gbc"),
+                    "--symbols",
+                    str(ROOT / "poketcg/poketcg.sym"),
+                    "--probe",
+                    str(lane / "build" / "poketcg_probe"),
+                    "--runner",
+                    str(RUNNER),
+                ],
+                lane,
+                timeout=300,
+                deadline=deadline,
+            )
             if compared.returncode == 0:
                 continue
             output = compared.stdout + compared.stderr
@@ -337,14 +435,16 @@ def primary_compare(
                     "cases",
                     f"setup routine {unknown_setup.group(1)} has no probe adapter; "
                     "a setup entry may only name an already-ported routine",
-                    fn, failure_class="code",
+                    fn,
+                    failure_class="code",
                 )
             if "TimeoutExpired" in output:
                 return verdict(
                     "primary",
                     f"case {fn}-{index} native probe did not terminate; the C body "
                     "loops forever on state the reference resolves",
-                    fn, failure_class="code",
+                    fn,
+                    failure_class="code",
                 )
             if comparison_status(output) is None and not output.startswith("SCHEMA"):
                 return verdict("infra-error", _normalize_diagnostic(output), fn)
@@ -356,8 +456,14 @@ def primary_compare(
     return None
 
 
-def verify_packet(packet: dict, lane: Path, cases_changed: bool,
-                  deadline: float | None = None, *, progress=None) -> dict:
+def verify_packet(
+    packet: dict,
+    lane: Path,
+    cases_changed: bool,
+    deadline: float | None = None,
+    *,
+    progress=None,
+) -> dict:
     basename = packet["basename"]
     routine_names = [r["name"] for r in packet["routines"]]
 
@@ -378,10 +484,19 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
         progress("case-inspect")
     try:
         inspected = run_bounded(
-            [sys.executable, str(ROOT / "tools/factory" / "case_inspect.py"),
-             "--lane", str(lane), "--basename", basename,
-             *[arg for fn in routine_names for arg in ("--fn", fn)]],
-            cwd=lane, cap=60, deadline=deadline, check=True,
+            [
+                sys.executable,
+                str(ROOT / "tools/factory" / "case_inspect.py"),
+                "--lane",
+                str(lane),
+                "--basename",
+                basename,
+                *[arg for fn in routine_names for arg in ("--fn", fn)],
+            ],
+            cwd=lane,
+            cap=60,
+            deadline=deadline,
+            check=True,
         )
         inspection = json.loads(inspected.stdout)
     except WaveDeadlineExpired:
@@ -389,8 +504,12 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
     except PhaseTimeout as exc:
         return verdict("infra-timeout", str(exc))
     except (
-        json.JSONDecodeError, OSError, RuntimeError,
-        subprocess.SubprocessError, TypeError, ValueError,
+        json.JSONDecodeError,
+        OSError,
+        RuntimeError,
+        subprocess.SubprocessError,
+        TypeError,
+        ValueError,
     ):
         return verdict("infra-error", traceback.format_exc(limit=2))
     if inspection.get("violations"):
@@ -400,8 +519,18 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
 
     if progress:
         progress("audit")
-    audit = run([sys.executable, "tools/audit_oracle_cases.py", "--stage", "routine",
-                "--only", basename], lane, deadline=deadline)
+    audit = run(
+        [
+            sys.executable,
+            "tools/audit_oracle_cases.py",
+            "--stage",
+            "routine",
+            "--only",
+            basename,
+        ],
+        lane,
+        deadline=deadline,
+    )
     if audit.returncode != 0:
         return verdict("schema", audit.stdout + audit.stderr)
 
@@ -423,19 +552,43 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
     mode = "refresh" if cases_changed else "cache"
     if progress:
         progress("diff-cache" if mode == "cache" else "diff-refresh")
-    diff = run([*ORACLE_PYTHON, "tests/test_leaves.py", *fn_args(routine_names),
-                "--oracle-mode", mode, "--cache-dir", str(CACHE),
-                "--probe", str(lane / "build" / "poketcg_probe")],
-               lane, timeout=1800, deadline=deadline)
+    diff = run(
+        [
+            *ORACLE_PYTHON,
+            "tests/test_leaves.py",
+            *fn_args(routine_names),
+            "--oracle-mode",
+            mode,
+            "--cache-dir",
+            str(CACHE),
+            "--probe",
+            str(lane / "build" / "poketcg_probe"),
+        ],
+        lane,
+        timeout=1800,
+        deadline=deadline,
+    )
     output = diff.stdout + diff.stderr
     if "cache miss" in output:
         mode = "refresh"
         if progress:
             progress("diff-refresh")
-        diff = run([*ORACLE_PYTHON, "tests/test_leaves.py", *fn_args(routine_names),
-                    "--oracle-mode", "refresh", "--cache-dir", str(CACHE),
-                    "--probe", str(lane / "build" / "poketcg_probe")],
-                   lane, timeout=1800, deadline=deadline)
+        diff = run(
+            [
+                *ORACLE_PYTHON,
+                "tests/test_leaves.py",
+                *fn_args(routine_names),
+                "--oracle-mode",
+                "refresh",
+                "--cache-dir",
+                str(CACHE),
+                "--probe",
+                str(lane / "build" / "poketcg_probe"),
+            ],
+            lane,
+            timeout=1800,
+            deadline=deadline,
+        )
         output = diff.stdout + diff.stderr
     if TIMEOUT_MARK in output:
         spinner = None
@@ -447,7 +600,8 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
         return verdict("timeout", output, spinner)
     if diff.returncode != 0:
         failing = "\n".join(
-            l for l in output.splitlines()
+            l
+            for l in output.splitlines()
             if l.startswith("FAIL") or "fail " in l or "!=" in l or "Error" in l
         )
         names = re.findall(r"^FAIL (\S+):", output, flags=re.MULTILINE)
@@ -458,10 +612,22 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
     if mode == "cache":
         if progress:
             progress("live")
-        live = run([*ORACLE_PYTHON, "tests/test_leaves.py", *fn_args(routine_names),
-                    "--oracle-mode", "refresh", "--cache-dir", str(CACHE),
-                    "--probe", str(lane / "build" / "poketcg_probe")],
-                   lane, timeout=1800, deadline=deadline)
+        live = run(
+            [
+                *ORACLE_PYTHON,
+                "tests/test_leaves.py",
+                *fn_args(routine_names),
+                "--oracle-mode",
+                "refresh",
+                "--cache-dir",
+                str(CACHE),
+                "--probe",
+                str(lane / "build" / "poketcg_probe"),
+            ],
+            lane,
+            timeout=1800,
+            deadline=deadline,
+        )
         if live.returncode != 0:
             live_witness = _comparator_witness(live.stdout + live.stderr)
             result = verdict("diff", live.stdout + live.stderr)
@@ -478,20 +644,40 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
                 return verdict("mutation", f"mutation missing for {fn}")
             index = witness_index(mutation)
             mutation_run = run(
-                [sys.executable, "tools/run_mutation.py", fn,
-                 f"tests/cases/{basename}.py", "--index", str(index),
-                 "--build", str(lane / "build"), "--runner", str(RUNNER)],
-                lane, timeout=1800, deadline=deadline)
+                [
+                    sys.executable,
+                    "tools/run_mutation.py",
+                    fn,
+                    f"tests/cases/{basename}.py",
+                    "--index",
+                    str(index),
+                    "--build",
+                    str(lane / "build"),
+                    "--runner",
+                    str(RUNNER),
+                ],
+                lane,
+                timeout=1800,
+                deadline=deadline,
+            )
             if mutation_run.returncode != 0:
-                return verdict("mutation", mutation_run.stdout + mutation_run.stderr,
-                               routine=fn)
+                return verdict(
+                    "mutation", mutation_run.stdout + mutation_run.stderr, routine=fn
+                )
     except WaveDeadlineExpired:
         raise
     except PhaseTimeout as exc:
         return verdict("infra-timeout", str(exc))
     except (
-        AttributeError, ImportError, NameError, OSError, RuntimeError,
-        subprocess.SubprocessError, SyntaxError, TypeError, ValueError,
+        AttributeError,
+        ImportError,
+        NameError,
+        OSError,
+        RuntimeError,
+        subprocess.SubprocessError,
+        SyntaxError,
+        TypeError,
+        ValueError,
     ):
         return verdict("infra-error", traceback.format_exc(limit=2))
 
@@ -499,7 +685,9 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
         progress("lint")
     lint = run(
         ["python3", "tools/lint_adapters.py"],
-        lane, timeout=300, deadline=deadline,
+        lane,
+        timeout=300,
+        deadline=deadline,
     )
     if lint.returncode != 0:
         return verdict("lint", lint.stdout + lint.stderr, phase="lint")
@@ -507,6 +695,8 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
     if progress:
         progress("complete")
     return verdict("green", output)
+
+
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -537,10 +727,15 @@ def _validate_bundle_inputs(packet: dict, lane: Path) -> tuple[dict, dict[str, s
         absent = {"C", "H", "PROBE", "CASES", "MUTATION"} - set(blocks)
         if absent:
             raise RuntimeError(f"bundle {fn} missing marker blocks: {sorted(absent)}")
-    rels = [f"src/home/{basename}.c", f"src/home/{basename}.h",
-            f"src/probe/{basename}.c", f"tests/cases/{basename}.py"]
-    rels += [f"tools/oracle/mutation_receipts/{r['name']}.json"
-             for r in packet["routines"]]
+    rels = [
+        f"src/home/{basename}.c",
+        f"src/home/{basename}.h",
+        f"src/probe/{basename}.c",
+        f"tests/cases/{basename}.py",
+    ]
+    rels += [
+        f"tools/oracle/mutation_receipts/{r['name']}.json" for r in packet["routines"]
+    ]
     hashes = {}
     for rel in rels:
         path = lane / rel
@@ -548,3 +743,216 @@ def _validate_bundle_inputs(packet: dict, lane: Path) -> tuple[dict, dict[str, s
             raise RuntimeError(f"bundle input missing: {path}")
         hashes[rel] = _sha256(path)
     return extracted, hashes
+
+
+def _manifest_digest(manifest: dict) -> str:
+    value = manifest.get("tree_sha256")
+    if isinstance(value, str) and value:
+        return value
+    return hashlib.sha256(
+        json.dumps(
+            manifest, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+        ).encode("utf-8")
+    ).hexdigest()
+
+
+_SOURCE_PREFIXES = ("src/", "tests/", "tools/", "include/", "docs/", "site/")
+
+
+def _artifact_reference_valid(root: Path, reference: dict) -> tuple[bool, bool]:
+    path_text = reference.get("path")
+    digest = reference.get("sha256")
+    if not isinstance(path_text, str) or not isinstance(digest, str) or not path_text:
+        return False, False
+    if path_text.startswith(_SOURCE_PREFIXES):
+        return False, False
+    path = (root / path_text).resolve()
+    try:
+        path.relative_to(root)
+    except ValueError:
+        return False, False
+    if not path.is_file() or _sha256(path) != digest:
+        return False, False
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return False, False
+    if not isinstance(payload, dict):
+        return False, False
+    schema = payload.get("schema")
+    if schema == "workflow-command-v1":
+        argv = payload.get("argv")
+        return (
+            isinstance(argv, list) and bool(argv) and payload.get("returncode") == 0,
+            True,
+        )
+    if schema != "workflow-observation-v1":
+        return False, False
+    files = payload.get("files")
+    if not isinstance(files, list) or not files:
+        return False, False
+    for entry in files:
+        if not isinstance(entry, dict):
+            return False, False
+        nested_path = entry.get("path")
+        nested_digest = entry.get("sha256")
+        if (
+            not isinstance(nested_path, str)
+            or not isinstance(nested_digest, str)
+            or nested_path.startswith(_SOURCE_PREFIXES)
+        ):
+            return False, False
+        candidate = (root / nested_path).resolve()
+        try:
+            candidate.relative_to(root)
+        except ValueError:
+            return False, False
+        if not candidate.is_file() or _sha256(candidate) != nested_digest:
+            return False, False
+    return True, False
+
+
+def _manifest_has_tree(manifest: dict) -> bool:
+    value = manifest.get("tree_sha256")
+    return isinstance(value, str) and bool(value)
+
+
+def integration_check(
+    base_manifest: dict,
+    candidate_manifest: dict,
+    work_results: list[dict],
+    *,
+    run_dir: Path,
+    root: Path = ROOT,
+) -> dict:
+    root = root.resolve()
+    if not isinstance(base_manifest, dict) or not isinstance(candidate_manifest, dict):
+        raise ValueError("integration manifests must be objects")
+    if not _manifest_has_tree(base_manifest) or not _manifest_has_tree(
+        candidate_manifest
+    ):
+        raise ValueError("integration manifests need source tree identities")
+    if not isinstance(work_results, list) or not work_results:
+        raise ValueError("integration check requires work results")
+    target_witnesses: list[dict] = []
+    checks: list[dict] = []
+    errors: list[dict] = []
+    source_changed = _manifest_digest(base_manifest) != _manifest_digest(
+        candidate_manifest
+    )
+    for result in work_results:
+        if not isinstance(result, dict):
+            errors.append({"reason": "malformed-work-result"})
+            continue
+        work_id = result.get("work_id")
+        attempt_id = result.get("attempt_id")
+        input_digest = result.get("input_digest")
+        outcome = result.get("outcome")
+        references = result.get("artifact_refs")
+        result_errors: list[str] = []
+        if not all(
+            isinstance(value, str) and value
+            for value in (work_id, attempt_id, input_digest)
+        ):
+            result_errors.append("work identity is malformed")
+        if outcome != "progress":
+            result_errors.append("work did not report progress")
+        if not isinstance(references, list) or not references:
+            result_errors.append("work has no measured artifact references")
+            valid_refs = False
+            has_command = False
+        else:
+            reference_checks = [
+                _artifact_reference_valid(root, reference)
+                for reference in references
+                if isinstance(reference, dict)
+            ]
+            valid_refs = len(reference_checks) == len(references) and all(
+                valid for valid, _command in reference_checks
+            )
+            has_command = any(command for _valid, command in reference_checks)
+            if not valid_refs:
+                result_errors.append(
+                    "artifact references are not measured observations"
+                )
+        argv = result.get("argv")
+        returncode = result.get("returncode")
+        if not isinstance(argv, list) or not argv or returncode != 0 or not has_command:
+            result_errors.append("work has no successful measured command")
+        oracles = result.get("oracles")
+        requires_bilateral = result.get("bilateral", True)
+        if requires_bilateral is not False and (
+            not isinstance(oracles, list)
+            or not {"native", "reference"}
+            <= {str(value).casefold() for value in oracles}
+        ):
+            result_errors.append("work lacks bilateral native/reference evidence")
+        if source_changed:
+            paths = result.get("write_paths")
+            before = result.get("base_hashes")
+            after = result.get("target_hashes")
+            if (
+                not isinstance(paths, list)
+                or not paths
+                or not isinstance(before, dict)
+                or not isinstance(after, dict)
+                or not any(before.get(path) != after.get(path) for path in paths)
+            ):
+                result_errors.append("source-changing work lacks changed source bytes")
+        target_witnesses.append(
+            {
+                "work_id": work_id,
+                "attempt_id": attempt_id,
+                "input_digest": input_digest,
+                "outcome": outcome,
+                "artifact_refs": references,
+                "valid": not result_errors,
+                "errors": result_errors,
+            }
+        )
+        checks.append(
+            {
+                "name": "measured-work-contract",
+                "argv": argv if isinstance(argv, list) else [],
+                "input_digest": input_digest,
+                "output_digest": hashlib.sha256(
+                    json.dumps(result, sort_keys=True, separators=(",", ":")).encode()
+                ).hexdigest(),
+                "outcome": "PASS" if not result_errors else "FAIL",
+            }
+        )
+        errors.extend(
+            {"work_id": work_id, "reason": reason} for reason in result_errors
+        )
+    accepted = bool(target_witnesses) and not errors
+    record = {
+        "schema": "integration-check-v1",
+        "base_tree_sha256": _manifest_digest(base_manifest),
+        "candidate_tree_sha256": _manifest_digest(candidate_manifest),
+        "native_manifest_sha256": _manifest_digest(
+            candidate_manifest.get("native", candidate_manifest)
+            if isinstance(candidate_manifest.get("native", candidate_manifest), dict)
+            else candidate_manifest
+        ),
+        "work_ids": [
+            result.get("work_id")
+            for result in work_results
+            if isinstance(result, dict) and isinstance(result.get("work_id"), str)
+        ],
+        "target_witnesses": target_witnesses,
+        "checks": checks,
+        "baseline_failures": [],
+        "new_failures": errors,
+        "regressions": [],
+        "accepted": accepted,
+    }
+    run_dir.mkdir(parents=True, exist_ok=True)
+    path = run_dir / "integration-check.json"
+    encoded = (
+        json.dumps(record, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+        + "\n"
+    )
+    if path.exists() and path.read_text(encoding="utf-8") != encoded:
+        raise ValueError("integration check already exists with different content")
+    path.write_text(encoded, encoding="utf-8")
+    return record

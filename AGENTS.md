@@ -16,10 +16,10 @@ In this order:
    taxonomy. Normative.
 2. `docs/factory-contract.md` — the exact `CONTRACT`/`CASES`/`MUTATIONS` block
    format a translator must emit. Normative for case modules.
-3. `docs/vision.md` — architecture and phase order. Descriptive, optional.
+3. `docs/vision.md` — normative architecture and release destination.
 
-Orchestrating a port run instead of writing C? `docs/factory-workflow.md` is the
-only runbook you need.
+There is no autonomous port controller and no model translation lane. Routines
+are hand-ported, one at a time, and verified with the commands below.
 
 ## 3. Dependencies
 
@@ -79,12 +79,6 @@ The commands that matter, from the `justfile`:
 | `just progress` | rebuild the progress report from registry + gate |
 | `just frontier` | print unported routines whose callees are all ported |
 | `just forgejo-auth-check` | prove the push credential works non-interactively |
-| `just factory-next` | select the next ready routines; prompts prepared, blocked.toml respected |
-| `just factory-try <Fn>` | verify k recorded candidates for one routine with the real verifier |
-| `just factory-land` | land every verified artifact: gate, commit, push, record |
-| `just factory-eta` | deterministic forecast from recorded landings |
-| `just factory-smoke` | offline contract rehearsal of the packet→land pipeline |
-| `just launch-port` | run the autonomous port factory loop |
 | `just data-verify` | data/asset extraction round-trip |
 | `just progress-serve` | serve the dashboard at http://127.0.0.1:8765 |
 
@@ -97,12 +91,9 @@ export POKETCG_BUILD=build-<slice>
 export POKETCG_PORTS="<pret basenames>"   # semicolon list; see CMakeLists.txt:34-60
 ```
 
-Parallel slice agents **never** run `just oracle-diff-all`: a routine
-registered in `tests/routines.py` without cases is a hard FAIL for everyone,
-so with slices in flight only the barrier — run centrally, after every slice
-lands — runs the full gate. A single session that owns the checkout runs it
-before every ratchet (`docs/grind.md`, "The gates, every iteration"); it
-takes about 150 s and its baseline is all-green.
+Concurrent agents coordinate by owning disjoint pret basenames. Nothing else
+integrates work: each agent verifies its own routine with `just oracle-diff`,
+commits with jj, and pushes.
 
 ## 6. File ownership
 
@@ -145,23 +136,7 @@ commit; never `git commit` / `git push` — use
 `jj git push --remote origin --bookmark main`. Full workflow:
 `docs/jj-workflow.md`.
 
-## 9. Factory port start
-
-When, and only when, the user's trimmed message is exactly `start`
-(case-sensitive), immediately read and execute `docs/factory-workflow.md`.
-`/start`, `Start`, `start <issue>`, and prose containing `start` follow normal
-request handling.
-
-The factory model: deterministic tooling under `tools/factory/` builds
-self-contained packets from the ready frontier (inventory + gate +
-`.factory/blocked.toml`), stateless generators fill them in disposable lanes,
-the oracle plus mutation harness accepts or rejects mechanically, and one
-serial landing driver — the orchestrator — owns every repository write, gating
-strictly before each push. Lanes never run jj, git, or a central gate and
-receive no remote credentials. Translation prompts are governed by
-`docs/factory-contract.md`.
-
-## 10. `tests/cases/*.py` are not unit tests
+## 9. `tests/cases/*.py` are not unit tests
 
 
 They are the oracle's input matrix — the thing that makes the port provable. The

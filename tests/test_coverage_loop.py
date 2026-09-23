@@ -16,11 +16,13 @@ class CoverageLoopTests(unittest.TestCase):
             }
         }
         carriers = {
-            "Effect": [{
-                "card": "TEST_CARD",
-                "slot": "attack1",
-                "command": "EFFECTCMDTYPE_AI_SELECTION",
-            }]
+            "Effect": [
+                {
+                    "card": "TEST_CARD",
+                    "slot": "attack1",
+                    "command": "EFFECTCMDTYPE_AI_SELECTION",
+                }
+            ]
         }
 
         frontier = coverage_ledger.target_frontier(
@@ -57,36 +59,130 @@ class CoverageLoopTests(unittest.TestCase):
             summary = Path(tmp) / "explore-seed.json"
             corpus = Path(tmp) / "explore-seed"
             corpus.mkdir()
-            summary.write_text(json.dumps({"ledger_digest": "digest"}))
+            summary.write_text(
+                json.dumps(
+                    {
+                        "producer_key": "digest",
+                        "scored_ledger_digest": "old-ledger",
+                    }
+                )
+            )
             index = corpus / "corpus.json"
             try:
                 index.write_text(json.dumps({"entries": [{"script": "old.txt"}]}))
                 self.assertFalse(coverage_ledger.corpus_current("seed", "digest"))
-                index.write_text(json.dumps({
-                    "entries": [{"script": "current.txt", "routines": []}],
-                }))
+                index.write_text(
+                    json.dumps(
+                        {
+                            "entries": [{"script": "current.txt", "routines": []}],
+                        }
+                    )
+                )
                 self.assertTrue(coverage_ledger.corpus_current("seed", "digest"))
             finally:
                 coverage_ledger.EXPLORE_DIR = original
 
     def test_next_step_distinguishes_work_done_and_gate(self) -> None:
         cases = [
-            ({"missing": 3, "pending_targets": 1, "intake_seed": "seed",
-              "discover_seeds": ["discover"], "attempted_targets": 2}, "target", 0),
-            ({"missing": 3, "pending_targets": 0, "intake_seed": "seed",
-              "discover_seeds": ["discover"], "attempted_targets": 2}, "intake", 0),
-            ({"missing": 3, "pending_targets": 0, "intake_seed": None,
-              "discover_seeds": ["discover"], "attempted_targets": 2}, "discover", 0),
-            ({"missing": 3, "pending_targets": 0, "intake_seed": None,
-              "discover_seeds": [], "attempted_targets": 2}, "gate", 3),
-            ({"missing": 0, "pending_targets": 0, "intake_seed": None,
-              "discover_seeds": [], "attempted_targets": 2}, "done", 2),
+            (
+                {
+                    "missing": 3,
+                    "pending_targets": 1,
+                    "intake_seed": "seed",
+                    "discover_seeds": ["discover"],
+                    "attempted_targets": 2,
+                },
+                "target",
+                0,
+            ),
+            (
+                {
+                    "missing": 3,
+                    "pending_targets": 0,
+                    "intake_seed": "seed",
+                    "discover_seeds": ["discover"],
+                    "attempted_targets": 2,
+                },
+                "intake",
+                0,
+            ),
+            (
+                {
+                    "missing": 3,
+                    "pending_targets": 0,
+                    "intake_seed": None,
+                    "discover_seeds": ["discover"],
+                    "attempted_targets": 2,
+                },
+                "discover",
+                0,
+            ),
+            (
+                {
+                    "missing": 3,
+                    "pending_targets": 0,
+                    "intake_seed": None,
+                    "discover_seeds": [],
+                    "attempted_targets": 2,
+                },
+                "gate",
+                3,
+            ),
+            (
+                {
+                    "missing": 0,
+                    "pending_targets": 0,
+                    "intake_seed": None,
+                    "discover_seeds": [],
+                    "attempted_targets": 2,
+                },
+                "done",
+                2,
+            ),
         ]
 
         for arguments, expected_kind, expected_code in cases:
             with self.subTest(kind=expected_kind):
                 kind, code, _detail = coverage_ledger.choose_coverage_step(**arguments)
                 self.assertEqual((kind, code), (expected_kind, expected_code))
+
+    def test_frozen_lane_is_immutable_and_content_hashed(self) -> None:
+        binary = coverage_ledger.scenario_module.BINARY
+        pack = coverage_ledger.scenario_module.PACK
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source_binary = root / "poketcg"
+            source_pack = root / "data-pack.bin"
+            source_binary.write_bytes(b"binary")
+            source_pack.write_bytes(b"pack")
+            coverage_ledger.scenario_module.BINARY = source_binary
+            coverage_ledger.scenario_module.PACK = source_pack
+            try:
+                destination = root / "lane"
+                lane = coverage_ledger.freeze_lane(
+                    destination=destination,
+                    manifest={"scope": "test"},
+                )
+                self.assertEqual((lane / "poketcg").read_bytes(), b"binary")
+                self.assertEqual(
+                    (lane / "completion" / "data-pack.bin").read_bytes(),
+                    b"pack",
+                )
+                self.assertEqual(
+                    coverage_ledger.freeze_lane(
+                        destination=destination,
+                        manifest={"scope": "test"},
+                    ),
+                    destination.resolve(),
+                )
+                with self.assertRaises(coverage_ledger.CoverageError):
+                    coverage_ledger.freeze_lane(
+                        destination=destination,
+                        manifest={"scope": "other"},
+                    )
+            finally:
+                coverage_ledger.scenario_module.BINARY = binary
+                coverage_ledger.scenario_module.PACK = pack
 
 
 if __name__ == "__main__":

@@ -5,10 +5,12 @@ bootstrapped pret/poketcg checkout (poketcg.map sizes, asm source classification
 Run only when the pret pin in tools/oracle/artifacts.json moves (see just
 progress-inventory). Requires `just bootstrap` to have populated poketcg/.
 """
+
 from __future__ import annotations
 
 import glob
 import json
+import os
 import re
 import subprocess
 import sys
@@ -21,31 +23,77 @@ MAP_FILE = PRET / "poketcg.map"
 SRC_DIR = PRET / "src"
 OUT_FILE = ROOT / "site" / "data" / "inventory.json"
 
-BANK_RE = re.compile(r'^(ROM0|ROMX|SRAM|WRAM0|WRAM|HRAM|VRAM|OAM) bank #(\d+):$')
-SEC_RE = re.compile(r'^\tSECTION: \$([0-9a-f]{4})-\$([0-9a-f]{4}) \(\$([0-9a-f]{4}) bytes\) \["(.*)"\]$')
-SYM_RE = re.compile(r'^\t {9}\$([0-9a-f]{4}) = (\S+)$')
-LAB_RE = re.compile(r'^([A-Za-z_][A-Za-z0-9_#@]*):{1,2}\s*$')
-CALL_RE = re.compile(r'^\s*(?:call|jp|jr|farcall|bank1call|homecall|callab|callba)\b(.*)$', re.I)
-TERM_RE = re.compile(r'^(ret|reti)\b(?!\s*,)|^(jp|jr)\s+(?!(z|nz|c|nc)\s*,)', re.I)
-TOKEN_RE = re.compile(r'[A-Za-z_][A-Za-z0-9_]*')
-DW_RE = re.compile(r'^\s*dw\s+([A-Za-z_][A-Za-z0-9_.]*)')
-DATA_RE = re.compile(r'^\s*(?:dw|db|dn|table_width|dr|ds)\b', re.I)
+BANK_RE = re.compile(r"^(ROM0|ROMX|SRAM|WRAM0|WRAM|HRAM|VRAM|OAM) bank #(\d+):$")
+SEC_RE = re.compile(
+    r'^\tSECTION: \$([0-9a-f]{4})-\$([0-9a-f]{4}) \(\$([0-9a-f]{4}) bytes\) \["(.*)"\]$'
+)
+SYM_RE = re.compile(r"^\t {9}\$([0-9a-f]{4}) = (\S+)$")
+LAB_RE = re.compile(r"^([A-Za-z_][A-Za-z0-9_#@]*):{1,2}\s*$")
+CALL_RE = re.compile(
+    r"^\s*(?:call|jp|jr|farcall|bank1call|homecall|callab|callba)\b(.*)$", re.I
+)
+TERM_RE = re.compile(r"^(ret|reti)\b(?!\s*,)|^(jp|jr)\s+(?!(z|nz|c|nc)\s*,)", re.I)
+TOKEN_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
+DW_RE = re.compile(r"^\s*dw\s+([A-Za-z_][A-Za-z0-9_.]*)")
+DATA_RE = re.compile(r"^\s*(?:dw|db|dn|table_width|dr|ds)\b", re.I)
 
-INSTR = set("""adc add and bit call ccf cp cpl daa dec di ei halt inc jp jr ld ldh ldi ldd
+INSTR = set(
+    """adc add and bit call ccf cp cpl daa dec di ei halt inc jp jr ld ldh ldi ldd
 nop or pop push res ret reti rl rla rlc rlca rr rra rrc rrca rst sbc scf set sla sra srl
-stop sub swap xor""".split())
+stop sub swap xor""".split()
+)
 # Every macro in poketcg/src/macros/code.asm expands to instructions; a routine
 # whose first line is one of them (MasonLabLoadMap opens with get_event_value)
 # is code, not data.
-CODE_MACROS = {"farcall", "bank1call", "homecall", "callab", "callba", "ldtx", "lb",
-               "jumptable", "fallthrough", "jp_hl", "debug_ret", "rst",
-               "handle_dmg_or_cgb", "sgb_command",
-               "lb", "ldtx", "bank1call", "farcall",
-               "set_event_value", "set_event_false", "set_event_zero", "max_event_value",
-               "get_event_value", "debug_nop", "retbc", "ldgbpal"}
-SKIP_TOKENS = {"SECTION", "INCLUDE", "ENDC", "IF", "ELSE", "ENDM", "MACRO", "REPT",
-               "ENDR", "ASSERT", "UNION", "NEXTU", "ENDU", "DEF", "CHARMAP", "PUSHS",
-               "POPS", "RSSET", "EXPORT"}
+CODE_MACROS = {
+    "farcall",
+    "bank1call",
+    "homecall",
+    "callab",
+    "callba",
+    "ldtx",
+    "lb",
+    "jumptable",
+    "fallthrough",
+    "jp_hl",
+    "debug_ret",
+    "rst",
+    "handle_dmg_or_cgb",
+    "sgb_command",
+    "lb",
+    "ldtx",
+    "bank1call",
+    "farcall",
+    "set_event_value",
+    "set_event_false",
+    "set_event_zero",
+    "max_event_value",
+    "get_event_value",
+    "debug_nop",
+    "retbc",
+    "ldgbpal",
+}
+SKIP_TOKENS = {
+    "SECTION",
+    "INCLUDE",
+    "ENDC",
+    "IF",
+    "ELSE",
+    "ENDM",
+    "MACRO",
+    "REPT",
+    "ENDR",
+    "ASSERT",
+    "UNION",
+    "NEXTU",
+    "ENDU",
+    "DEF",
+    "CHARMAP",
+    "PUSHS",
+    "POPS",
+    "RSSET",
+    "EXPORT",
+}
 COND = {"z", "nz", "c", "nc"}
 ROM_BANK_TYPES = ("ROM0", "ROMX")
 
@@ -66,7 +114,9 @@ def classify_line(stripped: str) -> str | None:
     return "data"
 
 
-def extract_callee(line_stripped: str, code_names: set[str], cur_parent: str) -> str | None:
+def extract_callee(
+    line_stripped: str, code_names: set[str], cur_parent: str
+) -> str | None:
     m = CALL_RE.match(line_stripped)
     if not m:
         return None
@@ -105,23 +155,28 @@ def parse_map() -> tuple[dict[str, dict], int, list[dict]]:
         if bank_type not in ROM_BANK_TYPES or sec_start is None:
             return
         top = [(a, n) for a, n in sec_syms if "." not in n]
-        sections.append({
-            "bank_type": bank_type,
-            "bank": bank_num,
-            "address": sec_start,
-            "length": sec_end - sec_start + 1,
-            "end": sec_end,
-            "section": sec_name,
-            # Local labels included; build_spans keeps only the ones the asm
-            # defines with data. Routine sizes below stay top-level only.
-            "symbols": [{"address": a, "name": n} for a, n in sec_syms],
-        })
+        sections.append(
+            {
+                "bank_type": bank_type,
+                "bank": bank_num,
+                "address": sec_start,
+                "length": sec_end - sec_start + 1,
+                "end": sec_end,
+                "section": sec_name,
+                # Local labels included; build_spans keeps only the ones the asm
+                # defines with data. Routine sizes below stay top-level only.
+                "symbols": [{"address": a, "name": n} for a, n in sec_syms],
+            }
+        )
         for i, (addr, name) in enumerate(top):
             next_addr = top[i + 1][0] if i + 1 < len(top) else sec_end + 1
             size = next_addr - addr
             if name not in labels:
                 labels[name] = {
-                    "addr": addr, "size": size, "bank": bank_num, "section": sec_name,
+                    "addr": addr,
+                    "size": size,
+                    "bank": bank_num,
+                    "section": sec_name,
                 }
 
     for raw in MAP_FILE.read_text().splitlines():
@@ -191,7 +246,10 @@ def local_data_labels() -> set[str]:
                 pending = []
     return found
 
-def process_asm_files(map_labels: dict[str, dict]) -> tuple[dict[str, dict], dict[str, int], list[str]]:
+
+def process_asm_files(
+    map_labels: dict[str, dict],
+) -> tuple[dict[str, dict], dict[str, int], list[str]]:
     files = sorted(glob.glob(str(SRC_DIR / "**" / "*.asm"), recursive=True))
     if not files:
         fail("no .asm sources found under poketcg/src")
@@ -233,8 +291,12 @@ def process_asm_files(map_labels: dict[str, dict]) -> tuple[dict[str, dict], dic
                     # too -- otherwise the phantom dep can close a dependency
                     # cycle and starve both routines out of the frontier forever
                     # (measured on GetPCPackNameTextID -> PrintPCPackName).
-                    if (cur_top and last_body is not None and prev_kind == "code"
-                            and classify_line(last_body) == "code"):
+                    if (
+                        cur_top
+                        and last_body is not None
+                        and prev_kind == "code"
+                        and classify_line(last_body) == "code"
+                    ):
                         if not TERM_RE.match(last_body):
                             if cur_top in defs:
                                 defs[cur_top]["fallthrough"] = name
@@ -255,8 +317,11 @@ def process_asm_files(map_labels: dict[str, dict]) -> tuple[dict[str, dict], dic
                 for lab_name, lab_line in pending_labels:
                     if lab_name not in defs:
                         defs[lab_name] = {
-                            "file": rel, "line": lab_line, "kind": kind,
-                            "deps": set(), "fallthrough": None,
+                            "file": rel,
+                            "line": lab_line,
+                            "kind": kind,
+                            "deps": set(),
+                            "fallthrough": None,
                         }
                 cur_top = parent_name(pending_labels[-1][0])
                 prev_kind = kind
@@ -264,9 +329,14 @@ def process_asm_files(map_labels: dict[str, dict]) -> tuple[dict[str, dict], dic
                 local_seen = False
             else:
                 kind = classify_line(stripped)
-                if (kind == "code" and local_seen and cur_top in defs
-                        and defs[cur_top]["kind"] == "data" and stripped.lower() != "ret"
-                        and rel.startswith("src/scripts/")):
+                if (
+                    kind == "code"
+                    and local_seen
+                    and cur_top in defs
+                    and defs[cur_top]["kind"] == "data"
+                    and stripped.lower() != "ret"
+                    and rel.startswith("src/scripts/")
+                ):
                     defs[cur_top]["kind"] = "code"
             callee = extract_callee(stripped, set(), cur_top or "")
             if callee and cur_top and cur_top in defs:
@@ -331,7 +401,7 @@ def process_asm_files(map_labels: dict[str, dict]) -> tuple[dict[str, dict], dic
             return table_cache[label]
         lines_ = Path(PRET / entry["file"]).read_text(errors="replace").splitlines()
         found: set[str] = set()
-        for raw in lines_[entry["line"]:]:
+        for raw in lines_[entry["line"] :]:
             body = raw.split(";", 1)[0]
             if not body.strip():
                 continue
@@ -373,8 +443,13 @@ def process_asm_files(map_labels: dict[str, dict]) -> tuple[dict[str, dict], dic
 
     unknown = sorted(n for n in map_labels if n not in defs)
     for n in unknown:
-        defs[n] = {"file": None, "line": None, "kind": "unknown", "deps": set(),
-                    "fallthrough": None}
+        defs[n] = {
+            "file": None,
+            "line": None,
+            "kind": "unknown",
+            "deps": set(),
+            "fallthrough": None,
+        }
 
     ref_map = {}
     for name in defs:
@@ -386,20 +461,67 @@ def process_asm_files(map_labels: dict[str, dict]) -> tuple[dict[str, dict], dic
         ref_map[name] = max(r - def_lines, 0)
 
     return defs, ref_map, unknown
+
+
 DATA_SECTION_HINTS = (
-    "audio", "anim", "booster", "card", "deck", "gfx", "graphic", "pal",
-    "text", "sgb", "table", "data", "map objects", "map data", "copyright",
+    "audio",
+    "anim",
+    "booster",
+    "card",
+    "deck",
+    "gfx",
+    "graphic",
+    "pal",
+    "text",
+    "sgb",
+    "table",
+    "data",
+    "map objects",
+    "map data",
+    "copyright",
 )
 CODE_SECTION_NAMES = {
-    "vblank", "lcdc", "timer", "serial", "joypad", "start", "audio callback",
-    "game loop", "duel core", "menus common", "menus 1", "menus 2", "menus 3",
-    "menus 4", "overworld scripting", "overworld map", "save", "map scripts",
-    "sprite animations", "scenes", "challenge machine", "ai logic 1", "ai logic 2",
-    "effect commands", "animation commands", "ir communications core",
-    "sprite animations vblank", "starter deck", "link functions",
-    "promotional card", "booster pack menu", "input name", "auto deck machines",
-    "bank 7", "duel animations", "start menu", "intro sequence",
-    "credits sequence", "effect functions", "unused save validation", "color",
+    "vblank",
+    "lcdc",
+    "timer",
+    "serial",
+    "joypad",
+    "start",
+    "audio callback",
+    "game loop",
+    "duel core",
+    "menus common",
+    "menus 1",
+    "menus 2",
+    "menus 3",
+    "menus 4",
+    "overworld scripting",
+    "overworld map",
+    "save",
+    "map scripts",
+    "sprite animations",
+    "scenes",
+    "challenge machine",
+    "ai logic 1",
+    "ai logic 2",
+    "effect commands",
+    "animation commands",
+    "ir communications core",
+    "sprite animations vblank",
+    "starter deck",
+    "link functions",
+    "promotional card",
+    "booster pack menu",
+    "input name",
+    "auto deck machines",
+    "bank 7",
+    "duel animations",
+    "start menu",
+    "intro sequence",
+    "credits sequence",
+    "effect functions",
+    "unused save validation",
+    "color",
     "gift center menu",
 }
 
@@ -410,11 +532,16 @@ def section_span_kind(name: str) -> str:
         return "header/metadata"
     if any(hint in lowered for hint in DATA_SECTION_HINTS):
         return "data"
-    return "code" if lowered.startswith("rst") or lowered in CODE_SECTION_NAMES else "unclassified"
+    return (
+        "code"
+        if lowered.startswith("rst") or lowered in CODE_SECTION_NAMES
+        else "unclassified"
+    )
 
 
-def build_spans(sections: list[dict], defs: dict[str, dict],
-                data_locals: set[str]) -> list[dict]:
+def build_spans(
+    sections: list[dict], defs: dict[str, dict], data_locals: set[str]
+) -> list[dict]:
     spans: list[dict] = []
     for section in sections:
         bank_type = section["bank_type"]
@@ -438,16 +565,18 @@ def build_spans(sections: list[dict], defs: dict[str, dict],
         cursor = section_start
         for index, (address, name) in enumerate(addresses):
             if address > cursor:
-                spans.append({
-                    "kind": section_span_kind(section["section"]),
-                    "source": "mapped-gap",
-                    "bank_type": bank_type,
-                    "bank": bank,
-                    "address": cursor,
-                    "length": address - cursor,
-                    "offset": base_offset + cursor - section_start,
-                    "section": section["section"],
-                })
+                spans.append(
+                    {
+                        "kind": section_span_kind(section["section"]),
+                        "source": "mapped-gap",
+                        "bank_type": bank_type,
+                        "bank": bank,
+                        "address": cursor,
+                        "length": address - cursor,
+                        "offset": base_offset + cursor - section_start,
+                        "section": section["section"],
+                    }
+                )
             end = addresses[index + 1][0] if index + 1 < len(addresses) else section_end
             kind = defs.get(name, {}).get("kind")
             if name in data_locals:
@@ -456,29 +585,33 @@ def build_spans(sections: list[dict], defs: dict[str, dict],
                 kind = section_span_kind(section["section"])
             if section["section"].casefold() == "romheader":
                 kind = "header/metadata"
-            spans.append({
-                "kind": kind,
-                "source": "mapped-symbol",
-                "bank_type": bank_type,
-                "bank": bank,
-                "address": address,
-                "length": end - address,
-                "offset": base_offset + address - section_start,
-                "section": section["section"],
-                "symbol": name,
-            })
+            spans.append(
+                {
+                    "kind": kind,
+                    "source": "mapped-symbol",
+                    "bank_type": bank_type,
+                    "bank": bank,
+                    "address": address,
+                    "length": end - address,
+                    "offset": base_offset + address - section_start,
+                    "section": section["section"],
+                    "symbol": name,
+                }
+            )
             cursor = end
         if cursor < section_end:
-            spans.append({
-                "kind": section_span_kind(section["section"]),
-                "source": "mapped-gap",
-                "bank_type": bank_type,
-                "bank": bank,
-                "address": cursor,
-                "length": section_end - cursor,
-                "offset": base_offset + cursor - section_start,
-                "section": section["section"],
-            })
+            spans.append(
+                {
+                    "kind": section_span_kind(section["section"]),
+                    "source": "mapped-gap",
+                    "bank_type": bank_type,
+                    "bank": bank,
+                    "address": cursor,
+                    "length": section_end - cursor,
+                    "offset": base_offset + cursor - section_start,
+                    "section": section["section"],
+                }
+            )
     return sorted(spans, key=lambda span: span["offset"])
 
 
@@ -504,8 +637,11 @@ def main() -> int:
         if d.get("fallthrough"):
             dep_set.add(d["fallthrough"])
         functions[name] = {
-            "file": d["file"], "line": d["line"], "bank": info["bank"],
-            "addr": info["addr"], "size": info["size"],
+            "file": d["file"],
+            "line": d["line"],
+            "bank": info["bank"],
+            "addr": info["addr"],
+            "size": info["size"],
             "deps": sorted(dep_set),
             "fallthrough": d.get("fallthrough"),
             "refs": refs_map.get(name, 0),
@@ -514,10 +650,22 @@ def main() -> int:
     for n in unknown:
         print(f"inventory: unknown label with no asm definition: {n}", file=sys.stderr)
 
-    pret_commit = subprocess.run(
-        ["git", "-C", str(PRET), "rev-parse", "HEAD"],
-        capture_output=True, text=True, check=True,
-    ).stdout.strip()
+    pinned_commit = (
+        (PRET / ".pret-commit").read_text(encoding="utf-8").strip()
+        if (PRET / ".pret-commit").is_file()
+        else ""
+    )
+    pret_commit = os.environ.get("POKETCG_PRET_COMMIT", pinned_commit)
+    if pret_commit:
+        if not re.fullmatch(r"[0-9a-fA-F]{12,64}", pret_commit):
+            fail("pinned pret commit is malformed")
+    else:
+        pret_commit = subprocess.run(
+            ["git", "-C", str(PRET), "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
 
     mapped_bytes = sum(span["length"] for span in spans)
     unclassified_bytes = sum(
@@ -543,10 +691,12 @@ def main() -> int:
 
     OUT_FILE.parent.mkdir(parents=True, exist_ok=True)
     OUT_FILE.write_text(json.dumps(out, sort_keys=True, separators=(",", ":")))
-    print(f"inventory: code_functions={out['totals']['code_functions']}, "
-          f"code_bytes={out['totals']['code_bytes']}, "
-          f"data_labels={out['totals']['data_labels']}, "
-          f"data_bytes={out['totals']['data_bytes']}")
+    print(
+        f"inventory: code_functions={out['totals']['code_functions']}, "
+        f"code_bytes={out['totals']['code_bytes']}, "
+        f"data_labels={out['totals']['data_labels']}, "
+        f"data_bytes={out['totals']['data_bytes']}"
+    )
     return 0
 
 

@@ -904,7 +904,7 @@ def sweep_worker(entries_path: Path, start: int, out_path: Path) -> int:
 
 
 def sweep(name: str, *, after: int = 0, until: int | None = None, limit: int = 0,
-          json_path: Path | None = None) -> int:
+          json_path: Path | None = None, jobs: int = 1) -> int:
     """Every ported routine the reference enters in a session, oracle-diffed at
     its first entry there, in one pass and without a model in the loop.
 
@@ -927,6 +927,8 @@ def sweep(name: str, *, after: int = 0, until: int | None = None, limit: int = 0
     oracle runs in worker processes so a wedged PyBoy frame
     costs one routine, marked `wedged`, not the sweep. Runs under the oracle
     environment (`just session-sweep`)."""
+    if jobs < 1:
+        raise SessionError("sweep jobs must be positive")
     entries, until = sweep_entries(name, after=after, until=until, limit=limit)
     rows: list[dict[str, Any]] = []
     with tempfile.TemporaryDirectory(prefix=f"sweep-{name}-") as tmp:
@@ -961,7 +963,7 @@ def sweep(name: str, *, after: int = 0, until: int | None = None, limit: int = 0
             kind = "memory" if row.get("memory") else "registers"
             print(f"ROW ordinal={row['ordinal']} routine={row['routine']} status={row['status']} {kind} "
                   + " | ".join(m[:100] for m in row["mismatches"][:3]))
-    print(f"SWEEP {name} after={after} until={until} routines={len(rows)} failing={failing} "
+    print(f"SWEEP {name} after={after} until={until} routines={len(rows)} failing={failing} jobs={jobs} "
           f"frames={sum(r['status'] == 'frames' for r in rows)} "
           f"errors={sum(r['status'] == 'error' for r in rows)} wedged={sum(r['status'] == 'wedged' for r in rows)}")
     report = {"schema": 1, "format": "session-sweep-v1", "name": name, "after": after, "until": until, "rows": rows}
@@ -1139,7 +1141,7 @@ def audio_requests(name: str, masks: list[int], frames: int, ordinal: int,
             for address, symbol in AUDIO_REQUESTS.items()]
 
 
-def verify(name: str, *, write: bool, json_path: Path | None) -> int:
+def verify(name: str, *, write: bool, json_path: Path | None, publish: bool = True) -> int:
     masks, meta = load_session(name)
     n = len(masks)
     frames = reference_frames(masks, meta)
@@ -1153,7 +1155,7 @@ def verify(name: str, *, write: bool, json_path: Path | None) -> int:
     if ref_count < n:
         report.update(status="ref-short", confirmed=0, reference_ordinals=ref_count)
         print(f"SESSION {name} status=ref-short confirmed=0 ordinals={n} reference={ref_count}")
-        emit(report, json_path)
+        emit(report, json_path, publish=publish)
         return 4
     with tempfile.TemporaryDirectory(prefix=f"session-{name}-") as tmp:
         directory = Path(tmp)
@@ -1222,17 +1224,18 @@ def verify(name: str, *, write: bool, json_path: Path | None) -> int:
     exit_code = {"clean": 0, "diverged": 1, "native-short": 1}[status]
     if off_schedule:
         exit_code = max(exit_code, 1)
-    with ratchet_lock():
-        ratchet = read_ratchet()
-        previous = ratchet.get(name, {}).get("confirmed_ordinal")
-        if previous is not None and confirmed < previous and not write:
-            print(f"REGRESSION {name} key=confirmed_ordinal was={previous} now={confirmed}")
-            report["regression"] = {"was": previous, "now": confirmed}
-            exit_code = 3
-        elif previous is None or confirmed > previous or write:
-            ratchet[name] = {"confirmed_ordinal": confirmed}
-            write_ratchet(ratchet)
-    emit(report, json_path)
+    if publish:
+        with ratchet_lock():
+            ratchet = read_ratchet()
+            previous = ratchet.get(name, {}).get("confirmed_ordinal")
+            if previous is not None and confirmed < previous and not write:
+                print(f"REGRESSION {name} key=confirmed_ordinal was={previous} now={confirmed}")
+                report["regression"] = {"was": previous, "now": confirmed}
+                exit_code = 3
+            elif previous is None or confirmed > previous or write:
+                ratchet[name] = {"confirmed_ordinal": confirmed}
+                write_ratchet(ratchet)
+    emit(report, json_path, publish=publish)
     return exit_code
 
 
@@ -1280,10 +1283,11 @@ def derive(name: str, movie: Path, goal: str) -> int:
 TRACKER_DIR = ROOT / "build" / "completion" / "tracker"
 
 
-def emit(report: dict[str, Any], json_path: Path | None) -> None:
-    """The report goes to the caller's path and to the tracker's copy, which
-    `tools/completion/tracker.py sync` projects onto the issue tracker."""
-    for path in (json_path, TRACKER_DIR / f"verify-{report['name']}.json"):
+def emit(report: dict[str, Any], json_path: Path | None, *, publish: bool = True) -> None:
+    paths = [json_path]
+    if publish:
+        paths.append(TRACKER_DIR / f"verify-{report['name']}.json")
+    for path in paths:
         if path:
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
@@ -1986,8 +1990,12 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     verify_parser = sub.add_parser("verify")
     verify_parser.add_argument("name", nargs="?", default="")
-    verify_parser.add_argument("--write-ratchet", action="store_true",
-                               help="accept a lower confirmed ordinal")
+    verify_parser.add_argument(
+        "--write-ratchet",
+        action="store_true",
+        help="accept a lower confirmed ordinal",
+    )
+    verify_parser.add_argument("--no-publish", action="store_true")
     verify_parser.add_argument("--json")
     sub.add_parser("status")
     sweep_parser = sub.add_parser("sweep", help="oracle-diff every ported routine at its first entry in a session")
@@ -1996,6 +2004,7 @@ def main(argv: list[str] | None = None) -> int:
     sweep_parser.add_argument("--until", type=int, help="last DoFrame ordinal to capture through")
     sweep_parser.add_argument("--limit", type=int, default=0, help="stop after this many routines")
     sweep_parser.add_argument("--json", type=Path)
+    sweep_parser.add_argument("--jobs", type=int, default=1)
     worker_parser = sub.add_parser("sweep-worker", help=argparse.SUPPRESS)
     worker_parser.add_argument("entries", type=Path)
     worker_parser.add_argument("--start", type=int, default=0)
@@ -2110,7 +2119,7 @@ def main(argv: list[str] | None = None) -> int:
             return diff(args.name, args.ordinal)
         if args.command == "sweep":
             return sweep(args.name, after=args.after, until=args.until, limit=args.limit,
-                         json_path=args.json)
+                         json_path=args.json, jobs=args.jobs)
         if args.command == "sweep-worker":
             return sweep_worker(args.entries, args.start, args.out)
         if args.command == "routines":
@@ -2154,8 +2163,12 @@ def main(argv: list[str] | None = None) -> int:
             script = args.script if args.script.is_absolute() else ROOT / args.script
             return from_script(args.name, seed=args.seed, script=script, goal=args.goal)
         name = args.name or lowest_confirmed()
-        return verify(name, write=args.write_ratchet,
-                      json_path=Path(args.json) if args.json else None)
+        return verify(
+            name,
+            write=args.write_ratchet,
+            json_path=Path(args.json) if args.json else None,
+            publish=not args.no_publish,
+        )
     except (SessionError, refstream.RefstreamError, OSError, ValueError) as exc:
         print(json.dumps({"status": "FAIL", "detail": str(exc)}), file=sys.stderr)
         return 2

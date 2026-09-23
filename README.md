@@ -57,21 +57,6 @@ produced by `just completion-gambatte-bootstrap`. It runs package smoke, the
 completion and CFG audits, independent-lane health, Gambatte health, and a
 one-frame `release-smoke` Gambatte capture.
 
-## Factory dispatch
-
-The factory keeps no external state: work selection, verification, and landing
-are all computed from the repository plus `.factory/` local caches.
-
-```sh
-just factory-next 4   # select ready routines, prepare prompts
-just factory-try <Fn> # verify recorded candidates for one routine
-just factory-land     # gate, commit, push, record every verified artifact
-just factory-eta      # forecast from recorded landings
-```
-
-See `docs/factory-workflow.md` for the loop and `docs/factory-contract.md` for
-translator constraints.
-
 ## Issues
 
 The Forgejo issues are the loop's worklist, projected from measured facts:
@@ -132,4 +117,4 @@ GB Recompiled does not include ROMs. Use only ROM images you are legally allowed
 
 ## Repository guidance
 
-Read `AGENTS.md` before making changes. The normative porting contract is `docs/port-contract.md`; a port run is orchestrated from `docs/factory-workflow.md`; architecture is in `docs/vision.md`.
+Read `AGENTS.md` before making changes. The normative porting contract is `docs/port-contract.md`; architecture is in `docs/vision.md`. Routines are hand-ported and verified one at a time; there is no autonomous port controller.

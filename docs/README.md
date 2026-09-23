@@ -1,31 +1,25 @@
 # docs/
 
-Twelve documents, each with one job. Nothing here is a task list — work is
-selected deterministically: the factory from open Forgejo work issues, the
-grind from `just issues-next`, the coverage program from `just coverage-status`.
+There is no autonomous runbook. Every document here is a contract, the
+architecture, or a technical diagnostic reference for hand-porting.
 
 | doc | role |
 |---|---|
-| `port-contract.md` | **Normative.** The porting contract: memory model, the three C rules, adapter rules, required case coverage, mutation testing, exclusion taxonomy. Read in full before writing any C. |
-| `factory-contract.md` | **Normative.** The exact `CONTRACT` / `CASES` / `MUTATIONS` blocks a translator lane must emit. |
-| `grind.md` | The porting runbook: the loop, the decision table, one row per failure class. Every branch is a lookup; a branch that needs a design decision is a stop condition. |
-| `factory-workflow.md` | The orchestrator runbook: preflight, the loop, reconciliation, escalation, invariants. The `start` trigger reads this and nothing else. |
-| `jj-workflow.md` | VCS workflow and Forgejo authentication (Cloudflare Access + PAT helper). |
-| `tas-progress-loop.md` | Reference for one tool, `just completion-tas-progress`: replaying the completion TAS on both lanes. Not the runbook; `grind.md` is. |
-| `coverage-program.md` | The five loops that turn "no route executes this routine" into recorded, verified, landed sessions: ledger, discover, intake, target, prove. Supersedes `integration-plan.md` waves 2-7. |
-| `audio-harness.md` | Phase 3's proof: the sound driver as a closed state machine under a per-tick oracle, plus the request-window and placement rows of `session-verify`. |
-| `reach-harness.md` | The parts no button search reaches: save-seeded sessions (packs, deck machines, credits variants, gift center) and the link/IR/printer peer, with the SGB decision. |
-| `integration-plan.md` | The 2026-09-09 integration program. Its state block is current; waves 2-7 are superseded by the three documents above and kept for history. |
-| `vision.md` | Descriptive: architecture, phase order, prior-art rationale. Not normative. |
-| `phase1-transform.md` | Per-routine delete/dissolve/port verdicts for the hardware-removal transform. |
+| `port-contract.md` | Normative routine-port contract. |
+| `factory-contract.md` | Normative `CONTRACT`/`CASES`/`MUTATIONS` case-module format. |
+| `grind.md` | Diagnostic interpretations and repair recipes. |
+| `coverage-program.md` | Coverage ledger, Target, Discover, and Intake diagnostics. |
+| `tas-progress-loop.md` | TAS diagnostic reference. |
+| `audio-harness.md` | Audio evidence mechanics. |
+| `reach-harness.md` | Save, peer, link, IR, and printer reach mechanics. |
+| `jj-workflow.md` | jj and Forgejo mechanics. |
+| `vision.md` | Normative architecture and release destination. |
+| `phase1-transform.md` | Hardware-transform record. |
 
-Machine-readable state lives outside `docs/` and always wins over prose:
-`site/data/coverage.json` (which routines every recorded session executes, and
-the `unmeasurable` ones no replay can report), `site/data/gate.json` (last
-central gate), `site/data/progress.json` (work records),
-`tools/progress/scope.toml` (exclusions), and the Forgejo issue ledger itself.
-`.factory/` holds only rebuildable caches: the issue snapshot, verified
-artifacts, and issued prompts.
+Machine-readable state wins over prose: `site/data/coverage.json`,
+`site/data/progress.json`, `site/data/gate.json`, `tools/progress/scope.toml`,
+and `.factory/workflow.sqlite3`. Forgejo is an idempotent projection, not a
+scheduler or evidence source.
 
 The Forgejo issues are a projection of the loop's measured facts - session
 divergences, sweep rows, composition audits - kept by `just issues-sync`

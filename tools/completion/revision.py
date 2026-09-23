@@ -29,6 +29,7 @@ def _jj_source_revision(root: Path) -> str:
         root,
         [
             "jj",
+            "--ignore-working-copy",
             "log",
             "-r",
             "ancestors(@-, 256)",
@@ -44,6 +45,7 @@ def _jj_source_revision(root: Path) -> str:
             root,
             [
                 "jj",
+                "--ignore-working-copy",
                 "diff",
                 "--name-only",
                 "--from",

@@ -75,10 +75,10 @@ def ensure_clean() -> None:
         raise GateError("release gate requires a clean working tree")
 
 
-def source_tree_digest() -> str:
+def source_tree_digest(root: Path = ROOT) -> str:
     try:
         result = subprocess.run(
-            ["git", "ls-files", "-z"], cwd=ROOT, capture_output=True, timeout=30, check=False
+            ["git", "ls-files", "-z"], cwd=root, capture_output=True, timeout=30, check=False
         )
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise GateError(f"cannot enumerate committed source tree: {exc}") from exc
@@ -86,7 +86,7 @@ def source_tree_digest() -> str:
         raise GateError("cannot enumerate committed source tree")
     digest = hashlib.sha256()
     for raw_path in sorted(filter(None, result.stdout.split(b"\0"))):
-        path = ROOT / os.fsdecode(raw_path)
+        path = root / os.fsdecode(raw_path)
         try:
             content = path.read_bytes()
         except OSError as exc:
@@ -219,6 +219,63 @@ def all_release_conditions(
     if trusted.get("count") != trusted.get("total"):
         return False
     return all(item.get("status") == "PASS" for item in constituents.values())
+
+
+def validate_attestation(
+    pointer: dict[str, Any],
+    root: Path,
+    expected_revision: str,
+) -> tuple[bool, str | None]:
+    root = root.resolve()
+    if not isinstance(pointer, dict) or pointer.get("schema") != 3:
+        return False, "release pointer schema differs"
+    if pointer.get("revision") != expected_revision:
+        return False, "release pointer revision differs"
+    if pointer.get("complete") is not True:
+        return False, "release pointer is incomplete"
+    run_dir_text = pointer.get("run_dir")
+    digest = pointer.get("attestation_sha256")
+    if not isinstance(run_dir_text, str) or not isinstance(digest, str):
+        return False, "release pointer lacks attestation identity"
+    run_dir = (root / run_dir_text).resolve()
+    try:
+        run_dir.relative_to(root)
+    except ValueError:
+        return False, "release attestation path escapes root"
+    path = run_dir / "attestation.json"
+    try:
+        attestation = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return False, f"cannot load release attestation: {exc}"
+    if not isinstance(attestation, dict):
+        return False, "release attestation is malformed"
+    material = json.dumps(attestation, sort_keys=True, separators=(",", ":"))
+    if hashlib.sha256(material.encode()).hexdigest() != digest:
+        return False, "release attestation digest differs"
+    if attestation.get("revision") != expected_revision:
+        return False, "release attestation revision differs"
+    if attestation.get("source_tree_sha256") != source_tree_digest(root):
+        return False, "release attestation source tree differs"
+    external = attestation.get("external")
+    if not isinstance(external, dict):
+        return False, "release attestation external identity is malformed"
+    paths = {
+        "baseline": root / "tools/completion/baseline.toml",
+        "requirements": root / "tools/completion/requirements.toml",
+        "gambatte_pins": root / "tools/completion/gambatte_pins.toml",
+    }
+    for name, path_value in paths.items():
+        if external.get(name) != file_digest(path_value):
+            return False, f"release attestation external identity differs: {name}"
+    constituents = attestation.get("constituents")
+    if not isinstance(constituents, dict) or not all(
+        isinstance(value, dict) and value.get("status") == "PASS"
+        for value in constituents.values()
+    ):
+        return False, "release attestation constituents are incomplete"
+    if not all_release_conditions(attestation.get("audit"), constituents):
+        return False, "release conditions are not met"
+    return True, None
 
 
 def parser() -> argparse.ArgumentParser:

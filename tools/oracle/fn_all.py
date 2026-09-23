@@ -89,29 +89,17 @@ def main() -> int:
     parser.add_argument("--probe", type=Path, required=True)
     parser.add_argument("--runner", type=Path, required=True)
     parser.add_argument("--jobs", type=int, default=min(4, os.cpu_count() or 1))
-    parser.add_argument("--report", type=Path, help="write gate record to JSON")
+    parser.add_argument("--report", type=Path, help="write function-check record to JSON")
     args = parser.parse_args()
     if not all(path.is_absolute() and path.is_file()
                for path in (args.rom, args.symbols, args.probe, args.runner)):
         print("ARTIFACT missing absolute barrier input", file=sys.stderr)
         return 2
     report_data = None
-    report_commit = None
     if args.report:
-        try:
-            rr = subprocess.run(
-                ["jj", "log", "-r", "@-", "--no-graph", "-T", "commit_id"],
-                capture_output=True, text=True, timeout=5,
-            )
-            if rr.returncode == 0:
-                report_commit = rr.stdout.strip()
-        except Exception:
-            pass
         report_data = {
-            "schema": 1,
+            "schema": "functions-check-v1",
             "generated_at": 0,
-            "commit": report_commit,
-            "input_trees": gate_input_trees(report_commit) if report_commit else None,
             "complete": False,
             "routines": {},
         }

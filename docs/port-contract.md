@@ -767,7 +767,7 @@ That framing is too coarse; measured, the boundary sits elsewhere.
   largest structural blocker needing a human decision on issuance policy.** `report.py` computes
   `ready = status == "todo" and not unported_blockers`. Two routines that call each
   other therefore each wait on the other forever: no member of a dependency cycle
-  can ever be `ready`, so `factory-next` can never select one. Of the 62 trapped
+  can ever be `ready`, so the frontier can never list one. Of the 62 trapped
   routines exactly **one** has ever been issued an attempt
   (`DuelCheckMenu_OppPlayArea`, and only while it was *falsely* ready before the
   `dw`-table fix above corrected it). A further **50 routines / 3,038 B** are
