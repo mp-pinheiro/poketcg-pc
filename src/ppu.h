@@ -16,6 +16,10 @@
 #define TILEMAP_H 32
 #endif
 
+#define WIDE_EXTRA_MAX 48
+#define PPU_SPRITES_PER_LINE 10
+#define PPU_SPRITES_MAX 40
+
 /* scroll.asm and credits.asm rewrite SCX/SCY mid-frame via LYC, so the
  * rasteriser reads scroll/window position per scanline instead of once per
  * frame; the eventual interrupt layer overwrites individual entries. */
@@ -32,5 +36,6 @@ void ppu_init_offsets(Ppu *p);
 void ppu_render_scanline(Ppu *p, int ly, uint16_t *fb);
 /* fb is SCREEN_W*SCREEN_H pixels of BGR555 (R:0-4, G:5-9, B:10-14). */
 void ppu_render_frame(Ppu *p, uint16_t *fb);
+void ppu_render_span(Ppu *p, uint16_t *fb, int left, int right, int sprite_limit);
 
 #endif /* POKETCG_PPU_H */

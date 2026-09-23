@@ -1,4 +1,6 @@
 #include "home/medal.h"
+#include "home/frames.h"
+#include "home/play_song.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -73,15 +75,11 @@ void ShowMedalReceivedScreen(uint8_t a)
 		FlashReceivedMedal();
 	} while (wMedalDisplayTimer != 0xE0u);
 	(void)PrintScrollableText_NoTextBoxLabel(WonTheMedalText);
-	/* medal.asm:47 `call WaitForSongToFinish`: the ROM waits here until the
-	 * medal jingle has run out, and only the timer ISR brings that about --
-	 * SoundTimerHandler walks each channel to its `music_end` so
-	 * CheckForEndOfSong can mark wCurSongID finished. The port has no interrupt
-	 * source, so the wait drives that same handler itself, exactly as the
-	 * landed _ShowPromotionalCardScreen does; the reference stops at this wait
-	 * and the cases declare completion pre-ret there. */
-	while (AssertSongFinished() != 0u)
-		SoundTimerHandler();
+	if (frame_boundary_is_installed())
+		WaitForSongToFinish();
+	else
+		while (AssertSongFinished() != 0u)
+			SoundTimerHandler();
 	ResumeSong();
 	wd291 = saved_d291;
 }

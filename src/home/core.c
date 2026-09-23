@@ -1,8 +1,10 @@
 #include "home/core.h"
+#include <setjmp.h>
 #include <stdio.h>
 
 #include "generated/hram.h"
 #include "generated/wram.h"
+#include "bank_guard.h"
 #include "mem.h"
 #include "home/menus.h"
 #include "home/serial.h"
@@ -1265,7 +1267,7 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
  * that unbalanced frame is never observed from here. */
 static void TossCoin_CheckTransmissionError(void)
 {
-	if (wSerialFlags == 0u)
+	if (gb_read8(wSerialFlags_ADDR) == 0u)
 		return;
 	FinishQueuedAnimations();
 	DuelTransmissionError();
@@ -2023,26 +2025,11 @@ CheckSkipDelayAllowedResult CheckSkipDelayAllowed(uint8_t f, uint8_t b, uint8_t 
 }
 /* <<< factory CheckSkipDelayAllowed */
 
-/* >>> factory AIMakeDecision */
-/* core.asm:6229-6263 */
-#include <stdlib.h>
-#define DuelistIsThinkingText 0x0088u
-AIMakeDecisionResult AIMakeDecision(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+/* core.asm:6246-6247: JumpToFunctionInTable(OppActionTable), core.asm:6487.
+ * $08 skips OppAction_BeginUseAttack's own HRAM preamble in C, so the
+ * dispatch supplies d/e from hTempCardIndex_ff9f/hTemp_ffa0 itself. */
+static void DispatchOppAction(uint8_t action, uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
-	gb_write8(hOppActionTableIndex_ADDR, a);
-	uint8_t delay = gb_read8(wSkipDuelistIsThinkingDelay_ADDR);
-	gb_write8(wSkipDuelistIsThinkingDelay_ADDR, 0u);
-	if (delay == 0u) {
-		do {
-			DoFrame();
-		} while (gb_read8(wVBlankCounter_ADDR) < 60u);
-	}
-
-	uint8_t action = gb_read8(hOppActionTableIndex_ADDR);
-	gb_write8(wOpponentTurnEnded_ADDR, 0u);
-	/* core.asm:6246-6247: JumpToFunctionInTable(OppActionTable), core.asm:6487.
-	 * $08 skips OppAction_BeginUseAttack's own HRAM preamble in C, so the
-	 * dispatch supplies d/e from hTempCardIndex_ff9f/hTemp_ffa0 itself. */
 	switch (action) {
 	case 0x00u: DuelTransmissionError(); break;
 	case 0x01u: OppAction_PlayBasicPokemonCard(); break;
@@ -2075,6 +2062,26 @@ AIMakeDecisionResult AIMakeDecision(uint8_t a, uint8_t b, uint8_t c, uint8_t d, 
 	default:
 		abort();
 	}
+}
+
+/* >>> factory AIMakeDecision */
+/* core.asm:6229-6263 */
+#include <stdlib.h>
+#define DuelistIsThinkingText 0x0088u
+AIMakeDecisionResult AIMakeDecision(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+{
+	gb_write8(hOppActionTableIndex_ADDR, a);
+	uint8_t delay = gb_read8(wSkipDuelistIsThinkingDelay_ADDR);
+	gb_write8(wSkipDuelistIsThinkingDelay_ADDR, 0u);
+	if (delay == 0u) {
+		do {
+			DoFrame();
+		} while (gb_read8(wVBlankCounter_ADDR) < 60u);
+	}
+
+	uint8_t action = gb_read8(hOppActionTableIndex_ADDR);
+	gb_write8(wOpponentTurnEnded_ADDR, 0u);
+	DispatchOppAction(action, b, c, d, e);
 
 	uint8_t ended = (uint8_t)(gb_read8(wDuelFinished_ADDR)
 				  | gb_read8(wOpponentTurnEnded_ADDR));
@@ -3619,7 +3626,7 @@ uint8_t DecideLinkDuelVariables(void)
 		}
 		Func0cc5Result ready = Func_0cc5(keys & PAD_START, 0u, 0u, 0u);
 		if (ready.f & 0x10u) {
-			uint16_t page = wSerialOp == 0x29u ?
+			uint16_t page = gb_read8(wSerialOp_ADDR) == 0x29u ?
 				wPlayerDuelVariables_ADDR : wOpponentDuelVariables_ADDR;
 			(void)page;
 			return 0x00u;
@@ -9321,8 +9328,8 @@ TurnDuelistTakePrizesResult TurnDuelistTakePrizes(void)
 		SelectPrizeCards(wNumberPrizeCardsToTake);
 		uint8_t d = hTemp_ffa0;
 		uint8_t e = gb_read8((uint16_t)(hTemp_ffa0_ADDR + 1u));
-		SerialSend8Bytes(wNumberPrizeCardsToTake, 0u, 0u, 0u,
-			(uint16_t)(((uint16_t)d << 8) | e), hTemp_ffa0_ADDR);
+		SerialSend8Bytes(SEND8_A | SEND8_D | SEND8_E | SEND8_H | SEND8_L, hBankROM, 0u, 0u, 0u,
+			(uint16_t)(((uint16_t)d << 8) | e), (uint16_t)(hTemp_ffa0_ADDR + 1u));
 	} else {
 		uint16_t play_area = (uint16_t)(((uint16_t)hWhoseTurn << 8) | PLAYER_TURN);
 		DrawYourOrOppPlayAreaScreen_Bank0(play_area);
@@ -9452,6 +9459,12 @@ void StartDuel_VSLinkOpp(void)
 	StartDuel();
 }
 /* <<< factory StartDuel_VSLinkOpp */
+
+#define LINK_OPP_TURN_CHECK_PLAY_AREA 0x0Au
+#define LINK_OPP_TURN_NUM_OPP_ACTIONS 0x17u
+
+jmp_buf g_link_opponent_turn_return;
+int g_link_opponent_turn_armed;
 
 /* >>> factory SetLinkDuelTransmissionFrameFunction */
 void SetLinkDuelTransmissionFrameFunction(void)
@@ -9792,10 +9805,11 @@ ReplaceKnockedOutPokemonResult ReplaceKnockedOutPokemon(uint8_t a, uint8_t f, ui
 
 	for (;;) {
 		if (player) {
-			while ((OpenPlayAreaScreenForSelection().f & FLAG_C) != 0u)
+			PlayAreaScreenResult picked;
+			while (((picked = OpenPlayAreaScreenForSelection()).f & FLAG_C) != 0u)
 				;
 			a = hTempPlayAreaLocation_ff9d;
-			SerialSend8Bytes(a, f, b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+			SerialSend8Bytes(SEND8_A | SEND8_F, a, picked.f, b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
 		}
 		FinishQueuedAnimations();
 		if ((DoPracticeDuelAction(PRACTICEDUEL_REPLACE_KNOCKED_OUT_POKEMON) & FLAG_C) == 0u)
@@ -10524,14 +10538,53 @@ void HandleTurn(void)
 /* <<< factory HandleTurn */
 
 /* >>> factory HandleWaitingLinkOpponentMenu */
+static void WaitingLinkOpponentMenu_InitTextBoxMenu(void)
+{
+	(void)SetCursorParametersForTextBox(wCurrentDuelMenuItem != 0u ? 8u : 2u, 16u, SYM_CURSOR_R, SYM_SPACE);
+}
+
+static void WaitingLinkOpponentMenu_HandleInput(void)
+{
+	uint8_t held = hDPadHeld;
+	if ((held & PAD_B) != 0u || (held & (PAD_LEFT | PAD_RIGHT)) == 0u)
+		return;
+	EraseCursor();
+	wCurrentDuelMenuItem = (uint8_t)(wCurrentDuelMenuItem ^ 0x01u);
+	WaitingLinkOpponentMenu_InitTextBoxMenu();
+}
+
 void HandleWaitingLinkOpponentMenu(void)
 {
-	uint8_t delay = 10u;
-	while (delay != 0u) {
-		DoFrame();
-		--delay;
+	size_t guard = bank_guard_depth();
+	if (setjmp(g_link_opponent_turn_return) != 0) {
+		g_link_opponent_turn_armed = 0;
+		bank_guard_truncate(guard);
+		return;
 	}
+	g_link_opponent_turn_armed = 1;
+	for (uint8_t delay = 10u; delay != 0u; --delay)
+		DoFrame();
 	wCurrentDuelMenuItem = 0u;
+	for (;;) {
+		hWhoseTurn = PLAYER_TURN;
+		(void)DrawWideTextBox_PrintTextNoDelay(WaitingHandExamineText);
+		WaitingLinkOpponentMenu_InitTextBoxMenu();
+		for (;;) {
+			DoFrame();
+			WaitingLinkOpponentMenu_HandleInput();
+			RefreshMenuCursor();
+			if ((hKeysPressed & PAD_A) != 0u) {
+				if (wCurrentDuelMenuItem == 0u)
+					(void)OpenTurnHolderHandScreen_Simple();
+				else
+					OpenDuelCheckMenu();
+				break;
+			}
+			if ((HandleSpecialDuelMainSceneHotkeys(0x01u).f & FLAG_C) != 0u)
+				break;
+		}
+		DrawDuelMainScene();
+	}
 }
 /* <<< factory HandleWaitingLinkOpponentMenu */
 
@@ -10730,7 +10783,7 @@ duel_finished:
 	InitVariablesToBeginDuel();
 	if (wDuelType == DUELTYPE_LINK) {
 		(void)ExchangeRNG(0u, 0u, 0u, 0u);
-		hWhoseTurn = (wSerialOp == 0x29u) ? PLAYER_TURN : OPPONENT_TURN_MAIN;
+		hWhoseTurn = (gb_read8(wSerialOp_ADDR) == 0x29u) ? PLAYER_TURN : OPPONENT_TURN_MAIN;
 		if ((HandleDuelSetup().f & 0x10u) != 0u)
 			return;
 		goto main_loop;
@@ -10757,6 +10810,32 @@ void _ContinueDuel(void)
 /* >>> factory DoLinkOpponentTurn */
 void DoLinkOpponentTurn(void)
 {
+	wOpponentTurnEnded = 0u;
+	wSkipDuelistIsThinkingDelay = 0u;
+	for (;;) {
+		if (wSkipDuelistIsThinkingDelay == 0u) {
+			SetLinkDuelTransmissionFrameFunction();
+			HandleWaitingLinkOpponentMenu();
+			if (wDuelDisplayedScreen == LINK_OPP_TURN_CHECK_PLAY_AREA)
+				(void)SetupText(0x38u, 0x9Fu);
+		}
+		ResetDoFrameFunction_Bank1();
+		SerialRecvDuelDataResult data = SerialRecvDuelData(0u, 0u, 0u, 0u);
+		hWhoseTurn = OPPONENT_TURN_MAIN;
+		if (gb_read8(wSerialFlags_ADDR) != 0u) {
+			DuelTransmissionError();
+			return;
+		}
+		wSkipDuelistIsThinkingDelay = 0u;
+		uint8_t action = gb_read8(hOppActionTableIndex_ADDR);
+		if (action >= LINK_OPP_TURN_NUM_OPP_ACTIONS) {
+			DuelTransmissionError();
+			return;
+		}
+		DispatchOppAction(action, data.b, data.c, (uint8_t)(data.de >> 8), (uint8_t)data.de);
+		if ((wDuelFinished | wOpponentTurnEnded) != 0u)
+			return;
+	}
 }
 /* <<< factory DoLinkOpponentTurn */
 

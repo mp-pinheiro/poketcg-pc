@@ -30,6 +30,7 @@ import functools
 import hashlib
 import json
 import os
+import re
 import struct
 import subprocess
 import sys
@@ -61,12 +62,14 @@ NATIVE_RECORD = struct.Struct("<5I")
 CALL_RECORD = struct.Struct("<IQB")
 TIMER_SYNC = {
     (None, 0x377F): "SetupSound", (None, 0x3785): "PlaySong",
-    (None, 0x378A): "AssertSongFinished", (None, 0x378F): "AssertSFXFinished",
     (None, 0x3796): "PlaySFX", (None, 0x379B): "PauseSong", (None, 0x37A0): "ResumeSong",
     (None, 0x383D): "ExecuteGameEvent",           # map.asm:26, enables the counter
     (3, 0x41B1): "Func_c1b1",                     # overworld.asm:230, zeroes it
     (4, 0x41CD): "PrintPlayTime",                 # print_stats.asm:115, reads it
     (4, 0x52FD): "CopyGeneralSaveDataToSRAM",     # save.asm .loop_bytes `ld a, [hli]`: saves it
+    (4, 0x546E): "LoadGeneralSaveDataFromDE",     # save.asm .loop_copy `ld [de], a`: overwrites it
+    (0x3D, 0x4052): "Music1_AssertSongFinished", (0x3D, 0x405C): "Music1_AssertSFXFinished",
+    (0x3E, 0x4052): "Music2_AssertSongFinished", (0x3E, 0x405C): "Music2_AssertSFXFinished",
     (0x3D, 0x4028): "Music1_PlaySong_store", (0x3D, 0x4048): "Music1_PlaySFX_store",
     (0x3E, 0x4028): "Music2_PlaySong_store", (0x3E, 0x4048): "Music2_PlaySFX_store",
 }
@@ -83,6 +86,8 @@ TIMER_SYNC_ADDRESSES = _sync_addresses(TIMER_SYNC)
 # A sync point inside a copy loop fires once per byte; only the read of the
 # play-time counter's first byte is the sync (the port syncs at that read).
 TIMER_SYNC_HL = {0x52FD: 0xCAC5}
+TIMER_SYNC_DE = {0x546E: 0xCAC5}
+TIMER_SYNC_ENABLED = {0x546E: 0xCAC4}
 # The game's own writes to wVBlankCounter, the only places VBlank-ISR timing
 # is observable mid-interval: `ld [wVBlankCounter], a` in DuelMainInterface
 # (core.asm:291) and AIMakeDecision (core.asm:6255). One record per write:
@@ -91,9 +96,22 @@ TIMER_SYNC_HL = {0x52FD: 0xCAC5}
 VBLANK_SYNC = {(1, 0x427D): "DuelMainInterface", (1, 0x67EE): "AIMakeDecision"}
 VBLANK_SYNC_ADDRESSES = {address: bank for bank, address in VBLANK_SYNC}
 VBLANK_RECORD = struct.Struct("<IQBB")
-ISR_RECORD = struct.Struct("<IHHB")
-ISR_TRACK = "isr.bin"
-ISR_SITES = "isr-sites.txt"
+ISR_RECORD = struct.Struct("<IHHBHB")
+ISR_EVENTS = {(None, 0x02B8): "@DisableLCD", (7, 0x57E7): "@Func_1d765"}
+ISR_EVENT_ADDRESSES = {address: bank for bank, address in ISR_EVENTS}
+HALT_RESUME = 0x0271
+ISR_RETURNS = frozenset({0x004B, 0x0060, 0x01E5, 0x021B, 0x0D76})
+ISR_HANDLER_ENTRIES = frozenset({0x019B, 0x01E6, 0x0D26})
+ISR_KIND_VBLANK = 0
+ISR_KIND_STAT = 1
+ISR_KIND_SERIAL = 2
+SERIAL_VECTOR = 0x0058
+SEND_PRINTER_PACKET = 0x312D
+PRINTERPKT_PRINT_INSTRUCTION = 0x02
+STACK_RECORD = struct.Struct("<IH")
+STACK_TRACK = "stack.bin"
+ISR_TRACK = "isr-events.bin"
+ISR_SITES = "isr-events.txt"
 # The VBlank ISR's `inc [hl]` on wVBlankCounter (vblank.asm:35) and the STAT
 # vector (home.asm `call wLCDCFunctionTrampoline`): per interval, a bitmask of
 # the VBlank services a STAT ISR followed, bit n set when a STAT fired after n
@@ -105,6 +123,9 @@ ISR_SITES = "isr-sites.txt"
 # `S<segment>:<count>`; a stream cached without the file has no repeats.
 INTERRUPT_VECTORS = (0x0040, 0x0048, 0x0050, 0x0058, 0x0060)
 REG_SP = 1
+REG_D = 5
+REG_H = 8
+REG_L = 9
 VBLANK_INCREMENT = 0x01D7
 STAT_VECTOR = 0x0048
 STAT_MASK_BITS = 8
@@ -183,6 +204,7 @@ def load_session(name: str) -> tuple[list[int], dict[str, Any]]:
     save_path = directory / SAVE_FILE
     meta["save"] = save_path.read_bytes() if save_path.is_file() else None
     meta["printer"] = bool(meta.get("printer"))
+    meta["link"] = meta.get("link") or None
     return masks, meta
 
 
@@ -309,7 +331,7 @@ def digest(regions: dict[str, bytes], tables: dict[str, bytes]) -> tuple[int, ..
 
 
 def stream_key(masks: list[int], frames: int, axis: str, pokes: refstream.Pokes | None = None,
-               save: bytes | None = None, printer: bool = False) -> str:
+               save: bytes | None = None, printer: bool = False, peer: str = "") -> str:
     import gambatte_runner
 
     pins = gambatte_runner.load_pins()
@@ -323,12 +345,16 @@ def stream_key(masks: list[int], frames: int, axis: str, pokes: refstream.Pokes 
         h.update(b"save:" + hashlib.sha256(save).digest())
     if printer:
         h.update(b"printer")
+    if peer:
+        h.update(b"peer:" + peer.encode())
     h.update(mask_text().encode())
     # The lag track in the stream directory is shaped by the sync points, so
     # a change to them rebuilds the reference rather than replaying against
     # a schedule the port no longer follows.
     h.update(repr(sorted(TIMER_SYNC.items(), key=repr)).encode())
     h.update(repr(sorted(TIMER_SYNC_HL.items())).encode())
+    h.update(repr(sorted(TIMER_SYNC_DE.items())).encode())
+    h.update(repr(sorted(TIMER_SYNC_ENABLED.items())).encode())
     h.update(repr(sorted(VBLANK_SYNC.items())).encode())
     h.update(pins["rom"]["sha256"].encode())
     h.update(pins["core"]["sha256"].encode())
@@ -347,6 +373,9 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     profile = axis if frame_mode == "vblank" else f"{axis}:{frame_mode}"
     if gba:
         profile += ":gba"
+    link = linked_session(name)
+    if link is not None:
+        return build_linked_reference(name, link, frames)
     key = stream_key(masks, frames, profile, pokes, save, printer)
     directory = CACHE / name / key
     meta_path = directory / "meta.json"
@@ -357,148 +386,20 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
             ensure_stat_track(directory, masks, frames, axis=axis, frame_mode=frame_mode,
                               gba=gba, pokes=pokes, save=save, printer=printer)
             return meta
-    tables = mask_tables()
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
-    records = bytearray()
-    calls = bytearray()
-    vblank_writes = bytearray()
-    stats = bytearray()
-    stat_mask = 0
-    stat_segments: dict[int, int] = {}
-    stat_repeats: dict[int, dict[int, int]] = {}
-    increments = 0
-    inputs = bytearray()
-    isr = bytearray()
-    site_names: list[str] = []
-    site_ids: dict[str, int] = {}
-    site_counts: dict[int, int] = {}
-    pending: list[int] = []
-    isr_depth = [0]
-    isr_sites = bool(os.environ.get("POKETCG_ISR_SITES"))
-    entry_addresses, entry_names = refstream.routine_entry_addresses() if isr_sites else (frozenset(), {})
-    overreads = OverreadRecorder()
     with refstream.Core(padded, gba=gba, pokes=pokes, save=save, printer=printer) as core:
         core.input_axis = axis
         core.frame_mode = frame_mode
-        read = core.library.gambatte_cpuread
-        registers = (ctypes.c_int * 10)()
-        hits = 0
-
-        def isr_flush(address: int) -> None:
-            """Place the interval's pending ISRs just before the next routine
-            entry the ROM made after them, on the one axis both lanes share:
-            the routine and which of its entries this interval is on. Placing
-            them at the *next* entry rather than inside the routine they
-            interrupted means an ISR is never delivered before the state it
-            observed existed; an ISR with no later entry in its interval keeps
-            the boundary placement it has today."""
-            if not pending:
-                return
-            bank = 0 if address < 0x4000 else core.bank_of(address)
-            routine = entry_names.get((bank, address))
-            if routine is None:
-                return
-            index = site_ids.get(routine)
-            if index is None:
-                index = len(site_names)
-                site_ids[routine] = index
-                site_names.append(routine)
-            nth = min(site_counts[address], 0xFFFF)
-            for kind in pending:
-                isr.extend(ISR_RECORD.pack(hits, index, nth, kind))
-            pending.clear()
-
-        def sp() -> int:
-            core.library.gambatte_getregs(core.core, registers)
-            return registers[REG_SP] & 0xFFFF
-
-        def on_exec(address: int, cycle: int) -> None:
-            nonlocal hits, stat_mask, increments
-            if isr_sites and address in INTERRUPT_VECTORS and not isr_depth[0]:
-                isr_depth[0] = sp()
-            if address == VBLANK_INCREMENT:
-                increments += 1
-                if isr_sites:
-                    pending.append(0)
-                return
-            if address == STAT_VECTOR:
-                segment = min(increments, STAT_MASK_BITS - 1)
-                stat_mask |= 1 << segment
-                stat_segments[segment] = stat_segments.get(segment, 0) + 1
-                if isr_sites:
-                    pending.append(1)
-                return
-            if address == CARD_COPY_ENTRY or address == CARD_COPY_RET:
-                overreads.on_exec(core, registers, address, hits)
-                return
-            if address in TIMER_SYNC_ADDRESSES:
-                banks = TIMER_SYNC_ADDRESSES[address]
-                if None in banks or core.bank_of(address) in banks:
-                    wanted_hl = TIMER_SYNC_HL.get(address)
-                    if wanted_hl is not None:
-                        core.library.gambatte_getregs(core.core, registers)
-                        if (((registers[8] & 0xFF) << 8) | (registers[9] & 0xFF)) != wanted_hl:
-                            return
-                    calls.extend(CALL_RECORD.pack(hits, core.samples + cycle, read(core.core, 0xCAC3)))
-                return
-            if address in VBLANK_SYNC_ADDRESSES:
-                if core.bank_of(address) == VBLANK_SYNC_ADDRESSES[address]:
-                    core.library.gambatte_getregs(core.core, registers)
-                    vblank_writes.extend(VBLANK_RECORD.pack(hits, core.samples + cycle,
-                                                            read(core.core, 0xCAB8), registers[2] & 0xFF))
-                return
-            if address in entry_addresses:
-                # An entry made by an interrupt handler is not on the axis the
-                # port shares: the ROM's ISR bodies call routines the port
-                # inlines or never calls. The handler pushed a return address,
-                # so it is still running while SP sits below the vector's.
-                if isr_depth[0]:
-                    if sp() <= isr_depth[0]:
-                        return
-                    isr_depth[0] = 0
-                site_counts[address] = site_counts.get(address, 0) + 1
-                if pending:
-                    isr_flush(address)
-                return
-            if address != refstream.DOFRAME_ANCHOR:
-                return
-            hits += 1
-            repeated = {segment: count for segment, count in stat_segments.items() if count > 1}
-            if repeated:
-                stat_repeats[len(stats)] = repeated
-            stats.append(stat_mask)
-            stat_mask = 0
-            stat_segments.clear()
-            increments = 0
-            site_counts.clear()
-            pending.clear()
-            isr_depth[0] = 0
-            regions = reference_regions(core)
-            crcs = digest(regions, tables)
-            records.extend(REFERENCE_RECORD.pack(*crcs, core.samples + cycle, regions["wram"][0xAB8],
-                                                 regions["wram"][0xAC3]))
-            if record_input:
-                held = read(core.core, 0xFF90)
-                inputs.append(((held << 4) | (held >> 4)) & 0xFF)
-
-        core.install_exec(on_exec)
+        recorder = StreamRecorder(core, record_input=record_input)
+        core.install_exec(recorder.on_exec)
         directory.mkdir(parents=True, exist_ok=True)
         for stale in directory.glob("checkpoint-*"):
             stale.unlink()
         core.checkpoint_dir = directory
-        core.run(frames)
-    (directory / "digests.bin").write_bytes(bytes(records))
-    (directory / "calls.bin").write_bytes(bytes(calls))
-    (directory / "vblank-writes.bin").write_bytes(bytes(vblank_writes))
-    (directory / "stats.bin").write_bytes(bytes(stats))
-    (directory / STAT_REPEATS).write_text(stat_repeats_text(stat_repeats))
-    if isr_sites:
-        (directory / ISR_TRACK).write_bytes(bytes(isr))
-        (directory / ISR_SITES).write_text("".join(name + "\n" for name in site_names))
-    (directory / "overreads.txt").write_text(overreads.text())
-    (directory / "serial.txt").write_text(serial_text(core.serial_counts))
-    (directory / "lag.txt").write_text(lag_track(bytes(records), bytes(calls), bytes(vblank_writes),
-                                                 bytes(stats), stat_repeats, core.serial_counts))
+        core.run(frames, stop=lambda: recorder.hits > len(masks))
+        recorder.write(directory)
+    hits = recorder.hits
+    inputs = recorder.inputs
     meta = {
         "schema": 1, "format": DIGEST_FORMAT, "name": name, "axis": axis, "key": key,
         "frames": frames, "anchors": hits, "record": REFERENCE_RECORD.size,
@@ -509,6 +410,199 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     meta_path.write_text(json.dumps({k: v for k, v in meta.items() if k != "inputs"},
                                     sort_keys=True) + "\n")
     return meta
+
+
+LINK_SLICE_BUDGET = 64
+
+
+def linked_session(name: str) -> dict[str, Any] | None:
+    path = SESSIONS / name / "session.json"
+    if not path.is_file():
+        return None
+    link = json.loads(path.read_text()).get("link")
+    return link if isinstance(link, dict) else None
+
+
+def peer_identity(name: str) -> str:
+    masks, meta = load_session(name)
+    h = hashlib.sha256()
+    h.update(bytes(m & 0xFF for m in masks))
+    h.update(refstream.pokes_text(meta["pokes"]).encode())
+    if meta["save"] is not None:
+        h.update(hashlib.sha256(meta["save"]).digest())
+    return f"{name}:{h.hexdigest()}"
+
+
+def linked_pair(names: tuple[str, str], frames: int) -> tuple[list[refstream.Core], refstream.LinkedPair, list[list[int]]]:
+    cores = []
+    all_masks = []
+    for name in names:
+        masks, meta = load_session(name)
+        padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
+        core = refstream.Core(padded, pokes=meta["pokes"], save=meta["save"])
+        core.input_axis = "ordinal"
+        core.install_exec(None)
+        cores.append(core)
+        all_masks.append(masks)
+    return cores, refstream.LinkedPair(cores[0], cores[1]), all_masks
+
+
+def run_linked(pair: refstream.LinkedPair, stop: Any, budget_samples: int) -> None:
+    start = pair.cores[0].samples
+    while not stop():
+        if pair.cores[0].samples - start > budget_samples:
+            raise SessionError("linked replay ran past its sample budget")
+        pair.advance(LINK_SLICE_BUDGET)
+
+
+def build_linked_reference(name: str, link: dict[str, Any], frames: int) -> dict[str, Any]:
+    side = int(link["side"])
+    names = (name, link["peer"]) if side == 0 else (link["peer"], name)
+    frames = max([frames] + [reference_frames(*load_session(member)) for member in names])
+    keys = []
+    directories = []
+    for index, member in enumerate(names):
+        masks, meta = load_session(member)
+        key = stream_key(masks, frames, "ordinal:link", meta["pokes"], meta["save"], False,
+                         peer_identity(names[1 - index]))
+        keys.append(key)
+        directories.append(CACHE / member / key)
+    metas = [directory / "meta.json" for directory in directories]
+    if not all(path.is_file() and json.loads(path.read_text()).get("format") == DIGEST_FORMAT
+               for path in metas):
+        cores, pair, all_masks = linked_pair(names, frames)
+        try:
+            recorders = []
+            for core in cores:
+                recorder = StreamRecorder(core, link=True)
+                core.install_exec(recorder.on_exec)
+                recorders.append(recorder)
+            run_linked(pair, lambda: all(r.hits > len(m) for r, m in zip(recorders, all_masks)),
+                       frames * refstream.SAMPLES_PER_FRAME)
+            for member, key, directory, recorder in zip(names, keys, directories, recorders):
+                directory.mkdir(parents=True, exist_ok=True)
+                recorder.write(directory)
+                meta = {
+                    "schema": 1, "format": DIGEST_FORMAT, "name": member, "axis": "ordinal:link",
+                    "key": key, "frames": frames, "anchors": recorder.hits, "record": REFERENCE_RECORD.size,
+                    "directory": str(directory.relative_to(ROOT)), "cached": False,
+                }
+                (directory / "meta.json").write_text(json.dumps(meta, sort_keys=True) + "\n")
+        finally:
+            for core in cores:
+                core.close()
+    meta = json.loads(metas[names.index(name)].read_text())
+    meta["cached"] = True
+    return meta
+
+
+class StreamRecorder:
+    def __init__(self, core: refstream.Core, *, record_input: bool = False, link: bool = False) -> None:
+        self.core = core
+        self.tables = mask_tables()
+        self.records = bytearray()
+        self.calls = bytearray()
+        self.vblank_writes = bytearray()
+        self.stats = bytearray()
+        self.stat_mask = 0
+        self.stat_segments: dict[int, int] = {}
+        self.stat_repeats: dict[int, dict[int, int]] = {}
+        self.increments = 0
+        self.inputs = bytearray()
+        self.stack = bytearray()
+        self.overreads = OverreadRecorder()
+        self.registers = (ctypes.c_int * 10)()
+        self.hits = 0
+        self.record_input = record_input
+        self.sites = IsrSiteRecorder(core, self.registers, serial=not link)
+        self.serial_track = SerialTrackRecorder(core) if link else None
+
+    def on_exec(self, address: int, cycle: int) -> None:
+        core = self.core
+        registers = self.registers
+        sites = self.sites
+        if self.serial_track is not None:
+            self.serial_track.on_exec(address, self.hits)
+        if sites.watched(address):
+            sites.on_exec(address, self.hits)
+        if address == VBLANK_INCREMENT:
+            self.increments += 1
+            sites.on_isr(ISR_KIND_VBLANK)
+            return
+        if address == STAT_VECTOR:
+            segment = min(self.increments, STAT_MASK_BITS - 1)
+            self.stat_mask |= 1 << segment
+            self.stat_segments[segment] = self.stat_segments.get(segment, 0) + 1
+            sites.on_isr(ISR_KIND_STAT)
+            return
+        if address == CARD_COPY_ENTRY or address == CARD_COPY_RET:
+            self.overreads.on_exec(core, registers, address, self.hits)
+            return
+        if address == SEND_PRINTER_PACKET:
+            instruction_address(core, registers, self.stack, self.hits)
+        if address in TIMER_SYNC_ADDRESSES:
+            banks = TIMER_SYNC_ADDRESSES[address]
+            if None in banks or core.bank_of(address) in banks:
+                wanted_hl = TIMER_SYNC_HL.get(address)
+                if wanted_hl is not None:
+                    core.library.gambatte_getregs(core.core, registers)
+                    if (((registers[8] & 0xFF) << 8) | (registers[9] & 0xFF)) != wanted_hl:
+                        return
+                wanted_de = TIMER_SYNC_DE.get(address)
+                if wanted_de is not None:
+                    core.library.gambatte_getregs(core.core, registers)
+                    if (((registers[5] & 0xFF) << 8) | (registers[6] & 0xFF)) != wanted_de:
+                        return
+                enable = TIMER_SYNC_ENABLED.get(address)
+                if enable is not None and not core.library.gambatte_cpuread(core.core, enable):
+                    return
+                self.calls.extend(CALL_RECORD.pack(self.hits, core.samples + cycle,
+                                                   core.library.gambatte_cpuread(core.core, 0xCAC3)))
+            return
+        if address in VBLANK_SYNC_ADDRESSES:
+            if core.bank_of(address) == VBLANK_SYNC_ADDRESSES[address]:
+                core.library.gambatte_getregs(core.core, registers)
+                self.vblank_writes.extend(VBLANK_RECORD.pack(
+                    self.hits, core.samples + cycle, core.library.gambatte_cpuread(core.core, 0xCAB8),
+                    registers[2] & 0xFF))
+            return
+        if address != refstream.DOFRAME_ANCHOR:
+            return
+        if self.serial_track is not None:
+            self.serial_track.on_anchor(self.hits)
+        self.hits += 1
+        repeated = {segment: count for segment, count in self.stat_segments.items() if count > 1}
+        if repeated:
+            self.stat_repeats[len(self.stats)] = repeated
+        self.stats.append(self.stat_mask)
+        self.stat_mask = 0
+        self.stat_segments.clear()
+        self.increments = 0
+        sites.on_anchor()
+        regions = reference_regions(core)
+        crcs = digest(regions, self.tables)
+        self.records.extend(REFERENCE_RECORD.pack(*crcs, core.samples + cycle, regions["wram"][0xAB8],
+                                                  regions["wram"][0xAC3]))
+        if self.record_input:
+            held = core.library.gambatte_cpuread(core.core, 0xFF90)
+            self.inputs.append(((held << 4) | (held >> 4)) & 0xFF)
+
+    def write(self, directory: Path) -> None:
+        (directory / "digests.bin").write_bytes(bytes(self.records))
+        (directory / "calls.bin").write_bytes(bytes(self.calls))
+        (directory / "vblank-writes.bin").write_bytes(bytes(self.vblank_writes))
+        (directory / "stats.bin").write_bytes(bytes(self.stats))
+        (directory / STAT_REPEATS).write_text(stat_repeats_text(self.stat_repeats))
+        self.sites.write(directory)
+        if self.serial_track is not None:
+            self.serial_track.write(directory)
+        (directory / "overreads.txt").write_text(self.overreads.text())
+        (directory / "serial.txt").write_text(serial_text(self.core.serial_counts))
+        (directory / STACK_TRACK).write_bytes(bytes(self.stack))
+        (directory / "lag.txt").write_text(lag_track(bytes(self.records), bytes(self.calls),
+                                                     bytes(self.vblank_writes), bytes(self.stats),
+                                                     self.stat_repeats, self.core.serial_counts,
+                                                     bytes(self.stack)))
 
 
 class OverreadRecorder:
@@ -552,8 +646,9 @@ def ensure_stat_track(directory: Path, masks: list[int], frames: int, *, axis: s
     deterministic stream, so its anchors are the cached digests' anchors."""
     stats_path = directory / "stats.bin"
     overreads_path = directory / "overreads.txt"
-    if stats_path.is_file() and overreads_path.is_file():
+    if stats_path.is_file() and overreads_path.is_file() and (directory / ISR_TRACK).is_file():
         return
+    expected_records = len((directory / "digests.bin").read_bytes()) // REFERENCE_RECORD.size
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     stats = bytearray()
     stat_mask = 0
@@ -565,15 +660,20 @@ def ensure_stat_track(directory: Path, masks: list[int], frames: int, *, axis: s
         core.input_axis = axis
         core.frame_mode = frame_mode
         registers = (ctypes.c_int * 10)()
+        sites = IsrSiteRecorder(core, registers)
 
         def on_exec(address: int, _cycle: int) -> None:
             nonlocal stat_mask, increments
+            if sites.watched(address):
+                sites.on_exec(address, len(stats))
             if address == VBLANK_INCREMENT:
                 increments += 1
+                sites.on_isr(ISR_KIND_VBLANK)
             elif address == STAT_VECTOR:
                 segment = min(increments, STAT_MASK_BITS - 1)
                 stat_mask |= 1 << segment
                 stat_segments[segment] = stat_segments.get(segment, 0) + 1
+                sites.on_isr(ISR_KIND_STAT)
             elif address == CARD_COPY_ENTRY or address == CARD_COPY_RET:
                 overreads.on_exec(core, registers, address, len(stats))
             elif address == refstream.DOFRAME_ANCHOR:
@@ -584,9 +684,10 @@ def ensure_stat_track(directory: Path, masks: list[int], frames: int, *, axis: s
                 stat_mask = 0
                 stat_segments.clear()
                 increments = 0
+                sites.on_anchor()
 
         core.install_exec(on_exec)
-        core.run(frames)
+        core.run(frames, stop=lambda: len(stats) >= expected_records)
     records = (directory / "digests.bin").read_bytes()
     if len(stats) != len(records) // REFERENCE_RECORD.size:
         raise SessionError(f"stat track replay reached {len(stats)} anchors, "
@@ -597,9 +698,12 @@ def ensure_stat_track(directory: Path, masks: list[int], frames: int, *, axis: s
     serial_path = directory / "serial.txt"
     serial = load_serial(serial_path) if serial_path.is_file() else core.serial_counts
     serial_path.write_text(serial_text(serial))
+    sites.write(directory)
+    stack_path = directory / STACK_TRACK
+    stack = stack_path.read_bytes() if stack_path.is_file() else b""
     (directory / "lag.txt").write_text(lag_track(records, (directory / "calls.bin").read_bytes(),
                                                  (directory / "vblank-writes.bin").read_bytes(),
-                                                 bytes(stats), stat_repeats, serial))
+                                                 bytes(stats), stat_repeats, serial, stack))
 
 
 def load_reference(meta: dict[str, Any]) -> bytes:
@@ -613,7 +717,7 @@ TICK_TIME = TICK_CYCLES // 2  # in the record's 2 MiHz units
 def unwrap(delta_mod: int, expected: float, modulus: int = 256) -> int:
     """The byte counter's delta closest to the cycle-derived expectation."""
     base = delta_mod % modulus
-    candidates = [base + modulus * m for m in range(-1, 4)]
+    candidates = [base + modulus * m for m in range(-1, max(4, int(expected) // modulus + 3))]
     return max(0, min(candidates, key=lambda c: abs(c - expected)))
 
 
@@ -630,9 +734,192 @@ def load_serial(path: Path) -> dict[int, int]:
     return counts
 
 
+def instruction_address(core: refstream.Core, registers: Any, stack: bytearray, interval: int) -> None:
+    core.library.gambatte_getregs(core.core, registers)
+    if registers[REG_D] & 0xFF == PRINTERPKT_PRINT_INSTRUCTION:
+        stack.extend(STACK_RECORD.pack(interval, ((registers[REG_H] & 0xFF) << 8) | (registers[REG_L] & 0xFF)))
+
+
+class IsrSiteRecorder:
+    def __init__(self, core: refstream.Core, registers: Any, *, serial: bool = True) -> None:
+        self.core = core
+        self.registers = registers
+        self.entries, self.entry_names = refstream.routine_entry_addresses()
+        self.records = bytearray()
+        self.names: list[str] = []
+        self.ids: dict[str, int] = {}
+        self.counts: dict[str, int] = {}
+        self.pending: list[tuple[int, int, int]] = []
+        self.kind_counts = [0, 0, 0, 0]
+        self.nest = 0
+        self.in_halt = False
+        self.serial = serial
+
+    def watched(self, address: int) -> bool:
+        return (address in self.entries or address in ISR_EVENT_ADDRESSES or address in ISR_RETURNS
+                or address in INTERRUPT_VECTORS)
+
+    def on_exec(self, address: int, interval: int) -> None:
+        if address in INTERRUPT_VECTORS:
+            if self.nest == 0:
+                self.core.library.gambatte_getregs(self.core.core, self.registers)
+                sp = self.registers[REG_SP] & 0xFFFF
+                read = self.core.library.gambatte_cpuread
+                resume = read(self.core.core, sp) | (read(self.core.core, (sp + 1) & 0xFFFF) << 8)
+                self.in_halt = resume == HALT_RESUME
+            self.nest += 1
+            if address == SERIAL_VECTOR and self.serial:
+                self.on_isr(ISR_KIND_SERIAL, self.core.library.gambatte_cpuread(self.core.core, 0xFF01))
+            return
+        if address in ISR_RETURNS:
+            if self.nest:
+                self.nest -= 1
+            return
+        if self.nest:
+            return
+        if address in ISR_EVENT_ADDRESSES:
+            bank = ISR_EVENT_ADDRESSES[address]
+            if bank is None or self.core.bank_of(address) == bank:
+                self.event(ISR_EVENTS[(bank, address)], interval)
+        if address in self.entries and address not in ISR_HANDLER_ENTRIES:
+            bank = 0 if address < 0x4000 else self.core.bank_of(address)
+            name = self.entry_names.get((bank, address))
+            if name is not None:
+                self.event(name, interval)
+
+    def on_isr(self, kind: int, value: int = 0) -> None:
+        self.kind_counts[kind] += 1
+        if not self.in_halt:
+            self.pending.append((kind, self.kind_counts[kind], value))
+
+    def event(self, name: str, interval: int) -> None:
+        count = self.counts.get(name, 0) + 1
+        self.counts[name] = count
+        if not self.pending:
+            return
+        index = self.ids.get(name)
+        if index is None:
+            index = len(self.names)
+            self.ids[name] = index
+            self.names.append(name)
+        for kind, ordinal, value in self.pending:
+            self.records.extend(ISR_RECORD.pack(interval, index, min(count, 0xFFFF), kind, ordinal, value))
+        self.pending.clear()
+
+    def on_anchor(self) -> None:
+        self.counts.clear()
+        self.pending.clear()
+        self.kind_counts = [0, 0, 0, 0]
+
+    def write(self, directory: Path) -> None:
+        (directory / ISR_TRACK).write_bytes(bytes(self.records))
+        (directory / ISR_SITES).write_text("".join(name + "\n" for name in self.names))
+
+
+SERIAL_TRACK = "serial-track.bin"
+SERIAL_TRACK_MAGIC = b"SRL1"
+SERIAL_TRACK_RECORD = struct.Struct("<IIBB")
+SERIAL_TRACK_TRANSFER = 0
+SERIAL_TRACK_TIMER = 1
+SERIAL_TRACK_AT_ANCHOR = 0xFFFFFFFF
+SERIAL_TIMER_STEPS = frozenset({0x0C9D, 0x0CA3, 0x0CA7, 0x0CAA, 0x0CB0, 0x0CB1, 0x0CB7, 0x0CB8, 0x0CBF, 0x0CC2})
+SERIAL_SEND8_LINK = 0x0FBC
+SERIAL_RESIDUE_RECORD = struct.Struct("<I8B")
+SERIAL_STATE_SYMBOLS = (
+    "wSerialOp", "wSerialFlags", "wSerialCounter", "wSerialCounter2", "wSerialTimeoutCounter",
+    "wSerialSendSave", "wSerialSendBufToggle", "wSerialSendBufIndex", "wSerialLastReadCA",
+    "wSerialRecvCounter", "wcba3", "wSerialRecvIndex", "wPrinterPacketSequence",
+)
+SERIAL_STATE_BUFFERS = (("wSerialSendBuf", 0x20), ("wSerialRecvBuf", 0x20))
+SERIAL_STATE_REGISTERS = (0xFF01, 0xFF02)
+
+
+def wram_address(symbol: str) -> int:
+    match = re.search(rf"#define\s+{re.escape(symbol)}_ADDR\s+0x([0-9A-Fa-f]+)u?",
+                      (ROOT / "include" / "generated" / "wram.h").read_text(encoding="utf-8"))
+    if match is None:
+        raise SessionError(f"{symbol}_ADDR is absent from include/generated/wram.h")
+    return int(match.group(1), 16)
+
+
+def serial_state_addresses() -> tuple[int, ...]:
+    addresses = {wram_address(symbol) for symbol in SERIAL_STATE_SYMBOLS}
+    for symbol, size in SERIAL_STATE_BUFFERS:
+        base = wram_address(symbol)
+        addresses.update(range(base, base + size))
+    addresses.update(SERIAL_STATE_REGISTERS)
+    return tuple(sorted(addresses))
+
+
+class SerialTrackRecorder:
+    def __init__(self, core: refstream.Core) -> None:
+        self.core = core
+        self.addresses = serial_state_addresses()
+        self.watched = frozenset(self.addresses)
+        self.nest = 0
+        self.interval = 0
+        self.accesses = 0
+        self.pending: list[tuple[int, int]] = []
+        self.records = bytearray()
+        self.totals: list[int] = []
+        self.residues = bytearray()
+        self.registers = (ctypes.c_int * 10)()
+        core.on_read(self.on_access)
+        core.on_write(self.on_access)
+
+    def on_exec(self, address: int, interval: int) -> None:
+        self.interval = interval
+        if address in INTERRUPT_VECTORS:
+            self.nest += 1
+            if address == SERIAL_VECTOR:
+                self.pending.append((SERIAL_TRACK_TRANSFER,
+                                     self.core.library.gambatte_cpuread(self.core.core, 0xFF01)))
+            return
+        if address in ISR_RETURNS:
+            if self.nest:
+                self.nest -= 1
+            return
+        if address in SERIAL_TIMER_STEPS and self.nest:
+            self.pending.append((SERIAL_TRACK_TIMER, address & 0xFF))
+        elif address == SERIAL_SEND8_LINK and not self.nest:
+            registers = self.registers
+            self.core.library.gambatte_getregs(self.core.core, registers)
+            self.residues.extend(SERIAL_RESIDUE_RECORD.pack(
+                interval, registers[7] & 0xFF, registers[2] & 0xFF, registers[9] & 0xFF, registers[8] & 0xFF,
+                registers[6] & 0xFF, registers[5] & 0xFF, registers[4] & 0xFF, registers[3] & 0xFF))
+
+    def on_access(self, address: int, _cycle: int) -> None:
+        if self.nest or address not in self.watched:
+            return
+        self.accesses += 1
+        if self.pending:
+            self.flush(self.accesses)
+
+    def flush(self, access: int) -> None:
+        for kind, value in self.pending:
+            self.records.extend(SERIAL_TRACK_RECORD.pack(self.interval, access, kind, value))
+        self.pending.clear()
+
+    def on_anchor(self, interval: int) -> None:
+        self.interval = interval
+        if self.pending:
+            self.flush(SERIAL_TRACK_AT_ANCHOR)
+        self.totals.append(self.accesses)
+        self.accesses = 0
+
+    def write(self, directory: Path) -> None:
+        count = len(self.records) // SERIAL_TRACK_RECORD.size
+        (directory / SERIAL_TRACK).write_bytes(
+            SERIAL_TRACK_MAGIC
+            + struct.pack(f"<H{len(self.addresses)}H", len(self.addresses), *self.addresses)
+            + struct.pack("<I", count) + bytes(self.records)
+            + struct.pack(f"<I{len(self.totals)}I", len(self.totals), *self.totals)
+            + struct.pack("<I", len(self.residues) // SERIAL_RESIDUE_RECORD.size) + bytes(self.residues))
+
+
 def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"", stats: bytes = b"",
               repeats: dict[int, dict[int, int]] | None = None,
-              serial: dict[int, int] | None = None) -> str:
+              serial: dict[int, int] | None = None, stack: bytes = b"") -> str:
     """One line per DoFrame: `<cycles> <timer ISRs> <VBlank ISRs>` the ROM
     spent between the previous anchor and this one, then one number per
     timer sync point reached in that interval: the timer ISRs that had fired
@@ -657,6 +944,10 @@ def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"", st
     for index in range(len(calls) // CALL_RECORD.size):
         interval, time, counter = CALL_RECORD.unpack_from(calls, index * CALL_RECORD.size)
         by_interval.setdefault(interval, []).append((time, counter))
+    stack_by_interval: dict[int, list[int]] = {}
+    for index in range(len(stack) // STACK_RECORD.size):
+        interval, address = STACK_RECORD.unpack_from(stack, index * STACK_RECORD.size)
+        stack_by_interval.setdefault(interval, []).append(address)
     writes_by_interval: dict[int, list[tuple[int, int, int]]] = {}
     for index in range(len(vblank_writes) // VBLANK_RECORD.size):
         interval, time, before, written = VBLANK_RECORD.unpack_from(vblank_writes, index * VBLANK_RECORD.size)
@@ -697,6 +988,8 @@ def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"", st
             fields.append(f"S{segment}:{count}")
         if serial and serial.get(index):
             fields.append(f"p{serial[index]}")
+        for address in stack_by_interval.get(index, ()):
+            fields.append(f"k{address}")
         if index == 0 and repeats is not None:
             fields.append("X")  # the STAT counts are exact (src/runtime.c stat_service)
         lines.append(" ".join(str(n) for n in fields))
@@ -718,7 +1011,7 @@ def native_save_file(image: bytes) -> bytes:
 def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
                digest_out: Path | None = None, mask_path: Path | None = None,
                dump_ordinals: list[int] | None = None, pcm_out: Path | None = None,
-               printer_dir: Path | None = None) -> tuple[Path, str, int]:
+               printer_dir: Path | None = None, extra: list[str] | None = None) -> tuple[Path, str, int]:
     """(state path, failure text, count of `off schedule` rows the lane printed)."""
     state_path = directory / "state.json"
     command = [
@@ -742,8 +1035,11 @@ def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
     if overreads_path.is_file():
         command += ["--overread-track", str(overreads_path)]
     isr_path = lag_path.with_name(ISR_TRACK)
-    if os.environ.get("POKETCG_ISR_PLACEMENT") and isr_path.is_file() and isr_path.stat().st_size:
+    if isr_path.is_file():
         command += ["--isr-track", str(isr_path)]
+    serial_path = lag_path.with_name(SERIAL_TRACK)
+    if serial_path.is_file():
+        command += ["--serial-track", str(serial_path)]
     if digest_out:
         command += ["--digest-out", str(digest_out)]
         if mask_path:
@@ -755,6 +1051,8 @@ def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
     if printer_dir is not None:
         printer_dir.mkdir(parents=True, exist_ok=True)
         command += ["--printer-dir", str(printer_dir)]
+    if extra:
+        command += extra
     try:
         result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True,
                                 timeout=NATIVE_TIMEOUT, check=False)
@@ -809,22 +1107,39 @@ def reference_capture(name: str, masks: list[int], frames: int, ordinal: int,
                       save: bytes | None = None, printer: bool = False) -> dict[str, bytes]:
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     captured: dict[str, bytes] = {}
-    with refstream.Core(padded, pokes=pokes, save=save, printer=printer) as core:
+    link = linked_session(name)
+    if link is not None:
+        side = int(link["side"])
+        members = (name, link["peer"]) if side == 0 else (link["peer"], name)
+        cores, pair, _masks = linked_pair(members, frames)
+        core = cores[side]
+        hits = 0
+    else:
+        cores = [refstream.Core(padded, pokes=pokes, save=save, printer=printer)]
+        pair = None
+        core = cores[0]
         core.input_axis = "ordinal"
         hits = core.seek(checkpoint_directory(name, masks, frames, pokes, save, printer), ordinal)
 
-        def on_exec(address: int, _cycle: int) -> None:
-            nonlocal hits
-            if address != refstream.DOFRAME_ANCHOR:
-                return
-            hits += 1
-            if hits == ordinal:
-                captured.update(reference_regions(core))
-                if sram:
-                    captured["sram"] = core.area("CartRAM")
+    def on_exec(address: int, _cycle: int) -> None:
+        nonlocal hits
+        if address != refstream.DOFRAME_ANCHOR:
+            return
+        hits += 1
+        if hits == ordinal:
+            captured.update(reference_regions(core))
+            if sram:
+                captured["sram"] = core.area("CartRAM")
 
+    try:
         core.install_exec(on_exec)
-        core.run(frames, stop=lambda: hits >= ordinal)
+        if pair is not None:
+            run_linked(pair, lambda: hits >= ordinal, frames * refstream.SAMPLES_PER_FRAME)
+        else:
+            core.run(frames, stop=lambda: hits >= ordinal)
+    finally:
+        for member in cores:
+            member.close()
     if not captured:
         raise SessionError(f"reference never reached ordinal {ordinal}")
     return captured
@@ -1473,7 +1788,8 @@ def status() -> int:
     return 0
 
 
-def record_meta(name: str, goal: str, *, printer: bool | None = None) -> int:
+def record_meta(name: str, goal: str, *, printer: bool | None = None,
+                link: dict[str, Any] | None = None) -> int:
     masks, meta = load_session(name)
     meta.update({
         "schema": 1, "name": name, "goal": goal or meta.get("goal", ""),
@@ -1484,6 +1800,10 @@ def record_meta(name: str, goal: str, *, printer: bool | None = None) -> int:
         meta["printer"] = printer
     if not meta["printer"]:
         del meta["printer"]
+    if link is not None:
+        meta["link"] = link
+    if not meta.get("link"):
+        meta.pop("link", None)
     meta.pop("save", None)
     (session_dir(name) / "session.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
     print(f"SESSION {name} ordinals={len(masks)} goal={meta['goal']!r}")

@@ -111,7 +111,7 @@ void DrawBottomCardInfoInSRAMGfxBuffer0(void);
 void ShowPrinterTransmitting(void);
 /* <<< factory ShowPrinterTransmitting */
 /* >>> factory SendPrinterPacket */
-typedef struct { uint8_t a; uint8_t f; } SendPrinterPacketResult;
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } SendPrinterPacketResult;
 SendPrinterPacketResult SendPrinterPacket(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory SendPrinterPacket */
 /* >>> factory ShowPrinterConnectionErrorScene */
@@ -119,12 +119,9 @@ typedef struct { uint8_t f; } ShowPrinterConnectionErrorSceneResult;
 ShowPrinterConnectionErrorSceneResult ShowPrinterConnectionErrorScene(uint8_t a, uint8_t f, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory ShowPrinterConnectionErrorScene */
 /* >>> factory TryInitPrinterCommunications */
-typedef struct {
-	uint8_t a;
-	uint8_t f;
-} TryInitPrinterCommunicationsResult;
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } TryInitPrinterCommunicationsResult;
 
-TryInitPrinterCommunicationsResult TryInitPrinterCommunications(void);
+TryInitPrinterCommunicationsResult TryInitPrinterCommunications(uint16_t hl);
 /* <<< factory TryInitPrinterCommunications */
 /* >>> factory ShowPrinterIsNotConnected */
 typedef struct { uint8_t f; } ShowPrinterIsNotConnectedResult;

@@ -624,8 +624,8 @@ CASES["SendDeckConfiguration"] = [
 # >>> factory SetUpAndStartLinkDuel
 CONTRACT["SetUpAndStartLinkDuel"] = {"compare": (), "preserve": ()}
 CASES["SetUpAndStartLinkDuel"] = [
-    {"wram": {WRAM_LCD_SHADOW: b"\x00"}, "setup": SETUP, "read": {WRAM_LCD_SHADOW: 1}, "expect": {WRAM_LCD_SHADOW: b"\x80"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={WRAM_LCD_SHADOW: b"\x00"}, setup=SETUP, read={WRAM_LCD_SHADOW: 1}, expect={WRAM_LCD_SHADOW: b"\x80"}, instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x02], "wram": {0xC400: b"\xAB\xAB\xAB\xAB", WRAM_LCD_SHADOW: b"\x00"}, "setup": SETUP, "read": {0xC400: 4}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], wram={0xC400: b"\xAB\xAB\xAB\xAB", WRAM_LCD_SHADOW: b"\x00"}, setup=SETUP, read={0xC400: 4}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory SetUpAndStartLinkDuel
 
@@ -870,8 +870,8 @@ for _record in SCHEMA2_CASES["SendDeckConfiguration"]:
 # >>> factory-mutation SetUpAndStartLinkDuel
 MUTATIONS["SetUpAndStartLinkDuel"] = {
     "source_symbol": "SetUpAndStartLinkDuel",
-    "before": "void SetUpAndStartLinkDuel(void)\n{\n\tSetSpriteAnimationsAsVBlankFunction();\n\t(void)LoadScene(SCENE_GAMEBOY_LINK_TRANSMITTING, 0u, 0u, 0u, 0u, 0u, 0u);\n\tLoadPlayerDeck();\n\tSwitchToCGBNormalSpeed();\n\t(void)SetupText(0x20u, 0x40u);\n\tEnableLCD();",
-    "after": "void SetUpAndStartLinkDuel(void)\n{\n\tSetSpriteAnimationsAsVBlankFunction();\n\t(void)LoadScene(SCENE_GAMEBOY_LINK_TRANSMITTING, 0u, 0u, 0u, 0u, 0u, 0u);\n\tLoadPlayerDeck();\n\tSwitchToCGBNormalSpeed();\n\t(void)SetupText(0x20u, 0x40u);\n\t(void)0;",
+    "before": "void SetUpAndStartLinkDuel(void)\n{\n\t_SetUpAndStartLinkDuel();",
+    "after": "void SetUpAndStartLinkDuel(void)\n{\n\t(void)0;",
     "case_ids": ["SetUpAndStartLinkDuel-0", "SetUpAndStartLinkDuel-1"]
 }
 # <<< factory-mutation SetUpAndStartLinkDuel

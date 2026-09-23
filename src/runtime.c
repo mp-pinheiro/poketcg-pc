@@ -1,5 +1,8 @@
 #include "runtime.h"
 #include "isr.h"
+#include "serial_track.h"
+#include "widescreen.h"
+#include "link.h"
 
 #include "bank_guard.h"
 #include "digest.h"
@@ -19,6 +22,7 @@
 #include <setjmp.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #define AUDIO_SAMPLES_PER_FRAME 1470u
 
@@ -45,19 +49,37 @@ static struct {
 	uint16_t delivered;
 } g_schedule;
 static uint32_t g_schedule_mismatches;
+static uint32_t g_first_mismatch = UINT32_MAX;
 
 void runtime_set_lag_track(const LagTrack *track)
 {
 	g_lag = track && track->count ? track : NULL;
 	runtime_serial_track(g_lag ? g_lag->serial : NULL, g_lag ? g_lag->count : 0);
+	runtime_stack_track(g_lag ? g_lag->stack_start : NULL, g_lag ? g_lag->stack_address : NULL,
+	                    g_lag ? g_lag->count : 0);
 	memset(&g_schedule, 0, sizeof g_schedule);
-	g_schedule_mismatches = 0;
+	if (g_lag) {
+		g_schedule_mismatches = 0;
+		g_first_mismatch = UINT32_MAX;
+	}
 	frame_boundary_services_from_track(g_lag != NULL);
 }
 
 uint32_t runtime_lag_schedule_mismatches(void)
 {
 	return g_schedule_mismatches;
+}
+
+uint32_t runtime_lag_first_mismatch(void)
+{
+	return g_first_mismatch;
+}
+
+static void schedule_mismatch(void)
+{
+	if (g_first_mismatch == UINT32_MAX)
+		g_first_mismatch = frame_boundary_doframe_ordinal();
+	g_schedule_mismatches++;
 }
 
 /* One VBlank ISR: the halt-return work (vblank.asm:2-46) and the counter it
@@ -84,26 +106,47 @@ static unsigned stat_count(uint32_t interval, unsigned index)
 	return 1u;
 }
 
+static struct {
+	uint32_t interval;
+	unsigned delivered;
+} g_stats = {UINT32_MAX, 0};
+
+static void stat_deliver_to(uint32_t interval, unsigned target)
+{
+	if (g_stats.interval != interval) {
+		g_stats.interval = interval;
+		g_stats.delivered = 0;
+	}
+	while (g_stats.delivered < target) {
+		isr_context_enter();
+		RuntimeLCDCHandlerOnce();
+		isr_context_leave();
+		g_stats.delivered++;
+	}
+}
+
 static void stat_service(uint32_t interval, unsigned index)
 {
-	unsigned n = stat_count(interval, index);
-	if (isr_active())
-		return;
 	if (g_lag && g_lag->exact_stats) {
-		while (n--)
-			RuntimeLCDCHandlerOnce();
-	} else if (n) {
+		unsigned last = index < 7u ? index : 7u;
+		unsigned target = 0;
+		for (unsigned segment = 0; segment <= last; segment++)
+			target += stat_count(interval, segment);
+		stat_deliver_to(interval, target);
+	} else if (stat_count(interval, index)) {
+		isr_context_enter();
 		RuntimeLCDCHandler();
+		isr_context_leave();
 	}
 }
 
 static void vblank_service(uint32_t interval, unsigned index)
 {
+	isr_context_enter();
 	stat_service(interval, index);
-	if (isr_active())
-		return;
 	RuntimeVBlankHandler();
 	gb_write8(wVBlankCounter_ADDR, (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
+	isr_context_leave();
 }
 
 static void schedule_sync(uint32_t ordinal)
@@ -121,7 +164,9 @@ static void schedule_deliver(uint32_t ordinal, uint16_t target)
 		target = g_lag->ticks[ordinal];
 	while (g_schedule.delivered < target) {
 		apu_trace_note_timer_tick();
+		isr_context_enter();
 		TimerHandler();
+		isr_context_leave();
 		g_schedule.delivered++;
 	}
 }
@@ -138,7 +183,35 @@ static void timer_sync(void *context)
 	if (g_schedule.call < g_lag->call_start[ordinal + 1])
 		schedule_deliver(ordinal, g_lag->call_ticks[g_schedule.call++]);
 	else
-		g_schedule_mismatches++;
+		schedule_mismatch();
+}
+
+/* Game-thread hook for a ROM loop that polls the sound driver without a
+ * DoFrame (promotional_card.asm .loop): the ROM's ISRs keep running while it
+ * spins. Replaying a track, the recorded timer schedule is those ISRs and the
+ * loop's own sync points deliver them; once the interval's recorded polls are
+ * spent, its remaining ticks run so a diverged replay still ends the wait.
+ * Live, one pass lets a frame of hardware time go by. */
+static void busy_wait(void *context)
+{
+	(void)context;
+	uint32_t ordinal = frame_boundary_doframe_ordinal();
+	if (g_lag && ordinal < g_lag->count) {
+		schedule_sync(ordinal);
+		if (g_schedule.call < g_lag->call_start[ordinal + 1])
+			return;
+		if (g_schedule.delivered < g_lag->ticks[ordinal]) {
+			schedule_deliver(ordinal, g_lag->ticks[ordinal]);
+			return;
+		}
+		schedule_mismatch();
+		apu_trace_note_timer_tick();
+		isr_context_enter();
+		TimerHandler();
+		isr_context_leave();
+		return;
+	}
+	frame_boundary_reach();
 }
 
 /* The interval just ended at this anchor: its remaining timer ISRs run
@@ -150,7 +223,7 @@ static void schedule_close(uint32_t ordinal)
 	schedule_sync(ordinal);
 	schedule_deliver(ordinal, g_lag->ticks[ordinal]);
 	if (g_schedule.call != g_lag->call_start[ordinal + 1])
-		g_schedule_mismatches++;
+		schedule_mismatch();
 }
 
 static void age_cycles(uint32_t *timer_cycles, uint32_t cycles)
@@ -166,7 +239,9 @@ static void age_cycles(uint32_t *timer_cycles, uint32_t cycles)
 	*timer_cycles += cycles;
 	while (*timer_cycles >= 17408u) {
 		apu_trace_note_timer_tick();
+		isr_context_enter();
 		TimerHandler();
+		isr_context_leave();
 		*timer_cycles -= 17408u;
 	}
 }
@@ -252,6 +327,8 @@ typedef struct {
 	Shell *shell;
 	Ppu ppu;
 	uint16_t framebuffer[SCREEN_W * SCREEN_H];
+	uint16_t present[(SCREEN_W + 2 * WIDE_EXTRA_MAX) * SCREEN_H];
+	WidescreenRect present_rect;
 	int16_t audio[AUDIO_SAMPLES_PER_FRAME];
 	const uint8_t *buttons;
 	size_t button_count;
@@ -350,6 +427,26 @@ void runtime_set_state_dump_frames(
 	g_state_dump_frame_count = frame_count;
 }
 
+static int g_present_extra;
+static int g_present_limit = PPU_SPRITES_PER_LINE;
+
+void runtime_set_presentation(int extra, int sprite_limit)
+{
+	g_present_extra = extra < 0 ? 0 : extra > WIDE_EXTRA_MAX ? WIDE_EXTRA_MAX : extra;
+	g_present_limit = sprite_limit;
+}
+
+static int presentation_on(void)
+{
+	return g_present_extra > 0 || g_present_limit != PPU_SPRITES_PER_LINE;
+}
+
+static void present_frame(RuntimeState *state)
+{
+	ppu_render_span(&state->ppu, state->present, g_present_extra, g_present_extra, g_present_limit);
+	state->present_rect = widescreen_apply_viewport(state->present, g_present_extra);
+}
+
 static void fill_result(const RuntimeState *state, uint32_t frame_limit,
                         RuntimeResult *out)
 {
@@ -360,6 +457,13 @@ static void fill_result(const RuntimeState *state, uint32_t frame_limit,
 	out->terminal_event = runtime_terminal_event();
 	out->stopped_by_user = state->stopped_by_user;
 	memcpy(out->framebuffer, state->framebuffer, sizeof out->framebuffer);
+	out->present_width = presentation_on() ? SCREEN_W + 2 * g_present_extra : 0;
+	if (out->present_width) {
+		memcpy(out->present, state->present, sizeof out->present);
+		out->present_x0 = state->present_rect.x0;
+		out->present_x1 = state->present_rect.x1;
+		out->present_room = state->present_rect.room;
+	}
 }
 
 /* VBlank ISRs the ROM saw before each of the game's own writes to
@@ -379,6 +483,43 @@ static void vschedule_sync(uint32_t ordinal)
 	g_vschedule.write = g_lag->write_start[ordinal];
 }
 
+static RuntimeState *g_isr_state;
+
+static void isr_deliver(uint32_t interval, unsigned kind, unsigned ordinal, uint8_t value)
+{
+	RuntimeState *state = g_isr_state;
+	if (!state || interval != frame_boundary_doframe_ordinal())
+		return;
+	switch (kind) {
+	case ISR_KIND_VBLANK:
+		while (state->services < ordinal) {
+			vblank_service(interval, state->services);
+			state->services++;
+		}
+		break;
+	case ISR_KIND_STAT:
+		if (g_lag && g_lag->exact_stats)
+			stat_deliver_to(interval, ordinal);
+		break;
+	case ISR_KIND_SERIAL:
+		link_replay_serial(value);
+		break;
+	case ISR_KIND_TIMER:
+		if (g_lag && interval < g_lag->count) {
+			schedule_sync(interval);
+			schedule_deliver(interval, (uint16_t)ordinal);
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void runtime_set_isr_track(const IsrTrack *track)
+{
+	isr_set_track(track, isr_deliver);
+}
+
 static void vblank_sync(void *context)
 {
 	RuntimeState *state = context;
@@ -388,7 +529,7 @@ static void vblank_sync(void *context)
 		return;
 	vschedule_sync(ordinal);
 	if (g_vschedule.write >= g_lag->write_start[ordinal + 1]) {
-		g_schedule_mismatches++;
+		schedule_mismatch();
 		return;
 	}
 	uint16_t target = g_lag->write_vblanks[g_vschedule.write++];
@@ -408,8 +549,8 @@ static void anchor(void *context)
 
 	/* Ordinal k's anchor closes interval k-1 (frames.c increments first). */
 	schedule_close(ordinal - 1u);
-	if (isr_active() && ordinal >= 1u)
-		state->services += isr_close_interval();
+	if (ordinal >= 1u)
+		isr_close_interval();
 	if (g_lag && ordinal >= 1u && ordinal - 1u < g_lag->count) {
 		/* The ROM's VBlank count for the interval, less what the
 		 * boundary passes delivered: nonzero only when the closing
@@ -421,13 +562,14 @@ static void anchor(void *context)
 		stat_service(ordinal - 1u, state->services);
 		if (g_vschedule.ordinal == ordinal - 1u &&
 		    g_vschedule.write != g_lag->write_start[ordinal])
-			g_schedule_mismatches++;
+			schedule_mismatch();
 	}
 	/* Interval `ordinal` starts here; its services are counted from zero
 	 * and delivered at the game's counter writes (vblank_sync) and at the
 	 * interval's end (the host pass below). */
 	state->services = 0;
 	isr_begin_interval(ordinal);
+	serial_track_begin_interval(ordinal);
 	/* The reference's anchor digest includes its pokes (refstream.Core._exec
 	 * writes before the user callback runs), so poke before the digest. */
 	while (g_poke_next < g_poke_count && g_pokes[g_poke_next].ordinal <= ordinal) {
@@ -504,12 +646,17 @@ int runtime_run_with_input(
 	frame_boundary_install(boundary, &state);
 	frame_boundary_install_anchor(anchor, &state);
 	frame_boundary_install_timer_sync(timer_sync, &state);
+	frame_boundary_install_busy_wait(busy_wait, &state);
+	g_isr_state = &state;
 	frame_boundary_install_vblank_sync(vblank_sync, &state);
 	frame_boundary_install_overread(g_overreads ? overread_hook : NULL, NULL);
 	pthread_t worker;
 	if (pthread_create(&worker, NULL, run_game, &state) != 0) {
 		frame_boundary_install_overread(NULL, NULL);
 		frame_boundary_install_timer_sync(NULL, NULL);
+	frame_boundary_install_busy_wait(NULL, NULL);
+		frame_boundary_install_busy_wait(NULL, NULL);
+		g_isr_state = NULL;
 		frame_boundary_install_vblank_sync(NULL, NULL);
 		frame_boundary_install_anchor(NULL, NULL);
 		frame_boundary_install(NULL, NULL);
@@ -559,9 +706,11 @@ int runtime_run_with_input(
 			 * aging, no render -- the game made no DoFrame progress. A
 			 * track that counts STAT ISRs delivers them at the segment
 			 * boundaries (stat_service), so only the chain model fires here. */
+			isr_context_enter();
 			if (!(g_lag && g_lag->exact_stats))
 				RuntimeLCDCHandler();
 			RuntimeVBlankHandler();
+			isr_context_leave();
 			pthread_mutex_lock(&state.lock);
 			state.resume = 1;
 			pthread_cond_broadcast(&state.condition);
@@ -639,12 +788,15 @@ int runtime_run_with_input(
 		 * A headless replay with neither skips the software PPU, which
 		 * was half of a verify's native pass (gprof, rock-club). */
 		if (shell_has_window(shell) || frame_dump_pending(state.frames) ||
-		    ordinal_dump_pending(ordinal + 1u))
+		    ordinal_dump_pending(ordinal + 1u)) {
 			ppu_render_frame(&state.ppu, state.framebuffer);
+			if (presentation_on())
+				present_frame(&state);
+		}
 		/* A recorded prefix replays at full speed; only live play is paced. */
 		if (!timeline_live)
 			shell_pace(shell);
-		shell_present(shell, state.framebuffer);
+		shell_present(shell, presentation_on() ? state.present : state.framebuffer);
 		shell_queue_audio(shell, state.audio, pcm_count);
 		if (g_pcm_sink) {
 			uint32_t tag = ordinal ? ordinal - 1u : 0u;
@@ -674,6 +826,8 @@ int runtime_run_with_input(
 	pthread_join(worker, NULL);
 	frame_boundary_install_overread(NULL, NULL);
 	frame_boundary_install_timer_sync(NULL, NULL);
+	frame_boundary_install_busy_wait(NULL, NULL);
+	g_isr_state = NULL;
 	frame_boundary_install_vblank_sync(NULL, NULL);
 	frame_boundary_install_anchor(NULL, NULL);
 	frame_boundary_install(NULL, NULL);
@@ -681,6 +835,8 @@ int runtime_run_with_input(
 		fflush(g_record_sink);
 	if (result) {
 		ppu_render_frame(&state.ppu, state.framebuffer);
+		if (presentation_on())
+			present_frame(&state);
 		fill_result(&state, frame_limit, result);
 	}
 	pthread_cond_destroy(&state.condition);

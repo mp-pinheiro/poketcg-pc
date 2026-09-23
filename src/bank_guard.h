@@ -27,5 +27,7 @@ void bank_guard_exit(const void *function);
  * probe's frame budget), restoring banks LIFO because those exits skipped every
  * pending exit hook. */
 void bank_guard_reset(void);
+size_t bank_guard_depth(void);
+void bank_guard_truncate(size_t depth);
 
 #endif /* POKETCG_BANK_GUARD_H */

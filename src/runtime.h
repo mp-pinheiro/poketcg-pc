@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
+#include "isr.h"
 #include <stdio.h>
 #include "ppu.h"
 
@@ -17,6 +19,7 @@ typedef enum {
 	RUNTIME_EVENT_OVERWORLD_READY = 5,
 	RUNTIME_EVENT_CREDITS_REACHED = 6,
 	RUNTIME_EVENT_PRINTER_PNG_CLOSED = 7,
+	RUNTIME_EVENT_LINK_SESSION_CLOSED = 8,
 } RuntimeEvent;
 
 typedef struct {
@@ -27,7 +30,14 @@ typedef struct {
 	RuntimeEvent terminal_event;
 	int stopped_by_user;
 	uint16_t framebuffer[SCREEN_W * SCREEN_H];
+	uint16_t present[(SCREEN_W + 2 * WIDE_EXTRA_MAX) * SCREEN_H];
+	int present_width;
+	int present_x0;
+	int present_x1;
+	int present_room;
 } RuntimeResult;
+
+void runtime_set_presentation(int extra, int sprite_limit);
 
 void runtime_events_reset(void);
 void runtime_mark_event(RuntimeEvent event);
@@ -107,15 +117,21 @@ typedef struct {
 	size_t repeats;
 	int exact_stats; /* the track counts STAT ISRs: run exactly that many, no chain */
 	uint16_t *serial; /* link transfers the reference completed in the interval; NULL: none recorded */
+	uint32_t *stack_start; /* count + 1 entries: SM83 stack addresses the interval's PRINT packets used */
+	uint16_t *stack_address;
 	size_t count;
 } LagTrack;
 void runtime_serial_track(const uint16_t *serial, size_t count);
+void runtime_stack_track(const uint32_t *start, const uint16_t *address, size_t count);
+uint16_t runtime_instruction_address(uint16_t fallback);
 unsigned runtime_serial_budget(void);
 void runtime_serial_consume(unsigned steps);
 void runtime_set_lag_track(const LagTrack *track);
+void runtime_set_isr_track(const IsrTrack *track);
 /* Sync points the schedule could not place: the interval reached more or
  * fewer of them than the reference recorded, a different code path. */
 uint32_t runtime_lag_schedule_mismatches(void);
+uint32_t runtime_lag_first_mismatch(void);
 
 /* Resume from an injected reference checkpoint instead of booting: skips Start
  * and GameLoop and drives DoFrame directly, so a subsystem the port cannot yet

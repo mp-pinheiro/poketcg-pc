@@ -5,7 +5,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from tools.completion import completion, scenario, witness
+from tools.completion import completion, scenario, widescreen, witness
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -190,8 +190,9 @@ _REGISTRY: dict[str, dict[str, Any]] = {
     "completion:v2:p7:link-ir": _descriptor(
         "link-ir",
         "scenario:link-ir-printer",
-        producer_files=_SCENARIO + ["tools/completion/peer.py"],
-        comparator_files=["tools/completion/peer.py", "tools/completion/refstream.py"],
+        producer_files=_WITNESS,
+        comparator_files=_WITNESS_COMPARATORS,
+        corpus=witness.corpus("link-ir-printer"),
     ),
     "completion:v2:p7:printer": _descriptor(
         "printer",
@@ -215,33 +216,38 @@ _REGISTRY: dict[str, dict[str, Any]] = {
     ),
     "completion:v2:p8:ppu:span-widening": _descriptor(
         "span-widening",
-        None,
-        producer_files=_SCENARIO,
-        comparator_files=["tests/scene_diff.py"],
+        "scenario:span-widening",
+        producer_files=_WITNESS + ["tools/completion/widescreen.py"],
+        comparator_files=_WITNESS_COMPARATORS + ["tools/completion/widescreen.py"],
+        corpus=widescreen.corpus("span-widening"),
     ),
     "completion:v2:p8:runtime:viewport-rect": _descriptor(
         "viewport-rect",
-        None,
-        producer_files=_SCENARIO,
-        comparator_files=["tests/scene_diff.py"],
+        "scenario:viewport-rect",
+        producer_files=_WITNESS + ["tools/completion/widescreen.py"],
+        comparator_files=_WITNESS_COMPARATORS + ["tools/completion/widescreen.py"],
+        corpus=widescreen.corpus("viewport-rect"),
     ),
     "completion:v2:p8:ui:wide-layouts": _descriptor(
         "wide-layouts",
-        None,
-        producer_files=_SCENARIO,
-        comparator_files=["tests/scene_diff.py"],
+        "scenario:wide-layouts",
+        producer_files=_WITNESS + ["tools/completion/widescreen.py"],
+        comparator_files=_WITNESS_COMPARATORS + ["tools/completion/widescreen.py"],
+        corpus=widescreen.corpus("wide-layouts"),
     ),
     "completion:v2:p8:features:render-only": _descriptor(
         "render-only",
-        None,
-        producer_files=_SCENARIO,
-        comparator_files=["tests/scene_diff.py"],
+        "scenario:render-only",
+        producer_files=_WITNESS + ["tools/completion/widescreen.py"],
+        comparator_files=_WITNESS_COMPARATORS + ["tools/completion/widescreen.py"],
+        corpus=widescreen.corpus("render-only"),
     ),
     "completion:v2:p8:release:enhanced-corpus": _descriptor(
         "enhanced-corpus",
-        None,
-        producer_files=_SCENARIO,
-        comparator_files=["tests/scene_diff.py"],
+        "scenario:widescreen-corpus",
+        producer_files=_WITNESS + ["tools/completion/widescreen.py"],
+        comparator_files=_WITNESS_COMPARATORS + ["tools/completion/widescreen.py"],
+        corpus=widescreen.corpus("widescreen-corpus"),
     ),
 }
 

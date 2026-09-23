@@ -138,7 +138,7 @@ add_custom_command(
   VERBATIM)
 
 set(GBMEM_SOURCES src/mem.c src/ppu.c src/apu.c src/printer_sink.c src/runtime_events.c src/trace.c
-                  src/bank_guard.c src/link.c src/isr.c ${HOME_SOURCES})
+                  src/bank_guard.c src/link.c src/isr.c src/serial_track.c src/widescreen.c ${HOME_SOURCES})
 if(NOT PORT_FILES)
   list(APPEND GBMEM_SOURCES "${BANK_GUARD_SOURCE}")
 endif()
@@ -154,7 +154,7 @@ target_compile_options(gbmem PRIVATE -Wall -Wextra)
 # record count by two orders of magnitude without naming a single routine.
 target_compile_options(gbmem PRIVATE
   -finstrument-functions
-  -finstrument-functions-exclude-file-list=mem.c,ppu.c,apu.c,printer_sink.c,runtime_events.c,trace.c,bank_guard.c,bank_guard_generated.c,link.c,isr.c)
+  -finstrument-functions-exclude-file-list=mem.c,ppu.c,apu.c,printer_sink.c,runtime_events.c,trace.c,bank_guard.c,bank_guard_generated.c,link.c,isr.c,serial_track.c,widescreen.c)
 
 # Frame-tagged function-entry recording for the bilateral call-count diff
 # against the reference stream, and the producer for the CFG audit's edges.

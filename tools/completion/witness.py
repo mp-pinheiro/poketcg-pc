@@ -37,6 +37,7 @@ EVENT_NAMES = {
     5: "OVERWORLD_READY",
     6: "CREDITS_REACHED",
     7: "PRINTER_PNG_CLOSED",
+    8: "LINK_SESSION_CLOSED",
 }
 IO_COMPARED = (
     0x00, 0x01, 0x02, 0x06, 0x07,
@@ -57,6 +58,7 @@ APU_READBACK = {
     0xFF24: (0x00, 0xFF), 0xFF25: (0x00, 0xFF), 0xFF26: (0x70, 0x80),
 }
 NR52 = 0xFF26
+SERIAL_VECTOR = 0x0058
 BOOT_ROM_PCS = ((0x0000, 0x0100), (0x0200, 0x0900))
 
 
@@ -130,6 +132,12 @@ SPECS: dict[str, Spec] = {
         fields=("wram", "framebuffer", "save", "rng"),
         terminal="CREDITS_REACHED",
         event="CREDITS_REACHED",
+    ),
+    "link-ir-printer": Spec(
+        sessions=("link-duel-a", "link-duel-b"),
+        fields=("transport", "wram", "rng", "framebuffer", "input_latch"),
+        terminal="LINK_SESSION_CLOSED",
+        event="LINK_SESSION_CLOSED",
     ),
     "printer": Spec(
         sessions=("printer-card-list",),
@@ -215,9 +223,21 @@ def reference_pass(
     stable: dict[int, bool] = {}
     apu_writes: list[tuple[int, int, int]] = []
     anchor_samples: list[int] = []
-    with refstream.Core(padded, pokes=meta["pokes"], save=meta["save"], printer=meta["printer"]) as core:
+    link = meta.get("link")
+    if link:
+        side = int(link["side"])
+        members = (name, link["peer"]) if side == 0 else (link["peer"], name)
+        cores, pair, _masks = session.linked_pair(members, frames)
+        core = cores[side]
+    else:
+        cores = [refstream.Core(padded, pokes=meta["pokes"], save=meta["save"], printer=meta["printer"])]
+        pair = None
+        core = cores[0]
+    try:
         core.input_axis = "ordinal"
         hits = 0
+        received = 0
+        received_crc = 0
         last_frame = b""
         pending: int | None = None
         read = core.library.gambatte_cpuread
@@ -230,7 +250,11 @@ def reference_pass(
                 apu_writes.append((hits, address, read(handle, address)))
 
         def on_exec(address: int, _cycle: int) -> None:
-            nonlocal hits, last_frame, pending
+            nonlocal hits, last_frame, pending, received, received_crc
+            if address == SERIAL_VECTOR:
+                received += 1
+                received_crc = zlib.crc32(bytes((read(handle, 0xFF01),)), received_crc)
+                return
             if address != refstream.DOFRAME_ANCHOR:
                 return
             hits += 1
@@ -255,6 +279,7 @@ def reference_pass(
                 }
                 if want_frames:
                     record["framebuffer"] = last_frame
+                record["transport"] = {"exchanges": received, "received_crc": received_crc}
                 if want_save and hits == count:
                     record["save"] = core.area("CartRAM")[:0x8000]
                 if core.printer is not None:
@@ -268,9 +293,15 @@ def reference_pass(
         if pcm_sink is not None:
             core.pcm_sink = pcm_sink
         core.install_exec(on_exec)
-        core.run(frames, stop=lambda: hits > count)
+        if pair is not None:
+            session.run_linked(pair, lambda: hits > count, frames * refstream.SAMPLES_PER_FRAME)
+        else:
+            core.run(frames, stop=lambda: hits > count)
         if pending is not None:
             stable[pending] = False
+    finally:
+        for member in cores:
+            member.close()
     if len(captured) != len(wanted):
         raise WitnessError(f"reference reached {len(captured)} of {len(wanted)} anchors for {name}")
     return {"anchors": captured, "stable": stable, "apu_writes": apu_writes, "anchor_samples": anchor_samples}
@@ -537,7 +568,11 @@ def compare_anchor(
     if field == "rng":
         return count_diff(bytes(native["rng"]), reference["wram"][RNG_OFFSET : RNG_OFFSET + 3])
     if field == "transport":
-        return len(native.get(field) or [])
+        expected = reference.get("transport") or {"exchanges": 0, "received_crc": 0}
+        actual = native.get("transport")
+        if not isinstance(actual, dict):
+            return 1
+        return sum(1 for key in ("exchanges", "received_crc") if actual.get(key) != expected[key])
     if field == "printer":
         expected = reference.get("printer")
         actual = native.get("printer")
@@ -815,7 +850,8 @@ def run(scenario: str) -> dict[str, Any]:
     spec = SPECS[scenario]
     rows = [witness_session(name, spec) for name in spec.sessions]
     passed = all(row["status"] == "PASS" for row in rows)
-    linked = any(session.load_session(name)[1]["printer"] for name in spec.sessions)
+    linked = any(session.load_session(name)[1]["printer"] or session.load_session(name)[1]["link"]
+                 for name in spec.sessions)
     fragment: dict[str, Any] = {
         "oracles": ["linked-reference" if linked else "gambatte", "native"],
         "state_fields": list(spec.fields),

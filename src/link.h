@@ -13,5 +13,8 @@ uint32_t link_exchanges(void);
 uint32_t link_timeouts(void);
 uint32_t link_drain_timeouts(void);
 int link_first_received(void);
+void link_replay_serial(uint8_t received);
+uint32_t link_transport_exchanges(void);
+uint32_t link_transport_crc(void);
 
-#endif /* POKETCG_LINK_H */
+#endif

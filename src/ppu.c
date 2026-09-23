@@ -58,22 +58,21 @@ static int fetch_bgwin_pixel(int mapx, int mapy, uint16_t map_base, uint8_t lcdc
 	return ((b1 >> bit) & 1) | (((b2 >> bit) & 1) << 1);
 }
 
-static void render_sprites(int ly, uint8_t lcdc, uint16_t *fb, const uint8_t *ab)
+static void render_sprites(int ly, uint8_t lcdc, uint16_t *row, const uint8_t *ab, int x0, int x1, int limit)
 {
 	if (!(lcdc & 0x02))
 		return;
 
 	int sheight = (lcdc & 0x04) ? 16 : 8;
 	int master = lcdc & 0x01;
-	int idx = ly * SCREEN_W;
 
-	int found[10];
+	int found[40];
 	int nf = 0;
 	for (int n = 0; n < 40; n++) {
 		int sy = (int)g_oam[n * 4] - 16;
 		if (sy <= ly && ly < sy + sheight) {
 			found[nf++] = n;
-			if (nf == 10)
+			if (nf == limit)
 				break;
 		}
 	}
@@ -101,14 +100,14 @@ static void render_sprites(int ly, uint8_t lcdc, uint16_t *fb, const uint8_t *ab
 
 		for (int dx = 0; dx < 8; dx++) {
 			int px = sx + dx;
-			if (px < 0 || px >= SCREEN_W)
+			if (px < x0 || px >= x1)
 				continue;
 			int color = ((b1 >> (7 - (xflip ? 7 - dx : dx))) & 1) |
 				    (((b2 >> (7 - (xflip ? 7 - dx : dx))) & 1) << 1);
 			if (color == 0)
 				continue;
 
-			uint8_t ba = ab[px];
+			uint8_t ba = ab[px - x0];
 			int draw;
 			if (!master)
 				draw = 1;
@@ -119,19 +118,18 @@ static void render_sprites(int ly, uint8_t lcdc, uint16_t *fb, const uint8_t *ab
 			else
 				draw = 1;
 			if (draw)
-				fb[idx + px] = pal_obj(palette, color);
+				row[px - x0] = pal_obj(palette, color);
 		}
 	}
 }
 
-void ppu_render_scanline(Ppu *p, int ly, uint16_t *fb)
+static void render_line(Ppu *p, int ly, uint16_t *row, int x0, int x1, int limit)
 {
 	uint8_t lcdc = g_io[IO_LCDC];
-	int idx = ly * SCREEN_W;
 
 	if (!(lcdc & 0x80)) {
-		for (int x = 0; x < SCREEN_W; x++)
-			fb[idx + x] = 0x7FFF;
+		for (int x = x0; x < x1; x++)
+			row[x - x0] = 0x7FFF;
 		return;
 	}
 
@@ -142,37 +140,27 @@ void ppu_render_scanline(Ppu *p, int ly, uint16_t *fb)
 	int win_active = (lcdc & 0x20) && wy <= ly && wx < SCREEN_W;
 	uint16_t bgmap = (lcdc & 0x08) ? BG_MAP1 : BG_MAP0;
 	uint16_t winmap = (lcdc & 0x40) ? BG_MAP1 : BG_MAP0;
+	int win_from = win_active ? (wx > 0 ? wx : 0) : SCREEN_W;
+	int wl = win_active ? ++p->win_line : 0;
 
-	uint8_t ab[SCREEN_W];
+	uint8_t ab[SCREEN_W + 2 * WIDE_EXTRA_MAX];
 
-	if (win_active) {
-		/* The window keeps its own line counter, advanced only on lines it
-		 * actually draws; reset to -1 at the frame start so the first
-		 * window line is row 0. */
-		int wl = ++p->win_line;
-		int pre = wx > 0 ? wx : 0;
-		for (int x = 0; x < pre; x++) {
-			int pal, bprio;
-			int c = fetch_bgwin_pixel(x + scx, ly + scy, bgmap, lcdc, &pal, &bprio);
-			fb[idx + x] = pal_bg(pal, c);
-			ab[x] = (uint8_t)((bprio ? BG_PRI : 0) | (c == 0 ? COL0 : 0));
-		}
-		for (int x = pre; x < SCREEN_W; x++) {
-			int pal, bprio;
-			int c = fetch_bgwin_pixel(x - wx, wl, winmap, lcdc, &pal, &bprio);
-			fb[idx + x] = pal_bg(pal, c);
-			ab[x] = (uint8_t)((bprio ? BG_PRI : 0) | (c == 0 ? COL0 : 0));
-		}
-	} else {
-		for (int x = 0; x < SCREEN_W; x++) {
-			int pal, bprio;
-			int c = fetch_bgwin_pixel(x + scx, ly + scy, bgmap, lcdc, &pal, &bprio);
-			fb[idx + x] = pal_bg(pal, c);
-			ab[x] = (uint8_t)((bprio ? BG_PRI : 0) | (c == 0 ? COL0 : 0));
-		}
+	for (int x = x0; x < x1; x++) {
+		int pal, bprio, c;
+		if (x >= win_from && x < SCREEN_W)
+			c = fetch_bgwin_pixel(x - wx, wl, winmap, lcdc, &pal, &bprio);
+		else
+			c = fetch_bgwin_pixel((x + scx) & 0xFF, ly + scy, bgmap, lcdc, &pal, &bprio);
+		row[x - x0] = pal_bg(pal, c);
+		ab[x - x0] = (uint8_t)((bprio ? BG_PRI : 0) | (c == 0 ? COL0 : 0));
 	}
 
-	render_sprites(ly, lcdc, fb, ab);
+	render_sprites(ly, lcdc, row, ab, x0, x1, limit);
+}
+
+void ppu_render_scanline(Ppu *p, int ly, uint16_t *fb)
+{
+	render_line(p, ly, fb + ly * SCREEN_W, 0, SCREEN_W, PPU_SPRITES_PER_LINE);
 }
 
 /* The renderer samples SCX/SCY/WX/WY from the live IO image every frame
@@ -185,7 +173,7 @@ void ppu_init_offsets(Ppu *p)
 	p->win_line = -1;
 }
 
-void ppu_render_frame(Ppu *p, uint16_t *fb)
+static void latch_offsets(Ppu *p)
 {
 	/* RuntimeVBlankHandler flushes hSCX/hSCY/hWX/hWY into the IO image each
 	 * frame; sample the live registers so mid-game scroll, window, and LCD
@@ -202,6 +190,20 @@ void ppu_render_frame(Ppu *p, uint16_t *fb)
 		p->win[i].wy = wy;
 	}
 	p->win_line = -1;
+}
+
+void ppu_render_frame(Ppu *p, uint16_t *fb)
+{
+	latch_offsets(p);
 	for (int ly = 0; ly < SCREEN_H; ly++)
 		ppu_render_scanline(p, ly, fb);
+}
+
+void ppu_render_span(Ppu *p, uint16_t *fb, int left, int right, int sprite_limit)
+{
+	int width = SCREEN_W + left + right;
+
+	latch_offsets(p);
+	for (int ly = 0; ly < SCREEN_H; ly++)
+		render_line(p, ly, fb + ly * width, -left, SCREEN_W + right, sprite_limit);
 }

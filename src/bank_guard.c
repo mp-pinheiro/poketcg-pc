@@ -98,6 +98,17 @@ NOTRACE void bank_guard_exit(const void *function)
 		BankswitchROM(frame->saved);
 }
 
+NOTRACE size_t bank_guard_depth(void)
+{
+	return g_depth;
+}
+
+NOTRACE void bank_guard_truncate(size_t depth)
+{
+	if (depth < g_depth)
+		g_depth = depth;
+}
+
 NOTRACE void bank_guard_reset(void)
 {
 	/* Restore in LIFO order, exactly as the abandoned `ret` cascade would, so

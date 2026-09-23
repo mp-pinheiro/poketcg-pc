@@ -1,6 +1,7 @@
 #define _POSIX_C_SOURCE 200809L
 #include "link.h"
 
+#include "isr.h"
 #include "mem.h"
 #include "home/serial.h"
 
@@ -34,6 +35,37 @@ static uint32_t g_drain_timeouts;
 static uint8_t g_draining;
 static int g_first_received = -1;
 static struct timespec g_armed_at;
+static uint32_t g_transport_exchanges;
+static uint32_t g_transport_crc = 0xFFFFFFFFu;
+
+static void transport_note(uint8_t received)
+{
+	uint32_t crc = g_transport_crc ^ received;
+	for (int bit = 0; bit < 8; bit++)
+		crc = (crc & 1u) ? 0xEDB88320u ^ (crc >> 1) : crc >> 1;
+	g_transport_crc = crc;
+	g_transport_exchanges++;
+}
+
+uint32_t link_transport_exchanges(void)
+{
+	return g_transport_exchanges;
+}
+
+uint32_t link_transport_crc(void)
+{
+	return g_transport_crc ^ 0xFFFFFFFFu;
+}
+
+void link_replay_serial(uint8_t received)
+{
+	gb_write8(LINK_SB, received);
+	gb_write8(LINK_SC, (uint8_t)(gb_read8(LINK_SC) & 0x7Fu));
+	transport_note(received);
+	isr_context_enter();
+	SerialHandler();
+	isr_context_leave();
+}
 
 static double link_elapsed(void)
 {
@@ -137,7 +169,10 @@ static void link_complete(uint8_t received)
 	gb_write8(LINK_SB, received);
 	gb_write8(LINK_SC, (uint8_t)(gb_read8(LINK_SC) & 0x7Fu));
 	g_exchanges++;
+	transport_note(received);
+	isr_context_enter();
 	SerialHandler();
+	isr_context_leave();
 }
 
 void link_drain(void)

@@ -1,10 +1,14 @@
 #include "mem.h"
 #include "link.h"
 #include "isr.h"
+#include "serial_track.h"
 #include "persistence.h"
 #include "state_dump.h"
 #include "runtime.h"
+#include "home/frames.h"
 #include "printer_sink.h"
+
+#define CGB_BOOT_LCDC 0x91u
 #include "shell.h"
 #include "checkpoint.h"
 #include "digest.h"
@@ -143,6 +147,8 @@ static void lag_track_free(LagTrack *track)
 	free(track->repeat_segment);
 	free(track->repeat_count);
 	free(track->serial);
+	free(track->stack_start);
+	free(track->stack_address);
 	memset(track, 0, sizeof *track);
 }
 
@@ -184,7 +190,10 @@ static void isr_track_free(IsrTrack *track)
 	free(track->site);
 	free(track->nth);
 	free(track->kind);
+	free(track->ordinal);
+	free(track->value);
 	free((void *)track->site_fn);
+	free(track->site_event);
 	memset(track, 0, sizeof *track);
 }
 
@@ -206,13 +215,22 @@ static int load_isr_sites(const char *path, IsrTrack *track)
 			continue;
 		if (track->sites == capacity) {
 			capacity = capacity ? capacity * 2 : 64;
-			if (grow((void **)&track->site_fn, capacity, sizeof *track->site_fn) != 0) {
+			if (grow((void **)&track->site_fn, capacity, sizeof *track->site_fn) != 0 ||
+			    grow((void **)&track->site_event, capacity, sizeof *track->site_event) != 0) {
 				fclose(file);
 				free(line);
 				return -1;
 			}
 		}
-		track->site_fn[track->sites++] = dlsym(RTLD_DEFAULT, line);
+		track->site_event[track->sites] = -1;
+		track->site_fn[track->sites] = NULL;
+		if (strcmp(line, "@DisableLCD") == 0)
+			track->site_event[track->sites] = ISR_SITE_DISABLE_LCD;
+		else if (strcmp(line, "@Func_1d765") == 0)
+			track->site_event[track->sites] = ISR_SITE_CREDITS_ARM;
+		else if (line[0] != '@')
+			track->site_fn[track->sites] = dlsym(RTLD_DEFAULT, line);
+		track->sites++;
 	}
 	fclose(file);
 	free(line);
@@ -222,7 +240,7 @@ static int load_isr_sites(const char *path, IsrTrack *track)
 static int load_isr_track(const char *path, uint32_t intervals, IsrTrack *track)
 {
 	FILE *file = fopen(path, "rb");
-	uint8_t record[9];
+	uint8_t record[12];
 	uint32_t previous = 0;
 	size_t capacity = 0;
 
@@ -250,7 +268,9 @@ static int load_isr_track(const char *path, uint32_t intervals, IsrTrack *track)
 			capacity = capacity ? capacity * 2 : 4096;
 			if (grow((void **)&track->site, capacity, sizeof *track->site) != 0 ||
 			    grow((void **)&track->nth, capacity, sizeof *track->nth) != 0 ||
-			    grow((void **)&track->kind, capacity, sizeof *track->kind) != 0) {
+			    grow((void **)&track->kind, capacity, sizeof *track->kind) != 0 ||
+			    grow((void **)&track->ordinal, capacity, sizeof *track->ordinal) != 0 ||
+			    grow((void **)&track->value, capacity, sizeof *track->value) != 0) {
 				fclose(file);
 				return -1;
 			}
@@ -258,6 +278,8 @@ static int load_isr_track(const char *path, uint32_t intervals, IsrTrack *track)
 		track->site[track->records] = site;
 		track->nth[track->records] = nth;
 		track->kind[track->records] = record[8];
+		track->ordinal[track->records] = (uint16_t)(record[9] | record[10] << 8);
+		track->value[track->records] = record[11];
 		track->records++;
 	}
 	fclose(file);
@@ -272,6 +294,7 @@ static int load_lag_track(const char *path, LagTrack *track)
 	char *line = NULL;
 	size_t line_size = 0;
 	size_t capacity = 0, call_capacity = 0, calls = 0, write_capacity = 0, writes = 0, repeat_capacity = 0;
+	size_t stack_capacity = 0, stacks = 0;
 	memset(track, 0, sizeof *track);
 	if (!file)
 		return -1;
@@ -297,7 +320,8 @@ static int load_lag_track(const char *path, LagTrack *track)
 			    grow((void **)&track->vblanks, capacity, sizeof *track->vblanks) != 0 ||
 			    grow((void **)&track->call_start, capacity + 1, sizeof *track->call_start) != 0 ||
 			    grow((void **)&track->write_start, capacity + 1, sizeof *track->write_start) != 0 ||
-			    grow((void **)&track->stat_masks, capacity, sizeof *track->stat_masks) != 0)
+			    grow((void **)&track->stat_masks, capacity, sizeof *track->stat_masks) != 0 ||
+			    grow((void **)&track->stack_start, capacity + 1, sizeof *track->stack_start) != 0)
 				goto fail;
 			if (track->serial) {
 				uint16_t *serial = realloc(track->serial, capacity * sizeof *serial);
@@ -312,6 +336,7 @@ static int load_lag_track(const char *path, LagTrack *track)
 		track->vblanks[track->count] = (uint16_t)v;
 		track->call_start[track->count] = (uint32_t)calls;
 		track->write_start[track->count] = (uint32_t)writes;
+		track->stack_start[track->count] = (uint32_t)stacks;
 		for (;;) {
 			unsigned long o = strtoul(cursor, &end, 10);
 			if (end == cursor)
@@ -395,6 +420,20 @@ static int load_lag_track(const char *path, LagTrack *track)
 			while (*cursor == ' ' || *cursor == '\t')
 				cursor++;
 		}
+		while (*cursor == 'k') {
+			unsigned long address = strtoul(cursor + 1, &end, 10);
+			if (end == cursor + 1 || address > 65535)
+				goto fail;
+			cursor = end;
+			if (stacks == stack_capacity) {
+				stack_capacity = stack_capacity ? stack_capacity * 2 : 16;
+				if (grow((void **)&track->stack_address, stack_capacity, sizeof *track->stack_address) != 0)
+					goto fail;
+			}
+			track->stack_address[stacks++] = (uint16_t)address;
+			while (*cursor == ' ' || *cursor == '\t')
+				cursor++;
+		}
 		if (*cursor == 'X') {
 			track->exact_stats = 1;
 			cursor++;
@@ -407,6 +446,7 @@ static int load_lag_track(const char *path, LagTrack *track)
 		goto fail_closed;
 	track->call_start[track->count] = (uint32_t)calls;
 	track->write_start[track->count] = (uint32_t)writes;
+	track->stack_start[track->count] = (uint32_t)stacks;
 	return 0;
 fail:
 	fclose(file);
@@ -606,6 +646,8 @@ static void state_dump_frames_callback(uint32_t frame, const RuntimeResult *resu
 int main(int argc, char **argv)
 {
 	ShellConfig config = {0};
+	int widescreen = 0;
+	int sprite_limit = PPU_SPRITES_PER_LINE;
 	uint32_t frame_limit = 600;
 	const char *pack_path = NULL;
 	int require_data = 0;
@@ -632,6 +674,7 @@ int main(int argc, char **argv)
 	const char *trace_window_path = NULL;
 	const char *checkpoint_path = NULL;
 	const char *isr_track_path = NULL;
+	const char *serial_track_path = NULL;
 	const char *dump_pcm_path = NULL;
 	const char *printer_dir = NULL;
 	int link_fd = -1;
@@ -713,6 +756,16 @@ int main(int argc, char **argv)
 			trace_window_path = argv[++i];
 		} else if (strcmp(argv[i], "--isr-track") == 0 && i + 1 < argc) {
 			isr_track_path = argv[++i];
+		} else if (strcmp(argv[i], "--serial-track") == 0 && i + 1 < argc) {
+			serial_track_path = argv[++i];
+		} else if (strcmp(argv[i], "--widescreen") == 0 && i + 1 < argc) {
+			widescreen = atoi(argv[++i]);
+			if (widescreen < 0 || widescreen > WIDE_EXTRA_MAX) {
+				fprintf(stderr, "--widescreen takes 0..%d extra columns per side\n", WIDE_EXTRA_MAX);
+				return 2;
+			}
+		} else if (strcmp(argv[i], "--no-sprite-limits") == 0) {
+			sprite_limit = PPU_SPRITES_MAX;
 		} else if (strcmp(argv[i], "--link-fd") == 0 && i + 1 < argc) {
 			link_fd = atoi(argv[++i]);
 		} else if (strcmp(argv[i], "--load-checkpoint") == 0 && i + 1 < argc) {
@@ -727,7 +780,7 @@ int main(int argc, char **argv)
 			       "[--digest-out PATH [--digest-mask FILE]] [--lag-track PATH] "
 			       "[--trace-entries PATH] [--trace-calls PATH] "
 			       "[--trace-window LO HI --trace-window-out PATH] "
-			       "[--load-checkpoint PATH] [--link-fd N] [--isr-track PATH] [--dump-pcm PATH] [--printer-dir DIR]\n");
+			       "[--load-checkpoint PATH] [--link-fd N] [--isr-track PATH] [--serial-track PATH] [--widescreen N] [--no-sprite-limits] [--dump-pcm PATH] [--printer-dir DIR]\n");
 			printf("--frames 0 runs until the window closes\n");
 			printf("--input is one byte per host frame (a movie axis); "
 			       "--input-ordinal is one byte per DoFrame and never wraps: "
@@ -769,6 +822,7 @@ int main(int argc, char **argv)
 		return 2;
 	}
 	mem_reset();
+	g_io[0x40] = CGB_BOOT_LCDC;
 	if (rom_pack_load(pack_path) != 0) {
 		fprintf(stderr, "cannot load production data pack %s: %s\n",
 		        pack_path, strerror(errno));
@@ -841,12 +895,12 @@ int main(int argc, char **argv)
 		const char *slash = strrchr(isr_track_path, '/');
 		size_t prefix = slash ? (size_t)(slash - isr_track_path) + 1u : 0u;
 
-		if (prefix + sizeof "isr-sites.txt" > sizeof sites_path) {
+		if (prefix + sizeof "isr-events.txt" > sizeof sites_path) {
 			fprintf(stderr, "isr track path is too long\n");
 			return 1;
 		}
 		memcpy(sites_path, isr_track_path, prefix);
-		memcpy(sites_path + prefix, "isr-sites.txt", sizeof "isr-sites.txt");
+		memcpy(sites_path + prefix, "isr-events.txt", sizeof "isr-events.txt");
 		if (load_isr_sites(sites_path, &isr_track) != 0 ||
 		    load_isr_track(isr_track_path, (uint32_t)lag_track.count, &isr_track) != 0) {
 			fprintf(stderr, "cannot read isr track %s\n", isr_track_path);
@@ -855,10 +909,16 @@ int main(int argc, char **argv)
 		}
 		size_t resolved = 0;
 		for (size_t i = 0; i < isr_track.sites; i++)
-			resolved += isr_track.site_fn[i] != NULL;
+			resolved += isr_track.site_fn[i] != NULL || isr_track.site_event[i] >= 0;
 		fprintf(stderr, "isr track: records=%zu sites=%zu resolved=%zu\n",
 		        isr_track.records, isr_track.sites, resolved);
-		isr_set_track(&isr_track);
+		runtime_set_isr_track(&isr_track);
+	}
+	if (serial_track_path && serial_track_load(serial_track_path) != 0) {
+		fprintf(stderr, "cannot read serial track %s\n", serial_track_path);
+		isr_track_free(&isr_track);
+		lag_track_free(&lag_track);
+		return 1;
 	}
 	RuntimeOverread *overreads = NULL;
 	size_t overread_count = 0;
@@ -910,6 +970,8 @@ int main(int argc, char **argv)
 		rom_pack_free();
 		return 2;
 	}
+	config.width = SCREEN_W + 2 * widescreen;
+	runtime_set_presentation(widescreen, sprite_limit);
 	Shell *shell = shell_create(&config);
 	if (!shell) {
 		if (record_sink)
@@ -965,11 +1027,12 @@ int main(int argc, char **argv)
 		status = 1;
 	}
 	runtime_set_lag_track(NULL);
-	if (isr_active()) {
-		fprintf(stderr, "isr track: placed=%u unplaced=%u\n", isr_placed(), isr_unplaced());
-		isr_set_track(NULL);
-		isr_track_free(&isr_track);
-	}
+	runtime_set_isr_track(NULL);
+	isr_track_free(&isr_track);
+	if (serial_track_mismatches())
+		fprintf(stderr, "serial track: %u intervals off schedule, first in interval %u\n",
+		        (unsigned)serial_track_mismatches(), (unsigned)serial_track_first_mismatch());
+	serial_track_free();
 	runtime_set_pokes(NULL, 0);
 	runtime_set_overreads(NULL, 0);
 	lag_track_free(&lag_track);
@@ -1011,9 +1074,11 @@ int main(int argc, char **argv)
 	if (runtime_overread_mismatches())
 		fprintf(stderr, "overread track: %u card copies off schedule\n",
 		        (unsigned)runtime_overread_mismatches());
+	if (isr_placed() || isr_unplaced())
+		fprintf(stderr, "isr track: placed=%u unplaced=%u\n", (unsigned)isr_placed(), (unsigned)isr_unplaced());
 	if (runtime_lag_schedule_mismatches())
-		fprintf(stderr, "lag track: %u sync points off schedule\n",
-		        (unsigned)runtime_lag_schedule_mismatches());
+		fprintf(stderr, "lag track: %u sync points off schedule, first in interval %u\n",
+		        (unsigned)runtime_lag_schedule_mismatches(), (unsigned)runtime_lag_first_mismatch());
 	if (status != 0)
 		fprintf(stderr, "runtime rendezvous failed\n");
 	else

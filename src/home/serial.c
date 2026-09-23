@@ -1,4 +1,5 @@
 #include "home/serial.h"
+#include "serial_track.h"
 
 #include "generated/wram.h"
 #include "home/printer.h"
@@ -411,20 +412,16 @@ ExchangeRNGResult ExchangeRNG(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
 /* >>> factory SerialSend8Bytes */
 /* serial.asm:605-651. Every register round-trips through push/pop, so nothing
  * is produced. The buffer layout is f, a, l, h, e, d, c, b. */
-void SerialSend8Bytes(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
+void SerialSend8Bytes(uint8_t known, uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
 {
 	DuelistVarResult r = GetNonTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
 	if (r.a != DUELIST_TYPE_LINK_OPP)
 		return;
+	uint8_t bytes[8] = {f, a, (uint8_t)hl, (uint8_t)(hl >> 8), (uint8_t)de, (uint8_t)(de >> 8), c, b};
+	serial_track_residue(known, bytes);
 	uint16_t p = wTempSerialBuf_ADDR;
-	gb_write8((uint16_t)(p + 0u), f);
-	gb_write8((uint16_t)(p + 1u), a);
-	gb_write8((uint16_t)(p + 2u), (uint8_t)hl);
-	gb_write8((uint16_t)(p + 3u), (uint8_t)(hl >> 8));
-	gb_write8((uint16_t)(p + 4u), (uint8_t)de);
-	gb_write8((uint16_t)(p + 5u), (uint8_t)(de >> 8));
-	gb_write8((uint16_t)(p + 6u), c);
-	gb_write8((uint16_t)(p + 7u), b);
+	for (unsigned i = 0; i < 8u; i++)
+		gb_write8((uint16_t)(p + i), bytes[i]);
 	SerialSendBytesResult s = SerialSendBytes(wTempSerialBuf_ADDR, 8u);
 	if (s.f & F_C)
 		DuelTransmissionError();
@@ -439,12 +436,14 @@ void SerialSend8Bytes(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint16_t de, u
  * byte) is an ordinary return with Func_0e32's a/f. */
 LinkOppTurnResult LinkOpponentTurnFrameFunction(void)
 {
-	if (wSerialFlags == 0u) {
+	if (gb_read8(wSerialFlags_ADDR) == 0u) {
 		SerialRecvReadyResult r = Func_0e32();
 		if (!(r.f & 0x10u))
 			return (LinkOppTurnResult){r.a, r.f};
 	}
 	BankswitchROM(BANK_LINK_OPP_TURN);
+	if (g_link_opponent_turn_armed)
+		longjmp(g_link_opponent_turn_return, 1);
 	return (LinkOppTurnResult){BANK_LINK_OPP_TURN, 0x10u};
 }
 /* <<< factory LinkOpponentTurnFrameFunction */
@@ -473,7 +472,7 @@ SerialRecvDuelDataResult SerialRecvDuelData(uint8_t b, uint8_t c, uint16_t de, u
 {
 	SerialRecvBytesResult r = SerialRecvBytes(0xFF9Eu, 10u);
 	ExchangeRNGResult x = ExchangeRNG(b, c, de, r.hl);
-	return (SerialRecvDuelDataResult){x.a, x.f};
+	return (SerialRecvDuelDataResult){x.a, x.f, b, c, x.de, hl};
 }
 /* <<< factory SerialRecvDuelData */
 

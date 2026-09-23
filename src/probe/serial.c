@@ -154,7 +154,7 @@ static void adapt_ExchangeRNG(ProbeState *s)
 /* >>> factory SerialSend8Bytes */
 static void adapt_SerialSend8Bytes(ProbeState *s)
 {
-	SerialSend8Bytes(s->a, s->f, s->b, s->c, (uint16_t)(s->d << 8 | s->e), s->hl);
+	SerialSend8Bytes(SEND8_ALL, s->a, s->f, s->b, s->c, (uint16_t)(s->d << 8 | s->e), s->hl);
 }
 /* <<< factory SerialSend8Bytes */
 
@@ -185,6 +185,11 @@ static void adapt_SerialRecvDuelData(ProbeState *s)
 	SerialRecvDuelDataResult r = SerialRecvDuelData(s->b, s->c, (uint16_t)(s->d << 8 | s->e), s->hl);
 	s->a = r.a;
 	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+	s->hl = r.hl;
 }
 /* <<< factory SerialRecvDuelData */
 

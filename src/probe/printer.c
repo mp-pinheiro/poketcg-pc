@@ -148,6 +148,7 @@ static void adapt_SendPrinterPacket(ProbeState *s)
 	SendPrinterPacketResult r = SendPrinterPacket(s->b, s->c, s->d, s->e, s->hl);
 	s->a = r.a;
 	s->f = r.f;
+	s->hl = r.hl;
 }
 /* <<< factory SendPrinterPacket */
 
@@ -173,9 +174,10 @@ static void adapt_ShowPrinterConnectionErrorScene(ProbeState *s)
 /* >>> factory TryInitPrinterCommunications */
 static void adapt_TryInitPrinterCommunications(ProbeState *s)
 {
-	TryInitPrinterCommunicationsResult r = TryInitPrinterCommunications();
+	TryInitPrinterCommunicationsResult r = TryInitPrinterCommunications(s->hl);
 	s->a = r.a;
 	s->f = r.f;
+	s->hl = r.hl;
 }
 /* <<< factory TryInitPrinterCommunications */
 

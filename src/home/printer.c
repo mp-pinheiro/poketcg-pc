@@ -6,6 +6,7 @@
 #include <limits.h>
 
 #include "generated/wram.h"
+#include "isr.h"
 #include "mem.h"
 /* >>> factory statics */
 #include "generated/wram.h"
@@ -234,6 +235,7 @@
 #define PrintMenuItemsText 0x0278u
 #define WhatWouldYouLikeToPrintText 0x0279u
 #define PRINTER_MENU_PARAMETERS_ADDR 0x6DADu
+#define PRINTER_INSTRUCTION_STACK 0xDFC6u
 #define PRINTER_QUALITY_PARAMETERS_ADDR 0x6DF5u
 /* <<< factory statics */
 
@@ -693,7 +695,9 @@ SendPrinterPacketResult SendPrinterPacket(uint8_t b, uint8_t c, uint8_t d, uint8
 					status_response = printer_status_byte();
 				gb_write8(rSB, status_response);
 			}
+			isr_context_enter();
 			SerialHandler();
+			isr_context_leave();
 			if (budget != UINT_MAX) {
 				runtime_serial_consume(1u);
 				budget--;
@@ -709,11 +713,11 @@ SendPrinterPacketResult SendPrinterPacket(uint8_t b, uint8_t c, uint8_t d, uint8
 	uint8_t device = gb_read8(wSerialTransferData_ADDR);
 	if (device != 0x81u) {
 		gb_write8(wPrinterStatus_ADDR, 0xFFu);
-		return (SendPrinterPacketResult){0xFFu, 0x10u};
+		return (SendPrinterPacketResult){0xFFu, 0x10u, wSerialEnd_ADDR};
 	}
 	uint8_t status = gb_read8(wPrinterStatus_ADDR);
 	uint8_t f = (uint8_t)((status & 0xF1u) == 0u ? 0x80u : 0x10u);
-	return (SendPrinterPacketResult){status, f};
+	return (SendPrinterPacketResult){status, f, (uint16_t)((wSerialEnd_ADDR & 0xFF00u) | status)};
 }
 /* <<< factory SendPrinterPacket */
 
@@ -740,31 +744,31 @@ ShowPrinterConnectionErrorSceneResult ShowPrinterConnectionErrorScene(
  * three times before the time-out exit. Neither oracle ever completes a
  * serial transfer, so only the B exit returns on the reference; the packet
  * paths below run on the PC runtime's synchronous SendPrinterPacket. */
-TryInitPrinterCommunicationsResult TryInitPrinterCommunications(void)
+TryInitPrinterCommunicationsResult TryInitPrinterCommunications(uint16_t hl)
 {
 	wPrinterInitAttempts = 0u;
 	for (;;) {
 		DoFrame();
 		if ((hKeysHeld & PAD_B) != 0u) {
 			wPrinterStatus = 0u;
-			/* xor a leaves zero set, scf adds carry: a = 0, f = $90 */
-			return (TryInitPrinterCommunicationsResult){0x00u, 0x90u};
+			return (TryInitPrinterCommunicationsResult){0x00u, 0x90u, hl};
 		}
-		SendPrinterPacketResult packet = SendPrinterPacket(0u, 0u, PRINTERPKT_NUL, FALSE, 0u);
+		SendPrinterPacketResult packet = SendPrinterPacket(0u, 0u, PRINTERPKT_NUL, FALSE, hl);
+		hl = packet.hl;
 		if ((packet.f & 0x10u) != 0u) {
 			for (uint8_t frames = 10u; frames != 0u; frames--)
 				DoFrame();
 		} else if ((packet.a & (uint8_t)((1u << PRINTER_STATUS_BUSY) | (1u << PRINTER_STATUS_PRINTING))) != 0u) {
 			continue;
 		}
-		packet = SendPrinterPacket(0u, 0u, PRINTERPKT_INIT, FALSE, 0u);
+		packet = SendPrinterPacket(0u, 0u, PRINTERPKT_INIT, FALSE, hl);
+		hl = packet.hl;
 		if ((packet.f & 0x10u) == 0u)
-			return (TryInitPrinterCommunicationsResult){packet.a, packet.f};
+			return (TryInitPrinterCommunicationsResult){packet.a, packet.f, hl};
 		wPrinterInitAttempts = (uint8_t)(wPrinterInitAttempts + 1u);
 		if (wPrinterInitAttempts < 3u)
 			continue;
-		/* cp 3 sets zero at the limit, scf adds carry: a = attempts, f = $90 */
-		return (TryInitPrinterCommunicationsResult){wPrinterInitAttempts, 0x90u};
+		return (TryInitPrinterCommunicationsResult){wPrinterInitAttempts, 0x90u, hl};
 	}
 }
 /* <<< factory TryInitPrinterCommunications */
@@ -851,8 +855,14 @@ SendTilesToPrinterResult SendTilesToPrinter(uint16_t hl, uint8_t b, uint8_t c)
 SendPrinterInstructionPacketResult SendPrinterInstructionPacket(uint16_t hl, uint16_t saved_hl)
 {
 	SendPrinterPacketResult packet = SendPrinterPacket(0u, 0u, PRINTERPKT_DATA, FALSE, hl);
-	if ((packet.f & 0x10u) == 0u)
-		packet = SendPrinterPacket(0u, 4u, PRINTERPKT_PRINT_INSTRUCTION, FALSE, saved_hl);
+	if ((packet.f & 0x10u) == 0u) {
+		uint16_t data = runtime_instruction_address(PRINTER_INSTRUCTION_STACK);
+		gb_write8(data, (uint8_t)hl);
+		gb_write8((uint16_t)(data + 1u), (uint8_t)(hl >> 8));
+		gb_write8((uint16_t)(data + 2u), (uint8_t)saved_hl);
+		gb_write8((uint16_t)(data + 3u), (uint8_t)(saved_hl >> 8));
+		packet = SendPrinterPacket(0u, 4u, PRINTERPKT_PRINT_INSTRUCTION, FALSE, data);
+	}
 	return (SendPrinterInstructionPacketResult){packet.a, packet.f, saved_hl};
 }
 /* <<< factory SendPrinterInstructionPacket */
@@ -900,7 +910,7 @@ SendPrinterInstructionPacket_1SheetResult SendPrinterInstructionPacket_1Sheet_3L
  * `or a`: a=1, f=0x00. */
 LoadGfxBufferForPrinterResult LoadGfxBufferForPrinter(uint16_t hl)
 {
-	TryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();
+	TryInitPrinterCommunicationsResult init = TryInitPrinterCommunications(hl);
 	if ((init.f & 0x10u) != 0u)
 		return (LoadGfxBufferForPrinterResult){init.a, init.f, hl};
 
@@ -994,7 +1004,7 @@ SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t 
 			return (SendCardListToPrinterResult){loaded.a, loaded.f, b, c, d, e, loaded.hl};
 		hl = loaded.hl;
 	}
-	TryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();
+	TryInitPrinterCommunicationsResult init = TryInitPrinterCommunications(hl);
 	if ((init.f & 0x10u) != 0u)
 		return (SendCardListToPrinterResult){init.a, init.f, b, c, d, e, hl};
 	SendPrinterInstructionPacket_1SheetResult packet = SendPrinterInstructionPacket_1Sheet_3LineFeeds();
@@ -1005,7 +1015,7 @@ SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t 
 /* >>> factory Func_19f87 */
 Func_19f87Result Func_19f87(void)
 {
-	TryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();
+	TryInitPrinterCommunicationsResult init = TryInitPrinterCommunications(0u);
 	if ((init.f & 0x10u) != 0u)
 		return (Func_19f87Result){init.a, init.f};
 
@@ -1022,7 +1032,7 @@ Func_19f87Result Func_19f87(void)
 /* >>> factory Func_1a011 */
 Func_1a011Result Func_1a011(void)
 {
-	TryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();
+	TryInitPrinterCommunicationsResult init = TryInitPrinterCommunications(0u);
 	if ((init.f & 0x10u) != 0u)
 		return (Func_1a011Result){init.a, init.f};
 
@@ -1042,7 +1052,7 @@ Func_1a011Result Func_1a011(void)
 /* >>> factory Func_19f99 */
 Func_19f99Result Func_19f99(void)
 {
-	TryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();
+	TryInitPrinterCommunicationsResult init = TryInitPrinterCommunications(0u);
 	if ((init.f & 0x10u) != 0u)
 		return (Func_19f99Result){init.a, init.f};
 

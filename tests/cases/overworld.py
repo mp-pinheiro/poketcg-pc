@@ -1127,8 +1127,8 @@ CASES["LoadMap"] = [
 # >>> factory PCMenu_Print
 CONTRACT["PCMenu_Print"] = {"compare": (), "preserve": ()}
 CASES["PCMenu_Print"] = [
-    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xFF92: b"\x55", 0xFF93: b"\x66", 0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00"}, "read": {0xFF92: 1, 0xFF93: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xFF92: b"\x55", 0xFF93: b"\x66", 0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00"}, read={0xFF92: 1, 0xFF93: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xFF92: b"\x55", 0xFF93: b"\x66"}, "read": {0xFF92: 1, 0xFF93: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xFF92: b"\x55", 0xFF93: b"\x66"}, read={0xFF92: 1, 0xFF93: 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PCMenu_Print
 

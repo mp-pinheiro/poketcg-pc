@@ -1,0 +1,12 @@
+{
+  "goal": "Two consoles linked at the Battle Center counter play a 2-prize link duel to its end and return to the overworld",
+  "link": {
+    "peer": "link-duel-b",
+    "side": 0
+  },
+  "name": "link-duel-a",
+  "ordinals": 50392,
+  "pokes": {},
+  "recorded": "2026-09-24T00:25:39+00:00",
+  "schema": 1
+}

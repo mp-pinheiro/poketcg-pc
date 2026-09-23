@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import widescreen
 import witness
 from tools.oracle.gbrecomp_oracle import Oracle
 
@@ -42,6 +43,10 @@ SCENARIO_REQUIREMENTS = {
     "link-ir-printer": "completion:v2:p7:link-ir",
     "printer": "completion:v2:p7:printer",
     "faithful-4x3-corpus": "completion:v2:faithful-4x3:package",
+    "span-widening": "completion:v2:p8:ppu:span-widening",
+    "viewport-rect": "completion:v2:p8:runtime:viewport-rect",
+    "wide-layouts": "completion:v2:p8:ui:wide-layouts",
+    "render-only": "completion:v2:p8:features:render-only",
     "widescreen-corpus": "completion:v2:p8:release:enhanced-corpus",
 }
 
@@ -61,6 +66,10 @@ SCENARIO_SCHEMAS = {
     "link-ir-printer": "transport-corpus-v1",
     "printer": "printer-corpus-v1",
     "faithful-4x3-corpus": "package-proof-v1",
+    "span-widening": "widescreen-corpus-v1",
+    "viewport-rect": "widescreen-corpus-v1",
+    "wide-layouts": "widescreen-corpus-v1",
+    "render-only": "feature-neutrality-v1",
     "widescreen-corpus": "widescreen-corpus-v1",
 }
 
@@ -176,6 +185,10 @@ def boot_input(frames: int) -> list[int]:
 #   entry, $FFE8 through ExecuteGameEvent -> GameEvent_Duel -> StartDuel_VSAIOpp
 #   -- which the C port, having no Game Boy stack, cannot reproduce; the same
 #   class as the stack regions above.
+# - wram[0xBF7..0xBF8] (wLinkOpponentTurnReturnAddress): the Game Boy stack
+#   pointer SetLinkDuelTransmissionFrameFunction saves (core.asm:6398-6404)
+#   for LinkOpponentTurnFrameFunction's `ld sp, hl` unwind (serial.asm:504-521),
+#   the same class as wDuelReturnAddress above.
 # - wram[0x1668] (wNextScrollLY): a beam-position readout. ApplyBackgroundScroll
 #   (scroll.asm:60-108, the STAT handler DistortScreen installs) stores
 #   `rLY + 1` after each per-line rSCX write and exits once LY reaches $60, so
@@ -187,7 +200,7 @@ def boot_input(frames: int) -> list[int]:
 COMPARATOR_EXCLUDED_RANGES = {
     "hram": [(0, 1), (13, 14), (96, 128)],
     "wram": [(0xAA9, 0xAAA), (0xAB8, 0xAB9), (0xABA, 0xABD), (0xAC0, 0xAC2),
-             (0xAC3, 0xAC4), (0xBE5, 0xBE7), (0x1668, 0x1669), (0x1EE5, 0x2000)],
+             (0xAC3, 0xAC4), (0xBE5, 0xBE7), (0xBF7, 0xBF9), (0x1668, 0x1669), (0x1EE5, 0x2000)],
     "io": [(4, 6), (15, 16), (16, 64), (65, 66), (68, 70), (104, 108)],
 }
 
@@ -285,6 +298,14 @@ def main(argv: list[str] | None = None) -> int:
         "required_edges": 0,
         "covered_edges": 0,
     }
+    if args.scenario in widescreen.SCENARIOS:
+        EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+        try:
+            artifact.update(widescreen.run(args.scenario))
+        except (OSError, ValueError, json.JSONDecodeError, RuntimeError) as exc:
+            artifact["failure"] = "SCENARIO_ERROR"
+            artifact["detail"] = str(exc)
+        return finish(args.scenario, requirement, artifact)
     if args.scenario in witness.SPECS or args.scenario in witness.NEGATIVES:
         EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
         try:

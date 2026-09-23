@@ -1,4 +1,5 @@
 #include "home/link_duel.h"
+#include "runtime.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -68,7 +69,7 @@ void _SetUpAndStartLinkDuel(void)
 		wDuelType = DUELTYPE_LINK;
 		EmptyScreen();
 
-		if (wSerialOp == 0x29u) {
+		if (gb_read8(wSerialOp_ADDR) == 0x29u) {
 			hWhoseTurn = PLAYER_TURN;
 			(void)CopyPlayerName(wDefaultText_ADDR);
 			SerialExchangeResult names = SerialExchangeBytes(
@@ -91,16 +92,18 @@ void _SetUpAndStartLinkDuel(void)
 					EnableLCD();
 					wNPCDuelPrizes = PRIZES_4;
 					wPrizeCardSelectionFrameCounter = 0u;
+					uint8_t symbol;
+					uint8_t held;
 					for (;;) {
 						DoFrame();
 						uint8_t prize = wNPCDuelPrizes;
-						uint8_t symbol = (uint8_t)(prize + SYM_0);
+						symbol = (uint8_t)(prize + SYM_0);
 						uint8_t frame = wPrizeCardSelectionFrameCounter;
 						wPrizeCardSelectionFrameCounter = (uint8_t)(frame + 1u);
 						if ((frame & 0x10u) != 0u)
 							symbol = SYM_SPACE;
 						WriteByteToBGMap0(symbol, 9u, 6u);
-						uint8_t held = hDPadHeld;
+						held = hDPadHeld;
 						if ((held & (uint8_t)(1u << B_PAD_LEFT)) != 0u) {
 							prize = (uint8_t)(prize - 1u);
 							if (prize < PRIZES_2)
@@ -117,7 +120,8 @@ void _SetUpAndStartLinkDuel(void)
 						if ((held & (uint8_t)(1u << B_PAD_A)) != 0u)
 							break;
 					}
-					SerialSend8Bytes(wNPCDuelPrizes, 0u, 0u, 0u, 0u, 0u);
+					SerialSend8Bytes((uint8_t)(SEND8_ALL & ~SEND8_D), wNPCDuelPrizes, 0x20u, held, 6u,
+						symbol, wPrizeCardSelectionFrameCounter_ADDR);
 				}
 			}
 		} else {
@@ -170,5 +174,6 @@ void _SetUpAndStartLinkDuel(void)
 	(void)ExchangeRNG(0u, 0u, 0u, 0u);
 	StartDuel_VSLinkOpp();
 	SwitchToCGBDoubleSpeed();
+	runtime_mark_event(RUNTIME_EVENT_LINK_SESSION_CLOSED);
 }
 /* <<< factory _SetUpAndStartLinkDuel */

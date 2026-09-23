@@ -2,6 +2,7 @@
 
 #include "mem.h"
 #include "printer_sink.h"
+#include "link.h"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -65,6 +66,8 @@ static const char *runtime_event_name(RuntimeEvent event)
 		return "CREDITS_REACHED";
 	case RUNTIME_EVENT_PRINTER_PNG_CLOSED:
 		return "PRINTER_PNG_CLOSED";
+	case RUNTIME_EVENT_LINK_SESSION_CLOSED:
+		return "LINK_SESSION_CLOSED";
 	default:
 		return "NONE";
 	}
@@ -127,8 +130,13 @@ int runtime_write_state(const char *path, const RuntimeResult *runtime)
 	ok = ok && fputs("]", file) >= 0;
 	ok = ok && fputs(",\"framebuffer\":", file) >= 0 &&
 	     write_words(file, runtime->framebuffer, SCREEN_W * SCREEN_H) == 0;
+	if (runtime->present_width)
+		ok = ok && fprintf(file, ",\"wide_width\":%d,\"wide_viewport\":[%d,%d],\"wide_room\":%d,\"framebuffer_wide\":",
+		                   runtime->present_width, runtime->present_x0, runtime->present_x1, runtime->present_room) >= 0 &&
+		     write_words(file, runtime->present, (size_t)runtime->present_width * SCREEN_H) == 0;
 	ok = ok && fputs(",\"save\":", file) >= 0 && write_bytes(file, g_sram, sizeof g_sram) == 0;
-	ok = ok && fputs(",\"transport\":[],\"printer\":", file) >= 0 &&
+	ok = ok && fprintf(file, ",\"transport\":{\"exchanges\":%u,\"received_crc\":%u},\"printer\":",
+	                     (unsigned)link_transport_exchanges(), (unsigned)link_transport_crc()) >= 0 &&
 	     write_printer(file) == 0 && fputs(",\"scratch\":", file) >= 0 &&
 	     write_bytes(file, g_scratch, sizeof g_scratch) == 0;
 	ok = ok && fputc('}', file) != EOF;

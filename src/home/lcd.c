@@ -60,6 +60,7 @@ void DisableLCD(void)
 	gb_write8(rOBP0, 0);
 	gb_write8(rOBP1, 0);
 	gb_write8(rIE, interrupt_enable);
+	frame_boundary_isr_site(ISR_SITE_DISABLE_LCD);
 	/* lcd.asm:43-44 masks IE_VBLANK before the rLY poll and lcd.asm:55
 	 * restores it after; the PPU raises the VBlank IF request at line 144
 	 * regardless of IE (gb-recompiled runtime ppu.c), so whenever the poll

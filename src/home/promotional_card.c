@@ -1,4 +1,5 @@
 #include "home/promotional_card.h"
+#include "home/frames.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -75,14 +76,8 @@ void _ShowPromotionalCardScreen(uint8_t a)
 		hWhoseTurn = PLAYER_TURN;
 		(void)_DisplayCardDetailScreen(text);
 
-		/* `.loop`: the ROM waits here until the medal jingle has run out, and
-		 * only the timer ISR brings that about -- SoundTimerHandler is what
-		 * walks each channel to its `music_end` so CheckForEndOfSong can mark
-		 * wCurSongID finished. The port has no interrupt source, so the wait
-		 * drives that same handler itself; nothing else on this thread can
-		 * ever clear the flag. */
 		while (AssertSongFinished() != 0u)
-			SoundTimerHandler();
+			frame_boundary_busy_wait();
 
 		ResumeSong();
 		/* Everything but `a` is callee residue by this point, and

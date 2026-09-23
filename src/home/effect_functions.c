@@ -7998,7 +7998,7 @@ uint8_t HandlePlayerMetronomeEffect(uint8_t a)
 	/* b is callee residue no ported callee reports, and SerialSend8Bytes stages
 	 * it into wTempSerialBuf only against a link opponent. hl is the second
 	 * wMetronomeSelectedAttack byte, where the asm's `inc hl` left it. */
-	SerialSend8Bytes(cost, sent.f, 0u, cost,
+	SerialSend8Bytes((uint8_t)(SEND8_ALL & ~SEND8_B), cost, sent.f, 0u, cost,
 		(uint16_t)((uint16_t)chosen_card << 8 | chosen_attack),
 		(uint16_t)(wMetronomeSelectedAttack_ADDR + 1u));
 
@@ -8149,7 +8149,7 @@ ShuffleCardsInDeckResult MrFuji_ReturnToDeckEffect(uint8_t b, uint8_t c, uint8_t
 SerialTossCoinATimesResult Serial_TossCoinATimes(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	(void)SetOppAction_SerialSendDuelData(OPPACTION_TOSS_COIN_A_TIMES, (uint16_t)((uint16_t)d << 8 | e));
-	SerialSend8Bytes(a, f, b, c, (uint16_t)((uint16_t)d << 8 | e), hl);
+	SerialSend8Bytes(SEND8_ALL, a, f, b, c, (uint16_t)((uint16_t)d << 8 | e), hl);
 	TossCoinATimesResult result = TossCoinATimes(a, f, b, c, d, e, hl);
 	return (SerialTossCoinATimesResult){result.a, result.f, result.hl};
 }
@@ -10791,7 +10791,7 @@ void Peek_SelectEffect(void)
 		FinishQueuedAnimations();
 		HandlePeekSelectionV2Result selected = HandlePeekSelection(0x80u);
 		hAIPkmnPowerEffectParam = selected.a;
-		SerialSend8Bytes(selected.a, selected.f, 0u, 0u, 0u, 0u);
+		SerialSend8Bytes(SEND8_A | SEND8_F, selected.a, selected.f, 0u, 0u, 0u, 0u);
 	}
 
 	uint8_t param = hAIPkmnPowerEffectParam;
@@ -12324,7 +12324,7 @@ void Heal_RemoveDamageEffect(void)
 				if (GetCardDamageAndMaxHP(location).a != 0u)
 					break;
 			}
-			SerialSend8Bytes(hTempPlayAreaLocation_ff9d, 0u, 0u, 0u, 0u, 0u);
+			SerialSend8Bytes(SEND8_A, hTempPlayAreaLocation_ff9d, 0u, 0u, 0u, 0u, 0u);
 		}
 	}
 	DuelistVarResult flags = GetTurnDuelistVariable((uint8_t)(hTemp_ffa0 + DUELVARS_ARENA_CARD_FLAGS));

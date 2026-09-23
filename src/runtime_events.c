@@ -88,3 +88,34 @@ void runtime_serial_consume(unsigned steps)
 	if (g_serial.counts)
 		g_serial.used += steps;
 }
+
+static struct {
+	const uint32_t *start;
+	const uint16_t *address;
+	size_t count;
+	uint32_t interval;
+	uint32_t cursor;
+} g_stack = {NULL, NULL, 0, UINT32_MAX, 0};
+
+void runtime_stack_track(const uint32_t *start, const uint16_t *address, size_t count)
+{
+	g_stack.start = start;
+	g_stack.address = address;
+	g_stack.count = start ? count : 0;
+	g_stack.interval = UINT32_MAX;
+	g_stack.cursor = 0;
+}
+
+uint16_t runtime_instruction_address(uint16_t fallback)
+{
+	uint32_t interval = frame_boundary_doframe_ordinal();
+	if (!g_stack.start || interval >= g_stack.count)
+		return fallback;
+	if (g_stack.interval != interval) {
+		g_stack.interval = interval;
+		g_stack.cursor = g_stack.start[interval];
+	}
+	if (g_stack.cursor >= g_stack.start[interval + 1u])
+		return fallback;
+	return g_stack.address[g_stack.cursor++];
+}

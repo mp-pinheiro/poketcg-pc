@@ -186,11 +186,15 @@ void LoadGeneralSaveDataFromDE(uint16_t de)
 		/* p[4]/p[5] (min/max) are ignored on the load path - save.asm:408-412. */
 
 		n = count ? count : 0x10000u;
-		while (n--)
+		while (n--) {
 			/* dst can be $556C (.EmptySRAMSlot); gb_write8 below $8000 decodes
 			 * that as an MBC5 register write, not a memory write - the RAM
 			 * bank select this whole slice exists to model. */
-			gb_write8(dst++, gb_read8(src++));
+			uint8_t v = gb_read8(src++);
+			if (dst == wPlayTimeCounter_ADDR && gb_read8(wPlayTimeCounterEnable_ADDR))
+				frame_boundary_timer_sync();
+			gb_write8(dst++, v);
+		}
 
 		gb_write8(wTempPointer_ADDR + 0, (uint8_t)src);
 		gb_write8(wTempPointer_ADDR + 1, (uint8_t)(src >> 8));

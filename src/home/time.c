@@ -9,6 +9,7 @@
 #include "home/music1.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
+#include "serial_track.h"
 #define IN_TIMER 0x01u
 #define BANK_SOUND_TIMER_HANDLER 0x3Du
 /* <<< factory statics */
@@ -135,7 +136,8 @@ TimerSetupResult SetupTimer(void)
 /* >>> factory TimerHandler */
 void TimerHandler(void)
 {
-	SerialTimerHandler();
+	if (!g_serial_track_on)
+		SerialTimerHandler();
 	uint8_t counter = wTimerCounter;
 	wTimerCounter = (uint8_t)(counter + 1u);
 	if ((counter & 0x3u) != 0u)

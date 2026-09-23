@@ -186,6 +186,7 @@ def _library() -> tuple[ctypes.CDLL, dict[str, Any]]:
     library.gambatte_getaddrbank.argtypes = [ctypes.c_void_p, ctypes.c_ushort]
     library.gambatte_getaddrbank.restype = ctypes.c_uint
     library.gambatte_setwritecallback.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+    library.gambatte_setreadcallback.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
     library.gambatte_newstatelen.argtypes = [ctypes.c_void_p]
     library.gambatte_newstatelen.restype = ctypes.c_int
     library.gambatte_cpuwrite.argtypes = [ctypes.c_void_p, ctypes.c_ushort, ctypes.c_ubyte]
@@ -321,6 +322,61 @@ class Printer:
         return {"attached": 1, "pages": len(self.pages), "band_bytes": len(self.bands),
                 "status": self.status, "bands": list(self.bands)}
 
+    def checkpoint_state(self) -> dict[str, Any]:
+        return {
+            "state": self.state, "command": self.command, "compression": self.compression,
+            "length": self.length, "checksum": self.checksum, "claimed": self.claimed,
+            "payload": self.payload.hex(), "bands": self.bands.hex(), "status": self.status,
+            "exchanges": self.exchanges,
+            "pages": [[tiles.hex(), palette] for tiles, palette in self.pages],
+        }
+
+    def load_state(self, saved: dict[str, Any]) -> None:
+        self.state = saved["state"]
+        self.command = saved["command"]
+        self.compression = saved["compression"]
+        self.length = saved["length"]
+        self.checksum = saved["checksum"]
+        self.claimed = saved["claimed"]
+        self.payload = bytearray.fromhex(saved["payload"])
+        self.bands = bytearray.fromhex(saved["bands"])
+        self.status = saved["status"]
+        self.exchanges = saved["exchanges"]
+        self.pages = [(bytes.fromhex(tiles), palette) for tiles, palette in saved["pages"]]
+
+
+
+class LinkedPair:
+    SLICE = 64
+
+    def __init__(self, left: "Core", right: "Core") -> None:
+        self.cores = (left, right)
+        self._holders = []
+        for index, core in enumerate(self.cores):
+            holder = LINK_CALLBACK(lambda index=index: self._clock(index))
+            self._holders.append(holder)
+            core.library.gambatte_setlinkcallback(core.core, ctypes.cast(holder, ctypes.c_void_p))
+            core.library.gambatte_linkstatus(core.core, LINK_ENABLE)
+        self.exchanges = 0
+
+    def _clock(self, index: int) -> None:
+        me, other = self.cores[index], self.cores[1 - index]
+        status = me.library.gambatte_linkstatus
+        out_me = status(me.core, LINK_GET_OUT) & 0xFF
+        status(me.core, LINK_ACK_CLOCK)
+        out_other = status(other.core, LINK_GET_OUT) & 0xFF
+        status(other.core, out_me)
+        status(me.core, out_other)
+        self.exchanges += 1
+
+    def advance(self, samples: int = SLICE) -> None:
+        for core in self.cores:
+            emitted = ctypes.c_uint(samples)
+            core.library.gambatte_runfor(
+                core.core, core._framebuffer, WIDTH, core._sound, ctypes.byref(emitted)
+            )
+            core.samples += int(emitted.value)
+            core._sink_sound(int(emitted.value))
 
 def render_page(tiles: bytes, palette: int) -> bytes:
     """160-wide greyscale rows from 2bpp tiles, the mapping printer_write_png uses."""
@@ -467,6 +523,13 @@ class Core:
             self.core, ctypes.cast(holder, ctypes.c_void_p)
         )
 
+    def on_read(self, callback: Callable[[int, int], None]) -> None:
+        holder = MEMORY_CALLBACK(callback)
+        self._keepalive.append(holder)
+        self.library.gambatte_setreadcallback(
+            self.core, ctypes.cast(holder, ctypes.c_void_p)
+        )
+
     def step_frame(self) -> None:
         """One movie frame, the way BizHawk's Gambatte core advances one
         (Gameboy.cs FrameAdvance). `frame_mode` names its sync setting:
@@ -541,6 +604,8 @@ class Core:
         path = self.checkpoint_dir / f"checkpoint-{self.ordinal:07d}.bin"
         meta = {"ordinal": self.ordinal, "frame": self.frame, "samples": self.samples,
                 "frame_overflow": self._frame_overflow}
+        if self.printer is not None:
+            meta["printer"] = self.printer.checkpoint_state()
         path.with_suffix(".json").write_text(json.dumps(meta))
         path.write_bytes(self.snapshot())
 
@@ -558,6 +623,8 @@ class Core:
         if best is None:
             return 0
         self.restore((directory / f"checkpoint-{best['ordinal']:07d}.bin").read_bytes())
+        if self.printer is not None:
+            self.printer.load_state(best["printer"])
         self.ordinal = best["ordinal"]
         self.frame = best["frame"]
         self.samples = best["samples"]

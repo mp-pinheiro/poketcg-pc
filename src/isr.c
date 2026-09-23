@@ -1,21 +1,21 @@
 #include "isr.h"
 
-#include "mem.h"
-#include "generated/wram.h"
-#include "home/vblank.h"
-
 #include <string.h>
 
 #define ISR_SLOTS 1024u
 #define ISR_SLOT_MASK (ISR_SLOTS - 1u)
+#define ISR_SITE_EVENTS 8u
 
 static const IsrTrack *g_track;
+static IsrDeliver g_deliver;
 static uint32_t g_interval = UINT32_MAX;
 static size_t g_cursor;
 static size_t g_end;
 static uint8_t g_delivering;
+static unsigned g_context;
 static uint32_t g_placed;
 static uint32_t g_unplaced;
+static uint32_t g_site_counts[ISR_SITE_EVENTS];
 
 static struct {
 	const void *fn;
@@ -24,23 +24,30 @@ static struct {
 static uint16_t g_touched[ISR_SLOTS];
 static uint16_t g_touched_count;
 
-void isr_set_track(const IsrTrack *track)
+static void isr_clear_counts(void)
+{
+	for (uint16_t i = 0; i < g_touched_count; i++)
+		g_counts[g_touched[i]].fn = NULL;
+	g_touched_count = 0;
+	memset(g_site_counts, 0, sizeof g_site_counts);
+}
+
+void isr_set_track(const IsrTrack *track, IsrDeliver deliver)
 {
 	g_track = track && track->count ? track : NULL;
+	g_deliver = deliver;
 	g_interval = UINT32_MAX;
 	g_cursor = 0;
 	g_end = 0;
-	g_placed = 0;
-	g_unplaced = 0;
-	g_touched_count = 0;
+	if (g_track) {
+		g_placed = 0;
+		g_unplaced = 0;
+	}
 	memset(g_counts, 0, sizeof g_counts);
+	g_touched_count = 0;
+	memset(g_site_counts, 0, sizeof g_site_counts);
 	if (g_track)
 		isr_begin_interval(0);
-}
-
-int isr_active(void)
-{
-	return g_track != NULL;
 }
 
 uint32_t isr_placed(void)
@@ -51,15 +58,6 @@ uint32_t isr_placed(void)
 uint32_t isr_unplaced(void)
 {
 	return g_unplaced;
-}
-
-void isr_begin_interval(uint32_t interval);
-
-static void isr_clear_counts(void)
-{
-	for (uint16_t i = 0; i < g_touched_count; i++)
-		g_counts[g_touched[i]].fn = NULL;
-	g_touched_count = 0;
 }
 
 static uint32_t isr_bump(const void *fn)
@@ -96,48 +94,58 @@ void isr_begin_interval(uint32_t interval)
 	g_end = g_track->start[interval + 1u];
 }
 
-static void isr_deliver(size_t index)
+static void isr_deliver_matching(int event, const void *fn, uint32_t seen)
 {
-	g_delivering = 1;
-	if (g_track->kind[index] == ISR_KIND_VBLANK) {
-		RuntimeVBlankHandler();
-		gb_write8(wVBlankCounter_ADDR, (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
-	} else {
-		(void)RuntimeLCDCHandlerOnce();
-	}
-	g_delivering = 0;
-}
-
-void isr_on_entry(const void *fn)
-{
-	if (!g_track || g_delivering || g_cursor >= g_end)
-		return;
-	uint32_t seen = isr_bump(fn);
-
 	while (g_cursor < g_end) {
 		uint16_t site = g_track->site[g_cursor];
-
-		if (site >= g_track->sites || g_track->site_fn[site] != fn
-		    || g_track->nth[g_cursor] != seen)
+		if (site >= g_track->sites || g_track->nth[g_cursor] != seen)
 			return;
-		isr_deliver(g_cursor);
+		if (event >= 0 ? g_track->site_event[site] != event : g_track->site_fn[site] != fn)
+			return;
+		g_delivering = 1;
+		g_deliver(g_interval, g_track->kind[g_cursor], g_track->ordinal[g_cursor], g_track->value[g_cursor]);
+		g_delivering = 0;
 		g_cursor++;
 		g_placed++;
 	}
 }
 
-unsigned isr_close_interval(void)
+void isr_context_enter(void)
 {
-	unsigned remainder = 0;
+	g_context++;
+}
 
+void isr_context_leave(void)
+{
+	g_context--;
+}
+
+int isr_in_context(void)
+{
+	return g_context || g_delivering;
+}
+
+void isr_on_entry(const void *fn)
+{
+	if (!g_track || g_delivering || g_context || g_cursor >= g_end)
+		return;
+	isr_deliver_matching(-1, fn, isr_bump(fn));
+}
+
+void isr_on_site(unsigned site)
+{
+	if (!g_track || g_delivering || g_context || site >= ISR_SITE_EVENTS)
+		return;
+	uint32_t seen = ++g_site_counts[site];
+	if (g_cursor >= g_end)
+		return;
+	isr_deliver_matching((int)site, NULL, seen);
+}
+
+void isr_close_interval(void)
+{
 	if (!g_track)
-		return 0;
-	while (g_cursor < g_end) {
-		if (g_track->kind[g_cursor] == ISR_KIND_VBLANK)
-			remainder++;
-		isr_deliver(g_cursor);
-		g_cursor++;
-		g_unplaced++;
-	}
-	return remainder;
+		return;
+	g_unplaced += (uint32_t)(g_end - g_cursor);
+	g_cursor = g_end;
 }

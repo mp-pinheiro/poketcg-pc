@@ -48,9 +48,11 @@ import argparse
 from bisect import bisect_right
 import ctypes
 import struct
+import threading
 import sys
 import zlib
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools" / "completion"))
@@ -109,7 +111,7 @@ IDLE_RUN = 150
 # mask: the OAM shadow, VBlank/timer/play-time counters and the RNG
 # ($CAB8-$CACD), the three cursor-blink counters, and the overworld's sprite
 # animation state and decompression scratch ($D200-$D560).
-IDLE_EXTRA_MASK = ((0xCA00, 0xCAA0), (0xCAB8, 0xCACE), (0xCD04, 0xCD05), (0xCD0F, 0xCD10),
+IDLE_EXTRA_MASK = ((0xCA00, 0xCAA0), (0xCAB8, 0xCACE), (0xCB74, 0xCBC5), (0xCD04, 0xCD05), (0xCD0F, 0xCD10),
                    (0xCEA3, 0xCEA4), (0xD200, 0xD560))
 
 
@@ -324,9 +326,9 @@ class Driver:
 
     def __init__(self, base_masks: list[int], budget: int,
                  pokes: refstream.Pokes | None = None, save: bytes | None = None,
-                 printer: bool = False) -> None:
+                 printer: bool = False, core: refstream.Core | None = None) -> None:
         self.masks = list(base_masks)
-        self.core = refstream.Core([0] * budget, pokes=pokes, save=save, printer=printer)
+        self.core = core or refstream.Core([0] * budget, pokes=pokes, save=save, printer=printer)
         self.core.input_axis = "ordinal"
         self.core.override_mask = 0
         self.budget = budget
@@ -407,6 +409,7 @@ CURRENT_DUEL_MENU_ITEM, LIST_SCROLL_OFFSET = 0xCBC6, 0xCD19
 TEXT_PROMPTS = {"WaitForWideTextBoxInput", "DrawWideTextBox_WaitForInput", "WaitForButtonAorB",
                 "DisplayDrawNCardsScreen", "DuelMainInterface", "MainDuelLoop", "DoFrameIfLCDEnabled"}
 YES_NO_PROMPTS = {"HandleYesOrNoMenu", "YesOrNoMenuWithText"}
+LINK_OPPONENT_WAITS = {"HandleWaitingLinkOpponentMenu"}
 
 
 def menu_press(current: int, target: int) -> int:
@@ -447,6 +450,10 @@ def play_duel(driver: "Driver", max_actions: int = 1200) -> None:
             print(f"duel: finished at ordinal {len(driver.masks)} turns={reader.at(DUEL_TURNS)}")
             return
         driver.idle()
+        if driver.chain and driver.chain[0] in LINK_OPPONENT_WAITS:
+            for _ in range(30):
+                driver.step(0)
+            continue
         prompt = prompt_of(driver.chain)
         # Text pages share their WRAM state, so the screen's tilemap is part
         # of what "the same prompt" means.
@@ -585,6 +592,164 @@ def decide_turn(reader: DuelReader, failed_attaches: set[int]) -> tuple:
     return ("done",)
 
 
+class SideDriver(Driver):
+    def __init__(self, link: "LinkedDriver", index: int, core: refstream.Core, budget: int) -> None:
+        super().__init__([], budget, core=core)
+        self.link = link
+        self.index = index
+        self.ready = False
+        self.released = False
+        self.finished = False
+
+    def step(self, mask: int) -> None:
+        self.core.override_mask = mask
+        self.masks.append(mask)
+        self._anchor = False
+        self.link.wait_anchor(self)
+
+    def close(self) -> None:
+        pass
+
+
+class LinkedDriver:
+    def __init__(self, saves: tuple[bytes | None, bytes | None], budget: int) -> None:
+        self.cores = [refstream.Core([0] * budget, save=save) for save in saves]
+        self.pair = refstream.LinkedPair(self.cores[0], self.cores[1])
+        self.sides = [SideDriver(self, index, core, budget) for index, core in enumerate(self.cores)]
+        self.budget_samples = budget * refstream.SAMPLES_PER_FRAME
+        self.condition = threading.Condition()
+        self.error: BaseException | None = None
+
+    def wait_anchor(self, side: SideDriver) -> None:
+        with self.condition:
+            side.ready = True
+            self.condition.notify_all()
+            while not side.released:
+                self.condition.wait()
+            side.released = False
+            if self.error is not None:
+                raise SystemExit("linked pilot stopped")
+
+    def _run_script(self, side: SideDriver, script: Any) -> None:
+        try:
+            script(side)
+        except BaseException as exc:
+            with self.condition:
+                if self.error is None:
+                    self.error = exc
+        finally:
+            with self.condition:
+                side.finished = True
+                side.ready = True
+                self.condition.notify_all()
+
+    def run(self, scripts: tuple[Any, Any]) -> None:
+        threads = [threading.Thread(target=self._run_script, args=(side, script), daemon=True)
+                   for side, script in zip(self.sides, scripts)]
+        for thread in threads:
+            thread.start()
+        start = self.cores[0].samples
+        while True:
+            with self.condition:
+                while not all(side.ready for side in self.sides):
+                    self.condition.wait()
+                if self.error is not None:
+                    raise self.error
+                if all(side.finished for side in self.sides):
+                    break
+            while not any(side._anchor for side in self.sides if not side.finished):
+                if self.cores[0].samples - start > self.budget_samples:
+                    raise SystemExit("linked pilot ran past its frame budget")
+                self.pair.advance(refstream.LinkedPair.SLICE)
+            with self.condition:
+                for side in self.sides:
+                    if side._anchor and not side.finished:
+                        side._anchor = False
+                        side.ready = False
+                        side.released = True
+                    elif side.finished:
+                        side._anchor = False
+                self.condition.notify_all()
+        for thread in threads:
+            thread.join()
+
+    def close(self) -> None:
+        for core in self.cores:
+            core.close()
+
+
+def run_steps(driver: Driver, steps: list[tuple[str, int, str]], tag: str = "") -> None:
+    for verb, value, extra in steps:
+        if verb == "hold":
+            for _ in range(int(extra) if extra else 1):
+                driver.step(value)
+        elif verb == "wait":
+            for _ in range(value):
+                driver.step(0)
+        elif verb == "idle":
+            waited = driver.idle()
+            print(f"{tag}idle: {waited} DoFrames, now at ordinal {len(driver.masks)}")
+        elif verb == "shot":
+            screenshot(driver.core, SHOTS / f"{tag}{extra}.png")
+            print(f"{tag}shot {extra}: ordinal {len(driver.masks)} -> {SHOTS / (tag + extra + '.png')}")
+        elif verb == "peek":
+            print(f"{tag}peek: ordinal {len(driver.masks)}\n{peek(driver.core)}")
+            print(driver.reader.describe(driver.waiting) + f"\nstack: {' < '.join(driver.chain)}")
+        elif verb == "duel":
+            play_duel(driver)
+        elif verb == "dismiss":
+            dismiss_text(driver)
+        elif verb == "yes":
+            answer_yes(driver)
+
+
+def write_session(out: Path, masks: list[int], pokes: refstream.Pokes, save: bytes | None, goal: str,
+                  printer: bool = False, link: dict[str, Any] | None = None) -> None:
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "input.txt").write_text("\n".join(str(m) for m in masks) + "\n", encoding="utf-8")
+    if pokes:
+        (out / "pokes.txt").write_text(refstream.pokes_text(pokes), encoding="utf-8")
+    session.inherit_save(out, save)
+    session.record_meta(out.name, goal, printer=printer, link=link)
+
+
+def main_linked(args: argparse.Namespace) -> int:
+    bases = []
+    for base in (args.base, args.link_from or args.base):
+        masks, meta = session.load_session(base)
+        if meta["pokes"]:
+            raise SystemExit(f"a linked side starts from a poke-free base; {base} has pokes")
+        bases.append((masks, meta))
+    saves = tuple(Path(path).read_bytes() if path else meta["save"]
+                  for path, (_masks, meta) in zip((args.save, args.link_save or args.save), bases))
+    prefixes = [masks[:args.base_ordinals] if args.base_ordinals is not None else masks for masks, _meta in bases]
+    steps = (parse_script(args.script), parse_script(args.link_script))
+    budget = (max(len(prefix) for prefix in prefixes) + 80000) * 2 + 400
+    driver = LinkedDriver(saves, budget)
+    starts = [0, 0]
+
+    def script_for(index: int) -> Any:
+        def run(side: SideDriver) -> None:
+            side.replay(prefixes[index])
+            starts[index] = len(side.masks)
+            run_steps(side, steps[index], tag="ab"[index] + "-")
+        return run
+
+    try:
+        driver.run((script_for(0), script_for(1)))
+        masks = [side.masks for side in driver.sides]
+    finally:
+        driver.close()
+    outs = (args.out, args.link_out)
+    for index, out in enumerate(outs):
+        peer = outs[1 - index].name
+        write_session(out, masks[index], {}, saves[index], args.goal,
+                      link={"peer": peer, "side": index})
+        print(f"wrote {out / 'input.txt'}: {len(masks[index])} DoFrames ({len(masks[index]) - starts[index]} new)")
+    print(f"LINK exchanges={driver.pair.exchanges}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--from", dest="base", required=True, help="session to extend")
@@ -596,7 +761,16 @@ def main(argv: list[str] | None = None) -> int:
                         help="pokes.txt applied on the reference and copied into the new session")
     parser.add_argument("--printer", action="store_true",
                         help="a Game Boy Printer answers on the link, on the reference and the port")
+    parser.add_argument("--save", help="cartridge RAM image both lanes start from")
+    parser.add_argument("--link-script", type=Path, help="the second console's script, linked to the first")
+    parser.add_argument("--link-out", type=Path, help="the second console's session directory")
+    parser.add_argument("--link-from", help="the second console's base session; default --from")
+    parser.add_argument("--link-save", help="the second console's cartridge RAM image; default --save")
     args = parser.parse_args(argv)
+    if args.link_script is not None:
+        if args.link_out is None:
+            raise SystemExit("--link-script needs --link-out")
+        return main_linked(args)
 
     base_masks, base_meta = session.load_session(args.base)
     if args.base_ordinals is not None:

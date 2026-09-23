@@ -428,10 +428,10 @@ CASES["HandlePrinterError"] = [
 CONTRACT["SendPrinterInstructionPacket"] = {"compare": (), "preserve": ()}
 CASES["SendPrinterInstructionPacket"] = [
     {"hl": 0xC100, "stack": [0xC100],
-     "wram": {0xC100: b"\x00\x00\x00\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
+     "wram": {0xC100: b"\x00\x00\x00\x00", 0xCE6E: b"\x00"},
      "read": {0xCE6A: 2}, "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, stack=[0x1234],
-         wram={0xCE6E: b"\x81", 0xCE6F: b"\x00"},
+         wram={0xCE6E: b"\x00"},
          read={0xCE6A: 2}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory SendPrinterInstructionPacket
@@ -981,8 +981,8 @@ MUTATIONS["HandlePrinterError"] = {"source_symbol": "HandlePrinterError", "befor
 # >>> factory-mutation SendPrinterInstructionPacket
 MUTATIONS["SendPrinterInstructionPacket"] = {
     "source_symbol": "SendPrinterInstructionPacket",
-    "before": "\t\tpacket = SendPrinterPacket(0u, 4u, PRINTERPKT_PRINT_INSTRUCTION, FALSE, saved_hl);",
-    "after": "\t\tpacket = SendPrinterPacket(0u, 4u, PRINTERPKT_PRINT_INSTRUCTION, FALSE, (uint16_t)(saved_hl + 1u));",
+    "before": "\tSendPrinterPacketResult packet = SendPrinterPacket(0u, 0u, PRINTERPKT_DATA, FALSE, hl);",
+    "after": "\tSendPrinterPacketResult packet = SendPrinterPacket(0u, 0u, PRINTERPKT_DATA, FALSE, (uint16_t)(hl + 1u));",
     "case_ids": ["SendPrinterInstructionPacket-0", "SendPrinterInstructionPacket-1"],
 }
 # <<< factory-mutation SendPrinterInstructionPacket

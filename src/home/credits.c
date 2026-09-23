@@ -1,4 +1,5 @@
 #include "home/credits.h"
+#include "home/frames.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -119,6 +120,7 @@ uint8_t Func_1d765(void)
 
 terminate:
 	gb_write8(de, 0xFFu);
+	frame_boundary_isr_site(ISR_SITE_CREDITS_ARM);
 	wd665 = 0x01u;
 	return 0x01u;
 }

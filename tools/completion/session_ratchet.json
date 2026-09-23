@@ -258,7 +258,7 @@
     "confirmed_ordinal": 864424
   },
   "credits-1-explore-1": {
-    "confirmed_ordinal": 871294
+    "confirmed_ordinal": 876358
   },
   "credits-1-explore-2": {
     "confirmed_ordinal": 871294
@@ -1862,6 +1862,15 @@
   "lightning-3": {
     "confirmed_ordinal": 342217
   },
+  "link-duel-a": {
+    "confirmed_ordinal": 50392
+  },
+  "link-duel-b": {
+    "confirmed_ordinal": 52372
+  },
+  "lobby-save": {
+    "confirmed_ordinal": 110690
+  },
   "master-explore": {
     "confirmed_ordinal": 546348
   },
@@ -1872,7 +1881,7 @@
     "confirmed_ordinal": 84921
   },
   "printer-card-list": {
-    "confirmed_ordinal": 94066
+    "confirmed_ordinal": 95453
   },
   "psychic-club": {
     "confirmed_ordinal": 609719

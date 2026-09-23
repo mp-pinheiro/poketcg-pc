@@ -12210,15 +12210,17 @@ CASES["HandleTurn"] = [
 CONTRACT["HandleWaitingLinkOpponentMenu"] = {"compare": (), "preserve": ()}
 CASES["HandleWaitingLinkOpponentMenu"] = [
     {
-        "read": {wCurrentDuelMenuItem: 1},
-        "expect": {wCurrentDuelMenuItem: b"\x00"},
+        "wram": {wCurrentDuelMenuItem: b"\x01", 0xFF97: b"\xc3"},
+        "read": {wCurrentDuelMenuItem: 1, 0xFF97: 1},
+        "expect": {wCurrentDuelMenuItem: b"\x00", 0xFF97: b"\xc2"},
         "instruction_budget": 200000,
         "cycle_budget": 800000,
     },
     dict(
         POISON,
-        read={wCurrentDuelMenuItem: 1},
-        expect={wCurrentDuelMenuItem: b"\x00"},
+        wram={wCurrentDuelMenuItem: b"\x01", 0xFF97: b"\xc3"},
+        read={wCurrentDuelMenuItem: 1, 0xFF97: 1},
+        expect={wCurrentDuelMenuItem: b"\x00", 0xFF97: b"\xc2"},
         instruction_budget=200000,
         cycle_budget=800000,
     ),
@@ -12335,15 +12337,21 @@ CASES["_ContinueDuel"] = [
 CONTRACT["DoLinkOpponentTurn"] = {"compare": (), "preserve": ()}
 CASES["DoLinkOpponentTurn"] = [
     {
-        "wram": {hWhoseTurn: b"\xc2"},
-        "read": {hWhoseTurn: 1},
-        "expect": {hWhoseTurn: b"\xc2"},
+        "wram": {0xCBE1: b"\x01", 0xCBF9: b"\x01", 0xCAD3: b"\x48\x03"},
+        "read": {0xCBE1: 1, 0xCBF9: 1, 0xCAD3: 2},
+        "expect": {0xCBE1: b"\x00", 0xCBF9: b"\x00", 0xCAD3: b"\x1d\x0f"},
+        "setup": [{"fn": "CopyDMAFunction"}],
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
     },
     dict(
         POISON,
-        wram={hWhoseTurn: b"\xc2"},
-        read={hWhoseTurn: 1},
-        expect={hWhoseTurn: b"\xc2"},
+        wram={0xCBE1: b"\x01", 0xCBF9: b"\x01", 0xCAD3: b"\x48\x03"},
+        read={0xCBE1: 1, 0xCBF9: 1, 0xCAD3: 2},
+        expect={0xCBE1: b"\x00", 0xCBF9: b"\x00", 0xCAD3: b"\x1d\x0f"},
+        setup=[{"fn": "CopyDMAFunction"}],
+        instruction_budget=2000000,
+        cycle_budget=8000000,
     ),
 ]
 # <<< factory DoLinkOpponentTurn
@@ -16207,14 +16215,19 @@ MUTATIONS["HandleTurn"] = {
 # >>> factory-mutation HandleWaitingLinkOpponentMenu
 MUTATIONS["HandleWaitingLinkOpponentMenu"] = {
     "source_symbol": "HandleWaitingLinkOpponentMenu",
-    "before": "void HandleWaitingLinkOpponentMenu(void)\n{\n\tuint8_t delay = 10u;\n\twhile (delay != 0u) {\n\t\tDoFrame();\n\t\t--delay;\n\t}\n\twCurrentDuelMenuItem = 0u;",
-    "after": "void HandleWaitingLinkOpponentMenu(void)\n{\n\tuint8_t delay = 10u;\n\twhile (delay != 0u) {\n\t\tDoFrame();\n\t\t--delay;\n\t}\n\twCurrentDuelMenuItem = 1u;",
+    "before": "\twCurrentDuelMenuItem = 0u;\n\tfor (;;) {\n\t\thWhoseTurn = PLAYER_TURN;",
+    "after": "\twCurrentDuelMenuItem = 1u;\n\tfor (;;) {\n\t\thWhoseTurn = PLAYER_TURN;",
     "case_ids": ["HandleWaitingLinkOpponentMenu-0", "HandleWaitingLinkOpponentMenu-1"],
 }
 # <<< factory-mutation HandleWaitingLinkOpponentMenu
 # >>> factory-completion HandleWaitingLinkOpponentMenu
 for _record in SCHEMA2_CASES["HandleWaitingLinkOpponentMenu"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x6806, "bank": 1}
+    _record["completion"] = {
+        "mode": "entry",
+        "pc": 0x2A36,
+        "bank": 0,
+        "routine": "DrawWideTextBox_PrintTextNoDelay",
+    }
 # <<< factory-completion HandleWaitingLinkOpponentMenu
 # >>> factory-mutation HandleBetweenTurnsEvents
 MUTATIONS["HandleBetweenTurnsEvents"] = {
@@ -16275,14 +16288,19 @@ for _record in SCHEMA2_CASES["_ContinueDuel"]:
 # >>> factory-mutation DoLinkOpponentTurn
 MUTATIONS["DoLinkOpponentTurn"] = {
     "source_symbol": "DoLinkOpponentTurn",
-    "before": "void DoLinkOpponentTurn(void)\n{\n}",
-    "after": "void DoLinkOpponentTurn(void)\n{\n\thWhoseTurn = 0xC3u;\n}",
+    "before": "\twOpponentTurnEnded = 0u;\n\twSkipDuelistIsThinkingDelay = 0u;",
+    "after": "\twOpponentTurnEnded = 1u;\n\twSkipDuelistIsThinkingDelay = 0u;",
     "case_ids": ["DoLinkOpponentTurn-0", "DoLinkOpponentTurn-1"],
 }
 # <<< factory-mutation DoLinkOpponentTurn
 # >>> factory-completion DoLinkOpponentTurn
 for _record in SCHEMA2_CASES["DoLinkOpponentTurn"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x238A, "bank": 13}
+    _record["completion"] = {
+        "mode": "entry",
+        "pc": 0x67FB,
+        "bank": 1,
+        "routine": "HandleWaitingLinkOpponentMenu",
+    }
 # <<< factory-completion DoLinkOpponentTurn
 # >>> factory-mutation TryContinueDuel
 MUTATIONS["TryContinueDuel"] = {

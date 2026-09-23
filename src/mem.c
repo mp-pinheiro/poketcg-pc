@@ -1,4 +1,5 @@
 #include "mem.h"
+#include "serial_track.h"
 #include "apu.h"
 
 #include "link.h"
@@ -594,6 +595,8 @@ uint8_t gb_read8(uint16_t addr)
 {
 	watch_poll();
 	link_pump();
+	if (serial_track_watches(addr))
+		serial_track_access();
 	if (addr >= 0xA000 && addr < 0xC000 && !g_sram_enabled)
 		return 0xFF; /* open bus, as on hardware */
 	/* STAT bit 7 is unused and reads back as 1 on real hardware, so a
@@ -829,6 +832,8 @@ static void watch_poll(void)
 void gb_write8(uint16_t addr, uint8_t v)
 {
 	watch_poll();
+	if (serial_track_watches(addr))
+		serial_track_access();
 	if (addr < 0x8000) {
 		mbc5_write(addr, v);
 		return;

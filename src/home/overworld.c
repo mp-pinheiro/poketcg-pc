@@ -1622,10 +1622,8 @@ void PCMenu_Print(void)
 	Set_OBJ_8x16();
 	SetDefaultPalettes();
 	HandlePrinterMenu(PCMENU_PRINT_ADDR);
-	wLCDC = 4u;
 	Set_OBJ_8x8();
 	WhiteOutDMGPals();
-	wLCDC = 4u;
 	DoFrameIfLCDEnabled();
 }
 /* <<< factory PCMenu_Print */

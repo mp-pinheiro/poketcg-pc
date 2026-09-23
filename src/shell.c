@@ -15,6 +15,7 @@
 
 struct Shell {
 	int headless;
+	int width;
 	/* Held buttons across host passes. SDL delivers press/release edges, so the
 	 * pump has to keep the level itself or a held key lasts one pass. */
 	uint8_t buttons;
@@ -39,6 +40,7 @@ Shell *shell_create(const ShellConfig *config)
 	if (!shell)
 		return NULL;
 	shell->headless = config && config->headless;
+	shell->width = config && config->width > SCREEN_W ? config->width : SCREEN_W;
 #ifdef POKETCG_HAVE_SDL
 	/* Video alone gates the window. Audio is a separate subsystem on purpose: a host
 	 * with no audio device (CI, WSL without a dsp node) must still get a window, and
@@ -58,11 +60,11 @@ Shell *shell_create(const ShellConfig *config)
 				SDL_PauseAudioDevice(shell->audio_device, 0);
 		}
 		shell->window = SDL_CreateWindow("poketcg", SDL_WINDOWPOS_UNDEFINED,
-			SDL_WINDOWPOS_UNDEFINED, SCREEN_W * 3, SCREEN_H * 3, 0);
+			SDL_WINDOWPOS_UNDEFINED, shell->width * 3, SCREEN_H * 3, 0);
 		shell->renderer = shell->window ? SDL_CreateRenderer(shell->window, -1,
 			SDL_RENDERER_ACCELERATED) : NULL;
 		shell->texture = shell->renderer ? SDL_CreateTexture(shell->renderer,
-			SDL_PIXELFORMAT_BGR555, SDL_TEXTUREACCESS_STREAMING, SCREEN_W, SCREEN_H) : NULL;
+			SDL_PIXELFORMAT_BGR555, SDL_TEXTUREACCESS_STREAMING, shell->width, SCREEN_H) : NULL;
 		if (!shell->texture) {
 			if (shell->renderer)
 				SDL_DestroyRenderer(shell->renderer);
@@ -199,7 +201,7 @@ void shell_present(Shell *shell, const uint16_t *framebuffer)
 #ifdef POKETCG_HAVE_SDL
 	if (!shell || shell->headless || !framebuffer)
 		return;
-	SDL_UpdateTexture(shell->texture, NULL, framebuffer, SCREEN_W * (int)sizeof *framebuffer);
+	SDL_UpdateTexture(shell->texture, NULL, framebuffer, shell->width * (int)sizeof *framebuffer);
 	SDL_RenderClear(shell->renderer);
 	SDL_RenderCopy(shell->renderer, shell->texture, NULL, NULL);
 	SDL_RenderPresent(shell->renderer);

@@ -11,6 +11,7 @@ typedef struct Shell Shell;
 
 typedef struct {
 	int headless;
+	int width;
 } ShellConfig;
 
 Shell *shell_create(const ShellConfig *config);

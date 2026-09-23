@@ -1,4 +1,7 @@
 #include "home/frames.h"
+#include "serial_track.h"
+#include "isr.h"
+#include "home/music1.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -145,6 +148,28 @@ void frame_boundary_timer_sync(void)
 		g_timer_sync_hook(g_timer_sync_context);
 }
 
+static FrameBoundaryHook g_busy_wait_hook;
+static void *g_busy_wait_context;
+
+void frame_boundary_install_busy_wait(FrameBoundaryHook hook, void *context)
+{
+	g_busy_wait_hook = hook;
+	g_busy_wait_context = context;
+}
+
+void frame_boundary_busy_wait(void)
+{
+	if (g_busy_wait_hook)
+		g_busy_wait_hook(g_busy_wait_context);
+	else
+		SoundTimerHandler();
+}
+
+void frame_boundary_isr_site(unsigned site)
+{
+	isr_on_site(site);
+}
+
 static FrameBoundaryHook g_vblank_sync_hook;
 static void *g_vblank_sync_context;
 
@@ -286,6 +311,7 @@ void DoFrame(void)
 	ReadJoypad();
 	(void)HandleDPadRepeat(0u);
 	/* frames.asm $0552: the reference anchors its per-DoFrame state here. */
+	serial_track_anchor();
 	g_doframe_ordinal++;
 	if (g_frame_anchor)
 		g_frame_anchor(g_frame_anchor_context);

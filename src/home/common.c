@@ -861,11 +861,6 @@ void SendDeckConfiguration(void)
 /* >>> factory SetUpAndStartLinkDuel */
 void SetUpAndStartLinkDuel(void)
 {
-	SetSpriteAnimationsAsVBlankFunction();
-	(void)LoadScene(SCENE_GAMEBOY_LINK_TRANSMITTING, 0u, 0u, 0u, 0u, 0u, 0u);
-	LoadPlayerDeck();
-	SwitchToCGBNormalSpeed();
-	(void)SetupText(0x20u, 0x40u);
-	EnableLCD();
+	_SetUpAndStartLinkDuel();
 }
 /* <<< factory SetUpAndStartLinkDuel */

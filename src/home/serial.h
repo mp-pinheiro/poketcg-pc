@@ -1,6 +1,7 @@
 #ifndef POKETCG_HOME_SERIAL_H
 #define POKETCG_HOME_SERIAL_H
 
+#include <setjmp.h>
 #include <stdint.h>
 
 /* poketcg/src/home/serial.asm */
@@ -156,7 +157,16 @@ ExchangeRNGResult ExchangeRNG(uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
 /* SerialSend8Bytes:: serial.asm:605-651. a/f/b/c/d/e/hl all round-trip
  * through push/pop, so the routine produces nothing; the link path stages
  * them into wTempSerialBuf as f, a, l, h, e, d, c, b. */
-void SerialSend8Bytes(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
+#define SEND8_A 0x01u
+#define SEND8_F 0x02u
+#define SEND8_B 0x04u
+#define SEND8_C 0x08u
+#define SEND8_D 0x10u
+#define SEND8_E 0x20u
+#define SEND8_H 0x40u
+#define SEND8_L 0x80u
+#define SEND8_ALL 0xFFu
+void SerialSend8Bytes(uint8_t known, uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
 /* <<< factory SerialSend8Bytes */
 /* >>> factory LinkOpponentTurnFrameFunction */
 /* LinkOpponentTurnFrameFunction:: serial.asm:504-521. Returns a/f; b/c/d/e/hl
@@ -175,7 +185,8 @@ SetOppActionSerialSendResult SetOppAction_SerialSendDuelData(uint8_t a, uint16_t
 /* <<< factory SetOppAction_SerialSendDuelData */
 /* >>> factory SerialRecvDuelData */
 typedef struct {
-	uint8_t a, f;
+	uint8_t a, f, b, c;
+	uint16_t de, hl;
 } SerialRecvDuelDataResult;
 SerialRecvDuelDataResult SerialRecvDuelData(uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
 /* <<< factory SerialRecvDuelData */
@@ -193,4 +204,7 @@ typedef struct {
 } UnreferencedSaveSerialReturnAddressResult;
 UnreferencedSaveSerialReturnAddressResult UnreferencedSaveSerialReturnAddress(void);
 /* <<< factory UnreferencedSaveSerialReturnAddress */
+extern jmp_buf g_link_opponent_turn_return;
+extern int g_link_opponent_turn_armed;
+
 #endif

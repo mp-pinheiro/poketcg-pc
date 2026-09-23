@@ -58,6 +58,8 @@ static const uint8_t booster_logo_oam[] = {
 
 #include "home/sgb.h"
 #include "generated/wram.h"
+
+#define LINK_OPP_PIC 0x2au
 #include "mem.h"
 
 #include "generated/wram.h"
@@ -130,7 +132,7 @@ void _DrawPortrait(uint8_t b, uint8_t c)
 	if (portrait <= 1u) {
 		tileset = 0x29u;
 		palette = 0x77u;
-	} else if (portrait == 41u) {
+	} else if (portrait == LINK_OPP_PIC) {
 		tileset = 0x29u;
 		palette = 0x78u;
 	} else if (portrait == 2u) {

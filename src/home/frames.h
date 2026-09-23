@@ -37,6 +37,16 @@ int frame_boundary_overread(uint8_t *out, size_t length);
  * opposed to DisableLCD's rLY poll (src/home/lcd.c): only the former is the
  * VBlank the ROM's DoFrame waits for. */
 int frame_boundary_pass_is_doframe(void);
+/* One spin of a ROM loop that polls the sound driver with no DoFrame: the
+ * host lets the ROM's ISRs run (src/runtime.c busy_wait); with no host the
+ * driver tick is the only thing that ends the wait. */
+void frame_boundary_install_busy_wait(FrameBoundaryHook hook, void *context);
+void frame_boundary_busy_wait(void);
+enum {
+	ISR_SITE_DISABLE_LCD = 0,
+	ISR_SITE_CREDITS_ARM = 1,
+};
+void frame_boundary_isr_site(unsigned site);
 /* Timer sync points: every routine through which game code observes
  * timer-ISR state -- the home/sound.asm wrappers (src/home/sound.c) and the
  * play-time counter's readers and writers (CopyGeneralSaveDataToSRAM,
