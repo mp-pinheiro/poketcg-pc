@@ -4,11 +4,13 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import copy
 import fnmatch
 import hashlib
 import os
 import importlib.util
+import io
 import json
 import re
 import shutil
@@ -140,8 +142,7 @@ def load_completion_sibling(name: str) -> Any:
 
 
 def current_revision() -> str:
-    controller_revision = os.environ.get("POKETCG_CONTROLLER_REVISION")
-    return controller_revision or current_source_revision(ROOT)
+    return current_source_revision(ROOT)
 
 
 def load_rom_inventory_module() -> Any:
@@ -2190,84 +2191,43 @@ def command_package() -> int:
     return 0 if artifact["status"] == "PASS" else 2
 
 
-def command_produce(req_id: str, context_path: Path) -> int:
-    try:
-        context = load_json(context_path)
-    except AuditError as exc:
-        print(
-            json.dumps(
-                {
-                    "schema": "producer-result-v1",
-                    "outcome": "invalid",
-                    "diagnostic": str(exc),
-                }
-            )
-        )
-        return 2
-    try:
-        from tools.completion import producers
-    except ImportError as exc:
-        result = {
-            "schema": "producer-result-v1",
-            "work_id": context.get("work_id"),
-            "input_digest": context.get("input_digest"),
-            "outcome": "infra-error",
-            "artifact_refs": [],
-            "diagnostic": str(exc),
-            "blocked_by": [],
-        }
-    else:
-        controller_revision = context.get("source_revision")
-        previous_revision = os.environ.get("POKETCG_CONTROLLER_REVISION")
-        if isinstance(controller_revision, str) and controller_revision:
-            os.environ["POKETCG_CONTROLLER_REVISION"] = controller_revision
-        try:
-            result = producers.produce(req_id, context=context)
-        except producers.ProducerUnavailable as exc:
-            result = {
-                "schema": "producer-result-v1",
-                "work_id": context.get("work_id"),
-                "input_digest": context.get("input_digest"),
-                "outcome": "no-progress",
-                "artifact_refs": [],
-                "diagnostic": str(exc),
-                "blocked_by": [f"implement-producer/{req_id}"],
-            }
-        finally:
-            if previous_revision is None:
-                os.environ.pop("POKETCG_CONTROLLER_REVISION", None)
-            else:
-                os.environ["POKETCG_CONTROLLER_REVISION"] = previous_revision
-    if not isinstance(result, dict) or result.get("schema") != "producer-result-v1":
-        print(
-            json.dumps(
-                {
-                    "schema": "producer-result-v1",
-                    "outcome": "invalid",
-                    "diagnostic": "producer returned malformed result",
-                }
-            )
-        )
-        return 2
-    output = context.get("output")
-    if isinstance(output, str) and output:
-        path = Path(output)
-        path.parent.mkdir(parents=True, exist_ok=True)
-        temporary = path.with_name(f".{path.name}.tmp")
-        temporary.write_text(
-            json.dumps(result, sort_keys=True, separators=(",", ":")) + "\n",
-            encoding="utf-8",
-        )
-        temporary.replace(path)
-    print(json.dumps(result, sort_keys=True, separators=(",", ":")))
-    outcome = result.get("outcome")
-    if outcome in {"progress", "no-progress"}:
-        return 0
-    if outcome == "timeout":
-        return 4
-    if outcome == "infra-error":
-        return 3
-    return 2
+def command_chain(only: str | None = None) -> int:
+    from tools.completion import producers
+
+    manifest = load_toml(MANIFEST_PATH)
+    requirements = [
+        req for req in manifest.get("requirement", [])
+        if isinstance(req, dict) and isinstance(req.get("id"), str)
+    ]
+    passed: dict[str, bool] = {}
+    for req in requirements:
+        req_id = req["id"]
+        status, reason = check_evidence(req)
+        if status == "pass" and (only is None or req_id != only):
+            passed[req_id] = True
+            print(f"CHAIN {req_id} pass")
+            continue
+        if only is not None and req_id != only:
+            passed[req_id] = status == "pass"
+            continue
+        blocked = [dep for dep in req.get("deps", []) if not passed.get(dep)]
+        if blocked:
+            passed[req_id] = False
+            print(f"CHAIN {req_id} blocked-by {','.join(blocked)}")
+            continue
+        if not producers.executable(req_id):
+            passed[req_id] = False
+            print(f"CHAIN {req_id} no-producer")
+            continue
+        handler = producers.handler_for(producers.describe(req_id)["handler"])
+        with contextlib.redirect_stdout(io.StringIO()):
+            handler()
+        status, reason = check_evidence(req)
+        passed[req_id] = status == "pass"
+        print(f"CHAIN {req_id} {status}{' ' + reason if reason else ''}")
+    remaining = [req_id for req_id, ok in passed.items() if not ok]
+    print(f"CHAIN passing={len(passed) - len(remaining)} remaining={len(remaining)}")
+    return 0 if not remaining else 2
 
 
 def command_validate_requirements() -> int:
@@ -2321,9 +2281,8 @@ def main(argv: list[str] | None = None) -> int:
     subparsers.add_parser("package")
     subparsers.add_parser("next")
     subparsers.add_parser("validate-requirements", help=argparse.SUPPRESS)
-    produce = subparsers.add_parser("produce")
-    produce.add_argument("id")
-    produce.add_argument("--context", type=Path, required=True)
+    chain = subparsers.add_parser("chain")
+    chain.add_argument("--only")
     args = parser.parse_args(argv)
     if args.command == "audit":
         return command_audit()
@@ -2347,8 +2306,8 @@ def main(argv: list[str] | None = None) -> int:
         return command_baseline()
     if args.command == "check":
         return command_check(args.id)
-    if args.command == "produce":
-        return command_produce(args.id, args.context)
+    if args.command == "chain":
+        return command_chain(args.only)
     if args.command == "validate-requirements":
         return command_validate_requirements()
     return command_next()

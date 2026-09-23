@@ -44,6 +44,8 @@ IO_COMPARED = (
 )
 IO_BITS = {0x07: 0x07}
 APU_FIRST, APU_LAST = 0xFF10, 0xFF3F
+APU_TRACE_ORDINALS = 6000
+APU_TRACE_CAPACITY = 65536
 APU_READBACK = {
     0xFF10: (0x80, 0xFF), 0xFF11: (0x3F, 0xFF), 0xFF12: (0x00, 0xFF), 0xFF13: (0xFF, 0x00),
     0xFF14: (0xBF, 0x40), 0xFF15: (0xFF, 0x00), 0xFF16: (0x3F, 0xFF), 0xFF17: (0x00, 0xFF),
@@ -114,6 +116,29 @@ SPECS: dict[str, Spec] = {
         fields=("apu_trace", "framebuffer"),
         terminal="PCM_WINDOW_CLOSED",
         checks=("pcm",),
+    ),
+    "script-vm": Spec(
+        sessions=("practice-win", "boot-deck-machine", "challenge-machine", "seed-packs"),
+        fields=("wram", "mapper_state", "input_latch"),
+        terminal="SCRIPT_OPCODE_CLOSED",
+        checks=("script_opcodes",),
+    ),
+    "all-maps-scripts": Spec(
+        sessions=("credits-1-explore-1",),
+        fields=("wram", "framebuffer", "save", "rng"),
+        terminal="CREDITS_REACHED",
+        event="CREDITS_REACHED",
+    ),
+    "new-game-to-credits": Spec(
+        sessions=("credits-1-explore-1",),
+        fields=(
+            "wram", "hram", "sram_bank_0", "sram_bank_1", "sram_bank_2", "sram_bank_3",
+            "vram_bank_0", "vram_bank_1", "oam", "io", "palette_ram", "mapper_state",
+            "input_latch", "timer_frame_counters", "rng", "apu_state", "apu_trace",
+            "framebuffer", "save", "transport", "printer",
+        ),
+        terminal="CREDITS_REACHED",
+        event="CREDITS_REACHED",
     ),
     "duel-state": Spec(
         sessions=(
@@ -189,8 +214,10 @@ def reference_pass(
         read = core.library.gambatte_cpuread
         handle = core.core
 
+        apu_limit = min(count, APU_TRACE_ORDINALS)
+
         def on_write(address: int, _cycle: int) -> None:
-            if APU_FIRST <= address <= APU_LAST and hits < count and not in_boot_rom(core.pc()):
+            if APU_FIRST <= address <= APU_LAST and hits < apu_limit and not in_boot_rom(core.pc()):
                 apu_writes.append((hits, address, read(handle, address)))
 
         def on_exec(address: int, _cycle: int) -> None:
@@ -212,6 +239,11 @@ def reference_pass(
                 record = session.reference_regions(core)
                 record["io"] = core.io_block()
                 record["palette_ram"] = core.palette_block()
+                record["mapper_state"] = {
+                    "rom_bank": core.bank_of(0x4000),
+                    "sram_bank": core.bank_of(0xA000),
+                    "vram_bank": record["io"][0x4F] & 1,
+                }
                 if want_frames:
                     record["framebuffer"] = last_frame
                 if want_save and hits == count:
@@ -436,6 +468,11 @@ def compare_anchor(
         return int(native["input_latch"] != ((mask << 4) | (mask >> 4)) & 0xFF)
     if field == "rng":
         return count_diff(bytes(native["rng"]), reference["wram"][RNG_OFFSET : RNG_OFFSET + 3])
+    if field in {"transport", "printer"}:
+        return len(native.get(field) or [])
+    if field == "mapper_state":
+        expected = reference["mapper_state"]
+        return sum(1 for key, value in expected.items() if native["mapper_state"].get(key) != value)
     if field in {"save", "sram_bank_0", "sram_bank_1", "sram_bank_2", "sram_bank_3"}:
         if "save" not in reference:
             return None
@@ -456,6 +493,9 @@ def compare_anchor(
 
 def compare_apu_trace(native_dump: dict[str, Any], reference_writes: list[tuple[int, int, int]]) -> dict[str, Any]:
     native_writes = [(int(row["address"]), int(row["value"])) for row in native_dump["apu_trace"]]
+    truncated = len(native_writes) >= APU_TRACE_CAPACITY
+    if len(native_writes) > len(reference_writes):
+        native_writes = native_writes[: len(reference_writes)]
     common = min(len(native_writes), len(reference_writes))
     first = None
     for index in range(common):
@@ -471,11 +511,13 @@ def compare_apu_trace(native_dump: dict[str, Any], reference_writes: list[tuple[
         if want != ref_readback:
             first = index
             break
-    if first is None and len(native_writes) != len(reference_writes):
+    if first is None and len(native_writes) != len(reference_writes) and not truncated:
         first = common
     return {
         "native_writes": len(native_writes),
         "reference_writes": len(reference_writes),
+        "compared": common,
+        "native_truncated": truncated,
         "first_mismatch": first,
         "status": "PASS" if first is None else "FAIL",
     }
@@ -574,6 +616,12 @@ def witness_session(name: str, spec: Spec) -> dict[str, Any]:
                 f"pcm: median cosine {pcm['median_cosine']}, agreeing {pcm['agreeing_fraction']}, "
                 f"envelope {pcm['envelope_correlation']}"
             )
+    if "script_opcodes" in spec.checks and name == spec.sessions[0]:
+        opcodes = script_opcode_coverage()
+        row["script_opcodes"] = opcodes
+        census["script_opcodes"] = {"anchors": opcodes["handlers"], "differing": len(opcodes["unwitnessed"])}
+        if opcodes["status"] != "PASS":
+            failures.append(f"script opcodes without a red witness: {len(opcodes['unwitnessed'])}")
     if "duel_finished" in spec.checks:
         finished = min(int(meta["duel_finished_ordinal"]) + 1, count)
         flag = native[finished]["wram"][DUEL_FINISHED_OFFSET]
@@ -587,6 +635,7 @@ def witness_session(name: str, spec: Spec) -> dict[str, Any]:
         }
     if "apu_trace" in fields:
         apu = compare_apu_trace(native[count], reference["apu_writes"])
+        apu["ordinals"] = min(count, APU_TRACE_ORDINALS)
         row["apu_trace"] = apu
         census["apu_trace"] = {"anchors": apu["reference_writes"], "differing": 0 if apu["status"] == "PASS" else 1}
         if apu["status"] != "PASS":
@@ -603,6 +652,53 @@ def witness_session(name: str, spec: Spec) -> dict[str, Any]:
     if failures:
         row["failures"] = failures
     return row
+
+
+LINK_ONLY_SCRIPT_COMMANDS = frozenset({"ScriptCommand_BattleCenter", "ScriptCommand_GiftCenter"})
+COVERAGE_LEDGER = ROOT / "site" / "data" / "coverage.json"
+RATCHET = ROOT / "tools" / "completion" / "session_ratchet.json"
+
+
+RECEIPTS = ROOT / "tools" / "oracle" / "mutation_receipts"
+
+
+def script_opcode_coverage() -> dict[str, Any]:
+    ledger = json.loads(COVERAGE_LEDGER.read_text(encoding="utf-8"))
+    ratchet = json.loads(RATCHET.read_text(encoding="utf-8"))
+    order = ledger["session_order"]
+    clean = set()
+    for path in (ROOT / "tests" / "sessions").glob("*/session.json"):
+        meta = json.loads(path.read_text(encoding="utf-8"))
+        if ratchet.get(path.parent.name, {}).get("confirmed_ordinal") == meta.get("ordinals"):
+            clean.add(path.parent.name)
+    handlers = {name: row for name, row in ledger["routines"].items() if name.startswith("ScriptCommand_")}
+    routed = sorted(
+        name for name, row in handlers.items()
+        if any(order[index] in clean for index in row.get("sessions", []))
+    )
+    unwitnessed = []
+    for name in handlers:
+        receipt = RECEIPTS / f"{name}.json"
+        try:
+            status = json.loads(receipt.read_text(encoding="utf-8")).get("status")
+        except (OSError, json.JSONDecodeError):
+            status = None
+        if status != "RED":
+            unwitnessed.append(name)
+    unrouted = sorted(
+        name for name in handlers
+        if name not in routed and name not in LINK_ONLY_SCRIPT_COMMANDS and not handlers[name].get("excluded")
+    )
+    return {
+        "handlers": len(handlers),
+        "witnessed": len(handlers) - len(unwitnessed),
+        "unwitnessed": sorted(unwitnessed),
+        "routed": len(routed),
+        "unrouted": unrouted,
+        "unmeasurable": sorted(name for name, row in handlers.items() if row.get("unmeasurable")),
+        "link_only": sorted(LINK_ONLY_SCRIPT_COMMANDS & set(handlers)),
+        "status": "PASS" if not unwitnessed else "FAIL",
+    }
 
 
 def corpus_entry(name: str) -> dict[str, str]:

@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import contextlib
-import io
 import json
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from tools.completion import completion, evidence, scenario, witness
+from tools.completion import completion, scenario, witness
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -176,21 +174,18 @@ _REGISTRY: dict[str, dict[str, Any]] = {
     ),
     "completion:v2:p6:script-vm": _descriptor(
         "script-vm",
-        None,
-        producer_files=_SCENARIO + ["tools/completion/refstream.py"],
-        comparator_files=[
-            "tools/completion/refstream.py",
-            "tools/completion/session.py",
-        ],
+        "scenario:script-vm",
+        producer_files=_WITNESS,
+        comparator_files=_WITNESS_COMPARATORS + ["tools/oracle/mutation_receipts"],
+        corpus=witness.corpus("script-vm")
+        + [{"path": "site/data/coverage.json"}, {"path": "tools/completion/session_ratchet.json"}],
     ),
     "completion:v2:p6:maps-and-campaign": _descriptor(
         "maps-and-campaign",
         "scenario:all-maps-scripts",
-        producer_files=_SCENARIO,
-        comparator_files=[
-            "tools/oracle/gbrecomp_oracle.py",
-            "tools/completion/session.py",
-        ],
+        producer_files=_WITNESS,
+        comparator_files=_WITNESS_COMPARATORS,
+        corpus=witness.corpus("all-maps-scripts"),
     ),
     "completion:v2:p7:link-ir": _descriptor(
         "link-ir",
@@ -207,8 +202,9 @@ _REGISTRY: dict[str, dict[str, Any]] = {
     "completion:v2:faithful-4x3:release": _descriptor(
         "faithful-release",
         "scenario:new-game-to-credits",
-        producer_files=_SCENARIO,
-        comparator_files=["tools/oracle/gbrecomp_oracle.py", "tools/completion/cfg.py"],
+        producer_files=_WITNESS,
+        comparator_files=_WITNESS_COMPARATORS,
+        corpus=witness.corpus("new-game-to-credits"),
     ),
     "completion:v2:faithful-4x3:package": _descriptor(
         "package",
@@ -267,7 +263,7 @@ def ids() -> tuple[str, ...]:
     return tuple(sorted(_REGISTRY))
 
 
-def _handler(name: str) -> Callable[[], int]:
+def handler_for(name: str) -> Callable[[], int]:
     commands: dict[str, Callable[[], int]] = {
         "baseline": completion.command_baseline,
         "rom-coverage": completion.command_rom_coverage,
@@ -283,63 +279,3 @@ def _handler(name: str) -> Callable[[], int]:
         scenario_name = name.split(":", 1)[1]
         return lambda: scenario.main([scenario_name])
     raise ProducerUnavailable(f"unknown producer handler: {name}")
-
-
-def _result(
-    requirement_id: str,
-    context: dict[str, Any],
-    outcome: str,
-    diagnostic: str,
-    artifact_refs: list[dict[str, str]],
-    blocked_by: list[str],
-) -> dict[str, Any]:
-    work_id = context.get("work_id")
-    input_digest = context.get("input_digest")
-    if not isinstance(work_id, str) or not isinstance(input_digest, str):
-        raise ProducerUnavailable("run context lacks work identity")
-    return {
-        "schema": "producer-result-v1",
-        "work_id": work_id,
-        "input_digest": input_digest,
-        "outcome": outcome,
-        "artifact_refs": artifact_refs,
-        "diagnostic": diagnostic[-8192:],
-        "blocked_by": blocked_by,
-    }
-
-
-def produce(requirement_id: str, *, context: dict[str, Any]) -> dict[str, Any]:
-    descriptor = describe(requirement_id)
-    handler_name = descriptor.get("handler")
-    if not isinstance(handler_name, str):
-        raise ProducerUnavailable(
-            f"producer implementation is absent: {requirement_id}"
-        )
-    root = Path(context.get("root", ROOT)).resolve()
-    if root != ROOT:
-        raise ProducerUnavailable("producer execution requires the controller checkout")
-    output = io.StringIO()
-    with contextlib.redirect_stdout(output):
-        exit_code = _handler(handler_name)()
-    requirement = completion.requirement_by_id(requirement_id)
-    status, reason = completion.check_evidence(requirement)
-    artifact_path = completion.evidence_path(requirement_id)
-    references = (
-        [evidence.file_identity(ROOT, artifact_path)] if artifact_path.is_file() else []
-    )
-    diagnostic = output.getvalue()
-    if reason:
-        diagnostic = f"{diagnostic}\nvalidator: {reason}".strip()
-    if exit_code == 0 and status == "pass":
-        return _result(requirement_id, context, "progress", diagnostic, references, [])
-    if status in {"unavailable", "unsupported"}:
-        return _result(
-            requirement_id,
-            context,
-            "no-progress",
-            diagnostic,
-            references,
-            [f"capability/{descriptor['producer']}"],
-        )
-    outcome = "diverged" if status in {"failing", "missing"} else "invalid"
-    return _result(requirement_id, context, outcome, diagnostic, references, [])

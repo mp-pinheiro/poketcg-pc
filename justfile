@@ -351,8 +351,8 @@ completion-status *ARGS:
     python3 tools/completion/completion.py status {{ARGS}}
 completion-check ID:
     python3 tools/completion/completion.py check "{{ID}}"
-completion-produce ID *ARGS:
-    python3 tools/completion/completion.py produce "{{ID}}" {{ARGS}}
+completion-chain *ARGS:
+    python3 tools/completion/completion.py chain {{ARGS}}
 completion-baseline:
     python3 tools/completion/completion.py baseline
 completion-rom-coverage:
