@@ -159,3 +159,11 @@ MUTATIONS["ZeroRAM"] = {
     "after": "\tuint16_t hl = 0xBFFFu;",
     "case_ids": ["ZeroRAM-0"],
 }
+for _rec in SCHEMA2_CASES["NoOp"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["NoOp"] = {
+    "source_symbol": "NoOp",
+    "before": "void NoOp(void)\n{",
+    "after": "void NoOp(void)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["NoOp-1"],
+}

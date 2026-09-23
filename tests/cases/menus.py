@@ -843,3 +843,19 @@ MUTATIONS["SetMenuItem"] = {
     "after": "void SetMenuItem(uint8_t a)\n{\n\twCurMenuItem = (a) ^ 1u;",
     "case_ids": ["SetMenuItem-0"],
 }
+for _rec in SCHEMA2_CASES["CardTypeToSymbolID"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["CardTypeToSymbolID"] = {
+    "source_symbol": "CardTypeToSymbolID",
+    "before": "uint8_t CardTypeToSymbolID(void)\n{",
+    "after": "uint8_t CardTypeToSymbolID(void)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["CardTypeToSymbolID-0"],
+}
+for _rec in SCHEMA2_CASES["GetCardSymbolData"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["GetCardSymbolData"] = {
+    "source_symbol": "GetCardSymbolData",
+    "before": "uint8_t GetCardSymbolData(void)\n{",
+    "after": "uint8_t GetCardSymbolData(void)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["GetCardSymbolData-0"],
+}

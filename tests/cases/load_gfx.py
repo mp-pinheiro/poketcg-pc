@@ -389,3 +389,27 @@ MUTATIONS["LoadTilesetGfx"] = {
     "after": "{\n\tuint16_t hl = GetMapDataPointer(wCurTileset, GFX_TABLE_TILESETS).hl;\n\t;",
     "case_ids": ["LoadTilesetGfx-0"],
 }
+for _rec in SCHEMA2_CASES["Func_80148"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["Func_80148"] = {
+    "source_symbol": "FuncEightZeroOneFourEight",
+    "before": "void FuncEightZeroOneFourEight(uint16_t hl, uint8_t b)\n{",
+    "after": "void FuncEightZeroOneFourEight(uint16_t hl, uint8_t b)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["Func_80148-0"],
+}
+for _rec in SCHEMA2_CASES["LoadPaletteDataFromHL"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["LoadPaletteDataFromHL"] = {
+    "source_symbol": "LoadPaletteDataFromHL",
+    "before": "void LoadPaletteDataFromHL(uint16_t hl, uint8_t b, uint8_t c)\n{",
+    "after": "void LoadPaletteDataFromHL(uint16_t hl, uint8_t b, uint8_t c)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["LoadPaletteDataFromHL-0"],
+}
+for _rec in SCHEMA2_CASES["LoadTilesetGfx.CopyGfxData"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["LoadTilesetGfx.CopyGfxData"] = {
+    "source_symbol": "LoadTilesetGfx.CopyGfxData",
+    "before": "LoadTilesetChunkResult LoadTilesetGfx_CopyGfxData(uint8_t b, uint8_t c)\n{",
+    "after": "LoadTilesetChunkResult LoadTilesetGfx_CopyGfxData(uint8_t b, uint8_t c)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["LoadTilesetGfx.CopyGfxData-1"],
+}

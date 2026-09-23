@@ -1,0 +1,9 @@
+{
+  "fn": "LoadTilesetGfx.CopyGfxData",
+  "case": "tests/cases/load_gfx.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadTilesetGfx.CopyGfxData\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54468\": \"0000\", \"54472\": \"00000000\", \"57328\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadTilesetGfx.CopyGfxData\", \"mismatches\": {\"bus\": {\"address\": 57328, \"reference\": \"0000000000\", \"native\": \"00000000ff\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[54468, 2], [54472, 4], [57328, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadTilesetGfx.CopyGfxData\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54468\": \"0000\", \"54472\": \"00000000\", \"57328\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

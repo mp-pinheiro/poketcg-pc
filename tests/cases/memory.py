@@ -183,3 +183,19 @@ MUTATIONS["GetFarByte"] = {
     "after": "\treturn 1u + v;",
     "case_ids": ["GetFarByte-0"],
 }
+for _rec in SCHEMA2_CASES["CopyBankedDataToDE"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+for _rec in SCHEMA2_CASES["FillMemoryWithDE"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["CopyBankedDataToDE"] = {
+    "source_symbol": "CopyBankedDataToDE",
+    "before": "void CopyBankedDataToDE(uint16_t bc, uint16_t de)\n{",
+    "after": "void CopyBankedDataToDE(uint16_t bc, uint16_t de)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["CopyBankedDataToDE-1"],
+}
+MUTATIONS["FillMemoryWithDE"] = {
+    "source_symbol": "FillMemoryWithDE",
+    "before": "void FillMemoryWithDE(uint16_t hl, uint16_t bc, uint8_t d, uint8_t e)\n{",
+    "after": "void FillMemoryWithDE(uint16_t hl, uint16_t bc, uint8_t d, uint8_t e)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["FillMemoryWithDE-1"],
+}

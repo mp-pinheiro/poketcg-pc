@@ -450,3 +450,27 @@ MUTATIONS["WriteToTextHeader_MoveToNext"] = {
     "after": "\tout.hl = (wWhichTextHeader_ADDR) ^ 1u;",
     "case_ids": ["WriteToTextHeader_MoveToNext-0"],
 }
+for _rec in SCHEMA2_CASES["InitTextPrinting_ProcessTextFromID"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["InitTextPrinting_ProcessTextFromID"] = {
+    "source_symbol": "InitTextPrinting_ProcessTextFromID",
+    "before": "ProcessTextHeaderResult InitTextPrinting_ProcessTextFromID(uint8_t d, uint8_t e, uint16_t hl)\n{",
+    "after": "ProcessTextHeaderResult InitTextPrinting_ProcessTextFromID(uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["InitTextPrinting_ProcessTextFromID-0"],
+}
+for _rec in SCHEMA2_CASES["InitTextPrinting_ProcessTextFromPointerToID"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["InitTextPrinting_ProcessTextFromPointerToID"] = {
+    "source_symbol": "InitTextPrinting_ProcessTextFromPointerToID",
+    "before": "ProcessTextHeaderResult InitTextPrinting_ProcessTextFromPointerToID(uint8_t d, uint8_t e, uint16_t hl)\n{",
+    "after": "ProcessTextHeaderResult InitTextPrinting_ProcessTextFromPointerToID(uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["InitTextPrinting_ProcessTextFromPointerToID-0"],
+}
+for _rec in SCHEMA2_CASES["WriteToTextHeader"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["WriteToTextHeader"] = {
+    "source_symbol": "WriteToTextHeader",
+    "before": "TextHeaderWrite WriteToTextHeader(uint16_t text)\n{",
+    "after": "TextHeaderWrite WriteToTextHeader(uint16_t text)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["WriteToTextHeader-0"],
+}

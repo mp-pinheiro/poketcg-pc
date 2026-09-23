@@ -433,3 +433,11 @@ MUTATIONS["LoadFullWidthFontTiles"] = {
     "after": "\tuint16_t src, dst;\n\n\t;",
     "case_ids": ["LoadFullWidthFontTiles-0"],
 }
+for _rec in SCHEMA2_CASES["LoadDeckAndDiscardPileIcons"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["LoadDeckAndDiscardPileIcons"] = {
+    "source_symbol": "LoadDeckAndDiscardPileIcons",
+    "before": "TileCopyResult LoadDeckAndDiscardPileIcons(void)\n{",
+    "after": "TileCopyResult LoadDeckAndDiscardPileIcons(void)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["LoadDeckAndDiscardPileIcons-0"],
+}

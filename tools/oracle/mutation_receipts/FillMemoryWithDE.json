@@ -1,0 +1,9 @@
+{
+  "fn": "FillMemoryWithDE",
+  "case": "tests/cases/memory.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FillMemoryWithDE\", \"registers\": {\"a\": 170, \"b\": 0, \"c\": 8, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"eeddeeddeeddeeddeeddeeddeeddeedd1111\", \"57328\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FillMemoryWithDE\", \"mismatches\": {\"bus\": {\"address\": 57328, \"reference\": \"eedd111100\", \"native\": \"eedd1111ff\", \"reference_size\": 19, \"native_size\": 19, \"spans\": [[50432, 18], [57328, 1]]}}}\n",
+  "restored": "{\"fn\": \"FillMemoryWithDE\", \"registers\": {\"a\": 170, \"b\": 0, \"c\": 8, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"eeddeeddeeddeeddeeddeeddeeddeedd1111\", \"57328\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

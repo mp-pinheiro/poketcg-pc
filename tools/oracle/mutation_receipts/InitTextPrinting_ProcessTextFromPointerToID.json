@@ -1,0 +1,9 @@
+{
+  "fn": "InitTextPrinting_ProcessTextFromPointerToID",
+  "case": "tests/cases/print_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"InitTextPrinting_ProcessTextFromPointerToID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"0000\", \"57328\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"InitTextPrinting_ProcessTextFromPointerToID\", \"mismatches\": {\"bus\": {\"address\": 57328, \"reference\": \"000000\", \"native\": \"0000ff\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[49408, 2], [57328, 1]]}}}\n",
+  "restored": "{\"fn\": \"InitTextPrinting_ProcessTextFromPointerToID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"0000\", \"57328\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

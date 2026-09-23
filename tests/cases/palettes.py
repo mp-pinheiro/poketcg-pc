@@ -174,3 +174,11 @@ MUTATIONS["SetOBP1"] = {
     "after": "\tgb_write8(wOBP1_ADDR, (uint8_t)(a ^ 1u));",
     "case_ids": ["SetOBP1-0"],
 }
+for _rec in SCHEMA2_CASES["FlushPalettesIfRequested"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["FlushPalettesIfRequested"] = {
+    "source_symbol": "FlushPalettesIfRequested_Registers",
+    "before": "\tuint8_t flags = gb_read8(wFlushPaletteFlags_ADDR);",
+    "after": "\tgb_write8(0xdff0u, 0xFFu);\n\tuint8_t flags = gb_read8(wFlushPaletteFlags_ADDR);",
+    "case_ids": ["FlushPalettesIfRequested-0"],
+}

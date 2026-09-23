@@ -11408,3 +11408,11 @@ MUTATIONS["Whirlpool_AISelectEffect"] = {
 	"case_ids": ["Whirlpool_AISelectEffect-0", "Whirlpool_AISelectEffect-1", "Whirlpool_AISelectEffect-2"],
 }
 # <<< factory-mutation Whirlpool_AISelectEffect
+for _rec in SCHEMA2_CASES["PidgeottoMirrorMove_InitialEffect1"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["PidgeottoMirrorMove_InitialEffect1"] = {
+    "source_symbol": "PidgeottoMirrorMove_InitialEffect1",
+    "before": "MirrorMoveInitialEffect1Result PidgeottoMirrorMove_InitialEffect1(void)\n{",
+    "after": "MirrorMoveInitialEffect1Result PidgeottoMirrorMove_InitialEffect1(void)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["PidgeottoMirrorMove_InitialEffect1-0"],
+}

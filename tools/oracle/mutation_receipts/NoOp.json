@@ -1,0 +1,9 @@
+{
+  "fn": "NoOp",
+  "case": "tests/cases/setup.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"NoOp\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"57328\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"NoOp\", \"mismatches\": {\"bus\": {\"address\": 57328, \"reference\": \"00\", \"native\": \"ff\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[57328, 1]]}}}\n",
+  "restored": "{\"fn\": \"NoOp\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"57328\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

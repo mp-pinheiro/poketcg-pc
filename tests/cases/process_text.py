@@ -317,3 +317,27 @@ MUTATIONS["SetupText"] = {
     "after": "\treturn (0xc600) ^ 1u;",
     "case_ids": ["SetupText-0"],
 }
+for _rec in SCHEMA2_CASES["Func_235e"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["Func_235e"] = {
+    "source_symbol": "Func_235e",
+    "before": "ProcessTextResult Func_235e(uint8_t d, uint8_t e)\n{",
+    "after": "ProcessTextResult Func_235e(uint8_t d, uint8_t e)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["Func_235e-0"],
+}
+for _rec in SCHEMA2_CASES["ProcessSpecialTextCharacter"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["ProcessSpecialTextCharacter"] = {
+    "source_symbol": "ProcessSpecialTextCharacter",
+    "before": "ProcessTextResult ProcessSpecialTextCharacter(uint8_t a, uint16_t hl)\n{",
+    "after": "ProcessTextResult ProcessSpecialTextCharacter(uint8_t a, uint16_t hl)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["ProcessSpecialTextCharacter-0"],
+}
+for _rec in SCHEMA2_CASES["ProcessText"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["ProcessText"] = {
+    "source_symbol": "ProcessText",
+    "before": "ProcessTextResult ProcessText(uint16_t *hl)\n{",
+    "after": "ProcessTextResult ProcessText(uint16_t *hl)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["ProcessText-0"],
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "CopyBankedDataToDE",
+  "case": "tests/cases/memory.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyBankedDataToDE\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 32, \"d\": 193, \"e\": 0, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"cd5a50afea5ececd9e2aafeaa3ce215841cd082ccd3f05cd655030f8feffc8fa1111\", \"54468\": \"004002\", \"57328\": \"00\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyBankedDataToDE\", \"mismatches\": {\"bus\": {\"address\": 57328, \"reference\": \"110040020001\", \"native\": \"11004002ff01\", \"reference_size\": 39, \"native_size\": 39, \"spans\": [[49408, 34], [54468, 3], [57328, 1], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"CopyBankedDataToDE\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 32, \"d\": 193, \"e\": 0, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"cd5a50afea5ececd9e2aafeaa3ce215841cd082ccd3f05cd655030f8feffc8fa1111\", \"54468\": \"004002\", \"57328\": \"00\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

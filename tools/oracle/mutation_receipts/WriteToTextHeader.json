@@ -1,0 +1,9 @@
+{
+  "fn": "WriteToTextHeader",
+  "case": "tests/cases/print_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"WriteToTextHeader\", \"registers\": {\"a\": 0, \"b\": 64, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52783, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52779\": \"0000010040\", \"52808\": \"00\", \"57328\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"WriteToTextHeader\", \"mismatches\": {\"bus\": {\"address\": 57328, \"reference\": \"0100400000\", \"native\": \"01004000ff\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[52779, 5], [52808, 1], [57328, 1]]}}}\n",
+  "restored": "{\"fn\": \"WriteToTextHeader\", \"registers\": {\"a\": 0, \"b\": 64, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52783, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52779\": \"0000010040\", \"52808\": \"00\", \"57328\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "CardTypeToSymbolID",
+  "case": "tests/cases/menus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CardTypeToSymbolID\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52260\": \"00\", \"57328\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CardTypeToSymbolID\", \"mismatches\": {\"bus\": {\"address\": 57328, \"reference\": \"0000\", \"native\": \"00ff\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52260, 1], [57328, 1]]}}}\n",
+  "restored": "{\"fn\": \"CardTypeToSymbolID\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52260\": \"00\", \"57328\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

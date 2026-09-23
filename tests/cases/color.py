@@ -334,3 +334,11 @@ MUTATIONS["SetWhitePalettes"] = {
     "after": "    uint8_t value = gb_read8(wConsolePaletteData_ADDR);\n    ;",
     "case_ids": ["SetWhitePalettes-0"],
 }
+for _rec in SCHEMA2_CASES["CopyPalsToSRAMBuffer"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["CopyPalsToSRAMBuffer"] = {
+    "source_symbol": "CopyPalsToSRAMBuffer",
+    "before": "void CopyPalsToSRAMBuffer(void)\n{",
+    "after": "void CopyPalsToSRAMBuffer(void)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["CopyPalsToSRAMBuffer-1"],
+}

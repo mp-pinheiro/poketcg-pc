@@ -844,3 +844,43 @@ MUTATIONS["_LoadGeneralSaveData"] = {
     "after": "{\n\t;",
     "case_ids": ["_LoadGeneralSaveData-2"],
 }
+for _rec in SCHEMA2_CASES["LoadBackupCardAndDeckSaveData"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["LoadBackupCardAndDeckSaveData"] = {
+    "source_symbol": "LoadBackupCardAndDeckSaveData",
+    "before": "void LoadBackupCardAndDeckSaveData(void)\n{",
+    "after": "void LoadBackupCardAndDeckSaveData(void)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["LoadBackupCardAndDeckSaveData-0"],
+}
+for _rec in SCHEMA2_CASES["ValidateGeneralSaveData"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["ValidateGeneralSaveData"] = {
+    "source_symbol": "ValidateGeneralSaveData",
+    "before": "ValidateResult ValidateGeneralSaveData(void)\n{",
+    "after": "ValidateResult ValidateGeneralSaveData(void)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["ValidateGeneralSaveData-0"],
+}
+for _rec in SCHEMA2_CASES["WriteBackupCardAndDeckSaveData"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["WriteBackupCardAndDeckSaveData"] = {
+    "source_symbol": "WriteBackupCardAndDeckSaveData",
+    "before": "void WriteBackupCardAndDeckSaveData(void)\n{",
+    "after": "void WriteBackupCardAndDeckSaveData(void)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["WriteBackupCardAndDeckSaveData-0"],
+}
+for _rec in SCHEMA2_CASES["WriteDataToBackup"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["WriteDataToBackup"] = {
+    "source_symbol": "WriteDataToBackup",
+    "before": "void WriteDataToBackup(uint16_t hl, uint16_t bc)\n{",
+    "after": "void WriteDataToBackup(uint16_t hl, uint16_t bc)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["WriteDataToBackup-1"],
+}
+for _rec in SCHEMA2_CASES["LoadDataFromBackup"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["LoadDataFromBackup"] = {
+    "source_symbol": "LoadDataFromBackup",
+    "before": "void LoadDataFromBackup(uint16_t hl, uint16_t bc)\n{",
+    "after": "void LoadDataFromBackup(uint16_t hl, uint16_t bc)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["LoadDataFromBackup-1"],
+}

@@ -1400,15 +1400,11 @@ for _rec in SCHEMA2_CASES["Music1_f404e"]:
 for _rec in SCHEMA2_CASES["Music1_f4066"]:
     _rec.setdefault("bus", {}).update({0xDDF2: 1})
 for _rec in SCHEMA2_CASES["Music1_f480a"]:
-    _rec.setdefault("bus", {}).update({0xDDEF: 1, 0xFF21: 1, 0xFF22: 1, 0xFF23: 1})
+    _rec.setdefault("bus", {}).update({0xDDEF: 1})
 for _rec in SCHEMA2_CASES["Music1_f485a"]:
-    _rec.setdefault("bus", {}).update({0xDDDF: 1, 0xDDE0: 1, 0xDDE1: 1, 0xFF11: 1, 0xFF14: 1, 0xFF16: 1, 0xFF19: 1, 0xFF1E: 1})
-for _rec in SCHEMA2_CASES["Music1_f4866"]:
-    _rec.setdefault("bus", {}).update({0xFF24: 1, 0xFF25: 1})
+    _rec.setdefault("bus", {}).update({0xDDDF: 1, 0xDDE0: 1, 0xDDE1: 1})
 for _rec in SCHEMA2_CASES["Music1_f490b"]:
-    _rec.setdefault("bus", {}).update({0xDDDF: 1, 0xDDE0: 1, 0xDDE1: 1, 0xFF11: 1, 0xFF14: 1, 0xFF16: 1, 0xFF19: 1, 0xFF1E: 1})
-for _rec in SCHEMA2_CASES["Music1_f4980"]:
-    _rec.setdefault("bus", {}).update({0xFF12: 1, 0xFF14: 1, 0xFF17: 1, 0xFF19: 1, 0xFF1C: 1, 0xFF21: 1, 0xFF23: 1})
+    _rec.setdefault("bus", {}).update({0xDDDF: 1, 0xDDE0: 1, 0xDDE1: 1})
 for _rec in SCHEMA2_CASES["Music1_BackupSong"]:
     _rec.setdefault("bus", {}).update({0xDD80: 0x165})
 for _rec in SCHEMA2_CASES["Music1_EmptyFunc"]:
@@ -1590,4 +1586,68 @@ MUTATIONS["Music1_f4066"] = {
     "before": "void Music1_f4066(void)              { g_rom_bank = MUSIC1_BANK; wddf2 ^= 1; }",
     "after": "void Music1_f4066(void)              { g_rom_bank = MUSIC1_BANK; wddf2 ^= (1) ^ 1u; }",
     "case_ids": ["Music1_f4066-0"],
+}
+for _rec in SCHEMA2_CASES["Music1_BackupSong"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["Music1_BackupSong"] = {
+    "source_symbol": "Music1_BackupSong",
+    "before": "void Music1_BackupSong(void)\n{",
+    "after": "void Music1_BackupSong(void)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["Music1_BackupSong-0"],
+}
+for _rec in SCHEMA2_CASES["Music1_LoadBackup"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["Music1_LoadBackup"] = {
+    "source_symbol": "Music1_LoadBackup",
+    "before": "void Music1_LoadBackup(void)\n{",
+    "after": "void Music1_LoadBackup(void)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["Music1_LoadBackup-0"],
+}
+for _rec in SCHEMA2_CASES["Music1_f480a"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["Music1_f480a"] = {
+    "source_symbol": "Music1_f480a",
+    "before": "void Music1_f480a(void)\n{",
+    "after": "void Music1_f480a(void)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["Music1_f480a-0"],
+}
+for _rec in SCHEMA2_CASES["Music1_f485a"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["Music1_f485a"] = {
+    "source_symbol": "Music1_f485a",
+    "before": "void Music1_f485a(uint8_t ch)\n{",
+    "after": "void Music1_f485a(uint8_t ch)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["Music1_f485a-0"],
+}
+for _rec in SCHEMA2_CASES["Music1_f4866"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["Music1_f4866"] = {
+    "source_symbol": "Music1_f4866",
+    "before": "void Music1_f4866(void)\n{",
+    "after": "void Music1_f4866(void)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["Music1_f4866-0"],
+}
+for _rec in SCHEMA2_CASES["Music1_f490b"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["Music1_f490b"] = {
+    "source_symbol": "Music1_f490b",
+    "before": "void Music1_f490b(uint8_t ch, uint16_t de)\n{",
+    "after": "void Music1_f490b(uint8_t ch, uint16_t de)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["Music1_f490b-0"],
+}
+for _rec in SCHEMA2_CASES["Music1_f4980"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["Music1_f4980"] = {
+    "source_symbol": "Music1_f4980",
+    "before": "void Music1_f4980(void)\n{",
+    "after": "void Music1_f4980(void)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": ["Music1_f4980-0"],
+}
+for _rec in SCHEMA2_CASES["Music1_EmptyFunc"]:
+    _rec.setdefault("bus", {}).update({0xdff0: 1})
+MUTATIONS["Music1_EmptyFunc"] = {
+    "source_symbol": "Music1_EmptyFunc",
+    "before": "void Music1_EmptyFunc(void)          { g_rom_bank = MUSIC1_BANK; }",
+    "after": "void Music1_EmptyFunc(void)          { gb_write8(0xdff0u, 0xFFu); g_rom_bank = MUSIC1_BANK; }",
+    "case_ids": ["Music1_EmptyFunc-0"],
 }
