@@ -1,0 +1,9 @@
+{
+  "fn": "ClearSpriteVRAMBuffer",
+  "case": "tests/cases/sprite_animations.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ClearSpriteVRAMBuffer\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54744\": \"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ClearSpriteVRAMBuffer\", \"mismatches\": {\"bus\": {\"address\": 54745, \"reference\": \"000000000000\", \"native\": \"00ffffffffff\", \"reference_size\": 65, \"native_size\": 65, \"spans\": [[54744, 65]]}}}\n",
+  "restored": "{\"fn\": \"ClearSpriteVRAMBuffer\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54744\": \"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"status\": \"PASS\"}\n"
+}

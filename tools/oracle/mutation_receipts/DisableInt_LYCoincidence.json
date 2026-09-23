@@ -1,0 +1,9 @@
+{
+  "fn": "DisableInt_LYCoincidence",
+  "case": "tests/cases/scroll.py",
+  "index": 4,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DisableInt_LYCoincidence\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65345\": \"80\", \"65535\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DisableInt_LYCoincidence\", \"mismatches\": {\"bus\": {\"address\": 65345, \"reference\": \"8000\", \"native\": \"ff00\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[65345, 1], [65535, 1]]}}}\n",
+  "restored": "{\"fn\": \"DisableInt_LYCoincidence\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65345\": \"80\", \"65535\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

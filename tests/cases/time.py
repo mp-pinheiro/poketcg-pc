@@ -78,3 +78,15 @@ MUTATIONS = {
 # >>> factory-mutation TimerHandler
 MUTATIONS["TimerHandler"] = {"source_symbol": "TimerHandler", "before": "\twTimerCounter = (uint8_t)(counter + 1u);", "after": "\twTimerCounter = counter;", "case_ids": ["TimerHandler-0", "TimerHandler-1"]}
 # <<< factory-mutation TimerHandler
+MUTATIONS["CheckForCGB"] = {
+    "source_symbol": "CheckForCGB",
+    "before": "\tif (a == CONSOLE_CGB)",
+    "after": "\tif (a != CONSOLE_CGB)",
+    "case_ids": ["CheckForCGB-0"],
+}
+MUTATIONS["SetupTimer"] = {
+    "source_symbol": "SetupTimer",
+    "before": "\t\tif ((gb_read8(rSPD) & (uint8_t)(1u << B_SPD_DOUBLE)) != 0u)",
+    "after": "\t\tif ((gb_read8(rSPD) & (uint8_t)(1u << B_SPD_DOUBLE)) == 0u)",
+    "case_ids": ["SetupTimer-1"],
+}

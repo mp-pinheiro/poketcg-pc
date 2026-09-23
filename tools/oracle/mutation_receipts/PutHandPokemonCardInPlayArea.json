@@ -1,0 +1,9 @@
+{
+  "fn": "PutHandPokemonCardInPlayArea",
+  "case": "tests/cases/duel.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PutHandPokemonCardInPlayArea\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 49903, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49903\": \"06\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PutHandPokemonCardInPlayArea\", \"mismatches\": {\"a\": [5, 6], \"f\": [16, 0], \"hl\": [49903, 49876], \"bus\": {\"address\": 49903, \"reference\": \"06c2\", \"native\": \"07c2\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49903, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"PutHandPokemonCardInPlayArea\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 49903, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49903\": \"06\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

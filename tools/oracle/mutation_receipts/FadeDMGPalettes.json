@@ -1,0 +1,9 @@
+{
+  "fn": "FadeDMGPalettes",
+  "case": "tests/cases/color.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FadeDMGPalettes\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51900\": \"550055\", \"53908\": \"ff0055\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FadeDMGPalettes\", \"mismatches\": {\"bus\": {\"address\": 51900, \"reference\": \"550055ff00\", \"native\": \"0055aaff00\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[51900, 3], [53908, 3]]}}}\n",
+  "restored": "{\"fn\": \"FadeDMGPalettes\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51900\": \"550055\", \"53908\": \"ff0055\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "Music1_GetChannelStackPointer",
+  "case": "tests/cases/music1.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Music1_GetChannelStackPointer\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"56819\": \"00c100c200c300c4\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Music1_GetChannelStackPointer\", \"mismatches\": {\"hl\": [49664, 0]}}\n",
+  "restored": "{\"fn\": \"Music1_GetChannelStackPointer\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"56819\": \"00c100c200c300c4\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "EmptyPlayAreaSlot",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"EmptyPlayAreaSlot\", \"registers\": {\"a\": 224, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49888, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49864\": \"00\", \"49870\": \"00\", \"49876\": \"00\", \"49882\": \"00\", \"49888\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"EmptyPlayAreaSlot\", \"mismatches\": {\"bus\": {\"address\": 49864, \"reference\": \"ff0000000000\", \"native\": \"ff0100000000\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[49851, 1], [49864, 1], [49870, 1], [49876, 1], [49882, 1], [49888, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"EmptyPlayAreaSlot\", \"registers\": {\"a\": 224, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49888, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49864\": \"00\", \"49870\": \"00\", \"49876\": \"00\", \"49882\": \"00\", \"49888\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

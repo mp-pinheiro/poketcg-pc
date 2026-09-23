@@ -724,3 +724,123 @@ MUTATIONS = {
         "case_ids": ["InvalidateSaveData-2", "InvalidateSaveData-0", "InvalidateSaveData-1"],
     },
 }
+MUTATIONS["AddCardToCollectionAndUpdateAlbumProgress"] = {
+    "source_symbol": "AddCardToCollectionAndUpdateAlbumProgress",
+    "before": "\t_AddCardToCollectionAndUpdateAlbumProgress(a);",
+    "after": "\t;",
+    "case_ids": ["AddCardToCollectionAndUpdateAlbumProgress-2"],
+}
+MUTATIONS["CopyGeneralSaveDataToSRAM"] = {
+    "source_symbol": "CopyGeneralSaveDataToSRAM",
+    "before": "\t\tif (src == 0)",
+    "after": "\t\tif (src != 0)",
+    "case_ids": ["CopyGeneralSaveDataToSRAM-2"],
+}
+MUTATIONS["LoadAlbumProgressFromSRAM"] = {
+    "source_symbol": "LoadAlbumProgressFromSRAM",
+    "before": "\tgb_write8(wTotalNumCardsToCollect_ADDR, gb_read8((uint16_t)(de + 1)));",
+    "after": "\tgb_write8(wTotalNumCardsToCollect_ADDR, gb_read8((uint16_t)(de - 1)));",
+    "case_ids": ["LoadAlbumProgressFromSRAM-2"],
+}
+MUTATIONS["LoadBackupGeneralSaveData"] = {
+    "source_symbol": "LoadBackupGeneralSaveData",
+    "before": "\tLoadDataFromBackup(sGeneralSaveData_ADDR, (uint16_t)(sGeneralSaveDataEnd_ADDR - sGeneralSaveData_ADDR));",
+    "after": "\t;",
+    "case_ids": ["LoadBackupGeneralSaveData-2"],
+}
+MUTATIONS["LoadBackupSaveData"] = {
+    "source_symbol": "LoadBackupSaveData",
+    "before": "\tLoadBackupGeneralSaveData();",
+    "after": "\t;",
+    "case_ids": ["LoadBackupSaveData-2"],
+}
+MUTATIONS["LoadGeneralSaveData"] = {
+    "source_symbol": "LoadGeneralSaveData",
+    "before": "\t_LoadGeneralSaveData();",
+    "after": "\t;",
+    "case_ids": ["LoadGeneralSaveData-2"],
+}
+MUTATIONS["LoadGeneralSaveDataFromDE"] = {
+    "source_symbol": "LoadGeneralSaveDataFromDE",
+    "before": "\t\tif (dst == 0)",
+    "after": "\t\tif (dst != 0)",
+    "case_ids": ["LoadGeneralSaveDataFromDE-2"],
+}
+MUTATIONS["SaveAndBackupData"] = {
+    "source_symbol": "SaveAndBackupData",
+    "before": "\tWriteBackupGeneralSaveData();",
+    "after": "\t;",
+    "case_ids": ["SaveAndBackupData-2"],
+}
+MUTATIONS["SaveGame"] = {
+    "source_symbol": "SaveGame",
+    "before": "\t_SaveGame(0);",
+    "after": "\t;",
+    "case_ids": ["SaveGame-0"],
+}
+MUTATIONS["SaveGeneralSaveData"] = {
+    "source_symbol": "SaveGeneralSaveData",
+    "before": "\t_SaveGeneralSaveData();",
+    "after": "\t;",
+    "case_ids": ["SaveGeneralSaveData-0"],
+}
+MUTATIONS["SaveGeneralSaveDataFromDE"] = {
+    "source_symbol": "SaveGeneralSaveDataFromDE",
+    "before": "\tCopyGeneralSaveDataToSRAM(de);",
+    "after": "\tCopyGeneralSaveDataToSRAM((uint16_t)(de ^ 1u));",
+    "case_ids": ["SaveGeneralSaveDataFromDE-0"],
+}
+MUTATIONS["UpdateAlbumProgress"] = {
+    "source_symbol": "UpdateAlbumProgress",
+    "before": "\tgb_write8((uint16_t)(de + 1), ap.e);",
+    "after": "\tgb_write8((uint16_t)(de - 1), ap.e);",
+    "case_ids": ["UpdateAlbumProgress-2"],
+}
+MUTATIONS["ValidateBackupGeneralSaveData"] = {
+    "source_symbol": "ValidateBackupGeneralSaveData",
+    "before": "\tBankswitchSRAM(sBackupGeneralSaveData_BANK);",
+    "after": "\t;",
+    "case_ids": ["ValidateBackupGeneralSaveData-0"],
+}
+MUTATIONS["ValidateGeneralSaveDataFromDE"] = {
+    "source_symbol": "ValidateGeneralSaveDataFromDE",
+    "before": "\t\tif (addr == 0)",
+    "after": "\t\tif (addr != 0)",
+    "case_ids": ["ValidateGeneralSaveDataFromDE-2"],
+}
+MUTATIONS["WriteBackupGeneralSaveData"] = {
+    "source_symbol": "WriteBackupGeneralSaveData",
+    "before": "\tWriteDataToBackup(sGeneralSaveData_ADDR, (uint16_t)(sGeneralSaveDataEnd_ADDR - sGeneralSaveData_ADDR));",
+    "after": "\t;",
+    "case_ids": ["WriteBackupGeneralSaveData-2"],
+}
+MUTATIONS["_AddCardToCollectionAndUpdateAlbumProgress"] = {
+    "source_symbol": "_AddCardToCollectionAndUpdateAlbumProgress",
+    "before": "\tgb_write8(wCardToAddToCollection_ADDR, a);",
+    "after": "\tgb_write8(wCardToAddToCollection_ADDR, (uint8_t)(a ^ 1u));",
+    "case_ids": ["_AddCardToCollectionAndUpdateAlbumProgress-2"],
+}
+MUTATIONS["_SaveGame"] = {
+    "source_symbol": "_SaveGame",
+    "before": "\t\tgb_write8(wTempPlayerXCoord_ADDR, 0x02);",
+    "after": "\t\t;",
+    "case_ids": ["_SaveGame-1"],
+}
+MUTATIONS["_SaveGeneralSaveData"] = {
+    "source_symbol": "_SaveGeneralSaveData",
+    "before": "\tget_received_legendary_cards();",
+    "after": "\t;",
+    "case_ids": ["_SaveGeneralSaveData-2"],
+}
+MUTATIONS["_ValidateGeneralSaveData"] = {
+    "source_symbol": "_ValidateGeneralSaveData",
+    "before": "\tValidateGeneralSaveDataFromDE(sGeneralSaveData_ADDR);",
+    "after": "\t;",
+    "case_ids": ["_ValidateGeneralSaveData-0"],
+}
+MUTATIONS["_LoadGeneralSaveData"] = {
+    "source_symbol": "_LoadGeneralSaveData",
+    "before": "{\n\tLoadGeneralSaveDataFromDE(sGeneralSaveData_ADDR);",
+    "after": "{\n\t;",
+    "case_ids": ["_LoadGeneralSaveData-2"],
+}

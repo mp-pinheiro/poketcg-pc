@@ -1,0 +1,9 @@
+{
+  "fn": "SortHandCardsByID",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SortHandCardsByID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 197, \"e\": 18, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 49729, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49730\": \"0001\", \"49902\": \"02\", \"50176\": \"cb01\", \"50448\": \"0100ff00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SortHandCardsByID\", \"mismatches\": {\"f\": [192, 193]}}\n",
+  "restored": "{\"fn\": \"SortHandCardsByID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 197, \"e\": 18, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 49729, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49730\": \"0001\", \"49902\": \"02\", \"50176\": \"cb01\", \"50448\": \"0100ff00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

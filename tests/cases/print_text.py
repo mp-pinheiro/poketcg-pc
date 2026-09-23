@@ -318,3 +318,135 @@ MUTATIONS = {
         "case_ids": ["PrintText-0", "PrintText-1", "PrintText-2", "PrintText-3", "PrintText-4"],
     },
 }
+MUTATIONS["CopyPlayerNameOrTurnDuelistName"] = {
+    "source_symbol": "CopyPlayerNameOrTurnDuelistName",
+    "before": "\tCopyTextResult result = hWhoseTurn == OPPONENT_TURN ? CopyOpponentName(de)",
+    "after": "\tCopyTextResult result = hWhoseTurn != OPPONENT_TURN ? CopyOpponentName(de)",
+    "case_ids": ["CopyPlayerNameOrTurnDuelistName-0"],
+}
+MUTATIONS["CopyText"] = {
+    "source_symbol": "CopyText",
+    "before": "\t\tif (hWhoseTurn == OPPONENT_TURN)",
+    "after": "\t\tif (hWhoseTurn != OPPONENT_TURN)",
+    "case_ids": ["CopyText-1"],
+}
+MUTATIONS["CountLinesOfTextFromID"] = {
+    "source_symbol": "CountLinesOfTextFromID",
+    "before": "\t\tif (value == 0x0a)",
+    "after": "\t\tif (value != 0x0a)",
+    "case_ids": ["CountLinesOfTextFromID-0"],
+}
+MUTATIONS["DrawTextReadyLabeledOrRegularTextBox"] = {
+    "source_symbol": "DrawTextReadyLabeledOrRegularTextBox",
+    "before": "\t\tDrawRegularTextBox(&box, wIsTextBoxLabeled, b, c, d, e);",
+    "after": "\t\tDrawRegularTextBox(&box, wIsTextBoxLabeled, (uint8_t)(b ^ 1u), c, d, e);",
+    "case_ids": ["DrawTextReadyLabeledOrRegularTextBox-0"],
+}
+MUTATIONS["GetTextOffsetFromTextID"] = {
+    "source_symbol": "GetTextOffsetFromTextID",
+    "before": "\tuint16_t index = (uint16_t)(text_id * 3u);",
+    "after": "\tuint16_t index = (uint16_t)(text_id * 4u);",
+    "case_ids": ["GetTextOffsetFromTextID-0"],
+}
+MUTATIONS["HandleTxRam2Or3"] = {
+    "source_symbol": "HandleTxRam2Or3",
+    "before": "\tuint8_t offset = (uint8_t)(index * 2u);",
+    "after": "\tuint8_t offset = (uint8_t)(index * 3u);",
+    "case_ids": ["HandleTxRam2Or3-1"],
+}
+MUTATIONS["GetPointerToTextHeader"] = {
+    "source_symbol": "GetPointerToTextHeader",
+    "before": "\treturn text_header();",
+    "after": "\treturn (text_header()) ^ 1u;",
+    "case_ids": ["GetPointerToTextHeader-0"],
+}
+MUTATIONS["LoadTxRam2"] = {
+    "source_symbol": "LoadTxRam2",
+    "before": "\tgb_write8((uint16_t)(wTxRam2_ADDR + 1), (uint8_t)(text_id >> 8));",
+    "after": "\tgb_write8((uint16_t)(wTxRam2_ADDR - 1), (uint8_t)(text_id >> 8));",
+    "case_ids": ["LoadTxRam2-0"],
+}
+MUTATIONS["LoadTxRam3"] = {
+    "source_symbol": "LoadTxRam3",
+    "before": "\tgb_write8((uint16_t)(wTxRam3_ADDR + 1), (uint8_t)(value >> 8));",
+    "after": "\tgb_write8((uint16_t)(wTxRam3_ADDR - 1), (uint8_t)(value >> 8));",
+    "case_ids": ["LoadTxRam3-0"],
+}
+MUTATIONS["PlaceTextItems"] = {
+    "source_symbol": "PlaceTextItems",
+    "before": "\t\tif (d & 0x80u)",
+    "after": "\t\tif (d & 0x81u)",
+    "case_ids": ["PlaceTextItems-2"],
+}
+MUTATIONS["PrintScrollableText"] = {
+    "source_symbol": "PrintScrollableText",
+    "before": "\t\tuint8_t c = (uint8_t)(speed + 1u);",
+    "after": "\t\tuint8_t c = (uint8_t)(speed - 1u);",
+    "case_ids": ["PrintScrollableText-0"],
+}
+MUTATIONS["PrintScrollableText_NoTextBoxLabel"] = {
+    "source_symbol": "PrintScrollableText_NoTextBoxLabel",
+    "before": "\t(void)PrintScrollableText(0, hl);",
+    "after": "\t;",
+    "case_ids": ["PrintScrollableText_NoTextBoxLabel-0"],
+}
+MUTATIONS["PrintScrollableText_WithTextBoxLabel"] = {
+    "source_symbol": "PrintScrollableText_WithTextBoxLabel",
+    "before": "\t(void)PrintScrollableText_WithTextBoxLabel_NoWait(hl, de);",
+    "after": "\t;",
+    "case_ids": ["PrintScrollableText_WithTextBoxLabel-0"],
+}
+MUTATIONS["PrintScrollableText_WithTextBoxLabel_NoWait"] = {
+    "source_symbol": "PrintScrollableText_WithTextBoxLabel_NoWait",
+    "before": "\tgb_write8(wTextBoxLabel_ADDR, (uint8_t)de);",
+    "after": "\tgb_write8(wTextBoxLabel_ADDR, (uint8_t)(uint16_t)(de ^ 1u));",
+    "case_ids": ["PrintScrollableText_WithTextBoxLabel_NoWait-0"],
+}
+MUTATIONS["PrintTextNoDelay"] = {
+    "source_symbol": "PrintTextNoDelay",
+    "before": "\tResetTxRam_WriteToTextHeader(text);",
+    "after": "\t;",
+    "case_ids": ["PrintTextNoDelay-0"],
+}
+MUTATIONS["ProcessTextFromID"] = {
+    "source_symbol": "ProcessTextFromID",
+    "before": "\tProcessText(&text);",
+    "after": "\t;",
+    "case_ids": ["ProcessTextFromID-0"],
+}
+MUTATIONS["ProcessTextFromPointerToID"] = {
+    "source_symbol": "ProcessTextFromPointerToID",
+    "before": "\t\treturn header_result(0, 0, 0, 0, hl);",
+    "after": "\t\treturn header_result(0, 0, 0, 0, (uint16_t)(hl ^ 1u));",
+    "case_ids": ["ProcessTextFromPointerToID-0"],
+}
+MUTATIONS["ReadTextHeader"] = {
+    "source_symbol": "ReadTextHeader",
+    "before": "\treturn text;",
+    "after": "\treturn 1u + text;",
+    "case_ids": ["ReadTextHeader-0"],
+}
+MUTATIONS["TwoByteNumberToText_CountLeadingZeros"] = {
+    "source_symbol": "TwoByteNumberToText_CountLeadingZeros",
+    "before": "\tif (wFontWidth == 0)",
+    "after": "\tif (wFontWidth != 0)",
+    "case_ids": ["TwoByteNumberToText_CountLeadingZeros-0"],
+}
+MUTATIONS["WaitForPlayerToAdvanceText"] = {
+    "source_symbol": "WaitForPlayerToAdvanceText",
+    "before": "\tSetCursorParametersForTextBox(18, 17, SYM_CURSOR_D, SYM_BOX_BOTTOM);",
+    "after": "\t;",
+    "case_ids": ["WaitForPlayerToAdvanceText-0"],
+}
+MUTATIONS["ResetTxRam_WriteToTextHeader"] = {
+    "source_symbol": "ResetTxRam_WriteToTextHeader",
+    "before": "\twWhichTextHeader = 0;",
+    "after": "\twWhichTextHeader = (0) ^ 1u;",
+    "case_ids": ["ResetTxRam_WriteToTextHeader-0"],
+}
+MUTATIONS["WriteToTextHeader_MoveToNext"] = {
+    "source_symbol": "WriteToTextHeader_MoveToNext",
+    "before": "\tout.hl = wWhichTextHeader_ADDR;",
+    "after": "\tout.hl = (wWhichTextHeader_ADDR) ^ 1u;",
+    "case_ids": ["WriteToTextHeader_MoveToNext-0"],
+}

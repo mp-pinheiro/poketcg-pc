@@ -1,0 +1,9 @@
+{
+  "fn": "ApplyAttachedDefender",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ApplyAttachedDefender\", \"registers\": {\"a\": 0, \"b\": 16, \"c\": 0, \"d\": 0, \"e\": 80, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 20, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"50176\": \"d9\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ApplyAttachedDefender\", \"mismatches\": {\"e\": [80, 79], \"hl\": [20, 21]}}\n",
+  "restored": "{\"fn\": \"ApplyAttachedDefender\", \"registers\": {\"a\": 0, \"b\": 16, \"c\": 0, \"d\": 0, \"e\": 80, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 20, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"50176\": \"d9\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

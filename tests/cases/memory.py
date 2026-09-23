@@ -171,3 +171,15 @@ MUTATIONS = {
         "case_ids": ["FillMemoryWithA-1", "FillMemoryWithA-0", "FillMemoryWithA-2", "FillMemoryWithA-3", "FillMemoryWithA-4", "FillMemoryWithA-5"],
     },
 }
+MUTATIONS["DecompressDataFromBank"] = {
+    "source_symbol": "DecompressDataFromBank",
+    "before": "\tDecompressData(bc, de);",
+    "after": "\tDecompressData((uint16_t)(bc ^ 1u), de);",
+    "case_ids": ["DecompressDataFromBank-0"],
+}
+MUTATIONS["GetFarByte"] = {
+    "source_symbol": "GetFarByte",
+    "before": "\treturn v;",
+    "after": "\treturn 1u + v;",
+    "case_ids": ["GetFarByte-0"],
+}

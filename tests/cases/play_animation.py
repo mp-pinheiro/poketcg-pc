@@ -141,3 +141,15 @@ MUTATIONS["Func_3bb5"] = {
     "case_ids": ["Func_3bb5-0", "Func_3bb5-1"],
 }
 # <<< factory-mutation Func_3bb5
+MUTATIONS["SetDoFrameFunction"] = {
+    "source_symbol": "SetDoFrameFunction",
+    "before": "\tgb_write8(wDoFrameFunction_ADDR + 1u, (uint8_t)(hl >> 8));",
+    "after": "\tgb_write8(wDoFrameFunction_ADDR - 1u, (uint8_t)(hl >> 8));",
+    "case_ids": ["SetDoFrameFunction-0"],
+}
+MUTATIONS["ResetDoFrameFunction"] = {
+    "source_symbol": "ResetDoFrameFunction",
+    "before": "\treturn (FrameFunctionResult){0, 0x80, hl};",
+    "after": "\treturn (FrameFunctionResult){(0) ^ 1u, 0x80, hl};",
+    "case_ids": ["ResetDoFrameFunction-0"],
+}

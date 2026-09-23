@@ -1,0 +1,9 @@
+{
+  "fn": "UpdateSubstatusConditions_StartOfTurn",
+  "case": "tests/cases/substatus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UpdateSubstatusConditions_StartOfTurn\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49895\": \"00\", \"49899\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UpdateSubstatusConditions_StartOfTurn\", \"mismatches\": {\"bus\": {\"address\": 49899, \"reference\": \"0001c2\", \"native\": \"0000c2\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[49895, 1], [49899, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"UpdateSubstatusConditions_StartOfTurn\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49895\": \"00\", \"49899\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

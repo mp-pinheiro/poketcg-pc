@@ -1,0 +1,9 @@
+{
+  "fn": "LoadTilemap",
+  "case": "tests/cases/load_gfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadTilemap\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53551\": \"1412\", \"53817\": \"0000\", \"53820\": \"0020\", \"54466\": \"0098\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadTilemap\", \"mismatches\": {\"bus\": {\"address\": 53820, \"reference\": \"141200000020009820\", \"native\": \"14120000dd20009820\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[53551, 2], [53817, 2], [53820, 2], [54466, 2], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadTilemap\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53551\": \"1412\", \"53817\": \"0000\", \"53820\": \"0020\", \"54466\": \"0098\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n"
+}

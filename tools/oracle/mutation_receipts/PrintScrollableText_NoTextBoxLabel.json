@@ -1,0 +1,9 @@
+{
+  "fn": "PrintScrollableText_NoTextBoxLabel",
+  "case": "tests/cases/print_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintScrollableText_NoTextBoxLabel\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"39474\": \"1d\"}}, \"wram\": {\"50576\": \"00\", \"52495\": \"0100\", \"52502\": \"1d\", \"52811\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintScrollableText_NoTextBoxLabel\", \"mismatches\": {\"f\": [128, 0], \"bus\": {\"address\": 52811, \"reference\": \"0001001d00\", \"native\": \"0001001dff\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[50576, 1], [52495, 2], [52502, 1], [52811, 1]]}}}\n",
+  "restored": "{\"fn\": \"PrintScrollableText_NoTextBoxLabel\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"39474\": \"1d\"}}, \"wram\": {\"50576\": \"00\", \"52495\": \"0100\", \"52502\": \"1d\", \"52811\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

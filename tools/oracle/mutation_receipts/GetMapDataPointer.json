@@ -1,0 +1,9 @@
+{
+  "fn": "GetMapDataPointer",
+  "case": "tests/cases/load_gfx.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetMapDataPointer\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 1192, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetMapDataPointer\", \"mismatches\": {\"hl\": [1192, 1362]}}\n",
+  "restored": "{\"fn\": \"GetMapDataPointer\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 1192, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

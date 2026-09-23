@@ -1,0 +1,9 @@
+{
+  "fn": "ShiftAllPokemonToFirstPlayAreaSlots",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ShiftAllPokemonToFirstPlayAreaSlots\", \"registers\": {\"a\": 6, \"b\": 0, \"c\": 0, \"d\": 6, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 50113, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49666\": \"10\", \"49851\": \"02ffffffffff\", \"50107\": \"ffffffffffff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ShiftAllPokemonToFirstPlayAreaSlots\", \"mismatches\": {\"bus\": {\"address\": 49666, \"reference\": \"1002ffffff\", \"native\": \"11ff02ffff\", \"reference_size\": 14, \"native_size\": 14, \"spans\": [[49666, 1], [49851, 6], [50107, 6], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"ShiftAllPokemonToFirstPlayAreaSlots\", \"registers\": {\"a\": 6, \"b\": 0, \"c\": 0, \"d\": 6, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 50113, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49666\": \"10\", \"49851\": \"02ffffffffff\", \"50107\": \"ffffffffffff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

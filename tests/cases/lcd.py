@@ -42,3 +42,33 @@ MUTATIONS = {
         "case_ids": ["EnableLCD-0", "EnableLCD-1"],
     },
 }
+MUTATIONS["DisableLCD"] = {
+    "source_symbol": "DisableLCD",
+    "before": "\tgb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) & (uint8_t)~LCDC_ON));",
+    "after": "\tgb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) | (uint8_t)~LCDC_ON));",
+    "case_ids": ["DisableLCD-0"],
+}
+MUTATIONS["SetWindowOff"] = {
+    "source_symbol": "SetWindowOff",
+    "before": "\tgb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) & (uint8_t)~LCDC_WIN_ON));",
+    "after": "\tgb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) | (uint8_t)~LCDC_WIN_ON));",
+    "case_ids": ["SetWindowOff-0"],
+}
+MUTATIONS["SetWindowOn"] = {
+    "source_symbol": "SetWindowOn",
+    "before": "\tgb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) | LCDC_WIN_ON));",
+    "after": "\tgb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) & LCDC_WIN_ON));",
+    "case_ids": ["SetWindowOn-0"],
+}
+MUTATIONS["Set_OBJ_8x16"] = {
+    "source_symbol": "Set_OBJ_8x16",
+    "before": "\tgb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) | LCDC_OBJ_16));",
+    "after": "\tgb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) & LCDC_OBJ_16));",
+    "case_ids": ["Set_OBJ_8x16-0"],
+}
+MUTATIONS["Set_OBJ_8x8"] = {
+    "source_symbol": "Set_OBJ_8x8",
+    "before": "\tgb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) & (uint8_t)~LCDC_OBJ_16));",
+    "after": "\tgb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) | (uint8_t)~LCDC_OBJ_16));",
+    "case_ids": ["Set_OBJ_8x8-0"],
+}

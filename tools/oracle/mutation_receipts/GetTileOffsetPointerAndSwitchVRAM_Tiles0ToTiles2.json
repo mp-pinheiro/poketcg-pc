@@ -1,0 +1,9 @@
+{
+  "fn": "GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2",
+  "case": "tests/cases/load_gfx.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54474\": \"8001\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2\", \"mismatches\": {\"bus\": {\"address\": 54474, \"reference\": \"8001\", \"native\": \"8101\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[54474, 2]]}}}\n",
+  "restored": "{\"fn\": \"GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54474\": \"8001\"}}, \"status\": \"PASS\"}\n"
+}

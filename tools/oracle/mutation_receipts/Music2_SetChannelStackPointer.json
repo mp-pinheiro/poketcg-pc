@@ -1,0 +1,9 @@
+{
+  "fn": "Music2_SetChannelStackPointer",
+  "case": "tests/cases/music2.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Music2_SetChannelStackPointer\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"56819\": \"00c1\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Music2_SetChannelStackPointer\", \"mismatches\": {\"bus\": {\"address\": 56820, \"reference\": \"00c1\", \"native\": \"0000\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[56819, 2]]}}}\n",
+  "restored": "{\"fn\": \"Music2_SetChannelStackPointer\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"56819\": \"00c1\"}}, \"status\": \"PASS\"}\n"
+}

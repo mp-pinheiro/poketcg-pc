@@ -1,0 +1,9 @@
+{
+  "fn": "FadeOBPalIntoTemp",
+  "case": "tests/cases/color.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FadeOBPalIntoTemp\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52016\": \"c451c652c855ca56cc59ce5ad05dd15ecf61ce62d065d266d465d666d861da62e45de65ee859ea5aec59ee5af05df15eef61ee62f065f266f469f66af86dfa6e\", \"53975\": \"7f7e7d7c7b7a797877767574737271706f6e6d6c6b6a696867666564636261605f5e5d5c5b5a595857565554535251504f4e4d4c4b4a49484746454443424140\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FadeOBPalIntoTemp\", \"mismatches\": {\"bus\": {\"address\": 52016, \"reference\": \"c451c652c8\", \"native\": \"4041424344\", \"reference_size\": 128, \"native_size\": 128, \"spans\": [[52016, 64], [53975, 64]]}}}\n",
+  "restored": "{\"fn\": \"FadeOBPalIntoTemp\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52016\": \"c451c652c855ca56cc59ce5ad05dd15ecf61ce62d065d266d465d666d861da62e45de65ee859ea5aec59ee5af05df15eef61ee62f065f266f469f66af86dfa6e\", \"53975\": \"7f7e7d7c7b7a797877767574737271706f6e6d6c6b6a696867666564636261605f5e5d5c5b5a595857565554535251504f4e4d4c4b4a49484746454443424140\"}}, \"status\": \"PASS\"}\n"
+}

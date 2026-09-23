@@ -1,0 +1,9 @@
+{
+  "fn": "SortCardsInDuelTempListByID",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SortCardsInDuelTempListByID\", \"registers\": {\"a\": 19, \"b\": 0, \"c\": 0, \"d\": 197, \"e\": 18, \"f\": 32, \"frame_budget_reached\": 0, \"hl\": 50451, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50176\": \"cb0102\", \"50448\": \"010200ff\", \"65431\": \"c2\", \"65433\": \"13c5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SortCardsInDuelTempListByID\", \"mismatches\": {\"a\": [19, 0], \"d\": [197, 0], \"e\": [18, 0], \"hl\": [50451, 0], \"bus\": {\"address\": 50448, \"reference\": \"cb0102010200ffc2\", \"native\": \"cb0102000201ffc2\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[50176, 3], [50448, 4], [65431, 1], [65433, 2]]}}}\n",
+  "restored": "{\"fn\": \"SortCardsInDuelTempListByID\", \"registers\": {\"a\": 19, \"b\": 0, \"c\": 0, \"d\": 197, \"e\": 18, \"f\": 32, \"frame_budget_reached\": 0, \"hl\": 50451, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50176\": \"cb0102\", \"50448\": \"010200ff\", \"65431\": \"c2\", \"65433\": \"13c5\"}}, \"status\": \"PASS\"}\n"
+}

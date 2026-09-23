@@ -1,0 +1,9 @@
+{
+  "fn": "SetNextElementOfList",
+  "case": "tests/cases/list.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetNextElementOfList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"00\", \"52082\": \"01c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetNextElementOfList\", \"mismatches\": {\"bus\": {\"address\": 49664, \"reference\": \"0001c2\", \"native\": \"ff0100\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[49664, 1], [52082, 2]]}}}\n",
+  "restored": "{\"fn\": \"SetNextElementOfList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"00\", \"52082\": \"01c2\"}}, \"status\": \"PASS\"}\n"
+}

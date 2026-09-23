@@ -1,0 +1,9 @@
+{
+  "fn": "LoadOBPalette",
+  "case": "tests/cases/load_gfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadOBPalette\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52016\": \"9c6394420821000000001c009c019c0300001c009c019c0300001c009c019c0300001c009c019c0300001c009c019c0300001c009c019c0300001c009c019c03\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadOBPalette\", \"mismatches\": {\"bus\": {\"address\": 52016, \"reference\": \"9c63944208\", \"native\": \"c3432dcdeb\", \"reference_size\": 65, \"native_size\": 65, \"spans\": [[52016, 64], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadOBPalette\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52016\": \"9c6394420821000000001c009c019c0300001c009c019c0300001c009c019c0300001c009c019c0300001c009c019c0300001c009c019c0300001c009c019c03\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n"
+}

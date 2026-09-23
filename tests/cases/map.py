@@ -436,3 +436,63 @@ MUTATIONS["ExecuteGameEvent"] = {"source_symbol": "ExecuteGameEvent", "before": 
 for _record in SCHEMA2_CASES["ExecuteGameEvent"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x08E1, "bank": 32}
 # <<< factory-completion ExecuteGameEvent
+MUTATIONS["CopyGfxDataFromTempBank"] = {
+    "source_symbol": "CopyGfxDataFromTempBank",
+    "before": "\tBankswitchROM(wTempPointerBank);",
+    "after": "\t;",
+    "case_ids": ["CopyGfxDataFromTempBank-4"],
+}
+MUTATIONS["FindLoadedNPC"] = {
+    "source_symbol": "FindLoadedNPC",
+    "before": "\t\tif (gb_read8(entry) == target) {",
+    "after": "\t\tif (gb_read8(entry) != target) {",
+    "case_ids": ["FindLoadedNPC-0"],
+}
+MUTATIONS["GameEvent_Overworld"] = {
+    "source_symbol": "GameEvent_Overworld",
+    "before": "\treturn (uint8_t)((f & 0x80u) | 0x10u);",
+    "after": "\treturn (uint8_t)((f | 0x80u) | 0x10u);",
+    "case_ids": ["GameEvent_Overworld-0"],
+}
+MUTATIONS["GetDefaultSong"] = {
+    "source_symbol": "GetDefaultSong",
+    "before": "\tif (wOverworldMapSelection == OWMAP_ISHIHARAS_HOUSE",
+    "after": "\tif (wOverworldMapSelection != OWMAP_ISHIHARAS_HOUSE",
+    "case_ids": ["GetDefaultSong-1"],
+}
+MUTATIONS["GetItemInLoadedNPCIndex"] = {
+    "source_symbol": "GetItemInLoadedNPCIndex",
+    "before": "\tif (a >= 8u)",
+    "after": "\tif (a > 8u)",
+    "case_ids": ["GetItemInLoadedNPCIndex-2"],
+}
+MUTATIONS["GetLoadedNPCID"] = {
+    "source_symbol": "GetLoadedNPCID",
+    "before": "\treturn GetItemInLoadedNPCIndex(a, 0);",
+    "after": "\treturn GetItemInLoadedNPCIndex((uint8_t)(a ^ 1u), 0);",
+    "case_ids": ["GetLoadedNPCID-0"],
+}
+MUTATIONS["GetNextNPCMovementByte"] = {
+    "source_symbol": "GetNextNPCMovementByte",
+    "before": "\treturn value;",
+    "after": "\treturn 1u + value;",
+    "case_ids": ["GetNextNPCMovementByte-0"],
+}
+MUTATIONS["GetPermissionByteOfMapPosition"] = {
+    "source_symbol": "GetPermissionByteOfMapPosition",
+    "before": "\treturn (PermissionResult){(uint8_t)(hl - wPermissionMap_ADDR), hl};",
+    "after": "\treturn (PermissionResult){(uint8_t)(hl + wPermissionMap_ADDR), hl};",
+    "case_ids": ["GetPermissionByteOfMapPosition-0"],
+}
+MUTATIONS["SetPermissionOfMapPosition"] = {
+    "source_symbol": "SetPermissionOfMapPosition",
+    "before": "\tgb_write8(permission_address(b, c), a);",
+    "after": "\t;",
+    "case_ids": ["SetPermissionOfMapPosition-0"],
+}
+MUTATIONS["UpdatePermissionOfMapPosition"] = {
+    "source_symbol": "UpdatePermissionOfMapPosition",
+    "before": "\tuint8_t result = (uint8_t)(gb_read8(address) & (uint8_t)~a);",
+    "after": "\tuint8_t result = (uint8_t)(gb_read8(address) | (uint8_t)~a);",
+    "case_ids": ["UpdatePermissionOfMapPosition-0"],
+}

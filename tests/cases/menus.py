@@ -695,3 +695,151 @@ for _record in SCHEMA2_CASES["ContinueDuel"]:
     _record["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
                              "routine": "DuelMainInterface"}
 # <<< factory-completion ContinueDuel
+for _rec in SCHEMA2_CASES["SetCursorParametersForTextBox"]:
+    _rec.setdefault("bus", {}).update({0xCD0F: 1, 0xCD10: 1, 0xCD11: 1, 0xCD12: 1, 0xCD13: 1, 0xCD14: 1, 0xCD15: 1, 0xCD16: 1})
+for _rec in SCHEMA2_CASES["SetMenuItem"]:
+    _rec.setdefault("bus", {}).update({0xCD0F: 1, 0xCD10: 1, 0xFFB1: 1})
+MUTATIONS["DrawCardSymbol"] = {
+    "source_symbol": "DrawCardSymbol",
+    "before": "\tif (wConsole == CONSOLE_CGB) {",
+    "after": "\tif (wConsole != CONSOLE_CGB) {",
+    "case_ids": ["DrawCardSymbol-0"],
+}
+MUTATIONS["DrawCursor"] = {
+    "source_symbol": "DrawCursor",
+    "before": "\t(void)DrawCursorRegs(a);",
+    "after": "\t;",
+    "case_ids": ["DrawCursor-0"],
+}
+MUTATIONS["DrawCursor2"] = {
+    "source_symbol": "DrawCursor2",
+    "before": "\tDrawCursor(wMenuVisibleCursorTile);",
+    "after": "\t;",
+    "case_ids": ["DrawCursor2-0"],
+}
+MUTATIONS["DrawNarrowTextBox"] = {
+    "source_symbol": "DrawNarrowTextBox",
+    "before": "\tDrawRegularTextBox(&hl, 0, 12, 6, d, e);",
+    "after": "\t;",
+    "case_ids": ["DrawNarrowTextBox-0"],
+}
+MUTATIONS["DrawNarrowTextBox_PrintTextNoDelay"] = {
+    "source_symbol": "DrawNarrowTextBox_PrintTextNoDelay",
+    "before": "\tDrawNarrowTextBox();",
+    "after": "\t;",
+    "case_ids": ["DrawNarrowTextBox_PrintTextNoDelay-0"],
+}
+MUTATIONS["DrawWideTextBox"] = {
+    "source_symbol": "DrawWideTextBox",
+    "before": "\tDrawRegularTextBox(&hl, 0, 20, 6, d, e);",
+    "after": "\t;",
+    "case_ids": ["DrawWideTextBox-0"],
+}
+MUTATIONS["DrawWideTextBox_PrintText"] = {
+    "source_symbol": "DrawWideTextBox_PrintText",
+    "before": "\tInitTextPrintingInTextbox(19, d, e);",
+    "after": "\tInitTextPrintingInTextbox(19, (uint8_t)(d ^ 1u), e);",
+    "case_ids": ["DrawWideTextBox_PrintText-1"],
+}
+MUTATIONS["DrawWideTextBox_PrintTextNoDelay_Wait"] = {
+    "source_symbol": "DrawWideTextBox_PrintTextNoDelay_Wait",
+    "before": "\t(void)DrawWideTextBox_PrintTextNoDelay(hl);",
+    "after": "\t;",
+    "case_ids": ["DrawWideTextBox_PrintTextNoDelay_Wait-0"],
+}
+MUTATIONS["EraseCursor"] = {
+    "source_symbol": "EraseCursor",
+    "before": "\tDrawCursor(wMenuInvisibleCursorTile);",
+    "after": "\t;",
+    "case_ids": ["EraseCursor-0"],
+}
+MUTATIONS["HandleDuelMenuInput"] = {
+    "source_symbol": "HandleDuelMenuInput",
+    "before": "\t\tif ((b & (PAD_UP | PAD_DOWN)) != 0u) {",
+    "after": "\t\tif ((b & (PAD_UP | PAD_DOWN)) == 0u) {",
+    "case_ids": ["HandleDuelMenuInput-0"],
+}
+MUTATIONS["InitializeCardListParameters"] = {
+    "source_symbol": "InitializeCardListParameters",
+    "before": "\tgb_write8((uint16_t)(wListFunctionPointer_ADDR + 1), gb_read8((*hl)++));",
+    "after": "\t;",
+    "case_ids": ["InitializeCardListParameters-0"],
+}
+MUTATIONS["InitializeMenuParameters"] = {
+    "source_symbol": "InitializeMenuParameters",
+    "before": "\t\tgb_write8((uint16_t)(wMenuCursorXOffset_ADDR + i), gb_read8((*hl)++));",
+    "after": "\t\t;",
+    "case_ids": ["InitializeMenuParameters-0"],
+}
+MUTATIONS["DrawNarrowTextBox_WaitForInput"] = {
+    "source_symbol": "DrawNarrowTextBox_WaitForInput",
+    "before": "void DrawNarrowTextBox_WaitForInput(uint16_t hl)\n{\n\t(void)DrawNarrowTextBox_PrintTextNoDelay(hl);",
+    "after": "void DrawNarrowTextBox_WaitForInput(uint16_t hl)\n{\n\t;",
+    "case_ids": ["DrawNarrowTextBox_WaitForInput-0"],
+}
+MUTATIONS["DrawWideTextBox_PrintTextNoDelay"] = {
+    "source_symbol": "DrawWideTextBox_PrintTextNoDelay",
+    "before": "{\n\tDrawWideTextBox();",
+    "after": "{\n\t;",
+    "case_ids": ["DrawWideTextBox_PrintTextNoDelay-0"],
+}
+MUTATIONS["DrawWideTextBox_WaitForInput"] = {
+    "source_symbol": "DrawWideTextBox_WaitForInput",
+    "before": "WaitResult DrawWideTextBox_WaitForInput(uint16_t hl)\n{\n\t(void)DrawWideTextBox_PrintText(hl);",
+    "after": "WaitResult DrawWideTextBox_WaitForInput(uint16_t hl)\n{\n\t;",
+    "case_ids": ["DrawWideTextBox_WaitForInput-0"],
+}
+MUTATIONS["OneByteNumberToTxSymbol_PadSpace"] = {
+    "source_symbol": "OneByteNumberToTxSymbol_PadSpace",
+    "before": "\t\tgb_write8(result.hl, SYM_SPACE);",
+    "after": "\t\t;",
+    "case_ids": ["OneByteNumberToTxSymbol_PadSpace-0"],
+}
+MUTATIONS["OneByteNumberToTxSymbol_TrimLeadingZeroAndAlign"] = {
+    "source_symbol": "OneByteNumberToTxSymbol_TrimLeadingZeroAndAlign",
+    "before": "\tif (first == SYM_0) {",
+    "after": "\tif (first != SYM_0) {",
+    "case_ids": ["OneByteNumberToTxSymbol_TrimLeadingZeroAndAlign-0"],
+}
+MUTATIONS["PrintYesOrNoItems"] = {
+    "source_symbol": "PrintYesOrNoItems",
+    "before": "\treturn InitTextPrinting_ProcessTextFromID(d, e, YES_OR_NO_TEXT_ID);",
+    "after": "\treturn InitTextPrinting_ProcessTextFromID((uint8_t)(d ^ 1u), e, YES_OR_NO_TEXT_ID);",
+    "case_ids": ["PrintYesOrNoItems-0"],
+}
+MUTATIONS["RefreshMenuCursor"] = {
+    "source_symbol": "RefreshMenuCursor",
+    "before": "\t(void)RefreshMenuCursorRegs();",
+    "after": "\t;",
+    "case_ids": ["RefreshMenuCursor-0"],
+}
+MUTATIONS["WaitForButtonAorB"] = {
+    "source_symbol": "WaitForButtonAorB",
+    "before": "\t\t\t|| gb_read8(wMenuInvisibleCursorTile_ADDR) == 0u ? 0x80u : 0x00u;",
+    "after": "\t\t\t|| gb_read8(wMenuInvisibleCursorTile_ADDR) != 0u ? 0x80u : 0x00u;",
+    "case_ids": ["WaitForButtonAorB-0"],
+}
+MUTATIONS["SetCursorParametersForTextBox_Default"] = {
+    "source_symbol": "SetCursorParametersForTextBox_Default",
+    "before": "\tresult.f = WaitForButtonAorB().f;",
+    "after": "\tresult.f = (WaitForButtonAorB().f) ^ 1u;",
+    "case_ids": ["SetCursorParametersForTextBox_Default-0"],
+}
+MUTATIONS["WaitForWideTextBoxInput"] = {
+    "source_symbol": "WaitForWideTextBoxInput",
+    "before": "\tuint16_t params = WTBM_PARAMS;\n\tInitializeMenuParameters(0, &params);",
+    "after": "\tuint16_t params = WTBM_PARAMS;\n\t;",
+    "case_ids": ["WaitForWideTextBoxInput-0"],
+}
+MUTATIONS["SetCursorParametersForTextBox"] = {
+    "source_symbol": "SetCursorParametersForTextBox",
+    "before": "\tgb_write8(wMenuCursorXOffset_ADDR, d);",
+    "after": "\tgb_write8(wMenuCursorXOffset_ADDR, (uint8_t)(d ^ 1u));",
+    "case_ids": ["SetCursorParametersForTextBox-0"],
+}
+MUTATIONS["SetMenuItem"] = {
+    "source_symbol": "SetMenuItem",
+    "before": "void SetMenuItem(uint8_t a)\n{\n\twCurMenuItem = a;",
+    "after": "void SetMenuItem(uint8_t a)\n{\n\twCurMenuItem = (a) ^ 1u;",
+    "case_ids": ["SetMenuItem-0"],
+}

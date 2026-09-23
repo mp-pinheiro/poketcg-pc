@@ -1,0 +1,9 @@
+{
+  "fn": "CopyPlayerNameOrTurnDuelistName",
+  "case": "tests/cases/print_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyPlayerNameOrTurnDuelistName\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 202, \"e\": 162, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 51872, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"40976\": \"414200\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51872\": \"41420000\", \"65431\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyPlayerNameOrTurnDuelistName\", \"mismatches\": {\"a\": [0, 1], \"e\": [162, 169], \"bus\": {\"address\": 51872, \"reference\": \"4142000000\", \"native\": \"06506c6100\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[51872, 4], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"CopyPlayerNameOrTurnDuelistName\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 202, \"e\": 162, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 51872, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"40976\": \"414200\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51872\": \"41420000\", \"65431\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

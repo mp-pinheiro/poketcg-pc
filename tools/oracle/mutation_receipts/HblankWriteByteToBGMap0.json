@@ -1,0 +1,9 @@
+{
+  "fn": "HblankWriteByteToBGMap0",
+  "case": "tests/cases/bg_map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HblankWriteByteToBGMap0\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"38912\": \"00\", \"51905\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HblankWriteByteToBGMap0\", \"mismatches\": {\"bus\": {\"address\": 51905, \"reference\": \"0000\", \"native\": \"0001\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[38912, 1], [51905, 1]]}}}\n",
+  "restored": "{\"fn\": \"HblankWriteByteToBGMap0\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"38912\": \"00\", \"51905\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

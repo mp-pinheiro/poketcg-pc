@@ -1,0 +1,9 @@
+{
+  "fn": "EvolvePokemonCardIfPossible",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"EvolvePokemonCardIfPossible\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 40, \"d\": 1, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49870, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"01\", \"49858\": \"00\", \"49864\": \"1e\", \"49870\": \"01\", \"50176\": \"0809\", \"52462\": \"00\", \"65431\": \"c201\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"EvolvePokemonCardIfPossible\", \"mismatches\": {\"a\": [1, 128], \"c\": [40, 0], \"hl\": [49870, 49858], \"bus\": {\"address\": 49851, \"reference\": \"01001e0108\", \"native\": \"00800a0008\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[49851, 1], [49858, 1], [49864, 1], [49870, 1], [50176, 2], [52462, 1], [65431, 2], [65437, 1]]}}}\n",
+  "restored": "{\"fn\": \"EvolvePokemonCardIfPossible\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 40, \"d\": 1, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49870, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"01\", \"49858\": \"00\", \"49864\": \"1e\", \"49870\": \"01\", \"50176\": \"0809\", \"52462\": \"00\", \"65431\": \"c201\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

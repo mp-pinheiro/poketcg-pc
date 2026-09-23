@@ -1,0 +1,9 @@
+{
+  "fn": "CheckIsIncapableOfUsingPkmnPower",
+  "case": "tests/cases/substatus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIsIncapableOfUsingPkmnPower\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 203, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"49904\": \"01\", \"50108\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIsIncapableOfUsingPkmnPower\", \"mismatches\": {\"a\": [1, 0], \"f\": [16, 128], \"hl\": [203, 212]}}\n",
+  "restored": "{\"fn\": \"CheckIsIncapableOfUsingPkmnPower\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 203, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"49904\": \"01\", \"50108\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

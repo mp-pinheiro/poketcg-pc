@@ -1,0 +1,9 @@
+{
+  "fn": "DecompressDataFromBank",
+  "case": "tests/cases/memory.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DecompressDataFromBank\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51926\": \"0200ff0001000100ca01\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DecompressDataFromBank\", \"mismatches\": {\"bus\": {\"address\": 51926, \"reference\": \"0200ff0001\", \"native\": \"f4d8080001\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[51926, 10], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"DecompressDataFromBank\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51926\": \"0200ff0001000100ca01\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

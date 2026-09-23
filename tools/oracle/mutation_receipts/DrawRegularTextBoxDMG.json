@@ -1,0 +1,9 @@
+{
+  "fn": "DrawRegularTextBoxDMG",
+  "case": "tests/cases/text_box.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawRegularTextBoxDMG\", \"registers\": {\"a\": 0, \"b\": 4, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 39008, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"38912\": \"181c1c19000000000000000000000000000000000000000000000000000000001e00001f000000000000000000000000000000000000000000000000000000001a1d1d1b00000000000000000000000000000000000000000000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawRegularTextBoxDMG\", \"mismatches\": {\"hl\": [39008, 38976], \"bus\": {\"address\": 38912, \"reference\": \"181c1c1900\", \"native\": \"1e00001f00\", \"reference_size\": 96, \"native_size\": 96, \"spans\": [[38912, 96]]}}}\n",
+  "restored": "{\"fn\": \"DrawRegularTextBoxDMG\", \"registers\": {\"a\": 0, \"b\": 4, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 39008, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"38912\": \"181c1c19000000000000000000000000000000000000000000000000000000001e00001f000000000000000000000000000000000000000000000000000000001a1d1d1b00000000000000000000000000000000000000000000000000000000\"}}, \"status\": \"PASS\"}\n"
+}

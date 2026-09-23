@@ -1,0 +1,9 @@
+{
+  "fn": "CreateArenaOrBenchEnergyCardList",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CreateArenaOrBenchEnergyCardList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 16, \"d\": 197, \"e\": 17, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 49724, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"1010\", \"50176\": \"01cb\", \"50448\": \"00ff0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreateArenaOrBenchEnergyCardList\", \"mismatches\": {\"a\": [0, 2], \"e\": [17, 74], \"f\": [128, 0], \"bus\": {\"address\": 50448, \"reference\": \"101001cb00ff0000c2\", \"native\": \"101001cb02030405c2\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49664, 2], [50176, 2], [50448, 4], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"CreateArenaOrBenchEnergyCardList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 16, \"d\": 197, \"e\": 17, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 49724, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"1010\", \"50176\": \"01cb\", \"50448\": \"00ff0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

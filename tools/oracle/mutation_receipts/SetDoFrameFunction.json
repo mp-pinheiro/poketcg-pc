@@ -1,0 +1,9 @@
+{
+  "fn": "SetDoFrameFunction",
+  "case": "tests/cases/play_animation.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetDoFrameFunction\", \"registers\": {\"a\": 18, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51923\": \"3412\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetDoFrameFunction\", \"mismatches\": {\"bus\": {\"address\": 51924, \"reference\": \"3412\", \"native\": \"3400\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[51923, 2]]}}}\n",
+  "restored": "{\"fn\": \"SetDoFrameFunction\", \"registers\": {\"a\": 18, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51923\": \"3412\"}}, \"status\": \"PASS\"}\n"
+}

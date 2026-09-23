@@ -1,0 +1,9 @@
+{
+  "fn": "WaitForWideTextBoxInput",
+  "case": "tests/cases/menus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"WaitForWideTextBoxInput\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"39474\": \"1d\"}}, \"wram\": {\"52495\": \"0100121101\", \"52501\": \"2f1d\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"WaitForWideTextBoxInput\", \"mismatches\": {\"bus\": {\"address\": 52495, \"reference\": \"0100121101\", \"native\": \"0600020300\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[52495, 5], [52501, 2]]}, \"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"WaitForWideTextBoxInput\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"39474\": \"1d\"}}, \"wram\": {\"52495\": \"0100121101\", \"52501\": \"2f1d\"}}, \"status\": \"PASS\"}\n"
+}

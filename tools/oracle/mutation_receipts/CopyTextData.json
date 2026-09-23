@@ -1,0 +1,9 @@
+{
+  "fn": "CopyTextData",
+  "case": "tests/cases/process_text.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyTextData\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 2, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49666, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"414200\", \"49664\": \"4142707000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyTextData\", \"mismatches\": {\"a\": [2, 1], \"e\": [2, 1], \"hl\": [49666, 49665], \"bus\": {\"address\": 49665, \"reference\": \"414200414270700000\", \"native\": \"414200410000000000\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[49408, 3], [49664, 8]]}}}\n",
+  "restored": "{\"fn\": \"CopyTextData\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 2, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49666, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"414200\", \"49664\": \"4142707000000000\"}}, \"status\": \"PASS\"}\n"
+}

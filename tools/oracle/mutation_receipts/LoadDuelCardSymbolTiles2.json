@@ -1,0 +1,9 @@
+{
+  "fn": "LoadDuelCardSymbolTiles2",
+  "case": "tests/cases/tiles.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadDuelCardSymbolTiles2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 142, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 28904, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"36160\": \"0000ffff8080818182838487888e929c0000fefe02020202828242c222e212f2a0bcb8be888e888e888f8f8f8080ffff0afa3afa22e222e222e2e2e20202fefe0000ffff80808181828384878a8c909d0000fefe02020202828242c2a2621272a0bfb8be888d888c888f8f8f8080ffff0a7a3afa22e2226222e2e2e20202fefe0000ffff8080bfbfa0a0afa0afa0bdbc0000fefe0202fafa0a0afa0afa0afa7a8584858485848584858487878080ffffc242c242c242c242c242c2c20202fefe\"}}, \"wram\": {\"51892\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadDuelCardSymbolTiles2\", \"mismatches\": {\"hl\": [28904, 28905], \"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"LoadDuelCardSymbolTiles2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 142, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 28904, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"36160\": \"0000ffff8080818182838487888e929c0000fefe02020202828242c222e212f2a0bcb8be888e888e888f8f8f8080ffff0afa3afa22e222e222e2e2e20202fefe0000ffff80808181828384878a8c909d0000fefe02020202828242c2a2621272a0bfb8be888d888c888f8f8f8080ffff0a7a3afa22e2226222e2e2e20202fefe0000ffff8080bfbfa0a0afa0afa0bdbc0000fefe0202fafa0a0afa0afa0afa7a8584858485848584858487878080ffffc242c242c242c242c242c2c20202fefe\"}}, \"wram\": {\"51892\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

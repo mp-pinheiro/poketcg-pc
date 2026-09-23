@@ -1,0 +1,9 @@
+{
+  "fn": "RefreshMenuCursor",
+  "case": "tests/cases/menus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"RefreshMenuCursor\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"39137\": \"ab\", \"52495\": \"0603010102\", \"52501\": \"ab00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"RefreshMenuCursor\", \"mismatches\": {\"bus\": {\"address\": 52495, \"reference\": \"ab0603010102\", \"native\": \"ab0503010102\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[39137, 1], [52495, 5], [52501, 2]]}}}\n",
+  "restored": "{\"fn\": \"RefreshMenuCursor\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"39137\": \"ab\", \"52495\": \"0603010102\", \"52501\": \"ab00\"}}, \"status\": \"PASS\"}\n"
+}

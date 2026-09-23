@@ -1,0 +1,9 @@
+{
+  "fn": "GetFullWidthFontTileOffset",
+  "case": "tests/cases/process_text.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetFullWidthFontTileOffset\", \"registers\": {\"a\": 16, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 16, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 128, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetFullWidthFontTileOffset\", \"mismatches\": {\"hl\": [128, 896]}}\n",
+  "restored": "{\"fn\": \"GetFullWidthFontTileOffset\", \"registers\": {\"a\": 16, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 16, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 128, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

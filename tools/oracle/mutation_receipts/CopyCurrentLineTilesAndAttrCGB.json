@@ -1,0 +1,9 @@
+{
+  "fn": "CopyCurrentLineTilesAndAttrCGB",
+  "case": "tests/cases/text_box.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyCurrentLineTilesAndAttrCGB\", \"registers\": {\"a\": 28, \"b\": 4, \"c\": 0, \"d\": 24, \"e\": 25, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 38944, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"38912\": \"181c1c1900000000000000000000000000000000000000000000000000000000\", \"52467\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyCurrentLineTilesAndAttrCGB\", \"mismatches\": {\"bus\": {\"address\": 38912, \"reference\": \"181c1c1900\", \"native\": \"0000000000\", \"reference_size\": 33, \"native_size\": 33, \"spans\": [[38912, 32], [52467, 1]]}}}\n",
+  "restored": "{\"fn\": \"CopyCurrentLineTilesAndAttrCGB\", \"registers\": {\"a\": 28, \"b\": 4, \"c\": 0, \"d\": 24, \"e\": 25, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 38944, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"38912\": \"181c1c1900000000000000000000000000000000000000000000000000000000\", \"52467\": \"03\"}}, \"status\": \"PASS\"}\n"
+}

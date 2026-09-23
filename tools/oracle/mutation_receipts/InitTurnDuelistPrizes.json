@@ -1,0 +1,9 @@
+{
+  "fn": "InitTurnDuelistPrizes",
+  "case": "tests/cases/duel_core_state.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"InitTurnDuelistPrizes\", \"registers\": {\"a\": 1, \"b\": 1, \"c\": 1, \"d\": 0, \"e\": 1, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49900, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"08\", \"49724\": \"0000\", \"49850\": \"01\", \"50176\": \"000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b\", \"52232\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"InitTurnDuelistPrizes\", \"mismatches\": {\"b\": [1, 2], \"bus\": {\"address\": 49850, \"reference\": \"0800000100010203\", \"native\": \"0800000200010203\", \"reference_size\": 66, \"native_size\": 66, \"spans\": [[49664, 1], [49724, 2], [49850, 1], [50176, 60], [52232, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"InitTurnDuelistPrizes\", \"registers\": {\"a\": 1, \"b\": 1, \"c\": 1, \"d\": 0, \"e\": 1, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49900, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"08\", \"49724\": \"0000\", \"49850\": \"01\", \"50176\": \"000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b\", \"52232\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

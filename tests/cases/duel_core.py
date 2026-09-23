@@ -442,4 +442,57 @@ MUTATIONS = {
         "case_ids": ["ResetAttackAnimationIsPlaying-0", "ResetAttackAnimationIsPlaying-1"],
     },
 }
-
+MUTATIONS["ApplyStatusConditionQueue"] = {
+    "source_symbol": "ApplyStatusConditionQueue",
+    "before": "\tif (index == 0) return 0x80u;",
+    "after": "\tif (index != 0) return 0x80u;",
+    "case_ids": ["ApplyStatusConditionQueue-0"],
+}
+MUTATIONS["ClearNonTurnTemporaryDuelvars_CopyStatus"] = {
+    "source_symbol": "ClearNonTurnTemporaryDuelvars_CopyStatus",
+    "before": "\tClearNonTurnTemporaryDuelvars();",
+    "after": "\t;",
+    "case_ids": ["ClearNonTurnTemporaryDuelvars_CopyStatus-0"],
+}
+MUTATIONS["ConvertSpecialTrainerCardToPokemon"] = {
+    "source_symbol": "ConvertSpecialTrainerCardToPokemon",
+    "before": "\tif (card_type != TYPE_TRAINER)",
+    "after": "\tif (card_type == TYPE_TRAINER)",
+    "case_ids": ["ConvertSpecialTrainerCardToPokemon-0"],
+}
+MUTATIONS["GetCardOneStageBelow"] = {
+    "source_symbol": "GetCardOneStageBelow",
+    "before": "\tif (stage == 0)",
+    "after": "\tif (stage != 0)",
+    "case_ids": ["GetCardOneStageBelow-0"],
+}
+MUTATIONS["ClearNonTurnTemporaryDuelvars"] = {
+    "source_symbol": "ClearNonTurnTemporaryDuelvars",
+    "before": "\tgb_write8(hl++, 0);\n\tgb_write8(hl, 0);",
+    "after": "\tgb_write8(hl++, 0);\n\tgb_write8((uint16_t)(hl ^ 1u), 0);",
+    "case_ids": ["ClearNonTurnTemporaryDuelvars-0"],
+}
+MUTATIONS["PrintThereWasNoEffectFromStatusText"] = {
+    "source_symbol": "PrintThereWasNoEffectFromStatusText",
+    "before": "\tif (status == (POISONED | CONFUSED))",
+    "after": "\tif (status != (POISONED | CONFUSED))",
+    "case_ids": ["PrintThereWasNoEffectFromStatusText-1"],
+}
+MUTATIONS["SetDefaultConsolePalettes"] = {
+    "source_symbol": "SetDefaultConsolePalettes",
+    "before": "\tif (console == 0x01u) {",
+    "after": "\tif (console != 0x01u) {",
+    "case_ids": ["SetDefaultConsolePalettes-0"],
+}
+MUTATIONS["UpdateArenaCardLastTurnDamage"] = {
+    "source_symbol": "UpdateArenaCardLastTurnDamage",
+    "before": "\t\tgb_write8((uint16_t)(hl + 1), 0);",
+    "after": "\t\tgb_write8((uint16_t)(hl - 1), 0);",
+    "case_ids": ["UpdateArenaCardLastTurnDamage-1"],
+}
+MUTATIONS["WaitAttackAnimation"] = {
+    "source_symbol": "WaitAttackAnimation",
+    "before": "\tif (gb_read8(wLoadedAttackAnimation_ADDR) == 0 ||",
+    "after": "\tif (gb_read8(wLoadedAttackAnimation_ADDR) != 0 ||",
+    "case_ids": ["WaitAttackAnimation-2"],
+}

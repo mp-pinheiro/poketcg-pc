@@ -1,0 +1,9 @@
+{
+  "fn": "Func_2325",
+  "case": "tests/cases/process_text.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_2325\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 65, \"e\": 66, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50720\": \"4200\", \"50976\": \"4100\", \"51232\": \"0000\", \"51488\": \"0000\", \"52484\": \"20\", \"65449\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_2325\", \"mismatches\": {\"bus\": {\"address\": 50720, \"reference\": \"4200410000\", \"native\": \"0000000000\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[50720, 2], [50976, 2], [51232, 2], [51488, 2], [52484, 1], [65449, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_2325\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 65, \"e\": 66, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50720\": \"4200\", \"50976\": \"4100\", \"51232\": \"0000\", \"51488\": \"0000\", \"52484\": \"20\", \"65449\": \"20\"}}, \"status\": \"PASS\"}\n"
+}

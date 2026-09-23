@@ -1,0 +1,9 @@
+{
+  "fn": "ZeroRAM",
+  "case": "tests/cases/setup.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ZeroRAM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 240, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 57344, \"palette\": {}, \"ram_bank\": 2, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"0000\", \"57342\": \"0000\", \"65408\": \"0000\", \"65517\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ZeroRAM\", \"mismatches\": {\"hl\": [57344, 57343], \"bus\": {\"address\": 57343, \"reference\": \"0000000000000000\", \"native\": \"000000dd00000000\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[49152, 2], [57342, 2], [65408, 2], [65517, 2]]}}}\n",
+  "restored": "{\"fn\": \"ZeroRAM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 240, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 57344, \"palette\": {}, \"ram_bank\": 2, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"0000\", \"57342\": \"0000\", \"65408\": \"0000\", \"65517\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

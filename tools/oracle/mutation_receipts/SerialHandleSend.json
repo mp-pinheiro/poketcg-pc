@@ -1,0 +1,9 @@
+{
+  "fn": "SerialHandleSend",
+  "case": "tests/cases/serial.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SerialHandleSend\", \"registers\": {\"a\": 172, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52094, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52093\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SerialHandleSend\", \"mismatches\": {\"a\": [172, 0], \"hl\": [52094, 52093]}}\n",
+  "restored": "{\"fn\": \"SerialHandleSend\", \"registers\": {\"a\": 172, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52094, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52093\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

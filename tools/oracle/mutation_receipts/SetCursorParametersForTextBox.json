@@ -1,0 +1,9 @@
+{
+  "fn": "SetCursorParametersForTextBox",
+  "case": "tests/cases/menus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetCursorParametersForTextBox\", \"registers\": {\"a\": 0, \"b\": 18, \"c\": 52, \"d\": 3, \"e\": 4, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52502, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52495\": \"0000030400011234\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetCursorParametersForTextBox\", \"mismatches\": {\"bus\": {\"address\": 52497, \"reference\": \"00000304000112\", \"native\": \"00000204000112\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[52495, 8]]}}}\n",
+  "restored": "{\"fn\": \"SetCursorParametersForTextBox\", \"registers\": {\"a\": 0, \"b\": 18, \"c\": 52, \"d\": 3, \"e\": 4, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52502, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52495\": \"0000030400011234\"}}, \"status\": \"PASS\"}\n"
+}

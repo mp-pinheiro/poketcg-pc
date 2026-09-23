@@ -1,0 +1,9 @@
+{
+  "fn": "GetSpriteAnimBufferProperty_SpriteInA",
+  "case": "tests/cases/load_animation.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetSpriteAnimBufferProperty_SpriteInA\", \"registers\": {\"a\": 16, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 54720, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetSpriteAnimBufferProperty_SpriteInA\", \"mismatches\": {\"hl\": [54720, 54736]}}\n",
+  "restored": "{\"fn\": \"GetSpriteAnimBufferProperty_SpriteInA\", \"registers\": {\"a\": 16, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 54720, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

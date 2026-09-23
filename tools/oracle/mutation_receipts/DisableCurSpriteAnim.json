@@ -1,0 +1,9 @@
+{
+  "fn": "DisableCurSpriteAnim",
+  "case": "tests/cases/sprite_animations.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DisableCurSpriteAnim\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54479\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DisableCurSpriteAnim\", \"mismatches\": {\"bus\": {\"address\": 54480, \"reference\": \"0000\", \"native\": \"0001\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[54479, 2]]}}}\n",
+  "restored": "{\"fn\": \"DisableCurSpriteAnim\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54479\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

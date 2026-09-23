@@ -1,0 +1,9 @@
+{
+  "fn": "OneByteNumberToTxSymbol_PadSpace",
+  "case": "tests/cases/menus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OneByteNumberToTxSymbol_PadSpace\", \"registers\": {\"a\": 32, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50576, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50576\": \"002000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OneByteNumberToTxSymbol_PadSpace\", \"mismatches\": {\"bus\": {\"address\": 50576, \"reference\": \"002000\", \"native\": \"202000\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[50576, 3]]}}}\n",
+  "restored": "{\"fn\": \"OneByteNumberToTxSymbol_PadSpace\", \"registers\": {\"a\": 32, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50576, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50576\": \"002000\"}}, \"status\": \"PASS\"}\n"
+}

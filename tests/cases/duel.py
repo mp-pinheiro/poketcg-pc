@@ -2361,3 +2361,393 @@ MUTATIONS["PlayAttackAnimation_DealAttackDamage"] = {"source_symbol": "PlayAttac
 # >>> factory-mutation UseAttackOrPokemonPower
 MUTATIONS["UseAttackOrPokemonPower"] = {"source_symbol": "UseAttackOrPokemonPower", "before": "DuelRoutineResult UseAttackOrPokemonPower(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = wSelectedAttack;\n\twPlayerAttackingAttackIndex = a;", "after": "DuelRoutineResult UseAttackOrPokemonPower(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = wSelectedAttack;\n\twPlayerAttackingAttackIndex = (uint8_t)(a ^ 1u);", "case_ids": ["UseAttackOrPokemonPower-0", "UseAttackOrPokemonPower-1"]}
 # <<< factory-mutation UseAttackOrPokemonPower
+MUTATIONS["AddCardToHand"] = {
+    "source_symbol": "AddCardToHand",
+    "before": "\tgb_write8((uint16_t)(page | a), CARD_LOCATION_HAND);",
+    "after": "\tgb_write8((uint16_t)(page & a), CARD_LOCATION_HAND);",
+    "case_ids": ["AddCardToHand-1"],
+}
+MUTATIONS["ApplyAttachedDefender"] = {
+    "source_symbol": "ApplyAttachedDefender",
+    "before": "\tuint16_t product = (uint16_t)(count * 20u);",
+    "after": "\tuint16_t product = (uint16_t)(count * 21u);",
+    "case_ids": ["ApplyAttachedDefender-0"],
+}
+MUTATIONS["ApplyAttachedPlusPower"] = {
+    "source_symbol": "ApplyAttachedPlusPower",
+    "before": "\tuint16_t product = (uint16_t)(count * 10u);",
+    "after": "\tuint16_t product = (uint16_t)(count * 11u);",
+    "case_ids": ["ApplyAttachedPlusPower-0"],
+}
+MUTATIONS["ApplyDamageModifiers_DamageToSelf"] = {
+    "source_symbol": "ApplyDamageModifiers_DamageToSelf",
+    "before": "\tuint8_t nonzero = (uint8_t)(hi_byte | lo);",
+    "after": "\tuint8_t nonzero = (uint8_t)(hi_byte & lo);",
+    "case_ids": ["ApplyDamageModifiers_DamageToSelf-1"],
+}
+MUTATIONS["ApplyDamageModifiers_DamageToTarget"] = {
+    "source_symbol": "ApplyDamageModifiers_DamageToTarget",
+    "before": "\t\tde &= (uint16_t)~0x8000u;",
+    "after": "\t\tde &= (uint16_t)~0x7FFFu;",
+    "case_ids": ["ApplyDamageModifiers_DamageToTarget-5"],
+}
+MUTATIONS["CheckIfCanEvolveInto"] = {
+    "source_symbol": "CheckIfCanEvolveInto",
+    "before": "\tif (gb_read8((uint16_t)(wLoadedCard1PreEvoName_ADDR + 1u)) !=",
+    "after": "\tif (gb_read8((uint16_t)(wLoadedCard1PreEvoName_ADDR + 1u)) ==",
+    "case_ids": ["CheckIfCanEvolveInto-0"],
+}
+MUTATIONS["CheckIfCanEvolveInto_BasicToStage2"] = {
+    "source_symbol": "CheckIfCanEvolveInto_BasicToStage2",
+    "before": "\tif (byte1 != gb_read8((uint16_t)(wLoadedCard2Name_ADDR + 1u)))",
+    "after": "\tif (byte1 == gb_read8((uint16_t)(wLoadedCard2Name_ADDR + 1u)))",
+    "case_ids": ["CheckIfCanEvolveInto_BasicToStage2-0"],
+}
+MUTATIONS["CheckLoadedAttackFlag"] = {
+    "source_symbol": "CheckLoadedAttackFlag",
+    "before": "\tuint8_t bit = (uint8_t)(1u << (a & 0x07u));",
+    "after": "\tuint8_t bit = (uint8_t)(1u << (a & 0x08u));",
+    "case_ids": ["CheckLoadedAttackFlag-1"],
+}
+MUTATIONS["CheckPrizeTaken"] = {
+    "source_symbol": "CheckPrizeTaken",
+    "before": "\tuint8_t mask = rom_ptr(0u, 0x11B7u)[a];",
+    "after": "\tuint8_t mask = rom_ptr(0u, 0x11B6u)[a];",
+    "case_ids": ["CheckPrizeTaken-0"],
+}
+MUTATIONS["ClearAllStatusConditions"] = {
+    "source_symbol": "ClearAllStatusConditions",
+    "before": "\tuint16_t sub3_addr = (uint16_t)(page | DUELVARS_ARENA_CARD_SUBSTATUS3);",
+    "after": "\tuint16_t sub3_addr = (uint16_t)(page & DUELVARS_ARENA_CARD_SUBSTATUS3);",
+    "case_ids": ["ClearAllStatusConditions-0"],
+}
+MUTATIONS["CopyAttackDataAndDamage"] = {
+    "source_symbol": "CopyAttackDataAndDamage",
+    "before": "\tuint16_t src = (e == 1) ? wLoadedCard1Atk2_ADDR : wLoadedCard1Atk1_ADDR;",
+    "after": "\tuint16_t src = (e != 1) ? wLoadedCard1Atk2_ADDR : wLoadedCard1Atk1_ADDR;",
+    "case_ids": ["CopyAttackDataAndDamage-0"],
+}
+MUTATIONS["CopyAttackDataAndDamage_FromCardID"] = {
+    "source_symbol": "CopyAttackDataAndDamage_FromCardID",
+    "before": "\tLoadCardDataToBuffer1_FromCardID(a);",
+    "after": "\t;",
+    "case_ids": ["CopyAttackDataAndDamage_FromCardID-0"],
+}
+MUTATIONS["CopyDeckData"] = {
+    "source_symbol": "CopyDeckData",
+    "before": "\tf = last_value ? 0x00u : 0x90u;",
+    "after": "\tf = last_value ? 0x01u : 0x90u;",
+    "case_ids": ["CopyDeckData-2"],
+}
+MUTATIONS["CopyOpponentName"] = {
+    "source_symbol": "CopyOpponentName",
+    "before": "\t\treturn copy_name_loop(wNameBuffer_ADDR, de);",
+    "after": "\t\treturn copy_name_loop(wNameBuffer_ADDR, (uint16_t)(de ^ 1u));",
+    "case_ids": ["CopyOpponentName-0"],
+}
+MUTATIONS["CopyPlayerName"] = {
+    "source_symbol": "CopyPlayerName",
+    "before": "\treturn copy_name_loop(sPlayerName_ADDR, de);",
+    "after": "\treturn copy_name_loop(sPlayerName_ADDR, (uint16_t)(de ^ 1u));",
+    "case_ids": ["CopyPlayerName-0"],
+}
+MUTATIONS["CountCardsInDuelTempList"] = {
+    "source_symbol": "CountCardsInDuelTempList",
+    "before": "\twhile (gb_read8((uint16_t)(wDuelTempList_ADDR + count)) != 0xFF)",
+    "after": "\twhile (gb_read8((uint16_t)(wDuelTempList_ADDR + count)) == 0xFF)",
+    "case_ids": ["CountCardsInDuelTempList-0"],
+}
+MUTATIONS["CountPrizes"] = {
+    "source_symbol": "CountPrizes",
+    "before": "\t\tcount = (uint8_t)(count + (mask & 1u));",
+    "after": "\t\tcount = (uint8_t)(count - (mask & 1u));",
+    "case_ids": ["CountPrizes-1"],
+}
+MUTATIONS["CreateArenaOrBenchEnergyCardList"] = {
+    "source_symbol": "CreateArenaOrBenchEnergyCardList",
+    "before": "\t\tif (gb_read8((uint16_t)(((uint16_t)hWhoseTurn << 8) | i)) != location_mask)",
+    "after": "\t\tif (gb_read8((uint16_t)(((uint16_t)hWhoseTurn << 8) | i)) == location_mask)",
+    "case_ids": ["CreateArenaOrBenchEnergyCardList-0"],
+}
+MUTATIONS["CreateDeckCardList"] = {
+    "source_symbol": "CreateDeckCardList",
+    "before": "\tif (not_in_deck.a >= DECK_SIZE) {",
+    "after": "\tif (not_in_deck.a > DECK_SIZE) {",
+    "case_ids": ["CreateDeckCardList-1"],
+}
+MUTATIONS["CreateDiscardPileCardList"] = {
+    "source_symbol": "CreateDiscardPileCardList",
+    "before": "\tuint8_t f = count ? 0x00u : 0x90u;",
+    "after": "\tuint8_t f = count ? 0x01u : 0x90u;",
+    "case_ids": ["CreateDiscardPileCardList-1"],
+}
+MUTATIONS["CreateHandCardList"] = {
+    "source_symbol": "CreateHandCardList",
+    "before": "\tuint8_t f = hand_count ? 0x00u : 0x90u;",
+    "after": "\tuint8_t f = hand_count ? 0x01u : 0x90u;",
+    "case_ids": ["CreateHandCardList-0"],
+}
+MUTATIONS["DrawCardFromDeck"] = {
+    "source_symbol": "DrawCardFromDeck",
+    "before": "\tif (not_in_deck >= DECK_SIZE) {",
+    "after": "\tif (not_in_deck > DECK_SIZE) {",
+    "case_ids": ["DrawCardFromDeck-1"],
+}
+MUTATIONS["DrawWideTextBox_WaitForInput_ReturnCarry"] = {
+    "source_symbol": "DrawWideTextBox_WaitForInput_ReturnCarry",
+    "before": "\treturn (uint8_t)(DrawWideTextBox_WaitForInput(hl).f | 0x10u);",
+    "after": "\treturn (uint8_t)(DrawWideTextBox_WaitForInput(hl).f | 0x11u);",
+    "case_ids": ["DrawWideTextBox_WaitForInput_ReturnCarry-0"],
+}
+MUTATIONS["EmptyPlayAreaSlot"] = {
+    "source_symbol": "EmptyPlayAreaSlot",
+    "before": "\t(void)EmptyPlayAreaSlot_init_duelvar(DUELVARS_ARENA_CARD_HP, 0x00u, e, hl);",
+    "after": "\t(void)EmptyPlayAreaSlot_init_duelvar(DUELVARS_ARENA_CARD_HP, 0x01u, e, hl);",
+    "case_ids": ["EmptyPlayAreaSlot-0"],
+}
+MUTATIONS["EvolvePokemonCardIfPossible"] = {
+    "source_symbol": "EvolvePokemonCardIfPossible",
+    "before": "\tif (check.f & 0x10u)",
+    "after": "\tif (check.f | 0x10u)",
+    "case_ids": ["EvolvePokemonCardIfPossible-0"],
+}
+MUTATIONS["FindLastCardInHand"] = {
+    "source_symbol": "FindLastCardInHand",
+    "before": "\t\t\t\t0x00u, (uint16_t)(((uint16_t)hWhoseTurn << 8) |",
+    "after": "\t\t\t\t0x01u, (uint16_t)(((uint16_t)hWhoseTurn << 8) |",
+    "case_ids": ["FindLastCardInHand-0"],
+}
+MUTATIONS["GetCardDamageAndMaxHP"] = {
+    "source_symbol": "GetCardDamageAndMaxHP",
+    "before": "\tif ((max_hp & 0x0Fu) < (damage & 0x0Fu))",
+    "after": "\tif ((max_hp & 0x10u) < (damage & 0x0Fu))",
+    "case_ids": ["GetCardDamageAndMaxHP-1"],
+}
+MUTATIONS["GetNonTurnDuelistVariable"] = {
+    "source_symbol": "GetNonTurnDuelistVariable",
+    "before": "\tuint8_t turn = hWhoseTurn == PLAYER_TURN ? OPPONENT_TURN : PLAYER_TURN;",
+    "after": "\tuint8_t turn = hWhoseTurn != PLAYER_TURN ? OPPONENT_TURN : PLAYER_TURN;",
+    "case_ids": ["GetNonTurnDuelistVariable-0"],
+}
+MUTATIONS["GetPlayAreaCardAttachedEnergies"] = {
+    "source_symbol": "GetPlayAreaCardAttachedEnergies",
+    "before": "\t\tif (gb_read8((uint16_t)(page | l)) != location)",
+    "after": "\t\tif (gb_read8((uint16_t)(page | l)) == location)",
+    "case_ids": ["GetPlayAreaCardAttachedEnergies-0"],
+}
+MUTATIONS["GetTurnDuelistVariable"] = {
+    "source_symbol": "GetTurnDuelistVariable",
+    "before": "\tuint16_t address = (uint16_t)(((uint16_t)hWhoseTurn << 8) | a);",
+    "after": "\tuint16_t address = (uint16_t)(((uint16_t)hWhoseTurn << 8) & a);",
+    "case_ids": ["GetTurnDuelistVariable-0"],
+}
+MUTATIONS["CopyAttackDataAndDamage_FromDeckIndex"] = {
+    "source_symbol": "CopyAttackDataAndDamage_FromDeckIndex",
+    "before": "AttackCopyResult CopyAttackDataAndDamage_FromDeckIndex(uint8_t d, uint8_t e)\n{\n\tgb_write8(wSelectedAttack_ADDR, e);",
+    "after": "AttackCopyResult CopyAttackDataAndDamage_FromDeckIndex(uint8_t d, uint8_t e)\n{\n\tgb_write8(wSelectedAttack_ADDR, (uint8_t)(e ^ 1u));",
+    "case_ids": ["CopyAttackDataAndDamage_FromDeckIndex-0"],
+}
+MUTATIONS["GetCardInDuelTempList"] = {
+    "source_symbol": "GetCardInDuelTempList",
+    "before": "DeckEntryResult GetCardInDuelTempList(uint8_t a, uint16_t hl)\n{\n\tuint8_t entry = gb_read8((uint16_t)(wDuelTempList_ADDR + a));",
+    "after": "DeckEntryResult GetCardInDuelTempList(uint8_t a, uint16_t hl)\n{\n\tuint8_t entry = gb_read8((uint16_t)(wDuelTempList_ADDR - a));",
+    "case_ids": ["GetCardInDuelTempList-1"],
+}
+MUTATIONS["GetCardInDuelTempList_OnlyDeckIndex"] = {
+    "source_symbol": "GetCardInDuelTempList_OnlyDeckIndex",
+    "before": "DeckCardResult GetCardInDuelTempList_OnlyDeckIndex(uint8_t a, uint16_t hl)\n{\n\tuint8_t entry = gb_read8((uint16_t)(wDuelTempList_ADDR + a));",
+    "after": "DeckCardResult GetCardInDuelTempList_OnlyDeckIndex(uint8_t a, uint16_t hl)\n{\n\tuint8_t entry = gb_read8((uint16_t)(wDuelTempList_ADDR - a));",
+    "case_ids": ["GetCardInDuelTempList_OnlyDeckIndex-1"],
+}
+MUTATIONS["GetPlayAreaCardRetreatCost"] = {
+    "source_symbol": "GetPlayAreaCardRetreatCost",
+    "before": "\tuint8_t deck_idx = GetTurnDuelistVariable((uint8_t)(slot + 0xBBu)).a;\n\tLoadCardDataToBuffer1_FromDeckIndex(deck_idx);",
+    "after": "\tuint8_t deck_idx = GetTurnDuelistVariable((uint8_t)(slot + 0xBBu)).a;\n\t;",
+    "case_ids": ["GetPlayAreaCardRetreatCost-0"],
+}
+MUTATIONS["GetCardIDFromDeckIndex"] = {
+    "source_symbol": "GetCardIDFromDeckIndex",
+    "before": "\treturn _GetCardIDFromDeckIndex(a).a;",
+    "after": "\treturn (_GetCardIDFromDeckIndex(a).a) ^ 1u;",
+    "case_ids": ["GetCardIDFromDeckIndex-0"],
+}
+MUTATIONS["GetCardIDFromDeckIndex_bc"] = {
+    "source_symbol": "GetCardIDFromDeckIndex_bc",
+    "before": "\treturn (DeckCardResult){_GetCardIDFromDeckIndex(a).a, hl};",
+    "after": "\treturn (DeckCardResult){(_GetCardIDFromDeckIndex(a).a) ^ 1u, hl};",
+    "case_ids": ["GetCardIDFromDeckIndex_bc-0"],
+}
+MUTATIONS["LoadCardDataToBuffer1_FromDeckIndex"] = {
+    "source_symbol": "LoadCardDataToBuffer1_FromDeckIndex",
+    "before": "\treturn load_card_data_from_deck_index(a, wLoadedCard1_ADDR,",
+    "after": "\treturn load_card_data_from_deck_index((uint8_t)(a ^ 1u), wLoadedCard1_ADDR,",
+    "case_ids": ["LoadCardDataToBuffer1_FromDeckIndex-0"],
+}
+MUTATIONS["LoadCardDataToBuffer2_FromDeckIndex"] = {
+    "source_symbol": "LoadCardDataToBuffer2_FromDeckIndex",
+    "before": "\treturn load_card_data_from_deck_index(a, wLoadedCard2_ADDR,",
+    "after": "\treturn load_card_data_from_deck_index((uint8_t)(a ^ 1u), wLoadedCard2_ADDR,",
+    "case_ids": ["LoadCardDataToBuffer2_FromDeckIndex-0"],
+}
+MUTATIONS["LoadNonPokemonCardEffectCommands"] = {
+    "source_symbol": "LoadNonPokemonCardEffectCommands",
+    "before": "\tb1 = gb_read8((uint16_t)(wLoadedCard1EffectCommands_ADDR + 1u));",
+    "after": "\tb1 = gb_read8((uint16_t)(wLoadedCard1EffectCommands_ADDR - 1u));",
+    "case_ids": ["LoadNonPokemonCardEffectCommands-1"],
+}
+MUTATIONS["MoveCardToDiscardPileIfInPlayArea"] = {
+    "source_symbol": "MoveCardToDiscardPileIfInPlayArea",
+    "before": "\t\tif ((uint8_t)id != c)",
+    "after": "\t\tif ((uint8_t)id == c)",
+    "case_ids": ["MoveCardToDiscardPileIfInPlayArea-0"],
+}
+MUTATIONS["MoveDiscardPileCardToHand"] = {
+    "source_symbol": "MoveDiscardPileCardToHand",
+    "before": "\t\treturn (MoveDiscardResult){0, 0x80u};",
+    "after": "\t\treturn (MoveDiscardResult){0, 0x81u};",
+    "case_ids": ["MoveDiscardPileCardToHand-1"],
+}
+MUTATIONS["MoveHandCardToDiscardPile"] = {
+    "source_symbol": "MoveHandCardToDiscardPile",
+    "before": "\tif (masked != CARD_LOCATION_HAND) {",
+    "after": "\tif (masked == CARD_LOCATION_HAND) {",
+    "case_ids": ["MoveHandCardToDiscardPile-0"],
+}
+MUTATIONS["MovePlayAreaCardToDiscardPile"] = {
+    "source_symbol": "MovePlayAreaCardToDiscardPile",
+    "before": "\t\tif (gb_read8(addr) == location)",
+    "after": "\t\tif (gb_read8(addr) != location)",
+    "case_ids": ["MovePlayAreaCardToDiscardPile-0"],
+}
+MUTATIONS["PrintKnockedOut"] = {
+    "source_symbol": "PrintKnockedOut",
+    "before": "\tDrawWideTextBox_PrintText(WAS_KNOCKED_OUT_TEXT);",
+    "after": "\t;",
+    "case_ids": ["PrintKnockedOut-0"],
+}
+MUTATIONS["PrintPlayAreaCardKnockedOutIfNoHP"] = {
+    "source_symbol": "PrintPlayAreaCardKnockedOutIfNoHP",
+    "before": "\t\treturn (KnockoutCheckResult){hp, 0x00u};",
+    "after": "\t\treturn (KnockoutCheckResult){hp, 0x01u};",
+    "case_ids": ["PrintPlayAreaCardKnockedOutIfNoHP-0"],
+}
+MUTATIONS["PutCardInDiscardPile"] = {
+    "source_symbol": "PutCardInDiscardPile",
+    "before": "\tgb_write8((uint16_t)(page | a), CARD_LOCATION_DISCARD_PILE);",
+    "after": "\tgb_write8((uint16_t)(page & a), CARD_LOCATION_DISCARD_PILE);",
+    "case_ids": ["PutCardInDiscardPile-0"],
+}
+MUTATIONS["PutHandCardInPlayArea"] = {
+    "source_symbol": "PutHandCardInPlayArea",
+    "before": "\tuint16_t hl = (uint16_t)(((uint16_t)hWhoseTurn << 8) | a);",
+    "after": "\tuint16_t hl = (uint16_t)(((uint16_t)hWhoseTurn << 8) & a);",
+    "case_ids": ["PutHandCardInPlayArea-0"],
+}
+MUTATIONS["PutHandPokemonCardInPlayArea"] = {
+    "source_symbol": "PutHandPokemonCardInPlayArea",
+    "before": "\tif (count.a >= MAX_PLAY_AREA_POKEMON) {",
+    "after": "\tif (count.a > MAX_PLAY_AREA_POKEMON) {",
+    "case_ids": ["PutHandPokemonCardInPlayArea-1"],
+}
+MUTATIONS["RemoveCardFromDuelTempList"] = {
+    "source_symbol": "RemoveCardFromDuelTempList",
+    "before": "\t\tif (entry == 0xFF)",
+    "after": "\t\tif (entry != 0xFF)",
+    "case_ids": ["RemoveCardFromDuelTempList-0"],
+}
+MUTATIONS["RemoveCardFromHand"] = {
+    "source_symbol": "RemoveCardFromHand",
+    "before": "\t\tif (card == a) {",
+    "after": "\t\tif (card != a) {",
+    "case_ids": ["RemoveCardFromHand-0"],
+}
+MUTATIONS["ReturnCardToDeck"] = {
+    "source_symbol": "ReturnCardToDeck",
+    "before": "\tuint8_t not_in_deck = (uint8_t)(gb_read8(not_in_deck_addr) - 1u);",
+    "after": "\tuint8_t not_in_deck = (uint8_t)(gb_read8(not_in_deck_addr) + 1u);",
+    "case_ids": ["ReturnCardToDeck-0"],
+}
+MUTATIONS["ReturnCarry"] = {
+    "source_symbol": "ReturnCarry",
+    "before": "\treturn (uint8_t)((f & 0x80u) | 0x10u);",
+    "after": "\treturn (uint8_t)((f | 0x80u) | 0x10u);",
+    "case_ids": ["ReturnCarry-0"],
+}
+MUTATIONS["SearchCardInDeckAndAddToHand"] = {
+    "source_symbol": "SearchCardInDeckAndAddToHand",
+    "before": "\tuint16_t hl = (uint16_t)(page | (uint8_t)(DUELVARS_DECK_CARDS + DECK_SIZE - 1u));",
+    "after": "\tuint16_t hl = (uint16_t)(page | (uint8_t)(DUELVARS_DECK_CARDS - DECK_SIZE - 1u));",
+    "case_ids": ["SearchCardInDeckAndAddToHand-0"],
+}
+MUTATIONS["ShiftAllPokemonToFirstPlayAreaSlots"] = {
+    "source_symbol": "ShiftAllPokemonToFirstPlayAreaSlots",
+    "before": "\t(void)ShiftTurnPokemonToFirstPlayAreaSlots();",
+    "after": "\t;",
+    "case_ids": ["ShiftAllPokemonToFirstPlayAreaSlots-0"],
+}
+MUTATIONS["ShiftTurnPokemonToFirstPlayAreaSlots"] = {
+    "source_symbol": "ShiftTurnPokemonToFirstPlayAreaSlots",
+    "before": "\t\tif (!(gb_read8(addr) & 0x80u)) {",
+    "after": "\t\tif (!(gb_read8(addr) & 0x81u)) {",
+    "case_ids": ["ShiftTurnPokemonToFirstPlayAreaSlots-0"],
+}
+MUTATIONS["ShuffleCards"] = {
+    "source_symbol": "ShuffleCards",
+    "before": "\t\treturn (ShuffleCardsResult){0, 0x80u};",
+    "after": "\t\treturn (ShuffleCardsResult){0, 0x81u};",
+    "case_ids": ["ShuffleCards-0"],
+}
+MUTATIONS["ShuffleDeck"] = {
+    "source_symbol": "ShuffleDeck",
+    "before": "\tuint8_t not_in_deck = gb_read8((uint16_t)(page | DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK));",
+    "after": "\tuint8_t not_in_deck = gb_read8((uint16_t)(page & DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK));",
+    "case_ids": ["ShuffleDeck-0"],
+}
+MUTATIONS["SortCardsInDuelTempListByID"] = {
+    "source_symbol": "SortCardsInDuelTempListByID",
+    "before": "\tlist_set_ptr(wDuelTempList_ADDR);",
+    "after": "\t;",
+    "case_ids": ["SortCardsInDuelTempListByID-0"],
+}
+MUTATIONS["SortHandCardsByID"] = {
+    "source_symbol": "SortHandCardsByID",
+    "before": "\t\t\t\t0xC0u, (uint16_t)(((uint16_t)hWhoseTurn << 8) + DUELVARS_HAND - 1u)};",
+    "after": "\t\t\t\t0xC1u, (uint16_t)(((uint16_t)hWhoseTurn << 8) + DUELVARS_HAND - 1u)};",
+    "case_ids": ["SortHandCardsByID-0"],
+}
+MUTATIONS["SubtractHP"] = {
+    "source_symbol": "SubtractHP",
+    "before": "\tuint8_t f = remaining ? 0x10u : 0x80u;",
+    "after": "\tuint8_t f = remaining ? 0x11u : 0x80u;",
+    "case_ids": ["SubtractHP-0"],
+}
+MUTATIONS["SwapArenaWithBenchPokemon"] = {
+    "source_symbol": "SwapArenaWithBenchPokemon",
+    "before": "\treturn SwapPlayAreaPokemon(PLAY_AREA_ARENA, e);",
+    "after": "\treturn SwapPlayAreaPokemon(PLAY_AREA_ARENA, (uint8_t)(e ^ 1u));",
+    "case_ids": ["SwapArenaWithBenchPokemon-0"],
+}
+MUTATIONS["SwapPlayAreaPokemon"] = {
+    "source_symbol": "SwapPlayAreaPokemon",
+    "before": "\tif (e == d)",
+    "after": "\tif (e != d)",
+    "case_ids": ["SwapPlayAreaPokemon-0"],
+}
+MUTATIONS["TranslateColorToWR"] = {
+    "source_symbol": "TranslateColorToWR",
+    "before": "\treturn rom_ptr(0u, 0x1A1Au)[a];",
+    "after": "\treturn rom_ptr(0u, 0x1A19u)[a];",
+    "case_ids": ["TranslateColorToWR-0"],
+}
+MUTATIONS["_GetCardIDFromDeckIndex"] = {
+    "source_symbol": "_GetCardIDFromDeckIndex",
+    "before": "\treturn (DeckCardResult){gb_read8((uint16_t)(deck + a)), (uint16_t)(deck + a)};",
+    "after": "\treturn (DeckCardResult){gb_read8((uint16_t)(deck - a)), (uint16_t)(deck + a)};",
+    "case_ids": ["_GetCardIDFromDeckIndex-1"],
+}
+MUTATIONS["SortCardsInListByID_CheckForListTerminator"] = {
+    "source_symbol": "SortCardsInListByID_CheckForListTerminator",
+    "before": "{\n\treturn SortCardsInListByID(b, c, de);",
+    "after": "{\n\treturn SortCardsInListByID((uint8_t)(b ^ 1u), c, de);",
+    "case_ids": ["SortCardsInListByID_CheckForListTerminator-1"],
+}

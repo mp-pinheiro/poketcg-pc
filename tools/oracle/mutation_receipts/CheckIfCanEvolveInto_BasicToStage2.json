@@ -1,0 +1,9 @@
+{
+  "fn": "CheckIfCanEvolveInto_BasicToStage2",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfCanEvolveInto_BasicToStage2\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 1, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52329, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49858\": \"80\", \"50176\": \"080a\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfCanEvolveInto_BasicToStage2\", \"mismatches\": {\"a\": [8, 0], \"f\": [0, 144]}}\n",
+  "restored": "{\"fn\": \"CheckIfCanEvolveInto_BasicToStage2\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 1, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52329, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49858\": \"80\", \"50176\": \"080a\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

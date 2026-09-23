@@ -1,0 +1,9 @@
+{
+  "fn": "MasonLabLoadMap",
+  "case": "tests/cases/mason_laboratory.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MasonLabLoadMap\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53446\": \"0000\", \"54187\": \"00\", \"54239\": \"06\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MasonLabLoadMap\", \"mismatches\": {\"bus\": {\"address\": 53446, \"reference\": \"00000006\", \"native\": \"53570106\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[53446, 2], [54187, 1], [54239, 1]]}}}\n",
+  "restored": "{\"fn\": \"MasonLabLoadMap\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53446\": \"0000\", \"54187\": \"00\", \"54239\": \"06\"}}, \"status\": \"PASS\"}\n"
+}

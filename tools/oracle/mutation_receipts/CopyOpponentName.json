@@ -1,0 +1,9 @@
+{
+  "fn": "CopyOpponentName",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyOpponentName\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 193, \"e\": 2, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50435, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"414200\", \"50432\": \"414200\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyOpponentName\", \"mismatches\": {\"e\": [2, 3], \"bus\": {\"address\": 49408, \"reference\": \"4142004142\", \"native\": \"0041424142\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[49408, 3], [50432, 3]]}}}\n",
+  "restored": "{\"fn\": \"CopyOpponentName\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 193, \"e\": 2, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50435, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"414200\", \"50432\": \"414200\"}}, \"status\": \"PASS\"}\n"
+}

@@ -385,3 +385,9 @@ MUTATIONS["SFX_ApplyPitchOffset"] = {"source_symbol": "SFX_ApplyPitchOffset", "b
 # >>> factory-mutation Func_fc1cd
 MUTATIONS["Func_fc1cd"] = {"source_symbol": "Func_fc1cd", "before": "\tgb_write8(freq_addr, new_low);", "after": "\tgb_write8(freq_addr, (uint8_t)(new_low + 1u));", "case_ids": ["Func_fc1cd-1", "Func_fc1cd-2"]}
 # <<< factory-mutation Func_fc1cd
+MUTATIONS["SFX_UpdateSFX"] = {
+    "source_symbol": "SFX_Update",
+    "before": "\tif (wdd8c == 0u) {",
+    "after": "\tif (wdd8c != 0u) {",
+    "case_ids": ["SFX_UpdateSFX-0"],
+}

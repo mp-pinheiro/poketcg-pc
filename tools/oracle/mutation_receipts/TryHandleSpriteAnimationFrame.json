@@ -1,0 +1,9 @@
+{
+  "fn": "TryHandleSpriteAnimationFrame",
+  "case": "tests/cases/sprite_animations.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TryHandleSpriteAnimationFrame\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 54480, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54480\": \"0100000000000400c200c3000000ff00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TryHandleSpriteAnimationFrame\", \"mismatches\": {\"bus\": {\"address\": 54494, \"reference\": \"c3000000ff00\", \"native\": \"c3000000fe00\", \"reference_size\": 16, \"native_size\": 16, \"spans\": [[54480, 16]]}}}\n",
+  "restored": "{\"fn\": \"TryHandleSpriteAnimationFrame\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 54480, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54480\": \"0100000000000400c200c3000000ff00\"}}, \"status\": \"PASS\"}\n"
+}

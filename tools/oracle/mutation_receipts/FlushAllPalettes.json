@@ -1,0 +1,9 @@
+{
+  "fn": "FlushAllPalettes",
+  "case": "tests/cases/palettes.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FlushAllPalettes\", \"registers\": {\"a\": 55, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"51903\": \"c0\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FlushAllPalettes\", \"mismatches\": {\"bus\": {\"address\": 51903, \"reference\": \"80c0\", \"native\": \"8000\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[51899, 1], [51903, 1]]}}}\n",
+  "restored": "{\"fn\": \"FlushAllPalettes\", \"registers\": {\"a\": 55, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"51903\": \"c0\"}}, \"status\": \"PASS\"}\n"
+}

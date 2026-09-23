@@ -1,0 +1,9 @@
+{
+  "fn": "MovePlayAreaCardToDiscardPile",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MovePlayAreaCardToDiscardPile\", \"registers\": {\"a\": 60, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 49724, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"02\", \"49790\": \"00\", \"49901\": \"01\", \"49903\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MovePlayAreaCardToDiscardPile\", \"mismatches\": {\"bus\": {\"address\": 49664, \"reference\": \"02000100c2\", \"native\": \"10013b00c2\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[49664, 1], [49790, 1], [49901, 1], [49903, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"MovePlayAreaCardToDiscardPile\", \"registers\": {\"a\": 60, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 49724, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"02\", \"49790\": \"00\", \"49901\": \"01\", \"49903\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

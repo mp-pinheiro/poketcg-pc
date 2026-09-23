@@ -1,0 +1,9 @@
+{
+  "fn": "CopyText",
+  "case": "tests/cases/print_text.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyText\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 193, \"e\": 1, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 40978, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"40976\": \"2100\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"2100\", \"65431\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyText\", \"mismatches\": {\"e\": [1, 9], \"hl\": [40978, 28638], \"bus\": {\"address\": 49408, \"reference\": \"210000\", \"native\": \"065000\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[49408, 2], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"CopyText\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 193, \"e\": 1, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 40978, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"40976\": \"2100\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"2100\", \"65431\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

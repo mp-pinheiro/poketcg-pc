@@ -1,0 +1,9 @@
+{
+  "fn": "TwoByteNumberToText_CountLeadingZeros",
+  "case": "tests/cases/print_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TwoByteNumberToText_CountLeadingZeros\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 202, \"e\": 165, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 51876, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51872\": \"303030303000\", \"52490\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TwoByteNumberToText_CountLeadingZeros\", \"mismatches\": {\"d\": [202, 0], \"e\": [165, 0], \"hl\": [51876, 51880], \"bus\": {\"address\": 51872, \"reference\": \"3030303030\", \"native\": \"0500050005\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[51872, 6], [52490, 1]]}}}\n",
+  "restored": "{\"fn\": \"TwoByteNumberToText_CountLeadingZeros\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 202, \"e\": 165, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 51876, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51872\": \"303030303000\", \"52490\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

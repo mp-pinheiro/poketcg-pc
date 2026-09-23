@@ -1,0 +1,9 @@
+{
+  "fn": "CopyAttackDataAndDamage",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyAttackDataAndDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 204, \"e\": 185, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 52416, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52267\": \"08\", \"52272\": \"01010101010101010101010101010101010101\", \"52390\": \"010101010101010101010101010101010101010100\", \"52415\": \"0000\", \"52418\": \"08\", \"52423\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyAttackDataAndDamage\", \"mismatches\": {\"bus\": {\"address\": 52390, \"reference\": \"010101010101010101\", \"native\": \"010101010000000000\", \"reference_size\": 45, \"native_size\": 45, \"spans\": [[52267, 1], [52272, 19], [52390, 21], [52415, 2], [52418, 1], [52423, 1]]}}}\n",
+  "restored": "{\"fn\": \"CopyAttackDataAndDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 204, \"e\": 185, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 52416, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52267\": \"08\", \"52272\": \"01010101010101010101010101010101010101\", \"52390\": \"010101010101010101010101010101010101010100\", \"52415\": \"0000\", \"52418\": \"08\", \"52423\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

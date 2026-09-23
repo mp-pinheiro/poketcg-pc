@@ -1,0 +1,9 @@
+{
+  "fn": "SetupRegisters",
+  "case": "tests/cases/setup.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetupRegisters\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 51922, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51888\": \"000000\", \"51898\": \"0047\", \"51917\": \"c3\", \"51920\": \"c34803\", \"65346\": \"0000\", \"65354\": \"0000\", \"65426\": \"00000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetupRegisters\", \"mismatches\": {\"bus\": {\"address\": 51917, \"reference\": \"00000047c3c3480300\", \"native\": \"00000047c4c3480300\", \"reference_size\": 17, \"native_size\": 17, \"spans\": [[51888, 3], [51898, 2], [51917, 1], [51920, 3], [65346, 2], [65354, 2], [65426, 4]]}}}\n",
+  "restored": "{\"fn\": \"SetupRegisters\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 51922, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51888\": \"000000\", \"51898\": \"0047\", \"51917\": \"c3\", \"51920\": \"c34803\", \"65346\": \"0000\", \"65354\": \"0000\", \"65426\": \"00000000\"}}, \"status\": \"PASS\"}\n"
+}

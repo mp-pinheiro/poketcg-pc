@@ -1,0 +1,9 @@
+{
+  "fn": "LoadTilesetGfx",
+  "case": "tests/cases/load_gfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadTilesetGfx\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54468\": \"124c22\", \"54472\": \"0000\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadTilesetGfx\", \"mismatches\": {\"bus\": {\"address\": 54468, \"reference\": \"124c220000\", \"native\": \"920c000000\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[54468, 3], [54472, 2], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadTilesetGfx\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54468\": \"124c22\", \"54472\": \"0000\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n"
+}

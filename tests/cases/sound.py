@@ -112,3 +112,67 @@ MUTATIONS = {
         "case_ids": ["Func_37c5-0", "Func_37c5-1", "Func_37c5-2", "Func_37c5-3"],
     },
 }
+for _rec in SCHEMA2_CASES["PauseSong"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+for _rec in SCHEMA2_CASES["StopMusic"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+MUTATIONS["Func_37a5"] = {
+    "source_symbol": "Func_37a5",
+    "before": "\tshifted = (uint16_t)((shifted & (uint16_t)~0x8000u) | 0x4000u);",
+    "after": "\tshifted = (uint16_t)((shifted & (uint16_t)~0x7FFFu) | 0x4000u);",
+    "case_ids": ["Func_37a5-0"],
+}
+MUTATIONS["AssertSFXFinished"] = {
+    "source_symbol": "AssertSFXFinished",
+    "before": "\tuint8_t result = Music1_AssertSFXFinished();\n\n\tBankswitchROM(saved);\n\treturn result;",
+    "after": "\tuint8_t result = Music1_AssertSFXFinished();\n\n\tBankswitchROM(saved);\n\treturn 1u + result;",
+    "case_ids": ["AssertSFXFinished-0"],
+}
+MUTATIONS["AssertSongFinished"] = {
+    "source_symbol": "AssertSongFinished",
+    "before": "\tuint8_t result = Music1_AssertSongFinished();\n\n\tBankswitchROM(saved);\n\treturn result;",
+    "after": "\tuint8_t result = Music1_AssertSongFinished();\n\n\tBankswitchROM(saved);\n\treturn 1u + result;",
+    "case_ids": ["AssertSongFinished-0"],
+}
+MUTATIONS["PlaySFX"] = {
+    "source_symbol": "PlaySFX",
+    "before": "\tMusic1_PlaySFX(a);",
+    "after": "\t;",
+    "case_ids": ["PlaySFX-1"],
+}
+MUTATIONS["PlaySFX_InvalidChoice"] = {
+    "source_symbol": "PlaySFX_InvalidChoice",
+    "before": "\tPlaySFX(SFX_DENIED);",
+    "after": "\t;",
+    "case_ids": ["PlaySFX_InvalidChoice-0"],
+}
+MUTATIONS["PlaySong"] = {
+    "source_symbol": "PlaySong",
+    "before": "\tMusic1_PlaySong(a);",
+    "after": "\t;",
+    "case_ids": ["PlaySong-1"],
+}
+MUTATIONS["ResumeSong"] = {
+    "source_symbol": "ResumeSong",
+    "before": "\tMusic1_ResumeSong();",
+    "after": "\t;",
+    "case_ids": ["ResumeSong-0"],
+}
+MUTATIONS["SetupSound"] = {
+    "source_symbol": "SetupSound",
+    "before": "\tMusic1_Init();",
+    "after": "\t;",
+    "case_ids": ["SetupSound-0"],
+}
+MUTATIONS["PauseSong"] = {
+    "source_symbol": "PauseSong",
+    "before": "\tMusic1_PauseSong();",
+    "after": "\t;",
+    "case_ids": ["PauseSong-0"],
+}
+MUTATIONS["StopMusic"] = {
+    "source_symbol": "StopMusic",
+    "before": "\tMusic1_PlaySong(0);",
+    "after": "\tMusic1_PlaySong(1);",
+    "case_ids": ["StopMusic-0"],
+}

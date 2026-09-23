@@ -1,0 +1,9 @@
+{
+  "fn": "CopyCurrentLineAttrCGB",
+  "case": "tests/cases/text_box.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyCurrentLineAttrCGB\", \"registers\": {\"a\": 0, \"b\": 4, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 38944, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"38912\": \"0000000000000000000000000000000000000000000000000000000000000000\", \"52467\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyCurrentLineAttrCGB\", \"mismatches\": {\"hl\": [38944, 38912]}}\n",
+  "restored": "{\"fn\": \"CopyCurrentLineAttrCGB\", \"registers\": {\"a\": 0, \"b\": 4, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 38944, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"38912\": \"0000000000000000000000000000000000000000000000000000000000000000\", \"52467\": \"03\"}}, \"status\": \"PASS\"}\n"
+}

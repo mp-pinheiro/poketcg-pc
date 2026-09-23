@@ -322,3 +322,125 @@ MUTATIONS["HandleAnimationFrame"] = {
     "after": "\t\treturn (uint8_t)(out + 1u);",
     "case_ids": ["HandleAnimationFrame-0"],
 }
+for _rec in SCHEMA2_CASES["_HandleAllSpriteAnimations"]:
+    _rec.setdefault("bus", {}).update({0xD4CF: 1, 0xD5D0: 1, 0xD5D1: 1, 0xD5D2: 1, 0xD5D3: 1, 0xD5D6: 1})
+MUTATIONS["ClearSpriteVRAMBuffer"] = {
+    "source_symbol": "ClearSpriteVRAMBuffer",
+    "before": "\t\tgb_write8((uint16_t)(wSpriteVRAMBuffer_ADDR + i), 0);",
+    "after": "\t\tgb_write8((uint16_t)(wSpriteVRAMBuffer_ADDR - i), 0);",
+    "case_ids": ["ClearSpriteVRAMBuffer-0"],
+}
+MUTATIONS["CreateSpriteAndAnimBufferEntry"] = {
+    "source_symbol": "CreateSpriteAndAnimBufferEntry",
+    "before": "\t\tif (gb_read8(slot_addr(i, 0)) == 0) {",
+    "after": "\t\tif (gb_read8(slot_addr(i, 0)) != 0) {",
+    "case_ids": ["CreateSpriteAndAnimBufferEntry-0"],
+}
+MUTATIONS["DisableCurSpriteAnim"] = {
+    "source_symbol": "DisableCurSpriteAnim",
+    "before": "\tDisableSpriteAnim(wWhichSprite);",
+    "after": "\t;",
+    "case_ids": ["DisableCurSpriteAnim-0"],
+}
+MUTATIONS["DisableSpriteAnim"] = {
+    "source_symbol": "DisableSpriteAnim",
+    "before": "\t\tgb_write8(slot_addr(a, 0), 0);",
+    "after": "\t\tgb_write8(slot_addr((uint8_t)(a ^ 1u), 0), 0);",
+    "case_ids": ["DisableSpriteAnim-0"],
+}
+MUTATIONS["FillNewSpriteAnimBufferEntry"] = {
+    "source_symbol": "FillNewSpriteAnimBufferEntry",
+    "before": "\tgb_write8((uint16_t)(hl + 4u), wCurrSpriteTileID);",
+    "after": "\tgb_write8((uint16_t)(hl + 5u), wCurrSpriteTileID);",
+    "case_ids": ["FillNewSpriteAnimBufferEntry-0"],
+}
+MUTATIONS["Func_12ac9"] = {
+    "source_symbol": "Func_12ac9",
+    "before": "\tif (c == 0) {",
+    "after": "\tif (c != 0) {",
+    "case_ids": ["Func_12ac9-0"],
+}
+MUTATIONS["Func_12ba7"] = {
+    "source_symbol": "Func_12ba7",
+    "before": "\tgb_write8(dst, wSpriteVRAMBufferSize);",
+    "after": "\t;",
+    "case_ids": ["Func_12ba7-0"],
+}
+MUTATIONS["Func_12bcd"] = {
+    "source_symbol": "Func_12bcd",
+    "before": "\tsrc = (uint16_t)(sGeneralSaveDataEnd_ADDR + 0x100u);",
+    "after": "\tsrc = (uint16_t)(sGeneralSaveDataEnd_ADDR + 0xFFu);",
+    "case_ids": ["Func_12bcd-0"],
+}
+MUTATIONS["Func_12c05"] = {
+    "source_symbol": "Func_12c05",
+    "before": "\t\tif (gb_read8((uint16_t)(entry + 1u)) == a) {",
+    "after": "\t\tif (gb_read8((uint16_t)(entry + 1u)) != a) {",
+    "case_ids": ["Func_12c05-1"],
+}
+MUTATIONS["Func_12c4f"] = {
+    "source_symbol": "Func_12c4f",
+    "before": "\tBankswitchROM(saved);",
+    "after": "\t;",
+    "case_ids": ["Func_12c4f-0"],
+}
+MUTATIONS["Func_12c5e"] = {
+    "source_symbol": "Func_12c5e",
+    "before": "\t\tif (gb_read8(entry) != 0)",
+    "after": "\t\tif (gb_read8(entry) == 0)",
+    "case_ids": ["Func_12c5e-1"],
+}
+MUTATIONS["GetAnimFramePointerFromOffset"] = {
+    "source_symbol": "GetAnimFramePointerFromOffset",
+    "before": "\t          gb_read8((uint16_t)(hl + ANIM_POINTER + 1u)));",
+    "after": "\t          gb_read8((uint16_t)(hl - ANIM_POINTER + 1u)));",
+    "case_ids": ["GetAnimFramePointerFromOffset-0"],
+}
+MUTATIONS["GetSpriteAnimCounter"] = {
+    "source_symbol": "GetSpriteAnimCounter",
+    "before": "\treturn gb_read8(slot_addr(wWhichSprite, ANIM_COUNTER));",
+    "after": "\treturn gb_read8(slot_addr(wWhichSprite, (ANIM_COUNTER + 1u)));",
+    "case_ids": ["GetSpriteAnimCounter-0"],
+}
+MUTATIONS["LoadSpriteAnimPointers"] = {
+    "source_symbol": "LoadSpriteAnimPointers",
+    "before": "\tput16((uint16_t)(slot + ANIM_FRAME_POINTER), (uint16_t)(pointer + 3u));",
+    "after": "\tput16((uint16_t)(slot + ANIM_FRAME_POINTER), (uint16_t)(pointer + 4u));",
+    "case_ids": ["LoadSpriteAnimPointers-0"],
+}
+MUTATIONS["LoadSpriteDataForAnimationFrame"] = {
+    "source_symbol": "LoadSpriteDataForAnimationFrame",
+    "before": "\tif ((gb_read8((uint16_t)(hl + 15u)) & (1u << FLAG_UNSKIPPABLE)) != 0)",
+    "after": "\tif ((gb_read8((uint16_t)(hl + 15u)) & (1u << FLAG_UNSKIPPABLE)) == 0)",
+    "case_ids": ["LoadSpriteDataForAnimationFrame-2"],
+}
+MUTATIONS["SetAnimationCounterAndLoop"] = {
+    "source_symbol": "SetAnimationCounterAndLoop",
+    "before": "\tif (a != 0)",
+    "after": "\tif (a == 0)",
+    "case_ids": ["SetAnimationCounterAndLoop-0"],
+}
+MUTATIONS["StartNewSpriteAnimation"] = {
+    "source_symbol": "StartNewSpriteAnimation",
+    "before": "\tif (gb_read8(id) == a)",
+    "after": "\tif (gb_read8(id) != a)",
+    "case_ids": ["StartNewSpriteAnimation-0"],
+}
+MUTATIONS["TryHandleSpriteAnimationFrame"] = {
+    "source_symbol": "TryHandleSpriteAnimationFrame",
+    "before": "\tif (counter == 0xff)",
+    "after": "\tif (counter != 0xff)",
+    "case_ids": ["TryHandleSpriteAnimationFrame-0"],
+}
+MUTATIONS["StartSpriteAnimation"] = {
+    "source_symbol": "StartSpriteAnimation",
+    "before": "{\n\tuint16_t slot = LoadSpriteAnimPointers(a);",
+    "after": "{\n\tuint16_t slot = (LoadSpriteAnimPointers(a)) ^ 1u;",
+    "case_ids": ["StartSpriteAnimation-0"],
+}
+MUTATIONS["_HandleAllSpriteAnimations"] = {
+    "source_symbol": "_HandleAllSpriteAnimations",
+    "before": "\twWhichSprite = SLOT_COUNT;",
+    "after": "\twWhichSprite = (SLOT_COUNT) ^ 1u;",
+    "case_ids": ["_HandleAllSpriteAnimations-0"],
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "GetAnimFramePointerFromOffset",
+  "case": "tests/cases/sprite_animations.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetAnimFramePointerFromOffset\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 54480, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49920\": \"0080c3\", \"50048\": \"abcd\", \"54468\": \"00c301\", \"54474\": \"00\", \"54480\": \"0100000000000100c300c320abcd0100\", \"65408\": \"04\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetAnimFramePointerFromOffset\", \"mismatches\": {\"bus\": {\"address\": 54469, \"reference\": \"c3abcd00c301000100\", \"native\": \"c3abcd000001000100\", \"reference_size\": 26, \"native_size\": 26, \"spans\": [[49920, 3], [50048, 2], [54468, 3], [54474, 1], [54480, 16], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"GetAnimFramePointerFromOffset\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 54480, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49920\": \"0080c3\", \"50048\": \"abcd\", \"54468\": \"00c301\", \"54474\": \"00\", \"54480\": \"0100000000000100c300c320abcd0100\", \"65408\": \"04\"}}, \"status\": \"PASS\"}\n"
+}

@@ -129,3 +129,33 @@ MUTATIONS = {
         "case_ids": ["DetectConsole-2", "DetectConsole-0", "DetectConsole-1"],
     },
 }
+MUTATIONS["FillTileMap"] = {
+    "source_symbol": "FillTileMap",
+    "before": "\t\treturn hl;",
+    "after": "\t\treturn 1u + hl;",
+    "case_ids": ["FillTileMap-0"],
+}
+MUTATIONS["SetupPalettes"] = {
+    "source_symbol": "SetupPalettes",
+    "before": "\tuint8_t a = 0xE4u; /* ldgbpal a, SHADE_WHITE, SHADE_LIGHT, SHADE_DARK, SHADE_BLACK */",
+    "after": "\tuint8_t a = 0xE5u; /* ldgbpal a, SHADE_WHITE, SHADE_LIGHT, SHADE_DARK, SHADE_BLACK */",
+    "case_ids": ["SetupPalettes-0"],
+}
+MUTATIONS["SetupRegisters"] = {
+    "source_symbol": "SetupRegisters",
+    "before": "\tgb_write8(wLCDCFunctionTrampoline_ADDR, 0xC3u);",
+    "after": "\tgb_write8(wLCDCFunctionTrampoline_ADDR, 0xC4u);",
+    "case_ids": ["SetupRegisters-0"],
+}
+MUTATIONS["SetupVRAM"] = {
+    "source_symbol": "SetupVRAM",
+    "before": "\tFillTileMap();",
+    "after": "\t;",
+    "case_ids": ["SetupVRAM-1"],
+}
+MUTATIONS["ZeroRAM"] = {
+    "source_symbol": "ZeroRAM",
+    "before": "\tuint16_t hl = 0xC000u;",
+    "after": "\tuint16_t hl = 0xBFFFu;",
+    "case_ids": ["ZeroRAM-0"],
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "LoadTxRam2",
+  "case": "tests/cases/print_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadTxRam2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 1, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52799\": \"0100ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadTxRam2\", \"mismatches\": {\"bus\": {\"address\": 52800, \"reference\": \"0100ff\", \"native\": \"01ffff\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52799, 3]]}}}\n",
+  "restored": "{\"fn\": \"LoadTxRam2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 1, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52799\": \"0100ff\"}}, \"status\": \"PASS\"}\n"
+}

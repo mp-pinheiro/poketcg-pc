@@ -1391,3 +1391,203 @@ MUTATIONS["Music1_note"] = {"source_symbol": "Music1_note", "before": "void Musi
 MUTATIONS["Music1_UpdateVibrato"] = {"source_symbol": "Music1_UpdateVibrato", "before": "\t\treturn (uint16_t)((uint16_t)(hi & 0x07u) << 8 | lo);", "after": "\t\treturn (uint16_t)((uint16_t)(hi & 0x0Fu) << 8 | lo);", "case_ids": ["Music1_UpdateVibrato-6"]}
 MUTATIONS["Music1_f479c"] = {"source_symbol": "Music1_f479c", "before": "\t\t\twMusicTie_PTR[0] = 0;\n\t\t\tgb_write8(APU_AUD3ENA, 0);", "after": "\t\t\twMusicTie_PTR[2] = 0;\n\t\t\tgb_write8(APU_AUD3ENA, 0);", "case_ids": ["Music1_f479c-1"]}
 MUTATIONS["Music1_CheckForNewSound"] = {"source_symbol": "Music1_CheckForNewSound", "before": "\t\twCurSongID = (uint8_t)(wCurSongID | 0x80u);", "after": "\t\twCurSongID = (uint8_t)(wCurSongID | 0x40u);", "case_ids": ["Music1_CheckForNewSound-1"]}
+for _rec in SCHEMA2_CASES["Music1_BackupSong"]:
+    _rec.setdefault("bus", {}).update({0xDE55: 1, 0xDE56: 1, 0xDE57: 1, 0xDE5C: 1, 0xDE5D: 1, 0xDE76: 1, 0xDE77: 1, 0xDEAC: 1})
+for _rec in SCHEMA2_CASES["Music1_LoadBackup"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 1, 0xDD81: 1, 0xDD84: 1, 0xDD8A: 1, 0xDD8B: 1, 0xDDAB: 1, 0xDDAC: 1, 0xDDEF: 1})
+for _rec in SCHEMA2_CASES["Music1_f404e"]:
+    _rec.setdefault("bus", {}).update({0xDDF0: 1})
+for _rec in SCHEMA2_CASES["Music1_f4066"]:
+    _rec.setdefault("bus", {}).update({0xDDF2: 1})
+for _rec in SCHEMA2_CASES["Music1_f480a"]:
+    _rec.setdefault("bus", {}).update({0xDDEF: 1, 0xFF21: 1, 0xFF22: 1, 0xFF23: 1})
+for _rec in SCHEMA2_CASES["Music1_f485a"]:
+    _rec.setdefault("bus", {}).update({0xDDDF: 1, 0xDDE0: 1, 0xDDE1: 1, 0xFF11: 1, 0xFF14: 1, 0xFF16: 1, 0xFF19: 1, 0xFF1E: 1})
+for _rec in SCHEMA2_CASES["Music1_f4866"]:
+    _rec.setdefault("bus", {}).update({0xFF24: 1, 0xFF25: 1})
+for _rec in SCHEMA2_CASES["Music1_f490b"]:
+    _rec.setdefault("bus", {}).update({0xDDDF: 1, 0xDDE0: 1, 0xDDE1: 1, 0xFF11: 1, 0xFF14: 1, 0xFF16: 1, 0xFF19: 1, 0xFF1E: 1})
+for _rec in SCHEMA2_CASES["Music1_f4980"]:
+    _rec.setdefault("bus", {}).update({0xFF12: 1, 0xFF14: 1, 0xFF17: 1, 0xFF19: 1, 0xFF1C: 1, 0xFF21: 1, 0xFF23: 1})
+for _rec in SCHEMA2_CASES["Music1_BackupSong"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+for _rec in SCHEMA2_CASES["Music1_EmptyFunc"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+for _rec in SCHEMA2_CASES["Music1_LoadBackup"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+for _rec in SCHEMA2_CASES["Music1_UpdateChannel1"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+for _rec in SCHEMA2_CASES["Music1_UpdateChannel2"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+for _rec in SCHEMA2_CASES["Music1_UpdateChannel3"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+for _rec in SCHEMA2_CASES["Music1_UpdateChannel4"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+for _rec in SCHEMA2_CASES["Music1_f404e"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+for _rec in SCHEMA2_CASES["Music1_f4066"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+for _rec in SCHEMA2_CASES["Music1_f4714"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+for _rec in SCHEMA2_CASES["Music1_f475a"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+for _rec in SCHEMA2_CASES["Music1_f480a"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+for _rec in SCHEMA2_CASES["Music1_f485a"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+for _rec in SCHEMA2_CASES["Music1_f4866"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+for _rec in SCHEMA2_CASES["Music1_f490b"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+for _rec in SCHEMA2_CASES["Music1_f4980"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+MUTATIONS["Music1_AssertSFXFinished"] = {
+    "source_symbol": "Music1_AssertSFXFinished",
+    "before": "\treturn (wCurSfxID != 0x80) ? 1 : 0;",
+    "after": "\treturn (wCurSfxID == 0x80) ? 1 : 0;",
+    "case_ids": ["Music1_AssertSFXFinished-0"],
+}
+MUTATIONS["Music1_AssertSongFinished"] = {
+    "source_symbol": "Music1_AssertSongFinished",
+    "before": "\treturn (wCurSongID != 0x80) ? 1 : 0;",
+    "after": "\treturn (wCurSongID == 0x80) ? 1 : 0;",
+    "case_ids": ["Music1_AssertSongFinished-0"],
+}
+MUTATIONS["Music1_BeginSong"] = {
+    "source_symbol": "Music1_BeginSong",
+    "before": "\tbank = gb_read8(ADR_SongBanks1 + a);",
+    "after": "\tbank = gb_read8(ADR_SongBanks1 - a);",
+    "case_ids": ["Music1_BeginSong-1"],
+}
+MUTATIONS["Music1_CheckForEndOfSong"] = {
+    "source_symbol": "Music1_CheckForEndOfSong",
+    "before": "\tif (sum == 0) wCurSongID = 0x80;",
+    "after": "\tif (sum != 0) wCurSongID = 0x80;",
+    "case_ids": ["Music1_CheckForEndOfSong-1"],
+}
+MUTATIONS["Music1_Init"] = {
+    "source_symbol": "Music1_Init",
+    "before": "\t\tgb_write8(wMusicChannelStackPointers_ADDR + i,",
+    "after": "\t\tgb_write8(wMusicChannelStackPointers_ADDR - i,",
+    "case_ids": ["Music1_Init-0"],
+}
+MUTATIONS["Music1_PlaySFX"] = {
+    "source_symbol": "Music1_PlaySFX",
+    "before": "\tif (a != 0u) {",
+    "after": "\tif (a == 0u) {",
+    "case_ids": ["Music1_PlaySFX-1"],
+}
+MUTATIONS["Music1_PlaySong"] = {
+    "source_symbol": "Music1_PlaySong",
+    "before": "\tif (a >= gb_read8(ADR_NumberOfSongs1)) return;",
+    "after": "\tif (a > gb_read8(ADR_NumberOfSongs1)) return;",
+    "case_ids": ["Music1_PlaySong-2"],
+}
+MUTATIONS["Music1_ResumeSong"] = {
+    "source_symbol": "Music1_ResumeSong",
+    "before": "\tMusic1_LoadBackup();",
+    "after": "\t;",
+    "case_ids": ["Music1_ResumeSong-1"],
+}
+MUTATIONS["Music1_SetChannelStackPointer"] = {
+    "source_symbol": "Music1_SetChannelStackPointer",
+    "before": "\tgb_write8(addr + 1, (uint8_t)(sp >> 8));",
+    "after": "\tgb_write8(addr - 1, (uint8_t)(sp >> 8));",
+    "case_ids": ["Music1_SetChannelStackPointer-0"],
+}
+MUTATIONS["Music1_Update"] = {
+    "source_symbol": "Music1_Update",
+    "before": "\t\tif (wddf2 != 0) {",
+    "after": "\t\tif (wddf2 == 0) {",
+    "case_ids": ["Music1_Update-3"],
+}
+MUTATIONS["Music1_f406f"] = {
+    "source_symbol": "Music1_f406f",
+    "before": "\tuint8_t lo = a & 0x07;",
+    "after": "\tuint8_t lo = a | 0x07;",
+    "case_ids": ["Music1_f406f-0"],
+}
+MUTATIONS["Music1_f4839"] = {
+    "source_symbol": "Music1_f4839",
+    "before": "\t\tif (v == 0xFF) {",
+    "after": "\t\tif (v != 0xFF) {",
+    "case_ids": ["Music1_f4839-1"],
+}
+MUTATIONS["Music1_f4967"] = {
+    "source_symbol": "Music1_f4967",
+    "before": "\tde = (uint16_t)wMusicCh1CurPitch_PTR[ch * 2 + 1] << 8",
+    "after": "\tde = (uint16_t)wMusicCh1CurPitch_PTR[ch * 2 - 1] << 8",
+    "case_ids": ["Music1_f4967-2"],
+}
+MUTATIONS["Music1_GetChannelStackPointer"] = {
+    "source_symbol": "Music1_GetChannelStackPointer",
+    "before": "uint16_t Music1_GetChannelStackPointer(uint8_t ch)\n{\n\tuint16_t addr = wMusicChannelStackPointers_ADDR + ((uint16_t)ch << 1);",
+    "after": "uint16_t Music1_GetChannelStackPointer(uint8_t ch)\n{\n\tuint16_t addr = wMusicChannelStackPointers_ADDR - ((uint16_t)ch << 1);",
+    "case_ids": ["Music1_GetChannelStackPointer-1"],
+}
+MUTATIONS["Music1_LoadWaveInstrument"] = {
+    "source_symbol": "Music1_LoadWaveInstrument",
+    "before": "\t}\n\twMusicWaveChange = 0;",
+    "after": "\t}\n\twMusicWaveChange = (0) ^ 1u;",
+    "case_ids": ["Music1_LoadWaveInstrument-0"],
+}
+MUTATIONS["Music1_PauseSong"] = {
+    "source_symbol": "Music1_PauseSong",
+    "before": "\tMusic1_BackupSong();\n\tMusic1_StopAllChannels();",
+    "after": "\tMusic1_BackupSong();\n\t;",
+    "case_ids": ["Music1_PauseSong-1"],
+}
+MUTATIONS["Music1_StopAllChannels"] = {
+    "source_symbol": "Music1_StopAllChannels",
+    "before": "\twMusicIsPlaying_PTR[0] = 0;",
+    "after": "\twMusicIsPlaying_PTR[0] = (0) ^ 1u;",
+    "case_ids": ["Music1_StopAllChannels-0"],
+}
+MUTATIONS["Music1_UpdateChannel1"] = {
+    "source_symbol": "Music1_UpdateChannel1",
+    "before": "void Music1_UpdateChannel1(void) { g_rom_bank = MUSIC1_BANK; update_channel(0); }",
+    "after": "void Music1_UpdateChannel1(void) { g_rom_bank = MUSIC1_BANK; update_channel(1); }",
+    "case_ids": ["Music1_UpdateChannel1-1"],
+}
+MUTATIONS["Music1_UpdateChannel2"] = {
+    "source_symbol": "Music1_UpdateChannel2",
+    "before": "void Music1_UpdateChannel2(void) { g_rom_bank = MUSIC1_BANK; update_channel(1); }",
+    "after": "void Music1_UpdateChannel2(void) { g_rom_bank = MUSIC1_BANK; update_channel(2); }",
+    "case_ids": ["Music1_UpdateChannel2-1"],
+}
+MUTATIONS["Music1_UpdateChannel3"] = {
+    "source_symbol": "Music1_UpdateChannel3",
+    "before": "void Music1_UpdateChannel3(void) { g_rom_bank = MUSIC1_BANK; update_channel(2); }",
+    "after": "void Music1_UpdateChannel3(void) { g_rom_bank = MUSIC1_BANK; update_channel(3); }",
+    "case_ids": ["Music1_UpdateChannel3-1"],
+}
+MUTATIONS["Music1_UpdateChannel4"] = {
+    "source_symbol": "Music1_UpdateChannel4",
+    "before": "void Music1_UpdateChannel4(void) { g_rom_bank = MUSIC1_BANK; update_channel(3); }",
+    "after": "void Music1_UpdateChannel4(void) { g_rom_bank = MUSIC1_BANK; update_channel(4); }",
+    "case_ids": ["Music1_UpdateChannel4-1"],
+}
+MUTATIONS["Music1_f4714"] = {
+    "source_symbol": "Music1_f4714",
+    "before": "void Music1_f4714(void) { g_rom_bank = MUSIC1_BANK; update_ch_output(0); }",
+    "after": "void Music1_f4714(void) { g_rom_bank = MUSIC1_BANK; update_ch_output(1); }",
+    "case_ids": ["Music1_f4714-2"],
+}
+MUTATIONS["Music1_f475a"] = {
+    "source_symbol": "Music1_f475a",
+    "before": "void Music1_f475a(void) { g_rom_bank = MUSIC1_BANK; update_ch_output(1); }",
+    "after": "void Music1_f475a(void) { g_rom_bank = MUSIC1_BANK; update_ch_output(2); }",
+    "case_ids": ["Music1_f475a-2"],
+}
+MUTATIONS["Music1_f404e"] = {
+    "source_symbol": "Music1_f404e",
+    "before": "void Music1_f404e(uint8_t a)         { g_rom_bank = MUSIC1_BANK; wddf0 = a; }",
+    "after": "void Music1_f404e(uint8_t a)         { g_rom_bank = MUSIC1_BANK; wddf0 = (a) ^ 1u; }",
+    "case_ids": ["Music1_f404e-0"],
+}
+MUTATIONS["Music1_f4066"] = {
+    "source_symbol": "Music1_f4066",
+    "before": "void Music1_f4066(void)              { g_rom_bank = MUSIC1_BANK; wddf2 ^= 1; }",
+    "after": "void Music1_f4066(void)              { g_rom_bank = MUSIC1_BANK; wddf2 ^= (1) ^ 1u; }",
+    "case_ids": ["Music1_f4066-0"],
+}

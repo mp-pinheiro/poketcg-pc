@@ -1,0 +1,9 @@
+{
+  "fn": "LoadTilemap.Decompress",
+  "case": "tests/cases/load_gfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadTilemap.Decompress\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 32, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53551\": \"010100\", \"54466\": \"00980098\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadTilemap.Decompress\", \"mismatches\": {\"e\": [32, 64]}}\n",
+  "restored": "{\"fn\": \"LoadTilemap.Decompress\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 32, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53551\": \"010100\", \"54466\": \"00980098\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n"
+}

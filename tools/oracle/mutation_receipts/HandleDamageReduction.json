@@ -1,0 +1,9 @@
+{
+  "fn": "HandleDamageReduction",
+  "case": "tests/cases/substatus.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleDamageReduction\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 80, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"50108\": \"ff\", \"50152\": \"03\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleDamageReduction\", \"mismatches\": {\"e\": [80, 100]}}\n",
+  "restored": "{\"fn\": \"HandleDamageReduction\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 80, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"50108\": \"ff\", \"50152\": \"03\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

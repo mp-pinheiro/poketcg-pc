@@ -1,0 +1,9 @@
+{
+  "fn": "CreateHandCardList",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CreateHandCardList\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 197, \"e\": 17, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49902, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49665\": \"00\", \"49667\": \"40\", \"49730\": \"0103\", \"49902\": \"02\", \"50448\": \"01ff0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreateHandCardList\", \"mismatches\": {\"f\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"CreateHandCardList\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 197, \"e\": 17, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49902, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49665\": \"00\", \"49667\": \"40\", \"49730\": \"0103\", \"49902\": \"02\", \"50448\": \"01ff0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

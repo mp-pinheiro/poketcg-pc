@@ -43,3 +43,11 @@ MUTATIONS = {
         "case_ids": ["ScriptPlaySong-0", "ScriptPlaySong-1", "ScriptPlaySong-2", "ScriptPlaySong-3"],
     },
 }
+for _rec in SCHEMA2_CASES["WaitForSongToFinish"]:
+    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+MUTATIONS["Func_3c87"] = {
+    "source_symbol": "Func_3c87",
+    "before": "\tPauseSong();",
+    "after": "\t;",
+    "case_ids": ["Func_3c87-0"],
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "SetupPalettes",
+  "case": "tests/cases/setup.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetupPalettes\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 51902, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51900\": \"e4e4e400\", \"65351\": \"e4e4e4\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetupPalettes\", \"mismatches\": {\"bus\": {\"address\": 51900, \"reference\": \"00e4e4e400e4\", \"native\": \"00e5e5e500e5\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[51892, 1], [51900, 4], [65351, 3]]}}}\n",
+  "restored": "{\"fn\": \"SetupPalettes\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 51902, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51900\": \"e4e4e400\", \"65351\": \"e4e4e4\"}}, \"status\": \"PASS\"}\n"
+}

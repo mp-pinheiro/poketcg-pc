@@ -1,0 +1,9 @@
+{
+  "fn": "Func_3ddb",
+  "case": "tests/cases/load_animation.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_3ddb\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54495\": \"fb\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_3ddb\", \"mismatches\": {\"bus\": {\"address\": 54495, \"reference\": \"fb\", \"native\": \"ff\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[54495, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_3ddb\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54495\": \"fb\"}}, \"status\": \"PASS\"}\n"
+}

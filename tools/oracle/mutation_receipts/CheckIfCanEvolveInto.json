@@ -1,0 +1,9 @@
+{
+  "fn": "CheckIfCanEvolveInto",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfCanEvolveInto\", \"registers\": {\"a\": 128, \"b\": 0, \"c\": 0, \"d\": 1, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49858, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49858\": \"80\", \"50176\": \"0809\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfCanEvolveInto\", \"mismatches\": {\"a\": [128, 0], \"f\": [0, 144], \"hl\": [49858, 52329]}}\n",
+  "restored": "{\"fn\": \"CheckIfCanEvolveInto\", \"registers\": {\"a\": 128, \"b\": 0, \"c\": 0, \"d\": 1, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49858, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49858\": \"80\", \"50176\": \"0809\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

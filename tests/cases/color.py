@@ -214,3 +214,123 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 FADE_EVENTS = [{"keys": 0}]
 for _i, _rec in enumerate(SCHEMA2_CASES["FadeScreenFromWhite"]):
     _rec["input_events"] = list(FADE_EVENTS)
+MUTATIONS["FadeBGPalIntoTemp1"] = {
+    "source_symbol": "FadeBGPalIntoTemp1",
+    "before": "    fade_palette_bytes(wBackgroundPalettesCGB_ADDR, wTempBackgroundPalettesCGB_ADDR, 16);",
+    "after": "    ;",
+    "case_ids": ["FadeBGPalIntoTemp1-0"],
+}
+MUTATIONS["FadeBGPalIntoTemp2"] = {
+    "source_symbol": "FadeBGPalIntoTemp2",
+    "before": "    fade_palette_bytes((uint16_t)(wBackgroundPalettesCGB_ADDR + 32), (uint16_t)(wTempBackgroundPalettesCGB_ADDR + 32), 16);",
+    "after": "    fade_palette_bytes((uint16_t)(wBackgroundPalettesCGB_ADDR - 32), (uint16_t)(wTempBackgroundPalettesCGB_ADDR + 32), 16);",
+    "case_ids": ["FadeBGPalIntoTemp2-0"],
+}
+MUTATIONS["FadeBGPalIntoTemp3"] = {
+    "source_symbol": "FadeBGPalIntoTemp3",
+    "before": "    fade_palette_bytes(wBackgroundPalettesCGB_ADDR, wTempBackgroundPalettesCGB_ADDR, 32);",
+    "after": "    ;",
+    "case_ids": ["FadeBGPalIntoTemp3-0"],
+}
+MUTATIONS["FadeDMGPalettes"] = {
+    "source_symbol": "FadeDMGPalettes",
+    "before": "        gb_write8(current, FadeDMGPalettes_CalculateMixPalette(gb_read8(current), gb_read8(target)));",
+    "after": "        ;",
+    "case_ids": ["FadeDMGPalettes-0"],
+}
+MUTATIONS["FadeDMGPalettes.CalculateMixPalette"] = {
+    "source_symbol": "FadeDMGPalettes.CalculateMixPalette",
+    "before": "        uint8_t combined = (uint8_t)(shade | output);",
+    "after": "        uint8_t combined = (uint8_t)(shade & output);",
+    "case_ids": ["FadeDMGPalettes.CalculateMixPalette-1"],
+}
+MUTATIONS["FadeDMGPalettes.GetMixShadeValue"] = {
+    "source_symbol": "FadeDMGPalettes.GetMixShadeValue",
+    "before": "    return mix_shades[((b & 3) << 2) | (c & 3)];",
+    "after": "    return mix_shades[((b | 3) << 2) | (c & 3)];",
+    "case_ids": ["FadeDMGPalettes.GetMixShadeValue-0"],
+}
+MUTATIONS["FadeOBPalIntoTemp"] = {
+    "source_symbol": "FadeOBPalIntoTemp",
+    "before": "    fade_palette_bytes(wObjectPalettesCGB_ADDR, wTempObjectPalettesCGB_ADDR, 32);",
+    "after": "    ;",
+    "case_ids": ["FadeOBPalIntoTemp-0"],
+}
+MUTATIONS["FadePalIntoAnother.FadeColor"] = {
+    "source_symbol": "FadePalIntoAnother.FadeColor",
+    "before": "    return fade_component(a, (uint8_t)hl);",
+    "after": "    return fade_component((uint8_t)(a ^ 1u), (uint8_t)hl);",
+    "case_ids": ["FadePalIntoAnother.FadeColor-1"],
+}
+MUTATIONS["FadePalIntoAnother.GetFadedColor"] = {
+    "source_symbol": "FadePalIntoAnother.GetFadedColor",
+    "before": "    if (c != e || b != d) {",
+    "after": "    if (c == e || b != d) {",
+    "case_ids": ["FadePalIntoAnother.GetFadedColor-2"],
+}
+MUTATIONS["FadeScreenFromWhite.BackupPalsAndSetWhite"] = {
+    "source_symbol": "FadeScreenFromWhite.BackupPalsAndSetWhite",
+    "before": "    SetWhitePalettes();",
+    "after": "    ;",
+    "case_ids": ["FadeScreenFromWhite.BackupPalsAndSetWhite-0"],
+}
+MUTATIONS["FadeScreenToTempPals"] = {
+    "source_symbol": "FadeScreenToTempPals",
+    "before": "    for (uint8_t count = 0x10; count != 0; count = (uint8_t)(count - 2)) {",
+    "after": "    for (uint8_t count = 0x10; count != 0; count = (uint8_t)(count + 2)) {",
+    "case_ids": ["FadeScreenToTempPals-2"],
+}
+MUTATIONS["FadeScreenToWhite"] = {
+    "source_symbol": "FadeScreenToWhite",
+    "before": "    if (gb_read8(wLCDC_ADDR) & 0x80) {",
+    "after": "    if (gb_read8(wLCDC_ADDR) | 0x80) {",
+    "case_ids": ["FadeScreenToWhite-0"],
+}
+MUTATIONS["FlashScreenToWhite"] = {
+    "source_symbol": "FlashScreenToWhite",
+    "before": "    if (c == 0) {",
+    "after": "    if (c != 0) {",
+    "case_ids": ["FlashScreenToWhite-0"],
+}
+MUTATIONS["Func_10d17"] = {
+    "source_symbol": "Func_10d17",
+    "before": "    gb_write8(wBGP_ADDR, gb_read8(wConsolePaletteData_ADDR));",
+    "after": "    ;",
+    "case_ids": ["Func_10d17-0"],
+}
+MUTATIONS["Func_10d50"] = {
+    "source_symbol": "Func_10d50",
+    "before": "    white_cgb(wTempBackgroundPalettesCGB_ADDR, 64);",
+    "after": "    ;",
+    "case_ids": ["Func_10d50-0"],
+}
+MUTATIONS["Func_10d74"] = {
+    "source_symbol": "Func_10d74",
+    "before": "    if (value == 0)",
+    "after": "    if (value != 0)",
+    "case_ids": ["Func_10d74-0"],
+}
+MUTATIONS["FadeScreenFromWhite"] = {
+    "source_symbol": "FadeScreenFromWhite",
+    "before": "    FlushAllPalettes();\n    EnableLCD();",
+    "after": "    FlushAllPalettes();\n    ;",
+    "case_ids": ["FadeScreenFromWhite-0"],
+}
+MUTATIONS["LoadPalsFromSRAMBuffer"] = {
+    "source_symbol": "LoadPalsFromSRAMBuffer",
+    "before": "        gb_write8((uint16_t)(wBackgroundPalettesCGB_ADDR + i), gb_read8((uint16_t)(address + i)));",
+    "after": "        gb_write8((uint16_t)(wBackgroundPalettesCGB_ADDR - i), gb_read8((uint16_t)(address + i)));",
+    "case_ids": ["LoadPalsFromSRAMBuffer-0"],
+}
+MUTATIONS["RestoreFirstColorInOBPals"] = {
+    "source_symbol": "RestoreFirstColorInOBPals",
+    "before": "        uint16_t source = (uint16_t)(wTempObjectPalettesCGB_ADDR + palette * 8);",
+    "after": "        uint16_t source = (uint16_t)(wTempObjectPalettesCGB_ADDR - palette * 8);",
+    "case_ids": ["RestoreFirstColorInOBPals-0"],
+}
+MUTATIONS["SetWhitePalettes"] = {
+    "source_symbol": "SetWhitePalettes",
+    "before": "    uint8_t value = gb_read8(wConsolePaletteData_ADDR);\n    gb_write8(wBGP_ADDR, value);",
+    "after": "    uint8_t value = gb_read8(wConsolePaletteData_ADDR);\n    ;",
+    "case_ids": ["SetWhitePalettes-0"],
+}

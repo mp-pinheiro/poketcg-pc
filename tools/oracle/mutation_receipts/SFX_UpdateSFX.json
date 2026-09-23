@@ -1,0 +1,9 @@
+{
+  "fn": "SFX_UpdateSFX",
+  "case": "tests/cases/sfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SFX_UpdateSFX\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 63, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"56706\": \"8000\", \"56716\": \"00\", \"56915\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SFX_UpdateSFX\", \"mismatches\": {\"bus\": {\"address\": 56706, \"reference\": \"80000000\", \"native\": \"04050001\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[56706, 2], [56716, 1], [56915, 1]]}}}\n",
+  "restored": "{\"fn\": \"SFX_UpdateSFX\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 63, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"56706\": \"8000\", \"56716\": \"00\", \"56915\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

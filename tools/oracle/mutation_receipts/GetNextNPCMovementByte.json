@@ -1,0 +1,9 @@
+{
+  "fn": "GetNextNPCMovementByte",
+  "case": "tests/cases/map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetNextNPCMovementByte\", \"registers\": {\"a\": 201, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetNextNPCMovementByte\", \"mismatches\": {\"a\": [201, 202]}}\n",
+  "restored": "{\"fn\": \"GetNextNPCMovementByte\", \"registers\": {\"a\": 201, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65408\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "GetCardDamageAndMaxHP",
+  "case": "tests/cases/duel.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetCardDamageAndMaxHP\", \"registers\": {\"a\": 108, \"b\": 0, \"c\": 113, \"d\": 0, \"e\": 0, \"f\": 96, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"05\", \"50176\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetCardDamageAndMaxHP\", \"mismatches\": {\"f\": [96, 64]}}\n",
+  "restored": "{\"fn\": \"GetCardDamageAndMaxHP\", \"registers\": {\"a\": 108, \"b\": 0, \"c\": 113, \"d\": 0, \"e\": 0, \"f\": 96, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"05\", \"50176\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

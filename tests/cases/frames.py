@@ -60,3 +60,9 @@ MUTATIONS = {
         "case_ids": ["DoAFrames-1", "DoAFrames-0"],
     },
 }
+MUTATIONS["HandleDPadRepeat"] = {
+    "source_symbol": "HandleDPadRepeat",
+    "before": "\t\tif (repeat == 0) {",
+    "after": "\t\tif (repeat != 0) {",
+    "case_ids": ["HandleDPadRepeat-5"],
+}

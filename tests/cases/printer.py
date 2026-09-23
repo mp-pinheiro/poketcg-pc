@@ -1182,3 +1182,9 @@ MUTATIONS["PrinterMenu_PrintQuality"] = {"source_symbol": "PrinterMenu_PrintQual
 for _record in SCHEMA2_CASES["PrinterMenu_PrintQuality"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x6DE2, "bank": 2}
 # <<< factory-completion PrinterMenu_PrintQuality
+MUTATIONS["SendNextPrinterPacketByte"] = {
+    "source_symbol": "SendNextPrinterPacketByte",
+    "before": "\t\t\t\t   (gb_read8((uint16_t)(wSerialDataPtr_ADDR + 1u)) << 8));",
+    "after": "\t\t\t\t   (gb_read8((uint16_t)(wSerialDataPtr_ADDR - 1u)) << 8));",
+    "case_ids": ["SendNextPrinterPacketByte-0"],
+}

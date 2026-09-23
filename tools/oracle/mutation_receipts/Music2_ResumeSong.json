@@ -1,0 +1,9 @@
+{
+  "fn": "Music2_ResumeSong",
+  "case": "tests/cases/music2.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Music2_ResumeSong\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"56704\": \"813e\", \"56716\": \"0f00000000\", \"56917\": \"813e\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Music2_ResumeSong\", \"mismatches\": {\"bus\": {\"address\": 56704, \"reference\": \"813e0f0000\", \"native\": \"803d0f0000\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[56704, 2], [56716, 5], [56917, 2]]}}}\n",
+  "restored": "{\"fn\": \"Music2_ResumeSong\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"56704\": \"813e\", \"56716\": \"0f00000000\", \"56917\": \"813e\"}}, \"status\": \"PASS\"}\n"
+}

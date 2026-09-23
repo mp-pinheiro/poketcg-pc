@@ -1,0 +1,9 @@
+{
+  "fn": "CountPokemonWithActivePkmnPowerInBothPlayAreas",
+  "case": "tests/cases/substatus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CountPokemonWithActivePkmnPowerInBothPlayAreas\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00ff\", \"50107\": \"00ff\", \"50176\": \"01\", \"50304\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CountPokemonWithActivePkmnPowerInBothPlayAreas\", \"mismatches\": {\"a\": [2, 0], \"f\": [16, 128]}}\n",
+  "restored": "{\"fn\": \"CountPokemonWithActivePkmnPowerInBothPlayAreas\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00ff\", \"50107\": \"00ff\", \"50176\": \"01\", \"50304\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

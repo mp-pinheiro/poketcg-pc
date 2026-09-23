@@ -1,0 +1,9 @@
+{
+  "fn": "LoadNonPokemonCardEffectCommands",
+  "case": "tests/cases/duel.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadNonPokemonCardEffectCommands\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 204, \"e\": 179, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 52269, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50304\": \"09\", \"52402\": \"3c01\", \"65431\": \"c3\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadNonPokemonCardEffectCommands\", \"mismatches\": {\"a\": [1, 9], \"bus\": {\"address\": 52403, \"reference\": \"093c01c300\", \"native\": \"093c09c300\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[50304, 1], [52402, 2], [65431, 1], [65439, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadNonPokemonCardEffectCommands\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 204, \"e\": 179, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 52269, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50304\": \"09\", \"52402\": \"3c01\", \"65431\": \"c3\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

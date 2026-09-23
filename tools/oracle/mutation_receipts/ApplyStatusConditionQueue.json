@@ -1,0 +1,9 @@
+{
+  "fn": "ApplyStatusConditionQueue",
+  "case": "tests/cases/duel_core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ApplyStatusConditionQueue\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49909\": \"00\", \"50165\": \"00\", \"52429\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ApplyStatusConditionQueue\", \"mismatches\": {\"f\": [128, 144]}}\n",
+  "restored": "{\"fn\": \"ApplyStatusConditionQueue\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49909\": \"00\", \"50165\": \"00\", \"52429\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

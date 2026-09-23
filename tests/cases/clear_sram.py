@@ -64,3 +64,9 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation ValidateSRAM
 MUTATIONS["ValidateSRAM"] = {"source_symbol": "ValidateSRAM", "before": "\t\t\tif (b2 == 0x05u)", "after": "\t\t\tif (b2 == 0x06u)", "case_ids": ["ValidateSRAM-1"]}
 # <<< factory-mutation ValidateSRAM
+MUTATIONS["RestartSRAM"] = {
+    "source_symbol": "RestartSRAM",
+    "before": "\tgb_write8(0xA000u, 0x04);",
+    "after": "\tgb_write8(0x9FFFu, 0x04);",
+    "case_ids": ["RestartSRAM-0"],
+}

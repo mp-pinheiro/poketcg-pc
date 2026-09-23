@@ -1,0 +1,9 @@
+{
+  "fn": "SetAllPlayAreaPokemonCanEvolve",
+  "case": "tests/cases/duel_core_state.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetAllPlayAreaPokemonCanEvolve\", \"registers\": {\"a\": 5, \"b\": 187, \"c\": 0, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 50119, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50114\": \"8080808080\", \"50159\": \"05\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetAllPlayAreaPokemonCanEvolve\", \"mismatches\": {\"hl\": [50119, 49919], \"bus\": {\"address\": 50115, \"reference\": \"808080808005\", \"native\": \"800000000005\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[50114, 5], [50159, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"SetAllPlayAreaPokemonCanEvolve\", \"registers\": {\"a\": 5, \"b\": 187, \"c\": 0, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 50119, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50114\": \"8080808080\", \"50159\": \"05\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n"
+}

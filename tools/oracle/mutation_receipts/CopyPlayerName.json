@@ -1,0 +1,9 @@
+{
+  "fn": "CopyPlayerName",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyPlayerName\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 193, \"e\": 2, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 40979, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"40976\": \"212200\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"212200\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyPlayerName\", \"mismatches\": {\"e\": [2, 3], \"bus\": {\"address\": 49408, \"reference\": \"212200\", \"native\": \"002122\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[49408, 3]]}}}\n",
+  "restored": "{\"fn\": \"CopyPlayerName\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 193, \"e\": 2, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 40979, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"40976\": \"212200\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"212200\"}}, \"status\": \"PASS\"}\n"
+}

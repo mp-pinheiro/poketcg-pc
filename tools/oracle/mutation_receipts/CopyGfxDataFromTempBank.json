@@ -1,0 +1,9 @@
+{
+  "fn": "CopyGfxDataFromTempBank",
+  "case": "tests/cases/map.py",
+  "index": 4,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyGfxDataFromTempBank\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 8, \"d\": 197, \"e\": 8, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 16392, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"cd8a02cdb607df85\", \"54470\": \"03\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyGfxDataFromTempBank\", \"mismatches\": {\"bus\": {\"address\": 50432, \"reference\": \"cd8a02cdb6\", \"native\": \"f33100e0cd\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[50432, 8], [54470, 1], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"CopyGfxDataFromTempBank\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 8, \"d\": 197, \"e\": 8, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 16392, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"cd8a02cdb607df85\", \"54470\": \"03\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

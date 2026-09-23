@@ -1,0 +1,9 @@
+{
+  "fn": "StartSpriteAnimation",
+  "case": "tests/cases/sprite_animations.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"StartSpriteAnimation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"0000000000000000000000000000000000000000000000000000000000000000000000\", \"49920\": \"00010000\", \"54480\": \"0000000000002a544e5b4e2a7f4e1000\", \"65408\": \"04\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"StartSpriteAnimation\", \"mismatches\": {\"a\": [0, 111], \"bus\": {\"address\": 54483, \"reference\": \"000000000000002a54\", \"native\": \"00000000646f002a54\", \"reference_size\": 56, \"native_size\": 56, \"spans\": [[49664, 35], [49920, 4], [54480, 16], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"StartSpriteAnimation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"0000000000000000000000000000000000000000000000000000000000000000000000\", \"49920\": \"00010000\", \"54480\": \"0000000000002a544e5b4e2a7f4e1000\", \"65408\": \"04\"}}, \"status\": \"PASS\"}\n"
+}

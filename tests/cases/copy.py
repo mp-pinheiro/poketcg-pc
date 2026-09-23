@@ -241,3 +241,9 @@ MUTATIONS = {
         "case_ids": ["CopyDataHLtoDE-primary-4"],
     },
 }
+MUTATIONS["CopyDataHLtoDE_SaveRegisters"] = {
+    "source_symbol": "CopyDataHLtoDE_SaveRegisters",
+    "before": "\tCopyDataHLtoDE(&hl, &de, bc);",
+    "after": "\t;",
+    "case_ids": ["CopyDataHLtoDE_SaveRegisters-primary-257"],
+}

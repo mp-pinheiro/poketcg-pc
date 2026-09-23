@@ -393,3 +393,15 @@ MUTATIONS["Func_d703"] = {
     "after": "if (event != 0u)",
     "case_ids": ["Func_d703-0", "Func_d703-1"],
 }
+MUTATIONS["MasonLabLoadMap"] = {
+    "source_symbol": "MasonLabLoadMap",
+    "before": "\tif (GetEventValue(EVENT_MASON_LAB_STATE) >= MASON_LAB_RECEIVED_STARTER_DECK)",
+    "after": "\tif (GetEventValue(EVENT_MASON_LAB_STATE) > MASON_LAB_RECEIVED_STARTER_DECK)",
+    "case_ids": ["MasonLabLoadMap-1"],
+}
+MUTATIONS["MasonLabPressedA"] = {
+    "source_symbol": "MasonLabPressedA",
+    "before": "\tif (GetEventValue(EVENT_RECEIVED_LEGENDARY_CARDS) == 0u)",
+    "after": "\tif (GetEventValue(EVENT_RECEIVED_LEGENDARY_CARDS) != 0u)",
+    "case_ids": ["MasonLabPressedA-0"],
+}

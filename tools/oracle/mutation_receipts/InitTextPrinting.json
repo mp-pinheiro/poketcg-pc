@@ -1,0 +1,9 @@
+{
+  "fn": "InitTextPrinting",
+  "case": "tests/cases/process_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"InitTextPrinting\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52489\": \"000000\", \"65450\": \"00980000000f\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"InitTextPrinting\", \"mismatches\": {\"bus\": {\"address\": 65450, \"reference\": \"0000000098000000\", \"native\": \"0000009800000000\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[52489, 3], [65450, 6]]}}}\n",
+  "restored": "{\"fn\": \"InitTextPrinting\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52489\": \"000000\", \"65450\": \"00980000000f\"}}, \"status\": \"PASS\"}\n"
+}

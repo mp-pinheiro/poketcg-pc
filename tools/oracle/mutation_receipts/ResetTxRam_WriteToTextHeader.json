@@ -1,0 +1,9 @@
+{
+  "fn": "ResetTxRam_WriteToTextHeader",
+  "case": "tests/cases/print_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ResetTxRam_WriteToTextHeader\", \"registers\": {\"a\": 0, \"b\": 64, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52783, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52779\": \"0f00010040\", \"52794\": \"0000000000\", \"52808\": \"000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ResetTxRam_WriteToTextHeader\", \"mismatches\": {\"hl\": [52783, 52788], \"bus\": {\"address\": 52779, \"reference\": \"0f00010040\", \"native\": \"0000000000\", \"reference_size\": 13, \"native_size\": 13, \"spans\": [[52779, 5], [52794, 5], [52808, 3]]}}}\n",
+  "restored": "{\"fn\": \"ResetTxRam_WriteToTextHeader\", \"registers\": {\"a\": 0, \"b\": 64, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52783, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52779\": \"0f00010040\", \"52794\": \"0000000000\", \"52808\": \"000000\"}}, \"status\": \"PASS\"}\n"
+}

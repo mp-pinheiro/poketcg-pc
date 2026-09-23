@@ -1,0 +1,9 @@
+{
+  "fn": "LoadCardDataToBuffer2_FromDeckIndex",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadCardDataToBuffer2_FromDeckIndex\", \"registers\": {\"a\": 21, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50177\": \"15\", \"52325\": \"019407510801211546014a08010000005208530800000000db47080000004c0100002054083c0800001e03df4700000000010104004f081e00180207b8015508\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadCardDataToBuffer2_FromDeckIndex\", \"mismatches\": {\"a\": [21, 0], \"bus\": {\"address\": 52325, \"reference\": \"150194075108\", \"native\": \"15c900000000\", \"reference_size\": 66, \"native_size\": 66, \"spans\": [[50177, 1], [52325, 64], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadCardDataToBuffer2_FromDeckIndex\", \"registers\": {\"a\": 21, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50177\": \"15\", \"52325\": \"019407510801211546014a08010000005208530800000000db47080000004c0100002054083c0800001e03df4700000000010104004f081e00180207b8015508\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

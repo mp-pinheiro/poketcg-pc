@@ -612,3 +612,135 @@ MUTATIONS["HandleSandAttackOrSmokescreenSubstatus"] = {"source_symbol": "HandleS
 # >>> factory-mutation HandleNoDamageOrEffectSubstatus
 MUTATIONS["HandleNoDamageOrEffectSubstatus"] = {"source_symbol": "HandleNoDamageOrEffectSubstatus_PkmnPower", "before": "\te = gb_read8(wTempTurnDuelistCardID_ADDR);\n\td = 0u;\n\tLoadCardDataToBuffer2_FromCardID(e);", "after": "\te = gb_read8(wTempTurnDuelistCardID_ADDR);\n\tLoadCardDataToBuffer2_FromCardID(e);", "case_ids": ["HandleNoDamageOrEffectSubstatus-10"]}
 # <<< factory-mutation HandleNoDamageOrEffectSubstatus
+MUTATIONS["CheckCantUseTrainerDueToEffect"] = {
+    "source_symbol": "CheckCantUseTrainerDueToEffect",
+    "before": "\t\treturn (TrainerEffectResult){0xA0u, sub3.hl};",
+    "after": "\t\treturn (TrainerEffectResult){0xA1u, sub3.hl};",
+    "case_ids": ["CheckCantUseTrainerDueToEffect-0"],
+}
+MUTATIONS["CheckIsIncapableOfUsingPkmnPower"] = {
+    "source_symbol": "CheckIsIncapableOfUsingPkmnPower",
+    "before": "\tif (a == PLAY_AREA_ARENA) {",
+    "after": "\tif (a != PLAY_AREA_ARENA) {",
+    "case_ids": ["CheckIsIncapableOfUsingPkmnPower-0"],
+}
+MUTATIONS["CheckNoDamageOrEffect"] = {
+    "source_symbol": "CheckNoDamageOrEffect",
+    "before": "\tif (val == 0)",
+    "after": "\tif (val != 0)",
+    "case_ids": ["CheckNoDamageOrEffect-0"],
+}
+MUTATIONS["CheckRainDanceScenario"] = {
+    "source_symbol": "CheckRainDanceScenario",
+    "before": "\tif (card_type != TYPE_ENERGY_WATER)",
+    "after": "\tif (card_type == TYPE_ENERGY_WATER)",
+    "case_ids": ["CheckRainDanceScenario-1"],
+}
+MUTATIONS["CheckSandAttackOrSmokescreenSubstatus"] = {
+    "source_symbol": "CheckSandAttackOrSmokescreenSubstatus",
+    "before": "\tif (status.a == 0)",
+    "after": "\tif (status.a != 0)",
+    "case_ids": ["CheckSandAttackOrSmokescreenSubstatus-0"],
+}
+MUTATIONS["CheckUnableToRetreatDueToEffect"] = {
+    "source_symbol": "CheckUnableToRetreatDueToEffect",
+    "before": "\tif (sub2.a != SUBSTATUS2_ACID)",
+    "after": "\tif (sub2.a == SUBSTATUS2_ACID)",
+    "case_ids": ["CheckUnableToRetreatDueToEffect-1"],
+}
+MUTATIONS["ClearChangedTypesIfMuk"] = {
+    "source_symbol": "ClearChangedTypesIfMuk",
+    "before": "\tif ((uint8_t)id != MUK)",
+    "after": "\tif ((uint8_t)id == MUK)",
+    "case_ids": ["ClearChangedTypesIfMuk-0"],
+}
+MUTATIONS["ClearDamageReductionSubstatus2"] = {
+    "source_symbol": "ClearDamageReductionSubstatus2",
+    "before": "\tif (sub2.a == SUBSTATUS2_REDUCE_BY_20 || sub2.a == SUBSTATUS2_POUNCE ||",
+    "after": "\tif (sub2.a != SUBSTATUS2_REDUCE_BY_20 || sub2.a == SUBSTATUS2_POUNCE ||",
+    "case_ids": ["ClearDamageReductionSubstatus2-0"],
+}
+MUTATIONS["CountPokemonWithActivePkmnPowerInBothPlayAreas"] = {
+    "source_symbol": "CountPokemonWithActivePkmnPowerInBothPlayAreas",
+    "before": "\tcount = (uint8_t)(count + CountTurnDuelistPokemonWithActivePkmnPower(a).a);",
+    "after": "\tcount = (uint8_t)(count - CountTurnDuelistPokemonWithActivePkmnPower(a).a);",
+    "case_ids": ["CountPokemonWithActivePkmnPowerInBothPlayAreas-0"],
+}
+MUTATIONS["CountTurnDuelistPokemonWithActivePkmnPower"] = {
+    "source_symbol": "CountTurnDuelistPokemonWithActivePkmnPower",
+    "before": "\tif (arena != 0xFF) {",
+    "after": "\tif (arena == 0xFF) {",
+    "case_ids": ["CountTurnDuelistPokemonWithActivePkmnPower-0"],
+}
+MUTATIONS["GetLoadedCard1RetreatCost"] = {
+    "source_symbol": "GetLoadedCard1RetreatCost",
+    "before": "\twhile (gb_read8(bench) != 0xFFu) {",
+    "after": "\twhile (gb_read8(bench) == 0xFFu) {",
+    "case_ids": ["GetLoadedCard1RetreatCost-1"],
+}
+MUTATIONS["HandleAmnesiaSubstatus"] = {
+    "source_symbol": "HandleAmnesiaSubstatus",
+    "before": "\tif (sub2.a != SUBSTATUS2_AMNESIA)",
+    "after": "\tif (sub2.a == SUBSTATUS2_AMNESIA)",
+    "case_ids": ["HandleAmnesiaSubstatus-1"],
+}
+MUTATIONS["HandleCantAttackSubstatus"] = {
+    "source_symbol": "HandleCantAttackSubstatus",
+    "before": "\tif (sub2.a == SUBSTATUS2_TAIL_WAG)",
+    "after": "\tif (sub2.a != SUBSTATUS2_TAIL_WAG)",
+    "case_ids": ["HandleCantAttackSubstatus-1"],
+}
+MUTATIONS["HandleDamageReduction"] = {
+    "source_symbol": "HandleDamageReduction",
+    "before": "\tif (sub2.a == SUBSTATUS2_REDUCE_BY_20)",
+    "after": "\tif (sub2.a != SUBSTATUS2_REDUCE_BY_20)",
+    "case_ids": ["HandleDamageReduction-1"],
+}
+MUTATIONS["HandleDamageReductionExceptSubstatus2"] = {
+    "source_symbol": "HandleDamageReductionExceptSubstatus2",
+    "before": "\tif (gb_read8(wNoDamageOrEffect_ADDR) != 0)",
+    "after": "\tif (gb_read8(wNoDamageOrEffect_ADDR) == 0)",
+    "case_ids": ["HandleDamageReductionExceptSubstatus2-0"],
+}
+MUTATIONS["HandleStrikesBack_AgainstDamagingAttack"] = {
+    "source_symbol": "HandleStrikesBack_AgainstDamagingAttack",
+    "before": "\t\treturn (StrikesBackResult){a, f_cp(a, 0x04u)};",
+    "after": "\t\treturn (StrikesBackResult){a, f_cp(a, 0x05u)};",
+    "case_ids": ["HandleStrikesBack_AgainstDamagingAttack-3"],
+}
+MUTATIONS["IsClairvoyanceActive"] = {
+    "source_symbol": "IsClairvoyanceActive",
+    "before": "\t\treturn (PkmnPowerCountResult){muk.a, 0x00u};",
+    "after": "\t\treturn (PkmnPowerCountResult){muk.a, 0x01u};",
+    "case_ids": ["IsClairvoyanceActive-2"],
+}
+MUTATIONS["IsPrehistoricPowerActive"] = {
+    "source_symbol": "IsPrehistoricPowerActive",
+    "before": "\tif (!(aero.f & 0x10u))",
+    "after": "\tif (!(aero.f | 0x10u))",
+    "case_ids": ["IsPrehistoricPowerActive-0"],
+}
+MUTATIONS["IsRainDanceActive"] = {
+    "source_symbol": "IsRainDanceActive",
+    "before": "\tif (!(blastoise.f & 0x10u))",
+    "after": "\tif (!(blastoise.f | 0x10u))",
+    "case_ids": ["IsRainDanceActive-0"],
+}
+MUTATIONS["CheckIsIncapableOfUsingPkmnPower_ArenaCard"] = {
+    "source_symbol": "CheckIsIncapableOfUsingPkmnPower_ArenaCard",
+    "before": "\treturn CheckIsIncapableOfUsingPkmnPower(PLAY_AREA_ARENA);",
+    "after": "\treturn CheckIsIncapableOfUsingPkmnPower((PLAY_AREA_ARENA + 1u));",
+    "case_ids": ["CheckIsIncapableOfUsingPkmnPower_ArenaCard-0"],
+}
+MUTATIONS["UpdateSubstatusConditions_EndOfTurn"] = {
+    "source_symbol": "UpdateSubstatusConditions_EndOfTurn",
+    "before": "\tif (sub1.a == SUBSTATUS1_NEXT_TURN_DOUBLE_DAMAGE)",
+    "after": "\tif (sub1.a != SUBSTATUS1_NEXT_TURN_DOUBLE_DAMAGE)",
+    "case_ids": ["UpdateSubstatusConditions_EndOfTurn-0"],
+}
+MUTATIONS["UpdateSubstatusConditions_StartOfTurn"] = {
+    "source_symbol": "UpdateSubstatusConditions_StartOfTurn",
+    "before": "\tif (sub1.a != SUBSTATUS1_NEXT_TURN_DOUBLE_DAMAGE)",
+    "after": "\tif (sub1.a == SUBSTATUS1_NEXT_TURN_DOUBLE_DAMAGE)",
+    "case_ids": ["UpdateSubstatusConditions_StartOfTurn-0"],
+}

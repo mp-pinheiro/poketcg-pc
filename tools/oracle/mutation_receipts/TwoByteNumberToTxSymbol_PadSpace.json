@@ -1,0 +1,9 @@
+{
+  "fn": "TwoByteNumberToTxSymbol_PadSpace",
+  "case": "tests/cases/process_text.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TwoByteNumberToTxSymbol_PadSpace\", \"registers\": {\"a\": 33, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 51880, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TwoByteNumberToTxSymbol_PadSpace\", \"mismatches\": {\"a\": [33, 32]}}\n",
+  "restored": "{\"fn\": \"TwoByteNumberToTxSymbol_PadSpace\", \"registers\": {\"a\": 33, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 51880, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

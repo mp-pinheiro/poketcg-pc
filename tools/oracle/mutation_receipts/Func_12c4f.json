@@ -1,0 +1,9 @@
+{
+  "fn": "Func_12c4f",
+  "case": "tests/cases/sprite_animations.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_12c4f\", \"registers\": {\"a\": 20, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65408\": \"04\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_12c4f\", \"mismatches\": {\"bus\": {\"address\": 65408, \"reference\": \"04\", \"native\": \"20\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_12c4f\", \"registers\": {\"a\": 20, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65408\": \"04\"}}, \"status\": \"PASS\"}\n"
+}

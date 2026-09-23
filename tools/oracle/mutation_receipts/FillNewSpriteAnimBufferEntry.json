@@ -1,0 +1,9 @@
+{
+  "fn": "FillNewSpriteAnimBufferEntry",
+  "case": "tests/cases/sprite_animations.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FillNewSpriteAnimBufferEntry\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49407\": \"00aa00000012ff0000000000000000ff0000\", \"49408\": \"aa00000012ff0000000000000000ff00\", \"54739\": \"12\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FillNewSpriteAnimBufferEntry\", \"mismatches\": {\"bus\": {\"address\": 49412, \"reference\": \"aa00000012ff000000\", \"native\": \"aa00000000ff000000\", \"reference_size\": 19, \"native_size\": 19, \"spans\": [[49407, 18], [54739, 1]]}}}\n",
+  "restored": "{\"fn\": \"FillNewSpriteAnimBufferEntry\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49407\": \"00aa00000012ff0000000000000000ff0000\", \"49408\": \"aa00000012ff0000000000000000ff00\", \"54739\": \"12\"}}, \"status\": \"PASS\"}\n"
+}

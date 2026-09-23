@@ -1,0 +1,9 @@
+{
+  "fn": "ClearSerialData",
+  "case": "tests/cases/serial.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ClearSerialData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52084\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ClearSerialData\", \"mismatches\": {\"bus\": {\"address\": 52084, \"reference\": \"0000000000\", \"native\": \"ffffffffff\", \"reference_size\": 81, \"native_size\": 81, \"spans\": [[52084, 81]]}}}\n",
+  "restored": "{\"fn\": \"ClearSerialData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52084\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"status\": \"PASS\"}\n"
+}

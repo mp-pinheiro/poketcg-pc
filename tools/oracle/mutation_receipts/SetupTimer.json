@@ -1,0 +1,9 @@
+{
+  "fn": "SetupTimer",
+  "case": "tests/cases/time.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetupTimer\", \"registers\": {\"a\": 7, \"b\": 188, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 160, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"02\", \"65286\": \"bc07\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetupTimer\", \"mismatches\": {\"bus\": {\"address\": 65286, \"reference\": \"02bc07\", \"native\": \"027807\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[51892, 1], [65286, 2]]}}}\n",
+  "restored": "{\"fn\": \"SetupTimer\", \"registers\": {\"a\": 7, \"b\": 188, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 160, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"02\", \"65286\": \"bc07\"}}, \"status\": \"PASS\"}\n"
+}

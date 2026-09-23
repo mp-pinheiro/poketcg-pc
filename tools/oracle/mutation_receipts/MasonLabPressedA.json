@@ -1,0 +1,9 @@
+{
+  "fn": "MasonLabPressedA",
+  "case": "tests/cases/mason_laboratory.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MasonLabPressedA\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53446\": \"0000\", \"54064\": \"0a04\", \"54068\": \"00\", \"54232\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MasonLabPressedA\", \"mismatches\": {\"b\": [0, 85], \"c\": [0, 125], \"e\": [0, 5], \"hl\": [0, 21874], \"bus\": {\"address\": 53446, \"reference\": \"00000a0400\", \"native\": \"7d550a0400\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[53446, 2], [54064, 2], [54068, 1], [54232, 1]]}}}\n",
+  "restored": "{\"fn\": \"MasonLabPressedA\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53446\": \"0000\", \"54064\": \"0a04\", \"54068\": \"00\", \"54232\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "SetCursorParametersForTextBox_Default",
+  "case": "tests/cases/menus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetCursorParametersForTextBox_Default\", \"registers\": {\"a\": 0, \"b\": 15, \"c\": 0, \"d\": 2, \"e\": 5, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 52502, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52495\": \"0100020500010f00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetCursorParametersForTextBox_Default\", \"mismatches\": {\"f\": [128, 129]}}\n",
+  "restored": "{\"fn\": \"SetCursorParametersForTextBox_Default\", \"registers\": {\"a\": 0, \"b\": 15, \"c\": 0, \"d\": 2, \"e\": 5, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 52502, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52495\": \"0100020500010f00\"}}, \"status\": \"PASS\"}\n"
+}

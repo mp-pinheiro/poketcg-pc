@@ -111,3 +111,39 @@ MUTATIONS = {
         "case_ids": ["InitVariablesToBeginTurn-0", "InitVariablesToBeginTurn-1"],
     },
 }
+MUTATIONS["CheckIfTurnDuelistPlayAreaPokemonAreAllKnockedOut"] = {
+    "source_symbol": "CheckIfTurnDuelistPlayAreaPokemonAreAllKnockedOut",
+    "before": "\t\tif (a != 0)",
+    "after": "\t\tif (a == 0)",
+    "case_ids": ["CheckIfTurnDuelistPlayAreaPokemonAreAllKnockedOut-0"],
+}
+MUTATIONS["CountKnockedOutPokemon"] = {
+    "source_symbol": "CountKnockedOutPokemon",
+    "before": "\t\tif (index != 0xff && gb_read8(hp) == 0) {",
+    "after": "\t\tif (index != 0xff && gb_read8(hp) != 0) {",
+    "case_ids": ["CountKnockedOutPokemon-0"],
+}
+MUTATIONS["InitTurnDuelistPrizes"] = {
+    "source_symbol": "InitTurnDuelistPrizes",
+    "before": "\t} while (b != count);",
+    "after": "\t} while (b == count);",
+    "case_ids": ["InitTurnDuelistPrizes-0"],
+}
+MUTATIONS["InitializeDuelVariables"] = {
+    "source_symbol": "InitializeDuelVariables",
+    "before": "\tuint16_t type_addr = (uint16_t)(((uint16_t)page << 8) | 0xf1);",
+    "after": "\tuint16_t type_addr = (uint16_t)(((uint16_t)page << 8) & 0xf1);",
+    "case_ids": ["InitializeDuelVariables-0"],
+}
+MUTATIONS["SetAllPlayAreaPokemonCanEvolve"] = {
+    "source_symbol": "SetAllPlayAreaPokemonCanEvolve",
+    "before": "\t\tflags = (uint16_t)((flags & 0xff00u) | (uint8_t)(flags + 1u));",
+    "after": "\t\tflags = (uint16_t)((flags & 0xFEFFu) | (uint8_t)(flags + 1u));",
+    "case_ids": ["SetAllPlayAreaPokemonCanEvolve-1"],
+}
+MUTATIONS["TakeAPrizes"] = {
+    "source_symbol": "TakeAPrizes",
+    "before": "\tif (a == 0)",
+    "after": "\tif (a != 0)",
+    "case_ids": ["TakeAPrizes-0"],
+}

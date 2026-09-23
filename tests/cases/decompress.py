@@ -238,3 +238,15 @@ MUTATIONS = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+MUTATIONS["DecompressData.Decompress"] = {
+    "source_symbol": "DecompressData.Decompress",
+    "before": "\tif (wDecompNumBytesToRepeat != 0) {",
+    "after": "\tif (wDecompNumBytesToRepeat == 0) {",
+    "case_ids": ["DecompressData.Decompress-0"],
+}
+MUTATIONS["InitDataDecompression"] = {
+    "source_symbol": "InitDataDecompression",
+    "before": "\t\tgb_write8((uint16_t)(b << 8 | low), 0);",
+    "after": "\t\tgb_write8((uint16_t)(b << 8 & low), 0);",
+    "case_ids": ["InitDataDecompression-1"],
+}

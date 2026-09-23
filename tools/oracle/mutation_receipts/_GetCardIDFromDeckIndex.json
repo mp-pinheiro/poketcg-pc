@@ -1,0 +1,9 @@
+{
+  "fn": "_GetCardIDFromDeckIndex",
+  "case": "tests/cases/duel.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_GetCardIDFromDeckIndex\", \"registers\": {\"a\": 34, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50309, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50309\": \"22\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_GetCardIDFromDeckIndex\", \"mismatches\": {\"a\": [34, 0]}}\n",
+  "restored": "{\"fn\": \"_GetCardIDFromDeckIndex\", \"registers\": {\"a\": 34, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50309, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50309\": \"22\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n"
+}

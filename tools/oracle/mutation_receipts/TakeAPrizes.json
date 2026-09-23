@@ -1,0 +1,9 @@
+{
+  "fn": "TakeAPrizes",
+  "case": "tests/cases/duel_core_state.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TakeAPrizes\", \"registers\": {\"a\": 63, \"b\": 31, \"c\": 5, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49900, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49900\": \"1f\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TakeAPrizes\", \"mismatches\": {\"a\": [63, 0], \"b\": [31, 0], \"c\": [5, 0], \"hl\": [49900, 0], \"bus\": {\"address\": 49900, \"reference\": \"1fc2\", \"native\": \"3fc2\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49900, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"TakeAPrizes\", \"registers\": {\"a\": 63, \"b\": 31, \"c\": 5, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49900, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49900\": \"1f\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

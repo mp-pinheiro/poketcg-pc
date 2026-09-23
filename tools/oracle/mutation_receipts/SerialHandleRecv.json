@@ -1,0 +1,9 @@
+{
+  "fn": "SerialHandleRecv",
+  "case": "tests/cases/serial.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SerialHandleRecv\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 255, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52085, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52085\": \"40\", \"52129\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SerialHandleRecv\", \"mismatches\": {\"e\": [255, 0], \"hl\": [52085, 52130], \"bus\": {\"address\": 52085, \"reference\": \"4000\", \"native\": \"0000\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52085, 1], [52129, 1]]}}}\n",
+  "restored": "{\"fn\": \"SerialHandleRecv\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 255, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52085, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52085\": \"40\", \"52129\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

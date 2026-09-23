@@ -75,3 +75,9 @@ MUTATIONS = {
         "case_ids": ["InitMenuScreen-0", "InitMenuScreen-1", "InitMenuScreen-2"],
     },
 }
+MUTATIONS["FlashWhiteScreen"] = {
+    "source_symbol": "FlashWhiteScreen",
+    "before": "\tCopyPalsToSRAMBuffer();",
+    "after": "\t;",
+    "case_ids": ["FlashWhiteScreen-0"],
+}

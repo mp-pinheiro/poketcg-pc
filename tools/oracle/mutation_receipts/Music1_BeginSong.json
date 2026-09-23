@@ -1,0 +1,9 @@
+{
+  "fn": "Music1_BeginSong",
+  "case": "tests/cases/music1.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Music1_BeginSong\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"56705\": \"3d\", \"56717\": \"01010101\", \"56725\": \"525093518652fa52\", \"56818\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Music1_BeginSong\", \"mismatches\": {\"bus\": {\"address\": 56705, \"reference\": \"3d01010101\", \"native\": \"1f00000000\", \"reference_size\": 14, \"native_size\": 14, \"spans\": [[56705, 1], [56717, 4], [56725, 8], [56818, 1]]}}}\n",
+  "restored": "{\"fn\": \"Music1_BeginSong\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"56705\": \"3d\", \"56717\": \"01010101\", \"56725\": \"525093518652fa52\", \"56818\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

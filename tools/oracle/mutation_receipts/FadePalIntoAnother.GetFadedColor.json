@@ -1,0 +1,9 @@
+{
+  "fn": "FadePalIntoAnother.GetFadedColor",
+  "case": "tests/cases/color.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FadePalIntoAnother.GetFadedColor\", \"registers\": {\"a\": 124, \"b\": 124, \"c\": 31, \"d\": 124, \"e\": 31, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65462\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FadePalIntoAnother.GetFadedColor\", \"mismatches\": {\"bus\": {\"address\": 65462, \"reference\": \"0000\", \"native\": \"1f00\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[65462, 2]]}}}\n",
+  "restored": "{\"fn\": \"FadePalIntoAnother.GetFadedColor\", \"registers\": {\"a\": 124, \"b\": 124, \"c\": 31, \"d\": 124, \"e\": 31, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65462\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

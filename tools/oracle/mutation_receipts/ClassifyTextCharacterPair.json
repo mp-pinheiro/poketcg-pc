@@ -1,0 +1,9 @@
+{
+  "fn": "ClassifyTextCharacterPair",
+  "case": "tests/cases/process_text.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ClassifyTextCharacterPair\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 15, \"e\": 32, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65455\": \"0f\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ClassifyTextCharacterPair\", \"mismatches\": {\"d\": [15, 0]}}\n",
+  "restored": "{\"fn\": \"ClassifyTextCharacterPair\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 15, \"e\": 32, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65455\": \"0f\"}}, \"status\": \"PASS\"}\n"
+}

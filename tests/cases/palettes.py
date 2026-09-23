@@ -124,3 +124,53 @@ MUTATIONS = {
         "case_ids": ["FlushPalettes-0", "FlushPalettes-1", "FlushPalettes-2"],
     },
 }
+for _rec in SCHEMA2_CASES["FlushPalettesIfRequested"]:
+    _rec.setdefault("bus", {}).update({0xCABF: 1})
+MUTATIONS["CopyCGBPalettes"] = {
+    "source_symbol": "CopyCGBPalettes",
+    "before": "\tuint8_t e = (uint8_t)(off & 0xBFu);",
+    "after": "\tuint8_t e = (uint8_t)(off & 0xC0u);",
+    "case_ids": ["CopyCGBPalettes-2"],
+}
+MUTATIONS["FlushAllCGBPalettes"] = {
+    "source_symbol": "FlushAllCGBPalettes",
+    "before": "\tCopyCGBPalettesResult r = CopyCGBPalettes(NUM_BACKGROUND_PALETTES, (uint8_t)(8u * PAL_SIZE));",
+    "after": "\tCopyCGBPalettesResult r = CopyCGBPalettes(NUM_BACKGROUND_PALETTES, (uint8_t)(9u * PAL_SIZE));",
+    "case_ids": ["FlushAllCGBPalettes-0"],
+}
+MUTATIONS["FlushAllPalettes"] = {
+    "source_symbol": "FlushAllPalettes",
+    "before": "\tFlushPalettes(FLUSH_ALL_PALS);",
+    "after": "\t;",
+    "case_ids": ["FlushAllPalettes-1"],
+}
+MUTATIONS["FlushPalette"] = {
+    "source_symbol": "FlushPalette",
+    "before": "\tFlushPalettes((uint8_t)(a | FLUSH_ONE_PAL));",
+    "after": "\tFlushPalettes((uint8_t)(a & FLUSH_ONE_PAL));",
+    "case_ids": ["FlushPalette-1"],
+}
+MUTATIONS["FlushPalette0"] = {
+    "source_symbol": "FlushPalette0",
+    "before": "\tFlushPalettes(FLUSH_ONE_PAL);",
+    "after": "\t;",
+    "case_ids": ["FlushPalette0-1"],
+}
+MUTATIONS["SetBGP"] = {
+    "source_symbol": "SetBGP",
+    "before": "\tgb_write8(wBGP_ADDR, a);",
+    "after": "\tgb_write8(wBGP_ADDR, (uint8_t)(a ^ 1u));",
+    "case_ids": ["SetBGP-0"],
+}
+MUTATIONS["SetOBP0"] = {
+    "source_symbol": "SetOBP0",
+    "before": "\tgb_write8(wOBP0_ADDR, a);",
+    "after": "\tgb_write8(wOBP0_ADDR, (uint8_t)(a ^ 1u));",
+    "case_ids": ["SetOBP0-0"],
+}
+MUTATIONS["SetOBP1"] = {
+    "source_symbol": "SetOBP1",
+    "before": "\tgb_write8(wOBP1_ADDR, a);",
+    "after": "\tgb_write8(wOBP1_ADDR, (uint8_t)(a ^ 1u));",
+    "case_ids": ["SetOBP1-0"],
+}

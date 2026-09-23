@@ -1,0 +1,9 @@
+{
+  "fn": "LoadCardDataToBuffer2_FromCardID",
+  "case": "tests/cases/card_data.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadCardDataToBuffer2_FromCardID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 8, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52325\": \"01a7020a0800100828000000020000000b080c080000140011480002000159000000000000000000000000000000000000000180000d0801000d020496000e0810\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadCardDataToBuffer2_FromCardID\", \"mismatches\": {\"bus\": {\"address\": 52326, \"reference\": \"01a7020a0800\", \"native\": \"0108030f0801\", \"reference_size\": 65, \"native_size\": 65, \"spans\": [[52325, 65]]}}}\n",
+  "restored": "{\"fn\": \"LoadCardDataToBuffer2_FromCardID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 8, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52325\": \"01a7020a0800100828000000020000000b080c080000140011480002000159000000000000000000000000000000000000000180000d0801000d020496000e0810\"}}, \"status\": \"PASS\"}\n"
+}

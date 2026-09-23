@@ -62,3 +62,15 @@ MUTATIONS = {
         "case_ids": ["IsArenaPokemonAsleepOrPoisoned-2", "IsArenaPokemonAsleepOrPoisoned-0", "IsArenaPokemonAsleepOrPoisoned-1", "IsArenaPokemonAsleepOrPoisoned-3", "IsArenaPokemonAsleepOrPoisoned-4"],
     },
 }
+MUTATIONS["DiscardAttachedDefenders"] = {
+    "source_symbol": "DiscardAttachedDefenders",
+    "before": "\treturn discard_attached(DUELVARS_ARENA_CARD_ATTACHED_DEFENDER, DEFENDER);",
+    "after": "\treturn discard_attached((DUELVARS_ARENA_CARD_ATTACHED_DEFENDER + 1u), DEFENDER);",
+    "case_ids": ["DiscardAttachedDefenders-0"],
+}
+MUTATIONS["DiscardAttachedPlusPowers"] = {
+    "source_symbol": "DiscardAttachedPlusPowers",
+    "before": "\treturn discard_attached(DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER, PLUSPOWER);",
+    "after": "\treturn discard_attached((DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER + 1u), PLUSPOWER);",
+    "case_ids": ["DiscardAttachedPlusPowers-0"],
+}

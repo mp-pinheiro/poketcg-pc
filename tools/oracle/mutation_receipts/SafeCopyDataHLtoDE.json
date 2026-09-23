@@ -1,0 +1,9 @@
+{
+  "fn": "SafeCopyDataHLtoDE",
+  "case": "tests/cases/bg_map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SafeCopyDataHLtoDE\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 152, \"e\": 1, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"38912\": \"42\", \"49408\": \"42\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SafeCopyDataHLtoDE\", \"mismatches\": {\"e\": [1, 0], \"hl\": [49409, 49408], \"bus\": {\"address\": 38912, \"reference\": \"4242\", \"native\": \"0042\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[38912, 1], [49408, 1]]}}}\n",
+  "restored": "{\"fn\": \"SafeCopyDataHLtoDE\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 152, \"e\": 1, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"38912\": \"42\", \"49408\": \"42\"}}, \"status\": \"PASS\"}\n"
+}

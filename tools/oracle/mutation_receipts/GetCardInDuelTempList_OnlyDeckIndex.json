@@ -1,0 +1,9 @@
+{
+  "fn": "GetCardInDuelTempList_OnlyDeckIndex",
+  "case": "tests/cases/duel.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetCardInDuelTempList_OnlyDeckIndex\", \"registers\": {\"a\": 9, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50450\": \"09\", \"65432\": \"09\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetCardInDuelTempList_OnlyDeckIndex\", \"mismatches\": {\"a\": [9, 0], \"bus\": {\"address\": 65432, \"reference\": \"0909\", \"native\": \"0900\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[50450, 1], [65432, 1]]}}}\n",
+  "restored": "{\"fn\": \"GetCardInDuelTempList_OnlyDeckIndex\", \"registers\": {\"a\": 9, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50450\": \"09\", \"65432\": \"09\"}}, \"status\": \"PASS\"}\n"
+}

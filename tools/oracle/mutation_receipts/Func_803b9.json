@@ -1,0 +1,9 @@
+{
+  "fn": "Func_803b9",
+  "case": "tests/cases/load_gfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_803b9\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53817\": \"00\", \"54468\": \"1b\", \"54470\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_803b9\", \"mismatches\": {\"bus\": {\"address\": 53817, \"reference\": \"001b20\", \"native\": \"f21b20\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[53817, 1], [54468, 1], [54470, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_803b9\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53817\": \"00\", \"54468\": \"1b\", \"54470\": \"20\"}}, \"status\": \"PASS\"}\n"
+}

@@ -81,3 +81,39 @@ MUTATIONS = {
         "case_ids": ["WriteDataBlockToBGMap0-1", "WriteDataBlockToBGMap0-0"],
     },
 }
+MUTATIONS["CopyDataToBGMap0"] = {
+    "source_symbol": "CopyDataToBGMap0",
+    "before": "\tSafeCopyDataHLtoDE(hl, de, a);",
+    "after": "\t;",
+    "case_ids": ["CopyDataToBGMap0-0"],
+}
+MUTATIONS["HblankWriteByteToBGMap0"] = {
+    "source_symbol": "HblankWriteByteToBGMap0",
+    "before": "\tgb_write8(wTempByte_ADDR, a);",
+    "after": "\tgb_write8(wTempByte_ADDR, (uint8_t)(a ^ 1u));",
+    "case_ids": ["HblankWriteByteToBGMap0-0"],
+}
+MUTATIONS["JPHblankCopyDataHLtoDE"] = {
+    "source_symbol": "SafeCopyDataHLtoDE",
+    "before": "\t\tgb_write8(dst++, gb_read8(src++));",
+    "after": "\t\t;",
+    "case_ids": ["JPHblankCopyDataHLtoDE-0"],
+}
+MUTATIONS["SafeCopyDataHLtoDE"] = {
+    "source_symbol": "SafeCopyDataHLtoDE",
+    "before": "\t\tgb_write8(dst++, gb_read8(src++));",
+    "after": "\t\t;",
+    "case_ids": ["SafeCopyDataHLtoDE-0"],
+}
+MUTATIONS["WriteByteToBGMap0"] = {
+    "source_symbol": "WriteByteToBGMap0",
+    "before": "\tif ((wLCDC & 0x80u) != 0u)",
+    "after": "\tif ((wLCDC & 0x80u) == 0u)",
+    "case_ids": ["WriteByteToBGMap0-1"],
+}
+MUTATIONS["WriteDataBlocksToBGMap0"] = {
+    "source_symbol": "WriteDataBlocksToBGMap0",
+    "before": "\t} while ((gb_read8(*hl) & 0x80) == 0);",
+    "after": "\t} while ((gb_read8(*hl) & 0x80) != 0);",
+    "case_ids": ["WriteDataBlocksToBGMap0-0"],
+}

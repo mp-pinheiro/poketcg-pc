@@ -312,3 +312,39 @@ MUTATIONS["LoadScene"] = {
     "case_ids": ["LoadScene-0", "LoadScene-1", "LoadScene-2"],
 }
 # <<< factory-mutation LoadScene
+MUTATIONS["Func_3ddb"] = {
+    "source_symbol": "Func_3ddb",
+    "before": "\tgb_write8(address, (uint8_t)(gb_read8(address) & (uint8_t)~(1u << SPRITE_ANIM_FLAG_CENTERED_F)));",
+    "after": "\tgb_write8(address, (uint8_t)(gb_read8(address) | (uint8_t)~(1u << SPRITE_ANIM_FLAG_CENTERED_F)));",
+    "case_ids": ["Func_3ddb-0"],
+}
+MUTATIONS["Func_3de7"] = {
+    "source_symbol": "Func_3de7",
+    "before": "\tgb_write8(address, (uint8_t)(gb_read8(address) | (uint8_t)(1u << SPRITE_ANIM_FLAG_CENTERED_F)));",
+    "after": "\tgb_write8(address, (uint8_t)(gb_read8(address) & (uint8_t)(1u << SPRITE_ANIM_FLAG_CENTERED_F)));",
+    "case_ids": ["Func_3de7-0"],
+}
+MUTATIONS["GetAnimationFramePointer"] = {
+    "source_symbol": "GetAnimationFramePointer",
+    "before": "\tif (wWhichAnimationFrame == 0xFFu) {",
+    "after": "\tif (wWhichAnimationFrame != 0xFFu) {",
+    "case_ids": ["GetAnimationFramePointer-0"],
+}
+MUTATIONS["GetSpriteAnimBufferProperty"] = {
+    "source_symbol": "GetSpriteAnimBufferProperty",
+    "before": "\treturn GetSpriteAnimBufferProperty_SpriteInA(gb_read8(wWhichSprite_ADDR), c);",
+    "after": "\treturn GetSpriteAnimBufferProperty_SpriteInA(gb_read8(wWhichSprite_ADDR), (uint8_t)(c ^ 1u));",
+    "case_ids": ["GetSpriteAnimBufferProperty-0"],
+}
+MUTATIONS["GetSpriteAnimBufferProperty_SpriteInA"] = {
+    "source_symbol": "GetSpriteAnimBufferProperty_SpriteInA",
+    "before": "\tif (a >= SPRITE_ANIM_BUFFER_CAPACITY)",
+    "after": "\tif (a > SPRITE_ANIM_BUFFER_CAPACITY)",
+    "case_ids": ["GetSpriteAnimBufferProperty_SpriteInA-3"],
+}
+MUTATIONS["GetFirstSpriteAnimBufferProperty"] = {
+    "source_symbol": "GetFirstSpriteAnimBufferProperty",
+    "before": "\treturn GetSpriteAnimBufferProperty(SPRITE_ANIM_ENABLED);",
+    "after": "\treturn GetSpriteAnimBufferProperty((SPRITE_ANIM_ENABLED + 1u));",
+    "case_ids": ["GetFirstSpriteAnimBufferProperty-0"],
+}

@@ -138,3 +138,21 @@ MUTATIONS = {
 		"case_ids": ["ApplyBackgroundScroll-0", "ApplyBackgroundScroll-1", "ApplyBackgroundScroll-2", "ApplyBackgroundScroll-3"],
 	},
 }
+MUTATIONS["DisableInt_LYCoincidence"] = {
+    "source_symbol": "DisableInt_LYCoincidence",
+    "before": "\tgb_write8(rSTAT, (uint8_t)(gb_read8(rSTAT) & (uint8_t)~STAT_LYC));",
+    "after": "\tgb_write8(rSTAT, (uint8_t)(gb_read8(rSTAT) | (uint8_t)~STAT_LYC));",
+    "case_ids": ["DisableInt_LYCoincidence-4"],
+}
+MUTATIONS["EnableInt_LYCoincidence"] = {
+    "source_symbol": "EnableInt_LYCoincidence",
+    "before": "\tgb_write8(rSTAT, (uint8_t)(gb_read8(rSTAT) | STAT_LYC));",
+    "after": "\tgb_write8(rSTAT, (uint8_t)(gb_read8(rSTAT) & STAT_LYC));",
+    "case_ids": ["EnableInt_LYCoincidence-4"],
+}
+MUTATIONS["GetNextBackgroundScroll"] = {
+    "source_symbol": "GetNextBackgroundScroll",
+    "before": "\tunsigned shifts = (mod == 1) ? 0 : (mod == 2) ? 1 : (mod == 3) ? 2 : 3;",
+    "after": "\tunsigned shifts = (mod != 1) ? 0 : (mod == 2) ? 1 : (mod == 3) ? 2 : 3;",
+    "case_ids": ["GetNextBackgroundScroll-1"],
+}

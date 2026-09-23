@@ -137,3 +137,51 @@ MUTATIONS = {
         "case_ids": ["GetArenaCardColor-3", "GetArenaCardColor-0", "GetArenaCardColor-1", "GetArenaCardColor-2", "GetArenaCardColor-4"],
     },
 }
+MUTATIONS["GetPlayAreaCardColor"] = {
+    "source_symbol": "GetPlayAreaCardColor",
+    "before": "\treturn type == TYPE_TRAINER ? COLORLESS : type;",
+    "after": "\treturn type != TYPE_TRAINER ? COLORLESS : type;",
+    "case_ids": ["GetPlayAreaCardColor-0"],
+}
+MUTATIONS["GetPlayAreaCardWeakness"] = {
+    "source_symbol": "GetPlayAreaCardWeakness",
+    "before": "\treturn card_weakness_of((uint8_t)(a + DUELVARS_ARENA_CARD));",
+    "after": "\treturn card_weakness_of((uint8_t)(a - DUELVARS_ARENA_CARD));",
+    "case_ids": ["GetPlayAreaCardWeakness-1"],
+}
+MUTATIONS["HandleEnergyBurn"] = {
+    "source_symbol": "HandleEnergyBurn",
+    "before": "\tif (card_id != CHARIZARD)",
+    "after": "\tif (card_id == CHARIZARD)",
+    "case_ids": ["HandleEnergyBurn-2"],
+}
+MUTATIONS["GetArenaCardResistance"] = {
+    "source_symbol": "GetArenaCardResistance",
+    "before": "\tuint8_t changed = turn_duel_var(DUELVARS_ARENA_CARD_CHANGED_RESISTANCE);\n\tif (changed != 0)",
+    "after": "\tuint8_t changed = turn_duel_var(DUELVARS_ARENA_CARD_CHANGED_RESISTANCE);\n\tif (changed == 0)",
+    "case_ids": ["GetArenaCardResistance-0"],
+}
+MUTATIONS["GetArenaCardWeakness"] = {
+    "source_symbol": "GetArenaCardWeakness",
+    "before": "\tuint8_t changed = turn_duel_var(DUELVARS_ARENA_CARD_CHANGED_WEAKNESS);\n\tif (changed != 0)",
+    "after": "\tuint8_t changed = turn_duel_var(DUELVARS_ARENA_CARD_CHANGED_WEAKNESS);\n\tif (changed == 0)",
+    "case_ids": ["GetArenaCardWeakness-0"],
+}
+MUTATIONS["GetCardResistance"] = {
+    "source_symbol": "GetCardResistance",
+    "before": "\treturn card_resistance_of(a);",
+    "after": "\treturn (card_resistance_of(a)) ^ 1u;",
+    "case_ids": ["GetCardResistance-0"],
+}
+MUTATIONS["GetCardWeakness"] = {
+    "source_symbol": "GetCardWeakness",
+    "before": "\treturn card_weakness_of(a);",
+    "after": "\treturn (card_weakness_of(a)) ^ 1u;",
+    "case_ids": ["GetCardWeakness-0"],
+}
+MUTATIONS["GetPlayAreaCardResistance"] = {
+    "source_symbol": "GetPlayAreaCardResistance",
+    "before": "\t\treturn GetArenaCardResistance();",
+    "after": "\t\treturn (GetArenaCardResistance()) ^ 1u;",
+    "case_ids": ["GetPlayAreaCardResistance-0"],
+}

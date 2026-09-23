@@ -1,0 +1,9 @@
+{
+  "fn": "ClearAllStatusConditions",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ClearAllStatusConditions\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49895\": \"0000000002\", \"49899\": \"02\", \"49904\": \"00\", \"49906\": \"0000000000000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ClearAllStatusConditions\", \"mismatches\": {\"bus\": {\"address\": 49899, \"reference\": \"000000000200000000\", \"native\": \"000000000300000000\", \"reference_size\": 15, \"native_size\": 15, \"spans\": [[49895, 5], [49904, 1], [49906, 8], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"ClearAllStatusConditions\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49895\": \"0000000002\", \"49899\": \"02\", \"49904\": \"00\", \"49906\": \"0000000000000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

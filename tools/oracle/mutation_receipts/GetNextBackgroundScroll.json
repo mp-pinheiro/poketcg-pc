@@ -1,0 +1,9 @@
+{
+  "fn": "GetNextBackgroundScroll",
+  "case": "tests/cases/scroll.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetNextBackgroundScroll\", \"registers\": {\"a\": 252, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51896\": \"00\", \"54886\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetNextBackgroundScroll\", \"mismatches\": {\"a\": [252, 255]}}\n",
+  "restored": "{\"fn\": \"GetNextBackgroundScroll\", \"registers\": {\"a\": 252, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51896\": \"00\", \"54886\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

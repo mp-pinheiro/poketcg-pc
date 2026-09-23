@@ -1,0 +1,9 @@
+{
+  "fn": "Music1_f4839",
+  "case": "tests/cases/music1.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Music1_f4839\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"03\", \"56716\": \"00\", \"56813\": \"01c101\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Music1_f4839\", \"mismatches\": {\"bus\": {\"address\": 56813, \"reference\": \"030001c101\", \"native\": \"030000c100\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[49408, 1], [56716, 1], [56813, 3]]}}}\n",
+  "restored": "{\"fn\": \"Music1_f4839\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"03\", \"56716\": \"00\", \"56813\": \"01c101\"}}, \"status\": \"PASS\"}\n"
+}

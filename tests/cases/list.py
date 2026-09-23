@@ -51,3 +51,9 @@ MUTATIONS = {
         "case_ids": ["SetListPointer-0", "SetListPointer-1", "SetListPointer-2", "SetListPointer-3"],
     },
 }
+MUTATIONS["SetNextElementOfList"] = {
+    "source_symbol": "SetNextElementOfList",
+    "before": "\t                         (gb_read8((uint16_t)(wListPointer_ADDR + 1)) << 8));",
+    "after": "\t                         (gb_read8((uint16_t)(wListPointer_ADDR - 1)) << 8));",
+    "case_ids": ["SetNextElementOfList-0"],
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "CreateHalfWidthFontTile",
+  "case": "tests/cases/process_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CreateHalfWidthFontTile\", \"registers\": {\"a\": 36, \"b\": 0, \"c\": 0, \"d\": 204, \"e\": 244, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52484, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreateHalfWidthFontTile\", \"mismatches\": {\"hl\": [52484, 52452]}}\n",
+  "restored": "{\"fn\": \"CreateHalfWidthFontTile\", \"registers\": {\"a\": 36, \"b\": 0, \"c\": 0, \"d\": 204, \"e\": 244, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52484, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

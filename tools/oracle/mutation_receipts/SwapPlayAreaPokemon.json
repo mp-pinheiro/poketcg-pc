@@ -1,0 +1,9 @@
+{
+  "fn": "SwapPlayAreaPokemon",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SwapPlayAreaPokemon\", \"registers\": {\"a\": 60, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"1110\", \"49851\": \"0201\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SwapPlayAreaPokemon\", \"mismatches\": {\"a\": [60, 1], \"bus\": {\"address\": 49664, \"reference\": \"11100201c2\", \"native\": \"10110102c2\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[49664, 2], [49851, 2], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"SwapPlayAreaPokemon\", \"registers\": {\"a\": 60, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"1110\", \"49851\": \"0201\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

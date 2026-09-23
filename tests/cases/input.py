@@ -68,3 +68,9 @@ MUTATIONS["ReadJoypad"] = {"source_symbol": "ReadJoypad", "before": "\t\t(void)R
 SCHEMA2_CASES["ReadJoypad"][3]["completion"] = {"mode": "pre-ret", "pc": 0x051F}
 SCHEMA2_CASES["ReadJoypad"][4]["completion"] = {"mode": "pre-ret", "pc": 0x051F}
 # <<< factory-completion ReadJoypad
+MUTATIONS["ClearJoypad"] = {
+    "source_symbol": "ClearJoypad",
+    "before": "\tgb_write8(address, 0);",
+    "after": "\t;",
+    "case_ids": ["ClearJoypad-0"],
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "SerialExchangeBytes",
+  "case": "tests/cases/serial.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SerialExchangeBytes\", \"registers\": {\"a\": 64, \"b\": 0, \"c\": 0, \"d\": 194, \"e\": 1, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"33\", \"52085\": \"40\", \"52095\": \"000133\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SerialExchangeBytes\", \"mismatches\": {\"f\": [16, 17]}}\n",
+  "restored": "{\"fn\": \"SerialExchangeBytes\", \"registers\": {\"a\": 64, \"b\": 0, \"c\": 0, \"d\": 194, \"e\": 1, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"33\", \"52085\": \"40\", \"52095\": \"000133\"}}, \"status\": \"PASS\"}\n"
+}

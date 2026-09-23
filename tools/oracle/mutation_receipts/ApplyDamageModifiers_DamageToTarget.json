@@ -1,0 +1,9 @@
+{
+  "fn": "ApplyDamageModifiers_DamageToTarget",
+  "case": "tests/cases/duel.py",
+  "index": 5,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ApplyDamageModifiers_DamageToTarget\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 10, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00ff\", \"49876\": \"00\", \"49904\": \"00\", \"50108\": \"ff\", \"50176\": \"08\", \"52409\": \"0a80\", \"52417\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ApplyDamageModifiers_DamageToTarget\", \"mismatches\": {\"e\": [10, 0]}}\n",
+  "restored": "{\"fn\": \"ApplyDamageModifiers_DamageToTarget\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 10, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00ff\", \"49876\": \"00\", \"49904\": \"00\", \"50108\": \"ff\", \"50176\": \"08\", \"52409\": \"0a80\", \"52417\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

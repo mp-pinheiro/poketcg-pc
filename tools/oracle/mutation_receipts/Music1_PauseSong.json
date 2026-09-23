@@ -1,0 +1,9 @@
+{
+  "fn": "Music1_PauseSong",
+  "case": "tests/cases/music1.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Music1_PauseSong\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"56704\": \"803d\", \"56716\": \"0f00000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Music1_PauseSong\", \"mismatches\": {\"bus\": {\"address\": 56717, \"reference\": \"803d0f00000000\", \"native\": \"803d0f01010101\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[56704, 2], [56716, 5]]}}}\n",
+  "restored": "{\"fn\": \"Music1_PauseSong\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"56704\": \"803d\", \"56716\": \"0f00000000\"}}, \"status\": \"PASS\"}\n"
+}

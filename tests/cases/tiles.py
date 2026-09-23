@@ -337,3 +337,99 @@ MUTATIONS["Func_1f96"] = {
     "case_ids": ["Func_1f96-0"]
 }
 # <<< factory-mutation Func_1f96
+MUTATIONS["Copy1bppTiles"] = {
+    "source_symbol": "Copy1bppTiles",
+    "before": "\tuint32_t n = 128u * 8u;",
+    "after": "\tuint32_t n = 129u * 8u;",
+    "case_ids": ["Copy1bppTiles-0"],
+}
+MUTATIONS["CopyFontsOrDuelGraphicsTiles"] = {
+    "source_symbol": "CopyFontsOrDuelGraphicsTiles",
+    "before": "\tCopyGfxData(&src, de, b, TILE_SIZE);",
+    "after": "\t;",
+    "case_ids": ["CopyFontsOrDuelGraphicsTiles-0"],
+}
+MUTATIONS["DrawDuelBoxMessage"] = {
+    "source_symbol": "DrawDuelBoxMessage",
+    "before": "\tuint16_t hl = HtimesL((uint16_t)((0xA0u << 8) | a));",
+    "after": "\tuint16_t hl = HtimesL((uint16_t)((0xA1u << 8) | a));",
+    "case_ids": ["DrawDuelBoxMessage-1"],
+}
+MUTATIONS["Func_212f"] = {
+    "source_symbol": "Func_212f",
+    "before": "\thl = (uint16_t)(DUEL_OTHER_GFX + 0x150u);",
+    "after": "\thl = (uint16_t)(DUEL_OTHER_GFX + 0x14Fu);",
+    "case_ids": ["Func_212f-0"],
+}
+MUTATIONS["LoadCardOrDuelMenuBorderTiles"] = {
+    "source_symbol": "LoadCardOrDuelMenuBorderTiles",
+    "before": "\tuint16_t hl = (uint16_t)(DUEL_OTHER_GFX + 0x150u);",
+    "after": "\tuint16_t hl = (uint16_t)(DUEL_OTHER_GFX + 0x14Fu);",
+    "case_ids": ["LoadCardOrDuelMenuBorderTiles-0"],
+}
+MUTATIONS["LoadCardSet2Tiles"] = {
+    "source_symbol": "LoadCardSet2Tiles",
+    "before": "\tif (off == 0xFFu)",
+    "after": "\tif (off != 0xFFu)",
+    "case_ids": ["LoadCardSet2Tiles-0"],
+}
+MUTATIONS["LoadCardTypeHeaderTiles"] = {
+    "source_symbol": "LoadCardTypeHeaderTiles",
+    "before": "\tuint16_t de = (uint16_t)(V0_TILES1 + 0x600u);",
+    "after": "\tuint16_t de = (uint16_t)(V0_TILES1 + 0x5FFu);",
+    "case_ids": ["LoadCardTypeHeaderTiles-0"],
+}
+MUTATIONS["LoadDuelCardSymbolTiles2"] = {
+    "source_symbol": "LoadDuelCardSymbolTiles2",
+    "before": "\t\t? DUEL_CGB_SYMBOL_GFX_FAR : DUEL_DMG_SGB_SYMBOL_GFX_FAR) + 0x40u);",
+    "after": "\t\t? DUEL_CGB_SYMBOL_GFX_FAR : DUEL_DMG_SGB_SYMBOL_GFX_FAR) + 0x41u);",
+    "case_ids": ["LoadDuelCardSymbolTiles2-0"],
+}
+MUTATIONS["LoadDuelCheckPokemonScreenTiles"] = {
+    "source_symbol": "LoadDuelCheckPokemonScreenTiles",
+    "before": "\treturn load_duel_check_pokemon_tiles(0x24u);",
+    "after": "\treturn load_duel_check_pokemon_tiles(0x25u);",
+    "case_ids": ["LoadDuelCheckPokemonScreenTiles-0"],
+}
+MUTATIONS["LoadDuelCoinTossResultTiles"] = {
+    "source_symbol": "LoadDuelCoinTossResultTiles",
+    "before": "\tuint16_t hl = (uint16_t)(DUEL_OTHER_GFX + 0xD0u);",
+    "after": "\tuint16_t hl = (uint16_t)(DUEL_OTHER_GFX + 0xD1u);",
+    "case_ids": ["LoadDuelCoinTossResultTiles-0"],
+}
+MUTATIONS["LoadDuelDrawCardsScreenTiles"] = {
+    "source_symbol": "LoadDuelDrawCardsScreenTiles",
+    "before": "\tuint16_t hl = (uint16_t)(DUEL_OTHER_GFX + 0x290u);",
+    "after": "\tuint16_t hl = (uint16_t)(DUEL_OTHER_GFX + 0x28Fu);",
+    "case_ids": ["LoadDuelDrawCardsScreenTiles-0"],
+}
+MUTATIONS["LoadDuelFaceDownCardTiles"] = {
+    "source_symbol": "LoadDuelFaceDownCardTiles",
+    "before": "\treturn load_duel_check_pokemon_tiles(0x10u);",
+    "after": "\treturn load_duel_check_pokemon_tiles(0x11u);",
+    "case_ids": ["LoadDuelFaceDownCardTiles-0"],
+}
+MUTATIONS["LoadPlacingThePrizesScreenTiles"] = {
+    "source_symbol": "LoadPlacingThePrizesScreenTiles",
+    "before": "\tCopyFontsOrDuelGraphicsTiles(&hl, &de, 0x0Du);",
+    "after": "\t;",
+    "case_ids": ["LoadPlacingThePrizesScreenTiles-0"],
+}
+MUTATIONS["LoadSymbolsFont"] = {
+    "source_symbol": "LoadSymbolsFont",
+    "before": "\tCopyFontsOrDuelGraphicsTiles(&hl, &de, SYMBOLS_FONT_TILES);",
+    "after": "\t;",
+    "case_ids": ["LoadSymbolsFont-0"],
+}
+MUTATIONS["LoadDuelCardSymbolTiles"] = {
+    "source_symbol": "LoadDuelCardSymbolTiles",
+    "before": "\t\t? DUEL_CGB_SYMBOL_GFX_FAR : DUEL_DMG_SGB_SYMBOL_GFX_FAR);\n\tuint16_t de = (uint16_t)(V0_TILES1 + 0x500u);",
+    "after": "\t\t? DUEL_CGB_SYMBOL_GFX_FAR : DUEL_DMG_SGB_SYMBOL_GFX_FAR);\n\tuint16_t de = (uint16_t)(V0_TILES1 + 0x4FFu);",
+    "case_ids": ["LoadDuelCardSymbolTiles-0"],
+}
+MUTATIONS["LoadFullWidthFontTiles"] = {
+    "source_symbol": "LoadFullWidthFontTiles",
+    "before": "\tuint16_t src, dst;\n\n\tBankswitchROM(bank);",
+    "after": "\tuint16_t src, dst;\n\n\t;",
+    "case_ids": ["LoadFullWidthFontTiles-0"],
+}

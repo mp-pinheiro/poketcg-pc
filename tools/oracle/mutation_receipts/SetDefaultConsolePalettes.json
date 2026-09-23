@@ -1,0 +1,9 @@
+{
+  "fn": "SetDefaultConsolePalettes",
+  "case": "tests/cases/duel_core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetDefaultConsolePalettes\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51900\": \"e4e4\", \"51903\": \"01\", \"65351\": \"fcffff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetDefaultConsolePalettes\", \"mismatches\": {\"bus\": {\"address\": 51900, \"reference\": \"00e4e401fcff\", \"native\": \"00fffffffcff\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[51892, 1], [51900, 2], [51903, 1], [65351, 3]]}}}\n",
+  "restored": "{\"fn\": \"SetDefaultConsolePalettes\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51900\": \"e4e4\", \"51903\": \"01\", \"65351\": \"fcffff\"}}, \"status\": \"PASS\"}\n"
+}

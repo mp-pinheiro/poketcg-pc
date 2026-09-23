@@ -1,0 +1,9 @@
+{
+  "fn": "PrintScrollableText_WithTextBoxLabel_NoWait",
+  "case": "tests/cases/print_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintScrollableText_WithTextBoxLabel_NoWait\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 16385, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"39296\": \"18\"}}, \"wram\": {\"50576\": \"00\", \"52811\": \"011234\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintScrollableText_WithTextBoxLabel_NoWait\", \"mismatches\": {\"bus\": {\"address\": 52812, \"reference\": \"00011234\", \"native\": \"00011334\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[50576, 1], [52811, 3]]}}}\n",
+  "restored": "{\"fn\": \"PrintScrollableText_WithTextBoxLabel_NoWait\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 16385, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"39296\": \"18\"}}, \"wram\": {\"50576\": \"00\", \"52811\": \"011234\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "PlaySFX",
+  "case": "tests/cases/sound.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlaySFX\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"56706\": \"010a\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlaySFX\", \"mismatches\": {\"bus\": {\"address\": 56706, \"reference\": \"010a\", \"native\": \"0000\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[56706, 2]]}}}\n",
+  "restored": "{\"fn\": \"PlaySFX\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"56706\": \"010a\"}}, \"status\": \"PASS\"}\n"
+}

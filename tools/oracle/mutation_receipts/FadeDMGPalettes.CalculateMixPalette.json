@@ -1,0 +1,9 @@
+{
+  "fn": "FadeDMGPalettes.CalculateMixPalette",
+  "case": "tests/cases/color.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FadeDMGPalettes.CalculateMixPalette\", \"registers\": {\"a\": 255, \"b\": 255, \"c\": 255, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FadeDMGPalettes.CalculateMixPalette\", \"mismatches\": {\"a\": [255, 0]}}\n",
+  "restored": "{\"fn\": \"FadeDMGPalettes.CalculateMixPalette\", \"registers\": {\"a\": 255, \"b\": 255, \"c\": 255, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

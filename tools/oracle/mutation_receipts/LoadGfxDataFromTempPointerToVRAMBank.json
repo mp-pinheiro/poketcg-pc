@@ -1,0 +1,9 @@
+{
+  "fn": "LoadGfxDataFromTempPointerToVRAMBank",
+  "case": "tests/cases/load_gfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadGfxDataFromTempPointerToVRAMBank\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"32768\": \"0714212e3b4855626f7c8996a3b0bdca\"}}, \"wram\": {\"49154\": \"0714212e3b4855626f7c8996a3b0bdca\", \"54466\": \"008000c0001001000000\", \"65359\": \"fe\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadGfxDataFromTempPointerToVRAMBank\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"LoadGfxDataFromTempPointerToVRAMBank\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"32768\": \"0714212e3b4855626f7c8996a3b0bdca\"}}, \"wram\": {\"49154\": \"0714212e3b4855626f7c8996a3b0bdca\", \"54466\": \"008000c0001001000000\", \"65359\": \"fe\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n"
+}

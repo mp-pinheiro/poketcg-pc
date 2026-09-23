@@ -1,0 +1,9 @@
+{
+  "fn": "SetOBP0",
+  "case": "tests/cases/palettes.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetOBP0\", \"registers\": {\"a\": 240, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"51901\": \"f0\", \"51903\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetOBP0\", \"mismatches\": {\"bus\": {\"address\": 51901, \"reference\": \"00f000\", \"native\": \"00f100\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[51899, 1], [51901, 1], [51903, 1]]}}}\n",
+  "restored": "{\"fn\": \"SetOBP0\", \"registers\": {\"a\": 240, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"51901\": \"f0\", \"51903\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

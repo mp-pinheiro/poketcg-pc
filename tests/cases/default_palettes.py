@@ -65,3 +65,9 @@ MUTATIONS = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+MUTATIONS["Func_12871"] = {
+    "source_symbol": "Func_12871",
+    "before": "\tZeroObjectPositions();",
+    "after": "\t;",
+    "case_ids": ["Func_12871-0"],
+}

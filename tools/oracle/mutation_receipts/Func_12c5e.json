@@ -1,0 +1,9 @@
+{
+  "fn": "Func_12c5e",
+  "case": "tests/cases/sprite_animations.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_12c5e\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"34800\": \"03030f0f1f1f1f1f3f3a3f307f547f43\"}}, \"wram\": {\"54744\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001077f01\", \"65408\": \"04\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_12c5e\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"Func_12c5e\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"34800\": \"03030f0f1f1f1f1f3f3a3f307f547f43\"}}, \"wram\": {\"54744\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001077f01\", \"65408\": \"04\"}}, \"status\": \"PASS\"}\n"
+}

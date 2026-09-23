@@ -1,0 +1,9 @@
+{
+  "fn": "HandleDPadRepeat",
+  "case": "tests/cases/frames.py",
+  "index": 5,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleDPadRepeat\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 65421, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65421\": \"0900004000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleDPadRepeat\", \"mismatches\": {\"bus\": {\"address\": 65421, \"reference\": \"0900004000\", \"native\": \"0600404000\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[65421, 5]]}}}\n",
+  "restored": "{\"fn\": \"HandleDPadRepeat\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 65421, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65421\": \"0900004000\"}}, \"status\": \"PASS\"}\n"
+}

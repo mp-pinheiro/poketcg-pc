@@ -245,3 +245,147 @@ MUTATIONS = {
         "case_ids": ["Func_80238-0", "Func_80238-1"],
     },
 }
+for _rec in SCHEMA2_CASES["Func_803b9"]:
+    _rec.setdefault("bus", {}).update({0xD239: 1, 0xD4C4: 1, 0xD4C6: 1})
+for _rec in SCHEMA2_CASES["GetTileOffsetPointerAndSwitchVRAM"]:
+    _rec.setdefault("bus", {}).update({0xD4C2: 2})
+for _rec in SCHEMA2_CASES["LoadPaletteDataToBuffer"]:
+    _rec.setdefault("bus", {}).update({0xD4C4: 1, 0xD4C6: 1})
+for _rec in SCHEMA2_CASES["LoadTilemap"]:
+    _rec.setdefault("bus", {}).update({0xD12F: 1, 0xD130: 1, 0xD239: 1, 0xD23A: 1, 0xD23C: 1, 0xD23D: 1, 0xD4C2: 2})
+for _rec in SCHEMA2_CASES["LoadTilemap.InitAndDecompressBGMap"]:
+    _rec.setdefault("bus", {}).update({0xD28E: 1})
+for _rec in SCHEMA2_CASES["LoadTilemap_ToSRAM"]:
+    _rec.setdefault("bus", {}).update({0xD12F: 1, 0xD130: 1, 0xD23A: 1, 0xD23C: 1, 0xD23D: 1, 0xD292: 1, 0xD4C2: 2})
+for _rec in SCHEMA2_CASES["LoadTilemap_ToVRAM"]:
+    _rec.setdefault("bus", {}).update({0xD12F: 1, 0xD130: 1, 0xD23A: 1, 0xD23C: 1, 0xD23D: 1, 0xD292: 1, 0xD4C2: 2})
+for _rec in SCHEMA2_CASES["LoadTilesetGfx"]:
+    _rec.setdefault("bus", {}).update({0xD4C4: 2, 0xD4C6: 1, 0xD4C8: 2})
+for _rec in SCHEMA2_CASES["LoadTilesetGfx.CopyGfxData"]:
+    _rec.setdefault("bus", {}).update({0xD4C4: 2, 0xD4C8: 2, 0xD4CA: 1, 0xD4CB: 1})
+MUTATIONS["ClearSRAMBGMaps"] = {
+    "source_symbol": "ClearSRAMBGMaps",
+    "before": "\tFillMemoryWithA(0xa000u, 0x0800u, 0);",
+    "after": "\tFillMemoryWithA(0x9FFFu, 0x0800u, 0);",
+    "case_ids": ["ClearSRAMBGMaps-0"],
+}
+MUTATIONS["CopyBGDataToVRAMOrSRAM"] = {
+    "source_symbol": "CopyBGDataToVRAMOrSRAM",
+    "before": "\t\tSafeCopyDataHLtoDE(hl, de, b);",
+    "after": "\t\t;",
+    "case_ids": ["CopyBGDataToVRAMOrSRAM-0"],
+}
+MUTATIONS["GetMapDataPointer"] = {
+    "source_symbol": "GetMapDataPointer",
+    "before": "\tuint16_t offset = (uint16_t)a * 4u;",
+    "after": "\tuint16_t offset = (uint16_t)a * 5u;",
+    "case_ids": ["GetMapDataPointer-1"],
+}
+MUTATIONS["GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2"] = {
+    "source_symbol": "GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2",
+    "before": "\tuint8_t saved = wVRAMTileOffset;",
+    "after": "\tuint8_t saved = (wVRAMTileOffset) ^ 1u;",
+    "case_ids": ["GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2-2"],
+}
+MUTATIONS["Func_803b9"] = {
+    "source_symbol": "Func_803b9",
+    "before": "void Func_803b9(void)\n{\n\tuint8_t saved = hBankROM;\n\tBankswitchROM(0x20u);",
+    "after": "void Func_803b9(void)\n{\n\tuint8_t saved = hBankROM;\n\tBankswitchROM(0x21u);",
+    "case_ids": ["Func_803b9-0"],
+}
+MUTATIONS["GetTileOffsetPointerAndSwitchVRAM"] = {
+    "source_symbol": "GetTileOffsetPointerAndSwitchVRAM",
+    "before": "\tput16(wVRAMPointer_ADDR, (uint16_t)(0x8000u + ((uint16_t)offset << 4)));",
+    "after": "\tput16(wVRAMPointer_ADDR, (uint16_t)(0x7FFFu + ((uint16_t)offset << 4)));",
+    "case_ids": ["GetTileOffsetPointerAndSwitchVRAM-0"],
+}
+MUTATIONS["LoadGfxDataFromTempPointer"] = {
+    "source_symbol": "LoadGfxDataFromTempPointer",
+    "before": "    uint16_t src = (uint16_t)(state16(wTempPointer_ADDR) + 2u);",
+    "after": "    uint16_t src = (uint16_t)(state16(wTempPointer_ADDR) + 3u);",
+    "case_ids": ["LoadGfxDataFromTempPointer-0"],
+}
+MUTATIONS["LoadGraphicsPointerFromHL"] = {
+    "source_symbol": "LoadGraphicsPointerFromHL",
+    "before": "\tgb_write8(wTempPointer_ADDR + 1u, gb_read8(p++));",
+    "after": "\t;",
+    "case_ids": ["LoadGraphicsPointerFromHL-0"],
+}
+MUTATIONS["LoadOBPalette"] = {
+    "source_symbol": "LoadOBPalette",
+    "before": "\t\t\t\t(uint16_t)(p - wLoadedPalData_PTR + wLoadedPalData_ADDR + 1u),",
+    "after": "\t\t\t\t(uint16_t)(p - wLoadedPalData_PTR - wLoadedPalData_ADDR + 1u),",
+    "case_ids": ["LoadOBPalette-0"],
+}
+MUTATIONS["LoadSpriteGfx"] = {
+    "source_symbol": "LoadSpriteGfx",
+    "before": "\treturn total;",
+    "after": "\treturn 1u + total;",
+    "case_ids": ["LoadSpriteGfx-0"],
+}
+MUTATIONS["LoadTilemap.Decompress"] = {
+    "source_symbol": "LoadTilemap.Decompress",
+    "before": "\t\tif ((uint8_t)(row + 1u) == rows)",
+    "after": "\t\tif ((uint8_t)(row + 1u) != rows)",
+    "case_ids": ["LoadTilemap.Decompress-0"],
+}
+MUTATIONS["LoadTilesetGfx.LoadTileGfx"] = {
+    "source_symbol": "LoadTilesetGfx.LoadTileGfx",
+    "before": "\tif (wConsole != 2u)",
+    "after": "\tif (wConsole == 2u)",
+    "case_ids": ["LoadTilesetGfx.LoadTileGfx-2"],
+}
+MUTATIONS["SafelyCopyBGMapFromSRAMToVRAM"] = {
+    "source_symbol": "SafelyCopyBGMapFromSRAMToVRAM",
+    "before": "\t\tuint16_t src = (uint16_t)(0xa000u + row * 32u);",
+    "after": "\t\tuint16_t src = (uint16_t)(0x9FFFu + row * 32u);",
+    "case_ids": ["SafelyCopyBGMapFromSRAMToVRAM-2"],
+}
+MUTATIONS["LoadGfxDataFromTempPointerToVRAMBank"] = {
+    "source_symbol": "LoadGfxDataFromTempPointerToVRAMBank",
+    "before": "\tGetTileOffsetPointerAndSwitchVRAM();\n\tLoadGfxDataFromTempPointer();",
+    "after": "\tGetTileOffsetPointerAndSwitchVRAM();\n\t;",
+    "case_ids": ["LoadGfxDataFromTempPointerToVRAMBank-0"],
+}
+MUTATIONS["LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2"] = {
+    "source_symbol": "LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2",
+    "before": "{\n\tGetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2();",
+    "after": "{\n\t;",
+    "case_ids": ["LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2-0"],
+}
+MUTATIONS["LoadPaletteDataToBuffer"] = {
+    "source_symbol": "LoadPaletteDataToBuffer",
+    "before": "\t      + (uint16_t)((size & 0xf0u) >> 1)",
+    "after": "\t      - (uint16_t)((size & 0xf0u) >> 1)",
+    "case_ids": ["LoadPaletteDataToBuffer-0"],
+}
+MUTATIONS["LoadTilemap"] = {
+    "source_symbol": "LoadTilemap",
+    "before": "\twBGMapCGBMode = gb_read8((uint16_t)(wDecompressionBuffer_ADDR + 4u));",
+    "after": "\twBGMapCGBMode = gb_read8((uint16_t)(wDecompressionBuffer_ADDR + 5u));",
+    "case_ids": ["LoadTilemap-0"],
+}
+MUTATIONS["LoadTilemap.InitAndDecompressBGMap"] = {
+    "source_symbol": "LoadTilemap.InitAndDecompressBGMap",
+    "before": "\t\tLoadTilemap_Decompress(&de);",
+    "after": "\t\t;",
+    "case_ids": ["LoadTilemap.InitAndDecompressBGMap-0"],
+}
+MUTATIONS["LoadTilemap_ToSRAM"] = {
+    "source_symbol": "LoadTilemap_ToSRAM",
+    "before": "\twWriteBGMapToSRAM = 1;\n\tLoadTilemap(b, c);",
+    "after": "\twWriteBGMapToSRAM = 1;\n\tLoadTilemap((uint8_t)(b ^ 1u), c);",
+    "case_ids": ["LoadTilemap_ToSRAM-0"],
+}
+MUTATIONS["LoadTilemap_ToVRAM"] = {
+    "source_symbol": "LoadTilemap_ToVRAM",
+    "before": "\twWriteBGMapToSRAM = 0;\n\tLoadTilemap(b, c);",
+    "after": "\twWriteBGMapToSRAM = 0;\n\tLoadTilemap((uint8_t)(b ^ 1u), c);",
+    "case_ids": ["LoadTilemap_ToVRAM-0"],
+}
+MUTATIONS["LoadTilesetGfx"] = {
+    "source_symbol": "LoadTilesetGfx",
+    "before": "{\n\tuint16_t hl = GetMapDataPointer(wCurTileset, GFX_TABLE_TILESETS).hl;\n\tLoadGraphicsPointerFromHL(&hl);",
+    "after": "{\n\tuint16_t hl = GetMapDataPointer(wCurTileset, GFX_TABLE_TILESETS).hl;\n\t;",
+    "case_ids": ["LoadTilesetGfx-0"],
+}

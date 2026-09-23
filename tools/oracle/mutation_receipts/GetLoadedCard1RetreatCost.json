@@ -1,0 +1,9 @@
+{
+  "fn": "GetLoadedCard1RetreatCost",
+  "case": "tests/cases/substatus.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetLoadedCard1RetreatCost\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"00ff\", \"50108\": \"ff\", \"50176\": \"b6\", \"52310\": \"03\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetLoadedCard1RetreatCost\", \"mismatches\": {\"a\": [2, 3]}}\n",
+  "restored": "{\"fn\": \"GetLoadedCard1RetreatCost\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"00ff\", \"50108\": \"ff\", \"50176\": \"b6\", \"52310\": \"03\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

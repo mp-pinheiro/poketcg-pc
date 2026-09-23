@@ -1,0 +1,9 @@
+{
+  "fn": "GetPlayAreaCardWeakness",
+  "case": "tests/cases/card_color.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetPlayAreaCardWeakness\", \"registers\": {\"a\": 64, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"04\", \"50180\": \"80\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetPlayAreaCardWeakness\", \"mismatches\": {\"a\": [64, 0]}}\n",
+  "restored": "{\"fn\": \"GetPlayAreaCardWeakness\", \"registers\": {\"a\": 64, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"04\", \"50180\": \"80\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

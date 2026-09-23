@@ -201,3 +201,119 @@ MUTATIONS = {
 }
 MUTATIONS["PlaceNextTextTile"] = {"source_symbol": "PlaceNextTextTile", "before": "\tuint8_t restored_c = (wLCDC & 0x80u) != 0u ? 1u : 0u;", "after": "\tuint8_t restored_c = 0u;", "case_ids": ["PlaceNextTextTile-0", "PlaceNextTextTile-1", "PlaceNextTextTile-2"]}
 MUTATIONS["TerminateHalfWidthText"] = {"source_symbol": "TerminateHalfWidthText", "before": "\tuint8_t exit_a = Func_22ca(d, pair);", "after": "\tuint8_t exit_a = 0u;\n\t(void)Func_22ca(d, pair);", "case_ids": ["TerminateHalfWidthText-0", "TerminateHalfWidthText-1", "TerminateHalfWidthText-2"]}
+for _rec in SCHEMA2_CASES["Func_235e"]:
+    _rec.setdefault("bus", {}).update({0xCD0B: 1, 0xFFA9: 1})
+for _rec in SCHEMA2_CASES["InitTextPrinting"]:
+    _rec.setdefault("bus", {}).update({0xCD09: 1, 0xCD0A: 1, 0xCD0B: 1, 0xFFAA: 1, 0xFFAB: 1, 0xFFAC: 1, 0xFFAD: 1, 0xFFAE: 1, 0xFFAF: 1})
+for _rec in SCHEMA2_CASES["InitTextPrintingInTextbox"]:
+    _rec.setdefault("bus", {}).update({0xCD09: 1, 0xCD0B: 1, 0xFFAA: 1, 0xFFAB: 1, 0xFFAD: 1, 0xFFAE: 1})
+for _rec in SCHEMA2_CASES["ProcessSpecialTextCharacter"]:
+    _rec.setdefault("bus", {}).update({0xCD05: 1, 0xCD0A: 1, 0xFFAA: 1, 0xFFAB: 1, 0xFFAF: 1})
+MUTATIONS["ClassifyTextCharacterPair"] = {
+    "source_symbol": "ClassifyTextCharacterPair",
+    "before": "\tif (*e >= TX_CTRL_END && *e < 0x60 && hJapaneseSyllabary == TX_KATAKANA) {",
+    "after": "\tif (*e >= TX_CTRL_END && *e < 0x60 && hJapaneseSyllabary != TX_KATAKANA) {",
+    "case_ids": ["ClassifyTextCharacterPair-3"],
+}
+MUTATIONS["CopyHalfWidthCharacterToDE"] = {
+    "source_symbol": "CopyHalfWidthCharacterToDE",
+    "before": "\tuint16_t source = (uint16_t)(0x6668u + (uint16_t)(uint8_t)(a - 0x20) * TILE_SIZE_1BPP);",
+    "after": "\tuint16_t source = (uint16_t)(0x6667u + (uint16_t)(uint8_t)(a - 0x20) * TILE_SIZE_1BPP);",
+    "case_ids": ["CopyHalfWidthCharacterToDE-0"],
+}
+MUTATIONS["CopyTextData"] = {
+    "source_symbol": "CopyTextData",
+    "before": "\t\tif (--d == 0) {",
+    "after": "\t\tif (--d != 0) {",
+    "case_ids": ["CopyTextData-2"],
+}
+MUTATIONS["CreateHalfWidthFontTile"] = {
+    "source_symbol": "CreateHalfWidthFontTile",
+    "before": "\t(uint16_t)(wTextTileBuffer_ADDR + TILE_SIZE)};",
+    "after": "\t(uint16_t)(wTextTileBuffer_ADDR - TILE_SIZE)};",
+    "case_ids": ["CreateHalfWidthFontTile-0"],
+}
+MUTATIONS["Func_22ca"] = {
+    "source_symbol": "Func_22ca",
+    "before": "\tif (hffb0 & 1)",
+    "after": "\tif (hffb0 | 1)",
+    "case_ids": ["Func_22ca-2"],
+}
+MUTATIONS["Func_2325"] = {
+    "source_symbol": "Func_2325",
+    "before": "\tif (hffa8 == wcd04) {",
+    "after": "\tif (hffa8 != wcd04) {",
+    "case_ids": ["Func_2325-2"],
+}
+MUTATIONS["GenerateTextTile"] = {
+    "source_symbol": "GenerateTextTile",
+    "before": "\treturn SafeCopyDataDEtoHL(&source, &destination, c);",
+    "after": "\treturn SafeCopyDataDEtoHL(&source, &destination, (uint8_t)(c ^ 1u));",
+    "case_ids": ["GenerateTextTile-0"],
+}
+MUTATIONS["GetFullWidthFontTileOffset"] = {
+    "source_symbol": "GetFullWidthFontTileOffset",
+    "before": "\tif (d == TX_HIRAGANA) {",
+    "after": "\tif (d != TX_HIRAGANA) {",
+    "case_ids": ["GetFullWidthFontTileOffset-1"],
+}
+MUTATIONS["GetTextLengthInHalfTiles"] = {
+    "source_symbol": "GetTextLengthInHalfTiles",
+    "before": "\t\t\tif (a == TX_SYMBOL) {",
+    "after": "\t\t\tif (a != TX_SYMBOL) {",
+    "case_ids": ["GetTextLengthInHalfTiles-2"],
+}
+MUTATIONS["GetTextLengthInTiles"] = {
+    "source_symbol": "GetTextLengthInTiles",
+    "before": "\tif (gb_read8(hl) == TX_HALFWIDTH) {",
+    "after": "\tif (gb_read8(hl) != TX_HALFWIDTH) {",
+    "case_ids": ["GetTextLengthInTiles-1"],
+}
+MUTATIONS["InitTextPrinting_ProcessText"] = {
+    "source_symbol": "InitTextPrinting_ProcessText",
+    "before": "\t(void)process_text_core(hl);",
+    "after": "\t;",
+    "case_ids": ["InitTextPrinting_ProcessText-0"],
+}
+MUTATIONS["CaseHalfWidthLetter"] = {
+    "source_symbol": "CaseHalfWidthLetter",
+    "before": "\tuint8_t a = wUppercaseHalfWidthLetters;",
+    "after": "\tuint8_t a = (wUppercaseHalfWidthLetters) ^ 1u;",
+    "case_ids": ["CaseHalfWidthLetter-0"],
+}
+MUTATIONS["ConvertTileNumberToTileDataAddress"] = {
+    "source_symbol": "ConvertTileNumberToTileDataAddress",
+    "before": "\t*c = TILE_SIZE;\n\treturn out;",
+    "after": "\t*c = TILE_SIZE;\n\treturn 1u + out;",
+    "case_ids": ["ConvertTileNumberToTileDataAddress-0"],
+}
+MUTATIONS["CreateFullWidthFontTile_ConvertToTileDataAddress"] = {
+    "source_symbol": "CreateFullWidthFontTile_ConvertToTileDataAddress",
+    "before": "\tuint16_t address = ConvertTileNumberToTileDataAddress(&b, &c);",
+    "after": "\tuint16_t address = (ConvertTileNumberToTileDataAddress(&b, &c)) ^ 1u;",
+    "case_ids": ["CreateFullWidthFontTile_ConvertToTileDataAddress-0"],
+}
+MUTATIONS["InitTextPrinting"] = {
+    "source_symbol": "InitTextPrinting",
+    "before": "\tgb_write8(0xffabu, (uint8_t)(bg >> 8));",
+    "after": "\tgb_write8(0xFFAAu, (uint8_t)(bg >> 8));",
+    "case_ids": ["InitTextPrinting-0"],
+}
+MUTATIONS["InitTextPrintingInTextbox"] = {
+    "source_symbol": "InitTextPrintingInTextbox",
+    "before": "{\n\tInitTextPrinting(d, e);",
+    "after": "{\n\tInitTextPrinting((uint8_t)(d ^ 1u), e);",
+    "case_ids": ["InitTextPrintingInTextbox-0"],
+}
+MUTATIONS["TwoByteNumberToTxSymbol_PadSpace"] = {
+    "source_symbol": "TwoByteNumberToTxSymbol_PadSpace",
+    "before": "\t\twhile (value >= places[i]) {",
+    "after": "\t\twhile (value > places[i]) {",
+    "case_ids": ["TwoByteNumberToTxSymbol_PadSpace-1"],
+}
+MUTATIONS["SetupText"] = {
+    "source_symbol": "SetupText",
+    "before": "\treturn 0xc600;",
+    "after": "\treturn (0xc600) ^ 1u;",
+    "case_ids": ["SetupText-0"],
+}

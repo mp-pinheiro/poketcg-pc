@@ -1,0 +1,9 @@
+{
+  "fn": "SortCardsInListByID_CheckForListTerminator",
+  "case": "tests/cases/duel.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SortCardsInListByID_CheckForListTerminator\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 32, \"frame_budget_reached\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"ff\", \"65431\": \"c2\", \"65433\": \"00c5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SortCardsInListByID_CheckForListTerminator\", \"mismatches\": {\"b\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"SortCardsInListByID_CheckForListTerminator\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 32, \"frame_budget_reached\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"ff\", \"65431\": \"c2\", \"65433\": \"00c5\"}}, \"status\": \"PASS\"}\n"
+}

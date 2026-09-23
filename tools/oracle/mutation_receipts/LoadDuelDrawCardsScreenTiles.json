@@ -1,0 +1,9 @@
+{
+  "fn": "LoadDuelDrawCardsScreenTiles",
+  "case": "tests/cases/tiles.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadDuelDrawCardsScreenTiles\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 143, \"e\": 192, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 17176, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"36672\": \"00000000010102030407080e111d203e0000e0c038f00cfc02fe067c0e3a1e74407f703f7c4f7f337f4c3f331f0c07033eea7cd4f8a8f050e0a0c0408080000000000f0f08083b186b689b88b98959490000f0f01010f0709898a68679017d015a4a2a2a2c2c1c1c13130c0c00000000fa027a02140404040808c8c830300000\"}}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadDuelDrawCardsScreenTiles\", \"mismatches\": {\"hl\": [17176, 17175], \"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"LoadDuelDrawCardsScreenTiles\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 143, \"e\": 192, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 17176, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"36672\": \"00000000010102030407080e111d203e0000e0c038f00cfc02fe067c0e3a1e74407f703f7c4f7f337f4c3f331f0c07033eea7cd4f8a8f050e0a0c0408080000000000f0f08083b186b689b88b98959490000f0f01010f0709898a68679017d015a4a2a2a2c2c1c1c13130c0c00000000fa027a02140404040808c8c830300000\"}}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

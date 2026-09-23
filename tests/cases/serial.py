@@ -523,3 +523,81 @@ MUTATIONS["UnreferencedGoToSerialReturnAddress"] = {"source_symbol": "Unreferenc
 # >>> factory-mutation UnreferencedSaveSerialReturnAddress
 MUTATIONS["UnreferencedSaveSerialReturnAddress"] = {"source_symbol": "UnreferencedSaveSerialReturnAddress", "before": "UnreferencedSaveSerialReturnAddressResult UnreferencedSaveSerialReturnAddress(void)\n{\n\tuint16_t entry_sp = 0xFFFCu;", "after": "UnreferencedSaveSerialReturnAddressResult UnreferencedSaveSerialReturnAddress(void)\n{\n\tuint16_t entry_sp = 0xFFFDu;", "case_ids": ["UnreferencedSaveSerialReturnAddress-0", "UnreferencedSaveSerialReturnAddress-1"]}
 # <<< factory-mutation UnreferencedSaveSerialReturnAddress
+MUTATIONS["ClearSerialData"] = {
+    "source_symbol": "ClearSerialData",
+    "before": "\t\tgb_write8(addr, 0);",
+    "after": "\t\t;",
+    "case_ids": ["ClearSerialData-0"],
+}
+MUTATIONS["Func_0cc5"] = {
+    "source_symbol": "Func_0cc5",
+    "before": "\t\tif (gb_read8(wSerialRecvCounter_ADDR) == 0)",
+    "after": "\t\tif (gb_read8(wSerialRecvCounter_ADDR) != 0)",
+    "case_ids": ["Func_0cc5-0"],
+}
+MUTATIONS["Func_0e32"] = {
+    "source_symbol": "Func_0e32",
+    "before": "\treturn (SerialRecvReadyResult){a, a ? 0x10u : 0x80u};",
+    "after": "\treturn (SerialRecvReadyResult){a, a ? 0x11u : 0x80u};",
+    "case_ids": ["Func_0e32-1"],
+}
+MUTATIONS["Func_0e8e"] = {
+    "source_symbol": "Func_0e8e",
+    "before": "\tgb_write8(rIF, (uint8_t)(gb_read8(rIF) & (uint8_t)~IE_SERIAL));",
+    "after": "\tgb_write8(rIF, (uint8_t)(gb_read8(rIF) | (uint8_t)~IE_SERIAL));",
+    "case_ids": ["Func_0e8e-0"],
+}
+MUTATIONS["ResetSerial"] = {
+    "source_symbol": "ResetSerial",
+    "before": "\tgb_write8(rIE, (uint8_t)(gb_read8(rIE) & (uint8_t)~IE_SERIAL));",
+    "after": "\tgb_write8(rIE, (uint8_t)(gb_read8(rIE) | (uint8_t)~IE_SERIAL));",
+    "case_ids": ["ResetSerial-0"],
+}
+MUTATIONS["SerialExchangeBytes"] = {
+    "source_symbol": "SerialExchangeBytes",
+    "before": "\t\t\treturn (SerialExchangeResult){a, b, c, 0x10u, hl, de};",
+    "after": "\t\t\treturn (SerialExchangeResult){a, b, c, 0x11u, hl, de};",
+    "case_ids": ["SerialExchangeBytes-2"],
+}
+MUTATIONS["SerialHandleRecv"] = {
+    "source_symbol": "SerialHandleRecv",
+    "before": "\tif (e == 0) {",
+    "after": "\tif (e != 0) {",
+    "case_ids": ["SerialHandleRecv-0"],
+}
+MUTATIONS["SerialHandleSend"] = {
+    "source_symbol": "SerialHandleSend",
+    "before": "\tif (gb_read8(wSerialSendSave_ADDR) != 0) {",
+    "after": "\tif (gb_read8(wSerialSendSave_ADDR) == 0) {",
+    "case_ids": ["SerialHandleSend-0"],
+}
+MUTATIONS["SerialHandler"] = {
+    "source_symbol": "SerialHandler",
+    "before": "\tif (gb_read8(wPrinterPacketSequence_ADDR) != 0) {",
+    "after": "\tif (gb_read8(wPrinterPacketSequence_ADDR) == 0) {",
+    "case_ids": ["SerialHandler-0"],
+}
+MUTATIONS["SerialRecvByte"] = {
+    "source_symbol": "SerialRecvByte",
+    "before": "\tif (gb_read8(wSerialRecvCounter_ADDR) == 0) {",
+    "after": "\tif (gb_read8(wSerialRecvCounter_ADDR) != 0) {",
+    "case_ids": ["SerialRecvByte-0"],
+}
+MUTATIONS["SerialRecvBytes"] = {
+    "source_symbol": "SerialRecvBytes",
+    "before": "\t\t\treturn (SerialRecvBytesResult){flags, 0x10u, hl};",
+    "after": "\t\t\treturn (SerialRecvBytesResult){flags, 0x11u, hl};",
+    "case_ids": ["SerialRecvBytes-2"],
+}
+MUTATIONS["SerialSendByte"] = {
+    "source_symbol": "SerialSendByte",
+    "before": "\tif (after == 0)",
+    "after": "\tif (after != 0)",
+    "case_ids": ["SerialSendByte-0"],
+}
+MUTATIONS["SerialSendBytes"] = {
+    "source_symbol": "SerialSendBytes",
+    "before": "\t\t\treturn (SerialSendBytesResult){flags, 0x10u, hl};",
+    "after": "\t\t\treturn (SerialSendBytesResult){flags, 0x11u, hl};",
+    "case_ids": ["SerialSendBytes-2"],
+}

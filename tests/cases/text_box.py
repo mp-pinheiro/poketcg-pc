@@ -129,3 +129,69 @@ MUTATIONS = {
         "case_ids": ["SafeCopyDataDEtoHL-0", "SafeCopyDataDEtoHL-2", "SafeCopyDataDEtoHL-3", "SafeCopyDataDEtoHL-4"],
     },
 }
+MUTATIONS["AdjustCoordinatesForBGScroll"] = {
+    "source_symbol": "AdjustCoordinatesForBGScroll",
+    "before": "\tuint8_t x = (uint8_t)((hSCX >> 3) & 0x1f);",
+    "after": "\tuint8_t x = (uint8_t)((hSCX >> 3) | 0x1f);",
+    "case_ids": ["AdjustCoordinatesForBGScroll-0"],
+}
+MUTATIONS["ContinueDrawingTextBoxCGB"] = {
+    "source_symbol": "ContinueDrawingTextBoxCGB",
+    "before": "\t\tgb_write8(0xff4f, 1);",
+    "after": "\t\t;",
+    "case_ids": ["ContinueDrawingTextBoxCGB-0"],
+}
+MUTATIONS["ContinueDrawingTextBoxDMGorSGB"] = {
+    "source_symbol": "ContinueDrawingTextBoxDMGorSGB",
+    "before": "\tdraw_line(hl, 0x1d, 0x1a, 0x1b, b);",
+    "after": "\t;",
+    "case_ids": ["ContinueDrawingTextBoxDMGorSGB-0"],
+}
+MUTATIONS["CopyCurrentLineAttrCGB"] = {
+    "source_symbol": "CopyCurrentLineAttrCGB",
+    "before": "\tCopyLine(hl, wTextBoxFrameType, b, wTextBoxFrameType, wTextBoxFrameType);",
+    "after": "\t;",
+    "case_ids": ["CopyCurrentLineAttrCGB-0"],
+}
+MUTATIONS["CopyCurrentLineTilesAndAttrCGB"] = {
+    "source_symbol": "CopyCurrentLineTilesAndAttrCGB",
+    "before": "\tCopyLine(hl, a, b, d, e);",
+    "after": "\t;",
+    "case_ids": ["CopyCurrentLineTilesAndAttrCGB-0"],
+}
+MUTATIONS["CopyLine"] = {
+    "source_symbol": "CopyLine",
+    "before": "\tuint8_t middle_raw = (uint8_t)(b - 2);",
+    "after": "\tuint8_t middle_raw = (uint8_t)(b + 2);",
+    "case_ids": ["CopyLine-0"],
+}
+MUTATIONS["DECoordToBGMap0Address"] = {
+    "source_symbol": "DECoordToBGMap0Address",
+    "before": "\treturn (uint16_t)(0x9800u + offset);",
+    "after": "\treturn (uint16_t)(0x97FFu + offset);",
+    "case_ids": ["DECoordToBGMap0Address-0"],
+}
+MUTATIONS["DrawLabeledTextBox"] = {
+    "source_symbol": "DrawLabeledTextBox",
+    "before": "\tif (wConsole == CONSOLE_CGB) {",
+    "after": "\tif (wConsole != CONSOLE_CGB) {",
+    "case_ids": ["DrawLabeledTextBox-1"],
+}
+MUTATIONS["DrawRegularTextBox"] = {
+    "source_symbol": "DrawRegularTextBox",
+    "before": "\t\tDrawRegularTextBoxCGB(hl, a, b, c, d, e);",
+    "after": "\t\t;",
+    "case_ids": ["DrawRegularTextBox-1"],
+}
+MUTATIONS["DrawRegularTextBoxCGB"] = {
+    "source_symbol": "DrawRegularTextBoxCGB",
+    "before": "\tCopyCurrentLineTilesAndAttrCGB(hl, 0x1c, b, 0x18, 0x19);",
+    "after": "\t;",
+    "case_ids": ["DrawRegularTextBoxCGB-0"],
+}
+MUTATIONS["DrawRegularTextBoxDMG"] = {
+    "source_symbol": "DrawRegularTextBoxDMG",
+    "before": "\tdraw_line(hl, 0x1c, 0x18, 0x19, b);",
+    "after": "\t;",
+    "case_ids": ["DrawRegularTextBoxDMG-0"],
+}

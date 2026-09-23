@@ -117,3 +117,45 @@ MUTATIONS["LoadCardDataToHL_FromCardID"] = {"source_symbol": "LoadCardDataToHL_F
 # >>> factory-mutation CopyFontsOrDuelGraphicsTiles2
 MUTATIONS["CopyFontsOrDuelGraphicsTiles2"] = {"source_symbol": "CopyFontsOrDuelGraphicsTiles2", "before": "\tuint8_t copy_length = 0x10u;", "after": "\tuint8_t copy_length = 0x08u;", "case_ids": ["CopyFontsOrDuelGraphicsTiles2-1", "CopyFontsOrDuelGraphicsTiles2-2", "CopyFontsOrDuelGraphicsTiles2-3"]}
 # <<< factory-mutation CopyFontsOrDuelGraphicsTiles2
+MUTATIONS["GetCardName"] = {
+    "source_symbol": "GetCardName",
+    "before": "\tconst uint8_t *p = card_data(e) + CARD_DATA_NAME;",
+    "after": "\tconst uint8_t *p = card_data(e) - CARD_DATA_NAME;",
+    "case_ids": ["GetCardName-0"],
+}
+MUTATIONS["GetCardPointer"] = {
+    "source_symbol": "GetCardPointer",
+    "before": "\tif (hl >= GETCARDPTR_BOUND)",
+    "after": "\tif (hl > GETCARDPTR_BOUND)",
+    "case_ids": ["GetCardPointer-2"],
+}
+MUTATIONS["LoadCardDataToBuffer1_FromCardID"] = {
+    "source_symbol": "LoadCardDataToBuffer1_FromCardID",
+    "before": "\tload_card_data(e, wLoadedCard1_ADDR);",
+    "after": "\tload_card_data((uint8_t)(e ^ 1u), wLoadedCard1_ADDR);",
+    "case_ids": ["LoadCardDataToBuffer1_FromCardID-0"],
+}
+MUTATIONS["LoadCardDataToBuffer1_FromName"] = {
+    "source_symbol": "LoadCardDataToBuffer1_FromName",
+    "before": "\t\tif (ptr == 0)",
+    "after": "\t\tif (ptr != 0)",
+    "case_ids": ["LoadCardDataToBuffer1_FromName-0"],
+}
+MUTATIONS["LoadCardDataToBuffer2_FromCardID"] = {
+    "source_symbol": "LoadCardDataToBuffer2_FromCardID",
+    "before": "\tload_card_data(e, wLoadedCard2_ADDR);",
+    "after": "\tload_card_data((uint8_t)(e ^ 1u), wLoadedCard2_ADDR);",
+    "case_ids": ["LoadCardDataToBuffer2_FromCardID-0"],
+}
+MUTATIONS["LoadCardGfx"] = {
+    "source_symbol": "LoadCardGfx",
+    "before": "\tsrc = (uint16_t)(((src & 0x7F00u) | 0x4000u) | (src & 0x00FFu));",
+    "after": "\tsrc = (uint16_t)(((src & 0x7EFFu) | 0x4000u) | (src & 0x00FFu));",
+    "case_ids": ["LoadCardGfx-0"],
+}
+MUTATIONS["GetCardTypeRarityAndSet"] = {
+    "source_symbol": "GetCardTypeRarityAndSet",
+    "before": "\treturn (CardTRS){p[CARD_DATA_TYPE], p[CARD_DATA_RARITY], p[CARD_DATA_SET]};",
+    "after": "\treturn (CardTRS){p[(CARD_DATA_TYPE + 1u)], p[CARD_DATA_RARITY], p[CARD_DATA_SET]};",
+    "case_ids": ["GetCardTypeRarityAndSet-0"],
+}

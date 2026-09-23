@@ -1,0 +1,9 @@
+{
+  "fn": "ConvertSpecialTrainerCardToPokemon",
+  "case": "tests/cases/duel_core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ConvertSpecialTrainerCardToPokemon\", \"registers\": {\"a\": 6, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"06\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ConvertSpecialTrainerCardToPokemon\", \"mismatches\": {\"a\": [6, 0]}}\n",
+  "restored": "{\"fn\": \"ConvertSpecialTrainerCardToPokemon\", \"registers\": {\"a\": 6, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"06\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

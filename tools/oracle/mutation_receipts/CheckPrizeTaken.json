@@ -1,0 +1,9 @@
+{
+  "fn": "CheckPrizeTaken",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckPrizeTaken\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 254, \"e\": 1, \"f\": 32, \"frame_budget_reached\": 0, \"hl\": 49900, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49900\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckPrizeTaken\", \"mismatches\": {\"d\": [254, 54], \"e\": [1, 201]}}\n",
+  "restored": "{\"fn\": \"CheckPrizeTaken\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 254, \"e\": 1, \"f\": 32, \"frame_budget_reached\": 0, \"hl\": 49900, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49900\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

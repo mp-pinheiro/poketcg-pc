@@ -341,3 +341,39 @@ MUTATIONS = {
         "case_ids": ["GetCardCountInCollection-2", "GetCardCountInCollection-0", "GetCardCountInCollection-1", "GetCardCountInCollection-3", "GetCardCountInCollection-4", "GetCardCountInCollection-5"],
     },
 }
+MUTATIONS["AddCardToCollection"] = {
+    "source_symbol": "AddCardToCollection",
+    "before": "\tuint8_t owned = (uint8_t)(gb_read8(temp_hl) & 0x7Fu); /* CARD_COUNT_MASK */",
+    "after": "\tuint8_t owned = (uint8_t)(gb_read8(temp_hl) & 0x80u); /* CARD_COUNT_MASK */",
+    "case_ids": ["AddCardToCollection-3"],
+}
+MUTATIONS["CreateTempCardCollection"] = {
+    "source_symbol": "CreateTempCardCollection",
+    "before": "\tCopyDataHLtoDE(&hl, &de, 0x0100u); /* CARD_COLLECTION_SIZE */",
+    "after": "\tCopyDataHLtoDE(&hl, &de, 0xFFu); /* CARD_COLLECTION_SIZE */",
+    "case_ids": ["CreateTempCardCollection-0"],
+}
+MUTATIONS["GetAmountOfCardsOwned"] = {
+    "source_symbol": "GetAmountOfCardsOwned",
+    "before": "\tfor (uint16_t i = 0; i < 0x100u; i++) { /* CARD_COLLECTION_SIZE */",
+    "after": "\tfor (uint16_t i = 0; i < 0xFFu; i++) { /* CARD_COLLECTION_SIZE */",
+    "case_ids": ["GetAmountOfCardsOwned-1"],
+}
+MUTATIONS["GetCardAlbumProgress"] = {
+    "source_symbol": "GetCardAlbumProgress",
+    "before": "\tif (gb_read8(CARD_SLOT(sCardCollection_ADDR, 0x0A)) & 0x80u) /* VENUSAUR_LV64 */",
+    "after": "\tif (gb_read8(CARD_SLOT(sCardCollection_ADDR, 0x0A)) & 0x81u) /* VENUSAUR_LV64 */",
+    "case_ids": ["GetCardAlbumProgress-2"],
+}
+MUTATIONS["GetCardCountInCollectionAndDecks"] = {
+    "source_symbol": "GetCardCountInCollectionAndDecks",
+    "before": "\t\tif (gb_read8(de) != 0) {",
+    "after": "\t\tif (gb_read8(de) == 0) {",
+    "case_ids": ["GetCardCountInCollectionAndDecks-0"],
+}
+MUTATIONS["RemoveCardFromCollection"] = {
+    "source_symbol": "RemoveCardFromCollection",
+    "before": "\tif (count != 0)",
+    "after": "\tif (count == 0)",
+    "case_ids": ["RemoveCardFromCollection-0"],
+}

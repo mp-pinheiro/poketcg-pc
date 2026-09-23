@@ -64,3 +64,15 @@ MUTATIONS = {
         "case_ids": ["SetOneObjectAttributes-0", "SetOneObjectAttributes-1", "SetOneObjectAttributes-2", "SetOneObjectAttributes-3"],
     },
 }
+MUTATIONS["SetManyObjectsAttributes"] = {
+    "source_symbol": "SetManyObjectsAttributes",
+    "before": "\t\tif ((uint8_t)(oam - wOAM_ADDR) >= OAM_SIZE) {",
+    "after": "\t\tif ((uint8_t)(oam - wOAM_ADDR) > OAM_SIZE) {",
+    "case_ids": ["SetManyObjectsAttributes-0"],
+}
+MUTATIONS["ZeroObjectPositions"] = {
+    "source_symbol": "ZeroObjectPositions",
+    "before": "\t\tuint16_t p = (uint16_t)(wOAM_ADDR + (uint16_t)i * 4u);",
+    "after": "\t\tuint16_t p = (uint16_t)(wOAM_ADDR + (uint16_t)i * 5u);",
+    "case_ids": ["ZeroObjectPositions-1"],
+}

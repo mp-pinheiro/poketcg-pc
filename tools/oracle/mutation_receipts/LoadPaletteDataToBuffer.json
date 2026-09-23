@@ -1,0 +1,9 @@
+{
+  "fn": "LoadPaletteDataToBuffer",
+  "case": "tests/cases/load_gfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadPaletteDataToBuffer\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54468\": \"8a\", \"54470\": \"2d\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadPaletteDataToBuffer\", \"mismatches\": {\"bus\": {\"address\": 54468, \"reference\": \"8a2d20\", \"native\": \"000020\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54468, 1], [54470, 1], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadPaletteDataToBuffer\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54468\": \"8a\", \"54470\": \"2d\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n"
+}

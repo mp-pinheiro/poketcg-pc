@@ -1,0 +1,9 @@
+{
+  "fn": "ContinueDrawingTextBoxDMGorSGB",
+  "case": "tests/cases/text_box.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ContinueDrawingTextBoxDMGorSGB\", \"registers\": {\"a\": 0, \"b\": 4, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 38976, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"38912\": \"1e00001f000000000000000000000000000000000000000000000000000000001a1d1d1b00000000000000000000000000000000000000000000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ContinueDrawingTextBoxDMGorSGB\", \"mismatches\": {\"hl\": [38976, 38944], \"bus\": {\"address\": 38944, \"reference\": \"000000001a1d1d1b00\", \"native\": \"000000000000000000\", \"reference_size\": 64, \"native_size\": 64, \"spans\": [[38912, 64]]}}}\n",
+  "restored": "{\"fn\": \"ContinueDrawingTextBoxDMGorSGB\", \"registers\": {\"a\": 0, \"b\": 4, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 38976, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"38912\": \"1e00001f000000000000000000000000000000000000000000000000000000001a1d1d1b00000000000000000000000000000000000000000000000000000000\"}}, \"status\": \"PASS\"}\n"
+}

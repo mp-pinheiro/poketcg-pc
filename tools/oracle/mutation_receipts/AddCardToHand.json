@@ -1,0 +1,9 @@
+{
+  "fn": "AddCardToHand",
+  "case": "tests/cases/duel.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AddCardToHand\", \"registers\": {\"a\": 5, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49925\": \"01\", \"49988\": \"05\", \"50158\": \"03\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AddCardToHand\", \"mismatches\": {\"bus\": {\"address\": 49925, \"reference\": \"010503c3\", \"native\": \"000503c3\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[49925, 1], [49988, 1], [50158, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"AddCardToHand\", \"registers\": {\"a\": 5, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49925\": \"01\", \"49988\": \"05\", \"50158\": \"03\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n"
+}

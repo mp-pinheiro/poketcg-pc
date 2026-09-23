@@ -1,0 +1,9 @@
+{
+  "fn": "RemoveCardFromDuelTempList",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"RemoveCardFromDuelTempList\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50448\": \"010204ffff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"RemoveCardFromDuelTempList\", \"mismatches\": {\"a\": [3, 0], \"f\": [0, 144], \"bus\": {\"address\": 50448, \"reference\": \"010204ffff\", \"native\": \"ff020304ff\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[50448, 5]]}}}\n",
+  "restored": "{\"fn\": \"RemoveCardFromDuelTempList\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50448\": \"010204ffff\"}}, \"status\": \"PASS\"}\n"
+}
