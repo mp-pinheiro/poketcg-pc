@@ -1,0 +1,9 @@
+{
+  "fn": "Func_d4fb",
+  "case": "tests/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_d4fb\", \"registers\": {\"a\": 224, \"b\": 0, \"c\": 7, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54240\": \"e00000\", \"54247\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_d4fb\", \"mismatches\": {\"a\": [224, 0], \"f\": [0, 112], \"c\": [7, 0], \"bus\": {\"address\": 54240, \"reference\": \"e0000000\", \"native\": \"40000000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[54240, 3], [54247, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_d4fb\", \"registers\": {\"a\": 224, \"b\": 0, \"c\": 7, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54240\": \"e00000\", \"54247\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

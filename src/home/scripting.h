@@ -750,4 +750,11 @@ IncreaseScriptPointerResult ScriptCommand_RemoveMan1RequestedCardFromCollection(
 /* >>> factory ScriptCommand_PickChallengeCupPrizeCard */
 IncreaseScriptPointerResult ScriptCommand_PickChallengeCupPrizeCard(void);
 /* <<< factory ScriptCommand_PickChallengeCupPrizeCard */
+/* >>> factory ScriptCommand_PickLegendaryCard */
+IncreaseScriptPointerResult ScriptCommand_PickLegendaryCard(void);
+/* <<< factory ScriptCommand_PickLegendaryCard */
+/* >>> factory Func_d4fb */
+typedef struct { uint8_t a; uint8_t f; uint8_t c; } FuncD4fbResult;
+FuncD4fbResult Func_d4fb(uint8_t c);
+/* <<< factory Func_d4fb */
 #endif

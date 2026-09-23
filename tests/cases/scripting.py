@@ -4811,7 +4811,68 @@ CASES["ScriptCommand_PickChallengeCupPrizeCard"] = [
 ]
 # <<< factory ScriptCommand_PickChallengeCupPrizeCard
 
+CONTRACT["ScriptCommand_PickLegendaryCard"] = {
+    "compare": ("a", "f", "c"),
+    "preserve": (),
+    "wram_out": True,
+}
+CASES["ScriptCommand_PickLegendaryCard"] = [
+    {
+        "wram": {
+            0xD3EB: b"\x00",
+            0xD697: b"\x00",
+            0xCE3F: b"\x00\x00",
+            0xCACA: b"\x5a\xa5\x3c",
+        },
+        "read": {0xD3EB: 1, 0xD697: 1, 0xCE3F: 2},
+    },
+    {
+        "wram": {
+            0xD3EB: b"\x0c",
+            0xD697: b"\x00",
+            0xCE3F: b"\x00\x00",
+            0xCACA: b"\x5a\xa5\x3c",
+        },
+        "read": {0xD3EB: 1, 0xD697: 1, 0xCE3F: 2},
+    },
+    dict(
+        POISON,
+        wram={
+            0xD3EB: b"\x00",
+            0xD697: b"\x00",
+            0xCE3F: b"\x00\x00",
+            0xCACA: b"\x5a\xa5\x3c",
+        },
+        read={0xD3EB: 1, 0xD697: 1, 0xCE3F: 2},
+    ),
+]
+CONTRACT["Func_d4fb"] = {
+    "compare": ("a", "f", "c"),
+    "preserve": ("b", "d", "e", "hl"),
+    "wram_out": True,
+}
+CASES["Func_d4fb"] = [
+    {
+        "wram": {0xD3E0: b"\x00", 0xD3E1: b"\x00", 0xD3E2: b"\x02", 0xD3E7: b"\x08"},
+        "read": {0xD3E0: 2, 0xD3E2: 1, 0xD3E7: 1},
+    },
+    {
+        "wram": {0xD3E0: b"\x40", 0xD3E1: b"\x00", 0xD3E2: b"\x02", 0xD3E7: b"\x08"},
+        "read": {0xD3E0: 2, 0xD3E2: 1, 0xD3E7: 1},
+    },
+    {
+        "wram": {0xD3E0: b"\x00", 0xD3E1: b"\x08", 0xD3E2: b"\x02", 0xD3E7: b"\x08"},
+        "read": {0xD3E0: 2, 0xD3E2: 1, 0xD3E7: 1},
+    },
+    dict(
+        POISON,
+        wram={0xD3E0: b"\x00", 0xD3E1: b"\x00", 0xD3E2: b"\x02", 0xD3E7: b"\x08"},
+        read={0xD3E0: 2, 0xD3E2: 1, 0xD3E7: 1},
+    ),
+]
+
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
 
 MUTATIONS = {}
 
@@ -6524,3 +6585,18 @@ MUTATIONS["ScriptCommand_PickChallengeCupPrizeCard"] = {
     ],
 }
 # <<< factory-mutation ScriptCommand_PickChallengeCupPrizeCard
+MUTATIONS["ScriptCommand_PickLegendaryCard"] = {
+    "source_symbol": "ScriptCommand_PickLegendaryCard",
+    "before": "\tmask = (uint8_t)(0x08u >> random);",
+    "after": "\tmask = (uint8_t)(0x04u >> random);",
+    "case_ids": [
+        "ScriptCommand_PickLegendaryCard-0",
+        "ScriptCommand_PickLegendaryCard-1",
+    ],
+}
+MUTATIONS["Func_d4fb"] = {
+    "source_symbol": "Func_d4fb",
+    "before": "if (GetEventValue(EVENT_CHALLENGE_CUP_1_STATE) == CHALLENGE_CUP_WON)",
+    "after": "if (GetEventValue(EVENT_CHALLENGE_CUP_1_STATE) != CHALLENGE_CUP_WON)",
+    "case_ids": ["Func_d4fb-1", "Func_d4fb-2"],
+}

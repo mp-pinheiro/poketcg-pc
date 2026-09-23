@@ -1582,6 +1582,25 @@ static void adapt_ScriptCommand_PickChallengeCupPrizeCard(ProbeState *s)
 	s->c = result.c;
 }
 /* <<< factory ScriptCommand_PickChallengeCupPrizeCard */
+/* >>> factory ScriptCommand_PickLegendaryCard */
+static void adapt_ScriptCommand_PickLegendaryCard(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = ScriptCommand_PickLegendaryCard();
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_PickLegendaryCard */
+
+/* >>> factory Func_d4fb */
+static void adapt_Func_d4fb(ProbeState *s)
+{
+	FuncD4fbResult result = Func_d4fb(s->c);
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory Func_d4fb */
 
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
@@ -1739,5 +1758,7 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_JumpIfMan1RequestedCardInCollection", adapt_ScriptCommand_JumpIfMan1RequestedCardInCollection },
 	{ "ScriptCommand_RemoveMan1RequestedCardFromCollection", adapt_ScriptCommand_RemoveMan1RequestedCardFromCollection },
 	{ "ScriptCommand_PickChallengeCupPrizeCard", adapt_ScriptCommand_PickChallengeCupPrizeCard },
+	{ "ScriptCommand_PickLegendaryCard", adapt_ScriptCommand_PickLegendaryCard },
+	{ "Func_d4fb", adapt_Func_d4fb },
 	{ NULL, NULL },
 };

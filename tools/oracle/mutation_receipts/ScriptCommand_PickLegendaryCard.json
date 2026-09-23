@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_PickLegendaryCard",
+  "case": "tests/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_PickLegendaryCard\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51914\": \"0a6f40\", \"52799\": \"f103\", \"54251\": \"1c\", \"54935\": \"40\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_PickLegendaryCard\", \"mismatches\": {\"bus\": {\"address\": 51914, \"reference\": \"0a6f40f103\", \"native\": \"ba0d3ff303\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[51914, 3], [52799, 2], [54251, 1], [54935, 1]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_PickLegendaryCard\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51914\": \"0a6f40\", \"52799\": \"f103\", \"54251\": \"1c\", \"54935\": \"40\"}}, \"status\": \"PASS\"}\n"
+}

@@ -371,6 +371,11 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 #define CHALLENGE_CUP_PRIZE_CARDS_BANK 3u
 #define CHALLENGE_CUP_PRIZE_CARDS_ADDR 0x51DCu
 #define CHALLENGE_CUP_PRIZE_CARD_COUNT 15u
+#define EVENT_LEGENDARY_CARDS_RECEIVED_FLAGS 0x71u
+#define LEGENDARY_CARDS_BANK 3u
+#define LEGENDARY_CARDS_ADDR 0x5234u
+#define LEGENDARY_CARD_EVENTS_BANK 3u
+#define LEGENDARY_CARD_EVENTS_ADDR 0x5240u
 /* <<< factory statics */
 
 
@@ -2638,3 +2643,55 @@ IncreaseScriptPointerResult ScriptCommand_PickChallengeCupPrizeCard(void)
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_PickChallengeCupPrizeCard */
+/* >>> factory ScriptCommand_PickLegendaryCard */
+IncreaseScriptPointerResult ScriptCommand_PickLegendaryCard(void)
+{
+	uint8_t flags = GetEventValue(EVENT_LEGENDARY_CARDS_RECEIVED_FLAGS);
+	uint8_t index;
+	uint8_t mask;
+	for (;;) {
+		uint8_t random = (uint8_t)(UpdateRNGSources() & 0x03u);
+		mask = (uint8_t)(0x08u >> random);
+		if ((mask & flags) == 0u) {
+			index = random;
+			break;
+		}
+	}
+	const uint8_t *event_entry = rom_ptr(
+		LEGENDARY_CARD_EVENTS_BANK,
+		(uint16_t)(LEGENDARY_CARD_EVENTS_ADDR + index)
+	);
+	(void)MaxOutEventValue(event_entry[0], 0u, 0u, 0u);
+	const uint8_t *card_entry = rom_ptr(
+		LEGENDARY_CARDS_BANK,
+		(uint16_t)(LEGENDARY_CARDS_ADDR + (uint16_t)index * 3u)
+	);
+	wCardReceived = card_entry[0];
+	gb_write8(wTxRam2_ADDR, card_entry[1]);
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), card_entry[2]);
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_PickLegendaryCard */
+
+/* >>> factory Func_d4fb */
+FuncD4fbResult Func_d4fb(uint8_t c)
+{
+	(void)ZeroOutEventValue(EVENT_PLAYER_ENTERED_CHALLENGE_CUP, 0u, 0u, 0u);
+	(void)Func_f602();
+	if (GetEventValue(EVENT_CHALLENGE_CUP_1_STATE) == CHALLENGE_CUP_WON) {
+		SetEventValueResult r = SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, CHALLENGE_CUP_OVER);
+		return (FuncD4fbResult){r.a, r.f, CHALLENGE_CUP_OVER};
+	}
+	if (GetEventValue(EVENT_CHALLENGE_CUP_2_STATE) == CHALLENGE_CUP_WON) {
+		SetEventValueResult r = SetEventValue(EVENT_CHALLENGE_CUP_2_STATE, 0u, 0u, CHALLENGE_CUP_OVER);
+		return (FuncD4fbResult){r.a, r.f, CHALLENGE_CUP_OVER};
+	}
+	uint8_t value = GetEventValue(EVENT_CHALLENGE_CUP_3_STATE);
+	if (value == CHALLENGE_CUP_WON) {
+		SetEventValueResult r = SetEventValue(EVENT_CHALLENGE_CUP_3_STATE, 0u, 0u, CHALLENGE_CUP_OVER);
+		return (FuncD4fbResult){r.a, r.f, CHALLENGE_CUP_OVER};
+	}
+	uint8_t f = value < CHALLENGE_CUP_WON ? 0x70u : 0x40u;
+	return (FuncD4fbResult){value, f, c};
+}
+/* <<< factory Func_d4fb */
