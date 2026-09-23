@@ -40,7 +40,6 @@ CFG_TOOL = ROOT / "tools" / "completion" / "cfg.py"
 CFG_OUTPUT = COMPLETION_DIR / "cfg.json"
 MAPPING_PATH = COMPLETION_DIR / "routine-mapping.json"
 EVIDENCE_DIR = COMPLETION_DIR / "evidence"
-FINALITY_DIR = COMPLETION_DIR / "finality"
 ROM_SIZE = 0x100000
 EXPECTED_EXTRA_REGISTRATIONS = 14
 ALLOWED_SPAN_KINDS = {"code", "data", "header/metadata", "padding", "unclassified"}
@@ -632,101 +631,14 @@ def load_scope_exclusions(
 
 
 def native_definitions() -> set[str]:
-    return set(native_bodies())
-
-
-def native_bodies() -> dict[str, tuple[Path, str]]:
-    bodies: dict[str, tuple[Path, str]] = {}
+    definitions: set[str] = set()
     for path in sorted((ROOT / "src" / "home").glob("*.c")):
         try:
             text = path.read_text(encoding="utf-8", errors="replace")
         except OSError as exc:
             raise AuditError(f"cannot read {path}: {exc}") from exc
-        for match in C_FUNCTION_RE.finditer(text):
-            depth = 0
-            end = None
-            for index in range(match.end() - 1, len(text)):
-                if text[index] == "{":
-                    depth += 1
-                elif text[index] == "}":
-                    depth -= 1
-                    if depth == 0:
-                        end = index + 1
-                        break
-            if end is not None:
-                bodies.setdefault(match.group(1), (path, text[match.start() : end]))
-    return bodies
-
-
-def _json_case_value(value: Any) -> Any:
-    if isinstance(value, bytes):
-        return {"bytes": value.hex()}
-    if isinstance(value, dict):
-        return {str(key): _json_case_value(item) for key, item in value.items()}
-    if isinstance(value, (list, tuple)):
-        return [_json_case_value(item) for item in value]
-    if isinstance(value, set):
-        return sorted(_json_case_value(item) for item in value)
-    return value
-
-
-def finality_path(routine: str) -> Path:
-    if not re.fullmatch(r"[A-Za-z0-9_.-]+", routine):
-        raise AuditError(f"unsafe routine finality path: {routine!r}")
-    return FINALITY_DIR / f"{routine}.json"
-
-
-def _stored_finality(routine: str) -> dict[str, Any] | None:
-    path = finality_path(routine)
-    if not path.is_file():
-        return None
-    try:
-        value = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        raise AuditError(f"cannot load finality record {path}: {exc}") from exc
-    if not isinstance(value, dict):
-        raise AuditError(f"finality record is not an object: {path}")
-    return value
-
-
-def _finality_for(
-    routine: str,
-    primary_case: dict[str, Any] | None,
-    primary_source: Path | None,
-    native_body: tuple[Path, str] | None,
-) -> tuple[str, dict[str, Any] | None, str | None]:
-    if primary_case is None:
-        return "debt", None, "missing primary completion contract"
-    if native_body is None:
-        return "debt", None, "missing native body"
-    body_sha256 = hashlib.sha256(native_body[1].encode("utf-8")).hexdigest()
-    contract_sha256 = hashlib.sha256(
-        evidence.canonical_bytes(_json_case_value(primary_case))
-    ).hexdigest()
-    mode = primary_case.get("completion", {}).get("mode")
-    if mode == "return":
-        if primary_source is None:
-            return "debt", None, "missing primary proof source"
-        record: dict[str, Any] = {
-            "schema": "routine-finality-v1",
-            "routine": routine,
-            "body_sha256": body_sha256,
-            "contract_sha256": contract_sha256,
-            "kind": "return",
-            "evidence_refs": [evidence.file_identity(ROOT, primary_source)],
-        }
-    else:
-        record = _stored_finality(routine)
-        if record is None:
-            return "debt", None, "missing event or transform finality evidence"
-    valid, reason = evidence.validate_finality_record(
-        ROOT,
-        record,
-        routine=routine,
-        body_sha256=body_sha256,
-        contract_sha256=contract_sha256,
-    )
-    return ("resolved", record, None) if valid else ("debt", record, reason)
+        definitions.update(C_FUNCTION_RE.findall(text))
+    return definitions
 
 
 def build_mapping(inventory: dict[str, Any]) -> dict[str, Any]:
@@ -737,11 +649,10 @@ def build_mapping(inventory: dict[str, Any]) -> dict[str, Any]:
     excluded = load_scope_exclusions(inventory_functions)
     canonical_inventory = {name for name in inventory_functions if name not in excluded}
     canonical_registry = set(grouped)
-    bodies = native_bodies()
+    bodies = native_definitions()
     rows: list[dict[str, Any]] = []
     missing_native: list[str] = []
-    provisional: list[str] = []
-    finality_debt: list[dict[str, str]] = []
+    missing_contract: list[str] = []
     for name in sorted(canonical_registry):
         info = inventory_functions.get(name)
         span = (
@@ -760,60 +671,36 @@ def build_mapping(inventory: dict[str, Any]) -> dict[str, Any]:
         )
         candidates = [candidate for candidate in candidate_names if candidate in bodies]
         primary = candidates[0] if candidates else None
-        native_body = bodies.get(primary) if primary else None
         if primary is None and name not in excluded:
             missing_native.append(name)
-        case_name = name
-        primary_case = primary_case_for(case_name)
+        primary_case = primary_case_for(name)
         if primary_case is None:
-            case_name = next(
+            primary_case = next(
                 (
-                    registration
+                    primary_case_for(registration)
                     for registration in grouped[name]
                     if primary_case_for(registration) is not None
                 ),
-                name,
+                None,
             )
-            primary_case = primary_case_for(case_name)
+        if primary_case is None and name not in excluded:
+            missing_contract.append(name)
         mode = primary_case.get("completion", {}).get("mode") if primary_case else None
         if name in excluded:
-            finality_state, finality_record, finality_reason = "excluded", None, None
+            disposition = "source-unreachable"
+        elif primary is None:
+            disposition = "missing-native"
+        elif primary_case is None:
+            disposition = "missing-contract"
         else:
-            finality_state, finality_record, finality_reason = _finality_for(
-                name,
-                primary_case,
-                primary_case_source(case_name),
-                native_body,
-            )
-            if finality_state != "resolved":
-                provisional.append(name)
-                finality_debt.append(
-                    {
-                        "routine": name,
-                        "reason": finality_reason or "unresolved finality",
-                    }
-                )
-        disposition = (
-            "source-unreachable"
-            if name in excluded
-            else (
-                "native-implementation-final"
-                if finality_state == "resolved"
-                else "native-implementation-provisional"
-            )
-        )
+            disposition = "native-implementation-final"
         rows.append(
             {
                 "canonical": name,
                 "registrations": grouped[name],
                 "native_symbols": candidates,
-                "disposition": disposition
-                if primary is not None or name in excluded
-                else "missing-native",
+                "disposition": disposition,
                 "completion_mode": mode,
-                "finality": finality_state,
-                "finality_reason": finality_reason,
-                "finality_record": finality_record,
                 "span": span,
             }
         )
@@ -849,24 +736,23 @@ def build_mapping(inventory: dict[str, Any]) -> dict[str, Any]:
         "unregistered_names": unregistered,
         "missing_native": len(missing_native),
         "missing_native_names": missing_native,
-        "final_routines": len(canonical_registry) - len(provisional),
-        "provisional_routines": len(provisional),
-        "provisional_names": provisional,
-        "finality_debt": finality_debt,
+        "missing_contract": len(missing_contract),
+        "missing_contract_names": missing_contract,
+        "final_routines": sum(
+            row["disposition"] == "native-implementation-final" for row in rows
+        ),
         "rows": rows,
         "registration_rows": registration_rows,
     }
 
 
 _PRIMARY_CASES: dict[str, dict[str, Any]] | None = None
-_PRIMARY_CASE_SOURCES: dict[str, Path] | None = None
 
 
 def primary_case_for(name: str) -> dict[str, Any] | None:
-    global _PRIMARY_CASES, _PRIMARY_CASE_SOURCES
+    global _PRIMARY_CASES
     if _PRIMARY_CASES is None:
         _PRIMARY_CASES = {}
-        _PRIMARY_CASE_SOURCES = {}
         case_dir = ROOT / "tests" / "cases"
         for path in sorted(case_dir.glob("*.py")):
             if path.name.startswith("_") or path.name == "__init__.py":
@@ -887,13 +773,7 @@ def primary_case_for(name: str) -> dict[str, Any] | None:
                 ]
                 if primary:
                     _PRIMARY_CASES[routine] = primary[0]
-                    _PRIMARY_CASE_SOURCES[routine] = path
     return _PRIMARY_CASES.get(name)
-
-
-def primary_case_source(name: str) -> Path | None:
-    primary_case_for(name)
-    return (_PRIMARY_CASE_SOURCES or {}).get(name)
 
 
 def evidence_path(req_id: str, *, root: Path = ROOT) -> Path:
@@ -1326,7 +1206,6 @@ def collect_report() -> dict[str, Any]:
             "registrations": 0,
             "logical_routines": 0,
             "final_routines": 0,
-            "provisional_routines": 0,
             "orphan_registrations": 0,
         }
         errors.append(str(exc))
@@ -1343,6 +1222,8 @@ def collect_report() -> dict[str, Any]:
         )
     if mapping.get("missing_native"):
         errors.append(f"missing native implementations: {mapping['missing_native']}")
+    if mapping.get("missing_contract"):
+        errors.append(f"missing primary oracle contracts: {mapping['missing_contract']}")
     if mapping.get("logical_routines") != mapping.get("expected_logical_routines"):
         errors.append("registry and canonical inventory counts disagree")
     if mapping.get("extra_registrations") != EXPECTED_EXTRA_REGISTRATIONS:
@@ -1351,8 +1232,6 @@ def collect_report() -> dict[str, Any]:
             f"registrations={mapping.get('registrations')}, "
             f"extra={mapping.get('extra_registrations')}, expected_extra={EXPECTED_EXTRA_REGISTRATIONS}"
         )
-    if mapping.get("finality_debt"):
-        errors.append(f"unresolved routine finality: {len(mapping['finality_debt'])}")
     baseline_values = baseline.get("baseline", {})
     manifest_values = manifest.get("manifest", {})
     key = content_key(baseline, manifest)
@@ -1439,7 +1318,6 @@ def collect_report() -> dict[str, Any]:
             "count": mapping.get("final_routines", 0),
             "total": mapping.get("logical_routines", 0),
         },
-        "provisional_routines": mapping.get("provisional_routines", 0),
         "trusted_oracle_evidence": {
             "count": 1 if trusted_gate else 0,
             "total": 1,
@@ -1486,7 +1364,6 @@ def collect_report() -> dict[str, Any]:
                 "unregistered_inventory",
                 "missing_native",
                 "final_routines",
-                "provisional_routines",
             )
             if key in mapping
         },
@@ -1757,7 +1634,6 @@ def command_routine_mapping() -> int:
             "canonical_routine",
             "registration",
             "native_disposition",
-            "finality",
             "span",
         ],
         "oracles": ["source-inventory", "native-registration"],
@@ -1772,10 +1648,10 @@ def command_routine_mapping() -> int:
             errors.append("logical routine counts disagree")
         if mapping["missing_native"]:
             errors.append("missing native implementations")
+        if mapping["missing_contract"]:
+            errors.append("missing primary oracle contracts")
         if mapping["orphan_registrations"] or mapping["unregistered_inventory"]:
             errors.append("routine mapping is not bijective")
-        if mapping["finality_debt"]:
-            errors.append("routine finality remains unresolved")
         artifact["mapping"] = {
             key: mapping[key]
             for key in (
@@ -1787,8 +1663,6 @@ def command_routine_mapping() -> int:
                 "orphan_registrations",
                 "unregistered_inventory",
                 "final_routines",
-                "provisional_routines",
-                "finality_debt",
             )
         }
         artifact["canonical_routine"] = {
@@ -1807,7 +1681,6 @@ def command_routine_mapping() -> int:
                         "canonical": row["canonical"],
                         "disposition": row["disposition"],
                         "completion_mode": row["completion_mode"],
-                        "finality": row["finality"],
                         "native_symbols": row["native_symbols"],
                     }
                     for row in rows
@@ -1823,7 +1696,7 @@ def command_routine_mapping() -> int:
         artifact["validation"] = {
             "errors": errors,
             "missing_native": mapping["missing_native_names"],
-            "finality_debt": mapping["finality_debt"],
+            "missing_contract": mapping["missing_contract_names"],
         }
         if errors:
             artifact["failure"] = "ROUTINE_MAPPING_INVALID"

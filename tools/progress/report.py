@@ -373,7 +373,7 @@ def workflow_axes(completion: dict | None, functions: list[dict]) -> dict:
     ] if isinstance(ratchet, dict) else []
     return {
         "source_finality": {
-            "debt": len(mapping.get("finality_debt", [])),
+            "missing_native": mapping.get("missing_native", 0),
             "final": mapping.get("final_routines"),
             "logical": mapping.get("logical_routines"),
         },

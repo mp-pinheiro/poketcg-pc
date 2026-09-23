@@ -92,7 +92,6 @@ PRIVATE_INPUTS = (
 
 PRIVATE_TREES = (
     "build/completion/evidence",
-    "build/completion/finality",
     "build/completion/gambatte",
     "poketcg/src",
 )
