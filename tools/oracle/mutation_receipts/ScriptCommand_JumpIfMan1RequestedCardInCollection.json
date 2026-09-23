@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_JumpIfMan1RequestedCardInCollection",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_JumpIfMan1RequestedCardInCollection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54291\": \"030000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_JumpIfMan1RequestedCardInCollection\", \"mismatches\": {\"bus\": {\"address\": 54293, \"reference\": \"030000\", \"native\": \"0300ff\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54291, 3]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_JumpIfMan1RequestedCardInCollection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54291\": \"030000\"}}, \"status\": \"PASS\"}\n"
+}

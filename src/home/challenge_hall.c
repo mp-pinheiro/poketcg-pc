@@ -140,3 +140,33 @@ ChallengeHallAfterDuelResult ChallengeHallAfterDuel(void)
 	return (ChallengeHallAfterDuelResult){r.a, r.f, r.b, r.c, r.hl};
 }
 /* <<< factory ChallengeHallAfterDuel */
+
+/* >>> factory Func_f580 */
+uint8_t Func_f580(void)
+{
+	uint8_t cup_number = GetEventValue(EVENT_CHALLENGE_CUP_NUMBER);
+	uint8_t picked;
+	if (cup_number != 3u && GetEventValue(EVENT_CHALLENGE_CUP_OPPONENT_NUMBER) == 3u) {
+		picked = NPC_RONALD1;
+	} else {
+		uint8_t count = (cup_number == 3u) ? CHALLENGE_HALL_NPC_COUNT
+		                                   : (uint8_t)(CHALLENGE_HALL_NPC_COUNT - 1u);
+		uint8_t index;
+		do {
+			index = Random(count);
+		} while ((Func_f5cc(index).f & 0x10u) != 0u);
+		(void)Func_f5d4(index);
+		picked = gb_read8((uint16_t)(CHALLENGE_HALL_NPCS_ADDR + index));
+	}
+	wTempNPC = picked;
+	wChallengeHallNPC = picked;
+	return picked;
+}
+/* <<< factory Func_f580 */
+
+/* >>> factory Func_f602 */
+SetEventValueResult Func_f602(void)
+{
+	return SetEventValue(EVENT_CHALLENGE_CUP_OPPONENT_CHOSEN, 0u, 0u, 0u);
+}
+/* <<< factory Func_f602 */

@@ -74,6 +74,21 @@ static void adapt_Preload_ChallengeHallOpponent(ProbeState *s)
 	s->a = r.a; s->f = r.f;
 }
 /* <<< factory Preload_ChallengeHallOpponent */
+/* >>> factory Func_f580 */
+static void adapt_Func_f580(ProbeState *s)
+{
+	s->a = Func_f580();
+}
+/* <<< factory Func_f580 */
+
+/* >>> factory Func_f602 */
+static void adapt_Func_f602(ProbeState *s)
+{
+	SetEventValueResult r = Func_f602();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Func_f602 */
 
 const ProbeEntry probe_entries_challenge_hall[] = {
 	{ "Func_f5db", adapt_Func_f5db },
@@ -85,5 +100,7 @@ const ProbeEntry probe_entries_challenge_hall[] = {
 	{ "ChallengeHallLoadMap", adapt_ChallengeHallLoadMap },
 	{ "Preload_Guide", adapt_Preload_Guide },
 	{ "Preload_ChallengeHallOpponent", adapt_Preload_ChallengeHallOpponent },
+	{ "Func_f580", adapt_Func_f580 },
+	{ "Func_f602", adapt_Func_f602 },
 	{ NULL, NULL },
 };

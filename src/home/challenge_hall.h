@@ -2,6 +2,7 @@
 #define POKETCG_HOME_CHALLENGE_HALL_H
 
 #include <stdint.h>
+#include "home/scripting.h"
 
 typedef struct {
 	uint8_t a;
@@ -62,4 +63,10 @@ ChallengeHallSetBitResult Func_f5d4(uint8_t c);
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint16_t hl; } ChallengeHallAfterDuelResult;
 ChallengeHallAfterDuelResult ChallengeHallAfterDuel(void);
 /* <<< factory ChallengeHallAfterDuel */
+/* >>> factory Func_f580 */
+uint8_t Func_f580(void);
+/* <<< factory Func_f580 */
+/* >>> factory Func_f602 */
+SetEventValueResult Func_f602(void);
+/* <<< factory Func_f602 */
 #endif

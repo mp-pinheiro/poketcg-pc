@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+/* >>> factory Func_d703 */
+typedef struct { uint8_t a; uint8_t f; } FuncD703Result;
+FuncD703Result Func_d703(void);
+/* <<< factory Func_d703 */
 /* >>> factory Preload_DrMason */
 typedef struct { uint8_t a; uint8_t f; } PreloadDrMasonResult;
 PreloadDrMasonResult Preload_DrMason(void);

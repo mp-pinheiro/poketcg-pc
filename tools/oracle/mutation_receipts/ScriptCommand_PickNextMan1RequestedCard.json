@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_PickNextMan1RequestedCard",
+  "case": "tests/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_PickNextMan1RequestedCard\", \"registers\": {\"a\": 197, \"b\": 187, \"c\": 1, \"d\": 221, \"e\": 238, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51914\": \"d42f43\", \"54234\": \"2b1f\", \"54291\": \"01c5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_PickNextMan1RequestedCard\", \"mismatches\": {\"bus\": {\"address\": 51914, \"reference\": \"d42f432b1f\", \"native\": \"ccfe3d810f\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[51914, 3], [54234, 2], [54291, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_PickNextMan1RequestedCard\", \"registers\": {\"a\": 197, \"b\": 187, \"c\": 1, \"d\": 221, \"e\": 238, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51914\": \"d42f43\", \"54234\": \"2b1f\", \"54291\": \"01c5\"}}, \"status\": \"PASS\"}\n"
+}

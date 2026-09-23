@@ -6929,8 +6929,8 @@ void DisplayEnergyDiscardScreen(uint8_t a)
 }
 /* <<< factory DisplayEnergyDiscardScreen */
 
-/* >>> factory OpenAttackPage */
-static void SetOBP1OrSGB3ToCardPalette(void)
+/* >>> factory SetOBP1OrSGB3ToCardPalette */
+void SetOBP1OrSGB3ToCardPalette(void)
 {
 	wOBP0 = 0xE4u;
 	uint8_t console = gb_read8(wConsole_ADDR);
@@ -6942,7 +6942,9 @@ static void SetOBP1OrSGB3ToCardPalette(void)
 	}
 	CopyCGBCardPalette(0x09u);
 }
+/* <<< factory SetOBP1OrSGB3ToCardPalette */
 
+/* >>> factory OpenAttackPage */
 void OpenAttackPage(void)
 {
 	wCardPageNumber = CARDPAGE_POKEMON_OVERVIEW;

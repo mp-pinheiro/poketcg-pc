@@ -1,0 +1,9 @@
+{
+  "fn": "Func_f602",
+  "case": "tests/cases/challenge_hall.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_f602\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54242\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_f602\", \"mismatches\": {\"a\": [0, 2], \"f\": [128, 0], \"bus\": {\"address\": 54242, \"reference\": \"00\", \"native\": \"02\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[54242, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_f602\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54242\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

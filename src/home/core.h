@@ -289,6 +289,9 @@ void LoadPlayAreaCardGfx(uint8_t a, uint16_t de);
 /* >>> factory SetBGP6OrSGB3ToCardPalette */
 void SetBGP6OrSGB3ToCardPalette(void);
 /* <<< factory SetBGP6OrSGB3ToCardPalette */
+/* >>> factory SetOBP1OrSGB3ToCardPalette */
+void SetOBP1OrSGB3ToCardPalette(void);
+/* <<< factory SetOBP1OrSGB3ToCardPalette */
 /* >>> factory SetOneLineSeparation */
 uint8_t SetOneLineSeparation(void);
 /* <<< factory SetOneLineSeparation */

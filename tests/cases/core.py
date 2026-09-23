@@ -1,38 +1,129 @@
 from tests.cases._fixtures import Fixture
-from tests.cases._fixtures import card_energies_fixture as _card_energies_fixture, CARD_ENERGIES_REGS as _CARD_ENERGIES_REGS, attack_list_fixture as _attack_list_fixture, ATTACK_LIST_REGS as _ATTACK_LIST_REGS
-from tests.cases._fixtures import card_page_attack2_fixture as _card_page_attack2_fixture, CARD_PAGE_ATTACK2_REGS as _CARD_PAGE_ATTACK2_REGS
-from tests.cases._fixtures import ai_power_effect_fixture as _ai_power_effect_fixture, AI_POWER_EFFECT_REGS as _AI_POWER_EFFECT_REGS
-from tests.cases._fixtures import damage_number_chars_fixture as _damage_number_chars_fixture, DAMAGE_NUMBER_CHARS_REGS as _DAMAGE_NUMBER_CHARS_REGS
-from tests.cases._fixtures import digit_char_fixture as _digit_char_fixture, DIGIT_CHAR_REGS as _DIGIT_CHAR_REGS
-from tests.cases._fixtures import begin_use_attack_fixture as _begin_use_attack_fixture, BEGIN_USE_ATTACK_REGS as _BEGIN_USE_ATTACK_REGS
+from tests.cases._fixtures import (
+    card_energies_fixture as _card_energies_fixture,
+    CARD_ENERGIES_REGS as _CARD_ENERGIES_REGS,
+    attack_list_fixture as _attack_list_fixture,
+    ATTACK_LIST_REGS as _ATTACK_LIST_REGS,
+)
+from tests.cases._fixtures import (
+    card_page_attack2_fixture as _card_page_attack2_fixture,
+    CARD_PAGE_ATTACK2_REGS as _CARD_PAGE_ATTACK2_REGS,
+)
+from tests.cases._fixtures import (
+    ai_power_effect_fixture as _ai_power_effect_fixture,
+    AI_POWER_EFFECT_REGS as _AI_POWER_EFFECT_REGS,
+)
+from tests.cases._fixtures import (
+    damage_number_chars_fixture as _damage_number_chars_fixture,
+    DAMAGE_NUMBER_CHARS_REGS as _DAMAGE_NUMBER_CHARS_REGS,
+)
+from tests.cases._fixtures import (
+    digit_char_fixture as _digit_char_fixture,
+    DIGIT_CHAR_REGS as _DIGIT_CHAR_REGS,
+)
+from tests.cases._fixtures import (
+    begin_use_attack_fixture as _begin_use_attack_fixture,
+    BEGIN_USE_ATTACK_REGS as _BEGIN_USE_ATTACK_REGS,
+)
 from tests.cases._fixtures import bench_switch_fixture as _bench_switch_fixture
-from tests.cases._fixtures import bench_count_fixture as _bench_count_fixture, BENCH_COUNT_REGS as _BENCH_COUNT_REGS
-from tests.cases._fixtures import bench_half_hp_fixture as _bench_half_hp_fixture, BENCH_HALF_HP_REGS as _BENCH_HALF_HP_REGS
-from tests.cases._fixtures import special_attack_params_fixture as _special_attack_params_fixture, SPECIAL_ATTACK_PARAMS_REGS as _SPECIAL_ATTACK_PARAMS_REGS
-from tests.cases._fixtures import evolution_in_list_fixture as _evolution_in_list_fixture, EVOLUTION_IN_LIST_REGS as _EVOLUTION_IN_LIST_REGS
-from tests.cases._fixtures import card_can_be_played_fixture as _card_can_be_played_fixture, CARD_CAN_BE_PLAYED_REGS as _CARD_CAN_BE_PLAYED_REGS
-from tests.cases._fixtures import alive_in_play_area_fixture as _alive_in_play_area_fixture, ALIVE_IN_PLAY_AREA_REGS as _ALIVE_IN_PLAY_AREA_REGS
-from tests.cases._fixtures import energy_needed_in_hand_fixture as _energy_needed_in_hand_fixture, ENERGY_NEEDED_IN_HAND_REGS as _ENERGY_NEEDED_IN_HAND_REGS
-from tests.cases._fixtures import sort_temp_hand_fixture as _sort_temp_hand_fixture, SORT_TEMP_HAND_REGS as _SORT_TEMP_HAND_REGS
-from tests.cases._fixtures import card_description_fixture as _card_description_fixture, CARD_DESCRIPTION_REGS as _CARD_DESCRIPTION_REGS
-from tests.cases._fixtures import attack_information_fixture as _attack_information_fixture, ATTACK_INFORMATION_REGS as _ATTACK_INFORMATION_REGS
-from tests.cases._fixtures import play_area_card_info_fixture as _play_area_card_info_fixture, PLAY_AREA_CARD_INFO_REGS as _PLAY_AREA_CARD_INFO_REGS
-from tests.cases._fixtures import first_or_next_page_fixture as _first_or_next_page_fixture, FIRST_OR_NEXT_PAGE_REGS as _FIRST_OR_NEXT_PAGE_REGS
-from tests.cases._fixtures import card_page_energy_fixture as _card_page_energy_fixture, CARD_PAGE_ENERGY_REGS as _CARD_PAGE_ENERGY_REGS
-from tests.cases._fixtures import card_page_trainer_fixture as _card_page_trainer_fixture, CARD_PAGE_TRAINER_REGS as _CARD_PAGE_TRAINER_REGS
-from tests.cases._fixtures import energy_or_trainer_page_fixture as _energy_or_trainer_page_fixture, ENERGY_OR_TRAINER_PAGE_REGS as _ENERGY_OR_TRAINER_PAGE_REGS
-from tests.cases._fixtures import fully_powered_fixture as _fully_powered_fixture, FULLY_POWERED_REGS as _FULLY_POWERED_REGS
-from tests.cases._fixtures import ai_trainer_phase5_fixture as _ai_trainer_phase5_fixture, AI_TRAINER_PHASE5_REGS as _AI_TRAINER_PHASE5_REGS
-from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS, ai_defending_ko_fixture as _ai_defending_ko_fixture, AI_DEFENDING_KO_REGS as _AI_DEFENDING_KO_REGS, power_screen_fixture as _power_screen_fixture, POWER_SCREEN_REGS as _POWER_SCREEN_REGS
+from tests.cases._fixtures import (
+    bench_count_fixture as _bench_count_fixture,
+    BENCH_COUNT_REGS as _BENCH_COUNT_REGS,
+)
+from tests.cases._fixtures import (
+    bench_half_hp_fixture as _bench_half_hp_fixture,
+    BENCH_HALF_HP_REGS as _BENCH_HALF_HP_REGS,
+)
+from tests.cases._fixtures import (
+    special_attack_params_fixture as _special_attack_params_fixture,
+    SPECIAL_ATTACK_PARAMS_REGS as _SPECIAL_ATTACK_PARAMS_REGS,
+)
+from tests.cases._fixtures import (
+    evolution_in_list_fixture as _evolution_in_list_fixture,
+    EVOLUTION_IN_LIST_REGS as _EVOLUTION_IN_LIST_REGS,
+)
+from tests.cases._fixtures import (
+    card_can_be_played_fixture as _card_can_be_played_fixture,
+    CARD_CAN_BE_PLAYED_REGS as _CARD_CAN_BE_PLAYED_REGS,
+)
+from tests.cases._fixtures import (
+    alive_in_play_area_fixture as _alive_in_play_area_fixture,
+    ALIVE_IN_PLAY_AREA_REGS as _ALIVE_IN_PLAY_AREA_REGS,
+)
+from tests.cases._fixtures import (
+    energy_needed_in_hand_fixture as _energy_needed_in_hand_fixture,
+    ENERGY_NEEDED_IN_HAND_REGS as _ENERGY_NEEDED_IN_HAND_REGS,
+)
+from tests.cases._fixtures import (
+    sort_temp_hand_fixture as _sort_temp_hand_fixture,
+    SORT_TEMP_HAND_REGS as _SORT_TEMP_HAND_REGS,
+)
+from tests.cases._fixtures import (
+    card_description_fixture as _card_description_fixture,
+    CARD_DESCRIPTION_REGS as _CARD_DESCRIPTION_REGS,
+)
+from tests.cases._fixtures import (
+    attack_information_fixture as _attack_information_fixture,
+    ATTACK_INFORMATION_REGS as _ATTACK_INFORMATION_REGS,
+)
+from tests.cases._fixtures import (
+    play_area_card_info_fixture as _play_area_card_info_fixture,
+    PLAY_AREA_CARD_INFO_REGS as _PLAY_AREA_CARD_INFO_REGS,
+)
+from tests.cases._fixtures import (
+    first_or_next_page_fixture as _first_or_next_page_fixture,
+    FIRST_OR_NEXT_PAGE_REGS as _FIRST_OR_NEXT_PAGE_REGS,
+)
+from tests.cases._fixtures import (
+    card_page_energy_fixture as _card_page_energy_fixture,
+    CARD_PAGE_ENERGY_REGS as _CARD_PAGE_ENERGY_REGS,
+)
+from tests.cases._fixtures import (
+    card_page_trainer_fixture as _card_page_trainer_fixture,
+    CARD_PAGE_TRAINER_REGS as _CARD_PAGE_TRAINER_REGS,
+)
+from tests.cases._fixtures import (
+    energy_or_trainer_page_fixture as _energy_or_trainer_page_fixture,
+    ENERGY_OR_TRAINER_PAGE_REGS as _ENERGY_OR_TRAINER_PAGE_REGS,
+)
+from tests.cases._fixtures import (
+    fully_powered_fixture as _fully_powered_fixture,
+    FULLY_POWERED_REGS as _FULLY_POWERED_REGS,
+)
+from tests.cases._fixtures import (
+    ai_trainer_phase5_fixture as _ai_trainer_phase5_fixture,
+    AI_TRAINER_PHASE5_REGS as _AI_TRAINER_PHASE5_REGS,
+)
+from tests.cases._fixtures import (
+    attack_fixture as _attack_fixture,
+    ATTACK_REGS as _ATTACK_REGS,
+    ai_defending_ko_fixture as _ai_defending_ko_fixture,
+    AI_DEFENDING_KO_REGS as _AI_DEFENDING_KO_REGS,
+    power_screen_fixture as _power_screen_fixture,
+    POWER_SCREEN_REGS as _POWER_SCREEN_REGS,
+)
+
 """Oracle-diff cases for poketcg/src/engine/duel/core.asm."""
 
 from tests.cases._duel_setup import (
-    DUEL_ANIM_SAFE, DUEL_CYCLE_BUDGET, DUEL_INSTRUCTION_BUDGET, DUEL_KEYS,
-    DUEL_SETUP, DUEL_WRAM)
+    DUEL_ANIM_SAFE,
+    DUEL_CYCLE_BUDGET,
+    DUEL_INSTRUCTION_BUDGET,
+    DUEL_KEYS,
+    DUEL_SETUP,
+    DUEL_WRAM,
+)
 
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
-          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 
 CONTRACT = {}
 CASES = {}
@@ -41,9 +132,9 @@ CASES = {}
 CONTRACT["SetLineSeparation"] = {"compare": ("a",), "preserve": ()}
 wLineSeparation = 0xCD08
 CASES["SetLineSeparation"] = [
-	{"a": 0, "wram": {wLineSeparation: b"\xff"}},
-	{"a": 1, "wram": {wLineSeparation: b"\x00"}},
-	dict(POISON, a=0x20, wram={wLineSeparation: b"\x00"}),
+    {"a": 0, "wram": {wLineSeparation: b"\xff"}},
+    {"a": 1, "wram": {wLineSeparation: b"\x00"}},
+    dict(POISON, a=0x20, wram={wLineSeparation: b"\x00"}),
 ]
 # <<< factory SetLineSeparation
 
@@ -62,9 +153,9 @@ CASES["PlayAreaScreenMenuFunction"] = [
 # >>> factory SwitchAttackPage
 CONTRACT["SwitchAttackPage"] = {"compare": (), "preserve": ()}
 CASES["SwitchAttackPage"] = [
-	{"wram": {0xCC04: b"\x00"}, "read": {0xCC04: 1}},
-	{"wram": {0xCC04: b"\x01"}, "read": {0xCC04: 1}},
-	dict(POISON, wram={0xCC04: b"\xff"}, read={0xCC04: 1}),
+    {"wram": {0xCC04: b"\x00"}, "read": {0xCC04: 1}},
+    {"wram": {0xCC04: b"\x01"}, "read": {0xCC04: 1}},
+    dict(POISON, wram={0xCC04: b"\xff"}, read={0xCC04: 1}),
 ]
 # <<< factory SwitchAttackPage
 
@@ -72,27 +163,41 @@ CASES["SwitchAttackPage"] = [
 CONTRACT["CopyCGBCardPalette"] = {"compare": (), "preserve": ()}
 CASES["CopyCGBCardPalette"] = [
     {"wram": {0xCE23: bytes(range(8))}, "read": {0xCAF0: 8}},
-    dict(POISON, a=2, wram={0xCE23: bytes(range(0x10, 0x18))},
-         read={0xCAF0 + 16: 8}),
+    dict(POISON, a=2, wram={0xCE23: bytes(range(0x10, 0x18))}, read={0xCAF0 + 16: 8}),
 ]
 # <<< factory CopyCGBCardPalette
 
 # >>> factory CreateCardAttrBlkPacket
-CONTRACT["CreateCardAttrBlkPacket"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CONTRACT["CreateCardAttrBlkPacket"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e"),
+}
 CASES["CreateCardAttrBlkPacket"] = [
-    {"wram": {0xCAE0: b"\xAA" * 32}, "read": {0xCAE0: 32}},
-    dict(POISON, a=0, d=0, e=0, wram={0xCAE0: b"\xAA" * 32}, read={0xCAE0: 32}),
+    {"wram": {0xCAE0: b"\xaa" * 32}, "read": {0xCAE0: 32}},
+    dict(POISON, a=0, d=0, e=0, wram={0xCAE0: b"\xaa" * 32}, read={0xCAE0: 32}),
     {"a": 1, "d": 2, "e": 3, "wram": {0xCAE0: b"\x55" * 32}, "read": {0xCAE0: 32}},
 ]
 # <<< factory CreateCardAttrBlkPacket
 # >>> factory CreateCardAttrBlkPacket_DataSet
 CONTRACT["CreateCardAttrBlkPacket_DataSet"] = {"compare": ("hl",), "preserve": ()}
 CASES["CreateCardAttrBlkPacket_DataSet"] = [
-	{"hl": 0xC100, "a": 0, "d": 0, "e": 0,
-	 "wram": {0xC100: b"\x00" * 6}, "read": {0xC100: 6}},
-	dict(POISON, hl=0xC100, wram={0xC100: b"\x00" * 6}, read={0xC100: 6}),
-	{"hl": 0xC100, "a": 0x12, "d": 0x30, "e": 0x40,
-	 "wram": {0xC100: b"\x00" * 6}, "read": {0xC100: 6}},
+    {
+        "hl": 0xC100,
+        "a": 0,
+        "d": 0,
+        "e": 0,
+        "wram": {0xC100: b"\x00" * 6},
+        "read": {0xC100: 6},
+    },
+    dict(POISON, hl=0xC100, wram={0xC100: b"\x00" * 6}, read={0xC100: 6}),
+    {
+        "hl": 0xC100,
+        "a": 0x12,
+        "d": 0x30,
+        "e": 0x40,
+        "wram": {0xC100: b"\x00" * 6},
+        "read": {0xC100: 6},
+    },
 ]
 # <<< factory CreateCardAttrBlkPacket_DataSet
 
@@ -104,9 +209,24 @@ sCurrentDuelData = 0xBC04
 wDuelType = 0xCC09
 wPlayerDuelVariables = 0xC200
 CASES["SaveDuelDataToDE"] = [
-	{"d": 0xBC, "e": 0x00, "wram": {wDuelType: b"\x02"}, "sread": {0: {sCurrentDuel: 4}}},
-	dict(POISON, d=0xBC, e=0x00, wram={wDuelType: b"\x03", wPlayerDuelVariables: b"\x11\x22"}),
-	{"d": 0xBC, "e": 0x00, "wram": {wDuelType: b"\x00"}, "sread": {0: {sCurrentDuel: 1}}},
+    {
+        "d": 0xBC,
+        "e": 0x00,
+        "wram": {wDuelType: b"\x02"},
+        "sread": {0: {sCurrentDuel: 4}},
+    },
+    dict(
+        POISON,
+        d=0xBC,
+        e=0x00,
+        wram={wDuelType: b"\x03", wPlayerDuelVariables: b"\x11\x22"},
+    ),
+    {
+        "d": 0xBC,
+        "e": 0x00,
+        "wram": {wDuelType: b"\x00"},
+        "sread": {0: {sCurrentDuel: 1}},
+    },
 ]
 # <<< factory SaveDuelDataToDE
 
@@ -116,29 +236,39 @@ sCurrentDuelData = 0xBC04
 wPlayerDuelVariables = 0xC200
 hWhoseTurn = 0xFF97
 CASES["LoadSavedDuelDataFromDE"] = [
-	{"d": 0xBC, "e": 0x00, "sram": {0: {sCurrentDuelData: bytes(range(0, 4))}},
-	 "read": {wPlayerDuelVariables: 4}},
-	dict(POISON, d=0xBC, e=0x00, sram={0: {sCurrentDuelData: bytes([0xAA, 0xBB])}}),
-	{"d": 0xBC, "e": 0x00, "sram": {0: {sCurrentDuelData: b"\x00" * 4}},
-	 "read": {wPlayerDuelVariables: 4}},
+    {
+        "d": 0xBC,
+        "e": 0x00,
+        "sram": {0: {sCurrentDuelData: bytes(range(0, 4))}},
+        "read": {wPlayerDuelVariables: 4},
+    },
+    dict(POISON, d=0xBC, e=0x00, sram={0: {sCurrentDuelData: bytes([0xAA, 0xBB])}}),
+    {
+        "d": 0xBC,
+        "e": 0x00,
+        "sram": {0: {sCurrentDuelData: b"\x00" * 4}},
+        "read": {wPlayerDuelVariables: 4},
+    },
 ]
 # <<< factory LoadSavedDuelDataFromDE
 
 # >>> factory SetBGP7OrSGB2ToCardPalette
 CONTRACT["SetBGP7OrSGB2ToCardPalette"] = {"compare": (), "preserve": ()}
 CASES["SetBGP7OrSGB2ToCardPalette"] = [
-	{"wram": {0xCAB4: bytes([0x00])}},
-	{"wram": {0xCAB4: bytes([0x01]), 0xCE23: bytes([0x11, 0x22, 0x33, 0x44])},
-	 "read": {0xCAE1: 4}},
-	dict(POISON, wram={0xCAB4: bytes([0x02])}),
+    {"wram": {0xCAB4: bytes([0x00])}},
+    {
+        "wram": {0xCAB4: bytes([0x01]), 0xCE23: bytes([0x11, 0x22, 0x33, 0x44])},
+        "read": {0xCAE1: 4},
+    },
+    dict(POISON, wram={0xCAB4: bytes([0x02])}),
 ]
 # <<< factory SetBGP7OrSGB2ToCardPalette
 
 # >>> factory JPWriteByteToBGMap0
 CONTRACT["JPWriteByteToBGMap0"] = {"compare": ("a",), "preserve": ()}
 CASES["JPWriteByteToBGMap0"] = [
-	{"a": 0x41, "b": 0, "c": 0, "read": {0x9800: 1}},
-	dict(POISON, a=0x50, b=5, c=3, read={0x9800 + 3 * 32 + 5: 1}),
+    {"a": 0x41, "b": 0, "c": 0, "read": {0x9800: 1}},
+    dict(POISON, a=0x50, b=5, c=3, read={0x9800 + 3 * 32 + 5: 1}),
 ]
 # <<< factory JPWriteByteToBGMap0
 
@@ -147,8 +277,8 @@ CASES["JPWriteByteToBGMap0"] = [
 wVBlankOAMCopyToggle = 0xCAC0
 CONTRACT["ZeroObjectPositionsAndToggleOAMCopy"] = {"compare": (), "preserve": ()}
 CASES["ZeroObjectPositionsAndToggleOAMCopy"] = [
-	{"wram": {wVBlankOAMCopyToggle: b"\x00"}},
-	dict(POISON, wram={wVBlankOAMCopyToggle: b"\xFF"}),
+    {"wram": {wVBlankOAMCopyToggle: b"\x00"}},
+    dict(POISON, wram={wVBlankOAMCopyToggle: b"\xff"}),
 ]
 # <<< factory ZeroObjectPositionsAndToggleOAMCopy
 
@@ -158,20 +288,49 @@ sCurrentlySelectedDeck_ = 0xB700
 sDeck1Cards_ = 0xA218
 wPlayerDeck_ = 0xC400
 CASES["LoadPlayerDeck"] = [
-    {"sram": {0: {sCurrentlySelectedDeck_: b"\x00", sDeck1Cards_: bytes(range(60))}},
-     "read": {wPlayerDeck_: 60}},
-    dict(POISON, sram={0: {sCurrentlySelectedDeck_: b"\x01", sDeck1Cards_: bytes(range(60)), sDeck1Cards_ + 60: bytes(range(60))}},
-         read={wPlayerDeck_: 60}),
-    {"sram": {0: {sCurrentlySelectedDeck_: b"\x00", sDeck1Cards_: bytes([0xFF] * 60)}},
-     "read": {wPlayerDeck_: 60}},
-    {"sram": {0: {sCurrentlySelectedDeck_: b"\x01", sDeck1Cards_: bytes([1] * 60), sDeck1Cards_ + 60: bytes([2] * 60)}},
-     "read": {wPlayerDeck_: 60}},
-    {"ramg": False, "sram": {0: {sCurrentlySelectedDeck_: b"\x00", sDeck1Cards_: bytes(range(60))}},
-     "read": {wPlayerDeck_: 60}},
+    {
+        "sram": {0: {sCurrentlySelectedDeck_: b"\x00", sDeck1Cards_: bytes(range(60))}},
+        "read": {wPlayerDeck_: 60},
+    },
+    dict(
+        POISON,
+        sram={
+            0: {
+                sCurrentlySelectedDeck_: b"\x01",
+                sDeck1Cards_: bytes(range(60)),
+                sDeck1Cards_ + 60: bytes(range(60)),
+            }
+        },
+        read={wPlayerDeck_: 60},
+    ),
+    {
+        "sram": {
+            0: {sCurrentlySelectedDeck_: b"\x00", sDeck1Cards_: bytes([0xFF] * 60)}
+        },
+        "read": {wPlayerDeck_: 60},
+    },
+    {
+        "sram": {
+            0: {
+                sCurrentlySelectedDeck_: b"\x01",
+                sDeck1Cards_: bytes([1] * 60),
+                sDeck1Cards_ + 60: bytes([2] * 60),
+            }
+        },
+        "read": {wPlayerDeck_: 60},
+    },
+    {
+        "ramg": False,
+        "sram": {0: {sCurrentlySelectedDeck_: b"\x00", sDeck1Cards_: bytes(range(60))}},
+        "read": {wPlayerDeck_: 60},
+    },
 ]
 # <<< factory LoadPlayerDeck
 # >>> factory CheckSkipDelayAllowed
-CONTRACT["CheckSkipDelayAllowed"] = {"compare": ("f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["CheckSkipDelayAllowed"] = {
+    "compare": ("f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 wSkipDelayAllowed_ = 0xCCF2
 hKeysHeld_ = 0xFF90
 CASES["CheckSkipDelayAllowed"] = [
@@ -193,103 +352,163 @@ wVBlankCounter_ = 0xCAB8
 wOpponentTurnEnded_ = 0xCBE1
 wDuelFinished_ = 0xCC07
 CASES["AIMakeDecision"] = [
-    {"a": 0x08, "wram": {
-        hOppActionTableIndex_: b"\x00",
-        wSkipDuelistIsThinkingDelay_: b"\x01",
-        wVBlankCounter_: b"\x01",
-        wOpponentTurnEnded_: b"\x00",
-        wDuelFinished_: b"\x00",
-    }},
-    dict(POISON, a=0x08, wram={
-        hOppActionTableIndex_: b"\x00",
-        wSkipDuelistIsThinkingDelay_: b"\x01",
-        wVBlankCounter_: b"\x01",
-        wOpponentTurnEnded_: b"\x00",
-        wDuelFinished_: b"\x00",
-    }),
-    {"a": 0x08, "wram": {
-        hOppActionTableIndex_: b"\x00",
-        wSkipDuelistIsThinkingDelay_: b"\x01",
-        wVBlankCounter_: b"\x01",
-        wOpponentTurnEnded_: b"\x00",
-        wDuelFinished_: b"\x00",
-    }},
+    {
+        "a": 0x08,
+        "wram": {
+            hOppActionTableIndex_: b"\x00",
+            wSkipDuelistIsThinkingDelay_: b"\x01",
+            wVBlankCounter_: b"\x01",
+            wOpponentTurnEnded_: b"\x00",
+            wDuelFinished_: b"\x00",
+        },
+    },
+    dict(
+        POISON,
+        a=0x08,
+        wram={
+            hOppActionTableIndex_: b"\x00",
+            wSkipDuelistIsThinkingDelay_: b"\x01",
+            wVBlankCounter_: b"\x01",
+            wOpponentTurnEnded_: b"\x00",
+            wDuelFinished_: b"\x00",
+        },
+    ),
+    {
+        "a": 0x08,
+        "wram": {
+            hOppActionTableIndex_: b"\x00",
+            wSkipDuelistIsThinkingDelay_: b"\x01",
+            wVBlankCounter_: b"\x01",
+            wOpponentTurnEnded_: b"\x00",
+            wDuelFinished_: b"\x00",
+        },
+    },
     # $0F -> OppAction_NoAction; post-dispatch wSkip==0 exits through the
     # DuelistIsThinking textbox (core.asm:6255-6259).
-    {"a": 0x0F, "keys": [0x00, 0x01], "wram": {
-        hOppActionTableIndex_: b"\x00",
-        wSkipDuelistIsThinkingDelay_: b"\x01",
-        wOpponentTurnEnded_: b"\x00",
-        wDuelFinished_: b"\x00",
-        0xFF80: b"\x01", 0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80",
+    {
+        "a": 0x0F,
+        "keys": [0x00, 0x01],
+        "wram": {
+            hOppActionTableIndex_: b"\x00",
+            wSkipDuelistIsThinkingDelay_: b"\x01",
+            wOpponentTurnEnded_: b"\x00",
+            wDuelFinished_: b"\x00",
+            0xFF80: b"\x01",
+            0xFF97: b"\xc2",
+            0xCABB: b"\x80",
+            0xFF40: b"\x80",
+        },
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
     },
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
     # wDuelFinished forces the .turn_ended carry exit (core.asm:6248-6251).
-    {"a": 0x0F, "wram": {
-        hOppActionTableIndex_: b"\x00",
-        wSkipDuelistIsThinkingDelay_: b"\x01",
-        wVBlankCounter_: b"\x01",
-        wOpponentTurnEnded_: b"\x00",
-        wDuelFinished_: b"\x01",
-    }},
+    {
+        "a": 0x0F,
+        "wram": {
+            hOppActionTableIndex_: b"\x00",
+            wSkipDuelistIsThinkingDelay_: b"\x01",
+            wVBlankCounter_: b"\x01",
+            wOpponentTurnEnded_: b"\x00",
+            wDuelFinished_: b"\x01",
+        },
+    },
     # wSkip==0 at entry runs the real DoFrame delay loop from 59 to 60
     # (core.asm:6236-6240); wDuelFinished then takes the carry exit.
-    {"a": 0x0F, "keys": [0x00, 0x01], "wram": {
-        hOppActionTableIndex_: b"\x00",
-        wSkipDuelistIsThinkingDelay_: b"\x00",
-        wVBlankCounter_: b"\x3B",
-        wOpponentTurnEnded_: b"\x00",
-        wDuelFinished_: b"\x01",
-        0xCABB: b"\x80", 0xFF40: b"\x80",
+    {
+        "a": 0x0F,
+        "keys": [0x00, 0x01],
+        "wram": {
+            hOppActionTableIndex_: b"\x00",
+            wSkipDuelistIsThinkingDelay_: b"\x00",
+            wVBlankCounter_: b"\x3b",
+            wOpponentTurnEnded_: b"\x00",
+            wDuelFinished_: b"\x01",
+            0xCABB: b"\x80",
+            0xFF40: b"\x80",
+        },
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
     },
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory AIMakeDecision
 
 # >>> factory PrintPracticeDuelDrMasonInstructions
-CONTRACT["PrintPracticeDuelDrMasonInstructions"] = {"compare": ("a", "f"), "preserve": ("a", "f")}
+CONTRACT["PrintPracticeDuelDrMasonInstructions"] = {
+    "compare": ("a", "f"),
+    "preserve": ("a", "f"),
+}
 CASES["PrintPracticeDuelDrMasonInstructions"] = [
-    {"hl": 0x01DB, "keys": 0x01,
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
-    dict(POISON, hl=0x01DC, keys=0x01,
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}),
+    {
+        "hl": 0x01DB,
+        "keys": 0x01,
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400},
+            1: {0x9800: 0x400},
+        },
+    },
+    dict(
+        POISON,
+        hl=0x01DC,
+        keys=0x01,
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+        vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+    ),
 ]
 # <<< factory PrintPracticeDuelDrMasonInstructions
 
 # >>> factory PrintPracticeDuelInstructionsTextBoxLabel
 CONTRACT["PrintPracticeDuelInstructionsTextBoxLabel"] = {"compare": (), "preserve": ()}
 CASES["PrintPracticeDuelInstructionsTextBoxLabel"] = [
-    {"wram": {0xCC06: b"\x00"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
-    {"wram": {0xCC06: b"\x07"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
-    dict(POISON, wram={0xCC06: b"\x06"},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}),
+    {
+        "wram": {0xCC06: b"\x00"},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400},
+            1: {0x9800: 0x400},
+        },
+    },
+    {
+        "wram": {0xCC06: b"\x07"},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400},
+            1: {0x9800: 0x400},
+        },
+    },
+    dict(
+        POISON,
+        wram={0xCC06: b"\x06"},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+        vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+    ),
 ]
 # <<< factory PrintPracticeDuelInstructionsTextBoxLabel
 
 # >>> factory SwitchCardPage
-CONTRACT["SwitchCardPage"] = {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CONTRACT["SwitchCardPage"] = {
+    "compare": ("a", "b", "c", "d", "e"),
+    "preserve": ("b", "c", "d", "e"),
+}
 # core.asm:3773-3789 dispatches sixteen table entries. Four of them answer from
 # the loaded card's attack and description fields via CheckCardPageExists, so
 # every index runs with those fields present, and the field-dependent ones also
 # run with them absent. The carry each arm returns is not compared: the exits
 # reached by `scf` leave Z as the caller had it, and CardPageResult carries no Z
 # to model that with.
-_SCP_FIELDS = {0xCC34: b"\x11\x22", 0xCC38: b"\x33\x44",
-               0xCC47: b"\x55\x66", 0xCC4B: b"\x77\x88",
-               0xCC30: b"\x99\xAA"}
+_SCP_FIELDS = {
+    0xCC34: b"\x11\x22",
+    0xCC38: b"\x33\x44",
+    0xCC47: b"\x55\x66",
+    0xCC4B: b"\x77\x88",
+    0xCC30: b"\x99\xaa",
+}
 _SCP_EMPTY = {address: b"\x00\x00" for address in _SCP_FIELDS}
 CASES["SwitchCardPage"] = [
     {"a": 0},
@@ -301,9 +520,11 @@ CASES["SwitchCardPage"] = [
 # <<< factory SwitchCardPage
 
 
-
 # >>> factory CardPageSwitch_00
-CONTRACT["CardPageSwitch_00"] = {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CONTRACT["CardPageSwitch_00"] = {
+    "compare": ("a", "b", "c", "d", "e"),
+    "preserve": ("b", "c", "d", "e"),
+}
 CASES["CardPageSwitch_00"] = [
     {},
     dict(POISON, f=0),
@@ -311,28 +532,58 @@ CASES["CardPageSwitch_00"] = [
 # <<< factory CardPageSwitch_00
 
 
-
 # >>> factory LoadLoaded1CardGfx
 CONTRACT["LoadLoaded1CardGfx"] = {"compare": (), "preserve": ()}
 CASES["LoadLoaded1CardGfx"] = [
-    {"d": 0x88, "e": 0x00, "wram": {0xCC25: b"\xA7\x02"}, "vread": {0: {0x8800: 0x300}}},
-    {"d": 0x90, "e": 0x00, "wram": {0xCC25: b"\x00\x18"}, "vread": {0: {0x9000: 0x300}}},
-    dict(POISON, d=0x88, e=0x00, wram={0xCC25: b"\xA7\x02"}, vread={0: {0x8800: 0x300}}),
+    {
+        "d": 0x88,
+        "e": 0x00,
+        "wram": {0xCC25: b"\xa7\x02"},
+        "vread": {0: {0x8800: 0x300}},
+    },
+    {
+        "d": 0x90,
+        "e": 0x00,
+        "wram": {0xCC25: b"\x00\x18"},
+        "vread": {0: {0x9000: 0x300}},
+    },
+    dict(
+        POISON, d=0x88, e=0x00, wram={0xCC25: b"\xa7\x02"}, vread={0: {0x8800: 0x300}}
+    ),
 ]
 # <<< factory LoadLoaded1CardGfx
 
 # >>> factory SetSGB3ToCardPalette
 CONTRACT["SetSGB3ToCardPalette"] = {"compare": (), "preserve": ()}
 CASES["SetSGB3ToCardPalette"] = [
-	{"wram": {0xCE25: b"\x00\x00\x00\x00\x00\x00", 0xCAE9: b"\xAA\xAA\xAA\xAA\xAA\xAA"}, "read": {0xCE25: 6}},
-	dict(POISON, wram={0xCE25: b"\x01\x23\x45\x67\x89\xAB", 0xCAE9: b"\xAA\xAA\xAA\xAA\xAA\xAA"}, read={0xCE25: 6}),
-	{"wram": {0xCE25: b"\xFF\x80\x7F\x01\xFE\x02", 0xCAE9: b"\x00\x00\x00\x00\x00\x00"}, "read": {0xCE25: 6}},
+    {
+        "wram": {
+            0xCE25: b"\x00\x00\x00\x00\x00\x00",
+            0xCAE9: b"\xaa\xaa\xaa\xaa\xaa\xaa",
+        },
+        "read": {0xCE25: 6},
+    },
+    dict(
+        POISON,
+        wram={0xCE25: b"\x01\x23\x45\x67\x89\xab", 0xCAE9: b"\xaa\xaa\xaa\xaa\xaa\xaa"},
+        read={0xCE25: 6},
+    ),
+    {
+        "wram": {
+            0xCE25: b"\xff\x80\x7f\x01\xfe\x02",
+            0xCAE9: b"\x00\x00\x00\x00\x00\x00",
+        },
+        "read": {0xCE25: 6},
+    },
 ]
 # <<< factory SetSGB3ToCardPalette
 
 
 # >>> factory LookForCardIDInPlayArea_Bank5
-CONTRACT["LookForCardIDInPlayArea_Bank5"] = {"compare": ("a", "f", "b", "d", "e"), "preserve": ("d", "e")}
+CONTRACT["LookForCardIDInPlayArea_Bank5"] = {
+    "compare": ("a", "f", "b", "d", "e"),
+    "preserve": ("d", "e"),
+}
 CASES["LookForCardIDInPlayArea_Bank5"] = [
     {"a": 0, "b": 0, "read": {0xCDD4: 1}},
     {"a": 1, "b": 0, "read": {0xCDD4: 1}},
@@ -344,7 +595,10 @@ CASES["LookForCardIDInPlayArea_Bank5"] = [
 # <<< factory LookForCardIDInPlayArea_Bank5
 
 # >>> factory ClearMemory_Bank5
-CONTRACT["ClearMemory_Bank5"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CONTRACT["ClearMemory_Bank5"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("a", "f", "b", "c", "d", "e", "hl"),
+}
 CASES["ClearMemory_Bank5"] = [
     {"a": 0, "hl": 0xC300, "wram": {0xC300: b"\xaa" * 0x101}},
     {"a": 1, "hl": 0xC300, "wram": {0xC300: b"\xaa\xbb"}},
@@ -354,10 +608,13 @@ CASES["ClearMemory_Bank5"] = [
 # <<< factory ClearMemory_Bank5
 
 # >>> factory CheckCardPageExists
-CONTRACT["CheckCardPageExists"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CONTRACT["CheckCardPageExists"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e"),
+}
 CASES["CheckCardPageExists"] = [
     {"hl": 0xC100, "wram": {0xC100: b"\x00\x00"}},
-    {"hl": 0xC100, "wram": {0xC100: b"\x0F\xF0"}},
+    {"hl": 0xC100, "wram": {0xC100: b"\x0f\xf0"}},
     {"hl": 0xC100, "wram": {0xC100: b"\x00\x01"}},
     {"hl": 0xC100, "wram": {0xC100: b"\x80\x00"}},
     dict(POISON, hl=0xC200, wram={0xC200: b"\x12\x34"}),
@@ -366,7 +623,10 @@ CASES["CheckCardPageExists"] = [
 
 
 # >>> factory CardPageSwitch_PokemonEnd
-CONTRACT["CardPageSwitch_PokemonEnd"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CONTRACT["CardPageSwitch_PokemonEnd"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
 CASES["CardPageSwitch_PokemonEnd"] = [
     {},
     dict(POISON),
@@ -376,7 +636,10 @@ CASES["CardPageSwitch_PokemonEnd"] = [
 
 
 # >>> factory SetCardListInfoBoxText
-CONTRACT["SetCardListInfoBoxText"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CONTRACT["SetCardListInfoBoxText"] = {
+    "compare": ("b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
 CASES["SetCardListInfoBoxText"] = [
     {"hl": 0x0000, "read": {0xCBDA: 2}},
     {"hl": 0x1234, "read": {0xCBDA: 2}},
@@ -387,11 +650,16 @@ CASES["SetCardListInfoBoxText"] = [
 # >>> factory PrintCardListHeaderAndInfoBoxTexts
 CONTRACT["PrintCardListHeaderAndInfoBoxTexts"] = {"compare": (), "preserve": ()}
 CASES["PrintCardListHeaderAndInfoBoxTexts"] = [
-    {"wram": {0xCBDA: b"\x00\x00", 0xCBDC: b"\x00\x00"},
-     "read": {0xFFAA: 2, 0xFFAD: 1},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, wram={0xCBDA: b"\x00\x00", 0xCBDC: b"\x00\x00"},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    {
+        "wram": {0xCBDA: b"\x00\x00", 0xCBDC: b"\x00\x00"},
+        "read": {0xFFAA: 2, 0xFFAD: 1},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    },
+    dict(
+        POISON,
+        wram={0xCBDA: b"\x00\x00", 0xCBDC: b"\x00\x00"},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    ),
 ]
 # <<< factory PrintCardListHeaderAndInfoBoxTexts
 
@@ -400,26 +668,35 @@ CASES["PrintCardListHeaderAndInfoBoxTexts"] = [
 CONTRACT["LoadCardNameToTxRam2"] = {"compare": (), "preserve": ()}
 CASES["LoadCardNameToTxRam2"] = [
     {"a": 0, "wram": {0xCE3F: b"\xaa\xaa\xaa\xaa"}, "read": {0xCC24: 0x41, 0xCE3F: 4}},
-    {"a": 0x10, "wram": {0xCE3F: b"\x55\x55\x55\x55"}, "read": {0xCC24: 0x41, 0xCE3F: 4}},
-    {"a": 0x3B, "wram": {0xCE3F: b"\xaa\xaa\xaa\xaa"}, "read": {0xCC24: 0x41, 0xCE3F: 4}},
-    dict(POISON, a=0x20, wram={0xCE3F: b"\xaa\xaa\xaa\xaa"}, read={0xCC24: 0x41, 0xCE3F: 4}),
+    {
+        "a": 0x10,
+        "wram": {0xCE3F: b"\x55\x55\x55\x55"},
+        "read": {0xCC24: 0x41, 0xCE3F: 4},
+    },
+    {
+        "a": 0x3B,
+        "wram": {0xCE3F: b"\xaa\xaa\xaa\xaa"},
+        "read": {0xCC24: 0x41, 0xCE3F: 4},
+    },
+    dict(
+        POISON,
+        a=0x20,
+        wram={0xCE3F: b"\xaa\xaa\xaa\xaa"},
+        read={0xCC24: 0x41, 0xCE3F: 4},
+    ),
 ]
 # <<< factory LoadCardNameToTxRam2
-
-
 
 
 # >>> factory LoadCardNameToTxRam2_b
 CONTRACT["LoadCardNameToTxRam2_b"] = {"compare": ("a",), "preserve": ()}
 CASES["LoadCardNameToTxRam2_b"] = [
     {"a": 0, "wram": {0xCE41: b"\x00\x00"}},
-    {"a": 0, "wram": {0xCE41: b"\xAA\xAA"}, "read": {0xCC27: 2}},
-    {"a": 1, "wram": {0xCE41: b"\xAA\xAA"}, "read": {0xCC27: 2}},
-    dict(POISON, a=0x3B, wram={0xCE41: b"\xAA\xAA"}, read={0xCC27: 2}),
+    {"a": 0, "wram": {0xCE41: b"\xaa\xaa"}, "read": {0xCC27: 2}},
+    {"a": 1, "wram": {0xCE41: b"\xaa\xaa"}, "read": {0xCC27: 2}},
+    dict(POISON, a=0x3B, wram={0xCE41: b"\xaa\xaa"}, read={0xCC27: 2}),
 ]
 # <<< factory LoadCardNameToTxRam2_b
-
-
 
 
 # >>> factory GetAnimCoordsAndFlags
@@ -427,14 +704,60 @@ wAnimFlags = 0xD42B
 wDuelAnimationScreen = 0xD4AE
 wDuelAnimDuelistSide = 0xD4AF
 wDuelAnimLocationParam = 0xD4B0
-CONTRACT["GetAnimCoordsAndFlags"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
+CONTRACT["GetAnimCoordsAndFlags"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("d", "e", "hl"),
+}
 CASES["GetAnimCoordsAndFlags"] = [
-    {"wram": {wAnimFlags: b"\x00", wDuelAnimationScreen: b"\x00", wDuelAnimDuelistSide: b"\x00", wDuelAnimLocationParam: b"\x00"}},
-    dict(POISON, wram={wAnimFlags: b"\x04", wDuelAnimationScreen: b"\x00", wDuelAnimDuelistSide: b"\x00", wDuelAnimLocationParam: b"\x00"}),
-    {"wram": {wAnimFlags: b"\x00", wDuelAnimationScreen: b"\x01", wDuelAnimDuelistSide: b"\xc2", wDuelAnimLocationParam: b"\x03"}},
-    {"wram": {wAnimFlags: b"\x00", wDuelAnimationScreen: b"\x02", wDuelAnimDuelistSide: b"\xc3", wDuelAnimLocationParam: b"\x05"}},
-    {"wram": {wAnimFlags: b"\x0c", wDuelAnimationScreen: b"\x00", wDuelAnimDuelistSide: b"\x00", wDuelAnimLocationParam: b"\x00"}},
-    {"wram": {wAnimFlags: b"\x00", wDuelAnimationScreen: b"\x00", wDuelAnimDuelistSide: b"\xc2", wDuelAnimLocationParam: b"\x00"}},
+    {
+        "wram": {
+            wAnimFlags: b"\x00",
+            wDuelAnimationScreen: b"\x00",
+            wDuelAnimDuelistSide: b"\x00",
+            wDuelAnimLocationParam: b"\x00",
+        }
+    },
+    dict(
+        POISON,
+        wram={
+            wAnimFlags: b"\x04",
+            wDuelAnimationScreen: b"\x00",
+            wDuelAnimDuelistSide: b"\x00",
+            wDuelAnimLocationParam: b"\x00",
+        },
+    ),
+    {
+        "wram": {
+            wAnimFlags: b"\x00",
+            wDuelAnimationScreen: b"\x01",
+            wDuelAnimDuelistSide: b"\xc2",
+            wDuelAnimLocationParam: b"\x03",
+        }
+    },
+    {
+        "wram": {
+            wAnimFlags: b"\x00",
+            wDuelAnimationScreen: b"\x02",
+            wDuelAnimDuelistSide: b"\xc3",
+            wDuelAnimLocationParam: b"\x05",
+        }
+    },
+    {
+        "wram": {
+            wAnimFlags: b"\x0c",
+            wDuelAnimationScreen: b"\x00",
+            wDuelAnimDuelistSide: b"\x00",
+            wDuelAnimLocationParam: b"\x00",
+        }
+    },
+    {
+        "wram": {
+            wAnimFlags: b"\x00",
+            wDuelAnimationScreen: b"\x00",
+            wDuelAnimDuelistSide: b"\xc2",
+            wDuelAnimLocationParam: b"\x00",
+        }
+    },
 ]
 # <<< factory GetAnimCoordsAndFlags
 
@@ -446,30 +769,53 @@ wDuelAnimBuffer = 0xD42C
 wActiveScreenAnim = 0xD42A
 wAnimationQueue = 0xD423
 wd4c0 = 0xD4C0
-CONTRACT["PlayBufferedDuelAnimations"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CONTRACT["PlayBufferedDuelAnimations"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
 CASES["PlayBufferedDuelAnimations"] = [
     {"wram": {wDuelAnimBufferCurPos: b"\x05", wDuelAnimBufferSize: b"\x05"}},
     dict(POISON, wram={wDuelAnimBufferCurPos: b"\x09", wDuelAnimBufferSize: b"\x09"}),
-    {"wram": {
-        wDuelAnimBufferCurPos: b"\x00", wDuelAnimBufferSize: b"\x08",
-        wDuelAnimBuffer: bytes([0x05, 0x01, 0xc2, 0x02, 0x10, 0x00, 0x00, 0x07]),
-        wActiveScreenAnim: b"\x00", wd4c0: b"\x00", wAnimationQueue: b"\x00" * 7,
-    }},
-    {"wram": {
-        wDuelAnimBufferCurPos: b"\x78", wDuelAnimBufferSize: b"\x7f",
-        wDuelAnimBuffer + 120: bytes([0x02, 0x00, 0xc3, 0x01, 0x00, 0x00, 0x00, 0x01]),
-        wActiveScreenAnim: b"\x00", wd4c0: b"\x00", wAnimationQueue: b"\x00" * 7,
-    }},
-    {"wram": {
-        wDuelAnimBufferCurPos: b"\x00", wDuelAnimBufferSize: b"\x08",
-        wDuelAnimBuffer: bytes([0x01, 0x00, 0xc2, 0x00, 0x00, 0x00, 0x00, 0x07]),
-        wActiveScreenAnim: b"\xff", wd4c0: b"\xff", wAnimationQueue: b"\xff" * 7,
-    }},
+    {
+        "wram": {
+            wDuelAnimBufferCurPos: b"\x00",
+            wDuelAnimBufferSize: b"\x08",
+            wDuelAnimBuffer: bytes([0x05, 0x01, 0xC2, 0x02, 0x10, 0x00, 0x00, 0x07]),
+            wActiveScreenAnim: b"\x00",
+            wd4c0: b"\x00",
+            wAnimationQueue: b"\x00" * 7,
+        }
+    },
+    {
+        "wram": {
+            wDuelAnimBufferCurPos: b"\x78",
+            wDuelAnimBufferSize: b"\x7f",
+            wDuelAnimBuffer + 120: bytes(
+                [0x02, 0x00, 0xC3, 0x01, 0x00, 0x00, 0x00, 0x01]
+            ),
+            wActiveScreenAnim: b"\x00",
+            wd4c0: b"\x00",
+            wAnimationQueue: b"\x00" * 7,
+        }
+    },
+    {
+        "wram": {
+            wDuelAnimBufferCurPos: b"\x00",
+            wDuelAnimBufferSize: b"\x08",
+            wDuelAnimBuffer: bytes([0x01, 0x00, 0xC2, 0x00, 0x00, 0x00, 0x00, 0x07]),
+            wActiveScreenAnim: b"\xff",
+            wd4c0: b"\xff",
+            wAnimationQueue: b"\xff" * 7,
+        }
+    },
 ]
 # <<< factory PlayBufferedDuelAnimations
 
 # >>> factory ReturnWrongAction
-CONTRACT["ReturnWrongAction"] = {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ("a", "b", "c", "d", "e", "hl")}
+CONTRACT["ReturnWrongAction"] = {
+    "compare": ("a", "b", "c", "d", "e", "f", "hl"),
+    "preserve": ("a", "b", "c", "d", "e", "hl"),
+}
 CASES["ReturnWrongAction"] = [
     {},
     {"f": 0x80},
@@ -479,32 +825,69 @@ CASES["ReturnWrongAction"] = [
 
 
 # >>> factory CopyListWithFFTerminatorFromHLToDE_Bank5
-CONTRACT["CopyListWithFFTerminatorFromHLToDE_Bank5"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
+CONTRACT["CopyListWithFFTerminatorFromHLToDE_Bank5"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c"),
+}
 CASES["CopyListWithFFTerminatorFromHLToDE_Bank5"] = [
-    {"hl": 0xC100, "d": 0xC2, "e": 0x00, "wram": {0xC100: b"\xFF"}, "read": {0xC100: 1, 0xC200: 1}},
-    dict(POISON, hl=0xC100, d=0xC2, e=0x00, wram={0xC100: b"\x01\x02\xFF"}, read={0xC100: 3, 0xC200: 3}),
-    {"hl": 0xC1FF, "d": 0xC2, "e": 0xFF, "wram": {0xC1FF: b"\x01\xFF"}, "read": {0xC1FF: 2, 0xC2FF: 2}},
+    {
+        "hl": 0xC100,
+        "d": 0xC2,
+        "e": 0x00,
+        "wram": {0xC100: b"\xff"},
+        "read": {0xC100: 1, 0xC200: 1},
+    },
+    dict(
+        POISON,
+        hl=0xC100,
+        d=0xC2,
+        e=0x00,
+        wram={0xC100: b"\x01\x02\xff"},
+        read={0xC100: 3, 0xC200: 3},
+    ),
+    {
+        "hl": 0xC1FF,
+        "d": 0xC2,
+        "e": 0xFF,
+        "wram": {0xC1FF: b"\x01\xff"},
+        "read": {0xC1FF: 2, 0xC2FF: 2},
+    },
 ]
 # <<< factory CopyListWithFFTerminatorFromHLToDE_Bank5
 
 # >>> factory CheckEnergyFlagsNeededInList
-CONTRACT["CheckEnergyFlagsNeededInList"] = {"compare": ("a", "f", "b", "c"), "preserve": ("b", "c")}
+CONTRACT["CheckEnergyFlagsNeededInList"] = {
+    "compare": ("a", "f", "b", "c"),
+    "preserve": ("b", "c"),
+}
 CASES["CheckEnergyFlagsNeededInList"] = [
-    {"a": 0, "wram": {0xC510: b"\xFF"}, "read": {0xC510: 1}},
-    dict(POISON, a=0, wram={0xC510: b"\xFF"}, read={0xC510: 1}),
-    {"a": 1, "wram": {0xC510: b"\xFF"}, "read": {0xC510: 1}},
-    {"a": 0xFF, "wram": {0xC510: b"\xFF"}, "read": {0xC510: 1}},
+    {"a": 0, "wram": {0xC510: b"\xff"}, "read": {0xC510: 1}},
+    dict(POISON, a=0, wram={0xC510: b"\xff"}, read={0xC510: 1}),
+    {"a": 1, "wram": {0xC510: b"\xff"}, "read": {0xC510: 1}},
+    {"a": 0xFF, "wram": {0xC510: b"\xff"}, "read": {0xC510: 1}},
 ]
 # <<< factory CheckEnergyFlagsNeededInList
 
 # >>> factory CardPageSwitch_EnergyEnd
-CONTRACT["CardPageSwitch_EnergyEnd"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
-CASES["CardPageSwitch_EnergyEnd"] = [{"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}, {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}]
+CONTRACT["CardPageSwitch_EnergyEnd"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
+CASES["CardPageSwitch_EnergyEnd"] = [
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234},
+]
 # <<< factory CardPageSwitch_EnergyEnd
 
 # >>> factory CardPageSwitch_0c
-CONTRACT["CardPageSwitch_0c"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
-CASES["CardPageSwitch_0c"] = [{"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}, {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}]
+CONTRACT["CardPageSwitch_0c"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
+CASES["CardPageSwitch_0c"] = [
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234},
+]
 # <<< factory CardPageSwitch_0c
 
 # >>> factory PlaceCardImageOAM
@@ -520,55 +903,78 @@ CONTRACT["PrintPlayAreaCardAttachedEnergies"] = {"compare": (), "preserve": ()}
 CASES["PrintPlayAreaCardAttachedEnergies"] = [
     {"read": {0xC590: 8}, "vread": {0: {0x9800: 8}}},
     dict(POISON, read={0xC590: 8}, vread={0: {0x9800: 8}}),
-    {"b": 2, "c": 3, "e": 1,
-     "read": {0xC590: 8}, "vread": {0: {0x9862: 8}}},
+    {"b": 2, "c": 3, "e": 1, "read": {0xC590: 8}, "vread": {0: {0x9862: 8}}},
     # Nine energies attached to the arena Pokemon (deck indexes 1-9, all at
     # CARD_LOCATION_ARENA $10): fire, grass, lightning x2, double colorless, fire x4.
     # Eight symbols fit, so the eighth becomes SYM_PLUS. The three cases above
     # attach nothing and never observe a colour symbol.
-    dict(POISON, b=7, c=5, e=0,
-         wram={0xFF97: b"\xC2", 0xC400: b"\x08\x02\x01\x04\x04\x07\x02\x02\x02\x02",
-               0xC200: b"\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10"},
-         read={0xC590: 8, 0xCC1B: 9}, vread={0: {0x98A7: 8}}),
+    dict(
+        POISON,
+        b=7,
+        c=5,
+        e=0,
+        wram={
+            0xFF97: b"\xc2",
+            0xC400: b"\x08\x02\x01\x04\x04\x07\x02\x02\x02\x02",
+            0xC200: b"\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10",
+        },
+        read={0xC590: 8, 0xCC1B: 9},
+        vread={0: {0x98A7: 8}},
+    ),
 ]
 # <<< factory PrintPlayAreaCardAttachedEnergies
 
 # >>> factory DiscardRetreatCostCards
-CONTRACT["DiscardRetreatCostCards"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CONTRACT["DiscardRetreatCostCards"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e"),
+}
 CASES["DiscardRetreatCostCards"] = [
-    {"wram": {0xFFA2: b"\xFF"}},
-    dict(POISON, wram={0xFFA2: b"\x00\xFF"}),
-    {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5,
-     "wram": {0xFFA2: b"\x01\x02\x03\xFF"}},
+    {"wram": {0xFFA2: b"\xff"}},
+    dict(POISON, wram={0xFFA2: b"\x00\xff"}),
+    {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "wram": {0xFFA2: b"\x01\x02\x03\xff"}},
 ]
 # <<< factory DiscardRetreatCostCards
 
 
 # >>> factory OppAction_DrawCard
-CONTRACT["OppAction_DrawCard"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
-CASES["OppAction_DrawCard"] = [{}, dict(POISON), {"a": 1, "f": 0x10, "b": 1, "c": 2, "d": 3, "e": 4, "hl": 0xC100}]
+CONTRACT["OppAction_DrawCard"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
+CASES["OppAction_DrawCard"] = [
+    {},
+    dict(POISON),
+    {"a": 1, "f": 0x10, "b": 1, "c": 2, "d": 3, "e": 4, "hl": 0xC100},
+]
 # <<< factory OppAction_DrawCard
 
 # >>> factory PrintSortNumberInCardList
 CONTRACT["PrintSortNumberInCardList_SetPointer"] = {"compare": (), "preserve": ()}
 CASES["PrintSortNumberInCardList_SetPointer"] = [
-	{"wram": {0xCBD8: b"\x00\x00", 0xCBDF: b"\x00"}, "read": {0xCBD8: 3}},
-	dict(POISON, wram={0xCBD8: b"\xff\xff", 0xCBDF: b"\x00"}, read={0xCBD8: 3}),
+    {"wram": {0xCBD8: b"\x00\x00", 0xCBDF: b"\x00"}, "read": {0xCBD8: 3}},
+    dict(POISON, wram={0xCBD8: b"\xff\xff", 0xCBDF: b"\x00"}, read={0xCBD8: 3}),
 ]
 # <<< factory PrintSortNumberInCardList
 # >>> factory PrintSortNumberInCardList_body
 CONTRACT["PrintSortNumberInCardList"] = {"compare": (), "preserve": ()}
 CASES["PrintSortNumberInCardList"] = [
-	{"wram": {0xC51A: b"\x00\x01\xff"}, "read": {0x9841: 2},
-	 "vread": {0: {0x9841: 2, 0x9881: 1}}},
-	dict(POISON, wram={0xC51A: b"\x01\x00\xff"}, read={0x9841: 2}),
-	{"wram": {0xC51A: b"\xff"}},
+    {
+        "wram": {0xC51A: b"\x00\x01\xff"},
+        "read": {0x9841: 2},
+        "vread": {0: {0x9841: 2, 0x9881: 1}},
+    },
+    dict(POISON, wram={0xC51A: b"\x01\x00\xff"}, read={0x9841: 2}),
+    {"wram": {0xC51A: b"\xff"}},
 ]
 # <<< factory PrintSortNumberInCardList_body
 
 
 # >>> factory PrintEnergiesOfColor
-CONTRACT["PrintEnergiesOfColor"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("c", "d", "hl")}
+CONTRACT["PrintEnergiesOfColor"] = {
+    "compare": ("a", "b", "c", "d", "e", "hl"),
+    "preserve": ("c", "d", "hl"),
+}
 CASES["PrintEnergiesOfColor"] = [
     {},
     dict(POISON, a=0, read={}),
@@ -580,7 +986,10 @@ CASES["PrintEnergiesOfColor"] = [
 # <<< factory PrintEnergiesOfColor
 
 # >>> factory PrintCardPageWeaknessesOrResistances
-CONTRACT["PrintCardPageWeaknessesOrResistances"] = {"compare": ("b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CONTRACT["PrintCardPageWeaknessesOrResistances"] = {
+    "compare": ("b", "c", "d", "e"),
+    "preserve": ("b", "c", "d", "e"),
+}
 CASES["PrintCardPageWeaknessesOrResistances"] = [
     {"read": {0x9800: 0x400}},
     dict(POISON, a=0x80, b=0, c=0, read={0x9800: 0x400}),
@@ -594,36 +1003,48 @@ CASES["PrintCardPageWeaknessesOrResistances"] = [
 CONTRACT["Func_6423"] = {"compare": ("a", "b", "c", "d", "hl"), "preserve": ("c", "d")}
 CASES["Func_6423"] = [
     {"wram": {0xC590: b"\x00\x00\x00\x00\x00\x00\x00\x00"}},
-    dict(POISON, wram={0xC590: b"\x01\x23\x45\x67\x89\xAB\xCD\xEF"}),
+    dict(POISON, wram={0xC590: b"\x01\x23\x45\x67\x89\xab\xcd\xef"}),
     {"b": 1, "c": 2, "wram": {0xC590: b"\x10\x20\x30\x40\x50\x60\x70\x80"}},
 ]
 # <<< factory Func_6423
 
 # >>> factory InitVariablesToBeginDuel
-CONTRACT["InitVariablesToBeginDuel"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CONTRACT["InitVariablesToBeginDuel"] = {
+    "compare": ("b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
 CASES["InitVariablesToBeginDuel"] = [
-    {"sram": {0: {0xA009: b"\x12"}},
-     "sread": {0: {0xA009: 1}}},
-    dict(POISON,
-         wram={0xCC07: b"\xAA", 0xCC06: b"\xAA", 0xCCE7: b"\xAA",
-               0xCC0F: b"\x55", 0xCC11: b"\x44", 0xCC10: b"\x44",
-               0xCCF2: b"\x99", 0xC2F1: b"\x80", 0xC3F1: b"\x55",
-               0xCC09: b"\x77"},
-         sram={0: {0xA009: b"\xA5"}},
-         sread={0: {0xA009: 1}}),
+    {"sram": {0: {0xA009: b"\x12"}}, "sread": {0: {0xA009: 1}}},
+    dict(
+        POISON,
+        wram={
+            0xCC07: b"\xaa",
+            0xCC06: b"\xaa",
+            0xCCE7: b"\xaa",
+            0xCC0F: b"\x55",
+            0xCC11: b"\x44",
+            0xCC10: b"\x44",
+            0xCCF2: b"\x99",
+            0xC2F1: b"\x80",
+            0xC3F1: b"\x55",
+            0xCC09: b"\x77",
+        },
+        sram={0: {0xA009: b"\xa5"}},
+        sread={0: {0xA009: 1}},
+    ),
     {"wram": {0xC2F1: b"\x01"}, "sram": {0: {0xA009: b"\x01"}}},
     {"wram": {0xC2F1: b"\x80"}, "sram": {0: {0xA009: b"\x02"}}},
-    {"wram": {0xC2F1: b"\x00", 0xC3F1: b"\x01"},
-     "sram": {0: {0xA009: b"\x03"}}},
-    {"wram": {0xC2F1: b"\x00", 0xC3F1: b"\x80"},
-     "sram": {0: {0xA009: b"\x04"}}},
-    {"wram": {0xC2F1: b"\x02", 0xC3F1: b"\x03"},
-     "sram": {0: {0xA009: b"\x05"}}},
+    {"wram": {0xC2F1: b"\x00", 0xC3F1: b"\x01"}, "sram": {0: {0xA009: b"\x03"}}},
+    {"wram": {0xC2F1: b"\x00", 0xC3F1: b"\x80"}, "sram": {0: {0xA009: b"\x04"}}},
+    {"wram": {0xC2F1: b"\x02", 0xC3F1: b"\x03"}, "sram": {0: {0xA009: b"\x05"}}},
 ]
 # <<< factory InitVariablesToBeginDuel
 
 # >>> factory CardPageSwitch_PokemonAttack1Page2
-CONTRACT["CardPageSwitch_PokemonAttack1Page2"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CONTRACT["CardPageSwitch_PokemonAttack1Page2"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e"),
+}
 CASES["CardPageSwitch_PokemonAttack1Page2"] = [
     {},
     dict(POISON, wram={0xCC36: b"\x00\x00\x01", 0xCC47: b"\x00"}),
@@ -632,73 +1053,113 @@ CASES["CardPageSwitch_PokemonAttack1Page2"] = [
 # <<< factory CardPageSwitch_PokemonAttack1Page2
 
 # >>> factory CardPageSwitch_PokemonAttack2Page1
-CONTRACT["CardPageSwitch_PokemonAttack2Page1"] = {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CONTRACT["CardPageSwitch_PokemonAttack2Page1"] = {
+    "compare": ("a", "f", "b", "c", "d", "e"),
+    "preserve": ("b", "c", "d", "e"),
+}
 CASES["CardPageSwitch_PokemonAttack2Page1"] = [
-	{"wram": {0xCC36: b"\x00\x00\x00\x00", 0xCC47: b"\x00\x00\x00\x00"}},
-	{"wram": {0xCC36: b"\x11\x22\x33\x44", 0xCC47: b"\x00\x00\x00\x00"}},
-	{"wram": {0xCC36: b"\x00\x00\x00\x00", 0xCC47: b"\x11\x22\x33\x44"}},
-	dict(POISON, wram={0xCC36: b"\xAA\xBB\xCC\xDD", 0xCC47: b"\x00\x00\x00\x00"}),
-	{"b": 1, "c": 2, "d": 3, "e": 4, "wram": {0xCC36: b"\x55\x66\x77\x88", 0xCC47: b"\x99\xAA\xBB\xCC"}},
+    {"wram": {0xCC36: b"\x00\x00\x00\x00", 0xCC47: b"\x00\x00\x00\x00"}},
+    {"wram": {0xCC36: b"\x11\x22\x33\x44", 0xCC47: b"\x00\x00\x00\x00"}},
+    {"wram": {0xCC36: b"\x00\x00\x00\x00", 0xCC47: b"\x11\x22\x33\x44"}},
+    dict(POISON, wram={0xCC36: b"\xaa\xbb\xcc\xdd", 0xCC47: b"\x00\x00\x00\x00"}),
+    {
+        "b": 1,
+        "c": 2,
+        "d": 3,
+        "e": 4,
+        "wram": {0xCC36: b"\x55\x66\x77\x88", 0xCC47: b"\x99\xaa\xbb\xcc"},
+    },
 ]
 # <<< factory CardPageSwitch_PokemonAttack2Page1
 
 # >>> factory AIDiscourage
-CONTRACT["AIDiscourage"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CONTRACT["AIDiscourage"] = {
+    "compare": ("b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
 CASES["AIDiscourage"] = [
     {"wram": {0xCDBE: b"\x00"}, "read": {0xCDBE: 1}},
     dict(POISON, wram={0xCDBE: b"\x40"}, read={0xCDBE: 1}),
     {"a": 1, "wram": {0xCDBE: b"\x01"}, "read": {0xCDBE: 1}},
     {"a": 2, "wram": {0xCDBE: b"\x01"}, "read": {0xCDBE: 1}},
-    {"a": 1, "wram": {0xCDBE: b"\xFF"}, "read": {0xCDBE: 1}},
+    {"a": 1, "wram": {0xCDBE: b"\xff"}, "read": {0xCDBE: 1}},
 ]
 # <<< factory AIDiscourage
 
 # >>> factory ConvertHPToDamageCounters_Bank5
-CONTRACT["ConvertHPToDamageCounters_Bank5"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CONTRACT["ConvertHPToDamageCounters_Bank5"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
 CASES["ConvertHPToDamageCounters_Bank5"] = [
-	{},
-	{"a": 1},
-	{"a": 10},
-	{"a": 255},
-	dict(POISON, a=20),
+    {},
+    {"a": 1},
+    {"a": 10},
+    {"a": 255},
+    dict(POISON, a=20),
 ]
 # <<< factory ConvertHPToDamageCounters_Bank5
 
 # >>> factory CalculateBDividedByA_Bank5
-CONTRACT["CalculateBDividedByA_Bank5"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CONTRACT["CalculateBDividedByA_Bank5"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
 CASES["CalculateBDividedByA_Bank5"] = [
-	{"a": 0, "b": 0, "oracle": False, "why": "Divisor zero enters the assembly loop forever.", "expect_regs": {"a": 0, "b": 0}},
-	{"a": 1, "b": 1},
-	{"a": 1, "b": 255},
-	{"a": 2, "b": 5},
-	{"a": 255, "b": 255},
-	dict(POISON, a=3, b=10),
+    {
+        "a": 0,
+        "b": 0,
+        "oracle": False,
+        "why": "Divisor zero enters the assembly loop forever.",
+        "expect_regs": {"a": 0, "b": 0},
+    },
+    {"a": 1, "b": 1},
+    {"a": 1, "b": 255},
+    {"a": 2, "b": 5},
+    {"a": 255, "b": 255},
+    dict(POISON, a=3, b=10),
 ]
 # <<< factory CalculateBDividedByA_Bank5
 
 # >>> factory PrintCardPageRarityIcon
 CONTRACT["PrintCardPageRarityIcon"] = {"compare": ("hl",), "preserve": ()}
 CASES["PrintCardPageRarityIcon"] = [
-	{"a": 0, "d": 0, "e": 0, "hl": 0xC100,
-	 "wram": {0xC100: b"\x00\x00\x00\x00"}, "read": {0xC100: 4}},
-	dict(POISON, hl=0xC100, wram={0xC156: b"\x00\x00\x00\x00"}, read={0xC156: 4}),
-	{"a": 0, "d": 0xDD, "e": 0xEE, "hl": 0xC100,
-	 "wram": {0xC156: b"\x00\x00\x00\x00"}, "read": {0xC156: 4}},
-	{"a": 0xFF, "d": 0, "e": 0, "hl": 0xC100,
-	 "wram": {0xC100: b"\x00\x00\x00\x00"}, "read": {0xC100: 4}},
+    {
+        "a": 0,
+        "d": 0,
+        "e": 0,
+        "hl": 0xC100,
+        "wram": {0xC100: b"\x00\x00\x00\x00"},
+        "read": {0xC100: 4},
+    },
+    dict(POISON, hl=0xC100, wram={0xC156: b"\x00\x00\x00\x00"}, read={0xC156: 4}),
+    {
+        "a": 0,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0xC100,
+        "wram": {0xC156: b"\x00\x00\x00\x00"},
+        "read": {0xC156: 4},
+    },
+    {
+        "a": 0xFF,
+        "d": 0,
+        "e": 0,
+        "hl": 0xC100,
+        "wram": {0xC100: b"\x00\x00\x00\x00"},
+        "read": {0xC100: 4},
+    },
 ]
 # <<< factory PrintCardPageRarityIcon
-
 
 
 # >>> factory SetNoLineSeparation
 CONTRACT["SetNoLineSeparation"] = {"compare": ("a",), "preserve": ()}
 CASES["SetNoLineSeparation"] = [
-	{"wram": {0xCD08: b"\x00"}, "read": {0xCD08: 1}},
-	dict(POISON, wram={0xCD08: b"\xff"}, read={0xCD08: 1}),
+    {"wram": {0xCD08: b"\x00"}, "read": {0xCD08: 1}},
+    dict(POISON, wram={0xCD08: b"\xff"}, read={0xCD08: 1}),
 ]
 # <<< factory SetNoLineSeparation
-
 
 
 # >>> factory AIPlayInitialBasicCards
@@ -730,28 +1191,62 @@ CASES["Func_14323"] = [
 # <<< factory Func_14323
 
 # >>> factory CreateEnergyCardListFromHand
-CONTRACT["CreateEnergyCardListFromHand"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CONTRACT["CreateEnergyCardListFromHand"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
 CASES["CreateEnergyCardListFromHand"] = [
-	{"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x02", 0xC242: b"\x00\x01",
-	          0xC400: b"\x01\xCB"}, "read": {0xC510: 3}},
-	{"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00",
-	          0xC400: b"\x01"}, "read": {0xC510: 2}},
-	dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x02",
-	                   0xC242: b"\x01\x00", 0xC400: b"\x01\x02"},
-	     read={0xC510: 3}),
+    {
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2EE: b"\x02",
+            0xC242: b"\x00\x01",
+            0xC400: b"\x01\xcb",
+        },
+        "read": {0xC510: 3},
+    },
+    {
+        "wram": {0xFF97: b"\xc2", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC400: b"\x01"},
+        "read": {0xC510: 2},
+    },
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2EE: b"\x02",
+            0xC242: b"\x01\x00",
+            0xC400: b"\x01\x02",
+        },
+        read={0xC510: 3},
+    ),
 ]
 # <<< factory CreateEnergyCardListFromHand
 
 # >>> factory LookForCardIDInHand
-CONTRACT["LookForCardIDInHand"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CONTRACT["LookForCardIDInHand"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
 CASES["LookForCardIDInHand"] = [
-	{"a": 0x01, "wram": {0xFF97: b"\xC2", 0xC2EE: b"\x02",
-	                     0xC242: b"\x00\x01", 0xC400: b"\xCB\x01"}},
-	{"a": 0x09, "wram": {0xFF97: b"\xC2", 0xC2EE: b"\x01",
-	                     0xC242: b"\x00", 0xC400: b"\xCB"}},
-	dict(POISON, a=0xCB, wram={0xFF97: b"\xC2", 0xC2EE: b"\x01",
-	                            0xC242: b"\x00", 0xC400: b"\xCB"}),
-	{"a": 0x09, "wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00"}},
+    {
+        "a": 0x01,
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2EE: b"\x02",
+            0xC242: b"\x00\x01",
+            0xC400: b"\xcb\x01",
+        },
+    },
+    {
+        "a": 0x09,
+        "wram": {0xFF97: b"\xc2", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC400: b"\xcb"},
+    },
+    dict(
+        POISON,
+        a=0xCB,
+        wram={0xFF97: b"\xc2", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC400: b"\xcb"},
+    ),
+    {"a": 0x09, "wram": {0xFF97: b"\xc2", 0xC2EE: b"\x00"}},
 ]
 # <<< factory LookForCardIDInHand
 
@@ -759,37 +1254,85 @@ CASES["LookForCardIDInHand"] = [
 # >>> factory LookForCardIDInHandList_Bank5
 CONTRACT["LookForCardIDInHandList_Bank5"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["LookForCardIDInHandList_Bank5"] = [
-	{"a": 0x01, "wram": {0xFF97: b"\xC2", 0xC2EE: b"\x02",
-	                     0xC242: b"\x00\x01", 0xC400: b"\xCB\x01"}},
-	{"a": 0x09, "wram": {0xFF97: b"\xC2", 0xC2EE: b"\x01",
-	                     0xC242: b"\x00", 0xC400: b"\xCB"}},
-	dict(POISON, a=0xCB, wram={0xFF97: b"\xC2", 0xC2EE: b"\x01",
-	                            0xC242: b"\x00", 0xC400: b"\xCB"}),
-	{"a": 0x09, "wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00"}},
+    {
+        "a": 0x01,
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2EE: b"\x02",
+            0xC242: b"\x00\x01",
+            0xC400: b"\xcb\x01",
+        },
+    },
+    {
+        "a": 0x09,
+        "wram": {0xFF97: b"\xc2", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC400: b"\xcb"},
+    },
+    dict(
+        POISON,
+        a=0xCB,
+        wram={0xFF97: b"\xc2", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC400: b"\xcb"},
+    ),
+    {"a": 0x09, "wram": {0xFF97: b"\xc2", 0xC2EE: b"\x00"}},
 ]
 # <<< factory LookForCardIDInHandList_Bank5
 
 
 # >>> factory CheckForEvolutionInDeck
-CONTRACT["CheckForEvolutionInDeck"]={"compare":("a","f"),"preserve":()}
-CASES["CheckForEvolutionInDeck"]=[{"a":7,"f":0,"wram":{0xFF97:b"\xC2",0xC2BB:b"\x03",0xC200:b"\xFF"*60}},dict(POISON,a=2,f=0x80,wram={0xFF97:b"\xC3",0xC3BB:b"\x05",0xC300:b"\xFF"*60})]
+CONTRACT["CheckForEvolutionInDeck"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CheckForEvolutionInDeck"] = [
+    {"a": 7, "f": 0, "wram": {0xFF97: b"\xc2", 0xC2BB: b"\x03", 0xC200: b"\xff" * 60}},
+    dict(
+        POISON,
+        a=2,
+        f=0x80,
+        wram={0xFF97: b"\xc3", 0xC3BB: b"\x05", 0xC300: b"\xff" * 60},
+    ),
+]
 # <<< factory CheckForEvolutionInDeck
 
 
 # >>> factory LookForCardThatIsKnockedOutOnDevolution
-CONTRACT["LookForCardThatIsKnockedOutOnDevolution"]={"compare":("a","f"),"preserve":()}
-CASES["LookForCardThatIsKnockedOutOnDevolution"]=[dict(POISON,f=0,wram={0xFF97:b"\xC2",0xFF9D:b"\x02",0xC3EF:b"\x02",0xC3BB:b"\x01",0xC3CE:b"\x01",0xC300:b"\x10\x10",0xC480:b"\x08\x09",0xC3C8:b"\xC8"})]
+CONTRACT["LookForCardThatIsKnockedOutOnDevolution"] = {
+    "compare": ("a", "f"),
+    "preserve": (),
+}
+CASES["LookForCardThatIsKnockedOutOnDevolution"] = [
+    dict(
+        POISON,
+        f=0,
+        wram={
+            0xFF97: b"\xc2",
+            0xFF9D: b"\x02",
+            0xC3EF: b"\x02",
+            0xC3BB: b"\x01",
+            0xC3CE: b"\x01",
+            0xC300: b"\x10\x10",
+            0xC480: b"\x08\x09",
+            0xC3C8: b"\xc8",
+        },
+    )
+]
 # <<< factory LookForCardThatIsKnockedOutOnDevolution
 
 
 # >>> factory CalculateParticularAttachedEnergyNeeded
-CONTRACT["CalculateParticularAttachedEnergyNeeded"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("c", "d", "e")}
-CASES["CalculateParticularAttachedEnergyNeeded"] = [{"a": 0, "b": 1, "hl": 0xC100, "wram": {0xC100: b"\x00"}}, {"a": 3, "b": 1, "hl": 0xC100, "wram": {0xC100: b"\x01"}}, dict(POISON, a=0x12, b=2, hl=0xC100, wram={0xC100: b"\x01"})]
+CONTRACT["CalculateParticularAttachedEnergyNeeded"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("c", "d", "e"),
+}
+CASES["CalculateParticularAttachedEnergyNeeded"] = [
+    {"a": 0, "b": 1, "hl": 0xC100, "wram": {0xC100: b"\x00"}},
+    {"a": 3, "b": 1, "hl": 0xC100, "wram": {0xC100: b"\x01"}},
+    dict(POISON, a=0x12, b=2, hl=0xC100, wram={0xC100: b"\x01"}),
+]
 # <<< factory CalculateParticularAttachedEnergyNeeded
 
 # >>> factory GetAnimationData
 wTempAnimation = 0xD422
-CONTRACT["GetAnimationData"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
+CONTRACT["GetAnimationData"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c"),
+}
 CASES["GetAnimationData"] = [
     {"wram": {wTempAnimation: b"\x00"}},
     dict(POISON, wram={wTempAnimation: b"\x01"}),
@@ -799,7 +1342,10 @@ CASES["GetAnimationData"] = [
 
 
 # >>> factory CardPageSwitch_PokemonOverviewOrDescription
-CONTRACT["CardPageSwitch_PokemonOverviewOrDescription"] = {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CONTRACT["CardPageSwitch_PokemonOverviewOrDescription"] = {
+    "compare": ("a", "b", "c", "d", "e"),
+    "preserve": ("b", "c", "d", "e"),
+}
 CASES["CardPageSwitch_PokemonOverviewOrDescription"] = [
     {},
     dict(POISON, f=0),
@@ -807,38 +1353,80 @@ CASES["CardPageSwitch_PokemonOverviewOrDescription"] = [
 # <<< factory CardPageSwitch_PokemonOverviewOrDescription
 
 
-
 # >>> factory CheckCardEvolutionInHandOrDeck
 CONTRACT["CheckCardEvolutionInHandOrDeck"] = {"compare": ("a", "f"), "preserve": ()}
 hWhoseTurn = 0xFF97
 CASES["CheckCardEvolutionInHandOrDeck"] = [
-    {"a": 7, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x09", 0xC200: b"\xFF" * 60}},
-    dict(POISON, a=0x2A, wram={hWhoseTurn: b"\xC2", 0xC2BB: b"\x2A", 0xC200: b"\xFF" * 60}),
+    {"a": 7, "wram": {hWhoseTurn: b"\xc2", 0xC2BB: b"\x09", 0xC200: b"\xff" * 60}},
+    dict(
+        POISON,
+        a=0x2A,
+        wram={hWhoseTurn: b"\xc2", 0xC2BB: b"\x2a", 0xC200: b"\xff" * 60},
+    ),
 ]
 # <<< factory CheckCardEvolutionInHandOrDeck
 
 # >>> factory CheckIfOpponentHasBossDeckID
-CONTRACT["CheckIfOpponentHasBossDeckID"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CONTRACT["CheckIfOpponentHasBossDeckID"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
 wOpponentDeckID = 0xCC0E
 CASES["CheckIfOpponentHasBossDeckID"] = [
-    {"a": 0x00, "f": 0x00, "wram": {wOpponentDeckID: b"\x0B"}},
-    {"a": 0x12, "f": 0x80, "wram": {wOpponentDeckID: b"\x0C"}},
-    dict(POISON, wram={wOpponentDeckID: b"\x1B"}),
-    {"a": 0x34, "f": 0x80, "wram": {wOpponentDeckID: b"\x1C"}},
+    {"a": 0x00, "f": 0x00, "wram": {wOpponentDeckID: b"\x0b"}},
+    {"a": 0x12, "f": 0x80, "wram": {wOpponentDeckID: b"\x0c"}},
+    dict(POISON, wram={wOpponentDeckID: b"\x1b"}),
+    {"a": 0x34, "f": 0x80, "wram": {wOpponentDeckID: b"\x1c"}},
 ]
 # <<< factory CheckIfOpponentHasBossDeckID
 
 
 # >>> factory RaiseAIScoreToAllMatchingIDsInBench
-CONTRACT["RaiseAIScoreToAllMatchingIDsInBench"] = {"compare": ("hl",), "preserve": (), "wram_out": True}
+CONTRACT["RaiseAIScoreToAllMatchingIDsInBench"] = {
+    "compare": ("hl",),
+    "preserve": (),
+    "wram_out": True,
+}
 hWhoseTurn = 0xFF97
 wPlayerDeck = 0xC400
 wOpponentDeck = 0xC500
 wPlayAreaEnergyAIScore = 0xCDE4
 CASES["RaiseAIScoreToAllMatchingIDsInBench"] = [
-    {"a": 0x2A, "wram": {hWhoseTurn: b"\x01", 0xC2BC: b"\x01\x02\xFF", wPlayerDeck + 1: b"\x2A", wPlayerDeck + 2: b"\x2B", wPlayAreaEnergyAIScore + 1: b"\x03\x04"}, "expect": {wPlayAreaEnergyAIScore + 1: b"\x08\x04"}, "read": {wPlayAreaEnergyAIScore + 1: 2}},
-    {"a": 0x2A, "wram": {hWhoseTurn: b"\x01", 0xC2BC: b"\x01\x02\x03\xFF", wPlayerDeck + 1: b"\x2A", wPlayerDeck + 2: b"\x2A", wPlayerDeck + 3: b"\x2B", wPlayAreaEnergyAIScore + 1: b"\x00\x00\x00"}, "read": {wPlayAreaEnergyAIScore + 1: 3}},
-    dict(POISON, a=0x2A, wram={hWhoseTurn: b"\x00", 0xC3BC: b"\x01\xFF", wOpponentDeck + 1: b"\x2B", wPlayAreaEnergyAIScore + 1: b"\xFA"}, read={wPlayAreaEnergyAIScore + 1: 1}),
+    {
+        "a": 0x2A,
+        "wram": {
+            hWhoseTurn: b"\x01",
+            0xC2BC: b"\x01\x02\xff",
+            wPlayerDeck + 1: b"\x2a",
+            wPlayerDeck + 2: b"\x2b",
+            wPlayAreaEnergyAIScore + 1: b"\x03\x04",
+        },
+        "expect": {wPlayAreaEnergyAIScore + 1: b"\x08\x04"},
+        "read": {wPlayAreaEnergyAIScore + 1: 2},
+    },
+    {
+        "a": 0x2A,
+        "wram": {
+            hWhoseTurn: b"\x01",
+            0xC2BC: b"\x01\x02\x03\xff",
+            wPlayerDeck + 1: b"\x2a",
+            wPlayerDeck + 2: b"\x2a",
+            wPlayerDeck + 3: b"\x2b",
+            wPlayAreaEnergyAIScore + 1: b"\x00\x00\x00",
+        },
+        "read": {wPlayAreaEnergyAIScore + 1: 3},
+    },
+    dict(
+        POISON,
+        a=0x2A,
+        wram={
+            hWhoseTurn: b"\x00",
+            0xC3BC: b"\x01\xff",
+            wOpponentDeck + 1: b"\x2b",
+            wPlayAreaEnergyAIScore + 1: b"\xfa",
+        },
+        read={wPlayAreaEnergyAIScore + 1: 1},
+    ),
 ]
 # <<< factory RaiseAIScoreToAllMatchingIDsInBench
 
@@ -848,42 +1436,97 @@ wDuelAnimDamage = 0xD4B1
 wDecimalChars = 0xD4B4
 CONTRACT["GetDamageNumberChars"] = {"compare": (), "preserve": ()}
 CASES["GetDamageNumberChars"] = [
-	{"wram": {wDuelAnimDamage: b"\x00\x00", wDecimalChars: b"\xAA\xAA\xAA"}, "read": {wDecimalChars: 3}},
-	{"wram": {wDuelAnimDamage: b"\x01\x00", wDecimalChars: b"\xAA\xAA\xAA"}, "read": {wDecimalChars: 3}},
-	{"wram": {wDuelAnimDamage: b"\x2C\x01", wDecimalChars: b"\xAA\xAA\xAA"}, "read": {wDecimalChars: 3}},
-	dict(POISON, wram={wDuelAnimDamage: b"\xFF\x00", wDecimalChars: b"\xAA\xAA\xAA"}, read={wDecimalChars: 3}),
-	dict(_damage_number_chars_fixture(vram=False), **_DAMAGE_NUMBER_CHARS_REGS, read={wDecimalChars: 3}),
+    {
+        "wram": {wDuelAnimDamage: b"\x00\x00", wDecimalChars: b"\xaa\xaa\xaa"},
+        "read": {wDecimalChars: 3},
+    },
+    {
+        "wram": {wDuelAnimDamage: b"\x01\x00", wDecimalChars: b"\xaa\xaa\xaa"},
+        "read": {wDecimalChars: 3},
+    },
+    {
+        "wram": {wDuelAnimDamage: b"\x2c\x01", wDecimalChars: b"\xaa\xaa\xaa"},
+        "read": {wDecimalChars: 3},
+    },
+    dict(
+        POISON,
+        wram={wDuelAnimDamage: b"\xff\x00", wDecimalChars: b"\xaa\xaa\xaa"},
+        read={wDecimalChars: 3},
+    ),
+    dict(
+        _damage_number_chars_fixture(vram=False),
+        **_DAMAGE_NUMBER_CHARS_REGS,
+        read={wDecimalChars: 3},
+    ),
 ]
 # <<< factory GetDamageNumberChars
 
 # >>> factory GetDamageNumberChars.ConvertDigitToCharTile
-CONTRACT["GetDamageNumberChars.ConvertDigitToCharTile"] = {"compare": ("a", "f", "d", "e", "hl"), "preserve": ()}
+CONTRACT["GetDamageNumberChars.ConvertDigitToCharTile"] = {
+    "compare": ("a", "f", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["GetDamageNumberChars.ConvertDigitToCharTile"] = [
-    {"b": 0xFF, "c": 0x9C, "d": (wDecimalChars >> 8) & 0xFF, "e": wDecimalChars & 0xFF, "hl": 0x0000,
-     "wram": {wDecimalChars: b"\xAA\xAA\xAA"}, "read": {wDecimalChars: 3}},
-    {"b": 0xFF, "c": 0x9C, "d": (wDecimalChars >> 8) & 0xFF, "e": wDecimalChars & 0xFF, "hl": 0x012C,
-     "wram": {wDecimalChars: b"\xAA\xAA\xAA"}, "read": {wDecimalChars: 3}},
-    {"b": 0xFF, "c": 0xF6, "d": (wDecimalChars >> 8) & 0xFF, "e": (wDecimalChars & 0xFF) + 1, "hl": 0x004B,
-     "wram": {wDecimalChars: b"\xAA\xAA\xAA"}, "read": {wDecimalChars: 3}},
-    dict(POISON, b=0xFF, c=0xF6, d=(wDecimalChars >> 8) & 0xFF, e=(wDecimalChars & 0xFF) + 1, hl=0x0009,
-         wram={wDecimalChars: b"\xAA\xAA\xAA"}, read={wDecimalChars: 3}),
+    {
+        "b": 0xFF,
+        "c": 0x9C,
+        "d": (wDecimalChars >> 8) & 0xFF,
+        "e": wDecimalChars & 0xFF,
+        "hl": 0x0000,
+        "wram": {wDecimalChars: b"\xaa\xaa\xaa"},
+        "read": {wDecimalChars: 3},
+    },
+    {
+        "b": 0xFF,
+        "c": 0x9C,
+        "d": (wDecimalChars >> 8) & 0xFF,
+        "e": wDecimalChars & 0xFF,
+        "hl": 0x012C,
+        "wram": {wDecimalChars: b"\xaa\xaa\xaa"},
+        "read": {wDecimalChars: 3},
+    },
+    {
+        "b": 0xFF,
+        "c": 0xF6,
+        "d": (wDecimalChars >> 8) & 0xFF,
+        "e": (wDecimalChars & 0xFF) + 1,
+        "hl": 0x004B,
+        "wram": {wDecimalChars: b"\xaa\xaa\xaa"},
+        "read": {wDecimalChars: 3},
+    },
+    dict(
+        POISON,
+        b=0xFF,
+        c=0xF6,
+        d=(wDecimalChars >> 8) & 0xFF,
+        e=(wDecimalChars & 0xFF) + 1,
+        hl=0x0009,
+        wram={wDecimalChars: b"\xaa\xaa\xaa"},
+        read={wDecimalChars: 3},
+    ),
     dict(_digit_char_fixture(vram=False), **_DIGIT_CHAR_REGS, read={wDecimalChars: 3}),
 ]
 # <<< factory GetDamageNumberChars.ConvertDigitToCharTile
 
 # >>> factory CardPageSwitch_PokemonAttack2Page2
-CONTRACT["CardPageSwitch_PokemonAttack2Page2"] = {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CONTRACT["CardPageSwitch_PokemonAttack2Page2"] = {
+    "compare": ("a", "f", "b", "c", "d", "e"),
+    "preserve": ("b", "c", "d", "e"),
+}
 CASES["CardPageSwitch_PokemonAttack2Page2"] = [
     {"wram": {0xCC49: b"\x00\x00\x00\x00\x00"}},
     {"wram": {0xCC49: b"\x11\x22\x00\x00\x01"}},
     {"wram": {0xCC49: b"\x00\x00\x00\x11\x22"}},
-    dict(POISON, wram={0xCC49: b"\xAA\xBB\xCC\xDD\x00"}),
+    dict(POISON, wram={0xCC49: b"\xaa\xbb\xcc\xdd\x00"}),
     {"b": 1, "c": 2, "d": 3, "e": 4, "wram": {0xCC49: b"\x55\x66\x77\x88\x99"}},
 ]
 # <<< factory CardPageSwitch_PokemonAttack2Page2
 
 # >>> factory CardPageSwitch_08
-CONTRACT["CardPageSwitch_08"] = {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CONTRACT["CardPageSwitch_08"] = {
+    "compare": ("a", "f", "b", "c", "d", "e"),
+    "preserve": ("b", "c", "d", "e"),
+}
 CASES["CardPageSwitch_08"] = [
     {},
     dict(POISON),
@@ -894,30 +1537,63 @@ CASES["CardPageSwitch_08"] = [
 # >>> factory LoadPlayAreaCardGfx
 CONTRACT["LoadPlayAreaCardGfx"] = {"compare": (), "preserve": ()}
 CASES["LoadPlayAreaCardGfx"] = [
-	{"a": 0xFF, "d": 0x88, "e": 0x00},
-	{"a": 0x00, "d": 0x88, "e": 0x00,
-	 "wram": {0xC400: b"\x01\x02"}, "vread": {0: {0x8800: 0x300}}},
-	dict(POISON, a=0x00, d=0x90, e=0x00,
-	     wram={0xC400: b"\x02\x03"}, vread={0: {0x9000: 0x300}}),
+    {"a": 0xFF, "d": 0x88, "e": 0x00},
+    {
+        "a": 0x00,
+        "d": 0x88,
+        "e": 0x00,
+        "wram": {0xC400: b"\x01\x02"},
+        "vread": {0: {0x8800: 0x300}},
+    },
+    dict(
+        POISON,
+        a=0x00,
+        d=0x90,
+        e=0x00,
+        wram={0xC400: b"\x02\x03"},
+        vread={0: {0x9000: 0x300}},
+    ),
 ]
 # <<< factory LoadPlayAreaCardGfx
 
 # >>> factory SetBGP6OrSGB3ToCardPalette
 CONTRACT["SetBGP6OrSGB3ToCardPalette"] = {"compare": (), "preserve": ()}
 CASES["SetBGP6OrSGB3ToCardPalette"] = [
-	{"wram": {0xCAB4: b"\x00"}},
-	{"wram": {0xCAB4: b"\x01", 0xCE23: b"\x11\x22\x33\x44\x55\x66\x77\x88"},
-	 "read": {0xCE2E: 6}},
-	dict(POISON, wram={0xCAB4: b"\x02", 0xCE23: bytes(range(8))},
-	     read={0xCB20: 8}),
+    {"wram": {0xCAB4: b"\x00"}},
+    {
+        "wram": {0xCAB4: b"\x01", 0xCE23: b"\x11\x22\x33\x44\x55\x66\x77\x88"},
+        "read": {0xCE2E: 6},
+    },
+    dict(POISON, wram={0xCAB4: b"\x02", 0xCE23: bytes(range(8))}, read={0xCB20: 8}),
 ]
 # <<< factory SetBGP6OrSGB3ToCardPalette
+
+# >>> factory SetOBP1OrSGB3ToCardPalette
+CONTRACT["SetOBP1OrSGB3ToCardPalette"] = {"compare": (), "preserve": ()}
+CASES["SetOBP1OrSGB3ToCardPalette"] = [
+    {"wram": {0xCAB4: b"\x00", 0xCABD: b"\x00"}, "read": {0xCABD: 1}},
+    {
+        "wram": {
+            0xCAB4: b"\x01",
+            0xCABD: b"\x00",
+            0xCE23: b"\x11\x22\x33\x44\x55\x66\x77\x88",
+            0xCAE9: b"\xaa" * 6,
+        },
+        "read": {0xCABD: 1, 0xCAE9: 6},
+    },
+    dict(
+        POISON,
+        wram={0xCAB4: b"\x02", 0xCABD: b"\x00", 0xCE23: bytes(range(8))},
+        read={0xCABD: 1, 0xCB38: 8},
+    ),
+]
+# <<< factory SetOBP1OrSGB3ToCardPalette
 
 # >>> factory SetOneLineSeparation
 CONTRACT["SetOneLineSeparation"] = {"compare": ("a",), "preserve": ()}
 CASES["SetOneLineSeparation"] = [
-	{"wram": {0xCD08: b"\xff"}, "read": {0xCD08: 1}},
-	dict(POISON, wram={0xCD08: b"\xff"}, read={0xCD08: 1}),
+    {"wram": {0xCD08: b"\xff"}, "read": {0xCD08: 1}},
+    dict(POISON, wram={0xCD08: b"\xff"}, read={0xCD08: 1}),
 ]
 # <<< factory SetOneLineSeparation
 
@@ -928,27 +1604,46 @@ CASES["_HasAlivePokemonInPlayArea"] = [
     # dome-5 832872: the live entry (a=0, the whole play area); the slot past the
     # last Pokemon is never read (the stale 50 HP past it stays unseen), and a
     # KO'd play area answers Z with the carry.
-    dict(_alive_in_play_area_fixture(vram=False, bank=1), **dict(_ALIVE_IN_PLAY_AREA_REGS, a=0), read={0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1}),
-    dict(_alive_in_play_area_fixture(vram=False, bank=1, **{"C2C8": b"\x00\x32"}), **dict(_ALIVE_IN_PLAY_AREA_REGS, a=0), read={0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1}),
-    {"a": 0, "wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xC2C8: b"\x10"},
-     "read": {0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1}},
-    {"a": 1, "wram": {0xFF97: b"\xC2", 0xC2EF: b"\x03",
-                      0xC2C8: b"\x00\x10\x00"}, "read": {0xCBD2: 1}},
-    dict(POISON, a=0, wram={0xFF97: b"\xC3", 0xC3EF: b"\x02",
-                            0xC3C8: b"\x00\x00"}),
+    dict(
+        _alive_in_play_area_fixture(vram=False, bank=1),
+        **dict(_ALIVE_IN_PLAY_AREA_REGS, a=0),
+        read={0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1},
+    ),
+    dict(
+        _alive_in_play_area_fixture(vram=False, bank=1, **{"C2C8": b"\x00\x32"}),
+        **dict(_ALIVE_IN_PLAY_AREA_REGS, a=0),
+        read={0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1},
+    ),
+    {
+        "a": 0,
+        "wram": {0xFF97: b"\xc2", 0xC2EF: b"\x01", 0xC2C8: b"\x10"},
+        "read": {0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1},
+    },
+    {
+        "a": 1,
+        "wram": {0xFF97: b"\xc2", 0xC2EF: b"\x03", 0xC2C8: b"\x00\x10\x00"},
+        "read": {0xCBD2: 1},
+    },
+    dict(POISON, a=0, wram={0xFF97: b"\xc3", 0xC3EF: b"\x02", 0xC3C8: b"\x00\x00"}),
 ]
 # <<< factory _HasAlivePokemonInPlayArea
 
 # >>> factory PrintPlayAreaCardLocation
 CONTRACT["PrintPlayAreaCardLocation"] = {"compare": (), "preserve": ()}
 CASES["PrintPlayAreaCardLocation"] = [
-    {"wram": {0xCBC9: b"\x00", 0xCBCA: b"\x00", 0xFF97: b"\x00"},
-     "read": {0x9801: 1, 0x9802: 1, 0x9803: 1}},
-    dict(POISON,
-         wram={0xCBC9: b"\x01", 0xCBCA: b"\x05", 0xFF97: b"\xC2"},
-         read={0x98A1: 1, 0x98A2: 1, 0x98A3: 1}),
-    {"wram": {0xCBC9: b"\x05", 0xCBCA: b"\x1F", 0xFF97: b"\x00"},
-     "read": {0x9BE1: 1, 0x9BE2: 1, 0x9BE3: 1}},
+    {
+        "wram": {0xCBC9: b"\x00", 0xCBCA: b"\x00", 0xFF97: b"\x00"},
+        "read": {0x9801: 1, 0x9802: 1, 0x9803: 1},
+    },
+    dict(
+        POISON,
+        wram={0xCBC9: b"\x01", 0xCBCA: b"\x05", 0xFF97: b"\xc2"},
+        read={0x98A1: 1, 0x98A2: 1, 0x98A3: 1},
+    ),
+    {
+        "wram": {0xCBC9: b"\x05", 0xCBCA: b"\x1f", 0xFF97: b"\x00"},
+        "read": {0x9BE1: 1, 0x9BE2: 1, 0x9BE3: 1},
+    },
 ]
 # <<< factory PrintPlayAreaCardLocation
 
@@ -974,7 +1669,10 @@ CASES["DrawHPBar"] = [
 ]
 # <<< factory DrawHPBar
 # >>> factory ValidateSavedDuelDataFromHL
-CONTRACT["ValidateSavedDuelDataFromHL"] = {"compare": ("f", "hl", "d", "e"), "preserve": ("d", "e")}
+CONTRACT["ValidateSavedDuelDataFromHL"] = {
+    "compare": ("f", "hl", "d", "e"),
+    "preserve": ("d", "e"),
+}
 CASES["ValidateSavedDuelDataFromHL"] = [
     {"hl": 0xBC00, "sram": {0: {0xBC00: b"\x00"}}},
     {"hl": 0xBC00, "sram": {0: {0xBC00: b"\x01\x45\x23\x00" + b"\x00" * 826}}},
@@ -988,9 +1686,17 @@ CONTRACT["ResetDoFrameFunction_Bank1"] = {
     "preserve": ("b", "c", "d", "e"),
 }
 CASES["ResetDoFrameFunction_Bank1"] = [
-    {"a": 0x12, "f": 0x00, "b": 0x34, "c": 0x56, "d": 0x78,
-     "e": 0x9A, "hl": 0x2468, "wram": {0xCAD3: b"\x34\x12"},
-     "read": {0xCAD3: 2}},
+    {
+        "a": 0x12,
+        "f": 0x00,
+        "b": 0x34,
+        "c": 0x56,
+        "d": 0x78,
+        "e": 0x9A,
+        "hl": 0x2468,
+        "wram": {0xCAD3: b"\x34\x12"},
+        "read": {0xCAD3: 2},
+    },
     dict(POISON, wram={0xCAD3: b"\x78\x56"}, read={0xCAD3: 2}),
 ]
 # <<< factory ResetDoFrameFunction_Bank1
@@ -1001,57 +1707,139 @@ CONTRACT["OppAction_NoAction"] = {
     "preserve": ("a", "f", "b", "c", "d", "e", "hl"),
 }
 CASES["OppAction_NoAction"] = [
-    dict(POISON, wram={0xCC24: b"\xA5"}, read={0xCC24: 1}),
+    dict(POISON, wram={0xCC24: b"\xa5"}, read={0xCC24: 1}),
 ]
 # <<< factory OppAction_NoAction
 
 # >>> factory ReturnRetreatCostCardsToArena
-CONTRACT["ReturnRetreatCostCardsToArena"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d")}
+CONTRACT["ReturnRetreatCostCardsToArena"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d"),
+}
 CASES["ReturnRetreatCostCardsToArena"] = [
-    {"wram": {0xFFA2: b"\xFF"}},
-    dict(POISON, wram={0xFFA2: b"\xFF"}),
+    {"wram": {0xFFA2: b"\xff"}},
+    dict(POISON, wram={0xFFA2: b"\xff"}),
 ]
 # <<< factory ReturnRetreatCostCardsToArena
 
 
 # >>> factory FindHighestBenchScore
-CONTRACT["FindHighestBenchScore"] = {"compare": ("a", "f", "d"), "preserve": (), "wram_out": True}
+CONTRACT["FindHighestBenchScore"] = {
+    "compare": ("a", "f", "d"),
+    "preserve": (),
+    "wram_out": True,
+}
 hWhoseTurn = 0xFF97
 hTempPlayAreaLocation_ff9d = 0xFF9D
 wPlayAreaAIScore = 0xCDBF
 CASES["FindHighestBenchScore"] = [
-    {"wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x01", wPlayAreaAIScore: b"\x00\x07"}, "expect": {hTempPlayAreaLocation_ff9d: b"\x00"}, "read": {hTempPlayAreaLocation_ff9d: 1}},
+    {
+        "wram": {hWhoseTurn: b"\xc2", 0xC2EF: b"\x01", wPlayAreaAIScore: b"\x00\x07"},
+        "expect": {hTempPlayAreaLocation_ff9d: b"\x00"},
+        "read": {hTempPlayAreaLocation_ff9d: 1},
+    },
     # a tie goes to the later slot (core.asm:63 `jr c` skips only a lower score)
-    {"wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x04", wPlayAreaAIScore: b"\x00\x01\x09\x09\x02"}, "expect": {hTempPlayAreaLocation_ff9d: b"\x03"}, "read": {hTempPlayAreaLocation_ff9d: 1}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2EF: b"\x03", wPlayAreaAIScore: b"\xAA\x00\xFF\x01\x02"}, expect={hTempPlayAreaLocation_ff9d: b"\x01"}, read={hTempPlayAreaLocation_ff9d: 1}),
-    {"wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x03", wPlayAreaAIScore: b"\x50\x20\x30"}, "expect": {hTempPlayAreaLocation_ff9d: b"\x02"}, "read": {hTempPlayAreaLocation_ff9d: 1}},
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            0xC2EF: b"\x04",
+            wPlayAreaAIScore: b"\x00\x01\x09\x09\x02",
+        },
+        "expect": {hTempPlayAreaLocation_ff9d: b"\x03"},
+        "read": {hTempPlayAreaLocation_ff9d: 1},
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc2",
+            0xC2EF: b"\x03",
+            wPlayAreaAIScore: b"\xaa\x00\xff\x01\x02",
+        },
+        expect={hTempPlayAreaLocation_ff9d: b"\x01"},
+        read={hTempPlayAreaLocation_ff9d: 1},
+    ),
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            0xC2EF: b"\x03",
+            wPlayAreaAIScore: b"\x50\x20\x30",
+        },
+        "expect": {hTempPlayAreaLocation_ff9d: b"\x02"},
+        "read": {hTempPlayAreaLocation_ff9d: 1},
+    },
 ]
 # <<< factory FindHighestBenchScore
 
 # >>> factory AIEncourage
-CONTRACT["AIEncourage"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
+CONTRACT["AIEncourage"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+    "wram_out": True,
+}
 wAIScore = 0xCDBE
 CASES["AIEncourage"] = [
-    {"a": 0x00, "wram": {wAIScore: b"\x00"}, "expect": {wAIScore: b"\x00"}, "read": {wAIScore: 1}},
-    {"a": 0x01, "wram": {wAIScore: b"\x02"}, "expect": {wAIScore: b"\x03"}, "read": {wAIScore: 1}},
-    {"a": 0x01, "wram": {wAIScore: b"\xFF"}, "expect": {wAIScore: b"\xFF"}, "read": {wAIScore: 1}},
-    dict(POISON, a=0x10, wram={wAIScore: b"\x20"}, expect={wAIScore: b"\x30"}, read={wAIScore: 1}),
+    {
+        "a": 0x00,
+        "wram": {wAIScore: b"\x00"},
+        "expect": {wAIScore: b"\x00"},
+        "read": {wAIScore: 1},
+    },
+    {
+        "a": 0x01,
+        "wram": {wAIScore: b"\x02"},
+        "expect": {wAIScore: b"\x03"},
+        "read": {wAIScore: 1},
+    },
+    {
+        "a": 0x01,
+        "wram": {wAIScore: b"\xff"},
+        "expect": {wAIScore: b"\xff"},
+        "read": {wAIScore: 1},
+    },
+    dict(
+        POISON,
+        a=0x10,
+        wram={wAIScore: b"\x20"},
+        expect={wAIScore: b"\x30"},
+        read={wAIScore: 1},
+    ),
 ]
 # <<< factory AIEncourage
 
 # >>> factory HandleFailedToContinueDuel
 CONTRACT["HandleFailedToContinueDuel"] = {"compare": ("f",), "preserve": ()}
 CASES["HandleFailedToContinueDuel"] = [
-    {"hl": 0x0000, "keys": 0x01, "wram": {
-        0xC590: b"\x00", 0xCD0F: b"\x05", 0xCD10: b"\x01",
-        0xCD11: b"\x04", 0xCD12: b"\x00", 0xCD13: b"\x00",
-        0xCD15: b"\x00", 0xCD16: b"\x22"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, hl=0x00CA, keys=0x01, wram={
-        0xC590: b"\x00", 0xCD0F: b"\x05", 0xCD10: b"\x01",
-        0xCD11: b"\x04", 0xCD12: b"\x00", 0xCD13: b"\x00",
-        0xCD15: b"\x00", 0xCD16: b"\x22"},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    {
+        "hl": 0x0000,
+        "keys": 0x01,
+        "wram": {
+            0xC590: b"\x00",
+            0xCD0F: b"\x05",
+            0xCD10: b"\x01",
+            0xCD11: b"\x04",
+            0xCD12: b"\x00",
+            0xCD13: b"\x00",
+            0xCD15: b"\x00",
+            0xCD16: b"\x22",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    },
+    dict(
+        POISON,
+        hl=0x00CA,
+        keys=0x01,
+        wram={
+            0xC590: b"\x00",
+            0xCD0F: b"\x05",
+            0xCD10: b"\x01",
+            0xCD11: b"\x04",
+            0xCD12: b"\x00",
+            0xCD13: b"\x00",
+            0xCD15: b"\x00",
+            0xCD16: b"\x22",
+        },
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    ),
 ]
 # <<< factory HandleFailedToContinueDuel
 
@@ -1060,11 +1848,11 @@ CONTRACT["IsLoadedCard1BasicPokemon"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["IsLoadedCard1BasicPokemon"] = [
     {"wram": {0xCC2B: b"\x01", 0xCC24: b"\x00", 0xCC2D: b"\x00"}},
     {"wram": {0xCC2B: b"\x00", 0xCC24: b"\x00", 0xCC2D: b"\x00"}},
-    {"wram": {0xCC2B: b"\x01", 0xCC24: b"\xFF", 0xCC2D: b"\xFF"}},
+    {"wram": {0xCC2B: b"\x01", 0xCC24: b"\xff", 0xCC2D: b"\xff"}},
     {"wram": {0xCC2B: b"\x01", 0xCC24: b"\x00", 0xCC2D: b"\x00"}},
-    {"wram": {0xCC2B: b"\xFF", 0xCC24: b"\xCB", 0xCC2D: b"\xFF"}},
-    dict(POISON, wram={0xCC2B: b"\xFF", 0xCC24: b"\x53", 0xCC2D: b"\xFF"}),
-    {"wram": {0xCC2B: b"\xCC", 0xCC24: b"\xFF", 0xCC2D: b"\xFF"}},
+    {"wram": {0xCC2B: b"\xff", 0xCC24: b"\xcb", 0xCC2D: b"\xff"}},
+    dict(POISON, wram={0xCC2B: b"\xff", 0xCC24: b"\x53", 0xCC2D: b"\xff"}),
+    {"wram": {0xCC2B: b"\xcc", 0xCC24: b"\xff", 0xCC2D: b"\xff"}},
 ]
 # <<< factory IsLoadedCard1BasicPokemon
 # >>> factory PracticeDuel_PlayGoldeen
@@ -1079,22 +1867,39 @@ CASES["PracticeDuel_PlayGoldeen"] = [
 # >>> factory Func_6ba2
 CONTRACT["Func_6ba2"] = {"compare": (), "preserve": ()}
 CASES["Func_6ba2"] = [
-    {"hl": 0x0000, "keys": [0x00, 0x01],
-     "wram": {0xCC0D: b"\x01", 0xC590: b"\x00"},
-     "read": {0xFF90: 1, 0xFF91: 1},
-     "vread": {0: {0x9980: 192}}},
-    dict(POISON, hl=0x0000, keys=0x01,
-         wram={0xCC0D: b"\x00", 0xC590: b"\x00",
-               0xCD0F: b"\x05", 0xCD10: b"\x01", 0xCD11: b"\x04",
-               0xCD12: b"\x00", 0xCD13: b"\x00", 0xCD15: b"\x00",
-               0xCD16: b"\x22"},
-         read={0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
-         vread={0: {0x9980: 1, 0x9A32: 1}}),
+    {
+        "hl": 0x0000,
+        "keys": [0x00, 0x01],
+        "wram": {0xCC0D: b"\x01", 0xC590: b"\x00"},
+        "read": {0xFF90: 1, 0xFF91: 1},
+        "vread": {0: {0x9980: 192}},
+    },
+    dict(
+        POISON,
+        hl=0x0000,
+        keys=0x01,
+        wram={
+            0xCC0D: b"\x00",
+            0xC590: b"\x00",
+            0xCD0F: b"\x05",
+            0xCD10: b"\x01",
+            0xCD11: b"\x04",
+            0xCD12: b"\x00",
+            0xCD13: b"\x00",
+            0xCD15: b"\x00",
+            0xCD16: b"\x22",
+        },
+        read={0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
+        vread={0: {0x9980: 1, 0x9A32: 1}},
+    ),
 ]
 # <<< factory Func_6ba2
 
 # >>> factory TwoByteNumberToTxSymbol_PadSpace_Bank1
-CONTRACT["TwoByteNumberToTxSymbol_PadSpace_Bank1"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["TwoByteNumberToTxSymbol_PadSpace_Bank1"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["TwoByteNumberToTxSymbol_PadSpace_Bank1"] = [
     {"d": 0, "e": 0, "wram": {0xCAA0: b"\x00" * 6}, "read": {0xCAA0: 6}},
     {"d": 0x30, "e": 0x39, "wram": {0xCAA0: b"\x00" * 6}, "read": {0xCAA0: 6}},
@@ -1105,18 +1910,30 @@ CASES["TwoByteNumberToTxSymbol_PadSpace_Bank1"] = [
 # >>> factory DrawWideTextBox_WaitForInput_Bank1
 CONTRACT["DrawWideTextBox_WaitForInput_Bank1"] = {"compare": ("f",), "preserve": ()}
 CASES["DrawWideTextBox_WaitForInput_Bank1"] = [
-    {"hl": 0, "keys": 0x01, "wram": {0xC590: b"\x00"},
-     "read": {0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
-     "vread": {0: {0x9980: 1, 0x9A32: 1}}},
-    dict(POISON, hl=0, keys=0x02, wram={0xC590: b"\x00"},
-         read={0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
-         vread={0: {0x9980: 1, 0x9A32: 1}}),
+    {
+        "hl": 0,
+        "keys": 0x01,
+        "wram": {0xC590: b"\x00"},
+        "read": {0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
+        "vread": {0: {0x9980: 1, 0x9A32: 1}},
+    },
+    dict(
+        POISON,
+        hl=0,
+        keys=0x02,
+        wram={0xC590: b"\x00"},
+        read={0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
+        vread={0: {0x9980: 1, 0x9A32: 1}},
+    ),
 ]
 # <<< factory DrawWideTextBox_WaitForInput_Bank1
 
 
 # >>> factory CardPageSwitch_EnergyOrTrainerPage1
-CONTRACT["CardPageSwitch_EnergyOrTrainerPage1"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CONTRACT["CardPageSwitch_EnergyOrTrainerPage1"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
 CASES["CardPageSwitch_EnergyOrTrainerPage1"] = [
     {},
     dict(POISON),
@@ -1124,28 +1941,46 @@ CASES["CardPageSwitch_EnergyOrTrainerPage1"] = [
 # <<< factory CardPageSwitch_EnergyOrTrainerPage1
 
 # >>> factory CardPageSwitch_TrainerEnd
-CONTRACT["CardPageSwitch_TrainerEnd"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
-CASES["CardPageSwitch_TrainerEnd"] = [{"a": 0, "f": 0}, dict(POISON), {"a": 0xFF, "f": 0x80}]
+CONTRACT["CardPageSwitch_TrainerEnd"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
+CASES["CardPageSwitch_TrainerEnd"] = [
+    {"a": 0, "f": 0},
+    dict(POISON),
+    {"a": 0xFF, "f": 0x80},
+]
 # <<< factory CardPageSwitch_TrainerEnd
 
 # >>> factory CheckIfEnoughEnergiesOfType
-CONTRACT["CheckIfEnoughEnergiesOfType"] = {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ("b", "c", "d", "e")}
+CONTRACT["CheckIfEnoughEnergiesOfType"] = {
+    "compare": ("a", "b", "c", "d", "e", "f", "hl"),
+    "preserve": ("b", "c", "d", "e"),
+}
 wAttachedEnergiesAccum = 0xCBCE
 CASES["CheckIfEnoughEnergiesOfType"] = [
     {"a": 0, "hl": 0xCC1B, "wram": {wAttachedEnergiesAccum: b"\x00", 0xCC1B: b"\x00"}},
     {"a": 2, "hl": 0xCC1B, "wram": {wAttachedEnergiesAccum: b"\x01", 0xCC1B: b"\x02"}},
     {"a": 3, "hl": 0xCC1B, "wram": {wAttachedEnergiesAccum: b"\x01", 0xCC1B: b"\x02"}},
-    dict(POISON, a=0xF4, hl=0xCC1B, wram={wAttachedEnergiesAccum: b"\xFE", 0xCC1B: b"\x01"}),
+    dict(
+        POISON,
+        a=0xF4,
+        hl=0xCC1B,
+        wram={wAttachedEnergiesAccum: b"\xfe", 0xCC1B: b"\x01"},
+    ),
 ]
 # <<< factory CheckIfEnoughEnergiesOfType
 # >>> factory CheckIfActiveCardParalyzedOrAsleep
-CONTRACT["CheckIfActiveCardParalyzedOrAsleep"] = {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ("b", "c", "d", "e")}
+CONTRACT["CheckIfActiveCardParalyzedOrAsleep"] = {
+    "compare": ("a", "b", "c", "d", "e", "f", "hl"),
+    "preserve": ("b", "c", "d", "e"),
+}
 hWhoseTurn = 0xFF97
 CASES["CheckIfActiveCardParalyzedOrAsleep"] = [
-    {"wram": {hWhoseTurn: b"\xC2", 0xC2F0: b"\x00"}},
-    {"wram": {hWhoseTurn: b"\xC2", 0xC2F0: b"\x02"}},
-    {"wram": {hWhoseTurn: b"\xC2", 0xC2F0: b"\x03"}},
-    dict(POISON, wram={hWhoseTurn: b"\xC3", 0xC3F0: b"\x04"}),
+    {"wram": {hWhoseTurn: b"\xc2", 0xC2F0: b"\x00"}},
+    {"wram": {hWhoseTurn: b"\xc2", 0xC2F0: b"\x02"}},
+    {"wram": {hWhoseTurn: b"\xc2", 0xC2F0: b"\x03"}},
+    dict(POISON, wram={hWhoseTurn: b"\xc3", 0xC3F0: b"\x04"}),
 ]
 # <<< factory CheckIfActiveCardParalyzedOrAsleep
 # >>> factory GetAttacksEnergyCostBits
@@ -1153,45 +1988,119 @@ CONTRACT["GetAttacksEnergyCostBits"] = {"compare": ("a",), "preserve": ()}
 wLoadedCard2Atk1EnergyCost = 0xCC71
 wLoadedCard2Atk2EnergyCost = 0xCC84
 CASES["GetAttacksEnergyCostBits"] = [
-    {"a": 0, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck_: b"\x00"}},
-    {"a": 1, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck_ + 1: b"\x33"}},
-    dict(POISON, a=2, wram={hWhoseTurn: b"\xC2", wPlayerDeck_ + 2: b"\x33"}),
+    {"a": 0, "wram": {hWhoseTurn: b"\xc2", wPlayerDeck_: b"\x00"}},
+    {"a": 1, "wram": {hWhoseTurn: b"\xc2", wPlayerDeck_ + 1: b"\x33"}},
+    dict(POISON, a=2, wram={hWhoseTurn: b"\xc2", wPlayerDeck_ + 2: b"\x33"}),
 ]
 # <<< factory GetAttacksEnergyCostBits
 # >>> factory CheckForEvolutionInList
-CONTRACT["CheckForEvolutionInList"] = {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ("c",)}
+CONTRACT["CheckForEvolutionInList"] = {
+    "compare": ("a", "b", "c", "d", "e", "f", "hl"),
+    "preserve": ("c",),
+}
 wDuelTempList = 0xC510
 wPlayerDuelVariables = 0xC200
 hWhoseTurn = 0xFF97
 CASES["CheckForEvolutionInList"] = [
-    {"a": 0, "wram": {wDuelTempList: b"\x01\xff", hWhoseTurn: b"\xc2",
-                      wPlayerDuelVariables + 0xbb: b"\x08",
-                      wPlayerDuelVariables + 0xc2: b"\x80",
-                      0xc27e: b"\x08\x09"}},
-    {"a": 0, "wram": {wDuelTempList: b"\xff", hWhoseTurn: b"\xc2", wPlayerDuelVariables + 0xbb: b"\x00"}},
-    {"a": 0, "wram": {wDuelTempList: b"\x01\xff", hWhoseTurn: b"\xc2", wPlayerDuelVariables + 0xbb: b"\x08", wPlayerDuelVariables + 0xc2: b"\x80"}},
-    dict(POISON, a=0, wram={wDuelTempList: b"\x01\xff", hWhoseTurn: b"\xc2", wPlayerDuelVariables + 0xbb: b"\x08", wPlayerDuelVariables + 0xc2: b"\x80"}),
+    {
+        "a": 0,
+        "wram": {
+            wDuelTempList: b"\x01\xff",
+            hWhoseTurn: b"\xc2",
+            wPlayerDuelVariables + 0xBB: b"\x08",
+            wPlayerDuelVariables + 0xC2: b"\x80",
+            0xC27E: b"\x08\x09",
+        },
+    },
+    {
+        "a": 0,
+        "wram": {
+            wDuelTempList: b"\xff",
+            hWhoseTurn: b"\xc2",
+            wPlayerDuelVariables + 0xBB: b"\x00",
+        },
+    },
+    {
+        "a": 0,
+        "wram": {
+            wDuelTempList: b"\x01\xff",
+            hWhoseTurn: b"\xc2",
+            wPlayerDuelVariables + 0xBB: b"\x08",
+            wPlayerDuelVariables + 0xC2: b"\x80",
+        },
+    },
+    dict(
+        POISON,
+        a=0,
+        wram={
+            wDuelTempList: b"\x01\xff",
+            hWhoseTurn: b"\xc2",
+            wPlayerDuelVariables + 0xBB: b"\x08",
+            wPlayerDuelVariables + 0xC2: b"\x80",
+        },
+    ),
     # dome-5 829338: Ronald's hand list holds no evolution of the card; the
     # `.no_carry` exit leaves d as the last candidate examined.
-    dict(_evolution_in_list_fixture(vram=False, bank=5), **_EVOLUTION_IN_LIST_REGS, read={0xC510: 12, 0xC3BB: 1}),
+    dict(
+        _evolution_in_list_fixture(vram=False, bank=5),
+        **_EVOLUTION_IN_LIST_REGS,
+        read={0xC510: 12, 0xC3BB: 1},
+    ),
 ]
 # <<< factory CheckForEvolutionInList
 # >>> factory CountNumberOfEnergyCardsAttached
-CONTRACT["CountNumberOfEnergyCardsAttached"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CONTRACT["CountNumberOfEnergyCardsAttached"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
 CASES["CountNumberOfEnergyCardsAttached"] = [
-    {"e": 0, "wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x10", 0xC400: b"\x01"}, "read": {0xCC1B: 8, 0xCC23: 1}},
-    {"e": 0, "wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x10", 0xC400: b"\x07",
-                      0xC201: b"\x10", 0xC401: b"\x01", 0xC27E: b"\x07"},
-     "read": {0xCC1B: 8, 0xCC23: 1}},
-    dict(POISON, e=0, wram={hWhoseTurn: b"\xC3", 0xC300: b"\x10", 0xC500: b"\x01"}, read={0xCC1B: 8, 0xCC23: 1}),
+    {
+        "e": 0,
+        "wram": {hWhoseTurn: b"\xc2", 0xC200: b"\x10", 0xC400: b"\x01"},
+        "read": {0xCC1B: 8, 0xCC23: 1},
+    },
+    {
+        "e": 0,
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            0xC200: b"\x10",
+            0xC400: b"\x07",
+            0xC201: b"\x10",
+            0xC401: b"\x01",
+            0xC27E: b"\x07",
+        },
+        "read": {0xCC1B: 8, 0xCC23: 1},
+    },
+    dict(
+        POISON,
+        e=0,
+        wram={hWhoseTurn: b"\xc3", 0xC300: b"\x10", 0xC500: b"\x01"},
+        read={0xCC1B: 8, 0xCC23: 1},
+    ),
 ]
 # <<< factory CountNumberOfEnergyCardsAttached
 # >>> factory LookForCardIDInLocation_Bank5
-CONTRACT["LookForCardIDInLocation_Bank5"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["LookForCardIDInLocation_Bank5"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["LookForCardIDInLocation_Bank5"] = [
-    {"a": 0x10, "e": 0x2A, "wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x10", 0xC400: b"\x2A"}},
-    {"a": 0x11, "e": 0x2A, "wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x11", 0xC400: b"\x2A"}},
-    dict(POISON, a=0x12, e=0x2A, wram={hWhoseTurn: b"\xC3", 0xC300: b"\x12", 0xC500: b"\x2A"}),
+    {
+        "a": 0x10,
+        "e": 0x2A,
+        "wram": {hWhoseTurn: b"\xc2", 0xC200: b"\x10", 0xC400: b"\x2a"},
+    },
+    {
+        "a": 0x11,
+        "e": 0x2A,
+        "wram": {hWhoseTurn: b"\xc2", 0xC200: b"\x11", 0xC400: b"\x2a"},
+    },
+    dict(
+        POISON,
+        a=0x12,
+        e=0x2A,
+        wram={hWhoseTurn: b"\xc3", 0xC300: b"\x12", 0xC500: b"\x2a"},
+    ),
 ]
 # <<< factory LookForCardIDInLocation_Bank5
 # >>> factory LoadDefendingPokemonColorWRAndPrizeCards
@@ -1207,14 +2116,41 @@ wAIPlayerResistance = 0xCDD1
 wAIPlayerPrizeCount = 0xCDD2
 wAIOpponentPrizeCount = 0xCDD3
 CASES["LoadDefendingPokemonColorWRAndPrizeCards"] = [
-    {"wram": {hWhoseTurn: b"\xC2", 0xC3BB: b"\x00", wOpponentDeck: b"\x44",
-              wPlayerPrizes: b"\x15", wOpponentPrizes: b"\x03"},
-     "read": {wAIPlayerColor: 1, wAIPlayerWeakness: 1, wAIPlayerResistance: 1,
-              wAIPlayerPrizeCount: 1, wAIOpponentPrizeCount: 1, hWhoseTurn: 1}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC3BB: b"\x00", wOpponentDeck: b"\x45",
-                       wPlayerPrizes: b"\x3F", wOpponentPrizes: b"\x00"},
-         read={wAIPlayerColor: 1, wAIPlayerWeakness: 1, wAIPlayerResistance: 1,
-               wAIPlayerPrizeCount: 1, wAIOpponentPrizeCount: 1, hWhoseTurn: 1}),
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            0xC3BB: b"\x00",
+            wOpponentDeck: b"\x44",
+            wPlayerPrizes: b"\x15",
+            wOpponentPrizes: b"\x03",
+        },
+        "read": {
+            wAIPlayerColor: 1,
+            wAIPlayerWeakness: 1,
+            wAIPlayerResistance: 1,
+            wAIPlayerPrizeCount: 1,
+            wAIOpponentPrizeCount: 1,
+            hWhoseTurn: 1,
+        },
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc2",
+            0xC3BB: b"\x00",
+            wOpponentDeck: b"\x45",
+            wPlayerPrizes: b"\x3f",
+            wOpponentPrizes: b"\x00",
+        },
+        read={
+            wAIPlayerColor: 1,
+            wAIPlayerWeakness: 1,
+            wAIPlayerResistance: 1,
+            wAIPlayerPrizeCount: 1,
+            wAIOpponentPrizeCount: 1,
+            hWhoseTurn: 1,
+        },
+    ),
 ]
 # <<< factory LoadDefendingPokemonColorWRAndPrizeCards
 
@@ -1223,14 +2159,43 @@ CONTRACT["CheckIfEnergyIsUseful"] = {"compare": ("f",), "preserve": ()}
 wTempCardID = 0xCDB9
 wTempCardType = 0xCDBA
 CASES["CheckIfEnergyIsUseful"] = [
-    {"a": 0, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x07",
-                      wTempCardID: b"\x00", wTempCardType: b"\x08"}},
-    {"a": 0, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x03",
-                      wTempCardID: b"\x28", wTempCardType: b"\x08"}},
-    {"a": 0, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x02",
-                      wTempCardID: b"\xBC", wTempCardType: b"\x08"}},
-    dict(POISON, a=0, wram={hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01",
-                            wTempCardID: b"\x00", wTempCardType: b"\x01"}),
+    {
+        "a": 0,
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wPlayerDeck: b"\x07",
+            wTempCardID: b"\x00",
+            wTempCardType: b"\x08",
+        },
+    },
+    {
+        "a": 0,
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wPlayerDeck: b"\x03",
+            wTempCardID: b"\x28",
+            wTempCardType: b"\x08",
+        },
+    },
+    {
+        "a": 0,
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wPlayerDeck: b"\x02",
+            wTempCardID: b"\xbc",
+            wTempCardType: b"\x08",
+        },
+    },
+    dict(
+        POISON,
+        a=0,
+        wram={
+            hWhoseTurn: b"\xc2",
+            wPlayerDeck: b"\x01",
+            wTempCardID: b"\x00",
+            wTempCardType: b"\x01",
+        },
+    ),
 ]
 # <<< factory CheckIfEnergyIsUseful
 
@@ -1238,10 +2203,25 @@ CASES["CheckIfEnergyIsUseful"] = [
 CONTRACT["PickRandomBenchPokemon"] = {"compare": ("a",), "preserve": ()}
 wPlayerPokemonCount = 0xC2EF
 CASES["PickRandomBenchPokemon"] = [
-    {"wram": {hWhoseTurn: b"\xC2", wPlayerPokemonCount: b"\x02",
-              0xCACA: b"\x12", 0xCACB: b"\x34", 0xCACC: b"\x56"}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerPokemonCount: b"\x06",
-                       0xCACA: b"\xA5", 0xCACB: b"\x5A", 0xCACC: b"\x01"}),
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wPlayerPokemonCount: b"\x02",
+            0xCACA: b"\x12",
+            0xCACB: b"\x34",
+            0xCACC: b"\x56",
+        }
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc2",
+            wPlayerPokemonCount: b"\x06",
+            0xCACA: b"\xa5",
+            0xCACB: b"\x5a",
+            0xCACC: b"\x01",
+        },
+    ),
 ]
 # <<< factory PickRandomBenchPokemon
 
@@ -1252,9 +2232,17 @@ CONTRACT["PracticeDuel_VerifyPlayerTurnActions"] = {"compare": ("f",), "preserve
 # action: Dr. Mason's "follow my guidance" text and the turn's saved duel data
 # reloaded from the SRAM backup, carry set.
 CASES["PracticeDuel_VerifyPlayerTurnActions"] = [
-    dict(_attack_fixture(vram=False), read={0xC200: 0x200, 0xCC00: 0x100, 0xCBFE: 1}, **_ATTACK_REGS),
-    dict(_attack_fixture(vram=False, **{"CCC2": b"\x54"}), read={0xC200: 0x200, 0xCC00: 0x100, 0xCBFE: 1}, **POISON),
-    dict(POISON, wram={0xFF97: b"\xC2", 0xCC06: b"\x00", 0xCCC2: b"\x53"}),
+    dict(
+        _attack_fixture(vram=False),
+        read={0xC200: 0x200, 0xCC00: 0x100, 0xCBFE: 1},
+        **_ATTACK_REGS,
+    ),
+    dict(
+        _attack_fixture(vram=False, **{"CCC2": b"\x54"}),
+        read={0xC200: 0x200, 0xCC00: 0x100, 0xCBFE: 1},
+        **POISON,
+    ),
+    dict(POISON, wram={0xFF97: b"\xc2", 0xCC06: b"\x00", 0xCCC2: b"\x53"}),
 ]
 # <<< factory PracticeDuel_VerifyPlayerTurnActions
 
@@ -1262,27 +2250,93 @@ CASES["PracticeDuel_VerifyPlayerTurnActions"] = [
 wTempNonTurnDuelistCardID = 0xCCC4
 CONTRACT["PrintCardNameFromCardIDInTextBox"] = {"compare": (), "preserve": ()}
 CASES["PrintCardNameFromCardIDInTextBox"] = [
-    {"hl": 0x0081, "wram": {wTempNonTurnDuelistCardID: b"\x08", 0xCAD3: b"\x48\x03"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 1000000, "cycle_budget": 4000000, "read": {0xCE3F: 2}, "vread": {0: {0x9980: 192}}},
-    dict(POISON, hl=0x0081, wram={wTempNonTurnDuelistCardID: b"\x08", 0xCAD3: b"\x48\x03"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=1000000, cycle_budget=4000000, read={0xCE3F: 2}, vread={0: {0x9980: 192}}),
+    {
+        "hl": 0x0081,
+        "wram": {wTempNonTurnDuelistCardID: b"\x08", 0xCAD3: b"\x48\x03"},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 1000000,
+        "cycle_budget": 4000000,
+        "read": {0xCE3F: 2},
+        "vread": {0: {0x9980: 192}},
+    },
+    dict(
+        POISON,
+        hl=0x0081,
+        wram={wTempNonTurnDuelistCardID: b"\x08", 0xCAD3: b"\x48\x03"},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=1000000,
+        cycle_budget=4000000,
+        read={0xCE3F: 2},
+        vread={0: {0x9980: 192}},
+    ),
 ]
 # <<< factory PrintCardNameFromCardIDInTextBox
 # >>> factory RemoveCardIDInList
-CONTRACT["RemoveCardIDInList"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CONTRACT["RemoveCardIDInList"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
 CASES["RemoveCardIDInList"] = [
-    {"hl": 0xC100, "e": 0x10, "hram": {0xFF97: b"\xC2"}, "wram": {0xC100: b"\x00\x01\xFF", 0xC400: b"\x10\x20"}, "read": {0xC100: 3, 0xC400: 2}},
-    {"hl": 0xC100, "e": 0x30, "hram": {0xFF97: b"\xC2"}, "wram": {0xC100: b"\x00\x01\xFF", 0xC400: b"\x10\x20"}, "read": {0xC100: 3, 0xC400: 2}},
-    dict(POISON, hl=0xC1FF, e=0x20, hram={0xFF97: b"\xC2"}, wram={0xC1FF: b"\x00\xFF", 0xC400: b"\x10\x20"}, read={0xC1FF: 2, 0xC400: 2}),
+    {
+        "hl": 0xC100,
+        "e": 0x10,
+        "hram": {0xFF97: b"\xc2"},
+        "wram": {0xC100: b"\x00\x01\xff", 0xC400: b"\x10\x20"},
+        "read": {0xC100: 3, 0xC400: 2},
+    },
+    {
+        "hl": 0xC100,
+        "e": 0x30,
+        "hram": {0xFF97: b"\xc2"},
+        "wram": {0xC100: b"\x00\x01\xff", 0xC400: b"\x10\x20"},
+        "read": {0xC100: 3, 0xC400: 2},
+    },
+    dict(
+        POISON,
+        hl=0xC1FF,
+        e=0x20,
+        hram={0xFF97: b"\xc2"},
+        wram={0xC1FF: b"\x00\xff", 0xC400: b"\x10\x20"},
+        read={0xC1FF: 2, 0xC400: 2},
+    ),
 ]
 # <<< factory RemoveCardIDInList
 # >>> factory SortTempHandByIDList
-CONTRACT["SortTempHandByIDList"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["SortTempHandByIDList"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["SortTempHandByIDList"] = [
     # water-master 437339: Amy's deck has no play-from-hand priority list, so the
     # sort returns at once with the caller's b, c, de and hl.
-    dict(_sort_temp_hand_fixture(vram=False, bank=5), **_SORT_TEMP_HAND_REGS, read={0xC510: 12}),
-    {"wram": {0xCDAE: b"\x00\xC6", 0xC600: b"\x20\x10\x00", 0xC510: b"\x00\x01\xFF", 0xC400: b"\x10\x20"}, "read": {0xC510: 3, 0xC600: 3, 0xCDAE: 2}},
-    {"wram": {0xCDAE: b"\x00\xC6", 0xC600: b"\x00", 0xC510: b"\x00\xFF"}, "read": {0xC510: 2, 0xC600: 1, 0xCDAE: 2}},
-    dict(POISON, wram={0xCDAE: b"\x00\xC6", 0xC600: b"\x20\x00", 0xC510: b"\x01\xFF", 0xC400: b"\x10\x20"}, read={0xC510: 2, 0xC600: 2, 0xCDAE: 2}),
+    dict(
+        _sort_temp_hand_fixture(vram=False, bank=5),
+        **_SORT_TEMP_HAND_REGS,
+        read={0xC510: 12},
+    ),
+    {
+        "wram": {
+            0xCDAE: b"\x00\xc6",
+            0xC600: b"\x20\x10\x00",
+            0xC510: b"\x00\x01\xff",
+            0xC400: b"\x10\x20",
+        },
+        "read": {0xC510: 3, 0xC600: 3, 0xCDAE: 2},
+    },
+    {
+        "wram": {0xCDAE: b"\x00\xc6", 0xC600: b"\x00", 0xC510: b"\x00\xff"},
+        "read": {0xC510: 2, 0xC600: 1, 0xCDAE: 2},
+    },
+    dict(
+        POISON,
+        wram={
+            0xCDAE: b"\x00\xc6",
+            0xC600: b"\x20\x00",
+            0xC510: b"\x01\xff",
+            0xC400: b"\x10\x20",
+        },
+        read={0xC510: 2, 0xC600: 2, 0xCDAE: 2},
+    ),
 ]
 # <<< factory SortTempHandByIDList
 
@@ -1293,18 +2347,55 @@ CONTRACT["ApplyCardCGBAttributes"] = {"compare": (), "preserve": ()}
 # reference's own hardware, so the attribute rectangle needs that seed to land
 # in bank 1 on both lanes.
 CASES["ApplyCardCGBAttributes"] = [
-    {"a": 0x06, "d": 0x02, "e": 0x03, "wram": {0xCAB4: b"\x02"}, "vread": {0: {0x9862: 0xA8}, 1: {0x9862: 0xA8}}},
-    dict(POISON, a=0x07, d=0x09, e=0x05, wram={0xCAB4: b"\x02"}, vread={0: {0x9800: 0x400}, 1: {0x9800: 0x400}}),
+    {
+        "a": 0x06,
+        "d": 0x02,
+        "e": 0x03,
+        "wram": {0xCAB4: b"\x02"},
+        "vread": {0: {0x9862: 0xA8}, 1: {0x9862: 0xA8}},
+    },
+    dict(
+        POISON,
+        a=0x07,
+        d=0x09,
+        e=0x05,
+        wram={0xCAB4: b"\x02"},
+        vread={0: {0x9800: 0x400}, 1: {0x9800: 0x400}},
+    ),
 ]
 # <<< factory ApplyCardCGBAttributes
 # >>> factory ApplyStatusConditionToArenaPokemon
-CONTRACT["ApplyStatusConditionToArenaPokemon"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d")}
+CONTRACT["ApplyStatusConditionToArenaPokemon"] = {
+    "compare": ("a", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d"),
+}
 CASES["ApplyStatusConditionToArenaPokemon"] = [
     {},
-    {"d": 0xC2, "hl": 0xC100, "wram": {0xC100: b"\x0F\x30", 0xC2F0: b"\xFF" * 16}, "read": {0xC2F0: 16}},
-    {"d": 0xC2, "hl": 0xC100, "wram": {0xC100: b"\x00\x00", 0xC2F0: b"\xAA" * 16}, "read": {0xC2F0: 16}},
-    {"d": 0xC2, "hl": 0xC100, "wram": {0xC100: b"\xFF\x00", 0xC2F0: b"\x5A" * 16}, "read": {0xC2F0: 16}},
-    dict(POISON, d=0xC2, hl=0xC100, wram={0xC100: b"\x3C\xC3", 0xC2F0: b"\x0F" * 16}, read={0xC2F0: 16}),
+    {
+        "d": 0xC2,
+        "hl": 0xC100,
+        "wram": {0xC100: b"\x0f\x30", 0xC2F0: b"\xff" * 16},
+        "read": {0xC2F0: 16},
+    },
+    {
+        "d": 0xC2,
+        "hl": 0xC100,
+        "wram": {0xC100: b"\x00\x00", 0xC2F0: b"\xaa" * 16},
+        "read": {0xC2F0: 16},
+    },
+    {
+        "d": 0xC2,
+        "hl": 0xC100,
+        "wram": {0xC100: b"\xff\x00", 0xC2F0: b"\x5a" * 16},
+        "read": {0xC2F0: 16},
+    },
+    dict(
+        POISON,
+        d=0xC2,
+        hl=0xC100,
+        wram={0xC100: b"\x3c\xc3", 0xC2F0: b"\x0f" * 16},
+        read={0xC2F0: 16},
+    ),
 ]
 # <<< factory ApplyStatusConditionToArenaPokemon
 
@@ -1318,17 +2409,31 @@ CASES["CheckIfEnoughEnergiesToRetreat"] = [
 # >>> factory DecideLinkDuelVariables
 CONTRACT["DecideLinkDuelVariables"] = {"compare": ("f",), "preserve": ()}
 CASES["DecideLinkDuelVariables"] = [
-    {"keys": 0x02, "wram": {0xC590: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, keys=0x02, wram={0xC590: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    {
+        "keys": 0x02,
+        "wram": {0xC590: b"\x00"},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    },
+    dict(
+        POISON,
+        keys=0x02,
+        wram={0xC590: b"\x00"},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    ),
 ]
 # <<< factory DecideLinkDuelVariables
 # >>> factory DisplayAttackPage
 CONTRACT["DisplayAttackPage"] = {"compare": (), "preserve": ()}
 CASES["DisplayAttackPage"] = [
-    {"wram": {0xCC04: b"\x02"}, "read": {0xCC04: 1},
-     "vread": {0: {0x9800: 20, 0x9820: 20}, 1: {0x9800: 20, 0x9820: 20}}},
-    {"wram": {0xCC04: b"\x00"},
-     "vread": {0: {0x9800: 20, 0x9820: 20}, 1: {0x9800: 20, 0x9820: 20}}},
+    {
+        "wram": {0xCC04: b"\x02"},
+        "read": {0xCC04: 1},
+        "vread": {0: {0x9800: 20, 0x9820: 20}, 1: {0x9800: 20, 0x9820: 20}},
+    },
+    {
+        "wram": {0xCC04: b"\x00"},
+        "vread": {0: {0x9800: 20, 0x9820: 20}, 1: {0x9800: 20, 0x9820: 20}},
+    },
     dict(POISON, wram={0xCC04: b"\x03"}),
 ]
 # <<< factory DisplayAttackPage
@@ -1341,13 +2446,39 @@ CONTRACT["DisplayCardPage"] = {"compare": (), "preserve": ()}
 # nothing or the second trainer page (second description id, zero here) goes
 # red. $0A is the second CARDPAGE_ENERGY slot.
 CASES["DisplayCardPage"] = [
-    {"oracle": False, "why": "Page zero enters the scene loop without a prepared duel screen.", "wram": {0xCBC7: b"\x00"}},
-    dict(POISON, wram={0xCBC7: b"\x0D", 0xCC2E: b"\x33\x00\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"},
-         read={0xFF40: 1}, vread={0: {0x9800: 20, 0x9860: 20, 0x9920: 20, 0x9960: 20}},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=2000000, cycle_budget=8000000),
-    dict(POISON, wram={0xCBC7: b"\x0A", 0xCC2E: b"\x00\x00\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"},
-         read={0xFF40: 1}, vread={0: {0x9800: 20, 0x9860: 20, 0x9920: 20}},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=2000000, cycle_budget=8000000),
+    {
+        "oracle": False,
+        "why": "Page zero enters the scene loop without a prepared duel screen.",
+        "wram": {0xCBC7: b"\x00"},
+    },
+    dict(
+        POISON,
+        wram={
+            0xCBC7: b"\x0d",
+            0xCC2E: b"\x33\x00\x00\x00",
+            0xCC27: b"\x33\x00",
+            0xCABB: b"\x00",
+        },
+        read={0xFF40: 1},
+        vread={0: {0x9800: 20, 0x9860: 20, 0x9920: 20, 0x9960: 20}},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
+    dict(
+        POISON,
+        wram={
+            0xCBC7: b"\x0a",
+            0xCC2E: b"\x00\x00\x00\x00",
+            0xCC27: b"\x33\x00",
+            0xCABB: b"\x00",
+        },
+        read={0xFF40: 1},
+        vread={0: {0x9800: 20, 0x9860: 20, 0x9920: 20}},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory DisplayCardPage
 # >>> factory DoPracticeDuelAction
@@ -1361,9 +2492,13 @@ CONTRACT["DoPracticeDuelAction"] = {"compare": ("f",), "preserve": ()}
 # hTempPlayAreaLocation_ff9d = PLAY_AREA_BENCH_1 returns Z. A dispatcher that
 # drops an arm returns the wrong flags on each.
 CASES["DoPracticeDuelAction"] = [
-    {"a": 0, "wram": {0xCC13: b"\x00", 0xCBFE: b"\xFF"}},
+    {"a": 0, "wram": {0xCC13: b"\x00", 0xCBFE: b"\xff"}},
     dict(POISON, a=0xFF, wram={0xCC13: b"\x00", 0xCBFE: b"\x00"}),
-    dict(POISON, a=0x04, wram={0xCC13: b"\x01", 0xCBFE: b"\x00", 0xC2EF: b"\x02", 0xFF97: b"\xC2"}),
+    dict(
+        POISON,
+        a=0x04,
+        wram={0xCC13: b"\x01", 0xCBFE: b"\x00", 0xC2EF: b"\x02", 0xFF97: b"\xc2"},
+    ),
     dict(POISON, a=0x09, wram={0xCC13: b"\x01", 0xCBFE: b"\x00", 0xCC06: b"\x03"}),
     dict(POISON, a=0x0A, wram={0xCC13: b"\x01", 0xCBFE: b"\x00", 0xFF9D: b"\x01"}),
 ]
@@ -1381,10 +2516,13 @@ CASES["DrawDuelHorizontalSeparator"] = [
 ]
 # <<< factory DrawDuelHorizontalSeparator
 # >>> factory MoveAllTurnHolderKnockedOutPokemonToDiscardPile
-CONTRACT["MoveAllTurnHolderKnockedOutPokemonToDiscardPile"] = {"compare": (), "preserve": ()}
+CONTRACT["MoveAllTurnHolderKnockedOutPokemonToDiscardPile"] = {
+    "compare": (),
+    "preserve": (),
+}
 CASES["MoveAllTurnHolderKnockedOutPokemonToDiscardPile"] = [
-    {"hram": {0xFF97: b"\xC2"}, "wram": {0xC2EF: b"\x01", 0xC2C9: b"\x00"}},
-    dict(POISON, hram={0xFF97: b"\xC3"}, wram={0xC3EF: b"\x02", 0xC3C9: b"\x00\x01"}),
+    {"hram": {0xFF97: b"\xc2"}, "wram": {0xC2EF: b"\x01", 0xC2C9: b"\x00"}},
+    dict(POISON, hram={0xFF97: b"\xc3"}, wram={0xC3EF: b"\x02", 0xC3C9: b"\x00\x01"}),
 ]
 # <<< factory MoveAllTurnHolderKnockedOutPokemonToDiscardPile
 # >>> factory PrintSortNumberInCardList_CallFromPointer
@@ -1393,8 +2531,16 @@ CONTRACT["PrintSortNumberInCardList_CallFromPointer"] = {"compare": (), "preserv
 # card list's initial state -- prints nothing, so case 1 seeds it zero with a
 # live list and reads the slots the pointer would have written.
 CASES["PrintSortNumberInCardList_CallFromPointer"] = [
-    {"wram": {0xC51A: b"\x01\x02\xFF"}, "vread": {0: {0x9841: 2, 0x9881: 1}}, "setup": [{"fn": "PrintSortNumberInCardList_SetPointer"}]},
-    dict(POISON, wram={0xC51A: b"\x03\x04\xFF", 0xCBD8: b"\x00\x00"}, vread={0: {0x9841: 2, 0x9881: 1}}),
+    {
+        "wram": {0xC51A: b"\x01\x02\xff"},
+        "vread": {0: {0x9841: 2, 0x9881: 1}},
+        "setup": [{"fn": "PrintSortNumberInCardList_SetPointer"}],
+    },
+    dict(
+        POISON,
+        wram={0xC51A: b"\x03\x04\xff", 0xCBD8: b"\x00\x00"},
+        vread={0: {0x9841: 2, 0x9881: 1}},
+    ),
 ]
 # <<< factory PrintSortNumberInCardList_CallFromPointer
 # >>> factory PracticeDuel_VerifyInitialPlay
@@ -1403,16 +2549,25 @@ CONTRACT["PracticeDuel_VerifyInitialPlay"] = {"compare": ("f",), "preserve": ()}
 # Dr. Mason's "choose Staryu" text box (labeled, rows 12-17 read back from
 # the map; keys hold A so the prompt closes) and carry.
 CASES["PracticeDuel_VerifyInitialPlay"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x02"}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EF: b"\x02"}),
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xCABB: b"\x00"}, keys=0x01,
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], vread={0: {0x9980: 20, 0x99A0: 20}},
-         instruction_budget=4000000, cycle_budget=16000000),
+    {"wram": {0xFF97: b"\xc2", 0xC2EF: b"\x02"}},
+    dict(POISON, wram={0xFF97: b"\xc2", 0xC2EF: b"\x02"}),
+    dict(
+        POISON,
+        wram={0xFF97: b"\xc2", 0xC2EF: b"\x01", 0xCABB: b"\x00"},
+        keys=0x01,
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        vread={0: {0x9980: 20, 0x99A0: 20}},
+        instruction_budget=4000000,
+        cycle_budget=16000000,
+    ),
 ]
 # <<< factory PracticeDuel_VerifyInitialPlay
 
 # >>> factory CheckIfNoSurplusEnergyForAttack
-CONTRACT["CheckIfNoSurplusEnergyForAttack"] = {"compare": ("a", "f", "d"), "preserve": ()}
+CONTRACT["CheckIfNoSurplusEnergyForAttack"] = {
+    "compare": ("a", "f", "d"),
+    "preserve": (),
+}
 CASES["CheckIfNoSurplusEnergyForAttack"] = [
     {"read": {0xCC1B: 9, 0xCDB5: 3}},
     {"wram": {0xCCC6: b"\x01"}, "read": {0xCC1B: 9, 0xCDB5: 3}},
@@ -1431,17 +2586,19 @@ CASES["Func_1585b"] = [
     dict(POISON, hl=0xC100, wram={0xC100: b"\x02\x11\x22\x00\x00\x00"}),
     # Type-1 entry for an implausible card ID: lookup fails, single inc hl,
     # then the terminator on the next iteration.
-    {"hl": 0xC100, "wram": {0xC100: b"\x01\xFE\x00\x00\x00\x00"}},
+    {"hl": 0xC100, "wram": {0xC100: b"\x01\xfe\x00\x00\x00\x00"}},
     # Type-1 entry with card ID 0 and a zero requirement.
     {"hl": 0xC100, "wram": {0xC100: b"\x01\x00\x00\x00\x00\x00"}},
     # Type-1 entry with the maximum requirement byte.
-    {"hl": 0xC100, "wram": {0xC100: b"\x01\x00\xFF\x00\x00\x00"}},
+    {"hl": 0xC100, "wram": {0xC100: b"\x01\x00\xff\x00\x00\x00"}},
     # Several mixed entries before the terminator, proving the 3-byte stride
     # of the skip path stays in phase with the type-1 path.
-    {"hl": 0xC100,
-     "wram": {0xC100: b"\x02\x01\x03\x01\x05\x02\xFF\x07\x09\x00\x00\x00"}},
+    {
+        "hl": 0xC100,
+        "wram": {0xC100: b"\x02\x01\x03\x01\x05\x02\xff\x07\x09\x00\x00\x00"},
+    },
     # High first byte (not 1): still a plain 3-byte skip.
-    {"hl": 0xC100, "wram": {0xC100: b"\xFF\xFF\xFF\x00"}},
+    {"hl": 0xC100, "wram": {0xC100: b"\xff\xff\xff\x00"}},
 ]
 # <<< factory Func_1585b
 
@@ -1450,51 +2607,76 @@ CONTRACT["CheckIfNotABossDeckID"] = {"compare": ("a",), "preserve": ()}
 sReceivedLegendaryCards = 0xA00A
 CASES["CheckIfNotABossDeckID"] = [
     # All-zero: the flag byte is 0, so the deck-ID check runs.
-    {"sram": {0: {sReceivedLegendaryCards: b"\x00\x00"}},
-     "sread": {0: {sReceivedLegendaryCards: 2}}},
+    {
+        "sram": {0: {sReceivedLegendaryCards: b"\x00\x00"}},
+        "sread": {0: {sReceivedLegendaryCards: 2}},
+    },
     # Poisoned entry registers: the routine takes no arguments. Flag byte
     # nonzero, so a is the flag value itself and the check is skipped.
-    dict(POISON, sram={0: {sReceivedLegendaryCards: b"\x07\x00"}},
-         sread={0: {sReceivedLegendaryCards: 2}}),
+    dict(
+        POISON,
+        sram={0: {sReceivedLegendaryCards: b"\x07\x00"}},
+        sread={0: {sReceivedLegendaryCards: 2}},
+    ),
     # Flag byte 0 but the following byte nonzero: pins the read address.
-    {"sram": {0: {sReceivedLegendaryCards: b"\x00\x05"}},
-     "sread": {0: {sReceivedLegendaryCards: 2}}},
+    {
+        "sram": {0: {sReceivedLegendaryCards: b"\x00\x05"}},
+        "sread": {0: {sReceivedLegendaryCards: 2}},
+    },
     # Maximum flag value.
-    {"sram": {0: {sReceivedLegendaryCards: b"\xFF\x00"}},
-     "sread": {0: {sReceivedLegendaryCards: 2}}},
+    {
+        "sram": {0: {sReceivedLegendaryCards: b"\xff\x00"}},
+        "sread": {0: {sReceivedLegendaryCards: 2}},
+    },
     # ramg False after seeding: only the routine's own EnableSRAM makes the
     # zero byte observable, otherwise it reads open bus $FF.
-    {"ramg": False, "sram": {0: {sReceivedLegendaryCards: b"\x00\x00"}},
-     "sread": {0: {sReceivedLegendaryCards: 2}}},
+    {
+        "ramg": False,
+        "sram": {0: {sReceivedLegendaryCards: b"\x00\x00"}},
+        "sread": {0: {sReceivedLegendaryCards: 2}},
+    },
 ]
 # <<< factory CheckIfNotABossDeckID
 
 # >>> factory AIChooseRandomlyNotToDoAction
 wOpponentDeckID = 0xCC0E
-CONTRACT["AIChooseRandomlyNotToDoAction"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CONTRACT["AIChooseRandomlyNotToDoAction"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
 CASES["AIChooseRandomlyNotToDoAction"] = [
-	# deck id 0: below every boss range and not one of the six 50% decks -> 25% path
-	{"wram": {wOpponentDeckID: b"\x00"}},
-	# above every deck id: not-boss via the high side, still the 25% path
-	{"wram": {wOpponentDeckID: b"\x7f"}},
-	{"wram": {wOpponentDeckID: b"\xff"}},
-	dict(POISON, wram={wOpponentDeckID: b"\x00"}),
+    # deck id 0: below every boss range and not one of the six 50% decks -> 25% path
+    {"wram": {wOpponentDeckID: b"\x00"}},
+    # above every deck id: not-boss via the high side, still the 25% path
+    {"wram": {wOpponentDeckID: b"\x7f"}},
+    {"wram": {wOpponentDeckID: b"\xff"}},
+    dict(POISON, wram={wOpponentDeckID: b"\x00"}),
 ]
 # <<< factory AIChooseRandomlyNotToDoAction
 
 # >>> factory TrySetUpBossStartingPlayArea
 CONTRACT["TrySetUpBossStartingPlayArea"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["TrySetUpBossStartingPlayArea"] = [
-	{"wram": {0xCDAA: b"\x00\x00"}},
-	dict(POISON, wram={0xCDAA: b"\x00\xc1", 0xC100: b"\x00"}),
-	{"wram": {0xCDAA: b"\x00\xc1", 0xC100: b"\x05\x00", 0xCDAC: b"\x00\xc2", 0xC200: b"\x09\x00"}},
-	{"wram": {0xCDAA: b"\x00\xc1", 0xC100: b"\x07\x08\x03\x00"}},
-	{"wram": {0xCDAA: b"\x00\xc1", 0xC100: b"\x00", 0xCDF1: b"\x2b"}},
+    {"wram": {0xCDAA: b"\x00\x00"}},
+    dict(POISON, wram={0xCDAA: b"\x00\xc1", 0xC100: b"\x00"}),
+    {
+        "wram": {
+            0xCDAA: b"\x00\xc1",
+            0xC100: b"\x05\x00",
+            0xCDAC: b"\x00\xc2",
+            0xC200: b"\x09\x00",
+        }
+    },
+    {"wram": {0xCDAA: b"\x00\xc1", 0xC100: b"\x07\x08\x03\x00"}},
+    {"wram": {0xCDAA: b"\x00\xc1", 0xC100: b"\x00", 0xCDF1: b"\x2b"}},
 ]
 # <<< factory TrySetUpBossStartingPlayArea
 
 # >>> factory CardPageSwitch_TrainerPage2
-CONTRACT["CardPageSwitch_TrainerPage2"] = {"compare": ("a", "f", "hl", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CONTRACT["CardPageSwitch_TrainerPage2"] = {
+    "compare": ("a", "f", "hl", "b", "c", "d", "e"),
+    "preserve": ("b", "c", "d", "e"),
+}
 CASES["CardPageSwitch_TrainerPage2"] = [
     {"wram": {0xCC30: b"\x00"}, "read": {0xCC30: 1}},
     dict(POISON, wram={0xCC30: b"\x00"}, read={0xCC30: 1}),
@@ -1505,18 +2687,18 @@ CASES["CardPageSwitch_TrainerPage2"] = [
 # >>> factory LoadAndValidateDuelSaveData
 CONTRACT["LoadAndValidateDuelSaveData"] = {"compare": ("f",), "preserve": ()}
 CASES["LoadAndValidateDuelSaveData"] = [
-	{"sram": {0: {0xBC00: b"\x00" * 0x100}}},
-	dict(POISON, sram={0: {0xBC00: b"\x00" * 0x100}}),
-	{"sram": {0: {0xBC00: b"\x01" + b"\x00" * 0xFF}}},
+    {"sram": {0: {0xBC00: b"\x00" * 0x100}}},
+    dict(POISON, sram={0: {0xBC00: b"\x00" * 0x100}}),
+    {"sram": {0: {0xBC00: b"\x01" + b"\x00" * 0xFF}}},
 ]
 # <<< factory LoadAndValidateDuelSaveData
 
 # >>> factory ValidateSavedNonLinkDuelData
 CONTRACT["ValidateSavedNonLinkDuelData"] = {"compare": ("f",), "preserve": ()}
 CASES["ValidateSavedNonLinkDuelData"] = [
-	{"sram": {0: {0xBC03: b"\x00", 0xBC00: b"\x00" * 0x100}}},
-	dict(POISON, sram={0: {0xBC03: b"\x00", 0xBC00: b"\x00" * 0x100}}),
-	{"sram": {0: {0xBC03: b"\x01", 0xBC00: b"\x00" * 0x100}}},
+    {"sram": {0: {0xBC03: b"\x00", 0xBC00: b"\x00" * 0x100}}},
+    dict(POISON, sram={0: {0xBC03: b"\x00", 0xBC00: b"\x00" * 0x100}}),
+    {"sram": {0: {0xBC03: b"\x01", 0xBC00: b"\x00" * 0x100}}},
 ]
 # <<< factory ValidateSavedNonLinkDuelData
 
@@ -1524,8 +2706,8 @@ CASES["ValidateSavedNonLinkDuelData"] = [
 CONTRACT["SetupPlayAreaScreen"] = {"compare": (), "preserve": ()}
 CASES["SetupPlayAreaScreen"] = [
     {"wram": {0xCAC2: b"\x00", 0xCBD2: b"\x00"}},
-    dict(POISON, wram={0xCAC2: b"\x02", 0xCBD2: b"\xAA"}),
-    {"wram": {0xCAC2: b"\x01", 0xCBD2: b"\xAA"}},
+    dict(POISON, wram={0xCAC2: b"\x02", 0xCBD2: b"\xaa"}),
+    {"wram": {0xCAC2: b"\x01", 0xCBD2: b"\xaa"}},
 ]
 # <<< factory SetupPlayAreaScreen
 
@@ -1565,11 +2747,22 @@ wDuelType = 0xCC09
 
 wStringBuffer = 0xCAA0
 BGMAP0 = 0x9800
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
+
 
 def write_case(a, b, c, d=0, e=0, hl=0, poison=False, expected=b"\x00\x00"):
     dst = BGMAP0 + c * 32 + b
-    values = dict(POISON) if poison else {"a": a, "b": b, "c": c, "d": d, "e": e, "hl": hl}
+    values = (
+        dict(POISON) if poison else {"a": a, "b": b, "c": c, "d": d, "e": e, "hl": hl}
+    )
     values["wram"] = {wStringBuffer: b"\xff" * 6}
     if dst < 0xA000:
         values["vram"] = {0: {dst: b"\xee" * 3}}
@@ -1579,6 +2772,7 @@ def write_case(a, b, c, d=0, e=0, hl=0, poison=False, expected=b"\x00\x00"):
         values["expect_sram"] = {0: {dst: expected + b"\xee"}}
     return values
 
+
 wNumCardsBeingDrawn = 0xCBE9
 wOpponentNumberOfCardsInHand = 0xC3EE
 wOpponentNumberOfCardsNotInDeck = 0xC3BA
@@ -1587,13 +2781,29 @@ wNumCardsBeingDrawn = 0xCBE9
 wPlayerNumberOfCardsInHand = 0xC2EE
 wPlayerNumberOfCardsNotInDeck = 0xC2BA
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 TEXT_READ = {0xCD05: 2, 0xCD0A: 1, 0xCAA0: 5}
 VRAM_FIRST = {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}
 VRAM_SECOND = VRAM_FIRST
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 
 wCardPageNumber = 0xCBC7
 wLoadedCard1Type = 0xCC24
@@ -1611,7 +2821,15 @@ wNumCardsBeingDrawn = 0xCBE9
 wPlayerNumberOfCardsNotInDeck = 0xC2BA
 wOpponentNumberOfCardsInHand = 0xC3EE
 wOpponentNumberOfCardsNotInDeck = 0xC3BA
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 
 wAnimationQueue = 0xD423
 wAnimFlags = 0xD42B
@@ -1619,8 +2837,11 @@ wDuelAnimationScreen = 0xD4AE
 wDuelAnimDuelistSide = 0xD4AF
 wDuelAnimLocationParam = 0xD4B0
 SPRITE_BUFFER = 0xD4D0
+
+
 def entry_base(idx):
     return SPRITE_BUFFER + (min(idx, 15) * 16)
+
 
 wLoadedCard1Name = 0xCC27
 wLoadedCard1NonPokemonDescription = 0xCC2E
@@ -1800,7 +3021,15 @@ hKeysPressed = 0xFF91
 hKeysReleased = 0xFF8E
 hCurMenuItem = 0xFFB1
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 hWhoseTurn = 0xFF97
 wArenaCard = 0xC2BB
 hTempPlayAreaLocation_ff9d = 0xFF9D
@@ -1811,12 +3040,28 @@ hWhoseTurn = 0xFF97
 hTempPlayAreaLocation_ff9d = 0xFF9D
 wSelectedAttack = 0xCCC6
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 wOpponentDeckID = 0xCC0E
 hWhoseTurn = 0xFF97
 ARTICUNO_SCORE = 0xCDE5
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 hWhoseTurn = 0xFF97
 hTempPlayAreaLocation_ff9d = 0xFF9D
 wLoadedCard1AIInfo = 0xCC64
@@ -1826,12 +3071,28 @@ wSelectedAttack = 0xCCC6
 wDuelDisplayedScreen = 0xCAC2
 wLoadedCard1Type = 0xCC24
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 hWhoseTurn = 0xFF97
 wHUDEnergyAndHPBarsX = 0xCBC9
 wHUDEnergyAndHPBarsY = 0xCBCA
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 hWhoseTurn = 0xFF97
 HUD_TILE = 0x996F
 
@@ -1842,7 +3103,15 @@ hWhoseTurn = 0xFF97
 wDuelDisplayedScreen = 0xCAC2
 wPlayerDuelistType = 0xC2F1
 wOpponentDuelistType = 0xC3F1
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 
 wSelectedDuelSubMenuItem = 0xCBCF
 wSortCardListByID = 0xCBDF
@@ -1854,26 +3123,71 @@ wNoItemSelectionMenuKeys = 0xCBD6
 wDuelTempList = 0xC510
 wCardListScratch = 0xC51A
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 hWhoseTurn = 0xFF97
 wWhoseTurn = 0xCC05
 HUD_TILE = 0x996F
-HUD_SEED = {hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC2", 0xC2BB: b"\xFF", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC2F0: b"\x00", 0xC2F1: b"\x00", 0xC3BB: b"\xFF", 0xC3EC: b"\x00", 0xC3EF: b"\x00", 0xC3F0: b"\x00", 0xC3F1: b"\x00"}
+HUD_SEED = {
+    hWhoseTurn: b"\xc2",
+    wWhoseTurn: b"\xc2",
+    0xC2BB: b"\xff",
+    0xC2EC: b"\x00",
+    0xC2EF: b"\x00",
+    0xC2F0: b"\x00",
+    0xC2F1: b"\x00",
+    0xC3BB: b"\xff",
+    0xC3EC: b"\x00",
+    0xC3EF: b"\x00",
+    0xC3F0: b"\x00",
+    0xC3F1: b"\x00",
+}
 HUD_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000}
 
 hWhoseTurn = 0xFF97
 wOpponentDuelistType = 0xC2F1
 wDuelDisplayedScreen = 0xCAC2
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 
 wDuelTempList = 0xC510
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 
 wDuelDisplayedScreen = 0xCAC2
 wLCDC = 0xCABB
 wOpponentTurnEnded = 0xCBE1
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 hWhoseTurn = 0xFF97
 wDuelTempList = 0xC510
 wListItemXPosition = 0xCD1A
@@ -1883,7 +3197,15 @@ hWhoseTurn = 0xFF97
 wPlayerArenaCard = 0xC2BB
 wPlayerDeck = 0xC400
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 wLoadedCard1AttackDescriptions = 0xCEA0
 
 wEnergyDiscardMenuDenominator = 0xCBFA
@@ -1892,7 +3214,15 @@ wEnergyDiscardMenuNumerator = 0xCBFB
 wEnergyCardsRequiredToRetreat = 0xCBCC
 hTempRetreatCostCards = 0xFFA2
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 wCardPageExitKeys = 0xCBD7
 wCardPageNumber = 0xCBC7
 wCardPageType = 0xCBD1
@@ -1952,7 +3282,27 @@ wDuelDisplayedScreen = 0xCAC2
 wLCDC = 0xCABB
 rLCDC = 0xFF40
 FRAME_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
-RETREAT_SEED = {hWhoseTurn: b"\xC2", hTemp_ffa0: b"\x00", hTempPlayAreaLocation_ffa1: b"\x01", hTempRetreatCostCards: b"\xFF", wDuelDisplayedScreen: b"\x01", wLCDC: b"\x00", rLCDC: b"\x00", 0xCC05: b"\xC2", 0xC2BB: b"\x00", 0xC2BC: b"\xFF", 0xC2F1: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC2F0: b"\x00", 0xC3BB: b"\xFF", 0xC3F1: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00", 0xC3F0: b"\x00"}
+RETREAT_SEED = {
+    hWhoseTurn: b"\xc2",
+    hTemp_ffa0: b"\x00",
+    hTempPlayAreaLocation_ffa1: b"\x01",
+    hTempRetreatCostCards: b"\xff",
+    wDuelDisplayedScreen: b"\x01",
+    wLCDC: b"\x00",
+    rLCDC: b"\x00",
+    0xCC05: b"\xc2",
+    0xC2BB: b"\x00",
+    0xC2BC: b"\xff",
+    0xC2F1: b"\x00",
+    0xC2EC: b"\x00",
+    0xC2EF: b"\x00",
+    0xC2F0: b"\x00",
+    0xC3BB: b"\xff",
+    0xC3F1: b"\x00",
+    0xC3EC: b"\x00",
+    0xC3EF: b"\x00",
+    0xC3F0: b"\x00",
+}
 
 hWhoseTurn = 0xFF97
 wDamageAnimAmount = 0xCE7F
@@ -1988,7 +3338,7 @@ hCurMenuItem = 0xFFB1
 # before the wait loop starts). wNoItemSelectionMenuKeys is 0 so no key opens the
 # card page, and wSortCardListByID is only read on the PAD_SELECT branch.
 DISPLAY_CARD_LIST_SEED = {
-    wDuelTempList: b"\xFF",
+    wDuelTempList: b"\xff",
     wLCDC: b"\x00",
     wSelectedDuelSubMenuItem: b"\x00",
     wSelectedDuelSubMenuScrollOffset: b"\x00",
@@ -1997,7 +3347,10 @@ DISPLAY_CARD_LIST_SEED = {
     hKeysPressed: b"\x02",
     hCurMenuItem: b"\x00",
 }
-DISPLAY_CARD_LIST_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+DISPLAY_CARD_LIST_SETUP = [
+    {"fn": "CopyDMAFunction"},
+    {"fn": "SetupText", "d": 0x20, "e": 0x40},
+]
 DISPLAY_CARD_LIST_KEYS = [0x00, 0x02]
 
 wDuelDisplayedScreen = 0xCAC2
@@ -2017,20 +3370,28 @@ PSDCA_hWhoseTurn = 0xFF97
 # animation ring empty, and wDoFrameFunction ($CAD3) pointing at
 # UpdateQueuedAnimations ($3BA2) - the value ResetAnimationQueue writes on both
 # sides, so every seeded byte here is one the two runs agree on at return.
-PSDCA_ANIM_SAFE = {0xD42A: b"\xff", 0xD4C0: b"\xff", 0xD423: b"\xff" * 7,
-                   0xCAD3: bytes([0xA2, 0x3B]), 0xD4AC: b"\x00", 0xD4AD: b"\x08"}
+PSDCA_ANIM_SAFE = {
+    0xD42A: b"\xff",
+    0xD4C0: b"\xff",
+    0xD423: b"\xff" * 7,
+    0xCAD3: bytes([0xA2, 0x3B]),
+    0xD4AC: b"\x00",
+    0xD4AD: b"\x08",
+}
 # wSkipDelayAllowed non-zero plus B held makes CheckSkipDelayAllowed return
 # carry on its first call after every DoFrame, so both wait loops leave on the
 # frame they enter and neither side depends on when an animation happens to
 # finish. wLCDC starts off: the routine's own EnableLCD turns it on, which is
 # what makes real frames elapse, so CopyDMAFunction has to be installed or
 # VBlankHandler calls an uncopied hDMAFunction and the reference parks at $0271.
-PSDCA_SEED = {**PSDCA_ANIM_SAFE,
-              PSDCA_hWhoseTurn: b"\xC2",
-              PSDCA_wSkipDelayAllowed: b"\x01",
-              PSDCA_wDuelType: b"\x00",
-              PSDCA_wLCDC: b"\x00",
-              PSDCA_wTextSpeed: b"\x00"}
+PSDCA_SEED = {
+    **PSDCA_ANIM_SAFE,
+    PSDCA_hWhoseTurn: b"\xc2",
+    PSDCA_wSkipDelayAllowed: b"\x01",
+    PSDCA_wDuelType: b"\x00",
+    PSDCA_wLCDC: b"\x00",
+    PSDCA_wTextSpeed: b"\x00",
+}
 PSDCA_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 PSDCA_READ = {PSDCA_wDuelDisplayedScreen: 1, PSDCA_wNumCardsBeingDrawn: 1}
 
@@ -2048,12 +3409,21 @@ hTempPlayAreaLocation_ff9d = 0xFF9D
 wDamage = 0xCCB9
 wSelectedAttack = 0xCCC6
 SNORLAX = 0xBE
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
+
 
 def _same_damage_case(hp=0, **overrides):
     case = {
         "wram": {
-            hWhoseTurn: b"\xC2",
+            hWhoseTurn: b"\xc2",
             hTempPlayAreaLocation_ff9d: b"\x00",
             0xC2BB: b"\x00",
             0xC3BB: b"\x00",
@@ -2071,6 +3441,7 @@ def _same_damage_case(hp=0, **overrides):
     }
     case.update(overrides)
     return case
+
 
 # CheckIfAnyAttackKnocksOutDefendingCard: the turn duelist's card at
 # hTempPlayAreaLocation_ff9d attacks, and the HP the routine subtracts wDamage
@@ -2099,9 +3470,10 @@ _kaod_wSelectedAttack = 0xCCC6
 _kaod_SNORLAX = 0xBE
 _kaod_CARD_LOCATION_ARENA = 0x10
 
+
 def _kaod_case(location=b"\x00", extra=None, **overrides):
     wram = {
-        _kaod_hWhoseTurn: b"\xC2",
+        _kaod_hWhoseTurn: b"\xc2",
         _kaod_hTempPlayAreaLocation_ff9d: location,
         _kaod_wPlayerCardLocations: bytes((_kaod_CARD_LOCATION_ARENA,)),
         _kaod_wOpponentCardLocations: bytes((_kaod_CARD_LOCATION_ARENA,)),
@@ -2125,6 +3497,7 @@ def _kaod_case(location=b"\x00", extra=None, **overrides):
     }
     case.update(overrides)
     return case
+
 
 wPlayerDuelVariables = 0xC200
 wPlayerDeck = 0xC400
@@ -2178,12 +3551,14 @@ DESC_READ = {
     DESC_wStringBuffer: 8,
 }
 
+
 def desc_seed(length, weight, description):
     seed = dict(DESC_BASE)
     seed[DESC_wLoadedCard1Length] = length
     seed[DESC_wLoadedCard1Weight] = weight
     seed[DESC_wLoadedCard1Description] = description
     return seed
+
 
 # PlayBetweenTurnsAnimation (core.asm:6975). Seeds shared by its three cases.
 # PBTA_ANIM_IDLE keeps both sides out of every unbounded animation path:
@@ -2203,11 +3578,19 @@ def desc_seed(length, weight, description):
 # the HUD tail: empty arenas ($C2BB/$C3BB = $FF), no status, human duelist types.
 # PBTA_SCRATCH pre-dirties the three bytes the routine writes, so a body that
 # skipped any of the three stores would diverge instead of matching by default.
-PBTA_POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+PBTA_POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 PBTA_ANIM_IDLE = {
-    0xD423: b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF",
-    0xD42A: b"\xFF",
-    0xD4C0: b"\xFF",
+    0xD423: b"\xff\xff\xff\xff\xff\xff\xff",
+    0xD42A: b"\xff",
+    0xD4C0: b"\xff",
     0xD4AC: b"\x08",
     0xD4AD: b"\x00",
     0xCABB: b"\x00",
@@ -2215,14 +3598,14 @@ PBTA_ANIM_IDLE = {
     0xCAD5: b"\x00",
 }
 PBTA_HUD_SEED = {
-    0xFF97: b"\xC2",
-    0xCC05: b"\xC2",
-    0xC2BB: b"\xFF",
+    0xFF97: b"\xc2",
+    0xCC05: b"\xc2",
+    0xC2BB: b"\xff",
     0xC2EC: b"\x00",
     0xC2EF: b"\x00",
     0xC2F0: b"\x00",
     0xC2F1: b"\x00",
-    0xC3BB: b"\xFF",
+    0xC3BB: b"\xff",
     0xC3EC: b"\x00",
     0xC3EF: b"\x00",
     0xC3F0: b"\x00",
@@ -2253,22 +3636,22 @@ HSC_RNG = 0xCACA
 # 00/00/00 gives bit0 = 0 (heads), 00/00/80 gives bit0 = 1 (tails). The remaining
 # bytes are the seed the landed RedrawTurnDuelistsMainSceneOrDuelHUD cases use.
 HSC_SEED = {
-    0xFF97: b"\xC2",
-    0xCC05: b"\xC2",
+    0xFF97: b"\xc2",
+    0xCC05: b"\xc2",
     0xCC09: b"\x00",
     0xCAC2: b"\x06",
     0xCABB: b"\x00",
     0xCCC4: b"\x01",
-    0xCD9C: b"\xFF",
-    0xCD9D: b"\xFF",
-    0xCD9E: b"\xFF",
+    0xCD9C: b"\xff",
+    0xCD9D: b"\xff",
+    0xCD9E: b"\xff",
     0xCD9F: b"\x01",
     0xCE4E: b"\x34\x12",
-    0xC2BB: b"\xFF",
+    0xC2BB: b"\xff",
     0xC2EC: b"\x00",
     0xC2EF: b"\x00",
     0xC2F1: b"\x00",
-    0xC3BB: b"\xFF",
+    0xC3BB: b"\xff",
     0xC3EC: b"\x00",
     0xC3EF: b"\x00",
     0xC3F0: b"\x00",
@@ -2300,11 +3683,15 @@ HPD_HP = 0xC2C8
 HPD_ANIM_DAMAGE = 0xD4B1
 HPD_CARD_ID = 0xCCC4
 HPD_SCREEN = 0xCAC2
-HPD_SEED = {**PBTA_HUD_SEED, **PBTA_ANIM_IDLE, **PBTA_SCRATCH,
-            HPD_SCREEN: b"\x01", HPD_CARD_ID: b"\x08",
-            HPD_ANIM_DAMAGE: b"\xFF\xFF"}
-HPD_SETUP = [{"fn": "CopyDMAFunction"},
-             {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+HPD_SEED = {
+    **PBTA_HUD_SEED,
+    **PBTA_ANIM_IDLE,
+    **PBTA_SCRATCH,
+    HPD_SCREEN: b"\x01",
+    HPD_CARD_ID: b"\x08",
+    HPD_ANIM_DAMAGE: b"\xff\xff",
+}
+HPD_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 HPD_READ = {**PBTA_READ, HPD_HP: 1, HPD_ANIM_DAMAGE: 2}
 HPD_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000}
 
@@ -2315,13 +3702,29 @@ START_DUEL_SETUP = DUEL_SETUP
 START_DUEL_ANIM_SAFE = DUEL_ANIM_SAFE
 START_DUEL_WRAM = DUEL_WRAM
 START_DUEL_KEYS = DUEL_KEYS
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 
 wPlayAreaSelectAction = 0xCBD4
 hTempPlayAreaLocation_ff9d = 0xFF9D
 hTemp_ffa0 = 0xFFA0
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 hWhoseTurn = 0xFF97
 hTempPlayAreaLocation_ff9d = 0xFF9D
 wPlayAreaSelectAction = 0xCBD4
@@ -2330,8 +3733,15 @@ wSerialSendBufIndex = 0xCB7F
 wcb80 = 0xCB80
 wSerialSendBuf = 0xCB81
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
-          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 wLoadedAttackEffectCommands = 0xCCB2
 hWhoseTurn = 0xFF97
 wPlayerDuelVariables = 0xC200
@@ -2346,7 +3756,15 @@ wTxRam2 = 0xCE3F
 wLCDC = 0xCABB
 wSkipDuelistIsThinkingDelay = 0xCBF9
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 wCurrentDuelMenuItem = 0xCBC6
 
 hWhoseTurn = 0xFF97
@@ -2365,33 +3783,105 @@ player_deck_cards = 0xC27E
 player_hand_card1 = 0xC242
 opponent_arena = 0xC3BB
 opponent_bench = 0xC3BC
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 
 wTempNonTurnDuelistCardID = 0xCCC4
 
 wLCDC = 0xCABB
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 wDuelReturnAddress = 0xCBE5
 wDuelFinished = 0xCC07
 wDuelTheme = 0xCC1A
 
 hWhoseTurn = 0xFF97
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 sCurrentDuel = 0xBC00
 TRY_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
-CONTRACT["CheckIfEnoughEnergiesForGivenAttack"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": (), "wram_out": True}
+CONTRACT["CheckIfEnoughEnergiesForGivenAttack"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+    "wram_out": True,
+}
 CASES["CheckIfEnoughEnergiesForGivenAttack"] = [
-	{"d": 0x00, "e": 0x00, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x10", wAttachedEnergies: b"\x00\x00\x00\x00", wTotalAttachedEnergies: b"\x00"}},
-	{"d": 0x01, "e": 0x01, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck + 1: b"\x20", wAttachedEnergies: b"\x11\x11\x11\x00", wTotalAttachedEnergies: b"\x03"}},
-	dict(POISON, d=0x05, e=0x01, wram={hWhoseTurn: b"\xC2", wPlayerDeck + 5: b"\x20", wAttachedEnergies: b"\x22\x22\x22\x00", wTotalAttachedEnergies: b"\x06"}),
-	Fixture("effect-poliwhirl-1-ai-energy-check-entry").case(vram=False),
+    {
+        "d": 0x00,
+        "e": 0x00,
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wPlayerDeck: b"\x10",
+            wAttachedEnergies: b"\x00\x00\x00\x00",
+            wTotalAttachedEnergies: b"\x00",
+        },
+    },
+    {
+        "d": 0x01,
+        "e": 0x01,
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wPlayerDeck + 1: b"\x20",
+            wAttachedEnergies: b"\x11\x11\x11\x00",
+            wTotalAttachedEnergies: b"\x03",
+        },
+    },
+    dict(
+        POISON,
+        d=0x05,
+        e=0x01,
+        wram={
+            hWhoseTurn: b"\xc2",
+            wPlayerDeck + 5: b"\x20",
+            wAttachedEnergies: b"\x22\x22\x22\x00",
+            wTotalAttachedEnergies: b"\x06",
+        },
+    ),
+    Fixture("effect-poliwhirl-1-ai-energy-check-entry").case(vram=False),
 ]
 # <<< factory CheckIfEnoughEnergiesForGivenAttack
 
@@ -2401,7 +3891,11 @@ sCurrentDuel = 0xBC00
 wDuelType = 0xCC09
 CASES["SaveDuelData"] = [
     {"wram": {wDuelType: b"\x02"}, "sread": {0: {sCurrentDuel: 4}}},
-    dict(POISON, wram={wDuelType: b"\x03", 0xC200: b"\x11\x22"}, sread={0: {sCurrentDuel: 4}}),
+    dict(
+        POISON,
+        wram={wDuelType: b"\x03", 0xC200: b"\x11\x22"},
+        sread={0: {sCurrentDuel: 4}},
+    ),
     {"wram": {wDuelType: b"\x00"}, "sread": {0: {sCurrentDuel: 1}}},
 ]
 # <<< factory SaveDuelData
@@ -2409,20 +3903,56 @@ CASES["SaveDuelData"] = [
 # >>> factory SetCardListHeaderText
 CONTRACT["SetCardListHeaderText"] = {"compare": (), "preserve": ()}
 CASES["SetCardListHeaderText"] = [
-	{"d": 0x12, "e": 0x34, "hl": 0x0000, "wram": {0xCBDC: b"\x00\x00"}, "expect": {0xCBDC: b"\x34\x12"}},
-	{"d": 0xAB, "e": 0xCD, "hl": 0x0000, "wram": {0xCBDC: b"\xFF\xFF"}, "expect": {0xCBDC: b"\xCD\xAB"}},
-	dict(POISON, d=0xDD, e=0xEE, hl=0x1234, wram={0xCBDC: b"\x00\x00"}, expect={0xCBDC: b"\xEE\xDD"}),
+    {
+        "d": 0x12,
+        "e": 0x34,
+        "hl": 0x0000,
+        "wram": {0xCBDC: b"\x00\x00"},
+        "expect": {0xCBDC: b"\x34\x12"},
+    },
+    {
+        "d": 0xAB,
+        "e": 0xCD,
+        "hl": 0x0000,
+        "wram": {0xCBDC: b"\xff\xff"},
+        "expect": {0xCBDC: b"\xcd\xab"},
+    },
+    dict(
+        POISON,
+        d=0xDD,
+        e=0xEE,
+        hl=0x1234,
+        wram={0xCBDC: b"\x00\x00"},
+        expect={0xCBDC: b"\xee\xdd"},
+    ),
 ]
 # <<< factory SetCardListHeaderText
 
 # >>> factory AIAttachEnergyInHandToCardInPlayArea
-CONTRACT["AIAttachEnergyInHandToCardInPlayArea"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["AIAttachEnergyInHandToCardInPlayArea"] = {
+    "compare": ("a", "f"),
+    "preserve": (),
+}
 # Sam's side of the practice-duel state: a Fighting Energy from his hand goes
 # onto Machop in the arena (the scripted turn 1). No Fighting Energy in hand
 # ($C300-$C33B: every hand card moved to the deck) returns no-carry untouched.
 CASES["AIAttachEnergyInHandToCardInPlayArea"] = [
-    dict(_attack_fixture(**{"FF97": b"\xc3"}), d=0x7D, e=0x05, read={0xC200: 0x200, 0xCC00: 0x100, 0xFFA0: 2}),
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00\x01", 0xC400: b"\xCB\x01"}, expect_regs={"a": 0xFF, "f": 0xC0}),
+    dict(
+        _attack_fixture(**{"FF97": b"\xc3"}),
+        d=0x7D,
+        e=0x05,
+        read={0xC200: 0x200, 0xCC00: 0x100, 0xFFA0: 2},
+    ),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2EE: b"\x01",
+            0xC242: b"\x00\x01",
+            0xC400: b"\xcb\x01",
+        },
+        expect_regs={"a": 0xFF, "f": 0xC0},
+    ),
 ]
 # <<< factory AIAttachEnergyInHandToCardInPlayArea
 
@@ -2435,16 +3965,26 @@ CASES["GoToPreviousCardPage"] = [
 # <<< factory GoToPreviousCardPage
 
 # >>> factory DrawWholeScreenTextBox
-CONTRACT["DrawWholeScreenTextBox"] = {"compare": (), "preserve": ()};
+CONTRACT["DrawWholeScreenTextBox"] = {"compare": (), "preserve": ()}
 CASES["DrawWholeScreenTextBox"] = [
-    {"hl": 0x01DB, "keys": 0x01,
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
-    dict(POISON, hl=0x01DB, keys=0x01,
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}),
+    {
+        "hl": 0x01DB,
+        "keys": 0x01,
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400},
+            1: {0x9800: 0x400},
+        },
+    },
+    dict(
+        POISON,
+        hl=0x01DB,
+        keys=0x01,
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+        vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+    ),
 ]
 # <<< factory DrawWholeScreenTextBox
 
@@ -2454,25 +3994,45 @@ CASES["HasAlivePokemonInPlayArea"] = [
     # dome-5 832872: the live entry (a=0, the whole play area); the slot past the
     # last Pokemon is never read (the stale 50 HP past it stays unseen), and a
     # KO'd play area answers Z with the carry.
-    dict(_alive_in_play_area_fixture(vram=False, bank=1), **dict(_ALIVE_IN_PLAY_AREA_REGS), read={0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1}),
-    dict(_alive_in_play_area_fixture(vram=False, bank=1, **{"C2C8": b"\x00\x32"}), **dict(_ALIVE_IN_PLAY_AREA_REGS), read={0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1}),
-    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xC2C8: b"\x10"},
-     "read": {0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1}},
-    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x03",
-              0xC2C8: b"\x00\x10\x00"}, "read": {0xCBD2: 1}},
-    dict(POISON, wram={0xFF97: b"\xC3", 0xC3EF: b"\x02",
-                       0xC3C8: b"\x00\x00"}),
+    dict(
+        _alive_in_play_area_fixture(vram=False, bank=1),
+        **dict(_ALIVE_IN_PLAY_AREA_REGS),
+        read={0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1},
+    ),
+    dict(
+        _alive_in_play_area_fixture(vram=False, bank=1, **{"C2C8": b"\x00\x32"}),
+        **dict(_ALIVE_IN_PLAY_AREA_REGS),
+        read={0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1},
+    ),
+    {
+        "wram": {0xFF97: b"\xc2", 0xC2EF: b"\x01", 0xC2C8: b"\x10"},
+        "read": {0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1},
+    },
+    {
+        "wram": {0xFF97: b"\xc2", 0xC2EF: b"\x03", 0xC2C8: b"\x00\x10\x00"},
+        "read": {0xCBD2: 1},
+    },
+    dict(POISON, wram={0xFF97: b"\xc3", 0xC3EF: b"\x02", 0xC3C8: b"\x00\x00"}),
 ]
 # <<< factory HasAlivePokemonInPlayArea
 
 # >>> factory CardPageSwitch_PokemonAttack1Page1
-CONTRACT["CardPageSwitch_PokemonAttack1Page1"] = {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CONTRACT["CardPageSwitch_PokemonAttack1Page1"] = {
+    "compare": ("a", "f", "b", "c", "d", "e"),
+    "preserve": ("b", "c", "d", "e"),
+}
 CASES["CardPageSwitch_PokemonAttack1Page1"] = [
     {"wram": {0xCC34: b"\x00\x00", 0xCC36: b"\x12\x34"}},
-    {"wram": {0xCC34: b"\x0F\xF0", 0xCC36: b"\x00\x00"}},
-    {"wram": {0xCC34: b"\x00\x01", 0xCC36: b"\xAA\xBB"}},
+    {"wram": {0xCC34: b"\x0f\xf0", 0xCC36: b"\x00\x00"}},
+    {"wram": {0xCC34: b"\x00\x01", 0xCC36: b"\xaa\xbb"}},
     dict(POISON, wram={0xCC34: b"\x12\x34", 0xCC36: b"\x00\x00"}),
-    {"b": 1, "c": 2, "d": 3, "e": 4, "wram": {0xCC34: b"\x80\x00", 0xCC36: b"\xFF\xEE"}},
+    {
+        "b": 1,
+        "c": 2,
+        "d": 3,
+        "e": 4,
+        "wram": {0xCC34: b"\x80\x00", 0xCC36: b"\xff\xee"},
+    },
 ]
 # <<< factory CardPageSwitch_PokemonAttack1Page1
 
@@ -2488,38 +4048,74 @@ CASES["CheckPrintDoublePoisoned"] = [
 # <<< factory CheckPrintDoublePoisoned
 
 # >>> factory PrintPracticeDuelLetsPlayTheGame
-CONTRACT["PrintPracticeDuelLetsPlayTheGame"] = {"compare": ("a", "f"), "preserve": ("a", "f")}
+CONTRACT["PrintPracticeDuelLetsPlayTheGame"] = {
+    "compare": ("a", "f"),
+    "preserve": ("a", "f"),
+}
 CASES["PrintPracticeDuelLetsPlayTheGame"] = [
-    {"keys": 0x01,
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
-     "keys": 0x01,
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
+    {
+        "keys": 0x01,
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400},
+            1: {0x9800: 0x400},
+        },
+    },
+    {
+        "a": 0xAA,
+        "f": 0xF0,
+        "b": 0xBB,
+        "c": 0xCC,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0x1234,
+        "keys": 0x01,
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400},
+            1: {0x9800: 0x400},
+        },
+    },
 ]
 # <<< factory PrintPracticeDuelLetsPlayTheGame
 
 # >>> factory AIAttachEnergyInHandToCardInBench
 CONTRACT["AIAttachEnergyInHandToCardInBench"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIAttachEnergyInHandToCardInBench"] = [
-	dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00\x01", 0xC400: b"\xCB\x01"}, expect_regs={"a": 0xFF, "f": 0xC0}),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2EE: b"\x01",
+            0xC242: b"\x00\x01",
+            0xC400: b"\xcb\x01",
+        },
+        expect_regs={"a": 0xFF, "f": 0xC0},
+    ),
 ]
 # <<< factory AIAttachEnergyInHandToCardInBench
 
 # >>> factory DrawPracticeDuelInstructionsTextBox
-CONTRACT["DrawPracticeDuelInstructionsTextBox"] = {"compare": (), "preserve": ()};
+CONTRACT["DrawPracticeDuelInstructionsTextBox"] = {"compare": (), "preserve": ()}
 CASES["DrawPracticeDuelInstructionsTextBox"] = [
-    {"wram": {0xCC06: b"\x00"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
-    dict(POISON, wram={0xCC06: b"\x06"},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}),
+    {
+        "wram": {0xCC06: b"\x00"},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400},
+            1: {0x9800: 0x400},
+        },
+    },
+    dict(
+        POISON,
+        wram={0xCC06: b"\x06"},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+        vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+    ),
 ]
 # <<< factory DrawPracticeDuelInstructionsTextBox
 
@@ -2535,83 +4131,204 @@ CASES["PracticeDuelVerify_Turn7Or8"] = [
 # >>> factory SetDiscardPileScreenTexts
 CONTRACT["SetDiscardPileScreenTexts"] = {"compare": (), "preserve": ()}
 CASES["SetDiscardPileScreenTexts"] = [
-    {"hram": {hWhoseTurn: b"\xC2"}, "wram": {wCardListHeaderText: b"\x00\x00", wCardListInfoBoxText: b"\x00\x00"}, "expect": {wCardListHeaderText: b"\x17\x02", wCardListInfoBoxText: b"\x56\x00"}},
-    {"hram": {hWhoseTurn: b"\x00"}, "wram": {wCardListHeaderText: b"\xFF\xFF", wCardListInfoBoxText: b"\xFF\xFF"}, "expect": {wCardListHeaderText: b"\x18\x02", wCardListInfoBoxText: b"\x56\x00"}},
-    dict(POISON, hram={hWhoseTurn: b"\xC2"}, wram={wCardListHeaderText: b"\x00\x00", wCardListInfoBoxText: b"\x00\x00"}, expect={wCardListHeaderText: b"\x17\x02", wCardListInfoBoxText: b"\x56\x00"}),
+    {
+        "hram": {hWhoseTurn: b"\xc2"},
+        "wram": {wCardListHeaderText: b"\x00\x00", wCardListInfoBoxText: b"\x00\x00"},
+        "expect": {wCardListHeaderText: b"\x17\x02", wCardListInfoBoxText: b"\x56\x00"},
+    },
+    {
+        "hram": {hWhoseTurn: b"\x00"},
+        "wram": {wCardListHeaderText: b"\xff\xff", wCardListInfoBoxText: b"\xff\xff"},
+        "expect": {wCardListHeaderText: b"\x18\x02", wCardListInfoBoxText: b"\x56\x00"},
+    },
+    dict(
+        POISON,
+        hram={hWhoseTurn: b"\xc2"},
+        wram={wCardListHeaderText: b"\x00\x00", wCardListInfoBoxText: b"\x00\x00"},
+        expect={wCardListHeaderText: b"\x17\x02", wCardListInfoBoxText: b"\x56\x00"},
+    ),
 ]
 # <<< factory SetDiscardPileScreenTexts
 
 # >>> factory PrintAttachedEnergyToPokemon
 CONTRACT["PrintAttachedEnergyToPokemon"] = {"compare": (), "preserve": ()}
 CASES["PrintAttachedEnergyToPokemon"] = [
-    {"wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00", hTempCardIndex_ff98: b"\x01", 0xC2BB: b"\x00", wPlayerDeck: b"\x08\x09"},
-     "keys": 0x01,
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 1000000, "cycle_budget": 4000000,
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9980: 0x400}, 1: {0x9980: 0x400}}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00", hTempCardIndex_ff98: b"\x01", 0xC2BB: b"\x00", wPlayerDeck: b"\x08\x09"},
-         keys=0x01,
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=1000000, cycle_budget=4000000,
-         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9980: 0x400}, 1: {0x9980: 0x400}}),
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            hTempPlayAreaLocation_ff9d: b"\x00",
+            hTempCardIndex_ff98: b"\x01",
+            0xC2BB: b"\x00",
+            wPlayerDeck: b"\x08\x09",
+        },
+        "keys": 0x01,
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 1000000,
+        "cycle_budget": 4000000,
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9980: 0x400},
+            1: {0x9980: 0x400},
+        },
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc2",
+            hTempPlayAreaLocation_ff9d: b"\x00",
+            hTempCardIndex_ff98: b"\x01",
+            0xC2BB: b"\x00",
+            wPlayerDeck: b"\x08\x09",
+        },
+        keys=0x01,
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=1000000,
+        cycle_budget=4000000,
+        vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9980: 0x400}, 1: {0x9980: 0x400}},
+    ),
 ]
 # <<< factory PrintAttachedEnergyToPokemon
 
 # >>> factory PrintPokemonEvolvedIntoPokemon
 CONTRACT["PrintPokemonEvolvedIntoPokemon"] = {"compare": (), "preserve": ()}
 CASES["PrintPokemonEvolvedIntoPokemon"] = [
-    {"wram": {wPreEvolutionPokemonCard: b"\x01"},
-     "hram": {hTempCardIndex_ff98: b"\x02"},
-     "keys": 0x01,
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 1000000, "cycle_budget": 4000000,
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9980: 0x400}, 1: {0x9980: 0x400}}},
-    dict(POISON, wram={wPreEvolutionPokemonCard: b"\x01"},
-         hram={hTempCardIndex_ff98: b"\x02"},
-         keys=0x01,
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=1000000, cycle_budget=4000000,
-         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9980: 0x400}, 1: {0x9980: 0x400}}),
+    {
+        "wram": {wPreEvolutionPokemonCard: b"\x01"},
+        "hram": {hTempCardIndex_ff98: b"\x02"},
+        "keys": 0x01,
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 1000000,
+        "cycle_budget": 4000000,
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9980: 0x400},
+            1: {0x9980: 0x400},
+        },
+    },
+    dict(
+        POISON,
+        wram={wPreEvolutionPokemonCard: b"\x01"},
+        hram={hTempCardIndex_ff98: b"\x02"},
+        keys=0x01,
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=1000000,
+        cycle_budget=4000000,
+        vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9980: 0x400}, 1: {0x9980: 0x400}},
+    ),
 ]
 # <<< factory PrintPokemonEvolvedIntoPokemon
 
 # >>> factory SetupDuel
 CONTRACT["SetupDuel"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["SetupDuel"] = [
-	{"wram": {0xCAB6: b"\xFF"}},
-	dict(a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, wram={0xCAB6: b"\xFF"}),
+    {"wram": {0xCAB6: b"\xff"}},
+    dict(
+        a=0xAA,
+        f=0xF0,
+        b=0xBB,
+        c=0xCC,
+        d=0xDD,
+        e=0xEE,
+        hl=0x1234,
+        wram={0xCAB6: b"\xff"},
+    ),
 ]
 # <<< factory SetupDuel
 
 # >>> factory PracticeDuelVerify_Turn6
 CONTRACT["PracticeDuelVerify_Turn6"] = {"compare": ("f",), "preserve": ()}
 CASES["PracticeDuelVerify_Turn6"] = [
-    {"wram": {hWhoseTurn: b"\xC2", wPlayerCardLocations: b"\x10" * 60, wPlayerDeck: b"\x03\x03\x03" + b"\x00" * 57, 0xC2C8: b"\x28", 0xCCC2: b"\x55"}},
-    {"wram": {hWhoseTurn: b"\xC2", wPlayerCardLocations: b"\x10" * 60, wPlayerDeck: b"\x03\x03" + b"\x00" * 58, 0xC2C8: b"\x28", 0xCCC2: b"\x55"}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerCardLocations: b"\x10" * 60, wPlayerDeck: b"\x03\x03\x03" + b"\x00" * 57, 0xC2C8: b"\x28", 0xCCC2: b"\x55"}),
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wPlayerCardLocations: b"\x10" * 60,
+            wPlayerDeck: b"\x03\x03\x03" + b"\x00" * 57,
+            0xC2C8: b"\x28",
+            0xCCC2: b"\x55",
+        }
+    },
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wPlayerCardLocations: b"\x10" * 60,
+            wPlayerDeck: b"\x03\x03" + b"\x00" * 58,
+            0xC2C8: b"\x28",
+            0xCCC2: b"\x55",
+        }
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc2",
+            wPlayerCardLocations: b"\x10" * 60,
+            wPlayerDeck: b"\x03\x03\x03" + b"\x00" * 57,
+            0xC2C8: b"\x28",
+            0xCCC2: b"\x55",
+        },
+    ),
 ]
 # <<< factory PracticeDuelVerify_Turn6
 
 # >>> factory PracticeDuelVerify_Turn4
 CONTRACT["PracticeDuelVerify_Turn4"] = {"compare": ("f",), "preserve": ()}
 CASES["PracticeDuelVerify_Turn4"] = [
-    {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables: b"\x12", wPlayerDeck: b"\x03", 0xC2EF: b"\x03", 0xCCC2: b"\x54", 0xCCC6: b"\x01"}},
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wPlayerDuelVariables: b"\x12",
+            wPlayerDeck: b"\x03",
+            0xC2EF: b"\x03",
+            0xCCC2: b"\x54",
+            0xCCC6: b"\x01",
+        }
+    },
     {"wram": {0xC2EF: b"\x02", 0xCCC2: b"\x54", 0xCCC6: b"\x01"}},
-    {"wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x03", 0xCCC2: b"\x54", 0xCCC6: b"\x01"}},
-    {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables: b"\x12", wPlayerDeck: b"\x03", 0xC2EF: b"\x03", 0xCCC2: b"\x55", 0xCCC6: b"\x01"}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables: b"\x12", wPlayerDeck: b"\x03", 0xC2EF: b"\x03", 0xCCC2: b"\x54", 0xCCC6: b"\x02"}),
+    {"wram": {hWhoseTurn: b"\xc2", 0xC2EF: b"\x03", 0xCCC2: b"\x54", 0xCCC6: b"\x01"}},
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wPlayerDuelVariables: b"\x12",
+            wPlayerDeck: b"\x03",
+            0xC2EF: b"\x03",
+            0xCCC2: b"\x55",
+            0xCCC6: b"\x01",
+        }
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc2",
+            wPlayerDuelVariables: b"\x12",
+            wPlayerDeck: b"\x03",
+            0xC2EF: b"\x03",
+            0xCCC2: b"\x54",
+            0xCCC6: b"\x02",
+        },
+    ),
 ]
 # <<< factory PracticeDuelVerify_Turn4
 
 # >>> factory ShuffleDeckAndDrawSevenCards
 CONTRACT["ShuffleDeckAndDrawSevenCards"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["ShuffleDeckAndDrawSevenCards"] = [
-    {"wram": {0xFF97: b"\xC2", 0xCC09: b"\x80"}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xCC09: b"\x80"}),
+    {"wram": {0xFF97: b"\xc2", 0xCC09: b"\x80"}},
+    dict(POISON, wram={0xFF97: b"\xc2", 0xCC09: b"\x80"}),
     # ai-duel-23 23741: a practice-type draw (no shuffle) whose only Pokemon-like card is a
     # Mysterious Fossil is redrawn - core.asm:2032 skips the Fossil/Doll exception.
-    {"wram": {0xFF97: b"\xC2", 0xCC09: b"\x80", 0xC400: b"\xCC\x02\x02\x03\x03\x02\x03"}, "read": {0xC242: 8}},
-    {"wram": {0xFF97: b"\xC2", 0xCC09: b"\x80", 0xC400: b"\xCB\x02\x02\x03\x08\x02\x03"}, "read": {0xC242: 8}},
+    {
+        "wram": {
+            0xFF97: b"\xc2",
+            0xCC09: b"\x80",
+            0xC400: b"\xcc\x02\x02\x03\x03\x02\x03",
+        },
+        "read": {0xC242: 8},
+    },
+    {
+        "wram": {
+            0xFF97: b"\xc2",
+            0xCC09: b"\x80",
+            0xC400: b"\xcb\x02\x02\x03\x08\x02\x03",
+        },
+        "read": {0xC242: 8},
+    },
 ]
 # <<< factory ShuffleDeckAndDrawSevenCards
 
@@ -2620,51 +4337,146 @@ CONTRACT["WriteTwoDigitNumberInTxSymbol_PadSpace"] = {"compare": (), "preserve":
 CASES["WriteTwoDigitNumberInTxSymbol_PadSpace"] = [
     write_case(0x00, 0x07, 0x04, d=0x12, e=0x34, hl=0x5678, expected=b"\x00\x20"),
     write_case(0x63, 0x1B, 0x3E, d=0x56, e=0x78, hl=0x0000, expected=b"\x29\x29"),
-    write_case(0xAA, 0xBB, 0xCC, d=0xDD, e=0xEE, hl=0x1234, poison=True, expected=b"\x27\x20"),
+    write_case(
+        0xAA, 0xBB, 0xCC, d=0xDD, e=0xEE, hl=0x1234, poison=True, expected=b"\x27\x20"
+    ),
 ]
 # <<< factory WriteTwoDigitNumberInTxSymbol_PadSpace
 
 # >>> factory PrintOpponentNumberOfHandAndDeckCards
 CONTRACT["PrintOpponentNumberOfHandAndDeckCards"] = {"compare": (), "preserve": ()}
 CASES["PrintOpponentNumberOfHandAndDeckCards"] = [
-    {"wram": {wOpponentNumberOfCardsInHand: b"\x02", wNumCardsBeingDrawn: b"\x03", wOpponentNumberOfCardsNotInDeck: b"\x0A"},
-     "vram": {0: {0x9865: b"\xA5\xA5", 0x986B: b"\xA5\xA5"}},
-     "expect_vram": {0: {0x9865: b"\x25\x25", 0x986B: b"\x24\x27"}}},
-    {"wram": {wOpponentNumberOfCardsInHand: b"\x5A", wNumCardsBeingDrawn: b"\x09", wOpponentNumberOfCardsNotInDeck: b"\x00"},
-     "vram": {0: {0x9865: b"\xA5\xA5", 0x986B: b"\xA5\xA5"}},
-     "expect_vram": {0: {0x9865: b"\x29\x29", 0x986B: b"\x23\x21"}}},
-    dict(POISON, wram={wOpponentNumberOfCardsInHand: b"\xAA", wNumCardsBeingDrawn: b"\x00", wOpponentNumberOfCardsNotInDeck: b"\x00"},
-         vram={0: {0x9865: b"\xA5\xA5", 0x986B: b"\xA5\xA5"}},
-         expect_vram={0: {0x9865: b"\x27\x20", 0x986B: b"\x26\x20"}}),
+    {
+        "wram": {
+            wOpponentNumberOfCardsInHand: b"\x02",
+            wNumCardsBeingDrawn: b"\x03",
+            wOpponentNumberOfCardsNotInDeck: b"\x0a",
+        },
+        "vram": {0: {0x9865: b"\xa5\xa5", 0x986B: b"\xa5\xa5"}},
+        "expect_vram": {0: {0x9865: b"\x25\x25", 0x986B: b"\x24\x27"}},
+    },
+    {
+        "wram": {
+            wOpponentNumberOfCardsInHand: b"\x5a",
+            wNumCardsBeingDrawn: b"\x09",
+            wOpponentNumberOfCardsNotInDeck: b"\x00",
+        },
+        "vram": {0: {0x9865: b"\xa5\xa5", 0x986B: b"\xa5\xa5"}},
+        "expect_vram": {0: {0x9865: b"\x29\x29", 0x986B: b"\x23\x21"}},
+    },
+    dict(
+        POISON,
+        wram={
+            wOpponentNumberOfCardsInHand: b"\xaa",
+            wNumCardsBeingDrawn: b"\x00",
+            wOpponentNumberOfCardsNotInDeck: b"\x00",
+        },
+        vram={0: {0x9865: b"\xa5\xa5", 0x986B: b"\xa5\xa5"}},
+        expect_vram={0: {0x9865: b"\x27\x20", 0x986B: b"\x26\x20"}},
+    ),
 ]
 # <<< factory PrintOpponentNumberOfHandAndDeckCards
 
 # >>> factory PrintPlayerNumberOfHandAndDeckCards
 CONTRACT["PrintPlayerNumberOfHandAndDeckCards"] = {"compare": (), "preserve": ()}
 CASES["PrintPlayerNumberOfHandAndDeckCards"] = [
-    {"wram": {wPlayerNumberOfCardsInHand: b"\x02", wNumCardsBeingDrawn: b"\x03", wPlayerNumberOfCardsNotInDeck: b"\x0A"},
-     "vram": {0: {0x9950: b"\xA5\xA5", 0x994A: b"\xA5\xA5"}},
-     "expect_vram": {0: {0x9950: b"\x00\x25", 0x994A: b"\x24\x27"}}},
-    {"wram": {wPlayerNumberOfCardsInHand: b"\x5A", wNumCardsBeingDrawn: b"\x09", wPlayerNumberOfCardsNotInDeck: b"\x00"},
-     "vram": {0: {0x9950: b"\xA5\xA5", 0x994A: b"\xA5\xA5"}},
-     "expect_vram": {0: {0x9950: b"\x29\x29", 0x994A: b"\x23\x21"}}},
-    dict(POISON, wram={wPlayerNumberOfCardsInHand: b"\x00", wNumCardsBeingDrawn: b"\x00", wPlayerNumberOfCardsNotInDeck: b"\x00"}, vram={0: {0x9950: b"\xEE\xEE", 0x994A: b"\xEE\xEE"}}, expect_vram={0: {0x9950: b"\x00\x20", 0x994A: b"\x26\x20"}}),
+    {
+        "wram": {
+            wPlayerNumberOfCardsInHand: b"\x02",
+            wNumCardsBeingDrawn: b"\x03",
+            wPlayerNumberOfCardsNotInDeck: b"\x0a",
+        },
+        "vram": {0: {0x9950: b"\xa5\xa5", 0x994A: b"\xa5\xa5"}},
+        "expect_vram": {0: {0x9950: b"\x00\x25", 0x994A: b"\x24\x27"}},
+    },
+    {
+        "wram": {
+            wPlayerNumberOfCardsInHand: b"\x5a",
+            wNumCardsBeingDrawn: b"\x09",
+            wPlayerNumberOfCardsNotInDeck: b"\x00",
+        },
+        "vram": {0: {0x9950: b"\xa5\xa5", 0x994A: b"\xa5\xa5"}},
+        "expect_vram": {0: {0x9950: b"\x29\x29", 0x994A: b"\x23\x21"}},
+    },
+    dict(
+        POISON,
+        wram={
+            wPlayerNumberOfCardsInHand: b"\x00",
+            wNumCardsBeingDrawn: b"\x00",
+            wPlayerNumberOfCardsNotInDeck: b"\x00",
+        },
+        vram={0: {0x9950: b"\xee\xee", 0x994A: b"\xee\xee"}},
+        expect_vram={0: {0x9950: b"\x00\x20", 0x994A: b"\x26\x20"}},
+    ),
 ]
 # <<< factory PrintPlayerNumberOfHandAndDeckCards
 
 # >>> factory PrintDuelResultStats
 CONTRACT["PrintDuelResultStats"] = {"compare": (), "preserve": ()}
 CASES["PrintDuelResultStats"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2EC: b"\x15", 0xC2EF: b"\x01", 0xC2BA: b"\x1E", 0xC3EC: b"\x3F", 0xC3EF: b"\x00", 0xC3BA: b"\x3C"}, "setup": SETUP_TEXT, "read": TEXT_READ},
-    {"wram": {0xFF97: b"\xC2", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC2BA: b"\x3C", 0xC3EC: b"\x01", 0xC3EF: b"\x02", 0xC3BA: b"\x00"}, "setup": SETUP_TEXT, "read": TEXT_READ},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EC: b"\x01", 0xC2EF: b"\x02", 0xC2BA: b"\x1E", 0xC3EC: b"\x08", 0xC3EF: b"\x01", 0xC3BA: b"\x01"}, setup=SETUP_TEXT, read=TEXT_READ),
+    {
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2EC: b"\x15",
+            0xC2EF: b"\x01",
+            0xC2BA: b"\x1e",
+            0xC3EC: b"\x3f",
+            0xC3EF: b"\x00",
+            0xC3BA: b"\x3c",
+        },
+        "setup": SETUP_TEXT,
+        "read": TEXT_READ,
+    },
+    {
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2EC: b"\x00",
+            0xC2EF: b"\x00",
+            0xC2BA: b"\x3c",
+            0xC3EC: b"\x01",
+            0xC3EF: b"\x02",
+            0xC3BA: b"\x00",
+        },
+        "setup": SETUP_TEXT,
+        "read": TEXT_READ,
+    },
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2EC: b"\x01",
+            0xC2EF: b"\x02",
+            0xC2BA: b"\x1e",
+            0xC3EC: b"\x08",
+            0xC3EF: b"\x01",
+            0xC3BA: b"\x01",
+        },
+        setup=SETUP_TEXT,
+        read=TEXT_READ,
+    ),
     # The numbers and "Cards" go next to each heading; read the whole BG map.
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EC: b"\x01", 0xC2EF: b"\x02", 0xC2BA: b"\x1E", 0xC3EC: b"\x08", 0xC3EF: b"\x01", 0xC3BA: b"\x01"}, setup=SETUP_TEXT, read={**TEXT_READ, 0x9800: 0x400}),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2EC: b"\x01",
+            0xC2EF: b"\x02",
+            0xC2BA: b"\x1e",
+            0xC3EC: b"\x08",
+            0xC3EF: b"\x01",
+            0xC3BA: b"\x01",
+        },
+        setup=SETUP_TEXT,
+        read={**TEXT_READ, 0x9800: 0x400},
+    ),
 ]
 # <<< factory PrintDuelResultStats
 
 # >>> factory ConvertColorToEnergyCardID
-CONTRACT["ConvertColorToEnergyCardID"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CONTRACT["ConvertColorToEnergyCardID"] = {
+    "compare": ("a", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
 CASES["ConvertColorToEnergyCardID"] = [
     {},
     dict(POISON, a=0),
@@ -2674,143 +4486,320 @@ CASES["ConvertColorToEnergyCardID"] = [
 # >>> factory WriteOneByteNumberInTxSymbol_PadSpace
 CONTRACT["WriteOneByteNumberInTxSymbol_PadSpace"] = {"compare": (), "preserve": ()}
 CASES["WriteOneByteNumberInTxSymbol_PadSpace"] = [
-    {"a": 0x00, "b": 0x07, "c": 0x04, "d": 0x12, "e": 0x34, "hl": 0x5678,
-     "wram": {0xCAA0: b"\xff" * 6},
-     "vram": {0: {0x9887: b"\xee" * 4}},
-     "expect_vram": {0: {0x9887: b"\x00\x20\xff\xee"}}},
-    {"a": 0x63, "b": 0x1B, "c": 0x3E, "d": 0x56, "e": 0x78, "hl": 0x0000,
-     "wram": {0xCAA0: b"\xff" * 6},
-     "vram": {0: {0x9FDB: b"\xee" * 4}},
-     "expect_vram": {0: {0x9FDB: b"\x29\x29\xff\xee"}}},
-    dict(POISON,
-         wram={0xCAA0: b"\xff" * 6},
-         sram={0: {0xAF1B: b"\xee" * 4}},
-         expect_sram={0: {0xAF1B: b"\x27\x20\xff\xee"}}),
+    {
+        "a": 0x00,
+        "b": 0x07,
+        "c": 0x04,
+        "d": 0x12,
+        "e": 0x34,
+        "hl": 0x5678,
+        "wram": {0xCAA0: b"\xff" * 6},
+        "vram": {0: {0x9887: b"\xee" * 4}},
+        "expect_vram": {0: {0x9887: b"\x00\x20\xff\xee"}},
+    },
+    {
+        "a": 0x63,
+        "b": 0x1B,
+        "c": 0x3E,
+        "d": 0x56,
+        "e": 0x78,
+        "hl": 0x0000,
+        "wram": {0xCAA0: b"\xff" * 6},
+        "vram": {0: {0x9FDB: b"\xee" * 4}},
+        "expect_vram": {0: {0x9FDB: b"\x29\x29\xff\xee"}},
+    },
+    dict(
+        POISON,
+        wram={0xCAA0: b"\xff" * 6},
+        sram={0: {0xAF1B: b"\xee" * 4}},
+        expect_sram={0: {0xAF1B: b"\x27\x20\xff\xee"}},
+    ),
 ]
 # <<< factory WriteOneByteNumberInTxSymbol_PadSpace
 
 # >>> factory PrintPracticeDuelNumberedInstruction
 CONTRACT["PrintPracticeDuelNumberedInstruction"] = {"compare": ("hl",), "preserve": ()}
 CASES["PrintPracticeDuelNumberedInstruction"] = [
-    {"d": 0x20, "e": 0x40, "hl": 0xC500,
-     "wram": {0xC502: b"\xA9\x01", 0xC504: b"\x00\x00"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD08: 1, 0xCD0A: 1},
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
-    {"d": 0x01, "e": 0x08, "hl": 0xC500,
-     "wram": {0xC502: b"\xAA\x01", 0xC504: b"\xFF\xFF"},
-     "setup": [{"fn": "SetupText", "d": 0x01, "e": 0x08}],
-     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD08: 1, 0xCD0A: 1},
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
-    dict(POISON, hl=0xC500,
-         wram={0xC502: b"\xAA\x01", 0xC504: b"\x00\x00"},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD08: 1, 0xCD0A: 1},
-         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}),
+    {
+        "d": 0x20,
+        "e": 0x40,
+        "hl": 0xC500,
+        "wram": {0xC502: b"\xa9\x01", 0xC504: b"\x00\x00"},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {
+            0xC620: 4,
+            0xC720: 4,
+            0xC820: 4,
+            0xC920: 4,
+            0xCD05: 2,
+            0xCD08: 1,
+            0xCD0A: 1,
+        },
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400},
+            1: {0x9800: 0x400},
+        },
+    },
+    {
+        "d": 0x01,
+        "e": 0x08,
+        "hl": 0xC500,
+        "wram": {0xC502: b"\xaa\x01", 0xC504: b"\xff\xff"},
+        "setup": [{"fn": "SetupText", "d": 0x01, "e": 0x08}],
+        "read": {
+            0xC620: 4,
+            0xC720: 4,
+            0xC820: 4,
+            0xC920: 4,
+            0xCD05: 2,
+            0xCD08: 1,
+            0xCD0A: 1,
+        },
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400},
+            1: {0x9800: 0x400},
+        },
+    },
+    dict(
+        POISON,
+        hl=0xC500,
+        wram={0xC502: b"\xaa\x01", 0xC504: b"\x00\x00"},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={
+            0xC620: 4,
+            0xC720: 4,
+            0xC820: 4,
+            0xC920: 4,
+            0xCD05: 2,
+            0xCD08: 1,
+            0xCD0A: 1,
+        },
+        vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+    ),
 ]
 # <<< factory PrintPracticeDuelNumberedInstruction
 
 # >>> factory PrintNextPracticeDuelInstruction
-CONTRACT["PrintNextPracticeDuelInstruction"] = {"compare": (), "preserve": (), "hram_out": True}
+CONTRACT["PrintNextPracticeDuelInstruction"] = {
+    "compare": (),
+    "preserve": (),
+    "hram_out": True,
+}
 CASES["PrintNextPracticeDuelInstruction"] = [
-    {"wram": {0xCC01: b"\x00\xC5", 0xCBCA: b"\x00", 0xC500: b"\x00"},
-     "hram": {0xFFB0: b"\x7F"},
-     "read": {0xFFB0: 1}},
-    dict(POISON,
-         wram={0xCC01: b"\x00\xC5", 0xCBCA: b"\x00", 0xC500: b"\x00"},
-         hram={0xFFB0: b"\x7F"},
-         read={0xFFB0: 1}),
+    {
+        "wram": {0xCC01: b"\x00\xc5", 0xCBCA: b"\x00", 0xC500: b"\x00"},
+        "hram": {0xFFB0: b"\x7f"},
+        "read": {0xFFB0: 1},
+    },
+    dict(
+        POISON,
+        wram={0xCC01: b"\x00\xc5", 0xCBCA: b"\x00", 0xC500: b"\x00"},
+        hram={0xFFB0: b"\x7f"},
+        read={0xFFB0: 1},
+    ),
 ]
 # <<< factory PrintNextPracticeDuelInstruction
 
 # >>> factory GoToFirstOrNextCardPage
 CONTRACT["GoToFirstOrNextCardPage"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["GoToFirstOrNextCardPage"] = [
-    {"wram": {wCardPageNumber: b"\x00", wLoadedCard1Type: b"\x08"}, "read": {wCardPageNumber: 1}},
-    {"wram": {wCardPageNumber: b"\x00", wLoadedCard1Type: b"\x10"}, "read": {wCardPageNumber: 1}},
-    {"wram": {wCardPageNumber: b"\x00", wLoadedCard1Type: b"\x00"}, "read": {wCardPageNumber: 1}},
-    dict(POISON, wram={wCardPageNumber: b"\x00", wLoadedCard1Type: b"\x00"}, read={wCardPageNumber: 1}),
+    {
+        "wram": {wCardPageNumber: b"\x00", wLoadedCard1Type: b"\x08"},
+        "read": {wCardPageNumber: 1},
+    },
+    {
+        "wram": {wCardPageNumber: b"\x00", wLoadedCard1Type: b"\x10"},
+        "read": {wCardPageNumber: 1},
+    },
+    {
+        "wram": {wCardPageNumber: b"\x00", wLoadedCard1Type: b"\x00"},
+        "read": {wCardPageNumber: 1},
+    },
+    dict(
+        POISON,
+        wram={wCardPageNumber: b"\x00", wLoadedCard1Type: b"\x00"},
+        read={wCardPageNumber: 1},
+    ),
 ]
 # <<< factory GoToFirstOrNextCardPage
 
 # >>> factory PrintPracticeDuelInstructions
-CONTRACT["PrintPracticeDuelInstructions"] = {"compare": (), "preserve": (), "wram_out": True}
+CONTRACT["PrintPracticeDuelInstructions"] = {
+    "compare": (),
+    "preserve": (),
+    "wram_out": True,
+}
 CASES["PrintPracticeDuelInstructions"] = [
-    {"hl": 0xC500, "keys": 0x01,
-     "wram": {0xC500: b"\x00"},
-     "expect": {0xCC01: b"\x00\xC5", 0xCBCA: b"\x00"},
-     "read": {0xCC01: 2, 0xCBCA: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
-    dict(POISON, hl=0xC500, keys=0x01,
-         wram={0xC500: b"\x00"},
-         expect={0xCC01: b"\x00\xC5", 0xCBCA: b"\x00"},
-         read={0xCC01: 2, 0xCBCA: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}),
+    {
+        "hl": 0xC500,
+        "keys": 0x01,
+        "wram": {0xC500: b"\x00"},
+        "expect": {0xCC01: b"\x00\xc5", 0xCBCA: b"\x00"},
+        "read": {
+            0xCC01: 2,
+            0xCBCA: 1,
+            0xC620: 4,
+            0xC720: 4,
+            0xC820: 4,
+            0xC920: 4,
+            0xCD05: 2,
+            0xCD0A: 1,
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400},
+            1: {0x9800: 0x400},
+        },
+    },
+    dict(
+        POISON,
+        hl=0xC500,
+        keys=0x01,
+        wram={0xC500: b"\x00"},
+        expect={0xCC01: b"\x00\xc5", 0xCBCA: b"\x00"},
+        read={
+            0xCC01: 2,
+            0xCBCA: 1,
+            0xC620: 4,
+            0xC720: 4,
+            0xC820: 4,
+            0xC920: 4,
+            0xCD05: 2,
+            0xCD0A: 1,
+        },
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+    ),
 ]
 # <<< factory PrintPracticeDuelInstructions
 
 # >>> factory DisplayPreviousCardPage
 CONTRACT["DisplayPreviousCardPage"] = {"compare": (), "preserve": ()}
 CASES["DisplayPreviousCardPage"] = [
-    {"wram": {wCardPageNumber: b"\x01", wLCDC: b"\x00"}, "hram": {0xFF40: b"\x00"}, "expect": {0xFF40: b"\x00"}},
-    dict(POISON, wram={wCardPageNumber: b"\x01", wLCDC: b"\x00"}, hram={0xFF40: b"\x00"}, expect={0xFF40: b"\x00"}),
+    {
+        "wram": {wCardPageNumber: b"\x01", wLCDC: b"\x00"},
+        "hram": {0xFF40: b"\x00"},
+        "expect": {0xFF40: b"\x00"},
+    },
+    dict(
+        POISON,
+        wram={wCardPageNumber: b"\x01", wLCDC: b"\x00"},
+        hram={0xFF40: b"\x00"},
+        expect={0xFF40: b"\x00"},
+    ),
 ]
 # <<< factory DisplayPreviousCardPage
 
 # >>> factory PrintNumberOfHandAndDeckCards
 CONTRACT["PrintNumberOfHandAndDeckCards"] = {"compare": (), "preserve": ()}
 CASES["PrintNumberOfHandAndDeckCards"] = [
-    {"hram": {hWhoseTurn: b"\xC2"},
-     "wram": {wPlayerNumberOfCardsInHand: b"\x02", wNumCardsBeingDrawn: b"\x03", wPlayerNumberOfCardsNotInDeck: b"\x0A"},
-     "vram": {0: {BGMAP0 + 10 * 32 + 16: b"\xA5\xA5", BGMAP0 + 10 * 32 + 10: b"\xA5\xA5"}},
-     "expect_vram": {0: {BGMAP0 + 10 * 32 + 16: b"\x00\x25", BGMAP0 + 10 * 32 + 10: b"\x24\x27"}}},
-    {"hram": {hWhoseTurn: b"\x00"},
-     "wram": {wOpponentNumberOfCardsInHand: b"\x02", wNumCardsBeingDrawn: b"\x03", wOpponentNumberOfCardsNotInDeck: b"\x0A"},
-     "vram": {0: {0x9865: b"\xA5\xA5", 0x986B: b"\xA5\xA5"}},
-     "expect_vram": {0: {0x9865: b"\x25\x25", 0x986B: b"\x24\x27"}}},
-    dict(POISON, hram={hWhoseTurn: b"\xC2"},
-         wram={wPlayerNumberOfCardsInHand: b"\x00", wNumCardsBeingDrawn: b"\x00", wPlayerNumberOfCardsNotInDeck: b"\x00"},
-         vram={0: {BGMAP0 + 10 * 32 + 16: b"\xEE\xEE\xEE", BGMAP0 + 10 * 32 + 10: b"\xEE\xEE\xEE"}},
-         expect_vram={0: {BGMAP0 + 10 * 32 + 16: b"\x20\x00\xEE", BGMAP0 + 10 * 32 + 10: b"\x26\x20\xEE"}}),
+    {
+        "hram": {hWhoseTurn: b"\xc2"},
+        "wram": {
+            wPlayerNumberOfCardsInHand: b"\x02",
+            wNumCardsBeingDrawn: b"\x03",
+            wPlayerNumberOfCardsNotInDeck: b"\x0a",
+        },
+        "vram": {
+            0: {BGMAP0 + 10 * 32 + 16: b"\xa5\xa5", BGMAP0 + 10 * 32 + 10: b"\xa5\xa5"}
+        },
+        "expect_vram": {
+            0: {BGMAP0 + 10 * 32 + 16: b"\x00\x25", BGMAP0 + 10 * 32 + 10: b"\x24\x27"}
+        },
+    },
+    {
+        "hram": {hWhoseTurn: b"\x00"},
+        "wram": {
+            wOpponentNumberOfCardsInHand: b"\x02",
+            wNumCardsBeingDrawn: b"\x03",
+            wOpponentNumberOfCardsNotInDeck: b"\x0a",
+        },
+        "vram": {0: {0x9865: b"\xa5\xa5", 0x986B: b"\xa5\xa5"}},
+        "expect_vram": {0: {0x9865: b"\x25\x25", 0x986B: b"\x24\x27"}},
+    },
+    dict(
+        POISON,
+        hram={hWhoseTurn: b"\xc2"},
+        wram={
+            wPlayerNumberOfCardsInHand: b"\x00",
+            wNumCardsBeingDrawn: b"\x00",
+            wPlayerNumberOfCardsNotInDeck: b"\x00",
+        },
+        vram={
+            0: {
+                BGMAP0 + 10 * 32 + 16: b"\xee\xee\xee",
+                BGMAP0 + 10 * 32 + 10: b"\xee\xee\xee",
+            }
+        },
+        expect_vram={
+            0: {
+                BGMAP0 + 10 * 32 + 16: b"\x20\x00\xee",
+                BGMAP0 + 10 * 32 + 10: b"\x26\x20\xee",
+            }
+        },
+    ),
 ]
 # <<< factory PrintNumberOfHandAndDeckCards
 
 # >>> factory PrintReturnCardsToDeckDrawAgain
-CONTRACT["PrintReturnCardsToDeckDrawAgain"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["PrintReturnCardsToDeckDrawAgain"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["PrintReturnCardsToDeckDrawAgain"] = [
-    {"keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 1000000, "cycle_budget": 4000000},
-    dict(POISON, keys=0x01, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=1000000, cycle_budget=4000000),
+    {
+        "keys": 0x01,
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 1000000,
+        "cycle_budget": 4000000,
+    },
+    dict(
+        POISON,
+        keys=0x01,
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=1000000,
+        cycle_budget=4000000,
+    ),
 ]
 # <<< factory PrintReturnCardsToDeckDrawAgain
 
 # >>> factory PracticeDuelVerify_Turn3
 CONTRACT["PracticeDuelVerify_Turn3"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["PracticeDuelVerify_Turn3"] = [
-    {"wram": {0xCCC2: b"\x54", 0xFF97: b"\xC2"}},
-    dict(POISON, wram={0xCCC2: b"\x00", 0xFF97: b"\xC2"}),
+    {"wram": {0xCCC2: b"\x54", 0xFF97: b"\xc2"}},
+    dict(POISON, wram={0xCCC2: b"\x00", 0xFF97: b"\xc2"}),
 ]
 # <<< factory PracticeDuelVerify_Turn3
 
 # >>> factory CheckIfEnoughEnergiesToAttack
-CONTRACT["CheckIfEnoughEnergiesToAttack"] = {"compare": ("a", "f", "d", "e", "b", "c", "hl"), "preserve": ("b", "c", "hl"), "wram_out": True}
+CONTRACT["CheckIfEnoughEnergiesToAttack"] = {
+    "compare": ("a", "f", "d", "e", "b", "c", "hl"),
+    "preserve": ("b", "c", "hl"),
+    "wram_out": True,
+}
 CASES["CheckIfEnoughEnergiesToAttack"] = [
-    {"wram": {0xFF97: b"\xC2", 0xFFB1: b"\x00", 0xC510: b"\x00\x00", 0xC400: b"\x10"}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xFFB1: b"\x01", 0xC512: b"\x01\x01", 0xC401: b"\x20"}),
+    {"wram": {0xFF97: b"\xc2", 0xFFB1: b"\x00", 0xC510: b"\x00\x00", 0xC400: b"\x10"}},
+    dict(
+        POISON,
+        wram={0xFF97: b"\xc2", 0xFFB1: b"\x01", 0xC512: b"\x01\x01", 0xC401: b"\x20"},
+    ),
 ]
 # <<< factory CheckIfEnoughEnergiesToAttack
 
 # >>> factory PlayTurnDuelistDrawAnimation
 CONTRACT["PlayTurnDuelistDrawAnimation"] = {"compare": ("e", "f"), "preserve": ()}
-_ANIM_SAFE = {0xD42A: b"\xff", 0xD4C0: b"\xff", 0xD423: b"\xff" * 7,
-              0xCAD3: bytes([0xA2, 0x3B]), 0xD4AC: b"\x00", 0xD4AD: b"\x08"}
+_ANIM_SAFE = {
+    0xD42A: b"\xff",
+    0xD4C0: b"\xff",
+    0xD423: b"\xff" * 7,
+    0xCAD3: bytes([0xA2, 0x3B]),
+    0xD4AC: b"\x00",
+    0xD4AD: b"\x08",
+}
 CASES["PlayTurnDuelistDrawAnimation"] = [
-    {"wram": {**_ANIM_SAFE, 0xFF97: b"\xC2", 0xCCF2: b"\x01"}, "keys": 0x02},
-    dict(POISON, wram={**_ANIM_SAFE, 0xFF97: b"\xC2", 0xCCF2: b"\x01"}, keys=0x02),
-    {"wram": {**_ANIM_SAFE, 0xFF97: b"\xC3", 0xCCF2: b"\x01"}, "keys": 0x02},
+    {"wram": {**_ANIM_SAFE, 0xFF97: b"\xc2", 0xCCF2: b"\x01"}, "keys": 0x02},
+    dict(POISON, wram={**_ANIM_SAFE, 0xFF97: b"\xc2", 0xCCF2: b"\x01"}, keys=0x02),
+    {"wram": {**_ANIM_SAFE, 0xFF97: b"\xc3", 0xCCF2: b"\x01"}, "keys": 0x02},
 ]
 # <<< factory PlayTurnDuelistDrawAnimation
 
@@ -2826,45 +4815,101 @@ CASES["DrawCardPageSet2AndRarityIcons"] = [
 # <<< factory DrawCardPageSet2AndRarityIcons
 
 # >>> factory CountOppEnergyCardsInHandAndAttached
-CONTRACT["CountOppEnergyCardsInHandAndAttached"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CONTRACT["CountOppEnergyCardsInHandAndAttached"] = {
+    "compare": ("a", "f", "hl"),
+    "preserve": (),
+}
 CASES["CountOppEnergyCardsInHandAndAttached"] = [
-    {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x02", 0xC242: b"\x00\x01",
-               0xC400: b"\x01\xCB", 0xC2EF: b"\x01"}},
-    {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00",
-               0xC400: b"\xCB", 0xC2EF: b"\x01", 0xC205: b"\x10", 0xC405: b"\x01"}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x02", 0xC242: b"\x00\x01",
-                        0xC400: b"\x01\xCB", 0xC2EF: b"\x01"}),
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            0xC2EE: b"\x02",
+            0xC242: b"\x00\x01",
+            0xC400: b"\x01\xcb",
+            0xC2EF: b"\x01",
+        }
+    },
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            0xC2EE: b"\x01",
+            0xC242: b"\x00",
+            0xC400: b"\xcb",
+            0xC2EF: b"\x01",
+            0xC205: b"\x10",
+            0xC405: b"\x01",
+        }
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc2",
+            0xC2EE: b"\x02",
+            0xC242: b"\x00\x01",
+            0xC400: b"\x01\xcb",
+            0xC2EF: b"\x01",
+        },
+    ),
 ]
 # <<< factory CountOppEnergyCardsInHandAndAttached
 
 # >>> factory AIPickPrizeCards
 CONTRACT["AIPickPrizeCards"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["AIPickPrizeCards"] = [
-    {"wram": {0xFF97: b"\xC3", 0xCCC8: b"\x01", 0xC3EC: b"\x3F", 0xC3EE: b"\x00",
-               0xC33C: b"\x00\x00\x00\x00\x00\x00"},
-     "read": {0xC3EC: 1, 0xC3EE: 1, 0xC342: 1}},
-    dict(POISON, wram={0xFF97: b"\xC3", 0xCCC8: b"\x01", 0xC3EC: b"\x3F", 0xC3EE: b"\x00",
-                        0xC33C: b"\x00\x00\x00\x00\x00\x00"},
-         read={0xC3EC: 1, 0xC3EE: 1, 0xC342: 1}),
+    {
+        "wram": {
+            0xFF97: b"\xc3",
+            0xCCC8: b"\x01",
+            0xC3EC: b"\x3f",
+            0xC3EE: b"\x00",
+            0xC33C: b"\x00\x00\x00\x00\x00\x00",
+        },
+        "read": {0xC3EC: 1, 0xC3EE: 1, 0xC342: 1},
+    },
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc3",
+            0xCCC8: b"\x01",
+            0xC3EC: b"\x3f",
+            0xC3EE: b"\x00",
+            0xC33C: b"\x00\x00\x00\x00\x00\x00",
+        },
+        read={0xC3EC: 1, 0xC3EE: 1, 0xC342: 1},
+    ),
 ]
 # <<< factory AIPickPrizeCards
 
 # >>> factory HandleAIEnergyScoringForRepeatedBenchPokemon
-CONTRACT["HandleAIEnergyScoringForRepeatedBenchPokemon"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["HandleAIEnergyScoringForRepeatedBenchPokemon"] = {
+    "compare": ("a", "f"),
+    "preserve": (),
+}
 CASES["HandleAIEnergyScoringForRepeatedBenchPokemon"] = [
     {
-        "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+        "a": 0xAA,
+        "f": 0xF0,
+        "b": 0xBB,
+        "c": 0xCC,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0x1234,
         "instruction_budget": 2000000,
         "cycle_budget": 8000000,
-        "wram": {0xC2BC: b"\xFF"},   # wPlayerDuelVariables DUELVARS_BENCH[0] = 0xFF (empty bench)
-        "hram": {0xFF97: b"\xC2"},
+        "wram": {
+            0xC2BC: b"\xff"
+        },  # wPlayerDuelVariables DUELVARS_BENCH[0] = 0xFF (empty bench)
+        "hram": {0xFF97: b"\xc2"},
         "expect_regs": {"a": 0xFF, "f": 0xC0},
     },
 ]
 # <<< factory HandleAIEnergyScoringForRepeatedBenchPokemon
 
 # >>> factory CheckPrintCnfSlpPrz
-CONTRACT["CheckPrintCnfSlpPrz"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CONTRACT["CheckPrintCnfSlpPrz"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("a", "f", "b", "c", "d", "e", "hl"),
+}
 CASES["CheckPrintCnfSlpPrz"] = [
     {"a": 0x00, "b": 0x05, "c": 0x03, "vread": {0: {0x9865: 1}}},
     {"a": 0x01, "b": 0x05, "c": 0x03, "vread": {0: {0x9865: 1}}},
@@ -2876,68 +4921,173 @@ CASES["CheckPrintCnfSlpPrz"] = [
 # >>> factory LoadAnimCoordsAndFlags
 CONTRACT["LoadAnimCoordsAndFlags"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["LoadAnimCoordsAndFlags"] = [
-    {"wram": {wAnimationQueue: b"\x02", wAnimFlags: b"\x00", wDuelAnimationScreen: b"\x00",
-              wDuelAnimDuelistSide: b"\x00", wDuelAnimLocationParam: b"\x00",
-              entry_base(2) + 1: b"\x80\x00\x00", entry_base(2) + 15: b"\x80\x00"},
-     "read": {entry_base(2) + 1: 3, entry_base(2) + 15: 2}},
-    dict(POISON, wram={wAnimationQueue: b"\x05", wAnimFlags: b"\x04", wDuelAnimationScreen: b"\x00",
-                       wDuelAnimDuelistSide: b"\x00", wDuelAnimLocationParam: b"\x00",
-                       entry_base(5) + 1: b"\x00\x00\x00", entry_base(5) + 15: b"\x00\x00"},
-         read={entry_base(5) + 1: 3, entry_base(5) + 15: 2}),
-    {"wram": {wAnimationQueue: b"\x00", wAnimFlags: b"\x00", wDuelAnimationScreen: b"\x01",
-              wDuelAnimDuelistSide: b"\xc2", wDuelAnimLocationParam: b"\x03",
-              entry_base(0) + 1: b"\x00\x00\x00", entry_base(0) + 15: b"\x00\x00"},
-     "read": {entry_base(0) + 1: 3, entry_base(0) + 15: 2}},
-    {"wram": {wAnimationQueue: b"\x10", wAnimFlags: b"\x00", wDuelAnimationScreen: b"\x00",
-              wDuelAnimDuelistSide: b"\x00", wDuelAnimLocationParam: b"\x00",
-              entry_base(15) + 1: b"\x10\x00\x00", entry_base(15) + 15: b"\x20\x00"},
-     "read": {entry_base(15) + 1: 3, entry_base(15) + 15: 2}},
+    {
+        "wram": {
+            wAnimationQueue: b"\x02",
+            wAnimFlags: b"\x00",
+            wDuelAnimationScreen: b"\x00",
+            wDuelAnimDuelistSide: b"\x00",
+            wDuelAnimLocationParam: b"\x00",
+            entry_base(2) + 1: b"\x80\x00\x00",
+            entry_base(2) + 15: b"\x80\x00",
+        },
+        "read": {entry_base(2) + 1: 3, entry_base(2) + 15: 2},
+    },
+    dict(
+        POISON,
+        wram={
+            wAnimationQueue: b"\x05",
+            wAnimFlags: b"\x04",
+            wDuelAnimationScreen: b"\x00",
+            wDuelAnimDuelistSide: b"\x00",
+            wDuelAnimLocationParam: b"\x00",
+            entry_base(5) + 1: b"\x00\x00\x00",
+            entry_base(5) + 15: b"\x00\x00",
+        },
+        read={entry_base(5) + 1: 3, entry_base(5) + 15: 2},
+    ),
+    {
+        "wram": {
+            wAnimationQueue: b"\x00",
+            wAnimFlags: b"\x00",
+            wDuelAnimationScreen: b"\x01",
+            wDuelAnimDuelistSide: b"\xc2",
+            wDuelAnimLocationParam: b"\x03",
+            entry_base(0) + 1: b"\x00\x00\x00",
+            entry_base(0) + 15: b"\x00\x00",
+        },
+        "read": {entry_base(0) + 1: 3, entry_base(0) + 15: 2},
+    },
+    {
+        "wram": {
+            wAnimationQueue: b"\x10",
+            wAnimFlags: b"\x00",
+            wDuelAnimationScreen: b"\x00",
+            wDuelAnimDuelistSide: b"\x00",
+            wDuelAnimLocationParam: b"\x00",
+            entry_base(15) + 1: b"\x10\x00\x00",
+            entry_base(15) + 15: b"\x20\x00",
+        },
+        "read": {entry_base(15) + 1: 3, entry_base(15) + 15: 2},
+    },
 ]
 # <<< factory LoadAnimCoordsAndFlags
 
 # >>> factory PrintUsedTrainerCardDescription
-CONTRACT["PrintUsedTrainerCardDescription"] = {"compare": (), "preserve": (), "wram_out": True}
+CONTRACT["PrintUsedTrainerCardDescription"] = {
+    "compare": (),
+    "preserve": (),
+    "wram_out": True,
+}
 CASES["PrintUsedTrainerCardDescription"] = [
-    {"keys": 0x01, "wram": {wLoadedCard1Name: b"\x33\x00", wLoadedCard1NonPokemonDescription: b"\x00\x00"},
-     "setup": SETUP,
-     "instruction_budget": 2000000, "cycle_budget": 8000000,
-     "vread": GENERIC_VREAD},
-    dict(POISON, keys=0x01, wram={wLoadedCard1Name: b"\x33\x00", wLoadedCard1NonPokemonDescription: b"\x00\x00"},
-         setup=SETUP,
-         instruction_budget=2000000, cycle_budget=8000000,
-         vread=GENERIC_VREAD),
+    {
+        "keys": 0x01,
+        "wram": {
+            wLoadedCard1Name: b"\x33\x00",
+            wLoadedCard1NonPokemonDescription: b"\x00\x00",
+        },
+        "setup": SETUP,
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+        "vread": GENERIC_VREAD,
+    },
+    dict(
+        POISON,
+        keys=0x01,
+        wram={
+            wLoadedCard1Name: b"\x33\x00",
+            wLoadedCard1NonPokemonDescription: b"\x00\x00",
+        },
+        setup=SETUP,
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+        vread=GENERIC_VREAD,
+    ),
 ]
 # <<< factory PrintUsedTrainerCardDescription
 
 # >>> factory PracticeDuelVerify_Turn5
-CONTRACT["PracticeDuelVerify_Turn5"] = {"compare": ("f",), "preserve": (), "wram_out": True}
+CONTRACT["PracticeDuelVerify_Turn5"] = {
+    "compare": ("f",),
+    "preserve": (),
+    "wram_out": True,
+}
 CASES["PracticeDuelVerify_Turn5"] = [
-    {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables: b"\x10\x10",
-              wPlayerDeck: bytes((WATER_ENERGY, WATER_ENERGY)),
-              wTempCardID_ccc2: bytes((STARYU,))}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables: b"\x10\x10\x10",
-                       wPlayerDeck: bytes((WATER_ENERGY, WATER_ENERGY, STARYU)),
-                       wTempCardID_ccc2: b"\x00"}),
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wPlayerDuelVariables: b"\x10\x10",
+            wPlayerDeck: bytes((WATER_ENERGY, WATER_ENERGY)),
+            wTempCardID_ccc2: bytes((STARYU,)),
+        }
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc2",
+            wPlayerDuelVariables: b"\x10\x10\x10",
+            wPlayerDeck: bytes((WATER_ENERGY, WATER_ENERGY, STARYU)),
+            wTempCardID_ccc2: b"\x00",
+        },
+    ),
 ]
 # <<< factory PracticeDuelVerify_Turn5
 
 # >>> factory PracticeDuelVerify_Turn1
 CONTRACT["PracticeDuelVerify_Turn1"] = {"compare": ("f",), "preserve": ()}
 CASES["PracticeDuelVerify_Turn1"] = [
-    {"wram": {hWhoseTurn: b"\xC2", wTempCardID_ccc2: b"\x53"}},
-    {"wram": {hWhoseTurn: b"\xC2", wTempCardID_ccc2: b"\x54"}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", wTempCardID_ccc2: b"\x53"}),
+    {"wram": {hWhoseTurn: b"\xc2", wTempCardID_ccc2: b"\x53"}},
+    {"wram": {hWhoseTurn: b"\xc2", wTempCardID_ccc2: b"\x54"}},
+    dict(POISON, wram={hWhoseTurn: b"\xc2", wTempCardID_ccc2: b"\x53"}),
 ]
 # <<< factory PracticeDuelVerify_Turn1
 
 # >>> factory PracticeDuelVerify_Turn2
 CONTRACT["PracticeDuelVerify_Turn2"] = {"compare": ("f",), "preserve": ()}
 CASES["PracticeDuelVerify_Turn2"] = [
-    {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, wTempCardID_ccc2: b"\x54", wSelectedAttack: b"\x01", 0xC300 + 0x05: b"\x01"}},
-    {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, wTempCardID_ccc2: b"\x55", wSelectedAttack: b"\x01"}},
-    {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, wTempCardID_ccc2: b"\x54", wSelectedAttack: b"\x02"}},
-    {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, wTempCardID_ccc2: b"\x54", wSelectedAttack: b"\x01"}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, wTempCardID_ccc2: b"\x54", wSelectedAttack: b"\x01", 0xC300 + 0x05: b"\x01"}),
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            0xC000: b"\x00" * 0xF00,
+            wTempCardID_ccc2: b"\x54",
+            wSelectedAttack: b"\x01",
+            0xC300 + 0x05: b"\x01",
+        }
+    },
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            0xC000: b"\x00" * 0xF00,
+            wTempCardID_ccc2: b"\x55",
+            wSelectedAttack: b"\x01",
+        }
+    },
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            0xC000: b"\x00" * 0xF00,
+            wTempCardID_ccc2: b"\x54",
+            wSelectedAttack: b"\x02",
+        }
+    },
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            0xC000: b"\x00" * 0xF00,
+            wTempCardID_ccc2: b"\x54",
+            wSelectedAttack: b"\x01",
+        }
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc2",
+            0xC000: b"\x00" * 0xF00,
+            wTempCardID_ccc2: b"\x54",
+            wSelectedAttack: b"\x01",
+            0xC300 + 0x05: b"\x01",
+        },
+    ),
 ]
 # <<< factory PracticeDuelVerify_Turn2
 
@@ -2947,39 +5097,70 @@ CASES["PracticeDuel_PlayStaryuFromBench"] = [
     {"wram": {wDuelTurns: b"\x05"}},
     {"wram": {wDuelTurns: b"\x00"}},
     dict(POISON, wram={wDuelTurns: b"\x05"}),
-    {"wram": {wDuelTurns: b"\x07"}, "oracle": False,
-     "why": "PrintPracticeDuelInstructions walks the real PracticeDuelText_SamTurn4 table (2 scrollable-text pages plus a final print), each needing a fresh button press-then-release edge; the harness keys field is a single static value and cannot simulate that sequence, so the run never terminates under any budget. DrawPracticeDuelInstructionsTextBox, EnableLCD, and PrintPracticeDuelInstructions are independently verified by their own landed suites; this case only confirms the draw branch is entered with the correct table pointer.",
-     "expect": {0xCC01: b"\x46\x53", 0xCBCA: b"\x00"}},
+    {
+        "wram": {wDuelTurns: b"\x07"},
+        "oracle": False,
+        "why": "PrintPracticeDuelInstructions walks the real PracticeDuelText_SamTurn4 table (2 scrollable-text pages plus a final print), each needing a fresh button press-then-release edge; the harness keys field is a single static value and cannot simulate that sequence, so the run never terminates under any budget. DrawPracticeDuelInstructionsTextBox, EnableLCD, and PrintPracticeDuelInstructions are independently verified by their own landed suites; this case only confirms the draw branch is entered with the correct table pointer.",
+        "expect": {0xCC01: b"\x46\x53", 0xCBCA: b"\x00"},
+    },
 ]
 # <<< factory PracticeDuel_PlayStaryuFromBench
 
 # >>> factory DisplayDuelistTurnScreen
 CONTRACT["DisplayDuelistTurnScreen"] = {"compare": (), "preserve": ()}
 CASES["DisplayDuelistTurnScreen"] = [
-    {"wram": {hWhoseTurn: b"\xC2"},
-     "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 2000000, "cycle_budget": 8000000,
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}}},
-    {"wram": {hWhoseTurn: b"\xC3"},
-     "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 2000000, "cycle_budget": 8000000,
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2"},
-         keys=0x01, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=2000000, cycle_budget=8000000,
-         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}}),
+    {
+        "wram": {hWhoseTurn: b"\xc2"},
+        "keys": 0x01,
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+        "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}},
+    },
+    {
+        "wram": {hWhoseTurn: b"\xc3"},
+        "keys": 0x01,
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+        "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}},
+    },
+    dict(
+        POISON,
+        wram={hWhoseTurn: b"\xc2"},
+        keys=0x01,
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+        vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}},
+    ),
 ]
 # <<< factory DisplayDuelistTurnScreen
 
 # >>> factory DrawDuelistPortraitsAndNames
-CONTRACT["DrawDuelistPortraitsAndNames"] = {"compare": (), "preserve": (), "wram_out": True, "vram_out": True}
+CONTRACT["DrawDuelistPortraitsAndNames"] = {
+    "compare": (),
+    "preserve": (),
+    "wram_out": True,
+    "vram_out": True,
+}
 CASES["DrawDuelistPortraitsAndNames"] = [
-    {"wram": {0xCC15: b"\x02"}, "sram": {0: {0xA010: b"\x21\x22\x00"}},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xD61E: 1}},
-    dict(POISON, wram={0xCC15: b"\x02"}, sram={0: {0xA010: b"\x21\x22\x00"}},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xD61E: 1}),
+    {
+        "wram": {0xCC15: b"\x02"},
+        "sram": {0: {0xA010: b"\x21\x22\x00"}},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xD61E: 1},
+    },
+    dict(
+        POISON,
+        wram={0xCC15: b"\x02"},
+        sram={0: {0xA010: b"\x21\x22\x00"}},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xD61E: 1},
+    ),
 ]
 # <<< factory DrawDuelistPortraitsAndNames
+
 
 # >>> factory CheckEnergyNeededForAttack
 # Card-location page helper: 60 bytes at (hWhoseTurn << 8), one per deck index.
@@ -2991,60 +5172,129 @@ def _cena_page(arena_slots):
         page[_i] = 0x10
     return bytes(page)
 
-CONTRACT["CheckEnergyNeededForAttack"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+
+CONTRACT["CheckEnergyNeededForAttack"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["CheckEnergyNeededForAttack"] = [
-    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08",
-              0xCCC6: b"\x00", 0xCC23: b"\x00"}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08",
-                        0xCCC6: b"\x00", 0xCC23: b"\x00"}),
+    {
+        "wram": {
+            0xFF97: b"\xc2",
+            0xFF9D: b"\x00",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            0xCCC6: b"\x00",
+            0xCC23: b"\x00",
+        }
+    },
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xFF9D: b"\x00",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            0xCCC6: b"\x00",
+            0xCC23: b"\x00",
+        },
+    ),
     # GetPlayAreaCardAttachedEnergies scans the whole 60-byte card-location page
     # at (hWhoseTurn << 8) | l. Cases 0 and 1 leave it unseeded, so the tally is
     # whatever the page happens to hold and the routine never reliably reaches
     # its `ret z` "enough energy" exit. These two pin the page, which is what
     # exposed the landed body returning STALE d/e on that exit instead of the
     # loop pointer wLoadedAttackEnergyCost + 3 = $CCA9 (fixed 2026-08-26).
-    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08",
-              0xCCC6: b"\x00", 0xCC23: b"\x00",
-              0xC200: _cena_page((3, 7))},
-     "read": {0xCC1B: 8, 0xCC23: 1}},
-    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08",
-              0xCCC6: b"\x00", 0xCC23: b"\x00",
-              0xC200: _cena_page(())},
-     "read": {0xCC1B: 8, 0xCC23: 1}},
+    {
+        "wram": {
+            0xFF97: b"\xc2",
+            0xFF9D: b"\x00",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            0xCCC6: b"\x00",
+            0xCC23: b"\x00",
+            0xC200: _cena_page((3, 7)),
+        },
+        "read": {0xCC1B: 8, 0xCC23: 1},
+    },
+    {
+        "wram": {
+            0xFF97: b"\xc2",
+            0xFF9D: b"\x00",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            0xCCC6: b"\x00",
+            0xCC23: b"\x00",
+            0xC200: _cena_page(()),
+        },
+        "read": {0xCC1B: 8, 0xCC23: 1},
+    },
 ]
 # <<< factory CheckEnergyNeededForAttack
 
 # >>> factory CreateDamageCharSprite
 CONTRACT["CreateDamageCharSprite"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["CreateDamageCharSprite"] = [
-    {"a": 1, "f": 0, "d": 0xC1, "e": 0x00,
-     "wram": {0xFF80: b"\x07", 0xD618: b"\x00", 0xD4B7: b"\x02", 0xD4B8: b"\x05", 0xC100: b"\x00"},
-     "read": {0xC100: 1, 0xD42B: 1}},
-    dict(POISON, d=0xC1, e=0x00,
-         wram={0xFF80: b"\x07", 0xD618: b"\x00", 0xD4B7: b"\x02", 0xD4B8: b"\x05", 0xC100: b"\x00"},
-         read={0xC100: 1, 0xD42B: 1}),
+    {
+        "a": 1,
+        "f": 0,
+        "d": 0xC1,
+        "e": 0x00,
+        "wram": {
+            0xFF80: b"\x07",
+            0xD618: b"\x00",
+            0xD4B7: b"\x02",
+            0xD4B8: b"\x05",
+            0xC100: b"\x00",
+        },
+        "read": {0xC100: 1, 0xD42B: 1},
+    },
+    dict(
+        POISON,
+        d=0xC1,
+        e=0x00,
+        wram={
+            0xFF80: b"\x07",
+            0xD618: b"\x00",
+            0xD4B7: b"\x02",
+            0xD4B8: b"\x05",
+            0xC100: b"\x00",
+        },
+        read={0xC100: 1, 0xD42B: 1},
+    ),
 ]
 # <<< factory CreateDamageCharSprite
 
 # >>> factory HasAlivePokemonInBench
 CONTRACT["HasAlivePokemonInBench"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["HasAlivePokemonInBench"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x03", 0xC2C8: b"\x00\x10\x00"}, "read": {0xCBD2: 1}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EF: b"\x03", 0xC2C8: b"\x00\x10\x00"}),
+    {
+        "wram": {0xFF97: b"\xc2", 0xC2EF: b"\x03", 0xC2C8: b"\x00\x10\x00"},
+        "read": {0xCBD2: 1},
+    },
+    dict(POISON, wram={0xFF97: b"\xc2", 0xC2EF: b"\x03", 0xC2C8: b"\x00\x10\x00"}),
 ]
 # <<< factory HasAlivePokemonInBench
 
 # >>> factory DrawOpponentSelectionScreen
 CONTRACT["DrawOpponentSelectionScreen"] = {"compare": (), "preserve": ()}
 CASES["DrawOpponentSelectionScreen"] = [
-    {"wram": {0xCC0E: b"\x00", 0xCC15: b"\x02", 0xCC18: b"\x03"},
-     "sram": {0: {0xA010: b"\x21\x22\x00"}},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "rom_bank": 1, "read": {0xCC15: 1}, "vread": {0: {0x9A05: 3}}},
-    dict(POISON, wram={0xCC0E: b"\x00", 0xCC15: b"\x02", 0xCC18: b"\x03"},
-         sram={0: {0xA010: b"\x21\x22\x00"}},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         rom_bank=1, read={0xCC15: 1}),
+    {
+        "wram": {0xCC0E: b"\x00", 0xCC15: b"\x02", 0xCC18: b"\x03"},
+        "sram": {0: {0xA010: b"\x21\x22\x00"}},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "rom_bank": 1,
+        "read": {0xCC15: 1},
+        "vread": {0: {0x9A05: 3}},
+    },
+    dict(
+        POISON,
+        wram={0xCC0E: b"\x00", 0xCC15: b"\x02", 0xCC18: b"\x03"},
+        sram={0: {0xA010: b"\x21\x22\x00"}},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        rom_bank=1,
+        read={0xCC15: 1},
+    ),
 ]
 # <<< factory DrawOpponentSelectionScreen
 
@@ -3052,9 +5302,17 @@ CASES["DrawOpponentSelectionScreen"] = [
 CONTRACT["PracticeDuel_ReplaceKnockedOutPokemon"] = {"compare": ("f",), "preserve": ()}
 CASES["PracticeDuel_ReplaceKnockedOutPokemon"] = [
     {"wram": {0xFF9D: b"\x01"}},
-    {"wram": {0xFF9D: b"\x00", 0xFF97: b"\xC2", 0xC2EF: b"\x03", 0xC2C8: b"\x00\x10\x00"},
-     "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}},
+    {
+        "wram": {
+            0xFF9D: b"\x00",
+            0xFF97: b"\xc2",
+            0xC2EF: b"\x03",
+            0xC2C8: b"\x00\x10\x00",
+        },
+        "keys": 0x01,
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+    },
     dict(POISON, wram={0xFF9D: b"\x01"}),
 ]
 # <<< factory PracticeDuel_ReplaceKnockedOutPokemon
@@ -3062,10 +5320,21 @@ CASES["PracticeDuel_ReplaceKnockedOutPokemon"] = [
 # >>> factory DrawDamageAnimationArrow
 CONTRACT["DrawDamageAnimationArrow"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["DrawDamageAnimationArrow"] = [
-    {"f": 0x00, "wram": {0xFF80: b"\x07", 0xD618: b"\x00", 0xD4B8: b"\x05", 0xD429: b"\x00\x00"},
-     "read": {0xD4B7: 1}},
-    dict(POISON, wram={0xFF80: b"\x07", 0xD618: b"\x00", 0xD4B8: b"\x05", 0xD429: b"\x00\x00"},
-         read={0xD4B7: 1}),
+    {
+        "f": 0x00,
+        "wram": {
+            0xFF80: b"\x07",
+            0xD618: b"\x00",
+            0xD4B8: b"\x05",
+            0xD429: b"\x00\x00",
+        },
+        "read": {0xD4B7: 1},
+    },
+    dict(
+        POISON,
+        wram={0xFF80: b"\x07", 0xD618: b"\x00", 0xD4B8: b"\x05", 0xD429: b"\x00\x00"},
+        read={0xD4B7: 1},
+    ),
 ]
 # <<< factory DrawDamageAnimationArrow
 
@@ -3078,7 +5347,11 @@ CASES["DrawDamageAnimationWeak"] = [
 # <<< factory DrawDamageAnimationWeak
 
 # >>> factory DrawDamageAnimationResist
-CONTRACT["DrawDamageAnimationResist"] = {"compare": (), "preserve": (), "wram_out": True}
+CONTRACT["DrawDamageAnimationResist"] = {
+    "compare": (),
+    "preserve": (),
+    "wram_out": True,
+}
 CASES["DrawDamageAnimationResist"] = [
     {"wram": {0xFF80: b"\x07", 0xD4B8: b"\x05"}, "read": {0xD4B7: 1, 0xD4B8: 1}},
     dict(POISON, wram={0xFF80: b"\x07", 0xD4B8: b"\x05"}, read={0xD4B7: 1, 0xD4B8: 1}),
@@ -3086,26 +5359,37 @@ CASES["DrawDamageAnimationResist"] = [
 # <<< factory DrawDamageAnimationResist
 
 # >>> factory DrawDamageAnimationNumbers
-CONTRACT["DrawDamageAnimationNumbers"] = {"compare": (), "preserve": (), "wram_out": True}
+CONTRACT["DrawDamageAnimationNumbers"] = {
+    "compare": (),
+    "preserve": (),
+    "wram_out": True,
+}
 CASES["DrawDamageAnimationNumbers"] = [
-    {"wram": {0xFF80: b"\x07", 0xD4B1: b"\x2A\x00", 0xD4B6: b"\x00"}, "read": {0xD4B7: 1}},
-    dict(POISON, wram={0xFF80: b"\x07", 0xD4B1: b"\x2A\x00", 0xD4B6: b"\x00"}, read={0xD4B7: 1}),
+    {
+        "wram": {0xFF80: b"\x07", 0xD4B1: b"\x2a\x00", 0xD4B6: b"\x00"},
+        "read": {0xD4B7: 1},
+    },
+    dict(
+        POISON,
+        wram={0xFF80: b"\x07", 0xD4B1: b"\x2a\x00", 0xD4B6: b"\x00"},
+        read={0xD4B7: 1},
+    ),
 ]
 # <<< factory DrawDamageAnimationNumbers
 
 # >>> factory Func_15886
 CONTRACT["Func_15886"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["Func_15886"] = [
-    {"hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00"}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00"}),
+    {"hl": 0x1234, "wram": {0xFF97: b"\xc2", 0xC2EE: b"\x00"}},
+    dict(POISON, wram={0xFF97: b"\xc2", 0xC2EE: b"\x00"}),
 ]
 # <<< factory Func_15886
 
 # >>> factory CheckAbleToRetreat
 CONTRACT["CheckAbleToRetreat"] = {"compare": ("f",), "preserve": ()}
 CASES["CheckAbleToRetreat"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2E8: b"\x09"}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2E8: b"\x09"}),
+    {"wram": {0xFF97: b"\xc2", 0xC2E8: b"\x09"}},
+    dict(POISON, wram={0xFF97: b"\xc2", 0xC2E8: b"\x09"}),
 ]
 # <<< factory CheckAbleToRetreat
 
@@ -3114,33 +5398,85 @@ CONTRACT["LookForEnergyNeededInHand"] = {"compare": ("f",), "preserve": ()}
 CASES["LookForEnergyNeededInHand"] = [
     # grass-club 549326: the first attack needs one energy the hand lacks, so the
     # `.no_carry` exit tests LookForCardIDInHandList's a: nonzero, Z clear.
-    dict(_energy_needed_in_hand_fixture(vram=False, bank=5), **_ENERGY_NEEDED_IN_HAND_REGS, read={0xCC23: 1, 0xC510: 8}),
-    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCC23: b"\x00"},
-     "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCC23: b"\x00"},
-         instruction_budget=2000000, cycle_budget=8000000),
+    dict(
+        _energy_needed_in_hand_fixture(vram=False, bank=5),
+        **_ENERGY_NEEDED_IN_HAND_REGS,
+        read={0xCC23: 1, 0xC510: 8},
+    ),
+    {
+        "wram": {
+            0xFF97: b"\xc2",
+            0xFF9D: b"\x00",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            0xCC23: b"\x00",
+        },
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xFF9D: b"\x00",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            0xCC23: b"\x00",
+        },
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory LookForEnergyNeededInHand
 
 # >>> factory Func_7364
 CONTRACT["Func_7364"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["Func_7364"] = [
-    {"keys": 0x02, "wram": {0xCC0E: b"\x00", 0xCC15: b"\x02", 0xCC18: b"\x03"},
-     "sram": {0: {0xA010: b"\x21\x22\x00"}}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, keys=0x02, wram={0xCC0E: b"\x00", 0xCC15: b"\x02", 0xCC18: b"\x03"},
-         sram={0: {0xA010: b"\x21\x22\x00"}}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=2000000, cycle_budget=8000000),
+    {
+        "keys": 0x02,
+        "wram": {0xCC0E: b"\x00", 0xCC15: b"\x02", 0xCC18: b"\x03"},
+        "sram": {0: {0xA010: b"\x21\x22\x00"}},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        keys=0x02,
+        wram={0xCC0E: b"\x00", 0xCC15: b"\x02", 0xCC18: b"\x03"},
+        sram={0: {0xA010: b"\x21\x22\x00"}},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory Func_7364
 
 # >>> factory CheckEnergyNeededForAttackAfterDiscard
-CONTRACT["CheckEnergyNeededForAttackAfterDiscard"] = {"compare": ("f", "b", "c", "d", "e"), "preserve": ()}
+CONTRACT["CheckEnergyNeededForAttackAfterDiscard"] = {
+    "compare": ("f", "b", "c", "d", "e"),
+    "preserve": (),
+}
 CASES["CheckEnergyNeededForAttackAfterDiscard"] = [
-    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", wPlayerDeck: b"\x08", wSelectedAttack: b"\x00",
-             hTempPlayAreaLocation_ff9d: b"\x00"}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", wPlayerDeck: b"\x08", wSelectedAttack: b"\x00",
-             hTempPlayAreaLocation_ff9d: b"\x00"}),
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            0xC2BB: b"\x00",
+            wPlayerDeck: b"\x08",
+            wSelectedAttack: b"\x00",
+            hTempPlayAreaLocation_ff9d: b"\x00",
+        }
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc2",
+            0xC2BB: b"\x00",
+            wPlayerDeck: b"\x08",
+            wSelectedAttack: b"\x00",
+            hTempPlayAreaLocation_ff9d: b"\x00",
+        },
+    ),
 ]
 # <<< factory CheckEnergyNeededForAttackAfterDiscard
 
@@ -3149,9 +5485,13 @@ CONTRACT["DisplayFirstOrNextCardPage"] = {"compare": ("a", "f", "b"), "preserve"
 CASES["DisplayFirstOrNextCardPage"] = [
     # water-club 314910: a trainer card's first page from the practice duel; the
     # exit is EnableLCD's wLCDC with `or a`, and b is the rarity icon's `ld b, 0`.
-    dict(_first_or_next_page_fixture(vram=True, bank=1), **_FIRST_OR_NEXT_PAGE_REGS, read={0xCBC7: 1, 0xCABB: 1}),
-    {"wram": {wCardPageNumber: b"\xFF"}, "read": {wCardPageNumber: 1}},
-    dict(POISON, wram={wCardPageNumber: b"\xFF"}, read={wCardPageNumber: 1}),
+    dict(
+        _first_or_next_page_fixture(vram=True, bank=1),
+        **_FIRST_OR_NEXT_PAGE_REGS,
+        read={0xCBC7: 1, 0xCABB: 1},
+    ),
+    {"wram": {wCardPageNumber: b"\xff"}, "read": {wCardPageNumber: 1}},
+    dict(POISON, wram={wCardPageNumber: b"\xff"}, read={wCardPageNumber: 1}),
 ]
 # <<< factory DisplayFirstOrNextCardPage
 
@@ -3164,22 +5504,36 @@ CASES["PrintAttackOrCardDescription"] = [
 # <<< factory PrintAttackOrCardDescription
 
 # >>> factory PrintAttackOrPkmnPowerInformation
-CONTRACT["PrintAttackOrPkmnPowerInformation"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["PrintAttackOrPkmnPowerInformation"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["PrintAttackOrPkmnPowerInformation"] = [
     # credits-1 858300: a legendary card's Pokemon Power on the received-card page;
     # the exit is ProcessTextFromID's `pop af` after InitTextPrinting's `xor a`.
-    dict(_attack_information_fixture(vram=True, bank=1), **_ATTACK_INFORMATION_REGS, read={0xCC34: 0x20}),
+    dict(
+        _attack_information_fixture(vram=True, bank=1),
+        **_ATTACK_INFORMATION_REGS,
+        read={0xCC34: 0x20},
+    ),
     {"hl": 0xC500, "wram": {0xC500: b"\x00\x00"}},
     dict(POISON, hl=0xC500, wram={0xC500: b"\x00\x00"}),
 ]
 # <<< factory PrintAttackOrPkmnPowerInformation
 
 # >>> factory PrintAttackOrNonPokemonCardDescription
-CONTRACT["PrintAttackOrNonPokemonCardDescription"] = {"compare": ("a", "f", "hl", "d", "e"), "preserve": ()}
+CONTRACT["PrintAttackOrNonPokemonCardDescription"] = {
+    "compare": ("a", "f", "hl", "d", "e"),
+    "preserve": (),
+}
 CASES["PrintAttackOrNonPokemonCardDescription"] = [
     # credits-1 858300: a legendary card's page; the description prints and the
     # exit is SetOneLineSeparation's `xor a` with de at (1, 11).
-    dict(_card_description_fixture(vram=False, bank=1), **_CARD_DESCRIPTION_REGS, read={0xCC36: 2, 0xCD00: 1}),
+    dict(
+        _card_description_fixture(vram=False, bank=1),
+        **_CARD_DESCRIPTION_REGS,
+        read={0xCC36: 2, 0xCD00: 1},
+    ),
     {"hl": 0xC500, "wram": {0xC500: b"\x00\x00"}},
     dict(POISON, hl=0xC500, wram={0xC500: b"\x00\x00"}),
 ]
@@ -3188,56 +5542,97 @@ CASES["PrintAttackOrNonPokemonCardDescription"] = [
 # >>> factory DisplayCardPageOnLeftOrRightPressed
 CONTRACT["DisplayCardPageOnLeftOrRightPressed"] = {"compare": (), "preserve": ()}
 CASES["DisplayCardPageOnLeftOrRightPressed"] = [
-    {"a": 1 << 5, "wram": {wCardPageNumber: b"\x0C"}, "read": {wCardPageNumber: 1}},
-    dict(POISON, a=1 << 5, wram={wCardPageNumber: b"\x0C"}, read={wCardPageNumber: 1}),
+    {"a": 1 << 5, "wram": {wCardPageNumber: b"\x0c"}, "read": {wCardPageNumber: 1}},
+    dict(POISON, a=1 << 5, wram={wCardPageNumber: b"\x0c"}, read={wCardPageNumber: 1}),
 ]
 # <<< factory DisplayCardPageOnLeftOrRightPressed
 
 # >>> factory PrintPlayAreaCardHeader
 CONTRACT["PrintPlayAreaCardHeader"] = {"compare": (), "preserve": ()}
 CASES["PrintPlayAreaCardHeader"] = [
-    {"instruction_budget": 20000000, "cycle_budget": 80000000,
-     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x04",
-              wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00"},
-     "vread": {0: {0x9800 + 3 * 32: 32 * 5}},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    {"instruction_budget": 20000000, "cycle_budget": 80000000,
-     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x01", wCurPlayAreaY: b"\x03",
-              wConsole: b"\x02", wPlayerArenaCard + 1: b"\x01", wPlayerDeck + 1: b"\x08",
-              wPlayerArenaCard + 1 + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x02",
-              wPlayerArenaCard + 1 + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x05",
-              wPlayerArenaCard + 1 + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x07"},
-     "vread": {0: {0x9800 + 2 * 32: 32 * 5}, 1: {0x9800 + 2 * 32: 32 * 5}},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, instruction_budget=20000000, cycle_budget=80000000,
-         wram={hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x04",
-                        wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
-                        wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
-                        wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
-                        wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
-                        wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00"},
-         vread={0: {0x9800 + 3 * 32: 32 * 5}},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    {
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+        "wram": {
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wCurPlayAreaSlot: b"\x00",
+            wCurPlayAreaY: b"\x04",
+            wConsole: b"\x00",
+            wPlayerArenaCard: b"\x00",
+            wPlayerDeck: b"\x08",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+        },
+        "vread": {0: {0x9800 + 3 * 32: 32 * 5}},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    },
+    {
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+        "wram": {
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wCurPlayAreaSlot: b"\x01",
+            wCurPlayAreaY: b"\x03",
+            wConsole: b"\x02",
+            wPlayerArenaCard + 1: b"\x01",
+            wPlayerDeck + 1: b"\x08",
+            wPlayerArenaCard + 1 + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x02",
+            wPlayerArenaCard + 1 + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x05",
+            wPlayerArenaCard + 1 + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x07",
+        },
+        "vread": {0: {0x9800 + 2 * 32: 32 * 5}, 1: {0x9800 + 2 * 32: 32 * 5}},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    },
+    dict(
+        POISON,
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+        wram={
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wCurPlayAreaSlot: b"\x00",
+            wCurPlayAreaY: b"\x04",
+            wConsole: b"\x00",
+            wPlayerArenaCard: b"\x00",
+            wPlayerDeck: b"\x08",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+        },
+        vread={0: {0x9800 + 3 * 32: 32 * 5}},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    ),
 ]
 # <<< factory PrintPlayAreaCardHeader
 
 # >>> factory PrintPokemonCardLength
 CONTRACT["PrintPokemonCardLength"] = {"compare": (), "preserve": ()}
 CASES["PrintPokemonCardLength"] = [
-    {"instruction_budget": 20000000, "cycle_budget": 80000000,
-     "hl": 0x0503, "b": 4, "c": 2, "wram": {wConsole: b"\x00", wLCDC: b"\x00"},
-     "read": {wPokemonLengthPrintOffset: 1},
-     "vread": {0: {0x9800: 32 * 8}},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, instruction_budget=20000000, cycle_budget=80000000,
-         hl=0x0503, b=4, c=2, wram={wConsole: b"\x00", wLCDC: b"\x00"},
-         read={wPokemonLengthPrintOffset: 1},
-         vread={0: {0x9800: 32 * 8}},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    {
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+        "hl": 0x0503,
+        "b": 4,
+        "c": 2,
+        "wram": {wConsole: b"\x00", wLCDC: b"\x00"},
+        "read": {wPokemonLengthPrintOffset: 1},
+        "vread": {0: {0x9800: 32 * 8}},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    },
+    dict(
+        POISON,
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+        hl=0x0503,
+        b=4,
+        c=2,
+        wram={wConsole: b"\x00", wLCDC: b"\x00"},
+        read={wPokemonLengthPrintOffset: 1},
+        vread={0: {0x9800: 32 * 8}},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    ),
 ]
 # <<< factory PrintPokemonCardLength
 
@@ -3248,38 +5643,100 @@ CASES["PrintPokemonCardLength"] = [
 # DoFrame chain and no port model produces it.
 CONTRACT["PlayDeckShuffleAnimation"] = {"compare": ("a", "c"), "preserve": ()}
 CASES["PlayDeckShuffleAnimation"] = [
-    {"compare": ("a",), "keys": 0, "instruction_budget": 3000000, "cycle_budget": 10000000,
-     "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCAC2: b"\x09",
-              0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, compare=("a",), keys=0, instruction_budget=3000000, cycle_budget=10000000,
-         wram={0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCAC2: b"\x09",
-               0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    {
+        "compare": ("a",),
+        "keys": 0,
+        "instruction_budget": 3000000,
+        "cycle_budget": 10000000,
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2BA: b"\x3c",
+            0xCAC2: b"\x09",
+            0xFF90: b"\x02",
+            0xCE47: b"\x00",
+            0xFFA9: b"\x00",
+            0xC600: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    },
+    dict(
+        POISON,
+        compare=("a",),
+        keys=0,
+        instruction_budget=3000000,
+        cycle_budget=10000000,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2BA: b"\x3c",
+            0xCAC2: b"\x09",
+            0xFF90: b"\x02",
+            0xCE47: b"\x00",
+            0xFFA9: b"\x00",
+            0xC600: b"\x00",
+        },
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    ),
     # core.asm:2277-2311. Both cases above seed 0xC2BA=0x3C -- zero cards in
     # deck -- so they only ever take `.one_card_in_deck`. This one leaves 12
     # cards there, which is the path that queues the animation and ends in
     # FinishQueuedAnimations, the only path where `c` is an output.
-    {"c": 0xCC, "keys": 0, "instruction_budget": 3000000, "cycle_budget": 10000000,
-     "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x30", 0xCAC2: b"\x09",
-              0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    {
+        "c": 0xCC,
+        "keys": 0,
+        "instruction_budget": 3000000,
+        "cycle_budget": 10000000,
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2BA: b"\x30",
+            0xCAC2: b"\x09",
+            0xFF90: b"\x02",
+            0xCE47: b"\x00",
+            0xFFA9: b"\x00",
+            0xC600: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    },
 ]
 # <<< factory PlayDeckShuffleAnimation
 
 # >>> factory OppAction_6b30
 CONTRACT["OppAction_6b30"] = {"compare": ("a",), "preserve": ()}
 CASES["OppAction_6b30"] = [
-    {"keys": 0, "instruction_budget": 3000000, "cycle_budget": 10000000,
-     "wram": {hWhoseTurn: b"\xC3", hTemp_ffa0: b"\xC2", 0xC2BA: b"\x3C", 0xCAC2: b"\x09",
-              0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
-     "read": {hWhoseTurn: 1},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, keys=0, instruction_budget=3000000, cycle_budget=10000000,
-         wram={hWhoseTurn: b"\xC3", hTemp_ffa0: b"\xC2", 0xC2BA: b"\x3C", 0xCAC2: b"\x09",
-               0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
-         read={hWhoseTurn: 1},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    {
+        "keys": 0,
+        "instruction_budget": 3000000,
+        "cycle_budget": 10000000,
+        "wram": {
+            hWhoseTurn: b"\xc3",
+            hTemp_ffa0: b"\xc2",
+            0xC2BA: b"\x3c",
+            0xCAC2: b"\x09",
+            0xFF90: b"\x02",
+            0xCE47: b"\x00",
+            0xFFA9: b"\x00",
+            0xC600: b"\x00",
+        },
+        "read": {hWhoseTurn: 1},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    },
+    dict(
+        POISON,
+        keys=0,
+        instruction_budget=3000000,
+        cycle_budget=10000000,
+        wram={
+            hWhoseTurn: b"\xc3",
+            hTemp_ffa0: b"\xc2",
+            0xC2BA: b"\x3c",
+            0xCAC2: b"\x09",
+            0xFF90: b"\x02",
+            0xCE47: b"\x00",
+            0xFFA9: b"\x00",
+            0xC600: b"\x00",
+        },
+        read={hWhoseTurn: 1},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    ),
 ]
 # <<< factory OppAction_6b30
 
@@ -3287,218 +5744,401 @@ CASES["OppAction_6b30"] = [
 CONTRACT["PrintPlayAreaCardInformation"] = {"compare": ("hl",), "preserve": ()}
 CASES["PrintPlayAreaCardInformation"] = [
     # water-master 422309: a live play-area row; hl ends past wDefaultText's copy.
-    dict(_play_area_card_info_fixture(vram=True, bank=1), **_PLAY_AREA_CARD_INFO_REGS, read={0xC590: 12}),
-    {"keys": 0, "instruction_budget": 4000000, "cycle_budget": 16000000,
-     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x04",
-              wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, keys=0, instruction_budget=4000000, cycle_budget=16000000,
-         wram={hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x04",
-               wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00"},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    dict(
+        _play_area_card_info_fixture(vram=True, bank=1),
+        **_PLAY_AREA_CARD_INFO_REGS,
+        read={0xC590: 12},
+    ),
+    {
+        "keys": 0,
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+        "wram": {
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wCurPlayAreaSlot: b"\x00",
+            wCurPlayAreaY: b"\x04",
+            wConsole: b"\x00",
+            wPlayerArenaCard: b"\x00",
+            wPlayerDeck: b"\x08",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    },
+    dict(
+        POISON,
+        keys=0,
+        instruction_budget=4000000,
+        cycle_budget=16000000,
+        wram={
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wCurPlayAreaSlot: b"\x00",
+            wCurPlayAreaY: b"\x04",
+            wConsole: b"\x00",
+            wPlayerArenaCard: b"\x00",
+            wPlayerDeck: b"\x08",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+        },
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    ),
 ]
 # <<< factory PrintPlayAreaCardInformation
 
 # >>> factory PrintPlayAreaCardInformationAndLocation
 CONTRACT["PrintPlayAreaCardInformationAndLocation"] = {"compare": (), "preserve": ()}
 CASES["PrintPlayAreaCardInformationAndLocation"] = [
-    {"keys": 0, "instruction_budget": 4000000, "cycle_budget": 16000000,
-     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x04",
-              wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00"},
-     "vread": {0: {0x9800 + 4 * 32 + 1: 1, 0x9800 + 5 * 32 + 1: 1, 0x9800 + 6 * 32 + 1: 1}},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, keys=0, instruction_budget=4000000, cycle_budget=16000000,
-         wram={hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x04",
-               wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00"},
-         vread={0: {0x9800 + 4 * 32 + 1: 1, 0x9800 + 5 * 32 + 1: 1, 0x9800 + 6 * 32 + 1: 1}},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    {
+        "keys": 0,
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+        "wram": {
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wCurPlayAreaSlot: b"\x00",
+            wCurPlayAreaY: b"\x04",
+            wConsole: b"\x00",
+            wPlayerArenaCard: b"\x00",
+            wPlayerDeck: b"\x08",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+        },
+        "vread": {
+            0: {0x9800 + 4 * 32 + 1: 1, 0x9800 + 5 * 32 + 1: 1, 0x9800 + 6 * 32 + 1: 1}
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    },
+    dict(
+        POISON,
+        keys=0,
+        instruction_budget=4000000,
+        cycle_budget=16000000,
+        wram={
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wCurPlayAreaSlot: b"\x00",
+            wCurPlayAreaY: b"\x04",
+            wConsole: b"\x00",
+            wPlayerArenaCard: b"\x00",
+            wPlayerDeck: b"\x08",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+        },
+        vread={
+            0: {0x9800 + 4 * 32 + 1: 1, 0x9800 + 5 * 32 + 1: 1, 0x9800 + 6 * 32 + 1: 1}
+        },
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    ),
 ]
 # <<< factory PrintPlayAreaCardInformationAndLocation
 
 # >>> factory DisplayUsePokemonPowerScreen
 CONTRACT["DisplayUsePokemonPowerScreen"] = {"compare": (), "preserve": ()}
 CASES["DisplayUsePokemonPowerScreen"] = [
-    {"keys": 0, "instruction_budget": 5000000, "cycle_budget": 20000000,
-     "hram": {hTempPlayAreaLocation_ff9d: b"\x00"},
-     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x00",
-              wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
-              wLoadedCard1Atk1Name: b"\x00\x00",
-              wLoadedCard1Atk1Description: b"\x00\x00"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, keys=0, instruction_budget=5000000, cycle_budget=20000000,
-         hram={hTempPlayAreaLocation_ff9d: b"\x00"},
-         wram={hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x00",
-               wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
-               wLoadedCard1Atk1Name: b"\x00\x00",
-               wLoadedCard1Atk1Description: b"\x00\x00"},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    {
+        "keys": 0,
+        "instruction_budget": 5000000,
+        "cycle_budget": 20000000,
+        "hram": {hTempPlayAreaLocation_ff9d: b"\x00"},
+        "wram": {
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wCurPlayAreaSlot: b"\x00",
+            wCurPlayAreaY: b"\x00",
+            wConsole: b"\x00",
+            wPlayerArenaCard: b"\x00",
+            wPlayerDeck: b"\x08",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+            wLoadedCard1Atk1Name: b"\x00\x00",
+            wLoadedCard1Atk1Description: b"\x00\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    },
+    dict(
+        POISON,
+        keys=0,
+        instruction_budget=5000000,
+        cycle_budget=20000000,
+        hram={hTempPlayAreaLocation_ff9d: b"\x00"},
+        wram={
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wCurPlayAreaSlot: b"\x00",
+            wCurPlayAreaY: b"\x00",
+            wConsole: b"\x00",
+            wPlayerArenaCard: b"\x00",
+            wPlayerDeck: b"\x08",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+            wLoadedCard1Atk1Name: b"\x00\x00",
+            wLoadedCard1Atk1Description: b"\x00\x00",
+        },
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    ),
 ]
 # <<< factory DisplayUsePokemonPowerScreen
 
 # >>> factory InitAndPrintPlayAreaCardInformationAndLocation
-CONTRACT["InitAndPrintPlayAreaCardInformationAndLocation"] = {"compare": (), "preserve": ()}
+CONTRACT["InitAndPrintPlayAreaCardInformationAndLocation"] = {
+    "compare": (),
+    "preserve": (),
+}
 CASES["InitAndPrintPlayAreaCardInformationAndLocation"] = [
-    {"keys": 0, "instruction_budget": 5000000, "cycle_budget": 20000000,
-     "hram": {hTempPlayAreaLocation_ff9d: b"\x00"},
-     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)),
-              wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00"},
-     "read": {wCurPlayAreaSlot: 1},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, keys=0, instruction_budget=5000000, cycle_budget=20000000,
-         hram={hTempPlayAreaLocation_ff9d: b"\x00"},
-         wram={hWhoseTurn: bytes((PLAYER_TURN,)),
-               wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00"},
-         read={wCurPlayAreaSlot: 1},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    {
+        "keys": 0,
+        "instruction_budget": 5000000,
+        "cycle_budget": 20000000,
+        "hram": {hTempPlayAreaLocation_ff9d: b"\x00"},
+        "wram": {
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wConsole: b"\x00",
+            wPlayerArenaCard: b"\x00",
+            wPlayerDeck: b"\x08",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+        },
+        "read": {wCurPlayAreaSlot: 1},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    },
+    dict(
+        POISON,
+        keys=0,
+        instruction_budget=5000000,
+        cycle_budget=20000000,
+        hram={hTempPlayAreaLocation_ff9d: b"\x00"},
+        wram={
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wConsole: b"\x00",
+            wPlayerArenaCard: b"\x00",
+            wPlayerDeck: b"\x08",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+        },
+        read={wCurPlayAreaSlot: 1},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    ),
 ]
 # <<< factory InitAndPrintPlayAreaCardInformationAndLocation
 
 # >>> factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox
-CONTRACT["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox"] = {"compare": (), "preserve": ()}
+CONTRACT["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox"] = {
+    "compare": (),
+    "preserve": (),
+}
 CASES["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox"] = [
-    {"keys": 0x01, "instruction_budget": 5000000, "cycle_budget": 20000000,
-     "hram": {hTempPlayAreaLocation_ff9d: b"\x00"},
-     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)),
-              wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00"},
-     "read": {0xCD11: 1},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, keys=0x01, instruction_budget=5000000, cycle_budget=20000000,
-         hram={hTempPlayAreaLocation_ff9d: b"\x00"},
-         wram={hWhoseTurn: bytes((PLAYER_TURN,)),
-               wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00"},
-         read={0xCD11: 1},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    {
+        "keys": 0x01,
+        "instruction_budget": 5000000,
+        "cycle_budget": 20000000,
+        "hram": {hTempPlayAreaLocation_ff9d: b"\x00"},
+        "wram": {
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wConsole: b"\x00",
+            wPlayerArenaCard: b"\x00",
+            wPlayerDeck: b"\x08",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+        },
+        "read": {0xCD11: 1},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    },
+    dict(
+        POISON,
+        keys=0x01,
+        instruction_budget=5000000,
+        cycle_budget=20000000,
+        hram={hTempPlayAreaLocation_ff9d: b"\x00"},
+        wram={
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wConsole: b"\x00",
+            wPlayerArenaCard: b"\x00",
+            wPlayerDeck: b"\x08",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+        },
+        read={0xCD11: 1},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    ),
 ]
 # <<< factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox
 
 # >>> factory PrintPlayAreaCardList
 CONTRACT["PrintPlayAreaCardList"] = {"compare": (), "preserve": ()}
 CASES["PrintPlayAreaCardList"] = [
-    {"instruction_budget": 4000000, "cycle_budget": 16000000,
-     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
-              wPlayerArenaCard: b"\xFF", wExcludeArenaPokemon: b"\x00"},
-     "read": {wNumPlayAreaItems: 1, wDuelTempList: 1}},
-    dict(POISON, instruction_budget=4000000, cycle_budget=16000000,
-         wram={hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
-               wPlayerArenaCard: b"\xFF", wExcludeArenaPokemon: b"\x00"},
-         read={wNumPlayAreaItems: 1, wDuelTempList: 1}),
-    {"instruction_budget": 4000000, "cycle_budget": 16000000,
-     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
-              wPlayerArenaCard: b"\xFF", wExcludeArenaPokemon: b"\x01"},
-     "read": {wNumPlayAreaItems: 1, wDuelTempList: 1}},
+    {
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+        "wram": {
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
+            wPlayerArenaCard: b"\xff",
+            wExcludeArenaPokemon: b"\x00",
+        },
+        "read": {wNumPlayAreaItems: 1, wDuelTempList: 1},
+    },
+    dict(
+        POISON,
+        instruction_budget=4000000,
+        cycle_budget=16000000,
+        wram={
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
+            wPlayerArenaCard: b"\xff",
+            wExcludeArenaPokemon: b"\x00",
+        },
+        read={wNumPlayAreaItems: 1, wDuelTempList: 1},
+    ),
+    {
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+        "wram": {
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
+            wPlayerArenaCard: b"\xff",
+            wExcludeArenaPokemon: b"\x01",
+        },
+        "read": {wNumPlayAreaItems: 1, wDuelTempList: 1},
+    },
 ]
 # <<< factory PrintPlayAreaCardList
 
 # >>> factory OppAction_UsePokemonPower
 CONTRACT["OppAction_UsePokemonPower"] = {"compare": (), "preserve": ()}
 CASES["OppAction_UsePokemonPower"] = [
-    {"keys": 0x01, "instruction_budget": 5000000, "cycle_budget": 20000000,
-     "hram": {hTempCardIndex_ff9f: b"\x00", hTemp_ffa0: b"\x00"},
-     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)),
-              wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
-              wDuelType: b"\x00"},
-     "read": {wSkipDuelistIsThinkingDelay: 1},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, keys=0x01, instruction_budget=5000000, cycle_budget=20000000,
-         hram={hTempCardIndex_ff9f: b"\x00", hTemp_ffa0: b"\x00"},
-         wram={hWhoseTurn: bytes((PLAYER_TURN,)),
-               wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
-               wDuelType: b"\x00"},
-         read={wSkipDuelistIsThinkingDelay: 1},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    {
+        "keys": 0x01,
+        "instruction_budget": 5000000,
+        "cycle_budget": 20000000,
+        "hram": {hTempCardIndex_ff9f: b"\x00", hTemp_ffa0: b"\x00"},
+        "wram": {
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wConsole: b"\x00",
+            wPlayerArenaCard: b"\x00",
+            wPlayerDeck: b"\x08",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+            wDuelType: b"\x00",
+        },
+        "read": {wSkipDuelistIsThinkingDelay: 1},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    },
+    dict(
+        POISON,
+        keys=0x01,
+        instruction_budget=5000000,
+        cycle_budget=20000000,
+        hram={hTempCardIndex_ff9f: b"\x00", hTemp_ffa0: b"\x00"},
+        wram={
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wConsole: b"\x00",
+            wPlayerArenaCard: b"\x00",
+            wPlayerDeck: b"\x08",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+            wDuelType: b"\x00",
+        },
+        read={wSkipDuelistIsThinkingDelay: 1},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    ),
 ]
 # <<< factory OppAction_UsePokemonPower
 
 # >>> factory Func_616e
 CONTRACT["Func_616e"] = {"compare": (), "preserve": ()}
 CASES["Func_616e"] = [
-    {"a": 0x00, "instruction_budget": 6000000, "cycle_budget": 20000000,
-     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard: b"\xFF",
-              wPlayerArenaCard + 0xEF - 0xBB: b"\x01", wExcludeArenaPokemon: b"\x01"},
-     "read": {wCurPlayAreaSlot: 1, wCurPlayAreaY: 1}},
-    dict(POISON, a=0xAA, instruction_budget=6000000, cycle_budget=20000000,
-         wram={hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard: b"\xFF",
-               wPlayerArenaCard + 0xEF - 0xBB: b"\x01", 0xC265: b"\xFF", wExcludeArenaPokemon: b"\x01"},
-         read={wCurPlayAreaSlot: 1, wCurPlayAreaY: 1}),
+    {
+        "a": 0x00,
+        "instruction_budget": 6000000,
+        "cycle_budget": 20000000,
+        "wram": {
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wPlayerArenaCard: b"\xff",
+            wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
+            wExcludeArenaPokemon: b"\x01",
+        },
+        "read": {wCurPlayAreaSlot: 1, wCurPlayAreaY: 1},
+    },
+    dict(
+        POISON,
+        a=0xAA,
+        instruction_budget=6000000,
+        cycle_budget=20000000,
+        wram={
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wPlayerArenaCard: b"\xff",
+            wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
+            0xC265: b"\xff",
+            wExcludeArenaPokemon: b"\x01",
+        },
+        read={wCurPlayAreaSlot: 1, wCurPlayAreaY: 1},
+    ),
 ]
 # <<< factory Func_616e
 
 # >>> factory PrintPlayAreaCardList_EnableLCD
 CONTRACT["PrintPlayAreaCardList_EnableLCD"] = {"compare": ("a",), "preserve": ()}
 CASES["PrintPlayAreaCardList_EnableLCD"] = [
-    {"instruction_budget": 6000000, "cycle_budget": 20000000,
-     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard: b"\xFF",
-              wPlayerArenaCard + 0xEF - 0xBB: b"\x01", wExcludeArenaPokemon: b"\x00"}},
-    dict(POISON, instruction_budget=6000000, cycle_budget=20000000,
-         wram={hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard: b"\xFF",
-               wPlayerArenaCard + 0xEF - 0xBB: b"\x01", wExcludeArenaPokemon: b"\x00"}),
+    {
+        "instruction_budget": 6000000,
+        "cycle_budget": 20000000,
+        "wram": {
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wPlayerArenaCard: b"\xff",
+            wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
+            wExcludeArenaPokemon: b"\x00",
+        },
+    },
+    dict(
+        POISON,
+        instruction_budget=6000000,
+        cycle_budget=20000000,
+        wram={
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wPlayerArenaCard: b"\xff",
+            wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
+            wExcludeArenaPokemon: b"\x00",
+        },
+    ),
 ]
 # <<< factory PrintPlayAreaCardList_EnableLCD
 
 # >>> factory FlushAllPalettesOrSendPal23Packet
 CONTRACT["FlushAllPalettesOrSendPal23Packet"] = {"compare": (), "preserve": ()}
 CASES["FlushAllPalettesOrSendPal23Packet"] = [
-    {"wram": {0xCAB4: b"\x00", 0xCAE0: b"\xAA" * 16}, "read": {0xCAE0: 16}},
+    {"wram": {0xCAB4: b"\x00", 0xCAE0: b"\xaa" * 16}, "read": {0xCAE0: 16}},
     {"wram": {0xCAB4: b"\x02", 0xCAE0: b"\x55" * 16}, "read": {0xCAE0: 16}},
     {"wram": {0xCAB4: b"\x01", 0xCAE0: b"\x00" * 16}, "read": {0xCAE0: 16}},
     dict(POISON, wram={0xCAB4: b"\x01", 0xCAE0: b"\x00" * 16}, read={0xCAE0: 16}),
@@ -3510,26 +6150,71 @@ CONTRACT["CheckIfCardCanBePlayed"] = {"compare": ("a", "f", "d"), "preserve": ()
 CASES["CheckIfCardCanBePlayed"] = [
     # water-club 116111: a basic Pokemon with one Pokemon in play: `cp / ccf`
     # leaves no N or H, carry clear.
-    dict(_card_can_be_played_fixture(vram=False, bank=5), **_CARD_CAN_BE_PLAYED_REGS, read={0xFF9F: 1, 0xCC24: 1}),
-    {"a": 0x00, "wram": {0xCC0B: b"\x01", 0xCC24: b"\x08", 0xCC2D: b"\x00"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xCC0B: b"\x01", 0xCC24: b"\x08", 0xCC2D: b"\x00"}, instruction_budget=2000000, cycle_budget=8000000),
+    dict(
+        _card_can_be_played_fixture(vram=False, bank=5),
+        **_CARD_CAN_BE_PLAYED_REGS,
+        read={0xFF9F: 1, 0xCC24: 1},
+    ),
+    {
+        "a": 0x00,
+        "wram": {0xCC0B: b"\x01", 0xCC24: b"\x08", 0xCC2D: b"\x00"},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        wram={0xCC0B: b"\x01", 0xCC24: b"\x08", 0xCC2D: b"\x00"},
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory CheckIfCardCanBePlayed
 
 # >>> factory OppAction_6b15
-CONTRACT["OppAction_6b15"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "d", "e")}
+CONTRACT["OppAction_6b15"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "d", "e"),
+}
 CASES["OppAction_6b15"] = [
-    {"wram": {wSkipDuelistIsThinkingDelay: b"\x00"}, "expect_wram": {wSkipDuelistIsThinkingDelay: b"\x01"}, "sram": {0: {}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={wSkipDuelistIsThinkingDelay: b"\x00"}, expect_wram={wSkipDuelistIsThinkingDelay: b"\x01"}, sram={0: {}}, instruction_budget=2000000, cycle_budget=8000000),
+    {
+        "wram": {wSkipDuelistIsThinkingDelay: b"\x00"},
+        "expect_wram": {wSkipDuelistIsThinkingDelay: b"\x01"},
+        "sram": {0: {}},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        wram={wSkipDuelistIsThinkingDelay: b"\x00"},
+        expect_wram={wSkipDuelistIsThinkingDelay: b"\x01"},
+        sram={0: {}},
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory OppAction_6b15
 
 # >>> factory OppAction_ExecutePokemonPowerEffect
-CONTRACT["OppAction_ExecutePokemonPowerEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["OppAction_ExecutePokemonPowerEffect"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["OppAction_ExecutePokemonPowerEffect"] = [
-    {"wram": {wSkipDuelistIsThinkingDelay: b"\x00"}, "expect_wram": {wSkipDuelistIsThinkingDelay: b"\x01"}, "sram": {0: {}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={wSkipDuelistIsThinkingDelay: b"\x00"}, expect_wram={wSkipDuelistIsThinkingDelay: b"\x01"}, sram={0: {}}, instruction_budget=2000000, cycle_budget=8000000),
-
+    {
+        "wram": {wSkipDuelistIsThinkingDelay: b"\x00"},
+        "expect_wram": {wSkipDuelistIsThinkingDelay: b"\x01"},
+        "sram": {0: {}},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        wram={wSkipDuelistIsThinkingDelay: b"\x00"},
+        expect_wram={wSkipDuelistIsThinkingDelay: b"\x01"},
+        sram={0: {}},
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
     # ai-duel-24 25580: Cowardice's effect receives the caller's b, d and e and leaves its own.
     dict(_ai_power_effect_fixture(vram=False, bank=1), **_AI_POWER_EFFECT_REGS),
 ]
@@ -3548,81 +6233,305 @@ CONTRACT["AIProcessHandTrainerCards"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIProcessHandTrainerCards"] = [
     {"a": 0x00},
     dict(POISON, a=0xAA),
-    dict(_ai_trainer_phase5_fixture(vram=False, bank=5), **_AI_TRAINER_PHASE5_REGS, read={0xC200: 96, 0xC300: 96, 0xCACA: 3, 0xCDDA: 4}),
+    dict(
+        _ai_trainer_phase5_fixture(vram=False, bank=5),
+        **_AI_TRAINER_PHASE5_REGS,
+        read={0xC200: 96, 0xC300: 96, 0xCACA: 3, 0xCDDA: 4},
+    ),
 ]
 # <<< factory AIProcessHandTrainerCards
 
 # >>> factory CardListFunction
 CONTRACT["CardListFunction"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["CardListFunction"] = [
-    {"wram": {hKeysPressed: b"\x00", hKeysReleased: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0xA0}},
-    {"wram": {hKeysPressed: b"\x02", hKeysReleased: b"\x00", hCurMenuItem: b"\x00"}, "expect": {hCurMenuItem: b"\xFF"}, "expect_regs": {"a": 0xFF, "f": 0x10}},
-    {"wram": {hKeysPressed: b"\x01", hKeysReleased: b"\x00"}, "expect_regs": {"a": 0x01, "f": 0x10}},
-    {"wram": {hKeysPressed: b"\x04", hKeysReleased: b"\x00"}, "expect_regs": {"a": 0x04, "f": 0x10}},
-    {"wram": {hKeysPressed: b"\x08", hKeysReleased: b"\x00"}, "expect_regs": {"a": 0x08, "f": 0x10}},
-    dict(POISON, wram={hKeysPressed: b"\x02", hKeysReleased: b"\x00", hCurMenuItem: b"\x55"}, expect={hCurMenuItem: b"\xFF"}, expect_regs={"a": 0xFF, "f": 0x10}),
+    {
+        "wram": {hKeysPressed: b"\x00", hKeysReleased: b"\x00"},
+        "expect_regs": {"a": 0x00, "f": 0xA0},
+    },
+    {
+        "wram": {hKeysPressed: b"\x02", hKeysReleased: b"\x00", hCurMenuItem: b"\x00"},
+        "expect": {hCurMenuItem: b"\xff"},
+        "expect_regs": {"a": 0xFF, "f": 0x10},
+    },
+    {
+        "wram": {hKeysPressed: b"\x01", hKeysReleased: b"\x00"},
+        "expect_regs": {"a": 0x01, "f": 0x10},
+    },
+    {
+        "wram": {hKeysPressed: b"\x04", hKeysReleased: b"\x00"},
+        "expect_regs": {"a": 0x04, "f": 0x10},
+    },
+    {
+        "wram": {hKeysPressed: b"\x08", hKeysReleased: b"\x00"},
+        "expect_regs": {"a": 0x08, "f": 0x10},
+    },
+    dict(
+        POISON,
+        wram={hKeysPressed: b"\x02", hKeysReleased: b"\x00", hCurMenuItem: b"\x55"},
+        expect={hCurMenuItem: b"\xff"},
+        expect_regs={"a": 0xFF, "f": 0x10},
+    ),
 ]
 # <<< factory CardListFunction
 
 # >>> factory CheckIfSelectedAttackIsUnusable
-CONTRACT["CheckIfSelectedAttackIsUnusable"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["CheckIfSelectedAttackIsUnusable"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["CheckIfSelectedAttackIsUnusable"] = [
-    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00"},
-     "sram": {0: {}}, "instruction_budget": 4000000, "cycle_budget": 20000000},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00"},
-         sram={0: {}}, instruction_budget=4000000, cycle_budget=20000000),
-    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x01", 0xCC23: b"\x00"},
-     "sram": {0: {}}, "instruction_budget": 4000000, "cycle_budget": 20000000},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x01", 0xCC23: b"\x00"},
-         sram={0: {}}, instruction_budget=4000000, cycle_budget=20000000),
+    {
+        "wram": {
+            0xFF97: b"\xc2",
+            0xFF9D: b"\x00",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            0xCCC6: b"\x00",
+            0xCC23: b"\x00",
+        },
+        "sram": {0: {}},
+        "instruction_budget": 4000000,
+        "cycle_budget": 20000000,
+    },
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xFF9D: b"\x00",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            0xCCC6: b"\x00",
+            0xCC23: b"\x00",
+        },
+        sram={0: {}},
+        instruction_budget=4000000,
+        cycle_budget=20000000,
+    ),
+    {
+        "wram": {
+            0xFF97: b"\xc2",
+            0xFF9D: b"\x00",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            0xCCC6: b"\x01",
+            0xCC23: b"\x00",
+        },
+        "sram": {0: {}},
+        "instruction_budget": 4000000,
+        "cycle_budget": 20000000,
+    },
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xFF9D: b"\x00",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            0xCCC6: b"\x01",
+            0xCC23: b"\x00",
+        },
+        sram={0: {}},
+        instruction_budget=4000000,
+        cycle_budget=20000000,
+    ),
 ]
 # <<< factory CheckIfSelectedAttackIsUnusable
 
 # >>> factory CheckForBenchIDAtHalfHPAndCanUseSecondAttack
-CONTRACT["CheckForBenchIDAtHalfHPAndCanUseSecondAttack"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["CheckForBenchIDAtHalfHPAndCanUseSecondAttack"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["CheckForBenchIDAtHalfHPAndCanUseSecondAttack"] = [
-    {"a": 0x12, "wram": {hWhoseTurn: b"\xC2", wArenaCard: b"\xFF", hTempPlayAreaLocation_ff9d: b"\x03", wSelectedAttack: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x01, "d": 0x03, "e": 0x00, "hl": 0xC2BC}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", wArenaCard: b"\xFF", hTempPlayAreaLocation_ff9d: b"\x5A", wSelectedAttack: b"\x01"}, expect_regs={"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x01, "d": 0x5A, "e": 0x01, "hl": 0xC2BC}),
+    {
+        "a": 0x12,
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wArenaCard: b"\xff",
+            hTempPlayAreaLocation_ff9d: b"\x03",
+            wSelectedAttack: b"\x00",
+        },
+        "expect_regs": {
+            "a": 0x00,
+            "f": 0x80,
+            "b": 0x00,
+            "c": 0x01,
+            "d": 0x03,
+            "e": 0x00,
+            "hl": 0xC2BC,
+        },
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc2",
+            wArenaCard: b"\xff",
+            hTempPlayAreaLocation_ff9d: b"\x5a",
+            wSelectedAttack: b"\x01",
+        },
+        expect_regs={
+            "a": 0x00,
+            "f": 0x80,
+            "b": 0x00,
+            "c": 0x01,
+            "d": 0x5A,
+            "e": 0x01,
+            "hl": 0xC2BC,
+        },
+    ),
     # dome-3 722200: Jack's Articuno scoring scans a two-Pokemon play area; the
     # HP read is one slot past the card (the asm's `add DUELVARS_ARENA_CARD_HP`
     # after `inc c`), so the last card compares against the empty slot's 0.
-    dict(_bench_half_hp_fixture(vram=False, bank=5), **_BENCH_HALF_HP_REGS, read={0xCC23: 1, 0xFF9D: 1, 0xCDF9: 1}),
+    dict(
+        _bench_half_hp_fixture(vram=False, bank=5),
+        **_BENCH_HALF_HP_REGS,
+        read={0xCC23: 1, 0xFF9D: 1, 0xCDF9: 1},
+    ),
     # The same state asked for ARTICUNO_LV35, the last Pokemon (bench 1): its HP read
     # lands on the empty slot, so the ROM never inspects the slot after it.
-    dict(_bench_half_hp_fixture(vram=False, bank=5), **dict(_BENCH_HALF_HP_REGS, a=0x5E), read={0xCC23: 1, 0xFF9D: 1, 0xCDF9: 1}),
+    dict(
+        _bench_half_hp_fixture(vram=False, bank=5),
+        **dict(_BENCH_HALF_HP_REGS, a=0x5E),
+        read={0xCC23: 1, 0xFF9D: 1, 0xCDF9: 1},
+    ),
 ]
 # <<< factory CheckForBenchIDAtHalfHPAndCanUseSecondAttack
 
 # >>> factory CountNumberOfSetUpBenchPokemon
-CONTRACT["CountNumberOfSetUpBenchPokemon"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["CountNumberOfSetUpBenchPokemon"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["CountNumberOfSetUpBenchPokemon"] = [
-    {"wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x03", wSelectedAttack: b"\x00", 0xC2BC: b"\xFF"}, "expect_regs": {"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x01, "d": 0x03, "e": 0x00, "hl": 0xC2BC}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x5A", wSelectedAttack: b"\x01", 0xC2BC: b"\xFF"}, expect_regs={"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x01, "d": 0x5A, "e": 0x01, "hl": 0xC2BC}),
-    dict(_bench_count_fixture(vram=False, bank=5), **_BENCH_COUNT_REGS, read={0xCC23: 1, 0xFF9D: 1}),
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            hTempPlayAreaLocation_ff9d: b"\x03",
+            wSelectedAttack: b"\x00",
+            0xC2BC: b"\xff",
+        },
+        "expect_regs": {
+            "a": 0x00,
+            "f": 0x80,
+            "b": 0x00,
+            "c": 0x01,
+            "d": 0x03,
+            "e": 0x00,
+            "hl": 0xC2BC,
+        },
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc2",
+            hTempPlayAreaLocation_ff9d: b"\x5a",
+            wSelectedAttack: b"\x01",
+            0xC2BC: b"\xff",
+        },
+        expect_regs={
+            "a": 0x00,
+            "f": 0x80,
+            "b": 0x00,
+            "c": 0x01,
+            "d": 0x5A,
+            "e": 0x01,
+            "hl": 0xC2BC,
+        },
+    ),
+    dict(
+        _bench_count_fixture(vram=False, bank=5),
+        **_BENCH_COUNT_REGS,
+        read={0xCC23: 1, 0xFF9D: 1},
+    ),
 ]
 # <<< factory CountNumberOfSetUpBenchPokemon
 
 # >>> factory HandleLegendaryArticunoEnergyScoring
-CONTRACT["HandleLegendaryArticunoEnergyScoring"] = {"compare": (), "preserve": (), "wram_out": True}
+CONTRACT["HandleLegendaryArticunoEnergyScoring"] = {
+    "compare": (),
+    "preserve": (),
+    "wram_out": True,
+}
 CASES["HandleLegendaryArticunoEnergyScoring"] = [
-    {"wram": {wOpponentDeckID: b"\x0E", hWhoseTurn: b"\xC2", 0xC3EC: b"\x07", 0xC2BB: b"\xFF", 0xC2BC: b"\x00\xFF", 0xC400: b"\x5E", 0xC2C9: b"\x00", ARTICUNO_SCORE: b"\x00"}, "expect": {ARTICUNO_SCORE: b"\x05"}},
-    dict(POISON, wram={wOpponentDeckID: b"\x0E", hWhoseTurn: b"\xC2", 0xC3EC: b"\x07", 0xC2BB: b"\xFF", 0xC2BC: b"\x00\xFF", 0xC400: b"\x5E", 0xC2C9: b"\x00", ARTICUNO_SCORE: b"\x00"}, expect={ARTICUNO_SCORE: b"\x05"}),
-    {"wram": {wOpponentDeckID: b"\x00", hWhoseTurn: b"\xC2", 0xC3EC: b"\x07", 0xC2BB: b"\xFF", 0xC2BC: b"\x00\xFF", 0xC400: b"\x5E", 0xC2C9: b"\x00", ARTICUNO_SCORE: b"\x00"}, "expect": {ARTICUNO_SCORE: b"\x00"}},
+    {
+        "wram": {
+            wOpponentDeckID: b"\x0e",
+            hWhoseTurn: b"\xc2",
+            0xC3EC: b"\x07",
+            0xC2BB: b"\xff",
+            0xC2BC: b"\x00\xff",
+            0xC400: b"\x5e",
+            0xC2C9: b"\x00",
+            ARTICUNO_SCORE: b"\x00",
+        },
+        "expect": {ARTICUNO_SCORE: b"\x05"},
+    },
+    dict(
+        POISON,
+        wram={
+            wOpponentDeckID: b"\x0e",
+            hWhoseTurn: b"\xc2",
+            0xC3EC: b"\x07",
+            0xC2BB: b"\xff",
+            0xC2BC: b"\x00\xff",
+            0xC400: b"\x5e",
+            0xC2C9: b"\x00",
+            ARTICUNO_SCORE: b"\x00",
+        },
+        expect={ARTICUNO_SCORE: b"\x05"},
+    ),
+    {
+        "wram": {
+            wOpponentDeckID: b"\x00",
+            hWhoseTurn: b"\xc2",
+            0xC3EC: b"\x07",
+            0xC2BB: b"\xff",
+            0xC2BC: b"\x00\xff",
+            0xC400: b"\x5e",
+            0xC2C9: b"\x00",
+            ARTICUNO_SCORE: b"\x00",
+        },
+        "expect": {ARTICUNO_SCORE: b"\x00"},
+    },
 ]
 # <<< factory HandleLegendaryArticunoEnergyScoring
 
 # >>> factory CheckIfArenaCardIsFullyPowered
 CONTRACT["CheckIfArenaCardIsFullyPowered"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["CheckIfArenaCardIsFullyPowered"] = [
-    {"hram": {0xFF97: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00"}, "wram": {0xC2BB: b"\xFF", wSelectedAttack: b"\x00"}, "sram": {0: {}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, hram={0xFF97: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00"}, wram={0xC2BB: b"\x0A", 0xC2C8: b"\x00", wSelectedAttack: b"\x00"}, sram={0: {}}, instruction_budget=2000000, cycle_budget=8000000),
-    dict(_fully_powered_fixture(vram=False, bank=5), **_FULLY_POWERED_REGS, read={0xC3BB: 1, 0xCC23: 1, 0xFF9D: 1}),
-    dict(_fully_powered_fixture(vram=False, bank=5, C4AD=b"\x8a", C3C2=b"\x80"), **_FULLY_POWERED_REGS, read={0xC3BB: 1, 0xCC23: 1, 0xFF9D: 1}),
+    {
+        "hram": {0xFF97: b"\xc2", hTempPlayAreaLocation_ff9d: b"\x00"},
+        "wram": {0xC2BB: b"\xff", wSelectedAttack: b"\x00"},
+        "sram": {0: {}},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        hram={0xFF97: b"\xc2", hTempPlayAreaLocation_ff9d: b"\x00"},
+        wram={0xC2BB: b"\x0a", 0xC2C8: b"\x00", wSelectedAttack: b"\x00"},
+        sram={0: {}},
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
+    dict(
+        _fully_powered_fixture(vram=False, bank=5),
+        **_FULLY_POWERED_REGS,
+        read={0xC3BB: 1, 0xCC23: 1, 0xFF9D: 1},
+    ),
+    dict(
+        _fully_powered_fixture(vram=False, bank=5, C4AD=b"\x8a", C3C2=b"\x80"),
+        **_FULLY_POWERED_REGS,
+        read={0xC3BB: 1, 0xCC23: 1, 0xFF9D: 1},
+    ),
 ]
 # <<< factory CheckIfArenaCardIsFullyPowered
 
 # >>> factory SendCardAttrBlkPacket
-CONTRACT["SendCardAttrBlkPacket"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["SendCardAttrBlkPacket"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["SendCardAttrBlkPacket"] = [
     {"instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, instruction_budget=2000000, cycle_budget=8000000),
@@ -3630,7 +6539,10 @@ CASES["SendCardAttrBlkPacket"] = [
 # <<< factory SendCardAttrBlkPacket
 
 # >>> factory ApplyBGP6OrSGB3ToCardImage
-CONTRACT["ApplyBGP6OrSGB3ToCardImage"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e")}
+CONTRACT["ApplyBGP6OrSGB3ToCardImage"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("d", "e"),
+}
 CASES["ApplyBGP6OrSGB3ToCardImage"] = [
     {"wram": {0xCAB4: b"\x00"}},
     dict(POISON, wram={0xCAB4: b"\x00"}),
@@ -3640,10 +6552,27 @@ CASES["ApplyBGP6OrSGB3ToCardImage"] = [
 # >>> factory DrawLargePictureOfCard
 CONTRACT["DrawLargePictureOfCard"] = {"compare": (), "preserve": ()}
 CASES["DrawLargePictureOfCard"] = [
-    {"wram": {wDuelDisplayedScreen: b"\x00", wLoadedCard1Type: b"\x00"}, "read": {wDuelDisplayedScreen: 1}, "vread": {0: {0x9800: 1}}},
-    dict(POISON, wram={wDuelDisplayedScreen: b"\x00", wLoadedCard1Type: b"\x00"}, read={wDuelDisplayedScreen: 1}, vread={0: {0x9800: 1}}),
-    {"wram": {wDuelDisplayedScreen: b"\x00", wLoadedCard1Type: b"\x01"}, "read": {wDuelDisplayedScreen: 1}, "vread": {0: {0x9800: 1}}},
-    {"wram": {wDuelDisplayedScreen: b"\x00", wLoadedCard1Type: b"\x08"}, "read": {wDuelDisplayedScreen: 1}, "vread": {0: {0x9800: 1}}},
+    {
+        "wram": {wDuelDisplayedScreen: b"\x00", wLoadedCard1Type: b"\x00"},
+        "read": {wDuelDisplayedScreen: 1},
+        "vread": {0: {0x9800: 1}},
+    },
+    dict(
+        POISON,
+        wram={wDuelDisplayedScreen: b"\x00", wLoadedCard1Type: b"\x00"},
+        read={wDuelDisplayedScreen: 1},
+        vread={0: {0x9800: 1}},
+    ),
+    {
+        "wram": {wDuelDisplayedScreen: b"\x00", wLoadedCard1Type: b"\x01"},
+        "read": {wDuelDisplayedScreen: 1},
+        "vread": {0: {0x9800: 1}},
+    },
+    {
+        "wram": {wDuelDisplayedScreen: b"\x00", wLoadedCard1Type: b"\x08"},
+        "read": {wDuelDisplayedScreen: 1},
+        "vread": {0: {0x9800: 1}},
+    },
 ]
 # <<< factory DrawLargePictureOfCard
 
@@ -3654,60 +6583,173 @@ CONTRACT["DrawCardPageSurroundingBox"] = {"compare": (), "preserve": ()}
 CASES["DrawCardPageSurroundingBox"] = [
     {"wram": {0xCCF3: b"\x00"}, "expect": {0xCCF3: b"\x00"}},
     dict(POISON, wram={0xCCF3: b"\x00"}, expect={0xCCF3: b"\x00"}),
-    dict(POISON, wram={0xCCF3: b"\x00", 0xCAB4: b"\x02"}, vread={0: {0x9800: 0x400}, 1: {0x9800: 0x400}}),
+    dict(
+        POISON,
+        wram={0xCCF3: b"\x00", 0xCAB4: b"\x02"},
+        vread={0: {0x9800: 0x400}, 1: {0x9800: 0x400}},
+    ),
 ]
 # <<< factory DrawCardPageSurroundingBox
 
 # >>> factory PrintPokemonCardPageGenericInformation
-CONTRACT["PrintPokemonCardPageGenericInformation"] = {"compare": ("hl",), "preserve": ()}
+CONTRACT["PrintPokemonCardPageGenericInformation"] = {
+    "compare": ("hl",),
+    "preserve": (),
+}
 CASES["PrintPokemonCardPageGenericInformation"] = [
-    {"wram": {0xCBD1: b"\x00", 0xCC24: b"\x00", 0xCC27: b"\x00\x00", 0xCC29: b"\xff", 0xCC2A: b"\x01"},
-     "setup": SETUP_TEXT, "rom_bank": 1,
-     "vram": {0: {0x9832: b"\xA5"}},
-     "expect_vram": {0: {0x9832: b"\x01"}},
-     "instruction_budget": 1000000, "cycle_budget": 4000000},
-    dict(POISON, wram={0xCBD1: b"\x00", 0xCC24: b"\x00", 0xCC27: b"\x00\x00", 0xCC29: b"\xff", 0xCC2A: b"\x01"},
-         setup=SETUP_TEXT, rom_bank=1,
-         vram={0: {0x9832: b"\xEE"}},
-         expect_vram={0: {0x9832: b"\x01"}},
-         instruction_budget=1000000, cycle_budget=4000000),
+    {
+        "wram": {
+            0xCBD1: b"\x00",
+            0xCC24: b"\x00",
+            0xCC27: b"\x00\x00",
+            0xCC29: b"\xff",
+            0xCC2A: b"\x01",
+        },
+        "setup": SETUP_TEXT,
+        "rom_bank": 1,
+        "vram": {0: {0x9832: b"\xa5"}},
+        "expect_vram": {0: {0x9832: b"\x01"}},
+        "instruction_budget": 1000000,
+        "cycle_budget": 4000000,
+    },
+    dict(
+        POISON,
+        wram={
+            0xCBD1: b"\x00",
+            0xCC24: b"\x00",
+            0xCC27: b"\x00\x00",
+            0xCC29: b"\xff",
+            0xCC2A: b"\x01",
+        },
+        setup=SETUP_TEXT,
+        rom_bank=1,
+        vram={0: {0x9832: b"\xee"}},
+        expect_vram={0: {0x9832: b"\x01"}},
+        instruction_budget=1000000,
+        cycle_budget=4000000,
+    ),
 ]
 # <<< factory PrintPokemonCardPageGenericInformation
 
 # >>> factory DrawDuelHUD
 CONTRACT["DrawDuelHUD"] = {"compare": ("d", "e"), "preserve": ()}
 CASES["DrawDuelHUD"] = [
-    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "wram": {0xC2BB: b"\xFF", 0xC2EC: b"\x00", 0xC2EF: b"\x00", hWhoseTurn: b"\xC2"}, "read": {wHUDEnergyAndHPBarsX: 1, wHUDEnergyAndHPBarsY: 1}},
-    dict(POISON, wram={0xC2BB: b"\xFF", 0xC2EC: b"\x00", 0xC2EF: b"\x00", hWhoseTurn: b"\xC2"}, read={wHUDEnergyAndHPBarsX: 1, wHUDEnergyAndHPBarsY: 1}),
+    {
+        "a": 0x00,
+        "f": 0x00,
+        "b": 0x00,
+        "c": 0x00,
+        "d": 0x00,
+        "e": 0x00,
+        "hl": 0x0000,
+        "wram": {
+            0xC2BB: b"\xff",
+            0xC2EC: b"\x00",
+            0xC2EF: b"\x00",
+            hWhoseTurn: b"\xc2",
+        },
+        "read": {wHUDEnergyAndHPBarsX: 1, wHUDEnergyAndHPBarsY: 1},
+    },
+    dict(
+        POISON,
+        wram={0xC2BB: b"\xff", 0xC2EC: b"\x00", 0xC2EF: b"\x00", hWhoseTurn: b"\xc2"},
+        read={wHUDEnergyAndHPBarsX: 1, wHUDEnergyAndHPBarsY: 1},
+    ),
     # An arena card (deck index 0, id 1 at $C400, 40 of its HP left at $C2C8)
     # at the opponent's HUD position, bars at (3,1): the HP bar's two rows go
     # to (3,2) and (3,3) -- the second one map row under the first row's
     # start (core.asm:2531-2543), so (3,3)-(8,3) is read back, as is the
     # sibling row and the six tiles to its right that a copy continuing from
     # the first row's end would have written.
-    dict(POISON, b=0x03, c=0x01, d=0x07, e=0x00,
-         wram={0xC2BB: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x28", 0xC400: b"\x01", hWhoseTurn: b"\xC2", 0xCABB: b"\x00"},
-         read={wHUDEnergyAndHPBarsX: 1, wHUDEnergyAndHPBarsY: 1},
-         vread={0: {0x9843: 12, 0x9863: 12}},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        POISON,
+        b=0x03,
+        c=0x01,
+        d=0x07,
+        e=0x00,
+        wram={
+            0xC2BB: b"\x00",
+            0xC2EC: b"\x00",
+            0xC2EF: b"\x01",
+            0xC2C8: b"\x28",
+            0xC400: b"\x01",
+            hWhoseTurn: b"\xc2",
+            0xCABB: b"\x00",
+        },
+        read={wHUDEnergyAndHPBarsX: 1, wHUDEnergyAndHPBarsY: 1},
+        vread={0: {0x9843: 12, 0x9863: 12}},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory DrawDuelHUD
 
 # >>> factory DrawDuelHUDs
 CONTRACT["DrawDuelHUDs"] = {"compare": ("d", "e"), "preserve": ()}
 CASES["DrawDuelHUDs"] = [
-    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00"}, "vread": {0: {HUD_TILE: 1}}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00"}, vread={0: {HUD_TILE: 1}}),
+    {
+        "a": 0x00,
+        "f": 0x00,
+        "b": 0x00,
+        "c": 0x00,
+        "d": 0x00,
+        "e": 0x00,
+        "hl": 0x0000,
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            0xC2BB: b"\xff",
+            0xC3BB: b"\xff",
+            0xC2F1: b"\x00",
+            0xC2F0: b"\x00",
+            0xC3F1: b"\x00",
+            0xC3F0: b"\x00",
+            0xC2EC: b"\x00",
+            0xC2EF: b"\x00",
+            0xC3EC: b"\x00",
+            0xC3EF: b"\x00",
+        },
+        "vread": {0: {HUD_TILE: 1}},
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc2",
+            0xC2BB: b"\xff",
+            0xC3BB: b"\xff",
+            0xC2F1: b"\x00",
+            0xC2F0: b"\x00",
+            0xC3F1: b"\x00",
+            0xC3F0: b"\x00",
+            0xC2EC: b"\x00",
+            0xC2EF: b"\x00",
+            0xC3EC: b"\x00",
+            0xC3EF: b"\x00",
+        },
+        vread={0: {HUD_TILE: 1}},
+    ),
 ]
 # <<< factory DrawDuelHUDs
 
 # >>> factory DrawCardListScreenLayout
 CONTRACT["DrawCardListScreenLayout"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["DrawCardListScreenLayout"] = [
-    {"wram": {0xC510: b"\xff", 0xC51A: b"\xff"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    {"wram": {0xC510: b"\x00\xff", 0xC51A: b"\xff"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xC510: b"\xff", 0xC51A: b"\xff"}, instruction_budget=2000000, cycle_budget=8000000),
+    {
+        "wram": {0xC510: b"\xff", 0xC51A: b"\xff"},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    {
+        "wram": {0xC510: b"\x00\xff", 0xC51A: b"\xff"},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        wram={0xC510: b"\xff", 0xC51A: b"\xff"},
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory DrawCardListScreenLayout
 
@@ -3724,40 +6766,104 @@ CASES["ApplyBGP7OrSGB2ToCardImage"] = [
 # >>> factory DisplayPracticeDuelPlayerHandScreen
 CONTRACT["DisplayPracticeDuelPlayerHandScreen"] = {"compare": (), "preserve": ()}
 CASES["DisplayPracticeDuelPlayerHandScreen"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xC510: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
-     "instruction_budget": 4000000, "cycle_budget": 16000000},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xC510: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
-         instruction_budget=4000000, cycle_budget=16000000),
+    {
+        "wram": {0xFF97: b"\xc2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {
+            0xC510: 1,
+            0xC620: 4,
+            0xC720: 4,
+            0xC820: 4,
+            0xC920: 4,
+            0xCD05: 2,
+            0xCD0A: 1,
+        },
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400},
+            1: {0x9800: 0x400},
+        },
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+    },
+    dict(
+        POISON,
+        wram={0xFF97: b"\xc2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={
+            0xC510: 1,
+            0xC620: 4,
+            0xC720: 4,
+            0xC820: 4,
+            0xC920: 4,
+            0xCD05: 2,
+            0xCD0A: 1,
+        },
+        vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+        instruction_budget=4000000,
+        cycle_budget=16000000,
+    ),
 ]
 # <<< factory DisplayPracticeDuelPlayerHandScreen
 
 # >>> factory DrawDuelMainScene
 CONTRACT["DrawDuelMainScene"] = {"compare": (), "preserve": ()}
 CASES["DrawDuelMainScene"] = [
-    {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelistType: b"\x00", wOpponentDuelistType: b"\x01", wDuelDisplayedScreen: b"\x01"},
-     "read": {hWhoseTurn: 1, wDuelDisplayedScreen: 1}},
-    {"wram": {hWhoseTurn: b"\xC3", wPlayerDuelistType: b"\x00", wOpponentDuelistType: b"\x01", wDuelDisplayedScreen: b"\x01"},
-     "read": {hWhoseTurn: 1, wDuelDisplayedScreen: 1}},
-    dict(POISON, wram={hWhoseTurn: b"\xC3", wPlayerDuelistType: b"\x00", wOpponentDuelistType: b"\x01", wDuelDisplayedScreen: b"\x01"},
-         read={hWhoseTurn: 1, wDuelDisplayedScreen: 1}),
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wPlayerDuelistType: b"\x00",
+            wOpponentDuelistType: b"\x01",
+            wDuelDisplayedScreen: b"\x01",
+        },
+        "read": {hWhoseTurn: 1, wDuelDisplayedScreen: 1},
+    },
+    {
+        "wram": {
+            hWhoseTurn: b"\xc3",
+            wPlayerDuelistType: b"\x00",
+            wOpponentDuelistType: b"\x01",
+            wDuelDisplayedScreen: b"\x01",
+        },
+        "read": {hWhoseTurn: 1, wDuelDisplayedScreen: 1},
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc3",
+            wPlayerDuelistType: b"\x00",
+            wOpponentDuelistType: b"\x01",
+            wDuelDisplayedScreen: b"\x01",
+        },
+        read={hWhoseTurn: 1, wDuelDisplayedScreen: 1},
+    ),
     # A real draw (wDuelDisplayedScreen 0): both arena cards are deck index 0
     # -- ids 1 and 2 ($C400, $C480) -- and their images land at v0Tiles1 +
     # $50 tiles ($8D00, player) and v0Tiles1 + $20 tiles ($8A00, opponent);
     # the first row of each is read back along with the map rows FillRectangle
     # points at them with ($D0 at (0,5), $A0 at (12,1)).
-    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelistType: b"\x00", wOpponentDuelistType: b"\x01", wDuelDisplayedScreen: b"\x00",
-                       0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC400: b"\x01", 0xC480: b"\x02", 0xC2C8: b"\x28", 0xC3C8: b"\x32",
-                       0xC2EF: b"\x01", 0xC3EF: b"\x01", 0xCABB: b"\x00"},
-         read={hWhoseTurn: 1, wDuelDisplayedScreen: 1},
-         vread={0: {0x8A00: 16, 0x8D00: 16, 0x98AC: 8, 0x9820: 8}},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc2",
+            wPlayerDuelistType: b"\x00",
+            wOpponentDuelistType: b"\x01",
+            wDuelDisplayedScreen: b"\x00",
+            0xC2BB: b"\x00",
+            0xC3BB: b"\x00",
+            0xC400: b"\x01",
+            0xC480: b"\x02",
+            0xC2C8: b"\x28",
+            0xC3C8: b"\x32",
+            0xC2EF: b"\x01",
+            0xC3EF: b"\x01",
+            0xCABB: b"\x00",
+        },
+        read={hWhoseTurn: 1, wDuelDisplayedScreen: 1},
+        vread={0: {0x8A00: 16, 0x8D00: 16, 0x98AC: 8, 0x9820: 8}},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory DrawDuelMainScene
 
@@ -3766,278 +6872,987 @@ CONTRACT["InitAndDrawCardListScreenLayout"] = {"compare": ("a", "f"), "preserve"
 # $CBCF-$CBD0 is wSelectedDuelSubMenuItem and its page scroll offset, both
 # zeroed by the `ld [hli], a / ld [hl], a` pair (core.asm:3149-3152).
 CASES["InitAndDrawCardListScreenLayout"] = [
-    {"wram": {0xCBCF: b"\xFF\xFF", 0xCBDF: b"\xFF", 0xCBD8: b"\xFF\xFF", 0xCBDE: b"\xFF", 0xCBD6: b"\xFF", 0xCBDA: b"\xFF\xFF", 0xCBDC: b"\xFF\xFF", 0xC510: b"\xFF", 0xC51A: b"\xFF"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xCBCF: b"\xFF\xFF", 0xCBDF: b"\xFF", 0xCBD8: b"\xFF\xFF", 0xCBDE: b"\xFF", 0xCBD6: b"\xFF", 0xCBDA: b"\xFF\xFF", 0xCBDC: b"\xFF\xFF", 0xC510: b"\xFF", 0xC51A: b"\xFF"}, instruction_budget=2000000, cycle_budget=8000000),
+    {
+        "wram": {
+            0xCBCF: b"\xff\xff",
+            0xCBDF: b"\xff",
+            0xCBD8: b"\xff\xff",
+            0xCBDE: b"\xff",
+            0xCBD6: b"\xff",
+            0xCBDA: b"\xff\xff",
+            0xCBDC: b"\xff\xff",
+            0xC510: b"\xff",
+            0xC51A: b"\xff",
+        },
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        wram={
+            0xCBCF: b"\xff\xff",
+            0xCBDF: b"\xff",
+            0xCBD8: b"\xff\xff",
+            0xCBDE: b"\xff",
+            0xCBD6: b"\xff",
+            0xCBDA: b"\xff\xff",
+            0xCBDC: b"\xff\xff",
+            0xC510: b"\xff",
+            0xC51A: b"\xff",
+        },
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory InitAndDrawCardListScreenLayout
 
 # >>> factory RedrawTurnDuelistsDuelHUD
 CONTRACT["RedrawTurnDuelistsDuelHUD"] = {"compare": (), "preserve": ()}
 CASES["RedrawTurnDuelistsDuelHUD"] = [
-    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "wram": HUD_SEED, "read": {wWhoseTurn: 0xC2}, "vread": {0: {HUD_TILE: 1}}, **HUD_BUDGET},
-    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "wram": {**HUD_SEED, hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC3"}, "read": {wWhoseTurn: 0xC3}, "vread": {0: {HUD_TILE: 1}}, **HUD_BUDGET},
-    dict(POISON, wram={**HUD_SEED, hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC3"}, read={wWhoseTurn: 0xC3}, vread={0: {HUD_TILE: 1}}, **HUD_BUDGET),
+    {
+        "a": 0x00,
+        "f": 0x00,
+        "b": 0x00,
+        "c": 0x00,
+        "d": 0x00,
+        "e": 0x00,
+        "hl": 0x0000,
+        "wram": HUD_SEED,
+        "read": {wWhoseTurn: 0xC2},
+        "vread": {0: {HUD_TILE: 1}},
+        **HUD_BUDGET,
+    },
+    {
+        "a": 0x00,
+        "f": 0x00,
+        "b": 0x00,
+        "c": 0x00,
+        "d": 0x00,
+        "e": 0x00,
+        "hl": 0x0000,
+        "wram": {**HUD_SEED, hWhoseTurn: b"\xc2", wWhoseTurn: b"\xc3"},
+        "read": {wWhoseTurn: 0xC3},
+        "vread": {0: {HUD_TILE: 1}},
+        **HUD_BUDGET,
+    },
+    dict(
+        POISON,
+        wram={**HUD_SEED, hWhoseTurn: b"\xc2", wWhoseTurn: b"\xc3"},
+        read={wWhoseTurn: 0xC3},
+        vread={0: {HUD_TILE: 1}},
+        **HUD_BUDGET,
+    ),
 ]
 # <<< factory RedrawTurnDuelistsDuelHUD
 
 # >>> factory OppAction_DrawDuelMainScene
 CONTRACT["OppAction_DrawDuelMainScene"] = {"compare": (), "preserve": ()}
 CASES["OppAction_DrawDuelMainScene"] = [
-    {"wram": {hWhoseTurn: b"\xC3", wOpponentDuelistType: b"\x01", wDuelDisplayedScreen: b"\x01"},
-     "read": {hWhoseTurn: 1, wDuelDisplayedScreen: 1}},
-    dict(POISON, wram={hWhoseTurn: b"\xC3", wOpponentDuelistType: b"\x01", wDuelDisplayedScreen: b"\x01"},
-         read={hWhoseTurn: 1, wDuelDisplayedScreen: 1}),
+    {
+        "wram": {
+            hWhoseTurn: b"\xc3",
+            wOpponentDuelistType: b"\x01",
+            wDuelDisplayedScreen: b"\x01",
+        },
+        "read": {hWhoseTurn: 1, wDuelDisplayedScreen: 1},
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc3",
+            wOpponentDuelistType: b"\x01",
+            wDuelDisplayedScreen: b"\x01",
+        },
+        read={hWhoseTurn: 1, wDuelDisplayedScreen: 1},
+    ),
 ]
 # <<< factory OppAction_DrawDuelMainScene
 
 # >>> factory InitAndDrawCardListScreenLayout_WithSelectCheckMenu
-CONTRACT["InitAndDrawCardListScreenLayout_WithSelectCheckMenu"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["InitAndDrawCardListScreenLayout_WithSelectCheckMenu"] = {
+    "compare": ("a", "f"),
+    "preserve": (),
+}
 CASES["InitAndDrawCardListScreenLayout_WithSelectCheckMenu"] = [
-    {"wram": {0xCBCF: b"\xFF", 0xCBDF: b"\xFF", 0xCBD8: b"\xFF\xFF", 0xCBDE: b"\xFF", 0xCBD6: b"\xFF", 0xCBDA: b"\xFF\xFF", 0xCBDC: b"\xFF\xFF", 0xC510: b"\xFF", 0xC51A: b"\xFF"}, "read": {0xCBDE: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xCBCF: b"\xFF", 0xCBDF: b"\xFF", 0xCBD8: b"\xFF\xFF", 0xCBDE: b"\xFF", 0xCBD6: b"\xFF", 0xCBDA: b"\xFF\xFF", 0xCBDC: b"\xFF\xFF", 0xC510: b"\xFF", 0xC51A: b"\xFF"}, read={0xCBDE: 1}, instruction_budget=2000000, cycle_budget=8000000),
+    {
+        "wram": {
+            0xCBCF: b"\xff",
+            0xCBDF: b"\xff",
+            0xCBD8: b"\xff\xff",
+            0xCBDE: b"\xff",
+            0xCBD6: b"\xff",
+            0xCBDA: b"\xff\xff",
+            0xCBDC: b"\xff\xff",
+            0xC510: b"\xff",
+            0xC51A: b"\xff",
+        },
+        "read": {0xCBDE: 1},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        wram={
+            0xCBCF: b"\xff",
+            0xCBDF: b"\xff",
+            0xCBD8: b"\xff\xff",
+            0xCBDE: b"\xff",
+            0xCBD6: b"\xff",
+            0xCBDA: b"\xff\xff",
+            0xCBDC: b"\xff\xff",
+            0xC510: b"\xff",
+            0xC51A: b"\xff",
+        },
+        read={0xCBDE: 1},
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory InitAndDrawCardListScreenLayout_WithSelectCheckMenu
 
 # >>> factory DisplayCardListDetails
 CONTRACT["DisplayCardListDetails"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["DisplayCardListDetails"] = [
-    {"wram": {wDuelTempList: b"\xFF"}, "read": {wDuelTempList: 1}, "expect_regs": {"a": 0xFF, "f": 0xC0}},
-    dict(POISON, wram={wDuelTempList: b"\xFF"}, read={wDuelTempList: 1}, expect_regs={"a": 0xFF, "f": 0xC0}),
+    {
+        "wram": {wDuelTempList: b"\xff"},
+        "read": {wDuelTempList: 1},
+        "expect_regs": {"a": 0xFF, "f": 0xC0},
+    },
+    dict(
+        POISON,
+        wram={wDuelTempList: b"\xff"},
+        read={wDuelTempList: 1},
+        expect_regs={"a": 0xFF, "f": 0xC0},
+    ),
 ]
 # <<< factory DisplayCardListDetails
 
 # >>> factory OppAction_FinishTurnWithoutAttacking
 CONTRACT["OppAction_FinishTurnWithoutAttacking"] = {"compare": (), "preserve": ()}
 CASES["OppAction_FinishTurnWithoutAttacking"] = [
-    {"wram": {wDuelDisplayedScreen: b"\x01", wLCDC: b"\x00", wOpponentTurnEnded: b"\x00"}, "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "expect": {wOpponentTurnEnded: b"\x01"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={wDuelDisplayedScreen: b"\x01", wLCDC: b"\x00", wOpponentTurnEnded: b"\x00"}, keys=0x01, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], expect={wOpponentTurnEnded: b"\x01"}, instruction_budget=2000000, cycle_budget=8000000),
+    {
+        "wram": {
+            wDuelDisplayedScreen: b"\x01",
+            wLCDC: b"\x00",
+            wOpponentTurnEnded: b"\x00",
+        },
+        "keys": 0x01,
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "expect": {wOpponentTurnEnded: b"\x01"},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        wram={
+            wDuelDisplayedScreen: b"\x01",
+            wLCDC: b"\x00",
+            wOpponentTurnEnded: b"\x00",
+        },
+        keys=0x01,
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        expect={wOpponentTurnEnded: b"\x01"},
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory OppAction_FinishTurnWithoutAttacking
 
 # >>> factory RedrawTurnDuelistsMainSceneOrDuelHUD
 CONTRACT["RedrawTurnDuelistsMainSceneOrDuelHUD"] = {"compare": (), "preserve": ()}
 CASES["RedrawTurnDuelistsMainSceneOrDuelHUD"] = [
-    {"wram": {**HUD_SEED, wDuelDisplayedScreen: b"\x01"}, "read": {wDuelDisplayedScreen: 1}, "vread": {0: {HUD_TILE: 1}}, **HUD_BUDGET},
-    {"wram": {**HUD_SEED, wDuelDisplayedScreen: b"\x00", hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC2"}, "read": {wDuelDisplayedScreen: 1, wWhoseTurn: 1}, **HUD_BUDGET},
-    {"wram": {**HUD_SEED, wDuelDisplayedScreen: b"\x00", hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC3"}, "read": {wDuelDisplayedScreen: 1, wWhoseTurn: 1}, **HUD_BUDGET},
-    dict(POISON, wram={**HUD_SEED, wDuelDisplayedScreen: b"\x00", hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC3"}, read={wDuelDisplayedScreen: 1, wWhoseTurn: 1}, **HUD_BUDGET),
+    {
+        "wram": {**HUD_SEED, wDuelDisplayedScreen: b"\x01"},
+        "read": {wDuelDisplayedScreen: 1},
+        "vread": {0: {HUD_TILE: 1}},
+        **HUD_BUDGET,
+    },
+    {
+        "wram": {
+            **HUD_SEED,
+            wDuelDisplayedScreen: b"\x00",
+            hWhoseTurn: b"\xc2",
+            wWhoseTurn: b"\xc2",
+        },
+        "read": {wDuelDisplayedScreen: 1, wWhoseTurn: 1},
+        **HUD_BUDGET,
+    },
+    {
+        "wram": {
+            **HUD_SEED,
+            wDuelDisplayedScreen: b"\x00",
+            hWhoseTurn: b"\xc2",
+            wWhoseTurn: b"\xc3",
+        },
+        "read": {wDuelDisplayedScreen: 1, wWhoseTurn: 1},
+        **HUD_BUDGET,
+    },
+    dict(
+        POISON,
+        wram={
+            **HUD_SEED,
+            wDuelDisplayedScreen: b"\x00",
+            hWhoseTurn: b"\xc2",
+            wWhoseTurn: b"\xc3",
+        },
+        read={wDuelDisplayedScreen: 1, wWhoseTurn: 1},
+        **HUD_BUDGET,
+    ),
 ]
 # <<< factory RedrawTurnDuelistsMainSceneOrDuelHUD
 
 # >>> factory DisplayNoBasicPokemonInHandScreen
 CONTRACT["DisplayNoBasicPokemonInHandScreen"] = {"compare": (), "preserve": ()}
 CASES["DisplayNoBasicPokemonInHandScreen"] = [
-    {"wram": {hWhoseTurn: b"\xC2", 0xFF80: b"\x01", 0xC2EE: b"\x00", 0xCABB: b"\x00", wDuelTempList: b"\xFF"}, "read": {wListItemXPosition: 1, wNumListItems: 1}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": 0x01, "instruction_budget": 40000000, "cycle_budget": 160000000},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xFF80: b"\x01", 0xC2EE: b"\x00", 0xCABB: b"\x00", wDuelTempList: b"\xFF"}, read={wListItemXPosition: 1, wNumListItems: 1}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=0x01, instruction_budget=40000000, cycle_budget=160000000),
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            0xFF80: b"\x01",
+            0xC2EE: b"\x00",
+            0xCABB: b"\x00",
+            wDuelTempList: b"\xff",
+        },
+        "read": {wListItemXPosition: 1, wNumListItems: 1},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "keys": 0x01,
+        "instruction_budget": 40000000,
+        "cycle_budget": 160000000,
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc2",
+            0xFF80: b"\x01",
+            0xC2EE: b"\x00",
+            0xCABB: b"\x00",
+            wDuelTempList: b"\xff",
+        },
+        read={wListItemXPosition: 1, wNumListItems: 1},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        keys=0x01,
+        instruction_budget=40000000,
+        cycle_budget=160000000,
+    ),
 ]
 # <<< factory DisplayNoBasicPokemonInHandScreen
 
 # >>> factory PrintAndLoadAttacksToDuelTempList
 CONTRACT["PrintAndLoadAttacksToDuelTempList"] = {"compare": ("a",), "preserve": ()}
 CASES["PrintAndLoadAttacksToDuelTempList"] = [
-    {"setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x07"}, "read": {0xC510: 4, 0xCBC7: 1}, "instruction_budget": 200000, "cycle_budget": 2000000},
-    dict(POISON, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x07"}, read={0xC510: 4, 0xCBC7: 1}, instruction_budget=200000, cycle_budget=2000000),
-    dict(_attack_list_fixture(vram=False, bank=1), **_ATTACK_LIST_REGS, instruction_budget=2000000, cycle_budget=8000000),
+    {
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "wram": {hWhoseTurn: b"\xc2", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x07"},
+        "read": {0xC510: 4, 0xCBC7: 1},
+        "instruction_budget": 200000,
+        "cycle_budget": 2000000,
+    },
+    dict(
+        POISON,
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        wram={hWhoseTurn: b"\xc2", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x07"},
+        read={0xC510: 4, 0xCBC7: 1},
+        instruction_budget=200000,
+        cycle_budget=2000000,
+    ),
+    dict(
+        _attack_list_fixture(vram=False, bank=1),
+        **_ATTACK_LIST_REGS,
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory PrintAndLoadAttacksToDuelTempList
 
 # >>> factory DisplayPokemonAttackCardPage
 CONTRACT["DisplayPokemonAttackCardPage"] = {"compare": (), "preserve": ()}
 CASES["DisplayPokemonAttackCardPage"] = [
-    {"hl": 0x0114, "d": 0x01, "e": 0x14, "wram": {wLoadedCard1AttackDescriptions: b"\x00\x00", 0xFF80: b"\x01", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCC27: 1}, "vread": {0: {0x9800: 0x400}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, hl=0x0114, d=0x01, e=0x14, wram={wLoadedCard1AttackDescriptions: b"\x00\x00", 0xFF80: b"\x01", 0xCABB: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xCC27: 1}, vread={0: {0x9800: 0x400}}, instruction_budget=2000000, cycle_budget=8000000),
+    {
+        "hl": 0x0114,
+        "d": 0x01,
+        "e": 0x14,
+        "wram": {
+            wLoadedCard1AttackDescriptions: b"\x00\x00",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xCC27: 1},
+        "vread": {0: {0x9800: 0x400}},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        hl=0x0114,
+        d=0x01,
+        e=0x14,
+        wram={
+            wLoadedCard1AttackDescriptions: b"\x00\x00",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+        },
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xCC27: 1},
+        vread={0: {0x9800: 0x400}},
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory DisplayPokemonAttackCardPage
 
 # >>> factory DisplayCardPage_PokemonAttack2Page2
 CONTRACT["DisplayCardPage_PokemonAttack2Page2"] = {"compare": (), "preserve": ()}
 CASES["DisplayCardPage_PokemonAttack2Page2"] = [
-    {"b": 0x01, "c": 0x02, "d": 0x03, "wram": {0xCEA0: b"\x00\x00", 0xCC47: b"\x00\x00", 0xCC4B: b"\x00\x00", 0xCC4D: b"\x01", 0xFF80: b"\x01", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCC27: 1}, "vread": {0: {0x9800: 0x400}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, b=0xBB, c=0xCC, d=0xDD, wram={0xCEA0: b"\x00\x00", 0xCC47: b"\x00\x00", 0xCC4B: b"\x00\x00", 0xCC4D: b"\x01", 0xFF80: b"\x01", 0xCABB: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xCC27: 1}, vread={0: {0x9800: 0x400}}, instruction_budget=2000000, cycle_budget=8000000),
+    {
+        "b": 0x01,
+        "c": 0x02,
+        "d": 0x03,
+        "wram": {
+            0xCEA0: b"\x00\x00",
+            0xCC47: b"\x00\x00",
+            0xCC4B: b"\x00\x00",
+            0xCC4D: b"\x01",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xCC27: 1},
+        "vread": {0: {0x9800: 0x400}},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        b=0xBB,
+        c=0xCC,
+        d=0xDD,
+        wram={
+            0xCEA0: b"\x00\x00",
+            0xCC47: b"\x00\x00",
+            0xCC4B: b"\x00\x00",
+            0xCC4D: b"\x01",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+        },
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xCC27: 1},
+        vread={0: {0x9800: 0x400}},
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
     # deck-explore 99717: the card-page screen with a real Pokemon loaded (attack 2
     # page 1's entry, same screen), so which description address the page picks is
     # observable in the redrawn BG map instead of rendering nothing.
-    dict(_card_page_attack2_fixture(vram=False, bank=1), **_CARD_PAGE_ATTACK2_REGS,
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=2000000, cycle_budget=8000000),
+    dict(
+        _card_page_attack2_fixture(vram=False, bank=1),
+        **_CARD_PAGE_ATTACK2_REGS,
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory DisplayCardPage_PokemonAttack2Page2
 
 # >>> factory DisplayCardPage_PokemonAttack1Page1
 CONTRACT["DisplayCardPage_PokemonAttack1Page1"] = {"compare": (), "preserve": ()}
 CASES["DisplayCardPage_PokemonAttack1Page1"] = [
-    {"wram": {0xCC34: b"\x14\x01", 0xCC36: b"\x14\x01\x14\x01\x01", 0xFF80: b"\x01", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCC34: b"\x14\x01", 0xCC36: b"\x11\x01\x14\x01\x01", 0xFF80: b"\x01", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "instruction_budget": 2000000, "cycle_budget": 8000000}
+    {
+        "wram": {
+            0xCC34: b"\x14\x01",
+            0xCC36: b"\x14\x01\x14\x01\x01",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "vread": {0: {0x9800: 0x400}},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    {
+        "a": 0xAA,
+        "f": 0xF0,
+        "b": 0xBB,
+        "c": 0xCC,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0x1234,
+        "wram": {
+            0xCC34: b"\x14\x01",
+            0xCC36: b"\x11\x01\x14\x01\x01",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "vread": {0: {0x9800: 0x400}},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
 ]
 # <<< factory DisplayCardPage_PokemonAttack1Page1
 
 # >>> factory DisplayCardPage_PokemonAttack1Page2
 CONTRACT["DisplayCardPage_PokemonAttack1Page2"] = {"compare": (), "preserve": ()}
 CASES["DisplayCardPage_PokemonAttack1Page2"] = [
-    {"wram": {0xCC34: b"\x14\x01", 0xCC36: b"\x14\x01\x14\x01\x01", 0xFF80: b"\x01", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCC34: b"\x14\x01", 0xCC36: b"\x11\x01\x14\x01\x01", 0xFF80: b"\x01", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "instruction_budget": 2000000, "cycle_budget": 8000000}
+    {
+        "wram": {
+            0xCC34: b"\x14\x01",
+            0xCC36: b"\x14\x01\x14\x01\x01",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "vread": {0: {0x9800: 0x400}},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    {
+        "a": 0xAA,
+        "f": 0xF0,
+        "b": 0xBB,
+        "c": 0xCC,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0x1234,
+        "wram": {
+            0xCC34: b"\x14\x01",
+            0xCC36: b"\x11\x01\x14\x01\x01",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "vread": {0: {0x9800: 0x400}},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
 ]
 # <<< factory DisplayCardPage_PokemonAttack1Page2
 
 # >>> factory DisplayCardPage_PokemonAttack2Page1
 CONTRACT["DisplayCardPage_PokemonAttack2Page1"] = {"compare": (), "preserve": ()}
 CASES["DisplayCardPage_PokemonAttack2Page1"] = [
-    {"b": 0x01, "c": 0x02, "d": 0x03, "wram": {0xCC47: b"\x00\x00", 0xCC49: b"\x00\x01", 0xFF80: b"\x01", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, b=0xBB, c=0xCC, d=0xDD, wram={0xCC47: b"\x00\x00", 0xCC49: b"\x00\x01", 0xFF80: b"\x01", 0xCABB: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], vread={0: {0x9800: 0x400}}, instruction_budget=2000000, cycle_budget=8000000),
+    {
+        "b": 0x01,
+        "c": 0x02,
+        "d": 0x03,
+        "wram": {
+            0xCC47: b"\x00\x00",
+            0xCC49: b"\x00\x01",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "vread": {0: {0x9800: 0x400}},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        b=0xBB,
+        c=0xCC,
+        d=0xDD,
+        wram={
+            0xCC47: b"\x00\x00",
+            0xCC49: b"\x00\x01",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+        },
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        vread={0: {0x9800: 0x400}},
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory DisplayCardPage_PokemonAttack2Page1
 
 # >>> factory DisplayAttackPage_Attack1Page1
 CONTRACT["DisplayAttackPage_Attack1Page1"] = {"compare": (), "preserve": ()}
 CASES["DisplayAttackPage_Attack1Page1"] = [
-    {"wram": {0xCC34: b"\x14\x01", 0xCC36: b"\x14\x01\x14\x01\x01", 0xFF80: b"\x01", 0xCABB: b"\x00", 0xCC04: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "read": {0xCC04: 0x01}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCC34: b"\x14\x01", 0xCC36: b"\x11\x01\x14\x01\x01", 0xFF80: b"\x01", 0xCABB: b"\x00", 0xCC04: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "read": {0xCC04: 0x01}, "instruction_budget": 2000000, "cycle_budget": 8000000}
+    {
+        "wram": {
+            0xCC34: b"\x14\x01",
+            0xCC36: b"\x14\x01\x14\x01\x01",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+            0xCC04: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "vread": {0: {0x9800: 0x400}},
+        "read": {0xCC04: 0x01},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    {
+        "a": 0xAA,
+        "f": 0xF0,
+        "b": 0xBB,
+        "c": 0xCC,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0x1234,
+        "wram": {
+            0xCC34: b"\x14\x01",
+            0xCC36: b"\x11\x01\x14\x01\x01",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+            0xCC04: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "vread": {0: {0x9800: 0x400}},
+        "read": {0xCC04: 0x01},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
 ]
 # <<< factory DisplayAttackPage_Attack1Page1
 
 # >>> factory DisplayAttackPage_Attack2Page1
 CONTRACT["DisplayAttackPage_Attack2Page1"] = {"compare": (), "preserve": ()}
 CASES["DisplayAttackPage_Attack2Page1"] = [
-    {"b": 0x01, "c": 0x02, "d": 0x03, "wram": {0xCC47: b"\x00\x00", 0xCC49: b"\x00\x01", 0xFF80: b"\x01", 0xCABB: b"\x00", 0xCC04: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "read": {0xCC04: 0x01}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCC47: b"\x00\x00", 0xCC49: b"\x00\x01", 0xFF80: b"\x01", 0xCABB: b"\x00", 0xCC04: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "read": {0xCC04: 0x01}, "instruction_budget": 2000000, "cycle_budget": 8000000}
+    {
+        "b": 0x01,
+        "c": 0x02,
+        "d": 0x03,
+        "wram": {
+            0xCC47: b"\x00\x00",
+            0xCC49: b"\x00\x01",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+            0xCC04: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "vread": {0: {0x9800: 0x400}},
+        "read": {0xCC04: 0x01},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    {
+        "a": 0xAA,
+        "f": 0xF0,
+        "b": 0xBB,
+        "c": 0xCC,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0x1234,
+        "wram": {
+            0xCC47: b"\x00\x00",
+            0xCC49: b"\x00\x01",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+            0xCC04: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "vread": {0: {0x9800: 0x400}},
+        "read": {0xCC04: 0x01},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
 ]
 # <<< factory DisplayAttackPage_Attack2Page1
 
 # >>> factory DisplayAttackPage_Attack2Page2
 CONTRACT["DisplayAttackPage_Attack2Page2"] = {"compare": (), "preserve": ()}
 CASES["DisplayAttackPage_Attack2Page2"] = [
-    {"b": 0x01, "c": 0x02, "d": 0x03, "wram": {0xCC47: b"\x00\x00", 0xCC49: b"\x00\x00\x01\x01", 0xFF80: b"\x01", 0xCABB: b"\x00", 0xCC04: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "read": {0xCC04: 0x01}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCC47: b"\x00\x00", 0xCC49: b"\x00\x00\x01\x01", 0xFF80: b"\x01", 0xCABB: b"\x00", 0xCC04: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "read": {0xCC04: 0x01}, "instruction_budget": 2000000, "cycle_budget": 8000000}
+    {
+        "b": 0x01,
+        "c": 0x02,
+        "d": 0x03,
+        "wram": {
+            0xCC47: b"\x00\x00",
+            0xCC49: b"\x00\x00\x01\x01",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+            0xCC04: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "vread": {0: {0x9800: 0x400}},
+        "read": {0xCC04: 0x01},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    {
+        "a": 0xAA,
+        "f": 0xF0,
+        "b": 0xBB,
+        "c": 0xCC,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0x1234,
+        "wram": {
+            0xCC47: b"\x00\x00",
+            0xCC49: b"\x00\x00\x01\x01",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+            0xCC04: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "vread": {0: {0x9800: 0x400}},
+        "read": {0xCC04: 0x01},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
 ]
 # <<< factory DisplayAttackPage_Attack2Page2
 
 # >>> factory DisplayAttackPage_Attack1Page2
 CONTRACT["DisplayAttackPage_Attack1Page2"] = {"compare": (), "preserve": ()}
 CASES["DisplayAttackPage_Attack1Page2"] = [
-    {"b": 0x01, "c": 0x02, "d": 0x03, "wram": {0xCC34: b"\x00\x00", 0xCC36: b"\x00\x00\x01\x01", 0xFF80: b"\x01", 0xCABB: b"\x00", 0xCC04: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "read": {0xCC04: 0x01}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCC34: b"\x00\x00", 0xCC36: b"\x00\x00\x01\x01", 0xFF80: b"\x01", 0xCABB: b"\x00", 0xCC04: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "read": {0xCC04: 0x01}, "instruction_budget": 2000000, "cycle_budget": 8000000}
+    {
+        "b": 0x01,
+        "c": 0x02,
+        "d": 0x03,
+        "wram": {
+            0xCC34: b"\x00\x00",
+            0xCC36: b"\x00\x00\x01\x01",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+            0xCC04: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "vread": {0: {0x9800: 0x400}},
+        "read": {0xCC04: 0x01},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    {
+        "a": 0xAA,
+        "f": 0xF0,
+        "b": 0xBB,
+        "c": 0xCC,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0x1234,
+        "wram": {
+            0xCC34: b"\x00\x00",
+            0xCC36: b"\x00\x00\x01\x01",
+            0xFF80: b"\x01",
+            0xCABB: b"\x00",
+            0xCC04: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "vread": {0: {0x9800: 0x400}},
+        "read": {0xCC04: 0x01},
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
 ]
 # <<< factory DisplayAttackPage_Attack1Page2
 
 # >>> factory DisplayEnergyDiscardMenu
 CONTRACT["DisplayEnergyDiscardMenu"] = {"compare": (), "preserve": ()}
 CASES["DisplayEnergyDiscardMenu"] = [
-    {"wram": {wDuelTempList: b"\xFF", 0xCABB: b"\x00"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {wDuelTempList: 1, 0xCD97: 1, 0xCD05: 2, 0xCD0A: 1},
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
-     "instruction_budget": 4000000, "cycle_budget": 16000000},
-    dict(POISON, wram={wDuelTempList: b"\xFF", 0xCABB: b"\x00"},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={wDuelTempList: 1, 0xCD97: 1, 0xCD05: 2, 0xCD0A: 1},
-         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
-         instruction_budget=4000000, cycle_budget=16000000),
+    {
+        "wram": {wDuelTempList: b"\xff", 0xCABB: b"\x00"},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {wDuelTempList: 1, 0xCD97: 1, 0xCD05: 2, 0xCD0A: 1},
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400},
+            1: {0x9800: 0x400},
+        },
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+    },
+    dict(
+        POISON,
+        wram={wDuelTempList: b"\xff", 0xCABB: b"\x00"},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={wDuelTempList: 1, 0xCD97: 1, 0xCD05: 2, 0xCD0A: 1},
+        vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+        instruction_budget=4000000,
+        cycle_budget=16000000,
+    ),
 ]
 # <<< factory DisplayEnergyDiscardMenu
 
 # >>> factory DisplayEnergyDiscardScreen
 CONTRACT["DisplayEnergyDiscardScreen"] = {"compare": (), "preserve": ()}
 CASES["DisplayEnergyDiscardScreen"] = [
-    {"a": 0x00, "keys": 0, "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08", wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00", wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00", wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00", wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00", wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00", wDuelTempList: b"\xFF", 0xCABB: b"\x00"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {wDuelTempList: 1, 0xCD97: 1, 0xCD05: 2, 0xCD0A: 1, 0xCBE0: 1, wCurPlayAreaSlot: 1, wCurPlayAreaY: 1, 0xCBFB: 1, 0xCBFA: 1},
-     "instruction_budget": 4000000, "cycle_budget": 16000000},
-    dict(POISON, a=0x00, keys=0, wram={hWhoseTurn: bytes((PLAYER_TURN,)), wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08", wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00", wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00", wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00", wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00", wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00", wDuelTempList: b"\xFF", 0xCABB: b"\x00"},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={wDuelTempList: 1, 0xCD97: 1, 0xCD05: 2, 0xCD0A: 1, 0xCBE0: 1, wCurPlayAreaSlot: 1, wCurPlayAreaY: 1, 0xCBFB: 1, 0xCBFA: 1},
-         instruction_budget=4000000, cycle_budget=16000000),
+    {
+        "a": 0x00,
+        "keys": 0,
+        "wram": {
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wConsole: b"\x00",
+            wPlayerArenaCard: b"\x00",
+            wPlayerDeck: b"\x08",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+            wDuelTempList: b"\xff",
+            0xCABB: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {
+            wDuelTempList: 1,
+            0xCD97: 1,
+            0xCD05: 2,
+            0xCD0A: 1,
+            0xCBE0: 1,
+            wCurPlayAreaSlot: 1,
+            wCurPlayAreaY: 1,
+            0xCBFB: 1,
+            0xCBFA: 1,
+        },
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+    },
+    dict(
+        POISON,
+        a=0x00,
+        keys=0,
+        wram={
+            hWhoseTurn: bytes((PLAYER_TURN,)),
+            wConsole: b"\x00",
+            wPlayerArenaCard: b"\x00",
+            wPlayerDeck: b"\x08",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+            wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+            wDuelTempList: b"\xff",
+            0xCABB: b"\x00",
+        },
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={
+            wDuelTempList: 1,
+            0xCD97: 1,
+            0xCD05: 2,
+            0xCD0A: 1,
+            0xCBE0: 1,
+            wCurPlayAreaSlot: 1,
+            wCurPlayAreaY: 1,
+            0xCBFB: 1,
+            0xCBFA: 1,
+        },
+        instruction_budget=4000000,
+        cycle_budget=16000000,
+    ),
 ]
 # <<< factory DisplayEnergyDiscardScreen
 
 # >>> factory OpenAttackPage
 CONTRACT["OpenAttackPage"] = {"compare": (), "preserve": ()}
 CASES["OpenAttackPage"] = [
-    {"keys": 0x01, "wram": {wDuelTempList: b"\xFF", 0xCABB: b"\x00", 0xFF97: b"\xC2"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xCBC7: 1, 0xCBC9: 1, 0xCBCF: 1, 0xCC04: 1, wDuelTempList: 1},
-     "instruction_budget": 4000000, "cycle_budget": 16000000},
-    dict(POISON, keys=0x01, wram={wDuelTempList: b"\xFF", 0xCABB: b"\x00", 0xFF97: b"\xC2"},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xCBC7: 1, 0xCBC9: 1, 0xCBCF: 1, 0xCC04: 1, wDuelTempList: 1},
-         instruction_budget=4000000, cycle_budget=16000000),
+    {
+        "keys": 0x01,
+        "wram": {wDuelTempList: b"\xff", 0xCABB: b"\x00", 0xFF97: b"\xc2"},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xCBC7: 1, 0xCBC9: 1, 0xCBCF: 1, 0xCC04: 1, wDuelTempList: 1},
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+    },
+    dict(
+        POISON,
+        keys=0x01,
+        wram={wDuelTempList: b"\xff", 0xCABB: b"\x00", 0xFF97: b"\xc2"},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xCBC7: 1, 0xCBC9: 1, 0xCBCF: 1, 0xCC04: 1, wDuelTempList: 1},
+        instruction_budget=4000000,
+        cycle_budget=16000000,
+    ),
 ]
 # <<< factory OpenAttackPage
 
 # >>> factory HandleEnergyDiscardMenuInput
 CONTRACT["HandleEnergyDiscardMenuInput"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["HandleEnergyDiscardMenuInput"] = [
-    {"keys": 0x02, "wram": {wEnergyDiscardMenuDenominator: b"\x00", wEnergyDiscardMenuNumerator: b"\x07", 0xCABB: b"\x00"}, "vread": {0: {0x9A10: 4}}, "instruction_budget": 10000, "cycle_budget": 40000},
-    {"keys": 0x02, "wram": {wEnergyDiscardMenuDenominator: b"\x01", wEnergyDiscardMenuNumerator: b"\x07", 0xCABB: b"\x00"}, "vread": {0: {0x9A10: 4}}, "instruction_budget": 10000, "cycle_budget": 40000},
-    dict(POISON, keys=0x02, wram={wEnergyDiscardMenuDenominator: b"\x01", wEnergyDiscardMenuNumerator: b"\x07", 0xCABB: b"\x00"}, vread={0: {0x9A10: 4}}, instruction_budget=10000, cycle_budget=40000),
+    {
+        "keys": 0x02,
+        "wram": {
+            wEnergyDiscardMenuDenominator: b"\x00",
+            wEnergyDiscardMenuNumerator: b"\x07",
+            0xCABB: b"\x00",
+        },
+        "vread": {0: {0x9A10: 4}},
+        "instruction_budget": 10000,
+        "cycle_budget": 40000,
+    },
+    {
+        "keys": 0x02,
+        "wram": {
+            wEnergyDiscardMenuDenominator: b"\x01",
+            wEnergyDiscardMenuNumerator: b"\x07",
+            0xCABB: b"\x00",
+        },
+        "vread": {0: {0x9A10: 4}},
+        "instruction_budget": 10000,
+        "cycle_budget": 40000,
+    },
+    dict(
+        POISON,
+        keys=0x02,
+        wram={
+            wEnergyDiscardMenuDenominator: b"\x01",
+            wEnergyDiscardMenuNumerator: b"\x07",
+            0xCABB: b"\x00",
+        },
+        vread={0: {0x9A10: 4}},
+        instruction_budget=10000,
+        cycle_budget=40000,
+    ),
 ]
 # <<< factory HandleEnergyDiscardMenuInput
 
 # >>> factory DisplayRetreatScreen
 CONTRACT["DisplayRetreatScreen"] = {"compare": (), "preserve": ()}
 CASES["DisplayRetreatScreen"] = [
-    {"a": 0x00, "wram": {wEnergyCardsRequiredToRetreat: b"\x00"}, "read": {wEnergyCardsRequiredToRetreat: 1, hTempRetreatCostCards: 1}},
-    dict(POISON, wram={wEnergyCardsRequiredToRetreat: b"\x00"}, read={wEnergyCardsRequiredToRetreat: 1, hTempRetreatCostCards: 1}),
+    {
+        "a": 0x00,
+        "wram": {wEnergyCardsRequiredToRetreat: b"\x00"},
+        "read": {wEnergyCardsRequiredToRetreat: 1, hTempRetreatCostCards: 1},
+    },
+    dict(
+        POISON,
+        wram={wEnergyCardsRequiredToRetreat: b"\x00"},
+        read={wEnergyCardsRequiredToRetreat: 1, hTempRetreatCostCards: 1},
+    ),
 ]
 # <<< factory DisplayRetreatScreen
 
 # >>> factory PrintPracticeDuelInstructions_Fast
 CONTRACT["PrintPracticeDuelInstructions_Fast"] = {"compare": (), "preserve": ()}
 CASES["PrintPracticeDuelInstructions_Fast"] = [
-    {"hl": 0xC500, "keys": 0x01, "wram": {0xC500: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}, "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, hl=0xC500, keys=0x01, wram={0xC500: b"\x00", 0xCABB: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}, vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}, instruction_budget=2000000, cycle_budget=8000000),
+    {
+        "hl": 0xC500,
+        "keys": 0x01,
+        "wram": {0xC500: b"\x00", 0xCABB: b"\x00"},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400},
+            1: {0x9800: 0x400},
+        },
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        hl=0xC500,
+        keys=0x01,
+        wram={0xC500: b"\x00", 0xCABB: b"\x00"},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+        vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory PrintPracticeDuelInstructions_Fast
 
 # >>> factory PracticeDuel_RepeatInstructions
 CONTRACT["PracticeDuel_RepeatInstructions"] = {"compare": ("f",), "preserve": ()}
 CASES["PracticeDuel_RepeatInstructions"] = [
-    {"keys": [0x00, 0x01], "instruction_budget": 4000000, "cycle_budget": 16000000,
-     "wram": {0xCABB: b"\x80", 0xFF40: b"\x80"},
-     "setup": [{"fn": "CopyDMAFunction"},
-               {"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, keys=[0x00, 0x01], instruction_budget=4000000, cycle_budget=16000000,
-         wram={0xCABB: b"\x80", 0xFF40: b"\x80"},
-         setup=[{"fn": "CopyDMAFunction"},
-                {"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    {
+        "keys": [0x00, 0x01],
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+        "wram": {0xCABB: b"\x80", 0xFF40: b"\x80"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x01],
+        instruction_budget=4000000,
+        cycle_budget=16000000,
+        wram={0xCABB: b"\x80", 0xFF40: b"\x80"},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    ),
 ]
 # <<< factory PracticeDuel_RepeatInstructions
 
 # >>> factory _DisplayCardDetailScreen
 CONTRACT["_DisplayCardDetailScreen"] = {"compare": ("f",), "preserve": ()}
 CASES["_DisplayCardDetailScreen"] = [
-    {"hl": 0xC100, "keys": [0x00, 0x01], "wram": {0xCABB: b"\x80", 0xFF40: b"\x80", 0xCC24: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 10000000, "cycle_budget": 40000000},
-    dict(POISON, hl=0x1234, keys=[0x00, 0x01], wram={0xCABB: b"\x80", 0xFF40: b"\x80", 0xCC24: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=10000000, cycle_budget=40000000),
+    {
+        "hl": 0xC100,
+        "keys": [0x00, 0x01],
+        "wram": {0xCABB: b"\x80", 0xFF40: b"\x80", 0xCC24: b"\x00"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 10000000,
+        "cycle_budget": 40000000,
+    },
+    dict(
+        POISON,
+        hl=0x1234,
+        keys=[0x00, 0x01],
+        wram={0xCABB: b"\x80", 0xFF40: b"\x80", 0xCC24: b"\x00"},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=10000000,
+        cycle_budget=40000000,
+    ),
 ]
 # <<< factory _DisplayCardDetailScreen
 
 # >>> factory OpenCardPage
 CONTRACT["OpenCardPage"] = {"compare": (), "preserve": ()}
 CASES["OpenCardPage"] = [
-    {"a": 0x02, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": [0x00, 0x01], "wram": {wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wCardPageType: 1, wCardPageNumber: 1}, "instruction_budget": 4000000, "cycle_budget": 16000000},
-    dict(POISON, keys=[0x00, 0x01], wram={wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wCardPageType: 1, wCardPageNumber: 1}, instruction_budget=4000000, cycle_budget=16000000),
+    {
+        "a": 0x02,
+        "f": 0x00,
+        "b": 0x00,
+        "c": 0x00,
+        "d": 0x00,
+        "e": 0x00,
+        "hl": 0x0000,
+        "keys": [0x00, 0x01],
+        "wram": {wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {wCardPageType: 1, wCardPageNumber: 1},
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x01],
+        wram={wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={wCardPageType: 1, wCardPageNumber: 1},
+        instruction_budget=4000000,
+        cycle_budget=16000000,
+    ),
 ]
 # <<< factory OpenCardPage
 
 CONTRACT["OpenCardPage.input_loop"] = {"compare": (), "preserve": ()}
 CASES["OpenCardPage.input_loop"] = [
-    {"b": 0x00, "keys": [0x00, 0x01], "wram": {wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {wCardPageType: 1, wCardPageNumber: 1},
-     "instruction_budget": 4000000, "cycle_budget": 16000000},
-    {"b": 0x00, "keys": [0x00, 0x02], "wram": {wCardPageExitKeys: b"\x02", 0xCABB: b"\x00",
-                                               wCardPageNumber: b"\x03"},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {wCardPageType: 1, wCardPageNumber: 1},
-     "instruction_budget": 4000000, "cycle_budget": 16000000},
-    {"b": 0x00, "keys": [0x01, 0x02], "wram": {wCardPageExitKeys: b"\x02", 0xCABB: b"\x00",
-                                               wCardPageNumber: b"\x00"},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {wCardPageType: 1, wCardPageNumber: 1},
-     "instruction_budget": 4000000, "cycle_budget": 16000000},
-    dict(POISON, keys=[0x00, 0x01], wram={wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"},
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={wCardPageType: 1, wCardPageNumber: 1},
-         instruction_budget=4000000, cycle_budget=16000000),
+    {
+        "b": 0x00,
+        "keys": [0x00, 0x01],
+        "wram": {wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {wCardPageType: 1, wCardPageNumber: 1},
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+    },
+    {
+        "b": 0x00,
+        "keys": [0x00, 0x02],
+        "wram": {wCardPageExitKeys: b"\x02", 0xCABB: b"\x00", wCardPageNumber: b"\x03"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {wCardPageType: 1, wCardPageNumber: 1},
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+    },
+    {
+        "b": 0x00,
+        "keys": [0x01, 0x02],
+        "wram": {wCardPageExitKeys: b"\x02", 0xCABB: b"\x00", wCardPageNumber: b"\x00"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {wCardPageType: 1, wCardPageNumber: 1},
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x01],
+        wram={wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={wCardPageType: 1, wCardPageNumber: 1},
+        instruction_budget=4000000,
+        cycle_budget=16000000,
+    ),
 ]
 
 # >>> factory DisplayCardDetailScreen
@@ -4045,34 +7860,99 @@ CONTRACT["DisplayCardDetailScreen"] = {"compare": ("f",), "preserve": ()}
 CASES["DisplayCardDetailScreen"] = [
     # wLoadedCard1 is the observable: the deck index picks which card is loaded
     # before the detail screen draws it.
-    {"a": 0, "hl": 0xC100, "keys": [0x00, 0x01],
-     "wram": {DCDS_wLCDC: b"\x80", DCDS_rLCDC: b"\x80", DCDS_wLoadedCard1: b"\x00",
-      DCDS_hWhoseTurn: bytes((DCDS_TURN,)), DCDS_wPlayerDeck: b"\x10"},
-     "read": {DCDS_wLoadedCard1: 64},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 10000000, "cycle_budget": 40000000},
-    dict(POISON, a=3, hl=0xC100, keys=[0x00, 0x01],
-         wram={DCDS_wLCDC: b"\x80", DCDS_rLCDC: b"\x80", DCDS_wLoadedCard1: b"\x00",
-         DCDS_hWhoseTurn: bytes((DCDS_TURN,)), DCDS_wPlayerDeck + 3: b"\x20"},
-         read={DCDS_wLoadedCard1: 64},
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=10000000, cycle_budget=40000000),
+    {
+        "a": 0,
+        "hl": 0xC100,
+        "keys": [0x00, 0x01],
+        "wram": {
+            DCDS_wLCDC: b"\x80",
+            DCDS_rLCDC: b"\x80",
+            DCDS_wLoadedCard1: b"\x00",
+            DCDS_hWhoseTurn: bytes((DCDS_TURN,)),
+            DCDS_wPlayerDeck: b"\x10",
+        },
+        "read": {DCDS_wLoadedCard1: 64},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 10000000,
+        "cycle_budget": 40000000,
+    },
+    dict(
+        POISON,
+        a=3,
+        hl=0xC100,
+        keys=[0x00, 0x01],
+        wram={
+            DCDS_wLCDC: b"\x80",
+            DCDS_rLCDC: b"\x80",
+            DCDS_wLoadedCard1: b"\x00",
+            DCDS_hWhoseTurn: bytes((DCDS_TURN,)),
+            DCDS_wPlayerDeck + 3: b"\x20",
+        },
+        read={DCDS_wLoadedCard1: 64},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=10000000,
+        cycle_budget=40000000,
+    ),
 ]
 # <<< factory DisplayCardDetailScreen
 
 # >>> factory OpenCardPage_FromHand
 CONTRACT["OpenCardPage_FromHand"] = {"compare": (), "preserve": ()}
 CASES["OpenCardPage_FromHand"] = [
-    {"a": 0x02, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": [0x00, 0x01], "wram": {wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wCardPageExitKeys: 0x02}, "instruction_budget": 4000000, "cycle_budget": 16000000},
-    dict(POISON, keys=[0x00, 0x01], wram={wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wCardPageExitKeys: 0x02}, instruction_budget=4000000, cycle_budget=16000000),
+    {
+        "a": 0x02,
+        "f": 0x00,
+        "b": 0x00,
+        "c": 0x00,
+        "d": 0x00,
+        "e": 0x00,
+        "hl": 0x0000,
+        "keys": [0x00, 0x01],
+        "wram": {wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {wCardPageExitKeys: 0x02},
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x01],
+        wram={wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={wCardPageExitKeys: 0x02},
+        instruction_budget=4000000,
+        cycle_budget=16000000,
+    ),
 ]
 # <<< factory OpenCardPage_FromHand
 
 # >>> factory OpenCardPage_FromCheckPlayArea
 CONTRACT["OpenCardPage_FromCheckPlayArea"] = {"compare": (), "preserve": ()}
 CASES["OpenCardPage_FromCheckPlayArea"] = [
-    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": [0x00, 0x01], "wram": {wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wCardPageExitKeys: 1, wCardPageType: 1}, "instruction_budget": 4000000, "cycle_budget": 16000000},
-    dict(POISON, keys=[0x00, 0x01], wram={wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wCardPageExitKeys: 1, wCardPageType: 1}, instruction_budget=4000000, cycle_budget=16000000),
+    {
+        "a": 0x00,
+        "f": 0x00,
+        "b": 0x00,
+        "c": 0x00,
+        "d": 0x00,
+        "e": 0x00,
+        "hl": 0x0000,
+        "keys": [0x00, 0x01],
+        "wram": {wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {wCardPageExitKeys: 1, wCardPageType: 1},
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x01],
+        wram={wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={wCardPageExitKeys: 1, wCardPageType: 1},
+        instruction_budget=4000000,
+        cycle_budget=16000000,
+    ),
 ]
 # <<< factory OpenCardPage_FromCheckPlayArea
 
@@ -4080,36 +7960,93 @@ CASES["OpenCardPage_FromCheckPlayArea"] = [
 CONTRACT["DisplayUsedTrainerCardDetailScreen"] = {"compare": ("f",), "preserve": ()}
 CASES["DisplayUsedTrainerCardDetailScreen"] = [
     # hTempCardIndex_ff9f picks the deck slot whose card data gets loaded.
-    {"keys": [0x00, 0x01],
-     "wram": {DUT_wLCDC: b"\x80", DUT_rLCDC: b"\x80", DUT_wLoadedCard1: b"\x00",
-      DUT_hWhoseTurn: bytes((DUT_TURN,)), DUT_wPlayerDeck: b"\x10",
-      DUT_hTempCardIndex_ff9f: b"\x00"},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {DUT_wLoadedCard1: 64},
-     "instruction_budget": 10000000, "cycle_budget": 40000000},
-    dict(POISON, keys=[0x00, 0x01],
-         wram={DUT_wLCDC: b"\x80", DUT_rLCDC: b"\x80", DUT_wLoadedCard1: b"\x00",
-         DUT_hWhoseTurn: bytes((DUT_TURN,)), DUT_wPlayerDeck + 3: b"\x20",
-         DUT_hTempCardIndex_ff9f: b"\x03"},
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={DUT_wLoadedCard1: 64},
-         instruction_budget=10000000, cycle_budget=40000000),
+    {
+        "keys": [0x00, 0x01],
+        "wram": {
+            DUT_wLCDC: b"\x80",
+            DUT_rLCDC: b"\x80",
+            DUT_wLoadedCard1: b"\x00",
+            DUT_hWhoseTurn: bytes((DUT_TURN,)),
+            DUT_wPlayerDeck: b"\x10",
+            DUT_hTempCardIndex_ff9f: b"\x00",
+        },
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {DUT_wLoadedCard1: 64},
+        "instruction_budget": 10000000,
+        "cycle_budget": 40000000,
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x01],
+        wram={
+            DUT_wLCDC: b"\x80",
+            DUT_rLCDC: b"\x80",
+            DUT_wLoadedCard1: b"\x00",
+            DUT_hWhoseTurn: bytes((DUT_TURN,)),
+            DUT_wPlayerDeck + 3: b"\x20",
+            DUT_hTempCardIndex_ff9f: b"\x03",
+        },
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={DUT_wLoadedCard1: 64},
+        instruction_budget=10000000,
+        cycle_budget=40000000,
+    ),
 ]
 # <<< factory DisplayUsedTrainerCardDetailScreen
 
 # >>> factory DisplayNoBasicPokemonInHandScreenAndText
-CONTRACT["DisplayNoBasicPokemonInHandScreenAndText"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["DisplayNoBasicPokemonInHandScreenAndText"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["DisplayNoBasicPokemonInHandScreenAndText"] = [
-    {"keys": [0x00, 0x01], "wram": {0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01], wram={0xCABB: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "keys": [0x00, 0x01],
+        "wram": {0xCABB: b"\x00"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x01],
+        wram={0xCABB: b"\x00"},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory DisplayNoBasicPokemonInHandScreenAndText
 
 # >>> factory OpenCardPage_FromCheckHandOrDiscardPile
 CONTRACT["OpenCardPage_FromCheckHandOrDiscardPile"] = {"compare": (), "preserve": ()}
 CASES["OpenCardPage_FromCheckHandOrDiscardPile"] = [
-    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": [0x00, 0x01], "wram": {wCardPageExitKeys: b"\x01", 0xCABB: b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wCardPageExitKeys: 1}, "expect": {wCardPageExitKeys: b"\xC2"}, "instruction_budget": 20000000, "cycle_budget": 100000000},
-    dict(POISON, keys=[0x00, 0x01], wram={wCardPageExitKeys: b"\x01", 0xCABB: b"\x80", 0xFF40: b"\x84"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wCardPageExitKeys: 1}, expect={wCardPageExitKeys: b"\xC2"}, instruction_budget=20000000, cycle_budget=100000000),
+    {
+        "a": 0x00,
+        "f": 0x00,
+        "b": 0x00,
+        "c": 0x00,
+        "d": 0x00,
+        "e": 0x00,
+        "hl": 0x0000,
+        "keys": [0x00, 0x01],
+        "wram": {wCardPageExitKeys: b"\x01", 0xCABB: b"\x80", 0xFF40: b"\x84"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {wCardPageExitKeys: 1},
+        "expect": {wCardPageExitKeys: b"\xc2"},
+        "instruction_budget": 20000000,
+        "cycle_budget": 100000000,
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x01],
+        wram={wCardPageExitKeys: b"\x01", 0xCABB: b"\x80", 0xFF40: b"\x84"},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={wCardPageExitKeys: 1},
+        expect={wCardPageExitKeys: b"\xc2"},
+        instruction_budget=20000000,
+        cycle_budget=100000000,
+    ),
 ]
 # <<< factory OpenCardPage_FromCheckHandOrDiscardPile
 
@@ -4117,114 +8054,341 @@ CASES["OpenCardPage_FromCheckHandOrDiscardPile"] = [
 CONTRACT["CardListItemSelectionMenu"] = {"compare": ("a", "f"), "preserve": ()}
 _CLIS_READ = {0xCD0F: 1, 0xCD10: 1, 0xCD11: 8}
 _CLIS_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
-_CLIS_POISONED = {0xCD0F: b"\xAA", 0xCD10: b"\xAA", 0xCD11: b"\xAA" * 8}
+_CLIS_POISONED = {0xCD0F: b"\xaa", 0xCD10: b"\xaa", 0xCD11: b"\xaa" * 8}
 CASES["CardListItemSelectionMenu"] = [
     {"wram": {0xCBDE: b"\x00"}},
     dict(POISON, wram={0xCBDE: b"\x00"}),
-    {"wram": {0xCBDE: b"\x02", **_CLIS_POISONED}, "keys": 0x02,
-     "setup": _CLIS_SETUP, "read": dict(_CLIS_READ),
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xCBDE: b"\x01", **_CLIS_POISONED}, keys=0x02,
-         setup=_CLIS_SETUP, read=dict(_CLIS_READ),
-         instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "wram": {0xCBDE: b"\x02", **_CLIS_POISONED},
+        "keys": 0x02,
+        "setup": _CLIS_SETUP,
+        "read": dict(_CLIS_READ),
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        wram={0xCBDE: b"\x01", **_CLIS_POISONED},
+        keys=0x02,
+        setup=_CLIS_SETUP,
+        read=dict(_CLIS_READ),
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory CardListItemSelectionMenu
 
 # >>> factory DisplayPlayerDrawCardScreen
 CONTRACT["DisplayPlayerDrawCardScreen"] = {"compare": ("f",), "preserve": ()}
 CASES["DisplayPlayerDrawCardScreen"] = [
-    {"wram": {0xFF98: b"\x00", DCDS_wLCDC: b"\x80", DCDS_rLCDC: b"\x80", DCDS_wLoadedCard1: b"\x00", DCDS_hWhoseTurn: bytes((DCDS_TURN,)), DCDS_wPlayerDeck: b"\x10"}, "read": {DCDS_wLoadedCard1: 64}, "keys": [0x00, 0x01], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 10000000, "cycle_budget": 40000000},
-    dict(POISON, wram={0xFF98: b"\x03", DCDS_wLCDC: b"\x80", DCDS_rLCDC: b"\x80", DCDS_wLoadedCard1: b"\x00", DCDS_hWhoseTurn: bytes((DCDS_TURN,)), DCDS_wPlayerDeck + 3: b"\x20"}, read={DCDS_wLoadedCard1: 64}, keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=10000000, cycle_budget=40000000),
+    {
+        "wram": {
+            0xFF98: b"\x00",
+            DCDS_wLCDC: b"\x80",
+            DCDS_rLCDC: b"\x80",
+            DCDS_wLoadedCard1: b"\x00",
+            DCDS_hWhoseTurn: bytes((DCDS_TURN,)),
+            DCDS_wPlayerDeck: b"\x10",
+        },
+        "read": {DCDS_wLoadedCard1: 64},
+        "keys": [0x00, 0x01],
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 10000000,
+        "cycle_budget": 40000000,
+    },
+    dict(
+        POISON,
+        wram={
+            0xFF98: b"\x03",
+            DCDS_wLCDC: b"\x80",
+            DCDS_rLCDC: b"\x80",
+            DCDS_wLoadedCard1: b"\x00",
+            DCDS_hWhoseTurn: bytes((DCDS_TURN,)),
+            DCDS_wPlayerDeck + 3: b"\x20",
+        },
+        read={DCDS_wLoadedCard1: 64},
+        keys=[0x00, 0x01],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=10000000,
+        cycle_budget=40000000,
+    ),
 ]
 # <<< factory DisplayPlayerDrawCardScreen
 
 # >>> factory OppAction_PlayTrainerCard
 CONTRACT["OppAction_PlayTrainerCard"] = {"compare": (), "preserve": ()}
 CASES["OppAction_PlayTrainerCard"] = [
-    {"keys": [0x00, 0x01],
-     "wram": {DUT_wLCDC: b"\x80", DUT_rLCDC: b"\x80", DUT_wLoadedCard1: b"\x00",
-              DUT_hWhoseTurn: bytes((DUT_TURN,)), DUT_wPlayerDeck: b"\x10",
-              DUT_hTempCardIndex_ff9f: b"\x00"},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {DUT_wLoadedCard1: 64, wSkipDuelistIsThinkingDelay: 1},
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01],
-         wram={DUT_wLCDC: b"\x80", DUT_rLCDC: b"\x80", DUT_wLoadedCard1: b"\x00",
-               DUT_hWhoseTurn: bytes((DUT_TURN,)), DUT_wPlayerDeck + 3: b"\x20",
-               DUT_hTempCardIndex_ff9f: b"\x03"},
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={DUT_wLoadedCard1: 64, wSkipDuelistIsThinkingDelay: 1},
-         instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "keys": [0x00, 0x01],
+        "wram": {
+            DUT_wLCDC: b"\x80",
+            DUT_rLCDC: b"\x80",
+            DUT_wLoadedCard1: b"\x00",
+            DUT_hWhoseTurn: bytes((DUT_TURN,)),
+            DUT_wPlayerDeck: b"\x10",
+            DUT_hTempCardIndex_ff9f: b"\x00",
+        },
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {DUT_wLoadedCard1: 64, wSkipDuelistIsThinkingDelay: 1},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x01],
+        wram={
+            DUT_wLCDC: b"\x80",
+            DUT_rLCDC: b"\x80",
+            DUT_wLoadedCard1: b"\x00",
+            DUT_hWhoseTurn: bytes((DUT_TURN,)),
+            DUT_wPlayerDeck + 3: b"\x20",
+            DUT_hTempCardIndex_ff9f: b"\x03",
+        },
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={DUT_wLoadedCard1: 64, wSkipDuelistIsThinkingDelay: 1},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory OppAction_PlayTrainerCard
 
 # >>> factory OpenActivePokemonScreen
 CONTRACT["OpenActivePokemonScreen"] = {"compare": (), "preserve": ()}
 CASES["OpenActivePokemonScreen"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xCBC9: b"\xAA", 0xCBCA: b"\x55"}, "read": {0xCBC9: 1, 0xCBCA: 1}},
-    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xCBC9: b"\xAA", 0xCBCA: b"\x55", 0xCABB: b"\x00", 0xCBD7: b"\x01"}, "keys": [0x00, 0x01], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 4000000, "cycle_budget": 16000000, "read": {0xCBC9: 1, 0xCBCA: 1}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xCBC9: b"\xAA", 0xCBCA: b"\x55", 0xCABB: b"\x00", 0xCBD7: b"\x01"}, "keys": [0x00, 0x01], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 4000000, "cycle_budget": 16000000, "read": {0xCBC9: 1, 0xCBCA: 1}}]
+    {
+        "wram": {0xFF97: b"\xc2", 0xC2BB: b"\xff", 0xCBC9: b"\xaa", 0xCBCA: b"\x55"},
+        "read": {0xCBC9: 1, 0xCBCA: 1},
+    },
+    {
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xCBC9: b"\xaa",
+            0xCBCA: b"\x55",
+            0xCABB: b"\x00",
+            0xCBD7: b"\x01",
+        },
+        "keys": [0x00, 0x01],
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+        "read": {0xCBC9: 1, 0xCBCA: 1},
+    },
+    {
+        "a": 0xAA,
+        "f": 0xF0,
+        "b": 0xBB,
+        "c": 0xCC,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0x1234,
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xCBC9: b"\xaa",
+            0xCBCA: b"\x55",
+            0xCABB: b"\x00",
+            0xCBD7: b"\x01",
+        },
+        "keys": [0x00, 0x01],
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+        "read": {0xCBC9: 1, 0xCBCA: 1},
+    },
+]
 # <<< factory OpenActivePokemonScreen
 
 # >>> factory DisplayPlayAreaScreenToUsePkmnPower
-CONTRACT["DisplayPlayAreaScreenToUsePkmnPower"] = {"compare": ("d", "e"), "preserve": (), "wram_out": True}
+CONTRACT["DisplayPlayAreaScreenToUsePkmnPower"] = {
+    "compare": ("d", "e"),
+    "preserve": (),
+    "wram_out": True,
+}
 CASES["DisplayPlayAreaScreenToUsePkmnPower"] = [
-    {"keys": [0x00, 0x02], "instruction_budget": 5000000, "cycle_budget": 20000000, "wram": {0xFF97: b"\x00", 0xC2EF: b"\x00", 0xCABB: b"\x00"}, "read": {0xCBCF: 1}, "expect": {0xCBCF: b"\x00"}},
-    dict(POISON, keys=[0x00, 0x02], instruction_budget=5000000, cycle_budget=20000000, wram={0xFF97: b"\x00", 0xC2EF: b"\x00", 0xCABB: b"\x00"}, read={0xCBCF: 1}, expect={0xCBCF: b"\x00"}),
+    {
+        "keys": [0x00, 0x02],
+        "instruction_budget": 5000000,
+        "cycle_budget": 20000000,
+        "wram": {0xFF97: b"\x00", 0xC2EF: b"\x00", 0xCABB: b"\x00"},
+        "read": {0xCBCF: 1},
+        "expect": {0xCBCF: b"\x00"},
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x02],
+        instruction_budget=5000000,
+        cycle_budget=20000000,
+        wram={0xFF97: b"\x00", 0xC2EF: b"\x00", 0xCABB: b"\x00"},
+        read={0xCBCF: 1},
+        expect={0xCBCF: b"\x00"},
+    ),
     # B cancels on the first frame: the drawn screen and the menu parameters are the observation.
     dict(_power_screen_fixture(bank=1), **_POWER_SCREEN_REGS, keys=[0x00, 0x02]),
 ]
 # <<< factory DisplayPlayAreaScreenToUsePkmnPower
 
 # >>> factory DisplayCardPage_PokemonOverview
-CONTRACT["DisplayCardPage_PokemonOverview"] = {"compare": (), "preserve": (), "wram_out": True}
+CONTRACT["DisplayCardPage_PokemonOverview"] = {
+    "compare": (),
+    "preserve": (),
+    "wram_out": True,
+}
 CASES["DisplayCardPage_PokemonOverview"] = [
-    dict(id="DisplayCardPage_PokemonOverview-0", vread={0: {0x99C1: 8, 0x99E1: 8, 0x9A01: 8, 0x99C8: 4, 0x9A0F: 2}}, wram={wCardPageType: b"\x01", wCurPlayAreaSlot: b"\x01", wCurPlayAreaY: b"\x00", wLoadedCard1Stage: b"\x00", wLoadedCard1RetreatCost: b"\x01", 0xCABB: b"\x00", 0xFF80: b"\x01"}, read={wCurPlayAreaY: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000),
-    dict(POISON, id="DisplayCardPage_PokemonOverview-1", vread={0: {0x99C1: 8, 0x99E1: 8, 0x9A01: 8, 0x99C8: 4, 0x9A0F: 2}}, wram={wCardPageType: b"\x01", wCurPlayAreaSlot: b"\x01", wCurPlayAreaY: b"\x00", wLoadedCard1Stage: b"\x00", wLoadedCard1RetreatCost: b"\x02", 0xCABB: b"\x00", 0xFF80: b"\x01"}, read={wCurPlayAreaY: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000),
+    dict(
+        id="DisplayCardPage_PokemonOverview-0",
+        vread={0: {0x99C1: 8, 0x99E1: 8, 0x9A01: 8, 0x99C8: 4, 0x9A0F: 2}},
+        wram={
+            wCardPageType: b"\x01",
+            wCurPlayAreaSlot: b"\x01",
+            wCurPlayAreaY: b"\x00",
+            wLoadedCard1Stage: b"\x00",
+            wLoadedCard1RetreatCost: b"\x01",
+            0xCABB: b"\x00",
+            0xFF80: b"\x01",
+        },
+        read={wCurPlayAreaY: 1},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        keys=[0x00, 0x01],
+        instruction_budget=20000000,
+        cycle_budget=100000000,
+    ),
+    dict(
+        POISON,
+        id="DisplayCardPage_PokemonOverview-1",
+        vread={0: {0x99C1: 8, 0x99E1: 8, 0x9A01: 8, 0x99C8: 4, 0x9A0F: 2}},
+        wram={
+            wCardPageType: b"\x01",
+            wCurPlayAreaSlot: b"\x01",
+            wCurPlayAreaY: b"\x00",
+            wLoadedCard1Stage: b"\x00",
+            wLoadedCard1RetreatCost: b"\x02",
+            0xCABB: b"\x00",
+            0xFF80: b"\x01",
+        },
+        read={wCurPlayAreaY: 1},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        keys=[0x00, 0x01],
+        instruction_budget=20000000,
+        cycle_budget=100000000,
+    ),
 ]
 # <<< factory DisplayCardPage_PokemonOverview
 
 # >>> factory DisplayEnergyOrTrainerCardPage
-CONTRACT["DisplayEnergyOrTrainerCardPage"] = {"compare": ("a", "f", "hl", "d", "e"), "preserve": ()}
+CONTRACT["DisplayEnergyOrTrainerCardPage"] = {
+    "compare": ("a", "f", "hl", "d", "e"),
+    "preserve": (),
+}
 CASES["DisplayEnergyOrTrainerCardPage"] = [
     # dome-5 834713: the trainer page drawn from the live state.
-    dict(_energy_or_trainer_page_fixture(vram=True, bank=1), **_ENERGY_OR_TRAINER_PAGE_REGS, read={0xCD08: 1, 0xC000: 0x100}),
-    {"hl": 0xC500, "wram": {0xC500: b"\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, "setup": SETUP_TEXT, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, hl=0xC500, wram={0xC500: b"\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, setup=SETUP_TEXT, instruction_budget=2000000, cycle_budget=8000000),
+    dict(
+        _energy_or_trainer_page_fixture(vram=True, bank=1),
+        **_ENERGY_OR_TRAINER_PAGE_REGS,
+        read={0xCD08: 1, 0xC000: 0x100},
+    ),
+    {
+        "hl": 0xC500,
+        "wram": {0xC500: b"\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"},
+        "setup": SETUP_TEXT,
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        hl=0xC500,
+        wram={0xC500: b"\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"},
+        setup=SETUP_TEXT,
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory DisplayEnergyOrTrainerCardPage
 
 # >>> factory DisplayCardPage_Energy
-CONTRACT["DisplayCardPage_Energy"] = {"compare": ("a", "f", "hl", "d", "e"), "preserve": ()}
+CONTRACT["DisplayCardPage_Energy"] = {
+    "compare": ("a", "f", "hl", "d", "e"),
+    "preserve": (),
+}
 CASES["DisplayCardPage_Energy"] = [
     # dome-4 778085: an energy card's page from the duel; the exit is the
     # description printer's `xor a`.
-    dict(_card_page_energy_fixture(vram=True, bank=1), **_CARD_PAGE_ENERGY_REGS, read={0xCD08: 1, 0xC000: 0x100}),
-    {"wram": {0xCC2E: b"\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, "setup": SETUP_TEXT, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xCC2E: b"\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, setup=SETUP_TEXT, instruction_budget=2000000, cycle_budget=8000000),
+    dict(
+        _card_page_energy_fixture(vram=True, bank=1),
+        **_CARD_PAGE_ENERGY_REGS,
+        read={0xCD08: 1, 0xC000: 0x100},
+    ),
+    {
+        "wram": {0xCC2E: b"\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"},
+        "setup": SETUP_TEXT,
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        wram={0xCC2E: b"\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"},
+        setup=SETUP_TEXT,
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory DisplayCardPage_Energy
 
 # >>> factory DisplayCardPage_TrainerPage2
-CONTRACT["DisplayCardPage_TrainerPage2"] = {"compare": ("a", "f", "hl", "d", "e"), "preserve": ()}
+CONTRACT["DisplayCardPage_TrainerPage2"] = {
+    "compare": ("a", "f", "hl", "d", "e"),
+    "preserve": (),
+}
 CASES["DisplayCardPage_TrainerPage2"] = [
-    {"wram": {0xCC2E: b"\x00\x00\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, "setup": SETUP_TEXT, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xCC2E: b"\x00\x00\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, setup=SETUP_TEXT, instruction_budget=2000000, cycle_budget=8000000),
+    {
+        "wram": {0xCC2E: b"\x00\x00\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"},
+        "setup": SETUP_TEXT,
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        wram={0xCC2E: b"\x00\x00\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"},
+        setup=SETUP_TEXT,
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory DisplayCardPage_TrainerPage2
 
 # >>> factory DisplayCardPage_TrainerPage1
-CONTRACT["DisplayCardPage_TrainerPage1"] = {"compare": ("a", "f", "hl", "d", "e"), "preserve": ()}
+CONTRACT["DisplayCardPage_TrainerPage1"] = {
+    "compare": ("a", "f", "hl", "d", "e"),
+    "preserve": (),
+}
 CASES["DisplayCardPage_TrainerPage1"] = [
     # dome-5 834713: a trainer card's first page from the duel.
-    dict(_card_page_trainer_fixture(vram=True, bank=1), **_CARD_PAGE_TRAINER_REGS, read={0xCD08: 1, 0xC000: 0x100}),
-    {"wram": {0xCC2E: b"\x00\x00\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, "setup": SETUP_TEXT, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xCC2E: b"\x00\x00\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, setup=SETUP_TEXT, instruction_budget=2000000, cycle_budget=8000000),
+    dict(
+        _card_page_trainer_fixture(vram=True, bank=1),
+        **_CARD_PAGE_TRAINER_REGS,
+        read={0xCD08: 1, 0xC000: 0x100},
+    ),
+    {
+        "wram": {0xCC2E: b"\x00\x00\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"},
+        "setup": SETUP_TEXT,
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
+    dict(
+        POISON,
+        wram={0xCC2E: b"\x00\x00\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"},
+        setup=SETUP_TEXT,
+        instruction_budget=2000000,
+        cycle_budget=8000000,
+    ),
 ]
 # <<< factory DisplayCardPage_TrainerPage1
 
 # >>> factory PrintPracticeDuelInstructionsForCurrentTurn
-CONTRACT["PrintPracticeDuelInstructionsForCurrentTurn"] = {"compare": (), "preserve": ()}
+CONTRACT["PrintPracticeDuelInstructionsForCurrentTurn"] = {
+    "compare": (),
+    "preserve": (),
+}
 # wDuelTurns & $FE is a byte offset into PracticeDuelTextPointerTable (01:52C5).
 # $94 lands on 01:5359, the $14/$CD pair that `lb bc, 20, 12` (ld bc, $140C) and the
 # `call DrawRegularTextBox` after it leave inside DrawPracticeDuelInstructionsTextBox
@@ -4239,30 +8403,70 @@ CONTRACT["PrintPracticeDuelInstructionsForCurrentTurn"] = {"compare": (), "prese
 # $CBCA/$CC01 are seeded to values neither printer produces, so they show which branch
 # ran: the slow path writes $00 and $CD14 there, the fast path leaves the seeds.
 CASES["PrintPracticeDuelInstructionsForCurrentTurn"] = [
-    {"a": 0x00, "keys": 0x01,
-     "wram": {0xCC06: b"\x94", 0xCD14: b"\x00", 0xCBCA: b"\xFF",
-              0xCC01: b"\x34\x12", 0xCABB: b"\x00", 0xFF80: b"\x01"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xCBCA: 1, 0xCC01: 2},
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0x00, "keys": 0x01,
-     "wram": {0xCC06: b"\x95", 0xCD14: b"\x00", 0xCBCA: b"\xFF",
-              0xCC01: b"\x34\x12", 0xCABB: b"\x00", 0xFF80: b"\x01"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xCBCA: 1, 0xCC01: 2},
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0x01, "keys": 0x01,
-     "wram": {0xCC06: b"\x94", 0xCD14: b"\x00", 0xCBCA: b"\xFF",
-              0xCC01: b"\x34\x12", 0xCABB: b"\x00", 0xFF80: b"\x01"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xCBCA: 1, 0xCC01: 2},
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=0x01,
-         wram={0xCC06: b"\x95", 0xCD14: b"\x00", 0xCBCA: b"\xFF",
-               0xCC01: b"\x34\x12", 0xCABB: b"\x00", 0xFF80: b"\x01"},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xCBCA: 1, 0xCC01: 2},
-         instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "a": 0x00,
+        "keys": 0x01,
+        "wram": {
+            0xCC06: b"\x94",
+            0xCD14: b"\x00",
+            0xCBCA: b"\xff",
+            0xCC01: b"\x34\x12",
+            0xCABB: b"\x00",
+            0xFF80: b"\x01",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xCBCA: 1, 0xCC01: 2},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "a": 0x00,
+        "keys": 0x01,
+        "wram": {
+            0xCC06: b"\x95",
+            0xCD14: b"\x00",
+            0xCBCA: b"\xff",
+            0xCC01: b"\x34\x12",
+            0xCABB: b"\x00",
+            0xFF80: b"\x01",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xCBCA: 1, 0xCC01: 2},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "a": 0x01,
+        "keys": 0x01,
+        "wram": {
+            0xCC06: b"\x94",
+            0xCD14: b"\x00",
+            0xCBCA: b"\xff",
+            0xCC01: b"\x34\x12",
+            0xCABB: b"\x00",
+            0xFF80: b"\x01",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xCBCA: 1, 0xCC01: 2},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        keys=0x01,
+        wram={
+            0xCC06: b"\x95",
+            0xCD14: b"\x00",
+            0xCBCA: b"\xff",
+            0xCC01: b"\x34\x12",
+            0xCABB: b"\x00",
+            0xFF80: b"\x01",
+        },
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xCBCA: 1, 0xCC01: 2},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory PrintPracticeDuelInstructionsForCurrentTurn
 
@@ -4274,34 +8478,93 @@ CONTRACT["PracticeDuel_PrintTurnInstructions"] = {"compare": (), "preserve": ()}
 # seeded $55 and read back). A port with the branches swapped asks on the new
 # turn and skips the question on the repeat.
 CASES["PracticeDuel_PrintTurnInstructions"] = [
-    {"keys": [0x00, 0x01],
-     "wram": {wDuelTurns: b"\x00", wPracticeDuelTurn: b"\x00", 0xCABB: b"\x00", 0xFF80: b"\x01", 0xFFB1: b"\x55"},
-     "read": {0xFFB1: 1},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"keys": [0x00, 0x01],
-     "wram": {wDuelTurns: b"\x02", wPracticeDuelTurn: b"\x02", 0xCABB: b"\x00", 0xFF80: b"\x01", 0xFFB1: b"\x55"},
-     "read": {0xFFB1: 1},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"keys": [0x00, 0x01],
-     "wram": {wDuelTurns: b"\x03", wPracticeDuelTurn: b"\x00", 0xCABB: b"\x00", 0xFF80: b"\x01", 0xFFB1: b"\x55"},
-     "read": {0xFFB1: 1},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01],
-         wram={wDuelTurns: b"\x04", wPracticeDuelTurn: b"\x00", 0xCABB: b"\x00", 0xFF80: b"\x01", 0xFFB1: b"\x55"},
-         read={0xFFB1: 1},
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "keys": [0x00, 0x01],
+        "wram": {
+            wDuelTurns: b"\x00",
+            wPracticeDuelTurn: b"\x00",
+            0xCABB: b"\x00",
+            0xFF80: b"\x01",
+            0xFFB1: b"\x55",
+        },
+        "read": {0xFFB1: 1},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "keys": [0x00, 0x01],
+        "wram": {
+            wDuelTurns: b"\x02",
+            wPracticeDuelTurn: b"\x02",
+            0xCABB: b"\x00",
+            0xFF80: b"\x01",
+            0xFFB1: b"\x55",
+        },
+        "read": {0xFFB1: 1},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "keys": [0x00, 0x01],
+        "wram": {
+            wDuelTurns: b"\x03",
+            wPracticeDuelTurn: b"\x00",
+            0xCABB: b"\x00",
+            0xFF80: b"\x01",
+            0xFFB1: b"\x55",
+        },
+        "read": {0xFFB1: 1},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x01],
+        wram={
+            wDuelTurns: b"\x04",
+            wPracticeDuelTurn: b"\x00",
+            0xCABB: b"\x00",
+            0xFF80: b"\x01",
+            0xFFB1: b"\x55",
+        },
+        read={0xFFB1: 1},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory PracticeDuel_PrintTurnInstructions
 
 # >>> factory Func_5a81
-CONTRACT["Func_5a81"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["Func_5a81"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["Func_5a81"] = [
-    {"a": 0x11, "f": 0x22, "b": 0x33, "c": 0x44, "d": 0x55, "e": 0x66, "hl": 0x4567, "wram": {wConsole: b"\x00"}},
-    {"a": 0x11, "f": 0x22, "b": 0x33, "c": 0x44, "d": 0x55, "e": 0x66, "hl": 0x4567, "wram": {wConsole: b"\x01", wTempSGBPacket: b"\xAA" * 32}, "read": {wTempSGBPacket: 16}},
+    {
+        "a": 0x11,
+        "f": 0x22,
+        "b": 0x33,
+        "c": 0x44,
+        "d": 0x55,
+        "e": 0x66,
+        "hl": 0x4567,
+        "wram": {wConsole: b"\x00"},
+    },
+    {
+        "a": 0x11,
+        "f": 0x22,
+        "b": 0x33,
+        "c": 0x44,
+        "d": 0x55,
+        "e": 0x66,
+        "hl": 0x4567,
+        "wram": {wConsole: b"\x01", wTempSGBPacket: b"\xaa" * 32},
+        "read": {wTempSGBPacket: 16},
+    },
     dict(POISON, wram={wConsole: b"\x00"}),
 ]
 # <<< factory Func_5a81
@@ -4319,91 +8582,362 @@ CONTRACT["_TossCoin"] = {"compare": ("a", "f"), "preserve": ()}
 # wRNG1/wRNG2/wRNGCounter are seeded so UpdateRNGSources is deterministic:
 # 00/00/00 returns bit0 = 0 (heads), 00/00/80 returns bit0 = 1 (tails).
 CASES["_TossCoin"] = [
-    dict(POISON,
-         a=0x01,
-         keys=[0x00, 0x01],
-         wram={0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xCC09: b"\x00",
-               0xCAC2: b"\x06", 0xCABB: b"\x00",
-               0xCACA: b"\x00\x00\x00",
-               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF",
-               0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
-         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2},
-         setup=[{"fn": "CopyDMAFunction"},
-                {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000),
-    {"a": 0x00,
-     "keys": [0x00, 0x01],
-     "wram": {0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xCC09: b"\x00",
-              0xCAC2: b"\x06", 0xCABB: b"\x00",
-              0xCACA: b"\x00\x00\x80",
-              0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF",
-              0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
-     "read": {0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2},
-     "setup": [{"fn": "CopyDMAFunction"},
-               {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(
+        POISON,
+        a=0x01,
+        keys=[0x00, 0x01],
+        wram={
+            0xFF97: b"\xc2",
+            0xC2F1: b"\x00",
+            0xCC09: b"\x00",
+            0xCAC2: b"\x06",
+            0xCABB: b"\x00",
+            0xCACA: b"\x00\x00\x00",
+            0xCD9C: b"\xff",
+            0xCD9D: b"\xff",
+            0xCD9E: b"\xff",
+            0xCD9F: b"\x01",
+            0xCE4E: b"\x34\x12",
+        },
+        read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
+    {
+        "a": 0x00,
+        "keys": [0x00, 0x01],
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2F1: b"\x00",
+            0xCC09: b"\x00",
+            0xCAC2: b"\x06",
+            0xCABB: b"\x00",
+            0xCACA: b"\x00\x00\x80",
+            0xCD9C: b"\xff",
+            0xCD9D: b"\xff",
+            0xCD9E: b"\xff",
+            0xCD9F: b"\x01",
+            0xCE4E: b"\x34\x12",
+        },
+        "read": {0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
 ]
 # <<< factory _TossCoin
 
 # >>> factory AttemptRetreat
 CONTRACT["AttemptRetreat"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AttemptRetreat"] = [
-    {"wram": {0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xFFA2: b"\xFF", 0xC2BB: b"\x01", 0xC2BC: b"\x02", 0xC200: b"\x10", 0xC201: b"\x11", 0xC2F0: b"\x05"}, "read": {0xCC0C: 1, 0xC2BB: 1, 0xC2BC: 1, 0xC200: 1, 0xC201: 1, 0xC2F0: 1}},
-    dict(POISON, wram={0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xFFA2: b"\xFF", 0xC2BB: b"\x01", 0xC2BC: b"\x02", 0xC200: b"\x10", 0xC201: b"\x11", 0xC2F0: b"\x05"}, read={0xCC0C: 1, 0xC2BB: 1, 0xC2BC: 1, 0xC200: 1, 0xC201: 1, 0xC2F0: 1}),
+    {
+        "wram": {
+            0xFFA0: b"\x00",
+            0xFFA1: b"\x01",
+            0xFFA2: b"\xff",
+            0xC2BB: b"\x01",
+            0xC2BC: b"\x02",
+            0xC200: b"\x10",
+            0xC201: b"\x11",
+            0xC2F0: b"\x05",
+        },
+        "read": {0xCC0C: 1, 0xC2BB: 1, 0xC2BC: 1, 0xC200: 1, 0xC201: 1, 0xC2F0: 1},
+    },
+    dict(
+        POISON,
+        wram={
+            0xFFA0: b"\x00",
+            0xFFA1: b"\x01",
+            0xFFA2: b"\xff",
+            0xC2BB: b"\x01",
+            0xC2BC: b"\x02",
+            0xC200: b"\x10",
+            0xC201: b"\x11",
+            0xC2F0: b"\x05",
+        },
+        read={0xCC0C: 1, 0xC2BB: 1, 0xC2BC: 1, 0xC200: 1, 0xC201: 1, 0xC2F0: 1},
+    ),
 ]
 # <<< factory AttemptRetreat
 
 # >>> factory OppAction_BeginUseAttack
-CONTRACT["OppAction_BeginUseAttack"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["OppAction_BeginUseAttack"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["OppAction_BeginUseAttack"] = [
-    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": 0x00, "wram": {hTempCardIndex_ff9f: b"\x00", hTemp_ffa0: b"\x00", hWhoseTurn: b"\x00", wLCDC: b"\x00", wSkipDuelistIsThinkingDelay: b"\x00"}, "read": {wSkipDuelistIsThinkingDelay: 1}, "instruction_budget": 6000000, "cycle_budget": 24000000},
-    dict(POISON, keys=0x00, wram={hTempCardIndex_ff9f: b"\x00", hTemp_ffa0: b"\x00", hWhoseTurn: b"\x00", wLCDC: b"\x00", wSkipDuelistIsThinkingDelay: b"\x00"}, read={wSkipDuelistIsThinkingDelay: 1}, instruction_budget=6000000, cycle_budget=24000000),
-    dict(_begin_use_attack_fixture(vram=False, bank=1), **_BEGIN_USE_ATTACK_REGS, read={0xCC24: 0x41, 0xCCA6: 0x1C, 0xCCC2: 1, 0xCCC6: 1, wSkipDuelistIsThinkingDelay: 1}),
+    {
+        "a": 0x00,
+        "f": 0x00,
+        "b": 0x00,
+        "c": 0x00,
+        "d": 0x00,
+        "e": 0x00,
+        "hl": 0x0000,
+        "keys": 0x00,
+        "wram": {
+            hTempCardIndex_ff9f: b"\x00",
+            hTemp_ffa0: b"\x00",
+            hWhoseTurn: b"\x00",
+            wLCDC: b"\x00",
+            wSkipDuelistIsThinkingDelay: b"\x00",
+        },
+        "read": {wSkipDuelistIsThinkingDelay: 1},
+        "instruction_budget": 6000000,
+        "cycle_budget": 24000000,
+    },
+    dict(
+        POISON,
+        keys=0x00,
+        wram={
+            hTempCardIndex_ff9f: b"\x00",
+            hTemp_ffa0: b"\x00",
+            hWhoseTurn: b"\x00",
+            wLCDC: b"\x00",
+            wSkipDuelistIsThinkingDelay: b"\x00",
+        },
+        read={wSkipDuelistIsThinkingDelay: 1},
+        instruction_budget=6000000,
+        cycle_budget=24000000,
+    ),
+    dict(
+        _begin_use_attack_fixture(vram=False, bank=1),
+        **_BEGIN_USE_ATTACK_REGS,
+        read={
+            0xCC24: 0x41,
+            0xCCA6: 0x1C,
+            0xCCC2: 1,
+            0xCCC6: 1,
+            wSkipDuelistIsThinkingDelay: 1,
+        },
+    ),
 ]
 # <<< factory OppAction_BeginUseAttack
 
 # >>> factory OppAction_TossCoinATimes
-CONTRACT["OppAction_TossCoinATimes"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["OppAction_TossCoinATimes"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["OppAction_TossCoinATimes"] = [
-    dict(POISON, wram={0xCBED: b"\xA0\x01\x12\x34\xE4\xD5\xC6\xB7", 0xCBA2: b"\x08", 0xCBA5: b"\xA0\x01\x12\x34\xE4\xD5\xC6\xB7", 0xCB75: b"\x00", 0xCBA3: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xD5\xE4"}, read={0xCBED: 8, 0xCBF9: 1, 0xCE4E: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000),
-    {"wram": {0xCBED: b"\xB0\x01\x21\x43\xF4\xE5\xD6\xC7", 0xCBA2: b"\x08", 0xCBA5: b"\xB0\x01\x21\x43\xF4\xE5\xD6\xC7", 0xCB75: b"\x00", 0xCBA3: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x80", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xE5\xF4"}, "read": {0xCBED: 8, 0xCBF9: 1, 0xCE4E: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000}
+    dict(
+        POISON,
+        wram={
+            0xCBED: b"\xa0\x01\x12\x34\xe4\xd5\xc6\xb7",
+            0xCBA2: b"\x08",
+            0xCBA5: b"\xa0\x01\x12\x34\xe4\xd5\xc6\xb7",
+            0xCB75: b"\x00",
+            0xCBA3: b"\x00",
+            0xCAC2: b"\x06",
+            0xCABB: b"\x00",
+            0xCACA: b"\x00\x00\x00",
+            0xCD9C: b"\xff",
+            0xCD9D: b"\xff",
+            0xCD9E: b"\xff",
+            0xCD9F: b"\x01",
+            0xCE4E: b"\xd5\xe4",
+        },
+        read={
+            0xCBED: 8,
+            0xCBF9: 1,
+            0xCE4E: 2,
+            0xCD9C: 1,
+            0xCD9D: 1,
+            0xCD9E: 1,
+            0xCD9F: 1,
+        },
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        keys=[0x00, 0x01],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
+    {
+        "wram": {
+            0xCBED: b"\xb0\x01\x21\x43\xf4\xe5\xd6\xc7",
+            0xCBA2: b"\x08",
+            0xCBA5: b"\xb0\x01\x21\x43\xf4\xe5\xd6\xc7",
+            0xCB75: b"\x00",
+            0xCBA3: b"\x00",
+            0xCAC2: b"\x06",
+            0xCABB: b"\x00",
+            0xCACA: b"\x00\x00\x80",
+            0xCD9C: b"\xff",
+            0xCD9D: b"\xff",
+            0xCD9E: b"\xff",
+            0xCD9F: b"\x01",
+            0xCE4E: b"\xe5\xf4",
+        },
+        "read": {
+            0xCBED: 8,
+            0xCBF9: 1,
+            0xCE4E: 2,
+            0xCD9C: 1,
+            0xCD9D: 1,
+            0xCD9E: 1,
+            0xCD9F: 1,
+        },
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "keys": [0x00, 0x01],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
 ]
 # <<< factory OppAction_TossCoinATimes
 
 # >>> factory OppAction_AttemptRetreat
 CONTRACT["OppAction_AttemptRetreat"] = {"compare": ("f",), "preserve": ()}
 CASES["OppAction_AttemptRetreat"] = [
-    {"keys": [0x00, 0x01], "wram": RETREAT_SEED, "read": {0xCAC2: 1, 0xC2BB: 1, 0xC2BC: 1, 0xCE3F: 2}, "setup": FRAME_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01], wram=RETREAT_SEED, read={0xCAC2: 1, 0xC2BB: 1, 0xC2BC: 1, 0xCE3F: 2}, setup=FRAME_SETUP, instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "keys": [0x00, 0x01],
+        "wram": RETREAT_SEED,
+        "read": {0xCAC2: 1, 0xC2BB: 1, 0xC2BC: 1, 0xCE3F: 2},
+        "setup": FRAME_SETUP,
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x01],
+        wram=RETREAT_SEED,
+        read={0xCAC2: 1, 0xC2BB: 1, 0xC2BC: 1, 0xCE3F: 2},
+        setup=FRAME_SETUP,
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory OppAction_AttemptRetreat
 
 # >>> factory PlayAttackAnimation
-CONTRACT["PlayAttackAnimation"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
+CONTRACT["PlayAttackAnimation"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("f", "b", "c", "d", "e", "hl"),
+}
 CASES["PlayAttackAnimation"] = [
-    {"a": 0x10, "f": 0x00, "b": 0x02, "c": 0x01, "d": 0x00, "e": 0x20, "hl": 0xC200, "wram": {hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC2", wTempNonTurnDuelistCardID: b"\x15", wLoadedAttackAnimation: b"\x00"}, "read": {wDamageAnimEffectiveness: 1, wDamageAnimPlayAreaLocation: 1, wDamageAnimPlayAreaSide: 1, wDamageAnimCardID: 1, wDamageAnimAmount: 2}},
-    {"a": 0x44, "f": 0x80, "b": 0x05, "c": 0x07, "d": 0x01, "e": 0x45, "hl": 0xC300, "wram": {hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC3", wTempNonTurnDuelistCardID: b"\xA0", wLoadedAttackAnimation: b"\x00"}, "read": {wDamageAnimEffectiveness: 1, wDamageAnimPlayAreaLocation: 1, wDamageAnimPlayAreaSide: 1, wDamageAnimCardID: 1, wDamageAnimAmount: 2}},
-    dict(POISON, wram={hWhoseTurn: b"\xC3", wWhoseTurn: b"\xC3", wTempNonTurnDuelistCardID: b"\xFE", wLoadedAttackAnimation: b"\x00"}, read={wDamageAnimEffectiveness: 1, wDamageAnimPlayAreaLocation: 1, wDamageAnimPlayAreaSide: 1, wDamageAnimCardID: 1, wDamageAnimAmount: 2}),
-    dict(POISON, b=0x7F, c=0xCC, d=0xAA, e=0x10, hl=0x7F00, wram={hWhoseTurn: b"\x80", wWhoseTurn: b"\x7F", wTempNonTurnDuelistCardID: b"\x42", wLoadedAttackAnimation: b"\x00"}, read={wDamageAnimEffectiveness: 1, wDamageAnimPlayAreaLocation: 1, wDamageAnimPlayAreaSide: 1, wDamageAnimCardID: 1, wDamageAnimAmount: 2}),
+    {
+        "a": 0x10,
+        "f": 0x00,
+        "b": 0x02,
+        "c": 0x01,
+        "d": 0x00,
+        "e": 0x20,
+        "hl": 0xC200,
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wWhoseTurn: b"\xc2",
+            wTempNonTurnDuelistCardID: b"\x15",
+            wLoadedAttackAnimation: b"\x00",
+        },
+        "read": {
+            wDamageAnimEffectiveness: 1,
+            wDamageAnimPlayAreaLocation: 1,
+            wDamageAnimPlayAreaSide: 1,
+            wDamageAnimCardID: 1,
+            wDamageAnimAmount: 2,
+        },
+    },
+    {
+        "a": 0x44,
+        "f": 0x80,
+        "b": 0x05,
+        "c": 0x07,
+        "d": 0x01,
+        "e": 0x45,
+        "hl": 0xC300,
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wWhoseTurn: b"\xc3",
+            wTempNonTurnDuelistCardID: b"\xa0",
+            wLoadedAttackAnimation: b"\x00",
+        },
+        "read": {
+            wDamageAnimEffectiveness: 1,
+            wDamageAnimPlayAreaLocation: 1,
+            wDamageAnimPlayAreaSide: 1,
+            wDamageAnimCardID: 1,
+            wDamageAnimAmount: 2,
+        },
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc3",
+            wWhoseTurn: b"\xc3",
+            wTempNonTurnDuelistCardID: b"\xfe",
+            wLoadedAttackAnimation: b"\x00",
+        },
+        read={
+            wDamageAnimEffectiveness: 1,
+            wDamageAnimPlayAreaLocation: 1,
+            wDamageAnimPlayAreaSide: 1,
+            wDamageAnimCardID: 1,
+            wDamageAnimAmount: 2,
+        },
+    ),
+    dict(
+        POISON,
+        b=0x7F,
+        c=0xCC,
+        d=0xAA,
+        e=0x10,
+        hl=0x7F00,
+        wram={
+            hWhoseTurn: b"\x80",
+            wWhoseTurn: b"\x7f",
+            wTempNonTurnDuelistCardID: b"\x42",
+            wLoadedAttackAnimation: b"\x00",
+        },
+        read={
+            wDamageAnimEffectiveness: 1,
+            wDamageAnimPlayAreaLocation: 1,
+            wDamageAnimPlayAreaSide: 1,
+            wDamageAnimCardID: 1,
+            wDamageAnimAmount: 2,
+        },
+    ),
     # core.asm:8389-8397 upgrades ATK_ANIM_HIT to ATK_ANIM_BIG_HIT at 70 damage
     # and then always dispatches, which the cases above cannot see: they seed
     # wLoadedAttackAnimation to 0, so PlayAttackAnimationCommands returns on its
     # own `ret z`. wAnimationsDisabled is set so the deeper guard
     # (animations/core.asm:51) short-circuits the animation itself.
-    {"a": 0x10, "b": 0x02, "c": 0x01, "d": 0x00, "e": 70, "hl": 0xC200,
-     "wram": {hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC2",
-              wTempNonTurnDuelistCardID: b"\x15",
-              wLoadedAttackAnimation: b"\x01", 0xCE7E: b"\x00",
-              0xD421: b"\x01"},
-     "read": {wLoadedAttackAnimation: 1, 0xCE7E: 1},
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0x10, "b": 0x02, "c": 0x01, "d": 0x00, "e": 69, "hl": 0xC200,
-     "wram": {hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC2",
-              wTempNonTurnDuelistCardID: b"\x15",
-              wLoadedAttackAnimation: b"\x01", 0xCE7E: b"\x00",
-              0xD421: b"\x01"},
-     "read": {wLoadedAttackAnimation: 1, 0xCE7E: 1},
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {
+        "a": 0x10,
+        "b": 0x02,
+        "c": 0x01,
+        "d": 0x00,
+        "e": 70,
+        "hl": 0xC200,
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wWhoseTurn: b"\xc2",
+            wTempNonTurnDuelistCardID: b"\x15",
+            wLoadedAttackAnimation: b"\x01",
+            0xCE7E: b"\x00",
+            0xD421: b"\x01",
+        },
+        "read": {wLoadedAttackAnimation: 1, 0xCE7E: 1},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "a": 0x10,
+        "b": 0x02,
+        "c": 0x01,
+        "d": 0x00,
+        "e": 69,
+        "hl": 0xC200,
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wWhoseTurn: b"\xc2",
+            wTempNonTurnDuelistCardID: b"\x15",
+            wLoadedAttackAnimation: b"\x01",
+            0xCE7E: b"\x00",
+            0xD421: b"\x01",
+        },
+        "read": {wLoadedAttackAnimation: 1, 0xCE7E: 1},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
 ]
 # <<< factory PlayAttackAnimation
 
@@ -4411,314 +8945,1071 @@ CASES["PlayAttackAnimation"] = [
 CONTRACT["PlayStatusConditionQueueAnimations"] = {"compare": (), "preserve": ()}
 CASES["PlayStatusConditionQueueAnimations"] = [
     {},
-    {"wram": {wStatusConditionQueueIndex: b"\x01", wStatusConditionQueue: b"\x00\xFF"}, "read": {wStatusConditionQueue + 1: 1}},
+    {
+        "wram": {
+            wStatusConditionQueueIndex: b"\x01",
+            wStatusConditionQueue: b"\x00\xff",
+        },
+        "read": {wStatusConditionQueue + 1: 1},
+    },
     dict(POISON),
 ]
 # <<< factory PlayStatusConditionQueueAnimations
 
 # >>> factory PlayAttackAnimation_DealAttackDamageSimple
-CONTRACT["PlayAttackAnimation_DealAttackDamageSimple"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["PlayAttackAnimation_DealAttackDamageSimple"] = {
+    "compare": ("a", "f"),
+    "preserve": (),
+}
 CASES["PlayAttackAnimation_DealAttackDamageSimple"] = [
-    {"a": 0x10, "f": 0x00, "b": 0x02, "c": 0x01, "d": 0x00, "e": 0x02, "hl": 0xC100, "wram": {0xC100: b"\x0A", 0xCAC2: b"\x00", 0xCCB8: b"\x00", 0xCC05: b"\xC2", 0xCCC4: b"\x15", 0xFF97: b"\xC2"}, "read": {0xC100: 1, 0xCE7F: 2, 0xCE81: 1, 0xCE82: 1, 0xCE83: 1, 0xCE84: 1}},
-    {"a": 0x44, "f": 0x80, "b": 0x05, "c": 0x07, "d": 0x00, "e": 0x0A, "hl": 0xC200, "wram": {0xC200: b"\x05", 0xCAC2: b"\x00", 0xCCB8: b"\x00", 0xCC05: b"\xC3", 0xCCC4: b"\xA0", 0xFF97: b"\xC3"}, "read": {0xC200: 1, 0xCE7F: 2, 0xCE81: 1, 0xCE82: 1, 0xCE83: 1, 0xCE84: 1}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCAC2: b"\x00", 0xCCB8: b"\x00", 0xCC05: b"\xC2", 0xCCC4: b"\xFE", 0xFF97: b"\xC2"}, "read": {0xCE7F: 2, 0xCE81: 1, 0xCE82: 1, 0xCE83: 1, 0xCE84: 1}}
+    {
+        "a": 0x10,
+        "f": 0x00,
+        "b": 0x02,
+        "c": 0x01,
+        "d": 0x00,
+        "e": 0x02,
+        "hl": 0xC100,
+        "wram": {
+            0xC100: b"\x0a",
+            0xCAC2: b"\x00",
+            0xCCB8: b"\x00",
+            0xCC05: b"\xc2",
+            0xCCC4: b"\x15",
+            0xFF97: b"\xc2",
+        },
+        "read": {0xC100: 1, 0xCE7F: 2, 0xCE81: 1, 0xCE82: 1, 0xCE83: 1, 0xCE84: 1},
+    },
+    {
+        "a": 0x44,
+        "f": 0x80,
+        "b": 0x05,
+        "c": 0x07,
+        "d": 0x00,
+        "e": 0x0A,
+        "hl": 0xC200,
+        "wram": {
+            0xC200: b"\x05",
+            0xCAC2: b"\x00",
+            0xCCB8: b"\x00",
+            0xCC05: b"\xc3",
+            0xCCC4: b"\xa0",
+            0xFF97: b"\xc3",
+        },
+        "read": {0xC200: 1, 0xCE7F: 2, 0xCE81: 1, 0xCE82: 1, 0xCE83: 1, 0xCE84: 1},
+    },
+    {
+        "a": 0xAA,
+        "f": 0xF0,
+        "b": 0xBB,
+        "c": 0xCC,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0x1234,
+        "wram": {
+            0xCAC2: b"\x00",
+            0xCCB8: b"\x00",
+            0xCC05: b"\xc2",
+            0xCCC4: b"\xfe",
+            0xFF97: b"\xc2",
+        },
+        "read": {0xCE7F: 2, 0xCE81: 1, 0xCE82: 1, 0xCE83: 1, 0xCE84: 1},
+    },
 ]
 # <<< factory PlayAttackAnimation_DealAttackDamageSimple
 
 # >>> factory DisplayOpponentUsedAttackScreen
 CONTRACT["DisplayOpponentUsedAttackScreen"] = {"compare": (), "preserve": ()}
 CASES["DisplayOpponentUsedAttackScreen"] = [
-    {"wram": {wTempCardID_ccc2: b"\x08", wSelectedAttack: b"\x00", 0xCABB: b"\x00"}, "read": {0xCBC7: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"wram": {wTempCardID_ccc2: b"\x08", wSelectedAttack: b"\x01", 0xCABB: b"\x00"}, "read": {0xCBC7: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={wTempCardID_ccc2: b"\x08", wSelectedAttack: b"\x00", 0xCABB: b"\x00"}, read={0xCBC7: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "wram": {wTempCardID_ccc2: b"\x08", wSelectedAttack: b"\x00", 0xCABB: b"\x00"},
+        "read": {0xCBC7: 1},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "wram": {wTempCardID_ccc2: b"\x08", wSelectedAttack: b"\x01", 0xCABB: b"\x00"},
+        "read": {0xCBC7: 1},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        wram={wTempCardID_ccc2: b"\x08", wSelectedAttack: b"\x00", 0xCABB: b"\x00"},
+        read={0xCBC7: 1},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory DisplayOpponentUsedAttackScreen
 
 # >>> factory DisplayCardList
 CONTRACT["DisplayCardList"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["DisplayCardList"] = [
-    {"keys": DISPLAY_CARD_LIST_KEYS, "wram": dict(DISPLAY_CARD_LIST_SEED),
-     "setup": DISPLAY_CARD_LIST_SETUP, "read": {hCurMenuItem: 1},
-     "expect": {hCurMenuItem: b"\xFF"}, "rom_bank": 1,
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=DISPLAY_CARD_LIST_KEYS, wram=dict(DISPLAY_CARD_LIST_SEED),
-         setup=DISPLAY_CARD_LIST_SETUP, read={hCurMenuItem: 1},
-         expect={hCurMenuItem: b"\xFF"}, rom_bank=1,
-         instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "keys": DISPLAY_CARD_LIST_KEYS,
+        "wram": dict(DISPLAY_CARD_LIST_SEED),
+        "setup": DISPLAY_CARD_LIST_SETUP,
+        "read": {hCurMenuItem: 1},
+        "expect": {hCurMenuItem: b"\xff"},
+        "rom_bank": 1,
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        keys=DISPLAY_CARD_LIST_KEYS,
+        wram=dict(DISPLAY_CARD_LIST_SEED),
+        setup=DISPLAY_CARD_LIST_SETUP,
+        read={hCurMenuItem: 1},
+        expect={hCurMenuItem: b"\xff"},
+        rom_bank=1,
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory DisplayCardList
 
 # >>> factory Func_5542
-CONTRACT["Func_5542"] = {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ()}
+CONTRACT["Func_5542"] = {
+    "compare": ("a", "b", "c", "d", "e", "f", "hl"),
+    "preserve": (),
+}
 CASES["Func_5542"] = [
-    {"c": 0x00, "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00"}, "read": {0xC510: 2}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00"}, "read": {0xC510: 2}},
+    {"c": 0x00, "wram": {0xFF97: b"\xc2", 0xC2ED: b"\x00"}, "read": {0xC510: 2}},
+    {
+        "a": 0xAA,
+        "f": 0xF0,
+        "b": 0xBB,
+        "c": 0xCC,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0x1234,
+        "wram": {0xFF97: b"\xc2", 0xC2ED: b"\x00"},
+        "read": {0xC510: 2},
+    },
 ]
 # <<< factory Func_5542
 
 # >>> factory CheckIfCanDamageDefendingPokemon
-CONTRACT["CheckIfCanDamageDefendingPokemon"] = {"compare": ("a", "f", "d", "e"), "preserve": ()}
+CONTRACT["CheckIfCanDamageDefendingPokemon"] = {
+    "compare": ("a", "f", "d", "e"),
+    "preserve": (),
+}
 CASES["CheckIfCanDamageDefendingPokemon"] = [
-    {"a": 0x00, "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00"},
-     "sram": {0: {}}, "instruction_budget": 4000000, "cycle_budget": 20000000},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00"},
-         sram={0: {}}, instruction_budget=4000000, cycle_budget=20000000),
+    {
+        "a": 0x00,
+        "wram": {
+            0xFF97: b"\xc2",
+            0xFF9D: b"\x00",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            0xCCC6: b"\x00",
+            0xCC23: b"\x00",
+        },
+        "sram": {0: {}},
+        "instruction_budget": 4000000,
+        "cycle_budget": 20000000,
+    },
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xFF9D: b"\x00",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            0xCCC6: b"\x00",
+            0xCC23: b"\x00",
+        },
+        sram={0: {}},
+        instruction_budget=4000000,
+        cycle_budget=20000000,
+    ),
 ]
 # <<< factory CheckIfCanDamageDefendingPokemon
 
 # >>> factory OpenDiscardPileScreen
 CONTRACT["OpenDiscardPileScreen"] = {"compare": ("f",), "preserve": ()}
 CASES["OpenDiscardPileScreen"] = [
-    {"c": 0x00, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, "read": {0xC510: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"c": 0x00, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x02", 0xC27E: b"\x11\x22", 0xCABB: b"\x00", 0xC590: b"\x00", 0xC510: b"\xFF", 0xCBD6: b"\x00"}, "read": {0xCBD6: 1, 0xC510: 3}, "expect": {0xCBD6: b"\x09"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, c=0x00, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, read={0xC510: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+    {
+        "c": 0x00,
+        "keys": [0x00, 0x01],
+        "wram": {0xFF97: b"\xc2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"},
+        "read": {0xC510: 1},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "c": 0x00,
+        "keys": [0x00, 0x02],
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2ED: b"\x02",
+            0xC27E: b"\x11\x22",
+            0xCABB: b"\x00",
+            0xC590: b"\x00",
+            0xC510: b"\xff",
+            0xCBD6: b"\x00",
+        },
+        "read": {0xCBD6: 1, 0xC510: 3},
+        "expect": {0xCBD6: b"\x09"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        c=0x00,
+        keys=[0x00, 0x01],
+        wram={0xFF97: b"\xc2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"},
+        read={0xC510: 1},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory OpenDiscardPileScreen
 
 # >>> factory OpenTurnHolderHandScreen_Simple
 CONTRACT["OpenTurnHolderHandScreen_Simple"] = {"compare": ("f",), "preserve": ()}
 CASES["OpenTurnHolderHandScreen_Simple"] = [
-    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"keys": DISPLAY_CARD_LIST_KEYS, "wram": {**DISPLAY_CARD_LIST_SEED, 0xFF97: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x02", 0xC202: b"\x00"}, "read": {wNoItemSelectionMenuKeys: 1}, "expect": {wNoItemSelectionMenuKeys: b"\x09"}, "setup": DISPLAY_CARD_LIST_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000, "rom_bank": 1},
-    dict(POISON, keys=DISPLAY_CARD_LIST_KEYS, wram={**DISPLAY_CARD_LIST_SEED, 0xFF97: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x02", 0xC202: b"\x00"}, read={wNoItemSelectionMenuKeys: 1}, expect={wNoItemSelectionMenuKeys: b"\x09"}, setup=DISPLAY_CARD_LIST_SETUP, instruction_budget=20000000, cycle_budget=80000000, rom_bank=1),
+    {
+        "keys": [0x00, 0x01],
+        "wram": {0xFF97: b"\xc2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "keys": DISPLAY_CARD_LIST_KEYS,
+        "wram": {
+            **DISPLAY_CARD_LIST_SEED,
+            0xFF97: b"\xc2",
+            0xC2EE: b"\x01",
+            0xC242: b"\x02",
+            0xC202: b"\x00",
+        },
+        "read": {wNoItemSelectionMenuKeys: 1},
+        "expect": {wNoItemSelectionMenuKeys: b"\x09"},
+        "setup": DISPLAY_CARD_LIST_SETUP,
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+        "rom_bank": 1,
+    },
+    dict(
+        POISON,
+        keys=DISPLAY_CARD_LIST_KEYS,
+        wram={
+            **DISPLAY_CARD_LIST_SEED,
+            0xFF97: b"\xc2",
+            0xC2EE: b"\x01",
+            0xC242: b"\x02",
+            0xC202: b"\x00",
+        },
+        read={wNoItemSelectionMenuKeys: 1},
+        expect={wNoItemSelectionMenuKeys: b"\x09"},
+        setup=DISPLAY_CARD_LIST_SETUP,
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+        rom_bank=1,
+    ),
 ]
 # <<< factory OpenTurnHolderHandScreen_Simple
 
 # >>> factory OpenTurnHolderDiscardPileScreen
 CONTRACT["OpenTurnHolderDiscardPileScreen"] = {"compare": ("f",), "preserve": ()}
 CASES["OpenTurnHolderDiscardPileScreen"] = [
-    {"c": 0x00, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, "read": {0xC510: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"c": 0x00, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x02", 0xC27E: b"\x11\x22", 0xCABB: b"\x00", 0xC590: b"\x00", 0xC510: b"\xFF", 0xCBD6: b"\x00"}, "read": {0xCBD6: 1, 0xC510: 3}, "expect": {0xCBD6: b"\x09"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, c=0x00, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, read={0xC510: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+    {
+        "c": 0x00,
+        "keys": [0x00, 0x01],
+        "wram": {0xFF97: b"\xc2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"},
+        "read": {0xC510: 1},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "c": 0x00,
+        "keys": [0x00, 0x02],
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2ED: b"\x02",
+            0xC27E: b"\x11\x22",
+            0xCABB: b"\x00",
+            0xC590: b"\x00",
+            0xC510: b"\xff",
+            0xCBD6: b"\x00",
+        },
+        "read": {0xCBD6: 1, 0xC510: 3},
+        "expect": {0xCBD6: b"\x09"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        c=0x00,
+        keys=[0x00, 0x01],
+        wram={0xFF97: b"\xc2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"},
+        read={0xC510: 1},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory OpenTurnHolderDiscardPileScreen
 
 # >>> factory OpenNonTurnHolderHandScreen_Simple
 CONTRACT["OpenNonTurnHolderHandScreen_Simple"] = {"compare": ("f",), "preserve": ()}
 CASES["OpenNonTurnHolderHandScreen_Simple"] = [
-    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC3EE: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"keys": DISPLAY_CARD_LIST_KEYS, "wram": {**DISPLAY_CARD_LIST_SEED, 0xFF97: b"\xC2", 0xC3EE: b"\x01", 0xC142: b"\x02", 0xC102: b"\x00"}, "read": {wNoItemSelectionMenuKeys: 1}, "expect": {wNoItemSelectionMenuKeys: b"\x09"}, "setup": DISPLAY_CARD_LIST_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000, "rom_bank": 1},
-    dict(POISON, keys=DISPLAY_CARD_LIST_KEYS, wram={**DISPLAY_CARD_LIST_SEED, 0xFF97: b"\xC2", 0xC3EE: b"\x01", 0xC142: b"\x02", 0xC102: b"\x00"}, read={wNoItemSelectionMenuKeys: 1}, expect={wNoItemSelectionMenuKeys: b"\x09"}, setup=DISPLAY_CARD_LIST_SETUP, instruction_budget=20000000, cycle_budget=80000000, rom_bank=1),
+    {
+        "keys": [0x00, 0x01],
+        "wram": {0xFF97: b"\xc2", 0xC3EE: b"\x00", 0xCABB: b"\x00"},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "keys": DISPLAY_CARD_LIST_KEYS,
+        "wram": {
+            **DISPLAY_CARD_LIST_SEED,
+            0xFF97: b"\xc2",
+            0xC3EE: b"\x01",
+            0xC142: b"\x02",
+            0xC102: b"\x00",
+        },
+        "read": {wNoItemSelectionMenuKeys: 1},
+        "expect": {wNoItemSelectionMenuKeys: b"\x09"},
+        "setup": DISPLAY_CARD_LIST_SETUP,
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+        "rom_bank": 1,
+    },
+    dict(
+        POISON,
+        keys=DISPLAY_CARD_LIST_KEYS,
+        wram={
+            **DISPLAY_CARD_LIST_SEED,
+            0xFF97: b"\xc2",
+            0xC3EE: b"\x01",
+            0xC142: b"\x02",
+            0xC102: b"\x00",
+        },
+        read={wNoItemSelectionMenuKeys: 1},
+        expect={wNoItemSelectionMenuKeys: b"\x09"},
+        setup=DISPLAY_CARD_LIST_SETUP,
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+        rom_bank=1,
+    ),
 ]
 # <<< factory OpenNonTurnHolderHandScreen_Simple
 
 # >>> factory OpenNonTurnHolderDiscardPileScreen
 CONTRACT["OpenNonTurnHolderDiscardPileScreen"] = {"compare": ("f",), "preserve": ()}
 CASES["OpenNonTurnHolderDiscardPileScreen"] = [
-    {"c": 0x00, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, "read": {0xC510: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"c": 0x00, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x02", 0xC27E: b"\x11\x22", 0xCABB: b"\x00", 0xC590: b"\x00", 0xC510: b"\xFF", 0xCBD6: b"\x00"}, "read": {0xCBD6: 1, 0xC510: 3}, "expect": {0xCBD6: b"\x09"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, c=0x00, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, read={0xC510: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+    {
+        "c": 0x00,
+        "keys": [0x00, 0x01],
+        "wram": {0xFF97: b"\xc2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"},
+        "read": {0xC510: 1},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "c": 0x00,
+        "keys": [0x00, 0x02],
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2ED: b"\x02",
+            0xC27E: b"\x11\x22",
+            0xCABB: b"\x00",
+            0xC590: b"\x00",
+            0xC510: b"\xff",
+            0xCBD6: b"\x00",
+        },
+        "read": {0xCBD6: 1, 0xC510: 3},
+        "expect": {0xCBD6: b"\x09"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        c=0x00,
+        keys=[0x00, 0x01],
+        wram={0xFF97: b"\xc2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"},
+        read={0xC510: 1},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory OpenNonTurnHolderDiscardPileScreen
 
 # >>> factory DisplayPlaceInitialPokemonCardsScreen
-CONTRACT["DisplayPlaceInitialPokemonCardsScreen"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["DisplayPlaceInitialPokemonCardsScreen"] = {
+    "compare": ("a", "f"),
+    "preserve": (),
+}
 CASES["DisplayPlaceInitialPokemonCardsScreen"] = [
-    {"a": 0x01, "hl": 0x0071,
-     "wram": {**DISPLAY_CARD_LIST_SEED, hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"},
-     "keys": DISPLAY_CARD_LIST_KEYS, "setup": DISPLAY_CARD_LIST_SETUP,
-     "read": {0xCBFD: 1, wCardListInfoBoxText: 2, 0xCBDE: 1, hCurMenuItem: 1},
-     "rom_bank": 1, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0x02, "hl": 0x0071,
-     "wram": {**DISPLAY_CARD_LIST_SEED, hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"},
-     "keys": DISPLAY_CARD_LIST_KEYS, "setup": DISPLAY_CARD_LIST_SETUP,
-     "read": {0xCBFD: 1, wCardListInfoBoxText: 2, 0xCBDE: 1, hCurMenuItem: 1},
-     "rom_bank": 1, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, hl=0x0071,
-         wram={**DISPLAY_CARD_LIST_SEED, hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"},
-         keys=DISPLAY_CARD_LIST_KEYS, setup=DISPLAY_CARD_LIST_SETUP,
-         read={0xCBFD: 1, wCardListInfoBoxText: 2, 0xCBDE: 1, hCurMenuItem: 1},
-         rom_bank=1, instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "a": 0x01,
+        "hl": 0x0071,
+        "wram": {**DISPLAY_CARD_LIST_SEED, hWhoseTurn: b"\xc2", 0xC2EE: b"\x00"},
+        "keys": DISPLAY_CARD_LIST_KEYS,
+        "setup": DISPLAY_CARD_LIST_SETUP,
+        "read": {0xCBFD: 1, wCardListInfoBoxText: 2, 0xCBDE: 1, hCurMenuItem: 1},
+        "rom_bank": 1,
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "a": 0x02,
+        "hl": 0x0071,
+        "wram": {**DISPLAY_CARD_LIST_SEED, hWhoseTurn: b"\xc2", 0xC2EE: b"\x00"},
+        "keys": DISPLAY_CARD_LIST_KEYS,
+        "setup": DISPLAY_CARD_LIST_SETUP,
+        "read": {0xCBFD: 1, wCardListInfoBoxText: 2, 0xCBDE: 1, hCurMenuItem: 1},
+        "rom_bank": 1,
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        hl=0x0071,
+        wram={**DISPLAY_CARD_LIST_SEED, hWhoseTurn: b"\xc2", 0xC2EE: b"\x00"},
+        keys=DISPLAY_CARD_LIST_KEYS,
+        setup=DISPLAY_CARD_LIST_SETUP,
+        read={0xCBFD: 1, wCardListInfoBoxText: 2, 0xCBDE: 1, hCurMenuItem: 1},
+        rom_bank=1,
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
     # core.asm:3063-3081: the bench-mode B exit (`scf / jr .done`) shares
     # .done with the selection exit, so a list sorted by SELECT
     # (wSortCardListByID set) sorts the hand on the way out too. Two hand
     # cards ($C2EE) whose deck indexes 1, 0 map to ids 5, 3 ($C400): SELECT,
     # then B, leaves the hand as 0, 1 -- the higher id at the newest slot.
-    dict(POISON, a=0x01, hl=0x0071,
-         wram={**DISPLAY_CARD_LIST_SEED, hWhoseTurn: b"\xC2", 0xC2EE: b"\x02",
-               0xC242: b"\x01\x00", 0xC400: b"\x05\x03"},
-         keys=[0x00, 0x04, 0x02], setup=DISPLAY_CARD_LIST_SETUP,
-         read={0xC242: 2, wSortCardListByID: 1, hCurMenuItem: 1},
-         rom_bank=1, instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        POISON,
+        a=0x01,
+        hl=0x0071,
+        wram={
+            **DISPLAY_CARD_LIST_SEED,
+            hWhoseTurn: b"\xc2",
+            0xC2EE: b"\x02",
+            0xC242: b"\x01\x00",
+            0xC400: b"\x05\x03",
+        },
+        keys=[0x00, 0x04, 0x02],
+        setup=DISPLAY_CARD_LIST_SETUP,
+        read={0xC242: 2, wSortCardListByID: 1, hCurMenuItem: 1},
+        rom_bank=1,
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory DisplayPlaceInitialPokemonCardsScreen
 
 # >>> factory CheckDamageToMrMime
 CONTRACT["CheckDamageToMrMime"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["CheckDamageToMrMime"] = [
-    {"a": 0x42, "f": 0x00, "wram": {0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC480: b"\x9A"}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC480: b"\x00"}},
+    {"a": 0x42, "f": 0x00, "wram": {0xFF97: b"\xc2", 0xC3BB: b"\x00", 0xC480: b"\x9a"}},
+    {
+        "a": 0xAA,
+        "f": 0xF0,
+        "b": 0xBB,
+        "c": 0xCC,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0x1234,
+        "wram": {0xFF97: b"\xc2", 0xC3BB: b"\x00", 0xC480: b"\x00"},
+    },
 ]
 # <<< factory CheckDamageToMrMime
 
 # >>> factory DisplayDrawNCardsScreen
 CONTRACT["DisplayDrawNCardsScreen"] = {"compare": (), "preserve": ()}
 CASES["DisplayDrawNCardsScreen"] = [
-    {"a": 0x00, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xCAC2: b"\x00", 0xCABB: b"\x00"}, "read": {wDuelDisplayedScreen: 1, wNumCardsBeingDrawn: 1, wNumCardsTryingToDraw: 1}, "expect": {wDuelDisplayedScreen: b"\x07", wNumCardsBeingDrawn: b"\x00", wNumCardsTryingToDraw: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0x01, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xCAC2: b"\x07", 0xCABB: b"\x00"}, "read": {wDuelDisplayedScreen: 1, wNumCardsBeingDrawn: 1, wNumCardsTryingToDraw: 1}, "expect": {wDuelDisplayedScreen: b"\x07", wNumCardsBeingDrawn: b"\x01", wNumCardsTryingToDraw: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0x05, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3B", 0xCAC2: b"\x09", 0xCABB: b"\x00"}, "read": {wDuelDisplayedScreen: 1, wNumCardsBeingDrawn: 1, wNumCardsTryingToDraw: 1}, "expect": {wDuelDisplayedScreen: b"\x07", wNumCardsBeingDrawn: b"\x01", wNumCardsTryingToDraw: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, a=0x05, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xCAC2: b"\x00", 0xCABB: b"\x00"}, read={wDuelDisplayedScreen: 1, wNumCardsBeingDrawn: 1, wNumCardsTryingToDraw: 1}, expect={wDuelDisplayedScreen: b"\x07", wNumCardsBeingDrawn: b"\x00", wNumCardsTryingToDraw: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "a": 0x00,
+        "keys": [0x00, 0x01],
+        "wram": {0xFF97: b"\xc2", 0xC2BA: b"\x00", 0xCAC2: b"\x00", 0xCABB: b"\x00"},
+        "read": {
+            wDuelDisplayedScreen: 1,
+            wNumCardsBeingDrawn: 1,
+            wNumCardsTryingToDraw: 1,
+        },
+        "expect": {
+            wDuelDisplayedScreen: b"\x07",
+            wNumCardsBeingDrawn: b"\x00",
+            wNumCardsTryingToDraw: b"\x00",
+        },
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "a": 0x01,
+        "keys": [0x00, 0x01],
+        "wram": {0xFF97: b"\xc2", 0xC2BA: b"\x00", 0xCAC2: b"\x07", 0xCABB: b"\x00"},
+        "read": {
+            wDuelDisplayedScreen: 1,
+            wNumCardsBeingDrawn: 1,
+            wNumCardsTryingToDraw: 1,
+        },
+        "expect": {
+            wDuelDisplayedScreen: b"\x07",
+            wNumCardsBeingDrawn: b"\x01",
+            wNumCardsTryingToDraw: b"\x01",
+        },
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "a": 0x05,
+        "keys": [0x00, 0x01],
+        "wram": {0xFF97: b"\xc2", 0xC2BA: b"\x3b", 0xCAC2: b"\x09", 0xCABB: b"\x00"},
+        "read": {
+            wDuelDisplayedScreen: 1,
+            wNumCardsBeingDrawn: 1,
+            wNumCardsTryingToDraw: 1,
+        },
+        "expect": {
+            wDuelDisplayedScreen: b"\x07",
+            wNumCardsBeingDrawn: b"\x01",
+            wNumCardsTryingToDraw: b"\x01",
+        },
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        a=0x05,
+        keys=[0x00, 0x01],
+        wram={0xFF97: b"\xc2", 0xC2BA: b"\x00", 0xCAC2: b"\x00", 0xCABB: b"\x00"},
+        read={
+            wDuelDisplayedScreen: 1,
+            wNumCardsBeingDrawn: 1,
+            wNumCardsTryingToDraw: 1,
+        },
+        expect={
+            wDuelDisplayedScreen: b"\x07",
+            wNumCardsBeingDrawn: b"\x00",
+            wNumCardsTryingToDraw: b"\x00",
+        },
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory DisplayDrawNCardsScreen
 
 # >>> factory PlayShuffleAndDrawCardsAnimation
-CONTRACT["PlayShuffleAndDrawCardsAnimation"] = {"compare": ("b", "c"), "preserve": ("b", "c")}
+CONTRACT["PlayShuffleAndDrawCardsAnimation"] = {
+    "compare": ("b", "c"),
+    "preserve": ("b", "c"),
+}
 CASES["PlayShuffleAndDrawCardsAnimation"] = [
-    {"b": 0x51, "c": 0x56, "d": 0x00, "e": 0x02, "hl": 0x0001,
-     "keys": 0x02,
-     "wram": dict(PSDCA_SEED),
-     "read": dict(PSDCA_READ),
-     "setup": PSDCA_SETUP,
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0xAA, "f": 0xF0, "b": 0x53, "c": 0x55, "d": 0xDD, "e": 0xEE, "hl": 0x0001,
-     "keys": 0x02,
-     "wram": dict(PSDCA_SEED),
-     "read": dict(PSDCA_READ),
-     "setup": PSDCA_SETUP,
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {
+        "b": 0x51,
+        "c": 0x56,
+        "d": 0x00,
+        "e": 0x02,
+        "hl": 0x0001,
+        "keys": 0x02,
+        "wram": dict(PSDCA_SEED),
+        "read": dict(PSDCA_READ),
+        "setup": PSDCA_SETUP,
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "a": 0xAA,
+        "f": 0xF0,
+        "b": 0x53,
+        "c": 0x55,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0x0001,
+        "keys": 0x02,
+        "wram": dict(PSDCA_SEED),
+        "read": dict(PSDCA_READ),
+        "setup": PSDCA_SETUP,
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
 ]
 # <<< factory PlayShuffleAndDrawCardsAnimation
 
 # >>> factory DisplayDrawOneCardScreen
 CONTRACT["DisplayDrawOneCardScreen"] = {"compare": (), "preserve": ()}
 CASES["DisplayDrawOneCardScreen"] = [
-    {"a": 0x00, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xCAC2: b"\x00", 0xCABB: b"\x00"}, "read": {0xCAC2: 1, 0xCBE9: 1, 0xCBE8: 1}, "expect": {0xCAC2: b"\x07", 0xCBE9: b"\x01", 0xCBE8: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0x01, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xCAC2: b"\x07", 0xCABB: b"\x00"}, "read": {0xCAC2: 1, 0xCBE9: 1, 0xCBE8: 1}, "expect": {0xCAC2: b"\x07", 0xCBE9: b"\x01", 0xCBE8: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0x05, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3B", 0xCAC2: b"\x09", 0xCABB: b"\x00"}, "read": {0xCAC2: 1, 0xCBE9: 1, 0xCBE8: 1}, "expect": {0xCAC2: b"\x07", 0xCBE9: b"\x01", 0xCBE8: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xCAC2: b"\x00", 0xCABB: b"\x00"}, "read": {0xCAC2: 1, 0xCBE9: 1, 0xCBE8: 1}, "expect": {0xCAC2: b"\x07", 0xCBE9: b"\x01", 0xCBE8: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000}
+    {
+        "a": 0x00,
+        "keys": [0x00, 0x01],
+        "wram": {0xFF97: b"\xc2", 0xC2BA: b"\x00", 0xCAC2: b"\x00", 0xCABB: b"\x00"},
+        "read": {0xCAC2: 1, 0xCBE9: 1, 0xCBE8: 1},
+        "expect": {0xCAC2: b"\x07", 0xCBE9: b"\x01", 0xCBE8: b"\x01"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "a": 0x01,
+        "keys": [0x00, 0x01],
+        "wram": {0xFF97: b"\xc2", 0xC2BA: b"\x00", 0xCAC2: b"\x07", 0xCABB: b"\x00"},
+        "read": {0xCAC2: 1, 0xCBE9: 1, 0xCBE8: 1},
+        "expect": {0xCAC2: b"\x07", 0xCBE9: b"\x01", 0xCBE8: b"\x01"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "a": 0x05,
+        "keys": [0x00, 0x01],
+        "wram": {0xFF97: b"\xc2", 0xC2BA: b"\x3b", 0xCAC2: b"\x09", 0xCABB: b"\x00"},
+        "read": {0xCAC2: 1, 0xCBE9: 1, 0xCBE8: 1},
+        "expect": {0xCAC2: b"\x07", 0xCBE9: b"\x01", 0xCBE8: b"\x01"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "a": 0xAA,
+        "f": 0xF0,
+        "b": 0xBB,
+        "c": 0xCC,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0x1234,
+        "keys": [0x00, 0x01],
+        "wram": {0xFF97: b"\xc2", 0xC2BA: b"\x00", 0xCAC2: b"\x00", 0xCABB: b"\x00"},
+        "read": {0xCAC2: 1, 0xCBE9: 1, 0xCBE8: 1},
+        "expect": {0xCAC2: b"\x07", 0xCBE9: b"\x01", 0xCBE8: b"\x01"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
 ]
 # <<< factory DisplayDrawOneCardScreen
 
 # >>> factory PlayShuffleAndDrawCardsAnimation_TurnDuelist
-CONTRACT["PlayShuffleAndDrawCardsAnimation_TurnDuelist"] = {"compare": (), "preserve": ()}
+CONTRACT["PlayShuffleAndDrawCardsAnimation_TurnDuelist"] = {
+    "compare": (),
+    "preserve": (),
+}
 CASES["PlayShuffleAndDrawCardsAnimation_TurnDuelist"] = [
-    {"wram": {**_ANIM_SAFE, 0xFF97: b"\xC2", 0xCABB: b"\x00"}, "keys": 0x01, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCAC2: 1, 0xCBE9: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={**_ANIM_SAFE, 0xFF97: b"\xC2", 0xCABB: b"\x00"}, keys=0x01, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xCAC2: 1, 0xCBE9: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "wram": {**_ANIM_SAFE, 0xFF97: b"\xc2", 0xCABB: b"\x00"},
+        "keys": 0x01,
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xCAC2: 1, 0xCBE9: 1},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        wram={**_ANIM_SAFE, 0xFF97: b"\xc2", 0xCABB: b"\x00"},
+        keys=0x01,
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xCAC2: 1, 0xCBE9: 1},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory PlayShuffleAndDrawCardsAnimation_TurnDuelist
 
 # >>> factory OppAction_ExecuteTrainerCardEffectCommands
 CONTRACT["OppAction_ExecuteTrainerCardEffectCommands"] = {"compare": (), "preserve": ()}
 CASES["OppAction_ExecuteTrainerCardEffectCommands"] = [
-    {"b": 0x12, "d": 0x34, "e": 0x56,
-     "wram": {0xFF97: b"\xC2", 0xFF9F: b"\x03", 0xC203: b"\x01",
-              0xC2EE: b"\x01", 0xC242: b"\x03", 0xC2ED: b"\x00",
-              0xC2F1: b"\x00", 0xCAC2: b"\x01", 0xCCB2: b"\x00\xC1",
-              0xC100: b"\x00"},
-     "read": {0xC203: 1, 0xC2EE: 1, 0xC2ED: 1, 0xC27E: 1, 0xCAC2: 1}},
-    dict(POISON, b=0x12, d=0x34, e=0x56,
-         wram={0xFF97: b"\xC3", 0xFF9F: b"\x07", 0xC307: b"\x01",
-               0xC3EE: b"\x01", 0xC342: b"\x07", 0xC3ED: b"\x00",
-               0xC3F1: b"\x00", 0xCAC2: b"\x01", 0xCCB2: b"\x00\xC1",
-               0xC100: b"\x00"},
-         read={0xC307: 1, 0xC3EE: 1, 0xC3ED: 1, 0xC37E: 1, 0xCAC2: 1}),
-    {"b": 0x12, "d": 0x34, "e": 0x56,
-     "wram": {0xFF80: b"\x01", 0xFF97: b"\xC2", 0xFF9F: b"\x03",
-              0xC203: b"\x01", 0xC2EE: b"\x01", 0xC242: b"\x03",
-              0xC2ED: b"\x00", 0xC2F1: b"\x00", 0xCAC2: b"\x01",
-              0xC0E8: b"\x06\x9C\x40\x00", 0xCCB2: b"\xE8\xC0",
-              0xCCED: b"\x00", 0xCE22: b"\x0B"},
-     "read": {0xC203: 1, 0xC2ED: 1, 0xC27E: 1, 0xCCED: 1}},
-    {"b": 0x12, "d": 0x34, "e": 0x56,
-     "wram": {0xFF80: b"\x01", 0xFF97: b"\xC2", 0xFF9F: b"\x03",
-              0xC203: b"\x01", 0xC2EE: b"\x01", 0xC242: b"\x03",
-              0xC2ED: b"\x00", 0xC2F1: b"\x00", 0xCAC2: b"\x01",
-              0xC0E8: b"\x03\xA2\x40\x00", 0xCCB2: b"\xE8\xC0",
-              0xCCED: b"\x00", 0xCE22: b"\x0B"},
-     "read": {0xC203: 1, 0xC2ED: 1, 0xC27E: 1, 0xCCED: 1}},
+    {
+        "b": 0x12,
+        "d": 0x34,
+        "e": 0x56,
+        "wram": {
+            0xFF97: b"\xc2",
+            0xFF9F: b"\x03",
+            0xC203: b"\x01",
+            0xC2EE: b"\x01",
+            0xC242: b"\x03",
+            0xC2ED: b"\x00",
+            0xC2F1: b"\x00",
+            0xCAC2: b"\x01",
+            0xCCB2: b"\x00\xc1",
+            0xC100: b"\x00",
+        },
+        "read": {0xC203: 1, 0xC2EE: 1, 0xC2ED: 1, 0xC27E: 1, 0xCAC2: 1},
+    },
+    dict(
+        POISON,
+        b=0x12,
+        d=0x34,
+        e=0x56,
+        wram={
+            0xFF97: b"\xc3",
+            0xFF9F: b"\x07",
+            0xC307: b"\x01",
+            0xC3EE: b"\x01",
+            0xC342: b"\x07",
+            0xC3ED: b"\x00",
+            0xC3F1: b"\x00",
+            0xCAC2: b"\x01",
+            0xCCB2: b"\x00\xc1",
+            0xC100: b"\x00",
+        },
+        read={0xC307: 1, 0xC3EE: 1, 0xC3ED: 1, 0xC37E: 1, 0xCAC2: 1},
+    ),
+    {
+        "b": 0x12,
+        "d": 0x34,
+        "e": 0x56,
+        "wram": {
+            0xFF80: b"\x01",
+            0xFF97: b"\xc2",
+            0xFF9F: b"\x03",
+            0xC203: b"\x01",
+            0xC2EE: b"\x01",
+            0xC242: b"\x03",
+            0xC2ED: b"\x00",
+            0xC2F1: b"\x00",
+            0xCAC2: b"\x01",
+            0xC0E8: b"\x06\x9c\x40\x00",
+            0xCCB2: b"\xe8\xc0",
+            0xCCED: b"\x00",
+            0xCE22: b"\x0b",
+        },
+        "read": {0xC203: 1, 0xC2ED: 1, 0xC27E: 1, 0xCCED: 1},
+    },
+    {
+        "b": 0x12,
+        "d": 0x34,
+        "e": 0x56,
+        "wram": {
+            0xFF80: b"\x01",
+            0xFF97: b"\xc2",
+            0xFF9F: b"\x03",
+            0xC203: b"\x01",
+            0xC2EE: b"\x01",
+            0xC242: b"\x03",
+            0xC2ED: b"\x00",
+            0xC2F1: b"\x00",
+            0xCAC2: b"\x01",
+            0xC0E8: b"\x03\xa2\x40\x00",
+            0xCCB2: b"\xe8\xc0",
+            0xCCED: b"\x00",
+            0xCE22: b"\x0b",
+        },
+        "read": {0xC203: 1, 0xC2ED: 1, 0xC27E: 1, 0xCCED: 1},
+    },
 ]
 # <<< factory OppAction_ExecuteTrainerCardEffectCommands
 
 # >>> factory OppAction_UseMetronomeAttack
 CONTRACT["OppAction_UseMetronomeAttack"] = {"compare": (), "preserve": ()}
 CASES["OppAction_UseMetronomeAttack"] = [
-    {"wram": {0xFF97: b"\xC2", 0xCAC2: b"\x01", 0xC2F0: b"\x81",
-              0xC2F1: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08",
-              0xC3F0: b"\x04", 0xC3BB: b"\x01", 0xC481: b"\x09", 0xCB75: b"\x00",
-              0xCBA2: b"\x08", 0xCBA3: b"\x00",
-              0xCBA5: b"\x00\x5A\x34\x12\x00\x01\x2A\xB1",
-              0xC3F2: b"\xFF" * 9, 0xCCCD: b"\xFF", 0xCCE6: b"\xFF",
-              0xCCEC: b"\xFF", 0xCCED: b"\xFF", 0xCCEF: b"\xFF",
-              0xCCF1: b"\xFF"},
-     "read": {0xCC10: 3, 0xCCC2: 4, 0xCCC6: 1, 0xCCA6: 19,
-              0xCCB9: 2, 0xCCBF: 2, 0xCCC7: 1, 0xCCF0: 1,
-              0xFF9F: 1, 0xCBA2: 2, 0xCBED: 8, 0xC3F2: 9,
-              0xCCCD: 1, 0xCCE6: 1, 0xCCEC: 1, 0xCCED: 1,
-              0xCCEF: 1, 0xCCF1: 1},
-     "instruction_budget": 5000000, "cycle_budget": 20000000},
-    dict(POISON,
-         wram={0xFF97: b"\xC3", 0xCAC2: b"\x01", 0xC3F0: b"\x00",
-               0xC3F1: b"\x00", 0xC3BB: b"\x01", 0xC481: b"\x08",
-               0xC2F0: b"\x02", 0xC2BB: b"\x02", 0xC402: b"\x09", 0xCCAA: b"\x35\x00",
-               0xCB75: b"\x00", 0xCBA2: b"\x08", 0xCBA3: b"\x00",
-               0xCBA5: b"\xF0\xA5\x78\x56\x01\x02\x3B\xB2",
-               0xC2F2: b"\xFF" * 9, 0xC590: b"\x00",
-               0xCE3F: b"\xFF" * 4, 0xCCCD: b"\xFF", 0xCCE6: b"\xFF",
-               0xCCEC: b"\xFF", 0xCCED: b"\xFF", 0xCCEF: b"\xFF",
-               0xCCF1: b"\xFF"},
-         keys=[0x00, 0x01],
-         setup=[{"fn": "SetupRegisters"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xCC10: 3, 0xCCC2: 4, 0xCCC6: 1, 0xCCA6: 19,
-               0xCCB9: 2, 0xCCBF: 2, 0xCCC7: 1, 0xCCF0: 1,
-               0xFF9F: 1, 0xCBA2: 2, 0xCBED: 8, 0xC2F2: 9,
-               0xCCCD: 1, 0xCCE6: 1, 0xCCEC: 1, 0xCCED: 1,
-               0xCCEF: 1, 0xCCF1: 1, 0xC590: 64, 0xCE3F: 4},
-         vread={0: {0x9980: 1, 0x9A32: 1}},
-         instruction_budget=5000000, cycle_budget=20000000),
+    {
+        "wram": {
+            0xFF97: b"\xc2",
+            0xCAC2: b"\x01",
+            0xC2F0: b"\x81",
+            0xC2F1: b"\x00",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            0xC3F0: b"\x04",
+            0xC3BB: b"\x01",
+            0xC481: b"\x09",
+            0xCB75: b"\x00",
+            0xCBA2: b"\x08",
+            0xCBA3: b"\x00",
+            0xCBA5: b"\x00\x5a\x34\x12\x00\x01\x2a\xb1",
+            0xC3F2: b"\xff" * 9,
+            0xCCCD: b"\xff",
+            0xCCE6: b"\xff",
+            0xCCEC: b"\xff",
+            0xCCED: b"\xff",
+            0xCCEF: b"\xff",
+            0xCCF1: b"\xff",
+        },
+        "read": {
+            0xCC10: 3,
+            0xCCC2: 4,
+            0xCCC6: 1,
+            0xCCA6: 19,
+            0xCCB9: 2,
+            0xCCBF: 2,
+            0xCCC7: 1,
+            0xCCF0: 1,
+            0xFF9F: 1,
+            0xCBA2: 2,
+            0xCBED: 8,
+            0xC3F2: 9,
+            0xCCCD: 1,
+            0xCCE6: 1,
+            0xCCEC: 1,
+            0xCCED: 1,
+            0xCCEF: 1,
+            0xCCF1: 1,
+        },
+        "instruction_budget": 5000000,
+        "cycle_budget": 20000000,
+    },
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc3",
+            0xCAC2: b"\x01",
+            0xC3F0: b"\x00",
+            0xC3F1: b"\x00",
+            0xC3BB: b"\x01",
+            0xC481: b"\x08",
+            0xC2F0: b"\x02",
+            0xC2BB: b"\x02",
+            0xC402: b"\x09",
+            0xCCAA: b"\x35\x00",
+            0xCB75: b"\x00",
+            0xCBA2: b"\x08",
+            0xCBA3: b"\x00",
+            0xCBA5: b"\xf0\xa5\x78\x56\x01\x02\x3b\xb2",
+            0xC2F2: b"\xff" * 9,
+            0xC590: b"\x00",
+            0xCE3F: b"\xff" * 4,
+            0xCCCD: b"\xff",
+            0xCCE6: b"\xff",
+            0xCCEC: b"\xff",
+            0xCCED: b"\xff",
+            0xCCEF: b"\xff",
+            0xCCF1: b"\xff",
+        },
+        keys=[0x00, 0x01],
+        setup=[{"fn": "SetupRegisters"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={
+            0xCC10: 3,
+            0xCCC2: 4,
+            0xCCC6: 1,
+            0xCCA6: 19,
+            0xCCB9: 2,
+            0xCCBF: 2,
+            0xCCC7: 1,
+            0xCCF0: 1,
+            0xFF9F: 1,
+            0xCBA2: 2,
+            0xCBED: 8,
+            0xC2F2: 9,
+            0xCCCD: 1,
+            0xCCE6: 1,
+            0xCCEC: 1,
+            0xCCED: 1,
+            0xCCEF: 1,
+            0xCCF1: 1,
+            0xC590: 64,
+            0xCE3F: 4,
+        },
+        vread={0: {0x9980: 1, 0x9A32: 1}},
+        instruction_budget=5000000,
+        cycle_budget=20000000,
+    ),
 ]
 # <<< factory OppAction_UseMetronomeAttack
 
 # >>> factory LookForEnergyNeededForAttackInHand
-CONTRACT["LookForEnergyNeededForAttackInHand"] = {"compare": ("a", "f", "d"), "preserve": ()}
+CONTRACT["LookForEnergyNeededForAttackInHand"] = {
+    "compare": ("a", "f", "d"),
+    "preserve": (),
+}
 CASES["LookForEnergyNeededForAttackInHand"] = [
-    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08",
-              0xCCC6: b"\x00", 0xCC23: b"\x00", 0xC200: b"\x00" * 0x3C}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08",
-                        0xCCC6: b"\x00", 0xCC23: b"\x00", 0xC200: b"\x00" * 0x3C}),
+    {
+        "wram": {
+            0xFF97: b"\xc2",
+            0xFF9D: b"\x00",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            0xCCC6: b"\x00",
+            0xCC23: b"\x00",
+            0xC200: b"\x00" * 0x3C,
+        }
+    },
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xFF9D: b"\x00",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            0xCCC6: b"\x00",
+            0xCC23: b"\x00",
+            0xC200: b"\x00" * 0x3C,
+        },
+    ),
 ]
 # <<< factory LookForEnergyNeededForAttackInHand
 
 # >>> factory PlayShuffleAndDrawCardsAnimation_BothDuelists
-CONTRACT["PlayShuffleAndDrawCardsAnimation_BothDuelists"] = {"compare": ("b", "c"), "preserve": ()}
+CONTRACT["PlayShuffleAndDrawCardsAnimation_BothDuelists"] = {
+    "compare": ("b", "c"),
+    "preserve": (),
+}
 CASES["PlayShuffleAndDrawCardsAnimation_BothDuelists"] = [
-    {"b": 0x51, "c": 0x56, "d": 0x00, "e": 0x02, "hl": 0x0001,
-     "keys": 0x02, "wram": dict(PSDCA_SEED), "read": dict(PSDCA_READ),
-     "setup": PSDCA_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
-     "keys": 0x02, "wram": dict(PSDCA_SEED), "read": dict(PSDCA_READ),
-     "setup": PSDCA_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"b": 0x51, "c": 0x56, "d": 0x00, "e": 0x02, "hl": 0x0001,
-     "keys": [0x00, 0x01], "wram": {**PSDCA_SEED, PSDCA_wDuelType: b"\x80"},
-     "read": dict(PSDCA_READ), "setup": PSDCA_SETUP,
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {
+        "b": 0x51,
+        "c": 0x56,
+        "d": 0x00,
+        "e": 0x02,
+        "hl": 0x0001,
+        "keys": 0x02,
+        "wram": dict(PSDCA_SEED),
+        "read": dict(PSDCA_READ),
+        "setup": PSDCA_SETUP,
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "a": 0xAA,
+        "f": 0xF0,
+        "b": 0xBB,
+        "c": 0xCC,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0x1234,
+        "keys": 0x02,
+        "wram": dict(PSDCA_SEED),
+        "read": dict(PSDCA_READ),
+        "setup": PSDCA_SETUP,
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "b": 0x51,
+        "c": 0x56,
+        "d": 0x00,
+        "e": 0x02,
+        "hl": 0x0001,
+        "keys": [0x00, 0x01],
+        "wram": {**PSDCA_SEED, PSDCA_wDuelType: b"\x80"},
+        "read": dict(PSDCA_READ),
+        "setup": PSDCA_SETUP,
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
 ]
 # <<< factory PlayShuffleAndDrawCardsAnimation_BothDuelists
 
 # >>> factory CheckIfDefendingPokemonCanKnockOut
-CONTRACT["CheckIfDefendingPokemonCanKnockOut"] = {"compare": ("a", "f", "d"), "preserve": ()}
+CONTRACT["CheckIfDefendingPokemonCanKnockOut"] = {
+    "compare": ("a", "f", "d"),
+    "preserve": (),
+}
 CASES["CheckIfDefendingPokemonCanKnockOut"] = [
-    {"wram": {0xFF97: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x01", 0xC2BB: b"\x00", 0xC400: b"\x08", wSelectedAttack: b"\x00", 0xCC23: b"\x00"},
-     "sram": {0: {}}, "read": {wAIFirstAttackDamage: 1, wAISecondAttackDamage: 1, hTempPlayAreaLocation_ff9d: 1},
-     "instruction_budget": 8000000, "cycle_budget": 40000000},
-    dict(POISON, wram={0xFF97: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x03", 0xC2BB: b"\x00", 0xC400: b"\x08", wSelectedAttack: b"\x00", 0xCC23: b"\x00"},
-         sram={0: {}}, read={wAIFirstAttackDamage: 1, wAISecondAttackDamage: 1, hTempPlayAreaLocation_ff9d: 1},
-         instruction_budget=8000000, cycle_budget=40000000),
-    {"a": 0x12, "b": 0x34, "c": 0x56, "d": 0x78, "e": 0x9A, "hl": 0xC100,
-     "wram": {0xFF97: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x5A", 0xC2BB: b"\x00", 0xC400: b"\x08", wSelectedAttack: b"\x00", 0xCC23: b"\x00"},
-     "sram": {0: {}}, "read": {wAIFirstAttackDamage: 1, wAISecondAttackDamage: 1, hTempPlayAreaLocation_ff9d: 1},
-     "instruction_budget": 8000000, "cycle_budget": 40000000},
-    dict(POISON, wram={0xFF97: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x01", 0xC2BB: b"\x00", 0xC400: b"\x08", wSelectedAttack: b"\x01", 0xCC23: b"\x00"},
-         sram={0: {}}, read={wAIFirstAttackDamage: 1, wAISecondAttackDamage: 1, hTempPlayAreaLocation_ff9d: 1},
-         instruction_budget=8000000, cycle_budget=40000000),
+    {
+        "wram": {
+            0xFF97: b"\xc2",
+            hTempPlayAreaLocation_ff9d: b"\x01",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            wSelectedAttack: b"\x00",
+            0xCC23: b"\x00",
+        },
+        "sram": {0: {}},
+        "read": {
+            wAIFirstAttackDamage: 1,
+            wAISecondAttackDamage: 1,
+            hTempPlayAreaLocation_ff9d: 1,
+        },
+        "instruction_budget": 8000000,
+        "cycle_budget": 40000000,
+    },
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            hTempPlayAreaLocation_ff9d: b"\x03",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            wSelectedAttack: b"\x00",
+            0xCC23: b"\x00",
+        },
+        sram={0: {}},
+        read={
+            wAIFirstAttackDamage: 1,
+            wAISecondAttackDamage: 1,
+            hTempPlayAreaLocation_ff9d: 1,
+        },
+        instruction_budget=8000000,
+        cycle_budget=40000000,
+    ),
+    {
+        "a": 0x12,
+        "b": 0x34,
+        "c": 0x56,
+        "d": 0x78,
+        "e": 0x9A,
+        "hl": 0xC100,
+        "wram": {
+            0xFF97: b"\xc2",
+            hTempPlayAreaLocation_ff9d: b"\x5a",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            wSelectedAttack: b"\x00",
+            0xCC23: b"\x00",
+        },
+        "sram": {0: {}},
+        "read": {
+            wAIFirstAttackDamage: 1,
+            wAISecondAttackDamage: 1,
+            hTempPlayAreaLocation_ff9d: 1,
+        },
+        "instruction_budget": 8000000,
+        "cycle_budget": 40000000,
+    },
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            hTempPlayAreaLocation_ff9d: b"\x01",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            wSelectedAttack: b"\x01",
+            0xCC23: b"\x00",
+        },
+        sram={0: {}},
+        read={
+            wAIFirstAttackDamage: 1,
+            wAISecondAttackDamage: 1,
+            hTempPlayAreaLocation_ff9d: 1,
+        },
+        instruction_budget=8000000,
+        cycle_budget=40000000,
+    ),
     dict(_ai_defending_ko_fixture(bank=5), **_AI_DEFENDING_KO_REGS),
     # ai-duel-13 bench slot 3 (30 HP) against an attack that overshoots it:
     # the knockout is `sub` carry, not equality
-    dict(_bench_switch_fixture(vram=False, bank=5, FF9D=b"\x03"), a=0, f=0, b=0, c=0, d=0, e=0, hl=0, read={0xCE00: 2, 0xCCB9: 2, 0xFF9D: 1}),
+    dict(
+        _bench_switch_fixture(vram=False, bank=5, FF9D=b"\x03"),
+        a=0,
+        f=0,
+        b=0,
+        c=0,
+        d=0,
+        e=0,
+        hl=0,
+        read={0xCE00: 2, 0xCCB9: 2, 0xFF9D: 1},
+    ),
 ]
 # <<< factory CheckIfDefendingPokemonCanKnockOut
 
 # >>> factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP
-CONTRACT["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP"] = {"compare": ("a", "f", "d"), "preserve": ()}
+CONTRACT["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP"] = {
+    "compare": ("a", "f", "d"),
+    "preserve": (),
+}
 CASES["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP"] = [
     _same_damage_case(0x00),
     _same_damage_case(0x00),
@@ -4728,7 +10019,10 @@ CASES["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP"] = [
 # <<< factory CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP
 
 # >>> factory CheckIfAnyAttackKnocksOutDefendingCard
-CONTRACT["CheckIfAnyAttackKnocksOutDefendingCard"] = {"compare": ("a", "f", "d", "e"), "preserve": ()}
+CONTRACT["CheckIfAnyAttackKnocksOutDefendingCard"] = {
+    "compare": ("a", "f", "d", "e"),
+    "preserve": (),
+}
 CASES["CheckIfAnyAttackKnocksOutDefendingCard"] = [
     _kaod_case(),
     _kaod_case(location=b"\x01", extra={_kaod_wPlayerBench: b"\x00"}),
@@ -4738,7 +10032,10 @@ CASES["CheckIfAnyAttackKnocksOutDefendingCard"] = [
 # <<< factory CheckIfAnyAttackKnocksOutDefendingCard
 
 # >>> factory CheckIfActiveCardCanKnockOut
-CONTRACT["CheckIfActiveCardCanKnockOut"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["CheckIfActiveCardCanKnockOut"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["CheckIfActiveCardCanKnockOut"] = [
     _kaod_case(read={hTempPlayAreaLocation_ff9d: 1}),
     dict(POISON, **_kaod_case(read={hTempPlayAreaLocation_ff9d: 1})),
@@ -4748,52 +10045,191 @@ CASES["CheckIfActiveCardCanKnockOut"] = [
 # >>> factory AISelectSpecialAttackParameters
 CONTRACT["AISelectSpecialAttackParameters"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AISelectSpecialAttackParameters"] = [
-    {"a": 0x00, "wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBB: b"\x00", wPlayerDeck: b"\x00", wSelectedAttack: b"\x00"}},
-    {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBB: b"\x00", wPlayerDeck: b"\x01", wSelectedAttack: b"\x01"}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBB: b"\x00", wPlayerDeck: b"\x01", wSelectedAttack: b"\x01"}),
+    {
+        "a": 0x00,
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wPlayerDuelVariables + 0xBB: b"\x00",
+            wPlayerDeck: b"\x00",
+            wSelectedAttack: b"\x00",
+        },
+    },
+    {
+        "a": 0x01,
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wPlayerDuelVariables + 0xBB: b"\x00",
+            wPlayerDeck: b"\x01",
+            wSelectedAttack: b"\x01",
+        },
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc2",
+            wPlayerDuelVariables + 0xBB: b"\x00",
+            wPlayerDeck: b"\x01",
+            wSelectedAttack: b"\x01",
+        },
+    ),
     # challenge-hall 645877: an ordinary arena card with the first attack
     # selected: `.no_carry`'s `or a` tests the card id, so Z is clear.
-    dict(_special_attack_params_fixture(vram=False, bank=5), **_SPECIAL_ATTACK_PARAMS_REGS, read={0xCC23: 1, 0xFFA0: 2}),
+    dict(
+        _special_attack_params_fixture(vram=False, bank=5),
+        **_SPECIAL_ATTACK_PARAMS_REGS,
+        read={0xCC23: 1, 0xFFA0: 2},
+    ),
 ]
 # <<< factory AISelectSpecialAttackParameters
 
 # >>> factory OppAction_EvolvePokemonCard
 CONTRACT["OppAction_EvolvePokemonCard"] = {"compare": (), "preserve": ()}
 CASES["OppAction_EvolvePokemonCard"] = [
-    {"keys": 0x01, "wram": {0xFF97: b"\xC2", 0xFFA1: b"\x05", 0xFFA0: b"\x00", 0xC400: b"\x08", 0xC2C0: b"\xFF", 0xC2F1: b"\x00", 0xC3F1: b"\x01", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xCAC2: b"\x01", 0xCABB: b"\x00", 0xCCEE: b"\x01"}, "read": {0xFF98: 1, 0xFF9D: 1}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=0x01, wram={0xFF97: b"\xC2", 0xFFA1: b"\x05", 0xFFA0: b"\x00", 0xC400: b"\x08", 0xC2C0: b"\xFF", 0xC2F1: b"\x00", 0xC3F1: b"\x01", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xCAC2: b"\x01", 0xCABB: b"\x00", 0xCCEE: b"\x01"}, read={0xFF98: 1, 0xFF9D: 1}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+    {
+        "keys": 0x01,
+        "wram": {
+            0xFF97: b"\xc2",
+            0xFFA1: b"\x05",
+            0xFFA0: b"\x00",
+            0xC400: b"\x08",
+            0xC2C0: b"\xff",
+            0xC2F1: b"\x00",
+            0xC3F1: b"\x01",
+            0xC2BB: b"\xff",
+            0xC3BB: b"\xff",
+            0xCAC2: b"\x01",
+            0xCABB: b"\x00",
+            0xCCEE: b"\x01",
+        },
+        "read": {0xFF98: 1, 0xFF9D: 1},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        keys=0x01,
+        wram={
+            0xFF97: b"\xc2",
+            0xFFA1: b"\x05",
+            0xFFA0: b"\x00",
+            0xC400: b"\x08",
+            0xC2C0: b"\xff",
+            0xC2F1: b"\x00",
+            0xC3F1: b"\x01",
+            0xC2BB: b"\xff",
+            0xC3BB: b"\xff",
+            0xCAC2: b"\x01",
+            0xCABB: b"\x00",
+            0xCCEE: b"\x01",
+        },
+        read={0xFF98: 1, 0xFF9D: 1},
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory OppAction_EvolvePokemonCard
 
 # >>> factory OppAction_PlayBasicPokemonCard
 CONTRACT["OppAction_PlayBasicPokemonCard"] = {"compare": (), "preserve": ()}
 CASES["OppAction_PlayBasicPokemonCard"] = [
-    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": [0x00, 0x01],
-     "wram": {0xFF97: b"\xC2", 0xC2EF: b"\x00", 0xC400: b"\x10", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\x00"},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xFF98: 1, 0xFF9D: 1, 0xC2CE: 1},
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x01],
-     "wram": {0xFF97: b"\xC2", 0xC2EF: b"\x00", 0xC400: b"\x10", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\x00"},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xFF98: 1, 0xFF9D: 1, 0xC2CE: 1},
-     "instruction_budget": 20000000, "cycle_budget": 80000000}
+    {
+        "a": 0x00,
+        "f": 0x00,
+        "b": 0x00,
+        "c": 0x00,
+        "d": 0x00,
+        "e": 0x00,
+        "hl": 0x0000,
+        "keys": [0x00, 0x01],
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2EF: b"\x00",
+            0xC400: b"\x10",
+            0xCABB: b"\x80",
+            0xFF40: b"\x80",
+            0xFFA0: b"\x00",
+        },
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xFF98: 1, 0xFF9D: 1, 0xC2CE: 1},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "a": 0xAA,
+        "f": 0xF0,
+        "b": 0xBB,
+        "c": 0xCC,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0x1234,
+        "keys": [0x00, 0x01],
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2EF: b"\x00",
+            0xC400: b"\x10",
+            0xCABB: b"\x80",
+            0xFF40: b"\x80",
+            0xFFA0: b"\x00",
+        },
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xFF98: 1, 0xFF9D: 1, 0xC2CE: 1},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
 ]
 # <<< factory OppAction_PlayBasicPokemonCard
 
 # >>> factory OppAction_PlayEnergyCard
 CONTRACT["OppAction_PlayEnergyCard"] = {"compare": (), "preserve": ()}
 CASES["OppAction_PlayEnergyCard"] = [
-    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": [0x00, 0x01],
-     "wram": {0xFF97: b"\xC2", 0xC2EF: b"\x00", 0xC400: b"\x10", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\x00", 0xFFA1: b"\x00"},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xFF98: 1, 0xFF9D: 1, 0xCC0B: 1},
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x01],
-     "wram": {0xFF97: b"\xC2", 0xC2EF: b"\x00", 0xC400: b"\x10", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFFA0: b"\x00", 0xFFA1: b"\x01"},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xFF98: 1, 0xFF9D: 1, 0xCC0B: 1},
-     "instruction_budget": 20000000, "cycle_budget": 80000000}
+    {
+        "a": 0x00,
+        "f": 0x00,
+        "b": 0x00,
+        "c": 0x00,
+        "d": 0x00,
+        "e": 0x00,
+        "hl": 0x0000,
+        "keys": [0x00, 0x01],
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2EF: b"\x00",
+            0xC400: b"\x10",
+            0xCABB: b"\x80",
+            0xFF40: b"\x80",
+            0xFFA0: b"\x00",
+            0xFFA1: b"\x00",
+        },
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xFF98: 1, 0xFF9D: 1, 0xCC0B: 1},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    {
+        "a": 0xAA,
+        "f": 0xF0,
+        "b": 0xBB,
+        "c": 0xCC,
+        "d": 0xDD,
+        "e": 0xEE,
+        "hl": 0x1234,
+        "keys": [0x00, 0x01],
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2EF: b"\x00",
+            0xC400: b"\x10",
+            0xCABB: b"\x80",
+            0xFF40: b"\x80",
+            0xFFA0: b"\x00",
+            0xFFA1: b"\x01",
+        },
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xFF98: 1, 0xFF9D: 1, 0xCC0B: 1},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
 ]
 # <<< factory OppAction_PlayEnergyCard
 
@@ -4811,48 +10247,103 @@ wOpponentTurnEnded__ = 0xCBE1
 # (or wOpponentTurnEnded) makes the landed $08 dispatch return carry, so these
 # cases cover the whole reachable path without touching the unported traps.
 CASES["AITryUseAttack"] = [
-    {"b": 0x00, "keys": 0x00,
-     "wram": {wSelectedAttack_: b"\x00", hTempCardIndex_ff9f_: b"\x00", hTemp_ffa0_: b"\x00",
-              hWhoseTurn_: b"\x00", wLCDC_: b"\x00", wSkipDuelistIsThinkingDelay__: b"\x01",
-              wDuelFinished__: b"\x01", wOpponentTurnEnded__: b"\x00"},
-     "read": {hTempCardIndex_ff9f_: 1, hTemp_ffa0_: 1, wSkipDuelistIsThinkingDelay__: 1},
-     "instruction_budget": 6000000, "cycle_budget": 24000000},
-    dict(POISON, keys=0x00,
-         wram={wSelectedAttack_: b"\x03", hTempCardIndex_ff9f_: b"\x00", hTemp_ffa0_: b"\x00",
-               hWhoseTurn_: b"\x00", wLCDC_: b"\x00", wSkipDuelistIsThinkingDelay__: b"\x01",
-               wDuelFinished__: b"\x01", wOpponentTurnEnded__: b"\x00"},
-         read={hTempCardIndex_ff9f_: 1, hTemp_ffa0_: 1, wSkipDuelistIsThinkingDelay__: 1},
-         instruction_budget=6000000, cycle_budget=24000000),
+    {
+        "b": 0x00,
+        "keys": 0x00,
+        "wram": {
+            wSelectedAttack_: b"\x00",
+            hTempCardIndex_ff9f_: b"\x00",
+            hTemp_ffa0_: b"\x00",
+            hWhoseTurn_: b"\x00",
+            wLCDC_: b"\x00",
+            wSkipDuelistIsThinkingDelay__: b"\x01",
+            wDuelFinished__: b"\x01",
+            wOpponentTurnEnded__: b"\x00",
+        },
+        "read": {
+            hTempCardIndex_ff9f_: 1,
+            hTemp_ffa0_: 1,
+            wSkipDuelistIsThinkingDelay__: 1,
+        },
+        "instruction_budget": 6000000,
+        "cycle_budget": 24000000,
+    },
+    dict(
+        POISON,
+        keys=0x00,
+        wram={
+            wSelectedAttack_: b"\x03",
+            hTempCardIndex_ff9f_: b"\x00",
+            hTemp_ffa0_: b"\x00",
+            hWhoseTurn_: b"\x00",
+            wLCDC_: b"\x00",
+            wSkipDuelistIsThinkingDelay__: b"\x01",
+            wDuelFinished__: b"\x01",
+            wOpponentTurnEnded__: b"\x00",
+        },
+        read={
+            hTempCardIndex_ff9f_: 1,
+            hTemp_ffa0_: 1,
+            wSkipDuelistIsThinkingDelay__: 1,
+        },
+        instruction_budget=6000000,
+        cycle_budget=24000000,
+    ),
 ]
 # <<< factory AITryUseAttack
 
 # >>> factory PrintPokemonCardWeight
-CONTRACT["PrintPokemonCardWeight"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["PrintPokemonCardWeight"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["PrintPokemonCardWeight"] = [
-    {"b": 0x01, "c": 0x02, "hl": 0x0000,
-     "wram": {WEIGHT_LCDC: b"\x00", WEIGHT_STRBUF: b"\x00" * 8},
-     "read": {WEIGHT_STRBUF: 8},
-     "vread": {0: {WEIGHT_BGMAP0 + 0x02 * 32 + 0x01: 1}}},
-    {"b": 0x02, "c": 0x03, "hl": 0x04D2,
-     "wram": {WEIGHT_LCDC: b"\x00", WEIGHT_STRBUF: b"\x00" * 8},
-     "read": {WEIGHT_STRBUF: 8},
-     "vread": {0: {WEIGHT_BGMAP0 + 0x03 * 32 + 0x02: 5}}},
-    dict(POISON, wram={WEIGHT_LCDC: b"\x00", WEIGHT_STRBUF: b"\x00" * 8},
-         read={WEIGHT_STRBUF: 8}),
+    {
+        "b": 0x01,
+        "c": 0x02,
+        "hl": 0x0000,
+        "wram": {WEIGHT_LCDC: b"\x00", WEIGHT_STRBUF: b"\x00" * 8},
+        "read": {WEIGHT_STRBUF: 8},
+        "vread": {0: {WEIGHT_BGMAP0 + 0x02 * 32 + 0x01: 1}},
+    },
+    {
+        "b": 0x02,
+        "c": 0x03,
+        "hl": 0x04D2,
+        "wram": {WEIGHT_LCDC: b"\x00", WEIGHT_STRBUF: b"\x00" * 8},
+        "read": {WEIGHT_STRBUF: 8},
+        "vread": {0: {WEIGHT_BGMAP0 + 0x03 * 32 + 0x02: 5}},
+    },
+    dict(
+        POISON,
+        wram={WEIGHT_LCDC: b"\x00", WEIGHT_STRBUF: b"\x00" * 8},
+        read={WEIGHT_STRBUF: 8},
+    ),
 ]
 # <<< factory PrintPokemonCardWeight
 
 # >>> factory DisplayCardPage_PokemonDescription
 CONTRACT["DisplayCardPage_PokemonDescription"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["DisplayCardPage_PokemonDescription"] = [
-    dict(id="DisplayCardPage_PokemonDescription-0",
-         wram=desc_seed(b"\x03\x0b", b"\xd2\x04", b"\x0e\x00"),
-         read=DESC_READ, setup=DESC_SETUP, rom_bank=1,
-         instruction_budget=20000000, cycle_budget=80000000),
-    dict(POISON, id="DisplayCardPage_PokemonDescription-1",
-         wram=desc_seed(b"\x02\x64", b"\x64\x00", b"\x10\x00"),
-         read=DESC_READ, setup=DESC_SETUP, rom_bank=1,
-         instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        id="DisplayCardPage_PokemonDescription-0",
+        wram=desc_seed(b"\x03\x0b", b"\xd2\x04", b"\x0e\x00"),
+        read=DESC_READ,
+        setup=DESC_SETUP,
+        rom_bank=1,
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
+    dict(
+        POISON,
+        id="DisplayCardPage_PokemonDescription-1",
+        wram=desc_seed(b"\x02\x64", b"\x64\x00", b"\x10\x00"),
+        read=DESC_READ,
+        setup=DESC_SETUP,
+        rom_bank=1,
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory DisplayCardPage_PokemonDescription
 
@@ -4878,15 +10369,21 @@ CASES["DisplayCardPage_PokemonDescription"] = [
 # explicit generous budgets.
 CONTRACT["RequestToPrintCards_SelectStartCard"] = {"compare": ("f",), "preserve": ()}
 CASES["RequestToPrintCards_SelectStartCard"] = [
-    {"keys": [0x00, 0x88],
-     "setup": [{"fn": "CopyDMAFunction"}],
-     "read": {0xCE9A: 1},
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON,
-         keys=[0x00, 0x88],
-         setup=[{"fn": "CopyDMAFunction"}],
-         read={0xCE9A: 1},
-         instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "keys": [0x00, 0x88],
+        "setup": [{"fn": "CopyDMAFunction"}],
+        "read": {0xCE9A: 1},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x88],
+        setup=[{"fn": "CopyDMAFunction"}],
+        read={0xCE9A: 1},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory RequestToPrintCards_SelectStartCard
 
@@ -4895,22 +10392,48 @@ CONTRACT["PlayBetweenTurnsAnimation"] = {"compare": (), "preserve": ()}
 CASES["PlayBetweenTurnsAnimation"] = [
     # wDuelType != 0 takes .store_duelist_turn straight away, and hWhoseTurn ==
     # wWhoseTurn keeps the RedrawTurnDuelistsDuelHUD tail on its no-swap path.
-    {"a": 0x00,
-     "wram": {**PBTA_HUD_SEED, **PBTA_ANIM_IDLE, **PBTA_SCRATCH, PBTA_DUEL_TYPE: b"\x01"},
-     "read": PBTA_READ, **PBTA_BUDGET},
+    {
+        "a": 0x00,
+        "wram": {
+            **PBTA_HUD_SEED,
+            **PBTA_ANIM_IDLE,
+            **PBTA_SCRATCH,
+            PBTA_DUEL_TYPE: b"\x01",
+        },
+        "read": PBTA_READ,
+        **PBTA_BUDGET,
+    },
     # wDuelType == 0 with wWhoseTurn != PLAYER_TURN takes the SwapTurn arm, so
     # wDuelAnimDuelistSide must come back $C3 while hWhoseTurn is restored to $C2;
     # the HUD tail then runs its own SwapTurn path.
-    {"a": 0x57,
-     "wram": {**PBTA_HUD_SEED, **PBTA_ANIM_IDLE, **PBTA_SCRATCH, PBTA_DUEL_TYPE: b"\x00", PBTA_WHOSE_TURN: b"\xC3"},
-     "read": PBTA_READ, **PBTA_BUDGET},
+    {
+        "a": 0x57,
+        "wram": {
+            **PBTA_HUD_SEED,
+            **PBTA_ANIM_IDLE,
+            **PBTA_SCRATCH,
+            PBTA_DUEL_TYPE: b"\x00",
+            PBTA_WHOSE_TURN: b"\xc3",
+        },
+        "read": PBTA_READ,
+        **PBTA_BUDGET,
+    },
     # Poisoned registers; wDuelType == 0 with wWhoseTurn == PLAYER_TURN takes the
     # store arm, and index $AA >= DUEL_SPECIAL_ANIMS exercises PlayDuelAnimation's
     # other index arm (still a no-op against the full ring). The BG map tile at
     # $996F witnesses that the HUD was actually redrawn.
-    dict(PBTA_POISON,
-         wram={**PBTA_HUD_SEED, **PBTA_ANIM_IDLE, **PBTA_SCRATCH, PBTA_DUEL_TYPE: b"\x00"},
-         read=PBTA_READ, vread={0: {PBTA_HUD_TILE: 1}}, **PBTA_BUDGET),
+    dict(
+        PBTA_POISON,
+        wram={
+            **PBTA_HUD_SEED,
+            **PBTA_ANIM_IDLE,
+            **PBTA_SCRATCH,
+            PBTA_DUEL_TYPE: b"\x00",
+        },
+        read=PBTA_READ,
+        vread={0: {PBTA_HUD_TILE: 1}},
+        **PBTA_BUDGET,
+    ),
 ]
 # <<< factory PlayBetweenTurnsAnimation
 
@@ -4936,22 +10459,30 @@ CASES["HandleSleepCheck"] = [
     {"hl": HSC_STATUS, "wram": {HSC_STATUS: b"\x00"}, "read": {HSC_STATUS: 1}},
     # Double poisoned and paralyzed: the CNF_SLP_PRZ mask has to drop the poison
     # bits before the compare, otherwise $C3 would not look like PARALYZED.
-    {"hl": HSC_STATUS, "wram": {HSC_STATUS: b"\xC3"}, "read": {HSC_STATUS: 1}},
+    {"hl": HSC_STATUS, "wram": {HSC_STATUS: b"\xc3"}, "read": {HSC_STATUS: 1}},
     # Asleep, coin heads: sleep is cured, so the status byte keeps only its
     # DOUBLE_POISONED bits ($02 & $C0 == $00).
-    {"hl": HSC_STATUS,
-     "wram": {**HSC_SEED, HSC_STATUS: b"\x02", HSC_RNG: b"\x00\x00\x00"},
-     "keys": [0x00, 0x01], "setup": HSC_SETUP, **HSC_BUDGET,
-     "oracle": False,
-     "why": "Reference and port agree on every observed byte except hWhoseTurn ($FF97), which the real ROM leaves flipped to $C3 through the coin toss / between-turns animation call graph; run natively to certify the cure store.",
-     "expect": {HSC_STATUS: b"\x00"}},
+    {
+        "hl": HSC_STATUS,
+        "wram": {**HSC_SEED, HSC_STATUS: b"\x02", HSC_RNG: b"\x00\x00\x00"},
+        "keys": [0x00, 0x01],
+        "setup": HSC_SETUP,
+        **HSC_BUDGET,
+        "oracle": False,
+        "why": "Reference and port agree on every observed byte except hWhoseTurn ($FF97), which the real ROM leaves flipped to $C3 through the coin toss / between-turns animation call graph; run natively to certify the cure store.",
+        "expect": {HSC_STATUS: b"\x00"},
+    },
     # Asleep, coin tails: the status byte is left exactly as seeded.
-    {"hl": HSC_STATUS,
-     "wram": {**HSC_SEED, HSC_STATUS: b"\x02", HSC_RNG: b"\x00\x00\x80"},
-     "keys": [0x00, 0x01], "setup": HSC_SETUP, **HSC_BUDGET,
-     "oracle": False,
-     "why": "Same hWhoseTurn ($FF97) divergence as the heads case; run natively to certify that the tails arm leaves the status byte untouched.",
-     "expect": {HSC_STATUS: b"\x02"}},
+    {
+        "hl": HSC_STATUS,
+        "wram": {**HSC_SEED, HSC_STATUS: b"\x02", HSC_RNG: b"\x00\x00\x80"},
+        "keys": [0x00, 0x01],
+        "setup": HSC_SETUP,
+        **HSC_BUDGET,
+        "oracle": False,
+        "why": "Same hWhoseTurn ($FF97) divergence as the heads case; run natively to certify that the tails arm leaves the status byte untouched.",
+        "expect": {HSC_STATUS: b"\x02"},
+    },
 ]
 # <<< factory HandleSleepCheck
 
@@ -4966,134 +10497,321 @@ CASES["HandlePoisonDamage"] = [
     # and SubtractHP takes $50 down to $46, which is also the byte
     # PrintKnockedOutIfHLZero loads and returns in a, with f = $00 since no
     # knockout happens.
-    dict(POISON,
-         hl=HPD_STATUS,
-         keys=[0x00, 0x01],
-         wram={**HPD_SEED, HPD_STATUS: b"\x80", HPD_HP: b"\x50"},
-         read=HPD_READ, setup=HPD_SETUP, **HPD_BUDGET),
+    dict(
+        POISON,
+        hl=HPD_STATUS,
+        keys=[0x00, 0x01],
+        wram={**HPD_SEED, HPD_STATUS: b"\x80", HPD_HP: b"\x50"},
+        read=HPD_READ,
+        setup=HPD_SETUP,
+        **HPD_BUDGET,
+    ),
     # Double poisoned ($C0): the other damage/text arm, $50 - $14 = $3C.
-    {"a": 0x00, "hl": HPD_STATUS, "keys": [0x00, 0x01],
-     "wram": {**HPD_SEED, HPD_STATUS: b"\xC0", HPD_HP: b"\x50"},
-     "read": HPD_READ, "setup": HPD_SETUP, **HPD_BUDGET},
+    {
+        "a": 0x00,
+        "hl": HPD_STATUS,
+        "keys": [0x00, 0x01],
+        "wram": {**HPD_SEED, HPD_STATUS: b"\xc0", HPD_HP: b"\x50"},
+        "read": HPD_READ,
+        "setup": HPD_SETUP,
+        **HPD_BUDGET,
+    },
     # Poisoned with exactly PSN_DAMAGE HP left: SubtractHP lands on zero, so
     # PrintKnockedOutIfHLZero falls through to PrintKnockedOut and the routine
     # returns a = 0 with carry set ($90), the flag both callsites branch on.
-    {"a": 0x00, "hl": HPD_STATUS, "keys": [0x00, 0x01],
-     "wram": {**HPD_SEED, HPD_STATUS: b"\x80", HPD_HP: b"\x0A"},
-     "read": HPD_READ, "setup": HPD_SETUP, **HPD_BUDGET},
+    {
+        "a": 0x00,
+        "hl": HPD_STATUS,
+        "keys": [0x00, 0x01],
+        "wram": {**HPD_SEED, HPD_STATUS: b"\x80", HPD_HP: b"\x0a"},
+        "read": HPD_READ,
+        "setup": HPD_SETUP,
+        **HPD_BUDGET,
+    },
 ]
 # <<< factory HandlePoisonDamage
 
 # >>> factory PracticeDuel_DrawSevenCards
 CONTRACT["PracticeDuel_DrawSevenCards"] = {"compare": (), "preserve": ()}
 CASES["PracticeDuel_DrawSevenCards"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
-     "keys": [0x00, 0x01],
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xC510: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
-         keys=[0x00, 0x01],
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xC510: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
-         instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "wram": {0xFF97: b"\xc2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
+        "keys": [0x00, 0x01],
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {
+            0xC510: 1,
+            0xC620: 4,
+            0xC720: 4,
+            0xC820: 4,
+            0xC920: 4,
+            0xCD05: 2,
+            0xCD0A: 1,
+        },
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400},
+            1: {0x9800: 0x400},
+        },
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        wram={0xFF97: b"\xc2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
+        keys=[0x00, 0x01],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={
+            0xC510: 1,
+            0xC620: 4,
+            0xC720: 4,
+            0xC820: 4,
+            0xC920: 4,
+            0xCD05: 2,
+            0xCD0A: 1,
+        },
+        vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory PracticeDuel_DrawSevenCards
 
 # >>> factory PracticeDuel_DonePuttingOnBench
 CONTRACT["PracticeDuel_DonePuttingOnBench"] = {"compare": (), "preserve": ()}
 CASES["PracticeDuel_DonePuttingOnBench"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00", 0xCC00: b"\x01"},
-     "keys": [0x00, 0x01],
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xC510: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1, 0xCC00: 1},
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00", 0xCC00: b"\x01"},
-         keys=[0x00, 0x01],
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xC510: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1, 0xCC00: 1},
-         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
-         instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "wram": {0xFF97: b"\xc2", 0xC2EE: b"\x00", 0xCABB: b"\x00", 0xCC00: b"\x01"},
+        "keys": [0x00, 0x01],
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {
+            0xC510: 1,
+            0xC620: 4,
+            0xC720: 4,
+            0xC820: 4,
+            0xC920: 4,
+            0xCD05: 2,
+            0xCD0A: 1,
+            0xCC00: 1,
+        },
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400},
+            1: {0x9800: 0x400},
+        },
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        wram={0xFF97: b"\xc2", 0xC2EE: b"\x00", 0xCABB: b"\x00", 0xCC00: b"\x01"},
+        keys=[0x00, 0x01],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={
+            0xC510: 1,
+            0xC620: 4,
+            0xC720: 4,
+            0xC820: 4,
+            0xC920: 4,
+            0xCD05: 2,
+            0xCD0A: 1,
+            0xCC00: 1,
+        },
+        vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory PracticeDuel_DonePuttingOnBench
 
 # >>> factory PracticeDuel_PutStaryuInBench
 CONTRACT["PracticeDuel_PutStaryuInBench"] = {"compare": (), "preserve": ()}
 CASES["PracticeDuel_PutStaryuInBench"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
-     "keys": [0x00, 0x01],
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xC510: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
-         keys=[0x00, 0x01],
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xC510: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
-         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
-         instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "wram": {0xFF97: b"\xc2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
+        "keys": [0x00, 0x01],
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {
+            0xC510: 1,
+            0xC620: 4,
+            0xC720: 4,
+            0xC820: 4,
+            0xC920: 4,
+            0xCD05: 2,
+            0xCD0A: 1,
+        },
+        "vread": {
+            0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400},
+            1: {0x9800: 0x400},
+        },
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        wram={0xFF97: b"\xc2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
+        keys=[0x00, 0x01],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={
+            0xC510: 1,
+            0xC620: 4,
+            0xC720: 4,
+            0xC820: 4,
+            0xC920: 4,
+            0xCD05: 2,
+            0xCD0A: 1,
+        },
+        vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory PracticeDuel_PutStaryuInBench
 
 # >>> factory ChooseInitialArenaAndBenchPokemon
 CONTRACT["ChooseInitialArenaAndBenchPokemon"] = {"compare": ("f",), "preserve": ()}
 CASES["ChooseInitialArenaAndBenchPokemon"] = [
-    {"wram": {0xCC0E: b"\x01", 0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xC2F1: b"\xFF"}, "read": {0xC2F1: 1}},
-    dict(POISON, wram={0xCC0E: b"\x01", 0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xC2F1: b"\xFF"}, read={0xC2F1: 1}),
+    {
+        "wram": {0xCC0E: b"\x01", 0xFF97: b"\xc2", 0xC2BA: b"\x00", 0xC2F1: b"\xff"},
+        "read": {0xC2F1: 1},
+    },
+    dict(
+        POISON,
+        wram={0xCC0E: b"\x01", 0xFF97: b"\xc2", 0xC2BA: b"\x00", 0xC2F1: b"\xff"},
+        read={0xC2F1: 1},
+    ),
 ]
 # <<< factory ChooseInitialArenaAndBenchPokemon
 
 # >>> factory TurnDuelistTakePrizes
 CONTRACT["TurnDuelistTakePrizes"] = {"compare": ("a", "f", "hl"), "preserve": ()}
 CASES["TurnDuelistTakePrizes"] = [
-    {"keys": [0x00, 0x01],
-     "wram": {0xFF80: b"\x01", 0xFF97: b"\xC3", 0xCABB: b"\x00", 0xFF40: b"\x00",
-               0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
-               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00",
-               0xC3F1: b"\x81", 0xC3EC: b"\x3F",
-               0xC33C: b"\x00\x00\x00\x00\x00\x00", 0xCC0E: b"\x01",
-               0xCCC8: b"\x01", 0xCC18: b"\x00", 0xC590: b"\x00" * 16},
-     "read": {0xCBFC: 1}, "expect": {0xCBFC: b"\x06"},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01],
-         wram={0xFF80: b"\x01", 0xFF97: b"\xC3", 0xCABB: b"\x00", 0xFF40: b"\x00",
-               0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
-               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00",
-               0xC3F1: b"\x81", 0xC3EC: b"\x3F",
-               0xC33C: b"\x00\x00\x00\x00\x00\x00", 0xCC0E: b"\x01",
-               0xCCC8: b"\x01", 0xCC18: b"\x00", 0xC590: b"\x00" * 16},
-         read={0xCBFC: 1}, expect={0xCBFC: b"\x06"},
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000),
-    {"keys": [0x00, 0x01],
-     "wram": {0xFF80: b"\x01", 0xFF97: b"\xC2", 0xCABB: b"\x00", 0xFF40: b"\x00",
-               0xC2F1: b"\x00", 0xC2EC: b"\x00", 0xCCC8: b"\x00", 0xCC18: b"\x00"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {
+        "keys": [0x00, 0x01],
+        "wram": {
+            0xFF80: b"\x01",
+            0xFF97: b"\xc3",
+            0xCABB: b"\x00",
+            0xFF40: b"\x00",
+            0xC2EE: b"\x05",
+            0xC2BA: b"\x0a",
+            0xC2ED: b"\x03",
+            0xC3EE: b"\x02",
+            0xC3BA: b"\x37",
+            0xC3ED: b"\x00",
+            0xC3F1: b"\x81",
+            0xC3EC: b"\x3f",
+            0xC33C: b"\x00\x00\x00\x00\x00\x00",
+            0xCC0E: b"\x01",
+            0xCCC8: b"\x01",
+            0xCC18: b"\x00",
+            0xC590: b"\x00" * 16,
+        },
+        "read": {0xCBFC: 1},
+        "expect": {0xCBFC: b"\x06"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x01],
+        wram={
+            0xFF80: b"\x01",
+            0xFF97: b"\xc3",
+            0xCABB: b"\x00",
+            0xFF40: b"\x00",
+            0xC2EE: b"\x05",
+            0xC2BA: b"\x0a",
+            0xC2ED: b"\x03",
+            0xC3EE: b"\x02",
+            0xC3BA: b"\x37",
+            0xC3ED: b"\x00",
+            0xC3F1: b"\x81",
+            0xC3EC: b"\x3f",
+            0xC33C: b"\x00\x00\x00\x00\x00\x00",
+            0xCC0E: b"\x01",
+            0xCCC8: b"\x01",
+            0xCC18: b"\x00",
+            0xC590: b"\x00" * 16,
+        },
+        read={0xCBFC: 1},
+        expect={0xCBFC: b"\x06"},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
+    {
+        "keys": [0x00, 0x01],
+        "wram": {
+            0xFF80: b"\x01",
+            0xFF97: b"\xc2",
+            0xCABB: b"\x00",
+            0xFF40: b"\x00",
+            0xC2F1: b"\x00",
+            0xC2EC: b"\x00",
+            0xCCC8: b"\x00",
+            0xCC18: b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
 ]
 # <<< factory TurnDuelistTakePrizes
 
 # >>> factory Func_6fa5
 CONTRACT["Func_6fa5"] = {"compare": ("f",), "preserve": ()}
 CASES["Func_6fa5"] = [
-    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\xFF" * 6,
-              0xC2C8: b"\x00" * 6, wNumberPrizeCardsToTake: b"\xAA"},
-     "read": {wNumberPrizeCardsToTake: 1}},
-    dict(POISON, wram={hWhoseTurn: b"\xC3", 0xC3BB: b"\xFF" * 6,
-                       0xC3C8: b"\x00" * 6, wNumberPrizeCardsToTake: b"\xAA"},
-         read={wNumberPrizeCardsToTake: 1}),
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            0xC2BB: b"\xff" * 6,
+            0xC2C8: b"\x00" * 6,
+            wNumberPrizeCardsToTake: b"\xaa",
+        },
+        "read": {wNumberPrizeCardsToTake: 1},
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc3",
+            0xC3BB: b"\xff" * 6,
+            0xC3C8: b"\x00" * 6,
+            wNumberPrizeCardsToTake: b"\xaa",
+        },
+        read={wNumberPrizeCardsToTake: 1},
+    ),
 ]
 # <<< factory Func_6fa5
 
 # >>> factory Func_1cb5e
 CONTRACT["Func_1cb5e"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["Func_1cb5e"] = [
-    {"a": 0x8C, "wram": {0xFF80: b"\x07", 0xD4B1: b"\x2A\x00", 0xD4B3: b"\x00", 0xD4B6: b"\x00", 0xD4B8: b"\x05", 0xD4CA: b"\xFF", 0xD4CB: b"\xFF"}, "read": {0xD4B3: 1, 0xD4B8: 1, 0xD4CA: 1, 0xD4CB: 1}},
-    dict(POISON, a=0x8C, wram={0xFF80: b"\x07", 0xD4B1: b"\x2A\x00", 0xD4B3: b"\x00", 0xD4B6: b"\x00", 0xD4B8: b"\x05", 0xD4CA: b"\xFF", 0xD4CB: b"\xFF"}, read={0xD4B3: 1, 0xD4B8: 1, 0xD4CA: 1, 0xD4CB: 1}),
+    {
+        "a": 0x8C,
+        "wram": {
+            0xFF80: b"\x07",
+            0xD4B1: b"\x2a\x00",
+            0xD4B3: b"\x00",
+            0xD4B6: b"\x00",
+            0xD4B8: b"\x05",
+            0xD4CA: b"\xff",
+            0xD4CB: b"\xff",
+        },
+        "read": {0xD4B3: 1, 0xD4B8: 1, 0xD4CA: 1, 0xD4CB: 1},
+    },
+    dict(
+        POISON,
+        a=0x8C,
+        wram={
+            0xFF80: b"\x07",
+            0xD4B1: b"\x2a\x00",
+            0xD4B3: b"\x00",
+            0xD4B6: b"\x00",
+            0xD4B8: b"\x05",
+            0xD4CA: b"\xff",
+            0xD4CB: b"\xff",
+        },
+        read={0xD4B3: 1, 0xD4B8: 1, 0xD4CA: 1, 0xD4CB: 1},
+    ),
     {"a": 0x00, "wram": {0xD421: b"\x01"}},
     {"a": 0x96},
 ]
@@ -5108,16 +10826,25 @@ CONTRACT["StartDuel"] = {"compare": (), "preserve": ()}
 DUEL_ENTRY_SP = 0xFFFC
 _START_DUEL_READ = {0xCBC6: 1, 0xCBE5: 2, 0xCC08: 1}
 CASES["StartDuel"] = [
-    {"entry_sp": DUEL_ENTRY_SP, "keys": list(START_DUEL_KEYS),
-     "wram": dict(START_DUEL_WRAM), "setup": START_DUEL_SETUP,
-     "read": dict(_START_DUEL_READ),
-     "instruction_budget": DUEL_INSTRUCTION_BUDGET,
-     "cycle_budget": DUEL_CYCLE_BUDGET},
-    dict(POISON, entry_sp=DUEL_ENTRY_SP, keys=list(START_DUEL_KEYS),
-         wram=dict(START_DUEL_WRAM), setup=START_DUEL_SETUP,
-         read=dict(_START_DUEL_READ),
-         instruction_budget=DUEL_INSTRUCTION_BUDGET,
-         cycle_budget=DUEL_CYCLE_BUDGET),
+    {
+        "entry_sp": DUEL_ENTRY_SP,
+        "keys": list(START_DUEL_KEYS),
+        "wram": dict(START_DUEL_WRAM),
+        "setup": START_DUEL_SETUP,
+        "read": dict(_START_DUEL_READ),
+        "instruction_budget": DUEL_INSTRUCTION_BUDGET,
+        "cycle_budget": DUEL_CYCLE_BUDGET,
+    },
+    dict(
+        POISON,
+        entry_sp=DUEL_ENTRY_SP,
+        keys=list(START_DUEL_KEYS),
+        wram=dict(START_DUEL_WRAM),
+        setup=START_DUEL_SETUP,
+        read=dict(_START_DUEL_READ),
+        instruction_budget=DUEL_INSTRUCTION_BUDGET,
+        cycle_budget=DUEL_CYCLE_BUDGET,
+    ),
 ]
 # <<< factory StartDuel
 
@@ -5128,40 +10855,56 @@ CONTRACT["StartDuel_VSAIOpp"] = {"compare": (), "preserve": ()}
 _VSAI_READ = {0xFF97: 1, 0xC2F1: 1, 0xCC0E: 1, 0xC400: 60, 0xC480: 60}
 _VSAI_READ.update(_START_DUEL_READ)
 CASES["StartDuel_VSAIOpp"] = [
-    {"entry_sp": DUEL_ENTRY_SP, "keys": list(START_DUEL_KEYS),
-     "wram": {**START_DUEL_WRAM, 0xCC19: b"\x01"},
-     "setup": START_DUEL_SETUP,
-     "sram": {0: {0xB700: b"\x00", 0xA218: b"\x08" * 60}},
-     "read": dict(_VSAI_READ),
-     "instruction_budget": DUEL_INSTRUCTION_BUDGET,
-     "cycle_budget": DUEL_CYCLE_BUDGET},
-    dict(POISON, entry_sp=DUEL_ENTRY_SP, keys=list(START_DUEL_KEYS),
-         wram={**START_DUEL_WRAM, 0xCC19: b"\x01"},
-         setup=START_DUEL_SETUP,
-         sram={0: {0xB700: b"\x00", 0xA218: b"\x08" * 60}},
-         read=dict(_VSAI_READ),
-         instruction_budget=DUEL_INSTRUCTION_BUDGET,
-         cycle_budget=DUEL_CYCLE_BUDGET),
+    {
+        "entry_sp": DUEL_ENTRY_SP,
+        "keys": list(START_DUEL_KEYS),
+        "wram": {**START_DUEL_WRAM, 0xCC19: b"\x01"},
+        "setup": START_DUEL_SETUP,
+        "sram": {0: {0xB700: b"\x00", 0xA218: b"\x08" * 60}},
+        "read": dict(_VSAI_READ),
+        "instruction_budget": DUEL_INSTRUCTION_BUDGET,
+        "cycle_budget": DUEL_CYCLE_BUDGET,
+    },
+    dict(
+        POISON,
+        entry_sp=DUEL_ENTRY_SP,
+        keys=list(START_DUEL_KEYS),
+        wram={**START_DUEL_WRAM, 0xCC19: b"\x01"},
+        setup=START_DUEL_SETUP,
+        sram={0: {0xB700: b"\x00", 0xA218: b"\x08" * 60}},
+        read=dict(_VSAI_READ),
+        instruction_budget=DUEL_INSTRUCTION_BUDGET,
+        cycle_budget=DUEL_CYCLE_BUDGET,
+    ),
 ]
 # <<< factory StartDuel_VSAIOpp
 
 # >>> factory StartDuel_VSLinkOpp
 CONTRACT["StartDuel_VSLinkOpp"] = {"compare": (), "preserve": ()}
 # core.asm:44-52 clears the opponent name and falls through into StartDuel.
-_VSLINK_WRAM = {0xCC18: b"\x06", 0xCC1A: b"\x01", 0xCC13: b"\xAA", 0xCC16: b"\xBB\xCC"}
+_VSLINK_WRAM = {0xCC18: b"\x06", 0xCC1A: b"\x01", 0xCC13: b"\xaa", 0xCC16: b"\xbb\xcc"}
 _VSLINK_READ = {0xCC13: 1, 0xCC16: 2, 0xCC1A: 1}
 _VSLINK_READ.update(_START_DUEL_READ)
 CASES["StartDuel_VSLinkOpp"] = [
-    {"entry_sp": DUEL_ENTRY_SP, "keys": list(START_DUEL_KEYS),
-     "wram": {**START_DUEL_WRAM, 0xCC13: b"\xAA", 0xCC16: b"\xBB\xCC"},
-     "setup": START_DUEL_SETUP, "read": dict(_VSLINK_READ),
-     "instruction_budget": DUEL_INSTRUCTION_BUDGET,
-     "cycle_budget": DUEL_CYCLE_BUDGET},
-    dict(POISON, entry_sp=DUEL_ENTRY_SP, keys=list(START_DUEL_KEYS),
-         wram={**START_DUEL_WRAM, 0xCC13: b"\xAA", 0xCC16: b"\xBB\xCC"},
-         setup=START_DUEL_SETUP, read=dict(_VSLINK_READ),
-         instruction_budget=DUEL_INSTRUCTION_BUDGET,
-         cycle_budget=DUEL_CYCLE_BUDGET),
+    {
+        "entry_sp": DUEL_ENTRY_SP,
+        "keys": list(START_DUEL_KEYS),
+        "wram": {**START_DUEL_WRAM, 0xCC13: b"\xaa", 0xCC16: b"\xbb\xcc"},
+        "setup": START_DUEL_SETUP,
+        "read": dict(_VSLINK_READ),
+        "instruction_budget": DUEL_INSTRUCTION_BUDGET,
+        "cycle_budget": DUEL_CYCLE_BUDGET,
+    },
+    dict(
+        POISON,
+        entry_sp=DUEL_ENTRY_SP,
+        keys=list(START_DUEL_KEYS),
+        wram={**START_DUEL_WRAM, 0xCC13: b"\xaa", 0xCC16: b"\xbb\xcc"},
+        setup=START_DUEL_SETUP,
+        read=dict(_VSLINK_READ),
+        instruction_budget=DUEL_INSTRUCTION_BUDGET,
+        cycle_budget=DUEL_CYCLE_BUDGET,
+    ),
 ]
 # <<< factory StartDuel_VSLinkOpp
 
@@ -5178,10 +10921,41 @@ CONTRACT["OpenNonTurnHolderPlayAreaScreen"] = {"compare": (), "preserve": ()}
 # core.asm:390-394. Opponent's arena Bulbasaur; B leaves the play area screen
 # and hWhoseTurn is swapped back.
 CASES["OpenNonTurnHolderPlayAreaScreen"] = [
-    dict(wram={0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC3F0: b"\x00", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFF97: 1, 0xCBC9: 1, 0xCC24: 2}, instruction_budget=20000000, cycle_budget=80000000),
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC3F0: b"\x00", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFF97: 1, 0xCBC9: 1, 0xCC24: 2}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        wram={
+            0xFF97: b"\xc2",
+            0xC3BB: b"\x00",
+            0xC3F0: b"\x00",
+            0xC3C8: b"\x28",
+            0xC3EF: b"\x01",
+            0xC480: b"\x08",
+            0xC300: b"\x10",
+            0xCABB: b"\x00",
+        },
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFF97: 1, 0xCBC9: 1, 0xCC24: 2},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC3BB: b"\x00",
+            0xC3F0: b"\x00",
+            0xC3C8: b"\x28",
+            0xC3EF: b"\x01",
+            0xC480: b"\x08",
+            0xC300: b"\x10",
+            0xCABB: b"\x00",
+        },
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFF97: 1, 0xCBC9: 1, 0xCC24: 2},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory OpenNonTurnHolderPlayAreaScreen
 
@@ -5190,54 +10964,128 @@ CONTRACT["OpenTurnHolderPlayAreaScreen"] = {"compare": ("a", "f"), "preserve": (
 # core.asm:397-399. Arena Bulbasaur; B leaves the play area screen with the
 # viewing exit's a/f.
 CASES["OpenTurnHolderPlayAreaScreen"] = [
-    dict(wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFF97: 1, 0xCBC9: 1, 0xCBD6: 1}, instruction_budget=20000000, cycle_budget=80000000),
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFF97: 1, 0xCBC9: 1, 0xCBD6: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        wram={
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xC2F0: b"\x00",
+            0xC2C8: b"\x28",
+            0xC2EF: b"\x01",
+            0xC400: b"\x08",
+            0xC200: b"\x10",
+            0xCABB: b"\x00",
+        },
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFF97: 1, 0xCBC9: 1, 0xCBD6: 1},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xC2F0: b"\x00",
+            0xC2C8: b"\x28",
+            0xC2EF: b"\x01",
+            0xC400: b"\x08",
+            0xC200: b"\x10",
+            0xCABB: b"\x00",
+        },
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFF97: 1, 0xCBC9: 1, 0xCBD6: 1},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory OpenTurnHolderPlayAreaScreen
 
 # >>> factory OpenVariousPlayAreaScreens_FromSelectPresses
-CONTRACT["OpenVariousPlayAreaScreens_FromSelectPresses"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["OpenVariousPlayAreaScreens_FromSelectPresses"] = {
+    "compare": ("f",),
+    "preserve": (),
+}
 # Seeds the B press that backs out of the in-play-area screen, which is the
 # chain's first `ret c`; redrawing that screen needs more than 240 frames.
 CASES["OpenVariousPlayAreaScreens_FromSelectPresses"] = [
     # B closes the in-play-area screen with carry: nothing else opens.
-    {"keys": [0x00, 0x02],
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x02],
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "keys": [0x00, 0x02],
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
     # Select closes it without carry, then closes each duelist's play area view:
     # the cycle is Select-only so every screen exits the same way from any phase.
-    {"keys": [0x00, 0x04], "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00"},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCBD4: 1, 0xFF97: 1}, "expect": {0xCBD4: b"\x02", 0xFF97: b"\xC2"},
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {
+        "keys": [0x00, 0x04],
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xC2F0: b"\x00",
+            0xC2C8: b"\x28",
+            0xC2EF: b"\x01",
+            0xC400: b"\x08",
+            0xC200: b"\x10",
+            0xCABB: b"\x00",
+        },
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {0xCBD4: 1, 0xFF97: 1},
+        "expect": {0xCBD4: b"\x02", 0xFF97: b"\xc2"},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
 ]
 # <<< factory OpenVariousPlayAreaScreens_FromSelectPresses
 
 # >>> factory OpenPlayAreaScreenForViewing
 CONTRACT["OpenPlayAreaScreenForViewing"] = {"compare": (), "preserve": ()}
 CASES["OpenPlayAreaScreenForViewing"] = [
-    {"wram": {0xCBD4: b"\x55", 0xCBD6: b"\x55"}, "read": {0xCBD4: 1, 0xCBD3: 1, 0xCBD6: 1},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xCBD4: b"\xAA", 0xCBD6: b"\xAA"}, read={0xCBD4: 1, 0xCBD3: 1, 0xCBD6: 1},
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "wram": {0xCBD4: b"\x55", 0xCBD6: b"\x55"},
+        "read": {0xCBD4: 1, 0xCBD3: 1, 0xCBD6: 1},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        wram={0xCBD4: b"\xaa", 0xCBD6: b"\xaa"},
+        read={0xCBD4: 1, 0xCBD3: 1, 0xCBD6: 1},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory OpenPlayAreaScreenForViewing
 
 # >>> factory OpenPlayAreaScreenForSelection
 CONTRACT["OpenPlayAreaScreenForSelection"] = {"compare": (), "preserve": ()}
 CASES["OpenPlayAreaScreenForSelection"] = [
-    {"wram": {0xCBD4: b"\x55", 0xCBD6: b"\x55"}, "read": {0xCBD4: 1, 0xCBD3: 1, 0xCBD6: 1},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xCBD4: b"\xAA", 0xCBD6: b"\xAA"}, read={0xCBD4: 1, 0xCBD3: 1, 0xCBD6: 1},
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "wram": {0xCBD4: b"\x55", 0xCBD6: b"\x55"},
+        "read": {0xCBD4: 1, 0xCBD3: 1, 0xCBD6: 1},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        wram={0xCBD4: b"\xaa", 0xCBD6: b"\xaa"},
+        read={0xCBD4: 1, 0xCBD3: 1, 0xCBD6: 1},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory OpenPlayAreaScreenForSelection
 
@@ -5246,11 +11094,32 @@ CONTRACT["DisplayPlayAreaScreen"] = {"compare": ("a",), "preserve": ()}
 # Two Pokemon in play, a = PAD_START (the card-page key). A picks the arena;
 # B cancels with hCurMenuItem = MENU_CANCEL. The exit flags under the carry are
 # the entry flags (`pop af`), which this contract does not model.
-_PLAY_AREA = {"a": 0x08, "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC200: b"\x10\x11", 0xC2BB: b"\x00", 0xC2C8: b"\x28\x28", 0xC2CE: b"\x01\x01", 0xC2EF: b"\x02", 0xC400: b"\x09\x08", 0xCABB: b"\x80", 0xCBD4: b"\x00", 0xFF40: b"\x80"}, "read": {0xFF92: 1, 0xFF9D: 1, 0xCBC9: 1, 0xCBD4: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000}
+_PLAY_AREA = {
+    "a": 0x08,
+    "wram": {
+        0xFF97: b"\xc2",
+        0xFF9D: b"\x00",
+        0xC200: b"\x10\x11",
+        0xC2BB: b"\x00",
+        0xC2C8: b"\x28\x28",
+        0xC2CE: b"\x01\x01",
+        0xC2EF: b"\x02",
+        0xC400: b"\x09\x08",
+        0xCABB: b"\x80",
+        0xCBD4: b"\x00",
+        0xFF40: b"\x80",
+    },
+    "read": {0xFF92: 1, 0xFF9D: 1, 0xCBC9: 1, 0xCBD4: 1},
+    "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+    "instruction_budget": 20000000,
+    "cycle_budget": 80000000,
+}
 CASES["DisplayPlayAreaScreen"] = [
     dict(_PLAY_AREA, keys=[0x00, 0x01]),
     dict(_PLAY_AREA, keys=[0x00, 0x02]),
-    dict(POISON, **{k: v for k, v in _PLAY_AREA.items() if k != "a"}, keys=[0x00, 0x01]),
+    dict(
+        POISON, **{k: v for k, v in _PLAY_AREA.items() if k != "a"}, keys=[0x00, 0x01]
+    ),
 ]
 # <<< factory DisplayPlayAreaScreen
 
@@ -5263,7 +11132,26 @@ CASES["SelectingBenchPokemonMenu"] = [
     dict(POISON, wram={0xCBD4: b"\x02"}),
     # Select opens the Hand/Examine/Back menu; Select again opens the in-play-area
     # screen through the hotkey, and the Select that closes it returns here.
-    {"keys": [0x04, 0x00, 0x04], "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00\x01", 0xC2F0: b"\x00", 0xC2C8: b"\x28\x28", 0xC2EF: b"\x02", 0xC400: b"\x08\x09", 0xC200: b"\x10\x11", 0xCABB: b"\x00", 0xCBD4: b"\x01", 0xFF91: b"\x04"}, "setup": FRAME_SETUP, "read": {0xCBD4: 1, 0xCBC6: 1}, "expect": {0xCBD4: b"\x01", 0xCBC6: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {
+        "keys": [0x04, 0x00, 0x04],
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00\x01",
+            0xC2F0: b"\x00",
+            0xC2C8: b"\x28\x28",
+            0xC2EF: b"\x02",
+            0xC400: b"\x08\x09",
+            0xC200: b"\x10\x11",
+            0xCABB: b"\x00",
+            0xCBD4: b"\x01",
+            0xFF91: b"\x04",
+        },
+        "setup": FRAME_SETUP,
+        "read": {0xCBD4: 1, 0xCBC6: 1},
+        "expect": {0xCBD4: b"\x01", 0xCBC6: b"\x00"},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
 ]
 # <<< factory SelectingBenchPokemonMenu
 
@@ -5273,15 +11161,87 @@ CASES["HandleSpecialDuelMainSceneHotkeys"] = [
     {},
     dict(POISON),
     # B held without a direction: nothing opens, the direction test leaves Z clear.
-    {"a": 0x00, "wram": {0xFF90: b"\x02", 0xFF91: b"\x02"}, "read": {0xCBFF: 1}, "expect": {0xCBFF: b"\x00"}},
+    {
+        "a": 0x00,
+        "wram": {0xFF90: b"\x02", 0xFF91: b"\x02"},
+        "read": {0xCBFF: 1},
+        "expect": {0xCBFF: b"\x00"},
+    },
     # Start with no arena card: carry straight back.
-    {"a": 0x01, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xFF91: b"\x08"}, "read": {0xCBFF: 1}, "expect": {0xCBFF: b"\x01"}},
+    {
+        "a": 0x01,
+        "wram": {0xFF97: b"\xc2", 0xC2BB: b"\xff", 0xFF91: b"\x08"},
+        "read": {0xCBFF: 1},
+        "expect": {0xCBFF: b"\x01"},
+    },
     # Start opens the arena card's page; the next B closes it.
-    {"a": 0x00, "keys": [0x08, 0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xFF91: b"\x08"}, "setup": FRAME_SETUP, "read": {0xCBC9: 1, 0xCBCF: 1}, "expect": {0xCBC9: b"\x00", 0xCBCF: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {
+        "a": 0x00,
+        "keys": [0x08, 0x00, 0x02],
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xC2F0: b"\x00",
+            0xC2C8: b"\x28",
+            0xC2EF: b"\x01",
+            0xC400: b"\x08",
+            0xC200: b"\x10",
+            0xCABB: b"\x00",
+            0xFF91: b"\x08",
+        },
+        "setup": FRAME_SETUP,
+        "read": {0xCBC9: 1, 0xCBCF: 1},
+        "expect": {0xCBC9: b"\x00", 0xCBCF: b"\x00"},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
     # B + Down opens the turn holder's play area screen until B.
-    {"a": 0x00, "keys": [0x82, 0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xFF90: b"\x82", 0xFF91: b"\x82"}, "setup": FRAME_SETUP, "read": {0xFF97: 1, 0xCBC9: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {
+        "a": 0x00,
+        "keys": [0x82, 0x00, 0x02],
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xC2F0: b"\x00",
+            0xC2C8: b"\x28",
+            0xC2EF: b"\x01",
+            0xC400: b"\x08",
+            0xC200: b"\x10",
+            0xCABB: b"\x00",
+            0xFF90: b"\x82",
+            0xFF91: b"\x82",
+        },
+        "setup": FRAME_SETUP,
+        "read": {0xFF97: 1, 0xCBC9: 1},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
     # B + Up opens the opponent's play area screen until B.
-    {"a": 0x00, "keys": [0x42, 0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xFF90: b"\x42", 0xFF91: b"\x42", 0xC3EF: b"\x01", 0xC3BB: b"\x00", 0xC3C8: b"\x28", 0xC480: b"\x08", 0xC300: b"\x10"}, "setup": FRAME_SETUP, "read": {0xFF97: 1, 0xCBC9: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {
+        "a": 0x00,
+        "keys": [0x42, 0x00, 0x02],
+        "wram": {
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xC2F0: b"\x00",
+            0xC2C8: b"\x28",
+            0xC2EF: b"\x01",
+            0xC400: b"\x08",
+            0xC200: b"\x10",
+            0xCABB: b"\x00",
+            0xFF90: b"\x42",
+            0xFF91: b"\x42",
+            0xC3EF: b"\x01",
+            0xC3BB: b"\x00",
+            0xC3C8: b"\x28",
+            0xC480: b"\x08",
+            0xC300: b"\x10",
+        },
+        "setup": FRAME_SETUP,
+        "read": {0xFF97: 1, 0xCBC9: 1},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
 ]
 # <<< factory HandleSpecialDuelMainSceneHotkeys
 
@@ -5308,16 +11268,25 @@ CONTRACT["HandleBetweenTurnKnockOuts"] = {"compare": ("a", "f"), "preserve": ()}
 # a prize, and the duel goes on.
 CASES["HandleBetweenTurnKnockOuts"] = [
     dict(_attack_fixture(), **_ATTACK_REGS),
-    dict(_attack_fixture(**{"C3C8": b"\x00", "C3BC": b"\xff" * 5, "C3EF": b"\x01"}), **POISON),
+    dict(
+        _attack_fixture(**{"C3C8": b"\x00", "C3BC": b"\xff" * 5, "C3EF": b"\x01"}),
+        **POISON,
+    ),
     dict(_attack_fixture(**{"C2C8": b"\x00"}), **_ATTACK_REGS),
 ]
 # <<< factory HandleBetweenTurnKnockOuts
 
 # >>> factory HandleDestinyBondAndBetweenTurnKnockOuts
-CONTRACT["HandleDestinyBondAndBetweenTurnKnockOuts"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["HandleDestinyBondAndBetweenTurnKnockOuts"] = {
+    "compare": ("a", "f"),
+    "preserve": (),
+}
 CASES["HandleDestinyBondAndBetweenTurnKnockOuts"] = [
     dict(_attack_fixture(), **_ATTACK_REGS),
-    dict(_attack_fixture(**{"C3C8": b"\x00", "C3BC": b"\xff" * 5, "C3EF": b"\x01"}), **POISON),
+    dict(
+        _attack_fixture(**{"C3C8": b"\x00", "C3BC": b"\xff" * 5, "C3EF": b"\x01"}),
+        **POISON,
+    ),
 ]
 # <<< factory HandleDestinyBondAndBetweenTurnKnockOuts
 
@@ -5326,10 +11295,14 @@ CONTRACT["RestartPracticeDuelTurn"] = {"compare": (), "preserve": ()}
 # It now flows into DuelMainInterface, which redraws the duel scene, so this
 # needs the text setup and a budget past the default 240 frames.
 CASES["RestartPracticeDuelTurn"] = [
-    dict(POISON, wram={0xCBFE: b"\x55", 0xCC13: b"\x00"},
-         read={0xCC10: 1, 0xCC11: 1, 0xCBFE: 1},
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000)
+    dict(
+        POISON,
+        wram={0xCBFE: b"\x55", 0xCC13: b"\x00"},
+        read={0xCC10: 1, 0xCC11: 1, 0xCBFE: 1},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    )
 ]
 # <<< factory RestartPracticeDuelTurn
 
@@ -5338,15 +11311,33 @@ CONTRACT["DuelMainInterface"] = {"compare": (), "preserve": ()}
 CASES["DuelMainInterface"] = [
     # wDuelistType $80 is the AI opponent. Drawing the main scene costs more than
     # the default 240-frame allowance.
-    {"wram": {0xCC0D: b"\x80", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd"}, "read": {0xCBF9: 1, 0xCC10: 1, 0xCC11: 1},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {
+        "wram": {0xCC0D: b"\x80", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd"},
+        "read": {0xCBF9: 1, 0xCC10: 1, 0xCC11: 1},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
     # wDuelistType 0 is the player, so this one falls into the duel menu's input
     # loop: it holds B and presses Up to leave through the first shortcut.
-    dict(POISON, wram={0xCC0D: b"\x00", 0xCAB8: b"\xaa", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd", 0xCC07: b"\x00", 0xCBE7: b"\x00"}, read={0xCAB8: 1, 0xCBF9: 1, 0xCC10: 1, 0xCC11: 1}, expect={0xCAB8: b"\xaa", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd"},
-         keys=[0x42, 0x42],
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000)
+    dict(
+        POISON,
+        wram={
+            0xCC0D: b"\x00",
+            0xCAB8: b"\xaa",
+            0xCBF9: b"\xbb",
+            0xCC10: b"\xcc",
+            0xCC11: b"\xdd",
+            0xCC07: b"\x00",
+            0xCBE7: b"\x00",
+        },
+        read={0xCAB8: 1, 0xCBF9: 1, 0xCC10: 1, 0xCC11: 1},
+        expect={0xCAB8: b"\xaa", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd"},
+        keys=[0x42, 0x42],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory DuelMainInterface
 
@@ -5357,21 +11348,36 @@ CONTRACT["PrintDuelMenuAndHandleInput"] = {"compare": (), "preserve": ()}
 # chain down to the in-play-area screen and out through DuelMainInterface, so it
 # needs the B press that backs out of that screen and the redraw budget.
 CASES["PrintDuelMenuAndHandleInput"] = [
-    dict(POISON, wram={0xCBC6: b"\x00", 0xCC07: b"\x00", 0xCBE7: b"\x00"},
-         read={0xCBC6: 1, 0xCC07: 1}, keys=[0x00, 0x42, 0x42],
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000),
-    dict(POISON, wram={0xCBC6: b"\x00", 0xCC07: b"\x00", 0xCBE7: b"\x00"},
-         read={0xCBC6: 1, 0xCC07: 1}, keys=[0x00, 0x04, 0x02],
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        POISON,
+        wram={0xCBC6: b"\x00", 0xCC07: b"\x00", 0xCBE7: b"\x00"},
+        read={0xCBC6: 1, 0xCC07: 1},
+        keys=[0x00, 0x42, 0x42],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
+    dict(
+        POISON,
+        wram={0xCBC6: b"\x00", 0xCC07: b"\x00", 0xCBE7: b"\x00"},
+        read={0xCBC6: 1, 0xCC07: 1},
+        keys=[0x00, 0x04, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
     # Cursor on Attack (wCurrentDuelMenuItem 1) through idle frames before the
     # B+Up shortcut: HandleDuelMenuInput's blink-counter early return leaves e
     # untouched, so the item written back every frame stays 1.
-    dict(POISON, wram={0xCBC6: b"\x01", 0xCC07: b"\x00", 0xCBE7: b"\x00"},
-         read={0xCBC6: 1, 0xCC07: 1}, keys=[0x00, 0x00, 0x00, 0x42, 0x42],
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        POISON,
+        wram={0xCBC6: b"\x01", 0xCC07: b"\x00", 0xCBE7: b"\x00"},
+        read={0xCBC6: 1, 0xCC07: 1},
+        keys=[0x00, 0x00, 0x00, 0x42, 0x42],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory PrintDuelMenuAndHandleInput
 
@@ -5381,8 +11387,24 @@ CONTRACT["DuelMenuShortcut_OpponentPlayArea"] = {"compare": (), "preserve": ()}
 # 40 HP); B leaves the play area screen and DuelMainInterface (the stop) is
 # entered with hWhoseTurn swapped back.
 CASES["DuelMenuShortcut_OpponentPlayArea"] = [
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC3F0: b"\x00", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFF97: 1, 0xCBC9: 1, 0xCC24: 2}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC3BB: b"\x00",
+            0xC3F0: b"\x00",
+            0xC3C8: b"\x28",
+            0xC3EF: b"\x01",
+            0xC480: b"\x08",
+            0xC300: b"\x10",
+            0xCABB: b"\x00",
+        },
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFF97: 1, 0xCBC9: 1, 0xCC24: 2},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory DuelMenuShortcut_OpponentPlayArea
 
@@ -5391,8 +11413,24 @@ CONTRACT["DuelMenuShortcut_PlayerPlayArea"] = {"compare": (), "preserve": ()}
 # core.asm:373-375. Arena Bulbasaur; B leaves the play area screen for
 # DuelMainInterface (the stop).
 CASES["DuelMenuShortcut_PlayerPlayArea"] = [
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFF97: 1, 0xCBC9: 1, 0xCC24: 2}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xC2F0: b"\x00",
+            0xC2C8: b"\x28",
+            0xC2EF: b"\x01",
+            0xC400: b"\x08",
+            0xC200: b"\x10",
+            0xCABB: b"\x00",
+        },
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFF97: 1, 0xCBC9: 1, 0xCC24: 2},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory DuelMenuShortcut_PlayerPlayArea
 
@@ -5405,10 +11443,51 @@ CONTRACT["DuelMenuShortcut_OpponentDiscardPile"] = {"compare": (), "preserve": (
 # the list for DuelMainInterface (the stop) with the $FF-terminated list at
 # wDuelTempList.
 CASES["DuelMenuShortcut_OpponentDiscardPile"] = [
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC3F0: b"\x00", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x00", 0xC3ED: b"\x00", 0xC510: b"\x55", 0xCAC2: b"\x55"}, keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFF97: 1, 0xC510: 1, 0xCAC2: 1}, vread={0: {0x9980: 20}}, instruction_budget=20000000, cycle_budget=80000000),
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC3F0: b"\x00", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x00", 0xC3ED: b"\x01", 0xC37E: b"\x01", 0xC480: b"\x08\x01", 0xC300: b"\x10\x02", 0xC510: b"\x55\x55"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFF97: 1, 0xC510: 2}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC3BB: b"\x00",
+            0xC3F0: b"\x00",
+            0xC3C8: b"\x28",
+            0xC3EF: b"\x01",
+            0xC480: b"\x08",
+            0xC300: b"\x10",
+            0xCABB: b"\x00",
+            0xC3ED: b"\x00",
+            0xC510: b"\x55",
+            0xCAC2: b"\x55",
+        },
+        keys=[0x00, 0x01],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFF97: 1, 0xC510: 1, 0xCAC2: 1},
+        vread={0: {0x9980: 20}},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC3BB: b"\x00",
+            0xC3F0: b"\x00",
+            0xC3C8: b"\x28",
+            0xC3EF: b"\x01",
+            0xC480: b"\x08",
+            0xC300: b"\x10",
+            0xCABB: b"\x00",
+            0xC3ED: b"\x01",
+            0xC37E: b"\x01",
+            0xC480: b"\x08\x01",
+            0xC300: b"\x10\x02",
+            0xC510: b"\x55\x55",
+        },
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFF97: 1, 0xC510: 2},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory DuelMenuShortcut_OpponentDiscardPile
 
@@ -5419,10 +11498,51 @@ CONTRACT["DuelMenuShortcut_PlayerDiscardPile"] = {"compare": (), "preserve": ()}
 # index 1, id $01, $C201 = $02, $C27E = 1, $C2ED = 1): B leaves the list for
 # DuelMainInterface (the stop).
 CASES["DuelMenuShortcut_PlayerDiscardPile"] = [
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xC2ED: b"\x00", 0xC510: b"\x55", 0xCAC2: b"\x55"}, keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFF97: 1, 0xC510: 1, 0xCAC2: 1}, vread={0: {0x9980: 20}}, instruction_budget=20000000, cycle_budget=80000000),
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xC2ED: b"\x01", 0xC27E: b"\x01", 0xC400: b"\x08\x01", 0xC200: b"\x10\x02", 0xC510: b"\x55\x55"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFF97: 1, 0xC510: 2}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xC2F0: b"\x00",
+            0xC2C8: b"\x28",
+            0xC2EF: b"\x01",
+            0xC400: b"\x08",
+            0xC200: b"\x10",
+            0xCABB: b"\x00",
+            0xC2ED: b"\x00",
+            0xC510: b"\x55",
+            0xCAC2: b"\x55",
+        },
+        keys=[0x00, 0x01],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFF97: 1, 0xC510: 1, 0xCAC2: 1},
+        vread={0: {0x9980: 20}},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xC2F0: b"\x00",
+            0xC2C8: b"\x28",
+            0xC2EF: b"\x01",
+            0xC400: b"\x08",
+            0xC200: b"\x10",
+            0xCABB: b"\x00",
+            0xC2ED: b"\x01",
+            0xC27E: b"\x01",
+            0xC400: b"\x08\x01",
+            0xC200: b"\x10\x02",
+            0xC510: b"\x55\x55",
+        },
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFF97: 1, 0xC510: 2},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory DuelMenuShortcut_PlayerDiscardPile
 
@@ -5432,10 +11552,33 @@ CONTRACT["DuelMenuShortcut_OpponentActivePokemon"] = {"compare": (), "preserve":
 # DuelMainInterface (the stop) with hWhoseTurn swapped back. Case 1: opponent
 # Bulbasaur, B leaves its card page.
 CASES["DuelMenuShortcut_OpponentActivePokemon"] = [
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC3BB: b"\xFF", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFF97: 1}, instruction_budget=20000000, cycle_budget=80000000),
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC3F0: b"\x00", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFF97: 1, 0xCBC9: 2, 0xCC24: 4}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        POISON,
+        wram={0xFF97: b"\xc2", 0xC3BB: b"\xff", 0xCABB: b"\x00"},
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFF97: 1},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC3BB: b"\x00",
+            0xC3F0: b"\x00",
+            0xC3C8: b"\x28",
+            0xC3EF: b"\x01",
+            0xC480: b"\x08",
+            0xC300: b"\x10",
+            0xCABB: b"\x00",
+        },
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFF97: 1, 0xCBC9: 2, 0xCC24: 4},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory DuelMenuShortcut_OpponentActivePokemon
 
@@ -5444,10 +11587,33 @@ CONTRACT["DuelMenuShortcut_PlayerActivePokemon"] = {"compare": (), "preserve": (
 # core.asm:440-442. Case 0: no arena card, straight to DuelMainInterface (the
 # stop). Case 1: Bulbasaur, B leaves its card page with the card loaded.
 CASES["DuelMenuShortcut_PlayerActivePokemon"] = [
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFF97: 1}, instruction_budget=20000000, cycle_budget=80000000),
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFF97: 1, 0xCBC9: 2, 0xCC24: 4}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        POISON,
+        wram={0xFF97: b"\xc2", 0xC2BB: b"\xff", 0xCABB: b"\x00"},
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFF97: 1},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xC2F0: b"\x00",
+            0xC2C8: b"\x28",
+            0xC2EF: b"\x01",
+            0xC400: b"\x08",
+            0xC200: b"\x10",
+            0xCABB: b"\x00",
+        },
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFF97: 1, 0xCBC9: 2, 0xCC24: 4},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory DuelMenuShortcut_PlayerActivePokemon
 
@@ -5456,8 +11622,26 @@ CONTRACT["DuelMenu_PkmnPower"] = {"compare": (), "preserve": ()}
 # core.asm:460-464. Arena Bulbasaur (no Pokemon Power): B leaves the selection
 # screen for DuelMainInterface (the stop), wSelectedDuelSubMenuItem cleared.
 CASES["DuelMenu_PkmnPower"] = [
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xCBCF: b"\x55", 0xCAC2: b"\x55"}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFF97: 1, 0xCBCF: 1, 0xCAC2: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xC2F0: b"\x00",
+            0xC2C8: b"\x28",
+            0xC2EF: b"\x01",
+            0xC400: b"\x08",
+            0xC200: b"\x10",
+            0xCABB: b"\x00",
+            0xCBCF: b"\x55",
+            0xCAC2: b"\x55",
+        },
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFF97: 1, 0xCBCF: 1, 0xCAC2: 1},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory DuelMenu_PkmnPower
 
@@ -5469,8 +11653,14 @@ CONTRACT["DuelMenu_Done"] = {"compare": (), "preserve": ()}
 # eight non-turn duelvars from DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX. The
 # carry path is not covered: it tail-jumps into RestartPracticeDuelTurn, which
 # has no reachable `ret` of its own under a probe.
-_DMD_WRAM = {0xCC13: b"\x00", 0xFF97: b"\xC2", 0xC3F1: b"\x00",
-             0xC3F2: b"\xFF" * 8, 0xFF9E: b"\xFF", 0xCBC6: b"\x00"}
+_DMD_WRAM = {
+    0xCC13: b"\x00",
+    0xFF97: b"\xc2",
+    0xC3F1: b"\x00",
+    0xC3F2: b"\xff" * 8,
+    0xFF9E: b"\xff",
+    0xCBC6: b"\x00",
+}
 _DMD_READ = {0xFF9E: 1, 0xC3F2: 8, 0xCBC6: 1}
 CASES["DuelMenu_Done"] = [
     {"wram": dict(_DMD_WRAM), "read": dict(_DMD_READ)},
@@ -5491,15 +11681,68 @@ CONTRACT["DuelMenu_Retreat"] = {"compare": (), "preserve": ()}
 # OpenPlayAreaScreenForSelection's entry, reached with the energy in the
 # discard pile ($C201 = $02) and hTempRetreatCostCards holding its index.
 CASES["DuelMenu_Retreat"] = [
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xFFA0: b"\x55"},
-         keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFFA0: 1}, vread={0: {0x9980: 20}}, instruction_budget=20000000, cycle_budget=80000000),
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x01", 0xCC0C: b"\x01", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xFFA0: b"\x55"},
-         keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFFA0: 1}, vread={0: {0x9980: 20}}, instruction_budget=20000000, cycle_budget=80000000),
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00\x02", 0xC2F0: b"\x00", 0xC2C8: b"\x28\x28", 0xC2EF: b"\x02", 0xC400: b"\x08\x01\x08", 0xC200: b"\x10\x10\x11", 0xCABB: b"\x00", 0xFFA0: b"\x55", 0xCBCB: b"\x55", 0xCC0C: b"\x00"},
-         keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFFA0: 1, 0xC200: 3, 0xC2EF: 1, 0xFFA2: 2}, instruction_budget=40000000, cycle_budget=160000000),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xC2F0: b"\x00",
+            0xC2C8: b"\x28",
+            0xC2EF: b"\x01",
+            0xC400: b"\x08",
+            0xC200: b"\x10",
+            0xCABB: b"\x00",
+            0xFFA0: b"\x55",
+        },
+        keys=[0x00, 0x01],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFFA0: 1},
+        vread={0: {0x9980: 20}},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xC2F0: b"\x01",
+            0xCC0C: b"\x01",
+            0xC2C8: b"\x28",
+            0xC2EF: b"\x01",
+            0xC400: b"\x08",
+            0xC200: b"\x10",
+            0xCABB: b"\x00",
+            0xFFA0: b"\x55",
+        },
+        keys=[0x00, 0x01],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFFA0: 1},
+        vread={0: {0x9980: 20}},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00\x02",
+            0xC2F0: b"\x00",
+            0xC2C8: b"\x28\x28",
+            0xC2EF: b"\x02",
+            0xC400: b"\x08\x01\x08",
+            0xC200: b"\x10\x10\x11",
+            0xCABB: b"\x00",
+            0xFFA0: b"\x55",
+            0xCBCB: b"\x55",
+            0xCC0C: b"\x00",
+        },
+        keys=[0x00, 0x01],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFFA0: 1, 0xC200: 3, 0xC2EF: 1, 0xFFA2: 2},
+        instruction_budget=40000000,
+        cycle_budget=160000000,
+    ),
 ]
 # <<< factory DuelMenu_Retreat
 
@@ -5512,12 +11755,32 @@ CONTRACT["DuelMenu_Hand"] = {"compare": (), "preserve": ()}
 # and PLAY_CHECK in wCardListItemSelectionMenuType ($CBDE) are what
 # DisplayCardList (the stop) receives.
 CASES["DuelMenu_Hand"] = [
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"}, keys=[0x00, 0x01],
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         vread={0: {0x9980: 20}}, instruction_budget=20000000, cycle_budget=80000000),
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x02", 0xC242: b"\x01\x00", 0xC400: b"\x08\x01", 0xC200: b"\x01\x01", 0xCABB: b"\x00", 0xCBDE: b"\x00", 0xC510: b"\xFF" * 4},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xC510: 3, 0xCBDE: 1, 0xCBDA: 2}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        POISON,
+        wram={0xFF97: b"\xc2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
+        keys=[0x00, 0x01],
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        vread={0: {0x9980: 20}},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2EE: b"\x02",
+            0xC242: b"\x01\x00",
+            0xC400: b"\x08\x01",
+            0xC200: b"\x01\x01",
+            0xCABB: b"\x00",
+            0xCBDE: b"\x00",
+            0xC510: b"\xff" * 4,
+        },
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xC510: 3, 0xCBDE: 1, 0xCBDA: 2},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory DuelMenu_Hand
 
@@ -5526,9 +11789,24 @@ CONTRACT["OpenPlayerHandScreen"] = {"compare": (), "preserve": ()}
 # core.asm:554-560 up to DisplayCardList (the stop): the hand list, the info
 # box text and PLAY_CHECK are in place.
 CASES["OpenPlayerHandScreen"] = [
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x02", 0xC242: b"\x01\x00", 0xC400: b"\x08\x01", 0xC200: b"\x01\x01", 0xCABB: b"\x00", 0xCBDE: b"\x00", 0xC510: b"\xFF" * 4, 0xCBDA: b"\xFF\xFF"},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xC510: 3, 0xCBDE: 1, 0xCBDA: 2}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2EE: b"\x02",
+            0xC242: b"\x01\x00",
+            0xC400: b"\x08\x01",
+            0xC200: b"\x01\x01",
+            0xCABB: b"\x00",
+            0xCBDE: b"\x00",
+            0xC510: b"\xff" * 4,
+            0xCBDA: b"\xff\xff",
+        },
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xC510: 3, 0xCBDE: 1, 0xCBDA: 2},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory OpenPlayerHandScreen
 
@@ -5542,18 +11820,53 @@ CONTRACT["PlayEnergyCard"] = {"compare": (), "preserve": ()}
 # second energy of a turn is refused with MayOnlyAttachOneEnergyCard and the
 # hand list is rebuilt for DisplayCardList (the stop), $CC0B untouched.
 CASES["PlayEnergyCard"] = [
-    dict(POISON, c=0x01, hram={0xFF98: b"\x05", 0xFF9D: b"\x00", 0xFFA0: b"\xaa", 0xFFA1: b"\xbb"},
-         wram={0xFF97: b"\xC2", 0xCC0B: b"\x00", 0xC2BB: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x28", 0xC2EE: b"\x01", 0xC242: b"\x05",
-               0xC400: b"\x08\x01\x01\x01\x01\x01", 0xC200: b"\x10\x00\x00\x00\x00\x01", 0xCABB: b"\x00", 0xCC0D: b"\x00", 0xCC0E: b"\x80"},
-         keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFFA0: 1, 0xFFA1: 1, 0xCC0B: 1, 0xC205: 1, 0xC2EE: 1},
-         instruction_budget=40000000, cycle_budget=160000000),
-    dict(POISON, c=0x01, hram={0xFF98: b"\x05", 0xFF9D: b"\x00", 0xFFA0: b"\xaa", 0xFFA1: b"\xbb"},
-         wram={0xFF97: b"\xC2", 0xCC0B: b"\x01", 0xC2BB: b"\x00", 0xC2EF: b"\x01", 0xC2C8: b"\x28", 0xC2EE: b"\x01", 0xC242: b"\x05",
-               0xC400: b"\x08\x01\x01\x01\x01\x01", 0xC200: b"\x10\x00\x00\x00\x00\x01", 0xCABB: b"\x00", 0xC510: b"\xFF" * 3},
-         keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xFFA0: 1, 0xFFA1: 1, 0xCC0B: 1, 0xC205: 1, 0xC510: 2},
-         instruction_budget=40000000, cycle_budget=160000000),
+    dict(
+        POISON,
+        c=0x01,
+        hram={0xFF98: b"\x05", 0xFF9D: b"\x00", 0xFFA0: b"\xaa", 0xFFA1: b"\xbb"},
+        wram={
+            0xFF97: b"\xc2",
+            0xCC0B: b"\x00",
+            0xC2BB: b"\x00",
+            0xC2EF: b"\x01",
+            0xC2C8: b"\x28",
+            0xC2EE: b"\x01",
+            0xC242: b"\x05",
+            0xC400: b"\x08\x01\x01\x01\x01\x01",
+            0xC200: b"\x10\x00\x00\x00\x00\x01",
+            0xCABB: b"\x00",
+            0xCC0D: b"\x00",
+            0xCC0E: b"\x80",
+        },
+        keys=[0x00, 0x01],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFFA0: 1, 0xFFA1: 1, 0xCC0B: 1, 0xC205: 1, 0xC2EE: 1},
+        instruction_budget=40000000,
+        cycle_budget=160000000,
+    ),
+    dict(
+        POISON,
+        c=0x01,
+        hram={0xFF98: b"\x05", 0xFF9D: b"\x00", 0xFFA0: b"\xaa", 0xFFA1: b"\xbb"},
+        wram={
+            0xFF97: b"\xc2",
+            0xCC0B: b"\x01",
+            0xC2BB: b"\x00",
+            0xC2EF: b"\x01",
+            0xC2C8: b"\x28",
+            0xC2EE: b"\x01",
+            0xC242: b"\x05",
+            0xC400: b"\x08\x01\x01\x01\x01\x01",
+            0xC200: b"\x10\x00\x00\x00\x00\x01",
+            0xCABB: b"\x00",
+            0xC510: b"\xff" * 3,
+        },
+        keys=[0x00, 0x01],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xFFA0: 1, 0xFFA1: 1, 0xCC0B: 1, 0xC205: 1, 0xC510: 2},
+        instruction_budget=40000000,
+        cycle_budget=160000000,
+    ),
 ]
 # <<< factory PlayEnergyCard
 
@@ -5562,20 +11875,37 @@ CONTRACT["ReloadCardListScreen"] = {"compare": (), "preserve": ()}
 # core.asm:625-629: the hand list is rebuilt into wDuelTempList and the
 # layout redrawn before DisplayCardList (the stop).
 CASES["ReloadCardListScreen"] = [
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x02", 0xC242: b"\x01\x00", 0xC400: b"\x08\x01", 0xC200: b"\x01\x01", 0xCABB: b"\x00", 0xC510: b"\xFF" * 4},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xC510: 3}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2EE: b"\x02",
+            0xC242: b"\x01\x00",
+            0xC400: b"\x08\x01",
+            0xC200: b"\x01\x01",
+            0xCABB: b"\x00",
+            0xC510: b"\xff" * 4,
+        },
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xC510: 3},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory ReloadCardListScreen
 
 # >>> factory DuelMenu_Check
 CONTRACT["DuelMenu_Check"] = {"compare": (), "preserve": ()}
 CASES["DuelMenu_Check"] = [
-    dict(POISON, wram={0xCBC6: b"\x00", 0xCBD3: b"\x55", 0xCEAF: b"\x55", 0xCEB0: b"\x55"},
-         read={0xCBC6: 1, 0xCBD3: 1, 0xCEAF: 1, 0xCEB0: 1},
-         keys=[0x00, 0x02],
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000)
+    dict(
+        POISON,
+        wram={0xCBC6: b"\x00", 0xCBD3: b"\x55", 0xCEAF: b"\x55", 0xCEB0: b"\x55"},
+        read={0xCBC6: 1, 0xCBD3: 1, 0xCEAF: 1, 0xCEB0: 1},
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    )
 ]
 # <<< factory DuelMenu_Check
 
@@ -5584,11 +11914,15 @@ CONTRACT["DuelMenuShortcut_BothActivePokemon"] = {"compare": (), "preserve": ()}
 # The chain walks the in-play-area screen, so this seeds the B press that backs
 # out of it and the budget that redraw needs.
 CASES["DuelMenuShortcut_BothActivePokemon"] = [
-    dict(POISON, wram={0xCBC6: b"\x00", 0xCBD4: b"\x55", 0xCE60: b"\x55"},
-         read={0xCBC6: 1, 0xCBD4: 1, 0xCE60: 1},
-         keys=[0x00, 0x02],
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000)
+    dict(
+        POISON,
+        wram={0xCBC6: b"\x00", 0xCBD4: b"\x55", 0xCE60: b"\x55"},
+        read={0xCBC6: 1, 0xCBD4: 1, 0xCE60: 1},
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    )
 ]
 # <<< factory DuelMenuShortcut_BothActivePokemon
 
@@ -5604,15 +11938,65 @@ CONTRACT["DuelMenu_Attack"] = {"compare": (), "preserve": ()}
 # $10) and A on Leech Seed reach UseAttackOrPokemonPower's entry (the stop)
 # with the attack's deck index / attack index pair at wDuelTempList.
 CASES["DuelMenu_Attack"] = [
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x03", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xCBCF: b"\x55"},
-         keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xCBCF: 1}, instruction_budget=20000000, cycle_budget=80000000),
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xCBCF: b"\x55", 0xCC13: b"\x00"},
-         keys=[0x00, 0x01, 0x00, 0x01, 0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xCBCF: 1, 0xC510: 2}, instruction_budget=40000000, cycle_budget=160000000),
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08\x01\x01\x01\x01", 0xC200: b"\x10\x10\x10\x10\x10", 0xCABB: b"\x00", 0xCBCF: b"\x55", 0xCC13: b"\x00"},
-         keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xCBCF: 1, 0xC510: 2, 0xFFB1: 1}, instruction_budget=40000000, cycle_budget=160000000),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xC2F0: b"\x03",
+            0xC2C8: b"\x28",
+            0xC2EF: b"\x01",
+            0xC400: b"\x08",
+            0xC200: b"\x10",
+            0xCABB: b"\x00",
+            0xCBCF: b"\x55",
+        },
+        keys=[0x00, 0x01],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xCBCF: 1},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xC2F0: b"\x00",
+            0xC2C8: b"\x28",
+            0xC2EF: b"\x01",
+            0xC400: b"\x08",
+            0xC200: b"\x10",
+            0xCABB: b"\x00",
+            0xCBCF: b"\x55",
+            0xCC13: b"\x00",
+        },
+        keys=[0x00, 0x01, 0x00, 0x01, 0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xCBCF: 1, 0xC510: 2},
+        instruction_budget=40000000,
+        cycle_budget=160000000,
+    ),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xC2F0: b"\x00",
+            0xC2C8: b"\x28",
+            0xC2EF: b"\x01",
+            0xC400: b"\x08\x01\x01\x01\x01",
+            0xC200: b"\x10\x10\x10\x10\x10",
+            0xCABB: b"\x00",
+            0xCBCF: b"\x55",
+            0xCC13: b"\x00",
+        },
+        keys=[0x00, 0x01],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xCBCF: 1, 0xC510: 2, 0xFFB1: 1},
+        instruction_budget=40000000,
+        cycle_budget=160000000,
+    ),
 ]
 # <<< factory DuelMenu_Attack
 
@@ -5621,75 +12005,211 @@ CONTRACT["UnreferencedDrawCardFromDeckToHand"] = {"compare": (), "preserve": ()}
 # It falls into the duel menu's input loop, so these seed the Select shortcut
 # that walks out of it, plus the B press and budget that path needs.
 CASES["UnreferencedDrawCardFromDeckToHand"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCC07: b"\x00", 0xCBE7: b"\x00"},
-     "read": {0xFF9E: 1}, "expect": {0xFF9E: b"\x0B"}, "keys": [0x00, 0x04, 0x02],
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCC07: b"\x00", 0xCBE7: b"\x00"},
-         read={0xFF9E: 1}, expect={0xFF9E: b"\x0B"}, keys=[0x00, 0x04, 0x02],
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "wram": {0xFF97: b"\xc2", 0xC2BA: b"\x3c", 0xCC07: b"\x00", 0xCBE7: b"\x00"},
+        "read": {0xFF9E: 1},
+        "expect": {0xFF9E: b"\x0b"},
+        "keys": [0x00, 0x04, 0x02],
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        wram={0xFF97: b"\xc2", 0xC2BA: b"\x3c", 0xCC07: b"\x00", 0xCBE7: b"\x00"},
+        read={0xFF9E: 1},
+        expect={0xFF9E: b"\x0b"},
+        keys=[0x00, 0x04, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory UnreferencedDrawCardFromDeckToHand
 
 # >>> factory OppAction_ForceSwitchActive
 CONTRACT["OppAction_ForceSwitchActive"] = {"compare": (), "preserve": ()}
 CASES["OppAction_ForceSwitchActive"] = [
-    {"wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x01", wPlayAreaSelectAction: b"\x55", 0xC3EF: b"\x02", 0xC3BB: b"\x00\x01", 0xC3C8: b"\x20\x20", 0xC480: b"\x08\x09", wSerialSendBufToggle: b"\x00", wSerialSendBufIndex: b"\x00", wcb80: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {wPlayAreaSelectAction: 1, wSerialSendBufToggle: 1, wcb80: 1, wSerialSendBuf: 1}, "expect": {wPlayAreaSelectAction: b"\x01", wSerialSendBufToggle: b"\x01", wcb80: b"\x01", wSerialSendBuf: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x01", wPlayAreaSelectAction: b"\x55", 0xC3EF: b"\x02", 0xC3BB: b"\x00\x01", 0xC3C8: b"\x20\x20", 0xC480: b"\x08\x09", wSerialSendBufToggle: b"\x00", wSerialSendBufIndex: b"\x00", wcb80: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={wPlayAreaSelectAction: 1, wSerialSendBufToggle: 1, wcb80: 1, wSerialSendBuf: 1}, expect={wPlayAreaSelectAction: b"\x01", wSerialSendBufToggle: b"\x01", wcb80: b"\x01", wSerialSendBuf: b"\x01"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            hTempPlayAreaLocation_ff9d: b"\x01",
+            wPlayAreaSelectAction: b"\x55",
+            0xC3EF: b"\x02",
+            0xC3BB: b"\x00\x01",
+            0xC3C8: b"\x20\x20",
+            0xC480: b"\x08\x09",
+            wSerialSendBufToggle: b"\x00",
+            wSerialSendBufIndex: b"\x00",
+            wcb80: b"\x00",
+            0xCABB: b"\x80",
+            0xFF40: b"\x80",
+        },
+        "read": {
+            wPlayAreaSelectAction: 1,
+            wSerialSendBufToggle: 1,
+            wcb80: 1,
+            wSerialSendBuf: 1,
+        },
+        "expect": {
+            wPlayAreaSelectAction: b"\x01",
+            wSerialSendBufToggle: b"\x01",
+            wcb80: b"\x01",
+            wSerialSendBuf: b"\x01",
+        },
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "keys": [0x00, 0x01],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        wram={
+            hWhoseTurn: b"\xc2",
+            hTempPlayAreaLocation_ff9d: b"\x01",
+            wPlayAreaSelectAction: b"\x55",
+            0xC3EF: b"\x02",
+            0xC3BB: b"\x00\x01",
+            0xC3C8: b"\x20\x20",
+            0xC480: b"\x08\x09",
+            wSerialSendBufToggle: b"\x00",
+            wSerialSendBufIndex: b"\x00",
+            wcb80: b"\x00",
+            0xCABB: b"\x80",
+            0xFF40: b"\x80",
+        },
+        read={
+            wPlayAreaSelectAction: 1,
+            wSerialSendBufToggle: 1,
+            wcb80: 1,
+            wSerialSendBuf: 1,
+        },
+        expect={
+            wPlayAreaSelectAction: b"\x01",
+            wSerialSendBufToggle: b"\x01",
+            wcb80: b"\x01",
+            wSerialSendBuf: b"\x01",
+        },
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        keys=[0x00, 0x01],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory OppAction_ForceSwitchActive
 
 # >>> factory OppAction_UseAttack
 CONTRACT["OppAction_UseAttack"] = {"compare": ("a",), "preserve": ()}
 CASES["OppAction_UseAttack"] = [
-    {"wram": {wLoadedAttackEffectCommands: b"\x00\x00",
-              hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBB: b"\x00",
-              wArenaStatus: b"\x00", wPlayerDeck: b"\x08",
-              wTempCardID_ccc2: b"\x08", wSelectedAttack: b"\x00",
-              wLoadedCard1Name: b"\x35\x00", wLoadedAttackName: b"\x35\x00",
-              wDefaultText: b"\x00", wTxRam2: b"\x00\x00\x35\x00",
-              wLCDC: b"\x00"},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "keys": [0x00, 0x01], "read": {wSkipDuelistIsThinkingDelay: 1},
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON,
-         wram={wLoadedAttackEffectCommands: b"\x00\x00",
-               hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBB: b"\x00",
-               wArenaStatus: b"\x00", wPlayerDeck: b"\x08",
-               wTempCardID_ccc2: b"\x08", wSelectedAttack: b"\x00",
-               wLoadedCard1Name: b"\x35\x00", wLoadedAttackName: b"\x35\x00",
-               wDefaultText: b"\x00", wTxRam2: b"\x00\x00\x35\x00",
-               wLCDC: b"\x00"},
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         keys=[0x00, 0x01], read={wSkipDuelistIsThinkingDelay: 1},
-         instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "wram": {
+            wLoadedAttackEffectCommands: b"\x00\x00",
+            hWhoseTurn: b"\xc2",
+            wPlayerDuelVariables + 0xBB: b"\x00",
+            wArenaStatus: b"\x00",
+            wPlayerDeck: b"\x08",
+            wTempCardID_ccc2: b"\x08",
+            wSelectedAttack: b"\x00",
+            wLoadedCard1Name: b"\x35\x00",
+            wLoadedAttackName: b"\x35\x00",
+            wDefaultText: b"\x00",
+            wTxRam2: b"\x00\x00\x35\x00",
+            wLCDC: b"\x00",
+        },
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "keys": [0x00, 0x01],
+        "read": {wSkipDuelistIsThinkingDelay: 1},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        wram={
+            wLoadedAttackEffectCommands: b"\x00\x00",
+            hWhoseTurn: b"\xc2",
+            wPlayerDuelVariables + 0xBB: b"\x00",
+            wArenaStatus: b"\x00",
+            wPlayerDeck: b"\x08",
+            wTempCardID_ccc2: b"\x08",
+            wSelectedAttack: b"\x00",
+            wLoadedCard1Name: b"\x35\x00",
+            wLoadedAttackName: b"\x35\x00",
+            wDefaultText: b"\x00",
+            wTxRam2: b"\x00\x00\x35\x00",
+            wLCDC: b"\x00",
+        },
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        keys=[0x00, 0x01],
+        read={wSkipDuelistIsThinkingDelay: 1},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory OppAction_UseAttack
 
 # >>> factory HandleTurn
 CONTRACT["HandleTurn"] = {"compare": (), "preserve": ()}
 CASES["HandleTurn"] = [
-    {"keys": [0x00, 0x01],
-     "wram": {hWhoseTurn: b"\xC2", wLCDC: b"\x00", player_duelist_type: b"\x00", player_not_in_deck: b"\x3C", player_arena: b"\xFF", player_bench: b"\xFF", player_hand_count: b"\x00", wDuelTurns: b"\x01", wDuelFinished: b"\x00", wDuelistType: b"\x00"},
-     "read": {wDuelFinished: 1, wDuelistType: 1},
-     "expect": {wDuelFinished: b"\x02", wDuelistType: b"\x00"},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01],
-         wram={hWhoseTurn: b"\xC2", wLCDC: b"\x00", player_duelist_type: b"\x00", player_not_in_deck: b"\x3C", player_arena: b"\xFF", player_bench: b"\xFF", player_hand_count: b"\x00", wDuelTurns: b"\x01", wDuelFinished: b"\x00", wDuelistType: b"\x00"},
-         read={wDuelFinished: 1, wDuelistType: 1},
-         expect={wDuelFinished: b"\x02", wDuelistType: b"\x00"},
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000)
+    {
+        "keys": [0x00, 0x01],
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wLCDC: b"\x00",
+            player_duelist_type: b"\x00",
+            player_not_in_deck: b"\x3c",
+            player_arena: b"\xff",
+            player_bench: b"\xff",
+            player_hand_count: b"\x00",
+            wDuelTurns: b"\x01",
+            wDuelFinished: b"\x00",
+            wDuelistType: b"\x00",
+        },
+        "read": {wDuelFinished: 1, wDuelistType: 1},
+        "expect": {wDuelFinished: b"\x02", wDuelistType: b"\x00"},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x01],
+        wram={
+            hWhoseTurn: b"\xc2",
+            wLCDC: b"\x00",
+            player_duelist_type: b"\x00",
+            player_not_in_deck: b"\x3c",
+            player_arena: b"\xff",
+            player_bench: b"\xff",
+            player_hand_count: b"\x00",
+            wDuelTurns: b"\x01",
+            wDuelFinished: b"\x00",
+            wDuelistType: b"\x00",
+        },
+        read={wDuelFinished: 1, wDuelistType: 1},
+        expect={wDuelFinished: b"\x02", wDuelistType: b"\x00"},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory HandleTurn
 
 # >>> factory HandleWaitingLinkOpponentMenu
 CONTRACT["HandleWaitingLinkOpponentMenu"] = {"compare": (), "preserve": ()}
 CASES["HandleWaitingLinkOpponentMenu"] = [
-    {"read": {wCurrentDuelMenuItem: 1}, "expect": {wCurrentDuelMenuItem: b"\x00"}, "instruction_budget": 200000, "cycle_budget": 800000},
-    dict(POISON, read={wCurrentDuelMenuItem: 1}, expect={wCurrentDuelMenuItem: b"\x00"}, instruction_budget=200000, cycle_budget=800000),
+    {
+        "read": {wCurrentDuelMenuItem: 1},
+        "expect": {wCurrentDuelMenuItem: b"\x00"},
+        "instruction_budget": 200000,
+        "cycle_budget": 800000,
+    },
+    dict(
+        POISON,
+        read={wCurrentDuelMenuItem: 1},
+        expect={wCurrentDuelMenuItem: b"\x00"},
+        instruction_budget=200000,
+        cycle_budget=800000,
+    ),
 ]
 # <<< factory HandleWaitingLinkOpponentMenu
 
@@ -5707,12 +12227,23 @@ CASES["HandleBetweenTurnsEvents"] = [
 # <<< factory HandleBetweenTurnsEvents
 
 # >>> factory OppAction_PlayAttackAnimationDealAttackDamage
-CONTRACT["OppAction_PlayAttackAnimationDealAttackDamage"] = {"compare": (), "preserve": ()}
+CONTRACT["OppAction_PlayAttackAnimationDealAttackDamage"] = {
+    "compare": (),
+    "preserve": (),
+}
 # The attack state with Sam as the turn holder (hWhoseTurn = OPPONENT_TURN,
 # the loaded attack is his): damage lands on Goldeen and the turn ends.
 CASES["OppAction_PlayAttackAnimationDealAttackDamage"] = [
-    dict(_attack_fixture(**{"FF97": b"\xc3", "CBE1": b"\x00"}), read={0xC200: 0x200, 0xCC00: 0x100, 0xCBE1: 1}, **_ATTACK_REGS),
-    dict(_attack_fixture(**{"FF97": b"\xc3", "CBE1": b"\x00"}), read={0xC200: 0x200, 0xCC00: 0x100, 0xCBE1: 1}, **POISON),
+    dict(
+        _attack_fixture(**{"FF97": b"\xc3", "CBE1": b"\x00"}),
+        read={0xC200: 0x200, 0xCC00: 0x100, 0xCBE1: 1},
+        **_ATTACK_REGS,
+    ),
+    dict(
+        _attack_fixture(**{"FF97": b"\xc3", "CBE1": b"\x00"}),
+        read={0xC200: 0x200, 0xCC00: 0x100, 0xCBE1: 1},
+        **POISON,
+    ),
 ]
 # <<< factory OppAction_PlayAttackAnimationDealAttackDamage
 
@@ -5721,90 +12252,148 @@ CONTRACT["MainDuelLoop"] = {"compare": (), "preserve": ()}
 CASES["MainDuelLoop"] = [
     # Reaching HandleTurn draws the duelist turn screen on the way, so the
     # default 240-frame allowance is not enough for either lane.
-    {"wram": {wLCDC: b"\x00", 0xCBC6: b"\x55", 0xCC06: b"\x00", 0xCC07: b"\x00",
-              0xFF97: b"\xC2", 0xD0C3: b"\x55"},
-     "read": {wLCDC: 1, 0xCBC6: 1, 0xCC06: 1, 0xCC07: 1, 0xFF97: 1, 0xD0C3: 1},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={wLCDC: b"\x00", 0xCBC6: b"\x55", 0xCC06: b"\x00", 0xCC07: b"\x00",
-                       0xFF97: b"\xC2", 0xD0C3: b"\x55"},
-         read={wLCDC: 1, 0xCBC6: 1, 0xCC06: 1, 0xCC07: 1, 0xFF97: 1, 0xD0C3: 1},
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000)
+    {
+        "wram": {
+            wLCDC: b"\x00",
+            0xCBC6: b"\x55",
+            0xCC06: b"\x00",
+            0xCC07: b"\x00",
+            0xFF97: b"\xc2",
+            0xD0C3: b"\x55",
+        },
+        "read": {wLCDC: 1, 0xCBC6: 1, 0xCC06: 1, 0xCC07: 1, 0xFF97: 1, 0xD0C3: 1},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        wram={
+            wLCDC: b"\x00",
+            0xCBC6: b"\x55",
+            0xCC06: b"\x00",
+            0xCC07: b"\x00",
+            0xFF97: b"\xc2",
+            0xD0C3: b"\x55",
+        },
+        read={wLCDC: 1, 0xCBC6: 1, 0xCC06: 1, 0xCC07: 1, 0xFF97: 1, 0xD0C3: 1},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory MainDuelLoop
 
 # >>> factory _ContinueDuel
 CONTRACT["_ContinueDuel"] = {"compare": (), "preserve": ()}
 CASES["_ContinueDuel"] = [
-    {"entry_sp": 0xFFFC,
-     "wram": {wDuelReturnAddress: b"\xAA\xBB", wDuelFinished: b"\xCC", wDuelTheme: b"\x01"},
-     "read": {wDuelReturnAddress: 2, wDuelFinished: 1},
-     "expect": {wDuelReturnAddress: b"\xFC\xFF", wDuelFinished: b"\x00"},
-     "keys": [0x42, 0x42],
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, entry_sp=0xFFFC,
-         wram={wDuelReturnAddress: b"\xAA\xBB", wDuelFinished: b"\xCC", wDuelTheme: b"\x01"},
-         read={wDuelReturnAddress: 2, wDuelFinished: 1},
-         expect={wDuelReturnAddress: b"\xFC\xFF", wDuelFinished: b"\x00"},
-         keys=[0x42, 0x42],
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "entry_sp": 0xFFFC,
+        "wram": {
+            wDuelReturnAddress: b"\xaa\xbb",
+            wDuelFinished: b"\xcc",
+            wDuelTheme: b"\x01",
+        },
+        "read": {wDuelReturnAddress: 2, wDuelFinished: 1},
+        "expect": {wDuelReturnAddress: b"\xfc\xff", wDuelFinished: b"\x00"},
+        "keys": [0x42, 0x42],
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        entry_sp=0xFFFC,
+        wram={
+            wDuelReturnAddress: b"\xaa\xbb",
+            wDuelFinished: b"\xcc",
+            wDuelTheme: b"\x01",
+        },
+        read={wDuelReturnAddress: 2, wDuelFinished: 1},
+        expect={wDuelReturnAddress: b"\xfc\xff", wDuelFinished: b"\x00"},
+        keys=[0x42, 0x42],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory _ContinueDuel
 
 # >>> factory DoLinkOpponentTurn
 CONTRACT["DoLinkOpponentTurn"] = {"compare": (), "preserve": ()}
 CASES["DoLinkOpponentTurn"] = [
-    {"wram": {hWhoseTurn: b"\xC2"},
-     "read": {hWhoseTurn: 1},
-     "expect": {hWhoseTurn: b"\xC2"}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2"},
-         read={hWhoseTurn: 1}, expect={hWhoseTurn: b"\xC2"}),
+    {
+        "wram": {hWhoseTurn: b"\xc2"},
+        "read": {hWhoseTurn: 1},
+        "expect": {hWhoseTurn: b"\xc2"},
+    },
+    dict(
+        POISON,
+        wram={hWhoseTurn: b"\xc2"},
+        read={hWhoseTurn: 1},
+        expect={hWhoseTurn: b"\xc2"},
+    ),
 ]
 # <<< factory DoLinkOpponentTurn
 
 # >>> factory TryContinueDuel
 CONTRACT["TryContinueDuel"] = {"compare": (), "preserve": ()}
 CASES["TryContinueDuel"] = [
-    {"wram": {0xCABB: b"\x00", 0xCC07: b"\xA5"},
-     "sram": {0: {sCurrentDuel: b"\x00"}},
-     "keys": [0x00, 0x01], "setup": TRY_SETUP,
-     "read": {0xCC07: 1},
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xCABB: b"\x00", 0xCC07: b"\xA5"},
-         sram={0: {sCurrentDuel: b"\x00"}}, keys=[0x00, 0x01],
-         setup=TRY_SETUP, read={0xCC07: 1},
-         instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "wram": {0xCABB: b"\x00", 0xCC07: b"\xa5"},
+        "sram": {0: {sCurrentDuel: b"\x00"}},
+        "keys": [0x00, 0x01],
+        "setup": TRY_SETUP,
+        "read": {0xCC07: 1},
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        wram={0xCABB: b"\x00", 0xCC07: b"\xa5"},
+        sram={0: {sCurrentDuel: b"\x00"}},
+        keys=[0x00, 0x01],
+        setup=TRY_SETUP,
+        read={0xCC07: 1},
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory TryContinueDuel
 
 # >>> factory PlayPokemonCard
 CONTRACT["PlayPokemonCard"] = {"compare": ("f",), "preserve": ()}
 CASES["PlayPokemonCard"] = [
-    {"keys": [0x00, 0x01],
-     "wram": {0xFF97: b"\xC2", 0xCC2D: b"\x00", 0xC2EF: b"\x06"},
-     "expect_regs": {"f": 0x90},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01],
-         wram={0xFF97: b"\xC2", 0xCC2D: b"\x00", 0xC2EF: b"\x06"},
-         expect_regs={"f": 0x90},
-         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000),
+    {
+        "keys": [0x00, 0x01],
+        "wram": {0xFF97: b"\xc2", 0xCC2D: b"\x00", 0xC2EF: b"\x06"},
+        "expect_regs": {"f": 0x90},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x01],
+        wram={0xFF97: b"\xc2", 0xCC2D: b"\x00", 0xC2EF: b"\x06"},
+        expect_regs={"f": 0x90},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        instruction_budget=20000000,
+        cycle_budget=80000000,
+    ),
 ]
 # <<< factory PlayPokemonCard
 
 from tests.cases._schema_migration import legacy_to_schema
+
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
 # >>> factory-mutation SetLineSeparation
 MUTATIONS["SetLineSeparation"] = {
-	"source_symbol": "SetLineSeparation",
-	"before": "wLineSeparation = a;",
-	"after": "wLineSeparation = (uint8_t)(a + 1u);",
-	"case_ids": ["SetLineSeparation-0", "SetLineSeparation-1"],
+    "source_symbol": "SetLineSeparation",
+    "before": "wLineSeparation = a;",
+    "after": "wLineSeparation = (uint8_t)(a + 1u);",
+    "case_ids": ["SetLineSeparation-0", "SetLineSeparation-1"],
 }
 # <<< factory-mutation SetLineSeparation
 # >>> factory-mutation PlayAreaScreenMenuFunction
@@ -5817,10 +12406,10 @@ MUTATIONS["PlayAreaScreenMenuFunction"] = {
 # <<< factory-mutation PlayAreaScreenMenuFunction
 # >>> factory-mutation SwitchAttackPage
 MUTATIONS["SwitchAttackPage"] = {
-	"source_symbol": "SwitchAttackPage",
-	"before": "wAttackPageNumber ^ 0x01u",
-	"after": "wAttackPageNumber & 0x01u",
-	"case_ids": ["SwitchAttackPage-0", "SwitchAttackPage-1"],
+    "source_symbol": "SwitchAttackPage",
+    "before": "wAttackPageNumber ^ 0x01u",
+    "after": "wAttackPageNumber & 0x01u",
+    "case_ids": ["SwitchAttackPage-0", "SwitchAttackPage-1"],
 }
 # <<< factory-mutation SwitchAttackPage
 # >>> factory-mutation CopyCGBCardPalette
@@ -5832,46 +12421,58 @@ MUTATIONS["CopyCGBCardPalette"] = {
 }
 # <<< factory-mutation CopyCGBCardPalette
 # >>> factory-mutation CreateCardAttrBlkPacket
-MUTATIONS["CreateCardAttrBlkPacket"] = {"source_symbol": "CreateCardAttrBlkPacket", "before": "gb_write8(hl, (uint8_t)((ATTR_BLK << 3) + 1u));", "after": "gb_write8(hl, (uint8_t)((ATTR_BLK << 3) + 2u));", "case_ids": ["CreateCardAttrBlkPacket-0", "CreateCardAttrBlkPacket-1", "CreateCardAttrBlkPacket-2"]}
+MUTATIONS["CreateCardAttrBlkPacket"] = {
+    "source_symbol": "CreateCardAttrBlkPacket",
+    "before": "gb_write8(hl, (uint8_t)((ATTR_BLK << 3) + 1u));",
+    "after": "gb_write8(hl, (uint8_t)((ATTR_BLK << 3) + 2u));",
+    "case_ids": [
+        "CreateCardAttrBlkPacket-0",
+        "CreateCardAttrBlkPacket-1",
+        "CreateCardAttrBlkPacket-2",
+    ],
+}
 # <<< factory-mutation CreateCardAttrBlkPacket
 # >>> factory-mutation SaveDuelDataToDE
 MUTATIONS["SaveDuelDataToDE"] = {
-	"source_symbol": "SaveDuelDataToDE",
-	"before": "gb_write8(base, TRUE);",
-	"after": "gb_write8(base, 0u);",
-	"case_ids": ["SaveDuelDataToDE-0"],
+    "source_symbol": "SaveDuelDataToDE",
+    "before": "gb_write8(base, TRUE);",
+    "after": "gb_write8(base, 0u);",
+    "case_ids": ["SaveDuelDataToDE-0"],
 }
 # <<< factory-mutation SaveDuelDataToDE
 # >>> factory-mutation LoadSavedDuelDataFromDE
 MUTATIONS["LoadSavedDuelDataFromDE"] = {
-	"source_symbol": "LoadSavedDuelDataFromDE",
-	"before": "de = (uint16_t)(de + SAVE_DUEL_HEADER_SIZE);",
-	"after": "de = (uint16_t)(de + SAVE_DUEL_HEADER_SIZE - 1u);",
-	"case_ids": ["LoadSavedDuelDataFromDE-0"],
+    "source_symbol": "LoadSavedDuelDataFromDE",
+    "before": "de = (uint16_t)(de + SAVE_DUEL_HEADER_SIZE);",
+    "after": "de = (uint16_t)(de + SAVE_DUEL_HEADER_SIZE - 1u);",
+    "case_ids": ["LoadSavedDuelDataFromDE-0"],
 }
 # <<< factory-mutation LoadSavedDuelDataFromDE
 # >>> factory-mutation SetBGP7OrSGB2ToCardPalette
 MUTATIONS["SetBGP7OrSGB2ToCardPalette"] = {
-	"source_symbol": "SetBGP7OrSGB2ToCardPalette",
-	"before": "if (console == CONSOLE_SGB) {",
-	"after": "if (console != CONSOLE_SGB) {",
-	"case_ids": ["SetBGP7OrSGB2ToCardPalette-1"],
+    "source_symbol": "SetBGP7OrSGB2ToCardPalette",
+    "before": "if (console == CONSOLE_SGB) {",
+    "after": "if (console != CONSOLE_SGB) {",
+    "case_ids": ["SetBGP7OrSGB2ToCardPalette-1"],
 }
 # <<< factory-mutation SetBGP7OrSGB2ToCardPalette
 # >>> factory-mutation JPWriteByteToBGMap0
 MUTATIONS["JPWriteByteToBGMap0"] = {
-	"source_symbol": "JPWriteByteToBGMap0",
-	"before": "WriteByteToBGMap0(a, b, c);",
-	"after": "WriteByteToBGMap0(a, c, b);",
-	"case_ids": ["JPWriteByteToBGMap0-1"],
+    "source_symbol": "JPWriteByteToBGMap0",
+    "before": "WriteByteToBGMap0(a, b, c);",
+    "after": "WriteByteToBGMap0(a, c, b);",
+    "case_ids": ["JPWriteByteToBGMap0-1"],
 }
 # <<< factory-mutation JPWriteByteToBGMap0
 # >>> factory-mutation ZeroObjectPositionsAndToggleOAMCopy
 MUTATIONS["ZeroObjectPositionsAndToggleOAMCopy"] = {
-	"source_symbol": "ZeroObjectPositionsAndToggleOAMCopy",
-	"before": "wVBlankOAMCopyToggle = TRUE;",
-	"after": "wVBlankOAMCopyToggle = 0u;",
-	"case_ids": ["ZeroObjectPositionsAndToggleOAMCopy-0", "ZeroObjectPositionsAndToggleOAMCopy-1"],
+    "source_symbol": "ZeroObjectPositionsAndToggleOAMCopy",
+    "before": "wVBlankOAMCopyToggle = TRUE;",
+    "after": "wVBlankOAMCopyToggle = 0u;",
+    "case_ids": [
+        "ZeroObjectPositionsAndToggleOAMCopy-0",
+        "ZeroObjectPositionsAndToggleOAMCopy-1",
+    ],
 }
 # <<< factory-mutation ZeroObjectPositionsAndToggleOAMCopy
 # >>> factory-mutation LoadPlayerDeck
@@ -5887,7 +12488,10 @@ MUTATIONS["PrintPracticeDuelDrMasonInstructions"] = {
     "source_symbol": "PrintPracticeDuelDrMasonInstructions",
     "before": "PrintScrollableText_WithTextBoxLabel(hl, DrMasonText)",
     "after": "PrintScrollableText_WithTextBoxLabel(hl, DrMasonText + 1u)",
-    "case_ids": ["PrintPracticeDuelDrMasonInstructions-0", "PrintPracticeDuelDrMasonInstructions-1"],
+    "case_ids": [
+        "PrintPracticeDuelDrMasonInstructions-0",
+        "PrintPracticeDuelDrMasonInstructions-1",
+    ],
 }
 # <<< factory-mutation PrintPracticeDuelDrMasonInstructions
 # >>> factory-mutation PrintPracticeDuelInstructionsTextBoxLabel
@@ -5919,26 +12523,45 @@ MUTATIONS["LoadLoaded1CardGfx"] = {
     "source_symbol": "LoadLoaded1CardGfx",
     "before": "LoadCardGfx(hl, de, 0x30u, TILE_SIZE);",
     "after": "LoadCardGfx(hl, de, 0x20u, TILE_SIZE);",
-    "case_ids": ["LoadLoaded1CardGfx-0", "LoadLoaded1CardGfx-1", "LoadLoaded1CardGfx-2"],
+    "case_ids": [
+        "LoadLoaded1CardGfx-0",
+        "LoadLoaded1CardGfx-1",
+        "LoadLoaded1CardGfx-2",
+    ],
 }
 # <<< factory-mutation LoadLoaded1CardGfx
 # >>> factory-mutation CreateCardAttrBlkPacket_DataSet
 MUTATIONS["CreateCardAttrBlkPacket_DataSet"] = {
-	"source_symbol": "CreateCardAttrBlkPacket_DataSet",
-	"before": "gb_write8(hl++, d);",
-	"after": "gb_write8(hl++, (uint8_t)(d + 1u));",
-	"case_ids": ["CreateCardAttrBlkPacket_DataSet-1", "CreateCardAttrBlkPacket_DataSet-2"],
+    "source_symbol": "CreateCardAttrBlkPacket_DataSet",
+    "before": "gb_write8(hl++, d);",
+    "after": "gb_write8(hl++, (uint8_t)(d + 1u));",
+    "case_ids": [
+        "CreateCardAttrBlkPacket_DataSet-1",
+        "CreateCardAttrBlkPacket_DataSet-2",
+    ],
 }
 # <<< factory-mutation CreateCardAttrBlkPacket_DataSet
 # >>> factory-mutation SetSGB3ToCardPalette
-MUTATIONS["SetSGB3ToCardPalette"] = {"source_symbol": "SetSGB3ToCardPalette", "before": "wCardPalette_ADDR + 2u", "after": "wCardPalette_ADDR + 3u", "case_ids": ["SetSGB3ToCardPalette-1", "SetSGB3ToCardPalette-2"]}
+MUTATIONS["SetSGB3ToCardPalette"] = {
+    "source_symbol": "SetSGB3ToCardPalette",
+    "before": "wCardPalette_ADDR + 2u",
+    "after": "wCardPalette_ADDR + 3u",
+    "case_ids": ["SetSGB3ToCardPalette-1", "SetSGB3ToCardPalette-2"],
+}
 # <<< factory-mutation SetSGB3ToCardPalette
 # >>> factory-mutation LookForCardIDInPlayArea_Bank5
 MUTATIONS["LookForCardIDInPlayArea_Bank5"] = {
     "source_symbol": "LookForCardIDInPlayArea_Bank5",
     "before": "\twTempCardIDToLook = a;",
     "after": "\twTempCardIDToLook = (uint8_t)(a + 1u);",
-    "case_ids": ["LookForCardIDInPlayArea_Bank5-0", "LookForCardIDInPlayArea_Bank5-1", "LookForCardIDInPlayArea_Bank5-2", "LookForCardIDInPlayArea_Bank5-3", "LookForCardIDInPlayArea_Bank5-4", "LookForCardIDInPlayArea_Bank5-5"],
+    "case_ids": [
+        "LookForCardIDInPlayArea_Bank5-0",
+        "LookForCardIDInPlayArea_Bank5-1",
+        "LookForCardIDInPlayArea_Bank5-2",
+        "LookForCardIDInPlayArea_Bank5-3",
+        "LookForCardIDInPlayArea_Bank5-4",
+        "LookForCardIDInPlayArea_Bank5-5",
+    ],
 }
 # <<< factory-mutation LookForCardIDInPlayArea_Bank5
 # >>> factory-mutation PrintCardListHeaderAndInfoBoxTexts
@@ -5946,7 +12569,10 @@ MUTATIONS["PrintCardListHeaderAndInfoBoxTexts"] = {
     "source_symbol": "PrintCardListHeaderAndInfoBoxTexts",
     "before": "\te = 1u;\n\tInitTextPrinting(d, e);",
     "after": "\te = 2u;\n\tInitTextPrinting(d, e);",
-    "case_ids": ["PrintCardListHeaderAndInfoBoxTexts-0", "PrintCardListHeaderAndInfoBoxTexts-1"],
+    "case_ids": [
+        "PrintCardListHeaderAndInfoBoxTexts-0",
+        "PrintCardListHeaderAndInfoBoxTexts-1",
+    ],
 }
 # <<< factory-mutation PrintCardListHeaderAndInfoBoxTexts
 # >>> factory-mutation ClearMemory_Bank5
@@ -5962,7 +12588,11 @@ MUTATIONS["CheckCardPageExists"] = {
     "source_symbol": "CheckCardPageExists",
     "before": "\ta |= gb_read8(*hl);",
     "after": "\ta &= gb_read8(*hl);",
-    "case_ids": ["CheckCardPageExists-2", "CheckCardPageExists-3", "CheckCardPageExists-4"],
+    "case_ids": [
+        "CheckCardPageExists-2",
+        "CheckCardPageExists-3",
+        "CheckCardPageExists-4",
+    ],
 }
 # <<< factory-mutation CheckCardPageExists
 # >>> factory-mutation CardPageSwitch_PokemonEnd
@@ -5970,7 +12600,11 @@ MUTATIONS["CardPageSwitch_PokemonEnd"] = {
     "source_symbol": "CardPageSwitch_PokemonEnd",
     "before": "return (CardPageResult){CARDPAGE_POKEMON_OVERVIEW, 1u};",
     "after": "return (CardPageResult){CARDPAGE_POKEMON_OVERVIEW, 0u};",
-    "case_ids": ["CardPageSwitch_PokemonEnd-0", "CardPageSwitch_PokemonEnd-1", "CardPageSwitch_PokemonEnd-2"],
+    "case_ids": [
+        "CardPageSwitch_PokemonEnd-0",
+        "CardPageSwitch_PokemonEnd-1",
+        "CardPageSwitch_PokemonEnd-2",
+    ],
 }
 # <<< factory-mutation CardPageSwitch_PokemonEnd
 # >>> factory-mutation SetCardListInfoBoxText
@@ -5986,7 +12620,12 @@ MUTATIONS["LoadCardNameToTxRam2"] = {
     "source_symbol": "LoadCardNameToTxRam2",
     "before": "\tgb_write8((uint16_t)(wTxRam2_ADDR + 1u), gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)));",
     "after": "\tgb_write8((uint16_t)(wTxRam2_ADDR + 2u), gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)));",
-    "case_ids": ["LoadCardNameToTxRam2-0", "LoadCardNameToTxRam2-1", "LoadCardNameToTxRam2-2", "LoadCardNameToTxRam2-3"],
+    "case_ids": [
+        "LoadCardNameToTxRam2-0",
+        "LoadCardNameToTxRam2-1",
+        "LoadCardNameToTxRam2-2",
+        "LoadCardNameToTxRam2-3",
+    ],
 }
 # <<< factory-mutation LoadCardNameToTxRam2
 # >>> factory-mutation LoadCardNameToTxRam2_b
@@ -5994,7 +12633,11 @@ MUTATIONS["LoadCardNameToTxRam2_b"] = {
     "source_symbol": "LoadCardNameToTxRam2_b",
     "before": "\tgb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), hi);",
     "after": "\tgb_write8((uint16_t)(wTxRam2_b_ADDR + 2u), hi);",
-    "case_ids": ["LoadCardNameToTxRam2_b-1", "LoadCardNameToTxRam2_b-2", "LoadCardNameToTxRam2_b-3"],
+    "case_ids": [
+        "LoadCardNameToTxRam2_b-1",
+        "LoadCardNameToTxRam2_b-2",
+        "LoadCardNameToTxRam2_b-3",
+    ],
 }
 # <<< factory-mutation LoadCardNameToTxRam2_b
 # >>> factory-mutation GetAnimCoordsAndFlags
@@ -6002,7 +12645,12 @@ MUTATIONS["GetAnimCoordsAndFlags"] = {
     "source_symbol": "GetAnimCoordsAndFlags",
     "before": "if (wDuelAnimDuelistSide != PLAYER_TURN)",
     "after": "if (wDuelAnimDuelistSide == PLAYER_TURN)",
-    "case_ids": ["GetAnimCoordsAndFlags-0", "GetAnimCoordsAndFlags-2", "GetAnimCoordsAndFlags-3", "GetAnimCoordsAndFlags-5"],
+    "case_ids": [
+        "GetAnimCoordsAndFlags-0",
+        "GetAnimCoordsAndFlags-2",
+        "GetAnimCoordsAndFlags-3",
+        "GetAnimCoordsAndFlags-5",
+    ],
 }
 # <<< factory-mutation GetAnimCoordsAndFlags
 # >>> factory-mutation PlayBufferedDuelAnimations
@@ -6014,40 +12662,100 @@ MUTATIONS["PlayBufferedDuelAnimations"] = {
 }
 # <<< factory-mutation PlayBufferedDuelAnimations
 # >>> factory-mutation CopyListWithFFTerminatorFromHLToDE_Bank5
-MUTATIONS["CopyListWithFFTerminatorFromHLToDE_Bank5"] = {"source_symbol": "CopyListWithFFTerminatorFromHLToDE_Bank5", "before": "\t\tif (a == 0xFFu)", "after": "\t\tif (a == 0xFEu)", "case_ids": ["CopyListWithFFTerminatorFromHLToDE_Bank5-0", "CopyListWithFFTerminatorFromHLToDE_Bank5-1", "CopyListWithFFTerminatorFromHLToDE_Bank5-2"]}
+MUTATIONS["CopyListWithFFTerminatorFromHLToDE_Bank5"] = {
+    "source_symbol": "CopyListWithFFTerminatorFromHLToDE_Bank5",
+    "before": "\t\tif (a == 0xFFu)",
+    "after": "\t\tif (a == 0xFEu)",
+    "case_ids": [
+        "CopyListWithFFTerminatorFromHLToDE_Bank5-0",
+        "CopyListWithFFTerminatorFromHLToDE_Bank5-1",
+        "CopyListWithFFTerminatorFromHLToDE_Bank5-2",
+    ],
+}
 # <<< factory-mutation CopyListWithFFTerminatorFromHLToDE_Bank5
 # >>> factory-mutation CheckEnergyFlagsNeededInList
-MUTATIONS["CheckEnergyFlagsNeededInList"] = {"source_symbol": "CheckEnergyFlagsNeededInList", "before": "return (EnergyFlagsResult){0xffu, 0u};", "after": "return (EnergyFlagsResult){0u, 0u};", "case_ids": ["CheckEnergyFlagsNeededInList-0", "CheckEnergyFlagsNeededInList-1", "CheckEnergyFlagsNeededInList-2", "CheckEnergyFlagsNeededInList-3"]}
+MUTATIONS["CheckEnergyFlagsNeededInList"] = {
+    "source_symbol": "CheckEnergyFlagsNeededInList",
+    "before": "return (EnergyFlagsResult){0xffu, 0u};",
+    "after": "return (EnergyFlagsResult){0u, 0u};",
+    "case_ids": [
+        "CheckEnergyFlagsNeededInList-0",
+        "CheckEnergyFlagsNeededInList-1",
+        "CheckEnergyFlagsNeededInList-2",
+        "CheckEnergyFlagsNeededInList-3",
+    ],
+}
 # <<< factory-mutation CheckEnergyFlagsNeededInList
 # >>> factory-mutation CardPageSwitch_EnergyEnd
-MUTATIONS["CardPageSwitch_EnergyEnd"] = {"source_symbol": "CardPageSwitch_EnergyEnd", "before": "return (CardPageResult){CARDPAGE_ENERGY, 1u};", "after": "return (CardPageResult){CARDPAGE_TRAINER_2, 1u};", "case_ids": ["CardPageSwitch_EnergyEnd-0", "CardPageSwitch_EnergyEnd-1"]}
+MUTATIONS["CardPageSwitch_EnergyEnd"] = {
+    "source_symbol": "CardPageSwitch_EnergyEnd",
+    "before": "return (CardPageResult){CARDPAGE_ENERGY, 1u};",
+    "after": "return (CardPageResult){CARDPAGE_TRAINER_2, 1u};",
+    "case_ids": ["CardPageSwitch_EnergyEnd-0", "CardPageSwitch_EnergyEnd-1"],
+}
 # <<< factory-mutation CardPageSwitch_EnergyEnd
 # >>> factory-mutation CardPageSwitch_0c
-MUTATIONS["CardPageSwitch_0c"] = {"source_symbol": "CardPageSwitch_0c", "before": "return (CardPageResult){CARDPAGE_TRAINER_2, 1u};", "after": "return (CardPageResult){CARDPAGE_ENERGY, 1u};", "case_ids": ["CardPageSwitch_0c-0", "CardPageSwitch_0c-1"]}
+MUTATIONS["CardPageSwitch_0c"] = {
+    "source_symbol": "CardPageSwitch_0c",
+    "before": "return (CardPageResult){CARDPAGE_TRAINER_2, 1u};",
+    "after": "return (CardPageResult){CARDPAGE_ENERGY, 1u};",
+    "case_ids": ["CardPageSwitch_0c-0", "CardPageSwitch_0c-1"],
+}
 # <<< factory-mutation CardPageSwitch_0c
 # >>> factory-mutation PlaceCardImageOAM
-MUTATIONS["PlaceCardImageOAM"] = {"source_symbol": "PlaceCardImageOAM", "before": "\tgb_write8(0xcac0u, TRUE);", "after": "\tgb_write8(0xcac0u, 0u);", "case_ids": ["PlaceCardImageOAM-0", "PlaceCardImageOAM-1"]}
+MUTATIONS["PlaceCardImageOAM"] = {
+    "source_symbol": "PlaceCardImageOAM",
+    "before": "\tgb_write8(0xcac0u, TRUE);",
+    "after": "\tgb_write8(0xcac0u, 0u);",
+    "case_ids": ["PlaceCardImageOAM-0", "PlaceCardImageOAM-1"],
+}
 # <<< factory-mutation PlaceCardImageOAM
 # >>> factory-mutation PrintPlayAreaCardAttachedEnergies
 MUTATIONS["PrintPlayAreaCardAttachedEnergies"] = {
     "source_symbol": "PrintPlayAreaCardAttachedEnergies",
     "before": "gb_write8((uint16_t)(wDefaultText_ADDR + i), SYM_SPACE);",
     "after": "gb_write8((uint16_t)(wDefaultText_ADDR + i), SYM_FIRE);",
-    "case_ids": ["PrintPlayAreaCardAttachedEnergies-0", "PrintPlayAreaCardAttachedEnergies-1", "PrintPlayAreaCardAttachedEnergies-2", "PrintPlayAreaCardAttachedEnergies-3"],
+    "case_ids": [
+        "PrintPlayAreaCardAttachedEnergies-0",
+        "PrintPlayAreaCardAttachedEnergies-1",
+        "PrintPlayAreaCardAttachedEnergies-2",
+        "PrintPlayAreaCardAttachedEnergies-3",
+    ],
 }
 # <<< factory-mutation PrintPlayAreaCardAttachedEnergies
 # >>> factory-mutation DiscardRetreatCostCards
-MUTATIONS["DiscardRetreatCostCards"] = {"source_symbol": "DiscardRetreatCostCards", "before": "uint8_t card = gb_read8(hl);", "after": "uint8_t card = gb_read8((uint16_t)(hl + 2u));", "case_ids": ["DiscardRetreatCostCards-0", "DiscardRetreatCostCards-1", "DiscardRetreatCostCards-2"]}
+MUTATIONS["DiscardRetreatCostCards"] = {
+    "source_symbol": "DiscardRetreatCostCards",
+    "before": "uint8_t card = gb_read8(hl);",
+    "after": "uint8_t card = gb_read8((uint16_t)(hl + 2u));",
+    "case_ids": [
+        "DiscardRetreatCostCards-0",
+        "DiscardRetreatCostCards-1",
+        "DiscardRetreatCostCards-2",
+    ],
+}
 # <<< factory-mutation DiscardRetreatCostCards
 # >>> factory-mutation OppAction_DrawCard
-MUTATIONS["OppAction_DrawCard"] = {"source_symbol": "OppAction_DrawCard", "before": "return (OppActionDrawResult){r.a, r.f};", "after": "return (OppActionDrawResult){r.a, 0u};", "case_ids": ["OppAction_DrawCard-0", "OppAction_DrawCard-1", "OppAction_DrawCard-2"]}
+MUTATIONS["OppAction_DrawCard"] = {
+    "source_symbol": "OppAction_DrawCard",
+    "before": "return (OppActionDrawResult){r.a, r.f};",
+    "after": "return (OppActionDrawResult){r.a, 0u};",
+    "case_ids": [
+        "OppAction_DrawCard-0",
+        "OppAction_DrawCard-1",
+        "OppAction_DrawCard-2",
+    ],
+}
 # <<< factory-mutation OppAction_DrawCard
 # >>> factory-mutation PrintSortNumberInCardList
 MUTATIONS["PrintSortNumberInCardList_SetPointer"] = {
-	"source_symbol": "PrintSortNumberInCardList_SetPointer",
-	"before": "wSortCardListByID = TRUE_VAL;",
-	"after": "wSortCardListByID = 0u;",
-	"case_ids": ["PrintSortNumberInCardList_SetPointer-0", "PrintSortNumberInCardList_SetPointer-1"],
+    "source_symbol": "PrintSortNumberInCardList_SetPointer",
+    "before": "wSortCardListByID = TRUE_VAL;",
+    "after": "wSortCardListByID = 0u;",
+    "case_ids": [
+        "PrintSortNumberInCardList_SetPointer-0",
+        "PrintSortNumberInCardList_SetPointer-1",
+    ],
 }
 # <<< factory-mutation PrintSortNumberInCardList
 # >>> factory-mutation PrintEnergiesOfColor
@@ -6059,43 +12767,112 @@ MUTATIONS["PrintEnergiesOfColor"] = {
 }
 # <<< factory-mutation PrintEnergiesOfColor
 # >>> factory-mutation PrintCardPageWeaknessesOrResistances
-MUTATIONS["PrintCardPageWeaknessesOrResistances"] = {"source_symbol": "PrintCardPageWeaknessesOrResistances", "before": "if (mask & 0x80u)", "after": "if (mask & 0x40u)", "case_ids": ["PrintCardPageWeaknessesOrResistances-1", "PrintCardPageWeaknessesOrResistances-2", "PrintCardPageWeaknessesOrResistances-4"]}
+MUTATIONS["PrintCardPageWeaknessesOrResistances"] = {
+    "source_symbol": "PrintCardPageWeaknessesOrResistances",
+    "before": "if (mask & 0x80u)",
+    "after": "if (mask & 0x40u)",
+    "case_ids": [
+        "PrintCardPageWeaknessesOrResistances-1",
+        "PrintCardPageWeaknessesOrResistances-2",
+        "PrintCardPageWeaknessesOrResistances-4",
+    ],
+}
 # <<< factory-mutation PrintCardPageWeaknessesOrResistances
 # >>> factory-mutation Func_6423
-MUTATIONS["Func_6423"] = {"source_symbol": "Func_6423", "before": "value = gb_read8(pos);", "after": "value = gb_read8((uint16_t)(pos + 1u));", "case_ids": ["Func_6423-1", "Func_6423-2"]}
+MUTATIONS["Func_6423"] = {
+    "source_symbol": "Func_6423",
+    "before": "value = gb_read8(pos);",
+    "after": "value = gb_read8((uint16_t)(pos + 1u));",
+    "case_ids": ["Func_6423-1", "Func_6423-2"],
+}
 # <<< factory-mutation Func_6423
 # >>> factory-mutation InitVariablesToBeginDuel
-MUTATIONS["InitVariablesToBeginDuel"] = {"source_symbol": "InitVariablesToBeginDuel", "before": "\t\t((a & DUELIST_TYPE_AI_OPP) != 0u));", "after": "\t\t((a & 0x40u) != 0u));", "case_ids": ["InitVariablesToBeginDuel-1", "InitVariablesToBeginDuel-3", "InitVariablesToBeginDuel-5"]}
+MUTATIONS["InitVariablesToBeginDuel"] = {
+    "source_symbol": "InitVariablesToBeginDuel",
+    "before": "\t\t((a & DUELIST_TYPE_AI_OPP) != 0u));",
+    "after": "\t\t((a & 0x40u) != 0u));",
+    "case_ids": [
+        "InitVariablesToBeginDuel-1",
+        "InitVariablesToBeginDuel-3",
+        "InitVariablesToBeginDuel-5",
+    ],
+}
 # <<< factory-mutation InitVariablesToBeginDuel
 # >>> factory-mutation CardPageSwitch_PokemonAttack1Page2
-MUTATIONS["CardPageSwitch_PokemonAttack1Page2"] = {"source_symbol": "CardPageSwitch_PokemonAttack1Page2", "before": "*hl = (uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u);", "after": "*hl = (uint16_t)(wLoadedCard1Atk1Description_ADDR + 1u);", "case_ids": ["CardPageSwitch_PokemonAttack1Page2-1", "CardPageSwitch_PokemonAttack1Page2-2"]}
+MUTATIONS["CardPageSwitch_PokemonAttack1Page2"] = {
+    "source_symbol": "CardPageSwitch_PokemonAttack1Page2",
+    "before": "*hl = (uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u);",
+    "after": "*hl = (uint16_t)(wLoadedCard1Atk1Description_ADDR + 1u);",
+    "case_ids": [
+        "CardPageSwitch_PokemonAttack1Page2-1",
+        "CardPageSwitch_PokemonAttack1Page2-2",
+    ],
+}
 # <<< factory-mutation CardPageSwitch_PokemonAttack1Page2
 # >>> factory-mutation CardPageSwitch_PokemonAttack2Page1
-MUTATIONS["CardPageSwitch_PokemonAttack2Page1"] = {"source_symbol": "CardPageSwitch_PokemonAttack2Page1", "before": "\tuint16_t hl = wLoadedCard1Atk2Name_ADDR;", "after": "\tuint16_t hl = wLoadedCard1Atk1Description_ADDR;", "case_ids": ["CardPageSwitch_PokemonAttack2Page1-2", "CardPageSwitch_PokemonAttack2Page1-3", "CardPageSwitch_PokemonAttack2Page1-4"]}
+MUTATIONS["CardPageSwitch_PokemonAttack2Page1"] = {
+    "source_symbol": "CardPageSwitch_PokemonAttack2Page1",
+    "before": "\tuint16_t hl = wLoadedCard1Atk2Name_ADDR;",
+    "after": "\tuint16_t hl = wLoadedCard1Atk1Description_ADDR;",
+    "case_ids": [
+        "CardPageSwitch_PokemonAttack2Page1-2",
+        "CardPageSwitch_PokemonAttack2Page1-3",
+        "CardPageSwitch_PokemonAttack2Page1-4",
+    ],
+}
 # <<< factory-mutation CardPageSwitch_PokemonAttack2Page1
 # >>> factory-mutation AIDiscourage
-MUTATIONS["AIDiscourage"] = {"source_symbol": "AIDiscourage", "before": "\tif (score < a) {", "after": "\tif (score > a) {", "case_ids": ["AIDiscourage-1", "AIDiscourage-2", "AIDiscourage-3", "AIDiscourage-4"]}
+MUTATIONS["AIDiscourage"] = {
+    "source_symbol": "AIDiscourage",
+    "before": "\tif (score < a) {",
+    "after": "\tif (score > a) {",
+    "case_ids": [
+        "AIDiscourage-1",
+        "AIDiscourage-2",
+        "AIDiscourage-3",
+        "AIDiscourage-4",
+    ],
+}
 # <<< factory-mutation AIDiscourage
 # >>> factory-mutation ConvertHPToDamageCounters_Bank5
-MUTATIONS["ConvertHPToDamageCounters_Bank5"] = {"source_symbol": "ConvertHPToDamageCounters_Bank5", "before": "\t\tif (value < 10u)", "after": "\t\tif (value <= 10u)", "case_ids": ["ConvertHPToDamageCounters_Bank5-2", "ConvertHPToDamageCounters_Bank5-4"]}
+MUTATIONS["ConvertHPToDamageCounters_Bank5"] = {
+    "source_symbol": "ConvertHPToDamageCounters_Bank5",
+    "before": "\t\tif (value < 10u)",
+    "after": "\t\tif (value <= 10u)",
+    "case_ids": [
+        "ConvertHPToDamageCounters_Bank5-2",
+        "ConvertHPToDamageCounters_Bank5-4",
+    ],
+}
 # <<< factory-mutation ConvertHPToDamageCounters_Bank5
 # >>> factory-mutation CalculateBDividedByA_Bank5
-MUTATIONS["CalculateBDividedByA_Bank5"] = {"source_symbol": "CalculateBDividedByA_Bank5", "before": "\t\tuint8_t result = (uint8_t)(remainder - divisor);", "after": "\t\tuint8_t result = (uint8_t)(remainder + divisor);", "case_ids": ["CalculateBDividedByA_Bank5-1", "CalculateBDividedByA_Bank5-2", "CalculateBDividedByA_Bank5-3", "CalculateBDividedByA_Bank5-4", "CalculateBDividedByA_Bank5-5"]}
+MUTATIONS["CalculateBDividedByA_Bank5"] = {
+    "source_symbol": "CalculateBDividedByA_Bank5",
+    "before": "\t\tuint8_t result = (uint8_t)(remainder - divisor);",
+    "after": "\t\tuint8_t result = (uint8_t)(remainder + divisor);",
+    "case_ids": [
+        "CalculateBDividedByA_Bank5-1",
+        "CalculateBDividedByA_Bank5-2",
+        "CalculateBDividedByA_Bank5-3",
+        "CalculateBDividedByA_Bank5-4",
+        "CalculateBDividedByA_Bank5-5",
+    ],
+}
 # <<< factory-mutation CalculateBDividedByA_Bank5
 # >>> factory-mutation PrintCardPageRarityIcon
 MUTATIONS["PrintCardPageRarityIcon"] = {
-	"source_symbol": "PrintCardPageRarityIcon",
-	"before": "a = (uint8_t)((a + 1u) << 1);",
-	"after": "a = (uint8_t)((a + 2u) << 1);",
-	"case_ids": ["PrintCardPageRarityIcon-0", "PrintCardPageRarityIcon-1"],
+    "source_symbol": "PrintCardPageRarityIcon",
+    "before": "a = (uint8_t)((a + 1u) << 1);",
+    "after": "a = (uint8_t)((a + 2u) << 1);",
+    "case_ids": ["PrintCardPageRarityIcon-0", "PrintCardPageRarityIcon-1"],
 }
 # <<< factory-mutation PrintCardPageRarityIcon
 # >>> factory-mutation SetNoLineSeparation
 MUTATIONS["SetNoLineSeparation"] = {
-	"source_symbol": "SetNoLineSeparation",
-	"before": "SetLineSeparation(1u);",
-	"after": "SetLineSeparation(0u);",
-	"case_ids": ["SetNoLineSeparation-0"],
+    "source_symbol": "SetNoLineSeparation",
+    "before": "SetLineSeparation(1u);",
+    "after": "SetLineSeparation(0u);",
+    "case_ids": ["SetNoLineSeparation-0"],
 }
 # <<< factory-mutation SetNoLineSeparation
 # >>> factory-mutation AIPlayInitialBasicCards
@@ -6116,28 +12893,43 @@ MUTATIONS["CheckIfEnoughParticularAttachedEnergy"] = {
 # <<< factory-mutation CheckIfEnoughParticularAttachedEnergy
 # >>> factory-mutation LookForCardIDInHand
 MUTATIONS["LookForCardIDInHand"] = {
-	"source_symbol": "LookForCardIDInHand",
-	"before": "if (last_id == a)",
-	"after": "if (last_id != a)",
-	"case_ids": ["LookForCardIDInHand-0"],
+    "source_symbol": "LookForCardIDInHand",
+    "before": "if (last_id == a)",
+    "after": "if (last_id != a)",
+    "case_ids": ["LookForCardIDInHand-0"],
 }
 # <<< factory-mutation LookForCardIDInHand
 # >>> factory-mutation LookForCardIDInHandList_Bank5
 MUTATIONS["LookForCardIDInHandList_Bank5"] = {
-	"source_symbol": "LookForCardIDInHandList_Bank5",
-	"before": "if ((uint8_t)LoadCardDataToBuffer1_FromDeckIndex(deck_index) == a)",
-	"after": "if ((uint8_t)LoadCardDataToBuffer1_FromDeckIndex(deck_index) != a)",
-	"case_ids": ["LookForCardIDInHandList_Bank5-0"],
+    "source_symbol": "LookForCardIDInHandList_Bank5",
+    "before": "if ((uint8_t)LoadCardDataToBuffer1_FromDeckIndex(deck_index) == a)",
+    "after": "if ((uint8_t)LoadCardDataToBuffer1_FromDeckIndex(deck_index) != a)",
+    "case_ids": ["LookForCardIDInHandList_Bank5-0"],
 }
 # <<< factory-mutation LookForCardIDInHandList_Bank5
 # >>> factory-mutation CheckForEvolutionInDeck
-MUTATIONS["CheckForEvolutionInDeck"]={"source_symbol":"CheckForEvolutionInDeck","before":"arena == 0u ? 0x80u : 0u","after":"arena != 0u ? 0x80u : 0u","case_ids":["CheckForEvolutionInDeck-0","CheckForEvolutionInDeck-1"]}
+MUTATIONS["CheckForEvolutionInDeck"] = {
+    "source_symbol": "CheckForEvolutionInDeck",
+    "before": "arena == 0u ? 0x80u : 0u",
+    "after": "arena != 0u ? 0x80u : 0u",
+    "case_ids": ["CheckForEvolutionInDeck-0", "CheckForEvolutionInDeck-1"],
+}
 # <<< factory-mutation CheckForEvolutionInDeck
 # >>> factory-mutation LookForCardThatIsKnockedOutOnDevolution
-MUTATIONS["LookForCardThatIsKnockedOutOnDevolution"]={"source_symbol":"LookForCardThatIsKnockedOutOnDevolution","before":"if (hp <= rem)","after":"if (hp > rem)","case_ids":["LookForCardThatIsKnockedOutOnDevolution-0"]}
+MUTATIONS["LookForCardThatIsKnockedOutOnDevolution"] = {
+    "source_symbol": "LookForCardThatIsKnockedOutOnDevolution",
+    "before": "if (hp <= rem)",
+    "after": "if (hp > rem)",
+    "case_ids": ["LookForCardThatIsKnockedOutOnDevolution-0"],
+}
 # <<< factory-mutation LookForCardThatIsKnockedOutOnDevolution
 # >>> factory-mutation CalculateParticularAttachedEnergyNeeded
-MUTATIONS["CalculateParticularAttachedEnergyNeeded"] = {"source_symbol": "CalculateParticularAttachedEnergyNeeded", "before": "return (CalculateParticularAttachedEnergyNeededResult){0u, (uint8_t)(next_b == 0u ? 0x80u : 0u), next_b, (uint16_t)(hl + 1u)};", "after": "return (CalculateParticularAttachedEnergyNeededResult){1u, (uint8_t)(next_b == 0u ? 0x80u : 0u), next_b, (uint16_t)(hl + 1u)};", "case_ids": ["CalculateParticularAttachedEnergyNeeded-0"]}
+MUTATIONS["CalculateParticularAttachedEnergyNeeded"] = {
+    "source_symbol": "CalculateParticularAttachedEnergyNeeded",
+    "before": "return (CalculateParticularAttachedEnergyNeededResult){0u, (uint8_t)(next_b == 0u ? 0x80u : 0u), next_b, (uint16_t)(hl + 1u)};",
+    "after": "return (CalculateParticularAttachedEnergyNeededResult){1u, (uint8_t)(next_b == 0u ? 0x80u : 0u), next_b, (uint16_t)(hl + 1u)};",
+    "case_ids": ["CalculateParticularAttachedEnergyNeeded-0"],
+}
 # <<< factory-mutation CalculateParticularAttachedEnergyNeeded
 # >>> factory-mutation GetAnimationData
 MUTATIONS["GetAnimationData"] = {
@@ -6152,61 +12944,123 @@ MUTATIONS["CardPageSwitch_PokemonOverviewOrDescription"] = {
     "source_symbol": "CardPageSwitch_PokemonOverviewOrDescription",
     "before": "return (CardPageResult){CARDPAGE_POKEMON_OVERVIEW, 0u};",
     "after": "return (CardPageResult){CARDPAGE_POKEMON_OVERVIEW + 1u, 0u};",
-    "case_ids": ["CardPageSwitch_PokemonOverviewOrDescription-0", "CardPageSwitch_PokemonOverviewOrDescription-1"],
+    "case_ids": [
+        "CardPageSwitch_PokemonOverviewOrDescription-0",
+        "CardPageSwitch_PokemonOverviewOrDescription-1",
+    ],
 }
 # <<< factory-mutation CardPageSwitch_PokemonOverviewOrDescription
 # >>> factory-mutation CheckCardEvolutionInHandOrDeck
-MUTATIONS["CheckCardEvolutionInHandOrDeck"] = {"source_symbol": "CheckCardEvolutionInHandOrDeck", "before": "return (CheckCardEvolutionInHandOrDeckResult){original, (uint8_t)(original == 0u ? 0x80u : 0u)};", "after": "return (CheckCardEvolutionInHandOrDeckResult){0u, 0u};", "case_ids": ["CheckCardEvolutionInHandOrDeck-0", "CheckCardEvolutionInHandOrDeck-1"]}
+MUTATIONS["CheckCardEvolutionInHandOrDeck"] = {
+    "source_symbol": "CheckCardEvolutionInHandOrDeck",
+    "before": "return (CheckCardEvolutionInHandOrDeckResult){original, (uint8_t)(original == 0u ? 0x80u : 0u)};",
+    "after": "return (CheckCardEvolutionInHandOrDeckResult){0u, 0u};",
+    "case_ids": [
+        "CheckCardEvolutionInHandOrDeck-0",
+        "CheckCardEvolutionInHandOrDeck-1",
+    ],
+}
 # <<< factory-mutation CheckCardEvolutionInHandOrDeck
 # >>> factory-mutation CheckIfOpponentHasBossDeckID
-MUTATIONS["CheckIfOpponentHasBossDeckID"] = {"source_symbol": "CheckIfOpponentHasBossDeckID", "before": "return (CheckIfOpponentHasBossDeckIDResult){a, carry};", "after": "return (CheckIfOpponentHasBossDeckIDResult){0u, carry};", "case_ids": ["CheckIfOpponentHasBossDeckID-1", "CheckIfOpponentHasBossDeckID-2", "CheckIfOpponentHasBossDeckID-3"]}
+MUTATIONS["CheckIfOpponentHasBossDeckID"] = {
+    "source_symbol": "CheckIfOpponentHasBossDeckID",
+    "before": "return (CheckIfOpponentHasBossDeckIDResult){a, carry};",
+    "after": "return (CheckIfOpponentHasBossDeckIDResult){0u, carry};",
+    "case_ids": [
+        "CheckIfOpponentHasBossDeckID-1",
+        "CheckIfOpponentHasBossDeckID-2",
+        "CheckIfOpponentHasBossDeckID-3",
+    ],
+}
 # <<< factory-mutation CheckIfOpponentHasBossDeckID
 # >>> factory-mutation RaiseAIScoreToAllMatchingIDsInBench
-MUTATIONS["RaiseAIScoreToAllMatchingIDsInBench"] = {"source_symbol": "RaiseAIScoreToAllMatchingIDsInBench", "before": "bench.hl = (uint16_t)(bench.hl + 1u);", "after": "bench.hl = (uint16_t)(bench.hl + 2u);", "case_ids": ["RaiseAIScoreToAllMatchingIDsInBench-0", "RaiseAIScoreToAllMatchingIDsInBench-1", "RaiseAIScoreToAllMatchingIDsInBench-2"]}
+MUTATIONS["RaiseAIScoreToAllMatchingIDsInBench"] = {
+    "source_symbol": "RaiseAIScoreToAllMatchingIDsInBench",
+    "before": "bench.hl = (uint16_t)(bench.hl + 1u);",
+    "after": "bench.hl = (uint16_t)(bench.hl + 2u);",
+    "case_ids": [
+        "RaiseAIScoreToAllMatchingIDsInBench-0",
+        "RaiseAIScoreToAllMatchingIDsInBench-1",
+        "RaiseAIScoreToAllMatchingIDsInBench-2",
+    ],
+}
 # <<< factory-mutation RaiseAIScoreToAllMatchingIDsInBench
 # >>> factory-mutation GetDamageNumberChars
-MUTATIONS["GetDamageNumberChars.ConvertDigitToCharTile"] = {"source_symbol": "GetDamageNumberChars_ConvertDigitToCharTile", "before": "\treturn (DamageDigitResult){new_hi, f, de, (uint16_t)(((uint16_t)new_hi << 8) | new_lo)};", "after": "\treturn (DamageDigitResult){new_hi, f, de, value};", "case_ids": ["GetDamageNumberChars.ConvertDigitToCharTile-4"]}
-MUTATIONS["GetDamageNumberChars"] = {"source_symbol": "GetDamageNumberChars", "before": "\tgb_write8(digit.de, (uint8_t)((uint8_t)digit.hl + SPRITE_ANIM_79));", "after": "\tgb_write8(digit.de, (uint8_t)((uint8_t)digit.hl));", "case_ids": ["GetDamageNumberChars-0"]}
+MUTATIONS["GetDamageNumberChars.ConvertDigitToCharTile"] = {
+    "source_symbol": "GetDamageNumberChars_ConvertDigitToCharTile",
+    "before": "\treturn (DamageDigitResult){new_hi, f, de, (uint16_t)(((uint16_t)new_hi << 8) | new_lo)};",
+    "after": "\treturn (DamageDigitResult){new_hi, f, de, value};",
+    "case_ids": ["GetDamageNumberChars.ConvertDigitToCharTile-4"],
+}
+MUTATIONS["GetDamageNumberChars"] = {
+    "source_symbol": "GetDamageNumberChars",
+    "before": "\tgb_write8(digit.de, (uint8_t)((uint8_t)digit.hl + SPRITE_ANIM_79));",
+    "after": "\tgb_write8(digit.de, (uint8_t)((uint8_t)digit.hl));",
+    "case_ids": ["GetDamageNumberChars-0"],
+}
 # <<< factory-mutation GetDamageNumberChars
 # >>> factory-mutation CardPageSwitch_PokemonAttack2Page2
-MUTATIONS["CardPageSwitch_PokemonAttack2Page2"] = {"source_symbol": "CardPageSwitch_PokemonAttack2Page2", "before": "\tuint16_t hl = (uint16_t)(wLoadedCard1Atk2Description_ADDR + 2u);", "after": "\tuint16_t hl = (uint16_t)(wLoadedCard1Atk2Description_ADDR + 3u);", "case_ids": ["CardPageSwitch_PokemonAttack2Page2-1", "CardPageSwitch_PokemonAttack2Page2-2", "CardPageSwitch_PokemonAttack2Page2-3"]}
+MUTATIONS["CardPageSwitch_PokemonAttack2Page2"] = {
+    "source_symbol": "CardPageSwitch_PokemonAttack2Page2",
+    "before": "\tuint16_t hl = (uint16_t)(wLoadedCard1Atk2Description_ADDR + 2u);",
+    "after": "\tuint16_t hl = (uint16_t)(wLoadedCard1Atk2Description_ADDR + 3u);",
+    "case_ids": [
+        "CardPageSwitch_PokemonAttack2Page2-1",
+        "CardPageSwitch_PokemonAttack2Page2-2",
+        "CardPageSwitch_PokemonAttack2Page2-3",
+    ],
+}
 # <<< factory-mutation CardPageSwitch_PokemonAttack2Page2
 # >>> factory-mutation CardPageSwitch_08
-MUTATIONS["CardPageSwitch_08"] = {"source_symbol": "CardPageSwitch_08", "before": "CARDPAGE_ENERGY + 1u", "after": "CARDPAGE_ENERGY + 2u", "case_ids": ["CardPageSwitch_08-0", "CardPageSwitch_08-1"]}
+MUTATIONS["CardPageSwitch_08"] = {
+    "source_symbol": "CardPageSwitch_08",
+    "before": "CARDPAGE_ENERGY + 1u",
+    "after": "CARDPAGE_ENERGY + 2u",
+    "case_ids": ["CardPageSwitch_08-0", "CardPageSwitch_08-1"],
+}
 # <<< factory-mutation CardPageSwitch_08
 # >>> factory-mutation LoadPlayAreaCardGfx
 MUTATIONS["LoadPlayAreaCardGfx"] = {
-	"source_symbol": "LoadPlayAreaCardGfx",
-	"before": "LoadLoaded1CardGfx(de);",
-	"after": "LoadLoaded1CardGfx((uint16_t)(de + 1u));",
-	"case_ids": ["LoadPlayAreaCardGfx-1", "LoadPlayAreaCardGfx-2"],
+    "source_symbol": "LoadPlayAreaCardGfx",
+    "before": "LoadLoaded1CardGfx(de);",
+    "after": "LoadLoaded1CardGfx((uint16_t)(de + 1u));",
+    "case_ids": ["LoadPlayAreaCardGfx-1", "LoadPlayAreaCardGfx-2"],
 }
 # <<< factory-mutation LoadPlayAreaCardGfx
 # >>> factory-mutation SetBGP6OrSGB3ToCardPalette
 MUTATIONS["SetBGP6OrSGB3ToCardPalette"] = {
-	"source_symbol": "SetBGP6OrSGB3ToCardPalette",
-	"before": "CopyCGBCardPalette(0x06u);",
-	"after": "CopyCGBCardPalette(0x07u);",
-	"case_ids": ["SetBGP6OrSGB3ToCardPalette-2"],
+    "source_symbol": "SetBGP6OrSGB3ToCardPalette",
+    "before": "CopyCGBCardPalette(0x06u);",
+    "after": "CopyCGBCardPalette(0x07u);",
+    "case_ids": ["SetBGP6OrSGB3ToCardPalette-2"],
 }
 # <<< factory-mutation SetBGP6OrSGB3ToCardPalette
 # >>> factory-mutation SetOneLineSeparation
 MUTATIONS["SetOneLineSeparation"] = {
-	"source_symbol": "SetOneLineSeparation",
-	"before": "SetLineSeparation(0u);",
-	"after": "SetLineSeparation(1u);",
-	"case_ids": ["SetOneLineSeparation-0"],
+    "source_symbol": "SetOneLineSeparation",
+    "before": "SetLineSeparation(0u);",
+    "after": "SetLineSeparation(1u);",
+    "case_ids": ["SetOneLineSeparation-0"],
 }
 # <<< factory-mutation SetOneLineSeparation
 # >>> factory-mutation _HasAlivePokemonInPlayArea
-MUTATIONS["_HasAlivePokemonInPlayArea"] = {"source_symbol": "_HasAlivePokemonInPlayArea", "before": "\tuint8_t slots = (uint8_t)(count - a);", "after": "\tuint8_t slots = (uint8_t)(count - a + 1u);", "case_ids": ["_HasAlivePokemonInPlayArea-1"]}
+MUTATIONS["_HasAlivePokemonInPlayArea"] = {
+    "source_symbol": "_HasAlivePokemonInPlayArea",
+    "before": "\tuint8_t slots = (uint8_t)(count - a);",
+    "after": "\tuint8_t slots = (uint8_t)(count - a + 1u);",
+    "case_ids": ["_HasAlivePokemonInPlayArea-1"],
+}
 # <<< factory-mutation _HasAlivePokemonInPlayArea
 # >>> factory-mutation PrintPlayAreaCardLocation
 MUTATIONS["PrintPlayAreaCardLocation"] = {
     "source_symbol": "PrintPlayAreaCardLocation",
     "before": "uint8_t tile = kPlayAreaLocationTileNumbers[index + i];",
     "after": "uint8_t tile = kPlayAreaLocationTileNumbers[index + i + 1u];",
-    "case_ids": ["PrintPlayAreaCardLocation-0", "PrintPlayAreaCardLocation-1", "PrintPlayAreaCardLocation-2"],
+    "case_ids": [
+        "PrintPlayAreaCardLocation-0",
+        "PrintPlayAreaCardLocation-1",
+        "PrintPlayAreaCardLocation-2",
+    ],
 }
 # <<< factory-mutation PrintPlayAreaCardLocation
 # >>> factory-mutation CheckPrintPoisoned
@@ -6267,7 +13121,12 @@ MUTATIONS["OppAction_NoAction"] = {
 }
 # <<< factory-mutation OppAction_NoAction
 # >>> factory-mutation ReturnRetreatCostCardsToArena
-MUTATIONS["ReturnRetreatCostCardsToArena"] = {"source_symbol": "ReturnRetreatCostCardsToArena", "before": "b, c, d, e, hl};", "after": "b, c, d, e, (uint16_t)(hl + 1u)};", "case_ids": ["ReturnRetreatCostCardsToArena-0", "ReturnRetreatCostCardsToArena-1"]}
+MUTATIONS["ReturnRetreatCostCardsToArena"] = {
+    "source_symbol": "ReturnRetreatCostCardsToArena",
+    "before": "b, c, d, e, hl};",
+    "after": "b, c, d, e, (uint16_t)(hl + 1u)};",
+    "case_ids": ["ReturnRetreatCostCardsToArena-0", "ReturnRetreatCostCardsToArena-1"],
+}
 # <<< factory-mutation ReturnRetreatCostCardsToArena
 # >>> factory-mutation FindHighestBenchScore
 MUTATIONS["FindHighestBenchScore"] = {
@@ -6326,7 +13185,12 @@ MUTATIONS["CheckSkipDelayAllowed"] = {
 }
 # <<< factory-mutation CheckSkipDelayAllowed
 # >>> factory-mutation AIMakeDecision
-MUTATIONS["AIMakeDecision"] = {"source_symbol": "AIMakeDecision", "before": "\tgb_write8(wOpponentTurnEnded_ADDR, 0u);", "after": "\tgb_write8(wOpponentTurnEnded_ADDR, 1u);", "case_ids": ["AIMakeDecision-0"]}
+MUTATIONS["AIMakeDecision"] = {
+    "source_symbol": "AIMakeDecision",
+    "before": "\tgb_write8(wOpponentTurnEnded_ADDR, 0u);",
+    "after": "\tgb_write8(wOpponentTurnEnded_ADDR, 1u);",
+    "case_ids": ["AIMakeDecision-0"],
+}
 # <<< factory-mutation AIMakeDecision
 
 # >>> factory-mutation Func_6ba2
@@ -6338,19 +13202,36 @@ MUTATIONS["Func_6ba2"] = {
 }
 # <<< factory-mutation Func_6ba2
 # >>> factory-mutation TwoByteNumberToTxSymbol_PadSpace_Bank1
-MUTATIONS["TwoByteNumberToTxSymbol_PadSpace_Bank1"] = {"source_symbol": "TwoByteNumberToTxSymbol_PadSpace_Bank1", "before": "gb_write8((uint16_t)(wStringBuffer_ADDR + i), SYM_SPACE);", "after": "gb_write8((uint16_t)(wStringBuffer_ADDR + i), SYM_FIRE);", "case_ids": ["TwoByteNumberToTxSymbol_PadSpace_Bank1-0", "TwoByteNumberToTxSymbol_PadSpace_Bank1-1", "TwoByteNumberToTxSymbol_PadSpace_Bank1-2"]}
+MUTATIONS["TwoByteNumberToTxSymbol_PadSpace_Bank1"] = {
+    "source_symbol": "TwoByteNumberToTxSymbol_PadSpace_Bank1",
+    "before": "gb_write8((uint16_t)(wStringBuffer_ADDR + i), SYM_SPACE);",
+    "after": "gb_write8((uint16_t)(wStringBuffer_ADDR + i), SYM_FIRE);",
+    "case_ids": [
+        "TwoByteNumberToTxSymbol_PadSpace_Bank1-0",
+        "TwoByteNumberToTxSymbol_PadSpace_Bank1-1",
+        "TwoByteNumberToTxSymbol_PadSpace_Bank1-2",
+    ],
+}
 # <<< factory-mutation TwoByteNumberToTxSymbol_PadSpace_Bank1
 # >>> factory-mutation DrawWideTextBox_WaitForInput_Bank1
 MUTATIONS["DrawWideTextBox_WaitForInput_Bank1"] = {
     "source_symbol": "DrawWideTextBox_WaitForInput_Bank1",
     "before": "return DrawWideTextBox_WaitForInput(hl);",
     "after": "return (WaitResult){0x10u};",
-    "case_ids": ["DrawWideTextBox_WaitForInput_Bank1-0", "DrawWideTextBox_WaitForInput_Bank1-1"],
+    "case_ids": [
+        "DrawWideTextBox_WaitForInput_Bank1-0",
+        "DrawWideTextBox_WaitForInput_Bank1-1",
+    ],
 }
 # <<< factory-mutation DrawWideTextBox_WaitForInput_Bank1
 
 # >>> factory-mutation CheckForEvolutionInList
-MUTATIONS["CheckForEvolutionInList"] = {"source_symbol": "CheckForEvolutionInList", "before": "\t\t\treturn (CheckForEvolutionInListResult){original, target, d, e,", "after": "\t\t\treturn (CheckForEvolutionInListResult){original, target, 0u, e,", "case_ids": ["CheckForEvolutionInList-4"]}
+MUTATIONS["CheckForEvolutionInList"] = {
+    "source_symbol": "CheckForEvolutionInList",
+    "before": "\t\t\treturn (CheckForEvolutionInListResult){original, target, d, e,",
+    "after": "\t\t\treturn (CheckForEvolutionInListResult){original, target, 0u, e,",
+    "case_ids": ["CheckForEvolutionInList-4"],
+}
 # <<< factory-mutation CheckForEvolutionInList
 # >>> factory-mutation CheckIfEnergyIsUseful
 MUTATIONS["CheckIfEnergyIsUseful"] = {
@@ -6365,7 +13246,10 @@ MUTATIONS["CountNumberOfEnergyCardsAttached"] = {
     "source_symbol": "CountNumberOfEnergyCardsAttached",
     "before": "colorless >> 1",
     "after": "colorless",
-    "case_ids": ["CountNumberOfEnergyCardsAttached-1", "CountNumberOfEnergyCardsAttached-2"],
+    "case_ids": [
+        "CountNumberOfEnergyCardsAttached-1",
+        "CountNumberOfEnergyCardsAttached-2",
+    ],
 }
 # <<< factory-mutation CountNumberOfEnergyCardsAttached
 # >>> factory-mutation GetAttacksEnergyCostBits
@@ -6381,7 +13265,10 @@ MUTATIONS["LoadDefendingPokemonColorWRAndPrizeCards"] = {
     "source_symbol": "LoadDefendingPokemonColorWRAndPrizeCards",
     "before": "wAIPlayerPrizeCount = CountPrizes();",
     "after": "wAIPlayerPrizeCount = 0u;",
-    "case_ids": ["LoadDefendingPokemonColorWRAndPrizeCards-0", "LoadDefendingPokemonColorWRAndPrizeCards-1"],
+    "case_ids": [
+        "LoadDefendingPokemonColorWRAndPrizeCards-0",
+        "LoadDefendingPokemonColorWRAndPrizeCards-1",
+    ],
 }
 # <<< factory-mutation LoadDefendingPokemonColorWRAndPrizeCards
 # >>> factory-mutation LookForCardIDInLocation_Bank5
@@ -6409,7 +13296,12 @@ MUTATIONS["RemoveCardIDInList"] = {
 }
 # <<< factory-mutation RemoveCardIDInList
 # >>> factory-mutation SortTempHandByIDList
-MUTATIONS["SortTempHandByIDList"] = {"source_symbol": "SortTempHandByIDList", "before": "\t\treturn (SortTempHandResult){0u, 0x80u, b, c, d, e, hl};", "after": "\t\treturn (SortTempHandResult){0u, 0x80u, b, 0u, d, e, hl};", "case_ids": ["SortTempHandByIDList-0"]}
+MUTATIONS["SortTempHandByIDList"] = {
+    "source_symbol": "SortTempHandByIDList",
+    "before": "\t\treturn (SortTempHandResult){0u, 0x80u, b, c, d, e, hl};",
+    "after": "\t\treturn (SortTempHandResult){0u, 0x80u, b, 0u, d, e, hl};",
+    "case_ids": ["SortTempHandByIDList-0"],
+}
 # <<< factory-mutation SortTempHandByIDList
 # >>> factory-mutation ApplyCardCGBAttributes
 MUTATIONS["ApplyCardCGBAttributes"] = {
@@ -6424,21 +13316,44 @@ MUTATIONS["ApplyStatusConditionToArenaPokemon"] = {
     "source_symbol": "ApplyStatusConditionToArenaPokemon",
     "before": "\t*hl = (uint16_t)(p + 2u);",
     "after": "\t*hl = (uint16_t)(p + 1u);",
-    "case_ids": ["ApplyStatusConditionToArenaPokemon-1", "ApplyStatusConditionToArenaPokemon-4"],
+    "case_ids": [
+        "ApplyStatusConditionToArenaPokemon-1",
+        "ApplyStatusConditionToArenaPokemon-4",
+    ],
 }
 # <<< factory-mutation ApplyStatusConditionToArenaPokemon
 # >>> factory-mutation CardPageSwitch_EnergyOrTrainerPage1
-MUTATIONS["CardPageSwitch_EnergyOrTrainerPage1"] = {"source_symbol": "CardPageSwitch_EnergyOrTrainerPage1", "before": "return (CardPageSwitchEnergyResult){1u, 0u};", "after": "return (CardPageSwitchEnergyResult){2u, 0u};", "case_ids": ["CardPageSwitch_EnergyOrTrainerPage1-0", "CardPageSwitch_EnergyOrTrainerPage1-1"]}
+MUTATIONS["CardPageSwitch_EnergyOrTrainerPage1"] = {
+    "source_symbol": "CardPageSwitch_EnergyOrTrainerPage1",
+    "before": "return (CardPageSwitchEnergyResult){1u, 0u};",
+    "after": "return (CardPageSwitchEnergyResult){2u, 0u};",
+    "case_ids": [
+        "CardPageSwitch_EnergyOrTrainerPage1-0",
+        "CardPageSwitch_EnergyOrTrainerPage1-1",
+    ],
+}
 # <<< factory-mutation CardPageSwitch_EnergyOrTrainerPage1
 # >>> factory-mutation CardPageSwitch_TrainerEnd
-MUTATIONS["CardPageSwitch_TrainerEnd"] = {"source_symbol": "CardPageSwitch_TrainerEnd", "before": "return (CardPageResult){CARDPAGE_TRAINER_1, TRUE};", "after": "return (CardPageResult){0x0eu, TRUE};", "case_ids": ["CardPageSwitch_TrainerEnd-0", "CardPageSwitch_TrainerEnd-1", "CardPageSwitch_TrainerEnd-2"]}
+MUTATIONS["CardPageSwitch_TrainerEnd"] = {
+    "source_symbol": "CardPageSwitch_TrainerEnd",
+    "before": "return (CardPageResult){CARDPAGE_TRAINER_1, TRUE};",
+    "after": "return (CardPageResult){0x0eu, TRUE};",
+    "case_ids": [
+        "CardPageSwitch_TrainerEnd-0",
+        "CardPageSwitch_TrainerEnd-1",
+        "CardPageSwitch_TrainerEnd-2",
+    ],
+}
 # <<< factory-mutation CardPageSwitch_TrainerEnd
 # >>> factory-mutation CheckIfActiveCardParalyzedOrAsleep
 MUTATIONS["CheckIfActiveCardParalyzedOrAsleep"] = {
     "source_symbol": "CheckIfActiveCardParalyzedOrAsleep",
     "before": "masked == 0x03u",
     "after": "masked == 0x04u",
-    "case_ids": ["CheckIfActiveCardParalyzedOrAsleep-2", "CheckIfActiveCardParalyzedOrAsleep-3"],
+    "case_ids": [
+        "CheckIfActiveCardParalyzedOrAsleep-2",
+        "CheckIfActiveCardParalyzedOrAsleep-3",
+    ],
 }
 # <<< factory-mutation CheckIfActiveCardParalyzedOrAsleep
 # >>> factory-mutation CheckIfEnoughEnergiesOfType
@@ -6454,7 +13369,10 @@ MUTATIONS["CheckIfEnoughEnergiesToRetreat"] = {
     "source_symbol": "CheckIfEnoughEnergiesToRetreat",
     "before": "attached < required",
     "after": "attached <= required",
-    "case_ids": ["CheckIfEnoughEnergiesToRetreat-0", "CheckIfEnoughEnergiesToRetreat-1"],
+    "case_ids": [
+        "CheckIfEnoughEnergiesToRetreat-0",
+        "CheckIfEnoughEnergiesToRetreat-1",
+    ],
 }
 # <<< factory-mutation CheckIfEnoughEnergiesToRetreat
 # >>> factory-mutation DecideLinkDuelVariables
@@ -6474,7 +13392,12 @@ MUTATIONS["DisplayAttackPage"] = {
 }
 # <<< factory-mutation DisplayAttackPage
 # >>> factory-mutation DisplayCardPage
-MUTATIONS["DisplayCardPage"] = {"source_symbol": "DisplayCardPage", "before": "\t\tb = DisplayCardPage_TrainerPage1(0u, 0u, 0u, 0u, 0u, 0u, 0u).b;", "after": "\t\tb = 0u;", "case_ids": ["DisplayCardPage-1"]}
+MUTATIONS["DisplayCardPage"] = {
+    "source_symbol": "DisplayCardPage",
+    "before": "\t\tb = DisplayCardPage_TrainerPage1(0u, 0u, 0u, 0u, 0u, 0u, 0u).b;",
+    "after": "\t\tb = 0u;",
+    "case_ids": ["DisplayCardPage-1"],
+}
 # <<< factory-mutation DisplayCardPage
 # >>> factory-mutation DoPracticeDuelAction
 MUTATIONS["DoPracticeDuelAction"] = {
@@ -6489,8 +13412,11 @@ MUTATIONS["DrawDuelHorizontalSeparator"] = {
     "source_symbol": "DrawDuelHorizontalSeparator",
     "before": "data = DUEL_HORIZONTAL_SEPARATOR_CGB_PAL_DATA;",
     "after": "data = DUEL_HORIZONTAL_SEPARATOR_TILE_DATA;",
-    "case_ids": ["DrawDuelHorizontalSeparator-0", "DrawDuelHorizontalSeparator-1",
-                 "DrawDuelHorizontalSeparator-2"],
+    "case_ids": [
+        "DrawDuelHorizontalSeparator-0",
+        "DrawDuelHorizontalSeparator-1",
+        "DrawDuelHorizontalSeparator-2",
+    ],
 }
 # <<< factory-mutation DrawDuelHorizontalSeparator
 # >>> factory-mutation MoveAllTurnHolderKnockedOutPokemonToDiscardPile
@@ -6498,18 +13424,29 @@ MUTATIONS["MoveAllTurnHolderKnockedOutPokemonToDiscardPile"] = {
     "source_symbol": "MoveAllTurnHolderKnockedOutPokemonToDiscardPile",
     "before": "if (gb_read8(hp) == 0u)",
     "after": "if (gb_read8(hp) != 0u)",
-    "case_ids": ["MoveAllTurnHolderKnockedOutPokemonToDiscardPile-0", "MoveAllTurnHolderKnockedOutPokemonToDiscardPile-1"],
+    "case_ids": [
+        "MoveAllTurnHolderKnockedOutPokemonToDiscardPile-0",
+        "MoveAllTurnHolderKnockedOutPokemonToDiscardPile-1",
+    ],
 }
 # <<< factory-mutation MoveAllTurnHolderKnockedOutPokemonToDiscardPile
 # >>> factory-mutation PracticeDuel_VerifyPlayerTurnActions
-MUTATIONS["PracticeDuel_VerifyPlayerTurnActions"] = {"source_symbol": "PracticeDuel_VerifyPlayerTurnActions", "before": "\tcase 0: f = PracticeDuelVerify_Turn1().f; break;", "after": "\tcase 0: f = PracticeDuelVerify_Turn2().f; break;", "case_ids": ["PracticeDuel_VerifyPlayerTurnActions-0"]}
+MUTATIONS["PracticeDuel_VerifyPlayerTurnActions"] = {
+    "source_symbol": "PracticeDuel_VerifyPlayerTurnActions",
+    "before": "\tcase 0: f = PracticeDuelVerify_Turn1().f; break;",
+    "after": "\tcase 0: f = PracticeDuelVerify_Turn2().f; break;",
+    "case_ids": ["PracticeDuel_VerifyPlayerTurnActions-0"],
+}
 # <<< factory-mutation PracticeDuel_VerifyPlayerTurnActions
 # >>> factory-mutation PrintCardNameFromCardIDInTextBox
 MUTATIONS["PrintCardNameFromCardIDInTextBox"] = {
     "source_symbol": "PrintCardNameFromCardIDInTextBox",
     "before": "LoadTxRam2(name);",
     "after": "LoadTxRam2(0u);",
-    "case_ids": ["PrintCardNameFromCardIDInTextBox-0", "PrintCardNameFromCardIDInTextBox-1"],
+    "case_ids": [
+        "PrintCardNameFromCardIDInTextBox-0",
+        "PrintCardNameFromCardIDInTextBox-1",
+    ],
 }
 # <<< factory-mutation PrintCardNameFromCardIDInTextBox
 # >>> factory-mutation PrintSortNumberInCardList
@@ -6529,27 +13466,73 @@ MUTATIONS["PrintSortNumberInCardList_CallFromPointer"] = {
 }
 # <<< factory-mutation PrintSortNumberInCardList_CallFromPointer
 # >>> factory CanArenaCardUseNonResidualAttack
-CONTRACT["CanArenaCardUseNonResidualAttack"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CONTRACT["CanArenaCardUseNonResidualAttack"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
 CASES["CanArenaCardUseNonResidualAttack"] = [
-    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00", 0xCCB1: b"\x00"},
-     "sram": {0: {}}, "read": {0xFF9D: 1}, "instruction_budget": 4000000, "cycle_budget": 20000000},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00", 0xCCB1: b"\x00"},
-         sram={0: {}}, read={0xFF9D: 1}, instruction_budget=4000000, cycle_budget=20000000),
+    {
+        "wram": {
+            0xFF97: b"\xc2",
+            0xFF9D: b"\x00",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            0xCCC6: b"\x00",
+            0xCC23: b"\x00",
+            0xCCB1: b"\x00",
+        },
+        "sram": {0: {}},
+        "read": {0xFF9D: 1},
+        "instruction_budget": 4000000,
+        "cycle_budget": 20000000,
+    },
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xFF9D: b"\x00",
+            0xC2BB: b"\x00",
+            0xC400: b"\x08",
+            0xCCC6: b"\x00",
+            0xCC23: b"\x00",
+            0xCCB1: b"\x00",
+        },
+        sram={0: {}},
+        read={0xFF9D: 1},
+        instruction_budget=4000000,
+        cycle_budget=20000000,
+    ),
 ]
 # <<< factory CanArenaCardUseNonResidualAttack
 
 # Keep schema-2 inventory after appended routine cases.
 
 # >>> factory PrintDeckAndHandIconsAndNumberOfCards
-_PRINT_DECK_COUNTS = {0xC2EE: b"\x02", 0xC2BA: b"\x0A", 0xC3EE: b"\x04", 0xC3BA: b"\x08", 0xCBE9: b"\x03"}
+_PRINT_DECK_COUNTS = {
+    0xC2EE: b"\x02",
+    0xC2BA: b"\x0a",
+    0xC3EE: b"\x04",
+    0xC3BA: b"\x08",
+    0xCBE9: b"\x03",
+}
 _PRINT_DECK_VRAM = {0x9842: 0x2A, 0x9927: 0x2B}
 CONTRACT["PrintDeckAndHandIconsAndNumberOfCards"] = {"compare": (), "preserve": ()}
 # 0xC100 (wDecompressionSecondaryBufferStart) seeded and diffed: the asm passes
 # its data blocks by ROM address and writes no WRAM while doing so.
 CASES["PrintDeckAndHandIconsAndNumberOfCards"] = [
-    {"wram": {**_PRINT_DECK_COUNTS, 0xCAB4: b"\x00", 0xC100: b"\x00" * 64}, "vread": {0: dict(_PRINT_DECK_VRAM)}},
-    {"wram": {**_PRINT_DECK_COUNTS, 0xCAB4: b"\x02", 0xC100: b"\x00" * 64}, "vread": {0: dict(_PRINT_DECK_VRAM), 1: dict(_PRINT_DECK_VRAM)}},
-    dict(POISON, wram={**_PRINT_DECK_COUNTS, 0xCAB4: b"\x00"}, vread={0: dict(_PRINT_DECK_VRAM)}),
+    {
+        "wram": {**_PRINT_DECK_COUNTS, 0xCAB4: b"\x00", 0xC100: b"\x00" * 64},
+        "vread": {0: dict(_PRINT_DECK_VRAM)},
+    },
+    {
+        "wram": {**_PRINT_DECK_COUNTS, 0xCAB4: b"\x02", 0xC100: b"\x00" * 64},
+        "vread": {0: dict(_PRINT_DECK_VRAM), 1: dict(_PRINT_DECK_VRAM)},
+    },
+    dict(
+        POISON,
+        wram={**_PRINT_DECK_COUNTS, 0xCAB4: b"\x00"},
+        vread={0: dict(_PRINT_DECK_VRAM)},
+    ),
 ]
 # <<< factory PrintDeckAndHandIconsAndNumberOfCards
 
@@ -6568,7 +13551,10 @@ MUTATIONS["CheckIfNoSurplusEnergyForAttack"] = {
     "source_symbol": "CheckIfNoSurplusEnergyForAttack",
     "before": "\tif (a1 < b)\n\t\treturn (CheckIfNoSurplusEnergyResult){a2, f, d};",
     "after": "\tif (a1 <= b)\n\t\treturn (CheckIfNoSurplusEnergyResult){a2, f, d};",
-    "case_ids": ["CheckIfNoSurplusEnergyForAttack-0", "CheckIfNoSurplusEnergyForAttack-3"],
+    "case_ids": [
+        "CheckIfNoSurplusEnergyForAttack-0",
+        "CheckIfNoSurplusEnergyForAttack-3",
+    ],
 }
 # <<< factory-mutation CheckIfNoSurplusEnergyForAttack
 # >>> factory-mutation Func_1585b
@@ -6576,7 +13562,15 @@ MUTATIONS["Func_1585b"] = {
     "source_symbol": "Func_1585b",
     "before": "return (Func1585bResult){ .a = 0, .f = 0x80u };",
     "after": "return (Func1585bResult){ .a = 0, .f = 0x00u };",
-    "case_ids": ["Func_1585b-0", "Func_1585b-1", "Func_1585b-2", "Func_1585b-3", "Func_1585b-4", "Func_1585b-5", "Func_1585b-6"],
+    "case_ids": [
+        "Func_1585b-0",
+        "Func_1585b-1",
+        "Func_1585b-2",
+        "Func_1585b-3",
+        "Func_1585b-4",
+        "Func_1585b-5",
+        "Func_1585b-6",
+    ],
 }
 # <<< factory-mutation Func_1585b
 # >>> factory-mutation CheckIfNotABossDeckID
@@ -6584,48 +13578,123 @@ MUTATIONS["CheckIfNotABossDeckID"] = {
     "source_symbol": "CheckIfNotABossDeckID",
     "before": "uint8_t a = gb_read8(sReceivedLegendaryCards_ADDR);",
     "after": "uint8_t a = gb_read8((uint16_t)(sReceivedLegendaryCards_ADDR + 1u));",
-    "case_ids": ["CheckIfNotABossDeckID-1", "CheckIfNotABossDeckID-2", "CheckIfNotABossDeckID-3"],
+    "case_ids": [
+        "CheckIfNotABossDeckID-1",
+        "CheckIfNotABossDeckID-2",
+        "CheckIfNotABossDeckID-3",
+    ],
 }
 # <<< factory-mutation CheckIfNotABossDeckID
 # >>> factory-mutation AIChooseRandomlyNotToDoAction
 MUTATIONS["AIChooseRandomlyNotToDoAction"] = {
-	"source_symbol": "AIChooseRandomlyNotToDoAction",
-	"before": "uint8_t cpflags = 0x40u;",
-	"after": "uint8_t cpflags = 0x00u;",
-	"case_ids": ["AIChooseRandomlyNotToDoAction-0", "AIChooseRandomlyNotToDoAction-1", "AIChooseRandomlyNotToDoAction-2", "AIChooseRandomlyNotToDoAction-3"],
+    "source_symbol": "AIChooseRandomlyNotToDoAction",
+    "before": "uint8_t cpflags = 0x40u;",
+    "after": "uint8_t cpflags = 0x00u;",
+    "case_ids": [
+        "AIChooseRandomlyNotToDoAction-0",
+        "AIChooseRandomlyNotToDoAction-1",
+        "AIChooseRandomlyNotToDoAction-2",
+        "AIChooseRandomlyNotToDoAction-3",
+    ],
 }
 # <<< factory-mutation AIChooseRandomlyNotToDoAction
 # >>> factory-mutation TrySetUpBossStartingPlayArea
 MUTATIONS["TrySetUpBossStartingPlayArea"] = {
-	"source_symbol": "TrySetUpBossStartingPlayArea",
-	"before": "return (TrySetUpBossStartingPlayAreaResult){r.a, r.f};",
-	"after": "return (TrySetUpBossStartingPlayAreaResult){r.a, 0x00u};",
-	"case_ids": ["TrySetUpBossStartingPlayArea-0", "TrySetUpBossStartingPlayArea-1", "TrySetUpBossStartingPlayArea-2", "TrySetUpBossStartingPlayArea-3", "TrySetUpBossStartingPlayArea-4"],
+    "source_symbol": "TrySetUpBossStartingPlayArea",
+    "before": "return (TrySetUpBossStartingPlayAreaResult){r.a, r.f};",
+    "after": "return (TrySetUpBossStartingPlayAreaResult){r.a, 0x00u};",
+    "case_ids": [
+        "TrySetUpBossStartingPlayArea-0",
+        "TrySetUpBossStartingPlayArea-1",
+        "TrySetUpBossStartingPlayArea-2",
+        "TrySetUpBossStartingPlayArea-3",
+        "TrySetUpBossStartingPlayArea-4",
+    ],
 }
 # <<< factory-mutation TrySetUpBossStartingPlayArea
 # >>> factory-mutation CardPageSwitch_TrainerPage2
-MUTATIONS["CardPageSwitch_TrainerPage2"] = {"source_symbol": "CardPageSwitch_TrainerPage2", "before": "return (TrainerPageResult){hl, r.a, r.zero};", "after": "return (TrainerPageResult){hl, r.a, (uint8_t)!r.zero};", "case_ids": ["CardPageSwitch_TrainerPage2-0", "CardPageSwitch_TrainerPage2-1", "CardPageSwitch_TrainerPage2-2"]}
+MUTATIONS["CardPageSwitch_TrainerPage2"] = {
+    "source_symbol": "CardPageSwitch_TrainerPage2",
+    "before": "return (TrainerPageResult){hl, r.a, r.zero};",
+    "after": "return (TrainerPageResult){hl, r.a, (uint8_t)!r.zero};",
+    "case_ids": [
+        "CardPageSwitch_TrainerPage2-0",
+        "CardPageSwitch_TrainerPage2-1",
+        "CardPageSwitch_TrainerPage2-2",
+    ],
+}
 # <<< factory-mutation CardPageSwitch_TrainerPage2
 # >>> factory-mutation LoadAndValidateDuelSaveData
-MUTATIONS["LoadAndValidateDuelSaveData"] = {"source_symbol": "LoadAndValidateDuelSaveData", "before": "if (duel.f & 0x10u)", "after": "if (!(duel.f & 0x10u))", "case_ids": ["LoadAndValidateDuelSaveData-0", "LoadAndValidateDuelSaveData-1", "LoadAndValidateDuelSaveData-2"]}
+MUTATIONS["LoadAndValidateDuelSaveData"] = {
+    "source_symbol": "LoadAndValidateDuelSaveData",
+    "before": "if (duel.f & 0x10u)",
+    "after": "if (!(duel.f & 0x10u))",
+    "case_ids": [
+        "LoadAndValidateDuelSaveData-0",
+        "LoadAndValidateDuelSaveData-1",
+        "LoadAndValidateDuelSaveData-2",
+    ],
+}
 # <<< factory-mutation LoadAndValidateDuelSaveData
 # >>> factory-mutation ValidateSavedNonLinkDuelData
-MUTATIONS["ValidateSavedNonLinkDuelData"] = {"source_symbol": "ValidateSavedNonLinkDuelData", "before": "if (duel_type != DUELTYPE_LINK)", "after": "if (duel_type == DUELTYPE_LINK)", "case_ids": ["ValidateSavedNonLinkDuelData-0", "ValidateSavedNonLinkDuelData-1", "ValidateSavedNonLinkDuelData-2"]}
+MUTATIONS["ValidateSavedNonLinkDuelData"] = {
+    "source_symbol": "ValidateSavedNonLinkDuelData",
+    "before": "if (duel_type != DUELTYPE_LINK)",
+    "after": "if (duel_type == DUELTYPE_LINK)",
+    "case_ids": [
+        "ValidateSavedNonLinkDuelData-0",
+        "ValidateSavedNonLinkDuelData-1",
+        "ValidateSavedNonLinkDuelData-2",
+    ],
+}
 # <<< factory-mutation ValidateSavedNonLinkDuelData
 # >>> factory-mutation SetupPlayAreaScreen
-MUTATIONS["SetupPlayAreaScreen"] = {"source_symbol": "SetupPlayAreaScreen", "before": "if (wDuelDisplayedScreen == PLAY_AREA_CARD_LIST)", "after": "if (wDuelDisplayedScreen != PLAY_AREA_CARD_LIST)", "case_ids": ["SetupPlayAreaScreen-1", "SetupPlayAreaScreen-2"]}
+MUTATIONS["SetupPlayAreaScreen"] = {
+    "source_symbol": "SetupPlayAreaScreen",
+    "before": "if (wDuelDisplayedScreen == PLAY_AREA_CARD_LIST)",
+    "after": "if (wDuelDisplayedScreen != PLAY_AREA_CARD_LIST)",
+    "case_ids": ["SetupPlayAreaScreen-1", "SetupPlayAreaScreen-2"],
+}
 # <<< factory-mutation SetupPlayAreaScreen
 # >>> factory-mutation CheckIfEnoughEnergiesForGivenAttack
-MUTATIONS["CheckIfEnoughEnergiesForGivenAttack"] = {"source_symbol": "CheckIfEnoughEnergiesForGivenAttack", "before": "if (category == 0x04u) {", "after": "if (category != 0x04u) {", "case_ids": ["CheckIfEnoughEnergiesForGivenAttack-0", "CheckIfEnoughEnergiesForGivenAttack-1", "CheckIfEnoughEnergiesForGivenAttack-3"]}
+MUTATIONS["CheckIfEnoughEnergiesForGivenAttack"] = {
+    "source_symbol": "CheckIfEnoughEnergiesForGivenAttack",
+    "before": "if (category == 0x04u) {",
+    "after": "if (category != 0x04u) {",
+    "case_ids": [
+        "CheckIfEnoughEnergiesForGivenAttack-0",
+        "CheckIfEnoughEnergiesForGivenAttack-1",
+        "CheckIfEnoughEnergiesForGivenAttack-3",
+    ],
+}
 # <<< factory-mutation CheckIfEnoughEnergiesForGivenAttack
 # >>> factory-mutation SaveDuelData
-MUTATIONS["SaveDuelData"] = {"source_symbol": "SaveDuelData", "before": "SaveDuelDataToDE(sCurrentDuel_ADDR);", "after": "SaveDuelDataToDE((uint16_t)(sCurrentDuel_ADDR + 1u));", "case_ids": ["SaveDuelData-1"]}
+MUTATIONS["SaveDuelData"] = {
+    "source_symbol": "SaveDuelData",
+    "before": "SaveDuelDataToDE(sCurrentDuel_ADDR);",
+    "after": "SaveDuelDataToDE((uint16_t)(sCurrentDuel_ADDR + 1u));",
+    "case_ids": ["SaveDuelData-1"],
+}
 # <<< factory-mutation SaveDuelData
 # >>> factory-mutation SetCardListHeaderText
-MUTATIONS["SetCardListHeaderText"] = {"source_symbol": "SetCardListHeaderText", "before": "wCardListHeaderText_PTR[1] = (uint8_t)(de >> 8);", "after": "wCardListHeaderText_PTR[1] = (uint8_t)de;", "case_ids": ["SetCardListHeaderText-0", "SetCardListHeaderText-1", "SetCardListHeaderText-2"]}
+MUTATIONS["SetCardListHeaderText"] = {
+    "source_symbol": "SetCardListHeaderText",
+    "before": "wCardListHeaderText_PTR[1] = (uint8_t)(de >> 8);",
+    "after": "wCardListHeaderText_PTR[1] = (uint8_t)de;",
+    "case_ids": [
+        "SetCardListHeaderText-0",
+        "SetCardListHeaderText-1",
+        "SetCardListHeaderText-2",
+    ],
+}
 # <<< factory-mutation SetCardListHeaderText
 # >>> factory-mutation AIAttachEnergyInHandToCardInPlayArea
-MUTATIONS["AIAttachEnergyInHandToCardInPlayArea"] = {"source_symbol": "AIAttachEnergyInHandToCardInPlayArea", "before": "\tLookResult location = LookForCardIDInPlayArea_Bank5(d, PLAY_AREA_ARENA);\n\thTempPlayAreaLocation_ffa1 = location.a;\n\thTemp_ffa0 = energy;\n\tAIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_ENERGY, 0u, 0u, 0u, 0u);\n\treturn (AIAttachEnergyInHandToCardInPlayAreaResult){decision.a, decision.f};", "after": "\tLookResult location = LookForCardIDInPlayArea_Bank5(e, PLAY_AREA_ARENA);\n\thTempPlayAreaLocation_ffa1 = location.a;\n\thTemp_ffa0 = energy;\n\tAIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_ENERGY, 0u, 0u, 0u, 0u);\n\treturn (AIAttachEnergyInHandToCardInPlayAreaResult){decision.a, decision.f};", "case_ids": ["AIAttachEnergyInHandToCardInPlayArea-0"]}
+MUTATIONS["AIAttachEnergyInHandToCardInPlayArea"] = {
+    "source_symbol": "AIAttachEnergyInHandToCardInPlayArea",
+    "before": "\tLookResult location = LookForCardIDInPlayArea_Bank5(d, PLAY_AREA_ARENA);\n\thTempPlayAreaLocation_ffa1 = location.a;\n\thTemp_ffa0 = energy;\n\tAIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_ENERGY, 0u, 0u, 0u, 0u);\n\treturn (AIAttachEnergyInHandToCardInPlayAreaResult){decision.a, decision.f};",
+    "after": "\tLookResult location = LookForCardIDInPlayArea_Bank5(e, PLAY_AREA_ARENA);\n\thTempPlayAreaLocation_ffa1 = location.a;\n\thTemp_ffa0 = energy;\n\tAIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_ENERGY, 0u, 0u, 0u, 0u);\n\treturn (AIAttachEnergyInHandToCardInPlayAreaResult){decision.a, decision.f};",
+    "case_ids": ["AIAttachEnergyInHandToCardInPlayArea-0"],
+}
 # <<< factory-mutation AIAttachEnergyInHandToCardInPlayArea
 # >>> factory-mutation GoToPreviousCardPage
 MUTATIONS["GoToPreviousCardPage"] = {
@@ -6652,25 +13721,44 @@ MUTATIONS["HasAlivePokemonInPlayArea"] = {
 }
 # <<< factory-mutation HasAlivePokemonInPlayArea
 # >>> factory-mutation CardPageSwitch_PokemonAttack1Page1
-MUTATIONS["CardPageSwitch_PokemonAttack1Page1"] = {"source_symbol": "CardPageSwitch_PokemonAttack1Page1", "before": "\tuint16_t hl = wLoadedCard1Atk1Name_ADDR;", "after": "\tuint16_t hl = wLoadedCard1Atk1Description_ADDR;", "case_ids": ["CardPageSwitch_PokemonAttack1Page1-0", "CardPageSwitch_PokemonAttack1Page1-1", "CardPageSwitch_PokemonAttack1Page1-2", "CardPageSwitch_PokemonAttack1Page1-3", "CardPageSwitch_PokemonAttack1Page1-4"]}
+MUTATIONS["CardPageSwitch_PokemonAttack1Page1"] = {
+    "source_symbol": "CardPageSwitch_PokemonAttack1Page1",
+    "before": "\tuint16_t hl = wLoadedCard1Atk1Name_ADDR;",
+    "after": "\tuint16_t hl = wLoadedCard1Atk1Description_ADDR;",
+    "case_ids": [
+        "CardPageSwitch_PokemonAttack1Page1-0",
+        "CardPageSwitch_PokemonAttack1Page1-1",
+        "CardPageSwitch_PokemonAttack1Page1-2",
+        "CardPageSwitch_PokemonAttack1Page1-3",
+        "CardPageSwitch_PokemonAttack1Page1-4",
+    ],
+}
 # <<< factory-mutation CardPageSwitch_PokemonAttack1Page1
 # >>> factory-mutation CheckPrintDoublePoisoned
-MUTATIONS["CheckPrintDoublePoisoned"] = {"source_symbol": "CheckPrintDoublePoisoned", "before": "printed_status = POISONED;", "after": "printed_status = 0u;", "case_ids": ["CheckPrintDoublePoisoned-1", "CheckPrintDoublePoisoned-3"]}
+MUTATIONS["CheckPrintDoublePoisoned"] = {
+    "source_symbol": "CheckPrintDoublePoisoned",
+    "before": "printed_status = POISONED;",
+    "after": "printed_status = 0u;",
+    "case_ids": ["CheckPrintDoublePoisoned-1", "CheckPrintDoublePoisoned-3"],
+}
 # <<< factory-mutation CheckPrintDoublePoisoned
 # >>> factory-mutation PrintPracticeDuelLetsPlayTheGame
 MUTATIONS["PrintPracticeDuelLetsPlayTheGame"] = {
     "source_symbol": "PrintPracticeDuelLetsPlayTheGame",
     "before": "\t(void)PrintPracticeDuelDrMasonInstructions(LetsPlayTheGamePracticeDuelText);",
     "after": "\t(void)PrintPracticeDuelDrMasonInstructions(LetsPlayTheGamePracticeDuelText + 1u);",
-    "case_ids": ["PrintPracticeDuelLetsPlayTheGame-0", "PrintPracticeDuelLetsPlayTheGame-1"],
+    "case_ids": [
+        "PrintPracticeDuelLetsPlayTheGame-0",
+        "PrintPracticeDuelLetsPlayTheGame-1",
+    ],
 }
 # <<< factory-mutation PrintPracticeDuelLetsPlayTheGame
 # >>> factory-mutation AIAttachEnergyInHandToCardInBench
 MUTATIONS["AIAttachEnergyInHandToCardInBench"] = {
-	"source_symbol": "AIAttachEnergyInHandToCardInBench",
-	"before": "return (AIAttachEnergyInHandToCardInBenchResult){hand.a, hand.f};",
-	"after": "return (AIAttachEnergyInHandToCardInBenchResult){(uint8_t)(hand.a ^ 1u), hand.f};",
-	"case_ids": ["AIAttachEnergyInHandToCardInBench-0"],
+    "source_symbol": "AIAttachEnergyInHandToCardInBench",
+    "before": "return (AIAttachEnergyInHandToCardInBenchResult){hand.a, hand.f};",
+    "after": "return (AIAttachEnergyInHandToCardInBenchResult){(uint8_t)(hand.a ^ 1u), hand.f};",
+    "case_ids": ["AIAttachEnergyInHandToCardInBench-0"],
 }
 # <<< factory-mutation AIAttachEnergyInHandToCardInBench
 # >>> factory-mutation DrawPracticeDuelInstructionsTextBox
@@ -6678,20 +13766,54 @@ MUTATIONS["DrawPracticeDuelInstructionsTextBox"] = {
     "source_symbol": "DrawPracticeDuelInstructionsTextBox",
     "before": "\tDrawRegularTextBox(&box, 0u, 20u, 12u, 0u, 0u);",
     "after": "\tDrawRegularTextBox(&box, 0u, 20u, 11u, 0u, 0u);",
-    "case_ids": ["DrawPracticeDuelInstructionsTextBox-0", "DrawPracticeDuelInstructionsTextBox-1"],
+    "case_ids": [
+        "DrawPracticeDuelInstructionsTextBox-0",
+        "DrawPracticeDuelInstructionsTextBox-1",
+    ],
 }
 # <<< factory-mutation DrawPracticeDuelInstructionsTextBox
 # >>> factory-mutation PracticeDuelVerify_Turn7Or8
-MUTATIONS["PracticeDuelVerify_Turn7Or8"] = {"source_symbol": "PracticeDuelVerify_Turn7Or8", "before": "card != STARMIE", "after": "card != 0x57u", "case_ids": ["PracticeDuelVerify_Turn7Or8-0", "PracticeDuelVerify_Turn7Or8-1", "PracticeDuelVerify_Turn7Or8-2"]}
+MUTATIONS["PracticeDuelVerify_Turn7Or8"] = {
+    "source_symbol": "PracticeDuelVerify_Turn7Or8",
+    "before": "card != STARMIE",
+    "after": "card != 0x57u",
+    "case_ids": [
+        "PracticeDuelVerify_Turn7Or8-0",
+        "PracticeDuelVerify_Turn7Or8-1",
+        "PracticeDuelVerify_Turn7Or8-2",
+    ],
+}
 # <<< factory-mutation PracticeDuelVerify_Turn7Or8
 # >>> factory-mutation SetDiscardPileScreenTexts
-MUTATIONS["SetDiscardPileScreenTexts"] = {"source_symbol": "SetDiscardPileScreenTexts", "before": "\tSetCardListHeaderText(de, ChooseTheCardYouWishToExamineText);", "after": "\tSetCardListHeaderText(de, YourDiscardPileText);", "case_ids": ["SetDiscardPileScreenTexts-0", "SetDiscardPileScreenTexts-1", "SetDiscardPileScreenTexts-2"]}
+MUTATIONS["SetDiscardPileScreenTexts"] = {
+    "source_symbol": "SetDiscardPileScreenTexts",
+    "before": "\tSetCardListHeaderText(de, ChooseTheCardYouWishToExamineText);",
+    "after": "\tSetCardListHeaderText(de, YourDiscardPileText);",
+    "case_ids": [
+        "SetDiscardPileScreenTexts-0",
+        "SetDiscardPileScreenTexts-1",
+        "SetDiscardPileScreenTexts-2",
+    ],
+}
 # <<< factory-mutation SetDiscardPileScreenTexts
 # >>> factory-mutation PrintAttachedEnergyToPokemon
-MUTATIONS["PrintAttachedEnergyToPokemon"] = {"source_symbol": "PrintAttachedEnergyToPokemon", "before": "\t(void)DrawWideTextBox_WaitForInput(AttachedEnergyToPokemonText);", "after": "\t(void)DrawWideTextBox_WaitForInput(0x0060u);", "case_ids": ["PrintAttachedEnergyToPokemon-0", "PrintAttachedEnergyToPokemon-1"]}
+MUTATIONS["PrintAttachedEnergyToPokemon"] = {
+    "source_symbol": "PrintAttachedEnergyToPokemon",
+    "before": "\t(void)DrawWideTextBox_WaitForInput(AttachedEnergyToPokemonText);",
+    "after": "\t(void)DrawWideTextBox_WaitForInput(0x0060u);",
+    "case_ids": ["PrintAttachedEnergyToPokemon-0", "PrintAttachedEnergyToPokemon-1"],
+}
 # <<< factory-mutation PrintAttachedEnergyToPokemon
 # >>> factory-mutation PrintPokemonEvolvedIntoPokemon
-MUTATIONS["PrintPokemonEvolvedIntoPokemon"] = {"source_symbol": "PrintPokemonEvolvedIntoPokemon", "before": "\t(void)DrawWideTextBox_WaitForInput(PokemonEvolvedIntoPokemonText);", "after": "\t(void)DrawWideTextBox_WaitForInput(0x0061u);", "case_ids": ["PrintPokemonEvolvedIntoPokemon-0", "PrintPokemonEvolvedIntoPokemon-1"]}
+MUTATIONS["PrintPokemonEvolvedIntoPokemon"] = {
+    "source_symbol": "PrintPokemonEvolvedIntoPokemon",
+    "before": "\t(void)DrawWideTextBox_WaitForInput(PokemonEvolvedIntoPokemonText);",
+    "after": "\t(void)DrawWideTextBox_WaitForInput(0x0061u);",
+    "case_ids": [
+        "PrintPokemonEvolvedIntoPokemon-0",
+        "PrintPokemonEvolvedIntoPokemon-1",
+    ],
+}
 # <<< factory-mutation PrintPokemonEvolvedIntoPokemon
 # >>> factory-mutation SetupDuel
 MUTATIONS["SetupDuel"] = {
@@ -6702,40 +13824,101 @@ MUTATIONS["SetupDuel"] = {
 }
 # <<< factory-mutation SetupDuel
 # >>> factory-mutation PracticeDuelVerify_Turn6
-MUTATIONS["PracticeDuelVerify_Turn6"] = {"source_symbol": "PracticeDuelVerify_Turn6", "before": "if (wAttachedEnergies_PTR[WATER] != 3u)", "after": "if (wAttachedEnergies_PTR[WATER] == 3u)", "case_ids": ["PracticeDuelVerify_Turn6-0", "PracticeDuelVerify_Turn6-1", "PracticeDuelVerify_Turn6-2"]}
+MUTATIONS["PracticeDuelVerify_Turn6"] = {
+    "source_symbol": "PracticeDuelVerify_Turn6",
+    "before": "if (wAttachedEnergies_PTR[WATER] != 3u)",
+    "after": "if (wAttachedEnergies_PTR[WATER] == 3u)",
+    "case_ids": [
+        "PracticeDuelVerify_Turn6-0",
+        "PracticeDuelVerify_Turn6-1",
+        "PracticeDuelVerify_Turn6-2",
+    ],
+}
 # <<< factory-mutation PracticeDuelVerify_Turn6
 # >>> factory-mutation PracticeDuelVerify_Turn4
-MUTATIONS["PracticeDuelVerify_Turn4"] = {"source_symbol": "PracticeDuelVerify_Turn4", "before": "if (gb_read8(wPlayerNumberOfPokemonInPlayArea_ADDR) != 3u)", "after": "if (gb_read8(wPlayerNumberOfPokemonInPlayArea_ADDR) == 3u)", "case_ids": ["PracticeDuelVerify_Turn4-0", "PracticeDuelVerify_Turn4-1", "PracticeDuelVerify_Turn4-2", "PracticeDuelVerify_Turn4-3", "PracticeDuelVerify_Turn4-4"]}
+MUTATIONS["PracticeDuelVerify_Turn4"] = {
+    "source_symbol": "PracticeDuelVerify_Turn4",
+    "before": "if (gb_read8(wPlayerNumberOfPokemonInPlayArea_ADDR) != 3u)",
+    "after": "if (gb_read8(wPlayerNumberOfPokemonInPlayArea_ADDR) == 3u)",
+    "case_ids": [
+        "PracticeDuelVerify_Turn4-0",
+        "PracticeDuelVerify_Turn4-1",
+        "PracticeDuelVerify_Turn4-2",
+        "PracticeDuelVerify_Turn4-3",
+        "PracticeDuelVerify_Turn4-4",
+    ],
+}
 # <<< factory-mutation PracticeDuelVerify_Turn4
 # >>> factory-mutation ShuffleDeckAndDrawSevenCards
-MUTATIONS["ShuffleDeckAndDrawSevenCards"] = {"source_symbol": "ShuffleDeckAndDrawSevenCards", "before": "if (wLoadedCard1Type < TYPE_ENERGY && wLoadedCard1Stage == 0u)", "after": "if (wLoadedCard1ID == 0xCCu || (wLoadedCard1Type < TYPE_ENERGY && wLoadedCard1Stage == 0u))", "case_ids": ["ShuffleDeckAndDrawSevenCards-2"]}
+MUTATIONS["ShuffleDeckAndDrawSevenCards"] = {
+    "source_symbol": "ShuffleDeckAndDrawSevenCards",
+    "before": "if (wLoadedCard1Type < TYPE_ENERGY && wLoadedCard1Stage == 0u)",
+    "after": "if (wLoadedCard1ID == 0xCCu || (wLoadedCard1Type < TYPE_ENERGY && wLoadedCard1Stage == 0u))",
+    "case_ids": ["ShuffleDeckAndDrawSevenCards-2"],
+}
 # <<< factory-mutation ShuffleDeckAndDrawSevenCards
 # >>> factory-mutation WriteTwoDigitNumberInTxSymbol_PadSpace
 MUTATIONS["WriteTwoDigitNumberInTxSymbol_PadSpace"] = {
     "source_symbol": "WriteTwoDigitNumberInTxSymbol_PadSpace",
     "before": "SafeCopyDataHLtoDE(&src, &dst, 2u);",
     "after": "SafeCopyDataHLtoDE(&src, &dst, 3u);",
-    "case_ids": ["WriteTwoDigitNumberInTxSymbol_PadSpace-0", "WriteTwoDigitNumberInTxSymbol_PadSpace-1", "WriteTwoDigitNumberInTxSymbol_PadSpace-2"],
+    "case_ids": [
+        "WriteTwoDigitNumberInTxSymbol_PadSpace-0",
+        "WriteTwoDigitNumberInTxSymbol_PadSpace-1",
+        "WriteTwoDigitNumberInTxSymbol_PadSpace-2",
+    ],
 }
 # <<< factory-mutation WriteTwoDigitNumberInTxSymbol_PadSpace
 # >>> factory-mutation PrintOpponentNumberOfHandAndDeckCards
-MUTATIONS["PrintOpponentNumberOfHandAndDeckCards"] = {"source_symbol": "PrintOpponentNumberOfHandAndDeckCards", "before": "uint8_t deck = (uint8_t)(DECK_SIZE - wOpponentNumberOfCardsNotInDeck - wNumCardsBeingDrawn);", "after": "uint8_t deck = (uint8_t)(DECK_SIZE - wOpponentNumberOfCardsNotInDeck + wNumCardsBeingDrawn);", "case_ids": ["PrintOpponentNumberOfHandAndDeckCards-0", "PrintOpponentNumberOfHandAndDeckCards-1", "PrintOpponentNumberOfHandAndDeckCards-2"]}
+MUTATIONS["PrintOpponentNumberOfHandAndDeckCards"] = {
+    "source_symbol": "PrintOpponentNumberOfHandAndDeckCards",
+    "before": "uint8_t deck = (uint8_t)(DECK_SIZE - wOpponentNumberOfCardsNotInDeck - wNumCardsBeingDrawn);",
+    "after": "uint8_t deck = (uint8_t)(DECK_SIZE - wOpponentNumberOfCardsNotInDeck + wNumCardsBeingDrawn);",
+    "case_ids": [
+        "PrintOpponentNumberOfHandAndDeckCards-0",
+        "PrintOpponentNumberOfHandAndDeckCards-1",
+        "PrintOpponentNumberOfHandAndDeckCards-2",
+    ],
+}
 # <<< factory-mutation PrintOpponentNumberOfHandAndDeckCards
 # >>> factory-mutation PrintPlayerNumberOfHandAndDeckCards
-MUTATIONS["PrintPlayerNumberOfHandAndDeckCards"] = {"source_symbol": "PrintPlayerNumberOfHandAndDeckCards", "before": "uint8_t deck = (uint8_t)(DECK_SIZE - wPlayerNumberOfCardsNotInDeck - wNumCardsBeingDrawn);", "after": "uint8_t deck = (uint8_t)(DECK_SIZE - wPlayerNumberOfCardsNotInDeck + wNumCardsBeingDrawn);", "case_ids": ["PrintPlayerNumberOfHandAndDeckCards-0", "PrintPlayerNumberOfHandAndDeckCards-1", "PrintPlayerNumberOfHandAndDeckCards-2"]}
+MUTATIONS["PrintPlayerNumberOfHandAndDeckCards"] = {
+    "source_symbol": "PrintPlayerNumberOfHandAndDeckCards",
+    "before": "uint8_t deck = (uint8_t)(DECK_SIZE - wPlayerNumberOfCardsNotInDeck - wNumCardsBeingDrawn);",
+    "after": "uint8_t deck = (uint8_t)(DECK_SIZE - wPlayerNumberOfCardsNotInDeck + wNumCardsBeingDrawn);",
+    "case_ids": [
+        "PrintPlayerNumberOfHandAndDeckCards-0",
+        "PrintPlayerNumberOfHandAndDeckCards-1",
+        "PrintPlayerNumberOfHandAndDeckCards-2",
+    ],
+}
 # <<< factory-mutation PrintPlayerNumberOfHandAndDeckCards
 # >>> factory-mutation PrintDuelResultStats
-MUTATIONS["PrintDuelResultStats"] = {"source_symbol": "PrintDuelResultStats", "before": "\t\td = (uint8_t)(b + 2u);", "after": "\t\td = (uint8_t)(b + 1u);", "case_ids": ["PrintDuelResultStats-3"]}
+MUTATIONS["PrintDuelResultStats"] = {
+    "source_symbol": "PrintDuelResultStats",
+    "before": "\t\td = (uint8_t)(b + 2u);",
+    "after": "\t\td = (uint8_t)(b + 1u);",
+    "case_ids": ["PrintDuelResultStats-3"],
+}
 # <<< factory-mutation PrintDuelResultStats
 # >>> factory-mutation ConvertColorToEnergyCardID
-MUTATIONS["ConvertColorToEnergyCardID"] = {"source_symbol": "ConvertColorToEnergyCardID", "before": "\treturn result;", "after": "\treturn (uint8_t)(result ^ 1u);", "case_ids": ["ConvertColorToEnergyCardID-0", "ConvertColorToEnergyCardID-1"]}
+MUTATIONS["ConvertColorToEnergyCardID"] = {
+    "source_symbol": "ConvertColorToEnergyCardID",
+    "before": "\treturn result;",
+    "after": "\treturn (uint8_t)(result ^ 1u);",
+    "case_ids": ["ConvertColorToEnergyCardID-0", "ConvertColorToEnergyCardID-1"],
+}
 # <<< factory-mutation ConvertColorToEnergyCardID
 # >>> factory-mutation WriteOneByteNumberInTxSymbol_PadSpace
 MUTATIONS["WriteOneByteNumberInTxSymbol_PadSpace"] = {
     "source_symbol": "WriteOneByteNumberInTxSymbol_PadSpace",
     "before": "SafeCopyDataHLtoDE(&src, &dst, 3u);",
     "after": "SafeCopyDataHLtoDE(&src, &dst, 4u);",
-    "case_ids": ["WriteOneByteNumberInTxSymbol_PadSpace-0", "WriteOneByteNumberInTxSymbol_PadSpace-1", "WriteOneByteNumberInTxSymbol_PadSpace-2"],
+    "case_ids": [
+        "WriteOneByteNumberInTxSymbol_PadSpace-0",
+        "WriteOneByteNumberInTxSymbol_PadSpace-1",
+        "WriteOneByteNumberInTxSymbol_PadSpace-2",
+    ],
 }
 # <<< factory-mutation WriteOneByteNumberInTxSymbol_PadSpace
 # >>> factory-mutation PrintPracticeDuelNumberedInstruction
@@ -6743,14 +13926,36 @@ MUTATIONS["PrintPracticeDuelNumberedInstruction"] = {
     "source_symbol": "PrintPracticeDuelNumberedInstruction",
     "before": "uint8_t c = gb_read8((uint16_t)(hl + 2u));",
     "after": "uint8_t c = gb_read8((uint16_t)(hl + 3u));",
-    "case_ids": ["PrintPracticeDuelNumberedInstruction-0", "PrintPracticeDuelNumberedInstruction-1", "PrintPracticeDuelNumberedInstruction-2"],
+    "case_ids": [
+        "PrintPracticeDuelNumberedInstruction-0",
+        "PrintPracticeDuelNumberedInstruction-1",
+        "PrintPracticeDuelNumberedInstruction-2",
+    ],
 }
 # <<< factory-mutation PrintPracticeDuelNumberedInstruction
 # >>> factory-mutation PrintNextPracticeDuelInstruction
-MUTATIONS["PrintNextPracticeDuelInstruction"] = {"source_symbol": "PrintNextPracticeDuelInstruction", "before": "gb_write8(hffb0_ADDR, 0u);", "after": "gb_write8(hffb0_ADDR, 1u);", "case_ids": ["PrintNextPracticeDuelInstruction-0", "PrintNextPracticeDuelInstruction-1"]}
+MUTATIONS["PrintNextPracticeDuelInstruction"] = {
+    "source_symbol": "PrintNextPracticeDuelInstruction",
+    "before": "gb_write8(hffb0_ADDR, 0u);",
+    "after": "gb_write8(hffb0_ADDR, 1u);",
+    "case_ids": [
+        "PrintNextPracticeDuelInstruction-0",
+        "PrintNextPracticeDuelInstruction-1",
+    ],
+}
 # <<< factory-mutation PrintNextPracticeDuelInstruction
 # >>> factory-mutation GoToFirstOrNextCardPage
-MUTATIONS["GoToFirstOrNextCardPage"] = {"source_symbol": "GoToFirstOrNextCardPage", "before": "\t\twCardPageNumber = initial_page;", "after": "\t\twCardPageNumber = CARDPAGE_POKEMON_OVERVIEW;", "case_ids": ["GoToFirstOrNextCardPage-0", "GoToFirstOrNextCardPage-1", "GoToFirstOrNextCardPage-2", "GoToFirstOrNextCardPage-3"]}
+MUTATIONS["GoToFirstOrNextCardPage"] = {
+    "source_symbol": "GoToFirstOrNextCardPage",
+    "before": "\t\twCardPageNumber = initial_page;",
+    "after": "\t\twCardPageNumber = CARDPAGE_POKEMON_OVERVIEW;",
+    "case_ids": [
+        "GoToFirstOrNextCardPage-0",
+        "GoToFirstOrNextCardPage-1",
+        "GoToFirstOrNextCardPage-2",
+        "GoToFirstOrNextCardPage-3",
+    ],
+}
 # <<< factory-mutation GoToFirstOrNextCardPage
 # >>> factory-mutation PrintPracticeDuelInstructions
 MUTATIONS["PrintPracticeDuelInstructions"] = {
@@ -6761,31 +13966,86 @@ MUTATIONS["PrintPracticeDuelInstructions"] = {
 }
 # <<< factory-mutation PrintPracticeDuelInstructions
 # >>> factory-mutation DisplayPreviousCardPage
-MUTATIONS["DisplayPreviousCardPage"] = {"source_symbol": "DisplayPreviousCardPage", "before": "\tif ((navigation.f & 0x10u) == 0u)", "after": "\tif ((navigation.f & 0x10u) != 0u)", "case_ids": ["DisplayPreviousCardPage-0", "DisplayPreviousCardPage-1"]}
+MUTATIONS["DisplayPreviousCardPage"] = {
+    "source_symbol": "DisplayPreviousCardPage",
+    "before": "\tif ((navigation.f & 0x10u) == 0u)",
+    "after": "\tif ((navigation.f & 0x10u) != 0u)",
+    "case_ids": ["DisplayPreviousCardPage-0", "DisplayPreviousCardPage-1"],
+}
 # <<< factory-mutation DisplayPreviousCardPage
 # >>> factory-mutation PrintNumberOfHandAndDeckCards
-MUTATIONS["PrintNumberOfHandAndDeckCards"] = {"source_symbol": "PrintNumberOfHandAndDeckCards", "before": "\tif (hWhoseTurn != PLAYER_TURN) {", "after": "\tif (hWhoseTurn == PLAYER_TURN) {", "case_ids": ["PrintNumberOfHandAndDeckCards-0", "PrintNumberOfHandAndDeckCards-1", "PrintNumberOfHandAndDeckCards-2"]}
+MUTATIONS["PrintNumberOfHandAndDeckCards"] = {
+    "source_symbol": "PrintNumberOfHandAndDeckCards",
+    "before": "\tif (hWhoseTurn != PLAYER_TURN) {",
+    "after": "\tif (hWhoseTurn == PLAYER_TURN) {",
+    "case_ids": [
+        "PrintNumberOfHandAndDeckCards-0",
+        "PrintNumberOfHandAndDeckCards-1",
+        "PrintNumberOfHandAndDeckCards-2",
+    ],
+}
 # <<< factory-mutation PrintNumberOfHandAndDeckCards
 # >>> factory-mutation PrintReturnCardsToDeckDrawAgain
-MUTATIONS["PrintReturnCardsToDeckDrawAgain"] = {"source_symbol": "PrintReturnCardsToDeckDrawAgain", "before": "\tExchangeRNGResult x = ExchangeRNG(0x12u, 0x11u, 0x1211u, 0xCD12u);", "after": "\tExchangeRNGResult x = ExchangeRNG(0x12u, 0x11u, 0x1211u, 0xCD13u);", "case_ids": ["PrintReturnCardsToDeckDrawAgain-0", "PrintReturnCardsToDeckDrawAgain-1"]}
+MUTATIONS["PrintReturnCardsToDeckDrawAgain"] = {
+    "source_symbol": "PrintReturnCardsToDeckDrawAgain",
+    "before": "\tExchangeRNGResult x = ExchangeRNG(0x12u, 0x11u, 0x1211u, 0xCD12u);",
+    "after": "\tExchangeRNGResult x = ExchangeRNG(0x12u, 0x11u, 0x1211u, 0xCD13u);",
+    "case_ids": [
+        "PrintReturnCardsToDeckDrawAgain-0",
+        "PrintReturnCardsToDeckDrawAgain-1",
+    ],
+}
 # <<< factory-mutation PrintReturnCardsToDeckDrawAgain
 # >>> factory-mutation PracticeDuelVerify_Turn3
-MUTATIONS["PracticeDuelVerify_Turn3"] = {"source_symbol": "PracticeDuelVerify_Turn3", "before": "\tif (a != SEAKING) {", "after": "\tif (a != (uint8_t)(SEAKING + 1u)) {", "case_ids": ["PracticeDuelVerify_Turn3-0", "PracticeDuelVerify_Turn3-1"]}
+MUTATIONS["PracticeDuelVerify_Turn3"] = {
+    "source_symbol": "PracticeDuelVerify_Turn3",
+    "before": "\tif (a != SEAKING) {",
+    "after": "\tif (a != (uint8_t)(SEAKING + 1u)) {",
+    "case_ids": ["PracticeDuelVerify_Turn3-0", "PracticeDuelVerify_Turn3-1"],
+}
 # <<< factory-mutation PracticeDuelVerify_Turn3
 # >>> factory-mutation CheckIfEnoughEnergiesToAttack
-MUTATIONS["CheckIfEnoughEnergiesToAttack"] = {"source_symbol": "CheckIfEnoughEnergiesToAttack", "before": "\tuint8_t doubled = (uint8_t)(menu_item * 2u);", "after": "\tuint8_t doubled = menu_item;", "case_ids": ["CheckIfEnoughEnergiesToAttack-1"]}
+MUTATIONS["CheckIfEnoughEnergiesToAttack"] = {
+    "source_symbol": "CheckIfEnoughEnergiesToAttack",
+    "before": "\tuint8_t doubled = (uint8_t)(menu_item * 2u);",
+    "after": "\tuint8_t doubled = menu_item;",
+    "case_ids": ["CheckIfEnoughEnergiesToAttack-1"],
+}
 # <<< factory-mutation CheckIfEnoughEnergiesToAttack
 # >>> factory-mutation PlayTurnDuelistDrawAnimation
-MUTATIONS["PlayTurnDuelistDrawAnimation"] = {"source_symbol": "PlayTurnDuelistDrawAnimation", "before": "\tuint8_t e = (hWhoseTurn == PLAYER_TURN) ? DUEL_ANIM_PLAYER_DRAW : DUEL_ANIM_OPP_DRAW;", "after": "\tuint8_t e = (hWhoseTurn != PLAYER_TURN) ? DUEL_ANIM_PLAYER_DRAW : DUEL_ANIM_OPP_DRAW;", "case_ids": ["PlayTurnDuelistDrawAnimation-0", "PlayTurnDuelistDrawAnimation-2"]}
+MUTATIONS["PlayTurnDuelistDrawAnimation"] = {
+    "source_symbol": "PlayTurnDuelistDrawAnimation",
+    "before": "\tuint8_t e = (hWhoseTurn == PLAYER_TURN) ? DUEL_ANIM_PLAYER_DRAW : DUEL_ANIM_OPP_DRAW;",
+    "after": "\tuint8_t e = (hWhoseTurn != PLAYER_TURN) ? DUEL_ANIM_PLAYER_DRAW : DUEL_ANIM_OPP_DRAW;",
+    "case_ids": ["PlayTurnDuelistDrawAnimation-0", "PlayTurnDuelistDrawAnimation-2"],
+}
 # <<< factory-mutation PlayTurnDuelistDrawAnimation
 # >>> factory-mutation DrawCardPageSet2AndRarityIcons
-MUTATIONS["DrawCardPageSet2AndRarityIcons"] = {"source_symbol": "DrawCardPageSet2AndRarityIcons", "before": "\tif (rarity != PROMOSTAR) {", "after": "\tif (rarity == PROMOSTAR) {", "case_ids": ["DrawCardPageSet2AndRarityIcons-0", "DrawCardPageSet2AndRarityIcons-2"]}
+MUTATIONS["DrawCardPageSet2AndRarityIcons"] = {
+    "source_symbol": "DrawCardPageSet2AndRarityIcons",
+    "before": "\tif (rarity != PROMOSTAR) {",
+    "after": "\tif (rarity == PROMOSTAR) {",
+    "case_ids": [
+        "DrawCardPageSet2AndRarityIcons-0",
+        "DrawCardPageSet2AndRarityIcons-2",
+    ],
+}
 # <<< factory-mutation DrawCardPageSet2AndRarityIcons
 # >>> factory-mutation CountOppEnergyCardsInHandAndAttached
-MUTATIONS["CountOppEnergyCardsInHandAndAttached"] = {"source_symbol": "CountOppEnergyCardsInHandAndAttached", "before": "\tif (!(listed.f & 0x10u)) {", "after": "\tif ((listed.f & 0x10u)) {", "case_ids": ["CountOppEnergyCardsInHandAndAttached-0"]}
+MUTATIONS["CountOppEnergyCardsInHandAndAttached"] = {
+    "source_symbol": "CountOppEnergyCardsInHandAndAttached",
+    "before": "\tif (!(listed.f & 0x10u)) {",
+    "after": "\tif ((listed.f & 0x10u)) {",
+    "case_ids": ["CountOppEnergyCardsInHandAndAttached-0"],
+}
 # <<< factory-mutation CountOppEnergyCardsInHandAndAttached
 # >>> factory-mutation AIPickPrizeCards
-MUTATIONS["AIPickPrizeCards"] = {"source_symbol": "AIPickPrizeCards", "before": "gb_write8(hl, (uint8_t)(gb_read8(hl) & (uint8_t)~bit));", "after": "gb_write8(hl, (uint8_t)(gb_read8(hl) | bit));", "case_ids": ["AIPickPrizeCards-0", "AIPickPrizeCards-1"]}
+MUTATIONS["AIPickPrizeCards"] = {
+    "source_symbol": "AIPickPrizeCards",
+    "before": "gb_write8(hl, (uint8_t)(gb_read8(hl) & (uint8_t)~bit));",
+    "after": "gb_write8(hl, (uint8_t)(gb_read8(hl) | bit));",
+    "case_ids": ["AIPickPrizeCards-0", "AIPickPrizeCards-1"],
+}
 # <<< factory-mutation AIPickPrizeCards
 # >>> factory-mutation HandleAIEnergyScoringForRepeatedBenchPokemon
 MUTATIONS["HandleAIEnergyScoringForRepeatedBenchPokemon"] = {
@@ -6796,138 +14056,372 @@ MUTATIONS["HandleAIEnergyScoringForRepeatedBenchPokemon"] = {
 }
 # <<< factory-mutation HandleAIEnergyScoringForRepeatedBenchPokemon
 # >>> factory-mutation CheckPrintCnfSlpPrz
-MUTATIONS["CheckPrintCnfSlpPrz"] = {"source_symbol": "CheckPrintCnfSlpPrz", "before": "\tstatic const uint8_t status_symbols[4] = {SYM_SPACE, SYM_CONFUSED, SYM_ASLEEP, SYM_PARALYZED};", "after": "\tstatic const uint8_t status_symbols[4] = {SYM_SPACE, SYM_PARALYZED, SYM_ASLEEP, SYM_CONFUSED};", "case_ids": ["CheckPrintCnfSlpPrz-1"]}
+MUTATIONS["CheckPrintCnfSlpPrz"] = {
+    "source_symbol": "CheckPrintCnfSlpPrz",
+    "before": "\tstatic const uint8_t status_symbols[4] = {SYM_SPACE, SYM_CONFUSED, SYM_ASLEEP, SYM_PARALYZED};",
+    "after": "\tstatic const uint8_t status_symbols[4] = {SYM_SPACE, SYM_PARALYZED, SYM_ASLEEP, SYM_CONFUSED};",
+    "case_ids": ["CheckPrintCnfSlpPrz-1"],
+}
 # <<< factory-mutation CheckPrintCnfSlpPrz
 # >>> factory-mutation LoadAnimCoordsAndFlags
-MUTATIONS["LoadAnimCoordsAndFlags"] = {"source_symbol": "LoadAnimCoordsAndFlags", "before": "gb_write8(hl, attr);", "after": "gb_write8(hl, (uint8_t)(attr ^ 0xFFu));", "case_ids": ["LoadAnimCoordsAndFlags-0", "LoadAnimCoordsAndFlags-1"]}
+MUTATIONS["LoadAnimCoordsAndFlags"] = {
+    "source_symbol": "LoadAnimCoordsAndFlags",
+    "before": "gb_write8(hl, attr);",
+    "after": "gb_write8(hl, (uint8_t)(attr ^ 0xFFu));",
+    "case_ids": ["LoadAnimCoordsAndFlags-0", "LoadAnimCoordsAndFlags-1"],
+}
 # <<< factory-mutation LoadAnimCoordsAndFlags
 # >>> factory-mutation PrintUsedTrainerCardDescription
-MUTATIONS["PrintUsedTrainerCardDescription"] = {"source_symbol": "PrintUsedTrainerCardDescription", "before": "InitTextPrinting(1u, 1u);", "after": "InitTextPrinting(2u, 1u);", "case_ids": ["PrintUsedTrainerCardDescription-0", "PrintUsedTrainerCardDescription-1"]}
+MUTATIONS["PrintUsedTrainerCardDescription"] = {
+    "source_symbol": "PrintUsedTrainerCardDescription",
+    "before": "InitTextPrinting(1u, 1u);",
+    "after": "InitTextPrinting(2u, 1u);",
+    "case_ids": [
+        "PrintUsedTrainerCardDescription-0",
+        "PrintUsedTrainerCardDescription-1",
+    ],
+}
 # <<< factory-mutation PrintUsedTrainerCardDescription
 # >>> factory-mutation PracticeDuelVerify_Turn5
-MUTATIONS["PracticeDuelVerify_Turn5"] = {"source_symbol": "PracticeDuelVerify_Turn5", "before": "if (gb_read8((uint16_t)(wAttachedEnergies_ADDR + WATER)) != 2u)", "after": "if (gb_read8((uint16_t)(wAttachedEnergies_ADDR + WATER)) != 3u)", "case_ids": ["PracticeDuelVerify_Turn5-0"]}
+MUTATIONS["PracticeDuelVerify_Turn5"] = {
+    "source_symbol": "PracticeDuelVerify_Turn5",
+    "before": "if (gb_read8((uint16_t)(wAttachedEnergies_ADDR + WATER)) != 2u)",
+    "after": "if (gb_read8((uint16_t)(wAttachedEnergies_ADDR + WATER)) != 3u)",
+    "case_ids": ["PracticeDuelVerify_Turn5-0"],
+}
 # <<< factory-mutation PracticeDuelVerify_Turn5
 # >>> factory-mutation PracticeDuelVerify_Turn1
-MUTATIONS["PracticeDuelVerify_Turn1"] = {"source_symbol": "PracticeDuelVerify_Turn1", "before": "if (a != GOLDEEN)", "after": "if (a == GOLDEEN)", "case_ids": ["PracticeDuelVerify_Turn1-0", "PracticeDuelVerify_Turn1-1"]}
+MUTATIONS["PracticeDuelVerify_Turn1"] = {
+    "source_symbol": "PracticeDuelVerify_Turn1",
+    "before": "if (a != GOLDEEN)",
+    "after": "if (a == GOLDEEN)",
+    "case_ids": ["PracticeDuelVerify_Turn1-0", "PracticeDuelVerify_Turn1-1"],
+}
 # <<< factory-mutation PracticeDuelVerify_Turn1
 # >>> factory-mutation PracticeDuelVerify_Turn2
-MUTATIONS["PracticeDuelVerify_Turn2"] = {"source_symbol": "PracticeDuelVerify_Turn2", "before": "if (psychic == 0u)", "after": "if (psychic != 0u)", "case_ids": ["PracticeDuelVerify_Turn2-0", "PracticeDuelVerify_Turn2-3"]}
+MUTATIONS["PracticeDuelVerify_Turn2"] = {
+    "source_symbol": "PracticeDuelVerify_Turn2",
+    "before": "if (psychic == 0u)",
+    "after": "if (psychic != 0u)",
+    "case_ids": ["PracticeDuelVerify_Turn2-0", "PracticeDuelVerify_Turn2-3"],
+}
 # <<< factory-mutation PracticeDuelVerify_Turn2
 # >>> factory-mutation PracticeDuel_PlayStaryuFromBench
-MUTATIONS["PracticeDuel_PlayStaryuFromBench"] = {"source_symbol": "PracticeDuel_PlayStaryuFromBench", "before": "(uint8_t)(turns == 0u ? 0x80u : 0x00u)", "after": "(uint8_t)(turns == 0u ? 0x00u : 0x80u)", "case_ids": ["PracticeDuel_PlayStaryuFromBench-0", "PracticeDuel_PlayStaryuFromBench-1"]}
+MUTATIONS["PracticeDuel_PlayStaryuFromBench"] = {
+    "source_symbol": "PracticeDuel_PlayStaryuFromBench",
+    "before": "(uint8_t)(turns == 0u ? 0x80u : 0x00u)",
+    "after": "(uint8_t)(turns == 0u ? 0x00u : 0x80u)",
+    "case_ids": [
+        "PracticeDuel_PlayStaryuFromBench-0",
+        "PracticeDuel_PlayStaryuFromBench-1",
+    ],
+}
 # <<< factory-mutation PracticeDuel_PlayStaryuFromBench
 # >>> factory-mutation DisplayDuelistTurnScreen
-MUTATIONS["DisplayDuelistTurnScreen"] = {"source_symbol": "DisplayDuelistTurnScreen", "before": "if (turn != PLAYER_TURN)", "after": "if (turn == PLAYER_TURN)", "case_ids": ["DisplayDuelistTurnScreen-0", "DisplayDuelistTurnScreen-1"]}
+MUTATIONS["DisplayDuelistTurnScreen"] = {
+    "source_symbol": "DisplayDuelistTurnScreen",
+    "before": "if (turn != PLAYER_TURN)",
+    "after": "if (turn == PLAYER_TURN)",
+    "case_ids": ["DisplayDuelistTurnScreen-0", "DisplayDuelistTurnScreen-1"],
+}
 # <<< factory-mutation DisplayDuelistTurnScreen
 # >>> factory-mutation DrawDuelistPortraitsAndNames
-MUTATIONS["DrawDuelistPortraitsAndNames"] = {"source_symbol": "DrawDuelistPortraitsAndNames", "before": "\tDrawOpponentPortrait(wOpponentPortrait, 13u, 1u);", "after": "\tDrawOpponentPortrait(0u, 13u, 1u);", "case_ids": ["DrawDuelistPortraitsAndNames-0", "DrawDuelistPortraitsAndNames-1"]}
+MUTATIONS["DrawDuelistPortraitsAndNames"] = {
+    "source_symbol": "DrawDuelistPortraitsAndNames",
+    "before": "\tDrawOpponentPortrait(wOpponentPortrait, 13u, 1u);",
+    "after": "\tDrawOpponentPortrait(0u, 13u, 1u);",
+    "case_ids": ["DrawDuelistPortraitsAndNames-0", "DrawDuelistPortraitsAndNames-1"],
+}
 # <<< factory-mutation DrawDuelistPortraitsAndNames
 # >>> factory-mutation CheckEnergyNeededForAttack
-MUTATIONS["CheckEnergyNeededForAttack"] = {"source_symbol": "CheckEnergyNeededForAttack", "before": "\t\t\t(uint8_t)(de >> 8), (uint8_t)de, hl};", "after": "\t\t\t(uint8_t)(de >> 4), (uint8_t)de, hl};", "case_ids": ["CheckEnergyNeededForAttack-2", "CheckEnergyNeededForAttack-3"]}
+MUTATIONS["CheckEnergyNeededForAttack"] = {
+    "source_symbol": "CheckEnergyNeededForAttack",
+    "before": "\t\t\t(uint8_t)(de >> 8), (uint8_t)de, hl};",
+    "after": "\t\t\t(uint8_t)(de >> 4), (uint8_t)de, hl};",
+    "case_ids": ["CheckEnergyNeededForAttack-2", "CheckEnergyNeededForAttack-3"],
+}
 # <<< factory-mutation CheckEnergyNeededForAttack
 # >>> factory-mutation CreateDamageCharSprite
-MUTATIONS["CreateDamageCharSprite"] = {"source_symbol": "CreateDamageCharSprite", "before": "gb_write8(de, wWhichSprite);", "after": "gb_write8(de, (uint8_t)(wWhichSprite + 1u));", "case_ids": ["CreateDamageCharSprite-0"]}
+MUTATIONS["CreateDamageCharSprite"] = {
+    "source_symbol": "CreateDamageCharSprite",
+    "before": "gb_write8(de, wWhichSprite);",
+    "after": "gb_write8(de, (uint8_t)(wWhichSprite + 1u));",
+    "case_ids": ["CreateDamageCharSprite-0"],
+}
 # <<< factory-mutation CreateDamageCharSprite
 # >>> factory-mutation HasAlivePokemonInBench
-MUTATIONS["HasAlivePokemonInBench"] = {"source_symbol": "HasAlivePokemonInBench", "before": "return _HasAlivePokemonInPlayArea(1u);", "after": "return _HasAlivePokemonInPlayArea(2u);", "case_ids": ["HasAlivePokemonInBench-0", "HasAlivePokemonInBench-1"]}
+MUTATIONS["HasAlivePokemonInBench"] = {
+    "source_symbol": "HasAlivePokemonInBench",
+    "before": "return _HasAlivePokemonInPlayArea(1u);",
+    "after": "return _HasAlivePokemonInPlayArea(2u);",
+    "case_ids": ["HasAlivePokemonInBench-0", "HasAlivePokemonInBench-1"],
+}
 # <<< factory-mutation HasAlivePokemonInBench
 # >>> factory-mutation DrawOpponentSelectionScreen
-MUTATIONS["DrawOpponentSelectionScreen"] = {"source_symbol": "DrawOpponentSelectionScreen", "before": "WriteOneByteNumberInTxSymbol_PadSpace(deck_id2, 5u, 16u, 0u, 0u, 0u);", "after": "WriteOneByteNumberInTxSymbol_PadSpace(deck_id2, 6u, 16u, 0u, 0u, 0u);", "case_ids": ["DrawOpponentSelectionScreen-0"]}
+MUTATIONS["DrawOpponentSelectionScreen"] = {
+    "source_symbol": "DrawOpponentSelectionScreen",
+    "before": "WriteOneByteNumberInTxSymbol_PadSpace(deck_id2, 5u, 16u, 0u, 0u, 0u);",
+    "after": "WriteOneByteNumberInTxSymbol_PadSpace(deck_id2, 6u, 16u, 0u, 0u, 0u);",
+    "case_ids": ["DrawOpponentSelectionScreen-0"],
+}
 # <<< factory-mutation DrawOpponentSelectionScreen
 # >>> factory-mutation PracticeDuel_ReplaceKnockedOutPokemon
-MUTATIONS["PracticeDuel_ReplaceKnockedOutPokemon"] = {"source_symbol": "PracticeDuel_ReplaceKnockedOutPokemon", "before": "PrintPracticeDuelDrMasonInstructions(SelectStaryuPracticeDuelText);", "after": "PrintPracticeDuelDrMasonInstructions((uint16_t)(SelectStaryuPracticeDuelText + 1u));", "case_ids": ["PracticeDuel_ReplaceKnockedOutPokemon-1"]}
+MUTATIONS["PracticeDuel_ReplaceKnockedOutPokemon"] = {
+    "source_symbol": "PracticeDuel_ReplaceKnockedOutPokemon",
+    "before": "PrintPracticeDuelDrMasonInstructions(SelectStaryuPracticeDuelText);",
+    "after": "PrintPracticeDuelDrMasonInstructions((uint16_t)(SelectStaryuPracticeDuelText + 1u));",
+    "case_ids": ["PracticeDuel_ReplaceKnockedOutPokemon-1"],
+}
 # <<< factory-mutation PracticeDuel_ReplaceKnockedOutPokemon
 # >>> factory-mutation DrawDamageAnimationArrow
-MUTATIONS["DrawDamageAnimationArrow"] = {"source_symbol": "DrawDamageAnimationArrow", "before": "gb_write8(wDamageCharIndex_ADDR, 5u);", "after": "gb_write8(wDamageCharIndex_ADDR, 4u);", "case_ids": ["DrawDamageAnimationArrow-0", "DrawDamageAnimationArrow-1"]}
+MUTATIONS["DrawDamageAnimationArrow"] = {
+    "source_symbol": "DrawDamageAnimationArrow",
+    "before": "gb_write8(wDamageCharIndex_ADDR, 5u);",
+    "after": "gb_write8(wDamageCharIndex_ADDR, 4u);",
+    "case_ids": ["DrawDamageAnimationArrow-0", "DrawDamageAnimationArrow-1"],
+}
 # <<< factory-mutation DrawDamageAnimationArrow
 # >>> factory-mutation DrawDamageAnimationWeak
-MUTATIONS["DrawDamageAnimationWeak"] = {"source_symbol": "DrawDamageAnimationWeak", "before": "wDamageCharIndex = 3u;", "after": "wDamageCharIndex = 4u;", "case_ids": ["DrawDamageAnimationWeak-0", "DrawDamageAnimationWeak-1"]}
+MUTATIONS["DrawDamageAnimationWeak"] = {
+    "source_symbol": "DrawDamageAnimationWeak",
+    "before": "wDamageCharIndex = 3u;",
+    "after": "wDamageCharIndex = 4u;",
+    "case_ids": ["DrawDamageAnimationWeak-0", "DrawDamageAnimationWeak-1"],
+}
 # <<< factory-mutation DrawDamageAnimationWeak
 # >>> factory-mutation DrawDamageAnimationResist
-MUTATIONS["DrawDamageAnimationResist"] = {"source_symbol": "DrawDamageAnimationResist", "before": "wDamageCharAnimDelay = (uint8_t)(wDamageCharAnimDelay + 18u);", "after": "wDamageCharAnimDelay = (uint8_t)(wDamageCharAnimDelay + 19u);", "case_ids": ["DrawDamageAnimationResist-0", "DrawDamageAnimationResist-1"]}
+MUTATIONS["DrawDamageAnimationResist"] = {
+    "source_symbol": "DrawDamageAnimationResist",
+    "before": "wDamageCharAnimDelay = (uint8_t)(wDamageCharAnimDelay + 18u);",
+    "after": "wDamageCharAnimDelay = (uint8_t)(wDamageCharAnimDelay + 19u);",
+    "case_ids": ["DrawDamageAnimationResist-0", "DrawDamageAnimationResist-1"],
+}
 # <<< factory-mutation DrawDamageAnimationResist
 # >>> factory-mutation DrawDamageAnimationNumbers
-MUTATIONS["DrawDamageAnimationNumbers"] = {"source_symbol": "DrawDamageAnimationNumbers", "before": "wDamageCharIndex = (uint8_t)(wDamageCharIndex + 1u);", "after": "wDamageCharIndex = (uint8_t)(wDamageCharIndex + 2u);", "case_ids": ["DrawDamageAnimationNumbers-0", "DrawDamageAnimationNumbers-1"]}
+MUTATIONS["DrawDamageAnimationNumbers"] = {
+    "source_symbol": "DrawDamageAnimationNumbers",
+    "before": "wDamageCharIndex = (uint8_t)(wDamageCharIndex + 1u);",
+    "after": "wDamageCharIndex = (uint8_t)(wDamageCharIndex + 2u);",
+    "case_ids": ["DrawDamageAnimationNumbers-0", "DrawDamageAnimationNumbers-1"],
+}
 # <<< factory-mutation DrawDamageAnimationNumbers
 # >>> factory-mutation Func_15886
-MUTATIONS["Func_15886"] = {"source_symbol": "Func_15886", "before": "\tif (check.f & 0x10u) {", "after": "\tif (check.f & 0x20u) {", "case_ids": ["Func_15886-0", "Func_15886-1"]}
+MUTATIONS["Func_15886"] = {
+    "source_symbol": "Func_15886",
+    "before": "\tif (check.f & 0x10u) {",
+    "after": "\tif (check.f & 0x20u) {",
+    "case_ids": ["Func_15886-0", "Func_15886-1"],
+}
 # <<< factory-mutation Func_15886
 # >>> factory-mutation CheckAbleToRetreat
-MUTATIONS["CheckAbleToRetreat"] = {"source_symbol": "CheckAbleToRetreat", "before": "\tif (r1.f & 0x10u) {", "after": "\tif (r1.f & 0x20u) {", "case_ids": ["CheckAbleToRetreat-0", "CheckAbleToRetreat-1"]}
+MUTATIONS["CheckAbleToRetreat"] = {
+    "source_symbol": "CheckAbleToRetreat",
+    "before": "\tif (r1.f & 0x10u) {",
+    "after": "\tif (r1.f & 0x20u) {",
+    "case_ids": ["CheckAbleToRetreat-0", "CheckAbleToRetreat-1"],
+}
 # <<< factory-mutation CheckAbleToRetreat
 # >>> factory-mutation LookForEnergyNeededInHand
-MUTATIONS["LookForEnergyNeededInHand"] = {"source_symbol": "LookForEnergyNeededInHand", "before": "\t\treturn last == 0u ? 0x80u : 0x00u;\n\t}\n\tif (total1 == 2u", "after": "\t\treturn 0x80u;\n\t}\n\tif (total1 == 2u", "case_ids": ["LookForEnergyNeededInHand-0"]}
+MUTATIONS["LookForEnergyNeededInHand"] = {
+    "source_symbol": "LookForEnergyNeededInHand",
+    "before": "\t\treturn last == 0u ? 0x80u : 0x00u;\n\t}\n\tif (total1 == 2u",
+    "after": "\t\treturn 0x80u;\n\t}\n\tif (total1 == 2u",
+    "case_ids": ["LookForEnergyNeededInHand-0"],
+}
 # <<< factory-mutation LookForEnergyNeededInHand
 # >>> factory-mutation Func_7364
-MUTATIONS["Func_7364"] = {"source_symbol": "Func_7364", "before": "\t\tif (b & (1u << B_PAD_B)) {\n\t\t\treturn (Func_7364Result){0u, 0x10u};", "after": "\t\tif (b & (1u << B_PAD_B)) {\n\t\t\treturn (Func_7364Result){0u, 0x20u};", "case_ids": ["Func_7364-0", "Func_7364-1"]}
+MUTATIONS["Func_7364"] = {
+    "source_symbol": "Func_7364",
+    "before": "\t\tif (b & (1u << B_PAD_B)) {\n\t\t\treturn (Func_7364Result){0u, 0x10u};",
+    "after": "\t\tif (b & (1u << B_PAD_B)) {\n\t\t\treturn (Func_7364Result){0u, 0x20u};",
+    "case_ids": ["Func_7364-0", "Func_7364-1"],
+}
 # <<< factory-mutation Func_7364
 # >>> factory-mutation CheckEnergyNeededForAttackAfterDiscard
-MUTATIONS["CheckEnergyNeededForAttackAfterDiscard"] = {"source_symbol": "CheckEnergyNeededForAttackAfterDiscard", "before": "uint8_t final_f = (uint8_t)((colorless_needed2 == 0u ? 0x80u : 0u) | 0x10u);", "after": "uint8_t final_f = (uint8_t)((colorless_needed2 == 0u ? 0x20u : 0u) | 0x10u);", "case_ids": ["CheckEnergyNeededForAttackAfterDiscard-0"]}
+MUTATIONS["CheckEnergyNeededForAttackAfterDiscard"] = {
+    "source_symbol": "CheckEnergyNeededForAttackAfterDiscard",
+    "before": "uint8_t final_f = (uint8_t)((colorless_needed2 == 0u ? 0x80u : 0u) | 0x10u);",
+    "after": "uint8_t final_f = (uint8_t)((colorless_needed2 == 0u ? 0x20u : 0u) | 0x10u);",
+    "case_ids": ["CheckEnergyNeededForAttackAfterDiscard-0"],
+}
 # <<< factory-mutation CheckEnergyNeededForAttackAfterDiscard
 # >>> factory-mutation DisplayFirstOrNextCardPage
-MUTATIONS["DisplayFirstOrNextCardPage"] = {"source_symbol": "DisplayCardPage", "before": "\tuint8_t a = EnableLCD();\n\treturn (DisplayCardPageResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), b};", "after": "\tuint8_t a = EnableLCD();\n\treturn (DisplayCardPageResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), (uint8_t)(b + 1u)};", "case_ids": ["DisplayFirstOrNextCardPage-0"]}
+MUTATIONS["DisplayFirstOrNextCardPage"] = {
+    "source_symbol": "DisplayCardPage",
+    "before": "\tuint8_t a = EnableLCD();\n\treturn (DisplayCardPageResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), b};",
+    "after": "\tuint8_t a = EnableLCD();\n\treturn (DisplayCardPageResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), (uint8_t)(b + 1u)};",
+    "case_ids": ["DisplayFirstOrNextCardPage-0"],
+}
 # <<< factory-mutation DisplayFirstOrNextCardPage
 # >>> factory-mutation PrintAttackOrCardDescription
-MUTATIONS["PrintAttackOrCardDescription"] = {"source_symbol": "PrintAttackOrCardDescription", "before": "\treturn (PrintAttackOrCardDescriptionResult){0u, b, d, e, 0x80u, text.hl};", "after": "\treturn (PrintAttackOrCardDescriptionResult){0u, b, d, e, 0x80u, (uint16_t)(text.hl + 1u)};", "case_ids": ["PrintAttackOrCardDescription-0", "PrintAttackOrCardDescription-1"]}
+MUTATIONS["PrintAttackOrCardDescription"] = {
+    "source_symbol": "PrintAttackOrCardDescription",
+    "before": "\treturn (PrintAttackOrCardDescriptionResult){0u, b, d, e, 0x80u, text.hl};",
+    "after": "\treturn (PrintAttackOrCardDescriptionResult){0u, b, d, e, 0x80u, (uint16_t)(text.hl + 1u)};",
+    "case_ids": ["PrintAttackOrCardDescription-0", "PrintAttackOrCardDescription-1"],
+}
 # <<< factory-mutation PrintAttackOrCardDescription
 # >>> factory-mutation PrintAttackOrPkmnPowerInformation
-MUTATIONS["PrintAttackOrPkmnPowerInformation"] = {"source_symbol": "PrintAttackOrPkmnPowerInformation", "before": "\t\tProcessTextHeaderResult text = InitTextPrinting_ProcessTextFromID(2u, e, text_hl);\n\t\treturn (PrintAttackOrPkmnPowerInformationResult){text.a, b, c, text.d, text.e, text.f, text.hl};", "after": "\t\tProcessTextHeaderResult text = InitTextPrinting_ProcessTextFromID(2u, e, text_hl);\n\t\treturn (PrintAttackOrPkmnPowerInformationResult){text.a, b, c, text.d, text.e, 0x00u, text.hl};", "case_ids": ["PrintAttackOrPkmnPowerInformation-0"]}
+MUTATIONS["PrintAttackOrPkmnPowerInformation"] = {
+    "source_symbol": "PrintAttackOrPkmnPowerInformation",
+    "before": "\t\tProcessTextHeaderResult text = InitTextPrinting_ProcessTextFromID(2u, e, text_hl);\n\t\treturn (PrintAttackOrPkmnPowerInformationResult){text.a, b, c, text.d, text.e, text.f, text.hl};",
+    "after": "\t\tProcessTextHeaderResult text = InitTextPrinting_ProcessTextFromID(2u, e, text_hl);\n\t\treturn (PrintAttackOrPkmnPowerInformationResult){text.a, b, c, text.d, text.e, 0x00u, text.hl};",
+    "case_ids": ["PrintAttackOrPkmnPowerInformation-0"],
+}
 # <<< factory-mutation PrintAttackOrPkmnPowerInformation
 # >>> factory-mutation PrintAttackOrNonPokemonCardDescription
-MUTATIONS["PrintAttackOrNonPokemonCardDescription"] = {"source_symbol": "PrintAttackOrNonPokemonCardDescription", "before": "\treturn PrintAttackOrCardDescription(b, hl, 1u, 11u);", "after": "\treturn PrintAttackOrCardDescription(b, hl, 1u, 12u);", "case_ids": ["PrintAttackOrNonPokemonCardDescription-0"]}
+MUTATIONS["PrintAttackOrNonPokemonCardDescription"] = {
+    "source_symbol": "PrintAttackOrNonPokemonCardDescription",
+    "before": "\treturn PrintAttackOrCardDescription(b, hl, 1u, 11u);",
+    "after": "\treturn PrintAttackOrCardDescription(b, hl, 1u, 12u);",
+    "case_ids": ["PrintAttackOrNonPokemonCardDescription-0"],
+}
 # <<< factory-mutation PrintAttackOrNonPokemonCardDescription
 # >>> factory-mutation DisplayCardPageOnLeftOrRightPressed
-MUTATIONS["DisplayCardPageOnLeftOrRightPressed"] = {"source_symbol": "DisplayCardPageOnLeftOrRightPressed", "before": "\tCardPageNavigationResult moved = (a & (1u << B_PAD_LEFT))", "after": "\tCardPageNavigationResult moved = !(a & (1u << B_PAD_LEFT))", "case_ids": ["DisplayCardPageOnLeftOrRightPressed-0", "DisplayCardPageOnLeftOrRightPressed-1"]}
+MUTATIONS["DisplayCardPageOnLeftOrRightPressed"] = {
+    "source_symbol": "DisplayCardPageOnLeftOrRightPressed",
+    "before": "\tCardPageNavigationResult moved = (a & (1u << B_PAD_LEFT))",
+    "after": "\tCardPageNavigationResult moved = !(a & (1u << B_PAD_LEFT))",
+    "case_ids": [
+        "DisplayCardPageOnLeftOrRightPressed-0",
+        "DisplayCardPageOnLeftOrRightPressed-1",
+    ],
+}
 # <<< factory-mutation DisplayCardPageOnLeftOrRightPressed
 # >>> factory-mutation PrintPlayAreaCardHeader
-MUTATIONS["PrintPlayAreaCardHeader"] = {"source_symbol": "PrintPlayAreaCardHeader", "before": "\tWriteByteToBGMap0(SYM_Lv, 14u, y);", "after": "\tWriteByteToBGMap0(SYM_0, 14u, y);", "case_ids": ["PrintPlayAreaCardHeader-0", "PrintPlayAreaCardHeader-1"]}
+MUTATIONS["PrintPlayAreaCardHeader"] = {
+    "source_symbol": "PrintPlayAreaCardHeader",
+    "before": "\tWriteByteToBGMap0(SYM_Lv, 14u, y);",
+    "after": "\tWriteByteToBGMap0(SYM_0, 14u, y);",
+    "case_ids": ["PrintPlayAreaCardHeader-0", "PrintPlayAreaCardHeader-1"],
+}
 # <<< factory-mutation PrintPlayAreaCardHeader
 # >>> factory-mutation PrintPokemonCardLength
-MUTATIONS["PrintPokemonCardLength"] = {"source_symbol": "PrintPokemonCardLength", "before": "\t\trow = (uint8_t)(new_row + 1u);", "after": "\t\trow = new_row;", "case_ids": ["PrintPokemonCardLength-0", "PrintPokemonCardLength-1"]}
+MUTATIONS["PrintPokemonCardLength"] = {
+    "source_symbol": "PrintPokemonCardLength",
+    "before": "\t\trow = (uint8_t)(new_row + 1u);",
+    "after": "\t\trow = new_row;",
+    "case_ids": ["PrintPokemonCardLength-0", "PrintPokemonCardLength-1"],
+}
 # <<< factory-mutation PrintPokemonCardLength
 # >>> factory-mutation PlayDeckShuffleAnimation
-MUTATIONS["PlayDeckShuffleAnimation"] = {"source_symbol": "PlayDeckShuffleAnimation", "before": "\te = DUEL_ANIM_PLAYER_SHUFFLE_490;\n\tif (gb_read8(hWhoseTurn_ADDR) != PLAYER_TURN_490)\n\t\te = DUEL_ANIM_OPP_SHUFFLE_490;", "after": "\te = DUEL_ANIM_OPP_SHUFFLE_490;\n\tif (gb_read8(hWhoseTurn_ADDR) != PLAYER_TURN_490)\n\t\te = DUEL_ANIM_PLAYER_SHUFFLE_490;", "case_ids": ["PlayDeckShuffleAnimation-0"]}
+MUTATIONS["PlayDeckShuffleAnimation"] = {
+    "source_symbol": "PlayDeckShuffleAnimation",
+    "before": "\te = DUEL_ANIM_PLAYER_SHUFFLE_490;\n\tif (gb_read8(hWhoseTurn_ADDR) != PLAYER_TURN_490)\n\t\te = DUEL_ANIM_OPP_SHUFFLE_490;",
+    "after": "\te = DUEL_ANIM_OPP_SHUFFLE_490;\n\tif (gb_read8(hWhoseTurn_ADDR) != PLAYER_TURN_490)\n\t\te = DUEL_ANIM_PLAYER_SHUFFLE_490;",
+    "case_ids": ["PlayDeckShuffleAnimation-0"],
+}
 # <<< factory-mutation PlayDeckShuffleAnimation
 # >>> factory-mutation OppAction_6b30
-MUTATIONS["OppAction_6b30"] = {"source_symbol": "OppAction_6b30", "before": "\treturn saved;", "after": "\treturn hTemp_ffa0;", "case_ids": ["OppAction_6b30-0", "OppAction_6b30-1"]}
+MUTATIONS["OppAction_6b30"] = {
+    "source_symbol": "OppAction_6b30",
+    "before": "\treturn saved;",
+    "after": "\treturn hTemp_ffa0;",
+    "case_ids": ["OppAction_6b30-0", "OppAction_6b30-1"],
+}
 # <<< factory-mutation OppAction_6b30
 # >>> factory-mutation PrintPlayAreaCardInformation
-MUTATIONS["PrintPlayAreaCardInformation"] = {"source_symbol": "PrintPlayAreaCardInformation", "before": "\treturn (PrintPlayAreaCardInformationResult){hl};\n}", "after": "\treturn (PrintPlayAreaCardInformationResult){(uint16_t)(hl - 1u)};\n}", "case_ids": ["PrintPlayAreaCardInformation-0"]}
+MUTATIONS["PrintPlayAreaCardInformation"] = {
+    "source_symbol": "PrintPlayAreaCardInformation",
+    "before": "\treturn (PrintPlayAreaCardInformationResult){hl};\n}",
+    "after": "\treturn (PrintPlayAreaCardInformationResult){(uint16_t)(hl - 1u)};\n}",
+    "case_ids": ["PrintPlayAreaCardInformation-0"],
+}
 # <<< factory-mutation PrintPlayAreaCardInformation
 # >>> factory-mutation PrintPlayAreaCardInformationAndLocation
-MUTATIONS["PrintPlayAreaCardInformationAndLocation"] = {"source_symbol": "PrintPlayAreaCardInformationAndLocation", "before": "\tDuelistVarResult r = GetTurnDuelistVariable((uint8_t)(slot + DUELVARS_ARENA_CARD));\n\tif (r.a == 0xFFu)", "after": "\tDuelistVarResult r = GetTurnDuelistVariable((uint8_t)(slot + DUELVARS_ARENA_CARD));\n\tif (r.a != 0xFFu)", "case_ids": ["PrintPlayAreaCardInformationAndLocation-0", "PrintPlayAreaCardInformationAndLocation-1"]}
+MUTATIONS["PrintPlayAreaCardInformationAndLocation"] = {
+    "source_symbol": "PrintPlayAreaCardInformationAndLocation",
+    "before": "\tDuelistVarResult r = GetTurnDuelistVariable((uint8_t)(slot + DUELVARS_ARENA_CARD));\n\tif (r.a == 0xFFu)",
+    "after": "\tDuelistVarResult r = GetTurnDuelistVariable((uint8_t)(slot + DUELVARS_ARENA_CARD));\n\tif (r.a != 0xFFu)",
+    "case_ids": [
+        "PrintPlayAreaCardInformationAndLocation-0",
+        "PrintPlayAreaCardInformationAndLocation-1",
+    ],
+}
 # <<< factory-mutation PrintPlayAreaCardInformationAndLocation
 # >>> factory-mutation DisplayUsePokemonPowerScreen
-MUTATIONS["DisplayUsePokemonPowerScreen"] = {"source_symbol": "DisplayUsePokemonPowerScreen", "before": "\twCurPlayAreaY = 0u;", "after": "\twCurPlayAreaY = 1u;", "case_ids": ["DisplayUsePokemonPowerScreen-0", "DisplayUsePokemonPowerScreen-1"]}
+MUTATIONS["DisplayUsePokemonPowerScreen"] = {
+    "source_symbol": "DisplayUsePokemonPowerScreen",
+    "before": "\twCurPlayAreaY = 0u;",
+    "after": "\twCurPlayAreaY = 1u;",
+    "case_ids": ["DisplayUsePokemonPowerScreen-0", "DisplayUsePokemonPowerScreen-1"],
+}
 # <<< factory-mutation DisplayUsePokemonPowerScreen
 # >>> factory-mutation InitAndPrintPlayAreaCardInformationAndLocation
-MUTATIONS["InitAndPrintPlayAreaCardInformationAndLocation"] = {"source_symbol": "InitAndPrintPlayAreaCardInformationAndLocation", "before": "\twCurPlayAreaSlot = a;", "after": "\twCurPlayAreaSlot = (uint8_t)(a + 1u);", "case_ids": ["InitAndPrintPlayAreaCardInformationAndLocation-0", "InitAndPrintPlayAreaCardInformationAndLocation-1"]}
+MUTATIONS["InitAndPrintPlayAreaCardInformationAndLocation"] = {
+    "source_symbol": "InitAndPrintPlayAreaCardInformationAndLocation",
+    "before": "\twCurPlayAreaSlot = a;",
+    "after": "\twCurPlayAreaSlot = (uint8_t)(a + 1u);",
+    "case_ids": [
+        "InitAndPrintPlayAreaCardInformationAndLocation-0",
+        "InitAndPrintPlayAreaCardInformationAndLocation-1",
+    ],
+}
 # <<< factory-mutation InitAndPrintPlayAreaCardInformationAndLocation
 # >>> factory-mutation InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox
-MUTATIONS["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox"] = {"source_symbol": "InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox", "before": "\treturn (WaitForButtonAorBResult){SetCursorParametersForTextBox_Default(0u, e).f};", "after": "\treturn (WaitForButtonAorBResult){SetCursorParametersForTextBox_Default(1u, e).f};", "case_ids": ["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox-0", "InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox-1"]}
+MUTATIONS["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox"] = {
+    "source_symbol": "InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox",
+    "before": "\treturn (WaitForButtonAorBResult){SetCursorParametersForTextBox_Default(0u, e).f};",
+    "after": "\treturn (WaitForButtonAorBResult){SetCursorParametersForTextBox_Default(1u, e).f};",
+    "case_ids": [
+        "InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox-0",
+        "InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox-1",
+    ],
+}
 # <<< factory-mutation InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox
 # >>> factory-mutation PrintPlayAreaCardList
-MUTATIONS["PrintPlayAreaCardList"] = {"source_symbol": "PrintPlayAreaCardList", "before": "\tb = saved_count;\n\tgb_write8(wNumPlayAreaItems_ADDR, b);\n\tif (gb_read8(wExcludeArenaPokemon_ADDR) == 0u)", "after": "\tb = (uint8_t)(saved_count + 1u);\n\tgb_write8(wNumPlayAreaItems_ADDR, b);\n\tif (gb_read8(wExcludeArenaPokemon_ADDR) == 0u)", "case_ids": ["PrintPlayAreaCardList-0", "PrintPlayAreaCardList-1"]}
+MUTATIONS["PrintPlayAreaCardList"] = {
+    "source_symbol": "PrintPlayAreaCardList",
+    "before": "\tb = saved_count;\n\tgb_write8(wNumPlayAreaItems_ADDR, b);\n\tif (gb_read8(wExcludeArenaPokemon_ADDR) == 0u)",
+    "after": "\tb = (uint8_t)(saved_count + 1u);\n\tgb_write8(wNumPlayAreaItems_ADDR, b);\n\tif (gb_read8(wExcludeArenaPokemon_ADDR) == 0u)",
+    "case_ids": ["PrintPlayAreaCardList-0", "PrintPlayAreaCardList-1"],
+}
 # <<< factory-mutation PrintPlayAreaCardList
 # >>> factory-mutation OppAction_UsePokemonPower
-MUTATIONS["OppAction_UsePokemonPower"] = {"source_symbol": "OppAction_UsePokemonPower", "before": "\t(void)ExchangeRNG(0u, 0u, 0u, 0u);\n\tgb_write8(wSkipDuelistIsThinkingDelay_ADDR, 1u);", "after": "\t(void)ExchangeRNG(0u, 0u, 0u, 0u);\n\tgb_write8(wSkipDuelistIsThinkingDelay_ADDR, 0u);", "case_ids": ["OppAction_UsePokemonPower-0", "OppAction_UsePokemonPower-1"]}
+MUTATIONS["OppAction_UsePokemonPower"] = {
+    "source_symbol": "OppAction_UsePokemonPower",
+    "before": "\t(void)ExchangeRNG(0u, 0u, 0u, 0u);\n\tgb_write8(wSkipDuelistIsThinkingDelay_ADDR, 1u);",
+    "after": "\t(void)ExchangeRNG(0u, 0u, 0u, 0u);\n\tgb_write8(wSkipDuelistIsThinkingDelay_ADDR, 0u);",
+    "case_ids": ["OppAction_UsePokemonPower-0", "OppAction_UsePokemonPower-1"],
+}
 # <<< factory-mutation OppAction_UsePokemonPower
 # >>> factory-mutation Func_616e
-MUTATIONS["Func_616e"] = {"source_symbol": "Func_616e", "before": "\tgb_write8(wExcludeArenaPokemon_ADDR, 0u);", "after": "\tgb_write8(wExcludeArenaPokemon_ADDR, 1u);", "case_ids": ["Func_616e-0", "Func_616e-1"]}
+MUTATIONS["Func_616e"] = {
+    "source_symbol": "Func_616e",
+    "before": "\tgb_write8(wExcludeArenaPokemon_ADDR, 0u);",
+    "after": "\tgb_write8(wExcludeArenaPokemon_ADDR, 1u);",
+    "case_ids": ["Func_616e-0", "Func_616e-1"],
+}
 # <<< factory-mutation Func_616e
 # >>> factory-mutation PrintPlayAreaCardList_EnableLCD
-MUTATIONS["PrintPlayAreaCardList_EnableLCD"] = {"source_symbol": "PrintPlayAreaCardList_EnableLCD", "before": "\treturn (NumPlayAreaItemsResult){gb_read8(wNumPlayAreaItems_ADDR)};", "after": "\treturn (NumPlayAreaItemsResult){0u};", "case_ids": ["PrintPlayAreaCardList_EnableLCD-0", "PrintPlayAreaCardList_EnableLCD-1"]}
+MUTATIONS["PrintPlayAreaCardList_EnableLCD"] = {
+    "source_symbol": "PrintPlayAreaCardList_EnableLCD",
+    "before": "\treturn (NumPlayAreaItemsResult){gb_read8(wNumPlayAreaItems_ADDR)};",
+    "after": "\treturn (NumPlayAreaItemsResult){0u};",
+    "case_ids": [
+        "PrintPlayAreaCardList_EnableLCD-0",
+        "PrintPlayAreaCardList_EnableLCD-1",
+    ],
+}
 # <<< factory-mutation PrintPlayAreaCardList_EnableLCD
 # >>> factory-mutation FlushAllPalettesOrSendPal23Packet
 MUTATIONS["FlushAllPalettesOrSendPal23Packet"] = {
     "source_symbol": "FlushAllPalettesOrSendPal23Packet",
     "before": "\tgb_write8(wTempSGBPacket_ADDR, 9u);\n\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 1u), 0x9Cu);\n\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 2u), 0x63u);\n\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 0x0Fu), 0u);",
     "after": "\tgb_write8(wTempSGBPacket_ADDR, 9u);\n\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 1u), 0x9Cu);\n\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 2u), 0x63u);\n\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 0x0Fu), 1u);",
-    "case_ids": ["FlushAllPalettesOrSendPal23Packet-2", "FlushAllPalettesOrSendPal23Packet-3"]
+    "case_ids": [
+        "FlushAllPalettesOrSendPal23Packet-2",
+        "FlushAllPalettesOrSendPal23Packet-3",
+    ],
 }
 # <<< factory-mutation FlushAllPalettesOrSendPal23Packet
 # >>> factory-mutation CheckIfCardCanBePlayed
-MUTATIONS["CheckIfCardCanBePlayed"] = {"source_symbol": "CheckIfCardCanBePlayed", "before": "\t\t\t                      (count.a < MAX_PLAY_AREA_POKEMON ? 0u : 0x10u));", "after": "\t\t\t                      (count.a < MAX_PLAY_AREA_POKEMON ? 0u : 0x10u) | 0x40u);", "case_ids": ["CheckIfCardCanBePlayed-0"]}
+MUTATIONS["CheckIfCardCanBePlayed"] = {
+    "source_symbol": "CheckIfCardCanBePlayed",
+    "before": "\t\t\t                      (count.a < MAX_PLAY_AREA_POKEMON ? 0u : 0x10u));",
+    "after": "\t\t\t                      (count.a < MAX_PLAY_AREA_POKEMON ? 0u : 0x10u) | 0x40u);",
+    "case_ids": ["CheckIfCardCanBePlayed-0"],
+}
 # <<< factory-mutation CheckIfCardCanBePlayed
 # >>> factory-mutation OppAction_6b15
 MUTATIONS["OppAction_6b15"] = {
@@ -6938,7 +14432,12 @@ MUTATIONS["OppAction_6b15"] = {
 }
 # <<< factory-mutation OppAction_6b15
 # >>> factory-mutation OppAction_ExecutePokemonPowerEffect
-MUTATIONS["OppAction_ExecutePokemonPowerEffect"] = {"source_symbol": "OppAction_ExecutePokemonPowerEffect", "before": "\t\teffect.c, effect.d, effect.e, effect.hl};", "after": "\t\teffect.c, effect.d, effect.e, 0u};", "case_ids": ["OppAction_ExecutePokemonPowerEffect-2"]}
+MUTATIONS["OppAction_ExecutePokemonPowerEffect"] = {
+    "source_symbol": "OppAction_ExecutePokemonPowerEffect",
+    "before": "\t\teffect.c, effect.d, effect.e, effect.hl};",
+    "after": "\t\teffect.c, effect.d, effect.e, 0u};",
+    "case_ids": ["OppAction_ExecutePokemonPowerEffect-2"],
+}
 # <<< factory-mutation OppAction_ExecutePokemonPowerEffect
 # >>> factory-mutation LoadSelectedCardGfx
 MUTATIONS["LoadSelectedCardGfx"] = {
@@ -6969,11 +14468,19 @@ MUTATIONS["CheckIfSelectedAttackIsUnusable"] = {
     "source_symbol": "CheckIfSelectedAttackIsUnusable",
     "before": "\tif (energy.f & 0x10u)\n\t\treturn (CheckIfSelectedAttackIsUnusableResult){energy.a, energy.f, energy.b, energy.c, energy.d, energy.e, energy.hl};",
     "after": "\tif (energy.f & 0x10u)\n\t\treturn (CheckIfSelectedAttackIsUnusableResult){energy.a, 0u, energy.b, energy.c, energy.d, energy.e, energy.hl};",
-    "case_ids": ["CheckIfSelectedAttackIsUnusable-0", "CheckIfSelectedAttackIsUnusable-1"],
+    "case_ids": [
+        "CheckIfSelectedAttackIsUnusable-0",
+        "CheckIfSelectedAttackIsUnusable-1",
+    ],
 }
 # <<< factory-mutation CheckIfSelectedAttackIsUnusable
 # >>> factory-mutation CheckForBenchIDAtHalfHPAndCanUseSecondAttack
-MUTATIONS["CheckForBenchIDAtHalfHPAndCanUseSecondAttack"] = {"source_symbol": "CheckForBenchIDAtHalfHPAndCanUseSecondAttack", "before": "\t\tuint8_t current_hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + c)).a;", "after": "\t\tuint8_t current_hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + c - 1u)).a;", "case_ids": ["CheckForBenchIDAtHalfHPAndCanUseSecondAttack-3"]}
+MUTATIONS["CheckForBenchIDAtHalfHPAndCanUseSecondAttack"] = {
+    "source_symbol": "CheckForBenchIDAtHalfHPAndCanUseSecondAttack",
+    "before": "\t\tuint8_t current_hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + c)).a;",
+    "after": "\t\tuint8_t current_hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + c - 1u)).a;",
+    "case_ids": ["CheckForBenchIDAtHalfHPAndCanUseSecondAttack-3"],
+}
 # <<< factory-mutation CheckForBenchIDAtHalfHPAndCanUseSecondAttack
 # >>> factory-mutation CountNumberOfSetUpBenchPokemon
 MUTATIONS["CountNumberOfSetUpBenchPokemon"] = {
@@ -6988,7 +14495,10 @@ MUTATIONS["HandleLegendaryArticunoEnergyScoring"] = {
     "source_symbol": "HandleLegendaryArticunoEnergyScoring",
     "before": "\tif (wOpponentDeckID == 0x0Eu) {",
     "after": "\tif (wOpponentDeckID != 0x0Eu) {",
-    "case_ids": ["HandleLegendaryArticunoEnergyScoring-0", "HandleLegendaryArticunoEnergyScoring-2"],
+    "case_ids": [
+        "HandleLegendaryArticunoEnergyScoring-0",
+        "HandleLegendaryArticunoEnergyScoring-2",
+    ],
 }
 # <<< factory-mutation HandleLegendaryArticunoEnergyScoring
 # >>> factory-mutation CheckIfArenaCardIsFullyPowered
@@ -6996,7 +14506,10 @@ MUTATIONS["CheckIfArenaCardIsFullyPowered"] = {
     "source_symbol": "CheckIfArenaCardIsFullyPowered",
     "before": "\t\tCheckCardEvolutionInHandOrDeckResult evolution = CheckCardEvolutionInHandOrDeck(deck_index);",
     "after": "\t\tCheckCardEvolutionInHandOrDeckResult evolution = CheckCardEvolutionInHandOrDeck(d);",
-    "case_ids": ["CheckIfArenaCardIsFullyPowered-2", "CheckIfArenaCardIsFullyPowered-3"],
+    "case_ids": [
+        "CheckIfArenaCardIsFullyPowered-2",
+        "CheckIfArenaCardIsFullyPowered-3",
+    ],
 }
 # <<< factory-mutation CheckIfArenaCardIsFullyPowered
 # >>> factory-mutation SendCardAttrBlkPacket
@@ -7032,7 +14545,15 @@ MUTATIONS["DrawCardPageSurroundingBox"] = {
 }
 # <<< factory-mutation DrawCardPageSurroundingBox
 # >>> factory-mutation PrintPokemonCardPageGenericInformation
-MUTATIONS["PrintPokemonCardPageGenericInformation"] = {"source_symbol": "PrintPokemonCardPageGenericInformation", "before": "JPWriteByteToBGMap0((uint8_t)(color + 1u), 18u, 1u);", "after": "JPWriteByteToBGMap0((uint8_t)(color + 2u), 18u, 1u);", "case_ids": ["PrintPokemonCardPageGenericInformation-0", "PrintPokemonCardPageGenericInformation-1"]}
+MUTATIONS["PrintPokemonCardPageGenericInformation"] = {
+    "source_symbol": "PrintPokemonCardPageGenericInformation",
+    "before": "JPWriteByteToBGMap0((uint8_t)(color + 1u), 18u, 1u);",
+    "after": "JPWriteByteToBGMap0((uint8_t)(color + 2u), 18u, 1u);",
+    "case_ids": [
+        "PrintPokemonCardPageGenericInformation-0",
+        "PrintPokemonCardPageGenericInformation-1",
+    ],
+}
 # <<< factory-mutation PrintPokemonCardPageGenericInformation
 # >>> factory-mutation DrawDuelHUD
 MUTATIONS["DrawDuelHUD"] = {
@@ -7043,16 +14564,39 @@ MUTATIONS["DrawDuelHUD"] = {
 }
 # <<< factory-mutation DrawDuelHUD
 # >>> factory-mutation DrawDuelHUDs
-MUTATIONS["DrawDuelHUDs"] = {"source_symbol": "DrawDuelHUDs", "before": "\tDrawDuelHUD(11u, 8u, 1u, 11u);\n\tDuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);", "after": "\tDrawDuelHUD(11u, 8u, 1u, 12u);\n\tDuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);", "case_ids": ["DrawDuelHUDs-0", "DrawDuelHUDs-1"]}
+MUTATIONS["DrawDuelHUDs"] = {
+    "source_symbol": "DrawDuelHUDs",
+    "before": "\tDrawDuelHUD(11u, 8u, 1u, 11u);\n\tDuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);",
+    "after": "\tDrawDuelHUD(11u, 8u, 1u, 12u);\n\tDuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);",
+    "case_ids": ["DrawDuelHUDs-0", "DrawDuelHUDs-1"],
+}
 # <<< factory-mutation DrawDuelHUDs
 # >>> factory-mutation DrawCardListScreenLayout
-MUTATIONS["DrawCardListScreenLayout"] = {"source_symbol": "DrawCardListScreenLayout", "before": "return (DrawCardListScreenLayoutResult){a, 0x90u};", "after": "return (DrawCardListScreenLayoutResult){a, 0x10u};", "case_ids": ["DrawCardListScreenLayout-0", "DrawCardListScreenLayout-2"]}
+MUTATIONS["DrawCardListScreenLayout"] = {
+    "source_symbol": "DrawCardListScreenLayout",
+    "before": "return (DrawCardListScreenLayoutResult){a, 0x90u};",
+    "after": "return (DrawCardListScreenLayoutResult){a, 0x10u};",
+    "case_ids": ["DrawCardListScreenLayout-0", "DrawCardListScreenLayout-2"],
+}
 # <<< factory-mutation DrawCardListScreenLayout
 # >>> factory-mutation ApplyBGP7OrSGB2ToCardImage
-MUTATIONS["ApplyBGP7OrSGB2ToCardImage"] = {"source_symbol": "ApplyBGP7OrSGB2ToCardImage", "before": "\t\ta = 0x0Au;", "after": "\t\ta = 0x20u;", "case_ids": ["ApplyBGP7OrSGB2ToCardImage-1"]}
+MUTATIONS["ApplyBGP7OrSGB2ToCardImage"] = {
+    "source_symbol": "ApplyBGP7OrSGB2ToCardImage",
+    "before": "\t\ta = 0x0Au;",
+    "after": "\t\ta = 0x20u;",
+    "case_ids": ["ApplyBGP7OrSGB2ToCardImage-1"],
+}
 # <<< factory-mutation ApplyBGP7OrSGB2ToCardImage
 # >>> factory-mutation DisplayPracticeDuelPlayerHandScreen
-MUTATIONS["DisplayPracticeDuelPlayerHandScreen"] = {"source_symbol": "DisplayPracticeDuelPlayerHandScreen", "before": "\tDrawRegularTextBox(&box, 0u, 20u, 13u, 0u, 0u);", "after": "\tDrawRegularTextBox(&box, 0u, 20u, 12u, 0u, 0u);", "case_ids": ["DisplayPracticeDuelPlayerHandScreen-0", "DisplayPracticeDuelPlayerHandScreen-1"]}
+MUTATIONS["DisplayPracticeDuelPlayerHandScreen"] = {
+    "source_symbol": "DisplayPracticeDuelPlayerHandScreen",
+    "before": "\tDrawRegularTextBox(&box, 0u, 20u, 13u, 0u, 0u);",
+    "after": "\tDrawRegularTextBox(&box, 0u, 20u, 12u, 0u, 0u);",
+    "case_ids": [
+        "DisplayPracticeDuelPlayerHandScreen-0",
+        "DisplayPracticeDuelPlayerHandScreen-1",
+    ],
+}
 # <<< factory-mutation DisplayPracticeDuelPlayerHandScreen
 # >>> factory-mutation DrawDuelMainScene
 MUTATIONS["DrawDuelMainScene"] = {
@@ -7063,67 +14607,199 @@ MUTATIONS["DrawDuelMainScene"] = {
 }
 # <<< factory-mutation DrawDuelMainScene
 # >>> factory-mutation InitAndDrawCardListScreenLayout
-MUTATIONS["InitAndDrawCardListScreenLayout"] = {"source_symbol": "InitAndDrawCardListScreenLayout", "before": "\twSelectedDuelSubMenuScrollOffset = 0u;", "after": "\twSelectedDuelSubMenuScrollOffset = 1u;", "case_ids": ["InitAndDrawCardListScreenLayout-0", "InitAndDrawCardListScreenLayout-1"]}
+MUTATIONS["InitAndDrawCardListScreenLayout"] = {
+    "source_symbol": "InitAndDrawCardListScreenLayout",
+    "before": "\twSelectedDuelSubMenuScrollOffset = 0u;",
+    "after": "\twSelectedDuelSubMenuScrollOffset = 1u;",
+    "case_ids": [
+        "InitAndDrawCardListScreenLayout-0",
+        "InitAndDrawCardListScreenLayout-1",
+    ],
+}
 # <<< factory-mutation InitAndDrawCardListScreenLayout
 # >>> factory-mutation RedrawTurnDuelistsDuelHUD
-MUTATIONS["RedrawTurnDuelistsDuelHUD"] = {"source_symbol": "RedrawTurnDuelistsDuelHUD", "before": "\tSwapTurn();\n\tDrawDuelHUDs();\n\tSwapTurn();", "after": "\tSwapTurn();\n\tDrawDuelHUDs();", "case_ids": ["RedrawTurnDuelistsDuelHUD-1", "RedrawTurnDuelistsDuelHUD-2"]}
+MUTATIONS["RedrawTurnDuelistsDuelHUD"] = {
+    "source_symbol": "RedrawTurnDuelistsDuelHUD",
+    "before": "\tSwapTurn();\n\tDrawDuelHUDs();\n\tSwapTurn();",
+    "after": "\tSwapTurn();\n\tDrawDuelHUDs();",
+    "case_ids": ["RedrawTurnDuelistsDuelHUD-1", "RedrawTurnDuelistsDuelHUD-2"],
+}
 # <<< factory-mutation RedrawTurnDuelistsDuelHUD
 # >>> factory-mutation OppAction_DrawDuelMainScene
-MUTATIONS["OppAction_DrawDuelMainScene"] = {"source_symbol": "OppAction_DrawDuelMainScene", "before": "\tDrawDuelMainScene();", "after": "\tgb_write8(0xCAC2u, 0u);", "case_ids": ["OppAction_DrawDuelMainScene-0", "OppAction_DrawDuelMainScene-1"]}
+MUTATIONS["OppAction_DrawDuelMainScene"] = {
+    "source_symbol": "OppAction_DrawDuelMainScene",
+    "before": "\tDrawDuelMainScene();",
+    "after": "\tgb_write8(0xCAC2u, 0u);",
+    "case_ids": ["OppAction_DrawDuelMainScene-0", "OppAction_DrawDuelMainScene-1"],
+}
 # <<< factory-mutation OppAction_DrawDuelMainScene
 # >>> factory-mutation InitAndDrawCardListScreenLayout_WithSelectCheckMenu
-MUTATIONS["InitAndDrawCardListScreenLayout_WithSelectCheckMenu"] = {"source_symbol": "InitAndDrawCardListScreenLayout_WithSelectCheckMenu", "before": "\tgb_write8(wCardListItemSelectionMenuType_ADDR, SELECT_CHECK);", "after": "\tgb_write8(wCardListItemSelectionMenuType_ADDR, 0u);", "case_ids": ["InitAndDrawCardListScreenLayout_WithSelectCheckMenu-0", "InitAndDrawCardListScreenLayout_WithSelectCheckMenu-1"]}
+MUTATIONS["InitAndDrawCardListScreenLayout_WithSelectCheckMenu"] = {
+    "source_symbol": "InitAndDrawCardListScreenLayout_WithSelectCheckMenu",
+    "before": "\tgb_write8(wCardListItemSelectionMenuType_ADDR, SELECT_CHECK);",
+    "after": "\tgb_write8(wCardListItemSelectionMenuType_ADDR, 0u);",
+    "case_ids": [
+        "InitAndDrawCardListScreenLayout_WithSelectCheckMenu-0",
+        "InitAndDrawCardListScreenLayout_WithSelectCheckMenu-1",
+    ],
+}
 # <<< factory-mutation InitAndDrawCardListScreenLayout_WithSelectCheckMenu
 # >>> factory-mutation DisplayCardListDetails
-MUTATIONS["DisplayCardListDetails"] = {"source_symbol": "DisplayCardListDetails", "before": "\t\tuint8_t f = (uint8_t)(0x40u | (((value & 0x0Fu) < 0x0Fu) ? 0x20u : 0u) | ((value < 0xFFu) ? 0x10u : 0u) | 0x80u);", "after": "\t\tuint8_t f = (uint8_t)(0x40u | (((value & 0x0Fu) < 0x0Fu) ? 0x20u : 0u) | ((value < 0xFFu) ? 0x10u : 0u));", "case_ids": ["DisplayCardListDetails-0", "DisplayCardListDetails-1"]}
+MUTATIONS["DisplayCardListDetails"] = {
+    "source_symbol": "DisplayCardListDetails",
+    "before": "\t\tuint8_t f = (uint8_t)(0x40u | (((value & 0x0Fu) < 0x0Fu) ? 0x20u : 0u) | ((value < 0xFFu) ? 0x10u : 0u) | 0x80u);",
+    "after": "\t\tuint8_t f = (uint8_t)(0x40u | (((value & 0x0Fu) < 0x0Fu) ? 0x20u : 0u) | ((value < 0xFFu) ? 0x10u : 0u));",
+    "case_ids": ["DisplayCardListDetails-0", "DisplayCardListDetails-1"],
+}
 # <<< factory-mutation DisplayCardListDetails
 # >>> factory-mutation OppAction_FinishTurnWithoutAttacking
-MUTATIONS["OppAction_FinishTurnWithoutAttacking"] = {"source_symbol": "OppAction_FinishTurnWithoutAttacking", "before": "\t(void)DrawWideTextBox_WaitForInput(FinishedTurnWithoutAttackingText);\n\twOpponentTurnEnded = 1u;", "after": "\t(void)DrawWideTextBox_WaitForInput(FinishedTurnWithoutAttackingText);\n\twOpponentTurnEnded = 0u;", "case_ids": ["OppAction_FinishTurnWithoutAttacking-0", "OppAction_FinishTurnWithoutAttacking-1"]}
+MUTATIONS["OppAction_FinishTurnWithoutAttacking"] = {
+    "source_symbol": "OppAction_FinishTurnWithoutAttacking",
+    "before": "\t(void)DrawWideTextBox_WaitForInput(FinishedTurnWithoutAttackingText);\n\twOpponentTurnEnded = 1u;",
+    "after": "\t(void)DrawWideTextBox_WaitForInput(FinishedTurnWithoutAttackingText);\n\twOpponentTurnEnded = 0u;",
+    "case_ids": [
+        "OppAction_FinishTurnWithoutAttacking-0",
+        "OppAction_FinishTurnWithoutAttacking-1",
+    ],
+}
 # <<< factory-mutation OppAction_FinishTurnWithoutAttacking
 # >>> factory-mutation RedrawTurnDuelistsMainSceneOrDuelHUD
-MUTATIONS["RedrawTurnDuelistsMainSceneOrDuelHUD"] = {"source_symbol": "RedrawTurnDuelistsMainSceneOrDuelHUD", "before": "\tif (wDuelDisplayedScreen == DUEL_MAIN_SCENE) {", "after": "\tif (wDuelDisplayedScreen != DUEL_MAIN_SCENE) {", "case_ids": ["RedrawTurnDuelistsMainSceneOrDuelHUD-0", "RedrawTurnDuelistsMainSceneOrDuelHUD-1"]}
+MUTATIONS["RedrawTurnDuelistsMainSceneOrDuelHUD"] = {
+    "source_symbol": "RedrawTurnDuelistsMainSceneOrDuelHUD",
+    "before": "\tif (wDuelDisplayedScreen == DUEL_MAIN_SCENE) {",
+    "after": "\tif (wDuelDisplayedScreen != DUEL_MAIN_SCENE) {",
+    "case_ids": [
+        "RedrawTurnDuelistsMainSceneOrDuelHUD-0",
+        "RedrawTurnDuelistsMainSceneOrDuelHUD-1",
+    ],
+}
 # <<< factory-mutation RedrawTurnDuelistsMainSceneOrDuelHUD
 # >>> factory-mutation DisplayNoBasicPokemonInHandScreen
-MUTATIONS["DisplayNoBasicPokemonInHandScreen"] = {"source_symbol": "DisplayNoBasicPokemonInHandScreen", "before": "void DisplayNoBasicPokemonInHandScreen(void)\n{\n\tEmptyScreen();\n\tTileCopyResult tiles = LoadDuelCardSymbolTiles();\n\tuint16_t box = tiles.hl;\n\tDrawRegularTextBox(&box, 0u, 20u, 18u, 0u, 0u);\n\t(void)CreateHandCardList(0u);\n\tuint8_t count = CountCardsInDuelTempList().a;", "after": "void DisplayNoBasicPokemonInHandScreen(void)\n{\n\tEmptyScreen();\n\tTileCopyResult tiles = LoadDuelCardSymbolTiles();\n\tuint16_t box = tiles.hl;\n\tDrawRegularTextBox(&box, 0u, 20u, 18u, 0u, 0u);\n\t(void)CreateHandCardList(0u);\n\tuint8_t count = (uint8_t)(CountCardsInDuelTempList().a + 1u);", "case_ids": ["DisplayNoBasicPokemonInHandScreen-0", "DisplayNoBasicPokemonInHandScreen-1"]}
+MUTATIONS["DisplayNoBasicPokemonInHandScreen"] = {
+    "source_symbol": "DisplayNoBasicPokemonInHandScreen",
+    "before": "void DisplayNoBasicPokemonInHandScreen(void)\n{\n\tEmptyScreen();\n\tTileCopyResult tiles = LoadDuelCardSymbolTiles();\n\tuint16_t box = tiles.hl;\n\tDrawRegularTextBox(&box, 0u, 20u, 18u, 0u, 0u);\n\t(void)CreateHandCardList(0u);\n\tuint8_t count = CountCardsInDuelTempList().a;",
+    "after": "void DisplayNoBasicPokemonInHandScreen(void)\n{\n\tEmptyScreen();\n\tTileCopyResult tiles = LoadDuelCardSymbolTiles();\n\tuint16_t box = tiles.hl;\n\tDrawRegularTextBox(&box, 0u, 20u, 18u, 0u, 0u);\n\t(void)CreateHandCardList(0u);\n\tuint8_t count = (uint8_t)(CountCardsInDuelTempList().a + 1u);",
+    "case_ids": [
+        "DisplayNoBasicPokemonInHandScreen-0",
+        "DisplayNoBasicPokemonInHandScreen-1",
+    ],
+}
 # <<< factory-mutation DisplayNoBasicPokemonInHandScreen
 # >>> factory-mutation PrintAndLoadAttacksToDuelTempList
-MUTATIONS["PrintAndLoadAttacksToDuelTempList"] = {"source_symbol": "PrintAndLoadAttacksToDuelTempList", "before": "de + (CARD_DATA_ATTACK1_CATEGORY - CARD_DATA_ATTACK1_NAME)", "after": "de + (CARD_DATA_ATTACK1_CATEGORY - CARD_DATA_ATTACK1_NAME + 1u)", "case_ids": ["PrintAndLoadAttacksToDuelTempList-2"]}
+MUTATIONS["PrintAndLoadAttacksToDuelTempList"] = {
+    "source_symbol": "PrintAndLoadAttacksToDuelTempList",
+    "before": "de + (CARD_DATA_ATTACK1_CATEGORY - CARD_DATA_ATTACK1_NAME)",
+    "after": "de + (CARD_DATA_ATTACK1_CATEGORY - CARD_DATA_ATTACK1_NAME + 1u)",
+    "case_ids": ["PrintAndLoadAttacksToDuelTempList-2"],
+}
 # <<< factory-mutation PrintAndLoadAttacksToDuelTempList
 # >>> factory-mutation DisplayPokemonAttackCardPage
-MUTATIONS["DisplayPokemonAttackCardPage"] = {"source_symbol": "DisplayPokemonAttackCardPage", "before": "\tPrintAttackOrPkmnPowerInformationResult printed = PrintAttackOrPkmnPowerInformation(b, c, d, 2u, hl);", "after": "\tPrintAttackOrPkmnPowerInformationResult printed = PrintAttackOrPkmnPowerInformation(b, c, d, 3u, hl);", "case_ids": ["DisplayPokemonAttackCardPage-0", "DisplayPokemonAttackCardPage-1"]}
+MUTATIONS["DisplayPokemonAttackCardPage"] = {
+    "source_symbol": "DisplayPokemonAttackCardPage",
+    "before": "\tPrintAttackOrPkmnPowerInformationResult printed = PrintAttackOrPkmnPowerInformation(b, c, d, 2u, hl);",
+    "after": "\tPrintAttackOrPkmnPowerInformationResult printed = PrintAttackOrPkmnPowerInformation(b, c, d, 3u, hl);",
+    "case_ids": ["DisplayPokemonAttackCardPage-0", "DisplayPokemonAttackCardPage-1"],
+}
 # <<< factory-mutation DisplayPokemonAttackCardPage
 # >>> factory-mutation DisplayCardPage_PokemonAttack2Page2
-MUTATIONS["DisplayCardPage_PokemonAttack2Page2"] = {"source_symbol": "DisplayCardPage_PokemonAttack2Page2", "before": "\treturn DisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk2Description_ADDR + 2u), wLoadedCard1Atk2Name_ADDR);", "after": "\treturn DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk2Description_ADDR, wLoadedCard1Atk2Name_ADDR);", "case_ids": ["DisplayCardPage_PokemonAttack2Page2-2"]}
+MUTATIONS["DisplayCardPage_PokemonAttack2Page2"] = {
+    "source_symbol": "DisplayCardPage_PokemonAttack2Page2",
+    "before": "\treturn DisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk2Description_ADDR + 2u), wLoadedCard1Atk2Name_ADDR);",
+    "after": "\treturn DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk2Description_ADDR, wLoadedCard1Atk2Name_ADDR);",
+    "case_ids": ["DisplayCardPage_PokemonAttack2Page2-2"],
+}
 # <<< factory-mutation DisplayCardPage_PokemonAttack2Page2
 # >>> factory-mutation DisplayCardPage_PokemonAttack1Page1
-MUTATIONS["DisplayCardPage_PokemonAttack1Page1"] = {"source_symbol": "DisplayCardPage_PokemonAttack1Page1", "before": "\treturn DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk1Description_ADDR, wLoadedCard1Atk1Name_ADDR);", "after": "\treturn DisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u), wLoadedCard1Atk1Name_ADDR);", "case_ids": ["DisplayCardPage_PokemonAttack1Page1-1"]}
+MUTATIONS["DisplayCardPage_PokemonAttack1Page1"] = {
+    "source_symbol": "DisplayCardPage_PokemonAttack1Page1",
+    "before": "\treturn DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk1Description_ADDR, wLoadedCard1Atk1Name_ADDR);",
+    "after": "\treturn DisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u), wLoadedCard1Atk1Name_ADDR);",
+    "case_ids": ["DisplayCardPage_PokemonAttack1Page1-1"],
+}
 # <<< factory-mutation DisplayCardPage_PokemonAttack1Page1
 # >>> factory-mutation DisplayCardPage_PokemonAttack1Page2
-MUTATIONS["DisplayCardPage_PokemonAttack1Page2"] = {"source_symbol": "DisplayCardPage_PokemonAttack1Page2", "before": "\treturn DisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u), wLoadedCard1Atk1Name_ADDR);", "after": "\treturn DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk1Description_ADDR, wLoadedCard1Atk1Name_ADDR);", "case_ids": ["DisplayCardPage_PokemonAttack1Page2-1"]}
+MUTATIONS["DisplayCardPage_PokemonAttack1Page2"] = {
+    "source_symbol": "DisplayCardPage_PokemonAttack1Page2",
+    "before": "\treturn DisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u), wLoadedCard1Atk1Name_ADDR);",
+    "after": "\treturn DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk1Description_ADDR, wLoadedCard1Atk1Name_ADDR);",
+    "case_ids": ["DisplayCardPage_PokemonAttack1Page2-1"],
+}
 # <<< factory-mutation DisplayCardPage_PokemonAttack1Page2
 # >>> factory-mutation DisplayCardPage_PokemonAttack2Page1
-MUTATIONS["DisplayCardPage_PokemonAttack2Page1"] = {"source_symbol": "DisplayCardPage_PokemonAttack2Page1", "before": "\treturn DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk2Description_ADDR, wLoadedCard1Atk2Name_ADDR);", "after": "\treturn DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk1Description_ADDR, wLoadedCard1Atk2Name_ADDR);", "case_ids": ["DisplayCardPage_PokemonAttack2Page1-0"]}
+MUTATIONS["DisplayCardPage_PokemonAttack2Page1"] = {
+    "source_symbol": "DisplayCardPage_PokemonAttack2Page1",
+    "before": "\treturn DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk2Description_ADDR, wLoadedCard1Atk2Name_ADDR);",
+    "after": "\treturn DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk1Description_ADDR, wLoadedCard1Atk2Name_ADDR);",
+    "case_ids": ["DisplayCardPage_PokemonAttack2Page1-0"],
+}
 # <<< factory-mutation DisplayCardPage_PokemonAttack2Page1
 # >>> factory-mutation DisplayAttackPage_Attack1Page1
-MUTATIONS["DisplayAttackPage_Attack1Page1"] = {"source_symbol": "DisplayAttackPage_Attack1Page1", "before": "void DisplayAttackPage_Attack1Page1(uint8_t b, uint8_t c, uint8_t d)\n{\n\tDisplayCardPage_PokemonAttack1Page1(b, c, d);\n\tSwitchAttackPage();", "after": "void DisplayAttackPage_Attack1Page1(uint8_t b, uint8_t c, uint8_t d)\n{\n\tDisplayCardPage_PokemonAttack1Page1(b, c, d);\n\t(void)0;", "case_ids": ["DisplayAttackPage_Attack1Page1-0", "DisplayAttackPage_Attack1Page1-1"]}
+MUTATIONS["DisplayAttackPage_Attack1Page1"] = {
+    "source_symbol": "DisplayAttackPage_Attack1Page1",
+    "before": "void DisplayAttackPage_Attack1Page1(uint8_t b, uint8_t c, uint8_t d)\n{\n\tDisplayCardPage_PokemonAttack1Page1(b, c, d);\n\tSwitchAttackPage();",
+    "after": "void DisplayAttackPage_Attack1Page1(uint8_t b, uint8_t c, uint8_t d)\n{\n\tDisplayCardPage_PokemonAttack1Page1(b, c, d);\n\t(void)0;",
+    "case_ids": [
+        "DisplayAttackPage_Attack1Page1-0",
+        "DisplayAttackPage_Attack1Page1-1",
+    ],
+}
 # <<< factory-mutation DisplayAttackPage_Attack1Page1
 # >>> factory-mutation DisplayAttackPage_Attack2Page1
-MUTATIONS["DisplayAttackPage_Attack2Page1"] = {"source_symbol": "DisplayAttackPage_Attack2Page1", "before": "void DisplayAttackPage_Attack2Page1(uint8_t b, uint8_t c, uint8_t d)\n{\n\tDisplayCardPage_PokemonAttack2Page1(b, c, d);\n\tSwitchAttackPage();", "after": "void DisplayAttackPage_Attack2Page1(uint8_t b, uint8_t c, uint8_t d)\n{\n\tDisplayCardPage_PokemonAttack2Page1(b, c, d);\n\t(void)0;", "case_ids": ["DisplayAttackPage_Attack2Page1-0", "DisplayAttackPage_Attack2Page1-1"]}
+MUTATIONS["DisplayAttackPage_Attack2Page1"] = {
+    "source_symbol": "DisplayAttackPage_Attack2Page1",
+    "before": "void DisplayAttackPage_Attack2Page1(uint8_t b, uint8_t c, uint8_t d)\n{\n\tDisplayCardPage_PokemonAttack2Page1(b, c, d);\n\tSwitchAttackPage();",
+    "after": "void DisplayAttackPage_Attack2Page1(uint8_t b, uint8_t c, uint8_t d)\n{\n\tDisplayCardPage_PokemonAttack2Page1(b, c, d);\n\t(void)0;",
+    "case_ids": [
+        "DisplayAttackPage_Attack2Page1-0",
+        "DisplayAttackPage_Attack2Page1-1",
+    ],
+}
 # <<< factory-mutation DisplayAttackPage_Attack2Page1
 # >>> factory-mutation DisplayAttackPage_Attack2Page2
-MUTATIONS["DisplayAttackPage_Attack2Page2"] = {"source_symbol": "DisplayAttackPage_Attack2Page2", "before": "void DisplayAttackPage_Attack2Page2(uint8_t b, uint8_t c, uint8_t d)\n{\n\tuint8_t lo = gb_read8((uint16_t)(wLoadedCard1Atk2Description_ADDR + 2u));\n\tuint8_t hi = gb_read8((uint16_t)(wLoadedCard1Atk2Description_ADDR + 3u));\n\tif ((uint8_t)(lo | hi) == 0u)", "after": "void DisplayAttackPage_Attack2Page2(uint8_t b, uint8_t c, uint8_t d)\n{\n\tuint8_t lo = gb_read8((uint16_t)(wLoadedCard1Atk2Description_ADDR + 2u));\n\tuint8_t hi = gb_read8((uint16_t)(wLoadedCard1Atk2Description_ADDR + 3u));\n\tif ((uint8_t)(lo | hi) != 0u)", "case_ids": ["DisplayAttackPage_Attack2Page2-0", "DisplayAttackPage_Attack2Page2-1"]}
+MUTATIONS["DisplayAttackPage_Attack2Page2"] = {
+    "source_symbol": "DisplayAttackPage_Attack2Page2",
+    "before": "void DisplayAttackPage_Attack2Page2(uint8_t b, uint8_t c, uint8_t d)\n{\n\tuint8_t lo = gb_read8((uint16_t)(wLoadedCard1Atk2Description_ADDR + 2u));\n\tuint8_t hi = gb_read8((uint16_t)(wLoadedCard1Atk2Description_ADDR + 3u));\n\tif ((uint8_t)(lo | hi) == 0u)",
+    "after": "void DisplayAttackPage_Attack2Page2(uint8_t b, uint8_t c, uint8_t d)\n{\n\tuint8_t lo = gb_read8((uint16_t)(wLoadedCard1Atk2Description_ADDR + 2u));\n\tuint8_t hi = gb_read8((uint16_t)(wLoadedCard1Atk2Description_ADDR + 3u));\n\tif ((uint8_t)(lo | hi) != 0u)",
+    "case_ids": [
+        "DisplayAttackPage_Attack2Page2-0",
+        "DisplayAttackPage_Attack2Page2-1",
+    ],
+}
 # <<< factory-mutation DisplayAttackPage_Attack2Page2
 # >>> factory-mutation DisplayAttackPage_Attack1Page2
-MUTATIONS["DisplayAttackPage_Attack1Page2"] = {"source_symbol": "DisplayAttackPage_Attack1Page2", "before": "void DisplayAttackPage_Attack1Page2(uint8_t b, uint8_t c, uint8_t d)\n{\n\tuint8_t lo = gb_read8((uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u));\n\tuint8_t hi = gb_read8((uint16_t)(wLoadedCard1Atk1Description_ADDR + 3u));\n\tif ((uint8_t)(lo | hi) == 0u)", "after": "void DisplayAttackPage_Attack1Page2(uint8_t b, uint8_t c, uint8_t d)\n{\n\tuint8_t lo = gb_read8((uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u));\n\tuint8_t hi = gb_read8((uint16_t)(wLoadedCard1Atk1Description_ADDR + 3u));\n\tif ((uint8_t)(lo | hi) != 0u)", "case_ids": ["DisplayAttackPage_Attack1Page2-0", "DisplayAttackPage_Attack1Page2-1"]}
+MUTATIONS["DisplayAttackPage_Attack1Page2"] = {
+    "source_symbol": "DisplayAttackPage_Attack1Page2",
+    "before": "void DisplayAttackPage_Attack1Page2(uint8_t b, uint8_t c, uint8_t d)\n{\n\tuint8_t lo = gb_read8((uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u));\n\tuint8_t hi = gb_read8((uint16_t)(wLoadedCard1Atk1Description_ADDR + 3u));\n\tif ((uint8_t)(lo | hi) == 0u)",
+    "after": "void DisplayAttackPage_Attack1Page2(uint8_t b, uint8_t c, uint8_t d)\n{\n\tuint8_t lo = gb_read8((uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u));\n\tuint8_t hi = gb_read8((uint16_t)(wLoadedCard1Atk1Description_ADDR + 3u));\n\tif ((uint8_t)(lo | hi) != 0u)",
+    "case_ids": [
+        "DisplayAttackPage_Attack1Page2-0",
+        "DisplayAttackPage_Attack1Page2-1",
+    ],
+}
 # <<< factory-mutation DisplayAttackPage_Attack1Page2
 # >>> factory-mutation DisplayEnergyDiscardMenu
-MUTATIONS["DisplayEnergyDiscardMenu"] = {"source_symbol": "DisplayEnergyDiscardMenu", "before": "\twCardListIndicatorYPosition = 4u;", "after": "\twCardListIndicatorYPosition = 5u;", "case_ids": ["DisplayEnergyDiscardMenu-0", "DisplayEnergyDiscardMenu-1"]}
+MUTATIONS["DisplayEnergyDiscardMenu"] = {
+    "source_symbol": "DisplayEnergyDiscardMenu",
+    "before": "\twCardListIndicatorYPosition = 4u;",
+    "after": "\twCardListIndicatorYPosition = 5u;",
+    "case_ids": ["DisplayEnergyDiscardMenu-0", "DisplayEnergyDiscardMenu-1"],
+}
 # <<< factory-mutation DisplayEnergyDiscardMenu
 # >>> factory-mutation DisplayEnergyDiscardScreen
-MUTATIONS["DisplayEnergyDiscardScreen"] = {"source_symbol": "DisplayEnergyDiscardScreen", "before": "\twEnergyDiscardMenuDenominator = 1u;", "after": "\twEnergyDiscardMenuDenominator = 2u;", "case_ids": ["DisplayEnergyDiscardScreen-0", "DisplayEnergyDiscardScreen-1"]}
+MUTATIONS["DisplayEnergyDiscardScreen"] = {
+    "source_symbol": "DisplayEnergyDiscardScreen",
+    "before": "\twEnergyDiscardMenuDenominator = 1u;",
+    "after": "\twEnergyDiscardMenuDenominator = 2u;",
+    "case_ids": ["DisplayEnergyDiscardScreen-0", "DisplayEnergyDiscardScreen-1"],
+}
 # <<< factory-mutation DisplayEnergyDiscardScreen
 # >>> factory-mutation OpenAttackPage
-MUTATIONS["OpenAttackPage"] = {"source_symbol": "OpenAttackPage", "before": "\twAttackPageNumber = (v != 0u) ? ATTACKPAGE_ATTACK2_1 : ATTACKPAGE_ATTACK1_1;", "after": "\twAttackPageNumber = (v != 0u) ? ATTACKPAGE_ATTACK1_1 : ATTACKPAGE_ATTACK2_1;", "case_ids": ["OpenAttackPage-0", "OpenAttackPage-1"]}
+MUTATIONS["OpenAttackPage"] = {
+    "source_symbol": "OpenAttackPage",
+    "before": "\twAttackPageNumber = (v != 0u) ? ATTACKPAGE_ATTACK2_1 : ATTACKPAGE_ATTACK1_1;",
+    "after": "\twAttackPageNumber = (v != 0u) ? ATTACKPAGE_ATTACK1_1 : ATTACKPAGE_ATTACK2_1;",
+    "case_ids": ["OpenAttackPage-0", "OpenAttackPage-1"],
+}
 # <<< factory-mutation OpenAttackPage
 # >>> factory-mutation HandleEnergyDiscardMenuInput
 MUTATIONS["HandleEnergyDiscardMenuInput"] = {
@@ -7134,107 +14810,236 @@ MUTATIONS["HandleEnergyDiscardMenuInput"] = {
 }
 # <<< factory-mutation HandleEnergyDiscardMenuInput
 # >>> factory-mutation DisplayRetreatScreen
-MUTATIONS["DisplayRetreatScreen"] = {"source_symbol": "DisplayRetreatScreen", "before": "\thTempRetreatCostCards = 0xFFu;", "after": "\thTempRetreatCostCards = 0u;", "case_ids": ["DisplayRetreatScreen-0", "DisplayRetreatScreen-1"]}
+MUTATIONS["DisplayRetreatScreen"] = {
+    "source_symbol": "DisplayRetreatScreen",
+    "before": "\thTempRetreatCostCards = 0xFFu;",
+    "after": "\thTempRetreatCostCards = 0u;",
+    "case_ids": ["DisplayRetreatScreen-0", "DisplayRetreatScreen-1"],
+}
 # <<< factory-mutation DisplayRetreatScreen
 # >>> factory-mutation PrintPracticeDuelInstructions_Fast
-MUTATIONS["PrintPracticeDuelInstructions_Fast"] = {"source_symbol": "PrintPracticeDuelInstructions_Fast", "before": "void PrintPracticeDuelInstructions_Fast(uint16_t hl)\n{\n\tfor (;;) {\n\t\tuint8_t count = gb_read8(hl);\n\t\thl = (uint16_t)(hl + 1u);\n\t\tif (count == 0u) {\n\t\t\tPrintPracticeDuelLetsPlayTheGame();\n\t\t\treturn;\n\t\t}", "after": "void PrintPracticeDuelInstructions_Fast(uint16_t hl)\n{\n\tfor (;;) {\n\t\tuint8_t count = gb_read8(hl);\n\t\thl = (uint16_t)(hl + 1u);\n\t\tif (count == 0u) {\n\t\t\treturn;\n\t\t}", "case_ids": ["PrintPracticeDuelInstructions_Fast-0", "PrintPracticeDuelInstructions_Fast-1"]}
+MUTATIONS["PrintPracticeDuelInstructions_Fast"] = {
+    "source_symbol": "PrintPracticeDuelInstructions_Fast",
+    "before": "void PrintPracticeDuelInstructions_Fast(uint16_t hl)\n{\n\tfor (;;) {\n\t\tuint8_t count = gb_read8(hl);\n\t\thl = (uint16_t)(hl + 1u);\n\t\tif (count == 0u) {\n\t\t\tPrintPracticeDuelLetsPlayTheGame();\n\t\t\treturn;\n\t\t}",
+    "after": "void PrintPracticeDuelInstructions_Fast(uint16_t hl)\n{\n\tfor (;;) {\n\t\tuint8_t count = gb_read8(hl);\n\t\thl = (uint16_t)(hl + 1u);\n\t\tif (count == 0u) {\n\t\t\treturn;\n\t\t}",
+    "case_ids": [
+        "PrintPracticeDuelInstructions_Fast-0",
+        "PrintPracticeDuelInstructions_Fast-1",
+    ],
+}
 # <<< factory-mutation PrintPracticeDuelInstructions_Fast
 # >>> factory-mutation PracticeDuel_RepeatInstructions
 MUTATIONS["PracticeDuel_RepeatInstructions"] = {
- "source_symbol": "PracticeDuel_RepeatInstructions",
- "before": "\t * clear it, so the caller sees Z|C, not carry alone. */\n\treturn 0x90u;",
- "after": "\t * clear it, so the caller sees Z|C, not carry alone. */\n\treturn 0x00u;",
- "case_ids": ["PracticeDuel_RepeatInstructions-0", "PracticeDuel_RepeatInstructions-1"],
+    "source_symbol": "PracticeDuel_RepeatInstructions",
+    "before": "\t * clear it, so the caller sees Z|C, not carry alone. */\n\treturn 0x90u;",
+    "after": "\t * clear it, so the caller sees Z|C, not carry alone. */\n\treturn 0x00u;",
+    "case_ids": [
+        "PracticeDuel_RepeatInstructions-0",
+        "PracticeDuel_RepeatInstructions-1",
+    ],
 }
 # <<< factory-mutation PracticeDuel_RepeatInstructions
 # >>> factory-mutation _DisplayCardDetailScreen
-MUTATIONS["_DisplayCardDetailScreen"] = {"source_symbol": "_DisplayCardDetailScreen", "before": "\tWaitResult waited = DrawWideTextBox_WaitForInput(saved_hl);", "after": "\tWaitResult waited = (WaitResult){0u};", "case_ids": ["_DisplayCardDetailScreen-0", "_DisplayCardDetailScreen-1"]}
+MUTATIONS["_DisplayCardDetailScreen"] = {
+    "source_symbol": "_DisplayCardDetailScreen",
+    "before": "\tWaitResult waited = DrawWideTextBox_WaitForInput(saved_hl);",
+    "after": "\tWaitResult waited = (WaitResult){0u};",
+    "case_ids": ["_DisplayCardDetailScreen-0", "_DisplayCardDetailScreen-1"],
+}
 # <<< factory-mutation _DisplayCardDetailScreen
 # >>> factory-mutation OpenCardPage
-MUTATIONS["OpenCardPage"] = {"source_symbol": "OpenCardPage", "before": "void OpenCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageType_ADDR, a);", "after": "void OpenCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageType_ADDR, 0u);", "case_ids": ["OpenCardPage-0", "OpenCardPage-1"]}
+MUTATIONS["OpenCardPage"] = {
+    "source_symbol": "OpenCardPage",
+    "before": "void OpenCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageType_ADDR, a);",
+    "after": "void OpenCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageType_ADDR, 0u);",
+    "case_ids": ["OpenCardPage-0", "OpenCardPage-1"],
+}
 # <<< factory-mutation OpenCardPage
 # >>> factory-mutation OpenCardPage.input_loop
-MUTATIONS["OpenCardPage.input_loop"] = {"source_symbol": "OpenCardPage_input_loop", "before": "\t\tif ((hKeysPressed & (PAD_START | PAD_A)) != 0u) {", "after": "\t\tif ((hKeysPressed & PAD_START) != 0u) {", "case_ids": ["OpenCardPage.input_loop-2"]}
+MUTATIONS["OpenCardPage.input_loop"] = {
+    "source_symbol": "OpenCardPage_input_loop",
+    "before": "\t\tif ((hKeysPressed & (PAD_START | PAD_A)) != 0u) {",
+    "after": "\t\tif ((hKeysPressed & PAD_START) != 0u) {",
+    "case_ids": ["OpenCardPage.input_loop-2"],
+}
 # <<< factory-mutation OpenCardPage.input_loop
 # >>> factory-mutation DisplayCardDetailScreen
 MUTATIONS["DisplayCardDetailScreen"] = {
- "source_symbol": "DisplayCardDetailScreen",
- "before": "\t * what reaches the screen routine. */\n\t(void)LoadCardDataToBuffer1_FromDeckIndex(a);",
- "after": "\t * what reaches the screen routine. */\n\t(void)LoadCardDataToBuffer1_FromDeckIndex((uint8_t)(a + 1u));",
- "case_ids": ["DisplayCardDetailScreen-0", "DisplayCardDetailScreen-1"],
+    "source_symbol": "DisplayCardDetailScreen",
+    "before": "\t * what reaches the screen routine. */\n\t(void)LoadCardDataToBuffer1_FromDeckIndex(a);",
+    "after": "\t * what reaches the screen routine. */\n\t(void)LoadCardDataToBuffer1_FromDeckIndex((uint8_t)(a + 1u));",
+    "case_ids": ["DisplayCardDetailScreen-0", "DisplayCardDetailScreen-1"],
 }
 # <<< factory-mutation DisplayCardDetailScreen
 # >>> factory-mutation OpenCardPage_FromHand
-MUTATIONS["OpenCardPage_FromHand"] = {"source_symbol": "OpenCardPage_FromHand", "before": "void OpenCardPage_FromHand(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, PAD_B);", "after": "void OpenCardPage_FromHand(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, 0u);", "case_ids": ["OpenCardPage_FromHand-0", "OpenCardPage_FromHand-1"]}
+MUTATIONS["OpenCardPage_FromHand"] = {
+    "source_symbol": "OpenCardPage_FromHand",
+    "before": "void OpenCardPage_FromHand(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, PAD_B);",
+    "after": "void OpenCardPage_FromHand(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, 0u);",
+    "case_ids": ["OpenCardPage_FromHand-0", "OpenCardPage_FromHand-1"],
+}
 # <<< factory-mutation OpenCardPage_FromHand
 # >>> factory-mutation OpenCardPage_FromCheckPlayArea
-MUTATIONS["OpenCardPage_FromCheckPlayArea"] = {"source_symbol": "OpenCardPage_FromCheckPlayArea", "before": "void OpenCardPage_FromCheckPlayArea(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, PAD_B);", "after": "void OpenCardPage_FromCheckPlayArea(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, 0u);", "case_ids": ["OpenCardPage_FromCheckPlayArea-0", "OpenCardPage_FromCheckPlayArea-1"]}
+MUTATIONS["OpenCardPage_FromCheckPlayArea"] = {
+    "source_symbol": "OpenCardPage_FromCheckPlayArea",
+    "before": "void OpenCardPage_FromCheckPlayArea(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, PAD_B);",
+    "after": "void OpenCardPage_FromCheckPlayArea(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, 0u);",
+    "case_ids": [
+        "OpenCardPage_FromCheckPlayArea-0",
+        "OpenCardPage_FromCheckPlayArea-1",
+    ],
+}
 # <<< factory-mutation OpenCardPage_FromCheckPlayArea
 # >>> factory-mutation DisplayUsedTrainerCardDetailScreen
 MUTATIONS["DisplayUsedTrainerCardDetailScreen"] = {
- "source_symbol": "DisplayUsedTrainerCardDetailScreen",
- "before": "WaitResult DisplayUsedTrainerCardDetailScreen(void)\n{\n\treturn DisplayCardDetailScreen(hTempCardIndex_ff9f, UsedText);",
- "after": "WaitResult DisplayUsedTrainerCardDetailScreen(void)\n{\n\treturn DisplayCardDetailScreen((uint8_t)(hTempCardIndex_ff9f + 1u), UsedText);",
- "case_ids": ["DisplayUsedTrainerCardDetailScreen-0", "DisplayUsedTrainerCardDetailScreen-1"],
+    "source_symbol": "DisplayUsedTrainerCardDetailScreen",
+    "before": "WaitResult DisplayUsedTrainerCardDetailScreen(void)\n{\n\treturn DisplayCardDetailScreen(hTempCardIndex_ff9f, UsedText);",
+    "after": "WaitResult DisplayUsedTrainerCardDetailScreen(void)\n{\n\treturn DisplayCardDetailScreen((uint8_t)(hTempCardIndex_ff9f + 1u), UsedText);",
+    "case_ids": [
+        "DisplayUsedTrainerCardDetailScreen-0",
+        "DisplayUsedTrainerCardDetailScreen-1",
+    ],
 }
 # <<< factory-mutation DisplayUsedTrainerCardDetailScreen
 # >>> factory-mutation DisplayNoBasicPokemonInHandScreenAndText
-MUTATIONS["DisplayNoBasicPokemonInHandScreenAndText"] = {"source_symbol": "DisplayNoBasicPokemonInHandScreenAndText", "before": "DisplayNoBasicPokemonInHandScreenAndTextResult DisplayNoBasicPokemonInHandScreenAndText(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ThereAreNoBasicPokemonInHand);\n\tDisplayNoBasicPokemonInHandScreen();\n\tPrintReturnCardsToDeckDrawAgainResult result = PrintReturnCardsToDeckDrawAgain();\n\treturn (DisplayNoBasicPokemonInHandScreenAndTextResult){result.a, result.b, result.c, result.f, result.hl, result.de};\n}", "after": "DisplayNoBasicPokemonInHandScreenAndTextResult DisplayNoBasicPokemonInHandScreenAndText(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ThereAreNoBasicPokemonInHand);\n\tDisplayNoBasicPokemonInHandScreen();\n\tPrintReturnCardsToDeckDrawAgainResult result = PrintReturnCardsToDeckDrawAgain();\n\treturn (DisplayNoBasicPokemonInHandScreenAndTextResult){0u};\n}", "case_ids": ["DisplayNoBasicPokemonInHandScreenAndText-0", "DisplayNoBasicPokemonInHandScreenAndText-1"]}
+MUTATIONS["DisplayNoBasicPokemonInHandScreenAndText"] = {
+    "source_symbol": "DisplayNoBasicPokemonInHandScreenAndText",
+    "before": "DisplayNoBasicPokemonInHandScreenAndTextResult DisplayNoBasicPokemonInHandScreenAndText(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ThereAreNoBasicPokemonInHand);\n\tDisplayNoBasicPokemonInHandScreen();\n\tPrintReturnCardsToDeckDrawAgainResult result = PrintReturnCardsToDeckDrawAgain();\n\treturn (DisplayNoBasicPokemonInHandScreenAndTextResult){result.a, result.b, result.c, result.f, result.hl, result.de};\n}",
+    "after": "DisplayNoBasicPokemonInHandScreenAndTextResult DisplayNoBasicPokemonInHandScreenAndText(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ThereAreNoBasicPokemonInHand);\n\tDisplayNoBasicPokemonInHandScreen();\n\tPrintReturnCardsToDeckDrawAgainResult result = PrintReturnCardsToDeckDrawAgain();\n\treturn (DisplayNoBasicPokemonInHandScreenAndTextResult){0u};\n}",
+    "case_ids": [
+        "DisplayNoBasicPokemonInHandScreenAndText-0",
+        "DisplayNoBasicPokemonInHandScreenAndText-1",
+    ],
+}
 # <<< factory-mutation DisplayNoBasicPokemonInHandScreenAndText
 # >>> factory-mutation OpenCardPage_FromCheckHandOrDiscardPile
-MUTATIONS["OpenCardPage_FromCheckHandOrDiscardPile"] = {"source_symbol": "OpenCardPage_FromCheckHandOrDiscardPile", "before": "void OpenCardPage_FromCheckHandOrDiscardPile(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, (uint8_t)(PAD_B | PAD_UP | PAD_DOWN));", "after": "void OpenCardPage_FromCheckHandOrDiscardPile(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, 0u);", "case_ids": ["OpenCardPage_FromCheckHandOrDiscardPile-0", "OpenCardPage_FromCheckHandOrDiscardPile-1"]}
+MUTATIONS["OpenCardPage_FromCheckHandOrDiscardPile"] = {
+    "source_symbol": "OpenCardPage_FromCheckHandOrDiscardPile",
+    "before": "void OpenCardPage_FromCheckHandOrDiscardPile(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, (uint8_t)(PAD_B | PAD_UP | PAD_DOWN));",
+    "after": "void OpenCardPage_FromCheckHandOrDiscardPile(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, 0u);",
+    "case_ids": [
+        "OpenCardPage_FromCheckHandOrDiscardPile-0",
+        "OpenCardPage_FromCheckHandOrDiscardPile-1",
+    ],
+}
 # <<< factory-mutation OpenCardPage_FromCheckHandOrDiscardPile
 # >>> factory-mutation CardListItemSelectionMenu
-MUTATIONS["CardListItemSelectionMenu"] = {"source_symbol": "CardListItemSelectionMenu", "before": "\t\treturn (CardListItemSelectionMenuResult){0u, 0x80u};", "after": "\t\treturn (CardListItemSelectionMenuResult){1u, 0x80u};", "case_ids": ["CardListItemSelectionMenu-0", "CardListItemSelectionMenu-1"]}
+MUTATIONS["CardListItemSelectionMenu"] = {
+    "source_symbol": "CardListItemSelectionMenu",
+    "before": "\t\treturn (CardListItemSelectionMenuResult){0u, 0x80u};",
+    "after": "\t\treturn (CardListItemSelectionMenuResult){1u, 0x80u};",
+    "case_ids": ["CardListItemSelectionMenu-0", "CardListItemSelectionMenu-1"],
+}
 # <<< factory-mutation CardListItemSelectionMenu
 # >>> factory-mutation DisplayPlayerDrawCardScreen
-MUTATIONS["DisplayPlayerDrawCardScreen"] = {"source_symbol": "DisplayPlayerDrawCardScreen", "before": "WaitResult DisplayPlayerDrawCardScreen(void)\n{\n\treturn DisplayCardDetailScreen(hTempCardIndex_ff98, YouDrewText);", "after": "WaitResult DisplayPlayerDrawCardScreen(void)\n{\n\treturn DisplayCardDetailScreen((uint8_t)(hTempCardIndex_ff98 + 1u), YouDrewText);", "case_ids": ["DisplayPlayerDrawCardScreen-0", "DisplayPlayerDrawCardScreen-1"]}
+MUTATIONS["DisplayPlayerDrawCardScreen"] = {
+    "source_symbol": "DisplayPlayerDrawCardScreen",
+    "before": "WaitResult DisplayPlayerDrawCardScreen(void)\n{\n\treturn DisplayCardDetailScreen(hTempCardIndex_ff98, YouDrewText);",
+    "after": "WaitResult DisplayPlayerDrawCardScreen(void)\n{\n\treturn DisplayCardDetailScreen((uint8_t)(hTempCardIndex_ff98 + 1u), YouDrewText);",
+    "case_ids": ["DisplayPlayerDrawCardScreen-0", "DisplayPlayerDrawCardScreen-1"],
+}
 # <<< factory-mutation DisplayPlayerDrawCardScreen
 # >>> factory-mutation OppAction_PlayTrainerCard
-MUTATIONS["OppAction_PlayTrainerCard"] = {"source_symbol": "OppAction_PlayTrainerCard", "before": "void OppAction_PlayTrainerCard(void)\n{\n\t(void)LoadNonPokemonCardEffectCommands();\n\t(void)DisplayUsedTrainerCardDetailScreen();\n\tPrintUsedTrainerCardDescription();\n\t(void)ExchangeRNG(0u, 0u, 0u, 0u);\n\tgb_write8(wSkipDuelistIsThinkingDelay_ADDR, 1u);", "after": "void OppAction_PlayTrainerCard(void)\n{\n\t(void)LoadNonPokemonCardEffectCommands();\n\t(void)DisplayUsedTrainerCardDetailScreen();\n\tPrintUsedTrainerCardDescription();\n\t(void)ExchangeRNG(0u, 0u, 0u, 0u);\n\tgb_write8(wSkipDuelistIsThinkingDelay_ADDR, 0u);", "case_ids": ["OppAction_PlayTrainerCard-0", "OppAction_PlayTrainerCard-1"]}
+MUTATIONS["OppAction_PlayTrainerCard"] = {
+    "source_symbol": "OppAction_PlayTrainerCard",
+    "before": "void OppAction_PlayTrainerCard(void)\n{\n\t(void)LoadNonPokemonCardEffectCommands();\n\t(void)DisplayUsedTrainerCardDetailScreen();\n\tPrintUsedTrainerCardDescription();\n\t(void)ExchangeRNG(0u, 0u, 0u, 0u);\n\tgb_write8(wSkipDuelistIsThinkingDelay_ADDR, 1u);",
+    "after": "void OppAction_PlayTrainerCard(void)\n{\n\t(void)LoadNonPokemonCardEffectCommands();\n\t(void)DisplayUsedTrainerCardDetailScreen();\n\tPrintUsedTrainerCardDescription();\n\t(void)ExchangeRNG(0u, 0u, 0u, 0u);\n\tgb_write8(wSkipDuelistIsThinkingDelay_ADDR, 0u);",
+    "case_ids": ["OppAction_PlayTrainerCard-0", "OppAction_PlayTrainerCard-1"],
+}
 # <<< factory-mutation OppAction_PlayTrainerCard
 # >>> factory-mutation OpenActivePokemonScreen
-MUTATIONS["OpenActivePokemonScreen"] = {"source_symbol": "OpenActivePokemonScreen", "before": "void OpenActivePokemonScreen(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tif (arena.a == 0xFFu)\n\t\treturn;\n\tuint16_t card_id = GetCardIDFromDeckIndex(arena.a);\n\tLoadCardDataToBuffer1_FromCardID((uint8_t)card_id);\n\twCurPlayAreaSlot = 0u;", "after": "void OpenActivePokemonScreen(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tif (arena.a == 0xFFu)\n\t\treturn;\n\tuint16_t card_id = GetCardIDFromDeckIndex(arena.a);\n\tLoadCardDataToBuffer1_FromCardID((uint8_t)card_id);\n\twCurPlayAreaSlot = 1u;", "case_ids": ["OpenActivePokemonScreen-1", "OpenActivePokemonScreen-2"]}
+MUTATIONS["OpenActivePokemonScreen"] = {
+    "source_symbol": "OpenActivePokemonScreen",
+    "before": "void OpenActivePokemonScreen(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tif (arena.a == 0xFFu)\n\t\treturn;\n\tuint16_t card_id = GetCardIDFromDeckIndex(arena.a);\n\tLoadCardDataToBuffer1_FromCardID((uint8_t)card_id);\n\twCurPlayAreaSlot = 0u;",
+    "after": "void OpenActivePokemonScreen(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tif (arena.a == 0xFFu)\n\t\treturn;\n\tuint16_t card_id = GetCardIDFromDeckIndex(arena.a);\n\tLoadCardDataToBuffer1_FromCardID((uint8_t)card_id);\n\twCurPlayAreaSlot = 1u;",
+    "case_ids": ["OpenActivePokemonScreen-1", "OpenActivePokemonScreen-2"],
+}
 # <<< factory-mutation OpenActivePokemonScreen
 # >>> factory-mutation DisplayPlayAreaScreenToUsePkmnPower
-MUTATIONS["DisplayPlayAreaScreenToUsePkmnPower"] = {"source_symbol": "DisplayPlayAreaScreenToUsePkmnPower", "before": "\tgb_write8(wSelectedDuelSubMenuItem_ADDR, 0u);", "after": "\tgb_write8(wSelectedDuelSubMenuItem_ADDR, 1u);", "case_ids": ["DisplayPlayAreaScreenToUsePkmnPower-0", "DisplayPlayAreaScreenToUsePkmnPower-1"]}
+MUTATIONS["DisplayPlayAreaScreenToUsePkmnPower"] = {
+    "source_symbol": "DisplayPlayAreaScreenToUsePkmnPower",
+    "before": "\tgb_write8(wSelectedDuelSubMenuItem_ADDR, 0u);",
+    "after": "\tgb_write8(wSelectedDuelSubMenuItem_ADDR, 1u);",
+    "case_ids": [
+        "DisplayPlayAreaScreenToUsePkmnPower-0",
+        "DisplayPlayAreaScreenToUsePkmnPower-1",
+    ],
+}
 # <<< factory-mutation DisplayPlayAreaScreenToUsePkmnPower
 # >>> factory-mutation DisplayCardPage_PokemonOverview
 MUTATIONS["DisplayCardPage_PokemonOverview"] = {
     "source_symbol": "DisplayCardPage_PokemonOverview",
     "before": "if (page_type != CARDPAGETYPE_NOT_PLAY_AREA) {",
     "after": "if (page_type == CARDPAGETYPE_NOT_PLAY_AREA) {",
-    "case_ids": ["DisplayCardPage_PokemonOverview-0", "DisplayCardPage_PokemonOverview-1"],
+    "case_ids": [
+        "DisplayCardPage_PokemonOverview-0",
+        "DisplayCardPage_PokemonOverview-1",
+    ],
 }
 # <<< factory-mutation DisplayCardPage_PokemonOverview
 # >>> factory-mutation DisplayEnergyOrTrainerCardPage
-MUTATIONS["DisplayEnergyOrTrainerCardPage"] = {"source_symbol": "DisplayEnergyOrTrainerCardPage", "before": "\tDrawRegularTextBox(&box_hl, 0u, 20u, 18u, 0u, 0u);", "after": "\tDrawRegularTextBox(&box_hl, 0u, 20u, 17u, 0u, 0u);", "case_ids": ["DisplayEnergyOrTrainerCardPage-0"]}
+MUTATIONS["DisplayEnergyOrTrainerCardPage"] = {
+    "source_symbol": "DisplayEnergyOrTrainerCardPage",
+    "before": "\tDrawRegularTextBox(&box_hl, 0u, 20u, 18u, 0u, 0u);",
+    "after": "\tDrawRegularTextBox(&box_hl, 0u, 20u, 17u, 0u, 0u);",
+    "case_ids": ["DisplayEnergyOrTrainerCardPage-0"],
+}
 # <<< factory-mutation DisplayEnergyOrTrainerCardPage
 # >>> factory-mutation DisplayCardPage_Energy
-MUTATIONS["DisplayCardPage_Energy"] = {"source_symbol": "DisplayCardPage_Energy", "before": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_ENERGY, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);", "after": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);", "case_ids": ["DisplayCardPage_Energy-0"]}
+MUTATIONS["DisplayCardPage_Energy"] = {
+    "source_symbol": "DisplayCardPage_Energy",
+    "before": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_ENERGY, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);",
+    "after": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);",
+    "case_ids": ["DisplayCardPage_Energy-0"],
+}
 # <<< factory-mutation DisplayCardPage_Energy
 # >>> factory-mutation DisplayCardPage_TrainerPage2
-MUTATIONS["DisplayCardPage_TrainerPage2"] = {"source_symbol": "DisplayCardPage_TrainerPage2", "before": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR + 2u);", "after": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, 0u);", "case_ids": ["DisplayCardPage_TrainerPage2-0", "DisplayCardPage_TrainerPage2-1"]}
+MUTATIONS["DisplayCardPage_TrainerPage2"] = {
+    "source_symbol": "DisplayCardPage_TrainerPage2",
+    "before": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR + 2u);",
+    "after": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, 0u);",
+    "case_ids": ["DisplayCardPage_TrainerPage2-0", "DisplayCardPage_TrainerPage2-1"],
+}
 # <<< factory-mutation DisplayCardPage_TrainerPage2
 # >>> factory-mutation DisplayCardPage_TrainerPage1
-MUTATIONS["DisplayCardPage_TrainerPage1"] = {"source_symbol": "DisplayCardPage_TrainerPage1", "before": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);\n\treturn result;\n}\n/* <<< factory DisplayCardPage_TrainerPage1", "after": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_ENERGY, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);\n\treturn result;\n}\n/* <<< factory DisplayCardPage_TrainerPage1", "case_ids": ["DisplayCardPage_TrainerPage1-0"]}
+MUTATIONS["DisplayCardPage_TrainerPage1"] = {
+    "source_symbol": "DisplayCardPage_TrainerPage1",
+    "before": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);\n\treturn result;\n}\n/* <<< factory DisplayCardPage_TrainerPage1",
+    "after": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_ENERGY, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);\n\treturn result;\n}\n/* <<< factory DisplayCardPage_TrainerPage1",
+    "case_ids": ["DisplayCardPage_TrainerPage1-0"],
+}
 # <<< factory-mutation DisplayCardPage_TrainerPage1
 # >>> factory-mutation PrintPracticeDuelInstructionsForCurrentTurn
 MUTATIONS["PrintPracticeDuelInstructionsForCurrentTurn"] = {
     "source_symbol": "PrintPracticeDuelInstructionsForCurrentTurn",
     "before": "\tif (a != 0u) {\n\t\tPrintPracticeDuelInstructions_Fast(hl);",
     "after": "\tif (a == 0u) {\n\t\tPrintPracticeDuelInstructions_Fast(hl);",
-    "case_ids": ["PrintPracticeDuelInstructionsForCurrentTurn-0",
-                 "PrintPracticeDuelInstructionsForCurrentTurn-1",
-                 "PrintPracticeDuelInstructionsForCurrentTurn-2",
-                 "PrintPracticeDuelInstructionsForCurrentTurn-3"],
+    "case_ids": [
+        "PrintPracticeDuelInstructionsForCurrentTurn-0",
+        "PrintPracticeDuelInstructionsForCurrentTurn-1",
+        "PrintPracticeDuelInstructionsForCurrentTurn-2",
+        "PrintPracticeDuelInstructionsForCurrentTurn-3",
+    ],
 }
 # <<< factory-mutation PrintPracticeDuelInstructionsForCurrentTurn
 # >>> factory-mutation PracticeDuel_PrintTurnInstructions
-MUTATIONS["PracticeDuel_PrintTurnInstructions"] = {"source_symbol": "PracticeDuel_PrintTurnInstructions", "before": "\tif (turns != previous_turn) {", "after": "\tif (turns == previous_turn) {", "case_ids": ["PracticeDuel_PrintTurnInstructions-0", "PracticeDuel_PrintTurnInstructions-2"]}
+MUTATIONS["PracticeDuel_PrintTurnInstructions"] = {
+    "source_symbol": "PracticeDuel_PrintTurnInstructions",
+    "before": "\tif (turns != previous_turn) {",
+    "after": "\tif (turns == previous_turn) {",
+    "case_ids": [
+        "PracticeDuel_PrintTurnInstructions-0",
+        "PracticeDuel_PrintTurnInstructions-2",
+    ],
+}
 # <<< factory-mutation PracticeDuel_PrintTurnInstructions
 # >>> factory-mutation Func_5a81
-MUTATIONS["Func_5a81"] = {"source_symbol": "Func_5a81", "before": "\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 1u), 2u);", "after": "\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 1u), 1u);", "case_ids": ["Func_5a81-1"]}
+MUTATIONS["Func_5a81"] = {
+    "source_symbol": "Func_5a81",
+    "before": "\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 1u), 2u);",
+    "after": "\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 1u), 1u);",
+    "case_ids": ["Func_5a81-1"],
+}
 # <<< factory-mutation Func_5a81
 # >>> factory-mutation _TossCoin
 MUTATIONS["_TossCoin"] = {
@@ -7253,90 +15058,266 @@ MUTATIONS["AttemptRetreat"] = {
 }
 # <<< factory-mutation AttemptRetreat
 # >>> factory-mutation OppAction_BeginUseAttack
-MUTATIONS["OppAction_BeginUseAttack"] = {'source_symbol': 'OppAction_BeginUseAttack', 'before': '\td = hTempCardIndex_ff9f;\n\te = hTemp_ffa0;\n\tAttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(d, e);', 'after': '\td = hTempCardIndex_ff9f;\n\te = hTemp_ffa0;\n\tAttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(e, d);', 'case_ids': ['OppAction_BeginUseAttack-2']}
+MUTATIONS["OppAction_BeginUseAttack"] = {
+    "source_symbol": "OppAction_BeginUseAttack",
+    "before": "\td = hTempCardIndex_ff9f;\n\te = hTemp_ffa0;\n\tAttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(d, e);",
+    "after": "\td = hTempCardIndex_ff9f;\n\te = hTemp_ffa0;\n\tAttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(e, d);",
+    "case_ids": ["OppAction_BeginUseAttack-2"],
+}
 # <<< factory-mutation OppAction_BeginUseAttack
 # >>> factory-mutation OppAction_TossCoinATimes
-MUTATIONS["OppAction_TossCoinATimes"] = {"source_symbol": "OppAction_TossCoinATimes", "before": "OppAction_TossCoinATimesResult OppAction_TossCoinATimes(void)\n{\n\tSerialRecv8BytesResult recv = SerialRecv8Bytes();\n\tTossCoinATimesResult toss = TossCoinATimes(recv.a, recv.f, recv.b, recv.c, recv.d, recv.e, recv.hl);\n\twSkipDuelistIsThinkingDelay = 1u;", "after": "OppAction_TossCoinATimesResult OppAction_TossCoinATimes(void)\n{\n\tSerialRecv8BytesResult recv = SerialRecv8Bytes();\n\tTossCoinATimesResult toss = TossCoinATimes(recv.a, recv.f, recv.b, recv.c, recv.d, recv.e, recv.hl);\n\twSkipDuelistIsThinkingDelay = 0u;", "case_ids": ["OppAction_TossCoinATimes-0", "OppAction_TossCoinATimes-1"]}
+MUTATIONS["OppAction_TossCoinATimes"] = {
+    "source_symbol": "OppAction_TossCoinATimes",
+    "before": "OppAction_TossCoinATimesResult OppAction_TossCoinATimes(void)\n{\n\tSerialRecv8BytesResult recv = SerialRecv8Bytes();\n\tTossCoinATimesResult toss = TossCoinATimes(recv.a, recv.f, recv.b, recv.c, recv.d, recv.e, recv.hl);\n\twSkipDuelistIsThinkingDelay = 1u;",
+    "after": "OppAction_TossCoinATimesResult OppAction_TossCoinATimes(void)\n{\n\tSerialRecv8BytesResult recv = SerialRecv8Bytes();\n\tTossCoinATimesResult toss = TossCoinATimes(recv.a, recv.f, recv.b, recv.c, recv.d, recv.e, recv.hl);\n\twSkipDuelistIsThinkingDelay = 0u;",
+    "case_ids": ["OppAction_TossCoinATimes-0", "OppAction_TossCoinATimes-1"],
+}
 # <<< factory-mutation OppAction_TossCoinATimes
 # >>> factory-mutation OppAction_AttemptRetreat
-MUTATIONS["OppAction_AttemptRetreat"] = {"source_symbol": "OppAction_AttemptRetreat", "before": "WaitResult OppAction_AttemptRetreat(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tAttemptRetreatResult retreat = AttemptRetreat();", "after": "WaitResult OppAction_AttemptRetreat(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tAttemptRetreatResult retreat = (AttemptRetreatResult){1u, 0x10u};", "case_ids": ["OppAction_AttemptRetreat-0", "OppAction_AttemptRetreat-1"]}
+MUTATIONS["OppAction_AttemptRetreat"] = {
+    "source_symbol": "OppAction_AttemptRetreat",
+    "before": "WaitResult OppAction_AttemptRetreat(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tAttemptRetreatResult retreat = AttemptRetreat();",
+    "after": "WaitResult OppAction_AttemptRetreat(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tAttemptRetreatResult retreat = (AttemptRetreatResult){1u, 0x10u};",
+    "case_ids": ["OppAction_AttemptRetreat-0", "OppAction_AttemptRetreat-1"],
+}
 # <<< factory-mutation OppAction_AttemptRetreat
 # >>> factory-mutation PlayAttackAnimation
-MUTATIONS["PlayAttackAnimation"] = {"source_symbol": "PlayAttackAnimation", "before": "void PlayAttackAnimation(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t saved_h_whose_turn = hWhoseTurn;\n\thWhoseTurn = wWhoseTurn;\n\tgb_write8(wDamageAnimEffectiveness_ADDR, c);", "after": "void PlayAttackAnimation(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t saved_h_whose_turn = hWhoseTurn;\n\thWhoseTurn = wWhoseTurn;\n\tgb_write8(wDamageAnimEffectiveness_ADDR, (uint8_t)(c + 1u));", "case_ids": ["PlayAttackAnimation-0", "PlayAttackAnimation-1", "PlayAttackAnimation-2", "PlayAttackAnimation-3"]}
+MUTATIONS["PlayAttackAnimation"] = {
+    "source_symbol": "PlayAttackAnimation",
+    "before": "void PlayAttackAnimation(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t saved_h_whose_turn = hWhoseTurn;\n\thWhoseTurn = wWhoseTurn;\n\tgb_write8(wDamageAnimEffectiveness_ADDR, c);",
+    "after": "void PlayAttackAnimation(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t saved_h_whose_turn = hWhoseTurn;\n\thWhoseTurn = wWhoseTurn;\n\tgb_write8(wDamageAnimEffectiveness_ADDR, (uint8_t)(c + 1u));",
+    "case_ids": [
+        "PlayAttackAnimation-0",
+        "PlayAttackAnimation-1",
+        "PlayAttackAnimation-2",
+        "PlayAttackAnimation-3",
+    ],
+}
 # <<< factory-mutation PlayAttackAnimation
 # >>> factory-mutation PlayStatusConditionQueueAnimations
-MUTATIONS["PlayStatusConditionQueueAnimations"] = {"source_symbol": "PlayStatusConditionQueueAnimations", "before": "\tgb_write8((uint16_t)(wStatusConditionQueue_ADDR + index), 0u);", "after": "\tgb_write8((uint16_t)(wStatusConditionQueue_ADDR + index), 1u);", "case_ids": ["PlayStatusConditionQueueAnimations-1"]}
+MUTATIONS["PlayStatusConditionQueueAnimations"] = {
+    "source_symbol": "PlayStatusConditionQueueAnimations",
+    "before": "\tgb_write8((uint16_t)(wStatusConditionQueue_ADDR + index), 0u);",
+    "after": "\tgb_write8((uint16_t)(wStatusConditionQueue_ADDR + index), 1u);",
+    "case_ids": ["PlayStatusConditionQueueAnimations-1"],
+}
 # <<< factory-mutation PlayStatusConditionQueueAnimations
 # >>> factory-mutation PlayAttackAnimation_DealAttackDamageSimple
-MUTATIONS["PlayAttackAnimation_DealAttackDamageSimple"] = {"source_symbol": "PlayAttackAnimation_DealAttackDamageSimple", "before": "\tuint16_t damage = (uint16_t)(((uint16_t)d << 8) | e);", "after": "\tuint16_t damage = 0u;", "case_ids": ["PlayAttackAnimation_DealAttackDamageSimple-0", "PlayAttackAnimation_DealAttackDamageSimple-1", "PlayAttackAnimation_DealAttackDamageSimple-2"]}
+MUTATIONS["PlayAttackAnimation_DealAttackDamageSimple"] = {
+    "source_symbol": "PlayAttackAnimation_DealAttackDamageSimple",
+    "before": "\tuint16_t damage = (uint16_t)(((uint16_t)d << 8) | e);",
+    "after": "\tuint16_t damage = 0u;",
+    "case_ids": [
+        "PlayAttackAnimation_DealAttackDamageSimple-0",
+        "PlayAttackAnimation_DealAttackDamageSimple-1",
+        "PlayAttackAnimation_DealAttackDamageSimple-2",
+    ],
+}
 # <<< factory-mutation PlayAttackAnimation_DealAttackDamageSimple
 # >>> factory-mutation DisplayOpponentUsedAttackScreen
-MUTATIONS["DisplayOpponentUsedAttackScreen"] = {"source_symbol": "DisplayOpponentUsedAttackScreen", "before": "void DisplayOpponentUsedAttackScreen(void)\n{\n\tZeroObjectPositionsAndToggleOAMCopy();\n\tEmptyScreen();\n\t(void)LoadDuelCardSymbolTiles();\n\t(void)LoadDuelFaceDownCardTiles();\n\tuint8_t cardid = wTempCardID_ccc2;\n\tLoadCardDataToBuffer1_FromCardID(cardid);\n\twCardPageNumber = CARDPAGE_POKEMON_OVERVIEW;", "after": "void DisplayOpponentUsedAttackScreen(void)\n{\n\tZeroObjectPositionsAndToggleOAMCopy();\n\tEmptyScreen();\n\t(void)LoadDuelCardSymbolTiles();\n\t(void)LoadDuelFaceDownCardTiles();\n\tuint8_t cardid = wTempCardID_ccc2;\n\tLoadCardDataToBuffer1_FromCardID(cardid);\n\twCardPageNumber = 0x02u;", "case_ids": ["DisplayOpponentUsedAttackScreen-0", "DisplayOpponentUsedAttackScreen-1", "DisplayOpponentUsedAttackScreen-2"]}
+MUTATIONS["DisplayOpponentUsedAttackScreen"] = {
+    "source_symbol": "DisplayOpponentUsedAttackScreen",
+    "before": "void DisplayOpponentUsedAttackScreen(void)\n{\n\tZeroObjectPositionsAndToggleOAMCopy();\n\tEmptyScreen();\n\t(void)LoadDuelCardSymbolTiles();\n\t(void)LoadDuelFaceDownCardTiles();\n\tuint8_t cardid = wTempCardID_ccc2;\n\tLoadCardDataToBuffer1_FromCardID(cardid);\n\twCardPageNumber = CARDPAGE_POKEMON_OVERVIEW;",
+    "after": "void DisplayOpponentUsedAttackScreen(void)\n{\n\tZeroObjectPositionsAndToggleOAMCopy();\n\tEmptyScreen();\n\t(void)LoadDuelCardSymbolTiles();\n\t(void)LoadDuelFaceDownCardTiles();\n\tuint8_t cardid = wTempCardID_ccc2;\n\tLoadCardDataToBuffer1_FromCardID(cardid);\n\twCardPageNumber = 0x02u;",
+    "case_ids": [
+        "DisplayOpponentUsedAttackScreen-0",
+        "DisplayOpponentUsedAttackScreen-1",
+        "DisplayOpponentUsedAttackScreen-2",
+    ],
+}
 # <<< factory-mutation DisplayOpponentUsedAttackScreen
 # >>> factory-mutation DisplayCardList
-MUTATIONS["DisplayCardList"] = {"source_symbol": "DisplayCardList", "before": "\t\t\t\tif ((keys & PAD_B) != 0u) {\n\t\t\t\t\t/* .b_pressed: hCurMenuItem is the MENU_CANCEL that\n\t\t\t\t\t * CardListFunction wrote on its way out */\n\t\t\t\t\treturn (DisplayCardListResult){hCurMenuItem, FLAG_C};", "after": "\t\t\t\tif ((keys & PAD_B) != 0u) {\n\t\t\t\t\t/* .b_pressed: hCurMenuItem is the MENU_CANCEL that\n\t\t\t\t\t * CardListFunction wrote on its way out */\n\t\t\t\t\treturn (DisplayCardListResult){0u, FLAG_C};", "case_ids": ["DisplayCardList-0", "DisplayCardList-1"]}
+MUTATIONS["DisplayCardList"] = {
+    "source_symbol": "DisplayCardList",
+    "before": "\t\t\t\tif ((keys & PAD_B) != 0u) {\n\t\t\t\t\t/* .b_pressed: hCurMenuItem is the MENU_CANCEL that\n\t\t\t\t\t * CardListFunction wrote on its way out */\n\t\t\t\t\treturn (DisplayCardListResult){hCurMenuItem, FLAG_C};",
+    "after": "\t\t\t\tif ((keys & PAD_B) != 0u) {\n\t\t\t\t\t/* .b_pressed: hCurMenuItem is the MENU_CANCEL that\n\t\t\t\t\t * CardListFunction wrote on its way out */\n\t\t\t\t\treturn (DisplayCardListResult){0u, FLAG_C};",
+    "case_ids": ["DisplayCardList-0", "DisplayCardList-1"],
+}
 # <<< factory-mutation DisplayCardList
 # >>> factory-mutation Func_5542
-MUTATIONS["Func_5542"] = {"source_symbol": "Func_5542", "before": "Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl)\n{\n\tCardListResult discard = CreateDiscardPileCardList(c);", "after": "Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl)\n{\n\tCardListResult discard = CreateDiscardPileCardList((uint8_t)(c + 1u));", "case_ids": ["Func_5542-0", "Func_5542-1"]}
+MUTATIONS["Func_5542"] = {
+    "source_symbol": "Func_5542",
+    "before": "Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl)\n{\n\tCardListResult discard = CreateDiscardPileCardList(c);",
+    "after": "Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl)\n{\n\tCardListResult discard = CreateDiscardPileCardList((uint8_t)(c + 1u));",
+    "case_ids": ["Func_5542-0", "Func_5542-1"],
+}
 # <<< factory-mutation Func_5542
 # >>> factory-mutation CheckIfCanDamageDefendingPokemon
-MUTATIONS["CheckIfCanDamageDefendingPokemon"] = {'source_symbol': 'CheckIfCanDamageDefendingPokemon', 'before': '\tf = (a == 0u) ? 0x80u : 0x00u;\n\treturn (CheckIfCanDamageDefendingPokemonResult){a, f, d, e};', 'after': '\tf = (a == 0u) ? 0x00u : 0x80u;\n\treturn (CheckIfCanDamageDefendingPokemonResult){a, f, d, e};', 'case_ids': ['CheckIfCanDamageDefendingPokemon-0']}
+MUTATIONS["CheckIfCanDamageDefendingPokemon"] = {
+    "source_symbol": "CheckIfCanDamageDefendingPokemon",
+    "before": "\tf = (a == 0u) ? 0x80u : 0x00u;\n\treturn (CheckIfCanDamageDefendingPokemonResult){a, f, d, e};",
+    "after": "\tf = (a == 0u) ? 0x00u : 0x80u;\n\treturn (CheckIfCanDamageDefendingPokemonResult){a, f, d, e};",
+    "case_ids": ["CheckIfCanDamageDefendingPokemon-0"],
+}
 # <<< factory-mutation CheckIfCanDamageDefendingPokemon
 # >>> factory-mutation OpenDiscardPileScreen
-MUTATIONS["OpenDiscardPileScreen"] = {"source_symbol": "OpenDiscardPileScreen", "before": "\tSetDiscardPileScreenTexts();\n\twNoItemSelectionMenuKeys = 0x09u;", "after": "\tSetDiscardPileScreenTexts();\n\twNoItemSelectionMenuKeys = 0x00u;", "case_ids": ["OpenDiscardPileScreen-1"]}
+MUTATIONS["OpenDiscardPileScreen"] = {
+    "source_symbol": "OpenDiscardPileScreen",
+    "before": "\tSetDiscardPileScreenTexts();\n\twNoItemSelectionMenuKeys = 0x09u;",
+    "after": "\tSetDiscardPileScreenTexts();\n\twNoItemSelectionMenuKeys = 0x00u;",
+    "case_ids": ["OpenDiscardPileScreen-1"],
+}
 # <<< factory-mutation OpenDiscardPileScreen
 # >>> factory-mutation OpenTurnHolderHandScreen_Simple
-MUTATIONS["OpenTurnHolderHandScreen_Simple"] = {"source_symbol": "OpenTurnHolderHandScreen_Simple", "before": "\t(void)InitAndDrawCardListScreenLayout();\n\twNoItemSelectionMenuKeys = (uint8_t)(PAD_START + PAD_A);", "after": "\t(void)InitAndDrawCardListScreenLayout();\n\twNoItemSelectionMenuKeys = 0x00u;", "case_ids": ["OpenTurnHolderHandScreen_Simple-1", "OpenTurnHolderHandScreen_Simple-2"]}
+MUTATIONS["OpenTurnHolderHandScreen_Simple"] = {
+    "source_symbol": "OpenTurnHolderHandScreen_Simple",
+    "before": "\t(void)InitAndDrawCardListScreenLayout();\n\twNoItemSelectionMenuKeys = (uint8_t)(PAD_START + PAD_A);",
+    "after": "\t(void)InitAndDrawCardListScreenLayout();\n\twNoItemSelectionMenuKeys = 0x00u;",
+    "case_ids": [
+        "OpenTurnHolderHandScreen_Simple-1",
+        "OpenTurnHolderHandScreen_Simple-2",
+    ],
+}
 # <<< factory-mutation OpenTurnHolderHandScreen_Simple
 # >>> factory-mutation OpenTurnHolderDiscardPileScreen
-MUTATIONS["OpenTurnHolderDiscardPileScreen"] = {"source_symbol": "OpenTurnHolderDiscardPileScreen", "before": "OpenDiscardPileScreenResult OpenTurnHolderDiscardPileScreen(uint8_t c)\n{\n\treturn OpenDiscardPileScreen(c);", "after": "OpenDiscardPileScreenResult OpenTurnHolderDiscardPileScreen(uint8_t c)\n{\n\treturn (OpenDiscardPileScreenResult){0u};", "case_ids": ["OpenTurnHolderDiscardPileScreen-0"]}
+MUTATIONS["OpenTurnHolderDiscardPileScreen"] = {
+    "source_symbol": "OpenTurnHolderDiscardPileScreen",
+    "before": "OpenDiscardPileScreenResult OpenTurnHolderDiscardPileScreen(uint8_t c)\n{\n\treturn OpenDiscardPileScreen(c);",
+    "after": "OpenDiscardPileScreenResult OpenTurnHolderDiscardPileScreen(uint8_t c)\n{\n\treturn (OpenDiscardPileScreenResult){0u};",
+    "case_ids": ["OpenTurnHolderDiscardPileScreen-0"],
+}
 # <<< factory-mutation OpenTurnHolderDiscardPileScreen
 # >>> factory-mutation OpenNonTurnHolderHandScreen_Simple
-MUTATIONS["OpenNonTurnHolderHandScreen_Simple"] = {"source_symbol": "OpenNonTurnHolderHandScreen_Simple", "before": "uint8_t OpenNonTurnHolderHandScreen_Simple(void)\n{\n\tSwapTurn();\n\tuint8_t result = OpenTurnHolderHandScreen_Simple();\n\tSwapTurn();\n\treturn result;", "after": "uint8_t OpenNonTurnHolderHandScreen_Simple(void)\n{\n\treturn 0u;", "case_ids": ["OpenNonTurnHolderHandScreen_Simple-1"]}
+MUTATIONS["OpenNonTurnHolderHandScreen_Simple"] = {
+    "source_symbol": "OpenNonTurnHolderHandScreen_Simple",
+    "before": "uint8_t OpenNonTurnHolderHandScreen_Simple(void)\n{\n\tSwapTurn();\n\tuint8_t result = OpenTurnHolderHandScreen_Simple();\n\tSwapTurn();\n\treturn result;",
+    "after": "uint8_t OpenNonTurnHolderHandScreen_Simple(void)\n{\n\treturn 0u;",
+    "case_ids": ["OpenNonTurnHolderHandScreen_Simple-1"],
+}
 # <<< factory-mutation OpenNonTurnHolderHandScreen_Simple
 # >>> factory-mutation OpenNonTurnHolderDiscardPileScreen
-MUTATIONS["OpenNonTurnHolderDiscardPileScreen"] = {"source_symbol": "OpenNonTurnHolderDiscardPileScreen", "before": "OpenDiscardPileScreenResult OpenNonTurnHolderDiscardPileScreen(uint8_t c)\n{\n\tSwapTurn();\n\tOpenDiscardPileScreenResult result = OpenDiscardPileScreen(c);\n\tSwapTurn();\n\treturn result;", "after": "OpenDiscardPileScreenResult OpenNonTurnHolderDiscardPileScreen(uint8_t c)\n{\n\treturn (OpenDiscardPileScreenResult){0u};", "case_ids": ["OpenNonTurnHolderDiscardPileScreen-0"]}
+MUTATIONS["OpenNonTurnHolderDiscardPileScreen"] = {
+    "source_symbol": "OpenNonTurnHolderDiscardPileScreen",
+    "before": "OpenDiscardPileScreenResult OpenNonTurnHolderDiscardPileScreen(uint8_t c)\n{\n\tSwapTurn();\n\tOpenDiscardPileScreenResult result = OpenDiscardPileScreen(c);\n\tSwapTurn();\n\treturn result;",
+    "after": "OpenDiscardPileScreenResult OpenNonTurnHolderDiscardPileScreen(uint8_t c)\n{\n\treturn (OpenDiscardPileScreenResult){0u};",
+    "case_ids": ["OpenNonTurnHolderDiscardPileScreen-0"],
+}
 # <<< factory-mutation OpenNonTurnHolderDiscardPileScreen
 # >>> factory-mutation CanArenaCardUseNonResidualAttack
-MUTATIONS["CanArenaCardUseNonResidualAttack"] = {"source_symbol": "CanArenaCardUseNonResidualAttack", "before": "\thTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;", "after": "\thTempPlayAreaLocation_ff9d = 0x01u;", "case_ids": ["CanArenaCardUseNonResidualAttack-0", "CanArenaCardUseNonResidualAttack-1"]}
+MUTATIONS["CanArenaCardUseNonResidualAttack"] = {
+    "source_symbol": "CanArenaCardUseNonResidualAttack",
+    "before": "\thTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;",
+    "after": "\thTempPlayAreaLocation_ff9d = 0x01u;",
+    "case_ids": [
+        "CanArenaCardUseNonResidualAttack-0",
+        "CanArenaCardUseNonResidualAttack-1",
+    ],
+}
 # <<< factory-mutation CanArenaCardUseNonResidualAttack
 # >>> factory-mutation DisplayPlaceInitialPokemonCardsScreen
-MUTATIONS["DisplayPlaceInitialPokemonCardsScreen"] = {"source_symbol": "DisplayPlaceInitialPokemonCardsScreen", "before": "DisplayPlaceInitialPokemonCardsScreenResult DisplayPlaceInitialPokemonCardsScreen(uint8_t a, uint16_t hl)\n{\n\twPlacingInitialBenchPokemon = a;\n\t(void)CreateHandCardList(a);\n\t(void)InitAndDrawCardListScreenLayout();\n\tSetCardListInfoBoxText(hl);", "after": "DisplayPlaceInitialPokemonCardsScreenResult DisplayPlaceInitialPokemonCardsScreen(uint8_t a, uint16_t hl)\n{\n\twPlacingInitialBenchPokemon = a;\n\t(void)CreateHandCardList(a);\n\t(void)InitAndDrawCardListScreenLayout();\n\tSetCardListInfoBoxText(PlayCheck1Text);", "case_ids": ["DisplayPlaceInitialPokemonCardsScreen-0", "DisplayPlaceInitialPokemonCardsScreen-1", "DisplayPlaceInitialPokemonCardsScreen-2"]}
+MUTATIONS["DisplayPlaceInitialPokemonCardsScreen"] = {
+    "source_symbol": "DisplayPlaceInitialPokemonCardsScreen",
+    "before": "DisplayPlaceInitialPokemonCardsScreenResult DisplayPlaceInitialPokemonCardsScreen(uint8_t a, uint16_t hl)\n{\n\twPlacingInitialBenchPokemon = a;\n\t(void)CreateHandCardList(a);\n\t(void)InitAndDrawCardListScreenLayout();\n\tSetCardListInfoBoxText(hl);",
+    "after": "DisplayPlaceInitialPokemonCardsScreenResult DisplayPlaceInitialPokemonCardsScreen(uint8_t a, uint16_t hl)\n{\n\twPlacingInitialBenchPokemon = a;\n\t(void)CreateHandCardList(a);\n\t(void)InitAndDrawCardListScreenLayout();\n\tSetCardListInfoBoxText(PlayCheck1Text);",
+    "case_ids": [
+        "DisplayPlaceInitialPokemonCardsScreen-0",
+        "DisplayPlaceInitialPokemonCardsScreen-1",
+        "DisplayPlaceInitialPokemonCardsScreen-2",
+    ],
+}
 # <<< factory-mutation DisplayPlaceInitialPokemonCardsScreen
 # >>> factory-mutation PrintDeckAndHandIconsAndNumberOfCards
-MUTATIONS["PrintDeckAndHandIconsAndNumberOfCards"] = {'source_symbol': 'PrintDeckAndHandIconsAndNumberOfCards', 'before': '\t\tdata = DECK_AND_HAND_ICONS_CGB_PAL_DATA;', 'after': '\t\tdata = DECK_AND_HAND_ICONS_TILE_DATA;', 'case_ids': ['PrintDeckAndHandIconsAndNumberOfCards-1']}
+MUTATIONS["PrintDeckAndHandIconsAndNumberOfCards"] = {
+    "source_symbol": "PrintDeckAndHandIconsAndNumberOfCards",
+    "before": "\t\tdata = DECK_AND_HAND_ICONS_CGB_PAL_DATA;",
+    "after": "\t\tdata = DECK_AND_HAND_ICONS_TILE_DATA;",
+    "case_ids": ["PrintDeckAndHandIconsAndNumberOfCards-1"],
+}
 # <<< factory-mutation PrintDeckAndHandIconsAndNumberOfCards
 # >>> factory-mutation CheckDamageToMrMime
-MUTATIONS["CheckDamageToMrMime"] = {"source_symbol": "CheckDamageToMrMime", "before": "\tif (card_id != MR_MIME)\n\t\treturn (CheckDamageToMrMimeResult){card_id, 0x10u};", "after": "\tif (card_id != MR_MIME)\n\t\treturn (CheckDamageToMrMimeResult){card_id, 0x00u};", "case_ids": ["CheckDamageToMrMime-0", "CheckDamageToMrMime-1"]}
+MUTATIONS["CheckDamageToMrMime"] = {
+    "source_symbol": "CheckDamageToMrMime",
+    "before": "\tif (card_id != MR_MIME)\n\t\treturn (CheckDamageToMrMimeResult){card_id, 0x10u};",
+    "after": "\tif (card_id != MR_MIME)\n\t\treturn (CheckDamageToMrMimeResult){card_id, 0x00u};",
+    "case_ids": ["CheckDamageToMrMime-0", "CheckDamageToMrMime-1"],
+}
 # <<< factory-mutation CheckDamageToMrMime
 # >>> factory-mutation DisplayDrawNCardsScreen
-MUTATIONS["DisplayDrawNCardsScreen"] = {"source_symbol": "DisplayDrawNCardsScreen", "before": "\twNumCardsTryingToDraw = a;", "after": "\twNumCardsTryingToDraw = (uint8_t)(a + 1u);", "case_ids": ["DisplayDrawNCardsScreen-0", "DisplayDrawNCardsScreen-1", "DisplayDrawNCardsScreen-2"]}
+MUTATIONS["DisplayDrawNCardsScreen"] = {
+    "source_symbol": "DisplayDrawNCardsScreen",
+    "before": "\twNumCardsTryingToDraw = a;",
+    "after": "\twNumCardsTryingToDraw = (uint8_t)(a + 1u);",
+    "case_ids": [
+        "DisplayDrawNCardsScreen-0",
+        "DisplayDrawNCardsScreen-1",
+        "DisplayDrawNCardsScreen-2",
+    ],
+}
 # <<< factory-mutation DisplayDrawNCardsScreen
 # >>> factory-mutation PlayShuffleAndDrawCardsAnimation
-MUTATIONS["PlayShuffleAndDrawCardsAnimation"] = {"source_symbol": "PlayShuffleAndDrawCardsAnimation", "before": "\t(void)LoadDuelDrawCardsScreenTiles();\n\twDuelDisplayedScreen = SHUFFLE_DECK;", "after": "\t(void)LoadDuelDrawCardsScreenTiles();\n\twDuelDisplayedScreen = 0u;", "case_ids": ["PlayShuffleAndDrawCardsAnimation-0", "PlayShuffleAndDrawCardsAnimation-1"]}
+MUTATIONS["PlayShuffleAndDrawCardsAnimation"] = {
+    "source_symbol": "PlayShuffleAndDrawCardsAnimation",
+    "before": "\t(void)LoadDuelDrawCardsScreenTiles();\n\twDuelDisplayedScreen = SHUFFLE_DECK;",
+    "after": "\t(void)LoadDuelDrawCardsScreenTiles();\n\twDuelDisplayedScreen = 0u;",
+    "case_ids": [
+        "PlayShuffleAndDrawCardsAnimation-0",
+        "PlayShuffleAndDrawCardsAnimation-1",
+    ],
+}
 # <<< factory-mutation PlayShuffleAndDrawCardsAnimation
 # >>> factory-mutation DisplayDrawOneCardScreen
-MUTATIONS["DisplayDrawOneCardScreen"] = {"source_symbol": "DisplayDrawOneCardScreen", "before": "void DisplayDrawOneCardScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 1u;", "after": "void DisplayDrawOneCardScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 2u;", "case_ids": ["DisplayDrawOneCardScreen-0", "DisplayDrawOneCardScreen-1", "DisplayDrawOneCardScreen-3"]}
+MUTATIONS["DisplayDrawOneCardScreen"] = {
+    "source_symbol": "DisplayDrawOneCardScreen",
+    "before": "void DisplayDrawOneCardScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 1u;",
+    "after": "void DisplayDrawOneCardScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 2u;",
+    "case_ids": [
+        "DisplayDrawOneCardScreen-0",
+        "DisplayDrawOneCardScreen-1",
+        "DisplayDrawOneCardScreen-3",
+    ],
+}
 # <<< factory-mutation DisplayDrawOneCardScreen
 # >>> factory-mutation PlayShuffleAndDrawCardsAnimation_TurnDuelist
-MUTATIONS["PlayShuffleAndDrawCardsAnimation_TurnDuelist"] = {"source_symbol": "PlayShuffleAndDrawCardsAnimation_TurnDuelist", "before": "\tPlayShuffleAndDrawCardsAnimation(shuffle, draw, (uint8_t)(Drew7CardsText >> 8), (uint8_t)Drew7CardsText, ShufflesTheDeckText);", "after": "\treturn;", "case_ids": ["PlayShuffleAndDrawCardsAnimation_TurnDuelist-0", "PlayShuffleAndDrawCardsAnimation_TurnDuelist-1"]}
+MUTATIONS["PlayShuffleAndDrawCardsAnimation_TurnDuelist"] = {
+    "source_symbol": "PlayShuffleAndDrawCardsAnimation_TurnDuelist",
+    "before": "\tPlayShuffleAndDrawCardsAnimation(shuffle, draw, (uint8_t)(Drew7CardsText >> 8), (uint8_t)Drew7CardsText, ShufflesTheDeckText);",
+    "after": "\treturn;",
+    "case_ids": [
+        "PlayShuffleAndDrawCardsAnimation_TurnDuelist-0",
+        "PlayShuffleAndDrawCardsAnimation_TurnDuelist-1",
+    ],
+}
 # <<< factory-mutation PlayShuffleAndDrawCardsAnimation_TurnDuelist
 # >>> factory-mutation OppAction_ExecuteTrainerCardEffectCommands
 MUTATIONS["OppAction_ExecuteTrainerCardEffectCommands"] = {
     "source_symbol": "OppAction_ExecuteTrainerCardEffectCommands",
     "before": "\tuint8_t card_index = hTempCardIndex_ff9f;",
     "after": "\tuint8_t card_index = (uint8_t)(hTempCardIndex_ff9f + 1u);",
-    "case_ids": ["OppAction_ExecuteTrainerCardEffectCommands-0", "OppAction_ExecuteTrainerCardEffectCommands-1"],
+    "case_ids": [
+        "OppAction_ExecuteTrainerCardEffectCommands-0",
+        "OppAction_ExecuteTrainerCardEffectCommands-1",
+    ],
 }
 # <<< factory-mutation OppAction_ExecuteTrainerCardEffectCommands
 # >>> factory-mutation OppAction_UseMetronomeAttack
-MUTATIONS["OppAction_UseMetronomeAttack"] = {"source_symbol": "OppAction_UseMetronomeAttack", "before": "\twMetronomeEnergyCost = serial.c;", "after": "\twMetronomeEnergyCost = 0u;", "case_ids": ["OppAction_UseMetronomeAttack-0", "OppAction_UseMetronomeAttack-1"]}
+MUTATIONS["OppAction_UseMetronomeAttack"] = {
+    "source_symbol": "OppAction_UseMetronomeAttack",
+    "before": "\twMetronomeEnergyCost = serial.c;",
+    "after": "\twMetronomeEnergyCost = 0u;",
+    "case_ids": ["OppAction_UseMetronomeAttack-0", "OppAction_UseMetronomeAttack-1"],
+}
 # <<< factory-mutation OppAction_UseMetronomeAttack
 # >>> factory-mutation LookForEnergyNeededForAttackInHand
-MUTATIONS["LookForEnergyNeededForAttackInHand"] = {"source_symbol": "LookForEnergyNeededForAttackInHand", "before": "\tCheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();\n\tuint8_t d = energy.d;\n\tuint8_t total = (uint8_t)(energy.b + energy.c);", "after": "\tCheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();\n\tuint8_t d = energy.d;\n\tuint8_t total = 0xFFu;", "case_ids": ["LookForEnergyNeededForAttackInHand-0", "LookForEnergyNeededForAttackInHand-1"]}
+MUTATIONS["LookForEnergyNeededForAttackInHand"] = {
+    "source_symbol": "LookForEnergyNeededForAttackInHand",
+    "before": "\tCheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();\n\tuint8_t d = energy.d;\n\tuint8_t total = (uint8_t)(energy.b + energy.c);",
+    "after": "\tCheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();\n\tuint8_t d = energy.d;\n\tuint8_t total = 0xFFu;",
+    "case_ids": [
+        "LookForEnergyNeededForAttackInHand-0",
+        "LookForEnergyNeededForAttackInHand-1",
+    ],
+}
 # <<< factory-mutation LookForEnergyNeededForAttackInHand
 # >>> factory-mutation PlayShuffleAndDrawCardsAnimation_BothDuelists
-MUTATIONS["PlayShuffleAndDrawCardsAnimation_BothDuelists"] = {"source_symbol": "PlayShuffleAndDrawCardsAnimation_BothDuelists", "before": "PlayShuffleAndDrawCardsAnimation_BothDuelistsResult PlayShuffleAndDrawCardsAnimation_BothDuelists(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tb = DUEL_ANIM_BOTH_SHUFFLE;", "after": "PlayShuffleAndDrawCardsAnimation_BothDuelistsResult PlayShuffleAndDrawCardsAnimation_BothDuelists(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tb = 0x54u;", "case_ids": ["PlayShuffleAndDrawCardsAnimation_BothDuelists-0", "PlayShuffleAndDrawCardsAnimation_BothDuelists-1"]}
+MUTATIONS["PlayShuffleAndDrawCardsAnimation_BothDuelists"] = {
+    "source_symbol": "PlayShuffleAndDrawCardsAnimation_BothDuelists",
+    "before": "PlayShuffleAndDrawCardsAnimation_BothDuelistsResult PlayShuffleAndDrawCardsAnimation_BothDuelists(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tb = DUEL_ANIM_BOTH_SHUFFLE;",
+    "after": "PlayShuffleAndDrawCardsAnimation_BothDuelistsResult PlayShuffleAndDrawCardsAnimation_BothDuelists(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tb = 0x54u;",
+    "case_ids": [
+        "PlayShuffleAndDrawCardsAnimation_BothDuelists-0",
+        "PlayShuffleAndDrawCardsAnimation_BothDuelists-1",
+    ],
+}
 # <<< factory-mutation PlayShuffleAndDrawCardsAnimation_BothDuelists
 # >>> factory-mutation CheckIfDefendingPokemonCanKnockOut
 MUTATIONS["CheckIfDefendingPokemonCanKnockOut"] = {
@@ -7347,33 +15328,79 @@ MUTATIONS["CheckIfDefendingPokemonCanKnockOut"] = {
 }
 # <<< factory-mutation CheckIfDefendingPokemonCanKnockOut
 # >>> factory-mutation CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP
-MUTATIONS["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP"] = {"source_symbol": "CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP", "before": "\tif (difference == 0u)\n\t\treturn (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, 0x90u, d};\n\tif ((flags & 0x10u) != 0u)", "after": "\tif (difference == 0u)\n\t\treturn (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, 0x80u, d};\n\tif ((flags & 0x10u) != 0u)", "case_ids": ["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP-0", "CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP-3"]}
+MUTATIONS["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP"] = {
+    "source_symbol": "CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP",
+    "before": "\tif (difference == 0u)\n\t\treturn (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, 0x90u, d};\n\tif ((flags & 0x10u) != 0u)",
+    "after": "\tif (difference == 0u)\n\t\treturn (CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult){difference, 0x80u, d};\n\tif ((flags & 0x10u) != 0u)",
+    "case_ids": [
+        "CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP-0",
+        "CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP-3",
+    ],
+}
 # <<< factory-mutation CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP
 # >>> factory-mutation CheckIfAnyAttackKnocksOutDefendingCard
-MUTATIONS["CheckIfAnyAttackKnocksOutDefendingCard"] = {'source_symbol': 'CheckIfAnyAttackKnocksOutDefendingCard', 'before': '\tDuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tuint8_t damage = wDamage;\n\tuint8_t difference = (uint8_t)(hp.a - damage);\n\t/* `sub [hl]` always sets N', 'after': '\tDuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tuint8_t damage = (uint8_t)(wDamage + 1u);\n\tuint8_t difference = (uint8_t)(hp.a - damage);\n\t/* `sub [hl]` always sets N', 'case_ids': ['CheckIfAnyAttackKnocksOutDefendingCard-0', 'CheckIfAnyAttackKnocksOutDefendingCard-1', 'CheckIfAnyAttackKnocksOutDefendingCard-2', 'CheckIfAnyAttackKnocksOutDefendingCard-3']}
+MUTATIONS["CheckIfAnyAttackKnocksOutDefendingCard"] = {
+    "source_symbol": "CheckIfAnyAttackKnocksOutDefendingCard",
+    "before": "\tDuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tuint8_t damage = wDamage;\n\tuint8_t difference = (uint8_t)(hp.a - damage);\n\t/* `sub [hl]` always sets N",
+    "after": "\tDuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tuint8_t damage = (uint8_t)(wDamage + 1u);\n\tuint8_t difference = (uint8_t)(hp.a - damage);\n\t/* `sub [hl]` always sets N",
+    "case_ids": [
+        "CheckIfAnyAttackKnocksOutDefendingCard-0",
+        "CheckIfAnyAttackKnocksOutDefendingCard-1",
+        "CheckIfAnyAttackKnocksOutDefendingCard-2",
+        "CheckIfAnyAttackKnocksOutDefendingCard-3",
+    ],
+}
 # <<< factory-mutation CheckIfAnyAttackKnocksOutDefendingCard
 # >>> factory-mutation CheckIfActiveCardCanKnockOut
 MUTATIONS["CheckIfActiveCardCanKnockOut"] = {
     "source_symbol": "CheckIfActiveCardCanKnockOut",
     "before": "CheckIfActiveCardCanKnockOutResult CheckIfActiveCardCanKnockOut(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\thTempPlayAreaLocation_ff9d = 0u;\n\tCheckIfAnyAttackKnocksOutDefendingCardResult any =",
     "after": "CheckIfActiveCardCanKnockOutResult CheckIfActiveCardCanKnockOut(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\thTempPlayAreaLocation_ff9d = 1u;\n\tCheckIfAnyAttackKnocksOutDefendingCardResult any =",
-    "case_ids": ["CheckIfActiveCardCanKnockOut-0", "CheckIfActiveCardCanKnockOut-1"]
+    "case_ids": ["CheckIfActiveCardCanKnockOut-0", "CheckIfActiveCardCanKnockOut-1"],
 }
 # <<< factory-mutation CheckIfActiveCardCanKnockOut
 # >>> factory-mutation AISelectSpecialAttackParameters
-MUTATIONS["AISelectSpecialAttackParameters"] = {"source_symbol": "AISelectSpecialAttackParameters", "before": "\t\tflags = last_a == 0u ? 0x80u : 0x00u;", "after": "\t\tflags = selected_attack == 0u ? 0x80u : 0x00u;", "case_ids": ["AISelectSpecialAttackParameters-3"]}
+MUTATIONS["AISelectSpecialAttackParameters"] = {
+    "source_symbol": "AISelectSpecialAttackParameters",
+    "before": "\t\tflags = last_a == 0u ? 0x80u : 0x00u;",
+    "after": "\t\tflags = selected_attack == 0u ? 0x80u : 0x00u;",
+    "case_ids": ["AISelectSpecialAttackParameters-3"],
+}
 # <<< factory-mutation AISelectSpecialAttackParameters
 # >>> factory-mutation OppAction_EvolvePokemonCard
-MUTATIONS["OppAction_EvolvePokemonCard"] = {"source_symbol": "OppAction_EvolvePokemonCard", "before": "void OppAction_EvolvePokemonCard(void)\n{\n\tuint8_t play_area = hTempPlayAreaLocation_ffa1;", "after": "void OppAction_EvolvePokemonCard(void)\n{\n\tuint8_t play_area = 0u;", "case_ids": ["OppAction_EvolvePokemonCard-0", "OppAction_EvolvePokemonCard-1"]}
+MUTATIONS["OppAction_EvolvePokemonCard"] = {
+    "source_symbol": "OppAction_EvolvePokemonCard",
+    "before": "void OppAction_EvolvePokemonCard(void)\n{\n\tuint8_t play_area = hTempPlayAreaLocation_ffa1;",
+    "after": "void OppAction_EvolvePokemonCard(void)\n{\n\tuint8_t play_area = 0u;",
+    "case_ids": ["OppAction_EvolvePokemonCard-0", "OppAction_EvolvePokemonCard-1"],
+}
 # <<< factory-mutation OppAction_EvolvePokemonCard
 # >>> factory-mutation OppAction_PlayBasicPokemonCard
-MUTATIONS["OppAction_PlayBasicPokemonCard"] = {"source_symbol": "OppAction_PlayBasicPokemonCard", "before": "void OppAction_PlayBasicPokemonCard(void)\n{\n\tuint8_t index = hTemp_ffa0;", "after": "void OppAction_PlayBasicPokemonCard(void)\n{\n\tuint8_t index = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["OppAction_PlayBasicPokemonCard-0", "OppAction_PlayBasicPokemonCard-1"]}
+MUTATIONS["OppAction_PlayBasicPokemonCard"] = {
+    "source_symbol": "OppAction_PlayBasicPokemonCard",
+    "before": "void OppAction_PlayBasicPokemonCard(void)\n{\n\tuint8_t index = hTemp_ffa0;",
+    "after": "void OppAction_PlayBasicPokemonCard(void)\n{\n\tuint8_t index = (uint8_t)(hTemp_ffa0 + 1u);",
+    "case_ids": [
+        "OppAction_PlayBasicPokemonCard-0",
+        "OppAction_PlayBasicPokemonCard-1",
+    ],
+}
 # <<< factory-mutation OppAction_PlayBasicPokemonCard
 # >>> factory-mutation OppAction_PlayEnergyCard
-MUTATIONS["OppAction_PlayEnergyCard"] = {"source_symbol": "OppAction_PlayEnergyCard", "before": "void OppAction_PlayEnergyCard(void)\n{\n\tuint8_t location = hTempPlayAreaLocation_ffa1;", "after": "void OppAction_PlayEnergyCard(void)\n{\n\tuint8_t location = (uint8_t)(hTempPlayAreaLocation_ffa1 + 1u);", "case_ids": ["OppAction_PlayEnergyCard-0", "OppAction_PlayEnergyCard-1"]}
+MUTATIONS["OppAction_PlayEnergyCard"] = {
+    "source_symbol": "OppAction_PlayEnergyCard",
+    "before": "void OppAction_PlayEnergyCard(void)\n{\n\tuint8_t location = hTempPlayAreaLocation_ffa1;",
+    "after": "void OppAction_PlayEnergyCard(void)\n{\n\tuint8_t location = (uint8_t)(hTempPlayAreaLocation_ffa1 + 1u);",
+    "case_ids": ["OppAction_PlayEnergyCard-0", "OppAction_PlayEnergyCard-1"],
+}
 # <<< factory-mutation OppAction_PlayEnergyCard
 # >>> factory-mutation AITryUseAttack
-MUTATIONS["AITryUseAttack"] = {"source_symbol": "AITryUseAttack", "before": "\tuint8_t e = wSelectedAttack;\n\thTemp_ffa0 = e;", "after": "\tuint8_t e = wSelectedAttack;\n\thTemp_ffa0 = (uint8_t)(e + 1u);", "case_ids": ["AITryUseAttack-0", "AITryUseAttack-1"]}
+MUTATIONS["AITryUseAttack"] = {
+    "source_symbol": "AITryUseAttack",
+    "before": "\tuint8_t e = wSelectedAttack;\n\thTemp_ffa0 = e;",
+    "after": "\tuint8_t e = wSelectedAttack;\n\thTemp_ffa0 = (uint8_t)(e + 1u);",
+    "case_ids": ["AITryUseAttack-0", "AITryUseAttack-1"],
+}
 # <<< factory-mutation AITryUseAttack
 
 # >>> factory-mutation PrintPokemonCardWeight
@@ -7381,7 +15408,11 @@ MUTATIONS["PrintPokemonCardWeight"] = {
     "source_symbol": "PrintPokemonCardWeight",
     "before": "\tdestination = BCCoordToBGMap0Address(entry_b, entry_c);\n\tout_c = entry_b;",
     "after": "\tdestination = BCCoordToBGMap0Address(entry_b, entry_c);\n\tout_c = entry_c;",
-    "case_ids": ["PrintPokemonCardWeight-0", "PrintPokemonCardWeight-1", "PrintPokemonCardWeight-2"],
+    "case_ids": [
+        "PrintPokemonCardWeight-0",
+        "PrintPokemonCardWeight-1",
+        "PrintPokemonCardWeight-2",
+    ],
 }
 # <<< factory-mutation PrintPokemonCardWeight
 # >>> factory-mutation DisplayCardPage_PokemonDescription
@@ -7389,7 +15420,10 @@ MUTATIONS["DisplayCardPage_PokemonDescription"] = {
     "source_symbol": "DisplayCardPage_PokemonDescription",
     "before": "\tcard_length = (uint16_t)(((uint16_t)gb_read8(wLoadedCard1Length_ADDR) << 8)\n\t\t| (uint16_t)gb_read8((uint16_t)(wLoadedCard1Length_ADDR + 1u)));",
     "after": "\tcard_length = (uint16_t)(((uint16_t)gb_read8((uint16_t)(wLoadedCard1Length_ADDR + 1u)) << 8)\n\t\t| (uint16_t)gb_read8(wLoadedCard1Length_ADDR));",
-    "case_ids": ["DisplayCardPage_PokemonDescription-0", "DisplayCardPage_PokemonDescription-1"],
+    "case_ids": [
+        "DisplayCardPage_PokemonDescription-0",
+        "DisplayCardPage_PokemonDescription-1",
+    ],
 }
 # <<< factory-mutation DisplayCardPage_PokemonDescription
 # >>> factory-mutation RequestToPrintCards_SelectStartCard
@@ -7397,7 +15431,10 @@ MUTATIONS["RequestToPrintCards_SelectStartCard"] = {
     "source_symbol": "RequestToPrintCards_SelectStartCard",
     "before": "\t\tif (b & (1u << B_PAD_DOWN))\n\t\t\ta = (uint8_t)(a - 10u);\n\t\twPrinterStartCardID = a;",
     "after": "\t\tif (b & (1u << B_PAD_DOWN))\n\t\t\ta = (uint8_t)(a - 11u);\n\t\twPrinterStartCardID = a;",
-    "case_ids": ["RequestToPrintCards_SelectStartCard-0", "RequestToPrintCards_SelectStartCard-1"],
+    "case_ids": [
+        "RequestToPrintCards_SelectStartCard-0",
+        "RequestToPrintCards_SelectStartCard-1",
+    ],
 }
 # <<< factory-mutation RequestToPrintCards_SelectStartCard
 # >>> factory-mutation PlayBetweenTurnsAnimation
@@ -7405,7 +15442,11 @@ MUTATIONS["PlayBetweenTurnsAnimation"] = {
     "source_symbol": "PlayBetweenTurnsAnimation",
     "before": "void PlayBetweenTurnsAnimation(uint8_t a)\n{\n\tif (wDuelType != 0u || wWhoseTurn == PLAYER_TURN) {",
     "after": "void PlayBetweenTurnsAnimation(uint8_t a)\n{\n\tif (wDuelType == 0u && wWhoseTurn != PLAYER_TURN) {",
-    "case_ids": ["PlayBetweenTurnsAnimation-0", "PlayBetweenTurnsAnimation-1", "PlayBetweenTurnsAnimation-2"],
+    "case_ids": [
+        "PlayBetweenTurnsAnimation-0",
+        "PlayBetweenTurnsAnimation-1",
+        "PlayBetweenTurnsAnimation-2",
+    ],
 }
 # <<< factory-mutation PlayBetweenTurnsAnimation
 # >>> factory-mutation HandleSleepCheck
@@ -7437,7 +15478,10 @@ MUTATIONS["PracticeDuel_DonePuttingOnBench"] = {
     "source_symbol": "PracticeDuel_DonePuttingOnBench",
     "before": "\twPracticeDuelTurn = 0xFFu;",
     "after": "\twPracticeDuelTurn = 0x00u;",
-    "case_ids": ["PracticeDuel_DonePuttingOnBench-0", "PracticeDuel_DonePuttingOnBench-1"],
+    "case_ids": [
+        "PracticeDuel_DonePuttingOnBench-0",
+        "PracticeDuel_DonePuttingOnBench-1",
+    ],
 }
 # <<< factory-mutation PracticeDuel_DonePuttingOnBench
 # >>> factory-mutation PracticeDuel_PutStaryuInBench
@@ -7445,14 +15489,24 @@ MUTATIONS["PracticeDuel_PutStaryuInBench"] = {
     "source_symbol": "PracticeDuel_PutStaryuInBench",
     "before": "void PracticeDuel_PutStaryuInBench(void)\n{\n\tDisplayPracticeDuelPlayerHandScreen();\n\tEnableLCD();\n\tPrintPracticeDuelDrMasonInstructions(PutPokemonOnBenchPracticeDuelText);\n}",
     "after": "void PracticeDuel_PutStaryuInBench(void)\n{\n\tDisplayPracticeDuelPlayerHandScreen();\n\tEnableLCD();\n\tPrintPracticeDuelDrMasonInstructions(PutPokemonOnBenchPracticeDuelText + 1u);\n}",
-    "case_ids": ["PracticeDuel_PutStaryuInBench-0", "PracticeDuel_PutStaryuInBench-1"]
+    "case_ids": ["PracticeDuel_PutStaryuInBench-0", "PracticeDuel_PutStaryuInBench-1"],
 }
 # <<< factory-mutation PracticeDuel_PutStaryuInBench
 # >>> factory-mutation ChooseInitialArenaAndBenchPokemon
-MUTATIONS["ChooseInitialArenaAndBenchPokemon"] = {"source_symbol": "ChooseInitialArenaAndBenchPokemon", "before": "ChooseInitialArenaAndBenchPokemonResult ChooseInitialArenaAndBenchPokemon(void)\n{\n\tDuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tuint8_t duelist_type = duelist.a;\n\tif (duelist_type != DUELIST_TYPE_PLAYER && duelist_type != DUELIST_TYPE_LINK_OPP) {\n\t\t(void)AIDoAction_StartDuel();\n\t\tgb_write8(duelist.hl, duelist_type);", "after": "ChooseInitialArenaAndBenchPokemonResult ChooseInitialArenaAndBenchPokemon(void)\n{\n\tDuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tuint8_t duelist_type = duelist.a;\n\tif (duelist_type != DUELIST_TYPE_PLAYER && duelist_type != DUELIST_TYPE_LINK_OPP) {\n\t\t(void)AIDoAction_StartDuel();\n\t\tgb_write8(duelist.hl, 0u);", "case_ids": ["ChooseInitialArenaAndBenchPokemon-0"]}
+MUTATIONS["ChooseInitialArenaAndBenchPokemon"] = {
+    "source_symbol": "ChooseInitialArenaAndBenchPokemon",
+    "before": "ChooseInitialArenaAndBenchPokemonResult ChooseInitialArenaAndBenchPokemon(void)\n{\n\tDuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tuint8_t duelist_type = duelist.a;\n\tif (duelist_type != DUELIST_TYPE_PLAYER && duelist_type != DUELIST_TYPE_LINK_OPP) {\n\t\t(void)AIDoAction_StartDuel();\n\t\tgb_write8(duelist.hl, duelist_type);",
+    "after": "ChooseInitialArenaAndBenchPokemonResult ChooseInitialArenaAndBenchPokemon(void)\n{\n\tDuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tuint8_t duelist_type = duelist.a;\n\tif (duelist_type != DUELIST_TYPE_PLAYER && duelist_type != DUELIST_TYPE_LINK_OPP) {\n\t\t(void)AIDoAction_StartDuel();\n\t\tgb_write8(duelist.hl, 0u);",
+    "case_ids": ["ChooseInitialArenaAndBenchPokemon-0"],
+}
 # <<< factory-mutation ChooseInitialArenaAndBenchPokemon
 # >>> factory-mutation TurnDuelistTakePrizes
-MUTATIONS["TurnDuelistTakePrizes"] = {"source_symbol": "TurnDuelistTakePrizes", "before": "\t\twTempNumRemainingPrizeCards = CountPrizes();", "after": "\t\twTempNumRemainingPrizeCards = (uint8_t)(CountPrizes() + 1u);", "case_ids": ["TurnDuelistTakePrizes-0"]}
+MUTATIONS["TurnDuelistTakePrizes"] = {
+    "source_symbol": "TurnDuelistTakePrizes",
+    "before": "\t\twTempNumRemainingPrizeCards = CountPrizes();",
+    "after": "\t\twTempNumRemainingPrizeCards = (uint8_t)(CountPrizes() + 1u);",
+    "case_ids": ["TurnDuelistTakePrizes-0"],
+}
 # <<< factory-mutation TurnDuelistTakePrizes
 # >>> factory-mutation Func_6fa5
 MUTATIONS["Func_6fa5"] = {
@@ -7463,19 +15517,33 @@ MUTATIONS["Func_6fa5"] = {
 }
 # <<< factory-mutation Func_6fa5
 # >>> factory-mutation Func_1cb5e
-MUTATIONS["Func_1cb5e"] = {"source_symbol": "Func_1cb5e", "before": "\tif (damage_high > 0x03u || (damage_high == 0x03u && damage_low >= 0xE8u)) {", "after": "\tif (damage_high < 0x03u || (damage_high == 0x03u && damage_low >= 0xE8u)) {", "case_ids": ["Func_1cb5e-0"]}
+MUTATIONS["Func_1cb5e"] = {
+    "source_symbol": "Func_1cb5e",
+    "before": "\tif (damage_high > 0x03u || (damage_high == 0x03u && damage_low >= 0xE8u)) {",
+    "after": "\tif (damage_high < 0x03u || (damage_high == 0x03u && damage_low >= 0xE8u)) {",
+    "case_ids": ["Func_1cb5e-0"],
+}
 # <<< factory-mutation Func_1cb5e
 # >>> factory HandleDuelSetup
 CONTRACT["HandleDuelSetup"] = {"compare": ("f",), "preserve": ()}
 HD_SETUP = START_DUEL_SETUP
 HD_WRAM = {**START_DUEL_WRAM, 0xCC08: b"\x06"}
 CASES["HandleDuelSetup"] = [
-    {"keys": [0x00, 0x01], "wram": dict(HD_WRAM), "setup": HD_SETUP,
-     "instruction_budget": DUEL_INSTRUCTION_BUDGET,
-     "cycle_budget": DUEL_CYCLE_BUDGET},
-    dict(POISON, keys=[0x00, 0x01], wram=dict(HD_WRAM), setup=HD_SETUP,
-         instruction_budget=DUEL_INSTRUCTION_BUDGET,
-         cycle_budget=DUEL_CYCLE_BUDGET),
+    {
+        "keys": [0x00, 0x01],
+        "wram": dict(HD_WRAM),
+        "setup": HD_SETUP,
+        "instruction_budget": DUEL_INSTRUCTION_BUDGET,
+        "cycle_budget": DUEL_CYCLE_BUDGET,
+    },
+    dict(
+        POISON,
+        keys=[0x00, 0x01],
+        wram=dict(HD_WRAM),
+        setup=HD_SETUP,
+        instruction_budget=DUEL_INSTRUCTION_BUDGET,
+        cycle_budget=DUEL_CYCLE_BUDGET,
+    ),
 ]
 # <<< factory HandleDuelSetup
 # >>> factory-mutation HandleDuelSetup
@@ -7489,78 +15557,152 @@ MUTATIONS["HandleDuelSetup"] = {
 # Keep schema-2 inventory after all factory-appended cases.
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation StartDuel
-MUTATIONS["StartDuel"] = {"source_symbol": "StartDuel", "before": "\twCurrentDuelMenuItem = 0u;", "after": "\twCurrentDuelMenuItem = 1u;", "case_ids": ["StartDuel-0", "StartDuel-1"]}
+MUTATIONS["StartDuel"] = {
+    "source_symbol": "StartDuel",
+    "before": "\twCurrentDuelMenuItem = 0u;",
+    "after": "\twCurrentDuelMenuItem = 1u;",
+    "case_ids": ["StartDuel-0", "StartDuel-1"],
+}
 # <<< factory-mutation StartDuel
 # >>> factory-completion StartDuel
 # MainDuelLoop no longer returns, so a `pre-ret` here stopped the reference
 # before the loop while the native lane ran into it. Both lanes stop at the
 # loop's first call instead.
 for _record in SCHEMA2_CASES["StartDuel"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x35E6, "bank": 0,
-                             "routine": "UpdateSubstatusConditions_StartOfTurn"}
+    _record["completion"] = {
+        "mode": "entry",
+        "pc": 0x35E6,
+        "bank": 0,
+        "routine": "UpdateSubstatusConditions_StartOfTurn",
+    }
 # <<< factory-completion StartDuel
 # >>> factory-mutation StartDuel_VSAIOpp
-MUTATIONS["StartDuel_VSAIOpp"] = {"source_symbol": "StartDuel_VSAIOpp", "before": "\twOpponentDeckID = wNPCDuelDeckID;", "after": "\twOpponentDeckID = 0u;", "case_ids": ["StartDuel_VSAIOpp-0", "StartDuel_VSAIOpp-1"]}
+MUTATIONS["StartDuel_VSAIOpp"] = {
+    "source_symbol": "StartDuel_VSAIOpp",
+    "before": "\twOpponentDeckID = wNPCDuelDeckID;",
+    "after": "\twOpponentDeckID = 0u;",
+    "case_ids": ["StartDuel_VSAIOpp-0", "StartDuel_VSAIOpp-1"],
+}
 # <<< factory-mutation StartDuel_VSAIOpp
 # >>> factory-completion StartDuel_VSAIOpp
 # 0x40CA is StartDuel itself: core.asm:42 tail-jumps there, so the recorded
 # address was the jump target and never a `ret` of this routine.
 for _record in SCHEMA2_CASES["StartDuel_VSAIOpp"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x40CA, "bank": 1,
-                             "routine": "StartDuel"}
+    _record["completion"] = {
+        "mode": "entry",
+        "pc": 0x40CA,
+        "bank": 1,
+        "routine": "StartDuel",
+    }
 # <<< factory-completion StartDuel_VSAIOpp
 # >>> factory-mutation StartDuel_VSLinkOpp
-MUTATIONS["StartDuel_VSLinkOpp"] = {"source_symbol": "StartDuel_VSLinkOpp", "before": "\tStartDuel();", "after": "\treturn;", "case_ids": ["StartDuel_VSLinkOpp-0", "StartDuel_VSLinkOpp-1"]}
+MUTATIONS["StartDuel_VSLinkOpp"] = {
+    "source_symbol": "StartDuel_VSLinkOpp",
+    "before": "\tStartDuel();",
+    "after": "\treturn;",
+    "case_ids": ["StartDuel_VSLinkOpp-0", "StartDuel_VSLinkOpp-1"],
+}
 # <<< factory-mutation StartDuel_VSLinkOpp
 # >>> factory-completion StartDuel_VSLinkOpp
 # MainDuelLoop no longer returns, so a `pre-ret` here stopped the reference
 # before the loop while the native lane ran into it. Both lanes stop at the
 # loop's first call instead.
 for _record in SCHEMA2_CASES["StartDuel_VSLinkOpp"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x35E6, "bank": 0,
-                             "routine": "UpdateSubstatusConditions_StartOfTurn"}
+    _record["completion"] = {
+        "mode": "entry",
+        "pc": 0x35E6,
+        "bank": 0,
+        "routine": "UpdateSubstatusConditions_StartOfTurn",
+    }
 # <<< factory-completion StartDuel_VSLinkOpp
 # >>> factory-mutation SetLinkDuelTransmissionFrameFunction
 MUTATIONS["SetLinkDuelTransmissionFrameFunction"] = {
     "source_symbol": "SetLinkDuelTransmissionFrameFunction",
     "before": "void SetLinkDuelTransmissionFrameFunction(void)\n{\n\tFinishQueuedAnimations();\n\twLinkOpponentTurnReturnAddress = 0xFCu;",
     "after": "void SetLinkDuelTransmissionFrameFunction(void)\n{\n\tFinishQueuedAnimations();\n\twLinkOpponentTurnReturnAddress = 0x00u;",
-    "case_ids": ["SetLinkDuelTransmissionFrameFunction-0", "SetLinkDuelTransmissionFrameFunction-1"]
+    "case_ids": [
+        "SetLinkDuelTransmissionFrameFunction-0",
+        "SetLinkDuelTransmissionFrameFunction-1",
+    ],
 }
 # <<< factory-mutation SetLinkDuelTransmissionFrameFunction
 # >>> factory-mutation OpenNonTurnHolderPlayAreaScreen
-MUTATIONS["OpenNonTurnHolderPlayAreaScreen"] = {"source_symbol": "OpenNonTurnHolderPlayAreaScreen", "before": "\tSwapTurn();\n\t(void)OpenTurnHolderPlayAreaScreen();\n\tSwapTurn();", "after": "\t(void)OpenTurnHolderPlayAreaScreen();", "case_ids": ["OpenNonTurnHolderPlayAreaScreen-0", "OpenNonTurnHolderPlayAreaScreen-1"]}
+MUTATIONS["OpenNonTurnHolderPlayAreaScreen"] = {
+    "source_symbol": "OpenNonTurnHolderPlayAreaScreen",
+    "before": "\tSwapTurn();\n\t(void)OpenTurnHolderPlayAreaScreen();\n\tSwapTurn();",
+    "after": "\t(void)OpenTurnHolderPlayAreaScreen();",
+    "case_ids": [
+        "OpenNonTurnHolderPlayAreaScreen-0",
+        "OpenNonTurnHolderPlayAreaScreen-1",
+    ],
+}
 # <<< factory-mutation OpenNonTurnHolderPlayAreaScreen
 # >>> factory-mutation OpenTurnHolderPlayAreaScreen
-MUTATIONS["OpenTurnHolderPlayAreaScreen"] = {"source_symbol": "OpenTurnHolderPlayAreaScreen", "before": "\tHasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();\n\tPlayAreaScreenResult r = OpenPlayAreaScreenForViewing();", "after": "\tHasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();\n\tPlayAreaScreenResult r = OpenPlayAreaScreenForSelection();", "case_ids": ["OpenTurnHolderPlayAreaScreen-0", "OpenTurnHolderPlayAreaScreen-1"]}
+MUTATIONS["OpenTurnHolderPlayAreaScreen"] = {
+    "source_symbol": "OpenTurnHolderPlayAreaScreen",
+    "before": "\tHasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();\n\tPlayAreaScreenResult r = OpenPlayAreaScreenForViewing();",
+    "after": "\tHasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();\n\tPlayAreaScreenResult r = OpenPlayAreaScreenForSelection();",
+    "case_ids": ["OpenTurnHolderPlayAreaScreen-0", "OpenTurnHolderPlayAreaScreen-1"],
+}
 # <<< factory-mutation OpenTurnHolderPlayAreaScreen
 # >>> factory-mutation OpenVariousPlayAreaScreens_FromSelectPresses
-MUTATIONS["OpenVariousPlayAreaScreens_FromSelectPresses"] = {"source_symbol": "OpenVariousPlayAreaScreens_FromSelectPresses", "before": "\treturn (hKeysPressed & PAD_B) != 0u ? 0x10u : 0xA0u;", "after": "\treturn (hKeysPressed & PAD_B) != 0u ? 0x10u : 0x20u;", "case_ids": ["OpenVariousPlayAreaScreens_FromSelectPresses-2"]}
+MUTATIONS["OpenVariousPlayAreaScreens_FromSelectPresses"] = {
+    "source_symbol": "OpenVariousPlayAreaScreens_FromSelectPresses",
+    "before": "\treturn (hKeysPressed & PAD_B) != 0u ? 0x10u : 0xA0u;",
+    "after": "\treturn (hKeysPressed & PAD_B) != 0u ? 0x10u : 0x20u;",
+    "case_ids": ["OpenVariousPlayAreaScreens_FromSelectPresses-2"],
+}
 # <<< factory-mutation OpenVariousPlayAreaScreens_FromSelectPresses
 # >>> factory-mutation OpenPlayAreaScreenForViewing
-MUTATIONS["OpenPlayAreaScreenForViewing"] = {"source_symbol": "OpenPlayAreaScreenForViewing", "before": "\treturn DisplayPlayAreaScreen(PAD_START | PAD_A);", "after": "\treturn DisplayPlayAreaScreen(PAD_START);", "case_ids": ["OpenPlayAreaScreenForViewing-0", "OpenPlayAreaScreenForViewing-1"]}
+MUTATIONS["OpenPlayAreaScreenForViewing"] = {
+    "source_symbol": "OpenPlayAreaScreenForViewing",
+    "before": "\treturn DisplayPlayAreaScreen(PAD_START | PAD_A);",
+    "after": "\treturn DisplayPlayAreaScreen(PAD_START);",
+    "case_ids": ["OpenPlayAreaScreenForViewing-0", "OpenPlayAreaScreenForViewing-1"],
+}
 # <<< factory-mutation OpenPlayAreaScreenForViewing
 # >>> factory-completion OpenPlayAreaScreenForViewing
 # The screen now runs its menu loop, which only exits on input, so a `pre-ret`
 # pc left the native lane running forever. Both lanes stop at the per-iteration
 # SelectingBenchPokemonMenu call, after the redraw and menu init.
 for _record in SCHEMA2_CASES["OpenPlayAreaScreenForViewing"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x60DD, "bank": 1,
-                             "routine": "SelectingBenchPokemonMenu"}
+    _record["completion"] = {
+        "mode": "entry",
+        "pc": 0x60DD,
+        "bank": 1,
+        "routine": "SelectingBenchPokemonMenu",
+    }
 # <<< factory-completion OpenPlayAreaScreenForViewing
 # >>> factory-mutation OpenPlayAreaScreenForSelection
-MUTATIONS["OpenPlayAreaScreenForSelection"] = {"source_symbol": "OpenPlayAreaScreenForSelection", "before": "\treturn DisplayPlayAreaScreen(PAD_START);", "after": "\treturn DisplayPlayAreaScreen(PAD_START | PAD_A);", "case_ids": ["OpenPlayAreaScreenForSelection-0", "OpenPlayAreaScreenForSelection-1"]}
+MUTATIONS["OpenPlayAreaScreenForSelection"] = {
+    "source_symbol": "OpenPlayAreaScreenForSelection",
+    "before": "\treturn DisplayPlayAreaScreen(PAD_START);",
+    "after": "\treturn DisplayPlayAreaScreen(PAD_START | PAD_A);",
+    "case_ids": [
+        "OpenPlayAreaScreenForSelection-0",
+        "OpenPlayAreaScreenForSelection-1",
+    ],
+}
 # <<< factory-mutation OpenPlayAreaScreenForSelection
 # >>> factory-completion OpenPlayAreaScreenForSelection
 # The screen now runs its menu loop, which only exits on input, so a `pre-ret`
 # pc left the native lane running forever. Both lanes stop at the per-iteration
 # SelectingBenchPokemonMenu call, after the redraw and menu init.
 for _record in SCHEMA2_CASES["OpenPlayAreaScreenForSelection"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x60DD, "bank": 1,
-                             "routine": "SelectingBenchPokemonMenu"}
+    _record["completion"] = {
+        "mode": "entry",
+        "pc": 0x60DD,
+        "bank": 1,
+        "routine": "SelectingBenchPokemonMenu",
+    }
 # <<< factory-completion OpenPlayAreaScreenForSelection
 # >>> factory-mutation DisplayPlayAreaScreen
-MUTATIONS["DisplayPlayAreaScreen"] = {"source_symbol": "DisplayPlayAreaScreen", "before": "\t\twCurPlayAreaSlot = (uint8_t)(wExcludeArenaPokemon + input.e);", "after": "\t\twCurPlayAreaSlot = (uint8_t)(wExcludeArenaPokemon + input.e + 1u);", "case_ids": ["DisplayPlayAreaScreen-0", "DisplayPlayAreaScreen-1"]}
+MUTATIONS["DisplayPlayAreaScreen"] = {
+    "source_symbol": "DisplayPlayAreaScreen",
+    "before": "\t\twCurPlayAreaSlot = (uint8_t)(wExcludeArenaPokemon + input.e);",
+    "after": "\t\twCurPlayAreaSlot = (uint8_t)(wExcludeArenaPokemon + input.e + 1u);",
+    "case_ids": ["DisplayPlayAreaScreen-0", "DisplayPlayAreaScreen-1"],
+}
 # <<< factory-mutation DisplayPlayAreaScreen
 # >>> factory-mutation SelectingBenchPokemonMenu
 MUTATIONS["SelectingBenchPokemonMenu"] = {
@@ -7579,27 +15721,56 @@ MUTATIONS["HandleSpecialDuelMainSceneHotkeys"] = {
 }
 # <<< factory-mutation HandleSpecialDuelMainSceneHotkeys
 # >>> factory-mutation ReplaceKnockedOutPokemon
-MUTATIONS["ReplaceKnockedOutPokemon"] = {"source_symbol": "ReplaceKnockedOutPokemon", "before": "\t(void)SwapPlayAreaPokemon(hTempPlayAreaLocation_ff9d, PLAY_AREA_ARENA);", "after": "", "case_ids": ["ReplaceKnockedOutPokemon-0"]}
+MUTATIONS["ReplaceKnockedOutPokemon"] = {
+    "source_symbol": "ReplaceKnockedOutPokemon",
+    "before": "\t(void)SwapPlayAreaPokemon(hTempPlayAreaLocation_ff9d, PLAY_AREA_ARENA);",
+    "after": "",
+    "case_ids": ["ReplaceKnockedOutPokemon-0"],
+}
 # <<< factory-mutation ReplaceKnockedOutPokemon
 # >>> factory-mutation HandleBetweenTurnKnockOuts
-MUTATIONS["HandleBetweenTurnKnockOuts"] = {"source_symbol": "HandleBetweenTurnKnockOuts", "before": "\tif (finished)\n\t\twDuelFinished = a;", "after": "\tif (finished)\n\t\twDuelFinished = 0u;", "case_ids": ["HandleBetweenTurnKnockOuts-1"]}
+MUTATIONS["HandleBetweenTurnKnockOuts"] = {
+    "source_symbol": "HandleBetweenTurnKnockOuts",
+    "before": "\tif (finished)\n\t\twDuelFinished = a;",
+    "after": "\tif (finished)\n\t\twDuelFinished = 0u;",
+    "case_ids": ["HandleBetweenTurnKnockOuts-1"],
+}
 # <<< factory-mutation HandleBetweenTurnKnockOuts
 # >>> factory-mutation HandleDestinyBondAndBetweenTurnKnockOuts
-MUTATIONS["HandleDestinyBondAndBetweenTurnKnockOuts"] = {"source_symbol": "HandleDestinyBondAndBetweenTurnKnockOuts", "before": "\treturn HandleBetweenTurnKnockOuts();", "after": "\treturn (HandleBetweenTurnKnockOutsResult){0u, 0x80u};", "case_ids": ["HandleDestinyBondAndBetweenTurnKnockOuts-1"]}
+MUTATIONS["HandleDestinyBondAndBetweenTurnKnockOuts"] = {
+    "source_symbol": "HandleDestinyBondAndBetweenTurnKnockOuts",
+    "before": "\treturn HandleBetweenTurnKnockOuts();",
+    "after": "\treturn (HandleBetweenTurnKnockOutsResult){0u, 0x80u};",
+    "case_ids": ["HandleDestinyBondAndBetweenTurnKnockOuts-1"],
+}
 # <<< factory-mutation HandleDestinyBondAndBetweenTurnKnockOuts
 # >>> factory-mutation RestartPracticeDuelTurn
-MUTATIONS["RestartPracticeDuelTurn"] = {"source_symbol": "RestartPracticeDuelTurn", "before": "\t(void)DoPracticeDuelAction(PRACTICEDUEL_PRINT_TURN_INSTRUCTIONS);", "after": "\t(void)0;", "case_ids": ["RestartPracticeDuelTurn-0"]}
+MUTATIONS["RestartPracticeDuelTurn"] = {
+    "source_symbol": "RestartPracticeDuelTurn",
+    "before": "\t(void)DoPracticeDuelAction(PRACTICEDUEL_PRINT_TURN_INSTRUCTIONS);",
+    "after": "\t(void)0;",
+    "case_ids": ["RestartPracticeDuelTurn-0"],
+}
 # <<< factory-mutation RestartPracticeDuelTurn
 # >>> factory-completion RestartPracticeDuelTurn
 # 0x238A sits below 0x4000, where a bank number means nothing. This routine has
 # no `ret`: core.asm:277 falls through into DuelMainInterface, so both lanes stop
 # at that routine's first call instead.
 for _record in SCHEMA2_CASES["RestartPracticeDuelTurn"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x4F9D, "bank": 1,
-                             "routine": "DrawDuelMainScene"}
+    _record["completion"] = {
+        "mode": "entry",
+        "pc": 0x4F9D,
+        "bank": 1,
+        "routine": "DrawDuelMainScene",
+    }
 # <<< factory-completion RestartPracticeDuelTurn
 # >>> factory-mutation DuelMainInterface
-MUTATIONS["DuelMainInterface"] = {"source_symbol": "DuelMainInterface", "before": "\twSkipDuelistIsThinkingDelay = 0u;", "after": "\twSkipDuelistIsThinkingDelay = 1u;", "case_ids": ["DuelMainInterface-0", "DuelMainInterface-1"]}
+MUTATIONS["DuelMainInterface"] = {
+    "source_symbol": "DuelMainInterface",
+    "before": "\twSkipDuelistIsThinkingDelay = 0u;",
+    "after": "\twSkipDuelistIsThinkingDelay = 1u;",
+    "case_ids": ["DuelMainInterface-0", "DuelMainInterface-1"],
+}
 # <<< factory-mutation DuelMainInterface
 # >>> factory-completion DuelMainInterface
 # 0x238C is below 0x4000, so "bank 1" never meant anything there. This routine
@@ -7608,178 +15779,405 @@ MUTATIONS["DuelMainInterface"] = {"source_symbol": "DuelMainInterface", "before"
 # it -- both counter zeroes and the thinking text are still compared. The player
 # arm tail-jumps into the duel menu and leaves through the B+Up shortcut.
 SCHEMA2_CASES["DuelMainInterface"][0]["completion"] = {
-    "mode": "entry", "pc": 0x2BBF, "bank": 0, "routine": "AIDoAction_Turn"}
+    "mode": "entry",
+    "pc": 0x2BBF,
+    "bank": 0,
+    "routine": "AIDoAction_Turn",
+}
 SCHEMA2_CASES["DuelMainInterface"][1]["completion"] = {
-    "mode": "entry", "pc": 0x430B, "bank": 1,
-    "routine": "DuelMenuShortcut_OpponentPlayArea"}
+    "mode": "entry",
+    "pc": 0x430B,
+    "bank": 1,
+    "routine": "DuelMenuShortcut_OpponentPlayArea",
+}
 # <<< factory-completion DuelMainInterface
 # >>> factory-mutation PrintDuelMenuAndHandleInput
-MUTATIONS["PrintDuelMenuAndHandleInput"] = {"source_symbol": "PrintDuelMenuAndHandleInput", "before": "\t\tHandleMenuInputResult input = HandleDuelMenuInput(menu_e);", "after": "\t\tHandleMenuInputResult input = HandleDuelMenuInput(0u);", "case_ids": ["PrintDuelMenuAndHandleInput-2"]}
+MUTATIONS["PrintDuelMenuAndHandleInput"] = {
+    "source_symbol": "PrintDuelMenuAndHandleInput",
+    "before": "\t\tHandleMenuInputResult input = HandleDuelMenuInput(menu_e);",
+    "after": "\t\tHandleMenuInputResult input = HandleDuelMenuInput(0u);",
+    "case_ids": ["PrintDuelMenuAndHandleInput-2"],
+}
 # <<< factory-mutation PrintDuelMenuAndHandleInput
 # >>> factory-completion PrintDuelMenuAndHandleInput
 # 0x237D in bank 13 named another routine's `ret`. This routine's own `ret nz`
 # only fires on an already-finished duel, and neither case reaches it: both stop
 # where their shortcut's tail jump lands.
 SCHEMA2_CASES["PrintDuelMenuAndHandleInput"][0]["completion"] = {
-    "mode": "entry", "pc": 0x430B, "bank": 1,
-    "routine": "DuelMenuShortcut_OpponentPlayArea"}
+    "mode": "entry",
+    "pc": 0x430B,
+    "bank": 1,
+    "routine": "DuelMenuShortcut_OpponentPlayArea",
+}
 SCHEMA2_CASES["PrintDuelMenuAndHandleInput"][1]["completion"] = {
-    "mode": "entry", "pc": 0x426D, "bank": 1, "routine": "DuelMainInterface"}
+    "mode": "entry",
+    "pc": 0x426D,
+    "bank": 1,
+    "routine": "DuelMainInterface",
+}
 SCHEMA2_CASES["PrintDuelMenuAndHandleInput"][2]["completion"] = {
-    "mode": "entry", "pc": 0x430B, "bank": 1,
-    "routine": "DuelMenuShortcut_OpponentPlayArea"}
+    "mode": "entry",
+    "pc": 0x430B,
+    "bank": 1,
+    "routine": "DuelMenuShortcut_OpponentPlayArea",
+}
 # <<< factory-completion PrintDuelMenuAndHandleInput
 # >>> factory-mutation DuelMenuShortcut_OpponentPlayArea
-MUTATIONS["DuelMenuShortcut_OpponentPlayArea"] = {"source_symbol": "DuelMenuShortcut_OpponentPlayArea", "before": "\tOpenNonTurnHolderPlayAreaScreen();\n\tDuelMainInterface();", "after": "\t(void)OpenTurnHolderPlayAreaScreen();\n\tDuelMainInterface();", "case_ids": ["DuelMenuShortcut_OpponentPlayArea-0"]}
+MUTATIONS["DuelMenuShortcut_OpponentPlayArea"] = {
+    "source_symbol": "DuelMenuShortcut_OpponentPlayArea",
+    "before": "\tOpenNonTurnHolderPlayAreaScreen();\n\tDuelMainInterface();",
+    "after": "\t(void)OpenTurnHolderPlayAreaScreen();\n\tDuelMainInterface();",
+    "case_ids": ["DuelMenuShortcut_OpponentPlayArea-0"],
+}
 # <<< factory-mutation DuelMenuShortcut_OpponentPlayArea
 # >>> factory-completion DuelMenuShortcut_OpponentPlayArea
-SCHEMA2_CASES["DuelMenuShortcut_OpponentPlayArea"][0]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
-                                                                     "routine": "DuelMainInterface"}
+SCHEMA2_CASES["DuelMenuShortcut_OpponentPlayArea"][0]["completion"] = {
+    "mode": "entry",
+    "pc": 0x426D,
+    "bank": 1,
+    "routine": "DuelMainInterface",
+}
 # <<< factory-completion DuelMenuShortcut_OpponentPlayArea
 # >>> factory-mutation DuelMenuShortcut_PlayerPlayArea
-MUTATIONS["DuelMenuShortcut_PlayerPlayArea"] = {"source_symbol": "DuelMenuShortcut_PlayerPlayArea", "before": "\t(void)OpenTurnHolderPlayAreaScreen();\n\tDuelMainInterface();", "after": "\tOpenNonTurnHolderPlayAreaScreen();\n\tDuelMainInterface();", "case_ids": ["DuelMenuShortcut_PlayerPlayArea-0"]}
+MUTATIONS["DuelMenuShortcut_PlayerPlayArea"] = {
+    "source_symbol": "DuelMenuShortcut_PlayerPlayArea",
+    "before": "\t(void)OpenTurnHolderPlayAreaScreen();\n\tDuelMainInterface();",
+    "after": "\tOpenNonTurnHolderPlayAreaScreen();\n\tDuelMainInterface();",
+    "case_ids": ["DuelMenuShortcut_PlayerPlayArea-0"],
+}
 # <<< factory-mutation DuelMenuShortcut_PlayerPlayArea
 # >>> factory-completion DuelMenuShortcut_PlayerPlayArea
-SCHEMA2_CASES["DuelMenuShortcut_PlayerPlayArea"][0]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
-                                                                   "routine": "DuelMainInterface"}
+SCHEMA2_CASES["DuelMenuShortcut_PlayerPlayArea"][0]["completion"] = {
+    "mode": "entry",
+    "pc": 0x426D,
+    "bank": 1,
+    "routine": "DuelMainInterface",
+}
 # <<< factory-completion DuelMenuShortcut_PlayerPlayArea
 # >>> factory-mutation DuelMenuShortcut_OpponentDiscardPile
-MUTATIONS["DuelMenuShortcut_OpponentDiscardPile"] = {"source_symbol": "DuelMenuShortcut_OpponentDiscardPile", "before": "\tif ((OpenNonTurnHolderDiscardPileScreen(0u).f & 0x10u) != 0u) {", "after": "\tif ((OpenNonTurnHolderDiscardPileScreen(0u).f & 0x10u) == 0u) {", "case_ids": ["DuelMenuShortcut_OpponentDiscardPile-0", "DuelMenuShortcut_OpponentDiscardPile-1"]}
+MUTATIONS["DuelMenuShortcut_OpponentDiscardPile"] = {
+    "source_symbol": "DuelMenuShortcut_OpponentDiscardPile",
+    "before": "\tif ((OpenNonTurnHolderDiscardPileScreen(0u).f & 0x10u) != 0u) {",
+    "after": "\tif ((OpenNonTurnHolderDiscardPileScreen(0u).f & 0x10u) == 0u) {",
+    "case_ids": [
+        "DuelMenuShortcut_OpponentDiscardPile-0",
+        "DuelMenuShortcut_OpponentDiscardPile-1",
+    ],
+}
 # <<< factory-mutation DuelMenuShortcut_OpponentDiscardPile
 # >>> factory-completion DuelMenuShortcut_OpponentDiscardPile
-SCHEMA2_CASES["DuelMenuShortcut_OpponentDiscardPile"][0]["completion"] = {"mode": "entry", "pc": 0x4295, "bank": 1,
-                                                                        "routine": "PrintDuelMenuAndHandleInput"}
-SCHEMA2_CASES["DuelMenuShortcut_OpponentDiscardPile"][1]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
-                                                                        "routine": "DuelMainInterface"}
+SCHEMA2_CASES["DuelMenuShortcut_OpponentDiscardPile"][0]["completion"] = {
+    "mode": "entry",
+    "pc": 0x4295,
+    "bank": 1,
+    "routine": "PrintDuelMenuAndHandleInput",
+}
+SCHEMA2_CASES["DuelMenuShortcut_OpponentDiscardPile"][1]["completion"] = {
+    "mode": "entry",
+    "pc": 0x426D,
+    "bank": 1,
+    "routine": "DuelMainInterface",
+}
 # <<< factory-completion DuelMenuShortcut_OpponentDiscardPile
 # >>> factory-mutation DuelMenuShortcut_PlayerDiscardPile
-MUTATIONS["DuelMenuShortcut_PlayerDiscardPile"] = {"source_symbol": "DuelMenuShortcut_PlayerDiscardPile", "before": "\tif ((OpenTurnHolderDiscardPileScreen(0u).f & 0x10u) != 0u) {", "after": "\tif ((OpenTurnHolderDiscardPileScreen(0u).f & 0x10u) == 0u) {", "case_ids": ["DuelMenuShortcut_PlayerDiscardPile-0", "DuelMenuShortcut_PlayerDiscardPile-1"]}
+MUTATIONS["DuelMenuShortcut_PlayerDiscardPile"] = {
+    "source_symbol": "DuelMenuShortcut_PlayerDiscardPile",
+    "before": "\tif ((OpenTurnHolderDiscardPileScreen(0u).f & 0x10u) != 0u) {",
+    "after": "\tif ((OpenTurnHolderDiscardPileScreen(0u).f & 0x10u) == 0u) {",
+    "case_ids": [
+        "DuelMenuShortcut_PlayerDiscardPile-0",
+        "DuelMenuShortcut_PlayerDiscardPile-1",
+    ],
+}
 # <<< factory-mutation DuelMenuShortcut_PlayerDiscardPile
 # >>> factory-completion DuelMenuShortcut_PlayerDiscardPile
-SCHEMA2_CASES["DuelMenuShortcut_PlayerDiscardPile"][0]["completion"] = {"mode": "entry", "pc": 0x4295, "bank": 1,
-                                                                      "routine": "PrintDuelMenuAndHandleInput"}
-SCHEMA2_CASES["DuelMenuShortcut_PlayerDiscardPile"][1]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
-                                                                      "routine": "DuelMainInterface"}
+SCHEMA2_CASES["DuelMenuShortcut_PlayerDiscardPile"][0]["completion"] = {
+    "mode": "entry",
+    "pc": 0x4295,
+    "bank": 1,
+    "routine": "PrintDuelMenuAndHandleInput",
+}
+SCHEMA2_CASES["DuelMenuShortcut_PlayerDiscardPile"][1]["completion"] = {
+    "mode": "entry",
+    "pc": 0x426D,
+    "bank": 1,
+    "routine": "DuelMainInterface",
+}
 # <<< factory-completion DuelMenuShortcut_PlayerDiscardPile
 # >>> factory-mutation DuelMenuShortcut_OpponentActivePokemon
-MUTATIONS["DuelMenuShortcut_OpponentActivePokemon"] = {"source_symbol": "DuelMenuShortcut_OpponentActivePokemon", "before": "\tSwapTurn();\n\tOpenActivePokemonScreen();\n\tSwapTurn();\n\tDuelMainInterface();", "after": "\tOpenActivePokemonScreen();\n\tDuelMainInterface();", "case_ids": ["DuelMenuShortcut_OpponentActivePokemon-1"]}
+MUTATIONS["DuelMenuShortcut_OpponentActivePokemon"] = {
+    "source_symbol": "DuelMenuShortcut_OpponentActivePokemon",
+    "before": "\tSwapTurn();\n\tOpenActivePokemonScreen();\n\tSwapTurn();\n\tDuelMainInterface();",
+    "after": "\tOpenActivePokemonScreen();\n\tDuelMainInterface();",
+    "case_ids": ["DuelMenuShortcut_OpponentActivePokemon-1"],
+}
 # <<< factory-mutation DuelMenuShortcut_OpponentActivePokemon
 # >>> factory-completion DuelMenuShortcut_OpponentActivePokemon
-SCHEMA2_CASES["DuelMenuShortcut_OpponentActivePokemon"][0]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
-                                                                          "routine": "DuelMainInterface"}
-SCHEMA2_CASES["DuelMenuShortcut_OpponentActivePokemon"][1]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
-                                                                          "routine": "DuelMainInterface"}
+SCHEMA2_CASES["DuelMenuShortcut_OpponentActivePokemon"][0]["completion"] = {
+    "mode": "entry",
+    "pc": 0x426D,
+    "bank": 1,
+    "routine": "DuelMainInterface",
+}
+SCHEMA2_CASES["DuelMenuShortcut_OpponentActivePokemon"][1]["completion"] = {
+    "mode": "entry",
+    "pc": 0x426D,
+    "bank": 1,
+    "routine": "DuelMainInterface",
+}
 # <<< factory-completion DuelMenuShortcut_OpponentActivePokemon
 # >>> factory-mutation DuelMenuShortcut_PlayerActivePokemon
-MUTATIONS["DuelMenuShortcut_PlayerActivePokemon"] = {"source_symbol": "DuelMenuShortcut_PlayerActivePokemon", "before": "\tOpenActivePokemonScreen();\n\tDuelMainInterface();\n}\n/* <<< factory DuelMenuShortcut_PlayerActivePokemon */", "after": "\tDuelMainInterface();\n}\n/* <<< factory DuelMenuShortcut_PlayerActivePokemon */", "case_ids": ["DuelMenuShortcut_PlayerActivePokemon-1"]}
+MUTATIONS["DuelMenuShortcut_PlayerActivePokemon"] = {
+    "source_symbol": "DuelMenuShortcut_PlayerActivePokemon",
+    "before": "\tOpenActivePokemonScreen();\n\tDuelMainInterface();\n}\n/* <<< factory DuelMenuShortcut_PlayerActivePokemon */",
+    "after": "\tDuelMainInterface();\n}\n/* <<< factory DuelMenuShortcut_PlayerActivePokemon */",
+    "case_ids": ["DuelMenuShortcut_PlayerActivePokemon-1"],
+}
 # <<< factory-mutation DuelMenuShortcut_PlayerActivePokemon
 # >>> factory-completion DuelMenuShortcut_PlayerActivePokemon
-SCHEMA2_CASES["DuelMenuShortcut_PlayerActivePokemon"][0]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
-                                                                        "routine": "DuelMainInterface"}
-SCHEMA2_CASES["DuelMenuShortcut_PlayerActivePokemon"][1]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
-                                                                        "routine": "DuelMainInterface"}
+SCHEMA2_CASES["DuelMenuShortcut_PlayerActivePokemon"][0]["completion"] = {
+    "mode": "entry",
+    "pc": 0x426D,
+    "bank": 1,
+    "routine": "DuelMainInterface",
+}
+SCHEMA2_CASES["DuelMenuShortcut_PlayerActivePokemon"][1]["completion"] = {
+    "mode": "entry",
+    "pc": 0x426D,
+    "bank": 1,
+    "routine": "DuelMainInterface",
+}
 # <<< factory-completion DuelMenuShortcut_PlayerActivePokemon
 # >>> factory-mutation DuelMenu_PkmnPower
-MUTATIONS["DuelMenu_PkmnPower"] = {"source_symbol": "DuelMenu_PkmnPower", "before": "\tif ((chosen.f & 0x10u) == 0u)", "after": "\tif ((chosen.f & 0x10u) != 0u)", "case_ids": ["DuelMenu_PkmnPower-0"]}
+MUTATIONS["DuelMenu_PkmnPower"] = {
+    "source_symbol": "DuelMenu_PkmnPower",
+    "before": "\tif ((chosen.f & 0x10u) == 0u)",
+    "after": "\tif ((chosen.f & 0x10u) != 0u)",
+    "case_ids": ["DuelMenu_PkmnPower-0"],
+}
 # <<< factory-mutation DuelMenu_PkmnPower
 # >>> factory-completion DuelMenu_PkmnPower
-SCHEMA2_CASES["DuelMenu_PkmnPower"][0]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
-                                                      "routine": "DuelMainInterface"}
+SCHEMA2_CASES["DuelMenu_PkmnPower"][0]["completion"] = {
+    "mode": "entry",
+    "pc": 0x426D,
+    "bank": 1,
+    "routine": "DuelMainInterface",
+}
 # <<< factory-completion DuelMenu_PkmnPower
 # >>> factory-mutation DuelMenu_Done
-MUTATIONS["DuelMenu_Done"] = {"source_symbol": "DuelMenu_Done", "before": "\tClearNonTurnTemporaryDuelvars();\n}", "after": "}", "case_ids": ["DuelMenu_Done-0"]}
+MUTATIONS["DuelMenu_Done"] = {
+    "source_symbol": "DuelMenu_Done",
+    "before": "\tClearNonTurnTemporaryDuelvars();\n}",
+    "after": "}",
+    "case_ids": ["DuelMenu_Done-0"],
+}
 # <<< factory-mutation DuelMenu_Done
 # >>> factory-mutation DuelMenu_Retreat
-MUTATIONS["DuelMenu_Retreat"] = {"source_symbol": "DuelMenu_Retreat", "before": "\t(void)DiscardRetreatCostCards();\n", "after": "", "case_ids": ["DuelMenu_Retreat-2"]}
+MUTATIONS["DuelMenu_Retreat"] = {
+    "source_symbol": "DuelMenu_Retreat",
+    "before": "\t(void)DiscardRetreatCostCards();\n",
+    "after": "",
+    "case_ids": ["DuelMenu_Retreat-2"],
+}
 # <<< factory-mutation DuelMenu_Retreat
 # >>> factory-mutation DuelMenu_Hand
-MUTATIONS["DuelMenu_Hand"] = {"source_symbol": "DuelMenu_Hand", "before": "\tif (GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a != 0u) {", "after": "\tif (GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a == 0u) {", "case_ids": ["DuelMenu_Hand-0"]}
+MUTATIONS["DuelMenu_Hand"] = {
+    "source_symbol": "DuelMenu_Hand",
+    "before": "\tif (GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a != 0u) {",
+    "after": "\tif (GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a == 0u) {",
+    "case_ids": ["DuelMenu_Hand-0"],
+}
 # <<< factory-mutation DuelMenu_Hand
 # >>> factory-completion DuelMenu_Hand
 # Both exits are tail jumps into loops that never return: the empty hand
 # ends in PrintDuelMenuAndHandleInput ($01:4295), the hand screen in
 # DisplayCardList ($01:55F0).
-SCHEMA2_CASES["DuelMenu_Hand"][0]["completion"] = {"mode": "entry", "pc": 0x4295, "bank": 1,
-                                                   "routine": "PrintDuelMenuAndHandleInput"}
-SCHEMA2_CASES["DuelMenu_Hand"][1]["completion"] = {"mode": "entry", "pc": 0x55F0, "bank": 1,
-                                                   "routine": "DisplayCardList"}
+SCHEMA2_CASES["DuelMenu_Hand"][0]["completion"] = {
+    "mode": "entry",
+    "pc": 0x4295,
+    "bank": 1,
+    "routine": "PrintDuelMenuAndHandleInput",
+}
+SCHEMA2_CASES["DuelMenu_Hand"][1]["completion"] = {
+    "mode": "entry",
+    "pc": 0x55F0,
+    "bank": 1,
+    "routine": "DisplayCardList",
+}
 # <<< factory-completion DuelMenu_Hand
 # >>> factory-mutation OpenPlayerHandScreen
-MUTATIONS["OpenPlayerHandScreen"] = {"source_symbol": "OpenPlayerHandScreen", "before": "\twCardListItemSelectionMenuType = PLAY_CHECK;\n\tOpenPlayerHandScreen_HandleInput();", "after": "\twCardListItemSelectionMenuType = 0u;\n\tOpenPlayerHandScreen_HandleInput();", "case_ids": ["OpenPlayerHandScreen-0"]}
+MUTATIONS["OpenPlayerHandScreen"] = {
+    "source_symbol": "OpenPlayerHandScreen",
+    "before": "\twCardListItemSelectionMenuType = PLAY_CHECK;\n\tOpenPlayerHandScreen_HandleInput();",
+    "after": "\twCardListItemSelectionMenuType = 0u;\n\tOpenPlayerHandScreen_HandleInput();",
+    "case_ids": ["OpenPlayerHandScreen-0"],
+}
 # <<< factory-mutation OpenPlayerHandScreen
 # >>> factory-completion OpenPlayerHandScreen
 for _record in SCHEMA2_CASES["OpenPlayerHandScreen"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x55F0, "bank": 1, "routine": "DisplayCardList"}
+    _record["completion"] = {
+        "mode": "entry",
+        "pc": 0x55F0,
+        "bank": 1,
+        "routine": "DisplayCardList",
+    }
 # <<< factory-completion OpenPlayerHandScreen
 # >>> factory-mutation PlayEnergyCard
-MUTATIONS["PlayEnergyCard"] = {"source_symbol": "PlayEnergyCard", "before": "\tif (set_played)\n\t\twAlreadyPlayedEnergy = TRUE;", "after": "\tif (set_played)\n\t\twAlreadyPlayedEnergy = 0u;", "case_ids": ["PlayEnergyCard-0"]}
+MUTATIONS["PlayEnergyCard"] = {
+    "source_symbol": "PlayEnergyCard",
+    "before": "\tif (set_played)\n\t\twAlreadyPlayedEnergy = TRUE;",
+    "after": "\tif (set_played)\n\t\twAlreadyPlayedEnergy = 0u;",
+    "case_ids": ["PlayEnergyCard-0"],
+}
 # <<< factory-mutation PlayEnergyCard
 # >>> factory-completion PlayEnergyCard
-SCHEMA2_CASES["PlayEnergyCard"][0]["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
-                                                    "routine": "DuelMainInterface"}
-SCHEMA2_CASES["PlayEnergyCard"][1]["completion"] = {"mode": "entry", "pc": 0x55F0, "bank": 1,
-                                                    "routine": "DisplayCardList"}
+SCHEMA2_CASES["PlayEnergyCard"][0]["completion"] = {
+    "mode": "entry",
+    "pc": 0x426D,
+    "bank": 1,
+    "routine": "DuelMainInterface",
+}
+SCHEMA2_CASES["PlayEnergyCard"][1]["completion"] = {
+    "mode": "entry",
+    "pc": 0x55F0,
+    "bank": 1,
+    "routine": "DisplayCardList",
+}
 # <<< factory-completion PlayEnergyCard
 # >>> factory-mutation ReloadCardListScreen
-MUTATIONS["ReloadCardListScreen"] = {"source_symbol": "ReloadCardListScreen", "before": "\t(void)CreateHandCardList(0u);\n\t(void)DrawCardListScreenLayout();\n\tOpenPlayerHandScreen_HandleInput();", "after": "\t(void)DrawCardListScreenLayout();\n\tOpenPlayerHandScreen_HandleInput();", "case_ids": ["ReloadCardListScreen-0"]}
+MUTATIONS["ReloadCardListScreen"] = {
+    "source_symbol": "ReloadCardListScreen",
+    "before": "\t(void)CreateHandCardList(0u);\n\t(void)DrawCardListScreenLayout();\n\tOpenPlayerHandScreen_HandleInput();",
+    "after": "\t(void)DrawCardListScreenLayout();\n\tOpenPlayerHandScreen_HandleInput();",
+    "case_ids": ["ReloadCardListScreen-0"],
+}
 # <<< factory-mutation ReloadCardListScreen
 # >>> factory-completion ReloadCardListScreen
 for _record in SCHEMA2_CASES["ReloadCardListScreen"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x55F0, "bank": 1, "routine": "DisplayCardList"}
+    _record["completion"] = {
+        "mode": "entry",
+        "pc": 0x55F0,
+        "bank": 1,
+        "routine": "DisplayCardList",
+    }
 # <<< factory-completion ReloadCardListScreen
 # >>> factory-mutation DuelMenu_Check
-MUTATIONS["DuelMenu_Check"] = {"source_symbol": "DuelMenu_Check", "before": "\tOpenDuelCheckMenu();", "after": "\t(void)0;", "case_ids": ["DuelMenu_Check-0"]}
+MUTATIONS["DuelMenu_Check"] = {
+    "source_symbol": "DuelMenu_Check",
+    "before": "\tOpenDuelCheckMenu();",
+    "after": "\t(void)0;",
+    "case_ids": ["DuelMenu_Check-0"],
+}
 # <<< factory-mutation DuelMenu_Check
 # >>> factory-completion DuelMenu_Check
 # core.asm:747-750 now really enters OpenDuelCheckMenu and tail-jumps into
 # DuelMainInterface, neither of which returns without input, so `pre-ret` left
 # the native lane running forever. Both lanes stop at the check menu's entry.
 for _record in SCHEMA2_CASES["DuelMenu_Check"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x3096, "bank": 0,
-                             "routine": "OpenDuelCheckMenu"}
+    _record["completion"] = {
+        "mode": "entry",
+        "pc": 0x3096,
+        "bank": 0,
+        "routine": "OpenDuelCheckMenu",
+    }
 # <<< factory-completion DuelMenu_Check
 # >>> factory-mutation DuelMenuShortcut_BothActivePokemon
-MUTATIONS["DuelMenuShortcut_BothActivePokemon"] = {"source_symbol": "DuelMenuShortcut_BothActivePokemon", "before": "\t(void)OpenVariousPlayAreaScreens_FromSelectPresses();", "after": "\t(void)0;", "case_ids": ["DuelMenuShortcut_BothActivePokemon-0"]}
+MUTATIONS["DuelMenuShortcut_BothActivePokemon"] = {
+    "source_symbol": "DuelMenuShortcut_BothActivePokemon",
+    "before": "\t(void)OpenVariousPlayAreaScreens_FromSelectPresses();",
+    "after": "\t(void)0;",
+    "case_ids": ["DuelMenuShortcut_BothActivePokemon-0"],
+}
 # <<< factory-mutation DuelMenuShortcut_BothActivePokemon
 # >>> factory-completion DuelMenuShortcut_BothActivePokemon
 # 0x4547 in bank 2 names no symbol at all, and this routine ends in a tail jump
 # with no `ret`; both lanes stop where that jump lands instead.
 for _record in SCHEMA2_CASES["DuelMenuShortcut_BothActivePokemon"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
-                             "routine": "DuelMainInterface"}
+    _record["completion"] = {
+        "mode": "entry",
+        "pc": 0x426D,
+        "bank": 1,
+        "routine": "DuelMainInterface",
+    }
 # <<< factory-completion DuelMenuShortcut_BothActivePokemon
 # >>> factory-mutation DuelMenu_Attack
-MUTATIONS["DuelMenu_Attack"] = {"source_symbol": "DuelMenu_Attack", "before": "\t\t\twSelectedDuelSubMenuItem = input.a;", "after": "\t\t\twSelectedDuelSubMenuItem = (uint8_t)(input.a + 1u);", "case_ids": ["DuelMenu_Attack-2"]}
+MUTATIONS["DuelMenu_Attack"] = {
+    "source_symbol": "DuelMenu_Attack",
+    "before": "\t\t\twSelectedDuelSubMenuItem = input.a;",
+    "after": "\t\t\twSelectedDuelSubMenuItem = (uint8_t)(input.a + 1u);",
+    "case_ids": ["DuelMenu_Attack-2"],
+}
 # <<< factory-mutation DuelMenu_Attack
 # >>> factory-completion DuelMenu_Retreat
-SCHEMA2_CASES["DuelMenu_Retreat"][0]["completion"] = {"mode": "entry", "pc": 0x4295, "bank": 1,
-                                                      "routine": "PrintDuelMenuAndHandleInput"}
-SCHEMA2_CASES["DuelMenu_Retreat"][1]["completion"] = {"mode": "entry", "pc": 0x4295, "bank": 1,
-                                                      "routine": "PrintDuelMenuAndHandleInput"}
-SCHEMA2_CASES["DuelMenu_Retreat"][2]["completion"] = {"mode": "entry", "pc": 0x600C, "bank": 1,
-                                                      "routine": "OpenPlayAreaScreenForSelection"}
+SCHEMA2_CASES["DuelMenu_Retreat"][0]["completion"] = {
+    "mode": "entry",
+    "pc": 0x4295,
+    "bank": 1,
+    "routine": "PrintDuelMenuAndHandleInput",
+}
+SCHEMA2_CASES["DuelMenu_Retreat"][1]["completion"] = {
+    "mode": "entry",
+    "pc": 0x4295,
+    "bank": 1,
+    "routine": "PrintDuelMenuAndHandleInput",
+}
+SCHEMA2_CASES["DuelMenu_Retreat"][2]["completion"] = {
+    "mode": "entry",
+    "pc": 0x600C,
+    "bank": 1,
+    "routine": "OpenPlayAreaScreenForSelection",
+}
 # <<< factory-completion DuelMenu_Retreat
 # >>> factory-completion DuelMenu_Attack
-SCHEMA2_CASES["DuelMenu_Attack"][0]["completion"] = {"mode": "entry", "pc": 0x4295, "bank": 1,
-                                                     "routine": "PrintDuelMenuAndHandleInput"}
-SCHEMA2_CASES["DuelMenu_Attack"][1]["completion"] = {"mode": "entry", "pc": 0x4295, "bank": 1,
-                                                     "routine": "PrintDuelMenuAndHandleInput"}
-SCHEMA2_CASES["DuelMenu_Attack"][2]["completion"] = {"mode": "entry", "pc": 0x1730, "bank": 0,
-                                                     "routine": "UseAttackOrPokemonPower"}
+SCHEMA2_CASES["DuelMenu_Attack"][0]["completion"] = {
+    "mode": "entry",
+    "pc": 0x4295,
+    "bank": 1,
+    "routine": "PrintDuelMenuAndHandleInput",
+}
+SCHEMA2_CASES["DuelMenu_Attack"][1]["completion"] = {
+    "mode": "entry",
+    "pc": 0x4295,
+    "bank": 1,
+    "routine": "PrintDuelMenuAndHandleInput",
+}
+SCHEMA2_CASES["DuelMenu_Attack"][2]["completion"] = {
+    "mode": "entry",
+    "pc": 0x1730,
+    "bank": 0,
+    "routine": "UseAttackOrPokemonPower",
+}
 # <<< factory-completion DuelMenu_Attack
 # >>> factory-mutation UnreferencedDrawCardFromDeckToHand
-MUTATIONS["UnreferencedDrawCardFromDeckToHand"] = {"source_symbol": "UnreferencedDrawCardFromDeckToHand", "before": "void UnreferencedDrawCardFromDeckToHand(void)\n{\n\tDrawCardResult draw = DrawCardFromDeck();\n\tif ((draw.f & 0x10u) == 0u)\n\t\tAddCardToHand(draw.a);\n\t(void)SetOppAction_SerialSendDuelData(OPPACTION_DRAW_CARD, 0u);", "after": "void UnreferencedDrawCardFromDeckToHand(void)\n{\n\tDrawCardResult draw = DrawCardFromDeck();\n\tif ((draw.f & 0x10u) == 0u)\n\t\tAddCardToHand(draw.a);\n\t(void)SetOppAction_SerialSendDuelData(0x0Au, 0u);", "case_ids": ["UnreferencedDrawCardFromDeckToHand-0", "UnreferencedDrawCardFromDeckToHand-1"]}
+MUTATIONS["UnreferencedDrawCardFromDeckToHand"] = {
+    "source_symbol": "UnreferencedDrawCardFromDeckToHand",
+    "before": "void UnreferencedDrawCardFromDeckToHand(void)\n{\n\tDrawCardResult draw = DrawCardFromDeck();\n\tif ((draw.f & 0x10u) == 0u)\n\t\tAddCardToHand(draw.a);\n\t(void)SetOppAction_SerialSendDuelData(OPPACTION_DRAW_CARD, 0u);",
+    "after": "void UnreferencedDrawCardFromDeckToHand(void)\n{\n\tDrawCardResult draw = DrawCardFromDeck();\n\tif ((draw.f & 0x10u) == 0u)\n\t\tAddCardToHand(draw.a);\n\t(void)SetOppAction_SerialSendDuelData(0x0Au, 0u);",
+    "case_ids": [
+        "UnreferencedDrawCardFromDeckToHand-0",
+        "UnreferencedDrawCardFromDeckToHand-1",
+    ],
+}
 # <<< factory-mutation UnreferencedDrawCardFromDeckToHand
 # >>> factory-completion UnreferencedDrawCardFromDeckToHand
 # 0x04E0 in bank 1 named an unrelated `ret`; this routine tail-jumps into the
 # duel menu's input loop and has no `ret` of its own, so it stops where its
 # shortcut's tail jump lands.
 for _record in SCHEMA2_CASES["UnreferencedDrawCardFromDeckToHand"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
-                             "routine": "DuelMainInterface"}
+    _record["completion"] = {
+        "mode": "entry",
+        "pc": 0x426D,
+        "bank": 1,
+        "routine": "DuelMainInterface",
+    }
 # <<< factory-completion UnreferencedDrawCardFromDeckToHand
 # >>> factory-mutation OppAction_ForceSwitchActive
-MUTATIONS["OppAction_ForceSwitchActive"] = {"source_symbol": "OppAction_ForceSwitchActive", "before": "void OppAction_ForceSwitchActive(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\twPlayAreaSelectAction = 1u;", "after": "void OppAction_ForceSwitchActive(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\twPlayAreaSelectAction = 0u;", "case_ids": ["OppAction_ForceSwitchActive-0", "OppAction_ForceSwitchActive-1"]}
+MUTATIONS["OppAction_ForceSwitchActive"] = {
+    "source_symbol": "OppAction_ForceSwitchActive",
+    "before": "void OppAction_ForceSwitchActive(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\twPlayAreaSelectAction = 1u;",
+    "after": "void OppAction_ForceSwitchActive(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\twPlayAreaSelectAction = 0u;",
+    "case_ids": ["OppAction_ForceSwitchActive-0", "OppAction_ForceSwitchActive-1"],
+}
 # <<< factory-mutation OppAction_ForceSwitchActive
 # >>> factory-mutation OppAction_UseAttack
 MUTATIONS["OppAction_UseAttack"] = {
@@ -7790,23 +16188,48 @@ MUTATIONS["OppAction_UseAttack"] = {
 }
 # <<< factory-mutation OppAction_UseAttack
 # >>> factory-mutation HandleTurn
-MUTATIONS["HandleTurn"] = {"source_symbol": "HandleTurn", "before": "void HandleTurn(void)\n{\n\tDuelistVarResult type = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\twDuelistType = type.a;", "after": "void HandleTurn(void)\n{\n\tDuelistVarResult type = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\twDuelistType = (uint8_t)(type.a ^ 1u);", "case_ids": ["HandleTurn-0", "HandleTurn-1"]}
+MUTATIONS["HandleTurn"] = {
+    "source_symbol": "HandleTurn",
+    "before": "void HandleTurn(void)\n{\n\tDuelistVarResult type = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\twDuelistType = type.a;",
+    "after": "void HandleTurn(void)\n{\n\tDuelistVarResult type = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\twDuelistType = (uint8_t)(type.a ^ 1u);",
+    "case_ids": ["HandleTurn-0", "HandleTurn-1"],
+}
 # <<< factory-mutation HandleTurn
 # >>> factory-mutation HandleWaitingLinkOpponentMenu
-MUTATIONS["HandleWaitingLinkOpponentMenu"] = {"source_symbol": "HandleWaitingLinkOpponentMenu", "before": "void HandleWaitingLinkOpponentMenu(void)\n{\n\tuint8_t delay = 10u;\n\twhile (delay != 0u) {\n\t\tDoFrame();\n\t\t--delay;\n\t}\n\twCurrentDuelMenuItem = 0u;", "after": "void HandleWaitingLinkOpponentMenu(void)\n{\n\tuint8_t delay = 10u;\n\twhile (delay != 0u) {\n\t\tDoFrame();\n\t\t--delay;\n\t}\n\twCurrentDuelMenuItem = 1u;", "case_ids": ["HandleWaitingLinkOpponentMenu-0", "HandleWaitingLinkOpponentMenu-1"]}
+MUTATIONS["HandleWaitingLinkOpponentMenu"] = {
+    "source_symbol": "HandleWaitingLinkOpponentMenu",
+    "before": "void HandleWaitingLinkOpponentMenu(void)\n{\n\tuint8_t delay = 10u;\n\twhile (delay != 0u) {\n\t\tDoFrame();\n\t\t--delay;\n\t}\n\twCurrentDuelMenuItem = 0u;",
+    "after": "void HandleWaitingLinkOpponentMenu(void)\n{\n\tuint8_t delay = 10u;\n\twhile (delay != 0u) {\n\t\tDoFrame();\n\t\t--delay;\n\t}\n\twCurrentDuelMenuItem = 1u;",
+    "case_ids": ["HandleWaitingLinkOpponentMenu-0", "HandleWaitingLinkOpponentMenu-1"],
+}
 # <<< factory-mutation HandleWaitingLinkOpponentMenu
 # >>> factory-completion HandleWaitingLinkOpponentMenu
 for _record in SCHEMA2_CASES["HandleWaitingLinkOpponentMenu"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x6806, "bank": 1}
 # <<< factory-completion HandleWaitingLinkOpponentMenu
 # >>> factory-mutation HandleBetweenTurnsEvents
-MUTATIONS["HandleBetweenTurnsEvents"] = {"source_symbol": "HandleBetweenTurnsEvents", "before": "\t\t\tgb_write8(status, (uint8_t)(gb_read8(status) & DOUBLE_POISONED));", "after": "", "case_ids": ["HandleBetweenTurnsEvents-2"]}
+MUTATIONS["HandleBetweenTurnsEvents"] = {
+    "source_symbol": "HandleBetweenTurnsEvents",
+    "before": "\t\t\tgb_write8(status, (uint8_t)(gb_read8(status) & DOUBLE_POISONED));",
+    "after": "",
+    "case_ids": ["HandleBetweenTurnsEvents-2"],
+}
 # <<< factory-mutation HandleBetweenTurnsEvents
 # >>> factory-mutation OppAction_PlayAttackAnimationDealAttackDamage
-MUTATIONS["OppAction_PlayAttackAnimationDealAttackDamage"] = {"source_symbol": "OppAction_PlayAttackAnimationDealAttackDamage", "before": "\twOpponentTurnEnded = 1u;", "after": "\twOpponentTurnEnded = 0u;", "case_ids": ["OppAction_PlayAttackAnimationDealAttackDamage-0"]}
+MUTATIONS["OppAction_PlayAttackAnimationDealAttackDamage"] = {
+    "source_symbol": "OppAction_PlayAttackAnimationDealAttackDamage",
+    "before": "\twOpponentTurnEnded = 1u;",
+    "after": "\twOpponentTurnEnded = 0u;",
+    "case_ids": ["OppAction_PlayAttackAnimationDealAttackDamage-0"],
+}
 # <<< factory-mutation OppAction_PlayAttackAnimationDealAttackDamage
 # >>> factory-mutation MainDuelLoop
-MUTATIONS["MainDuelLoop"] = {"source_symbol": "MainDuelLoop", "before": "\twCurrentDuelMenuItem = 0u;", "after": "\twCurrentDuelMenuItem = 1u;", "case_ids": ["MainDuelLoop-0", "MainDuelLoop-1"]}
+MUTATIONS["MainDuelLoop"] = {
+    "source_symbol": "MainDuelLoop",
+    "before": "\twCurrentDuelMenuItem = 0u;",
+    "after": "\twCurrentDuelMenuItem = 1u;",
+    "case_ids": ["MainDuelLoop-0", "MainDuelLoop-1"],
+}
 # <<< factory-mutation MainDuelLoop
 # >>> factory-completion MainDuelLoop
 # core.asm:73-78. The loop only returns when the duel ends, so `pre-ret` stopped
@@ -7814,29 +16237,69 @@ MUTATIONS["MainDuelLoop"] = {"source_symbol": "MainDuelLoop", "before": "\twCurr
 # HandleTurn, which is after the two start-of-turn calls the gate reports as the
 # earliest frontier misses.
 for _record in SCHEMA2_CASES["MainDuelLoop"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x35E6, "bank": 0,
-                             "routine": "UpdateSubstatusConditions_StartOfTurn"}
+    _record["completion"] = {
+        "mode": "entry",
+        "pc": 0x35E6,
+        "bank": 0,
+        "routine": "UpdateSubstatusConditions_StartOfTurn",
+    }
 # <<< factory-completion MainDuelLoop
 # >>> factory-mutation _ContinueDuel
-MUTATIONS["_ContinueDuel"] = {"source_symbol": "_ContinueDuel", "before": "\tuint16_t entry_sp = DUEL_ENTRY_SP;", "after": "\tuint16_t entry_sp = (uint16_t)(DUEL_ENTRY_SP + 1u);", "case_ids": ["_ContinueDuel-0", "_ContinueDuel-1"]}
+MUTATIONS["_ContinueDuel"] = {
+    "source_symbol": "_ContinueDuel",
+    "before": "\tuint16_t entry_sp = DUEL_ENTRY_SP;",
+    "after": "\tuint16_t entry_sp = (uint16_t)(DUEL_ENTRY_SP + 1u);",
+    "case_ids": ["_ContinueDuel-0", "_ContinueDuel-1"],
+}
 # <<< factory-mutation _ContinueDuel
 # >>> factory-completion _ContinueDuel
 # It falls through DuelMainInterface into the duel menu's input loop and has no
 # reachable `ret` of its own, so both lanes stop where the B+Up shortcut lands.
 for _record in SCHEMA2_CASES["_ContinueDuel"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x430B, "bank": 1,
-                             "routine": "DuelMenuShortcut_OpponentPlayArea"}
+    _record["completion"] = {
+        "mode": "entry",
+        "pc": 0x430B,
+        "bank": 1,
+        "routine": "DuelMenuShortcut_OpponentPlayArea",
+    }
 # <<< factory-completion _ContinueDuel
 # >>> factory-mutation DoLinkOpponentTurn
-MUTATIONS["DoLinkOpponentTurn"] = {"source_symbol": "DoLinkOpponentTurn", "before": "void DoLinkOpponentTurn(void)\n{\n}", "after": "void DoLinkOpponentTurn(void)\n{\n\thWhoseTurn = 0xC3u;\n}", "case_ids": ["DoLinkOpponentTurn-0", "DoLinkOpponentTurn-1"]}
+MUTATIONS["DoLinkOpponentTurn"] = {
+    "source_symbol": "DoLinkOpponentTurn",
+    "before": "void DoLinkOpponentTurn(void)\n{\n}",
+    "after": "void DoLinkOpponentTurn(void)\n{\n\thWhoseTurn = 0xC3u;\n}",
+    "case_ids": ["DoLinkOpponentTurn-0", "DoLinkOpponentTurn-1"],
+}
 # <<< factory-mutation DoLinkOpponentTurn
 # >>> factory-completion DoLinkOpponentTurn
 for _record in SCHEMA2_CASES["DoLinkOpponentTurn"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x238A, "bank": 13}
 # <<< factory-completion DoLinkOpponentTurn
 # >>> factory-mutation TryContinueDuel
-MUTATIONS["TryContinueDuel"] = {"source_symbol": "TryContinueDuel", "before": "void TryContinueDuel(void)\n{\n\tSetupDuel();\n\tuint8_t failed = LoadAndValidateDuelSaveData();\n\tif ((failed & 0x10u) != 0u) {", "after": "void TryContinueDuel(void)\n{\n\tSetupDuel();\n\tuint8_t failed = LoadAndValidateDuelSaveData();\n\tif ((failed & 0x10u) == 0u) {", "case_ids": ["TryContinueDuel-0", "TryContinueDuel-1"]}
+MUTATIONS["TryContinueDuel"] = {
+    "source_symbol": "TryContinueDuel",
+    "before": "void TryContinueDuel(void)\n{\n\tSetupDuel();\n\tuint8_t failed = LoadAndValidateDuelSaveData();\n\tif ((failed & 0x10u) != 0u) {",
+    "after": "void TryContinueDuel(void)\n{\n\tSetupDuel();\n\tuint8_t failed = LoadAndValidateDuelSaveData();\n\tif ((failed & 0x10u) == 0u) {",
+    "case_ids": ["TryContinueDuel-0", "TryContinueDuel-1"],
+}
 # <<< factory-mutation TryContinueDuel
 # >>> factory-mutation PlayPokemonCard
-MUTATIONS["PlayPokemonCard"] = {"source_symbol": "PlayPokemonCard", "before": "\t\tif (count.a >= PLAY_POKEMON_CARD_MAX_PLAY_AREA) {", "after": "\t\tif (count.a > PLAY_POKEMON_CARD_MAX_PLAY_AREA) {", "case_ids": ["PlayPokemonCard-0", "PlayPokemonCard-1"]}
+MUTATIONS["PlayPokemonCard"] = {
+    "source_symbol": "PlayPokemonCard",
+    "before": "\t\tif (count.a >= PLAY_POKEMON_CARD_MAX_PLAY_AREA) {",
+    "after": "\t\tif (count.a > PLAY_POKEMON_CARD_MAX_PLAY_AREA) {",
+    "case_ids": ["PlayPokemonCard-0", "PlayPokemonCard-1"],
+}
 # <<< factory-mutation PlayPokemonCard
+# >>> factory-mutation SetOBP1OrSGB3ToCardPalette
+MUTATIONS["SetOBP1OrSGB3ToCardPalette"] = {
+    "source_symbol": "SetOBP1OrSGB3ToCardPalette",
+    "before": "\twOBP0 = 0xE4u;",
+    "after": "\twOBP0 = 0xE0u;",
+    "case_ids": [
+        "SetOBP1OrSGB3ToCardPalette-0",
+        "SetOBP1OrSGB3ToCardPalette-1",
+        "SetOBP1OrSGB3ToCardPalette-2",
+    ],
+}
+# <<< factory-mutation SetOBP1OrSGB3ToCardPalette

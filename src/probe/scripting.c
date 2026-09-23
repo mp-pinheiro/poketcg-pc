@@ -1521,6 +1521,68 @@ static void adapt_ScriptCommand_OpenMenu(ProbeState *s)
 }
 /* <<< factory ScriptCommand_OpenMenu */
 
+/* >>> factory ScriptCommand_PrintTextForChallengeCup */
+static void adapt_ScriptCommand_PrintTextForChallengeCup(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = ScriptCommand_PrintTextForChallengeCup();
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_PrintTextForChallengeCup */
+
+/* >>> factory ScriptCommand_PickNextMan1RequestedCard */
+static void adapt_ScriptCommand_PickNextMan1RequestedCard(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = ScriptCommand_PickNextMan1RequestedCard();
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_PickNextMan1RequestedCard */
+
+/* >>> factory ScriptCommand_JumpIfMan1RequestedCardOwned */
+static void adapt_ScriptCommand_JumpIfMan1RequestedCardOwned(ProbeState *s)
+{
+	JumpIfCardInCollectionResult r = ScriptCommand_JumpIfMan1RequestedCardOwned(s->b);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_JumpIfMan1RequestedCardOwned */
+
+/* >>> factory ScriptCommand_JumpIfMan1RequestedCardInCollection */
+static void adapt_ScriptCommand_JumpIfMan1RequestedCardInCollection(ProbeState *s)
+{
+	JumpIfCardInCollectionResult r = ScriptCommand_JumpIfMan1RequestedCardInCollection(s->b);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_JumpIfMan1RequestedCardInCollection */
+
+/* >>> factory ScriptCommand_RemoveMan1RequestedCardFromCollection */
+static void adapt_ScriptCommand_RemoveMan1RequestedCardFromCollection(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = ScriptCommand_RemoveMan1RequestedCardFromCollection();
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_RemoveMan1RequestedCardFromCollection */
+
+/* >>> factory ScriptCommand_PickChallengeCupPrizeCard */
+static void adapt_ScriptCommand_PickChallengeCupPrizeCard(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = ScriptCommand_PickChallengeCupPrizeCard();
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_PickChallengeCupPrizeCard */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1671,5 +1733,11 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "GetStackEventValue", adapt_GetStackEventValue },
 	{ "RST20", adapt_RST20 },
 	{ "ScriptCommand_OpenMenu", adapt_ScriptCommand_OpenMenu },
+	{ "ScriptCommand_PrintTextForChallengeCup", adapt_ScriptCommand_PrintTextForChallengeCup },
+	{ "ScriptCommand_PickNextMan1RequestedCard", adapt_ScriptCommand_PickNextMan1RequestedCard },
+	{ "ScriptCommand_JumpIfMan1RequestedCardOwned", adapt_ScriptCommand_JumpIfMan1RequestedCardOwned },
+	{ "ScriptCommand_JumpIfMan1RequestedCardInCollection", adapt_ScriptCommand_JumpIfMan1RequestedCardInCollection },
+	{ "ScriptCommand_RemoveMan1RequestedCardFromCollection", adapt_ScriptCommand_RemoveMan1RequestedCardFromCollection },
+	{ "ScriptCommand_PickChallengeCupPrizeCard", adapt_ScriptCommand_PickChallengeCupPrizeCard },
 	{ NULL, NULL },
 };

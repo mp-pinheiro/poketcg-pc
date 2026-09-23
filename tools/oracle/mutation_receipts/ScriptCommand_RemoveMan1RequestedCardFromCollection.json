@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_RemoveMan1RequestedCardFromCollection",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_RemoveMan1RequestedCardFromCollection\", \"registers\": {\"a\": 197, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {\"0\": {\"41221\": \"01\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54234\": \"05\", \"54291\": \"01c5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_RemoveMan1RequestedCardFromCollection\", \"mismatches\": {\"c\": [1, 2], \"bus\": {\"address\": 54291, \"reference\": \"0501c5\", \"native\": \"0502c5\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54234, 1], [54291, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_RemoveMan1RequestedCardFromCollection\", \"registers\": {\"a\": 197, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {\"0\": {\"41221\": \"01\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54234\": \"05\", \"54291\": \"01c5\"}}, \"status\": \"PASS\"}\n"
+}

@@ -654,6 +654,14 @@ static void adapt_SetBGP6OrSGB3ToCardPalette(ProbeState *s)
 }
 /* <<< factory SetBGP6OrSGB3ToCardPalette */
 
+/* >>> factory SetOBP1OrSGB3ToCardPalette */
+static void adapt_SetOBP1OrSGB3ToCardPalette(ProbeState *s)
+{
+	(void)s;
+	SetOBP1OrSGB3ToCardPalette();
+}
+/* <<< factory SetOBP1OrSGB3ToCardPalette */
+
 /* >>> factory SetOneLineSeparation */
 static void adapt_SetOneLineSeparation(ProbeState *s)
 {
@@ -3250,6 +3258,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CardPageSwitch_08", adapt_CardPageSwitch_08 },
 	{ "LoadPlayAreaCardGfx", adapt_LoadPlayAreaCardGfx },
 	{ "SetBGP6OrSGB3ToCardPalette", adapt_SetBGP6OrSGB3ToCardPalette },
+	{ "SetOBP1OrSGB3ToCardPalette", adapt_SetOBP1OrSGB3ToCardPalette },
 	{ "PrintCardPageRarityIcon", adapt_PrintCardPageRarityIcon },
 	{ "SetNoLineSeparation", adapt_SetNoLineSeparation },
 	{ "SetOneLineSeparation", adapt_SetOneLineSeparation },

@@ -27,7 +27,15 @@
 
 #define MAP_EVENT_CHALLENGE_MACHINE 0x0au
 #define SOUTH 0x02u
-/* <<< factory statics */
+/* >>> factory Func_d703 */
+FuncD703Result Func_d703(void)
+{
+	uint8_t event = GetEventValue(EVENT_RECEIVED_LEGENDARY_CARDS);
+	if (event == 0u)
+		return (FuncD703Result){0u, 0x80u};
+	return (FuncD703Result){SetOWMapEvent(MAP_EVENT_CHALLENGE_MACHINE), 0u};
+}
+/* <<< factory Func_d703 */
 
 /* >>> factory Preload_DrMason */
 PreloadDrMasonResult Preload_DrMason(void)

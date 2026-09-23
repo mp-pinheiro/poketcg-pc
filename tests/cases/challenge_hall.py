@@ -1,9 +1,17 @@
 """Oracle-diff cases for poketcg/src/scripts/challenge_hall.asm."""
 
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
-          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 
 from tests.cases._schema_migration import legacy_to_schema
+
 FLAGS = 0xD698
 
 CONTRACT = {
@@ -24,7 +32,7 @@ CONTRACT = {
 CASES = {
     "Func_f5db": [
         {"wram": {FLAGS: b"\x11\x22\x33\x44"}, "read": {FLAGS: 4}},
-        dict(POISON, wram={FLAGS: b"\xFF\xFF\xFF\xFF"}, read={FLAGS: 4}),
+        dict(POISON, wram={FLAGS: b"\xff\xff\xff\xff"}, read={FLAGS: 4}),
     ],
     "Func_f5e9": [
         {"c": 0},
@@ -34,8 +42,8 @@ CASES = {
         dict(POISON, c=0xFF),
     ],
     "Script_Host": [
-        {"wram": {FLAGS: b"\xFF\xFF\xFF\xFF"}, "read": {FLAGS: 4}},
-        dict(POISON, wram={FLAGS: b"\xFF\xFF\xFF\xFF"}, read={FLAGS: 4}),
+        {"wram": {FLAGS: b"\xff\xff\xff\xff"}, "read": {FLAGS: 4}},
+        dict(POISON, wram={FLAGS: b"\xff\xff\xff\xff"}, read={FLAGS: 4}),
     ],
 }
 
@@ -62,16 +70,20 @@ CONTRACT["Func_f5d4"] = {
 }
 CASES["Func_f5d4"] = [
     {"c": 0, "wram": {FLAGS: b"\x00\x00\x00\x00"}, "read": {FLAGS: 4}},
-    dict(POISON, c=0, wram={FLAGS: b"\x7F\x00\x00\x00"}, read={FLAGS: 4}),
+    dict(POISON, c=0, wram={FLAGS: b"\x7f\x00\x00\x00"}, read={FLAGS: 4}),
     {"c": 7, "wram": {FLAGS: b"\x00\x00\x00\x00"}, "read": {FLAGS: 4}},
     {"c": 8, "wram": {FLAGS: b"\x00\x00\x00\x00"}, "read": {FLAGS: 4}},
-    {"c": 31, "wram": {FLAGS: b"\xFF\xFF\xFF\xFE"}, "read": {FLAGS: 4}},
+    {"c": 31, "wram": {FLAGS: b"\xff\xff\xff\xfe"}, "read": {FLAGS: 4}},
     dict(POISON, c=31, wram={FLAGS: b"\x00\x00\x00\x00"}, read={FLAGS: 4}),
 ]
 # <<< factory Func_f5d4
 
 # >>> factory ChallengeHallAfterDuel
-CONTRACT["ChallengeHallAfterDuel"] = {"compare": ("a", "f", "b", "c", "hl"), "preserve": (), "wram_out": True}
+CONTRACT["ChallengeHallAfterDuel"] = {
+    "compare": ("a", "f", "b", "c", "hl"),
+    "preserve": (),
+    "wram_out": True,
+}
 CASES["ChallengeHallAfterDuel"] = [
     {"wram": {0xD0C3: b"\x00", 0xD3AB: b"\x00"}, "read": {0xD3AB: 1}},
     dict(POISON, wram={0xD0C3: b"\x01", 0xD3AB: b"\x00"}, read={0xD3AB: 1}),
@@ -79,7 +91,10 @@ CASES["ChallengeHallAfterDuel"] = [
 # <<< factory ChallengeHallAfterDuel
 
 # >>> factory ChallengeHallLoadMap
-CONTRACT["ChallengeHallLoadMap"] = {"compare": ("a", "f", "b", "c", "hl"), "preserve": ()}
+CONTRACT["ChallengeHallLoadMap"] = {
+    "compare": ("a", "f", "b", "c", "hl"),
+    "preserve": (),
+}
 CASES["ChallengeHallLoadMap"] = [
     {"wram": {0xD3E2: b"\x00", 0xD3AB: b"\x00"}},
     {"wram": {0xD3E2: b"\x02", 0xD3AB: b"\x00", 0xD34A: b"\x00" * 96}},
@@ -97,13 +112,54 @@ CASES["Preload_Guide"] = [
 # <<< factory Preload_Guide
 
 # >>> factory Preload_ChallengeHallOpponent
-CONTRACT["Preload_ChallengeHallOpponent"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CONTRACT["Preload_ChallengeHallOpponent"] = {
+    "compare": ("a", "f"),
+    "preserve": (),
+    "wram_out": True,
+}
 CASES["Preload_ChallengeHallOpponent"] = [
     {"wram": {0xD3E2: b"\x80", 0xD3AB: b"\x00"}},
     {"wram": {0xD3E2: b"\x82", 0xD3AB: b"\x00", 0xD3E7: b"\x00"}},
     dict(POISON, wram={0xD3E2: b"\x82", 0xD3AB: b"\x00", 0xD3E7: b"\x00"}),
 ]
 # <<< factory Preload_ChallengeHallOpponent
+
+CONTRACT["Func_f580"] = {"compare": ("a",), "preserve": (), "wram_out": True}
+CASES["Func_f580"] = [
+    {
+        "wram": {
+            0xD3E2: b"\x10",
+            0xD3AB: b"\x00",
+            0xD696: b"\x00",
+            0xD698: b"\x00\x00\x00\x00",
+        },
+        "read": {0xD3E2: 1, 0xD3AB: 1, 0xD696: 1, 0xD698: 4},
+    },
+    {
+        "wram": {
+            0xD3E2: b"\x2c",
+            0xD3AB: b"\x00",
+            0xD696: b"\x00",
+            0xD698: b"\x00\x00\x00\x00",
+        },
+        "read": {0xD3E2: 1, 0xD3AB: 1, 0xD696: 1, 0xD698: 4},
+    },
+    dict(
+        POISON,
+        wram={
+            0xD3E2: b"\x30",
+            0xD3AB: b"\x00",
+            0xD696: b"\x00",
+            0xD698: b"\x00\x00\x00\x00",
+        },
+        read={0xD3E2: 1, 0xD3AB: 1, 0xD696: 1, 0xD698: 4},
+    ),
+]
+CONTRACT["Func_f602"] = {"compare": ("a", "f"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["Func_f602"] = [
+    {"wram": {0xD3E2: b"\x02"}, "read": {0xD3E2: 1}},
+    dict(POISON, wram={0xD3E2: b"\x02"}, read={0xD3E2: 1}),
+]
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -118,7 +174,13 @@ MUTATIONS = {
         "source_symbol": "Func_f5e9",
         "before": "uint8_t b = (uint8_t)(0x80u >> (c & 7u));",
         "after": "uint8_t b = (uint8_t)(0x80u >> ((c + 1u) & 7u));",
-        "case_ids": ["Func_f5e9-0", "Func_f5e9-1", "Func_f5e9-2", "Func_f5e9-3", "Func_f5e9-4"],
+        "case_ids": [
+            "Func_f5e9-0",
+            "Func_f5e9-1",
+            "Func_f5e9-2",
+            "Func_f5e9-3",
+            "Func_f5e9-4",
+        ],
     },
     "Script_Host": {
         "source_symbol": "Script_Host",
@@ -132,8 +194,15 @@ MUTATIONS["Func_f5cc"] = {
     "source_symbol": "Func_f5cc",
     "before": "uint8_t f = a ? 0x10u : 0xA0u;",
     "after": "uint8_t f = a ? 0xA0u : 0x10u;",
-    "case_ids": ["Func_f5cc-0", "Func_f5cc-1", "Func_f5cc-2",
-                  "Func_f5cc-3", "Func_f5cc-4", "Func_f5cc-5", "Func_f5cc-6"],
+    "case_ids": [
+        "Func_f5cc-0",
+        "Func_f5cc-1",
+        "Func_f5cc-2",
+        "Func_f5cc-3",
+        "Func_f5cc-4",
+        "Func_f5cc-5",
+        "Func_f5cc-6",
+    ],
 }
 # <<< factory-mutation Func_f5cc
 # >>> factory-mutation Func_f5d4
@@ -141,19 +210,57 @@ MUTATIONS["Func_f5d4"] = {
     "source_symbol": "Func_f5d4",
     "before": "uint8_t a = (uint8_t)(gb_read8(bit.hl) | bit.b);",
     "after": "uint8_t a = (uint8_t)(gb_read8(bit.hl) & bit.b);",
-    "case_ids": ["Func_f5d4-0", "Func_f5d4-1", "Func_f5d4-2",
-                  "Func_f5d4-3", "Func_f5d4-4", "Func_f5d4-5"],
+    "case_ids": [
+        "Func_f5d4-0",
+        "Func_f5d4-1",
+        "Func_f5d4-2",
+        "Func_f5d4-3",
+        "Func_f5d4-4",
+        "Func_f5d4-5",
+    ],
 }
 # <<< factory-mutation Func_f5d4
 # >>> factory-mutation ChallengeHallAfterDuel
-MUTATIONS["ChallengeHallAfterDuel"] = {"source_symbol": "ChallengeHallAfterDuel", "before": "\tuint8_t c = (wDuelResult == DUEL_WIN) ? 0u : 2u;", "after": "\tuint8_t c = (wDuelResult == DUEL_WIN) ? 2u : 0u;", "case_ids": ["ChallengeHallAfterDuel-0", "ChallengeHallAfterDuel-1"]}
+MUTATIONS["ChallengeHallAfterDuel"] = {
+    "source_symbol": "ChallengeHallAfterDuel",
+    "before": "\tuint8_t c = (wDuelResult == DUEL_WIN) ? 0u : 2u;",
+    "after": "\tuint8_t c = (wDuelResult == DUEL_WIN) ? 2u : 0u;",
+    "case_ids": ["ChallengeHallAfterDuel-0", "ChallengeHallAfterDuel-1"],
+}
 # <<< factory-mutation ChallengeHallAfterDuel
 # >>> factory-mutation ChallengeHallLoadMap
-MUTATIONS["ChallengeHallLoadMap"] = {"source_symbol": "ChallengeHallLoadMap", "before": "if (event == 0u)", "after": "if (event != 0u)", "case_ids": ["ChallengeHallLoadMap-0", "ChallengeHallLoadMap-1"]}
+MUTATIONS["ChallengeHallLoadMap"] = {
+    "source_symbol": "ChallengeHallLoadMap",
+    "before": "if (event == 0u)",
+    "after": "if (event != 0u)",
+    "case_ids": ["ChallengeHallLoadMap-0", "ChallengeHallLoadMap-1"],
+}
 # <<< factory-mutation ChallengeHallLoadMap
 # >>> factory-mutation Preload_Guide
-MUTATIONS["Preload_Guide"] = {"source_symbol": "Preload_Guide", "before": "if (event != 0u) {", "after": "if (event == 0u) {", "case_ids": ["Preload_Guide-1", "Preload_Guide-2"]}
+MUTATIONS["Preload_Guide"] = {
+    "source_symbol": "Preload_Guide",
+    "before": "if (event != 0u) {",
+    "after": "if (event == 0u) {",
+    "case_ids": ["Preload_Guide-1", "Preload_Guide-2"],
+}
 # <<< factory-mutation Preload_Guide
 # >>> factory-mutation Preload_ChallengeHallOpponent
-MUTATIONS["Preload_ChallengeHallOpponent"] = {"source_symbol": "Preload_ChallengeHallOpponent", "before": "starting == 0u", "after": "starting != 0u", "case_ids": ["Preload_ChallengeHallOpponent-0", "Preload_ChallengeHallOpponent-1"]}
+MUTATIONS["Preload_ChallengeHallOpponent"] = {
+    "source_symbol": "Preload_ChallengeHallOpponent",
+    "before": "starting == 0u",
+    "after": "starting != 0u",
+    "case_ids": ["Preload_ChallengeHallOpponent-0", "Preload_ChallengeHallOpponent-1"],
+}
 # <<< factory-mutation Preload_ChallengeHallOpponent
+MUTATIONS["Func_f580"] = {
+    "source_symbol": "Func_f580",
+    "before": "\twTempNPC = picked;\n\twChallengeHallNPC = picked;",
+    "after": "\twTempNPC = 0u;\n\twChallengeHallNPC = picked;",
+    "case_ids": ["Func_f580-0", "Func_f580-1"],
+}
+MUTATIONS["Func_f602"] = {
+    "source_symbol": "Func_f602",
+    "before": "return SetEventValue(EVENT_CHALLENGE_CUP_OPPONENT_CHOSEN, 0u, 0u, 0u);",
+    "after": "return SetEventValue(EVENT_CHALLENGE_CUP_OPPONENT_CHOSEN, 0u, 0u, 1u);",
+    "case_ids": ["Func_f602-0", "Func_f602-1"],
+}

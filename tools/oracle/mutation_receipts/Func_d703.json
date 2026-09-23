@@ -1,0 +1,9 @@
+{
+  "fn": "Func_d703",
+  "case": "tests/cases/mason_laboratory.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_d703\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54232\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_d703\", \"mismatches\": {\"f\": [128, 0]}}\n",
+  "restored": "{\"fn\": \"Func_d703\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54232\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

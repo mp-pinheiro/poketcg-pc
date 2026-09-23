@@ -363,6 +363,14 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 #include "home/script.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#define EVENT_MAN1_GIFTED_CARD_FLAGS 0x2du
+#define MAN1_REQUESTED_CARDS_BANK 3u
+#define MAN1_REQUESTED_CARDS_ADDR 0x5006u
+#define MAN1_REQUESTED_CARDS_COUNT 5u
+#define CHALLENGE_CUP_PRIZE_CARDS_BANK 3u
+#define CHALLENGE_CUP_PRIZE_CARDS_ADDR 0x51DCu
+#define CHALLENGE_CUP_PRIZE_CARD_COUNT 15u
 /* <<< factory statics */
 
 
@@ -2536,3 +2544,97 @@ IncreaseScriptPointerResult ScriptCommand_OpenMenu(void)
 	return result;
 }
 /* <<< factory ScriptCommand_OpenMenu */
+
+/* >>> factory ScriptCommand_PrintTextForChallengeCup */
+IncreaseScriptPointerResult ScriptCommand_PrintTextForChallengeCup(void)
+{
+	uint8_t cup = GetEventValue(EVENT_CHALLENGE_CUP_NUMBER);
+	uint8_t offset = (uint8_t)((((uint8_t)(cup - 1u) & 0x03u) << 1) + 1u);
+	GetScriptArgsAfterPointerResult args = GetScriptArgsAfterPointer(offset);
+	Func_cc32((uint16_t)(((uint16_t)args.b << 8) | args.c));
+	return IncreaseScriptPointerBy7();
+}
+/* <<< factory ScriptCommand_PrintTextForChallengeCup */
+
+/* >>> factory ScriptCommand_PickNextMan1RequestedCard */
+IncreaseScriptPointerResult ScriptCommand_PickNextMan1RequestedCard(void)
+{
+	uint8_t flags = GetEventValue(EVENT_MAN1_GIFTED_CARD_FLAGS);
+	uint8_t index;
+	uint8_t mask;
+	do {
+		index = Random(MAN1_REQUESTED_CARDS_COUNT);
+		mask = (uint8_t)(1u << index);
+	} while ((mask & flags) != 0u);
+	(void)SetEventValue(EVENT_MAN1_GIFTED_CARD_FLAGS, 0u, 0u, (uint8_t)(mask | flags));
+	const uint8_t *entry = rom_ptr(MAN1_REQUESTED_CARDS_BANK,
+	                               (uint16_t)(MAN1_REQUESTED_CARDS_ADDR + index));
+	(void)SetEventValue(EVENT_MAN1_REQUESTED_CARD_ID, 0u, 0u, entry[0]);
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_PickNextMan1RequestedCard */
+
+/* >>> factory ScriptCommand_JumpIfMan1RequestedCardOwned */
+JumpIfCardInCollectionResult ScriptCommand_JumpIfMan1RequestedCardOwned(uint8_t b)
+{
+	uint8_t card = GetEventValue(EVENT_MAN1_REQUESTED_CARD_ID);
+	CardCountResult cnt = GetCardCountInCollectionAndDecks(card);
+	if ((cnt.f & 0x10u) != 0u) {
+		SetScriptControlByteFail();
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy3();
+		return (JumpIfCardInCollectionResult){r.a, r.f, b, r.c};
+	}
+	SetScriptControlBytePass();
+	GetScriptArgsAfterPointerResult args = GetScriptArgs1AfterPointer();
+	if ((args.f & 0x80u) != 0u) {
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy3();
+		return (JumpIfCardInCollectionResult){r.a, r.f, args.b, r.c};
+	}
+	(void)SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
+	return (JumpIfCardInCollectionResult){args.a, args.f, args.b, args.c};
+}
+/* <<< factory ScriptCommand_JumpIfMan1RequestedCardOwned */
+
+/* >>> factory ScriptCommand_JumpIfMan1RequestedCardInCollection */
+JumpIfCardInCollectionResult ScriptCommand_JumpIfMan1RequestedCardInCollection(uint8_t b)
+{
+	uint8_t card = GetEventValue(EVENT_MAN1_REQUESTED_CARD_ID);
+	CardCountResult cnt = GetCardCountInCollection(card);
+	if ((cnt.f & 0x10u) != 0u) {
+		SetScriptControlByteFail();
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy3();
+		return (JumpIfCardInCollectionResult){r.a, r.f, b, r.c};
+	}
+	SetScriptControlBytePass();
+	GetScriptArgsAfterPointerResult args = GetScriptArgs1AfterPointer();
+	if ((args.f & 0x80u) != 0u) {
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy3();
+		return (JumpIfCardInCollectionResult){r.a, r.f, args.b, r.c};
+	}
+	(void)SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
+	return (JumpIfCardInCollectionResult){args.a, args.f, args.b, args.c};
+}
+/* <<< factory ScriptCommand_JumpIfMan1RequestedCardInCollection */
+
+/* >>> factory ScriptCommand_RemoveMan1RequestedCardFromCollection */
+IncreaseScriptPointerResult ScriptCommand_RemoveMan1RequestedCardFromCollection(void)
+{
+	RemoveCardFromCollection(GetEventValue(EVENT_MAN1_REQUESTED_CARD_ID));
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_RemoveMan1RequestedCardFromCollection */
+
+/* >>> factory ScriptCommand_PickChallengeCupPrizeCard */
+IncreaseScriptPointerResult ScriptCommand_PickChallengeCupPrizeCard(void)
+{
+	uint8_t index = (uint8_t)(GetEventValue(EVENT_CHALLENGE_CUP_NUMBER) - 1u);
+	if (index >= 2u)
+		index = (uint8_t)(Random((uint8_t)(CHALLENGE_CUP_PRIZE_CARD_COUNT - 2u)) + 2u);
+	const uint8_t *entry = rom_ptr(CHALLENGE_CUP_PRIZE_CARDS_BANK,
+	                               (uint16_t)(CHALLENGE_CUP_PRIZE_CARDS_ADDR + (uint16_t)index * 3u));
+	wCardReceived = entry[0];
+	gb_write8(wTxRam2_ADDR, entry[1]);
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), entry[2]);
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_PickChallengeCupPrizeCard */

@@ -3,6 +3,14 @@
 #include "generated/wram.h"
 #include "probe.h"
 
+/* >>> factory Func_d703 */
+static void adapt_Func_d703(ProbeState *s)
+{
+	FuncD703Result r = Func_d703();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Func_d703 */
 /* >>> factory Preload_DrMason */
 static void adapt_Preload_DrMason(ProbeState *s)
 {
@@ -87,6 +95,7 @@ static void adapt_Script_Tech1(ProbeState *s)
 
 const ProbeEntry probe_entries_mason_laboratory[] = {
 	{ "Script_Tech1", adapt_Script_Tech1 },
+	{ "Func_d703", adapt_Func_d703 },
 	{ "Preload_DrMason", adapt_Preload_DrMason },
 	{ "Preload_Sam", adapt_Preload_Sam },
 	{ "Preload_Tech5", adapt_Preload_Tech5 },

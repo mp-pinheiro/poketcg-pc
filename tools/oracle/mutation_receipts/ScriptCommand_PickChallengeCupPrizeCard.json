@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_PickChallengeCupPrizeCard",
+  "case": "tests/cases/scripting.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_PickChallengeCupPrizeCard\", \"registers\": {\"a\": 197, \"b\": 187, \"c\": 1, \"d\": 221, \"e\": 238, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51914\": \"ccfe3d\", \"52799\": \"eb03\", \"54242\": \"30\", \"54291\": \"01c5\", \"54935\": \"63\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_PickChallengeCupPrizeCard\", \"mismatches\": {\"bus\": {\"address\": 52799, \"reference\": \"ccfe3deb033001c5\", \"native\": \"ccfe3dec033001c5\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[51914, 3], [52799, 2], [54242, 1], [54291, 2], [54935, 1]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_PickChallengeCupPrizeCard\", \"registers\": {\"a\": 197, \"b\": 187, \"c\": 1, \"d\": 221, \"e\": 238, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51914\": \"ccfe3d\", \"52799\": \"eb03\", \"54242\": \"30\", \"54291\": \"01c5\", \"54935\": \"63\"}}, \"status\": \"PASS\"}\n"
+}

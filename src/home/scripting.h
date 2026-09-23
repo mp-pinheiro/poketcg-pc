@@ -732,4 +732,22 @@ RST20Result RST20(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t
 /* >>> factory ScriptCommand_OpenMenu */
 IncreaseScriptPointerResult ScriptCommand_OpenMenu(void);
 /* <<< factory ScriptCommand_OpenMenu */
+/* >>> factory ScriptCommand_PrintTextForChallengeCup */
+IncreaseScriptPointerResult ScriptCommand_PrintTextForChallengeCup(void);
+/* <<< factory ScriptCommand_PrintTextForChallengeCup */
+/* >>> factory ScriptCommand_PickNextMan1RequestedCard */
+IncreaseScriptPointerResult ScriptCommand_PickNextMan1RequestedCard(void);
+/* <<< factory ScriptCommand_PickNextMan1RequestedCard */
+/* >>> factory ScriptCommand_JumpIfMan1RequestedCardOwned */
+JumpIfCardInCollectionResult ScriptCommand_JumpIfMan1RequestedCardOwned(uint8_t b);
+/* <<< factory ScriptCommand_JumpIfMan1RequestedCardOwned */
+/* >>> factory ScriptCommand_JumpIfMan1RequestedCardInCollection */
+JumpIfCardInCollectionResult ScriptCommand_JumpIfMan1RequestedCardInCollection(uint8_t b);
+/* <<< factory ScriptCommand_JumpIfMan1RequestedCardInCollection */
+/* >>> factory ScriptCommand_RemoveMan1RequestedCardFromCollection */
+IncreaseScriptPointerResult ScriptCommand_RemoveMan1RequestedCardFromCollection(void);
+/* <<< factory ScriptCommand_RemoveMan1RequestedCardFromCollection */
+/* >>> factory ScriptCommand_PickChallengeCupPrizeCard */
+IncreaseScriptPointerResult ScriptCommand_PickChallengeCupPrizeCard(void);
+/* <<< factory ScriptCommand_PickChallengeCupPrizeCard */
 #endif
