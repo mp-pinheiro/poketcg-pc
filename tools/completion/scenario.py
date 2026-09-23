@@ -6,7 +6,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import os
-import re
 import json
 import struct
 import subprocess
@@ -20,8 +19,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import witness
-from refstream import group_by_symbol
-from tools.oracle.gbrecomp_oracle import Oracle, _full_state
+from tools.oracle.gbrecomp_oracle import Oracle
 
 # Same lane-isolation convention as the justfile's build_dir.
 _BUILD_DIR = Path(os.environ.get("POKETCG_BUILD", "build"))
@@ -82,127 +80,6 @@ def boot_input(frames: int) -> list[int]:
         for index in range(start, min(start + 3, frames)):
             masks[index] |= value
     return masks
-
-def reference_boot_input() -> str:
-    """oracle-b input script (f<start>:<buttons>:<duration>, active for
-    frames [start, start+duration)) mirroring boot_input(): same anchors,
-    every press held 3 frames. shift_reference_input moves starts only, so
-    window overlap is shift-invariant, and simultaneously-active entries AND
-    into a combined joypad state that byte-matches boot_input's OR'd masks."""
-    return "f1000:A:3,f1100:D:3,f1101:A:3,f1200:S:3,f1201:A:3"
-
-
-WVBC_WRAM_OFFSET = 0xCAB8 - 0xC000
-
-
-def reference_aligned_state(
-    oracle: Oracle,
-    native_state: dict[str, Any],
-    native_frames: int,
-    *,
-    base_input: str | None = None,
-    initial_offset: int = 6,
-    max_iterations: int = 4,
-) -> tuple[dict[str, Any], int]:
-    """Run the reference until its DoFrame count matches the native run's.
-
-    The two lanes count frames on different axes (oracle-b counts PPU
-    scanouts from power-on; the native counts DoFrame boundaries), and the
-    gap grows with every LCD-off transition the game performs, so it is not
-    a constant. wVBlankCounter ($CAB8) increments once per DoFrame on both
-    sides, which makes it a monotonic alignment ruler: adjust the reference
-    frame limit (and its input timeline, which rides the same axis) by the
-    counter delta until both lanes report the same DoFrame count, then
-    return that state (and the frame offset used)."""
-    wvbc = WVBC_WRAM_OFFSET
-    native_counter = native_state["wram"][wvbc]
-    offset = initial_offset
-    state: dict[str, Any] = {}
-    for _ in range(max_iterations):
-        with tempfile.TemporaryDirectory(prefix="poketcg-align-") as directory:
-            save_state = Path(directory) / "reference.gbs"
-            result = oracle.run(
-                frame_limit=native_frames + offset,
-                input_file=(
-                    shift_reference_input(base_input, offset)
-                    if base_input
-                    else None
-                ),
-                save_state=save_state,
-            )
-            dump = (
-                json.loads(result.state)
-                if isinstance(result.state, (str, bytes))
-                else result.state
-            )
-            state = _full_state(save_state, dump)
-        delta = native_counter - state["wram"][wvbc]
-        if delta == 0:
-            break
-        offset += delta
-    return state, offset
-
-
-def reference_boot_frame_offset(
-    oracle: Oracle,
-    *,
-    probe_frames: int = 1024,
-) -> int:
-    """wVBlankCounter-aligned reference frame offset for the boot timeline.
-
-    Runs the native lane for probe_frames DoFrames, then iterates the
-    reference frame limit exactly like reference_aligned_state until both
-    lanes report the same wVBlankCounter. The returned offset is the
-    reference-scanout lead frame_bisect applies to every reference run."""
-    with tempfile.TemporaryDirectory(prefix="poketcg-offset-") as directory:
-        state_path = Path(directory) / "state.json"
-        trace_path = Path(directory) / "trace.json"
-        returncode, stdout, stderr = run_native(
-            probe_frames, state_path, trace_path
-        )
-        if returncode != 0:
-            raise RuntimeError(
-                f"native probe run failed at {probe_frames} frames: "
-                f"{stderr.strip() or stdout.strip()}"
-            )
-        native_state = json.loads(state_path.read_text(encoding="utf-8"))
-    _, offset = reference_aligned_state(
-        oracle,
-        native_state,
-        probe_frames,
-        base_input=reference_boot_input(),
-    )
-    return offset
-
-
-REFERENCE_INCOMPLETE_FIELDS = {"apu_trace"}
-# Fields whose values depend on the hardware VBlank-service phase the
-# rendezvous substrate cannot reproduce (3 mid-processing services per
-# boot-to-name; LFSR algorithm itself proven byte-exact per call). Duel and
-# later scenarios seed wRNG* identically on both lanes, so gameplay parity is
-# unaffected.
-TIMING_PHASE_FIELDS = {"rng"}
-
-
-def fields_incomparable(
-    reference: dict[str, Any], native: dict[str, Any], field: str
-) -> bool:
-    """True when the field carries no comparable reference information.
-
-    Two cases: host-bookkeeping dicts serialized with different schemas on the
-    two sides (timer_frame_counters gains a "cycles" key on oracle-b), and
-    fields the oracle-b scene dump never records at all (apu_trace is always
-    empty there; its parity contract lives in the audio-catalog scenario,
-    which captures the real (address, value) sequence on both lanes)."""
-    if field in REFERENCE_INCOMPLETE_FIELDS or field in TIMING_PHASE_FIELDS:
-        return True
-    ref_value = reference.get(field)
-    nat_value = native.get(field)
-    return (
-        isinstance(ref_value, dict)
-        and isinstance(nat_value, dict)
-        and set(ref_value) != set(nat_value)
-    )
 
 
 # Documented comparator exclusions: byte ranges that differ for structural
@@ -308,45 +185,6 @@ COMPARATOR_EXCLUDED_RANGES = {
     "io": [(4, 6), (15, 16), (16, 64), (65, 66), (68, 70), (104, 108)],
 }
 
-COMPARATOR_EXCLUDED_KEYS = {
-    "mapper_state": {"rom_bank", "vram_bank"},
-}
-
-
-def apply_comparator_exclusions(
-    reference: dict[str, Any], native: dict[str, Any], field: str
-) -> None:
-    """Neutralize excluded ranges/keys in BOTH states so they cannot
-    mismatch. Byte ranges zero on both sides; excluded dict keys are dropped
-    from both. Exclusions are assertions of structural difference, each with
-    a documented reason above."""
-    for start, end in COMPARATOR_EXCLUDED_RANGES.get(field, ()):
-        for state in (reference, native):
-            values = state.get(field)
-            if isinstance(values, list):
-                for index in range(start, min(end, len(values))):
-                    values[index] = 0
-    excluded = COMPARATOR_EXCLUDED_KEYS.get(field, set())
-    if excluded:
-        for state in (reference, native):
-            values = state.get(field)
-            if isinstance(values, dict):
-                for key in excluded:
-                    values.pop(key, None)
-
-
-def shift_reference_input(text: str, offset: int) -> str:
-    """Shift a comma-separated f<frame>:<key>:<value> timeline by offset."""
-    if offset == 0:
-        return text
-    shifted = []
-    for part in text.split(","):
-        head, rest = part.split(":", 1)
-        if head.startswith("f"):
-            head = f"f{int(head[1:]) + offset}"
-        shifted.append(f"{head}:{rest}")
-    return ",".join(shifted)
-
 
 SAVE_HEADER_MAGIC = b"PKSR"
 SAVE_PAYLOAD_SIZE = 0x8000
@@ -377,110 +215,7 @@ def file_to_native_battery(path: Path) -> bytes:
     if struct.unpack_from("<I", header, 12)[0] != fnv1a(payload):
         raise ValueError(f"{path} fails its battery checksum")
     return payload
-AUDIO_WRITE_RE = re.compile(
-    r"\[WRITE\]\s+cyc=(\d+)\s+addr=([0-9A-Fa-f]{4}).*<=\s+([0-9A-Fa-f]{2})"
-)
 
-
-def parse_reference_audio(path: Path) -> list[dict[str, int]]:
-    records = []
-    for line in path.read_text(encoding="utf-8").splitlines():
-        match = AUDIO_WRITE_RE.search(line)
-        if match:
-            records.append({
-                "tick": int(match.group(1)),
-                "address": int(match.group(2), 16),
-                "value": int(match.group(3), 16),
-            })
-    if not records:
-        raise ValueError("reference audio trace has no register writes")
-    return records
-
-
-
-CENSUS_TOP_REGIONS = 20
-CENSUS_OFFSETS_PER_REGION = 8
-
-
-def excluded_byte_count(field: str) -> int:
-    return sum(end - start for start, end in COMPARATOR_EXCLUDED_RANGES.get(field, ()))
-
-
-def field_differences(
-    reference: dict[str, Any], native: dict[str, Any], field: str
-) -> tuple[list[int], bool]:
-    """Differing byte offsets for one field, plus whether the two sides differ
-    in length. Exclusions must already be applied to both states."""
-    from tests.scene_diff import _state_field
-
-    reference_value = _state_field(reference, field)
-    native_value = _state_field(native, field)
-    if reference_value is None or native_value is None:
-        return [], False
-    offsets = [
-        offset
-        for offset, (mine, theirs) in enumerate(zip(reference_value, native_value))
-        if mine != theirs
-    ]
-    return offsets, len(reference_value) != len(native_value)
-
-
-def compare_state_fields(
-    reference: dict[str, Any], native: dict[str, Any], fields: tuple[str, ...]
-) -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[str, str]]]:
-    """(mismatches, census, schema_skips).
-
-    `mismatches` keeps one first-offset entry per field so the requirement
-    gate's PASS/FAIL semantics are unchanged; `census` counts every differing
-    byte and groups it under the RAM symbol that owns it, which is the
-    burn-down metric."""
-    from tests.scene_diff import _state_field
-
-    mismatches: list[dict[str, Any]] = []
-    schema_skips: list[dict[str, str]] = []
-    regions: list[dict[str, Any]] = []
-    by_field: dict[str, int] = {}
-    length_divergent: list[str] = []
-    excluded_total = 0
-    for field in fields:
-        if fields_incomparable(reference, native, field):
-            schema_skips.append({"field": field, "reason": "schema"})
-            continue
-        apply_comparator_exclusions(reference, native, field)
-        excluded_total += excluded_byte_count(field)
-        if _state_field(reference, field) is None or _state_field(native, field) is None:
-            mismatches.append({"field": field, "reason": "missing"})
-            continue
-        offsets, length_differs = field_differences(reference, native, field)
-        by_field[field] = len(offsets)
-        if length_differs:
-            length_divergent.append(field)
-        if offsets:
-            mismatches.append({"field": field, "offset": offsets[0]})
-        elif length_differs:
-            mismatches.append({"field": field, "offset": _length_mismatch_offset(reference, native, field)})
-        regions.extend(
-            group_by_symbol(field, offsets, offsets_per_region=CENSUS_OFFSETS_PER_REGION)
-        )
-    regions.sort(key=lambda row: (-row["count"], row["field"], row["field_offset"]))
-    census = {
-        "total_bytes": sum(by_field.values()),
-        "regions": len(regions),
-        "excluded_bytes_total": excluded_total,
-        "by_field": by_field,
-        "top_regions": regions[:CENSUS_TOP_REGIONS],
-    }
-    if length_divergent:
-        census["length_divergent_fields"] = length_divergent
-    return mismatches, census, schema_skips
-
-
-def _length_mismatch_offset(
-    reference: dict[str, Any], native: dict[str, Any], field: str
-) -> int:
-    from tests.scene_diff import _state_field
-
-    return min(len(_state_field(reference, field)), len(_state_field(native, field)))
 
 def current_key() -> str:
     from tools.completion.completion import content_key, load_toml
@@ -544,10 +279,13 @@ def main(argv: list[str] | None = None) -> int:
         "required_edges": 0,
         "covered_edges": 0,
     }
-    if args.scenario in witness.SPECS:
+    if args.scenario in witness.SPECS or args.scenario in witness.NEGATIVES:
         EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
         try:
-            artifact.update(witness.run(args.scenario))
+            if args.scenario in witness.SPECS:
+                artifact.update(witness.run(args.scenario))
+            else:
+                artifact.update(witness.negative(args.scenario, EVIDENCE_DIR, requirement))
         except (OSError, ValueError, json.JSONDecodeError, RuntimeError) as exc:
             artifact["failure"] = "SCENARIO_ERROR"
             artifact["detail"] = str(exc)
@@ -557,16 +295,7 @@ def main(argv: list[str] | None = None) -> int:
         with tempfile.TemporaryDirectory(prefix="poketcg-scenario-") as directory:
             state_path = Path(directory) / "state.json"
             trace_path = Path(directory) / "trace.json"
-            input_path = None
-            if args.scenario == "boot-title-negative":
-                input_path = Path(directory) / "input.txt"
-                input_path.write_text(
-                    ",".join(str(value) for value in boot_input(run_frames)) + "\n",
-                    encoding="utf-8",
-                )
-            returncode, stdout, stderr = run_native(
-                run_frames, state_path, trace_path, input_path
-            )
+            returncode, stdout, stderr = run_native(run_frames, state_path, trace_path)
             if returncode != 0:
                 artifact["failure"] = "EARLY_EXIT"
                 artifact["detail"] = stderr.strip() or stdout.strip()
@@ -588,62 +317,7 @@ def main(argv: list[str] | None = None) -> int:
                 artifact["covered_edges"] = len(trace.get("edges", []))
                 artifact["terminal_event"] = trace.get("terminal_event")
                 artifact["trace_symbols"] = trace.get("symbols", [])
-                if args.scenario == "boot-title-negative":
-                    from frame_bisect import bisect_first_mismatch
-
-                    with Oracle(timeout=120.0) as oracle:
-                        finding = bisect_first_mismatch(
-                            oracle,
-                            run_frames,
-                            native_input=input_path,
-                            oracle_input=reference_boot_input(),
-                        )
-                    artifact["oracles"] = ["oracle-b", "native"]
-                    if finding is None:
-                        artifact["failure"] = "NO_MISMATCH_FOUND"
-                        artifact["detail"] = (
-                            f"native and oracle-b agree over all {run_frames} frames; "
-                            "negative evidence requires a detected first mismatch"
-                        )
-                    else:
-                        artifact["status"] = "PASS"
-                        artifact["terminal_event"] = "FIRST_MISMATCH"
-                        artifact["events"] = 1
-                        artifact["comparison"] = {
-                            "status": "PASS",
-                            "kind": "first-mismatch",
-                        }
-                        artifact["first_mismatch_frame"] = finding["frame"]
-                        artifact["first_mismatch_region"] = finding["field"]
-                        artifact["first_mismatch_offset"] = finding["offset"]
-                        artifact["state_fields"] = [
-                            "first_mismatch_region",
-                            "first_mismatch_offset",
-                            "replay_artifact",
-                        ]
-                        replay = {
-                            "schema": "negative-evidence-replay-v1",
-                            "scenario": args.scenario,
-                            "sweep_frames": run_frames,
-                            "bisect_frame": finding["frame"],
-                            "first_mismatch_region": finding["field"],
-                            "first_mismatch_offset": finding["offset"],
-                            "native": finding.get("native"),
-                            "reference": finding.get("reference"),
-                            "context": finding.get("context", {}),
-                            "reference_input": reference_boot_input(),
-                            "native_input_sha256": hashlib.sha256(
-                                input_path.read_bytes() if input_path else b""
-                            ).hexdigest(),
-                        }
-                        replay_path = EVIDENCE_DIR / f"{requirement}.replay.json"
-                        replay_path.write_text(
-                            json.dumps(replay, sort_keys=True, separators=(",", ":")) + "\n",
-                            encoding="utf-8",
-                        )
-                        artifact["replay_artifact"] = str(replay_path.relative_to(ROOT))
-                        artifact.pop("failure", None)
-                elif args.scenario == "save-interchange":
+                if args.scenario == "save-interchange":
                     from tests.scene_diff import _first_difference as _first_byte
 
                     roundtrip_frames = min(run_frames, 120)

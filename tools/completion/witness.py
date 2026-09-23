@@ -380,8 +380,12 @@ def corpus_entry(name: str) -> dict[str, str]:
     return entry
 
 
+def corpus_for(sessions: tuple[str, ...]) -> list[dict[str, str]]:
+    return [corpus_entry(name) for name in sessions]
+
+
 def corpus(scenario: str) -> list[dict[str, str]]:
-    return [corpus_entry(name) for name in SPECS[scenario].sessions]
+    return corpus_for(SPECS[scenario].sessions)
 
 
 def run(scenario: str) -> dict[str, Any]:
@@ -413,4 +417,113 @@ def run(scenario: str) -> dict[str, Any]:
             for row in rows
             if row["status"] != "PASS"
         )
+    return fragment
+
+
+NEGATIVES: dict[str, tuple[str, int, int]] = {
+    "boot-title-negative": ("boot-menu", 600, 0x01),
+}
+
+
+def first_mismatch(native: dict[str, bytes], reference: dict[str, bytes]) -> dict[str, Any] | None:
+    tables = session.mask_tables()
+    for region in session.REGIONS[: session.GATED]:
+        table = tables[region]
+        left, right = native[region], reference[region]
+        for offset in range(min(len(left), len(right))):
+            if table[offset] or left[offset] == right[offset]:
+                continue
+            field, field_offset = session.region_field(region, offset)
+            symbol, _base = refstream.resolve_region(field, field_offset)
+            return {
+                "field": field,
+                "offset": field_offset,
+                "symbol": symbol,
+                "native": left[offset],
+                "reference": right[offset],
+            }
+    return None
+
+
+def negative(scenario: str, evidence_dir: Path, requirement: str) -> dict[str, Any]:
+    name, at, bits = NEGATIVES[scenario]
+    masks, meta = session.load_session(name)
+    count = len(masks)
+    frames = session.reference_frames(masks, meta)
+    ref_meta = session.build_reference(name, masks, frames, pokes=meta["pokes"], save=meta["save"])
+    reference = session.load_reference(ref_meta)
+    lag_path = ROOT / ref_meta["directory"] / "lag.txt"
+    perturbed = list(masks)
+    for ordinal in range(at - 1, min(count, at + 7)):
+        perturbed[ordinal] |= bits
+    fragment: dict[str, Any] = {
+        "oracles": ["gambatte", "native"],
+        "state_fields": ["first_mismatch_region", "first_mismatch_offset", "replay_artifact"],
+        "frames": count,
+        "events": 0,
+        "status": "FAIL",
+    }
+    with tempfile.TemporaryDirectory(prefix=f"witness-negative-{name}-") as directory:
+        lane = Path(directory)
+        input_path = lane / "input.txt"
+        input_path.write_text("\n".join(str(value) for value in perturbed) + "\n", encoding="utf-8")
+        for file_name in ("pokes.txt", session.SAVE_FILE):
+            source = session.session_dir(name) / file_name
+            if source.is_file():
+                (lane / file_name).write_bytes(source.read_bytes())
+        mask_path = lane / "mask.txt"
+        mask_path.write_text(session.mask_text())
+        digest_path = lane / "native.bin"
+        _state, failure, _off = session.run_native(
+            lane, input_path, count, lag_path=lag_path, digest_out=digest_path, mask_path=mask_path
+        )
+        native_digests = digest_path.read_bytes() if digest_path.is_file() else b""
+        ordinal, reached, regions, _audio = session.first_divergence(reference, native_digests)
+        if ordinal is None:
+            fragment["failure"] = "NO_MISMATCH_FOUND"
+            fragment["detail"] = (
+                f"perturbing {name} at ordinal {at} left {reached} ordinals byte-identical: {failure[-200:]}"
+            )
+            return fragment
+        capture = lane / "capture"
+        capture.mkdir()
+        state_path, capture_failure, _off = session.run_native(
+            capture, input_path, ordinal, lag_path=lag_path, dump_ordinals=[ordinal]
+        )
+        dump_path = state_path.with_name(f"{state_path.stem}-f{ordinal}.json")
+        if not dump_path.is_file():
+            raise WitnessError(f"no native dump at ordinal {ordinal}: {capture_failure[-300:]}")
+        native_state = session.native_regions(json.loads(dump_path.read_text(encoding="utf-8")))
+        digest = hashlib.sha256(input_path.read_bytes()).hexdigest()
+    reference_state = session.reference_capture(name, masks, frames, ordinal, meta["pokes"], save=meta["save"])
+    finding = first_mismatch(native_state, reference_state)
+    if finding is None:
+        fragment["failure"] = "MISMATCH_UNATTRIBUTED"
+        fragment["detail"] = f"digests diverge at ordinal {ordinal} in {regions} but no compared byte differs"
+        return fragment
+    replay = {
+        "schema": "negative-evidence-replay-v1",
+        "scenario": scenario,
+        "session": name,
+        "perturbation": {"ordinal": at, "ordinals": 8, "mask_bits": bits},
+        "native_input_sha256": digest,
+        "first_mismatch_ordinal": ordinal,
+        "regions": regions,
+        "finding": finding,
+    }
+    replay_path = evidence_dir / f"{requirement}.replay.json"
+    replay_path.write_text(json.dumps(replay, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
+    fragment.update(
+        {
+            "status": "PASS",
+            "terminal_event": "FIRST_MISMATCH",
+            "events": 1,
+            "comparison": {"status": "PASS", "kind": "first-mismatch", "regions": regions},
+            "first_mismatch_frame": ordinal,
+            "first_mismatch_region": finding["field"],
+            "first_mismatch_offset": finding["offset"],
+            "first_mismatch_symbol": finding["symbol"],
+            "replay_artifact": str(replay_path.relative_to(ROOT)),
+        }
+    )
     return fragment

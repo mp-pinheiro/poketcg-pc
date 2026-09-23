@@ -128,11 +128,9 @@ _REGISTRY: dict[str, dict[str, Any]] = {
     "completion:v2:p2:boot-title-negative": _descriptor(
         "boot-title-negative",
         "scenario:boot-title-negative",
-        producer_files=_SCENARIO + ["tools/completion/frame_bisect.py"],
-        comparator_files=[
-            "tools/oracle/gbrecomp_oracle.py",
-            "tools/completion/frame_bisect.py",
-        ],
+        producer_files=_WITNESS,
+        comparator_files=_WITNESS_COMPARATORS,
+        corpus=witness.corpus_for(("boot-menu",)),
     ),
     "completion:v2:p3:audio-trace": _descriptor(
         "audio-trace",
