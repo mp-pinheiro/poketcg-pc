@@ -1,4 +1,6 @@
 from tests.cases._fixtures import Fixture
+DRAGONITE_PLAY_ATTACK = Fixture("effect-dragonite-lv41-2-ai-s3-playattackanimation-entry")
+DRAGONITE_PLAY_BUFFERED = Fixture("effect-dragonite-lv41-2-ai-s3-playbufferedduelanimations-entry")
 from tests.cases._fixtures import (
     card_energies_fixture as _card_energies_fixture,
     CARD_ENERGIES_REGS as _CARD_ENERGIES_REGS,
@@ -771,7 +773,7 @@ wAnimationQueue = 0xD423
 wd4c0 = 0xD4C0
 CONTRACT["PlayBufferedDuelAnimations"] = {
     "compare": ("a", "f", "b", "c", "d", "e", "hl"),
-    "preserve": ("b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "hl"),
 }
 CASES["PlayBufferedDuelAnimations"] = [
     {"wram": {wDuelAnimBufferCurPos: b"\x05", wDuelAnimBufferSize: b"\x05"}},
@@ -808,6 +810,12 @@ CASES["PlayBufferedDuelAnimations"] = [
             wAnimationQueue: b"\xff" * 7,
         }
     },
+    dict(
+        DRAGONITE_PLAY_BUFFERED.case(vram=False),
+        **DRAGONITE_PLAY_BUFFERED.regs,
+        compare=("a", "f", "b", "c", "hl"),
+        read={0xC200: 0x200, 0xCC00: 0x100, wDuelAnimBufferCurPos: 1, wDuelAnimBufferSize: 1},
+    ),
 ]
 # <<< factory PlayBufferedDuelAnimations
 
@@ -8938,6 +8946,10 @@ CASES["PlayAttackAnimation"] = [
         "instruction_budget": 20000000,
         "cycle_budget": 80000000,
     },
+    dict(
+        DRAGONITE_PLAY_ATTACK.case(vram=False),
+        read={0xC200: 0x200, 0xCC00: 0x100, wDamageAnimAmount: 2},
+    ),
 ]
 # <<< factory PlayAttackAnimation
 

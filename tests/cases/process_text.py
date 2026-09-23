@@ -5,6 +5,9 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 from tests.cases._fixtures import font_tile_fixture as _font_tile_fixture, FONT_TILE_REGS as _FONT_TILE_REGS
 from tests.cases._fixtures import text_tile_fixture as _text_tile_fixture, TEXT_TILE_REGS as _TEXT_TILE_REGS
 from tests.cases._fixtures import half_width_end_fixture as _half_width_end_fixture, HALF_WIDTH_END_REGS as _HALF_WIDTH_END_REGS
+from tests.cases._fixtures import Fixture
+DRAGONITE_TEXT_2325 = Fixture("seed-duel-continue-func-2325-entry")
+DRAGONITE_TEXT_235E = Fixture("seed-duel-continue-func-235e-entry")
 
 CONTRACT = {
     "InitTextFormat": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ()},
@@ -104,6 +107,12 @@ CASES.update({
         {"d": 0x41, "e": 0x42,
          "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
          "read": {0xC600: 4, 0xC700: 4, 0xC800: 4, 0xC900: 4, 0xFFA9: 1}},
+        dict(
+            DRAGONITE_TEXT_235E.case(vram=False),
+            **DRAGONITE_TEXT_235E.regs,
+            read={0xC600: 0x100, 0xC700: 0x100, 0xC800: 0x100, 0xC900: 0x100,
+                  0xCCF6: 1, 0xCD04: 1, 0xCD05: 1, 0xCD09: 1},
+        ),
     ],
     "Func_2325": [
         {}, dict(POISON),
@@ -125,6 +134,12 @@ CASES.update({
                    {"fn": "Func_2325", "d": 0x43, "e": 0x44}],
          "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xFFA9: 1,
                   0xCD04: 1}},
+        dict(
+            DRAGONITE_TEXT_2325.case(vram=False),
+            **DRAGONITE_TEXT_2325.regs,
+            read={0xC600: 0x100, 0xC700: 0x100, 0xC800: 0x100, 0xC900: 0x100,
+                  0xCCF6: 1, 0xCD04: 1, 0xCD05: 1, 0xCD09: 1},
+        ),
     ],
     # The zero-length path alone leaves the whole copy loop unexercised, so these
     # also drive: the early-TX_END fill, truncation at the budget, and a plain

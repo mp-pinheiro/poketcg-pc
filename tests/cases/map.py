@@ -1,6 +1,8 @@
 from tests.cases._duel_setup import (
     DUEL_CYCLE_BUDGET, DUEL_INSTRUCTION_BUDGET, DUEL_KEYS, DUEL_SETUP,
     DUEL_WRAM)
+from tests.cases._fixtures import Fixture
+AI01_PLAY_DEFAULT = Fixture("ai-duel-01-playdefaultsong-entry")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -156,6 +158,8 @@ CASES = {
                   wSongOverride: b"\x05"}, "read": {wSongOverride: 1}},
         {"wram": {wCurSongID: b"\x80", wDefaultSong: bytes((NUM_SONGS,)),
                   wSongOverride: b"\x01"}, "read": {wSongOverride: 1}},
+        dict(AI01_PLAY_DEFAULT.case(vram=False), **AI01_PLAY_DEFAULT.regs,
+             read={wSongOverride: 1, wCurSongID: 1, wDefaultSong: 1}),
     ],
 }
 # >>> factory HandleMapWarp

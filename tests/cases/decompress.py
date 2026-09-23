@@ -5,6 +5,8 @@ them as one 10-byte span. InitDataDecompression is the only way the game reaches
 that state, but a probe call is a single routine call, so the streaming routines
 get the post-Init state (and any mid-stream state) seeded directly instead.
 """
+from tests.cases._fixtures import Fixture
+MW_WIN_DECOMPRESS = Fixture("mw-win-decompressdata-entry")
 
 STATE = 0xCAD6  # source ptr LE, bits left, command byte, repeat toggle, lengths,
                 # bytes to repeat, buffer page, repeat offset, buffer low
@@ -174,9 +176,14 @@ CASES = {
          "wram": AA_SEED,
          "sram": AA_SRAM,
          "expect": {
-             0xD000: b"\xaa",  # seeded $55; written as output byte 45057
-             0xFF80: b"\xaa",  # seeded $55; written as output byte 57217
+             0xD000: b"\xaa",
+             0xFF80: b"\xaa",
          }},
+        dict(
+            MW_WIN_DECOMPRESS.case(vram=False),
+            **MW_WIN_DECOMPRESS.regs,
+            read={0xC000: 0x100, 0xC0EF: 1, 0xC0F0: 1, 0xCAD6: 10},
+        ),
     ],
     "DecompressData.Decompress": [
         # All-zero state: bits left 0 decrements to $FF without refilling, the zero
