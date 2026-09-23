@@ -195,9 +195,10 @@ _REGISTRY: dict[str, dict[str, Any]] = {
     ),
     "completion:v2:p7:printer": _descriptor(
         "printer",
-        None,
-        producer_files=_SCENARIO + ["tools/completion/peer.py"],
-        comparator_files=["tools/completion/peer.py", "tools/completion/refstream.py"],
+        "scenario:printer",
+        producer_files=_WITNESS,
+        comparator_files=_WITNESS_COMPARATORS,
+        corpus=witness.corpus("printer"),
     ),
     "completion:v2:faithful-4x3:release": _descriptor(
         "faithful-release",

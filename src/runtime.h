@@ -16,6 +16,7 @@ typedef enum {
 	RUNTIME_EVENT_NEW_GAME_ENTERED = 4,
 	RUNTIME_EVENT_OVERWORLD_READY = 5,
 	RUNTIME_EVENT_CREDITS_REACHED = 6,
+	RUNTIME_EVENT_PRINTER_PNG_CLOSED = 7,
 } RuntimeEvent;
 
 typedef struct {
@@ -105,8 +106,12 @@ typedef struct {
 	uint8_t *repeat_count;
 	size_t repeats;
 	int exact_stats; /* the track counts STAT ISRs: run exactly that many, no chain */
+	uint16_t *serial; /* link transfers the reference completed in the interval; NULL: none recorded */
 	size_t count;
 } LagTrack;
+void runtime_serial_track(const uint16_t *serial, size_t count);
+unsigned runtime_serial_budget(void);
+void runtime_serial_consume(unsigned steps);
 void runtime_set_lag_track(const LagTrack *track);
 /* Sync points the schedule could not place: the interval reached more or
  * fewer of them than the reference recorded, a different code path. */

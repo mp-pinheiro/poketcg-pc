@@ -1,0 +1,32 @@
+# boot-deck-machine at the open PC menu after the glossary (cursor on Glossary), a printer on the link
+press DOWN
+wait 30
+shot pr0
+press A
+idle
+shot pr1
+# printer menu: Pokemon Cards, Deck Configuration, Card List, Print Quality, Quit
+press DOWN
+wait 30
+press DOWN
+wait 30
+shot pr2
+press A
+idle
+shot pr3
+# Print the card list? the cursor starts on No
+press LEFT
+wait 20
+shot pr3b
+press A
+idle
+shot pr4
+peek
+# quit print, then turn the PC off
+press B
+idle
+shot pr5
+press A
+idle
+shot pr6
+peek

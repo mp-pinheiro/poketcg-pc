@@ -49,6 +49,7 @@ static uint32_t g_schedule_mismatches;
 void runtime_set_lag_track(const LagTrack *track)
 {
 	g_lag = track && track->count ? track : NULL;
+	runtime_serial_track(g_lag ? g_lag->serial : NULL, g_lag ? g_lag->count : 0);
 	memset(&g_schedule, 0, sizeof g_schedule);
 	g_schedule_mismatches = 0;
 	frame_boundary_services_from_track(g_lag != NULL);

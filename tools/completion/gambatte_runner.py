@@ -401,6 +401,9 @@ def configure_library(path: Path) -> ctypes.CDLL:
     library.gambatte_cpuread.argtypes = [ctypes.c_void_p, ctypes.c_ushort]
     library.gambatte_cpuread.restype = ctypes.c_ubyte
     library.gambatte_getregs.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_int)]
+    library.gambatte_linkstatus.argtypes = [ctypes.c_void_p, ctypes.c_int]
+    library.gambatte_linkstatus.restype = ctypes.c_int
+    library.gambatte_setlinkcallback.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
     return library
 
 

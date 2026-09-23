@@ -196,6 +196,145 @@ def _library() -> tuple[ctypes.CDLL, dict[str, Any]]:
 INPUT_GETTER = ctypes.CFUNCTYPE(ctypes.c_uint, ctypes.c_void_p)
 EXEC_CALLBACK = ctypes.CFUNCTYPE(None, ctypes.c_uint, ctypes.c_ulonglong)
 MEMORY_CALLBACK = ctypes.CFUNCTYPE(None, ctypes.c_int, ctypes.c_longlong)
+LINK_CALLBACK = ctypes.CFUNCTYPE(None)
+LINK_CLOCK_SIGNALED = 256
+LINK_ACK_CLOCK = 257
+LINK_GET_OUT = 258
+LINK_ENABLE = 264
+
+
+class Printer:
+    """The Game Boy Printer as the slave end of the link: the same packet
+    decoder as src/printer_sink.c, so both lanes' pages can be compared."""
+
+    MAGIC = (0x88, 0x33)
+    CMD_INIT, CMD_PRINT, CMD_DATA, CMD_STATUS = 0x01, 0x02, 0x04, 0x0F
+    DEVICE = 0x81
+    STATUS_PRINTING, STATUS_DATA = 0x02, 0x08
+    PAYLOAD_MAX = 0x280
+    BAND_MAX = 64 * 40 * 16
+
+    def __init__(self) -> None:
+        self.state = 0
+        self.command = 0
+        self.compression = 0
+        self.length = 0
+        self.checksum = 0
+        self.claimed = 0
+        self.payload = bytearray()
+        self.bands = bytearray()
+        self.pages: list[tuple[bytes, int]] = []
+        self.status = 0
+        self.exchanges = 0
+
+    def exchange(self, out: int) -> int:
+        reply = 0
+        if self.state == 9:
+            reply = self.DEVICE
+        elif self.state == 10:
+            reply = self.status
+        self.serial_byte(out)
+        self.exchanges += 1
+        return reply
+
+    def serial_byte(self, value: int) -> None:
+        state = self.state
+        if state == 0:
+            self.state = 1 if value == self.MAGIC[0] else 0
+        elif state == 1:
+            self.state = 2 if value == self.MAGIC[1] else 0
+        elif state == 2:
+            self.command = value
+            self.checksum = value
+            self.state = 3
+        elif state == 3:
+            self.compression = value & 1
+            self.checksum += value
+            self.state = 4
+        elif state == 4:
+            self.length = value
+            self.checksum += value
+            self.state = 5
+        elif state == 5:
+            self.length = min(self.length | (value << 8), self.PAYLOAD_MAX)
+            self.checksum += value
+            self.payload = bytearray()
+            self.state = 6 if self.length else 7
+        elif state == 6:
+            self.payload.append(value)
+            self.checksum += value
+            if len(self.payload) >= self.length:
+                self.state = 7
+        elif state == 7:
+            self.claimed = value
+            self.state = 8
+        elif state == 8:
+            self.claimed |= value << 8
+            if self.claimed != self.checksum & 0xFFFF:
+                self.status |= 0x01
+            else:
+                self.complete_packet()
+            self.state = 9
+        elif state == 9:
+            self.state = 10
+        else:
+            self.state = 0
+
+    def decode_payload(self) -> None:
+        data = self.payload
+        if not self.compression:
+            self.bands += data
+            return
+        index = 0
+        while index < len(data):
+            control = data[index]
+            index += 1
+            if control & 0x80:
+                if index >= len(data):
+                    break
+                self.bands += bytes([data[index]]) * ((control & 0x7F) + 2)
+                index += 1
+            else:
+                run = control + 1
+                self.bands += data[index : index + run]
+                index += run
+        del self.bands[self.BAND_MAX :]
+
+    def complete_packet(self) -> None:
+        if self.command == self.CMD_INIT:
+            self.bands = bytearray()
+            self.status = 0
+        elif self.command == self.CMD_DATA:
+            if self.length:
+                self.decode_payload()
+                self.status |= self.STATUS_DATA
+        elif self.command == self.CMD_PRINT:
+            palette = self.payload[2] if len(self.payload) >= 3 else 0xE4
+            if self.bands:
+                self.pages.append((bytes(self.bands), palette))
+            self.bands = bytearray()
+            self.status = (self.status & 0x40) | self.STATUS_PRINTING
+        else:
+            self.status &= ~self.STATUS_PRINTING & 0xFF
+
+    def snapshot(self) -> dict[str, Any]:
+        return {"attached": 1, "pages": len(self.pages), "band_bytes": len(self.bands),
+                "status": self.status, "bands": list(self.bands)}
+
+
+def render_page(tiles: bytes, palette: int) -> bytes:
+    """160-wide greyscale rows from 2bpp tiles, the mapping printer_write_png uses."""
+    grey = (0xFF, 0xAA, 0x55, 0x00)
+    rows = len(tiles) // 16 // 20
+    out = bytearray()
+    for y in range(rows * 8):
+        for x in range(160):
+            tile = (y // 8) * 20 + x // 8
+            base = tile * 16 + (y % 8) * 2
+            bit = 7 - (x % 8)
+            index = ((tiles[base] >> bit) & 1) | (((tiles[base + 1] >> bit) & 1) << 1)
+            out.append(grey[(palette >> (index * 2)) & 3])
+    return bytes(out)
 
 
 def native_mask_to_gambatte(mask: int) -> int:
@@ -212,7 +351,7 @@ SAVE_SIZE = 0x8000
 
 class Core:
     def __init__(self, masks: list[int], *, gba: bool = False, pokes: Pokes | None = None,
-                 save: bytes | None = None) -> None:
+                 save: bytes | None = None, printer: bool = False) -> None:
         self.library, self.pins = _library()
         import gambatte_runner
 
@@ -266,6 +405,24 @@ class Core:
             self.load_save(save)
         if self._pokes:
             self.install_exec(None)  # pokes ride the anchor callback
+        self.printer: Printer | None = None
+        self.serial_counts: dict[int, int] = {}
+        if printer:
+            self.attach_printer()
+
+    def attach_printer(self) -> None:
+        self.printer = Printer()
+        holder = LINK_CALLBACK(self._link_clock)
+        self._keepalive.append(holder)
+        self.library.gambatte_setlinkcallback(self.core, ctypes.cast(holder, ctypes.c_void_p))
+        self.library.gambatte_linkstatus(self.core, LINK_ENABLE)
+
+    def _link_clock(self) -> None:
+        out = self.library.gambatte_linkstatus(self.core, LINK_GET_OUT) & 0xFF
+        self.library.gambatte_linkstatus(self.core, LINK_ACK_CLOCK)
+        assert self.printer is not None
+        self.serial_counts[self.ordinal] = self.serial_counts.get(self.ordinal, 0) + 1
+        self.library.gambatte_linkstatus(self.core, self.printer.exchange(out))
 
     def hold(self, mask: int | None) -> None:
         """Drive input from an explicit mask instead of the scenario timeline,

@@ -4,6 +4,7 @@
 #include "persistence.h"
 #include "state_dump.h"
 #include "runtime.h"
+#include "printer_sink.h"
 #include "shell.h"
 #include "checkpoint.h"
 #include "digest.h"
@@ -141,6 +142,7 @@ static void lag_track_free(LagTrack *track)
 	free(track->repeat_interval);
 	free(track->repeat_segment);
 	free(track->repeat_count);
+	free(track->serial);
 	memset(track, 0, sizeof *track);
 }
 
@@ -297,6 +299,13 @@ static int load_lag_track(const char *path, LagTrack *track)
 			    grow((void **)&track->write_start, capacity + 1, sizeof *track->write_start) != 0 ||
 			    grow((void **)&track->stat_masks, capacity, sizeof *track->stat_masks) != 0)
 				goto fail;
+			if (track->serial) {
+				uint16_t *serial = realloc(track->serial, capacity * sizeof *serial);
+				if (!serial)
+					goto fail;
+				memset(serial + track->count, 0, (capacity - track->count) * sizeof *serial);
+				track->serial = serial;
+			}
 		}
 		track->cycles[track->count] = (uint32_t)f;
 		track->ticks[track->count] = (uint16_t)t;
@@ -369,6 +378,20 @@ static int load_lag_track(const char *path, LagTrack *track)
 			track->repeat_segment[track->repeats] = (uint8_t)segment;
 			track->repeat_count[track->repeats] = (uint8_t)repeat;
 			track->repeats++;
+			while (*cursor == ' ' || *cursor == '\t')
+				cursor++;
+		}
+		if (*cursor == 'p') {
+			unsigned long completions = strtoul(cursor + 1, &end, 10);
+			if (end == cursor + 1 || completions > 65535)
+				goto fail;
+			cursor = end;
+			if (!track->serial) {
+				track->serial = calloc(capacity, sizeof *track->serial);
+				if (!track->serial)
+					goto fail;
+			}
+			track->serial[track->count] = (uint16_t)completions;
 			while (*cursor == ' ' || *cursor == '\t')
 				cursor++;
 		}
@@ -610,6 +633,7 @@ int main(int argc, char **argv)
 	const char *checkpoint_path = NULL;
 	const char *isr_track_path = NULL;
 	const char *dump_pcm_path = NULL;
+	const char *printer_dir = NULL;
 	int link_fd = -1;
 	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "--headless") == 0) {
@@ -648,6 +672,8 @@ int main(int argc, char **argv)
 			record_input_path = argv[++i];
 		} else if (strcmp(argv[i], "--dump-pcm") == 0 && i + 1 < argc) {
 			dump_pcm_path = argv[++i];
+		} else if (strcmp(argv[i], "--printer-dir") == 0 && i + 1 < argc) {
+			printer_dir = argv[++i];
 		} else if (strcmp(argv[i], "--poke-ordinal") == 0 && i + 1 < argc) {
 			poke_ordinal_path = argv[++i];
 		} else if (strcmp(argv[i], "--overread-track") == 0 && i + 1 < argc) {
@@ -701,7 +727,7 @@ int main(int argc, char **argv)
 			       "[--digest-out PATH [--digest-mask FILE]] [--lag-track PATH] "
 			       "[--trace-entries PATH] [--trace-calls PATH] "
 			       "[--trace-window LO HI --trace-window-out PATH] "
-			       "[--load-checkpoint PATH] [--link-fd N] [--isr-track PATH] [--dump-pcm PATH]\n");
+			       "[--load-checkpoint PATH] [--link-fd N] [--isr-track PATH] [--dump-pcm PATH] [--printer-dir DIR]\n");
 			printf("--frames 0 runs until the window closes\n");
 			printf("--input is one byte per host frame (a movie axis); "
 			       "--input-ordinal is one byte per DoFrame and never wraps: "
@@ -846,6 +872,7 @@ int main(int argc, char **argv)
 		return 2;
 	}
 	runtime_set_overreads(overreads, overread_count);
+	printer_attach(printer_dir);
 	FILE *pcm_sink = NULL;
 	if (dump_pcm_path) {
 		pcm_sink = fopen(dump_pcm_path, "wb");

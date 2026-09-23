@@ -346,7 +346,7 @@ static void adapt_PrinterMenu_PokemonCards(ProbeState *s)
 /* >>> factory HandlePrinterMenu */
 static void adapt_HandlePrinterMenu(ProbeState *s)
 {
-	HandlePrinterMenu();
+	HandlePrinterMenu(s->hl);
 }
 /* <<< factory HandlePrinterMenu */
 

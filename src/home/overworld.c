@@ -1612,6 +1612,8 @@ void LoadMap(void)
 }
 /* <<< factory LoadMap */
 
+#define PCMENU_PRINT_ADDR 0x4877u
+
 /* >>> factory PCMenu_Print */
 void PCMenu_Print(void)
 {
@@ -1619,7 +1621,7 @@ void PCMenu_Print(void)
 	hSCY = 0u;
 	Set_OBJ_8x16();
 	SetDefaultPalettes();
-	HandlePrinterMenu();
+	HandlePrinterMenu(PCMENU_PRINT_ADDR);
 	wLCDC = 4u;
 	Set_OBJ_8x8();
 	WhiteOutDMGPals();

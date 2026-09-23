@@ -1,4 +1,9 @@
 #include "home/printer.h"
+#include "home/serial.h"
+#include "printer_sink.h"
+#include "runtime.h"
+
+#include <limits.h>
 
 #include "generated/wram.h"
 #include "mem.h"
@@ -261,6 +266,7 @@ void SendByteThroughSerialData(uint8_t a)
 	gb_write8(rSB, a);
 	gb_write8(rSC, SC_INTERNAL);
 	gb_write8(rSC, (uint8_t)(SC_START | SC_INTERNAL));
+	printer_serial_byte(a);
 }
 
 static void increment_sequence(void)
@@ -652,6 +658,10 @@ SendPrinterPacketResult SendPrinterPacket(uint8_t b, uint8_t c, uint8_t d, uint8
 {
 	uint8_t device_response = gb_read8(wSerialTransferData_ADDR);
 	uint8_t status_response = gb_read8(wPrinterStatus_ADDR);
+	if (printer_attached()) {
+		device_response = printer_device_byte();
+		status_response = printer_status_byte();
+	}
 	gb_write8(wPrinterPacketPreamble_ADDR, 0x88u);
 	gb_write8((uint16_t)(wPrinterPacketPreamble_ADDR + 1u), 0x33u);
 	gb_write8(wPrinterPacketInstructions_ADDR, d);
@@ -666,18 +676,34 @@ SendPrinterPacketResult SendPrinterPacket(uint8_t b, uint8_t c, uint8_t d, uint8
 	gb_write8((uint16_t)(wSerialDataPtr_ADDR + 1u), (uint8_t)(wPrinterPacket_ADDR >> 8));
 	(void)Func_0e8e();
 	gb_write8(wPrinterPacketSequence_ADDR, 1u);
-	SendNextPrinterPacketByteResult first = SendNextPrinterPacketByte();
-	uint8_t step_d = first.d;
-	uint8_t step_e = first.e;
-	while (gb_read8(wPrinterPacketSequence_ADDR) != 0u) {
-		uint8_t sequence = gb_read8(wPrinterPacketSequence_ADDR);
-		if (sequence == 11u)
-			gb_write8(rSB, device_response);
-		else if (sequence == 12u)
-			gb_write8(rSB, status_response);
-		ExecutePrinterPacketSequenceResult step = ExecutePrinterPacketSequence(sequence, step_d, step_e);
-		step_d = step.d;
-		step_e = step.e;
+	(void)SendNextPrinterPacketByte();
+	unsigned starved = 0;
+	for (;;) {
+		unsigned budget = runtime_serial_budget();
+		if (budget == 0u && ++starved > 600u)
+			budget = 1u;
+		while (budget && gb_read8(wPrinterPacketSequence_ADDR) != 0u) {
+			uint8_t sequence = gb_read8(wPrinterPacketSequence_ADDR);
+			if (sequence == 11u) {
+				if (printer_attached())
+					device_response = printer_device_byte();
+				gb_write8(rSB, device_response);
+			} else if (sequence == 12u) {
+				if (printer_attached())
+					status_response = printer_status_byte();
+				gb_write8(rSB, status_response);
+			}
+			SerialHandler();
+			if (budget != UINT_MAX) {
+				runtime_serial_consume(1u);
+				budget--;
+			}
+		}
+		if (budget == UINT_MAX)
+			break;
+		DoFrame();
+		if (gb_read8(wPrinterPacketSequence_ADDR) == 0u)
+			break;
 	}
 	ResetSerial();
 	uint8_t device = gb_read8(wSerialTransferData_ADDR);
@@ -1632,9 +1658,52 @@ void PrinterMenu_PokemonCards(void)
 /* <<< factory PrinterMenu_PokemonCards */
 
 /* >>> factory HandlePrinterMenu */
-void HandlePrinterMenu(void)
+void HandlePrinterMenu(uint16_t hl)
 {
-	(void)0;
+	if (PreparePrinterConnection(hl) & 0x10u)
+		return;
+	uint8_t menu_item = 0u;
+	for (;;) {
+		uint16_t menu_parameters = PRINTER_MENU_PARAMETERS_ADDR;
+		InitializeMenuParameters(menu_item, &menu_parameters);
+		EmptyScreenAndLoadFontDuelAndHandCardsIcons();
+		uint16_t box = 0u;
+		DrawRegularTextBox(&box, 0u, 12u, 12u, 4u, 0u);
+		InitTextPrinting(6u, 2u);
+		(void)ProcessTextFromID(PrintMenuItemsText);
+		(void)DrawWideTextBox_PrintText(WhatWouldYouLikeToPrintText);
+		(void)EnableLCD();
+		for (;;) {
+			DoFrame();
+			HandleMenuInputResult input = HandleMenuInput();
+			if ((input.f & 0x10u) != 0u)
+				break;
+		}
+		uint8_t selected = hCurMenuItem;
+		if (selected == MENU_CANCEL) {
+			(void)PrinterMenu_QuitPrint(0u);
+			return;
+		}
+		wSelectedPrinterMenuItem = selected;
+		switch (selected) {
+		case 0u:
+			PrinterMenu_PokemonCards();
+			break;
+		case 1u:
+			(void)PrinterMenu_DeckConfiguration();
+			break;
+		case 2u:
+			PrinterMenu_CardList();
+			break;
+		case 3u:
+			PrinterMenu_PrintQuality(0u);
+			break;
+		default:
+			(void)PrinterMenu_QuitPrint(0u);
+			return;
+		}
+		menu_item = wSelectedPrinterMenuItem;
+	}
 }
 /* <<< factory HandlePrinterMenu */
 

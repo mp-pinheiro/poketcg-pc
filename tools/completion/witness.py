@@ -15,6 +15,7 @@ import math
 import re
 import struct
 import tempfile
+import zlib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -35,6 +36,7 @@ EVENT_NAMES = {
     4: "NEW_GAME_ENTERED",
     5: "OVERWORLD_READY",
     6: "CREDITS_REACHED",
+    7: "PRINTER_PNG_CLOSED",
 }
 IO_COMPARED = (
     0x00, 0x01, 0x02, 0x06, 0x07,
@@ -129,6 +131,13 @@ SPECS: dict[str, Spec] = {
         terminal="CREDITS_REACHED",
         event="CREDITS_REACHED",
     ),
+    "printer": Spec(
+        sessions=("printer-card-list",),
+        fields=("printer", "wram", "framebuffer", "input_latch"),
+        terminal="PRINTER_PNG_CLOSED",
+        event="PRINTER_PNG_CLOSED",
+        checks=("pages",),
+    ),
     "new-game-to-credits": Spec(
         sessions=("credits-1-explore-1",),
         fields=(
@@ -206,7 +215,7 @@ def reference_pass(
     stable: dict[int, bool] = {}
     apu_writes: list[tuple[int, int, int]] = []
     anchor_samples: list[int] = []
-    with refstream.Core(padded, pokes=meta["pokes"], save=meta["save"]) as core:
+    with refstream.Core(padded, pokes=meta["pokes"], save=meta["save"], printer=meta["printer"]) as core:
         core.input_axis = "ordinal"
         hits = 0
         last_frame = b""
@@ -248,6 +257,10 @@ def reference_pass(
                     record["framebuffer"] = last_frame
                 if want_save and hits == count:
                     record["save"] = core.area("CartRAM")[:0x8000]
+                if core.printer is not None:
+                    record["printer"] = core.printer.snapshot()
+                    if hits == count:
+                        record["pages"] = list(core.printer.pages)
                 captured[hits] = record
 
         if want_apu:
@@ -407,10 +420,11 @@ def native_pass(
     directory: Path,
     *,
     pcm_out: Path | None = None,
+    printer_dir: Path | None = None,
 ) -> dict[int, dict[str, Any]]:
     state_path, failure, _off = session.run_native(
         directory, session.session_dir(name) / "input.txt", count, lag_path=lag_path,
-        dump_ordinals=anchors, pcm_out=pcm_out,
+        dump_ordinals=anchors, pcm_out=pcm_out, printer_dir=printer_dir,
     )
     dumps: dict[int, dict[str, Any]] = {}
     for ordinal in anchors:
@@ -419,6 +433,60 @@ def native_pass(
             raise WitnessError(f"native dump missing at ordinal {ordinal} for {name}: {failure[-300:]}")
         dumps[ordinal] = json.loads(dump_path.read_text(encoding="utf-8"))
     return dumps
+
+
+def read_png_grey(path: Path) -> tuple[int, int, bytes]:
+    data = path.read_bytes()
+    if data[:8] != b"\x89PNG\r\n\x1a\n":
+        raise WitnessError(f"{path} is not a PNG")
+    offset = 8
+    width = height = 0
+    idat = b""
+    while offset < len(data):
+        length = int.from_bytes(data[offset : offset + 4], "big")
+        kind = data[offset + 4 : offset + 8]
+        body = data[offset + 8 : offset + 8 + length]
+        if kind == b"IHDR":
+            width = int.from_bytes(body[:4], "big")
+            height = int.from_bytes(body[4:8], "big")
+            if body[8] != 8 or body[9] != 0:
+                raise WitnessError(f"{path} is not 8-bit greyscale")
+        elif kind == b"IDAT":
+            idat += body
+        offset += 12 + length
+    raw = zlib.decompress(idat)
+    stride = width + 1
+    rows = b"".join(raw[y * stride + 1 : (y + 1) * stride] for y in range(height))
+    return width, height, rows
+
+
+def compare_pages(printer_dir: Path, reference_pages: list[tuple[bytes, int]]) -> dict[str, Any]:
+    files = sorted(printer_dir.glob("print-*.png"))
+    mismatched: list[int] = []
+    detail = ""
+    for index, (tiles, palette) in enumerate(reference_pages):
+        expected = refstream.render_page(tiles, palette)
+        if index >= len(files):
+            mismatched.append(index + 1)
+            detail = detail or f"native wrote {len(files)} pages, reference printed {len(reference_pages)}"
+            continue
+        width, height, rows = read_png_grey(files[index])
+        if width != 160 or rows != expected:
+            mismatched.append(index + 1)
+            detail = detail or f"page {index + 1}: {width}x{height} differs from the reference render"
+    if len(files) > len(reference_pages):
+        mismatched.append(len(reference_pages) + 1)
+        detail = detail or f"native wrote {len(files)} pages, reference printed {len(reference_pages)}"
+    if not reference_pages:
+        detail = detail or "reference printed no page"
+    status = "PASS" if reference_pages and not mismatched else "FAIL"
+    return {
+        "native_pages": len(files),
+        "reference_pages": len(reference_pages),
+        "mismatched": mismatched,
+        "status": status,
+        "detail": detail,
+    }
 
 
 def count_diff(left: bytes, right: bytes) -> int:
@@ -468,8 +536,18 @@ def compare_anchor(
         return int(native["input_latch"] != ((mask << 4) | (mask >> 4)) & 0xFF)
     if field == "rng":
         return count_diff(bytes(native["rng"]), reference["wram"][RNG_OFFSET : RNG_OFFSET + 3])
-    if field in {"transport", "printer"}:
+    if field == "transport":
         return len(native.get(field) or [])
+    if field == "printer":
+        expected = reference.get("printer")
+        actual = native.get("printer")
+        if expected is None:
+            return len(actual or []) if isinstance(actual, list) else int(bool(actual and actual.get("attached")))
+        if not isinstance(actual, dict):
+            return 1
+        return sum(
+            1 for key in ("attached", "pages", "band_bytes", "status") if actual.get(key) != expected[key]
+        ) + count_diff(bytes(actual.get("bands", [])), bytes(expected["bands"]))
     if field == "mapper_state":
         expected = reference["mapper_state"]
         return sum(1 for key, value in expected.items() if native["mapper_state"].get(key) != value)
@@ -579,12 +657,15 @@ def witness_session(name: str, spec: Spec) -> dict[str, Any]:
                 name, masks, meta, frames, anchors,
                 want_frames=want_frames, want_apu=want_apu, want_save=want_save,
             )
-        ref_meta = session.build_reference(name, masks, frames, pokes=meta["pokes"], save=meta["save"])
+        ref_meta = session.build_reference(name, masks, frames, pokes=meta["pokes"], save=meta["save"],
+                                           printer=meta["printer"])
         lag_path = ROOT / ref_meta["directory"] / "lag.txt"
+        printer_dir = lane / "printer" if meta["printer"] else None
         native = native_pass(
             name, count, anchors, lag_path, lane,
-            pcm_out=(lane / "native.pcm") if want_pcm else None,
+            pcm_out=(lane / "native.pcm") if want_pcm else None, printer_dir=printer_dir,
         )
+        pages = compare_pages(printer_dir, reference["anchors"][count].get("pages", [])) if printer_dir else None
         if want_pcm:
             native_pcm = (lane / "native.pcm").read_bytes()
     tables = session.mask_tables()
@@ -628,6 +709,14 @@ def witness_session(name: str, spec: Spec) -> dict[str, Any]:
         row["duel_finished"] = {"ordinal": finished, "flag": flag}
         if not flag:
             failures.append(f"duel outcome flag clear at ordinal {finished}")
+    if "pages" in spec.checks:
+        if pages is None:
+            failures.append("session has no printer on the link")
+        else:
+            row["pages"] = pages
+            census["printer_pages"] = {"anchors": pages["reference_pages"], "differing": len(pages["mismatched"])}
+            if pages["status"] != "PASS":
+                failures.append(f"printer pages: {pages['detail']}")
     if "timer_frame_counters" in fields:
         census["timer_frame_counters"] = {
             "anchors": count,
@@ -726,8 +815,9 @@ def run(scenario: str) -> dict[str, Any]:
     spec = SPECS[scenario]
     rows = [witness_session(name, spec) for name in spec.sessions]
     passed = all(row["status"] == "PASS" for row in rows)
+    linked = any(session.load_session(name)[1]["printer"] for name in spec.sessions)
     fragment: dict[str, Any] = {
-        "oracles": ["gambatte", "native"],
+        "oracles": ["linked-reference" if linked else "gambatte", "native"],
         "state_fields": list(spec.fields),
         "frames": sum(row.get("frames", 0) for row in rows),
         "events": sum(row.get("events", {}).get("count", 0) for row in rows),

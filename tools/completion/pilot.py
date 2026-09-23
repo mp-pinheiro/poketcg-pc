@@ -323,9 +323,10 @@ class Driver:
     """Runs the reference one DoFrame at a time under script control."""
 
     def __init__(self, base_masks: list[int], budget: int,
-                 pokes: refstream.Pokes | None = None, save: bytes | None = None) -> None:
+                 pokes: refstream.Pokes | None = None, save: bytes | None = None,
+                 printer: bool = False) -> None:
         self.masks = list(base_masks)
-        self.core = refstream.Core([0] * budget, pokes=pokes, save=save)
+        self.core = refstream.Core([0] * budget, pokes=pokes, save=save, printer=printer)
         self.core.input_axis = "ordinal"
         self.core.override_mask = 0
         self.budget = budget
@@ -593,6 +594,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--base-ordinals", type=int, help="use only the first N inputs of the base session")
     parser.add_argument("--pokes", type=Path,
                         help="pokes.txt applied on the reference and copied into the new session")
+    parser.add_argument("--printer", action="store_true",
+                        help="a Game Boy Printer answers on the link, on the reference and the port")
     args = parser.parse_args(argv)
 
     base_masks, base_meta = session.load_session(args.base)
@@ -604,7 +607,9 @@ def main(argv: list[str] | None = None) -> int:
             merged = pokes.setdefault(ordinal, [])
             merged.extend(write for write in writes if write not in merged)
     steps = parse_script(args.script)
-    driver = Driver([], budget=(len(base_masks) + 80000) * 2 + 400, pokes=pokes, save=base_meta["save"])
+    printer = args.printer or base_meta["printer"]
+    driver = Driver([], budget=(len(base_masks) + 80000) * 2 + 400, pokes=pokes, save=base_meta["save"],
+                    printer=printer)
     try:
         driver.replay(base_masks)
         start = len(driver.masks)
@@ -639,8 +644,7 @@ def main(argv: list[str] | None = None) -> int:
         (args.out / "pokes.txt").write_text(refstream.pokes_text(pokes), encoding="utf-8")
     session.inherit_save(args.out, base_meta["save"])
     print(f"wrote {args.out / 'input.txt'}: {len(masks)} DoFrames ({len(masks) - start} new)")
-    if args.goal:
-        session.record_meta(args.out.name, args.goal)
+    session.record_meta(args.out.name, args.goal, printer=printer)
     return 0
 
 

@@ -1,6 +1,7 @@
 #include "state_dump.h"
 
 #include "mem.h"
+#include "printer_sink.h"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -36,6 +37,17 @@ static int write_region(FILE *file, const char *name, const uint8_t *data, size_
 	return fprintf(file, "\"%s\":", name) < 0 || write_bytes(file, data, count) != 0 ? -1 : 0;
 }
 
+static int write_printer(FILE *file)
+{
+	size_t bytes = printer_band_bytes();
+	if (fprintf(file, "{\"attached\":%d,\"pages\":%zu,\"band_bytes\":%zu,\"status\":%u,\"last_path\":\"%s\",\"bands\":",
+	            printer_attached(), printer_pages(), bytes, printer_status_byte(), printer_last_path()) < 0)
+		return -1;
+	if (write_bytes(file, printer_band_data(), bytes) != 0)
+		return -1;
+	return fputc('}', file) == EOF ? -1 : 0;
+}
+
 static const char *runtime_event_name(RuntimeEvent event)
 {
 	switch (event) {
@@ -51,6 +63,8 @@ static const char *runtime_event_name(RuntimeEvent event)
 		return "OVERWORLD_READY";
 	case RUNTIME_EVENT_CREDITS_REACHED:
 		return "CREDITS_REACHED";
+	case RUNTIME_EVENT_PRINTER_PNG_CLOSED:
+		return "PRINTER_PNG_CLOSED";
 	default:
 		return "NONE";
 	}
@@ -114,7 +128,8 @@ int runtime_write_state(const char *path, const RuntimeResult *runtime)
 	ok = ok && fputs(",\"framebuffer\":", file) >= 0 &&
 	     write_words(file, runtime->framebuffer, SCREEN_W * SCREEN_H) == 0;
 	ok = ok && fputs(",\"save\":", file) >= 0 && write_bytes(file, g_sram, sizeof g_sram) == 0;
-	ok = ok && fputs(",\"transport\":[],\"printer\":[],\"scratch\":", file) >= 0 &&
+	ok = ok && fputs(",\"transport\":[],\"printer\":", file) >= 0 &&
+	     write_printer(file) == 0 && fputs(",\"scratch\":", file) >= 0 &&
 	     write_bytes(file, g_scratch, sizeof g_scratch) == 0;
 	ok = ok && fputc('}', file) != EOF;
 	if (fclose(file) != 0)

@@ -859,8 +859,10 @@ CASES["PrinterMenu_PokemonCards"] = [
 # >>> factory HandlePrinterMenu
 CONTRACT["HandlePrinterMenu"] = {"compare": (), "preserve": ()}
 CASES["HandlePrinterMenu"] = [
-    {"wram": {0xCFE4: b"\x00"}, "read": {0xCFE4: 1}},
-    dict(POISON, wram={0xCFE4: b"\x00"}, read={0xCFE4: 1}),
+    {"wram": {0xCFE4: b"\x00"}, "read": {0xCFE4: 1}, "keys": [0x00, 0x01],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xCFE4: b"\x00"}, read={0xCFE4: 1}, keys=[0x00, 0x01],
+         instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory HandlePrinterMenu
 
@@ -1169,7 +1171,7 @@ MUTATIONS["PrinterMenu_PokemonCards"] = {
 }
 # <<< factory-mutation PrinterMenu_PokemonCards
 # >>> factory-mutation HandlePrinterMenu
-MUTATIONS["HandlePrinterMenu"] = {"source_symbol": "HandlePrinterMenu", "before": "void HandlePrinterMenu(void)\n{\n\t(void)0;", "after": "void HandlePrinterMenu(void)\n{\n\t(void)0;\n\twSelectedPrinterMenuItem = 1u;", "case_ids": ["HandlePrinterMenu-0", "HandlePrinterMenu-1"]}
+MUTATIONS["HandlePrinterMenu"] = {"source_symbol": "HandlePrinterMenu", "before": "\tif (PreparePrinterConnection(hl) & 0x10u)\n\t\treturn;\n\tuint8_t menu_item = 0u;", "after": "\tif (PreparePrinterConnection(hl) & 0x10u) {\n\t\twSelectedPrinterMenuItem = 1u;\n\t\treturn;\n\t}\n\tuint8_t menu_item = 0u;", "case_ids": ["HandlePrinterMenu-0", "HandlePrinterMenu-1"]}
 # <<< factory-mutation HandlePrinterMenu
 # >>> factory-completion HandlePrinterMenu
 for _record in SCHEMA2_CASES["HandlePrinterMenu"]:

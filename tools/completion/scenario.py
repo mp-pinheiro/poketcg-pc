@@ -40,6 +40,7 @@ SCENARIO_REQUIREMENTS = {
     "all-maps-scripts": "completion:v2:p6:maps-and-campaign",
     "new-game-to-credits": "completion:v2:faithful-4x3:release",
     "link-ir-printer": "completion:v2:p7:link-ir",
+    "printer": "completion:v2:p7:printer",
     "faithful-4x3-corpus": "completion:v2:faithful-4x3:package",
     "widescreen-corpus": "completion:v2:p8:release:enhanced-corpus",
 }
@@ -58,6 +59,7 @@ SCENARIO_SCHEMAS = {
     "all-maps-scripts": "campaign-corpus-v2",
     "new-game-to-credits": "release-corpus-v2",
     "link-ir-printer": "transport-corpus-v1",
+    "printer": "printer-corpus-v1",
     "faithful-4x3-corpus": "package-proof-v1",
     "widescreen-corpus": "widescreen-corpus-v1",
 }

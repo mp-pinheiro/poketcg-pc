@@ -182,6 +182,7 @@ def load_session(name: str) -> tuple[list[int], dict[str, Any]]:
     meta["pokes"] = refstream.load_pokes(pokes_path) if pokes_path.is_file() else {}
     save_path = directory / SAVE_FILE
     meta["save"] = save_path.read_bytes() if save_path.is_file() else None
+    meta["printer"] = bool(meta.get("printer"))
     return masks, meta
 
 
@@ -280,13 +281,16 @@ def masked(data: bytes, table: bytes) -> bytes:
 
 def reference_regions(core: refstream.Core) -> dict[str, bytes]:
     wram = core.area("WRAM")[:0x2000]
-    return {
+    regions = {
         "wram": wram,
         "hram": core.hram_block(),
         "oam": core.area("OAM")[:0xA0],
         "vram": core.area("VRAM")[:0x4000],
         "audio": wram[0x1D80:0x1EE5],
     }
+    if core.printer is not None:
+        regions["printer"] = core.printer
+    return regions
 
 
 def native_regions(dump: dict[str, Any]) -> dict[str, bytes]:
@@ -305,7 +309,7 @@ def digest(regions: dict[str, bytes], tables: dict[str, bytes]) -> tuple[int, ..
 
 
 def stream_key(masks: list[int], frames: int, axis: str, pokes: refstream.Pokes | None = None,
-               save: bytes | None = None) -> str:
+               save: bytes | None = None, printer: bool = False) -> str:
     import gambatte_runner
 
     pins = gambatte_runner.load_pins()
@@ -317,6 +321,8 @@ def stream_key(masks: list[int], frames: int, axis: str, pokes: refstream.Pokes 
     h.update(refstream.pokes_text(pokes).encode())
     if save is not None:
         h.update(b"save:" + hashlib.sha256(save).digest())
+    if printer:
+        h.update(b"printer")
     h.update(mask_text().encode())
     # The lag track in the stream directory is shaped by the sync points, so
     # a change to them rebuilds the reference rather than replaying against
@@ -332,7 +338,8 @@ def stream_key(masks: list[int], frames: int, axis: str, pokes: refstream.Pokes 
 
 def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "ordinal",
                     record_input: bool = False, frame_mode: str = "vblank", gba: bool = False,
-                    pokes: refstream.Pokes | None = None, save: bytes | None = None) -> dict[str, Any]:
+                    pokes: refstream.Pokes | None = None, save: bytes | None = None,
+                    printer: bool = False) -> dict[str, Any]:
     """One reference replay: a digest record per DoFrame anchor, cached by
     input. With `record_input` the byte ReadJoypad saw at each anchor is
     returned as well, in InputFrame order, which is how a movie becomes a
@@ -340,7 +347,7 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     profile = axis if frame_mode == "vblank" else f"{axis}:{frame_mode}"
     if gba:
         profile += ":gba"
-    key = stream_key(masks, frames, profile, pokes, save)
+    key = stream_key(masks, frames, profile, pokes, save, printer)
     directory = CACHE / name / key
     meta_path = directory / "meta.json"
     if meta_path.is_file() and not record_input:
@@ -348,7 +355,7 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
         if meta.get("format") == DIGEST_FORMAT:
             meta["cached"] = True
             ensure_stat_track(directory, masks, frames, axis=axis, frame_mode=frame_mode,
-                              gba=gba, pokes=pokes, save=save)
+                              gba=gba, pokes=pokes, save=save, printer=printer)
             return meta
     tables = mask_tables()
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
@@ -370,7 +377,7 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
     isr_sites = bool(os.environ.get("POKETCG_ISR_SITES"))
     entry_addresses, entry_names = refstream.routine_entry_addresses() if isr_sites else (frozenset(), {})
     overreads = OverreadRecorder()
-    with refstream.Core(padded, gba=gba, pokes=pokes, save=save) as core:
+    with refstream.Core(padded, gba=gba, pokes=pokes, save=save, printer=printer) as core:
         core.input_axis = axis
         core.frame_mode = frame_mode
         read = core.library.gambatte_cpuread
@@ -489,8 +496,9 @@ def build_reference(name: str, masks: list[int], frames: int, *, axis: str = "or
         (directory / ISR_TRACK).write_bytes(bytes(isr))
         (directory / ISR_SITES).write_text("".join(name + "\n" for name in site_names))
     (directory / "overreads.txt").write_text(overreads.text())
+    (directory / "serial.txt").write_text(serial_text(core.serial_counts))
     (directory / "lag.txt").write_text(lag_track(bytes(records), bytes(calls), bytes(vblank_writes),
-                                                 bytes(stats), stat_repeats))
+                                                 bytes(stats), stat_repeats, core.serial_counts))
     meta = {
         "schema": 1, "format": DIGEST_FORMAT, "name": name, "axis": axis, "key": key,
         "frames": frames, "anchors": hits, "record": REFERENCE_RECORD.size,
@@ -537,7 +545,7 @@ class OverreadRecorder:
 
 def ensure_stat_track(directory: Path, masks: list[int], frames: int, *, axis: str,
                       frame_mode: str, gba: bool, pokes: refstream.Pokes | None,
-                      save: bytes | None = None) -> None:
+                      save: bytes | None = None, printer: bool = False) -> None:
     """A reference cached before the lag track carried STAT ISRs or the
     over-read track existed: replay it once more recording only those and the
     anchors, then rewrite lag.txt with the column. The replay is the same
@@ -553,7 +561,7 @@ def ensure_stat_track(directory: Path, masks: list[int], frames: int, *, axis: s
     stat_repeats: dict[int, dict[int, int]] = {}
     increments = 0
     overreads = OverreadRecorder()
-    with refstream.Core(padded, gba=gba, pokes=pokes, save=save) as core:
+    with refstream.Core(padded, gba=gba, pokes=pokes, save=save, printer=printer) as core:
         core.input_axis = axis
         core.frame_mode = frame_mode
         registers = (ctypes.c_int * 10)()
@@ -586,9 +594,12 @@ def ensure_stat_track(directory: Path, masks: list[int], frames: int, *, axis: s
     stats_path.write_bytes(bytes(stats))
     (directory / STAT_REPEATS).write_text(stat_repeats_text(stat_repeats))
     overreads_path.write_text(overreads.text())
+    serial_path = directory / "serial.txt"
+    serial = load_serial(serial_path) if serial_path.is_file() else core.serial_counts
+    serial_path.write_text(serial_text(serial))
     (directory / "lag.txt").write_text(lag_track(records, (directory / "calls.bin").read_bytes(),
                                                  (directory / "vblank-writes.bin").read_bytes(),
-                                                 bytes(stats), stat_repeats))
+                                                 bytes(stats), stat_repeats, serial))
 
 
 def load_reference(meta: dict[str, Any]) -> bytes:
@@ -606,8 +617,22 @@ def unwrap(delta_mod: int, expected: float, modulus: int = 256) -> int:
     return max(0, min(candidates, key=lambda c: abs(c - expected)))
 
 
+def serial_text(counts: dict[int, int]) -> str:
+    return "".join(f"{interval} {count}\n" for interval, count in sorted(counts.items()) if count)
+
+
+def load_serial(path: Path) -> dict[int, int]:
+    counts: dict[int, int] = {}
+    for line in path.read_text().splitlines():
+        parts = line.split()
+        if len(parts) == 2:
+            counts[int(parts[0])] = int(parts[1])
+    return counts
+
+
 def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"", stats: bytes = b"",
-              repeats: dict[int, dict[int, int]] | None = None) -> str:
+              repeats: dict[int, dict[int, int]] | None = None,
+              serial: dict[int, int] | None = None) -> str:
     """One line per DoFrame: `<cycles> <timer ISRs> <VBlank ISRs>` the ROM
     spent between the previous anchor and this one, then one number per
     timer sync point reached in that interval: the timer ISRs that had fired
@@ -670,6 +695,8 @@ def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"", st
             fields.append(f"s{stats[index]}")
         for segment, count in sorted((repeats or {}).get(index, {}).items()):
             fields.append(f"S{segment}:{count}")
+        if serial and serial.get(index):
+            fields.append(f"p{serial[index]}")
         if index == 0 and repeats is not None:
             fields.append("X")  # the STAT counts are exact (src/runtime.c stat_service)
         lines.append(" ".join(str(n) for n in fields))
@@ -690,7 +717,8 @@ def native_save_file(image: bytes) -> bytes:
 
 def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
                digest_out: Path | None = None, mask_path: Path | None = None,
-               dump_ordinals: list[int] | None = None, pcm_out: Path | None = None) -> tuple[Path, str, int]:
+               dump_ordinals: list[int] | None = None, pcm_out: Path | None = None,
+               printer_dir: Path | None = None) -> tuple[Path, str, int]:
     """(state path, failure text, count of `off schedule` rows the lane printed)."""
     state_path = directory / "state.json"
     command = [
@@ -724,6 +752,9 @@ def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
         command += ["--dump-state-ordinals", ",".join(str(v) for v in dump_ordinals)]
     if pcm_out:
         command += ["--dump-pcm", str(pcm_out)]
+    if printer_dir is not None:
+        printer_dir.mkdir(parents=True, exist_ok=True)
+        command += ["--printer-dir", str(printer_dir)]
     try:
         result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True,
                                 timeout=NATIVE_TIMEOUT, check=False)
@@ -757,13 +788,15 @@ def first_divergence(reference: bytes, native: bytes) -> tuple[int | None, int, 
 
 
 def checkpoint_directory(name: str, masks: list[int], frames: int,
-                         pokes: refstream.Pokes | None, save: bytes | None = None) -> Path:
+                         pokes: refstream.Pokes | None, save: bytes | None = None,
+                         printer: bool = False) -> Path:
     """The cached stream's directory, where the build left its savestates. A
     stream built before savestates existed gets them from one replay here."""
-    directory = ROOT / build_reference(name, masks, frames, pokes=pokes, save=save)["directory"]
+    directory = ROOT / build_reference(name, masks, frames, pokes=pokes, save=save,
+                                       printer=printer)["directory"]
     if not any(directory.glob("checkpoint-*.bin")):
         padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
-        with refstream.Core(padded, pokes=pokes, save=save) as core:
+        with refstream.Core(padded, pokes=pokes, save=save, printer=printer) as core:
             core.input_axis = "ordinal"
             core.install_exec(None)
             core.checkpoint_dir = directory
@@ -773,12 +806,12 @@ def checkpoint_directory(name: str, masks: list[int], frames: int,
 
 def reference_capture(name: str, masks: list[int], frames: int, ordinal: int,
                       pokes: refstream.Pokes | None = None, *, sram: bool = False,
-                      save: bytes | None = None) -> dict[str, bytes]:
+                      save: bytes | None = None, printer: bool = False) -> dict[str, bytes]:
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     captured: dict[str, bytes] = {}
-    with refstream.Core(padded, pokes=pokes, save=save) as core:
+    with refstream.Core(padded, pokes=pokes, save=save, printer=printer) as core:
         core.input_axis = "ordinal"
-        hits = core.seek(checkpoint_directory(name, masks, frames, pokes, save), ordinal)
+        hits = core.seek(checkpoint_directory(name, masks, frames, pokes, save, printer), ordinal)
 
         def on_exec(address: int, _cycle: int) -> None:
             nonlocal hits
@@ -831,10 +864,10 @@ def sweep_entries(name: str, *, after: int, until: int | None, limit: int) -> tu
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     candidates, by_bank_address = refstream.routine_entry_addresses()
     entries: dict[str, dict[str, Any]] = {}
-    with refstream.Core(padded, pokes=meta["pokes"], save=meta["save"]) as core:
+    with refstream.Core(padded, pokes=meta["pokes"], save=meta["save"], printer=meta["printer"]) as core:
         core.input_axis = "ordinal"
         if after > 0:
-            core.seek(checkpoint_directory(name, masks, frames, meta["pokes"], meta["save"]), after)
+            core.seek(checkpoint_directory(name, masks, frames, meta["pokes"], meta["save"], meta["printer"]), after)
         registers = (ctypes.c_int * 10)()
 
         def on_exec(address: int, _cycle: int) -> None:
@@ -995,7 +1028,7 @@ def capture(name: str, routine: str, *, after: int = 0, nth: int = 1, out: Path 
     banks = {address: bank for (bank, address), label in by_bank_address.items() if label == routine}
     captured: dict[str, Any] = {}
     entries = 0
-    with refstream.Core(padded, pokes=meta["pokes"], save=meta["save"]) as core:
+    with refstream.Core(padded, pokes=meta["pokes"], save=meta["save"], printer=meta["printer"]) as core:
         core.input_axis = "ordinal"
         if after > 0:
             core.seek(checkpoint_directory(name, masks, frames, meta["pokes"], meta["save"]), after)
@@ -1067,7 +1100,8 @@ def region_field(region: str, offset: int) -> tuple[str, int]:
 
 def attribute(name: str, masks: list[int], frames: int, ordinal: int,
               native: dict[str, bytes], reference: dict[str, bytes],
-              pokes: refstream.Pokes | None = None, save: bytes | None = None) -> list[dict[str, Any]]:
+              pokes: refstream.Pokes | None = None, save: bytes | None = None,
+              printer: bool = False) -> list[dict[str, Any]]:
     tables = mask_tables()
     picked: list[tuple[str, int, int, int, str]] = []
     seen: set[str] = set()
@@ -1090,7 +1124,7 @@ def attribute(name: str, masks: list[int], frames: int, ordinal: int,
     # back to a boot replay only for a byte nothing in that tail wrote.
     writers: dict[int, Any] = {}
     if addresses:
-        checkpoints = checkpoint_directory(name, masks, frames, pokes, save)
+        checkpoints = checkpoint_directory(name, masks, frames, pokes, save, printer)
         writers = {
             int(entry["address"], 16): entry
             for entry in refstream.writers(f"session:{name}", frames, addresses, events=True,
@@ -1126,18 +1160,19 @@ AUDIO_REQUESTS = {0xDD80: "wCurSongID", 0xDD81: "wCurSongBank", 0xDD82: "wCurSfx
 
 def audio_requests(name: str, masks: list[int], frames: int, ordinal: int,
                    pokes: refstream.Pokes | None, lag_path: Path,
-                   save: bytes | None = None) -> list[dict[str, Any]]:
+                   save: bytes | None = None, printer: bool = False) -> list[dict[str, Any]]:
     """The four bytes game code asks the sound driver through, on both lanes
     at the first anchor the audio region differs: same bytes mean the driver
     was asked the same thing and diverged on its own."""
     with tempfile.TemporaryDirectory(prefix=f"audio-{name}-") as tmp:
         state_path, failure, _off = run_native(Path(tmp), session_dir(name) / "input.txt", ordinal,
-                                               lag_path=lag_path, dump_ordinals=[ordinal])
+                                               lag_path=lag_path, dump_ordinals=[ordinal],
+                                               printer_dir=Path(tmp) / "printer" if printer else None)
         dump_path = state_path.with_name(f"{state_path.stem}-f{ordinal}.json")
         if not dump_path.is_file():
             raise SessionError(f"no native dump at ordinal {ordinal}: {failure[-300:]}")
         native = native_regions(json.loads(dump_path.read_text()))["audio"]
-    reference = reference_capture(name, masks, frames, ordinal, pokes, save=save)["audio"]
+    reference = reference_capture(name, masks, frames, ordinal, pokes, save=save, printer=printer)["audio"]
     return [{"address": f"0x{address:04X}", "symbol": symbol,
              "native": native[address - 0xDD80], "reference": reference[address - 0xDD80]}
             for address, symbol in AUDIO_REQUESTS.items()]
@@ -1151,7 +1186,8 @@ def verify(name: str, *, write: bool, json_path: Path | None, publish: bool = Tr
                               "ordinals": n, "goal": meta.get("goal", "")}
     pokes = meta["pokes"]
     save = meta["save"]
-    ref_meta = build_reference(name, masks, frames, pokes=pokes, save=save)
+    printer = meta["printer"]
+    ref_meta = build_reference(name, masks, frames, pokes=pokes, save=save, printer=printer)
     reference = load_reference(ref_meta)
     ref_count = len(reference) // REFERENCE_RECORD.size
     if ref_count < n:
@@ -1167,7 +1203,8 @@ def verify(name: str, *, write: bool, json_path: Path | None, publish: bool = Tr
         lag_path = ROOT / ref_meta["directory"] / "lag.txt"
         _state, failure, off_schedule = run_native(directory, session_dir(name) / "input.txt", n,
                                                    lag_path=lag_path, digest_out=digest_path,
-                                                   mask_path=mask_path)
+                                                   mask_path=mask_path,
+                                                   printer_dir=directory / "printer" if printer else None)
         native = digest_path.read_bytes() if digest_path.is_file() else b""
         ordinal, reached, regions, audio_first = first_divergence(reference, native)
         # A session may declare a ceiling: the last ordinal the ROM's own
@@ -1195,7 +1232,7 @@ def verify(name: str, *, write: bool, json_path: Path | None, publish: bool = Tr
         print(f"SCHEDULE {name} off_schedule={off_schedule}")
         if audio_first is not None and (ordinal is None or audio_first < ordinal):
             report["audio_requests"] = audio_requests(name, masks, frames, audio_first, pokes, lag_path,
-                                                      save=save)
+                                                      save=save, printer=printer)
             rows = report["audio_requests"]
             same = all(row["native"] == row["reference"] for row in rows)
             print(f"AUDIO ordinal={audio_first} requests={'same' if same else 'differ'} "
@@ -1208,13 +1245,15 @@ def verify(name: str, *, write: bool, json_path: Path | None, publish: bool = Tr
             capture_dir = directory / "capture"
             capture_dir.mkdir()
             state_path, cap_failure, _off = run_native(capture_dir, session_dir(name) / "input.txt",
-                                                       ordinal, lag_path=lag_path, dump_ordinals=[ordinal])
+                                                       ordinal, lag_path=lag_path, dump_ordinals=[ordinal],
+                                                       printer_dir=capture_dir / "printer" if printer else None)
             dump_path = state_path.with_name(f"{state_path.stem}-f{ordinal}.json")
             if not dump_path.is_file():
                 raise SessionError(f"no native dump at ordinal {ordinal}: {cap_failure[-300:]}")
             native_state = native_regions(json.loads(dump_path.read_text()))
-            reference_state = reference_capture(name, masks, frames, ordinal, pokes, save=save)
-            details = attribute(name, masks, frames, ordinal, native_state, reference_state, pokes, save)
+            reference_state = reference_capture(name, masks, frames, ordinal, pokes, save=save, printer=printer)
+            details = attribute(name, masks, frames, ordinal, native_state, reference_state, pokes, save,
+                                printer=printer)
             report["divergence"]["rows"] = details
             for row in details[:8]:
                 print(f"DIVERGE ordinal={ordinal} field={row['field']} address={row['address']} "
@@ -1314,18 +1353,21 @@ def diff(name: str, ordinal: int) -> int:
     symbol: the whole picture behind a verify's first eight DIVERGE rows."""
     masks, meta = load_session(name)
     frames = reference_frames(masks, meta)
-    ref_meta = build_reference(name, masks, frames, pokes=meta["pokes"], save=meta["save"])
+    ref_meta = build_reference(name, masks, frames, pokes=meta["pokes"], save=meta["save"],
+                               printer=meta["printer"])
     lag_path = ROOT / ref_meta["directory"] / "lag.txt"
     with tempfile.TemporaryDirectory(prefix=f"session-{name}-") as tmp:
         state_path, failure, _off = run_native(Path(tmp), session_dir(name) / "input.txt", ordinal,
-                                               lag_path=lag_path, dump_ordinals=[ordinal])
+                                               lag_path=lag_path, dump_ordinals=[ordinal],
+                                               printer_dir=Path(tmp) / "printer" if meta["printer"] else None)
         dump_path = state_path.with_name(f"{state_path.stem}-f{ordinal}.json")
         if not dump_path.is_file():
             raise SessionError(f"no native dump at ordinal {ordinal}: {failure[-300:]}")
         dump = json.loads(dump_path.read_text())
         native = native_regions(dump)
         native["sram"] = b"".join(bytes(dump[f"sram_bank_{bank}"]) for bank in range(4))
-    reference = reference_capture(name, masks, frames, ordinal, meta["pokes"], sram=True, save=meta["save"])
+    reference = reference_capture(name, masks, frames, ordinal, meta["pokes"], sram=True, save=meta["save"],
+                                  printer=meta["printer"])
     tables = mask_tables()
     rows = 0
     # SRAM is not digested (a save is compared through the checksum the game
@@ -1394,9 +1436,9 @@ def routines(name: str, ordinal: int, *, everything: bool) -> int:
     padded = (list(masks) + [0] * max(0, frames - len(masks)))[:frames]
     candidates, by_bank_address = refstream.routine_entry_addresses()
     sequence: list[str] = []
-    with refstream.Core(padded, pokes=meta["pokes"], save=meta["save"]) as core:
+    with refstream.Core(padded, pokes=meta["pokes"], save=meta["save"], printer=meta["printer"]) as core:
         core.input_axis = "ordinal"
-        core.seek(checkpoint_directory(name, masks, frames, meta["pokes"], meta["save"]), ordinal)
+        core.seek(checkpoint_directory(name, masks, frames, meta["pokes"], meta["save"], meta["printer"]), ordinal)
 
         def on_exec(address: int, _cycle: int) -> None:
             if address not in candidates or core.ordinal != ordinal:
@@ -1431,13 +1473,18 @@ def status() -> int:
     return 0
 
 
-def record_meta(name: str, goal: str) -> int:
+def record_meta(name: str, goal: str, *, printer: bool | None = None) -> int:
     masks, meta = load_session(name)
     meta.update({
         "schema": 1, "name": name, "goal": goal or meta.get("goal", ""),
         "ordinals": len(masks),
         "recorded": datetime.now(UTC).isoformat(timespec="seconds"),
     })
+    if printer is not None:
+        meta["printer"] = printer
+    if not meta["printer"]:
+        del meta["printer"]
+    meta.pop("save", None)
     (session_dir(name) / "session.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
     print(f"SESSION {name} ordinals={len(masks)} goal={meta['goal']!r}")
     return 0
