@@ -469,12 +469,16 @@ class Core:
         self.close()
 
 
-def _pack_palette(rgb: bytes) -> bytes:
-    """32 RGB32 entries -> the native g_pal 64-byte little-endian 15-bit half."""
+def _pack_palette(entries: bytes) -> bytes:
+    """32 identity-mapped `unsigned long` colours -> the native g_pal 64-byte
+    little-endian 15-bit half. Core installs the identity CGB palette, so each
+    entry already is the BCPD/OCPD word."""
+    import gambatte_runner
+
+    width = gambatte_runner.PALETTE_ENTRY_BYTES
     packed = bytearray()
-    for index in range(0, min(len(rgb), 128), 4):
-        red, green, blue = rgb[index + 2], rgb[index + 1], rgb[index]
-        value = (red * 31 + 127) // 255 | ((green * 31 + 127) // 255) << 5 | ((blue * 31 + 127) // 255) << 10
+    for index in range(0, min(len(entries), 32 * width), width):
+        value = int.from_bytes(entries[index : index + width], "little") & 0x7FFF
         packed += struct.pack("<H", value)
     packed += b"\x00" * (0x40 - len(packed))
     return bytes(packed[:0x40])

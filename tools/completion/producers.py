@@ -7,7 +7,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from tools.completion import completion, evidence, scenario
+from tools.completion import completion, evidence, scenario, witness
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -24,6 +24,7 @@ def _descriptor(
     comparator_files: list[str],
     native: bool = True,
     reference: bool = True,
+    corpus: list[dict[str, str]] | None = None,
 ) -> dict[str, Any]:
     producer_closure = sorted(set(producer_files + ["tools/completion"]))
     comparator_closure = set(comparator_files + ["tools/completion"])
@@ -42,11 +43,23 @@ def _descriptor(
         "reference": {"files": ["tools/completion/gambatte_pins.toml"]}
         if reference
         else {"files": []},
+        "corpus": list(corpus or []),
     }
 
 
 _COMMON = ["tools/completion/producers.py", "tools/completion/completion.py"]
 _SCENARIO = _COMMON + ["tools/completion/scenario.py", "tools/completion/refstream.py"]
+_WITNESS = _SCENARIO + [
+    "tools/completion/witness.py",
+    "tools/completion/session.py",
+    "tools/completion/gambatte_runner.py",
+]
+_WITNESS_COMPARATORS = [
+    "tools/completion/witness.py",
+    "tools/completion/session.py",
+    "tools/completion/refstream.py",
+    "tools/completion/gambatte_runner.py",
+]
 
 
 _REGISTRY: dict[str, dict[str, Any]] = {
@@ -108,8 +121,9 @@ _REGISTRY: dict[str, dict[str, Any]] = {
     "completion:v2:p2:boot-title": _descriptor(
         "boot-title",
         "scenario:boot-title",
-        producer_files=_SCENARIO,
-        comparator_files=["tools/oracle/gbrecomp_oracle.py", "tests/scene_diff.py"],
+        producer_files=_WITNESS,
+        comparator_files=_WITNESS_COMPARATORS,
+        corpus=witness.corpus("boot-title"),
     ),
     "completion:v2:p2:boot-title-negative": _descriptor(
         "boot-title-negative",
@@ -123,8 +137,9 @@ _REGISTRY: dict[str, dict[str, Any]] = {
     "completion:v2:p3:audio-trace": _descriptor(
         "audio-trace",
         "scenario:audio-catalog",
-        producer_files=_SCENARIO,
-        comparator_files=["tools/oracle/gbrecomp_oracle.py", "tools/audio"],
+        producer_files=_WITNESS,
+        comparator_files=_WITNESS_COMPARATORS,
+        corpus=witness.corpus("audio-catalog"),
     ),
     "completion:v2:p3:audio-pcm": _descriptor(
         "audio-pcm",
@@ -135,14 +150,16 @@ _REGISTRY: dict[str, dict[str, Any]] = {
     "completion:v2:p4:ui-corpus": _descriptor(
         "ui-corpus",
         "scenario:ui-corpus",
-        producer_files=_SCENARIO,
-        comparator_files=["tools/oracle/gbrecomp_oracle.py", "tests/scene_diff.py"],
+        producer_files=_WITNESS,
+        comparator_files=_WITNESS_COMPARATORS,
+        corpus=witness.corpus("ui-corpus"),
     ),
     "completion:v2:p4:raster-effects": _descriptor(
         "raster-effects",
         "scenario:raster-effects",
-        producer_files=_SCENARIO,
-        comparator_files=["tools/oracle/gbrecomp_oracle.py", "tests/scene_diff.py"],
+        producer_files=_WITNESS,
+        comparator_files=_WITNESS_COMPARATORS,
+        corpus=witness.corpus("raster-effects"),
     ),
     "completion:v2:p5:duel-state": _descriptor(
         "duel-state",

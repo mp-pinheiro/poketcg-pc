@@ -576,6 +576,14 @@ uint8_t *gb_ptr(uint16_t addr)
 
 static void watch_poll(void);
 
+static const uint8_t APU_READ_OR[0x16] = {
+	0x80u, 0x3Fu, 0x00u, 0xFFu, 0xBFu,
+	0xFFu, 0x3Fu, 0x00u, 0xFFu, 0xBFu,
+	0x7Fu, 0xFFu, 0x9Fu, 0xFFu, 0xBFu,
+	0xFFu, 0xFFu, 0x00u, 0x00u, 0xBFu,
+	0x00u, 0x00u,
+};
+
 uint8_t gb_read8(uint16_t addr)
 {
 	watch_poll();
@@ -591,6 +599,16 @@ uint8_t gb_read8(uint16_t addr)
 		return (uint8_t)(*gb_ptr(addr) | 0x7Cu);
 	if (addr == 0xFF0Fu)
 		return (uint8_t)(*gb_ptr(addr) | 0xE0u);
+	if (addr == 0xFF07u)
+		return (uint8_t)(*gb_ptr(addr) | 0xF8u);
+	if (addr == 0xFF75u)
+		return (uint8_t)((*gb_ptr(addr) & 0x70u) | 0x8Fu);
+	if (addr >= 0xFF10u && addr <= 0xFF25u)
+		return (uint8_t)(*gb_ptr(addr) | APU_READ_OR[addr - 0xFF10u]);
+	if (addr == 0xFF26u)
+		return (uint8_t)((*gb_ptr(addr) & 0x8Fu) | 0x70u);
+	if (addr >= 0xFF27u && addr <= 0xFF2Fu)
+		return 0xFFu;
 	if (addr == 0xFF4Fu)
 		return (uint8_t)(0xFEu | g_vram_bank);
 	if (addr == 0xFF4Du)
@@ -866,6 +884,8 @@ void gb_write8(uint16_t addr, uint8_t v)
 	}
 	if (addr == 0xFF56u && (g_keys & 0x80u) != 0u)
 		g_ir_write_count++;
+	if (addr == 0xFF26u && (v & 0x80u) == 0u)
+		memset(g_io + 0x10, 0, 0x16);
 	/* A completed joypad poll is the native frame boundary: advance to the next
 	 * timeline entry so the following poll sees a fresh press edge, exactly as a
 	 * new reference frame does. Cycles modulo the entry count, matching

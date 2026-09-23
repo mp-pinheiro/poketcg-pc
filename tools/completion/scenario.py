@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import witness
 from refstream import group_by_symbol
 from tools.oracle.gbrecomp_oracle import Oracle, _full_state
 
@@ -529,7 +530,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.frames < 1:
         raise ValueError("frame bound must be positive")
-    run_frames = max(args.frames, 2000) if args.scenario == "boot-title" else args.frames
+    run_frames = args.frames
     requirement = SCENARIO_REQUIREMENTS[args.scenario]
     key = current_key()
     artifact: dict[str, Any] = {
@@ -543,14 +544,21 @@ def main(argv: list[str] | None = None) -> int:
         "required_edges": 0,
         "covered_edges": 0,
     }
+    if args.scenario in witness.SPECS:
+        EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+        try:
+            artifact.update(witness.run(args.scenario))
+        except (OSError, ValueError, json.JSONDecodeError, RuntimeError) as exc:
+            artifact["failure"] = "SCENARIO_ERROR"
+            artifact["detail"] = str(exc)
+        return finish(args.scenario, requirement, artifact)
     try:
         EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(prefix="poketcg-scenario-") as directory:
             state_path = Path(directory) / "state.json"
             trace_path = Path(directory) / "trace.json"
-            reference_trace = Path(directory) / "reference-audio.json"
             input_path = None
-            if args.scenario in {"boot-title", "boot-title-negative"}:
+            if args.scenario == "boot-title-negative":
                 input_path = Path(directory) / "input.txt"
                 input_path.write_text(
                     ",".join(str(value) for value in boot_input(run_frames)) + "\n",
@@ -580,127 +588,7 @@ def main(argv: list[str] | None = None) -> int:
                 artifact["covered_edges"] = len(trace.get("edges", []))
                 artifact["terminal_event"] = trace.get("terminal_event")
                 artifact["trace_symbols"] = trace.get("symbols", [])
-                if args.scenario == "boot-title":
-                    if artifact["terminal_event"] != "NEW_GAME_ENTERED":
-                        artifact["failure"] = "TERMINAL_EVENT_MISSING"
-                    elif artifact["events"] < 3:
-                        artifact["failure"] = "EVENT_BOUND_NOT_MET"
-                    else:
-                        try:
-                            from tests.scene_diff import STATE_FIELDS
-                            with Oracle(timeout=120.0) as oracle:
-                                reference_state, frame_offset = (
-                                    reference_aligned_state(
-                                        oracle, state, run_frames,
-                                        base_input=reference_boot_input(),
-                                    )
-                                )
-                            artifact["reference_frame_offset"] = frame_offset
-                            mismatches, census, schema_skips = compare_state_fields(
-                                reference_state, state, STATE_FIELDS
-                            )
-                            artifact["field_schema_skips"] = schema_skips
-                            artifact["oracles"] = ["oracle-b", "native"]
-                            artifact["comparison"] = {
-                                "status": "PASS" if not mismatches else "FAIL",
-                                "mismatches": mismatches,
-                                "census": census,
-                            }
-                            if mismatches:
-                                artifact["failure"] = "STATE_MISMATCH"
-                            else:
-                                artifact["status"] = "PASS"
-                                artifact.pop("failure", None)
-                        except (OSError, ValueError, RuntimeError) as exc:
-                            artifact["failure"] = "ORACLE_ERROR"
-                            artifact["detail"] = str(exc)
-                elif args.scenario in {"ui-corpus", "raster-effects"}:
-                    try:
-
-                        with Oracle(timeout=120.0) as oracle:
-                            reference_state, frame_offset = (
-                                reference_aligned_state(oracle, state, run_frames)
-                            )
-                            artifact["reference_frame_offset"] = frame_offset
-                        fields = (
-                            ("wram", "vram_bank_0", "vram_bank_1", "oam", "palette_ram", "framebuffer")
-                            if args.scenario == "ui-corpus"
-                            else ("vram_bank_0", "vram_bank_1", "framebuffer")
-                        )
-                        mismatches, census, schema_skips = compare_state_fields(
-                            reference_state, state, fields
-                        )
-                        artifact["field_schema_skips"] = schema_skips
-                        artifact["oracles"] = ["oracle-b", "native"]
-                        artifact["comparison"] = {
-                            "fields": list(fields),
-                            "mismatches": mismatches,
-                            "census": census,
-                            "status": "PASS" if not mismatches else "FAIL",
-                        }
-                        if not mismatches:
-                            artifact["status"] = "PASS"
-                            artifact["terminal_event"] = (
-                                "UI_CORPUS_CLOSED"
-                                if args.scenario == "ui-corpus"
-                                else "RASTER_EFFECTS_CLOSED"
-                            )
-                            artifact.pop("failure", None)
-                        else:
-                            artifact["failure"] = "UI_STATE_MISMATCH"
-                    except (OSError, ValueError, RuntimeError) as exc:
-                        artifact["failure"] = "ORACLE_ERROR"
-                        artifact["detail"] = str(exc)
-                elif args.scenario == "audio-catalog":
-                    try:
-                        with Oracle(timeout=120.0) as oracle:
-                            _, frame_offset = reference_aligned_state(
-                                oracle, state, run_frames
-                            )
-                            artifact["reference_frame_offset"] = frame_offset
-                            oracle.run(
-                                frame_limit=run_frames + frame_offset,
-                                audio_trace=reference_trace,
-                            )
-                        reference_audio = parse_reference_audio(reference_trace)
-                        native_audio = state.get("apu_trace")
-                        if not isinstance(native_audio, list):
-                            raise ValueError("native audio trace is not a list")
-                        native_pairs = [
-                            (int(item["address"]), int(item["value"]))
-                            for item in native_audio
-                            if isinstance(item, dict)
-                            and "address" in item
-                            and "value" in item
-                        ]
-                        reference_pairs = [
-                            (item["address"], item["value"]) for item in reference_audio
-                        ]
-                        common = min(len(native_pairs), len(reference_pairs))
-                        first_mismatch = next(
-                            (
-                                index for index in range(common)
-                                if native_pairs[index] != reference_pairs[index]
-                            ),
-                            common if len(native_pairs) != len(reference_pairs) else None,
-                        )
-                        artifact["oracles"] = ["oracle-b", "native"]
-                        artifact["comparison"] = {
-                            "native_writes": len(native_pairs),
-                            "reference_writes": len(reference_pairs),
-                            "first_mismatch": first_mismatch,
-                            "status": "PASS" if first_mismatch is None else "FAIL",
-                        }
-                        if first_mismatch is None:
-                            artifact["status"] = "PASS"
-                            artifact["terminal_event"] = "AUDIO_TRACE_CLOSED"
-                            artifact.pop("failure", None)
-                        else:
-                            artifact["failure"] = "AUDIO_TRACE_MISMATCH"
-                    except (OSError, ValueError, RuntimeError) as exc:
-                        artifact["failure"] = "ORACLE_ERROR"
-                        artifact["detail"] = str(exc)
-                elif args.scenario == "boot-title-negative":
+                if args.scenario == "boot-title-negative":
                     from frame_bisect import bisect_first_mismatch
 
                     with Oracle(timeout=120.0) as oracle:
@@ -857,13 +745,17 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         artifact["failure"] = "SCENARIO_ERROR"
         artifact["detail"] = str(exc)
+    return finish(args.scenario, requirement, artifact)
+
+
+def finish(scenario: str, requirement: str, artifact: dict[str, Any]) -> int:
     from tools.completion.completion import check_evidence, requirement_by_id, write_evidence_artifact
 
     write_evidence_artifact(requirement, artifact)
     status, reason = check_evidence(requirement_by_id(requirement))
     output = {
         "status": artifact["status"],
-        "scenario": args.scenario,
+        "scenario": scenario,
         "validation": status,
         **{
             key: artifact[key]

@@ -51,6 +51,7 @@ REQUIRED_DOMAIN_NAMES = (
     "BG Palette RGB",
     "OBJ Palette RGB",
 )
+PALETTE_ENTRY_BYTES = ctypes.sizeof(ctypes.c_ulong)
 EXPECTED_DOMAIN_LENGTHS = {
     "VRAM": 0x4000,
     "VRAM Bank 0": 0x2000,
@@ -60,8 +61,8 @@ EXPECTED_DOMAIN_LENGTHS = {
     "OAM": 0xA0,
     "HRAM": 0x7F,
     "System Bus": 0x10000,
-    "BG Palette RGB": 32 * 4,
-    "OBJ Palette RGB": 32 * 4,
+    "BG Palette RGB": 32 * PALETTE_ENTRY_BYTES,
+    "OBJ Palette RGB": 32 * PALETTE_ENTRY_BYTES,
 }
 REGISTER_INDICES = {
     "PC": 0,
@@ -414,7 +415,9 @@ def memory_area(library: ctypes.CDLL, core: int, name: str) -> bytes:
     length = ctypes.c_int()
     if not library.gambatte_getmemoryarea(core, AREA_IDS[name], ctypes.byref(pointer), ctypes.byref(length)):
         raise GambatteError(f"Gambatte does not expose {name}")
-    byte_length = length.value * 4 if name.endswith("Palette RGB") else length.value
+    byte_length = (
+        length.value * PALETTE_ENTRY_BYTES if name.endswith("Palette RGB") else length.value
+    )
     if not pointer.value or byte_length <= 0:
         raise GambatteError(f"Gambatte exposed empty {name}")
     return ctypes.string_at(pointer.value, byte_length)
