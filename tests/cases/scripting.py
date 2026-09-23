@@ -5374,13 +5374,7 @@ MUTATIONS["ScriptCommand_SetEventValue"] = {
     "source_symbol": "ScriptCommand_SetEventValue",
     "before": "\t(void)SetEventValue(c, f, b, b);",
     "after": "\t(void)SetEventValue(c, f, b, c);",
-    "case_ids": [
-        "ScriptCommand_SetEventValue-0",
-        "ScriptCommand_SetEventValue-1",
-        "ScriptCommand_SetEventValue-2",
-        "ScriptCommand_SetEventValue-3",
-        "ScriptCommand_SetEventValue-4",
-    ],
+    "case_ids": ["ScriptCommand_SetEventValue-5", "ScriptCommand_SetEventValue-0", "ScriptCommand_SetEventValue-1", "ScriptCommand_SetEventValue-2", "ScriptCommand_SetEventValue-3", "ScriptCommand_SetEventValue-4"],
 }
 # <<< factory-mutation ScriptCommand_SetEventValue
 # >>> factory-mutation ScriptCommand_TryGivePCPack
@@ -6018,7 +6012,7 @@ MUTATIONS["Func_c9c0"] = {
     "source_symbol": "Func_c9c0",
     "before": "CallMapScriptResult Func_c9c0(void)\n{\n\treturn CallMapScriptPointerIfExists(MAP_SCRIPT_MOVED_PLAYER);",
     "after": "CallMapScriptResult Func_c9c0(void)\n{\n\treturn CallMapScriptPointerIfExists((uint8_t)(MAP_SCRIPT_MOVED_PLAYER + 2u));",
-    "case_ids": ["Func_c9c0-1", "Func_c9c0-2", "Func_c9c0-4"],
+    "case_ids": ["Func_c9c0-0", "Func_c9c0-1", "Func_c9c0-2", "Func_c9c0-4"],
 }
 # <<< factory-mutation Func_c9c0
 # >>> factory-mutation Func_cc32
@@ -6589,10 +6583,7 @@ MUTATIONS["ScriptCommand_PickLegendaryCard"] = {
     "source_symbol": "ScriptCommand_PickLegendaryCard",
     "before": "\tmask = (uint8_t)(0x08u >> random);",
     "after": "\tmask = (uint8_t)(0x04u >> random);",
-    "case_ids": [
-        "ScriptCommand_PickLegendaryCard-0",
-        "ScriptCommand_PickLegendaryCard-1",
-    ],
+    "case_ids": ["ScriptCommand_PickLegendaryCard-1", "ScriptCommand_PickLegendaryCard-0"],
 }
 MUTATIONS["Func_d4fb"] = {
     "source_symbol": "Func_d4fb",

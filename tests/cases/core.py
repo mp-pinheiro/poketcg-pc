@@ -13400,7 +13400,7 @@ MUTATIONS["DisplayAttackPage"] = {
     "source_symbol": "DisplayAttackPage",
     "before": "case ATTACKPAGE_ATTACK1_1:\n\t\tDisplayAttackPage_Attack1Page1(0u, 0u, 0u);",
     "after": "case ATTACKPAGE_ATTACK1_1:\n\t\tSwitchAttackPage();",
-    "case_ids": ["DisplayAttackPage-0", "DisplayAttackPage-1"],
+    "case_ids": ["DisplayAttackPage-1", "DisplayAttackPage-0"],
 }
 # <<< factory-mutation DisplayAttackPage
 # >>> factory-mutation DisplayCardPage
@@ -14518,10 +14518,7 @@ MUTATIONS["CheckIfArenaCardIsFullyPowered"] = {
     "source_symbol": "CheckIfArenaCardIsFullyPowered",
     "before": "\t\tCheckCardEvolutionInHandOrDeckResult evolution = CheckCardEvolutionInHandOrDeck(deck_index);",
     "after": "\t\tCheckCardEvolutionInHandOrDeckResult evolution = CheckCardEvolutionInHandOrDeck(d);",
-    "case_ids": [
-        "CheckIfArenaCardIsFullyPowered-2",
-        "CheckIfArenaCardIsFullyPowered-3",
-    ],
+    "case_ids": ["CheckIfArenaCardIsFullyPowered-3", "CheckIfArenaCardIsFullyPowered-2"],
 }
 # <<< factory-mutation CheckIfArenaCardIsFullyPowered
 # >>> factory-mutation SendCardAttrBlkPacket

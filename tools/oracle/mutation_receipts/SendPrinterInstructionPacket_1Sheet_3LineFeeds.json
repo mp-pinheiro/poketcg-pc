@@ -1,0 +1,9 @@
+{
+  "fn": "SendPrinterInstructionPacket_1Sheet_3LineFeeds",
+  "case": "tests/cases/printer.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SendPrinterInstructionPacket_1Sheet_3LineFeeds\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 228, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52842\": \"0103\", \"52846\": \"00\", \"52889\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SendPrinterInstructionPacket_1Sheet_3LineFeeds\", \"mismatches\": {\"bus\": {\"address\": 52842, \"reference\": \"01030000\", \"native\": \"02030000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52842, 2], [52846, 1], [52889, 1]]}}}\n",
+  "restored": "{\"fn\": \"SendPrinterInstructionPacket_1Sheet_3LineFeeds\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 228, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52842\": \"0103\", \"52846\": \"00\", \"52889\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

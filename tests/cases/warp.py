@@ -4,6 +4,6 @@ from tests.cases._fixtures import map_warp_fixture as _map_warp_fixture, MAP_WAR
 CONTRACT={"_HandleMapWarp":{"compare":("a","f","b","c","d","e","hl"),"preserve":("b","c","d","e","hl")}}
 def _memory(m,x,y,d,t=b"\x11\x22\x33\x44"):return {wCurMap:bytes((m,)),wPlayerXCoord:bytes((x,)),wPlayerYCoord:bytes((y,)),wPlayerDirection:bytes((d,)),wTempMap:t}
 CASES={"_HandleMapWarp":[dict(POISON,wram=_memory(1,0x1A,0x0A,2,b"\0\0\0\0")),{"wram":_memory(1,0,0,0)},{"wram":_memory(1,0x0E,0x1C,1)},{"wram":_memory(1,0x10,0x1C,3)},{"wram":_memory(2,0,0x0A,4)},dict(_map_warp_fixture(vram=False,bank=7),**_MAP_WARP_REGS)]}
-MUTATIONS={"_HandleMapWarp":{"source_symbol":"_HandleMapWarp","before":"if((uint8_t)(wx|wy)==0){flags=0x80u;break;}","after":"if((uint8_t)(wx|wy)==0){break;}","case_ids":["_HandleMapWarp-0","_HandleMapWarp-1","_HandleMapWarp-2","_HandleMapWarp-3","_HandleMapWarp-4","_HandleMapWarp-5"]}}
+MUTATIONS={"_HandleMapWarp":{"source_symbol":"_HandleMapWarp","before":"if((uint8_t)(wx|wy)==0){flags=0x80u;break;}","after":"if((uint8_t)(wx|wy)==0){break;}","case_ids":["_HandleMapWarp-5","_HandleMapWarp-0","_HandleMapWarp-1","_HandleMapWarp-2","_HandleMapWarp-3","_HandleMapWarp-4"]}}
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES=legacy_to_schema(CASES,CONTRACT)

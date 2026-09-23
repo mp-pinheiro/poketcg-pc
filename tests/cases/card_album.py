@@ -163,6 +163,6 @@ MUTATIONS["CardAlbum"] = {
     "source_symbol": "CardAlbum",
     "before": "\t(void)DrawWideTextBox_PrintText(ViewWhichCardFileText);",
     "after": "\t(void)DrawWideTextBox_PrintText(EmptyPromotionalCardText);",
-    "case_ids": ["CardAlbum-0", "CardAlbum-1", "CardAlbum-2"],
+    "case_ids": ["CardAlbum-2", "CardAlbum-0", "CardAlbum-1"],
 }
 # <<< factory-mutation CardAlbum

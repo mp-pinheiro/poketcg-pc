@@ -337,14 +337,7 @@ MUTATIONS["Preload_DrMason"] = {
     "source_symbol": "Preload_DrMason",
     "before": "	if (GetEventValue(EVENT_RECEIVED_LEGENDARY_CARDS) != 0u)",
     "after": "	if (GetEventValue(EVENT_RECEIVED_LEGENDARY_CARDS) == 0u)",
-    "case_ids": [
-        "Preload_DrMason-0",
-        "Preload_DrMason-1",
-        "Preload_DrMason-2",
-        "Preload_DrMason-3",
-        "Preload_DrMason-4",
-        "Preload_DrMason-5",
-    ],
+    "case_ids": ["Preload_DrMason-5", "Preload_DrMason-0", "Preload_DrMason-1", "Preload_DrMason-2", "Preload_DrMason-3", "Preload_DrMason-4"],
 }
 # <<< factory-mutation Preload_DrMason
 # >>> factory-mutation Preload_Sam
@@ -367,12 +360,7 @@ MUTATIONS["Preload_Tech5"] = {
     "source_symbol": "Preload_Tech5",
     "before": "uint8_t moved = (uint8_t)(gb_read8(hl) + 2u);",
     "after": "uint8_t moved = (uint8_t)(gb_read8(hl) + 1u);",
-    "case_ids": [
-        "Preload_Tech5-0",
-        "Preload_Tech5-1",
-        "Preload_Tech5-2",
-        "Preload_Tech5-3",
-    ],
+    "case_ids": ["Preload_Tech5-2", "Preload_Tech5-0", "Preload_Tech5-1", "Preload_Tech5-3"],
 }
 # <<< factory-mutation Preload_Tech5
 # >>> factory-mutation MasonLaboratoryAfterDuel
