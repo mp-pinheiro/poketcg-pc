@@ -2,102 +2,78 @@
 
 ## Status
 
-"Open" below means the phase's *gate evidence* is unproduced, which is not the
-same as its code being unwritten. As of 2026-09-11 the port is oracle-clean
-per routine over 3,014 registrations, and 493 recorded sessions replay
-byte-identical on WRAM, HRAM, OAM and both VRAM banks at every DoFrame anchor
-— boot, naming, Mason's lab, the practice duel, the deck machines and editor,
-all eight clubs, Ronald and the Challenge Hall, the Pokémon Dome, the credits,
-arranged AI duels, seeded card-effect duels and the duel-screen tour. Four
-sessions are diverged and each is an open fact: `ronald-explore` at 638,492 of
-651,681 and `credits-1-explore-1`/`-2` at 871,295 (all three ISR-placement,
-deferred — a new sync site re-keys every cached reference), plus
-`deck-machine-auto` at 3,714 (#3410, workable).
+Development is paused here by the owner's decision (2026-09-23). What follows
+is the measured state at `main` `bf0e27e0`, what the remaining gates are, and
+why none of them is needed to play the port. Nothing below is a plan.
 
-Coverage, measured on the reference (`docs/coverage-program.md`): 2,333 of
-3,012 in-scope routines execute on some recorded session (77%). Of the 679
-that do not, 137 are card effects in `duel/effect_functions.asm`, 93 are
-link/IR/printer routines needing a peer (`docs/reach-harness.md`), and 26 are
-`unmeasurable` — the reference tracer has no entry address for them, so they
-are a registration gap rather than coverage work.
+**Delivered.** All 3,012 in-scope routines have C bodies; the 3,026 oracle
+registrations are clean (`just oracle-diff-all`), every one has a RED mutation
+witness (`tools/completion/mutation_campaign.py --report`, complete), and the
+hatch audit passes at release stage. 666 sessions are recorded; 659 replay
+byte-identical on WRAM, HRAM, OAM, both VRAM banks, palettes and framebuffer at
+every DoFrame anchor against Gambatte — boot, naming, the lab, the practice
+duel, the deck machines and editor, all eight clubs, Ronald, the Challenge
+Hall, the Dome, arranged and seeded AI duels, the card-effect corpus, the
+credits up to the scroll sequence, and a Game Boy Printer card-list print
+against a linked reference (`printer-card-list`, 94,066 of 95,453). Coverage
+on the reference: 2,487 of the 3,062 ledger routines execute on some recorded
+session (81%). The port boots and plays in the SDL2 shell with no emulator and
+no ROM at runtime.
 
-Milestones, audited per requirement on 2026-09-11 at content key
-`f911fc50` (`just completion-check <id>` over all 26 of
-`tools/completion/requirements.toml`; the release gate itself is a
-landing-gate action, not a loop action, and its last record
-`site/data/gate.json` predates this week):
+**Requirements** (`just completion-check <id>` over the 26 rows of
+`tools/completion/requirements.toml`): 16 pass — `reset:baseline`,
+`reset:rom-coverage`, `reset:routine-bijection`, `p0:substrate`,
+`p1:hardware-removal`, `p2:leaves`, `p2:save-interchange`, `p2:boot-title`,
+`p2:boot-title-negative`, `p3:audio-trace`, `p3:audio-pcm`, `p4:ui-corpus`,
+`p4:raster-effects`, `p5:duel-state`, `p5:seeded-duel`, `p6:script-vm`. The
+package producer's own checks pass and wait only on the release row.
 
-| state | count | which |
-|---|---|---|
-| pass | 4 | `reset:baseline`, `reset:rom-coverage`, `p0:substrate`, `p1:hardware-removal` |
-| failing | 2 | `reset:routine-bijection`, `p2:boot-title` |
-| missing (no artifact at all) | 20 | every p2 leaf/save/negative, both p3, both p4, both p5, both p6, both p7, the two 4x3 release rows, all five p8 |
+**The ten that do not pass, by cause:**
 
-The two failures are named, not summarised. `reset:routine-bijection` fails on
-exactly two counts: `logical_routines` 3,000 against an expected 3,012, and 12
-inventory routines with no registration — `Func_d4fb`, `Func_d703`,
-`Func_f580`, `Func_f602`, the six `ScriptCommand_*` Man1/legendary/
-challenge-cup commands, and `SetOBP1OrSGB3ToCardPalette`. Orphan
-registrations are 0 and the `extra_registrations` pin (14) matches, so the two
-older failures there are closed. These same 12 are why the coverage ledger
-marks 26 routines `unmeasurable`: the reference tracer has no entry address
-for an unregistered routine, so closing one means registering it, not
-recording a session. `p2:boot-title` fails `STATE_MISMATCH` on 31 bytes in 23
-regions, and the split matters: 27 are WRAM in the sound-driver window
-(`$DDBB`-`$DDE3`), the region anchor comparison still leaves ungated
-(`GATED = 4`, `docs/audio-harness.md`), and 2 are `sPlayerName` at `$A010`,
-mirrored into the `save` field. Nothing else diverges — framebuffer, OAM,
-both VRAM banks, HRAM, IO and the mapper state are all 0.
+| requirement | measured blocker |
+|---|---|
+| `p6:maps-and-campaign` | `credits-1-explore-1` diverges at 858,149 (the credits song starts inside a ~1 s LCD-off interval; the sound driver's tick alignment differs by one) and at 871,295 (the LYC scroll handler consumes `wd665` a frame early). Same root cause: the port places interrupts per DoFrame interval and at sync sites, never by cycle position inside a long interval. |
+| `p7:printer` | linked-reference oracle, paced serial model and PNG sink are landed; the session diverges at 94,067 where the print-setup interval's two VBlank OAM copies land before the main thread redraws the cursor. Same class. Also open: the print path reads bank-6 printer graphics (`06:40E4`) absent from the data pack, and PRINT packets store the Game Boy stack pointer into `wPrinterPacketDataPtr` (a ledger decision). |
+| `p7:link-ir` | no two-console route exists; Gambatte's link API (`gambatte_linkstatus`, used by the printer oracle) makes a linked oracle feasible but nothing is recorded. |
+| `faithful-4x3:release`, `faithful-4x3:package` | depend on the three rows above. |
+| `p8:*` (five rows) | widescreen is an unstarted feature project on top of the faithful port. |
 
-`reset:baseline` passes because its `inventory_sha256` was re-pinned today to
-the committed `site/data/inventory.json`. That pin drifted for a repo-side
-reason, not an upstream one: pret is still at the pinned commit
-`0e7157e8`, the schema is still 2, and the ROM, map and symbol hashes all
-match — only our own derived inventory file had changed. Re-pinning re-keys
-every evidence artifact, which is why the other three passing producers were
-re-run at the new key.
+**Open session facts** (each a measured divergence, not a routine bug):
+`credits-1-explore-1`/`-2` at 871,294, `ai-duel-01` at 32,335,
+`seed-duel-continue` at 1,415, `effect-dragonite-lv41-2-ai-s3` at 27,748 —
+all interrupt-placement class — and `printer-card-list` at 94,066 as above.
+`tas-5530s` is clean through its declared ceiling (the Duel Escape glitch).
+
+**What the remaining gates would cost.** The faithful blockers are one
+problem: cycle-positioned interrupt delivery inside long intervals, for STAT,
+VBlank and timer ISRs (`docs/grind.md`, "ISR placement"; the site track in
+`isr-sites.txt` records the routine/nth-call positions). Three attempts at a
+placement model regressed or moved the divergence without clearing it. This
+is days of design with real failure risk, and it changes nothing a player can
+see. Link duels need a second player. Widescreen is the vision's largest
+unstarted item. The vision's own estimate for everything below from scratch
+was 12–18 months solo; that number was for this whole document, not for the
+faithful remainder.
+
+**Decision.** Stop here. The faithful port is usable software; the release
+gate is this document's byte-exact definition of done, and it stays unmet on
+record rather than being weakened. A bug found in play is an hour of
+oracle-backed work; the gates above are not.
 
 - **Phase 0 — Substrate** (#1): closed.
-- **Phase 1 — Delete the hardware** (#2): transform recorded in
-  `docs/phase1-transform.md`; applied per-slice as each routine ports.
+- **Phase 1 — Delete the hardware** (#2): closed; transform in
+  `docs/phase1-transform.md`.
 - **Phase 2 — Leaves and save** (#3): closed.
-- **Phase 3 — Timer, APU, audio** (#4): driver-level harness
-  (`docs/audio-harness.md`): the tick oracle proves the sound driver from
-  every seed the recorded sessions give it, `session-verify` gates tick
-  placement (`SCHEDULE`) and names the request bytes when the audio region
-  diverges (`AUDIO`). Its first run found and fixed the port writing
-  `rAUD1SWEEP` on the channel-2 path in both drivers. Anchor-level audio
-  (`GATED = 5`) remains an integration check; `credits-1` is the one session
-  that fails it, on ISR interleaving inside one LCD-off block. `p3:audio-pcm`
-  still has no producer.
-- **Phase 4 — Text, tiles, menus** (#5, #18): code lands and replays; evidence
-  artifact unproduced. The deck editor, card album, naming screen and glossary
-  are all on recorded routes.
-- **Phase 5 — Duel engine** (#6): the coverage program's Target and board-seed
-  loops. `just coverage-target` arranges one AI duel per carrier card; the
-  carriers the AI refuses to play are reached by `just session-board-seed`,
-  which pokes the carrier active with energy attached
-  (`CARD_LOCATION_ARENA` in its location byte) and then attacks — that lever
-  took attack-carrier yield from 0 of 40 under pure input search to 22 of 25.
-  397 `effect-*` sessions are landed and `effect_functions.asm` is at 137
-  misses, from 400. `p5:duel-state`'s duel vectors are those sessions.
-  Still out of reach: the 43 `*_AISelection`/`AIDecide_*` routines, which need
-  the carrier in the *opponent's* deck (an opponent-deck seed is unproven —
-  five poke ordinals were probed and the card never reached the AI's hand).
-- **Phase 6 — Overworld and scripts** (#7): code lands and replays; the
-  Discover and Intake loops (`just coverage-discover`, `just
-  coverage-intake`) record the routes button search finds, and `just
-  coverage-probe` asks which unexecuted routines a candidate input reaches
-  before anything is recorded. Save-seeded sessions
-  (`docs/reach-harness.md`) opened the deck machines; the packs, credits
-  variants and gift center are next. `scripting.asm` stands at 27 real
-  misses (17 of its 44 are `unmeasurable`).
-- **Phase 7 — Link, IR, printer** (#8): blocked on a peer. Unreachable from a
-  single-console route; no oracle has a serial partner. The native-only
-  loopback and the reference-side dual-core link are in
-  `docs/reach-harness.md`.
-- **Phase 8 — Widescreen and features** (#9): open, and strictly on top — 5 of
-  the 26 requirements. Not port distance.
+- **Phase 3 — Timer, APU, audio** (#4): closed; software APU (`src/apu.c`),
+  register trace and PCM window evidence (`docs/audio-harness.md`).
+- **Phase 4 — Text, tiles, menus** (#5, #18): closed.
+- **Phase 5 — Duel engine** (#6): closed; the effect corpus is the duel
+  vector set.
+- **Phase 6 — Overworld and scripts** (#7): script VM closed; the campaign
+  row waits on the credits session (above).
+- **Phase 7 — Link, IR, printer** (#8): printer oracle and sink landed, row
+  unmet as above; link unstarted.
+- **Phase 8 — Widescreen and features** (#9): not started.
 
 SGB (`engine/sgb.asm`, 19 routines) is excluded as hardware-only in
 `tools/progress/scope.toml`: the CGB target never takes the path and neither
