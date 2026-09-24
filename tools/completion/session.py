@@ -514,7 +514,7 @@ class StreamRecorder:
         self.registers = (ctypes.c_int * 10)()
         self.hits = 0
         self.record_input = record_input
-        self.sites = IsrSiteRecorder(core, self.registers, serial=not link)
+        self.sites = IsrSiteRecorder(core, self.registers, serial=not link and core.printer is None)
         self.serial_track = SerialTrackRecorder(core) if link else None
 
     def on_exec(self, address: int, cycle: int) -> None:
@@ -660,7 +660,7 @@ def ensure_stat_track(directory: Path, masks: list[int], frames: int, *, axis: s
         core.input_axis = axis
         core.frame_mode = frame_mode
         registers = (ctypes.c_int * 10)()
-        sites = IsrSiteRecorder(core, registers)
+        sites = IsrSiteRecorder(core, registers, serial=not printer)
 
         def on_exec(address: int, _cycle: int) -> None:
             nonlocal stat_mask, increments
