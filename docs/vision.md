@@ -13,7 +13,8 @@ What follows is the measured state; nothing below is a plan.
 **Delivered.** All 3,012 in-scope routines have C bodies; the 3,026 oracle
 registrations are clean (`just oracle-diff-all`), every one has a RED mutation
 witness (`tools/completion/mutation_campaign.py --report`, complete), and the
-hatch audit passes at release stage. 669 sessions are recorded; 665 replay
+hatch audit passes at release stage. All 669 recorded sessions hold their full
+length in `tools/completion/session_ratchet.json`: each has replayed
 byte-identical on WRAM, HRAM, OAM, both VRAM banks, palettes and framebuffer at
 every DoFrame anchor against Gambatte — boot, naming, the lab, the practice
 duel, the deck machines and editor, all eight clubs, Ronald, the Challenge
@@ -52,11 +53,8 @@ credits, link and corpus rows dominate), and `tools/oracle/release_gate.py`
 re-attests a clean tree. `just session-verify <name>` replays one session
 against its cached Gambatte reference; a linked session records both cores.
 
-**Open session facts** (measured divergences outside every gated corpus):
-`ai-duel-01` at 32,335, `credits-1-explore-2` at 871,294 of 909,358,
-`effect-dragonite-lv41-2-ai-s3` at 27,748 and `seed-duel-continue` at 1,415,
-all interrupt-placement class. `tas-5530s` is clean through its declared
-ceiling (the Duel Escape glitch).
+**Open session facts:** none. Every session's ratchet reaches its full length,
+and `tas-5530s` its declared ceiling (the Duel Escape glitch).
 
 - **Phase 0 — Substrate** (#1): closed.
 - **Phase 1 — Delete the hardware** (#2): closed; transform in
