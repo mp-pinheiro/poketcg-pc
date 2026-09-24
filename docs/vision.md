@@ -4,8 +4,11 @@
 
 Complete. All 26 rows of `tools/completion/requirements.toml` pass
 (`just completion-chain`), and `tools/oracle/release_gate.py` attests the
-revision recorded in `site/data/gate.json` (schema 3). What follows is the
-measured state; nothing below is a plan.
+revision recorded in `site/data/gate.json` (schema 3). The gate no longer
+requires static CFG edge coverage (owner decision, 2026-09-24): it asked a
+600-frame packaged boot to cover all 15,828 asm edges, `engine/sgb.asm`
+included, which no run can do; `just completion-cfg-audit` still reports it.
+What follows is the measured state; nothing below is a plan.
 
 **Delivered.** All 3,012 in-scope routines have C bodies; the 3,026 oracle
 registrations are clean (`just oracle-diff-all`), every one has a RED mutation
@@ -271,7 +274,8 @@ VRAM (2 banks) + OAM + palette RAM + the CPU register file. `smw`'s wider vector
 - **Release capture — headless Gambatte.** The completion bootstrap downloads
   and source-builds the pinned `libgambatte` core. The release gate checks the
   source, core, ROM, C ABI, domains, registers, trace schema, framebuffer schema,
-  and no-BIOS mode, then runs a one-frame `release-smoke` capture. The capture
+  and the pinned boot mode, then runs a `release-smoke` capture from power-on
+  through the CGB boot ROM to the cartridge entry at `$0150`. The capture
   records pre/post SM83 registers, both VRAM banks, direct memory domains, the
   full system bus, an anchored execution trace, a 160×144 PNG, and pinned
   provenance.
