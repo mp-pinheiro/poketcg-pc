@@ -9633,7 +9633,6 @@ NidoranFCallForFamily_PlayerSelectEffectResult NidoranFCallForFamily_PlayerSelec
 				hTemp_ffa0 = selected;
 				return (NidoranFCallForFamily_PlayerSelectEffectResult){selected, (uint8_t)(selected == 0u ? 0x80u : 0x00u)};
 			}
-			PlaySFX_InvalidChoice();
 			continue;
 		}
 		DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
@@ -9642,8 +9641,7 @@ NidoranFCallForFamily_PlayerSelectEffectResult NidoranFCallForFamily_PlayerSelec
 			if (gb_read8(hl) == CARD_LOCATION_DECK) {
 				uint16_t card_id = GetCardIDFromDeckIndex((uint8_t)hl);
 				uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, NIDORANF);
-				uint8_t is_m = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, NIDORANM);
-				if ((is_f & 0x80u) != 0u || (is_m & 0x80u) != 0u) { PlaySFX_InvalidChoice(); break; }
+				if ((is_f & 0x80u) != 0u) { PlaySFX_InvalidChoice(); break; }
 			}
 			hl = (uint16_t)((hl & 0xff00u) | (uint8_t)(hl + 1u));
 			if ((uint8_t)hl >= DECK_SIZE) { hTemp_ffa0 = 0xffu; return (NidoranFCallForFamily_PlayerSelectEffectResult){0xffu, 0x00u}; }
