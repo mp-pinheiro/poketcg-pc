@@ -361,6 +361,7 @@ void HandleTitleScreen(void)
 		return;
 	}
 
+title_screen:
 	if (wLastSelectedStartMenuItem != 0u) {
 		for (;;) { /* .play_opening */
 			PlaySong(MUSIC_STOP);
@@ -407,28 +408,18 @@ void HandleTitleScreen(void)
 		}
 	}
 
-	for (;;) { /* jr c, HandleTitleScreen re-entries (start.asm:63-76) */
-		(void)CheckIfHasSaveData();
-		HandleStartMenu();
-		if (wStartMenuChoice == START_MENU_NEW_GAME) {
-			if ((DeleteSaveDataForNewGame() & 0x10u) != 0u)
-				continue;
-			break; /* jr .card_pop: not Card Pop! -> .continue_duel */
-		}
-		if (wStartMenuChoice == START_MENU_CONTINUE_FROM_DIARY) {
-			AskToContinueFromDiaryWithDuelDataResult answer =
-				AskToContinueFromDiaryWithDuelData();
-			if ((answer.f & 0x10u) != 0u)
-				continue;
-			break;
-		}
-		if (wStartMenuChoice == START_MENU_CARD_POP) {
-			if ((ShowCardPopCGBDisclaimer() & 0x10u) != 0u)
-				continue;
-			break; /* falls into .continue_duel */
-		}
-		break; /* .continue_duel */
+	(void)CheckIfHasSaveData();
+	HandleStartMenu();
+	if (wStartMenuChoice == START_MENU_NEW_GAME) {
+		if ((DeleteSaveDataForNewGame() & 0x10u) != 0u)
+			goto title_screen;
+	} else if (wStartMenuChoice == START_MENU_CONTINUE_FROM_DIARY) {
+		AskToContinueFromDiaryWithDuelDataResult answer = AskToContinueFromDiaryWithDuelData();
+		if ((answer.f & 0x10u) != 0u)
+			goto title_screen;
 	}
+	if (wStartMenuChoice == START_MENU_CARD_POP && (ShowCardPopCGBDisclaimer() & 0x10u) != 0u)
+		goto title_screen;
 	ResetDoFrameFunction(0u);
 	EnableAndClearSpriteAnimations();
 }
