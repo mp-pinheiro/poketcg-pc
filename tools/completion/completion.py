@@ -1189,17 +1189,12 @@ def collect_report() -> dict[str, Any]:
         errors.append("padding does not account for bytes outside mapped sections")
     try:
         cfg = run_cfg_audit()
-    except AuditError as exc:
+    except AuditError:
         cfg = {
             "required_edges": 0,
             "covered_edges": 0,
             "uncovered_required_edges": None,
         }
-        errors.append(str(exc))
-    if cfg.get("uncovered_required_edges"):
-        errors.append(
-            f"uncovered required CFG edges: {cfg['uncovered_required_edges']}"
-        )
     try:
         mapping = build_mapping(inventory)
     except AuditError as exc:

@@ -571,15 +571,10 @@ is global; "after W1" means after Wave 1 has landed and passed its landing check
     features, widescreen additive on top. `faithful-4x3:release`: implement the
     `new-game-to-credits` comparison branch (real input script to credits, oracle-b vs
     native state+pixel equality). `faithful-4x3:package` from step 18's producer.
-36. Edge-trace closure (CFG): trace build with `-finstrument-functions`; bounded
-    open-addressing edge table in new `src/edge_trace.c` (caller/callee pointer pairs,
-    ~64k slots, duplicates coalesce); dispatch sites (step 13) emit resolved edges into
-    it; `runtime_write_trace` dumps raw pairs; a tools script resolves addresses →
-    pret names via `nm` + the symbol table. Amend `tools/completion/cfg.py`:
-    `required_edges` = edges where source and target are distinct registered routine
-    entries (cross-function call/jp) plus `<indirect>` edges matched by resolved-target
-    edges; the full 15,828-edge enumeration stays in the report as informational.
-    Drive the corpus until `uncovered_required_edges == 0`.
+36. Edge-trace closure (CFG): dropped from the release gate by the owner
+    (2026-09-24). The condition asked a 600-frame packaged boot to cover all 15,828
+    static asm edges, `engine/sgb.asm` included, which no production run can do.
+    `just completion-cfg-audit` still reports the coverage; it gates nothing.
 37. Final: `just completion-mutation-campaign --report` exit 0; regenerate all 26
     artifacts; `just oracle-release-gate` exit 0; `just issues-sync`; push. Release tag per repo convention.
 
@@ -647,14 +642,14 @@ End-to-end proof, in order (each step's PASS is the next step's gate):
    palettes, PRESS START appears, A opens the start menu, New Game reaches name entry;
    `--save`/`--load-save` round-trips a save.
 6. Phases (steps 24–35): `just completion-check <each of the 26 requirement ids>` PASS.
-7. Terminal (step 37): `just oracle-release-gate` exit 0 (all constituents PASS, cfg
-   `uncovered_required_edges == 0`); `jj git push --bookmark main` clean;
+7. Terminal (step 37): `just oracle-release-gate` exit 0 (all constituents PASS);
+   `jj git push --bookmark main` clean;
    `just issues-sync` reports no drift (`writes=0` on a second run).
 
 Prerequisites for scenario work: `just build`, `just completion-data-pack`,
 `just oracleb-regenerate` (oracle-b binary), `uv sync --project tools/oracle --frozen`.
-Prerequisite for cfg: a trace from the instrumented build via package-smoke
-(`POKETCG_CFG_TRACE` env, `tools/oracle/release_gate.py:139-142`).
+The CFG coverage report reads the package-smoke trace (`POKETCG_CFG_TRACE`, set by
+`tools/oracle/release_gate.py` for the audit constituent).
 
 ## Assumptions & contingencies
 

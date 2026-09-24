@@ -26,8 +26,9 @@ just oracle-release-gate       # central release barrier; exits non-zero on any 
 
 The central release barrier verifies the pinned Gambatte source archive, shared
 core, ROM, C ABI, memory domains, registers, trace schema, framebuffer schema,
-and no-BIOS mode. It also runs a bounded one-frame Gambatte capture; file-health
-alone is not accepted as a passing constituent.
+and the pinned boot mode. It also runs a bounded Gambatte capture from power-on
+through the CGB boot ROM to the cartridge entry at `$0150`; file-health alone is
+not accepted as a passing constituent.
 
 After the gate and progress publication are committed, `just issues-sync`
 reconciles the Forgejo issues with the measured facts (`docs/grind.md`, "Issues").
