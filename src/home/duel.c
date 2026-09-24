@@ -2948,7 +2948,7 @@ DuelRoutineResult ProcessPlayedPokemonCard(uint8_t a, uint8_t f, uint8_t b, uint
 	hl = HavePokemonPowerText;
 	WaitResult wait = DrawWideTextBox_WaitForInput(hl);
 	f = wait.f;
-	ExchangeRNGResult rng = ExchangeRNG(b, c, (uint16_t)((uint16_t)d << 8 | e), hl);
+	ExchangeRNGResult rng = ExchangeRNG(wait.b, wait.c, (uint16_t)((uint16_t)wait.d << 8 | wait.e), wait.hl);
 	a = rng.a; b = rng.b; c = rng.c; f = rng.f; hl = rng.hl; d = (uint8_t)(rng.de >> 8); e = (uint8_t)rng.de;
 	if (wLoadedCard1ID != MUK) {
 		PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(PLAY_AREA_BENCH_1);
@@ -2957,7 +2957,7 @@ DuelRoutineResult ProcessPlayedPokemonCard(uint8_t a, uint8_t f, uint8_t b, uint
 			DisplayUsePokemonPowerScreen();
 			hl = UnableToUsePkmnPowerDueToToxicGasText;
 			wait = DrawWideTextBox_WaitForInput(hl); f = wait.f;
-			rng = ExchangeRNG(b, c, (uint16_t)((uint16_t)d << 8 | e), hl);
+			rng = ExchangeRNG(wait.b, wait.c, (uint16_t)((uint16_t)wait.d << 8 | wait.e), wait.hl);
 			return (DuelRoutineResult){rng.a, rng.f, rng.b, rng.c, (uint8_t)(rng.de >> 8), (uint8_t)rng.de, rng.hl};
 		}
 	}
@@ -2975,9 +2975,10 @@ DuelRoutineResult ProcessPlayedPokemonCard(uint8_t a, uint8_t f, uint8_t b, uint
 	gb_write8((uint16_t)(wTxRam2_ADDR + 3u), gb_read8((uint16_t)(wLoadedAttackName_ADDR + 1u)));
 	hl = WillUseThePokemonPowerText;
 	wait = DrawWideTextBox_WaitForInput(hl); f = wait.f;
-	rng = ExchangeRNG(b, c, (uint16_t)((uint16_t)d << 8 | e), hl);
+	rng = ExchangeRNG(wait.b, wait.c, (uint16_t)((uint16_t)wait.d << 8 | wait.e), wait.hl);
 	ResetAttackAnimationIsPlaying();
-	TryExecuteEffectCommandFunctionResult executed = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_PKMN_POWER_TRIGGER, b, d, e);
+	TryExecuteEffectCommandFunctionResult executed = TryExecuteEffectCommandFunction(
+		EFFECTCMDTYPE_PKMN_POWER_TRIGGER, rng.b, (uint8_t)(rng.de >> 8), (uint8_t)rng.de);
 	return (DuelRoutineResult){executed.a, executed.f, executed.b, executed.c, executed.d, executed.e, executed.hl};
 }
 /* <<< factory ProcessPlayedPokemonCard */
