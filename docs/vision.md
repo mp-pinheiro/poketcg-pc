@@ -2,63 +2,58 @@
 
 ## Status
 
-Development is paused here by the owner's decision (2026-09-23). What follows
-is the measured state at `main` `bf0e27e0`, what the remaining gates are, and
-why none of them is needed to play the port. Nothing below is a plan.
+Complete. All 26 rows of `tools/completion/requirements.toml` pass
+(`just completion-chain`), and `tools/oracle/release_gate.py` attests the
+revision recorded in `site/data/gate.json` (schema 3). What follows is the
+measured state; nothing below is a plan.
 
 **Delivered.** All 3,012 in-scope routines have C bodies; the 3,026 oracle
 registrations are clean (`just oracle-diff-all`), every one has a RED mutation
 witness (`tools/completion/mutation_campaign.py --report`, complete), and the
-hatch audit passes at release stage. 666 sessions are recorded; 659 replay
+hatch audit passes at release stage. 669 sessions are recorded; 665 replay
 byte-identical on WRAM, HRAM, OAM, both VRAM banks, palettes and framebuffer at
 every DoFrame anchor against Gambatte — boot, naming, the lab, the practice
 duel, the deck machines and editor, all eight clubs, Ronald, the Challenge
-Hall, the Dome, arranged and seeded AI duels, the card-effect corpus, the
-credits up to the scroll sequence, and a Game Boy Printer card-list print
-against a linked reference (`printer-card-list`, 94,066 of 95,453). Coverage
-on the reference: 2,487 of the 3,062 ledger routines execute on some recorded
-session (81%). The port boots and plays in the SDL2 shell with no emulator and
-no ROM at runtime.
+Hall, the Dome, arranged and seeded AI duels, the card-effect corpus, a new
+game through the credits (`credits-1-explore-1`, 876,358 ordinals, audio
+included), a Game Boy Printer card-list print against a linked printer
+reference (`printer-card-list`, 95,453), and a two-console link duel
+(`link-duel-a`/`-b`, 50,392 and 52,372) against two Gambatte cores joined
+through their serial ports. Coverage on the reference at `bf0e27e0`: 2,487 of
+the 3,062 ledger routines execute on some recorded session (81%). The port
+boots and plays in the SDL2 shell with no emulator and no ROM at runtime.
 
-**Requirements** (`just completion-check <id>` over the 26 rows of
-`tools/completion/requirements.toml`): 16 pass — `reset:baseline`,
-`reset:rom-coverage`, `reset:routine-bijection`, `p0:substrate`,
-`p1:hardware-removal`, `p2:leaves`, `p2:save-interchange`, `p2:boot-title`,
-`p2:boot-title-negative`, `p3:audio-trace`, `p3:audio-pcm`, `p4:ui-corpus`,
-`p4:raster-effects`, `p5:duel-state`, `p5:seeded-duel`, `p6:script-vm`. The
-package producer's own checks pass and wait only on the release row.
+**Requirements** (`just completion-check <id>`): all 26 pass — `reset` (3),
+`p0`–`p2` (6), `p3` audio (2), `p4` UI and raster (2), `p5` duel (2), `p6`
+script VM and campaign (2), `p7` link and printer (2), `faithful-4x3` release
+and package (2), `p8` widescreen and features (5).
 
-**The ten that do not pass, by cause:**
+**How the last ten closed:**
 
-| requirement | measured blocker |
+| requirement | mechanism and evidence |
 |---|---|
-| `p6:maps-and-campaign` | `credits-1-explore-1` diverges at 858,149 (the credits song starts inside a ~1 s LCD-off interval; the sound driver's tick alignment differs by one) and at 871,295 (the LYC scroll handler consumes `wd665` a frame early). Same root cause: the port places interrupts per DoFrame interval and at sync sites, never by cycle position inside a long interval. |
-| `p7:printer` | linked-reference oracle, paced serial model and PNG sink are landed; the session diverges at 94,067 where the print-setup interval's two VBlank OAM copies land before the main thread redraws the cursor. Same class. Also open: the print path reads bank-6 printer graphics (`06:40E4`) absent from the data pack, and PRINT packets store the Game Boy stack pointer into `wPrinterPacketDataPtr` (a ledger decision). |
-| `p7:link-ir` | no two-console route exists; Gambatte's link API (`gambatte_linkstatus`, used by the printer oracle) makes a linked oracle feasible but nothing is recorded. |
-| `faithful-4x3:release`, `faithful-4x3:package` | depend on the three rows above. |
-| `p8:*` (five rows) | widescreen is an unstarted feature project on top of the faithful port. |
+| `p6:maps-and-campaign`, `faithful-4x3:release` | ISR delivery at two recorded ROM sites (LCD disable, the credits LYC arm) plus a busy-wait hook that lets the ROM's ISRs run inside the sound-driver polling loops that have no DoFrame. `credits-1-explore-1` is clean on every release field, the APU write trace included. |
+| `p7:printer` | the SM83 stack addresses that PRINT packets store into `wPrinterPacketDataPtr` replay from a per-interval stack track; `printer-card-list` is clean end to end and its pages match the linked reference printer's. |
+| `p7:link-ir` | two linked Gambatte cores record each serial interrupt's byte and each `SerialTimerHandler` memory step, positioned by the main thread's accesses to serial state (`serial-track.bin`); the native replays them into the ported handlers, nested interrupts included. Both sides of the link duel are clean. |
+| `faithful-4x3:package` | binary plus generated data pack and nothing ROM-derived; a 600-frame smoke passes and a pack with a span removed fails with `MISSING_DATA`. |
+| `p8:*` (five rows) | `--widescreen 48` draws 48 extra columns each side from the same VRAM and OAM; overworld rooms widen to the map's edges and fill past them with BG colour 0; other screens keep the 160-px layout centred; `--no-sprite-limits` changes pixels only. The producers check the wide frame against an independent renderer over Gambatte's state, the centre columns against the 4:3 frame, every DoFrame digest against Gambatte with the features on, and the save against the 4:3 run, over the whole witness corpus. |
 
-**Open session facts** (each a measured divergence, not a routine bug):
-`credits-1-explore-1`/`-2` at 871,294, `ai-duel-01` at 32,335,
-`seed-duel-continue` at 1,415, `effect-dragonite-lv41-2-ai-s3` at 27,748 —
-all interrupt-placement class — and `printer-card-list` at 94,066 as above.
-`tas-5530s` is clean through its declared ceiling (the Duel Escape glitch).
+**Not covered by a session.** Card Pop and the Gift Center (IR) are ported and
+oracle-verified per routine, but no recorded session drives them end to end;
+the Phase 7 gate ("a link duel round-trips; a card exports to PNG") does not
+require one.
 
-**What the remaining gates would cost.** The faithful blockers are one
-problem: cycle-positioned interrupt delivery inside long intervals, for STAT,
-VBlank and timer ISRs (`docs/grind.md`, "ISR placement"; the site track in
-`isr-sites.txt` records the routine/nth-call positions). Three attempts at a
-placement model regressed or moved the divergence without clearing it. This
-is days of design with real failure risk, and it changes nothing a player can
-see. Link duels need a second player. Widescreen is the vision's largest
-unstarted item. The vision's own estimate for everything below from scratch
-was 12–18 months solo; that number was for this whole document, not for the
-faithful remainder.
+**Reproduce.** `just build`, then `just completion-chain` regenerates every
+artifact under `build/completion/evidence/` in dependency order (hours; the
+credits, link and corpus rows dominate), and `tools/oracle/release_gate.py`
+re-attests a clean tree. `just session-verify <name>` replays one session
+against its cached Gambatte reference; a linked session records both cores.
 
-**Decision.** Stop here. The faithful port is usable software; the release
-gate is this document's byte-exact definition of done, and it stays unmet on
-record rather than being weakened. A bug found in play is an hour of
-oracle-backed work; the gates above are not.
+**Open session facts** (measured divergences outside every gated corpus):
+`ai-duel-01` at 32,335, `credits-1-explore-2` at 871,294 of 909,358,
+`effect-dragonite-lv41-2-ai-s3` at 27,748 and `seed-duel-continue` at 1,415,
+all interrupt-placement class. `tas-5530s` is clean through its declared
+ceiling (the Duel Escape glitch).
 
 - **Phase 0 — Substrate** (#1): closed.
 - **Phase 1 — Delete the hardware** (#2): closed; transform in
@@ -69,11 +64,12 @@ oracle-backed work; the gates above are not.
 - **Phase 4 — Text, tiles, menus** (#5, #18): closed.
 - **Phase 5 — Duel engine** (#6): closed; the effect corpus is the duel
   vector set.
-- **Phase 6 — Overworld and scripts** (#7): script VM closed; the campaign
-  row waits on the credits session (above).
-- **Phase 7 — Link, IR, printer** (#8): printer oracle and sink landed, row
-  unmet as above; link unstarted.
-- **Phase 8 — Widescreen and features** (#9): not started.
+- **Phase 6 — Overworld and scripts** (#7): closed; the campaign row runs on
+  `credits-1-explore-1`.
+- **Phase 7 — Link, IR, printer** (#8): closed; linked link-duel and printer
+  oracles.
+- **Phase 8 — Widescreen and features** (#9): closed; `src/widescreen.c` and
+  `tools/completion/widescreen.py`.
 
 SGB (`engine/sgb.asm`, 19 routines) is excluded as hardware-only in
 `tools/progress/scope.toml`: the CGB target never takes the path and neither
