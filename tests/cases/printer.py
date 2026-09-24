@@ -967,8 +967,8 @@ MUTATIONS["SendPrinterPacket"] = {"source_symbol": "SendPrinterPacket", "before"
 # >>> factory-mutation TryInitPrinterCommunications
 MUTATIONS["TryInitPrinterCommunications"] = {
     "source_symbol": "TryInitPrinterCommunications",
-    "before": "TryInitPrinterCommunicationsResult TryInitPrinterCommunications(void)\n{\n\twPrinterInitAttempts = 0u;\n\tfor (;;) {\n\t\tDoFrame();\n\t\tif ((hKeysHeld & PAD_B) != 0u) {\n\t\t\twPrinterStatus = 0u;",
-    "after": "TryInitPrinterCommunicationsResult TryInitPrinterCommunications(void)\n{\n\twPrinterInitAttempts = 0u;\n\tfor (;;) {\n\t\tDoFrame();\n\t\tif ((hKeysHeld & PAD_B) != 0u) {\n\t\t\twPrinterStatus = 0xFFu;",
+    "before": "TryInitPrinterCommunicationsResult TryInitPrinterCommunications(uint16_t hl)\n{\n\twPrinterInitAttempts = 0u;\n\tfor (;;) {\n\t\tDoFrame();\n\t\tif ((hKeysHeld & PAD_B) != 0u) {\n\t\t\twPrinterStatus = 0u;",
+    "after": "TryInitPrinterCommunicationsResult TryInitPrinterCommunications(uint16_t hl)\n{\n\twPrinterInitAttempts = 0u;\n\tfor (;;) {\n\t\tDoFrame();\n\t\tif ((hKeysHeld & PAD_B) != 0u) {\n\t\t\twPrinterStatus = 0xFFu;",
     "case_ids": ["TryInitPrinterCommunications-0", "TryInitPrinterCommunications-1"],
 }
 # <<< factory-mutation TryInitPrinterCommunications
@@ -1073,29 +1073,29 @@ MUTATIONS["AddToPrinterGfxBuffer"] = {
 }
 # <<< factory-mutation AddToPrinterGfxBuffer
 # >>> factory-mutation SendCardListToPrinter
-MUTATIONS["SendCardListToPrinter"] = {"source_symbol": "SendCardListToPrinter", "before": "SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t offset = wPrinterHorizontalOffset;\n\tif (offset != 1u) {\n\t\tLoadGfxBufferForPrinterResult loaded = LoadGfxBufferForPrinter(hl);\n\t\tif ((loaded.f & 0x10u) != 0u)\n\t\t\treturn (SendCardListToPrinterResult){loaded.a, loaded.f, b, c, d, e, loaded.hl};\n\t\thl = loaded.hl;\n\t}\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();\n\tif ((init.f & 0x10u) != 0u)", "after": "SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t offset = wPrinterHorizontalOffset;\n\tif (offset != 1u) {\n\t\tLoadGfxBufferForPrinterResult loaded = LoadGfxBufferForPrinter(hl);\n\t\tif ((loaded.f & 0x10u) != 0u)\n\t\t\treturn (SendCardListToPrinterResult){loaded.a, loaded.f, b, c, d, e, loaded.hl};\n\t\thl = loaded.hl;\n\t}\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();\n\tif ((init.f & 0x10u) == 0u)", "case_ids": ["SendCardListToPrinter-0", "SendCardListToPrinter-1", "SendCardListToPrinter-2"]}
+MUTATIONS["SendCardListToPrinter"] = {"source_symbol": "SendCardListToPrinter", "before": "SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t offset = wPrinterHorizontalOffset;\n\tif (offset != 1u) {\n\t\tLoadGfxBufferForPrinterResult loaded = LoadGfxBufferForPrinter(hl);\n\t\tif ((loaded.f & 0x10u) != 0u)\n\t\t\treturn (SendCardListToPrinterResult){loaded.a, loaded.f, b, c, d, e, loaded.hl};\n\t\thl = loaded.hl;\n\t}\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications(hl);\n\tif ((init.f & 0x10u) != 0u)", "after": "SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t offset = wPrinterHorizontalOffset;\n\tif (offset != 1u) {\n\t\tLoadGfxBufferForPrinterResult loaded = LoadGfxBufferForPrinter(hl);\n\t\tif ((loaded.f & 0x10u) != 0u)\n\t\t\treturn (SendCardListToPrinterResult){loaded.a, loaded.f, b, c, d, e, loaded.hl};\n\t\thl = loaded.hl;\n\t}\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications(hl);\n\tif ((init.f & 0x10u) == 0u)", "case_ids": ["SendCardListToPrinter-0", "SendCardListToPrinter-1", "SendCardListToPrinter-2"]}
 # <<< factory-mutation SendCardListToPrinter
 # >>> factory-mutation Func_19f87
 MUTATIONS["Func_19f87"] = {
     "source_symbol": "Func_19f87",
-    "before": "Func_19f87Result Func_19f87(void)\n{\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();\n\tif ((init.f & 0x10u) != 0u)",
-    "after": "Func_19f87Result Func_19f87(void)\n{\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();\n\tif ((init.f & 0x10u) == 0u)",
+    "before": "Func_19f87Result Func_19f87(void)\n{\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications(0u);\n\tif ((init.f & 0x10u) != 0u)",
+    "after": "Func_19f87Result Func_19f87(void)\n{\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications(0u);\n\tif ((init.f & 0x10u) == 0u)",
     "case_ids": ["Func_19f87-0", "Func_19f87-1"],
 }
 # <<< factory-mutation Func_19f87
 # >>> factory-mutation Func_1a011
 MUTATIONS["Func_1a011"] = {
     "source_symbol": "Func_1a011",
-    "before": "Func_1a011Result Func_1a011(void)\n{\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();\n\tif ((init.f & 0x10u) != 0u)",
-    "after": "Func_1a011Result Func_1a011(void)\n{\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();\n\tif ((init.f & 0x10u) == 0u)",
+    "before": "Func_1a011Result Func_1a011(void)\n{\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications(0u);\n\tif ((init.f & 0x10u) != 0u)",
+    "after": "Func_1a011Result Func_1a011(void)\n{\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications(0u);\n\tif ((init.f & 0x10u) == 0u)",
     "case_ids": ["Func_1a011-0", "Func_1a011-1"],
 }
 # <<< factory-mutation Func_1a011
 # >>> factory-mutation Func_19f99
 MUTATIONS["Func_19f99"] = {
     "source_symbol": "Func_19f99",
-    "before": "Func_19f99Result Func_19f99(void)\n{\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();\n\tif ((init.f & 0x10u) != 0u)\n\t\treturn (Func_19f99Result){init.a, init.f};",
-    "after": "Func_19f99Result Func_19f99(void)\n{\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();\n\tif ((init.f & 0x10u) != 0u)\n\t\treturn (Func_19f99Result){init.a, 0x80u};",
+    "before": "Func_19f99Result Func_19f99(void)\n{\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications(0u);\n\tif ((init.f & 0x10u) != 0u)\n\t\treturn (Func_19f99Result){init.a, init.f};",
+    "after": "Func_19f99Result Func_19f99(void)\n{\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications(0u);\n\tif ((init.f & 0x10u) != 0u)\n\t\treturn (Func_19f99Result){init.a, 0x80u};",
     "case_ids": ["Func_19f99-0", "Func_19f99-1"],
 }
 # <<< factory-mutation Func_19f99

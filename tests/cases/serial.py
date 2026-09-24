@@ -496,8 +496,8 @@ MUTATIONS["SerialSend8Bytes"] = {
 # >>> factory-mutation LinkOpponentTurnFrameFunction
 MUTATIONS["LinkOpponentTurnFrameFunction"] = {
     "source_symbol": "LinkOpponentTurnFrameFunction",
-    "before": "\tif (wSerialFlags == 0u) {",
-    "after": "\tif (wSerialFlags != 0u) {",
+    "before": "\tif (gb_read8(wSerialFlags_ADDR) == 0u) {",
+    "after": "\tif (gb_read8(wSerialFlags_ADDR) != 0u) {",
     "case_ids": ["LinkOpponentTurnFrameFunction-0", "LinkOpponentTurnFrameFunction-1", "LinkOpponentTurnFrameFunction-2"],
 }
 # <<< factory-mutation LinkOpponentTurnFrameFunction
