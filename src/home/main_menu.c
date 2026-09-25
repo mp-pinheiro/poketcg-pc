@@ -22,6 +22,7 @@
 #define GAME_EVENT_OVERWORLD 0x00u
 #define GAME_EVENT_CONTINUE_DUEL 0x05u
 #define PLAYER_TURN 0xC2u
+#define START_MENU_PC_OPTIONS 0xFEu
 
 #include "home/scripting.h"
 
@@ -145,6 +146,10 @@ void _GameLoop(void)
 			hWhoseTurn = PLAYER_TURN;
 			Func_c1f8();
 			HandleTitleScreen();
+			if (wStartMenuChoice == START_MENU_PC_OPTIONS) {
+				runtime_request_pc_options();
+				continue;
+			}
 			if ((MainMenuFunctionTable[wStartMenuChoice]() & 0x10u) != 0u)
 				continue; /* jr c: return to main menu */
 			break; /* jr _GameLoop */
