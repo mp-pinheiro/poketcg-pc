@@ -100,8 +100,54 @@ jobs:
           echo "live dashboard never converged to $want_commit/$want_gen"
           exit 1
 
+  nightly:
+    if: github.repository == 'fairfruit/poketcg-pc' && github.event_name == 'schedule'
+    needs: [quality]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container:
+      image: node:24-bookworm@sha256:934240a162082fd8b8a2f90cd5114446443f1eba1c5378f6687167ca405e6584
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+      - name: Install jq
+        run: |
+          set -euo pipefail
+          arch="$(uname -m)"
+          case "$arch" in
+            x86_64) jq_arch=amd64 ;;
+            aarch64) jq_arch=arm64 ;;
+            *) echo "unsupported arch: $arch" >&2; exit 1 ;;
+          esac
+          curl -fsSL -o /usr/local/bin/jq \
+            "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-${jq_arch}"
+          chmod +x /usr/local/bin/jq
+      - name: Publish nightly prerelease
+        env:
+          FORGEJO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git fetch origin main --tags
+          commit="$(git rev-parse origin/main)"
+          base="$(tr -d '[:space:]' < VERSION)"
+          tag="v${base}-nightly.$(date -u +%Y%m%d.%H%M%S).${GITHUB_RUN_NUMBER}"
+          git tag "$tag" "$commit"
+          git push origin "$tag"
+          api="${GITHUB_API_URL:-${GITHUB_SERVER_URL%/}/api/v1}"
+          notes="$(printf 'Automated nightly build from `%s`.\n\nThis prerelease does not modify VERSION or main release metadata.' "$commit")"
+          jq -n --arg t "$tag" --arg b "$notes" \
+            '{tag_name:$t,name:$t,body:$b,prerelease:true,draft:false}' \
+            > /tmp/nightly-release.json
+          curl --fail --silent --show-error --max-time 30 \
+            -X POST -H "Authorization: token ${FORGEJO_TOKEN}" \
+            -H 'Content-Type: application/json' \
+            --data @/tmp/nightly-release.json \
+            "${api}/repos/${GITHUB_REPOSITORY}/releases"
+
   release:
-    if: github.repository == 'fairfruit/poketcg-pc' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+    if: github.repository == 'fairfruit/poketcg-pc' && github.event_name == 'workflow_dispatch'
     needs: [quality]
     runs-on: ubuntu-latest
     timeout-minutes: 10
