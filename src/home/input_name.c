@@ -366,6 +366,7 @@ PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_CheckButtonState(void)
 		uint8_t c = gb_read8(wNamingScreenKeyboardHeight_ADDR);
 		uint8_t h = gb_read8(wNamingScreenCursorX_ADDR);
 		uint8_t l = gb_read8(wNamingScreenCursorY_ADDR);
+		newY = l;
 		uint8_t a = l;
 
 		if (b & PADF_UP_800) {

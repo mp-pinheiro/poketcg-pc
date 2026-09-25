@@ -181,6 +181,8 @@ CONTRACT["PlayerNamingScreen_CheckButtonState"] = {"compare": ("a",), "preserve"
 CASES["PlayerNamingScreen_CheckButtonState"] = [
     {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x00", 0xCEA3: b"\x00",
               0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"}},
+    {"wram": {0xFF8F: b"\x10", 0xFF91: b"\x00", 0xCEA3: b"\x00",
+              0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x02", 0xCEA9: b"\x06"}},
     dict(POISON, wram={0xFF8F: b"\x00", 0xFF91: b"\x00", 0xCEA3: b"\x00",
                        0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"}),
     # A press: `and PAD_A` leaves a=1; the push af/pop af sandwich returns it
