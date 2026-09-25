@@ -1,0 +1,17 @@
+hold RIGHT 80
+idle
+hold UP 80
+idle
+press A
+idle
+yes
+dismiss
+press DOWN
+idle
+press DOWN
+idle
+press A
+idle
+peek
+yes
+duel
