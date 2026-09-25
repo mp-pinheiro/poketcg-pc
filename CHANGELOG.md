@@ -2,6 +2,17 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
+## v1.0.0 - 2026-09-25
+
+### Bug Fixes
+
+- *(audio)* Restore Linux and WSL PulseAudio playback
+- *(audio)* Remove host output DC bias and raise Pulse fallback level
+
+### Features
+
+- *(debug)* Add native playtest controls and GameShark-inspired cheats
+
 ## v0.223.0 - 2026-09-25
 
 ### Bug Fixes
@@ -29,4 +40,3 @@ This changelog is generated automatically from [Conventional Commits](https://ww
 
 - *(sessions)* Ratchet ai-duel-01 to clean
 - *(sessions)* Ratchet three sessions to clean
-
