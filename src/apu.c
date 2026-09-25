@@ -43,6 +43,10 @@ static struct {
 	uint32_t sample_cycles;
 	uint8_t nr50;
 	uint8_t nr51;
+	uint8_t host_master_volume;
+	uint8_t host_music_volume;
+	uint8_t host_sfx_mask;
+	int host_mono;
 } g_apu;
 
 static const uint8_t DUTY_TABLE[4] = {0x01u, 0x81u, 0x87u, 0x7Eu};
@@ -67,6 +71,17 @@ void apu_reset(void)
 {
 	memset(&g_apu, 0, sizeof g_apu);
 	g_apu.ch[3].lfsr = 0x7FFFu;
+	g_apu.host_master_volume = 100u;
+	g_apu.host_music_volume = 100u;
+}
+
+void apu_set_host_mix(uint8_t master_volume, uint8_t music_volume,
+	int mono, uint8_t sfx_mask)
+{
+	g_apu.host_master_volume = master_volume > 100u ? 100u : master_volume;
+	g_apu.host_music_volume = music_volume > 100u ? 100u : music_volume;
+	g_apu.host_mono = mono != 0;
+	g_apu.host_sfx_mask = sfx_mask;
 }
 
 uint8_t apu_status(void)
@@ -391,18 +406,33 @@ static int channel_output(unsigned index)
 
 static void mix(int16_t *out)
 {
-	int left = 0;
-	int right = 0;
+	int music_left = 0;
+	int music_right = 0;
+	int sfx_left = 0;
+	int sfx_right = 0;
 	if (g_apu.power) {
 		for (unsigned i = 0; i < 4; i++) {
 			int sample = channel_output(i);
+			int *left = (g_apu.host_sfx_mask & (1u << i)) ? &sfx_left : &music_left;
+			int *right = (g_apu.host_sfx_mask & (1u << i)) ? &sfx_right : &music_right;
 			if (g_apu.nr51 & (1u << (i + 4)))
-				left += sample;
+				*left += sample;
 			if (g_apu.nr51 & (1u << i))
-				right += sample;
+				*right += sample;
 		}
-		left *= ((g_apu.nr50 >> 4) & 7) + 1;
-		right *= (g_apu.nr50 & 7) + 1;
+		music_left *= ((g_apu.nr50 >> 4) & 7) + 1;
+		music_right *= (g_apu.nr50 & 7) + 1;
+		sfx_left *= ((g_apu.nr50 >> 4) & 7) + 1;
+		sfx_right *= (g_apu.nr50 & 7) + 1;
+	}
+	int left = (music_left * g_apu.host_music_volume / 100 + sfx_left)
+		* g_apu.host_master_volume / 100;
+	int right = (music_right * g_apu.host_music_volume / 100 + sfx_right)
+		* g_apu.host_master_volume / 100;
+	if (g_apu.host_mono) {
+		int mono = (left + right) / 2;
+		left = mono;
+		right = mono;
 	}
 	out[0] = (int16_t)(left * 32);
 	out[1] = (int16_t)(right * 32);

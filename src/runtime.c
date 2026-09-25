@@ -16,6 +16,7 @@
 #include "mem.h"
 #include "ppu.h"
 #include "shell.h"
+#include "apu.h"
 #include "trace.h"
 #ifdef POKETCG_DEBUG_MENU
 #include "persistence.h"
@@ -1014,6 +1015,24 @@ int runtime_run_with_input(
 			continue;
 		}
 		InputFrame input = host_input.game;
+		int options_stopped = 0;
+		while (shell_options_active(shell)) {
+			ShellInput options_input = {0};
+			if (!shell_pump(shell, &options_input)) {
+				pthread_mutex_lock(&state.lock);
+				state.stop = 1;
+				state.stopped_by_user = 1;
+				state.resume = 1;
+				pthread_cond_broadcast(&state.condition);
+				pthread_mutex_unlock(&state.lock);
+				options_stopped = 1;
+				break;
+			}
+			shell_present(shell, presentation_on() ? state.present : state.framebuffer);
+			shell_pace(shell);
+		}
+		if (options_stopped)
+			continue;
 #ifdef POKETCG_DEBUG_MENU
 		if (host_input.debug_toggle || debug_menu.active) {
 			if (host_input.debug_toggle)
@@ -1141,6 +1160,10 @@ int runtime_run_with_input(
 			vblank_service(ordinal, state.services);
 			state.services++;
 		}
+		ShellAudioSettings audio_settings = shell_audio_settings(shell);
+		apu_set_host_mix(audio_settings.master_volume,
+		                 audio_settings.music_volume, audio_settings.mono,
+		                 (uint8_t)(gb_read8(wdd8c_ADDR) & 0x0Fu));
 		apu_trace_set_tick(state.frames);
 		size_t pcm_count = apu_trace_render_pcm(
 			state.audio, AUDIO_SAMPLES_PER_FRAME);

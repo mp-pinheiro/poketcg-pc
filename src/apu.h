@@ -16,6 +16,8 @@ typedef struct {
 
 void apu_reset(void);
 void apu_write(uint16_t address, uint8_t value);
+void apu_set_host_mix(uint8_t master_volume, uint8_t music_volume,
+                      int mono, uint8_t sfx_mask);
 uint8_t apu_status(void);
 void apu_render_frame(int16_t *stereo_out, size_t frames_out,
                       const ApuFrameWrite *writes, size_t write_count,

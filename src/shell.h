@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "input.h"
+#include "pc_options.h"
 #include "ppu.h"
 #include "presentation.h"
 
@@ -13,7 +14,9 @@ typedef struct Shell Shell;
 typedef struct {
 	int headless;
 	int width;
+	int scale;
 	PresentationMode presentation;
+	PcOptions *options;
 } ShellConfig;
 
 typedef struct {
@@ -21,6 +24,14 @@ typedef struct {
 	uint8_t debug_toggle;
 	uint8_t pressed;
 } ShellInput;
+
+typedef struct {
+	uint8_t master_volume;
+	uint8_t music_volume;
+	uint8_t sfx_mask;
+	int mono;
+} ShellAudioSettings;
+
 
 typedef struct {
 	const char *title;
@@ -36,6 +47,8 @@ uint8_t shell_hkeys_from_input(uint8_t buttons);
 void shell_present(Shell *shell, const uint16_t *framebuffer);
 void shell_present_debug(Shell *shell, uint16_t *framebuffer, const ShellDebugView *view);
 void shell_queue_audio(Shell *shell, const int16_t *samples, size_t count);
+ShellAudioSettings shell_audio_settings(const Shell *shell);
+int shell_options_active(const Shell *shell);
 void shell_set_speed(Shell *shell, unsigned speed);
 
 /* "sdl" or "headless" -- the backend actually in use, which is not simply the inverse

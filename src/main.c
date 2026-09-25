@@ -13,6 +13,7 @@
 #include "checkpoint.h"
 #include "digest.h"
 #include "trace.h"
+#include "pc_options.h"
 
 #include <ctype.h>
 #include <dlfcn.h>
@@ -642,11 +643,15 @@ static void state_dump_frames_callback(uint32_t frame, const RuntimeResult *resu
 		g_dump_frames_failed = 1;
 	}
 }
-
 int main(int argc, char **argv)
 {
+	PcOptions pc_options;
+	(void)pc_options_load(&pc_options);
 	ShellConfig config = {0};
-	PresentationMode presentation = PRESENTATION_4X3;
+	PresentationMode presentation =
+		pc_options.sgb ? PRESENTATION_SGB_FRAME : PRESENTATION_4X3;
+	config.options = &pc_options;
+	config.scale = pc_options.scale;
 	uint32_t frame_limit = 600;
 	const char *pack_path = NULL;
 	int require_data = 0;
