@@ -101,12 +101,35 @@
 #define START_MENU_CONTINUE_FROM_DIARY 0x01u
 #define START_MENU_NEW_GAME 0x02u
 #define START_MENU_CONTINUE_DUEL 0x03u
+#define START_MENU_PC_OPTIONS 0xFEu
 #define rVBK 0xFF4Fu
 /* <<< factory statics */
 
 #define CONSOLE_CGB 0x02u
 #define DISCLAIMER_TEXT_ID 0x0378u
 #define SYM_CURSOR_D 0x2Fu
+static void print_host_text(const char *text, uint8_t d, uint8_t e)
+{
+	uint16_t ptr = wDefaultText_ADDR;
+	gb_write8(ptr++, 0x06u);
+	while (*text)
+		gb_write8(ptr++, (uint8_t)*text++);
+	gb_write8(ptr, 0u);
+	InitTextPrinting(d, e);
+	ptr = wDefaultText_ADDR;
+	(void)ProcessText(&ptr);
+}
+
+static uint8_t start_menu_pc_index(void)
+{
+	uint8_t index = 1u;
+	if (wHasSaveData != 0u) {
+		index = 3u;
+		if (wHasDuelSaveData != 0u)
+			index++;
+	}
+	return index;
+}
 #define SYM_BOX_BOTTOM 0x1Du
 
 uint8_t ShowCardPopCGBDisclaimer(void)
@@ -155,6 +178,19 @@ PrintStartMenuDescriptionTextResult PrintStartMenuDescriptionText(uint8_t a, uin
 	uint8_t menu_item = wCurMenuItem;
 	uint8_t dispatch;
 	uint8_t out_a = menu_item;
+	if (runtime_pc_options_enabled() &&
+	    menu_item == start_menu_pc_index()) {
+		if (menu_item != wCurHighlightedStartMenuItem) {
+			DrawRegularTextBox(&box, 0u, 20u, 8u, 0u, 10u);
+			print_host_text("Configure PC options.", 1u, 12u);
+		}
+		uint8_t out_f = (menu_item == wCurHighlightedStartMenuItem) ? 0xC0u : f;
+		wCurHighlightedStartMenuItem = menu_item;
+		(void)a;
+		(void)hl;
+		return (PrintStartMenuDescriptionTextResult){out_a, out_f,
+			saved_b, saved_c, saved_d, saved_e};
+	}
 	if (menu_item != wCurHighlightedStartMenuItem) {
 		dispatch = menu_item;
 		if (wHasSaveData == 0u)
@@ -267,6 +303,12 @@ void HandleStartMenu(void)
 			text_id = (uint8_t)(text_id + 1u);
 		}
 	}
+	uint8_t pc_options = (uint8_t)runtime_pc_options_enabled();
+	uint8_t native_item_count = item_count;
+	if (pc_options != 0u) {
+		item_count++;
+		box_height = (uint8_t)(box_height + 2u);
+	}
 	gb_write8((uint16_t)(wStartMenuParams_ADDR + 12u), item_count);
 	gb_write8((uint16_t)(wStartMenuParams_ADDR + 3u), box_height);
 	gb_write8((uint16_t)(wStartMenuParams_ADDR + 6u), text_id);
@@ -279,6 +321,9 @@ void HandleStartMenu(void)
 	if (selected >= 4u)
 		selected = (wHasSaveData != 0u) ? 1u : 0u;
 	InitAndPrintMenu(wStartMenuParams_ADDR, selected);
+	if (pc_options != 0u)
+		print_host_text("PC OPTIONS", 2u,
+			(uint8_t)(2u + native_item_count * 2u));
 	/* start.asm:104-141: InitAndPrintMenu's menu-item print (PrintTextNoDelay
 	 * -> Func_235e) spans a VBlank period on the reference -- service 1008
 	 * interrupts it mid-draw (1150-frame trace: wvbc 1008; the reference
@@ -302,6 +347,10 @@ void HandleStartMenu(void)
 			continue;
 		wLastSelectedStartMenuItem = hCurMenuItem;
 		uint8_t choice = input.e;
+		if (pc_options != 0u && choice == native_item_count) {
+			wStartMenuChoice = START_MENU_PC_OPTIONS;
+			return;
+		}
 		if (wHasSaveData == 0u)
 			choice = (uint8_t)(choice + 2u);
 		wStartMenuChoice = choice;
@@ -410,6 +459,11 @@ title_screen:
 
 	(void)CheckIfHasSaveData();
 	HandleStartMenu();
+	if (wStartMenuChoice == START_MENU_PC_OPTIONS) {
+		wLastSelectedStartMenuItem = 0u;
+		runtime_request_pc_options();
+		goto title_screen;
+	}
 	if (wStartMenuChoice == START_MENU_NEW_GAME) {
 		if ((DeleteSaveDataForNewGame() & 0x10u) != 0u)
 			goto title_screen;

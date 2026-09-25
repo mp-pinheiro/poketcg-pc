@@ -988,6 +988,7 @@ int main(int argc, char **argv)
 		rom_pack_free();
 		return 1;
 	}
+	runtime_set_pc_options_enabled(shell_has_window(shell));
 	g_dump_state_path = dump_state_path;
 	if (g_dump_frame_count)
 		runtime_set_state_dump_frames(

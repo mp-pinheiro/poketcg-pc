@@ -53,6 +53,33 @@ uint32_t runtime_event_count(void)
 	return g_event_count;
 }
 
+static int g_pc_options_enabled;
+static int g_pc_options_request;
+
+void runtime_set_pc_options_enabled(int enabled)
+{
+	g_pc_options_enabled = enabled != 0;
+	g_pc_options_request = 0;
+}
+
+int runtime_pc_options_enabled(void)
+{
+	return g_pc_options_enabled;
+}
+
+void runtime_request_pc_options(void)
+{
+	if (g_pc_options_enabled)
+		g_pc_options_request = 1;
+}
+
+int runtime_take_pc_options_request(void)
+{
+	int request = g_pc_options_request;
+	g_pc_options_request = 0;
+	return request;
+}
+
 static struct {
 	const uint16_t *counts;
 	size_t count;

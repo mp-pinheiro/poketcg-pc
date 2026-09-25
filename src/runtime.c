@@ -1015,6 +1015,8 @@ int runtime_run_with_input(
 			continue;
 		}
 		InputFrame input = host_input.game;
+		if (runtime_take_pc_options_request())
+			shell_open_options(shell);
 		int options_stopped = 0;
 		while (shell_options_active(shell)) {
 			ShellInput options_input = {0};

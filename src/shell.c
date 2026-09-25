@@ -87,10 +87,6 @@ static int clamp_int(int value, int low, int high)
 	return value;
 }
 
-static int start_menu_visible(void)
-{
-	return (runtime_event_mask() & (1u << RUNTIME_EVENT_START_MENU_READY)) != 0u;
-}
 
 #ifdef POKETCG_HAVE_SDL
 static void destroy_video(Shell *shell)
@@ -297,17 +293,6 @@ static void draw_options(Shell *shell)
 	SDL_SetRenderDrawBlendMode(shell->renderer, SDL_BLENDMODE_NONE);
 }
 
-static void draw_options_hint(Shell *shell)
-{
-	if (!shell->options || !start_menu_visible() || shell->options_active)
-		return;
-	SDL_Rect strip = {0, shell->height - 10, shell->width, 10};
-	SDL_SetRenderDrawBlendMode(shell->renderer, SDL_BLENDMODE_BLEND);
-	SDL_SetRenderDrawColor(shell->renderer, 0, 0, 0, 190);
-	SDL_RenderFillRect(shell->renderer, &strip);
-	options_text(shell, 3, shell->height - 9, "PC OPTIONS F1", (SDL_Color){255, 238, 120, 255});
-	SDL_SetRenderDrawBlendMode(shell->renderer, SDL_BLENDMODE_NONE);
-}
 #endif
 
 Shell *shell_create(const ShellConfig *config)
@@ -393,6 +378,14 @@ int shell_options_active(const Shell *shell)
 {
 	return shell && shell->options_active;
 }
+void shell_open_options(Shell *shell)
+{
+	if (!shell || !shell->options)
+		return;
+	shell->options_active = 1;
+	shell->options_selected = 0;
+	shell->buttons = 0;
+}
 
 ShellAudioSettings shell_audio_settings(const Shell *shell)
 {
@@ -423,12 +416,7 @@ int shell_pump(Shell *shell, ShellInput *input)
 			if (event.key.repeat)
 				continue;
 			if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_F1) {
-				if (shell->options && start_menu_visible()) {
-					shell->options_active = !shell->options_active;
-					shell->buttons = 0;
-				} else {
-					input->debug_toggle = 1u;
-				}
+				input->debug_toggle = 1u;
 				continue;
 			}
 			if (shell->options_active) {
@@ -599,8 +587,6 @@ void shell_present(Shell *shell, const uint16_t *framebuffer)
 	SDL_RenderCopy(shell->renderer, shell->texture, NULL, NULL);
 	if (shell->options_active)
 		draw_options(shell);
-	else
-		draw_options_hint(shell);
 	SDL_RenderPresent(shell->renderer);
 #else
 	(void)shell;

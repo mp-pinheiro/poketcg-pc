@@ -45,6 +45,10 @@ void runtime_record_event(RuntimeEvent event);
 RuntimeEvent runtime_terminal_event(void);
 uint32_t runtime_event_mask(void);
 uint32_t runtime_event_count(void);
+void runtime_set_pc_options_enabled(int enabled);
+int runtime_pc_options_enabled(void);
+void runtime_request_pc_options(void);
+int runtime_take_pc_options_request(void);
 
 typedef void (*RuntimeStateDumpCb)(uint32_t frame, const RuntimeResult *result);
 

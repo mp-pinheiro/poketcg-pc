@@ -49,6 +49,7 @@ void shell_present_debug(Shell *shell, uint16_t *framebuffer, const ShellDebugVi
 void shell_queue_audio(Shell *shell, const int16_t *samples, size_t count);
 ShellAudioSettings shell_audio_settings(const Shell *shell);
 int shell_options_active(const Shell *shell);
+void shell_open_options(Shell *shell);
 void shell_set_speed(Shell *shell, unsigned speed);
 
 /* "sdl" or "headless" -- the backend actually in use, which is not simply the inverse
