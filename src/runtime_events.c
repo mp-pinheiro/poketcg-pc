@@ -1,4 +1,5 @@
 #include "runtime.h"
+#include "pc_options.h"
 
 #include "home/frames.h"
 
@@ -54,31 +55,69 @@ uint32_t runtime_event_count(void)
 }
 
 static int g_pc_options_enabled;
-static int g_pc_options_request;
+static PcOptions *g_pc_options;
+
+void runtime_bind_pc_options(struct PcOptions *options)
+{
+	g_pc_options = options;
+}
+
+int runtime_pc_option_value(unsigned option)
+{
+	if (!g_pc_options)
+		return 0;
+	switch (option) {
+	case 0u: return g_pc_options->scale;
+	case 1u: return g_pc_options->stereo;
+	case 2u: return g_pc_options->sgb;
+	case 3u: return g_pc_options->sound_volume;
+	case 4u: return g_pc_options->music_volume;
+	default: return 0;
+	}
+}
+
+void runtime_pc_option_adjust(unsigned option, int direction)
+{
+	if (!g_pc_options || !g_pc_options_enabled)
+		return;
+	switch (option) {
+	case 0u:
+		g_pc_options->scale = g_pc_options->scale + direction;
+		if (g_pc_options->scale < 1) g_pc_options->scale = 1;
+		if (g_pc_options->scale > 6) g_pc_options->scale = 6;
+		break;
+	case 1u:
+		g_pc_options->stereo = !g_pc_options->stereo;
+		break;
+	case 2u:
+		g_pc_options->sgb = !g_pc_options->sgb;
+		break;
+	case 3u:
+		g_pc_options->sound_volume += direction * 10;
+		if (g_pc_options->sound_volume < 0) g_pc_options->sound_volume = 0;
+		if (g_pc_options->sound_volume > 100) g_pc_options->sound_volume = 100;
+		break;
+	case 4u:
+		g_pc_options->music_volume += direction * 10;
+		if (g_pc_options->music_volume < 0) g_pc_options->music_volume = 0;
+		if (g_pc_options->music_volume > 100) g_pc_options->music_volume = 100;
+		break;
+	default:
+		return;
+	}
+}
 
 void runtime_set_pc_options_enabled(int enabled)
 {
 	g_pc_options_enabled = enabled != 0;
-	g_pc_options_request = 0;
 }
+
 
 int runtime_pc_options_enabled(void)
 {
 	return g_pc_options_enabled;
 }
 
-void runtime_request_pc_options(void)
-{
-	if (g_pc_options_enabled)
-		g_pc_options_request = 1;
-}
-
-int runtime_take_pc_options_request(void)
-{
-	int request = g_pc_options_request;
-	g_pc_options_request = 0;
-	return request;
-}
 
 static struct {
 	const uint16_t *counts;

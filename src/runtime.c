@@ -1014,27 +1014,8 @@ int runtime_run_with_input(
 			pthread_mutex_unlock(&state.lock);
 			continue;
 		}
+		shell_sync_options(shell);
 		InputFrame input = host_input.game;
-		if (runtime_take_pc_options_request())
-			shell_open_options(shell);
-		int options_stopped = 0;
-		while (shell_options_active(shell)) {
-			ShellInput options_input = {0};
-			if (!shell_pump(shell, &options_input)) {
-				pthread_mutex_lock(&state.lock);
-				state.stop = 1;
-				state.stopped_by_user = 1;
-				state.resume = 1;
-				pthread_cond_broadcast(&state.condition);
-				pthread_mutex_unlock(&state.lock);
-				options_stopped = 1;
-				break;
-			}
-			shell_present(shell, presentation_on() ? state.present : state.framebuffer);
-			shell_pace(shell);
-		}
-		if (options_stopped)
-			continue;
 #ifdef POKETCG_DEBUG_MENU
 		if (host_input.debug_toggle || debug_menu.active) {
 			if (host_input.debug_toggle)

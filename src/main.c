@@ -652,6 +652,7 @@ int main(int argc, char **argv)
 		pc_options.sgb ? PRESENTATION_SGB_FRAME : PRESENTATION_4X3;
 	config.options = &pc_options;
 	config.scale = pc_options.scale;
+	runtime_bind_pc_options(&pc_options);
 	uint32_t frame_limit = 600;
 	const char *pack_path = NULL;
 	int require_data = 0;
@@ -1018,6 +1019,8 @@ int main(int argc, char **argv)
 	int status = input_count
 		? runtime_run_with_input(shell, frame_limit, input_buttons, input_count, &runtime)
 		: runtime_run(shell, frame_limit, &runtime);
+	if (shell_has_window(shell) && pc_options_save(&pc_options) != 0)
+		status = 1;
 	if (digest_out_path && digest_close() != 0) {
 		fprintf(stderr, "cannot finish --digest-out %s\n", digest_out_path);
 		status = 1;

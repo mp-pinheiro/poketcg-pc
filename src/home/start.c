@@ -1,4 +1,5 @@
 #include "home/start.h"
+#include <stdio.h>
 
 #include "generated/wram.h"
 #include "home/menus.h"
@@ -97,6 +98,11 @@
 #define PAD_A 0x01u
 #define PAD_START 0x08u
 #define SFX_CONFIRM 0x02u
+#define PAD_B 0x02u
+#define PAD_RIGHT 0x10u
+#define PAD_LEFT 0x20u
+#define PAD_UP 0x40u
+#define PAD_DOWN 0x80u
 #define START_MENU_CARD_POP 0x00u
 #define START_MENU_CONTINUE_FROM_DIARY 0x01u
 #define START_MENU_NEW_GAME 0x02u
@@ -130,6 +136,81 @@ static uint8_t start_menu_pc_index(void)
 	}
 	return index;
 }
+static void print_pc_option_line(uint8_t index)
+{
+	char text[32];
+	switch (index) {
+	case 0u:
+		snprintf(text, sizeof text, "RESOLUTION %dX", runtime_pc_option_value(0u));
+		break;
+	case 1u:
+		snprintf(text, sizeof text, "SOUND %s",
+			runtime_pc_option_value(1u) ? "STEREO" : "MONO");
+		break;
+	case 2u:
+		snprintf(text, sizeof text, "SGB %s",
+			runtime_pc_option_value(2u) ? "ON" : "OFF");
+		break;
+	case 3u:
+		snprintf(text, sizeof text, "SOUND VOL %d", runtime_pc_option_value(3u));
+		break;
+	default:
+		snprintf(text, sizeof text, "MUSIC VOL %d", runtime_pc_option_value(4u));
+		break;
+	}
+	print_host_text(text, 2u, (uint8_t)(3u + index * 2u));
+}
+
+static void RunPCOptionsMenu(void)
+{
+	uint16_t box = 0u;
+	DisableLCD();
+	(void)InitMenuScreen();
+	(void)SetupText(0x30u, 0x8Fu);
+	EnableAndClearSpriteAnimations();
+	wLineSeparation = DOUBLE_SPACED;
+	DrawPlayerPortrait(14u, 1u);
+	DrawRegularTextBox(&box, 0u, 14u, 14u, 0u, 0u);
+	print_host_text("PC OPTIONS", 2u, 1u);
+	for (uint8_t i = 0u; i < 5u; ++i)
+		print_pc_option_line(i);
+	wCurMenuItem = 0u;
+	hCurMenuItem = 0u;
+	wMenuCursorXOffset = 1u;
+	wMenuCursorYOffset = 3u;
+	wMenuYSeparation = 2u;
+	wNumMenuItems = 5u;
+	wMenuVisibleCursorTile = SYM_CURSOR_R;
+	wMenuInvisibleCursorTile = SYM_SPACE;
+	wMenuUpdateFunc = 0u;
+	gb_write8((uint16_t)(wMenuUpdateFunc_ADDR + 1u), 0u);
+	wCursorBlinkCounter = 0u;
+	DrawCursor2();
+	(void)FlashWhiteScreen();
+	for (;;) {
+		DoFrameIfLCDEnabled();
+		(void)UpdateRNGSources();
+		HandleMenuInputResult input = HandleMenuInput();
+		uint8_t pressed = hKeysPressed;
+		if ((pressed & (PAD_LEFT | PAD_RIGHT)) != 0u) {
+			runtime_pc_option_adjust(wCurMenuItem,
+				(pressed & PAD_RIGHT) != 0u ? 1 : -1);
+			print_pc_option_line(wCurMenuItem);
+			DrawCursor2();
+		}
+		if ((input.f & 0x10u) == 0u)
+			continue;
+		if (hCurMenuItem == 0xFFu)
+			return;
+		if ((pressed & PAD_A) != 0u &&
+		    (wCurMenuItem == 1u || wCurMenuItem == 2u)) {
+			runtime_pc_option_adjust(wCurMenuItem, 1);
+			print_pc_option_line(wCurMenuItem);
+			DrawCursor2();
+		}
+	}
+}
+
 #define SYM_BOX_BOTTOM 0x1Du
 
 uint8_t ShowCardPopCGBDisclaimer(void)
@@ -460,8 +541,8 @@ title_screen:
 	(void)CheckIfHasSaveData();
 	HandleStartMenu();
 	if (wStartMenuChoice == START_MENU_PC_OPTIONS) {
+		RunPCOptionsMenu();
 		wLastSelectedStartMenuItem = 0u;
-		runtime_request_pc_options();
 		goto title_screen;
 	}
 	if (wStartMenuChoice == START_MENU_NEW_GAME) {

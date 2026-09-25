@@ -146,10 +146,8 @@ void _GameLoop(void)
 			hWhoseTurn = PLAYER_TURN;
 			Func_c1f8();
 			HandleTitleScreen();
-			if (wStartMenuChoice == START_MENU_PC_OPTIONS) {
-				runtime_request_pc_options();
+			if (wStartMenuChoice == START_MENU_PC_OPTIONS)
 				continue;
-			}
 			if ((MainMenuFunctionTable[wStartMenuChoice]() & 0x10u) != 0u)
 				continue; /* jr c: return to main menu */
 			break; /* jr _GameLoop */

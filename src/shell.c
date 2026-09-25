@@ -27,8 +27,6 @@ struct Shell {
 	int game_width;
 	int scale;
 	PcOptions *options;
-	int options_active;
-	unsigned options_selected;
 	uint8_t buttons;
 	uint64_t next_ns;
 	int height;
@@ -149,150 +147,6 @@ static void set_scale(Shell *shell, int scale)
 		                  shell->height * shell->scale);
 }
 
-static const uint8_t options_font[36][7] = {
-	{14,17,17,31,17,17,17},{30,17,17,30,17,17,30},{14,17,16,16,16,17,14},
-	{30,17,17,17,17,17,30},{31,16,16,30,16,16,31},{31,16,16,30,16,16,16},
-	{14,17,16,23,17,17,14},{17,17,17,31,17,17,17},{14,4,4,4,4,4,14},
-	{7,2,2,2,18,18,12},{17,18,20,24,20,18,17},{16,16,16,16,16,16,31},
-	{17,27,21,21,17,17,17},{17,25,21,19,17,17,17},{14,17,17,17,17,17,14},
-	{30,17,17,30,16,16,16},{14,17,17,17,21,18,13},{30,17,17,30,20,18,17},
-	{15,16,16,14,1,1,30},{31,4,4,4,4,4,4},{17,17,17,17,17,17,14},
-	{17,17,17,17,17,10,4},{17,17,17,21,21,21,10},{17,17,10,4,10,17,17},
-	{17,17,10,4,4,4,4},{31,1,2,4,8,16,31},
-	{14,17,19,21,25,17,14},{4,12,4,4,4,4,14},{14,17,1,2,4,8,31},
-	{30,1,1,14,1,1,30},{2,6,10,18,31,2,2},{31,16,16,30,1,1,30},
-	{14,16,16,30,17,17,14},{31,1,2,4,8,8,8},{14,17,17,14,17,17,14},
-	{14,17,17,15,1,1,14},
-};
-
-static const uint8_t *options_glyph(char c)
-{
-	static const uint8_t blank[7] = {0, 0, 0, 0, 0, 0, 0};
-	static const uint8_t colon[7] = {0, 4, 4, 0, 4, 4, 0};
-	static const uint8_t dash[7] = {0, 0, 0, 31, 0, 0, 0};
-	if (c >= 'A' && c <= 'Z')
-		return options_font[c - 'A'];
-	if (c >= '0' && c <= '9')
-		return options_font[26 + c - '0'];
-	if (c == ':')
-		return colon;
-	if (c == '-')
-		return dash;
-	return blank;
-}
-
-static void options_text(Shell *shell, int x, int y, const char *text, SDL_Color color)
-{
-	SDL_SetRenderDrawColor(shell->renderer, color.r, color.g, color.b, color.a);
-	for (; *text; text++, x += 6) {
-		const uint8_t *rows = options_glyph(*text);
-		for (int row = 0; row < 7; row++)
-			for (int col = 0; col < 5; col++)
-				if (rows[row] & (1u << (4 - col))) {
-					SDL_Rect pixel = {x + col, y + row, 1, 1};
-					SDL_RenderFillRect(shell->renderer, &pixel);
-				}
-	}
-}
-
-static void save_options(Shell *shell)
-{
-	if (shell->options)
-		(void)pc_options_save(shell->options);
-}
-
-static void adjust_option(Shell *shell, int direction)
-{
-	if (!shell->options)
-		return;
-	PcOptions *options = shell->options;
-	switch (shell->options_selected) {
-	case 0:
-		options->scale = clamp_int(options->scale + direction, 1, 6);
-		set_scale(shell, options->scale);
-		break;
-	case 1:
-		options->stereo = !options->stereo;
-		break;
-	case 2: {
-		PresentationMode old_presentation = shell->presentation;
-		options->sgb = !options->sgb;
-		shell->presentation = options->sgb ? PRESENTATION_SGB_FRAME : PRESENTATION_4X3;
-		if (rebuild_video(shell) != 0) {
-			options->sgb = !options->sgb;
-			shell->presentation = old_presentation;
-			(void)rebuild_video(shell);
-		}
-		break;
-	}
-	case 3:
-		options->sound_volume = clamp_int(options->sound_volume + direction * 10, 0, 100);
-		break;
-	case 4:
-		options->music_volume = clamp_int(options->music_volume + direction * 10, 0, 100);
-		break;
-	default:
-		break;
-	}
-	save_options(shell);
-}
-
-static void options_key(Shell *shell, SDL_Keycode key)
-{
-	if (key == SDLK_ESCAPE || key == SDLK_x || key == SDLK_BACKSPACE) {
-		shell->options_active = 0;
-		shell->buttons = 0;
-		return;
-	}
-	if (key == SDLK_UP) {
-		shell->options_selected = shell->options_selected == 0 ? 4 : shell->options_selected - 1;
-		return;
-	}
-	if (key == SDLK_DOWN) {
-		shell->options_selected = (shell->options_selected + 1) % 5;
-		return;
-	}
-	if (key == SDLK_LEFT) {
-		adjust_option(shell, -1);
-		return;
-	}
-	if (key == SDLK_RIGHT) {
-		adjust_option(shell, 1);
-		return;
-	}
-	if ((key == SDLK_z || key == SDLK_RETURN) &&
-	    (shell->options_selected == 1 || shell->options_selected == 2))
-		adjust_option(shell, 1);
-}
-
-static void draw_options(Shell *shell)
-{
-	if (!shell->options)
-		return;
-	SDL_SetRenderDrawBlendMode(shell->renderer, SDL_BLENDMODE_BLEND);
-	int panel_x = 3;
-	int panel_y = (shell->height - 116) / 2;
-	int panel_w = shell->width - 6;
-	SDL_Rect panel = {panel_x, panel_y, panel_w, 116};
-	SDL_SetRenderDrawColor(shell->renderer, 0, 0, 0, 235);
-	SDL_RenderFillRect(shell->renderer, &panel);
-	SDL_Color title = {255, 238, 120, 255};
-	SDL_Color normal = {240, 240, 240, 255};
-	SDL_Color selected = {255, 255, 255, 255};
-	options_text(shell, panel_x + 5, panel_y + 5, "PC OPTIONS", title);
-	char lines[5][32];
-	snprintf(lines[0], sizeof lines[0], "RESOLUTION %dX", shell->options->scale);
-	snprintf(lines[1], sizeof lines[1], "SOUND %s", shell->options->stereo ? "STEREO" : "MONO");
-	snprintf(lines[2], sizeof lines[2], "SGB %s", shell->options->sgb ? "ON" : "OFF");
-	snprintf(lines[3], sizeof lines[3], "SOUND VOL %d", shell->options->sound_volume);
-	snprintf(lines[4], sizeof lines[4], "MUSIC VOL %d", shell->options->music_volume);
-	for (unsigned i = 0; i < 5; i++)
-		options_text(shell, panel_x + 5, panel_y + 19 + (int)i * 15,
-		             lines[i], i == shell->options_selected ? selected : normal);
-	options_text(shell, panel_x + 5, panel_y + 98, "ARROWS CHANGE X CLOSE", normal);
-	SDL_SetRenderDrawBlendMode(shell->renderer, SDL_BLENDMODE_NONE);
-}
-
 #endif
 
 Shell *shell_create(const ShellConfig *config)
@@ -374,18 +228,6 @@ int shell_has_window(const Shell *shell)
 {
 	return shell && !shell->headless;
 }
-int shell_options_active(const Shell *shell)
-{
-	return shell && shell->options_active;
-}
-void shell_open_options(Shell *shell)
-{
-	if (!shell || !shell->options)
-		return;
-	shell->options_active = 1;
-	shell->options_selected = 0;
-	shell->buttons = 0;
-}
 
 ShellAudioSettings shell_audio_settings(const Shell *shell)
 {
@@ -396,6 +238,23 @@ ShellAudioSettings shell_audio_settings(const Shell *shell)
 		settings.mono = shell->options->stereo == 0;
 	}
 	return settings;
+}
+void shell_sync_options(Shell *shell)
+{
+	if (!shell || !shell->options)
+		return;
+#ifdef POKETCG_HAVE_SDL
+	if (shell->options->scale != shell->scale)
+		set_scale(shell, shell->options->scale);
+	PresentationMode desired = shell->options->sgb
+		? PRESENTATION_SGB_FRAME : PRESENTATION_4X3;
+	if (desired != shell->presentation && shell_has_window(shell)) {
+		PresentationMode old = shell->presentation;
+		shell->presentation = desired;
+		if (rebuild_video(shell) != 0)
+			shell->presentation = old;
+	}
+#endif
 }
 
 int shell_pump(Shell *shell, ShellInput *input)
@@ -417,11 +276,6 @@ int shell_pump(Shell *shell, ShellInput *input)
 				continue;
 			if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_F1) {
 				input->debug_toggle = 1u;
-				continue;
-			}
-			if (shell->options_active) {
-				if (event.type == SDL_KEYDOWN)
-					options_key(shell, event.key.keysym.sym);
 				continue;
 			}
 			uint8_t bit = 0;
@@ -447,7 +301,7 @@ int shell_pump(Shell *shell, ShellInput *input)
 		}
 	}
 #endif
-	input->game.buttons = shell->options_active ? 0u : shell->buttons;
+	input->game.buttons = shell->buttons;
 	return 1;
 }
 
@@ -585,8 +439,6 @@ void shell_present(Shell *shell, const uint16_t *framebuffer)
 	                  shell->width * (int)sizeof *output);
 	SDL_RenderClear(shell->renderer);
 	SDL_RenderCopy(shell->renderer, shell->texture, NULL, NULL);
-	if (shell->options_active)
-		draw_options(shell);
 	SDL_RenderPresent(shell->renderer);
 #else
 	(void)shell;

@@ -45,10 +45,12 @@ void runtime_record_event(RuntimeEvent event);
 RuntimeEvent runtime_terminal_event(void);
 uint32_t runtime_event_mask(void);
 uint32_t runtime_event_count(void);
+struct PcOptions;
+void runtime_bind_pc_options(struct PcOptions *options);
+int runtime_pc_option_value(unsigned option);
+void runtime_pc_option_adjust(unsigned option, int direction);
 void runtime_set_pc_options_enabled(int enabled);
 int runtime_pc_options_enabled(void);
-void runtime_request_pc_options(void);
-int runtime_take_pc_options_request(void);
 
 typedef void (*RuntimeStateDumpCb)(uint32_t frame, const RuntimeResult *result);
 
