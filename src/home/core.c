@@ -7,6 +7,9 @@
 #include "bank_guard.h"
 #include "mem.h"
 #include "home/menus.h"
+#ifdef POKETCG_DEBUG_MENU
+#include "debug_cheats.h"
+#endif
 #include "home/serial.h"
 /* >>> factory statics */
 #define MAX_HP 120u
@@ -7627,6 +7630,15 @@ TossCoinResult _TossCoin(uint8_t a)
 			anim = DUEL_ANIM_COIN_TOSS_GOING_HEADS_7847;
 			result = HEADS_7847;
 		}
+#ifdef POKETCG_DEBUG_MENU
+		if (debug_cheats_coin_mode() == DEBUG_COIN_HEADS) {
+			anim = DUEL_ANIM_COIN_TOSS_GOING_HEADS_7847;
+			result = HEADS_7847;
+		} else if (debug_cheats_coin_mode() == DEBUG_COIN_TAILS) {
+			anim = DUEL_ANIM_COIN_TOSS_GOING_TAILS_7847;
+			result = TAILS_7847;
+		}
+#endif
 
 		/* play the tossing animation and wait for it to finish */
 		(void)PlayDuelAnimation(anim);
@@ -7637,6 +7649,12 @@ TossCoinResult _TossCoin(uint8_t a)
 			TossCoin_SendSerialByte(result);
 		} else {
 			result = TossCoin_GetOpponentCoinResult(result);
+#ifdef POKETCG_DEBUG_MENU
+			if (debug_cheats_coin_mode() == DEBUG_COIN_HEADS)
+				result = HEADS_7847;
+			else if (debug_cheats_coin_mode() == DEBUG_COIN_TAILS)
+				result = TAILS_7847;
+#endif
 		}
 
 		anim = DUEL_ANIM_COIN_HEADS_7847;

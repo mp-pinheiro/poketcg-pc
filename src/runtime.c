@@ -20,6 +20,12 @@
 #ifdef POKETCG_DEBUG_MENU
 #include "persistence.h"
 #include "state_dump.h"
+#include "generated/hram.h"
+#include "generated/sram.h"
+#include "home/duel.h"
+#include "home/scripting.h"
+#include "home/switch_sram.h"
+#include "debug_cheats.h"
 #endif
 
 #include <pthread.h>
@@ -472,18 +478,26 @@ static void fill_result(const RuntimeState *state, uint32_t frame_limit,
 #ifdef POKETCG_DEBUG_MENU
 typedef struct {
 	int active;
+	int page;
+	int infinite_energy;
+	int opponent_control;
 	size_t selected;
 	unsigned steps;
 	unsigned speed;
-	char message[32];
 	char save_path[512];
 	char state_path[512];
 } DebugMenu;
 
-static const char *const debug_items[] = {
+static const char *const debug_main_items[] = {
 	"RESUME", "AUTO WIN", "STEP 1", "STEP 10",
 	"STEP 60", "SPEED 1X", "SPEED 2X", "SPEED 4X",
-	"SPEED MAX", "SAVE SRAM", "LOAD SRAM", "DUMP STATE", "QUIT"
+	"SPEED MAX", "SAVE SRAM", "LOAD SRAM", "DUMP STATE", "CHEATS >"
+};
+
+static const char *const debug_cheat_items[] = {
+	"BACK", "COIN HEADS", "COIN TAILS", "COIN RANDOM",
+	"INF ENERGY", "FULL HP", "KO OPP", "REFILL HAND",
+	"ALL CARDS", "ALL MEDALS", "OPP CONTROL"
 };
 
 static void debug_menu_init(DebugMenu *menu)
@@ -492,9 +506,12 @@ static void debug_menu_init(DebugMenu *menu)
 	if (!dir || !*dir)
 		dir = ".";
 	menu->speed = 1u;
+	menu->page = 0;
+	menu->infinite_energy = 0;
+	menu->opponent_control = 0;
+	debug_cheats_set_coin_mode(DEBUG_COIN_RANDOM);
 	snprintf(menu->save_path, sizeof menu->save_path, "%s/poketcg-debug.sav", dir);
 	snprintf(menu->state_path, sizeof menu->state_path, "%s/poketcg-debug-state.json", dir);
-	menu->message[0] = '\0';
 }
 
 static const char *debug_speed_name(unsigned speed)
@@ -508,22 +525,143 @@ static const char *debug_speed_name(unsigned speed)
 	return "MAX";
 }
 
+#define DEBUG_DUELVARS_ARENA_CARD 0xBBu
+#define DEBUG_DUELVARS_ARENA_CARD_HP 0xC8u
+#define DEBUG_DUELVARS_HAND 0x42u
+#define DEBUG_DUELVARS_HAND_COUNT 0xEEu
+#define DEBUG_DUELVARS_NOT_IN_DECK 0xBAu
+#define DEBUG_DUELVARS_DECK_CARDS 0x7Eu
+#define DEBUG_DECK_SIZE 60u
+#define DEBUG_CARD_LOCATION_DECK 0x00u
+#define DEBUG_PLAYER_TURN ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
+#define DEBUG_OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
+
+static const char *const *debug_item_list(const DebugMenu *menu)
+{
+	return menu->page ? debug_cheat_items : debug_main_items;
+}
+
+static size_t debug_item_count(const DebugMenu *menu)
+{
+	return menu->page
+		? sizeof debug_cheat_items / sizeof debug_cheat_items[0]
+		: sizeof debug_main_items / sizeof debug_main_items[0];
+}
+
+static void debug_set_hp(uint8_t page, int zero)
+{
+	uint8_t saved_turn = hWhoseTurn;
+	hWhoseTurn = page;
+	for (uint8_t slot = 0; slot < 6u; slot++) {
+		DuelistVarResult card = GetTurnDuelistVariable(
+			(uint8_t)(DEBUG_DUELVARS_ARENA_CARD + slot));
+		if (card.a == 0xFFu)
+			continue;
+		DuelistVarResult hp = GetTurnDuelistVariable(
+			(uint8_t)(DEBUG_DUELVARS_ARENA_CARD_HP + slot));
+		uint8_t value = zero ? 0u : GetCardDamageAndMaxHP(slot).c;
+		gb_write8(hp.hl, value);
+	}
+	hWhoseTurn = saved_turn;
+}
+
+static void debug_refill_hand(void)
+{
+	uint8_t saved_turn = hWhoseTurn;
+	hWhoseTurn = DEBUG_PLAYER_TURN;
+	for (uint8_t guard = 0; guard < DEBUG_DECK_SIZE; guard++) {
+		uint8_t count = GetTurnDuelistVariable(DEBUG_DUELVARS_HAND_COUNT).a;
+		uint8_t not_in_deck = GetTurnDuelistVariable(
+			DEBUG_DUELVARS_NOT_IN_DECK).a;
+		if (count >= 7u || not_in_deck >= DEBUG_DECK_SIZE)
+			break;
+		DuelistVarResult deck = GetTurnDuelistVariable(DEBUG_DUELVARS_DECK_CARDS);
+		uint8_t card = gb_read8((uint16_t)(deck.hl + not_in_deck));
+		SearchCardInDeckAndAddToHand(card);
+		AddCardToHand(card);
+	}
+	hWhoseTurn = saved_turn;
+}
+
+static void debug_unlock_cards(void)
+{
+	uint8_t saved_bank = hBankSRAM;
+	BankswitchSRAM(0u);
+	EnableSRAM();
+	for (uint16_t card = 0; card < 0xE4u; card++)
+		gb_write8((uint16_t)(sCardCollection_ADDR + card), 99u);
+	DisableSRAM();
+	BankswitchSRAM(saved_bank);
+}
+
+static void debug_unlock_medals(void)
+{
+	for (uint8_t event = 0x08u; event <= 0x0Fu; event++)
+		(void)MaxOutEventValue(event, 0u, 0u, 0u);
+	(void)MaxOutEventValue(0x2Eu, 0u, 0u, 0u);
+	wMedalCount = 8u;
+	uint8_t saved_bank = hBankSRAM;
+	BankswitchSRAM(0u);
+	EnableSRAM();
+	gb_write8(sMedalCount_ADDR, 8u);
+	DisableSRAM();
+	BankswitchSRAM(saved_bank);
+}
+
+static void debug_menu_apply(const DebugMenu *menu)
+{
+	if (menu->infinite_energy)
+		wAlreadyPlayedEnergy = 0u;
+	if (menu->opponent_control)
+		wOpponentDuelistType = 0u;
+}
+static int debug_cheat_active(const DebugMenu *menu, size_t index)
+{
+	if (!menu->page)
+		return -1;
+	switch (index) {
+	case 1:
+		return debug_cheats_coin_mode() == DEBUG_COIN_HEADS;
+	case 2:
+		return debug_cheats_coin_mode() == DEBUG_COIN_TAILS;
+	case 3:
+		return debug_cheats_coin_mode() == DEBUG_COIN_RANDOM;
+	case 4:
+		return menu->infinite_energy;
+	case 10:
+		return menu->opponent_control;
+	default:
+		return -1;
+	}
+}
+
 static int debug_menu_loop(Shell *shell, RuntimeState *state, uint32_t frame_limit,
                            DebugMenu *menu)
 {
 	for (;;) {
 		char status[96];
+		char item_lines[13][32];
 		const char *lines[14];
-		snprintf(status, sizeof status, "ORD %u SPD %s %s",
+		const char *const *items = debug_item_list(menu);
+		size_t item_count = debug_item_count(menu);
+		snprintf(status, sizeof status, "ORD %u SPD %s",
 		         (unsigned)frame_boundary_doframe_ordinal(),
-		         debug_speed_name(menu->speed), menu->message);
+		         debug_speed_name(menu->speed));
 		lines[0] = status;
-		for (size_t i = 0; i < sizeof debug_items / sizeof debug_items[0]; i++)
-			lines[i + 1] = debug_items[i];
+		for (size_t i = 0; i < item_count; i++) {
+			int active = debug_cheat_active(menu, i);
+			if (active >= 0) {
+				snprintf(item_lines[i], sizeof item_lines[i], "%s %s",
+				         active ? "[X]" : "[ ]", items[i]);
+				lines[i + 1] = item_lines[i];
+			} else {
+				lines[i + 1] = items[i];
+			}
+		}
 		ShellDebugView view = {
-			.title = "DEBUG MENU",
+			.title = menu->page ? "DEBUG CHEATS" : "DEBUG MENU",
 			.lines = lines,
-			.line_count = sizeof debug_items / sizeof debug_items[0] + 1u,
+			.line_count = item_count + 1u,
 			.selected = menu->selected + 1u,
 		};
 		shell_present_debug(shell, state->framebuffer, &view);
@@ -531,78 +669,122 @@ static int debug_menu_loop(Shell *shell, RuntimeState *state, uint32_t frame_lim
 		ShellInput input = {0};
 		if (!shell_pump(shell, &input))
 			return -1;
-		if (input.debug_toggle || (input.pressed & BTN_B) != 0u) {
+		if (input.debug_toggle) {
+			menu->active = 0;
+			return 0;
+		}
+		if (input.pressed & BTN_B) {
+			if (menu->page) {
+				menu->page = 0;
+				menu->selected = sizeof debug_main_items / sizeof debug_main_items[0] - 1u;
+				continue;
+			}
 			menu->active = 0;
 			return 0;
 		}
 		if (input.pressed & BTN_UP) {
 			menu->selected = menu->selected == 0u
-				? sizeof debug_items / sizeof debug_items[0] - 1u
+				? item_count - 1u
 				: menu->selected - 1u;
 			continue;
 		}
 		if (input.pressed & BTN_DOWN) {
-			menu->selected = (menu->selected + 1u)
-				% (sizeof debug_items / sizeof debug_items[0]);
+			menu->selected = (menu->selected + 1u) % item_count;
 			continue;
 		}
 		if (!(input.pressed & BTN_A))
 			continue;
-		menu->message[0] = '\0';
+		if (!menu->page) {
+			switch (menu->selected) {
+			case 0:
+				menu->active = 0;
+				return 0;
+			case 1:
+				gb_write8(wDuelFinished_ADDR, 1u);
+				break;
+			case 2:
+				menu->steps = 1u;
+				return 1;
+			case 3:
+				menu->steps = 10u;
+				return 1;
+			case 4:
+				menu->steps = 60u;
+				return 1;
+			case 5:
+				menu->speed = 1u;
+				shell_set_speed(shell, menu->speed);
+				break;
+			case 6:
+				menu->speed = 2u;
+				shell_set_speed(shell, menu->speed);
+				break;
+			case 7:
+				menu->speed = 4u;
+				shell_set_speed(shell, menu->speed);
+				break;
+			case 8:
+				menu->speed = 0u;
+				shell_set_speed(shell, menu->speed);
+				break;
+			case 9:
+				(void)sram_save_atomic(menu->save_path);
+				break;
+			case 10:
+				(void)sram_load(menu->save_path);
+				break;
+			case 11: {
+				RuntimeResult result;
+				fill_result(state, frame_limit, &result);
+				(void)runtime_write_state(menu->state_path, &result);
+				break;
+			}
+			case 12:
+				menu->page = 1;
+				menu->selected = 0u;
+				break;
+			}
+			continue;
+		}
 		switch (menu->selected) {
 		case 0:
-			menu->active = 0;
-			return 0;
+			menu->page = 0;
+			menu->selected = sizeof debug_main_items / sizeof debug_main_items[0] - 1u;
+			break;
 		case 1:
-			gb_write8(wDuelFinished_ADDR, 1u);
-			snprintf(menu->message, sizeof menu->message, "WIN SET");
+			debug_cheats_set_coin_mode(DEBUG_COIN_HEADS);
 			break;
 		case 2:
-			menu->steps = 1u;
-			return 1;
+			debug_cheats_set_coin_mode(DEBUG_COIN_TAILS);
+			break;
 		case 3:
-			menu->steps = 10u;
-			return 1;
+			debug_cheats_set_coin_mode(DEBUG_COIN_RANDOM);
+			break;
 		case 4:
-			menu->steps = 60u;
-			return 1;
+			menu->infinite_energy = !menu->infinite_energy;
+			break;
 		case 5:
-			menu->speed = 1u;
-			shell_set_speed(shell, menu->speed);
-			snprintf(menu->message, sizeof menu->message, "SPEED 1X");
+			debug_set_hp(DEBUG_PLAYER_TURN, 0);
 			break;
 		case 6:
-			menu->speed = 2u;
-			shell_set_speed(shell, menu->speed);
-			snprintf(menu->message, sizeof menu->message, "SPEED 2X");
+			debug_set_hp(DEBUG_OPPONENT_TURN, 1);
 			break;
 		case 7:
-			menu->speed = 4u;
-			shell_set_speed(shell, menu->speed);
-			snprintf(menu->message, sizeof menu->message, "SPEED 4X");
+			debug_refill_hand();
 			break;
 		case 8:
-			menu->speed = 0u;
-			shell_set_speed(shell, menu->speed);
-			snprintf(menu->message, sizeof menu->message, "SPEED MAX");
+			debug_unlock_cards();
 			break;
 		case 9:
-			snprintf(menu->message, sizeof menu->message,
-			         sram_save_atomic(menu->save_path) == 0 ? "SAVED" : "SAVE ERR");
+			debug_unlock_medals();
 			break;
 		case 10:
-			snprintf(menu->message, sizeof menu->message,
-			         sram_load(menu->save_path) == 0 ? "LOADED RESTART" : "LOAD ERR");
+			menu->opponent_control = !menu->opponent_control;
+			if (menu->opponent_control)
+				wOpponentDuelistType = 0u;
+			else
+				wOpponentDuelistType = (uint8_t)(wOpponentDeckID | 0x80u);
 			break;
-		case 11: {
-			RuntimeResult result;
-			fill_result(state, frame_limit, &result);
-			snprintf(menu->message, sizeof menu->message,
-			         runtime_write_state(menu->state_path, &result) == 0 ? "DUMPED" : "DUMP ERR");
-			break;
-		}
-		default:
-			return -1;
 		}
 	}
 }
@@ -860,6 +1042,9 @@ int runtime_run_with_input(
 				input.buttons = 0u;
 			}
 		}
+#endif
+#ifdef POKETCG_DEBUG_MENU
+		debug_menu_apply(&debug_menu);
 #endif
 		state.frames++;
 		trace_set_frame(state.frames);

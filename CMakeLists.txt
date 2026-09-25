@@ -137,8 +137,13 @@ add_custom_command(
   COMMENT "gen_bank_guard: farcall targets -> required bank table"
   VERBATIM)
 
+option(POKETCG_DEBUG_MENU "enable the host playtest debug menu" OFF)
+
 set(GBMEM_SOURCES src/mem.c src/ppu.c src/apu.c src/printer_sink.c src/runtime_events.c src/trace.c
                   src/bank_guard.c src/link.c src/isr.c src/serial_track.c src/widescreen.c ${HOME_SOURCES})
+if(POKETCG_DEBUG_MENU)
+  list(APPEND GBMEM_SOURCES src/debug_cheats.c)
+endif()
 if(NOT PORT_FILES)
   list(APPEND GBMEM_SOURCES "${BANK_GUARD_SOURCE}")
 endif()
@@ -147,6 +152,9 @@ add_library(gbmem STATIC ${GBMEM_SOURCES})
 add_dependencies(gbmem gen_layout)
 target_include_directories(gbmem PUBLIC "${CMAKE_SOURCE_DIR}/src" "${CMAKE_SOURCE_DIR}/include")
 target_compile_options(gbmem PRIVATE -Wall -Wextra)
+if(POKETCG_DEBUG_MENU)
+  target_compile_definitions(gbmem PUBLIC POKETCG_DEBUG_MENU=1)
+endif()
 
 # Entry/exit instrumentation carries `farcall`'s bank switch for every target in
 # the generated table (src/bank_guard.c), so it is on in every build. mem.c and
@@ -163,7 +171,6 @@ if(POKETCG_TRACE)
   target_compile_definitions(gbmem PUBLIC POKETCG_TRACE=1)
   message(STATUS "function-entry recording: on")
 endif()
-option(POKETCG_DEBUG_MENU "enable the host playtest debug menu" OFF)
 
 # One adapter translation unit per pret source file, each exporting
 # `const ProbeEntry probe_entries_<basename>[]`. Generating the group list from
