@@ -258,7 +258,7 @@ static int load_isr_track(const char *path, uint32_t intervals, IsrTrack *track)
 		uint16_t site = (uint16_t)(record[4] | record[5] << 8);
 		uint16_t nth = (uint16_t)(record[6] | record[7] << 8);
 
-		if (interval >= intervals || interval < previous) {
+		if (interval > intervals || interval < previous) {
 			fclose(file);
 			return -1;
 		}
