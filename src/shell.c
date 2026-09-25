@@ -4,9 +4,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <stdio.h>
 
 #ifdef POKETCG_HAVE_SDL
 #include <SDL2/SDL.h>
+#endif
+#ifdef POKETCG_HAVE_PULSE
+#include <pulse/error.h>
+#include <pulse/simple.h>
 #endif
 
 /* One PPU frame: 1e9 * 70224 / 4194304 ns (59.7275 Hz), the same cadence the
@@ -22,6 +27,10 @@ struct Shell {
 #ifdef POKETCG_HAVE_SDL
 	int have_audio;
 	SDL_AudioDeviceID audio_device;
+#ifdef POKETCG_HAVE_PULSE
+	int have_pulse;
+	pa_simple *pulse_audio;
+#endif
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 	SDL_Texture *texture;
@@ -33,6 +42,27 @@ uint8_t shell_hkeys_from_input(uint8_t buttons)
 	return (uint8_t)((buttons << 4) | (buttons >> 4));
 }
 
+#ifdef POKETCG_HAVE_PULSE
+static int shell_open_pulse_audio(Shell *shell)
+{
+	pa_sample_spec spec = {
+		.format = PA_SAMPLE_S16NE,
+		.rate = 44100,
+		.channels = 2
+	};
+	int error = 0;
+	shell->pulse_audio = pa_simple_new(
+		NULL, "poketcg", PA_STREAM_PLAYBACK, NULL, "Game audio",
+		&spec, NULL, NULL, &error);
+	if (!shell->pulse_audio) {
+		fprintf(stderr, "audio: PulseAudio unavailable: %s\n", pa_strerror(error));
+		return 0;
+	}
+	shell->have_pulse = 1;
+	fprintf(stderr, "audio: PulseAudio\n");
+	return 1;
+}
+#endif
 Shell *shell_create(const ShellConfig *config)
 {
 	Shell *shell = calloc(1, sizeof *shell);
@@ -46,19 +76,27 @@ Shell *shell_create(const ShellConfig *config)
 	 * with no audio device (CI, WSL without a dsp node) must still get a window, and
 	 * initialising both in one SDL_Init would sink the video backend with it. */
 	if (!shell->headless && SDL_Init(SDL_INIT_VIDEO) == 0) {
-		shell->have_audio = SDL_InitSubSystem(SDL_INIT_AUDIO) == 0;
-		if (shell->have_audio) {
+		int audio_initialized = SDL_InitSubSystem(SDL_INIT_AUDIO) == 0;
+		if (audio_initialized) {
 			SDL_AudioSpec desired = {0};
 			desired.freq = 44100;
 			desired.format = AUDIO_S16SYS;
 			desired.channels = 2;
 			desired.samples = 1024;
 			shell->audio_device = SDL_OpenAudioDevice(NULL, 0, &desired, NULL, 0);
-			if (!shell->audio_device)
-				shell->have_audio = 0;
-			else
+			if (shell->audio_device) {
+				shell->have_audio = 1;
 				SDL_PauseAudioDevice(shell->audio_device, 0);
+				fprintf(stderr, "audio: SDL %s\n",
+				        SDL_GetCurrentAudioDriver());
+			} else {
+				SDL_AudioQuit();
+			}
 		}
+#ifdef POKETCG_HAVE_PULSE
+		if (!shell->have_audio)
+			(void)shell_open_pulse_audio(shell);
+#endif
 		shell->window = SDL_CreateWindow("poketcg", SDL_WINDOWPOS_UNDEFINED,
 			SDL_WINDOWPOS_UNDEFINED, shell->width * 3, SCREEN_H * 3, 0);
 		shell->renderer = shell->window ? SDL_CreateRenderer(shell->window, -1,
@@ -88,6 +126,13 @@ void shell_destroy(Shell *shell)
 	if (!shell)
 		return;
 #ifdef POKETCG_HAVE_SDL
+#ifdef POKETCG_HAVE_PULSE
+	if (shell->pulse_audio) {
+		int error = 0;
+		(void)pa_simple_drain(shell->pulse_audio, &error);
+		pa_simple_free(shell->pulse_audio);
+	}
+#endif
 	if (shell->audio_device)
 		SDL_CloseAudioDevice(shell->audio_device);
 	if (shell->texture)
@@ -295,13 +340,25 @@ void shell_present(Shell *shell, const uint16_t *framebuffer)
 /* Queue interleaved signed 16-bit samples when SDL audio is available. */
 void shell_queue_audio(Shell *shell, const int16_t *samples, size_t count)
 {
-#ifdef POKETCG_HAVE_SDL
-	if (!shell || !shell->have_audio || !samples || !count)
+	if (!shell || !samples || !count)
 		return;
-	(void)SDL_QueueAudio(shell->audio_device, samples, count * sizeof *samples);
-#else
-	(void)shell;
-	(void)samples;
-	(void)count;
+#ifdef POKETCG_HAVE_SDL
+	if (shell->have_audio) {
+		(void)SDL_QueueAudio(shell->audio_device, samples, count * sizeof *samples);
+		return;
+	}
+#endif
+#ifdef POKETCG_HAVE_PULSE
+	if (shell->have_pulse) {
+		int error = 0;
+		if (pa_simple_write(shell->pulse_audio, samples,
+		                    count * sizeof *samples, &error) < 0) {
+			fprintf(stderr, "audio: PulseAudio write failed: %s\n",
+			        pa_strerror(error));
+			pa_simple_free(shell->pulse_audio);
+			shell->pulse_audio = NULL;
+			shell->have_pulse = 0;
+		}
+	}
 #endif
 }

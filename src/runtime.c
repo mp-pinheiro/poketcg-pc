@@ -496,8 +496,8 @@ static const char *const debug_main_items[] = {
 
 static const char *const debug_cheat_items[] = {
 	"BACK", "COIN HEADS", "COIN TAILS", "COIN RANDOM",
-	"INF ENERGY", "FULL HP", "KO OPP", "REFILL HAND",
-	"ALL CARDS", "ALL MEDALS", "OPP CONTROL"
+	"INF ENERGY", "RUN FULL HP", "RUN KO OPP", "RUN REFILL HAND",
+	"RUN ALL CARDS", "RUN ALL MEDALS", "OPP CONTROL"
 };
 
 static void debug_menu_init(DebugMenu *menu)
