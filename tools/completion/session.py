@@ -53,12 +53,9 @@ CACHE = ROOT / "build" / "completion" / "sessions"
 RATCHET_PATH = ROOT / "tools" / "completion" / "session_ratchet.json"
 SAVE_FILE = "save.sav"
 NATIVE_TIMEOUT = 1800
-DIGEST_FORMAT = "session-digest-v7"
-# wram, hram, oam, vram, audio; then the reference's real time at the anchor
-# in 2 MiHz units (emitted samples of completed slices plus the exec
-# callback's in-slice offset), wVBlankCounter and wTimerCounter.
-REFERENCE_RECORD = struct.Struct("<5IQBB")
-NATIVE_RECORD = struct.Struct("<5I")
+DIGEST_FORMAT = "session-digest-v8"
+REFERENCE_RECORD = struct.Struct("<6IQBB")
+NATIVE_RECORD = struct.Struct("<6I")
 CALL_RECORD = struct.Struct("<IQB")
 TIMER_SYNC = {
     (None, 0x377F): "SetupSound", (None, 0x3785): "PlaySong",
@@ -166,10 +163,10 @@ def card_overreads() -> dict[int, int]:
         if 0x4000 <= pointer < 0x8000 and pointer + PKMN_CARD_DATA_LENGTH > 0x8000:
             result[card] = pointer + PKMN_CARD_DATA_LENGTH - 0x8000
     return result
-REGIONS = ("wram", "hram", "oam", "vram", "audio")
-GATED = 4
-REGION_LENGTHS = {"wram": 0x2000, "hram": 0x80, "oam": 0xA0, "vram": 0x4000, "audio": 0x165}
-REGION_BASES = {"wram": 0xC000, "hram": 0xFF80, "oam": 0xFE00, "vram": 0x8000, "audio": 0xDD80}
+REGIONS = ("wram", "hram", "oam", "vram", "sram", "audio")
+GATED = 5
+REGION_LENGTHS = {"wram": 0x2000, "hram": 0x80, "oam": 0xA0, "vram": 0x4000, "sram": 0x8000, "audio": 0x165}
+REGION_BASES = {"wram": 0xC000, "hram": 0xFF80, "oam": 0xFE00, "vram": 0x8000, "sram": 0xA000, "audio": 0xDD80}
 
 TIMING_PHASE: dict[str, list[tuple[int, int]]] = {"wram": [(0xDD80 - 0xC000, 0xDEE5 - 0xC000)]}
 # Ledger entries whose justification is the frame axis, compared on this one:
@@ -308,6 +305,7 @@ def reference_regions(core: refstream.Core) -> dict[str, bytes]:
         "hram": core.hram_block(),
         "oam": core.area("OAM")[:0xA0],
         "vram": core.area("VRAM")[:0x4000],
+        "sram": core.area("CartRAM")[:0x8000],
         "audio": wram[0x1D80:0x1EE5],
     }
     if core.printer is not None:
@@ -322,6 +320,7 @@ def native_regions(dump: dict[str, Any]) -> dict[str, bytes]:
         "hram": bytes(dump["hram"]),
         "oam": bytes(dump["oam"]),
         "vram": bytes(dump["vram_bank_0"]) + bytes(dump["vram_bank_1"]),
+        "sram": bytes(dump["save"]),
         "audio": wram[0x1D80:0x1EE5],
     }
 
@@ -956,7 +955,7 @@ def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"", st
     prev = (0, 0, 0)  # time, vblanks, ticks at the interval's start
     for index in range(count):
         row = REFERENCE_RECORD.unpack_from(records, index * REFERENCE_RECORD.size)
-        time, vblanks, ticks = row[5], row[6], row[7]
+        time, vblanks, ticks = row[6], row[7], row[8]
         cycles = 2 * (time - prev[0])
         if index == 0:
             dt, dv = ticks, vblanks
@@ -1400,18 +1399,19 @@ def lag_between(reference: bytes, ordinal: int) -> dict[str, int]:
     pass (frame_boundary_consume_services) at whatever the game was doing."""
     this = REFERENCE_RECORD.unpack_from(reference, (ordinal - 1) * REFERENCE_RECORD.size)
     if ordinal < 2:
-        return {"frames": round(2 * this[5] / 70224, 2), "vblanks": this[6]}
+        return {"frames": round(2 * this[6] / 70224, 2), "vblanks": this[7]}
     prev = REFERENCE_RECORD.unpack_from(reference, (ordinal - 2) * REFERENCE_RECORD.size)
-    return {"frames": round(2 * (this[5] - prev[5]) / 70224, 2), "vblanks": (this[6] - prev[6]) & 0xFF}
+    return {"frames": round(2 * (this[6] - prev[6]) / 70224, 2), "vblanks": (this[7] - prev[7]) & 0xFF}
 
 
 def region_field(region: str, offset: int) -> tuple[str, int]:
     if region == "vram":
         return ("vram_bank_1", offset - 0x2000) if offset >= 0x2000 else ("vram_bank_0", offset)
+    if region == "sram":
+        return "save", offset
     if region == "audio":
         return "wram", REGION_BASES["audio"] - REGION_BASES["wram"] + offset
     return region, offset
-
 
 def attribute(name: str, masks: list[int], frames: int, ordinal: int,
               native: dict[str, bytes], reference: dict[str, bytes],
@@ -1566,7 +1566,7 @@ def verify(name: str, *, write: bool, json_path: Path | None, publish: bool = Tr
             if not dump_path.is_file():
                 raise SessionError(f"no native dump at ordinal {ordinal}: {cap_failure[-300:]}")
             native_state = native_regions(json.loads(dump_path.read_text()))
-            reference_state = reference_capture(name, masks, frames, ordinal, pokes, save=save, printer=printer)
+            reference_state = reference_capture(name, masks, frames, ordinal, pokes, sram=True, save=save, printer=printer)
             details = attribute(name, masks, frames, ordinal, native_state, reference_state, pokes, save,
                                 printer=printer)
             report["divergence"]["rows"] = details
