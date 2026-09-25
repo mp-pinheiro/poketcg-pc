@@ -256,7 +256,7 @@ if(POKETCG_SDL_USABLE)
 		target_link_libraries(poketcg PRIVATE ${SDL2_LIBRARIES})
 	endif()
 endif()
-if(POKETCG_PULSE_USABLE)
+if(POKETCG_SDL_USABLE AND POKETCG_PULSE_USABLE)
 	target_compile_definitions(poketcg PRIVATE POKETCG_HAVE_PULSE=1)
 	target_include_directories(poketcg PRIVATE "${POKETCG_PULSE_INCLUDE_DIR}")
 	target_link_libraries(poketcg PRIVATE

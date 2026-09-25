@@ -17,6 +17,7 @@
 /* One PPU frame: 1e9 * 70224 / 4194304 ns (59.7275 Hz), the same cadence the
  * runtime ages the hardware clock by (mem_advance_hardware_clock(70224)). */
 #define POKETCG_FRAME_NS 16742706ull
+#define SHELL_AUDIO_BUFFER_SAMPLES 4096u
 
 struct Shell {
 	int headless;
@@ -34,6 +35,9 @@ struct Shell {
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 	SDL_Texture *texture;
+	int audio_filter_ready;
+	int32_t audio_dc[2];
+	int16_t audio_buffer[SHELL_AUDIO_BUFFER_SAMPLES];
 #endif
 };
 
@@ -337,6 +341,31 @@ void shell_present(Shell *shell, const uint16_t *framebuffer)
 #endif
 }
 
+#ifdef POKETCG_HAVE_SDL
+static size_t shell_filter_audio(Shell *shell, const int16_t *samples, size_t count)
+{
+	if (count > SHELL_AUDIO_BUFFER_SAMPLES || count < 2u)
+		return 0;
+	if (!shell->audio_filter_ready) {
+		shell->audio_dc[0] = samples[0];
+		shell->audio_dc[1] = samples[1];
+		shell->audio_filter_ready = 1;
+	}
+	for (size_t i = 0; i < count; i++) {
+		unsigned channel = (unsigned)(i & 1u);
+		int32_t sample = samples[i];
+		int32_t delta = sample - shell->audio_dc[channel];
+		shell->audio_dc[channel] += delta / 256;
+		int32_t filtered = sample - shell->audio_dc[channel];
+		if (filtered > 32767)
+			filtered = 32767;
+		else if (filtered < -32768)
+			filtered = -32768;
+		shell->audio_buffer[i] = (int16_t)filtered;
+	}
+	return count;
+}
+#endif
 /* Queue interleaved signed 16-bit samples when SDL audio is available. */
 void shell_queue_audio(Shell *shell, const int16_t *samples, size_t count)
 {
@@ -344,15 +373,19 @@ void shell_queue_audio(Shell *shell, const int16_t *samples, size_t count)
 		return;
 #ifdef POKETCG_HAVE_SDL
 	if (shell->have_audio) {
-		(void)SDL_QueueAudio(shell->audio_device, samples, count * sizeof *samples);
+		(void)SDL_QueueAudio(shell->audio_device,
+		                     samples, count * sizeof *samples);
 		return;
 	}
-#endif
 #ifdef POKETCG_HAVE_PULSE
 	if (shell->have_pulse) {
+		size_t output_count = shell_filter_audio(shell, samples, count);
+		if (!output_count)
+			return;
+		const int16_t *output = shell->audio_buffer;
 		int error = 0;
-		if (pa_simple_write(shell->pulse_audio, samples,
-		                    count * sizeof *samples, &error) < 0) {
+		if (pa_simple_write(shell->pulse_audio, output,
+		                    output_count * sizeof *output, &error) < 0) {
 			fprintf(stderr, "audio: PulseAudio write failed: %s\n",
 			        pa_strerror(error));
 			pa_simple_free(shell->pulse_audio);
@@ -360,5 +393,6 @@ void shell_queue_audio(Shell *shell, const int16_t *samples, size_t count)
 			shell->have_pulse = 0;
 		}
 	}
+#endif
 #endif
 }
