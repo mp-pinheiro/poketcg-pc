@@ -2,7 +2,7 @@
 schema = 2
 version = "completion-v2-epoch-4"
 source = "docs/vision.md"
-source_sha256 = "099fb34e7bfb0464d3904a16e83001940ee5c2196582320976f0330030c8888f"
+source_sha256 = "ad9586cc321c77cd370ba4fc5b003fb6228292b429bbf7b676ab6432f22b80a9"
 
 milestones = [
   "reset",
@@ -13,7 +13,6 @@ milestones = [
   "phase-6-overworld",
   "phase-7-transport",
   "faithful-4x3",
-  "phase-8-widescreen",
 ]
 
 [[scenario]]
@@ -471,72 +470,3 @@ state_fields = ["executable_sha256", "data_pack_sha256", "package_contents"]
 artifact_schema = "package-proof-v1"
 tracker_issue = 3179
 
-[[requirement]]
-id = "completion:v2:p8:ppu:span-widening"
-anchor = "docs/vision.md:131-147"
-milestone = "phase-8-widescreen"
-deps = ["completion:v2:faithful-4x3:release"]
-command = "just completion-check completion:v2:p8:ppu:span-widening"
-producer = "span-widening"
-terminal_event = "WIDE_SPAN_CLOSED"
-min_frames = 1
-min_events = 1
-state_fields = ["framebuffer"]
-artifact_schema = "widescreen-corpus-v1"
-tracker_issue = 3205
-
-[[requirement]]
-id = "completion:v2:p8:runtime:viewport-rect"
-anchor = "docs/vision.md:155-162"
-milestone = "phase-8-widescreen"
-deps = ["completion:v2:p8:ppu:span-widening"]
-command = "just completion-check completion:v2:p8:runtime:viewport-rect"
-producer = "viewport-rect"
-terminal_event = "VIEWPORT_RECT_CLOSED"
-min_frames = 1
-min_events = 1
-state_fields = ["wram", "framebuffer"]
-artifact_schema = "widescreen-corpus-v1"
-tracker_issue = 3206
-
-[[requirement]]
-id = "completion:v2:p8:ui:wide-layouts"
-anchor = "docs/vision.md:148-153"
-milestone = "phase-8-widescreen"
-deps = ["completion:v2:p8:runtime:viewport-rect"]
-command = "just completion-check completion:v2:p8:ui:wide-layouts"
-producer = "wide-layouts"
-terminal_event = "WIDE_UI_CLOSED"
-min_frames = 1
-min_events = 1
-state_fields = ["wram", "framebuffer"]
-artifact_schema = "widescreen-corpus-v1"
-tracker_issue = 3207
-
-[[requirement]]
-id = "completion:v2:p8:features:render-only"
-anchor = "docs/vision.md:174-180"
-milestone = "phase-8-widescreen"
-deps = ["completion:v2:p8:ui:wide-layouts"]
-command = "just completion-check completion:v2:p8:features:render-only"
-producer = "render-only"
-terminal_event = "RENDER_ONLY_CLOSED"
-min_frames = 1
-min_events = 1
-state_fields = ["wram", "framebuffer"]
-artifact_schema = "feature-neutrality-v1"
-tracker_issue = 3208
-
-[[requirement]]
-id = "completion:v2:p8:release:enhanced-corpus"
-anchor = "docs/vision.md:257-260"
-milestone = "phase-8-widescreen"
-deps = ["completion:v2:p8:features:render-only"]
-command = "just completion-check completion:v2:p8:release:enhanced-corpus"
-producer = "enhanced-corpus"
-terminal_event = "WIDESCREEN_CORPUS_CLOSED"
-min_frames = 1
-min_events = 1
-state_fields = ["wram", "framebuffer", "save", "rng"]
-artifact_schema = "widescreen-corpus-v1"
-tracker_issue = 3209

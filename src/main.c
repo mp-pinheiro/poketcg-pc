@@ -646,8 +646,6 @@ static void state_dump_frames_callback(uint32_t frame, const RuntimeResult *resu
 int main(int argc, char **argv)
 {
 	ShellConfig config = {0};
-	int widescreen = 0;
-	int sprite_limit = PPU_SPRITES_PER_LINE;
 	uint32_t frame_limit = 600;
 	const char *pack_path = NULL;
 	int require_data = 0;
@@ -758,14 +756,6 @@ int main(int argc, char **argv)
 			isr_track_path = argv[++i];
 		} else if (strcmp(argv[i], "--serial-track") == 0 && i + 1 < argc) {
 			serial_track_path = argv[++i];
-		} else if (strcmp(argv[i], "--widescreen") == 0 && i + 1 < argc) {
-			widescreen = atoi(argv[++i]);
-			if (widescreen < 0 || widescreen > WIDE_EXTRA_MAX) {
-				fprintf(stderr, "--widescreen takes 0..%d extra columns per side\n", WIDE_EXTRA_MAX);
-				return 2;
-			}
-		} else if (strcmp(argv[i], "--no-sprite-limits") == 0) {
-			sprite_limit = PPU_SPRITES_MAX;
 		} else if (strcmp(argv[i], "--link-fd") == 0 && i + 1 < argc) {
 			link_fd = atoi(argv[++i]);
 		} else if (strcmp(argv[i], "--load-checkpoint") == 0 && i + 1 < argc) {
@@ -780,7 +770,7 @@ int main(int argc, char **argv)
 			       "[--digest-out PATH [--digest-mask FILE]] [--lag-track PATH] "
 			       "[--trace-entries PATH] [--trace-calls PATH] "
 			       "[--trace-window LO HI --trace-window-out PATH] "
-			       "[--load-checkpoint PATH] [--link-fd N] [--isr-track PATH] [--serial-track PATH] [--widescreen N] [--no-sprite-limits] [--dump-pcm PATH] [--printer-dir DIR]\n");
+			       "[--load-checkpoint PATH] [--link-fd N] [--isr-track PATH] [--serial-track PATH] [--dump-pcm PATH] [--printer-dir DIR]\n");
 			printf("--frames 0 runs until the window closes\n");
 			printf("--input is one byte per host frame (a movie axis); "
 			       "--input-ordinal is one byte per DoFrame and never wraps: "
@@ -970,8 +960,8 @@ int main(int argc, char **argv)
 		rom_pack_free();
 		return 2;
 	}
-	config.width = SCREEN_W + 2 * widescreen;
-	runtime_set_presentation(widescreen, sprite_limit);
+	config.width = SCREEN_W;
+	runtime_set_presentation(0, PPU_SPRITES_PER_LINE);
 	Shell *shell = shell_create(&config);
 	if (!shell) {
 		if (record_sink)

@@ -70,13 +70,6 @@ REQUIRED_RELATION_FIELDS = {
     "sm83_registers_function_boundary",
     "hardware_exclusions",
 }
-P8_IDS = {
-    "completion:v2:p8:ppu:span-widening",
-    "completion:v2:p8:runtime:viewport-rect",
-    "completion:v2:p8:ui:wide-layouts",
-    "completion:v2:p8:features:render-only",
-    "completion:v2:p8:release:enhanced-corpus",
-}
 NATIVE_EQUIVALENTS = {
     "FadePalIntoAnother": ("fade_palette_bytes",),
     "Func_80148": ("FuncEightZeroOneFourEight",),
@@ -485,8 +478,6 @@ def validate_manifest(manifest: dict[str, Any], baseline: dict[str, Any]) -> lis
     negative = by_id.get("completion:v2:p2:boot-title-negative")
     if negative and negative.get("terminal_event") != "FIRST_MISMATCH":
         errors.append("boot-title-negative has no first-mismatch terminal")
-    if not P8_IDS <= set(by_id):
-        errors.append("Phase 8 stable obligations are incomplete")
     scenarios = manifest.get("scenario")
     scenarios_by_id = (
         {

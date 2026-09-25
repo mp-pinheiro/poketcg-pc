@@ -2,7 +2,7 @@
 
 ## Status
 
-Complete. All 26 rows of `tools/completion/requirements.toml` pass
+Complete. All 21 rows of `tools/completion/requirements.toml` pass
 (`just completion-chain`), and `tools/oracle/release_gate.py` attests the
 revision recorded in `site/data/gate.json` (schema 3). The gate no longer
 requires static CFG edge coverage (owner decision, 2026-09-24): it asked a
@@ -27,10 +27,10 @@ through their serial ports. Coverage on the reference at `bf0e27e0`: 2,487 of
 the 3,062 ledger routines execute on some recorded session (81%). The port
 boots and plays in the SDL2 shell with no emulator and no ROM at runtime.
 
-**Requirements** (`just completion-check <id>`): all 26 pass — `reset` (3),
+**Requirements** (`just completion-check <id>`): all 21 pass — `reset` (3),
 `p0`–`p2` (6), `p3` audio (2), `p4` UI and raster (2), `p5` duel (2), `p6`
 script VM and campaign (2), `p7` link and printer (2), `faithful-4x3` release
-and package (2), `p8` widescreen and features (5).
+and package (2).
 
 **How the last ten closed:**
 
@@ -40,7 +40,9 @@ and package (2), `p8` widescreen and features (5).
 | `p7:printer` | the SM83 stack addresses that PRINT packets store into `wPrinterPacketDataPtr` replay from a per-interval stack track; `printer-card-list` is clean end to end and its pages match the linked reference printer's. |
 | `p7:link-ir` | two linked Gambatte cores record each serial interrupt's byte and each `SerialTimerHandler` memory step, positioned by the main thread's accesses to serial state (`serial-track.bin`); the native replays them into the ported handlers, nested interrupts included. Both sides of the link duel are clean. |
 | `faithful-4x3:package` | binary plus generated data pack and nothing ROM-derived; a 600-frame smoke passes and a pack with a span removed fails with `MISSING_DATA`. |
-| `p8:*` (five rows) | `--widescreen 48` draws 48 extra columns each side from the same VRAM and OAM; overworld rooms widen to the map's edges and fill past them with BG colour 0; other screens keep the 160-px layout centred; `--no-sprite-limits` changes pixels only. The producers check the wide frame against an independent renderer over Gambatte's state, the centre columns against the 4:3 frame, every DoFrame digest against Gambatte with the features on, and the save against the 4:3 run, over the whole witness corpus. |
+
+**Presentation** is canonical 4:3: the verified 160×144 framebuffer is
+integer-scaled and pillarboxed by the host.
 
 **Not covered by a session.** Card Pop and the Gift Center (IR) are ported and
 oracle-verified per routine, but no recorded session drives them end to end;
@@ -69,8 +71,7 @@ and `tas-5530s` its declared ceiling (the Duel Escape glitch).
   `credits-1-explore-1`.
 - **Phase 7 — Link, IR, printer** (#8): closed; linked link-duel and printer
   oracles.
-- **Phase 8 — Widescreen and features** (#9): closed; `src/widescreen.c` and
-  `tools/completion/widescreen.py`.
+- **Presentation** — canonical 4:3; the game canvas remains the original 160×144 pixel grid.
 
 SGB (`engine/sgb.asm`, 19 routines) is excluded as hardware-only in
 `tools/progress/scope.toml`: the CGB target never takes the path and neither
@@ -80,8 +81,9 @@ oracle emulates the Super Game Boy.
 A native PC/Linux port of Pokémon Trading Card Game (Game Boy Color), hand-ported
 from the [`pret/poketcg`](https://github.com/pret/poketcg) disassembly into C11
 (`static_assert` locks the generated WRAM/HRAM/SRAM layout headers against the
-disassembly) + SDL2. No emulator bundled, no ROM required at runtime. Widescreen and other
-quality-of-life features land later, strictly on top of verified code.
+disassembly) + SDL2. No emulator bundled, no ROM required at runtime. The release
+surface is a fixed 160×144 canvas scaled by the host; extra window area is
+pillarboxed rather than treated as game space.
 
 This document is the synthesis of ten parallel investigations: four on prior art
 (`zelda3`, `suiCune`, `Gen1Recomp`, `Links-Awakening-DX-HD`, `CppRed`) and six
@@ -90,16 +92,14 @@ timing dependencies, build/data pipeline).
 
 ## TL;DR — the decision
 
-Hand-port every function to C, keeping a **software PPU whose screen and tilemap
-dimensions are runtime variables**. Preserve the original memory layout
-byte-for-byte so a whole-state `memcmp` against the ROM is a valid correctness
-oracle. Add widescreen **only** as a layer on top of already-verified 4:3 code.
+Hand-port every function to C, keeping a **software PPU for the fixed 160×144
+Game Boy Color canvas**. Preserve the original memory layout byte-for-byte so a
+whole-state `memcmp` against the ROM is a valid correctness oracle. Host scaling
+is presentation only; it never changes game state or the verified framebuffer.
 
-This is `zelda3`'s architecture (virtual PPU + RAM oracle + span-widened
-widescreen) with `suiCune`'s conversion discipline (function-by-function hand
-port, verified against the original) and `Gen1Recomp`'s variable logical canvas
-(widen the surface, re-lay-out one screen, leave the simulation untouched). Each
-choice is load-bearing and each has a shipped precedent.
+This uses the virtual PPU + RAM oracle architecture with the conversion
+discipline of function-by-function hand-porting. The product does not invent
+off-grid game pixels or re-layout screens for modern aspect ratios.
 
 The decisive constraint, verified directly from the built ROM's symbol table:
 
@@ -168,16 +168,14 @@ symbols; 1,518 are WRAM, at known flat offsets):
 every struct you promote from raw bytes.
 
 **(b) The PPU is the only thing that knows about pixels**, and it is a normal,
-editable C module — not an emulator you vendored. That is what makes both
-widescreen and the oracle possible simultaneously. `zelda3` gets 4× Mode-7
-upsampling, 240-line mode, and widescreen from this one property.
+editable C module — not an emulator you vendored. The PPU owns the fixed
+160×144 game canvas and the pixel comparison surface; host scaling happens
+outside the game renderer.
 
-**(c) Dimensions are variables from commit one.** `BCCoordToBGMap0Address`
-(`src/home/empty_screen.asm:26-38`) computes the tilemap stride as five chained
-`add hl,hl` — the ×32 is an *instruction pattern*, not a constant. Only 15 sites
-use the symbolic `TILEMAP_WIDTH`. Every one hand-translates to
-`&bgmap[y * TILEMAP_W + x]`. Widescreen is nearly free if you do this on the way
-in, and a second full pass if you don't. Non-negotiable.
+**(c) Dimensions are fixed at the product boundary.** Internal PPU buffers may
+retain bounded capacity for diagnostics, but the release path renders exactly
+160×144 pixels. No game state, tilemap stride or UI layout is re-authored for
+modern aspect ratios.
 
 ## Why not the alternatives
 
@@ -188,65 +186,24 @@ in, and a second full pass if you don't. Non-negotiable.
 | Any asm→C transpiler | `CharlesAverill/poketcg` is the worked counterexample: one commit, `lift_skeleton.py` maps `jr`/`jp` to *comments*, 75% of its 212k lines are commented-out asm, `src/home/hblank.c` has an empty body, and it does not compile (`registers.h:15: 'CPURegs' has no member named 'regs'`). Do not join, do not salvage. More fundamentally: `farcall`/`bank1call` rewrite return addresses on the stack (`src/home/farcall.asm:3-79`) and 149 event macros read their operand *from the return address*. No line-by-line lifter survives that. A human deletes it in a second. |
 | Bundle the ROM or extracted assets | Links Awakening DX HD shipped assets and was DMCA'd within a day of publicity — the widescreen and 120fps did not save it. Its *source* fork is still up. |
 
-## Widescreen, concretely
+## Presentation
 
-Four mechanisms, all with working source precedents.
+The game's art is hand-drawn for the Game Boy Color's 160×144 pixel grid.
+Widening the logical canvas does not reveal additional authored content; it
+mostly creates filled margins around a fixed composition. That is the wrong
+visual contract for this game.
 
-**Span widening (from `zelda3`).** Size every scanline buffer
-`160 + 2*kExtraLeftRight` at build time, bias all writes by that constant so
-x=0 lands at the offset and negative x is legal, then move the draw span:
+The release presentation is therefore fixed 4:3:
 
-```c
-/* zelda3 snes/ppu.c:204-208, adapted */
-win->edges[0] = -(layer != HUD_LAYER ? ppu->extraLeftCur : 0);
-win->edges[1] = SCREEN_W + (layer != HUD_LAYER ? ppu->extraRightCur : 0);
-```
+- render the original 160×144 framebuffer;
+- scale it by an integer factor for the host window;
+- preserve nearest-neighbour pixels;
+- pillarbox or letterbox unused host area.
 
-The existing, unmodified per-layer rasterisers then emit wider lines. Zero
-duplicated renderers. `layer != HUD_LAYER` is the entire HUD fix at PPU level.
-
-**Variable logical canvas (from `Gen1Recomp`).** Its `setUISize` lets a game
-state request a wider surface — the widescreen battle asks for 304×144 and
-re-lays-out the menu as 2×2 while *"the battle simulation, timing, animations
-and rules stay BattleState's"*. poketcg is menus plus one duel screen — this is
-exactly the shape of the problem. Widen the canvas, re-author the duel/menu
-screen builders, leave the 826-byte duel state untouched.
-
-**Single viewport rect (from LADX-HD).** For the overworld only, derive the
-render rect from the live window and feed *the same rect* to culling, NPC
-updates, and animation (`GameManager.cs:602-605` → `ObjectManager.cs:192-198`,
-`// only update the objects that are in a tile that is visible`). One definition
-of "active region" means rendering and simulation cannot desync. Keep room
-semantics as a logical grid decoupled from the viewport
-(`FieldWidth`/`FieldHeight` + per-field update counters) — how LADX-HD preserved
-GB room-reset behaviour under a 5-room-wide camera.
-
-**The honest problem, and its answer.** The GB tilemap is 32×32 and wraps;
-poketcg is screen-composed, so there is usually no valid off-screen tile data to
-reveal. `zelda3` clamps the extension to the current room bounds every frame
-(`ConfigurePpuSideSpace`, `src/zelda_rtl.c:140-173`) so the view narrows back to
-4:3 rather than showing junk, and disables widescreen for the one effect it
-cannot widen (dungeon lantern cone). For poketcg the extra columns must mostly
-be **authored** — a background fill or explicitly uploaded tiles — in the screen
-builders. Budget widescreen as work in `engine/menus/` and the duel screen, not
-in the PPU.
-
-**Sprite limits are orthogonal.** GB's 10-per-scanline / 40-OAM limits live only
-in sprite evaluation, which reads OAM and writes the object buffer — never back
-into OAM or WRAM. So a `NoSpriteLimits` render flag changes pixels only and
-stays out of the `memcmp` entirely (`zelda3 snes/ppu.c:1247`). The game's own
-allocator is a 40-entry bump list with a carry-on-overflow contract
-(`src/home/objects.asm:14-19`) plus 16 animated slots
-(`SPRITE_ANIM_BUFFER_CAPACITY EQU 16`); widening is an array size.
-
-**Raster effects: per-scanline offset arrays, not STAT interrupts.** `CppRed` has
-the right abstraction — `Point bg_offsets[144]; Point window_offsets[144];` with
-a range setter. poketcg's LYC handler (`src/home.asm:34-36` calls
-`wLCDCFunctionTrampoline`) and `src/home/scroll.asm` write ranges into those
-arrays; the renderer consumes them per line. `suiCune`'s
-`wLYOverrides[LY] + hLCDCPointer` (`home/lcd.c:20-24`) is the same idea limited
-to one register — take the array version.
-
+The former `--widescreen` path remains developer archaeology only. It is not a
+release option, completion requirement, or promise of additional game content.
+Future border work may add decorative host-side art without changing the game
+canvas or its verified state.
 ## Verification harness
 
 This is what decides whether the project ships, and it is what `suiCune` did
@@ -322,10 +279,9 @@ bit-exact, because:
 
 That is the single most favourable fact about this game for porting.
 
-**Gate the oracle off when features are on.** `zelda3 src/zelda_rtl.c:742`:
-`if (enhanced_features0 != 0) ZeldaRunFrameInternal(...)` — *"can't compare
-against real impl when running with extra features"*. Verify at 160×144 with zero
-features; widescreen strictly on top of verified code.
+**Gate the oracle at the game canvas.** All product verification compares the
+160×144 framebuffer and game state. Host scaling and future decorative borders
+are outside the simulation and oracle contract.
 
 ## Phases
 
@@ -342,7 +298,9 @@ counts are measured.
 | 5 — Duel engine | state, turn loop, card-effect VM, AI, RNG | 44,614 | 12–16 | replay a seeded duel, `memcmp` the 826-byte state every turn |
 | 6 — Overworld and scripts | 104-opcode VM, maps, NPCs | 12,129 | 6–8 | walk every map; scripts fire correctly |
 | 7 — Link, IR, printer | TCP transport; Card Pop / Gift Center; printer→PNG | 3,468 | 4–5 | a link duel round-trips; a card exports to PNG |
-| 8 — Widescreen and features | span widening, variable canvas, viewport rect, QoL | — | 6–8 | replay corpus still passes at 4:3; widescreen is additive |
+
+Presentation is host-side scaling of the verified 160×144 framebuffer, not a
+game-content phase.
 
 **Total: 12–18 months solo; 6–9 months with 2–3 developers** (Phase 5 splits
 cleanly). Calibration: `suiCune` reached 70% of pokecrystal in 4.4 years solo
@@ -465,7 +423,7 @@ mode.
 | 1 | Scope collapse from unbounded per-function verification | Phase 0 harness **before any game code**. This is what cost `suiCune` years. |
 | 2 | Dimensions baked in during Phases 2–6, forcing a second pass | `SCREEN_W`/`TILEMAP_W` symbolic from the first commit; assert no literal 32/20/18 in tilemap math in review |
 | 3 | Hybrid asm+bytecode scripts resist clean C structure | Design the `RunScript` re-entry contract in Phase 0, before touching `src/scripts/` |
-| 4 | Widescreen has no valid off-screen tile data | Author the margins in the screen builders; clamp-to-bounds as fallback, `zelda3`-style |
+| 4 | Hand-drawn pixel art has no valid extra game canvas | Keep the release viewport fixed at 160×144; treat future borders as host decoration |
 | 5 | Audio timing at 60.235 Hz, not 60 Hz | Derive the tick from `16384/68/4` exactly; `sPlayTimeCounter` must stay cartridge-compatible |
 | 6 | Bug-compatibility vs. correctness | Preserve original bugs by default behind a `faithful`/`fixed` ruleset gate. Known ones to keep: the Card Pop name-check loop that discards its result (`card_pop.asm:195-208`); `VENUSAUR_LV64` unobtainable because both hash halves share parity (`:328-337`); SFX preemption not silencing the previous SFX (`sfx.asm:485-499`). |
 

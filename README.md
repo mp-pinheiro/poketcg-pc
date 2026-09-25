@@ -2,6 +2,10 @@
 
 A hand-port of the Pokémon Trading Card Game for Game Boy Color to C11 + SDL2. The C routines are checked against the original ROM through PyBoy; the build-time disassembly checkout is created by `just bootstrap` and is not committed.
 
+The release presentation preserves the original 160×144 pixel grid. The host
+scales it with nearest-neighbour integer scaling and pillarboxes unused window
+space; it does not invent widescreen game pixels.
+
 ## Dependencies
 
 On Linux, install:

@@ -5,7 +5,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from tools.completion import completion, scenario, widescreen, witness
+from tools.completion import completion, scenario, witness
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -213,41 +213,6 @@ _REGISTRY: dict[str, dict[str, Any]] = {
         "package",
         producer_files=_COMMON + ["tools/completion/package_smoke.py"],
         comparator_files=["tools/completion/package_smoke.py", "tools/gen_data.py"],
-    ),
-    "completion:v2:p8:ppu:span-widening": _descriptor(
-        "span-widening",
-        "scenario:span-widening",
-        producer_files=_WITNESS + ["tools/completion/widescreen.py"],
-        comparator_files=_WITNESS_COMPARATORS + ["tools/completion/widescreen.py"],
-        corpus=widescreen.corpus("span-widening"),
-    ),
-    "completion:v2:p8:runtime:viewport-rect": _descriptor(
-        "viewport-rect",
-        "scenario:viewport-rect",
-        producer_files=_WITNESS + ["tools/completion/widescreen.py"],
-        comparator_files=_WITNESS_COMPARATORS + ["tools/completion/widescreen.py"],
-        corpus=widescreen.corpus("viewport-rect"),
-    ),
-    "completion:v2:p8:ui:wide-layouts": _descriptor(
-        "wide-layouts",
-        "scenario:wide-layouts",
-        producer_files=_WITNESS + ["tools/completion/widescreen.py"],
-        comparator_files=_WITNESS_COMPARATORS + ["tools/completion/widescreen.py"],
-        corpus=widescreen.corpus("wide-layouts"),
-    ),
-    "completion:v2:p8:features:render-only": _descriptor(
-        "render-only",
-        "scenario:render-only",
-        producer_files=_WITNESS + ["tools/completion/widescreen.py"],
-        comparator_files=_WITNESS_COMPARATORS + ["tools/completion/widescreen.py"],
-        corpus=widescreen.corpus("render-only"),
-    ),
-    "completion:v2:p8:release:enhanced-corpus": _descriptor(
-        "enhanced-corpus",
-        "scenario:widescreen-corpus",
-        producer_files=_WITNESS + ["tools/completion/widescreen.py"],
-        comparator_files=_WITNESS_COMPARATORS + ["tools/completion/widescreen.py"],
-        corpus=widescreen.corpus("widescreen-corpus"),
     ),
 }
 
