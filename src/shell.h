@@ -6,12 +6,14 @@
 
 #include "input.h"
 #include "ppu.h"
+#include "presentation.h"
 
 typedef struct Shell Shell;
 
 typedef struct {
 	int headless;
 	int width;
+	PresentationMode presentation;
 } ShellConfig;
 
 typedef struct {

@@ -25,6 +25,8 @@ struct Shell {
 	int width;
 	uint8_t buttons;
 	uint64_t next_ns;
+	int height;
+	PresentationMode presentation;
 	unsigned speed;
 #ifdef POKETCG_HAVE_SDL
 	int have_audio;
@@ -36,6 +38,7 @@ struct Shell {
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 	SDL_Texture *texture;
+	uint16_t *presentation_frame;
 	int audio_filter_ready;
 	int32_t audio_dc[2];
 	int16_t audio_buffer[SHELL_AUDIO_BUFFER_SAMPLES];
@@ -73,8 +76,13 @@ Shell *shell_create(const ShellConfig *config)
 	Shell *shell = calloc(1, sizeof *shell);
 	if (!shell)
 		return NULL;
-	shell->headless = config && config->headless;
-	shell->width = config && config->width > SCREEN_W ? config->width : SCREEN_W;
+	shell->presentation = config ? config->presentation : PRESENTATION_4X3;
+	shell->width = shell->presentation == PRESENTATION_SGB_FRAME
+		? PRESENTATION_SGB_WIDTH
+		: (config && config->width > SCREEN_W ? config->width : SCREEN_W);
+	shell->height = shell->presentation == PRESENTATION_SGB_FRAME
+		? PRESENTATION_SGB_HEIGHT
+		: SCREEN_H;
 	shell->speed = 1u;
 #ifdef POKETCG_HAVE_SDL
 	/* Video alone gates the window. Audio is a separate subsystem on purpose: a host
@@ -102,12 +110,25 @@ Shell *shell_create(const ShellConfig *config)
 		if (!shell->have_audio)
 			(void)shell_open_pulse_audio(shell);
 #endif
+#ifdef POKETCG_HAVE_SDL
+		if (shell->presentation == PRESENTATION_SGB_FRAME) {
+			shell->presentation_frame = calloc(
+				(size_t)PRESENTATION_SGB_WIDTH * PRESENTATION_SGB_HEIGHT,
+				sizeof *shell->presentation_frame);
+			if (!shell->presentation_frame) {
+				SDL_Quit();
+				free(shell);
+				return NULL;
+			}
+		}
+#endif
 		shell->window = SDL_CreateWindow("poketcg", SDL_WINDOWPOS_UNDEFINED,
-			SDL_WINDOWPOS_UNDEFINED, shell->width * 3, SCREEN_H * 3, 0);
+			SDL_WINDOWPOS_UNDEFINED, shell->width * 3, shell->height * 3, 0);
 		shell->renderer = shell->window ? SDL_CreateRenderer(shell->window, -1,
 			SDL_RENDERER_ACCELERATED) : NULL;
 		shell->texture = shell->renderer ? SDL_CreateTexture(shell->renderer,
-			SDL_PIXELFORMAT_BGR555, SDL_TEXTUREACCESS_STREAMING, shell->width, SCREEN_H) : NULL;
+			SDL_PIXELFORMAT_BGR555, SDL_TEXTUREACCESS_STREAMING,
+			shell->width, shell->height) : NULL;
 		if (!shell->texture) {
 			if (shell->renderer)
 				SDL_DestroyRenderer(shell->renderer);
@@ -142,6 +163,8 @@ void shell_destroy(Shell *shell)
 		SDL_CloseAudioDevice(shell->audio_device);
 	if (shell->texture)
 		SDL_DestroyTexture(shell->texture);
+	if (shell->presentation_frame)
+		free(shell->presentation_frame);
 	if (shell->renderer)
 		SDL_DestroyRenderer(shell->renderer);
 	if (shell->window)
@@ -282,7 +305,7 @@ void shell_present_debug(Shell *shell, uint16_t *framebuffer, const ShellDebugVi
 #ifdef POKETCG_DEBUG_MENU
 	if (!shell || !framebuffer || !view || !shell_has_window(shell))
 		return;
-	int width = shell->width;
+	int width = SCREEN_W;
 	int panel_width = width > 158 ? 156 : width - 4;
 	for (int y = 2; y < SCREEN_H - 2; y++)
 		for (int x = 2; x < panel_width + 2; x++)
@@ -332,7 +355,14 @@ void shell_present(Shell *shell, const uint16_t *framebuffer)
 #ifdef POKETCG_HAVE_SDL
 	if (!shell || shell->headless || !framebuffer)
 		return;
-	SDL_UpdateTexture(shell->texture, NULL, framebuffer, shell->width * (int)sizeof *framebuffer);
+	const uint16_t *output = framebuffer;
+	if (shell->presentation == PRESENTATION_SGB_FRAME) {
+		presentation_render(PRESENTATION_SGB_FRAME,
+		                    shell->presentation_frame, framebuffer);
+		output = shell->presentation_frame;
+	}
+	SDL_UpdateTexture(shell->texture, NULL, output,
+	                  shell->width * (int)sizeof *output);
 	SDL_RenderClear(shell->renderer);
 	SDL_RenderCopy(shell->renderer, shell->texture, NULL, NULL);
 	SDL_RenderPresent(shell->renderer);

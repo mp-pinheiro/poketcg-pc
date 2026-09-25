@@ -236,7 +236,7 @@ if(POKETCG_PULSE_INCLUDE_DIR AND
 	set(POKETCG_PULSE_USABLE ON)
 endif()
 
-set(POKETCG_SHELL_SOURCES src/main.c src/checkpoint.c src/digest.c src/persistence.c src/runtime.c src/shell.c src/state_dump.c)
+set(POKETCG_SHELL_SOURCES src/main.c src/checkpoint.c src/digest.c src/persistence.c src/presentation.c src/runtime.c src/shell.c src/state_dump.c)
 add_executable(poketcg ${POKETCG_SHELL_SOURCES})
 set_target_properties(poketcg PROPERTIES ENABLE_EXPORTS ON)
 target_include_directories(poketcg PRIVATE "${CMAKE_SOURCE_DIR}/src")
