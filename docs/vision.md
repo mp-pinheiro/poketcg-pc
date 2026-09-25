@@ -13,7 +13,7 @@ What follows is the measured state; nothing below is a plan.
 **Delivered.** All 3,012 in-scope routines have C bodies; the 3,026 oracle
 registrations are clean (`just oracle-diff-all`), every one has a RED mutation
 witness (`tools/completion/mutation_campaign.py --report`, complete), and the
-hatch audit passes at release stage. All 669 recorded sessions hold their full
+hatch audit passes at release stage. All 670 recorded sessions hold their full
 length in `tools/completion/session_ratchet.json`: each has replayed
 byte-identical on WRAM, HRAM, OAM, both VRAM banks, palettes and framebuffer at
 every DoFrame anchor against Gambatte — boot, naming, the lab, the practice
