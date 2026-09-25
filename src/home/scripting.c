@@ -223,7 +223,13 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "mem.h"
 #define GAME_EVENT_DUEL 0x01u
 #define LOADED_NPC_ID 0x00u
-static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
+#define LIGHTNING_AND_FIRE_DECK_ID 0x09u
+#define WATER_AND_FIGHTING_DECK_ID 0x0Au
+#define GRASS_AND_PSYCHIC_DECK_ID 0x0Bu
+static const uint8_t sAaronDeckIDs[] = {
+	LIGHTNING_AND_FIRE_DECK_ID, WATER_AND_FIGHTING_DECK_ID,
+	GRASS_AND_PSYCHIC_DECK_ID, GRASS_AND_PSYCHIC_DECK_ID
+};
 
 #include "home/scripting.h"
 #include "home/npc_data.h"

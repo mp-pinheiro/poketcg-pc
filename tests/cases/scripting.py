@@ -2714,6 +2714,30 @@ CASES["ScriptCommand_StartDuel"] = [
         "instruction_budget": 2000000,
         "cycle_budget": 8000000,
     },
+    {
+        "b": 0xFF,
+        "c": 0x03,
+        "wram": {
+            wScriptNPC: b"\x00",
+            wLoadedNPCs: b"\x00",
+            wNPCDuelDeckID: b"\xFF",
+            wMultichoiceTextboxResult_ChooseDeckToDuelAgainst: b"\x02",
+            wScriptPointer: b"\x10\x20",
+            wGameEvent: b"\x00",
+            wOverworldTransition: b"\x00",
+        },
+        "expect": {
+            wNPCDuelist: b"\x00",
+            wNPCDuelistCopy: b"\x00",
+            wNPCDuelistDirection: b"\x00",
+            wGameEvent: b"\x01",
+            wOverworldTransition: b"@",
+            wNPCDuelDeckID: b"\x0D",
+            wScriptPointer: b"\x14\x20",
+        },
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
     dict(
         POISON,
         wram={
