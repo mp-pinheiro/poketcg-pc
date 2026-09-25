@@ -18,6 +18,7 @@
  * runtime ages the hardware clock by (mem_advance_hardware_clock(70224)). */
 #define POKETCG_FRAME_NS 16742706ull
 #define SHELL_AUDIO_BUFFER_SAMPLES 4096u
+#define SHELL_PULSE_GAIN 4
 
 struct Shell {
 	int headless;
@@ -356,7 +357,7 @@ static size_t shell_filter_audio(Shell *shell, const int16_t *samples, size_t co
 		int32_t sample = samples[i];
 		int32_t delta = sample - shell->audio_dc[channel];
 		shell->audio_dc[channel] += delta / 256;
-		int32_t filtered = sample - shell->audio_dc[channel];
+		int32_t filtered = (sample - shell->audio_dc[channel]) * SHELL_PULSE_GAIN;
 		if (filtered > 32767)
 			filtered = 32767;
 		else if (filtered < -32768)
