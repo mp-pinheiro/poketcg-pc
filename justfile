@@ -143,6 +143,9 @@ hatch-ratchet:
 build:
     cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPORT_FILES="{{port_files}}"
     ninja -C {{build_dir}}
+debug-build:
+    cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPOKETCG_DEBUG_MENU=ON -DPORT_FILES=""
+    ninja -C {{build_dir}}
 
 # Launch the port with a window. Requires `just build` and `just completion-data-pack`;
 # the configure step must have printed "SDL2 backend: compiled in". Extra arguments

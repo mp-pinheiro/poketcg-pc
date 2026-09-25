@@ -14,12 +14,27 @@ typedef struct {
 	int width;
 } ShellConfig;
 
+typedef struct {
+	InputFrame game;
+	uint8_t debug_toggle;
+	uint8_t pressed;
+} ShellInput;
+
+typedef struct {
+	const char *title;
+	const char *const *lines;
+	size_t line_count;
+	size_t selected;
+} ShellDebugView;
+
 Shell *shell_create(const ShellConfig *config);
 void shell_destroy(Shell *shell);
-int shell_pump(Shell *shell, InputFrame *frame);
+int shell_pump(Shell *shell, ShellInput *input);
 uint8_t shell_hkeys_from_input(uint8_t buttons);
 void shell_present(Shell *shell, const uint16_t *framebuffer);
+void shell_present_debug(Shell *shell, uint16_t *framebuffer, const ShellDebugView *view);
 void shell_queue_audio(Shell *shell, const int16_t *samples, size_t count);
+void shell_set_speed(Shell *shell, unsigned speed);
 
 /* "sdl" or "headless" -- the backend actually in use, which is not simply the inverse
  * of ShellConfig.headless: shell_create falls back when SDL is absent or SDL_Init fails. */

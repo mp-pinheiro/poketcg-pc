@@ -163,6 +163,7 @@ if(POKETCG_TRACE)
   target_compile_definitions(gbmem PUBLIC POKETCG_TRACE=1)
   message(STATUS "function-entry recording: on")
 endif()
+option(POKETCG_DEBUG_MENU "enable the host playtest debug menu" OFF)
 
 # One adapter translation unit per pret source file, each exporting
 # `const ProbeEntry probe_entries_<basename>[]`. Generating the group list from
@@ -239,4 +240,7 @@ if(POKETCG_SDL_USABLE)
 		target_link_directories(poketcg PRIVATE ${SDL2_LIBRARY_DIRS})
 		target_link_libraries(poketcg PRIVATE ${SDL2_LIBRARIES})
 	endif()
+endif()
+if(POKETCG_DEBUG_MENU)
+	target_compile_definitions(poketcg PRIVATE POKETCG_DEBUG_MENU=1)
 endif()

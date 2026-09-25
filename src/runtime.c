@@ -17,6 +17,10 @@
 #include "ppu.h"
 #include "shell.h"
 #include "trace.h"
+#ifdef POKETCG_DEBUG_MENU
+#include "persistence.h"
+#include "state_dump.h"
+#endif
 
 #include <pthread.h>
 #include <setjmp.h>
@@ -465,6 +469,144 @@ static void fill_result(const RuntimeState *state, uint32_t frame_limit,
 		out->present_room = state->present_rect.room;
 	}
 }
+#ifdef POKETCG_DEBUG_MENU
+typedef struct {
+	int active;
+	size_t selected;
+	unsigned steps;
+	unsigned speed;
+	char message[32];
+	char save_path[512];
+	char state_path[512];
+} DebugMenu;
+
+static const char *const debug_items[] = {
+	"RESUME", "AUTO WIN", "STEP 1", "STEP 10",
+	"STEP 60", "SPEED 1X", "SPEED 2X", "SPEED 4X",
+	"SPEED MAX", "SAVE SRAM", "LOAD SRAM", "DUMP STATE", "QUIT"
+};
+
+static void debug_menu_init(DebugMenu *menu)
+{
+	const char *dir = getenv("POKETCG_DEBUG_DIR");
+	if (!dir || !*dir)
+		dir = ".";
+	menu->speed = 1u;
+	snprintf(menu->save_path, sizeof menu->save_path, "%s/poketcg-debug.sav", dir);
+	snprintf(menu->state_path, sizeof menu->state_path, "%s/poketcg-debug-state.json", dir);
+	menu->message[0] = '\0';
+}
+
+static const char *debug_speed_name(unsigned speed)
+{
+	if (speed == 1u)
+		return "1X";
+	if (speed == 2u)
+		return "2X";
+	if (speed == 4u)
+		return "4X";
+	return "MAX";
+}
+
+static int debug_menu_loop(Shell *shell, RuntimeState *state, uint32_t frame_limit,
+                           DebugMenu *menu)
+{
+	for (;;) {
+		char status[96];
+		const char *lines[14];
+		snprintf(status, sizeof status, "ORD %u SPD %s %s",
+		         (unsigned)frame_boundary_doframe_ordinal(),
+		         debug_speed_name(menu->speed), menu->message);
+		lines[0] = status;
+		for (size_t i = 0; i < sizeof debug_items / sizeof debug_items[0]; i++)
+			lines[i + 1] = debug_items[i];
+		ShellDebugView view = {
+			.title = "DEBUG MENU",
+			.lines = lines,
+			.line_count = sizeof debug_items / sizeof debug_items[0] + 1u,
+			.selected = menu->selected + 1u,
+		};
+		shell_present_debug(shell, state->framebuffer, &view);
+		shell_pace(shell);
+		ShellInput input = {0};
+		if (!shell_pump(shell, &input))
+			return -1;
+		if (input.debug_toggle || (input.pressed & BTN_B) != 0u) {
+			menu->active = 0;
+			return 0;
+		}
+		if (input.pressed & BTN_UP) {
+			menu->selected = menu->selected == 0u
+				? sizeof debug_items / sizeof debug_items[0] - 1u
+				: menu->selected - 1u;
+			continue;
+		}
+		if (input.pressed & BTN_DOWN) {
+			menu->selected = (menu->selected + 1u)
+				% (sizeof debug_items / sizeof debug_items[0]);
+			continue;
+		}
+		if (!(input.pressed & BTN_A))
+			continue;
+		menu->message[0] = '\0';
+		switch (menu->selected) {
+		case 0:
+			menu->active = 0;
+			return 0;
+		case 1:
+			gb_write8(wDuelFinished_ADDR, 1u);
+			snprintf(menu->message, sizeof menu->message, "WIN SET");
+			break;
+		case 2:
+			menu->steps = 1u;
+			return 1;
+		case 3:
+			menu->steps = 10u;
+			return 1;
+		case 4:
+			menu->steps = 60u;
+			return 1;
+		case 5:
+			menu->speed = 1u;
+			shell_set_speed(shell, menu->speed);
+			snprintf(menu->message, sizeof menu->message, "SPEED 1X");
+			break;
+		case 6:
+			menu->speed = 2u;
+			shell_set_speed(shell, menu->speed);
+			snprintf(menu->message, sizeof menu->message, "SPEED 2X");
+			break;
+		case 7:
+			menu->speed = 4u;
+			shell_set_speed(shell, menu->speed);
+			snprintf(menu->message, sizeof menu->message, "SPEED 4X");
+			break;
+		case 8:
+			menu->speed = 0u;
+			shell_set_speed(shell, menu->speed);
+			snprintf(menu->message, sizeof menu->message, "SPEED MAX");
+			break;
+		case 9:
+			snprintf(menu->message, sizeof menu->message,
+			         sram_save_atomic(menu->save_path) == 0 ? "SAVED" : "SAVE ERR");
+			break;
+		case 10:
+			snprintf(menu->message, sizeof menu->message,
+			         sram_load(menu->save_path) == 0 ? "LOADED RESTART" : "LOAD ERR");
+			break;
+		case 11: {
+			RuntimeResult result;
+			fill_result(state, frame_limit, &result);
+			snprintf(menu->message, sizeof menu->message,
+			         runtime_write_state(menu->state_path, &result) == 0 ? "DUMPED" : "DUMP ERR");
+			break;
+		}
+		default:
+			return -1;
+		}
+	}
+}
+#endif
 
 /* VBlank ISRs the ROM saw before each of the game's own writes to
  * wVBlankCounter (runtime.h write_start/write_vblanks). Delivered on the game
@@ -628,6 +770,10 @@ int runtime_run_with_input(
 	state.buttons = buttons;
 	state.button_count = button_count;
 	state.frame_limit = frame_limit;
+#ifdef POKETCG_DEBUG_MENU
+	DebugMenu debug_menu = {0};
+	debug_menu_init(&debug_menu);
+#endif
 	if (button_count)
 		g_keys = shell_hkeys_from_input(buttons[0]);
 	else if (g_ordinal_count)
@@ -675,8 +821,8 @@ int runtime_run_with_input(
 		state.frame_ready = 0;
 		pthread_mutex_unlock(&state.lock);
 
-		InputFrame input = {0};
-		if (!shell_pump(shell, &input)) {
+		ShellInput host_input = {0};
+		if (!shell_pump(shell, &host_input)) {
 			pthread_mutex_lock(&state.lock);
 			state.stop = 1;
 			state.stopped_by_user = 1;
@@ -685,6 +831,36 @@ int runtime_run_with_input(
 			pthread_mutex_unlock(&state.lock);
 			continue;
 		}
+		InputFrame input = host_input.game;
+#ifdef POKETCG_DEBUG_MENU
+		if (host_input.debug_toggle || debug_menu.active) {
+			if (host_input.debug_toggle)
+				debug_menu.active = 1;
+			if (debug_menu.active && debug_menu.steps == 0u) {
+				int action = debug_menu_loop(shell, &state, frame_limit, &debug_menu);
+				if (action < 0) {
+					pthread_mutex_lock(&state.lock);
+					state.stop = 1;
+					state.stopped_by_user = 1;
+					state.resume = 1;
+					pthread_cond_broadcast(&state.condition);
+					pthread_mutex_unlock(&state.lock);
+					continue;
+				}
+				if (action == 0) {
+					pthread_mutex_lock(&state.lock);
+					state.resume = 1;
+					pthread_cond_broadcast(&state.condition);
+					pthread_mutex_unlock(&state.lock);
+					continue;
+				}
+			}
+			if (debug_menu.active && debug_menu.steps != 0u) {
+				debug_menu.steps--;
+				input.buttons = 0u;
+			}
+		}
+#endif
 		state.frames++;
 		trace_set_frame(state.frames);
 		if (state.button_count)
