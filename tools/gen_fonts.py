@@ -30,7 +30,7 @@ FONT_SPECS = (
 )
 HALF_SOURCE = "tom-thumb.bdf"
 HALF_LICENSE = "tom-thumb-LICENSE.txt"
-HALF_BASELINE_ROW = 6
+HALF_ROWS = {4: (1,), 3: (2, 3), 2: (4,), 1: (5,), 0: (6,), -1: (7,)}
 CHARMAP_LINE = re.compile(r'^\s*charmap\s+(".*"),\s*\$([0-9A-Fa-f]+)')
 FULLWIDTH_LINE = re.compile(r'^\s*fwcharmap\s+TX_FULLWIDTH3,\s+(".*"),\s*\$([0-9A-Fa-f]+)')
 
@@ -125,13 +125,11 @@ def half_glyph(rows: list[int], box: tuple[int, int, int, int]) -> bytes:
     width, height, x_offset, y_offset = box
     cell = bytearray(8)
     for index, value in enumerate(rows):
-        row = HALF_BASELINE_ROW - (y_offset + height - 1 - index)
-        if not 0 <= row < 8:
-            continue
-        for bit in range(width):
-            column = x_offset + bit
-            if value & (0x80 >> bit) and 0 <= column < 3:
-                cell[row] |= 0x80 >> column
+        for row in HALF_ROWS.get(y_offset + height - 1 - index, ()):
+            for bit in range(width):
+                column = x_offset + bit
+                if value & (0x80 >> bit) and 0 <= column < 3:
+                    cell[row] |= 0x80 >> column
     return bytes(cell)
 
 
