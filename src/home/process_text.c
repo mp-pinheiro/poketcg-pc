@@ -7,6 +7,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+#include "runtime.h"
 #include "home/write_number.h"
 #define TX_CTRL_START 0x05
 #define TX_SYMBOL 0x05
@@ -32,7 +33,7 @@ void InitTextFormat(void)
 uint8_t CaseHalfWidthLetter(uint8_t *e)
 {
 	uint8_t a = wUppercaseHalfWidthLetters;
-	if (!a) return 0;
+	if (!a || runtime_text_mixed_case()) return 0;
 	a = *e;
 	if (a < 0x60 || a >= 0x7b) return a;
 	*e = (uint8_t)(a - ('a' - 'A'));

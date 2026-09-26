@@ -1,6 +1,7 @@
 #define _POSIX_C_SOURCE 200809L
 #include "shell.h"
 #include "runtime.h"
+#include "mem.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -32,6 +33,7 @@ struct Shell {
 	int height;
 	PresentationMode presentation;
 	unsigned speed;
+	int sgb_border;
 #ifdef POKETCG_HAVE_SDL
 	int have_audio;
 	SDL_AudioDeviceID audio_device;
@@ -130,13 +132,33 @@ static int create_video(Shell *shell)
 	return 0;
 }
 
-static int rebuild_video(Shell *shell)
+static int switch_presentation(Shell *shell)
 {
-	destroy_video(shell);
-	if (create_video(shell) == 0)
-		return 0;
-	destroy_video(shell);
-	return -1;
+	int width = shell->game_width;
+	int height = SCREEN_H;
+	uint16_t *frame = NULL;
+	if (shell->presentation == PRESENTATION_SGB_FRAME) {
+		width = PRESENTATION_SGB_WIDTH;
+		height = PRESENTATION_SGB_HEIGHT;
+		frame = calloc((size_t)width * height, sizeof *frame);
+		if (!frame)
+			return -1;
+	}
+	SDL_Texture *texture = SDL_CreateTexture(shell->renderer,
+		SDL_PIXELFORMAT_BGR555, SDL_TEXTUREACCESS_STREAMING, width, height);
+	if (!texture) {
+		free(frame);
+		return -1;
+	}
+	SDL_DestroyTexture(shell->texture);
+	free(shell->presentation_frame);
+	shell->texture = texture;
+	shell->presentation_frame = frame;
+	shell->width = width;
+	shell->height = height;
+	SDL_RenderSetLogicalSize(shell->renderer, width, height);
+	SDL_SetWindowSize(shell->window, width * shell->scale, height * shell->scale);
+	return 0;
 }
 
 static void set_scale(Shell *shell, int scale)
@@ -164,6 +186,7 @@ Shell *shell_create(const ShellConfig *config)
 	shell->height = shell->presentation == PRESENTATION_SGB_FRAME
 		? PRESENTATION_SGB_HEIGHT : SCREEN_H;
 	shell->speed = 1u;
+	shell->sgb_border = -1;
 #ifdef POKETCG_HAVE_SDL
 	if (!shell->headless && SDL_Init(SDL_INIT_VIDEO) == 0) {
 		int audio_initialized = SDL_InitSubSystem(SDL_INIT_AUDIO) == 0;
@@ -251,8 +274,12 @@ void shell_sync_options(Shell *shell)
 	if (desired != shell->presentation && shell_has_window(shell)) {
 		PresentationMode old = shell->presentation;
 		shell->presentation = desired;
-		if (rebuild_video(shell) != 0)
+		if (switch_presentation(shell) != 0)
 			shell->presentation = old;
+	}
+	if (shell->options->sgb_border != shell->sgb_border) {
+		shell->sgb_border = shell->options->sgb_border;
+		presentation_set_border(rom_sgb_border(shell->sgb_border));
 	}
 #endif
 }

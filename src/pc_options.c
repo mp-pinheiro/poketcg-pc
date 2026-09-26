@@ -42,6 +42,8 @@ static void normalize(PcOptions *options)
 	options->sound_volume = clamp(options->sound_volume, 0, 100);
 	options->music_volume = clamp(options->music_volume, 0, 100);
 	options->font = clamp(options->font, 0, 3);
+	options->sgb_border = clamp(options->sgb_border, 0, 3);
+	options->text_case = options->text_case ? 1 : 0;
 }
 
 void pc_options_defaults(PcOptions *options)
@@ -54,6 +56,8 @@ void pc_options_defaults(PcOptions *options)
 	options->sound_volume = 100;
 	options->music_volume = 100;
 	options->font = 0;
+	options->sgb_border = 2;
+	options->text_case = 0;
 }
 
 int pc_options_load(PcOptions *options)
@@ -85,6 +89,10 @@ int pc_options_load(PcOptions *options)
 			options->music_volume = value;
 		else if (strcmp(key, "font") == 0)
 			options->font = value;
+		else if (strcmp(key, "sgb_border") == 0)
+			options->sgb_border = value;
+		else if (strcmp(key, "text_case") == 0)
+			options->text_case = value;
 	}
 	int error = ferror(file) ? -1 : 0;
 	fclose(file);
@@ -126,10 +134,10 @@ int pc_options_save(const PcOptions *options)
 	if (!file)
 		return -1;
 	int result = fprintf(file,
-		"scale=%d\nstereo=%d\nsgb=%d\nsound_volume=%d\nmusic_volume=%d\nfont=%d\n",
+		"scale=%d\nstereo=%d\nsgb=%d\nsound_volume=%d\nmusic_volume=%d\nfont=%d\nsgb_border=%d\ntext_case=%d\n",
 		normalized.scale, normalized.stereo, normalized.sgb,
 		normalized.sound_volume, normalized.music_volume,
-		normalized.font) < 0;
+		normalized.font, normalized.sgb_border, normalized.text_case) < 0;
 	if (fclose(file) != 0)
 		result = 1;
 	if (result || rename(temporary, path) != 0) {

@@ -196,9 +196,11 @@ def build_font(root: Path, spec: tuple[int, str, str, str | None, str]) -> dict[
     source_paths.append(root / "third_party" / "fonts" / HALF_SOURCE)
     source_paths.append(root / "third_party" / "fonts" / HALF_LICENSE)
     return {
+        "kind": "font",
         "id": font_id,
         "name": name,
         "bank": FONT_BANK_BASE + font_id - 1,
+        "flags": 0xF0000000 | font_id,
         "data": data,
         "sha256": hashlib.sha256(data).hexdigest(),
         "full_used": full_used,
@@ -217,19 +219,6 @@ def build_font(root: Path, spec: tuple[int, str, str, str | None, str]) -> dict[
 
 def build_fonts(root: Path = ROOT) -> list[dict[str, object]]:
     return [build_font(root, spec) for spec in FONT_SPECS]
-
-
-def source_manifest(root: Path = ROOT) -> list[dict[str, object]]:
-    return [
-        {
-            "id": font["id"],
-            "name": font["name"],
-            "bank": font["bank"],
-            "sha256": font["sha256"],
-            "source_files": font["source_files"],
-        }
-        for font in build_fonts(root)
-    ]
 
 
 def main() -> int:

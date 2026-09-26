@@ -76,6 +76,8 @@ int runtime_pc_option_value(unsigned option)
 	case 3u: return g_pc_options->sound_volume;
 	case 4u: return g_pc_options->music_volume;
 	case 5u: return g_pc_options->font;
+	case 6u: return g_pc_options->sgb_border;
+	case 7u: return g_pc_options->text_case;
 	default: return 0;
 	}
 }
@@ -111,6 +113,12 @@ void runtime_pc_option_adjust(unsigned option, int direction)
 			% PC_FONT_COUNT;
 		mem_set_font_override(g_pc_options->font);
 		break;
+	case 6u:
+		g_pc_options->sgb_border = (g_pc_options->sgb_border + direction % 4 + 4) % 4;
+		break;
+	case 7u:
+		g_pc_options->text_case = !g_pc_options->text_case;
+		break;
 	default:
 		return;
 	}
@@ -130,6 +138,10 @@ int runtime_pc_options_enabled(void)
 	return g_pc_options_enabled;
 }
 
+int runtime_text_mixed_case(void)
+{
+	return g_pc_options_enabled && g_pc_options && g_pc_options->text_case;
+}
 
 static struct {
 	const uint16_t *counts;

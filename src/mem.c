@@ -554,6 +554,21 @@ void mem_set_font_override(int font)
 		rom_font_available((uint8_t)font)) ? font : 0;
 }
 
+#define ROM_BORDER_BANK_BASE 0xF3u
+#define ROM_BORDER_COUNT 3u
+#define ROM_BORDER_BYTES 0x2880u
+
+const uint8_t *rom_sgb_border(int border)
+{
+	if (!g_product_mode || border < 1 || border > (int)ROM_BORDER_COUNT)
+		return NULL;
+	uint8_t bank = (uint8_t)(ROM_BORDER_BANK_BASE + border - 1);
+	if (!rom_byte_available(bank, 0x4000u) ||
+	    !rom_byte_available(bank, (uint16_t)(0x4000u + ROM_BORDER_BYTES - 1u)))
+		return NULL;
+	return rom_ptr_product(bank, 0x4000u);
+}
+
 const uint8_t *rom_ptr_product(uint8_t bank, uint16_t addr)
 {
 	if (g_font_override && bank == 0x1Du &&

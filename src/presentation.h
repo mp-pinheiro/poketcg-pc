@@ -15,5 +15,6 @@ typedef enum {
 
 void presentation_render(PresentationMode mode, uint16_t *output,
                          const uint16_t *game);
+void presentation_set_border(const uint8_t *border);
 
 #endif

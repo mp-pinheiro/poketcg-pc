@@ -12,7 +12,19 @@ import sys
 import zlib
 from dataclasses import dataclass
 from pathlib import Path
-from gen_fonts import build_fonts, source_manifest
+from gen_fonts import build_fonts
+from gen_sgb_borders import build_borders
+
+
+def build_extras(root: Path) -> list[dict[str, object]]:
+    return build_fonts(root) + build_borders(root)
+
+
+def extra_manifest(extras: list[dict[str, object]]) -> list[dict[str, object]]:
+    return [
+        {key: extra[key] for key in ("kind", "id", "name", "bank", "sha256", "source_files")}
+        for extra in extras
+    ]
 
 SCHEMA = (
     {"name": "decks", "section": "Decks", "ctype": "uint8_t", "symbol": "DeckPointers"},
@@ -295,9 +307,9 @@ def write_sparse_pack(
     sym_path: Path,
     root: Path,
 ) -> tuple[int, int]:
-    fonts = build_fonts(root)
-    payload = bytearray(PACK_HEADER.pack(PACK_MAGIC, 1, len(items) + len(fonts)))
-    payload.extend(b"\0" * PACK_RECORD.size * (len(items) + len(fonts)))
+    extras = build_extras(root)
+    payload = bytearray(PACK_HEADER.pack(PACK_MAGIC, 1, len(items) + len(extras)))
+    payload.extend(b"\0" * PACK_RECORD.size * (len(items) + len(extras)))
     spans = []
     for entry, section, data in items:
         if section.name.casefold() == "romheader" or section.name.casefold().startswith(
@@ -317,20 +329,20 @@ def write_sparse_pack(
             "flags": 0,
             "sha256": hashlib.sha256(data).hexdigest(),
         })
-    for font in fonts:
-        data = font["data"]
+    for extra in extras:
+        data = extra["data"]
         pack_offset = len(payload)
         payload.extend(data)
         spans.append({
-            "name": font["name"],
-            "font_id": font["id"],
-            "kind": "font",
-            "bank": font["bank"],
+            "name": extra["name"],
+            "extra_id": extra["id"],
+            "kind": extra["kind"],
+            "bank": extra["bank"],
             "address": 0x4000,
             "length": len(data),
             "pack_offset": pack_offset,
-            "flags": 0xF0000000 | int(font["id"]),
-            "sha256": font["sha256"],
+            "flags": extra["flags"],
+            "sha256": extra["sha256"],
         })
     records = bytearray()
     for span in spans:
@@ -351,7 +363,7 @@ def write_sparse_pack(
         "pack_sha256": hashlib.sha256(payload).hexdigest(),
         "pack_size": len(payload),
         "rom_source": str(rom_path),
-        "font_sources": source_manifest(root),
+        "extra_sources": extra_manifest(extras),
         "spans": spans,
     }
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
@@ -381,8 +393,9 @@ def verify_sparse_pack(
         raise ValueError("sparse pack size differs from manifest")
     if hashlib.sha256(payload).hexdigest() != manifest.get("pack_sha256"):
         raise ValueError("sparse pack hash differs from manifest")
-    if manifest.get("font_sources") != source_manifest(root):
-        raise ValueError("sparse pack font source identity differs from source")
+    extras = build_extras(root)
+    if manifest.get("extra_sources") != extra_manifest(extras):
+        raise ValueError("sparse pack font/border source identity differs from source")
     if len(payload) < PACK_HEADER.size:
         raise ValueError("sparse pack is truncated")
     magic, version, count = PACK_HEADER.unpack(payload[:PACK_HEADER.size])
@@ -394,7 +407,7 @@ def verify_sparse_pack(
     spans = manifest.get("spans")
     if not isinstance(spans, list) or count != len(spans):
         raise ValueError("sparse pack span count is invalid")
-    fonts = {int(font["id"]): font for font in build_fonts(root)}
+    by_kind = {(extra["kind"], int(extra["id"])): extra for extra in extras}
     total = 0
     expected_offset = table_end
     for index, span in enumerate(spans):
@@ -402,15 +415,15 @@ def verify_sparse_pack(
             raise ValueError("sparse pack span is invalid")
         kind = span.get("kind")
         label = span.get("section") or span.get("name")
-        if kind == "font":
-            font = fonts.get(int(span.get("font_id", -1)))
-            if font is None:
-                raise ValueError(f"unknown font span: {label}")
-            expected_bank = int(font["bank"])
+        extra = by_kind.get((kind, int(span.get("extra_id", -1)))) if kind != "data" else None
+        if kind != "data":
+            if extra is None:
+                raise ValueError(f"unknown {kind} span: {label}")
+            expected_bank = int(extra["bank"])
             expected_address = 0x4000
-            expected_length = len(font["data"])
-            expected_data = font["data"]
-        elif kind == "data":
+            expected_length = len(extra["data"])
+            expected_data = extra["data"]
+        else:
             section = sections.get(span.get("section"))
             if section is not None:
                 expected_bank = section.bank
@@ -428,8 +441,6 @@ def verify_sparse_pack(
                     raise ValueError(f"sparse pack span is invalid: {label}")
                 start = rom_offset(expected_bank, expected_address)
                 expected_data = rom[start:start + expected_length]
-        else:
-            raise ValueError(f"sparse pack contains invalid span kind: {kind}")
         bank, address, length, pack_offset, flags = PACK_RECORD.unpack_from(
             payload, PACK_HEADER.size + index * PACK_RECORD.size
         )
@@ -437,9 +448,9 @@ def verify_sparse_pack(
             bank, address, expected_length
         ):
             raise ValueError(f"sparse pack record differs: {label}")
-        if kind == "font":
-            if flags != 0xF0000000 | int(span["font_id"]):
-                raise ValueError(f"sparse pack font flags differ: {label}")
+        if extra is not None:
+            if flags != extra["flags"]:
+                raise ValueError(f"sparse pack {kind} flags differ: {label}")
         elif flags != 0:
             raise ValueError(f"sparse pack data flags differ: {label}")
         if pack_offset != expected_offset or span.get("pack_offset") != pack_offset:

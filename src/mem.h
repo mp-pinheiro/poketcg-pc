@@ -109,6 +109,7 @@ const uint8_t *rom_ptr_product(uint8_t bank, uint16_t addr);
 /* Existing game call sites use the active role without migration. */
 const uint8_t *rom_ptr(uint8_t bank, uint16_t addr);
 void mem_set_font_override(int font);
+const uint8_t *rom_sgb_border(int border);
 
 /* Whether a banked ROM byte is backed by the product pack; always true against
  * the reference ROM. For a read the asm performs speculatively and discards. */

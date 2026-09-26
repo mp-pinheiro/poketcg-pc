@@ -10,6 +10,8 @@ typedef struct PcOptions {
 	int sound_volume;
 	int music_volume;
 	int font;
+	int sgb_border;
+	int text_case;
 } PcOptions;
 void pc_options_defaults(PcOptions *options);
 int pc_options_load(PcOptions *options);
