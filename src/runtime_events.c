@@ -71,7 +71,6 @@ int runtime_pc_option_value(unsigned option)
 		return 0;
 	switch (option) {
 	case 0u: return g_pc_options->scale;
-	case 1u: return g_pc_options->stereo;
 	case 2u: return g_pc_options->sgb;
 	case 3u: return g_pc_options->master_volume;
 	case 4u: return g_pc_options->music_volume;
@@ -110,9 +109,6 @@ void runtime_pc_option_adjust(unsigned option, int direction)
 		g_pc_options->scale = g_pc_options->scale + direction;
 		if (g_pc_options->scale < 1) g_pc_options->scale = 1;
 		if (g_pc_options->scale > 6) g_pc_options->scale = 6;
-		break;
-	case 1u:
-		g_pc_options->stereo = !g_pc_options->stereo;
 		break;
 	case 2u:
 		g_pc_options->sgb = !g_pc_options->sgb;

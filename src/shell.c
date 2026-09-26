@@ -254,12 +254,11 @@ int shell_has_window(const Shell *shell)
 
 ShellAudioSettings shell_audio_settings(const Shell *shell)
 {
-	ShellAudioSettings settings = {100u, 100u, 100u, 0};
+	ShellAudioSettings settings = {100u, 100u, 100u};
 	if (shell && shell->options) {
 		settings.master_volume = (uint8_t)clamp_int(shell->options->master_volume, 0, 100);
 		settings.music_volume = (uint8_t)clamp_int(shell->options->music_volume, 0, 100);
 		settings.sfx_volume = (uint8_t)clamp_int(shell->options->sfx_volume, 0, 100);
-		settings.mono = shell->options->stereo == 0;
 	}
 	return settings;
 }

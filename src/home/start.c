@@ -149,9 +149,11 @@ static uint8_t start_menu_pc_index(void)
 	return index;
 }
 #define PC_PAGE_SLOTS 6u
-#define PC_ROWS (PC_PAGE_SLOTS + 1u)
+#define PC_PAGE_ROW_Y 15u
 #define PC_OPTION_SGB 2u
 #define PC_OPTION_BORDER 6u
+#define PC_SFX_CURSOR 0x01u
+#define PC_SFX_CANCEL 0x03u
 typedef struct {
 	const char *name;
 	uint8_t count;
@@ -159,7 +161,7 @@ typedef struct {
 } PcOptionPage;
 static const PcOptionPage kPcPages[] = {
 	{"DISPLAY", 6u, {0u, PC_OPTION_SGB, PC_OPTION_BORDER, 5u, 9u, 7u}},
-	{"SOUND", 4u, {1u, 3u, 4u, 8u}},
+	{"SOUND", 3u, {3u, 4u, 8u}},
 };
 #define PC_PAGE_COUNT (sizeof kPcPages / sizeof kPcPages[0])
 static const char *const kPcFontNames[] = {
@@ -187,23 +189,25 @@ static uint8_t pc_visible_options(uint8_t page, uint8_t *out)
 	return count;
 }
 
-static void print_pc_row(uint8_t row, const char *text)
+static uint8_t pc_row_y(uint8_t row, uint8_t count)
 {
-	char padded[23];
-	snprintf(padded, sizeof padded, "%-22s", text);
-	print_host_text(padded, 2u, (uint8_t)(3u + row * 2u));
+	return row < count ? (uint8_t)(3u + row * 2u) : PC_PAGE_ROW_Y;
 }
 
-static void print_pc_option_line(uint8_t row, uint8_t option)
+static void print_pc_row(uint8_t y, const char *text)
+{
+	char padded[23];
+	snprintf(padded, sizeof padded, "%-22.22s", text);
+	print_host_text(padded, 2u, y);
+}
+
+static void print_pc_option_line(uint8_t y, uint8_t option)
 {
 	char text[24];
 	int value = runtime_pc_option_value(option);
 	switch (option) {
 	case 0u:
 		snprintf(text, sizeof text, "RESOLUTION %dX", value);
-		break;
-	case 1u:
-		snprintf(text, sizeof text, "SOUND %s", value ? "STEREO" : "MONO");
 		break;
 	case 2u:
 		snprintf(text, sizeof text, "SGB %s", value ? "ON" : "OFF");
@@ -230,7 +234,7 @@ static void print_pc_option_line(uint8_t row, uint8_t option)
 		snprintf(text, sizeof text, "SMALL FONT %s", value ? "TOM THUMB" : "ORIGINAL");
 		break;
 	}
-	print_pc_row(row, text);
+	print_pc_row(y, text);
 }
 
 static uint8_t g_pc_header_palette;
@@ -282,37 +286,43 @@ static void load_pc_header_palette(void)
 	FlushAllPalettes();
 }
 
-static uint8_t draw_pc_options(uint8_t page)
+static uint8_t draw_pc_options(uint8_t page, uint8_t *options)
 {
 	char header[24];
-	uint8_t options[PC_PAGE_SLOTS];
 	uint8_t count = pc_visible_options(page, options);
 	(void)SetupText(0x30u, 0x8Fu);
 	print_host_text("PC OPTIONS", 2u, 1u);
-	for (uint8_t row = 0u; row < PC_ROWS; ++row) {
-		if (row < count) {
-			print_pc_option_line(row, options[row]);
-		} else if (row == count) {
-			snprintf(header, sizeof header, "PAGE %u/%u %s", (unsigned)page + 1u,
-				(unsigned)PC_PAGE_COUNT, kPcPages[page].name);
-			print_pc_row(row, header);
-		} else {
-			print_pc_row(row, "");
-		}
-		set_pc_row_palette((uint8_t)(3u + row * 2u),
-			row == count ? g_pc_header_palette : g_pc_body_palette);
-	}
 	set_pc_row_palette(1u, g_pc_header_palette);
+	for (uint8_t slot = 0u; slot < PC_PAGE_SLOTS; ++slot) {
+		uint8_t y = (uint8_t)(3u + slot * 2u);
+		if (slot < count)
+			print_pc_option_line(y, options[slot]);
+		else
+			print_pc_row(y, "");
+		set_pc_row_palette(y, g_pc_body_palette);
+	}
+	int used = snprintf(header, sizeof header, "PAGE %u/%u", (unsigned)page + 1u,
+		(unsigned)PC_PAGE_COUNT);
+	snprintf(header + used, sizeof header - (size_t)used, "%*s", 21 - used,
+		kPcPages[page].name);
+	print_pc_row(PC_PAGE_ROW_Y, header);
+	set_pc_row_palette(PC_PAGE_ROW_Y, g_pc_header_palette);
 	print_text_bytes(kFontSampleUpper, 15u, 9u);
 	print_text_bytes(kFontSampleLower, 15u, 11u);
-	wNumMenuItems = (uint8_t)(count + 1u);
 	return count;
+}
+
+static int pc_option_toggles(uint8_t option)
+{
+	return option == 2u || option == 5u || option == 6u || option == 7u || option == 9u;
 }
 
 static void RunPCOptionsMenu(void)
 {
 	uint16_t box = 0u;
 	uint8_t page = 0u;
+	uint8_t row = 0u;
+	uint8_t options[PC_PAGE_SLOTS];
 	DisableLCD();
 	(void)InitMenuScreen();
 	EnableAndClearSpriteAnimations();
@@ -322,58 +332,55 @@ static void RunPCOptionsMenu(void)
 	DrawRegularTextBox(&box, 0u, 6u, 6u, 14u, 8u);
 	if (wConsole == CONSOLE_CGB)
 		load_pc_header_palette();
-	(void)draw_pc_options(page);
-	wCurMenuItem = 0u;
-	hCurMenuItem = 0u;
-	wMenuCursorXOffset = 1u;
-	wMenuCursorYOffset = 3u;
-	wMenuYSeparation = 2u;
-	wMenuVisibleCursorTile = SYM_CURSOR_R;
-	wMenuInvisibleCursorTile = SYM_SPACE;
-	wMenuUpdateFunc = 0u;
-	gb_write8((uint16_t)(wMenuUpdateFunc_ADDR + 1u), 0u);
+	uint8_t count = draw_pc_options(page, options);
 	wCursorBlinkCounter = 0u;
-	DrawCursor2();
+	(void)WriteByteToBGMap0(SYM_CURSOR_R, 1u, pc_row_y(row, count));
 	(void)FlashWhiteScreen();
 	for (;;) {
 		DoFrameIfLCDEnabled();
 		(void)UpdateRNGSources();
-		HandleMenuInputResult input = HandleMenuInput();
+		uint8_t held = hDPadHeld;
 		uint8_t pressed = hKeysPressed;
-		uint8_t options[PC_PAGE_SLOTS];
-		uint8_t count = pc_visible_options(page, options);
-		uint8_t row = wCurMenuItem <= count ? wCurMenuItem : count;
+		if ((pressed & PAD_B) != 0u) {
+			PlaySFX(PC_SFX_CANCEL);
+			return;
+		}
+		if ((held & (PAD_UP | PAD_DOWN)) != 0u) {
+			(void)WriteByteToBGMap0(SYM_SPACE, 1u, pc_row_y(row, count));
+			if ((held & PAD_UP) != 0u)
+				row = row == 0u ? count : (uint8_t)(row - 1u);
+			else
+				row = row >= count ? 0u : (uint8_t)(row + 1u);
+			wCursorBlinkCounter = 0u;
+			PlaySFX(PC_SFX_CURSOR);
+		}
 		int direction = 0;
-		if ((pressed & (PAD_LEFT | PAD_RIGHT)) != 0u)
-			direction = (pressed & PAD_RIGHT) != 0u ? 1 : -1;
-		if ((input.f & 0x10u) != 0u) {
-			if (hCurMenuItem == 0xFFu)
-				return;
-			if ((pressed & PAD_A) != 0u)
-				direction = 1;
+		if ((held & (PAD_LEFT | PAD_RIGHT)) != 0u)
+			direction = (held & PAD_RIGHT) != 0u ? 1 : -1;
+		else if ((pressed & PAD_A) != 0u)
+			direction = 1;
+		if (direction) {
+			if (row == count) {
+				int next = (int)page + direction;
+				if (next < 0)
+					next = (int)PC_PAGE_COUNT - 1;
+				else if (next >= (int)PC_PAGE_COUNT)
+					next = 0;
+				page = (uint8_t)next;
+				count = draw_pc_options(page, options);
+				row = count;
+				PlaySFX(PC_SFX_CURSOR);
+			} else if ((pressed & PAD_A) == 0u || pc_option_toggles(options[row])) {
+				runtime_pc_option_adjust(options[row], direction);
+				count = draw_pc_options(page, options);
+				if (row > count)
+					row = count;
+				PlaySFX((pressed & PAD_A) != 0u ? SFX_CONFIRM : PC_SFX_CURSOR);
+			}
 		}
-		if (!direction)
-			continue;
-		if (row == count) {
-			int next = (int)page + direction;
-			if (next < 0)
-				next = (int)PC_PAGE_COUNT - 1;
-			else if (next >= (int)PC_PAGE_COUNT)
-				next = 0;
-			page = (uint8_t)next;
-			(void)WriteByteToBGMap0(SYM_SPACE, 1u, (uint8_t)(3u + row * 2u));
-			count = draw_pc_options(page);
-			wCurMenuItem = count;
-			hCurMenuItem = count;
-		} else {
-			uint8_t option = options[row];
-			if ((pressed & PAD_A) != 0u && !(option == 1u || option == 2u ||
-			    option == 5u || option == 6u || option == 7u || option == 9u))
-				continue;
-			runtime_pc_option_adjust(option, direction);
-			(void)draw_pc_options(page);
-		}
-		DrawCursor2();
+		wCursorBlinkCounter++;
+		(void)WriteByteToBGMap0((wCursorBlinkCounter & 0x10u) != 0u ? SYM_SPACE : SYM_CURSOR_R,
+			1u, pc_row_y(row, count));
 	}
 }
 

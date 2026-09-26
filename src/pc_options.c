@@ -37,7 +37,6 @@ static const char *options_path(void)
 static void normalize(PcOptions *options)
 {
 	options->scale = clamp(options->scale, 1, 6);
-	options->stereo = options->stereo ? 1 : 0;
 	options->sgb = options->sgb ? 1 : 0;
 	options->master_volume = clamp(options->master_volume, 0, 100);
 	options->music_volume = clamp(options->music_volume, 0, 100);
@@ -53,7 +52,6 @@ void pc_options_defaults(PcOptions *options)
 	if (!options)
 		return;
 	options->scale = 3;
-	options->stereo = 1;
 	options->sgb = 0;
 	options->master_volume = 100;
 	options->music_volume = 100;
@@ -71,7 +69,6 @@ int pc_options_load(PcOptions *options)
 		size_t offset;
 	} fields[] = {
 		{"scale", offsetof(PcOptions, scale)},
-		{"stereo", offsetof(PcOptions, stereo)},
 		{"sgb", offsetof(PcOptions, sgb)},
 		{"master_volume", offsetof(PcOptions, master_volume)},
 		{"music_volume", offsetof(PcOptions, music_volume)},
@@ -143,9 +140,9 @@ int pc_options_save(const PcOptions *options)
 	if (!file)
 		return -1;
 	int result = fprintf(file,
-		"scale=%d\nstereo=%d\nsgb=%d\nmaster_volume=%d\nmusic_volume=%d\n"
+		"scale=%d\nsgb=%d\nmaster_volume=%d\nmusic_volume=%d\n"
 		"sfx_volume=%d\nbig_font=%d\nsmall_font=%d\nsgb_border=%d\ntext_case=%d\n",
-		normalized.scale, normalized.stereo, normalized.sgb,
+		normalized.scale, normalized.sgb,
 		normalized.master_volume, normalized.music_volume, normalized.sfx_volume,
 		normalized.big_font, normalized.small_font, normalized.sgb_border,
 		normalized.text_case) < 0;

@@ -6,7 +6,6 @@
 
 typedef struct PcOptions {
 	int scale;
-	int stereo;
 	int sgb;
 	int master_volume;
 	int music_volume;
