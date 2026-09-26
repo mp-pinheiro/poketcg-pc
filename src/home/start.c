@@ -7,6 +7,7 @@
 #include "home/print_text.h"
 #include "home/text_box.h"
 #include "home/bg_map.h"
+#include "home/palettes.h"
 /* >>> factory statics */
 #include "home/start.h"
 #include "home/save.h"
@@ -232,6 +233,55 @@ static void print_pc_option_line(uint8_t row, uint8_t option)
 	print_pc_row(row, text);
 }
 
+static uint8_t g_pc_header_palette;
+static uint8_t g_pc_body_palette;
+
+static void set_pc_row_palette(uint8_t y, uint8_t palette)
+{
+	if (wConsole != CONSOLE_CGB)
+		return;
+	gb_write8(rVBK, 1u);
+	for (uint8_t x = 2u; x < 13u; ++x) {
+		uint16_t cell = (uint16_t)(0x9800u + y * 32u + x);
+		gb_write8(cell, (uint8_t)((gb_read8(cell) & 0xF8u) | palette));
+	}
+	gb_write8(rVBK, 0u);
+}
+
+static void load_pc_header_palette(void)
+{
+	uint8_t used = 0u;
+	gb_write8(rVBK, 1u);
+	g_pc_body_palette = (uint8_t)(gb_read8((uint16_t)(0x9800u + 3u * 32u + 2u)) & 7u);
+	for (uint8_t y = 0u; y < 18u; ++y)
+		for (uint8_t x = 0u; x < 20u; ++x)
+			used |= (uint8_t)(1u << (gb_read8((uint16_t)(0x9800u + y * 32u + x)) & 7u));
+	gb_write8(rVBK, 0u);
+	g_pc_header_palette = g_pc_body_palette;
+	for (uint8_t palette = 7u; palette > 0u; --palette) {
+		if (!(used & (1u << palette))) {
+			g_pc_header_palette = palette;
+			break;
+		}
+	}
+	if (g_pc_header_palette == g_pc_body_palette)
+		return;
+	uint8_t *pals = wBackgroundPalettesCGB_PTR;
+	const uint8_t *body = pals + g_pc_body_palette * 8u;
+	uint16_t background = (uint16_t)(body[0] | body[1] << 8);
+	uint16_t text = (uint16_t)(body[6] | body[7] << 8);
+	uint16_t gray = 0u;
+	for (unsigned shift = 0u; shift < 15u; shift += 5u) {
+		unsigned mix = (((background >> shift) & 31u) + ((text >> shift) & 31u)) / 2u;
+		gray = (uint16_t)(gray | mix << shift);
+	}
+	for (unsigned i = 0u; i < 8u; ++i)
+		pals[g_pc_header_palette * 8u + i] = body[i];
+	pals[g_pc_header_palette * 8u + 6u] = (uint8_t)gray;
+	pals[g_pc_header_palette * 8u + 7u] = (uint8_t)(gray >> 8);
+	FlushAllPalettes();
+}
+
 static uint8_t draw_pc_options(uint8_t page)
 {
 	char header[24];
@@ -249,7 +299,10 @@ static uint8_t draw_pc_options(uint8_t page)
 		} else {
 			print_pc_row(row, "");
 		}
+		set_pc_row_palette((uint8_t)(3u + row * 2u),
+			row == count ? g_pc_header_palette : g_pc_body_palette);
 	}
+	set_pc_row_palette(1u, g_pc_header_palette);
 	print_text_bytes(kFontSampleUpper, 15u, 9u);
 	print_text_bytes(kFontSampleLower, 15u, 11u);
 	wNumMenuItems = (uint8_t)(count + 1u);
@@ -267,6 +320,8 @@ static void RunPCOptionsMenu(void)
 	DrawPlayerPortrait(14u, 1u);
 	DrawRegularTextBox(&box, 0u, 14u, 18u, 0u, 0u);
 	DrawRegularTextBox(&box, 0u, 6u, 6u, 14u, 8u);
+	if (wConsole == CONSOLE_CGB)
+		load_pc_header_palette();
 	(void)draw_pc_options(page);
 	wCurMenuItem = 0u;
 	hCurMenuItem = 0u;
