@@ -2,41 +2,31 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v1.0.0 - 2026-09-25
+## v1.1.0 - 2026-09-26
 
 ### Bug Fixes
 
-- *(audio)* Restore Linux and WSL PulseAudio playback
-- *(audio)* Remove host output DC bias and raise Pulse fallback level
+- *(options)* Make menu entry native
+- *(options)* Guard native menu dispatch
+- *(fonts)* Match small font to original height
+- *(options)* Justify page row label
 
-### Features
+### CI/CD
 
-- *(debug)* Add native playtest controls and GameShark-inspired cheats
-
-## v0.223.0 - 2026-09-25
-
-### Bug Fixes
-
-- *(completion)* Drop printer serial ISR events
-- *(dump)* Keep io readback off serial track
-- *(oracle)* Refresh stale printer, link mutations
-- *(gate)* Drop CFG gate, capture past boot ROM
-- *(start)* Re-enter the title screen at its top
-- *(duel)* Carry text box registers into triggers
-- *(effects)* Match Call for Family reloop quirks
-- *(runtime)* Accept trailing ISR records
+- *(release)* Mark nightlies prerelease
 
 ### Documentation
 
-- *(vision)* Record completion at 26/26
-- *(vision)* Record CFG gate decision
-- *(vision)* Record every session clean
+- Make 4x3 presentation canonical
 
 ### Features
 
-- *(completion)* Close link, credits, widescreen
+- *(presentation)* Add sgb frame mode
+- *(options)* Add host settings menu
+- *(options)* Render native menu screen
+- *(options)* Add alternate font choice
+- *(options)* Paginate and add SGB borders
+- *(options)* Split fonts and add SFX volume
+- *(options)* Gray header rows
+- *(options)* Pin page row, drop stereo
 
-### Tests
-
-- *(sessions)* Ratchet ai-duel-01 to clean
-- *(sessions)* Ratchet three sessions to clean
