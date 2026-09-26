@@ -12,6 +12,7 @@ import sys
 import zlib
 from dataclasses import dataclass
 from pathlib import Path
+from gen_fonts import build_fonts, source_manifest
 
 SCHEMA = (
     {"name": "decks", "section": "Decks", "ctype": "uint8_t", "symbol": "DeckPointers"},
@@ -292,9 +293,11 @@ def write_sparse_pack(
     rom_path: Path,
     map_path: Path,
     sym_path: Path,
+    root: Path,
 ) -> tuple[int, int]:
-    payload = bytearray(PACK_HEADER.pack(PACK_MAGIC, 1, len(items)))
-    payload.extend(b"\0" * PACK_RECORD.size * len(items))
+    fonts = build_fonts(root)
+    payload = bytearray(PACK_HEADER.pack(PACK_MAGIC, 1, len(items) + len(fonts)))
+    payload.extend(b"\0" * PACK_RECORD.size * (len(items) + len(fonts)))
     spans = []
     for entry, section, data in items:
         if section.name.casefold() == "romheader" or section.name.casefold().startswith(
@@ -311,12 +314,29 @@ def write_sparse_pack(
             "address": section.start,
             "length": len(data),
             "pack_offset": pack_offset,
+            "flags": 0,
             "sha256": hashlib.sha256(data).hexdigest(),
+        })
+    for font in fonts:
+        data = font["data"]
+        pack_offset = len(payload)
+        payload.extend(data)
+        spans.append({
+            "name": font["name"],
+            "font_id": font["id"],
+            "kind": "font",
+            "bank": font["bank"],
+            "address": 0x4000,
+            "length": len(data),
+            "pack_offset": pack_offset,
+            "flags": 0xF0000000 | int(font["id"]),
+            "sha256": font["sha256"],
         })
     records = bytearray()
     for span in spans:
         records.extend(PACK_RECORD.pack(
-            span["bank"], span["address"], span["length"], span["pack_offset"], 0
+            span["bank"], span["address"], span["length"],
+            span["pack_offset"], span["flags"],
         ))
     table_end = PACK_HEADER.size + len(records)
     payload[PACK_HEADER.size:table_end] = records
@@ -331,6 +351,7 @@ def write_sparse_pack(
         "pack_sha256": hashlib.sha256(payload).hexdigest(),
         "pack_size": len(payload),
         "rom_source": str(rom_path),
+        "font_sources": source_manifest(root),
         "spans": spans,
     }
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
@@ -345,6 +366,7 @@ def verify_sparse_pack(
     manifest_path: Path,
     rom: bytes,
     sections: dict[str, Section],
+    root: Path,
 ) -> tuple[int, int]:
     try:
         payload = pack_path.read_bytes()
@@ -359,6 +381,8 @@ def verify_sparse_pack(
         raise ValueError("sparse pack size differs from manifest")
     if hashlib.sha256(payload).hexdigest() != manifest.get("pack_sha256"):
         raise ValueError("sparse pack hash differs from manifest")
+    if manifest.get("font_sources") != source_manifest(root):
+        raise ValueError("sparse pack font source identity differs from source")
     if len(payload) < PACK_HEADER.size:
         raise ValueError("sparse pack is truncated")
     magic, version, count = PACK_HEADER.unpack(payload[:PACK_HEADER.size])
@@ -370,41 +394,61 @@ def verify_sparse_pack(
     spans = manifest.get("spans")
     if not isinstance(spans, list) or count != len(spans):
         raise ValueError("sparse pack span count is invalid")
+    fonts = {int(font["id"]): font for font in build_fonts(root)}
     total = 0
     expected_offset = table_end
     for index, span in enumerate(spans):
-        if not isinstance(span, dict) or span.get("kind") != "data":
-            raise ValueError("sparse pack contains a non-data span")
-        section = sections.get(span.get("section"))
-        label = span.get("section")
-        if section is not None:
-            expected_bank = section.bank
-            expected_address = section.start
-            expected_length = section.end - section.start + 1
-            start = rom_offset(expected_bank, expected_address)
+        if not isinstance(span, dict):
+            raise ValueError("sparse pack span is invalid")
+        kind = span.get("kind")
+        label = span.get("section") or span.get("name")
+        if kind == "font":
+            font = fonts.get(int(span.get("font_id", -1)))
+            if font is None:
+                raise ValueError(f"unknown font span: {label}")
+            expected_bank = int(font["bank"])
+            expected_address = 0x4000
+            expected_length = len(font["data"])
+            expected_data = font["data"]
+        elif kind == "data":
+            section = sections.get(span.get("section"))
+            if section is not None:
+                expected_bank = section.bank
+                expected_address = section.start
+                expected_length = section.end - section.start + 1
+                start = rom_offset(expected_bank, expected_address)
+                expected_data = rom[start:start + expected_length]
+            else:
+                expected_bank = span.get("bank")
+                expected_address = span.get("address")
+                expected_length = span.get("length")
+                if not all(isinstance(value, int) for value in (
+                    expected_bank, expected_address, expected_length,
+                )):
+                    raise ValueError(f"sparse pack span is invalid: {label}")
+                start = rom_offset(expected_bank, expected_address)
+                expected_data = rom[start:start + expected_length]
         else:
-            expected_bank = span.get("bank")
-            expected_address = span.get("address")
-            expected_length = span.get("length")
-            if not all(isinstance(value, int) for value in (
-                expected_bank, expected_address, expected_length,
-            )):
-                raise ValueError(f"sparse pack span is invalid: {label}")
-            start = rom_offset(expected_bank, expected_address)
-        bank, address, length, pack_offset, _flags = PACK_RECORD.unpack_from(
+            raise ValueError(f"sparse pack contains invalid span kind: {kind}")
+        bank, address, length, pack_offset, flags = PACK_RECORD.unpack_from(
             payload, PACK_HEADER.size + index * PACK_RECORD.size
         )
         if (span.get("bank"), span.get("address"), span.get("length")) != (
             bank, address, expected_length
         ):
             raise ValueError(f"sparse pack record differs: {label}")
+        if kind == "font":
+            if flags != 0xF0000000 | int(span["font_id"]):
+                raise ValueError(f"sparse pack font flags differ: {label}")
+        elif flags != 0:
+            raise ValueError(f"sparse pack data flags differ: {label}")
         if pack_offset != expected_offset or span.get("pack_offset") != pack_offset:
             raise ValueError(f"sparse pack offsets are not contiguous: {label}")
         actual = payload[pack_offset:pack_offset + length]
-        expected = rom[start:start + length]
         if len(actual) != length:
             raise ValueError(f"sparse pack data is truncated: {label}")
-        if actual != expected or hashlib.sha256(actual).hexdigest() != span.get("sha256"):
+        expected_sha = span.get("sha256")
+        if actual != expected_data or hashlib.sha256(actual).hexdigest() != expected_sha:
             raise ValueError(f"sparse pack first mismatch: {label}")
         expected_offset += length
         total += length
@@ -432,6 +476,7 @@ def main() -> int:
         default=Path("build/completion/data-pack.json"),
     )
     args = parser.parse_args()
+    root = Path.cwd().resolve()
     for path in (args.rom, args.map, args.sym):
         if not path.exists():
             raise SystemExit(f"input not found: {path} (run `just bootstrap`)")
@@ -445,16 +490,16 @@ def main() -> int:
         if args.check:
             parser.error("--check validates the C header, not a sparse pack")
         if args.pack_check:
-            count, total = verify_sparse_pack(args.pack, args.pack_manifest, rom, sections)
+            count, total = verify_sparse_pack(args.pack, args.pack_manifest, rom, sections, root)
             print(f"gen_data: checked sparse pack {args.pack} -- {count} sections, {total} bytes")
         else:
             count, total = write_sparse_pack(
                 items, rom, args.pack, args.pack_manifest,
-                args.rom, args.map, args.sym,
+                args.rom, args.map, args.sym, root,
             )
             print(f"gen_data: wrote sparse pack {args.pack} -- {count} sections, {total} bytes")
             if args.verify:
-                verify_sparse_pack(args.pack, args.pack_manifest, rom, sections)
+                verify_sparse_pack(args.pack, args.pack_manifest, rom, sections, root)
                 print("gen_data: verified sparse pack")
         return 0
     if args.check:

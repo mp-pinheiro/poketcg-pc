@@ -1,9 +1,12 @@
 #include "runtime.h"
+#include "mem.h"
 #include "pc_options.h"
 
 #include "home/frames.h"
 
 #include <limits.h>
+
+#define PC_FONT_COUNT 4
 
 static RuntimeEvent g_terminal_event;
 static uint32_t g_event_mask;
@@ -72,6 +75,7 @@ int runtime_pc_option_value(unsigned option)
 	case 2u: return g_pc_options->sgb;
 	case 3u: return g_pc_options->sound_volume;
 	case 4u: return g_pc_options->music_volume;
+	case 5u: return g_pc_options->font;
 	default: return 0;
 	}
 }
@@ -102,6 +106,11 @@ void runtime_pc_option_adjust(unsigned option, int direction)
 		if (g_pc_options->music_volume < 0) g_pc_options->music_volume = 0;
 		if (g_pc_options->music_volume > 100) g_pc_options->music_volume = 100;
 		break;
+	case 5u:
+		g_pc_options->font = (g_pc_options->font + direction % PC_FONT_COUNT + PC_FONT_COUNT)
+			% PC_FONT_COUNT;
+		mem_set_font_override(g_pc_options->font);
+		break;
 	default:
 		return;
 	}
@@ -110,8 +119,11 @@ void runtime_pc_option_adjust(unsigned option, int direction)
 void runtime_set_pc_options_enabled(int enabled)
 {
 	g_pc_options_enabled = enabled != 0;
+	if (g_pc_options_enabled && g_pc_options)
+		mem_set_font_override(g_pc_options->font);
+	else
+		mem_set_font_override(0);
 }
-
 
 int runtime_pc_options_enabled(void)
 {

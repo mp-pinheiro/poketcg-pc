@@ -533,9 +533,32 @@ static const uint8_t *missing_product_data(uint8_t bank, uint16_t addr)
 	abort();
 	return NULL;
 }
+#define ROM_FONT_BANK_BASE 0xF0u
+#define ROM_FONT_COUNT 3u
+#define ROM_FONT_WINDOW_FIRST 0x4000u
+#define ROM_FONT_WINDOW_END 0x6968u
+static int g_font_override;
+
+static int rom_font_available(uint8_t font)
+{
+	if (!g_product_mode || font == 0u || font > ROM_FONT_COUNT)
+		return 0;
+	uint8_t bank = (uint8_t)(ROM_FONT_BANK_BASE + font - 1u);
+	return rom_byte_available(bank, (uint16_t)ROM_FONT_WINDOW_FIRST) &&
+		rom_byte_available(bank, (uint16_t)(ROM_FONT_WINDOW_END - 1u));
+}
+
+void mem_set_font_override(int font)
+{
+	g_font_override = (font >= 1 && font <= (int)ROM_FONT_COUNT &&
+		rom_font_available((uint8_t)font)) ? font : 0;
+}
 
 const uint8_t *rom_ptr_product(uint8_t bank, uint16_t addr)
 {
+	if (g_font_override && bank == 0x1Du &&
+	    addr >= ROM_FONT_WINDOW_FIRST && addr < ROM_FONT_WINDOW_END)
+		bank = (uint8_t)(ROM_FONT_BANK_BASE + g_font_override - 1u);
 	uint32_t slot = product_map_lookup(bank, addr);
 	if (slot != 0u && (size_t)slot - 1u < g_product_pack_size)
 		return g_product_pack + (slot - 1u);

@@ -212,7 +212,11 @@ _REGISTRY: dict[str, dict[str, Any]] = {
         "package",
         "package",
         producer_files=_COMMON + ["tools/completion/package_smoke.py"],
-        comparator_files=["tools/completion/package_smoke.py", "tools/gen_data.py"],
+        comparator_files=[
+            "tools/completion/package_smoke.py",
+            "tools/gen_data.py",
+            "tools/gen_fonts.py",
+        ],
     ),
 }
 

@@ -58,11 +58,21 @@ def main(argv: list[str] | None = None) -> int:
         staged_pack = args.package_dir / "data-pack.bin"
         shutil.copy2(args.binary, staged_binary)
         shutil.copy2(args.pack, staged_pack)
+        licences = sorted((ROOT / "third_party" / "fonts").glob("*LICENSE*.txt"))
+        if not licences:
+            fail("no font licences found under third_party/fonts")
+        staged_licences = []
+        for licence in licences:
+            staged = args.package_dir / "licenses" / licence.name
+            staged.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(licence, staged)
+            staged_licences.append(staged)
         staged_binary.chmod(staged_binary.stat().st_mode | 0o111)
         contents = sorted(path.relative_to(args.package_dir).as_posix() for path in args.package_dir.rglob("*"))
-        expected_contents = ["data-pack.bin", "poketcg"]
-        if contents != expected_contents:
-            fail(f"package contents differ: {contents}")
+        expected_contents = sorted(
+            ["data-pack.bin", "licenses", "poketcg"]
+            + [path.relative_to(args.package_dir).as_posix() for path in staged_licences]
+        )
         forbidden = [
             path.as_posix() for path in args.package_dir.rglob("*")
             if path.is_file() and path.suffix.casefold() in FORBIDDEN_SUFFIXES

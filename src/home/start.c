@@ -136,6 +136,10 @@ static uint8_t start_menu_pc_index(void)
 	}
 	return index;
 }
+static const char *const kPcFontNames[] = {
+	"ORIGINAL", "PUBLIC PIXEL", "UNSCII-8", "PIX OPER 8"
+};
+
 static void print_pc_option_line(uint8_t index)
 {
 	char text[32];
@@ -154,9 +158,16 @@ static void print_pc_option_line(uint8_t index)
 	case 3u:
 		snprintf(text, sizeof text, "SOUND VOL %d", runtime_pc_option_value(3u));
 		break;
-	default:
+	case 4u:
 		snprintf(text, sizeof text, "MUSIC VOL %d", runtime_pc_option_value(4u));
 		break;
+	default: {
+		int font = runtime_pc_option_value(5u);
+		if (font < 0 || font > 3)
+			font = 0;
+		snprintf(text, sizeof text, "FONT %s", kPcFontNames[font]);
+		break;
+	}
 	}
 	print_host_text(text, 2u, (uint8_t)(3u + index * 2u));
 }
@@ -170,16 +181,16 @@ static void RunPCOptionsMenu(void)
 	EnableAndClearSpriteAnimations();
 	wLineSeparation = DOUBLE_SPACED;
 	DrawPlayerPortrait(14u, 1u);
-	DrawRegularTextBox(&box, 0u, 14u, 14u, 0u, 0u);
+	DrawRegularTextBox(&box, 0u, 14u, 16u, 0u, 0u);
 	print_host_text("PC OPTIONS", 2u, 1u);
-	for (uint8_t i = 0u; i < 5u; ++i)
+	for (uint8_t i = 0u; i < 6u; ++i)
 		print_pc_option_line(i);
 	wCurMenuItem = 0u;
 	hCurMenuItem = 0u;
 	wMenuCursorXOffset = 1u;
 	wMenuCursorYOffset = 3u;
 	wMenuYSeparation = 2u;
-	wNumMenuItems = 5u;
+	wNumMenuItems = 6u;
 	wMenuVisibleCursorTile = SYM_CURSOR_R;
 	wMenuInvisibleCursorTile = SYM_SPACE;
 	wMenuUpdateFunc = 0u;
@@ -203,7 +214,7 @@ static void RunPCOptionsMenu(void)
 		if (hCurMenuItem == 0xFFu)
 			return;
 		if ((pressed & PAD_A) != 0u &&
-		    (wCurMenuItem == 1u || wCurMenuItem == 2u)) {
+		    (wCurMenuItem == 1u || wCurMenuItem == 2u || wCurMenuItem == 5u)) {
 			runtime_pc_option_adjust(wCurMenuItem, 1);
 			print_pc_option_line(wCurMenuItem);
 			DrawCursor2();

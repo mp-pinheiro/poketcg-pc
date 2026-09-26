@@ -9,6 +9,7 @@ typedef struct PcOptions {
 	int sgb;
 	int sound_volume;
 	int music_volume;
+	int font;
 } PcOptions;
 void pc_options_defaults(PcOptions *options);
 int pc_options_load(PcOptions *options);
