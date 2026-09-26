@@ -303,7 +303,7 @@ static uint8_t draw_pc_options(uint8_t page, uint8_t *options)
 	}
 	int used = snprintf(header, sizeof header, "PAGE %u/%u", (unsigned)page + 1u,
 		(unsigned)PC_PAGE_COUNT);
-	snprintf(header + used, sizeof header - (size_t)used, "%*s", 21 - used,
+	snprintf(header + used, sizeof header - (size_t)used, "%*s", 20 - used,
 		kPcPages[page].name);
 	print_pc_row(PC_PAGE_ROW_Y, header);
 	set_pc_row_palette(PC_PAGE_ROW_Y, g_pc_header_palette);
