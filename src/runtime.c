@@ -1145,7 +1145,8 @@ int runtime_run_with_input(
 		}
 		ShellAudioSettings audio_settings = shell_audio_settings(shell);
 		apu_set_host_mix(audio_settings.master_volume,
-		                 audio_settings.music_volume, audio_settings.mono,
+		                 audio_settings.music_volume, audio_settings.sfx_volume,
+		                 audio_settings.mono,
 		                 (uint8_t)(gb_read8(wdd8c_ADDR) & 0x0Fu));
 		apu_trace_set_tick(state.frames);
 		size_t pcm_count = apu_trace_render_pcm(

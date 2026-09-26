@@ -536,8 +536,10 @@ static const uint8_t *missing_product_data(uint8_t bank, uint16_t addr)
 #define ROM_FONT_BANK_BASE 0xF0u
 #define ROM_FONT_COUNT 3u
 #define ROM_FONT_WINDOW_FIRST 0x4000u
+#define ROM_FONT_SMALL_FIRST 0x6668u
 #define ROM_FONT_WINDOW_END 0x6968u
 static int g_font_override;
+static int g_small_font_override;
 
 static int rom_font_available(uint8_t font)
 {
@@ -548,10 +550,11 @@ static int rom_font_available(uint8_t font)
 		rom_byte_available(bank, (uint16_t)(ROM_FONT_WINDOW_END - 1u));
 }
 
-void mem_set_font_override(int font)
+void mem_set_font_override(int big_font, int small_font)
 {
-	g_font_override = (font >= 1 && font <= (int)ROM_FONT_COUNT &&
-		rom_font_available((uint8_t)font)) ? font : 0;
+	g_font_override = (big_font >= 1 && big_font <= (int)ROM_FONT_COUNT &&
+		rom_font_available((uint8_t)big_font)) ? big_font : 0;
+	g_small_font_override = small_font && rom_font_available(1u);
 }
 
 #define ROM_BORDER_BANK_BASE 0xF3u
@@ -571,9 +574,15 @@ const uint8_t *rom_sgb_border(int border)
 
 const uint8_t *rom_ptr_product(uint8_t bank, uint16_t addr)
 {
-	if (g_font_override && bank == 0x1Du &&
-	    addr >= ROM_FONT_WINDOW_FIRST && addr < ROM_FONT_WINDOW_END)
-		bank = (uint8_t)(ROM_FONT_BANK_BASE + g_font_override - 1u);
+	if ((g_font_override || g_small_font_override) && bank == 0x1Du &&
+	    addr >= ROM_FONT_WINDOW_FIRST && addr < ROM_FONT_WINDOW_END) {
+		if (addr < ROM_FONT_SMALL_FIRST) {
+			if (g_font_override)
+				bank = (uint8_t)(ROM_FONT_BANK_BASE + g_font_override - 1u);
+		} else if (g_small_font_override) {
+			bank = (uint8_t)ROM_FONT_BANK_BASE;
+		}
+	}
 	uint32_t slot = product_map_lookup(bank, addr);
 	if (slot != 0u && (size_t)slot - 1u < g_product_pack_size)
 		return g_product_pack + (slot - 1u);

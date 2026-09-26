@@ -6,6 +6,7 @@
 #include "home/process_text.h"
 #include "home/print_text.h"
 #include "home/text_box.h"
+#include "home/bg_map.h"
 /* >>> factory statics */
 #include "home/start.h"
 #include "home/save.h"
@@ -147,14 +148,17 @@ static uint8_t start_menu_pc_index(void)
 	return index;
 }
 #define PC_PAGE_SLOTS 6u
+#define PC_ROWS (PC_PAGE_SLOTS + 1u)
+#define PC_OPTION_SGB 2u
+#define PC_OPTION_BORDER 6u
 typedef struct {
 	const char *name;
 	uint8_t count;
 	uint8_t options[PC_PAGE_SLOTS];
 } PcOptionPage;
 static const PcOptionPage kPcPages[] = {
-	{"DISPLAY", 5u, {0u, 2u, 6u, 5u, 7u}},
-	{"SOUND", 3u, {1u, 3u, 4u}},
+	{"DISPLAY", 6u, {0u, PC_OPTION_SGB, PC_OPTION_BORDER, 5u, 9u, 7u}},
+	{"SOUND", 4u, {1u, 3u, 4u, 8u}},
 };
 #define PC_PAGE_COUNT (sizeof kPcPages / sizeof kPcPages[0])
 static const char *const kPcFontNames[] = {
@@ -169,6 +173,18 @@ static const uint8_t kFontSampleUpper[] = {
 static const uint8_t kFontSampleLower[] = {
 	0x03u, 0x64u, 0x03u, 0x65u, 0x03u, 0x4Bu, 0x03u, 0x66u, 0u
 };
+
+static uint8_t pc_visible_options(uint8_t page, uint8_t *out)
+{
+	uint8_t count = 0u;
+	for (uint8_t i = 0u; i < kPcPages[page].count; ++i) {
+		uint8_t option = kPcPages[page].options[i];
+		if (option == PC_OPTION_BORDER && !runtime_pc_option_value(PC_OPTION_SGB))
+			continue;
+		out[count++] = option;
+	}
+	return count;
+}
 
 static void print_pc_row(uint8_t row, const char *text)
 {
@@ -192,41 +208,52 @@ static void print_pc_option_line(uint8_t row, uint8_t option)
 		snprintf(text, sizeof text, "SGB %s", value ? "ON" : "OFF");
 		break;
 	case 3u:
-		snprintf(text, sizeof text, "SOUND VOL %d", value);
+		snprintf(text, sizeof text, "MASTER VOL %d", value);
 		break;
 	case 4u:
 		snprintf(text, sizeof text, "MUSIC VOL %d", value);
 		break;
 	case 5u:
-		snprintf(text, sizeof text, "FONT %s", kPcFontNames[value & 3]);
+		snprintf(text, sizeof text, "BIG FONT %s", kPcFontNames[value & 3]);
 		break;
 	case 6u:
 		snprintf(text, sizeof text, "BORDER %s", kPcBorderNames[value & 3]);
 		break;
-	default:
+	case 7u:
 		snprintf(text, sizeof text, "TEXT CASE %s", value ? "NORMAL" : "UPPER");
+		break;
+	case 8u:
+		snprintf(text, sizeof text, "SFX VOL %d", value);
+		break;
+	default:
+		snprintf(text, sizeof text, "SMALL FONT %s", value ? "TOM THUMB" : "ORIGINAL");
 		break;
 	}
 	print_pc_row(row, text);
 }
 
-static void draw_pc_options(uint8_t page)
+static uint8_t draw_pc_options(uint8_t page)
 {
 	char header[24];
-	const PcOptionPage *current = &kPcPages[page];
+	uint8_t options[PC_PAGE_SLOTS];
+	uint8_t count = pc_visible_options(page, options);
 	(void)SetupText(0x30u, 0x8Fu);
 	print_host_text("PC OPTIONS", 2u, 1u);
-	snprintf(header, sizeof header, "PAGE %u/%u %s", (unsigned)page + 1u,
-		(unsigned)PC_PAGE_COUNT, current->name);
-	print_pc_row(0u, header);
-	for (uint8_t slot = 0u; slot < PC_PAGE_SLOTS; ++slot) {
-		if (slot < current->count)
-			print_pc_option_line((uint8_t)(slot + 1u), current->options[slot]);
-		else
-			print_pc_row((uint8_t)(slot + 1u), "");
+	for (uint8_t row = 0u; row < PC_ROWS; ++row) {
+		if (row < count) {
+			print_pc_option_line(row, options[row]);
+		} else if (row == count) {
+			snprintf(header, sizeof header, "PAGE %u/%u %s", (unsigned)page + 1u,
+				(unsigned)PC_PAGE_COUNT, kPcPages[page].name);
+			print_pc_row(row, header);
+		} else {
+			print_pc_row(row, "");
+		}
 	}
 	print_text_bytes(kFontSampleUpper, 15u, 9u);
 	print_text_bytes(kFontSampleLower, 15u, 11u);
+	wNumMenuItems = (uint8_t)(count + 1u);
+	return count;
 }
 
 static void RunPCOptionsMenu(void)
@@ -240,13 +267,12 @@ static void RunPCOptionsMenu(void)
 	DrawPlayerPortrait(14u, 1u);
 	DrawRegularTextBox(&box, 0u, 14u, 18u, 0u, 0u);
 	DrawRegularTextBox(&box, 0u, 6u, 6u, 14u, 8u);
-	draw_pc_options(page);
+	(void)draw_pc_options(page);
 	wCurMenuItem = 0u;
 	hCurMenuItem = 0u;
 	wMenuCursorXOffset = 1u;
 	wMenuCursorYOffset = 3u;
 	wMenuYSeparation = 2u;
-	wNumMenuItems = (uint8_t)(kPcPages[page].count + 1u);
 	wMenuVisibleCursorTile = SYM_CURSOR_R;
 	wMenuInvisibleCursorTile = SYM_SPACE;
 	wMenuUpdateFunc = 0u;
@@ -259,7 +285,9 @@ static void RunPCOptionsMenu(void)
 		(void)UpdateRNGSources();
 		HandleMenuInputResult input = HandleMenuInput();
 		uint8_t pressed = hKeysPressed;
-		uint8_t row = wCurMenuItem < wNumMenuItems ? wCurMenuItem : 0u;
+		uint8_t options[PC_PAGE_SLOTS];
+		uint8_t count = pc_visible_options(page, options);
+		uint8_t row = wCurMenuItem <= count ? wCurMenuItem : count;
 		int direction = 0;
 		if ((pressed & (PAD_LEFT | PAD_RIGHT)) != 0u)
 			direction = (pressed & PAD_RIGHT) != 0u ? 1 : -1;
@@ -271,22 +299,25 @@ static void RunPCOptionsMenu(void)
 		}
 		if (!direction)
 			continue;
-		if (row == 0u) {
+		if (row == count) {
 			int next = (int)page + direction;
 			if (next < 0)
 				next = (int)PC_PAGE_COUNT - 1;
 			else if (next >= (int)PC_PAGE_COUNT)
 				next = 0;
 			page = (uint8_t)next;
-			wNumMenuItems = (uint8_t)(kPcPages[page].count + 1u);
+			(void)WriteByteToBGMap0(SYM_SPACE, 1u, (uint8_t)(3u + row * 2u));
+			count = draw_pc_options(page);
+			wCurMenuItem = count;
+			hCurMenuItem = count;
 		} else {
-			uint8_t option = kPcPages[page].options[row - 1u];
+			uint8_t option = options[row];
 			if ((pressed & PAD_A) != 0u && !(option == 1u || option == 2u ||
-			    option == 5u || option == 6u || option == 7u))
+			    option == 5u || option == 6u || option == 7u || option == 9u))
 				continue;
 			runtime_pc_option_adjust(option, direction);
+			(void)draw_pc_options(page);
 		}
-		draw_pc_options(page);
 		DrawCursor2();
 	}
 }

@@ -28,7 +28,7 @@ typedef struct {
 typedef struct {
 	uint8_t master_volume;
 	uint8_t music_volume;
-	uint8_t sfx_mask;
+	uint8_t sfx_volume;
 	int mono;
 } ShellAudioSettings;
 

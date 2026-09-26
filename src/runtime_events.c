@@ -73,13 +73,32 @@ int runtime_pc_option_value(unsigned option)
 	case 0u: return g_pc_options->scale;
 	case 1u: return g_pc_options->stereo;
 	case 2u: return g_pc_options->sgb;
-	case 3u: return g_pc_options->sound_volume;
+	case 3u: return g_pc_options->master_volume;
 	case 4u: return g_pc_options->music_volume;
-	case 5u: return g_pc_options->font;
+	case 5u: return g_pc_options->big_font;
 	case 6u: return g_pc_options->sgb_border;
 	case 7u: return g_pc_options->text_case;
+	case 8u: return g_pc_options->sfx_volume;
+	case 9u: return g_pc_options->small_font;
 	default: return 0;
 	}
+}
+
+static void adjust_volume(int *volume, int direction)
+{
+	*volume += direction * 10;
+	if (*volume < 0)
+		*volume = 0;
+	if (*volume > 100)
+		*volume = 100;
+}
+
+static void apply_font_override(void)
+{
+	if (g_pc_options_enabled && g_pc_options)
+		mem_set_font_override(g_pc_options->big_font, g_pc_options->small_font);
+	else
+		mem_set_font_override(0, 0);
 }
 
 void runtime_pc_option_adjust(unsigned option, int direction)
@@ -99,25 +118,28 @@ void runtime_pc_option_adjust(unsigned option, int direction)
 		g_pc_options->sgb = !g_pc_options->sgb;
 		break;
 	case 3u:
-		g_pc_options->sound_volume += direction * 10;
-		if (g_pc_options->sound_volume < 0) g_pc_options->sound_volume = 0;
-		if (g_pc_options->sound_volume > 100) g_pc_options->sound_volume = 100;
+		adjust_volume(&g_pc_options->master_volume, direction);
 		break;
 	case 4u:
-		g_pc_options->music_volume += direction * 10;
-		if (g_pc_options->music_volume < 0) g_pc_options->music_volume = 0;
-		if (g_pc_options->music_volume > 100) g_pc_options->music_volume = 100;
+		adjust_volume(&g_pc_options->music_volume, direction);
 		break;
 	case 5u:
-		g_pc_options->font = (g_pc_options->font + direction % PC_FONT_COUNT + PC_FONT_COUNT)
+		g_pc_options->big_font = (g_pc_options->big_font + direction % PC_FONT_COUNT + PC_FONT_COUNT)
 			% PC_FONT_COUNT;
-		mem_set_font_override(g_pc_options->font);
+		apply_font_override();
 		break;
 	case 6u:
 		g_pc_options->sgb_border = (g_pc_options->sgb_border + direction % 4 + 4) % 4;
 		break;
 	case 7u:
 		g_pc_options->text_case = !g_pc_options->text_case;
+		break;
+	case 8u:
+		adjust_volume(&g_pc_options->sfx_volume, direction);
+		break;
+	case 9u:
+		g_pc_options->small_font = !g_pc_options->small_font;
+		apply_font_override();
 		break;
 	default:
 		return;
@@ -127,10 +149,7 @@ void runtime_pc_option_adjust(unsigned option, int direction)
 void runtime_set_pc_options_enabled(int enabled)
 {
 	g_pc_options_enabled = enabled != 0;
-	if (g_pc_options_enabled && g_pc_options)
-		mem_set_font_override(g_pc_options->font);
-	else
-		mem_set_font_override(0);
+	apply_font_override();
 }
 
 int runtime_pc_options_enabled(void)

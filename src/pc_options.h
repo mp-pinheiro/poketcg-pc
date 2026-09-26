@@ -1,15 +1,18 @@
 #ifndef POKETCG_PC_OPTIONS_H
 #define POKETCG_PC_OPTIONS_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 typedef struct PcOptions {
 	int scale;
 	int stereo;
 	int sgb;
-	int sound_volume;
+	int master_volume;
 	int music_volume;
-	int font;
+	int sfx_volume;
+	int big_font;
+	int small_font;
 	int sgb_border;
 	int text_case;
 } PcOptions;

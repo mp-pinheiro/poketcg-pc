@@ -39,9 +39,11 @@ static void normalize(PcOptions *options)
 	options->scale = clamp(options->scale, 1, 6);
 	options->stereo = options->stereo ? 1 : 0;
 	options->sgb = options->sgb ? 1 : 0;
-	options->sound_volume = clamp(options->sound_volume, 0, 100);
+	options->master_volume = clamp(options->master_volume, 0, 100);
 	options->music_volume = clamp(options->music_volume, 0, 100);
-	options->font = clamp(options->font, 0, 3);
+	options->sfx_volume = clamp(options->sfx_volume, 0, 100);
+	options->big_font = clamp(options->big_font, 0, 3);
+	options->small_font = options->small_font ? 1 : 0;
 	options->sgb_border = clamp(options->sgb_border, 0, 3);
 	options->text_case = options->text_case ? 1 : 0;
 }
@@ -53,15 +55,32 @@ void pc_options_defaults(PcOptions *options)
 	options->scale = 3;
 	options->stereo = 1;
 	options->sgb = 0;
-	options->sound_volume = 100;
+	options->master_volume = 100;
 	options->music_volume = 100;
-	options->font = 0;
+	options->sfx_volume = 100;
+	options->big_font = 0;
+	options->small_font = 0;
 	options->sgb_border = 2;
 	options->text_case = 0;
 }
 
 int pc_options_load(PcOptions *options)
 {
+	static const struct {
+		const char *key;
+		size_t offset;
+	} fields[] = {
+		{"scale", offsetof(PcOptions, scale)},
+		{"stereo", offsetof(PcOptions, stereo)},
+		{"sgb", offsetof(PcOptions, sgb)},
+		{"master_volume", offsetof(PcOptions, master_volume)},
+		{"music_volume", offsetof(PcOptions, music_volume)},
+		{"sfx_volume", offsetof(PcOptions, sfx_volume)},
+		{"big_font", offsetof(PcOptions, big_font)},
+		{"small_font", offsetof(PcOptions, small_font)},
+		{"sgb_border", offsetof(PcOptions, sgb_border)},
+		{"text_case", offsetof(PcOptions, text_case)},
+	};
 	if (!options)
 		return -1;
 	pc_options_defaults(options);
@@ -77,22 +96,12 @@ int pc_options_load(PcOptions *options)
 		int value;
 		if (sscanf(line, " %63[^=]=%d", key, &value) != 2)
 			continue;
-		if (strcmp(key, "scale") == 0)
-			options->scale = value;
-		else if (strcmp(key, "stereo") == 0)
-			options->stereo = value;
-		else if (strcmp(key, "sgb") == 0)
-			options->sgb = value;
-		else if (strcmp(key, "sound_volume") == 0)
-			options->sound_volume = value;
-		else if (strcmp(key, "music_volume") == 0)
-			options->music_volume = value;
-		else if (strcmp(key, "font") == 0)
-			options->font = value;
-		else if (strcmp(key, "sgb_border") == 0)
-			options->sgb_border = value;
-		else if (strcmp(key, "text_case") == 0)
-			options->text_case = value;
+		for (size_t i = 0; i < sizeof fields / sizeof fields[0]; i++) {
+			if (strcmp(key, fields[i].key) == 0) {
+				*(int *)((char *)options + fields[i].offset) = value;
+				break;
+			}
+		}
 	}
 	int error = ferror(file) ? -1 : 0;
 	fclose(file);
@@ -134,10 +143,12 @@ int pc_options_save(const PcOptions *options)
 	if (!file)
 		return -1;
 	int result = fprintf(file,
-		"scale=%d\nstereo=%d\nsgb=%d\nsound_volume=%d\nmusic_volume=%d\nfont=%d\nsgb_border=%d\ntext_case=%d\n",
+		"scale=%d\nstereo=%d\nsgb=%d\nmaster_volume=%d\nmusic_volume=%d\n"
+		"sfx_volume=%d\nbig_font=%d\nsmall_font=%d\nsgb_border=%d\ntext_case=%d\n",
 		normalized.scale, normalized.stereo, normalized.sgb,
-		normalized.sound_volume, normalized.music_volume,
-		normalized.font, normalized.sgb_border, normalized.text_case) < 0;
+		normalized.master_volume, normalized.music_volume, normalized.sfx_volume,
+		normalized.big_font, normalized.small_font, normalized.sgb_border,
+		normalized.text_case) < 0;
 	if (fclose(file) != 0)
 		result = 1;
 	if (result || rename(temporary, path) != 0) {
