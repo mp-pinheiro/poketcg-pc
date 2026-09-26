@@ -14,6 +14,7 @@ typedef struct PcOptions {
 	int small_font;
 	int sgb_border;
 	int text_case;
+	int character_select;
 } PcOptions;
 void pc_options_defaults(PcOptions *options);
 int pc_options_load(PcOptions *options);

@@ -60,6 +60,34 @@ static const uint8_t booster_logo_oam[] = {
 #include "generated/wram.h"
 
 #define LINK_OPP_PIC 0x2au
+#define MINT_PIC 0x2bu
+#define TILESET_MINT 0x57u
+#define TILESET_MINT_SINGLE 0x58u
+#define PALETTE_MINT 0xa1u
+#define PALETTE_MINT_SINGLE 0xa2u
+#define MINT_PALETTE_BASE 1u
+#define MINT_ATTRIBUTE_OFFSET 26u
+#define rVBK 0xFF4Fu
+static uint8_t g_mint_single_palette;
+
+void SetMintSinglePalette(uint8_t single)
+{
+	g_mint_single_palette = single;
+}
+
+static void write_mint_attributes(uint8_t b, uint8_t c)
+{
+	const uint8_t *attributes = rom_mint_asset(ROM_MINT_PALETTE_BANK);
+	if (!attributes || wConsole != CONSOLE_CGB)
+		return;
+	attributes += MINT_ATTRIBUTE_OFFSET;
+	gb_write8(rVBK, 1u);
+	for (uint8_t row = 0u; row < 6u; ++row)
+		for (uint8_t column = 0u; column < 6u; ++column)
+			gb_write8((uint16_t)(0x9800u + (c + row) * 32u + b + column),
+				(uint8_t)(MINT_PALETTE_BASE + attributes[row * 6u + column]));
+	gb_write8(rVBK, 0u);
+}
 #include "mem.h"
 
 #include "generated/wram.h"
@@ -125,16 +153,19 @@ void _DrawPortrait(uint8_t b, uint8_t c)
 	/* scenes.asm:258-268: d is the tileset's VRAM tile offset and e the BG
 	 * palette index; the tilemap itself loads at the caller's bc. */
 	LoadTilemap_ToVRAM(b, c);
-
 	uint8_t portrait = wCurPortrait;
 	uint8_t tileset;
 	uint8_t palette;
+
 	if (portrait <= 1u) {
 		tileset = 0x29u;
 		palette = 0x77u;
 	} else if (portrait == LINK_OPP_PIC) {
 		tileset = 0x29u;
 		palette = 0x78u;
+	} else if (portrait == MINT_PIC) {
+		tileset = g_mint_single_palette ? TILESET_MINT_SINGLE : TILESET_MINT;
+		palette = g_mint_single_palette ? PALETTE_MINT_SINGLE : PALETTE_MINT;
 	} else if (portrait == 2u) {
 		tileset = 0x2Au;
 		palette = 0x79u;
@@ -148,6 +179,10 @@ void _DrawPortrait(uint8_t b, uint8_t c)
 	LoadTilesetGfx();
 	wWhichOBP = 0u;
 	wWhichBGPalIndex = wd291;
+	if (portrait == MINT_PIC && !g_mint_single_palette) {
+		wWhichBGPalIndex = MINT_PALETTE_BASE;
+		write_mint_attributes(b, c);
+	}
 	LoadBGPalette(palette);
 	wd291 = saved_wd291;
 }

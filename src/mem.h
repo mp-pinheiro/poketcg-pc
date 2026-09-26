@@ -110,6 +110,13 @@ const uint8_t *rom_ptr_product(uint8_t bank, uint16_t addr);
 const uint8_t *rom_ptr(uint8_t bank, uint16_t addr);
 void mem_set_font_override(int big_font, int small_font);
 const uint8_t *rom_sgb_border(int border);
+#define ROM_MINT_PORTRAIT_BANK 0xF6u
+#define ROM_MINT_SINGLE_BANK 0xF7u
+#define ROM_MINT_SPRITE_BANK 0xF8u
+#define ROM_MINT_PALETTE_BANK 0xF9u
+#define ROM_MINT_TEXT_BANK 0xFAu
+const uint8_t *rom_mint_asset(uint8_t bank);
+uint16_t rom_mint_text_address(uint16_t text_id);
 
 /* Whether a banked ROM byte is backed by the product pack; always true against
  * the reference ROM. For a read the asm performs speculatively and discards. */

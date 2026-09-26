@@ -9,8 +9,8 @@ port_files := env_var_or_default("POKETCG_PORTS", "")
 default:
     @just --list
 
-# Clone + build the pret/poketcg disassembly the port is diffed against.
-# Build-time input only: never a submodule, never committed.
+# Clone the pret/poketcg disassembly and the pinned GB2 graphic source.
+# Both are build-time inputs, never submodules or committed artifacts.
 bootstrap:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -18,6 +18,10 @@ bootstrap:
         git clone https://github.com/pret/poketcg poketcg
         git -C poketcg checkout 0e7157e
     fi
+    if [ ! -d poketcg2 ]; then
+        git clone https://github.com/pret/poketcg2 poketcg2
+    fi
+    git -C poketcg2 checkout --detach 1de12603f93ca0dc48dae628735acdd6c334a604
     if [ -f poketcg/poketcg.gbc ]; then
         python3 tools/verify_oracle_artifacts.py
     fi

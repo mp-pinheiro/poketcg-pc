@@ -10,6 +10,9 @@
 #include "home/init_menu.h"
 #include "home/labels.h"
 #include "home/wait_keys.h"
+#include "home/scenes.h"
+#include "home/scripting.h"
+#define EVENT_MEDAL_FLAGS 0x10u
 #define StatusScreenLabels 0x4095u
 #define PAD_A 0x01u
 #define PAD_B 0x02u
@@ -25,7 +28,9 @@ void _PauseMenu_Status(void)
 	DrawCollectedMedals();
 	DrawRegularTextBox(&init.hl, 0u, 20u, 8u, 0u, 0u);
 	(void)PrintLabels(StatusScreenLabels, 0u, 0u);
+	SetMintSinglePalette(GetEventValue(EVENT_MEDAL_FLAGS) != 0u);
 	DrawPauseMenuPlayerPortrait(1u, 1u); /* menus/status.asm:14 lb bc, 1, 1 */
+	SetMintSinglePalette(0u);
 	PrintAlbumProgress(12u, 4u);
 	PrintPlayTime(13u, 6u);
 	(void)FlashWhiteScreen();

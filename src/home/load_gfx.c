@@ -20,6 +20,23 @@
 #define GFX_TABLE_SPRITES 4u
 #define GFX_TABLE_PALETTES 8u
 #define TILE_SIZE 16u
+#define TILESET_MINT 0x57u
+#define TILESET_MINT_SINGLE 0x58u
+#define SPRITE_OW_MINT 0x72u
+#define PALETTE_MINT 0xa1u
+#define PALETTE_MINT_SINGLE 0xa2u
+#define MINT_PALETTE_BYTES 26u
+#define MINT_SINGLE_PALETTE_OFFSET 62u
+#define MINT_SINGLE_PALETTE_BYTES 10u
+
+static uint8_t mint_tileset_bank(uint8_t tileset)
+{
+	if (tileset == TILESET_MINT)
+		return ROM_MINT_PORTRAIT_BANK;
+	if (tileset == TILESET_MINT_SINGLE)
+		return ROM_MINT_SINGLE_BANK;
+	return 0u;
+}
 
 static void switch_vram(uint8_t bank)
 {
@@ -198,10 +215,17 @@ void LoadGraphicsPointerFromHL(uint16_t *hl)
 uint8_t LoadSpriteGfx(uint8_t a)
 {
 	uint8_t saved = hBankROM;
-	BankswitchROM(0x20u);
-	uint16_t hl = GetMapDataPointer(a, GFX_TABLE_SPRITES).hl;
-	LoadGraphicsPointerFromHL(&hl);
-	uint8_t total = gb_read8(hl);
+	uint8_t total;
+	if (a == SPRITE_OW_MINT) {
+		put16(wTempPointer_ADDR, 0x4000u);
+		wTempPointerBank = ROM_MINT_SPRITE_BANK;
+		total = GetFarByte(ROM_MINT_SPRITE_BANK, 0x4000u);
+	} else {
+		BankswitchROM(0x20u);
+		uint16_t hl = GetMapDataPointer(a, GFX_TABLE_SPRITES).hl;
+		LoadGraphicsPointerFromHL(&hl);
+		total = gb_read8(hl);
+	}
 	BankswitchROM(saved);
 	wTotalNumTiles = total;
 	wCurSpriteTileSize = TILE_SIZE;
@@ -241,14 +265,21 @@ void GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2(void)
 	uint8_t saved = wVRAMTileOffset;
 	wVRAMTileOffset ^= 0x80u;
 	GetTileOffsetPointerAndSwitchVRAM();
-	gb_write8(wVRAMPointer_ADDR + 1u, (uint8_t)(gb_read8(wVRAMPointer_ADDR + 1u) + 0x08u));
+	gb_write8(wVRAMPointer_ADDR + 1u,
+		(uint8_t)(gb_read8(wVRAMPointer_ADDR + 1u) + 0x08u));
 	wVRAMTileOffset = saved;
 }
 
 void LoadTilesetGfx(void)
 {
-	uint16_t hl = GetMapDataPointer(wCurTileset, GFX_TABLE_TILESETS).hl;
-	LoadGraphicsPointerFromHL(&hl);
+	uint8_t mint_bank = mint_tileset_bank(wCurTileset);
+	if (mint_bank) {
+		put16(wTempPointer_ADDR, 0x4000u);
+		wTempPointerBank = mint_bank;
+	} else {
+		uint16_t hl = GetMapDataPointer(wCurTileset, GFX_TABLE_TILESETS).hl;
+		LoadGraphicsPointerFromHL(&hl);
+	}
 	LoadTilesetGfx_LoadTileGfx();
 	switch_vram(0);
 }
@@ -256,11 +287,18 @@ void LoadTilesetGfx(void)
 void Func_80238(void)
 {
 	uint8_t saved = hBankROM;
-	BankswitchROM(0x20u);
-	uint16_t hl = GetMapDataPointer(wCurTileset, GFX_TABLE_TILESETS).hl;
-	LoadGraphicsPointerFromHL(&hl);
-	wTotalNumTiles = gb_read8(hl);
-	BankswitchROM(saved);
+	uint8_t mint_bank = mint_tileset_bank(wCurTileset);
+	if (mint_bank) {
+		put16(wTempPointer_ADDR, 0x4000u);
+		wTempPointerBank = mint_bank;
+		wTotalNumTiles = GetFarByte(mint_bank, 0x4000u);
+	} else {
+		BankswitchROM(0x20u);
+		uint16_t hl = GetMapDataPointer(wCurTileset, GFX_TABLE_TILESETS).hl;
+		LoadGraphicsPointerFromHL(&hl);
+		wTotalNumTiles = gb_read8(hl);
+		BankswitchROM(saved);
+	}
 	wCurSpriteTileSize = TILE_SIZE;
 	wWhichVRAMBank = 0;
 	wVRAMTileOffset = 0x80;
@@ -400,6 +438,16 @@ void LoadOBPalette(uint8_t a)
 
 void LoadPaletteDataToBuffer(uint8_t a)
 {
+	if (a == PALETTE_MINT || a == PALETTE_MINT_SINGLE) {
+		const uint8_t *mint = rom_mint_asset(ROM_MINT_PALETTE_BANK);
+		if (mint) {
+			uint8_t offset = a == PALETTE_MINT ? 0u : MINT_SINGLE_PALETTE_OFFSET;
+			uint8_t length = a == PALETTE_MINT ? MINT_PALETTE_BYTES : MINT_SINGLE_PALETTE_BYTES;
+			for (uint8_t i = 0u; i < length; ++i)
+				wLoadedPalData_PTR[i] = mint[offset + i];
+			return;
+		}
+	}
 	uint8_t saved = hBankROM;
 	BankswitchROM(0x20u);
 	uint16_t hl = GetMapDataPointer(a, GFX_TABLE_PALETTES).hl;

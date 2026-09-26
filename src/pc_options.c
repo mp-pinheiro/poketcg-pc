@@ -45,6 +45,7 @@ static void normalize(PcOptions *options)
 	options->small_font = options->small_font ? 1 : 0;
 	options->sgb_border = clamp(options->sgb_border, 0, 3);
 	options->text_case = options->text_case ? 1 : 0;
+	options->character_select = options->character_select ? 1 : 0;
 }
 
 void pc_options_defaults(PcOptions *options)
@@ -60,6 +61,7 @@ void pc_options_defaults(PcOptions *options)
 	options->small_font = 0;
 	options->sgb_border = 2;
 	options->text_case = 0;
+	options->character_select = 1;
 }
 
 int pc_options_load(PcOptions *options)
@@ -77,6 +79,7 @@ int pc_options_load(PcOptions *options)
 		{"small_font", offsetof(PcOptions, small_font)},
 		{"sgb_border", offsetof(PcOptions, sgb_border)},
 		{"text_case", offsetof(PcOptions, text_case)},
+		{"character_select", offsetof(PcOptions, character_select)},
 	};
 	if (!options)
 		return -1;
@@ -141,11 +144,12 @@ int pc_options_save(const PcOptions *options)
 		return -1;
 	int result = fprintf(file,
 		"scale=%d\nsgb=%d\nmaster_volume=%d\nmusic_volume=%d\n"
-		"sfx_volume=%d\nbig_font=%d\nsmall_font=%d\nsgb_border=%d\ntext_case=%d\n",
+		"sfx_volume=%d\nbig_font=%d\nsmall_font=%d\nsgb_border=%d\n"
+		"text_case=%d\ncharacter_select=%d\n",
 		normalized.scale, normalized.sgb,
 		normalized.master_volume, normalized.music_volume, normalized.sfx_volume,
 		normalized.big_font, normalized.small_font, normalized.sgb_border,
-		normalized.text_case) < 0;
+		normalized.text_case, normalized.character_select) < 0;
 	if (fclose(file) != 0)
 		result = 1;
 	if (result || rename(temporary, path) != 0) {

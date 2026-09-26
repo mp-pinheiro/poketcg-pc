@@ -521,7 +521,7 @@ void mem_reset(void)
 
 const uint8_t *rom_ptr_reference(uint8_t bank, uint16_t addr)
 {
-	size_t off = addr < 0x4000 ? addr : (size_t)0x4000 * bank + (addr - 0x4000);
+	size_t off = addr < 0x4000 ? addr : (size_t)0x4000 * (bank % 64u) + (addr - 0x4000);
 	if (!g_rom || off >= g_rom_size)
 		return g_scratch;
 	return g_rom + off;
@@ -587,6 +587,30 @@ const uint8_t *rom_ptr_product(uint8_t bank, uint16_t addr)
 	if (slot != 0u && (size_t)slot - 1u < g_product_pack_size)
 		return g_product_pack + (slot - 1u);
 	return missing_product_data(bank, addr);
+}
+
+const uint8_t *rom_mint_asset(uint8_t bank)
+{
+	if (!g_product_mode || bank < ROM_MINT_PORTRAIT_BANK ||
+	    bank > ROM_MINT_TEXT_BANK || !rom_byte_available(bank, 0x4000u))
+		return NULL;
+	return rom_ptr_product(bank, 0x4000u);
+}
+
+uint16_t rom_mint_text_address(uint16_t text_id)
+{
+	const uint8_t *base = rom_mint_asset(ROM_MINT_TEXT_BANK);
+	if (!base || memcmp(base, "MTXT", 4) != 0)
+		return 0u;
+	for (uint8_t i = 0u; i < base[4]; ++i) {
+		const uint8_t *record = base + 5u + (uint16_t)i * 6u;
+		uint16_t id = (uint16_t)(record[0] | ((uint16_t)record[1] << 8));
+		if (id == text_id) {
+			uint16_t offset = (uint16_t)(record[2] | ((uint16_t)record[3] << 8));
+			return offset < 0x4000u ? (uint16_t)(0x4000u + offset) : 0u;
+		}
+	}
+	return 0u;
 }
 
 /* Whether a banked ROM byte is backed by the product pack. The interpreter in
@@ -783,7 +807,7 @@ void mbc5_write(uint16_t addr, uint8_t v)
 	if (addr < 0x2000)
 		g_sram_enabled = (v == 0x0A);
 	else if (addr < 0x3000)
-		g_rom_bank = v % 64;
+		g_rom_bank = v;
 	else if (addr >= 0x4000 && addr < 0x6000)
 		g_sram_bank = (v & 0x0F) % 4;
 }

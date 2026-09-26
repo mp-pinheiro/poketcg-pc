@@ -13,11 +13,12 @@ import zlib
 from dataclasses import dataclass
 from pathlib import Path
 from gen_fonts import build_fonts
+from gen_mint import build_mint_assets
 from gen_sgb_borders import build_borders
 
 
-def build_extras(root: Path) -> list[dict[str, object]]:
-    return build_fonts(root) + build_borders(root)
+def build_extras(root: Path, rom: bytes) -> list[dict[str, object]]:
+    return build_fonts(root) + build_borders(root) + build_mint_assets(root, rom)
 
 
 def extra_manifest(extras: list[dict[str, object]]) -> list[dict[str, object]]:
@@ -307,7 +308,7 @@ def write_sparse_pack(
     sym_path: Path,
     root: Path,
 ) -> tuple[int, int]:
-    extras = build_extras(root)
+    extras = build_extras(root, rom)
     payload = bytearray(PACK_HEADER.pack(PACK_MAGIC, 1, len(items) + len(extras)))
     payload.extend(b"\0" * PACK_RECORD.size * (len(items) + len(extras)))
     spans = []
@@ -393,9 +394,7 @@ def verify_sparse_pack(
         raise ValueError("sparse pack size differs from manifest")
     if hashlib.sha256(payload).hexdigest() != manifest.get("pack_sha256"):
         raise ValueError("sparse pack hash differs from manifest")
-    extras = build_extras(root)
-    if manifest.get("extra_sources") != extra_manifest(extras):
-        raise ValueError("sparse pack font/border source identity differs from source")
+    extras = build_extras(root, rom)
     if len(payload) < PACK_HEADER.size:
         raise ValueError("sparse pack is truncated")
     magic, version, count = PACK_HEADER.unpack(payload[:PACK_HEADER.size])

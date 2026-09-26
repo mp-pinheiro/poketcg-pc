@@ -3,20 +3,26 @@
 #include "pc_options.h"
 
 #include "home/frames.h"
+#include "generated/wram.h"
 
 #include <limits.h>
 
 #define PC_FONT_COUNT 4
+#define PC_OPTION_PLAYER_CHARACTER 10u
+#define PC_OPTION_CHARACTER_SELECT 11u
+#define EVENT_PLAYER_GENDER_OFFSET 0x1du
 
 static RuntimeEvent g_terminal_event;
 static uint32_t g_event_mask;
 static uint32_t g_event_count;
+static int g_player_gender_dirty;
 
 void runtime_events_reset(void)
 {
 	g_terminal_event = RUNTIME_EVENT_NONE;
 	g_event_mask = 0u;
 	g_event_count = 0u;
+	g_player_gender_dirty = 0;
 }
 
 static void record_event(RuntimeEvent event)
@@ -56,13 +62,45 @@ uint32_t runtime_event_count(void)
 {
 	return g_event_count;
 }
-
 static int g_pc_options_enabled;
 static PcOptions *g_pc_options;
 
 void runtime_bind_pc_options(struct PcOptions *options)
 {
 	g_pc_options = options;
+}
+
+int runtime_player_gender(void)
+{
+	return g_pc_options_enabled &&
+		(gb_read8((uint16_t)(wEventVars_ADDR + EVENT_PLAYER_GENDER_OFFSET)) & 1u);
+}
+
+void runtime_set_player_gender(int female)
+{
+	if (!g_pc_options_enabled)
+		return;
+	uint16_t address = (uint16_t)(wEventVars_ADDR + EVENT_PLAYER_GENDER_OFFSET);
+	uint8_t old = gb_read8(address);
+	uint8_t next = female ? (uint8_t)(old | 1u) : (uint8_t)(old & (uint8_t)~1u);
+	if (old != next)
+		g_player_gender_dirty = 1;
+	gb_write8(address, next);
+}
+
+int runtime_player_gender_dirty(void)
+{
+	return g_player_gender_dirty;
+}
+
+void runtime_clear_player_gender_dirty(void)
+{
+	g_player_gender_dirty = 0;
+}
+
+int runtime_character_selection_enabled(void)
+{
+	return g_pc_options_enabled && g_pc_options && g_pc_options->character_select;
 }
 
 int runtime_pc_option_value(unsigned option)
@@ -79,6 +117,8 @@ int runtime_pc_option_value(unsigned option)
 	case 7u: return g_pc_options->text_case;
 	case 8u: return g_pc_options->sfx_volume;
 	case 9u: return g_pc_options->small_font;
+	case PC_OPTION_PLAYER_CHARACTER: return runtime_player_gender();
+	case PC_OPTION_CHARACTER_SELECT: return g_pc_options->character_select;
 	default: return 0;
 	}
 }
@@ -137,11 +177,16 @@ void runtime_pc_option_adjust(unsigned option, int direction)
 		g_pc_options->small_font = !g_pc_options->small_font;
 		apply_font_override();
 		break;
+	case PC_OPTION_PLAYER_CHARACTER:
+		runtime_set_player_gender(!runtime_player_gender());
+		break;
+	case PC_OPTION_CHARACTER_SELECT:
+		g_pc_options->character_select = !g_pc_options->character_select;
+		break;
 	default:
 		return;
 	}
 }
-
 void runtime_set_pc_options_enabled(int enabled)
 {
 	g_pc_options_enabled = enabled != 0;

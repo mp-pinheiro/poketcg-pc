@@ -324,7 +324,7 @@ static const uint8_t sAaronDeckIDs[] = {
 #include "home/scripting.h"
 #include "generated/wram.h"
 #define EVENT_AARON_DECK_MENU_CHOICE 0x76u
-
+#define EVENT_PLAYER_GENDER 0x77u
 #include "generated/wram.h"
 #include "home/give_booster_pack.h"
 #include "home/overworld.h"
@@ -437,8 +437,16 @@ GetEventVarResult GetEventVar(uint8_t a, uint8_t f, uint8_t b, uint8_t c)
 {
 	(void)f;
 	uint16_t bc = (uint16_t)a * 2u;
-	uint16_t table_addr = (uint16_t)(EVENT_VAR_MASKS + bc);
-	const uint8_t *entry = rom_ptr(EVENT_VAR_MASKS_BANK, table_addr);
+	uint8_t local_entry[2];
+	const uint8_t *entry;
+	if (a == EVENT_PLAYER_GENDER) {
+		local_entry[0] = 0x1du;
+		local_entry[1] = 0x01u;
+		entry = local_entry;
+	} else {
+		uint16_t table_addr = (uint16_t)(EVENT_VAR_MASKS + bc);
+		entry = rom_ptr(EVENT_VAR_MASKS_BANK, table_addr);
+	}
 	uint8_t flags = (bc & 0xFF00u) == 0 ? 0x80u : 0u;
 	uint8_t offset = entry[0];
 	if (((wEventVars_ADDR & 0x0FFFu) + (offset & 0x0FFFu)) > 0x0FFFu)

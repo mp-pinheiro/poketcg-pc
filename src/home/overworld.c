@@ -111,7 +111,9 @@
 #define CONSOLE_CGB 0x02u
 #define SOUTH 0x02u
 #define SPRITE_OW_PLAYER 0x00u
+#define SPRITE_OW_MINT 0x72u
 #define SPRITE_ANIM_LIGHT_NPC_UP 0x00u
+#define SPRITE_ANIM_BLUE_NPC_UP 0x0Eu
 #define SPRITE_ANIM_RED_NPC_UP 0x1Eu
 #define PALETTE_OVERWORLD_OAM 0x1Du
 
@@ -829,6 +831,7 @@ void Func_c4b9(void)
 	LoadOBPalette(PALETTE_OVERWORLD_OAM);
 
 	uint8_t console = wConsole;
+	uint8_t female = runtime_player_gender();
 	uint8_t base_anim = SPRITE_ANIM_LIGHT_NPC_UP;
 	uint8_t f_cgb = 0x40u;
 	if ((console & 0x0Fu) < (CONSOLE_CGB & 0x0Fu))
@@ -837,11 +840,11 @@ void Func_c4b9(void)
 		f_cgb |= 0x10u;
 	if (console == CONSOLE_CGB) {
 		f_cgb |= 0x80u;
-		base_anim = SPRITE_ANIM_RED_NPC_UP;
+		base_anim = female ? SPRITE_ANIM_BLUE_NPC_UP : SPRITE_ANIM_RED_NPC_UP;
 	}
 	wPlayerSpriteBaseAnimation = base_anim;
 
-	(void)CreateSpriteAndAnimBufferEntry(SPRITE_OW_PLAYER, f_cgb);
+	(void)CreateSpriteAndAnimBufferEntry(female ? SPRITE_OW_MINT : SPRITE_OW_PLAYER, f_cgb);
 	wPlayerSpriteIndex = wWhichSprite;
 
 	uint8_t cur_map = wCurMap;

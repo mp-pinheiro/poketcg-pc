@@ -31,6 +31,8 @@ generated/
 # which `/poketcg/` does not match -- it showed up as `A poketcg` in `jj st`.
 /poketcg
 /poketcg/
+/poketcg2
+/poketcg2/
 *.gbc
 *.sym
 *.map

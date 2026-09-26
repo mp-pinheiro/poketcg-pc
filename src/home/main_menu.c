@@ -8,6 +8,7 @@
 #include "generated/sram.h"
 #include "home/map.h"
 #include "home/naming.h"
+#include "home/player_gender.h"
 #include "home/starter_deck.h"
 #include "home/switch_sram.h"
 /* >>> factory statics */
@@ -55,6 +56,10 @@ uint8_t MainMenu_NewGame(void)
 		 * frame-driven and never terminate without the host loop. */
 		return 0x00u;
 	}
+	if (runtime_character_selection_enabled())
+		PlayerGenderSelection();
+	else
+		runtime_set_player_gender(0);
 	(void)DisplayPlayerNamingScreen();
 	InitSaveData();
 	EnableSRAM();

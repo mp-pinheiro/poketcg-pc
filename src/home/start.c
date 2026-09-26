@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "generated/wram.h"
+#include "generated/sram.h"
 #include "home/menus.h"
 #include "home/process_text.h"
 #include "home/print_text.h"
@@ -162,6 +163,7 @@ typedef struct {
 static const PcOptionPage kPcPages[] = {
 	{"DISPLAY", 6u, {0u, PC_OPTION_SGB, PC_OPTION_BORDER, 5u, 9u, 7u}},
 	{"SOUND", 3u, {3u, 4u, 8u}},
+	{"GAMEPLAY", 2u, {10u, 11u}},
 };
 #define PC_PAGE_COUNT (sizeof kPcPages / sizeof kPcPages[0])
 static const char *const kPcFontNames[] = {
@@ -229,6 +231,12 @@ static void print_pc_option_line(uint8_t y, uint8_t option)
 		break;
 	case 8u:
 		snprintf(text, sizeof text, "SFX VOL %d", value);
+		break;
+	case 10u:
+		snprintf(text, sizeof text, "PLAYER %s", value ? "MINT" : "MARK");
+		break;
+	case 11u:
+		snprintf(text, sizeof text, "NEW GAME SELECT %s", value ? "ON" : "OFF");
 		break;
 	default:
 		snprintf(text, sizeof text, "SMALL FONT %s", value ? "TOM THUMB" : "ORIGINAL");
@@ -314,7 +322,8 @@ static uint8_t draw_pc_options(uint8_t page, uint8_t *options)
 
 static int pc_option_toggles(uint8_t option)
 {
-	return option == 2u || option == 5u || option == 6u || option == 7u || option == 9u;
+	return option == 2u || option == 5u || option == 6u || option == 7u ||
+		option == 9u || option == 10u || option == 11u;
 }
 
 static void RunPCOptionsMenu(void)
@@ -372,6 +381,11 @@ static void RunPCOptionsMenu(void)
 				PlaySFX(PC_SFX_CURSOR);
 			} else if ((pressed & PAD_A) == 0u || pc_option_toggles(options[row])) {
 				runtime_pc_option_adjust(options[row], direction);
+				if (options[row] == 10u) {
+					DrawPlayerPortrait(14u, 1u);
+					if (wConsole == CONSOLE_CGB)
+						load_pc_header_palette();
+				}
 				count = draw_pc_options(page, options);
 				if (row > count)
 					row = count;
@@ -559,10 +573,17 @@ void HandleStartMenu(void)
 	}
 	uint8_t pc_options = (uint8_t)runtime_pc_options_enabled();
 	uint8_t native_item_count = item_count;
+	uint8_t list_top = 2u;
 	if (pc_options != 0u) {
 		item_count++;
 		box_height = (uint8_t)(box_height + 2u);
+		if (item_count == 5u) {
+			list_top = 1u;
+			box_height = 11u;
+		}
 	}
+	gb_write8((uint16_t)(wStartMenuParams_ADDR + 5u), list_top);
+	gb_write8((uint16_t)(wStartMenuParams_ADDR + 10u), list_top);
 	gb_write8((uint16_t)(wStartMenuParams_ADDR + 12u), item_count);
 	gb_write8((uint16_t)(wStartMenuParams_ADDR + 3u), box_height);
 	gb_write8((uint16_t)(wStartMenuParams_ADDR + 6u), text_id);
@@ -577,7 +598,7 @@ void HandleStartMenu(void)
 	InitAndPrintMenu(wStartMenuParams_ADDR, selected);
 	if (pc_options != 0u)
 		print_host_text("PC OPTIONS", 2u,
-			(uint8_t)(2u + native_item_count * 2u));
+			(uint8_t)(list_top + native_item_count * 2u));
 	/* start.asm:104-141: InitAndPrintMenu's menu-item print (PrintTextNoDelay
 	 * -> Func_235e) spans a VBlank period on the reference -- service 1008
 	 * interrupts it mid-draw (1150-frame trace: wvbc 1008; the reference
@@ -651,6 +672,15 @@ uint8_t DeleteSaveDataForNewGame(void)
 }
 /* <<< factory DeleteSaveDataForNewGame */
 
+static void LoadEventsFromSRAM(void)
+{
+	EnableSRAM();
+	for (uint8_t i = 0u; i < 0x40u; ++i)
+		gb_write8((uint16_t)(wEventVars_ADDR + i),
+			gb_read8((uint16_t)(sEventVars_ADDR + i)));
+	DisableSRAM();
+}
+
 /* >>> factory HandleTitleScreen */
 void HandleTitleScreen(void)
 {
@@ -712,9 +742,21 @@ title_screen:
 	}
 
 	(void)CheckIfHasSaveData();
+	if (runtime_pc_options_enabled() && wHasSaveData != 0u)
+		LoadEventsFromSRAM();
 	HandleStartMenu();
 	if (wStartMenuChoice == START_MENU_PC_OPTIONS) {
+		uint8_t had_save = wHasSaveData;
+		if (had_save) {
+			LoadBackupGeneralSaveData();
+			LoadGeneralSaveData();
+		}
 		RunPCOptionsMenu();
+		if (had_save && runtime_player_gender_dirty()) {
+			SaveGeneralSaveData();
+			WriteBackupGeneralSaveData();
+			runtime_clear_player_gender_dirty();
+		}
 		wLastSelectedStartMenuItem = 0u;
 		goto title_screen;
 	}

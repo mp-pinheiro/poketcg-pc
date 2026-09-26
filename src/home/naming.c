@@ -3,6 +3,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+#include "runtime.h"
 /* >>> factory statics */
 #include "home/copy.h"
 #include "home/input_name.h"
@@ -16,6 +17,7 @@
 
 #define NAME_BUFFER_LENGTH 0x10u
 #define TX_END 0x00u
+#define MINT_NAME 0xffffu
 
 /* poketcg.sym: 04:68a9 DisplayPlayerNamingScreen, 04:68eb
  * DisplayPlayerNamingScreen.default_name. The routine shares bank 4 with its
@@ -39,14 +41,15 @@ DisplayPlayerNamingScreenResult DisplayPlayerNamingScreen(void)
 	DisableLCD();
 	uint16_t hl = wNameBuffer_ADDR;
 	if (gb_read8(hl) == 0u)
-		hl = DEFAULT_PLAYER_NAME;
+		hl = runtime_player_gender() ? MINT_NAME : DEFAULT_PLAYER_NAME;
 	EnableSRAM();
-	if (hl == DEFAULT_PLAYER_NAME) {
-		/* rom_ptr, not the bus: the ROM executes this copy with bank
-		 * NAMING_BANK mapped (FarCall restored it after InputPlayerName),
-		 * while the native bank latch holds whatever the naming screen's
-		 * ported callees last wrote, so the window address alone does not
-		 * name these bytes on both sides. */
+	if (hl == MINT_NAME) {
+		static const uint8_t name[NAME_BUFFER_LENGTH] = {
+			0x03u, 0x3Cu, 0x03u, 0x38u, 0x03u, 0x3Du, 0x03u, 0x43u
+		};
+		for (uint8_t i = 0u; i < NAME_BUFFER_LENGTH; i++)
+			gb_write8((uint16_t)(sPlayerName_ADDR + i), name[i]);
+	} else if (hl == DEFAULT_PLAYER_NAME) {
 		const uint8_t *name = rom_ptr(NAMING_BANK, DEFAULT_PLAYER_NAME);
 		for (uint8_t i = 0u; i < NAME_BUFFER_LENGTH; i++)
 			gb_write8((uint16_t)(sPlayerName_ADDR + i), name[i]);

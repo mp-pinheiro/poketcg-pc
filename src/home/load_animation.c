@@ -5,6 +5,7 @@
 #include "home/objects.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+#include "runtime.h"
 /* >>> factory statics */
 #include "home/sprite_animations.h"
 #define BANK_SPRITE_ANIMATIONS 0x04u
@@ -21,6 +22,7 @@
 #include "generated/wram.h"
 #define PLAYER_PIC 0x01u
 #define TILEMAP_PLAYER 0x62u
+#define MINT_PIC 0x2bu
 
 #include "home/animation.h"
 
@@ -280,10 +282,9 @@ void DrawOpponentPortrait(uint8_t a, uint8_t b, uint8_t c)
 /* <<< factory DrawOpponentPortrait */
 
 /* >>> factory DrawPlayerPortrait */
-/* load_animation.asm:293-295 via DrawPortrait: bc = coordinates. */
 void DrawPlayerPortrait(uint8_t b, uint8_t c)
 {
-	wCurPortrait = PLAYER_PIC;
+	wCurPortrait = runtime_player_gender() ? MINT_PIC : PLAYER_PIC;
 	DrawPortrait(TILEMAP_PLAYER, b, c);
 }
 /* <<< factory DrawPlayerPortrait */

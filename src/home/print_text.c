@@ -6,6 +6,7 @@
 #include "home/process_text.h"
 #include "home/duel.h"
 #include "home/switch_rom.h"
+#include "runtime.h"
 #include "home/write_number.h"
 #include "home/frames.h"
 #include "home/menus.h"
@@ -19,9 +20,15 @@ static uint16_t text_header(void)
 {
 	return (uint16_t)(wTextHeader1_ADDR + (uint8_t)(wWhichTextHeader * 5u));
 }
-
 uint16_t GetTextOffsetFromTextID(uint16_t text_id)
 {
+	if (runtime_player_gender()) {
+		uint16_t mint = rom_mint_text_address(text_id);
+		if (mint != 0u) {
+			BankswitchROM(ROM_MINT_TEXT_BANK);
+			return mint;
+		}
+	}
 	uint16_t index = (uint16_t)(text_id * 3u);
 	uint16_t table = (uint16_t)(0x4000u + index);
 	uint8_t lo;

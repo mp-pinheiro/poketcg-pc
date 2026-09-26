@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+void SetMintSinglePalette(uint8_t single);
 /* >>> factory SetBoosterLogoOAM */
 void SetBoosterLogoOAM(void);
 /* <<< factory SetBoosterLogoOAM */
