@@ -309,7 +309,6 @@ def reference_pass(
 
 REFERENCE_PCM_RATE = 2097152
 NATIVE_PCM_RATE = 44100
-NATIVE_PCM_BLOCK = 1470
 PCM_WINDOW_ORDINALS = 4
 PCM_WINDOWS = 40
 PCM_FFT_SIZE = 2048
@@ -387,11 +386,13 @@ def _reference_window(raw: bytes, anchor_samples: list[int], start: int, length:
 def _native_blocks(raw: bytes) -> dict[int, array.array]:
     blocks: dict[int, array.array] = {}
     offset = 0
-    stride = 4 + NATIVE_PCM_BLOCK * 2
-    while offset + stride <= len(raw):
-        tag = struct.unpack_from("<I", raw, offset)[0]
-        blocks.setdefault(tag, array.array("h")).extend(array.array("h", raw[offset + 4 : offset + stride]))
-        offset += stride
+    while offset + 8 <= len(raw):
+        tag, count = struct.unpack_from("<II", raw, offset)
+        end = offset + 8 + count * 2
+        if end > len(raw):
+            break
+        blocks.setdefault(tag, array.array("h")).extend(array.array("h", raw[offset + 8 : end]))
+        offset = end
     return blocks
 
 

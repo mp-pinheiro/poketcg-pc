@@ -2,6 +2,7 @@
 #include "shell.h"
 #include "runtime.h"
 #include "mem.h"
+#include "apu.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -20,7 +21,9 @@
  * runtime ages the hardware clock by (mem_advance_hardware_clock(70224)). */
 #define POKETCG_FRAME_NS 16742706ull
 #define SHELL_AUDIO_BUFFER_SAMPLES 4096u
-#define SHELL_PULSE_GAIN 4
+#define SHELL_AUDIO_GAIN 2
+#define SHELL_AUDIO_FRAME_BYTES 4u
+#define SHELL_AUDIO_TARGET_FRAMES 2048u
 
 struct Shell {
 	int headless;
@@ -61,13 +64,20 @@ static int shell_open_pulse_audio(Shell *shell)
 {
 	pa_sample_spec spec = {
 		.format = PA_SAMPLE_S16NE,
-		.rate = 44100,
+		.rate = APU_SAMPLE_RATE,
 		.channels = 2
+	};
+	pa_buffer_attr buffer = {
+		.maxlength = (uint32_t)-1,
+		.tlength = SHELL_AUDIO_TARGET_FRAMES * SHELL_AUDIO_FRAME_BYTES,
+		.prebuf = (uint32_t)-1,
+		.minreq = (uint32_t)-1,
+		.fragsize = (uint32_t)-1
 	};
 	int error = 0;
 	shell->pulse_audio = pa_simple_new(
 		NULL, "poketcg", PA_STREAM_PLAYBACK, NULL, "Game audio",
-		&spec, NULL, NULL, &error);
+		&spec, NULL, &buffer, &error);
 	if (!shell->pulse_audio) {
 		fprintf(stderr, "audio: PulseAudio unavailable: %s\n", pa_strerror(error));
 		return 0;
@@ -192,7 +202,7 @@ Shell *shell_create(const ShellConfig *config)
 		int audio_initialized = SDL_InitSubSystem(SDL_INIT_AUDIO) == 0;
 		if (audio_initialized) {
 			SDL_AudioSpec desired = {0};
-			desired.freq = 44100;
+			desired.freq = APU_SAMPLE_RATE;
 			desired.format = AUDIO_S16SYS;
 			desired.channels = 2;
 			desired.samples = 1024;
@@ -340,6 +350,17 @@ void shell_pace(Shell *shell)
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 	uint64_t now = (uint64_t)ts.tv_sec * 1000000000ull + (uint64_t)ts.tv_nsec;
 	uint64_t frame_ns = POKETCG_FRAME_NS / shell->speed;
+#ifdef POKETCG_HAVE_SDL
+	if (shell->have_audio && shell->speed == 1u) {
+		int64_t target = SHELL_AUDIO_TARGET_FRAMES;
+		int64_t error = (int64_t)(SDL_GetQueuedAudioSize(shell->audio_device) / SHELL_AUDIO_FRAME_BYTES) - target;
+		if (error > target)
+			error = target;
+		else if (error < -target)
+			error = -target;
+		frame_ns = (uint64_t)((int64_t)frame_ns + (int64_t)frame_ns * error / (target * 200));
+	}
+#endif
 	if (shell->next_ns == 0 || now > shell->next_ns + 4u * frame_ns)
 		shell->next_ns = now;
 	if (now < shell->next_ns) {
@@ -488,7 +509,7 @@ static size_t shell_filter_audio(Shell *shell, const int16_t *samples, size_t co
 		int32_t sample = samples[i];
 		int32_t delta = sample - shell->audio_dc[channel];
 		shell->audio_dc[channel] += delta / 256;
-		int32_t filtered = (sample - shell->audio_dc[channel]) * SHELL_PULSE_GAIN;
+		int32_t filtered = (sample - shell->audio_dc[channel]) * SHELL_AUDIO_GAIN;
 		if (filtered > 32767)
 			filtered = 32767;
 		else if (filtered < -32768)
@@ -497,6 +518,17 @@ static size_t shell_filter_audio(Shell *shell, const int16_t *samples, size_t co
 	}
 	return count;
 }
+
+static const int16_t shell_audio_silence[SHELL_AUDIO_TARGET_FRAMES * 2u];
+
+static int shell_audio_open(const Shell *shell)
+{
+#ifdef POKETCG_HAVE_PULSE
+	if (shell->have_pulse)
+		return 1;
+#endif
+	return shell->have_audio;
+}
 #endif
 /* Queue interleaved signed 16-bit samples when SDL audio is available. */
 void shell_queue_audio(Shell *shell, const int16_t *samples, size_t count)
@@ -504,26 +536,30 @@ void shell_queue_audio(Shell *shell, const int16_t *samples, size_t count)
 	if (!shell || !samples || !count)
 		return;
 #ifdef POKETCG_HAVE_SDL
+	if (shell->speed != 1u || !shell_audio_open(shell))
+		return;
+	size_t output_count = shell_filter_audio(shell, samples, count);
+	if (!output_count)
+		return;
+	const int16_t *output = shell->audio_buffer;
 	if (shell->have_audio) {
-		(void)SDL_QueueAudio(shell->audio_device,
-		                     samples, count * sizeof *samples);
+		uint32_t queued = SDL_GetQueuedAudioSize(shell->audio_device) / SHELL_AUDIO_FRAME_BYTES;
+		if (queued == 0u)
+			(void)SDL_QueueAudio(shell->audio_device, shell_audio_silence, sizeof shell_audio_silence);
+		else if (queued > 3u * SHELL_AUDIO_TARGET_FRAMES)
+			return;
+		(void)SDL_QueueAudio(shell->audio_device, output, output_count * sizeof *output);
 		return;
 	}
 #ifdef POKETCG_HAVE_PULSE
-	if (shell->have_pulse) {
-		size_t output_count = shell_filter_audio(shell, samples, count);
-		if (!output_count)
-			return;
-		const int16_t *output = shell->audio_buffer;
-		int error = 0;
-		if (pa_simple_write(shell->pulse_audio, output,
-		                    output_count * sizeof *output, &error) < 0) {
-			fprintf(stderr, "audio: PulseAudio write failed: %s\n",
-			        pa_strerror(error));
-			pa_simple_free(shell->pulse_audio);
-			shell->pulse_audio = NULL;
-			shell->have_pulse = 0;
-		}
+	int error = 0;
+	if (pa_simple_write(shell->pulse_audio, output,
+	                    output_count * sizeof *output, &error) < 0) {
+		fprintf(stderr, "audio: PulseAudio write failed: %s\n",
+		        pa_strerror(error));
+		pa_simple_free(shell->pulse_audio);
+		shell->pulse_audio = NULL;
+		shell->have_pulse = 0;
 	}
 #endif
 #endif

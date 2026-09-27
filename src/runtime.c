@@ -35,7 +35,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define AUDIO_SAMPLES_PER_FRAME 1470u
+#define AUDIO_SAMPLES_PER_FRAME_MAX (2u * (APU_SAMPLE_RATE * APU_CYCLES_PER_FRAME / APU_CLOCK_HZ + 1u))
 
 
 static RuntimeStateDumpCb g_state_dump_callback;
@@ -340,7 +340,8 @@ typedef struct {
 	uint16_t framebuffer[SCREEN_W * SCREEN_H];
 	uint16_t present[(SCREEN_W + 2 * WIDE_EXTRA_MAX) * SCREEN_H];
 	WidescreenRect present_rect;
-	int16_t audio[AUDIO_SAMPLES_PER_FRAME];
+	int16_t audio[AUDIO_SAMPLES_PER_FRAME_MAX];
+	uint64_t audio_phase;
 	const uint8_t *buttons;
 	size_t button_count;
 	uint32_t frame_limit;
@@ -1148,8 +1149,10 @@ int runtime_run_with_input(
 		                 audio_settings.music_volume, audio_settings.sfx_volume,
 		                 (uint8_t)(gb_read8(wdd8c_ADDR) & 0x0Fu));
 		apu_trace_set_tick(state.frames);
-		size_t pcm_count = apu_trace_render_pcm(
-			state.audio, AUDIO_SAMPLES_PER_FRAME);
+		state.audio_phase += (uint64_t)APU_SAMPLE_RATE * APU_CYCLES_PER_FRAME;
+		size_t audio_frames = (size_t)(state.audio_phase / APU_CLOCK_HZ);
+		state.audio_phase -= (uint64_t)audio_frames * APU_CLOCK_HZ;
+		size_t pcm_count = apu_trace_render_pcm(state.audio, audio_frames * 2u);
 		/* The framebuffer has two consumers: the window and a state dump
 		 * (this frame's, or the anchor dump of the DoFrame that follows).
 		 * A headless replay with neither skips the software PPU, which
@@ -1167,7 +1170,9 @@ int runtime_run_with_input(
 		shell_queue_audio(shell, state.audio, pcm_count);
 		if (g_pcm_sink) {
 			uint32_t tag = ordinal ? ordinal - 1u : 0u;
+			uint32_t samples = (uint32_t)pcm_count;
 			fwrite(&tag, sizeof tag, 1, g_pcm_sink);
+			fwrite(&samples, sizeof samples, 1, g_pcm_sink);
 			fwrite(state.audio, sizeof state.audio[0], pcm_count, g_pcm_sink);
 		}
 		if (g_state_dump_callback) {
