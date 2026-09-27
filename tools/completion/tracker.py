@@ -201,12 +201,12 @@ class Forgejo:
                 have[name] = created.get("id", -1)
         return have
 
-    def ensure_milestones(self) -> dict[str, dict[str, Any]]:
+    def ensure_milestones(self, needed: set[str]) -> dict[str, dict[str, Any]]:
         have = self.milestones()
         for title in MILESTONES:
             if title not in have:
                 have[title] = self.call("POST", f"/repos/{REPO}/milestones", {"title": title})
-            elif have[title].get("state") == "closed":
+            elif title in needed and have[title].get("state") == "closed":
                 self.call("PATCH", f"/repos/{REPO}/milestones/{have[title]['id']}", {"state": "open"})
         return have
 
@@ -534,13 +534,16 @@ def locked_sync(dry_run: bool, retire_plan: bool) -> int:
     desired, resolved = load_desired()
     c = c_locations()
     label_ids = api.ensure_labels() if not dry_run else {name: -1 for name in LABELS}
-    milestones = api.ensure_milestones() if not dry_run else {name: {"id": -1, "title": name} for name in MILESTONES}
     existing = api.issues()
     by_key: dict[str, dict[str, Any]] = {}
     for issue in existing:
         match = KEY_MARK.search(issue.get("body") or "")
         if match:
             by_key[match.group(1)] = issue
+    held = {key for key, have in by_key.items()
+            if {label["name"] for label in have.get("labels", [])} & HOLD_LABELS}
+    needed = {want["milestone"] for key, want in desired.items() if key not in held}
+    milestones = api.ensure_milestones(needed) if not dry_run else {name: {"id": -1, "title": name} for name in MILESTONES}
     ratchet = session.read_ratchet()
     created = updated = closed = reopened = 0
 
@@ -747,7 +750,7 @@ def route(name: str, title: str, how: str) -> int:
             print(f"#{issue['number']} already names session {name}")
             return 0
     label_ids = api.ensure_labels()
-    milestones = api.ensure_milestones()
+    milestones = api.ensure_milestones({route_of(name)})
     lines = [
         f"session: `{name}`",
         "",
