@@ -16,7 +16,13 @@
 #include "pc_options.h"
 
 #include <ctype.h>
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
+#else
 #include <dlfcn.h>
+#endif
 #include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -198,6 +204,15 @@ static void isr_track_free(IsrTrack *track)
 	memset(track, 0, sizeof *track);
 }
 
+static const void *routine_address(const char *name)
+{
+#ifdef _WIN32
+	return (const void *)GetProcAddress(GetModuleHandleA(NULL), name);
+#else
+	return dlsym(RTLD_DEFAULT, name);
+#endif
+}
+
 static int load_isr_sites(const char *path, IsrTrack *track)
 {
 	FILE *file = fopen(path, "r");
@@ -230,7 +245,7 @@ static int load_isr_sites(const char *path, IsrTrack *track)
 		else if (strcmp(line, "@Func_1d765") == 0)
 			track->site_event[track->sites] = ISR_SITE_CREDITS_ARM;
 		else if (line[0] != '@')
-			track->site_fn[track->sites] = dlsym(RTLD_DEFAULT, line);
+			track->site_fn[track->sites] = routine_address(line);
 		track->sites++;
 	}
 	fclose(file);

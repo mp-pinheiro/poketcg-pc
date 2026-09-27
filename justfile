@@ -394,6 +394,11 @@ appimage:
     just completion-data-pack
     tools/appimage/build.sh {{build_dir}}/poketcg build/completion/data-pack.bin build/appimage
 
+# Cross-compile the port for 64-bit Windows with MinGW as build/windows/poketcg-VERSION-windows.zip.
+windows:
+    just completion-data-pack
+    tools/windows/build.sh build/completion/data-pack.bin
+
 completion-lanes-health:
     python3 tools/completion/oracle_lanes.py --health
 

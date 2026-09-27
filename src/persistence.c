@@ -12,6 +12,14 @@
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
+#ifdef _WIN32
+#include <io.h>
+#include <windows.h>
+#endif
+
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
 
 #define SAVE_HEADER_SIZE 16u
 #define SAVE_VERSION 1u
@@ -74,6 +82,10 @@ static int read_all(int fd, uint8_t *data, size_t length)
 
 static int sync_parent(const char *path)
 {
+#ifdef _WIN32
+	(void)path;
+	return 0;
+#else
 	char parent[PATH_MAX];
 	const char *slash = strrchr(path, '/');
 	if (!slash) {
@@ -97,6 +109,28 @@ static int sync_parent(const char *path)
 	close(fd);
 	errno = saved_errno;
 	return result;
+#endif
+}
+
+static int sync_file(int fd)
+{
+#ifdef _WIN32
+	return _commit(fd);
+#else
+	return fsync(fd);
+#endif
+}
+
+int file_replace(const char *from, const char *to)
+{
+#ifdef _WIN32
+	if (MoveFileExA(from, to, MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
+		return 0;
+	errno = EACCES;
+	return -1;
+#else
+	return rename(from, to);
+#endif
 }
 
 int sram_save_atomic(const char *path)
@@ -122,13 +156,13 @@ int sram_save_atomic(const char *path)
 	if (!result)
 		result = write_all(fd, g_sram, sizeof g_sram);
 	if (!result)
-		result = fsync(fd);
+		result = sync_file(fd);
 	int saved_errno = errno;
 	if (close(fd) != 0 && !result) {
 		result = -1;
 		saved_errno = errno;
 	}
-	if (!result && rename(temporary, path) != 0) {
+	if (!result && file_replace(temporary, path) != 0) {
 		result = -1;
 		saved_errno = errno;
 	}
@@ -148,7 +182,7 @@ int sram_load(const char *path)
 		errno = EINVAL;
 		return -1;
 	}
-	int fd = open(path, O_RDONLY);
+	int fd = open(path, O_RDONLY | O_BINARY);
 	if (fd < 0)
 		return -1;
 	uint8_t header[SAVE_HEADER_SIZE];

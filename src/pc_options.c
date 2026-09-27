@@ -1,5 +1,6 @@
 #define _POSIX_C_SOURCE 200809L
 #include "pc_options.h"
+#include "persistence.h"
 
 #include <errno.h>
 #include <stdio.h>
@@ -7,6 +8,15 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+static int make_directory(const char *path)
+{
+#ifdef _WIN32
+	return mkdir(path);
+#else
+	return mkdir(path, 0755);
+#endif
+}
 
 static int clamp(int value, int low, int high)
 {
@@ -128,11 +138,11 @@ int pc_options_save(const PcOptions *options)
 		char *last = strrchr(directory, '/');
 		if (last) {
 			*last = '\0';
-			if (*directory && mkdir(directory, 0755) != 0 && errno != EEXIST)
+			if (*directory && make_directory(directory) != 0 && errno != EEXIST)
 				return -1;
 			*last = '/';
 		}
-		if (mkdir(directory, 0755) != 0 && errno != EEXIST)
+		if (make_directory(directory) != 0 && errno != EEXIST)
 			return -1;
 	} else {
 		strcpy(directory, ".");
@@ -152,7 +162,7 @@ int pc_options_save(const PcOptions *options)
 		normalized.text_case, normalized.character_select) < 0;
 	if (fclose(file) != 0)
 		result = 1;
-	if (result || rename(temporary, path) != 0) {
+	if (result || file_replace(temporary, path) != 0) {
 		remove(temporary);
 		return -1;
 	}

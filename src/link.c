@@ -5,11 +5,14 @@
 #include "mem.h"
 #include "home/serial.h"
 
-#include <fcntl.h>
+#include <errno.h>
 #include <stddef.h>
 #include <time.h>
-#include <sys/socket.h>
 #include <unistd.h>
+#ifndef _WIN32
+#include <fcntl.h>
+#include <sys/socket.h>
+#endif
 
 #define LINK_SB 0xFF01u
 #define LINK_SC 0xFF02u
@@ -79,6 +82,11 @@ static double link_elapsed(void)
 
 int link_open(int fd)
 {
+#ifdef _WIN32
+	(void)fd;
+	errno = ENOSYS;
+	return -1;
+#else
 	int flags = fcntl(fd, F_GETFL, 0);
 
 	if (flags < 0 || fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0)
@@ -94,6 +102,7 @@ int link_open(int fd)
 	g_drain_timeouts = 0;
 	g_first_received = -1;
 	return 0;
+#endif
 }
 
 void link_close(void)
@@ -140,15 +149,18 @@ void link_note_sc_write(uint8_t value)
 
 static void link_send_frame(void)
 {
+#ifndef _WIN32
 	uint8_t frame[LINK_FRAME_SIZE] = {LINK_FRAME_MAGIC, 1u, gb_read8(LINK_SB)};
 	ssize_t written = send(g_fd, frame, sizeof frame, MSG_NOSIGNAL);
 
 	if (written == (ssize_t)sizeof frame)
 		g_sent = 1;
+#endif
 }
 
 static void link_recv_frame(void)
 {
+#ifndef _WIN32
 	uint8_t frame[LINK_FRAME_SIZE];
 	ssize_t got = recv(g_fd, frame, sizeof frame, 0);
 
@@ -157,6 +169,7 @@ static void link_recv_frame(void)
 	g_peer_valid = 1;
 	g_peer_armed = frame[1];
 	g_peer_byte = frame[2];
+#endif
 }
 
 static void link_complete(uint8_t received)

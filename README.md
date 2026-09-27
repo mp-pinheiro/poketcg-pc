@@ -45,6 +45,10 @@ just build
 
 `just appimage` builds `build/appimage/poketcg-VERSION-x86_64.AppImage`: the windowed binary, the data pack, and the bundled SDL2 and PulseAudio libraries. It runs until the window closes and keeps its save at `${XDG_DATA_HOME:-~/.local/share}/poketcg/poketcg.sav`; arguments after the AppImage path pass through to `poketcg`. The build host's glibc sets the floor (2.38 when built on Ubuntu 24.04).
 
+## Windows build
+
+`just windows` cross-compiles with MinGW GCC (unpacked from the host's Ubuntu apt archive, no root needed) and the pinned SDL2 2.32.10 MinGW package, then writes `build/windows/poketcg-VERSION-windows.zip`: `poketcg.exe`, `SDL2.dll`, the data pack, licences, and `Play.bat`. `Play.bat` runs the game until the window closes and keeps its save and options under `%APPDATA%\poketcg`. The link cable (`--link-fd`) is Linux-only.
+
 ## Verification
 
 ```sh
