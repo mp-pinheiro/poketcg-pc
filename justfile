@@ -388,6 +388,12 @@ package-smoke:
     just completion-data-pack
     python3 tools/completion/package_smoke.py
 
+# Package the windowed build and the data pack as build/appimage/poketcg-VERSION-x86_64.AppImage.
+appimage:
+    just build
+    just completion-data-pack
+    tools/appimage/build.sh {{build_dir}}/poketcg build/completion/data-pack.bin build/appimage
+
 completion-lanes-health:
     python3 tools/completion/oracle_lanes.py --health
 

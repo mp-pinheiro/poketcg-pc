@@ -1,0 +1,10 @@
+#!/bin/sh
+here="$(dirname "$(readlink -f "$0")")"
+save_dir="${XDG_DATA_HOME:-$HOME/.local/share}/poketcg"
+save="$save_dir/poketcg.sav"
+mkdir -p "$save_dir"
+if [ -f "$save" ]; then
+	set -- --load-save "$save" "$@"
+fi
+export POKETCG_DATA_PACK="$here/usr/share/poketcg/data-pack.bin"
+exec "$here/usr/bin/poketcg" --frames 0 --save "$save" "$@"

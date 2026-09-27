@@ -41,6 +41,10 @@ just build
 
 `just bootstrap` clones the pinned `pret/poketcg` disassembly and verifies its ROM checksum. `uv sync --project tools/oracle --frozen` installs the pinned PyBoy project. `just completion-gambatte-bootstrap` downloads the pinned Gambatte source archive, builds its shared library with the pinned SCons version, and rejects archive or core hash drift.
 
+## Linux AppImage
+
+`just appimage` builds `build/appimage/poketcg-VERSION-x86_64.AppImage`: the windowed binary, the data pack, and the bundled SDL2 and PulseAudio libraries. It runs until the window closes and keeps its save at `${XDG_DATA_HOME:-~/.local/share}/poketcg/poketcg.sav`; arguments after the AppImage path pass through to `poketcg`. The build host's glibc sets the floor (2.38 when built on Ubuntu 24.04).
+
 ## Verification
 
 ```sh

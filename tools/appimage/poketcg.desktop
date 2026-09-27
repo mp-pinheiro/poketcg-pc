@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Pokémon TCG
+Comment=Native port of the Game Boy Color Pokémon Trading Card Game
+Exec=poketcg
+Icon=poketcg
+Terminal=false
+Categories=Game;CardGame;
