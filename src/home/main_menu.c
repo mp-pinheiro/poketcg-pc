@@ -143,8 +143,6 @@ void _GameLoop(void)
 			/* Probe world: the oracle stops pre-ret before
 			 * .main_menu_loop (main_menu.asm:11); keep the bounded
 			 * prefix instead of dispatching into the menu table. */
-			Func_c1f8();
-			HandleTitleScreen();
 			return;
 		}
 		for (;;) { /* .main_menu_loop */
