@@ -19,6 +19,7 @@
 
 #define rSCX 0xFF43u
 #define DEFAULT_SCREEN_ANIMATION_UPDATE_ADDR 0x4CBCu
+#define RST00_ADDR 0x0000u
 
 #include "generated/wram.h"
 
@@ -123,7 +124,7 @@ void DefaultScreenAnimationUpdate(void)
 void DoScreenAnimationUpdate(void)
 {
 	wScreenAnimDuration = 1u;
-	CallScreenAnimationUpdate();
+	(void)CallScreenAnimationUpdate();
 	DefaultScreenAnimationUpdate();
 }
 /* <<< factory DoScreenAnimationUpdate */
@@ -342,21 +343,20 @@ void InitScreenAnimation(void)
 }
 /* <<< factory InitScreenAnimation */
 
-/* `call CallHL2` on wScreenAnimUpdatePtr (screen_effects.asm:82 and
- * animations/core.asm:416-421). The pointer only ever holds one of the five
- * update routines this file registers. */
-void CallScreenAnimationUpdate(void)
+uint16_t CallScreenAnimationUpdate(void)
 {
 	uint16_t target = (uint16_t)(gb_read8(wScreenAnimUpdatePtr_ADDR) |
 	                             ((uint16_t)gb_read8((uint16_t)(wScreenAnimUpdatePtr_ADDR + 1u)) << 8));
 	switch (target) {
-	case SHAKE_SCREEN_X_UPDATE_FUNC_ADDR: shake_screen_x_update(); return;
-	case SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR: shake_screen_y_update(); return;
-	case WHITEFLASHSCREEN_UPDATEFUNC_ADDR: white_flash_screen_update(); return;
-	case DISTORTSCREEN_UPDATEFUNC_ADDR: distort_screen_update(); return;
-	case DEFAULT_SCREEN_ANIMATION_UPDATE_ADDR: DefaultScreenAnimationUpdate(); return;
+	case SHAKE_SCREEN_X_UPDATE_FUNC_ADDR: shake_screen_x_update(); break;
+	case SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR: shake_screen_y_update(); break;
+	case WHITEFLASHSCREEN_UPDATEFUNC_ADDR: white_flash_screen_update(); break;
+	case DISTORTSCREEN_UPDATEFUNC_ADDR: distort_screen_update(); break;
+	case DEFAULT_SCREEN_ANIMATION_UPDATE_ADDR: DefaultScreenAnimationUpdate(); break;
+	case RST00_ADDR: return target;
 	default:
 		fprintf(stderr, "wScreenAnimUpdatePtr holds unknown target %04X\n", target);
 		abort();
 	}
+	return (uint16_t)(wScreenAnimUpdatePtr_ADDR + 1u);
 }

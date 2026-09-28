@@ -126,11 +126,11 @@ DuelAnimationUpdateResult _UpdateQueuedAnimations(uint8_t entry_c, uint16_t entr
     if (active != 0xff) {
         /* core.asm:416-421: tick the screen animation; when it just ended,
          * the buffered animations resume this same frame. */
-        CallScreenAnimationUpdate();
+        uint16_t hl = CallScreenAnimationUpdate();
         active = read(wActiveScreenAnim_ADDR);
         if (active == 0xff)
             active = play_buffered_duel_animations();
-        return (DuelAnimationUpdateResult){active, entry_c, wScreenAnimUpdatePtr_ADDR + 1u};
+        return (DuelAnimationUpdateResult){active, entry_c, hl};
     }
     uint8_t accumulator = read(wd4c0_ADDR);
     if (accumulator == 0x80) {
