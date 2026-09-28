@@ -433,7 +433,8 @@ class Oracle:
              frames: int | None = None,
              post_call_byte: int | None = None,
              entry_sp: int | None = None,
-             rom_bank: int | None = None) -> Result:
+             rom_bank: int | None = None,
+             ram_bank: int | None = None) -> Result:
         pb = self.pyboy
         self._baseline.seek(0)
         pb.load_state(self._baseline)
@@ -468,6 +469,8 @@ class Oracle:
             for at, data in spans.items():
                 for i, byte in enumerate(data):
                     pb.memory[at + i] = byte
+        if ram_bank is not None:
+            pb.memory[0x4000] = ram_bank & 0xFF
 
         # Seeding SRAM enables the latch as a side effect, so a case that needs to
         # enter with non-zero SRAM and RAM disabled -- the only way a routine's own

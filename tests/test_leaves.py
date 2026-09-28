@@ -28,6 +28,7 @@ sys.path.insert(0, str(ROOT / "tests"))
 
 from lane_frames import lane_frames  # noqa: E402
 from routines import ALL, EXCLUSIONS, ROUTINES  # noqa: E402
+from tests.cases._schema_migration import _seed_byte  # noqa: E402
 CACHE_SEMANTICS = 2
 REGS = ("a", "f", "b", "c", "d", "e", "hl")
 CACHE_SCHEMA = 1
@@ -94,6 +95,11 @@ def pyboy_frames(case: dict) -> int | None:
     return lane_frames(case)
 
 
+def seeded_ram_bank(case: dict) -> int | None:
+    bank = _seed_byte(case.get("wram") or {}, 0xFF81, -1)
+    return bank if 0 <= bank <= 3 else None
+
+
 def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
               sreads: dict[int, dict[int, int]] | None = None,
               vreads: dict[int, dict[int, int]] | None = None) -> dict:
@@ -113,6 +119,9 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
                          for bank, spans in vreads.items()}
     if case.get("ramg") is not None:
         req["ramg"] = 1 if case["ramg"] else 0
+    ram_bank = seeded_ram_bank(case)
+    if ram_bank is not None:
+        req["ram_bank"] = ram_bank
     frames = pyboy_frames(case)
     if frames is not None:
         req["frame_budget"] = int(frames)
@@ -339,7 +348,7 @@ def direct_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], c
     ref = oracle.call(fn, a=case.get("a", 0), f=case.get("f", 0), b=case.get("b", 0),
                       c=case.get("c", 0), d=case.get("d", 0), e=case.get("e", 0),
                       hl=case.get("hl", 0), wram=case.get("wram"), sram=case.get("sram"),
-                      ramg=case.get("ramg"), setup=case.get("setup"), keys=key_timeline(case),
+                      ramg=case.get("ramg"), ram_bank=seeded_ram_bank(case), setup=case.get("setup"), keys=key_timeline(case),
                       stop_pc=completion.get("pc") if completion.get("mode") in ("pre-ret", "entry") else None,
                       stop_bank=completion.get("bank") if completion.get("mode") in ("pre-ret", "entry") else None,
                       stack=case.get("stack"), hbank_rom=case.get("hbank_rom"),
@@ -643,7 +652,7 @@ def main() -> int:
                             key = hashlib.sha256(payload).hexdigest()
                             ref = None
                             completion = case.get("_completion", {"mode": "return"})
-                            result = oracle.call(fn, a=case.get("a", 0), f=case.get("f", 0), b=case.get("b", 0), c=case.get("c", 0), d=case.get("d", 0), e=case.get("e", 0), hl=case.get("hl", 0), wram=case.get("wram"), sram=case.get("sram"), ramg=case.get("ramg"), setup=case.get("setup"), keys=key_timeline(case), stop_pc=completion.get("pc") if completion.get("mode") in ("pre-ret", "entry") else None, stop_bank=completion.get("bank") if completion.get("mode") in ("pre-ret", "entry") else None, stack=case.get("stack"), post_call_byte=case.get("post_call_byte"), entry_sp=case.get("entry_sp"))
+                            result = oracle.call(fn, a=case.get("a", 0), f=case.get("f", 0), b=case.get("b", 0), c=case.get("c", 0), d=case.get("d", 0), e=case.get("e", 0), hl=case.get("hl", 0), wram=case.get("wram"), sram=case.get("sram"), ramg=case.get("ramg"), ram_bank=seeded_ram_bank(case), setup=case.get("setup"), keys=key_timeline(case), stop_pc=completion.get("pc") if completion.get("mode") in ("pre-ret", "entry") else None, stop_bank=completion.get("bank") if completion.get("mode") in ("pre-ret", "entry") else None, stack=case.get("stack"), post_call_byte=case.get("post_call_byte"), entry_sp=case.get("entry_sp"))
                             reads, sreads, vreads = merged_spans(case)
                             ref = {"registers": {field: getattr(result, field) for field in fields}, "wram": {str(a): result.mem(a, n).hex() for a, n in reads.items()}, "sram": {str(b): {str(a): result.mem(a, n, bank=b).hex() for a, n in spans.items()} for b, spans in sreads.items()}, "vram": {str(b): {str(a): result.mem(a, n, bank=b).hex() for a, n in spans.items()} for b, spans in vreads.items()}}
                             cache_reference(args.cache_dir, key, fn, fields, ref)
