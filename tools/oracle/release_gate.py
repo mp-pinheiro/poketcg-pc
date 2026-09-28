@@ -22,6 +22,7 @@ HISTORY_PATH = ROOT / "site" / "data" / "history.jsonl"
 COMPLETION = ROOT / "tools" / "completion" / "completion.py"
 GAMBATTE_PINS = ROOT / "tools" / "completion" / "gambatte_pins.toml"
 RELEASE_SMOKE_FRAMES = 200
+CONSTITUENT_TIMEOUTS = {"function-gate": 1800.0}
 
 
 class GateError(RuntimeError):
@@ -313,13 +314,15 @@ def main(argv: list[str] | None = None) -> int:
             "completion-audit": [sys.executable, str(COMPLETION), "audit"],
             "hatches": [sys.executable, str(ROOT / "tools/audit_hatches.py"), "--stage", "release"],
             "mutations": [sys.executable, str(ROOT / "tools/audit_mutations.py"), "--stage", "release"],
+            "function-gate": ["just", "oracle-fn-gate"],
             "lane-health": ["just", "completion-lanes-health"],
             "gambatte-health": ["just", "completion-gambatte-health"],
             "gambatte-capture": gambatte_capture_command,
         }
         for name, command in commands.items():
             constituents[name] = run_constituent(
-                name, command, run_dir / f"{name}.log", args.timeout
+                name, command, run_dir / f"{name}.log",
+                max(args.timeout, CONSTITUENT_TIMEOUTS.get(name, 0.0)),
             )
         audit_report = parse_json_log(run_dir / "completion-audit.log")
         summary = {

@@ -24,11 +24,7 @@ just oracle-diff-group <basename>
 just oracle-release-gate       # central release barrier; exits non-zero on any failure
 ```
 
-The central release barrier verifies the pinned Gambatte source archive, shared
-core, ROM, C ABI, memory domains, registers, trace schema, framebuffer schema,
-and the pinned boot mode. It also runs a bounded Gambatte capture from power-on
-through the CGB boot ROM to the cartridge entry at `$0150`; file-health alone is
-not accepted as a passing constituent.
+The central release barrier verifies the pinned Gambatte source archive, shared core, ROM, C ABI, memory domains, registers, trace schema, framebuffer schema, and the pinned boot mode. It also runs a bounded Gambatte capture from power-on through the CGB boot ROM to the cartridge entry at `$0150`; file-health alone is not accepted as a passing constituent. Its `function-gate` constituent runs `just oracle-fn-gate`: the gbref health check, then every schema-2 case against the native probe (`tools/oracle/fn_all.py`), which must report `failures=0`.
 
 After the gate and progress publication are committed, `just issues-sync`
 reconciles the Forgejo issues with the measured facts (`docs/grind.md`, "Issues").
