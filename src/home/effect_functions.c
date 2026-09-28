@@ -11615,7 +11615,7 @@ PokeBallPlayerSelectionResult PokeBall_PlayerSelection(void)
 	hTempList = toss.a;
 	if ((toss.f & 0x10u) == 0u) return (PokeBallPlayerSelectionResult){toss.a, toss.f};
 	CardListResult deck = CreateDeckCardList(0u, 0u);
-	LookForCardsInDeckResult search = LookForCardsInDeck(deck.a, 0u, (uint8_t)(ChooseBasicOrEvolutionPokemonCardFromDeckText & 0xFFu), SEARCHEFFECT_POKEMON, 0u, EvolutionCardText);
+	LookForCardsInDeckResult search = LookForCardsInDeck(deck.a, (uint8_t)(EvolutionCardText >> 8), (uint8_t)EvolutionCardText, SEARCHEFFECT_POKEMON, 0u, ChooseBasicOrEvolutionPokemonCardFromDeckText);
 	if ((search.f & 0x10u) != 0u) { hTempList_PTR[1] = 0xffu; return (PokeBallPlayerSelectionResult){0xffu, 0x00u}; }
 	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
 	SetCardListHeaderText(DuelistDeckText, ChoosePokemonCardText);
