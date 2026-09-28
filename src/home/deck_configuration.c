@@ -427,6 +427,7 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #define SendTheseCardsText 0x0282u
 #define HANDLE_SEND_DECK_CONFIGURATION_MENU_DATA_ADDR 0x61F4u
 #define DATA_B04A_ADDR 0x704Au
+#define CANCEL_SEND_DECK_CONFIGURATION_ADDR 0x627Du
 
 #include "home/deck_configuration.h"
 #include "home/deck_selection.h"
@@ -720,7 +721,7 @@ void FillBGMapLineWithA(uint8_t a, uint8_t b, uint8_t c)
 /* <<< factory FillBGMapLineWithA */
 
 /* >>> factory OpenDeckConfigurationMenu */
-void OpenDeckConfigurationMenu(void)
+DeckBuildScreenResult OpenDeckConfigurationMenu(void)
 {
 	gb_write8(wYourOrOppPlayAreaCurPosition_ADDR, 0u);
 	uint16_t de = wDeckConfigurationMenuTransitionTable_ADDR;
@@ -728,21 +729,19 @@ void OpenDeckConfigurationMenu(void)
 	gb_write8(hl++, gb_read8(de++));
 	gb_write8(hl, gb_read8(de));
 	gb_write8(wDuelInitialPrizesUpperBitsSet_ADDR, 0xffu);
-	OpenDeckConfigurationMenu_SkipInit();
+	return OpenDeckConfigurationMenu_SkipInit();
 }
 
-void OpenDeckConfigurationMenu_SkipInit(void)
+DeckBuildScreenResult OpenDeckConfigurationMenu_SkipInit(void)
 {
 	gb_write8(wCheckMenuCursorBlinkCounter_ADDR, 0u);
 	uint16_t handler = (uint16_t)(gb_read8(wDeckConfigurationMenuHandlerFunction_ADDR)
 	                              | (gb_read8((uint16_t)(wDeckConfigurationMenuHandlerFunction_ADDR + 1u)) << 8));
 	switch (handler) {
 	case DECK_CONFIGURATION_MENU_HANDLER:
-		HandleDeckConfigurationMenu();
-		break;
+		return HandleDeckConfigurationMenu();
 	case SEND_DECK_CONFIGURATION_MENU_HANDLER:
-		HandleSendDeckConfigurationMenu();
-		break;
+		return HandleSendDeckConfigurationMenu();
 	default:
 		fprintf(stderr, "wDeckConfigurationMenuHandlerFunction is $%04X\n", (unsigned)handler);
 		abort();
@@ -2566,14 +2565,14 @@ HandleSelectUpAndDownInListResult HandleSelectUpAndDownInList(void)
 /* <<< factory HandleSelectUpAndDownInList */
 
 /* >>> factory HandleDeckBuildScreen */
-void HandleDeckBuildScreen(void)
+DeckBuildScreenResult HandleDeckBuildScreen(void)
 {
 	(void)WriteCardListsTerminatorBytes();
 	CountNumberOfCardsForEachCardType();
-	HandleDeckBuildScreen_SkipCount();
+	return HandleDeckBuildScreen_SkipCount();
 }
 
-void HandleDeckBuildScreen_SkipCount(void)
+DeckBuildScreenResult HandleDeckBuildScreen_SkipCount(void)
 {
 	(void)DrawCardTypeIconsAndPrintCardCounts();
 
@@ -2581,10 +2580,10 @@ void HandleDeckBuildScreen_SkipCount(void)
 	wCurCardTypeFilter = 0u;
 	PrintFilteredCardListResult printed = PrintFilteredCardList(0u, 0u, 0u, 0u, 0u, 0u,
 		HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR);
-	HandleDeckBuildScreen_SkipDraw(printed.a);
+	return HandleDeckBuildScreen_SkipDraw(printed.a);
 }
 
-void HandleDeckBuildScreen_SkipDraw(uint8_t a)
+DeckBuildScreenResult HandleDeckBuildScreen_SkipDraw(uint8_t a)
 {
 	uint16_t params;
 	params = HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR;
@@ -2617,10 +2616,8 @@ void HandleDeckBuildScreen_SkipDraw(uint8_t a)
 			HandleCardSelectionInputResult input = HandleCardSelectionInput();
 			if (input.carry == 0u)
 				continue;
-			if (hffb3 == MENU_CANCEL) {
-				OpenDeckConfigurationMenu();
-				return;
-			}
+			if (hffb3 == MENU_CANCEL)
+				return OpenDeckConfigurationMenu();
 			jump_to_list = 1u;
 		}
 
@@ -2805,7 +2802,7 @@ void HandlePlayersCardsScreen(void)
 /* <<< factory HandlePlayersCardsScreen */
 
 /* >>> factory HandleSendDeckConfigurationMenu */
-void HandleSendDeckConfigurationMenu(void)
+DeckBuildScreenResult HandleSendDeckConfigurationMenu(void)
 {
 	uint16_t box = 0u;
 	DrawRegularTextBox(&box, 0u, 20u, 6u, 0u, 0u);
@@ -2824,21 +2821,19 @@ void HandleSendDeckConfigurationMenu(void)
 		if (selection == MENU_CANCEL) {
 			DrawCardTypeIconsAndPrintCardCounts();
 			wCardListCursorPos = wTempCardListCursorPos;
-			(void)PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u,
+			PrintFilteredCardListResult printed = PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u,
 				FILTERS_CARD_SELECTION_PARAMS_ADDR);
-			HandleDeckBuildScreen();
-			return;
+			return HandleDeckBuildScreen_SkipDraw(printed.a);
 		}
 
 		if (selection == 0u) {
 			ConfirmDeckConfiguration();
-			OpenDeckConfigurationMenu_SkipInit();
-			return;
+			return OpenDeckConfigurationMenu_SkipInit();
 		}
 
 		if (selection == 1u) {
 			if (wCurDeckCards == 0u)
-				return;
+				return (DeckBuildScreenResult){0u, 0x80u};
 			wCardListVisibleOffset = 0u;
 			uint16_t params = DATA_B04A_ADDR;
 			(void)InitCardSelectionParams(0u, &params);
@@ -2850,18 +2845,18 @@ void HandleSendDeckConfigurationMenu(void)
 			EnableLCD();
 			HandleYesOrNoMenuResult answer = YesOrNoMenuWithText(SendTheseCardsText);
 			if ((answer.f & 0x10u) == 0u)
-				return;
-			HandleDeckBuildScreen();
-			return;
+				return (DeckBuildScreenResult){answer.a, 0x10u};
+			return HandleDeckBuildScreen_SkipCount();
 		}
 
-		return;
+		uint8_t cancel = (uint8_t)CANCEL_SEND_DECK_CONFIGURATION_ADDR;
+		return (DeckBuildScreenResult){cancel, (uint8_t)(cancel == 0u ? 0x80u : 0x00u)};
 	}
 }
 /* <<< factory HandleSendDeckConfigurationMenu */
 
 /* >>> factory PrepareToBuildDeckConfigurationToSend */
-void PrepareToBuildDeckConfigurationToSend(void)
+DeckBuildScreenResult PrepareToBuildDeckConfigurationToSend(void)
 {
 	ClearMemory_Bank2((uint8_t)(wCurDeckCardsEnd_ADDR - wCurDeckCards_ADDR), wCurDeckCards_ADDR);
 	wCurDeck = 0xffu;
@@ -2870,7 +2865,7 @@ void PrepareToBuildDeckConfigurationToSend(void)
 	CopyListFromHLToDE(&text, &name);
 	uint16_t params = PREPARE_TO_BUILD_DECK_PARAMS_ADDR;
 	(void)InitDeckBuildingParams(&params, 0u);
-	HandleDeckBuildScreen();
+	return HandleDeckBuildScreen();
 }
 /* <<< factory PrepareToBuildDeckConfigurationToSend */
 
@@ -2882,7 +2877,7 @@ void ChangeDeckName(void)
 /* <<< factory ChangeDeckName */
 
 /* >>> factory HandleDeckConfigurationMenu */
-void HandleDeckConfigurationMenu(void)
+DeckBuildScreenResult HandleDeckConfigurationMenu(void)
 {
 	uint16_t box = 0u;
 	DrawRegularTextBox(&box, 0u, 20u, 6u, 0u, 0u);
@@ -2901,8 +2896,7 @@ void HandleDeckConfigurationMenu(void)
 			wCardListCursorPos = wTempCardListCursorPos;
 			PrintFilteredCardListResult printed = PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u,
 				FILTERS_CARD_SELECTION_PARAMS_ADDR);
-			HandleDeckBuildScreen_SkipDraw(printed.a);
-			return;
+			return HandleDeckBuildScreen_SkipDraw(printed.a);
 		}
 		/* deck_configuration.asm:585-591: the cursor is drawn and the OAM
 		 * copy armed before the table dispatch, for every selection but
@@ -2913,36 +2907,39 @@ void HandleDeckConfigurationMenu(void)
 		case 0u:
 			ConfirmDeckConfiguration();
 			break;
-		case 3u:
-			if (SaveDeckConfiguration(0u).unwound)
-				return;
+		case 3u: {
+			SaveDeckConfigurationResult saved = SaveDeckConfiguration(0u);
+			if (saved.unwound)
+				return (DeckBuildScreenResult){saved.a, saved.f};
 			break;
-		case 4u:
-			if (DismantleDeck(0u).unwound)
-				return;
+		}
+		case 4u: {
+			DismantleDeckResult dismantled = DismantleDeck(0u);
+			if (dismantled.unwound)
+				return (DeckBuildScreenResult){dismantled.a, 0x00u};
 			break;
-		case 5u:
-			if (CancelDeckModifications(0u).unwound)
-				return;
+		}
+		case 5u: {
+			CancelDeckModificationsResult cancelled = CancelDeckModifications(0u);
+			if (cancelled.unwound)
+				return (DeckBuildScreenResult){cancelled.a, cancelled.f};
 			break;
+		}
 		case 1u:
-			ModifyDeckConfiguration(0u);
-			return;
+			return ModifyDeckConfiguration(0u);
 		case 2u:
 			ChangeDeckName();
-			HandleDeckBuildScreen_SkipCount();
-			return;
+			return HandleDeckBuildScreen_SkipCount();
 		default:
 			break;
 		}
-		OpenDeckConfigurationMenu_SkipInit();
-		return;
+		return OpenDeckConfigurationMenu_SkipInit();
 	}
 }
 /* <<< factory HandleDeckConfigurationMenu */
 
 /* >>> factory ModifyDeckConfiguration */
-void ModifyDeckConfiguration(uint16_t w0)
+DeckBuildScreenResult ModifyDeckConfiguration(uint16_t w0)
 {
 	(void)w0;
 	/* deck_configuration.asm:624-626: `add sp, $2` drops the caller's return
@@ -2953,6 +2950,6 @@ void ModifyDeckConfiguration(uint16_t w0)
 	wCardListCursorPos = wTempCardListCursorPos;
 	PrintFilteredCardListResult printed = PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u,
 		FILTERS_CARD_SELECTION_PARAMS_ADDR);
-	HandleDeckBuildScreen_SkipDraw(printed.a);
+	return HandleDeckBuildScreen_SkipDraw(printed.a);
 }
 /* <<< factory ModifyDeckConfiguration */

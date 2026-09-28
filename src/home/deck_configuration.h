@@ -52,8 +52,9 @@ uint8_t CheckIfDeckHasCards(uint16_t hl);
 void FillBGMapLineWithA(uint8_t a, uint8_t b, uint8_t c);
 /* <<< factory FillBGMapLineWithA */
 /* >>> factory OpenDeckConfigurationMenu */
-void OpenDeckConfigurationMenu(void);
-void OpenDeckConfigurationMenu_SkipInit(void);
+typedef struct { uint8_t a; uint8_t f; } DeckBuildScreenResult;
+DeckBuildScreenResult OpenDeckConfigurationMenu(void);
+DeckBuildScreenResult OpenDeckConfigurationMenu_SkipInit(void);
 /* <<< factory OpenDeckConfigurationMenu */
 /* >>> factory PrintTotalNumberOfCardsInCollection */
 void PrintTotalNumberOfCardsInCollection(void);
@@ -299,26 +300,26 @@ typedef struct { uint8_t f; } HandleSelectUpAndDownInListResult;
 HandleSelectUpAndDownInListResult HandleSelectUpAndDownInList(void);
 /* <<< factory HandleSelectUpAndDownInList */
 /* >>> factory HandleDeckBuildScreen */
-void HandleDeckBuildScreen(void);
-void HandleDeckBuildScreen_SkipCount(void);
-void HandleDeckBuildScreen_SkipDraw(uint8_t a);
+DeckBuildScreenResult HandleDeckBuildScreen(void);
+DeckBuildScreenResult HandleDeckBuildScreen_SkipCount(void);
+DeckBuildScreenResult HandleDeckBuildScreen_SkipDraw(uint8_t a);
 /* <<< factory HandleDeckBuildScreen */
 /* >>> factory HandlePlayersCardsScreen */
 void HandlePlayersCardsScreen(void);
 /* <<< factory HandlePlayersCardsScreen */
 /* >>> factory HandleSendDeckConfigurationMenu */
-void HandleSendDeckConfigurationMenu(void);
+DeckBuildScreenResult HandleSendDeckConfigurationMenu(void);
 /* <<< factory HandleSendDeckConfigurationMenu */
 /* >>> factory PrepareToBuildDeckConfigurationToSend */
-void PrepareToBuildDeckConfigurationToSend(void);
+DeckBuildScreenResult PrepareToBuildDeckConfigurationToSend(void);
 /* <<< factory PrepareToBuildDeckConfigurationToSend */
 /* >>> factory ChangeDeckName */
 void ChangeDeckName(void);
 /* <<< factory ChangeDeckName */
 /* >>> factory HandleDeckConfigurationMenu */
-void HandleDeckConfigurationMenu(void);
+DeckBuildScreenResult HandleDeckConfigurationMenu(void);
 /* <<< factory HandleDeckConfigurationMenu */
 /* >>> factory ModifyDeckConfiguration */
-void ModifyDeckConfiguration(uint16_t w0);
+DeckBuildScreenResult ModifyDeckConfiguration(uint16_t w0);
 /* <<< factory ModifyDeckConfiguration */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

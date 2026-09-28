@@ -720,16 +720,18 @@ static void adapt_HandlePlayersCardsScreen(ProbeState *s)
 /* >>> factory HandleSendDeckConfigurationMenu */
 static void adapt_HandleSendDeckConfigurationMenu(ProbeState *s)
 {
-	(void)s;
-	HandleSendDeckConfigurationMenu();
+	DeckBuildScreenResult result = HandleSendDeckConfigurationMenu();
+	s->a = result.a;
+	s->f = result.f;
 }
 /* <<< factory HandleSendDeckConfigurationMenu */
 
 /* >>> factory PrepareToBuildDeckConfigurationToSend */
 static void adapt_PrepareToBuildDeckConfigurationToSend(ProbeState *s)
 {
-	(void)s;
-	PrepareToBuildDeckConfigurationToSend();
+	DeckBuildScreenResult result = PrepareToBuildDeckConfigurationToSend();
+	s->a = result.a;
+	s->f = result.f;
 }
 /* <<< factory PrepareToBuildDeckConfigurationToSend */
 

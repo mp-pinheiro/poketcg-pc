@@ -1,0 +1,13 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Seeded from the Fighting Club lobby save with ten Bulbasaur: Continue lands at the Battle Center counter mid-dialogue, where the Gift Center route starts",
+  "name": "seed-gift-center",
+  "ordinals": 890,
+  "recorded": "2026-09-28T15:12:25+00:00",
+  "save": "giftcenter.sav",
+  "save_sha256": "fc3e2204b93ee6f36277c820d778d919370d7dbf247bff1bd48e13feef9cbd34",
+  "schema": 1,
+  "then": [
+    "WAIT"
+  ]
+}

@@ -1,0 +1,44 @@
+idle
+press RIGHT
+idle
+press A
+idle
+press A
+idle
+press START
+idle
+press DOWN
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press RIGHT
+idle
+press DOWN
+idle
+press LEFT
+idle
+press B
+idle
+press B
+idle
+press DOWN
+idle
+press RIGHT
+idle
+press RIGHT
+idle
+press A
+idle
+yes
+idle
+press A
+idle
+press A
+idle
+press RIGHT
+idle
+shot zz-f3

@@ -1,0 +1,8 @@
+{
+  "goal": "from seed-gift-center: decline the Battle Center duel, open the pause-menu deck screen, pick deck 2 and back out of its submenu with B so the cursor stays on deck 2, then leave the deck screen",
+  "name": "deck-select-cancel",
+  "ordinals": 2721,
+  "pokes": {},
+  "recorded": "2026-09-28T15:57:47+00:00",
+  "schema": 1
+}

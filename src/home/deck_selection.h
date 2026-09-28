@@ -82,6 +82,7 @@ void InputCurDeckName(void);
 /* <<< factory InputCurDeckName */
 /* >>> factory DeckSelectionMenu */
 void DeckSelectionMenu(void);
+void DeckSelectionMenu_InitMenuParams(uint8_t a);
 void DeckSelectionSubMenu(void);
 void DeckSelectionSubMenu_SelectOrCancel(void);
 /* <<< factory DeckSelectionMenu */

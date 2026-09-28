@@ -1215,7 +1215,7 @@ CASES["HandlePlayersCardsScreen"] = [
 # <<< factory HandlePlayersCardsScreen
 
 # >>> factory HandleSendDeckConfigurationMenu
-CONTRACT["HandleSendDeckConfigurationMenu"] = {"compare": (), "preserve": ()}
+CONTRACT["HandleSendDeckConfigurationMenu"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["HandleSendDeckConfigurationMenu"] = [
     {"wram": {0xCE52: b"\x02", 0xCABB: b"\x00"},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
@@ -1236,7 +1236,7 @@ CASES["HandleSendDeckConfigurationMenu"] = [
 # <<< factory HandleSendDeckConfigurationMenu
 
 # >>> factory PrepareToBuildDeckConfigurationToSend
-CONTRACT["PrepareToBuildDeckConfigurationToSend"] = {"compare": (), "preserve": ()}
+CONTRACT["PrepareToBuildDeckConfigurationToSend"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["PrepareToBuildDeckConfigurationToSend"] = [
     {"wram": {0xCABB: b"\x80", 0xFF40: b"\x80"},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
@@ -1398,7 +1398,7 @@ MUTATIONS["CheckIfDeckHasCards"] = {"source_symbol": "CheckIfDeckHasCards", "bef
 MUTATIONS["FillBGMapLineWithA"] = {"source_symbol": "FillBGMapLineWithA", "before": "	FillDEWithA(0x04u, 20u, de);", "after": "	FillDEWithA(0x05u, 20u, de);", "case_ids": ["FillBGMapLineWithA-1", "FillBGMapLineWithA-2"]}
 # <<< factory-mutation FillBGMapLineWithA
 # >>> factory-mutation OpenDeckConfigurationMenu
-MUTATIONS["OpenDeckConfigurationMenu"] = {"source_symbol": "OpenDeckConfigurationMenu", "before": "\tOpenDeckConfigurationMenu_SkipInit();", "after": "", "case_ids": ["OpenDeckConfigurationMenu-0", "OpenDeckConfigurationMenu-1", "OpenDeckConfigurationMenu-2"]}
+MUTATIONS["OpenDeckConfigurationMenu"] = {"source_symbol": "OpenDeckConfigurationMenu", "before": "\treturn OpenDeckConfigurationMenu_SkipInit();", "after": "\treturn (DeckBuildScreenResult){0u, 0u};", "case_ids": ["OpenDeckConfigurationMenu-0", "OpenDeckConfigurationMenu-1", "OpenDeckConfigurationMenu-2"]}
 # <<< factory-mutation OpenDeckConfigurationMenu
 # >>> factory-mutation PrintTotalNumberOfCardsInCollection
 MUTATIONS["PrintTotalNumberOfCardsInCollection"] = {"source_symbol": "PrintTotalNumberOfCardsInCollection", "before": "\tuint16_t printed = wTempCardCollection_ADDR;", "after": "\tuint16_t printed = (uint16_t)(wTempCardCollection_ADDR + 2u);", "case_ids": ["PrintTotalNumberOfCardsInCollection-1", "PrintTotalNumberOfCardsInCollection-3"]}

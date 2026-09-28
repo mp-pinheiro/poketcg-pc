@@ -1,0 +1,22 @@
+idle
+press RIGHT
+idle
+press A
+idle
+press A
+idle
+press START
+idle
+press DOWN
+idle
+press A
+idle
+press DOWN
+idle
+press A
+idle
+press B
+idle
+shot zz-h1
+press B
+idle

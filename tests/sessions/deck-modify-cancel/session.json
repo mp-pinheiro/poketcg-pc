@@ -1,0 +1,8 @@
+{
+  "goal": "from seed-gift-center: decline the Battle Center duel, remove a Charmander from deck 1 in the pause-menu deck screen, cancel the modification and confirm, then reopen deck 1 on its original configuration",
+  "name": "deck-modify-cancel",
+  "ordinals": 4741,
+  "pokes": {},
+  "recorded": "2026-09-28T15:25:46+00:00",
+  "schema": 1
+}
