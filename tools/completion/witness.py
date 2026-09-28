@@ -9,6 +9,7 @@ compared byte for byte across the requirement's representation fields.
 from __future__ import annotations
 
 import array
+import functools
 import hashlib
 import json
 import math
@@ -69,15 +70,12 @@ class WitnessError(RuntimeError):
 WRAM_HEADER = ROOT / "include" / "generated" / "wram.h"
 
 
+@functools.cache
 def wram_offset(symbol: str) -> int:
     match = re.search(rf"#define\s+{re.escape(symbol)}_ADDR\s+0x([0-9A-Fa-f]+)u?", WRAM_HEADER.read_text(encoding="utf-8"))
     if match is None:
         raise WitnessError(f"{symbol}_ADDR is absent from {WRAM_HEADER}")
     return int(match.group(1), 16) - 0xC000
-
-
-DUEL_FINISHED_OFFSET = wram_offset("wDuelFinished")
-RNG_OFFSET = wram_offset("wRNG1")
 
 
 @dataclass(frozen=True)
@@ -567,7 +565,8 @@ def compare_anchor(
         mask = masks[ordinal - 1] if ordinal - 1 < len(masks) else 0
         return int(native["input_latch"] != ((mask << 4) | (mask >> 4)) & 0xFF)
     if field == "rng":
-        return count_diff(bytes(native["rng"]), reference["wram"][RNG_OFFSET : RNG_OFFSET + 3])
+        rng = wram_offset("wRNG1")
+        return count_diff(bytes(native["rng"]), reference["wram"][rng : rng + 3])
     if field == "transport":
         expected = reference.get("transport") or {"exchanges": 0, "received_crc": 0}
         actual = native.get("transport")
@@ -741,7 +740,7 @@ def witness_session(name: str, spec: Spec) -> dict[str, Any]:
             failures.append(f"script opcodes without a red witness: {len(opcodes['unwitnessed'])}")
     if "duel_finished" in spec.checks:
         finished = min(int(meta["duel_finished_ordinal"]) + 1, count)
-        flag = native[finished]["wram"][DUEL_FINISHED_OFFSET]
+        flag = native[finished]["wram"][wram_offset("wDuelFinished")]
         row["duel_finished"] = {"ordinal": finished, "flag": flag}
         if not flag:
             failures.append(f"duel outcome flag clear at ordinal {finished}")

@@ -29,9 +29,6 @@ OVERWORLD_MAP = 0x00
 LCD_OFF_COLOR = 0x7FFF
 BG_MAP0 = 0x1800
 BG_MAP1 = 0x1C00
-DO_FRAME = witness.wram_offset("wDoFrameFunction")
-CUR_MAP = witness.wram_offset("wCurMap")
-MAP_WIDTH = witness.wram_offset("wBGMapWidth")
 
 
 class WidescreenError(RuntimeError):
@@ -167,12 +164,13 @@ def render(state: dict[str, Any], extra: int, limit: int) -> list[int]:
 
 def viewport(state: dict[str, Any], extra: int) -> tuple[int, int, bool]:
     wram, io = state["wram"], state["io"]
-    frame_function = wram[DO_FRAME] | (wram[DO_FRAME + 1] << 8)
-    if not (io[0x40] & 0x80 and frame_function == OVERWORLD_DO_FRAME and wram[CUR_MAP] != OVERWORLD_MAP):
+    do_frame = witness.wram_offset("wDoFrameFunction")
+    frame_function = wram[do_frame] | (wram[do_frame + 1] << 8)
+    if not (io[0x40] & 0x80 and frame_function == OVERWORLD_DO_FRAME and wram[witness.wram_offset("wCurMap")] != OVERWORLD_MAP):
         return 0, SCREEN_W, False
     scx = io[0x43]
     left = max(-extra, -scx)
-    right = min(SCREEN_W + extra, wram[MAP_WIDTH] * 8 - scx)
+    right = min(SCREEN_W + extra, wram[witness.wram_offset("wBGMapWidth")] * 8 - scx)
     return min(left, 0), max(right, SCREEN_W), True
 
 
