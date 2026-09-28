@@ -2389,25 +2389,9 @@ the bank restore and the `scf` -- its cases were `oracle: False`, so no lane
 had ever compared it to the ROM; they are oracle-backed at the handler's entry
 now and the dispatch returns its carry like `GameEvent_BattleCenter` does.
 
-**Boundary and body land together.** The other four (`_SendCard`,
-`_SendDeckConfiguration`, `GiftCenter_SendCard`, `GiftCenter_SendDeck`) were
-reverted to `pre-ret` rather than left in `entry` mode with a failing baseline:
-a canary whose baseline fails cannot run at all, and `audit_mutations` only
-proves that an anchor resolves, so leaving them converted would have left four
-routines silently unguarded.
+The other four (`_SendCard`, `_SendDeckConfiguration`, `GiftCenter_SendCard`, `GiftCenter_SendDeck`) are ported in full. Their gbref cases cover the cancel paths: the infrared sends are cancelled with B and decline the retry prompt, and the Gift Center cases back out of the menus, including from the captured `gift-center-send-card-entry` and `gift-center-send-deck-entry` fixtures. No lane reaches a completed transfer: the PC build has no infrared peer, and the gbref runner's `ir_peer` replays a fixed handshake script (`tools/oracle/gbref/gbrt-mbc5.patch`), so a send that gets past the request spins in `ReceiveByteThroughIR` until its budget runs out.
 
-They are blocked on an entry-register contract, not on missing callees -- all
-sixteen callees of the four tails are ported. `RequestDataReceivalThroughIR`
-reaches `TransmitRegistersThroughIR`, which stores *every* register into
-`wIRDataBuffer` and transmits it, and the caller then does `add b`
-(`link/ir_core.asm`), so `b` at `_SendDeckConfiguration`'s entry is observable
-on the wire. The asm never sets it: it belongs to the deck-machine caller
-(`menus/deck_machine.asm:2202`, `bank1call SendDeckConfiguration` then
-`ret c`), whose own body is one of the four truncations. So this is one
-bottom-up region port with `b` threaded from the deck machine down, and
-everything below `LoadLinkConnectingScene`'s entry is transcription-only for
-the same reason `ChallengeMachine_Duel` is: no IR peer answers, so no lane can
-reach those exits.
+That leaves one register unverified on the transfer path. On CGB the request's last exchange closes the link through `SafelyCloseIRCommunications`, `CloseIRCommunications` and `SwitchToCGBDoubleSpeed`, and `CGBSpeedSwitch` ends in `SetupTimer`, which leaves `b = -68 * 2 = $78`. `_SendCard` and `_SendDeckConfiguration` hand that `b` to `RequestDataReceivalThroughIR`, and `TransmitRegistersThroughIR` sends every register. The port's speed switches return nothing, so those calls pass `b = 0` (`src/home/ir_functions.c`), and so do `_ReceiveCard` and `HandleCardPopCommunications` (`src/home/card_pop.c`), where the asm passes whatever the previous call left in `b`. Threading `b` up from `SetupTimer` touches about 60 call lines across `ir_core.c`, `ir_functions.c`, `card_pop.c`, `link_duel.c`, `setup.c` and `time.c`, and no lane could check the result, so it waits for a lane that completes a transfer.
 
 ## What is actually unexercised, measured
 
