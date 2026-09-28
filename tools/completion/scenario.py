@@ -18,7 +18,6 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import witness
 from tools.oracle.gbrecomp_oracle import Oracle
 
 # Same lane-isolation convention as the justfile's build_dir.
@@ -263,6 +262,8 @@ def run_native(
 
 
 def main(argv: list[str] | None = None) -> int:
+    import witness
+
     parser = argparse.ArgumentParser()
     parser.add_argument("scenario", choices=sorted(SCENARIO_REQUIREMENTS))
     parser.add_argument("--frames", type=int, default=600)
