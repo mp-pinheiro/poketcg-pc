@@ -18,15 +18,10 @@
 #define STRUCT_SIZE 8u
 #define BUFFER_MASK 0x7fu
 #define UPDATE_ADDR 0x3BA2u
-#define DEFAULT_SCREEN_UPDATE_ADDR 0x4cbcu
 #define ANIMATIONS_BANK 7u
 #define ANIMATIONS_ADDR 0x4E32u
 #define ANIM_ENTRY_SIZE 6u
 #define SPRITE_UNSKIPPABLE 0x80u
-#define SPRITE_X_FLIP 0x01u
-#define SPRITE_Y_FLIP 0x02u
-#define SPRITE_X_INVERTED 0x10u
-#define SPRITE_Y_INVERTED 0x20u
 
 static uint8_t read(uint16_t addr) { return gb_read8(addr); }
 static void write(uint16_t addr, uint8_t value) { gb_write8(addr, value); }
