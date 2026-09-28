@@ -773,7 +773,7 @@ wActiveScreenAnim = 0xD42A
 wAnimationQueue = 0xD423
 wd4c0 = 0xD4C0
 CONTRACT["PlayBufferedDuelAnimations"] = {
-    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "compare": ("a", "f", "b", "c", "hl"),
     "preserve": ("b", "c", "hl"),
 }
 CASES["PlayBufferedDuelAnimations"] = [
@@ -814,7 +814,6 @@ CASES["PlayBufferedDuelAnimations"] = [
     dict(
         DRAGONITE_PLAY_BUFFERED.case(vram=False),
         **DRAGONITE_PLAY_BUFFERED.regs,
-        compare=("a", "f", "b", "c", "hl"),
         read={0xC200: 0x200, 0xCC00: 0x100, wDuelAnimBufferCurPos: 1, wDuelAnimBufferSize: 1},
     ),
 ]
@@ -12657,7 +12656,7 @@ MUTATIONS["PlayBufferedDuelAnimations"] = {
     "source_symbol": "PlayBufferedDuelAnimations",
     "before": "if (cur == size) {",
     "after": "if (cur != size) {",
-    "case_ids": ["PlayBufferedDuelAnimations-0", "PlayBufferedDuelAnimations-1"],
+    "case_ids": ["PlayBufferedDuelAnimations-5", "PlayBufferedDuelAnimations-0", "PlayBufferedDuelAnimations-1"],
 }
 # <<< factory-mutation PlayBufferedDuelAnimations
 # >>> factory-mutation CopyListWithFFTerminatorFromHLToDE_Bank5
