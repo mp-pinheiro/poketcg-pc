@@ -1010,7 +1010,7 @@ def native_save_file(image: bytes) -> bytes:
 def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
                digest_out: Path | None = None, mask_path: Path | None = None,
                dump_ordinals: list[int] | None = None, pcm_out: Path | None = None,
-               printer_dir: Path | None = None, extra: list[str] | None = None) -> tuple[Path, str, int]:
+               printer_dir: Path | None = None) -> tuple[Path, str, int]:
     """(state path, failure text, count of `off schedule` rows the lane printed)."""
     state_path = directory / "state.json"
     command = [
@@ -1050,8 +1050,6 @@ def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,
     if printer_dir is not None:
         printer_dir.mkdir(parents=True, exist_ok=True)
         command += ["--printer-dir", str(printer_dir)]
-    if extra:
-        command += extra
     try:
         result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True,
                                 timeout=NATIVE_TIMEOUT, check=False)

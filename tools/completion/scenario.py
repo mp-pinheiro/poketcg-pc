@@ -18,7 +18,6 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import widescreen
 import witness
 from tools.oracle.gbrecomp_oracle import Oracle
 
@@ -43,11 +42,6 @@ SCENARIO_REQUIREMENTS = {
     "link-ir-printer": "completion:v2:p7:link-ir",
     "printer": "completion:v2:p7:printer",
     "faithful-4x3-corpus": "completion:v2:faithful-4x3:package",
-    "span-widening": "completion:v2:p8:ppu:span-widening",
-    "viewport-rect": "completion:v2:p8:runtime:viewport-rect",
-    "wide-layouts": "completion:v2:p8:ui:wide-layouts",
-    "render-only": "completion:v2:p8:features:render-only",
-    "widescreen-corpus": "completion:v2:p8:release:enhanced-corpus",
 }
 
 SCENARIO_SCHEMAS = {
@@ -66,11 +60,6 @@ SCENARIO_SCHEMAS = {
     "link-ir-printer": "transport-corpus-v1",
     "printer": "printer-corpus-v1",
     "faithful-4x3-corpus": "package-proof-v1",
-    "span-widening": "widescreen-corpus-v1",
-    "viewport-rect": "widescreen-corpus-v1",
-    "wide-layouts": "widescreen-corpus-v1",
-    "render-only": "feature-neutrality-v1",
-    "widescreen-corpus": "widescreen-corpus-v1",
 }
 
 
@@ -294,14 +283,6 @@ def main(argv: list[str] | None = None) -> int:
         "required_edges": 0,
         "covered_edges": 0,
     }
-    if args.scenario in widescreen.SCENARIOS:
-        EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
-        try:
-            artifact.update(widescreen.run(args.scenario))
-        except (OSError, ValueError, json.JSONDecodeError, RuntimeError) as exc:
-            artifact["failure"] = "SCENARIO_ERROR"
-            artifact["detail"] = str(exc)
-        return finish(args.scenario, requirement, artifact)
     if args.scenario in witness.SPECS or args.scenario in witness.NEGATIVES:
         EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
         try:
