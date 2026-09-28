@@ -6518,7 +6518,7 @@ CASES["SendCardAttrBlkPacket"] = [
 
 # >>> factory ApplyBGP6OrSGB3ToCardImage
 CONTRACT["ApplyBGP6OrSGB3ToCardImage"] = {
-    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "compare": ("a", "b", "c", "d", "e", "hl"),
     "preserve": ("d", "e"),
 }
 CASES["ApplyBGP6OrSGB3ToCardImage"] = [

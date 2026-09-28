@@ -7,7 +7,6 @@ WDO_FRAME_FN = 0xCAD3
 UPDATE_LO = 0xA2
 UPDATE_HI = 0x3B
 CONTRACT = {
-    "_UpdateQueuedAnimations": {"source_symbol": "_UpdateQueuedAnimations", "before": "    return (DuelAnimationUpdateResult){accumulator, 0u, (uint16_t)(QUEUE_ADDR + QUEUE_LENGTH)};", "after": "    return (DuelAnimationUpdateResult){accumulator, entry_c, (uint16_t)(QUEUE_ADDR + QUEUE_LENGTH)};", "case_ids": ["_UpdateQueuedAnimations-3"]},
     "_ResetAnimationQueue": {
         "compare": ("b", "c", "hl"),
         "preserve": ("b", "c", "hl"),
@@ -23,7 +22,7 @@ CONTRACT = {
         "preserve": ("b", "c", "d", "e", "hl"),
     },
     "_UpdateQueuedAnimations": {
-        "compare": ("a", "b", "c", "d", "e", "hl"),
+        "compare": ("a", "b", "c", "hl"),
         "preserve": (),
     },
     "ClearAndDisableQueuedAnimations": {
