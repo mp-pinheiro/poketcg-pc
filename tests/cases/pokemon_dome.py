@@ -94,7 +94,6 @@ wPCPacks_A = 0xD11E
 wNextScript_A = 0xD0C6
 # <<< factory-cases-statics
 wEventVarByte_Dome = 0xD3E9
-wEventVarByte_Masters = 0xD3E9
 wEventVarByte_GrandMasters = 0xD3E9
 wEventVarByte_NPC = 0xD3EA
 wEventVarByte_Ronald = 0xD3EB

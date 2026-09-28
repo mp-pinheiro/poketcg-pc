@@ -63,7 +63,6 @@ wFirstAttackAIScore = 0xCDBF
 wSelectedAttack = 0xCCC6
 
 hTempPlayAreaLocation_ff9d = 0xFF9D
-wAICannotDamage = 0xCDF0
 wDamage = 0xCCB9
 wDuelTempList = 0xC510
 wSelectedAttack = 0xCCC6

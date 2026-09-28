@@ -116,6 +116,9 @@ LoadLinkNotConnectedSceneAndAskWhetherToTryAgainResult LoadLinkNotConnectedScene
 /* >>> factory SetIRCommunicationErrorCode_NoError */
 SetIRCommunicationErrorCode_NoErrorResult SetIRCommunicationErrorCode_NoError(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)c;
+	(void)d;
+	(void)e;
 	(void)hl;
 	wOwnIRCommunicationParams = 0u;
 	RequestDataReceivalThroughIRResult received = RequestDataReceivalThroughIR(a, f, b, 1u, 0xC5u, 0xEAu, wOwnIRCommunicationParams_ADDR);
@@ -265,6 +268,7 @@ _ReceiveDeckConfigurationResult _ReceiveDeckConfiguration(void)
 /* >>> factory PrepareSendCardOrDeckConfigurationThroughIR */
 PrepareSendCardOrDeckConfigurationThroughIRResult PrepareSendCardOrDeckConfigurationThroughIR(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)f;
 	InitIRCommunications(a);
 	for (;;) {
 		DoFrame();

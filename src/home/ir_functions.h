@@ -15,7 +15,6 @@ void LoadLinkConnectingScene(uint16_t hl);
 void ClearRPAndRestoreVBlankFunction(void);
 /* <<< factory ClearRPAndRestoreVBlankFunction */
 /* >>> factory LoadLinkNotConnectedSceneAndAskWhetherToTryAgain */
-/* >>> factory LoadLinkNotConnectedSceneAndAskWhetherToTryAgain */
 typedef struct { uint8_t a; uint8_t f; } LoadLinkNotConnectedSceneAndAskWhetherToTryAgainResult;
 LoadLinkNotConnectedSceneAndAskWhetherToTryAgainResult LoadLinkNotConnectedSceneAndAskWhetherToTryAgain(uint16_t hl);
 /* <<< factory LoadLinkNotConnectedSceneAndAskWhetherToTryAgain */

@@ -518,7 +518,6 @@ static void adapt_ScriptCommand_JumpIfAnyEnergyCardsInCollection(ProbeState *s)
 /* <<< factory ScriptCommand_JumpIfAnyEnergyCardsInCollection */
 
 /* >>> factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
-/* >>> factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
 static void adapt_ScriptCommand_JumpBasedOnFightingClubPupilStatus(ProbeState *s)
 {
 	ScriptCommand_JumpBasedOnFightingClubPupilStatusResult r = ScriptCommand_JumpBasedOnFightingClubPupilStatus();
@@ -528,7 +527,6 @@ static void adapt_ScriptCommand_JumpBasedOnFightingClubPupilStatus(ProbeState *s
 	s->c = r.c;
 	s->hl = r.hl;
 }
-/* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
 /* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
 
 /* >>> factory GetEventValue */
@@ -1128,6 +1126,7 @@ static void adapt_Func_cc32(ProbeState *s)
 /* >>> factory Script_LegendaryCardRightSpark */
 static void adapt_Script_LegendaryCardRightSpark(ProbeState *s)
 {
+	(void)s;
 	Script_LegendaryCardRightSpark();
 }
 /* <<< factory Script_LegendaryCardRightSpark */
@@ -1183,7 +1182,6 @@ static void adapt_ScriptCommand_GiftCenter(ProbeState *s)
 /* <<< factory ScriptCommand_GiftCenter */
 
 /* >>> factory ScriptCommand_PrintTextQuitFully */
-/* >>> factory ScriptCommand_PrintTextQuitFully */
 static void adapt_ScriptCommand_PrintTextQuitFully(ProbeState *s)
 {
 	ScriptCommand_PrintTextQuitFullyResult result = ScriptCommand_PrintTextQuitFully(s->a, s->f, s->b, s->c, s->d, s->e, s->stack[0]);
@@ -1211,6 +1209,7 @@ static void adapt_ScriptCommand_QuitScriptFully(ProbeState *s)
 /* >>> factory PrintInteractableObjectText */
 static void adapt_PrintInteractableObjectText(ProbeState *s)
 {
+	(void)s;
 	PrintInteractableObjectText();
 }
 /* <<< factory PrintInteractableObjectText */

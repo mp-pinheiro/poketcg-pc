@@ -10,16 +10,12 @@
 #define DeckMachineRoomAfterDuelTable 0x58a6u
 
 #include "generated/wram.h"
-#define PKMN_CARD_DATA_LENGTH 0x41u
 
 #include "home/deck_machine_room.h"
 #include "home/scripting.h"
 #include "home/map_events.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define EVENT_BEAT_NIKKI 0x08u
-#define EVENT_GRASS_DECK_MACHINE_ACTIVE 0x5eu
-#define MAP_EVENT_GRASS_DECK_MACHINE 0x06u
 
 #include "home/deck_machine_room.h"
 #include "home/scripting.h"
@@ -29,14 +25,6 @@
 #include "home/sound.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define EVENT_BEAT_AMY 0x0bu
-#define EVENT_WATER_DECK_MACHINE_ACTIVE 0x5cu
-#define MAP_EVENT_WATER_DECK_MACHINE 0x04u
-#define SFX_INTRO_ORB_TITLE 0x5au
-
-#define EVENT_BEAT_ISAAC 0x0cu
-#define EVENT_LIGHTNING_DECK_MACHINE_ACTIVE 0x5du
-#define MAP_EVENT_LIGHTNING_DECK_MACHINE 0x05u
 /* <<< factory statics */
 #define CLUB_MAP_NAMES 0x5985u
 #define CLUB_MAP_NAMES_BANK 3u

@@ -7,10 +7,8 @@
 void AIDecideSpecialEvolutions(void);
 /* <<< factory AIDecideSpecialEvolutions */
 /* >>> factory AIDecideEvolution */
-/* >>> factory AIDecideEvolution */
 uint8_t AIDecideEvolution(void);
 /* <<< factory AIDecideEvolution */
-/* >>> factory AIDecidePlayLegendaryBirds */
 /* >>> factory AIDecidePlayLegendaryBirds */
 void AIDecidePlayLegendaryBirds(void);
 /* <<< factory AIDecidePlayLegendaryBirds */

@@ -36,7 +36,6 @@ typedef struct { uint8_t a; uint8_t f; } HandleAIGoGoRainDanceEnergyResult;
 HandleAIGoGoRainDanceEnergyResult HandleAIGoGoRainDanceEnergy(void);
 /* <<< factory HandleAIGoGoRainDanceEnergy */
 /* >>> factory HandleAICowardice */
-/* >>> factory HandleAICowardice */
 typedef struct { uint8_t a; uint8_t f; } HandleAICowardiceResult;
 HandleAICowardiceResult HandleAICowardice(void);
 /* <<< factory HandleAICowardice */

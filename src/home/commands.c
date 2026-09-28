@@ -26,7 +26,6 @@
 #define ANIMCMD_SET_SCREEN 0x04u
 #define ANIMCMD_PLAY_AREA 0x05u
 #define ANIMCMD_END_UNUSED 0x06u
-#define NUM_ANIM_COMMANDS 0x07u
 
 /* animation_constants.asm: values are the file's own hex annotations. */
 #define DUEL_ANIM_SHOW_DAMAGE 0x09u

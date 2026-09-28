@@ -25,11 +25,6 @@ CASES = {
     ],
 }
 
-# >>> factory-cases-statics
-wCoinTossNumHeads = 0xCD9D
-wCoinTossScreenTextID = 0xCE4E
-# <<< factory-cases-statics
-
 # >>> factory TossCoinATimes
 CONTRACT["TossCoinATimes"] = {"compare": ("a", "f", "hl"), "preserve": ("hl",)}
 CASES["TossCoinATimes"] = [

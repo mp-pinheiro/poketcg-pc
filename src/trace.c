@@ -2,7 +2,6 @@
 
 #include <signal.h>
 #include <stdio.h>
-#include <string.h>
 
 #include "bank_guard.h"
 #include "isr.h"
@@ -39,10 +38,10 @@ typedef struct {
 /* The entry hook itself is always compiled because the bank guard rides on it. */
 static TraceRecord g_records[TRACE_SLOTS];
 static uint32_t g_used;
-#endif
 static uint64_t g_count;
-static uint32_t g_frame;
 static int g_overflow;
+#endif
+static uint32_t g_frame;
 static uint32_t g_ordinal;
 static uint32_t g_window_lo;
 static uint32_t g_window_hi;
@@ -76,26 +75,6 @@ NOTRACE void trace_set_window(uint32_t lo, uint32_t hi)
 	g_window_lo = lo;
 	g_window_hi = hi;
 	g_window_on = 1;
-}
-
-NOTRACE void trace_reset(void)
-{
-	g_count = 0;
-	g_overflow = 0;
-#ifdef POKETCG_TRACE
-	memset(g_records, 0, sizeof g_records);
-	g_used = 0;
-#endif
-}
-
-NOTRACE size_t trace_count(void)
-{
-	return (size_t)g_count;
-}
-
-NOTRACE int trace_overflowed(void)
-{
-	return g_overflow;
 }
 
 static const void *g_stop_fn;

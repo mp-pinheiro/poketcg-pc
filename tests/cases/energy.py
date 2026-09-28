@@ -59,13 +59,10 @@ CHARIZARD_ID = 0x32
 hTempPlayAreaLocation_ff9d = 0xFF9D
 wSelectedAttack = 0xCCC6
 wTempAI = 0xCDF1
-wLoadedAttackEffectParam = 0xCCB7
 wLoadedCard1ID = 0xCC2B
 hWhoseTurn = 0xFF97
 
-wAIEnergyAttachLogicFlags = 0xCDD8
 wAIBarrierFlagCounter = 0xCDA7
-wAICardListEnergyBonus = 0xCDB2
 wAIScore = 0xCDBE
 wDuelTempList = 0xC510
 wPlayAreaAIScore = 0xCDBF
@@ -74,7 +71,6 @@ wTempAI = 0xCDF1
 wTotalAttachedEnergies = 0xCC23
 hTempPlayAreaLocation_ff9d = 0xFF9D
 
-wAIEnergyAttachLogicFlags = 0xCDD8
 wAIScore = 0xCDBE
 wPlayAreaAIScore = 0xCDBF
 wTempPlayAreaAIScore = 0xCDDD

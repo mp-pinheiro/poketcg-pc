@@ -26,7 +26,6 @@
 /* <<< factory statics */
 
 #define PALETTE_TITLE_SCREEN_ORBS 0x1eu
-#define SPRITE_ANIM_ATTRIBUTES 1u
 #define SPRITE_ANIM_COORD_X 2u
 #define SPRITE_PRESS_START 0x6au
 #define SPRITE_ANIM_190 0xbeu

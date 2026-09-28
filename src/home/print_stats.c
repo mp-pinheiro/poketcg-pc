@@ -4,6 +4,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 #include "home/frames.h"
+#include "home/tiles.h"
 /* >>> factory statics */
 #include "home/load_animation.h"
 

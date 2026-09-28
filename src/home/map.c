@@ -39,6 +39,7 @@
 
 #include "home/map.h"
 #include "home/challenge_machine.h"
+#include "home/deck_machine.h"
 #include "home/switch_sram.h"
 #include "generated/wram.h"
 #include "generated/sram.h"

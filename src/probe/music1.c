@@ -293,6 +293,7 @@ static void adapt__PlaySong(ProbeState *s)
 /* >>> factory _SetupSound */
 static void adapt__SetupSound(ProbeState *s)
 {
+	(void)s;
 	_SetupSound();
 }
 /* <<< factory _SetupSound */

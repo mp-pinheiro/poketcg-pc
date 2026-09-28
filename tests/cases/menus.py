@@ -278,10 +278,7 @@ hCurMenuItem = 0xFFB1
 hDPadHeld = 0xFF8F
 hKeysPressed = 0xFF91
 wCurMenuItem = 0xCD10
-wCursorBlinkCounter = 0xCD0F
 wDefaultYesOrNo = 0xCD9A
-wLeftmostItemCursorX = 0xCD98
-wMenuCursorXOffset = 0xCD11
 
 wDuelTempList = 0xC510
 wListScrollOffset = 0xCD19
@@ -289,7 +286,6 @@ wMenuCursorYOffset = 0xCD12
 wNumMenuItems = 0xCD14
 wNumListItems = 0xCD1B
 wListItemXPosition = 0xCD1A
-wListItemNameMaxLength = 0xCD1C
 wDefaultText = 0xC590
 
 hffb0 = 0xFFB0
@@ -312,10 +308,7 @@ wRefreshMenuCursorSFX = 0xCD99
 wDefaultText = 0xC590
 
 wCurMenuItem = 0xCD10
-wLeftmostItemCursorX = 0xCD98
 wDefaultYesOrNo = 0xCD9A
-wMenuCursorXOffset = 0xCD11
-wCursorBlinkCounter = 0xCD0F
 hCurMenuItem = 0xFFB1
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}

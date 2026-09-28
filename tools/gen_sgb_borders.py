@@ -9,10 +9,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BORDER_BANK_BASE = 0xF3
-TILE_BYTES = 0x2000
 MAP_BYTES = 0x800
 PALETTE_BYTES = 0x80
-BORDER_BYTES = TILE_BYTES + MAP_BYTES + PALETTE_BYTES
 BORDER_SPECS = (
     (1, "Intro", "border_intro_1.bin", "border_intro_2.bin", "border_intro_3.bin", "border_intro_4.bin"),
     (2, "Medals", "border_medals_1.bin", "border_medals_2.bin", "border_medals_3.bin", "border_medals_5.bin"),

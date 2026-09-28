@@ -32,6 +32,7 @@ static void adapt_DuelAnim153(ProbeState *s)
 /* >>> factory AnimationCommand_AnimEnd */
 static void adapt_AnimationCommand_AnimEnd(ProbeState *s)
 {
+	(void)s;
 	AnimationCommand_AnimEnd();
 }
 /* <<< factory AnimationCommand_AnimEnd */
@@ -40,6 +41,7 @@ static void adapt_AnimationCommand_AnimEnd(ProbeState *s)
 /* >>> factory DuelAnim154 */
 static void adapt_DuelAnim154(ProbeState *s)
 {
+	(void)s;
 	DuelAnim154();
 }
 /* <<< factory DuelAnim154 */
@@ -47,6 +49,7 @@ static void adapt_DuelAnim154(ProbeState *s)
 /* >>> factory DuelAnim155 */
 static void adapt_DuelAnim155(ProbeState *s)
 {
+	(void)s;
 	DuelAnim155();
 }
 /* <<< factory DuelAnim155 */
@@ -54,6 +57,7 @@ static void adapt_DuelAnim155(ProbeState *s)
 /* >>> factory DuelAnim156 */
 static void adapt_DuelAnim156(ProbeState *s)
 {
+	(void)s;
 	DuelAnim156();
 }
 /* <<< factory DuelAnim156 */

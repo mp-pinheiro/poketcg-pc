@@ -20,6 +20,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/core.h"
+#include "home/random.h"
 #include "home/duel.h"
 #include "home/energy.h"
 #include "home/retreat.h"

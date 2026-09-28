@@ -68,12 +68,8 @@ wSceneSGBPacketPtr = 0xD620
 wSceneSGBRoutinePtr = 0xD622
 wConsole = 0xCAB4
 wCurTilemap = 0xD131
-wCurTileset = 0xD239
 wBGP = 0xCABC
-wWhichBGPalIndex = 0xD4CB
 wd291 = 0xD291
-wVRAMTileOffset = 0xD4CA
-wWhichVRAMBank = 0xD4CB
 wAllSpriteAnimationsDisabled = 0xD5D7
 
 wCurTilemap = 0xD131

@@ -33,10 +33,6 @@ BLOCKED = ROOT / ".factory" / "blocked.toml"
 COMPLETION_TOOL = ROOT / "tools" / "completion" / "completion.py"
 
 TIER_BOUNDS = ((1, 0, 100), (2, 100, 300), (3, 300, 800), (4, 800, None))
-LIFECYCLE_STATES = (
-    "ready", "blocked", "active", "awaiting-check", "failing", "complete",
-    "excluded",
-)
 
 
 def _write_json_atomic(path: Path, payload: dict) -> None:

@@ -524,11 +524,6 @@ def main() -> int:
     if mode == "entry" and not native.get("stop_reached"):
         mismatches["completion"] = (completion_spec["routine"], "return")
 
-    def reference_spans(field: str, base: int, spans: tuple[tuple[int, int], ...]) -> str:
-        data = bytes.fromhex(reference[field])
-        return "".join(data[address - base:address - base + size].hex()
-                       for address, size in spans)
-
     def native_spans(field: str, spans: tuple[tuple[int, int, int], ...]) -> str:
         grouped = native.get(field, {})
         if field == "wram":

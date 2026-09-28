@@ -49,7 +49,6 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 };
 
 #define LOADED_NPC_COORD_X 0x02u
-#define LOADED_NPC_COORD_Y 0x03u
 
 #define NPC_FLAG_MOVING (1u << NPC_FLAG_MOVING_F)
 #define SPRITE_ANIM_COORD_X 0x02u

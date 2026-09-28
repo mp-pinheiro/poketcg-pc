@@ -529,7 +529,7 @@ def main() -> int:
         count, total = verify(items, arrays, rom)
         print(f"gen_data: verified {count} sections, {total} bytes")
         perturbed = bytearray(rom)
-        first_entry, first_section, _ = items[0]
+        _, first_section, _ = items[0]
         first_offset = rom_offset(first_section.bank, first_section.start)
         perturbed[first_offset] ^= 1
         try:

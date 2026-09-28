@@ -9,7 +9,7 @@ static void adapt_GetArenaCardResistance(ProbeState *s) { s->a = GetArenaCardRes
 static void adapt_GetPlayAreaCardResistance(ProbeState *s) { s->a = GetPlayAreaCardResistance(s->a); }
 static void adapt_GetArenaCardColor(ProbeState *s) { s->a = GetArenaCardColor(); }
 static void adapt_GetPlayAreaCardColor(ProbeState *s) { s->a = GetPlayAreaCardColor(s->a); }
-static void adapt_HandleEnergyBurn(ProbeState *s) { HandleEnergyBurn(); }
+static void adapt_HandleEnergyBurn(ProbeState *s) { (void)s; HandleEnergyBurn(); }
 
 const ProbeEntry probe_entries_card_color[] = {
 	{ "GetCardWeakness", adapt_GetCardWeakness },

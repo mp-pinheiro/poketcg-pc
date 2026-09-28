@@ -6,6 +6,7 @@
 /* >>> factory SetBoosterLogoOAM */
 static void adapt_SetBoosterLogoOAM(ProbeState *s)
 {
+	(void)s;
 	SetBoosterLogoOAM();
 }
 /* <<< factory SetBoosterLogoOAM */

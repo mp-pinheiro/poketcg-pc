@@ -164,7 +164,6 @@ typedef struct {
 DestinyBondResult HandleDestinyBondSubstatus(void);
 /* <<< factory HandleDestinyBondSubstatus */
 /* >>> factory HandleNShieldAndTransparency */
-/* >>> factory HandleNShieldAndTransparency */
 typedef struct {
 	uint8_t a;
 	uint8_t f;

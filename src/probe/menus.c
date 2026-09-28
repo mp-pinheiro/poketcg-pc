@@ -213,6 +213,7 @@ static void adapt_CopyCardNameAndLevel(ProbeState *s)
 /* >>> factory ReloadCardListItems */
 static void adapt_ReloadCardListItems(ProbeState *s)
 {
+	(void)s;
 	ReloadCardListItems();
 }
 /* <<< factory ReloadCardListItems */

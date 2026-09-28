@@ -34,8 +34,6 @@
 #include "generated/wram.h"
 
 #define SYM_CURSOR_R 0x0Fu
-#define SYM_SPACE 0x00u
-#define PAD_A 0x01u
 #define PAD_RIGHT 0x10u
 #define PAD_LEFT 0x20u
 #define SFX_CURSOR 0x01u
@@ -62,8 +60,6 @@
 #define PAD_UP 0x40u
 #define PAD_DOWN 0x80u
 #define SYM_SLASH 0x2Eu
-
-#define PAD_B 0x02u
 
 #include "home/menus.h"
 #include "generated/hram.h"
@@ -260,7 +256,7 @@ static HandleMenuInputResult RefreshMenuCursorRegs(void)
 
 	wCursorBlinkCounter = (uint8_t)(old + 1);
 	if ((old & 0x0fu) != 0u)
-		return (HandleMenuInputResult){(uint8_t)(old & 0x0fu), 0u, 0x20u};
+		return (HandleMenuInputResult){(uint8_t)(old & 0x0fu), 0u, 0x20u, 0u};
 	if ((wCursorBlinkCounter & 0x10u) == 0u)
 		return DrawCursorRegs(wMenuVisibleCursorTile);
 	return DrawCursorRegs(wMenuInvisibleCursorTile);
@@ -390,11 +386,11 @@ WaitResult WaitForButtonAorB(void)
 			|| gb_read8(wMenuInvisibleCursorTile_ADDR) == 0u ? 0x80u : 0x00u;
 		if (keys & PAD_A) {
 			EraseCursor();
-			return (WaitResult){zero};
+			return (WaitResult){zero, 0u, 0u, 0u, 0u, 0u, 0u};
 		}
 		if (keys & PAD_B) {
 			EraseCursor();
-			return (WaitResult){(uint8_t)(zero | 0x10u)};
+			return (WaitResult){(uint8_t)(zero | 0x10u), 0u, 0u, 0u, 0u, 0u, 0u};
 		}
 	}
 }
@@ -476,9 +472,9 @@ PlayOpenOrExitScreenSFXResult PlayOpenOrExitScreenSFX(uint8_t a, uint8_t f)
 /* >>> factory HandleYesOrNoMenu */
 HandleYesOrNoMenuResult HandleYesOrNoMenu(uint8_t d, uint8_t e, uint8_t b, uint8_t c)
 {
+	(void)b; (void)c;
 	wLeftmostItemCursorX = d;
 	(void)SetCursorParametersForTextBox(d, e, SYM_CURSOR_R, SYM_SPACE);
-	uint8_t selected = (uint8_t)(wDefaultYesOrNo ^ 1u);
 	wCurMenuItem = (uint8_t)(wDefaultYesOrNo ^ 1u);
 	EnableLCD();
 	wMenuCursorXOffset = (uint8_t)(wCurMenuItem * 4u + wLeftmostItemCursorX);
@@ -773,7 +769,7 @@ HandleMenuInputResult HandleMenuInput(void)
 	uint8_t e2 = wCurMenuItem;
 	hCurMenuItem = 0xFFu;
 	(void)PlayOpenOrExitScreenSFX(0u, 0x80u);
-	return (HandleMenuInputResult){0xFFu, e2, 0x90u};
+	return (HandleMenuInputResult){0xFFu, e2, 0x90u, 0u};
 }
 /* <<< factory HandleMenuInput */
 
@@ -817,7 +813,7 @@ HandleMenuInputResult HandleDuelMenuInput(uint8_t e)
 				(void)PlayOpenOrExitScreenSFX(0u, 0x00u);
 				uint8_t e2 = wCurMenuItem;
 				uint8_t a2 = hCurMenuItem;
-				return (HandleMenuInputResult){a2, e2, 0x10u};
+				return (HandleMenuInputResult){a2, e2, 0x10u, 0u};
 			}
 		}
 		if (moved != 0u) {
@@ -833,11 +829,11 @@ HandleMenuInputResult HandleDuelMenuInput(uint8_t e)
 	wCursorBlinkCounter = (uint8_t)(counter + 1u);
 	uint8_t masked = (uint8_t)(counter & 0x0Fu);
 	if (masked != 0u)
-		return (HandleMenuInputResult){masked, e, 0x20u};
+		return (HandleMenuInputResult){masked, e, 0x20u, 0u};
 	uint8_t item2 = wCurMenuItem;
 	uint8_t tile = ((wCursorBlinkCounter & 0x10u) != 0u) ? SYM_SPACE : SYM_CURSOR_R;
 	WriteByteToBGMap0(tile, coords[(uint8_t)(item2 * 2u)], coords[(uint8_t)(item2 * 2u + 1u)]);
-	return (HandleMenuInputResult){item2, item2, (item2 == 0u) ? 0x80u : 0x00u};
+	return (HandleMenuInputResult){item2, item2, (item2 == 0u) ? 0x80u : 0x00u, 0u};
 }
 /* <<< factory HandleDuelMenuInput */
 

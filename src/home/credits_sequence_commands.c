@@ -1,5 +1,6 @@
 #include "home/credits_sequence_commands.h"
 #include "home/indirect_dispatch.h"
+#include "home/overworld_map.h"
 
 #include "generated/wram.h"
 #include "mem.h"
@@ -337,6 +338,7 @@ void CreditsSequenceCmd_PrintText(uint8_t b, uint8_t c, uint16_t de)
 /* >>> factory CreditsSequenceCmd_LoadBooster */
 void CreditsSequenceCmd_LoadBooster(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
+	(void)d;
 	ClearNumLoadedFramesetSubgroups();
 	EmptyScreen();
 	hSCX = 0;
@@ -363,6 +365,7 @@ void CreditsSequenceCmd_FadeOut(void)
 /* >>> factory CreditsSequenceCmd_LoadScene */
 CreditsSequenceCmdLoadSceneResult CreditsSequenceCmd_LoadScene(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)a;
 	ClearNumLoadedFramesetSubgroups();
 	EmptyScreen();
 	hSCX = 0;
@@ -386,6 +389,7 @@ CreditsSequenceCmdLoadSceneResult CreditsSequenceCmd_LoadScene(uint8_t a, uint8_
 /* >>> factory LoadOWMapForCreditsSequence */
 void LoadOWMapForCreditsSequence(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
+	(void)d;
 	EmptyScreen();
 	hSCX = c;
 	hSCY = b;

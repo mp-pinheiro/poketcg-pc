@@ -1,4 +1,5 @@
 #include "home/game_loop.h"
+#include "home/starter_deck.h"
 
 #include "home/frames.h"
 #include "home/input.h"

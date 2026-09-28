@@ -45,17 +45,6 @@ def _max_gfx_case():
         "expect_regs": {"b": 0, "c": 0, "d": 0, "e": 0, "hl": 0},
     }
 
-NAMES = (
-    "LoadTilemap_ToSRAM", "LoadTilemap_ToVRAM", "LoadTilemap",
-    "LoadTilemap.InitAndDecompressBGMap", "LoadTilemap.Decompress", "Func_80148",
-    "CopyBGDataToVRAMOrSRAM", "SafelyCopyBGMapFromSRAMToVRAM", "ClearSRAMBGMaps",
-    "GetMapDataPointer", "LoadGraphicsPointerFromHL", "LoadSpriteGfx",
-    "LoadGfxDataFromTempPointerToVRAMBank", "LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2",
-    "LoadGfxDataFromTempPointer", "GetTileOffsetPointerAndSwitchVRAM",
-    "Func_80238",
-    "LoadTilesetGfx.LoadTileGfx", "LoadTilesetGfx.CopyGfxData", "Func_803b9",
-    "LoadBGPalette", "LoadPaletteDataFromHL", "LoadOBPalette", "LoadPaletteDataToBuffer",
-)
 
 CONTRACT = {
     "LoadTilemap_ToSRAM": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
@@ -385,8 +374,8 @@ MUTATIONS["LoadTilemap_ToVRAM"] = {
 }
 MUTATIONS["LoadTilesetGfx"] = {
     "source_symbol": "LoadTilesetGfx",
-    "before": "{\n\tuint16_t hl = GetMapDataPointer(wCurTileset, GFX_TABLE_TILESETS).hl;\n\tLoadGraphicsPointerFromHL(&hl);",
-    "after": "{\n\tuint16_t hl = GetMapDataPointer(wCurTileset, GFX_TABLE_TILESETS).hl;\n\t;",
+    "before": "\t} else {\n\t\tuint16_t hl = GetMapDataPointer(wCurTileset, GFX_TABLE_TILESETS).hl;\n\t\tLoadGraphicsPointerFromHL(&hl);",
+    "after": "\t} else {\n\t\tuint16_t hl = GetMapDataPointer(wCurTileset, GFX_TABLE_TILESETS).hl;\n\t\t(void)hl;",
     "case_ids": ["LoadTilesetGfx-0"],
 }
 for _rec in SCHEMA2_CASES["Func_80148"]:

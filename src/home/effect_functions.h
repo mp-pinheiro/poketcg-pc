@@ -50,10 +50,8 @@ uint8_t CommentedOut_2c086(uint8_t a);
 void SetWasUnsuccessful(void);
 /* <<< factory SetWasUnsuccessful */
 /* >>> factory Teleport_SwitchEffect */
-/* >>> factory Teleport_SwitchEffect */
 void Teleport_SwitchEffect(void);
 /* <<< factory Teleport_SwitchEffect */
-/* >>> factory SetDamageToATimes20 */
 /* >>> factory SetDamageToATimes20 */
 void SetDamageToATimes20(uint8_t a);
 /* <<< factory SetDamageToATimes20 */
@@ -1532,7 +1530,6 @@ SerialTossCoinATimesResult Serial_TossCoin(uint8_t a, uint8_t f, uint8_t b, uint
 void NinetalesLure_SwitchEffect(void);
 /* <<< factory NinetalesLure_SwitchEffect */
 /* >>> factory VictreebelLure_SwitchDefendingPokemon */
-/* >>> factory VictreebelLure_SwitchDefendingPokemon */
 void VictreebelLure_SwitchDefendingPokemon(void);
 /* <<< factory VictreebelLure_SwitchDefendingPokemon */
 /* >>> factory DancingEmbers_MultiplierEffect */
@@ -1738,7 +1735,6 @@ typedef struct { uint8_t a; uint8_t f; } RaichuThunder_RecoilEffectResult;
 RaichuThunder_RecoilEffectResult RaichuThunder_RecoilEffect(uint8_t f, uint8_t d, uint8_t e);
 /* <<< factory RaichuThunder_RecoilEffect */
 /* >>> factory BigEggsplosion_MultiplierEffect */
-/* >>> factory BigEggsplosion_MultiplierEffect */
 void BigEggsplosion_MultiplierEffect(void);
 /* <<< factory BigEggsplosion_MultiplierEffect */
 /* >>> factory PokemonFlute_PlayerSelection */
@@ -1928,7 +1924,6 @@ uint8_t HornHazard_NoDamage50PercentEffect(void);
 void Thunderpunch_ModifierEffect(void);
 /* <<< factory Thunderpunch_ModifierEffect */
 /* >>> factory SeadraAgilityEffect */
-/* >>> factory SeadraAgilityEffect */
 uint16_t SeadraAgilityEffect(void);
 /* <<< factory SeadraAgilityEffect */
 /* >>> factory RaichuAgilityEffect */
@@ -2010,7 +2005,6 @@ void ThunderstormEffect(void);
 /* >>> factory FoulGas_PoisonOrConfusionEffect */
 uint8_t FoulGas_PoisonOrConfusionEffect(void);
 /* <<< factory FoulGas_PoisonOrConfusionEffect */
-/* >>> factory Sprout_PlayerSelectEffect */
 /* >>> factory Sprout_PlayerSelectEffect */
 typedef struct { uint8_t a; uint8_t f; } Sprout_PlayerSelectEffectResult;
 Sprout_PlayerSelectEffectResult Sprout_PlayerSelectEffect(void);
@@ -2247,7 +2241,6 @@ typedef struct { uint8_t a; uint8_t f; } PokemonBreeder_PlayerSelectionResult;
 PokemonBreeder_PlayerSelectionResult PokemonBreeder_PlayerSelection(void);
 /* <<< factory PokemonBreeder_PlayerSelection */
 /* >>> factory Curse_TransferDamageEffect */
-/* >>> factory Curse_TransferDamageEffect */
 void Curse_TransferDamageEffect(void);
 /* <<< factory Curse_TransferDamageEffect */
 /* >>> factory SuperPotion_PlayerSelectEffect */
@@ -2267,7 +2260,6 @@ HandlePokemonAndEnergySelectionScreenResult SuperEnergyRemoval_PlayerSelection(v
 typedef struct { uint8_t a; uint8_t f; } DevolutionSpray_PlayerSelectionResult;
 DevolutionSpray_PlayerSelectionResult DevolutionSpray_PlayerSelection(void);
 /* <<< factory DevolutionSpray_PlayerSelection */
-/* >>> factory EnergySpike_PlayerSelectEffect */
 /* >>> factory EnergySpike_PlayerSelectEffect */
 void EnergySpike_PlayerSelectEffect(void);
 /* <<< factory EnergySpike_PlayerSelectEffect */

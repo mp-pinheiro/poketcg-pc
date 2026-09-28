@@ -3,7 +3,6 @@
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 sCurrentDuelValid = 0xBC00
-sCurrentDuelChecksum = 0xBC01
 GUARD_LOW = 0xBBFF        # byte just below sCurrentDuelValid
 GUARD_HIGH = 0xBC03       # sCurrentDuelType, the byte just past the checksum
 hBankSRAM = 0xFF81

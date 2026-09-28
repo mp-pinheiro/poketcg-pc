@@ -37,7 +37,6 @@ void Func_fc26c(void);
 void SFX_loop(uint16_t bc, uint16_t caller_de);
 /* <<< factory SFX_loop */
 /* >>> factory SFX_pan */
-/* >>> factory SFX_pan */
 void SFX_pan(uint16_t bc, uint16_t caller_hl);
 /* <<< factory SFX_pan */
 /* >>> factory SFX_unused */
@@ -52,7 +51,6 @@ void SFX_wave(uint8_t a, uint16_t bc, uint16_t caller_hl);
 /* >>> factory SFX_duty */
 void SFX_duty(uint8_t a, uint16_t bc, uint16_t caller_hl);
 /* <<< factory SFX_duty */
-/* >>> factory SFX_envelope */
 /* >>> factory SFX_envelope */
 void SFX_envelope(uint16_t bc, uint16_t caller_hl);
 /* <<< factory SFX_envelope */

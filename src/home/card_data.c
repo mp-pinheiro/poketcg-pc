@@ -25,7 +25,6 @@
 #define CARD_DATA_NAME      0x03u
 #define CARD_DATA_RARITY    0x05u
 #define CARD_DATA_SET       0x06u
-#define PKMN_CARD_DATA_LEN  0x41u
 
 static uint16_t get_card_pointer(uint8_t cardid)
 {

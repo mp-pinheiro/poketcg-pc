@@ -288,7 +288,7 @@ OverworldMapGetMapPositionResult OverworldMap_GetMapPosition(uint8_t a, uint8_t 
 	OverworldMapGetMapPositionResult result = {
 		.a = (uint8_t)y_sum,
 		.f = (uint8_t)(((uint8_t)y_sum == 0u ? 0x80u : 0u) |
-			((((uint8_t)(y_base & 0x0Fu) + (uint8_t)(e & 0x0Fu)) > 0x0Fu) ? 0x20u : 0u) |
+			(((unsigned int)((uint8_t)(y_base & 0x0Fu) + (uint8_t)(e & 0x0Fu)) > 0x0Fu) ? 0x20u : 0u) |
 			((y_sum > 0xFFu) ? 0x10u : 0u)),
 		.d = x,
 		.e = (uint8_t)y_sum,

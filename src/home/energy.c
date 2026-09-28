@@ -1,4 +1,5 @@
 #include "home/energy.h"
+#include "home/damage_calculation.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -83,10 +84,8 @@
 #define DOUBLE_POISONED 0xc0u
 #define DUELVARS_ARENA_CARD_HP 0xc8u
 #define DUELVARS_ARENA_CARD_STATUS 0xf0u
-#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
 #define MUK 0x27u
 #define POISONED 0x80u
-#define SECOND_ATTACK 0x01u
 #define VENUSAUR_LV67 0x0bu
 
 #include "home/energy.h"
@@ -284,6 +283,7 @@ GetEnergyCardForDiscardOrEnergyBoostAttackResult GetEnergyCardForDiscardOrEnergy
 /* >>> factory CheckIfEvolutionNeedsEnergyForAttack */
 CheckIfEvolutionNeedsEnergyForAttackResult CheckIfEvolutionNeedsEnergyForAttack(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)hl;
 	(void)CreateHandCardList(c);
 	uint8_t loc1 = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
 	DuelistVarResult var1 = GetTurnDuelistVariable((uint8_t)(loc1 + DUELVARS_ARENA_CARD_510));

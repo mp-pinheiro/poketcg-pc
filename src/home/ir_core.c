@@ -46,7 +46,6 @@
 #include "mem.h"
 #define IRCMD_RETURN_WO_CLOSING 0x01u
 #define IRCMD_RECEIVE_DATA 0x03u
-#define IRCMD_CALL_FUNCTION 0x04u
 #define NUM_IR_COMMANDS 0x05u
 
 #define P10 0x01u
@@ -198,14 +197,14 @@ TransmitByteThroughIRResult TransmitByteThroughIR(uint8_t a, uint16_t hl_in, uin
 {
 	uint8_t b = a;
 
-	TransmitIRBitResult r = TransmitIRBit(0u, 0x10u, RP_ADDR);
-	r = TransmitIRBit(0u, 0x00u, RP_ADDR);
+	(void)TransmitIRBit(0u, 0x10u, RP_ADDR);
+	(void)TransmitIRBit(0u, 0x00u, RP_ADDR);
 
 	uint8_t c = 8u;
 	for (;;) {
 		uint8_t carry_in = (uint8_t)(b & 0x01u);
 		b = (uint8_t)(b >> 1);
-		r = TransmitIRBit(0u, (uint8_t)(carry_in ? 0x10u : 0x00u), RP_ADDR);
+		(void)TransmitIRBit(0u, (uint8_t)(carry_in ? 0x10u : 0x00u), RP_ADDR);
 		c = (uint8_t)(c - 1u);
 		if (c == 0u) {
 			break;

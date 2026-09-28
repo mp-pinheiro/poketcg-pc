@@ -34,6 +34,8 @@ SGBWaitResult Wait(uint16_t bc)
 /* >>> factory SendSGB */
 SendSGBResult SendSGB(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)a;
+	(void)f;
 	uint8_t packet_count = (uint8_t)(gb_read8(hl) & 0x07u);
 	if (packet_count == 0u)
 		return (SendSGBResult){0u, 0xA0u, b, c, d, e, hl};
@@ -80,6 +82,13 @@ InitSGBResult InitSGB(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uin
 /* >>> factory DetectSGB */
 DetectSGBResult DetectSGB(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)a;
+	(void)f;
+	(void)b;
+	(void)c;
+	(void)d;
+	(void)e;
+	(void)hl;
 	SGBWaitResult w = Wait(60u);
 	SendSGBResult r = SendSGB(w.a, w.f, w.b, w.c, w.d, w.e, 0x0BBBu); /* MltReq2Packet */
 	uint8_t joyp = (uint8_t)(gb_read8(0xFF00u) & JOYP_SGB_MLT_REQ);
@@ -110,6 +119,10 @@ DetectSGBResult DetectSGB(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d,
 /* >>> factory Func_0bcb */
 Func_0bcbResult Func_0bcb(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)a;
+	(void)f;
+	(void)b;
+	(void)c;
 	for (uint16_t i = 0; i < 0x1000u; i++) {
 		uint8_t value = gb_read8((uint16_t)(hl + i));
 		gb_write8((uint16_t)(0x8800u + i), value);

@@ -225,8 +225,6 @@ def npc_entry(npc_id, sprite_id, x, y, direction=0, flags=0, step=0):
     e[5] = flags
     e[8] = step
     return bytes(e)
-def sprite_entry(base):
-    return {base + 1: b'\x00', base + 2: b'\x00', base + 3: b'\x00', base + 15: b'\x00'}
 # <<< factory-cases-statics
 
 # >>> factory SetNPCPosition

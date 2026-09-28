@@ -6,7 +6,6 @@
 
 void printer_attach(const char *directory);
 int printer_attached(void);
-void printer_reset(void);
 void printer_serial_byte(uint8_t value);
 uint8_t printer_device_byte(void);
 uint8_t printer_status_byte(void);

@@ -9,6 +9,7 @@
 #include "home/menus.h"
 #include "home/substatus.h"
 #include "home/duel.h"
+#include "home/sgb.h"
 
 #define PLAYER_TURN  ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
 #define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
@@ -98,12 +99,10 @@ TrainerConvertResult ConvertSpecialTrainerCardToPokemon(uint8_t a, uint16_t hl, 
 #define DUELVARS_ARENA_CARD_LAST_TURN_DAMAGE       0xF3u
 #define DUELVARS_ARENA_CARD_LAST_TURN_STATUS       0xF5u
 
-#define NO_STATUS       0x00u
 #define CONFUSED        0x01u
 #define ASLEEP          0x02u
 #define PARALYZED       0x03u
 #define POISONED        0x80u
-#define DOUBLE_POISONED 0xC0u
 #define CNF_SLP_PRZ     0x0Fu
 #define PSN_DBLPSN      0xF0u
 

@@ -97,8 +97,6 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 #define MUK 0x27u
 #define SNORLAX 0xbeu
 
-#define PKMN_CARD_DATA_LENGTH 0x41u
-
 #include "home/effect_commands.h"
 #include "generated/hram.h"
 #include "generated/wram.h"

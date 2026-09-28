@@ -34,18 +34,13 @@
 #define DEBUG_CREATE_BOOSTER_MENU_POINTERS 0x67F1u
 #define DEBUG_CREATE_BOOSTER_TYPES 0x67FBu
 
-#define BOOSTER_COLOSSEUM_NEUTRAL 0x00u
-#define BOOSTER_EVOLUTION_NEUTRAL 0x07u
-#define BOOSTER_MYSTERY_NEUTRAL 0x0Eu
-#define BOOSTER_LABORATORY_NEUTRAL 0x14u
-#define BOOSTER_ENERGY_LIGHTNING_FIRE 0x19u
-
 #include "home/sound.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/credits_sequence_commands.h"
+#include "home/credits.h"
 #include "home/lcd.h"
 #include "home/lcd_enable_frame.h"
 #include "home/load_animation.h"

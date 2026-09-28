@@ -54,7 +54,6 @@ void ShakeScreenY_Big(void);
 void ShakeScreenY_Small(void);
 /* <<< factory ShakeScreenY_Small */
 /* >>> factory InitScreenAnimation */
-/* >>> factory InitScreenAnimation */
 void InitScreenAnimation(void);
 /* <<< factory InitScreenAnimation */
 

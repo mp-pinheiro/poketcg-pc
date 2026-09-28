@@ -307,7 +307,6 @@ void HandleDeckBuildScreen_SkipDraw(uint8_t a);
 void HandlePlayersCardsScreen(void);
 /* <<< factory HandlePlayersCardsScreen */
 /* >>> factory HandleSendDeckConfigurationMenu */
-/* >>> factory HandleSendDeckConfigurationMenu */
 void HandleSendDeckConfigurationMenu(void);
 /* <<< factory HandleSendDeckConfigurationMenu */
 /* >>> factory PrepareToBuildDeckConfigurationToSend */

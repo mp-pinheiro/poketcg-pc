@@ -51,9 +51,9 @@ static void adapt_OpenInPlayAreaScreen_NonTurnHolderDiscardPile(ProbeState *s)
 /* <<< factory OpenInPlayAreaScreen_NonTurnHolderDiscardPile */
 
 /* >>> factory OpenInPlayAreaScreen_NonTurnHolderHand */
-/* >>> factory OpenInPlayAreaScreen_NonTurnHolderHand */
 static void adapt_OpenInPlayAreaScreen_NonTurnHolderHand(ProbeState *s)
 {
+	(void)s;
 	OpenInPlayAreaScreen_NonTurnHolderHand();
 }
 /* <<< factory OpenInPlayAreaScreen_NonTurnHolderHand */

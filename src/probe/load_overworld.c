@@ -14,6 +14,7 @@ static void adapt_LoadMapTilesAndPals(ProbeState *s)
 /* >>> factory ReloadMapAfterTextClose */
 static void adapt_ReloadMapAfterTextClose(ProbeState *s)
 {
+	(void)s;
 	ReloadMapAfterTextClose();
 }
 /* <<< factory ReloadMapAfterTextClose */
@@ -21,6 +22,7 @@ static void adapt_ReloadMapAfterTextClose(ProbeState *s)
 /* >>> factory LoadMapGfxAndPermissions */
 static void adapt_LoadMapGfxAndPermissions(ProbeState *s)
 {
+	(void)s;
 	LoadMapGfxAndPermissions();
 }
 /* <<< factory LoadMapGfxAndPermissions */

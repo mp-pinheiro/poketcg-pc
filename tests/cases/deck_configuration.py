@@ -192,7 +192,6 @@ wDefaultText = 0xC590
 wTotalCardCount = 0xCECC
 SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
-wCardCollection = 0xA100
 wCardListCoords = 0xCED0
 wNumVisibleCardListEntries = 0xCECB
 
@@ -227,7 +226,6 @@ wCurDeckCards = 0xCF17
 wUniqueDeckCardList = 0xCF68
 wNumUniqueCards = 0xCED9
 
-wMaxNumCardsAllowed = 0xCFD1
 
 hDPadHeld = 0xFF8F
 hKeysPressed = 0xFF91

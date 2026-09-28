@@ -1173,7 +1173,6 @@ wPlayerDeck = 0xC400
 wPlayerArenaCard = 0xC2BB
 wConsole = 0xCAB4
 wDefaultText = 0xC590
-wLoadedCard1HP = 0xCC2C
 DUELVARS_ARENA_CARD_HP_OFF = 0xC8 - 0xBB
 DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
 DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
@@ -1215,12 +1214,10 @@ wLoadedCard1Name = 0xCC27
 wLoadedAttackName = 0xCCAA
 wDefaultText = 0xC590
 wTxRam2 = 0xCE3F
-wTxRam2_b = 0xCE41
 TEXT_SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
 wEffectFailed = 0xCCED
 
-wArenaCardsInPlayArea = 0xCE5D
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 wTileMapFill = 0xCAB6
@@ -1257,7 +1254,6 @@ hWhoseTurn = 0xFF97
 
 wNumberOfPrizeCardsToSelect = 0xCE59
 wYourOrOppPlayAreaCurPosition = 0xCE52
-wSelectedPrizeCardListPtr = 0xCE5A
 hTemp_ffa0 = 0xFFA0
 hTempPlayAreaLocation_ffa1 = 0xFFA1
 hWhoseTurn = 0xFF97

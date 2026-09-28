@@ -43,6 +43,7 @@ static void adapt_Func_c158(ProbeState *s)
 /* >>> factory Func_c184 */
 static void adapt_Func_c184(ProbeState *s)
 {
+	(void)s;
 	Func_c184();
 }
 /* <<< factory Func_c184 */
@@ -74,6 +75,7 @@ static void adapt_BackupPlayerPosition(ProbeState *s)
 /* >>> factory Func_c469 */
 static void adapt_Func_c469(ProbeState *s)
 {
+	(void)s;
 	Func_c469();
 }
 /* <<< factory Func_c469 */
@@ -92,6 +94,7 @@ static void adapt_SetScreenScrollWram(ProbeState *s)
 /* >>> factory SetScreenScroll */
 static void adapt_SetScreenScroll(ProbeState *s)
 {
+	(void)s;
 	SetScreenScroll();
 }
 /* <<< factory SetScreenScroll */
@@ -215,6 +218,7 @@ static void adapt_AttemptPlayerMovementFromDirection(ProbeState *s)
 /* >>> factory Func_c687 */
 static void adapt_Func_c687(ProbeState *s)
 {
+	(void)s;
 	Func_c687();
 }
 /* <<< factory Func_c687 */
@@ -279,6 +283,7 @@ static void adapt_Func_c58b(ProbeState *s)
 /* >>> factory UpdatePlayerSprite */
 static void adapt_UpdatePlayerSprite(ProbeState *s)
 {
+	(void)s;
 	UpdatePlayerSprite();
 }
 /* <<< factory UpdatePlayerSprite */
@@ -446,7 +451,6 @@ static void adapt_Func_c258(ProbeState *s)
 /* <<< factory Func_c258 */
 
 /* >>> factory Func_c251 */
-/* >>> factory Func_c251 */
 static void adapt_Func_c251(ProbeState *s)
 {
 	uint8_t saved_hffb0 = hffb0;
@@ -499,6 +503,7 @@ static void adapt_ReturnToOverworld(ProbeState *s)
 /* >>> factory CloseAdvancedDialogueBox */
 static void adapt_CloseAdvancedDialogueBox(ProbeState *s)
 {
+	(void)s;
 	CloseAdvancedDialogueBox();
 }
 /* <<< factory CloseAdvancedDialogueBox */
@@ -578,6 +583,7 @@ static void adapt_Func_c17a(ProbeState *s)
 /* >>> factory Func_c53d */
 static void adapt_Func_c53d(ProbeState *s)
 {
+	(void)s;
 	Func_c53d();
 }
 /* <<< factory Func_c53d */
@@ -666,6 +672,7 @@ static void adapt_PauseMenu(ProbeState *s)
 /* >>> factory OpenPauseMenu */
 static void adapt_OpenPauseMenu(ProbeState *s)
 {
+	(void)s;
 	OpenPauseMenu();
 }
 /* <<< factory OpenPauseMenu */

@@ -30,8 +30,8 @@ CASES = {
 MUTATIONS = {
     "ShowCardPopCGBDisclaimer": {
         "source_symbol": "ShowCardPopCGBDisclaimer",
-        "before": "if (wConsole == CONSOLE_CGB)",
-        "after": "if (wConsole != CONSOLE_CGB)",
+        "before": "uint16_t box = 0;\n\tif (wConsole == CONSOLE_CGB)",
+        "after": "uint16_t box = 0;\n\tif (wConsole != CONSOLE_CGB)",
         "case_ids": [
             "ShowCardPopCGBDisclaimer-0",
             "ShowCardPopCGBDisclaimer-1",
@@ -66,7 +66,6 @@ wTxRam2 = 0xCE3F
 wTxRam3 = 0xCE43
 SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
-wHasDuelSaveData = 0xD625
 
 wHasSaveData = 0xD624
 
@@ -161,7 +160,7 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS["CheckIfHasSaveData"] = {"source_symbol": "CheckIfHasSaveData", "before": "\tuint8_t has_save = (first.f & 0x10u) ? TRUE : FALSE;", "after": "\tuint8_t has_save = (first.f & 0x10u) ? FALSE : TRUE;", "case_ids": ["CheckIfHasSaveData-0", "CheckIfHasSaveData-2"]}
 # <<< factory-mutation CheckIfHasSaveData
 # >>> factory-mutation PrintStartMenuDescriptionText
-MUTATIONS["PrintStartMenuDescriptionText"] = {"source_symbol": "PrintStartMenuDescriptionText", "before": "\tuint8_t out_f = (menu_item == wCurHighlightedStartMenuItem) ? 0xC0u : f;", "after": "\tuint8_t out_f = (menu_item == wCurHighlightedStartMenuItem) ? 0x80u : f;", "case_ids": ["PrintStartMenuDescriptionText-0", "PrintStartMenuDescriptionText-1"]}
+MUTATIONS["PrintStartMenuDescriptionText"] = {"source_symbol": "PrintStartMenuDescriptionText", "before": "\n\tuint8_t out_f = (menu_item == wCurHighlightedStartMenuItem) ? 0xC0u : f;", "after": "\n\tuint8_t out_f = (menu_item == wCurHighlightedStartMenuItem) ? 0x80u : f;", "case_ids": ["PrintStartMenuDescriptionText-0", "PrintStartMenuDescriptionText-1"]}
 # <<< factory-mutation PrintStartMenuDescriptionText
 # >>> factory-mutation AskToContinueFromDiaryWithDuelData
 MUTATIONS["AskToContinueFromDiaryWithDuelData"] = {"source_symbol": "AskToContinueFromDiaryWithDuelData", "before": "\t\treturn (AskToContinueFromDiaryWithDuelDataResult){a, 0x80u};", "after": "\t\treturn (AskToContinueFromDiaryWithDuelDataResult){0xFFu, 0x80u};", "case_ids": ["AskToContinueFromDiaryWithDuelData-0", "AskToContinueFromDiaryWithDuelData-1"]}

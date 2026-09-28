@@ -67,13 +67,6 @@ int printer_attached(void)
 	return g_printer.attached;
 }
 
-void printer_reset(void)
-{
-	g_printer.state = STATE_MAGIC_0;
-	g_printer.band_bytes = 0;
-	g_printer.status = 0;
-}
-
 size_t printer_pages(void)
 {
 	return g_printer.pages;

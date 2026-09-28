@@ -121,6 +121,7 @@ static void adapt_SetWasUnsuccessful(ProbeState *s)
 /* >>> factory Teleport_SwitchEffect */
 static void adapt_Teleport_SwitchEffect(ProbeState *s)
 {
+	(void)s;
 	Teleport_SwitchEffect();
 }
 /* <<< factory Teleport_SwitchEffect */
@@ -412,6 +413,7 @@ static void adapt_SolarPower_CheckUse(ProbeState *s)
 /* >>> factory DevolutionBeam_LoadAnimation */
 static void adapt_DevolutionBeam_LoadAnimation(ProbeState *s)
 {
+	(void)s;
 	DevolutionBeam_LoadAnimation();
 }
 /* <<< factory DevolutionBeam_LoadAnimation */
@@ -458,6 +460,7 @@ static void adapt_FireBlast_CheckEnergy(ProbeState *s)
 /* >>> factory BigEggsplosion_AIEffect */
 static void adapt_BigEggsplosion_AIEffect(ProbeState *s)
 {
+	(void)s;
 	BigEggsplosion_AIEffect();
 }
 /* <<< factory BigEggsplosion_AIEffect */
@@ -465,6 +468,7 @@ static void adapt_BigEggsplosion_AIEffect(ProbeState *s)
 /* >>> factory Thrash_AIEffect */
 static void adapt_Thrash_AIEffect(ProbeState *s)
 {
+	(void)s;
 	Thrash_AIEffect();
 }
 /* <<< factory Thrash_AIEffect */
@@ -720,6 +724,7 @@ static void adapt_BeedrillPoisonSting_AIEffect(ProbeState *s)
 /* >>> factory FoulGas_AIEffect */
 static void adapt_FoulGas_AIEffect(ProbeState *s)
 {
+	(void)s;
 	FoulGas_AIEffect();
 }
 /* <<< factory FoulGas_AIEffect */
@@ -773,6 +778,7 @@ static void adapt_NidorinaDoubleKick_AIEffect(ProbeState *s)
 /* >>> factory NidorinoDoubleKick_AIEffect */
 static void adapt_NidorinoDoubleKick_AIEffect(ProbeState *s)
 {
+	(void)s;
 	NidorinoDoubleKick_AIEffect();
 }
 /* <<< factory NidorinoDoubleKick_AIEffect */
@@ -780,6 +786,7 @@ static void adapt_NidorinoDoubleKick_AIEffect(ProbeState *s)
 /* >>> factory WeedlePoisonSting_AIEffect */
 static void adapt_WeedlePoisonSting_AIEffect(ProbeState *s)
 {
+	(void)s;
 	WeedlePoisonSting_AIEffect();
 }
 /* <<< factory WeedlePoisonSting_AIEffect */
@@ -794,6 +801,7 @@ static void adapt_BellsproutCallForFamily_AISelectEffect(ProbeState *s)
 /* >>> factory WeezingSmog_AIEffect */
 static void adapt_WeezingSmog_AIEffect(ProbeState *s)
 {
+	(void)s;
 	WeezingSmog_AIEffect();
 }
 /* <<< factory WeezingSmog_AIEffect */
@@ -949,6 +957,7 @@ static void adapt_Quickfreeze_InitialEffect(ProbeState *s)
 /* >>> factory FocusEnergyEffect */
 static void adapt_FocusEnergyEffect(ProbeState *s)
 {
+	(void)s;
 	FocusEnergyEffect();
 }
 /* <<< factory FocusEnergyEffect */
@@ -957,6 +966,7 @@ static void adapt_FocusEnergyEffect(ProbeState *s)
 /* >>> factory MagnetonSonicboom_UnaffectedByColorEffect */
 static void adapt_MagnetonSonicboom_UnaffectedByColorEffect(ProbeState *s)
 {
+	(void)s;
 	MagnetonSonicboom_UnaffectedByColorEffect();
 }
 /* <<< factory MagnetonSonicboom_UnaffectedByColorEffect */
@@ -964,6 +974,7 @@ static void adapt_MagnetonSonicboom_UnaffectedByColorEffect(ProbeState *s)
 /* >>> factory MagnetonSonicboom_NullEffect */
 static void adapt_MagnetonSonicboom_NullEffect(ProbeState *s)
 {
+	(void)s;
 	MagnetonSonicboom_NullEffect();
 }
 /* <<< factory MagnetonSonicboom_NullEffect */
@@ -986,6 +997,7 @@ static void adapt_EnergySpike_AISelectEffect(ProbeState *s)
 /* >>> factory CometPunch_AIEffect */
 static void adapt_CometPunch_AIEffect(ProbeState *s)
 {
+	(void)s;
 	CometPunch_AIEffect();
 }
 /* <<< factory CometPunch_AIEffect */
@@ -1013,6 +1025,7 @@ static void adapt_Conversion2_ResistanceCheck(ProbeState *s)
 /* >>> factory ElectrodeSonicboom_NullEffect */
 static void adapt_ElectrodeSonicboom_NullEffect(ProbeState *s)
 {
+	(void)s;
 	ElectrodeSonicboom_NullEffect();
 }
 /* <<< factory ElectrodeSonicboom_NullEffect */
@@ -1029,6 +1042,7 @@ static void adapt_FirstAid_DamageCheck(ProbeState *s)
 /* >>> factory DoTheWaveEffect */
 static void adapt_DoTheWaveEffect(ProbeState *s)
 {
+	(void)s;
 	DoTheWaveEffect();
 }
 /* <<< factory DoTheWaveEffect */
@@ -1106,6 +1120,7 @@ static void adapt_Firegiver_InitialEffect(ProbeState *s)
 /* >>> factory MoltresLv37DiveBomb_AIEffect */
 static void adapt_MoltresLv37DiveBomb_AIEffect(ProbeState *s)
 {
+	(void)s;
 	MoltresLv37DiveBomb_AIEffect();
 }
 /* <<< factory MoltresLv37DiveBomb_AIEffect */
@@ -1164,6 +1179,7 @@ static void adapt_ClefairyDoll_BenchCheck(ProbeState *s)
 /* >>> factory ClefairyDoll_PlaceInPlayAreaEffect */
 static void adapt_ClefairyDoll_PlaceInPlayAreaEffect(ProbeState *s)
 {
+	(void)s;
 	ClefairyDoll_PlaceInPlayAreaEffect();
 }
 /* <<< factory ClefairyDoll_PlaceInPlayAreaEffect */
@@ -1511,6 +1527,7 @@ static void adapt_DreamEaterEffect(ProbeState *s)
 /* >>> factory JynxMeditate_DamageBoostEffect */
 static void adapt_JynxMeditate_DamageBoostEffect(ProbeState *s)
 {
+	(void)s;
 	JynxMeditate_DamageBoostEffect();
 }
 /* <<< factory JynxMeditate_DamageBoostEffect */
@@ -1531,12 +1548,14 @@ static void adapt_KadabraRecover_CheckEnergyHP(ProbeState *s)
 /* >>> factory MewtwoAltEnergyAbsorption_AddToHandEffect */
 static void adapt_MewtwoAltEnergyAbsorption_AddToHandEffect(ProbeState *s)
 {
+	(void)s;
 	MewtwoAltEnergyAbsorption_AddToHandEffect();
 }
 /* <<< factory MewtwoAltEnergyAbsorption_AddToHandEffect */
 /* >>> factory MewtwoEnergyAbsorption_AddToHandEffect */
 static void adapt_MewtwoEnergyAbsorption_AddToHandEffect(ProbeState *s)
 {
+	(void)s;
 	MewtwoEnergyAbsorption_AddToHandEffect();
 }
 /* <<< factory MewtwoEnergyAbsorption_AddToHandEffect */
@@ -1586,7 +1605,7 @@ static void adapt_Wail_BenchCheck(ProbeState *s)
 }
 /* <<< factory Wail_BenchCheck */
 /* >>> factory StepIn_SwitchEffect */
-static void adapt_StepIn_SwitchEffect(ProbeState *s) { StepIn_SwitchEffect(); }
+static void adapt_StepIn_SwitchEffect(ProbeState *s) { (void)s; StepIn_SwitchEffect(); }
 /* <<< factory StepIn_SwitchEffect */
 /* >>> factory ThickSkinnedEffect */
 static void adapt_ThickSkinnedEffect(ProbeState *s) { s->f = ThickSkinnedEffect(s->f); }
@@ -1626,6 +1645,7 @@ static void adapt_Func_2c6d9(ProbeState *s)
 /* >>> factory MarowakCallForFamily_AISelectEffect */
 static void adapt_MarowakCallForFamily_AISelectEffect(ProbeState *s)
 {
+	(void)s;
 	MarowakCallForFamily_AISelectEffect();
 }
 /* <<< factory MarowakCallForFamily_AISelectEffect */
@@ -1678,6 +1698,7 @@ static void adapt_NinetalesLure_CheckBench(ProbeState *s)
 /* >>> factory ThunderboltEffect */
 static void adapt_ThunderboltEffect(ProbeState *s)
 {
+	(void)s;
 	ThunderboltEffect();
 }
 /* <<< factory ThunderboltEffect */
@@ -1693,6 +1714,7 @@ static void adapt_TrainerCardAsPokemon_BenchCheck(ProbeState *s)
 /* >>> factory TrainerCardAsPokemon_DiscardEffect */
 static void adapt_TrainerCardAsPokemon_DiscardEffect(ProbeState *s)
 {
+	(void)s;
 	TrainerCardAsPokemon_DiscardEffect();
 }
 /* <<< factory TrainerCardAsPokemon_DiscardEffect */
@@ -1708,6 +1730,7 @@ static void adapt_MysteriousFossil_BenchCheck(ProbeState *s)
 /* >>> factory MysteriousFossil_PlaceInPlayAreaEffect */
 static void adapt_MysteriousFossil_PlaceInPlayAreaEffect(ProbeState *s)
 {
+	(void)s;
 	MysteriousFossil_PlaceInPlayAreaEffect();
 }
 /* <<< factory MysteriousFossil_PlaceInPlayAreaEffect */
@@ -1764,10 +1787,10 @@ static void adapt_SpacingOut_HealEffect(ProbeState *s)
 static void adapt_LeekSlap_OncePerDuelCheck(ProbeState *s) { s->f = (uint8_t)(LeekSlap_OncePerDuelCheck() | (s->f & 0x00u)); }
 /* <<< factory LeekSlap_OncePerDuelCheck */
 /* >>> factory LeekSlap_SetUsedThisDuelFlag */
-static void adapt_LeekSlap_SetUsedThisDuelFlag(ProbeState *s) { LeekSlap_SetUsedThisDuelFlag(); }
+static void adapt_LeekSlap_SetUsedThisDuelFlag(ProbeState *s) { (void)s; LeekSlap_SetUsedThisDuelFlag(); }
 /* <<< factory LeekSlap_SetUsedThisDuelFlag */
 /* >>> factory PlusPowerEffect */
-static void adapt_PlusPowerEffect(ProbeState *s) { PlusPowerEffect(); }
+static void adapt_PlusPowerEffect(ProbeState *s) { (void)s; PlusPowerEffect(); }
 /* <<< factory PlusPowerEffect */
 /* >>> factory StrikesBackEffect */
 static void adapt_StrikesBackEffect(ProbeState *s) { s->f = (uint8_t)((s->f & 0x80u) | StrikesBackEffect()); }
@@ -1776,7 +1799,7 @@ static void adapt_StrikesBackEffect(ProbeState *s) { s->f = (uint8_t)((s->f & 0x
 static void adapt_Switch_BenchCheck(ProbeState *s) { MrFujiBenchCheckResult r = Switch_BenchCheck(); s->a = r.a; s->f = r.f; s->hl = r.hl; }
 /* <<< factory Switch_BenchCheck */
 /* >>> factory Switch_SwitchEffect */
-static void adapt_Switch_SwitchEffect(ProbeState *s) { Switch_SwitchEffect(); }
+static void adapt_Switch_SwitchEffect(ProbeState *s) { (void)s; Switch_SwitchEffect(); }
 /* <<< factory Switch_SwitchEffect */
 
 /* >>> factory CopyPlayAreaHPToBackup_Unreferenced */
@@ -1805,18 +1828,18 @@ static void adapt_Barrier_DiscardEffect(ProbeState *s)
 /* <<< factory Barrier_DiscardEffect */
 
 /* >>> factory DestinyBond_DiscardEffect */
-static void adapt_DestinyBond_DiscardEffect(ProbeState *s) { DestinyBond_DiscardEffect(); }
+static void adapt_DestinyBond_DiscardEffect(ProbeState *s) { (void)s; DestinyBond_DiscardEffect(); }
 /* <<< factory DestinyBond_DiscardEffect */
-static void adapt_Ember_DiscardEffect(ProbeState *s) { Ember_DiscardEffect(); }
+static void adapt_Ember_DiscardEffect(ProbeState *s) { (void)s; Ember_DiscardEffect(); }
 /* <<< factory Ember_DiscardEffect */
 /* >>> factory FireBlast_DiscardEffect */
-static void adapt_FireBlast_DiscardEffect(ProbeState *s) { FireBlast_DiscardEffect(); }
+static void adapt_FireBlast_DiscardEffect(ProbeState *s) { (void)s; FireBlast_DiscardEffect(); }
 /* <<< factory FireBlast_DiscardEffect */
 /* >>> factory FireSpin_AISelectEffect */
-static void adapt_FireSpin_AISelectEffect(ProbeState *s) { FireSpin_AISelectEffect(); }
+static void adapt_FireSpin_AISelectEffect(ProbeState *s) { (void)s; FireSpin_AISelectEffect(); }
 /* <<< factory FireSpin_AISelectEffect */
 /* >>> factory FireSpin_DiscardEffect */
-static void adapt_FireSpin_DiscardEffect(ProbeState *s) { FireSpin_DiscardEffect(); }
+static void adapt_FireSpin_DiscardEffect(ProbeState *s) { (void)s; FireSpin_DiscardEffect(); }
 /* <<< factory FireSpin_DiscardEffect */
 /* >>> factory PidgeottoMirrorMove_InitialEffect1 */
 static void adapt_PidgeottoMirrorMove_InitialEffect1(ProbeState *s)
@@ -1839,6 +1862,7 @@ static void adapt_ClefairyMetronome_CheckAttacks(ProbeState *s)
 /* >>> factory Psychic_DamageBoostEffect */
 static void adapt_Psychic_DamageBoostEffect(ProbeState *s)
 {
+	(void)s;
 	Psychic_DamageBoostEffect();
 }
 /* <<< factory Psychic_DamageBoostEffect */
@@ -1846,6 +1870,7 @@ static void adapt_Psychic_DamageBoostEffect(ProbeState *s)
 /* >>> factory Barrier_AISelectEffect */
 static void adapt_Barrier_AISelectEffect(ProbeState *s)
 {
+	(void)s;
 	Barrier_AISelectEffect();
 }
 /* <<< factory Barrier_AISelectEffect */
@@ -1892,6 +1917,7 @@ static void adapt_EnergyRetrieval_HandEnergyCheck(ProbeState *s)
 /* >>> factory MrMimeMeditate_AIEffect */
 static void adapt_MrMimeMeditate_AIEffect(ProbeState *s)
 {
+	(void)s;
 	MrMimeMeditate_AIEffect();
 }
 /* <<< factory MrMimeMeditate_AIEffect */
@@ -1939,6 +1965,7 @@ static void adapt_PokemonTrader_HandDeckCheck(ProbeState *s)
 /* >>> factory VictreebelLure_GetBenchPokemonWithLowestHP */
 static void adapt_VictreebelLure_GetBenchPokemonWithLowestHP(ProbeState *s)
 {
+	(void)s;
 	VictreebelLure_GetBenchPokemonWithLowestHP();
 }
 /* <<< factory VictreebelLure_GetBenchPokemonWithLowestHP */
@@ -1992,6 +2019,7 @@ static void adapt_Scavenge_CheckDiscardPile(ProbeState *s)
 /* >>> factory Scavenge_AISelectEffect */
 static void adapt_Scavenge_AISelectEffect(ProbeState *s)
 {
+	(void)s;
 	Scavenge_AISelectEffect();
 }
 /* <<< factory Scavenge_AISelectEffect */
@@ -2019,6 +2047,7 @@ static void adapt_DevolutionBeam_CheckPlayArea(ProbeState *s)
 /* >>> factory DevolutionBeam_AISelectEffect */
 static void adapt_DevolutionBeam_AISelectEffect(ProbeState *s)
 {
+	(void)s;
 	DevolutionBeam_AISelectEffect();
 }
 /* <<< factory DevolutionBeam_AISelectEffect */
@@ -2076,6 +2105,7 @@ static void adapt_MewtwoEnergyAbsorption_AISelectEffect(ProbeState *s)
 /* >>> factory JynxMeditate_AIEffect */
 static void adapt_JynxMeditate_AIEffect(ProbeState *s)
 {
+	(void)s;
 	JynxMeditate_AIEffect();
 }
 /* <<< factory JynxMeditate_AIEffect */
@@ -2083,6 +2113,7 @@ static void adapt_JynxMeditate_AIEffect(ProbeState *s)
 /* >>> factory MysteryAttack_RandomEffect */
 static void adapt_MysteryAttack_RandomEffect(ProbeState *s)
 {
+	(void)s;
 	MysteryAttack_RandomEffect();
 }
 /* <<< factory MysteryAttack_RandomEffect */
@@ -2123,6 +2154,7 @@ static void adapt_FlamesOfRage_AIEffect(ProbeState *s)
 /* >>> factory ArcanineFlamethrower_AISelectEffect */
 static void adapt_ArcanineFlamethrower_AISelectEffect(ProbeState *s)
 {
+	(void)s;
 	ArcanineFlamethrower_AISelectEffect();
 }
 /* <<< factory ArcanineFlamethrower_AISelectEffect */
@@ -2130,6 +2162,7 @@ static void adapt_ArcanineFlamethrower_AISelectEffect(ProbeState *s)
 /* >>> factory FlamesOfRage_AISelectEffect */
 static void adapt_FlamesOfRage_AISelectEffect(ProbeState *s)
 {
+	(void)s;
 	FlamesOfRage_AISelectEffect();
 }
 /* <<< factory FlamesOfRage_AISelectEffect */
@@ -2137,6 +2170,7 @@ static void adapt_FlamesOfRage_AISelectEffect(ProbeState *s)
 /* >>> factory FireBlast_AISelectEffect */
 static void adapt_FireBlast_AISelectEffect(ProbeState *s)
 {
+	(void)s;
 	FireBlast_AISelectEffect();
 }
 /* <<< factory FireBlast_AISelectEffect */
@@ -2153,6 +2187,7 @@ static void adapt_EnergyConversion_CheckEnergy(ProbeState *s)
 /* >>> factory EnergyConversion_AISelectEffect */
 static void adapt_EnergyConversion_AISelectEffect(ProbeState *s)
 {
+	(void)s;
 	EnergyConversion_AISelectEffect();
 }
 /* <<< factory EnergyConversion_AISelectEffect */
@@ -2160,6 +2195,7 @@ static void adapt_EnergyConversion_AISelectEffect(ProbeState *s)
 /* >>> factory HypnoDarkMind_AISelectEffect */
 static void adapt_HypnoDarkMind_AISelectEffect(ProbeState *s)
 {
+	(void)s;
 	HypnoDarkMind_AISelectEffect();
 }
 /* <<< factory HypnoDarkMind_AISelectEffect */
@@ -2182,6 +2218,7 @@ static void adapt_MirrorMove_AISelection(ProbeState *s)
 /* >>> factory KinglerFlail_HPCheck */
 static void adapt_KinglerFlail_HPCheck(ProbeState *s)
 {
+	(void)s;
 	KinglerFlail_HPCheck();
 }
 /* <<< factory KinglerFlail_HPCheck */
@@ -2189,6 +2226,7 @@ static void adapt_KinglerFlail_HPCheck(ProbeState *s)
 /* >>> factory MagikarpFlail_HPCheck */
 static void adapt_MagikarpFlail_HPCheck(ProbeState *s)
 {
+	(void)s;
 	MagikarpFlail_HPCheck();
 }
 /* <<< factory MagikarpFlail_HPCheck */
@@ -2196,6 +2234,7 @@ static void adapt_MagikarpFlail_HPCheck(ProbeState *s)
 /* >>> factory SuperFang_HalfHPEffect */
 static void adapt_SuperFang_HalfHPEffect(ProbeState *s)
 {
+	(void)s;
 	SuperFang_HalfHPEffect();
 }
 /* <<< factory SuperFang_HalfHPEffect */
@@ -2258,6 +2297,7 @@ static void adapt_DestinyBond_DestinyBondEffect(ProbeState *s)
 /* >>> factory FlareonRage_AIEffect */
 static void adapt_FlareonRage_AIEffect(ProbeState *s)
 {
+	(void)s;
 	FlareonRage_AIEffect();
 }
 /* <<< factory FlareonRage_AIEffect */
@@ -2329,6 +2369,7 @@ static void adapt_JolteonDoubleKick_AIEffect(ProbeState *s)
 /* >>> factory RapidashStomp_AIEffect */
 static void adapt_RapidashStomp_AIEffect(ProbeState *s)
 {
+	(void)s;
 	RapidashStomp_AIEffect();
 }
 /* <<< factory RapidashStomp_AIEffect */
@@ -2441,6 +2482,7 @@ static void adapt_PidgeottoMirrorMove_AIEffect(ProbeState *s)
 /* >>> factory PidgeottoMirrorMove_AISelection */
 static void adapt_PidgeottoMirrorMove_AISelection(ProbeState *s)
 {
+	(void)s;
 	PidgeottoMirrorMove_AISelection();
 }
 /* <<< factory PidgeottoMirrorMove_AISelection */
@@ -2856,6 +2898,7 @@ static void adapt_MorphEffect(ProbeState *s)
 /* >>> factory AISelectConversionColor */
 static void adapt_AISelectConversionColor(ProbeState *s)
 {
+	(void)s;
 	AISelectConversionColor();
 }
 /* <<< factory AISelectConversionColor */
@@ -2871,6 +2914,7 @@ static void adapt_PrintArenaCardNameAndColorText(ProbeState *s)
 /* >>> factory Conversion1_AISelectEffect */
 static void adapt_Conversion1_AISelectEffect(ProbeState *s)
 {
+	(void)s;
 	Conversion1_AISelectEffect();
 }
 /* <<< factory Conversion1_AISelectEffect */
@@ -2886,6 +2930,7 @@ static void adapt_Conversion2_ChangeResistanceEffect(ProbeState *s)
 /* >>> factory Conversion2_AISelectEffect */
 static void adapt_Conversion2_AISelectEffect(ProbeState *s)
 {
+	(void)s;
 	Conversion2_AISelectEffect();
 }
 /* <<< factory Conversion2_AISelectEffect */
@@ -3549,6 +3594,7 @@ static void adapt_DamageSwap_SelectAndSwapEffect(ProbeState *s)
 /* >>> factory Gigashock_PlayerSelectEffect */
 static void adapt_Gigashock_PlayerSelectEffect(ProbeState *s)
 {
+	(void)s;
 	Gigashock_PlayerSelectEffect();
 }
 /* <<< factory Gigashock_PlayerSelectEffect */
@@ -3822,6 +3868,7 @@ static void adapt_NidorinaDoubleKick_MultiplierEffect(ProbeState *s)
 /* >>> factory DragoniteLv41Slam_MultiplierEffect */
 static void adapt_DragoniteLv41Slam_MultiplierEffect(ProbeState *s)
 {
+	(void)s;
 	DragoniteLv41Slam_MultiplierEffect();
 }
 /* <<< factory DragoniteLv41Slam_MultiplierEffect */
@@ -3907,6 +3954,7 @@ static void adapt_StretchKick_BenchDamageEffect(ProbeState *s)
 /* >>> factory IceBreath_RandomPokemonDamageEffect */
 static void adapt_IceBreath_RandomPokemonDamageEffect(ProbeState *s)
 {
+	(void)s;
 	IceBreath_RandomPokemonDamageEffect();
 }
 /* <<< factory IceBreath_RandomPokemonDamageEffect */
@@ -3943,6 +3991,7 @@ static void adapt_CatPunchEffect(ProbeState *s)
 /* >>> factory Gigashock_BenchDamageEffect */
 static void adapt_Gigashock_BenchDamageEffect(ProbeState *s)
 {
+	(void)s;
 	Gigashock_BenchDamageEffect();
 }
 /* <<< factory Gigashock_BenchDamageEffect */
@@ -4097,6 +4146,7 @@ static void adapt_BillEffect(ProbeState *s)
 /* >>> factory ImposterProfessorOakEffect */
 static void adapt_ImposterProfessorOakEffect(ProbeState *s)
 {
+	(void)s;
 	ImposterProfessorOakEffect();
 }
 /* <<< factory ImposterProfessorOakEffect */
@@ -4204,6 +4254,7 @@ static void adapt_RaichuThunder_RecoilEffect(ProbeState *s)
 /* >>> factory BigEggsplosion_MultiplierEffect */
 static void adapt_BigEggsplosion_MultiplierEffect(ProbeState *s)
 {
+	(void)s;
 	BigEggsplosion_MultiplierEffect();
 }
 /* <<< factory BigEggsplosion_MultiplierEffect */
@@ -4296,6 +4347,7 @@ static void adapt_Thunderpunch_RecoilEffect(ProbeState *s)
 /* >>> factory Revive_PlayerSelection */
 static void adapt_Revive_PlayerSelection(ProbeState *s)
 {
+	(void)s;
 	Revive_PlayerSelection();
 }
 /* <<< factory Revive_PlayerSelection */
@@ -4805,6 +4857,7 @@ static void adapt_RaichuThunder_Recoil50PercentEffect(ProbeState *s)
 /* >>> factory TaurosStomp_DamageBoostEffect */
 static void adapt_TaurosStomp_DamageBoostEffect(ProbeState *s)
 {
+	(void)s;
 	TaurosStomp_DamageBoostEffect();
 }
 /* <<< factory TaurosStomp_DamageBoostEffect */
@@ -4880,6 +4933,7 @@ static void adapt_VenomPowder_PoisonConfusion50PercentEffect(ProbeState *s)
 /* >>> factory ThunderstormEffect */
 static void adapt_ThunderstormEffect(ProbeState *s)
 {
+	(void)s;
 	ThunderstormEffect();
 }
 /* <<< factory ThunderstormEffect */
@@ -4891,7 +4945,6 @@ static void adapt_FoulGas_PoisonOrConfusionEffect(ProbeState *s)
 }
 /* <<< factory FoulGas_PoisonOrConfusionEffect */
 
-/* >>> factory Sprout_PlayerSelectEffect */
 /* >>> factory Sprout_PlayerSelectEffect */
 static void adapt_Sprout_PlayerSelectEffect(ProbeState *s)
 {
@@ -5565,6 +5618,7 @@ static void adapt_DevolutionSpray_PlayerSelection(ProbeState *s)
 /* >>> factory EnergySpike_PlayerSelectEffect */
 static void adapt_EnergySpike_PlayerSelectEffect(ProbeState *s)
 {
+	(void)s;
 	EnergySpike_PlayerSelectEffect();
 }
 /* <<< factory EnergySpike_PlayerSelectEffect */

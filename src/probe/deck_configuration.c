@@ -412,6 +412,7 @@ static void adapt_AppendOwnedCardCountAndStorageCountNumbers(ProbeState *s)
 /* >>> factory PrintCardTypeCounts */
 static void adapt_PrintCardTypeCounts(ProbeState *s)
 {
+	(void)s;
 	PrintCardTypeCounts();
 }
 /* <<< factory PrintCardTypeCounts */
@@ -449,6 +450,7 @@ static void adapt_RemoveCardFromDeckAndUpdateCount(ProbeState *s)
 /* >>> factory PrintCardSelectionList */
 static void adapt_PrintCardSelectionList(ProbeState *s)
 {
+	(void)s;
 	PrintCardSelectionList();
 }
 /* <<< factory PrintCardSelectionList */
@@ -534,6 +536,7 @@ static void adapt_GetCardTypeIconPalette(ProbeState *s)
 /* >>> factory DrawCardTypeIcons */
 static void adapt_DrawCardTypeIcons(ProbeState *s)
 {
+	(void)s;
 	DrawCardTypeIcons();
 }
 /* <<< factory DrawCardTypeIcons */
@@ -604,6 +607,7 @@ static void adapt_PrintCurDeckNumberAndName(ProbeState *s)
 /* >>> factory UpdateConfirmationCardScreen */
 static void adapt_UpdateConfirmationCardScreen(ProbeState *s)
 {
+	(void)s;
 	UpdateConfirmationCardScreen();
 }
 /* <<< factory UpdateConfirmationCardScreen */
@@ -708,6 +712,7 @@ static void adapt_HandleDeckBuildScreen(ProbeState *s)
 /* >>> factory HandlePlayersCardsScreen */
 static void adapt_HandlePlayersCardsScreen(ProbeState *s)
 {
+	(void)s;
 	HandlePlayersCardsScreen();
 }
 /* <<< factory HandlePlayersCardsScreen */

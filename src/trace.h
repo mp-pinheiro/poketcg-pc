@@ -14,9 +14,6 @@
  * with -finstrument-functions (cmake -DPOKETCG_TRACE=ON). */
 
 void trace_set_frame(uint32_t frame);
-void trace_reset(void);
-size_t trace_count(void);
-int trace_overflowed(void);
 
 /* Raw records, resolved to routine names offline by
  * tools/completion/native_trace.py against the same binary's symbol table. */

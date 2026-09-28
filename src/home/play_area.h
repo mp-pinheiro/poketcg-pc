@@ -13,7 +13,6 @@ OpenInPlayAreaScreenHandleInputResult OpenInPlayAreaScreen_HandleInput(void);
 void OpenInPlayAreaScreen_TurnHolderPlayArea(void);
 /* <<< factory OpenInPlayAreaScreen_TurnHolderPlayArea */
 /* >>> factory OpenInPlayAreaScreen_NonTurnHolderPlayArea */
-/* >>> factory OpenInPlayAreaScreen_NonTurnHolderPlayArea */
 void OpenInPlayAreaScreen_NonTurnHolderPlayArea(void);
 /* <<< factory OpenInPlayAreaScreen_NonTurnHolderPlayArea */
 /* >>> factory OpenInPlayAreaScreen_TurnHolderDiscardPile */
@@ -22,7 +21,6 @@ void OpenInPlayAreaScreen_TurnHolderDiscardPile(uint8_t c);
 /* >>> factory OpenInPlayAreaScreen_NonTurnHolderDiscardPile */
 void OpenInPlayAreaScreen_NonTurnHolderDiscardPile(uint8_t c);
 /* <<< factory OpenInPlayAreaScreen_NonTurnHolderDiscardPile */
-/* >>> factory OpenInPlayAreaScreen_NonTurnHolderHand */
 /* >>> factory OpenInPlayAreaScreen_NonTurnHolderHand */
 void OpenInPlayAreaScreen_NonTurnHolderHand(void);
 /* <<< factory OpenInPlayAreaScreen_NonTurnHolderHand */

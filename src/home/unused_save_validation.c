@@ -20,11 +20,6 @@
 #include "home/process_text.h"
 #include "home/tiles.h"
 #include "mem.h"
-#define RRAMB_ADDR 0x4000u
-#define RRTCREG_ADDR 0xA000u
-#define CONSOLE_SGB 0x01u
-#define SGB_DEFAULT_PALETTE 0xE4u
-#define YourDataWasDestroyedSomehowText 0x00a3u
 /* <<< factory statics */
 
 /* >>> factory StubbedUnusedSaveDataValidation */

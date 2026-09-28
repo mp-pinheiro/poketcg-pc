@@ -16,7 +16,6 @@ hBankSRAM = 0xFF81
 wTempBankSRAM = 0xD0A4
 wMachineDeckPtrs = 0xD00D
 wSelectedDeckMachineEntry = 0xD088
-wDecksToBeDismantled = 0xD0A6
 # <<< factory-cases-statics
 
 # >>> factory ReadAutoDeckConfiguration

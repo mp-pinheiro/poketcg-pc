@@ -140,10 +140,8 @@ hffb0 = 0xFFB0
 wDuelTempList = 0xC510
 wTempCardCollection = 0xC000
 wFilteredCardList = 0xCEDA
-wNumEntriesInCurFilter = 0xCEAE
 wNumVisibleCardListEntries = 0xCECB
 wCardListCoords = 0xCED0
-wCursorAlternateTile = 0xCFDE
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -222,8 +220,6 @@ wMachineDeckPtrs = 0xD00D
 wCardListVisibleOffset = 0xCEA1
 wCardListCursorPos = 0xCEA4
 wMachineDeckPtrs = 0xD00D
-wTempCardListVisibleOffset = 0xD087
-wTempDeckMachineCursorPos = 0xD086
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}

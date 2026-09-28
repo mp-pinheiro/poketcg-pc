@@ -341,6 +341,7 @@ static void adapt_PrinterMenu_CardList(ProbeState *s)
 /* >>> factory PrinterMenu_PokemonCards */
 static void adapt_PrinterMenu_PokemonCards(ProbeState *s)
 {
+	(void)s;
 	PrinterMenu_PokemonCards();
 }
 /* <<< factory PrinterMenu_PokemonCards */

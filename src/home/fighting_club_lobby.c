@@ -16,7 +16,6 @@
 #define EVENT_IMAKUNI_ROOM 0x34u
 #define IMAKUNI_NOT_MENTIONED 0x00u
 #define IMAKUNI_MENTIONED 0x01u
-#define IMAKUNI_TALKED 0x02u
 #define IMAKUNI_FIGHTING_CLUB 0x00u
 #define MUSIC_IMAKUNI 0x10u
 /* <<< factory statics */

@@ -12,6 +12,7 @@
 #include "home/switch_sram.h"
 #include "home/tiles.h"
 #include "mem.h"
+#include "home/objects.h"
 
 #define rSCX 0xFF43u
 #define rSCY 0xFF42u

@@ -94,6 +94,7 @@ static void adapt_ConfigScreenHandleDPadInput(ProbeState *s)
 /* >>> factory _PauseMenu_Config */
 static void adapt__PauseMenu_Config(ProbeState *s)
 {
+	(void)s;
 	_PauseMenu_Config();
 }
 /* <<< factory _PauseMenu_Config */

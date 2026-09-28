@@ -471,7 +471,6 @@ void CreateCardSetListAndInitListCoords(uint8_t a)
 #define VENUSAUR_OWNED_PHANTOM_F 0x00u
 #define MEW_OWNED_PHANTOM_F 0x01u
 #define SYM_SLASH 0x2Eu
-#define BoosterPackTitleText 0x0252u
 #define Item1ColosseumText 0x0253u
 #define Item2EvolutionText 0x0254u
 #define Item3MysteryText 0x0255u

@@ -64,6 +64,7 @@ static void adapt_PrintMedalCount(ProbeState *s)
 /* >>> factory DrawCollectedMedals */
 static void adapt_DrawCollectedMedals(ProbeState *s)
 {
+	(void)s;
 	DrawCollectedMedals();
 }
 /* <<< factory DrawCollectedMedals */

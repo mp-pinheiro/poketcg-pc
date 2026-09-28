@@ -19,7 +19,6 @@
 #define MAP_OW_FRAMESET_POINTERS_BANK 0x20u
 #define MAP_OW_FRAMESET_POINTERS_ADDR 0x45D6u
 /* <<< factory statics */
-#define NUM_OW_FRAMESET_SUBGROUPS 3u
 
 void ClearNumLoadedFramesetSubgroups(void)
 {

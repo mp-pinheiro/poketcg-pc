@@ -18,7 +18,6 @@
 
 #define WIDE_EXTRA_MAX 48
 #define PPU_SPRITES_PER_LINE 10
-#define PPU_SPRITES_MAX 40
 
 /* scroll.asm and credits.asm rewrite SCX/SCY mid-frame via LYC, so the
  * rasteriser reads scroll/window position per scanline instead of once per

@@ -348,9 +348,6 @@ def _naming_source(text):
     body = bytes(text) + b"\x00" * (24 - len(text))
     return body[:13] + b"\x00\x00" + body[15:]
 
-wNamingScreenBuffer = 0xCFE7
-wNamingScreenDestPointer = 0xD000
-wNamingScreenBufferMaxLength = 0xD004
 
 # InitializeInputName clears NAMING_SCREEN_BUFFER_LENGTH ($18) bytes at $CFE7,
 # which erases the PyBoy oracle's `jr -2` park stub at $CFF4/$CFF5, and

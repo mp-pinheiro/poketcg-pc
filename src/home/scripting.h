@@ -50,7 +50,6 @@ IncreaseScriptPointerResult IncreaseScriptPointerBy2(void);
 IncreaseScriptPointerResult IncreaseScriptPointerBy4(void);
 /* <<< factory IncreaseScriptPointerBy4 */
 /* >>> factory IncreaseScriptPointerBy3 */
-/* >>> factory IncreaseScriptPointerBy3 */
 IncreaseScriptPointerResult IncreaseScriptPointerBy3(void);
 /* <<< factory IncreaseScriptPointerBy3 */
 /* >>> factory GetScriptArgs5AfterPointer */
@@ -129,7 +128,6 @@ IncreaseScriptPointerResult ScriptCommand_PlaySFX(uint8_t c);
 IncreaseScriptPointerResult ScriptCommand_PlayDefaultSong(void);
 /* <<< factory ScriptCommand_PlayDefaultSong */
 /* >>> factory ScriptCommand_SetSpriteAttributes */
-/* >>> factory ScriptCommand_SetSpriteAttributes */
 typedef struct {
 	uint8_t a;
 	uint8_t f;
@@ -140,14 +138,11 @@ typedef struct {
 SetSpriteAttributesResult ScriptCommand_SetSpriteAttributes(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_SetSpriteAttributes */
 /* >>> factory ScriptCommand_DoFrames */
-/* >>> factory ScriptCommand_DoFrames */
 IncreaseScriptPointerResult ScriptCommand_DoFrames(uint8_t c);
 /* <<< factory ScriptCommand_DoFrames */
 /* >>> factory ScriptCommand_EndScript */
-/* >>> factory ScriptCommand_EndScript */
 IncreaseScriptPointerResult ScriptCommand_EndScript(void);
 /* <<< factory ScriptCommand_EndScript */
-/* >>> factory SetNPCDuelParams */
 /* >>> factory SetNPCDuelParams */
 typedef struct {
 	uint8_t a;
@@ -159,10 +154,8 @@ typedef struct {
 SetNPCDuelParamsResult SetNPCDuelParams(uint8_t b, uint8_t c);
 /* <<< factory SetNPCDuelParams */
 /* >>> factory ScriptCommand_BattleCenter */
-/* >>> factory ScriptCommand_BattleCenter */
 IncreaseScriptPointerResult ScriptCommand_BattleCenter(void);
 /* <<< factory ScriptCommand_BattleCenter */
-/* >>> factory ScriptCommand_LoadCurrentMapNameIntoTxRamSlot */
 /* >>> factory ScriptCommand_LoadCurrentMapNameIntoTxRamSlot */
 typedef struct {
 	uint8_t a;
@@ -173,7 +166,6 @@ typedef struct {
 
 ScriptCommand_LoadCurrentMapNameIntoTxRamSlotResult ScriptCommand_LoadCurrentMapNameIntoTxRamSlot(uint8_t c);
 /* <<< factory ScriptCommand_LoadCurrentMapNameIntoTxRamSlot */
-/* >>> factory ScriptCommand_EnterMap */
 /* >>> factory ScriptCommand_EnterMap */
 IncreaseScriptPointerResult ScriptCommand_EnterMap(void);
 /* <<< factory ScriptCommand_EnterMap */
@@ -246,7 +238,6 @@ typedef struct {
 ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult ScriptCommand_JumpIfAnyEnergyCardsInCollection(void);
 /* <<< factory ScriptCommand_JumpIfAnyEnergyCardsInCollection */
 /* >>> factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
-/* >>> factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
 typedef struct {
 	uint8_t a;
 	uint8_t f;
@@ -256,7 +247,6 @@ typedef struct {
 } ScriptCommand_JumpBasedOnFightingClubPupilStatusResult;
 
 ScriptCommand_JumpBasedOnFightingClubPupilStatusResult ScriptCommand_JumpBasedOnFightingClubPupilStatus(void);
-/* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
 /* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
 /* >>> factory GetEventValue */
 uint8_t GetEventValue(uint8_t a);
@@ -547,7 +537,6 @@ IncreaseScriptPointerResult ScriptCommand_CloseAdvancedTextBox(void);
 IncreaseScriptPointerResult ScriptCommand_PrintVariableNPCText(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_PrintVariableNPCText */
 /* >>> factory ScriptCommand_PrintVariableText */
-/* >>> factory ScriptCommand_PrintVariableText */
 IncreaseScriptPointerResult ScriptCommand_PrintVariableText(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_PrintVariableText */
 /* >>> factory ScriptCommand_GiftCenter */
@@ -557,7 +546,6 @@ IncreaseScriptPointerResult ScriptCommand_PrintVariableText(uint8_t b, uint8_t c
  * GiftCenterMenu, which does not carry them out. */
 IncreaseScriptPointerResult ScriptCommand_GiftCenter(uint8_t c);
 /* <<< factory ScriptCommand_GiftCenter */
-/* >>> factory ScriptCommand_PrintTextQuitFully */
 /* >>> factory ScriptCommand_PrintTextQuitFully */
 typedef struct {
 	uint8_t a;
@@ -597,7 +585,6 @@ typedef struct {
 
 Func_c943Result Func_c943(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory Func_c943 */
-/* >>> factory ScriptCommand_MovePlayer */
 /* >>> factory ScriptCommand_MovePlayer */
 IncreaseScriptPointerResult ScriptCommand_MovePlayer(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_MovePlayer */

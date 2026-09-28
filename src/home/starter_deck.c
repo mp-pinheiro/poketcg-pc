@@ -1,4 +1,6 @@
 #include "home/starter_deck.h"
+#include "home/deck_selection.h"
+#include "home/duel.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"

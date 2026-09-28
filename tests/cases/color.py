@@ -47,12 +47,6 @@ PALETTE_SEED = {
     TEMP_BGP: b"\x00", TEMP_OBP0: b"\x55", TEMP_OBP1: b"\xAA",
     TEMP_BG_PALS: bytes(reversed(range(64))), TEMP_OBJ_PALS: bytes(reversed(range(64, 128))),
 }
-PALETTE_EXPECT = {
-    BGP: b"\xE4", OBP0: b"\x1B", OBP1: b"\xB4",
-    BG_PALS: bytes(range(64)), OBJ_PALS: bytes(range(64, 128)),
-    TEMP_BGP: b"\x00", TEMP_OBP0: b"\x55", TEMP_OBP1: b"\xAA",
-    TEMP_BG_PALS: bytes(reversed(range(64))), TEMP_OBJ_PALS: bytes(reversed(range(64, 128))),
-}
 SRAM_PALETTE = bytes([0xE4, 0x1B, 0xB4]) + bytes(range(128))
 MIX_CASES = [
     {"b": 0, "c": 0}, {"b": 0, "c": 1}, {"b": 0, "c": 2}, {"b": 0, "c": 3},

@@ -28,7 +28,6 @@ static void adapt_AIDecideBenchPokemonToSwitchTo(ProbeState *s)
 /* <<< factory AIDecideBenchPokemonToSwitchTo */
 
 /* >>> factory AIDecideWhetherToRetreat */
-/* >>> factory AIDecideWhetherToRetreat */
 static void adapt_AIDecideWhetherToRetreat(ProbeState *s)
 {
 	AIDecideWhetherToRetreatResult r = AIDecideWhetherToRetreat(s->d);

@@ -14,7 +14,6 @@ typedef struct { unsigned char a; unsigned char f; } AIProcessAttacksResult;
 AIProcessAttacksResult AIProcessAttacks(void);
 /* <<< factory AIProcessAttacks */
 /* >>> factory AIProcessAndTryToUseAttack */
-/* >>> factory AIProcessAndTryToUseAttack */
 AIProcessAttacksResult AIProcessAndTryToUseAttack(void);
 /* <<< factory AIProcessAndTryToUseAttack */
 /* >>> factory AIProcessButDontUseAttack */

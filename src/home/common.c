@@ -3,6 +3,8 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+#include "home/starter_deck.h"
+#include "home/promotional_card.h"
 /* >>> factory statics */
 #include "home/core.h"
 
@@ -112,7 +114,6 @@
 #include "home/sprite_vblank.h"
 #include "home/time.h"
 #include "home/lcd.h"
-#define SCENE_GAMEBOY_LINK_TRANSMITTING 0x0fu
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */

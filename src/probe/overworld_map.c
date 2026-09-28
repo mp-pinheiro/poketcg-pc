@@ -6,6 +6,7 @@
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */
 static void adapt_OverworldMap_ContinuePlayerWalkingAnimation(ProbeState *s)
 {
+	(void)s;
 	OverworldMap_ContinuePlayerWalkingAnimation();
 }
 /* <<< factory OverworldMap_ContinuePlayerWalkingAnimation */
@@ -61,6 +62,7 @@ static void adapt_OverworldMap_GetOWMapID(ProbeState *s)
 /* >>> factory OverworldMap_InitCursorSprite */
 static void adapt_OverworldMap_InitCursorSprite(ProbeState *s)
 {
+	(void)s;
 	OverworldMap_InitCursorSprite();
 }
 /* <<< factory OverworldMap_InitCursorSprite */
@@ -93,6 +95,7 @@ static void adapt_OverworldMap_InitPlayerNorthSouthMovement(ProbeState *s)
 /* >>> factory OverworldMap_PrintMapName */
 static void adapt_OverworldMap_PrintMapName(ProbeState *s)
 {
+	(void)s;
 	OverworldMap_PrintMapName();
 }
 /* <<< factory OverworldMap_PrintMapName */

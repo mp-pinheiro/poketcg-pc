@@ -5,6 +5,7 @@
 
 static void adapt_Func_1c865(ProbeState *s)
 {
+	(void)s;
 	Func_1c865();
 }
 

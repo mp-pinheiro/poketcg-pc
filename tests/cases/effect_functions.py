@@ -2489,9 +2489,6 @@ hTempCardIndex_ff9f = 0xFF9F
 hTemp_ffa0 = 0xFFA0
 hWhoseTurn = 0xFF97
 
-wLoadedCard1Name = 0xCC27
-wTxRam2 = 0xCE3F
-wTxRam2_b = 0xCE41
 
 hWhoseTurn = 0xFF97
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -2536,7 +2533,6 @@ wDuelistType = 0xC2F1
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 hCurSelectionItem = 0xFFB2
-hKeysPressed = 0xFF91
 hWhoseTurn = 0xFF97
 wPlayerArenaCard = 0xC2BB
 wPlayerDeck = 0xC242
@@ -2547,19 +2543,15 @@ wDuelTempList = 0xC510
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 hTempCardIndex_ff98 = 0xFF98
-wTotalAttachedEnergies = 0xCC23
 
 hCurSelectionItem = 0xFFB2
 hTempPlayAreaLocation_ffa1 = 0xFFA1
 hTemp_ffa0 = 0xFFA0
-wNumMenuItems = 0xCD14
 hWhoseTurn = 0xFF97
 wPlayerArenaCard = 0xC2BB
 wExcludeArenaPokemon = 0xCBD2
 
 wDuelTempList = 0xC510
-wLoadedCard2Type = 0xCC65
-wLoadedCard2Stage = 0xCC6E
 
 KR_PLAYER_TURN = 0xC2
 KR_wConsole = 0xCAB4
@@ -2599,9 +2591,6 @@ SR_STATUS = 0xF0 - 0xBB
 SR_PLUS = 0xE0 - 0xBB
 SR_DEF = 0xE6 - 0xBB
 
-wTempPlayAreaLocation_cceb = 0xCCEB
-wTxRam2 = 0xCE3F
-wTxRam2_b = 0xCE41
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 FRAME_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
@@ -2623,12 +2612,7 @@ RAH_DUELIST_TYPE = 0xC2F1
 RAH_LOCATIONS = 0xC200
 RAH_DECK_CARDS = 0xC27E
 RAH_NOT_IN_DECK = 0xC2BA
-RAH_wPlayerDeck = 0xC400
-RAH_wLoadedCard1 = 0xCC24
-RAH_wLCDC = 0xCABB
-RAH_rLCDC = 0xFF40
 
-wStage = 0xC2CF
 
 CFF_hTemp_ffa0 = 0xFFA0
 CFF_hWhoseTurn = 0xFF97
@@ -2671,7 +2655,6 @@ IF_DUELIST_TYPE = 0xC2F1
 IF_LOCATIONS = 0xC200
 IF_HAND_COUNT = 0xC2EE
 IF_HAND = 0xC242
-IF_DISCARD_COUNT = 0xC2F2
 IF_NOT_IN_DECK = 0xC2BA
 
 hWhoseTurn = 0xFF97
@@ -2688,8 +2671,6 @@ hWhoseTurn = 0xFF97
 hTempCardIndex_ff98 = 0xFF98
 hTempPlayAreaLocation_ffa1 = 0xFFA1
 hTemp_ffa0 = 0xFFA0
-wLoadedCard2Stage = 0xCC6E
-wLoadedCard2Type = 0xCC65
 
 hWhoseTurn = 0xFF97
 wPlayerDuelVariables = 0xC200
@@ -2701,7 +2682,6 @@ PLAYER_TURN = 0xC2
 hTemp_ffa0 = 0xFFA0
 hTempPlayAreaLocation_ffa1 = 0xFFA1
 
-wDealtDamage = 0xCCBF
 wDuelDisplayedScreen = 0xCAC2
 wNoDamageOrEffect = 0xCCC7
 
@@ -2795,7 +2775,6 @@ hWhoseTurn = 0xFF97
 wPlayerArenaCard = 0xC2BB
 wPlayerDeck = 0xC400
 wArenaCardStatus = 0xC2F0
-wLoadedCard1ID = 0xCC2B
 BULBASAUR = 0x08
 CLEFAIRY_DOLL = 0xCB
 MYSTERIOUS_FOSSIL = 0xCC
@@ -2860,14 +2839,6 @@ wNotInDeck = 0xC2BA
 wDiscardCount = 0xC2ED
 wHandCount = 0xC2EE
 
-PB_TURN = 0xC2
-PB_HWHOSE_TURN = 0xFF97
-PB_DUELIST_TYPE = 0xC2F1
-PB_LOCATIONS = 0xC200
-PB_DECK_CARDS = 0xC27E
-PB_NOT_IN_DECK = 0xC2BA
-PB_HAND_COUNT = 0xC2EE
-PB_WLCDC = 0xCABB
 
 hTempPlayAreaLocation_ff9d = 0xFF9D
 hWhoseTurn = 0xFF97
@@ -2887,126 +2858,23 @@ DISPLAY_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 
 DISPLAY_KEYS = [0x00, 0x01]
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-_td_arena_hp = 0xC2C8
-_td_wLoadedAttackAnimation = 0xCCB8
-_td_wDamage = 0xCCB9
-_td_wDamageEffectiveness = 0xCCC1
-_td_wTempTurn = 0xCCC3
-_td_wTempNonTurn = 0xCCC4
-_td_wNoDamageOrEffect = 0xCCC7
-_td_wAnimationsDisabled = 0xD421
-_td_rLCDC = 0xFF40
 
-def _td_case(**kw):
-    case = {"wram": {_td_arena_hp: b"\x40", _td_wDamage: b"\x00\x00", _td_wDamageEffectiveness: b"\x00", _td_wTempTurn: b"\x01", _td_wTempNonTurn: b"\x01", _td_wNoDamageOrEffect: b"\x00", _td_wAnimationsDisabled: b"\x01", 0xCABB: b"\x00", _td_rLCDC: b"\x80"},
-            "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}, {"fn": "SwapTurn"}], "instruction_budget": 8000000, "cycle_budget": 32000000,
-            "read": {_td_arena_hp: 1, _td_wLoadedAttackAnimation: 1, _td_wDamage: 2, _td_wDamageEffectiveness: 1, _td_wTempNonTurn: 1, _td_wNoDamageOrEffect: 1}}
-    case.update(kw)
-    return case
 
 hTempCardIndex_ff98 = 0xFF98
 hTempList = 0xFFA0
 
-wIsDamageToSelf = 0xCCE6
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-_gse_arena_hp = 0xC2C8
-_gse_loaded_animation = 0xCCB8
-_gse_damage = 0xCCB9
-_gse_damage_effectiveness = 0xCCC1
-_gse_temp_turn = 0xCCC3
-_gse_temp_nonturn = 0xCCC4
-_gse_no_damage = 0xCCC7
-_gse_animations_disabled = 0xD421
-_GSE_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
-def _gse_case(**kw):
-    case = {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80", _gse_arena_hp: b"\xC8", _gse_damage: b"\x00\x00", _gse_damage_effectiveness: b"\x00", _gse_temp_turn: b"\x01", _gse_temp_nonturn: b"\x01", _gse_no_damage: b"\x00", wIsDamageToSelf: b"\x00", _gse_animations_disabled: b"\x01"}, "read": {_gse_arena_hp: 1, _gse_loaded_animation: 1, _gse_damage: 2, _gse_damage_effectiveness: 1, _gse_temp_nonturn: 1, _gse_no_damage: 1, wIsDamageToSelf: 1}, "setup": list(_GSE_SETUP), "instruction_budget": 20000000, "cycle_budget": 80000000}
-    case.update(kw)
-    return case
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-_cde_arena_hp = 0xC2C8
-_cde_wLoadedAttackAnimation = 0xCCB8
-_cde_wDamage = 0xCCB9
-_cde_wDamageEffectiveness = 0xCCC1
-_cde_wTempTurn = 0xCCC3
-_cde_wTempNonTurn = 0xCCC4
-_cde_wNoDamageOrEffect = 0xCCC7
-_cde_wAnimationsDisabled = 0xD421
-_cde_wLcdc = 0xCABB
-_cde_rLcdc = 0xFF40
 
-def _cde_case(**kw):
-    case = {"wram": {_cde_arena_hp: b"\x40",
-                     _cde_wDamage: b"\x00\x00",
-                     _cde_wDamageEffectiveness: b"\x00",
-                     _cde_wTempTurn: b"\x01",
-                     _cde_wTempNonTurn: b"\x01",
-                     _cde_wNoDamageOrEffect: b"\x00",
-                     _cde_wAnimationsDisabled: b"\x01",
-                     _cde_wLcdc: b"\x00",
-                     _cde_rLcdc: b"\x80"},
-            "setup": [{"fn": "CopyDMAFunction"},
-                      {"fn": "SetupText", "d": 0x30, "e": 0x7F},
-                      {"fn": "SwapTurn"}],
-            "instruction_budget": 20000000,
-            "cycle_budget": 80000000,
-            "read": {_cde_arena_hp: 1,
-                     _cde_wLoadedAttackAnimation: 1,
-                     _cde_wDamage: 2,
-                     _cde_wDamageEffectiveness: 1,
-                     _cde_wTempNonTurn: 1,
-                     _cde_wNoDamageOrEffect: 1}}
-    case.update(kw)
-    return case
-
-_se_arena_hp=0xC2C8
-_POISON={"a":170,"f":240,"b":187,"c":204,"d":221,"e":238,"hl":4660}
-def _se_case(**kw):
- case={"wram":{_se_arena_hp:b"\x40",0xCCB9:b"\x00\x00",0xCCC1:b"\x00",0xCCC3:b"\x01",0xCCC4:b"\x01",0xCCC7:b"\x00",0xD421:b"\x01",0xCABB:b"\x00",0xFF40:b"\x80"},"setup":[{"fn":"CopyDMAFunction"},{"fn":"SetupText","d":48,"e":127},{"fn":"SwapTurn"}],"instruction_budget":8000000,"cycle_budget":32000000,"read":{_se_arena_hp:1,0xCCB8:1,0xCCB9:2,0xCCC1:1,0xCCC4:1,0xCCC7:1}}
- case.update(kw)
- return case
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-_mse_arena_hp = 0xC2C8
-_mse_loaded_attack_animation = 0xCCB8
-_mse_damage = 0xCCB9
-_mse_damage_effectiveness = 0xCCC1
-_mse_temp_turn = 0xCCC3
-_mse_temp_nonturn = 0xCCC4
-_mse_no_damage_or_effect = 0xCCC7
-_mse_animations_disabled = 0xD421
-_mse_is_damage_to_self = 0xCCE6
 
-def _mse_case(**kw):
-    case = {"wram": {_mse_arena_hp: b"\x50", _mse_damage: b"\x00\x00", _mse_damage_effectiveness: b"\x00", _mse_temp_turn: b"\x01", _mse_temp_nonturn: b"\x01", _mse_no_damage_or_effect: b"\x00", _mse_animations_disabled: b"\x01", _mse_is_damage_to_self: b"\x00", 0xCABB: b"\x00", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}, {"fn": "SwapTurn"}], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {_mse_arena_hp: 1, _mse_loaded_attack_animation: 1, _mse_damage: 2, _mse_damage_effectiveness: 1, _mse_temp_nonturn: 1, _mse_no_damage_or_effect: 1, _mse_is_damage_to_self: 1}}
-    case.update(kw)
-    return case
 
-_arena_hp = 0xC2C8
-_loaded_animation = 0xCCB8
-_damage = 0xCCB9
-_effectiveness = 0xCCC1
-_temp_turn = 0xCCC3
-_temp_nonturn = 0xCCC4
-_no_effect = 0xCCC7
-_animations_disabled = 0xD421
 POISON = dict(a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234)
-def _rrse(**kw):
-    case = {"wram": {_arena_hp: b"\x40", _damage: b"\x00\x00", _effectiveness: b"\x00", _temp_turn: b"\x00", _temp_nonturn: b"\x00", _no_effect: b"\x00", _animations_disabled: b"\x01"}, "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {_arena_hp: 1, _loaded_animation: 1, _damage: 2, _effectiveness: 1, _temp_turn: 1, _temp_nonturn: 1, _no_effect: 1}}
-    case.update(kw)
-    return case
 
 POISON={"a":0xAA,"f":0xF0,"b":0xBB,"c":0xCC,"d":0xDD,"e":0xEE,"hl":0x1234}
-def _m(**k):
- x={"wram":{0xC2C8:b"\x50",0xCCB9:b"\x00\x00",0xCCC1:b"\x00",0xCCC4:b"\x01",0xCCC7:b"\x00",0xD421:b"\x01"},"instruction_budget":20000000,"cycle_budget":80000000,"read":{0xC2C8:1,0xCCB8:1,0xCCB9:2,0xCCC1:1,0xCCC4:1,0xCCC7:1}}
- x.update(k)
- return x
 
-wIsDamageToSelf=0xCCE6
-_magneton_arena_hp=0xC2C8
-def _magneton(**kw):
- c={"wram":{_magneton_arena_hp:b"\xA0",wIsDamageToSelf:b"\x00"},"instruction_budget":20000000,"cycle_budget":80000000,"read":{_magneton_arena_hp:1,wIsDamageToSelf:1}}
- c.update(kw);return c
 
 POISON = {"a":0xAA,"f":0xF0,"b":0xBB,"c":0xCC,"d":0xDD,"e":0xEE,"hl":0x1234}
 hTempCardIndex_ff98=0xFF98
@@ -3016,24 +2884,9 @@ wDuelistDiscardCards=0xC27E
 wDuelTempList=0xC510
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-_wsd_arena_hp = 0xC2C8
-_wsd_loaded_attack_animation = 0xCCB8
-_wsd_damage = 0xCCB9
-_wsd_damage_effectiveness = 0xCCC1
-_wsd_temp_turn = 0xCCC3
-_wsd_temp_nonturn = 0xCCC4
-_wsd_no_damage_or_effect = 0xCCC7
-_wsd_animations_disabled = 0xD421
-_wsd_is_damage_to_self = 0xCCE6
-_WSD_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
-def _wsd_case(**kw):
-    case = {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80", _wsd_arena_hp: b"\xC8", _wsd_damage: b"\x00\x00", _wsd_damage_effectiveness: b"\x00", _wsd_temp_turn: b"\x01", _wsd_temp_nonturn: b"\x01", _wsd_no_damage_or_effect: b"\x00", _wsd_is_damage_to_self: b"\x00", _wsd_animations_disabled: b"\x01"}, "read": {_wsd_arena_hp: 1, _wsd_loaded_attack_animation: 1, _wsd_damage: 2, _wsd_damage_effectiveness: 1, _wsd_temp_nonturn: 1, _wsd_no_damage_or_effect: 1, _wsd_is_damage_to_self: 1}, "setup": list(_WSD_SETUP), "instruction_budget": 20000000, "cycle_budget": 80000000}
-    case.update(kw)
-    return case
 
 wDuelistType = 0xCC0D
 
-hTemp = 0xFFA0
 wDamage = 0xCCB9
 CASES_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 COIN_WRAM = {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00", 0xCE4E: b"\x34\x12"}
@@ -3062,20 +2915,12 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 hTemp_ffa0 = 0xFFA0
 hTempPlayAreaLocation_ffa1 = 0xFFA1
 hWhoseTurn = 0xFF97
-DUELIST_TYPE = 0xC2F1
-HAND_COUNT = 0xC2EE
-HAND = 0xC242
-CARD0_LOCATION = 0xC200
-CARD1_LOCATION = 0xC201
-NOT_IN_DECK = 0xC2BA
-DECK_TOP = 0xC2B8
 
 hCurMenuItem = 0xFFB1
 hTempCardIndex_ff98 = 0xFF98
 hTempPlayAreaLocation_ff9d = 0xFF9D
 hTempPlayAreaLocation_ffa1 = 0xFFA1
 hTemp_ffa0 = 0xFFA0
-wTotalAttachedEnergies = 0xCC23
 hWhoseTurn = 0xFF97
 wDuelistVars = 0xC200
 wPlayerDeck = 0xC400
@@ -3085,31 +2930,6 @@ wDuelistPokemonCount = 0xC2EF
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 FRAME_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
-def _peal_of_thunder_case(rng, poison=False):
-    wram = {
-        0xFF97: b"\xC2", 0xFF9D: b"\x01",
-        0xC2EF: b"\x01", 0xC3EF: b"\x01",
-        0xC2BB: b"\x00", 0xC3BB: b"\x00",
-        0xC2C8: b"\x50", 0xC3C8: b"\x50",
-        0xC400: b"\x01", 0xC480: b"\x01",
-        0xCABB: b"\x00",
-        0xCACA: rng,
-        0xCCBF: b"\x00\x00",
-        0xCE7E: b"\x01",
-        0xD423: b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF",
-        0xD42A: b"\xFF", 0xD4C0: b"\xFF",
-        0xD4AC: b"\x08", 0xD4AD: b"\x00",
-    }
-    case = {
-        "d": 0x00, "e": 0x14, "wram": wram,
-        "read": {0xCCC7: 1, 0xCCE6: 1, 0xCCB8: 1,
-                  0xC2C8: 1, 0xC3C8: 1, 0xCCBF: 2},
-        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-        "instruction_budget": 20000000, "cycle_budget": 80000000,
-    }
-    if poison:
-        case.update(POISON)
-    return case
 
 hTemp_ffa0 = 0xFFA0
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -10378,7 +10198,7 @@ MUTATIONS["Recycle_AddToHandEffect"] = {
 }
 # <<< factory-mutation Recycle_AddToHandEffect
 # >>> factory-mutation PokemonBreeder_EvolveEffect
-MUTATIONS["PokemonBreeder_EvolveEffect"] = {"source_symbol": "PokemonBreeder_EvolveEffect", "before": "PokemonBreederEvolveEffectResult PokemonBreeder_EvolveEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t saved_a = hTempCardIndex_ff9f;\n\tuint8_t entry_f = f;\n\thTempCardIndex_ff98 = hTemp_ffa0;", "after": "PokemonBreederEvolveEffectResult PokemonBreeder_EvolveEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t saved_a = hTempCardIndex_ff9f;\n\tuint8_t entry_f = f;\n\thTempCardIndex_ff98 = 0u;", "case_ids": ["PokemonBreeder_EvolveEffect-0", "PokemonBreeder_EvolveEffect-1", "PokemonBreeder_EvolveEffect-2"]}
+MUTATIONS["PokemonBreeder_EvolveEffect"] = {"source_symbol": "PokemonBreeder_EvolveEffect", "before": "PokemonBreederEvolveEffectResult PokemonBreeder_EvolveEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)hl;\n\tuint8_t saved_a = hTempCardIndex_ff9f;\n\tuint8_t entry_f = f;\n\thTempCardIndex_ff98 = hTemp_ffa0;", "after": "PokemonBreederEvolveEffectResult PokemonBreeder_EvolveEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)hl;\n\tuint8_t saved_a = hTempCardIndex_ff9f;\n\tuint8_t entry_f = f;\n\thTempCardIndex_ff98 = 0u;", "case_ids": ["PokemonBreeder_EvolveEffect-0", "PokemonBreeder_EvolveEffect-1", "PokemonBreeder_EvolveEffect-2"]}
 # <<< factory-mutation PokemonBreeder_EvolveEffect
 # >>> factory-mutation Sprout_PutInPlayAreaEffect
 MUTATIONS["Sprout_PutInPlayAreaEffect"] = {
@@ -10526,7 +10346,7 @@ MUTATIONS["Serial_TossCoinATimes"] = {"source_symbol": "Serial_TossCoinATimes", 
 MUTATIONS["TossCoinATimes_BankB"] = {"source_symbol": "TossCoinATimes_BankB", "before": "TossCoinATimes_BankBResult TossCoinATimes_BankB(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tTossCoinATimesResult result = TossCoinATimes(a, f, b, c, d, e, hl);", "after": "TossCoinATimes_BankBResult TossCoinATimes_BankB(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tTossCoinATimesResult result = TossCoinATimes((uint8_t)(a + 1u), f, b, c, d, e, hl);", "case_ids": ["TossCoinATimes_BankB-0", "TossCoinATimes_BankB-1"]}
 # <<< factory-mutation TossCoinATimes_BankB
 # >>> factory-mutation Serial_TossZeroCoins
-MUTATIONS["Serial_TossZeroCoins"] = {"source_symbol": "Serial_TossZeroCoins", "before": "SerialTossCoinATimesResult Serial_TossZeroCoins(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\treturn Serial_TossCoinATimes(0x00u, 0x80u, b, c, d, e, hl);", "after": "SerialTossCoinATimesResult Serial_TossZeroCoins(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\treturn Serial_TossCoinATimes(0x01u, 0x80u, b, c, d, e, hl);", "case_ids": ["Serial_TossZeroCoins-0", "Serial_TossZeroCoins-1"]}
+MUTATIONS["Serial_TossZeroCoins"] = {"source_symbol": "Serial_TossZeroCoins", "before": "SerialTossCoinATimesResult Serial_TossZeroCoins(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\treturn Serial_TossCoinATimes(0x00u, 0x80u, b, c, d, e, hl);", "after": "SerialTossCoinATimesResult Serial_TossZeroCoins(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\treturn Serial_TossCoinATimes(0x01u, 0x80u, b, c, d, e, hl);", "case_ids": ["Serial_TossZeroCoins-0", "Serial_TossZeroCoins-1"]}
 # <<< factory-mutation Serial_TossZeroCoins
 # >>> factory-mutation Serial_TossCoin
 MUTATIONS["Serial_TossCoin"] = {"source_symbol": "Serial_TossCoin", "before": "SerialTossCoinATimesResult Serial_TossCoin(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 1u;", "after": "SerialTossCoinATimesResult Serial_TossCoin(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 0u;", "case_ids": ["Serial_TossCoin-0", "Serial_TossCoin-1", "Serial_TossCoin-2"]}
@@ -10604,19 +10424,19 @@ MUTATIONS["PetalDance_MultiplierEffect"] = {"source_symbol": "PetalDance_Multipl
 MUTATIONS["PlayTrainerEffectAnimation"] = {"source_symbol": "PlayTrainerEffectAnimation", "before": "\tPlayAttackAnimation(hWhoseTurn, f, 0u, 0u, d, e, (uint16_t)(((uint16_t)hWhoseTurn << 8) | (hl & 0xffu)));", "after": "\tPlayAttackAnimation(hWhoseTurn, f, 1u, 0u, d, e, (uint16_t)(((uint16_t)hWhoseTurn << 8) | (hl & 0xffu)));", "case_ids": ["PlayTrainerEffectAnimation-0"]}
 # <<< factory-mutation PlayTrainerEffectAnimation
 # >>> factory-mutation StretchKick_BenchDamageEffect
-MUTATIONS["StretchKick_BenchDamageEffect"] = {"source_symbol": "StretchKick_BenchDamageEffect", "before": "StretchKick_BenchDamageEffectResult StretchKick_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = hTemp_ffa0;", "after": "StretchKick_BenchDamageEffectResult StretchKick_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["StretchKick_BenchDamageEffect-0", "StretchKick_BenchDamageEffect-1"]}
+MUTATIONS["StretchKick_BenchDamageEffect"] = {"source_symbol": "StretchKick_BenchDamageEffect", "before": "StretchKick_BenchDamageEffectResult StretchKick_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)b;\n\t(void)d;\n\t(void)e;\n\tuint8_t target = hTemp_ffa0;", "after": "StretchKick_BenchDamageEffectResult StretchKick_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)b;\n\t(void)d;\n\t(void)e;\n\tuint8_t target = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["StretchKick_BenchDamageEffect-0", "StretchKick_BenchDamageEffect-1"]}
 # <<< factory-mutation StretchKick_BenchDamageEffect
 # >>> factory-mutation IceBreath_RandomPokemonDamageEffect
 MUTATIONS["IceBreath_RandomPokemonDamageEffect"] = {"source_symbol": "IceBreath_RandomPokemonDamageEffect", "before": "void IceBreath_RandomPokemonDamageEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = random.a;", "after": "void IceBreath_RandomPokemonDamageEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = (uint8_t)(random.a + 1u);", "case_ids": ["IceBreath_RandomPokemonDamageEffect-0", "IceBreath_RandomPokemonDamageEffect-1"]}
 # <<< factory-mutation IceBreath_RandomPokemonDamageEffect
 # >>> factory-mutation HypnoDarkMind_DamageBenchEffect
-MUTATIONS["HypnoDarkMind_DamageBenchEffect"] = {"source_symbol": "HypnoDarkMind_DamageBenchEffect", "before": "HypnoDarkMind_DamageBenchEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = hTemp_ffa0;", "after": "HypnoDarkMind_DamageBenchEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["HypnoDarkMind_DamageBenchEffect-1", "HypnoDarkMind_DamageBenchEffect-2"]}
+MUTATIONS["HypnoDarkMind_DamageBenchEffect"] = {"source_symbol": "HypnoDarkMind_DamageBenchEffect", "before": "HypnoDarkMind_DamageBenchEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)b;\n\t(void)c;\n\t(void)d;\n\t(void)e;\n\tuint8_t target = hTemp_ffa0;", "after": "HypnoDarkMind_DamageBenchEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)b;\n\t(void)c;\n\t(void)d;\n\t(void)e;\n\tuint8_t target = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["HypnoDarkMind_DamageBenchEffect-1", "HypnoDarkMind_DamageBenchEffect-2"]}
 # <<< factory-mutation HypnoDarkMind_DamageBenchEffect
 # >>> factory-mutation GengarDarkMind_DamageBenchEffect
-MUTATIONS["GengarDarkMind_DamageBenchEffect"] = {"source_symbol": "GengarDarkMind_DamageBenchEffect", "before": "GengarDarkMind_DamageBenchEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = hTemp_ffa0;", "after": "GengarDarkMind_DamageBenchEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["GengarDarkMind_DamageBenchEffect-1", "GengarDarkMind_DamageBenchEffect-2"]}
+MUTATIONS["GengarDarkMind_DamageBenchEffect"] = {"source_symbol": "GengarDarkMind_DamageBenchEffect", "before": "GengarDarkMind_DamageBenchEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)b;\n\t(void)c;\n\t(void)d;\n\t(void)e;\n\tuint8_t target = hTemp_ffa0;", "after": "GengarDarkMind_DamageBenchEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)b;\n\t(void)c;\n\t(void)d;\n\t(void)e;\n\tuint8_t target = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["GengarDarkMind_DamageBenchEffect-1", "GengarDarkMind_DamageBenchEffect-2"]}
 # <<< factory-mutation GengarDarkMind_DamageBenchEffect
 # >>> factory-mutation Spark_BenchDamageEffect
-MUTATIONS["Spark_BenchDamageEffect"] = {"source_symbol": "Spark_BenchDamageEffect", "before": "Spark_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = hTemp_ffa0;", "after": "Spark_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["Spark_BenchDamageEffect-1", "Spark_BenchDamageEffect-2"]}
+MUTATIONS["Spark_BenchDamageEffect"] = {"source_symbol": "Spark_BenchDamageEffect", "before": "Spark_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)b;\n\t(void)c;\n\t(void)d;\n\t(void)e;\n\tuint8_t target = hTemp_ffa0;", "after": "Spark_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)b;\n\t(void)c;\n\t(void)d;\n\t(void)e;\n\tuint8_t target = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["Spark_BenchDamageEffect-1", "Spark_BenchDamageEffect-2"]}
 # <<< factory-mutation Spark_BenchDamageEffect
 # >>> factory-mutation CatPunchEffect
 MUTATIONS["CatPunchEffect"] = {"source_symbol": "CatPunchEffect", "before": "void CatPunchEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = random.a;\n\twLoadedAttackAnimation = ATK_ANIM_CAT_PUNCH_PLAY_AREA;", "after": "void CatPunchEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = random.a;\n\twLoadedAttackAnimation = (uint8_t)(ATK_ANIM_CAT_PUNCH_PLAY_AREA ^ 1u);", "case_ids": ["CatPunchEffect-0", "CatPunchEffect-1"]}
@@ -10631,7 +10451,7 @@ MUTATIONS["ChainLightningEffect"] = {"source_symbol": "ChainLightningEffect", "b
 MUTATIONS["Firegiver_AddToHandEffect"] = {"source_symbol": "Firegiver_AddToHandEffect", "before": "\tgb_write8(list, FG_LIST_TERMINATOR);", "after": "\tgb_write8(list, 0x00u);", "case_ids": ["Firegiver_AddToHandEffect-0", "Firegiver_AddToHandEffect-1"]}
 # <<< factory-mutation Firegiver_AddToHandEffect
 # >>> factory-mutation PlayAttackAnimationOverAttackingPokemon
-MUTATIONS["PlayAttackAnimationOverAttackingPokemon"] = {"source_symbol": "PlayAttackAnimationOverAttackingPokemon", "before": "void PlayAttackAnimationOverAttackingPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\twLoadedAttackAnimation = a;", "after": "void PlayAttackAnimationOverAttackingPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\twLoadedAttackAnimation = (uint8_t)(a + 1u);", "case_ids": ["PlayAttackAnimationOverAttackingPokemon-0", "PlayAttackAnimationOverAttackingPokemon-1"]}
+MUTATIONS["PlayAttackAnimationOverAttackingPokemon"] = {"source_symbol": "PlayAttackAnimationOverAttackingPokemon", "before": "void PlayAttackAnimationOverAttackingPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)b;\n\t(void)c;\n\twLoadedAttackAnimation = a;", "after": "void PlayAttackAnimationOverAttackingPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)b;\n\t(void)c;\n\twLoadedAttackAnimation = (uint8_t)(a + 1u);", "case_ids": ["PlayAttackAnimationOverAttackingPokemon-0", "PlayAttackAnimationOverAttackingPokemon-1"]}
 # <<< factory-mutation PlayAttackAnimationOverAttackingPokemon
 # >>> factory-mutation PokemonTrader_PlayerHandSelection
 MUTATIONS["PokemonTrader_PlayerHandSelection"] = {"source_symbol": "PokemonTrader_PlayerHandSelection", "before": "\thTemp_ffa0 = result.a;", "after": "\thTemp_ffa0 = (uint8_t)(result.a + 1u);", "case_ids": ["PokemonTrader_PlayerHandSelection-0", "PokemonTrader_PlayerHandSelection-1"]}
@@ -10661,7 +10481,7 @@ MUTATIONS["FetchEffect"] = {"source_symbol": "FetchEffect", "before": "void Fetc
 MUTATIONS["ProfessorOakEffect"] = {"source_symbol": "ProfessorOakEffect", "before": "\t\tPutCardInDiscardPile(card);", "after": "\t\t(void)card;", "case_ids": ["ProfessorOakEffect-0"]}
 # <<< factory-mutation ProfessorOakEffect
 # >>> factory-mutation Maintenance_ReturnToDeckAndDrawEffect
-MUTATIONS["Maintenance_ReturnToDeckAndDrawEffect"] = {"source_symbol": "Maintenance_ReturnToDeckAndDrawEffect", "before": "MaintenanceReturnToDeckAndDrawEffectResult Maintenance_ReturnToDeckAndDrawEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t first = hTempList;", "after": "MaintenanceReturnToDeckAndDrawEffectResult Maintenance_ReturnToDeckAndDrawEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t first = (uint8_t)(hTempList + 1u);", "case_ids": ["Maintenance_ReturnToDeckAndDrawEffect-0", "Maintenance_ReturnToDeckAndDrawEffect-1"]}
+MUTATIONS["Maintenance_ReturnToDeckAndDrawEffect"] = {"source_symbol": "Maintenance_ReturnToDeckAndDrawEffect", "before": "MaintenanceReturnToDeckAndDrawEffectResult Maintenance_ReturnToDeckAndDrawEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\tuint8_t first = hTempList;", "after": "MaintenanceReturnToDeckAndDrawEffectResult Maintenance_ReturnToDeckAndDrawEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\tuint8_t first = (uint8_t)(hTempList + 1u);", "case_ids": ["Maintenance_ReturnToDeckAndDrawEffect-0", "Maintenance_ReturnToDeckAndDrawEffect-1"]}
 # <<< factory-mutation Maintenance_ReturnToDeckAndDrawEffect
 # >>> factory-mutation ThunderJolt_RecoilEffect
 MUTATIONS["ThunderJolt_RecoilEffect"] = {"source_symbol": "ThunderJolt_RecoilEffect", "before": "ThunderJolt_RecoilEffectResult ThunderJolt_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tLoadTxRam3(10u);", "after": "ThunderJolt_RecoilEffectResult ThunderJolt_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tLoadTxRam3(11u);", "case_ids": ["ThunderJolt_RecoilEffect-0", "ThunderJolt_RecoilEffect-1"]}
@@ -10726,7 +10546,7 @@ MUTATIONS["DevolutionBeam_DevolveEffect"] = {"source_symbol": "DevolutionBeam_De
 MUTATIONS["MarowakCallForFamily_PlayerSelectEffect"] = {"source_symbol": "MarowakCallForFamily_PlayerSelectEffect", "before": "MarowakCallForFamily_PlayerSelectEffectResult MarowakCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0xffu;", "after": "MarowakCallForFamily_PlayerSelectEffectResult MarowakCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0x00u;", "case_ids": ["MarowakCallForFamily_PlayerSelectEffect-0", "MarowakCallForFamily_PlayerSelectEffect-1"]}
 # <<< factory-mutation MarowakCallForFamily_PlayerSelectEffect
 # >>> factory-mutation DealDamageToAllBenchedPokemon
-MUTATIONS["DealDamageToAllBenchedPokemon"] = {"source_symbol": "DealDamageToAllBenchedPokemon", "before": "DealDamageToAllBenchedPokemonResult DealDamageToAllBenchedPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t animation = a;\n\tDuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tuint8_t count_value = count.a;\n\ta = count_value;", "after": "DealDamageToAllBenchedPokemonResult DealDamageToAllBenchedPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t animation = a;\n\tDuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tuint8_t count_value = count.a;\n\ta = 0u;", "case_ids": ["DealDamageToAllBenchedPokemon-0", "DealDamageToAllBenchedPokemon-1"]}
+MUTATIONS["DealDamageToAllBenchedPokemon"] = {"source_symbol": "DealDamageToAllBenchedPokemon", "before": "DealDamageToAllBenchedPokemonResult DealDamageToAllBenchedPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)hl;\n\tuint8_t animation = a;\n\tDuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tuint8_t count_value = count.a;\n\ta = count_value;", "after": "DealDamageToAllBenchedPokemonResult DealDamageToAllBenchedPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)hl;\n\tuint8_t animation = a;\n\tDuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tuint8_t count_value = count.a;\n\ta = 0u;", "case_ids": ["DealDamageToAllBenchedPokemon-0", "DealDamageToAllBenchedPokemon-1"]}
 # <<< factory-mutation DealDamageToAllBenchedPokemon
 # >>> factory-mutation HandleProphecyScreen
 MUTATIONS["HandleProphecyScreen"] = {"source_symbol": "HandleProphecyScreen", "before": "\t\t\tgb_write8((uint16_t)(hTempList_ADDR + 1u + written), 0xffu);", "after": "\t\t\tgb_write8((uint16_t)(hTempList_ADDR + written), 0xffu);", "case_ids": ["HandleProphecyScreen-0", "HandleProphecyScreen-1"]}
@@ -11024,7 +10844,7 @@ MUTATIONS["RandomlyDamagePlayAreaPokemon"] = {"source_symbol": "RandomlyDamagePl
 MUTATIONS["BigThunderEffect"] = {"source_symbol": "BigThunderEffect", "before": "RandomlyDamagePlayAreaPokemonResult BigThunderEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)\n{\n\t(void)ExchangeRNG(b, c, de, hl);\n\treturn RandomlyDamagePlayAreaPokemon(70u);", "after": "RandomlyDamagePlayAreaPokemonResult BigThunderEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)\n{\n\t(void)ExchangeRNG(b, c, de, hl);\n\treturn RandomlyDamagePlayAreaPokemon(0u);", "case_ids": ["BigThunderEffect-0", "BigThunderEffect-1", "BigThunderEffect-2"]}
 # <<< factory-mutation BigThunderEffect
 # >>> factory-mutation EnergySearch_AddToHandEffect
-MUTATIONS["EnergySearch_AddToHandEffect"] = {"source_symbol": "EnergySearch_AddToHandEffect", "before": "ShuffleCardsInDeckResult EnergySearch_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t card = hTemp_ffa0;", "after": "ShuffleCardsInDeckResult EnergySearch_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t card = 0xFFu;", "case_ids": ["EnergySearch_AddToHandEffect-0", "EnergySearch_AddToHandEffect-2"]}
+MUTATIONS["EnergySearch_AddToHandEffect"] = {"source_symbol": "EnergySearch_AddToHandEffect", "before": "ShuffleCardsInDeckResult EnergySearch_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\tuint8_t card = hTemp_ffa0;", "after": "ShuffleCardsInDeckResult EnergySearch_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\tuint8_t card = 0xFFu;", "case_ids": ["EnergySearch_AddToHandEffect-0", "EnergySearch_AddToHandEffect-2"]}
 # <<< factory-mutation EnergySearch_AddToHandEffect
 # >>> factory-mutation LassEffect
 MUTATIONS["LassEffect"] = {"source_symbol": "LassEffect", "before": "\thCurSelectionItem = 0u;", "after": "\thCurSelectionItem = 1u;", "case_ids": ["LassEffect-0", "LassEffect-1"]}
@@ -11033,7 +10853,7 @@ MUTATIONS["LassEffect"] = {"source_symbol": "LassEffect", "before": "\thCurSelec
 MUTATIONS["ComputerSearch_DiscardAddToHandEffect"] = {"source_symbol": "ComputerSearch_DiscardAddToHandEffect", "before": "ShuffleCardsInDeckResult ComputerSearch_DiscardAddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\thl = hTempList_ADDR;\n\tuint8_t first = gb_read8(hl++);\n\tRemoveCardFromHand(first);\n\tPutCardInDiscardPile(first);\n\tuint8_t second = gb_read8(hl++);", "after": "ShuffleCardsInDeckResult ComputerSearch_DiscardAddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\thl = hTempList_ADDR;\n\tuint8_t first = (uint8_t)(gb_read8(hl++) + 1u);\n\tRemoveCardFromHand(first);\n\tPutCardInDiscardPile(first);\n\tuint8_t second = gb_read8(hl++);", "case_ids": ["ComputerSearch_DiscardAddToHandEffect-0", "ComputerSearch_DiscardAddToHandEffect-1"]}
 # <<< factory-mutation ComputerSearch_DiscardAddToHandEffect
 # >>> factory-mutation PokeBall_AddToHandEffect
-MUTATIONS["PokeBall_AddToHandEffect"] = {"source_symbol": "PokeBall_AddToHandEffect", "before": "ShuffleCardsInDeckResult PokeBall_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t toss = hTempList;\n\tif (toss == 0u)\n\t\treturn (ShuffleCardsInDeckResult){toss, b, c, d, e, 0x80u, hl};", "after": "ShuffleCardsInDeckResult PokeBall_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t toss = hTempList;\n\tif (toss == 0u)\n\t\treturn (ShuffleCardsInDeckResult){toss, b, c, d, e, 0x00u, hl};", "case_ids": ["PokeBall_AddToHandEffect-0", "PokeBall_AddToHandEffect-1"]}
+MUTATIONS["PokeBall_AddToHandEffect"] = {"source_symbol": "PokeBall_AddToHandEffect", "before": "ShuffleCardsInDeckResult PokeBall_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\tuint8_t toss = hTempList;\n\tif (toss == 0u)\n\t\treturn (ShuffleCardsInDeckResult){toss, b, c, d, e, 0x80u, hl};", "after": "ShuffleCardsInDeckResult PokeBall_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\tuint8_t toss = hTempList;\n\tif (toss == 0u)\n\t\treturn (ShuffleCardsInDeckResult){toss, b, c, d, e, 0x00u, hl};", "case_ids": ["PokeBall_AddToHandEffect-0", "PokeBall_AddToHandEffect-1"]}
 # <<< factory-mutation PokeBall_AddToHandEffect
 # >>> factory-mutation HealPlayAreaCardHP
 MUTATIONS["HealPlayAreaCardHP"] = {"source_symbol": "HealPlayAreaCardHP", "before": "\twLoadedAttackAnimation = ATK_ANIM_HEALING_WIND_PLAY_AREA;", "after": "\twLoadedAttackAnimation = (uint8_t)(ATK_ANIM_HEALING_WIND_PLAY_AREA + 1u);", "case_ids": ["HealPlayAreaCardHP-0", "HealPlayAreaCardHP-1", "HealPlayAreaCardHP-2"]}
@@ -11042,7 +10862,7 @@ MUTATIONS["HealPlayAreaCardHP"] = {"source_symbol": "HealPlayAreaCardHP", "befor
 MUTATIONS["Potion_HealEffect"] = {"source_symbol": "Potion_HealEffect", "before": "\thTempPlayAreaLocation_ff9d = hTemp_ffa0;", "after": "\thTempPlayAreaLocation_ff9d = 0u;", "case_ids": ["Potion_HealEffect-3"]}
 # <<< factory-mutation Potion_HealEffect
 # >>> factory-mutation SuperPotion_HealEffect
-MUTATIONS["SuperPotion_HealEffect"] = {"source_symbol": "SuperPotion_HealEffect", "before": "void SuperPotion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tPutCardInDiscardPile(hTemp_ffa0);\n\thTempPlayAreaLocation_ff9d = hTempPlayAreaLocation_ffa1;", "after": "void SuperPotion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tPutCardInDiscardPile(hTemp_ffa0);\n\thTempPlayAreaLocation_ff9d = 0u;", "case_ids": ["SuperPotion_HealEffect-0", "SuperPotion_HealEffect-1"]}
+MUTATIONS["SuperPotion_HealEffect"] = {"source_symbol": "SuperPotion_HealEffect", "before": "void SuperPotion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\tPutCardInDiscardPile(hTemp_ffa0);\n\thTempPlayAreaLocation_ff9d = hTempPlayAreaLocation_ffa1;", "after": "void SuperPotion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\tPutCardInDiscardPile(hTemp_ffa0);\n\thTempPlayAreaLocation_ff9d = 0u;", "case_ids": ["SuperPotion_HealEffect-0", "SuperPotion_HealEffect-1"]}
 # <<< factory-mutation SuperPotion_HealEffect
 # >>> factory-mutation PokemonCenter_HealDiscardEnergyEffect
 MUTATIONS["PokemonCenter_HealDiscardEnergyEffect"] = {"source_symbol": "PokemonCenter_HealDiscardEnergyEffect", "before": "\t\t\tPutCardInDiscardPile(index);", "after": "\t\t\t(void)index;", "case_ids": ["PokemonCenter_HealDiscardEnergyEffect-0"]}

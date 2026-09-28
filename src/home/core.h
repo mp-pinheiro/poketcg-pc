@@ -1266,7 +1266,6 @@ typedef struct { uint8_t a; uint8_t f; uint16_t hl; } TurnDuelistTakePrizesResul
 TurnDuelistTakePrizesResult TurnDuelistTakePrizes(void);
 /* <<< factory TurnDuelistTakePrizes */
 /* >>> factory Func_6fa5 */
-/* >>> factory Func_6fa5 */
 typedef struct { uint8_t f; } Func6fa5Result;
 Func6fa5Result Func_6fa5(void);
 /* <<< factory Func_6fa5 */
@@ -1324,7 +1323,6 @@ ReplaceKnockedOutPokemonResult ReplaceKnockedOutPokemon(uint8_t a, uint8_t f, ui
 typedef struct { uint8_t a; uint8_t f; } HandleBetweenTurnKnockOutsResult;
 HandleBetweenTurnKnockOutsResult HandleBetweenTurnKnockOuts(void);
 /* <<< factory HandleBetweenTurnKnockOuts */
-/* >>> factory HandleDestinyBondAndBetweenTurnKnockOuts */
 /* >>> factory HandleDestinyBondAndBetweenTurnKnockOuts */
 HandleBetweenTurnKnockOutsResult HandleDestinyBondAndBetweenTurnKnockOuts(void);
 /* <<< factory HandleDestinyBondAndBetweenTurnKnockOuts */
@@ -1386,7 +1384,6 @@ void DuelMenuShortcut_BothActivePokemon(void);
 void DuelMenu_Attack(void);
 /* <<< factory DuelMenu_Attack */
 /* >>> factory UnreferencedDrawCardFromDeckToHand */
-/* >>> factory UnreferencedDrawCardFromDeckToHand */
 void UnreferencedDrawCardFromDeckToHand(void);
 /* <<< factory UnreferencedDrawCardFromDeckToHand */
 /* >>> factory OppAction_ForceSwitchActive */
@@ -1408,7 +1405,6 @@ void HandleBetweenTurnsEvents(void);
 /* >>> factory OppAction_PlayAttackAnimationDealAttackDamage */
 void OppAction_PlayAttackAnimationDealAttackDamage(void);
 /* <<< factory OppAction_PlayAttackAnimationDealAttackDamage */
-/* >>> factory MainDuelLoop */
 /* >>> factory MainDuelLoop */
 void MainDuelLoop(void);
 /* <<< factory MainDuelLoop */

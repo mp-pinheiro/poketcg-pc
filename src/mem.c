@@ -474,11 +474,6 @@ void rom_pack_free(void)
 	g_product_pack_size = 0;
 }
 
-void rom_use_reference(void)
-{
-	g_product_mode = 0;
-}
-
 int rom_use_product(void)
 {
 	if (!g_product_pack) {

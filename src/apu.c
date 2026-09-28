@@ -85,15 +85,6 @@ void apu_set_host_mix(uint8_t master_volume, uint8_t music_volume,
 	g_apu.host_sfx_mask = sfx_mask;
 }
 
-uint8_t apu_status(void)
-{
-	uint8_t status = g_apu.power ? 0xF0u : 0x70u;
-	for (unsigned i = 0; i < 4; i++)
-		if (g_apu.ch[i].enabled)
-			status |= (uint8_t)(1u << i);
-	return status;
-}
-
 static void trigger_square(Channel *ch, unsigned index)
 {
 	ch->enabled = 1;

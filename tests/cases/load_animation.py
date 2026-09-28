@@ -145,7 +145,6 @@ wSceneSGBRoutinePtr = 0xD622
 wd291 = 0xD291
 wCurTilemap = 0xD131
 wAllSpriteAnimationsDisabled = 0xD5D7
-wSceneSpriteIndex = 0xD61B
 # <<< factory-cases-statics
 
 
@@ -291,8 +290,8 @@ MUTATIONS["DrawOpponentPortrait"] = {
 # >>> factory-mutation DrawPlayerPortrait
 MUTATIONS["DrawPlayerPortrait"] = {
 	"source_symbol": "DrawPlayerPortrait",
-	"before": "wCurPortrait = PLAYER_PIC;",
-	"after": "wCurPortrait = (uint8_t)(PLAYER_PIC + 1u);",
+	"before": "wCurPortrait = runtime_player_gender() ? MINT_PIC : PLAYER_PIC;",
+	"after": "wCurPortrait = runtime_player_gender() ? MINT_PIC : (uint8_t)(PLAYER_PIC + 1u);",
 	"case_ids": ["DrawPlayerPortrait-0", "DrawPlayerPortrait-1"],
 }
 # <<< factory-mutation DrawPlayerPortrait

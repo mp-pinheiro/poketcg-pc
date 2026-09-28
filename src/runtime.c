@@ -529,12 +529,10 @@ static const char *debug_speed_name(unsigned speed)
 
 #define DEBUG_DUELVARS_ARENA_CARD 0xBBu
 #define DEBUG_DUELVARS_ARENA_CARD_HP 0xC8u
-#define DEBUG_DUELVARS_HAND 0x42u
 #define DEBUG_DUELVARS_HAND_COUNT 0xEEu
 #define DEBUG_DUELVARS_NOT_IN_DECK 0xBAu
 #define DEBUG_DUELVARS_DECK_CARDS 0x7Eu
 #define DEBUG_DECK_SIZE 60u
-#define DEBUG_CARD_LOCATION_DECK 0x00u
 #define DEBUG_PLAYER_TURN ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
 #define DEBUG_OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
 

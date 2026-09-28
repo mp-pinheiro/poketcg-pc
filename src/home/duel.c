@@ -14,6 +14,9 @@
 #include "home/frames.h"
 #include "mem.h"
 
+#include "home/play_area.h"
+#include "home/script.h"
+#include "home/switch_rom.h"
 /* HIGH(wOpponentDuelVariables), the value hWhoseTurn carries on the opponent's turn. */
 #define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
 #define PLAYER_TURN ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
@@ -122,7 +125,6 @@ SubtractHPResult SubtractHP(uint16_t hl, uint16_t de)
 
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xbau
 #define DUELVARS_DECK_CARDS 0x7eu
-#define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0xedu
 #define DECK_SIZE 60u
 
 /* duel.asm:398-431. Copies DECK_SIZE - n remaining deck ids into wDuelTempList.
@@ -277,19 +279,13 @@ HandListResult CreateArenaOrBenchEnergyCardList(uint8_t a)
 
 #include "home/random.h"
 /* >>> factory statics */
-#define DUELVARS_PRIZES 0xecu
 #define PRIZES_6 0x06u
 
 #include "home/bg_map.h"
 #include "home/objects.h"
 #include "home/random.h"
 #include "home/tiles.h"
-#define CONSOLE_CGB_8BF2 0x02u
 #define TRUE_8BF2 0x01u
-#define DUELVARS_PRIZES_8BF2 0xECu
-#define PRIZE_TILE_8BF2 0xACu
-#define PRIZE_TILE_CGB_ATTR_8BF2 0x02u
-#define VBK_REG_8BF2 0xFF4Fu
 
 #include "home/random.h"
 #include "home/sound.h"
@@ -345,7 +341,6 @@ void YourOrOppPlayAreaScreen_DrawCursor(void)
 #define BPA_RECT_STEPS_TILES 0x0102u
 #define BPA_RECT_STEPS_FLAT 0x0000u
 #define BPA_SYM_SPACE 0x00u
-#define BPA_SYM_CURSOR_R 0x01u
 #define BPA_RVBK 0xFF4Fu
 
 #include "home/tiles.h"
@@ -390,8 +385,6 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/tiles.h"
 #include "home/objects.h"
 #include "mem.h"
-#define PLAYER_TURN 0xC2u
-#define OPPONENT_TURN 0xC3u
 
 #include "home/deck_configuration.h"
 #include "home/process_text.h"
@@ -437,10 +430,7 @@ static const uint8_t kCursorTileData[16] = {
 
 #include "home/duel.h"
 #include "generated/wram.h"
-#define DECK_SIZE 0x3Cu
 #define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0xEDu
-#define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xEEu
-#define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
 #define PLAYER_ICON_COORDS 0x4635u
 #define OPPONENT_ICON_COORDS 0x463Bu
 
@@ -513,7 +503,6 @@ static const uint8_t kCursorTileData[16] = {
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define DUELVARS_ARENA_CARD 0xBBu
 #define PokemonsAttackText 0x0035u
 
 #include "generated/hram.h"
@@ -590,21 +579,15 @@ static const uint8_t kCursorTileData[16] = {
 #include "generated/wram.h"
 #define CNF_SLP_PRZ 0x0fu
 #define CONFUSED 0x01u
-#define DUELVARS_ARENA_CARD_STATUS 0xf0u
-#define FALSE 0x00u
 #define ConfusionCheckDamageText 0x00f7u
 
-#define DUELVARS_ARENA_CARD_SUBSTATUS2 0xE8u
-#define PLAY_AREA_ARENA 0x00u
 #define RESIDUAL_F 0x07u
 
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/substatus.h"
-#define CARD_LOCATION_ARENA 0x10u
 #define CARD_LOCATION_PLAY_AREA 0x10u
-#define DUELVARS_ARENA_CARD_HP 0xC8u
 
 #define ATK_ANIM_BENCH_HIT 0x78u
 
@@ -644,8 +627,6 @@ static const uint8_t kCursorTileData[16] = {
 #define PEEK_PLAYER_TURN 0xC2u
 #define PEEK_OPPONENT_TURN 0xC3u
 #define PEEK_TRUE 0x01u
-#define PEEK_PAD_A 0x01u
-#define PEEK_PAD_B 0x02u
 #define PEEK_DUELVARS_PRIZES 0xECu
 #define PEEK_DUELVARS_PRIZE_CARDS 0x3Cu
 
@@ -720,7 +701,6 @@ ShuffleCardsResult ShuffleCards(uint8_t a, uint16_t hl)
 }
 
 #define HTEMP_LIST_PTR 0xFF99u
-#define HTEMP_CARD_ID 0xFF9Bu
 
 static uint16_t list_ptr(void)
 {
@@ -1745,6 +1725,7 @@ KnockoutCheckResult PrintPlayAreaCardKnockedOutIfNoHP(uint8_t a)
 DuelRoutineResult UpdateArenaCardIDsAndClearTwoTurnDuelVars(
 	uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)d; (void)hl;
 	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	hTempCardIndex_ff9f = arena.a;
 	uint16_t card_id = GetCardIDFromDeckIndex(arena.a);

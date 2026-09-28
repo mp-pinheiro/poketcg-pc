@@ -4,6 +4,8 @@
 
 #include "generated/wram.h"
 #include "mem.h"
+#include "home/load_gfx.h"
+#include "home/overworld.h"
 /* >>> factory statics */
 #define TRUE 0x01u
 #define CONSOLE_CGB 0x02u

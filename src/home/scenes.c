@@ -191,6 +191,7 @@ void _DrawPortrait(uint8_t b, uint8_t c)
 /* >>> factory LoadScene_LoadSGBPacket */
 LoadScene_LoadSGBPacketResult LoadScene_LoadSGBPacket(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)f;
 	uint8_t console = wConsole;
 	uint8_t result_f;
 	if (console != CONSOLE_SGB) {
@@ -221,6 +222,8 @@ LoadScene_LoadSGBPacketResult LoadScene_LoadSGBPacket(uint8_t a, uint8_t f, uint
 /* >>> factory LoadScene_LoadCompressedSGBPacket */
 LoadScene_LoadCompressedSGBPacketResult LoadScene_LoadCompressedSGBPacket(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)a;
+	(void)f;
 	uint8_t console = wConsole; /* engine/scenes.asm:155 */
 	uint8_t cmp_f = (uint8_t)(0x40u
 		| (console == CONSOLE_SGB ? 0x80u : 0u)

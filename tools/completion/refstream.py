@@ -40,12 +40,6 @@ DOFRAME_ANCHOR = 0x0552
 # gambatte_getregs fills a 10-int array; PC is index 0 and L is index 9.
 REG_PC = 0
 
-# libgambatte/include/inputgetter.h button bits, identical to hKeysHeld.
-GAMBATTE_BUTTONS = {
-    "A": 0x01, "B": 0x02, "SELECT": 0x04, "START": 0x08,
-    "RIGHT": 0x10, "LEFT": 0x20, "UP": 0x40, "DOWN": 0x80,
-}
-
 FIELD_WINDOWS = {
     "wram": (0xC000, 0x2000),
     "hram": (0xFF80, 0x80),
@@ -198,7 +192,6 @@ INPUT_GETTER = ctypes.CFUNCTYPE(ctypes.c_uint, ctypes.c_void_p)
 EXEC_CALLBACK = ctypes.CFUNCTYPE(None, ctypes.c_uint, ctypes.c_ulonglong)
 MEMORY_CALLBACK = ctypes.CFUNCTYPE(None, ctypes.c_int, ctypes.c_longlong)
 LINK_CALLBACK = ctypes.CFUNCTYPE(None)
-LINK_CLOCK_SIGNALED = 256
 LINK_ACK_CLOCK = 257
 LINK_GET_OUT = 258
 LINK_ENABLE = 264
@@ -209,7 +202,7 @@ class Printer:
     decoder as src/printer_sink.c, so both lanes' pages can be compared."""
 
     MAGIC = (0x88, 0x33)
-    CMD_INIT, CMD_PRINT, CMD_DATA, CMD_STATUS = 0x01, 0x02, 0x04, 0x0F
+    CMD_INIT, CMD_PRINT, CMD_DATA = 0x01, 0x02, 0x04
     DEVICE = 0x81
     STATUS_PRINTING, STATUS_DATA = 0x02, 0x08
     PAYLOAD_MAX = 0x280
@@ -856,7 +849,6 @@ def build(scenario: str, frames: int, anchors: int,
                 existing["cached"] = True
                 return existing
         records = bytearray()
-        ordinals = bytearray()
         hits = 0
 
         def on_exec(address: int, _cycle: int) -> None:
@@ -869,14 +861,12 @@ def build(scenario: str, frames: int, anchors: int,
             records.extend(core.io_block())
             records.extend(core.area("OAM")[: RECORD_OFFSETS["oam"][1]])
             records.extend(core.palette_block())
-            ordinals.extend(struct.pack("<II", core.frame, wram[0xAB8]))
             hits += 1
 
         core.install_exec(on_exec)
         core.run(frames, stop=lambda: hits >= anchors)
         directory.mkdir(parents=True, exist_ok=True)
         (directory / "anchors.bin").write_bytes(bytes(records))
-        (directory / "ordinals.bin").write_bytes(bytes(ordinals))
         (directory / "labels.json").write_text(
             json.dumps(
                 {
@@ -922,7 +912,6 @@ class Stream:
         # file-backed and reclaimable; only one domain is copied per compare.
         self._handle = (directory / "anchors.bin").open("rb")
         self._records = mmap.mmap(self._handle.fileno(), 0, access=mmap.ACCESS_READ)
-        self._ordinals = (directory / "ordinals.bin").read_bytes()
         self.stride = int(self.meta["stride"])
         self.count = len(self._records) // self.stride
 
@@ -936,9 +925,6 @@ class Stream:
         offset, length = RECORD_OFFSETS[name]
         start = ordinal * self.stride + offset
         return self._records[start : start + length]
-
-    def ordinal_info(self, ordinal: int) -> tuple[int, int]:
-        return struct.unpack_from("<II", self._ordinals, ordinal * 8)
 
 
 def open_stream(scenario: str, frames: int, anchors: int,

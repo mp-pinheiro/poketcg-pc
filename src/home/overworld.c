@@ -9,6 +9,8 @@
 #include "generated/wram.h"
 #include "mem.h"
 #include "home/frames.h"
+#include "home/decompress.h"
+#include "home/memory.h"
 /* >>> factory statics */
 #include "home/load_animation.h"
 #include "mem.h"
@@ -27,13 +29,6 @@
 #include "home/color.h"
 #include "mem.h"
 #include "runtime.h"
-
-/* The engine/overworld bank is labeled in pret's bank-linear space: names like
- * Func_c158 address the bank-3 slot $c000-$ffff, i.e. runtime address
- * (name - $8000). SetOverworldDoFrameFunction occupies $c199 (7 bytes:
- * ld hl,nn / call nn / ret), and OverworldDoFrameFunction is the next label,
- * so the pointer handed to SetDoFrameFunction is runtime $41a0. */
-#define OVERWORLD_DO_FRAME_FUNCTION 0x41a0u
 
 #define GAME_EVENT_DUEL      0x01u
 #define LOADED_NPC_DIRECTION 0x04u
@@ -1056,7 +1051,6 @@ void Func_c258(void)
 /* <<< factory Func_c258 */
 
 /* >>> factory Func_c251 */
-/* >>> factory Func_c251 */
 void Func_c251(void)
 {
 	uint8_t saved_hffb0 = hffb0;
@@ -1224,6 +1218,7 @@ uint8_t ReturnToOverworldWithCallback(uint16_t hl)
 /* >>> factory FindNPCOrObject */
 FindNPCOrObjectResult FindNPCOrObject(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)a; (void)f; (void)b; (void)c;
 	wScriptNPC = 0xffu;
 	FindPlayerMovementWithOffsetResult movement = FindPlayerMovementFromDirection();
 	uint8_t permission = GetPermissionOfMapPosition(movement.b, movement.c);
@@ -1523,6 +1518,7 @@ void HandleOverworldMode(uint16_t hl)
 		break;
 	case 2u:
 		(void)SetScriptData(hl);
+		__attribute__((fallthrough));
 		/* overworld.asm:120 falls through with `jr EnterScript` */
 	case 3u: {
 		(void)EnterScript(0u, 0u, 0u, 0u, 0u);

@@ -18,14 +18,6 @@ from schema import SchemaValidationError, validate_cases
 sys.path.insert(0, str(ROOT / "tests"))
 from routines import ALL, EXCLUSIONS
 
-ALLOWED_EXCLUSION_KINDS = {
-    "dead-zero-callsites",
-    "hardware-transform",
-    "sgb-only",
-    "fallthrough-only",
-    "trampoline-direct-call",
-    "dependency-pending",
-}
 
 def load_modules(only: str | None = None) -> list[tuple[Path, object]]:
     result = []

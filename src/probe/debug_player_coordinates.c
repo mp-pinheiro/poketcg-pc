@@ -10,6 +10,7 @@ static void adapt_JumpSetWindowOff(ProbeState *s)
 /* >>> factory Func_1c003 */
 static void adapt_Func_1c003(ProbeState *s)
 {
+	(void)s;
 	Func_1c003();
 }
 /* <<< factory Func_1c003 */

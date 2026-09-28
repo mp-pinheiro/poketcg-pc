@@ -227,7 +227,6 @@ AIDecideResult AIPlay_PokemonCenter(uint8_t d, uint8_t e);
 AIDecideParameterResult AIDecide_PlusPower_Phase14(uint8_t d);
 /* <<< factory AIDecide_PlusPower_Phase14 */
 /* >>> factory AIDecide_GustOfWind */
-/* >>> factory AIDecide_GustOfWind */
 typedef struct { uint8_t a; uint8_t f; uint8_t d; uint8_t e; } AIDecideGustOfWindResult;
 AIDecideGustOfWindResult AIDecide_GustOfWind(uint8_t d, uint8_t e);
 /* <<< factory AIDecide_GustOfWind */
@@ -268,7 +267,6 @@ AIDecide_PlusPower_Phase13Result AIDecide_PlusPower_Phase13(uint8_t d);
 AIDecideResult AIPlay_PlusPower(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_PlusPower */
 /* >>> factory AIPlay_Potion */
-/* >>> factory AIPlay_Potion */
 AIDecideResult AIPlay_Potion(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_Potion */
 /* >>> factory AIPlay_GustOfWind */
@@ -277,7 +275,6 @@ AIDecideResult AIPlay_GustOfWind(uint8_t d, uint8_t e);
 /* >>> factory AIPlay_Switch */
 AIDecideResult AIPlay_Switch(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_Switch */
-/* >>> factory AIPlay_Maintenance */
 /* >>> factory AIPlay_Maintenance */
 AIDecideResult AIPlay_Maintenance(uint8_t d, uint8_t e);
 /* <<< factory AIPlay_Maintenance */

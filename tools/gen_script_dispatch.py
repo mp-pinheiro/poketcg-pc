@@ -10,6 +10,7 @@ from pathlib import Path
 _TABLE = "const ProbeEntry probe_entries_scripting[] = {"
 _ROW = re.compile(r'\{\s*"([A-Za-z0-9_]+)"\s*,\s*adapt_\1\s*\}')
 _OPCODE = re.compile(r"\bdw\s+(ScriptCommand_[A-Za-z0-9_]+)")
+_BLOCK = re.compile(r"/\* >>> factory (\w+) \*/\n.*?/\* <<< factory \1 \*/\n", re.S)
 
 
 def render(probe_path: Path, table_path: Path) -> str:
@@ -23,7 +24,9 @@ def render(probe_path: Path, table_path: Path) -> str:
     missing = sorted(set(opcodes) - adapters)
     if missing:
         print(f"script adapters unavailable: {missing}")
-    definitions = definitions.replace(
+    used = adapters.intersection(opcodes)
+    definitions = _BLOCK.sub(lambda block: block.group(0) if block.group(1) in used else "", definitions)
+    definitions = re.sub(r"\n{3,}", "\n\n", definitions).replace(
         '#include "probe.h"',
         '#include "home/script_dispatch.h"',
     ).replace("ProbeState", "ScriptDispatchState")

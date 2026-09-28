@@ -150,7 +150,7 @@ def peek(core: refstream.Core) -> str:
 PLAYER_VARS = 0xC200
 CARD_LOCATIONS, HAND, ARENA_CARD, ARENA_CARD_HP = 0x00, 0x42, 0xBB, 0xC8
 NUMBER_OF_CARDS_IN_HAND, NUMBER_OF_POKEMON_IN_PLAY_AREA = 0xEE, 0xEF
-LOCATION_HAND, LOCATION_ARENA = 0x01, 0x10
+LOCATION_ARENA = 0x10
 PLAYER_DECK = 0xC400
 DUEL_FINISHED, ALREADY_PLAYED_ENERGY, CUR_MENU_ITEM, DUEL_TURNS = 0xCC07, 0xCC0B, 0xCD10, 0xCC06
 WHOSE_TURN, BANK_ROM = 0xFF97, 0xFF80
@@ -289,12 +289,6 @@ class DuelReader:
             return True
         return address >= 1 and (byte(address - 1) & 0xC7) == 0xC7
 
-    def waiting_in(self) -> str:
-        for name in self.waiting_chain():
-            if name not in FRAME_WRAPPERS:
-                return name
-        return "?"
-
     def describe(self, waiting: str) -> str:
         turn = "player" if self.at(WHOSE_TURN) == 0xC2 else "opponent"
         lines = [f"duel turn={self.at(DUEL_TURNS)} whose={turn} finished={self.at(DUEL_FINISHED)} "
@@ -406,9 +400,6 @@ A, B, RIGHT, LEFT, UP, DOWN = 0x10, 0x20, 0x01, 0x02, 0x04, 0x08
 # low bit, left/right steps by two).
 MENU_HAND, MENU_ATTACK, MENU_DONE = 0, 1, 5
 CURRENT_DUEL_MENU_ITEM, LIST_SCROLL_OFFSET = 0xCBC6, 0xCD19
-TEXT_PROMPTS = {"WaitForWideTextBoxInput", "DrawWideTextBox_WaitForInput", "WaitForButtonAorB",
-                "DisplayDrawNCardsScreen", "DuelMainInterface", "MainDuelLoop", "DoFrameIfLCDEnabled"}
-YES_NO_PROMPTS = {"HandleYesOrNoMenu", "YesOrNoMenuWithText"}
 LINK_OPPONENT_WAITS = {"HandleWaitingLinkOpponentMenu"}
 
 

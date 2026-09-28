@@ -495,16 +495,6 @@ def key_timeline(case: dict) -> int | list[int]:
     return int(keys)
 
 
-def held_keys(case: dict) -> int:
-    """The single byte the native probe models: the state a timeline settles on.
-
-    The probe has no frames, so it takes the last entry, exactly as the schema-2
-    comparator does.
-    """
-    keys = key_timeline(case)
-    return keys[-1] if isinstance(keys, list) and keys else (keys if isinstance(keys, int) else 0)
-
-
 def _hexnum(value: object, width: int = 0) -> str:
     """Render one case field for a diagnostic line without trusting its type.
 

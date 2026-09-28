@@ -126,6 +126,7 @@ static void adapt_PrintObtainedPCPacks(ProbeState *s)
 /* >>> factory BlinkUnopenedPCPacks */
 static void adapt_BlinkUnopenedPCPacks(ProbeState *s)
 {
+	(void)s;
 	BlinkUnopenedPCPacks();
 }
 /* <<< factory BlinkUnopenedPCPacks */

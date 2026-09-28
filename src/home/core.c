@@ -1,12 +1,14 @@
 #include "home/core.h"
 #include <setjmp.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "bank_guard.h"
 #include "mem.h"
 #include "home/menus.h"
+#include "home/map.h"
 #ifdef POKETCG_DEBUG_MENU
 #include "debug_cheats.h"
 #endif
@@ -30,15 +32,12 @@
 #define PAD_A     0x01u
 #define PAD_B     0x02u
 #define PAD_START 0x08u
-#define B_PAD_B_BIT 0x02u
 
 #define ASLEEP           0x02u
 #define CNF_SLP_PRZ       0x0Fu
 #define PARALYZED        0x03u
 #define DUELVARS_ARENA_CARD_STATUS 0xF0u
 #define DUELVARS_ARENA_CARD_LAST_TURN_STATUS 0xF5u
-#define TX_UnableDueToParalysisText 0x0000u
-#define TX_UnableDueToSleepText     0x0001u
 
 #define FLAG_Z 0x80u
 #define BOXMSG_COIN_TOSS 0x06u
@@ -55,12 +54,9 @@
 #include "generated/wram.h"
 #include "home/card_data.h"
 
-#define TILE_SIZE 0x10u
 #define PAL_SIZE 8u
 #define ATTR_BLK_CTRL_INSIDE 1u
 #define ATTR_BLK_CTRL_LINE 2u
-
-#define LOAD_LOADED1_CARD_GFX_B 0x30u
 
 #include "home/copy.h"
 #include "home/switch_sram.h"
@@ -135,7 +131,6 @@ static uint32_t duel_save_total_size(void)
 #include "home/card_data.h"
 
 #define TILE_SIZE 0x10u
-#define SGB3_COPY_LEN 0x06u
 
 #define MAX_PLAY_AREA_POKEMON 0x06u
 #define DUELVARS_ARENA_CARD   0xBBu
@@ -163,12 +158,7 @@ static uint32_t duel_save_total_size(void)
 #define ANIM_COORDS_ADDR 0x4a04u
 #define DUEL_ANIM_STRUCT_SIZE 8u
 #define PLAYER_TURN 0xc2u
-#define SPRITE_ANIM_FLAG_X_INVERTED 0x01u
-#define SPRITE_ANIM_FLAG_Y_INVERTED 0x02u
 #define SPRITE_ANIM_FLAG_CENTERED   0x04u
-#define SPRITE_ANIM_FLAG_3          0x08u
-#define SPRITE_ANIM_FLAG_X_FLIP     0x20u
-#define SPRITE_ANIM_FLAG_Y_FLIP     0x40u
 
 #define COLORLESS_F 0x40u
 #define DOUBLE_COLORLESS_ENERGY 0x07u
@@ -259,7 +249,6 @@ static uint8_t is_duelist_type(uint8_t a)
 #include "home/duel.h"
 #include "home/duel_core.h"
 #define DUELVARS_PRIZE_CARDS 0x3Cu
-#define DUELVARS_CARD_LOCATIONS 0x00u
 #define CARD_LOCATION_DECK 0x00u
 
 #define ANIMATIONS_ADDR 0x4e32u
@@ -422,7 +411,6 @@ typedef struct {
 #include "home/switch_sram.h"
 
 #define DUELTYPE_LINK 0x01u
-#define LINK_OPPONENT_TURN_FRAME_FUNCTION 0x0000u
 
 static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 	0xe0u, 0xe1u, 0xe2u, 0x00u,
@@ -515,7 +503,6 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 
 #define DUELTYPE_PRACTICE 0x80u
 #define DUELVARS_HAND 0x42u
-#define DUELVARS_DECK_CARDS 0x7Eu
 
 #include "home/empty_screen.h"
 #include "home/bg_map.h"
@@ -610,7 +597,6 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #define PLAY_AREA_BENCH_5 0x05u
 
 #define CONFUSED 0x01u
-#define NO_STATUS 0x00u
 #define SYM_ASLEEP 0x09u
 #define SYM_CONFUSED 0x0au
 #define SYM_PARALYZED 0x0bu
@@ -659,7 +645,6 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/empty_screen.h"
 #include "home/serial.h"
 #include "mem.h"
-#define BOXMSG_OPPONENTS_TURN 0x01u
 #define BOXMSG_PLAYERS_TURN 0x00u
 #define DuelistTurnText 0x005eu
 
@@ -684,7 +669,6 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/wram.h"
 #include "mem.h"
 #define SPRITE_ANIM_COORD_X 0x02u
-#define SPRITE_ANIM_COORD_Y 0x03u
 #define SPRITE_ANIM_FLAG_UNSKIPPABLE_F 0x07u
 #define SPRITE_ANIM_FLAG_UNSKIPPABLE (1u << SPRITE_ANIM_FLAG_UNSKIPPABLE_F)
 #define SPRITE_DUEL_DAMAGE 0x2Eu
@@ -785,10 +769,6 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/wram.h"
 #include "mem.h"
 #define CARD_DATA_ATTACK1_CATEGORY 0x17u
-#define CARD_DATA_ATTACK1_ENERGY_COST 0x0Cu
-#define DAMAGE_MINUS 0x02u
-#define DAMAGE_PLUS 0x01u
-#define DAMAGE_X 0x03u
 #define RESIDUAL 0x80u
 #define SYM_ATK_DESCR 0x0Eu
 #define SYM_PLUS_OFFSET 0x2Au
@@ -995,7 +975,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/hram.h"
 #include "mem.h"
 #define TX_END 0x00u
-#define TX_SYMBOL 0x05u
 #define SYM_POKEMON 0x0Du
 #define SYM_PRIZE 0x30u
 #define TILEMAP_WIDTH 32u
@@ -1200,7 +1179,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/bg_map.h"
 #include "mem.h"
 #define CARDPAGETYPE_NOT_PLAY_AREA 0x00u
-#define CARDPAGETYPE_PLAY_AREA 0x01u
 #define SYM_COLORLESS 0x07u
 #define CARD_PAGE_RETREAT_WR_TEXT_DATA 0x5D05u
 #define CARD_PAGE_LV_HP_NO_TEXT_TILE_DATA 0x5D12u
@@ -1681,11 +1659,6 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/core.h"
 
 #define DUEL_NOT_FINISHED 0x00u
-#define SUBSTATUS2_GROWL 0x12u
-#define SUBSTATUS2_LEER 0x06u
-#define SUBSTATUS2_POUNCE 0x07u
-#define SUBSTATUS2_REDUCE_BY_20 0x03u
-#define SUBSTATUS2_TAIL_WAG 0x05u
 #define TURN_PLAYER_LOST 0x02u
 #define TURN_PLAYER_TIED 0x03u
 #define TURN_PLAYER_WON 0x01u
@@ -3222,6 +3195,8 @@ TwoByteNumberToTxSymbolPadResult TwoByteNumberToTxSymbol_PadSpace_Bank1(
 	uint8_t entry_b, uint8_t entry_c, uint8_t entry_d, uint8_t entry_e,
 	uint16_t hl)
 {
+	(void)entry_b;
+	(void)entry_c;
 	uint16_t value = hl;
 	uint16_t places[] = {10000u, 1000u, 100u, 10u, 1u};
 	uint8_t digits[5];
@@ -6200,6 +6175,9 @@ CardListFunctionResult CardListFunction(void)
 /* >>> factory CheckIfSelectedAttackIsUnusable */
 CheckIfSelectedAttackIsUnusableResult CheckIfSelectedAttackIsUnusable(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)a;
+	(void)f;
+	(void)hl;
 	uint8_t location = hTempPlayAreaLocation_ff9d;
 	if (location == 0u) {
 		CantAttackResult cant = HandleCantAttackSubstatus();
@@ -7180,6 +7158,7 @@ void OpenCardPage_FromHand(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d
 /* >>> factory OpenCardPage_FromCheckPlayArea */
 void OpenCardPage_FromCheckPlayArea(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)a;
 	gb_write8(wCardPageExitKeys_ADDR, PAD_B);
 	OpenCardPage(1u, f, b, c, d, e, hl);
 }
@@ -7457,6 +7436,8 @@ PrintAttackOrCardDescriptionResult DisplayEnergyOrTrainerCardPage(uint8_t a, uin
 /* >>> factory DisplayCardPage_Energy */
 PrintAttackOrCardDescriptionResult DisplayCardPage_Energy(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)a;
+	(void)hl;
 	PrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_ENERGY, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);
 	return result;
 }
@@ -7465,6 +7446,8 @@ PrintAttackOrCardDescriptionResult DisplayCardPage_Energy(uint8_t a, uint8_t f, 
 /* >>> factory DisplayCardPage_TrainerPage2 */
 PrintAttackOrCardDescriptionResult DisplayCardPage_TrainerPage2(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)a;
+	(void)hl;
 	PrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR + 2u);
 	return result;
 }
@@ -7473,6 +7456,8 @@ PrintAttackOrCardDescriptionResult DisplayCardPage_TrainerPage2(uint8_t a, uint8
 /* >>> factory DisplayCardPage_TrainerPage1 */
 PrintAttackOrCardDescriptionResult DisplayCardPage_TrainerPage1(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)a;
+	(void)hl;
 	PrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);
 	return result;
 }
@@ -8090,6 +8075,12 @@ DisplayCardListResult DisplayCardList(void)
 /* >>> factory Func_5542 */
 Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl)
 {
+	(void)a;
+	(void)b;
+	(void)d;
+	(void)e;
+	(void)f;
+	(void)hl;
 	CardListResult discard = CreateDiscardPileCardList(c);
 	if (discard.f & 0x10u)
 		return (Func5542Result){discard.a, discard.b, discard.c, discard.d, discard.e, discard.f, discard.hl};
@@ -8310,6 +8301,9 @@ void PrintDeckAndHandIconsAndNumberOfCards(void)
 /* >>> factory CheckDamageToMrMime */
 CheckDamageToMrMimeResult CheckDamageToMrMime(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)b;
+	(void)c;
+	(void)hl;
 	uint8_t original_a = a;
 	DuelistVarResult arena = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	SwapTurn();
@@ -8733,6 +8727,8 @@ CheckIfAnyAttackKnocksOutDefendingCardResult CheckIfAnyAttackKnocksOutDefendingC
 /* >>> factory CheckIfActiveCardCanKnockOut */
 CheckIfActiveCardCanKnockOutResult CheckIfActiveCardCanKnockOut(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)a;
+	(void)f;
 	hTempPlayAreaLocation_ff9d = 0u;
 	CheckIfAnyAttackKnocksOutDefendingCardResult any = CheckIfAnyAttackKnocksOutDefendingCard();
 	if ((any.f & 0x10u) == 0u)
@@ -9786,6 +9782,7 @@ HandleSpecialDuelMainSceneHotkeysResult HandleSpecialDuelMainSceneHotkeys(uint8_
 /* >>> factory ReplaceKnockedOutPokemon */
 ReplaceKnockedOutPokemonResult ReplaceKnockedOutPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)f;
 	DuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
 	if (hp.a != 0u)
 		return (ReplaceKnockedOutPokemonResult){hp.a, hp.a == 0u ? FLAG_Z : 0u, b, c, d, e, hp.hl};
@@ -10873,6 +10870,7 @@ void TryContinueDuel(void)
 /* >>> factory PlayPokemonCard */
 PlayPokemonCardResult PlayPokemonCard(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)hl;
 	uint8_t stage = wLoadedCard1Stage;
 	if (stage == PLAY_POKEMON_CARD_BASIC) {
 		DuelistVarResult count = GetTurnDuelistVariable(PLAY_POKEMON_CARD_NUM_POKEMON);

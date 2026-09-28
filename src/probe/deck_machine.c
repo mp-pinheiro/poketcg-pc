@@ -123,6 +123,7 @@ static void adapt_PrintReceivedTheseCardsText(ProbeState *s)
 /* >>> factory PrintNumSavedDecks */
 static void adapt_PrintNumSavedDecks(ProbeState *s)
 {
+	(void)s;
 	PrintNumSavedDecks();
 }
 /* <<< factory PrintNumSavedDecks */
@@ -130,6 +131,7 @@ static void adapt_PrintNumSavedDecks(ProbeState *s)
 /* >>> factory Func_b568 */
 static void adapt_Func_b568(ProbeState *s)
 {
+	(void)s;
 	Func_b568();
 }
 /* <<< factory Func_b568 */

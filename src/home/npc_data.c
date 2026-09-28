@@ -60,7 +60,7 @@ GetNPCHeaderPointerResult GetNPCHeaderPointer(uint8_t a)
 		f |= 0x80u;
 	if ((uint8_t)((0x58u & 0x0Fu) + carry) > 0x0Fu)
 		f |= 0x20u;
-	if ((uint16_t)0x58u + carry > 0xFFu)
+	if ((uint16_t)0x58u + carry > (uint16_t)0xFFu)
 		f |= 0x10u;
 	return (GetNPCHeaderPointerResult){pointer, pointer_low, f};
 }
@@ -199,6 +199,7 @@ _GetChallengeMachineDuelConfigurationsResult _GetChallengeMachineDuelConfigurati
 /* >>> factory SetNPCDialogName */
 SetNPCDialogNameResult SetNPCDialogName(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint16_t hl)
 {
+	(void)f;
 	GetNPCHeaderPointerResult header = GetNPCHeaderPointer(a);
 	uint16_t addr = header.hl;
 	uint8_t z = header.f & 0x80u;
@@ -219,6 +220,7 @@ SetNPCDialogNameResult SetNPCDialogName(uint8_t a, uint8_t f, uint8_t b, uint8_t
 /* >>> factory SetNPCMatchStartTheme */
 SetNPCMatchStartThemeResult SetNPCMatchStartTheme(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)f;
 	GetNPCHeaderPointerResult header = GetNPCHeaderPointer(a);
 	const uint8_t *entry = rom_ptr(NPC_HEADER_POINTERS_BANK, (uint16_t)(header.hl + NPC_DATA_MATCH_START_ID));
 	gb_write8(wMatchStartTheme_ADDR, entry[0]);
@@ -230,7 +232,7 @@ SetNPCMatchStartThemeResult SetNPCMatchStartTheme(uint8_t a, uint8_t f, uint8_t 
 
 	uint8_t map = wCurMap;
 	uint8_t r2 = (uint8_t)(map - POKEMON_DOME);
-	uint8_t f2 = (uint8_t)(0x40u | (r2 == 0u ? 0x80u : 0u) | (((map & 0x0Fu) < (POKEMON_DOME & 0x0Fu)) ? 0x20u : 0u) | ((map < POKEMON_DOME) ? 0x10u : 0u));
+	uint8_t f2 = (uint8_t)(0x40u | (r2 == 0u ? 0x80u : 0u) | ((int)(map & 0x0Fu) < (int)(POKEMON_DOME & 0x0Fu) ? 0x20u : 0u) | ((map < POKEMON_DOME) ? 0x10u : 0u));
 	if (map != POKEMON_DOME)
 		return (SetNPCMatchStartThemeResult){map, f2, b, c, d, e, hl};
 

@@ -6,6 +6,7 @@
 /* >>> factory UnusedCopyrightScreen */
 static void adapt_UnusedCopyrightScreen(ProbeState *s)
 {
+	(void)s;
 	UnusedCopyrightScreen();
 }
 /* <<< factory UnusedCopyrightScreen */

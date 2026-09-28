@@ -7,6 +7,7 @@
 #include "home/print_text.h"
 #include "home/process_text.h"
 #include "home/switch_sram.h"
+#include "home/switch_rom.h"
 
 #define DECK_NAME_SIZE 0x18u
 #define NUM_DECK_MACHINE_SLOTS 0x05u
@@ -74,8 +75,6 @@
 #include "home/card_data.h"
 #include "generated/wram.h"
 #define CARD_COLLECTION_SIZE 0x100u
-#define FILTER_ENERGY 0x20u
-#define TYPE_ENERGY 0x08u
 #define FUNC_B088_CARD_LIMIT 0xe4u
 
 #include "home/deck_configuration.h"
@@ -265,11 +264,6 @@
 #include "home/save.h"
 #include "home/common.h"
 #include "generated/wram.h"
-#define DOUBLE_SPACED 0x00u
-#define SINGLE_SPACED 0x01u
-#define ProceduresForSendingCardsText 0x027cu
-#define CardSendingProceduresText 0x027du
-#define PleaseReadTheProceduresForSendingCardsText 0x027eu
 
 #include "generated/wram.h"
 

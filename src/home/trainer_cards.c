@@ -247,7 +247,6 @@
 #include "generated/hram.h"
 #include "mem.h"
 #define TYPE_ENERGY_FIRE 0x08u
-#define TYPE_ENERGY_GRASS 0x09u
 #define TYPE_ENERGY_LIGHTNING 0x0Au
 #define HEATED_BATTLE_DECK_ID 0x1Du
 
@@ -547,6 +546,7 @@ PickPokedexResult PickPokedexCards(void)
 /* >>> factory AIDecide_Recycle */
 AIDecideParameterResult AIDecide_Recycle(uint8_t d)
 {
+	(void)d;
 	/* trainer_cards.asm AIDecide_Recycle: the five priority slots live in
 	 * wce08..wce0c and the first one filled is the card to recycle. */
 	CardListResult discard = CreateDiscardPileCardList(0);
@@ -669,6 +669,7 @@ AIDecideParameterResult AIDecide_Imakuni(uint8_t d)
 /* >>> factory AIDecide_PokemonFlute */
 AIDecidePokemonFluteResult AIDecide_PokemonFlute(uint8_t c, uint8_t d)
 {
+	(void)d;
 	SwapTurn();
 	CardListResult discard = CreateDiscardPileCardList(c);
 	SwapTurn();
@@ -801,6 +802,7 @@ AIDecideParameterResult AIDecide_Gambler(uint8_t d)
 /* >>> factory AIDecide_Revive */
 AIDecideReviveResult AIDecide_Revive(uint8_t d)
 {
+	(void)d;
 	CardListResult discard = CreateDiscardPileCardList(0);
 	if (discard.f & 0x10u)
 		return (AIDecideReviveResult){discard.a, 0x80u, 0xC5u};
@@ -863,7 +865,7 @@ PickPokedexResult PickPokedexCards_Unreferenced(void)
 			gb_write8((uint16_t)(wce1a_ADDR + out++), indices[i]);
 		}
 	}
-	return (PickPokedexResult){0xFFu, (uint8_t)(0x80u | 0x10u)};
+	return (PickPokedexResult){0xFFu, (uint8_t)(0x80u | 0x10u), 0u};
 }
 /* <<< factory PickPokedexCards_Unreferenced */
 
@@ -1292,6 +1294,7 @@ AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in, uint8_t d)
 /* >>> factory AIDecide_PokemonTrader_LegendaryMoltres */
 AIDecide_PokemonTrader_LegendaryMoltresResult AIDecide_PokemonTrader_LegendaryMoltres(uint8_t d)
 {
+	(void)d;
 	LookForCardIDToTradeWithDifferentHandCardResult r = LookForCardIDToTradeWithDifferentHandCard(MOLTRES_LV37, MOLTRES_LV35);
 	if (!(r.f & 0x10u)) {
 		uint8_t f = (r.a == 0u) ? 0x80u : 0u;
@@ -1305,6 +1308,7 @@ AIDecide_PokemonTrader_LegendaryMoltresResult AIDecide_PokemonTrader_LegendaryMo
 /* >>> factory AIDecide_PokemonTrader_StrangePower */
 AIDecide_PokemonTrader_StrangePowerResult AIDecide_PokemonTrader_StrangePower(uint8_t d)
 {
+	(void)d;
 	LookForCardIDToTradeWithDifferentHandCardResult r = LookForCardIDToTradeWithDifferentHandCard(MR_MIME, MR_MIME);
 	if (!(r.f & 0x10u)) {
 		uint8_t f = (r.a == 0u) ? 0x80u : 0u;
@@ -1318,6 +1322,7 @@ AIDecide_PokemonTrader_StrangePowerResult AIDecide_PokemonTrader_StrangePower(ui
 /* >>> factory AIDecide_PokemonTrader_LegendaryArticuno */
 AIDecide_PokemonTrader_LegendaryArticunoResult AIDecide_PokemonTrader_LegendaryArticuno(uint8_t d)
 {
+	(void)d;
 	LookForCardIDInHandAndPlayAreaResult r = LookForCardIDInHandAndPlayArea(ARTICUNO_LV35);
 	if (r.f & 0x10u) {
 		uint8_t f = (r.a == 0u) ? 0x80u : 0u;
@@ -2230,6 +2235,7 @@ AIDecideParameterResult AIDecide_MrFuji(uint8_t d)
 /* >>> factory AIDecide_PokemonTrader_BlisteringPokemon */
 AIDecide_PokemonTrader_BlisteringPokemonResult AIDecide_PokemonTrader_BlisteringPokemon(uint8_t d)
 {
+	(void)d;
 	uint8_t a;
 	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r1 =
 		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(RHYDON, RHYHORN);
@@ -4323,7 +4329,7 @@ AIDecideParameterResult AIDecide_ProfessorOak(uint8_t d)
 			d = 0xC5u;
 			if ((found.f & 0x10u) == 0u)
 				found = LookForCardIDInHandList_Bank8(MUK);
-				d = 0xC5u;
+			d = 0xC5u;
 			if (found.f & 0x10u)
 				return (AIDecideParameterResult){found.a, or_a_flags(found.a), d};
 		}

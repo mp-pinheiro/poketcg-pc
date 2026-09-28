@@ -53,6 +53,7 @@ extern size_t g_rom_size;
 extern uint8_t g_rom_bank;
 extern uint8_t g_sram_bank;
 extern int g_sram_enabled;
+void mbc5_write(uint16_t addr, uint8_t v);
 
 /* VBK ($FF4F) low bit: which half of g_vram the $8000-$9FFF window resolves to. */
 extern uint8_t g_vram_bank;
@@ -102,7 +103,6 @@ void rom_free(void);
  * reference-ROM resolver. A product miss terminates with MISSING_DATA bank:addr. */
 int rom_pack_load(const char *path);
 void rom_pack_free(void);
-void rom_use_reference(void);
 int rom_use_product(void);
 const uint8_t *rom_ptr_reference(uint8_t bank, uint16_t addr);
 const uint8_t *rom_ptr_product(uint8_t bank, uint16_t addr);

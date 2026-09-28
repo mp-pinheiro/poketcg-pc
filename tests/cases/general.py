@@ -7,7 +7,6 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory-cases-statics
-wAIPlayAreaCardToSwitch = 0xCDD5
 wAIRetreatedThisTurn = 0xCE03
 wPreviousAIFlags = 0xCE20
 wConfusionRetreatCheckWasUnsuccessful = 0xCC0C

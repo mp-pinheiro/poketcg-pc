@@ -57,8 +57,8 @@ MUTATIONS = {}
 # >>> factory-mutation DisplayPlayerNamingScreen
 MUTATIONS["DisplayPlayerNamingScreen"] = {
 	"source_symbol": "DisplayPlayerNamingScreen",
-	"before": "\t\t\tgb_write8((uint16_t)(sPlayerName_ADDR + i), name[i]);",
-	"after": "\t\t\tgb_write8((uint16_t)(sPlayerName_ADDR + i + 1u), name[i]);",
+	"before": "const uint8_t *name = rom_ptr(NAMING_BANK, DEFAULT_PLAYER_NAME);\n\t\tfor (uint8_t i = 0u; i < NAME_BUFFER_LENGTH; i++)\n\t\t\tgb_write8((uint16_t)(sPlayerName_ADDR + i), name[i]);",
+	"after": "const uint8_t *name = rom_ptr(NAMING_BANK, DEFAULT_PLAYER_NAME);\n\t\tfor (uint8_t i = 0u; i < NAME_BUFFER_LENGTH; i++)\n\t\t\tgb_write8((uint16_t)(sPlayerName_ADDR + i + 1u), name[i]);",
 	"case_ids": ["DisplayPlayerNamingScreen-0", "DisplayPlayerNamingScreen-1"],
 }
 # <<< factory-mutation DisplayPlayerNamingScreen

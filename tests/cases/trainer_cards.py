@@ -291,7 +291,6 @@ hWhoseTurn = 0xFF97
 wPlayerDeck = 0xC400
 wce06 = 0xCE06
 wce1a = 0xCE1A
-wce1b = 0xCE1B
 wAITrainerCardToPlay = 0xCE16
 
 hWhoseTurn = 0xFF97
@@ -317,11 +316,9 @@ wDuelTempList = 0xC510
 wOpponentDeckID = 0xCC0E
 hWhoseTurn = 0xFF97
 
-wAITrainerCardPhase = 0xCE18
 
 hTempCardIndex_ff9f = 0xFF9F
 hTemp_ffa0 = 0xFFA0
-wAITrainerCardParameter = 0xCE19
 wAITrainerCardToPlay = 0xCE16
 SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 BUDGET = dict(instruction_budget=20000000, cycle_budget=80000000)
@@ -381,9 +378,7 @@ PLAYER_DECK = 0xC400
 hWhoseTurn = 0xFF97
 hTempPlayAreaLocation_ff9d = 0xFF9D
 
-wArena = 0xC2BB
 wOpponentArena = 0xC3BB
-wScratch = 0xCE00
 
 hWhoseTurn = 0xFF97
 ARENA_CARD = 0xC2BB
@@ -456,7 +451,6 @@ def _pp13_case(location=b"\x00", **overrides):
 
 hTempCardIndex_ff9f = 0xFF9F
 wAITrainerCardToPlay = 0xCE16
-wCurrentAIFlags = 0xCE21
 wOpponentDeckID = 0xCC0E
 wRNG1 = 0xCACA
 SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
@@ -1377,8 +1371,8 @@ MUTATIONS["AIDecide_ImposterProfessorOak"] = {
 # >>> factory-mutation PickPokedexCards_Unreferenced
 MUTATIONS["PickPokedexCards_Unreferenced"] = {
     "source_symbol": "PickPokedexCards_Unreferenced",
-    "before": "return (PickPokedexResult){0xFFu, (uint8_t)(0x80u | 0x10u)};",
-    "after": "return (PickPokedexResult){0xFFu, 0x10u};",
+    "before": "return (PickPokedexResult){0xFFu, (uint8_t)(0x80u | 0x10u), 0u};",
+    "after": "return (PickPokedexResult){0xFFu, 0x10u, 0u};",
     "case_ids": ["PickPokedexCards_Unreferenced-0", "PickPokedexCards_Unreferenced-1"],
 }
 # <<< factory-mutation PickPokedexCards_Unreferenced

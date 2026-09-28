@@ -191,13 +191,13 @@ static void jskip(void)
 static char *read_stdin(void)
 {
 	size_t cap = 1 << 16, len = 0;
-	char *buf = malloc(cap);
+	char *volatile buf = malloc(cap);
 	if (!buf)
 		die("out of memory");
 	for (;;) {
 		if (len + 1 >= cap) {
 			cap *= 2;
-			char *grown = realloc(buf, cap);
+			char *volatile grown = realloc(buf, cap);
 			if (!grown)
 				die("out of memory");
 			buf = grown;

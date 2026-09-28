@@ -55,6 +55,7 @@ static void adapt_ProcessOWFrameset(ProbeState *s)
 /* >>> factory DoMapOWFrame */
 static void adapt_DoMapOWFrame(ProbeState *s)
 {
+	(void)s;
 	DoMapOWFrame();
 }
 /* <<< factory DoMapOWFrame */

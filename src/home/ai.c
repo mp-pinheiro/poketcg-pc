@@ -98,11 +98,7 @@ typedef void (*DeckTurn)(void);
 typedef struct {
 	uint16_t table;
 	DeckTurn do_turn;      /* NULL: AIMainTurnLogic */
-	uint16_t lists[6];     /* prize, arena, bench, play_hand, retreat, energy; all zero for the
-	                        * general start_duel. Only Legendary Moltres stores its retreat list:
-	                        * every other boss deck's start_duel skips that store_list_pointer
-	                        * (decks/*.asm "missing store_list_pointer"), leaving the slot as
-	                        * InitAIDuelVars cleared it. */
+	uint16_t lists[6];
 } DeckAI;
 
 static void turn_general_no_retreat(void) { (void)AIDoTurn_GeneralNoRetreat(0u, 0u, 0u, 0u, 0u, 0u, 0u); }

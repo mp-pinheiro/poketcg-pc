@@ -30,6 +30,7 @@
 SamsPracticeResult IsAIPracticeScriptedTurn(uint8_t a, uint8_t f, uint8_t b,
 						uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)a; (void)f;
 	uint8_t shifted = (uint8_t)(gb_read8(wDuelTurns_ADDR) >> 1);
 	uint8_t flags = (uint8_t)((shifted == 7 ? 0x80u : 0u) |
 					 (shifted >= 7 ? 0x10u : 0u));
@@ -39,6 +40,7 @@ SamsPracticeResult IsAIPracticeScriptedTurn(uint8_t a, uint8_t f, uint8_t b,
 SamsPracticeResult SetSamsStartingPlayArea(uint8_t a, uint8_t f, uint8_t b,
 						uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)hl;
 	HandListResult list = CreateHandCardList(c);
 	uint16_t scan = wDuelTempList_ADDR;
 

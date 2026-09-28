@@ -64,12 +64,6 @@
 #define K_LEN_TIMER    0x3Fu
 #define K_WAVE_SIZE    16
 
-/* ── Channel-indexed accessors ──────────────────────────────────────── */
-#define CH_WR(addr, ch)   gb_write8((addr) + (ch), v)
-#define CH_RD(addr, ch)   gb_read8((addr) + (ch))
-#define CH_PTR_RD(ptr, ch) (ptr)[ch]
-#define CH_PTR_WR(ptr, ch, v) ((ptr)[ch] = (v))
-
 /* ── Forward declarations ───────────────────────────────────────────── */
 static void pnn_note(uint16_t *hl, uint8_t note, uint8_t ch);
 static void update_channel(uint8_t ch);

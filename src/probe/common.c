@@ -304,6 +304,7 @@ static void adapt_ReceiveDeckConfiguration(ProbeState *s)
 /* >>> factory DoCardPop */
 static void adapt_DoCardPop(ProbeState *s)
 {
+	(void)s;
 	DoCardPop();
 }
 /* <<< factory DoCardPop */

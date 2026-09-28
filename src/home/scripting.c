@@ -5,6 +5,8 @@
 #include "generated/wram.h"
 #include "mem.h"
 
+#include "home/color.h"
+#include "home/map_events.h"
 /* >>> factory statics */
 #define EVENT_VAR_MASKS_BANK 3u
 #define EVENT_VAR_MASKS 0x4B37u
@@ -877,6 +879,7 @@ SetEventValueResult SetEventValue(uint8_t a, uint8_t f, uint8_t b, uint8_t c)
 /* >>> factory MaxOutEventValue */
 SetEventValueResult MaxOutEventValue(uint8_t a, uint8_t f, uint8_t b, uint8_t c)
 {
+	(void)c;
 	return SetEventValue(a, f, b, 0xffu);
 }
 /* <<< factory MaxOutEventValue */
@@ -884,6 +887,7 @@ SetEventValueResult MaxOutEventValue(uint8_t a, uint8_t f, uint8_t b, uint8_t c)
 /* >>> factory ZeroOutEventValue */
 SetEventValueResult ZeroOutEventValue(uint8_t a, uint8_t f, uint8_t b, uint8_t c)
 {
+	(void)c;
 	return SetEventValue(a, f, b, 0u);
 }
 /* <<< factory ZeroOutEventValue */
@@ -1019,7 +1023,6 @@ ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult ScriptCommand_JumpIfAnyEner
 /* <<< factory ScriptCommand_JumpIfAnyEnergyCardsInCollection */
 
 /* >>> factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
-/* >>> factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
 ScriptCommand_JumpBasedOnFightingClubPupilStatusResult ScriptCommand_JumpBasedOnFightingClubPupilStatus(void)
 {
 	GetEventVarResult michael_event = GetEventVar(EVENT_PUPIL_MICHAEL_STATE, 0u, 0u, 0u);
@@ -1069,7 +1072,6 @@ ScriptCommand_JumpBasedOnFightingClubPupilStatusResult ScriptCommand_JumpBasedOn
 	uint16_t hl = SetScriptPointer(target);
 	return (ScriptCommand_JumpBasedOnFightingClubPupilStatusResult){args.a, args.f, args.b, args.c, hl};
 }
-/* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
 /* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
 
 /* >>> factory GetEventValue */
@@ -2032,6 +2034,7 @@ IncreaseScriptPointerResult ScriptCommand_GiftCenter(uint8_t c)
 /* scripting.asm:806-823 */
 ScriptCommand_PrintTextQuitFullyResult ScriptCommand_PrintTextQuitFully(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t saved_hl)
 {
+	(void)a; (void)f; (void)d; (void)e;
 	Func_cc32((uint16_t)(((uint16_t)b << 8) | c));
 	CloseAdvancedDialogueBox();
 	wBreakScriptLoop = 0x01u;
@@ -2062,6 +2065,7 @@ void PrintInteractableObjectText(void)
 /* >>> factory Func_c943 */
 Func_c943Result Func_c943(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)a; (void)f;
 	uint8_t saved_b = b;
 	uint8_t saved_c = c;
 	uint8_t saved_d = d;
@@ -2085,9 +2089,7 @@ Func_c943Result Func_c943(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d,
 			uint16_t preload = (uint16_t)(wLoadNPCFunction |
 				((uint16_t)gb_read8((uint16_t)(wLoadNPCFunction_ADDR + 1u)) << 8));
 			if (preload == 0u || (ScriptEntryEnter(preload).f & 0x10u) != 0u) {
-				LoadNPCSpriteDataResult sprite = LoadNPCSpriteData(wTempNPC, b, c, d, e, hl);
-				a = sprite.a;
-				f = sprite.f;
+				(void)LoadNPCSpriteData(wTempNPC, b, c, d, e, hl);
 				(void)Func_c998();
 				(void)LoadNPC();
 			}
@@ -2517,6 +2519,7 @@ SetEventValueResult SetStackEventValue(uint8_t f, uint8_t b, uint8_t c, uint8_t 
 /* >>> factory SetStackEventZero */
 SetEventValueResult SetStackEventZero(uint8_t event, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)c; (void)d; (void)e; (void)hl;
 	return SetEventValue(event, f, b, 0u);
 }
 /* <<< factory SetStackEventZero */

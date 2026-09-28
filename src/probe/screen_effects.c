@@ -65,6 +65,7 @@ static void adapt_Func_1ce03(ProbeState *s)
 /* >>> factory ShakeScreenX_Big */
 static void adapt_ShakeScreenX_Big(ProbeState *s)
 {
+	(void)s;
 	ShakeScreenX_Big();
 }
 /* <<< factory ShakeScreenX_Big */
@@ -72,6 +73,7 @@ static void adapt_ShakeScreenX_Big(ProbeState *s)
 /* >>> factory ShakeScreenX_Small */
 static void adapt_ShakeScreenX_Small(ProbeState *s)
 {
+	(void)s;
 	ShakeScreenX_Small();
 }
 /* <<< factory ShakeScreenX_Small */

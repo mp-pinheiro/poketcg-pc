@@ -22,6 +22,7 @@ static void adapt_AdvanceIntroSequenceCmdPtr(ProbeState *s)
 /* >>> factory AdvanceIntroSequenceCmdPtrBy2 */
 static void adapt_AdvanceIntroSequenceCmdPtrBy2(ProbeState *s)
 {
+	(void)s;
 	AdvanceIntroSequenceCmdPtrBy2();
 }
 /* <<< factory AdvanceIntroSequenceCmdPtrBy2 */
@@ -29,6 +30,7 @@ static void adapt_AdvanceIntroSequenceCmdPtrBy2(ProbeState *s)
 /* >>> factory AdvanceIntroSequenceCmdPtrBy4 */
 static void adapt_AdvanceIntroSequenceCmdPtrBy4(ProbeState *s)
 {
+	(void)s;
 	AdvanceIntroSequenceCmdPtrBy4();
 }
 /* <<< factory AdvanceIntroSequenceCmdPtrBy4 */
@@ -117,6 +119,7 @@ static void adapt_IntroSequenceCmd_FadeOut(ProbeState *s)
 /* >>> factory AdvanceIntroSequenceCmdPtrBy3 */
 static void adapt_AdvanceIntroSequenceCmdPtrBy3(ProbeState *s)
 {
+	(void)s;
 	AdvanceIntroSequenceCmdPtrBy3();
 }
 /* <<< factory AdvanceIntroSequenceCmdPtrBy3 */

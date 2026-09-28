@@ -6,6 +6,7 @@
 /* >>> factory _OpenBoosterPack */
 static void adapt__OpenBoosterPack(ProbeState *s)
 {
+	(void)s;
 	_OpenBoosterPack();
 }
 /* <<< factory _OpenBoosterPack */

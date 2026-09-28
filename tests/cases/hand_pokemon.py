@@ -22,9 +22,7 @@ wLoadedCard1ID = 0xCC2B
 wAIScore = 0xCDBE
 
 wDuelTempList = 0xC510
-wHandTempList = 0xCEDA
 hWhoseTurn = 0xFF97
-DUELVARS_NUMBER_OF_CARDS_IN_HAND = 0xEE
 # <<< factory-cases-statics
 
 # >>> factory AIDecideSpecialEvolutions

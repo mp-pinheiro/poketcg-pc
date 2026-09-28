@@ -18,7 +18,6 @@
 
 #include "home/sound.h"
 
-#define MENU_CANCEL 0xFFu
 #define SFX_CONFIRM 0x02u
 #define SFX_CANCEL  0x03u
 

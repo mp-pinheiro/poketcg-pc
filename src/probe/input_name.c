@@ -189,6 +189,7 @@ static void adapt_PlayerNamingScreen_ProcessInput(ProbeState *s)
 /* >>> factory LoadTextCursorTile */
 static void adapt_LoadTextCursorTile(ProbeState *s)
 {
+	(void)s;
 	LoadTextCursorTile();
 }
 /* <<< factory LoadTextCursorTile */
@@ -205,6 +206,7 @@ static void adapt_LoadHalfWidthTextCursorTile(ProbeState *s)
 /* >>> factory PrintDeckNameFromInput */
 static void adapt_PrintDeckNameFromInput(ProbeState *s)
 {
+	(void)s;
 	PrintDeckNameFromInput();
 }
 /* <<< factory PrintDeckNameFromInput */
@@ -212,6 +214,7 @@ static void adapt_PrintDeckNameFromInput(ProbeState *s)
 /* >>> factory DrawDeckNamingScreenBG */
 static void adapt_DrawDeckNamingScreenBG(ProbeState *s)
 {
+	(void)s;
 	DrawDeckNamingScreenBG();
 }
 /* <<< factory DrawDeckNamingScreenBG */

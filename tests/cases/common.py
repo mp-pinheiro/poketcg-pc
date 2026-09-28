@@ -133,7 +133,6 @@ BULBASAUR = 0x08
 
 hWhoseTurn = 0xFF97
 wPlayerDeck = 0xC400
-wTempAIPokemonCard = 0xCDF3
 
 hWhoseTurn = 0xFF97
 sCardCollection = 0xA100

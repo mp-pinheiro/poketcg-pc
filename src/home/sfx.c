@@ -4,21 +4,12 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
-/* rAUD1ENV is NR12 ($ff12); AUD1ENV_UP is the envelope-direction bit of NRx2.
- * wdd8c has no generated symbol in this port's header set, so its address is
- * defined locally. */
-#define RAUD1ENV     0xff12u
-#define AUD1ENV_UP   0x08u
-#define WDD8C        0xdd8cu
-
 #include "generated/wram.h"
 #include "mem.h"
-#define rAUD1ENV 0xFF12u
 
 #include "home/sfx.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define rAUD1LEN 0xFF11u
 
 #include "home/sfx.h"
 #include "generated/wram.h"
@@ -37,7 +28,6 @@
 
 #define rAUD1LEN   0xFF11u
 #define rAUD1ENV   0xFF12u
-#define rAUD1LOW   0xFF13u
 #define rAUD1HIGH  0xFF14u
 #define rAUD4LEN   0xFF20u
 #define rAUD4GO    0xFF23u

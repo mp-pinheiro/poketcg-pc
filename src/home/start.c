@@ -109,7 +109,6 @@
 #define START_MENU_CARD_POP 0x00u
 #define START_MENU_CONTINUE_FROM_DIARY 0x01u
 #define START_MENU_NEW_GAME 0x02u
-#define START_MENU_CONTINUE_DUEL 0x03u
 #define START_MENU_PC_OPTIONS 0xFEu
 #define rVBK 0xFF4Fu
 /* <<< factory statics */

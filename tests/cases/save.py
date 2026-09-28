@@ -27,8 +27,6 @@ PLAYTIME_OUT = {0xD3C8: 5}
 
 sGeneralSaveData = 0xB800
 sCardCollection = 0xA100
-sCardAndDeckSaveDataEnd = 0xB707
-sGeneralSaveDataEnd = 0xB900
 
 hBankROM = 0xFF80
 sAlbumProgress = 0xB8FE
@@ -74,7 +72,6 @@ _o = 0
 for _addr, _n, _lo, _hi in MAPPER:
     _OFFSETS.append(_o)
     _o += _n
-PAYLOAD_LEN = _o  # 179
 
 
 def poison_wram(seed=11):

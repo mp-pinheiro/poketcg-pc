@@ -15,12 +15,6 @@ CASES["TryFirstRonaldEncounter"] = [
 # <<< factory TryFirstRonaldEncounter
 
 # >>> factory-cases-statics
-def _npc_table(ids):
-    entries = bytearray()
-    for i, npc_id in enumerate(ids):
-        entries += bytes([npc_id & 0xFF]) + bytes((i * 7 + k) & 0xFF for k in range(1, 12))
-    return bytes(entries)
-
 wTempNPC = 0xD3AB
 
 wDuelResult = 0xD0C3

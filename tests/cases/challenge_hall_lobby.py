@@ -5,7 +5,6 @@ wEventVars = 0xD3D2
 wLoadedEventBits = 0xD3D1
 wDefaultSong = 0xD111
 EVENT_BYTE = wEventVars + 0x10
-MUSIC_CHALLENGE_HALL = 0x0B
 
 
 def event_vars(value):

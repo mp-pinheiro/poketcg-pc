@@ -6,6 +6,7 @@
 /* >>> factory StubbedUnusedSaveDataValidation */
 static void adapt_StubbedUnusedSaveDataValidation(ProbeState *s)
 {
+	(void)s;
 	StubbedUnusedSaveDataValidation();
 }
 /* <<< factory StubbedUnusedSaveDataValidation */

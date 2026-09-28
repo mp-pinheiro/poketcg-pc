@@ -134,14 +134,6 @@ def stat_repeats_text(repeats: dict[int, dict[int, int]]) -> str:
                    for anchor in sorted(repeats) for segment, count in sorted(repeats[anchor].items()))
 
 
-def load_stat_repeats(path: Path) -> dict[int, dict[int, int]]:
-    repeats: dict[int, dict[int, int]] = {}
-    if path.is_file():
-        for line in path.read_text().split("\n"):
-            if line:
-                anchor, segment, count = (int(x) for x in line.split())
-                repeats.setdefault(anchor, {})[segment] = count
-    return repeats
 CARD_COPY_ENTRY = 0x2F14
 CARD_COPY_RET = 0x2F31
 CARD_POINTERS = (0x0C, 0x4C5C)

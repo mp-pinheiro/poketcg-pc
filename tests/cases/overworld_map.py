@@ -43,9 +43,6 @@ wTempPlayerYCoord = 0xD0BD
 wTempPlayerDirection = 0xD0BE
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wOverworldMapPlayerMovementCounter = 0xD341
-wOverworldMapPlayerPathHorizontalMovement = 0xD343
-wOverworldMapPlayerPathVerticalMovement = 0xD345
 wPlayerDirection = 0xD334
 
 wOverworldMapSelection = 0xD32E

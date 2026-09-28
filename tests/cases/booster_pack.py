@@ -8,7 +8,6 @@ CASES = {}
 
 # >>> factory-cases-statics
 hWhoseTurn = 0xFF97
-wBoosterCardsDrawn = 0xC400
 wDuelTempList = 0xC510
 wNoItemSelectionMenuKeys = 0xCBD6
 wPlayerDuelVariables = 0xC200

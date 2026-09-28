@@ -154,6 +154,7 @@ static void adapt_ChallengeMachine_PrepareDuel(ProbeState *s)
 /* >>> factory ChallengeMachine_DrawScoreScreen */
 static void adapt_ChallengeMachine_DrawScoreScreen(ProbeState *s)
 {
+	(void)s;
 	ChallengeMachine_DrawScoreScreen();
 }
 /* <<< factory ChallengeMachine_DrawScoreScreen */

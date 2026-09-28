@@ -5,8 +5,6 @@ from tests.cases._fixtures import DAMAGE_REDUCTION_REGS, damage_reduction_fixtur
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-hTempCardIndex_ff98_ADDR = 0xFF98
-hTempPlayAreaLocation_ff9d_ADDR = 0xFF9D
 hWhoseTurn = 0xFF97
 wGotHeads = 0xCC0A
 ARENA_SUBSTATUS2 = 0xC200 + 0xE8  # player page, duelvar $E8
@@ -484,7 +482,6 @@ wNoDamageOrEffect = 0xCCC7
 wTempNonTurnDuelistCardID = 0xCCC4
 wTempPlayAreaLocation_cceb = 0xCCEB
 POKEMON_POWER = 0x04
-HAUNTER_LV17 = 0x96
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 

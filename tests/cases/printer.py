@@ -87,8 +87,6 @@ CASES = {
     ],
 }
 # >>> factory-cases-statics
-wce9d = 0xCE9D
-
 SGFXBUFFER1 = 0xA400
 SGFXBUFFER5 = 0xB400
 
@@ -973,7 +971,7 @@ MUTATIONS["TryInitPrinterCommunications"] = {
 }
 # <<< factory-mutation TryInitPrinterCommunications
 # >>> factory-mutation ShowPrinterIsNotConnected
-MUTATIONS["ShowPrinterIsNotConnected"] = {"source_symbol": "ShowPrinterIsNotConnected", "before": "ShowPrinterIsNotConnectedResult ShowPrinterIsNotConnected(uint8_t a, uint8_t f, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 0x02u;", "after": "ShowPrinterIsNotConnectedResult ShowPrinterIsNotConnected(uint8_t a, uint8_t f, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 0x03u;", "case_ids": ["ShowPrinterIsNotConnected-0", "ShowPrinterIsNotConnected-1"]}
+MUTATIONS["ShowPrinterIsNotConnected"] = {"source_symbol": "ShowPrinterIsNotConnected", "before": "ShowPrinterIsNotConnectedResult ShowPrinterIsNotConnected(uint8_t a, uint8_t f, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)hl;\n\ta = 0x02u;", "after": "ShowPrinterIsNotConnectedResult ShowPrinterIsNotConnected(uint8_t a, uint8_t f, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)hl;\n\ta = 0x03u;", "case_ids": ["ShowPrinterIsNotConnected-0", "ShowPrinterIsNotConnected-1"]}
 # <<< factory-mutation ShowPrinterIsNotConnected
 # >>> factory-mutation HandlePrinterError
 MUTATIONS["HandlePrinterError"] = {"source_symbol": "HandlePrinterError", "before": "\tShowPrinterConnectionErrorSceneResult scene =\n\t\tShowPrinterConnectionErrorScene(0x04u, 0xA0u, d, e, PrinterPacketErrorText);", "after": "\tShowPrinterConnectionErrorSceneResult scene =\n\t\tShowPrinterConnectionErrorScene(0x02u, 0xA0u, d, e, PrinterPacketErrorText);", "case_ids": ["HandlePrinterError-5", "HandlePrinterError-6"]}
@@ -1073,7 +1071,7 @@ MUTATIONS["AddToPrinterGfxBuffer"] = {
 }
 # <<< factory-mutation AddToPrinterGfxBuffer
 # >>> factory-mutation SendCardListToPrinter
-MUTATIONS["SendCardListToPrinter"] = {"source_symbol": "SendCardListToPrinter", "before": "SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t offset = wPrinterHorizontalOffset;\n\tif (offset != 1u) {\n\t\tLoadGfxBufferForPrinterResult loaded = LoadGfxBufferForPrinter(hl);\n\t\tif ((loaded.f & 0x10u) != 0u)\n\t\t\treturn (SendCardListToPrinterResult){loaded.a, loaded.f, b, c, d, e, loaded.hl};\n\t\thl = loaded.hl;\n\t}\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications(hl);\n\tif ((init.f & 0x10u) != 0u)", "after": "SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t offset = wPrinterHorizontalOffset;\n\tif (offset != 1u) {\n\t\tLoadGfxBufferForPrinterResult loaded = LoadGfxBufferForPrinter(hl);\n\t\tif ((loaded.f & 0x10u) != 0u)\n\t\t\treturn (SendCardListToPrinterResult){loaded.a, loaded.f, b, c, d, e, loaded.hl};\n\t\thl = loaded.hl;\n\t}\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications(hl);\n\tif ((init.f & 0x10u) == 0u)", "case_ids": ["SendCardListToPrinter-0", "SendCardListToPrinter-1", "SendCardListToPrinter-2"]}
+MUTATIONS["SendCardListToPrinter"] = {"source_symbol": "SendCardListToPrinter", "before": "SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\tuint8_t offset = wPrinterHorizontalOffset;\n\tif (offset != 1u) {\n\t\tLoadGfxBufferForPrinterResult loaded = LoadGfxBufferForPrinter(hl);\n\t\tif ((loaded.f & 0x10u) != 0u)\n\t\t\treturn (SendCardListToPrinterResult){loaded.a, loaded.f, b, c, d, e, loaded.hl};\n\t\thl = loaded.hl;\n\t}\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications(hl);\n\tif ((init.f & 0x10u) != 0u)", "after": "SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\tuint8_t offset = wPrinterHorizontalOffset;\n\tif (offset != 1u) {\n\t\tLoadGfxBufferForPrinterResult loaded = LoadGfxBufferForPrinter(hl);\n\t\tif ((loaded.f & 0x10u) != 0u)\n\t\t\treturn (SendCardListToPrinterResult){loaded.a, loaded.f, b, c, d, e, loaded.hl};\n\t\thl = loaded.hl;\n\t}\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications(hl);\n\tif ((init.f & 0x10u) == 0u)", "case_ids": ["SendCardListToPrinter-0", "SendCardListToPrinter-1", "SendCardListToPrinter-2"]}
 # <<< factory-mutation SendCardListToPrinter
 # >>> factory-mutation Func_19f87
 MUTATIONS["Func_19f87"] = {

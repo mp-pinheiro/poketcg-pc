@@ -105,10 +105,8 @@ wTempBoosterChances = 0xD4CA
 wBoosterPackID = 0xD669
 
 wBoosterCardsDrawn_A = 0xC400
-wBoosterCardsDrawnEnd_A = 0xC416
 wTempCardCollection_A = 0xC000
 wBoosterData_Set_A = 0xD686
-wBoosterData_TypeChances_A = 0xD689
 wBoosterPackID_A = 0xD669
 wBoosterAveragedTypeChances_A = 0xD66D
 

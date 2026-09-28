@@ -1993,8 +1993,6 @@ CASES["CheckIfActiveCardParalyzedOrAsleep"] = [
 # <<< factory CheckIfActiveCardParalyzedOrAsleep
 # >>> factory GetAttacksEnergyCostBits
 CONTRACT["GetAttacksEnergyCostBits"] = {"compare": ("a",), "preserve": ()}
-wLoadedCard2Atk1EnergyCost = 0xCC71
-wLoadedCard2Atk2EnergyCost = 0xCC84
 CASES["GetAttacksEnergyCostBits"] = [
     {"a": 0, "wram": {hWhoseTurn: b"\xc2", wPlayerDeck_: b"\x00"}},
     {"a": 1, "wram": {hWhoseTurn: b"\xc2", wPlayerDeck_ + 1: b"\x33"}},
@@ -2725,8 +2723,6 @@ wPlayerDeck = 0xC400
 wAttachedEnergies = 0xCC1B
 wAttachedEnergiesAccum = 0xCBCE
 wTotalAttachedEnergies = 0xCC23
-wLoadedCard1Atk1EnergyCost = 0xCC30
-wLoadedCard1Atk2EnergyCost = 0xCC43
 
 wCardPageNumber = 0xCBC7
 
@@ -2800,8 +2796,6 @@ POISON = {
 }
 SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 TEXT_READ = {0xCD05: 2, 0xCD0A: 1, 0xCAA0: 5}
-VRAM_FIRST = {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}
-VRAM_SECOND = VRAM_FIRST
 
 POISON = {
     "a": 0xAA,
@@ -2816,8 +2810,6 @@ POISON = {
 wCardPageNumber = 0xCBC7
 wLoadedCard1Type = 0xCC24
 
-wPracticeDuelTextPointer = 0xCC01
-wPracticeDuelTextY = 0xCBCA
 
 wCardPageNumber = 0xCBC7
 wLCDC = 0xCABB
@@ -2903,7 +2895,6 @@ wCurPlayAreaSlot = 0xCBC9
 wCurPlayAreaY = 0xCBCA
 wConsole = 0xCAB4
 wDefaultText = 0xC590
-wLoadedCard1HP = 0xCC2C
 DUELVARS_ARENA_CARD_HP_OFF = 0xC8 - 0xBB
 DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
 DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
@@ -2918,7 +2909,6 @@ wPlayerDeck = 0xC400
 wPlayerArenaCard = 0xC2BB
 wConsole = 0xCAB4
 wDefaultText = 0xC590
-wLoadedCard1HP = 0xCC2C
 DUELVARS_ARENA_CARD_HP_OFF = 0xC8 - 0xBB
 DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
 DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
@@ -2936,7 +2926,6 @@ wPlayerDeck = 0xC400
 wPlayerArenaCard = 0xC2BB
 wConsole = 0xCAB4
 wDefaultText = 0xC590
-wLoadedCard1HP = 0xCC2C
 DUELVARS_ARENA_CARD_HP_OFF = 0xC8 - 0xBB
 DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
 DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
@@ -2952,7 +2941,6 @@ wPlayerDeck = 0xC400
 wPlayerArenaCard = 0xC2BB
 wConsole = 0xCAB4
 wDefaultText = 0xC590
-wLoadedCard1HP = 0xCC2C
 DUELVARS_ARENA_CARD_HP_OFF = 0xC8 - 0xBB
 DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
 DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
@@ -2988,7 +2976,6 @@ hTempPlayAreaLocation_ff9d = 0xFF9D
 hTemp_ffa0 = 0xFFA0
 wLoadedAttackName = 0xCCAA
 wSkipDuelistIsThinkingDelay = 0xCBF9
-wTxRam2_b = 0xCE41
 wCurPlayAreaSlot = 0xCBC9
 wCurPlayAreaY = 0xCBCA
 hWhoseTurn = 0xFF97
@@ -3042,7 +3029,6 @@ hWhoseTurn = 0xFF97
 wArenaCard = 0xC2BB
 hTempPlayAreaLocation_ff9d = 0xFF9D
 wSelectedAttack = 0xCCC6
-wSamePokemonCardID = 0xCDF9
 
 hWhoseTurn = 0xFF97
 hTempPlayAreaLocation_ff9d = 0xFF9D
@@ -3072,8 +3058,6 @@ POISON = {
 }
 hWhoseTurn = 0xFF97
 hTempPlayAreaLocation_ff9d = 0xFF9D
-wLoadedCard1AIInfo = 0xCC64
-wLoadedCard1HP = 0xCC2C
 wSelectedAttack = 0xCCC6
 
 wDuelDisplayedScreen = 0xCAC2
@@ -3105,7 +3089,6 @@ hWhoseTurn = 0xFF97
 HUD_TILE = 0x996F
 
 wDuelTempList = 0xC510
-wCardListScratch = 0xC51A
 
 hWhoseTurn = 0xFF97
 wDuelDisplayedScreen = 0xCAC2
@@ -3123,13 +3106,10 @@ POISON = {
 
 wSelectedDuelSubMenuItem = 0xCBCF
 wSortCardListByID = 0xCBDF
-wPrintSortNumberInCardListPtr = 0xCBD8
 wCardListInfoBoxText = 0xCBDA
 wCardListHeaderText = 0xCBDC
-wCardListItemSelectionMenuType = 0xCBDE
 wNoItemSelectionMenuKeys = 0xCBD6
 wDuelTempList = 0xC510
-wCardListScratch = 0xC51A
 
 POISON = {
     "a": 0xAA,
@@ -3256,15 +3236,9 @@ wCardPageType = 0xCBD1
 wCurPlayAreaSlot = 0xCBC9
 wCurPlayAreaY = 0xCBCA
 wLoadedCard1Atk1Name = 0xCC34
-wLoadedCard1Atk2Name = 0xCC47
-wLoadedCard1HP = 0xCC2C
 wLoadedCard1Level = 0xCC5D
-wLoadedCard1PokedexNumber = 0xCC5B
-wLoadedCard1PreEvoName = 0xCC2E
-wLoadedCard1Resistance = 0xCC58
 wLoadedCard1RetreatCost = 0xCC56
 wLoadedCard1Stage = 0xCC2D
-wLoadedCard1Weakness = 0xCC57
 
 SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
@@ -3707,7 +3681,6 @@ hWhoseTurn = 0xFF97
 wNumberPrizeCardsToTake = 0xCCC8
 
 START_DUEL_SETUP = DUEL_SETUP
-START_DUEL_ANIM_SAFE = DUEL_ANIM_SAFE
 START_DUEL_WRAM = DUEL_WRAM
 START_DUEL_KEYS = DUEL_KEYS
 POISON = {
@@ -3787,9 +3760,6 @@ player_not_in_deck = 0xC2BA
 player_arena = 0xC2BB
 player_bench = 0xC2BC
 player_hand_count = 0xC2EE
-player_deck_cards = 0xC27E
-player_hand_card1 = 0xC242
-opponent_arena = 0xC3BB
 opponent_bench = 0xC3BC
 POISON = {
     "a": 0xAA,
@@ -14899,8 +14869,8 @@ MUTATIONS["OpenCardPage_FromHand"] = {
 # >>> factory-mutation OpenCardPage_FromCheckPlayArea
 MUTATIONS["OpenCardPage_FromCheckPlayArea"] = {
     "source_symbol": "OpenCardPage_FromCheckPlayArea",
-    "before": "void OpenCardPage_FromCheckPlayArea(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, PAD_B);",
-    "after": "void OpenCardPage_FromCheckPlayArea(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, 0u);",
+    "before": "void OpenCardPage_FromCheckPlayArea(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\tgb_write8(wCardPageExitKeys_ADDR, PAD_B);",
+    "after": "void OpenCardPage_FromCheckPlayArea(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\tgb_write8(wCardPageExitKeys_ADDR, 0u);",
     "case_ids": [
         "OpenCardPage_FromCheckPlayArea-0",
         "OpenCardPage_FromCheckPlayArea-1",
@@ -15154,8 +15124,8 @@ MUTATIONS["DisplayCardList"] = {
 # >>> factory-mutation Func_5542
 MUTATIONS["Func_5542"] = {
     "source_symbol": "Func_5542",
-    "before": "Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl)\n{\n\tCardListResult discard = CreateDiscardPileCardList(c);",
-    "after": "Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl)\n{\n\tCardListResult discard = CreateDiscardPileCardList((uint8_t)(c + 1u));",
+    "before": "Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl)\n{\n\t(void)a;\n\t(void)b;\n\t(void)d;\n\t(void)e;\n\t(void)f;\n\t(void)hl;\n\tCardListResult discard = CreateDiscardPileCardList(c);",
+    "after": "Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl)\n{\n\t(void)a;\n\t(void)b;\n\t(void)d;\n\t(void)e;\n\t(void)f;\n\t(void)hl;\n\tCardListResult discard = CreateDiscardPileCardList((uint8_t)(c + 1u));",
     "case_ids": ["Func_5542-0", "Func_5542-1"],
 }
 # <<< factory-mutation Func_5542
@@ -15371,8 +15341,8 @@ MUTATIONS["CheckIfAnyAttackKnocksOutDefendingCard"] = {
 # >>> factory-mutation CheckIfActiveCardCanKnockOut
 MUTATIONS["CheckIfActiveCardCanKnockOut"] = {
     "source_symbol": "CheckIfActiveCardCanKnockOut",
-    "before": "CheckIfActiveCardCanKnockOutResult CheckIfActiveCardCanKnockOut(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\thTempPlayAreaLocation_ff9d = 0u;\n\tCheckIfAnyAttackKnocksOutDefendingCardResult any =",
-    "after": "CheckIfActiveCardCanKnockOutResult CheckIfActiveCardCanKnockOut(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\thTempPlayAreaLocation_ff9d = 1u;\n\tCheckIfAnyAttackKnocksOutDefendingCardResult any =",
+    "before": "CheckIfActiveCardCanKnockOutResult CheckIfActiveCardCanKnockOut(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\thTempPlayAreaLocation_ff9d = 0u;\n\tCheckIfAnyAttackKnocksOutDefendingCardResult any =",
+    "after": "CheckIfActiveCardCanKnockOutResult CheckIfActiveCardCanKnockOut(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\thTempPlayAreaLocation_ff9d = 1u;\n\tCheckIfAnyAttackKnocksOutDefendingCardResult any =",
     "case_ids": ["CheckIfActiveCardCanKnockOut-0", "CheckIfActiveCardCanKnockOut-1"],
 }
 # <<< factory-mutation CheckIfActiveCardCanKnockOut

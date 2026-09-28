@@ -11,9 +11,6 @@ from pathlib import Path
 
 EXTENSIONS = (".1bpp", ".2bpp", ".pal", ".dimensions")
 HEX_RE = re.compile(r"0x([0-9a-fA-F]{2})")
-MANIFEST_RE = re.compile(
-    r"^/\* POKETCG_ASSET path=(\S+) name=(\w+) size=(\d+) sha256=([0-9a-f]{64}) \*/$"
-)
 ARRAY_RE = re.compile(
     r"static const uint8_t (\w+)\[\] = \{(.*?)\};", re.DOTALL
 )

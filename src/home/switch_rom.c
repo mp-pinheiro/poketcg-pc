@@ -24,7 +24,7 @@ BankpushROMResult BankpushROM(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_
 	uint16_t sum = (uint16_t)a + bank_offset;
 	uint8_t out_a = (uint8_t)sum;
 	uint8_t out_f = (uint8_t)((out_a == 0u ? 0x80u : 0u)
-		| ((((uint8_t)(a & 0x0Fu) + bank_offset) > 0x0Fu) ? 0x20u : 0u)
+		| (((unsigned int)((uint8_t)(a & 0x0Fu) + bank_offset) > 0x0Fu) ? 0x20u : 0u)
 		| ((sum > 0xFFu) ? 0x10u : 0u));
 	uint16_t out_hl = (uint16_t)((hl & 0x3FFFu) | 0x4000u);
 	BankswitchROM(bank);

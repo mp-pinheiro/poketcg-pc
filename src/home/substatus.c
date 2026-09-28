@@ -18,8 +18,6 @@
 #include "home/menus.h"
 #include "home/print_text.h"
 #include "mem.h"
-#define DUELVARS_ARENA_CARD_HP 0xc8u
-#define PLAY_AREA_ARENA 0x00u
 #define ReceivesDamageDueToStrikesBackText 0x0105u
 
 #include "generated/wram.h"
@@ -43,11 +41,8 @@
 #include "home/coin_toss.h"
 #include "home/duel.h"
 #include "home/menus.h"
-#define DUELVARS_ARENA_CARD 0xbbu
 #define DUELVARS_ARENA_CARD_STAGE 0xceu
 #define HAUNTER_LV17 0x96u
-#define MEW_LV8 0xa0u
-#define NO_DAMAGE_OR_EFFECT_NSHIELD 0x05u
 #define NO_DAMAGE_OR_EFFECT_TRANSPARENCY 0x04u
 #define NoDamageOrEffectDueToNShieldText 0x010bu
 #define NoDamageOrEffectDueToTransparencyText 0x010cu
@@ -56,7 +51,6 @@
 #include "generated/wram.h"
 #include "home/coin_toss.h"
 #include "home/substatus.h"
-#define POKEMON_POWER 0x04u
 
 #include "generated/wram.h"
 #include "home/coin_toss.h"
@@ -794,13 +788,14 @@ HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult HandleDamageReductionO
 /* >>> factory HandleSandAttackOrSmokescreenSubstatus */
 HandleSandAttackOrSmokescreenSubstatusResult HandleSandAttackOrSmokescreenSubstatus(uint16_t de, uint16_t hl)
 {
+	(void)hl;
 	SandAttackCheckResult check = CheckSandAttackOrSmokescreenSubstatus(de);
 	if ((check.f & 0x10u) == 0u)
-		return (HandleSandAttackOrSmokescreenSubstatusResult){check.a, check.f, check.de, check.hl};
+		return (HandleSandAttackOrSmokescreenSubstatusResult){check.a, check.f, check.de, check.hl, 0u};
 	TossCoinRoutineResult toss = TossCoin(check.de, check.hl);
 	wGotHeadsFromSandAttackOrSmokescreenCheck = toss.a;
 	if ((toss.f & 0x10u) != 0u)
-		return (HandleSandAttackOrSmokescreenSubstatusResult){toss.a, (uint8_t)(toss.f & 0x80u), check.de, toss.hl};
+		return (HandleSandAttackOrSmokescreenSubstatusResult){toss.a, (uint8_t)(toss.f & 0x80u), check.de, toss.hl, 0u};
 	WaitResult wait = DrawWideTextBox_WaitForInput(AttackUnsuccessfulText);
 	return (HandleSandAttackOrSmokescreenSubstatusResult){wait.a, (uint8_t)((wait.f & 0x80u) | 0x10u),
 		(uint16_t)((uint16_t)wait.d << 8 | wait.e), wait.hl,

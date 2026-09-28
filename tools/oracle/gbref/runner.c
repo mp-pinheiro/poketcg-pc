@@ -353,7 +353,7 @@ static int apply_seed_spans(GBContext *ctx, char *spec) {
     }
     return 1;
 }
-static int apply_banked_spans(GBContext *ctx, char *spec, uint8_t *region,
+static int apply_banked_spans(char *spec, uint8_t *region,
                                size_t region_size, unsigned base, unsigned banks) {
     for (char *item = strtok(spec, ";"); item; item = strtok(NULL, ";")) {
         unsigned bank = 0;
@@ -495,7 +495,7 @@ int main(int argc, char **argv) {
     uint64_t instruction_budget = DEFAULT_INSTRUCTION_BUDGET;
     uint64_t cycle_budget = DEFAULT_CYCLE_BUDGET;
     uint64_t stop_pc = 0;
-    int stop_state = json_number(request, "stop_pc", &stop_pc);
+    json_number(request, "stop_pc", &stop_pc);
     char seed_wram[65536];
     char seed_sram[65536];
     char seed_vram[65536];
@@ -640,13 +640,13 @@ int main(int argc, char **argv) {
         fail("SCHEMA", "seed_wram must contain address=hex spans");
     }
     if (seed_sram_state == 1 &&
-        !apply_banked_spans(ctx, seed_sram, ctx->eram, ctx->eram_size, 0xa000, 4)) {
+        !apply_banked_spans(seed_sram, ctx->eram, ctx->eram_size, 0xa000, 4)) {
         gb_context_destroy(ctx);
         free(rom);
         fail("SCHEMA", "seed_sram must contain bank:address=hex spans");
     }
     if (seed_vram_state == 1 &&
-        !apply_banked_spans(ctx, seed_vram, ctx->vram, 2u * 0x2000u, 0x8000, 2)) {
+        !apply_banked_spans(seed_vram, ctx->vram, 2u * 0x2000u, 0x8000, 2)) {
         gb_context_destroy(ctx);
         free(rom);
         fail("SCHEMA", "seed_vram must contain bank:address=hex spans");

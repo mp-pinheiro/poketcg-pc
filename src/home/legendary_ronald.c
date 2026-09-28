@@ -35,6 +35,9 @@
 /* >>> factory AIDoTurn_LegendaryRonald */
 AIDoTurn_LegendaryRonaldResult AIDoTurn_LegendaryRonald(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)a;
+	(void)f;
+	(void)hl;
 	InitAITurnVars();
 	AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_01);
 	AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_02);

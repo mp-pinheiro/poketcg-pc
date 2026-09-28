@@ -1,4 +1,5 @@
 #include "home/retreat.h"
+#include "home/damage_calculation.h"
 
 #include "generated/wram.h"
 #include "mem.h"
@@ -462,7 +463,6 @@ active_cant_ko_1:
 		}
 	}
 
-check_resistance_1:
 	a = TranslateColorToWR(GetArenaCardColor());
 	b = a;
 	a = wAIPlayerResistance;
@@ -484,7 +484,6 @@ check_resistance_1:
 		}
 	}
 
-check_weakness_1:
 	b = wAIPlayerColor;
 	a = GetArenaCardWeakness();
 	if ((a & b) != 0u) {
@@ -505,13 +504,11 @@ check_weakness_1:
 		}
 	}
 
-check_resistance_2:
 	b = wAIPlayerColor;
 	a = GetArenaCardResistance();
 	if ((a & b) != 0u)
 		AIDiscourage(3u);
 
-check_weakness_2:
 	/* retreat.asm:137-167. The first bench card whose type is the player's
 	 * weakness scores 2 and ends the scan: a Porygon arena that can damage
 	 * adds 10 and skips .check_weakness_3, any other arena goes to it; a
@@ -568,7 +565,6 @@ check_resistance_3:
 		}
 	}
 
-check_ko_2:
 	v = GetTurnDuelistVariable(DUELVARS_BENCH);
 	hl = v.hl;
 	c = 0u;
@@ -650,7 +646,6 @@ check_defending_id:
 		}
 	}
 
-check_retreat_cost:
 	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
 	a = GetPlayAreaCardRetreatCost();
 	if (a == 2u)

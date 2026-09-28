@@ -18,7 +18,6 @@ CONTRACT = {
     },
 }
 
-SIG = b"\x04\x21\x05"
 
 CASES = {
     "ClearSRAMBank": [

@@ -301,6 +301,7 @@ static void adapt_Music2_f4015_2(ProbeState *s)
 /* >>> factory _SetupSound_2 */
 static void adapt__SetupSound_2(ProbeState *s)
 {
+	(void)s;
 	_SetupSound_2();
 }
 /* <<< factory _SetupSound_2 */
@@ -308,6 +309,7 @@ static void adapt__SetupSound_2(ProbeState *s)
 /* >>> factory SoundTimerHandler_2 */
 static void adapt_SoundTimerHandler_2(ProbeState *s)
 {
+	(void)s;
 	SoundTimerHandler_2();
 }
 /* <<< factory SoundTimerHandler_2 */

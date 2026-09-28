@@ -1,4 +1,9 @@
 #include "home/deck_selection.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#include "home/empty_screen.h"
+#include "home/objects.h"
+#include "home/switch_rom.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"

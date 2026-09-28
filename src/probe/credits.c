@@ -6,6 +6,7 @@
 /* >>> factory Func_1d758 */
 static void adapt_Func_1d758(ProbeState *s)
 {
+	(void)s;
 	Func_1d758();
 }
 /* <<< factory Func_1d758 */
@@ -20,6 +21,7 @@ static void adapt_Func_1d765(ProbeState *s)
 /* >>> factory Func_1d7ee */
 static void adapt_Func_1d7ee(ProbeState *s)
 {
+	(void)s;
 	Func_1d7ee();
 }
 /* <<< factory Func_1d7ee */

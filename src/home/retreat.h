@@ -24,7 +24,6 @@ typedef struct { uint8_t a; uint8_t f; uint8_t d; } AIDecideBenchPokemonToSwitch
 AIDecideBenchPokemonToSwitchToResult AIDecideBenchPokemonToSwitchTo(uint8_t d);
 /* <<< factory AIDecideBenchPokemonToSwitchTo */
 /* >>> factory AIDecideWhetherToRetreat */
-/* >>> factory AIDecideWhetherToRetreat */
 typedef struct { uint8_t a; uint8_t f; uint8_t d; } AIDecideWhetherToRetreatResult;
 AIDecideWhetherToRetreatResult AIDecideWhetherToRetreat(uint8_t d);
 /* <<< factory AIDecideWhetherToRetreat */

@@ -708,6 +708,7 @@ static void adapt_DrawYourOrOppPlayArea_DrawArrows(ProbeState *s)
 /* >>> factory DrawYourOrOppPlayArea_EraseArrows */
 static void adapt_DrawYourOrOppPlayArea_EraseArrows(ProbeState *s)
 {
+	(void)s;
 	DrawYourOrOppPlayArea_EraseArrows();
 }
 /* <<< factory DrawYourOrOppPlayArea_EraseArrows */
@@ -900,6 +901,7 @@ static void adapt_DrawInPlayArea_ActiveCardGfx(ProbeState *s)
 /* >>> factory DrawInPlayAreaScreen */
 static void adapt_DrawInPlayAreaScreen(ProbeState *s)
 {
+	(void)s;
 	DrawInPlayAreaScreen();
 }
 /* <<< factory DrawInPlayAreaScreen */
@@ -928,6 +930,7 @@ static void adapt_ProcessPlayedPokemonCard(ProbeState *s)
 /* >>> factory _SelectPrizeCards */
 static void adapt__SelectPrizeCards(ProbeState *s)
 {
+	(void)s;
 	_SelectPrizeCards();
 }
 /* <<< factory _SelectPrizeCards */
@@ -999,6 +1002,7 @@ static void adapt_OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile(ProbeState *
 /* >>> factory OpenYourOrOppPlayAreaScreen_NonTurnHolderHand */
 static void adapt_OpenYourOrOppPlayAreaScreen_NonTurnHolderHand(ProbeState *s)
 {
+	(void)s;
 	OpenYourOrOppPlayAreaScreen_NonTurnHolderHand();
 }
 /* <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderHand */

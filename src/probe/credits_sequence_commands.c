@@ -137,6 +137,7 @@ static void adapt_CreditsSequenceCmd_LoadBooster(ProbeState *s)
 /* >>> factory CreditsSequenceCmd_FadeOut */
 static void adapt_CreditsSequenceCmd_FadeOut(ProbeState *s)
 {
+	(void)s;
 	CreditsSequenceCmd_FadeOut();
 }
 /* <<< factory CreditsSequenceCmd_FadeOut */

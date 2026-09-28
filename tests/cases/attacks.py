@@ -66,7 +66,6 @@ wAIBarrierFlagCounter = 0xCDA7
 wAIExecuteProcessedAttack = 0xCDD9
 wAIPlusPowerAttack = 0xCDD6
 wAIRetreatScore = 0xCDB4
-wAITriedAttack = 0xCDDB
 wDamage = 0xCCB9
 wFirstAttackAIScore = 0xCDBF
 wPreviousAIFlags = 0xCE20

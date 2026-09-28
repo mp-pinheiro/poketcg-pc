@@ -11,6 +11,8 @@
 #include "generated/wram.h"
 #define ScienceClubLobbyAfterDuelTable 0x6b5eu
 #include "home/scripting.h"
+#include "home/random.h"
+#include "home/card_data.h"
 #define EVENT_TEMP_DUELED_IMAKUNI 0x03u
 #define EVENT_IMAKUNI_STATE 0x13u
 #define EVENT_IMAKUNI_ROOM 0x34u

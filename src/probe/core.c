@@ -166,6 +166,7 @@ static void adapt_LoadLoaded1CardGfx(ProbeState *s)
 /* >>> factory SetSGB3ToCardPalette */
 static void adapt_SetSGB3ToCardPalette(ProbeState *s)
 {
+	(void)s;
 	SetSGB3ToCardPalette();
 }
 /* <<< factory SetSGB3ToCardPalette */
@@ -369,6 +370,7 @@ static void adapt_OppAction_DrawCard(ProbeState *s)
 /* >>> factory PrintSortNumberInCardList_SetPointer */
 static void adapt_PrintSortNumberInCardList_SetPointer(ProbeState *s)
 {
+	(void)s;
 	PrintSortNumberInCardList_SetPointer();
 }
 /* <<< factory PrintSortNumberInCardList_SetPointer */
@@ -376,6 +378,7 @@ static void adapt_PrintSortNumberInCardList_SetPointer(ProbeState *s)
 /* >>> factory PrintSortNumberInCardList */
 static void adapt_PrintSortNumberInCardList(ProbeState *s)
 {
+	(void)s;
 	PrintSortNumberInCardList();
 }
 /* <<< factory PrintSortNumberInCardList */
@@ -961,12 +964,14 @@ static void adapt_DecideLinkDuelVariables(ProbeState *s)
 /* >>> factory DisplayAttackPage */
 static void adapt_DisplayAttackPage(ProbeState *s)
 {
+	(void)s;
 	DisplayAttackPage();
 }
 /* <<< factory DisplayAttackPage */
 /* >>> factory DisplayCardPage */
 static void adapt_DisplayCardPage(ProbeState *s)
 {
+	(void)s;
 	DisplayCardPage();
 }
 /* <<< factory DisplayCardPage */
@@ -979,18 +984,21 @@ static void adapt_DoPracticeDuelAction(ProbeState *s)
 /* >>> factory DrawDuelHorizontalSeparator */
 static void adapt_DrawDuelHorizontalSeparator(ProbeState *s)
 {
+	(void)s;
 	DrawDuelHorizontalSeparator();
 }
 /* <<< factory DrawDuelHorizontalSeparator */
 /* >>> factory MoveAllTurnHolderKnockedOutPokemonToDiscardPile */
 static void adapt_MoveAllTurnHolderKnockedOutPokemonToDiscardPile(ProbeState *s)
 {
+	(void)s;
 	MoveAllTurnHolderKnockedOutPokemonToDiscardPile();
 }
 /* <<< factory MoveAllTurnHolderKnockedOutPokemonToDiscardPile */
 /* >>> factory PrintSortNumberInCardList_CallFromPointer */
 static void adapt_PrintSortNumberInCardList_CallFromPointer(ProbeState *s)
 {
+	(void)s;
 	PrintSortNumberInCardList_CallFromPointer();
 }
 /* <<< factory PrintSortNumberInCardList_CallFromPointer */
@@ -1073,6 +1081,7 @@ static void adapt_ValidateSavedNonLinkDuelData(ProbeState *s)
 /* >>> factory SetupPlayAreaScreen */
 static void adapt_SetupPlayAreaScreen(ProbeState *s)
 {
+	(void)s;
 	SetupPlayAreaScreen();
 }
 /* <<< factory SetupPlayAreaScreen */
@@ -1160,6 +1169,7 @@ static void adapt_CheckPrintDoublePoisoned(ProbeState *s)
 /* >>> factory PrintPracticeDuelLetsPlayTheGame */
 static void adapt_PrintPracticeDuelLetsPlayTheGame(ProbeState *s)
 {
+	(void)s;
 	PrintPracticeDuelLetsPlayTheGame();
 }
 /* <<< factory PrintPracticeDuelLetsPlayTheGame */
@@ -1192,6 +1202,7 @@ static void adapt_PracticeDuelVerify_Turn7Or8(ProbeState *s)
 /* >>> factory SetDiscardPileScreenTexts */
 static void adapt_SetDiscardPileScreenTexts(ProbeState *s)
 {
+	(void)s;
 	SetDiscardPileScreenTexts();
 }
 /* <<< factory SetDiscardPileScreenTexts */
@@ -1539,6 +1550,7 @@ static void adapt_DrawDamageAnimationArrow(ProbeState *s)
 /* >>> factory DrawDamageAnimationWeak */
 static void adapt_DrawDamageAnimationWeak(ProbeState *s)
 {
+	(void)s;
 	DrawDamageAnimationWeak();
 }
 /* <<< factory DrawDamageAnimationWeak */
@@ -1546,6 +1558,7 @@ static void adapt_DrawDamageAnimationWeak(ProbeState *s)
 /* >>> factory DrawDamageAnimationResist */
 static void adapt_DrawDamageAnimationResist(ProbeState *s)
 {
+	(void)s;
 	DrawDamageAnimationResist();
 }
 /* <<< factory DrawDamageAnimationResist */
@@ -1553,6 +1566,7 @@ static void adapt_DrawDamageAnimationResist(ProbeState *s)
 /* >>> factory DrawDamageAnimationNumbers */
 static void adapt_DrawDamageAnimationNumbers(ProbeState *s)
 {
+	(void)s;
 	DrawDamageAnimationNumbers();
 }
 /* <<< factory DrawDamageAnimationNumbers */
@@ -1747,6 +1761,7 @@ static void adapt_PrintPlayAreaCardList_EnableLCD(ProbeState *s)
 /* >>> factory FlushAllPalettesOrSendPal23Packet */
 static void adapt_FlushAllPalettesOrSendPal23Packet(ProbeState *s)
 {
+	(void)s;
 	FlushAllPalettesOrSendPal23Packet();
 }
 /* <<< factory FlushAllPalettesOrSendPal23Packet */
@@ -2411,6 +2426,7 @@ static void adapt_PlayAttackAnimation_DealAttackDamageSimple(ProbeState *s)
 /* >>> factory DisplayOpponentUsedAttackScreen */
 static void adapt_DisplayOpponentUsedAttackScreen(ProbeState *s)
 {
+	(void)s;
 	DisplayOpponentUsedAttackScreen();
 }
 /* <<< factory DisplayOpponentUsedAttackScreen */
@@ -2644,6 +2660,7 @@ static void adapt_AISelectSpecialAttackParameters(ProbeState *s)
 /* >>> factory OppAction_EvolvePokemonCard */
 static void adapt_OppAction_EvolvePokemonCard(ProbeState *s)
 {
+	(void)s;
 	OppAction_EvolvePokemonCard();
 }
 /* <<< factory OppAction_EvolvePokemonCard */
@@ -2651,6 +2668,7 @@ static void adapt_OppAction_EvolvePokemonCard(ProbeState *s)
 /* >>> factory OppAction_PlayBasicPokemonCard */
 static void adapt_OppAction_PlayBasicPokemonCard(ProbeState *s)
 {
+	(void)s;
 	OppAction_PlayBasicPokemonCard();
 }
 /* <<< factory OppAction_PlayBasicPokemonCard */
@@ -2658,6 +2676,7 @@ static void adapt_OppAction_PlayBasicPokemonCard(ProbeState *s)
 /* >>> factory OppAction_PlayEnergyCard */
 static void adapt_OppAction_PlayEnergyCard(ProbeState *s)
 {
+	(void)s;
 	OppAction_PlayEnergyCard();
 }
 /* <<< factory OppAction_PlayEnergyCard */
@@ -2818,6 +2837,7 @@ static void adapt_SetLinkDuelTransmissionFrameFunction(ProbeState *s)
 /* >>> factory OpenNonTurnHolderPlayAreaScreen */
 static void adapt_OpenNonTurnHolderPlayAreaScreen(ProbeState *s)
 {
+	(void)s;
 	OpenNonTurnHolderPlayAreaScreen();
 }
 /* <<< factory OpenNonTurnHolderPlayAreaScreen */

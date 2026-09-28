@@ -1,4 +1,5 @@
 #include "home/challenge_machine.h"
+#include "home/clear_saved_duel.h"
 
 #include "generated/sram.h"
 #include "home/core.h"
@@ -38,9 +39,6 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #define TRUE_VALUE 0x01u
 #define WIN_CAP_HIGH 0x03u
 #define WIN_CAP_LOW 0xE7u
-
-/* wChallengeMachineOpponent is not exposed by generated/wram.h in this build. */
-#define wChallengeMachineOpponent_ADDR 0xD692u
 
 #include "generated/sram.h"
 #include "generated/wram.h"
@@ -462,6 +460,7 @@ ChallengeMachineDuelWonResult ChallengeMachine_DuelWon(void)
 /* >>> factory ChallengeMachine_GetOpponentNameAndDeck */
 ChallengeMachine_GetOpponentNameAndDeckResult ChallengeMachine_GetOpponentNameAndDeck(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
+	(void)hl;
 	uint8_t opponent = gb_read8(wChallengeMachineOpponent_ADDR);
 	uint16_t de = (uint16_t)opponent;
 	uint16_t table_hl = (uint16_t)(CHALLENGE_MACHINE_OPPONENT_DECK_IDS_ADDR_500 + de);
