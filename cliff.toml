@@ -31,6 +31,7 @@ require_conventional = false
 split_commits = false
 # Only derive versions from `v*` tags.
 tag_pattern = "v?[0-9].*"
+ignore_tags = "-nightly\\."
 
 [[git.commit_parsers]]
 message = "^chore\\(release\\)"
