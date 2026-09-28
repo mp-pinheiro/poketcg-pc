@@ -2,31 +2,44 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v1.1.0 - 2026-09-26
+## v1.2.0 - 2026-09-28
 
 ### Bug Fixes
 
-- *(options)* Make menu entry native
-- *(options)* Guard native menu dispatch
-- *(fonts)* Match small font to original height
-- *(options)* Justify page row label
+- *(effects)* Restore Poke Ball search texts
+- *(mem)* Wrap non-extension ROM bank writes
+- *(main-menu)* Stop probe _GameLoop at menu loop
+- *(animations)* Treat a null screen update as ret
+- *(deck)* Honor the deck build screen carry
+- *(core)* Stop comparing de after buffered anims
 
 ### CI/CD
 
-- *(release)* Mark nightlies prerelease
+- Run tooling tests in quality job
+- Ignore nightly tags in release versioning
 
 ### Documentation
 
-- Make 4x3 presentation canonical
+- *(grind)* Add two session symptom rows
 
 ### Features
 
-- *(presentation)* Add sgb frame mode
-- *(options)* Add host settings menu
-- *(options)* Render native menu screen
-- *(options)* Add alternate font choice
-- *(options)* Paginate and add SGB borders
-- *(options)* Split fonts and add SFX volume
-- *(options)* Gray header rows
-- *(options)* Pin page row, drop stereo
+- *(gate)* Add function gate to release gate
+- *(gift-center)* Send cards and decks over IR
+
+### Miscellaneous
+
+- Purge dead code and orphan files
+- *(completion)* Remove widescreen scenarios
+- Remove unused duel animation defines
+- Build warning-free and drop dead code
+
+### Refactor
+
+- *(completion)* Resolve wram offsets lazily
+- *(completion)* Break scenario import cycle
+
+### Tests
+
+- *(cases)* Remove gbref harness artefacts
 
