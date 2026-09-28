@@ -47,18 +47,6 @@ def atomic_write(path: Path, payload: str) -> None:
             os.unlink(temporary)
 
 
-def command_output(command: list[str]) -> str:
-    try:
-        result = subprocess.run(
-            command, cwd=ROOT, capture_output=True, text=True, timeout=15, check=False
-        )
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        raise GateError(f"cannot inspect revision: {exc}") from exc
-    if result.returncode or not result.stdout.strip():
-        raise GateError((result.stderr or result.stdout).strip() or "revision command failed")
-    return result.stdout.strip()
-
-
 def revision() -> str:
     return current_source_revision(ROOT)
 

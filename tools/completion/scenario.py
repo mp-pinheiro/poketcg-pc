@@ -245,10 +245,6 @@ def current_key() -> str:
     )
 
 
-def evidence_path(requirement: str) -> Path:
-    return EVIDENCE_DIR / f"{requirement}.json"
-
-
 def run_native(
     frames: int, state_path: Path, trace_path: Path, input_path: Path | None = None,
     save_path: Path | None = None, load_save_path: Path | None = None,

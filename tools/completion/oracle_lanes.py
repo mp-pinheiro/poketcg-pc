@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Independent lane serializers and health reporting."""
+"""Independent lane health reporting."""
 
 from __future__ import annotations
 
@@ -10,76 +10,6 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
-
-
-def serialize_gbrt(registers: dict[str, int], bus: list[dict[str, int]], state: dict[str, Any]) -> bytes:
-    return json.dumps({
-        "lane": "gbrt-native",
-        "registers": registers,
-        "bus": bus,
-        "state": state,
-    }, sort_keys=True, separators=(",", ":")).encode()
-
-
-def parse_gbrt(payload: bytes) -> dict[str, Any]:
-    value = json.loads(payload)
-    if value.get("lane") != "gbrt-native" or not isinstance(value.get("registers"), dict):
-        raise ValueError("invalid GBRT lane record")
-    return value
-
-
-def serialize_pyboy(registers: dict[str, int], domains: dict[str, bytes], io: bytes) -> bytes:
-    return json.dumps({
-        "lane": "pyboy",
-        "registers": registers,
-        "domains": {name: data.hex() for name, data in sorted(domains.items())},
-        "io": io.hex(),
-    }, sort_keys=True, separators=(",", ":")).encode()
-
-
-def parse_pyboy(payload: bytes) -> dict[str, Any]:
-    value = json.loads(payload)
-    if value.get("lane") != "pyboy" or not isinstance(value.get("domains"), dict):
-        raise ValueError("invalid PyBoy lane record")
-    return value
-
-
-def serialize_oracle_b(frames: int, state: dict[str, Any], save_state_sha256: str) -> bytes:
-    return json.dumps({
-        "lane": "oracle-b",
-        "frames": frames,
-        "state": state,
-        "save_state_sha256": save_state_sha256,
-    }, sort_keys=True, separators=(",", ":")).encode()
-
-
-def parse_oracle_b(payload: bytes) -> dict[str, Any]:
-    value = json.loads(payload)
-    if value.get("lane") != "oracle-b" or not isinstance(value.get("frames"), int):
-        raise ValueError("invalid Oracle-B lane record")
-    return value
-
-
-def serialize_gambatte(
-    domains: dict[str, bytes],
-    registers_before: dict[str, int],
-    registers_after: dict[str, int],
-    trace: list[dict[str, int]],
-) -> bytes:
-    return json.dumps({
-        "lane": "gambatte-headless",
-        "domains": {name: data.hex() for name, data in sorted(domains.items())},
-        "registers_before": registers_before,
-        "registers_after": registers_after,
-        "trace": trace,
-    }, sort_keys=True, separators=(",", ":")).encode()
-
-
-def parse_gambatte(payload: bytes) -> dict[str, Any]:
-    value = json.loads(payload)
-    if value.get("lane") != "gambatte-headless" or not isinstance(value.get("domains"), dict):
-        raise ValueError("invalid Gambatte lane record")
-    return value
 
 
 def _available(path: Path) -> bool:

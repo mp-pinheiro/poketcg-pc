@@ -67,10 +67,6 @@ MAX_FRAMES = 240  # a home-bank leaf that has not returned by now never will
 # watchdog thread covers the case the loop cannot see, a single frame that
 # never returns; it runs precisely because `nogil` released the GIL, and it
 # hard-exits rather than raising, because there is no thread left to raise on.
-#
-# The budget is per allotted frame (measured cost is ~10 ms/frame, so 0.25 s is
-# 25x headroom) with a floor for short cases, and stays under the 1800 s cap
-# `tools/factory/common.py:run_bounded` puts on the whole diff command.
 WALL_FLOOR = float(os.environ.get("POKETCG_ORACLE_WALL_FLOOR", "120"))
 WALL_PER_FRAME = 0.25
 WATCHDOG_GRACE = 30.0

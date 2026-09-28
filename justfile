@@ -93,25 +93,6 @@ oracle-venv:
     uv python install 3.12.3
     uv sync --project tools/oracle --python 3.12.3 --frozen --reinstall-package pyboy
 
-
-
-oracle-venv-release: oracle-venv
-    #!/usr/bin/env bash
-    set -euo pipefail
-    tarball=/tmp/pyboy-prebuilt.tar.zst
-    sitepkg=tools/oracle/.venv/lib/python3.12/site-packages
-    echo "packing pyboy → $tarball ..."
-    tar -caf "$tarball" -C "$sitepkg" pyboy
-    echo "uploading to GitHub release oracle-venv ..."
-    if gh release view oracle-venv &>/dev/null; then
-        gh release upload oracle-venv "$tarball" --clobber
-    else
-        gh release create oracle-venv "$tarball" \
-            --title "Pre-built PyBoy" \
-            --notes "Compiled PyBoy extension for Copilot setup." \
-            --prerelease
-    fi
-    echo "done"
 # Validate the installed PyBoy execution path before replacing it.
 oracle-health-pyboy:
     uv run --project tools/oracle --frozen --python 3.12.3 python tools/oracle/pyboy_health.py
@@ -179,11 +160,6 @@ build-incremental:
     }
     ninja -C "{{build_dir}}"
 
-# Serialize landings: `just land-lock <command...>` runs it under .locks/land.lock.
-land-lock *CMD:
-    mkdir -p .locks
-    flock .locks/land.lock {{CMD}}
-
 oracle-warm FN: build-incremental
     #!/usr/bin/env bash
     set -euo pipefail
@@ -222,8 +198,7 @@ oracle-fn FN CASE INDEX="0": oracle-build-gbref build-barrier
     python3 tools/oracle/gbref/compare_one.py --fn {{FN}} --index {{INDEX}} --case {{CASE}} --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
 # Fixed GBRT primary inventory barrier.
 oracle-fn-all: oracle-build-gbref build-barrier lint-adapters
-    mkdir -p .factory/runtime/checks/function-gate
-    python3 tools/oracle/fn_all.py --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)" --report .factory/runtime/checks/function-gate/functions.json
+    python3 tools/oracle/fn_all.py --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
 # Primary function gate: GBRT health, adapters, schema, and inventory.
 oracle-fn-gate: oracle-health-gbref oracle-fn-all
     python3 tools/audit_oracle_cases.py --stage routine

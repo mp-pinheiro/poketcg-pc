@@ -23,7 +23,6 @@
 #define ANIMATIONS_ADDR 0x4E32u
 #define ANIM_ENTRY_SIZE 6u
 #define SPRITE_UNSKIPPABLE 0x80u
-#define SPRITE_CENTERED 0x04u
 #define SPRITE_X_FLIP 0x01u
 #define SPRITE_Y_FLIP 0x02u
 #define SPRITE_X_INVERTED 0x10u
@@ -31,20 +30,6 @@
 
 static uint8_t read(uint16_t addr) { return gb_read8(addr); }
 static void write(uint16_t addr, uint8_t value) { gb_write8(addr, value); }
-
-static uint8_t coord_index(void)
-{
-    uint8_t flags = read(wAnimFlags_ADDR);
-    if (flags & SPRITE_CENTERED)
-        return 0;
-    uint8_t c = (uint8_t)(read(wDuelAnimationScreen_ADDR) * 12u);
-    if (read(wDuelAnimDuelistSide_ADDR) != (uint8_t)(wPlayerDuelVariables_ADDR >> 8))
-        c = (uint8_t)(c + 6u);
-    return (uint8_t)(c + read(wDuelAnimLocationParam_ADDR));
-}
-
-
-
 
 void _ResetAnimationQueue(void)
 {

@@ -16,10 +16,7 @@ architecture, or a technical diagnostic reference for hand-porting.
 | `vision.md` | Normative architecture and release destination. |
 | `phase1-transform.md` | Hardware-transform record. |
 
-Machine-readable state wins over prose: `site/data/coverage.json`,
-`site/data/progress.json`, `site/data/gate.json`, `tools/progress/scope.toml`,
-and `.factory/workflow.sqlite3`. Forgejo is an idempotent projection, not a
-scheduler or evidence source.
+Machine-readable state wins over prose: `site/data/coverage.json`, `site/data/progress.json`, `site/data/gate.json`, and `tools/progress/scope.toml`. Forgejo is an idempotent projection, not a scheduler or evidence source.
 
 The Forgejo issues are a projection of the loop's measured facts - session
 divergences, sweep rows, composition audits - kept by `just issues-sync`

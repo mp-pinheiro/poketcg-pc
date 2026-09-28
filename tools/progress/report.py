@@ -17,7 +17,6 @@ import tempfile
 import time
 import tomllib
 import importlib.util
-import sqlite3
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
@@ -66,33 +65,6 @@ def canonical_work_id(source: str, name: str) -> str:
     if not source or not name:
         raise ValueError("a routine needs a source path and symbol")
     return f"port:v1:{source}:{name}"
-
-
-# Mirrors tools/oracle/fn_all.py's GATE_INPUT_PATHS; both sides must name the
-# same tracked paths in the same order or the gate reads as untrusted.
-GATE_INPUT_PATHS = ("src", "tests", "tools/oracle", "CMakeLists.txt")
-
-
-def gate_input_trees() -> dict[str, str] | None:
-    """Map every measured gate input to its git tree id at the revision under test.
-
-    Identity travels inside the commit, so a landing keeps its trust when CI
-    re-parents it onto a release commit: the trees are byte-identical while the
-    commit id the gate ran at no longer exists in the published history. In CI
-    HEAD is the commit under test; in the colocated jj checkout HEAD is @-,
-    which is the revision tools/oracle/fn_all.py recorded.
-    """
-    try:
-        result = subprocess.run(
-            ["git", "rev-parse", *(f"HEAD:{path}" for path in GATE_INPUT_PATHS)],
-            cwd=ROOT, capture_output=True, text=True, timeout=30,
-        )
-    except (OSError, subprocess.TimeoutExpired):
-        return None
-    ids = result.stdout.split()
-    if result.returncode != 0 or len(ids) != len(GATE_INPUT_PATHS):
-        return None
-    return dict(zip(GATE_INPUT_PATHS, ids))
 
 
 def gate_is_trusted(gate_data: dict | None) -> bool:
@@ -348,16 +320,6 @@ def workflow_axes(completion: dict | None, functions: list[dict]) -> dict:
     mapping = _read_json(ROOT / "build" / "completion" / "routine-mapping.json", {})
     coverage = _read_json(ROOT / "site" / "data" / "coverage.json", {})
     ratchet = _read_json(ROOT / "tools" / "completion" / "session_ratchet.json", {})
-    pending_publication = 0
-    journal = ROOT / ".factory" / "workflow.sqlite3"
-    if journal.is_file():
-        try:
-            with sqlite3.connect(f"file:{journal}?mode=ro", uri=True) as database:
-                pending_publication = int(database.execute(
-                    "SELECT COUNT(*) FROM publications WHERE phase != 'published'"
-                ).fetchone()[0])
-        except sqlite3.Error:
-            pending_publication = -1
     requirements = (completion or {}).get("counts", {}).get("requirements", {})
     milestones = (completion or {}).get("counts", {}).get("milestone_gates", {})
     routines = coverage.get("routines", {}) if isinstance(coverage, dict) else {}
@@ -392,7 +354,6 @@ def workflow_axes(completion: dict | None, functions: list[dict]) -> dict:
         },
         "requirements": requirements,
         "milestones": milestones,
-        "pending_publication": pending_publication,
         "final_release": gate_is_trusted(load_gate()),
     }
 
