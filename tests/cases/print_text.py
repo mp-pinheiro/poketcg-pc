@@ -288,7 +288,7 @@ CASES.update({
                   0xCD0F: b"\x05", 0xCD10: b"\x04", 0xCD16: b"\x22"},
          "read": {0xCE4B: 1, 0xCE4C: 2, 0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
          "vread": {0: {0x9980: 1}}},
-        dict(scroll_label_fixture(vram=False), **SCROLL_LABEL_REGS, keys=[0x00, 0x01]),
+        dict(scroll_label_fixture(vram=False, **{"CAD3": b"\x00\x00"}), **SCROLL_LABEL_REGS, keys=[0x00, 0x01]),
     ],
 })
 # GenerateTextTile's product is the tile itself, copied into VRAM. Without a vread

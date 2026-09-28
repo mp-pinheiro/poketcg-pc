@@ -7669,8 +7669,8 @@ CASES["SolarPower_RemoveStatusEffect"] = [{"a":0x00,"f":0x00,"b":0x00,"c":0x00,"
 CONTRACT["Prophecy_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["Prophecy_PlayerSelectEffect"] = [
     {"keys": [0x0, 0x20, 0x0, 0x1], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xCBD0: b"\x00", 0xCD9A: b"\x01", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC3BA: b"\x3B", 0xC3B9: b"\x01", 0xC401: b"\x08"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 80000000, "cycle_budget": 320000000},
-    {"keys": [0x00, 0x10, 0x01], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xCBD0: b"\x00", 0xCD9A: b"\x01", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC3BA: b"\x3B", 0xC3B9: b"\x01", 0xC401: b"\x08"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 80000000, "cycle_budget": 320000000},
-    dict(POISON, keys=[0x00, 0x10, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xCBD0: b"\x00", 0xCD9A: b"\x01", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC3BA: b"\x3B", 0xC3B9: b"\x01", 0xC401: b"\x08"}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=80000000, cycle_budget=320000000)
+    {"keys": [0x00, 0x10, 0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xCBD0: b"\x00", 0xCD9A: b"\x01", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC3BA: b"\x3B", 0xC3B9: b"\x01", 0xC401: b"\x08"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 80000000, "cycle_budget": 320000000},
+    dict(POISON, keys=[0x00, 0x10, 0x00, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xCBD0: b"\x00", 0xCD9A: b"\x01", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC3BA: b"\x3B", 0xC3B9: b"\x01", 0xC401: b"\x08"}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=80000000, cycle_budget=320000000)
 ]
 # <<< factory Prophecy_PlayerSelectEffect
 

@@ -401,14 +401,14 @@ CASES["CardListMenuFunction"] = [
     # is shown with the cursor at 6 - 5 = 1, not at 6. menus.asm:530-546 RIGHT
     # onto the last page from scroll 0, cursor 0: scroll becomes 2 and the
     # cursor 0 - 2 + 5 = 3.
-    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x04", wNumMenuItems: b"\x05", wListScrollOffset: b"\x02", wNumListItems: b"\x07", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x01", 0xFF8F: b"\x20"}, read={hCurMenuItem: 1, wCurMenuItem: 1, wListScrollOffset: 1}),
-    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x00", wNumMenuItems: b"\x05", wListScrollOffset: b"\x00", wNumListItems: b"\x07", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x01", 0xFF8F: b"\x10"}, read={hCurMenuItem: 1, wCurMenuItem: 1, wListScrollOffset: 1}),
+    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x04", wNumMenuItems: b"\x05", wListScrollOffset: b"\x02", wNumListItems: b"\x07", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x01", 0xFF8F: b"\x20"}, read={hCurMenuItem: 1, wCurMenuItem: 1, wListScrollOffset: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x00", wNumMenuItems: b"\x05", wListScrollOffset: b"\x00", wNumListItems: b"\x07", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x01", 0xFF8F: b"\x10"}, read={hCurMenuItem: 1, wCurMenuItem: 1, wListScrollOffset: 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory CardListMenuFunction
 
 # >>> factory HandleMenuInput
 CONTRACT["HandleMenuInput"] = {"compare": ("a", "e", "f"), "preserve": ()}
-_PLAY_AREA_B = _play_area_b_fixture(bank=1)
+_PLAY_AREA_B = _play_area_b_fixture(vram=False, bank=1)
 _PLAY_AREA_B["wram"] = {**_PLAY_AREA_B["wram"], 0xFF8F: b"\x02", 0xFF90: b"\x02", 0xFF91: b"\x02"}
 _PLAY_AREA_B["read"] = {**_PLAY_AREA_B["read"], 0xFF92: 1, 0xCD10: 1}
 CASES["HandleMenuInput"] = [

@@ -1,6 +1,6 @@
 from tests.cases._duel_setup import (
-    DUEL_CYCLE_BUDGET, DUEL_INSTRUCTION_BUDGET, DUEL_KEYS, DUEL_SETUP,
-    DUEL_WRAM)
+    DUEL_CYCLE_BUDGET, DUEL_ENTRY_SP, DUEL_INSTRUCTION_BUDGET, DUEL_KEYS,
+    DUEL_SETUP, DUEL_WRAM)
 from tests.cases._fixtures import Fixture
 AI01_PLAY_DEFAULT = Fixture("ai-duel-01-playdefaultsong-entry")
 
@@ -243,7 +243,7 @@ CASES["OverworldDoFrameFunction"] = [
 # >>> factory GameEvent_Duel
 CONTRACT["GameEvent_Duel"] = {"compare": (), "preserve": ()}
 CASES["GameEvent_Duel"] = [
-    {"keys": list(DUEL_KEYS),
+    {"keys": list(DUEL_KEYS), "entry_sp": DUEL_ENTRY_SP,
      "wram": {**DUEL_WRAM, 0xCC19: b"\x01", 0xD0C2: b"\x00", 0xD112: b"\xAA"},
      "setup": DUEL_SETUP,
      "sram": {0: {0xBA44: b"\xAA", 0xB700: b"\x00", 0xA218: b"\x08" * 60}},
@@ -251,7 +251,7 @@ CASES["GameEvent_Duel"] = [
      "sread": {0: {0xBA44: 1}},
      "instruction_budget": DUEL_INSTRUCTION_BUDGET,
      "cycle_budget": DUEL_CYCLE_BUDGET},
-    dict(POISON, keys=list(DUEL_KEYS),
+    dict(POISON, keys=list(DUEL_KEYS), entry_sp=DUEL_ENTRY_SP,
          wram={**DUEL_WRAM, 0xCC19: b"\x01", 0xD0C2: b"\x00", 0xD112: b"\xAA"},
          setup=DUEL_SETUP,
          sram={0: {0xBA44: b"\xAA", 0xB700: b"\x00", 0xA218: b"\x08" * 60}},

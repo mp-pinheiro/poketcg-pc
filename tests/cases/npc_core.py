@@ -100,7 +100,7 @@ CASES["StartNPCMovement"] = [
 	dict(POISON, b=0xC1, c=0x00, wram={SCRATCH: b"\x01"}, read={SCRATCH: 1}),  # proves hl preserved, bc unchanged
 	dict(POISON, b=0xC1, c=0x02, wram={0xC102: b"\x81\x05"}, read={0xC102: 2}),  # preservation through rotation path
 	dict(POISON, b=0xC1, c=0x00, wram={SCRATCH: b"\xff"}, read={SCRATCH: 1}),  # preservation through stop path,
-    dict(_npc_start_fixture(bank=7), **_NPC_START_REGS),
+    dict(_npc_start_fixture(vram=False, bank=7), **_NPC_START_REGS),
 ]
 # <<< factory StartNPCMovement
 

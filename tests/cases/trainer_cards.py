@@ -150,7 +150,7 @@ CASES["AIDecide_Bill"] = [
     dict(POISON, wram={0xC3BA: b"\x03"}),
     dict(POISON, wram={0xC3BA: b"\x32"}),
     dict(POISON, wram={0xC3BA: b"\x33"}),
-    dict(_ai_bill_fixture(bank=8), **_AI_BILL_REGS),
+    dict(_ai_bill_fixture(vram=False, bank=8), **_AI_BILL_REGS),
 ]
 # <<< factory AIDecide_Bill
 
@@ -1276,10 +1276,12 @@ CASES["AIPlay_MrFuji"] = [
 
 # >>> factory AIDecide_ProfessorOak
 CONTRACT["AIDecide_ProfessorOak"] = {"compare": ("a", "f", "d"), "preserve": ()}
+_PROFESSOR_OAK = _professor_oak_fixture()
+_PROFESSOR_OAK["wram"] = {**_PROFESSOR_OAK["wram"], 0xFF40: b"\x00"}
 CASES["AIDecide_ProfessorOak"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x36"}},
     dict(POISON, wram={0xFF97: b"\xC2", 0xC2BA: b"\x36"}),
-    dict(_professor_oak_fixture(vram=False), **_PROFESSOR_OAK_REGS),
+    dict(_PROFESSOR_OAK, **_PROFESSOR_OAK_REGS),
 ]
 # <<< factory AIDecide_ProfessorOak
 

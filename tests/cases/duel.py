@@ -1732,7 +1732,7 @@ CONTRACT["_SelectPrizeCards"] = {"compare": (), "preserve": ()}
 # only the terminator and mask are written.
 CASES["_SelectPrizeCards"] = [
     dict(_attack_fixture(**{"CE59": b"\x01"}), read={0xC200: 0x200, 0xCC00: 0x100, 0xCE52: 1, 0xCE5A: 2, 0xFFA0: 3}, **_ATTACK_REGS),
-    dict(_attack_fixture(**{"CE59": b"\x00"}), read={0xC200: 0x200, 0xCE52: 1, 0xCE5A: 2, 0xFFA0: 3}, **POISON),
+    dict(_attack_fixture(vram=False, **{"CE59": b"\x00"}), read={0xC200: 0x200, 0xCE52: 1, 0xCE5A: 2, 0xFFA0: 3}, **POISON),
 ]
 # <<< factory _SelectPrizeCards
 

@@ -90,7 +90,7 @@ CASES["AIDoAction"] = [
     dict(_attack_fixture(**{"FF97": b"\xc3"}), a=0x01, read={0xC200: 0x200, 0xCC00: 0x100}),
     dict(_attack_fixture(**{"FF97": b"\xc3"}), a=0x04, read={0xC200: 0x200, 0xFF9D: 4}),
     dict(_attack_fixture(**{"FF97": b"\xc3"}), a=0x05, read={0xC200: 0x200, 0xFFA0: 2}),
-    dict(_attack_fixture(**{"FF97": b"\xc3", "CC0E": b"\x01"}), read={0xC200: 0x200, 0xFF9D: 4}, **dict(POISON, a=0x03)),
+    dict(_attack_fixture(vram=False, **{"FF97": b"\xc3", "CC0E": b"\x01"}), read={0xC200: 0x200, 0xFF9D: 4}, **dict(POISON, a=0x03)),
 ]
 # <<< factory AIDoAction
 

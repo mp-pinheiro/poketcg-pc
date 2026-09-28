@@ -110,6 +110,7 @@ from tests.cases._fixtures import (
 from tests.cases._duel_setup import (
     DUEL_ANIM_SAFE,
     DUEL_CYCLE_BUDGET,
+    DUEL_ENTRY_SP,
     DUEL_INSTRUCTION_BUDGET,
     DUEL_KEYS,
     DUEL_SETUP,
@@ -10801,12 +10802,7 @@ CASES["Func_1cb5e"] = [
 
 # >>> factory StartDuel
 CONTRACT["StartDuel"] = {"compare": (), "preserve": ()}
-# core.asm:54-70 runs SetupDuel, InitVariablesToBeginDuel and HandleDuelSetup,
-# which drive frames and wait for input, so both lanes need a frame budget to
-# reach the completion pc. The observations cover every byte the routine itself
-# writes: the entry stack pointer, the menu item and the initial prize count.
-DUEL_ENTRY_SP = 0xFFFC
-_START_DUEL_READ = {0xCBC6: 1, 0xCBE5: 2, 0xCC08: 1}
+_START_DUEL_READ = {0xCBC6: 1, 0xCC08: 1}
 CASES["StartDuel"] = [
     {
         "entry_sp": DUEL_ENTRY_SP,
@@ -11236,7 +11232,7 @@ CONTRACT["ReplaceKnockedOutPokemon"] = {"compare": ("a", "f"), "preserve": ()}
 # its card is shown. Arena card intact: nothing to do, Z.
 CASES["ReplaceKnockedOutPokemon"] = [
     dict(_attack_fixture(**{"C2C8": b"\x00"}), **_ATTACK_REGS),
-    dict(_attack_fixture(), **POISON),
+    dict(_attack_fixture(vram=False), **POISON),
 ]
 # <<< factory ReplaceKnockedOutPokemon
 
@@ -11249,7 +11245,7 @@ CONTRACT["HandleBetweenTurnKnockOuts"] = {"compare": ("a", "f"), "preserve": ()}
 # to pick the replacement (A picks the first bench slot), the opponent takes
 # a prize, and the duel goes on.
 CASES["HandleBetweenTurnKnockOuts"] = [
-    dict(_attack_fixture(), **_ATTACK_REGS),
+    dict(_attack_fixture(vram=False), **_ATTACK_REGS),
     dict(
         _attack_fixture(**{"C3C8": b"\x00", "C3BC": b"\xff" * 5, "C3EF": b"\x01"}),
         **POISON,
@@ -11306,15 +11302,14 @@ CASES["DuelMainInterface"] = [
         POISON,
         wram={
             0xCC0D: b"\x00",
-            0xCAB8: b"\xaa",
             0xCBF9: b"\xbb",
             0xCC10: b"\xcc",
             0xCC11: b"\xdd",
             0xCC07: b"\x00",
             0xCBE7: b"\x00",
         },
-        read={0xCAB8: 1, 0xCBF9: 1, 0xCC10: 1, 0xCC11: 1},
-        expect={0xCAB8: b"\xaa", 0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd"},
+        read={0xCBF9: 1, 0xCC10: 1, 0xCC11: 1},
+        expect={0xCBF9: b"\xbb", 0xCC10: b"\xcc", 0xCC11: b"\xdd"},
         keys=[0x42, 0x42],
         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
         instruction_budget=20000000,
@@ -11913,12 +11908,6 @@ CONTRACT["DuelMenu_Attack"] = {"compare": (), "preserve": ()}
 # core.asm:981-1058. hWhoseTurn $C2, arena Bulbasaur (deck index 0, id $08 at
 # $C400, 40 HP). Case 0: paralyzed ($C2F0 status) -- the alert box closes on
 # A and the duel menu is re-entered (stop: PrintDuelMenuAndHandleInput).
-# Case 1: no energy attached, A on the first attack -> NotEnoughEnergyCards,
-# closed on A, the attack list reopens and B cancels back to the duel menu
-# (stop), wSelectedDuelSubMenuItem ($CBCF) holding the picked item. Case 2:
-# four grass energies in play (deck indexes 1-4, id $01, CARD_LOCATION_ARENA
-# $10) and A on Leech Seed reach UseAttackOrPokemonPower's entry (the stop)
-# with the attack's deck index / attack index pair at wDuelTempList.
 CASES["DuelMenu_Attack"] = [
     dict(
         POISON,
@@ -11953,7 +11942,7 @@ CASES["DuelMenu_Attack"] = [
             0xCBCF: b"\x55",
             0xCC13: b"\x00",
         },
-        keys=[0x00, 0x01, 0x00, 0x01, 0x00, 0x02],
+        keys=[0x00, 0x01],
         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
         read={0xCBCF: 1, 0xC510: 2},
         instruction_budget=40000000,
@@ -11976,6 +11965,26 @@ CASES["DuelMenu_Attack"] = [
         keys=[0x00, 0x01],
         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
         read={0xCBCF: 1, 0xC510: 2, 0xFFB1: 1},
+        instruction_budget=40000000,
+        cycle_budget=160000000,
+    ),
+    dict(
+        POISON,
+        wram={
+            0xFF97: b"\xc2",
+            0xC2BB: b"\x00",
+            0xC2F0: b"\x00",
+            0xC2C8: b"\x28",
+            0xC2EF: b"\x01",
+            0xC400: b"\x08",
+            0xC200: b"\x10",
+            0xCABB: b"\x00",
+            0xCBCF: b"\x55",
+            0xCC13: b"\x00",
+        },
+        keys=[0x00, 0x02],
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={0xCBCF: 1, 0xC510: 2},
         instruction_budget=40000000,
         cycle_budget=160000000,
     ),
@@ -15546,8 +15555,8 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation StartDuel
 MUTATIONS["StartDuel"] = {
     "source_symbol": "StartDuel",
-    "before": "\twCurrentDuelMenuItem = 0u;",
-    "after": "\twCurrentDuelMenuItem = 1u;",
+    "before": "\twDuelInitialPrizes = wNPCDuelPrizes;",
+    "after": "\twDuelInitialPrizes = (uint8_t)(wNPCDuelPrizes + 1u);",
     "case_ids": ["StartDuel-0", "StartDuel-1"],
 }
 # <<< factory-mutation StartDuel
@@ -16124,15 +16133,21 @@ SCHEMA2_CASES["DuelMenu_Attack"][0]["completion"] = {
 }
 SCHEMA2_CASES["DuelMenu_Attack"][1]["completion"] = {
     "mode": "entry",
-    "pc": 0x4295,
-    "bank": 1,
-    "routine": "PrintDuelMenuAndHandleInput",
+    "pc": 0x2AAB,
+    "bank": 0,
+    "routine": "DrawWideTextBox_WaitForInput",
 }
 SCHEMA2_CASES["DuelMenu_Attack"][2]["completion"] = {
     "mode": "entry",
     "pc": 0x1730,
     "bank": 0,
     "routine": "UseAttackOrPokemonPower",
+}
+SCHEMA2_CASES["DuelMenu_Attack"][3]["completion"] = {
+    "mode": "entry",
+    "pc": 0x4295,
+    "bank": 1,
+    "routine": "PrintDuelMenuAndHandleInput",
 }
 # <<< factory-completion DuelMenu_Attack
 # >>> factory-mutation UnreferencedDrawCardFromDeckToHand

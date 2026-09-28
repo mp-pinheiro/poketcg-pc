@@ -2176,14 +2176,11 @@ suspect — read the mismatch and classify:
 |---|---|---|
 | `0xCAB8` (wVBlankCounter), `0xCD0F`, `0xCEA3` | frame counters the two lanes service differently, already listed in `tests/cases/_fixtures.py` `_HOLES` | stop seeding it in the case; a fixture never seeds it either |
 | the case's own seed, unchanged in native | the probe stopped before the reference did | check the case's completion record; an `entry` stop and a frame cap are two terminators and the cap can truncate the run |
-| a live game byte on a link/serial path | gbref and PyBoy model serial differently | leave the canary declared and unproven, and say so |
+| an HRAM byte such as `0xFF97` (`hWhoseTurn`) | the case entered with `sp` in HRAM (`entry_sp` `0xFFFC`, or the runner's `$FFFE` default) and the reference's call chain grew down into the bytes it compares | set `entry_sp` to `0xDCBE` (decision table above); the duel-entry cases take it from `DUEL_ENTRY_SP` in `tests/cases/_duel_setup.py` |
+| `wLoadedCard1` tail bytes `$FF` on the reference only, after a trainer card at the end of the card bank | the 65-byte copy ran past `$7FFF` into VRAM while the PPU was in mode 3 (the `LoadCardDataToHL_FromCardID` row above) | seed rLCDC off (`0xFF40: b"\x00"` in the case's `wram`) and keep VRAM seeded, so both lanes read the tile bytes |
+| `BUDGET_EXHAUSTED` in a menu or text wait, or frame-driven bytes one `DoFrame` apart, on a multi-press `keys` timeline | the gbref runner advances `keys` once per rendered frame, PyBoy once per tick (several DoFrames) and the probe once per poll, so a lag frame changes which entry a wait sees | when only frame-driven bytes differ (the RNG and sprite counters `OverworldDoFrameFunction` advances), seed `wDoFrameFunction` (`CAD3`) to `$0000` so the extra wait frames change nothing; when the presses steer the flow, separate them with releases (`0x00`) or stop at the first wait (an `entry` stop needs a `tests/hatches.py` entry). A timeline that passes one reference can fail the other, so run `just oracle-fn` and `just oracle-diff` on the routine |
 
-Worked example of the last row: `StartDuel_VSLinkOpp` case 0 seeds `hWhoseTurn`
-(`0xFF97`), so it is compared. gbref leaves `0x01` there; PyBoy and the native
-port both leave `0xC2`, and `just oracle-diff StartDuel_VSLinkOpp` passes. Two
-references disagreeing on one ROM is a lane defect, so the honest disposition is
-to record it here rather than delete the seed and weaken a real case. It is the
-one canary of 2529 that is declared, anchored and unproven.
+Worked example of the HRAM row: `StartDuel_VSLinkOpp` case 0 seeds `hWhoseTurn` (`0xFF97`) and entered at `$FFFC`. gbref left `0x01` there while PyBoy and the port left `0xC2`, and this page recorded it as a serial-path lane defect with the canary unproven. The byte was the reference's own stack: with the entry stack in the reserved window every seeded byte agrees. The port stores a fixed `wDuelReturnAddress` because it has no Game Boy stack (`tools/completion/scenario.py` excludes that word from sessions), so the duel-entry cases no longer compare it.
 
 ## What the audit still cannot see
 

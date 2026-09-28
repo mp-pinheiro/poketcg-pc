@@ -1082,7 +1082,7 @@ CASES["OpenPauseMenu"] = [
 
 # >>> factory HandlePlayerMoveMode
 CONTRACT["HandlePlayerMoveMode"] = {"compare": (), "preserve": ()}
-_MOVE_STEP = _move_step_fixture(bank=3)
+_MOVE_STEP = _move_step_fixture(vram=False, bank=3)
 _MOVE_STEP["wram"] = {**_MOVE_STEP["wram"], 0xFF8F: b"\x00", 0xFF90: b"\x80", 0xFF91: b"\x00"}
 _MOVE_STEP["read"] = {**_MOVE_STEP["read"], 0xD335: 1, 0xD338: 1, 0xD4DE: 2}
 CASES["HandlePlayerMoveMode"] = [
