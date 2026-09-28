@@ -793,6 +793,11 @@ uint8_t gb_read8(uint16_t addr)
 	return *gb_ptr(addr);
 }
 
+static int rom_extension_bank(uint8_t bank)
+{
+	return g_product_mode && bank >= ROM_FONT_BANK_BASE && rom_byte_available(bank, 0x4000u);
+}
+
 /* MBC5 register decode, mirroring PyBoy's MBC5.setitem exactly (PyBoy is the oracle).
  * RAMG is an exact byte compare, not a low-nibble mask: PyBoy checks the whole byte.
  * $3000-$3FFF (the ROM bank's 9th bit) and $6000-$7FFF are no-ops on this cart: it has
@@ -802,7 +807,7 @@ void mbc5_write(uint16_t addr, uint8_t v)
 	if (addr < 0x2000)
 		g_sram_enabled = (v == 0x0A);
 	else if (addr < 0x3000)
-		g_rom_bank = v;
+		g_rom_bank = rom_extension_bank(v) ? v : (uint8_t)(v % 64u);
 	else if (addr >= 0x4000 && addr < 0x6000)
 		g_sram_bank = (v & 0x0F) % 4;
 }
