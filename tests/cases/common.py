@@ -605,18 +605,18 @@ CASES["DoCardPop"] = [
 # <<< factory DoCardPop
 
 # >>> factory SendCard
-CONTRACT["SendCard"] = {"compare": (), "preserve": ()}
+CONTRACT["SendCard"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["SendCard"] = [
-    {"oracle": False, "evidence": "primary", "why": "The wrapper is bounded immediately before entering the external infrared sender; the pre-call music state is preserved and asserted.", "wram": {wCurSongID: b"\xff"}, "read": {wCurSongID: 1}, "expect": {wCurSongID: b"\xff"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="The wrapper is bounded immediately before entering the external infrared sender with poisoned registers; the pre-call music state is preserved and asserted.", wram={wCurSongID: b"\xff"}, read={wCurSongID: 1}, expect={wCurSongID: b"\xff"}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically cancels the send with B, reaches the retry screen and returns through its no-retry carry exit; the own communication parameter block and the card-pop song are observed.", "keys": [0x02, 0x00, 0x01, 0x00, 0x10, 0x00, 0x01], "entry_sp": 0xDCBE, "wram": {0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC5EB: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xC5EB: 4, wCurSongID: 1}, "expect": {0xC5EB: b"\x02\x50\x4B\x31"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The disconnected CGB infrared path deterministically cancels the send with B, reaches the retry screen and returns through its no-retry carry exit with poisoned registers; the own communication parameter block and the card-pop song are observed.", keys=[0x02, 0x00, 0x01, 0x00, 0x10, 0x00, 0x01], entry_sp=0xDCBE, wram={0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC5EB: b"\xFF\xFF\xFF\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xC5EB: 4, wCurSongID: 1}, expect={0xC5EB: b"\x02\x50\x4B\x31"}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory SendCard
 
 # >>> factory SendDeckConfiguration
-CONTRACT["SendDeckConfiguration"] = {"compare": (), "preserve": ()}
+CONTRACT["SendDeckConfiguration"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["SendDeckConfiguration"] = [
-    {"oracle": False, "evidence": "primary", "why": "The bounded prefix stops after the routine's initial music shutdown before the connecting scene and infrared handshake; the music state is asserted.", "wram": {wCurSongID: b"\xff"}, "read": {wCurSongID: 1}, "expect": {wCurSongID: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="The bounded prefix stops after the routine's initial music shutdown with poisoned registers before the connecting scene and infrared handshake; the music state is asserted.", wram={wCurSongID: b"\xff"}, read={wCurSongID: 1}, expect={wCurSongID: b"\x00"}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically cancels the send with B, reaches the retry screen and returns through its no-retry carry exit; the own communication parameter block and the card-pop song are observed.", "keys": [0x02, 0x00, 0x01, 0x00, 0x10, 0x00, 0x01], "entry_sp": 0xDCBE, "wram": {0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC5EB: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xC5EB: 4, wCurSongID: 1}, "expect": {0xC5EB: b"\x03\x50\x4B\x31"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The disconnected CGB infrared path deterministically cancels the send with B, reaches the retry screen and returns through its no-retry carry exit with poisoned registers; the own communication parameter block and the card-pop song are observed.", keys=[0x02, 0x00, 0x01, 0x00, 0x10, 0x00, 0x01], entry_sp=0xDCBE, wram={0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC5EB: b"\xFF\xFF\xFF\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xC5EB: 4, wCurSongID: 1}, expect={0xC5EB: b"\x03\x50\x4B\x31"}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory SendDeckConfiguration
 
@@ -852,20 +852,11 @@ MUTATIONS["ReceiveDeckConfiguration"] = {"source_symbol": "ReceiveDeckConfigurat
 MUTATIONS["DoCardPop"] = {"source_symbol": "DoCardPop", "before": "void DoCardPop(void)\n{\n\t_DoCardPop();", "after": "void DoCardPop(void)\n{\n\thWhoseTurn = 1u;", "case_ids": ["DoCardPop-0", "DoCardPop-1"]}
 # <<< factory-mutation DoCardPop
 # >>> factory-mutation SendCard
-MUTATIONS["SendCard"] = {"source_symbol": "SendCard", "before": "void SendCard(void)\n{\n\t_SendCard();\n}", "after": "void SendCard(void)\n{\n\t(void)0;\n}", "case_ids": ["SendCard-0", "SendCard-1"]}
+MUTATIONS["SendCard"] = {"source_symbol": "SendCard", "before": "\treturn (SendCardResult){result.a, result.f};", "after": "\treturn (SendCardResult){result.a, (uint8_t)(result.f & 0x80u)};", "case_ids": ["SendCard-0", "SendCard-1"]}
 # <<< factory-mutation SendCard
-# >>> factory-completion SendCard
-for _record in SCHEMA2_CASES["SendCard"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x5B41, "bank": 6,
-                             "routine": "_SendCard"}
-# <<< factory-completion SendCard
 # >>> factory-mutation SendDeckConfiguration
-MUTATIONS["SendDeckConfiguration"] = {"source_symbol": "SendDeckConfiguration", "before": "void SendDeckConfiguration(void)\n{\n\t_SendDeckConfiguration();\n}", "after": "void SendDeckConfiguration(void)\n{\n\t(void)0;\n}", "case_ids": ["SendDeckConfiguration-0", "SendDeckConfiguration-1"]}
+MUTATIONS["SendDeckConfiguration"] = {"source_symbol": "SendDeckConfiguration", "before": "\treturn (SendDeckConfigurationResult){result.a, result.f};", "after": "\treturn (SendDeckConfigurationResult){result.a, (uint8_t)(result.f & 0x80u)};", "case_ids": ["SendDeckConfiguration-0", "SendDeckConfiguration-1"]}
 # <<< factory-mutation SendDeckConfiguration
-# >>> factory-completion SendDeckConfiguration
-for _record in SCHEMA2_CASES["SendDeckConfiguration"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x5A1F}
-# <<< factory-completion SendDeckConfiguration
 # >>> factory-mutation SetUpAndStartLinkDuel
 MUTATIONS["SetUpAndStartLinkDuel"] = {
     "source_symbol": "SetUpAndStartLinkDuel",

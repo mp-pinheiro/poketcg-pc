@@ -5,6 +5,8 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 from tests.cases._fixtures import deck_entry_fixture as _deck_entry_fixture, DECK_ENTRY_REGS as _DECK_ENTRY_REGS
 from tests.cases._fixtures import DM_ENTRIES_REGS, dm_entries_fixture
+from tests.cases._fixtures import gift_center_send_card_fixture as _gift_center_send_card_fixture, GIFT_CENTER_SEND_CARD_REGS as _GIFT_CENTER_SEND_CARD_REGS
+from tests.cases._fixtures import gift_center_send_deck_fixture as _gift_center_send_deck_fixture, GIFT_CENTER_SEND_DECK_REGS as _GIFT_CENTER_SEND_DECK_REGS
 
 CONTRACT = {}
 CASES = {}
@@ -689,24 +691,31 @@ CASES["GiftCenter_ReceiveDeck"] = [
 # >>> factory GiftCenter_SendCard
 CONTRACT["GiftCenter_SendCard"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["GiftCenter_SendCard"] = [
-    {"oracle": False, "evidence": "primary", "why": "The deck-building screen is frame-driven; the bounded cancel timeline exercises the deterministic no-carry exit while avoiding the external card-transfer path.", "keys": [0x00, 0x02], "wram": {0xCAB6: b"\xff", 0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCAB6: 1}, "expect": {0xCAB6: b"\x00"}, "expect_regs": {"a": 0x01, "f": 0x00}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="The deck-building screen is frame-driven; the bounded cancel timeline exercises the deterministic no-carry exit with poisoned registers while avoiding the external card-transfer path.", keys=[0x00, 0x02], wram={0xCAB6: b"\xff", 0xCABB: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xCAB6: 1}, expect={0xCAB6: b"\x00"}, expect_regs={"a": 0x01, "f": 0x00}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "The procedures box is dismissed with B, B opens the send menu from the filter row, LEFT wraps the cursor to Cancel and A takes it; the cleared card list, the send list title, the restored line separation and the no-carry exit are observed.", "keys": [0x00, 0x02, 0x00, 0x02, 0x00, 0x20, 0x00, 0x01], "entry_sp": 0xDCBE, "wram": {0xCAB6: b"\xff", 0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCAB6: 1, 0xCF17: 0x51, 0xCFB9: 0x15, 0xCD08: 1}, "expect": {0xCAB6: b"\x00"}, "expect_regs": {"a": 0x01, "f": 0x00}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The procedures box is dismissed with B, B opens the send menu from the filter row, LEFT wraps the cursor to Cancel and A takes it with poisoned registers; the cleared card list, the send list title, the restored line separation and the no-carry exit are observed.", keys=[0x00, 0x02, 0x00, 0x02, 0x00, 0x20, 0x00, 0x01], entry_sp=0xDCBE, wram={0xCAB6: b"\xff", 0xCABB: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xCAB6: 1, 0xCF17: 0x51, 0xCFB9: 0x15, 0xCD08: 1}, expect={0xCAB6: b"\x00"}, expect_regs={"a": 0x01, "f": 0x00}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(_gift_center_send_card_fixture(vram=False, bank=2, **{"CE47": b"\x00"}), **_GIFT_CENTER_SEND_CARD_REGS, keys=[0x00, 0x02, 0x00, 0x02, 0x00, 0x20, 0x00, 0x01],
+         read={0xC200: 0x200, 0xCC00: 0x100, 0xCF17: 0x51, 0xCFB9: 0x15}),
 ]
 # <<< factory GiftCenter_SendCard
 
 # >>> factory GiftCenter_SendDeck
-CONTRACT["GiftCenter_SendDeck"] = {"compare": (), "preserve": ()}
+CONTRACT["GiftCenter_SendDeck"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["GiftCenter_SendDeck"] = [
-    {"oracle": False, "evidence": "primary", "why": "The bounded prefix initializes the deck-machine scroll offset and title immediately before the frame-heavy screen loader; both writes are asserted.", "wram": {wCardListVisibleOffset: b"\xff", wDeckMachineTitleText: b"\xff\xff"}, "read": {wCardListVisibleOffset: 1, wDeckMachineTitleText: 2}, "expect": {wCardListVisibleOffset: b"\x00", wDeckMachineTitleText: b"\x5c\x02"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="The bounded prefix initializes the deck-machine scroll offset and title with poisoned registers immediately before the frame-heavy screen loader; both writes are asserted.", wram={wCardListVisibleOffset: b"\xff", wDeckMachineTitleText: b"\xff\xff"}, read={wCardListVisibleOffset: 1, wDeckMachineTitleText: 2}, expect={wCardListVisibleOffset: b"\x00", wDeckMachineTitleText: b"\x5c\x02"}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "B cancels the deck selection after the deck machine screen is drawn; the scroll offset, the title, the entry count and the no-carry exit are observed.", "keys": [0x00, 0x02], "rom_bank": 2, "ramg": True, "sram": {0: {}}, "entry_sp": 0xDCBE, "wram": {wCardListVisibleOffset: b"\xff", wDeckMachineTitleText: b"\xff\xff", 0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wCardListVisibleOffset: 1, wDeckMachineTitleText: 2, wNumDeckMachineEntries: 1}, "expect": {wCardListVisibleOffset: b"\x00", wDeckMachineTitleText: b"\x5c\x02", wNumDeckMachineEntries: b"\x3c"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="B cancels the deck selection after the deck machine screen is drawn with poisoned registers; the scroll offset, the title, the entry count and the no-carry exit are observed.", keys=[0x00, 0x02], rom_bank=2, ramg=True, sram={0: {}}, entry_sp=0xDCBE, wram={wCardListVisibleOffset: b"\xff", wDeckMachineTitleText: b"\xff\xff", 0xCABB: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wCardListVisibleOffset: 1, wDeckMachineTitleText: 2, wNumDeckMachineEntries: 1}, expect={wCardListVisibleOffset: b"\x00", wDeckMachineTitleText: b"\x5c\x02", wNumDeckMachineEntries: b"\x3c"}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(_gift_center_send_deck_fixture(vram=False, bank=2), **_GIFT_CENTER_SEND_DECK_REGS, keys=[0x00, 0x02],
+         read={0xC200: 0x200, 0xCC00: 0x100, wCardListVisibleOffset: 1, wDeckMachineTitleText: 2, wNumDeckMachineEntries: 1}),
 ]
 # <<< factory GiftCenter_SendDeck
 
 # >>> factory HandleGiftCenter
 CONTRACT["HandleGiftCenter"] = {"compare": (), "preserve": ()}
 CASES["HandleGiftCenter"] = [
-    {"oracle": False, "evidence": "primary", "why": "The bounded dispatch prefix stops immediately before the selected deck-send handler; the menu choice and untouched tile-map state are asserted.", "wram": {wGiftCenterChoice: b"\x02", wTileMapFill: b"\xff"}, "read": {wGiftCenterChoice: 1, wTileMapFill: 1}, "expect": {wGiftCenterChoice: b"\x02", wTileMapFill: b"\xff"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"oracle": False, "evidence": "primary", "why": "The bounded dispatch prefix stops immediately before the selected deck-send handler with poisoned registers; the menu choice and untouched tile-map state are asserted.", "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {wGiftCenterChoice: b"\x02", wTileMapFill: b"\xff"}, "read": {wGiftCenterChoice: 1, wTileMapFill: 1}, "expect": {wGiftCenterChoice: b"\x02", wTileMapFill: b"\xff"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"oracle": False, "evidence": "primary", "why": "The deck-send choice dispatches to GiftCenter_SendDeck, whose B cancel returns a nonzero a; the choice byte is set to $ff and the text RAM slot is left alone.", "keys": [0x00, 0x02], "rom_bank": 2, "ramg": True, "sram": {0: {}}, "entry_sp": 0xDCBE, "wram": {wGiftCenterChoice: b"\x02", wTxRam2: b"\xaa\xbb", 0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wGiftCenterChoice: 1, wTxRam2: 2}, "expect": {wGiftCenterChoice: b"\xff", wTxRam2: b"\xaa\xbb"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The deck-send choice dispatches to GiftCenter_SendDeck with poisoned registers, whose B cancel returns a nonzero a; the choice byte is set to $ff and the text RAM slot is left alone.", keys=[0x00, 0x02], rom_bank=2, ramg=True, sram={0: {}}, entry_sp=0xDCBE, wram={wGiftCenterChoice: b"\x02", wTxRam2: b"\xaa\xbb", 0xCABB: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wGiftCenterChoice: 1, wTxRam2: 2}, expect={wGiftCenterChoice: b"\xff", wTxRam2: b"\xaa\xbb"}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "The card-send choice, with the in-event bit GameEvent_GiftCenter sets, dispatches to GiftCenter_SendCard and its menu Cancel returns a nonzero a; the choice byte is set to $ff.", "keys": [0x00, 0x02, 0x00, 0x02, 0x00, 0x20, 0x00, 0x01], "rom_bank": 2, "ramg": True, "sram": {0: {}}, "entry_sp": 0xDCBE, "wram": {wGiftCenterChoice: b"\x10", wTxRam2: b"\xaa\xbb", 0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wGiftCenterChoice: 1, wTxRam2: 2}, "expect": {wGiftCenterChoice: b"\xff", wTxRam2: b"\xaa\xbb"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"oracle": False, "evidence": "primary", "why": "The card-receive choice dispatches to GiftCenter_ReceiveCard, whose disconnected CGB infrared path returns through its no-retry carry exit; the choice byte is set to $ff.", "keys": [0x82, 0x10, 0x01], "rom_bank": 2, "entry_sp": 0xDCBE, "wram": {wGiftCenterChoice: b"\x11", wTxRam2: b"\xaa\xbb", 0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wGiftCenterChoice: 1, wTxRam2: 2}, "expect": {wGiftCenterChoice: b"\xff", wTxRam2: b"\xaa\xbb"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"oracle": False, "evidence": "primary", "why": "The deck-receive choice dispatches to GiftCenter_ReceiveDeck, whose B cancel returns a nonzero a; the choice byte is set to $ff.", "keys": [0x00, 0x02], "rom_bank": 2, "ramg": True, "sram": {0: {}}, "entry_sp": 0xDCBE, "wram": {wGiftCenterChoice: b"\x13", wTxRam2: b"\xaa\xbb", 0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wGiftCenterChoice: 1, wTxRam2: 2}, "expect": {wGiftCenterChoice: b"\xff", wTxRam2: b"\xaa\xbb"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory HandleGiftCenter
 
@@ -871,26 +880,14 @@ MUTATIONS["GiftCenter_ReceiveCard"] = {"source_symbol": "GiftCenter_ReceiveCard"
 MUTATIONS["GiftCenter_ReceiveDeck"] = {"source_symbol": "GiftCenter_ReceiveDeck", "before": "\twNumDeckMachineEntries = DECK_SIZE;", "after": "\twNumDeckMachineEntries = 0u;", "case_ids": ["GiftCenter_ReceiveDeck-0", "GiftCenter_ReceiveDeck-1"]}
 # <<< factory-mutation GiftCenter_ReceiveDeck
 # >>> factory-mutation GiftCenter_SendCard
-MUTATIONS["GiftCenter_SendCard"] = {"source_symbol": "GiftCenter_SendCard", "before": "GiftCenter_SendCardResult GiftCenter_SendCard(void)\n{\n\twTileMapFill = 0u;", "after": "GiftCenter_SendCardResult GiftCenter_SendCard(void)\n{\n\twTileMapFill = 1u;", "case_ids": ["GiftCenter_SendCard-0", "GiftCenter_SendCard-1"]}
+MUTATIONS["GiftCenter_SendCard"] = {"source_symbol": "GiftCenter_SendCard", "before": "\t\treturn (GiftCenter_SendCardResult){0x01u, 0x00u};", "after": "\t\treturn (GiftCenter_SendCardResult){0x00u, 0x00u};", "case_ids": ["GiftCenter_SendCard-2", "GiftCenter_SendCard-0", "GiftCenter_SendCard-1"]}
 # <<< factory-mutation GiftCenter_SendCard
-# >>> factory-completion GiftCenter_SendCard
-for _record in SCHEMA2_CASES["GiftCenter_SendCard"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x2C29, "bank": 0}
-# <<< factory-completion GiftCenter_SendCard
 # >>> factory-mutation GiftCenter_SendDeck
-MUTATIONS["GiftCenter_SendDeck"] = {"source_symbol": "GiftCenter_SendDeck", "before": "void GiftCenter_SendDeck(void)\n{\n\twCardListVisibleOffset = 0u;", "after": "void GiftCenter_SendDeck(void)\n{\n\twCardListVisibleOffset = 1u;", "case_ids": ["GiftCenter_SendDeck-0", "GiftCenter_SendDeck-1"]}
+MUTATIONS["GiftCenter_SendDeck"] = {"source_symbol": "GiftCenter_SendDeck", "before": "\twNumDeckMachineEntries = DECK_SIZE;", "after": "\twNumDeckMachineEntries = 0u;", "case_ids": ["GiftCenter_SendDeck-2", "GiftCenter_SendDeck-0", "GiftCenter_SendDeck-1"]}
 # <<< factory-mutation GiftCenter_SendDeck
-# >>> factory-completion GiftCenter_SendDeck
-for _record in SCHEMA2_CASES["GiftCenter_SendDeck"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7379, "bank": 2}
-# <<< factory-completion GiftCenter_SendDeck
 # >>> factory-mutation HandleGiftCenter
-MUTATIONS["HandleGiftCenter"] = {"source_symbol": "HandleGiftCenter", "before": "void HandleGiftCenter(void)\n{\n\tuint8_t choice = (uint8_t)(wGiftCenterChoice & 0x03u);\n\tif (choice == 2u)\n\t\treturn;", "after": "void HandleGiftCenter(void)\n{\n\tuint8_t choice = (uint8_t)(wGiftCenterChoice & 0x03u);\n\tif (choice == 2u) {\n\t\tGiftCenter_SendCard();\n\t\treturn;\n\t}", "case_ids": ["HandleGiftCenter-0", "HandleGiftCenter-1"]}
+MUTATIONS["HandleGiftCenter"] = {"source_symbol": "HandleGiftCenter", "before": "\t\twGiftCenterChoice = 0xFFu;", "after": "\t\twGiftCenterChoice = 0xFEu;", "case_ids": ["HandleGiftCenter-0", "HandleGiftCenter-1", "HandleGiftCenter-2", "HandleGiftCenter-3", "HandleGiftCenter-4"]}
 # <<< factory-mutation HandleGiftCenter
-# >>> factory-completion HandleGiftCenter
-for _record in SCHEMA2_CASES["HandleGiftCenter"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x7C04, "bank": 2}
-# <<< factory-completion HandleGiftCenter
 # >>> factory-mutation ClearScreenAndDrawDeckMachineScreen
 MUTATIONS["ClearScreenAndDrawDeckMachineScreen"] = {"source_symbol": "ClearScreenAndDrawDeckMachineScreen", "before": "\twTileMapFill = 0u;", "after": "\twTileMapFill = 1u;", "case_ids": ["ClearScreenAndDrawDeckMachineScreen-0", "ClearScreenAndDrawDeckMachineScreen-1"]}
 # <<< factory-mutation ClearScreenAndDrawDeckMachineScreen

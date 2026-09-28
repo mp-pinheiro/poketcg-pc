@@ -106,16 +106,18 @@ static void adapt_PrepareSendCardOrDeckConfigurationThroughIR(ProbeState *s)
 /* >>> factory _SendCard */
 static void adapt__SendCard(ProbeState *s)
 {
-	_SendCard();
-	(void)s;
+	_SendCardResult result = _SendCard();
+	s->a = result.a;
+	s->f = result.f;
 }
 /* <<< factory _SendCard */
 
 /* >>> factory _SendDeckConfiguration */
 static void adapt__SendDeckConfiguration(ProbeState *s)
 {
-	_SendDeckConfiguration();
-	(void)s;
+	_SendDeckConfigurationResult result = _SendDeckConfiguration();
+	s->a = result.a;
+	s->f = result.f;
 }
 /* <<< factory _SendDeckConfiguration */
 

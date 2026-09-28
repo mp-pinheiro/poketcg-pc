@@ -155,18 +155,18 @@ CASES["PrepareSendCardOrDeckConfigurationThroughIR"] = [
 # <<< factory PrepareSendCardOrDeckConfigurationThroughIR
 
 # >>> factory _SendCard
-CONTRACT["_SendCard"] = {"compare": (), "preserve": ()}
+CONTRACT["_SendCard"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["_SendCard"] = [
-    {"oracle": False, "evidence": "primary", "why": "The bounded prefix stops after the routine initial music shutdown before the scene and infrared handshake; the music state is asserted.", "read": {wCurSongID: 1}, "expect": {wCurSongID: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"oracle": False, "evidence": "primary", "why": "The bounded prefix stops after the routine initial music shutdown with poisoned registers; the music state is asserted.", "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "read": {wCurSongID: 1}, "expect": {wCurSongID: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically cancels the send with B, reaches the retry screen and returns through its no-retry carry exit; the own communication parameter block and the card-pop song are observed.", "keys": [0x02, 0x00, 0x01, 0x00, 0x10, 0x00, 0x01], "entry_sp": 0xDCBE, "wram": {0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wOwnIRCommunicationParams: 4, wCurSongID: 1}, "expect": {wOwnIRCommunicationParams: b"\x02\x50\x4B\x31"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The disconnected CGB infrared path deterministically cancels the send with B, reaches the retry screen and returns through its no-retry carry exit with poisoned registers; the own communication parameter block and the card-pop song are observed.", keys=[0x02, 0x00, 0x01, 0x00, 0x10, 0x00, 0x01], entry_sp=0xDCBE, wram={0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wOwnIRCommunicationParams: 4, wCurSongID: 1}, expect={wOwnIRCommunicationParams: b"\x02\x50\x4B\x31"}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory _SendCard
 
 # >>> factory _SendDeckConfiguration
-CONTRACT["_SendDeckConfiguration"] = {"compare": (), "preserve": ()}
+CONTRACT["_SendDeckConfiguration"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["_SendDeckConfiguration"] = [
-    {"oracle": False, "evidence": "primary", "why": "The bounded prefix stops after the routine's initial music shutdown before the connecting scene and infrared handshake; the music state is asserted.", "read": {wCurSongID: 1}, "expect": {wCurSongID: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"oracle": False, "evidence": "primary", "why": "The bounded prefix stops after the routine's initial music shutdown with poisoned registers before the connecting scene and infrared handshake; the music state is asserted.", "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "read": {wCurSongID: 1}, "expect": {wCurSongID: b"\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically cancels the send with B, reaches the retry screen and returns through its no-retry carry exit; the own communication parameter block and the card-pop song are observed.", "keys": [0x02, 0x00, 0x01, 0x00, 0x10, 0x00, 0x01], "entry_sp": 0xDCBE, "wram": {0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wOwnIRCommunicationParams: 4, wCurSongID: 1}, "expect": {wOwnIRCommunicationParams: b"\x03\x50\x4B\x31"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The disconnected CGB infrared path deterministically cancels the send with B, reaches the retry screen and returns through its no-retry carry exit with poisoned registers; the own communication parameter block and the card-pop song are observed.", keys=[0x02, 0x00, 0x01, 0x00, 0x10, 0x00, 0x01], entry_sp=0xDCBE, wram={0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wOwnIRCommunicationParams: 4, wCurSongID: 1}, expect={wOwnIRCommunicationParams: b"\x03\x50\x4B\x31"}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory _SendDeckConfiguration
 
@@ -179,8 +179,8 @@ for _case, _name in zip(SCHEMA2_CASES["PlayCardPopSong"], ("zero", "poison", "bo
 MUTATIONS = {
     "PlayCardPopSong": {
         "source_symbol": "PlayCardPopSong",
-        "before": "Music1_PlaySong(MUSIC_CARD_POP);",
-        "after": "Music1_PlaySong((uint8_t)(MUSIC_CARD_POP + 1u));",
+        "before": "PlaySong(MUSIC_CARD_POP);",
+        "after": "PlaySong((uint8_t)(MUSIC_CARD_POP + 1u));",
         "case_ids": [
             "PlayCardPopSong-zero",
             "PlayCardPopSong-poison",
@@ -263,16 +263,8 @@ MUTATIONS["PrepareSendCardOrDeckConfigurationThroughIR"] = {
 }
 # <<< factory-mutation PrepareSendCardOrDeckConfigurationThroughIR
 # >>> factory-mutation _SendCard
-MUTATIONS["_SendCard"] = {"source_symbol": "_SendCard", "before": "void _SendCard(void)\n{\n\tStopMusic();\n}", "after": "void _SendCard(void)\n{\n\tPlayCardPopSong();\n}", "case_ids": ["_SendCard-0", "_SendCard-1"]}
+MUTATIONS["_SendCard"] = {"source_symbol": "_SendCard", "before": "PrepareSendCardOrDeckConfigurationThroughIR(IRPARAM_SEND_CARDS, 0x20u,", "after": "PrepareSendCardOrDeckConfigurationThroughIR(IRPARAM_SEND_DECK, 0x20u,", "case_ids": ["_SendCard-0", "_SendCard-1"]}
 # <<< factory-mutation _SendCard
-# >>> factory-completion _SendCard
-for _record in SCHEMA2_CASES["_SendCard"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x5A1F}
-# <<< factory-completion _SendCard
 # >>> factory-mutation _SendDeckConfiguration
-MUTATIONS["_SendDeckConfiguration"] = {"source_symbol": "_SendDeckConfiguration", "before": "void _SendDeckConfiguration(void)\n{\n\tStopMusic();\n}", "after": "void _SendDeckConfiguration(void)\n{\n\tPlayCardPopSong();\n}", "case_ids": ["_SendDeckConfiguration-0", "_SendDeckConfiguration-1"]}
+MUTATIONS["_SendDeckConfiguration"] = {"source_symbol": "_SendDeckConfiguration", "before": "PrepareSendCardOrDeckConfigurationThroughIR(IRPARAM_SEND_DECK, 0x20u,", "after": "PrepareSendCardOrDeckConfigurationThroughIR(IRPARAM_SEND_CARDS, 0x20u,", "case_ids": ["_SendDeckConfiguration-0", "_SendDeckConfiguration-1"]}
 # <<< factory-mutation _SendDeckConfiguration
-# >>> factory-completion _SendDeckConfiguration
-for _record in SCHEMA2_CASES["_SendDeckConfiguration"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x5A1F}
-# <<< factory-completion _SendDeckConfiguration

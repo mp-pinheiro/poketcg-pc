@@ -281,6 +281,12 @@
   "deck-machine-water": {
     "confirmed_ordinal": 6448
   },
+  "deck-modify-cancel": {
+    "confirmed_ordinal": 4741
+  },
+  "deck-select-cancel": {
+    "confirmed_ordinal": 2721
+  },
   "dome-1": {
     "confirmed_ordinal": 682246
   },
@@ -1844,6 +1850,9 @@
   "gene-duel": {
     "confirmed_ordinal": 240161
   },
+  "gift-center": {
+    "confirmed_ordinal": 9968
+  },
   "grass-club": {
     "confirmed_ordinal": 580415
   },
@@ -1993,6 +2002,9 @@
   },
   "seed-duel-continue": {
     "confirmed_ordinal": 6142
+  },
+  "seed-gift-center": {
+    "confirmed_ordinal": 890
   },
   "seed-packs": {
     "confirmed_ordinal": 1564

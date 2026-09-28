@@ -1117,3 +1117,19 @@ CARD_PAGE_ATTACK2_REGS = CARD_PAGE_ATTACK2.regs
 
 def card_page_attack2_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
     return CARD_PAGE_ATTACK2.case(vram=vram, bank=bank, **changes)
+
+
+GIFT_CENTER_SEND_CARD = Fixture("gift-center-send-card-entry")
+GIFT_CENTER_SEND_CARD_REGS = GIFT_CENTER_SEND_CARD.regs
+
+
+def gift_center_send_card_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return GIFT_CENTER_SEND_CARD.case(vram=vram, bank=bank, **changes)
+
+
+GIFT_CENTER_SEND_DECK = Fixture("gift-center-send-deck-entry")
+GIFT_CENTER_SEND_DECK_REGS = GIFT_CENTER_SEND_DECK.regs
+
+
+def gift_center_send_deck_fixture(vram: bool = True, bank: int | None = None, **changes: bytes) -> dict:
+    return GIFT_CENTER_SEND_DECK.case(vram=vram, bank=bank, **changes)

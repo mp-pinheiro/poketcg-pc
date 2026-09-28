@@ -152,10 +152,12 @@ ReceiveDeckConfigurationResult ReceiveDeckConfiguration(void);
 void DoCardPop(void);
 /* <<< factory DoCardPop */
 /* >>> factory SendCard */
-void SendCard(void);
+typedef struct { uint8_t a; uint8_t f; } SendCardResult;
+SendCardResult SendCard(void);
 /* <<< factory SendCard */
 /* >>> factory SendDeckConfiguration */
-void SendDeckConfiguration(void);
+typedef struct { uint8_t a; uint8_t f; } SendDeckConfigurationResult;
+SendDeckConfigurationResult SendDeckConfiguration(void);
 /* <<< factory SendDeckConfiguration */
 /* >>> factory SetUpAndStartLinkDuel */
 void SetUpAndStartLinkDuel(void);

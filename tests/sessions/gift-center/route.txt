@@ -1,0 +1,83 @@
+idle
+press RIGHT
+idle
+press A
+idle
+press A
+idle
+hold RIGHT 32
+idle
+hold UP 8
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+yes
+idle
+press A
+idle
+press A
+idle
+press DOWN
+idle
+press RIGHT
+idle
+press B
+idle
+press B
+idle
+press RIGHT
+idle
+press A
+idle
+yes
+idle
+press B
+idle
+press A
+idle
+press RIGHT
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press DOWN
+idle
+press DOWN
+idle
+press A
+idle
+press A
+idle
+yes
+idle
+press A
+idle
+press DOWN
+idle
+press A
+idle
+press B
+idle
+press A
+idle
+press RIGHT
+idle
+press A
+idle
+press A
+idle

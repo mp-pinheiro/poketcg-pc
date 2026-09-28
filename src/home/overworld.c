@@ -1089,7 +1089,9 @@ Func_c141Result Func_c141(void)
 		return (Func_c141Result){0u, 0u, 0u};
 	}
 	Func_fcadResult gift = Func_fcad();
-	return (Func_c141Result){gift.a, 0u, 0u};
+	RST20Result script = RST20(gift.a, 0u, 0u, gift.c, 0u, 0u,
+		(uint16_t)(Func_fcad_START_SCRIPT + 1u));
+	return (Func_c141Result){script.a, script.f, script.hl};
 }
 /* <<< factory Func_c141 */
 

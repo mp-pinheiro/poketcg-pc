@@ -334,8 +334,9 @@ static void adapt_GiftCenter_SendCard(ProbeState *s)
 /* >>> factory GiftCenter_SendDeck */
 static void adapt_GiftCenter_SendDeck(ProbeState *s)
 {
-	GiftCenter_SendDeck();
-	(void)s;
+	GiftCenter_SendDeckResult result = GiftCenter_SendDeck();
+	s->a = result.a;
+	s->f = result.f;
 }
 /* <<< factory GiftCenter_SendDeck */
 

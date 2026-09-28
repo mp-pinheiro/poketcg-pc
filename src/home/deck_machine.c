@@ -250,6 +250,12 @@
 #include "home/save.h"
 #define PleaseChooseASaveSlotText 0x0285u
 #define ReceivedADeckConfigurationFromText 0x0287u
+#define ProceduresForSendingCardsText 0x027cu
+#define CardSendingProceduresText 0x027du
+#define PleaseReadTheProceduresForSendingCardsText 0x027eu
+#define PleaseChooseADeckConfigurationToSendText 0x0284u
+#define SINGLE_SPACED 0x01u
+#define DOUBLE_SPACED 0x00u
 
 #include "home/deck_configuration.h"
 #include "home/switch_sram.h"
@@ -1946,7 +1952,7 @@ GiftCenter_ReceiveDeckResult GiftCenter_ReceiveDeck(void)
 		EnableSRAM();
 		CopyListFromHLToDE(&source, &destination);
 		DisableSRAM();
-		return (GiftCenter_ReceiveDeckResult){0u, 0u};
+		return (GiftCenter_ReceiveDeckResult){0u, 0x80u};
 	}
 }
 /* <<< factory GiftCenter_ReceiveDeck */
@@ -1962,25 +1968,131 @@ GiftCenter_SendCardResult GiftCenter_SendCard(void)
 	SetDefaultConsolePalettes();
 	(void)SetupText(0x3Cu, 0xBFu);
 	InitTextPrinting(3u, 1u);
-	return (GiftCenter_SendCardResult){0u, 0x80u};
+	(void)ProcessTextFromID(ProceduresForSendingCardsText);
+	InitTextPrinting(1u, 3u);
+	wLineSeparation = SINGLE_SPACED;
+	(void)ProcessTextFromID(CardSendingProceduresText);
+	wLineSeparation = DOUBLE_SPACED;
+	(void)DrawWideTextBox_WaitForInput(PleaseReadTheProceduresForSendingCardsText);
+	EnableLCD();
+
+	DeckBuildScreenResult chosen = PrepareToBuildDeckConfigurationToSend();
+	if ((chosen.f & CARRY_FLAG) == 0u)
+		return (GiftCenter_SendCardResult){0x01u, 0x00u};
+
+	uint16_t source = wCurDeckCards_ADDR;
+	uint16_t destination = wDuelTempList_ADDR;
+	CopyListFromHLToDE(&source, &destination);
+	wNameBuffer = 0u;
+	SendCardResult sent = SendCard();
+	if ((sent.f & CARRY_FLAG) != 0u)
+		return (GiftCenter_SendCardResult){sent.a, sent.f};
+
+	EnableSRAM();
+	(void)DecrementDeckCardsInCollection(wCurDeckCards_ADDR);
+	DisableSRAM();
+	SaveGame();
+	source = wNameBuffer_ADDR;
+	destination = wDefaultText_ADDR;
+	CopyListFromHLToDE(&source, &destination);
+	return (GiftCenter_SendCardResult){0x00u, 0x80u};
 }
 /* <<< factory GiftCenter_SendCard */
 
 /* >>> factory GiftCenter_SendDeck */
-void GiftCenter_SendDeck(void)
+GiftCenter_SendDeckResult GiftCenter_SendDeck(void)
 {
 	wCardListVisibleOffset = 0u;
 	wDeckMachineTitleText = (uint8_t)DeckSaveMachineText;
 	gb_write8((uint16_t)(wDeckMachineTitleText_ADDR + 1u),
 		(uint8_t)(DeckSaveMachineText >> 8u));
+	ClearScreenAndDrawDeckMachineScreen();
+	wNumDeckMachineEntries = DECK_SIZE;
+
+	uint8_t cursor = 0u;
+	for (;;) {
+		uint16_t selection_params = DECK_MACHINE_SELECTION_PARAMS_ADDR;
+		(void)InitCardSelectionParams(cursor, &selection_params);
+		DrawListScrollArrows();
+		PrintNumSavedDecks();
+		(void)DrawWideTextBox_PrintText(PleaseChooseADeckConfigurationToSendText);
+		(void)InitDeckMachineDrawingParams(
+			(uint8_t)(PleaseChooseADeckConfigurationToSendText >> 8),
+			(uint8_t)PleaseChooseADeckConfigurationToSendText);
+
+		for (;;) {
+			HandleDeckMachineSelectionResult selection =
+				HandleDeckMachineSelection();
+			if (selection.f & CARRY_FLAG) {
+				cursor = selection.a;
+				break;
+			}
+			if (selection.a == MENU_CANCEL)
+				return (GiftCenter_SendDeckResult){0x01u, 0x00u};
+
+			wSelectedDeckMachineEntry =
+				(uint8_t)(wCardListVisibleOffset + selection.a);
+			if (CheckIfSelectedDeckMachineEntryIsEmpty() & CARRY_FLAG)
+				continue;
+
+			uint16_t source = GetSelectedSavedDeckPtr();
+			uint16_t destination = wDuelTempList_ADDR;
+			EnableSRAM();
+			CopyNBytesFromHLToDE(&source, &destination, DECK_STRUCT_SIZE);
+			DisableSRAM();
+
+			wNameBuffer = 0u;
+			SendDeckConfigurationResult sent = SendDeckConfiguration();
+			if (sent.f & CARRY_FLAG)
+				return (GiftCenter_SendDeckResult){sent.a, sent.f};
+
+			source = GetSelectedSavedDeckPtr();
+			destination = wDefaultText_ADDR;
+			EnableSRAM();
+			CopyListFromHLToDE(&source, &destination);
+			DisableSRAM();
+			return (GiftCenter_SendDeckResult){0x00u, 0x80u};
+		}
+	}
 }
 /* <<< factory GiftCenter_SendDeck */
 
 /* >>> factory HandleGiftCenter */
 void HandleGiftCenter(void)
 {
-	uint8_t choice = (uint8_t)(wGiftCenterChoice & 0x03u);
-	if (choice == 2u)
+	uint8_t a;
+	uint8_t f;
+	switch (wGiftCenterChoice & 0x03u) {
+	case 0u: {
+		GiftCenter_SendCardResult sent = GiftCenter_SendCard();
+		a = sent.a;
+		f = sent.f;
+		break;
+	}
+	case 1u: {
+		GiftCenter_ReceiveCardResult received = GiftCenter_ReceiveCard();
+		a = received.a;
+		f = received.f;
+		break;
+	}
+	case 2u: {
+		GiftCenter_SendDeckResult sent = GiftCenter_SendDeck();
+		a = sent.a;
+		f = sent.f;
+		break;
+	}
+	default: {
+		GiftCenter_ReceiveDeckResult received = GiftCenter_ReceiveDeck();
+		a = received.a;
+		f = received.f;
+		break;
+	}
+	}
+	if ((f & CARRY_FLAG) != 0u || a != 0u) {
+		wGiftCenterChoice = 0xFFu;
 		return;
+	}
+	gb_write8(wTxRam2_ADDR, 0u);
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), 0u);
 }
 /* <<< factory HandleGiftCenter */

@@ -3,13 +3,15 @@
 
 #include <stdint.h>
 
+#include "home/print_text.h"
+
 void PlayCardPopSong(void);
 
 /* >>> factory InitIRCommunications */
 void InitIRCommunications(uint8_t a);
 /* <<< factory InitIRCommunications */
 /* >>> factory LoadLinkConnectingScene */
-void LoadLinkConnectingScene(uint16_t hl);
+TextResult LoadLinkConnectingScene(uint16_t hl);
 /* <<< factory LoadLinkConnectingScene */
 /* >>> factory ClearRPAndRestoreVBlankFunction */
 void ClearRPAndRestoreVBlankFunction(void);
@@ -47,9 +49,11 @@ typedef struct { uint8_t a; uint8_t f; } PrepareSendCardOrDeckConfigurationThrou
 PrepareSendCardOrDeckConfigurationThroughIRResult PrepareSendCardOrDeckConfigurationThroughIR(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory PrepareSendCardOrDeckConfigurationThroughIR */
 /* >>> factory _SendCard */
-void _SendCard(void);
+typedef struct { uint8_t a; uint8_t f; } _SendCardResult;
+_SendCardResult _SendCard(void);
 /* <<< factory _SendCard */
 /* >>> factory _SendDeckConfiguration */
-void _SendDeckConfiguration(void);
+typedef struct { uint8_t a; uint8_t f; } _SendDeckConfigurationResult;
+_SendDeckConfigurationResult _SendDeckConfiguration(void);
 /* <<< factory _SendDeckConfiguration */
 #endif

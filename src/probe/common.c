@@ -312,16 +312,18 @@ static void adapt_DoCardPop(ProbeState *s)
 /* >>> factory SendCard */
 static void adapt_SendCard(ProbeState *s)
 {
-	SendCard();
-	(void)s;
+	SendCardResult result = SendCard();
+	s->a = result.a;
+	s->f = result.f;
 }
 /* <<< factory SendCard */
 
 /* >>> factory SendDeckConfiguration */
 static void adapt_SendDeckConfiguration(ProbeState *s)
 {
-	(void)s;
-	SendDeckConfiguration();
+	SendDeckConfigurationResult result = SendDeckConfiguration();
+	s->a = result.a;
+	s->f = result.f;
 }
 /* <<< factory SendDeckConfiguration */
 

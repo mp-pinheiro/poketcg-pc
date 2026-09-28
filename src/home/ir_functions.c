@@ -1,6 +1,5 @@
 #include "home/ir_functions.h"
 
-#include "home/music1.h"
 /* >>> factory statics */
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -44,6 +43,12 @@
 #define IRPARAM_SEND_DECK 0x03u
 #define DeckConfigurationTransferWasntSuccessful2Text 0x01a1u
 #define ReceivingDeckConfigurationText 0x019du
+#define SendingACardText 0x019au
+#define SendingADeckConfigurationText 0x019cu
+#define CardTransferWasntSuccessful1Text 0x019eu
+#define DeckConfigurationTransferWasntSuccessful1Text 0x01a0u
+#define DECK_SIZE 0x3Cu
+#define DECK_STRUCT_SIZE 0x54u
 
 #include "home/frames.h"
 
@@ -54,7 +59,7 @@
 
 void PlayCardPopSong(void)
 {
-	Music1_PlaySong(MUSIC_CARD_POP);
+	PlaySong(MUSIC_CARD_POP);
 }
 
 
@@ -80,13 +85,14 @@ void InitIRCommunications(uint8_t a)
 /* <<< factory InitIRCommunications */
 
 /* >>> factory LoadLinkConnectingScene */
-void LoadLinkConnectingScene(uint16_t hl)
+TextResult LoadLinkConnectingScene(uint16_t hl)
 {
 	uint16_t saved_hl = hl;
 	SetSpriteAnimationsAsVBlankFunction();
 	LoadScene(SCENE_GAMEBOY_LINK_CONNECTING, 0u, 0u, 0u, 0u, 0u, saved_hl);
-	DrawWideTextBox_PrintText(saved_hl);
-	EnableLCD();
+	TextResult text = DrawWideTextBox_PrintText(saved_hl);
+	text.a = EnableLCD();
+	return text;
 }
 /* <<< factory LoadLinkConnectingScene */
 
@@ -293,8 +299,7 @@ PrepareSendCardOrDeckConfigurationThroughIRResult PrepareSendCardOrDeckConfigura
 					SetIRCommunicationErrorCode_Error(parameter, compare_f, b);
 				return (PrepareSendCardOrDeckConfigurationThroughIRResult){error.a, error.f};
 			}
-			return (PrepareSendCardOrDeckConfigurationThroughIRResult){request.a,
-				(request.a == 0u) ? 0x80u : 0x00u};
+			return (PrepareSendCardOrDeckConfigurationThroughIRResult){parameter, 0x00u};
 		}
 		if (request.a != 0u)
 			return (PrepareSendCardOrDeckConfigurationThroughIRResult){0u, 0x90u};
@@ -303,15 +308,72 @@ PrepareSendCardOrDeckConfigurationThroughIRResult PrepareSendCardOrDeckConfigura
 /* <<< factory PrepareSendCardOrDeckConfigurationThroughIR */
 
 /* >>> factory _SendCard */
-void _SendCard(void)
+_SendCardResult _SendCard(void)
 {
-	StopMusic();
+	for (;;) {
+		StopMusic();
+		TextResult scene = LoadLinkConnectingScene(SendingACardText);
+		PrepareSendCardOrDeckConfigurationThroughIRResult prepared =
+			PrepareSendCardOrDeckConfigurationThroughIR(IRPARAM_SEND_CARDS, 0x20u,
+				scene.b, scene.c, scene.d, scene.e, scene.hl);
+		if ((prepared.f & 0x10u) == 0u) {
+			gb_write8((uint16_t)(wDuelTempList_ADDR + DECK_SIZE), 0u);
+			RequestDataReceivalThroughIRResult sent = RequestDataReceivalThroughIR(
+				0u, 0x80u, 0u, (uint8_t)(DECK_SIZE + 1u),
+				(uint8_t)(wDuelTempList_ADDR >> 8), (uint8_t)wDuelTempList_ADDR,
+				wDuelTempList_ADDR);
+			if ((sent.f & 0x10u) == 0u) {
+				SetIRCommunicationErrorCode_NoErrorResult acknowledged =
+					SetIRCommunicationErrorCode_NoError(sent.a, sent.f, 0u, 0u, 0u, 0u, 0u);
+				if ((acknowledged.f & 0x10u) == 0u) {
+					ExecuteReceivedIRCommandsResult executed = ExecuteReceivedIRCommands();
+					if ((executed.f & 0x10u) == 0u &&
+						gb_read8((uint16_t)(wOwnIRCommunicationParams_ADDR + 1u)) == 0x4Fu) {
+						PlayCardPopSong();
+						ClearRPAndRestoreVBlankFunction();
+						return (_SendCardResult){0x00u, 0x80u};
+					}
+				}
+			}
+		}
+		PlayCardPopSong();
+		LoadLinkNotConnectedSceneAndAskWhetherToTryAgainResult retry =
+			LoadLinkNotConnectedSceneAndAskWhetherToTryAgain(CardTransferWasntSuccessful1Text);
+		if ((retry.f & 0x10u) != 0u)
+			return (_SendCardResult){retry.a, (uint8_t)((retry.f & 0x80u) | 0x10u)};
+	}
 }
 /* <<< factory _SendCard */
 
 /* >>> factory _SendDeckConfiguration */
-void _SendDeckConfiguration(void)
+_SendDeckConfigurationResult _SendDeckConfiguration(void)
 {
-	StopMusic();
+	for (;;) {
+		StopMusic();
+		TextResult scene = LoadLinkConnectingScene(SendingADeckConfigurationText);
+		PrepareSendCardOrDeckConfigurationThroughIRResult prepared =
+			PrepareSendCardOrDeckConfigurationThroughIR(IRPARAM_SEND_DECK, 0x20u,
+				scene.b, scene.c, scene.d, scene.e, scene.hl);
+		if ((prepared.f & 0x10u) == 0u) {
+			RequestDataReceivalThroughIRResult sent = RequestDataReceivalThroughIR(
+				prepared.a, prepared.f, 0u, DECK_STRUCT_SIZE,
+				(uint8_t)(wDuelTempList_ADDR >> 8), (uint8_t)wDuelTempList_ADDR,
+				wDuelTempList_ADDR);
+			if ((sent.f & 0x10u) == 0u) {
+				SetIRCommunicationErrorCode_NoErrorResult acknowledged =
+					SetIRCommunicationErrorCode_NoError(sent.a, sent.f, 0u, 0u, 0u, 0u, 0u);
+				if ((acknowledged.f & 0x10u) == 0u) {
+					PlayCardPopSong();
+					ClearRPAndRestoreVBlankFunction();
+					return (_SendDeckConfigurationResult){0x08u, 0x00u};
+				}
+			}
+		}
+		PlayCardPopSong();
+		LoadLinkNotConnectedSceneAndAskWhetherToTryAgainResult retry =
+			LoadLinkNotConnectedSceneAndAskWhetherToTryAgain(DeckConfigurationTransferWasntSuccessful1Text);
+		if ((retry.f & 0x10u) != 0u)
+			return (_SendDeckConfigurationResult){retry.a, (uint8_t)((retry.f & 0x80u) | 0x10u)};
+	}
 }
 /* <<< factory _SendDeckConfiguration */

@@ -846,16 +846,18 @@ void DoCardPop(void)
 /* <<< factory DoCardPop */
 
 /* >>> factory SendCard */
-void SendCard(void)
+SendCardResult SendCard(void)
 {
-	_SendCard();
+	_SendCardResult result = _SendCard();
+	return (SendCardResult){result.a, result.f};
 }
 /* <<< factory SendCard */
 
 /* >>> factory SendDeckConfiguration */
-void SendDeckConfiguration(void)
+SendDeckConfigurationResult SendDeckConfiguration(void)
 {
-	_SendDeckConfiguration();
+	_SendDeckConfigurationResult result = _SendDeckConfiguration();
+	return (SendDeckConfigurationResult){result.a, result.f};
 }
 /* <<< factory SendDeckConfiguration */
 
