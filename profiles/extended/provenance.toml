@@ -1,0 +1,29 @@
+repository = "https://github.com/ElectroDeoxys/Pokemon-TCG-Extended.git"
+tag = "v2.0.0"
+commit = "8257bd26c1dff868ca5bf90da8e7affff30ddc4d"
+license = "none-declared"
+distribution = "blocked"
+permission_evidence = []
+copied_paths = [
+  "profiles/extended/source-fixes.patch",
+  "poketcg-extended/src/data/card_pointers.asm",
+  "poketcg-extended/src/home/card_data.asm",
+  "poketcg-extended/src/home/load_deck.asm",
+  "poketcg-extended/src/gfx/duelists/player.pal",
+  "poketcg2/src/gfx/duelists/mint.png",
+  "poketcg2/src/gfx/overworld_sprites/mint.png",
+  "poketcg2/src/data/palettes1.asm"
+]
+
+[ancestry]
+pret_merge_base = "741d8e627302ca4ed1c6e8fbbf6f5798ecfc4567"
+tinytcg_parent = "5017ff6fb1a73ac1d3b7c1d3b2c53119dadc0460"
+
+[upstream_tcg2]
+repository = "https://github.com/pret/poketcg2.git"
+attribution = "Pokémon TCG 2 disassembly and derived graphics and animation sources"
+paths = [
+  "src/home/card_data.asm",
+  "src/engine/gfx/default_palettes.asm",
+  "src/engine/gfx/portraits.asm"
+]

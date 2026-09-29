@@ -1,0 +1,120 @@
+{
+  "schema": 1,
+  "default": "vanilla",
+  "profiles": {
+    "vanilla": {
+      "title": "Pokémon TCG",
+      "source": {
+        "repository": "https://github.com/pret/poketcg.git",
+        "checkout": "poketcg",
+        "commit": "0e7157e885c03d68b3b44410d3adc5aede385627",
+        "rom": "poketcg.gbc",
+        "map": "poketcg.map",
+        "sym": "poketcg.sym",
+        "rgbds_version": null,
+        "pret_merge_base": null,
+        "tinytcg_parent": null
+      },
+      "build": {
+        "binary": "poketcg",
+        "probe": "poketcg_probe",
+        "generated_headers": "generated/vanilla",
+        "default_build_dir": "build",
+        "overlay_root": null,
+        "removed_basenames": []
+      },
+      "artifacts": {
+        "inventory": "site/data/inventory.json",
+        "data_pack": "build/completion/data-pack.bin",
+        "pack_manifest": "build/completion/data-pack.json",
+        "rom_sha256": "a54515bb6b3e364964d3c0226f5a6b0c8c0f7318c9296ef2e321df0bbb8541ce",
+        "pack_sha256": "b3c1036a2ac2b410f47a4ed47fd28264ae7087a84c29fc6bbc14864155a92d27",
+        "pack_size": 945154
+      },
+      "evidence": {
+        "oracle_namespace": "vanilla",
+        "session_namespace": "tests/sessions",
+        "case_namespace": "tests/cases"
+      },
+      "save": {
+        "tag": "VANL",
+        "default_filename": "poketcg.sav"
+      },
+      "features": {
+        "link_duel": true,
+        "card_pop": true,
+        "gift_center": true,
+        "printer": true,
+        "multi_bank_scripts": false,
+        "nine_bit_card_ids": false,
+        "three_palette_cards": false
+      }
+    },
+    "extended": {
+      "title": "Pokémon TCG Extended",
+      "source": {
+        "repository": "https://github.com/ElectroDeoxys/Pokemon-TCG-Extended.git",
+        "checkout": "poketcg-extended",
+        "commit": "8257bd26c1dff868ca5bf90da8e7affff30ddc4d",
+        "rom": "poketcg_ext.gbc",
+        "map": "poketcg_ext.map",
+        "sym": "poketcg_ext.sym",
+        "rgbds_version": "1.0.0",
+        "pret_merge_base": "741d8e627302ca4ed1c6e8fbbf6f5798ecfc4567",
+        "tinytcg_parent": "5017ff6fb1a73ac1d3b7c1d3b2c53119dadc0460"
+      },
+      "build": {
+        "binary": "poketcg-extended",
+        "probe": "poketcg_extended_probe",
+        "generated_headers": "generated/extended",
+        "default_build_dir": "build-extended",
+        "overlay_root": "src/profiles/extended",
+        "removed_basenames": [
+          "battle_center",
+          "card_pop",
+          "clear_saved_duel",
+          "debug",
+          "debug_main",
+          "debug_player_coordinates",
+          "debug_sprites",
+          "gift_center",
+          "ir_core",
+          "ir_functions",
+          "link_duel",
+          "music1",
+          "music2",
+          "printer",
+          "serial",
+          "sgb",
+          "sprite_vblank"
+        ]
+      },
+      "artifacts": {
+        "inventory": "site/data/extended/inventory.json",
+        "data_pack": "build-extended/completion/data-pack.bin",
+        "pack_manifest": "build-extended/completion/data-pack.json",
+        "rom_sha256": "61ddf86befabf0e7827d97d39b1779a9cc98956faececfe6cd0d24432de3d10b",
+        "pack_sha256": null,
+        "pack_size": null
+      },
+      "evidence": {
+        "oracle_namespace": "extended",
+        "session_namespace": "tests/sessions/extended",
+        "case_namespace": "tests/profiles/extended/cases"
+      },
+      "save": {
+        "tag": "EXTD",
+        "default_filename": "poketcg-extended.sav"
+      },
+      "features": {
+        "link_duel": false,
+        "card_pop": false,
+        "gift_center": false,
+        "printer": false,
+        "multi_bank_scripts": true,
+        "nine_bit_card_ids": true,
+        "three_palette_cards": true
+      }
+    }
+  }
+}

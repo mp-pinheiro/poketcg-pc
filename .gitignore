@@ -29,6 +29,8 @@ generated/
 # spellings: a jj workspace shares one .gitignore, and a workspace that reaches
 # the clone through a symlink (`poketcg -> ../poketcg/poketcg`) sees a *file*,
 # which `/poketcg/` does not match -- it showed up as `A poketcg` in `jj st`.
+/poketcg-extended
+/poketcg-extended/
 /poketcg
 /poketcg/
 /poketcg2

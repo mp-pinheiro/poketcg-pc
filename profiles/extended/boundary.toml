@@ -1,0 +1,7 @@
+fixture = "build-extended/completion/extended-boundary.json"
+lookup = ["00fe", "00ff", "0100", "01ff", "0200-rejected"]
+collection = "0x200-byte"
+deck_live_entries = 60
+deck_entry_bytes = 2
+deck_compressed_bytes = 68
+presentation = ["card-page", "duel-card-high-id", "duelist-portrait", "in-play-area"]

@@ -1,0 +1,77 @@
+diff --git a/src/audio/music.asm b/src/audio/music.asm
+index 9dfb926e..4bb20ba6 100644
+--- a/src/audio/music.asm
++++ b/src/audio/music.asm
+@@ -1,5 +1,5 @@
+ _SetupSound::
+-	jp SetupSound
++	jp Music_SetupSound
+ 
+ SoundTimerHandler::
+ 	jp MusicUpdate
+@@ -11,16 +11,16 @@ _PlaySFX::
+ 	jp SetCurSFX
+ 
+ _AssertSongFinished::
+-	jp AssertSongFinished
++	jp Music_AssertSongFinished
+ 
+ _AssertSFXFinished::
+-	jp AssertSFXFinished
++	jp Music_AssertSFXFinished
+ 
+ _PauseSong::
+-	jp PauseSong
++	jp Music_PauseSong
+ 
+ _ResumeSong::
+-	jp ResumeSong
++	jp Music_ResumeSong
+ 
+ SetCurSong:
+ 	push hl
+@@ -36,7 +36,7 @@ SetCurSFX:
+ 	ld [wCurSfxID], a
+ 	ret
+ 
+-AssertSongFinished:
++Music_AssertSongFinished:
+ 	ld a, [wCurSongID]
+ 	cp $80
+ 	ld a, $1
+@@ -44,7 +44,7 @@ AssertSongFinished:
+ 	xor a
+ 	ret
+ 
+-AssertSFXFinished:
++Music_AssertSFXFinished:
+ 	ld a, [wCurSfxID]
+ 	cp $80
+ 	ld a, $1
+@@ -52,7 +52,7 @@ AssertSFXFinished:
+ 	xor a
+ 	ret
+ 
+-SetupSound:
++Music_SetupSound:
+ 	xor a
+ 	ldh [rAUDENA], a
+ 	ld a, AUDENA_ON
+@@ -1546,7 +1546,7 @@ CheckForEndOfSong:
+ 	ld [wCurSongID], a
+ 	ret
+ 
+-PauseSong:
++Music_PauseSong:
+ 	di
+ 	call Music_f4980
+ 	call BackupSong
+@@ -1554,7 +1554,7 @@ PauseSong:
+ 	ei
+ 	ret
+ 
+-ResumeSong:
++Music_ResumeSong:
+ 	di
+ 	call Music_f4980
+ 	call StopAllChannels
