@@ -4,12 +4,12 @@ api = "libgambatte-c-v1"
 [source]
 commit = "e35e24de89f06642852f622d7d4159ba6a4abea2"
 url = "https://github.com/pokemon-speedrunning/gambatte-core/archive/e35e24de89f06642852f622d7d4159ba6a4abea2.tar.gz"
-path = "build-extended/completion/gambatte/gambatte-core.tar.gz"
+path = "build/completion/gambatte/gambatte-core.tar.gz"
 sha256 = "4f4c382737ef9e6d1b38b20eae2b34756547b1a0e820a19dd4da3baf47f312c5"
 scons_version = "4.5.2"
 
 [core]
-path = "build-extended/completion/gambatte/source/libgambatte/libgambatte.so"
+path = "build/completion/gambatte/source/libgambatte/libgambatte.so"
 sha256 = "1fc680ae7af048bc21291995f9d6b9cc0a336c68e08377b36ae0c27d28474ad6"
 
 [rom]
@@ -18,7 +18,7 @@ sha256 = "61ddf86befabf0e7827d97d39b1779a9cc98956faececfe6cd0d24432de3d10b"
 
 [boot]
 mode = "bios"
-path = "build-extended/completion/gambatte/cgb_boot.bin"
+path = "build/completion/gambatte/cgb_boot.bin"
 sha1 = "1293d68bf9643bc4f36954c1e80e38f39864528d"
 
 [requirements]

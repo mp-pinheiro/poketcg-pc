@@ -39,6 +39,7 @@ MAX_SLICES_PER_FRAME = 240
 # reference on PPU frame boundaries instead reports ~40 bytes of wOAM
 # sampling-phase noise that is not port divergence.
 DOFRAME_ANCHOR = symbol_address(PROFILE, "DoFrame", ROOT, (0, 0x053F))[1] + 0x13
+CARTRIDGE_ENTRY = 0x0150
 
 # gambatte_getregs fills a 10-int array; PC is index 0 and L is index 9.
 REG_PC = 0
@@ -421,6 +422,7 @@ class Core:
         # fixture is; it lets a session start the ROM somewhere its scripts
         # never would, such as an AI-versus-AI duel.
         self._pokes: Pokes = pokes or {}
+        self._cartridge_started = False
         self.frame = 0
         # Real time: stereo samples emitted at 2 MiHz, two cycles each, LCD on
         # or off. `frame` only counts rendered frames.
@@ -495,6 +497,10 @@ class Core:
         return 0
 
     def _exec(self, address: int, cycle: int) -> None:
+        if not self._cartridge_started:
+            if address != CARTRIDGE_ENTRY:
+                return
+            self._cartridge_started = True
         if address == DOFRAME_ANCHOR:
             self.ordinal += 1
             writes = self._pokes.get(self.ordinal)

@@ -337,6 +337,12 @@ def extract_source(archive: Path) -> None:
 
 def bootstrap(pins: dict[str, Any]) -> dict[str, Any]:
     source_pin = pins["source"]
+    pinned_core = resolve(pins["core"]["path"])
+    if pinned_core.is_file() and digest(pinned_core) == pins["core"]["sha256"]:
+        report = health_report(pins)
+        if report["status"] != "PASS":
+            raise GambatteError("Gambatte health failed for the pinned core")
+        return report
     archive = download_source(source_pin)
     extract_source(archive)
     command = [
