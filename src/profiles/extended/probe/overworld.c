@@ -1,0 +1,772 @@
+#include "home/overworld.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "probe.h"
+
+/* >>> factory Func_c6cc */
+static void adapt_Func_c6cc(ProbeState *s)
+{
+	s->a = Func_c6cc(s->a);
+}
+/* <<< factory Func_c6cc */
+
+/* >>> factory Func_c6d4 */
+static void adapt_Func_c6d4(ProbeState *s)
+{
+	s->a = Func_c6d4(s->a);
+}
+/* <<< factory Func_c6d4 */
+
+/* >>> factory Func_c6f7 */
+static void adapt_Func_c6f7(ProbeState *s)
+{
+	s->a = Func_c6f7(&s->hl);
+}
+/* <<< factory Func_c6f7 */
+
+/* >>> factory SetOverworldNPCFlags */
+static void adapt_SetOverworldNPCFlags(ProbeState *s)
+{
+	OverworldNPCFlagsResult result = SetOverworldNPCFlags(s->a);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory SetOverworldNPCFlags */
+
+/* >>> factory Func_c158 */
+static void adapt_Func_c158(ProbeState *s)
+{
+	s->a = Func_c158();
+}
+/* <<< factory Func_c158 */
+
+/* >>> factory Func_c184 */
+static void adapt_Func_c184(ProbeState *s)
+{
+	(void)s;
+	Func_c184();
+}
+/* <<< factory Func_c184 */
+
+/* >>> factory WhiteOutDMGPals */
+static void adapt_WhiteOutDMGPals(ProbeState *s)
+{
+	(void)s;
+	WhiteOutDMGPals();
+}
+/* <<< factory WhiteOutDMGPals */
+
+/* >>> factory Func_c1f8 */
+static void adapt_Func_c1f8(ProbeState *s)
+{
+	(void)s;
+	Func_c1f8();
+}
+/* <<< factory Func_c1f8 */
+
+/* >>> factory BackupPlayerPosition */
+static void adapt_BackupPlayerPosition(ProbeState *s)
+{
+	(void)s;
+	BackupPlayerPosition();
+}
+/* <<< factory BackupPlayerPosition */
+
+/* >>> factory Func_c469 */
+static void adapt_Func_c469(ProbeState *s)
+{
+	(void)s;
+	Func_c469();
+}
+/* <<< factory Func_c469 */
+
+
+
+/* >>> factory SetScreenScrollWram */
+static void adapt_SetScreenScrollWram(ProbeState *s)
+{
+	s->a = SetScreenScrollWram();
+}
+/* <<< factory SetScreenScrollWram */
+
+
+
+/* >>> factory SetScreenScroll */
+static void adapt_SetScreenScroll(ProbeState *s)
+{
+	(void)s;
+	SetScreenScroll();
+}
+/* <<< factory SetScreenScroll */
+
+
+
+/* >>> factory Func_c70d */
+static void adapt_Func_c70d(ProbeState *s)
+{
+	FuncC70dResult r = Func_c70d();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Func_c70d */
+
+/* >>> factory Func_c41c */
+static void adapt_Func_c41c(ProbeState *s)
+{
+	(void)s;
+	Func_c41c();
+}
+/* <<< factory Func_c41c */
+
+/* >>> factory Func_c3ca */
+static void adapt_Func_c3ca(ProbeState *s)
+{
+	FuncC3caResult result = Func_c3ca(s->b, s->c, s->d, s->e);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Func_c3ca */
+
+/* >>> factory GetDirectionFromDPad */
+static void adapt_GetDirectionFromDPad(ProbeState *s)
+{
+	GetDirectionFromDPadResult result = GetDirectionFromDPad(s->a);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory GetDirectionFromDPad */
+
+/* >>> factory Func_c694 */
+static void adapt_Func_c694(ProbeState *s)
+{
+	Func_c694(s->a, s->c);
+}
+/* <<< factory Func_c694 */
+
+/* >>> factory FindPlayerMovementWithOffset */
+static void adapt_FindPlayerMovementWithOffset(ProbeState *s)
+{
+	FindPlayerMovementWithOffsetResult result = FindPlayerMovementWithOffset(s->a);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+}
+/* <<< factory FindPlayerMovementWithOffset */
+
+/* >>> factory BackupObjectPalettes */
+static void adapt_BackupObjectPalettes(ProbeState *s)
+{
+	(void)s;
+	BackupObjectPalettes();
+}
+/* <<< factory BackupObjectPalettes */
+
+/* >>> factory AttemptPlayerMovement */
+static void adapt_AttemptPlayerMovement(ProbeState *s)
+{
+	AttemptPlayerMovement(s->b, s->c);
+}
+/* <<< factory AttemptPlayerMovement */
+
+/* >>> factory FindPlayerMovementFromDirection */
+static void adapt_FindPlayerMovementFromDirection(ProbeState *s)
+{
+	FindPlayerMovementWithOffsetResult result = FindPlayerMovementFromDirection();
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+}
+/* <<< factory FindPlayerMovementFromDirection */
+
+/* >>> factory Func_c1a0 */
+static void adapt_Func_c1a0(ProbeState *s)
+{
+	uint8_t f = s->f;
+	FuncC1A0Result result = Func_c1a0(s->hl);
+	s->a = result.a;
+	s->f = f;
+	s->hl = result.hl;
+}
+/* <<< factory Func_c1a0 */
+
+/* >>> factory PauseMenu_Exit */
+static void adapt_PauseMenu_Exit(ProbeState *s)
+{
+	(void)s;
+	PauseMenu_Exit();
+}
+/* <<< factory PauseMenu_Exit */
+
+/* >>> factory AttemptPlayerMovementFromDirection */
+static void adapt_AttemptPlayerMovementFromDirection(ProbeState *s)
+{
+	AttemptPlayerMovementFromDirection();
+	(void)s;
+}
+/* <<< factory AttemptPlayerMovementFromDirection */
+
+/* >>> factory Func_c687 */
+static void adapt_Func_c687(ProbeState *s)
+{
+	(void)s;
+	Func_c687();
+}
+/* <<< factory Func_c687 */
+
+/* >>> factory Func_c36a */
+static void adapt_Func_c36a(ProbeState *s)
+{
+	(void)s;
+	Func_c36a();
+}
+/* <<< factory Func_c36a */
+
+/* >>> factory Func_c915 */
+static void adapt_Func_c915(ProbeState *s)
+{
+	FuncC3caResult result = Func_c915();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Func_c915 */
+
+/* >>> factory StartScriptedMovement */
+static void adapt_StartScriptedMovement(ProbeState *s)
+{
+	StartScriptedMovement();
+	(void)s;
+}
+/* <<< factory StartScriptedMovement */
+
+/* >>> factory RestoreObjectPalettes */
+static void adapt_RestoreObjectPalettes(ProbeState *s)
+{
+	(void)s;
+	RestoreObjectPalettes();
+}
+/* <<< factory RestoreObjectPalettes */
+
+/* >>> factory Func_c3ff */
+static void adapt_Func_c3ff(ProbeState *s)
+{
+	(void)s;
+	Func_c3ff();
+}
+/* <<< factory Func_c3ff */
+
+/* >>> factory Func_c49c */
+static void adapt_Func_c49c(ProbeState *s)
+{
+	(void)s;
+	Func_c49c();
+}
+/* <<< factory Func_c49c */
+
+/* >>> factory Func_c58b */
+static void adapt_Func_c58b(ProbeState *s)
+{
+	(void)s;
+	Func_c58b();
+}
+/* <<< factory Func_c58b */
+
+/* >>> factory UpdatePlayerSprite */
+static void adapt_UpdatePlayerSprite(ProbeState *s)
+{
+	(void)s;
+	UpdatePlayerSprite();
+}
+/* <<< factory UpdatePlayerSprite */
+
+/* >>> factory UpdatePlayerDirection */
+static void adapt_UpdatePlayerDirection(ProbeState *s)
+{
+	UpdatePlayerDirection(s->a);
+}
+/* <<< factory UpdatePlayerDirection */
+
+/* >>> factory UpdatePlayerDirectionFromDPad */
+static void adapt_UpdatePlayerDirectionFromDPad(ProbeState *s)
+{
+	UpdatePlayerDirectionFromDPad(s->a);
+}
+/* <<< factory UpdatePlayerDirectionFromDPad */
+
+/* >>> factory SetOverworldDoFrameFunction */
+static void adapt_SetOverworldDoFrameFunction(ProbeState *s)
+{
+	(void)s;
+	SetOverworldDoFrameFunction();
+}
+/* <<< factory SetOverworldDoFrameFunction */
+
+/* >>> factory Func_c3ee */
+static void adapt_Func_c3ee(ProbeState *s)
+{
+	(void)s;
+	Func_c3ee();
+}
+/* <<< factory Func_c3ee */
+
+/* >>> factory Func_c66c */
+static void adapt_Func_c66c(ProbeState *s)
+{
+	(void)s;
+	Func_c66c();
+}
+/* <<< factory Func_c66c */
+
+/* >>> factory Func_c4b9 */
+static void adapt_Func_c4b9(ProbeState *s)
+{
+	(void)s;
+	Func_c4b9();
+}
+/* <<< factory Func_c4b9 */
+
+/* >>> factory DecompressPermissionMap */
+static void adapt_DecompressPermissionMap(ProbeState *s)
+{
+	DecompressPermissionMapResult r = DecompressPermissionMap(s->hl);
+	s->hl = r.hl;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory DecompressPermissionMap */
+
+/* >>> factory LoadPermissionMap */
+static void adapt_LoadPermissionMap(ProbeState *s)
+{
+	(void)s;
+	LoadPermissionMap();
+}
+/* <<< factory LoadPermissionMap */
+
+/* >>> factory Func_c1ed */
+static void adapt_Func_c1ed(ProbeState *s)
+{
+	(void)s;
+	Func_c1ed();
+}
+/* <<< factory Func_c1ed */
+
+/* >>> factory Func_c1b1 */
+static void adapt_Func_c1b1(ProbeState *s)
+{
+	(void)s;
+	Func_c1b1();
+}
+/* <<< factory Func_c1b1 */
+
+/* >>> factory Func_c554 */
+static void adapt_Func_c554(ProbeState *s)
+{
+	(void)s;
+	Func_c554();
+}
+/* <<< factory Func_c554 */
+
+/* >>> factory Func_c280 */
+static void adapt_Func_c280(ProbeState *s)
+{
+	(void)s;
+	Func_c280();
+}
+/* <<< factory Func_c280 */
+
+/* >>> factory UpdateOverworldMap */
+static void adapt_UpdateOverworldMap(ProbeState *s)
+{
+	(void)s;
+	UpdateOverworldMap();
+}
+/* <<< factory UpdateOverworldMap */
+
+/* >>> factory DisplayPauseMenu */
+static void adapt_DisplayPauseMenu(ProbeState *s)
+{
+	(void)s;
+	DisplayPauseMenu();
+}
+/* <<< factory DisplayPauseMenu */
+
+/* >>> factory Func_c8ed */
+static void adapt_Func_c8ed(ProbeState *s)
+{
+	FuncC8edResult result = Func_c8ed(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Func_c8ed */
+
+/* >>> factory PauseMenu_Diary */
+static void adapt_PauseMenu_Diary(ProbeState *s)
+{
+	(void)s;
+	PauseMenu_Diary();
+}
+/* <<< factory PauseMenu_Diary */
+
+/* >>> factory DisplayPCMenu */
+static void adapt_DisplayPCMenu(ProbeState *s)
+{
+	(void)s;
+	DisplayPCMenu();
+}
+/* <<< factory DisplayPCMenu */
+
+/* >>> factory Func_c268 */
+static void adapt_Func_c268(ProbeState *s)
+{
+	(void)s;
+	Func_c268();
+}
+/* <<< factory Func_c268 */
+
+/* >>> factory PauseMenu_Status */
+static void adapt_PauseMenu_Status(ProbeState *s)
+{
+	(void)s;
+	PauseMenu_Status();
+}
+/* <<< factory PauseMenu_Status */
+
+/* >>> factory Func_c258 */
+static void adapt_Func_c258(ProbeState *s)
+{
+	uint8_t saved_hffb0 = hffb0;
+	Func_c258();
+	s->a = saved_hffb0;
+}
+/* <<< factory Func_c258 */
+
+/* >>> factory Func_c241 */
+static void adapt_Func_c241(ProbeState *s)
+{
+	Func_c241();
+	s->f = 0xA0u;
+}
+/* <<< factory Func_c241 */
+
+
+/* >>> factory Func_c141 */
+static void adapt_Func_c141(ProbeState *s)
+{
+	Func_c141Result r = Func_c141();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Func_c141 */
+
+/* >>> factory CloseTextBox */
+static void adapt_CloseTextBox(ProbeState *s)
+{
+	(void)s;
+	CloseTextBox();
+}
+/* <<< factory CloseTextBox */
+
+/* >>> factory Func_c891 */
+static void adapt_Func_c891(ProbeState *s)
+{
+	Func_c891(s->hl);
+}
+/* <<< factory Func_c891 */
+
+/* >>> factory ReturnToOverworld */
+static void adapt_ReturnToOverworld(ProbeState *s)
+{
+	s->a = ReturnToOverworld();
+}
+/* <<< factory ReturnToOverworld */
+
+/* >>> factory CloseAdvancedDialogueBox */
+static void adapt_CloseAdvancedDialogueBox(ProbeState *s)
+{
+	(void)s;
+	CloseAdvancedDialogueBox();
+}
+/* <<< factory CloseAdvancedDialogueBox */
+
+/* >>> factory Func_c8ba */
+static void adapt_Func_c8ba(ProbeState *s)
+{
+	Func_c8ba(s->hl, (uint16_t)((uint16_t)s->d << 8 | s->e));
+}
+/* <<< factory Func_c8ba */
+
+/* >>> factory ReturnToOverworldNoCallback */
+static void adapt_ReturnToOverworldNoCallback(ProbeState *s)
+{
+	s->a = ReturnToOverworldNoCallback();
+}
+/* <<< factory ReturnToOverworldNoCallback */
+
+/* >>> factory ReturnToOverworldWithCallback */
+static void adapt_ReturnToOverworldWithCallback(ProbeState *s)
+{
+	s->a = ReturnToOverworldWithCallback(s->hl);
+}
+/* <<< factory ReturnToOverworldWithCallback */
+
+/* >>> factory FindNPCOrObject */
+static void adapt_FindNPCOrObject(ProbeState *s)
+{
+	FindNPCOrObjectResult result = FindNPCOrObject(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory FindNPCOrObject */
+
+/* >>> factory Func_c6dc */
+static void adapt_Func_c6dc(ProbeState *s)
+{
+	FuncC6dcResult result = Func_c6dc(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+	s->hl = result.hl;
+}
+/* <<< factory Func_c6dc */
+
+/* >>> factory HandlePlayerMoveModeInput */
+static void adapt_HandlePlayerMoveModeInput(ProbeState *s)
+{
+	(void)s;
+	HandlePlayerMoveModeInput();
+}
+/* <<< factory HandlePlayerMoveModeInput */
+
+/* >>> factory PCMenu_Glossary */
+static void adapt_PCMenu_Glossary(ProbeState *s)
+{
+	(void)s;
+	PCMenu_Glossary();
+}
+/* <<< factory PCMenu_Glossary */
+
+/* >>> factory Func_c17a */
+static void adapt_Func_c17a(ProbeState *s)
+{
+	FuncC17aResult result = Func_c17a(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory Func_c17a */
+
+/* >>> factory Func_c53d */
+static void adapt_Func_c53d(ProbeState *s)
+{
+	(void)s;
+	Func_c53d();
+}
+/* <<< factory Func_c53d */
+
+/* >>> factory PCMenu_CardAlbum */
+static void adapt_PCMenu_CardAlbum(ProbeState *s)
+{
+	(void)s;
+	PCMenu_CardAlbum();
+}
+/* <<< factory PCMenu_CardAlbum */
+
+/* >>> factory PauseMenu_Config */
+static void adapt_PauseMenu_Config(ProbeState *s)
+{
+	(void)s;
+	PauseMenu_Config();
+}
+/* <<< factory PauseMenu_Config */
+
+/* >>> factory PCMenu_ReadMail */
+static void adapt_PCMenu_ReadMail(ProbeState *s)
+{
+	s->a = PCMenu_ReadMail();
+}
+/* <<< factory PCMenu_ReadMail */
+
+/* >>> factory Func_c2a3 */
+static void adapt_Func_c2a3(ProbeState *s)
+{
+	(void)s;
+	Func_c2a3();
+}
+/* <<< factory Func_c2a3 */
+
+/* >>> factory PauseMenu_Card */
+static void adapt_PauseMenu_Card(ProbeState *s)
+{
+	(void)s;
+	PauseMenu_Card();
+}
+/* <<< factory PauseMenu_Card */
+
+/* >>> factory SetScriptData */
+static void adapt_SetScriptData(ProbeState *s)
+{
+	SetScriptDataResult result = SetScriptData(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->hl = result.hl;
+}
+/* <<< factory SetScriptData */
+
+/* >>> factory PauseMenu_Deck */
+static void adapt_PauseMenu_Deck(ProbeState *s)
+{
+	(void)s;
+	PauseMenu_Deck();
+}
+/* <<< factory PauseMenu_Deck */
+
+/* >>> factory PauseMenu */
+static void adapt_PauseMenu(ProbeState *s)
+{
+	(void)s;
+	PauseMenu();
+}
+/* <<< factory PauseMenu */
+
+/* >>> factory OpenPauseMenu */
+static void adapt_OpenPauseMenu(ProbeState *s)
+{
+	(void)s;
+	OpenPauseMenu();
+}
+/* <<< factory OpenPauseMenu */
+
+/* >>> factory HandlePlayerMoveMode */
+static void adapt_HandlePlayerMoveMode(ProbeState *s)
+{
+	(void)s;
+	HandlePlayerMoveMode();
+}
+/* <<< factory HandlePlayerMoveMode */
+
+/* >>> factory CallHandlePlayerMoveMode */
+static void adapt_CallHandlePlayerMoveMode(ProbeState *s)
+{
+	(void)s;
+	CallHandlePlayerMoveMode();
+}
+/* <<< factory CallHandlePlayerMoveMode */
+
+/* >>> factory HandleOverworldMode */
+static void adapt_HandleOverworldMode(ProbeState *s)
+{
+	HandleOverworldMode(s->hl);
+}
+/* <<< factory HandleOverworldMode */
+
+/* >>> factory LoadMap */
+static void adapt_LoadMap(ProbeState *s)
+{
+	(void)s;
+	LoadMap();
+}
+/* <<< factory LoadMap */
+
+/* >>> factory PCMenu */
+static void adapt_PCMenu(ProbeState *s)
+{
+	(void)s;
+	PCMenu();
+}
+/* <<< factory PCMenu */
+
+const ProbeEntry probe_entries_overworld[] = {
+	{ "Func_c141", adapt_Func_c141 },
+	{ "Func_c6cc", adapt_Func_c6cc },
+	{ "Func_c6d4", adapt_Func_c6d4 },
+	{ "Func_c6f7", adapt_Func_c6f7 },
+	{ "SetOverworldNPCFlags", adapt_SetOverworldNPCFlags },
+	{ "Func_c158", adapt_Func_c158 },
+	{ "Func_c184", adapt_Func_c184 },
+	{ "WhiteOutDMGPals", adapt_WhiteOutDMGPals },
+	{ "Func_c1f8", adapt_Func_c1f8 },
+	{ "BackupPlayerPosition", adapt_BackupPlayerPosition },
+	{ "Func_c469", adapt_Func_c469 },
+	{ "SetScreenScrollWram", adapt_SetScreenScrollWram },
+	{ "SetScreenScroll", adapt_SetScreenScroll },
+	{ "Func_c70d", adapt_Func_c70d },
+	{ "Func_c41c", adapt_Func_c41c },
+	{ "Func_c3ca", adapt_Func_c3ca },
+	{ "GetDirectionFromDPad", adapt_GetDirectionFromDPad },
+	{ "Func_c694", adapt_Func_c694 },
+	{ "FindPlayerMovementWithOffset", adapt_FindPlayerMovementWithOffset },
+	{ "BackupObjectPalettes", adapt_BackupObjectPalettes },
+	{ "AttemptPlayerMovement", adapt_AttemptPlayerMovement },
+	{ "FindPlayerMovementFromDirection", adapt_FindPlayerMovementFromDirection },
+	{ "Func_c1a0", adapt_Func_c1a0 },
+	{ "PauseMenu_Exit", adapt_PauseMenu_Exit },
+	{ "AttemptPlayerMovementFromDirection", adapt_AttemptPlayerMovementFromDirection },
+	{ "Func_c687", adapt_Func_c687 },
+	{ "Func_c36a", adapt_Func_c36a },
+	{ "Func_c915", adapt_Func_c915 },
+	{ "StartScriptedMovement", adapt_StartScriptedMovement },
+	{ "RestoreObjectPalettes", adapt_RestoreObjectPalettes },
+	{ "Func_c3ff", adapt_Func_c3ff },
+	{ "Func_c49c", adapt_Func_c49c },
+	{ "Func_c58b", adapt_Func_c58b },
+	{ "UpdatePlayerSprite", adapt_UpdatePlayerSprite },
+	{ "UpdatePlayerDirection", adapt_UpdatePlayerDirection },
+	{ "UpdatePlayerDirectionFromDPad", adapt_UpdatePlayerDirectionFromDPad },
+	{ "SetOverworldDoFrameFunction", adapt_SetOverworldDoFrameFunction },
+	{ "Func_c3ee", adapt_Func_c3ee },
+	{ "Func_c66c", adapt_Func_c66c },
+	{ "Func_c4b9", adapt_Func_c4b9 },
+	{ "DecompressPermissionMap", adapt_DecompressPermissionMap },
+	{ "LoadPermissionMap", adapt_LoadPermissionMap },
+	{ "Func_c1ed", adapt_Func_c1ed },
+	{ "Func_c1b1", adapt_Func_c1b1 },
+	{ "Func_c554", adapt_Func_c554 },
+	{ "Func_c280", adapt_Func_c280 },
+	{ "UpdateOverworldMap", adapt_UpdateOverworldMap },
+	{ "Func_c8ed", adapt_Func_c8ed },
+	{ "DisplayPauseMenu", adapt_DisplayPauseMenu },
+	{ "PauseMenu_Diary", adapt_PauseMenu_Diary },
+	{ "DisplayPCMenu", adapt_DisplayPCMenu },
+	{ "Func_c268", adapt_Func_c268 },
+	{ "Func_c258", adapt_Func_c258 },
+	{ "PauseMenu_Status", adapt_PauseMenu_Status },
+	{ "Func_c241", adapt_Func_c241 },
+	{ "CloseTextBox", adapt_CloseTextBox },
+	{ "Func_c891", adapt_Func_c891 },
+	{ "ReturnToOverworld", adapt_ReturnToOverworld },
+	{ "CloseAdvancedDialogueBox", adapt_CloseAdvancedDialogueBox },
+	{ "Func_c8ba", adapt_Func_c8ba },
+	{ "ReturnToOverworldNoCallback", adapt_ReturnToOverworldNoCallback },
+	{ "ReturnToOverworldWithCallback", adapt_ReturnToOverworldWithCallback },
+	{ "FindNPCOrObject", adapt_FindNPCOrObject },
+	{ "Func_c6dc", adapt_Func_c6dc },
+	{ "HandlePlayerMoveModeInput", adapt_HandlePlayerMoveModeInput },
+	{ "PCMenu_Glossary", adapt_PCMenu_Glossary },
+	{ "Func_c17a", adapt_Func_c17a },
+	{ "Func_c53d", adapt_Func_c53d },
+	{ "PCMenu_CardAlbum", adapt_PCMenu_CardAlbum },
+	{ "PauseMenu_Config", adapt_PauseMenu_Config },
+	{ "PCMenu_ReadMail", adapt_PCMenu_ReadMail },
+	{ "Func_c2a3", adapt_Func_c2a3 },
+	{ "PauseMenu_Card", adapt_PauseMenu_Card },
+	{ "SetScriptData", adapt_SetScriptData },
+	{ "PauseMenu_Deck", adapt_PauseMenu_Deck },
+	{ "PauseMenu", adapt_PauseMenu },
+	{ "OpenPauseMenu", adapt_OpenPauseMenu },
+	{ "HandlePlayerMoveMode", adapt_HandlePlayerMoveMode },
+	{ "CallHandlePlayerMoveMode", adapt_CallHandlePlayerMoveMode },
+	{ "HandleOverworldMode", adapt_HandleOverworldMode },
+	{ "LoadMap", adapt_LoadMap },
+	{ "PCMenu", adapt_PCMenu },
+	{ NULL, NULL },
+};

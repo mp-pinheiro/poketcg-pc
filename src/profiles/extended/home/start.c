@@ -1,0 +1,800 @@
+#include "home/start.h"
+#include <stdio.h>
+
+#include "generated/wram.h"
+#include "generated/sram.h"
+#include "home/menus.h"
+#include "home/process_text.h"
+#include "home/print_text.h"
+#include "home/text_box.h"
+#include "home/bg_map.h"
+#include "home/palettes.h"
+/* >>> factory statics */
+#include "home/start.h"
+#include "home/save.h"
+#include "home/core.h"
+#include "generated/wram.h"
+#define FALSE 0x00u
+#define TRUE 0x01u
+
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/process_text.h"
+#include "home/print_text.h"
+#include "home/print_stats.h"
+#include "home/text_box.h"
+#define ContinueFromDiarySummaryText 0x0370u
+#define StartANewGameText 0x0371u
+#define WhenYouCardPopWithFriendText 0x036Fu
+#define TheGameWillContinueFromThePointInTheDuelText 0x0372u
+#define OVERWORLD_MAP_NAMES 0x397Bu /* home/map.asm OverworldMapNames; fixed bank $00 */
+#include "home/lcd.h"
+#include "home/lcd_enable_frame.h"
+#include "home/load_animation.h"
+#include "home/init_menu.h"
+#include "home/print_text.h"
+#include "home/menus.h"
+#include "generated/wram.h"
+#define ContinueFromDiaryText 0x0377u
+#define DataExistsWhenPowerWasTurnedOFFDuringDuelText 0x0376u
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#include "home/copy.h"
+#include "home/lcd.h"
+#include "home/lcd_enable_frame.h"
+#include "home/load_animation.h"
+#include "home/init_menu.h"
+#include "home/menus.h"
+#include "home/labels.h"
+#include "home/sound.h"
+#include "home/process_text.h"
+#include "home/random.h"
+#define DOUBLE_SPACED 0x00u
+#define MUSIC_PC_MAIN_MENU 0x06u
+#define SYM_CURSOR_R 0x0Fu
+#define SYM_SPACE 0x00u
+
+#include "home/color.h"
+#include "home/play_animation.h"
+#define IsCrazyAboutPokemonAndPokemonCardCollectingText 0x0379u
+#define HANDLEALLSPRITEANIMATIONS_ADDR 0x3CB4u
+
+#include "home/lcd.h"
+#include "home/lcd_enable_frame.h"
+#include "home/load_animation.h"
+#include "home/init_menu.h"
+#include "home/save.h"
+#include "home/print_text.h"
+#include "home/menus.h"
+#include "generated/wram.h"
+#define AllDataWasDeletedText 0x0375u
+#define OKToDeleteTheDataText 0x0374u
+#define SavedDataAlreadyExistsText 0x0373u
+
+#include "home/intro.h"
+#include "home/intro_sequence_commands.h"
+#include "home/load_animation.h"
+#include "home/sound.h"
+#include "generated/wram.h"
+#define MUSIC_STOP 0x00u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/clear_sram.h"
+#include "home/dma.h"
+#include "home/lcd.h"
+#include "home/overworld.h"
+#include "home/frames.h"
+#include "home/main_menu.h"
+#include "home/setup.h"
+#include "home/sound.h"
+#include "home/switch_sram.h"
+#include "home/time.h"
+#include "mem.h"
+#include "runtime.h"
+#define BANK_GAME_LOOP 0x01u
+#define rIF 0xFF0Fu
+#define rIE 0xFFFFu
+#define PAD_A 0x01u
+#define PAD_START 0x08u
+#define SFX_CONFIRM 0x02u
+#define PAD_B 0x02u
+#define PAD_RIGHT 0x10u
+#define PAD_LEFT 0x20u
+#define PAD_UP 0x40u
+#define PAD_DOWN 0x80u
+#define START_MENU_CARD_POP 0x00u
+#define START_MENU_CONTINUE_FROM_DIARY 0x01u
+#define START_MENU_NEW_GAME 0x02u
+#define START_MENU_PC_OPTIONS 0xFEu
+#define rVBK 0xFF4Fu
+/* <<< factory statics */
+
+#define CONSOLE_CGB 0x02u
+#define DISCLAIMER_TEXT_ID 0x0378u
+#define SYM_CURSOR_D 0x2Fu
+static void print_text_bytes(const uint8_t *text, uint8_t d, uint8_t e)
+{
+	uint16_t ptr = wDefaultText_ADDR;
+	while (*text)
+		gb_write8(ptr++, *text++);
+	gb_write8(ptr, 0u);
+	InitTextPrinting(d, e);
+	ptr = wDefaultText_ADDR;
+	(void)ProcessText(&ptr);
+}
+
+static void print_host_text(const char *text, uint8_t d, uint8_t e)
+{
+	uint8_t bytes[40];
+	size_t length = 0u;
+	bytes[length++] = 0x06u;
+	while (*text && length < sizeof bytes - 1u)
+		bytes[length++] = (uint8_t)*text++;
+	bytes[length] = 0u;
+	print_text_bytes(bytes, d, e);
+}
+
+static uint8_t start_menu_pc_index(void)
+{
+	uint8_t index = 1u;
+	if (wHasSaveData != 0u) {
+		index = 3u;
+		if (wHasDuelSaveData != 0u)
+			index++;
+	}
+	return index;
+}
+#define PC_PAGE_SLOTS 6u
+#define PC_PAGE_ROW_Y 15u
+#define PC_OPTION_SGB 2u
+#define PC_OPTION_BORDER 6u
+#define PC_SFX_CURSOR 0x01u
+#define PC_SFX_CANCEL 0x03u
+typedef struct {
+	const char *name;
+	uint8_t count;
+	uint8_t options[PC_PAGE_SLOTS];
+} PcOptionPage;
+static const PcOptionPage kPcPages[] = {
+	{"DISPLAY", 6u, {0u, PC_OPTION_SGB, PC_OPTION_BORDER, 5u, 9u, 7u}},
+	{"SOUND", 3u, {3u, 4u, 8u}},
+	{"GAMEPLAY", 2u, {10u, 11u}},
+};
+#define PC_PAGE_COUNT (sizeof kPcPages / sizeof kPcPages[0])
+static const char *const kPcFontNames[] = {
+	"ORIGINAL", "PUBLIC PIXEL", "UNSCII-8", "PIX OPER 8"
+};
+static const char *const kPcBorderNames[] = {
+	"PLAIN", "INTRO", "MEDALS", "LEGEND"
+};
+static const uint8_t kFontSampleUpper[] = {
+	0x03u, 0x30u, 0x03u, 0x31u, 0x03u, 0x32u, 0x03u, 0x33u, 0u
+};
+static const uint8_t kFontSampleLower[] = {
+	0x03u, 0x64u, 0x03u, 0x65u, 0x03u, 0x4Bu, 0x03u, 0x66u, 0u
+};
+
+static uint8_t pc_visible_options(uint8_t page, uint8_t *out)
+{
+	uint8_t count = 0u;
+	for (uint8_t i = 0u; i < kPcPages[page].count; ++i) {
+		uint8_t option = kPcPages[page].options[i];
+		if (option == PC_OPTION_BORDER && !runtime_pc_option_value(PC_OPTION_SGB))
+			continue;
+		out[count++] = option;
+	}
+	return count;
+}
+
+static uint8_t pc_row_y(uint8_t row, uint8_t count)
+{
+	return row < count ? (uint8_t)(3u + row * 2u) : PC_PAGE_ROW_Y;
+}
+
+static void print_pc_row(uint8_t y, const char *text)
+{
+	char padded[23];
+	snprintf(padded, sizeof padded, "%-22.22s", text);
+	print_host_text(padded, 2u, y);
+}
+
+static void print_pc_option_line(uint8_t y, uint8_t option)
+{
+	char text[24];
+	int value = runtime_pc_option_value(option);
+	switch (option) {
+	case 0u:
+		snprintf(text, sizeof text, "RESOLUTION %dX", value);
+		break;
+	case 2u:
+		snprintf(text, sizeof text, "SGB %s", value ? "ON" : "OFF");
+		break;
+	case 3u:
+		snprintf(text, sizeof text, "MASTER VOL %d", value);
+		break;
+	case 4u:
+		snprintf(text, sizeof text, "MUSIC VOL %d", value);
+		break;
+	case 5u:
+		snprintf(text, sizeof text, "BIG FONT %s", kPcFontNames[value & 3]);
+		break;
+	case 6u:
+		snprintf(text, sizeof text, "BORDER %s", kPcBorderNames[value & 3]);
+		break;
+	case 7u:
+		snprintf(text, sizeof text, "TEXT CASE %s", value ? "NORMAL" : "UPPER");
+		break;
+	case 8u:
+		snprintf(text, sizeof text, "SFX VOL %d", value);
+		break;
+	case 10u:
+		snprintf(text, sizeof text, "PLAYER %s", value ? "MINT" : "MARK");
+		break;
+	case 11u:
+		snprintf(text, sizeof text, "NEW GAME SELECT %s", value ? "ON" : "OFF");
+		break;
+	default:
+		snprintf(text, sizeof text, "SMALL FONT %s", value ? "TOM THUMB" : "ORIGINAL");
+		break;
+	}
+	print_pc_row(y, text);
+}
+
+static uint8_t g_pc_header_palette;
+static uint8_t g_pc_body_palette;
+
+static void set_pc_row_palette(uint8_t y, uint8_t palette)
+{
+	if (wConsole != CONSOLE_CGB)
+		return;
+	gb_write8(rVBK, 1u);
+	for (uint8_t x = 2u; x < 13u; ++x) {
+		uint16_t cell = (uint16_t)(0x9800u + y * 32u + x);
+		gb_write8(cell, (uint8_t)((gb_read8(cell) & 0xF8u) | palette));
+	}
+	gb_write8(rVBK, 0u);
+}
+
+static void load_pc_header_palette(void)
+{
+	uint8_t used = 0u;
+	gb_write8(rVBK, 1u);
+	g_pc_body_palette = (uint8_t)(gb_read8((uint16_t)(0x9800u + 3u * 32u + 2u)) & 7u);
+	for (uint8_t y = 0u; y < 18u; ++y)
+		for (uint8_t x = 0u; x < 20u; ++x)
+			used |= (uint8_t)(1u << (gb_read8((uint16_t)(0x9800u + y * 32u + x)) & 7u));
+	gb_write8(rVBK, 0u);
+	g_pc_header_palette = g_pc_body_palette;
+	for (uint8_t palette = 7u; palette > 0u; --palette) {
+		if (!(used & (1u << palette))) {
+			g_pc_header_palette = palette;
+			break;
+		}
+	}
+	if (g_pc_header_palette == g_pc_body_palette)
+		return;
+	uint8_t *pals = wBackgroundPalettesCGB_PTR;
+	const uint8_t *body = pals + g_pc_body_palette * 8u;
+	uint16_t background = (uint16_t)(body[0] | body[1] << 8);
+	uint16_t text = (uint16_t)(body[6] | body[7] << 8);
+	uint16_t gray = 0u;
+	for (unsigned shift = 0u; shift < 15u; shift += 5u) {
+		unsigned mix = (((background >> shift) & 31u) + ((text >> shift) & 31u)) / 2u;
+		gray = (uint16_t)(gray | mix << shift);
+	}
+	for (unsigned i = 0u; i < 8u; ++i)
+		pals[g_pc_header_palette * 8u + i] = body[i];
+	pals[g_pc_header_palette * 8u + 6u] = (uint8_t)gray;
+	pals[g_pc_header_palette * 8u + 7u] = (uint8_t)(gray >> 8);
+	FlushAllPalettes();
+}
+
+static uint8_t draw_pc_options(uint8_t page, uint8_t *options)
+{
+	char header[24];
+	uint8_t count = pc_visible_options(page, options);
+	(void)SetupText(0x30u, 0x8Fu);
+	print_host_text("PC OPTIONS", 2u, 1u);
+	set_pc_row_palette(1u, g_pc_header_palette);
+	for (uint8_t slot = 0u; slot < PC_PAGE_SLOTS; ++slot) {
+		uint8_t y = (uint8_t)(3u + slot * 2u);
+		if (slot < count)
+			print_pc_option_line(y, options[slot]);
+		else
+			print_pc_row(y, "");
+		set_pc_row_palette(y, g_pc_body_palette);
+	}
+	int used = snprintf(header, sizeof header, "PAGE %u/%u", (unsigned)page + 1u,
+		(unsigned)PC_PAGE_COUNT);
+	snprintf(header + used, sizeof header - (size_t)used, "%*s", 20 - used,
+		kPcPages[page].name);
+	print_pc_row(PC_PAGE_ROW_Y, header);
+	set_pc_row_palette(PC_PAGE_ROW_Y, g_pc_header_palette);
+	print_text_bytes(kFontSampleUpper, 15u, 9u);
+	print_text_bytes(kFontSampleLower, 15u, 11u);
+	return count;
+}
+
+static int pc_option_toggles(uint8_t option)
+{
+	return option == 2u || option == 5u || option == 6u || option == 7u ||
+		option == 9u || option == 10u || option == 11u;
+}
+
+static void RunPCOptionsMenu(void)
+{
+	uint16_t box = 0u;
+	uint8_t page = 0u;
+	uint8_t row = 0u;
+	uint8_t options[PC_PAGE_SLOTS];
+	DisableLCD();
+	(void)InitMenuScreen();
+	EnableAndClearSpriteAnimations();
+	wLineSeparation = DOUBLE_SPACED;
+	DrawPlayerPortrait(14u, 1u);
+	DrawRegularTextBox(&box, 0u, 14u, 18u, 0u, 0u);
+	DrawRegularTextBox(&box, 0u, 6u, 6u, 14u, 8u);
+	if (wConsole == CONSOLE_CGB)
+		load_pc_header_palette();
+	uint8_t count = draw_pc_options(page, options);
+	wCursorBlinkCounter = 0u;
+	(void)WriteByteToBGMap0(SYM_CURSOR_R, 1u, pc_row_y(row, count));
+	(void)FlashWhiteScreen();
+	for (;;) {
+		DoFrameIfLCDEnabled();
+		(void)UpdateRNGSources();
+		uint8_t held = hDPadHeld;
+		uint8_t pressed = hKeysPressed;
+		if ((pressed & PAD_B) != 0u) {
+			PlaySFX(PC_SFX_CANCEL);
+			return;
+		}
+		if ((held & (PAD_UP | PAD_DOWN)) != 0u) {
+			(void)WriteByteToBGMap0(SYM_SPACE, 1u, pc_row_y(row, count));
+			if ((held & PAD_UP) != 0u)
+				row = row == 0u ? count : (uint8_t)(row - 1u);
+			else
+				row = row >= count ? 0u : (uint8_t)(row + 1u);
+			wCursorBlinkCounter = 0u;
+			PlaySFX(PC_SFX_CURSOR);
+		}
+		int direction = 0;
+		if ((held & (PAD_LEFT | PAD_RIGHT)) != 0u)
+			direction = (held & PAD_RIGHT) != 0u ? 1 : -1;
+		else if ((pressed & PAD_A) != 0u)
+			direction = 1;
+		if (direction) {
+			if (row == count) {
+				int next = (int)page + direction;
+				if (next < 0)
+					next = (int)PC_PAGE_COUNT - 1;
+				else if (next >= (int)PC_PAGE_COUNT)
+					next = 0;
+				page = (uint8_t)next;
+				count = draw_pc_options(page, options);
+				row = count;
+				PlaySFX(PC_SFX_CURSOR);
+			} else if ((pressed & PAD_A) == 0u || pc_option_toggles(options[row])) {
+				runtime_pc_option_adjust(options[row], direction);
+				if (options[row] == 10u) {
+					DrawPlayerPortrait(14u, 1u);
+					if (wConsole == CONSOLE_CGB)
+						load_pc_header_palette();
+				}
+				count = draw_pc_options(page, options);
+				if (row > count)
+					row = count;
+				PlaySFX((pressed & PAD_A) != 0u ? SFX_CONFIRM : PC_SFX_CURSOR);
+			}
+		}
+		wCursorBlinkCounter++;
+		(void)WriteByteToBGMap0((wCursorBlinkCounter & 0x10u) != 0u ? SYM_SPACE : SYM_CURSOR_R,
+			1u, pc_row_y(row, count));
+	}
+}
+
+#define SYM_BOX_BOTTOM 0x1Du
+
+uint8_t ShowCardPopCGBDisclaimer(void)
+{
+	uint16_t box = 0;
+	if (wConsole == CONSOLE_CGB)
+		return 0xC0u;
+
+	DrawRegularTextBox(&box, 0, 20, 8, 0, 10);
+	InitTextPrinting(1, 12);
+	(void)PrintTextNoDelay(DISCLAIMER_TEXT_ID, 1, 12);
+	(void)SetCursorParametersForTextBox(18, 17, SYM_CURSOR_D, SYM_BOX_BOTTOM);
+	/* start.asm:399-401. The port dropped the wait and returned a bare
+	 * carry. `scf` clears N and H and leaves Z, so the exit is the callee's
+	 * Z with carry forced on. */
+	WaitResult wait = WaitForButtonAorB();
+
+	return (uint8_t)((wait.f & 0x80u) | 0x10u);
+}
+
+/* >>> factory CheckIfHasSaveData */
+CheckIfHasSaveDataResult CheckIfHasSaveData(void)
+{
+	ValidateResult first = ValidateBackupGeneralSaveData();
+	uint8_t has_save = (first.f & 0x10u) ? TRUE : FALSE;
+	wHasSaveData = has_save;
+	if (has_save != FALSE) {
+		ValidateSavedDuelDataResult duel = ValidateSavedDuelData(sCurrentDuel_ADDR);
+		uint8_t flags = duel.f;
+		wHasDuelSaveData = (flags & 0x10u) ? FALSE : TRUE;
+	} else {
+		wHasDuelSaveData = FALSE;
+	}
+	ValidateResult final = ValidateBackupGeneralSaveData();
+	return (CheckIfHasSaveDataResult){final.a, final.f};
+}
+/* <<< factory CheckIfHasSaveData */
+
+/* >>> factory PrintStartMenuDescriptionText */
+PrintStartMenuDescriptionTextResult PrintStartMenuDescriptionText(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t saved_b = b;
+	uint8_t saved_c = c;
+	uint8_t saved_d = d;
+	uint8_t saved_e = e;
+	uint16_t box = 0;
+	uint8_t menu_item = wCurMenuItem;
+	uint8_t dispatch;
+	uint8_t out_a = menu_item;
+	if (runtime_pc_options_enabled() &&
+	    menu_item == start_menu_pc_index()) {
+		if (menu_item != wCurHighlightedStartMenuItem) {
+			DrawRegularTextBox(&box, 0u, 20u, 8u, 0u, 10u);
+			print_host_text("Configure PC options.", 1u, 12u);
+		}
+		uint8_t out_f = (menu_item == wCurHighlightedStartMenuItem) ? 0xC0u : f;
+		wCurHighlightedStartMenuItem = menu_item;
+		(void)a;
+		(void)hl;
+		return (PrintStartMenuDescriptionTextResult){out_a, out_f,
+			saved_b, saved_c, saved_d, saved_e};
+	}
+	if (menu_item != wCurHighlightedStartMenuItem) {
+		dispatch = menu_item;
+		if (wHasSaveData == 0u)
+			dispatch = (uint8_t)(dispatch + 2u);
+		DrawRegularTextBox(&box, 0u, 20u, 8u, 0u, 10u);
+		switch (dispatch) {
+		/* start.asm:265-266 jumps through JumpToFunctionInTable, whose
+		 * index is 0-based (jumptable.asm:3-4 doubles `a` and adds it
+		 * straight to the table address), so the four cases are the
+		 * table order at start.asm:271-275: CardPop, ContinueFromDiary,
+		 * NewGame, ContinueDuel. */
+		case 0u: {
+			InitTextPrinting(1u, 12u);
+			TextResult text = PrintTextNoDelay(WhenYouCardPopWithFriendText, 1u, 12u);
+			(void)text;
+			break;
+		}
+		case 1u: {
+			uint8_t map = wCurOverworldMap;
+			uint8_t offset = (uint8_t)(map + map);
+			uint16_t src = (uint16_t)(OVERWORLD_MAP_NAMES + offset);
+			gb_write8(wTxRam2_ADDR, gb_read8(src));
+			gb_write8((uint16_t)(wTxRam2_ADDR + 1u), gb_read8((uint16_t)(src + 1u)));
+			gb_write8(wTxRam3_ADDR, wMedalCount);
+			gb_write8((uint16_t)(wTxRam3_ADDR + 1u), 0u);
+			InitTextPrinting(1u, 10u);
+			TextResult text = PrintTextNoDelay(ContinueFromDiarySummaryText, 1u, 10u);
+			(void)text;
+			PrintAlbumProgress_SkipGetProgress(9u, 14u, wTotalNumCardsCollected, wTotalNumCardsToCollect);
+			PrintPlayTime_SkipUpdateTime(10u, 16u);
+			break;
+		}
+		case 2u: {
+			InitTextPrinting(1u, 12u);
+			TextResult text = PrintTextNoDelay(StartANewGameText, 1u, 12u);
+			(void)text;
+			break;
+		}
+		case 3u: {
+			InitTextPrinting(1u, 12u);
+			TextResult text = PrintTextNoDelay(TheGameWillContinueFromThePointInTheDuelText, 1u, 12u);
+			(void)text;
+			break;
+		}
+		default:
+			break;
+		}
+	}
+	/* start.asm:267-268: every path falls through .skip, which reloads
+	 * `a` from wCurMenuItem, so the dispatched print's own return value
+	 * never reaches the caller. The dispatch path's F is the flag state
+	 * the printed branch left behind; PrintTextNoDelay does not surface
+	 * it (TextResult has no f member, src/home/print_text.h:54-57), so
+	 * only the skip path's F is modeled here. */
+	uint8_t out_f = (menu_item == wCurHighlightedStartMenuItem) ? 0xC0u : f;
+	wCurHighlightedStartMenuItem = menu_item;
+	(void)a;
+	(void)hl;
+	return (PrintStartMenuDescriptionTextResult){out_a, out_f, saved_b, saved_c, saved_d, saved_e};
+}
+/* <<< factory PrintStartMenuDescriptionText */
+
+/* >>> factory AskToContinueFromDiaryWithDuelData */
+AskToContinueFromDiaryWithDuelDataResult AskToContinueFromDiaryWithDuelData(void)
+{
+	uint8_t a = wHasDuelSaveData;
+	if (a == 0u)
+		return (AskToContinueFromDiaryWithDuelDataResult){a, 0x80u};
+
+	DisableLCD();
+	(void)InitMenuScreen();
+	EnableAndClearSpriteAnimations();
+	(void)FlashWhiteScreen();
+	DoFrameIfLCDEnabled();
+	(void)PrintScrollableText_NoTextBoxLabel(DataExistsWhenPowerWasTurnedOFFDuringDuelText);
+	HandleYesOrNoMenuResult menu = YesOrNoMenuWithText(ContinueFromDiaryText);
+	if ((menu.f & 0x10u) != 0u)
+		return (AskToContinueFromDiaryWithDuelDataResult){menu.a, menu.f};
+	return (AskToContinueFromDiaryWithDuelDataResult){menu.a, menu.a == 0u ? 0x80u : 0u};
+}
+/* <<< factory AskToContinueFromDiaryWithDuelData */
+
+/* >>> factory HandleStartMenu */
+void HandleStartMenu(void)
+{
+	PlaySong(MUSIC_PC_MAIN_MENU);
+	DisableLCD();
+	(void)InitMenuScreen();
+	(void)SetupText(0x30u, 0x8Fu);
+	EnableAndClearSpriteAnimations();
+	wLineSeparation = DOUBLE_SPACED;
+	DrawPlayerPortrait(14u, 1u); /* menus/start.asm:229 lb bc, 14, 1 */
+	static const uint8_t params[17] = {
+		0x00u, 0x00u, 0x0Eu, 0x04u, 0x02u, 0x02u,
+		0x6Cu, 0x03u, 0xFFu, 0x01u, 0x02u, 0x02u, 0x01u,
+		SYM_CURSOR_R, SYM_SPACE, 0x00u, 0x00u
+	};
+	for (uint8_t i = 0u; i < 17u; ++i)
+		gb_write8((uint16_t)(wStartMenuParams_ADDR + i), params[i]);
+	uint8_t item_count = 1u;
+	uint8_t box_height = 4u;
+	uint8_t text_id = 0x6Cu;
+	if (wHasSaveData != 0u) {
+		item_count = (uint8_t)(item_count + 2u);
+		box_height = (uint8_t)(box_height + 4u);
+		text_id = (uint8_t)(text_id + 1u);
+		if (wHasDuelSaveData != 0u) {
+			item_count = (uint8_t)(item_count + 1u);
+			box_height = (uint8_t)(box_height + 2u);
+			text_id = (uint8_t)(text_id + 1u);
+		}
+	}
+	uint8_t pc_options = (uint8_t)runtime_pc_options_enabled();
+	uint8_t native_item_count = item_count;
+	uint8_t list_top = 2u;
+	if (pc_options != 0u) {
+		item_count++;
+		box_height = (uint8_t)(box_height + 2u);
+		if (item_count == 5u) {
+			list_top = 1u;
+			box_height = 11u;
+		}
+	}
+	gb_write8((uint16_t)(wStartMenuParams_ADDR + 5u), list_top);
+	gb_write8((uint16_t)(wStartMenuParams_ADDR + 10u), list_top);
+	gb_write8((uint16_t)(wStartMenuParams_ADDR + 12u), item_count);
+	gb_write8((uint16_t)(wStartMenuParams_ADDR + 3u), box_height);
+	gb_write8((uint16_t)(wStartMenuParams_ADDR + 6u), text_id);
+	gb_write8((uint16_t)(wStartMenuParams_ADDR + 7u), 0x03u);
+	wTitleScreenIgnoreInputCounter = 0xFFu;
+	uint8_t selected = wLastSelectedStartMenuItem;
+	/* start.asm:119-125: when wLastSelectedStartMenuItem >= 4, `ld a,
+	 * [wHasSaveData]` loads the flag over it, so a no-save boot starts on
+	 * item 0 and a has-save boot on item 1 -- never on the stale $FF. */
+	if (selected >= 4u)
+		selected = (wHasSaveData != 0u) ? 1u : 0u;
+	InitAndPrintMenu(wStartMenuParams_ADDR, selected);
+	if (pc_options != 0u)
+		print_host_text("PC OPTIONS", 2u,
+			(uint8_t)(list_top + native_item_count * 2u));
+	/* start.asm:104-141: InitAndPrintMenu's menu-item print (PrintTextNoDelay
+	 * -> Func_235e) spans a VBlank period on the reference -- service 1008
+	 * interrupts it mid-draw (1150-frame trace: wvbc 1008; the reference
+	 * burns 12 no-advance steps 997-1008 vs native 9). Consume it once per
+	 * menu opening, before the white flash. */
+	/* start.asm:104-141: the description print spans two service periods
+	 * on the reference (cursor+box in one, text body in the next;
+	 * 1150-frame trace: wvbc 1007 mid-box, 1008 mid-text). */
+	frame_boundary_consume_services(2u);
+	(void)FlashWhiteScreen();
+	runtime_mark_event(RUNTIME_EVENT_START_MENU_READY);
+	for (;;) { /* .wait_input */
+		DoFrameIfLCDEnabled();
+		(void)UpdateRNGSources();
+		HandleMenuInputResult input = HandleMenuInput();
+		PrintStartMenuDescriptionTextResult description = PrintStartMenuDescriptionText(input.a, input.f, 0u, 0u, 0u, input.e, 0u);
+		(void)description;
+		if ((input.f & 0x10u) == 0u)
+			continue;
+		if (hCurMenuItem != input.e)
+			continue;
+		wLastSelectedStartMenuItem = hCurMenuItem;
+		uint8_t choice = input.e;
+		if (pc_options != 0u && choice == native_item_count) {
+			wStartMenuChoice = START_MENU_PC_OPTIONS;
+			return;
+		}
+		if (wHasSaveData == 0u)
+			choice = (uint8_t)(choice + 2u);
+		wStartMenuChoice = choice;
+		return;
+	}
+}
+/* <<< factory HandleStartMenu */
+
+/* >>> factory DrawPlayerPortraitAndPrintNewGameText */
+void DrawPlayerPortraitAndPrintNewGameText(void)
+{
+	DisableLCD();
+	LoadConsolePaletteData();
+	(void)InitMenuScreen();
+	EnableAndClearSpriteAnimations();
+	(void)SetDoFrameFunction(HANDLEALLSPRITEANIMATIONS_ADDR);
+	DrawPlayerPortrait(7u, 3u); /* menus/start.asm:410 lb bc, 7, 3 */
+	(void)FadeScreenFromWhite();
+	DoFrameIfLCDEnabled();
+	(void)PrintScrollableText_NoTextBoxLabel(IsCrazyAboutPokemonAndPokemonCardCollectingText);
+	(void)ResetDoFrameFunction(0u);
+	EnableAndClearSpriteAnimations();
+}
+/* <<< factory DrawPlayerPortraitAndPrintNewGameText */
+
+/* >>> factory DeleteSaveDataForNewGame */
+uint8_t DeleteSaveDataForNewGame(void)
+{
+	if (wHasSaveData == 0u)
+		return 0x00u; /* ret z */
+
+	DisableLCD();
+	(void)InitMenuScreen();
+	EnableAndClearSpriteAnimations();
+	(void)FlashWhiteScreen();
+	DoFrameIfLCDEnabled();
+	(void)PrintScrollableText_NoTextBoxLabel(SavedDataAlreadyExistsText);
+	HandleYesOrNoMenuResult result = YesOrNoMenuWithText(OKToDeleteTheDataText);
+	if ((result.f & 0x10u) != 0u)
+		return 0x10u; /* ret c: quit if chose "no" */
+	InvalidateSaveData();
+	(void)PrintScrollableText_NoTextBoxLabel(AllDataWasDeletedText);
+	return 0x00u; /* or a */
+}
+/* <<< factory DeleteSaveDataForNewGame */
+
+static void LoadEventsFromSRAM(void)
+{
+	EnableSRAM();
+	for (uint8_t i = 0u; i < 0x40u; ++i)
+		gb_write8((uint16_t)(wEventVars_ADDR + i),
+			gb_read8((uint16_t)(sEventVars_ADDR + i)));
+	DisableSRAM();
+}
+
+/* >>> factory HandleTitleScreen */
+void HandleTitleScreen(void)
+{
+	if (!frame_boundary_is_installed()) {
+		/* Probe world: the oracle stops pre-ret right before the intro
+		 * call (start.asm:16); keep the bounded opening prefix. */
+		if (wLastSelectedStartMenuItem == 0u)
+			return;
+		PlaySong(MUSIC_STOP);
+		EnableAndClearSpriteAnimations();
+		return;
+	}
+
+title_screen:
+	if (wLastSelectedStartMenuItem != 0u) {
+		for (;;) { /* .play_opening */
+			PlaySong(MUSIC_STOP);
+			EnableAndClearSpriteAnimations();
+			PlayIntroSequence();
+			LoadTitleScreenSprites();
+			/* start.asm:17 calls LoadTitleScreenSprites with the LCD
+			 * back on (intro.asm:52): the seven 4-tile orb copies
+			 * through CopyGfxData's hblank-gated HRAM copier plus the
+			 * sprite-buffer work fill most of a frame period, and the
+			 * reference's ISR services twice while this chain is still
+			 * running -- service 657 interrupts CopyGfxData.hblank_copy
+			 * inside the GRASS copy, service 658 lands at CopyGfxData+3
+			 * of the PSYCHIC copy, both inside DoFrame interval 652
+			 * (700/1150-frame reference traces). The intro-side call
+			 * (intro.c) runs with the LCD off and crosses nothing.
+			 * Model both services here. */
+			frame_boundary_consume_services(2u);
+			runtime_mark_event(RUNTIME_EVENT_TITLE_READY);
+			wTitleScreenOrbCounter = 0u;
+			wTitleScreenIgnoreInputCounter = 0x3Cu;
+			uint8_t start_menu = 0u;
+			while (start_menu == 0u) { /* .loop */
+				DoFrameIfLCDEnabled();
+				(void)UpdateRNGSources();
+				(void)AnimateRandomTitleScreenOrb();
+				wTitleScreenOrbCounter++;
+				if (AssertSongFinished() == 0u) {
+					FadeScreenToWhite();
+					break; /* jr .play_opening: replay opening */
+				}
+				if (wTitleScreenIgnoreInputCounter != 0u) {
+					wTitleScreenIgnoreInputCounter--;
+					continue;
+				}
+				if ((hKeysPressed & (PAD_A | PAD_START)) == 0u)
+					continue;
+				PlaySFX(SFX_CONFIRM);
+				FadeScreenToWhite();
+				start_menu = 1u; /* key fallthrough: .start_menu */
+			}
+			if (start_menu != 0u)
+				break;
+		}
+	}
+
+	(void)CheckIfHasSaveData();
+	if (runtime_pc_options_enabled() && wHasSaveData != 0u)
+		LoadEventsFromSRAM();
+	HandleStartMenu();
+	if (wStartMenuChoice == START_MENU_PC_OPTIONS) {
+		uint8_t had_save = wHasSaveData;
+		if (had_save) {
+			LoadBackupGeneralSaveData();
+			LoadGeneralSaveData();
+		}
+		RunPCOptionsMenu();
+		if (had_save && runtime_player_gender_dirty()) {
+			SaveGeneralSaveData();
+			WriteBackupGeneralSaveData();
+			runtime_clear_player_gender_dirty();
+		}
+		wLastSelectedStartMenuItem = 0u;
+		goto title_screen;
+	}
+	if (wStartMenuChoice == START_MENU_NEW_GAME) {
+		if ((DeleteSaveDataForNewGame() & 0x10u) != 0u)
+			goto title_screen;
+	} else if (wStartMenuChoice == START_MENU_CONTINUE_FROM_DIARY) {
+		AskToContinueFromDiaryWithDuelDataResult answer = AskToContinueFromDiaryWithDuelData();
+		if ((answer.f & 0x10u) != 0u)
+			goto title_screen;
+	}
+	if (wStartMenuChoice == START_MENU_CARD_POP && (ShowCardPopCGBDisclaimer() & 0x10u) != 0u)
+		goto title_screen;
+	ResetDoFrameFunction(0u);
+	EnableAndClearSpriteAnimations();
+}
+/* <<< factory HandleTitleScreen */
+
+/* >>> factory Start */
+void Start(uint8_t a)
+{
+	gb_write8(rIF, 0);
+	gb_write8(rIE, 0);
+	(void)ZeroRAM();
+	BankswitchROM(1u);
+	BankswitchSRAM(0u);
+	hBankVRAM = 0u;
+	gb_write8(rVBK, 0xFEu);
+	DisableLCD();
+	wInitialA = a;
+	(void)DetectConsole(a);
+	wTileMapFill = 0x20u;
+	(void)SetupVRAM();
+	(void)SetupRegisters();
+	(void)SetupPalettes(0u, 0u, 0u, 0u);
+	SetupSound();
+	(void)SetupTimer();
+	CopyDMAFunction();
+	ValidateSRAM();
+	BankswitchROM(BANK_GAME_LOOP);
+}
+/* <<< factory Start */

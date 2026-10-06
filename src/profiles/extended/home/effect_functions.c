@@ -1,0 +1,10991 @@
+#include "home/effect_functions.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/bg_map.h"
+/* >>> factory statics */
+#include "home/duel.h"
+#include "home/effect_functions.h"
+
+#define DUELIST_TYPE_PLAYER               0x00u
+#define POISONED                          0x80u
+#define DOUBLE_POISONED                   0xc0u
+#define DUELVARS_DUELIST_TYPE             0xf1u
+#define DUELVARS_ARENA_CARD_STATUS        0xf0u
+#define DUELVARS_ARENA_CARD_SUBSTATUS1    0xe7u
+
+#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
+#include "home/random.h"
+
+#include "home/substatus.h"
+
+#define CLEFAIRY_DOLL 0xCBu
+#define EFFECT_FAILED_UNSUCCESSFUL 0x02u
+#define MYSTERIOUS_FOSSIL 0xCCu
+#define SNORLAX 0xBEu
+
+#define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0xEDu
+#define DUELVARS_DECK_CARDS 0x7Eu
+#define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
+#define DECK_SIZE 60u
+#define TYPE_ENERGY 0x08u
+#define TYPE_ENERGY_DOUBLE_COLORLESS 0x0Eu
+#define TYPE_TRAINER 0x10u
+#define TX_ThereAreNoTrainerCardsInDiscardPileText 0x00C4u
+#define TX_NoCardsLeftInTheDeckText 0x00B1u
+#define NotEnoughWaterEnergyText 0x00C3u
+#define NoDamageCountersText 0x00ADu
+#define ThePkmnCardsInHandAndDeckWereShuffledText 0x014Eu
+#define NIDORANF                         0x14u
+#define NIDORANM                         0x17u
+
+#define SUBSTATUS1_REDUCE_BY_20 0x13u
+
+#include "home/effect_functions.h"
+
+#include "home/damage.h"
+#include "home/duel.h"
+
+#define PLAY_AREA_ARENA 0x00u
+
+#define DUELVARS_ARENA_CARD       0xBBu
+#define DUELVARS_ARENA_CARD_HP    0xC8u
+#define DUELVARS_ARENA_CARD_STAGE 0xCEu
+#define POKEMON_POWER             0x04u
+
+#define CONFUSED   0x01u
+#define PARALYZED  0x03u
+#define PSN_DBLPSN 0xf0u
+#define CNF_SLP_PRZ 0x0fu
+
+#define COLOR_TEXT_FIRE      0x48u
+#define COLOR_TEXT_GRASS     0x47u
+#define COLOR_TEXT_LIGHTNING 0x4au
+#define COLOR_TEXT_WATER     0x49u
+#define COLOR_TEXT_FIGHTING  0x4bu
+#define COLOR_TEXT_PSYCHIC   0x4cu
+
+static const uint16_t color_to_text[] = {
+	COLOR_TEXT_FIRE,
+	COLOR_TEXT_GRASS,
+	COLOR_TEXT_LIGHTNING,
+	COLOR_TEXT_WATER,
+	COLOR_TEXT_FIGHTING,
+	COLOR_TEXT_PSYCHIC,
+};
+
+#define DUELVARS_BENCH1_CARD_HP 0xC9u
+
+#include "home/math.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/duel.h"
+
+#define KRABBY 0x4fu
+#define SUBSTATUS3_HEADACHE_F 1u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "mem.h"
+
+#define FIRE 0x00u
+#define NotEnoughFireEnergyText 0x00c1u
+
+#define DUELVARS_ARENA_CARD_FLAGS 0xC2u
+#define USED_PKMN_POWER_THIS_TURN 0x20u
+#define WATER 0x03u
+
+#include "home/damage.h"
+#include "home/duel.h"
+#include "home/math.h"
+
+#define ASLEEP    0x02u
+
+#include "home/duel.h"
+#include "home/card_data.h"
+#define DUELVARS_CARD_LOCATIONS 0x00u
+#define CARD_LOCATION_ARENA    0x10u
+
+#define DUELVARS_ARENA_CARD_CHANGED_TYPE 0xD4u
+
+#define NoCardsLeftInTheDeckText 0x00b1u
+
+#define ATK_ANIM_NONE 0x00u
+
+#define PSYCHIC 0x05u
+#define NotEnoughPsychicEnergyText 0x00c2u
+#define OpponentIsNotAsleepText 0x00d3u
+
+#define SUBSTATUS1_REDUCE_BY_10 0x1eu
+
+#include "home/duel.h"
+#include "home/card_data.h"
+#define CARD_LOCATION_PLAY_AREA_F 4u
+
+#define ThereAreNoCardsInTheDiscardPileText 0x00bbu
+
+#define DUELVARS_HAND 0x42u
+#define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xeeu
+
+#define ThereAreNoStage1PokemonText 0x00BCu
+
+#define SUBSTATUS1_PREVENT_LESS_THAN_40 0x0eu
+#define EffectNoPokemonOnTheBenchText 0x00b7u
+
+#define SUBSTATUS1_HALVE_DAMAGE 0x15u
+
+#define CARD_LOCATION_PLAY_AREA 0x10u
+#define TYPE_ENERGY_GRASS 0x09u
+
+#define UNAFFECTED_BY_WEAKNESS_RESISTANCE_F 0x07u
+
+#include "generated/hram.h"
+
+#define USED_LEEK_SLAP_THIS_DUEL_F 0x06u
+
+#define NoResistanceText 0x00c9u
+#define NoWeaknessText 0x00c8u
+
+#include "home/math.h"
+#include "home/damage.h"
+#include "home/duel.h"
+
+#define NotAffectedByPoisonSleepParalysisOrConfusionText 0x00b5u
+#define NotEnoughCardsInHandText 0x00b6u
+
+#define NoGrassEnergyText 0x00CEu
+
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "home/duel.h"
+
+#define OnlyOncePerTurnText 0x00CAu
+
+#define NotEnoughEnergyCardsText 0x00C0u
+
+#include "home/duel.h"
+
+#define ThereAreNoBasicEnergyCardsInDiscardPileText 0x00b0u
+
+#include "home/duel.h"
+#include "generated/hram.h"
+
+#define DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER 0xe0u
+
+static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
+{
+	uint8_t f = 0x40u;
+	if (lhs == rhs)
+		f |= 0x80u;
+	if ((lhs & 0x0fu) < (rhs & 0x0fu))
+		f |= 0x20u;
+	if (lhs < rhs)
+		f |= 0x10u;
+	return f;
+}
+
+#include "home/effect_functions.h"
+#define NoAttackMayBeChoosenText 0x00c5u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/effect_functions.h"
+#include "mem.h"
+
+#define TYPE_ENERGY_PSYCHIC 0x0du
+
+#include "generated/hram.h"
+#include "home/duel.h"
+
+#define NoEnergyAttachedToOpponentsActiveText 0x00aeu
+
+#define NoPokemonWithDamageCountersText 0x00acu
+
+#include "home/duel.h"
+#include "home/substatus.h"
+
+#define ConditionsForEvolvingToStage2NotFulfilledText 0x00b9u
+#define ThereAreNoCardsInHandThatYouCanChangeText 0x00bau
+
+#define MAX_PLAY_AREA_POKEMON 0x06u
+
+#define DUELVARS_ARENA_CARD_LAST_TURN_EFFECT 0xf8u
+#define LAST_TURN_EFFECT_DISCARD_ENERGY 0x01u
+
+#define ThereAreNoTrainerCardsInDiscardPileText 0x00c4u
+
+#define ThereAreNoEnergyCardsInDiscardPileText 0x00afu
+
+#include "home/random.h"
+
+#define ATK_ANIM_GLOW_EFFECT 0x5bu
+
+#include "mem.h"
+
+#include "generated/wram.h"
+#include "home/card_color.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "mem.h"
+#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
+#define SECOND_ATTACK 0x01u
+
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#define LAST_TURN_EFFECT_AMNESIA 0x02u
+
+#include "home/duel.h"
+#include "home/effect_functions.h"
+
+#include "home/duel.h"
+#include "home/effect_functions.h"
+
+#include "generated/wram.h"
+#include "mem.h"
+
+#define SUBSTATUS1_DESTINY_BOND 0x16u
+
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#include "mem.h"
+
+#include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+
+#include "generated/hram.h"
+#include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+
+#include "home/damage.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+
+#define ThereIsNoEnergyCardAttachedText 0x00cdu
+#include "home/effect_functions.h"
+
+#define ThereAreNoPokemonInDiscardPileText 0x00b8u
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+
+#include "home/effect_functions.h"
+#include "home/substatus.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#define CannotUseSinceTheresOnly1PkmnText 0x00cfu
+
+#include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define TYPE_ENERGY_WATER 0x0Bu
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+
+#include "home/effect_functions.h"
+#include "home/substatus.h"
+#include "generated/hram.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#define HAS_CHANGED_COLOR 0x80u
+#define USED_PKMN_POWER_THIS_TURN_F 0x05u
+#define ChangedTheColorOfText 0x0116u
+
+#include "home/effect_functions.h"
+#include "mem.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "mem.h"
+
+#include "home/effect_functions.h"
+#include "mem.h"
+#define SUBSTATUS1_BARRIER 0x14u
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define PokemonAndAllAttachedCardsReturnedToHandText 0x0147u
+
+#include "home/effect_functions.h"
+#include "mem.h"
+#define hTemp_ffa0_ADDR 0xFFA0u
+
+#include "home/effect_functions.h"
+#include "mem.h"
+#include "generated/wram.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "mem.h"
+
+#include "home/effect_functions.h"
+#include "home/substatus.h"
+#include "home/duel.h"
+#include "mem.h"
+#define CannotUseBecauseItWillBeKnockedOutText 0x00d0u
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#define ProcedureForEnergyTransferText 0x012du
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "mem.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#define NoEnergyCardsAttachedToPokemonInOppPlayAreaText 0x00beu
+#define NoEnergyCardsAttachedToPokemonInYourPlayAreaText 0x00bdu
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#include "home/serial.h"
+#include "home/menus.h"
+#include "home/card_data.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define BASIC 0x00u
+#define DITTO 0xbbu
+#define AttackUnsuccessfulText 0x00fdu
+#define MetamorphsToText 0x010du
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/random.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define COLORLESS 0x06u
+#define NUM_COLORED_TYPES 0x06u
+#define TYPE_PKMN 0x07u
+
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#define DUELVARS_ARENA_CARD_CHANGED_RESISTANCE 0xEAu
+#define ChangedTheResistanceOfPokemonToColorText 0x0115u
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#define DUELVARS_ARENA_CARD_CHANGED_WEAKNESS 0xE9u
+#define DUELVARS_ARENA_CARD_LAST_TURN_CHANGE_WEAK 0xF7u
+#define ChangedTheWeaknessOfPokemonToColorText 0x0114u
+
+#include "home/core.h"
+#include "home/serial.h"
+#include "generated/hram.h"
+#define OPPACTION_6B30 0x12u
+
+#include "home/serial.h"
+#include "home/core.h"
+#include "home/duel.h"
+
+#include "generated/hram.h"
+#include "home/core.h"
+
+#include "generated/hram.h"
+#include "home/effect_functions.h"
+#include "home/duel.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "mem.h"
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+
+#include "home/core.h"
+#include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define DUELVARS_ARENA_CARD_ATTACHED_DEFENDER 0xDAu
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "mem.h"
+#define PokemonDevolvedToText 0x017au
+
+#include "home/substatus.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "home/duel.h"
+#include "mem.h"
+#define DUELVARS_ARENA_CARD_LAST_TURN_SUBSTATUS2 0xf6u
+#define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/duel.h"
+#include "home/print_text.h"
+#define DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX 0xF2u
+#define SUBSTATUS2_AMNESIA 0x04u
+#define WasChosenForTheEffectOfAmnesiaText 0x0148u
+
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "generated/wram.h"
+#define ATK_ANIM_HIT 0x01u
+#define DUELVARS_ARENA_CARD_LAST_TURN_DAMAGE 0xf3u
+
+#include "home/effect_functions.h"
+#define SUBSTATUS2_SMOKESCREEN 0x01u
+
+#include "home/effect_functions.h"
+#define SUBSTATUS2_GROWL 0x12u
+
+#include "home/effect_functions.h"
+#define SUBSTATUS2_POUNCE 0x07u
+
+#include "home/effect_functions.h"
+#define SUBSTATUS2_SAND_ATTACK 0x02u
+
+#include "home/effect_functions.h"
+#define SUBSTATUS2_REDUCE_BY_20 0x03u
+
+#include "generated/hram.h"
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "mem.h"
+#define SUBSTATUS2_CONVERSION2 0x08u
+#define SUBSTATUS2_ACID 0x09u
+#define SUBSTATUS2_BONE_ATTACK 0x0bu
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "mem.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/frames.h"
+#include "home/core.h"
+#include "home/lcd.h"
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#define PAD_B 0x02u
+#define PAD_START 0x08u
+#define MENU_CANCEL 0xFFu
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#define ChooseDiscardEnergyCardFromOpponentText 0x0123u
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "generated/hram.h"
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/sound.h"
+#include "home/serial.h"
+#include "home/frames.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define OPPACTION_6B15 0x15u
+#define ProcedureForStrangeBehaviorText 0x0139u
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#define SEARCHEFFECT_BASIC_ENERGY 0x03u
+#define SEARCHEFFECT_BASIC_FIGHTING 0x02u
+#define SEARCHEFFECT_CARD_ID 0x00u
+#define SEARCHEFFECT_NIDORAN 0x01u
+#define SEARCHEFFECT_POKEMON 0x04u
+#define TYPE_PKMN_FIGHTING 0x04u
+#define ThereIsNoInTheDeckText 0x013bu
+#define WouldYouLikeToCheckTheDeckText 0x013cu
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#define BANK_DUEL_CORE 0x01u
+#define KADABRA_TYPE_ENERGY_PSYCHIC 0x0du
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#define Scavenge_PlayerSelectEnergyEffect_PLAY_AREA_ARENA 0x00u
+#define Scavenge_PlayerSelectEnergyEffect_BANK_DUEL_CORE 0x01u
+#define Scavenge_PlayerSelectEnergyEffect_TYPE_ENERGY_PSYCHIC 0x0du
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#define SR_PLAY_AREA_ARENA 0x00u
+#define SR_BANK_DUEL_CORE 0x01u
+#define SR_TYPE_ENERGY_WATER 0x0Bu
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
+
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#include "generated/hram.h"
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define ChooseAndDiscard2FireEnergyCardsText 0x011fu
+
+#include "generated/wram.h"
+#include "home/bg_map.h"
+#include "home/card_color.h"
+#include "home/card_data.h"
+#include "home/credits_sequence_commands.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "home/menus.h"
+#include "home/objects.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
+#include "home/tiles.h"
+#define TX_END 0x00u
+#define ColorListText 0x0046u
+
+#include "generated/hram.h"
+#include "home/effect_functions.h"
+#define C1_PLAY_AREA_ARENA 0x00u
+#define ChooseWeaknessYouWishToChangeText 0x0111u
+
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#define ChooseResistanceYouWishToChangeText 0x0112u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#define YouCanSelectMoreCardsQuitText 0x017cu
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#define SAH_BANK_DUEL_CORE 0x01u
+#define WasPlacedInTheHandText 0x016fu
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#define RAH_BANK_DUEL_CORE 0x01u
+#define CardWasChosenText 0x0165u
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/menus.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/print_text.h"
+#include "home/sound.h"
+#define SFX_POKEMON_EVOLUTION 0x5Eu
+#define STAGE2_WITHOUT_STAGE1 0x03u
+#define PokemonEvolvedIntoPokemonText 0x0060u
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#define Sprout_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
+#define Sprout_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#define NidoranFCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
+#define NidoranFCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#define MarowakCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
+#define MarowakCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#define KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
+#define KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#include "mem.h"
+#define RV_BANK_DUEL_CORE 0x01u
+#define RV_DUELVARS_ARENA_CARD_HP 0xC8u
+#define PlacedOnTheBenchText 0x0061u
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#include "mem.h"
+#define IF_BANK_DUEL_CORE 0x01u
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#define BellsproutCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
+#define BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+
+#include "home/switch_rom.h"
+#define DiscardOppDeckAsManyFireEnergyCardsText 0x0120u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#define ChooseAndDiscard2EnergyCardsText 0x0121u
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "home/core.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define AttachedEnergyToPokemonText 0x005fu
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#define PokemonWasReturnedFromArenaToHandText 0x016cu
+#define PokemonWasReturnedFromBenchToHandText 0x016du
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/frames.h"
+#include "home/menus.h"
+#include "home/serial.h"
+#include "home/sound.h"
+#define SYM_GRASS 0x02u
+#define SYM_SPACE 0x00u
+#define SYM_LIGHTNING 0x03u
+
+#define ProcedureForDamageSwapText 0x0137u
+
+#include "home/effect_functions.h"
+#include "home/frames.h"
+#include "home/menus.h"
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/sound.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define ChooseUpTo3PkmnOnBenchToGiveDamageText 0x011bu
+
+#include "home/duel.h"
+#include "home/substatus.h"
+#include "home/effect_functions.h"
+#include "generated/wram.h"
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/substatus.h"
+#include "home/effect_functions.h"
+#include "home/random.h"
+
+#include "generated/hram.h"
+#include "home/menus.h"
+#include "home/card_color.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#define ChoosePokemonWishToColorChangeText 0x0113u
+#define UnableToSelectText 0x0045u
+
+#include "home/duel.h"
+#include "home/effect_commands.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/serial.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+
+#define ChooseOppAttackToBeUsedWithMetronomeText 0x013au
+#define EFFECTCMDTYPE_INITIAL_EFFECT_1 0x01u
+#define EFFECTCMDTYPE_INITIAL_EFFECT_2 0x02u
+#define OPPACTION_USE_METRONOME_ATTACK 0x14u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/frames.h"
+#include "home/menus.h"
+#include "home/sound.h"
+
+#define ProcedureForCurseText 0x0131u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#define PokemonAndAllAttachedCardsWereReturnedToDeckText 0x016bu
+
+#include "home/serial.h"
+#include "home/coin_toss.h"
+#define OPPACTION_TOSS_COIN_A_TIMES 0x11u
+
+#include "home/coin_toss.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/substatus.h"
+#include "home/duel.h"
+
+#include "home/math.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
+#define DamageCheckIfHeadsXDamageText 0x00f4u
+#define DamageCheckIfHeadsPlusDamageText 0x00f3u
+#define AcidCheckText 0x00f5u
+#define IfHeadsOpponentCannotAttackText 0x00fcu
+
+#define IfHeadsNoDamageNextTurnText 0x00f1u
+#define IfHeadsDoNotReceiveDamageOrEffectText 0x00fbu
+#define ATK_ANIM_HIT_EFFECT 0x05u
+#define ATK_ANIM_AGILITY_PROTECT 0x52u
+#define ATK_ANIM_PROTECT 0x4fu
+#define ATK_ANIM_LEER 0x74u
+#define SUBSTATUS1_AGILITY 0x0cu
+#define SUBSTATUS1_FLY 0x0du
+#define SUBSTATUS1_NO_DAMAGE_HIDE_IN_SHELL 0x11u
+#define SUBSTATUS1_NO_DAMAGE_STIFFEN 0x0fu
+#define SUBSTATUS1_NO_DAMAGE_SCRUNCH 0x17u
+#define SuccessCheckIfHeadsAttackIsSuccessfulText 0x00eeu
+#define SUBSTATUS2_LEER 0x06u
+#define DamageCheckIfTailsNoDamageText 0x00e6u
+#define ATK_ANIM_DIVE_BOMB 0x11u
+#include "home/math.h"
+#define SUBSTATUS1_NO_DAMAGE_WITHDRAW 0x10u
+#define SUBSTATUS2_TAIL_WAG 0x05u
+#define ATK_ANIM_SCRUNCH 0x6bu
+#define ATK_ANIM_LURE 0x46u
+#define ATK_ANIM_MULTIPLE_SLASH 0x29u
+#define IfTailsYourPokemonBecomesConfusedText 0x00e5u
+#include "home/print_text.h"
+#include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
+#include "home/math.h"
+#include "home/print_text.h"
+
+#include "home/math.h"
+#include "home/print_text.h"
+
+#include "home/effect_functions.h"
+#include "home/math.h"
+#include "home/print_text.h"
+#include "home/duel.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel_core.h"
+
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "generated/wram.h"
+#define ATK_ANIM_CAT_PUNCH_PLAY_AREA 0x83u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/card_color.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+
+#define TRUE 0x01u
+
+/* effect_functions.asm:6753-6779, ChainLightningEffect.DamageSameColorBench.
+ * The entry jumps straight to .next_bench, so `inc d` / `dec e` both run
+ * before the first color check: the arena slot is never examined, and a play
+ * area count of 1 damages nothing. Both counters stay 8-bit and wrap exactly
+ * like the asm, so a count of 0 walks 255 slots just as the ROM does.
+ * hl at the DealDamageToPlayAreaPokemon_RegularAnim call is dead - that
+ * routine reloads hl from DUELVARS_ARENA_CARD + b before any use. */
+static void chain_lightning_damage_same_color_bench(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t e = count.a;
+	uint8_t d = PLAY_AREA_ARENA;
+	for (;;) {
+		++d;
+		--e;
+		if (e == 0u)
+			return;
+		if (GetPlayAreaCardColor(d) == hCurSelectionItem)
+			(void)DealDamageToPlayAreaPokemon_RegularAnim(d, 10u, 0u);
+	}
+}
+
+#include "home/card_data.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "home/random.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+
+#define DrewFireEnergyFromTheHandText 0x014du
+#define ThereWasNoFireEnergyText 0x017bu
+
+#define FG_ATK_ANIM_FIREGIVER_OPP 0x85u
+#define FG_ATK_ANIM_FIREGIVER_PLAYER 0x84u
+#define FG_CARD_LOCATION_DECK 0x00u
+#define FG_DECK_SIZE 60u
+#define FG_DUELIST_TYPE_PLAYER 0x00u
+#define FG_DUELVARS_CARD_LOCATIONS 0x00u
+#define FG_DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xEEu
+#define FG_DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
+#define FG_LIST_TERMINATOR 0xFFu
+#define FG_PLAY_AREA_ARENA 0x00u
+#define FG_TYPE_ENERGY_FIRE 0x08u
+
+#include "home/core.h"
+#include "home/duel_core.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "generated/hram.h"
+#define ChooseCardFromYourHandToSwitchText 0x015eu
+#define ChooseCardToSwitchText 0x015fu
+#define DuelistHandText 0x00a7u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#define Choose2BasicEnergyCardsFromDiscardPileText 0x0153u
+#define PlayerDiscardPileText 0x00a6u
+#define PleaseSelectCardText 0x00abu
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/menus.h"
+#define ChooseCardToDiscardFromHandText 0x0151u
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define ChooseAnEnergyCardText 0x0134u
+
+#include "home/effect_functions.h"
+#define Choose2EnergyCardsFromDiscardPileForHandText 0x0133u
+
+#define Choose2EnergyCardsFromDiscardPileToAttachText 0x0132u
+
+#include "home/core.h"
+#include "home/menus.h"
+#define Draw1CardFromTheDeckText 0x0117u
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+
+#include "home/core.h"
+
+#include "home/duel.h"
+#include "home/print_text.h"
+#include "generated/hram.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "home/print_text.h"
+#include "generated/hram.h"
+#include "mem.h"
+
+#include "home/core.h"
+#include "home/menus.h"
+
+#define Choose2CardsFromHandToDiscardText 0x0155u
+#define ChooseTheCardToDiscardText 0x0173u
+
+#include "home/effect_functions.h"
+#define Choose2HandCardsFromHandToReturnToDeckText 0x0156u
+#define ChooseTheCardToPutBackText 0x0172u
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "generated/hram.h"
+#define ChooseCardToPlaceInHandText 0x0157u
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define ChooseUpTo4FromDiscardPileText 0x0169u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/switch_rom.h"
+#include "mem.h"
+
+/* Every `bank1call` below reaches a bank 1 routine that reads its own tables
+ * out of the $4000-$7FFF window (InitAndDrawCardListScreenLayout and
+ * DisplayCardList both go through CardListParameters at $5710), so the bank has
+ * to be latched around each call exactly as the rst $18 trampoline does:
+ * Bank1Call saves hBankROM, switches to 1, calls, then SwitchToBankAtSP puts
+ * the caller's bank back. This routine is banked at 0b, so without the latch
+ * those tables read out of bank 0b. DECK_SIZE, DUELVARS_DECK_CARDS and
+ * DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK are already defined earlier in this
+ * statics block and are deliberately not repeated. */
+#define Pokedex_PlayerSelection_BANK_DUEL_CORE 0x01u
+#define ChooseTheOrderOfTheCardsText 0x0136u
+#define DuelistDeckText 0x00a9u
+#define IsThisOKText 0x002eu
+#define RearrangeThe5CardsAtTopOfDeckText 0x0162u
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/print_text.h"
+#include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define ChoosePokemonToPlaceInPlayText 0x015bu
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/substatus.h"
+#include "home/menus.h"
+#include "home/duel_core.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
+#define ATK_ANIM_DEVOLUTION_BEAM 0x5du
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/sound.h"
+#include "mem.h"
+#define CARD_LOCATION_DECK 0x00u
+#define FIGHTING 0x04u
+#define ChooseBasicFightingPokemonFromDeckText 0x0125u
+#define ChooseBasicFightingPokemonText 0x012cu
+#define FightingPokemonDeckText 0x0143u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "mem.h"
+#define HandleProphecyScreen_BANK_DUEL_CORE 0x01u
+void BankswitchROM(uint8_t bank);
+
+#include "home/effect_functions.h"
+#include "generated/wram.h"
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "generated/hram.h"
+#define ChooseBasicPokemonToPlaceOnBenchText 0x0166u
+
+#include "generated/hram.h"
+#include "home/coin_toss.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/sound.h"
+#include "mem.h"
+
+#define BellsproutText 0x0141u
+#define ChooseABellsproutFromDeckText 0x012eu
+#define ChooseABellsproutText 0x012fu
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/sound.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define BasicEnergyText 0x0144u
+#define Choose1BasicEnergyCardFromDeckText 0x011cu
+#define ChooseBasicEnergyCardText 0x0129u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/sound.h"
+#include "mem.h"
+#define ChooseAKrabbyFromDeckText 0x0122u
+#define ChooseAKrabbyText 0x0128u
+#define KrabbyText 0x0142u
+
+#define ChooseNidoranFromDeckText 0x012au
+#define ChooseNidoranText 0x012bu
+#define NidoranMNidoranFText 0x013fu
+
+#include "home/effect_functions.h"
+#include "home/substatus.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define ATK_ANIM_GUST_OF_WIND 0x8du
+
+#define ConfusionCheckText 0x00e3u
+
+#include "home/effect_functions.h"
+#define PoisonCheckText 0x00e2u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/coin_toss.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#define ATK_ANIM_HEAL 0x79u
+
+#define ParalysisCheckText 0x00e0u
+
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+
+#define ChooseAttackOpponentWillNotBeAbleToUseText 0x0124u
+
+#include "home/effect_functions.h"
+#define SleepCheckText 0x00e1u
+
+#include "home/math.h"
+#include "home/print_text.h"
+#include "home/effect_functions.h"
+#include "generated/wram.h"
+
+#include "home/math.h"
+#include "home/print_text.h"
+#include "home/effect_functions.h"
+
+#include "home/damage.h"
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+
+#define IfHeadPlus10IfTails10ToYourselfText 0x00e9u
+
+#include "home/math.h"
+#include "home/print_text.h"
+#include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define ATK_ANIM_RECOVER 0x58u
+
+#include "home/damage.h"
+#include "home/print_text.h"
+#include "home/effect_functions.h"
+
+#include "generated/hram.h"
+#include "home/damage.h"
+#include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#define IfTailsDamageToYourselfTooText 0x00edu
+
+#include "home/print_text.h"
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+
+#include "generated/wram.h"
+#include "home/effect_functions.h"
+#include "home/print_text.h"
+
+#define DamageToOppBenchIfHeadsDamageToYoursIfTailsText 0x00eau
+
+#define VenomPowderCheckText 0x00e4u
+
+#include "home/math.h"
+#include "home/print_text.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define PLAY_AREA_BENCH_1 0x01u
+#define BenchText 0x004du
+
+#define PoisonedIfHeadsConfusedIfTailsText 0x00fau
+
+#include "home/coin_toss.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/sound.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+
+#define ChooseAnOddishFromDeckText 0x0126u
+#define ChooseAnOddishText 0x0127u
+#define OddishText 0x0140u
+
+#include "home/core.h"
+#define ATK_ANIM_FULL_HEAL 0x8au
+#define NO_STATUS 0x00u
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/substatus.h"
+#include "home/effect_functions.h"
+#include "mem.h"
+#define ATK_ANIM_OWN_CONFUSION 0x7fu
+#define ThereWasNoEffectText 0x017du
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define CardCheckIfHeads8CardsIfTails1CardText 0x00f0u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#define ATK_ANIM_HEALING_WIND_PLAY_AREA 0x86u
+
+#include "home/effect_functions.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define ATK_ANIM_SPIT_POISON_SUCCESS 0x8cu
+
+#include "home/core.h"
+#include "home/duel_menus.h"
+#include "home/menus.h"
+#include "home/script.h"
+#define AI_PEEK_TARGET_HAND 0x80u
+#define AI_PEEK_TARGET_HAND_F 0x07u
+#define DUELIST_TYPE_AI_OPP 0x80u
+#define CardPeekWasUsedOnText 0x0146u
+#define PeekWasUsedToLookInYourHandText 0x0145u
+
+#define TheEnergyCardFromPlayAreaWasMovedText 0x014cu
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/random.h"
+#define ATK_ANIM_THUNDER_PLAY_AREA 0x82u
+
+#include "home/effect_functions.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/card_data.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#define OPPONENT_TURN 0xc3u
+#define PAD_A 0x01u
+#define ChooseTheCardYouWishToExamineText 0x0056u
+#define DuelistHasNoCardsInHandText 0x0178u
+#define PleaseCheckTheOpponentsHandText 0x0163u
+
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "mem.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "mem.h"
+#define PokemonHealedDamageText 0x0179u
+
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+
+#include "generated/wram.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#define TrainerCardSuccessCheckText 0x00efu
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#define FALSE 0x00u
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+
+#include "generated/wram.h"
+#include "home/effect_functions.h"
+#include "home/duel.h"
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "generated/hram.h"
+#include "mem.h"
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/menus.h"
+#define IfHeadsDraw1CardFromDeckText 0x00e7u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/random.h"
+#include "home/effect_functions.h"
+#include "mem.h"
+#define FlipUntilFailAppears10DamageForEachHeadsText 0x00e8u
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#define ATK_ANIM_HEAL_BOTH_SIDES 0x8Eu
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#define PleaseSelectTheDeckText 0x013du
+#define ProcedureForProphecyText 0x0135u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/menus.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "home/sound.h"
+#define ChooseBasicOrEvolutionPokemonCardFromDeckText 0x0160u
+#define ChoosePokemonCardText 0x0161u
+#define EvolutionCardText 0x0164u
+
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#define PokemonWasReturnedToDeckText 0x016eu
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/ai.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#define SelectPkmnOnBenchToSwitchWithActiveText 0x010eu
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#define NoEnergyCardsText 0x002du
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/menus.h"
+
+#define ChoosePokemonToAttachDefenderToText 0x0158u
+
+#include "home/menus.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#define ChoosePokemonToRemoveEnergyFromText 0x0152u
+
+#define ChoosePokemonToReturnToTheDeckText 0x015au
+
+#define SelectPokemonToPlaceInTheArenaText 0x010fu
+
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "home/serial.h"
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+
+#define ChooseAPokemonToSwitchWithActivePokemonText 0x016au
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/menus.h"
+
+#define ChoosePkmnInTheBenchToGiveDamageText 0x011au
+
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#define IfHeadsChangeOpponentsActivePokemonText 0x00ebu
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "home/credits_sequence_commands.h"
+
+#define ChoosePokemonToScoopUpText 0x015du
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/effect_functions.h"
+#define PleaseSelectThePlayAreaText 0x013eu
+#define ProcedureForDevolutionBeamText 0x0138u
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#include "home/effect_functions.h"
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#define ChooseBasicPokemonToEvolveText 0x015cu
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/serial.h"
+
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/core.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define BasicPokemonWasPlacedOnEachBenchText 0x0149u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/switch_rom.h"
+#include "mem.h"
+#define ChoosePokemonInYourAreaThenPokemonInYourOppText 0x0168u
+
+#include "home/menus.h"
+#include "home/credits_sequence_commands.h"
+#include "home/lcd.h"
+#include "home/duel_core.h"
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define ChooseEvolutionCardAndPressAButtonToDevolveText 0x0167u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define HANDLE_COLOR_CHANGE_MENU_PARAMS 0x45B6u
+#define CONSOLE_CGB 0x02u
+#define SHIFT_MENU_DATA 0x46A1u /* ShiftMenuData, bank $0b */
+#define COLOR_TILE_AND_BGP 0x46AEu /* ColorTileAndBGP, bank $0b */
+#define SHIFT_LIST_ITEM_TO_COLOR 0x46BAu /* ShiftListItemToColor, bank $0b */
+/* <<< factory statics */
+
+/* >>> factory SleepEffect */
+/* effect_functions.asm:14-16 */
+QueueStatusConditionResult SleepEffect(void)
+{
+	return QueueStatusCondition(PSN_DBLPSN, ASLEEP);
+}
+/* <<< factory SleepEffect */
+
+/* >>> factory SetDefiniteDamage */
+/* effect_functions.asm:...? */
+void SetDefiniteDamage(uint8_t a)
+{
+	gb_write8(wDamage_ADDR, a);
+	gb_write8(wAIMinDamage_ADDR, a);
+	gb_write8(wAIMaxDamage_ADDR, a);
+	gb_write8((uint16_t)(wDamage_ADDR + 1u), 0u);
+}
+/* <<< factory SetDefiniteDamage */
+
+
+
+
+
+/* >>> factory UpdateExpectedAIDamage */
+/* effect_functions.asm:193-206 */
+void UpdateExpectedAIDamage(uint8_t a, uint8_t d, uint8_t e)
+{
+	uint8_t hl = gb_read8(wDamage_ADDR);
+	gb_write8(wAIMinDamage_ADDR, (uint8_t)(hl + d));
+	gb_write8(wAIMaxDamage_ADDR, (uint8_t)(hl + e));
+	gb_write8(wDamage_ADDR, (uint8_t)(a + hl));
+}
+/* <<< factory UpdateExpectedAIDamage */
+
+
+/* >>> factory SetExpectedAIDamage */
+/* effect_functions.asm:213-221 */
+void SetExpectedAIDamage(uint8_t a, uint8_t d, uint8_t e)
+{
+	gb_write8(wDamage_ADDR, a);
+	gb_write8((uint16_t)(wDamage_ADDR + 1u), 0u);
+	gb_write8(wAIMinDamage_ADDR, d);
+	gb_write8(wAIMaxDamage_ADDR, e);
+}
+/* <<< factory SetExpectedAIDamage */
+
+
+/* >>> factory IsPlayerTurn */
+/* effect_functions.asm:157-165 */
+IsPlayerTurnResult IsPlayerTurn(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (r.a == DUELIST_TYPE_PLAYER)
+		return (IsPlayerTurnResult){r.a, 0x90u, r.hl};
+	return (IsPlayerTurnResult){r.a, 0x00u, r.hl};
+}
+/* <<< factory IsPlayerTurn */
+
+/* >>> factory UpdateExpectedAIDamage_AccountForPoison */
+/* effect_functions.asm:177-187 */
+void UpdateExpectedAIDamage_AccountForPoison(uint8_t a, uint8_t d, uint8_t e)
+{
+	DuelistVarResult r = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	if ((r.a & (POISONED | DOUBLE_POISONED)) == 0u) {
+		UpdateExpectedAIDamage(a, d, e);
+		return;
+	}
+	uint8_t dmg = wDamage;
+	wAIMinDamage = dmg;
+	wAIMaxDamage = dmg;
+}
+/* <<< factory UpdateExpectedAIDamage_AccountForPoison */
+
+
+/* >>> factory ApplySubstatus1ToAttackingCard */
+/* effect_functions.asm:264-270 */
+uint16_t ApplySubstatus1ToAttackingCard(uint8_t a)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS1);
+	gb_write8(r.hl, a);
+	return (uint16_t)(r.hl + 1u);
+}
+/* <<< factory ApplySubstatus1ToAttackingCard */
+
+/* >>> factory SetNoEffectFromStatus */
+void SetNoEffectFromStatus(void)
+{
+	gb_write8(0xCCEDu, 0x01u);
+}
+/* <<< factory SetNoEffectFromStatus */
+
+/* >>> factory SetDefiniteAIDamage */
+void SetDefiniteAIDamage(void)
+{
+	uint8_t a = gb_read8(0xCCB9u);
+	gb_write8(0xCCBBu, a);
+	gb_write8(0xCCBCu, a);
+}
+/* <<< factory SetDefiniteAIDamage */
+
+/* >>> factory PickRandomPlayAreaCard */
+/* effect_functions.asm:316-321 */
+PickRandomPlayAreaCardResult PickRandomPlayAreaCard(void)
+{
+	DuelistVarResult v = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t a = Random(v.a);
+	return (PickRandomPlayAreaCardResult){a, (uint8_t)(a == 0 ? 0x80u : 0u)};
+}
+/* <<< factory PickRandomPlayAreaCard */
+
+/* >>> factory GetNextPositionInTempList */
+/* effect_functions.asm:326-334 */
+uint16_t GetNextPositionInTempList(void)
+{
+	uint8_t a = hCurSelectionItem;
+	hCurSelectionItem = (uint8_t)(a + 1u);
+	return (uint16_t)(hTempList_ADDR + a);
+}
+/* <<< factory GetNextPositionInTempList */
+
+/* >>> factory QueueStatusCondition */
+/* effect_functions.asm:41-73 */
+QueueStatusConditionResult QueueStatusCondition(uint8_t b, uint8_t c)
+{
+	uint8_t who = gb_read8(hWhoseTurn_ADDR);
+	uint8_t turn = wWhoseTurn;
+	uint8_t can_induce = 1u;
+
+	if (who == turn) {
+		uint8_t cardid = wTempNonTurnDuelistCardID;
+		if (cardid == CLEFAIRY_DOLL || cardid == MYSTERIOUS_FOSSIL) {
+			can_induce = 0u;
+		} else if (cardid == SNORLAX) {
+			SwapTurn();
+			PkmnPowerIncapableResult r = CheckIsIncapableOfUsingPkmnPower(PLAY_AREA_ARENA);
+			SwapTurn();
+			can_induce = (r.f & 0x10u) ? 1u : 0u;
+		} else {
+			can_induce = 1u;
+		}
+	}
+
+	if (!can_induce) {
+		wNoEffectFromWhichStatus = c;
+		SetNoEffectFromStatus();
+		return (QueueStatusConditionResult){0x00u};
+	}
+
+	uint16_t idxaddr = wStatusConditionQueueIndex_ADDR;
+	uint8_t idx = gb_read8(idxaddr);
+	uint16_t qhl = (uint16_t)(wStatusConditionQueue_ADDR + idx);
+
+	SwapTurn();
+	uint8_t whoNew = gb_read8(hWhoseTurn_ADDR);
+	gb_write8(qhl, whoNew);
+	qhl++;
+	SwapTurn();
+
+	gb_write8(qhl, b);
+	qhl++;
+	gb_write8(qhl, c);
+
+	gb_write8(idxaddr, (uint8_t)(idx + 3u));
+
+	return (QueueStatusConditionResult){0x10u};
+}
+/* <<< factory QueueStatusCondition */
+
+/* >>> factory SetWasUnsuccessful */
+/* effect_functions.asm:131-136 */
+void SetWasUnsuccessful(void)
+{
+	wEffectFailed = EFFECT_FAILED_UNSUCCESSFUL;
+}
+/* <<< factory SetWasUnsuccessful */
+
+/* >>> factory Teleport_SwitchEffect */
+/* effect_functions.asm:1806-1812 */
+void Teleport_SwitchEffect(void)
+{
+	uint8_t e = hTemp_ffa0;
+	SwapArenaWithBenchPokemon(e);
+	wDuelDisplayedScreen = 0u;
+}
+/* <<< factory Teleport_SwitchEffect */
+
+/* >>> factory SetDamageToATimes20 */
+/* effect_functions.asm:1847-1861 */
+void SetDamageToATimes20(uint8_t a)
+{
+	uint16_t hl = a;
+	uint16_t de = hl;
+	hl = (uint16_t)(hl + hl);
+	hl = (uint16_t)(hl + hl);
+	hl = (uint16_t)(hl + de);
+	hl = (uint16_t)(hl + hl);
+	hl = (uint16_t)(hl + hl);
+	gb_write8(wDamage_ADDR, (uint8_t)(hl & 0xFFu));
+	gb_write8((uint16_t)(wDamage_ADDR + 1u), (uint8_t)(hl >> 8));
+}
+/* <<< factory SetDamageToATimes20 */
+
+/* >>> factory CreateTrainerCardListFromDiscardPile */
+/* effect_functions.asm:537-596 */
+CreateTrainerCardListFromDiscardPileResult CreateTrainerCardListFromDiscardPile(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE);
+	uint8_t b = r.a;
+	uint16_t hl = (uint16_t)((r.hl & 0xFF00u) | (uint8_t)(r.a + DUELVARS_DECK_CARDS));
+	uint16_t de = wDuelTempList_ADDR;
+	b = (uint8_t)(b + 1u);
+
+	for (;;) {
+		hl = (uint16_t)((hl & 0xFF00u) | (uint8_t)((uint8_t)hl - 1u));
+		if (--b == 0u)
+			break;
+		uint8_t card = gb_read8(hl);
+		(void)LoadCardDataToBuffer2_FromDeckIndex(card);
+		if (gb_read8(wLoadedCard2Type_ADDR) == TYPE_TRAINER) {
+			gb_write8(de, card);
+			de++;
+		}
+	}
+
+	gb_write8(de, 0xFFu);
+	if (gb_read8(wDuelTempList_ADDR) == 0xFFu)
+		return (CreateTrainerCardListFromDiscardPileResult){TX_ThereAreNoTrainerCardsInDiscardPileText, 0x90u};
+	uint8_t first = gb_read8(wDuelTempList_ADDR);
+	return (CreateTrainerCardListFromDiscardPileResult){0, (uint8_t)((first == 0u) ? 0x80u : 0x00u)};
+}
+/* <<< factory CreateTrainerCardListFromDiscardPile */
+
+/* >>> factory CreateEnergyCardListFromDiscardPile */
+/* effect_functions.asm:597-654 */
+CreateEnergyCardListFromDiscardPileResult CreateEnergyCardListFromDiscardPile(uint8_t c)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE);
+	uint8_t count = r.a;
+	uint8_t h = (uint8_t)(r.hl >> 8);
+	uint8_t l = (uint8_t)(DUELVARS_DECK_CARDS + count);
+	uint16_t de = wDuelTempList_ADDR;
+	uint8_t b = (uint8_t)(count + 1u);
+	for (;;) {
+		l--;
+		b--;
+		if (b == 0u)
+			break;
+		uint8_t idx = gb_read8((uint16_t)((uint16_t)h << 8 | l));
+		LoadCardDataToBuffer2_FromDeckIndex(idx);
+		uint8_t type = gb_read8(wLoadedCard2Type_ADDR);
+		if ((type & TYPE_ENERGY) == 0u)
+			continue;
+		if (c != 0u && type == TYPE_ENERGY_DOUBLE_COLORLESS)
+			continue;
+		gb_write8(de++, idx);
+	}
+	gb_write8(de, 0xFFu);
+	uint8_t first = gb_read8(wDuelTempList_ADDR);
+	uint16_t hl_out = (uint16_t)((uint16_t)h << 8 | l);
+	uint8_t f = (first == 0xFFu) ? 0x90u : 0x00u;
+	return (CreateEnergyCardListFromDiscardPileResult){hl_out, f};
+}
+/* <<< factory CreateEnergyCardListFromDiscardPile */
+
+
+/* >>> factory GetAttackName */
+/* effect_functions.asm:877-894 */
+uint16_t GetAttackName(uint8_t d, uint8_t e)
+{
+	LoadCardDataToBuffer1_FromDeckIndex(d);
+	uint16_t addr = (e == 0u) ? wLoadedCard1Atk1Name_ADDR : wLoadedCard1Atk2Name_ADDR;
+	uint8_t lo = gb_read8(addr);
+	uint8_t hi = gb_read8((uint16_t)(addr + 1u));
+	return (uint16_t)(lo | (uint16_t)hi << 8);
+}
+/* <<< factory GetAttackName */
+
+
+/* >>> factory HandleAIMetronomeEffect */
+/* effect_functions.asm:8168-8169 */
+void HandleAIMetronomeEffect(void)
+{
+	(void)0;
+}
+/* <<< factory HandleAIMetronomeEffect */
+
+/* >>> factory ParalysisEffect */
+/* effect_functions.asm:19-21 */
+QueueStatusConditionResult ParalysisEffect(void)
+{
+	return QueueStatusCondition(PSN_DBLPSN, PARALYZED);
+}
+/* <<< factory ParalysisEffect */
+
+/* >>> factory ConfusionEffect */
+/* effect_functions.asm:28-30 */
+QueueStatusConditionResult ConfusionEffect(void)
+{
+	return QueueStatusCondition(PSN_DBLPSN, CONFUSED);
+}
+/* <<< factory ConfusionEffect */
+
+/* >>> factory InvisibleWallEffect */
+/* effect_functions.asm:4999-5001. scf: sets carry, clears N/H, keeps Z. */
+uint8_t InvisibleWallEffect(uint8_t f)
+{
+	return (uint8_t)((f & 0x80u) | 0x10u);
+}
+/* <<< factory InvisibleWallEffect */
+
+/* >>> factory CheckIfDefendingPokemonHasAnyAttack */
+/* effect_functions.asm:893-916 */
+CheckAttackResult CheckIfDefendingPokemonHasAnyAttack(void)
+{
+	SwapTurn();
+	uint8_t index = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+	LoadCardDataToBuffer2_FromDeckIndex(index);
+
+	uint8_t f;
+	uint8_t category = gb_read8(wLoadedCard2Atk1Category_ADDR);
+	if (category != POKEMON_POWER) {
+		f = (category == 0u) ? 0x80u : 0x00u;
+	} else {
+		uint8_t lo = gb_read8(wLoadedCard2Atk2Name_ADDR);
+		uint8_t hi = gb_read8((uint16_t)(wLoadedCard2Atk2Name_ADDR + 1u));
+		f = ((uint8_t)(lo | hi) != 0u) ? 0x00u : 0x90u;
+	}
+
+	SwapTurn();
+	return (CheckAttackResult){f};
+}
+/* <<< factory CheckIfDefendingPokemonHasAnyAttack */
+
+/* >>> factory UpdateDevolvedCardHPAndStage */
+/* effect_functions.asm:919-947 */
+void UpdateDevolvedCardHPAndStage(uint8_t a)
+{
+	uint8_t e = hTempPlayAreaLocation_ff9d;
+	uint8_t damage = GetCardDamageAndMaxHP(e).a;
+
+	uint16_t arena_addr = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e)).hl;
+	gb_write8(arena_addr, a);
+
+	LoadCardDataToBuffer2_FromDeckIndex(a);
+
+	uint16_t hp_addr = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + e)).hl;
+	uint8_t new_max_hp = gb_read8(wLoadedCard2HP_ADDR);
+	uint8_t new_hp = (new_max_hp < damage) ? 0u : (uint8_t)(new_max_hp - damage);
+	gb_write8(hp_addr, new_hp);
+
+	uint16_t stage_addr = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_STAGE + e)).hl;
+	gb_write8(stage_addr, gb_read8(wLoadedCard2Stage_ADDR));
+}
+/* <<< factory UpdateDevolvedCardHPAndStage */
+
+
+/* >>> factory DragonairSlam_AIEffect */
+/* effect_functions.asm:7890-7893 */
+void DragonairSlam_AIEffect(void)
+{
+	SetExpectedAIDamage(30u, 0u, 60u);
+}
+/* <<< factory DragonairSlam_AIEffect */
+
+
+
+/* >>> factory CheckIfPlayAreaHasAnyDamage */
+/* effect_functions.asm:517-531. Zero-means-max: the count is post-tested
+ * (dec+jr nz after the call), so an 8-bit count of 0 runs 256 times. */
+CheckIfPlayAreaHasAnyDamageResult CheckIfPlayAreaHasAnyDamage(void)
+{
+	/* DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA = 0xEFu (duel_constants.asm);
+	 * not the local macro of the same name, which is defined wrong above. */
+	DuelistVarResult count = GetTurnDuelistVariable(0xEFu);
+	uint8_t d = count.a;
+	uint8_t e = PLAY_AREA_ARENA;
+	CardDamageResult card = {0u, 0u, 0u};
+	do {
+		card = GetCardDamageAndMaxHP(e);
+		if (card.a != 0u)
+			return (CheckIfPlayAreaHasAnyDamageResult){card.a, card.c, d, e, 0x00u, count.hl};
+		e++;
+		d--;
+	} while (d != 0u);
+	return (CheckIfPlayAreaHasAnyDamageResult){0u, card.c, 0u, e, 0x90u, count.hl};
+}
+/* <<< factory CheckIfPlayAreaHasAnyDamage */
+
+/* >>> factory CreateEnergyCardListFromDiscardPile_OnlyBasic */
+/* effect_functions.asm:581-583 */
+CreateEnergyCardListFromDiscardPileResult CreateEnergyCardListFromDiscardPile_OnlyBasic(void)
+{
+	return CreateEnergyCardListFromDiscardPile(0x01u);
+}
+/* <<< factory CreateEnergyCardListFromDiscardPile_OnlyBasic */
+
+/* >>> factory KabutoArmorEffect */
+/* effect_functions.asm:5939-5941. scf: sets carry, clears N/H, keeps Z. */
+uint8_t KabutoArmorEffect(uint8_t f)
+{
+	return (uint8_t)((f & 0x80u) | 0x10u);
+}
+/* <<< factory KabutoArmorEffect */
+
+/* >>> factory PoisonEffect */
+/* effect_functions.asm:6-8 */
+QueueStatusConditionResult PoisonEffect(void)
+{
+	return QueueStatusCondition(CNF_SLP_PRZ, POISONED);
+}
+/* <<< factory PoisonEffect */
+
+/* >>> factory DoublePoisonEffect */
+/* effect_functions.asm:10-12 */
+QueueStatusConditionResult DoublePoisonEffect(void)
+{
+	return QueueStatusCondition(CNF_SLP_PRZ, DOUBLE_POISONED);
+}
+/* <<< factory DoublePoisonEffect */
+
+
+
+
+/* >>> factory LoadCardNameAndInputColor */
+/* effect_functions.asm:1345-1371 */
+void LoadCardNameAndInputColor(uint8_t a, uint8_t d, uint8_t e)
+{
+	(void)d;
+	(void)e;
+	uint16_t symbol = color_to_text[(uint8_t)((uint8_t)(a + a) >> 1)];
+	uint8_t name_lo = gb_read8(wLoadedCard1Name_ADDR);
+	uint8_t name_hi = gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u));
+
+	wTxRam2 = name_lo;
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), name_hi);
+	wTxRam2_b = (uint8_t)symbol;
+	gb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), (uint8_t)(symbol >> 8));
+}
+/* <<< factory LoadCardNameAndInputColor */
+
+
+
+
+/* >>> factory AIPickEnergyCardToDiscardFromDefendingPokemon */
+/* effect_functions.asm:1053-1140 */
+AIPickEnergyCardToDiscardResult AIPickEnergyCardToDiscardFromDefendingPokemon(void)
+{
+	SwapTurn();
+	GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	HandListResult list = CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);
+	if (list.f & 0x10u) {
+		SwapTurn();
+		return (AIPickEnergyCardToDiscardResult){0xFFu};
+	}
+
+	uint8_t color = 0x07u;
+	uint8_t colorless = gb_read8((uint16_t)(wAttachedEnergies_ADDR + 7u));
+	if (colorless == 0u) {
+		DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+		LoadCardDataToBuffer1_FromDeckIndex(arena.a);
+		color = wLoadedCard1Type;
+		if (color >= 0x07u ||
+		    gb_read8((uint16_t)(wAttachedEnergies_ADDR + color)) == 0u)
+			color = 0xFFu;
+	}
+
+	uint16_t cursor = wDuelTempList_ADDR;
+	if (color != 0xFFu) {
+		for (;;) {
+			uint8_t entry = gb_read8(cursor++);
+			if (entry == 0xFFu)
+				break;
+			LoadCardDataToBuffer2_FromDeckIndex(entry);
+			if ((wLoadedCard2Type & 0x07u) == color) {
+				SwapTurn();
+				return (AIPickEnergyCardToDiscardResult){entry};
+			}
+		}
+	}
+	TempListResult count = CountCardsInDuelTempList();
+	(void)ShuffleCards(count.a, wDuelTempList_ADDR);
+	SwapTurn();
+	return (AIPickEnergyCardToDiscardResult){gb_read8(wDuelTempList_ADDR)};
+}
+/* <<< factory AIPickEnergyCardToDiscardFromDefendingPokemon */
+
+
+
+
+/* >>> factory AIFindTargetForBenchAttack */
+/* effect_functions.asm:1141-1176 */
+AIFindTargetForBenchAttackResult AIFindTargetForBenchAttack(void)
+{
+	SwapTurn();
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	uint8_t target = PLAY_AREA_ARENA;
+	uint8_t best = 0xFFu;
+	uint8_t slot = 1u;
+	while (--count != 0u) {
+		uint8_t hp = GetTurnDuelistVariable(
+			(uint8_t)(DUELVARS_BENCH1_CARD_HP + slot - 1u)).a;
+		if (best >= hp) {
+			best = hp;
+			target = slot;
+		}
+		slot++;
+	}
+	SwapTurn();
+	return (AIFindTargetForBenchAttackResult){target};
+}
+/* <<< factory AIFindTargetForBenchAttack */
+
+
+
+
+/* >>> factory ApplyExtraWaterEnergyDamageBonus */
+void ApplyExtraWaterEnergyDamageBonus(uint8_t b, uint8_t c)
+{
+	if (wMetronomeEnergyCost) {
+		c = wMetronomeEnergyCost;
+		b = 0u;
+	}
+	GetPlayAreaCardAttachedEnergies(hTempPlayAreaLocation_ff9d);
+	uint16_t water_addr = (uint16_t)(wAttachedEnergies_ADDR + WATER);
+	uint8_t water = gb_read8(water_addr);
+	if (c && wTotalAttachedEnergies == water)
+		b = (uint8_t)(c + b);
+	uint8_t extra = (uint8_t)(water - b);
+	if (water >= b && extra >= 1u) {
+		if (extra > 2u) extra = 2u;
+		AddToDamage(ATimes10(extra));
+	}
+	wAIMinDamage = wDamage;
+	wAIMaxDamage = wDamage;
+}
+/* <<< factory ApplyExtraWaterEnergyDamageBonus */
+
+
+
+/* >>> factory OmastarSpikeCannon_AIEffect */
+/* effect_functions.asm:8045-8052. */
+void OmastarSpikeCannon_AIEffect(void)
+{
+	SetExpectedAIDamage((uint8_t)30u, 0u, 60u);
+}
+/* <<< factory OmastarSpikeCannon_AIEffect */
+
+
+
+/* >>> factory ClairvoyanceEffect */
+/* effect_functions.asm:8058-8059. scf: sets carry, clears N/H, keeps Z. */
+uint8_t ClairvoyanceEffect(uint8_t f)
+{
+	return (uint8_t)((f & 0x80u) | 0x10u);
+}
+/* <<< factory ClairvoyanceEffect */
+
+/* >>> factory KrabbyCallForFamily_AISelectEffect */
+/* effect_functions.asm:2946-2966 */
+void KrabbyCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
+{
+	(void)CreateDeckCardList(c, de);
+
+	uint16_t hl = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		hTemp_ffa0 = card;
+		if (card == 0xffu)
+			return;
+		uint16_t card_id = GetCardIDFromDeckIndex(card);
+		if ((uint8_t)card_id == KRABBY)
+			return;
+	}
+}
+/* <<< factory KrabbyCallForFamily_AISelectEffect */
+
+
+/* >>> factory CreateListOfEnergyAttachedToArena */
+CreateListOfEnergyAttachedToArenaResult CreateListOfEnergyAttachedToArena(uint8_t a)
+{
+	uint8_t count = 0;
+	uint16_t locations = GetTurnDuelistVariable(0x00u).hl;
+	uint16_t dst = wDuelTempList_ADDR;
+	for (uint8_t index = 0; index < DECK_SIZE; index++) {
+		if (gb_read8((uint16_t)(locations + index)) != 0x10u)
+			continue;
+		uint8_t card_id = GetCardIDFromDeckIndex(index);
+		if (GetCardType(card_id) != a)
+			continue;
+		gb_write8(dst++, index);
+		count++;
+	}
+	gb_write8(dst, 0xFFu);
+	return (CreateListOfEnergyAttachedToArenaResult){
+		count, count, (uint16_t)(locations + DECK_SIZE), 0xC0u};
+}
+/* <<< factory CreateListOfEnergyAttachedToArena */
+
+
+/* >>> factory HandleNoDamageOrEffect */
+/* effect_functions.asm:454-461. `call nz, DrawWideTextBox_PrintText` really
+ * draws the box when the text id is non-zero; the port skipped the call and
+ * only synthesized its exit flags. Those flags are still `or h`'s -- carry from
+ * the trailing `scf`, Z only on the zero id -- because TextResult carries no f,
+ * so the observable change is the box itself and the callee's hl. */
+HandleNoDamageOrEffectResult HandleNoDamageOrEffect(uint16_t hl)
+{
+	NoDamageOrEffectCheckResult check = CheckNoDamageOrEffect(hl);
+
+	if ((check.f & 0x10u) == 0u)
+		return (HandleNoDamageOrEffectResult){check.f, check.hl};
+	if (check.hl == 0u)
+		return (HandleNoDamageOrEffectResult){0x90u, check.hl};
+
+	TextResult text = DrawWideTextBox_PrintText(check.hl);
+
+	return (HandleNoDamageOrEffectResult){0x10u, text.hl};
+}
+/* <<< factory HandleNoDamageOrEffect */
+
+
+/* >>> factory PoisonWhip_AIEffect */
+void PoisonWhip_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(10u, 10u, 10u);
+}
+/* <<< factory PoisonWhip_AIEffect */
+
+
+/* >>> factory SolarPower_CheckUse */
+SolarPowerCheckUseResult SolarPower_CheckUse(void)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	hTemp_ffa0 = location;
+	DuelistVarResult flags = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));
+	if (flags.a & USED_PKMN_POWER_THIS_TURN)
+		return (SolarPowerCheckUseResult){0x10u, 0x00CAu};
+	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(location);
+	if (incapable.f & 0x10u)
+		return (SolarPowerCheckUseResult){incapable.f, incapable.hl};
+	DuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	if (status.a)
+		return (SolarPowerCheckUseResult){0x00u, status.hl};
+	status = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	if (status.a)
+		return (SolarPowerCheckUseResult){0x00u, status.hl};
+	return (SolarPowerCheckUseResult){0x90u, 0x00B5u};
+}
+/* <<< factory SolarPower_CheckUse */
+
+
+/* >>> factory DevolutionBeam_LoadAnimation */
+/* effect_functions.asm:5232-5236 */
+void DevolutionBeam_LoadAnimation(void)
+{
+	wLoadedAttackAnimation = ATK_ANIM_NONE;
+}
+/* <<< factory DevolutionBeam_LoadAnimation */
+
+
+/* >>> factory CheckIfTurnDuelistHasEvolvedCards */
+CheckAttackResult CheckIfTurnDuelistHasEvolvedCards(void)
+{
+	DuelistVarResult cards = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	uint16_t stage = (uint16_t)((cards.hl & 0xFF00u) | DUELVARS_ARENA_CARD_STAGE);
+	for (;;) {
+		uint8_t card = gb_read8(cards.hl++);
+		if (card == 0xFFu)
+			return (CheckAttackResult){0x90u};
+		uint8_t stage_value = gb_read8(stage++);
+		if (stage_value != 0u)
+			return (CheckAttackResult){0x00u};
+	}
+}
+/* <<< factory CheckIfTurnDuelistHasEvolvedCards */
+
+
+/* >>> factory FindFirstNonBasicCardInPlayArea */
+FindFirstNonBasicCardInPlayAreaResult FindFirstNonBasicCardInPlayArea(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint32_t n = count.a ? count.a : 0x100u;
+	uint16_t stage = (uint16_t)((count.hl & 0xFF00u) | DUELVARS_ARENA_CARD_STAGE);
+	uint8_t slot = PLAY_AREA_ARENA;
+	for (uint32_t i = 0; i < n; i++) {
+		if (gb_read8(stage++) != 0u)
+			return (FindFirstNonBasicCardInPlayAreaResult){slot, 0x10u};
+		slot++;
+	}
+	return (FindFirstNonBasicCardInPlayAreaResult){0x00u, 0x80u};
+}
+/* <<< factory FindFirstNonBasicCardInPlayArea */
+
+/* >>> factory Wildfire_AISelectEffect */
+/* effect_functions.asm:3780-3783 */
+WildfireAISelectEffectResult Wildfire_AISelectEffect(void)
+{
+	uint8_t a = 0x00u;
+	hTempList = a;
+	return (WildfireAISelectEffectResult){a, 0x80u};
+}
+/* <<< factory Wildfire_AISelectEffect */
+
+/* >>> factory FireBlast_CheckEnergy */
+/* effect_functions.asm:3691-3704 */
+FireBlastCheckEnergyResult FireBlast_CheckEnergy(void)
+{
+	uint8_t a;
+	uint8_t flags = 0x40u;
+
+	GetPlayAreaCardAttachedEnergies(0u);
+	a = gb_read8((uint16_t)(wAttachedEnergies_ADDR + FIRE));
+	if ((a & 0x0fu) == 0u)
+		flags |= 0x20u;
+	if (a == 1u)
+		flags |= 0x80u;
+	if (a < 1u)
+		flags |= 0x10u;
+	return (FireBlastCheckEnergyResult){a, flags, NotEnoughFireEnergyText};
+}
+/* <<< factory FireBlast_CheckEnergy */
+
+/* >>> factory BigEggsplosion_AIEffect */
+/* effect_functions.asm:1814-1844 */
+void BigEggsplosion_AIEffect(void)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	GetPlayAreaCardAttachedEnergies(location);
+	SetDamageToATimes20(wTotalAttachedEnergies);
+
+	uint16_t damage = (uint16_t)((uint16_t)wTotalAttachedEnergies * 20u);
+	if ((uint8_t)(damage >> 8) == 0xFFu)
+		damage = (uint16_t)((damage & 0xFF00u) | 0x00FFu);
+
+	wAIMaxDamage = (uint8_t)damage;
+	wDamage = (uint8_t)(wAIMaxDamage >> 1);
+	wAIMinDamage = 0u;
+}
+/* <<< factory BigEggsplosion_AIEffect */
+
+/* >>> factory Thrash_AIEffect */
+/* effect_functions.asm:1863-1870 */
+void Thrash_AIEffect(void)
+{
+	SetExpectedAIDamage(35u, 30u, 40u);
+}
+/* <<< factory Thrash_AIEffect */
+
+/* >>> factory Prophecy_CheckDeck */
+/* effect_functions.asm:4705-4729 */
+ProphecyCheckDeckResult Prophecy_CheckDeck(void)
+{
+	DuelistVarResult turn = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	if (turn.a < DECK_SIZE)
+		return (ProphecyCheckDeckResult){
+			turn.a,
+			(uint8_t)(turn.a == 0u ? 0x80u : 0x00u),
+			turn.hl
+		};
+
+	DuelistVarResult nonturn = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	if (nonturn.a < DECK_SIZE)
+		return (ProphecyCheckDeckResult){
+			nonturn.a,
+			(uint8_t)(nonturn.a == 0u ? 0x80u : 0x00u),
+			nonturn.hl
+		};
+
+	return (ProphecyCheckDeckResult){nonturn.a, 0x10u, NoCardsLeftInTheDeckText};
+}
+/* <<< factory Prophecy_CheckDeck */
+
+/* >>> factory TryGiveDamageCounter_DamageSwap */
+/* effect_functions.asm:5134-5158 */
+TryGiveDamageCounter_DamageSwapResult TryGiveDamageCounter_DamageSwap(void)
+{
+	uint8_t target = (uint8_t)(hPlayAreaEffectTarget + DUELVARS_ARENA_CARD_HP);
+	DuelistVarResult result = GetTurnDuelistVariable(target);
+	uint8_t remaining = (uint8_t)(result.a - 10u);
+
+	if (remaining == 0u)
+		return (TryGiveDamageCounter_DamageSwapResult){0u, 0x90u, result.hl};
+
+	gb_write8(result.hl, remaining);
+
+	uint8_t source = (uint8_t)(hTempPlayAreaLocation_ffa1 + DUELVARS_ARENA_CARD_HP);
+	uint16_t source_hp = (uint16_t)((result.hl & 0xff00u) | source);
+	uint8_t new_hp = (uint8_t)(10u + gb_read8(source_hp));
+	gb_write8(source_hp, new_hp);
+
+	return (TryGiveDamageCounter_DamageSwapResult){
+		new_hp,
+		(uint8_t)(new_hp == 0u ? 0x80u : 0u),
+		source_hp
+	};
+}
+/* <<< factory TryGiveDamageCounter_DamageSwap */
+
+/* >>> factory TransparencyEffect */
+/* effect_functions.asm:4699-4700 */
+uint8_t TransparencyEffect(void)
+{
+	return 0x10u;
+}
+/* <<< factory TransparencyEffect */
+
+/* >>> factory Barrier_CheckEnergy */
+/* effect_functions.asm:5395-5408 */
+BarrierCheckEnergyResult Barrier_CheckEnergy(void)
+{
+	GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	uint8_t a = gb_read8((uint16_t)(wAttachedEnergies_ADDR + PSYCHIC));
+	uint8_t f = 0x40u;
+
+	if (a == 1u)
+		f |= 0x80u;
+	if ((a & 0x0fu) < 1u)
+		f |= 0x20u;
+	if (a < 1u)
+		f |= 0x10u;
+
+	return (BarrierCheckEnergyResult){a, f, NotEnoughPsychicEnergyText};
+}
+/* <<< factory Barrier_CheckEnergy */
+
+/* >>> factory ResetDevolvedCardStatus */
+/* effect_functions.asm:1026-1050 */
+uint8_t ResetDevolvedCardStatus(void)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	if (location == PLAY_AREA_ARENA)
+		ClearAllStatusConditions();
+
+	DuelistVarResult changed = GetTurnDuelistVariable(
+		(uint8_t)(DUELVARS_ARENA_CARD_CHANGED_TYPE + location));
+	gb_write8(changed.hl, 0u);
+	DuelistVarResult flags = GetTurnDuelistVariable(
+		(uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));
+	gb_write8(flags.hl, 0u);
+	return (uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location);
+}
+/* <<< factory ResetDevolvedCardStatus */
+
+/* >>> factory MirrorMove_AIEffect */
+void MirrorMove_AIEffect(void)
+{
+	DuelistVarResult damage = GetTurnDuelistVariable(0xF3u);
+	wAIMinDamage = gb_read8(damage.hl);
+	wAIMaxDamage = wAIMinDamage;
+}
+/* <<< factory MirrorMove_AIEffect */
+
+/* >>> factory MirrorMove_InitialEffect1 */
+MirrorMoveInitialEffect1Result MirrorMove_InitialEffect1(void)
+{
+	DuelistVarResult damage = GetTurnDuelistVariable(0xF3u);
+	uint16_t hl = damage.hl;
+	uint8_t value = gb_read8(hl++);
+	value |= gb_read8(hl);
+	hl++;
+	value |= gb_read8(hl);
+	hl++;
+	if (value != 0u)
+		return (MirrorMoveInitialEffect1Result){0x00u, hl};
+	value = gb_read8(hl++);
+	if (value != 0u)
+		return (MirrorMoveInitialEffect1Result){0x00u, hl};
+	return (MirrorMoveInitialEffect1Result){0x90u, 0x00C6u};
+}
+/* <<< factory MirrorMove_InitialEffect1 */
+
+/* >>> factory FuryAttack_AIEffect */
+/* effect_functions.asm:...? */
+void FuryAttack_AIEffect(void)
+{
+	SetExpectedAIDamage(10u, 0u, 20u);
+}
+/* <<< factory FuryAttack_AIEffect */
+
+/* >>> factory RetreatAidEffect */
+/* effect_functions.asm:...? */
+uint8_t RetreatAidEffect(uint8_t f)
+{
+	return (uint8_t)((f & 0x80u) | 0x10u);
+}
+/* <<< factory RetreatAidEffect */
+
+/* >>> factory FriendshipSong_BenchCheck */
+FriendshipSongBenchCheckResult FriendshipSong_BenchCheck(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t f = (uint8_t)(count.a >= 6u ? 0x10u : 0u);
+	if (count.a == 6u)
+		f |= 0x80u;
+	return (FriendshipSongBenchCheckResult){count.a, f, 0x00B2u};
+}
+/* <<< factory FriendshipSong_BenchCheck */
+
+/* >>> factory ExpandEffect */
+void ExpandEffect(void)
+{
+	(void)ApplySubstatus1ToAttackingCard(SUBSTATUS1_REDUCE_BY_10);
+}
+/* <<< factory ExpandEffect */
+
+/* >>> factory CheckIfThereAreAnyEnergyCardsAttached */
+CheckIfThereAreAnyEnergyCardsAttachedResult CheckIfThereAreAnyEnergyCardsAttached(void)
+{
+	DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+	for (uint8_t index = 0; index < DECK_SIZE; index++) {
+		uint8_t location = gb_read8((uint16_t)(locations.hl + index));
+		if (!(location & (1u << CARD_LOCATION_PLAY_AREA_F)))
+			continue;
+		(void)LoadCardDataToBuffer2_FromDeckIndex(index);
+		uint8_t type = gb_read8(wLoadedCard2Type_ADDR);
+		if (type == TYPE_TRAINER)
+			continue;
+		if (type >= TYPE_ENERGY)
+			return (CheckIfThereAreAnyEnergyCardsAttachedResult){0x00u};
+	}
+	return (CheckIfThereAreAnyEnergyCardsAttachedResult){0x90u};
+}
+/* <<< factory CheckIfThereAreAnyEnergyCardsAttached */
+
+/* >>> factory PokeBall_DeckCheck */
+/* effect_functions.asm:10462-10473 */
+PokeBall_DeckCheckResult PokeBall_DeckCheck(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	uint8_t z = (uint8_t)(r.a == DECK_SIZE);
+	uint8_t borrow = (uint8_t)(r.a < DECK_SIZE);
+	uint8_t f = z ? 0x80u : 0x00u;
+	if (!borrow)
+		f = (uint8_t)(f | 0x10u);
+	return (PokeBall_DeckCheckResult){r.a, (uint16_t)NoCardsLeftInTheDeckText, f};
+}
+/* <<< factory PokeBall_DeckCheck */
+
+/* >>> factory Recycle_DiscardPileCheck */
+/* effect_functions.asm:10548-10558 */
+Recycle_DiscardPileCheckResult Recycle_DiscardPileCheck(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE);
+	uint8_t z = (uint8_t)(r.a == 1u);
+	uint8_t h = (uint8_t)((r.a & 0x0fu) < 1u);
+	uint8_t borrow = (uint8_t)(r.a < 1u);
+	uint8_t f = 0x40u;
+	if (z)
+		f = (uint8_t)(f | 0x80u);
+	if (h)
+		f = (uint8_t)(f | 0x20u);
+	if (borrow)
+		f = (uint8_t)(f | 0x10u);
+	return (Recycle_DiscardPileCheckResult){(uint16_t)ThereAreNoCardsInTheDiscardPileText, f};
+}
+/* <<< factory Recycle_DiscardPileCheck */
+
+
+/* >>> factory CreateBasicPokemonCardListFromDiscardPile */
+CreateBasicPokemonCardListFromDiscardPileResult CreateBasicPokemonCardListFromDiscardPile(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE);
+	uint8_t b = (uint8_t)(count.a + 1u);
+	uint16_t hl = (uint16_t)((count.hl & 0xFF00u) |
+		(uint8_t)(count.a + DUELVARS_DECK_CARDS));
+	uint16_t de = wDuelTempList_ADDR;
+	for (;;) {
+		hl = (uint16_t)((hl & 0xFF00u) | (uint8_t)((uint8_t)hl - 1u));
+		if (--b == 0u)
+			break;
+		uint8_t card = gb_read8(hl);
+		LoadCardDataToBuffer2_FromDeckIndex(card);
+		if (gb_read8(wLoadedCard2Type_ADDR) < TYPE_ENERGY &&
+			gb_read8(wLoadedCard2Stage_ADDR) == 0u)
+			gb_write8(de++, card);
+	}
+	gb_write8(de, 0xFFu);
+	if (gb_read8(wDuelTempList_ADDR) == 0xFFu)
+		return (CreateBasicPokemonCardListFromDiscardPileResult){0x90u};
+	return (CreateBasicPokemonCardListFromDiscardPileResult){0x00u};
+}
+/* <<< factory CreateBasicPokemonCardListFromDiscardPile */
+
+/* >>> factory CreatePokemonCardListFromHand */
+CreatePokemonCardListFromHandResult CreatePokemonCardListFromHand(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
+	uint8_t count = r.a;
+	uint16_t hl = (uint16_t)((r.hl & 0xFF00u) | DUELVARS_HAND);
+	uint16_t de = wDuelTempList_ADDR;
+
+	for (;;) {
+		uint8_t card = gb_read8(hl);
+		LoadCardDataToBuffer2_FromDeckIndex(card);
+		if (gb_read8(wLoadedCard2Type_ADDR) < TYPE_ENERGY)
+			gb_write8(de++, card);
+		hl = (uint16_t)((hl & 0xFF00u) | (uint8_t)((uint8_t)hl + 1u));
+		count--;
+		if (count == 0u)
+			break;
+	}
+	gb_write8(de, 0xFFu);
+	uint8_t first = gb_read8(wDuelTempList_ADDR);
+	uint8_t result_f = (first == 0xFFu) ? 0x90u : (uint8_t)(first == 0u ? 0x80u : 0x00u);
+	return (CreatePokemonCardListFromHandResult){first, result_f, 0u,
+		(uint8_t)(de >> 8), (uint8_t)de};
+}
+/* <<< factory CreatePokemonCardListFromHand */
+
+/* >>> factory Pokedex_DeckCheck */
+PokedexDeckCheckResult Pokedex_DeckCheck(void)
+{
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK).a;
+	uint8_t f = (count < DECK_SIZE) ? 0x00u : (uint8_t)(count == DECK_SIZE ? 0x90u : 0x10u);
+	return (PokedexDeckCheckResult){count, f, NoCardsLeftInTheDeckText};
+}
+/* <<< factory Pokedex_DeckCheck */
+
+/* >>> factory Pokedex_OrderDeckCardsEffect */
+
+PokedexOrderDeckCardsEffectResult Pokedex_OrderDeckCardsEffect(void)
+{
+	uint16_t hl = hTempList_ADDR;
+	uint8_t c = 0u;
+	uint8_t a = 0u;
+
+	for (;;) {
+		a = gb_read8(hl++);
+		if (a == 0xffu)
+			break;
+		SearchCardInDeckAndAddToHand(a);
+		c = (uint8_t)(c + 1u);
+	}
+
+	hl = (uint16_t)(hl - 2u);
+	do {
+		a = gb_read8(hl--);
+		ReturnCardToDeck(a);
+		c = (uint8_t)(c - 1u);
+	} while (c != 0u);
+
+	return (PokedexOrderDeckCardsEffectResult){a, c, 0xc0u, hl};
+}
+/* <<< factory Pokedex_OrderDeckCardsEffect */
+
+/* >>> factory Maintenance_HandCheck */
+MaintenanceHandCheckResult Maintenance_HandCheck(void)
+{
+	DuelistVarResult hand = GetTurnDuelistVariable(0xeeu);
+	uint8_t result = (uint8_t)(hand.a - 3u);
+	uint8_t f = 0x40u;
+
+	if (result == 0u)
+		f |= 0x80u;
+	if ((hand.a & 0x0fu) < 3u)
+		f |= 0x20u;
+	if (hand.a < 3u)
+		f |= 0x10u;
+
+	return (MaintenanceHandCheckResult){hand.a, f, 0x00b6u};
+}
+/* <<< factory Maintenance_HandCheck */
+
+/* >>> factory DevolutionSpray_PlayAreaEvolutionCheck */
+DevolutionSprayPlayAreaEvolutionCheckResult DevolutionSpray_PlayAreaEvolutionCheck(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint16_t hl = (uint16_t)((count.hl & 0xFF00u) | DUELVARS_ARENA_CARD);
+	uint16_t n = count.a ? count.a : 0x100u;
+	do {
+		LoadCardDataToBuffer2_FromDeckIndex(gb_read8(hl++));
+		if (gb_read8(wLoadedCard2Stage_ADDR) != 0u)
+			return (DevolutionSprayPlayAreaEvolutionCheckResult){0x0000u, 0x00u};
+	} while (--n != 0u);
+	return (DevolutionSprayPlayAreaEvolutionCheckResult){
+		ThereAreNoStage1PokemonText, 0x90u
+	};
+}
+/* <<< factory DevolutionSpray_PlayAreaEvolutionCheck */
+
+/* >>> factory SpitPoison_AIEffect */
+/* effect_functions.asm:1435-1438 */
+void SpitPoison_AIEffect(void)
+{
+	SetExpectedAIDamage(5u, 0u, 10u);
+}
+/* <<< factory SpitPoison_AIEffect */
+
+/* >>> factory GloomPoisonPowder_AIEffect */
+void GloomPoisonPowder_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(10u, 10u, 10u);
+}
+/* <<< factory GloomPoisonPowder_AIEffect */
+
+/* >>> factory FoulOdorEffect */
+QueueStatusConditionResult FoulOdorEffect(void)
+{
+	QueueStatusConditionResult r;
+	(void)ConfusionEffect();
+	SwapTurn();
+	r = ConfusionEffect();
+	SwapTurn();
+	return r;
+}
+/* <<< factory FoulOdorEffect */
+
+
+/* >>> factory KakunaPoisonPowder_AIEffect */
+void KakunaPoisonPowder_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);
+}
+/* <<< factory KakunaPoisonPowder_AIEffect */
+
+
+/* >>> factory SwordsDanceEffect */
+uint16_t SwordsDanceEffect(void)
+{
+	if (gb_read8(0xCCC3u) != 0x2Eu)
+		return 0u;
+	return ApplySubstatus1ToAttackingCard(0x19u);
+}
+/* <<< factory SwordsDanceEffect */
+
+
+/* >>> factory Twineedle_AIEffect */
+void Twineedle_AIEffect(void)
+{
+	SetExpectedAIDamage(30u, 0u, 60u);
+}
+/* <<< factory Twineedle_AIEffect */
+
+
+/* >>> factory BeedrillPoisonSting_AIEffect */
+void BeedrillPoisonSting_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);
+}
+/* <<< factory BeedrillPoisonSting_AIEffect */
+
+
+/* >>> factory FoulGas_AIEffect */
+void FoulGas_AIEffect(void)
+{
+	UpdateExpectedAIDamage(5u, 0u, 10u);
+}
+/* <<< factory FoulGas_AIEffect */
+
+
+/* >>> factory Sprout_AISelectEffect */
+#define ODDISH 0x1cu
+void Sprout_AISelectEffect(uint8_t c, uint16_t de)
+{
+	(void)CreateDeckCardList(c, de);
+
+	uint16_t hl = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(hl++);
+		hTemp_ffa0 = card;
+		if (card == 0xffu)
+			return;
+		if (GetCardIDFromDeckIndex(card) == ODDISH)
+			return;
+	}
+}
+/* <<< factory Sprout_AISelectEffect */
+
+
+/* >>> factory Teleport_CheckBench */
+TeleportCheckBenchResult Teleport_CheckBench(void)
+{
+    DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+    uint8_t f = 0x40u;
+    if (count.a == 2u) f |= 0x80u;
+    if ((count.a & 0x0fu) < 2u) f |= 0x20u;
+    if (count.a < 2u) f |= 0x10u;
+    return (TeleportCheckBenchResult){count.a, f, 0x00d2u};
+}
+/* <<< factory Teleport_CheckBench */
+
+
+/* >>> factory Teleport_AISelectEffect */
+TeleportAISelectEffectResult Teleport_AISelectEffect(void)
+{
+    DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+    uint8_t a = Random(count.a);
+    hTemp_ffa0 = a;
+    return (TeleportAISelectEffectResult){a, count.hl};
+}
+/* <<< factory Teleport_AISelectEffect */
+
+
+/* >>> factory HornHazard_AIEffect */
+/* effect_functions.asm:2050-2053 */
+void HornHazard_AIEffect(void)
+{
+	SetExpectedAIDamage(15u, 0u, 30u);
+}
+/* <<< factory HornHazard_AIEffect */
+
+
+/* >>> factory WeedlePoisonSting_AIEffect */
+/* effect_functions.asm:...? */
+void WeedlePoisonSting_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);
+}
+/* <<< factory WeedlePoisonSting_AIEffect */
+
+/* >>> factory BellsproutCallForFamily_AISelectEffect */
+#define BELLSPROUT 0x23u
+void BellsproutCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
+{
+	(void)CreateDeckCardList(c, de);
+
+	uint16_t hl = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(hl++);
+		hTemp_ffa0 = card;
+		if (card == 0xffu)
+			return;
+		if (GetCardIDFromDeckIndex(card) == BELLSPROUT)
+			return;
+	}
+}
+/* <<< factory BellsproutCallForFamily_AISelectEffect */
+
+/* >>> factory WeezingSmog_AIEffect */
+void WeezingSmog_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);
+}
+/* <<< factory WeezingSmog_AIEffect */
+
+
+
+/* >>> factory NidoranFCallForFamily_AISelectEffect */
+void NidoranFCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
+{
+	(void)CreateDeckCardList(c, de);
+	uint16_t hl = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(hl++);
+		hTemp_ffa0 = card;
+		if (card == 0xffu)
+			return;
+		uint8_t card_id = GetCardIDFromDeckIndex(card);
+		if ((uint8_t)card_id == NIDORANF || (uint8_t)card_id == NIDORANM)
+			return;
+	}
+}
+/* <<< factory NidoranFCallForFamily_AISelectEffect */
+
+
+/* >>> factory ToxicGasEffect */
+uint8_t ToxicGasEffect(uint8_t f)
+{
+	return (uint8_t)((f & 0x80u) | 0x10u);
+}
+/* <<< factory ToxicGasEffect */
+
+
+/* >>> factory Sludge_AIEffect */
+void Sludge_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);
+}
+/* <<< factory Sludge_AIEffect */
+
+/* >>> factory KadabraRecover_DiscardEffect */
+/* effect_functions.asm:5774-5779 */
+uint8_t KadabraRecover_DiscardEffect(void)
+{
+	uint8_t a = hTemp_ffa0;
+	PutCardInDiscardPile(a);
+	return a;
+}
+/* <<< factory KadabraRecover_DiscardEffect */
+
+/* >>> factory StretchKick_CheckBench */
+/* effect_functions.asm:6186-6196 */
+StretchKickCheckBenchResult StretchKick_CheckBench(void)
+{
+	DuelistVarResult r = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t f = 0x40u;
+
+	if (r.a == 2u)
+		f |= 0x80u;
+	if ((r.a & 0x0fu) < 2u)
+		f |= 0x20u;
+	if (r.a < 2u)
+		f |= 0x10u;
+
+	return (StretchKickCheckBenchResult){r.a, f, EffectNoPokemonOnTheBenchText};
+}
+/* <<< factory StretchKick_CheckBench */
+
+/* >>> factory StarmieRecover_CheckEnergyHP */
+/* effect_functions.asm:5782-5804 */
+StarmieRecoverCheckEnergyHPResult StarmieRecover_CheckEnergyHP(void)
+{
+	uint8_t energy;
+	uint8_t a;
+	uint8_t f;
+	CardDamageResult damage;
+	uint16_t hl = NotEnoughWaterEnergyText;
+
+	GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	energy = gb_read8((uint16_t)(wAttachedEnergies_ADDR + WATER));
+	f = 0x40u;
+	if (energy == 1u)
+		f |= 0x80u;
+	if ((energy & 0x0fu) < 1u)
+		f |= 0x20u;
+	if (energy < 1u)
+		f |= 0x10u;
+	if (energy < 1u)
+		return (StarmieRecoverCheckEnergyHPResult){energy, f, 0u, 0u, hl};
+
+	damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	a = damage.a;
+	hl = NoDamageCountersText;
+	f = 0x40u;
+	if (a == 10u)
+		f |= 0x80u;
+	if ((a & 0x0fu) < 10u)
+		f |= 0x20u;
+	if (a < 10u)
+		f |= 0x10u;
+	return (StarmieRecoverCheckEnergyHPResult){a, f, damage.c, 1u, hl};
+}
+/* <<< factory StarmieRecover_CheckEnergyHP */
+
+
+/* >>> factory StarmieRecover_DiscardEffect */
+/* effect_functions.asm:5807-5812 */
+uint8_t StarmieRecover_DiscardEffect(void)
+{
+	uint8_t card = gb_read8((uint16_t)(hTemp_ffa0_ADDR));
+	PutCardInDiscardPile(card);
+	return card;
+}
+/* <<< factory StarmieRecover_DiscardEffect */
+
+
+/* >>> factory LightScreenEffect */
+/* effect_functions.asm:6436-6441 */
+uint16_t LightScreenEffect(void)
+{
+	return ApplySubstatus1ToAttackingCard(SUBSTATUS1_HALVE_DAMAGE);
+}
+/* <<< factory LightScreenEffect */
+
+
+/* >>> factory Cowardice_CheckUseAndBench */
+/* effect_functions.asm:3391-3425 */
+#define CAN_EVOLVE_THIS_TURN 0x80u
+#define CannotBeUsedInTurnWhichWasPlayedText 0x00ccu
+CowardiceCheckUseAndBenchResult Cowardice_CheckUseAndBench(void)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	hTemp_ffa0 = location;
+	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(location);
+	if (incapable.f & 0x10u)
+		return (CowardiceCheckUseAndBenchResult){incapable.f, incapable.hl};
+
+	DuelistVarResult count = GetTurnDuelistVariable(
+		DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a < 2u)
+		return (CowardiceCheckUseAndBenchResult){0x70u, EffectNoPokemonOnTheBenchText};
+
+	DuelistVarResult flags = GetTurnDuelistVariable(
+		(uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));
+	if ((flags.a & CAN_EVOLVE_THIS_TURN) == 0u)
+		return (CowardiceCheckUseAndBenchResult){0x10u,
+			CannotBeUsedInTurnWhichWasPlayedText};
+	return (CowardiceCheckUseAndBenchResult){0x00u, flags.hl};
+}
+/* <<< factory Cowardice_CheckUseAndBench */
+
+
+
+/* >>> factory Cowardice_ReturnToHandEffect */
+/* effect_functions.asm:3428-3467 */
+CowardiceReturnResult Cowardice_ReturnToHandEffect(void)
+{
+	uint8_t location = hTemp_ffa0;
+	uint8_t card = GetTurnDuelistVariable(
+		(uint8_t)(DUELVARS_ARENA_CARD + location)).a;
+	(void)MovePlayAreaCardToDiscardPile(location);
+	if (location == PLAY_AREA_ARENA)
+		(void)SwapArenaWithBenchPokemon(hAIPkmnPowerEffectParam);
+	(void)MoveDiscardPileCardToHand(card);
+	AddCardToHand(card);
+	/* The shift's own exit registers are the effect's: it ends with `xor a`,
+	 * which only rewrites a and the flags (duel.asm:1122-1137 leaves
+	 * d = MAX_PLAY_AREA_POKEMON, e = the occupied slot count and hl one past
+	 * the non-turn duelist's last play area slot). */
+	ShiftResult shifted = ShiftAllPokemonToFirstPlayAreaSlots();
+	wDuelDisplayedScreen = 0u;
+	/* `xor a` is the last instruction: a = 0 with Z set. */
+	return (CowardiceReturnResult){0u, 0x80u, shifted.d, shifted.e, shifted.hl};
+}
+/* <<< factory Cowardice_ReturnToHandEffect */
+
+/* >>> factory CheckIfCardHasGrassEnergyAttached */
+/* effect_functions.asm:2303-2340 */
+CheckIfCardHasGrassEnergyAttachedResult CheckIfCardHasGrassEnergyAttached(uint8_t a)
+{
+	uint8_t e = (uint8_t)(a | CARD_LOCATION_PLAY_AREA);
+	DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+	for (uint8_t index = 0; index < DECK_SIZE; index++) {
+		if (gb_read8((uint16_t)(locations.hl + index)) != e)
+			continue;
+		uint8_t card_id = GetCardIDFromDeckIndex(index);
+		if (GetCardType(card_id) != TYPE_ENERGY_GRASS)
+			continue;
+		return (CheckIfCardHasGrassEnergyAttachedResult){
+			index, index == 0u ? 0x80u : 0x00u, e, (uint16_t)(locations.hl + index)};
+	}
+	return (CheckIfCardHasGrassEnergyAttachedResult){DECK_SIZE, 0x90u, e,
+		(uint16_t)(locations.hl + DECK_SIZE)};
+}
+/* <<< factory CheckIfCardHasGrassEnergyAttached */
+
+
+/* >>> factory Quickfreeze_InitialEffect */
+/* effect_functions.asm:3463-3465. scf: sets carry, clears N/H, keeps Z. */
+uint8_t Quickfreeze_InitialEffect(uint8_t f)
+{
+	return (uint8_t)((f & 0x80u) | 0x10u);
+}
+/* <<< factory Quickfreeze_InitialEffect */
+
+
+/* >>> factory FocusEnergyEffect */
+/* effect_functions.asm:3509-3520 */
+void FocusEnergyEffect(void)
+{
+	if (gb_read8(0xCCC3u) != 0x5Au)
+		return;
+	(void)ApplySubstatus1ToAttackingCard(0x19u);
+}
+/* <<< factory FocusEnergyEffect */
+
+/* >>> factory EnergySpike_AISelectEffect */
+/* effect_functions.asm:7365-7369 */
+void EnergySpike_AISelectEffect(void)
+{
+	hTemp_ffa0 = 0xffu;
+}
+/* <<< factory EnergySpike_AISelectEffect */
+
+/* >>> factory CometPunch_AIEffect */
+/* effect_functions.asm:7794-7801 */
+void CometPunch_AIEffect(void)
+{
+	SetExpectedAIDamage(0x28u, 0x00u, 0x50u);
+}
+/* <<< factory CometPunch_AIEffect */
+
+/* >>> factory Conversion1_WeaknessCheck */
+/* effect_functions.asm:8228-8251 */
+Conversion1WeaknessCheckResult Conversion1_WeaknessCheck(void)
+{
+	DuelistVarResult result;
+	uint8_t weakness;
+
+	SwapTurn();
+	result = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	LoadCardDataToBuffer2_FromDeckIndex(result.a);
+	SwapTurn();
+
+	weakness = wLoadedCard2Weakness;
+	if (weakness == 0u)
+		return (Conversion1WeaknessCheckResult){0u, 0x90u, NoWeaknessText};
+	return (Conversion1WeaknessCheckResult){weakness, 0u, result.hl};
+}
+/* <<< factory Conversion1_WeaknessCheck */
+
+/* >>> factory Conversion2_ResistanceCheck */
+/* effect_functions.asm:8277-8294 */
+Conversion2ResistanceCheckResult Conversion2_ResistanceCheck(void)
+{
+	DuelistVarResult result;
+	uint8_t resistance;
+
+	result = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	LoadCardDataToBuffer2_FromDeckIndex(result.a);
+
+	resistance = wLoadedCard2Resistance;
+	if (resistance == 0u)
+		return (Conversion2ResistanceCheckResult){0u, 0x90u, NoResistanceText};
+	return (Conversion2ResistanceCheckResult){resistance, 0u, result.hl};
+}
+/* <<< factory Conversion2_ResistanceCheck */
+
+/* >>> factory FirstAid_DamageCheck */
+/* effect_functions.asm:8180-8190 */
+FirstAidDamageCheckResult FirstAid_DamageCheck(void)
+{
+	uint8_t hp = GetCardDamageAndMaxHP(PLAY_AREA_ARENA).a;
+	uint8_t flags = 0x40u;
+
+	if (hp == 10u)
+		flags |= 0x80u;
+	if (hp < 10u)
+		flags |= 0x10u;
+	if ((hp & 0x0fu) < 0x0au)
+		flags |= 0x20u;
+
+	return (FirstAidDamageCheckResult){NoDamageCountersText, flags};
+}
+/* <<< factory FirstAid_DamageCheck */
+
+/* >>> factory DoTheWaveEffect */
+/* effect_functions.asm:8171-8183 */
+void DoTheWaveEffect(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t amount = ATimes10((uint8_t)(r.a - 1u));
+	AddToDamage(amount);
+}
+/* <<< factory DoTheWaveEffect */
+
+/* >>> factory FullHeal_StatusCheck */
+/* effect_functions.asm:9404-9415 */
+FullHealStatusCheckResult FullHeal_StatusCheck(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	uint8_t status = r.a;
+
+	if (status != 0u)
+		return (FullHealStatusCheckResult){status, 0x00u, r.hl};
+
+	return (FullHealStatusCheckResult){
+		0x00u,
+		(uint8_t)(0x80u | 0x10u),
+		NotAffectedByPoisonSleepParalysisOrConfusionText
+	};
+}
+/* <<< factory FullHeal_StatusCheck */
+
+/* >>> factory PoisonFang_AIEffect */
+/* effect_functions.asm:1485 */
+void PoisonFang_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(10u, 10u, 10u);
+}
+/* <<< factory PoisonFang_AIEffect */
+
+/* >>> factory WeepinbellPoisonPowder_AIEffect */
+/* effect_functions.asm:1490 */
+void WeepinbellPoisonPowder_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);
+}
+/* <<< factory WeepinbellPoisonPowder_AIEffect */
+
+/* >>> factory Toxic_AIEffect */
+void Toxic_AIEffect(void)
+{
+	UpdateExpectedAIDamage(20u, 20u, 20u);
+}
+/* <<< factory Toxic_AIEffect */
+
+/* >>> factory BoyfriendsEffect */
+#define NIDOKING 0x19u
+void BoyfriendsEffect(void)
+{
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	uint16_t hl = arena.hl;
+	uint8_t c = PLAY_AREA_ARENA;
+	while (gb_read8(hl) != 0xffu) {
+		uint16_t id = GetCardIDFromDeckIndex(gb_read8(hl));
+		if ((uint8_t)id == NIDOKING && (uint8_t)(id >> 8) == 0u)
+			c++;
+		hl++;
+	}
+	AddToDamage(ATimes10((uint8_t)(c << 1)));
+}
+/* <<< factory BoyfriendsEffect */
+
+/* >>> factory IvysaurPoisonPowder_AIEffect */
+void IvysaurPoisonPowder_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(10u, 10u, 10u);
+}
+/* <<< factory IvysaurPoisonPowder_AIEffect */
+
+/* >>> factory EnergyTrans_CheckPlayArea */
+EnergyTransCheckPlayAreaResult EnergyTrans_CheckPlayArea(void)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	hTemp_ffa0 = location;
+	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(location);
+	if (incapable.f & 0x10u)
+		return (EnergyTransCheckPlayAreaResult){location, incapable.f, incapable.hl, 0u};
+
+	DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+	for (uint8_t index = 0; index < DECK_SIZE; index++) {
+		uint16_t entry = (uint16_t)(locations.hl + index);
+		if ((gb_read8(entry) & CARD_LOCATION_PLAY_AREA) == 0u)
+			continue;
+		uint16_t card_id = GetCardIDFromDeckIndex(index);
+		uint8_t card_type = GetCardType(card_id);
+		if (card_type == TYPE_ENERGY_GRASS)
+			return (EnergyTransCheckPlayAreaResult){card_type, 0xC0u, entry, card_id};
+	}
+	return (EnergyTransCheckPlayAreaResult){DECK_SIZE, 0x90u, NoGrassEnergyText, 0u};
+}
+/* <<< factory EnergyTrans_CheckPlayArea */
+
+
+/* >>> factory Firegiver_InitialEffect */
+uint8_t Firegiver_InitialEffect(uint8_t f)
+{
+	return (uint8_t)((f & 0x80u) | 0x10u);
+}
+/* <<< factory Firegiver_InitialEffect */
+
+
+/* >>> factory MoltresLv37DiveBomb_AIEffect */
+void MoltresLv37DiveBomb_AIEffect(void)
+{
+	SetExpectedAIDamage(35u, 0u, 70u);
+}
+/* <<< factory MoltresLv37DiveBomb_AIEffect */
+
+
+/* >>> factory GetEnergyAttachedMultiplierDamage */
+uint16_t GetEnergyAttachedMultiplierDamage(void)
+{
+	SwapTurn();
+	DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+	uint8_t count = 0u;
+	for (uint8_t i = 0u; i < DECK_SIZE; i++) {
+		if (gb_read8((uint16_t)(locations.hl + i)) != CARD_LOCATION_ARENA)
+			continue;
+		if ((GetCardType(GetCardIDFromDeckIndex(i)) & TYPE_ENERGY) != 0u)
+			count++;
+	}
+	SwapTurn();
+	return (uint16_t)(count * 10u);
+}
+/* <<< factory GetEnergyAttachedMultiplierDamage */
+/* >>> factory Fly_AIEffect */
+void Fly_AIEffect(void)
+{
+	SetExpectedAIDamage(15u, 0u, 30u);
+}
+/* <<< factory Fly_AIEffect */
+/* >>> factory Gigashock_AISelectEffect */
+void Gigashock_AISelectEffect(void)
+{
+	uint8_t count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	uint16_t list = hTempList_ADDR;
+	if (count < 4u) {
+		for (uint8_t slot = 1u; slot < count; slot++)
+			gb_write8(list++, slot);
+		gb_write8(list, 0xffu);
+		return;
+	}
+	SwapTurn();
+	for (uint8_t slot = 1u; slot < count; slot++)
+		gb_write8(list++, slot);
+	gb_write8(list, 0u);
+	for (uint8_t offset = 0u; gb_read8((uint16_t)(hTempList_ADDR + offset)) != 0u; offset++) {
+		uint16_t current_addr = (uint16_t)(hTempList_ADDR + offset);
+		uint8_t current = gb_read8(current_addr);
+		uint8_t current_hp =
+			GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + current)).a;
+		for (uint8_t next = (uint8_t)(offset + 1u);
+		     gb_read8((uint16_t)(hTempList_ADDR + next)) != 0u; next++) {
+			uint16_t next_addr = (uint16_t)(hTempList_ADDR + next);
+			uint8_t candidate = gb_read8(next_addr);
+			uint8_t candidate_hp =
+				GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + candidate)).a;
+			if (candidate_hp >= current_hp) {
+				current_hp = candidate_hp;
+				gb_write8(current_addr, candidate);
+				gb_write8(next_addr, current);
+				current = candidate;
+			}
+		}
+	}
+	gb_write8((uint16_t)(hTempList_ADDR + 3u), 0xffu);
+	SwapTurn();
+}
+/* <<< factory Gigashock_AISelectEffect */
+
+/* >>> factory Wildfire_DiscardDeckEffect */
+void Wildfire_DiscardDeckEffect(void)
+{
+	uint8_t count = hTemp_ffa0;
+	SwapTurn();
+	DuelistVarResult remaining = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	uint8_t cards_left = (uint8_t)(DECK_SIZE - remaining.a);
+	if (cards_left < count)
+		count = cards_left;
+	for (uint8_t i = 0u; i < count; i++) {
+		DrawCardResult draw = DrawCardFromDeck();
+		if ((draw.f & 0x10u) == 0u)
+			PutCardInDiscardPile(draw.a);
+	}
+	LoadTxRam3(count);
+	(void)DrawWideTextBox_PrintText(0x0174u);
+	SwapTurn();
+}
+/* <<< factory Wildfire_DiscardDeckEffect */
+
+/* >>> factory MoltresLv35DiveBomb_AIEffect */
+void MoltresLv35DiveBomb_AIEffect(void)
+{
+	SetExpectedAIDamage(40u, 0u, 80u);
+}
+/* <<< factory MoltresLv35DiveBomb_AIEffect */
+
+/* >>> factory ClefairyDoll_BenchCheck */
+ClefairyDollBenchCheckResult ClefairyDoll_BenchCheck(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(0xEFu);
+	uint8_t f = (uint8_t)(count.a >= 6u ? 0x10u : 0x00u);
+	if (count.a == 6u)
+		f |= 0x80u;
+	return (ClefairyDollBenchCheckResult){count.a, f, 0x00B2u};
+}
+/* <<< factory ClefairyDoll_BenchCheck */
+
+/* >>> factory ClefairyDoll_PlaceInPlayAreaEffect */
+void ClefairyDoll_PlaceInPlayAreaEffect(void)
+{
+	(void)PutHandPokemonCardInPlayArea(hTempCardIndex_ff9f, 0x00u);
+}
+/* <<< factory ClefairyDoll_PlaceInPlayAreaEffect */
+
+/* >>> factory Shift_OncePerTurnCheck */
+/* effect_functions.asm:2472-2501 */
+ShiftOncePerTurnCheckResult Shift_OncePerTurnCheck(void)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	hTemp_ffa0 = location;
+	DuelistVarResult flags = GetTurnDuelistVariable(
+		(uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));
+	if (flags.a & USED_PKMN_POWER_THIS_TURN)
+		return (ShiftOncePerTurnCheckResult){0x10u, OnlyOncePerTurnText};
+	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(location);
+	return (ShiftOncePerTurnCheckResult){incapable.f, incapable.hl};
+}
+/* <<< factory Shift_OncePerTurnCheck */
+
+/* >>> factory VenomPowder_AIEffect */
+void VenomPowder_AIEffect(void)
+{
+	UpdateExpectedAIDamage(5u, 0u, 10u);
+}
+/* <<< factory VenomPowder_AIEffect */
+
+/* >>> factory TangelaPoisonPowder_AIEffect */
+/* effect_functions.asm:2572-2575 */
+void TangelaPoisonPowder_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);
+}
+/* <<< factory TangelaPoisonPowder_AIEffect */
+
+/* >>> factory PetalDance_AIEffect */
+/* effect_functions.asm:2653-2656 */
+void PetalDance_AIEffect(void)
+{
+	SetExpectedAIDamage(60u, 0u, 120u);
+}
+/* <<< factory PetalDance_AIEffect */
+
+/* >>> factory RainDanceEffect */
+/* effect_functions.asm:8058-8059. scf: sets carry, clears N/H, keeps Z. */
+uint8_t RainDanceEffect(uint8_t f)
+{
+	return (uint8_t)((f & 0x80u) | 0x10u);
+}
+/* <<< factory RainDanceEffect */
+
+/* >>> factory JellyfishSting_AIEffect */
+/* effect_functions.asm:3176-3179 */
+void JellyfishSting_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(10u, 10u, 10u);
+}
+/* <<< factory JellyfishSting_AIEffect */
+
+/* >>> factory HeadacheEffect */
+void HeadacheEffect(void)
+{
+	DuelistVarResult substatus = GetNonTurnDuelistVariable(0xEBu);
+	gb_write8(substatus.hl, (uint8_t)(substatus.a | (1u << SUBSTATUS3_HEADACHE_F)));
+}
+/* <<< factory HeadacheEffect */
+
+/* >>> factory FlamesOfRage_CheckEnergy */
+FlamesOfRageCheckEnergyResult FlamesOfRage_CheckEnergy(void)
+{
+	uint8_t a;
+	uint8_t f = 0x40u;
+
+	GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	a = gb_read8((uint16_t)(wAttachedEnergies_ADDR + FIRE));
+	if (a == 2u)
+		f |= 0x80u;
+	if (a < 2u)
+		f |= 0x10u;
+	if ((a & 0x0fu) < 2u)
+		f |= 0x20u;
+	return (FlamesOfRageCheckEnergyResult){a, f, PLAY_AREA_ARENA,
+		NotEnoughFireEnergyText};
+}
+/* <<< factory FlamesOfRage_CheckEnergy */
+
+/* >>> factory MagmarSmog_AIEffect */
+/* effect_functions.asm:3921-3928 */
+void MagmarSmog_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);
+}
+/* <<< factory MagmarSmog_AIEffect */
+
+/* >>> factory Wildfire_CheckEnergy */
+/* effect_functions.asm:3735-3748 */
+WildfireCheckEnergyResult Wildfire_CheckEnergy(void)
+{
+	uint8_t energy;
+	uint8_t f = 0x40u;
+	uint16_t hl = NotEnoughFireEnergyText;
+
+	GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	energy = gb_read8((uint16_t)(wAttachedEnergies_ADDR + FIRE));
+	if (energy == 1u)
+		f |= 0x80u;
+	if ((energy & 0x0fu) == 0u)
+		f |= 0x20u;
+	if (energy == 0u)
+		f |= 0x10u;
+	return (WildfireCheckEnergyResult){energy, f, PLAY_AREA_ARENA, hl};
+}
+/* <<< factory Wildfire_CheckEnergy */
+
+/* >>> factory DancingEmbers_AIEffect */
+/* effect_functions.asm:4111-4114 */
+void DancingEmbers_AIEffect(void)
+{
+	SetExpectedAIDamage(80u / 2u, 0u, 80u);
+}
+/* <<< factory DancingEmbers_AIEffect */
+
+/* >>> factory FlamesOfRage_DiscardEffect */
+/* effect_functions.asm:...? */
+void FlamesOfRage_DiscardEffect(void)
+{
+	PutCardInDiscardPile(gb_read8(hTempList_ADDR));
+	PutCardInDiscardPile(gb_read8((uint16_t)(hTempList_ADDR + 1u)));
+}
+/* <<< factory FlamesOfRage_DiscardEffect */
+
+/* >>> factory FlamesOfRage_DamageBoostEffect */
+/* effect_functions.asm:...? */
+void FlamesOfRage_DamageBoostEffect(void)
+{
+	CardDamageResult r = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	AddToDamage(r.a);
+}
+/* <<< factory FlamesOfRage_DamageBoostEffect */
+
+/* >>> factory EnergyBurnEffect */
+EnergyBurnEffectResult EnergyBurnEffect(uint8_t f)
+{
+	return (EnergyBurnEffectResult){(uint8_t)((f & 0x80u) | 0x10u)};
+}
+/* <<< factory EnergyBurnEffect */
+
+/* >>> factory FireSpin_CheckEnergy */
+FireSpinCheckEnergyResult FireSpin_CheckEnergy(void)
+{
+	(void)CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);
+	uint8_t count = CountCardsInDuelTempList().a;
+	uint8_t f = 0x40u;
+	if ((count & 0x0fu) < 2u)
+		f |= 0x20u;
+	if (count < 2u)
+		f |= 0x10u;
+	if (count == 2u)
+		f |= 0x80u;
+	return (FireSpinCheckEnergyResult){count, f, NotEnoughEnergyCardsText};
+}
+/* <<< factory FireSpin_CheckEnergy */
+
+/* >>> factory Prophecy_AISelectEffect */
+/* effect_functions.asm:4756-4760 */
+ProphecyAISelectEffectResult Prophecy_AISelectEffect(void)
+{
+	hTemp_ffa0 = 0xffu;
+	return (ProphecyAISelectEffectResult){0xffu};
+}
+/* <<< factory Prophecy_AISelectEffect */
+
+/* >>> factory Prophecy_ReorderDeckEffect */
+/* effect_functions.asm:4763-4815 */
+ProphecyReorderDeckEffectResult Prophecy_ReorderDeckEffect(void)
+{
+	uint16_t hl = hTempList_ADDR;
+	uint8_t a = gb_read8(hl++);
+	if (a == 0xffu)
+		return (ProphecyReorderDeckEffectResult){a, 0u, 0x00u, hl};
+	if (a != 0u)
+		SwapTurn();
+
+	uint8_t c = 0u;
+	for (;;) {
+		a = gb_read8(hl++);
+		if (a == 0xffu)
+			break;
+		SearchCardInDeckAndAddToHand(a);
+		c = (uint8_t)(c + 1u);
+	}
+	hl = (uint16_t)(hl - 2u);
+	do {
+		a = gb_read8(hl--);
+		ReturnCardToDeck(a);
+		c = (uint8_t)(c - 1u);
+	} while (c != 0u);
+
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if (!(turn.f & 0x10u)) {
+		WaitResult wait = DrawWideTextBox_WaitForInput(0x0184u);
+		if (a == 0u)
+			a = turn.a;
+		return (ProphecyReorderDeckEffectResult){a, c, wait.f, hl};
+	}
+	return (ProphecyReorderDeckEffectResult){turn.a, c, turn.f, turn.hl};
+}
+/* <<< factory Prophecy_ReorderDeckEffect */
+
+/* >>> factory SuperEnergyRetrieval_HandEnergyCheck */
+/* effect_functions.asm:10979-10996 */
+SuperEnergyRetrievalHandEnergyCheckResult SuperEnergyRetrieval_HandEnergyCheck(void)
+{
+	DuelistVarResult hand = GetTurnDuelistVariable(0xeeu);
+	if (hand.a < 3u)
+		return (SuperEnergyRetrievalHandEnergyCheckResult){NotEnoughCardsInHandText, 0x70u};
+
+	CreateEnergyCardListFromDiscardPileResult energy =
+		CreateEnergyCardListFromDiscardPile_OnlyBasic();
+	return (SuperEnergyRetrievalHandEnergyCheckResult){
+		ThereAreNoBasicEnergyCardsInDiscardPileText, energy.f
+	};
+}
+/* <<< factory SuperEnergyRetrieval_HandEnergyCheck */
+
+/* >>> factory GetNextPositionInTempList_TrainerEffects */
+/* effect_functions.asm:11065-11079 */
+uint16_t GetNextPositionInTempList_TrainerEffects(void)
+{
+	uint8_t selection = hCurSelectionItem;
+	hCurSelectionItem = (uint8_t)(selection + 1u);
+	return (uint16_t)(hTempList_ADDR + selection);
+}
+/* <<< factory GetNextPositionInTempList_TrainerEffects */
+
+/* >>> factory NinetalesLure_AISelectEffect */
+/* effect_functions.asm:3674-3679 */
+uint8_t NinetalesLure_AISelectEffect(void)
+{
+	AIFindTargetForBenchAttackResult r = AIFindTargetForBenchAttack();
+	hTemp_ffa0 = r.a;
+	return r.a;
+}
+/* <<< factory NinetalesLure_AISelectEffect */
+
+/* >>> factory Ember_CheckEnergy */
+/* effect_functions.asm:3713-3726 */
+EmberCheckEnergyResult Ember_CheckEnergy(void)
+{
+	GetPlayAreaCardAttachedEnergies(0u);
+	uint8_t fire = wAttachedEnergies;
+	uint8_t flags = 0x40u;
+
+	if (fire == 1u)
+		flags = (uint8_t)(flags | 0x80u);
+	if (fire < 1u)
+		flags = (uint8_t)(flags | 0x30u);
+	if (fire != 0u && (fire & 0x0fu) == 0u)
+		flags = (uint8_t)(flags | 0x20u);
+
+	return (EmberCheckEnergyResult){fire, flags, NotEnoughFireEnergyText};
+}
+/* <<< factory Ember_CheckEnergy */
+
+/* >>> factory DestinyBond_CheckEnergy */
+/* effect_functions.asm:4593-4606 */
+IsPlayerTurnResult DestinyBond_CheckEnergy(void)
+{
+	GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	uint8_t a = gb_read8((uint16_t)(wAttachedEnergies_ADDR + PSYCHIC));
+	uint16_t hl = NotEnoughPsychicEnergyText;
+	uint8_t f = 0x40u;
+
+	if ((a & 0x0fu) < 1u)
+		f |= 0x20u;
+	if (a < 1u)
+		f |= 0x10u;
+	if (a == 1u)
+		f |= 0x80u;
+
+	return (IsPlayerTurnResult){a, f, hl};
+}
+/* <<< factory DestinyBond_CheckEnergy */
+
+/* >>> factory ComputerSearch_HandDeckCheck */
+/* effect_functions.asm:9455-9477 */
+ComputerSearchHandDeckCheckResult ComputerSearch_HandDeckCheck(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
+	if (r.a < 3u)
+		return (ComputerSearchHandDeckCheckResult){
+			r.a, (uint8_t)(effect_compare(r.a, 3u)), NotEnoughCardsInHandText
+		};
+
+	r = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	return (ComputerSearchHandDeckCheckResult){
+		r.a,
+		(uint8_t)((effect_compare(r.a, DECK_SIZE) & 0x80u)
+		          | ((effect_compare(r.a, DECK_SIZE) & 0x10u) ^ 0x10u)),
+		NoCardsLeftInTheDeckText
+	};
+}
+/* <<< factory ComputerSearch_HandDeckCheck */
+
+/* >>> factory MrFuji_BenchCheck */
+/* effect_functions.asm:9516-9526 */
+MrFujiBenchCheckResult MrFuji_BenchCheck(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	return (MrFujiBenchCheckResult){
+		r.a,
+		effect_compare(r.a, 2u),
+		EffectNoPokemonOnTheBenchText
+	};
+}
+/* <<< factory MrFuji_BenchCheck */
+/* >>> factory StepIn_BenchCheck */
+/* effect_functions.asm:7708-7718 */
+SolarPowerCheckUseResult StepIn_BenchCheck(void)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	hTemp_ffa0 = location;
+	if (location == PLAY_AREA_ARENA)
+		return (SolarPowerCheckUseResult){0x90u, 0x00D1u};
+	uint8_t flags = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD_FLAGS)).a;
+	if ((flags & (1u << USED_PKMN_POWER_THIS_TURN_F)) != 0u)
+		return (SolarPowerCheckUseResult){0x10u, OnlyOncePerTurnText};
+	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(location);
+	return (SolarPowerCheckUseResult){incapable.f, incapable.hl};
+}
+/* <<< factory StepIn_BenchCheck */
+/* >>> factory Peek_OncePerTurnCheck */
+/* effect_functions.asm:6254-6277 */
+SolarPowerCheckUseResult Peek_OncePerTurnCheck(void)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	hTemp_ffa0 = location;
+	DuelistVarResult flags = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));
+	if (flags.a & USED_PKMN_POWER_THIS_TURN)
+		return (SolarPowerCheckUseResult){0x10u, 0x00CAu};
+	PkmnPowerIncapableResult r = CheckIsIncapableOfUsingPkmnPower(location);
+	return (SolarPowerCheckUseResult){r.f, r.hl};
+}
+/* <<< factory Peek_OncePerTurnCheck */
+
+/* >>> factory Wail_BenchCheck */
+/* effect_functions.asm:6339-6363 */
+MrFujiBenchCheckResult Wail_BenchCheck(void)
+{
+	DuelistVarResult turn = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (turn.a < 6u)
+		return (MrFujiBenchCheckResult){turn.a, turn.a == 0u ? 0x80u : 0u, turn.hl};
+	DuelistVarResult nonturn = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (nonturn.a < 6u)
+		return (MrFujiBenchCheckResult){nonturn.a, nonturn.a == 0u ? 0x80u : 0u, nonturn.hl};
+	return (MrFujiBenchCheckResult){nonturn.a, 0x10u, 0x00B2u};
+}
+/* <<< factory Wail_BenchCheck */
+
+/* >>> factory StepIn_SwitchEffect */
+/* effect_functions.asm:7719-7732 */
+void StepIn_SwitchEffect(void)
+{
+	SwapAreaResult r = SwapArenaWithBenchPokemon(hTemp_ffa0);
+	(void)r;
+	DuelistVarResult flags = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_FLAGS);
+	gb_write8(flags.hl, (uint8_t)(gb_read8(flags.hl) | USED_PKMN_POWER_THIS_TURN));
+}
+/* <<< factory StepIn_SwitchEffect */
+
+/* >>> factory ThickSkinnedEffect */
+/* effect_functions.asm:7745-7746 */
+uint8_t ThickSkinnedEffect(uint8_t f)
+{
+	return (uint8_t)((f & 0x80u) | 0x10u);
+}
+/* <<< factory ThickSkinnedEffect */
+
+/* >>> factory HealingWind_InitialEffect */
+/* effect_functions.asm:8489-8490 */
+uint8_t HealingWind_InitialEffect(uint8_t f)
+{
+	return (uint8_t)((f & 0x80u) | 0x10u);
+}
+/* <<< factory HealingWind_InitialEffect */
+
+/* >>> factory PickRandomBasicCardFromDeck */
+/* effect_functions.asm:8712-8750 */
+PickRandomBasicCardResult PickRandomBasicCardFromDeck(void)
+{
+	/* de is CreateDeckCardList's: it exits past the list's terminator and
+	 * nothing after it (ShuffleCards pushes de, the card loads preserve it)
+	 * touches it. Callers store that de through PlayAttackAnimation. */
+	CardListResult list = CreateDeckCardList(0u, 0u);
+	if (list.f & 0x10u)
+		return (PickRandomBasicCardResult){0xFFu, 0x90u, list.d, list.e};
+	/* duel.asm:422 leaves the list's card count in a: that is how many
+	 * cards ShuffleCards shuffles (a count of 0 shuffles nothing). */
+	(void)ShuffleCards(list.a, wDuelTempList_ADDR);
+	uint16_t hl = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t index = gb_read8(hl++);
+		hTempCardIndex_ff98 = index;
+		if (index == 0xFFu)
+			return (PickRandomBasicCardResult){0xFFu, 0x90u, list.d, list.e};
+		LoadCardDataToBuffer2_FromDeckIndex(index);
+		if (wLoadedCard2Type >= TYPE_ENERGY || wLoadedCard2Stage != 0u)
+			continue;
+		return (PickRandomBasicCardResult){index, (uint8_t)(index == 0u ? 0x80u : 0u), list.d, list.e};
+	}
+}
+/* <<< factory PickRandomBasicCardFromDeck */
+
+/* >>> factory DreamEaterEffect */
+/* effect_functions.asm:4688-4702 */
+DreamEaterEffectResult DreamEaterEffect(void)
+{
+	DuelistVarResult r = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	uint8_t masked = (uint8_t)(r.a & CNF_SLP_PRZ);
+
+	if (masked == ASLEEP)
+		return (DreamEaterEffectResult){masked, 0xc0u, r.hl};
+
+	return (DreamEaterEffectResult){masked, 0x10u, OpponentIsNotAsleepText};
+}
+/* <<< factory DreamEaterEffect */
+
+/* >>> factory KadabraRecover_CheckEnergyHP */
+/* effect_functions.asm:5744-5766 */
+KadabraRecoverCheckEnergyHPResult KadabraRecover_CheckEnergyHP(void)
+{
+	GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	uint8_t energy = gb_read8((uint16_t)(wAttachedEnergies_ADDR + PSYCHIC));
+	uint8_t f = 0x40u;
+	uint16_t hl = NotEnoughPsychicEnergyText;
+	if (energy == 1u)
+		f |= 0x80u;
+	if ((energy & 0x0fu) < 1u)
+		f |= 0x20u;
+	if (energy < 1u)
+		f |= 0x10u;
+	if (energy < 1u)
+		return (KadabraRecoverCheckEnergyHPResult){energy, f, 0u, 0u, hl};
+	CardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	f = 0x40u;
+	hl = NoDamageCountersText;
+	if (damage.a == 10u)
+		f |= 0x80u;
+	if ((damage.a & 0x0fu) < 10u)
+		f |= 0x20u;
+	if (damage.a < 10u)
+		f |= 0x10u;
+	return (KadabraRecoverCheckEnergyHPResult){damage.a, f, damage.c, 1u, hl};
+}
+/* <<< factory KadabraRecover_CheckEnergyHP */
+
+/* >>> factory NeutralizingShieldEffect */
+/* effect_functions.asm:5375-5377 */
+uint8_t NeutralizingShieldEffect(void)
+{
+	return 0x10u;
+}
+/* <<< factory NeutralizingShieldEffect */
+
+/* >>> factory PealOfThunder_InitialEffect */
+/* effect_functions.asm:7087-7089 */
+uint8_t PealOfThunder_InitialEffect(void)
+{
+	return 0x10u;
+}
+/* <<< factory PealOfThunder_InitialEffect */
+
+/* >>> factory PrehistoricPowerEffect */
+/* effect_functions.asm:6249-6251 */
+uint8_t PrehistoricPowerEffect(void)
+{
+	return 0x10u;
+}
+/* <<< factory PrehistoricPowerEffect */
+
+/* >>> factory Scavenge_DiscardEffect */
+/* effect_functions.asm:5694-5697 */
+uint8_t Scavenge_DiscardEffect(void)
+{
+	uint8_t card = gb_read8(hTemp_ffa0_ADDR);
+	PutCardInDiscardPile(card);
+	return card;
+}
+/* <<< factory Scavenge_DiscardEffect */
+
+/* >>> factory DrawSymbolOnPlayAreaCursor */
+/* effect_functions.asm:1401-1413 */
+void DrawSymbolOnPlayAreaCursor(uint8_t a, uint8_t b)
+{
+	uint8_t row = (uint8_t)(a * 3u + 2u);
+	WriteByteToBGMap0(b, 0u, row);
+}
+/* <<< factory DrawSymbolOnPlayAreaCursor */
+
+/* >>> factory MarowakCallForFamily_AISelectEffect */
+/* effect_functions.asm:6072-6100 */
+void MarowakCallForFamily_AISelectEffect(void)
+{
+	(void)CreateDeckCardList(0u, 0u);
+	uint16_t hl = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(hl++);
+		hTemp_ffa0 = card;
+		if (card == 0xffu)
+			return;
+		LoadCardDataToBuffer2_FromDeckIndex(card);
+		if (gb_read8(wLoadedCard2Type_ADDR) != 0x04u)
+			continue;
+		if (gb_read8(wLoadedCard2Stage_ADDR) == 0u)
+			return;
+	}
+}
+/* <<< factory MarowakCallForFamily_AISelectEffect */
+
+/* >>> factory GustOfWind_BenchCheck */
+/* effect_functions.asm:11131-11141 */
+IsPlayerTurnResult GustOfWind_BenchCheck(void)
+{
+	DuelistVarResult r = GetNonTurnDuelistVariable(
+		DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t flags = 0x40u;
+	uint8_t value = r.a;
+	if (value < 2u)
+		flags |= 0x10u;
+	if ((value & 0x0fu) < 2u)
+		flags |= 0x20u;
+	if (value == 2u)
+		flags |= 0x80u;
+	return (IsPlayerTurnResult){value, flags, EffectNoPokemonOnTheBenchText};
+}
+/* <<< factory GustOfWind_BenchCheck */
+#define NoSpaceOnTheBenchText 0x00b2u
+
+/* >>> factory VictreebelLure_AssertPokemonInBench */
+/* effect_functions.asm:1496-1501 */
+VictreebelLureAssertPokemonInBenchResult VictreebelLure_AssertPokemonInBench(void)
+{
+	DuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	return (VictreebelLureAssertPokemonInBenchResult){
+		count.a, effect_compare(count.a, 2u), EffectNoPokemonOnTheBenchText
+	};
+}
+/* <<< factory VictreebelLure_AssertPokemonInBench */
+
+/* >>> factory NinetalesLure_CheckBench */
+/* effect_functions.asm:3654-3659 */
+NinetalesLureCheckBenchResult NinetalesLure_CheckBench(void)
+{
+	DuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	return (NinetalesLureCheckBenchResult){
+		count.a, effect_compare(count.a, 2u), EffectNoPokemonOnTheBenchText
+	};
+}
+/* <<< factory NinetalesLure_CheckBench */
+
+/* >>> factory ThunderboltEffect */
+/* effect_functions.asm:6491-6501 */
+void ThunderboltEffect(void)
+{
+	(void)CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);
+	for (uint8_t i = 0;; i++) {
+		uint8_t card = gb_read8((uint16_t)(wDuelTempList_ADDR + i));
+		if (card == 0xffu)
+			break;
+		PutCardInDiscardPile(card);
+	}
+}
+/* <<< factory ThunderboltEffect */
+
+/* >>> factory TrainerCardAsPokemon_BenchCheck */
+/* effect_functions.asm:8453-8460 */
+TrainerCardAsPokemonBenchCheckResult TrainerCardAsPokemon_BenchCheck(void)
+{
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	return (TrainerCardAsPokemonBenchCheckResult){
+		count.a, effect_compare(count.a, 2u), EffectNoPokemonOnTheBenchText
+	};
+}
+/* <<< factory TrainerCardAsPokemon_BenchCheck */
+
+/* >>> factory TrainerCardAsPokemon_DiscardEffect */
+/* effect_functions.asm:8475-8487 */
+void TrainerCardAsPokemon_DiscardEffect(void)
+{
+	uint8_t location = hTemp_ffa0;
+	(void)MovePlayAreaCardToDiscardPile(location);
+	if (location == PLAY_AREA_ARENA)
+		(void)SwapArenaWithBenchPokemon(hTempPlayAreaLocation_ffa1);
+	(void)ShiftAllPokemonToFirstPlayAreaSlots();
+}
+/* <<< factory TrainerCardAsPokemon_DiscardEffect */
+
+/* >>> factory MysteriousFossil_BenchCheck */
+/* effect_functions.asm:9390-9396 */
+MysteriousFossilBenchCheckResult MysteriousFossil_BenchCheck(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t f = count.a == 6u ? 0x90u : (count.a > 6u ? 0x10u : 0u);
+	return (MysteriousFossilBenchCheckResult){count.a, f, NoSpaceOnTheBenchText};
+}
+/* <<< factory MysteriousFossil_BenchCheck */
+
+/* >>> factory MysteriousFossil_PlaceInPlayAreaEffect */
+/* effect_functions.asm:9398-9401 */
+void MysteriousFossil_PlaceInPlayAreaEffect(void)
+{
+	(void)PutHandPokemonCardInPlayArea(hTempCardIndex_ff9f, 0x00u);
+}
+/* <<< factory MysteriousFossil_PlaceInPlayAreaEffect */
+
+/* >>> factory ScoopUp_BenchCheck */
+/* effect_functions.asm:9905-9910 */
+ScoopUpBenchCheckResult ScoopUp_BenchCheck(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	return (ScoopUpBenchCheckResult){
+		count.a, effect_compare(count.a, 2u), EffectNoPokemonOnTheBenchText
+	};
+}
+/* <<< factory ScoopUp_BenchCheck */
+/* >>> factory CreateListOfFireEnergyAttachedToArena */
+/* effect_functions.asm:340-341 */
+CreateListOfEnergyAttachedToArenaResult CreateListOfFireEnergyAttachedToArena(void)
+{
+	return CreateListOfEnergyAttachedToArena(0x08u);
+}
+/* <<< factory CreateListOfFireEnergyAttachedToArena */
+
+/* >>> factory CreateEnergyCardListFromDiscardPile_AllEnergy */
+/* effect_functions.asm:588-589 */
+CreateEnergyCardListFromDiscardPileResult CreateEnergyCardListFromDiscardPile_AllEnergy(void)
+{
+	return CreateEnergyCardListFromDiscardPile(0x00u);
+}
+/* <<< factory CreateEnergyCardListFromDiscardPile_AllEnergy */
+
+/* >>> factory CheckIfDeckIsEmpty */
+/* effect_functions.asm:658-669 */
+CheckIfDeckIsEmptyResult CheckIfDeckIsEmpty(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(
+		DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	uint8_t f = count.a >= DECK_SIZE ? 0x10u : 0x00u;
+	if (count.a == DECK_SIZE)
+		f |= 0x80u;
+	return (CheckIfDeckIsEmptyResult){count.a, TX_NoCardsLeftInTheDeckText, f};
+}
+/* <<< factory CheckIfDeckIsEmpty */
+
+
+/* >>> factory Toxic_DoublePoisonEffect */
+/* effect_functions.asm:1892-1894 */
+QueueStatusConditionResult Toxic_DoublePoisonEffect(void)
+{
+	return DoublePoisonEffect();
+}
+/* <<< factory Toxic_DoublePoisonEffect */
+/* >>> factory LeekSlap_OncePerDuelCheck */
+/* effect_functions.asm:7755-7763 */
+uint8_t LeekSlap_OncePerDuelCheck(void)
+{
+	DuelistVarResult flags = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_FLAGS);
+	if ((gb_read8(flags.hl) & (uint8_t)(1u << USED_LEEK_SLAP_THIS_DUEL_F)) == 0u)
+		return 0xA0u;
+	return 0x10u;
+}
+/* <<< factory LeekSlap_OncePerDuelCheck */
+
+/* >>> factory LeekSlap_SetUsedThisDuelFlag */
+/* effect_functions.asm:7765-7769 */
+void LeekSlap_SetUsedThisDuelFlag(void)
+{
+	DuelistVarResult flags = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_FLAGS);
+	gb_write8(flags.hl, (uint8_t)(gb_read8(flags.hl) | (uint8_t)(1u << USED_LEEK_SLAP_THIS_DUEL_F)));
+}
+/* <<< factory LeekSlap_SetUsedThisDuelFlag */
+
+/* >>> factory PlusPowerEffect */
+/* effect_functions.asm:9589-9599 */
+void PlusPowerEffect(void)
+{
+	(void)PutHandCardInPlayArea(hTempCardIndex_ff9f, PLAY_AREA_ARENA);
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER);
+	gb_write8(count.hl, (uint8_t)(gb_read8(count.hl) + 1u));
+}
+/* <<< factory PlusPowerEffect */
+
+/* >>> factory StrikesBackEffect */
+/* effect_functions.asm:5935-5937 */
+uint8_t StrikesBackEffect(void)
+{
+	return 0x10u;
+}
+/* <<< factory StrikesBackEffect */
+
+/* >>> factory Switch_BenchCheck */
+/* effect_functions.asm:9602-9607 */
+MrFujiBenchCheckResult Switch_BenchCheck(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	return (MrFujiBenchCheckResult){count.a, effect_compare(count.a, 2u), EffectNoPokemonOnTheBenchText};
+}
+/* <<< factory Switch_BenchCheck */
+
+/* >>> factory Switch_SwitchEffect */
+/* effect_functions.asm:9618-9622 */
+void Switch_SwitchEffect(void)
+{
+	(void)SwapArenaWithBenchPokemon(hTemp_ffa0);
+}
+/* <<< factory Switch_SwitchEffect */
+/* >>> factory TryGiveDamageCounter_StrangeBehavior */
+/* effect_functions.asm:5605-5623 */
+TryGiveDamageCounter_StrangeBehaviorResult TryGiveDamageCounter_StrangeBehavior(void)
+{
+	uint8_t source = gb_read8((uint16_t)hTemp_ffa0_ADDR);
+	uint8_t target = gb_read8((uint16_t)hTempPlayAreaLocation_ffa1_ADDR);
+	DuelistVarResult source_hp =
+		GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + source));
+	uint8_t remaining = (uint8_t)(source_hp.a - 10u);
+	if (remaining == 0u)
+		return (TryGiveDamageCounter_StrangeBehaviorResult){0u, 0x90u, source_hp.hl};
+	gb_write8(source_hp.hl, remaining);
+	DuelistVarResult target_hp =
+		GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + target));
+	uint8_t new_hp = (uint8_t)(10u + target_hp.a);
+	gb_write8(target_hp.hl, new_hp);
+	return (TryGiveDamageCounter_StrangeBehaviorResult){
+		new_hp, (uint8_t)(new_hp == 0u ? 0x80u : 0u), target_hp.hl
+	};
+}
+/* <<< factory TryGiveDamageCounter_StrangeBehavior */
+
+/* >>> factory SpacingOut_CheckDamage */
+/* effect_functions.asm:5626-5630 */
+SpacingOutCheckDamageResult SpacingOut_CheckDamage(void)
+{
+	CardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	return (SpacingOutCheckDamageResult){
+		damage.a, effect_compare(damage.a, 10u), damage.c, 0u, NoDamageCountersText
+	};
+}
+/* <<< factory SpacingOut_CheckDamage */
+
+/* >>> factory SpacingOut_HealEffect */
+/* effect_functions.asm:5642-5654 */
+SpacingOutHealEffectResult SpacingOut_HealEffect(void)
+{
+	uint8_t coin = gb_read8((uint16_t)hTemp_ffa0_ADDR);
+	if (coin == 0u)
+		return (SpacingOutHealEffectResult){0u, 0x80u, 0u, 0u};
+	CardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	if (damage.a == 0u)
+		return (SpacingOutHealEffectResult){0u, 0x80u, 0u, 0u};
+	DuelistVarResult hp =
+		GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	uint8_t new_hp = (uint8_t)(10u + hp.a);
+	uint8_t f = 0u;
+	if (new_hp == 0u)
+		f |= 0x80u;
+	if ((hp.a & 0x0fu) + 10u > 0x0fu)
+		f |= 0x20u;
+	if ((uint16_t)hp.a + 10u > 0xffu)
+		f |= 0x10u;
+	gb_write8(hp.hl, new_hp);
+	return (SpacingOutHealEffectResult){new_hp, f, hp.hl, 1u};
+}
+/* <<< factory SpacingOut_HealEffect */
+
+/* >>> factory Gale_LoadAnimation */
+void Gale_LoadAnimation(void)
+{
+	wLoadedAttackAnimation = 0x87u;
+}
+/* <<< factory Gale_LoadAnimation */
+
+/* >>> factory EnergySearch_DeckCheck */
+uint8_t EnergySearch_DeckCheck(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	if (count.a == DECK_SIZE)
+		return 0x90u;
+	return (count.a > DECK_SIZE) ? 0x10u : 0x00u;
+}
+/* <<< factory EnergySearch_DeckCheck */
+
+/* >>> factory CheckIfCardIsBasicEnergy */
+uint8_t CheckIfCardIsBasicEnergy(uint8_t a)
+{
+	LoadCardDataToBuffer2_FromDeckIndex(a);
+	uint8_t type = gb_read8(wLoadedCard2Type_ADDR);
+	if (type < TYPE_ENERGY)
+		return 0x10u;
+	if (type >= TYPE_ENERGY_DOUBLE_COLORLESS)
+		return type == TYPE_ENERGY_DOUBLE_COLORLESS ? 0x90u : 0x10u;
+	return 0x00u;
+}
+/* <<< factory CheckIfCardIsBasicEnergy */
+
+/* >>> factory CreatePlayableStage2PokemonCardListFromHand */
+uint8_t CreatePlayableStage2PokemonCardListFromHand(void)
+{
+	HandListResult hand = CreateHandCardList(0u);
+	if (hand.f & 0x10u)
+		return 0x90u;
+	uint16_t src = wDuelTempList_ADDR;
+	uint16_t dst = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(src++);
+		if (card == 0xffu)
+			break;
+		LoadCardDataToBuffer2_FromDeckIndex(card);
+		if (gb_read8(wLoadedCard2Type_ADDR) >= TYPE_ENERGY ||
+			gb_read8(wLoadedCard2Stage_ADDR) != 2u)
+			continue;
+		DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+		uint8_t eligible = 0u;
+		for (uint8_t slot = 0; slot < count.a; slot++) {
+			if (!(CheckIfCanEvolveInto_BasicToStage2(card, slot).f & 0x10u)) {
+				eligible = 1u;
+				break;
+			}
+		}
+		if (eligible)
+			gb_write8(dst++, card);
+	}
+	gb_write8(dst, 0xffu);
+	return gb_read8(wDuelTempList_ADDR) == 0xffu ? 0x90u : 0x00u;
+}
+/* <<< factory CreatePlayableStage2PokemonCardListFromHand */
+
+/* >>> factory Barrier_DiscardEffect */
+/* effect_functions.asm:5422-5427 */
+uint8_t Barrier_DiscardEffect(void)
+{
+	uint8_t value = hTemp_ffa0;
+	PutCardInDiscardPile(value);
+	return value;
+}
+/* <<< factory Barrier_DiscardEffect */
+/* >>> factory DestinyBond_DiscardEffect */
+void DestinyBond_DiscardEffect(void) { PutCardInDiscardPile(gb_read8(hTempList_ADDR)); }
+/* <<< factory DestinyBond_DiscardEffect */
+/* >>> factory Ember_DiscardEffect */
+void Ember_DiscardEffect(void) { PutCardInDiscardPile(hTemp_ffa0); }
+/* <<< factory Ember_DiscardEffect */
+/* >>> factory FireBlast_DiscardEffect */
+void FireBlast_DiscardEffect(void) { PutCardInDiscardPile(hTemp_ffa0); }
+/* <<< factory FireBlast_DiscardEffect */
+/* >>> factory FireSpin_AISelectEffect */
+void FireSpin_AISelectEffect(void)
+{
+	(void)CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);
+	gb_write8(hTempList_ADDR, gb_read8(wDuelTempList_ADDR));
+	gb_write8((uint16_t)(hTempList_ADDR + 1u), gb_read8((uint16_t)(wDuelTempList_ADDR + 1u)));
+}
+/* <<< factory FireSpin_AISelectEffect */
+/* >>> factory FireSpin_DiscardEffect */
+void FireSpin_DiscardEffect(void)
+{
+	PutCardInDiscardPile(gb_read8(hTempList_ADDR));
+	PutCardInDiscardPile(gb_read8((uint16_t)(hTempList_ADDR + 1u)));
+}
+/* <<< factory FireSpin_DiscardEffect */
+/* >>> factory ClefairyMetronome_CheckAttacks */
+/* effect_functions.asm:8071-8077 */
+ClefairyMetronomeCheckAttacksResult ClefairyMetronome_CheckAttacks(void)
+{
+	CheckAttackResult r = CheckIfDefendingPokemonHasAnyAttack();
+	return (ClefairyMetronomeCheckAttacksResult){r.f, NoAttackMayBeChoosenText};
+}
+/* <<< factory ClefairyMetronome_CheckAttacks */
+
+/* >>> factory Psychic_DamageBoostEffect */
+/* effect_functions.asm:5383-5395 */
+void Psychic_DamageBoostEffect(void)
+{
+	uint16_t damage = (uint16_t)(gb_read8(wDamage_ADDR) |
+		((uint16_t)gb_read8((uint16_t)(wDamage_ADDR + 1u)) << 8));
+	uint16_t bonus = GetEnergyAttachedMultiplierDamage();
+	uint16_t sum = (uint16_t)(damage + bonus);
+
+	gb_write8(wDamage_ADDR, (uint8_t)sum);
+	gb_write8((uint16_t)(wDamage_ADDR + 1u), (uint8_t)(sum >> 8));
+}
+/* <<< factory Psychic_DamageBoostEffect */
+
+/* >>> factory Barrier_AISelectEffect */
+/* effect_functions.asm:5414-5424 */
+void Barrier_AISelectEffect(void)
+{
+	CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);
+	uint8_t value = gb_read8(wDuelTempList_ADDR);
+	gb_write8(hTemp_ffa0_ADDR, value);
+}
+/* <<< factory Barrier_AISelectEffect */
+
+/* >>> factory EnergyRemoval_EnergyCheck */
+/* effect_functions.asm:9010-9022 */
+EnergyRemovalEnergyCheckResult EnergyRemoval_EnergyCheck(void)
+{
+	SwapTurn();
+	CheckIfThereAreAnyEnergyCardsAttachedResult r = CheckIfThereAreAnyEnergyCardsAttached();
+	SwapTurn();
+	return (EnergyRemovalEnergyCheckResult){r.f, NoEnergyAttachedToOpponentsActiveText};
+}
+/* <<< factory EnergyRemoval_EnergyCheck */
+
+/* >>> factory EnergyRemoval_AISelection */
+/* effect_functions.asm:9025-9028 */
+uint8_t EnergyRemoval_AISelection(void)
+{
+	return AIPickEnergyCardToDiscardFromDefendingPokemon().a;
+}
+/* <<< factory EnergyRemoval_AISelection */
+
+/* >>> factory EnergyRetrieval_HandEnergyCheck */
+/* effect_functions.asm:9046-9063. cp 2 with a hand count below 2 always leaves
+ * N|H|C set and Z clear (the count is 0 or 1, so the half-borrow is guaranteed),
+ * which is the exact flag byte the caller sees on the early ret c path; the
+ * fall-through path inherits the list-builder's exit flags untouched by ldtx. */
+EnergyRetrievalHandEnergyCheckResult EnergyRetrieval_HandEnergyCheck(void)
+{
+	uint8_t n = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a;
+	if (n < 2u)
+		return (EnergyRetrievalHandEnergyCheckResult){NotEnoughCardsInHandText, 0x70u};
+	uint8_t f = CreateEnergyCardListFromDiscardPile_OnlyBasic().f;
+	return (EnergyRetrievalHandEnergyCheckResult){ThereAreNoBasicEnergyCardsInDiscardPileText, f};
+}
+/* <<< factory EnergyRetrieval_HandEnergyCheck */
+
+/* >>> factory PsywaveEffect */
+/* effect_functions.asm:5154-5163. Stores the energy-multiplier damage (the de
+ * pair returned by GetEnergyAttachedMultiplierDamage) little-endian into
+ * wDamage; hl ends advanced one past the low byte, exactly as the asm leaves
+ * it. */
+uint16_t PsywaveEffect(void)
+{
+	uint16_t de = GetEnergyAttachedMultiplierDamage();
+	uint16_t hl = wDamage_ADDR;
+	gb_write8(hl++, (uint8_t)de);
+	gb_write8(hl, (uint8_t)(de >> 8));
+	return hl;
+}
+/* <<< factory PsywaveEffect */
+
+/* >>> factory PokemonCenter_DamageCheck */
+/* effect_functions.asm:9624-9627 */
+PokemonCenterDamageCheckResult PokemonCenter_DamageCheck(void)
+{
+	CheckIfPlayAreaHasAnyDamageResult r = CheckIfPlayAreaHasAnyDamage();
+	return (PokemonCenterDamageCheckResult){r.f, NoPokemonWithDamageCountersText};
+}
+/* <<< factory PokemonCenter_DamageCheck */
+
+/* >>> factory PokemonBreeder_HandPlayAreaCheck */
+/* effect_functions.asm:9735-9743 */
+PokemonBreederHandPlayAreaCheckResult PokemonBreeder_HandPlayAreaCheck(uint16_t hl)
+{
+	uint8_t f = CreatePlayableStage2PokemonCardListFromHand();
+	if (f & 0x10u)
+		return (PokemonBreederHandPlayAreaCheckResult){
+			(uint8_t)((f & 0x80u) | 0x10u),
+			ConditionsForEvolvingToStage2NotFulfilledText
+		};
+	PrehistoricPowerResult r = IsPrehistoricPowerActive(hl);
+	return (PokemonBreederHandPlayAreaCheckResult){r.f, r.hl};
+}
+/* <<< factory PokemonBreeder_HandPlayAreaCheck */
+
+/* >>> factory PokemonTrader_HandDeckCheck */
+/* effect_functions.asm:10016-10024 */
+PokemonTraderHandDeckCheckResult PokemonTrader_HandDeckCheck(void)
+{
+	DuelistVarResult var = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
+	uint16_t message = ThereAreNoCardsInHandThatYouCanChangeText;
+	if (var.a < 2u) {
+		uint8_t f = 0x40u;
+		if (var.a == 0u)
+			f |= 0x20u;
+		f |= 0x10u;
+		return (PokemonTraderHandDeckCheckResult){
+			var.a, f, 0u, 0u, 0u, message, 0u
+		};
+	}
+	CreatePokemonCardListFromHandResult list = CreatePokemonCardListFromHand();
+	return (PokemonTraderHandDeckCheckResult){
+		list.a, list.f, list.c, list.d, list.e, message, 1u
+	};
+}
+/* <<< factory PokemonTrader_HandDeckCheck */
+
+/* >>> factory VictreebelLure_GetBenchPokemonWithLowestHP */
+/* effect_functions.asm:1520-1523 */
+void VictreebelLure_GetBenchPokemonWithLowestHP(void)
+{
+	AIFindTargetForBenchAttackResult target = AIFindTargetForBenchAttack();
+	hTemp_ffa0 = target.a;
+}
+/* <<< factory VictreebelLure_GetBenchPokemonWithLowestHP */
+
+/* >>> factory Sprout_CheckDeckAndPlayArea */
+/* effect_functions.asm:1674-1682 */
+CheckIfDeckIsEmptyResult Sprout_CheckDeckAndPlayArea(void)
+{
+	CheckIfDeckIsEmptyResult deck = CheckIfDeckIsEmpty();
+	if (deck.f & 0x10u)
+		return deck;
+
+	DuelistVarResult vars = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t sprout_flags = vars.a >= MAX_PLAY_AREA_POKEMON ? 0x10u : 0x00u;
+	if (vars.a == MAX_PLAY_AREA_POKEMON)
+		sprout_flags |= 0x80u;
+	return (CheckIfDeckIsEmptyResult){vars.a, NoSpaceOnTheBenchText, sprout_flags};
+}
+/* <<< factory Sprout_CheckDeckAndPlayArea */
+
+/* >>> factory NidoranFCallForFamily_CheckDeckAndPlayArea */
+/* effect_functions.asm:1939-1947 */
+CheckIfDeckIsEmptyResult NidoranFCallForFamily_CheckDeckAndPlayArea(void)
+{
+	CheckIfDeckIsEmptyResult deck = CheckIfDeckIsEmpty();
+	if (deck.f & 0x10u)
+		return deck;
+
+	DuelistVarResult vars = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t family_flags = vars.a >= MAX_PLAY_AREA_POKEMON ? 0x10u : 0x00u;
+	if (vars.a == MAX_PLAY_AREA_POKEMON)
+		family_flags |= 0x80u;
+	return (CheckIfDeckIsEmptyResult){vars.a, NoSpaceOnTheBenchText, family_flags};
+}
+/* <<< factory NidoranFCallForFamily_CheckDeckAndPlayArea */
+
+/* >>> factory ClefableMetronome_CheckAttacks */
+/* effect_functions.asm:7959-7963 */
+ClefableMetronomeCheckAttacksResult ClefableMetronome_CheckAttacks(void)
+{
+	CheckAttackResult r = CheckIfDefendingPokemonHasAnyAttack();
+	return (ClefableMetronomeCheckAttacksResult){r.f, NoAttackMayBeChoosenText};
+}
+/* <<< factory ClefableMetronome_CheckAttacks */
+
+/* >>> factory Scavenge_CheckDiscardPile */
+/* effect_functions.asm:5659-5667 */
+ScavengeCheckDiscardPileResult Scavenge_CheckDiscardPile(void)
+{
+	GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	uint8_t psychic = gb_read8((uint16_t)(wAttachedEnergies_ADDR + PSYCHIC));
+	if (psychic < 1u)
+		return (ScavengeCheckDiscardPileResult){NotEnoughPsychicEnergyText, 0x70u};
+	CreateTrainerCardListFromDiscardPileResult r = CreateTrainerCardListFromDiscardPile();
+	return (ScavengeCheckDiscardPileResult){ThereAreNoTrainerCardsInDiscardPileText, r.f};
+}
+/* <<< factory Scavenge_CheckDiscardPile */
+
+/* >>> factory Scavenge_AISelectEffect */
+/* effect_functions.asm:5682-5693 */
+void Scavenge_AISelectEffect(void)
+{
+	(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);
+	hTemp_ffa0 = wDuelTempList;
+	(void)CreateTrainerCardListFromDiscardPile();
+	hTempPlayAreaLocation_ffa1 = wDuelTempList;
+}
+/* <<< factory Scavenge_AISelectEffect */
+
+/* >>> factory DevolutionBeam_CheckPlayArea */
+/* effect_functions.asm:5163-5169 */
+DevolutionBeamCheckPlayAreaResult DevolutionBeam_CheckPlayArea(void)
+{
+	CheckAttackResult r = CheckIfTurnDuelistHasEvolvedCards();
+	if ((r.f & 0x10u) == 0u)
+		return (DevolutionBeamCheckPlayAreaResult){r.f, 0x01u, 0x02u, 0x00efu};
+
+	SwapTurn();
+	r = CheckIfTurnDuelistHasEvolvedCards();
+	SwapTurn();
+	return (DevolutionBeamCheckPlayAreaResult){
+		r.f,
+		0x01u,
+		0x02u,
+		ThereAreNoStage1PokemonText
+	};
+}
+/* <<< factory DevolutionBeam_CheckPlayArea */
+
+/* >>> factory DevolutionBeam_AISelectEffect */
+/* effect_functions.asm:5218-5230 */
+void DevolutionBeam_AISelectEffect(void)
+{
+	hTemp_ffa0 = 0x01u;
+	SwapTurn();
+	FindFirstNonBasicCardInPlayAreaResult r = FindFirstNonBasicCardInPlayArea();
+	SwapTurn();
+	if (!(r.f & 0x10u)) {
+		hTemp_ffa0 = 0x00u;
+		r = FindFirstNonBasicCardInPlayArea();
+	}
+	hTempPlayAreaLocation_ffa1 = r.a;
+}
+/* <<< factory DevolutionBeam_AISelectEffect */
+
+/* >>> factory MysteryAttack_RandomEffect */
+/* effect_functions.asm:5820-5858 */
+void MysteryAttack_RandomEffect(void)
+{
+	SetDefiniteDamage(10u);
+
+	uint8_t effect = (uint8_t)(UpdateRNGSources() & 0x07u);
+	hTemp_ffa0 = effect;
+
+	switch (effect) {
+	case 0u:
+		(void)ParalysisEffect();
+		break;
+	case 1u:
+		(void)PoisonEffect();
+		break;
+	case 2u:
+		(void)SleepEffect();
+		break;
+	case 3u:
+		(void)ConfusionEffect();
+		break;
+	case 4u:
+	case 5u:
+		break;
+	case 6u:
+		SetDefiniteDamage(20u);
+		break;
+	case 7u:
+		wLoadedAttackAnimation = ATK_ANIM_GLOW_EFFECT;
+		SetDefiniteDamage(0u);
+		SetNoEffectFromStatus();
+		break;
+	}
+}
+/* <<< factory MysteryAttack_RandomEffect */
+
+/* >>> factory MarowakCallForFamily_CheckDeckAndPlayArea */
+/* effect_functions.asm:5995-6003 */
+CheckIfDeckIsEmptyResult MarowakCallForFamily_CheckDeckAndPlayArea(void)
+{
+	CheckIfDeckIsEmptyResult deck = CheckIfDeckIsEmpty();
+	if (deck.f & 0x10u)
+		return deck;
+	DuelistVarResult v = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	/* cp MAX_PLAY_AREA_POKEMON followed by ccf: N and H are cleared by ccf,
+	 * Z survives from the compare, carry is the inverted borrow. */
+	uint8_t f = (uint8_t)((v.a == MAX_PLAY_AREA_POKEMON ? 0x80u : 0x00u)
+		| (v.a >= MAX_PLAY_AREA_POKEMON ? 0x10u : 0x00u));
+	CheckIfDeckIsEmptyResult r;
+	r.a = v.a;
+	r.hl = NoSpaceOnTheBenchText;
+	r.f = f;
+	return r;
+}
+/* <<< factory MarowakCallForFamily_CheckDeckAndPlayArea */
+
+/* >>> factory IceBreath_ZeroDamage */
+/* effect_functions.asm:3495-3499 */
+uint8_t IceBreath_ZeroDamage(void)
+{
+	uint8_t ice_breath_damage = 0u;
+	SetDefiniteDamage(ice_breath_damage);
+	return ice_breath_damage;
+}
+/* <<< factory IceBreath_ZeroDamage */
+
+/* >>> factory AIPickFireEnergyCardToDiscard */
+/* effect_functions.asm:3526-3531 */
+void AIPickFireEnergyCardToDiscard(void)
+{
+	CreateListOfFireEnergyAttachedToArena();
+	hTemp_ffa0 = gb_read8(wDuelTempList_ADDR);
+}
+/* <<< factory AIPickFireEnergyCardToDiscard */
+
+/* >>> factory FlamesOfRage_AIEffect */
+/* effect_functions.asm:3618-3620 */
+void FlamesOfRage_AIEffect(void)
+{
+	FlamesOfRage_DamageBoostEffect();
+	SetDefiniteAIDamage();
+}
+/* <<< factory FlamesOfRage_AIEffect */
+
+/* >>> factory FlamesOfRage_AISelectEffect */
+/* effect_functions.asm:3605-3613 */
+void FlamesOfRage_AISelectEffect(void)
+{
+	AIPickFireEnergyCardToDiscard();
+	gb_write8((uint16_t)(hTempList_ADDR + 1u), gb_read8((uint16_t)(wDuelTempList_ADDR + 1u)));
+}
+/* <<< factory FlamesOfRage_AISelectEffect */
+
+/* >>> factory FireBlast_AISelectEffect */
+/* effect_functions.asm:3703-3706 */
+void FireBlast_AISelectEffect(void)
+{
+	AIPickFireEnergyCardToDiscard();
+}
+/* <<< factory FireBlast_AISelectEffect */
+
+/* >>> factory EnergyConversion_CheckEnergy */
+/* effect_functions.asm:4632-4638 */
+EnergyConversionCheckEnergyResult EnergyConversion_CheckEnergy(void)
+{
+	CreateEnergyCardListFromDiscardPileResult r =
+		CreateEnergyCardListFromDiscardPile_AllEnergy();
+	return (EnergyConversionCheckEnergyResult){ThereAreNoEnergyCardsInDiscardPileText, r.f};
+}
+/* <<< factory EnergyConversion_CheckEnergy */
+
+/* >>> factory EnergyConversion_AISelectEffect */
+/* effect_functions.asm:4642-4666 */
+void EnergyConversion_AISelectEffect(void)
+{
+	uint16_t src = wDuelTempList_ADDR;
+	uint16_t dst = hTempList_ADDR;
+	uint8_t count = 2u;
+
+	(void)CreateEnergyCardListFromDiscardPile_AllEnergy();
+	for (;;) {
+		uint8_t value = gb_read8(src);
+		src = (uint16_t)(src + 1u);
+		if (value == 0xffu) {
+			gb_write8(dst, 0xffu);
+			return;
+		}
+		gb_write8(dst, value);
+		dst = (uint16_t)(dst + 1u);
+		count = (uint8_t)(count - 1u);
+		if (count == 0u)
+			break;
+	}
+	gb_write8(dst, 0xffu);
+}
+/* <<< factory EnergyConversion_AISelectEffect */
+
+/* >>> factory AIPickAttackForAmnesia */
+uint8_t AIPickAttackForAmnesia(void)
+{
+	uint8_t attack = FIRST_ATTACK_OR_PKMN_POWER;
+	SwapTurn();
+	GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	HandleEnergyBurn();
+	uint8_t arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+	LoadCardDataToBuffer2_FromDeckIndex(arena);
+	uint16_t attack_name = (uint16_t)(gb_read8(wLoadedCard2Atk1Name_ADDR)
+		| (uint16_t)gb_read8((uint16_t)(wLoadedCard2Atk1Name_ADDR + 1u)) << 8);
+	if (attack_name == 0u)
+		goto chosen;
+	{
+		CheckIfEnoughEnergiesForGivenAttackResult check =
+			CheckIfEnoughEnergiesForGivenAttack(arena, SECOND_ATTACK);
+		if ((check.f & 0x10u) == 0u) {
+			attack = SECOND_ATTACK;
+			goto chosen;
+		}
+	}
+	if (wLoadedCard2Atk1Category != POKEMON_POWER)
+		attack = FIRST_ATTACK_OR_PKMN_POWER;
+	else
+		attack = SECOND_ATTACK;
+chosen:
+	SwapTurn();
+	return attack;
+}
+/* <<< factory AIPickAttackForAmnesia */
+
+/* >>> factory MirrorMove_AISelection */
+void MirrorMove_AISelection(void)
+{
+	hTemp_ffa0 = 0xFFu;
+	uint8_t effect = GetTurnDuelistVariable(
+		DUELVARS_ARENA_CARD_LAST_TURN_EFFECT).a;
+	if (effect == 0u)
+		return;
+	if (effect == LAST_TURN_EFFECT_DISCARD_ENERGY) {
+		AIPickEnergyCardToDiscardResult result =
+			AIPickEnergyCardToDiscardFromDefendingPokemon();
+		hTemp_ffa0 = result.a;
+		return;
+	}
+	if (effect == LAST_TURN_EFFECT_AMNESIA) {
+		hTemp_ffa0 = AIPickAttackForAmnesia();
+	}
+}
+/* <<< factory MirrorMove_AISelection */
+
+/* >>> factory SuperFang_HalfHPEffect */
+void SuperFang_HalfHPEffect(void)
+{
+	DuelistVarResult r = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	uint8_t damage = (uint8_t)(r.a >> 1);
+	if ((damage & 1u) != 0u)
+		damage = (uint8_t)(damage + 5u);
+	SetDefiniteDamage(damage);
+}
+/* <<< factory SuperFang_HalfHPEffect */
+
+/* >>> factory KarateChop_DamageSubtractionEffect */
+void KarateChop_DamageSubtractionEffect(void)
+{
+	CardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	uint16_t damage_value = (uint16_t)(gb_read8(wDamage_ADDR) |
+		((uint16_t)gb_read8((uint16_t)(wDamage_ADDR + 1u)) << 8));
+	uint16_t remaining = (uint16_t)(damage_value - (uint16_t)damage.a);
+	gb_write8(wDamage_ADDR, (uint8_t)remaining);
+	gb_write8((uint16_t)(wDamage_ADDR + 1u), (uint8_t)(remaining >> 8));
+	if (damage_value < damage.a)
+		SetDefiniteDamage(0u);
+}
+/* <<< factory KarateChop_DamageSubtractionEffect */
+
+/* >>> factory ClefableMetronome_AISelectEffect */
+void ClefableMetronome_AISelectEffect(void)
+{
+	HandleAIMetronomeEffect();
+}
+/* <<< factory ClefableMetronome_AISelectEffect */
+
+/* >>> factory Ember_AISelectEffect */
+void Ember_AISelectEffect(void)
+{
+	AIPickFireEnergyCardToDiscard();
+}
+/* <<< factory Ember_AISelectEffect */
+
+/* >>> factory DestinyBond_DestinyBondEffect */
+uint16_t DestinyBond_DestinyBondEffect(void)
+{
+	return ApplySubstatus1ToAttackingCard(SUBSTATUS1_DESTINY_BOND);
+}
+/* <<< factory DestinyBond_DestinyBondEffect */
+
+/* >>> factory StretchKick_AISelectEffect */
+void StretchKick_AISelectEffect(void)
+{
+	AIFindTargetForBenchAttackResult result = AIFindTargetForBenchAttack();
+	hTemp_ffa0 = result.a;
+}
+/* <<< factory StretchKick_AISelectEffect */
+
+/* >>> factory VaporeonWaterGunEffect */
+void VaporeonWaterGunEffect(void)
+{
+	ApplyExtraWaterEnergyDamageBonus(2u, 1u);
+}
+/* <<< factory VaporeonWaterGunEffect */
+
+/* >>> factory Potion_DamageCheck */
+PotionDamageCheckResult Potion_DamageCheck(void)
+{
+	CheckIfPlayAreaHasAnyDamageResult r = CheckIfPlayAreaHasAnyDamage();
+	return (PotionDamageCheckResult){r.f, NoPokemonWithDamageCountersText};
+}
+/* <<< factory Potion_DamageCheck */
+
+/* >>> factory CloysterSpikeCannon_AIEffect */
+void CloysterSpikeCannon_AIEffect(void)
+{
+	SetExpectedAIDamage(30u, 0u, 60u);
+}
+/* <<< factory CloysterSpikeCannon_AIEffect */
+
+/* >>> factory JolteonDoubleKick_AIEffect */
+void JolteonDoubleKick_AIEffect(void)
+{
+	SetExpectedAIDamage(20u, 0u, 40u);
+}
+/* <<< factory JolteonDoubleKick_AIEffect */
+
+/* >>> factory RapidashStomp_AIEffect */
+void RapidashStomp_AIEffect(void)
+{
+	SetExpectedAIDamage(25u, 20u, 30u);
+}
+/* <<< factory RapidashStomp_AIEffect */
+
+/* >>> factory StoneBarrage_AIEffect */
+void StoneBarrage_AIEffect(void)
+{
+	SetExpectedAIDamage(10u, 0u, 100u);
+}
+/* <<< factory StoneBarrage_AIEffect */
+
+/* >>> factory DestinyBond_AISelectEffect */
+void DestinyBond_AISelectEffect(void)
+{
+	CreateListOfEnergyAttachedToArenaResult result = CreateListOfEnergyAttachedToArena(0x0Du);
+	(void)result;
+	hTempList = wDuelTempList;
+}
+/* <<< factory DestinyBond_AISelectEffect */
+
+/* >>> factory Rampage_AIEffect */
+void Rampage_AIEffect(void)
+{
+	CardDamageResult r = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	AddToDamage(r.a);
+	SetDefiniteAIDamage();
+}
+/* <<< factory Rampage_AIEffect */
+
+/* >>> factory SuperPotion_DamageEnergyCheck */
+SuperPotionDamageEnergyCheckResult SuperPotion_DamageEnergyCheck(void)
+{
+	CheckIfPlayAreaHasAnyDamageResult damage = CheckIfPlayAreaHasAnyDamage();
+	if ((damage.f & 0x10u) != 0u)
+		return (SuperPotionDamageEnergyCheckResult){damage.f, NoPokemonWithDamageCountersText};
+	CheckIfThereAreAnyEnergyCardsAttachedResult energy = CheckIfThereAreAnyEnergyCardsAttached();
+	return (SuperPotionDamageEnergyCheckResult){energy.f, ThereIsNoEnergyCardAttachedText};
+}
+/* <<< factory SuperPotion_DamageEnergyCheck */
+
+/* >>> factory KrabbyCallForFamily_CheckDeckAndPlayArea */
+CheckIfDeckIsEmptyResult KrabbyCallForFamily_CheckDeckAndPlayArea(void)
+{
+	CheckIfDeckIsEmptyResult deck = CheckIfDeckIsEmpty();
+	if (deck.f & 0x10u)
+		return deck;
+	DuelistVarResult vars = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t f = (vars.a == MAX_PLAY_AREA_POKEMON ? 0x80u : 0x00u)
+		| (vars.a >= MAX_PLAY_AREA_POKEMON ? 0x10u : 0x00u);
+	return (CheckIfDeckIsEmptyResult){vars.a, NoSpaceOnTheBenchText, f};
+}
+/* <<< factory KrabbyCallForFamily_CheckDeckAndPlayArea */
+
+/* >>> factory Revive_BenchCheck */
+ReviveBenchCheckResult Revive_BenchCheck(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a >= MAX_PLAY_AREA_POKEMON) {
+		uint8_t f = (uint8_t)((count.a == MAX_PLAY_AREA_POKEMON ? 0x80u : 0u) | 0x10u);
+		return (ReviveBenchCheckResult){f, NoSpaceOnTheBenchText};
+	}
+	CreateBasicPokemonCardListFromDiscardPileResult list = CreateBasicPokemonCardListFromDiscardPile();
+	return (ReviveBenchCheckResult){list.f, ThereAreNoPokemonInDiscardPileText};
+}
+/* <<< factory Revive_BenchCheck */
+
+/* >>> factory MirrorMove_ExecuteStatusEffect */
+MirrorMoveExecuteStatusEffectResult MirrorMove_ExecuteStatusEffect(uint8_t a)
+{
+	uint8_t c = a;
+	if ((a & PSN_DBLPSN) != 0u) {
+		if (a == DOUBLE_POISONED)
+			(void)DoublePoisonEffect();
+		if (a == POISONED)
+			(void)PoisonEffect();
+	}
+	if ((c & CNF_SLP_PRZ) == 0u)
+		return (MirrorMoveExecuteStatusEffectResult){0xa0u};
+	if (c == CONFUSED) {
+		QueueStatusConditionResult r = ConfusionEffect();
+		return (MirrorMoveExecuteStatusEffectResult){r.f};
+	}
+	if (c == ASLEEP) {
+		QueueStatusConditionResult r = SleepEffect();
+		return (MirrorMoveExecuteStatusEffectResult){r.f};
+	}
+	if (c == PARALYZED) {
+		QueueStatusConditionResult r = ParalysisEffect();
+		return (MirrorMoveExecuteStatusEffectResult){r.f};
+	}
+	return (MirrorMoveExecuteStatusEffectResult){0x00u};
+}
+/* <<< factory MirrorMove_ExecuteStatusEffect */
+
+/* >>> factory Curse_CheckDamageAndBench */
+CurseCheckDamageAndBenchResult Curse_CheckDamageAndBench(uint8_t c, uint8_t d, uint8_t e)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	hTemp_ffa0 = location;
+	DuelistVarResult flags = GetTurnDuelistVariable(
+		(uint8_t)(location + DUELVARS_ARENA_CARD_FLAGS));
+	if ((flags.a & USED_PKMN_POWER_THIS_TURN) != 0u)
+		return (CurseCheckDamageAndBenchResult){(uint8_t)(flags.a & USED_PKMN_POWER_THIS_TURN), 0x10u, c, d, e, OnlyOncePerTurnText};
+
+	SwapTurn();
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	SwapTurn();
+	if (count.a < 2u)
+		return (CurseCheckDamageAndBenchResult){count.a, 0x10u, c, d, e, CannotUseSinceTheresOnly1PkmnText};
+
+	/* effect_functions.asm:4386-4395: the damage scan's c, d and e are what
+	 * the incapable check (substatus.asm:495-516, bc/de kept) returns. */
+	SwapTurn();
+	CheckIfPlayAreaHasAnyDamageResult damage = CheckIfPlayAreaHasAnyDamage();
+	SwapTurn();
+	if ((damage.f & 0x10u) != 0u)
+		return (CurseCheckDamageAndBenchResult){damage.a, 0x10u, damage.c, damage.d, damage.e, NoPokemonWithDamageCountersText};
+
+	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(location);
+	return (CurseCheckDamageAndBenchResult){incapable.a, incapable.f, damage.c, damage.d, damage.e, incapable.hl};
+}
+/* <<< factory Curse_CheckDamageAndBench */
+
+/* >>> factory ClefairyMetronome_AISelectEffect */
+void ClefairyMetronome_AISelectEffect(void)
+{
+	HandleAIMetronomeEffect();
+}
+/* <<< factory ClefairyMetronome_AISelectEffect */
+
+/* >>> factory EnergySpike_DeckCheck */
+CheckIfDeckIsEmptyResult EnergySpike_DeckCheck(void)
+{
+	return CheckIfDeckIsEmpty();
+}
+/* <<< factory EnergySpike_DeckCheck */
+
+/* >>> factory OmastarWaterGunEffect */
+void OmastarWaterGunEffect(void)
+{
+	ApplyExtraWaterEnergyDamageBonus(1u, 1u);
+}
+/* <<< factory OmastarWaterGunEffect */
+
+/* >>> factory KarateChop_AIEffect */
+void KarateChop_AIEffect(void)
+{
+	KarateChop_DamageSubtractionEffect();
+	SetDefiniteAIDamage();
+}
+/* <<< factory KarateChop_AIEffect */
+
+/* >>> factory LaprasWaterGunEffect */
+void LaprasWaterGunEffect(void)
+{
+	ApplyExtraWaterEnergyDamageBonus(1u, 0u);
+}
+/* <<< factory LaprasWaterGunEffect */
+
+/* >>> factory OmanyteWaterGunEffect */
+void OmanyteWaterGunEffect(void)
+{
+	ApplyExtraWaterEnergyDamageBonus(1u, 0u);
+}
+/* <<< factory OmanyteWaterGunEffect */
+
+/* >>> factory PoliwrathWaterGunEffect */
+void PoliwrathWaterGunEffect(void)
+{
+	ApplyExtraWaterEnergyDamageBonus(2u, 1u);
+}
+/* <<< factory PoliwrathWaterGunEffect */
+
+/* >>> factory SeadraWaterGunEffect */
+void SeadraWaterGunEffect(void)
+{
+	ApplyExtraWaterEnergyDamageBonus(1u, 1u);
+}
+/* <<< factory SeadraWaterGunEffect */
+
+/* >>> factory SuperFang_AIEffect */
+void SuperFang_AIEffect(void)
+{
+	SuperFang_HalfHPEffect();
+	SetDefiniteAIDamage();
+}
+/* <<< factory SuperFang_AIEffect */
+
+/* >>> factory DragoniteLv41Slam_AIEffect */
+void DragoniteLv41Slam_AIEffect(void)
+{
+	SetExpectedAIDamage(30u, 0u, 60u);
+}
+/* <<< factory DragoniteLv41Slam_AIEffect */
+
+/* >>> factory LeekSlap_AIEffect */
+void LeekSlap_AIEffect(void)
+{
+	SetExpectedAIDamage(15u, 0u, 30u);
+}
+/* <<< factory LeekSlap_AIEffect */
+
+/* >>> factory PinMissile_AIEffect */
+void PinMissile_AIEffect(void)
+{
+	SetExpectedAIDamage(40u, 0u, 80u);
+}
+/* <<< factory PinMissile_AIEffect */
+
+/* >>> factory Thunderpunch_AIEffect */
+void Thunderpunch_AIEffect(void)
+{
+	SetExpectedAIDamage(35u, 30u, 40u);
+}
+/* <<< factory Thunderpunch_AIEffect */
+
+/* >>> factory StarmieRecover_AISelectEffect */
+StarmieRecoverAISelectEffectResult StarmieRecover_AISelectEffect(void)
+{
+	CreateListOfEnergyAttachedToArenaResult result = CreateListOfEnergyAttachedToArena(TYPE_ENERGY_WATER);
+	uint8_t a = wDuelTempList;
+	hTemp_ffa0 = a;
+	return (StarmieRecoverAISelectEffectResult){a, result.f};
+}
+/* <<< factory StarmieRecover_AISelectEffect */
+
+/* >>> factory BellsproutCallForFamily_CheckDeckAndPlayArea */
+BellsproutCallForFamilyCheckDeckAndPlayAreaResult BellsproutCallForFamily_CheckDeckAndPlayArea(void)
+{
+	CheckIfDeckIsEmptyResult deck = CheckIfDeckIsEmpty();
+	if (deck.f & 0x10u)
+		return (BellsproutCallForFamilyCheckDeckAndPlayAreaResult){deck.a, deck.hl, deck.f};
+	DuelistVarResult var = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint16_t hl = NoSpaceOnTheBenchText;
+	uint8_t z = (var.a == MAX_PLAY_AREA_POKEMON) ? 0x80u : 0u;
+	uint8_t c = (var.a >= MAX_PLAY_AREA_POKEMON) ? 0x10u : 0u;
+	uint8_t f = (uint8_t)(z | c);
+	return (BellsproutCallForFamilyCheckDeckAndPlayAreaResult){var.a, hl, f};
+}
+/* <<< factory BellsproutCallForFamily_CheckDeckAndPlayArea */
+
+/* >>> factory Spark_AISelectEffect */
+SparkAISelectEffectResult Spark_AISelectEffect(void)
+{
+	hTemp_ffa0 = 0xFFu;
+	DuelistVarResult var = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (var.a < 2u)
+		return (SparkAISelectEffectResult){var.a};
+	AIFindTargetForBenchAttackResult target = AIFindTargetForBenchAttack();
+	hTemp_ffa0 = target.a;
+	return (SparkAISelectEffectResult){target.a};
+}
+/* <<< factory Spark_AISelectEffect */
+
+/* >>> factory DamageSwap_CheckDamage */
+DamageSwapCheckDamageResult DamageSwap_CheckDamage(void)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	hTemp_ffa0 = location;
+	CheckIfPlayAreaHasAnyDamageResult has_damage = CheckIfPlayAreaHasAnyDamage();
+	if (has_damage.f & 0x10u) {
+		uint8_t f = (uint8_t)((has_damage.f & 0x80u) | 0x10u);
+		return (DamageSwapCheckDamageResult){f, NoPokemonWithDamageCountersText};
+	}
+	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(hTempPlayAreaLocation_ff9d);
+	return (DamageSwapCheckDamageResult){incapable.f, incapable.hl};
+}
+/* <<< factory DamageSwap_CheckDamage */
+
+/* >>> factory PokemonFlute_BenchCheck */
+PokemonFluteBenchCheckResult PokemonFlute_BenchCheck(void)
+{
+	DuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a >= MAX_PLAY_AREA_POKEMON) {
+		uint8_t f = (uint8_t)(((count.a == MAX_PLAY_AREA_POKEMON) ? 0x80u : 0u) | 0x10u);
+		return (PokemonFluteBenchCheckResult){f, NoSpaceOnTheBenchText};
+	}
+	SwapTurn();
+	CreateBasicPokemonCardListFromDiscardPileResult basics = CreateBasicPokemonCardListFromDiscardPile();
+	SwapTurn();
+	return (PokemonFluteBenchCheckResult){basics.f, ThereAreNoPokemonInDiscardPileText};
+}
+/* <<< factory PokemonFlute_BenchCheck */
+
+/* >>> factory Heal_OncePerTurnCheck */
+HealOncePerTurnCheckResult Heal_OncePerTurnCheck(void)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	hTemp_ffa0 = location;
+	DuelistVarResult flags = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD_FLAGS));
+	if (flags.a & USED_PKMN_POWER_THIS_TURN)
+		return (HealOncePerTurnCheckResult){0x10u, OnlyOncePerTurnText};
+	CheckIfPlayAreaHasAnyDamageResult has_damage = CheckIfPlayAreaHasAnyDamage();
+	if (has_damage.f & 0x10u)
+		return (HealOncePerTurnCheckResult){has_damage.f, NoPokemonWithDamageCountersText};
+	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(hTempPlayAreaLocation_ff9d);
+	return (HealOncePerTurnCheckResult){incapable.f, incapable.hl};
+}
+/* <<< factory Heal_OncePerTurnCheck */
+
+/* >>> factory Shift_ChangeColorEffect */
+Shift_ChangeColorEffectResult Shift_ChangeColorEffect(uint8_t d, uint8_t e)
+{
+	uint8_t location = hTemp_ffa0;
+	DuelistVarResult arena_card = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
+	(void)LoadCardDataToBuffer1_FromDeckIndex(arena_card.a);
+
+	DuelistVarResult flags = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD_FLAGS));
+	gb_write8(flags.hl, (uint8_t)(gb_read8(flags.hl) | (1u << USED_PKMN_POWER_THIS_TURN_F)));
+
+	DuelistVarResult changed_type = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD_CHANGED_TYPE));
+	uint8_t new_type = (uint8_t)(hAIPkmnPowerEffectParam | HAS_CHANGED_COLOR);
+	gb_write8(changed_type.hl, new_type);
+
+	LoadCardNameAndInputColor(new_type, d, e);
+	WaitResult result = DrawWideTextBox_WaitForInput(ChangedTheColorOfText);
+	return (Shift_ChangeColorEffectResult){result.f};
+}
+/* <<< factory Shift_ChangeColorEffect */
+
+/* >>> factory PoliwagWaterGunEffect */
+void PoliwagWaterGunEffect(void)
+{
+	ApplyExtraWaterEnergyDamageBonus(1u, 0u);
+}
+/* <<< factory PoliwagWaterGunEffect */
+
+/* >>> factory TaurosStomp_AIEffect */
+void TaurosStomp_AIEffect(void)
+{
+	SetExpectedAIDamage(25u, 20u, 30u);
+}
+/* <<< factory TaurosStomp_AIEffect */
+
+/* >>> factory DragoniteLv45Slam_AIEffect */
+void DragoniteLv45Slam_AIEffect(void)
+{
+	SetExpectedAIDamage(40u, 0u, 80u);
+}
+/* <<< factory DragoniteLv45Slam_AIEffect */
+
+/* >>> factory PoliwhirlDoubleslap_AIEffect */
+void PoliwhirlDoubleslap_AIEffect(void)
+{
+	SetExpectedAIDamage(30u, 0u, 60u);
+}
+/* <<< factory PoliwhirlDoubleslap_AIEffect */
+
+/* >>> factory JynxDoubleslap_AIEffect */
+void JynxDoubleslap_AIEffect(void)
+{
+	SetExpectedAIDamage(10u, 0u, 20u);
+}
+/* <<< factory JynxDoubleslap_AIEffect */
+
+/* >>> factory Bonemerang_AIEffect */
+void Bonemerang_AIEffect(void)
+{
+	SetExpectedAIDamage(30u, 0u, 60u);
+}
+/* <<< factory Bonemerang_AIEffect */
+
+/* >>> factory Barrier_BarrierEffect */
+void Barrier_BarrierEffect(void)
+{
+	(void)ApplySubstatus1ToAttackingCard(SUBSTATUS1_BARRIER);
+}
+/* <<< factory Barrier_BarrierEffect */
+
+/* >>> factory HydroPumpEffect */
+void HydroPumpEffect(void)
+{
+	ApplyExtraWaterEnergyDamageBonus(3u, 0u);
+}
+/* <<< factory HydroPumpEffect */
+
+/* >>> factory MysteryAttack_AIEffect */
+void MysteryAttack_AIEffect(void)
+{
+	SetExpectedAIDamage(10u, 0u, 20u);
+}
+/* <<< factory MysteryAttack_AIEffect */
+
+/* >>> factory HurricaneEffect */
+QueueStatusConditionResult HurricaneEffect(uint16_t hl)
+{
+	HandleNoDamageOrEffectResult noeff = HandleNoDamageOrEffect(hl);
+	if (noeff.f & 0x10u)
+		return (QueueStatusConditionResult){noeff.f};
+
+	DuelistVarResult nonturn = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	if (nonturn.a == 0u)
+		return (QueueStatusConditionResult){0x80u};
+
+	SwapTurn();
+	(void)GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+	uint16_t base = (uint16_t)(hWhoseTurn << 8);
+	for (uint8_t l = 0u; l < DECK_SIZE; l++) {
+		uint16_t addr = (uint16_t)(base + l);
+		if (gb_read8(addr) == CARD_LOCATION_ARENA)
+			AddCardToHand(l);
+	}
+
+	uint16_t arena_addr = (uint16_t)(base + DUELVARS_ARENA_CARD);
+	uint8_t old_deck_index = gb_read8(arena_addr);
+	gb_write8(arena_addr, 0xFFu);
+	uint16_t hp_addr = (uint16_t)(base + DUELVARS_ARENA_CARD_HP);
+	gb_write8(hp_addr, 0u);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(old_deck_index);
+	uint16_t name_id = (uint16_t)(gb_read8(wLoadedCard1Name_ADDR) |
+		(uint16_t)gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)) << 8);
+	LoadTxRam2(name_id);
+	(void)DrawWideTextBox_WaitForInput(PokemonAndAllAttachedCardsReturnedToHandText);
+	wDuelDisplayedScreen = 0u;
+	SwapTurn();
+	return (QueueStatusConditionResult){0x80u};
+}
+/* <<< factory HurricaneEffect */
+
+/* >>> factory Psychic_AIEffect */
+void Psychic_AIEffect(void)
+{
+	Psychic_DamageBoostEffect();
+	SetDefiniteAIDamage();
+}
+/* <<< factory Psychic_AIEffect */
+
+/* >>> factory KadabraRecover_AISelectEffect */
+void KadabraRecover_AISelectEffect(void)
+{
+	(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);
+	uint8_t a = gb_read8(wDuelTempList_ADDR);
+	gb_write8(hTemp_ffa0_ADDR, a);
+}
+/* <<< factory KadabraRecover_AISelectEffect */
+
+/* >>> factory StrangeBehavior_CheckDamage */
+StrangeBehavior_CheckDamageResult StrangeBehavior_CheckDamage(void)
+{
+	uint8_t loc = hTempPlayAreaLocation_ff9d;
+	hTemp_ffa0 = loc;
+	CheckIfPlayAreaHasAnyDamageResult r1 = CheckIfPlayAreaHasAnyDamage();
+	if (r1.f & 0x10u)
+		return (StrangeBehavior_CheckDamageResult){(uint8_t)((r1.f & 0x80u) | 0x10u), NoPokemonWithDamageCountersText};
+	DuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(loc + DUELVARS_ARENA_CARD_HP));
+	if (hp.a < 20u)
+		return (StrangeBehavior_CheckDamageResult){0x10u, CannotUseBecauseItWillBeKnockedOutText};
+	PkmnPowerIncapableResult r3 = CheckIsIncapableOfUsingPkmnPower(loc);
+	return (StrangeBehavior_CheckDamageResult){r3.f, r3.hl};
+}
+/* <<< factory StrangeBehavior_CheckDamage */
+
+/* >>> factory EnergyTrans_PrintProcedure */
+void EnergyTrans_PrintProcedure(void)
+{
+	DrawWholeScreenTextBox(ProcedureForEnergyTransferText);
+}
+/* <<< factory EnergyTrans_PrintProcedure */
+
+/* >>> factory ItemFinder_HandDiscardPileCheck */
+ItemFinder_HandDiscardPileCheckResult ItemFinder_HandDiscardPileCheck(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
+	if (count.a < 3u)
+		return (ItemFinder_HandDiscardPileCheckResult){0x70u, NotEnoughCardsInHandText};
+	CreateTrainerCardListFromDiscardPileResult r = CreateTrainerCardListFromDiscardPile();
+	return (ItemFinder_HandDiscardPileCheckResult){r.f, r.hl};
+}
+/* <<< factory ItemFinder_HandDiscardPileCheck */
+
+/* >>> factory Wildfire_DiscardEnergyEffect */
+void Wildfire_DiscardEnergyEffect(void)
+{
+	(void)CreateListOfFireEnergyAttachedToArena();
+	uint8_t count = gb_read8(hTemp_ffa0_ADDR);
+	if (count == 0u)
+		return;
+	uint16_t hl = wDuelTempList_ADDR;
+	for (uint8_t c = count; c != 0u; c--) {
+		uint8_t card = gb_read8(hl);
+		hl++;
+		PutCardInDiscardPile(card);
+	}
+}
+/* <<< factory Wildfire_DiscardEnergyEffect */
+
+/* >>> factory SuperEnergyRemoval_EnergyCheck */
+SuperEnergyRemoval_EnergyCheckResult SuperEnergyRemoval_EnergyCheck(void)
+{
+	CheckIfThereAreAnyEnergyCardsAttachedResult r1 = CheckIfThereAreAnyEnergyCardsAttached();
+	if (r1.f & 0x10u)
+		return (SuperEnergyRemoval_EnergyCheckResult){r1.f, NoEnergyCardsAttachedToPokemonInYourPlayAreaText};
+	SwapTurn();
+	CheckIfThereAreAnyEnergyCardsAttachedResult r2 = CheckIfThereAreAnyEnergyCardsAttached();
+	SwapTurn();
+	return (SuperEnergyRemoval_EnergyCheckResult){r2.f, NoEnergyCardsAttachedToPokemonInOppPlayAreaText};
+}
+/* <<< factory SuperEnergyRemoval_EnergyCheck */
+
+/* >>> factory MorphEffect */
+void MorphEffect(void)
+{
+
+	uint8_t found = 0u;
+	CardListResult deck_list = CreateDeckCardList(0u, 0u);
+	if (!(deck_list.f & 0x10u)) {
+		(void)ShuffleCards(deck_list.a, wDuelTempList_ADDR);
+		uint16_t hl = wDuelTempList_ADDR;
+		for (;;) {
+			uint8_t idx = gb_read8(hl);
+			hl++;
+			hTempCardIndex_ff98 = idx;
+			if (idx == 0xffu)
+				break;
+			(void)LoadCardDataToBuffer2_FromDeckIndex(idx);
+			if (wLoadedCard2Type >= TYPE_ENERGY)
+				continue;
+			if (wLoadedCard2Stage != 0u)
+				continue;
+			if (wLoadedCard2ID == DITTO)
+				continue;
+			found = 1u;
+			break;
+		}
+	}
+
+	if (!found) {
+		(void)DrawWideTextBox_WaitForInput(AttackUnsuccessfulText);
+		return;
+	}
+
+	DuelistVarResult stage = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STAGE);
+	if (stage.a != 0u) {
+		hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+		CardOneStageBelowResult below = GetCardOneStageBelow(0u, 0u);
+		PutCardInDiscardPile(below.d);
+		gb_write8(stage.hl, BASIC);
+	}
+
+	uint16_t chosen_card_id = GetCardIDFromDeckIndex(hTempCardIndex_ff98);
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	uint8_t old_arena_index = arena.a;
+	hTempCardIndex_ff98 = old_arena_index;
+	DeckCardResult old_slot = _GetCardIDFromDeckIndex(old_arena_index);
+	gb_write8(old_slot.hl, (uint8_t)chosen_card_id);
+	gb_write8((uint16_t)(old_slot.hl + 1u), (uint8_t)(chosen_card_id >> 8));
+
+	CardDamageResult dmg = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	DuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	gb_write8(hp.hl, dmg.c);
+
+	DuelistVarResult changed_type = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_CHANGED_TYPE);
+	gb_write8(changed_type.hl, 0u);
+	ClearAllStatusConditions();
+
+	uint16_t old_card_id = (uint16_t)(gb_read8(wTempTurnDuelistCardID_ADDR)
+		| ((uint16_t)gb_read8((uint16_t)(wTempTurnDuelistCardID_ADDR + 1u)) << 8));
+	uint16_t src = wLoadedCard2Name_ADDR;
+	uint16_t dst = wTxRam2_ADDR;
+	gb_write8(dst, gb_read8(src));
+	dst++;
+	src++;
+	gb_write8(dst, gb_read8(src));
+	dst++;
+
+	(void)LoadCardDataToBuffer2_FromDeckIndex(hTempCardIndex_ff98);
+	src = wLoadedCard2Name_ADDR;
+	gb_write8(dst, gb_read8(src));
+	dst++;
+	src++;
+	gb_write8(dst, gb_read8(src));
+
+	(void)DrawWideTextBox_WaitForInput(MetamorphsToText);
+	wDuelDisplayedScreen = 0u;
+}
+/* <<< factory MorphEffect */
+
+/* >>> factory AISelectConversionColor */
+void AISelectConversionColor(void)
+{
+	DuelistVarResult duelists = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t pokemon_count = duelists.a;
+
+	for (uint8_t location = (uint8_t)(PLAY_AREA_ARENA + 1u); location < pokemon_count; ++location) {
+		(void)GetPlayAreaCardAttachedEnergies(location);
+		duelists = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
+		(void)LoadCardDataToBuffer1_FromDeckIndex(duelists.a);
+		if (wLoadedCard1Type != COLORLESS) {
+			CheckIfEnoughEnergiesForGivenAttackResult first_attack = CheckIfEnoughEnergiesForGivenAttack(duelists.a, FIRST_ATTACK_OR_PKMN_POWER);
+			if (!(first_attack.f & 0x10u)) {
+				gb_write8(hTemp_ffa0_ADDR, (uint8_t)(wLoadedCard1Type & TYPE_PKMN));
+				return;
+			}
+			CheckIfEnoughEnergiesForGivenAttackResult second_attack = CheckIfEnoughEnergiesForGivenAttack(duelists.a, SECOND_ATTACK);
+			if (!(second_attack.f & 0x10u)) {
+				gb_write8(hTemp_ffa0_ADDR, (uint8_t)(wLoadedCard1Type & TYPE_PKMN));
+				return;
+			}
+		}
+	}
+
+	for (uint8_t location = (uint8_t)(PLAY_AREA_ARENA + 1u); location < pokemon_count; ++location) {
+		(void)GetPlayAreaCardAttachedEnergies(location);
+		if (wTotalAttachedEnergies != 0u) {
+			duelists = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
+			(void)LoadCardDataToBuffer1_FromDeckIndex(duelists.a);
+			if (wLoadedCard1Type != COLORLESS) {
+				gb_write8(hTemp_ffa0_ADDR, (uint8_t)(wLoadedCard1Type & TYPE_PKMN));
+				return;
+			}
+		}
+	}
+
+	gb_write8(hTemp_ffa0_ADDR, Random(NUM_COLORED_TYPES));
+}
+/* <<< factory AISelectConversionColor */
+
+/* >>> factory PrintArenaCardNameAndColorText */
+TextResult PrintArenaCardNameAndColorText(uint8_t d, uint8_t e, uint16_t hl)
+{
+	DuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(duelist.a);
+	uint8_t color = hTemp_ffa0;
+	LoadCardNameAndInputColor(color, d, e);
+	return DrawWideTextBox_PrintText(hl);
+}
+/* <<< factory PrintArenaCardNameAndColorText */
+
+/* >>> factory Conversion1_AISelectEffect */
+void Conversion1_AISelectEffect(void)
+{
+	AISelectConversionColor();
+}
+/* <<< factory Conversion1_AISelectEffect */
+
+/* >>> factory Conversion2_ChangeResistanceEffect */
+TextResult Conversion2_ChangeResistanceEffect(uint8_t d, uint8_t e)
+{
+	DuelistVarResult v = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_CHANGED_RESISTANCE);
+	uint8_t color = gb_read8(hTemp_ffa0_ADDR);
+	uint8_t wr = TranslateColorToWR(color);
+	gb_write8(v.hl, wr);
+	return PrintArenaCardNameAndColorText(d, e, ChangedTheResistanceOfPokemonToColorText);
+}
+/* <<< factory Conversion2_ChangeResistanceEffect */
+
+/* >>> factory Conversion2_AISelectEffect */
+void Conversion2_AISelectEffect(void)
+{
+	SwapTurn();
+	DuelistVarResult v = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(v.a);
+	SwapTurn();
+	uint8_t type = gb_read8(wLoadedCard1Type_ADDR);
+	if (type == COLORLESS) {
+		SwapTurn();
+		AISelectConversionColor();
+		SwapTurn();
+	} else {
+		gb_write8(hTemp_ffa0_ADDR, type);
+	}
+}
+/* <<< factory Conversion2_AISelectEffect */
+
+/* >>> factory MirrorMove_AfterDamage */
+TextResult MirrorMove_AfterDamage(uint8_t d, uint8_t e, uint16_t hl_in)
+{
+	uint8_t a = gb_read8(wNoDamageOrEffect_ADDR);
+	if (a != 0u) {
+		return (TextResult){a, 0u, 0u, d, e, hl_in};
+	}
+
+	DuelistVarResult v1 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_LAST_TURN_EFFECT);
+	a = v1.a;
+	if (a == LAST_TURN_EFFECT_DISCARD_ENERGY) {
+		SwapTurn();
+		uint8_t card = gb_read8(hTemp_ffa0_ADDR);
+		PutCardInDiscardPile(card);
+		DuelistVarResult v2 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_LAST_TURN_EFFECT);
+		gb_write8(v2.hl, LAST_TURN_EFFECT_DISCARD_ENERGY);
+		SwapTurn();
+	}
+
+	DuelistVarResult v3 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_LAST_TURN_CHANGE_WEAK);
+	a = gb_read8(v3.hl);
+	if (a == 0u) {
+		return (TextResult){0u, 0u, 0u, d, e, v3.hl};
+	}
+
+	uint16_t saved_hl = v3.hl;
+	SwapTurn();
+	DuelistVarResult v4 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	(void)LoadCardDataToBuffer2_FromDeckIndex(v4.a);
+	SwapTurn();
+
+	a = gb_read8(wLoadedCard2Weakness_ADDR);
+	if (a == 0u) {
+		return (TextResult){0u, 0u, 0u, d, e, saved_hl};
+	}
+
+	uint8_t saved_a = gb_read8(saved_hl);
+	DuelistVarResult v5 = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_CHANGED_WEAKNESS);
+	a = saved_a;
+	gb_write8(v5.hl, a);
+
+	uint8_t c = (uint8_t)-1;
+	do {
+		c = (uint8_t)(c + 1u);
+		uint8_t carry_out = (uint8_t)(a & 0x80u);
+		a = (uint8_t)(a << 1);
+		if (carry_out != 0u) {
+			break;
+		}
+	} while (1);
+
+	a = c;
+	SwapTurn();
+	uint8_t color = a;
+	DuelistVarResult v6 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(v6.a);
+	a = color;
+	LoadCardNameAndInputColor(a, d, e);
+	TextResult t = DrawWideTextBox_PrintText(ChangedTheWeaknessOfPokemonToColorText);
+	SwapTurn();
+	return t;
+}
+/* <<< factory MirrorMove_AfterDamage */
+
+/* >>> factory ShuffleCardsInDeck */
+ShuffleCardsInDeckResult ShuffleCardsInDeck(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
+{
+	PlayDeckShuffleAnimationResult anim = PlayDeckShuffleAnimation(c, (uint8_t)de);
+	ShuffleDeckResult sd = ShuffleDeck(anim.c, anim.e);
+	return (ShuffleCardsInDeckResult){sd.a, sd.b, sd.c, sd.d, sd.e, sd.f, sd.hl};
+}
+/* <<< factory ShuffleCardsInDeck */
+
+/* >>> factory DrawPlayAreaScreenToShowChanges */
+void DrawPlayAreaScreenToShowChanges(uint8_t a)
+{
+	gb_write8(hTempPlayAreaLocation_ff9d_ADDR, a);
+	SetupPlayAreaScreen();
+	(void)PrintPlayAreaCardList_EnableLCD();
+	InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox();
+}
+/* <<< factory DrawPlayAreaScreenToShowChanges */
+
+/* >>> factory EnergyRemoval_DiscardEffect */
+EnergyRemovalDiscardEffectResult EnergyRemoval_DiscardEffect(void)
+{
+	SwapTurn();
+	PutCardInDiscardPile(hTempPlayAreaLocation_ffa1);
+	SwapTurn();
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if (!(turn.f & 0x10u)) {
+		SwapTurn();
+		DrawPlayAreaScreenToShowChanges(hTemp_ffa0);
+		SwapTurn();
+	}
+	return (EnergyRemovalDiscardEffectResult){turn.a, turn.f, turn.hl};
+}
+/* <<< factory EnergyRemoval_DiscardEffect */
+
+/* >>> factory SuperEnergyRemoval_DiscardEffect */
+void SuperEnergyRemoval_DiscardEffect(void)
+{
+	uint16_t hl = (uint16_t)(hTempList_ADDR + 1u);
+	PutCardInDiscardPile(gb_read8(hl++));
+	hl++;
+	SwapTurn();
+	for (;;) {
+		uint8_t card = gb_read8(hl++);
+		if (card == 0xffu)
+			break;
+		PutCardInDiscardPile(card);
+	}
+	SwapTurn();
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if ((turn.f & 0x10u) != 0u)
+		return;
+	DrawPlayAreaScreenToShowChanges(gb_read8(hTemp_ffa0_ADDR));
+	gb_write8(wDuelDisplayedScreen_ADDR, 0u);
+	SwapTurn();
+	DrawPlayAreaScreenToShowChanges(gb_read8(hPlayAreaEffectTarget_ADDR));
+	SwapTurn();
+}
+/* <<< factory SuperEnergyRemoval_DiscardEffect */
+
+/* >>> factory EnergyTrans_AIEffect */
+void EnergyTrans_AIEffect(void)
+{
+	uint8_t location = hAIEnergyTransPlayAreaLocation;
+	uint8_t card = hAIEnergyTransEnergyCard;
+	AddCardToHand(card);
+	(void)PutHandCardInPlayArea(card, location);
+	(void)PrintPlayAreaCardList_EnableLCD();
+}
+/* <<< factory EnergyTrans_AIEffect */
+
+/* >>> factory StrangeBehavior_SwapEffect */
+StrangeBehaviorSwapEffectResult StrangeBehavior_SwapEffect(void)
+{
+	TryGiveDamageCounter_StrangeBehaviorResult damage = TryGiveDamageCounter_StrangeBehavior();
+	if ((damage.f & 0x10u) != 0u)
+		return (StrangeBehaviorSwapEffectResult){damage.a, (uint8_t)(damage.a == 0u ? 0x90u : damage.f), damage.hl};
+	NumPlayAreaItemsResult items = PrintPlayAreaCardList_EnableLCD();
+	return (StrangeBehaviorSwapEffectResult){items.a, (uint8_t)(items.a == 0u ? 0x80u : 0u), 0u};
+}
+/* <<< factory StrangeBehavior_SwapEffect */
+
+/* >>> factory Defender_AttachDefenderEffect */
+DefenderAttachDefenderEffectResult Defender_AttachDefenderEffect(void)
+{
+	uint8_t location = hTemp_ffa0;
+	(void)PutHandCardInPlayArea(hTempCardIndex_ff9f, location);
+	DuelistVarResult defender = GetTurnDuelistVariable(
+		(uint8_t)(DUELVARS_ARENA_CARD_ATTACHED_DEFENDER + location));
+	gb_write8(defender.hl, (uint8_t)(gb_read8(defender.hl) + 1u));
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if (turn.f & 0x10u)
+		return (DefenderAttachDefenderEffectResult){turn.f};
+	DrawPlayAreaScreenToShowChanges(location);
+	return (DefenderAttachDefenderEffectResult){0x00u};
+}
+/* <<< factory Defender_AttachDefenderEffect */
+
+/* >>> factory DamageSwap_SwapEffect */
+DamageSwap_SwapEffectResult DamageSwap_SwapEffect(void)
+{
+	TryGiveDamageCounter_DamageSwapResult damage = TryGiveDamageCounter_DamageSwap(); /* forward flags verbatim per ret c */
+	if ((damage.f & 0x10u) != 0u)
+		return (DamageSwap_SwapEffectResult){damage.a, damage.f, damage.hl};
+	NumPlayAreaItemsResult items = PrintPlayAreaCardList_EnableLCD();
+	return (DamageSwap_SwapEffectResult){items.a, (uint8_t)(items.a == 0u ? 0x80u : 0u), 0u};
+}
+/* <<< factory DamageSwap_SwapEffect */
+
+/* >>> factory PrintDevolvedCardNameAndLevelText */
+void PrintDevolvedCardNameAndLevelText(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+{
+	(void)LoadCardDataToBuffer1_FromDeckIndex(e);
+	gb_write8(wTxRam2_ADDR, gb_read8(wLoadedCard1Name_ADDR));
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)));
+	gb_write8(wTxRam2_b_ADDR, 0u);
+	gb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), 0u);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(d);
+	CopyCardNameAndLevelResult result = CopyCardNameAndLevel(18u, b, c, d, e);
+	gb_write8(result.hl, 0u);
+	(void)DrawWideTextBox_WaitForInput(PokemonDevolvedToText);
+}
+/* <<< factory PrintDevolvedCardNameAndLevelText */
+
+/* >>> factory ApplySubstatus2ToDefendingCard */
+uint16_t ApplySubstatus2ToDefendingCard(uint8_t a, uint16_t hl)
+{
+	NoDamageOrEffectCheckResult check = CheckNoDamageOrEffect(hl);
+	if (check.f & 0x10u) {
+		DrawDuelMainScene();
+		if (check.hl != 0u)
+			return DrawWideTextBox_PrintText(check.hl).hl;
+		return check.hl;
+	}
+	DuelistVarResult r = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS2);
+	gb_write8(r.hl, a);
+	uint16_t last_turn = (uint16_t)((r.hl & 0xff00u) | DUELVARS_ARENA_CARD_LAST_TURN_SUBSTATUS2);
+	gb_write8(last_turn, a);
+	return last_turn;
+}
+/* <<< factory ApplySubstatus2ToDefendingCard */
+
+/* >>> factory ApplyAmnesiaToAttack */
+void ApplyAmnesiaToAttack(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)f;
+	(void)b;
+	(void)c;
+	(void)d;
+	(void)e;
+	ApplySubstatus2ToDefendingCard(SUBSTATUS2_AMNESIA, hl);
+	if (wNoDamageOrEffect != 0u)
+		return;
+
+	DuelistVarResult non_turn = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX);
+	gb_write8(non_turn.hl, hTemp_ffa0);
+	uint16_t last_turn_effect = (uint16_t)((non_turn.hl & 0xFF00u) | DUELVARS_ARENA_CARD_LAST_TURN_EFFECT);
+	gb_write8(last_turn_effect, LAST_TURN_EFFECT_AMNESIA);
+
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if ((turn.f & 0x10u) != 0u)
+		return;
+
+	SwapTurn();
+	DuelistVarResult turn_arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	uint8_t card = turn_arena.a;
+	uint8_t attack = hTemp_ffa0;
+	uint16_t attack_name = GetAttackName(card, attack);
+	LoadTxRam2(attack_name);
+	(void)DrawWideTextBox_WaitForInput(WasChosenForTheEffectOfAmnesiaText);
+	SwapTurn();
+}
+/* <<< factory ApplyAmnesiaToAttack */
+
+/* >>> factory MirrorMove_BeforeDamage */
+void MirrorMove_BeforeDamage(void)
+{
+	DuelistVarResult last_effect = GetTurnDuelistVariable(
+		DUELVARS_ARENA_CARD_LAST_TURN_EFFECT);
+	if (last_effect.a == LAST_TURN_EFFECT_AMNESIA) {
+		ApplyAmnesiaToAttack(last_effect.a, 0u, 0u, 0u, 0u, 0u, last_effect.hl);
+		return;
+	}
+
+	DuelistVarResult damage = GetTurnDuelistVariable(
+		DUELVARS_ARENA_CARD_LAST_TURN_DAMAGE);
+	uint8_t damage_lo = gb_read8(damage.hl);
+	uint8_t damage_hi = gb_read8((uint16_t)(damage.hl + 1u));
+	gb_write8(wDamage_ADDR, damage_lo);
+	gb_write8((uint16_t)(wDamage_ADDR + 1u), damage_hi);
+	if ((uint8_t)(damage_lo | damage_hi) != 0u)
+		gb_write8(wLoadedAttackAnimation_ADDR, ATK_ANIM_HIT);
+
+	uint16_t status_addr = (uint16_t)(damage.hl + 2u);
+	uint8_t status = gb_read8(status_addr);
+	DuelistVarResult target_status = GetNonTurnDuelistVariable(
+		DUELVARS_ARENA_CARD_STATUS);
+	if (status != 0u)
+		(void)MirrorMove_ExecuteStatusEffect(status);
+
+	DuelistVarResult target_substatus = GetNonTurnDuelistVariable(
+		DUELVARS_ARENA_CARD_SUBSTATUS2);
+	gb_write8(target_substatus.hl, gb_read8((uint16_t)(status_addr + 1u)));
+	(void)target_status;
+}
+/* <<< factory MirrorMove_BeforeDamage */
+
+/* >>> factory PounceEffect */
+uint16_t PounceEffect(uint16_t hl)
+{
+	return ApplySubstatus2ToDefendingCard(SUBSTATUS2_POUNCE, hl);
+}
+/* <<< factory PounceEffect */
+
+/* >>> factory SandAttackEffect */
+uint16_t SandAttackEffect(uint16_t hl)
+{
+	return ApplySubstatus2ToDefendingCard(SUBSTATUS2_SAND_ATTACK, hl);
+}
+/* <<< factory SandAttackEffect */
+
+/* >>> factory SnivelEffect */
+uint16_t SnivelEffect(uint16_t hl)
+{
+	return ApplySubstatus2ToDefendingCard(SUBSTATUS2_REDUCE_BY_20, hl);
+}
+/* <<< factory SnivelEffect */
+
+/* >>> factory Conversion1_ChangeWeaknessEffect */
+uint16_t Conversion1_ChangeWeaknessEffect(uint8_t d, uint8_t e, uint16_t hl)
+{
+	HandleNoDamageOrEffectResult check = HandleNoDamageOrEffect(hl);
+	if (check.f & 0x10u)
+		return check.hl;
+
+	DuelistVarResult nonturn = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_CHANGED_WEAKNESS);
+	uint8_t color = gb_read8(hTemp_ffa0_ADDR);
+	uint8_t weakness = TranslateColorToWR(color);
+	gb_write8(nonturn.hl, weakness);
+	gb_write8((uint16_t)(nonturn.hl + (DUELVARS_ARENA_CARD_LAST_TURN_CHANGE_WEAK - DUELVARS_ARENA_CARD_CHANGED_WEAKNESS)), weakness);
+
+	SwapTurn();
+	TextResult text = PrintArenaCardNameAndColorText(d, e, ChangedTheWeaknessOfPokemonToColorText);
+	SwapTurn();
+
+	return ApplySubstatus2ToDefendingCard(SUBSTATUS2_CONVERSION2, text.hl);
+}
+/* <<< factory Conversion1_ChangeWeaknessEffect */
+
+/* >>> factory EnergyRetrieval_DiscardAndAddToHandEffect */
+void EnergyRetrieval_DiscardAndAddToHandEffect(void)
+{
+	uint16_t hl = hTempList_ADDR;
+	uint8_t card = gb_read8(hl++);
+	RemoveCardFromHand(card);
+	PutCardInDiscardPile(card);
+	uint16_t de = wDuelTempList_ADDR;
+	for (;;) {
+		card = gb_read8(hl++);
+		gb_write8(de++, card);
+		if (card == 0xFFu)
+			break;
+		MoveDiscardResult moved = MoveDiscardPileCardToHand(card);
+		AddCardToHand(moved.a);
+	}
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if (turn.f & 0x10u)
+		return;
+	(void)DisplayCardListDetails();
+}
+/* <<< factory EnergyRetrieval_DiscardAndAddToHandEffect */
+
+/* >>> factory SuperEnergyRetrieval_DiscardAndAddToHandEffect */
+SuperEnergyRetrievalDiscardAndAddToHandEffectResult SuperEnergyRetrieval_DiscardAndAddToHandEffect(uint8_t b, uint8_t c)
+{
+	uint16_t hl = hTemp_ffa0_ADDR;
+	uint8_t a = gb_read8(hl++);
+	RemoveCardFromHand(a);
+	PutCardInDiscardPile(a);
+	a = gb_read8(hl++);
+	RemoveCardFromHand(a);
+	PutCardInDiscardPile(a);
+	uint16_t de = wDuelTempList_ADDR;
+	for (;;) {
+		a = gb_read8(hl++);
+		gb_write8(de, a);
+		de++;
+		if (a == 0xFFu)
+			break;
+		MoveDiscardResult moved = MoveDiscardPileCardToHand(a);
+		AddCardToHand(moved.a);
+	}
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if ((turn.f & 0x10u) != 0u)
+		return (SuperEnergyRetrievalDiscardAndAddToHandEffectResult){turn.a, turn.f, b, c, (uint8_t)(de >> 8), (uint8_t)de, turn.hl};
+	DisplayCardListDetailsResult details = DisplayCardListDetails();
+	return (SuperEnergyRetrievalDiscardAndAddToHandEffectResult){details.a, details.f, b, c, (uint8_t)(de >> 8), (uint8_t)de, hl};
+}
+/* <<< factory SuperEnergyRetrieval_DiscardAndAddToHandEffect */
+
+/* >>> factory HandleDefendingPokemonAttackSelection */
+HandleDefendingPokemonAttackSelectionResult HandleDefendingPokemonAttackSelection(void)
+{
+	DrawDuelMainScene();
+	SwapTurn();
+	hCurSelectionItem = 0u;
+	for (;;) {
+		uint8_t count = PrintAndLoadAttacksToDuelTempList();
+		uint16_t menu_parameters = 0x43F4u;
+		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
+		wNumMenuItems = count;
+		EnableLCD();
+		for (;;) {
+			DoFrame();
+			uint8_t keys = hKeysPressed;
+			if ((keys & PAD_B) != 0u) {
+				SwapTurn();
+				return (HandleDefendingPokemonAttackSelectionResult){menu_parameters, 0x10u};
+			}
+			if ((keys & PAD_START) != 0u) {
+				hCurSelectionItem = hCurMenuItem;
+				DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+				(void)LoadCardDataToBuffer1_FromDeckIndex(arena.a);
+				OpenAttackPage();
+				SwapTurn();
+				DrawDuelMainScene();
+				SwapTurn();
+				break;
+			}
+			HandleMenuInputResult input = HandleMenuInput();
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			if (input.a == MENU_CANCEL)
+				continue;
+			uint8_t index = (uint8_t)(hCurMenuItem + hCurMenuItem);
+			uint8_t d = gb_read8((uint16_t)(wDuelTempList_ADDR + index));
+			uint8_t e = gb_read8((uint16_t)(wDuelTempList_ADDR + index + 1u));
+			SwapTurn();
+			return (HandleDefendingPokemonAttackSelectionResult){GetAttackName(d, e), 0u};
+		}
+	}
+}
+/* <<< factory HandleDefendingPokemonAttackSelection */
+
+/* >>> factory HandleEnergyDiscardEffectSelection */
+void HandleEnergyDiscardEffectSelection(void)
+{
+	SwapTurn();
+	HandListResult list = CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);
+	if (list.f & 0x10u) {
+		SwapTurn();
+		hTemp_ffa0 = 0xffu;
+		return;
+	}
+	(void)DrawWideTextBox_WaitForInput(ChooseDiscardEnergyCardFromOpponentText);
+	DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
+	for (;;) {
+		HandleEnergyDiscardMenuInputResult input = HandleEnergyDiscardMenuInput();
+		if (input.f & 0x10u)
+			continue;
+		SwapTurn();
+		hTemp_ffa0 = hTempCardIndex_ff98;
+		return;
+	}
+}
+/* <<< factory HandleEnergyDiscardEffectSelection */
+
+/* >>> factory MirrorMove_PlayerSelection */
+void MirrorMove_PlayerSelection(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_LAST_TURN_EFFECT);
+	if (r.a == 0u)
+		return;
+	if (r.a == LAST_TURN_EFFECT_DISCARD_ENERGY)
+		HandleEnergyDiscardEffectSelection();
+}
+/* <<< factory MirrorMove_PlayerSelection */
+
+/* >>> factory StrangeBehavior_SelectAndSwapEffect */
+void StrangeBehavior_SelectAndSwapEffect(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (r.a != DUELIST_TYPE_PLAYER) {
+		SetupPlayAreaScreen();
+		(void)PrintPlayAreaCardList_EnableLCD();
+		return;
+	}
+	(void)DrawWholeScreenTextBox(ProcedureForStrangeBehaviorText);
+	hCurSelectionItem = 0u;
+	SetupPlayAreaScreen();
+	for (;;) {
+		uint8_t count = PrintPlayAreaCardList_EnableLCD().a;
+		uint16_t menu_parameters = 0x46e0u;
+		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
+		wNumMenuItems = count;
+		for (;;) {
+			DoFrame();
+			HandleMenuInputResult input = HandleMenuInput();
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			if (input.a == MENU_CANCEL)
+				return;
+			hCurSelectionItem = input.a;
+			hTempPlayAreaLocation_ffa1 = input.a;
+			if (input.a == hTemp_ffa0) {
+				PlaySFX_InvalidChoice();
+				continue;
+			}
+			CardDamageResult dmg = GetCardDamageAndMaxHP(input.e);
+			if (dmg.a == 0u) {
+				PlaySFX_InvalidChoice();
+				continue;
+			}
+			TryGiveDamageCounter_StrangeBehaviorResult t = TryGiveDamageCounter_StrangeBehavior();
+			if (t.f & 0x10u) {
+				PlaySFX_InvalidChoice();
+				continue;
+			}
+			hOppActionTableIndex = OPPACTION_6B15;
+			break;
+		}
+	}
+}
+/* <<< factory StrangeBehavior_SelectAndSwapEffect */
+
+/* >>> factory LookForCardsInDeck */
+/* effect_functions.asm:680-780. d selects the search over wDuelTempList (the
+ * deck), b/c name the card kind for the "There is no X in the deck" text and
+ * hl the text shown when one is found. A search that finds nothing -- or an
+ * empty list -- ends in that refusal plus the "check the deck?" Yes/No, whose
+ * answer is the exit: carry means No. */
+static uint8_t LookForCardsInDeck_Found(uint8_t d, uint8_t e)
+{
+	for (uint16_t at = wDuelTempList_ADDR;; at++) {
+		uint8_t index = gb_read8(at);
+		if (index == 0xffu)
+			return 0u;
+		switch (d) {
+		case SEARCHEFFECT_CARD_ID:
+			if (GetCardIDFromDeckIndex(index) == e)
+				return 1u;
+			break;
+		case SEARCHEFFECT_NIDORAN: {
+			uint8_t id = GetCardIDFromDeckIndex(index);
+			if (id == NIDORANF || id == NIDORANM)
+				return 1u;
+			break;
+		}
+		case SEARCHEFFECT_BASIC_FIGHTING:
+			(void)LoadCardDataToBuffer2_FromDeckIndex(index);
+			if (wLoadedCard2Type == TYPE_PKMN_FIGHTING && wLoadedCard2Stage == BASIC)
+				return 1u;
+			break;
+		case SEARCHEFFECT_BASIC_ENERGY: {
+			uint8_t type = GetCardType(GetCardIDFromDeckIndex(index));
+			if (type != TYPE_ENERGY_DOUBLE_COLORLESS && (type & TYPE_ENERGY) != 0u)
+				return 1u;
+			break;
+		}
+		default: /* SEARCHEFFECT_POKEMON */
+			if (GetCardType(GetCardIDFromDeckIndex(index)) < TYPE_ENERGY)
+				return 1u;
+			break;
+		}
+	}
+}
+
+LookForCardsInDeckResult LookForCardsInDeck(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	if (wDuelTempList != 0xffu && LookForCardsInDeck_Found(d, e)) {
+		WaitResult waited = DrawWideTextBox_WaitForInput(hl);
+		return (LookForCardsInDeckResult){waited.a, (uint8_t)(waited.a == 0u ? 0x80u : 0x00u)};
+	}
+	LoadTxRam2((uint16_t)(((uint16_t)b << 8) | c));
+	(void)DrawWideTextBox_WaitForInput(ThereIsNoInTheDeckText);
+	HandleYesOrNoMenuResult menu = YesOrNoMenuWithText_SetCursorToYes(WouldYouLikeToCheckTheDeckText);
+	return (LookForCardsInDeckResult){menu.a, menu.f};
+}
+/* <<< factory LookForCardsInDeck */
+
+/* >>> factory KadabraRecover_PlayerSelectEffect */
+KadabraRecover_PlayerSelectEffectResult KadabraRecover_PlayerSelectEffect(void)
+{
+	(void)CreateListOfEnergyAttachedToArena(KADABRA_TYPE_ENERGY_PSYCHIC);
+	/* `bank1call` selects bank 1 for the callee and restores this routine's own
+	 * bank 11 on return. The switch is load-bearing: DisplayEnergyDiscardMenu
+	 * reads EnergyDiscardCardListParameters ($46F3) out of the switched window,
+	 * so under bank 11 it installs a garbage wListFunctionPointer and the menu
+	 * never reports a selection. */
+	uint8_t saved = hBankROM;
+	BankswitchROM(BANK_DUEL_CORE);
+	DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
+	BankswitchROM(saved);
+	BankswitchROM(BANK_DUEL_CORE);
+	HandleEnergyDiscardMenuInputResult input = HandleEnergyDiscardMenuInput();
+	BankswitchROM(saved);
+	if ((input.f & 0x10u) != 0u)
+		return (KadabraRecover_PlayerSelectEffectResult){input.a, input.f};
+	uint8_t card = hTempCardIndex_ff98;
+	hTemp_ffa0 = card;
+	return (KadabraRecover_PlayerSelectEffectResult){card, input.f};
+}
+/* <<< factory KadabraRecover_PlayerSelectEffect */
+
+/* >>> factory Scavenge_PlayerSelectEnergyEffect */
+Scavenge_PlayerSelectEnergyEffectResult Scavenge_PlayerSelectEnergyEffect(void)
+{
+	(void)CreateListOfEnergyAttachedToArena(Scavenge_PlayerSelectEnergyEffect_TYPE_ENERGY_PSYCHIC);
+	/* `bank1call` selects bank 1 for the callee and restores this routine's own
+	 * bank 11 on return. The switch is load-bearing: DisplayEnergyDiscardMenu
+	 * reads EnergyDiscardCardListParameters ($46F3) out of the switched window,
+	 * so under bank 11 it installs a garbage wListFunctionPointer and the menu
+	 * never reports a selection. */
+	uint8_t saved = hBankROM;
+	BankswitchROM(Scavenge_PlayerSelectEnergyEffect_BANK_DUEL_CORE);
+	DisplayEnergyDiscardScreen(Scavenge_PlayerSelectEnergyEffect_PLAY_AREA_ARENA);
+	BankswitchROM(saved);
+	BankswitchROM(Scavenge_PlayerSelectEnergyEffect_BANK_DUEL_CORE);
+	HandleEnergyDiscardMenuInputResult input = HandleEnergyDiscardMenuInput();
+	BankswitchROM(saved);
+	if ((input.f & 0x10u) != 0u)
+		return (Scavenge_PlayerSelectEnergyEffectResult){input.a, input.f};
+	uint8_t card = hTempCardIndex_ff98;
+	hTemp_ffa0 = card;
+	/* `or a` clears carry and sets Z from the stored card index. */
+	return (Scavenge_PlayerSelectEnergyEffectResult){card, (uint8_t)(card == 0u ? 0x80u : 0x00u)};
+}
+/* <<< factory Scavenge_PlayerSelectEnergyEffect */
+
+/* >>> factory PlayerPickFireEnergyCardToDiscard */
+/* effect_functions.asm:3517-3524. The port skipped the menu input entirely and
+ * synthesized a `0x90` exit. The two trailing `ldh` moves set no flags, so the
+ * exit flags are the input handler's; only `a` is the card index it left in
+ * hTempCardIndex_ff98. */
+PlayerPickFireEnergyCardToDiscardResult PlayerPickFireEnergyCardToDiscard(void)
+{
+	(void)CreateListOfFireEnergyAttachedToArena();
+	DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
+	HandleEnergyDiscardMenuInputResult input = HandleEnergyDiscardMenuInput();
+	uint8_t card = hTempCardIndex_ff98;
+
+	hTemp_ffa0 = card;
+	return (PlayerPickFireEnergyCardToDiscardResult){card, input.f};
+}
+/* <<< factory PlayerPickFireEnergyCardToDiscard */
+
+/* >>> factory Barrier_PlayerSelectEffect */
+Barrier_PlayerSelectEffectResult Barrier_PlayerSelectEffect(void)
+{
+	(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);
+	{
+		uint8_t saved = hBankROM;
+		BankswitchROM(0x01);
+		DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
+		BankswitchROM(saved);
+	}
+	HandleEnergyDiscardMenuInputResult menu;
+	{
+		uint8_t saved = hBankROM;
+		BankswitchROM(0x01);
+		menu = HandleEnergyDiscardMenuInput();
+		BankswitchROM(saved);
+	}
+	if (menu.f & 0x10)
+		return (Barrier_PlayerSelectEffectResult){menu.a, menu.f};
+	hTemp_ffa0 = hTempCardIndex_ff98;
+	return (Barrier_PlayerSelectEffectResult){hTemp_ffa0, menu.f};
+}
+/* <<< factory Barrier_PlayerSelectEffect */
+
+/* >>> factory StarmieRecover_PlayerSelectEffect */
+StarmieRecover_PlayerSelectEffectResult StarmieRecover_PlayerSelectEffect(void)
+{
+	(void)CreateListOfEnergyAttachedToArena(SR_TYPE_ENERGY_WATER);
+	/* `bank1call` selects bank 1 for the callee and restores this routine's own
+	 * bank 11 on return. The switch is load-bearing: DisplayEnergyDiscardMenu
+	 * reads EnergyDiscardCardListParameters ($46F3) out of the switched window,
+	 * so under bank 11 it installs a garbage wListFunctionPointer and the menu
+	 * never reports a selection. */
+	uint8_t saved = hBankROM;
+	BankswitchROM(SR_BANK_DUEL_CORE);
+	DisplayEnergyDiscardScreen(SR_PLAY_AREA_ARENA);
+	BankswitchROM(saved);
+	/* .loop_input: cancelling re-opens the menu, so only an accept leaves it. */
+	HandleEnergyDiscardMenuInputResult input;
+	do {
+		BankswitchROM(SR_BANK_DUEL_CORE);
+		input = HandleEnergyDiscardMenuInput();
+		BankswitchROM(saved);
+	} while ((input.f & 0x10u) != 0u);
+	uint8_t card = hTempCardIndex_ff98;
+	hTemp_ffa0 = card;
+	return (StarmieRecover_PlayerSelectEffectResult){card, input.f};
+}
+/* <<< factory StarmieRecover_PlayerSelectEffect */
+
+/* >>> factory DestinyBond_PlayerSelectEffect */
+DestinyBond_PlayerSelectEffectResult DestinyBond_PlayerSelectEffect(void)
+{
+	(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);
+	uint8_t saved = hBankROM;
+	BankswitchROM(0x01);
+	DisplayEnergyDiscardScreen(0x00);
+	BankswitchROM(saved);
+	HandleEnergyDiscardMenuInputResult result = HandleEnergyDiscardMenuInput();
+	if (result.f & 0x10)
+		return (DestinyBond_PlayerSelectEffectResult){result.a, result.f};
+	hTempList = hTempCardIndex_ff98;
+	return (DestinyBond_PlayerSelectEffectResult){hTempList, result.f};
+}
+/* <<< factory DestinyBond_PlayerSelectEffect */
+
+/* >>> factory FlamesOfRage_PlayerSelectEffect */
+void FlamesOfRage_PlayerSelectEffect(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2FireEnergyCardsText);
+	hCurSelectionItem = 0u;
+	(void)CreateListOfFireEnergyAttachedToArena();
+	{ uint8_t saved = hBankROM; BankswitchROM(0x01); DisplayEnergyDiscardScreen(PLAY_AREA_ARENA); BankswitchROM(saved); }
+	for (;;) {
+		HandleEnergyDiscardMenuInputResult menu;
+		{ uint8_t saved = hBankROM; BankswitchROM(0x01); menu = HandleEnergyDiscardMenuInput(); BankswitchROM(saved); }
+		if ((menu.f & 0x10u) != 0u)
+			return;
+		uint16_t hl = GetNextPositionInTempList();
+		gb_write8(hl, hTempCardIndex_ff98);
+		(void)RemoveCardFromDuelTempList(hTempCardIndex_ff98);
+		if (hCurSelectionItem >= 2u)
+			return;
+		{ uint8_t saved = hBankROM; BankswitchROM(0x01); DisplayEnergyDiscardMenu(); BankswitchROM(saved); }
+	}
+}
+/* <<< factory FlamesOfRage_PlayerSelectEffect */
+
+/* >>> factory HandleColorChangeScreen */
+/* effect_functions.asm:1233-1319 (.DrawScreen). Draws the color-change screen
+ * for the card at play area location a & $7f; hl is the text printed in the
+ * bottom box. Bank $0b data tables are read through the mapped window. */
+static void HandleColorChangeScreen_DrawScreen(uint8_t a, uint16_t hl)
+{
+	EmptyScreen();
+	ZeroObjectPositions();
+	(void)LoadDuelCardSymbolTiles();
+	SetDefaultConsolePalettes();
+	uint8_t location = (uint8_t)(a & 0x7Fu);
+	gb_write8(wTempPlayAreaLocation_cceb_ADDR, location);
+	DuelistVarResult arena = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
+	(void)LoadCardDataToBuffer1_FromDeckIndex(arena.a);
+	LoadLoaded1CardGfx(0x8A00u);
+	uint16_t palette = (uint16_t)(wBackgroundPalettesCGB_ADDR + 5u * 8u);
+	uint16_t card_palette = wCardPalette_ADDR;
+	for (uint8_t i = 0u; i < 3u; i++) {
+		gb_write8(palette++, gb_read8(card_palette++));
+	}
+	for (uint8_t i = 0u; i < 0x30u; i++) {
+		uint16_t attr = (uint16_t)(wCardAttrMap_ADDR + i);
+		gb_write8(attr, (uint8_t)(gb_read8(attr) + 5u));
+	}
+	FlushAllPalettes();
+	FillRectangle(0xA0u, 8u, 6u, 0x0902u, 0x0601u);
+	(void)ApplyCardCGBAttributes(0xA0u, 0x0902u);
+	CopyCardNameAndLevelResult name = CopyCardNameAndLevel(16u, 0u, 0u, 0u, 0u);
+	gb_write8(name.hl, TX_END);
+	InitTextPrinting(7u, 0u);
+	uint16_t text = wDefaultText_ADDR;
+	(void)ProcessText(&text);
+	(void)PlaceTextItems(SHIFT_MENU_DATA);
+	(void)WriteByteToBGMap0((uint8_t)(GetPlayAreaCardColor(location) + 1u), 15u, 9u);
+	PrintCardPageWeaknessesOrResistances(GetPlayAreaCardWeakness(location), 15u, 10u);
+	PrintCardPageWeaknessesOrResistances(GetPlayAreaCardResistance(location), 15u, 11u);
+	(void)DrawWideTextBox();
+	(void)InitTextPrinting_ProcessTextFromID(4u, 1u, ColorListText);
+	(void)InitTextPrinting_ProcessTextFromID(1u, 14u, hl);
+	/* Color icons: a 2x2 tile block per type, with its BG palette on CGB. */
+	uint16_t entry = COLOR_TILE_AND_BGP;
+	uint8_t y = 0u;
+	for (uint8_t remaining = NUM_COLORED_TYPES; remaining != 0u; remaining--) {
+		uint8_t tile = gb_read8(entry);
+		uint16_t de = (uint16_t)(0x0200u | y);
+		FillRectangle(tile, 2u, 2u, de, 0x0102u);
+		uint8_t color_palette = gb_read8((uint16_t)(entry + 1u));
+		hBankVRAM = 1u;
+		gb_write8(0xFF4Fu, 1u);
+		FillRectangle(color_palette, 2u, 2u, de, 0u);
+		hBankVRAM = 0u;
+		gb_write8(0xFF4Fu, 0u);
+		entry += 2u;
+		y += 2u;
+	}
+}
+
+HandleColorChangeScreenResult HandleColorChangeScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)f; (void)b; (void)c; (void)d; (void)e;
+	/* `or a` / `call z, SwapTurn`: location 0 with the high bit clear means the
+	 * opponent's arena card, so the screen is drawn from the other side. */
+	uint8_t swapped = (a == 0u);
+	if (swapped)
+		SwapTurn();
+	HandleColorChangeScreen_DrawScreen(a, hl);
+	if (swapped)
+		SwapTurn();
+	uint16_t menu = HANDLE_COLOR_CHANGE_MENU_PARAMS;
+	InitializeMenuParameters(0u, &menu);
+	EnableLCD();
+	for (;;) {
+		DoFrame();
+		HandleMenuInputResult input = HandleMenuInput();
+		if ((input.f & 0x10u) == 0u)
+			continue;
+		if (input.a == MENU_CANCEL)
+			return (HandleColorChangeScreenResult){MENU_CANCEL, 0x90u};
+		uint8_t color = gb_read8((uint16_t)(SHIFT_LIST_ITEM_TO_COLOR + input.a));
+		return (HandleColorChangeScreenResult){color, (uint8_t)(color == 0u ? 0x80u : 0x00u)};
+	}
+}
+/* <<< factory HandleColorChangeScreen */
+
+/* >>> factory Ember_PlayerSelectEffect */
+PlayerPickFireEnergyCardToDiscardResult Ember_PlayerSelectEffect(void)
+{
+	return PlayerPickFireEnergyCardToDiscard();
+}
+/* <<< factory Ember_PlayerSelectEffect */
+
+/* >>> factory FireBlast_PlayerSelectEffect */
+PlayerPickFireEnergyCardToDiscardResult FireBlast_PlayerSelectEffect(void)
+{
+	return PlayerPickFireEnergyCardToDiscard();
+}
+/* <<< factory FireBlast_PlayerSelectEffect */
+
+/* >>> factory Conversion1_PlayerSelectEffect */
+HandleColorChangeScreenResult Conversion1_PlayerSelectEffect(void)
+{
+	/* `xor a` leaves a = PLAY_AREA_ARENA with Z set; HandleColorChangeScreen
+	 * consumes only a, so the other registers carry no contract here. */
+	HandleColorChangeScreenResult r =
+		HandleColorChangeScreen(C1_PLAY_AREA_ARENA, 0x80u, 0u, 0u, 0u, 0u,
+				ChooseWeaknessYouWishToChangeText);
+	hTemp_ffa0 = r.a;
+	return r;
+}
+/* <<< factory Conversion1_PlayerSelectEffect */
+
+/* >>> factory Conversion2_PlayerSelectEffect */
+HandleColorChangeScreenResult Conversion2_PlayerSelectEffect(void)
+{
+	HandleColorChangeScreenResult r =
+		HandleColorChangeScreen(0x80u, 0u, 0u, 0u, 0u, 0u,
+				ChooseResistanceYouWishToChangeText);
+	hTemp_ffa0 = r.a;
+	return r;
+}
+/* <<< factory Conversion2_PlayerSelectEffect */
+
+/* >>> factory AskWhetherToQuitSelectingCards */
+AskWhetherToQuitSelectingCardsResult AskWhetherToQuitSelectingCards(uint8_t a)
+{
+	uint8_t remaining = (uint8_t)(a - hCurSelectionItem);
+	LoadTxRam3(remaining);
+	HandleYesOrNoMenuResult menu = YesOrNoMenuWithText(YouCanSelectMoreCardsQuitText);
+	return (AskWhetherToQuitSelectingCardsResult){menu.a, menu.f};
+}
+/* <<< factory AskWhetherToQuitSelectingCards */
+
+/* >>> factory Scavenge_AddToHandEffect */
+Scavenge_AddToHandEffectResult Scavenge_AddToHandEffect(void)
+{
+	MoveDiscardResult moved = MoveDiscardPileCardToHand(hTempPlayAreaLocation_ffa1);
+	AddCardToHand(moved.a);
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	/* IsPlayerTurn sets carry on the player's own turn, and `ret c` skips the
+	 * screen there: the detail screen exists to show the *opponent's* pick. */
+	if ((turn.f & 0x10u) != 0u)
+		return (Scavenge_AddToHandEffectResult){turn.a, turn.f};
+	/* `bank1call` selects bank 1 for the callee and restores this routine's own
+	 * bank on return. */
+	uint8_t saved = hBankROM;
+	BankswitchROM(SAH_BANK_DUEL_CORE);
+	WaitResult shown = DisplayCardDetailScreen(hTempPlayAreaLocation_ffa1,
+						   WasPlacedInTheHandText);
+	BankswitchROM(saved);
+	return (Scavenge_AddToHandEffectResult){hTempPlayAreaLocation_ffa1, shown.f};
+}
+/* <<< factory Scavenge_AddToHandEffect */
+
+/* >>> factory Recycle_AddToHandEffect */
+Recycle_AddToHandEffectResult Recycle_AddToHandEffect(void)
+{
+	uint8_t index = hTempList;
+	if (index == 0xFFu)
+		/* `cp $ff` against $ff: Z and N set, no borrow, so H and C stay clear. */
+		return (Recycle_AddToHandEffectResult){index, 0xC0u};
+	MoveDiscardResult moved = MoveDiscardPileCardToHand(index);
+	ReturnCardToDeck(moved.a);
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	/* IsPlayerTurn sets carry on the player's own turn; `ret c` skips the screen
+	 * because it exists to show the opponent's choice to the player. */
+	if ((turn.f & 0x10u) != 0u)
+		return (Recycle_AddToHandEffectResult){turn.a, turn.f};
+	uint8_t saved = hBankROM;
+	BankswitchROM(RAH_BANK_DUEL_CORE);
+	WaitResult shown = DisplayCardDetailScreen(hTempList, CardWasChosenText);
+	BankswitchROM(saved);
+	return (Recycle_AddToHandEffectResult){hTempList, shown.f};
+}
+/* <<< factory Recycle_AddToHandEffect */
+
+/* >>> factory PokemonBreeder_EvolveEffect */
+PokemonBreederEvolveEffectResult PokemonBreeder_EvolveEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)hl;
+	uint8_t saved_a = hTempCardIndex_ff9f;
+	uint8_t entry_f = f;
+	hTempCardIndex_ff98 = hTemp_ffa0;
+	hTempPlayAreaLocation_ff9d = hTempPlayAreaLocation_ffa1;
+	DuelistVarResult turn = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + hTempPlayAreaLocation_ff9d));
+	(void)LoadCardDataToBuffer1_FromDeckIndex(turn.a);
+	uint16_t name = (uint16_t)(gb_read8(wLoadedCard1Name_ADDR) | ((uint16_t)gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)) << 8));
+	LoadTxRam2(name);
+	EvolveResult evolved = EvolvePokemonCard();
+	gb_write8(evolved.hl, STAGE2_WITHOUT_STAGE1);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(hTempCardIndex_ff98);
+	CopyCardNameAndLevelResult copied = CopyCardNameAndLevel(18u, b, c, d, e);
+	gb_write8(copied.hl, 0u);
+	gb_write8(wTxRam2_b_ADDR, 0u);
+	gb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), 0u);
+	DrawLargePictureOfCard();
+	PlaySFX(SFX_POKEMON_EVOLUTION);
+	WaitResult waited = DrawWideTextBox_WaitForInput(PokemonEvolvedIntoPokemonText);
+	DuelRoutineResult processed = ProcessPlayedPokemonCard(SFX_POKEMON_EVOLUTION, waited.f, copied.b, copied.c, copied.d, copied.e, PokemonEvolvedIntoPokemonText);
+	hTempCardIndex_ff9f = saved_a;
+	return (PokemonBreederEvolveEffectResult){saved_a, entry_f, processed.b, processed.c, processed.d, processed.e, processed.hl};
+}
+/* <<< factory PokemonBreeder_EvolveEffect */
+
+/* >>> factory Sprout_PutInPlayAreaEffect */
+ShuffleCardsInDeckResult Sprout_PutInPlayAreaEffect(uint8_t b, uint8_t c, uint8_t d,
+							   uint8_t e, uint16_t hl)
+{
+	uint8_t index = hTemp_ffa0;
+	if (index != 0xFFu) {
+		SearchCardInDeckAndAddToHand(index);
+		AddCardToHand(index);
+		PutHandPokemonResult placed = PutHandPokemonCardInPlayArea(index, 0u);
+		IsPlayerTurnResult turn = IsPlayerTurn();
+		hl = turn.hl;
+		/* IsPlayerTurn sets carry on the player's own turn, and `jr c` skips
+		 * straight to the shuffle: the screen exists to show the opponent's
+		 * pick to the player. */
+		if ((turn.f & 0x10u) == 0u) {
+			/* `bank1call` selects bank 1 for the callee and restores this
+			 * routine's own bank on return. */
+			uint8_t saved = hBankROM;
+			BankswitchROM(Sprout_PutInPlayAreaEffect_BANK_DUEL_CORE);
+			(void)DisplayCardDetailScreen(hTemp_ffa0,
+						      Sprout_PutInPlayAreaEffect_PlacedOnTheBenchText);
+			BankswitchROM(saved);
+		}
+		(void)placed;
+	}
+	/* ShuffleCardsInDeck shuffles purely from WRAM deck state and only echoes
+	 * b/c/d/e/hl back out (duel.c ShuffleDeck), so PutHandPokemonCardInPlayArea's
+	 * undocumented exit e cannot change behaviour here; e is left out of the
+	 * contract rather than guessed. */
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+}
+/* <<< factory Sprout_PutInPlayAreaEffect */
+
+/* >>> factory NidoranFCallForFamily_PutInPlayAreaEffect */
+ShuffleCardsInDeckResult NidoranFCallForFamily_PutInPlayAreaEffect(uint8_t b, uint8_t c, uint8_t d,
+							   uint8_t e, uint16_t hl)
+{
+	uint8_t index = hTemp_ffa0;
+	if (index != 0xFFu) {
+		SearchCardInDeckAndAddToHand(index);
+		AddCardToHand(index);
+		PutHandPokemonResult placed = PutHandPokemonCardInPlayArea(index, 0u);
+		IsPlayerTurnResult turn = IsPlayerTurn();
+		hl = turn.hl;
+		/* IsPlayerTurn sets carry on the player's own turn, and `jr c` skips
+		 * straight to the shuffle: the screen exists to show the opponent's
+		 * pick to the player. */
+		if ((turn.f & 0x10u) == 0u) {
+			/* `bank1call` selects bank 1 for the callee and restores this
+			 * routine's own bank on return. */
+			uint8_t saved = hBankROM;
+			BankswitchROM(NidoranFCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE);
+			(void)DisplayCardDetailScreen(hTemp_ffa0,
+						      NidoranFCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText);
+			BankswitchROM(saved);
+		}
+		(void)placed;
+	}
+	/* ShuffleCardsInDeck shuffles purely from WRAM deck state and only echoes
+	 * b/c/d/e/hl back out (duel.c ShuffleDeck), so PutHandPokemonCardInPlayArea's
+	 * undocumented exit e cannot change behaviour here; e is left out of the
+	 * contract rather than guessed. */
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+}
+/* <<< factory NidoranFCallForFamily_PutInPlayAreaEffect */
+
+/* >>> factory MarowakCallForFamily_PutInPlayAreaEffect */
+ShuffleCardsInDeckResult MarowakCallForFamily_PutInPlayAreaEffect(uint8_t b, uint8_t c, uint8_t d,
+							   uint8_t e, uint16_t hl)
+{
+	uint8_t index = hTemp_ffa0;
+	if (index != 0xFFu) {
+		SearchCardInDeckAndAddToHand(index);
+		AddCardToHand(index);
+		PutHandPokemonResult placed = PutHandPokemonCardInPlayArea(index, 0u);
+		IsPlayerTurnResult turn = IsPlayerTurn();
+		hl = turn.hl;
+		/* IsPlayerTurn sets carry on the player's own turn, and `jr c` skips
+		 * straight to the shuffle: the screen exists to show the opponent's
+		 * pick to the player. */
+		if ((turn.f & 0x10u) == 0u) {
+			/* `bank1call` selects bank 1 for the callee and restores this
+			 * routine's own bank on return. */
+			uint8_t saved = hBankROM;
+			BankswitchROM(MarowakCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE);
+			(void)DisplayCardDetailScreen(hTemp_ffa0,
+						      MarowakCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText);
+			BankswitchROM(saved);
+		}
+		(void)placed;
+	}
+	/* ShuffleCardsInDeck shuffles purely from WRAM deck state and only echoes
+	 * b/c/d/e/hl back out (duel.c ShuffleDeck), so PutHandPokemonCardInPlayArea's
+	 * undocumented exit e cannot change behaviour here; e is left out of the
+	 * contract rather than guessed. */
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+}
+/* <<< factory MarowakCallForFamily_PutInPlayAreaEffect */
+
+/* >>> factory KrabbyCallForFamily_PutInPlayAreaEffect */
+ShuffleCardsInDeckResult KrabbyCallForFamily_PutInPlayAreaEffect(uint8_t b, uint8_t c, uint8_t d,
+							   uint8_t e, uint16_t hl)
+{
+	uint8_t index = hTemp_ffa0;
+	if (index != 0xFFu) {
+		SearchCardInDeckAndAddToHand(index);
+		AddCardToHand(index);
+		PutHandPokemonResult placed = PutHandPokemonCardInPlayArea(index, 0u);
+		IsPlayerTurnResult turn = IsPlayerTurn();
+		hl = turn.hl;
+		/* IsPlayerTurn sets carry on the player's own turn, and `jr c` skips
+		 * straight to the shuffle: the screen exists to show the opponent's
+		 * pick to the player. */
+		if ((turn.f & 0x10u) == 0u) {
+			/* `bank1call` selects bank 1 for the callee and restores this
+			 * routine's own bank on return. */
+			uint8_t saved = hBankROM;
+			BankswitchROM(KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE);
+			(void)DisplayCardDetailScreen(hTemp_ffa0,
+						      KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText);
+			BankswitchROM(saved);
+		}
+		(void)placed;
+	}
+	/* ShuffleCardsInDeck shuffles purely from WRAM deck state and only echoes
+	 * b/c/d/e/hl back out (duel.c ShuffleDeck), so PutHandPokemonCardInPlayArea's
+	 * undocumented exit e cannot change behaviour here; e is left out of the
+	 * contract rather than guessed. */
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+}
+/* <<< factory KrabbyCallForFamily_PutInPlayAreaEffect */
+
+/* >>> factory PokemonFlute_PlaceInPlayAreaText */
+void PokemonFlute_PlaceInPlayAreaText(void)
+{
+	uint8_t index = hTemp_ffa0;
+	SwapTurn();
+	MoveDiscardResult moved = MoveDiscardPileCardToHand(index);
+	AddCardToHand(moved.a);
+	(void)PutHandPokemonCardInPlayArea(moved.a, moved.f);
+	SwapTurn();
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if (turn.f & 0x10u)
+		return;
+	SwapTurn();
+	(void)DisplayCardDetailScreen(hTemp_ffa0, CardWasChosenText);
+	SwapTurn();
+}
+/* <<< factory PokemonFlute_PlaceInPlayAreaText */
+
+/* >>> factory Revive_PlaceInPlayAreaEffect */
+Revive_PlaceInPlayAreaEffectResult Revive_PlaceInPlayAreaEffect(void)
+{
+	uint8_t index = hTemp_ffa0;
+	MoveDiscardResult moved = MoveDiscardPileCardToHand(index);
+	AddCardToHand(moved.a);
+	PutHandPokemonResult placed = PutHandPokemonCardInPlayArea(moved.a, moved.f);
+	DuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(placed.a
+							     + RV_DUELVARS_ARENA_CARD_HP));
+	uint8_t half = (uint8_t)(hp.a >> 1);
+	/* `bit 0, a` tests the already-halved value, so an odd half gets +5 to land
+	 * back on a multiple of 10. */
+	if ((half & 0x01u) != 0u)
+		half = (uint8_t)(half + 5u);
+	gb_write8(hp.hl, half);
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	/* `ret c`: the player played Revive themselves, so no screen is shown. */
+	if ((turn.f & 0x10u) != 0u)
+		return (Revive_PlaceInPlayAreaEffectResult){turn.a, turn.f};
+	/* `bank1call` selects bank 1 for the callee and restores this routine's own
+	 * bank on return. */
+	uint8_t saved = hBankROM;
+	BankswitchROM(RV_BANK_DUEL_CORE);
+	WaitResult shown = DisplayCardDetailScreen(hTemp_ffa0, PlacedOnTheBenchText);
+	BankswitchROM(saved);
+	return (Revive_PlaceInPlayAreaEffectResult){hTemp_ffa0, shown.f};
+}
+/* <<< factory Revive_PlaceInPlayAreaEffect */
+
+/* >>> factory ItemFinder_DiscardAddToHandEffect */
+ItemFinder_DiscardAddToHandEffectResult ItemFinder_DiscardAddToHandEffect(void)
+{
+	/* hl walks hTempList: two hand cards to discard, then the discard-pile card
+	 * to retrieve. RemoveCardFromHand and PutCardInDiscardPile both preserve
+	 * every register, so each pair shares one deck index. */
+	uint8_t first = gb_read8(hTempList_ADDR);
+	RemoveCardFromHand(first);
+	PutCardInDiscardPile(first);
+	uint8_t second = gb_read8((uint16_t)(hTempList_ADDR + 1u));
+	RemoveCardFromHand(second);
+	PutCardInDiscardPile(second);
+	uint8_t wanted = gb_read8((uint16_t)(hTempList_ADDR + 2u));
+	MoveDiscardResult moved = MoveDiscardPileCardToHand(wanted);
+	AddCardToHand(moved.a);
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	/* IsPlayerTurn sets carry on the player's own turn, and `ret c` skips the
+	 * screen: it exists to show the opponent's pick to the player. */
+	if ((turn.f & 0x10u) != 0u)
+		return (ItemFinder_DiscardAddToHandEffectResult){turn.a, turn.f};
+	/* `bank1call` selects bank 1 for the callee and restores this routine's own
+	 * bank on return. */
+	uint8_t saved = hBankROM;
+	BankswitchROM(IF_BANK_DUEL_CORE);
+	uint8_t shown_index = gb_read8((uint16_t)(hTempList_ADDR + 2u));
+	WaitResult shown = DisplayCardDetailScreen(shown_index, WasPlacedInTheHandText);
+	BankswitchROM(saved);
+	return (ItemFinder_DiscardAddToHandEffectResult){shown_index, shown.f};
+}
+/* <<< factory ItemFinder_DiscardAddToHandEffect */
+
+/* >>> factory BellsproutCallForFamily_PutInPlayAreaEffect */
+ShuffleCardsInDeckResult BellsproutCallForFamily_PutInPlayAreaEffect(uint8_t b, uint8_t c, uint8_t d,
+							   uint8_t e, uint16_t hl)
+{
+	uint8_t index = hTemp_ffa0;
+	if (index != 0xFFu) {
+		SearchCardInDeckAndAddToHand(index);
+		AddCardToHand(index);
+		PutHandPokemonResult placed = PutHandPokemonCardInPlayArea(index, 0u);
+		IsPlayerTurnResult turn = IsPlayerTurn();
+		hl = turn.hl;
+		/* IsPlayerTurn sets carry on the player's own turn, and `jr c` skips
+		 * straight to the shuffle: the screen exists to show the opponent's
+		 * pick to the player. */
+		if ((turn.f & 0x10u) == 0u) {
+			/* `bank1call` selects bank 1 for the callee and restores this
+			 * routine's own bank on return. */
+			uint8_t saved = hBankROM;
+			BankswitchROM(BellsproutCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE);
+			(void)DisplayCardDetailScreen(hTemp_ffa0,
+						      BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText);
+			BankswitchROM(saved);
+		}
+		(void)placed;
+	}
+	/* ShuffleCardsInDeck shuffles purely from WRAM deck state and only echoes
+	 * b/c/d/e/hl back out (duel.c ShuffleDeck), so PutHandPokemonCardInPlayArea's
+	 * undocumented exit e cannot change behaviour here; e is left out of the
+	 * contract rather than guessed. */
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+}
+/* <<< factory BellsproutCallForFamily_PutInPlayAreaEffect */
+
+/* >>> factory Wildfire_PlayerSelectEffect */
+Wildfire_PlayerSelectEffectResult Wildfire_PlayerSelectEffect(void)
+{
+	(void)DrawWideTextBox_WaitForInput(DiscardOppDeckAsManyFireEnergyCardsText);
+	hCurSelectionItem = 0u;
+	(void)CreateListOfFireEnergyAttachedToArena();
+	{
+		uint8_t saved = hBankROM;
+		BankswitchROM(0x01u);
+		DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
+		BankswitchROM(saved);
+	}
+	wEnergyDiscardMenuDenominator = 0u;
+	for (;;) {
+		wEnergyDiscardMenuNumerator = hCurSelectionItem;
+		HandleEnergyDiscardMenuInputResult input;
+		{
+			uint8_t saved = hBankROM;
+			BankswitchROM(0x01u);
+			input = HandleEnergyDiscardMenuInput();
+			BankswitchROM(saved);
+		}
+		if ((input.f & 0x10u) != 0u)
+			break;
+		hCurSelectionItem++;
+		TempListResult removed = RemoveCardFromDuelTempList(input.a);
+		if ((removed.f & 0x10u) != 0u)
+			break;
+		{
+			uint8_t saved = hBankROM;
+			BankswitchROM(0x01u);
+			DisplayEnergyDiscardMenu();
+			BankswitchROM(saved);
+		}
+	}
+	uint8_t count = hCurSelectionItem;
+	hTemp_ffa0 = count;
+	return (Wildfire_PlayerSelectEffectResult){count, count ? 0u : 0x10u};
+}
+/* <<< factory Wildfire_PlayerSelectEffect */
+
+/* >>> factory FireSpin_PlayerSelectEffect */
+void FireSpin_PlayerSelectEffect(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2EnergyCardsText);
+	hCurSelectionItem = 0u;
+	(void)CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);
+	(void)SortCardsInDuelTempListByID(0u, 0u, 0u);
+	{ uint8_t saved = hBankROM; BankswitchROM(0x01u); DisplayEnergyDiscardScreen(PLAY_AREA_ARENA); BankswitchROM(saved); }
+	uint8_t denominator = 2u;
+	wEnergyDiscardMenuDenominator = denominator;
+	for (;;) {
+		HandleEnergyDiscardMenuInputResult menu;
+		{ uint8_t saved = hBankROM; BankswitchROM(0x01u); menu = HandleEnergyDiscardMenuInput(); BankswitchROM(saved); }
+		if ((menu.f & 0x10u) != 0u)
+			return;
+		uint16_t hl = GetNextPositionInTempList();
+		gb_write8(hl, hTempCardIndex_ff98);
+		wEnergyDiscardMenuNumerator++;
+		if (hCurSelectionItem >= 2u)
+			return;
+		(void)RemoveCardFromDuelTempList(hTempCardIndex_ff98);
+		{ uint8_t saved = hBankROM; BankswitchROM(0x01u); DisplayEnergyDiscardMenu(); BankswitchROM(saved); }
+	}
+}
+/* <<< factory FireSpin_PlayerSelectEffect */
+
+/* >>> factory EnergySpike_AttachEnergyEffect */
+ShuffleCardsInDeckResult EnergySpike_AttachEnergyEffect(uint8_t b, uint8_t c, uint8_t d,
+							   uint8_t e, uint16_t hl)
+{
+	uint8_t index = hTemp_ffa0;
+	if (index != 0xFFu) {
+		SearchCardInDeckAndAddToHand(index);
+		AddCardToHand(index);
+		PutHandResult placed = PutHandCardInPlayArea(index, hTempPlayAreaLocation_ffa1);
+		IsPlayerTurnResult turn = IsPlayerTurn();
+		if ((turn.f & 0x10u) == 0u) {
+			DuelistVarResult card = GetTurnDuelistVariable((uint8_t)(hTempPlayAreaLocation_ffa1 + DUELVARS_ARENA_CARD));
+			(void)LoadCardDataToBuffer1_FromDeckIndex(card.a);
+			uint8_t first = gb_read8(wLoadedCard1Name_ADDR);
+			uint8_t second = gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u));
+			gb_write8(wTxRam2_b_ADDR, first);
+			gb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), second);
+			(void)DisplayCardDetailScreen(index, AttachedEnergyToPokemonText);
+		}
+		(void)placed;
+	}
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+}
+/* <<< factory EnergySpike_AttachEnergyEffect */
+
+/* >>> factory ScoopUp_ReturnToHandEffect */
+void ScoopUp_ReturnToHandEffect(void)
+{
+	uint8_t location = hTemp_ffa0;
+	uint8_t selected = (uint8_t)(location | CARD_LOCATION_PLAY_AREA);
+	DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+	for (uint8_t index = 0; index < DECK_SIZE; index++) {
+		if (gb_read8((uint16_t)(locations.hl + index)) != selected)
+			continue;
+		(void)LoadCardDataToBuffer2_FromDeckIndex(index);
+		if (wLoadedCard2Type >= TYPE_ENERGY)
+			continue;
+		if (wLoadedCard2Stage != 0u)
+			continue;
+		hTempCardIndex_ff98 = index;
+		AddCardToHand(index);
+	}
+	(void)MovePlayAreaCardToDiscardPile(location);
+	if (location == PLAY_AREA_ARENA)
+		ClearAllStatusConditions();
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if ((turn.f & 0x10u) == 0u) {
+		uint16_t text = location == PLAY_AREA_ARENA ?
+			PokemonWasReturnedFromArenaToHandText :
+			PokemonWasReturnedFromBenchToHandText;
+		(void)DisplayCardDetailScreen(hTempCardIndex_ff98, text);
+	}
+	if (location != PLAY_AREA_ARENA) {
+		(void)ShiftAllPokemonToFirstPlayAreaSlots();
+		return;
+	}
+	(void)SwapPlayAreaPokemon(hTempPlayAreaLocation_ffa1, PLAY_AREA_ARENA);
+	(void)ShiftAllPokemonToFirstPlayAreaSlots();
+}
+/* <<< factory ScoopUp_ReturnToHandEffect */
+
+/* >>> factory EnergyTrans_TransferEffect */
+uint8_t EnergyTrans_TransferEffect(void)
+{
+	DuelistVarResult turn = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (turn.a != DUELIST_TYPE_PLAYER) {
+		SetupPlayAreaScreen();
+		uint8_t result = PrintPlayAreaCardList_EnableLCD().a;
+		return result;
+	}
+	hCurSelectionItem = 0u;
+	SetupPlayAreaScreen();
+	for (;;) {
+		uint8_t count = PrintPlayAreaCardList_EnableLCD().a;
+		uint16_t menu_parameters = 0x46e0u;
+		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
+		wNumMenuItems = count;
+		for (;;) {
+			DoFrame();
+			HandleMenuInputResult input = HandleMenuInput();
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			if (input.a == MENU_CANCEL)
+				return input.a;
+			hAIPkmnPowerEffectParam = input.a;
+			hCurSelectionItem = input.a;
+			CheckIfCardHasGrassEnergyAttachedResult check = CheckIfCardHasGrassEnergyAttached(input.a);
+			if ((check.f & 0x10u) != 0u) {
+				PlaySFX_InvalidChoice();
+				continue;
+			}
+			hAIEnergyTransEnergyCard = check.a;
+			AddCardToHand(check.a);
+			(void)PrintPlayAreaCardList_EnableLCD();
+			uint8_t location = hAIPkmnPowerEffectParam;
+			(void)PutHandCardInPlayArea(hAIEnergyTransEnergyCard, location);
+			DrawSymbolOnPlayAreaCursor(hAIPkmnPowerEffectParam, SYM_GRASS);
+			for (;;) {
+				DoFrame();
+				HandleMenuInputResult placement = HandleMenuInput();
+				if ((placement.f & 0x10u) == 0u)
+					continue;
+				if (placement.a == MENU_CANCEL)
+					break;
+				hCurSelectionItem = placement.a;
+				hAIEnergyTransPlayAreaLocation = placement.a;
+				hOppActionTableIndex = OPPACTION_6B15;
+				AddCardToHand(hAIEnergyTransEnergyCard);
+				(void)PutHandCardInPlayArea(hAIEnergyTransEnergyCard, hAIEnergyTransPlayAreaLocation);
+				break;
+			}
+			DrawSymbolOnPlayAreaCursor(hAIPkmnPowerEffectParam, SYM_SPACE);
+			EraseCursor();
+			break;
+		}
+	}
+}
+/* <<< factory EnergyTrans_TransferEffect */
+
+/* >>> factory DamageSwap_SelectAndSwapEffect */
+void DamageSwap_SelectAndSwapEffect(void)
+{
+	DuelistVarResult turn = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (turn.a != DUELIST_TYPE_PLAYER) {
+		SetupPlayAreaScreen();
+		(void)PrintPlayAreaCardList_EnableLCD();
+		return;
+	}
+	DrawWholeScreenTextBox(ProcedureForDamageSwapText);
+	hCurSelectionItem = 0u;
+	SetupPlayAreaScreen();
+	for (;;) {
+		uint8_t count = PrintPlayAreaCardList_EnableLCD().a;
+		uint16_t menu_parameters = 0x46e0u;
+		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
+		wNumMenuItems = count;
+		for (;;) {
+			DoFrame();
+			HandleMenuInputResult input = HandleMenuInput();
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			if (input.a == MENU_CANCEL)
+				return;
+			hTempPlayAreaLocation_ffa1 = input.a;
+			hCurSelectionItem = input.a;
+			CardDamageResult damage = GetCardDamageAndMaxHP(input.e);
+			if (damage.a == 0u) {
+				PlaySFX_InvalidChoice();
+				continue;
+			}
+			DuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(hTempPlayAreaLocation_ffa1 + DUELVARS_ARENA_CARD_HP));
+			uint8_t saved_hp = gb_read8(hp.hl);
+			gb_write8(hp.hl, (uint8_t)(saved_hp + 10u));
+			(void)PrintPlayAreaCardList_EnableLCD();
+			gb_write8(hp.hl, saved_hp);
+			DrawSymbolOnPlayAreaCursor(hTempPlayAreaLocation_ffa1, 0x17u);
+			for (;;) {
+				DoFrame();
+				HandleMenuInputResult target = HandleMenuInput();
+				if ((target.f & 0x10u) == 0u)
+					continue;
+				if (target.a == MENU_CANCEL)
+					break;
+				hPlayAreaEffectTarget = target.a;
+				hCurSelectionItem = target.a;
+				TryGiveDamageCounter_DamageSwapResult result = TryGiveDamageCounter_DamageSwap();
+				if ((result.f & 0x10u) != 0u)
+					continue;
+				hOppActionTableIndex = OPPACTION_6B15;
+				break;
+			}
+			DrawSymbolOnPlayAreaCursor(hTempPlayAreaLocation_ffa1, 0x00u);
+			EraseCursor();
+			break;
+		}
+	}
+}
+/* <<< factory DamageSwap_SelectAndSwapEffect */
+
+/* >>> factory Gigashock_PlayerSelectEffect */
+/* effect_functions.asm:6803-6906. Returns carry if the bench Pokemon in
+ * register a was already picked into hTempList. */
+static uint8_t Gigashock_CheckIfChosenAlready(uint8_t a)
+{
+	uint8_t c = (uint8_t)(a + 1u);
+	uint8_t b = (uint8_t)(hCurSelectionItem + 1u);
+	uint16_t hl = hTempList_ADDR;
+	while (--b != 0u) {
+		if (gb_read8(hl++) == c)
+			return 0x10u;
+	}
+	return 0u;
+}
+
+void Gigashock_PlayerSelectEffect(void)
+{
+	SwapTurn();
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	if (count < 2u) {
+		SwapTurn();
+		hTempList = 0xffu;
+		return;
+	}
+	(void)DrawWideTextBox_WaitForInput(ChooseUpTo3PkmnOnBenchToGiveDamageText);
+	hCurSelectionItem = 0u;
+	wCurGigashockItem = 0u;
+	SetupPlayAreaScreen();
+	for (;;) {
+		uint8_t items = PrintPlayAreaCardList_EnableLCD().a;
+		uint16_t menu_parameters = 0x46e8u;
+		InitializeMenuParameters(wCurGigashockItem, &menu_parameters);
+		wNumMenuItems = (uint8_t)(items - 1u);
+		HandleMenuInputResult input;
+		for (;;) {
+			DoFrame();
+			input = HandleMenuInput();
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			if (input.a == MENU_CANCEL)
+				break;
+			wCurGigashockItem = input.a;
+			if ((Gigashock_CheckIfChosenAlready(input.a) & 0x10u) != 0u) {
+				PlaySFX_InvalidChoice();
+				continue;
+			}
+			break;
+		}
+		if (input.a != MENU_CANCEL) {
+			DrawSymbolOnPlayAreaCursor((uint8_t)(hCurMenuItem + 1u), SYM_LIGHTNING);
+			gb_write8(GetNextPositionInTempList(), (uint8_t)(hCurMenuItem + 1u));
+			uint8_t chosen = hCurSelectionItem;
+			if (chosen < 3u) {
+				uint8_t bench = (uint8_t)(GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a - 1u);
+				if (bench != chosen)
+					continue;
+			}
+			DrawPlayAreaScreenToShowChanges((uint8_t)(hCurMenuItem + 1u));
+			if ((hKeysPressed & PAD_B) == 0u) {
+				SwapTurn();
+				gb_write8(GetNextPositionInTempList(), 0xffu);
+				return;
+			}
+		}
+		/* .try_cancel: undo the last selection, or loop back if none. */
+		uint8_t selected = hCurSelectionItem;
+		if (selected == 0u)
+			continue;
+		selected--;
+		hCurSelectionItem = selected;
+		uint8_t location = gb_read8((uint16_t)(hTempList_ADDR + selected));
+		DrawSymbolOnPlayAreaCursor(location, SYM_SPACE);
+		EraseCursor();
+		wCurGigashockItem = (uint8_t)(location - 1u);
+	}
+}
+/* <<< factory Gigashock_PlayerSelectEffect */
+
+/* >>> factory HandleSwitchDefendingPokemonEffect */
+HandleSwitchDefendingPokemonEffectResult HandleSwitchDefendingPokemonEffect(uint8_t a)
+{
+	uint8_t e = a;
+	if (e == 0xFFu)
+		return (HandleSwitchDefendingPokemonEffectResult){e, 0xC0u};
+	DuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	uint16_t hl = hp.hl;
+	if (hp.a == 0u) {
+		DestinyBondResult bond = HandleDestinyBondSubstatus();
+		a = bond.a;
+		hl = bond.hl;
+	}
+	HandleNoDamageOrEffectResult no_effect = HandleNoDamageOrEffect(hl);
+	if ((no_effect.f & 0x10u) != 0u)
+		return (HandleSwitchDefendingPokemonEffectResult){a, no_effect.f};
+	SwapTurn();
+	(void)SwapArenaWithBenchPokemon(e);
+	SwapTurn();
+	wUnused_DefendingPkmnStatus = 0u;
+	wDuelDisplayedScreen = 0u;
+	wDefendingWasForcedToSwitch = 1u;
+	return (HandleSwitchDefendingPokemonEffectResult){1u, 0x00u};
+}
+/* <<< factory HandleSwitchDefendingPokemonEffect */
+
+/* >>> factory TerrorStrike_SwitchDefendingPokemon */
+HandleSwitchDefendingPokemonEffectResult TerrorStrike_SwitchDefendingPokemon(void)
+{
+	uint8_t gate = hTemp_ffa0;
+	if (gate == 0u)
+		return (HandleSwitchDefendingPokemonEffectResult){0u, 0x80u};
+	uint8_t input = hTempPlayAreaLocation_ffa1;
+	return HandleSwitchDefendingPokemonEffect(input);
+}
+/* <<< factory TerrorStrike_SwitchDefendingPokemon */
+
+/* >>> factory Gale_SwitchEffect */
+GaleSwitchEffectResult Gale_SwitchEffect(uint16_t hl)
+{
+	HandleNoDamageOrEffectResult no_effect = HandleNoDamageOrEffect(hl);
+	if ((no_effect.f & 0x10u) != 0u) {
+		DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+		if (count.a < 2u)
+			return (GaleSwitchEffectResult){(count.a == 0u) ? 0x70u : 0x50u};
+		(void)SwapArenaWithBenchPokemon((uint8_t)(Random((uint8_t)(count.a - 1u)) + 1u));
+		wDuelDisplayedScreen = 0u;
+		return (GaleSwitchEffectResult){0x80u};
+	}
+	DuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	if (hp.a == 0u)
+		(void)HandleDestinyBondSubstatus();
+	SwapTurn();
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a >= 2u) {
+		(void)SwapArenaWithBenchPokemon((uint8_t)(Random((uint8_t)(count.a - 1u)) + 1u));
+		wDuelDisplayedScreen = 0u;
+		// xor a clears both bytes of the dealt-damage word.
+		wDealtDamage = 0u;
+		*(wDealtDamage_PTR + 1) = 0u;
+	}
+	SwapTurn();
+	count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a < 2u)
+		return (GaleSwitchEffectResult){(count.a == 0u) ? 0x70u : 0x50u};
+	(void)SwapArenaWithBenchPokemon((uint8_t)(Random((uint8_t)(count.a - 1u)) + 1u));
+	wDuelDisplayedScreen = 0u;
+	return (GaleSwitchEffectResult){0x80u};
+}
+/* <<< factory Gale_SwitchEffect */
+
+/* >>> factory Shift_PlayerSelectEffect */
+HandleColorChangeScreenResult Shift_PlayerSelectEffect(void)
+{
+	for (;;) {
+		HandleColorChangeScreenResult selected =
+			HandleColorChangeScreen((uint8_t)(hTemp_ffa0 | 0x80u), 0u, 0u, 0u, 0u, 0u,
+				ChoosePokemonWishToColorChangeText);
+		hAIPkmnPowerEffectParam = selected.a;
+		if ((selected.f & 0x10u) != 0u)
+			return selected;
+
+		uint8_t found = 0u;
+		DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+		for (uint8_t slot = PLAY_AREA_ARENA; slot < count.a; ++slot) {
+			if (GetPlayAreaCardColor(slot) == hAIPkmnPowerEffectParam) {
+				found = 1u;
+				break;
+			}
+		}
+		if (found == 0u) {
+			SwapTurn();
+			count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+			for (uint8_t slot = PLAY_AREA_ARENA; slot < count.a; ++slot) {
+				if (GetPlayAreaCardColor(slot) == hAIPkmnPowerEffectParam) {
+					found = 1u;
+					break;
+				}
+			}
+			SwapTurn();
+		}
+		if (found != 0u)
+			return (HandleColorChangeScreenResult){hAIPkmnPowerEffectParam, 0xC0u};
+		(void)DrawWideTextBox_WaitForInput(UnableToSelectText);
+	}
+}
+/* <<< factory Shift_PlayerSelectEffect */
+
+/* >>> factory HandlePlayerMetronomeEffect */
+/* effect_functions.asm:8089-8166 */
+uint8_t HandlePlayerMetronomeEffect(uint8_t a)
+{
+	wMetronomeEnergyCost = a;
+	(void)DrawWideTextBox_WaitForInput(ChooseOppAttackToBeUsedWithMetronomeText);
+
+	HandleDefendingPokemonAttackSelectionResult selection = HandleDefendingPokemonAttackSelection();
+	if ((selection.f & 0x10u) != 0u)
+		return selection.f;
+
+	/* The asm takes the chosen card/attack pair out of the selection routine's
+	 * exit d/e. The ported callee reports only hl/f, so the pair is re-read from
+	 * the two wDuelTempList bytes its own asm loaded them out of: entry
+	 * hCurMenuItem, doubled with 8-bit wraparound. */
+	uint8_t index = (uint8_t)(hCurMenuItem + hCurMenuItem);
+	uint8_t card = gb_read8((uint16_t)(wDuelTempList_ADDR + index));
+	uint8_t attack = gb_read8((uint16_t)(wDuelTempList_ADDR + index + 1u));
+
+	wMetronomeSelectedAttack = card;
+	gb_write8((uint16_t)(wMetronomeSelectedAttack_ADDR + 1u), attack);
+
+	/* Metronome's own name, saved across the copy that overwrites it. */
+	uint8_t metronome_lo = gb_read8(wLoadedAttackName_ADDR);
+	uint8_t metronome_hi = gb_read8((uint16_t)(wLoadedAttackName_ADDR + 1u));
+	SwapTurn();
+	(void)CopyAttackDataAndDamage_FromDeckIndex(card, attack);
+	SwapTurn();
+	if (metronome_lo == gb_read8(wLoadedAttackName_ADDR) &&
+	    metronome_hi == gb_read8((uint16_t)(wLoadedAttackName_ADDR + 1u))) {
+		/* Metronome cannot be used on Metronome. `scf` keeps the wait's Z. */
+		WaitResult unable = DrawWideTextBox_WaitForInput(UnableToSelectText);
+		return (uint8_t)((unable.f & 0x80u) | 0x10u);
+	}
+
+	TryExecuteEffectCommandFunctionResult initial1 = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1, 0u, 0u, 0u);
+	if ((initial1.f & 0x10u) != 0u) {
+		/* .failed is reached with hl still holding the text id the failing
+		 * command function loaded. */
+		WaitResult refused = DrawWideTextBox_WaitForInput(initial1.hl);
+		return (uint8_t)((refused.f & 0x80u) | 0x10u);
+	}
+
+	TryExecuteEffectCommandFunctionResult initial2 = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_2, 0u, 0u, 0u);
+	if ((initial2.f & 0x10u) != 0u)
+		return (uint8_t)((initial2.f & 0x80u) | 0x10u);
+
+	hOppActionTableIndex = OPPACTION_USE_METRONOME_ATTACK;
+	wPlayerAttackingCardIndex = hTempCardIndex_ff9f;
+	wPlayerAttackingAttackIndex = wSelectedAttack;
+	uint8_t attacking_id_lo = gb_read8(wTempCardID_ccc2_ADDR);
+	uint8_t attacking_id_hi = gb_read8((uint16_t)(wTempCardID_ccc2_ADDR + 1u));
+	wPlayerAttackingCardID = attacking_id_lo;
+	gb_write8((uint16_t)(wPlayerAttackingCardID_ADDR + 1u), attacking_id_hi);
+	return (uint8_t)(attacking_id_hi == 0u ? 0x80u : 0x00u);
+}
+/* <<< factory HandlePlayerMetronomeEffect */
+
+/* >>> factory ClefairyMetronome_UseAttackEffect */
+/* effect_functions.asm:8080-8087 */
+uint8_t ClefairyMetronome_UseAttackEffect(void)
+{
+	uint8_t energy_cost = 3u;
+	return HandlePlayerMetronomeEffect(energy_cost);
+}
+/* <<< factory ClefairyMetronome_UseAttackEffect */
+
+/* >>> factory ClefableMetronome_UseAttackEffect */
+/* effect_functions.asm:7968-7970 */
+uint8_t ClefableMetronome_UseAttackEffect(void)
+{
+	uint8_t energy_cost = 1u;
+	return HandlePlayerMetronomeEffect(energy_cost);
+}
+/* <<< factory ClefableMetronome_UseAttackEffect */
+
+/* >>> factory Curse_PlayerSelectEffect */
+/* effect_functions.asm:4402. The turn is swapped for the whole selection so
+ * that the Curse user picks inside the defending player's Play Area; both exits
+ * swap it back.
+ *
+ * `.cancel` reaches its `ret` with Z still set from `cp MENU_CANCEL` (the branch
+ * that got there) and with carry freshly set by `scf`, which also clears N and
+ * H, so f is $90 on that exit, never merely $10.
+ *
+ * hl for InitializeMenuParameters is PlayAreaSelectionMenuParameters
+ * (effect_functions.asm:1419), the same $46e0 the landed
+ * DamageSwap_SelectAndSwapEffect and EnergyTrans_TransferEffect pass. */
+Curse_PlayerSelectEffectResult Curse_PlayerSelectEffect(void)
+{
+	DrawWholeScreenTextBox(ProcedureForCurseText);
+	SwapTurn();
+	hCurSelectionItem = 0u;
+	SetupPlayAreaScreen();
+	for (;;) {
+		/* .start: re-renders the list and re-seats the menu. */
+		uint8_t count = PrintPlayAreaCardList_EnableLCD().a;
+		uint16_t menu_parameters = 0x46e0u;
+		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
+		wNumMenuItems = count;
+		uint8_t restart = 0u;
+		for (;;) {
+			/* .loop_input_first */
+			DoFrame();
+			HandleMenuInputResult input = HandleMenuInput();
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			if (input.a == MENU_CANCEL) {
+				SwapTurn();
+				return (Curse_PlayerSelectEffectResult){input.a, 0x90u};
+			}
+			hCurSelectionItem = input.a;
+			hTempPlayAreaLocation_ffa1 = input.a;
+			CardDamageResult damage = GetCardDamageAndMaxHP(input.e);
+			if (damage.a == 0u) {
+				PlaySFX_InvalidChoice();
+				continue;
+			}
+			/* .picked_first: lend the card 10 HP, redraw, then take it back. */
+			DuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(hTempPlayAreaLocation_ffa1 + DUELVARS_ARENA_CARD_HP));
+			uint8_t saved_hp = gb_read8(hp.hl);
+			gb_write8(hp.hl, (uint8_t)(saved_hp + 10u));
+			(void)PrintPlayAreaCardList_EnableLCD();
+			gb_write8(hp.hl, saved_hp);
+			DrawSymbolOnPlayAreaCursor(hTempPlayAreaLocation_ffa1, 0x17u); /* SYM_HP_NOK */
+			for (;;) {
+				/* .loop_input_second */
+				DoFrame();
+				HandleMenuInputResult target = HandleMenuInput();
+				if ((target.f & 0x10u) == 0u)
+					continue;
+				hPlayAreaEffectTarget = target.a;
+				if (target.a == MENU_CANCEL) {
+					/* B press: `jr .start`, so this has to leave BOTH inner
+					 * loops and re-enter the outer one at the redraw. */
+					DrawSymbolOnPlayAreaCursor(hTempPlayAreaLocation_ffa1, 0x00u); /* SYM_SPACE */
+					EraseCursor();
+					restart = 1u;
+					break;
+				}
+				if (target.a == hTempPlayAreaLocation_ffa1)
+					continue;
+				/* .a_press with a different Pokemon: a is reloaded from
+				 * hTempPlayAreaLocation_ffa1, `or a` clears carry and sets Z
+				 * only when that first pick is the arena slot. */
+				uint8_t picked = hTempPlayAreaLocation_ffa1;
+				DrawSymbolOnPlayAreaCursor(picked, 0x00u); /* SYM_SPACE */
+				EraseCursor();
+				SwapTurn();
+				return (Curse_PlayerSelectEffectResult){picked, (uint8_t)(picked == 0u ? 0x80u : 0x00u)};
+			}
+			if (restart)
+				break;
+		}
+	}
+}
+/* <<< factory Curse_PlayerSelectEffect */
+
+/* >>> factory MrFuji_ReturnToDeckEffect */
+ShuffleCardsInDeckResult MrFuji_ReturnToDeckEffect(uint8_t b, uint8_t c, uint8_t d,
+							   uint8_t e, uint16_t hl)
+{
+	uint8_t location = hTemp_ffa0;
+	DuelistVarResult arena_card = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
+	hTempCardIndex_ff98 = arena_card.a;
+
+	uint8_t play_area_location = (uint8_t)(location | CARD_LOCATION_PLAY_AREA);
+	DuelistVarResult card_locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+	for (uint8_t deck_index = 0; deck_index < DECK_SIZE; deck_index++) {
+		if (gb_read8((uint16_t)(card_locations.hl + deck_index)) == play_area_location)
+			ReturnCardToDeck(deck_index);
+	}
+
+	EmptySlotResult empty = EmptyPlayAreaSlot(location);
+	uint16_t count_addr = (uint16_t)((empty.hl & 0xFF00u) | DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	gb_write8(count_addr, (uint8_t)(gb_read8(count_addr) - 1u));
+	ShiftResult shifted = ShiftAllPokemonToFirstPlayAreaSlots();
+	d = shifted.d;
+	e = shifted.e;
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	hl = turn.hl;
+	if ((turn.f & 0x10u) == 0u) {
+		(void)LoadCardDataToBuffer1_FromDeckIndex(hTempCardIndex_ff98);
+		uint16_t name = (uint16_t)(gb_read8(wLoadedCard1Name_ADDR) |
+			((uint16_t)gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)) << 8));
+		LoadTxRam2(name);
+		DrawLargePictureOfCard();
+		(void)DrawWideTextBox_WaitForInput(PokemonAndAllAttachedCardsWereReturnedToDeckText);
+	}
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+}
+/* <<< factory MrFuji_ReturnToDeckEffect */
+
+/* >>> factory NinetalesLure_SwitchEffect */
+void NinetalesLure_SwitchEffect(void)
+{
+	SwapTurn();
+	uint8_t e = hTemp_ffa0;
+	HandleNShieldAndTransparencyResult shield = HandleNShieldAndTransparency((uint16_t)e);
+	if (!(shield.f & 0x10u))
+		(void)SwapArenaWithBenchPokemon(e);
+	SwapTurn();
+	wDuelDisplayedScreen = 0u;
+}
+/* <<< factory NinetalesLure_SwitchEffect */
+
+/* >>> factory VictreebelLure_SwitchDefendingPokemon */
+void VictreebelLure_SwitchDefendingPokemon(void)
+{
+	SwapTurn();
+	uint8_t e = hTemp_ffa0;
+	HandleNShieldAndTransparencyResult shield = HandleNShieldAndTransparency((uint16_t)e);
+	if (!(shield.f & 0x10u))
+		(void)SwapArenaWithBenchPokemon(e);
+	SwapTurn();
+	wDuelDisplayedScreen = 0u;
+}
+/* <<< factory VictreebelLure_SwitchDefendingPokemon */
+
+/* >>> factory DancingEmbers_MultiplierEffect */
+void DancingEmbers_MultiplierEffect(void)
+{
+	LoadTxRam3(10u);
+	TossCoinATimesResult result = TossCoinATimes(8u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	SetDefiniteDamage(ATimes10(result.a));
+}
+/* <<< factory DancingEmbers_MultiplierEffect */
+
+/* >>> factory JolteonDoubleKick_MultiplierEffect */
+void JolteonDoubleKick_MultiplierEffect(void)
+{
+	LoadTxRam3(20u);
+	TossCoinATimesResult result = TossCoinATimes(2u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 10u);
+	uint8_t damage = ATimes10((uint8_t)(result.a + result.a));
+	SetDefiniteDamage(damage);
+}
+/* <<< factory JolteonDoubleKick_MultiplierEffect */
+
+/* >>> factory CometPunch_MultiplierEffect */
+void CometPunch_MultiplierEffect(void)
+{
+	LoadTxRam3(20u);
+	TossCoinATimesResult result = TossCoinATimes(4u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 20u);
+	uint8_t damage = ATimes10((uint8_t)(result.a + result.a));
+	SetDefiniteDamage(damage);
+}
+/* <<< factory CometPunch_MultiplierEffect */
+
+/* >>> factory PinMissile_MultiplierEffect */
+void PinMissile_MultiplierEffect(void)
+{
+	LoadTxRam3(20u);
+	TossCoinATimesResult result = TossCoinATimes(4u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage = ATimes10((uint8_t)(result.a + result.a));
+	SetDefiniteDamage(damage);
+}
+/* <<< factory PinMissile_MultiplierEffect */
+
+/* >>> factory DragoniteLv45Slam_MultiplierEffect */
+void DragoniteLv45Slam_MultiplierEffect(void)
+{
+	LoadTxRam3(40u);
+	TossCoinATimesResult result = TossCoinATimes(2u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage = result.a;
+	damage += damage;
+	damage += damage;
+	damage = ATimes10(damage);
+	SetDefiniteDamage(damage);
+}
+/* <<< factory DragoniteLv45Slam_MultiplierEffect */
+
+/* >>> factory FuryAttack_MultiplierEffect */
+void FuryAttack_MultiplierEffect(void)
+{
+	LoadTxRam3(10u);
+	TossCoinATimesResult result = TossCoinATimes(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	SetDefiniteDamage(ATimes10(result.a));
+}
+/* <<< factory FuryAttack_MultiplierEffect */
+
+/* >>> factory Bonemerang_MultiplierEffect */
+void Bonemerang_MultiplierEffect(void)
+{
+	LoadTxRam3(30u);
+	TossCoinATimesResult result = TossCoinATimes(2u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage_multiplier = (uint8_t)(result.a + result.a);
+	damage_multiplier = (uint8_t)(damage_multiplier + result.a);
+	SetDefiniteDamage(ATimes10(damage_multiplier));
+}
+/* <<< factory Bonemerang_MultiplierEffect */
+
+/* >>> factory CloysterSpikeCannon_MultiplierEffect */
+void CloysterSpikeCannon_MultiplierEffect(void)
+{
+	LoadTxRam3(30u);
+	TossCoinATimesResult result = TossCoinATimes(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage = result.a;
+	damage = (uint8_t)(damage + damage);
+	damage = (uint8_t)(damage + result.a);
+	SetDefiniteDamage(ATimes10(damage));
+}
+/* <<< factory CloysterSpikeCannon_MultiplierEffect */
+
+/* >>> factory DragoniteLv41Slam_MultiplierEffect */
+void DragoniteLv41Slam_MultiplierEffect(void)
+{
+	LoadTxRam3(30u);
+	TossCoinATimesResult result = TossCoinATimes(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t c = result.a;
+	uint8_t damage = (uint8_t)(result.a + result.a);
+	damage = (uint8_t)(damage + c);
+	SetDefiniteDamage(ATimes10(damage));
+}
+/* <<< factory DragoniteLv41Slam_MultiplierEffect */
+
+/* >>> factory OmastarSpikeCannon_MultiplierEffect */
+void OmastarSpikeCannon_MultiplierEffect(void)
+{
+	LoadTxRam3(30u);
+	TossCoinATimesResult result = TossCoinATimes(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage = result.a;
+	damage = (uint8_t)(damage + damage);
+	damage = (uint8_t)(damage + result.a);
+	SetDefiniteDamage(ATimes10(damage));
+}
+/* <<< factory OmastarSpikeCannon_MultiplierEffect */
+
+/* >>> factory JynxDoubleslap_MultiplierEffect */
+void JynxDoubleslap_MultiplierEffect(void)
+{
+	LoadTxRam3(10u);
+	TossCoinATimesResult result = TossCoinATimes(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	SetDefiniteDamage(ATimes10(result.a));
+}
+/* <<< factory JynxDoubleslap_MultiplierEffect */
+
+/* >>> factory PoliwhirlDoubleslap_MultiplierEffect */
+void PoliwhirlDoubleslap_MultiplierEffect(void)
+{
+	LoadTxRam3(30u);
+	TossCoinATimesResult result = TossCoinATimes(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage = result.a;
+	damage = (uint8_t)(damage + damage);
+	damage = (uint8_t)(damage + result.a);
+	SetDefiniteDamage(ATimes10(damage));
+}
+/* <<< factory PoliwhirlDoubleslap_MultiplierEffect */
+
+/* >>> factory Twineedle_MultiplierEffect */
+void Twineedle_MultiplierEffect(void)
+{
+	LoadTxRam3(30u);
+	TossCoinATimesResult result = TossCoinATimes(2u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage = (uint8_t)(result.a + result.a);
+	damage = (uint8_t)(damage + result.a);
+	SetDefiniteDamage(ATimes10(damage));
+}
+/* <<< factory Twineedle_MultiplierEffect */
+
+/* >>> factory DragonairSlam_MultiplierEffect */
+void DragonairSlam_MultiplierEffect(void)
+{
+	LoadTxRam3(30u);
+	TossCoinATimesResult result = TossCoinATimes(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage = (uint8_t)(result.a + result.a);
+	damage = (uint8_t)(damage + result.a);
+	SetDefiniteDamage(ATimes10(damage));
+}
+/* <<< factory DragonairSlam_MultiplierEffect */
+
+/* >>> factory PetalDance_MultiplierEffect */
+void PetalDance_MultiplierEffect(void)
+{
+	LoadTxRam3(40u);
+	TossCoinATimesResult result = TossCoinATimes(3u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage = ATimes10((uint8_t)(result.a << 2));
+	SetDefiniteDamage(damage);
+	SwapTurn();
+	(void)ConfusionEffect();
+	SwapTurn();
+}
+/* <<< factory PetalDance_MultiplierEffect */
+
+/* >>> factory PlayTrainerEffectAnimation */
+void PlayTrainerEffectAnimation(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)b;
+	(void)c;
+	wLoadedAttackAnimation = a;
+	ResetAttackAnimationIsPlaying();
+	PlayAttackAnimation(hWhoseTurn, f, 0u, 0u, d, e, (uint16_t)(((uint16_t)hWhoseTurn << 8) | (hl & 0xffu)));
+	WaitAttackAnimation();
+}
+/* <<< factory PlayTrainerEffectAnimation */
+
+/* >>> factory StretchKick_BenchDamageEffect */
+StretchKick_BenchDamageEffectResult StretchKick_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)b;
+	(void)d;
+	(void)e;
+	uint8_t target = hTemp_ffa0;
+	SwapTurn();
+	DealDamageToPlayAreaPokemonResult damage =
+		DealDamageToPlayAreaPokemon_RegularAnim(target, 20u, hl);
+	SwapTurn();
+	return (StretchKick_BenchDamageEffectResult){damage.a, damage.f, target, c, 0u, 20u, hl};
+}
+/* <<< factory StretchKick_BenchDamageEffect */
+
+/* >>> factory IceBreath_RandomPokemonDamageEffect */
+void IceBreath_RandomPokemonDamageEffect(void)
+{
+	SwapTurn();
+	PickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();
+	uint8_t target = random.a;
+	(void)DealDamageToPlayAreaPokemon_RegularAnim(target, 40u, 0u);
+	SwapTurn();
+}
+/* <<< factory IceBreath_RandomPokemonDamageEffect */
+
+/* >>> factory Spark_BenchDamageEffect */
+void Spark_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)b;
+	(void)c;
+	(void)d;
+	(void)e;
+	uint8_t target = hTemp_ffa0;
+	if (target == 0xffu)
+		return;
+	SwapTurn();
+	(void)DealDamageToPlayAreaPokemon_RegularAnim(target, 10u, hl);
+	SwapTurn();
+}
+/* <<< factory Spark_BenchDamageEffect */
+
+/* >>> factory CatPunchEffect */
+void CatPunchEffect(void)
+{
+	SwapTurn();
+	PickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();
+	uint8_t target = random.a;
+	wLoadedAttackAnimation = ATK_ANIM_CAT_PUNCH_PLAY_AREA;
+	(void)DealDamageToPlayAreaPokemon(target, 20u, 0u);
+	SwapTurn();
+}
+/* <<< factory CatPunchEffect */
+
+/* >>> factory Gigashock_BenchDamageEffect */
+void Gigashock_BenchDamageEffect(void)
+{
+	SwapTurn();
+	uint16_t hl = hTempList_ADDR;
+	for (;;) {
+		uint8_t target = gb_read8(hl++);
+		if (target == 0xffu)
+			break;
+		(void)DealDamageToPlayAreaPokemon_RegularAnim(target, 10u, hl);
+	}
+	SwapTurn();
+}
+/* <<< factory Gigashock_BenchDamageEffect */
+
+/* >>> factory ChainLightningEffect */
+/* effect_functions.asm:6733-6751 */
+void ChainLightningEffect(void)
+{
+	SetDefiniteDamage(10u);
+	/* the color that selects the targets is the DEFENDING card's, so the
+	 * read happens with the turn swapped; SwapTurn preserves af, which is
+	 * why the asm can store the color after swapping back. */
+	SwapTurn();
+	uint8_t color = GetArenaCardColor();
+	SwapTurn();
+	hCurSelectionItem = color;
+	if (color == COLORLESS)
+		return; /* don't damage if colorless */
+
+	/* opponent's Bench */
+	SwapTurn();
+	chain_lightning_damage_same_color_bench();
+	SwapTurn();
+
+	/* own Bench */
+	wIsDamageToSelf = TRUE;
+	chain_lightning_damage_same_color_bench();
+}
+/* <<< factory ChainLightningEffect */
+
+/* >>> factory Firegiver_AddToHandEffect */
+/* effect_functions.asm:4130. Entry a, c, de and hl are all overwritten before
+ * they are read, so b is the only entry register that survives, and it rides
+ * through to the shared ShuffleCardsInDeck tail. Both exits are that tail call,
+ * so every exit register is ShuffleCardsInDeck's. */
+ShuffleCardsInDeckResult Firegiver_AddToHandEffect(uint8_t b)
+{
+	DuelistVarResult locations = GetTurnDuelistVariable(FG_DUELVARS_CARD_LOCATIONS);
+	uint16_t list = wDuelTempList_ADDR;
+	uint8_t c = 0u;
+	for (uint8_t index = 0u; index < FG_DECK_SIZE; index++) {
+		if (gb_read8((uint16_t)(locations.hl + index)) != FG_CARD_LOCATION_DECK)
+			continue;
+		uint16_t card_id = GetCardIDFromDeckIndex(index);
+		if (GetCardType(card_id) != FG_TYPE_ENERGY_FIRE)
+			continue;
+		gb_write8(list, index);
+		list++;
+		c++;
+	}
+	gb_write8(list, FG_LIST_TERMINATOR);
+
+	/* de is never reloaded after `ld de, wDuelTempList`, so it still points at
+	 * the terminator byte that was just stored. */
+	uint8_t d = (uint8_t)(list >> 8);
+	uint8_t e = (uint8_t)list;
+
+	if (c == 0u) {
+		(void)DrawWideTextBox_WaitForInput(ThereWasNoFireEnergyText);
+		return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e),
+					  ThereWasNoFireEnergyText);
+	}
+
+	/* Random returns 0-3, `inc a` makes that 1-4, and `cp c` / `jr c` keeps the
+	 * roll only while it is below the number of cards that were found. */
+	uint8_t picked = (uint8_t)(Random(4u) + 1u);
+	if (picked >= c)
+		picked = c;
+	hCurSelectionItem = picked;
+
+	d = FG_ATK_ANIM_FIREGIVER_PLAYER;
+	if (wDuelistType != FG_DUELIST_TYPE_PLAYER)
+		d = FG_ATK_ANIM_FIREGIVER_OPP;
+	wLoadedAttackAnimation = d;
+
+	uint8_t remaining = hCurSelectionItem;
+	list = wDuelTempList_ADDR;
+	do {
+		uint8_t turn = hWhoseTurn;
+		/* `ld h, a` only replaces the high byte: l still holds the low byte
+		 * of the wDuelTempList cursor. PlayAttackAnimation and
+		 * WaitAttackAnimation both push and pop de, so d and e survive. */
+		PlayAttackAnimation(turn, 0u, FG_PLAY_AREA_ARENA, 0u, d, e,
+				    (uint16_t)(((uint16_t)turn << 8) | (list & 0xffu)));
+		WaitAttackAnimation();
+
+		uint8_t x = 18u;
+		uint8_t y = 7u;
+		e = 3u;
+		if (wLoadedAttackAnimation != FG_ATK_ANIM_FIREGIVER_PLAYER) {
+			x = 4u;
+			y = 5u;
+			e = 10u;
+		}
+		DuelistVarResult hand =
+			GetTurnDuelistVariable(FG_DUELVARS_NUMBER_OF_CARDS_IN_HAND);
+		WriteTwoDigitNumberInTxSymbolFormat((uint8_t)(hand.a + 1u), x, y);
+		DuelistVarResult deck =
+			GetTurnDuelistVariable(FG_DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+		/* `ld c, e` reuses the deck row as the y coordinate. */
+		WriteTwoDigitNumberInTxSymbolFormat((uint8_t)(FG_DECK_SIZE - 1u - deck.a),
+						    x, e);
+
+		uint8_t deck_index = gb_read8(list);
+		list++;
+		SearchCardInDeckAndAddToHand(deck_index);
+		AddCardToHand(deck_index);
+		remaining--;
+	} while (remaining != 0u);
+
+	LoadTxRam3(hCurSelectionItem);
+	(void)DrawWideTextBox_WaitForInput(DrewFireEnergyFromTheHandText);
+	return ShuffleCardsInDeck(b, 0u, (uint16_t)(((uint16_t)d << 8) | e),
+				  DrewFireEnergyFromTheHandText);
+}
+/* <<< factory Firegiver_AddToHandEffect */
+
+/* >>> factory PlayAttackAnimationOverAttackingPokemon */
+void PlayAttackAnimationOverAttackingPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)b;
+	(void)c;
+	wLoadedAttackAnimation = a;
+	uint8_t target = hTempPlayAreaLocation_ff9d;
+	uint8_t turn = hWhoseTurn;
+	PlayAttackAnimation(turn, f, target, 0u, d, e, (uint16_t)(((uint16_t)turn << 8) | (hl & 0xffu)));
+	WaitAttackAnimation();
+}
+/* <<< factory PlayAttackAnimationOverAttackingPokemon */
+
+/* >>> factory PokemonTrader_PlayerHandSelection */
+void PokemonTrader_PlayerHandSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseCardFromYourHandToSwitchText);
+	(void)CreatePokemonCardListFromHand();
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistHandText, ChooseCardToSwitchText);
+	DisplayCardListResult result = DisplayCardList();
+	hTemp_ffa0 = result.a;
+}
+/* <<< factory PokemonTrader_PlayerHandSelection */
+
+/* >>> factory EnergyRetrieval_PlayerDiscardPileSelection */
+EnergyRetrieval_PlayerDiscardPileSelectionResult EnergyRetrieval_PlayerDiscardPileSelection(void)
+{
+	hCurSelectionItem = 1u;
+	(void)DrawWideTextBox_WaitForInput(Choose2BasicEnergyCardsFromDiscardPileText);
+	(void)CreateEnergyCardListFromDiscardPile_OnlyBasic();
+	for (;;) {
+		(void)InitAndDrawCardListScreenLayout();
+		SetCardListHeaderText(PlayerDiscardPileText, PleaseSelectCardText);
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) == 0u) {
+			uint16_t position = GetNextPositionInTempList_TrainerEffects();
+			gb_write8(position, hTempCardIndex_ff98);
+			TempListResult removed = RemoveCardFromDuelTempList(hTempCardIndex_ff98);
+			if ((removed.f & 0x10u) != 0u)
+				break;
+			if (hCurSelectionItem >= 3u)
+				break;
+			continue;
+		}
+		AskWhetherToQuitSelectingCardsResult quit = AskWhetherToQuitSelectingCards(3u);
+		if ((quit.f & 0x10u) != 0u)
+			continue;
+		break;
+	}
+	uint16_t position = GetNextPositionInTempList_TrainerEffects();
+	gb_write8(position, 0xffu);
+	uint8_t a = (uint8_t)(hCurSelectionItem - 1u);
+	return (EnergyRetrieval_PlayerDiscardPileSelectionResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u)};
+}
+/* <<< factory EnergyRetrieval_PlayerDiscardPileSelection */
+
+/* >>> factory EnergyRetrieval_PlayerHandSelection */
+void EnergyRetrieval_PlayerHandSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseCardToDiscardFromHandText);
+	(void)CreateHandCardList(0u);
+	(void)RemoveCardFromDuelTempList(hTempCardIndex_ff9f);
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	(void)DisplayCardList();
+	hTempList = hTempCardIndex_ff98;
+}
+/* <<< factory EnergyRetrieval_PlayerHandSelection */
+
+/* >>> factory HandleEnergyCardsInDiscardPileSelection */
+HandleEnergyCardsInDiscardPileSelectionResult HandleEnergyCardsInDiscardPileSelection(uint16_t hl)
+{
+	hCurSelectionItem = 0u;
+	CreateEnergyCardListFromDiscardPileResult list =
+		CreateEnergyCardListFromDiscardPile_AllEnergy();
+	if ((list.f & 0x10u) == 0u) {
+		(void)DrawWideTextBox_WaitForInput(hl);
+		for (;;) {
+			(void)InitAndDrawCardListScreenLayout();
+			SetCardListHeaderText(PlayerDiscardPileText, ChooseAnEnergyCardText);
+			DisplayCardListResult display = DisplayCardList();
+			if ((display.f & 0x10u) == 0u) {
+				uint16_t position = GetNextPositionInTempList();
+				gb_write8(position, hTempCardIndex_ff98);
+				TempListResult removed = RemoveCardFromDuelTempList(hTempCardIndex_ff98);
+				if (removed.a == 0u)
+					break;
+				if (hCurSelectionItem >= 2u)
+					break;
+				continue;
+			}
+			AskWhetherToQuitSelectingCardsResult quit =
+				AskWhetherToQuitSelectingCards(2u);
+			if ((quit.f & 0x10u) != 0u)
+				continue;
+			break;
+		}
+	}
+	uint8_t a = hCurSelectionItem;
+	uint16_t position = GetNextPositionInTempList();
+	gb_write8(position, 0xffu);
+	return (HandleEnergyCardsInDiscardPileSelectionResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u), position};
+}
+/* <<< factory HandleEnergyCardsInDiscardPileSelection */
+
+/* >>> factory EnergyConversion_PlayerSelectEffect */
+HandleEnergyCardsInDiscardPileSelectionResult EnergyConversion_PlayerSelectEffect(void)
+{
+	return HandleEnergyCardsInDiscardPileSelection(Choose2EnergyCardsFromDiscardPileForHandText);
+}
+/* <<< factory EnergyConversion_PlayerSelectEffect */
+
+/* >>> factory FetchEffect */
+void FetchEffect(void)
+{
+	(void)DrawWideTextBox_WaitForInput(Draw1CardFromTheDeckText);
+	DisplayDrawOneCardScreen(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	DrawCardResult draw = DrawCardFromDeck();
+	if ((draw.f & 0x10u) != 0u)
+		return;
+	AddCardToHand(draw.a);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(draw.a);
+	if (wDuelistType != DUELIST_TYPE_PLAYER)
+		return;
+	OpenCardPage_FromHand(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+}
+/* <<< factory FetchEffect */
+
+/* >>> factory ProfessorOakEffect */
+void ProfessorOakEffect(void)
+{
+	HandListResult hand = CreateHandCardList(0u);
+	uint16_t de = (uint16_t)(((uint16_t)hand.d << 8) | hand.e);
+	SortResult sorted = SortCardsInDuelTempListByID(hand.b, hand.c, de);
+	/* effect_functions.asm:9214-9221: the sorted hand goes to the discard
+	 * pile, lowest card id first. */
+	for (uint16_t entry = wDuelTempList_ADDR;; entry++) {
+		uint8_t card = gb_read8(entry);
+		if (card == 0xFFu)
+			break;
+		RemoveCardFromHand(card);
+		PutCardInDiscardPile(card);
+	}
+	uint8_t draw_count = 7u;
+	DisplayDrawNCardsScreen(draw_count, sorted.f, sorted.b, sorted.c, sorted.d, sorted.e, sorted.hl);
+	uint8_t remaining = 7u;
+	while (remaining != 0u) {
+		DrawCardResult card = DrawCardFromDeck();
+		if (card.f & 0x10u)
+			break;
+		AddCardToHand(card.a);
+		--remaining;
+	}
+}
+/* <<< factory ProfessorOakEffect */
+
+/* >>> factory Maintenance_ReturnToDeckAndDrawEffect */
+MaintenanceReturnToDeckAndDrawEffectResult Maintenance_ReturnToDeckAndDrawEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)f;
+	uint8_t first = hTempList;
+	RemoveCardFromHand(first);
+	ReturnCardToDeck(first);
+	uint8_t second = (uint8_t)gb_read8((uint16_t)(hTempList_ADDR + 1u));
+	RemoveCardFromHand(second);
+	ReturnCardToDeck(second);
+	ShuffleCardsInDeckResult shuffled = ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+	DisplayDrawNCardsScreen(1u, shuffled.f, shuffled.b, shuffled.c, shuffled.d, shuffled.e, shuffled.hl);
+	DrawCardResult drawn = DrawCardFromDeck();
+	hTempCardIndex_ff98 = drawn.a;
+	AddCardToHand(drawn.a);
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if ((turn.f & 0x10u) != 0u) {
+		WaitResult shown = DisplayPlayerDrawCardScreen();
+		return (MaintenanceReturnToDeckAndDrawEffectResult){turn.a, shown.f};
+	}
+	return (MaintenanceReturnToDeckAndDrawEffectResult){turn.a, turn.f};
+}
+/* <<< factory Maintenance_ReturnToDeckAndDrawEffect */
+
+/* >>> factory ThunderJolt_RecoilEffect */
+ThunderJolt_RecoilEffectResult ThunderJolt_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)
+{
+	LoadTxRam3(10u);
+	uint8_t coin = hTemp_ffa0;
+	if (coin != 0u)
+		return (ThunderJolt_RecoilEffectResult){coin, 0x00u};
+	DealConfusionDamageToSelfResult result =
+		DealRecoilDamageToSelf(10u, f, d, e);
+	return (ThunderJolt_RecoilEffectResult){result.a, result.f};
+}
+/* <<< factory ThunderJolt_RecoilEffect */
+
+/* >>> factory BillEffect */
+void BillEffect(void)
+{
+	DisplayDrawNCardsScreen(2u, 0u, 0u, 0u, 0u, 0u, 0u);
+	uint8_t remaining = 2u;
+	while (remaining != 0u) {
+		DrawCardResult draw = DrawCardFromDeck();
+		if ((draw.f & 0x10u) != 0u)
+			break;
+		hTempCardIndex_ff98 = draw.a;
+		AddCardToHand(draw.a);
+		IsPlayerTurnResult turn = IsPlayerTurn();
+		if ((turn.f & 0x10u) != 0u) {
+			(void)DisplayPlayerDrawCardScreen();
+		}
+		--remaining;
+	}
+}
+/* <<< factory BillEffect */
+
+/* >>> factory ImposterProfessorOakEffect */
+void ImposterProfessorOakEffect(void)
+{
+	SwapTurn();
+	HandListResult hand = CreateHandCardList(0u);
+	uint16_t de = (uint16_t)(((uint16_t)hand.d << 8) | hand.e);
+	SortResult sorted = SortCardsInDuelTempListByID(hand.b, hand.c, de);
+	uint16_t hl = wDuelTempList_ADDR;
+	while (gb_read8(hl) != 0xFFu) {
+		uint8_t card = gb_read8(hl);
+		++hl;
+		RemoveCardFromHand(card);
+		ReturnCardToDeck(card);
+	}
+	++hl;
+	ShuffleCardsInDeckResult shuffled = ShuffleCardsInDeck(sorted.b, sorted.c, (uint16_t)(((uint16_t)sorted.d << 8) | sorted.e), hl);
+	uint8_t draw_count = 7u;
+	DisplayDrawNCardsScreen(draw_count, shuffled.f, shuffled.b, shuffled.c, shuffled.d, shuffled.e, shuffled.hl);
+	uint8_t remaining = 7u;
+	while (remaining != 0u) {
+		DrawCardResult card = DrawCardFromDeck();
+		if ((card.f & 0x10u) != 0u)
+			break;
+		AddCardToHand(card.a);
+		--remaining;
+	}
+	SwapTurn();
+}
+/* <<< factory ImposterProfessorOakEffect */
+
+/* >>> factory HandlePlayerSelection2HandCards */
+HandlePlayerSelection2HandCardsResult HandlePlayerSelection2HandCards(uint16_t de, uint16_t hl)
+{
+	(void)DrawWideTextBox_WaitForInput(hl);
+	(void)CreateHandCardList(0u);
+	uint8_t trainer = hTempCardIndex_ff9f;
+	(void)RemoveCardFromDuelTempList(trainer);
+	hCurSelectionItem = 0u;
+	for (;;) {
+		(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+		SetCardListInfoBoxText(de);
+		DisplayCardListResult displayed = DisplayCardList();
+		if ((displayed.f & 0x10u) != 0u)
+			return (HandlePlayerSelection2HandCardsResult){displayed.a, 0x10u};
+		uint16_t position = GetNextPositionInTempList_TrainerEffects();
+		uint8_t selected = hTempCardIndex_ff98;
+		gb_write8(position, selected);
+		(void)RemoveCardFromDuelTempList(selected);
+		if (hCurSelectionItem < 2u)
+			continue;
+		return (HandlePlayerSelection2HandCardsResult){hCurSelectionItem, 0x00u};
+	}
+}
+/* <<< factory HandlePlayerSelection2HandCards */
+
+/* >>> factory HandlePlayerSelection2HandCardsToDiscard */
+HandlePlayerSelection2HandCardsResult HandlePlayerSelection2HandCardsToDiscard(void)
+{
+	return HandlePlayerSelection2HandCards(ChooseTheCardToDiscardText, Choose2CardsFromHandToDiscardText);
+}
+/* <<< factory HandlePlayerSelection2HandCardsToDiscard */
+
+/* >>> factory SuperEnergyRetrieval_PlayerHandSelection */
+HandlePlayerSelection2HandCardsResult SuperEnergyRetrieval_PlayerHandSelection(void)
+{
+	return HandlePlayerSelection2HandCardsToDiscard();
+}
+/* <<< factory SuperEnergyRetrieval_PlayerHandSelection */
+
+/* >>> factory Maintenance_PlayerSelection */
+HandlePlayerSelection2HandCardsResult Maintenance_PlayerSelection(void)
+{
+	return HandlePlayerSelection2HandCards(ChooseTheCardToPutBackText, Choose2HandCardsFromHandToReturnToDeckText);
+}
+/* <<< factory Maintenance_PlayerSelection */
+
+/* >>> factory ItemFinder_PlayerSelection */
+ItemFinderPlayerSelectionResult ItemFinder_PlayerSelection(void)
+{
+	HandlePlayerSelection2HandCardsResult hand = HandlePlayerSelection2HandCardsToDiscard();
+	if ((hand.f & 0x10u) != 0u)
+		return (ItemFinderPlayerSelectionResult){hand.a, hand.f};
+	(void)CreateTrainerCardListFromDiscardPile();
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(PlayerDiscardPileText, ChooseCardToPlaceInHandText);
+	DisplayCardListResult display = DisplayCardList();
+	gb_write8(hTempList_ADDR + 2u, display.a);
+	return (ItemFinderPlayerSelectionResult){display.a, display.f};
+}
+/* <<< factory ItemFinder_PlayerSelection */
+
+/* >>> factory SlicingWindEffect */
+SlicingWindEffectResult SlicingWindEffect(void)
+{
+	SwapTurn();
+	PickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();
+	uint8_t target = random.a;
+	(void)DealDamageToPlayAreaPokemon_RegularAnim(target, 30u, 0u);
+	SwapTurn();
+	return (SlicingWindEffectResult){0u, 30u};
+}
+/* <<< factory SlicingWindEffect */
+
+/* >>> factory SuperEnergyRetrieval_PlayerDiscardPileSelection */
+SuperEnergyRetrievalPlayerDiscardPileSelectionResult SuperEnergyRetrieval_PlayerDiscardPileSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseUpTo4FromDiscardPileText);
+	(void)CreateEnergyCardListFromDiscardPile_OnlyBasic();
+	for (;;) {
+		(void)InitAndDrawCardListScreenLayout();
+		SetCardListHeaderText(PlayerDiscardPileText, PleaseSelectCardText);
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) != 0u) {
+			AskWhetherToQuitSelectingCardsResult quit = AskWhetherToQuitSelectingCards(6u);
+			if ((quit.f & 0x10u) != 0u)
+				continue;
+			break;
+		}
+		uint8_t selected = hTempCardIndex_ff98;
+		(void)GetTurnDuelistVariable(selected);
+		uint16_t position = GetNextPositionInTempList_TrainerEffects();
+		gb_write8(position, selected);
+		TempListResult removed = RemoveCardFromDuelTempList(selected);
+		if ((removed.f & 0x10u) != 0u)
+			break;
+		if (hCurSelectionItem >= 6u)
+			break;
+	}
+	uint8_t final_a = hCurSelectionItem;
+	uint16_t terminator = GetNextPositionInTempList_TrainerEffects();
+	gb_write8(terminator, 0xffu);
+	return (SuperEnergyRetrievalPlayerDiscardPileSelectionResult){final_a, (final_a == 0u) ? 0x80u : 0x00u};
+}
+/* <<< factory SuperEnergyRetrieval_PlayerDiscardPileSelection */
+
+/* >>> factory ComputerSearch_PlayerDiscardHandSelection */
+HandlePlayerSelection2HandCardsResult ComputerSearch_PlayerDiscardHandSelection(void)
+{
+	return HandlePlayerSelection2HandCardsToDiscard();
+}
+/* <<< factory ComputerSearch_PlayerDiscardHandSelection */
+
+/* >>> factory Pokedex_PlayerSelection */
+PokedexPlayerSelectionResult Pokedex_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(RearrangeThe5CardsAtTopOfDeckText);
+
+	/* Cap the number of cards to reorder at what is left in the deck, five at
+	 * most. `sub [hl]` re-reads the byte GetTurnDuelistVariable already handed
+	 * back in a. */
+	DuelistVarResult not_in_deck = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	uint8_t taken = not_in_deck.a;
+	uint8_t left = (uint8_t)(DECK_SIZE - taken);
+	uint8_t count = 5u;
+
+	if (left < count)
+		count = left;
+	wNumberOfCardsToOrder = (uint8_t)(count + 1u);
+
+	/* `ld l, a` writes only l, so h stays the duelist page GetTurnDuelistVariable
+	 * returned and the offset wraps inside that page. */
+	uint16_t source = (uint16_t)((not_in_deck.hl & 0xFF00u)
+				     | (uint8_t)(taken + DUELVARS_DECK_CARDS));
+	uint16_t dest = wDuelTempList_ADDR;
+	uint8_t remaining = count;
+
+	do {
+		gb_write8(dest, gb_read8(source));
+		source = (uint16_t)(source + 1u);
+		dest = (uint16_t)(dest + 1u);
+		remaining--;
+	} while (remaining != 0u);
+	gb_write8(dest, 0xFFu);
+
+	for (;;) {
+		/* .clear_list: one zeroed ordering slot per listed card. */
+		uint8_t entries = CountCardsInDuelTempList().a;
+		uint16_t order = (uint16_t)(wDuelTempList_ADDR + 10u);
+
+		hCurSelectionItem = 1u;
+		do {
+			gb_write8(order, 0u);
+			order = (uint16_t)(order + 1u);
+			entries--;
+		} while (entries != 0u);
+		gb_write8(order, 0xFFu);
+
+		{
+			uint8_t bank = hBankROM;
+			BankswitchROM(Pokedex_PlayerSelection_BANK_DUEL_CORE);
+			(void)InitAndDrawCardListScreenLayout();
+			BankswitchROM(bank);
+		}
+		{
+			uint8_t bank = hBankROM;
+			BankswitchROM(Pokedex_PlayerSelection_BANK_DUEL_CORE);
+			SetCardListHeaderText(DuelistDeckText, ChooseTheOrderOfTheCardsText);
+			BankswitchROM(bank);
+		}
+		{
+			uint8_t bank = hBankROM;
+			BankswitchROM(Pokedex_PlayerSelection_BANK_DUEL_CORE);
+			PrintSortNumberInCardList_SetPointer();
+			BankswitchROM(bank);
+		}
+
+		for (;;) {
+			/* .read_input */
+			DisplayCardListResult display;
+
+			{
+				uint8_t bank = hBankROM;
+				BankswitchROM(Pokedex_PlayerSelection_BANK_DUEL_CORE);
+				display = DisplayCardList();
+				BankswitchROM(bank);
+			}
+			if ((display.f & 0x10u) != 0u) {
+				/* .undo: B takes the last ordering number back. */
+				uint8_t selection = hCurSelectionItem;
+				uint16_t scan;
+
+				if (selection == 1u)
+					continue; /* nothing has been ordered yet */
+				selection--;
+				hCurSelectionItem = selection;
+				scan = (uint16_t)(wDuelTempList_ADDR + 10u);
+				while (gb_read8(scan) != selection)
+					scan = (uint16_t)(scan + 1u);
+				gb_write8(scan, 0u);
+				{
+					uint8_t bank = hBankROM;
+					BankswitchROM(Pokedex_PlayerSelection_BANK_DUEL_CORE);
+					PrintSortNumberInCardList_CallFromPointer();
+					BankswitchROM(bank);
+				}
+				continue;
+			}
+
+			uint16_t slot = (uint16_t)(wDuelTempList_ADDR + 10u + hCurMenuItem);
+
+			if (gb_read8(slot) != 0u)
+				continue; /* this card already carries an ordering number */
+			gb_write8(slot, hCurSelectionItem);
+			hCurSelectionItem = (uint8_t)(hCurSelectionItem + 1u);
+			{
+				uint8_t bank = hBankROM;
+				BankswitchROM(Pokedex_PlayerSelection_BANK_DUEL_CORE);
+				PrintSortNumberInCardList_CallFromPointer();
+				BankswitchROM(bank);
+			}
+			if (hCurSelectionItem < wNumberOfCardsToOrder)
+				continue; /* still more cards to number */
+
+			EraseCursor();
+			if ((YesOrNoMenuWithText_LeftAligned(IsThisOKText, 0u, 0u).f & 0x10u) != 0u)
+				break; /* "No": start over from .clear_list */
+
+			{
+				/* Overwrite hTempList with the card indices in pick order. */
+				uint16_t picked = (uint16_t)(wDuelTempList_ADDR + 10u);
+				uint16_t cards = wDuelTempList_ADDR;
+				uint8_t written = 0u;
+				uint8_t number;
+
+				for (;;) {
+					number = gb_read8(picked);
+					picked = (uint16_t)(picked + 1u);
+					if (number == 0xFFu)
+						break;
+					gb_write8((uint16_t)(hTempCardIndex_ff9f_ADDR + number),
+						  gb_read8(cards));
+					cards = (uint16_t)(cards + 1u);
+					written++;
+				}
+				/* `or a` runs on the $ff the walk stopped on, so carry and the
+				 * subtract flag clear and only Z can be set. */
+				gb_write8((uint16_t)(hTempList_ADDR + written), 0xFFu);
+				return (PokedexPlayerSelectionResult){number,
+					(uint8_t)(number == 0u ? 0x80u : 0x00u)};
+			}
+		}
+	}
+}
+/* <<< factory Pokedex_PlayerSelection */
+
+/* >>> factory Thrash_RecoilEffect */
+Thrash_RecoilEffectResult Thrash_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)
+{
+	uint8_t coin = hTemp_ffa0;
+	if (coin != 0u)
+		return (Thrash_RecoilEffectResult){coin, 0x00u};
+	DealConfusionDamageToSelfResult result =
+		DealRecoilDamageToSelf(10u, f, d, e);
+	return (Thrash_RecoilEffectResult){result.a, result.f};
+}
+/* <<< factory Thrash_RecoilEffect */
+
+/* >>> factory BigEggsplosion_MultiplierEffect */
+/* effect_functions.asm:1836-1850 */
+void BigEggsplosion_MultiplierEffect(void)
+{
+	GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	LoadTxRam3(20u);
+	TossCoinATimesResult result = TossCoinATimes(wTotalAttachedEnergies, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 20u);
+	SetDamageToATimes20(result.a);
+}
+/* <<< factory BigEggsplosion_MultiplierEffect */
+
+/* >>> factory PokemonFlute_PlayerSelection */
+void PokemonFlute_PlayerSelection(void)
+{
+	SwapTurn();
+	(void)CreateBasicPokemonCardListFromDiscardPile();
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(PlayerDiscardPileText, ChoosePokemonToPlaceInPlayText);
+	(void)DisplayCardList();
+	SwapTurn();
+	hTemp_ffa0 = hTempCardIndex_ff98;
+}
+/* <<< factory PokemonFlute_PlayerSelection */
+
+/* >>> factory DevolutionBeam_DevolveEffect */
+/* effect_functions.asm:5237-5364 */
+void DevolutionBeam_DevolveEffect(uint8_t d, uint8_t e)
+{
+	uint8_t target = hTemp_ffa0;
+	if (target == 0xffu) {
+		return;
+	}
+	if (target != 0u) {
+		SwapTurn();
+		uint8_t location = hTempPlayAreaLocation_ffa1;
+		if (location == 0u) {
+			HandleNoDamageOrEffectResult no_effect = HandleNoDamageOrEffect(0u);
+			if ((no_effect.f & 0x10u) != 0u) {
+				SwapTurn();
+				return;
+			}
+		}
+	}
+	wLoadedAttackAnimation = ATK_ANIM_DEVOLUTION_BEAM;
+	uint8_t location = hTempPlayAreaLocation_ffa1;
+	PlayAttackAnimation(hWhoseTurn, 0u, location, 0u, d, e, (uint16_t)(((uint16_t)hWhoseTurn << 8) | location));
+	WaitAttackAnimation();
+	hTempPlayAreaLocation_ff9d = location;
+	wTempPlayAreaLocation_cceb = location;
+	DuelistVarResult var = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location));
+	uint8_t deck_index = LoadCardDataToBuffer1_FromDeckIndex(var.a);
+	wTempNonTurnDuelistCardID = wLoadedCard1ID;
+	uint16_t hl = var.hl;
+	if (hTempPlayAreaLocation_ff9d == 0u) {
+		NoDamageOrEffectResult substatus = HandleNoDamageOrEffectSubstatus(0u, 0u, hl);
+		if ((substatus.f & 0x10u) == 0u)
+			hl = substatus.hl;
+	}
+	HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult reduction =
+		HandleDamageReductionOrNoDamageFromPkmnPowerEffects(0u, hl);
+	if ((reduction.f & 0x10u) == 0u)
+		hl = reduction.hl;
+	NoDamageOrEffectCheckResult check = CheckNoDamageOrEffect(hl);
+	if ((check.f & 0x10u) != 0u) {
+		(void)DrawWideTextBox_WaitForInput(hl);
+		return;
+	}
+	hTempPlayAreaLocation_ff9d = location;
+	var = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location));
+	CardOneStageBelowResult below = GetCardOneStageBelow(0u, var.a);
+	PrintDevolvedCardNameAndLevelText(0u, 0u, below.d, below.e);
+	UpdateDevolvedCardHPAndStage(below.d);
+	(void)ResetDevolvedCardStatus();
+	AddCardToHand(below.e);
+	(void)PrintPlayAreaCardKnockedOutIfNoHP(location);
+	wDuelDisplayedScreen = 0u;
+	(void)deck_index;
+}
+/* <<< factory DevolutionBeam_DevolveEffect */
+
+/* >>> factory MarowakCallForFamily_PlayerSelectEffect */
+MarowakCallForFamily_PlayerSelectEffectResult MarowakCallForFamily_PlayerSelectEffect(void)
+{
+	hTemp_ffa0 = 0xffu;
+	CardListResult deck = CreateDeckCardList(0u, 0u);
+	LookForCardsInDeckResult search = LookForCardsInDeck(
+		deck.a, (uint8_t)(FightingPokemonDeckText >> 8),
+		(uint8_t)FightingPokemonDeckText, SEARCHEFFECT_BASIC_FIGHTING,
+		0u, ChooseBasicFightingPokemonFromDeckText);
+	if ((search.f & 0x10u) != 0u)
+		return (MarowakCallForFamily_PlayerSelectEffectResult){search.a, search.f};
+
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChooseBasicFightingPokemonText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) != 0u) {
+			DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+			uint16_t hl = locations.hl;
+			for (;;) {
+				if (gb_read8(hl) == CARD_LOCATION_DECK) {
+					uint8_t index = (uint8_t)hl;
+					(void)LoadCardDataToBuffer2_FromDeckIndex(index);
+					if (wLoadedCard1Type == FIGHTING && wLoadedCard1Stage == 0u)
+						break;
+				}
+				hl = (uint16_t)((hl & 0xff00u) | (uint8_t)(hl + 1u));
+				if ((uint8_t)hl >= DECK_SIZE) {
+					hTemp_ffa0 = 0xffu;
+					return (MarowakCallForFamily_PlayerSelectEffectResult){0xffu, 0x00u};
+				}
+			}
+			PlaySFX_InvalidChoice();
+			continue;
+		}
+		(void)LoadCardDataToBuffer2_FromDeckIndex(display.a);
+		if (wLoadedCard2Type != FIGHTING || wLoadedCard2Stage != 0u) {
+			PlaySFX_InvalidChoice();
+			continue;
+		}
+		uint8_t selected = hTempCardIndex_ff98;
+		hTemp_ffa0 = selected;
+		return (MarowakCallForFamily_PlayerSelectEffectResult){selected,
+			(uint8_t)(selected == 0u ? 0x80u : 0x00u)};
+	}
+}
+/* <<< factory MarowakCallForFamily_PlayerSelectEffect */
+
+/* >>> factory DealDamageToAllBenchedPokemon */
+DealDamageToAllBenchedPokemonResult DealDamageToAllBenchedPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)hl;
+	uint8_t animation = a;
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t count_value = count.a;
+	a = count_value;
+	d = 0u;
+	e = animation;
+	b = PLAY_AREA_ARENA;
+	uint8_t old_c = c;
+	c = count_value;
+	++b;
+	old_c = c;
+	--c;
+	f = (uint8_t)((f & 0x10u) | 0x40u | (c == 0u ? 0x80u : 0u) | ((old_c & 0x0fu) == 0u ? 0x20u : 0u));
+	while (c != 0u) {
+		DealDamageToPlayAreaPokemonResult damage =
+			DealDamageToPlayAreaPokemon_RegularAnim(b, (uint16_t)animation, count.hl);
+		a = damage.a;
+		f = damage.f;
+		old_c = c;
+		++b;
+		--c;
+		f = (uint8_t)((f & 0x10u) | 0x40u | (c == 0u ? 0x80u : 0u) | ((old_c & 0x0fu) == 0u ? 0x20u : 0u));
+	}
+	return (DealDamageToAllBenchedPokemonResult){a, f, b, c, d, e, count.hl};
+}
+/* <<< factory DealDamageToAllBenchedPokemon */
+
+/* >>> factory HandleProphecyScreen */
+ProphecyScreenResult HandleProphecyScreen(void)
+{
+	DuelistVarResult deck = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	uint8_t not_in_deck = deck.a;
+	uint8_t cards_in_deck = (uint8_t)(DECK_SIZE - not_in_deck);
+	uint8_t to_order = 3u;
+	if (cards_in_deck < to_order)
+		to_order = cards_in_deck;
+	wNumberOfCardsToOrder = (uint8_t)(to_order + 1u);
+	uint16_t src = (uint16_t)((deck.hl & 0xff00u) | (uint8_t)(not_in_deck + DUELVARS_DECK_CARDS));
+	uint16_t dst = wDuelTempList_ADDR;
+	uint8_t left = to_order;
+	do {
+		gb_write8(dst, gb_read8(src));
+		dst = (uint16_t)(dst + 1u);
+		src = (uint16_t)(src + 1u);
+		left--;
+	} while (left != 0u);
+	gb_write8(dst, 0xffu);
+	for (;;) {
+		uint8_t count = CountCardsInDuelTempList().a;
+		hCurSelectionItem = 1u;
+		uint16_t order = (uint16_t)(wDuelTempList_ADDR + 10u);
+		uint16_t p = order;
+		uint8_t n = count;
+		while (n != 0u) { gb_write8(p, 0u); p = (uint16_t)(p + 1u); n--; }
+		gb_write8(p, 0xffu);
+		{ uint8_t bank = hBankROM; BankswitchROM(HandleProphecyScreen_BANK_DUEL_CORE); (void)InitAndDrawCardListScreenLayout(); BankswitchROM(bank); }
+		{ uint8_t bank = hBankROM; BankswitchROM(HandleProphecyScreen_BANK_DUEL_CORE); SetCardListHeaderText(DuelistDeckText, ChooseTheOrderOfTheCardsText); BankswitchROM(bank); }
+		{ uint8_t bank = hBankROM; BankswitchROM(HandleProphecyScreen_BANK_DUEL_CORE); PrintSortNumberInCardList_SetPointer(); BankswitchROM(bank); }
+		for (;;) {
+			DisplayCardListResult shown;
+			{ uint8_t bank = hBankROM; BankswitchROM(HandleProphecyScreen_BANK_DUEL_CORE); shown = DisplayCardList(); BankswitchROM(bank); }
+			if ((shown.f & 0x10u) != 0u) {
+				if (hCurSelectionItem == 1u) continue;
+				hCurSelectionItem--;
+				uint8_t sort = hCurSelectionItem;
+				p = order;
+				while (gb_read8(p) != sort) p = (uint16_t)(p + 1u);
+				gb_write8(p, 0u);
+				{ uint8_t bank = hBankROM; BankswitchROM(HandleProphecyScreen_BANK_DUEL_CORE); PrintSortNumberInCardList_CallFromPointer(); BankswitchROM(bank); }
+				continue;
+			}
+			p = (uint16_t)(order + hCurMenuItem);
+			if (gb_read8(p) != 0u) continue;
+			gb_write8(p, hCurSelectionItem);
+			hCurSelectionItem++;
+			{ uint8_t bank = hBankROM; BankswitchROM(HandleProphecyScreen_BANK_DUEL_CORE); PrintSortNumberInCardList_CallFromPointer(); BankswitchROM(bank); }
+			if (hCurSelectionItem < wNumberOfCardsToOrder) continue;
+			EraseCursor();
+			if ((YesOrNoMenuWithText_LeftAligned(IsThisOKText, 0u, 0u).f & 0x10u) != 0u) break;
+			p = order; dst = wDuelTempList_ADDR; uint8_t written = 0u; uint8_t a;
+			for (;;) { a = gb_read8(p); p = (uint16_t)(p + 1u); if (a == 0xffu) break; gb_write8((uint16_t)(hTempList_ADDR + a), gb_read8(dst)); dst = (uint16_t)(dst + 1u); written++; }
+			gb_write8((uint16_t)(hTempList_ADDR + 1u + written), 0xffu);
+			return (ProphecyScreenResult){a, (uint8_t)(a == 0u ? 0x80u : 0u)};
+		}
+	}
+}
+/* <<< factory HandleProphecyScreen */
+
+/* >>> factory EarthquakeEffect */
+DealDamageToAllBenchedPokemonResult EarthquakeEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	wIsDamageToSelf = TRUE;
+	return DealDamageToAllBenchedPokemon(10u, f, b, c, d, e, hl);
+}
+/* <<< factory EarthquakeEffect */
+
+/* >>> factory Blizzard_BenchDamageEffect */
+DealDamageToAllBenchedPokemonResult Blizzard_BenchDamageEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)f;
+	if (hTemp_ffa0 == 0u) {
+		wIsDamageToSelf = TRUE;
+		return DealDamageToAllBenchedPokemon(10u, 0x80u, b, c, d, e, hl);
+	}
+	SwapTurn();
+	DealDamageToAllBenchedPokemonResult result =
+		DealDamageToAllBenchedPokemon(10u, 0x00u, b, c, d, e, hl);
+	SwapTurn();
+	return result;
+}
+/* <<< factory Blizzard_BenchDamageEffect */
+
+/* >>> factory Thunderpunch_RecoilEffect */
+Thunderpunch_RecoilEffectResult Thunderpunch_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)
+{
+	uint8_t coin = hTemp_ffa0;
+	if (coin != 0u)
+		return (Thunderpunch_RecoilEffectResult){coin, 0x00u};
+	DealConfusionDamageToSelfResult result =
+		DealRecoilDamageToSelf(10u, f, d, e);
+	return (Thunderpunch_RecoilEffectResult){result.a, result.f};
+}
+/* <<< factory Thunderpunch_RecoilEffect */
+
+/* >>> factory Revive_PlayerSelection */
+void Revive_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseBasicPokemonToPlaceOnBenchText);
+	(void)CreateBasicPokemonCardListFromDiscardPile();
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(PlayerDiscardPileText, PleaseSelectCardText);
+	(void)DisplayCardList();
+	hTemp_ffa0 = hTempCardIndex_ff98;
+}
+/* <<< factory Revive_PlayerSelection */
+
+/* >>> factory BellsproutCallForFamily_PlayerSelectEffect */
+BellsproutCallForFamily_PlayerSelectEffectResult BellsproutCallForFamily_PlayerSelectEffect(void)
+{
+	hTemp_ffa0 = 0xffu;
+	CardListResult deck = CreateDeckCardList(0u, 0u);
+	LookForCardsInDeckResult search = LookForCardsInDeck(
+		deck.a, (uint8_t)(BellsproutText >> 8),
+		(uint8_t)BellsproutText, SEARCHEFFECT_CARD_ID, BELLSPROUT,
+		ChooseABellsproutFromDeckText);
+	if ((search.f & 0x10u) != 0u)
+		return (BellsproutCallForFamily_PlayerSelectEffectResult){search.a, search.f};
+
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChooseABellsproutText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) == 0u) {
+			uint16_t card_id = GetCardIDFromDeckIndex(display.a);
+			uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
+				(uint8_t)card_id, 0u, BELLSPROUT);
+			if ((compare & 0x80u) != 0u) {
+				uint8_t selected = hTempCardIndex_ff98;
+				hTemp_ffa0 = selected;
+				return (BellsproutCallForFamily_PlayerSelectEffectResult){selected,
+					(uint8_t)(selected == 0u ? 0x80u : 0x00u)};
+			}
+			PlaySFX_InvalidChoice();
+			continue;
+		}
+
+		DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+		uint16_t hl = locations.hl;
+		for (;;) {
+			if (gb_read8(hl) == CARD_LOCATION_DECK) {
+				uint8_t index = (uint8_t)hl;
+				uint16_t card_id = GetCardIDFromDeckIndex(index);
+				uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
+					(uint8_t)card_id, 0u, BELLSPROUT);
+				if ((compare & 0x80u) != 0u) {
+					PlaySFX_InvalidChoice();
+					break;
+				}
+			}
+			hl = (uint16_t)((hl & 0xff00u) | (uint8_t)(hl + 1u));
+			if ((uint8_t)hl >= DECK_SIZE) {
+				hTemp_ffa0 = 0xffu;
+				return (BellsproutCallForFamily_PlayerSelectEffectResult){0xffu, 0x00u};
+			}
+		}
+	}
+}
+/* <<< factory BellsproutCallForFamily_PlayerSelectEffect */
+
+/* >>> factory EnergySearch_PlayerSelection */
+EnergySearch_PlayerSelectionResult EnergySearch_PlayerSelection(void)
+{
+	hTemp_ffa0 = 0xffu;
+	CardListResult deck = CreateDeckCardList(0u, 0u);
+	LookForCardsInDeckResult search = LookForCardsInDeck(
+		deck.a, (uint8_t)(BasicEnergyText >> 8), (uint8_t)BasicEnergyText,
+		SEARCHEFFECT_BASIC_ENERGY, 0u, Choose1BasicEnergyCardFromDeckText);
+	if ((search.f & 0x10u) != 0u)
+		return (EnergySearch_PlayerSelectionResult){search.a, search.f};
+
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChooseBasicEnergyCardText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) != 0u) {
+			uint16_t list = wDuelTempList_ADDR;
+			uint8_t has_basic_energy = 0u;
+			for (;;) {
+				uint8_t card = gb_read8(list++);
+				if (card == 0xffu)
+					break;
+				if ((CheckIfCardIsBasicEnergy(card) & 0x10u) == 0u) {
+					has_basic_energy = 1u;
+					break;
+				}
+			}
+			if (has_basic_energy != 0u)
+				continue;
+			hTemp_ffa0 = 0xffu;
+			return (EnergySearch_PlayerSelectionResult){0xffu, 0x00u};
+		}
+
+		uint8_t card = hTempCardIndex_ff98;
+		hTemp_ffa0 = card;
+		if ((CheckIfCardIsBasicEnergy(card) & 0x10u) != 0u) {
+			PlaySFX_InvalidChoice();
+			continue;
+		}
+		uint8_t type = wLoadedCard2Type;
+		return (EnergySearch_PlayerSelectionResult){type, (uint8_t)(type == 0u ? 0x80u : 0x00u)};
+	}
+}
+/* <<< factory EnergySearch_PlayerSelection */
+
+/* >>> factory KrabbyCallForFamily_PlayerSelectEffect */
+KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEffect(void)
+{
+	hTemp_ffa0 = 0xffu;
+	CardListResult deck = CreateDeckCardList(0u, 0u);
+	LookForCardsInDeckResult search = LookForCardsInDeck(
+		deck.a, (uint8_t)(KrabbyText >> 8),
+		(uint8_t)KrabbyText, SEARCHEFFECT_CARD_ID,
+		KRABBY, ChooseAKrabbyFromDeckText);
+	if ((search.f & 0x10u) != 0u)
+		return (KrabbyCallForFamily_PlayerSelectEffectResult){search.a, search.f};
+
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChooseAKrabbyText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) != 0u) {
+			DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+			uint16_t hl = locations.hl;
+			for (;;) {
+				if (gb_read8(hl) == CARD_LOCATION_DECK) {
+					uint8_t index = (uint8_t)hl;
+					uint16_t card_id = GetCardIDFromDeckIndex(index);
+					uint8_t compare = CompareDEtoBC(
+						(uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, KRABBY);
+					if ((compare & 0x80u) != 0u)
+						break;
+				}
+				hl = (uint16_t)((hl & 0xff00u) | (uint8_t)(hl + 1u));
+				if ((uint8_t)hl >= DECK_SIZE) {
+					hTemp_ffa0 = 0xffu;
+					return (KrabbyCallForFamily_PlayerSelectEffectResult){0xffu, 0x00u};
+				}
+			}
+			PlaySFX_InvalidChoice();
+			continue;
+		}
+		uint16_t card_id = GetCardIDFromDeckIndex(display.a);
+		uint8_t compare = CompareDEtoBC(
+			(uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, KRABBY);
+		if ((compare & 0x80u) == 0u) {
+			PlaySFX_InvalidChoice();
+			continue;
+		}
+		uint8_t selected = hTempCardIndex_ff98;
+		hTemp_ffa0 = selected;
+		return (KrabbyCallForFamily_PlayerSelectEffectResult){selected,
+			(uint8_t)(selected == 0u ? 0x80u : 0x00u)};
+	}
+}
+/* <<< factory KrabbyCallForFamily_PlayerSelectEffect */
+
+/* >>> factory NidoranFCallForFamily_PlayerSelectEffect */
+NidoranFCallForFamily_PlayerSelectEffectResult NidoranFCallForFamily_PlayerSelectEffect(void)
+{
+	hTemp_ffa0 = 0xffu;
+	CardListResult deck = CreateDeckCardList(0u, 0u);
+	LookForCardsInDeckResult search = LookForCardsInDeck(deck.a,
+		(uint8_t)(NidoranMNidoranFText >> 8),
+		(uint8_t)NidoranMNidoranFText, SEARCHEFFECT_NIDORAN, 0u,
+		ChooseNidoranFromDeckText);
+	if ((search.f & 0x10u) != 0u)
+		return (NidoranFCallForFamily_PlayerSelectEffectResult){search.a, search.f};
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChooseNidoranText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) == 0u) {
+			uint16_t card_id = GetCardIDFromDeckIndex(display.a);
+			uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, NIDORANF);
+			uint8_t is_m = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, NIDORANM);
+			if ((is_f & 0x80u) != 0u || (is_m & 0x80u) != 0u) {
+				uint8_t selected = hTempCardIndex_ff98;
+				hTemp_ffa0 = selected;
+				return (NidoranFCallForFamily_PlayerSelectEffectResult){selected, (uint8_t)(selected == 0u ? 0x80u : 0x00u)};
+			}
+			continue;
+		}
+		DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+		uint16_t hl = locations.hl;
+		for (;;) {
+			if (gb_read8(hl) == CARD_LOCATION_DECK) {
+				uint16_t card_id = GetCardIDFromDeckIndex((uint8_t)hl);
+				uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, NIDORANF);
+				if ((is_f & 0x80u) != 0u) { PlaySFX_InvalidChoice(); break; }
+			}
+			hl = (uint16_t)((hl & 0xff00u) | (uint8_t)(hl + 1u));
+			if ((uint8_t)hl >= DECK_SIZE) { hTemp_ffa0 = 0xffu; return (NidoranFCallForFamily_PlayerSelectEffectResult){0xffu, 0x00u}; }
+		}
+	}
+}
+/* <<< factory NidoranFCallForFamily_PlayerSelectEffect */
+
+/* >>> factory GustOfWind_SwitchEffect */
+void GustOfWind_SwitchEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	/* The asm never sets de before the animation: PlayAttackAnimation stores
+	 * the entry de into wDamageAnimAmount, so the leftover has to flow through. */
+	(void)a;
+	PlayTrainerEffectAnimation(ATK_ANIM_GUST_OF_WIND, f, b, c, d, e, hl);
+	SwapTurn();
+	e = hTemp_ffa0;
+	(void)SwapArenaWithBenchPokemon(e);
+	SwapTurn();
+	ClearDamageReductionSubstatus2();
+	wDuelDisplayedScreen = 0u;
+}
+/* <<< factory GustOfWind_SwitchEffect */
+
+/* >>> factory Confusion50PercentEffect */
+uint8_t Confusion50PercentEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(ConfusionCheckText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return toss.f;
+	return ConfusionEffect().f;
+}
+/* <<< factory Confusion50PercentEffect */
+
+/* >>> factory Poison50PercentEffect */
+uint8_t Poison50PercentEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(PoisonCheckText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return toss.f;
+	return PoisonEffect().f;
+}
+/* <<< factory Poison50PercentEffect */
+
+/* >>> factory ApplyAndAnimateHPRecovery */
+void ApplyAndAnimateHPRecovery(uint8_t d, uint8_t e)
+{
+	wUnused_HPRecoverAmount = e;
+	gb_write8((uint16_t)(wUnused_HPRecoverAmount_ADDR + 1u), d);
+
+	CardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	if (damage.a == 0u)
+		return;
+
+	wLoadedAttackAnimation = ATK_ANIM_HEAL;
+	/* The asm never loads hWhoseTurn into h (its documented bug): h is still
+	 * the high byte of wUnused_HPRecoverAmount + 1, so PlayAttackAnimation
+	 * always takes the non-turn-side branch and sets bit 7 of b. */
+	PlayAttackAnimation(ATK_ANIM_HEAL, 0x00u, PLAY_AREA_ARENA, 0x01u, d, e,
+		(uint16_t)(wUnused_HPRecoverAmount_ADDR + 1u));
+
+	damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	uint8_t b = 0x00u;
+	uint8_t c = damage.c;
+	DuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	uint16_t sum = (uint16_t)((uint16_t)hp.a + (uint16_t)e);
+
+	e = (uint8_t)sum;
+	d = (uint8_t)(d + (uint8_t)(sum >> 8));
+	if ((CompareDEtoBC(d, e, b, c) & 0x10u) == 0u) {
+		e = c;
+		d = b;
+	}
+	gb_write8(hp.hl, e);
+	WaitAttackAnimation();
+	(void)d;
+}
+/* <<< factory ApplyAndAnimateHPRecovery */
+
+/* >>> factory Paralysis50PercentEffect */
+uint8_t Paralysis50PercentEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(ParalysisCheckText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return toss.f;
+	return ParalysisEffect().f;
+}
+/* <<< factory Paralysis50PercentEffect */
+
+/* >>> factory PlayerPickAttackForAmnesia */
+/* effect_functions.asm:3217-3223 */
+PlayerPickAttackForAmnesiaResult PlayerPickAttackForAmnesia(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseAttackOpponentWillNotBeAbleToUseText);
+
+	HandleDefendingPokemonAttackSelectionResult selection = HandleDefendingPokemonAttackSelection();
+
+	/* The asm stores the selection routine's exit e. The ported callee reports
+	 * only hl/f, so the attack index is re-read from the wDuelTempList entry its
+	 * own asm loaded e out of - exit hCurMenuItem, doubled with 8-bit
+	 * wraparound - exactly as HandlePlayerMetronomeEffect does. */
+	uint8_t selected = (uint8_t)(hCurMenuItem + hCurMenuItem);
+	uint8_t attack_index = gb_read8((uint16_t)(wDuelTempList_ADDR + selected + 1u));
+	hTemp_ffa0 = attack_index;
+
+	/* `ld a, e` / `ldh [hTemp_ffa0], a` touch no flag, so f is whatever the
+	 * callee returned: its `scf` on the cancelled exit, and its `or a` over
+	 * a = the doubled menu item on the selected exit. */
+	uint8_t f = ((selection.f & 0x10u) != 0u) ? selection.f
+	                                          : (uint8_t)((selected == 0u) ? 0x80u : 0x00u);
+	return (PlayerPickAttackForAmnesiaResult){attack_index, f};
+}
+/* <<< factory PlayerPickAttackForAmnesia */
+
+/* >>> factory FirstAid_HealEffect */
+void FirstAid_HealEffect(void)
+{
+	ApplyAndAnimateHPRecovery(0u, 10u);
+}
+/* <<< factory FirstAid_HealEffect */
+
+/* >>> factory GolbatLeechLifeEffect */
+void GolbatLeechLifeEffect(void)
+{
+	uint8_t e = gb_read8(wDealtDamage_ADDR);
+	uint8_t d = gb_read8((uint16_t)(wDealtDamage_ADDR + 1u));
+	ApplyAndAnimateHPRecovery(d, e);
+}
+/* <<< factory GolbatLeechLifeEffect */
+
+/* >>> factory VenonatLeechLifeEffect */
+void VenonatLeechLifeEffect(void)
+{
+	uint8_t e = gb_read8(wDealtDamage_ADDR);
+	uint8_t d = gb_read8((uint16_t)(wDealtDamage_ADDR + 1u));
+	ApplyAndAnimateHPRecovery(d, e);
+}
+/* <<< factory VenonatLeechLifeEffect */
+
+/* >>> factory ZubatLeechLifeEffect */
+void ZubatLeechLifeEffect(void)
+{
+	uint8_t e = gb_read8(wDealtDamage_ADDR);
+	uint8_t d = gb_read8((uint16_t)(wDealtDamage_ADDR + 1u));
+	ApplyAndAnimateHPRecovery(d, e);
+}
+/* <<< factory ZubatLeechLifeEffect */
+
+/* >>> factory ExeggcuteLeechSeedEffect */
+void ExeggcuteLeechSeedEffect(void)
+{
+	uint8_t a = gb_read8(wDealtDamage_ADDR);
+	if (a == 0u)
+		return;
+	ApplyAndAnimateHPRecovery(0u, 10u);
+}
+/* <<< factory ExeggcuteLeechSeedEffect */
+
+/* >>> factory BulbasaurLeechSeedEffect */
+void BulbasaurLeechSeedEffect(void)
+{
+	uint8_t a = gb_read8(wDealtDamage_ADDR);
+	uint8_t h = gb_read8((uint16_t)(wDealtDamage_ADDR + 1u));
+	if ((a | h) == 0u)
+		return;
+	ApplyAndAnimateHPRecovery(0u, 10u);
+}
+/* <<< factory BulbasaurLeechSeedEffect */
+
+/* >>> factory Sleep50PercentEffect */
+uint8_t Sleep50PercentEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(SleepCheckText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return toss.f;
+	return SleepEffect().f;
+}
+/* <<< factory Sleep50PercentEffect */
+
+/* >>> factory KadabraRecover_HealEffect */
+void KadabraRecover_HealEffect(void)
+{
+	CardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	ApplyAndAnimateHPRecovery(0u, damage.a);
+}
+/* <<< factory KadabraRecover_HealEffect */
+
+/* >>> factory StarmieRecover_HealEffect */
+void StarmieRecover_HealEffect(void)
+{
+	CardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	ApplyAndAnimateHPRecovery(0u, damage.a);
+}
+/* <<< factory StarmieRecover_HealEffect */
+
+/* >>> factory SingEffect */
+uint8_t SingEffect(void)
+{
+	uint8_t f = Sleep50PercentEffect();
+	if ((f & 0x10u) == 0u)
+		SetNoEffectFromStatus();
+	return f;
+}
+/* <<< factory SingEffect */
+
+/* >>> factory SleepingGasEffect */
+uint8_t SleepingGasEffect(void)
+{
+	uint8_t f = Sleep50PercentEffect();
+	if ((f & 0x10u) == 0u)
+		SetNoEffectFromStatus();
+	return f;
+}
+/* <<< factory SleepingGasEffect */
+
+/* >>> factory AbsorbEffect */
+/* effect_functions.asm:5943-5961 */
+void AbsorbEffect(void)
+{
+	uint16_t dealt = (uint16_t)(gb_read8(wDealtDamage_ADDR)
+		| ((uint16_t)gb_read8((uint16_t)(wDealtDamage_ADDR + 1u)) << 8));
+	dealt = (uint16_t)(dealt >> 1);
+	if ((dealt & 1u) != 0u)
+		dealt = (uint16_t)(dealt + 5u);
+	ApplyAndAnimateHPRecovery((uint8_t)(dealt >> 8), (uint8_t)dealt);
+}
+/* <<< factory AbsorbEffect */
+
+/* >>> factory ButterfreeMegaDrainEffect */
+/* effect_functions.asm:2129-2147 */
+void ButterfreeMegaDrainEffect(void)
+{
+	uint16_t dealt = (uint16_t)(gb_read8(wDealtDamage_ADDR)
+		| ((uint16_t)gb_read8((uint16_t)(wDealtDamage_ADDR + 1u)) << 8));
+	dealt = (uint16_t)(dealt >> 1);
+	if ((dealt & 1u) != 0u)
+		dealt = (uint16_t)(dealt + 5u);
+	ApplyAndAnimateHPRecovery((uint8_t)(dealt >> 8), (uint8_t)dealt);
+}
+/* <<< factory ButterfreeMegaDrainEffect */
+
+/* >>> factory AcidEffect */
+/* effect_functions.asm:1539-1546. TossCoin preserves hl, so the substatus
+ * write lands through the caller's original pointer. */
+AcidEffectResult AcidEffect(uint16_t hl)
+{
+	TossCoinRoutineResult toss = TossCoin(AcidCheckText, hl);
+	if ((toss.f & 0x10u) == 0u)
+		return (AcidEffectResult){toss.a, toss.f, toss.hl};
+	uint16_t written = ApplySubstatus2ToDefendingCard(SUBSTATUS2_ACID, hl);
+	return (AcidEffectResult){SUBSTATUS2_ACID, toss.f, written};
+}
+/* <<< factory AcidEffect */
+
+/* >>> factory BoneAttackEffect */
+/* effect_functions.asm:6329-6336 */
+BoneAttackEffectResult BoneAttackEffect(uint16_t hl)
+{
+	TossCoinRoutineResult toss = TossCoin(IfHeadsOpponentCannotAttackText, hl);
+	if ((toss.f & 0x10u) == 0u)
+		return (BoneAttackEffectResult){toss.a, toss.f, toss.hl};
+	uint16_t written = ApplySubstatus2ToDefendingCard(SUBSTATUS2_BONE_ATTACK, hl);
+	return (BoneAttackEffectResult){SUBSTATUS2_BONE_ATTACK, toss.f, written};
+}
+/* <<< factory BoneAttackEffect */
+
+/* >>> factory ClampEffect */
+/* effect_functions.asm:3334-3347. Tails: the xor-a zero-flags exit
+ * (a = EFFECT_FAILED_UNSUCCESSFUL, f = Z = $80) survives SetDefiniteDamage
+ * and SetWasUnsuccessful untouched. */
+uint8_t ClampEffect(void)
+{
+	wLoadedAttackAnimation = ATK_ANIM_HIT_EFFECT;
+	TossCoinRoutineResult toss = TossCoin(SuccessCheckIfHeadsAttackIsSuccessfulText, 0u);
+	if ((toss.f & 0x10u) != 0u)
+		return ParalysisEffect().f;
+	wLoadedAttackAnimation = ATK_ANIM_NONE;
+	SetDefiniteDamage(0u);
+	SetWasUnsuccessful();
+	return 0x80u;
+}
+/* <<< factory ClampEffect */
+
+/* >>> factory HideInShellEffect */
+/* effect_functions.asm:3081-3090. Both exits keep TossCoin's flags. */
+uint8_t HideInShellEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(IfHeadsNoDamageNextTurnText, 0u);
+	if ((toss.f & 0x10u) == 0u) {
+		SetWasUnsuccessful();
+		return toss.f;
+	}
+	wLoadedAttackAnimation = ATK_ANIM_PROTECT;
+	ApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_HIDE_IN_SHELL);
+	return toss.f;
+}
+/* <<< factory HideInShellEffect */
+
+/* >>> factory LeerEffect */
+/* effect_functions.asm:6175-6184. TossCoin preserves hl, so the defending
+ * card's substatus write lands through the caller's original pointer. */
+uint8_t LeerEffect(uint16_t hl)
+{
+	TossCoinRoutineResult toss = TossCoin(IfHeadsOpponentCannotAttackText, hl);
+	if ((toss.f & 0x10u) == 0u) {
+		SetWasUnsuccessful();
+		return toss.f;
+	}
+	wLoadedAttackAnimation = ATK_ANIM_LEER;
+	ApplySubstatus2ToDefendingCard(SUBSTATUS2_LEER, hl);
+	return toss.f;
+}
+/* <<< factory LeerEffect */
+
+/* >>> factory Thunderpunch_ModifierEffect */
+void Thunderpunch_ModifierEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(IfHeadPlus10IfTails10ToYourselfText, 0u);
+	hTemp_ffa0 = toss.a;
+	if ((toss.f & 0x10u) == 0u)
+		return;
+	AddToDamage(10u);
+}
+/* <<< factory Thunderpunch_ModifierEffect */
+
+/* >>> factory Fly_Success50PercentEffect */
+/* effect_functions.asm:6639-6663. Tails: the xor-a zero-flags exit
+ * (anim reset, zero damage, unsuccessful); heads: FLY substatus. */
+uint8_t Fly_Success50PercentEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(SuccessCheckIfHeadsAttackIsSuccessfulText, 0u);
+	if ((toss.f & 0x10u) == 0u) {
+		wLoadedAttackAnimation = ATK_ANIM_NONE;
+		SetDefiniteDamage(0u);
+		SetWasUnsuccessful();
+		return 0x80u;
+	}
+	wLoadedAttackAnimation = ATK_ANIM_AGILITY_PROTECT;
+	ApplySubstatus1ToAttackingCard(SUBSTATUS1_FLY);
+	return toss.f;
+}
+/* <<< factory Fly_Success50PercentEffect */
+
+/* >>> factory MoltresLv35DiveBomb_Success50PercentEffect */
+/* effect_functions.asm:3845-3859. Heads only plays the animation; the tails
+ * xor-a zero-flags exit survives both calls untouched. */
+uint8_t MoltresLv35DiveBomb_Success50PercentEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(SuccessCheckIfHeadsAttackIsSuccessfulText, 0u);
+	if ((toss.f & 0x10u) != 0u) {
+		wLoadedAttackAnimation = ATK_ANIM_DIVE_BOMB;
+		return toss.f;
+	}
+	SetDefiniteDamage(0u);
+	SetWasUnsuccessful();
+	return 0x80u;
+}
+/* <<< factory MoltresLv35DiveBomb_Success50PercentEffect */
+
+/* >>> factory MoltresLv37DiveBomb_Success50PercentEffect */
+/* effect_functions.asm:4258-4272. Byte-identical twin of the Lv35 effect. */
+uint8_t MoltresLv37DiveBomb_Success50PercentEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(SuccessCheckIfHeadsAttackIsSuccessfulText, 0u);
+	if ((toss.f & 0x10u) != 0u) {
+		wLoadedAttackAnimation = ATK_ANIM_DIVE_BOMB;
+		return toss.f;
+	}
+	SetDefiniteDamage(0u);
+	SetWasUnsuccessful();
+	return 0x80u;
+}
+/* <<< factory MoltresLv37DiveBomb_Success50PercentEffect */
+
+/* >>> factory HornHazard_NoDamage50PercentEffect */
+/* effect_functions.asm:2055-2069. Same two-exit shape; toss text differs. */
+uint8_t HornHazard_NoDamage50PercentEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(DamageCheckIfTailsNoDamageText, 0u);
+	if ((toss.f & 0x10u) != 0u) {
+		wLoadedAttackAnimation = ATK_ANIM_HIT;
+		return toss.f;
+	}
+	SetDefiniteDamage(0u);
+	SetWasUnsuccessful();
+	return 0x80u;
+}
+/* <<< factory HornHazard_NoDamage50PercentEffect */
+
+/* >>> factory RapidashStomp_DamageBoostEffect */
+/* effect_functions.asm:3633-3643. Same shape as the QuickAttack_DamageBoost
+ * family but AddToDamage carries 10, not 20. */
+void RapidashStomp_DamageBoostEffect(void)
+{
+	LoadTxRam3(10u);
+	TossCoinRoutineResult toss = TossCoin(DamageCheckIfHeadsPlusDamageText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return;
+	AddToDamage(10u);
+}
+/* <<< factory RapidashStomp_DamageBoostEffect */
+
+/* >>> factory ScrunchEffect */
+/* effect_functions.asm:8421-8430. Tails keeps TossCoin's flags; heads keeps
+ * them too (ApplySubstatus1's pop-af restores the call-site flags). */
+uint8_t ScrunchEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(IfHeadsNoDamageNextTurnText, 0u);
+	if ((toss.f & 0x10u) == 0u) {
+		SetWasUnsuccessful();
+		return toss.f;
+	}
+	wLoadedAttackAnimation = ATK_ANIM_SCRUNCH;
+	ApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_SCRUNCH);
+	return toss.f;
+}
+/* <<< factory ScrunchEffect */
+
+/* >>> factory TailWagEffect */
+/* effect_functions.asm:7424-7433. Tails -> unsuccessful; heads -> LURE anim
+ * plus the defending card's TAIL_WAG substatus through the caller's hl. */
+uint8_t TailWagEffect(uint16_t hl)
+{
+	TossCoinRoutineResult toss = TossCoin(IfHeadsOpponentCannotAttackText, hl);
+	if ((toss.f & 0x10u) == 0u) {
+		SetWasUnsuccessful();
+		return toss.f;
+	}
+	wLoadedAttackAnimation = ATK_ANIM_LURE;
+	ApplySubstatus2ToDefendingCard(SUBSTATUS2_TAIL_WAG, hl);
+	return toss.f;
+}
+/* <<< factory TailWagEffect */
+
+/* >>> factory TantrumEffect */
+/* effect_functions.asm:5923-5934. Heads returns TossCoin's flags; tails
+ * plays the confusion animation with the sides swapped for the queue. */
+uint8_t TantrumEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(IfTailsYourPokemonBecomesConfusedText, 0u);
+	if ((toss.f & 0x10u) != 0u)
+		return toss.f;
+	wLoadedAttackAnimation = ATK_ANIM_MULTIPLE_SLASH;
+	SwapTurn();
+	QueueStatusConditionResult confused = ConfusionEffect();
+	SwapTurn();
+	return confused.f;
+}
+/* <<< factory TantrumEffect */
+
+/* >>> factory Rampage_Confusion50PercentEffect */
+/* effect_functions.asm:7831-7843. Adds the dealt damage back to wDamage, then
+ * on tails queues CONFUSED against the non-turn duelist (side swapped). */
+void Rampage_Confusion50PercentEffect(void)
+{
+	CardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	AddToDamage(damage.a);
+	TossCoinRoutineResult toss = TossCoin(IfTailsYourPokemonBecomesConfusedText, 0u);
+	if ((toss.f & 0x10u) != 0u)
+		return;
+	SwapTurn();
+	ConfusionEffect();
+	SwapTurn();
+}
+/* <<< factory Rampage_Confusion50PercentEffect */
+
+/* >>> factory VenusaurMegaDrainEffect */
+/* effect_functions.asm:2737-2755. Halving-wDealtDamage body shared with the
+ * Absorb/ButterfreeMegaDrain family. */
+void VenusaurMegaDrainEffect(void)
+{
+	uint16_t dealt = (uint16_t)(gb_read8(wDealtDamage_ADDR)
+		| ((uint16_t)gb_read8((uint16_t)(wDealtDamage_ADDR + 1u)) << 8));
+	dealt = (uint16_t)(dealt >> 1);
+	if ((dealt & 1u) != 0u)
+		dealt = (uint16_t)(dealt + 5u);
+	ApplyAndAnimateHPRecovery((uint8_t)(dealt >> 8), (uint8_t)dealt);
+}
+/* <<< factory VenusaurMegaDrainEffect */
+
+/* >>> factory SpacingOut_Success50PercentEffect */
+void SpacingOut_Success50PercentEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(SuccessCheckIfHeadsAttackIsSuccessfulText, 0u);
+	hTemp_ffa0 = toss.a;
+	if ((toss.f & 0x10u) == 0u) {
+		SetWasUnsuccessful();
+		return;
+	}
+	wLoadedAttackAnimation = ATK_ANIM_RECOVER;
+}
+/* <<< factory SpacingOut_Success50PercentEffect */
+
+/* >>> factory Thrash_ModifierEffect */
+void Thrash_ModifierEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(IfHeadPlus10IfTails10ToYourselfText, 0u);
+	hTemp_ffa0 = toss.a;
+	if ((toss.f & 0x10u) == 0u)
+		return;
+	AddToDamage(10u);
+}
+/* <<< factory Thrash_ModifierEffect */
+
+/* >>> factory TaurosStomp_DamageBoostEffect */
+void TaurosStomp_DamageBoostEffect(void)
+{
+	LoadTxRam3(10u);
+	TossCoinRoutineResult toss = TossCoin(DamageCheckIfHeadsPlusDamageText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return;
+	AddToDamage(10u);
+}
+/* <<< factory TaurosStomp_DamageBoostEffect */
+
+/* >>> factory MirrorMove_InitialEffect2 */
+PlayerPickAttackForAmnesiaResult MirrorMove_InitialEffect2(void)
+{
+	hTemp_ffa0 = 0xffu;
+	DuelistVarResult effect = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_LAST_TURN_EFFECT);
+	if (effect.a == 0u)
+		return (PlayerPickAttackForAmnesiaResult){0u, 0x80u};
+	if (effect.a == LAST_TURN_EFFECT_AMNESIA)
+		return PlayerPickAttackForAmnesia();
+	return (PlayerPickAttackForAmnesiaResult){effect.a, 0x00u};
+}
+/* <<< factory MirrorMove_InitialEffect2 */
+
+/* >>> factory MysteryAttack_RecoverEffect */
+void MysteryAttack_RecoverEffect(void)
+{
+	uint8_t effect = hTemp_ffa0;
+	if (effect != 4u)
+		return;
+	ApplyAndAnimateHPRecovery(0u, 10u);
+}
+/* <<< factory MysteryAttack_RecoverEffect */
+
+/* >>> factory ThunderJolt_Recoil50PercentEffect */
+ThunderJolt_Recoil50PercentEffectResult ThunderJolt_Recoil50PercentEffect(void)
+{
+	LoadTxRam3(10u);
+	TossCoinRoutineResult toss = TossCoin(IfTailsDamageToYourselfTooText, 10u);
+	hTemp_ffa0 = toss.a;
+	return (ThunderJolt_Recoil50PercentEffectResult){toss.a, toss.f, 18u, toss.hl};
+}
+/* <<< factory ThunderJolt_Recoil50PercentEffect */
+
+/* >>> factory LeekSlap_NoDamage50PercentEffect */
+uint8_t LeekSlap_NoDamage50PercentEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(DamageCheckIfTailsNoDamageText, 0u);
+	if ((toss.f & 0x10u) != 0u)
+		return toss.f;
+	SetDefiniteDamage(0u);
+	return 0x80u;
+}
+/* <<< factory LeekSlap_NoDamage50PercentEffect */
+
+/* >>> factory Blizzard_BenchDamage50PercentEffect */
+void Blizzard_BenchDamage50PercentEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(DamageToOppBenchIfHeadsDamageToYoursIfTailsText, 0u);
+	hTemp_ffa0 = toss.a;
+}
+/* <<< factory Blizzard_BenchDamage50PercentEffect */
+
+/* >>> factory VenomPowder_PoisonConfusion50PercentEffect */
+/* effect_functions.asm:2559-2571 */
+uint8_t VenomPowder_PoisonConfusion50PercentEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(VenomPowderCheckText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return toss.f;
+	(void)PoisonEffect();
+	QueueStatusConditionResult confusion = ConfusionEffect();
+	if ((confusion.f & 0x10u) != 0u)
+		return confusion.f;
+	/* Carry clear means confusion was blocked, so QueueStatusCondition left
+	 * only CONFUSED in wNoEffectFromWhichStatus; name both statuses instead. */
+	wNoEffectFromWhichStatus = CONFUSED | POISONED;
+	return confusion.f;
+}
+/* <<< factory VenomPowder_PoisonConfusion50PercentEffect */
+
+/* >>> factory ThunderstormEffect */
+void ThunderstormEffect(void)
+{
+	hCurSelectionItem = 1u;
+	SwapTurn();
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	uint8_t tails = 0u;
+	uint8_t bench = 0u;
+	for (;;) {
+		++bench;
+		count = (uint8_t)(count - 1u);
+		if (count == 0u)
+			break;
+
+		CopyTextResult text = CopyText(BenchText, wDefaultText_ADDR);
+		uint16_t de = (uint16_t)(((uint16_t)text.d << 8) | text.e);
+		gb_write8(de, (uint8_t)('0' + bench));
+		++de;
+		gb_write8(de, (uint8_t)' ');
+		++de;
+
+		DuelistVarResult arena = GetTurnDuelistVariable(
+			(uint8_t)(DUELVARS_ARENA_CARD + bench));
+		(void)LoadCardDataToBuffer2_FromDeckIndex(arena.a);
+		uint16_t name = (uint16_t)(gb_read8(wLoadedCard2Name_ADDR) |
+			((uint16_t)gb_read8((uint16_t)(wLoadedCard2Name_ADDR + 1u)) << 8));
+		(void)CopyText(name, de);
+		wDuelDisplayedScreen = 0u;
+
+		SwapTurn();
+	TossCoinRoutineResult toss = TossCoin(0u, 0u);
+		SwapTurn();
+		uint16_t position = GetNextPositionInTempList();
+		gb_write8(position, toss.a);
+		if ((toss.f & 0x10u) == 0u)
+			++tails;
+	}
+
+	uint16_t position = GetNextPositionInTempList();
+	gb_write8(position, 0xffu);
+	hTemp_ffa0 = tails;
+	ResetAnimationQueue();
+	SwapTurn();
+
+	if (tails != 0u) {
+		uint8_t damage = ATimes10(tails);
+		(void)DealRecoilDamageToSelf(damage, 0u, 0u, 0u);
+	}
+
+	SwapTurn();
+	uint16_t hl = hTempPlayAreaLocation_ffa1_ADDR;
+	uint8_t location = PLAY_AREA_BENCH_1;
+	for (;;) {
+		uint8_t result = gb_read8(hl++);
+		if (result == 0xffu)
+			break;
+		if (result != 0u)
+			(void)DealDamageToPlayAreaPokemon_RegularAnim(location, 20u, hl);
+		++location;
+	}
+
+	SwapTurn();
+}
+/* <<< factory ThunderstormEffect */
+
+/* >>> factory FoulGas_PoisonOrConfusionEffect */
+uint8_t FoulGas_PoisonOrConfusionEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(PoisonedIfHeadsConfusedIfTailsText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return ConfusionEffect().f;
+	return PoisonEffect().f;
+}
+/* <<< factory FoulGas_PoisonOrConfusionEffect */
+
+/* >>> factory Sprout_PlayerSelectEffect */
+Sprout_PlayerSelectEffectResult Sprout_PlayerSelectEffect(void)
+{
+	hTemp_ffa0 = 0xffu;
+	CardListResult deck = CreateDeckCardList(0u, 0u);
+	LookForCardsInDeckResult search = LookForCardsInDeck(
+		deck.a, (uint8_t)(OddishText >> 8), (uint8_t)OddishText,
+		SEARCHEFFECT_CARD_ID, ODDISH, ChooseAnOddishFromDeckText);
+	if ((search.f & 0x10u) != 0u)
+		return (Sprout_PlayerSelectEffectResult){search.a, search.f};
+
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChooseAnOddishText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) == 0u) {
+			uint16_t card_id = GetCardIDFromDeckIndex(display.a);
+			uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
+				(uint8_t)card_id, 0u, ODDISH);
+			if ((compare & 0x80u) != 0u) {
+				uint8_t selected = hTempCardIndex_ff98;
+				hTemp_ffa0 = selected;
+				return (Sprout_PlayerSelectEffectResult){selected,
+					(uint8_t)(selected == 0u ? 0x80u : 0x00u)};
+			}
+			PlaySFX_InvalidChoice();
+			continue;
+		}
+
+		DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+		uint16_t hl = locations.hl;
+		for (;;) {
+			if (gb_read8(hl) == CARD_LOCATION_DECK) {
+				uint8_t index = (uint8_t)hl;
+				uint16_t card_id = GetCardIDFromDeckIndex(index);
+				uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
+					(uint8_t)card_id, 0u, ODDISH);
+				if ((compare & 0x80u) != 0u) {
+					PlaySFX_InvalidChoice();
+					break;
+				}
+			}
+			hl = (uint16_t)((hl & 0xff00u) | (uint8_t)(hl + 1u));
+			if ((uint8_t)hl >= DECK_SIZE) {
+				hTemp_ffa0 = 0xffu;
+				return (Sprout_PlayerSelectEffectResult){0xffu, 0x00u};
+			}
+		}
+	}
+}
+/* <<< factory Sprout_PlayerSelectEffect */
+
+/* >>> factory FullHeal_ClearStatusEffect */
+void FullHeal_ClearStatusEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	PlayTrainerEffectAnimation(ATK_ANIM_FULL_HEAL, f, b, c, d, e, hl);
+	DuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	gb_write8(status.hl, NO_STATUS);
+	DrawDuelHUDs();
+}
+/* <<< factory FullHeal_ClearStatusEffect */
+
+/* >>> factory ImakuniEffect */
+void ImakuniEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	/* Every path keeps the entry de (the card load and the power check push
+	 * and pop it) and PlayAttackAnimation stores it into wDamageAnimAmount. */
+	(void)a;
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(arena.a);
+	uint8_t card = wLoadedCard1ID;
+	if (card == CLEFAIRY_DOLL || card == MYSTERIOUS_FOSSIL) {
+		PlayTrainerEffectAnimation(ATK_ANIM_OWN_CONFUSION, f, b, c, d, e, hl);
+		(void)DrawWideTextBox_WaitForInput(ThereWasNoEffectText);
+		return;
+	}
+	if (card == SNORLAX) {
+		PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(PLAY_AREA_ARENA);
+		if ((incapable.f & 0x10u) == 0u) {
+			PlayTrainerEffectAnimation(ATK_ANIM_OWN_CONFUSION, f, b, c, d, e, hl);
+			(void)DrawWideTextBox_WaitForInput(ThereWasNoEffectText);
+			return;
+		}
+	}
+	PlayTrainerEffectAnimation(ATK_ANIM_OWN_CONFUSION, f, b, c, d, e, hl);
+	DuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	status.a = (uint8_t)((status.a & PSN_DBLPSN) | CONFUSED);
+	gb_write8(status.hl, status.a);
+	DrawDuelHUDs();
+}
+/* <<< factory ImakuniEffect */
+
+/* >>> factory GamblerEffect */
+void GamblerEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(CardCheckIfHeads8CardsIfTails1CardText, 0u);
+	hTemp_ffa0 = toss.a;
+	uint8_t gambler = hTempCardIndex_ff9f;
+	RemoveCardFromHand(gambler);
+	PutCardInDiscardPile(gambler);
+	HandListResult hand = CreateHandCardList(0u);
+	SortResult sorted = SortCardsInDuelTempListByID(hand.b, hand.c, (uint16_t)(((uint16_t)hand.d << 8) | hand.e));
+	uint16_t hl = wDuelTempList_ADDR;
+	while (gb_read8(hl) != 0xFFu) {
+		uint8_t card = gb_read8(hl++);
+		RemoveCardFromHand(card);
+		ReturnCardToDeck(card);
+	}
+	++hl;
+	ShuffleCardsInDeckResult shuffled = ShuffleCardsInDeck(sorted.b, sorted.c, (uint16_t)(((uint16_t)sorted.d << 8) | sorted.e), hl);
+	uint8_t draw_count = hTemp_ffa0 != 0u ? 8u : 1u;
+	DisplayDrawNCardsScreen(draw_count, shuffled.f, shuffled.b, draw_count, shuffled.d, shuffled.e, shuffled.hl);
+	while (draw_count != 0u) {
+		DrawCardResult drawn = DrawCardFromDeck();
+		if ((drawn.f & 0x10u) != 0u)
+			break;
+		AddCardToHand(drawn.a);
+		--draw_count;
+	}
+}
+/* <<< factory GamblerEffect */
+
+/* >>> factory HealingWind_PlayAreaHealEffect */
+void HealingWind_PlayAreaHealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	uint8_t turn = hWhoseTurn;
+	b = location;
+	c = 0u;
+	a = turn;
+	hl = (uint16_t)(((uint16_t)turn << 8) | (hl & 0xffu));
+	PlayAttackAnimation(a, f, b, c, d, e, hl);
+	WaitAttackAnimation();
+	a = ATK_ANIM_HEALING_WIND_PLAY_AREA;
+	wLoadedAttackAnimation = a;
+
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	hl = count.hl;
+	d = count.a;
+	e = PLAY_AREA_ARENA;
+	for (;;) {
+		uint8_t saved_d = d;
+		uint8_t saved_e = e;
+		a = e;
+		hTempPlayAreaLocation_ff9d = a;
+		CardDamageResult damage = GetCardDamageAndMaxHP(e);
+		if (damage.a != 0u) {
+			d = 0u;
+			e = 20u;
+			if (damage.a < e)
+				e = damage.a;
+			a = (uint8_t)(hTempPlayAreaLocation_ff9d + DUELVARS_ARENA_CARD_HP);
+			DuelistVarResult hp = GetTurnDuelistVariable(a);
+			hl = hp.hl;
+			a = (uint8_t)(hp.a + e);
+			gb_write8(hp.hl, a);
+
+			a = hTempPlayAreaLocation_ff9d;
+			b = a;
+			c = 1u;
+			a = hWhoseTurn;
+			hl = (uint16_t)(((uint16_t)a << 8) | (hl & 0xffu));
+			PlayAttackAnimation(a, f, b, c, d, e, hl);
+			WaitAttackAnimation();
+		}
+		d = saved_d;
+		e = saved_e;
+		++e;
+		--d;
+		if (d == 0u)
+			break;
+	}
+}
+/* <<< factory HealingWind_PlayAreaHealEffect */
+
+/* >>> factory SpitPoison_Poison50PercentEffect */
+SpitPoison_Poison50PercentEffectResult SpitPoison_Poison50PercentEffect(uint16_t hl)
+{
+	TossCoinRoutineResult toss = TossCoin(PoisonCheckText, hl);
+	if ((toss.f & 0x10u) != 0u) {
+		QueueStatusConditionResult poison = PoisonEffect();
+		uint16_t result_hl = (poison.f & 0x10u) != 0u ?
+			wStatusConditionQueueIndex_ADDR : wWhoseTurn_ADDR;
+		return (SpitPoison_Poison50PercentEffectResult){poison.f, result_hl};
+	}
+	wLoadedAttackAnimation = ATK_ANIM_SPIT_POISON_SUCCESS;
+	SetNoEffectFromStatus();
+	return (SpitPoison_Poison50PercentEffectResult){toss.f, toss.hl};
+}
+/* <<< factory SpitPoison_Poison50PercentEffect */
+
+/* >>> factory Peek_SelectEffect */
+void Peek_SelectEffect(void)
+{
+	DuelistVarResult arena_flags = GetTurnDuelistVariable(
+		(uint8_t)(hTemp_ffa0 + DUELVARS_ARENA_CARD_FLAGS));
+	gb_write8(arena_flags.hl, (uint8_t)(arena_flags.a | (1u << USED_PKMN_POWER_THIS_TURN_F)));
+
+	DuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if ((duelist.a & DUELIST_TYPE_AI_OPP) == 0u) {
+		FinishQueuedAnimations();
+		HandlePeekSelectionV2Result selected = HandlePeekSelection(0x80u);
+		hAIPkmnPowerEffectParam = selected.a;
+		return;
+	}
+
+	uint8_t param = hAIPkmnPowerEffectParam;
+	if ((param & (1u << AI_PEEK_TARGET_HAND_F)) != 0u) {
+		uint8_t masked = (uint8_t)(param & (uint8_t)~AI_PEEK_TARGET_HAND);
+		if (masked < 0x40u) {
+			SwapTurn();
+			(void)DisplayCardDetailScreen(0u, PeekWasUsedToLookInYourHandText);
+			SwapTurn();
+			return;
+		}
+	}
+	FinishQueuedAnimations();
+	SwapTurn();
+	DrawAIPeekScreenResult screen = DrawAIPeekScreen((uint8_t)(param ^ 0x80u), 0u);
+	(void)screen;
+	SwapTurn();
+	(void)DrawWideTextBox_WaitForInput(CardPeekWasUsedOnText);
+}
+/* <<< factory Peek_SelectEffect */
+
+/* >>> factory MagneticStormEffect */
+void MagneticStormEffect(void)
+{
+	DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+	uint16_t energy_list = wDuelTempList_ADDR;
+	uint8_t energy_count = 0u;
+	for (uint8_t index = 0u; index < DECK_SIZE; index++) {
+		if ((gb_read8((uint16_t)(locations.hl + index)) & CARD_LOCATION_PLAY_AREA) == 0u)
+			continue;
+		uint16_t card_id = GetCardIDFromDeckIndex(index);
+		if ((GetCardType(card_id) & TYPE_ENERGY) == 0u)
+			continue;
+		gb_write8(energy_list++, index);
+		energy_count++;
+	}
+	gb_write8(energy_list, 0xffu);
+
+	DuelistVarResult pokemon_result = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t pokemon_count = pokemon_result.a;
+	uint8_t remainder = energy_count;
+	uint8_t per_pokemon = 0xffu;
+	for (;;) {
+		per_pokemon = (uint8_t)(per_pokemon + 1u);
+		if (remainder < pokemon_count)
+			break;
+		remainder = (uint8_t)(remainder - pokemon_count);
+	}
+
+	TempListResult listed = CountCardsInDuelTempList();
+	(void)ShuffleCards(listed.a, wDuelTempList_ADDR);
+	uint16_t energy_cursor = wDuelTempList_ADDR;
+	uint8_t slot = PLAY_AREA_ARENA;
+	uint8_t remaining_pokemon = pokemon_count;
+	while (remaining_pokemon != 0u) {
+		uint8_t cards = (uint8_t)(per_pokemon + 1u);
+		while (--cards != 0u) {
+			uint8_t deck_index = gb_read8(energy_cursor++);
+			AddCardToHand(deck_index);
+			(void)PutHandCardInPlayArea(deck_index, slot);
+		}
+		slot++;
+		remaining_pokemon--;
+	}
+
+	uint16_t pokemon_list = hTempList_ADDR;
+	for (uint8_t index = 0u; index < pokemon_count; index++)
+		gb_write8((uint16_t)(pokemon_list + index), index);
+	(void)ShuffleCards(pokemon_count, pokemon_list);
+	uint16_t random_pokemon = pokemon_list;
+	while (gb_read8(energy_cursor) != 0xffu) {
+		uint8_t target = gb_read8(random_pokemon++);
+		uint8_t deck_index = gb_read8(energy_cursor++);
+		AddCardToHand(deck_index);
+		(void)PutHandCardInPlayArea(deck_index, target);
+	}
+
+	DrawDuelMainScene();
+	DrawDuelHUDs();
+	(void)DrawWideTextBox_WaitForInput(TheEnergyCardFromPlayAreaWasMovedText);
+	DrawPlayAreaScreenToShowChanges(0u);
+}
+
+/* <<< factory MagneticStormEffect */
+/* >>> factory MixUpEffect */
+void MixUpEffect(void)
+{
+	SwapTurn();
+	(void)CreateHandCardList(0u);
+	(void)SortCardsInDuelTempListByID(0u, 0u, wDuelTempList_ADDR);
+
+	uint8_t count = 0u;
+	uint16_t hand_list = wDuelTempList_ADDR;
+	for (uint16_t offset = 0u; offset < 0x100u; offset++) {
+		uint8_t card = gb_read8((uint16_t)(hand_list + offset));
+		if (card == 0xffu)
+			break;
+		LoadCardDataToBuffer2_FromDeckIndex(card);
+		if (wLoadedCard2Type >= TYPE_ENERGY)
+			continue;
+		count++;
+		RemoveCardFromHand(card);
+		ReturnCardToDeck(card);
+	}
+
+	gb_write8(hCurSelectionItem_ADDR, count);
+	(void)DrawWideTextBox_WaitForInput(ThePkmnCardsInHandAndDeckWereShuffledText);
+	(void)ShuffleCardsInDeck(0u, count, wDuelTempList_ADDR, 0u);
+	(void)CreateDeckCardList(count, wDuelTempList_ADDR);
+	if (count != 0u) {
+		uint8_t remaining = count;
+		for (uint16_t offset = 0u; offset < 0x100u && remaining != 0u; offset++) {
+			uint8_t card = gb_read8((uint16_t)(wDuelTempList_ADDR + offset));
+			if (card == 0xffu)
+				break;
+			LoadCardDataToBuffer2_FromDeckIndex(card);
+			if (wLoadedCard2Type >= TYPE_ENERGY)
+				continue;
+			remaining--;
+			SearchCardInDeckAndAddToHand(card);
+			AddCardToHand(card);
+		}
+	}
+	SwapTurn();
+}
+/* <<< factory MixUpEffect */
+
+/* >>> factory RandomlyDamagePlayAreaPokemon */
+RandomlyDamagePlayAreaPokemonResult RandomlyDamagePlayAreaPokemon(uint16_t de)
+{
+	for (;;) {
+		wNoDamageOrEffect = 0u;
+		uint8_t opponent = (uint8_t)(UpdateRNGSources() & 1u);
+		DuelistVarResult count;
+		uint8_t target;
+		if (opponent == 0u) {
+			wIsDamageToSelf = 1u;
+			count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+			target = Random(count.a);
+			if (target == hTempPlayAreaLocation_ff9d)
+				continue;
+		} else {
+			wIsDamageToSelf = 0u;
+			SwapTurn();
+			count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+			target = Random(count.a);
+		}
+		wLoadedAttackAnimation = ATK_ANIM_THUNDER_PLAY_AREA;
+		DealDamageToPlayAreaPokemonResult damage =
+			DealDamageToPlayAreaPokemon(target, de, count.hl);
+		if (opponent != 0u)
+			SwapTurn();
+		return (RandomlyDamagePlayAreaPokemonResult){damage.a, damage.f};
+	}
+}
+/* <<< factory RandomlyDamagePlayAreaPokemon */
+
+/* >>> factory BigThunderEffect */
+RandomlyDamagePlayAreaPokemonResult BigThunderEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
+{
+	return RandomlyDamagePlayAreaPokemon(70u);
+}
+/* <<< factory BigThunderEffect */
+
+/* >>> factory EnergySearch_AddToHandEffect */
+ShuffleCardsInDeckResult EnergySearch_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)f;
+	uint8_t card = hTemp_ffa0;
+	if (card != 0xFFu) {
+		SearchCardInDeckAndAddToHand(card);
+		AddCardToHand(card);
+		IsPlayerTurnResult turn = IsPlayerTurn();
+		if ((turn.f & 0x10u) == 0u) {
+			uint8_t saved = hBankROM;
+			BankswitchROM(0x01u);
+			(void)DisplayCardDetailScreen(card, WasPlacedInTheHandText);
+			BankswitchROM(saved);
+		}
+	}
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+}
+/* <<< factory EnergySearch_AddToHandEffect */
+
+/* >>> factory LassEffect */
+void LassEffect(void)
+{
+	uint8_t discarded = hTempCardIndex_ff9f;
+	RemoveCardFromHand(discarded);
+	PutCardInDiscardPile(discarded);
+	(void)DrawWideTextBox_WaitForInput(PleaseCheckTheOpponentsHandText);
+
+	if (wDuelType != 0u) {
+		uint8_t saved_turn = hWhoseTurn;
+		hWhoseTurn = OPPONENT_TURN;
+		HandListResult hand = CreateHandCardList(0u);
+		if ((hand.f & 0x10u) != 0u)
+			(void)DrawWideTextBox_WaitForInput(DuelistHasNoCardsInHandText);
+		else {
+			(void)InitAndDrawCardListScreenLayout();
+			SetCardListHeaderText(DuelistHandText, ChooseTheCardYouWishToExamineText);
+			wNoItemSelectionMenuKeys = (uint8_t)(PAD_A | PAD_START);
+			(void)DisplayCardList();
+		}
+		hWhoseTurn = saved_turn;
+	} else {
+		SwapTurn();
+		HandListResult hand = CreateHandCardList(0u);
+		if ((hand.f & 0x10u) != 0u)
+			(void)DrawWideTextBox_WaitForInput(DuelistHasNoCardsInHandText);
+		else {
+			(void)InitAndDrawCardListScreenLayout();
+			SetCardListHeaderText(DuelistHandText, ChooseTheCardYouWishToExamineText);
+			wNoItemSelectionMenuKeys = (uint8_t)(PAD_A | PAD_START);
+			(void)DisplayCardList();
+		}
+		SwapTurn();
+	}
+
+	(void)CreateHandCardList(0u);
+	(void)SortCardsInDuelTempListByID(0u, 0u, wDuelTempList_ADDR);
+	hCurSelectionItem = 0u;
+	uint16_t list = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t index = gb_read8(list++);
+		if (index == 0xffu)
+			break;
+		hTempCardIndex_ff98 = index;
+		uint16_t card_id = GetCardIDFromDeckIndex(index);
+		if (GetCardType(card_id) != TYPE_TRAINER)
+			continue;
+		RemoveCardFromHand(index);
+		ReturnCardToDeck(index);
+		hCurSelectionItem++;
+	}
+	if (hCurSelectionItem != 0u)
+		(void)ShuffleCardsInDeck(hCurSelectionItem, 0u, 0u, wDuelTempList_ADDR);
+}
+/* <<< factory LassEffect */
+
+/* >>> factory ComputerSearch_DiscardAddToHandEffect */
+ShuffleCardsInDeckResult ComputerSearch_DiscardAddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)f;
+	hl = hTempList_ADDR;
+	uint8_t first = gb_read8(hl++);
+	RemoveCardFromHand(first);
+	PutCardInDiscardPile(first);
+	uint8_t second = gb_read8(hl++);
+	RemoveCardFromHand(second);
+	PutCardInDiscardPile(second);
+	uint8_t third = gb_read8(hl);
+	SearchCardInDeckAndAddToHand(third);
+	AddCardToHand(third);
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+}
+/* <<< factory ComputerSearch_DiscardAddToHandEffect */
+
+/* >>> factory PokeBall_AddToHandEffect */
+ShuffleCardsInDeckResult PokeBall_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)f;
+	uint8_t toss = hTempList;
+	if (toss == 0u)
+		return (ShuffleCardsInDeckResult){toss, b, c, d, e, 0x80u, hl};
+	uint8_t card = gb_read8((uint16_t)(hTempList_ADDR + 1u));
+	if (card != 0xFFu) {
+		SearchCardInDeckAndAddToHand(card);
+		AddCardToHand(card);
+		IsPlayerTurnResult turn = IsPlayerTurn();
+		if ((turn.f & 0x10u) == 0u) {
+			uint8_t saved = hBankROM;
+			BankswitchROM(0x01u);
+			(void)DisplayCardDetailScreen(card, WasPlacedInTheHandText);
+			BankswitchROM(saved);
+		}
+	}
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+}
+/* <<< factory PokeBall_AddToHandEffect */
+
+/* >>> factory HealPlayAreaCardHP */
+/* effect_functions.asm:11183-11222. The healed amount arrives in a and is held
+ * across the animation and the text box in de, then added to the target's
+ * DUELVARS_ARENA_CARD_HP. */
+void HealPlayAreaCardHP(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	const uint8_t healed = a;
+
+	(void)f;
+	(void)b;
+	(void)c;
+	(void)d;
+	(void)e;
+	(void)hl;
+
+	ResetAttackAnimationIsPlaying();
+	wLoadedAttackAnimation = ATK_ANIM_HEALING_WIND_PLAY_AREA;
+	PlayAttackAnimation(ATK_ANIM_HEALING_WIND_PLAY_AREA, 0u,
+			    hTempPlayAreaLocation_ff9d, 0x01u, 0u, healed,
+			    (uint16_t)((uint16_t)hWhoseTurn << 8));
+	WaitAttackAnimation();
+
+	LoadTxRam3(healed);
+	LoadTxRam2(0x0000u);
+	DuelistVarResult card =
+		GetTurnDuelistVariable((uint8_t)(hTempPlayAreaLocation_ff9d + DUELVARS_ARENA_CARD));
+	(void)LoadCardDataToBuffer1_FromDeckIndex(card.a);
+	CopyCardNameAndLevelResult copied = CopyCardNameAndLevel(18u, 0u, 0u, 0u, 0u);
+	gb_write8(copied.hl, 0x00u);
+	(void)DrawWideTextBox_WaitForInput(PokemonHealedDamageText);
+
+	DuelistVarResult target =
+		GetTurnDuelistVariable((uint8_t)(hTempPlayAreaLocation_ff9d + DUELVARS_ARENA_CARD_HP));
+	gb_write8(target.hl, (uint8_t)(target.a + healed));
+}
+/* <<< factory HealPlayAreaCardHP */
+
+/* >>> factory Potion_HealEffect */
+void Potion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	hTempPlayAreaLocation_ff9d = hTemp_ffa0;
+	HealPlayAreaCardHP(hTempPlayAreaLocation_ffa1, f, b, c, d, e, hl);
+}
+/* <<< factory Potion_HealEffect */
+
+/* >>> factory SuperPotion_HealEffect */
+void SuperPotion_HealEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	PutCardInDiscardPile(hTemp_ffa0);
+	hTempPlayAreaLocation_ff9d = hTempPlayAreaLocation_ffa1;
+	HealPlayAreaCardHP(hPlayAreaEffectTarget, f, b, c, d, e, hl);
+}
+/* <<< factory SuperPotion_HealEffect */
+
+/* >>> factory PokemonCenter_HealDiscardEnergyEffect */
+/* effect_functions.asm:11229-11281. Walks the turn duelist's play area, heals
+ * every damaged Pokemon, and discards the energy cards attached to each one it
+ * healed. `l` doubles as the deck index because DUELVARS_CARD_LOCATIONS is the
+ * duelvars page's offset zero. */
+void PokemonCenter_HealDiscardEnergyEffect(void)
+{
+	DuelistVarResult count =
+		GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t remaining = count.a;
+
+	for (uint8_t slot = PLAY_AREA_ARENA; remaining != 0u; remaining--, slot++) {
+		hTempPlayAreaLocation_ff9d = slot;
+
+		CardDamageResult damage = GetCardDamageAndMaxHP(slot);
+
+		if (damage.a == 0u)
+			continue;
+
+		HealPlayAreaCardHP(damage.a, 0u, 0u, 0u, 0u, damage.a, 0u);
+
+		const uint8_t attached =
+			(uint8_t)(hTempPlayAreaLocation_ff9d | CARD_LOCATION_PLAY_AREA);
+		DuelistVarResult locations =
+			GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+
+		for (uint8_t index = 0u; index < DECK_SIZE; index++) {
+			if (gb_read8((uint16_t)(locations.hl + index)) != attached)
+				continue;
+			(void)LoadCardDataToBuffer2_FromDeckIndex(index);
+			if ((wLoadedCard2Type & TYPE_ENERGY) == 0u)
+				continue;
+			PutCardInDiscardPile(index);
+		}
+	}
+}
+/* <<< factory PokemonCenter_HealDiscardEnergyEffect */
+
+/* >>> factory ComputerSearch_PlayerDeckSelection */
+ComputerSearch_PlayerDeckSelectionResult ComputerSearch_PlayerDeckSelection(uint8_t c, uint16_t de)
+{
+	(void)CreateDeckCardList(c, de);
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChooseCardToPlaceInHandText);
+	/* effect_functions.asm:9478-9482. `.loop_input` re-enters DisplayCardList
+	 * while it reports carry -- B cannot exit this list -- and only its
+	 * no-carry return holds the chosen card. The port skipped the loop and
+	 * substituted an LCDC value, a key press and a read of wDuelTempList's
+	 * first entry, none of which the asm performs. */
+	DisplayCardListResult display;
+
+	do {
+		display = DisplayCardList();
+	} while ((display.f & 0x10u) != 0u);
+	gb_write8((uint16_t)(hTempList_ADDR + 2u), display.a);
+	return (ComputerSearch_PlayerDeckSelectionResult){display.a, display.f};
+}
+/* <<< factory ComputerSearch_PlayerDeckSelection */
+
+/* >>> factory TakeDownEffect */
+TakeDownEffectResult TakeDownEffect(uint8_t f, uint8_t d, uint8_t e)
+{
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(30u, f, d, e);
+	return (TakeDownEffectResult){recoil.a, recoil.f};
+}
+/* <<< factory TakeDownEffect */
+
+/* >>> factory JigglypuffDoubleEdgeEffect */
+JigglypuffDoubleEdgeEffectResult JigglypuffDoubleEdgeEffect(uint8_t f, uint8_t d, uint8_t e)
+{
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(20u, f, d, e);
+	return (JigglypuffDoubleEdgeEffectResult){recoil.a, recoil.f};
+}
+/* <<< factory JigglypuffDoubleEdgeEffect */
+
+/* >>> factory Recycle_PlayerSelection */
+RecyclePlayerSelectionResult Recycle_PlayerSelection(void)
+{
+	TossCoinATimesResult toss = TossCoinATimes(1u, 0u, 0u, 0u, 0u, TrainerCardSuccessCheckText, 0u);
+	if ((toss.f & 0x10u) != 0u) {
+		(void)CreateDiscardPileCardList(0u);
+		(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+		SetCardListHeaderText(PlayerDiscardPileText, PleaseSelectCardText);
+		DisplayCardListResult display;
+		do {
+			display = DisplayCardList();
+		} while ((display.f & 0x10u) != 0u);
+		hTempList = hTempCardIndex_ff98;
+		return (RecyclePlayerSelectionResult){hTempCardIndex_ff98, display.f};
+	}
+	hTempList = 0xFFu;
+	return (RecyclePlayerSelectionResult){0xFFu, 0x00u};
+}
+/* <<< factory Recycle_PlayerSelection */
+
+/* >>> factory GolemSelfdestructEffect */
+DealDamageToAllBenchedPokemonResult GolemSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)b;
+	(void)c;
+	(void)hl;
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(100u, f, d, e);
+	wIsDamageToSelf = TRUE;
+	DealDamageToAllBenchedPokemonResult own =
+		DealDamageToAllBenchedPokemon(20u, recoil.f, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+	wIsDamageToSelf = FALSE;
+	DealDamageToAllBenchedPokemonResult other =
+		DealDamageToAllBenchedPokemon(20u, own.f, own.b, own.c, own.d, own.e, own.hl);
+	SwapTurn();
+	return (DealDamageToAllBenchedPokemonResult){other.a, other.f, other.b, other.c, other.d, other.e, other.hl};
+}
+/* <<< factory GolemSelfdestructEffect */
+
+/* >>> factory ChanseyDoubleEdgeEffect */
+ChanseyDoubleEdgeEffectResult ChanseyDoubleEdgeEffect(uint8_t f, uint8_t d, uint8_t e)
+{
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(80u, f, d, e);
+	return (ChanseyDoubleEdgeEffectResult){recoil.a, recoil.f};
+}
+/* <<< factory ChanseyDoubleEdgeEffect */
+
+/* >>> factory FriendshipSong_AddToBench50PercentEffect */
+#define SuccessCheckIfHeadsAttackIsSuccessfulText 0x00eeu
+#define NoneCameText 0x0176u
+#define CameToTheBenchText 0x0177u
+#define ATK_ANIM_FRIENDSHIP_SONG 0x6au
+FriendshipSong_AddToBench50PercentEffectResult FriendshipSong_AddToBench50PercentEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)f;
+	TossCoinRoutineResult toss = TossCoin(SuccessCheckIfHeadsAttackIsSuccessfulText, hl);
+	if ((toss.f & 0x10u) == 0u) {
+		WaitResult none = DrawWideTextBox_WaitForInput(NoneCameText);
+		return (FriendshipSong_AddToBench50PercentEffectResult){none.d, none.e};
+	}
+	PickRandomBasicCardResult pick = PickRandomBasicCardFromDeck();
+	uint8_t picked = pick.a;
+	d = pick.d;
+	e = pick.e;
+	if ((pick.f & 0x10u) != 0u) {
+		PlayAttackAnimationOverAttackingPokemon(ATK_ANIM_FRIENDSHIP_SONG, 0u, b, c, d, e, hl);
+		WaitResult none = DrawWideTextBox_WaitForInput(NoneCameText);
+		ShuffleCardsInDeckResult shuffled = ShuffleCardsInDeck(none.b, none.c,
+			(uint16_t)((uint16_t)none.d << 8 | none.e), none.hl);
+		return (FriendshipSong_AddToBench50PercentEffectResult){shuffled.d, shuffled.e};
+	}
+	SearchCardInDeckAndAddToHand(picked);
+	AddCardToHand(picked);
+	/* duel.asm:1003-1047: the slot the card went to stays in e, and the
+	 * animation stores that de into wDamageAnimAmount. */
+	PutHandPokemonResult put = PutHandPokemonCardInPlayArea(picked, 0u);
+	e = put.a;
+	PlayAttackAnimationOverAttackingPokemon(ATK_ANIM_FRIENDSHIP_SONG, 0u, b, c, d, e, hl);
+	(void)DisplayCardDetailScreen(hTempCardIndex_ff98, CameToTheBenchText);
+	ShuffleCardsInDeckResult shuffled = ShuffleCardsInDeck(b, c, (uint16_t)((uint16_t)d << 8 | e), hl);
+	return (FriendshipSong_AddToBench50PercentEffectResult){shuffled.d, shuffled.e};
+}
+/* <<< factory FriendshipSong_AddToBench50PercentEffect */
+
+/* >>> factory SubmissionEffect */
+SubmissionEffectResult SubmissionEffect(uint8_t a,uint8_t f,uint8_t b,uint8_t c,uint8_t d,uint8_t e,uint16_t hl)
+{
+	(void)a;
+	(void)b;
+	(void)c;
+	(void)hl;
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(20u, f, d, e);
+	return (SubmissionEffectResult){recoil.a, recoil.f};
+}
+/* <<< factory SubmissionEffect */
+
+/* >>> factory MagnemiteSelfdestructEffect */
+MagnemiteSelfdestructEffectResult MagnemiteSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)b;
+	(void)c;
+	(void)hl;
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(40u, f, d, e);
+	wIsDamageToSelf = TRUE;
+	DealDamageToAllBenchedPokemonResult own =
+		DealDamageToAllBenchedPokemon(10u, recoil.f, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+	wIsDamageToSelf = FALSE;
+	DealDamageToAllBenchedPokemonResult other =
+		DealDamageToAllBenchedPokemon(10u, own.f, own.b, own.c, own.d, own.e, own.hl);
+	SwapTurn();
+	return (MagnemiteSelfdestructEffectResult){other.a, other.f, other.b, other.c, other.d, other.e, other.hl};
+}
+/* <<< factory MagnemiteSelfdestructEffect */
+
+/* >>> factory Ram_RecoilSwitchEffect */
+RamRecoilSwitchEffectResult Ram_RecoilSwitchEffect(uint8_t f, uint8_t d, uint8_t e)
+{
+	(void)DealRecoilDamageToSelf(20u, f, d, e);
+	HandleSwitchDefendingPokemonEffectResult switched = HandleSwitchDefendingPokemonEffect(hTemp_ffa0);
+	return (RamRecoilSwitchEffectResult){switched.a, switched.f};
+}
+/* <<< factory Ram_RecoilSwitchEffect */
+
+/* >>> factory MagnetonLv35SelfdestructEffect */
+DealDamageToAllBenchedPokemonResult MagnetonLv35SelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)b;
+	(void)c;
+	(void)hl;
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(100u, f, d, e);
+	wIsDamageToSelf = TRUE;
+	DealDamageToAllBenchedPokemonResult own =
+		DealDamageToAllBenchedPokemon(20u, recoil.f, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+	wIsDamageToSelf = FALSE;
+	DealDamageToAllBenchedPokemonResult other =
+		DealDamageToAllBenchedPokemon(20u, own.f, own.b, own.c, own.d, own.e, own.hl);
+	SwapTurn();
+	return (DealDamageToAllBenchedPokemonResult){other.a, other.f, other.b, other.c, other.d, other.e, other.hl};
+}
+/* <<< factory MagnetonLv35SelfdestructEffect */
+
+/* >>> factory MagnetonLv28SelfdestructEffect */
+MagnetonLv28SelfdestructEffectResult MagnetonLv28SelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)b;
+	(void)c;
+	(void)hl;
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(80u, f, d, e);
+	wIsDamageToSelf = TRUE;
+	DealDamageToAllBenchedPokemonResult own =
+		DealDamageToAllBenchedPokemon(20u, recoil.f, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+	wIsDamageToSelf = FALSE;
+	DealDamageToAllBenchedPokemonResult other =
+		DealDamageToAllBenchedPokemon(20u, own.f, own.b, own.c, own.d, own.e, own.hl);
+	SwapTurn();
+	return (MagnetonLv28SelfdestructEffectResult){other.a, other.f, other.b, other.c, other.d, other.e, other.hl};
+}
+/* <<< factory MagnetonLv28SelfdestructEffect */
+
+/* >>> factory Scavenge_PlayerSelectTrainerEffect */
+/* effect_functions.asm:5699-5710. `.loop_input` re-enters DisplayCardList while
+ * it reports carry, and only its no-carry exit leaves hTempCardIndex_ff98
+ * holding the chosen card; the two `ldh` moves after it touch no flag, so the
+ * exit flags are that callee's. */
+Scavenge_PlayerSelectTrainerEffectResult Scavenge_PlayerSelectTrainerEffect(void)
+{
+	DisplayCardListResult display;
+
+	(void)CreateTrainerCardListFromDiscardPile();
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(PlayerDiscardPileText, PleaseSelectCardText);
+	do {
+		display = DisplayCardList();
+	} while ((display.f & 0x10u) != 0u);
+
+	uint8_t selected = hTempCardIndex_ff98;
+
+	hTempPlayAreaLocation_ffa1 = selected;
+	return (Scavenge_PlayerSelectTrainerEffectResult){selected, display.f};
+}
+/* <<< factory Scavenge_PlayerSelectTrainerEffect */
+
+/* >>> factory WeezingSelfdestructEffect */
+DealDamageToAllBenchedPokemonResult WeezingSelfdestructEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)b;
+	(void)c;
+	(void)hl;
+	DealConfusionDamageToSelfResult recoil = DealRecoilDamageToSelf(60u, f, d, e);
+	wIsDamageToSelf = TRUE;
+	DealDamageToAllBenchedPokemonResult own =
+		DealDamageToAllBenchedPokemon(10u, recoil.f, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+	wIsDamageToSelf = FALSE;
+	DealDamageToAllBenchedPokemonResult other =
+		DealDamageToAllBenchedPokemon(10u, own.f, own.b, own.c, own.d, own.e, own.hl);
+	SwapTurn();
+	return (DealDamageToAllBenchedPokemonResult){other.a, other.f, other.b, other.c, other.d, other.e, other.hl};
+}
+/* <<< factory WeezingSelfdestructEffect */
+
+/* >>> factory PayDayEffect */
+void PayDayEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(IfHeadsDraw1CardFromDeckText, 0u);
+	if ((toss.f & 0x10u) != 0u) {
+		(void)DrawWideTextBox_WaitForInput(Draw1CardFromTheDeckText);
+		DisplayDrawOneCardScreen(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		DrawCardResult draw = DrawCardFromDeck();
+		if ((draw.f & 0x10u) == 0u) {
+			AddCardToHand(draw.a);
+			(void)LoadCardDataToBuffer1_FromDeckIndex(draw.a);
+			if (wDuelistType == DUELIST_TYPE_PLAYER)
+				OpenCardPage_FromHand(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		}
+	}
+}
+/* <<< factory PayDayEffect */
+
+/* >>> factory StoneBarrage_MultiplierEffect */
+void StoneBarrage_MultiplierEffect(void)
+{
+	hTemp_ffa0 = 0u;
+	for (;;) {
+		TossCoinATimesResult toss = TossCoinATimes(0u, 0u, 0u, 0u, 0u, FlipUntilFailAppears10DamageForEachHeadsText, 0u);
+		if ((toss.f & 0x10u) == 0u)
+			break;
+		hTemp_ffa0 = (uint8_t)(hTemp_ffa0 + 1u);
+	}
+	uint16_t damage = HtimesL((uint16_t)(0x0A00u | hTemp_ffa0));
+	gb_write8(wDamage_ADDR, (uint8_t)damage);
+	gb_write8((uint16_t)(wDamage_ADDR + 1u), (uint8_t)(damage >> 8));
+	*gb_ptr(0xCE4E) = 0x00u;
+}
+/* <<< factory StoneBarrage_MultiplierEffect */
+
+/* >>> factory EnergyConversion_AddToHandEffect */
+EnergyConversionAddToHandEffectResult EnergyConversion_AddToHandEffect(uint8_t f, uint8_t d, uint8_t e)
+{
+	(void)DealRecoilDamageToSelf(10u, f, d, e);
+	/* The chosen discard-pile cards in hTempList, copied to wDuelTempList
+	 * up to and including the $ff terminator, each moved to the hand. */
+	uint16_t src = hTempList_ADDR;
+	uint16_t dst = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(src++);
+		gb_write8(dst++, card);
+		if (card == 0xFFu)
+			break;
+		(void)MoveDiscardPileCardToHand(card);
+		AddCardToHand(card);
+	}
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if ((turn.f & 0x10u) != 0u)
+		return (EnergyConversionAddToHandEffectResult){turn.a, turn.f};
+	DisplayCardListDetailsResult shown = DisplayCardListDetails();
+	return (EnergyConversionAddToHandEffectResult){shown.a, shown.f};
+}
+/* <<< factory EnergyConversion_AddToHandEffect */
+
+/* >>> factory SolarPower_RemoveStatusEffect */
+void SolarPower_RemoveStatusEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	uint8_t turn = hWhoseTurn;
+	wLoadedAttackAnimation = ATK_ANIM_HEAL_BOTH_SIDES;
+	ResetAttackAnimationIsPlaying();
+	PlayAttackAnimation(turn, f, location, 0u, d, e, (uint16_t)(((uint16_t)turn << 8) | (hl & 0xffu)));
+	WaitAttackAnimation();
+	DuelistVarResult flags = GetTurnDuelistVariable((uint8_t)(hTemp_ffa0 + DUELVARS_ARENA_CARD_FLAGS));
+	gb_write8(flags.hl, (uint8_t)(gb_read8(flags.hl) | (1u << USED_PKMN_POWER_THIS_TURN_F)));
+	gb_write8((uint16_t)((flags.hl & 0xff00u) | DUELVARS_ARENA_CARD_STATUS), NO_STATUS);
+	DuelistVarResult status = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	gb_write8(status.hl, NO_STATUS);
+	DrawDuelHUDs();
+	(void)a; (void)b; (void)c;
+}
+/* <<< factory SolarPower_RemoveStatusEffect */
+
+/* >>> factory Prophecy_PlayerSelectEffect */
+/* effect_functions.asm:4721-4754. Two loops, not one: B returns to `.start` and
+ * redraws the procedure text box, while an empty deck returns only to
+ * `.select_deck`. Both duelist branches end in HandleProphecyScreen, whose exit
+ * flags are this routine's -- the non-turn branch's trailing SwapTurn touches
+ * none of them. */
+ProphecyScreenResult Prophecy_PlayerSelectEffect(void)
+{
+	for (;;) {
+		DrawWholeScreenTextBox(ProcedureForProphecyText);
+		for (;;) {
+			DrawDuelMainScene();
+			(void)TwoItemHorizontalMenu(PleaseSelectTheDeckText);
+			if ((hKeysHeld & PAD_B) != 0u)
+				break;
+			hTempList = hCurMenuItem;
+			if (hTempList != 0u) {
+				DuelistVarResult other = GetNonTurnDuelistVariable(
+					DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+
+				if (other.a >= DECK_SIZE)
+					continue;
+				SwapTurn();
+				ProphecyScreenResult screen = HandleProphecyScreen();
+
+				SwapTurn();
+				return screen;
+			}
+			DuelistVarResult own = GetTurnDuelistVariable(
+				DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+
+			if (own.a >= DECK_SIZE)
+				continue;
+			return HandleProphecyScreen();
+		}
+	}
+}
+/* <<< factory Prophecy_PlayerSelectEffect */
+
+/* >>> factory PokemonTrader_PlayerDeckSelection */
+/* effect_functions.asm:10043-10075. The chosen hand card is parked in the deck
+ * so it can itself be offered for trade, and is put back only after a valid
+ * pick. `.read_input` re-enters DisplayCardList both when it reports carry (B)
+ * and when the pick is not a Pokemon, so the type check is part of the loop.
+ * The final `or a` makes the exit flags a function of the parked card. */
+PokemonTrader_PlayerDeckSelectionResult PokemonTrader_PlayerDeckSelection(void)
+{
+	uint8_t parked = hTemp_ffa0;
+
+	RemoveCardFromHand(parked);
+	ReturnCardToDeck(parked);
+	(void)DrawWideTextBox_WaitForInput(ChooseBasicOrEvolutionPokemonCardFromDeckText);
+	(void)CreateDeckCardList(0u, 0u);
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChoosePokemonCardText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+
+		if ((display.f & 0x10u) != 0u)
+			continue;
+		(void)LoadCardDataToBuffer2_FromDeckIndex(display.a);
+		if (wLoadedCard2Type >= TYPE_ENERGY)
+			continue;
+		break;
+	}
+	hTempPlayAreaLocation_ffa1 = hTempCardIndex_ff98;
+	SearchCardInDeckAndAddToHand(parked);
+	AddCardToHand(parked);
+	return (PokemonTrader_PlayerDeckSelectionResult){parked, (parked == 0u) ? 0x80u : 0x00u};
+}
+/* <<< factory PokemonTrader_PlayerDeckSelection */
+
+/* >>> factory Quickfreeze_Paralysis50PercentEffect */
+uint8_t Quickfreeze_Paralysis50PercentEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(ParalysisCheckText, 0u);
+	uint8_t result_f;
+	if ((toss.f & 0x10u) == 0u) {
+		SetWasUnsuccessful();
+		DrawDuelMainScene();
+		(void)PrintFailedEffectText();
+		result_f = WaitForWideTextBoxInput().f;
+	} else {
+		QueueStatusConditionResult paralysis = ParalysisEffect();
+		uint8_t location = hTempPlayAreaLocation_ff9d;
+		uint8_t turn = hWhoseTurn;
+		uint16_t animation_hl = (uint16_t)(((uint16_t)turn << 8) | (wStatusConditionQueueIndex_ADDR & 0xffu));
+		PlayAttackAnimation(turn, paralysis.f, location, 0u, 0u, 0u, animation_hl);
+		PlayStatusConditionQueueAnimations();
+		WaitAttackAnimation();
+		(void)ApplyStatusConditionQueue();
+		DrawDuelHUDs();
+		PrintFailedEffectTextResult failed = PrintFailedEffectText();
+		result_f = failed.f;
+		if ((failed.f & 0x10u) != 0u)
+			result_f = WaitForWideTextBoxInput().f;
+	}
+	return result_f;
+}
+/* <<< factory Quickfreeze_Paralysis50PercentEffect */
+
+/* >>> factory PokeBall_PlayerSelection */
+PokeBallPlayerSelectionResult PokeBall_PlayerSelection(void)
+{
+	TossCoinATimesResult toss = TossCoinATimes(1u, 0u, 0u, 0u, 0u, TrainerCardSuccessCheckText, 0u);
+	hTempList = toss.a;
+	if ((toss.f & 0x10u) == 0u) return (PokeBallPlayerSelectionResult){toss.a, toss.f};
+	CardListResult deck = CreateDeckCardList(0u, 0u);
+	LookForCardsInDeckResult search = LookForCardsInDeck(deck.a, (uint8_t)(EvolutionCardText >> 8), (uint8_t)EvolutionCardText, SEARCHEFFECT_POKEMON, 0u, ChooseBasicOrEvolutionPokemonCardFromDeckText);
+	if ((search.f & 0x10u) != 0u) { hTempList_PTR[1] = 0xffu; return (PokeBallPlayerSelectionResult){0xffu, 0x00u}; }
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChoosePokemonCardText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) != 0u) {
+			uint16_t list = wDuelTempList_ADDR;
+			for (;;) {
+				uint8_t index = gb_read8(list++);
+				if (index == 0xffu) { hTempList_PTR[1] = 0xffu; return (PokeBallPlayerSelectionResult){0xffu, 0x00u}; }
+				(void)LoadCardDataToBuffer2_FromDeckIndex(index);
+				if (wLoadedCard2Type < TYPE_ENERGY) break;
+			}
+			PlaySFX_InvalidChoice(); continue;
+		}
+		uint8_t index = hTempCardIndex_ff98;
+		(void)LoadCardDataToBuffer2_FromDeckIndex(index);
+		if (wLoadedCard2Type >= TYPE_ENERGY) { PlaySFX_InvalidChoice(); continue; }
+		hTempList_PTR[1] = index;
+		return (PokeBallPlayerSelectionResult){index, (index == 0u) ? 0x80u : 0x00u};
+	}
+}
+/* <<< factory PokeBall_PlayerSelection */
+
+/* >>> factory PokemonTrader_TradeCardsEffect */
+ShuffleCardsInDeckResult PokemonTrader_TradeCardsEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t hand_card = hTemp_ffa0;
+	RemoveCardFromHand(hand_card);
+	ReturnCardToDeck(hand_card);
+
+	uint8_t deck_card = hTempPlayAreaLocation_ffa1;
+	SearchCardInDeckAndAddToHand(deck_card);
+	AddCardToHand(deck_card);
+
+	/* effect_functions.asm:10088-10099. `jr c, .done` skips both detail screens
+	 * on the Player's own turn, and every path falls into ShuffleCardsInDeck --
+	 * whose registers are this routine's exit, not a synthesized `0x70`. The
+	 * shuffle inherits whatever `hl` the last `ldtx` left. */
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	uint16_t shuffle_hl = hl;
+
+	if ((turn.f & 0x10u) == 0u) {
+		(void)DisplayCardDetailScreen(hand_card, PokemonWasReturnedToDeckText);
+		(void)DisplayCardDetailScreen(deck_card, WasPlacedInTheHandText);
+		shuffle_hl = WasPlacedInTheHandText;
+	}
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), shuffle_hl);
+}
+/* <<< factory PokemonTrader_TradeCardsEffect */
+
+/* >>> factory HandleEvolvedCardSelection */
+HandleEvolvedCardSelectionResult HandleEvolvedCardSelection(void)
+{
+	(void)HasAlivePokemonInPlayArea();
+	for (;;) {
+		PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
+		if ((screen.f & 0x10u) != 0u)
+			return (HandleEvolvedCardSelectionResult){screen.f};
+		uint8_t location = hTempPlayAreaLocation_ff9d;
+		DuelistVarResult stage = GetTurnDuelistVariable(
+			(uint8_t)(DUELVARS_ARENA_CARD_STAGE + location));
+		if (stage.a != 0u)
+			return (HandleEvolvedCardSelectionResult){0x00u};
+	}
+}
+/* <<< factory HandleEvolvedCardSelection */
+
+/* >>> factory DuelistSelectForcedSwitch */
+DuelistSelectForcedSwitchResult DuelistSelectForcedSwitch(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)f;
+	(void)d;
+	(void)e;
+	(void)hl;
+	DuelistVarResult duelist = GetNonTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (duelist.a == DUELIST_TYPE_PLAYER) {
+		(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);
+		SwapTurn();
+		(void)HasAlivePokemonInBench();
+		wPlayAreaSelectAction = 1u;
+		while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+		}
+		uint8_t selected = hTempPlayAreaLocation_ff9d;
+		SwapTurn();
+		return (DuelistSelectForcedSwitchResult){selected, selected == 0u ? 0x80u : 0x00u};
+	}
+	SwapTurn();
+	uint8_t selected = AIDoAction_ForcedSwitch();
+	hTempPlayAreaLocation_ff9d = selected;
+	SwapTurn();
+	AttackCopyResult copied = CopyAttackDataAndDamage_FromCardID(wPlayerAttackingCardID, wPlayerAttackingCardIndex, wPlayerAttackingAttackIndex);
+	DuelRoutineResult updated = UpdateArenaCardIDsAndClearTwoTurnDuelVars(copied.a, copied.f, b, copied.c, (uint8_t)(copied.de >> 8), (uint8_t)copied.de, copied.hl);
+	return (DuelistSelectForcedSwitchResult){updated.a, updated.f};
+}
+/* <<< factory DuelistSelectForcedSwitch */
+
+/* >>> factory HandlePokemonAndEnergySelectionScreen */
+HandlePokemonAndEnergySelectionScreenResult HandlePokemonAndEnergySelectionScreen(void)
+{
+	for (;;) {
+		uint8_t saved = hBankROM;
+		BankswitchROM(0x01u);
+		(void)HasAlivePokemonInPlayArea();
+		BankswitchROM(saved);
+
+		BankswitchROM(0x01u);
+		PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
+		if ((screen.f & 0x10u) != 0u) {
+			BankswitchROM(saved);
+			return (HandlePokemonAndEnergySelectionScreenResult){screen.a, screen.f};
+		}
+		BankswitchROM(saved);
+		uint8_t location = hCurMenuItem;
+		(void)GetPlayAreaCardAttachedEnergies(location);
+		if (wTotalAttachedEnergies == 0u) {
+			(void)DrawWideTextBox_WaitForInput(NoEnergyCardsText);
+			continue;
+		}
+
+		(void)CreateArenaOrBenchEnergyCardList(hCurMenuItem);
+		BankswitchROM(0x01u);
+		DisplayEnergyDiscardScreen(hCurMenuItem);
+		BankswitchROM(saved);
+		HandleEnergyDiscardMenuInputResult input;
+		BankswitchROM(0x01u);
+		input = HandleEnergyDiscardMenuInput();
+		BankswitchROM(saved);
+		hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+		hTempPlayAreaLocation_ffa1 = hTempCardIndex_ff98;
+		return (HandlePokemonAndEnergySelectionScreenResult){hTempCardIndex_ff98, input.f};
+	}
+}
+/* <<< factory HandlePokemonAndEnergySelectionScreen */
+
+/* >>> factory Defender_PlayerSelection */
+void Defender_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChoosePokemonToAttachDefenderToText);
+	(void)HasAlivePokemonInPlayArea();
+	OpenPlayAreaScreenForSelection();
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+}
+/* <<< factory Defender_PlayerSelection */
+
+/* >>> factory EnergyRemoval_PlayerSelection */
+HandlePokemonAndEnergySelectionScreenResult EnergyRemoval_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChoosePokemonToRemoveEnergyFromText);
+	SwapTurn();
+	HandlePokemonAndEnergySelectionScreenResult selected = HandlePokemonAndEnergySelectionScreen();
+	SwapTurn();
+	return selected;
+}
+/* <<< factory EnergyRemoval_PlayerSelection */
+
+/* >>> factory MrFuji_PlayerSelection */
+void MrFuji_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChoosePokemonToReturnToTheDeckText);
+	(void)HasAlivePokemonInBench();
+	(void)OpenPlayAreaScreenForSelection();
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+}
+/* <<< factory MrFuji_PlayerSelection */
+
+/* >>> factory Switch_PlayerSelection */
+void Switch_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);
+	(void)HasAlivePokemonInBench();
+	(void)OpenPlayAreaScreenForSelection();
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+}
+/* <<< factory Switch_PlayerSelection */
+
+/* >>> factory Cowardice_PlayerSelectEffect */
+void Cowardice_PlayerSelectEffect(void)
+{
+	if (hTemp_ffa0 != 0u)
+		return;
+	(void)DrawWideTextBox_WaitForInput(SelectPokemonToPlaceInTheArenaText);
+	(void)HasAlivePokemonInBench();
+	(void)OpenPlayAreaScreenForSelection();
+	hAIPkmnPowerEffectParam = hTempPlayAreaLocation_ff9d;
+}
+/* <<< factory Cowardice_PlayerSelectEffect */
+
+/* >>> factory PealOfThunder_RandomlyDamageEffect */
+PealOfThunderRandomlyDamageEffectResult PealOfThunder_RandomlyDamageEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
+{
+	(void)RandomlyDamagePlayAreaPokemon(30u);
+	HandleBetweenTurnKnockOutsResult r = HandleDestinyBondAndBetweenTurnKnockOuts();
+	return (PealOfThunderRandomlyDamageEffectResult){r.a, r.f};
+}
+/* <<< factory PealOfThunder_RandomlyDamageEffect */
+
+/* >>> factory TrainerCardAsPokemon_PlayerSelectSwitch */
+void TrainerCardAsPokemon_PlayerSelectSwitch(void)
+{
+	if (hTemp_ffa0 != 0u)
+		return;
+	(void)DrawWideTextBox_WaitForInput(SelectPokemonToPlaceInTheArenaText);
+	(void)HasAlivePokemonInBench();
+	(void)OpenPlayAreaScreenForSelection();
+	hTempPlayAreaLocation_ffa1 = hTempPlayAreaLocation_ff9d;
+}
+/* <<< factory TrainerCardAsPokemon_PlayerSelectSwitch */
+
+/* >>> factory Ram_SelectSwitchEffect */
+Ram_SelectSwitchEffectResult Ram_SelectSwitchEffect(void)
+{
+	DuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a < 2u) {
+		hTemp_ffa0 = 0xFFu;
+		return (Ram_SelectSwitchEffectResult){0xFFu, 0x70u};
+	}
+	DuelistSelectForcedSwitchResult selected =
+		DuelistSelectForcedSwitch(count.a, 0u, 0u, 0u, 0u, 0u, count.hl);
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	return (Ram_SelectSwitchEffectResult){hTempPlayAreaLocation_ff9d, selected.f};
+}
+/* <<< factory Ram_SelectSwitchEffect */
+
+/* >>> factory GustOfWind_PlayerSelection */
+void GustOfWind_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseAPokemonToSwitchWithActivePokemonText);
+	SwapTurn();
+	(void)HasAlivePokemonInBench();
+	(void)OpenPlayAreaScreenForSelection();
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	SwapTurn();
+}
+/* <<< factory GustOfWind_PlayerSelection */
+
+/* >>> factory Teleport_PlayerSelectEffect */
+void Teleport_PlayerSelectEffect(void)
+{
+	(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);
+	(void)HasAlivePokemonInBench();
+	wPlayAreaSelectAction = 1u;
+	while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+	}
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+}
+/* <<< factory Teleport_PlayerSelectEffect */
+
+/* >>> factory NinetalesLure_PlayerSelectEffect */
+void NinetalesLure_PlayerSelectEffect(void)
+{
+	(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);
+	SwapTurn();
+	(void)HasAlivePokemonInBench();
+	while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+	}
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	SwapTurn();
+}
+/* <<< factory NinetalesLure_PlayerSelectEffect */
+
+/* >>> factory StretchKick_PlayerSelectEffect */
+void StretchKick_PlayerSelectEffect(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChoosePkmnInTheBenchToGiveDamageText);
+	SwapTurn();
+	(void)HasAlivePokemonInBench();
+	while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+	}
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	SwapTurn();
+}
+/* <<< factory StretchKick_PlayerSelectEffect */
+
+/* >>> factory VictreebelLure_SelectSwitchPokemon */
+void VictreebelLure_SelectSwitchPokemon(void)
+{
+	(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);
+	SwapTurn();
+	(void)HasAlivePokemonInBench();
+	while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+	}
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	SwapTurn();
+}
+/* <<< factory VictreebelLure_SelectSwitchPokemon */
+
+/* >>> factory TerrorStrike_50PercentSelectSwitchPokemon */
+TerrorStrike50PercentSelectSwitchPokemonResult TerrorStrike_50PercentSelectSwitchPokemon(void)
+{
+	hTemp_ffa0 = 0x00u;
+	DuelistVarResult count =
+		GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t flags = effect_compare(count.a, 2u);
+	if (count.a < 2u)
+		return (TerrorStrike50PercentSelectSwitchPokemonResult){count.a, flags};
+
+	TossCoinATimesResult toss = TossCoinATimes(
+		count.a, flags, 0u, 0u,
+		(uint8_t)(IfHeadsChangeOpponentsActivePokemonText >> 8),
+		(uint8_t)IfHeadsChangeOpponentsActivePokemonText, count.hl);
+	hTemp_ffa0 = toss.a;
+	if ((toss.f & 0x10u) == 0u)
+		return (TerrorStrike50PercentSelectSwitchPokemonResult){toss.a, toss.f};
+
+	DuelistSelectForcedSwitchResult selected =
+		DuelistSelectForcedSwitch(toss.a, toss.f, 0u, 0u, 0u, 0u, count.hl);
+	hTempPlayAreaLocation_ffa1 = hTempPlayAreaLocation_ff9d;
+	return (TerrorStrike50PercentSelectSwitchPokemonResult){hTempPlayAreaLocation_ff9d, selected.f};
+}
+/* <<< factory TerrorStrike_50PercentSelectSwitchPokemon */
+
+/* >>> factory Potion_PlayerSelection */
+/* effect_functions.asm:9241-9261: B on the selection screen returns its
+ * carry straight to PlayTrainerCard, which then drops the card unplayed. The
+ * screen's cancel exit is `pop af` then `scf` (core.asm:5016-5021), so the
+ * flags under the carry are the ones it was entered with: the alive check's. */
+Potion_PlayerSelectionResult Potion_PlayerSelection(void)
+{
+	HasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();
+	for (;;) {
+		PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
+		if ((screen.f & 0x10u) != 0u)
+			return (Potion_PlayerSelectionResult){screen.a, (uint8_t)((alive.f & 0x80u) | 0x10u)};
+		uint8_t location = hTempPlayAreaLocation_ff9d;
+		hTemp_ffa0 = location;
+		CardDamageResult damage = GetCardDamageAndMaxHP(location);
+		if (damage.a == 0u)
+			continue;
+		uint8_t amount = damage.a;
+		if (amount > 20u)
+			amount = 20u;
+		hTempPlayAreaLocation_ffa1 = amount;
+		/* `or a` on the capped amount, which is never zero here. */
+		return (Potion_PlayerSelectionResult){amount, 0u};
+	}
+}
+/* <<< factory Potion_PlayerSelection */
+
+/* >>> factory ScoopUp_PlayerSelection */
+/* effect_functions.asm:9912-9929. B on either selection screen returns its
+ * carry (the screen's `pop af`+`scf` over the alive check's flags); picking a
+ * bench card ends at `or a` on its location. */
+ScoopUp_PlayerSelectionResult ScoopUp_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChoosePokemonToScoopUpText);
+	HasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();
+	PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
+	if ((screen.f & 0x10u) != 0u)
+		return (ScoopUp_PlayerSelectionResult){screen.a, (uint8_t)((alive.f & 0x80u) | 0x10u)};
+	hTemp_ffa0 = screen.a;
+	if (screen.a != 0u)
+		return (ScoopUp_PlayerSelectionResult){screen.a, 0u};
+	EmptyScreen();
+	(void)DrawWideTextBox_WaitForInput(SelectPokemonToPlaceInTheArenaText);
+	HasAlivePokemonInPlayAreaResult bench = HasAlivePokemonInBench();
+	screen = OpenPlayAreaScreenForSelection();
+	hTempPlayAreaLocation_ffa1 = screen.a;
+	if ((screen.f & 0x10u) != 0u)
+		return (ScoopUp_PlayerSelectionResult){screen.a, (uint8_t)((bench.f & 0x80u) | 0x10u)};
+	return (ScoopUp_PlayerSelectionResult){screen.a, screen.a == 0u ? 0x80u : 0u};
+}
+/* <<< factory ScoopUp_PlayerSelection */
+
+/* >>> factory Spark_PlayerSelectEffect */
+void Spark_PlayerSelectEffect(void)
+{
+	hTemp_ffa0 = 0xffu;
+	DuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a < 2u)
+		return;
+	(void)DrawWideTextBox_WaitForInput(ChoosePkmnInTheBenchToGiveDamageText);
+	SwapTurn();
+	(void)HasAlivePokemonInBench();
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_BENCH_1;
+	while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+	}
+	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	SwapTurn();
+}
+/* <<< factory Spark_PlayerSelectEffect */
+
+/* >>> factory DevolutionBeam_PlayerSelectEffect */
+void DevolutionBeam_PlayerSelectEffect(void)
+{
+	(void)DrawWholeScreenTextBox(ProcedureForDevolutionBeamText);
+	for (;;) {
+		DrawDuelMainScene();
+		(void)TwoItemHorizontalMenu(PleaseSelectThePlayAreaText);
+		if ((hKeysHeld & PAD_B) != 0u)
+			return;
+
+		uint8_t selected_duelist = 0u;
+		HandleEvolvedCardSelectionResult selection;
+		if (hCurMenuItem != 0u) {
+			SwapTurn();
+			selection = HandleEvolvedCardSelection();
+			SwapTurn();
+			if ((selection.f & 0x10u) != 0u)
+				continue;
+			selected_duelist = 1u;
+		} else {
+			selection = HandleEvolvedCardSelection();
+			if ((selection.f & 0x10u) != 0u)
+				continue;
+		}
+
+		hTemp_ffa0 = selected_duelist;
+		hAIPkmnPowerEffectParam = hTempPlayAreaLocation_ff9d;
+		return;
+	}
+}
+/* <<< factory DevolutionBeam_PlayerSelectEffect */
+
+/* >>> factory DevolutionSpray_DevolutionEffect */
+void DevolutionSpray_DevolutionEffect(void)
+{
+	uint8_t location = hTempList;
+	hTempPlayAreaLocation_ff9d = location;
+	DuelistVarResult arena = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location));
+	uint8_t original_card = arena.a;
+	uint16_t list = (uint16_t)(hTempList_ADDR + 1u);
+	for (;;) {
+		uint8_t card = gb_read8(list);
+		if (card == 0xffu)
+			break;
+		CardOneStageBelowResult below = GetCardOneStageBelow(0u, 0u);
+		UpdateDevolvedCardHPAndStage(below.d);
+		(void)ResetDevolvedCardStatus();
+		PutCardInDiscardPile(card);
+		list = (uint16_t)(list + 1u);
+	}
+	uint8_t current_card = gb_read8(arena.hl);
+	PrintDevolvedCardNameAndLevelText(0u, 0u, current_card, original_card);
+	(void)PrintPlayAreaCardKnockedOutIfNoHP(location);
+	(void)HandleDestinyBondAndBetweenTurnKnockOuts();
+}
+/* <<< factory DevolutionSpray_DevolutionEffect */
+
+/* >>> factory PokemonBreeder_PlayerSelection */
+/* effect_functions.asm:9745-9771. B on the hand list or on the play area
+ * selection returns its carry; a Basic that the chosen Stage 2 can evolve ends
+ * at `or a` on CheckIfCanEvolveInto_BasicToStage2's a. */
+PokemonBreeder_PlayerSelectionResult PokemonBreeder_PlayerSelection(void)
+{
+	(void)CreatePlayableStage2PokemonCardListFromHand();
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistHandText, PleaseSelectCardText);
+	DisplayCardListResult list = DisplayCardList();
+	if ((list.f & 0x10u) != 0u)
+		return (PokemonBreeder_PlayerSelectionResult){list.a, list.f};
+	hTemp_ffa0 = hTempCardIndex_ff98;
+	(void)DrawWideTextBox_WaitForInput(ChooseBasicPokemonToEvolveText);
+	HasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();
+	EvolveResult evolve;
+	do {
+		PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
+		if ((screen.f & 0x10u) != 0u)
+			return (PokemonBreeder_PlayerSelectionResult){screen.a, (uint8_t)((alive.f & 0x80u) | 0x10u)};
+		uint8_t location = hTempPlayAreaLocation_ff9d;
+		hTempPlayAreaLocation_ffa1 = location;
+		evolve = CheckIfCanEvolveInto_BasicToStage2(hTemp_ffa0, location);
+	} while ((evolve.f & 0x10u) != 0u);
+	return (PokemonBreeder_PlayerSelectionResult){evolve.a, evolve.a == 0u ? 0x80u : 0u};
+}
+/* <<< factory PokemonBreeder_PlayerSelection */
+
+/* >>> factory Curse_TransferDamageEffect */
+void Curse_TransferDamageEffect(void)
+{
+	uint8_t location = hTempList;
+	DuelistVarResult flags = GetTurnDuelistVariable(
+		(uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));
+	gb_write8(flags.hl, (uint8_t)(flags.a | (1u << USED_PKMN_POWER_THIS_TURN_F)));
+
+	SwapTurn();
+	DuelistVarResult duelist = GetNonTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (duelist.a != DUELIST_TYPE_PLAYER)
+		SetupPlayAreaScreen();
+
+	DuelistVarResult target = GetTurnDuelistVariable(
+		(uint8_t)(DUELVARS_ARENA_CARD_HP + hPlayAreaEffectTarget));
+	gb_write8(target.hl, (uint8_t)(target.a - 10u));
+	DuelistVarResult recipient = GetTurnDuelistVariable(
+		(uint8_t)(DUELVARS_ARENA_CARD_HP + hTempPlayAreaLocation_ffa1));
+	gb_write8(recipient.hl, (uint8_t)(recipient.a + 10u));
+
+	(void)PrintPlayAreaCardList_EnableLCD();
+	duelist = GetNonTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (duelist.a != DUELIST_TYPE_PLAYER) {
+		hTempPlayAreaLocation_ff9d = hPlayAreaEffectTarget;
+		InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox();
+	}
+
+	SwapTurn();
+	(void)HandleDestinyBondAndBetweenTurnKnockOuts();
+}
+/* <<< factory Curse_TransferDamageEffect */
+
+/* >>> factory SuperPotion_PlayerSelectEffect */
+#define ChoosePokemonToRemoveDamageCounterFromText 0x0150u
+SuperPotion_PlayerSelectEffectResult SuperPotion_PlayerSelectEffect(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChoosePokemonToRemoveDamageCounterFromText);
+	for (;;) {
+		HasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();
+		uint8_t chosen = 0u;
+		for (;;) {
+			PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
+			if ((screen.f & 0x10u) != 0u)
+				return (SuperPotion_PlayerSelectEffectResult){screen.a,
+					(uint8_t)((alive.f & 0x80u) | 0x10u)};
+			if (GetCardDamageAndMaxHP(screen.a).a == 0u)
+				continue;
+			(void)GetPlayAreaCardAttachedEnergies(hCurMenuItem);
+			if (gb_read8(wTotalAttachedEnergies_ADDR) != 0u) {
+				chosen = 1u;
+				break;
+			}
+			(void)DrawWideTextBox_WaitForInput(NoEnergyCardsText);
+			break;
+		}
+		if (chosen)
+			break;
+	}
+	(void)CreateArenaOrBenchEnergyCardList(hCurMenuItem);
+	DisplayEnergyDiscardScreen(hCurMenuItem);
+	HandleEnergyDiscardMenuInputResult discard = HandleEnergyDiscardMenuInput();
+	if ((discard.f & 0x10u) != 0u)
+		return (SuperPotion_PlayerSelectEffectResult){discard.a, discard.f};
+	hTemp_ffa0 = hTempCardIndex_ff98;
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	hTempPlayAreaLocation_ffa1 = location;
+	uint8_t amount = GetCardDamageAndMaxHP(location).a;
+	if (amount > 40u)
+		amount = 40u;
+	gb_write8(hPlayAreaEffectTarget_ADDR, amount);
+	return (SuperPotion_PlayerSelectEffectResult){amount, (uint8_t)(amount == 0u ? 0x80u : 0x00u)};
+}
+/* <<< factory SuperPotion_PlayerSelectEffect */
+
+/* >>> factory Wail_FillBenchEffect */
+void Wail_FillBenchEffect(void)
+{
+	SwapTurn();
+	{
+		CardListResult list = CreateDeckCardList(0u, 0u);
+		if (!(list.f & 0x10u)) {
+			(void)ShuffleCards(list.a, wDuelTempList_ADDR);
+			uint16_t cursor = wDuelTempList_ADDR;
+			for (;;) {
+				DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+				if (count.a >= MAX_PLAY_AREA_POKEMON)
+					break;
+				uint8_t index = gb_read8(cursor++);
+				hTempCardIndex_ff98 = index;
+				if (index == 0xffu)
+					break;
+				LoadCardDataToBuffer2_FromDeckIndex(index);
+				if (wLoadedCard2Type >= TYPE_ENERGY)
+					continue;
+				if (wLoadedCard2Stage != 0u)
+					continue;
+				SearchCardInDeckAndAddToHand(index);
+				AddCardToHand(index);
+				(void)PutHandPokemonCardInPlayArea(index, 0u);
+			}
+			(void)ShuffleCardsInDeck(list.b, list.c,
+				(uint16_t)(((uint16_t)list.d << 8) | list.e), cursor);
+		}
+	}
+	SwapTurn();
+	{
+		CardListResult list = CreateDeckCardList(0u, 0u);
+		if (!(list.f & 0x10u)) {
+			(void)ShuffleCards(list.a, wDuelTempList_ADDR);
+			uint16_t cursor = wDuelTempList_ADDR;
+			for (;;) {
+				DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+				if (count.a >= MAX_PLAY_AREA_POKEMON)
+					break;
+				uint8_t index = gb_read8(cursor++);
+				hTempCardIndex_ff98 = index;
+				if (index == 0xffu)
+					break;
+				LoadCardDataToBuffer2_FromDeckIndex(index);
+				if (wLoadedCard2Type >= TYPE_ENERGY)
+					continue;
+				if (wLoadedCard2Stage != 0u)
+					continue;
+				SearchCardInDeckAndAddToHand(index);
+				AddCardToHand(index);
+				(void)PutHandPokemonCardInPlayArea(index, 0u);
+			}
+			(void)ShuffleCardsInDeck(list.b, list.c,
+				(uint16_t)(((uint16_t)list.d << 8) | list.e), cursor);
+		}
+	}
+	(void)DrawWideTextBox_WaitForInput(BasicPokemonWasPlacedOnEachBenchText);
+	(void)HasAlivePokemonInPlayArea();
+	OpenPlayAreaScreenForSelection();
+	SwapTurn();
+	(void)HasAlivePokemonInPlayArea();
+	OpenPlayAreaScreenForSelection();
+	SwapTurn();
+}
+/* <<< factory Wail_FillBenchEffect */
+
+/* >>> factory Heal_RemoveDamageEffect */
+#define IfHeadsHealIsSuccessfulText 0x00ecu
+#define ChoosePkmnToRemoveDamageCounterText 0x0130u
+void Heal_RemoveDamageEffect(void)
+{
+	TossCoinRoutineResult toss = TossCoin(IfHeadsHealIsSuccessfulText, 0u);
+	hAIPkmnPowerEffectParam = toss.a;
+	if ((toss.f & 0x10u) != 0u) {
+		DuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+		if ((duelist.a & DUELIST_TYPE_AI_OPP) == 0u) {
+			(void)DrawWideTextBox_WaitForInput(ChoosePkmnToRemoveDamageCounterText);
+			(void)HasAlivePokemonInPlayArea();
+			for (;;) {
+				PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
+				if ((screen.f & 0x10u) != 0u)
+					continue;
+				uint8_t location = hTempPlayAreaLocation_ff9d;
+				if (GetCardDamageAndMaxHP(location).a == 0u)
+					continue;
+				hPlayAreaEffectTarget = location;
+				break;
+			}
+		}
+	}
+	DuelistVarResult flags = GetTurnDuelistVariable(
+		(uint8_t)(hTemp_ffa0 + DUELVARS_ARENA_CARD_FLAGS));
+	gb_write8(flags.hl, (uint8_t)(flags.a | (1u << USED_PKMN_POWER_THIS_TURN_F)));
+	if (hAIPkmnPowerEffectParam == 0u)
+		return;
+	uint8_t target = hPlayAreaEffectTarget;
+	DuelistVarResult hp = GetTurnDuelistVariable(
+		(uint8_t)(target + DUELVARS_ARENA_CARD_HP));
+	gb_write8(hp.hl, (uint8_t)(hp.a + 10u));
+	DrawPlayAreaScreenToShowChanges(target);
+}
+/* <<< factory Heal_RemoveDamageEffect */
+
+/* >>> factory SuperEnergyRemoval_PlayerSelection */
+HandlePokemonAndEnergySelectionScreenResult SuperEnergyRemoval_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChoosePokemonInYourAreaThenPokemonInYourOppText);
+	HandlePokemonAndEnergySelectionScreenResult own = HandlePokemonAndEnergySelectionScreen();
+	if ((own.f & 0x10u) != 0u)
+		return own;
+
+	(void)DrawWideTextBox_WaitForInput(ChoosePokemonToRemoveEnergyFromText);
+	SwapTurn();
+	hCurSelectionItem = 3u;
+	for (;;) {
+		uint8_t saved_bank = hBankROM;
+		BankswitchROM(0x01u);
+		(void)HasAlivePokemonInPlayArea();
+		BankswitchROM(saved_bank);
+
+		saved_bank = hBankROM;
+		BankswitchROM(0x01u);
+		while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+		}
+		BankswitchROM(saved_bank);
+		uint8_t location = hCurMenuItem;
+		if (location == 0xffu) {
+			SwapTurn();
+			return (HandlePokemonAndEnergySelectionScreenResult){location, 0x90u};
+		}
+
+		(void)GetPlayAreaCardAttachedEnergies(location);
+		if (wTotalAttachedEnergies == 0u) {
+			(void)DrawWideTextBox_WaitForInput(NoEnergyCardsText);
+			continue;
+		}
+
+		hPlayAreaEffectTarget = hTempPlayAreaLocation_ff9d;
+		saved_bank = hBankROM;
+		BankswitchROM(0x01u);
+		(void)CreateArenaOrBenchEnergyCardList(hTempPlayAreaLocation_ff9d);
+		BankswitchROM(saved_bank);
+		saved_bank = hBankROM;
+		BankswitchROM(0x01u);
+		DisplayEnergyDiscardScreen(hTempPlayAreaLocation_ff9d);
+		BankswitchROM(saved_bank);
+		wEnergyDiscardMenuDenominator = 2u;
+
+		for (;;) {
+			HandleEnergyDiscardMenuInputResult menu;
+			saved_bank = hBankROM;
+			BankswitchROM(0x01u);
+			menu = HandleEnergyDiscardMenuInput();
+			BankswitchROM(saved_bank);
+			if ((menu.f & 0x10u) != 0u) {
+				AskWhetherToQuitSelectingCardsResult quit = AskWhetherToQuitSelectingCards(5u);
+				if ((quit.f & 0x10u) == 0u)
+					break;
+				uint8_t numerator = wEnergyDiscardMenuNumerator;
+				saved_bank = hBankROM;
+				BankswitchROM(0x01u);
+				DisplayEnergyDiscardScreen(hTempPlayAreaLocation_ff9d);
+				BankswitchROM(saved_bank);
+				wEnergyDiscardMenuDenominator = 2u;
+				wEnergyDiscardMenuNumerator = numerator;
+				continue;
+			}
+
+			uint16_t position = GetNextPositionInTempList_TrainerEffects();
+			gb_write8(position, hTempCardIndex_ff98);
+			(void)RemoveCardFromDuelTempList(hTempCardIndex_ff98);
+			++wEnergyDiscardMenuNumerator;
+			if (hCurSelectionItem >= 5u || wDuelTempList == 0xffu)
+				break;
+			saved_bank = hBankROM;
+			BankswitchROM(0x01u);
+			DisplayEnergyDiscardMenu();
+			BankswitchROM(saved_bank);
+		}
+
+		uint8_t final_selection = hCurSelectionItem;
+		uint16_t position = GetNextPositionInTempList_TrainerEffects();
+		gb_write8(position, 0xffu);
+		SwapTurn();
+		return (HandlePokemonAndEnergySelectionScreenResult){final_selection, (uint8_t)(final_selection == 0u ? 0x80u : 0x00u)};
+	}
+}
+/* <<< factory SuperEnergyRemoval_PlayerSelection */
+
+/* >>> factory DevolutionSpray_PlayerSelection */
+/* effect_functions.asm:10717-10804. Two ways out with carry: B on the
+ * selection screen (`ret c`, the screen's `pop af`+`scf` over the alive check's
+ * flags), and "No" at the confirmation, whose flags the closing pops leave
+ * untouched. Between them, B on the devolved card's page ends the chain. */
+DevolutionSpray_PlayerSelectionResult DevolutionSpray_PlayerSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseEvolutionCardAndPressAButtonToDevolveText);
+	hCurSelectionItem = 1u;
+	HasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();
+
+	CardOneStageBelowResult below;
+	for (;;) {
+		PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
+		if ((screen.f & 0x10u) != 0u)
+			return (DevolutionSpray_PlayerSelectionResult){screen.a, (uint8_t)((alive.f & 0x80u) | 0x10u)};
+		below = GetCardOneStageBelow(0u, 0u);
+		if ((below.f & 0x10u) == 0u)
+			break;
+	}
+
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	DuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + location));
+	DuelistVarResult stage = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_STAGE + location));
+	DuelistVarResult card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location));
+
+	for (;;) {
+		UpdateDevolvedCardHPAndStage(below.d);
+		uint16_t position = GetNextPositionInTempList_TrainerEffects();
+		gb_write8(position, below.e);
+		(void)LoadCardDataToBuffer2_FromDeckIndex(below.d);
+		if (wLoadedCard2Stage == 0u)
+			break;
+		if ((InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox().f & 0x10u) != 0u)
+			break;
+		below = GetCardOneStageBelow(0u, 0u);
+	}
+
+	uint16_t terminator = GetNextPositionInTempList_TrainerEffects();
+	gb_write8(terminator, 0xffu);
+	hTempList = location;
+	EmptyScreen();
+	hTempPlayAreaLocation_ff9d = location;
+	wHUDEnergyAndHPBarsX = location;
+	gb_write8((uint16_t)(wHUDEnergyAndHPBarsX_ADDR + 1u), 0u);
+	PrintPlayAreaCardInformationAndLocation();
+	EnableLCD();
+
+	gb_write8(card.hl, card.a);
+	HandleYesOrNoMenuResult answer = YesOrNoMenuWithText(IsThisOKText);
+	gb_write8(stage.hl, stage.a);
+	gb_write8(hp.hl, hp.a);
+	return (DevolutionSpray_PlayerSelectionResult){answer.a, answer.f};
+}
+/* <<< factory DevolutionSpray_PlayerSelection */
+
+/* >>> factory EnergySpike_PlayerSelectEffect */
+#define ChoosePokemonToAttachEnergyCardText 0x011du
+static uint8_t energy_spike_is_basic_energy(uint8_t deck_index)
+{
+	uint8_t type = GetCardType(GetCardIDFromDeckIndex(deck_index));
+	return (uint8_t)(type < TYPE_ENERGY_DOUBLE_COLORLESS && (type & TYPE_ENERGY) != 0u);
+}
+
+void EnergySpike_PlayerSelectEffect(void)
+{
+	hTemp_ffa0 = 0xffu;
+	CardListResult deck = CreateDeckCardList(0u, 0u);
+	LookForCardsInDeckResult search = LookForCardsInDeck(
+		deck.a, (uint8_t)(BasicEnergyText >> 8), (uint8_t)BasicEnergyText,
+		SEARCHEFFECT_BASIC_ENERGY, 0u, Choose1BasicEnergyCardFromDeckText);
+	if ((search.f & 0x10u) != 0u)
+		return;
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChooseBasicEnergyCardText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) == 0u) {
+			if (!energy_spike_is_basic_energy(display.a))
+				continue;
+			hTemp_ffa0 = hTempCardIndex_ff98;
+			EmptyScreen();
+			(void)DrawWideTextBox_WaitForInput(ChoosePokemonToAttachEnergyCardText);
+			(void)HasAlivePokemonInPlayArea();
+			while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+			}
+			hTempPlayAreaLocation_ffa1 = hTempPlayAreaLocation_ff9d;
+			return;
+		}
+		uint8_t forced = 0u;
+		for (uint8_t index = 0u; index < DECK_SIZE; index++) {
+			if (GetTurnDuelistVariable((uint8_t)(DUELVARS_CARD_LOCATIONS + index)).a != CARD_LOCATION_DECK)
+				continue;
+			if ((GetCardType(GetCardIDFromDeckIndex(index)) & TYPE_ENERGY) != 0u) {
+				forced = 1u;
+				break;
+			}
+		}
+		if (forced) {
+			PlaySFX_InvalidChoice();
+			continue;
+		}
+		hTemp_ffa0 = 0xffu;
+		return;
+	}
+}
+/* <<< factory EnergySpike_PlayerSelectEffect */

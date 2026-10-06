@@ -1,0 +1,345 @@
+#include "home/menus.h"
+#include "probe.h"
+#include "generated/wram.h"
+
+static void adapt_InitializeCardListParameters(ProbeState *s)
+{
+	InitializeCardListParameters(s->a, s->d, s->e, &s->hl);
+}
+
+static void adapt_InitializeMenuParameters(ProbeState *s)
+{
+	InitializeMenuParameters(s->a, &s->hl);
+}
+
+static void adapt_SetMenuItem(ProbeState *s)
+{
+	SetMenuItem(s->a);
+}
+
+static void adapt_OneByteNumberToTxSymbol(ProbeState *s)
+{
+	TxSymbolResult result = OneByteNumberToTxSymbol(s->a);
+	s->a = result.a;
+	s->hl = result.hl;
+}
+static void adapt_OneByteNumberToTxSymbol_TrimLeadingZeros(ProbeState *s)
+{
+	TxSymbolResult result = OneByteNumberToTxSymbol_TrimLeadingZeros(s->a);
+	s->a = result.a;
+	s->hl = result.hl;
+}
+
+static void adapt_CardTypeToSymbolID(ProbeState *s)
+{
+	s->a = CardTypeToSymbolID();
+}
+
+static void adapt_GetCardSymbolData(ProbeState *s)
+{
+	uint8_t id = CardTypeToSymbolID();
+	s->a = GetCardSymbolData();
+	s->b = 0;
+	s->c = (uint8_t)(id * 2);
+	s->hl = (uint16_t)(0x20C5u + id * 2u);
+}
+
+static void adapt_SetCursorParametersForTextBox(ProbeState *s)
+{
+	CursorTileResult result = SetCursorParametersForTextBox(s->d, s->e, s->b, s->c);
+	s->b = result.b;
+	s->c = result.c;
+	s->hl = result.hl;
+}
+
+static void adapt_SetCursorParametersForTextBox_Default(ProbeState *s)
+{
+	CursorTileResult result = SetCursorParametersForTextBox_Default(s->d, s->e);
+	s->b = result.b;
+	s->c = result.c;
+	s->hl = result.hl;
+	s->f = result.f;
+}
+
+static void adapt_DrawCursor(ProbeState *s)
+{
+	DrawCursor(s->a);
+}
+
+static void adapt_EraseCursor(ProbeState *s)
+{
+	(void)s;
+	EraseCursor();
+}
+
+static void adapt_DrawCursor2(ProbeState *s)
+{
+	(void)s;
+	DrawCursor2();
+}
+
+static void adapt_RefreshMenuCursor(ProbeState *s)
+{
+	(void)s;
+	RefreshMenuCursor();
+}
+
+static void adapt_DrawCardSymbol(ProbeState *s)
+{
+	DrawCardSymbol(s->d, s->e);
+}
+
+static void adapt_DrawNarrowTextBox(ProbeState *s)
+{
+	s->hl = DrawNarrowTextBox();
+}
+
+static void adapt_DrawWideTextBox(ProbeState *s)
+{
+	s->hl = DrawWideTextBox();
+}
+
+static void adapt_DrawNarrowTextBox_PrintTextNoDelay(ProbeState *s)
+{
+	s->hl = DrawNarrowTextBox_PrintTextNoDelay(s->hl).hl;
+}
+
+/* >>> factory DrawTextBox_PrintTextNoDelay */
+/* `a` is the box width the callers load; the caller-pushed hl is the case's
+ * stack[0], which the asm's `pop hl` consumes. */
+static void adapt_DrawTextBox_PrintTextNoDelay(ProbeState *s)
+{
+	s->hl = DrawTextBox_PrintTextNoDelay(s->a, s->stack[0]).hl;
+}
+/* <<< factory DrawTextBox_PrintTextNoDelay */
+
+static void adapt_DrawWideTextBox_PrintTextNoDelay(ProbeState *s)
+{
+	s->hl = DrawWideTextBox_PrintTextNoDelay(s->hl).hl;
+}
+
+static void adapt_DrawWideTextBox_PrintText(ProbeState *s)
+{
+	s->hl = DrawWideTextBox_PrintText(s->hl).hl;
+}
+
+static void adapt_PrintYesOrNoItems(ProbeState *s)
+{
+	ProcessTextHeaderResult r = PrintYesOrNoItems(s->d, s->e);
+	s->a = r.a;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_WaitForButtonAorB(ProbeState *s)
+{
+	s->f = WaitForButtonAorB().f;
+}
+
+static void adapt_DrawWideTextBox_WaitForInput(ProbeState *s)
+{
+	DrawWideTextBox_WaitForInput(s->hl);
+}
+
+static void adapt_WaitForWideTextBoxInput(ProbeState *s)
+{
+	(void)s;
+	WaitForWideTextBoxInput();
+}
+
+/* >>> factory RefreshMenuCursor_CheckPlaySFX */
+static void adapt_RefreshMenuCursor_CheckPlaySFX(ProbeState *s)
+{
+	(void)s;
+	RefreshMenuCursor_CheckPlaySFX();
+}
+/* <<< factory RefreshMenuCursor_CheckPlaySFX */
+
+/* >>> factory PlayOpenOrExitScreenSFX */
+static void adapt_PlayOpenOrExitScreenSFX(ProbeState *s)
+{
+	PlayOpenOrExitScreenSFXResult r = PlayOpenOrExitScreenSFX(s->a, s->f);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory PlayOpenOrExitScreenSFX */
+
+/* >>> factory HandleYesOrNoMenu */
+static void adapt_HandleYesOrNoMenu(ProbeState *s)
+{
+	HandleYesOrNoMenuResult result = HandleYesOrNoMenu(s->d, s->e, s->b, s->c);
+	s->a = result.a;
+	s->f = result.f;
+	s->d = result.d;
+	s->e = result.e;
+}
+/* <<< factory HandleYesOrNoMenu */
+
+/* >>> factory CopyCardNameAndLevel */
+static void adapt_CopyCardNameAndLevel(ProbeState *s)
+{
+	CopyCardNameAndLevelResult result =
+		CopyCardNameAndLevel(s->a, s->b, s->c, s->d, s->e);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory CopyCardNameAndLevel */
+
+/* >>> factory ReloadCardListItems */
+static void adapt_ReloadCardListItems(ProbeState *s)
+{
+	(void)s;
+	ReloadCardListItems();
+}
+/* <<< factory ReloadCardListItems */
+
+/* >>> factory PrintCardListItems */
+static void adapt_PrintCardListItems(ProbeState *s)
+{
+	PrintCardListItems(s->a, s->d, s->e, &s->hl);
+}
+/* <<< factory PrintCardListItems */
+
+/* >>> factory CardListMenuFunction */
+static void adapt_CardListMenuFunction(ProbeState *s)
+{
+	CardListMenuFunctionResult r = CardListMenuFunction();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CardListMenuFunction */
+
+/* >>> factory HandleMenuInput */
+static void adapt_HandleMenuInput(ProbeState *s)
+{
+	HandleMenuInputResult r = HandleMenuInput();
+	s->a = r.a;
+	s->e = r.e;
+	s->f = r.f;
+}
+/* <<< factory HandleMenuInput */
+
+/* >>> factory HandleCardListInput */
+static void adapt_HandleCardListInput(ProbeState *s)
+{
+	HandleCardListInputResult r = HandleCardListInput();
+	s->a = r.a;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+}
+/* <<< factory HandleCardListInput */
+
+/* >>> factory HandleDuelMenuInput */
+static void adapt_HandleDuelMenuInput(ProbeState *s)
+{
+	HandleMenuInputResult r = HandleDuelMenuInput(s->e);
+	s->a = r.a;
+	s->e = r.e;
+	s->f = r.f;
+}
+/* <<< factory HandleDuelMenuInput */
+
+/* >>> factory YesOrNoMenuWithText_LeftAligned */
+static void adapt_YesOrNoMenuWithText_LeftAligned(ProbeState *s)
+{
+	HandleYesOrNoMenuResult r = YesOrNoMenuWithText_LeftAligned(s->hl, s->b, s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory YesOrNoMenuWithText_LeftAligned */
+
+/* >>> factory TwoItemHorizontalMenu */
+static void adapt_TwoItemHorizontalMenu(ProbeState *s)
+{
+	HandleYesOrNoMenuResult r = TwoItemHorizontalMenu(s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory TwoItemHorizontalMenu */
+
+/* >>> factory YesOrNoMenu */
+static void adapt_YesOrNoMenu(ProbeState *s)
+{
+	(void)s;
+	HandleYesOrNoMenuResult r = YesOrNoMenu();
+	s->a = r.a;
+	s->f = r.f;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory YesOrNoMenu */
+
+/* >>> factory YesOrNoMenuWithText */
+static void adapt_YesOrNoMenuWithText(ProbeState *s)
+{
+	HandleYesOrNoMenuResult result = YesOrNoMenuWithText(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->d = result.d;
+	s->e = result.e;
+}
+/* <<< factory YesOrNoMenuWithText */
+
+/* >>> factory YesOrNoMenuWithText_SetCursorToYes */
+static void adapt_YesOrNoMenuWithText_SetCursorToYes(ProbeState *s)
+{
+	HandleYesOrNoMenuResult result = YesOrNoMenuWithText_SetCursorToYes(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory YesOrNoMenuWithText_SetCursorToYes */
+
+const ProbeEntry probe_entries_menus[] = {
+	{ "InitializeCardListParameters", adapt_InitializeCardListParameters },
+	{ "InitializeMenuParameters", adapt_InitializeMenuParameters },
+	{ "SetMenuItem", adapt_SetMenuItem },
+	{ "OneByteNumberToTxSymbol", adapt_OneByteNumberToTxSymbol },
+	{ "OneByteNumberToTxSymbol_TrimLeadingZeros", adapt_OneByteNumberToTxSymbol_TrimLeadingZeros },
+	{ "CardTypeToSymbolID", adapt_CardTypeToSymbolID },
+	{ "GetCardSymbolData", adapt_GetCardSymbolData },
+	{ "SetCursorParametersForTextBox", adapt_SetCursorParametersForTextBox },
+	{ "SetCursorParametersForTextBox_Default", adapt_SetCursorParametersForTextBox_Default },
+	{ "DrawCursor", adapt_DrawCursor },
+	{ "EraseCursor", adapt_EraseCursor },
+	{ "DrawCursor2", adapt_DrawCursor2 },
+	{ "RefreshMenuCursor", adapt_RefreshMenuCursor },
+	{ "DrawCardSymbol", adapt_DrawCardSymbol },
+	{ "DrawNarrowTextBox", adapt_DrawNarrowTextBox },
+	{ "DrawWideTextBox", adapt_DrawWideTextBox },
+	{ "DrawNarrowTextBox_PrintTextNoDelay", adapt_DrawNarrowTextBox_PrintTextNoDelay },
+	{ "DrawWideTextBox_PrintTextNoDelay", adapt_DrawWideTextBox_PrintTextNoDelay },
+	{ "DrawWideTextBox_PrintText", adapt_DrawWideTextBox_PrintText },
+	{ "PrintYesOrNoItems", adapt_PrintYesOrNoItems },
+	{ "WaitForButtonAorB", adapt_WaitForButtonAorB },
+	{ "DrawWideTextBox_WaitForInput", adapt_DrawWideTextBox_WaitForInput },
+	{ "WaitForWideTextBoxInput", adapt_WaitForWideTextBoxInput },
+	{ "RefreshMenuCursor_CheckPlaySFX", adapt_RefreshMenuCursor_CheckPlaySFX },
+	{ "PlayOpenOrExitScreenSFX", adapt_PlayOpenOrExitScreenSFX },
+	{ "DrawTextBox_PrintTextNoDelay", adapt_DrawTextBox_PrintTextNoDelay },
+	{ "HandleYesOrNoMenu", adapt_HandleYesOrNoMenu },
+	{ "CopyCardNameAndLevel", adapt_CopyCardNameAndLevel },
+	{ "ReloadCardListItems", adapt_ReloadCardListItems },
+	{ "PrintCardListItems", adapt_PrintCardListItems },
+	{ "CardListMenuFunction", adapt_CardListMenuFunction },
+	{ "HandleMenuInput", adapt_HandleMenuInput },
+	{ "HandleCardListInput", adapt_HandleCardListInput },
+	{ "HandleDuelMenuInput", adapt_HandleDuelMenuInput },
+	{ "TwoItemHorizontalMenu", adapt_TwoItemHorizontalMenu },
+	{ "YesOrNoMenu", adapt_YesOrNoMenu },
+	{ "YesOrNoMenuWithText", adapt_YesOrNoMenuWithText },
+	{ "YesOrNoMenuWithText_SetCursorToYes", adapt_YesOrNoMenuWithText_SetCursorToYes },
+	{ "YesOrNoMenuWithText_LeftAligned", adapt_YesOrNoMenuWithText_LeftAligned },
+	{ NULL, NULL },
+};

@@ -1,0 +1,42 @@
+#include "generated/rom.h"
+#ifndef POKETCG_HOME_MASON_LABORATORY_H
+#define POKETCG_HOME_MASON_LABORATORY_H
+
+#include <stdint.h>
+
+/* >>> factory Func_d703 */
+typedef struct { uint8_t a; uint8_t f; } FuncD703Result;
+FuncD703Result Func_d703(void);
+/* <<< factory Func_d703 */
+/* >>> factory Preload_DrMason */
+typedef struct { uint8_t a; uint8_t f; } PreloadDrMasonResult;
+PreloadDrMasonResult Preload_DrMason(void);
+/* <<< factory Preload_DrMason */
+/* >>> factory Preload_Sam */
+typedef struct { uint8_t a; uint8_t f; } PreloadSamResult;
+PreloadSamResult Preload_Sam(void);
+/* <<< factory Preload_Sam */
+/* >>> factory Preload_Tech5 */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } PreloadTech5Result;
+PreloadTech5Result Preload_Tech5(uint16_t hl);
+/* <<< factory Preload_Tech5 */
+/* >>> factory MasonLaboratoryAfterDuel */
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } MasonLaboratoryAfterDuelResult;
+MasonLaboratoryAfterDuelResult MasonLaboratoryAfterDuel(void);
+/* <<< factory MasonLaboratoryAfterDuel */
+/* >>> factory MasonLabCloseTextBox */
+void MasonLabCloseTextBox(void);
+/* <<< factory MasonLabCloseTextBox */
+/* >>> factory MasonLabLoadMap */
+void MasonLabLoadMap(void);
+/* <<< factory MasonLabLoadMap */
+/* >>> factory MasonLabPressedA */
+typedef struct { uint16_t hl; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint8_t carry; } MasonLabPressedAResult;
+MasonLabPressedAResult MasonLabPressedA(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory MasonLabPressedA */
+/* >>> factory Script_Tech1 */
+typedef struct { uint8_t a; uint8_t b; uint8_t c; uint16_t hl; } ScriptTech1Result;
+ScriptTech1Result Script_Tech1(void);
+/* <<< factory Script_Tech1 */
+#define Script_Tech1_START_SCRIPT AttackAnimation_FriendshipSong_ADDR
+#endif /* POKETCG_HOME_MASON_LABORATORY_H */
