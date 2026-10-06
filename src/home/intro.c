@@ -19,7 +19,7 @@
 #include "home/lcd.h"
 #include "home/sound.h"
 #include "home/play_animation.h"
-#define HANDLE_ALL_SPRITE_ANIMATIONS 0x3CB4u
+#define HANDLE_ALL_SPRITE_ANIMATIONS HandleAllSpriteAnimations_ADDR
 #define INTRO_SEQUENCE IntroSequence_ADDR
 #define PAD_A 0x01u
 #define PAD_START 0x08u

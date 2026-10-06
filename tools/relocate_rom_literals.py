@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from tools.profiles import get_profile, symbol_table
 
-LITERAL_RE = re.compile(r"\b0[xX]([4-7][0-9A-Fa-f]{3})[uU]?\b")
+LITERAL_RE = re.compile(r"\b0[xX]([0-7][0-9A-Fa-f]{3})[uU]?\b")
 FACTORY_RE = re.compile(r"/\* >>> factory (\w+) \*/\n(.*?)/\* <<< factory \1 \*/", re.DOTALL)
 COMMENT_RE = re.compile(r"/\*.*?\*/|//[^\n]*", re.DOTALL)
 STRING_RE = re.compile(r'"(?:\\.|[^"\\])*"')
@@ -45,7 +45,7 @@ class Resolver:
         self.preferred = preferred
         self.index: dict[tuple[int, int], list[str]] = defaultdict(list)
         for name, (bank, address) in labels.items():
-            if 0x4000 <= address < 0x8000 and "." not in name:
+            if 0x0150 <= address < 0x8000 and "." not in name:
                 self.index[(bank, address)].append(name)
         self.tables: dict[int, list[int]] = defaultdict(list)
         for bank, address in self.index:
@@ -138,7 +138,12 @@ def relocate(text: str, resolver: Resolver) -> tuple[str, list[str]]:
             bank = int(comment.group(1))
         define = DEFINE_RE.match(raw_line)
         replacement = None
-        if bank is not None:
+        if address < 0x4000:
+            if address >= 0x0150:
+                replacement = resolver.exact(0, address)
+            if replacement is None:
+                continue
+        elif bank is not None:
             replacement = resolver.exact(bank, address) or resolver.offset(bank, address)
         elif define is not None:
             replacement = resolver.by_define(define.group(1), address)

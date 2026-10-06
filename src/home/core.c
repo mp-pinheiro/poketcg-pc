@@ -1399,7 +1399,7 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "generated/wram.h"
 #include "home/script.h"
 #include "mem.h"
-#define SET_LINK_OPPONENT_TURN_FRAME_FUNCTION 0x0F1Du
+#define SET_LINK_OPPONENT_TURN_FRAME_FUNCTION LinkOpponentTurnFrameFunction_ADDR
 
 #include "generated/wram.h"
 #include "home/duel.h"

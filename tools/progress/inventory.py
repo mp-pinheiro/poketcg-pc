@@ -623,13 +623,15 @@ def build_spans(
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--profile")
+    parser.add_argument("--source", type=Path, help="disassembly checkout overriding the profile's")
+    parser.add_argument("--output", type=Path, help="inventory path overriding the profile's")
     args = parser.parse_args(argv)
     profile = get_profile(args.profile, ROOT)
     global PRET, MAP_FILE, SRC_DIR, OUT_FILE
-    PRET = profile.source_path(ROOT)
-    MAP_FILE = profile.map_path(ROOT)
+    PRET = args.source.resolve() if args.source else profile.source_path(ROOT)
+    MAP_FILE = PRET / profile.map_name
     SRC_DIR = PRET / "src"
-    OUT_FILE = profile.artifact_path("inventory", ROOT)
+    OUT_FILE = args.output.resolve() if args.output else profile.artifact_path("inventory", ROOT)
     map_labels, rom_bytes, sections = parse_map()
     defs, refs_map, unknown = process_asm_files(map_labels)
     spans = build_spans(sections, defs, local_data_labels())

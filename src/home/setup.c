@@ -1,6 +1,7 @@
 #include "home/setup.h"
 #include "home/time.h"
 
+#include "generated/rom.h"
 #include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -29,8 +30,8 @@
 
 /* poketcg.sym (bank 0, fixed for this disassembly): the two ROM addresses the
  * asm bakes into its self-modifying trampoline/copy code. */
-#define NOOP_ADDR 0x0348u
-#define INITIAL_PALETTE_ADDR 0x0399u
+#define NOOP_ADDR NoOp_ADDR
+#define INITIAL_PALETTE_ADDR InitialPalette_ADDR
 
 void NoOp(void)
 {

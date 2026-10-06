@@ -17,12 +17,15 @@ import tempfile
 import urllib.error
 import urllib.request
 import zlib
+import sys
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
 from tools.profiles import get_profile
 
 from typing import Any
 
-ROOT = Path(__file__).resolve().parents[2]
 PROFILE = get_profile()
 PINS_PATH = ROOT / "tools" / "completion" / (
     "gambatte_pins.toml" if PROFILE.name == "vanilla" else f"gambatte_pins_{PROFILE.name}.toml"

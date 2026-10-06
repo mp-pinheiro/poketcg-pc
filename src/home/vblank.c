@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "home/vblank.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/dma.h"
@@ -21,14 +22,14 @@
  * carries — NoOp from SetupRegisters (src/home/setup.c) and
  * HandleAllSpriteAnimations from SetSpriteAnimationsAsVBlankFunction
  * (src/home/sprite_vblank.c). Anything else aborts through DispatchIndirect. */
-#define TRAMPOLINE_NOOP 0x0348u
-#define TRAMPOLINE_ALL_SPRITE_ANIMATIONS 0x3CB4u
+#define TRAMPOLINE_NOOP NoOp_ADDR
+#define TRAMPOLINE_ALL_SPRITE_ANIMATIONS HandleAllSpriteAnimations_ADDR
 
 /* poketcg.sym (bank 0): the two targets games park in wLCDCFunctionTrampoline
  * -- ApplyBackgroundScroll from DistortScreen (src/home/screen_effects.c) and
  * Func_3e44 from the credits (src/home/credits.c). */
-#define LCDC_APPLY_BACKGROUND_SCROLL 0x3EA6u
-#define LCDC_FUNC_3E44 0x3E44u
+#define LCDC_APPLY_BACKGROUND_SCROLL ApplyBackgroundScroll_ADDR
+#define LCDC_FUNC_3E44 Func_3e44_ADDR
 #define rSTAT 0xFF41u
 #define rLYC  0xFF45u
 #define rIE   0xFFFFu

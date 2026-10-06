@@ -1,3 +1,4 @@
+#include "generated/rom.h"
 #include "generated/constants.h"
 #include "home/sgb.h"
 /* >>> factory statics */
@@ -63,17 +64,17 @@ SendSGBResult SendSGB(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uin
 InitSGBResult InitSGB(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	SendSGBResult r = {a, f, b, c, d, e, hl};
-	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0AD0u); /* MaskEnPacket_Freeze */
-	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0A50u); /* DataSndPacket1 */
-	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0A60u); /* DataSndPacket2 */
-	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0A70u); /* DataSndPacket3 */
-	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0A80u); /* DataSndPacket4 */
-	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0A90u); /* DataSndPacket5 */
-	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0AA0u); /* DataSndPacket6 */
-	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0AB0u); /* DataSndPacket7 */
-	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0AC0u); /* DataSndPacket8 */
-	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0AF0u); /* Pal01Packet_InitSGB */
-	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0AE0u); /* MaskEnPacket_Cancel */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, MaskEnPacket_Freeze_ADDR); /* MaskEnPacket_Freeze */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, DataSndPacket1_ADDR); /* DataSndPacket1 */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, DataSndPacket2_ADDR); /* DataSndPacket2 */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, DataSndPacket3_ADDR); /* DataSndPacket3 */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, DataSndPacket4_ADDR); /* DataSndPacket4 */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, DataSndPacket5_ADDR); /* DataSndPacket5 */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, DataSndPacket6_ADDR); /* DataSndPacket6 */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, DataSndPacket7_ADDR); /* DataSndPacket7 */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, DataSndPacket8_ADDR); /* DataSndPacket8 */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, Pal01Packet_InitSGB_ADDR); /* Pal01Packet_InitSGB */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, MaskEnPacket_Cancel_ADDR); /* MaskEnPacket_Cancel */
 	return (InitSGBResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }
 /* <<< factory InitSGB */
@@ -89,10 +90,10 @@ DetectSGBResult DetectSGB(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d,
 	(void)e;
 	(void)hl;
 	SGBWaitResult w = Wait(60u);
-	SendSGBResult r = SendSGB(w.a, w.f, w.b, w.c, w.d, w.e, 0x0BBBu); /* MltReq2Packet */
+	SendSGBResult r = SendSGB(w.a, w.f, w.b, w.c, w.d, w.e, MltReq2Packet_ADDR); /* MltReq2Packet */
 	uint8_t joyp = (uint8_t)(gb_read8(0xFF00u) & JOYP_SGB_MLT_REQ);
 	if (joyp != JOYP_SGB_MLT_REQ) {
-		SendSGBResult fail = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0BABu); /* MltReq1Packet */
+		SendSGBResult fail = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, MltReq1Packet_ADDR); /* MltReq1Packet */
 		return (DetectSGBResult){fail.a, (uint8_t)((fail.f & 0x80u) | 0x10u), fail.b, fail.c, fail.d, fail.e, fail.hl};
 	}
 	gb_write8(0xFF00u, JOYP_SGB_ZERO);
@@ -107,10 +108,10 @@ DetectSGBResult DetectSGB(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d,
 		(void)gb_read8(0xFF00u);
 	joyp = (uint8_t)(gb_read8(0xFF00u) & JOYP_SGB_MLT_REQ);
 	if (joyp != JOYP_SGB_MLT_REQ) {
-		SendSGBResult fail = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0BABu); /* MltReq1Packet */
+		SendSGBResult fail = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, MltReq1Packet_ADDR); /* MltReq1Packet */
 		return (DetectSGBResult){fail.a, (uint8_t)((fail.f & 0x80u) | 0x10u), fail.b, fail.c, fail.d, fail.e, fail.hl};
 	}
-	SendSGBResult ok = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0BABu); /* MltReq1Packet */
+	SendSGBResult ok = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, MltReq1Packet_ADDR); /* MltReq1Packet */
 	return (DetectSGBResult){ok.a, (uint8_t)(ok.a == 0u ? 0x80u : 0x00u), ok.b, ok.c, ok.d, ok.e, ok.hl};
 }
 /* <<< factory DetectSGB */

@@ -40,7 +40,7 @@
 #include "home/scroll.h"
 #include "generated/wram.h"
 #define DISTORTSCREEN_UPDATEFUNC_ADDR (DistortScreen_ADDR + 0x1Cu)
-#define APPLYBACKGROUNDSCROLL_ADDR 0x3EA6u
+#define APPLYBACKGROUNDSCROLL_ADDR ApplyBackgroundScroll_ADDR
 
 #include "home/copy.h"
 #include "home/memory.h"

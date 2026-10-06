@@ -1,5 +1,6 @@
 #include "home/scroll.h"
 
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "home/copy.h"
 #include "mem.h"
@@ -16,7 +17,7 @@
 #define IE_STAT   0x02u
 
 /* BGScrollData, scroll.asm:112, read live from bank 0. */
-#define BGSCROLL_DATA 0x3EF8u
+#define BGSCROLL_DATA BGScrollData_ADDR
 
 void Func_3e44(void)
 {

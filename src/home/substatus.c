@@ -1,6 +1,7 @@
 #include "home/substatus.h"
 
 #include "generated/text_ids.h"
+#include "generated/rom.h"
 #include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -151,7 +152,7 @@ SandAttackCheckResult CheckSandAttackOrSmokescreenSubstatus(uint16_t de)
 #define NO_DAMAGE_OR_EFFECT_DUE_TO_NSHIELD_TEXT_ID 0x010bu
 
 /* substatus.asm:476-481, ROM0 fixed bank (00:34d8 per poketcg.sym). */
-#define NO_DAMAGE_OR_EFFECT_TEXT_ID_TABLE_ADDR 0x34d8u
+#define NO_DAMAGE_OR_EFFECT_TEXT_ID_TABLE_ADDR NoDamageOrEffectTextIDTable_ADDR
 
 PkmnPowerIncapableResult CheckIsIncapableOfUsingPkmnPower(uint8_t a)
 {

@@ -753,7 +753,7 @@ HandSortResult SortHandCardsByID(void)
  * are preserved. */
 uint8_t TranslateColorToWR(uint8_t a)
 {
-	return rom_ptr(0u, 0x1A1Au)[a];
+	return rom_ptr(0u, InvertedPowersOf2_ADDR)[a];
 }
 
 /* duel.asm:1290-1315. Entry hl supplies the page only: `ld l,
@@ -1068,7 +1068,7 @@ MoveDiscardResult MoveDiscardPileCardToHand(uint8_t a)
 /* duel.asm:350-362. PowersOf2 (00:11B7) is `db $01..$80`. */
 CheckPrizeResult CheckPrizeTaken(uint8_t a)
 {
-	uint8_t mask = rom_ptr(0u, 0x11B7u)[a];
+	uint8_t mask = rom_ptr(0u, PowersOf2_ADDR)[a];
 	uint8_t comp = (uint8_t)~mask;
 	DuelistVarResult prizes = GetTurnDuelistVariable(DUELVARS_PRIZES);
 	uint8_t result = (uint8_t)(prizes.a & mask);

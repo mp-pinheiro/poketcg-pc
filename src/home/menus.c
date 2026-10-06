@@ -20,7 +20,7 @@
  * into wMenuUpdateFunc; duel/core.asm:5030/5038 PlayAreaScreenMenuFunction
  * ($01:60CE) into wMenuUpdateFunc; core.asm:3395 CardListFunction ($01:5719)
  * into wListFunctionPointer. */
-#define CARD_LIST_MENU_FUNCTION 0x283Fu
+#define CARD_LIST_MENU_FUNCTION CardListMenuFunction_ADDR
 #define PLAY_AREA_SCREEN_MENU_FUNCTION PlayAreaScreenMenuFunction_ADDR
 #define CARD_LIST_FUNCTION CardListFunction_ADDR
 #include "home/core.h"
@@ -74,7 +74,7 @@
 
 #define SYM_0 0x20
 #define SYM_SPACE 0x00
-#define CARD_SYMBOL_TABLE 0x29dd
+#define CARD_SYMBOL_TABLE CardSymbolTable_ADDR
 #define YES_OR_NO_TEXT_ID 0x2f
 
 void InitializeCardListParameters(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl)
@@ -369,8 +369,8 @@ ProcessTextHeaderResult PrintYesOrNoItems(uint8_t d, uint8_t e)
 
 #define PAD_A        0x01u
 #define PAD_B        0x02u
-#define NTBM_PARAMS  0x2a96u
-#define WTBM_PARAMS  0x2ac8u
+#define NTBM_PARAMS  NarrowTextBoxMenuParameters_ADDR
+#define WTBM_PARAMS  WideTextBoxMenuParameters_ADDR
 
 WaitResult WaitForButtonAorB(void)
 {

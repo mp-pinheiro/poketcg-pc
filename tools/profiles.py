@@ -118,6 +118,9 @@ class Profile:
         return root / self.session_namespace
 
     def case_path(self, root: Path = ROOT) -> Path:
+        override = os.environ.get("POKETCG_CASE_PATH")
+        if override:
+            return root / override
         return root / self.case_namespace
 
     def artifact_path(self, name: str, root: Path = ROOT) -> Path:
@@ -162,6 +165,8 @@ class Profile:
 
     def case_modules(self, root: Path = ROOT) -> list[Path]:
         shared = root / "tests" / "cases"
+        if os.environ.get("POKETCG_CASE_PATH"):
+            return sorted(path for path in self.case_path(root).glob("*.py") if not path.name.startswith("_"))
         overlay = self.case_path(root)
         return self._merged(shared, overlay if overlay != shared else None, ".py")
 

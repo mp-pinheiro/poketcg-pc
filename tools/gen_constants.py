@@ -100,10 +100,11 @@ def write_header(path: Path, content: str) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--profile")
+    parser.add_argument("--disasm", type=Path, help="disassembly checkout overriding the profile's")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
     profile = get_profile(args.profile, ROOT)
-    disasm = profile.source_path(ROOT)
+    disasm = args.disasm.resolve() if args.disasm else profile.source_path(ROOT)
     values = evaluate(disasm, constant_names(disasm))
     write_header(args.out / "constants.h", render("POKETCG_GENERATED_CONSTANTS_H", values))
     ids = text_ids(disasm)

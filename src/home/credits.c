@@ -1,6 +1,7 @@
 #include "home/credits.h"
 #include "home/frames.h"
 
+#include "generated/rom.h"
 #include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -39,8 +40,8 @@
 #include "mem.h"
 
 #define R_LYC 0xFF45u
-#define FUNC_3E31 0x3E31u
-#define FUNC_3E44 0x3E44u
+#define FUNC_3E31 Func_3e31_ADDR
+#define FUNC_3E44 Func_3e44_ADDR
 /* <<< factory statics */
 
 /* >>> factory Func_1d758 */

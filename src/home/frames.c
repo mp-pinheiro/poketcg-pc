@@ -3,6 +3,7 @@
 #include "isr.h"
 #include "home/music1.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/indirect_dispatch.h"
@@ -18,12 +19,12 @@
 #define PAD_SELECT 0x04u
 
 /* Registered targets of wDoFrameFunction that this tree has a C body for. */
-#define DO_FRAME_UPDATE_QUEUED_ANIMATIONS 0x3BA2u
-#define DO_FRAME_OVERWORLD 0x380Eu
-#define DO_FRAME_FUNC_3E31 0x3E31u
-#define DO_FRAME_ALL_SPRITE_ANIMATIONS 0x3CB4u
-#define DO_FRAME_LINK_OPPONENT_TURN 0x0F1Du
-#define DO_FRAME_NOOP 0x0348u
+#define DO_FRAME_UPDATE_QUEUED_ANIMATIONS UpdateQueuedAnimations_ADDR
+#define DO_FRAME_OVERWORLD OverworldDoFrameFunction_ADDR
+#define DO_FRAME_FUNC_3E31 Func_3e31_ADDR
+#define DO_FRAME_ALL_SPRITE_ANIMATIONS HandleAllSpriteAnimations_ADDR
+#define DO_FRAME_LINK_OPPONENT_TURN LinkOpponentTurnFrameFunction_ADDR
+#define DO_FRAME_NOOP NoOp_ADDR
 
 static FrameBoundaryHook g_frame_boundary_hook;
 static void *g_frame_boundary_context;

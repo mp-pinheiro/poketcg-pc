@@ -11,8 +11,9 @@
 /* poketcg.sym bank 00: home HandleAllSpriteAnimations trampoline entry,
  * the address baked into wVBlankFunctionTrampoline by
  * SetSpriteAnimationsAsVBlankFunction. */
-#define HANDLEALLSPRITEANIMATIONS_ADDR 0x3CB4u
+#define HANDLEALLSPRITEANIMATIONS_ADDR HandleAllSpriteAnimations_ADDR
 
+#include "generated/rom.h"
 #include "generated/wram.h"
 /* <<< factory statics */
 

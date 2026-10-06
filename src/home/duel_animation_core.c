@@ -18,7 +18,7 @@
 #define BUFFER_ADDR 0xd42cu
 #define STRUCT_SIZE 8u
 #define BUFFER_MASK 0x7fu
-#define UPDATE_ADDR 0x3BA2u
+#define UPDATE_ADDR UpdateQueuedAnimations_ADDR
 #define ANIMATIONS_BANK 7u
 #define ANIMATIONS_ADDR Animations_ADDR
 #define ANIM_ENTRY_SIZE 6u

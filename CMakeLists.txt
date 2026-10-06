@@ -14,6 +14,7 @@ set(POKETCG_DISASM "${CMAKE_SOURCE_DIR}/poketcg" CACHE PATH "pret/poketcg checko
 set(POKETCG_EXTENDED_DISASM "${CMAKE_SOURCE_DIR}/poketcg-extended" CACHE PATH "Extended source checkout")
 set(POKETCG_DATA_PACK "" CACHE FILEPATH "vanilla sparse production data pack")
 set(POKETCG_DATA_PACK_EXTENDED "" CACHE FILEPATH "Extended sparse production data pack")
+set(POKETCG_EXTENDED_INVENTORY "${CMAKE_SOURCE_DIR}/site/data/extended/inventory.json" CACHE FILEPATH "Extended routine inventory")
 set(PORT_FILES "" CACHE STRING "semicolon-separated pret basenames to build; empty = all")
 option(POKETCG_ENABLE_EXTENDED "build the Extended profile targets" OFF)
 option(POKETCG_ENABLE_LAUNCHER "build the profile chooser" OFF)
@@ -130,7 +131,7 @@ function(add_poketcg_profile profile)
   add_custom_command(
     OUTPUT ${constant_headers}
     COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/gen_constants.py"
-            --profile "${profile}" --out "${profile_generated}"
+            --profile "${profile}" --disasm "${PROFILE_DISASM}" --out "${profile_generated}"
     DEPENDS "${CMAKE_SOURCE_DIR}/tools/gen_constants.py" ${profile_constant_sources}
             "${PROFILE_DISASM}/src/text/text_offsets.asm" "${CMAKE_SOURCE_DIR}/profiles/profiles.json"
     COMMENT "gen_constants: ${profile}"
@@ -387,7 +388,7 @@ if(POKETCG_ENABLE_EXTENDED)
     BINARY poketcg-extended
     PROBE poketcg_extended_probe
     DATA_PACK "${POKETCG_DATA_PACK_EXTENDED}"
-    INVENTORY "${CMAKE_SOURCE_DIR}/site/data/extended/inventory.json")
+    INVENTORY "${POKETCG_EXTENDED_INVENTORY}")
 endif()
 
 if(POKETCG_ENABLE_LAUNCHER)
