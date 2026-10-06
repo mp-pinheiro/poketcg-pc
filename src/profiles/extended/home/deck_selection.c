@@ -28,6 +28,7 @@
 #include "mem.h"
 
 #include "home/switch_sram.h"
+#include "home/load_deck.h"
 #include "mem.h"
 
 #include "home/deck_selection.h"

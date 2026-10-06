@@ -7,7 +7,7 @@ CONTRACT = {
     'LoadCardDataToBuffer1_FromCardID': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     'LoadCardDataToBuffer2_FromCardID': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     'LoadCardDataToBuffer1_FromName': {'compare': (), 'preserve': ()},
-    'GetCardPointer': {'compare': ('f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e')},
+    'GetCardPointer': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e')},
     'LoadCardDataToHL_FromCardID': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
 }
 
@@ -28,11 +28,11 @@ CASES = {
         {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0x60, 'hl': 0x1234},
     ],
     'GetCardTypeRarityAndSet': [
-        {'a': 0x01},
-        {'a': 0x08},
-        {'a': 0x40},
-        {'a': 0xE4},
-        {'a': 0x30, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0xEE, 'hl': 0x1234},
+        {'e': 0x01},
+        {'e': 0x08},
+        {'e': 0x40},
+        {'e': 0xE4},
+        {'a': 0x30, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0x00, 'e': 0x60, 'hl': 0x1234},
     ],
     'LoadCardDataToBuffer1_FromCardID': [
         {   'e': 0x08,

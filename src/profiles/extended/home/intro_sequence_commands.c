@@ -1,5 +1,6 @@
 #include "home/intro_sequence_commands.h"
 
+#include "generated/rom.h"
 #include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -91,20 +92,20 @@ static void UpdateSpriteAttributes(void)
 #include "home/intro_sequence_commands.h"
 #include "generated/wram.h"
 #define INTRO_SEQUENCE_CMD_WAIT_ORBS_ANIMATION 0x5301u
-#define INTRO_SEQUENCE_CMD_WAIT 0x531Du
-#define INTRO_SEQUENCE_CMD_SET_ORBS_ANIMATIONS 0x5326u
-#define INTRO_SEQUENCE_CMD_SET_ORBS_COORDINATES 0x5343u
-#define INTRO_SEQUENCE_CMD_PLAY_TITLE_SCREEN_MUSIC 0x53D6u
-#define INTRO_SEQUENCE_CMD_WAIT_SFX 0x53E0u
-#define INTRO_SEQUENCE_CMD_PLAY_SFX 0x53EDu
-#define INTRO_SEQUENCE_CMD_FADE_IN 0x53F6u
-#define INTRO_SEQUENCE_CMD_FADE_OUT 0x5400u
-#define INTRO_SEQUENCE_CMD_LOAD_CHARIZARD_SCENE 0x540Eu
-#define INTRO_SEQUENCE_CMD_LOAD_SCYTHER_SCENE 0x5416u
-#define INTRO_SEQUENCE_CMD_LOAD_AERODACTYL_SCENE 0x541Eu
-#define INTRO_SEQUENCE_CMD_LOAD_TITLE_SCREEN_SCENE 0x5426u
-#define INTRO_SEQUENCE_LOAD_OPENING_SCENE 0x5433u
-#define INTRO_SEQUENCE_EMPTY_FUNC 0x544Eu
+#define INTRO_SEQUENCE_CMD_WAIT (DrawPlayerPortraitAndPrintNewGameText_ADDR + 0x17u)
+#define INTRO_SEQUENCE_CMD_SET_ORBS_ANIMATIONS (DrawPlayerPortraitAndPrintNewGameText_ADDR + 0x20u)
+#define INTRO_SEQUENCE_CMD_SET_ORBS_COORDINATES (PlayIntroSequence_ADDR + 0x0Eu)
+#define INTRO_SEQUENCE_CMD_PLAY_TITLE_SCREEN_MUSIC (LoadTitleScreenSprites_ADDR + 0x08u)
+#define INTRO_SEQUENCE_CMD_WAIT_SFX (LoadTitleScreenSprites_ADDR + 0x12u)
+#define INTRO_SEQUENCE_CMD_PLAY_SFX (LoadTitleScreenSprites_ADDR + 0x1Fu)
+#define INTRO_SEQUENCE_CMD_FADE_IN (LoadTitleScreenSprites_ADDR + 0x28u)
+#define INTRO_SEQUENCE_CMD_FADE_OUT (LoadTitleScreenSprites_ADDR + 0x32u)
+#define INTRO_SEQUENCE_CMD_LOAD_CHARIZARD_SCENE (ExecuteIntroSequenceCmd_ADDR + 0x06u)
+#define INTRO_SEQUENCE_CMD_LOAD_SCYTHER_SCENE (ExecuteIntroSequenceCmd_ADDR + 0x0Eu)
+#define INTRO_SEQUENCE_CMD_LOAD_AERODACTYL_SCENE (ExecuteIntroSequenceCmd_ADDR + 0x16u)
+#define INTRO_SEQUENCE_CMD_LOAD_TITLE_SCREEN_SCENE (ExecuteIntroSequenceCmd_ADDR + 0x1Eu)
+#define INTRO_SEQUENCE_LOAD_OPENING_SCENE (AdvanceIntroSequenceCmdPtrBy3_ADDR + 0x01u)
+#define INTRO_SEQUENCE_EMPTY_FUNC (IntroSequenceCmd_WaitOrbsAnimation_ADDR + 0x0Au)
 /* <<< factory statics */
 
 /* >>> factory AnimateRandomTitleScreenOrb */

@@ -1,0 +1,839 @@
+#include "home/pkmn_powers.h"
+
+#include "generated/constants.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+/* >>> factory statics */
+#include "home/card_color.h"
+#include "home/card_data.h"
+#include "home/core.h"
+#include "home/duel.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+
+#include "mem.h"
+
+#define DUELVARS_ARENA_CARD                 0xbbu
+#define DUELVARS_ARENA_CARD_FLAGS          0xc2u
+/* wce08: AI scratch byte holding the deck index the Pkmn Power acts on. */
+#define WCE08_ADDR                          0xce08u
+#define WCE06_ADDR                          0xce06u
+
+/* pkmn_powers.asm:618-729 (.CheckWhetherTurnDuelistHasColor). Returns 1 with
+ * carry set if the turn duelist has a card in play whose color matches the
+ * weakness WR mask in b: walks the play area slots starting at the arena card
+ * variable until an $ff terminator. push bc around the card lookups keeps b
+ * alive across the calls. Exit flags: 0x30 on a hit (and b sets H, scf sets C),
+ * 0x00 on the terminator (or a with a = $ff). */
+static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
+{
+	uint16_t hl = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).hl;
+	uint8_t c = PLAY_AREA_ARENA;
+	for (;;) {
+		uint8_t idx = gb_read8(hl++);
+		if (idx == 0xffu) {
+			*f = 0x00u;
+			return 0xffu;
+		}
+		uint8_t wr = TranslateColorToWR(GetPlayAreaCardColor(c));
+		uint8_t overlap = (uint8_t)(wr & b);
+		if (overlap != 0u) {
+			*f = 0x30u;
+			return overlap;
+		}
+		c++;
+	}
+}
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/random.h"
+
+#define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK  0xbau
+#define DUELVARS_PRIZES                       0xecu
+
+#define DUELVARS_ARENA_CARD_HP 0xc8u
+#define DUELVARS_CARD_LOCATIONS 0x00u
+#define OPPACTION_DUEL_MAIN_SCENE_269 0x16u
+/* wAttachedEnergies ($CC1B) indexed by GRASS ($01). */
+#define GRASS_ENERGY_COUNT_ADDR 0xCC1Cu
+
+#include "home/attacks.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+
+#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
+
+#include "home/core.h"
+#include "home/common.h"
+#include "home/duel.h"
+#include "home/frames.h"
+#include "home/substatus.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+
+#include "home/effect_commands.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+
+#define DUELVARS_ARENA_CARD_STATUS 0xf0u
+
+#include "home/energy.h"
+#include "home/substatus.h"
+#define GO_GO_RAIN_DANCE_DECK_ID 0x12u
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/retreat.h"
+#include "home/substatus.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+
+#include "generated/hram.h"
+#include "home/core.h"
+
+#include "home/core.h"
+#include "generated/wram.h"
+/* <<< factory statics */
+
+/* >>> factory HandleAIShift */
+/* pkmn_powers.asm:618-729. AI handler for Venomoth's Shift power. c is the
+ * Play Area location of Venomoth (0 = Arena card); any nonzero location
+ * returns immediately. The c==0 path stores the defending Pokemon's weakness
+ * to wAIDefendingPokemonWeakness and, when a usable color exists, runs the
+ * OPPACTION_USE_PKMN_POWER / _EXECUTE_PKMN_POWER_EFFECT / _DUEL_MAIN_SCENE
+ * sequence through AIMakeDecision. Produces a/f at every exit; b, c, d, e, hl
+ * are preserved on the early paths. */
+AIShiftResult HandleAIShift(uint8_t c)
+{
+	if (c != 0u) /* ld a,c ; or a ; ret nz */
+		return (AIShiftResult){c, 0x00u};
+
+	hTemp_ffa0 = 0u;
+	uint8_t wr = TranslateColorToWR(GetArenaCardColor());
+	SwapTurn();
+	uint8_t weakness = GetArenaCardWeakness();
+	wAIDefendingPokemonWeakness = weakness;
+	SwapTurn();
+	if (weakness == 0u) /* or a ; ret z */
+		return (AIShiftResult){weakness, 0x80u};
+	uint8_t overlap = (uint8_t)(weakness & wr);
+	if (overlap != 0u) /* and b ; ret nz (and always sets H) */
+		return (AIShiftResult){overlap, 0x20u};
+	uint8_t f = 0u;
+	uint8_t found = check_turn_duelist_has_color(weakness, &f);
+	if (!(f & 0x10u)) {
+		SwapTurn();
+		found = check_turn_duelist_has_color(weakness, &f);
+		SwapTurn();
+		if (!(f & 0x10u))
+			return (AIShiftResult){found, f};
+	}
+	/* .found: dispatch the Shift Pkmn Power sequence */
+	hTempCardIndex_ff9f = gb_read8(WCE08_ADDR);
+	(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
+
+	/* converts WR_* back to a color index: rotate left until bit 7 is set */
+	uint8_t color = 0u;
+	uint8_t rot = wAIDefendingPokemonWeakness;
+	while (!(rot & 0x80u)) {
+		color = (uint8_t)(color + 1u);
+		rot = (uint8_t)((rot << 1u) | (rot >> 7u));
+	}
+
+	hAIPkmnPowerEffectParam = color;
+	(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+	AIMakeDecisionResult r = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
+	return (AIShiftResult){OPPACTION_DUEL_MAIN_SCENE, r.f};
+}
+/* <<< factory HandleAIShift */
+
+/* >>> factory HandleAIPeek */
+/* pkmn_powers.asm:699-818. Decides whether the AI uses Peek: 47 of 50 Random(50)
+ * rolls decline immediately (ret nc keeps a = the roll and f = the cp 3 flags).
+ * Otherwise Random(3) picks the target: the Player's Deck (bail unless the Player
+ * has >= 2 cards left, i.e. cards-not-in-deck < DECK_SIZE - 1), one of the AI's
+ * own remaining prizes (bit-scan of wAIPeekedPrizes, lowest set bit; the flag is
+ * cleared there and the prize index d is added to AI_PEEK_TARGET_PRIZE), or a
+ * shuffled entry of the Player's hand list (turn is swapped around
+ * CreateHandCardList; a is still the Random(3) result 1 at that call). The
+ * target byte lands in hAIPkmnPowerEffectParam between two AIMakeDecision
+ * oppactions; the tail always exits with a = OPPACTION_DUEL_MAIN_SCENE and
+ * f = the final AIMakeDecision's flags (bank1call = plain call). */
+AIPeekResult HandleAIPeek(uint8_t c)
+{
+	hTemp_ffa0 = c;
+
+	uint8_t roll = Random(50u);
+	if (roll >= 3u)
+		return (AIPeekResult){roll, (uint8_t)(0x40u | (roll == 3u ? 0x80u : 0x00u) | (((roll & 0x0fu) < 3u) ? 0x20u : 0x00u))};
+
+	uint8_t choice = Random(3u);
+	uint8_t param;
+	if (choice == 0u) {
+		/* AI prizes */
+		DuelistVarResult prizes = GetTurnDuelistVariable(DUELVARS_PRIZES);
+		uint8_t avail = (uint8_t)(prizes.a & wAIPeekedPrizes);
+		wAIPeekedPrizes = avail;
+		if (avail == 0u)
+			return (AIPeekResult){0x00u, 0x80u};
+		uint8_t bit = 0x01u;
+		uint8_t d = 0u;
+		while ((avail & bit) == 0u) {
+			bit = (uint8_t)(bit << 1u);
+			d++;
+		}
+		wAIPeekedPrizes = (uint8_t)(avail - bit);
+		param = (uint8_t)(AI_PEEK_TARGET_PRIZE + d);
+	} else if (choice < 2u) {
+		/* Player hand */
+		SwapTurn();
+		uint8_t hand = CreateHandCardList(choice).a;
+		SwapTurn();
+		if (hand == 0u)
+			return (AIPeekResult){0x00u, 0x80u};
+		ShuffleCards(CountCardsInDuelTempList().a, wDuelTempList_ADDR);
+		param = (uint8_t)(wDuelTempList | AI_PEEK_TARGET_HAND);
+	} else {
+		/* Player deck */
+		DuelistVarResult notindeck = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+		if (notindeck.a >= DECK_SIZE - 1u)
+			return (AIPeekResult){notindeck.a, (uint8_t)(0x40u | (notindeck.a == DECK_SIZE - 1u ? 0x80u : 0x00u) | (((notindeck.a & 0x0fu) < 0x0bu) ? 0x20u : 0x00u))};
+		param = AI_PEEK_TARGET_DECK;
+	}
+
+	hTempCardIndex_ff9f = wce08;
+	AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
+	hAIPkmnPowerEffectParam = param;
+	AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+	AIMakeDecisionResult done = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
+	return (AIPeekResult){OPPACTION_DUEL_MAIN_SCENE, done.f};
+}
+/* <<< factory HandleAIPeek */
+
+/* >>> factory HandleAIStrangeBehavior */
+HandleAIStrangeBehaviorResult HandleAIStrangeBehavior(uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	if (c == 0u)
+		return (HandleAIStrangeBehaviorResult){c, 0x80u, c, d, e, hl};
+
+	hTemp_ffa0 = c;
+	e = PLAY_AREA_ARENA;
+	CardDamageResult damage = GetCardDamageAndMaxHP(e);
+	if (damage.a == 0u)
+		return (HandleAIStrangeBehaviorResult){damage.a, 0x80u, damage.c, d, e, hl};
+
+	wce06 = damage.a;
+	DuelistVarResult remaining = GetTurnDuelistVariable((uint8_t)(c + DUELVARS_ARENA_CARD_HP));
+	uint8_t hp = (uint8_t)(remaining.a - 10u);
+	if (hp == 0u)
+		return (HandleAIStrangeBehaviorResult){hp, 0xC0u, damage.c, d, e, remaining.hl};
+
+	uint8_t counters = hp;
+	if (hp >= wce06)
+		counters = wce06;
+
+	hTempCardIndex_ff9f = wce08;
+	(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
+	hAIPkmnPowerEffectParam = 0u;
+	(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+
+	counters = ConvertHPToDamageCounters_Bank8(counters);
+	e = counters;
+	do {
+		for (d = 30u; d != 0u; d--)
+			DoFrame();
+		(void)AIMakeDecision(OPPACTION_6B15, 0u, 0u, 0u, 0u);
+		e--;
+	} while (e != 0u);
+
+	for (d = 60u; d != 0u; d--)
+		DoFrame();
+	AIMakeDecisionResult result = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
+	return (HandleAIStrangeBehaviorResult){OPPACTION_DUEL_MAIN_SCENE, result.f,
+		result.c, result.d, result.e, hl};
+}
+/* <<< factory HandleAIStrangeBehavior */
+
+/* >>> factory HandleAICurse */
+HandleAICurseResult HandleAICurse(uint8_t c)
+{
+	hTemp_ffa0 = c;
+
+	uint8_t d = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	uint8_t e = PLAY_AREA_ARENA;
+	uint8_t found = 0u;
+	uint8_t best_hp = 0xffu;
+	uint8_t best_loc = PLAY_AREA_ARENA;
+	SwapTurn();
+	do {
+		uint8_t remaining = GetCardDamageAndMaxHP(e).a;
+		if (remaining != 0u) {
+			found++;
+			uint8_t hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + e)).a;
+			if (hp < best_hp) {
+				best_hp = hp;
+				best_loc = e;
+			}
+		}
+		e++;
+	} while (e != d);
+
+	/* pkmn_powers.asm:887-889: `ld a, 1 / cp b / jr nc, .failed` - Curse
+	 * needs two damaged cards, one to take the counter from and one to
+	 * give it to; a single damaged card fails before hTempRetreatCostCards
+	 * is written. */
+	if (found <= 1u) {
+		SwapTurn();
+		return (HandleAICurseResult){1u, 0x00u};
+	}
+
+	hTempRetreatCostCards = best_loc;
+	uint8_t skip_loc = best_loc;
+	e = (best_hp == 10u) ? PLAY_AREA_ARENA : PLAY_AREA_BENCH_1;
+	d = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	for (;;) {
+		if (e != skip_loc) {
+			uint8_t remaining2 = GetCardDamageAndMaxHP(e).a;
+			if (remaining2 != 0u) {
+				hAIPkmnPowerEffectParam = e;
+				SwapTurn();
+				hTempCardIndex_ff9f = wce08;
+				AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
+				AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+				AIMakeDecisionResult r = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
+				return (HandleAICurseResult){0u, r.f};
+			}
+		}
+		e++;
+		if (e == d)
+			break;
+	}
+	uint8_t f = (e == 0u) ? 0x80u : 0x00u;
+	SwapTurn();
+	return (HandleAICurseResult){e, f};
+}
+/* <<< factory HandleAICurse */
+
+/* >>> factory HandleAIDamageSwap */
+/* pkmn_powers.asm .CheckForDamageSwapTargetInBench. Looks through the bench for
+ * a Chansey, Kangaskhan, Snorlax or Mr. Mime with at least 20 HP, preferring
+ * one with no energy attached. Returns carry when there is none; otherwise a
+ * is the target's play area location with Z clear. */
+static HandleAIDamageSwapResult HandleAIDamageSwap_CheckForTargetInBench(void)
+{
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	uint8_t with_energy = 0xffu;
+	uint8_t without_energy = 0xffu;
+	for (uint8_t location = PLAY_AREA_BENCH_1; location != count; location++) {
+		uint8_t index = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD)).a;
+		CardId id = GetCardIDFromDeckIndex(index);
+		if (id != CHANSEY && id != KANGASKHAN && id != SNORLAX && id != MR_MIME)
+			continue;
+		if (GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + location)).a < 20u)
+			continue;
+		with_energy = location;
+		if (CountNumberOfEnergyCardsAttached(location).a != 0u)
+			continue;
+		without_energy = location;
+	}
+	if (without_energy != 0xffu)
+		return (HandleAIDamageSwapResult){without_energy, 0x00u};
+	if (with_energy != 0xffu)
+		return (HandleAIDamageSwapResult){with_energy, 0x00u};
+	return (HandleAIDamageSwapResult){0xffu, 0x90u};
+}
+
+HandleAIDamageSwapResult HandleAIDamageSwap(uint8_t f)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t bench_count = (uint8_t)(count.a - 1u);
+	if (bench_count == 0u)
+		return (HandleAIDamageSwapResult){0u, (uint8_t)(0xc0u | (f & 0x10u))};
+
+	AIChooseRandomlyNotToDoActionResult skip = AIChooseRandomlyNotToDoAction();
+	if (skip.f & 0x10u)
+		return (HandleAIDamageSwapResult){skip.a, skip.f};
+	PkmnPowerCountResult alakazam = CountTurnDuelistPokemonWithActivePkmnPower(ALAKAZAM);
+	if (!(alakazam.f & 0x10u))
+		return (HandleAIDamageSwapResult){alakazam.a, alakazam.f};
+	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
+	if (muk.f & 0x10u)
+		return (HandleAIDamageSwapResult){muk.a, muk.f};
+	uint8_t arena_index = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+	CardId arena_id = GetCardIDFromDeckIndex(arena_index);
+	if (arena_id != ALAKAZAM && arena_id != KADABRA && arena_id != ABRA && arena_id != MR_MIME) {
+		uint8_t half_borrow = (uint8_t)((arena_id & 0x0fu) < (MR_MIME & 0x0fu));
+		uint8_t borrow = (uint8_t)(arena_id < MR_MIME);
+		return (HandleAIDamageSwapResult){(uint8_t)arena_id, (uint8_t)(0x40u | (half_borrow << 5) | (borrow << 4))};
+	}
+	CardDamageResult arena = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	if (arena.a == 0u)
+		return (HandleAIDamageSwapResult){0u, 0x80u};
+	gb_write8(WCE06_ADDR, ConvertHPToDamageCounters_Bank8(arena.a));
+	LookResult alakazam_at = LookForCardIDInPlayArea_Bank5(ALAKAZAM, PLAY_AREA_BENCH_1);
+	gb_write8(WCE08_ADDR, (alakazam_at.f & 0x10u) != 0u ? alakazam_at.a : PLAY_AREA_ARENA);
+	HandleAIDamageSwapResult target = HandleAIDamageSwap_CheckForTargetInBench();
+	if ((target.f & 0x10u) != 0u)
+		return target;
+
+	uint8_t alakazam_location = gb_read8(WCE08_ADDR);
+	hTempCardIndex_ff9f = GetTurnDuelistVariable((uint8_t)(alakazam_location + DUELVARS_ARENA_CARD)).a;
+	hTemp_ffa0 = alakazam_location;
+	(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
+	(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+	for (uint8_t counters = gb_read8(WCE06_ADDR); counters != 0u; counters--) {
+		for (uint8_t delay = 30u; delay != 0u; delay--)
+			DoFrame();
+		target = HandleAIDamageSwap_CheckForTargetInBench();
+		if ((target.f & 0x10u) != 0u)
+			break;
+		hTempRetreatCostCards = target.a;
+		hAIPkmnPowerEffectParam = PLAY_AREA_ARENA;
+		(void)AIMakeDecision(OPPACTION_6B15, 0u, 0u, 0u, 0u);
+	}
+	for (uint8_t delay = 60u; delay != 0u; delay--)
+		DoFrame();
+	AIMakeDecisionResult scene = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
+	return (HandleAIDamageSwapResult){scene.a, scene.f};
+}
+/* <<< factory HandleAIDamageSwap */
+
+/* >>> factory HandleAIHeal */
+HandleAIHealResult HandleAIHeal(uint8_t c)
+{
+	hTemp_ffa0 = c;
+	CardDamageResult arena = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	if (arena.a != 0u) {
+		hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+		CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(PLAY_AREA_ARENA, arena.f, 0u, arena.c, 0u, PLAY_AREA_ARENA, 0u);
+		if (!(ko.f & 0x10u))
+			goto heal_arena;
+		uint8_t damage = ko.a;
+		uint8_t hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a;
+		uint8_t remaining = GetCardDamageAndMaxHP(PLAY_AREA_ARENA).a;
+		uint8_t heal = remaining;
+		if (heal > 10u)
+			heal = 10u;
+		uint8_t after = (uint8_t)(hp + heal - damage);
+		if (after == 0u || (uint8_t)(hp + heal) < damage)
+			goto check_bench;
+heal_arena:
+		hTempCardIndex_ff9f = gb_read8(0xce08u);
+		(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
+		hPlayAreaEffectTarget = PLAY_AREA_ARENA;
+		(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+		AIMakeDecisionResult result = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
+		return (HandleAIHealResult){result.a, result.f};
+	}
+check_bench:
+	{
+		uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+		uint8_t best_damage = 0u;
+		uint8_t best_location = PLAY_AREA_ARENA;
+		for (uint8_t e = PLAY_AREA_BENCH_1; e != count; e++) {
+			uint8_t remaining = GetCardDamageAndMaxHP(e).a;
+			if (remaining > best_damage) { best_damage = remaining; best_location = e; }
+		}
+		if (best_location == PLAY_AREA_ARENA)
+			return (HandleAIHealResult){PLAY_AREA_ARENA, 0x80u};
+		hTempCardIndex_ff9f = gb_read8(0xce08u);
+		(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
+		hPlayAreaEffectTarget = best_location;
+		(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+		AIMakeDecisionResult result = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
+		return (HandleAIHealResult){result.a, result.f};
+	}
+}
+/* <<< factory HandleAIHeal */
+
+/* >>> factory HandleAIPkmnPowers */
+HandleAIPkmnPowersResult HandleAIPkmnPowers(void)
+{
+	/* pkmn_powers.asm:413-420: `ccf / ret nc` keeps the callee's Z and clears
+	 * N, H and the flipped carry. */
+	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
+	if (muk.f & 0x10u)
+		return (HandleAIPkmnPowersResult){muk.a, (uint8_t)(muk.f & 0x80u)};
+
+	AIChooseRandomlyNotToDoActionResult skip = AIChooseRandomlyNotToDoAction();
+	if (skip.f & 0x10u)
+		return (HandleAIPkmnPowersResult){skip.a, (uint8_t)(skip.f & 0x80u)};
+
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	uint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;
+	uint8_t c = PLAY_AREA_ARENA;
+	if (status & CNF_SLP_PRZ)
+		c++;
+	while (c != count) {
+		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + c)).a;
+		gb_write8(WCE08_ADDR, deck_index);
+		hTempPlayAreaLocation_ff9d = c;
+		AttackCopyResult copied = CopyAttackDataAndDamage_FromDeckIndex(deck_index, FIRST_ATTACK_OR_PKMN_POWER);
+		(void)copied;
+		if (wLoadedAttackCategory == POKEMON_POWER) {
+			TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_2, 0u, 0u, 0u);
+			if (!(effect.f & 0x10u)) {
+				CardId card_id = GetCardIDFromDeckIndex(deck_index);
+				if (card_id == VILEPLUME)
+					(void)HandleAIHeal(c);
+				else if (card_id == VENOMOTH)
+					(void)HandleAIShift(c);
+				else if (card_id == MANKEY)
+					(void)HandleAIPeek(c);
+				else if (card_id == SLOWBRO)
+					(void)HandleAIStrangeBehavior(c, 0u, 0u, 0u);
+				else if (card_id == GENGAR) {
+					HandleAICurseResult curse = HandleAICurse(c);
+					if (curse.f & 0x10u)
+						return (HandleAIPkmnPowersResult){curse.a, curse.f};
+				}
+			}
+		}
+		c++;
+	}
+	return (HandleAIPkmnPowersResult){c, 0xC0u};
+}
+/* <<< factory HandleAIPkmnPowers */
+
+/* >>> factory HandleAIGoGoRainDanceEnergy */
+HandleAIGoGoRainDanceEnergyResult HandleAIGoGoRainDanceEnergy(void)
+{
+	uint8_t deck = wOpponentDeckID;
+	if (deck != GO_GO_RAIN_DANCE_DECK_ID) {
+		uint8_t f = (uint8_t)(0x40u | ((deck & 0x0fu) < (GO_GO_RAIN_DANCE_DECK_ID & 0x0fu) ? 0x20u : 0u) | (deck < GO_GO_RAIN_DANCE_DECK_ID ? 0x10u : 0u));
+		return (HandleAIGoGoRainDanceEnergyResult){deck, f};
+	}
+	PkmnPowerCountResult blastoise = CountTurnDuelistPokemonWithActivePkmnPower(BLASTOISE);
+	if ((blastoise.f & 0x10u) == 0u)
+		return (HandleAIGoGoRainDanceEnergyResult){blastoise.a, blastoise.f};
+	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
+	if (muk.f & 0x10u)
+		return (HandleAIGoGoRainDanceEnergyResult){muk.a, muk.f};
+	AIProcessAndTryToPlayEnergy();
+	return (HandleAIGoGoRainDanceEnergyResult){0u, 0u};
+}
+/* <<< factory HandleAIGoGoRainDanceEnergy */
+
+/* >>> factory HandleAICowardice */
+HandleAICowardiceResult HandleAICowardice(void)
+{
+	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
+	if (muk.f & 0x10u)
+		return (HandleAICowardiceResult){muk.a, muk.f};
+
+	AIChooseRandomlyNotToDoActionResult skip = AIChooseRandomlyNotToDoAction();
+	if (skip.f & 0x10u)
+		return (HandleAICowardiceResult){skip.a, skip.f};
+
+	DuelistVarResult count_result = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t count = count_result.a;
+	uint8_t count_flags = (uint8_t)(0x40u | (count == 1u ? 0x80u : 0u) | (count < 1u ? 0x30u : 0u));
+	if (count == 1u)
+		return (HandleAICowardiceResult){count, count_flags};
+
+	uint8_t b = count;
+	uint8_t c = PLAY_AREA_ARENA;
+	uint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;
+	if (status & CNF_SLP_PRZ)
+		c++;
+	/* pkmn_powers.asm:968-993: after a Tentacool uses Cowardice the scan
+	 * restarts from the arena with one Pokemon fewer, and stops with `cp b`'s
+	 * flags once only one is left; the plain end of the scan is `cp b`'s Z. */
+	for (;;) {
+		if (c == b)
+			return (HandleAICowardiceResult){c, 0xC0u};
+		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + c)).a;
+		wce08 = deck_index;
+		CardId card_id = GetCardIDFromDeckIndex(deck_index);
+		/* `cp TENTACOOL` then `jr nc, .next`: a card whose id is below
+		 * Tentacool's leaves carry set and takes the "used Cowardice" path
+		 * without using anything (the ROM's own bug, kept). */
+		uint8_t used = card_id < TENTACOOL;
+		if (card_id == TENTACOOL) {
+			hTemp_ffa0 = c;
+			uint8_t flags = GetTurnDuelistVariable(
+				(uint8_t)(DUELVARS_ARENA_CARD_FLAGS + c)).a;
+			if ((flags & CAN_EVOLVE_THIS_TURN) == 0u) {
+				c++;
+				continue;
+			}
+			CardDamageResult damage = GetCardDamageAndMaxHP(c);
+			if (damage.a != 0u) {
+				uint8_t effect_param;
+				if (c != PLAY_AREA_ARENA) {
+					effect_param = 0xffu;
+				} else {
+					AIDecideBenchPokemonToSwitchToResult retreat =
+						AIDecideBenchPokemonToSwitchTo(0u);
+					effect_param = retreat.a;
+				}
+				hTempCardIndex_ff9f = wce08;
+				(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
+				hAIPkmnPowerEffectParam = effect_param;
+				(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+				(void)AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
+				used = 1u;
+			}
+		}
+		if (used) {
+			b--;
+			if (b == 1u)
+				return (HandleAICowardiceResult){1u, 0xC0u};
+			c = PLAY_AREA_ARENA;
+			continue;
+		}
+		c++;
+	}
+}
+/* <<< factory HandleAICowardice */
+
+/* >>> factory AIEnergyTransTransferEnergyToBench */
+/* pkmn_powers.asm:269-402. AI logic for moving Grass energy off the Arena card
+ * onto the bench with Venusaur Lv67's Energy Trans.
+ *
+ * Six exits. The first four bail before anything is transferred and hand back
+ * their callee's registers or the byte an `or a` just tested; `.done_transfer`
+ * ends in AIMakeDecision and returns its. */
+AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void)
+{
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	CheckIfDefendingPokemonCanKnockOutResult knock_out =
+		CheckIfDefendingPokemonCanKnockOut(0u, 0x80u, 0u, 0u, 0u, 0u, 0u);
+
+	if ((knock_out.f & 0x10u) == 0u)
+		return (AIEnergyTransTransferEnergyToBenchResult){knock_out.a,
+								 knock_out.f};
+
+	/* if any attack would be used this turn, leave the energy where it is */
+	AIProcessAttacksResult attack = AIProcessButDontUseAttack();
+
+	if ((attack.f & 0x10u) != 0u)
+		return (AIEnergyTransTransferEnergyToBenchResult){attack.a,
+								 attack.f};
+
+	(void)GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	if (gb_read8(GRASS_ENERGY_COUNT_ADDR) == 0u)
+		return (AIEnergyTransTransferEnergyToBenchResult){0u, 0x80u};
+
+	AIEnergyResult needed = AIProcessButDontPlayEnergy_SkipEvolutionAndArena();
+
+	if ((needed.f & 0x10u) == 0u)
+		return (AIEnergyTransTransferEnergyToBenchResult){needed.a,
+								 needed.f};
+
+	/* an attachment is wanted, so look for Venusaur Lv67 to power it */
+	uint8_t slot = (uint8_t)(GetTurnDuelistVariable(
+		DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a - 1u);
+
+	for (;;) {
+		DuelistVarResult card = GetTurnDuelistVariable(
+			(uint8_t)(DUELVARS_ARENA_CARD + slot));
+
+		hTempCardIndex_ff9f = card.a;
+		wAIVenusaurLv67DeckIndex = card.a;
+		if (GetCardIDFromDeckIndex(card.a) == VENUSAUR_LV67)
+			break;
+		if (slot == 0u)
+			return (AIEnergyTransTransferEnergyToBenchResult){0u, 0x80u};
+		slot--;
+	}
+
+	hTemp_ffa0 = slot;
+	wAIVenusaurLv67PlayAreaLocation = slot;
+	(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
+	(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+
+	for (;;) {
+		hTempPlayAreaLocation_ffa1 = 0u;
+		hTemp_ffa0 = wAIVenusaurLv67PlayAreaLocation;
+		(void)GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+		if (gb_read8(GRASS_ENERGY_COUNT_ADDR) == 0u)
+			break;
+
+		/* find a Grass energy still attached to the Arena card */
+		uint8_t index = 0u;
+
+		while (index < DECK_SIZE) {
+			if (GetTurnDuelistVariable(
+				(uint8_t)(DUELVARS_CARD_LOCATIONS + index)).a
+					== CARD_LOCATION_ARENA
+			    && GetCardIDFromDeckIndex(index)
+					== GRASS_ENERGY)
+				break;
+			index++;
+		}
+		if (index == DECK_SIZE)
+			break;
+		gb_write8(hAIEnergyTransEnergyCard_ADDR, index);
+
+		/* pick the bench card to move it to */
+		AIEnergyResult target =
+			AIProcessButDontPlayEnergy_SkipEvolutionAndArena();
+
+		if ((target.f & 0x10u) == 0u)
+			break;
+		gb_write8(hAIEnergyTransPlayAreaLocation_ADDR,
+			  hTempPlayAreaLocation_ff9d);
+		for (uint8_t frames = 30u; frames != 0u; frames--)
+			DoFrame();
+		hTempCardIndex_ff9f = wAIVenusaurLv67DeckIndex;
+		(void)CopyAttackDataAndDamage_FromDeckIndex(
+			wAIVenusaurLv67DeckIndex, FIRST_ATTACK_OR_PKMN_POWER);
+		(void)AIMakeDecision(OPPACTION_6B15, 0u, 0u, 0u, 0u);
+	}
+
+	for (uint8_t frames = 60u; frames != 0u; frames--)
+		DoFrame();
+	AIMakeDecisionResult scene =
+		AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE_269, 0u, 0u, 0u, 0u);
+
+	return (AIEnergyTransTransferEnergyToBenchResult){scene.a, scene.f};
+}
+/* <<< factory AIEnergyTransTransferEnergyToBench */
+
+/* >>> factory HandleAIEnergyTrans */
+/* pkmn_powers.asm:107-268. AI logic for Venusaur Lv67's Energy Trans: a is the
+ * AI_ENERGY_TRANS_* mode, parked in wAINumberOfEnergyTransCards (wce06) until
+ * the transfer count replaces it. RETREAT moves enough Grass energy to the
+ * Arena card to pay its retreat cost, ATTACK enough for its second attack,
+ * TO_BENCH tail-jumps to AIEnergyTransTransferEnergyToBench. */
+
+/* .CountGrassEnergyInBench: Grass energy cards attached to bench cards. */
+static uint8_t energy_trans_count_grass_in_bench(void)
+{
+	uint8_t count = 0u;
+	for (uint8_t index = 0u; index < DECK_SIZE; index++) {
+		uint8_t location = (uint8_t)(GetTurnDuelistVariable(
+			(uint8_t)(DUELVARS_CARD_LOCATIONS + index)).a & 0x1Fu);
+		if (location < CARD_LOCATION_BENCH_1)
+			continue;
+		if (GetCardIDFromDeckIndex(index) == GRASS_ENERGY)
+			count++;
+	}
+	return count;
+}
+
+/* .CheckEnoughGrassEnergyCardsForAttack: carry with the number of cards the
+ * Arena card's second attack still needs, when the bench holds that many. */
+static HandleAIEnergyTransResult energy_trans_check_attack(void)
+{
+	uint8_t arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+	if (GetCardIDFromDeckIndex(arena) == EXEGGUTOR) {
+		/* .is_exeggutor: any Grass energy on the bench will do */
+		uint8_t count = energy_trans_count_grass_in_bench();
+		if (count == 0u)
+			return (HandleAIEnergyTransResult){0u, 0x80u};
+		return (HandleAIEnergyTransResult){count, 0x10u};
+	}
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	wSelectedAttack = SECOND_ATTACK;
+	CheckEnergyNeededForAttackResult need = CheckEnergyNeededForAttack();
+	if ((need.f & 0x10u) == 0u)
+		return (HandleAIEnergyTransResult){need.a, (uint8_t)(need.a == 0u ? 0x80u : 0u)};
+	uint8_t wanted = need.c;
+	if (wanted == 0u) {
+		if (need.b == 0u)
+			return (HandleAIEnergyTransResult){0u, 0x80u};
+		if (need.e != GRASS_ENERGY)
+			return (HandleAIEnergyTransResult){need.e, 0u};
+		wanted = need.b;
+	}
+	uint8_t count = energy_trans_count_grass_in_bench();
+	if (count < wanted)
+		return (HandleAIEnergyTransResult){count, (uint8_t)(count == 0u ? 0x80u : 0u)};
+	return (HandleAIEnergyTransResult){wanted, 0x10u};
+}
+
+/* .CheckEnoughGrassEnergyCardsForRetreatCost: carry with the number of cards
+ * the Arena card's retreat cost still needs, when the bench holds that many. */
+static HandleAIEnergyTransResult energy_trans_check_retreat(void)
+{
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	uint8_t cost = GetPlayAreaCardRetreatCost();
+	uint8_t attached = CountNumberOfEnergyCardsAttached(PLAY_AREA_ARENA).a;
+	if (attached >= cost)
+		return (HandleAIEnergyTransResult){attached, (uint8_t)(attached == 0u ? 0x80u : 0u)};
+	uint8_t needed = (uint8_t)(cost - attached);
+	uint8_t count = energy_trans_count_grass_in_bench();
+	if (count < needed)
+		return (HandleAIEnergyTransResult){count, (uint8_t)(count == 0u ? 0x80u : 0u)};
+	return (HandleAIEnergyTransResult){needed, 0x10u};
+}
+
+HandleAIEnergyTransResult HandleAIEnergyTrans(uint8_t a)
+{
+	wAINumberOfEnergyTransCards = a;
+	AIChooseRandomlyNotToDoActionResult skip = AIChooseRandomlyNotToDoAction();
+	if ((skip.f & 0x10u) != 0u)
+		return (HandleAIEnergyTransResult){skip.a, skip.f};
+	uint8_t in_play = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	if (in_play == 1u)
+		return (HandleAIEnergyTransResult){0u, 0xC0u};
+	PkmnPowerCountResult venusaur = CountTurnDuelistPokemonWithActivePkmnPower(VENUSAUR_LV67);
+	if ((venusaur.f & 0x10u) == 0u)
+		return (HandleAIEnergyTransResult){venusaur.a, venusaur.f};
+	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
+	if ((muk.f & 0x10u) != 0u)
+		return (HandleAIEnergyTransResult){muk.a, muk.f};
+
+	uint8_t mode = wAINumberOfEnergyTransCards;
+	HandleAIEnergyTransResult needed;
+	if (mode == AI_ENERGY_TRANS_RETREAT) {
+		needed = energy_trans_check_retreat();
+	} else if (mode == AI_ENERGY_TRANS_TO_BENCH) {
+		AIEnergyTransTransferEnergyToBenchResult bench = AIEnergyTransTransferEnergyToBench();
+		return (HandleAIEnergyTransResult){bench.a, bench.f};
+	} else {
+		needed = energy_trans_check_attack();
+	}
+	if ((needed.f & 0x10u) == 0u)
+		return needed;
+
+	/* .TransferEnergyToArena */
+	wAINumberOfEnergyTransCards = needed.a;
+	uint8_t slot = (uint8_t)(in_play - 1u);
+	for (;;) {
+		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + slot)).a;
+		hTempCardIndex_ff9f = deck_index;
+		if (GetCardIDFromDeckIndex(deck_index) == VENUSAUR_LV67)
+			break;
+		if (slot == 0u)
+			return (HandleAIEnergyTransResult){0u, 0x80u};
+		slot--;
+	}
+	/* .use_pkmn_power */
+	hTemp_ffa0 = slot;
+	(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
+	(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
+	hAIEnergyTransPlayAreaLocation = PLAY_AREA_ARENA;
+	uint8_t remaining = wAINumberOfEnergyTransCards;
+	for (uint8_t index = 0u; index < DECK_SIZE; index++) {
+		uint8_t location = (uint8_t)(GetTurnDuelistVariable(
+			(uint8_t)(DUELVARS_CARD_LOCATIONS + index)).a & 0x1Fu);
+		if (location < CARD_LOCATION_BENCH_1)
+			continue;
+		hTempPlayAreaLocation_ffa1 = (uint8_t)(location & 0x0Fu);
+		if (GetCardIDFromDeckIndex(index) != GRASS_ENERGY)
+			continue;
+		hAIEnergyTransEnergyCard = index;
+		for (uint8_t frame = 30u; frame != 0u; frame--)
+			DoFrame();
+		(void)AIMakeDecision(OPPACTION_6B15, 0u, 0u, 0u, 0u);
+		if (--remaining == 0u)
+			break;
+	}
+	/* .done_transfer */
+	for (uint8_t frame = 60u; frame != 0u; frame--)
+		DoFrame();
+	AIMakeDecisionResult scene = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
+	return (HandleAIEnergyTransResult){scene.a, scene.f};
+}
+/* <<< factory HandleAIEnergyTrans */

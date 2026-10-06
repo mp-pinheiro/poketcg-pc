@@ -1,5 +1,6 @@
 #include "home/save.h"
 
+#include "generated/rom.h"
 #include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/sram.h"
@@ -12,7 +13,7 @@
 
 /* WRAMToSRAMMapper:: save.asm:461-497, ROM bank 4. 6 bytes/entry: dw addr, dw count,
  * db min, db max; terminated by a zero address word. */
-#define WRAM_TO_SRAM_MAPPER 0x5498u
+#define WRAM_TO_SRAM_MAPPER WRAMToSRAMMapper_ADDR
 
 static const uint8_t *mapper_entry(unsigned index)
 {
@@ -371,8 +372,8 @@ void _LoadGeneralSaveData(void)
 
 /* EventVarMasks and MedalEvents live in ROM bank 3 (scripting.asm:388/355), read
  * via the code bank there -- a farcall target. Both are 2- and 1-byte records. */
-#define EVENT_VAR_MASKS 0x4B37u
-#define MEDAL_EVENTS    0x4B15u
+#define EVENT_VAR_MASKS EventVarMasks_ADDR
+#define MEDAL_EVENTS    MedalEvents_ADDR
 #define EV_ISHIHARA_MENT 0x1eu
 #define EV_LEGENDARY     0x22u
 #define EV_MEDAL_COUNT   0x2eu

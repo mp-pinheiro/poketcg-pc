@@ -1,0 +1,69 @@
+#ifndef POKETCG_HOME_MAIL_H
+#define POKETCG_HOME_MAIL_H
+
+#include <stdint.h>
+
+typedef struct {
+	uint8_t b;
+	uint8_t c;
+} PCPackCoordinates;
+
+PCPackCoordinates GePCPackSelectionCoordinates(void);
+void TryGivePCPack(uint8_t id);
+
+/* >>> factory InitPCPacks */
+void InitPCPacks(void);
+/* <<< factory InitPCPacks */
+/* >>> factory DrawMailMenuCursor */
+void DrawMailMenuCursor(uint8_t symbol);
+/* <<< factory DrawMailMenuCursor */
+/* >>> factory GetPCPackCoordinates */
+PCPackCoordinates GetPCPackCoordinates(uint8_t pack);
+/* <<< factory GetPCPackCoordinates */
+/* >>> factory ShowMailMenuCursor */
+void ShowMailMenuCursor(void);
+/* <<< factory ShowMailMenuCursor */
+/* >>> factory HideMailMenuCursor */
+void HideMailMenuCursor(void);
+/* <<< factory HideMailMenuCursor */
+/* >>> factory PrintEmptyPCPackName */
+void PrintEmptyPCPackName(uint8_t pack);
+/* <<< factory PrintEmptyPCPackName */
+/* >>> factory UpdateMailMenuCursor */
+void UpdateMailMenuCursor(void);
+/* <<< factory UpdateMailMenuCursor */
+/* >>> factory PCMailHandleDPadInput */
+void PCMailHandleDPadInput(void);
+/* <<< factory PCMailHandleDPadInput */
+/* >>> factory GetPCPackNameTextID */
+uint16_t GetPCPackNameTextID(uint8_t a);
+/* <<< factory GetPCPackNameTextID */
+/* >>> factory PrintPCPackName */
+typedef struct {
+	uint8_t a;
+} PrintPCPackNameResult;
+PrintPCPackNameResult PrintPCPackName(uint8_t a);
+/* <<< factory PrintPCPackName */
+/* >>> factory PrintObtainedPCPacks */
+void PrintObtainedPCPacks(void);
+/* <<< factory PrintObtainedPCPacks */
+/* >>> factory BlinkUnopenedPCPacks */
+void BlinkUnopenedPCPacks(void);
+/* <<< factory BlinkUnopenedPCPacks */
+/* >>> factory TryOpenPCMailBoosterPack */
+/* mail.asm:263. The tail is `call DisableLCD / ret`, and DisableLCD models no
+ * register result, so nothing is returned. */
+void TryOpenPCMailBoosterPack(void);
+/* <<< factory TryOpenPCMailBoosterPack */
+/* >>> factory PCMailHandleAInput */
+/* mail.asm:136. The tail is `call DoFrameIfLCDEnabled / ret` and both early
+ * exits are bare `ret z`, so no register result is modelled. */
+void PCMailHandleAInput(void);
+/* <<< factory PCMailHandleAInput */
+/* >>> factory _PCMenu_ReadMail */
+/* mail.asm:22. The tail is `pop af / ld [wd291], a / ret`, so a comes back as
+ * the entry value of wd291; b, c, d, e and hl are whatever PlaySFX leaves and
+ * that callee models no register result, so none of them is modelled here. */
+uint8_t _PCMenu_ReadMail(void);
+/* <<< factory _PCMenu_ReadMail */
+#endif

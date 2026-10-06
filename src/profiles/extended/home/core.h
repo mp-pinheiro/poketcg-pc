@@ -2,6 +2,7 @@
 #define POKETCG_HOME_CORE_H
 
 #include <stdint.h>
+#include "home/card_id.h"
 
 /* >>> factory DrawHPBar */
 void DrawHPBar(uint8_t d, uint8_t e);
@@ -83,7 +84,7 @@ void LoadLoaded1CardGfx(uint16_t de);
 /* <<< factory LoadLoaded1CardGfx */
 /* >>> factory LookForCardIDInPlayArea_Bank5 */
 typedef struct { uint8_t a; uint8_t b; uint8_t f; } LookResult;
-LookResult LookForCardIDInPlayArea_Bank5(uint8_t a, uint8_t b);
+LookResult LookForCardIDInPlayArea_Bank5(uint16_t de, uint8_t b);
 /* <<< factory LookForCardIDInPlayArea_Bank5 */
 /* >>> factory ClearMemory_Bank5 */
 void ClearMemory_Bank5(uint8_t a, uint16_t hl);
@@ -123,7 +124,7 @@ typedef struct { uint8_t a; uint8_t f; } AnimBufferResult;
 AnimBufferResult PlayBufferedDuelAnimations(void);
 /* <<< factory PlayBufferedDuelAnimations */
 /* >>> factory CheckEnergyFlagsNeededInList */
-typedef struct { uint8_t a; uint8_t carry; } EnergyFlagsResult;
+typedef struct { uint8_t a; uint8_t carry; uint8_t c; } EnergyFlagsResult;
 EnergyFlagsResult CheckEnergyFlagsNeededInList(uint8_t a);
 /* <<< factory CheckEnergyFlagsNeededInList */
 /* >>> factory CardPageSwitch_EnergyEnd */
@@ -210,10 +211,10 @@ typedef struct { uint8_t a; uint8_t f; } CoreCardListResult;
 CoreCardListResult CreateEnergyCardListFromHand(uint8_t a);
 /* <<< factory CreateEnergyCardListFromHand */
 /* >>> factory LookForCardIDInHand */
-CoreCardListResult LookForCardIDInHand(uint8_t a);
+CoreCardListResult LookForCardIDInHand(CardId de);
 /* <<< factory LookForCardIDInHand */
 /* >>> factory LookForCardIDInHandList_Bank5 */
-CoreCardListResult LookForCardIDInHandList_Bank5(uint8_t a);
+CoreCardListResult LookForCardIDInHandList_Bank5(CardId de);
 /* <<< factory LookForCardIDInHandList_Bank5 */
 /* >>> factory CheckForEvolutionInDeck */
 typedef struct { uint8_t a; uint8_t f; } CheckForEvolutionInDeckResult;
@@ -356,7 +357,7 @@ typedef struct {
 	uint16_t hl;
 } LookForCardIDInLocationResult;
 LookForCardIDInLocationResult LookForCardIDInLocation_Bank5(uint8_t location,
-	uint8_t card_id);
+	CardId card_id);
 /* <<< factory LookForCardIDInLocation_Bank5 */
 /* >>> factory LoadDefendingPokemonColorWRAndPrizeCards */
 void LoadDefendingPokemonColorWRAndPrizeCards(void);
@@ -377,7 +378,7 @@ void PrintCardNameFromCardIDInTextBox(uint16_t hl);
 /* <<< factory PrintCardNameFromCardIDInTextBox */
 /* >>> factory RemoveCardIDInList */
 typedef struct { uint8_t a; uint8_t f; } RemoveCardIDResult;
-RemoveCardIDResult RemoveCardIDInList(uint16_t *hl, uint8_t e);
+RemoveCardIDResult RemoveCardIDInList(uint16_t *hl, CardId de);
 /* <<< factory RemoveCardIDInList */
 /* >>> factory SortTempHandByIDList */
 typedef struct {

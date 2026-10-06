@@ -34,6 +34,8 @@
 #include "generated/hram.h"
 #include "generated/sram.h"
 #include "generated/wram.h"
+#include "home/card_id_bus.h"
+#include "home/load_deck.h"
 #include "home/deck_configuration.h"
 #include "home/switch_sram.h"
 
@@ -411,11 +413,11 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 uint16_t DecrementDeckCardsInCollection(uint16_t hl)
 {
 	uint16_t p = hl;
-	for (uint8_t d = 0; d < DECK_SIZE; d++) {
-		uint8_t a = gb_read8(p++);
-		if (a == 0)
+	for (uint8_t d = 0u; d < DECK_SIZE; d++) {
+		CardId id = card_id_read(&p);
+		if (id == 0u)
 			break;
-		uint16_t addr = (uint16_t)(SCARDCOLLECTION_ADDR + a);
+		uint16_t addr = (uint16_t)(sCardCollection_ADDR + id);
 		gb_write8(addr, (uint8_t)(gb_read8(addr) - 1u));
 	}
 	return hl;
@@ -428,11 +430,11 @@ uint16_t DecrementDeckCardsInCollection(uint16_t hl)
 uint16_t AddDeckToCollection(uint16_t hl)
 {
 	uint16_t p = hl;
-	for (uint8_t d = 0; d < DECK_SIZE; d++) {
-		uint8_t a = gb_read8(p++);
-		if (a == 0)
+	for (uint8_t d = 0u; d < DECK_SIZE; d++) {
+		CardId id = card_id_read(&p);
+		if (id == 0u)
 			break;
-		uint16_t addr = (uint16_t)(SCARDCOLLECTION_ADDR + a);
+		uint16_t addr = (uint16_t)(sCardCollection_ADDR + id);
 		gb_write8(addr, (uint8_t)(gb_read8(addr) + 1u));
 	}
 	return hl;
@@ -479,6 +481,21 @@ void CalculateOnesAndTensDigits(uint8_t a)
 	gb_write8((uint16_t)(wDecimalDigitsSymbols_ADDR + 1u), tens);
 }
 /* <<< factory CalculateOnesAndTensDigits */
+/* >>> factory CalculateOnesAndTensDigits_Long */
+void CalculateOnesAndTensDigits_Long(uint16_t hl)
+{
+	const uint16_t places[5] = {10000u, 1000u, 100u, 10u, 1u};
+	uint16_t output = wDecimalDigitsSymbols_ADDR;
+	for (uint8_t i = 0u; i < 5u; i++) {
+		uint8_t digit = 0u;
+		while (hl >= places[i]) {
+			hl = (uint16_t)(hl - places[i]);
+			digit = (uint8_t)(digit + 1u);
+		}
+		gb_write8(output++, (uint8_t)(SYM_0 + digit));
+	}
+}
+/* <<< factory CalculateOnesAndTensDigits_Long */
 
 
 
@@ -563,11 +580,10 @@ void DrawHandCardsTileAtDE(uint16_t de)
 uint8_t CountNumberOfCardsOfType(uint8_t a)
 {
 	uint8_t input_type = a;
-	uint8_t count = 0;
-	uint16_t index = 0;
-	for (;;) {
-		uint8_t card = gb_read8((uint16_t)(wCurDeckCards_ADDR + index));
-		index = (uint16_t)(index + 1u);
+	uint8_t count = 0u;
+	for (uint8_t index = 0u; index < DECK_SIZE; index++) {
+		CardId card = card_id_read_at(card_id_index_address(wCurDeckCards_ADDR,
+			index));
 		if (card == 0u)
 			break;
 		uint8_t card_type = GetCardType(card);
@@ -596,22 +612,39 @@ void CopyNBytesFromHLToDE(uint16_t *hl, uint16_t *de, uint8_t b)
 	*de = dst;
 }
 /* <<< factory CopyNBytesFromHLToDE */
+/* >>> factory CopyNBytesFromHLToDE_Long */
+CopyNBytesFromHLToDELongResult CopyNBytesFromHLToDE_Long(
+	uint16_t *hl, uint16_t *de, uint16_t bc)
+{
+	uint16_t src = *hl;
+	uint16_t dst = *de;
+	uint32_t n = bc ? bc : 0x10000u;
+	do {
+		gb_write8(dst++, gb_read8(src++));
+	} while (--n);
+	*hl = src;
+	*de = dst;
+	return (CopyNBytesFromHLToDELongResult){0u, 0x80u, 0u, 0u, src, dst};
+}
+/* <<< factory CopyNBytesFromHLToDE_Long */
 
 /* >>> factory IncrementDeckCardsInTempCollection */
 void IncrementDeckCardsInTempCollection(uint16_t de)
 {
 	EnableSRAM();
-	uint16_t bc = wTempCardCollection_ADDR;
-	uint8_t h = DECK_SIZE;
-	for (;;) {
-		uint8_t card = gb_read8(de);
-		de = (uint16_t)(de + 1u);
-		if (card == 0u)
-			break;
-		uint16_t slot = (uint16_t)(bc + card);
-		gb_write8(slot, (uint8_t)(gb_read8(slot) + 1u));
-		if (--h == 0u)
-			break;
+	uint8_t remaining = DECK_SIZE;
+	while (remaining != 0u) {
+		uint8_t command = gb_read8(de++);
+		for (uint8_t bit = 0u; bit < 8u && remaining != 0u; bit++) {
+			CardId id = (CardId)gb_read8(de++);
+			if ((command & 0x80u) != 0u)
+				id = (CardId)(id | 0x0100u);
+			command = (uint8_t)(command << 1);
+			uint16_t slot = (uint16_t)(wTempCardCollection_ADDR + id);
+			gb_write8(slot, (uint8_t)(gb_read8(slot) + 1u));
+			remaining = (uint8_t)(remaining - 1u);
+			wDecompSavedDeckCount = remaining;
+		}
 	}
 	DisableSRAM();
 }
@@ -624,29 +657,30 @@ void CreateCardCollectionListWithDeckCards(uint8_t a)
 	uint16_t hl = sCardCollection_ADDR;
 	uint16_t de = wTempCardCollection_ADDR;
 	EnableSRAM();
-	CopyNBytesFromHLToDE(&hl, &de, (uint8_t)(CARD_COLLECTION_SIZE - 1u));
+	CopyNBytesFromHLToDE_Long(&hl, &de, (uint16_t)(CARD_COLLECTION_SIZE - 2u));
 	DisableSRAM();
 	uint8_t flags = gb_read8(hffb5_ADDR);
-	if ((flags & (uint8_t)(1u << DECK_1_F)) != 0u) {
+	if ((flags & (uint8_t)(1u << DECK_1_F)) != 0u)
 		IncrementDeckCardsInTempCollection(sDeck1Cards_ADDR);
-	}
-	if ((flags & (uint8_t)(1u << DECK_2_F)) != 0u) {
+	if ((flags & (uint8_t)(1u << DECK_2_F)) != 0u)
 		IncrementDeckCardsInTempCollection(sDeck2Cards_ADDR);
-	}
-	if ((flags & (uint8_t)(1u << DECK_3_F)) != 0u) {
+	if ((flags & (uint8_t)(1u << DECK_3_F)) != 0u)
 		IncrementDeckCardsInTempCollection(sDeck3Cards_ADDR);
-	}
-	if ((flags & (uint8_t)(1u << DECK_4_F)) != 0u) {
+	if ((flags & (uint8_t)(1u << DECK_4_F)) != 0u)
 		IncrementDeckCardsInTempCollection(sDeck4Cards_ADDR);
-	}
 }
 /* <<< factory CreateCardCollectionListWithDeckCards */
 
 /* >>> factory GetSelectedVisibleCardID */
-uint8_t GetSelectedVisibleCardID(void)
+GetSelectedVisibleCardIDResult GetSelectedVisibleCardID(void)
 {
-	uint8_t cursor = gb_read8(wCardListCursorPos_ADDR);
-	return gb_read8((uint16_t)(wVisibleListCardIDs_ADDR + cursor));
+	uint8_t cursor = wCardListCursorPos;
+	uint8_t a = (uint8_t)(cursor << 1);
+	uint8_t f = (uint8_t)((a == 0u ? 0x80u : 0u) |
+		((cursor & 0x80u) != 0u ? 0x10u : 0u));
+	uint16_t hl = (uint16_t)(wVisibleListCardIDs_ADDR + a);
+	CardId id = card_id_read(&hl);
+	return (GetSelectedVisibleCardIDResult){id, a, f, hl};
 }
 /* <<< factory GetSelectedVisibleCardID */
 
@@ -655,9 +689,9 @@ uint8_t CheckIfDeckHasCards(uint16_t hl)
 {
 	hl = (uint16_t)(hl + DECK_NAME_SIZE);
 	EnableSRAM();
-	uint8_t value = gb_read8(hl);
+	CardId id = card_id_read_at(hl);
 	DisableSRAM();
-	return value == 0u ? 0x90u : 0x00u;
+	return id == 0u ? 0x90u : 0x00u;
 }
 /* <<< factory CheckIfDeckHasCards */
 
@@ -666,11 +700,9 @@ void FillBGMapLineWithA(uint8_t a, uint8_t b, uint8_t c)
 {
 	uint16_t de = BCCoordToBGMap0Address(b, c);
 	FillDEWithA(a, 20u, de);
-	if (gb_read8(wConsole_ADDR) != 0x02u)
-		return;
 	hBankVRAM = 1u;
 	gb_write8(0xFF4Fu, 1u);
-	FillDEWithA(0x04u, 20u, de);
+	FillDEWithA(0x01u, 20u, de);
 	hBankVRAM = 0u;
 	gb_write8(0xFF4Fu, 0u);
 }
@@ -761,16 +793,18 @@ DrawHorizontalListCursorResult DrawHorizontalListCursor(uint8_t a)
 /* <<< factory DrawHorizontalListCursor */
 
 /* >>> factory GetCountOfCardInCurDeck */
-GetCountOfCardInCurDeckResult GetCountOfCardInCurDeck(uint8_t e)
+GetCountOfCardInCurDeckResult GetCountOfCardInCurDeck(CardId id)
 {
 	uint8_t count = 0u;
-	const uint8_t *cards = &wCurDeckCards;
-	while (*cards != 0u) {
-		if (*cards == e)
-			++count;
-		++cards;
+	uint16_t cards = wCurDeckCards_ADDR;
+	for (uint8_t i = 0u; i < DECK_SIZE; i++) {
+		CardId card = card_id_read(&cards);
+		if (card == 0u)
+			break;
+		if (card == id)
+			count = (uint8_t)(count + 1u);
 	}
-	return (GetCountOfCardInCurDeckResult){count, 0x80u, count};
+	return (GetCountOfCardInCurDeckResult){count, 0x80u, (uint8_t)(id >> 8)};
 }
 /* <<< factory GetCountOfCardInCurDeck */
 
@@ -805,31 +839,40 @@ DrawHorizontalListCursorResult DrawHorizontalListCursor_Visible(void)
 
 /* >>> factory IsCardInAnyDeck */
 /* deck_configuration.asm:1133-1190 */
-IsCardInAnyDeckResult IsCardInAnyDeck(uint8_t a, uint8_t f, uint8_t e)
+IsCardInAnyDeckResult IsCardInAnyDeck(uint8_t a, uint8_t f, CardId id)
 {
+	(void)f;
 	const uint16_t decks[] = {
 		sDeck1Cards_ADDR,
 		sDeck2Cards_ADDR,
 		sDeck3Cards_ADDR,
 		sDeck4Cards_ADDR,
 	};
-
-	for (uint8_t deck = 0; deck < 4u; deck++) {
+	for (uint8_t deck = 0u; deck < 4u; deck++) {
+		EnableSRAM();
 		uint16_t address = decks[deck];
 		uint8_t b = DECK_SIZE;
-		EnableSRAM();
+		uint8_t c = 8u;
 		while (b != 0u) {
-			uint8_t card = gb_read8(address++);
-			if (card == e) {
-				DisableSRAM();
-				return (IsCardInAnyDeckResult){(a == 0u) ? 0x80u : 0x00u, b};
+			uint8_t command = gb_read8(address++);
+			for (c = 8u; c != 0u && b != 0u; c--) {
+				uint8_t low = gb_read8(address++);
+				CardId card = (CardId)low;
+				if ((command & 0x80u) != 0u)
+					card = (CardId)(card | 0x0100u);
+				command = (uint8_t)(command << 1);
+				if (card == id) {
+					DisableSRAM();
+					return (IsCardInAnyDeckResult){
+						(a == 0u) ? 0x80u : 0x00u, b, c
+					};
+				}
+				b = (uint8_t)(b - 1u);
 			}
-			b = (uint8_t)(b - 1u);
 		}
 		DisableSRAM();
 	}
-
-	return (IsCardInAnyDeckResult){(uint8_t)((f & 0x80u) | 0x10u), 0u};
+	return (IsCardInAnyDeckResult){0x10u, 0u, 1u};
 }
 /* <<< factory IsCardInAnyDeck */
 
@@ -876,20 +919,19 @@ CopyDeckNameResult CopyDeckName(uint16_t hl)
 /* <<< factory CopyDeckName */
 
 /* >>> factory GetOwnedCardCount */
-GetOwnedCardCountResult GetOwnedCardCount(uint8_t e)
+GetOwnedCardCountResult GetOwnedCardCount(CardId id)
 {
 	uint16_t hl = wFilteredCardList_ADDR;
-	uint8_t d = (uint8_t)(-1);
+	uint8_t index = 0u;
 	for (;;) {
-		d = (uint8_t)(d + 1u);
-		uint8_t a = gb_read8(hl);
-		hl = (uint16_t)(hl + 1u);
-		if (a == 0u)
-			return (GetOwnedCardCountResult){0u, d};
-		if (a == e) {
-			uint8_t count = gb_read8((uint16_t)(wOwnedCardsCountList_ADDR + d));
-			return (GetOwnedCardCountResult){count, d};
+		CardId card = card_id_read(&hl);
+		if (card == 0u)
+			return (GetOwnedCardCountResult){0u, (uint8_t)(id >> 8)};
+		if (card == id) {
+			uint8_t count = gb_read8((uint16_t)(wOwnedCardsCountList_ADDR + index));
+			return (GetOwnedCardCountResult){count, (uint8_t)(id >> 8)};
 		}
+		index = (uint8_t)(index + 1u);
 	}
 }
 /* <<< factory GetOwnedCardCount */
@@ -915,36 +957,34 @@ TallyCardsInCardFilterListsResult TallyCardsInCardFilterLists(uint8_t d, uint8_t
 /* >>> factory RemoveCardFromDeck */
 RemoveCardFromDeckResult RemoveCardFromDeck(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
-	GetCountOfCardInCurDeckResult r = GetCountOfCardInCurDeck(e);
+	CardId id = (CardId)(((uint16_t)d << 8) | e);
+	GetCountOfCardInCurDeckResult r = GetCountOfCardInCurDeck(id);
 	if (r.a == 0u)
 		return (RemoveCardFromDeckResult){0u, 0x80u, b, c, d, e, hl};
-
 	PlaySFX(SFX_CURSOR);
-
-	uint16_t p = wCurDeckCards_ADDR;
-	uint8_t v;
+	uint16_t source = wCurDeckCards_ADDR;
 	for (;;) {
-		v = gb_read8(p);
-		p = (uint16_t)(p + 1u);
-		if (v == e)
+		CardId card = card_id_read(&source);
+		if (card == id)
 			break;
 	}
-	uint16_t dst = (uint16_t)(p - 1u);
+	uint16_t dst = (uint16_t)(source - 2u);
 	for (;;) {
-		v = gb_read8(p);
-		p = (uint16_t)(p + 1u);
-		if (v == 0u)
+		CardId card = card_id_read(&source);
+		if (card == 0u) {
+			card_id_write(&dst, 0u);
 			break;
-		gb_write8(dst, v);
-		dst = (uint16_t)(dst + 1u);
+		}
+		card_id_write(&dst, card);
 	}
-	gb_write8(dst, 0u);
-
 	uint8_t filter = wCurCardTypeFilter;
 	uint16_t faddr = (uint16_t)(wCardFilterCounts_ADDR + filter);
 	gb_write8(faddr, (uint8_t)(gb_read8(faddr) - 1u));
-
-	return (RemoveCardFromDeckResult){0u, 0x90u, (uint8_t)(dst >> 8), (uint8_t)dst, d, e, p};
+	uint16_t bc = (uint16_t)(dst - 1u);
+	return (RemoveCardFromDeckResult){
+		0u, 0x10u, (uint8_t)(bc >> 8), (uint8_t)bc, d, e,
+		(uint16_t)(source - 2u)
+	};
 }
 /* <<< factory RemoveCardFromDeck */
 
@@ -956,58 +996,55 @@ CheckIfCurrentDeckWasChangedResult CheckIfCurrentDeckWasChanged(void)
 		DisableSRAM();
 		return (CheckIfCurrentDeckWasChangedResult){total, 0x10u};
 	}
-
-	uint16_t src = GetPointerToDeckCards();
-	uint16_t dst = wCurDeckCardChanges_ADDR;
+	uint16_t source = GetPointerToDeckCards();
 	EnableSRAM();
-	CopyNBytesFromHLToDE(&src, &dst, DECK_SIZE);
+	DecompressSRAMDeck(source, wCurDeckCardChanges_ADDR);
 	DisableSRAM();
-
-	gb_write8((uint16_t)(wCurDeckCardChanges_ADDR + DECK_SIZE), 0xFFu);
-	uint16_t de = wCurDeckCards_ADDR;
+	gb_write8((uint16_t)(wCurDeckCardChanges_ADDR + DECK_SIZE * 2u), 0xFFu);
+	gb_write8((uint16_t)(wCurDeckCardChanges_ADDR + DECK_SIZE * 2u + 1u),
+		0xFFu);
+	uint16_t current = wCurDeckCards_ADDR;
 	for (;;) {
-		uint8_t card = gb_read8(de);
+		CardId card = card_id_read(&current);
 		if (card == 0u)
 			break;
-		de = (uint16_t)(de + 1u);
-		uint16_t hl = wCurDeckCardChanges_ADDR;
+		uint16_t scan = wCurDeckCardChanges_ADDR;
 		for (;;) {
-			uint8_t v = gb_read8(hl);
-			hl = (uint16_t)(hl + 1u);
-			if (v == 0xFFu)
+			CardId value = card_id_read(&scan);
+			if (value == 0xFFFFu)
 				break;
-			if (v == card) {
-				gb_write8((uint16_t)(hl - 1u), 0u);
+			if (value == card) {
+				uint16_t zero = (uint16_t)(scan - 2u);
+				card_id_write(&zero, 0u);
 				break;
 			}
 		}
 	}
-
-	uint16_t hl = wCurDeckCardChanges_ADDR;
+	uint16_t scan = wCurDeckCardChanges_ADDR;
 	for (;;) {
-		uint8_t v = gb_read8(hl);
-		hl = (uint16_t)(hl + 1u);
-		if (v == 0xFFu)
+		CardId value = card_id_read(&scan);
+		if (value == 0xFFFFu)
 			break;
-		if (v != 0u) {
+		if (value != 0u) {
 			DisableSRAM();
-			return (CheckIfCurrentDeckWasChangedResult){v, 0x10u};
+			return (CheckIfCurrentDeckWasChangedResult){
+				(uint8_t)value, 0x10u
+			};
 		}
 	}
-
-	hl = GetPointerToDeckName();
-	uint16_t de2 = wCurDeckName_ADDR;
+	uint16_t name = GetPointerToDeckName();
+	uint16_t current_name = wCurDeckName_ADDR;
 	EnableSRAM();
 	for (;;) {
-		uint8_t a = gb_read8(de2);
-		uint8_t nb = gb_read8(hl);
-		if (a != nb) {
+		uint8_t left = gb_read8(current_name);
+		uint8_t right = gb_read8(name);
+		if (left != right) {
 			DisableSRAM();
-			return (CheckIfCurrentDeckWasChangedResult){a, 0x10u};
+			return (CheckIfCurrentDeckWasChangedResult){left, 0x10u};
 		}
-		de2 = (uint16_t)(de2 + 1u);
-		hl = (uint16_t)(hl + 1u);
-		if (a == 0u)
+		current_name = (uint16_t)(current_name + 1u);
+		name = (uint16_t)(name + 1u);
+		if (left == 0u)
 			break;
 	}
 	DisableSRAM();
@@ -1020,54 +1057,44 @@ CreateFilteredCardListResult CreateFilteredCardList(
 	uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	uint8_t filter = a;
-
 	ClearMemory_Bank2(DECK_SIZE, wOwnedCardsCountList_ADDR);
-	ClearMemory_Bank2(DECK_SIZE, wFilteredCardList_ADDR);
-
-	uint16_t out_index = 0u;
-	uint8_t card_id = 0u;
-	for (;;) {
-		card_id++;
-		CardPtrResult ptr = GetCardPointer(card_id);
+	ClearMemory_Bank2((uint8_t)((MAX_NUM_CARDS_PER_TYPE + 1u) * 2u),
+		wFilteredCardList_ADDR);
+	uint8_t out_index = 0u;
+	for (CardId id = 1u; id <= CARD_ID_MAX; id++) {
+		CardPtrResult ptr = GetCardPointer(id);
 		if (ptr.carry)
 			break;
-		uint8_t card_type = GetCardType(card_id);
-
+		uint8_t card_type = GetCardType(id);
 		uint8_t add = 0u;
-		if (filter == 0xFFu) {
+		if (filter == 0xFFu)
 			add = 1u;
-		} else if ((filter & FILTER_ENERGY) == FILTER_ENERGY) {
-			if ((card_type & TYPE_ENERGY) == TYPE_ENERGY)
-				add = 1u;
-		} else {
-			if (card_type == filter)
-				add = 1u;
+		else if ((filter & FILTER_ENERGY) == FILTER_ENERGY)
+			add = (uint8_t)((card_type & TYPE_ENERGY) == TYPE_ENERGY);
+		else
+			add = (uint8_t)(card_type == filter);
+		if (!add)
+			continue;
+		uint16_t list = (uint16_t)(wFilteredCardList_ADDR +
+			(uint16_t)out_index * 2u);
+		card_id_write(&list, id);
+		uint8_t owned = gb_read8((uint16_t)(wTempCardCollection_ADDR + id));
+		if (owned == CARD_NOT_OWNED)
+			continue;
+		if (owned == 0u) {
+			IsCardInAnyDeckResult r = IsCardInAnyDeck(0u, 0x80u, id);
+			if ((r.f & 0x10u) != 0u)
+				continue;
 		}
-
-		if (add) {
-			gb_write8((uint16_t)(wFilteredCardList_ADDR + out_index), card_id);
-			uint8_t owned = gb_read8((uint16_t)(wTempCardCollection_ADDR + card_id));
-			if (owned != CARD_NOT_OWNED) {
-				uint8_t skip = 0u;
-				uint8_t count_value = owned;
-				if (owned == 0u) {
-					IsCardInAnyDeckResult r = IsCardInAnyDeck(0u, 0x80u, card_id);
-					if (r.f & 0x10u)
-						skip = 1u;
-					count_value = 0u;
-				}
-				if (!skip) {
-					gb_write8((uint16_t)(wOwnedCardsCountList_ADDR + out_index), count_value);
-					out_index++;
-				}
-			}
-		}
+		gb_write8((uint16_t)(wOwnedCardsCountList_ADDR + out_index), owned);
+		out_index = (uint8_t)(out_index + 1u);
 	}
-
-	gb_write8(wNumEntriesInCurFilter_ADDR, (uint8_t)out_index);
-	gb_write8((uint16_t)(wFilteredCardList_ADDR + out_index), 0u);
+	gb_write8(wNumEntriesInCurFilter_ADDR, out_index);
+	uint16_t terminator = (uint16_t)(wFilteredCardList_ADDR +
+		(uint16_t)out_index * 2u);
+	gb_write8(terminator++, 0u);
+	gb_write8(terminator, 0u);
 	gb_write8((uint16_t)(wOwnedCardsCountList_ADDR + out_index), 0xFFu);
-
 	return (CreateFilteredCardListResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory CreateFilteredCardList */
@@ -1084,11 +1111,13 @@ ConfirmSelectionAndReturnCarryResult ConfirmSelectionAndReturnCarry(void)
 /* <<< factory ConfirmSelectionAndReturnCarry */
 
 /* >>> factory AddCardIDToVisibleList */
-void AddCardIDToVisibleList(uint8_t b, uint8_t e)
+void AddCardIDToVisibleList(uint8_t b, CardId id)
 {
-	uint8_t num_entries = gb_read8(wNumVisibleCardListEntries_ADDR);
+	uint8_t num_entries = wNumVisibleCardListEntries;
 	uint8_t offset = (uint8_t)(num_entries - b);
-	gb_write8((uint16_t)(wVisibleListCardIDs_ADDR + offset), e);
+	uint16_t address = (uint16_t)(wVisibleListCardIDs_ADDR +
+		(uint16_t)offset * 2u);
+	card_id_write(&address, id);
 }
 /* <<< factory AddCardIDToVisibleList */
 
@@ -1321,13 +1350,12 @@ void PrintDeckName(uint16_t hl, uint8_t d, uint8_t e)
 /* <<< factory PrintDeckName */
 
 /* >>> factory AppendOwnedCardCountNumber */
-void AppendOwnedCardCountNumber(uint16_t hl, uint8_t e)
+void AppendOwnedCardCountNumber(uint16_t hl, CardId id)
 {
 	uint16_t walk = hl;
-	while (gb_read8(walk) != 0u) {
+	while (gb_read8(walk) != 0u)
 		walk = (uint16_t)(walk + 1u);
-	}
-	GetOwnedCardCountResult r1 = GetOwnedCardCount(e);
+	GetOwnedCardCountResult r1 = GetOwnedCardCount(id);
 	ConvertToNumericalDigitsResult r2 = ConvertToNumericalDigits(r1.a, walk);
 	gb_write8(r2.hl, 0u);
 }
@@ -1354,20 +1382,17 @@ void PrintNumberValueInCursorYPos(uint8_t a)
 /* <<< factory PrintNumberValueInCursorYPos */
 
 /* >>> factory AppendOwnedCardCountAndStorageCountNumbers */
-void AppendOwnedCardCountAndStorageCountNumbers(uint16_t hl, uint8_t e)
+void AppendOwnedCardCountAndStorageCountNumbers(uint16_t hl, CardId id)
 {
 	uint16_t walk = hl;
-	while (gb_read8(walk) != 0u) {
+	while (gb_read8(walk) != 0u)
 		walk = (uint16_t)(walk + 1u);
-	}
-	GetCountOfCardInCurDeckResult r1 = GetCountOfCardInCurDeck(e);
+	GetCountOfCardInCurDeckResult r1 = GetCountOfCardInCurDeck(id);
 	ConvertToNumericalDigitsResult r2 = ConvertToNumericalDigits(r1.a, walk);
 	walk = r2.hl;
-	gb_write8(walk, TX_SYMBOL);
-	walk = (uint16_t)(walk + 1u);
-	gb_write8(walk, SYM_SLASH);
-	walk = (uint16_t)(walk + 1u);
-	GetOwnedCardCountResult r3 = GetOwnedCardCount(e);
+	gb_write8(walk++, TX_SYMBOL);
+	gb_write8(walk++, SYM_SLASH);
+	GetOwnedCardCountResult r3 = GetOwnedCardCount(id);
 	ConvertToNumericalDigitsResult r4 = ConvertToNumericalDigits(r3.a, walk);
 	gb_write8(r4.hl, TX_END);
 }
@@ -1552,15 +1577,17 @@ void PrintCardSelectionList(void)
 
 	uint8_t offset = wCardListVisibleOffset;
 	uint8_t c = offset;
-	uint16_t hl = (uint16_t)(wFilteredCardList_ADDR + offset);
+	uint16_t hl = (uint16_t)(wFilteredCardList_ADDR +
+		(uint16_t)offset * 2u);
 	uint8_t count = wNumVisibleCardListEntries;
 	while (count != 0u) {
-		uint8_t card_id = gb_read8(hl++);
+		CardId card_id = card_id_read(&hl);
 		if (card_id != 0u) {
 			uint8_t b = count;
 			AddCardIDToVisibleList(b, card_id);
 			LoadCardDataToBuffer1_FromCardID(card_id);
-			CopyCardNameAndLevelResult name = CopyCardNameAndLevel(14u, b, c, d, card_id);
+			CopyCardNameAndLevelResult name = CopyCardNameAndLevel(14u, b, c, d,
+				(uint8_t)card_id);
 			AppendOwnedCardCountNumber(name.hl, card_id);
 			InitTextPrinting(d, e);
 			uint16_t text = wDefaultText_ADDR;
@@ -1573,8 +1600,7 @@ void PrintCardSelectionList(void)
 		--count;
 		e = (uint8_t)(e + 2u);
 	}
-
-	if (gb_read8(hl) != 0u) {
+	if (card_id_read_at(hl) != 0u) {
 		wUnableToScrollDown = FALSE;
 		tile = SYM_CURSOR_D;
 	} else {
@@ -1610,15 +1636,17 @@ void PrintDeckBuildingCardList(void)
 	WriteByteToBGMap0(tile, 19u, (uint8_t)(e - 1u));
 
 	uint8_t offset = wCardListVisibleOffset;
-	uint16_t hl = (uint16_t)(wFilteredCardList_ADDR + offset);
+	uint16_t hl = (uint16_t)(wFilteredCardList_ADDR +
+		(uint16_t)offset * 2u);
 	uint8_t count = wNumVisibleCardListEntries;
 	while (count != 0u) {
 		uint8_t b = count;
-		uint8_t card_id = gb_read8(hl++);
+		CardId card_id = card_id_read(&hl);
 		if (card_id != 0u) {
 			AddCardIDToVisibleList(b, card_id);
 			LoadCardDataToBuffer1_FromCardID(card_id);
-			CopyCardNameAndLevelResult name = CopyCardNameAndLevel(13u, b, offset, d, card_id);
+			CopyCardNameAndLevelResult name = CopyCardNameAndLevel(13u, b, offset,
+				d, (uint8_t)card_id);
 			AppendOwnedCardCountAndStorageCountNumbers(name.hl, card_id);
 			InitTextPrinting(d, e);
 			uint16_t text = wDefaultText_ADDR;
@@ -1631,8 +1659,7 @@ void PrintDeckBuildingCardList(void)
 		count = (uint8_t)(count - 1u);
 		e = (uint8_t)(e + 2u);
 	}
-
-	if (gb_read8(hl) != 0u) {
+	if (card_id_read_at(hl) != 0u) {
 		wUnableToScrollDown = FALSE;
 		tile = SYM_CURSOR_D;
 	} else {
@@ -1657,7 +1684,7 @@ PrintFilteredCardListResult PrintFilteredCardList(uint8_t a, uint8_t f, uint8_t 
 	uint16_t src = sCardCollection_ADDR;
 	uint16_t dst = wTempCardCollection_ADDR;
 	EnableSRAM();
-	CopyNBytesFromHLToDE(&src, &dst, (uint8_t)(CARD_COLLECTION_SIZE - 1u));
+	CopyNBytesFromHLToDE_Long(&src, &dst, (uint16_t)(CARD_COLLECTION_SIZE - 2u));
 	DisableSRAM();
 	b = 0u;
 	c = 0u;
@@ -1692,9 +1719,10 @@ restart:
 	uint16_t list_ptr = (uint16_t)gb_read8(wCurCardListPtr_ADDR);
 	list_ptr |= (uint16_t)((uint16_t)gb_read8((uint16_t)(wCurCardListPtr_ADDR + 1u)) << 8);
 	uint8_t cursor = gb_read8(wCardListCursorPos_ADDR);
-	list_ptr = (uint16_t)(list_ptr + cursor);
-	list_ptr = (uint16_t)(list_ptr + gb_read8(wCardListVisibleOffset_ADDR));
-	uint8_t card_id = gb_read8(list_ptr);
+	uint8_t visible = gb_read8(wCardListVisibleOffset_ADDR);
+	list_ptr = (uint16_t)(list_ptr +
+		((uint16_t)cursor + visible) * 2u);
+	CardId card_id = card_id_read_at(list_ptr);
 	LoadCardDataToBuffer1_FromCardID(card_id);
 	uint16_t text_hl = SetupText(0x38u, 0x9Fu);
 	OpenCardPage_FromCheckHandOrDiscardPile(0u, 0u, 0u, 0u, 0x38u, 0x9Fu, text_hl);
@@ -1730,10 +1758,9 @@ handle_input:
 			goto reopen_card_page;
 		uint16_t probe = (uint16_t)gb_read8(wCurCardListPtr_ADDR);
 		probe |= (uint16_t)((uint16_t)gb_read8((uint16_t)(wCurCardListPtr_ADDR + 1u)) << 8);
-		probe = (uint16_t)(probe + gb_read8(wCardListCursorPos_ADDR));
-		offset = (uint8_t)(gb_read8(wCardListVisibleOffset_ADDR) + 1u);
-		probe = (uint16_t)(probe + offset);
-		if (gb_read8(probe) != 0u) {
+		probe = (uint16_t)(probe +
+			((uint16_t)gb_read8(wCardListCursorPos_ADDR) + offset) * 2u);
+		if (card_id_read_at(probe) != 0u) {
 			gb_write8(wCardListVisibleOffset_ADDR, offset);
 			cursor = (uint8_t)(cursor - 1u);
 			goto reopen_card_page;
@@ -1768,17 +1795,20 @@ exit:
 CheckIfThereAreAnyBasicCardsInDeckResult CheckIfThereAreAnyBasicCardsInDeck(void)
 {
 	uint16_t hl = wCurDeckCards_ADDR;
-	for (;;) {
-		uint8_t card = gb_read8(hl++);
+	for (uint8_t i = 0u; i < DECK_SIZE; i++) {
+		CardId card = card_id_read(&hl);
 		if (card == 0u)
 			return (CheckIfThereAreAnyBasicCardsInDeckResult){0u, 0x80u, 0u, hl};
-	LoadCardDataToBuffer1_FromCardID(card);
-		if ((uint8_t)(wLoadedCard1Type & TYPE_ENERGY) != 0u)
+		LoadCardDataToBuffer1_FromCardID(card);
+		if ((wLoadedCard1Type & TYPE_ENERGY) != 0u)
 			continue;
 		if (wLoadedCard1Stage != 0u)
 			continue;
-		return (CheckIfThereAreAnyBasicCardsInDeckResult){0u, 0x90u, card, hl};
+		return (CheckIfThereAreAnyBasicCardsInDeckResult){
+			0u, 0x10u, (uint8_t)card, hl
+		};
 	}
+	return (CheckIfThereAreAnyBasicCardsInDeckResult){0u, 0x80u, 0u, hl};
 }
 /* <<< factory CheckIfThereAreAnyBasicCardsInDeck */
 
@@ -1789,31 +1819,31 @@ SortCurDeckCardsByIDResult SortCurDeckCardsByID(void)
 	uint16_t dst = wOpponentDeck_ADDR;
 	uint16_t list = wDuelTempList_ADDR;
 	uint8_t index = 0u;
-
-	for (;;) {
-		uint8_t card = gb_read8(src++);
-		gb_write8(dst++, card);
+	for (uint8_t i = 0u; i < DECK_SIZE; i++) {
+		CardId card = card_id_read(&src);
+		card_id_write(&dst, card);
 		if (card == 0u) {
 			gb_write8(list, 0xFFu);
 			break;
 		}
 		gb_write8(list++, index++);
 	}
-
 	uint8_t saved_turn = hWhoseTurn;
 	hWhoseTurn = OPPONENT_TURN;
-	(void)SortCardsInDuelTempListByID((uint8_t)(list >> 8), (uint8_t)list, dst);
+	(void)SortCardsInDuelTempListByID((uint8_t)(list >> 8),
+		(uint8_t)list, dst);
 	hWhoseTurn = saved_turn;
-
 	uint16_t out = wCurDeckCards_ADDR;
 	uint16_t order = wDuelTempList_ADDR;
 	for (;;) {
-		uint8_t entry = gb_read8(order);
+		uint8_t entry = gb_read8(order++);
 		if (entry == 0xFFu)
 			break;
-		gb_write8(out++, gb_read8((uint16_t)(wOpponentDeck_ADDR + entry)));
-		order++;
+		uint16_t card = (uint16_t)(wOpponentDeck_ADDR + (uint16_t)entry * 2u);
+		CardId id = card_id_read_at(card);
+		card_id_write(&out, id);
 	}
+	gb_write8(out++, 0u);
 	gb_write8(out, 0u);
 	return (SortCurDeckCardsByIDResult){(uint8_t)order};
 }
@@ -1895,48 +1925,54 @@ void PrintConfirmationCardList(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl)
 	uint8_t tile = wCardListVisibleOffset ? SYM_CURSOR_U : SYM_SPACE;
 	WriteByteToBGMap0(tile, 19u, (uint8_t)(row - 1u));
 	uint8_t offset = wCardListVisibleOffset;
-	uint16_t list = (uint16_t)(wOwnedCardsCountList_ADDR + offset);
+	uint16_t list = (uint16_t)(wUniqueDeckCardList_ADDR +
+		(uint16_t)offset * 2u);
 	uint8_t remaining = wNumVisibleCardListEntries;
 	while (remaining != 0u) {
-		uint8_t card = gb_read8(list++);
-		if (card == 0u) break;
 		uint8_t index = remaining;
+		CardId card = card_id_read(&list);
+		if (card == 0u)
+			break;
 		AddCardIDToVisibleList(index, card);
 		LoadCardDataToBuffer1_FromCardID(card);
-		CopyCardNameAndLevelResult name = CopyCardNameAndLevel(13u, index, align, row, card);
+		CopyCardNameAndLevelResult name = CopyCardNameAndLevel(13u, index, align,
+			row, (uint8_t)card);
 		uint16_t text = name.hl;
-		while (gb_read8(text) != 0u) text++;
+		while (gb_read8(text) != 0u)
+			text++;
 		GetCountOfCardInCurDeckResult count = GetCountOfCardInCurDeck(card);
 		gb_write8(text++, TX_SYMBOL);
 		gb_write8(text++, SYM_CROSS);
-		ConvertToNumericalDigitsResult digits = ConvertToNumericalDigits(count.d, text);
+		ConvertToNumericalDigitsResult digits = ConvertToNumericalDigits(count.a, text);
 		gb_write8(digits.hl, TX_END);
 		uint8_t icon;
-		if (wLoadedCard1Type < TYPE_ENERGY) icon = (uint8_t)(ICON_TILE_BASIC_POKEMON + (uint8_t)(wLoadedCard1Stage * 4u));
-		else if (wLoadedCard1Type < TYPE_TRAINER) icon = (uint8_t)(ICON_TILE_FIRE + (uint8_t)((wLoadedCard1Type - TYPE_ENERGY) * 4u));
-		else icon = ICON_TILE_TRAINER;
-		uint16_t de = (uint16_t)((uint16_t)(align - 2u) << 8 | (uint8_t)(row - 1u));
+		if (wLoadedCard1Type < TYPE_ENERGY)
+			icon = (uint8_t)(ICON_TILE_BASIC_POKEMON + (uint8_t)(wLoadedCard1Stage * 4u));
+		else if (wLoadedCard1Type < TYPE_TRAINER)
+			icon = (uint8_t)(ICON_TILE_FIRE +
+				(uint8_t)((wLoadedCard1Type - TYPE_ENERGY) * 4u));
+		else
+			icon = ICON_TILE_TRAINER;
+		uint16_t de = (uint16_t)((uint16_t)(align - 2u) << 8 |
+			(uint8_t)(row - 1u));
 		FillRectangle(icon, 2u, 2u, de, 0x0102u);
-		GetCardTypeIconPaletteResult palette = GetCardTypeIconPalette(icon, 0u, 0u, 0u, 0u, 0u, de);
-		if (wConsole == CONSOLE_CGB) {
-			hBankVRAM = 1u;
-			gb_write8(0xFF4Fu, 1u);
-			FillRectangle(palette.a, 2u, 2u, de, 0x0000u);
-			hBankVRAM = 0u;
-			gb_write8(0xFF4Fu, 0u);
-		}
+		GetCardTypeIconPaletteResult palette =
+			GetCardTypeIconPalette(icon, 0u, 0u, 0u, 0u, 0u, de);
+		hBankVRAM = 1u;
+		gb_write8(0xFF4Fu, 1u);
+		FillRectangle(palette.a, 2u, 2u, de, 0x0000u);
+		hBankVRAM = 0u;
+		gb_write8(0xFF4Fu, 0u);
 		InitTextPrinting(align, row);
 		uint16_t text_ptr = wDefaultText_ADDR;
 		ProcessText(&text_ptr);
 		remaining = (uint8_t)(index - 1u);
 		row = (uint8_t)(row + 2u);
 	}
-	if (gb_read8(list) == 0u) {
-		/* PrintConfirmationCardList: set scroll guard */
+	if (card_id_read_at(list) == 0u) {
 		wUnableToScrollDown = 1u;
 		tile = SYM_SPACE;
 	} else {
-		/* PrintConfirmationCardList: clear scroll guard */
 		wUnableToScrollDown = 0u;
 		tile = SYM_CURSOR_D;
 	}
@@ -1949,73 +1985,83 @@ void PrintConfirmationCardList(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl)
 CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)
 {
 	uint8_t count = 0u;
-	uint8_t previous = 0u;
+	CardId previous = 0u;
 	uint16_t hl = wCurDeckCards_ADDR;
 	uint16_t de = wUniqueDeckCardList_ADDR;
-	for (;;) {
-		uint8_t card = gb_read8(hl++);
-		if (card == previous)
+	for (uint8_t i = 0u; i <= DECK_SIZE; i++) {
+		CardId card = card_id_read(&hl);
+		if (card == previous && card != 0u)
 			continue;
 		previous = card;
-		gb_write8(de++, card);
+		card_id_write(&de, card);
 		if (card == 0u)
 			break;
-		++count;
+		count = (uint8_t)(count + 1u);
 	}
 	wNumUniqueCards = count;
-	return (CreateCurDeckUniqueCardListResult){count, 0x80u, count, previous, (uint8_t)(de >> 8), (uint8_t)de, hl};
+	return (CreateCurDeckUniqueCardListResult){
+		count, 0x80u, 0u, 0u, (uint8_t)(de >> 8), (uint8_t)de, hl
+	};
 }
 /* <<< factory CreateCurDeckUniqueCardList */
 
 /* >>> factory TryAddCardToDeck */
-TryAddCardToDeckResult TryAddCardToDeck(uint8_t e)
+TryAddCardToDeckResult TryAddCardToDeck(CardId id)
 {
-	uint8_t d = wMaxNumCardsAllowed;
-	if (wTotalCardCount == d)
-		return (TryAddCardToDeckResult){0u, 0x90u};
-
-	LoadCardDataToBuffer1_FromCardID(e);
+	uint8_t max_cards = wMaxNumCardsAllowed;
+	if (wTotalCardCount == max_cards)
+		return (TryAddCardToDeckResult){wTotalCardCount, 0x10u};
+	LoadCardDataToBuffer1_FromCardID(id);
 	if (wLoadedCard1Type != TYPE_ENERGY_DOUBLE_COLORLESS &&
-	    (wLoadedCard1Type & TYPE_ENERGY) != TYPE_ENERGY) {
+		(wLoadedCard1Type & TYPE_ENERGY) != TYPE_ENERGY) {
 		uint16_t name = (uint16_t)(wLoadedCard1Name |
 			(uint16_t)wLoadedCard1Name_PTR[1] << 8);
 		uint8_t same = 0u;
-		uint8_t *cards = wCurDeckCards_PTR;
-		while (*cards != 0u) {
-			uint16_t card_name = GetCardName(*cards);
-			if (card_name == name && ++same == wSameNameCardsLimit)
-				return (TryAddCardToDeckResult){0u, (uint8_t)0x10u};
-			++cards;
+		uint16_t cards = wCurDeckCards_ADDR;
+		for (;;) {
+			CardId card = card_id_read(&cards);
+			if (card == 0u)
+				break;
+			if (GetCardName(card) == name) {
+				same = (uint8_t)(same + 1u);
+				if (same == wSameNameCardsLimit)
+					return (TryAddCardToDeckResult){0u, 0x10u};
+			}
 		}
 	}
-
-	GetCountOfCardInCurDeckResult count = GetCountOfCardInCurDeck(e);
-	uint8_t *owned = wOwnedCardsCountList_PTR + wCardListVisibleOffset + wCardListCursorPos;
-	if (count.a == *owned)
-		return (TryAddCardToDeckResult){count.a, 0x40u};
-
+	GetCountOfCardInCurDeckResult count = GetCountOfCardInCurDeck(id);
+	uint16_t owned_address = (uint16_t)(wOwnedCardsCountList_ADDR +
+		wCardListVisibleOffset + wCardListCursorPos);
+	uint8_t owned = gb_read8(owned_address);
+	if (count.a == owned)
+		return (TryAddCardToDeckResult){count.a, 0x90u};
 	PlaySFX(SFX_CURSOR);
-	uint8_t *slot = wCurDeckCards_PTR;
-	while (*slot != 0u)
-		++slot;
-	*slot++ = e;
-	*slot = 0u;
-	++(wCardFilterCounts_PTR[wCurCardTypeFilter]);
+	uint16_t slot = wCurDeckCards_ADDR;
+	for (uint8_t i = 0u; i < DECK_SIZE; i++) {
+		if (card_id_read_at(slot) == 0u)
+			break;
+		slot = (uint16_t)(slot + 2u);
+	}
+	card_id_write(&slot, id);
+	card_id_write(&slot, 0u);
+	uint8_t filter = wCurCardTypeFilter;
+	uint16_t filter_address = (uint16_t)(wCardFilterCounts_ADDR + filter);
+	gb_write8(filter_address, (uint8_t)(gb_read8(filter_address) + 1u));
 	return (TryAddCardToDeckResult){0u, 0u};
 }
 /* <<< factory TryAddCardToDeck */
 
 /* >>> factory AddCardToDeckAndUpdateCount */
-AddCardToDeckAndUpdateCountResult AddCardToDeckAndUpdateCount(uint8_t e)
+AddCardToDeckAndUpdateCountResult AddCardToDeckAndUpdateCount(CardId id)
 {
-	TryAddCardToDeckResult r = TryAddCardToDeck(e);
+	TryAddCardToDeckResult r = TryAddCardToDeck(id);
 	if (r.f & 0x10u)
-		return (AddCardToDeckAndUpdateCountResult){r.a, r.f, e};
+		return (AddCardToDeckAndUpdateCountResult){r.a, r.f, (uint8_t)id};
 	PrintCardTypeCounts();
 	PrintTotalCardCount(15u, 0u);
-	GetCountOfCardInCurDeckResult r2 = GetCountOfCardInCurDeck(e);
+	GetCountOfCardInCurDeckResult r2 = GetCountOfCardInCurDeck(id);
 	PrintNumberValueInCursorYPos(r2.a);
-	return (AddCardToDeckAndUpdateCountResult){r2.a, r2.f, e};
+	return (AddCardToDeckAndUpdateCountResult){r2.a, r2.f, (uint8_t)id};
 }
 /* <<< factory AddCardToDeckAndUpdateCount */
 
@@ -2043,9 +2089,14 @@ HandleDeckCardSelectionListResult HandleDeckCardSelectionList(void)
 			(void)DrawListCursor_Invisible(); wCardListCursorPos = a; wCheckMenuCursorBlinkCounter = 0u;
 		} else if (wced2 != 0u) {
 			if ((dpad & (1u << B_PAD_LEFT)) != 0u) {
-				uint8_t e = GetSelectedVisibleCardID(); RemoveCardFromDeckAndUpdateCount(out.b, out.c, out.d, e, out.hl);
+				GetSelectedVisibleCardIDResult selected =
+					GetSelectedVisibleCardID();
+				RemoveCardFromDeckAndUpdateCount(out.b, out.c,
+					(uint8_t)(selected.id >> 8), (uint8_t)selected.id, out.hl);
 			} else if ((dpad & (1u << B_PAD_RIGHT)) != 0u) {
-				AddCardToDeckAndUpdateCount(GetSelectedVisibleCardID());
+				GetSelectedVisibleCardIDResult selected =
+					GetSelectedVisibleCardID();
+				AddCardToDeckAndUpdateCount(selected.id);
 			}
 		}
 	}

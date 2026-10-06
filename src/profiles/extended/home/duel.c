@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "generated/text_ids.h"
+#include "generated/rom.h"
 #include "generated/constants.h"
 #define MENU_CONFIRM 0x01u
 #define CURSOR_BLINK_PERIOD_MASK 0x0Fu
@@ -54,8 +55,9 @@ void SwapTurn(void)
 DeckCardResult _GetCardIDFromDeckIndex(uint8_t a)
 {
 	uint16_t deck = hWhoseTurn == PLAYER_TURN ? wPlayerDeck_ADDR : wOpponentDeck_ADDR;
-	CardId id = card_id_read_at(card_id_index_address(deck, a));
-	return (DeckCardResult){(uint8_t)id, id, card_id_index_address(deck, a)};
+	uint16_t slot = card_id_index_address(deck, a);
+	CardId id = card_id_read_at(slot);
+	return (DeckCardResult){hWhoseTurn, id, (uint16_t)(slot + 1u)};
 }
 
 /* duel.asm:701-711: id in de, af and hl preserved (both pushed and popped). */
@@ -69,7 +71,7 @@ CardId GetCardIDFromDeckIndex(uint8_t a)
 DeckCardResult GetCardIDFromDeckIndex_bc(uint8_t a, uint16_t hl)
 {
 	CardId id = GetCardIDFromDeckIndex(a);
-	return (DeckCardResult){(uint8_t)id, id, hl};
+	return (DeckCardResult){hWhoseTurn, id, hl};
 }
 
 /* duel.asm:670-684: the temp-list entry in a, shadowed in hTempCardIndex_ff98,
@@ -436,8 +438,8 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/duel.h"
 #include "generated/wram.h"
 #define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0xEDu
-#define PLAYER_ICON_COORDS 0x4635u
-#define OPPONENT_ICON_COORDS 0x463Bu
+#define PLAYER_ICON_COORDS PlayAreaIconCoordinates_ADDR
+#define OPPONENT_ICON_COORDS (PlayAreaIconCoordinates_ADDR + 0x06u)
 
 #include "home/duel.h"
 #include "generated/wram.h"
@@ -455,8 +457,8 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/objects.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define PLAYER_ICON_COORDINATES_ADDR 0x4BE6u
-#define OPP_ICON_COORDINATES_ADDR 0x4BECu
+#define PLAYER_ICON_COORDINATES_ADDR (_DrawPlayAreaToPlacePrizeCards_ADDR + 0x61u)
+#define OPP_ICON_COORDINATES_ADDR (_DrawPlayAreaToPlacePrizeCards_ADDR + 0x67u)
 
 #include "home/duel.h"
 #include "home/serial.h"
@@ -589,10 +591,10 @@ static const uint8_t kCursorTileData[16] = {
  * 02:48fa (poketcg.sym). Every constant is prefixed because duel.c already
  * defines TRUE, MENU_CANCEL, PAD_A/PAD_B, PLAYER_TURN, DUELVARS_PRIZES and
  * DUELVARS_PRIZE_CARDS for earlier routines. */
-#define PEEK_MENU_PARAMETERS 0x4811u
-#define PEEK_MENU_TEXT_ITEMS 0x4808u
-#define PEEK_YOUR_TRANSITION_TABLE 0x48C2u
-#define PEEK_OPP_TRANSITION_TABLE 0x48FAu
+#define PEEK_MENU_PARAMETERS (_HandlePeekSelection_ADDR + 0xADu)
+#define PEEK_MENU_TEXT_ITEMS (_HandlePeekSelection_ADDR + 0xA4u)
+#define PEEK_YOUR_TRANSITION_TABLE PeekYourPlayAreaTransitionTable_ADDR
+#define PEEK_OPP_TRANSITION_TABLE PeekOppPlayAreaTransitionTable_ADDR
 #define PEEK_WHICH_CARD_TEXT 0x024Cu
 #define PEEK_MENU_CANCEL 0xFFu
 #define PEEK_PLAYER_TURN 0xC2u
@@ -602,10 +604,10 @@ static const uint8_t kCursorTileData[16] = {
 #define PEEK_DUELVARS_PRIZE_CARDS 0x3Cu
 
 #include "home/deck_selection.h"
-#define CHECK_MENU_DATA_ADDR 0x4158u
-#define YOUR_PLAY_AREA_MENU_DATA_ADDR 0x4169u
-#define OPP_PLAY_AREA_MENU_DATA_ADDR 0x4176u
-#define OPP_PLAY_AREA_MENU_DATA_CLAIRVOYANCE_ADDR 0x417Fu
+#define CHECK_MENU_DATA_ADDR CheckMenuData_ADDR
+#define YOUR_PLAY_AREA_MENU_DATA_ADDR YourPlayAreaMenuData_ADDR
+#define OPP_PLAY_AREA_MENU_DATA_ADDR OppPlayAreaMenuData_ADDR
+#define OPP_PLAY_AREA_MENU_DATA_CLAIRVOYANCE_ADDR OppPlayAreaMenuData_WithClairvoyance_ADDR
 
 #include "generated/wram.h"
 #include "home/duel.h"
@@ -691,14 +693,18 @@ SortResult SortCardsInListByID(uint8_t b, uint8_t c, uint16_t de)
 						0x20u, ptr};
 		}
 		uint16_t lowest_pos = ptr;
-		uint16_t lowest_id = GetCardIDFromDeckIndex_bc(gb_read8(ptr), 0).id;
+		DeckCardResult first = GetCardIDFromDeckIndex_bc(gb_read8(ptr), 0);
+		uint16_t lowest_id = first.id;
+		uint8_t last_b = (uint8_t)(first.id >> 8);
 		/* duel.asm:599-602, 618-622: the running lowest id lives in
 		 * hTempCardID_ff9b (two bytes), rewritten on every new lowest. */
 		uint16_t lowest_id_addr = hTempCardID_ff9b_ADDR;
 		card_id_write(&lowest_id_addr, lowest_id);
 		uint16_t scan = (uint16_t)(ptr + 1u);
 		while (!(gb_read8(scan) & 0x80u)) {
-			uint16_t candidate = GetCardIDFromDeckIndex_bc(gb_read8(scan), 0).id;
+			DeckCardResult candidate_result = GetCardIDFromDeckIndex_bc(gb_read8(scan), 0);
+			uint16_t candidate = candidate_result.id;
+			last_b = (uint8_t)(candidate >> 8);
 			/* The asm's `cp / jr c, .not_lower_id` updates the slot on EQUAL ids
 			 * too (only a strictly smaller current-lowest keeps the slot), so the
 			 * sort is unstable: the last equal card moves to the front. */
@@ -715,7 +721,7 @@ SortResult SortCardsInListByID(uint8_t b, uint8_t c, uint16_t de)
 		gb_write8(lowest_pos, front);
 		/* Every pass ends with b = 0 (GetCardIDFromDeckIndex_bc's `ld b, $0`),
 		 * c = the swapped-out front, de = the lowest-card position. */
-		b = 0;
+		b = last_b;
 		c = front;
 		de = lowest_pos;
 		list_set_ptr((uint16_t)(ptr + 1u));
@@ -761,7 +767,7 @@ HandSortResult SortHandCardsByID(void)
  * are preserved. */
 uint8_t TranslateColorToWR(uint8_t a)
 {
-	return rom_ptr(0u, 0x1A1Au)[a];
+	return rom_ptr(InvertedPowersOf2_BANK, InvertedPowersOf2_ADDR)[a];
 }
 
 /* duel.asm:1290-1315. Entry hl supplies the page only: `ld l,
@@ -872,26 +878,40 @@ CardListResult CopyDeckData(uint16_t de)
 	uint16_t deck = hWhoseTurn == PLAYER_TURN ? wPlayerDeck_ADDR : wOpponentDeck_ADDR;
 	uint16_t last_slot = (uint16_t)(deck + DECK_SIZE_BYTES - 2u);
 	uint16_t dst = deck;
-	uint8_t last_value;
+	uint8_t count;
+	uint8_t a;
 	uint8_t f;
 
 	gb_write8(last_slot, 0u);
 	gb_write8((uint16_t)(last_slot + 1u), 0u);
 	for (;;) {
-		uint8_t count = gb_read8(de++);
+		count = gb_read8(de++);
 		if (!count)
 			break;
-		CardId id = card_id_read(&de);
-		for (uint8_t i = 0; i < count; i++)
+		for (uint8_t i = 0u; i < count; i++) {
+			CardId id = card_id_read(&de);
 			card_id_write(&dst, id);
+			de = (uint16_t)(de - 2u);
+		}
+		de = (uint16_t)(de + 2u);
 	}
 	gb_write8(wDeckName_ADDR, gb_read8(de++));
 	gb_write8((uint16_t)(wDeckName_ADDR + 1u), gb_read8(de));
 
-	last_value = gb_read8(last_slot) | gb_read8((uint16_t)(last_slot + 1u));
-	f = last_value ? 0x00u : 0x90u;
-	return (CardListResult){last_value, 0u, (uint8_t)(DECK_SIZE - 1u),
-		(uint8_t)(de >> 8), (uint8_t)de, f, last_slot};
+	uint16_t check = last_slot;
+	a = gb_read8(check++);
+	a = (uint8_t)(a | gb_read8(check));
+	if (a == 0u) {
+		f = 0x90u;
+		return (CardListResult){a, 0u, (uint8_t)(DECK_SIZE_BYTES - 2u),
+			(uint8_t)(de >> 8), (uint8_t)de, f, check};
+	}
+	check++;
+	a = gb_read8(check++);
+	a = (uint8_t)(a | gb_read8(check));
+	f = a == 0u ? 0x80u : 0x10u;
+	return (CardListResult){a, 0u, (uint8_t)(DECK_SIZE_BYTES - 2u),
+		(uint8_t)(de >> 8), (uint8_t)de, f, check};
 }
 
 /* duel.asm:107-120. Verified exhaustively (all 256 byte values) against the
@@ -2084,9 +2104,9 @@ void DrawPlayArea_PrizeCards(uint16_t hl)
 /* duel.asm:796-849, ROM bank 2 (this file's bank): x, y pairs read by
  * DrawPlayArea_PrizeCards through hl. Passed by ROM address, never copied
  * into WRAM -- the asm writes nothing while pointing at them. */
-#define PRIZE_COORDS_YOUR_OR_OPP_PLAYER 0x44B4u
-#define PRIZE_COORDS_YOUR_OR_OPP_OPPONENT 0x44C0u
-#define PRIZE_COORDS_2_PLAYER 0x44CCu
+#define PRIZE_COORDS_YOUR_OR_OPP_PLAYER PrizeCardsCoordinateData_YourOrOppPlayArea_ADDR
+#define PRIZE_COORDS_YOUR_OR_OPP_OPPONENT (PrizeCardsCoordinateData_YourOrOppPlayArea_ADDR + 0x0Cu)
+#define PRIZE_COORDS_2_PLAYER PrizeCardsCoordinateData_2_ADDR
 #define PRIZE_COORDS_2_OPPONENT 0x44D8u
 
 /* >>> factory DrawPlayArea_HandText */
@@ -2527,9 +2547,9 @@ void _DrawAIPeekScreen(uint8_t b)
 		SwapTurn();
 		wIsSwapTurnPending = 1u;
 		turn = hWhoseTurn;
-		transition_table = 0x48FAu;
+		transition_table = PeekOppPlayAreaTransitionTable_ADDR;
 	} else {
-		transition_table = 0x48C2u;
+		transition_table = PeekYourPlayAreaTransitionTable_ADDR;
 	}
 
 	DrawYourOrOppPlayAreaScreen((uint16_t)(((uint16_t)turn << 8) | turn));
@@ -2708,16 +2728,16 @@ void DrawInPlayAreaScreen(void)
 
 	wCheckMenuPlayAreaWhichDuelist = hWhoseTurn;
 	wCheckMenuPlayAreaWhichLayout = hWhoseTurn;
-	DrawPlayArea_PrizeCards(0x44E4u); /* PrizeCardsCoordinateData_InPlayArea.player */
+	DrawPlayArea_PrizeCards(PrizeCardsCoordinateData_InPlayArea_ADDR); /* PrizeCardsCoordinateData_InPlayArea.player */
 	DrawPlayArea_BenchCards(3u, 3u, 15u);
-	DrawInPlayArea_Icons(0x4641u); /* PlayAreaIconCoordinates.player2 */
+	DrawInPlayArea_Icons((PlayAreaIconCoordinates_ADDR + 0x0Cu)); /* PlayAreaIconCoordinates.player2 */
 	SwapTurn();
 	wCheckMenuPlayAreaWhichDuelist = hWhoseTurn;
 	SwapTurn();
-	DrawPlayArea_PrizeCards(0x44F0u); /* PrizeCardsCoordinateData_InPlayArea.opponent */
+	DrawPlayArea_PrizeCards((PrizeCardsCoordinateData_InPlayArea_ADDR + 0x0Cu)); /* PrizeCardsCoordinateData_InPlayArea.opponent */
 	DrawPlayArea_BenchCards(3u, 3u, 0u);
 	SwapTurn();
-	DrawInPlayArea_Icons(0x4647u); /* PlayAreaIconCoordinates.opponent2 */
+	DrawInPlayArea_Icons((PlayAreaIconCoordinates_ADDR + 0x12u)); /* PlayAreaIconCoordinates.opponent2 */
 	SwapTurn();
 	DrawInPlayArea_ActiveCardGfx();
 }
@@ -2827,8 +2847,8 @@ void _SelectPrizeCards(void)
 		(void)DrawWideTextBox();
 		InitTextPrinting(1u, 14u);
 		(void)ProcessTextFromID(PleaseChooseAPrizeText);
-		wMenuInputTablePointer = (uint8_t)0x4B5Bu;
-		gb_write8((uint16_t)(wMenuInputTablePointer_ADDR + 1u), (uint8_t)(0x4B5Bu >> 8));
+		wMenuInputTablePointer = (uint8_t)(_SelectPrizeCards_ADDR + 0xB1u);
+		gb_write8((uint16_t)(wMenuInputTablePointer_ADDR + 1u), (uint8_t)((_SelectPrizeCards_ADDR + 0xB1u) >> 8));
 		uint8_t mask;
 		for (;;) {
 			wVBlankOAMCopyToggle = TRUE;

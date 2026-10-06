@@ -90,6 +90,8 @@ CONTRACT = {
     'ChangeDeckName': {'compare': (), 'preserve': ()},
     'HandleDeckConfigurationMenu': {'compare': (), 'preserve': ()},
     'ModifyDeckConfiguration': {'compare': (), 'preserve': ()},
+    'CopyNBytesFromHLToDE_Long': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ()},
+    'CalculateOnesAndTensDigits_Long': {'compare': (), 'preserve': ()},
 }
 
 CASES = {
@@ -10145,6 +10147,19 @@ CASES = {
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
     ],
+    'CopyNBytesFromHLToDE_Long': [
+        {'b': 0x00, 'c': 0x01, 'hl': 0xC100, 'd': 0xC2, 'e': 0x00,
+         'wram': {0xC100: b'\x42'}, 'read': {0xC200: 0x01}},
+        {'a': 0xAA, 'f': 0xF0, 'b': 0x00, 'c': 0x03, 'd': 0xC2, 'e': 0x00,
+         'hl': 0xC100, 'wram': {0xC100: b'\x01\x02\x03'},
+         'read': {0xC200: 0x03}},
+    ],
+    'CalculateOnesAndTensDigits_Long': [
+        {'hl': 0x0000, 'wram': {0xCE60: b'\xff\xff\xff\xff\xff'}},
+        {'hl': 0x0001, 'wram': {0xCE60: b'\xff\xff\xff\xff\xff'}},
+        {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0xEE,
+         'hl': 0xFFFF, 'wram': {0xCE60: b'\xff\xff\xff\xff\xff'}},
+    ],
 }
 
 MUTATIONS = {
@@ -10658,6 +10673,16 @@ MUTATIONS = {
         'before': '\twCardListCursorPos = wTempCardListCursorPos;',
         'after': '\twCardListCursorPos = (uint8_t)(wTempCardListCursorPos + 1u);',
         'case_ids': ['ModifyDeckConfiguration-0', 'ModifyDeckConfiguration-1'],
+        'source': 'src/profiles/extended/home/deck_configuration.c'},
+    'CopyNBytesFromHLToDE_Long': {'source_symbol': 'CopyNBytesFromHLToDE_Long',
+        'before': '\t\tgb_write8(dst++, gb_read8(src++));',
+        'after': '\t\tgb_write8(dst++, (uint8_t)(gb_read8(src++) + 1u));',
+        'case_ids': ['CopyNBytesFromHLToDE_Long-0', 'CopyNBytesFromHLToDE_Long-1'],
+        'source': 'src/profiles/extended/home/deck_configuration.c'},
+    'CalculateOnesAndTensDigits_Long': {'source_symbol': 'CalculateOnesAndTensDigits_Long',
+        'before': '\t\twhile (hl >= places[i]) {',
+        'after': '\t\twhile (hl > places[i]) {',
+        'case_ids': ['CalculateOnesAndTensDigits_Long-0', 'CalculateOnesAndTensDigits_Long-1'],
         'source': 'src/profiles/extended/home/deck_configuration.c'},
 }
 

@@ -3,6 +3,7 @@
 #include "home/script_entry_dispatch.h"
 #include "home/card_id_bus.h"
 
+#include "generated/rom.h"
 #include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -11,7 +12,7 @@
 #include "home/map_events.h"
 /* >>> factory statics */
 #define EVENT_VAR_MASKS_BANK 3u
-#define EVENT_VAR_MASKS 0x4B37u
+#define EVENT_VAR_MASKS EventVarMasks_ADDR
 
 static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 {
@@ -61,7 +62,7 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
  * overworld script bank. The routine does not switch banks itself, so the table
  * is reached through ordinary bus reads at this $4000-$7fff window offset;
  * poketcg.sym puts it at 03:5153. */
-#define MAP_NAMES 0x5153u
+#define MAP_NAMES MapNames_ADDR
 
 #include "generated/wram.h"
 
@@ -120,7 +121,7 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "mem.h"
 #define CHALLENGE_HALL_NPC_COUNT 25u
 #define CHALLENGE_HALL_NPCS_BANK 3u
-#define CHALLENGE_HALL_NPCS_ADDR 0x75B3u
+#define CHALLENGE_HALL_NPCS_ADDR ChallengeHallNPCs_ADDR
 
 #include "home/scripting.h"
 #include "home/card_data.h"
@@ -152,7 +153,7 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "generated/wram.h"
 
 #include "home/scripting.h"
-#define Script_BeginGame 0x552eu
+#define Script_BeginGame Script_BeginGame_ADDR
 
 #include "home/scripting.h"
 #include "home/mail.h"
@@ -259,7 +260,7 @@ static const uint8_t sAaronDeckIDs[] = {
 #include "home/switch_rom.h"
 #include "generated/wram.h"
 #define SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK 0x03u
-#define MULTICHOICE_MENU_ARGS 0x527Bu
+#define MULTICHOICE_MENU_ARGS (ScriptCommand_ChooseStarterDeckMultichoice_ADDR + 0x0Au)
 
 #include "home/scripting.h"
 #include "generated/wram.h"
@@ -307,12 +308,12 @@ static const uint8_t sAaronDeckIDs[] = {
 #define MAN1_REQUESTED_CARDS_ADDR Man1RequestedCardsList_ADDR
 #define MAN1_REQUESTED_CARDS_COUNT 5u
 #define CHALLENGE_CUP_PRIZE_CARDS_BANK 3u
-#define CHALLENGE_CUP_PRIZE_CARDS_ADDR 0x51DCu
+#define CHALLENGE_CUP_PRIZE_CARDS_ADDR ChallengeCupPrizeCards_ADDR
 #define CHALLENGE_CUP_PRIZE_CARD_COUNT 15u
 #define LEGENDARY_CARDS_BANK 3u
-#define LEGENDARY_CARDS_ADDR 0x5234u
+#define LEGENDARY_CARDS_ADDR LegendaryCards_ADDR
 #define LEGENDARY_CARD_EVENTS_BANK 3u
-#define LEGENDARY_CARD_EVENTS_ADDR 0x5240u
+#define LEGENDARY_CARD_EVENTS_ADDR LegendaryCardEvents_ADDR
 /* <<< factory statics */
 
 
@@ -2053,7 +2054,7 @@ IncreaseScriptPointerResult ScriptCommand_ChooseStarterDeckMultichoice(void)
 IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)
 {
 	BankswitchROM(3u);
-	ShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, 0x530Cu);
+	ShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, (ScriptCommand_ShowSamNormalMultichoice_ADDR + 0x16u));
 	uint8_t choice = wMultichoiceTextboxResult_Sam;
 	(void)menu;
 	(void)SetEventValue(0x75u, 0u, 0u, choice);
@@ -2069,7 +2070,7 @@ IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)
 	 * follows the routine in bank 3 ($03:532B). */
 	BankswitchROM(3u);
 	ShowMultichoiceTextboxResult menu =
-		ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, 0x532Bu);
+		ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, (ScriptCommand_ShowSamRulesMultichoice_ADDR + 0x14u));
 	uint8_t choice = wMultichoiceTextboxResult_Sam;
 	(void)menu;
 	(void)SetEventValue(0x75u, 0u, 0u, choice);
@@ -2081,7 +2082,7 @@ IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)
 IncreaseScriptPointerResult ScriptCommand_ChooseDeckToDuelAgainstMultichoice(void)
 {
 	BankswitchROM(3u);
-	(void)ShowMultichoiceTextbox(0u, 0x525Eu);
+	(void)ShowMultichoiceTextbox(0u, (ScriptCommand_ChooseDeckToDuelAgainstMultichoice_ADDR + 0x12u));
 	uint8_t choice = wMultichoiceTextboxResult_ChooseDeckToDuelAgainst;
 	(void)SetEventValue(EVENT_AARON_DECK_MENU_CHOICE, 0u, 0u, choice);
 	return IncreaseScriptPointerBy1();

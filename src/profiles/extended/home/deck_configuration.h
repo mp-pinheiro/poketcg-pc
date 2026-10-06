@@ -2,6 +2,7 @@
 #define POKETCG_HOME_DECK_CONFIGURATION_H
 
 #include <stdint.h>
+#include "home/card_id.h"
 
 /* >>> factory DecrementDeckCardsInCollection */
 uint16_t DecrementDeckCardsInCollection(uint16_t hl);
@@ -15,6 +16,9 @@ void CopyListFromHLToDE(uint16_t *hl, uint16_t *de);
 /* >>> factory CalculateOnesAndTensDigits */
 void CalculateOnesAndTensDigits(uint8_t a);
 /* <<< factory CalculateOnesAndTensDigits */
+/* >>> factory CalculateOnesAndTensDigits_Long */
+void CalculateOnesAndTensDigits_Long(uint16_t hl);
+/* <<< factory CalculateOnesAndTensDigits_Long */
 /* >>> factory InitCardSelectionParams */
 uint8_t InitCardSelectionParams(uint8_t a, uint16_t *hl);
 /* <<< factory InitCardSelectionParams */
@@ -36,6 +40,18 @@ uint8_t CountNumberOfCardsOfType(uint8_t a);
 /* >>> factory CopyNBytesFromHLToDE */
 void CopyNBytesFromHLToDE(uint16_t *hl, uint16_t *de, uint8_t b);
 /* <<< factory CopyNBytesFromHLToDE */
+/* >>> factory CopyNBytesFromHLToDE_Long */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint16_t hl;
+	uint16_t de;
+} CopyNBytesFromHLToDELongResult;
+CopyNBytesFromHLToDELongResult CopyNBytesFromHLToDE_Long(
+	uint16_t *hl, uint16_t *de, uint16_t bc);
+/* <<< factory CopyNBytesFromHLToDE_Long */
 /* >>> factory IncrementDeckCardsInTempCollection */
 void IncrementDeckCardsInTempCollection(uint16_t de);
 /* <<< factory IncrementDeckCardsInTempCollection */
@@ -43,7 +59,13 @@ void IncrementDeckCardsInTempCollection(uint16_t de);
 void CreateCardCollectionListWithDeckCards(uint8_t a);
 /* <<< factory CreateCardCollectionListWithDeckCards */
 /* >>> factory GetSelectedVisibleCardID */
-uint8_t GetSelectedVisibleCardID(void);
+typedef struct {
+	CardId id;
+	uint8_t a;
+	uint8_t f;
+	uint16_t hl;
+} GetSelectedVisibleCardIDResult;
+GetSelectedVisibleCardIDResult GetSelectedVisibleCardID(void);
 /* <<< factory GetSelectedVisibleCardID */
 /* >>> factory CheckIfDeckHasCards */
 uint8_t CheckIfDeckHasCards(uint16_t hl);
@@ -69,7 +91,7 @@ DrawHorizontalListCursorResult DrawHorizontalListCursor(uint8_t a);
 /* <<< factory DrawHorizontalListCursor */
 /* >>> factory GetCountOfCardInCurDeck */
 typedef struct { uint8_t a; uint8_t f; uint8_t d; } GetCountOfCardInCurDeckResult;
-GetCountOfCardInCurDeckResult GetCountOfCardInCurDeck(uint8_t e);
+GetCountOfCardInCurDeckResult GetCountOfCardInCurDeck(CardId de);
 /* <<< factory GetCountOfCardInCurDeck */
 /* >>> factory DrawListCursor */
 typedef struct {
@@ -89,9 +111,10 @@ DrawHorizontalListCursorResult DrawHorizontalListCursor_Visible(void);
 typedef struct {
 	uint8_t f;
 	uint8_t b;
+	uint8_t c;
 } IsCardInAnyDeckResult;
 
-IsCardInAnyDeckResult IsCardInAnyDeck(uint8_t a, uint8_t f, uint8_t e);
+IsCardInAnyDeckResult IsCardInAnyDeck(uint8_t a, uint8_t f, CardId de);
 /* <<< factory IsCardInAnyDeck */
 /* >>> factory DrawListCursor_Invisible */
 DrawListCursorResult DrawListCursor_Invisible(void);
@@ -108,7 +131,7 @@ CopyDeckNameResult CopyDeckName(uint16_t hl);
 /* <<< factory CopyDeckName */
 /* >>> factory GetOwnedCardCount */
 typedef struct { uint8_t a; uint8_t d; } GetOwnedCardCountResult;
-GetOwnedCardCountResult GetOwnedCardCount(uint8_t e);
+GetOwnedCardCountResult GetOwnedCardCount(CardId de);
 /* <<< factory GetOwnedCardCount */
 /* >>> factory TallyCardsInCardFilterLists */
 typedef struct { uint8_t a; uint8_t f; uint8_t d; uint8_t e; uint16_t hl; } TallyCardsInCardFilterListsResult;
@@ -132,7 +155,7 @@ typedef struct { uint8_t a; uint8_t e; } ConfirmSelectionAndReturnCarryResult;
 ConfirmSelectionAndReturnCarryResult ConfirmSelectionAndReturnCarry(void);
 /* <<< factory ConfirmSelectionAndReturnCarry */
 /* >>> factory AddCardIDToVisibleList */
-void AddCardIDToVisibleList(uint8_t b, uint8_t e);
+void AddCardIDToVisibleList(uint8_t b, CardId de);
 /* <<< factory AddCardIDToVisibleList */
 /* >>> factory HandleCardSelectionCursorBlink */
 DrawHorizontalListCursorResult HandleCardSelectionCursorBlink(void);
@@ -163,13 +186,13 @@ CopyListFromHLToDEInSRAMResult CopyListFromHLToDEInSRAM(uint16_t hl, uint16_t de
 void PrintDeckName(uint16_t hl, uint8_t d, uint8_t e);
 /* <<< factory PrintDeckName */
 /* >>> factory AppendOwnedCardCountNumber */
-void AppendOwnedCardCountNumber(uint16_t hl, uint8_t e);
+void AppendOwnedCardCountNumber(uint16_t hl, CardId de);
 /* <<< factory AppendOwnedCardCountNumber */
 /* >>> factory PrintNumberValueInCursorYPos */
 void PrintNumberValueInCursorYPos(uint8_t a);
 /* <<< factory PrintNumberValueInCursorYPos */
 /* >>> factory AppendOwnedCardCountAndStorageCountNumbers */
-void AppendOwnedCardCountAndStorageCountNumbers(uint16_t hl, uint8_t e);
+void AppendOwnedCardCountAndStorageCountNumbers(uint16_t hl, CardId de);
 /* <<< factory AppendOwnedCardCountAndStorageCountNumbers */
 /* >>> factory PrintCardTypeCounts */
 void PrintCardTypeCounts(void);
@@ -238,11 +261,11 @@ CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void);
 /* <<< factory CreateCurDeckUniqueCardList */
 /* >>> factory TryAddCardToDeck */
 typedef struct { uint8_t a; uint8_t f; } TryAddCardToDeckResult;
-TryAddCardToDeckResult TryAddCardToDeck(uint8_t e);
+TryAddCardToDeckResult TryAddCardToDeck(CardId de);
 /* <<< factory TryAddCardToDeck */
 /* >>> factory AddCardToDeckAndUpdateCount */
 typedef struct { uint8_t a; uint8_t f; uint8_t e; } AddCardToDeckAndUpdateCountResult;
-AddCardToDeckAndUpdateCountResult AddCardToDeckAndUpdateCount(uint8_t e);
+AddCardToDeckAndUpdateCountResult AddCardToDeckAndUpdateCount(CardId de);
 /* <<< factory AddCardToDeckAndUpdateCount */
 /* >>> factory HandleDeckCardSelectionList */
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } HandleDeckCardSelectionListResult;

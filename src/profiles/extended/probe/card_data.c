@@ -1,21 +1,27 @@
 #include "home/card_data.h"
+#include "generated/hram.h"
 #include "probe.h"
+
+static CardId probe_card_id(const ProbeState *s)
+{
+	return (CardId)(((uint16_t)s->d << 8) | s->e);
+}
 
 static void adapt_GetCardType(ProbeState *s)
 {
-	s->a = GetCardType(s->e);
+	s->a = GetCardType(probe_card_id(s));
 }
 
 static void adapt_GetCardName(ProbeState *s)
 {
-	uint16_t de = GetCardName(s->e);
+	uint16_t de = GetCardName(probe_card_id(s));
 	s->d = (uint8_t)(de >> 8);
 	s->e = (uint8_t)de;
 }
 
 static void adapt_GetCardTypeRarityAndSet(ProbeState *s)
 {
-	CardTRS r = GetCardTypeRarityAndSet(s->a);
+	CardTRS r = GetCardTypeRarityAndSet(probe_card_id(s));
 	s->a = r.type;
 	s->b = r.rarity;
 	s->c = r.set;
@@ -23,12 +29,12 @@ static void adapt_GetCardTypeRarityAndSet(ProbeState *s)
 
 static void adapt_LoadCardDataToBuffer1_FromCardID(ProbeState *s)
 {
-	LoadCardDataToBuffer1_FromCardID(s->e);
+	LoadCardDataToBuffer1_FromCardID(probe_card_id(s));
 }
 
 static void adapt_LoadCardDataToBuffer2_FromCardID(ProbeState *s)
 {
-	LoadCardDataToBuffer2_FromCardID(s->e);
+	LoadCardDataToBuffer2_FromCardID(probe_card_id(s));
 }
 
 static void adapt_LoadCardDataToBuffer1_FromName(ProbeState *s)
@@ -38,15 +44,21 @@ static void adapt_LoadCardDataToBuffer1_FromName(ProbeState *s)
 
 static void adapt_GetCardPointer(ProbeState *s)
 {
-	CardPtrResult r = GetCardPointer(s->e);
+	CardPtrResult r = GetCardPointer(probe_card_id(s));
 	s->hl = r.hl;
-	s->f = r.carry ? (uint8_t)(0x10u | (r.bound_zero ? 0x80u : 0u)) : 0x00u;
+	if (r.carry) {
+		s->a = hBankROM;
+		s->f = (uint8_t)(0x10u | (r.bound_zero ? 0x80u : 0u));
+	} else {
+		s->a = r.bank;
+		s->f = 0x00u;
+	}
 }
 
 /* >>> factory LoadCardDataToHL_FromCardID */
 static void adapt_LoadCardDataToHL_FromCardID(ProbeState *s)
 {
-	LoadCardDataToHL_FromCardID(s->e, &s->hl, s->stack[0]);
+	LoadCardDataToHL_FromCardID(probe_card_id(s), &s->hl, s->stack[0]);
 }
 /* <<< factory LoadCardDataToHL_FromCardID */
 

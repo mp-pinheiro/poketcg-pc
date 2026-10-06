@@ -36,6 +36,12 @@ static void adapt_CalculateOnesAndTensDigits(ProbeState *s)
 	CalculateOnesAndTensDigits(s->a);
 }
 /* <<< factory CalculateOnesAndTensDigits */
+/* >>> factory CalculateOnesAndTensDigits_Long */
+static void adapt_CalculateOnesAndTensDigits_Long(ProbeState *s)
+{
+	CalculateOnesAndTensDigits_Long(s->hl);
+}
+/* <<< factory CalculateOnesAndTensDigits_Long */
 
 
 
@@ -99,6 +105,23 @@ static void adapt_CopyNBytesFromHLToDE(ProbeState *s)
 	s->e = (uint8_t)de;
 }
 /* <<< factory CopyNBytesFromHLToDE */
+/* >>> factory CopyNBytesFromHLToDE_Long */
+static void adapt_CopyNBytesFromHLToDE_Long(ProbeState *s)
+{
+	uint16_t hl = s->hl;
+	uint16_t de = (uint16_t)(((uint16_t)s->d << 8) | s->e);
+	uint16_t bc = (uint16_t)(((uint16_t)s->b << 8) | s->c);
+	CopyNBytesFromHLToDELongResult r =
+		CopyNBytesFromHLToDE_Long(&hl, &de, bc);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+}
+/* <<< factory CopyNBytesFromHLToDE_Long */
 
 /* >>> factory IncrementDeckCardsInTempCollection */
 static void adapt_IncrementDeckCardsInTempCollection(ProbeState *s)
@@ -118,14 +141,12 @@ static void adapt_CreateCardCollectionListWithDeckCards(ProbeState *s)
 /* >>> factory GetSelectedVisibleCardID */
 static void adapt_GetSelectedVisibleCardID(ProbeState *s)
 {
-	uint8_t cursor = gb_read8(wCardListCursorPos_ADDR);
-	uint16_t hl = (uint16_t)(wVisibleListCardIDs_ADDR + cursor);
-	uint8_t z = (uint8_t)(s->f & 0x80u);
-	s->e = GetSelectedVisibleCardID();
-	s->a = cursor;
-	s->d = 0;
-	s->hl = hl;
-	s->f = z;
+	GetSelectedVisibleCardIDResult result = GetSelectedVisibleCardID();
+	s->a = result.a;
+	s->f = result.f;
+	s->d = (uint8_t)(result.id >> 8);
+	s->e = (uint8_t)result.id;
+	s->hl = result.hl;
 }
 /* <<< factory GetSelectedVisibleCardID */
 
@@ -171,7 +192,8 @@ static void adapt_DrawHorizontalListCursor(ProbeState *s)
 /* >>> factory GetCountOfCardInCurDeck */
 static void adapt_GetCountOfCardInCurDeck(ProbeState *s)
 {
-	GetCountOfCardInCurDeckResult r = GetCountOfCardInCurDeck(s->e);
+	CardId id = (CardId)(((uint16_t)s->d << 8) | s->e);
+	GetCountOfCardInCurDeckResult r = GetCountOfCardInCurDeck(id);
 	s->a = r.a;
 	s->f = r.f;
 	s->d = r.d;
@@ -208,9 +230,11 @@ static void adapt_DrawHorizontalListCursor_Visible(ProbeState *s)
 /* >>> factory IsCardInAnyDeck */
 static void adapt_IsCardInAnyDeck(ProbeState *s)
 {
-	IsCardInAnyDeckResult r = IsCardInAnyDeck(s->a, s->f, s->e);
+	CardId id = (CardId)(((uint16_t)s->d << 8) | s->e);
+	IsCardInAnyDeckResult r = IsCardInAnyDeck(s->a, s->f, id);
 	s->f = r.f;
 	s->b = r.b;
+	s->c = r.c;
 }
 /* <<< factory IsCardInAnyDeck */
 
@@ -253,7 +277,8 @@ static void adapt_CopyDeckName(ProbeState *s)
 /* >>> factory GetOwnedCardCount */
 static void adapt_GetOwnedCardCount(ProbeState *s)
 {
-	GetOwnedCardCountResult r = GetOwnedCardCount(s->e);
+	CardId id = (CardId)(((uint16_t)s->d << 8) | s->e);
+	GetOwnedCardCountResult r = GetOwnedCardCount(id);
 	s->a = r.a;
 	s->d = r.d;
 }
@@ -308,7 +333,8 @@ static void adapt_ConfirmSelectionAndReturnCarry(ProbeState *s)
 /* >>> factory AddCardIDToVisibleList */
 static void adapt_AddCardIDToVisibleList(ProbeState *s)
 {
-	AddCardIDToVisibleList(s->b, s->e);
+	CardId id = (CardId)(((uint16_t)s->d << 8) | s->e);
+	AddCardIDToVisibleList(s->b, id);
 }
 /* <<< factory AddCardIDToVisibleList */
 
@@ -558,7 +584,8 @@ static void adapt_CreateCurDeckUniqueCardList(ProbeState *s)
 /* >>> factory TryAddCardToDeck */
 static void adapt_TryAddCardToDeck(ProbeState *s)
 {
-	TryAddCardToDeckResult r = TryAddCardToDeck(s->e);
+	CardId id = (CardId)(((uint16_t)s->d << 8) | s->e);
+	TryAddCardToDeckResult r = TryAddCardToDeck(id);
 	s->a = r.a;
 	s->f = r.f;
 }
@@ -567,7 +594,8 @@ static void adapt_TryAddCardToDeck(ProbeState *s)
 /* >>> factory AddCardToDeckAndUpdateCount */
 static void adapt_AddCardToDeckAndUpdateCount(ProbeState *s)
 {
-	AddCardToDeckAndUpdateCountResult r = AddCardToDeckAndUpdateCount(s->e);
+	CardId id = (CardId)(((uint16_t)s->d << 8) | s->e);
+	AddCardToDeckAndUpdateCountResult r = AddCardToDeckAndUpdateCount(id);
 	s->a = r.a;
 	s->f = r.f;
 	s->e = r.e;
@@ -732,12 +760,14 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "CopyListFromHLToDE", adapt_CopyListFromHLToDE },
 	{ "InitCardSelectionParams", adapt_InitCardSelectionParams },
 	{ "CalculateOnesAndTensDigits", adapt_CalculateOnesAndTensDigits },
+	{ "CalculateOnesAndTensDigits_Long", adapt_CalculateOnesAndTensDigits_Long },
 	{ "ClearMemory_Bank2", adapt_ClearMemory_Bank2 },
 	{ "CheckIfHasOtherValidDecks", adapt_CheckIfHasOtherValidDecks },
 	{ "FillDEWithA", adapt_FillDEWithA },
 	{ "DrawHandCardsTileAtDE", adapt_DrawHandCardsTileAtDE },
 	{ "CountNumberOfCardsOfType", adapt_CountNumberOfCardsOfType },
 	{ "CopyNBytesFromHLToDE", adapt_CopyNBytesFromHLToDE },
+	{ "CopyNBytesFromHLToDE_Long", adapt_CopyNBytesFromHLToDE_Long },
 	{ "IncrementDeckCardsInTempCollection", adapt_IncrementDeckCardsInTempCollection },
 	{ "CreateCardCollectionListWithDeckCards", adapt_CreateCardCollectionListWithDeckCards },
 	{ "GetSelectedVisibleCardID", adapt_GetSelectedVisibleCardID },

@@ -1,5 +1,6 @@
 #include "home/scenes.h"
 
+#include "generated/rom.h"
 #include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -16,7 +17,7 @@
 #include "home/sprite_animations.h"
 
 #define GFX_TABLE_POINTERS_BANK 0x20u
-#define GFX_TABLE_POINTERS_ADDR 0x4B5Du
+#define GFX_TABLE_POINTERS_ADDR (RestoreFirstColorInOBPals_ADDR + 0x1Cu)
 #define PORTRAIT_TILE_COUNT 36u
 #define TILE_SIZE 16u
 #define TILEMAP_WIDTH 32u
@@ -179,7 +180,7 @@ void _LoadScene(uint8_t a, uint8_t b, uint8_t c)
 	gb_write8(wSceneBaseY_ADDR, base_y);
 
 	const uint8_t *ptr_entry = rom_ptr(4u,
-		(uint16_t)(0x6B5Du + (uint16_t)a * 2u));
+		(uint16_t)((HandleAnimationFrame_ADDR + 0x4Au) + (uint16_t)a * 2u));
 	uint16_t scene_ptr = (uint16_t)(ptr_entry[0] |
 		((uint16_t)ptr_entry[1] << 8));
 	const uint8_t *scene = rom_ptr(4u, scene_ptr);

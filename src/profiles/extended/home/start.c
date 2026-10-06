@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "generated/text_ids.h"
+#include "generated/rom.h"
 #include "generated/constants.h"
 #include "generated/wram.h"
 #include "generated/sram.h"
@@ -25,7 +26,7 @@
 #include "home/print_text.h"
 #include "home/print_stats.h"
 #include "home/text_box.h"
-#define OVERWORLD_MAP_NAMES 0x397Bu /* home/map.asm OverworldMapNames; fixed bank $00 */
+#define OVERWORLD_MAP_NAMES OverworldMapNames_ADDR /* home/map.asm OverworldMapNames; fixed bank $00 */
 #include "home/lcd.h"
 #include "home/lcd_enable_frame.h"
 #include "home/load_animation.h"
@@ -52,7 +53,7 @@
 
 #include "home/color.h"
 #include "home/play_animation.h"
-#define HANDLEALLSPRITEANIMATIONS_ADDR 0x3CB4u
+#define HANDLEALLSPRITEANIMATIONS_ADDR HandleAllSpriteAnimations_ADDR
 
 #include "home/lcd.h"
 #include "home/lcd_enable_frame.h"

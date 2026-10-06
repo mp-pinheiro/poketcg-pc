@@ -1,6 +1,7 @@
 #include "home/challenge_machine.h"
 
 #include "generated/text_ids.h"
+#include "generated/rom.h"
 #include "generated/constants.h"
 #include "generated/sram.h"
 #include "home/core.h"
@@ -82,7 +83,7 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "generated/wram.h"
 #include "mem.h"
 #define CHALLENGE_MACHINE_DATA_BANK_500 0x04u
-#define CHALLENGE_MACHINE_OPPONENT_DECK_IDS_ADDR_500 0x7707u
+#define CHALLENGE_MACHINE_OPPONENT_DECK_IDS_ADDR_500 ChallengeMachine_OpponentDeckIDs_ADDR
 
 #include "home/empty_screen.h"
 #include "home/print_stats.h"
@@ -104,7 +105,7 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "generated/wram.h"
 #include "generated/sram.h"
 #include "mem.h"
-#define CHALLENGE_MACHINE_PRIZES_ADDR 0x7362u
+#define CHALLENGE_MACHINE_PRIZES_ADDR ChallengeMachine_Prizes_ADDR
 
 #include "home/challenge_machine.h"
 #include "home/copy.h"
@@ -116,8 +117,8 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "generated/wram.h"
 #include "mem.h"
 #define CHALLENGE_MACHINE_RECORD_HOLDER_NAME_ADDR 0xBA58u
-#define CHALLENGE_MACHINE_PLAYER_SCORE_LABELS_ADDR 0x74F2u
-#define CHALLENGE_MACHINE_PLAYER_SCORE_VALUES_ADDR 0x750Fu
+#define CHALLENGE_MACHINE_PLAYER_SCORE_LABELS_ADDR ChallengeMachine_PlayerScoreLabels_ADDR
+#define CHALLENGE_MACHINE_PLAYER_SCORE_VALUES_ADDR ChallengeMachine_PlayerScoreValues_ADDR
 
 #include "generated/wram.h"
 #include "generated/sram.h"
@@ -356,7 +357,7 @@ ChallengeMachineInitializeResult ChallengeMachine_Initialize(void)
 			gb_write8(hl++, 0u);
 			c--;
 		}
-		const uint8_t *text = rom_ptr(0x04u, 0x7674u);
+		const uint8_t *text = rom_ptr(0x04u, ChallengeMachine_DrMasonText_ADDR);
 		for (uint8_t i = 0u; i < NAME_BUFFER_LENGTH; i++)
 			gb_write8((uint16_t)(sChallengeMachineRecordHolderName_ADDR + i), text[i]);
 		gb_write8(sMaximumConsecutiveWins_ADDR, 1u);
@@ -662,7 +663,7 @@ void ChallengeMachine_DrawOpponentList(void)
 	uint16_t box2_hl = 0u;
 	DrawRegularTextBox(&box2_hl, 0u, 20u, 6u, 0u, 12u);
 
-	LabelsResult labels = PrintLabels(0x7545u, 0u, 0u);
+	LabelsResult labels = PrintLabels(ChallengeMachine_OpponentNumberLabels_ADDR, 0u, 0u);
 	ChallengeMachine_PrintOpponentInfo(0u, labels.d, labels.e);
 	ChallengeMachine_PrintDuelResultIcons();
 }

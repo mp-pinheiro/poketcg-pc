@@ -4,6 +4,7 @@
 #include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+#include "generated/rom.h"
 #include "mem.h"
 #include "home/bg_map.h"
 /* >>> factory statics */
@@ -23,8 +24,8 @@
 #define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0xEDu
 #define DUELVARS_DECK_CARDS 0x7Eu
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
-#define TX_ThereAreNoTrainerCardsInDiscardPileText 0x00C4u
-#define TX_NoCardsLeftInTheDeckText 0x00B1u
+#define TX_ThereAreNoTrainerCardsInDiscardPileText ThereAreNoTrainerCardsInDiscardPileText
+#define TX_NoCardsLeftInTheDeckText NoCardsLeftInTheDeckText
 
 
 #include "home/effect_functions.h"
@@ -38,12 +39,12 @@
 #define DUELVARS_ARENA_CARD_STAGE 0xCEu
 
 
-#define COLOR_TEXT_FIRE      0x48u
-#define COLOR_TEXT_GRASS     0x47u
-#define COLOR_TEXT_LIGHTNING 0x4au
-#define COLOR_TEXT_WATER     0x49u
-#define COLOR_TEXT_FIGHTING  0x4bu
-#define COLOR_TEXT_PSYCHIC   0x4cu
+#define COLOR_TEXT_FIRE      FireSymbolText
+#define COLOR_TEXT_GRASS     GrassSymbolText
+#define COLOR_TEXT_LIGHTNING LightningSymbolText
+#define COLOR_TEXT_WATER     WaterSymbolText
+#define COLOR_TEXT_FIGHTING  FightingSymbolText
+#define COLOR_TEXT_PSYCHIC   PsychicSymbolText
 
 static const uint16_t color_to_text[] = {
 	COLOR_TEXT_FIRE,
@@ -1293,10 +1294,11 @@ void BankswitchROM(uint8_t bank);
 
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define HANDLE_COLOR_CHANGE_MENU_PARAMS 0x45B6u
-#define SHIFT_MENU_DATA 0x46A1u /* ShiftMenuData, bank $0b */
-#define COLOR_TILE_AND_BGP 0x46AEu /* ColorTileAndBGP, bank $0b */
-#define SHIFT_LIST_ITEM_TO_COLOR 0x46BAu /* ShiftListItemToColor, bank $0b */
+#define HANDLE_COLOR_CHANGE_MENU_PARAMS (HandleColorChangeScreen_ADDR + 0x2Eu)
+#define SHIFT_MENU_DATA ShiftMenuData_ADDR /* ShiftMenuData, bank $0b */
+#define COLOR_TILE_AND_BGP ColorTileAndBGP_ADDR /* ColorTileAndBGP, bank $0b */
+#define SHIFT_LIST_ITEM_TO_COLOR ShiftListItemToColor_ADDR /* ShiftListItemToColor, bank $0b */
+#define HANDLE_DEFENDING_ATTACK_MENU_PARAMS (HandleDefendingPokemonAttackSelection_ADDR + 0x71u)
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -1386,16 +1388,15 @@ uint16_t ApplySubstatus1ToAttackingCard(uint8_t a)
 /* >>> factory SetNoEffectFromStatus */
 void SetNoEffectFromStatus(void)
 {
-	gb_write8(0xCCEDu, 0x01u);
+	wEffectFailed = EFFECT_FAILED_NO_EFFECT;
 }
 /* <<< factory SetNoEffectFromStatus */
 
 /* >>> factory SetDefiniteAIDamage */
 void SetDefiniteAIDamage(void)
 {
-	uint8_t a = gb_read8(0xCCB9u);
-	gb_write8(0xCCBBu, a);
-	gb_write8(0xCCBCu, a);
+	wAIMinDamage = wDamage;
+	wAIMaxDamage = wDamage;
 }
 /* <<< factory SetDefiniteAIDamage */
 
@@ -1620,7 +1621,7 @@ CheckAttackResult CheckIfDefendingPokemonHasAnyAttack(void)
 	uint8_t f;
 	uint8_t category = gb_read8(wLoadedCard2Atk1Category_ADDR);
 	if (category != POKEMON_POWER) {
-		f = (category == 0u) ? 0x80u : 0x00u;
+		f = (uint8_t)((category & 0x80u) | (category == 0u ? 0x80u : 0u));
 	} else {
 		uint8_t lo = gb_read8(wLoadedCard2Atk2Name_ADDR);
 		uint8_t hi = gb_read8((uint16_t)(wLoadedCard2Atk2Name_ADDR + 1u));
@@ -1869,8 +1870,8 @@ void KrabbyCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
 		hTemp_ffa0 = card;
 		if (card == 0xffu)
 			return;
-		uint16_t card_id = GetCardIDFromDeckIndex(card);
-		if ((uint8_t)card_id == KRABBY)
+		CardId card_id = GetCardIDFromDeckIndex(card);
+		if (card_id == KRABBY)
 			return;
 	}
 }
@@ -1886,7 +1887,7 @@ CreateListOfEnergyAttachedToArenaResult CreateListOfEnergyAttachedToArena(uint8_
 	for (uint8_t index = 0; index < DECK_SIZE; index++) {
 		if (gb_read8((uint16_t)(locations + index)) != 0x10u)
 			continue;
-		uint8_t card_id = GetCardIDFromDeckIndex(index);
+		CardId card_id = GetCardIDFromDeckIndex(index);
 		if (GetCardType(card_id) != a)
 			continue;
 		gb_write8(dst++, index);
@@ -1936,7 +1937,7 @@ SolarPowerCheckUseResult SolarPower_CheckUse(void)
 	hTemp_ffa0 = location;
 	DuelistVarResult flags = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));
 	if (flags.a & USED_PKMN_POWER_THIS_TURN)
-		return (SolarPowerCheckUseResult){0x10u, 0x00CAu};
+		return (SolarPowerCheckUseResult){0x10u, OnlyOncePerTurnText};
 	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(location);
 	if (incapable.f & 0x10u)
 		return (SolarPowerCheckUseResult){incapable.f, incapable.hl};
@@ -1946,7 +1947,7 @@ SolarPowerCheckUseResult SolarPower_CheckUse(void)
 	status = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
 	if (status.a)
 		return (SolarPowerCheckUseResult){0x00u, status.hl};
-	return (SolarPowerCheckUseResult){0x90u, 0x00B5u};
+	return (SolarPowerCheckUseResult){0x90u, CanOnlyBeUsedOnTheBenchText};
 }
 /* <<< factory SolarPower_CheckUse */
 
@@ -2167,7 +2168,7 @@ MirrorMoveInitialEffect1Result MirrorMove_InitialEffect1(void)
 	value = gb_read8(hl++);
 	if (value != 0u)
 		return (MirrorMoveInitialEffect1Result){0x00u, hl};
-	return (MirrorMoveInitialEffect1Result){0x90u, 0x00C6u};
+	return (MirrorMoveInitialEffect1Result){0x90u, YouDidNotReceiveAnAttackToMirrorMoveText};
 }
 /* <<< factory MirrorMove_InitialEffect1 */
 
@@ -2194,7 +2195,7 @@ FriendshipSongBenchCheckResult FriendshipSong_BenchCheck(void)
 	uint8_t f = (uint8_t)(count.a >= 6u ? 0x10u : 0u);
 	if (count.a == 6u)
 		f |= 0x80u;
-	return (FriendshipSongBenchCheckResult){count.a, f, 0x00B2u};
+	return (FriendshipSongBenchCheckResult){count.a, f, NoSpaceOnTheBenchText};
 }
 /* <<< factory FriendshipSong_BenchCheck */
 
@@ -2359,7 +2360,7 @@ MaintenanceHandCheckResult Maintenance_HandCheck(void)
 	if (hand.a < 3u)
 		f |= 0x10u;
 
-	return (MaintenanceHandCheckResult){hand.a, f, 0x00b6u};
+	return (MaintenanceHandCheckResult){hand.a, f, NotEnoughCardsInHandText};
 }
 /* <<< factory Maintenance_HandCheck */
 
@@ -2419,7 +2420,9 @@ void KakunaPoisonPowder_AIEffect(void)
 /* >>> factory SwordsDanceEffect */
 uint16_t SwordsDanceEffect(void)
 {
-	if (gb_read8(0xCCC3u) != 0x2Eu)
+	CardId card_id = (CardId)(gb_read8(wTempTurnDuelistCardID_ADDR)
+		| ((CardId)gb_read8((uint16_t)(wTempTurnDuelistCardID_ADDR + 1u)) << 8));
+	if (card_id != SCYTHER)
 		return 0u;
 	return ApplySubstatus1ToAttackingCard(0x19u);
 }
@@ -2476,7 +2479,7 @@ TeleportCheckBenchResult Teleport_CheckBench(void)
     if (count.a == 2u) f |= 0x80u;
     if ((count.a & 0x0fu) < 2u) f |= 0x20u;
     if (count.a < 2u) f |= 0x10u;
-    return (TeleportCheckBenchResult){count.a, f, 0x00d2u};
+    return (TeleportCheckBenchResult){count.a, f, ThereAreNoPokemonOnBenchText};
 }
 /* <<< factory Teleport_CheckBench */
 
@@ -2545,8 +2548,8 @@ void NidoranFCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
 		hTemp_ffa0 = card;
 		if (card == 0xffu)
 			return;
-		uint8_t card_id = GetCardIDFromDeckIndex(card);
-		if ((uint8_t)card_id == NIDORANF || (uint8_t)card_id == NIDORANM)
+		CardId card_id = GetCardIDFromDeckIndex(card);
+		if (card_id == NIDORANF || card_id == NIDORANM)
 			return;
 	}
 }
@@ -2711,7 +2714,7 @@ CheckIfCardHasGrassEnergyAttachedResult CheckIfCardHasGrassEnergyAttached(uint8_
 	for (uint8_t index = 0; index < DECK_SIZE; index++) {
 		if (gb_read8((uint16_t)(locations.hl + index)) != e)
 			continue;
-		uint8_t card_id = GetCardIDFromDeckIndex(index);
+		CardId card_id = GetCardIDFromDeckIndex(index);
 		if (GetCardType(card_id) != TYPE_ENERGY_GRASS)
 			continue;
 		return (CheckIfCardHasGrassEnergyAttachedResult){
@@ -2736,7 +2739,9 @@ uint8_t Quickfreeze_InitialEffect(uint8_t f)
 /* effect_functions.asm:3509-3520 */
 void FocusEnergyEffect(void)
 {
-	if (gb_read8(0xCCC3u) != 0x5Au)
+	CardId card_id = (CardId)(gb_read8(wTempTurnDuelistCardID_ADDR)
+		| ((CardId)gb_read8((uint16_t)(wTempTurnDuelistCardID_ADDR + 1u)) << 8));
+	if (card_id != VAPOREON_LV29)
 		return;
 	(void)ApplySubstatus1ToAttackingCard(0x19u);
 }
@@ -3021,7 +3026,7 @@ ClefairyDollBenchCheckResult ClefairyDoll_BenchCheck(void)
 	uint8_t f = (uint8_t)(count.a >= 6u ? 0x10u : 0x00u);
 	if (count.a == 6u)
 		f |= 0x80u;
-	return (ClefairyDollBenchCheckResult){count.a, f, 0x00B2u};
+	return (ClefairyDollBenchCheckResult){count.a, f, NoSpaceOnTheBenchText};
 }
 /* <<< factory ClefairyDoll_BenchCheck */
 
@@ -3349,9 +3354,9 @@ SolarPowerCheckUseResult StepIn_BenchCheck(void)
 {
 	uint8_t location = hTempPlayAreaLocation_ff9d;
 	hTemp_ffa0 = location;
-	if (location == PLAY_AREA_ARENA)
-		return (SolarPowerCheckUseResult){0x90u, 0x00D1u};
 	uint8_t flags = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD_FLAGS)).a;
+	if (location == PLAY_AREA_ARENA)
+		return (SolarPowerCheckUseResult){0x90u, CanOnlyBeUsedOnTheBenchText};
 	if ((flags & (1u << USED_PKMN_POWER_THIS_TURN_F)) != 0u)
 		return (SolarPowerCheckUseResult){0x10u, OnlyOncePerTurnText};
 	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(location);
@@ -3365,9 +3370,9 @@ SolarPowerCheckUseResult Peek_OncePerTurnCheck(void)
 	uint8_t location = hTempPlayAreaLocation_ff9d;
 	hTemp_ffa0 = location;
 	DuelistVarResult flags = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));
-	if (flags.a & USED_PKMN_POWER_THIS_TURN)
-		return (SolarPowerCheckUseResult){0x10u, 0x00CAu};
 	PkmnPowerIncapableResult r = CheckIsIncapableOfUsingPkmnPower(location);
+	if (flags.a & USED_PKMN_POWER_THIS_TURN)
+		return (SolarPowerCheckUseResult){0x10u, OnlyOncePerTurnText};
 	return (SolarPowerCheckUseResult){r.f, r.hl};
 }
 /* <<< factory Peek_OncePerTurnCheck */
@@ -3382,7 +3387,7 @@ MrFujiBenchCheckResult Wail_BenchCheck(void)
 	DuelistVarResult nonturn = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
 	if (nonturn.a < 6u)
 		return (MrFujiBenchCheckResult){nonturn.a, nonturn.a == 0u ? 0x80u : 0u, nonturn.hl};
-	return (MrFujiBenchCheckResult){nonturn.a, 0x10u, 0x00B2u};
+	return (MrFujiBenchCheckResult){nonturn.a, 0x10u, NoSpaceOnTheBenchText};
 }
 /* <<< factory Wail_BenchCheck */
 
@@ -4928,7 +4933,9 @@ void MorphEffect(void)
 				continue;
 			if (wLoadedCard2Stage != 0u)
 				continue;
-			if (wLoadedCard2ID == DITTO)
+			CardId card_id = (CardId)(gb_read8(wLoadedCard2ID_ADDR)
+				| ((CardId)gb_read8((uint16_t)(wLoadedCard2ID_ADDR + 1u)) << 8));
+			if (card_id == DITTO)
 				continue;
 			found = 1u;
 			break;
@@ -4966,6 +4973,7 @@ void MorphEffect(void)
 
 	uint16_t old_card_id = (uint16_t)(gb_read8(wTempTurnDuelistCardID_ADDR)
 		| ((uint16_t)gb_read8((uint16_t)(wTempTurnDuelistCardID_ADDR + 1u)) << 8));
+	LoadCardDataToBuffer2_FromCardID(old_card_id);
 	uint16_t src = wLoadedCard2Name_ADDR;
 	uint16_t dst = wTxRam2_ADDR;
 	gb_write8(dst, gb_read8(src));
@@ -5446,7 +5454,7 @@ HandleDefendingPokemonAttackSelectionResult HandleDefendingPokemonAttackSelectio
 	hCurSelectionItem = 0u;
 	for (;;) {
 		uint8_t count = PrintAndLoadAttacksToDuelTempList();
-		uint16_t menu_parameters = 0x43F4u;
+		uint16_t menu_parameters = HANDLE_DEFENDING_ATTACK_MENU_PARAMS;
 		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
 		wNumMenuItems = count;
 		EnableLCD();
@@ -5530,7 +5538,7 @@ void StrangeBehavior_SelectAndSwapEffect(void)
 	SetupPlayAreaScreen();
 	for (;;) {
 		uint8_t count = PrintPlayAreaCardList_EnableLCD().a;
-		uint16_t menu_parameters = 0x46e0u;
+		uint16_t menu_parameters = PlayAreaSelectionMenuParameters_ADDR;
 		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
 		wNumMenuItems = count;
 		for (;;) {
@@ -6363,7 +6371,7 @@ uint8_t EnergyTrans_TransferEffect(void)
 	SetupPlayAreaScreen();
 	for (;;) {
 		uint8_t count = PrintPlayAreaCardList_EnableLCD().a;
-		uint16_t menu_parameters = 0x46e0u;
+		uint16_t menu_parameters = PlayAreaSelectionMenuParameters_ADDR;
 		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
 		wNumMenuItems = count;
 		for (;;) {
@@ -6422,7 +6430,7 @@ void DamageSwap_SelectAndSwapEffect(void)
 	SetupPlayAreaScreen();
 	for (;;) {
 		uint8_t count = PrintPlayAreaCardList_EnableLCD().a;
-		uint16_t menu_parameters = 0x46e0u;
+		uint16_t menu_parameters = PlayAreaSelectionMenuParameters_ADDR;
 		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
 		wNumMenuItems = count;
 		for (;;) {
@@ -6498,7 +6506,7 @@ void Gigashock_PlayerSelectEffect(void)
 	SetupPlayAreaScreen();
 	for (;;) {
 		uint8_t items = PrintPlayAreaCardList_EnableLCD().a;
-		uint16_t menu_parameters = 0x46e8u;
+		uint16_t menu_parameters = BenchSelectionMenuParameters_ADDR;
 		InitializeMenuParameters(wCurGigashockItem, &menu_parameters);
 		wNumMenuItems = (uint8_t)(items - 1u);
 		HandleMenuInputResult input;
@@ -6751,7 +6759,7 @@ Curse_PlayerSelectEffectResult Curse_PlayerSelectEffect(void)
 	for (;;) {
 		/* .start: re-renders the list and re-seats the menu. */
 		uint8_t count = PrintPlayAreaCardList_EnableLCD().a;
-		uint16_t menu_parameters = 0x46e0u;
+		uint16_t menu_parameters = PlayAreaSelectionMenuParameters_ADDR;
 		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
 		wNumMenuItems = count;
 		uint8_t restart = 0u;
@@ -8031,7 +8039,7 @@ BellsproutCallForFamily_PlayerSelectEffectResult BellsproutCallForFamily_PlayerS
 		if ((display.f & 0x10u) == 0u) {
 			uint16_t card_id = GetCardIDFromDeckIndex(display.a);
 			uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
-				(uint8_t)card_id, 0u, BELLSPROUT);
+				(uint8_t)card_id, (uint8_t)(BELLSPROUT >> 8), (uint8_t)BELLSPROUT);
 			if ((compare & 0x80u) != 0u) {
 				uint8_t selected = hTempCardIndex_ff98;
 				hTemp_ffa0 = selected;
@@ -8048,8 +8056,8 @@ BellsproutCallForFamily_PlayerSelectEffectResult BellsproutCallForFamily_PlayerS
 			if (gb_read8(hl) == CARD_LOCATION_DECK) {
 				uint8_t index = (uint8_t)hl;
 				uint16_t card_id = GetCardIDFromDeckIndex(index);
-				uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
-					(uint8_t)card_id, 0u, BELLSPROUT);
+			uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
+				(uint8_t)card_id, (uint8_t)(BELLSPROUT >> 8), (uint8_t)BELLSPROUT);
 				if ((compare & 0x80u) != 0u) {
 					PlaySFX_InvalidChoice();
 					break;
@@ -8134,7 +8142,8 @@ KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEff
 					uint8_t index = (uint8_t)hl;
 					uint16_t card_id = GetCardIDFromDeckIndex(index);
 					uint8_t compare = CompareDEtoBC(
-						(uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, KRABBY);
+						(uint8_t)(card_id >> 8), (uint8_t)card_id,
+						(uint8_t)(KRABBY >> 8), (uint8_t)KRABBY);
 					if ((compare & 0x80u) != 0u)
 						break;
 				}
@@ -8149,7 +8158,8 @@ KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEff
 		}
 		uint16_t card_id = GetCardIDFromDeckIndex(display.a);
 		uint8_t compare = CompareDEtoBC(
-			(uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, KRABBY);
+			(uint8_t)(card_id >> 8), (uint8_t)card_id,
+			(uint8_t)(KRABBY >> 8), (uint8_t)KRABBY);
 		if ((compare & 0x80u) == 0u) {
 			PlaySFX_InvalidChoice();
 			continue;
@@ -8179,8 +8189,10 @@ NidoranFCallForFamily_PlayerSelectEffectResult NidoranFCallForFamily_PlayerSelec
 		DisplayCardListResult display = DisplayCardList();
 		if ((display.f & 0x10u) == 0u) {
 			uint16_t card_id = GetCardIDFromDeckIndex(display.a);
-			uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, NIDORANF);
-			uint8_t is_m = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, NIDORANM);
+			uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id,
+				(uint8_t)(NIDORANF >> 8), (uint8_t)NIDORANF);
+			uint8_t is_m = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id,
+				(uint8_t)(NIDORANM >> 8), (uint8_t)NIDORANM);
 			if ((is_f & 0x80u) != 0u || (is_m & 0x80u) != 0u) {
 				uint8_t selected = hTempCardIndex_ff98;
 				hTemp_ffa0 = selected;
@@ -8193,7 +8205,8 @@ NidoranFCallForFamily_PlayerSelectEffectResult NidoranFCallForFamily_PlayerSelec
 		for (;;) {
 			if (gb_read8(hl) == CARD_LOCATION_DECK) {
 				uint16_t card_id = GetCardIDFromDeckIndex((uint8_t)hl);
-				uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, NIDORANF);
+				uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id,
+					(uint8_t)(NIDORANF >> 8), (uint8_t)NIDORANF);
 				if ((is_f & 0x80u) != 0u) { PlaySFX_InvalidChoice(); break; }
 			}
 			hl = (uint16_t)((hl & 0xff00u) | (uint8_t)(hl + 1u));
@@ -8873,7 +8886,7 @@ Sprout_PlayerSelectEffectResult Sprout_PlayerSelectEffect(void)
 		if ((display.f & 0x10u) == 0u) {
 			uint16_t card_id = GetCardIDFromDeckIndex(display.a);
 			uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
-				(uint8_t)card_id, 0u, ODDISH);
+				(uint8_t)card_id, (uint8_t)(ODDISH >> 8), (uint8_t)ODDISH);
 			if ((compare & 0x80u) != 0u) {
 				uint8_t selected = hTempCardIndex_ff98;
 				hTemp_ffa0 = selected;
@@ -8891,7 +8904,7 @@ Sprout_PlayerSelectEffectResult Sprout_PlayerSelectEffect(void)
 				uint8_t index = (uint8_t)hl;
 				uint16_t card_id = GetCardIDFromDeckIndex(index);
 				uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
-					(uint8_t)card_id, 0u, ODDISH);
+					(uint8_t)card_id, (uint8_t)(ODDISH >> 8), (uint8_t)ODDISH);
 				if ((compare & 0x80u) != 0u) {
 					PlaySFX_InvalidChoice();
 					break;

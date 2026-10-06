@@ -143,7 +143,8 @@ static void adapt_LoadLoaded1CardGfx(ProbeState *s)
 /* >>> factory LookForCardIDInPlayArea_Bank5 */
 static void adapt_LookForCardIDInPlayArea_Bank5(ProbeState *s)
 {
-	LookResult r = LookForCardIDInPlayArea_Bank5(s->a, s->b);
+	uint16_t de = (uint16_t)(s->d << 8 | s->e);
+	LookResult r = LookForCardIDInPlayArea_Bank5(de, s->b);
 	s->a = r.a;
 	s->b = r.b;
 	s->f = r.f;
@@ -277,6 +278,7 @@ static void adapt_CheckEnergyFlagsNeededInList(ProbeState *s)
 {
 	EnergyFlagsResult r = CheckEnergyFlagsNeededInList(s->a);
 	s->a = r.a;
+	s->c = r.c;
 	s->f = r.carry ? 0x10u : 0u;
 }
 /* <<< factory CheckEnergyFlagsNeededInList */
@@ -465,7 +467,8 @@ static void adapt_CreateEnergyCardListFromHand(ProbeState *s)
 /* >>> factory LookForCardIDInHand */
 static void adapt_LookForCardIDInHand(ProbeState *s)
 {
-	CoreCardListResult r = LookForCardIDInHand(s->a);
+	uint16_t de = (uint16_t)(s->d << 8 | s->e);
+	CoreCardListResult r = LookForCardIDInHand(de);
 	s->a = r.a;
 	s->f = r.f;
 }
@@ -475,7 +478,8 @@ static void adapt_LookForCardIDInHand(ProbeState *s)
 /* >>> factory LookForCardIDInHandList_Bank5 */
 static void adapt_LookForCardIDInHandList_Bank5(ProbeState *s)
 {
-	CoreCardListResult r = LookForCardIDInHandList_Bank5(s->a);
+	uint16_t de = (uint16_t)(s->d << 8 | s->e);
+	CoreCardListResult r = LookForCardIDInHandList_Bank5(de);
 	s->a = r.a;
 	s->f = r.f;
 }
@@ -749,8 +753,9 @@ static void adapt_CountNumberOfEnergyCardsAttached(ProbeState *s)
 /* >>> factory LookForCardIDInLocation_Bank5 */
 static void adapt_LookForCardIDInLocation_Bank5(ProbeState *s)
 {
+	uint16_t de = (uint16_t)(s->d << 8 | s->e);
 	LookForCardIDInLocationResult r =
-		LookForCardIDInLocation_Bank5(s->a, s->e);
+		LookForCardIDInLocation_Bank5(s->a, de);
 	s->a = r.a;
 	s->b = r.b;
 	s->c = r.c;
@@ -799,7 +804,8 @@ static void adapt_PrintCardNameFromCardIDInTextBox(ProbeState *s)
 /* >>> factory RemoveCardIDInList */
 static void adapt_RemoveCardIDInList(ProbeState *s)
 {
-	RemoveCardIDResult r = RemoveCardIDInList(&s->hl, s->e);
+	uint16_t de = (uint16_t)(s->d << 8 | s->e);
+	RemoveCardIDResult r = RemoveCardIDInList(&s->hl, de);
 	s->a = r.a;
 	s->f = r.f;
 }
@@ -844,6 +850,18 @@ static void adapt_SetBGP5ToCardPalette(ProbeState *s)
 	SetBGP5ToCardPalette();
 }
 /* <<< factory SetBGP5ToCardPalette */
+/* >>> factory WriteTwoByteNumberInTxSymbolFormat */
+static void adapt_WriteTwoByteNumberInTxSymbolFormat(ProbeState *s)
+{
+	WriteTwoByteNumberInTxSymbolFormat(s->a, s->b, s->c);
+}
+/* <<< factory WriteTwoByteNumberInTxSymbolFormat */
+/* >>> factory WriteTwoDigitNumberInTxSymbolFormat */
+static void adapt_WriteTwoDigitNumberInTxSymbolFormat(ProbeState *s)
+{
+	WriteTwoDigitNumberInTxSymbolFormat(s->a, s->b, s->c);
+}
+/* <<< factory WriteTwoDigitNumberInTxSymbolFormat */
 /* >>> factory ApplyStatusConditionToArenaPokemon */
 static void adapt_ApplyStatusConditionToArenaPokemon(ProbeState *s)
 {
@@ -2894,6 +2912,8 @@ const ProbeEntry probe_entries_core[] = {
 	{ "SetCardPalette", adapt_SetCardPalette },
 	{ "SetBGP2ToCardPalette", adapt_SetBGP2ToCardPalette },
 	{ "SetBGP5ToCardPalette", adapt_SetBGP5ToCardPalette },
+	{ "WriteTwoByteNumberInTxSymbolFormat", adapt_WriteTwoByteNumberInTxSymbolFormat },
+	{ "WriteTwoDigitNumberInTxSymbolFormat", adapt_WriteTwoDigitNumberInTxSymbolFormat },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
 	{ "DisplayAttackPage", adapt_DisplayAttackPage },
 	{ "DisplayCardPage", adapt_DisplayCardPage },

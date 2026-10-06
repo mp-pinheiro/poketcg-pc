@@ -7,6 +7,7 @@
 #include "home/card_id_bus.h"
 
 #include "generated/text_ids.h"
+#include "generated/rom.h"
 #include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -129,7 +130,7 @@
 
 #include "generated/wram.h"
 #include "home/labels.h"
-#define PAUSE_MENU_PARAMS 0x4D98u
+#define PAUSE_MENU_PARAMS PauseMenuParams_ADDR
 
 #include "generated/wram.h"
 #include "home/lcd_enable_frame.h"
@@ -143,7 +144,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define PC_MENU_PARAMS 0x4DA9u
+#define PC_MENU_PARAMS PCMenuParams_ADDR
 /* Bank $04 holds the menu implementations and their data: the params tables
  * PauseMenuParams ($04:4D98) and PCMenuParams ($04:4DA9), InitAndPrintMenu
  * ($04:51E9), and every _PauseMenu_* body ($04:4059-$04:4548) with its labels
@@ -153,7 +154,7 @@
 #define MENUS_BANK 0x04u
 
 #define PAUSE_MENU_TEXT_LIST_BANK 0x03u
-#define PAUSE_MENU_TEXT_LIST_ADDR 0x427Cu
+#define PAUSE_MENU_TEXT_LIST_ADDR PauseMenuTextList_ADDR
 
 #include "home/status.h"
 
@@ -234,8 +235,8 @@
 #include "home/sound.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define DISPLAY_PAUSE_MENU 0x4797u
-#define DISPLAY_PC_MENU 0x484Eu
+#define DISPLAY_PAUSE_MENU DisplayPauseMenu_ADDR
+#define DISPLAY_PC_MENU DisplayPCMenu_ADDR
 
 #include "home/overworld.h"
 #include "generated/hram.h"
@@ -753,7 +754,7 @@ void UpdatePlayerDirectionFromDPad(uint8_t a)
 /* >>> factory SetOverworldDoFrameFunction */
 void SetOverworldDoFrameFunction(void)
 {
-	(void)SetDoFrameFunction(0x380eu);
+	(void)SetDoFrameFunction(OverworldDoFrameFunction_ADDR);
 }
 /* <<< factory SetOverworldDoFrameFunction */
 
