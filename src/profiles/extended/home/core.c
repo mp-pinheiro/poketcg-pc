@@ -4231,8 +4231,8 @@ loop_bench:
 			hl++;
 			if (deck_index == 0xFFu)
 				break;
-			uint8_t card_id = GetCardIDFromDeckIndex(deck_index);
-			if (card_id != wSamePokemonCardID)
+			CardId card_id = GetCardIDFromDeckIndex(deck_index);
+			if (card_id != same_pokemon_card_id)
 				continue;
 			uint8_t dam = GetCardDamageAndMaxHP(e).a;
 			uint8_t counters = ConvertHPToDamageCounters_Bank5(dam).a;
@@ -7527,7 +7527,8 @@ void OppAction_UseMetronomeAttack(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 	SwapTurn();
 	wPlayerAttackingCardIndex = hTempCardIndex_ff9f;
 	wPlayerAttackingAttackIndex = wSelectedAttack;
-	wPlayerAttackingCardID = wTempCardID_ccc2;
+	uint16_t player_attacking_card_id = wPlayerAttackingCardID_ADDR;
+	card_id_write(&player_attacking_card_id, card_id_read_at(wTempCardID_ccc2_ADDR));
 	(void)UpdateArenaCardIDsAndClearTwoTurnDuelVars(copy.a, copy.f, b, copy.c,
 		(uint8_t)(copy.de >> 8), (uint8_t)copy.de, copy.hl);
 	wMetronomeEnergyCost = c;
@@ -8099,7 +8100,8 @@ HandleSleepCheckResult HandleSleepCheck(uint16_t hl)
 		return (HandleSleepCheckResult){f};
 	}
 
-	LoadCardDataToBuffer1_FromCardID(wTempNonTurnDuelistCardID);
+	CardId non_turn_card_id = card_id_read_at(wTempNonTurnDuelistCardID_ADDR);
+	LoadCardDataToBuffer1_FromCardID(non_turn_card_id);
 	/* `ld a, 18` is the pad width; bc and de are dead on entry to the callee. */
 	CopyCardNameAndLevelResult name = CopyCardNameAndLevel(18u, 0u, 0u, 0u, 0u);
 	gb_write8(name.hl, TX_END);
@@ -9397,7 +9399,8 @@ void HandleTurn(void)
 static void handle_between_turns_status(void)
 {
 	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	wTempNonTurnDuelistCardID = GetCardIDFromDeckIndex(arena.a);
+	uint16_t temp_non_turn_card_id = wTempNonTurnDuelistCardID_ADDR;
+	card_id_write(&temp_non_turn_card_id, GetCardIDFromDeckIndex(arena.a));
 	uint16_t status = (uint16_t)(((uint16_t)hWhoseTurn << 8) | DUELVARS_ARENA_CARD_STATUS);
 	if (gb_read8(status) == 0u)
 		return;
@@ -9430,7 +9433,8 @@ void HandleBetweenTurnsEvents(void)
 	(void)DrawWideTextBox_WaitForInput(BetweenTurnsText);
 
 	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	wTempNonTurnDuelistCardID = GetCardIDFromDeckIndex(arena.a);
+	uint16_t temp_non_turn_card_id = wTempNonTurnDuelistCardID_ADDR;
+	card_id_write(&temp_non_turn_card_id, GetCardIDFromDeckIndex(arena.a));
 	uint16_t status = (uint16_t)(((uint16_t)hWhoseTurn << 8) | DUELVARS_ARENA_CARD_STATUS);
 	if (gb_read8(status) != 0u && (HandlePoisonDamage(0u, status).f & 0x10u) == 0u) {
 		(void)HandleSleepCheck(status);

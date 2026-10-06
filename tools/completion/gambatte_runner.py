@@ -31,6 +31,7 @@ PINS_PATH = ROOT / "tools" / "completion" / (
     "gambatte_pins.toml" if PROFILE.name == "vanilla" else f"gambatte_pins_{PROFILE.name}.toml"
 )
 BUILD_ROOT = PROFILE.build_path(ROOT) / "completion" / "gambatte"
+SOURCE_ROOT = BUILD_ROOT / "source"
 WIDTH = 160
 HEIGHT = 144
 SAMPLES_PER_FRAME = 35112
