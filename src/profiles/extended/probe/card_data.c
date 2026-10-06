@@ -23,6 +23,9 @@ static void adapt_GetCardTypeRarityAndSet(ProbeState *s)
 {
 	CardTRS r = GetCardTypeRarityAndSet(probe_card_id(s));
 	s->a = r.type;
+	if (r.carry)
+		return;
+	s->e = r.type;
 	s->b = r.rarity;
 	s->c = r.set;
 }
@@ -51,7 +54,7 @@ static void adapt_GetCardPointer(ProbeState *s)
 		s->f = (uint8_t)((s->f & 0x80u) | 0x10u);
 	} else {
 		s->a = r.bank;
-		s->f = 0x00u;
+		s->f = r.bank == 0u ? 0x80u : 0x00u;
 	}
 }
 

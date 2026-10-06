@@ -14,4 +14,3 @@ dependencies = [
 [tool.uv]
 no-binary-package = ["pyboy"]
 no-build-isolation-package = ["pyboy"]
-reinstall-package = ["pyboy"]

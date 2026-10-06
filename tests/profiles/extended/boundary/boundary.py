@@ -33,6 +33,8 @@ CONTRACT = {
     "DecompressSRAMDeck": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     "GetCardIDFromDeckIndex": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "hl")},
     "LoadLoaded1CardGfx": {"compare": (), "preserve": ()},
+    "LoadCardDataToBuffer1_FromDeckIndex": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "CountCardIDInLocation": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
 }
 
 CASES = {
@@ -73,6 +75,18 @@ CASES = {
     "LoadLoaded1CardGfx": [
         {"d": 0x88, "e": 0x00, "wram": {LOADED_CARD1_GFX: b"\xa7\x02"},
          "read": {CARD_PALETTE: 0x33}, "vread": {0x00: {0x8800: 0x0300}}},
+    ],
+    "LoadCardDataToBuffer1_FromDeckIndex": [
+        {"a": index, "wram": {0xFF97: PLAYER_TURN, PLAYER_DECK: deck_bytes(BOUNDARY_IDS)}, "read": {LOADED_CARD1: 0x41}}
+        for index in range(len(BOUNDARY_IDS))
+    ],
+    "CountCardIDInLocation": [
+        card(0x01FF, b=0x01, hl=0xC200, wram={0xFF97: PLAYER_TURN, PLAYER_DECK: deck_bytes(BOUNDARY_IDS),
+                                              0xC200: bytes([0, 0, 1, 1] + [0] * 56)}),
+        card(0x00FF, b=0x01, hl=0xC200, wram={0xFF97: PLAYER_TURN, PLAYER_DECK: deck_bytes(BOUNDARY_IDS),
+                                              0xC200: bytes([0, 0, 1, 1] + [0] * 56)}),
+        card(0x01FF, b=0x00, hl=0xC200, wram={0xFF97: PLAYER_TURN, PLAYER_DECK: deck_bytes([0x01FF] * 60),
+                                              0xC200: bytes(60)}),
     ],
 }
 

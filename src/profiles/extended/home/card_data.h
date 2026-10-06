@@ -9,7 +9,7 @@
 uint8_t GetCardType(CardId e);
 uint16_t GetCardName(CardId e);
 
-typedef struct { uint8_t type, rarity, set; } CardTRS;
+typedef struct { uint8_t type, rarity, set, carry; } CardTRS;
 CardTRS GetCardTypeRarityAndSet(CardId a);
 
 void LoadCardDataToBuffer1_FromCardID(CardId e);

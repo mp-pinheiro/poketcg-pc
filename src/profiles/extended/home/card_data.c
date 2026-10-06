@@ -43,21 +43,28 @@ static const uint8_t *card_data(CardId cardid)
 /* card_data.asm:84-96 */
 uint8_t GetCardType(CardId e)
 {
-	return card_data(e)[CARD_DATA_TYPE];
+	CardPtrResult pointer = get_card_pointer(e);
+	if (pointer.carry)
+		return hBankROM;
+	return rom_ptr(pointer.bank, pointer.hl)[CARD_DATA_TYPE];
 }
 
-/* card_data.asm:99-114 */
 uint16_t GetCardName(CardId e)
 {
-	const uint8_t *p = card_data(e) + CARD_DATA_NAME;
+	CardPtrResult pointer = get_card_pointer(e);
+	if (pointer.carry)
+		return e;
+	const uint8_t *p = rom_ptr(pointer.bank, pointer.hl) + CARD_DATA_NAME;
 	return (uint16_t)(p[0] | (uint16_t)p[1] << 8);
 }
 
-/* card_data.asm:117-138 */
 CardTRS GetCardTypeRarityAndSet(CardId a)
 {
-	const uint8_t *p = card_data(a);
-	return (CardTRS){p[CARD_DATA_TYPE], p[CARD_DATA_RARITY], p[CARD_DATA_SET]};
+	CardPtrResult pointer = get_card_pointer(a);
+	if (pointer.carry)
+		return (CardTRS){hBankROM, 0u, 0u, 1u};
+	const uint8_t *p = rom_ptr(pointer.bank, pointer.hl);
+	return (CardTRS){p[CARD_DATA_TYPE], p[CARD_DATA_RARITY], p[CARD_DATA_SET], 0u};
 }
 
 static void load_card_data(CardId cardid, uint16_t dest)

@@ -1,7 +1,25 @@
+schema = 2
 fixture = "build-extended/completion/extended-boundary.json"
+cases = "tests/profiles/extended/boundary/boundary.py"
+gate = "just extended-boundary-gate"
 lookup = ["00fe", "00ff", "0100", "01ff", "0200-rejected"]
-collection = "0x200-byte"
-deck_live_entries = 60
+fixture_card_count = 511
+rejected_card_id = 512
+collection_bytes = 512
+deck_entries = 60
 deck_entry_bytes = 2
 deck_compressed_bytes = 68
-presentation = ["card-page", "duel-card-high-id", "duelist-portrait", "in-play-area"]
+routines = [
+    "GetCardPointer",
+    "GetCardType",
+    "GetCardName",
+    "LoadCardDataToBuffer1_FromCardID",
+    "GetCardCountInCollection",
+    "AddCardToCollection",
+    "CompressDeckToSRAM",
+    "DecompressSRAMDeck",
+    "GetCardIDFromDeckIndex",
+    "LoadCardDataToBuffer1_FromDeckIndex",
+    "CountCardIDInLocation",
+    "LoadLoaded1CardGfx",
+]
