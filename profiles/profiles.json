@@ -83,10 +83,12 @@
           "link_duel",
           "music1",
           "music2",
+          "player_gender",
           "printer",
           "serial",
           "sgb",
-          "sprite_vblank"
+          "sprite_vblank",
+          "unknown"
         ]
       },
       "artifacts": {

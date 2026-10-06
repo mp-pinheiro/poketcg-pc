@@ -122,8 +122,21 @@ function(add_poketcg_profile profile)
     DEPENDS "${CMAKE_SOURCE_DIR}/tools/gen_layout.py" "${PROFILE_SYM}"
     COMMENT "gen_layout: ${profile}"
     VERBATIM)
+  set(constant_headers
+    "${profile_generated}/constants.h"
+    "${profile_generated}/text_ids.h"
+  )
+  file(GLOB profile_constant_sources CONFIGURE_DEPENDS "${PROFILE_DISASM}/src/constants/*.asm")
+  add_custom_command(
+    OUTPUT ${constant_headers}
+    COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/gen_constants.py"
+            --profile "${profile}" --out "${profile_generated}"
+    DEPENDS "${CMAKE_SOURCE_DIR}/tools/gen_constants.py" ${profile_constant_sources}
+            "${PROFILE_DISASM}/src/text/text_offsets.asm" "${CMAKE_SOURCE_DIR}/profiles/profiles.json"
+    COMMENT "gen_constants: ${profile}"
+    VERBATIM)
   set(layout_target "gen_layout_${profile}")
-  add_custom_target(${layout_target} DEPENDS ${generated_headers})
+  add_custom_target(${layout_target} DEPENDS ${generated_headers} ${constant_headers})
   if(profile STREQUAL "vanilla")
     add_custom_target(gen_layout DEPENDS ${layout_target})
   endif()
@@ -256,7 +269,6 @@ function(add_poketcg_profile profile)
   endif()
   if(profile STREQUAL "extended")
     target_compile_definitions(${gbmem_target} PUBLIC POKETCG_PROFILE_EXTENDED=1)
-    target_compile_definitions(${gbmem_target} PUBLIC POKETCG_CARD_COUNT=511)
   endif()
   target_compile_options(${gbmem_target} PRIVATE
     -finstrument-functions
