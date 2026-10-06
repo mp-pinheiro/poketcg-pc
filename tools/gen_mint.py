@@ -160,14 +160,19 @@ def portrait_palettes(source: Path) -> list[list[tuple[int, int, int]]]:
     return [colors[index:index + 4] for index in range(0, len(colors), 4)]
 
 
-def player_portrait_backdrop(path: Path) -> tuple[int, int, int]:
+def player_portrait_backdrop(path: Path, palette_path: Path | None = None) -> tuple[int, int, int]:
     lines = path.read_text(encoding="utf-8").splitlines()
-    start = next(index for index, line in enumerate(lines) if line.startswith("PlayerPicPal::"))
-    for line in lines[start + 1:]:
-        match = RGB_LINE.match(line)
-        if match:
-            return int(match[1]), int(match[2]), int(match[3])
-    raise ValueError(f"PlayerPicPal has no colours: {path}")
+    labels = ("PlayerPicPal::", "PalettePlayerPortrait::")
+    start = next((index for index, line in enumerate(lines) if line.startswith(labels)), None)
+    if start is not None:
+        for line in lines[start + 1:]:
+            match = RGB_LINE.match(line)
+            if match:
+                return int(match[1]), int(match[2]), int(match[3])
+    if palette_path is not None and palette_path.is_file():
+        value = int.from_bytes(palette_path.read_bytes()[:2], "little")
+        return value & 0x1F, (value >> 5) & 0x1F, (value >> 10) & 0x1F
+    raise ValueError(f"player portrait palette has no colours: {path}")
 
 
 def palette_bytes(palette: list[tuple[int, int, int]]) -> bytes:
@@ -208,10 +213,14 @@ def build_texts(rom: bytes) -> dict[int, bytes]:
     for text_id, changes in replacements.items():
         data = text_from_rom(rom, text_id)
         for old, new in changes:
-            if data.count(old) != 1:
+            count = data.count(old)
+            if count == 0:
+                continue
+            if count != 1:
                 raise ValueError(f"text {text_id:04X}: expected one {old!r}")
             data = data.replace(old, new)
         result[text_id] = data
+
     return result
 
 
@@ -249,26 +258,28 @@ def asset(kind_id: int, name: str, data: bytes, bank: int, paths: list[Path], ro
     }
 
 
-def build_mint(root: Path, rom: bytes) -> list[dict[str, object]]:
+def build_mint(root: Path, rom: bytes, profile_source: Path | None = None) -> list[dict[str, object]]:
     source = source_root(root)
     portrait_png = source / "gfx" / "duelists" / "mint.png"
     sprite_png = source / "gfx" / "overworld_sprites" / "mint.png"
     tilemap_bin = source / "data" / "maps" / "tiles" / ATTRIBUTE_TILEMAP
     palette_asm = source / "data" / "palettes1.asm"
-    backdrop_asm = root / "poketcg" / "src" / "gfx.asm"
+    game_source = profile_source or root / "poketcg"
+    backdrop_asm = game_source / "src" / "gfx.asm"
     tiles = tile_pixels(portrait_png, PORTRAIT_TILES)
     attributes = portrait_attributes(source)
     palettes = portrait_palettes(source)
     if len(palettes) != 3:
         raise ValueError(f"{PALETTE_LABEL}: expected 3 palettes, found {len(palettes)}")
-    backdrop = player_portrait_backdrop(backdrop_asm)
+    palette_path = game_source / "src" / "gfx" / "duelists" / "player.pal"
+    backdrop = player_portrait_backdrop(backdrop_asm, palette_path)
     palette_blob = bytearray((0, len(palettes)))
     for palette in palettes:
         palette_blob.extend(palette_bytes([backdrop] + palette[1:]))
     palette_blob.extend(attributes)
     palette_blob.extend((0, 1))
     palette_blob.extend(palette_bytes([backdrop] + palettes[0][1:]))
-    text_paths = [root / "poketcg" / "src" / "text" / name for name in ("text6.asm", "text7.asm", "text8.asm")]
+    text_paths = [game_source / "src" / "text" / name for name in ("text6.asm", "text7.asm", "text8.asm")]
     return [
         asset(1, "Mint portrait", encode_tiles(tiles), PORTRAIT_BANK, [portrait_png], root),
         asset(2, "Mint single-palette portrait", encode_tiles(single_palette_tiles(tiles, attributes)),
@@ -281,5 +292,5 @@ def build_mint(root: Path, rom: bytes) -> list[dict[str, object]]:
     ]
 
 
-def build_mint_assets(root: Path, rom: bytes) -> list[dict[str, object]]:
-    return build_mint(root.resolve(), rom)
+def build_mint_assets(root: Path, rom: bytes, profile_source: Path | None = None) -> list[dict[str, object]]:
+    return build_mint(root.resolve(), rom, profile_source)

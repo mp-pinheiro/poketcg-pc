@@ -33,7 +33,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_PROBE_DIR = REPO_ROOT / "src" / "probe"
 
 # R1 boundary: the smallest Game Boy address ($8000 / VRAM origin). No literal a
 # marshalling layer touches should reach it.
@@ -295,10 +294,16 @@ def emit(report: Report, stream) -> None:
 def main(argv: list[str] | None = None) -> int:
 	ap = argparse.ArgumentParser(description=__doc__)
 	ap.add_argument("paths", nargs="*", type=Path,
-		help="files or dirs of probe adapters to lint (default: src/probe)")
+		help="files or dirs of probe adapters to lint (default: the selected profile's adapters)")
 	args = ap.parse_args(argv)
 
-	targets = args.paths or [DEFAULT_PROBE_DIR]
+	if args.paths:
+		targets = args.paths
+	else:
+		sys.path.insert(0, str(REPO_ROOT))
+		from tools.profiles import get_profile
+
+		targets = get_profile(root=REPO_ROOT).probe_sources(REPO_ROOT)
 	missing = [t for t in targets if not t.exists()]
 	if missing:
 		for t in missing:

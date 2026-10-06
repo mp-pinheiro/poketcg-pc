@@ -368,6 +368,8 @@ def main() -> int:
         "vram_bank": native_vram_bank,
         "setup": resolved_setup,
         "input_events": case["input_events"],
+        "vblank_trampoline": symbols["wVBlankFunctionTrampoline"][1],
+        "vblank_noop": symbols["NoOp"][1],
         **registers,
     }
     if case.get("ir_peer"):

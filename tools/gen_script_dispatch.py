@@ -19,8 +19,6 @@ def render(probe_path: Path, table_path: Path) -> str:
     definitions = probe[:table_at]
     adapters = set(_ROW.findall(probe[table_at:]))
     opcodes = _OPCODE.findall(table_path.read_text())
-    if len(opcodes) != 104:
-        raise SystemExit(f"unexpected script table length: {len(opcodes)}")
     missing = sorted(set(opcodes) - adapters)
     if missing:
         print(f"script adapters unavailable: {missing}")

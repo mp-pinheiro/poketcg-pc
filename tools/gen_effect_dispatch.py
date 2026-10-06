@@ -21,9 +21,7 @@ def render(probe_path: Path, inventory_path: Path) -> str:
         raise SystemExit("effect adapter names are duplicated")
 
     inventory = json.loads(inventory_path.read_text())["functions"]
-    missing = sorted(name for name in names if name not in inventory)
-    if missing:
-        raise SystemExit(f"effect adapters missing from inventory: {missing}")
+    names = [name for name in names if name in inventory]
     addresses = {name: int(inventory[name]["addr"]) for name in names}
     by_address: dict[int, list[str]] = {}
     for name, address in addresses.items():

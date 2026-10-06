@@ -116,6 +116,30 @@ def emit(region: str, base: int, end: int, array: str, size: int, max_bank: int,
     return len(rows)
 
 
+def emit_rom(syms: list[tuple[int, int, str]], out_dir: Path) -> int:
+    seen: dict[str, tuple[int, int]] = {}
+    for bank, addr, name in syms:
+        if bank == 0 and not 0 <= addr < 0x4000:
+            continue
+        if bank > 0 and not 0x4000 <= addr < 0x8000:
+            continue
+        previous = seen.get(name)
+        if previous is not None and previous != (bank, addr):
+            raise SystemExit(f"ROM symbol {name} appears at two addresses")
+        seen[name] = (bank, addr)
+    rows = sorted((bank, addr, name) for name, (bank, addr) in seen.items())
+    body = ["#ifndef POKETCG_GENERATED_ROM_H\n", "#define POKETCG_GENERATED_ROM_H\n\n"]
+    for bank, addr, name in rows:
+        body.append(f"#define {name}_BANK {bank}u\n")
+        body.append(f"#define {name}_ADDR 0x{addr:04X}u\n")
+    body.append("\n#endif\n")
+    dest = out_dir / "rom.h"
+    text = "".join(body)
+    if not dest.exists() or dest.read_text() != text:
+        dest.write_text(text)
+    return len(rows)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--sym", required=True, type=Path)
@@ -130,6 +154,8 @@ def main() -> int:
     for region, base, end, array, size, max_bank in REGIONS:
         n = emit(region, base, end, array, size, max_bank, syms, args.sym, args.out)
         print(f"gen_layout: {region}.h  {n} symbols")
+    n = emit_rom(syms, args.out)
+    print(f"gen_layout: rom.h  {n} symbols")
     return 0
 
 

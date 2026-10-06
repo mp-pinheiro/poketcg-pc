@@ -35,12 +35,17 @@ import refstream
 import scenario as scenario_module
 import session
 from tools.completion.revision import current_source_revision
+from tools.profiles import get_profile
+
+PROFILE = get_profile()
+
 from tools.progress.report import load_scope, resolve_scope
 
-CACHE = ROOT / "build" / "completion" / "coverage"
-LEDGER = ROOT / "site" / "data" / "coverage.json"
-RATCHET = ROOT / "tools" / "completion" / "coverage_ratchet.json"
-INVENTORY = ROOT / "site" / "data" / "inventory.json"
+PROFILE_SUFFIX = "" if PROFILE.name == "vanilla" else f"_{PROFILE.name}"
+CACHE = PROFILE.build_path(ROOT) / "completion" / "coverage"
+LEDGER = ROOT / "site" / "data" / f"coverage{PROFILE_SUFFIX}.json"
+RATCHET = ROOT / "tools" / "completion" / f"coverage_ratchet{PROFILE_SUFFIX}.json"
+INVENTORY = PROFILE.artifact_path("inventory", ROOT)
 LEDGER_FORMAT = "coverage-ledger-v1"
 TRACE_FORMAT = "coverage-trace-v1"
 CORE_SESSIONS = ("boot-menu", "first-duel")
@@ -669,10 +674,11 @@ def discover_producer_key(seed: str, *, budget: int = DISCOVER_BUDGET) -> str:
     inputs = hashlib.sha256(
         bytes(mask & 0xFF for mask in masks) + pokes.encode() + save
     ).hexdigest()
+    rom_relative = PROFILE.rom_path(ROOT).relative_to(ROOT).as_posix()
     runtime = {
         relative: _file_sha256(ROOT / relative) if (ROOT / relative).is_file() else None
         for relative in (
-            "poketcg/poketcg.gbc",
+            rom_relative,
             "tools/completion/gambatte_pins.toml",
             "tools/completion/coverage_ledger.py",
             "tools/completion/explore.py",
@@ -890,8 +896,8 @@ def commit_line(name: str) -> list[str]:
     return [
         "jj",
         "commit",
-        f"tests/sessions/{name}",
-        "tools/completion/session_ratchet.json",
+        str((PROFILE.session_path(ROOT) / name).relative_to(ROOT)),
+        str(session.RATCHET_PATH.relative_to(ROOT)),
         "-m",
         f"feat(session): record {name}",
     ]

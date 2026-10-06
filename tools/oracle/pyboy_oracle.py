@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import io
 import os
+import re
 import sys
 import threading
 import time
@@ -213,6 +214,7 @@ class Oracle:
         self._baseline = io.BytesIO()
         self._reset_ram()
         self.pyboy.save_state(self._baseline)
+        self._locate_vblank_anchors(rom, str(symbols))
 
     def close(self) -> None:
         self.pyboy.stop(save=False)
@@ -292,9 +294,24 @@ class Oracle:
         pb.memory[0x3000] = 0x00  # ROM bank high
         pb.memory[0x4000] = 0x00  # SRAM bank
 
-    _VBLANK_HALT = 0x0270
-    _VBLANK_NOP = 0x0271
-    _WVBLANK_COUNTER = 0xCAB8
+    def _locate_vblank_anchors(self, rom: str, symbols: str) -> None:
+        table: dict[str, tuple[int, int]] = {}
+        pattern = re.compile(r"^([0-9A-Fa-f]{2}):([0-9A-Fa-f]{4})\s+(\S+)\s*$")
+        for line in Path(symbols).read_text(errors="replace").splitlines():
+            match = pattern.match(line.strip())
+            if match:
+                table.setdefault(match.group(3), (int(match.group(1), 16), int(match.group(2), 16)))
+        wait = table.get("WaitForVBlank")
+        counter = table.get("wVBlankCounter")
+        if wait is None or counter is None:
+            raise OracleError(f"{symbols} lacks WaitForVBlank or wVBlankCounter")
+        data = Path(rom).read_bytes()
+        window = data[wait[1]:wait[1] + 0x20]
+        if 0x76 not in window:
+            raise OracleError("WaitForVBlank has no halt within 32 bytes")
+        self._VBLANK_HALT = wait[1] + window.index(0x76)
+        self._VBLANK_NOP = self._VBLANK_HALT + 1
+        self._WVBLANK_COUNTER = counter[1]
 
     def _service_vblank(self, _ctx) -> None:
         pb = self.pyboy

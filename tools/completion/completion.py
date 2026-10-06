@@ -25,24 +25,28 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from tools.completion import evidence
 from tools.completion.revision import current_source_revision
+from tools.profiles import get_profile
+
+PROFILE = get_profile()
+
 
 BASELINE_PATH = ROOT / "tools" / "completion" / "baseline.toml"
 MANIFEST_PATH = ROOT / "tools" / "completion" / "requirements.toml"
-INVENTORY_PATH = ROOT / "site" / "data" / "inventory.json"
+INVENTORY_PATH = PROFILE.artifact_path("inventory", ROOT)
 INVENTORY_TOOL = ROOT / "tools" / "progress" / "inventory.py"
-ROM_PATH = ROOT / "poketcg" / "poketcg.gbc"
-MAP_PATH = ROOT / "poketcg" / "poketcg.map"
-SYMBOL_PATH = ROOT / "poketcg" / "poketcg.sym"
-ROM_SHA1_PATH = ROOT / "poketcg" / "rom.sha1"
+ROM_PATH = PROFILE.rom_path(ROOT)
+MAP_PATH = PROFILE.map_path(ROOT)
+SYMBOL_PATH = PROFILE.sym_path(ROOT)
+ROM_SHA1_PATH = PROFILE.source_path(ROOT) / "rom.sha1"
 SCOPE_PATH = ROOT / "tools" / "progress" / "scope.toml"
 REGISTRY_PATH = ROOT / "tests" / "routines.py"
 MAIN_PATH = ROOT / "src" / "main.c"
-COMPLETION_DIR = ROOT / "build" / "completion"
+COMPLETION_DIR = PROFILE.build_path(ROOT) / "completion"
 CFG_TOOL = ROOT / "tools" / "completion" / "cfg.py"
 CFG_OUTPUT = COMPLETION_DIR / "cfg.json"
 MAPPING_PATH = COMPLETION_DIR / "routine-mapping.json"
 EVIDENCE_DIR = COMPLETION_DIR / "evidence"
-ROM_SIZE = 0x100000
+ROM_SIZE = ROM_PATH.stat().st_size if ROM_PATH.is_file() else 0x100000
 EXPECTED_EXTRA_REGISTRATIONS = 14
 ALLOWED_SPAN_KINDS = {"code", "data", "header/metadata", "padding", "unclassified"}
 REQUIRED_RELATION_FIELDS = {
@@ -254,15 +258,15 @@ def validate_baseline(baseline: dict[str, Any], inventory: dict[str, Any]) -> li
     except OSError as exc:
         errors.append(f"ROM is unavailable: {exc}")
         actual_size = -1
-    if values["pret_commit"] != "0e7157e885c03d68b3b44410d3adc5aede385627":
-        errors.append("pret commit is not the frozen epoch")
-    pinned_pret = ROOT / "poketcg" / ".pret-commit"
+    if values["pret_commit"] != PROFILE.source_commit:
+        errors.append("pret commit is not the selected profile revision")
+    pinned_pret = PROFILE.source_path(ROOT) / ".pret-commit"
     if pinned_pret.is_file():
         actual_pret = pinned_pret.read_text(encoding="utf-8").strip()
     else:
         try:
             pret = subprocess.run(
-                ["git", "-C", str(ROOT / "poketcg"), "rev-parse", "HEAD"],
+                ["git", "-C", str(PROFILE.source_path(ROOT)), "rev-parse", "HEAD"],
                 capture_output=True,
                 text=True,
                 timeout=10,

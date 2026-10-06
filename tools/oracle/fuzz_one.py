@@ -28,12 +28,23 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+from tools.profiles import get_profile  # noqa: E402
+
+PROFILE = get_profile(root=ROOT)
 GATE = ROOT / "site" / "data" / "gate.json"
 PROGRESS = ROOT / "site" / "data" / "progress.json"
 REPORT = ROOT / ".factory" / "fuzz-report.json"
 COMPARE = ROOT / "tools" / "oracle" / "gbref" / "compare_one.py"
 REGS8 = ("a", "b", "c", "d", "e")
 THIN_MAX_CASES = 4
+
+
+def _case_module(basename: str) -> Path | None:
+    for path in PROFILE.case_modules(ROOT):
+        if path.stem == basename:
+            return path
+    return None
 
 
 def _load_module(path: Path):
@@ -49,9 +60,9 @@ def _load_module(path: Path):
 
 def _paths() -> dict[str, Path]:
     paths = {
-        "rom": ROOT / "poketcg" / "poketcg.gbc",
-        "symbols": ROOT / "poketcg" / "poketcg.sym",
-        "probe": ROOT / "build-barrier" / "poketcg_probe",
+        "rom": PROFILE.rom_path(ROOT),
+        "symbols": PROFILE.sym_path(ROOT),
+        "probe": ROOT / "build-barrier" / PROFILE.probe,
         "runner": ROOT / "tools" / "oracle" / "gbref" / "build" / "gbref_runner",
     }
     missing = [str(p) for p in paths.values() if not p.is_file()]
@@ -169,8 +180,8 @@ def thinnest(limit: int) -> list[tuple[str, Path]]:
         basename = _basename_for(name)
         if basename is None:
             continue
-        module_path = ROOT / "tests" / "cases" / f"{basename}.py"
-        if module_path.is_file():
+        module_path = _case_module(basename)
+        if module_path is not None:
             selected.append((name, module_path))
         if len(selected) >= limit:
             break
@@ -193,7 +204,10 @@ def main(argv: list[str] | None = None) -> int:
         basename = _basename_for(arguments.fn)
         if basename is None:
             raise SystemExit(f"{arguments.fn}: no source mapping in progress.json")
-        targets = [(arguments.fn, ROOT / "tests" / "cases" / f"{basename}.py")]
+        module_path = _case_module(basename)
+        if module_path is None:
+            raise SystemExit(f"{arguments.fn}: no case module for {basename}")
+        targets = [(arguments.fn, module_path)]
     else:
         targets = thinnest(arguments.thinnest)
     results = [fuzz_fn(fn, module_path, arguments.variants, paths)

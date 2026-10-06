@@ -9,9 +9,13 @@ import re
 from pathlib import Path
 from typing import Any
 
+from tools.profiles import get_profile
+
+PROFILE = get_profile()
+
 ROOT = Path(__file__).resolve().parents[2]
-ASM_ROOT = ROOT / "poketcg" / "src"
-DEFAULT_OUTPUT = ROOT / "build" / "completion" / "cfg.json"
+ASM_ROOT = PROFILE.source_path(ROOT) / "src"
+DEFAULT_OUTPUT = PROFILE.build_path(ROOT) / "completion" / "cfg.json"
 LABEL_RE = re.compile(r"^([A-Za-z_][A-Za-z0-9_.#@]*):{1,2}\s*$")
 INSTRUCTION_RE = re.compile(r"^\s*([A-Za-z_][A-Za-z0-9_.]*)\s*(.*)$")
 BRANCHES = {

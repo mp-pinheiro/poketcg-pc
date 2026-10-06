@@ -14,6 +14,10 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+from tools.profiles import get_profile
+
+PROFILE = get_profile()
+
 
 # scenario.boot_input's JOYP nibble order: low nibble dpad, high nibble buttons.
 BK2_TO_MASK = {
@@ -131,7 +135,7 @@ def convert(path: Path, rom: Path) -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("movie")
-    parser.add_argument("--rom", default="poketcg/poketcg.gbc")
+    parser.add_argument("--rom", default=str(PROFILE.rom_path(ROOT)))
     parser.add_argument("--input-out", help="per-frame mask file for --input")
     parser.add_argument("--json")
     args = parser.parse_args(argv)

@@ -120,7 +120,7 @@ def next_script_targets(scripts: list[Path]) -> set[str]:
 
 def script_entries(sym_path: Path, rom_path: Path, map_scripts: Path,
                    npc_map_data: Path, map_objects: Path,
-                   scripts: list[Path]) -> dict[int, tuple[int, int, list[str]]]:
+                   scripts: list[Path]) -> dict[tuple[int, int], tuple[int, int, list[str]]]:
     rom = rom_path.read_bytes()
     table = symbol_table(sym_path)
 
@@ -152,18 +152,13 @@ def script_entries(sym_path: Path, rom_path: Path, map_scripts: Path,
     if unresolved:
         raise SystemExit(f"script entry targets missing from poketcg.sym: {unresolved}")
 
-    found: dict[int, tuple[int, int, list[str]]] = {}
+    found: dict[tuple[int, int], tuple[int, int, list[str]]] = {}
     for name in sorted(wanted):
         bank, offset = table[name]
         physical = bank * 0x4000 + (offset - 0x4000 if offset >= 0x4000 else offset)
         if physical >= len(rom):
             raise SystemExit(f"{name} at {bank:02X}:{offset:04X} is past the ROM")
-        entry = found.setdefault(offset, (bank, rom[physical], []))
-        if entry[0] != bank:
-            raise SystemExit(
-                f"${offset:04X} is claimed by bank {entry[0]:02X} and {bank:02X}; "
-                "the table keys on the 16-bit address a `jp hl` carries"
-            )
+        entry = found.setdefault((bank, offset), (bank, rom[physical], []))
         entry[2].append(name)
     return found
 
@@ -245,8 +240,8 @@ def render(sym_path: Path, rom_path: Path, home: Path, map_scripts: Path,
 
     rows, thunks = [], []
     headers = {"scripting.h"}
-    for offset in sorted(entries):
-        bank, opcode, names = entries[offset]
+    for bank, offset in sorted(entries):
+        _, opcode, names = entries[(bank, offset)]
         ported = sorted(name for name in names if c_name(name) in owners)
         name = ported[0] if ported else sorted(names)[0]
         if opcode == OPCODE_RST_20:
@@ -284,21 +279,19 @@ static const ScriptEntryRow kScriptEntries[] = {{
 #define SCRIPT_ENTRY_COUNT \\
 \t((uint16_t)(sizeof(kScriptEntries) / sizeof(kScriptEntries[0])))
 
+const ScriptEntryRow *ScriptEntryLookupBank(uint8_t bank, uint16_t address)
+{{
+\tfor (uint16_t index = 0u; index < SCRIPT_ENTRY_COUNT; index++)
+\t\tif (kScriptEntries[index].address == address && kScriptEntries[index].bank == bank)
+\t\t\treturn &kScriptEntries[index];
+\treturn NULL;
+}}
+
 const ScriptEntryRow *ScriptEntryLookup(uint16_t address)
 {{
-\tuint16_t low = 0u;
-\tuint16_t high = SCRIPT_ENTRY_COUNT;
-
-\twhile (low < high) {{
-\t\tuint16_t middle = (uint16_t)(low + (uint16_t)((high - low) / 2u));
-
-\t\tif (kScriptEntries[middle].address < address)
-\t\t\tlow = (uint16_t)(middle + 1u);
-\t\telse
-\t\t\thigh = middle;
-\t}}
-\tif (low < SCRIPT_ENTRY_COUNT && kScriptEntries[low].address == address)
-\t\treturn &kScriptEntries[low];
+\tfor (uint16_t index = 0u; index < SCRIPT_ENTRY_COUNT; index++)
+\t\tif (kScriptEntries[index].address == address)
+\t\t\treturn &kScriptEntries[index];
 \treturn NULL;
 }}
 
@@ -309,11 +302,17 @@ static ScriptEntryRegs script_entry_regs_from_rst20(RST20Result r)
 
 ScriptEntryRegs ScriptEntryEnter(uint16_t target)
 {{
-\treturn ScriptEntryEnterWith(target, 0u, 0u, 0u, 0u, 0u);
+\treturn ScriptEntryEnterWithBank(target, 0u, 0u, 0u, 0u, 0u, 0u);
 }}
 
 ScriptEntryRegs ScriptEntryEnterWith(uint16_t target, uint8_t f, uint8_t b, uint8_t c,
                                      uint8_t d, uint8_t e)
+{{
+\treturn ScriptEntryEnterWithBank(target, 0u, f, b, c, d, e);
+}}
+
+ScriptEntryRegs ScriptEntryEnterWithBank(uint16_t target, uint8_t bank, uint8_t f, uint8_t b,
+                                         uint8_t c, uint8_t d, uint8_t e)
 {{
 \tconst ScriptEntryRow *row;
 \tuint8_t saved_bank;
@@ -336,7 +335,7 @@ ScriptEntryRegs ScriptEntryEnterWith(uint16_t target, uint8_t f, uint8_t b, uint
 \t\t        (unsigned)opcode, (unsigned)target);
 \t\tabort();
 \t}}
-\trow = ScriptEntryLookup(target);
+\trow = ScriptEntryLookupBank(bank, target);
 \tif (row == NULL) {{
 \t\tfprintf(stderr, "script entry miss target=$%04X\\n", (unsigned)target);
 \t\tabort();

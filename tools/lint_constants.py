@@ -47,11 +47,13 @@ import sys
 import tempfile
 from collections import defaultdict
 from pathlib import Path
+from profiles import get_profile
+
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DISASM = REPO_ROOT / "poketcg"
-DEFAULT_SOURCES = ("src/home", "src/probe")
-
+SYM_PATH = DISASM / "poketcg.sym"
+INVENTORY_PATH = REPO_ROOT / "site" / "data" / "inventory.json"
 DEFINE_RE = re.compile(
     r"^#define\s+([A-Za-z_]\w*)\s+\(?\s*(-?0[xX][0-9A-Fa-f]+|-?\d+)\s*[uUlL]{0,2}\s*\)?\s*(?://.*|/\*.*)?$"
 )
@@ -113,7 +115,7 @@ def text_ids() -> dict[str, int]:
 
 def rom_labels() -> dict[str, tuple[int, int]]:
     labels: dict[str, tuple[int, int]] = {}
-    for line in (DISASM / "poketcg.sym").read_text(encoding="utf-8").splitlines():
+    for line in SYM_PATH.read_text(encoding="utf-8").splitlines():
         match = SYM_RE.match(line)
         if match and "." not in match.group(3):
             labels.setdefault(match.group(3), (int(match.group(1), 16), int(match.group(2), 16)))
@@ -134,7 +136,7 @@ ROM_LITERAL_ALLOWLIST = {
 
 def inventory_spans() -> dict[int, list[tuple[int, int, str, str | None]]]:
     spans: dict[int, list[tuple[int, int, str, str | None]]] = {}
-    path = REPO_ROOT / "site" / "data" / "inventory.json"
+    path = INVENTORY_PATH
     for span in json.loads(path.read_text(encoding="utf-8"))["spans"]:
         spans.setdefault(int(span.get("bank", 0)), []).append(
             (span["address"], span["address"] + span["length"], span["kind"], span.get("symbol")))
@@ -191,10 +193,19 @@ def matches(c_value: int, asm_value: int) -> bool:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("paths", nargs="*", default=DEFAULT_SOURCES,
-                        help="source files or directories to lint")
+    parser.add_argument("--profile")
+    parser.add_argument("paths", nargs="*",
+                        help="source files or directories to lint (default: the selected profile's sources)")
     args = parser.parse_args(argv)
-    roots = [REPO_ROOT / path for path in args.paths]
+    profile = get_profile(args.profile, REPO_ROOT)
+    global DISASM, SYM_PATH, INVENTORY_PATH
+    DISASM = profile.source_path(REPO_ROOT)
+    SYM_PATH = profile.sym_path(REPO_ROOT)
+    INVENTORY_PATH = profile.artifact_path("inventory", REPO_ROOT)
+    if args.paths:
+        roots = [REPO_ROOT / path for path in args.paths]
+    else:
+        roots = profile.home_sources(REPO_ROOT) + profile.home_headers(REPO_ROOT) + profile.probe_sources(REPO_ROOT)
     defines = collect_defines(roots)
     names = sorted(defines)
     constants = asm_values(names)

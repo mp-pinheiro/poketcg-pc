@@ -33,9 +33,12 @@ import re
 import sys
 from pathlib import Path
 from typing import Any
+from tools.profiles import get_profile
+
 
 ROOT = Path(__file__).resolve().parents[2]
-ASM_ROOT = ROOT / "poketcg" / "src"
+PROFILE = get_profile()
+ASM_ROOT = PROFILE.source_path(ROOT) / "src"
 HOME = ROOT / "src" / "home"
 
 LABEL = re.compile(r"^([A-Za-z_]\w*):{1,2}")
@@ -330,7 +333,7 @@ ASM_CALL_TARGET = re.compile(r"^\s+(?:call|farcall|bank1call|callfar)\s+(?:\w+,\
 def symbol_entries() -> dict[str, tuple[int, int]]:
     """Top-level symbol -> (bank, address). Dotted local labels are branch targets."""
     entries: dict[str, tuple[int, int]] = {}
-    for line in (ROOT / "poketcg" / "poketcg.sym").read_text().splitlines():
+    for line in PROFILE.sym_path(ROOT).read_text().splitlines():
         match = SYM_LINE.match(line.strip())
         if match and "." not in match.group(3):
             entries[match.group(3)] = (int(match.group(1), 16), int(match.group(2), 16))

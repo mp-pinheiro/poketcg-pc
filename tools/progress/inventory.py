@@ -9,6 +9,8 @@ progress-inventory). Requires `just bootstrap` to have populated poketcg/.
 from __future__ import annotations
 
 import glob
+import argparse
+
 import json
 import os
 import re
@@ -16,6 +18,9 @@ import subprocess
 import sys
 from collections import Counter
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from profiles import get_profile
+
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 PRET = ROOT / "poketcg"
@@ -615,7 +620,16 @@ def build_spans(
     return sorted(spans, key=lambda span: span["offset"])
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--profile")
+    args = parser.parse_args(argv)
+    profile = get_profile(args.profile, ROOT)
+    global PRET, MAP_FILE, SRC_DIR, OUT_FILE
+    PRET = profile.source_path(ROOT)
+    MAP_FILE = profile.map_path(ROOT)
+    SRC_DIR = PRET / "src"
+    OUT_FILE = profile.artifact_path("inventory", ROOT)
     map_labels, rom_bytes, sections = parse_map()
     defs, refs_map, unknown = process_asm_files(map_labels)
     spans = build_spans(sections, defs, local_data_labels())

@@ -33,9 +33,13 @@ sys.path.insert(0, str(ROOT / "tools" / "completion"))
 
 import refstream
 import session
+from tools.profiles import get_profile
 
-SEEDS = ROOT / "build" / "audio" / "seeds"
-REPORT = ROOT / "build" / "audio" / "tickdiff.json"
+PROFILE = get_profile()
+
+
+SEEDS = PROFILE.build_path(ROOT) / "audio" / "seeds"
+REPORT = PROFILE.build_path(ROOT) / "audio" / "tickdiff.json"
 DRIVER_BASE = 0xDD80
 DRIVER_SIZE = 0xDEE5 - 0xDD80
 DRIVER_BANK = 0x3D
@@ -44,10 +48,10 @@ APU_SIZE = 0x30
 SOUND_TIMER_HANDLER = 0x4003
 PLAY_SONG = 0x3785
 PLAY_SFX = 0x3796
-ROM = ROOT / "poketcg" / "poketcg.gbc"
-SYMBOLS = ROOT / "poketcg" / "poketcg.sym"
+ROM = PROFILE.rom_path(ROOT)
+SYMBOLS = PROFILE.sym_path(ROOT)
 RUNNER = ROOT / "tools" / "oracle" / "gbref" / "build" / "gbref_runner"
-PROBE = ROOT / os.environ.get("POKETCG_BUILD", "build") / "poketcg_probe"
+PROBE = PROFILE.probe_path(ROOT)
 DEFAULT_TICKS = 4096
 DEFAULT_EVERY = 1024
 SEED_FORMAT = "audio-seed-v1"

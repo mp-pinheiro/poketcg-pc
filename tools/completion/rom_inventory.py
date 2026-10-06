@@ -10,13 +10,16 @@ import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+from tools.profiles import get_profile
+
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_ROM = ROOT / "poketcg" / "poketcg.gbc"
-DEFAULT_MAP = ROOT / "poketcg" / "poketcg.map"
-DEFAULT_SYMBOLS = ROOT / "poketcg" / "poketcg.sym"
-DEFAULT_OUTPUT = ROOT / "build" / "completion" / "rom-inventory.json"
-ROM_SIZE = 0x100000
+PROFILE = get_profile()
+DEFAULT_ROM = PROFILE.rom_path(ROOT)
+DEFAULT_MAP = PROFILE.map_path(ROOT)
+DEFAULT_SYMBOLS = PROFILE.sym_path(ROOT)
+DEFAULT_OUTPUT = PROFILE.build_path(ROOT) / "completion" / "rom-inventory.json"
+ROM_SIZE = DEFAULT_ROM.stat().st_size if DEFAULT_ROM.is_file() else 0x100000
 BANK_SIZE = 0x4000
 
 BANK_RE = re.compile(r"^(ROM0|ROMX|SRAM|WRAM0|WRAM|HRAM|VRAM|OAM) bank #(\d+):$")

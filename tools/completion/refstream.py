@@ -20,9 +20,12 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-SYM_PATH = ROOT / "poketcg" / "poketcg.sym"
-HARDWARE_INC = ROOT / "poketcg" / "src" / "constants" / "hardware.inc"
-STREAM_ROOT = ROOT / "build" / "completion" / "refstream"
+from tools.profiles import get_profile, symbol_address
+
+PROFILE = get_profile()
+SYM_PATH = PROFILE.sym_path(ROOT)
+HARDWARE_INC = PROFILE.source_path(ROOT) / "src" / "constants" / "hardware.inc"
+STREAM_ROOT = PROFILE.build_path(ROOT) / "completion" / "refstream"
 STREAM_FORMAT = "refstream-v2"
 
 WIDTH = 160
@@ -35,7 +38,7 @@ MAX_SLICES_PER_FRAME = 240
 # port reaches frame_boundary_reach() (src/home/frames.c). Sampling the
 # reference on PPU frame boundaries instead reports ~40 bytes of wOAM
 # sampling-phase noise that is not port divergence.
-DOFRAME_ANCHOR = 0x0552
+DOFRAME_ANCHOR = symbol_address(PROFILE, "DoFrame", ROOT, (0, 0x053F))[1] + 0x13
 
 # gambatte_getregs fills a 10-int array; PC is index 0 and L is index 9.
 REG_PC = 0

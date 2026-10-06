@@ -36,6 +36,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import refstream
 import scenario as scenario_module
 import session
+from tools.profiles import get_profile
+
+PROFILE = get_profile()
+
 
 FRAME_MAGIC = 0x5A
 FRAME_SIZE = 3
@@ -57,7 +61,7 @@ def wram_addresses() -> dict[str, int]:
     """The serial WRAM symbols this driver reads, from the disassembly's map."""
     wanted = set(WRAM)
     found: dict[str, int] = {}
-    for line in (ROOT / "poketcg" / "poketcg.sym").read_text().splitlines():
+    for line in PROFILE.sym_path(ROOT).read_text().splitlines():
         parts = line.split()
         if len(parts) == 2 and parts[1] in wanted and parts[0].startswith("00:"):
             found[parts[1]] = int(parts[0].split(":")[1], 16)

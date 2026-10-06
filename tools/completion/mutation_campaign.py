@@ -14,8 +14,11 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
+from tools.profiles import get_profile  # noqa: E402
+
+PROFILE = get_profile(root=ROOT)
 RECEIPT_DIR = ROOT / "tools" / "oracle" / "mutation_receipts"
-OUTPUT = ROOT / "build" / "completion" / "mutation-campaign.json"
+OUTPUT = PROFILE.build_path(ROOT) / "completion" / "mutation-campaign.json"
 
 
 def load_module(path: Path) -> Any:
@@ -36,9 +39,7 @@ def witness_index(case_ids: list[object], records: list[dict[str, Any]]) -> int:
     return 0
 def targets() -> list[tuple[str, str, int]]:
     found: list[tuple[str, str, int]] = []
-    for path in sorted((ROOT / "tests" / "cases").glob("*.py")):
-        if path.name.startswith("_") or path.name == "__init__.py":
-            continue
+    for path in PROFILE.case_modules(ROOT):
         module = load_module(path)
         for fn, mutation in getattr(module, "MUTATIONS", {}).items():
             case_ids = mutation.get("case_ids") if isinstance(mutation, dict) else None

@@ -12,13 +12,19 @@ import sys
 import zlib
 from dataclasses import dataclass
 from pathlib import Path
+from profiles import ProfileError, get_profile
+
 from gen_fonts import build_fonts
 from gen_mint import build_mint_assets
 from gen_sgb_borders import build_borders
 
 
-def build_extras(root: Path, rom: bytes) -> list[dict[str, object]]:
-    return build_fonts(root) + build_borders(root) + build_mint_assets(root, rom)
+def build_extras(root: Path, rom: bytes, source_root: Path) -> list[dict[str, object]]:
+    return (
+        build_fonts(root, source_root)
+        + build_borders(root, source_root)
+        + build_mint_assets(root, rom, source_root)
+    )
 
 
 def extra_manifest(extras: list[dict[str, object]]) -> list[dict[str, object]]:
@@ -201,8 +207,9 @@ def script_entry_spans(rom: bytes, sym_path: Path) -> list[tuple[str, int, int, 
 
 def sparse_items(
     rom: bytes,
+    inventory_path: Path,
+    sym_path: Path,
 ) -> list[tuple[dict[str, str], Section, bytes]]:
-    inventory_path = Path("site/data/inventory.json")
     try:
         inventory = json.loads(inventory_path.read_text())
     except (OSError, json.JSONDecodeError) as exc:
@@ -221,6 +228,8 @@ def sparse_items(
         length = span.get("length")
         if not all(isinstance(value, int) for value in (bank, address, length)):
             raise ValueError(f"invalid source data span: {span}")
+        if length == 0:
+            continue
         start = rom_offset(bank, address)
         end = start + length
         if length < 1 or end > len(rom):
@@ -230,7 +239,7 @@ def sparse_items(
         entry = {"name": name, "section": section.name, "ctype": "uint8_t"}
         result.append((entry, section, rom[start:end]))
     for name, bank, address, length in (
-            tuple(NATIVE_DATA_SPANS) + tuple(script_entry_spans(rom, Path("poketcg/poketcg.sym")))):
+            tuple(NATIVE_DATA_SPANS) + tuple(script_entry_spans(rom, sym_path))):
         start = rom_offset(bank, address)
         end = start + length
         if length < 1 or end > len(rom):
@@ -307,8 +316,9 @@ def write_sparse_pack(
     map_path: Path,
     sym_path: Path,
     root: Path,
+    source_root: Path,
 ) -> tuple[int, int]:
-    extras = build_extras(root, rom)
+    extras = build_extras(root, rom, source_root)
     payload = bytearray(PACK_HEADER.pack(PACK_MAGIC, 1, len(items) + len(extras)))
     payload.extend(b"\0" * PACK_RECORD.size * (len(items) + len(extras)))
     spans = []
@@ -380,6 +390,7 @@ def verify_sparse_pack(
     rom: bytes,
     sections: dict[str, Section],
     root: Path,
+    source_root: Path,
 ) -> tuple[int, int]:
     try:
         payload = pack_path.read_bytes()
@@ -394,7 +405,7 @@ def verify_sparse_pack(
         raise ValueError("sparse pack size differs from manifest")
     if hashlib.sha256(payload).hexdigest() != manifest.get("pack_sha256"):
         raise ValueError("sparse pack hash differs from manifest")
-    extras = build_extras(root, rom)
+    extras = build_extras(root, rom, source_root)
     if len(payload) < PACK_HEADER.size:
         raise ValueError("sparse pack is truncated")
     magic, version, count = PACK_HEADER.unpack(payload[:PACK_HEADER.size])
@@ -469,47 +480,58 @@ def verify_sparse_pack(
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--rom", type=Path, default=Path("poketcg/poketcg.gbc"))
-    parser.add_argument("--map", type=Path, default=Path("poketcg/poketcg.map"))
-    parser.add_argument("--sym", type=Path, default=Path("poketcg/poketcg.sym"))
-    parser.add_argument("--out", type=Path, default=Path("include/generated/data.h"))
+    parser.add_argument("--profile")
+    parser.add_argument("--rom", type=Path)
+    parser.add_argument("--map", type=Path)
+    parser.add_argument("--sym", type=Path)
+    parser.add_argument("--inventory", type=Path)
+    parser.add_argument("--out", type=Path)
     parser.add_argument("--verify", action="store_true")
-    # --check validates the artifact already on disk instead of a freshly rendered
-    # string, so a corrupted or stale include/generated/data.h is actually caught.
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--sparse-pack", action="store_true")
     parser.add_argument("--pack-check", action="store_true")
-    parser.add_argument("--pack", type=Path, default=Path("build/completion/data-pack.bin"))
-    parser.add_argument(
-        "--pack-manifest",
-        type=Path,
-        default=Path("build/completion/data-pack.json"),
-    )
+    parser.add_argument("--pack", type=Path)
+    parser.add_argument("--pack-manifest", type=Path)
     args = parser.parse_args()
     root = Path.cwd().resolve()
-    for path in (args.rom, args.map, args.sym):
+    try:
+        profile = get_profile(args.profile, root)
+    except ProfileError as error:
+        raise SystemExit(str(error)) from error
+    args.rom = args.rom or profile.rom_path(root)
+    args.map = args.map or profile.map_path(root)
+    args.sym = args.sym or profile.sym_path(root)
+    args.inventory = args.inventory or profile.artifact_path("inventory", root)
+    source_root = profile.source_path(root)
+    if args.out is None:
+        args.out = root / "include" / "generated" / "data.h"
+    if args.pack is None:
+        args.pack = root / ("build" if profile.name == "vanilla" else "build-extended") / "completion" / "data-pack.bin"
+    if args.pack_manifest is None:
+        args.pack_manifest = root / ("build" if profile.name == "vanilla" else "build-extended") / "completion" / "data-pack.json"
+    for path in (args.rom, args.map, args.sym, args.inventory):
         if not path.exists():
-            raise SystemExit(f"input not found: {path} (run `just bootstrap`)")
+            raise SystemExit(f"input not found: {path} (run the selected profile bootstrap)")
     sections = parse_map(args.map)
     symbols = parse_symbols(args.sym)
     rom = args.rom.read_bytes()
-    items = sparse_items(rom) if args.sparse_pack else slices(SCHEMA, sections, symbols, rom)
+    items = sparse_items(rom, args.inventory, args.sym) if args.sparse_pack else slices(SCHEMA, sections, symbols, rom)
     if args.sparse_pack and args.pack_check:
         parser.error("--sparse-pack and --pack-check are mutually exclusive")
     if args.sparse_pack or args.pack_check:
         if args.check:
             parser.error("--check validates the C header, not a sparse pack")
         if args.pack_check:
-            count, total = verify_sparse_pack(args.pack, args.pack_manifest, rom, sections, root)
+            count, total = verify_sparse_pack(args.pack, args.pack_manifest, rom, sections, root, source_root)
             print(f"gen_data: checked sparse pack {args.pack} -- {count} sections, {total} bytes")
         else:
             count, total = write_sparse_pack(
                 items, rom, args.pack, args.pack_manifest,
-                args.rom, args.map, args.sym, root,
+                args.rom, args.map, args.sym, root, source_root,
             )
             print(f"gen_data: wrote sparse pack {args.pack} -- {count} sections, {total} bytes")
             if args.verify:
-                verify_sparse_pack(args.pack, args.pack_manifest, rom, sections, root)
+                verify_sparse_pack(args.pack, args.pack_manifest, rom, sections, root, source_root)
                 print("gen_data: verified sparse pack")
         return 0
     if args.check:

@@ -47,10 +47,19 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import refstream
 import scenario as scenario_module
+from tools.profiles import get_profile, symbol_address
 
-SESSIONS = ROOT / "tests" / "sessions"
-CACHE = ROOT / "build" / "completion" / "sessions"
-RATCHET_PATH = ROOT / "tools" / "completion" / "session_ratchet.json"
+PROFILE = get_profile()
+def profile_symbol(name: str, default: tuple[int, int]) -> tuple[int, int]:
+    return symbol_address(PROFILE, name, ROOT, default)
+
+
+
+SESSIONS = PROFILE.session_path(ROOT)
+CACHE = PROFILE.build_path(ROOT) / "completion" / "sessions"
+RATCHET_PATH = ROOT / "tools" / "completion" / (
+    "session_ratchet.json" if PROFILE.name == "vanilla" else f"session_ratchet_{PROFILE.name}.json"
+)
 SAVE_FILE = "save.sav"
 NATIVE_TIMEOUT = 1800
 DIGEST_FORMAT = "session-digest-v8"
@@ -134,9 +143,9 @@ def stat_repeats_text(repeats: dict[int, dict[int, int]]) -> str:
                    for anchor in sorted(repeats) for segment, count in sorted(repeats[anchor].items()))
 
 
-CARD_COPY_ENTRY = 0x2F14
-CARD_COPY_RET = 0x2F31
-CARD_POINTERS = (0x0C, 0x4C5C)
+CARD_COPY_ENTRY = profile_symbol("LoadCardDataToHL_FromCardID", (0, 0x2F14))[1]
+CARD_COPY_RET = profile_symbol("LoadCardDataToHL_FromCardID.done", (0, 0x2F31))[1]
+CARD_POINTERS = profile_symbol("CardPointers", (0x0C, 0x4C5C))
 PKMN_CARD_DATA_LENGTH = 65
 
 
@@ -145,7 +154,7 @@ def card_overreads() -> dict[int, int]:
     """card id -> bytes of its 65-byte copy that lie past $7FFF, from the
     CardPointers table in the ROM: the two last cards of the bank spill into
     VRAM, which the CPU reads as $FF during mode 3 (card_data.asm:59-81)."""
-    rom = (ROOT / "poketcg" / "poketcg.gbc").read_bytes()
+    rom = PROFILE.rom_path(ROOT).read_bytes()
     bank, address = CARD_POINTERS
     base = bank * 0x4000 + (address - 0x4000)
     result = {}
@@ -1212,9 +1221,9 @@ def sweep_worker(entries_path: Path, start: int, out_path: Path) -> int:
     from pyboy_oracle import Oracle  # noqa: E402
     fixtures = importlib.import_module("tests.cases._fixtures")
     entries = json.loads(entries_path.read_text())
-    rom = os.environ.get("POKETCG_ROM", str(ROOT / "poketcg" / "poketcg.gbc"))
+    rom = os.environ.get("POKETCG_ROM", str(PROFILE.rom_path(ROOT)))
     os.environ.setdefault("POKETCG_ROM", rom)
-    probe = scenario_module.BINARY.with_name("poketcg_probe")
+    probe = PROFILE.probe_path(ROOT)
     with Oracle(rom) as oracle, out_path.open("a") as out:
         for index in range(start, len(entries)):
             entry = entries[index]
@@ -1818,7 +1827,7 @@ AI_DUEL = {
     "wDuelInitialPrizes": 0xCC08, "wRNG1": 0xCACA, "wRNG2": 0xCACB,
 }
 DUELIST_TYPE_AI_OPP = 0x80
-DECK_POINTERS = (0x0C, 0x4000)
+DECK_POINTERS = profile_symbol("DeckPointers", (0x0C, 0x4000))
 DECK_SIZE = 60
 
 
@@ -1832,7 +1841,7 @@ def deck_cards(deck_id: int) -> list[int]:
     the ROM exactly as CopyDeckData does (home/duel.asm:60-88). Deck ids are
     the AI's *_DECK_ID values, two below the DeckPointers index
     (home/ai.asm LoadOpponentDeck)."""
-    rom = (ROOT / "poketcg" / "poketcg.gbc").read_bytes()
+    rom = PROFILE.rom_path(ROOT).read_bytes()
     bank, table = DECK_POINTERS
     base = bank * 0x4000
     entry = base + (table - 0x4000) + 2 * (deck_id + 2)
@@ -1862,7 +1871,7 @@ def load_cards(path: Path) -> list[int]:
     return cards
 
 
-DRAW_CARD_FROM_DECK = 0x10CF
+DRAW_CARD_FROM_DECK = profile_symbol("DrawCardFromDeck", (0, 0x10CF))[1]
 PLAYER_DECK_CARDS = 0x027E
 PLAYER_TURN = 0xC2
 ARRANGE_WINDOW = 4000

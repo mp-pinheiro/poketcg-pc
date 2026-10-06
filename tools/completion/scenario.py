@@ -19,12 +19,12 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from tools.oracle.gbrecomp_oracle import Oracle
+from tools.profiles import get_profile
 
-# Same lane-isolation convention as the justfile's build_dir.
-_BUILD_DIR = Path(os.environ.get("POKETCG_BUILD", "build"))
-BINARY = ROOT / _BUILD_DIR / "poketcg"
-PACK = ROOT / _BUILD_DIR / "completion" / "data-pack.bin"
-EVIDENCE_DIR = ROOT / _BUILD_DIR / "completion" / "evidence"
+PROFILE = get_profile()
+BINARY = PROFILE.binary_path(ROOT)
+PACK = PROFILE.data_pack_path(ROOT)
+EVIDENCE_DIR = PROFILE.build_path(ROOT) / "completion" / "evidence"
 SCENARIO_REQUIREMENTS = {
     "boot-title": "completion:v2:p2:boot-title",
     "boot-title-negative": "completion:v2:p2:boot-title-negative",

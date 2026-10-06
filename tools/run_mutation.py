@@ -17,6 +17,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+from tools.profiles import get_profile  # noqa: E402
+
+PROFILE = get_profile(root=ROOT)
 
 
 def load_case(path: Path):
@@ -90,20 +93,22 @@ def main() -> int:
     case_path = (ROOT / args.case).resolve()
     module = load_case(case_path)
     mutation = module.MUTATIONS[args.fn]
-    source_value = mutation.get("source", f"src/home/{case_path.stem}.c")
+    home_sources = {path.stem: path for path in PROFILE.home_sources(ROOT)}
+    default_source = home_sources.get(case_path.stem, ROOT / "src" / "home" / f"{case_path.stem}.c")
+    source_value = mutation.get("source", default_source.relative_to(ROOT).as_posix())
     if not isinstance(source_value, str) or not source_value:
-        raise SystemExit("mutation source must be a relative src/home path")
+        raise SystemExit("mutation source must be a relative src/home or src/profiles path")
     source_rel = Path(source_value)
     if (source_rel.is_absolute() or ".." in source_rel.parts
-            or source_rel.parts[:2] != ("src", "home")):
-        raise SystemExit("mutation source must be a relative src/home path")
+            or source_rel.parts[:2] not in (("src", "home"), ("src", "profiles"))):
+        raise SystemExit("mutation source must be a relative src/home or src/profiles path")
     source_path = ROOT / source_rel
     original = source_path.read_text()
     region = resolve_anchor(original, mutation.get("source_symbol", args.fn),
                             mutation["before"])
 
     build_dir = args.build if args.build.is_absolute() else ROOT / args.build
-    probe = build_dir / "poketcg_probe"
+    probe = build_dir / PROFILE.probe
     if not probe.exists():
         raise SystemExit(f"{probe} not built; configure {build_dir} first")
     runner = args.runner if args.runner.is_absolute() else ROOT / args.runner
@@ -113,8 +118,8 @@ def main() -> int:
     compare_command = [
         sys.executable, "tools/oracle/gbref/compare_one.py", "--fn", args.fn,
         "--index", str(args.index), "--case", str(case_path.relative_to(ROOT)),
-        "--rom", str((ROOT / "poketcg/poketcg.gbc").resolve()),
-        "--symbols", str((ROOT / "poketcg/poketcg.sym").resolve()),
+        "--rom", str(PROFILE.rom_path(ROOT).resolve()),
+        "--symbols", str(PROFILE.sym_path(ROOT).resolve()),
         "--probe", str(probe.resolve()),
         "--runner", str(runner.resolve()),
     ]

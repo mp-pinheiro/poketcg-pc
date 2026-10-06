@@ -79,8 +79,9 @@ def load_hex(path: Path) -> dict[int, bytes]:
     return glyphs
 
 
-def source_layout(root: Path) -> tuple[bytearray, bytearray]:
-    font_root = root / "poketcg" / "src" / "gfx" / "fonts"
+def source_layout(root: Path, source_root: Path | None = None) -> tuple[bytearray, bytearray]:
+    source = source_root or root / "poketcg"
+    font_root = source / "src" / "gfx" / "fonts"
     full = bytearray()
     for name, size in FULL_WIDTH_FILES:
         data = (font_root / "full_width" / name).read_bytes()
@@ -156,12 +157,17 @@ def spaced_glyph(glyph: bytes) -> bytes:
     )
 
 
-def build_font(root: Path, spec: tuple[int, str, str, str | None, str]) -> dict[str, object]:
+def build_font(
+    root: Path,
+    spec: tuple[int, str, str, str | None, str],
+    source_root: Path | None = None,
+) -> dict[str, object]:
     font_id, name, bitmap_name, source_name, license_name = spec
-    full, half = source_layout(root)
+    source = source_root or root / "poketcg"
+    full, half = source_layout(root, source)
     glyphs = load_hex(root / "third_party" / "fonts" / bitmap_name)
     half_glyphs = load_bdf(root / "third_party" / "fonts" / HALF_SOURCE)
-    half_map, full_map = load_charmaps(root / "poketcg" / "src" / "constants" / "charmaps.asm")
+    half_map, full_map = load_charmaps(source / "src" / "constants" / "charmaps.asm")
     full_used = 0
     full_fallback: list[int] = []
     for slot, codepoint in sorted(full_map.items()):
@@ -217,8 +223,8 @@ def build_font(root: Path, spec: tuple[int, str, str, str | None, str]) -> dict[
     }
 
 
-def build_fonts(root: Path = ROOT) -> list[dict[str, object]]:
-    return [build_font(root, spec) for spec in FONT_SPECS]
+def build_fonts(root: Path = ROOT, source_root: Path | None = None) -> list[dict[str, object]]:
+    return [build_font(root, spec, source_root) for spec in FONT_SPECS]
 
 
 def main() -> int:

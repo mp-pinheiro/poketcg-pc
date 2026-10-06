@@ -17,13 +17,14 @@ sys.path.insert(0, str(ROOT))
 from schema import SchemaValidationError, validate_cases
 sys.path.insert(0, str(ROOT / "tests"))
 from routines import ALL, EXCLUSIONS
+from tools.profiles import get_profile
+
+PROFILE = get_profile(root=ROOT)
 
 
 def load_modules(only: str | None = None) -> list[tuple[Path, object]]:
     result = []
-    for path in sorted((ROOT / "tests/cases").glob("*.py")):
-        if path.name == "__init__.py":
-            continue
+    for path in PROFILE.case_modules(ROOT):
         if only is not None and path.stem != only:
             continue
         spec = importlib.util.spec_from_file_location(f"audit_{path.stem}", path)
@@ -77,7 +78,7 @@ def uncased_routines(modules: list[tuple[Path, object]]) -> list[tuple[str, str]
             cased.add(fn.replace(".", "_"))
     excluded = {fn for entries in EXCLUSIONS.values() if isinstance(entries, dict) for fn in entries}
     missing = []
-    for source in sorted((ROOT / "src/home").glob("*.c")):
+    for source in PROFILE.home_sources(ROOT):
         for fn in C_BLOCK.findall(source.read_text()):
             if fn != "statics" and fn not in cased and fn not in excluded:
                 missing.append((source.name, fn))
@@ -134,7 +135,7 @@ def main() -> int:
             if args.stage == "release" and exclusion["kind"] == "dependency-pending":
                 print(f"EXCLUSION dependency-pending blocks release {basename}:{fn}")
                 failures += 1
-    for path in sorted((ROOT / "tests/cases").glob("*.py")):
+    for path in PROFILE.case_modules(ROOT):
         for fault in marker_faults(path):
             print(f"MARKERS {path.name}: {fault}")
             failures += 1

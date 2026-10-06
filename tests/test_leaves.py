@@ -26,6 +26,10 @@ sys.path.insert(0, str(ROOT / "tools" / "oracle"))
 sys.path.insert(0, str(ROOT / "tests" / "cases"))
 sys.path.insert(0, str(ROOT / "tests"))
 
+from tools.profiles import get_profile
+
+PROFILE = get_profile()
+
 from lane_frames import lane_frames  # noqa: E402
 from routines import ALL, EXCLUSIONS, ROUTINES  # noqa: E402
 from tests.cases._schema_migration import _seed_byte  # noqa: E402
@@ -50,7 +54,7 @@ def symbol_bank(fn: str) -> int | None:
         import re
 
         pattern = re.compile(r"^([0-9A-Fa-f]{2}):([0-9A-Fa-f]{4})\s+(\S+)\s*$")
-        for line in (ROOT / "poketcg" / "poketcg.sym").read_text().splitlines():
+        for line in PROFILE.sym_path(ROOT).read_text().splitlines():
             match = pattern.match(line)
             if match:
                 _SYMBOL_BANKS.setdefault(
@@ -64,9 +68,7 @@ def symbol_bank(fn: str) -> int | None:
 def load_cases() -> tuple[dict[str, list[dict]], dict[str, tuple[str, ...]]]:
     cases: dict[str, list[dict]] = {}
     contracts: dict[str, tuple[str, ...]] = {}
-    for path in sorted((ROOT / "tests" / "cases").glob("*.py")):
-        if path.name == "__init__.py":
-            continue
+    for path in PROFILE.case_modules(ROOT):
         spec = importlib.util.spec_from_file_location(f"cases_{path.stem}", path)
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
@@ -538,8 +540,8 @@ def main() -> int:
     selectors.add_argument("--all", action="store_true", help="diff every routine")
     ap.add_argument("--oracle-mode", choices=("live", "refresh", "cache"), default="live")
     ap.add_argument("--cache-dir", type=Path)
-    ap.add_argument("--probe", type=Path, default=ROOT / "build" / "poketcg_probe")
-    ap.add_argument("--rom", default=os.environ.get("POKETCG_ROM", str(ROOT / "poketcg" / "poketcg.gbc")))
+    ap.add_argument("--probe", type=Path, default=PROFILE.probe_path(ROOT))
+    ap.add_argument("--rom", default=os.environ.get("POKETCG_ROM", str(PROFILE.rom_path(ROOT))))
     ap.add_argument("--report", type=Path, help="write gate record to JSON (requires --all)")
     ap.add_argument("--shard", help="I/K: run only sorted routines where index %% K == I")
     ap.add_argument("--auto-observe", action="store_true",

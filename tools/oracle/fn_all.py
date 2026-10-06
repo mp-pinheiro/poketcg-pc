@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tests"))
 from routines import ALL, EXCLUSIONS  # noqa: E402
+from tools.profiles import get_profile  # noqa: E402
 EXCLUDED = {
     fn: entry
     for basename, entries in EXCLUSIONS.items()
@@ -27,7 +28,7 @@ EXCLUDED = {
 
 def load_cases() -> dict[str, list[tuple[Path, dict]]]:
     found: dict[str, list[tuple[Path, dict]]] = {}
-    for path in sorted((ROOT / "tests" / "cases").glob("*.py")):
+    for path in get_profile(root=ROOT).case_modules(ROOT):
         spec = importlib.util.spec_from_file_location(f"barrier_{path.stem}", path)
         if spec is None or spec.loader is None:
             raise SystemExit(f"ARTIFACT cannot load {path}")

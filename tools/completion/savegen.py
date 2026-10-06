@@ -26,9 +26,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import effects
 import session
+from tools.profiles import get_profile
 
-SAVES = ROOT / "build" / "completion" / "saves"
-PRET = ROOT / "poketcg" / "src"
+PROFILE = get_profile()
+
+
+SAVES = PROFILE.build_path(ROOT) / "completion" / "saves"
+PRET = PROFILE.source_path(ROOT) / "src"
 SCRIPTING = PRET / "engine" / "overworld" / "scripting.asm"
 SCRIPT_CONSTANTS = PRET / "constants" / "script_constants.asm"
 BANK = 0x2000

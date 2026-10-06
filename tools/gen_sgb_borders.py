@@ -18,9 +18,13 @@ BORDER_SPECS = (
 )
 
 
-def build_border(root: Path, spec: tuple[int, str, str, str, str, str]) -> dict[str, object]:
+def build_border(
+    root: Path,
+    spec: tuple[int, str, str, str, str, str],
+    source_root: Path | None = None,
+) -> dict[str, object]:
     border_id, name, tiles_low, tiles_high, palettes, tile_map = spec
-    source = root / "poketcg" / "src" / "data" / "sgb_data"
+    source = (source_root or root / "poketcg") / "src" / "data" / "sgb_data"
     paths = [source / tiles_low, source / tiles_high, source / palettes, source / tile_map]
     low, high, pals, layout = (path.read_bytes() for path in paths)
     if len(low) > 0x1000 or len(high) > 0x1000 or len(pals) > PALETTE_BYTES or len(layout) != MAP_BYTES:
@@ -41,8 +45,8 @@ def build_border(root: Path, spec: tuple[int, str, str, str, str, str]) -> dict[
     }
 
 
-def build_borders(root: Path = ROOT) -> list[dict[str, object]]:
-    return [build_border(root, spec) for spec in BORDER_SPECS]
+def build_borders(root: Path = ROOT, source_root: Path | None = None) -> list[dict[str, object]]:
+    return [build_border(root, spec, source_root) for spec in BORDER_SPECS]
 
 
 def main() -> int:

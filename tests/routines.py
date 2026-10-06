@@ -27,10 +27,10 @@ if str(_ROOT) not in sys.path:
 
 
 def _load() -> dict[str, tuple[str, ...]]:
+    from tools.profiles import get_profile
+
     routines: dict[str, tuple[str, ...]] = {}
-    for path in sorted((_ROOT / "tests" / "cases").glob("*.py")):
-        if path.name.startswith("_") or path.name == "__init__.py":
-            continue
+    for path in get_profile(root=_ROOT).case_modules(_ROOT):
         spec = importlib.util.spec_from_file_location(f"registry_{path.stem}", path)
         if spec is None or spec.loader is None:
             raise RuntimeError(f"routines: cannot load {path}")

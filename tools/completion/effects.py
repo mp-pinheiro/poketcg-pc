@@ -17,13 +17,16 @@ import re
 import sys
 from pathlib import Path
 from typing import Any
+from tools.profiles import get_profile
+
 
 ROOT = Path(__file__).resolve().parents[2]
-PRET = ROOT / "poketcg" / "src"
+PROFILE = get_profile()
+PRET = PROFILE.source_path(ROOT) / "src"
 CARDS = PRET / "data" / "cards.asm"
 COMMANDS = PRET / "engine" / "duel" / "effect_commands.asm"
 CONSTANTS = PRET / "constants" / "card_constants.asm"
-MAP_PATH = ROOT / "build" / "completion" / "effects.json"
+MAP_PATH = PROFILE.build_path(ROOT) / "completion" / "effects.json"
 DECK_SIZE = 60
 COPIES = 4
 ENERGY_CARDS = 24

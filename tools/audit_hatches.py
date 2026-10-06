@@ -39,6 +39,10 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT / "tests"))
+from profiles import get_profile
+
+PROFILE = get_profile(root=ROOT)
+
 
 from audit_oracle_cases import load_modules
 
@@ -64,7 +68,7 @@ def asm_bodies() -> dict[str, tuple[int, str, int]]:
     up to the next global label. A body that is only a straight-line `ret`
     stops there; anything with a branch is counted whole."""
     bodies: dict[str, tuple[int, str, int]] = {}
-    for path in glob.glob(str(ROOT / "poketcg" / "src" / "**" / "*.asm"), recursive=True):
+    for path in glob.glob(str(PROFILE.source_path(ROOT) / "src" / "**" / "*.asm"), recursive=True):
         lines = Path(path).read_text(errors="replace").split("\n")
         for index, line in enumerate(lines):
             match = LABEL.match(line)
@@ -93,8 +97,9 @@ def asm_bodies() -> dict[str, tuple[int, str, int]]:
 def hollow_bodies() -> dict[str, str]:
     """C factory blocks with no calls and no bus access -> file name."""
     hollow: dict[str, str] = {}
-    for path in sorted(glob.glob(str(ROOT / "src" / "home" / "*.c"))):
-        text = Path(path).read_text()
+    for source in PROFILE.home_sources(ROOT):
+        path = str(source)
+        text = source.read_text()
         for match in FACTORY.finditer(text):
             name, body = match.group(1), match.group(2)
             if name == "statics":

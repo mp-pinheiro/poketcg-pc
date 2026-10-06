@@ -16,9 +16,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import refstream
 
-INVENTORY = ROOT / "site" / "data" / "inventory.json"
-CASES_DIR = ROOT / "tests" / "cases"
-DISASM = ROOT / "poketcg"
+from tools.profiles import get_profile
+
+PROFILE = get_profile()
+
+INVENTORY = PROFILE.artifact_path("inventory", ROOT)
+CASES_DIR = PROFILE.case_path(ROOT)
+DISASM = PROFILE.source_path(ROOT)
 FIELD_BASE = {
     "wram": 0xC000,
     "hram": 0xFF80,

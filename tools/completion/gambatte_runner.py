@@ -18,12 +18,16 @@ import urllib.error
 import urllib.request
 import zlib
 from pathlib import Path
+from tools.profiles import get_profile
+
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
-PINS_PATH = ROOT / "tools" / "completion" / "gambatte_pins.toml"
-BUILD_ROOT = ROOT / "build" / "completion" / "gambatte"
-SOURCE_ROOT = BUILD_ROOT / "source"
+PROFILE = get_profile()
+PINS_PATH = ROOT / "tools" / "completion" / (
+    "gambatte_pins.toml" if PROFILE.name == "vanilla" else f"gambatte_pins_{PROFILE.name}.toml"
+)
+BUILD_ROOT = PROFILE.build_path(ROOT) / "completion" / "gambatte"
 WIDTH = 160
 HEIGHT = 144
 SAMPLES_PER_FRAME = 35112

@@ -16,10 +16,10 @@ static void service_pending_interrupt(GBContext *ctx) {
     if (ctx->halted && pending) ctx->halted = 0;
     ctx->stopped = 0;
 }
-static void seed_call_environment(GBContext *ctx) {
-    gb_write8(ctx, 0xcad0, 0xc3);
-    gb_write8(ctx, 0xcad1, 0x48);
-    gb_write8(ctx, 0xcad2, 0x03);
+static void seed_call_environment(GBContext *ctx, uint16_t trampoline, uint16_t noop) {
+    gb_write8(ctx, trampoline, 0xc3);
+    gb_write8(ctx, (uint16_t)(trampoline + 1u), (uint8_t)noop);
+    gb_write8(ctx, (uint16_t)(trampoline + 2u), (uint8_t)(noop >> 8));
     gb_write8(ctx, 0xff40, 0);
     gb_write8(ctx, 0xff0f, 0);
 }
@@ -538,6 +538,9 @@ int main(int argc, char **argv) {
     int mapper_vram_state = json_number(request, "vram_bank", &mapper_vram_bank);
     int mapper_enable_state = json_number(request, "ram_enable", &mapper_ram_enable);
     int mapper_hbank_state = json_number(request, "hbank_rom", &mapper_hbank_rom);
+    uint64_t vblank_trampoline = 0xcad0, vblank_noop = 0x0348;
+    json_number(request, "vblank_trampoline", &vblank_trampoline);
+    json_number(request, "vblank_noop", &vblank_noop);
     if (mapper_mode_state == 0) mapper_mode_state = 1;
     SetupCall setup_calls[256];
     size_t setup_count = 0;
@@ -621,7 +624,7 @@ int main(int argc, char **argv) {
         fail("ARTIFACT", "runtime rejected ROM");
     }
     gb_context_reset(ctx, true);
-    seed_call_environment(ctx);
+    seed_call_environment(ctx, (uint16_t)vblank_trampoline, (uint16_t)vblank_noop);
     if (strcmp(mapper_mode, "seeded") == 0) {
         seed_mapper_shadows(ctx, mapper_rom_bank, mapper_ram_bank, mapper_ram_enable);
     } else {
