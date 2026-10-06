@@ -182,6 +182,15 @@ extended-check BASENAME: build-extended-incremental
     export POKETCG_ROM="$(python3 tools/profile_path.py rom)"
     uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --group {{BASENAME}} --oracle-mode live --probe "$(python3 tools/profile_path.py probe)"
 
+# Oracle-diff one Extended routine (repeatable: `just extended-check-fn Foo Bar`).
+extended-check-fn +FNS: build-extended-incremental
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export POKETCG_PROFILE=extended
+    export POKETCG_ROM="$(python3 tools/profile_path.py rom)"
+    args=(); for fn in {{FNS}}; do args+=(--fn "$fn"); done
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py "${args[@]}" --oracle-mode live --probe "$(python3 tools/profile_path.py probe)"
+
 build-profiles:
     POKETCG_PROFILE=vanilla just progress-inventory
     POKETCG_PROFILE=extended just progress-inventory
