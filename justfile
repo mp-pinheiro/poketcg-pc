@@ -5,6 +5,13 @@
 # their own pret basenames, so neither ninja state nor a compile error is shared.
 build_dir := env_var_or_default("POKETCG_BUILD", "build")
 port_files := env_var_or_default("POKETCG_PORTS", "")
+ninja_jobs := env_var_or_default("POKETCG_NINJA_JOBS", "")
+profile_rom := `python3 tools/profile_path.py rom`
+profile_map := `python3 tools/profile_path.py map`
+profile_sym := `python3 tools/profile_path.py sym`
+profile_binary := `python3 tools/profile_path.py binary`
+profile_probe := `python3 tools/profile_path.py probe`
+profile_pack := `python3 tools/profile_path.py pack`
 # default recipe
 default:
     @just --list
@@ -16,8 +23,9 @@ bootstrap:
     set -euo pipefail
     if [ ! -d poketcg ]; then
         git clone https://github.com/pret/poketcg poketcg
-        git -C poketcg checkout 0e7157e
+        git -C poketcg checkout 0e7157e885c03d68b3b44410d3adc5aede385627
     fi
+    git -C poketcg checkout --detach 0e7157e885c03d68b3b44410d3adc5aede385627
     if [ ! -d poketcg2 ]; then
         git clone https://github.com/pret/poketcg2 poketcg2
     fi
@@ -27,6 +35,9 @@ bootstrap:
     fi
     make -C poketcg DEBUG=1
     python3 tools/verify_oracle_artifacts.py
+
+bootstrap-extended:
+    python3 tools/bootstrap_extended.py
 
 
 # Per-clone VCS setup: jj --repo config lives outside the repo, so a fresh
@@ -128,6 +139,57 @@ hatch-ratchet:
 build:
     cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPORT_FILES="{{port_files}}"
     ninja -C {{build_dir}}
+build-extended: extended-configure
+    ninja {{ninja_jobs}} -C {{build_dir}} poketcg-extended poketcg_extended_probe
+
+# Regenerate the Extended inventory and sparse pack, then configure the Extended targets.
+extended-configure:
+    POKETCG_PROFILE=extended just progress-inventory
+    POKETCG_PROFILE=extended python3 tools/gen_data.py --sparse-pack --verify --pack {{build_dir}}/completion/data-pack-extended.bin --pack-manifest {{build_dir}}/completion/data-pack-extended.json
+    cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPOKETCG_ENABLE_EXTENDED=ON -DPOKETCG_DATA_PACK_EXTENDED="{{build_dir}}/completion/data-pack-extended.bin" -DPORT_FILES=""
+
+# Configure a private Extended build directory without touching the shared inventory or pack
+# (the probe does not load the pack; port lanes use this before `just extended-check`).
+extended-configure-lane:
+    cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPOKETCG_ENABLE_EXTENDED=ON -DPORT_FILES=""
+
+# Incremental Extended rebuild of the game and probe only.
+build-extended-incremental:
+    ninja {{ninja_jobs}} -C {{build_dir}} poketcg-extended poketcg_extended_probe
+
+# Start an Extended overlay for one pret basename: copy the shared trio, seed the
+# Extended case module from the vanilla one, and list the routines whose asm differs.
+extended-overlay BASENAME:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    mkdir -p src/profiles/extended/home src/profiles/extended/probe tests/profiles/extended/cases
+    for pair in "src/home/{{BASENAME}}.c src/profiles/extended/home/{{BASENAME}}.c" \
+                "src/home/{{BASENAME}}.h src/profiles/extended/home/{{BASENAME}}.h" \
+                "src/probe/{{BASENAME}}.c src/profiles/extended/probe/{{BASENAME}}.c"; do
+        set -- $pair
+        if [ -f "$2" ]; then echo "keep $2"; elif [ -f "$1" ]; then cp "$1" "$2"; echo "copied $2"; fi
+    done
+    if [ -f tests/cases/{{BASENAME}}.py ] && [ ! -f tests/profiles/extended/cases/{{BASENAME}}.py ]; then
+        python3 tools/transpose_cases.py {{BASENAME}}
+    fi
+    python3 tools/profile_audit.py --routines {{BASENAME}}
+
+# Oracle-diff one Extended basename against the Extended ROM through its overlay cases.
+extended-check BASENAME: build-extended-incremental
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export POKETCG_PROFILE=extended
+    export POKETCG_ROM="$(python3 tools/profile_path.py rom)"
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --group {{BASENAME}} --oracle-mode live --probe "$(python3 tools/profile_path.py probe)"
+
+build-profiles:
+    POKETCG_PROFILE=vanilla just progress-inventory
+    POKETCG_PROFILE=extended just progress-inventory
+    POKETCG_PROFILE=vanilla python3 tools/gen_data.py --sparse-pack --verify --pack {{build_dir}}/completion/data-pack.bin --pack-manifest {{build_dir}}/completion/data-pack.json
+    POKETCG_PROFILE=extended python3 tools/gen_data.py --sparse-pack --verify --pack {{build_dir}}/completion/data-pack-extended.bin --pack-manifest {{build_dir}}/completion/data-pack-extended.json
+    cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPOKETCG_ENABLE_EXTENDED=ON -DPOKETCG_ENABLE_LAUNCHER=ON -DPOKETCG_DATA_PACK="{{build_dir}}/completion/data-pack.bin" -DPOKETCG_DATA_PACK_EXTENDED="{{build_dir}}/completion/data-pack-extended.bin" -DPORT_FILES=""
+    ninja -C {{build_dir}} poketcg poketcg_probe poketcg-extended poketcg_extended_probe poketcg-launcher
+
 debug-build:
     cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPOKETCG_DEBUG_MENU=ON -DPORT_FILES=""
     ninja -C {{build_dir}}
@@ -138,7 +200,13 @@ debug-build:
 # --record-input /tmp/NAME.txt` replays a recorded prefix at full speed, then hands
 # the keyboard over and keeps recording.
 play *ARGS:
+    {{build_dir}}/poketcg-launcher {{ARGS}}
+
+play-vanilla *ARGS:
     {{build_dir}}/poketcg --data-pack {{build_dir}}/completion/data-pack.bin --frames 0 {{ARGS}}
+
+play-extended *ARGS:
+    {{build_dir}}/poketcg-extended --data-pack {{build_dir}}/completion/data-pack-extended.bin --frames 0 {{ARGS}}
 
 # Fixed central barrier build; ignores slice-scoped environment variables.
 build-barrier:
@@ -163,65 +231,59 @@ build-incremental:
 oracle-warm FN: build-incremental
     #!/usr/bin/env bash
     set -euo pipefail
-    export POKETCG_ROM=poketcg/poketcg.gbc
-    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --fn {{FN}} --oracle-mode refresh --cache-dir {{build_dir}}/oracle-cache --probe {{build_dir}}/poketcg_probe
+    export POKETCG_ROM="{{profile_rom}}"
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --fn {{FN}} --oracle-mode refresh --cache-dir {{build_dir}}/oracle-cache --probe "{{profile_probe}}"
 
 oracle-warm-group GROUP: build-incremental
     #!/usr/bin/env bash
     set -euo pipefail
-    export POKETCG_ROM=poketcg/poketcg.gbc
-    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --group {{GROUP}} --oracle-mode refresh --cache-dir {{build_dir}}/oracle-cache --probe {{build_dir}}/poketcg_probe
+    export POKETCG_ROM="{{profile_rom}}"
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --group {{GROUP}} --oracle-mode refresh --cache-dir {{build_dir}}/oracle-cache --probe "{{profile_probe}}"
 
 oracle-diff-fast FN: build-incremental
     #!/usr/bin/env bash
     set -euo pipefail
-    export POKETCG_ROM=poketcg/poketcg.gbc
+    export POKETCG_ROM="{{profile_rom}}"
     python3 tools/audit_oracle_cases.py --stage routine
-    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --fn {{FN}} --oracle-mode cache --cache-dir {{build_dir}}/oracle-cache --probe {{build_dir}}/poketcg_probe
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --fn {{FN}} --oracle-mode cache --cache-dir {{build_dir}}/oracle-cache --probe "{{profile_probe}}"
 
 oracle-diff-fast-group GROUP: build-incremental
     #!/usr/bin/env bash
     set -euo pipefail
-    export POKETCG_ROM=poketcg/poketcg.gbc
-    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --group {{GROUP}} --oracle-mode cache --cache-dir {{build_dir}}/oracle-cache --probe {{build_dir}}/poketcg_probe
+    export POKETCG_ROM="{{profile_rom}}"
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --group {{GROUP}} --oracle-mode cache --cache-dir {{build_dir}}/oracle-cache --probe "{{profile_probe}}"
 
 oracle-diff-group GROUP: build
     #!/usr/bin/env bash
     set -euo pipefail
-    export POKETCG_ROM=poketcg/poketcg.gbc
-    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --group {{GROUP}} --oracle-mode live --probe {{build_dir}}/poketcg_probe
+    export POKETCG_ROM="{{profile_rom}}"
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --group {{GROUP}} --oracle-mode live --probe "{{profile_probe}}"
 
-
-
-# Run one schema-2 case through the GBRT primary and native probe.
 oracle-fn FN CASE INDEX="0": oracle-build-gbref build-barrier
-    python3 tools/oracle/gbref/compare_one.py --fn {{FN}} --index {{INDEX}} --case {{CASE}} --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
-# Fixed GBRT primary inventory barrier.
+    python3 tools/oracle/gbref/compare_one.py --fn {{FN}} --index {{INDEX}} --case {{CASE}} --rom "$(realpath {{profile_rom}})" --symbols "$(realpath {{profile_sym}})" --probe "$(realpath {{profile_probe}})" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
+
 oracle-fn-all: oracle-build-gbref build-barrier lint-adapters
-    python3 tools/oracle/fn_all.py --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
-# Primary function gate: GBRT health, adapters, schema, and inventory.
+    python3 tools/oracle/fn_all.py --rom "$(realpath {{profile_rom}})" --symbols "$(realpath {{profile_sym}})" --probe "$(realpath {{profile_probe}})" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
+
 oracle-fn-gate: oracle-health-gbref oracle-fn-all
     python3 tools/audit_oracle_cases.py --stage routine
     python3 tools/audit_hatches.py --stage routine
 
-
 gate-report: oracle-fn-all
     python3 tools/progress/report.py build
 
-# Independent PyBoy audit lane; a health failure quarantines this lane.
 oracle-audit-all: oracle-health-pyboy
-    export POKETCG_ROM=poketcg/poketcg.gbc
-    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --all --oracle-mode live --probe build-barrier/poketcg_probe
+    export POKETCG_ROM="{{profile_rom}}"
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --all --oracle-mode live --probe "{{profile_probe}}"
 
-# Sharded PyBoy audit: 4 processes over the sorted census; same verdicts as --all.
 oracle-audit-all-parallel: oracle-health-pyboy
     #!/usr/bin/env bash
     set -euo pipefail
-    export POKETCG_ROM=poketcg/poketcg.gbc
+    export POKETCG_ROM="{{profile_rom}}"
     tmp=$(mktemp -d)
     pids=()
     for i in 0 1 2 3; do
-        uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --all --oracle-mode live --probe build-barrier/poketcg_probe --shard "$i/4" >"$tmp/$i.log" 2>&1 &
+        uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --all --oracle-mode live --probe "{{profile_probe}}" --shard "$i/4" >"$tmp/$i.log" 2>&1 &
         pids+=("$!")
     done
     rc=0
@@ -232,40 +294,36 @@ oracle-audit-all-parallel: oracle-health-pyboy
     rm -rf "$tmp"
     exit "$rc"
 
-# Advisory differential fuzz over the thinnest landed matrices; never gates.
 oracle-fuzz-thin: oracle-build-gbref build-barrier
     python3 tools/oracle/fuzz_one.py --thinnest 20 --variants 16
 
-# Aggregate function gate adds the independent PyBoy audit.
 oracle-gate: oracle-fn-gate oracle-audit-all-parallel
     python3 tools/audit_oracle_cases.py --stage routine
     python3 tools/audit_hatches.py --stage routine
 
-# Sole release authority. It records an immutable run and an atomic pointer.
 oracle-release-gate:
     python3 tools/oracle/release_gate.py
 
-# Diff one routine's C port against PyBoy running the real ROM.
 oracle-diff FN *ARGS: build
     #!/usr/bin/env bash
     set -euo pipefail
-    export POKETCG_ROM=poketcg/poketcg.gbc
+    export POKETCG_ROM="{{profile_rom}}"
     python3 tools/audit_oracle_cases.py --stage routine
-    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --fn {{FN}} --probe {{build_dir}}/poketcg_probe {{ARGS}}
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --fn {{FN}} --probe "{{profile_probe}}" {{ARGS}}
 
-# Which of a routine's writes no case observes (--all sweeps every routine).
 blind-spots *ARGS:
     #!/usr/bin/env bash
     set -euo pipefail
-    export POKETCG_ROM=poketcg/poketcg.gbc
+    export POKETCG_ROM="{{profile_rom}}"
     uv run --project tools/oracle --frozen --python 3.12.3 python tools/oracle/blind_spots.py {{ARGS}}
 
-# Diff every routine in tests/routines.py. Non-zero if any fails or has no cases.
 oracle-diff-all: build lint-adapters lint-constants
     #!/usr/bin/env bash
     set -euo pipefail
-    export POKETCG_ROM=poketcg/poketcg.gbc
-    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --all --probe {{build_dir}}/poketcg_probe
+    export POKETCG_ROM="{{profile_rom}}"
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --all --probe "{{profile_probe}}"
+
+
 
 # Reject probe adapters that reimplement the routine they marshal (issue #19).
 lint-adapters:
@@ -282,7 +340,7 @@ oracleb-regenerate:
     generator="${POKETCG_GBRECOMP:-$HOME/.local/gbrecomp/gb-recompiled-linux/gbrecomp}"
     output="${POKETCG_ORACLEB_DIR:-$HOME/.local/share/gbrecompiled/poketcg}"
     jobs="${POKETCG_GBRECOMP_JOBS:-1}"
-    "$generator" poketcg/poketcg.gbc --symbols poketcg/poketcg.sym -o "$output" -j "$jobs"
+    "$generator" "{{profile_rom}}" --symbols "{{profile_sym}}" -o "$output" -j "$jobs"
     cmake -G Ninja -S "$output" -B "$output/build"
     ninja -C "$output/build" -j "$jobs"
     cp "$output/build/poketcg" "$output/poketcg"
@@ -326,6 +384,9 @@ progress-inventory:
     python3 tools/progress/inventory.py
 
 
+profile-audit:
+    python3 tools/profile_audit.py
+
 # Truthful completion audit and revision-pinned obligation checks.
 completion-audit:
     python3 tools/completion/completion.py audit
@@ -355,6 +416,25 @@ completion-data-pack:
     just progress-inventory
     just data-verify
     python3 tools/gen_data.py --sparse-pack --verify
+completion-data-pack-extended:
+    POKETCG_PROFILE=extended just progress-inventory
+    POKETCG_PROFILE=extended python3 tools/gen_data.py --sparse-pack --verify
+extended-boundary-gate:
+    python3 tools/extended_boundary.py --check
+
+
+extended-animation-manifest:
+    python3 tools/extended_animation.py --write
+
+extended-animation-gate:
+    python3 tools/extended_animation.py
+
+extended-fixes-gate:
+    python3 tools/extended_fixes.py
+
+extended-reference-gate:
+    python3 tools/extended_reference.py
+
 completion-data-pack-check:
     python3 tools/gen_data.py --pack-check
 
@@ -373,6 +453,14 @@ appimage:
 windows:
     just completion-data-pack
     tools/windows/build.sh build/completion/data-pack.bin
+appimage-profiles:
+    python3 tools/check_profile_distribution.py
+    python3 tools/package_profiles.py --format appimage
+
+windows-profiles:
+    python3 tools/check_profile_distribution.py
+    python3 tools/package_profiles.py --format windows
+
 
 completion-lanes-health:
     python3 tools/completion/oracle_lanes.py --health
@@ -508,7 +596,7 @@ session-ai-duel NAME DECK *ARGS:
 session-sweep NAME *ARGS: build
     #!/usr/bin/env bash
     set -euo pipefail
-    export POKETCG_ROM=poketcg/poketcg.gbc
+    export POKETCG_ROM="{{profile_rom}}"
     uv run --project tools/oracle --frozen --python 3.12.3 python tools/completion/session.py sweep "{{NAME}}" {{ARGS}}
 
 # Count the composition defects per-routine verification cannot see.
