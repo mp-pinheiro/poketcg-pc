@@ -3,28 +3,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
+#define MENU_CONFIRM 0x01u
+#define CURSOR_BLINK_PERIOD_MASK 0x0Fu
+#define B_CURSOR_BLINK_PERIOD 4u
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
-#define DECK_SIZE 60u
 #define SCARDCOLLECTION_ADDR 0xA100u
-#define MAX_AMOUNT_OF_CARD 99u
 #include "home/card_data.h"
 #include "mem.h"
 
 #define SYM_0 0x20u
-#define FILTER_ENERGY 0x20u
 #define FILTER_TRAINER 0x10u
-#define TYPE_ENERGY 0x08u
 #define HFFB3 0xffb3u
 #include "home/deck_configuration.h"
 
 #include "home/deck_selection.h"
 #include "home/switch_sram.h"
 
-#define NUM_DECKS 0x04u
 
 #include "home/tiles.h"
 
@@ -37,17 +37,11 @@
 #include "home/deck_configuration.h"
 #include "home/switch_sram.h"
 
-#define CARD_COLLECTION_SIZE 0x100u
-#define DECK_1_F 0x00u
-#define DECK_2_F 0x01u
-#define DECK_3_F 0x02u
-#define DECK_4_F 0x03u
 
 #include "generated/wram.h"
 
 #include "home/switch_sram.h"
 #include "mem.h"
-#define DECK_NAME_SIZE 0x18u
 
 #include "home/empty_screen.h"
 #include "home/deck_configuration.h"
@@ -61,10 +55,6 @@
 #include "generated/wram.h"
 #include "home/deck_configuration.h"
 #include "home/process_text.h"
-#define ALL_DECKS 0xffu
-#define NUM_CARDS 0xe4u
-#define TX_END 0x00u
-#define TX_SYMBOL 0x05u
 #define SYM_SPACE 0x00u
 
 #include "generated/wram.h"
@@ -94,12 +84,9 @@
 #include "home/process_text.h"
 #include "home/print_text.h"
 #include "generated/wram.h"
-#define NUM_FILTERS 0x09u
-#define NoCardsChosenText 0x023eu
 
 #include "home/sound.h"
 #include "generated/wram.h"
-#define SFX_CURSOR 0x01u
 
 #include "home/switch_sram.h"
 #include "home/deck_selection.h"
@@ -108,17 +95,13 @@
 
 #include "home/card_data.h"
 #include "generated/wram.h"
-#define CARD_NOT_OWNED 0x80u
 
 #include "home/deck_configuration.h"
 #include "home/deck_check.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
 
-#define MENU_CONFIRM 0x01u
 
-#define B_CURSOR_BLINK_PERIOD 0x04u
-#define CURSOR_BLINK_PERIOD_MASK 0x0fu
 
 #include "generated/wram.h"
 #include "generated/hram.h"
@@ -143,7 +126,6 @@
 #include "home/print_text.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define SCardsText 0x025au
 
 #include "home/deck_configuration.h"
 #include "home/switch_sram.h"
@@ -164,7 +146,6 @@
 #include "home/print_text.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define NewDeckText 0x0223u
 #define DECK_NAME_SUFFIX_ADDR_590 DeckNameSuffix_ADDR
 
 #include "home/deck_configuration.h"
@@ -189,7 +170,6 @@
 #include "home/process_text.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define DECK_NAME_SIZE_WO_SUFFIX 0x15u
 #define APPEND_DECK_NAME_TEXT_START_ADDR (AppendDeckName_ADDR + 0x3Au)
 
 #include "home/deck_configuration.h"
@@ -225,7 +205,6 @@
 #include "home/deck_configuration.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define NUM_DECK_CONFIRMATION_VISIBLE_CARDS 0x07u
 static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 0x05u, 0x06u, 0x10u, 0x20u};
 
 #define Text_9a30 Text_9a30_ADDR
@@ -242,7 +221,6 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "home/deck_configuration.h"
 #include "home/deck_selection.h"
 #include "home/switch_sram.h"
-#define NUM_FILTERED_LIST_VISIBLE_CARDS 0x06u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -285,12 +263,7 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "home/lcd.h"
 #define SYM_BOX_TOP 0x1Cu
 
-#define CONSOLE_CGB 0x02u
 #define SYM_CROSS 0x2Du
-#define TYPE_TRAINER 0x10u
-#define ICON_TILE_BASIC_POKEMON 0xD0u
-#define ICON_TILE_FIRE 0xE0u
-#define ICON_TILE_TRAINER 0xDCu
 #include "generated/wram.h"
 #include "home/deck_configuration.h"
 #include "home/menus.h"
@@ -302,7 +275,6 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "home/card_data.h"
 #include "home/deck_configuration.h"
 #include "home/sound.h"
-#define TYPE_ENERGY_DOUBLE_COLORLESS 0x0eu
 
 #include "generated/wram.h"
 #include "generated/hram.h"
@@ -349,12 +321,6 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "home/menus.h"
 #include "generated/wram.h"
 /* DECK_SIZE is already #define'd as 60u earlier in this statics block. */
-#define ThisIsntA60CardDeckText 0x0238u
-#define ReturnToOriginalConfigurationText 0x023au
-#define TheDeckMustInclude60CardsText 0x0239u
-#define SaveThisDeckText 0x023bu
-#define ThereAreNoBasicPokemonInThisDeckText 0x0236u
-#define YouMustIncludeABasicPokemonInTheDeckText 0x0237u
 
 #include "home/deck_configuration.h"
 #include "home/deck_selection.h"
@@ -366,14 +332,10 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "mem.h"
 /* DECK_SIZE (60u) and FILTERS_CARD_SELECTION_PARAMS_ADDR are already defined
  * earlier in this statics block, so they are not repeated here. */
-#define NAME_BUFFER_LENGTH 0x10u
-#define DismantleThisDeckText 0x023du
-#define ThereIsOnly1DeckSoCannotBeDismantledText 0x0235u
 
 #include "home/deck_configuration.h"
 #include "home/menus.h"
 #include "generated/wram.h"
-#define QuitModifyingTheDeckText 0x023cu
 
 #include "generated/hram.h"
 #include "generated/wram.h"

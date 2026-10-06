@@ -1,5 +1,6 @@
 #include "home/save.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/sram.h"
 #include "generated/wram.h"
@@ -12,8 +13,6 @@
 /* WRAMToSRAMMapper:: save.asm:461-497, ROM bank 4. 6 bytes/entry: dw addr, dw count,
  * db min, db max; terminated by a zero address word. */
 #define WRAM_TO_SRAM_MAPPER 0x5498u
-#define NUM_PC_PACKS 15
-#define PACK_UNOPENED 0x80
 
 static const uint8_t *mapper_entry(unsigned index)
 {

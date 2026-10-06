@@ -1,12 +1,12 @@
 #include "home/sound.h"
 #include "home/music.h"
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "home/switch_rom.h"
 #include "mem.h"
 
 #define BANK_CARD_GRAPHICS 0x31u
 #define MUSIC_BANK 0x42u
-#define SFX_DENIED 0x04u
 
 /* >>> factory Func_37c5 */
 /* sound.asm:56-113 */

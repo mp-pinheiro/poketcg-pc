@@ -1,5 +1,6 @@
 #include "home/mason_laboratory.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -9,7 +10,6 @@
 #define ENERGY_CARD_LIST EnergyCardList_ADDR
 #define ENERGY_CARD_LIST_BANK 3u
 #define ENERGY_CARD_LIST_LEN 6u
-#define MASON_LAB_IN_PRACTICE_DUEL 0x01u
 
 #include "home/grass_club_entrance.h"
 #define MasonLaboratoryAfterDuelTable (MasonLaboratoryAfterDuel_ADDR + 0x06u)
@@ -19,15 +19,9 @@
 #include "home/overworld.h"
 #include "home/scripting.h"
 #include "home/map_events.h"
-#define EVENT_MASON_LAB_STATE 0x3Eu
-#define EVENT_RECEIVED_LEGENDARY_CARDS 0x22u
-#define MASON_LAB_RECEIVED_STARTER_DECK 0x03u
-#define NPC_DRMASON 0x01u
 #define SCRIPT_ENTER_LAB_FIRST_TIME Script_EnterLabFirstTime_ADDR
 #define CHALLENGE_MACHINE_OBJECT_TABLE ChallengeMachineObjectTable_ADDR
 
-#define MAP_EVENT_CHALLENGE_MACHINE 0x0au
-#define SOUTH 0x02u
 /* >>> factory Func_d703 */
 FuncD703Result Func_d703(void)
 {

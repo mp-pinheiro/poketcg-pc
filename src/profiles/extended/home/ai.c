@@ -1,5 +1,6 @@
 #include "home/ai.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "home/duel.h"
@@ -30,21 +31,14 @@
 #define DECK_AI_POINTER_TABLE_ADDR DeckAIPointerTable_ADDR
 #define AI_ACTION_TABLE_SAM_PRACTICE_ADDR AIActionTable_SamPractice_ADDR
 
-#define AIACTION_START_DUEL 0x02u
-#define AIACTION_FORCED_SWITCH 0x03u
-#define AIACTION_KO_SWITCH 0x04u
 
-#define AIACTION_TAKE_PRIZE 0x05u
 
-#define AIACTION_DO_TURN 0x01u
 /* <<< factory statics */
 
 #define SAMS_PRACTICE_DECK_ID 0u
 #define SAMS_NORMAL_DECK_ID 2u
 #define PRACTICE_PLAYER_DECK_ID 1u
 #define PRACTICE_PLAYER_DECK 3u
-#define NUM_DECK_IDS 53u
-#define DUELIST_TYPE_AI_OPP 0x80u
 #define DUELVARS_DUELIST_TYPE 0xF1u
 
 /* ai.asm:1-46. Sam paths (deck id 0 or 2) force PRACTICE_PLAYER_DECK onto the

@@ -1,5 +1,6 @@
 #include "home/duel_core.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "generated/rom.h"
@@ -29,14 +30,7 @@ static void load_tx_ram2(uint16_t text_id)
 
 
 
-#define TYPE_TRAINER 0x10u
-#define TYPE_PKMN_COLORLESS 0x06u
-#define CARD_LOCATION_PLAY_AREA 0x10u
-#define CARD_DATA_HP 0x08u
-#define CARD_DATA_AI_INFO 0x40u
 #define TRAINER_TO_PKMN_DATA 0x6db9u /* bank 1 */
-#define MYSTERIOUS_FOSSIL 0xccu
-#define CLEFAIRY_DOLL 0xcbu
 
 static const uint8_t *trainer_to_pkmn_data(void)
 {
@@ -87,10 +81,6 @@ TrainerConvertResult ConvertSpecialTrainerCardToPokemon(uint8_t a, uint16_t hl, 
 				      0, (uint16_t)(hl + CARD_DATA_AI_INFO)};
 }
 
-#define STAGE1 0x01u
-#define STAGE2_WITHOUT_STAGE1 0x03u
-#define TYPE_ENERGY 0x08u
-#define DECK_SIZE 60u
 #define DUELVARS_CARD_LOCATIONS 0x00u
 #define DUELVARS_ARENA_CARD 0xBBu
 #define DUELVARS_ARENA_CARD_STAGE 0xCEu
@@ -100,12 +90,6 @@ TrainerConvertResult ConvertSpecialTrainerCardToPokemon(uint8_t a, uint16_t hl, 
 #define DUELVARS_ARENA_CARD_LAST_TURN_DAMAGE       0xF3u
 #define DUELVARS_ARENA_CARD_LAST_TURN_STATUS       0xF5u
 
-#define CONFUSED        0x01u
-#define ASLEEP          0x02u
-#define PARALYZED       0x03u
-#define POISONED        0x80u
-#define CNF_SLP_PRZ     0x0Fu
-#define PSN_DBLPSN      0xF0u
 
 #define THERE_WAS_NO_EFFECT_FROM_TX_RAM2_TEXT         0x014Bu
 #define THERE_WAS_NO_EFFECT_FROM_POISON_CONFUSION_TEXT 0x0183u

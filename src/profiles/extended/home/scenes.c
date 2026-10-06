@@ -1,5 +1,6 @@
 #include "home/scenes.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -16,17 +17,11 @@
 
 #define GFX_TABLE_POINTERS_BANK 0x20u
 #define GFX_TABLE_POINTERS_ADDR 0x4B5Du
-#define GFXTABLE_PALETTES 0x08u
-#define GFXTABLE_PORTRAITS 0x0Au
-#define PORTRAIT_PLAYER 0u
-#define PORTRAIT_SLOT_1 0xD0u
 #define PORTRAIT_TILE_COUNT 36u
 #define TILE_SIZE 16u
 #define TILEMAP_WIDTH 32u
 #define VRAM_BANK_REGISTER 0xFF4Fu
 #define PORTRAIT_PAL_BASE 0x97u
-#define SPRITE_BOOSTER_PACK_OAM 0x69u
-#define SPRITE_ANIM_COORD_X 0x02u
 static const uint8_t booster_logo_oam[] = {
 	0x20u,
 	0x00u, 0x00u, 0x00u, 0x00u,

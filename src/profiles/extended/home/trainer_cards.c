@@ -1,5 +1,7 @@
 #include "home/trainer_cards.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -10,8 +12,6 @@
 #include "home/duel.h"
 #include "mem.h"
 #include "home/random.h"
-#define TYPE_TRAINER 0x10u
-#define TYPE_ENERGY 0x08u
 
 #include "home/card_data.h"
 #include "home/duel.h"
@@ -40,14 +40,10 @@
 #include "home/duel.h"
 #include "home/random.h"
 #include "generated/wram.h"
-#define DECK_SIZE 0x3cu
 
 #include "home/duel.h"
 #include "home/trainer_cards.h"
 #include "generated/wram.h"
-#define ENERGY_REMOVAL 0xd0u
-#define MR_MIME 0x9bu
-#define POKEMON_TRADER 0xc9u
 
 #include "home/core.h"
 #include "home/substatus.h"
@@ -58,13 +54,9 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 
-#define BLASTOISE 0x43u
-#define CARD_LOCATION_DISCARD_PILE 0x02u
 #define DUELVARS_ARENA_CARD 0xbbu
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
 #define GO_GO_RAIN_DANCE_DECK_ID 0x12u
-#define MUK 0x27u
-#define PLAY_AREA_ARENA 0x00u
 
 #include "home/duel.h"
 #include "home/common.h"
@@ -73,158 +65,55 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 
-#define ALAKAZAM 0x90u
-#define DRAGONITE_LV41 0xc1u
 #define DUELVARS_ARENA_CARD_HP 0xc8u
-#define GENGAR 0x98u
-#define VENUSAUR_LV64 0x0au
-#define VENUSAUR_LV67 0x0bu
-#define VILEPLUME 0x1eu
 
-#define MOLTRES_LV35 0x3fu
-#define MOLTRES_LV37 0x40u
 
-#define ARTICUNO_LV35 0x5eu
-#define ARTICUNO_LV37 0x5fu
-#define CARD_LOCATION_DECK 0x00u
-#define CHANSEY 0xb8u
-#define SNORLAX 0xbeu
-#define DEWGONG 0x4cu
-#define DITTO 0xbbu
-#define LAPRAS 0x59u
-#define SEEL 0x4bu
 
-#define JIGGLYPUFF_LV12 0xadu
-#define TAUROS 0xbau
 
-#define ARCANINE_LV34 0x37u
-#define DODRIO 0xb6u
-#define DODUO 0xb5u
-#define GROWLITHE 0x36u
-#define RATICATE 0xa8u
-#define RATTATA 0xa7u
 
-#define GRIMER 0x26u
-#define PROFESSOR_OAK 0xc3u
 
-#define DIGLETT 0x79u
-#define DOUBLE_COLORLESS_ENERGY 0x07u
-#define DUGTRIO 0x7au
-#define FIGHTING_ENERGY 0x05u
-#define GEODUDE 0x80u
-#define GOLEM 0x82u
-#define GRAVELER 0x81u
-#define ONIX 0x83u
-#define RHYHORN 0x89u
 
 #define ANGER_DECK_ID 0x31u
 #define FIRE_CHARGE_DECK_ID 0x17u
 #define ROCK_CRUSHER_DECK_ID 0x11u
 #define WONDERS_OF_SCIENCE_DECK_ID 0x16u
 #define EXCAVATION_DECK_ID 0x1Fu
-#define MYSTERIOUS_FOSSIL 0xccu
-#define WATER_ENERGY 0x03u
 #define TRUE 0x01u
 #define DUELVARS_CARD_LOCATIONS 0x00u
-#define CARD_LOCATION_HAND 0x01u
 
-#define DRAGONAIR 0xc0u
-#define DRATINI 0xbfu
-#define EEVEE 0xbcu
-#define FLAREON_LV22 0x3du
-#define JOLTEON_LV24 0x72u
-#define VAPOREON_LV29 0x5au
-#define ZAPDOS_LV68 0x76u
 
-#define CLOYSTER 0x4eu
-#define HORSEA 0x51u
-#define KINGLER 0x50u
-#define KRABBY 0x4fu
-#define SEADRA 0x52u
-#define SHELLDER 0x4du
-#define TENTACOOL 0x49u
-#define TENTACRUEL 0x4au
 
-#define CHARIZARD 0x32u
-#define CHARMANDER 0x30u
-#define CHARMELEON 0x31u
-#define GYARADOS 0x58u
-#define KANGASKHAN 0xb9u
-#define MAGIKARP 0x57u
 
 #define ETCETERA_DECK_ID 0x28u
-#define FIRE_ENERGY 0x02u
-#define FLYING_PIKACHU 0x64u
-#define GASTLY_LV8 0x94u
 #define HARD_POKEMON_DECK_ID 0x21u
-#define JYNX 0x9cu
-#define LIGHTNING_ENERGY 0x04u
 #define LOVELY_NIDORAN_DECK_ID 0x2fu
-#define MACHOP 0x7du
-#define MAGMAR_LV31 0x3cu
-#define MAGNEMITE_LV13 0x69u
-#define NIDOKING 0x19u
-#define NIDOQUEEN 0x16u
-#define NIDORANF 0x14u
-#define NIDORANM 0x17u
-#define NIDORINA 0x15u
-#define NIDORINO 0x18u
-#define PIKACHU_ALT_LV16 0x63u
 #define PIKACHU_DECK_ID 0x25u
-#define PIKACHU_LV12 0x60u
-#define PIKACHU_LV14 0x61u
-#define PIKACHU_LV16 0x62u
-#define PSYCHIC_ENERGY 0x06u
-#define RHYDON 0x8au
 
 #include "home/trainer_cards.h"
 #include "home/common.h"
 #include "home/duel.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define PLAY_AREA_BENCH_1 0x01u
 
 #include "home/trainer_cards.h"
 #include "home/common.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define CUBONE 0x84u
-#define MAROWAK_LV26 0x85u
-#define PONYTA 0x39u
-#define RAPIDASH 0x3au
 
 #include "home/trainer_cards.h"
 #include "home/common.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define ARCANINE_LV45 0x38u
-#define FLAREON_LV28 0x3eu
-#define NINETALES_LV32 0x34u
-#define VULPIX 0x33u
 
 #include "home/trainer_cards.h"
 #include "home/common.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define BELLSPROUT 0x23u
-#define BULBASAUR 0x08u
-#define GLOOM 0x1du
-#define IVYSAUR 0x09u
-#define ODDISH 0x1cu
-#define VICTREEBEL 0x25u
-#define WEEPINBELL 0x24u
 
 #include "home/trainer_cards.h"
 #include "home/common.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define ELECTRODE_LV35 0x6eu
-#define ELECTRODE_LV42 0x6fu
-#define MAGNEMITE_LV15 0x6au
-#define MAGNETON_LV28 0x6bu
-#define MAGNETON_LV35 0x6cu
-#define RAICHU_LV40 0x67u
-#define VOLTORB 0x6du
 
 #include "home/trainer_cards.h"
 #include "generated/wram.h"
@@ -247,8 +136,6 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
-#define TYPE_ENERGY_FIRE 0x08u
-#define TYPE_ENERGY_LIGHTNING 0x0Au
 #define HEATED_BATTLE_DECK_ID 0x1Du
 
 #include "home/core.h"
@@ -259,18 +146,11 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
-#define AI_FLAG_MODIFIED_HAND 0x08u
-#define AI_FLAG_USED_SWITCH 0x02u
-#define EFFECTCMDTYPE_INITIAL_EFFECT_1 0x01u
-#define OPPACTION_PLAY_TRAINER 0x06u
-#define SWITCH 0xd2u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/coin_toss.h"
 #include "home/core.h"
-#define OPPACTION_EXECUTE_TRAINER_EFFECTS 0x07u
-#define TrainerCardSuccessCheckText 0x00efu
 
 #include "home/core.h"
 #include "home/damage_calculation.h"
@@ -286,12 +166,6 @@
 #include "home/card_color.h"
 #include "home/damage_calculation.h"
 #include "mem.h"
-#define AI_FLAG_USED_GUST_OF_WIND 0x10u
-#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
-#define MEWTWO_LV53 0x9Du
-#define MEW_LV23 0xA2u
-#define POKEMON_POWER 0x04u
-#define SECOND_ATTACK 0x01u
 
 #include "home/core.h"
 #include "home/damage_calculation.h"
@@ -316,13 +190,6 @@
 #include "home/core.h"
 #include "home/common.h"
 #include "generated/wram.h"
-#define ASLEEP 0x02u
-#define CNF_SLP_PRZ 0x0Fu
-#define CONFUSED 0x01u
-#define GASTLY_LV17 0x95u
-#define HAUNTER_LV22 0x97u
-#define PARALYZED 0x03u
-#define SCOOP_UP 0xD5u
 
 #include "home/core.h"
 #include "home/damage_calculation.h"
@@ -349,7 +216,6 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/core.h"
-#define AI_FLAG_USED_PLUSPOWER 0x01u
 
 #include "home/core.h"
 #include "generated/hram.h"
@@ -365,18 +231,9 @@
 #include "generated/hram.h"
 #include "mem.h"
 #define IMAKUNI_DECK_ID 0x34u
-#define NUM_COLORED_TYPES 0x06u
-#define CARD_LOCATION_ARENA 0x10u
 #define PLAYER_TURN 0xC2u
 #define DUELVARS_BENCH 0xBCu
-#define ATTACK_FLAG1_ADDRESS 0x00u
-#define HIGH_RECOIL_F 0x06u
-#define LOW_RECOIL_F 0x04u
-#define AI_MEWTWO_MILL 0x80u
 #define GHOST_DECK_ID 0x2Bu
-#define LASS 0xC7u
-#define MEOWTH_LV15 0xB2u
-#define ZUBAT 0x1Au
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -384,13 +241,10 @@
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/random.h"
-#define ATTACK_FLAG3_ADDRESS 0x10u
-#define BOOST_IF_TAKEN_DAMAGE_F 0u
 
 #include "home/core.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define AI_FLAG_USED_PROFESSOR_OAK 0x04u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -424,8 +278,6 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "home/core.h"
-#define WIGGLYTUFF 0xB0u
-#define MAX_PLAY_AREA_POKEMON 0x06u
 /* <<< factory statics */
 
 /* The exit F register of a `cp n` and of an `or a`, for the decisions whose

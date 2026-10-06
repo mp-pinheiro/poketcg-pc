@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "bank_guard.h"
@@ -12,11 +14,8 @@
 #include "debug_cheats.h"
 #endif
 /* >>> factory statics */
-#define MAX_HP 120u
-#define HP_BAR_LENGTH 12u
 #define SYM_HP_OK 0x16u
 #define SYM_HP_NOK 0x17u
-#define SPRITE_ANIM_79 0x4Fu
 #include "home/duel.h"
 
 /* core.asm:55-58 records the GB stack pointer at StartDuel's entry so
@@ -31,15 +30,10 @@
 #define PAD_B     0x02u
 #define PAD_START 0x08u
 
-#define ASLEEP           0x02u
-#define CNF_SLP_PRZ       0x0Fu
-#define PARALYZED        0x03u
 #define DUELVARS_ARENA_CARD_STATUS 0xF0u
 #define DUELVARS_ARENA_CARD_LAST_TURN_STATUS 0xF5u
 
 #define FLAG_Z 0x80u
-#define BOXMSG_COIN_TOSS 0x06u
-#define SFX_PLACE_PRIZE 0x08u
 #define TX_COIN_TOSS 0x0075u
 #define TX_IF_HEADS 0x0074u
 #define TX_NEITHER_BASIC 0x006Bu
@@ -53,8 +47,6 @@
 #include "home/card_data.h"
 
 #define PAL_SIZE 8u
-#define ATTR_BLK_CTRL_INSIDE 1u
-#define ATTR_BLK_CTRL_LINE 2u
 
 #include "home/copy.h"
 #include "home/switch_sram.h"
@@ -62,8 +54,6 @@
 #include "home/process_text.h"
 #include "home/print_text.h"
 
-#define SAVE_DUEL_HEADER_SIZE 4u
-#define SAVE_DUEL_CHECKSUM_SEED 0x2345u
 #define TRUE 1u
 
 typedef struct {
@@ -87,31 +77,21 @@ static const DuelSaveEntry kDuelDataToSave[] = {
 #include "home/indirect_dispatch.h"
 #include "home/lcd.h"
 #include "home/tiles.h"
-#define CONSOLE_CGB 0x02u
-#define CONSOLE_DMG 0x00u
-#define ATTR_BLK 0x04u
 
 #include "home/objects.h"
 
-#define CARDPAGE_TRAINER_1 0x0du
-#define CARDPAGE_TRAINER_2 0x0eu
 
 #include "generated/hram.h"
 #include "generated/sram.h"
 #include "home/random.h"
 
-#define DECK_SIZE 60u
 
 #define DECK_SIZE_ 60u
 
 #include "home/print_text.h"
 #include "home/process_text.h"
 
-#define DrMasonText 0x01a3u
-#define PlayersTurnPracticeDuelText 0x01dbu
-#define ReplaceDueToKnockoutPracticeDuelText 0x01dcu
 
-#define CARDPAGE_POKEMON_DESCRIPTION 0x06u
 
 /* SwitchCardPage dispatch: only index 0 (CardPageSwitch_00) is in scope for
  * this port; it is the only handler whose asm is provided. */
@@ -121,10 +101,8 @@ static const DuelSaveEntry kDuelDataToSave[] = {
 
 #define TILE_SIZE 0x10u
 
-#define MAX_PLAY_AREA_POKEMON 0x06u
 #define DUELVARS_ARENA_CARD   0xBBu
 
-#define CARDPAGE_POKEMON_OVERVIEW 0x01u
 
 #include "generated/wram.h"
 #include "mem.h"
@@ -144,32 +122,8 @@ static const DuelSaveEntry kDuelDataToSave[] = {
 #define ANIM_DATA_BANK 7u
 #define ANIM_COORDS_INDEX_ADDR 0x49e0u
 #define ANIM_COORDS_ADDR 0x4a04u
-#define DUEL_ANIM_STRUCT_SIZE 8u
 #define PLAYER_TURN 0xc2u
-#define SPRITE_ANIM_FLAG_CENTERED   0x04u
 
-#define COLORLESS_F 0x40u
-#define DOUBLE_COLORLESS_ENERGY 0x07u
-#define TYPE_ENERGY_DOUBLE_COLORLESS 0x0Eu
-#define EXEGGCUTE 0x28u
-#define EXEGGUTOR 0x29u
-#define PSYDUCK 0x44u
-#define GOLDUCK 0x45u
-#define SURFING_PIKACHU_LV13 0x65u
-#define SURFING_PIKACHU_ALT_LV13 0x66u
-#define EEVEE 0xBCu
-#define FIGHTING_ENERGY 0x05u
-#define FIGHTING_F 0x10u
-#define FIRE_ENERGY 0x02u
-#define FIRE_F 0x01u
-#define GRASS_ENERGY 0x01u
-#define GRASS_F 0x02u
-#define LIGHTNING_ENERGY 0x04u
-#define LIGHTNING_F 0x04u
-#define PSYCHIC_ENERGY 0x06u
-#define PSYCHIC_F 0x20u
-#define WATER_ENERGY 0x03u
-#define WATER_F 0x08u
 
 #include "home/objects.h"
 #include "home/lcd.h"
@@ -178,10 +132,8 @@ static const DuelSaveEntry kDuelDataToSave[] = {
 #include "home/duel.h"
 #include "home/bg_map.h"
 
-#define NUM_TYPES 0x08u
 #define SYM_SPACE 0x00u
 #define SYM_CURSOR_R 0x0Fu
-#define SelectingBenchPokemonHandExamineBackText 0x0059u
 #define SYM_FIRE 0x01u
 #define SYM_PLUS 0x2Bu
 
@@ -192,14 +144,11 @@ static const DuelSaveEntry kDuelDataToSave[] = {
 #include "home/duel.h"
 #include "home/bg_map.h"
 #define SYM_POISONED 0x08u
-#define POISONED 0x80u
 
 #include "home/duel.h"
-#define PLAY_AREA_ARENA 0u
 #define SYM_0 0x20u
 #include "generated/hram.h"
 
-#define CARDPAGE_ENERGY 0x09u
 
 /* >>> factory CardPageSwitch_08 */
 /* core.asm:3838-3842 */
@@ -211,26 +160,20 @@ CardPageResult CardPageSwitch_08(void)
 
 #include "home/core.h"
 
-#define FIRE 0x00u
 
 #include "home/switch_sram.h"
 
-#define DUELIST_TYPE_AI_OPP 0x80u
 
 #include "home/card_color.h"
 #include "home/duel.h"
 
 #include "home/effect_commands.h"
-#define EFFECTCMDTYPE_INITIAL_EFFECT_2 0x02u
-#define EFFECTCMDTYPE_REQUIRE_SELECTION 0x05u
-#define TYPE_ENERGY 0x08u
 #include "home/duel.h"
 
 #include "home/card_color.h"
 #include "home/duel.h"
 #include "home/duel_core.h"
 #define DUELVARS_PRIZE_CARDS 0x3Cu
-#define CARD_LOCATION_DECK 0x00u
 
 #define ANIMATIONS_ADDR 0x4e32u
 
@@ -325,8 +268,6 @@ CardPageResult CardPageSwitch_00(void)
 #include "generated/hram.h"
 #include "mem.h"
 
-#define PLAY_AREA_BENCH_1   0x01u
-#define POKEMON_POWER       0x04u
 
 #include "home/menus.h"
 
@@ -404,7 +345,6 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/empty_screen.h"
 #include "home/tiles.h"
 
-#define PLAY_AREA_CARD_LIST 0x02u
 
 #include "generated/sram.h"
 #include "home/core.h"
@@ -415,8 +355,6 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 
 #include "home/core.h"
 #include "generated/hram.h"
-#define OPPACTION_PLAY_ENERGY 0x02u
-#define OPPACTION_ATTEMPT_RETREAT 0x03u
 
 #include "home/text_box.h"
 #include "home/empty_screen.h"
@@ -426,38 +364,28 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/menus.h"
 
 #include "home/core.h"
-#define DOUBLE_POISONED 0xC0u
 
 #include "home/core.h"
-#define LetsPlayTheGamePracticeDuelText 0x01d8u
 
 #include "home/text_box.h"
 #include "home/empty_screen.h"
 
 #include "generated/wram.h"
 #include "mem.h"
-#define SECOND_ATTACK 0x01u
-#define STARMIE 0x56u
 
 #include "generated/hram.h"
-#define ChooseTheCardYouWishToExamineText 0x0056u
-#define OpponentsDiscardPileText 0x0218u
-#define YourDiscardPileText 0x0217u
 
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/menus.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define AttachedEnergyToPokemonText 0x005fu
 
 #include "home/core.h"
 #include "home/menus.h"
 #include "home/sound.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define SFX_POKEMON_EVOLUTION 0x5eu
-#define PokemonEvolvedIntoPokemonText 0x0060u
 
 #include "generated/wram.h"
 #include "home/empty_screen.h"
@@ -468,20 +396,15 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 
 #include "generated/wram.h"
 #include "home/duel.h"
-#define STARYU 0x55u
-#define WATER 0x03u
 
 #include "generated/wram.h"
 #include "mem.h"
 #include "home/duel.h"
-#define PLAY_AREA_BENCH_2 0x02u
-#define SEAKING 0x54u
 
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/duel_core_state.h"
 
-#define DUELTYPE_PRACTICE 0x80u
 #define DUELVARS_HAND 0x42u
 
 #include "home/empty_screen.h"
@@ -499,10 +422,6 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xbau
 #define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xEEu
-#define CardsText 0x007eu
-#define NoneText 0x007cu
-#define PrizesLeftActivePokemonCardsInDeckText 0x007bu
-#define YesText 0x007du
 
 #include "home/core.h"
 #include "home/empty_screen.h"
@@ -518,8 +437,6 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/wram.h"
 #include "mem.h"
 
-#define TYPE_ENERGY_F 0x03u
-#define TYPE_TRAINER_F 0x04u
 
 #include "home/core.h"
 #include "home/print_text.h"
@@ -530,7 +447,6 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/hram.h"
 
 #include "home/menus.h"
-#define ReturnCardsToDeckAndDrawAgainText 0x006cu
 
 #include "home/duel.h"
 #include "home/core.h"
@@ -548,13 +464,10 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/frames.h"
 #include "home/script.h"
 #include "generated/hram.h"
-#define DUEL_ANIM_OPP_DRAW 0x57u
-#define DUEL_ANIM_PLAYER_DRAW 0x56u
 
 #include "home/core.h"
 #include "home/tiles.h"
 #include "generated/wram.h"
-#define PROMOSTAR 0xffu
 #define DUEL_OTHER_GFX 0x4008u
 #define CardRarityTextIDs_ADDR 0x5e14u
 
@@ -573,9 +486,7 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/hram.h"
 
 #define DUELVARS_BENCH 0xbcu
-#define PLAY_AREA_BENCH_5 0x05u
 
-#define CONFUSED 0x01u
 #define SYM_ASLEEP 0x09u
 #define SYM_CONFUSED 0x0au
 #define SYM_PARALYZED 0x0bu
@@ -595,7 +506,6 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/print_text.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define UsedText 0x0033u
 
 #include "home/core.h"
 #include "home/duel.h"
@@ -604,13 +514,11 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/core.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define GOLDEEN 0x53u
 
 #include "home/core.h"
 #include "home/duel.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define PSYCHIC 0x05u
 
 #include "home/core.h"
 #include "home/lcd.h"
@@ -623,8 +531,6 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/menus.h"
 #include "home/empty_screen.h"
 #include "mem.h"
-#define BOXMSG_PLAYERS_TURN 0x00u
-#define DuelistTurnText 0x005eu
 
 #include "home/duel.h"
 #include "home/core.h"
@@ -646,10 +552,6 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/load_animation.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define SPRITE_ANIM_COORD_X 0x02u
-#define SPRITE_ANIM_FLAG_UNSKIPPABLE_F 0x07u
-#define SPRITE_ANIM_FLAG_UNSKIPPABLE (1u << SPRITE_ANIM_FLAG_UNSKIPPABLE_F)
-#define SPRITE_DUEL_DAMAGE 0x2Eu
 
 #include "home/core.h"
 #include "mem.h"
@@ -665,23 +567,20 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/hram.h"
 #include "mem.h"
 #define PLAY_AREA_BENCH_1_730 0x01u
-#define SelectStaryuPracticeDuelText 0x01D7u
-#define ChooseStaryuPracticeDuelText 0x01A7u
 
 #include "home/core.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define SPRITE_ANIM_89_850 0x59u
+#define SAVE_DUEL_CHECKSUM_SEED 0x2345u
+#define SAVE_DUEL_HEADER_SIZE 4u
 
 #include "home/core.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define SPRITE_ANIM_91 0x5Bu
 
 #include "home/core.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define SPRITE_ANIM_90 0x5Au
 
 #include "home/core.h"
 #include "generated/wram.h"
@@ -700,15 +599,11 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/print_text.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define TYPE_TRAINER 0x10u
-#define EnergyCardsRequiredToRetreatText 0x00BFu
-#define UnableToRetreatText 0x003Du
 
 #include "home/core.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
-#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
 
 #include "home/core.h"
 #include "home/frames.h"
@@ -721,7 +616,6 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
-#define NUM_DECK_IDS 0x35u
 #define B_PAD_B 1u
 #define B_PAD_RIGHT 4u
 #define B_PAD_LEFT 5u
@@ -735,7 +629,6 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
-#define COLORLESS 0x06u
 
 #include "home/core.h"
 #include "home/print_text.h"
@@ -746,11 +639,8 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/bg_map.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define CARD_DATA_ATTACK1_CATEGORY 0x17u
-#define RESIDUAL 0x80u
 #define SYM_ATK_DESCR 0x0Eu
 #define SYM_PLUS_OFFSET 0x2Au
-#define PKMNPWRText 0x000Au
 
 #include "home/core.h"
 
@@ -768,8 +658,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 	0xdcu, 0x01u, /* stage 2 special */
 };
 
-#define FeetText 0x0215u
-#define InchesText 0x0216u
 
 #include "home/core.h"
 #include "home/play_animation.h"
@@ -790,9 +678,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define PLAYER_TURN_490 0xC2u
 #define SHUFFLE_DECK_490 0x09u
 #define FLAG_C_490 0x10u
-#define DeckHasXCardsText 0x0068u
-#define ShufflesTheDeckText 0x0063u
-#define Drew7CardsText 0x0067u
 
 #include "home/core.h"
 #include "home/duel.h"
@@ -800,7 +685,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/bg_map.h"
 #include "home/empty_screen.h"
 #include "generated/wram.h"
-#define KnockOutText 0x004eu
 #define SYM_E 0x12u
 #define SYM_HP 0x10u
 
@@ -836,8 +720,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/duel.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define EFFECTCMDTYPE_BEFORE_DAMAGE 0x03u
-#define WillUseThePokemonPowerText 0x005Cu
 #define hTempCardIndex_ff9f_ADDR 0xFF9Fu
 #define hTemp_ffa0_ADDR 0xFFA0u
 
@@ -861,11 +743,9 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/duel.h"
 #include "home/effect_commands.h"
 #include "home/substatus.h"
-#define EFFECTCMDTYPE_INITIAL_EFFECT_1 0x01u
 
 #include "generated/wram.h"
 #include "home/effect_commands.h"
-#define EFFECTCMDTYPE_AFTER_DAMAGE 0x04u
 
 #include "generated/wram.h"
 #include "home/duel_core.h"
@@ -890,8 +770,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/duel.h"
 #include "home/effect_commands.h"
 #include "home/substatus.h"
-#define ATTACK_FLAG2_ADDRESS 0x08u
-#define IGNORE_THIS_ATTACK_F 0x05u
 
 #include "home/core.h"
 #include "home/duel.h"
@@ -903,7 +781,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/duel.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
-#define HAS_EVOLUTION 0x10u
 
 #include "generated/wram.h"
 #include "home/legendary_articuno.h"
@@ -919,10 +796,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/credits_sequence_commands.h"
 #include "home/duel_core.h"
 #include "home/tiles.h"
-#define HEADER_ENERGY 0x01u
-#define HEADER_POKEMON 0x02u
-#define HEADER_TRAINER 0x00u
-#define LARGE_CARD_PICTURE 0x08u
 #define LARGE_CARD_TILE_DATA 0x5EB7u
 
 #include "generated/wram.h"
@@ -942,7 +815,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
-#define TX_END 0x00u
 #define SYM_POKEMON 0x0Du
 #define SYM_PRIZE 0x30u
 #define TILEMAP_WIDTH 32u
@@ -951,7 +823,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/duel.h"
-#define DUELIST_TYPE_PLAYER 0x00u
 #define DUELVARS_DUELIST_TYPE 0xF1u
 
 #include "generated/wram.h"
@@ -970,7 +841,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/tiles.h"
 #include "home/menus.h"
 #include "home/print_text.h"
-#define DuelistHandText 0x00a7u
 #define CARD_LIST_PARAMETERS 0x5710u
 #define ITEM_SELECTION_MENU_PARAMETERS 0x5708u
 
@@ -982,11 +852,9 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/bg_map.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define DUEL_MAIN_SCENE 0x01u
 
 #include "generated/wram.h"
 #include "home/core.h"
-#define PleaseSelectHandText 0x00AAu
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -995,7 +863,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 
 #include "home/core.h"
 #include "generated/wram.h"
-#define SELECT_CHECK 0x02u
 
 #include "generated/wram.h"
 #include "home/core.h"
@@ -1003,14 +870,11 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/menus.h"
 #include "home/process_text.h"
 #include "home/print_text.h"
-#define TheCardYouReceivedText 0x0170u
-#define YouReceivedTheseCardsText 0x0171u
 
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/duel_core.h"
 #include "home/menus.h"
-#define FinishedTurnWithoutAttackingText 0x005du
 
 #include "generated/wram.h"
 #include "generated/hram.h"
@@ -1035,7 +899,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
-#define CARD_DATA_ATTACK1_NAME 0x10u
 
 #include "generated/wram.h"
 #include "home/core.h"
@@ -1047,16 +910,11 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/text_box.h"
 #include "home/lcd.h"
 #include "home/duel.h"
-#define ChooseEnergyCardToDiscardText 0x0050u
 #define EnergyDiscardCardListParameters 0x46f3u
 
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "home/core.h"
-#define ATTACKPAGE_ATTACK1_1 0x00u
-#define ATTACKPAGE_ATTACK1_2 0x01u
-#define ATTACKPAGE_ATTACK2_1 0x02u
-#define ATTACKPAGE_ATTACK2_2 0x03u
 #define PAD_RIGHT 0x10u
 #define PAD_LEFT 0x20u
 
@@ -1079,7 +937,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/sram.h"
 #include "home/switch_sram.h"
 #include "home/core.h"
-#define FollowMyGuidancePracticeDuelText 0x01dau
 
 #include "home/core.h"
 #include "home/menus.h"
@@ -1103,7 +960,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 
 #include "home/core.h"
 #include "home/menus.h"
-#define ThereAreNoBasicPokemonInHand 0x006au
 
 #define PAD_UP 0x40u
 #define PAD_DOWN 0x80u
@@ -1115,14 +971,9 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/menus.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define PLAY_CHECK 0x01u
-#define PlayCheck1Text 0x0084u
-#define PlayCheck2Text 0x0085u
-#define SelectCheckText 0x0086u
 
 #include "home/core.h"
 #include "generated/hram.h"
-#define YouDrewText 0x0070u
 
 #include "home/duel.h"
 #include "home/card_data.h"
@@ -1130,8 +981,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/wram.h"
 #include "generated/hram.h"
 
-#define PokemonPowerSelectNotRequiredText 0x0040u
-#define UseThisPokemonPowerText 0x003fu
 #include "home/effect_commands.h"
 
 #include "generated/wram.h"
@@ -1142,7 +991,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/tiles.h"
 #include "home/bg_map.h"
 #include "mem.h"
-#define CARDPAGETYPE_NOT_PLAY_AREA 0x00u
 #define SYM_COLORLESS 0x07u
 #define CARD_PAGE_RETREAT_WR_TEXT_DATA 0x5D05u
 #define CARD_PAGE_LV_HP_NO_TEXT_TILE_DATA 0x5D12u
@@ -1162,7 +1010,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define PRACTICE_DUEL_TEXT_POINTER_TABLE_BANK 0x01u
 #define PRACTICE_DUEL_TEXT_POINTER_TABLE_ADDR 0x52C5u
 
-#define NeedPracticeAgainPracticeDuelText 0x01d9u
 
 #include "home/core.h"
 #include "generated/wram.h"
@@ -1231,7 +1078,6 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/coin_toss.h"
-#define ConfusionCheckRetreatText 0x00f8u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -1245,24 +1091,15 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/core.h"
 #include "home/duel.h"
 #include "generated/wram.h"
-#define RetreatWasUnsuccessfulText 0x005bu
-#define RetreatedToTheBenchText 0x005au
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/commands.h"
-#define ATK_ANIM_BIG_HIT 0x02u
-#define ATK_ANIM_HIT 0x01u
 
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "home/commands.h"
 #include "mem.h"
-#define ATK_ANIM_CONFUSION 0x7cu
-#define ATK_ANIM_OWN_CONFUSION 0x7fu
-#define ATK_ANIM_PARALYSIS 0x7du
-#define ATK_ANIM_POISON 0x7bu
-#define ATK_ANIM_SLEEP 0x7eu
 
 #include "home/core.h"
 #include "home/duel.h"
@@ -1293,19 +1130,11 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/duel.h"
 #include "home/core.h"
 #include "home/menus.h"
-#define TheDiscardPileHasNoCardsText 0x00a5u
 
 #include "generated/wram.h"
-#define NoCardsInHandText 0x00a4u
 
-#define YouCannotSelectThisCardText 0x0071u
 
-#define MR_MIME 0x9Bu
 
-#define DRAW_CARDS 0x07u
-#define SHUFFLE_DECK 0x09u
-#define CannotDrawCardBecauseNoCardsInDeckText 0x0119u
-#define DrawCardsFromTheDeckText 0x0118u
 
 #include "generated/wram.h"
 #include "home/core.h"
@@ -1317,13 +1146,10 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/script.h"
 #include "home/tiles.h"
 
-#define DUEL_ANIM_BOTH_DRAW 0x55u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/duel.h"
-#define BASIC 0x00u
-#define PlacedOnTheBenchText 0x0061u
 
 #include "home/effect_commands.h"
 #define OPP_EFFECTCMDTYPE_BEFORE_DAMAGE 0x03u
@@ -1347,10 +1173,6 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "generated/hram.h"
 #include "mem.h"
 
-#define DUEL_ANIM_BOTH_SHUFFLE 0x53u
-#define EachPlayerDraw7CardsText 0x0066u
-#define EachPlayerShuffleOpponentsDeckText 0x0065u
-#define ThisIsJustPracticeDoNotShuffleText 0x0064u
 
 #include "home/core.h"
 #include "home/damage_calculation.h"
@@ -1366,11 +1188,6 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/retreat.h"
 #include "home/energy.h"
 #include "home/effect_functions.h"
-#define CARD_LOCATION_DISCARD_PILE 0x02u
-#define ELECTRODE_LV35 0x6Eu
-#define MEWTWO_ALT_LV60 0x9Fu
-#define MEWTWO_LV60 0x9Eu
-#define MEW_LV23 0xA2u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -1403,9 +1220,6 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define CARD_PAGE_LENGTH_WEIGHT_TEXT_DATA 0x5E02u
 #define CARD_PAGE_LV_HP_TEXT_TILE_DATA 0x5E0Bu
 
-#define TX_KATAKANA 0x0fu
-#define LbsText 0x0010u
-#define PokemonText 0x000eu
 #define CARD_PAGE_DESCRIPTION_LINE_LENGTH 19u
 
 #include "home/frames.h"
@@ -1420,7 +1234,6 @@ static void TossCoin_WaitForOpponent(uint8_t a)
  * last card constant ($e4), so NUM_CARDS is $e4. GetCardPointer
  * (home/card_data.asm:142-167) returns carry when CardPointers + 2*e reaches
  * CardPointers + 2 + 2*NUM_CARDS, i.e. for every card id above NUM_CARDS. */
-#define NUM_CARDS 0xE4u
 
 #include "generated/wram.h"
 #include "generated/hram.h"
@@ -1430,7 +1243,6 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 
 /* PLAYER_TURN ($c2) and FLAG_C ($10) are already defined above in this
  * module's statics; only the screen constant is missing here. */
-#define DUEL_ANIM_SCREEN_MAIN_SCENE 0x00u
 
 #include "mem.h"
 #include "generated/wram.h"
@@ -1444,9 +1256,6 @@ static void TossCoin_WaitForOpponent(uint8_t a)
  * because DUEL_ANIM_* names are added per routine in this module. */
 #define DUEL_ANIM_SLEEP_7027 0x03u
 #define DUEL_ANIM_HEAL_7027  0x3Eu
-#define IsCuredOfSleepText 0x0029u
-#define IsStillAsleepText 0x0028u
-#define PokemonsSleepCheckText 0x00f9u
 
 #include "generated/wram.h"
 #include "home/duel.h"
@@ -1455,23 +1264,12 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 
 /* HandlePoisonDamage (core.asm:7071). DUELVARS_ARENA_CARD_HP is already
  * defined above in this module's statics, so only these are missing. */
-#define POISONED_F 7u
-#define DOUBLE_POISONED_F 6u
-#define PSN_DAMAGE 0x0Au
-#define DBLPSN_DAMAGE 0x14u
-#define DUEL_ANIM_POISON 0x05u
-#define DUEL_ANIM_DAMAGE_HUD 0x8Cu
-#define Received10DamageDueToPoisonText 0x0026u
-#define Received20DamageDueToPoisonText 0x0027u
 
-#define DrawSevenCardsPracticeDuelText 0x01a4u
 
 #include "home/core.h"
 #include "home/lcd.h"
 #include "generated/wram.h"
-#define PressBToFinishPracticeDuelText 0x01a8u
 
-#define PutPokemonOnBenchPracticeDuelText 0x01a6u
 
 #include "home/ai.h"
 #include "home/credits_sequence_commands.h"
@@ -1479,22 +1277,6 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define BOXMSG_ARENA_POKEMON 0x05u
-#define BOXMSG_BENCH_POKEMON 0x04u
-#define PRACTICEDUEL_DONE_PUTTING_ON_BENCH 0x05u
-#define PRACTICEDUEL_DRAW_SEVEN_CARDS 0x01u
-#define PRACTICEDUEL_PLAY_GOLDEEN 0x02u
-#define PRACTICEDUEL_PUT_STARYU_IN_BENCH 0x03u
-#define PRACTICEDUEL_VERIFY_INITIAL_PLAY 0x04u
-#define PRACTICEDUEL_PRINT_TURN_INSTRUCTIONS 0x06u
-#define PRACTICEDUEL_VERIFY_PLAYER_TURN_ACTIONS 0x07u
-#define ChooseBasicPkmnToPlaceInArenaText 0x0069u
-#define ChooseUpTo5BasicPkmnToPlaceOnBenchText 0x006du
-#define ChooseYourBenchPokemonText 0x006fu
-#define NoSpaceOnTheBenchText 0x00b2u
-#define PlacedInTheArenaText 0x0062u
-#define PleaseChooseAnActivePokemonText 0x006eu
-#define TransmittingDataText 0x0057u
 
 #include "generated/wram.h"
 #include "generated/hram.h"
@@ -1506,18 +1288,14 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/menus.h"
 #include "home/print_text.h"
 #include "home/script.h"
-#define DrewNPrizesText 0x0043u
-#define WillDrawNPrizesText 0x0042u
 
 #include "home/duel_core_state.h"
 #include "home/core.h"
 #include "home/menus.h"
 #include "home/duel.h"
-#define TookAllThePrizesText 0x007fu
 
 #include "home/screen_effects.h"
 #include "home/load_gfx.h"
-#define PALETTE_DAMAGE 0x25u
 
 #include "home/core.h"
 #include "home/sound.h"
@@ -1531,7 +1309,6 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 
 #include "home/core.h"
 #include "generated/wram.h"
-#define MUSIC_DUEL_THEME_1 0x02u
 
 #include "generated/wram.h"
 #include "home/script.h"
@@ -1551,14 +1328,6 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/core.h"
 #include "home/menus.h"
 #include "home/script.h"
-#define PRACTICEDUEL_PLAY_STARYU_FROM_BENCH 0x09u
-#define PRACTICEDUEL_REPLACE_KNOCKED_OUT_POKEMON 0x0Au
-#define PRACTICEDUEL_REPEAT_INSTRUCTIONS 0x08u
-#define OPPACTION_FINISH_NO_ATTACK 0x04u
-#define DuelistIsSelectingPokemonToPlaceInArenaText 0x0110u
-#define DuelistPlacedACardText 0x0044u
-#define SelectPokemonToPlaceInTheArenaText 0x010Fu
-#define ThereAreNoPokemonInPlayAreaText 0x0080u
 
 #include "generated/wram.h"
 #include "home/duel.h"
@@ -1566,10 +1335,6 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/substatus.h"
 #include "home/core.h"
 
-#define DUEL_NOT_FINISHED 0x00u
-#define TURN_PLAYER_LOST 0x02u
-#define TURN_PLAYER_TIED 0x03u
-#define TURN_PLAYER_WON 0x01u
 
 #include "home/core.h"
 #include "home/substatus.h"
@@ -1580,25 +1345,21 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 
 #include "home/duel.h"
 #include "home/core.h"
-#define OPPACTION_DRAW_CARD 0x0Au
 
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/menus.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define SelectPkmnOnBenchToSwitchWithActiveText 0x010eu
 
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/effect_commands.h"
 #include "home/menus.h"
-#define EFFECTCMDTYPE_DISCARD_ENERGY 0x06u
 
 #include "home/frames.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define WaitingHandExamineText 0x0058u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -1619,7 +1380,6 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "generated/wram.h"
 
 #include "home/core.h"
-#define BackUpIsBrokenText 0x00d6u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -1833,7 +1593,6 @@ static void DispatchOppAction(uint8_t action, uint8_t b, uint8_t c, uint8_t d, u
 /* >>> factory AIMakeDecision */
 /* core.asm:6229-6263 */
 #include <stdlib.h>
-#define DuelistIsThinkingText 0x0088u
 AIMakeDecisionResult AIMakeDecision(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
 	gb_write8(hOppActionTableIndex_ADDR, a);
@@ -2612,7 +2371,7 @@ uint16_t RaiseAIScoreToAllMatchingIDsInBench(uint8_t a)
 /* >>> factory GetDamageNumberChars.ConvertDigitToCharTile */
 DamageDigitResult GetDamageNumberChars_ConvertDigitToCharTile(uint16_t bc, uint16_t de, uint16_t hl)
 {
-	uint8_t chr = SPRITE_ANIM_79 - 1u;
+	uint8_t chr = SPRITE_ANIM_DAMAGE_0 - 1u;
 	uint16_t value = hl;
 	for (;;) {
 		chr = (uint8_t)(chr + 1u);
@@ -2647,11 +2406,11 @@ void GetDamageNumberChars(void)
 	DamageDigitResult digit = GetDamageNumberChars_ConvertDigitToCharTile(
 		(uint16_t)-100, wDecimalChars_ADDR, hl);
 	digit = GetDamageNumberChars_ConvertDigitToCharTile((uint16_t)-10, digit.de, digit.hl);
-	gb_write8(digit.de, (uint8_t)((uint8_t)digit.hl + SPRITE_ANIM_79));
+	gb_write8(digit.de, (uint8_t)((uint8_t)digit.hl + SPRITE_ANIM_DAMAGE_0));
 
 	uint16_t scan = wDecimalChars_ADDR;
 	for (uint8_t count = 2u; count != 0u; count--) {
-		if (gb_read8(scan) != SPRITE_ANIM_79)
+		if (gb_read8(scan) != SPRITE_ANIM_DAMAGE_0)
 			break;
 		gb_write8(scan, 0x00u);
 		scan = (uint16_t)(scan + 1u);
@@ -3248,10 +3007,6 @@ void DisplayAttackPage(void)
 }
 /* >>> factory DisplayCardPage */
 /* core.asm:3665-3701: CardPageDisplayPointerTable indexed by wCardPageNumber. */
-#define CARDPAGE_POKEMON_ATTACK1_1 0x02u
-#define CARDPAGE_POKEMON_ATTACK1_2 0x03u
-#define CARDPAGE_POKEMON_ATTACK2_1 0x04u
-#define CARDPAGE_POKEMON_ATTACK2_2 0x05u
 #define CARDPAGE_ENERGY_2 0x0Au
 #define CARDPAGE_TABLE_LAST 0x0Fu
 DisplayCardPageResult DisplayCardPage(void)
@@ -4653,7 +4408,7 @@ void DrawDuelistPortraitsAndNames(void)
 	InitTextPrinting((uint8_t)(length.a + SCREEN_WIDTH), 0);
 	ProcessText(&hl);
 
-	DrawOpponentPortrait(wOpponentPortrait, 13u, 1u); /* duel/core.asm:1610 lb bc, 13, 1 */
+	DrawOpponentPortrait(wOpponentPortrait, 13u, 1u, EMOTION_NEUTRAL);
 	DrawDuelHorizontalSeparator();
 }
 /* <<< factory DrawDuelistPortraitsAndNames */
@@ -4801,7 +4556,7 @@ void DrawDamageAnimationArrow(uint8_t f)
 {
 	gb_write8(wDamageCharIndex_ADDR, 5u);
 	uint16_t de = (uint16_t)(wAnimationQueue_ADDR + 6u);
-	CreateDamageCharSprite(SPRITE_ANIM_89_850, f, de);
+	CreateDamageCharSprite(SPRITE_ANIM_DAMAGE_ARROW, f, de);
 }
 /* <<< factory DrawDamageAnimationArrow */
 
@@ -4809,7 +4564,7 @@ void DrawDamageAnimationArrow(uint8_t f)
 void DrawDamageAnimationWeak(void)
 {
 	wDamageCharIndex = 3u;
-	CreateDamageCharSprite(SPRITE_ANIM_91, 0u, (uint16_t)(wAnimationQueue_ADDR + 4u));
+	CreateDamageCharSprite(SPRITE_ANIM_DAMAGE_WEAK, 0u, (uint16_t)(wAnimationQueue_ADDR + 4u));
 }
 /* <<< factory DrawDamageAnimationWeak */
 
@@ -4817,7 +4572,7 @@ void DrawDamageAnimationWeak(void)
 void DrawDamageAnimationResist(void)
 {
 	wDamageCharIndex = 4u;
-	CreateDamageCharSprite(SPRITE_ANIM_90, 0u, (uint16_t)(wAnimationQueue_ADDR + 5u));
+	CreateDamageCharSprite(SPRITE_ANIM_DAMAGE_RESIST, 0u, (uint16_t)(wAnimationQueue_ADDR + 5u));
 	wDamageCharAnimDelay = (uint8_t)(wDamageCharAnimDelay + 18u);
 }
 /* <<< factory DrawDamageAnimationResist */
@@ -8141,8 +7896,6 @@ void OppAction_PlayEnergyCard(void)
 #define OPPACTION_BEGIN_ATTACK_C 0x07u
 #define OPPACTION_USE_ATTACK_C 0x08u
 #define OPPACTION_ATTACK_ANIM_AND_DAMAGE_C 0x09u
-#define EFFECTCMDTYPE_AI_SELECTION 0x08u
-#define EFFECTCMDTYPE_AI_SWITCH_DEFENDING_PKMN 0x0Au
 AITryUseAttackResult AITryUseAttack(uint8_t b)
 {
 	uint8_t e = wSelectedAttack;
@@ -8580,9 +8333,9 @@ void Func_1cb5e(uint8_t a)
 	}
 
 	wDamageCharAnimDelay = 0u;
-	wWhichOBP = 0u;
+	wVRAMTileOffset = 0u;
 	wWhichOBPalIndex = 0u;
-	LoadOBPalette(PALETTE_DAMAGE);
+	LoadOBPalette(PALETTE_DUEL_DAMAGE);
 
 	DrawDamageAnimationNumbers();
 	uint8_t effectiveness = wDuelAnimEffectiveness;
@@ -9406,8 +9159,6 @@ static void OpenPlayerHandScreen_HandleInput(void)
 /* >>> factory PlayEnergyCard */
 /* core.asm:586-623. c is the energy card's type. Exits are tail jumps into
  * DuelMainInterface, OpenPlayerHandScreen or ReloadCardListScreen. */
-#define MayOnlyAttachOneEnergyCardText 0x003Eu
-#define TYPE_ENERGY_WATER 0x0Bu
 void PlayEnergyCard(uint8_t c)
 {
 	int set_played;
@@ -9496,8 +9247,6 @@ void DuelMenuShortcut_BothActivePokemon(void)
  * (PrintDuelMenuAndHandleInput, RestartPracticeDuelTurn, DuelMainInterface)
  * or the plain `ret` after a successful UseAttackOrPokemonPower. */
 #define ATTACK_MENU_PARAMETERS 0x47E4u
-#define NoSelectableAttackText 0x003Cu
-#define NotEnoughEnergyCardsText 0x00C0u
 void DuelMenu_Attack(void)
 {
 	CantAttackResult cant = HandleCantAttackSubstatus();
@@ -9654,9 +9403,6 @@ void HandleTurn(void)
  * status condition: PlusPowers and Defenders are discarded and that is all.
  * Otherwise the "between turns" box message runs poison, sleep, and paralysis
  * for both sides and resolves any knockouts that produced. */
-#define BOXMSG_BETWEEN_TURNS 0x02u
-#define BetweenTurnsText 0x002bu
-#define IsCuredOfParalysisText 0x002au
 
 static void handle_between_turns_status(void)
 {
@@ -9754,6 +9500,7 @@ void MainDuelLoop(void)
 	uint8_t finished;
 	uint8_t anim;
 	uint8_t song;
+	uint8_t emotion;
 	uint16_t text;
 
 main_loop:
@@ -9801,20 +9548,24 @@ duel_finished:
 		wDuelResult = DUEL_WIN_MAIN;
 		anim = DUEL_ANIM_DUEL_WIN_MAIN;
 		song = MUSIC_MATCH_VICTORY_MAIN;
+		emotion = EMOTION_SAD;
 		text = WON_DUEL_TEXT_MAIN;
 	} else if (finished == TURN_PLAYER_WON || finished == TURN_PLAYER_LOST) {
 		wDuelResult = DUEL_LOSS_MAIN;
 		anim = DUEL_ANIM_DUEL_LOSS_MAIN;
 		song = MUSIC_MATCH_LOSS_MAIN;
+		emotion = EMOTION_HAPPY;
 		text = LOST_DUEL_TEXT_MAIN;
 	} else {
 		anim = DUEL_ANIM_DUEL_DRAW_MAIN;
 		song = MUSIC_MATCH_DRAW_MAIN;
+		emotion = EMOTION_NEUTRAL;
 		text = DUEL_WAS_A_DRAW_TEXT_MAIN;
 	}
 
 	(void)PlayDuelAnimation(anim);
 	PlaySong(song);
+	DrawOpponentPortrait(wOpponentPortrait, 13u, 1u, emotion);
 	hWhoseTurn = OPPONENT_TURN_MAIN;
 	(void)DrawWideTextBox_PrintText(text);
 	EnableLCD();

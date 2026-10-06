@@ -2,6 +2,8 @@
 #include "home/frames.h"
 #include "home/play_song.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -20,24 +22,9 @@
 #include "home/process_text.h"
 #include "home/text_box.h"
 
-#define MUSIC_MEDAL 0x1du
-#define MUSIC_STOP 0x00u
-#define NUM_MEDALS 0x08u
 
-#define WonTheMedalText 0x038bu
 /* MasterMedalNames' eight `tx` entries (medal.asm:52-62) resolved through
  * poketcg/src/text/text_offsets.asm:822-829. */
-#define FightingClubMapName 0x0332u
-#define RockClubMapName 0x0333u
-#define WaterClubMapName 0x0334u
-#define LightningClubMapName 0x0335u
-#define GrassClubMapName 0x0336u
-#define PsychicClubMapName 0x0337u
-#define ScienceClubMapName 0x0338u
-#define FireClubMapName 0x0339u
-#define PlayerStatusMedalsTitleText 0x0347u
-#define PALETTE_118 0x36u
-#define EVENT_MEDAL_FLAGS 0x10u
 
 static void load_collected_medal_tilemaps(void)
 {

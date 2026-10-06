@@ -1,5 +1,7 @@
 #include "home/status.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -16,16 +18,10 @@
 #include "home/labels.h"
 #include "home/wait_keys.h"
 #include "home/scripting.h"
-#define EVENT_MEDAL_FLAGS 0x10u
 #define StatusScreenLabels StatusScreenLabels_ADDR
 #define PAD_A 0x01u
 #define PAD_B 0x02u
 #define PAD_START 0x08u
-#define PlayerStatusMedalsTitleText 0x0347u
-#define PALETTE_118 0x36u
-#define FIRE_MEDAL_F 0x05u
-#define WATER_MEDAL_F 0x04u
-#define NUM_MEDALS 0x08u
 #define OAM_X_OFS 0x08u
 #define OAM_Y_OFS 0x10u
 

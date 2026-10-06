@@ -1,5 +1,7 @@
 #include "home/challenge_machine.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/sram.h"
 #include "home/core.h"
 #include "home/print_text.h"
@@ -15,7 +17,6 @@
 
 #define CLUB_MASTERS_START 0x18u
 #define GRAND_MASTERS_START 0x20u
-#define NUM_CHALLENGE_MACHINE_OPPONENTS 0x05u
 
 /* challenge_machine.asm:781-789 ChallengeMachine_FinalOpponentProbabilities.
  * Pairs of (probability weight, opponent id); the last weight is a catch-all. */
@@ -34,7 +35,6 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "home/switch_sram.h"
 #include "mem.h"
 
-#define NAME_BUFFER_LENGTH 0x10u
 #define TRUE_VALUE 0x01u
 #define WIN_CAP_HIGH 0x03u
 #define WIN_CAP_LOW 0xE7u
@@ -60,7 +60,6 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "home/print_text.h"
 #include "generated/wram.h"
 #include "generated/sram.h"
-#define ConsecutiveWinsEndedAtText 0x07e2u
 
 #include "home/challenge_machine.h"
 #include "home/switch_sram.h"
@@ -69,8 +68,6 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "home/print_text.h"
 #include "generated/wram.h"
 #include "generated/sram.h"
-#define MUSIC_MEDAL 0x1du
-#define ConsecutiveWinRecordIncreasedText 0x07e8u
 #define sConsecutiveWinRecordIncreased_ADDR 0xBA68u
 #define sMaximumConsecutiveWins_ADDR 0xBA56u
 
@@ -80,8 +77,6 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "home/print_text.h"
 #include "generated/wram.h"
 #include "generated/sram.h"
-#define Defeated5OpponentsText 0x07e6u
-#define WonAgainstXOpponentsText 0x07e5u
 
 #include "home/npc_data.h"
 #include "generated/wram.h"
@@ -131,9 +126,6 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "home/print_text.h"
 #include "home/menus.h"
 #include "mem.h"
-#define NthOpponentIsText 0x07dbu
-#define WouldYouLikeToBeginTheDuelText 0x07dcu
-#define XConsecutiveWinsNthOpponentIsText 0x07dau
 
 #include "home/switch_sram.h"
 #include "home/process_text.h"
@@ -157,15 +149,12 @@ static const uint16_t challenge_machine_duel_result_icons[3] = {
 #include "home/core.h"
 #include "generated/sram.h"
 #include "generated/wram.h"
-#define MUSIC_MATCH_START_1 0x15u
-#define MUSIC_MATCH_START_2 0x16u
 
 #include "home/challenge_machine.h"
 #include "home/color.h"
 #include "home/switch_sram.h"
 #include "generated/sram.h"
 #include "generated/wram.h"
-#define DOUBLE_SPACED 0x00u
 /* <<< factory statics */
 
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
@@ -705,14 +694,6 @@ void ChallengeMachine_Duel(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e
 /* <<< factory ChallengeMachine_Duel */
 
 /* >>> factory ChallengeMachine_Start */
-#define PlayTheChallengeMachineText 0x07dfu
-#define LetUsChooseYourOpponentText 0x07e0u
-#define YourOpponentsForThisGameText 0x07e4u
-#define IfYouQuitTheDuelText 0x07ddu
-#define WouldYouLikeToQuitTheDuelText 0x07deu
-#define SuccessfullyDefeated5OpponentsText 0x07e7u
-#define LostToTheNthOpponentText 0x07e1u
-#define WeAwaitYourNextChallengeText 0x07e3u
 void ChallengeMachine_Start(void)
 {
 	wLineSeparation = DOUBLE_SPACED;

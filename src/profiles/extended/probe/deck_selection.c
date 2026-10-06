@@ -1,0 +1,187 @@
+#include "home/deck_selection.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "probe.h"
+
+/* >>> factory GetPointerToDeckCards */
+static void adapt_GetPointerToDeckCards(ProbeState *s)
+{
+	s->hl = GetPointerToDeckCards();
+}
+/* <<< factory GetPointerToDeckCards */
+
+/* >>> factory ResetCheckMenuCursorPositionAndBlink */
+static void adapt_ResetCheckMenuCursorPositionAndBlink(ProbeState *s)
+{
+	ResetCheckMenuCursorPositionAndBlinkResult r = ResetCheckMenuCursorPositionAndBlink();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory ResetCheckMenuCursorPositionAndBlink */
+
+/* >>> factory GetPointerToDeckName */
+static void adapt_GetPointerToDeckName(ProbeState *s)
+{
+	s->a = 0;
+	s->f = 0x80;
+	s->hl = GetPointerToDeckName();
+}
+/* <<< factory GetPointerToDeckName */
+
+/* >>> factory InitDeckBuildingParams */
+static void adapt_InitDeckBuildingParams(ProbeState *s)
+{
+	InitDeckBuildingParamsResult r = InitDeckBuildingParams(&s->hl, s->f);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+	s->hl = r.hl;
+}
+/* <<< factory InitDeckBuildingParams */
+
+/* >>> factory CheckIfCurDeckIsValid */
+static void adapt_CheckIfCurDeckIsValid(ProbeState *s)
+{
+	CheckIfCurDeckIsValidResult result = CheckIfCurDeckIsValid();
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->hl = result.hl;
+}
+/* <<< factory CheckIfCurDeckIsValid */
+
+/* >>> factory CancelDeckSelectionSubMenu */
+static void adapt_CancelDeckSelectionSubMenu(ProbeState *s)
+{
+	(void)s;
+	CancelDeckSelectionSubMenu();
+}
+/* <<< factory CancelDeckSelectionSubMenu */
+
+/* >>> factory LoadHandCardsIcon */
+static void adapt_LoadHandCardsIcon(ProbeState *s)
+{
+	LoadHandCardsIconResult r = LoadHandCardsIcon();
+	s->hl = r.hl;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory LoadHandCardsIcon */
+
+/* >>> factory InitPromotionalCardAndDeckCounterSaveData */
+static void adapt_InitPromotionalCardAndDeckCounterSaveData(ProbeState *s)
+{
+	LoadHandCardsIconResult r = InitPromotionalCardAndDeckCounterSaveData();
+	s->hl = r.hl;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory InitPromotionalCardAndDeckCounterSaveData */
+
+/* >>> factory PrepareMenuGraphics */
+static void adapt_PrepareMenuGraphics(ProbeState *s)
+{
+	(void)s;
+	PrepareMenuGraphics();
+}
+/* <<< factory PrepareMenuGraphics */
+
+/* >>> factory EmptyScreenAndLoadFontDuelAndHandCardsIcons */
+static void adapt_EmptyScreenAndLoadFontDuelAndHandCardsIcons(ProbeState *s)
+{
+	(void)s;
+	EmptyScreenAndLoadFontDuelAndHandCardsIcons();
+}
+/* <<< factory EmptyScreenAndLoadFontDuelAndHandCardsIcons */
+
+/* >>> factory PrintThereIsNoDeckHereText */
+static void adapt_PrintThereIsNoDeckHereText(ProbeState *s)
+{
+	s->a = PrintThereIsNoDeckHereText();
+}
+/* <<< factory PrintThereIsNoDeckHereText */
+
+/* >>> factory WriteCardListsTerminatorBytes */
+static void adapt_WriteCardListsTerminatorBytes(ProbeState *s)
+{
+	WriteCardListsTerminatorBytesResult r = WriteCardListsTerminatorBytes();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory WriteCardListsTerminatorBytes */
+
+/* >>> factory OpenDeckConfirmationMenu */
+static void adapt_OpenDeckConfirmationMenu(ProbeState *s)
+{
+	OpenDeckConfirmationMenu((uint16_t)(((uint16_t)s->d << 8) | s->e), s->hl);
+}
+/* <<< factory OpenDeckConfirmationMenu */
+
+/* >>> factory HandleStartButtonInDeckSelectionMenu */
+static void adapt_HandleStartButtonInDeckSelectionMenu(ProbeState *s)
+{
+	HandleStartButtonInDeckSelectionMenuResult result = HandleStartButtonInDeckSelectionMenu();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory HandleStartButtonInDeckSelectionMenu */
+
+/* >>> factory InputCurDeckName */
+static void adapt_InputCurDeckName(ProbeState *s)
+{
+	(void)s;
+	InputCurDeckName();
+}
+/* <<< factory InputCurDeckName */
+
+/* >>> factory DeckSelectionMenu */
+static void adapt_DeckSelectionMenu(ProbeState *s)
+{
+	(void)s;
+	DeckSelectionMenu();
+}
+/* <<< factory DeckSelectionMenu */
+
+/* >>> factory DeckSelectionSubMenu */
+static void adapt_DeckSelectionSubMenu(ProbeState *s)
+{
+	(void)s;
+	DeckSelectionSubMenu();
+}
+/* <<< factory DeckSelectionSubMenu */
+
+/* >>> factory DeckSelectionSubMenu_SelectOrCancel */
+static void adapt_DeckSelectionSubMenu_SelectOrCancel(ProbeState *s)
+{
+	(void)s;
+	DeckSelectionSubMenu_SelectOrCancel();
+}
+/* <<< factory DeckSelectionSubMenu_SelectOrCancel */
+
+const ProbeEntry probe_entries_deck_selection[] = {
+	{ "GetPointerToDeckCards", adapt_GetPointerToDeckCards },
+	{ "ResetCheckMenuCursorPositionAndBlink", adapt_ResetCheckMenuCursorPositionAndBlink },
+	{ "GetPointerToDeckName", adapt_GetPointerToDeckName },
+	{ "InitDeckBuildingParams", adapt_InitDeckBuildingParams },
+	{ "CheckIfCurDeckIsValid", adapt_CheckIfCurDeckIsValid },
+	{ "CancelDeckSelectionSubMenu", adapt_CancelDeckSelectionSubMenu },
+	{ "LoadHandCardsIcon", adapt_LoadHandCardsIcon },
+	{ "InitPromotionalCardAndDeckCounterSaveData", adapt_InitPromotionalCardAndDeckCounterSaveData },
+	{ "PrepareMenuGraphics", adapt_PrepareMenuGraphics },
+	{ "EmptyScreenAndLoadFontDuelAndHandCardsIcons", adapt_EmptyScreenAndLoadFontDuelAndHandCardsIcons },
+	{ "PrintThereIsNoDeckHereText", adapt_PrintThereIsNoDeckHereText },
+	{ "WriteCardListsTerminatorBytes", adapt_WriteCardListsTerminatorBytes },
+	{ "OpenDeckConfirmationMenu", adapt_OpenDeckConfirmationMenu },
+	{ "HandleStartButtonInDeckSelectionMenu", adapt_HandleStartButtonInDeckSelectionMenu },
+	{ "InputCurDeckName", adapt_InputCurDeckName },
+	{ "DeckSelectionMenu", adapt_DeckSelectionMenu },
+	{ "DeckSelectionSubMenu", adapt_DeckSelectionSubMenu },
+	{ "DeckSelectionSubMenu_SelectOrCancel", adapt_DeckSelectionSubMenu_SelectOrCancel },
+	{ NULL, NULL },
+};

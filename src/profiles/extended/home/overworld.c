@@ -6,6 +6,8 @@
 #include "home/script_entry_dispatch.h"
 #include "home/card_id_bus.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -16,9 +18,6 @@
 #include "home/load_animation.h"
 #include "mem.h"
 
-#define SPRITE_ANIM_COUNTER          0x0eu
-#define SPRITE_ANIM_FLAGS            0x0fu
-#define SPRITE_ANIM_FLAG_CENTERED_F  0x02u
 
 #include "home/copy.h"
 #include "home/print_text.h"
@@ -31,11 +30,6 @@
 #include "mem.h"
 #include "runtime.h"
 
-#define GAME_EVENT_DUEL      0x01u
-#define LOADED_NPC_DIRECTION 0x04u
-#define OVERWORLD_MAP        0x00u
-#define OWMODE_MAP           0x00u
-#define OWMODE_MOVE          0x01u
 #define FLAG_CARRY           0x10u
 
 #include "generated/sram.h"
@@ -72,7 +66,6 @@
 #include "generated/wram.h"
 #include "mem.h"
 
-#define POKEMON_DOME_ENTRANCE 0x1fu
 
 #include "home/text_box.h"
 #include "home/overworld.h"
@@ -90,7 +83,6 @@
 #include "home/map.h"
 #include "home/load_animation.h"
 
-#define SPRITE_ANIM_FLAG_UNSKIPPABLE 0x80u
 
 #include "generated/wram.h"
 #include "home/sprite_animations.h"
@@ -104,14 +96,7 @@
 #include "home/sprite_animations.h"
 #include "home/overworld_map.h"
 
-#define CONSOLE_CGB 0x02u
-#define SOUTH 0x02u
-#define SPRITE_OW_PLAYER 0x00u
 #define SPRITE_OW_MINT 0x72u
-#define SPRITE_ANIM_LIGHT_NPC_UP 0x00u
-#define SPRITE_ANIM_BLUE_NPC_UP 0x0Eu
-#define SPRITE_ANIM_RED_NPC_UP 0x1Eu
-#define PALETTE_OVERWORLD_OAM 0x1Du
 
 #include "home/scripting.h"
 #include "home/battle_center.h"
@@ -125,13 +110,11 @@
 #include "home/challenge_machine.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
-#define OWMAP_POKEMON_DOME 0x0Cu
 
 #include "home/overworld.h"
 #include "home/load_animation.h"
 #include "home/overworld_map.h"
 #include "generated/wram.h"
-#define SPRITE_ANIM_COORD_X 0x02u
 
 #include "home/overworld.h"
 #include "home/lcd.h"
@@ -178,7 +161,6 @@
 
 #include "home/load_overworld.h"
 #include "generated/wram.h"
-#define AUTO_CLOSE_TEXTBOX 0x00u
 
 #include "generated/wram.h"
 #include "generated/hram.h"
@@ -191,17 +173,13 @@
 #include "home/overworld.h"
 #include "home/load_overworld.h"
 #include "home/npc_core.h"
-#define HIDE_ALL_NPC_SPRITES 0x07u
 #define PLAYER_TURN 0xC2u
 
-#define RESTORE_FACING_DIRECTION 0x01u
 
 #include "generated/wram.h"
 #include "home/map.h"
 #include "home/npc_core.h"
 #include "home/script.h"
-#define OWMODE_SCRIPT 0x03u
-#define OWMODE_START_SCRIPT 0x02u
 
 #include "generated/wram.h"
 #include "home/overworld.h"
@@ -256,12 +234,8 @@
 #include "home/sound.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define MUSIC_PAUSE_MENU 0x05u
 #define DISPLAY_PAUSE_MENU 0x4797u
 #define DISPLAY_PC_MENU 0x484Eu
-#define MUSIC_PC_MAIN_MENU 0x06u
-#define TurnedPCOnText 0x0352u
-#define TurnedPCOffText 0x0353u
 
 #include "home/overworld.h"
 #include "generated/hram.h"
@@ -288,9 +262,6 @@
 #include "home/switch_sram.h"
 #include "home/tiles.h"
 
-#define DOUBLE_SPACED 0x00u
-#define GAME_EVENT_OVERWORLD 0x00u
-#define SFX_WARP 0x0Cu
 
 #include "generated/hram.h"
 #include "home/printer.h"
@@ -816,23 +787,10 @@ void Func_c4b9(void)
 {
 	wWhichOBP = 0u;
 	wWhichOBPalIndex = 0u;
-	LoadOBPalette(PALETTE_OVERWORLD_OAM);
+	LoadOBPalette(PALETTE_29);
+	wPlayerSpriteBaseAnimation = SPRITE_ANIM_RED_NPC_UP;
 
-	uint8_t console = wConsole;
-	uint8_t female = runtime_player_gender();
-	uint8_t base_anim = SPRITE_ANIM_LIGHT_NPC_UP;
-	uint8_t f_cgb = 0x40u;
-	if ((console & 0x0Fu) < (CONSOLE_CGB & 0x0Fu))
-		f_cgb |= 0x20u;
-	if (console < CONSOLE_CGB)
-		f_cgb |= 0x10u;
-	if (console == CONSOLE_CGB) {
-		f_cgb |= 0x80u;
-		base_anim = female ? SPRITE_ANIM_BLUE_NPC_UP : SPRITE_ANIM_RED_NPC_UP;
-	}
-	wPlayerSpriteBaseAnimation = base_anim;
-
-	(void)CreateSpriteAndAnimBufferEntry(female ? SPRITE_OW_MINT : SPRITE_OW_PLAYER, f_cgb);
+	(void)CreateSpriteAndAnimBufferEntry(SPRITE_OW_PLAYER, 0u);
 	wPlayerSpriteIndex = wWhichSprite;
 
 	uint8_t cur_map = wCurMap;

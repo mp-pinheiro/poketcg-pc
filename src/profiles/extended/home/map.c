@@ -1,6 +1,7 @@
 #include "home/credits.h"
 #include "home/map.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/sound.h"
@@ -16,7 +17,6 @@
 #include "generated/sram.h"
 #include "home/scripting.h"
 #include "home/switch_sram.h"
-#define EVENT_RECEIVED_LEGENDARY_CARDS 0x22u
 
 #include "home/map.h"
 #include "home/switch_rom.h"
@@ -28,22 +28,18 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
-#define HIDE_ALL_NPC_SPRITES 7u
 
 #include "generated/wram.h"
 #include "generated/sram.h"
 #include "home/switch_sram.h"
 #include "home/save.h"
 #include "home/core.h"
-#define GAME_EVENT_DUEL 0x01u
 
 #include "home/map.h"
 #include "home/challenge_machine.h"
 #include "home/switch_sram.h"
 #include "generated/wram.h"
 #include "generated/sram.h"
-#define MUSIC_OVERWORLD 0x09u
-#define MUSIC_PC_MAIN_MENU 0x06u
 
 
 #include "home/map.h"
@@ -55,8 +51,6 @@
 
 #include "home/map.h"
 #include "generated/wram.h"
-#define GAME_EVENT_CHALLENGE_MACHINE 0x04u
-#define NUM_GAME_EVENTS 0x05u
 
 #include "home/map.h"
 #include "home/overworld.h"
@@ -65,12 +59,6 @@
 /* <<< factory statics */
 
 #define BANK_EXECUTE_NPC_MOVEMENT 0x03u
-#define LOADED_NPC_MAX            8u
-#define LOADED_NPC_LENGTH         12u
-#define OWMAP_ISHIHARAS_HOUSE     0x02u
-#define OWMAP_CHALLENGE_HALL      0x0Bu
-#define OWMAP_POKEMON_DOME        0x0Cu
-#define MUSIC_RONALD              0x0Fu
 
 static uint16_t permission_address(uint8_t b, uint8_t c)
 {
