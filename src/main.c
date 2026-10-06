@@ -862,7 +862,7 @@ int main(int argc, char **argv)
 		rom_pack_free();
 		return 1;
 	}
-	if (load_save_path && sram_load(load_save_path) != 0) {
+	if (load_save_path && sram_load(load_save_path, profile_current().id) != 0) {
 		fprintf(stderr, "cannot load save %s: %s\n",
 		        load_save_path, strerror(errno));
 		rom_pack_free();
@@ -1069,7 +1069,7 @@ int main(int argc, char **argv)
 		status = 1;
 	free(dump_ordinals);
 	free(g_dump_frames);
-	if (status == 0 && save_path && sram_save_atomic(save_path) != 0) {
+	if (status == 0 && save_path && sram_save_atomic(save_path, profile_current().id) != 0) {
 		fprintf(stderr, "cannot save %s: %s\n", save_path, strerror(errno));
 		status = 1;
 	}

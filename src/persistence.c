@@ -21,8 +21,10 @@
 #define O_BINARY 0
 #endif
 
-#define SAVE_HEADER_SIZE 16u
+#define SAVE_VANILLA_HEADER_SIZE 16u
+#define SAVE_EXTENDED_HEADER_SIZE 24u
 #define SAVE_VERSION 1u
+#define SAVE_EXTENDED_VERSION 2u
 #define SAVE_PAYLOAD_SIZE 0x8000u
 
 static void put_u32(uint8_t *dst, uint32_t value)
@@ -47,6 +49,10 @@ static uint32_t checksum(const uint8_t *data, size_t length)
 		result *= 16777619u;
 	}
 	return result;
+}
+static int profile_matches_current(ProfileId profile)
+{
+	return profile == profile_current().id;
 }
 
 static int write_all(int fd, const uint8_t *data, size_t length)
@@ -133,9 +139,9 @@ int file_replace(const char *from, const char *to)
 #endif
 }
 
-int sram_save_atomic(const char *path)
+int sram_save_atomic(const char *path, ProfileId profile)
 {
-	if (!path || !*path) {
+	if (!path || !*path || !profile_matches_current(profile)) {
 		errno = EINVAL;
 		return -1;
 	}
@@ -148,11 +154,18 @@ int sram_save_atomic(const char *path)
 	int fd = mkstemp(temporary);
 	if (fd < 0)
 		return -1;
-	uint8_t header[SAVE_HEADER_SIZE] = {'P', 'K', 'S', 'R'};
-	put_u32(header + 4, SAVE_VERSION);
+	ProfileDescriptor descriptor = profile_current();
+	size_t header_size = profile == PROFILE_ID_EXTENDED ?
+		SAVE_EXTENDED_HEADER_SIZE : SAVE_VANILLA_HEADER_SIZE;
+	uint8_t header[SAVE_EXTENDED_HEADER_SIZE] = {'P', 'K', 'S', 'R'};
+	put_u32(header + 4, profile == PROFILE_ID_EXTENDED ? SAVE_EXTENDED_VERSION : SAVE_VERSION);
 	put_u32(header + 8, SAVE_PAYLOAD_SIZE);
 	put_u32(header + 12, checksum(g_sram, sizeof g_sram));
-	int result = write_all(fd, header, sizeof header);
+	if (profile == PROFILE_ID_EXTENDED) {
+		memcpy(header + 16, descriptor.tag, 4u);
+		put_u32(header + 20, descriptor.save_schema);
+	}
+	int result = write_all(fd, header, header_size);
 	if (!result)
 		result = write_all(fd, g_sram, sizeof g_sram);
 	if (!result)
@@ -176,21 +189,31 @@ int sram_save_atomic(const char *path)
 	return result;
 }
 
-int sram_load(const char *path)
+int sram_load(const char *path, ProfileId profile)
 {
-	if (!path || !*path) {
+	if (!path || !*path || !profile_matches_current(profile)) {
 		errno = EINVAL;
 		return -1;
 	}
 	int fd = open(path, O_RDONLY | O_BINARY);
 	if (fd < 0)
 		return -1;
-	uint8_t header[SAVE_HEADER_SIZE];
+	ProfileDescriptor descriptor = profile_current();
+	size_t header_size = profile == PROFILE_ID_EXTENDED ?
+		SAVE_EXTENDED_HEADER_SIZE : SAVE_VANILLA_HEADER_SIZE;
+	uint8_t header[SAVE_EXTENDED_HEADER_SIZE];
 	uint8_t payload[SAVE_PAYLOAD_SIZE];
-	int result = read_all(fd, header, sizeof header);
+	int result = read_all(fd, header, header_size);
 	if (!result && (memcmp(header, "PKSR", 4) != 0 ||
-	                get_u32(header + 4) != SAVE_VERSION ||
+	                get_u32(header + 4) !=
+	                    (profile == PROFILE_ID_EXTENDED ? SAVE_EXTENDED_VERSION : SAVE_VERSION) ||
 	                get_u32(header + 8) != SAVE_PAYLOAD_SIZE)) {
+		errno = EINVAL;
+		result = -1;
+	}
+	if (!result && profile == PROFILE_ID_EXTENDED &&
+	    (memcmp(header + 16, descriptor.tag, 4u) != 0 ||
+	     get_u32(header + 20) != descriptor.save_schema)) {
 		errno = EINVAL;
 		result = -1;
 	}

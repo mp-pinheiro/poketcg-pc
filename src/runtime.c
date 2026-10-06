@@ -728,10 +728,10 @@ static int debug_menu_loop(Shell *shell, RuntimeState *state, uint32_t frame_lim
 				shell_set_speed(shell, menu->speed);
 				break;
 			case 9:
-				(void)sram_save_atomic(menu->save_path);
+				(void)sram_save_atomic(menu->save_path, profile_current().id);
 				break;
 			case 10:
-				(void)sram_load(menu->save_path);
+				(void)sram_load(menu->save_path, profile_current().id);
 				break;
 			case 11: {
 				RuntimeResult result;
