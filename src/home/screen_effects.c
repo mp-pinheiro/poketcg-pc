@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -46,7 +47,6 @@
 #include "home/palettes.h"
 #include "home/screen_effects.h"
 #include "generated/wram.h"
-#define PALRGB_WHITE 0x7FFFu
 #define WHITEFLASHSCREEN_UPDATEFUNC_ADDR (WhiteFlashScreen_ADDR + 0x2Du)
 
 #include "home/screen_effects.h"
@@ -58,7 +58,6 @@
 #include "mem.h"
 
 #include "generated/wram.h"
-#define DUEL_SCREEN_ANIMS 0x61u
 /* <<< factory statics */
 
 /* >>> factory DecrementScreenAnimDuration */

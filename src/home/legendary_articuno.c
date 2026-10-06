@@ -1,5 +1,6 @@
 #include "home/legendary_articuno.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -7,11 +8,6 @@
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/legendary_articuno.h"
-#define ARTICUNO_LV35 0x5Eu
-#define DEWGONG 0x4Cu
-#define LAPRAS 0x59u
-#define PLAY_AREA_BENCH_1 0x01u
-#define SEEL 0x4Bu
 
 #include "generated/wram.h"
 #include "home/attacks.h"
@@ -21,13 +17,6 @@
 #include "home/general.h"
 #include "home/hand_pokemon.h"
 #include "home/init.h"
-#define AI_FLAG_USED_PROFESSOR_OAK 0x04u
-#define AI_TRAINER_CARD_PHASE_01 0x01u
-#define AI_TRAINER_CARD_PHASE_02 0x02u
-#define AI_TRAINER_CARD_PHASE_10 0x0au
-#define AI_TRAINER_CARD_PHASE_13 0x0du
-#define AI_TRAINER_CARD_PHASE_15 0x0fu
-#define OPPACTION_FINISH_NO_ATTACK 0x05u
 /* <<< factory statics */
 
 /* >>> factory ScoreLegendaryArticunoCards */

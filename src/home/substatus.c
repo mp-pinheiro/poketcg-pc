@@ -1,5 +1,7 @@
 #include "home/substatus.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/card_data.h"
@@ -18,14 +20,11 @@
 #include "home/menus.h"
 #include "home/print_text.h"
 #include "mem.h"
-#define ReceivesDamageDueToStrikesBackText 0x0105u
 
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/menus.h"
 #include "home/substatus.h"
-#define MACHAMP 0x7fu
-#define RESIDUAL 0x80u
 
 #include "generated/wram.h"
 #include "home/core.h"
@@ -33,8 +32,6 @@
 #include "home/menus.h"
 #include "home/print_text.h"
 #include "mem.h"
-#define SUBSTATUS1_DESTINY_BOND 0x16u
-#define KnockedOutDueToDestinyBondText 0x0104u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -42,11 +39,6 @@
 #include "home/duel.h"
 #include "home/menus.h"
 #define DUELVARS_ARENA_CARD_STAGE 0xceu
-#define HAUNTER_LV17 0x96u
-#define NO_DAMAGE_OR_EFFECT_TRANSPARENCY 0x04u
-#define NoDamageOrEffectDueToNShieldText 0x010bu
-#define NoDamageOrEffectDueToTransparencyText 0x010cu
-#define TransparencyCheckText 0x00f6u
 
 #include "generated/wram.h"
 #include "home/coin_toss.h"
@@ -56,18 +48,14 @@
 #include "home/coin_toss.h"
 #include "home/menus.h"
 #include "home/substatus.h"
-#define AttackUnsuccessfulText 0x00fdu
 /* <<< factory statics */
 
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
-#define SUBSTATUS2_SMOKESCREEN 0x01u
-#define SUBSTATUS2_SAND_ATTACK 0x02u
 #define SAND_ATTACK_CHECK_TEXT 0x00deu
 #define SMOKESCREEN_CHECK_TEXT 0x00dfu
 #define DUELVARS_ARENA_CARD 0xbbu
 #define DUELVARS_BENCH 0xbcu
 #define DUELVARS_ARENA_CARD_STATUS 0xf0u
-#define CNF_SLP_PRZ 0x0fu
 #define wTempPokemonID_ADDR 0xce7cu
 
 /* substatus.asm:544-590. Counts arena (if not status-incapable) plus bench
@@ -139,49 +127,12 @@ SandAttackCheckResult CheckSandAttackOrSmokescreenSubstatus(uint16_t de)
 #define DUELVARS_ARENA_CARD_SUBSTATUS3 0xebu
 #define DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX 0xf2u
 #define DUELVARS_ARENA_CARD_CHANGED_TYPE 0xd4u
-#define MAX_PLAY_AREA_POKEMON 6u
-#define PLAY_AREA_ARENA 0x00u
 
-#define SUBSTATUS1_AGILITY 0x0cu
-#define SUBSTATUS1_FLY 0x0du
-#define SUBSTATUS1_PREVENT_LESS_THAN_40 0x0eu
-#define SUBSTATUS1_NO_DAMAGE_STIFFEN 0x0fu
-#define SUBSTATUS1_NO_DAMAGE_WITHDRAW 0x10u
-#define SUBSTATUS1_NO_DAMAGE_HIDE_IN_SHELL 0x11u
-#define SUBSTATUS1_REDUCE_BY_20 0x13u
-#define SUBSTATUS1_BARRIER 0x14u
-#define SUBSTATUS1_HALVE_DAMAGE 0x15u
-#define SUBSTATUS1_NO_DAMAGE_SCRUNCH 0x17u
-#define SUBSTATUS1_NEXT_TURN_DOUBLE_DAMAGE 0x19u
-#define SUBSTATUS1_REDUCE_BY_10 0x1eu
 
-#define SUBSTATUS2_REDUCE_BY_20 0x03u
-#define SUBSTATUS2_AMNESIA 0x04u
-#define SUBSTATUS2_TAIL_WAG 0x05u
-#define SUBSTATUS2_LEER 0x06u
-#define SUBSTATUS2_POUNCE 0x07u
-#define SUBSTATUS2_ACID 0x09u
-#define SUBSTATUS2_BONE_ATTACK 0x0bu
-#define SUBSTATUS2_GROWL 0x12u
 
-#define SUBSTATUS3_THIS_TURN_DOUBLE_DAMAGE_F 0u
-#define SUBSTATUS3_HEADACHE_F 1u
 
-#define NO_DAMAGE_OR_EFFECT_AGILITY 0x01u
-#define NO_DAMAGE_OR_EFFECT_BARRIER 0x02u
-#define NO_DAMAGE_OR_EFFECT_FLY 0x03u
-#define NO_DAMAGE_OR_EFFECT_NSHIELD 0x05u
 
-#define POKEMON_POWER 0x04u
 
-#define MUK 0x27u
-#define OMANYTE 0x5cu
-#define BLASTOISE 0x43u
-#define AERODACTYL 0x8du
-#define DODRIO 0xb6u
-#define MR_MIME 0x9bu
-#define KABUTO 0x8bu
-#define MEW_LV8 0xa0u
 
 /* ldtx's compile-time text ids, matching text_offsets.asm's index (the same
  * convention as duel.c's PLAYER2_TEXT_ID). */
@@ -527,8 +478,6 @@ void ClearChangedTypesIfMuk(uint8_t a)
 }
 
 
-#define TYPE_ENERGY_WATER 0x0Bu
-#define TYPE_PKMN_WATER   0x03u
 
 RainDanceResult CheckRainDanceScenario(void)
 {

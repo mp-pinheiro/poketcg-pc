@@ -1,5 +1,6 @@
 #include "home/npc_data.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -9,17 +10,14 @@
 #define NPC_HEADER_POINTERS_BANK 0x04u
 #define NPC_HEADER_POINTERS_ADDR NPCHeaderPointers_ADDR
 
-#define NPC_DATA_NAME_TEXT 0x07u
 
 #include "home/npc_data.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define NPC_DATA_SCRIPT_PTR 0x05u
 
 #include "generated/wram.h"
 #include "mem.h"
 #define NPC_DATA_BANK 0x04u
-#define CONSOLE_CGB 0x02u
 
 #include "generated/wram.h"
 #include "mem.h"
@@ -29,7 +27,6 @@
 #include "home/npc_data.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define NPC_DATA_DECK_ID 0x0Au
 
 #include "home/npc_data.h"
 #include "generated/wram.h"
@@ -38,10 +35,6 @@
 #include "home/npc_data.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define MUSIC_MATCH_START_3 0x17u
-#define NPC_DATA_MATCH_START_ID 0x0Cu
-#define NPC_RONALD1 0x02u
-#define POKEMON_DOME 0x20u
 /* <<< factory statics */
 
 /* >>> factory GetNPCHeaderPointer */

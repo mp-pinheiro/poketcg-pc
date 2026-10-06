@@ -1,5 +1,6 @@
 #include "home/challenge_hall.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -8,15 +9,7 @@
 #include "home/random.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define DUEL_WIN 0x00u
-#define NPC_HOST 0x4Au
-#define NPC_RONALD1 0x02u
 #define CHALLENGE_HALL_BANK 3u
-#define EVENT_CHALLENGE_CUP_IN_MENU 0x47u
-#define EVENT_CHALLENGE_CUP_STARTING 0x42u
-#define EVENT_CHALLENGE_CUP_OPPONENT_CHOSEN 0x46u
-#define EVENT_CHALLENGE_CUP_OPPONENT_NUMBER 0x45u
-#define EVENT_CHALLENGE_CUP_NUMBER 0x44u
 #define CHALLENGE_HALL_NPC_COUNT 25u
 #define CHALLENGE_HALL_NPCS_ADDR ChallengeHallNPCs_ADDR
 #define CHALLENGE_HALL_SCRIPT_F433 Script_f433_ADDR

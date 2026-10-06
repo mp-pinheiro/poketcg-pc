@@ -1,5 +1,6 @@
 #include "home/debug_player_coordinates.h"
 
+#include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
@@ -11,8 +12,6 @@
 #include "generated/hram.h"
 #define PAD_A 0x01u
 #define PAD_B 0x02u
-#define OWMODE_START_SCRIPT 0x02u
-#define SCENE_COLOR_PALETTE 0x1Bu
 #define WX_OFS 0x07u
 /* <<< factory statics */
 

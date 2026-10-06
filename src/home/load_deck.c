@@ -1,5 +1,6 @@
 #include "home/load_deck.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -9,7 +10,6 @@
 
 #define BANK_DECK_DATA 0x0cu
 #define DECK_POINTERS  DeckPointers_ADDR
-#define DECK_SIZE      60u
 #define PLAYER_TURN    ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
 
 /* load_deck.asm + duel.asm:60-104. CopyDeckData is inlined: it expands the

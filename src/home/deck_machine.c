@@ -1,5 +1,7 @@
 #include "home/deck_machine.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -10,25 +12,18 @@
 #include "home/switch_sram.h"
 #include "home/switch_rom.h"
 
-#define DECK_NAME_SIZE 0x18u
-#define NUM_DECK_MACHINE_SLOTS 0x05u
 
 #include "home/switch_sram.h"
 
-#define CARD_NOT_OWNED 0x80u
-#define DECK_SIZE 0x3Cu
 
 #include "home/deck_configuration.h"
 #include "generated/sram.h"
 
-#define DECK_STRUCT_SIZE            0x54u
-#define NUM_DECK_SAVE_MACHINE_SLOTS 0x3cu
 
 #include "generated/wram.h"
 #include "home/bg_map.h"
 
 #define FALSE 0x00u
-#define NUM_DECK_MACHINE_VISIBLE_DECKS 0x05u
 #define TRUE 0x01u
 #define SYM_CURSOR_U 0x0Cu
 #define SYM_BOX_RIGHT 0x1Fu
@@ -40,17 +35,12 @@
 
 #include "home/deck_machine.h"
 
-#define CardToSendText 0x0281u
 
-#define CardReceivedText 0x0280u
-#define ReceivedTheseCardsFromText 0x0283u
 
 #include "home/deck_configuration.h"
 #include "home/process_text.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define TX_END 0x00u
-#define TX_SYMBOL 0x05u
 #define SYM_SLASH 0x2Eu
 
 #include "home/deck_machine.h"
@@ -61,7 +51,6 @@
 #include "home/deck_configuration.h"
 #include "home/process_text.h"
 #include "home/print_text.h"
-#define EmptyDeckNameText 0x025bu
 #define PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR (PrintDeckMachineEntry_ADDR + 0xB0u)
 
 #include "generated/hram.h"
@@ -75,15 +64,12 @@
 #include "home/deck_configuration.h"
 #include "home/card_data.h"
 #include "generated/wram.h"
-#define CARD_COLLECTION_SIZE 0x100u
 #define FUNC_B088_CARD_LIMIT 0xe4u
 
 #include "home/deck_configuration.h"
 #include "home/menus.h"
 #include "home/switch_sram.h"
 #include "generated/wram.h"
-#define DeletedTheConfigurationForText 0x0267u
-#define DoYouReallyWishToDeleteText 0x0266u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -96,9 +82,7 @@
 #include "home/process_text.h"
 #include "mem.h"
 
-#define NUM_FILTERS 0x09u
 #define MENU_CANCEL 0xFFu
-#define MENU_CONFIRM 0x01u
 #define PAD_START 0x08u
 #define CARRY_FLAG 0x10u
 #define NUM_CONFIRMATION_CURSOR_POSITIONS 0x05u
@@ -113,11 +97,6 @@
 #define DECK_CONFIRMATION_CARD_SELECTION_PARAMS_ADDR (HandleDeckMissingCardsList_ADDR + 0x93u)
 #define CARD_LIST_UPDATE_FUNCTION_ADDR (HandleDeckMissingCardsList_ADDR + 0x9Cu)
 
-#define ALL_DECKS 0xffu
-#define ChooseADeckToDismantleText 0x0269u
-#define DismantleThisDeckText 0x023du
-#define DismantledDeckText 0x026au
-#define YouMayOnlyCarry4DecksText 0x0268u
 
 #include "home/deck_machine.h"
 #include "generated/wram.h"
@@ -146,7 +125,6 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define SFX_CURSOR 0x01u
 #define PAD_RIGHT 0x10u
 #define PAD_LEFT 0x20u
 
@@ -159,8 +137,6 @@
 #include "home/menus.h"
 #include "home/switch_sram.h"
 #include "mem.h"
-#define ChooseADeckToSaveText 0x0260u
-#define SavedTheConfigurationForText 0x0263u
 
 #include "home/deck_machine.h"
 #include "home/auto_deck_machines.h"
@@ -173,17 +149,6 @@
 #include "generated/wram.h"
 #include "mem.h"
 
-#define CARD_COUNT_MASK 0x7fu
-#define DECK_1_F 0x00u
-#define DECK_2_F 0x01u
-#define DECK_3_F 0x02u
-#define DECK_4_F 0x03u
-#define BuiltDeckText 0x026eu
-#define DismantleTheseDecksText 0x0270u
-#define DismantledTheDeckText 0x0271u
-#define TheseCardsAreNeededToBuildThisDeckText 0x026fu
-#define ThisDeckCanOnlyBeBuiltIfYouDismantleText 0x026cu
-#define YouDoNotOwnAllCardsNeededToBuildThisDeckText 0x026du
 /* poketcg.sym: 02:7609 DeckMachineMenuParameters. */
 #define DECK_MACHINE_MENU_PARAMETERS_ADDR DeckMachineMenuParameters_ADDR
 
@@ -208,7 +173,6 @@
 #include "generated/wram.h"
 #include "mem.h"
 
-#define PleaseSelectDeckText 0x0224u
 /* poketcg.sym, every one of these in bank 2:
  *   02:7b6e HandleAutoDeckMenu.MenuParameters
  *   02:7b76 HandleAutoDeckMenu.DeckMachineMenuData
@@ -227,14 +191,9 @@
 #include "mem.h"
 #define DRAW_DECK_MACHINE_SCREEN_ADDR DrawDeckMachineScreen_ADDR
 
-#define PleaseChooseDeckConfigurationToPrintText 0x0275u
-#define PrintThisDeckText 0x0276u
 #define PRINTER_MENU_DECK_CONFIGURATION_PARAMS_ADDR DeckMachineSelectionParams_ADDR
 
 #include "generated/wram.h"
-#define DeckSaveMachineText 0x025cu
-#define NoDeckIsSavedText 0x0264u
-#define OKIfFileDeletedText 0x0272u
 #define DECK_MACHINE_SELECTION_PARAMS_ADDR DeckMachineSelectionParams_ADDR
 #define DECK_MACHINE_MENU_DATA_ADDR (HandleDeckSaveMachineMenu_ADDR + 0xD7u)
 
@@ -248,14 +207,6 @@
 
 #include "home/common.h"
 #include "home/save.h"
-#define PleaseChooseASaveSlotText 0x0285u
-#define ReceivedADeckConfigurationFromText 0x0287u
-#define ProceduresForSendingCardsText 0x027cu
-#define CardSendingProceduresText 0x027du
-#define PleaseReadTheProceduresForSendingCardsText 0x027eu
-#define PleaseChooseADeckConfigurationToSendText 0x0284u
-#define SINGLE_SPACED 0x01u
-#define DOUBLE_SPACED 0x00u
 
 #include "home/deck_configuration.h"
 #include "home/switch_sram.h"

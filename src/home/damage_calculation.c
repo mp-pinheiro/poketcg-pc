@@ -1,5 +1,6 @@
 #include "home/damage_calculation.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/card_color.h"
@@ -13,14 +14,8 @@
 #define DUELVARS_ARENA_CARD_CHANGED_WEAKNESS 0xE9u
 #define DUELVARS_ARENA_CARD_CHANGED_RESISTANCE 0xEAu
 #define DUELVARS_ARENA_CARD_STATUS 0xF0u
-#define CARD_LOCATION_ARENA 0x10u
-#define UNAFFECTED_BY_WEAKNESS_RESISTANCE_F 7u
-#define POISONED 0x80u
-#define DOUBLE_POISONED 0xC0u
 #define DUELVARS_ARENA_CARD_SUBSTATUS1 0xE7u
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xE8u
-#define POKEMON_POWER 0x04u
-#define EFFECTCMDTYPE_AI 0x09u
 
 
 static DamageCalculationResult finish_damage(uint16_t out, uint16_t value)

@@ -1,5 +1,6 @@
 #include "home/empty_screen.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/lcd.h"
@@ -12,7 +13,6 @@
  * bit off, so every WriteByteToBGMap0 until the next EnableLCD takes the
  * direct path (no wTempByte staging) and DoFrameIfLCDEnabled skips its
  * DoFrame, as on the ROM. FillTileMap is the home routine, not a copy. */
-#define CONSOLE_SGB 0x01u
 #define ATTR_BLK_PACKET_EMPTY_SCREEN 0x04BFu
 void EmptyScreen(void)
 {

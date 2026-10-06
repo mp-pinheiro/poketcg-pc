@@ -1,5 +1,6 @@
 #include "home/fire_club_lobby.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -17,10 +18,6 @@
 #include "home/grass_club_entrance.h"
 #include "mem.h"
 #define AFTER_DUEL_TABLE_830 (FireClubLobbyAfterDuel_ADDR + 0x07u)
-#define EVENT_LAD2_STATE 0x21u
-#define LAD2_SLOWPOKE_AVAILABLE 0x01u
-#define EVENT_PUPIL_JESSICA_STATE 0x20u
-#define PUPIL_DEFEATED 0x08u
 /* <<< factory statics */
 
 /* >>> factory FindExtraInteractableObjects */

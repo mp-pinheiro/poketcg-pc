@@ -1,5 +1,6 @@
 #include "home/palettes.h"
 
+#include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
 
@@ -8,16 +9,11 @@
 #define rOBP0   0xFF48u
 #define rOBP1   0xFF49u
 
-#define CONSOLE_CGB             0x02u
-#define FLUSH_ONE_PAL           0x80u
-#define FLUSH_ALL_PALS          0xC0u
 /* palettes.asm:74: `bit FLUSH_ALL_PALS_F, a` tests bit 6 alone, not the full
  * FLUSH_ALL_PALS (0xC0) pattern. Every single-palette flush request also has
  * FLUSH_ONE_PAL (bit 7) set, so masking with FLUSH_ALL_PALS instead of this
  * bit routed every CGB single-palette flush through FlushAllCGBPalettes. */
-#define FLUSH_ALL_PALS_F         6u
 #define PAL_SIZE                8u
-#define NUM_BACKGROUND_PALETTES 8u
 #define STAT_BUSY               0x02u
 
 CopyCGBPalettesResult CopyCGBPalettes(uint8_t a, uint8_t b)

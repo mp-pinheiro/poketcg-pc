@@ -1,5 +1,6 @@
 #include "home/ir_core.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -20,13 +21,11 @@
 #include "mem.h"
 
 #include "home/ir_core.h"
-#define P11 0x02u
 #define RJOYP_ADDR 0xFF00u
 
 #include "home/ir_core.h"
 
 #include "home/time.h"
-#define P14 0x10u
 
 #define JOYP_GET_NONE 0x30u
 #define RSTAT_ADDR 0xFF41u
@@ -36,19 +35,13 @@
 #include "home/ir_core.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define IRCMD_CLOSE 0x00u
 
 #include "home/ir_core.h"
-#define IRCMD_TRANSMIT_DATA 0x02u
 
 #include "home/ir_core.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define IRCMD_RETURN_WO_CLOSING 0x01u
-#define IRCMD_RECEIVE_DATA 0x03u
-#define NUM_IR_COMMANDS 0x05u
 
-#define P10 0x01u
 
 #include "home/ir_core.h"
 #include "mem.h"

@@ -1,5 +1,6 @@
 #include "home/overworld_map.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -7,16 +8,11 @@
 /* >>> factory statics */
 #include "home/load_animation.h"
 
-#define SPRITE_ANIM_COORD_X 0x02u
 
 #include "generated/wram.h"
 #include "home/sprite_animations.h"
 #include "home/load_animation.h"
 
-#define CONSOLE_CGB 0x02u
-#define SPRITE_ANIM_CGB_VOLCANO_SMOKE 0x37u
-#define SPRITE_ANIM_SGB_VOLCANO_SMOKE 0x34u
-#define SPRITE_OW_MAP_OAM 0x25u
 
 #include "generated/wram.h"
 #include "home/sprite_animations.h"
@@ -24,7 +20,6 @@
 #include "home/overworld_map.h"
 #include "generated/wram.h"
 
-#define NORTH 0x00u
 
 static const uint8_t overworld_map_warps[13][4] = {
 	{0x00u, 0x00u, 0x00u, 0x00u},
@@ -46,15 +41,10 @@ static const uint8_t overworld_map_warps[13][4] = {
 #include "home/overworld_map.h"
 #include "generated/wram.h"
 
-#define EAST 0x01u
-#define WEST 0x03u
 
 #include "generated/wram.h"
 #include "home/scripting.h"
 
-#define EVENT_ISHIHARAS_HOUSE_MENTIONED 0x1eu
-#define OWMAP_ISHIHARAS_HOUSE 0x02u
-#define OWMAP_MYSTERY_HOUSE 0x0du
 
 #include "generated/wram.h"
 #include "mem.h"
@@ -62,17 +52,11 @@ static const uint8_t overworld_map_warps[13][4] = {
 #include "home/scripting.h"
 #include "home/sprite_animations.h"
 
-#define EVENT_MASON_LAB_STATE 0x3eu
-#define SPRITE_ANIM_CGB_OWMAP_CURSOR 0x38u
-#define SPRITE_ANIM_FLAGS 0x0fu
-#define SPRITE_ANIM_FLAG_UNSKIPPABLE_F 0x07u
-#define SPRITE_ANIM_SGB_OWMAP_CURSOR 0x35u
 
 #include "home/load_animation.h"
 #include "home/overworld_map.h"
 #include "mem.h"
 
-#define SOUTH 0x02u
 
 #include "home/process_text.h"
 #include "home/print_text.h"
@@ -88,8 +72,6 @@ static const uint8_t overworld_map_warps[13][4] = {
 #include "home/sound.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define SFX_PLAYER_WALK_MAP 0x57u
-#define SPRITE_ANIM_FLAG_CENTERED_F 0x02u
 #define OVERWORLD_MAP_BANK 0x04u
 #define OVERWORLD_MAP_PLAYER_MOVEMENT_PATHS OverworldMap_PlayerMovementPaths_ADDR
 
@@ -123,7 +105,6 @@ static const uint8_t overworld_map_cursor_transitions[13][4] = {
 #include "generated/wram.h"
 #define PAD_CTRL_PAD 0xF0u
 #define PAD_A 0x01u
-#define SFX_CONFIRM 0x02u
 /* <<< factory statics */
 
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */

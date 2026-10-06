@@ -1,12 +1,11 @@
 #include "home/ishiharas_house.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
 #include "home/scripting.h"
-#define ISHIHARA_LEFT 0x08u
-#define NIKKI_IN_ISHIHARAS_HOUSE 0x01u
 #define TRUE 0x01u
 
 static uint8_t cp_flags(uint8_t a, uint8_t n)

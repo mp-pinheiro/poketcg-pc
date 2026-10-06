@@ -5,6 +5,8 @@
 
 #include <limits.h>
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "isr.h"
@@ -31,7 +33,6 @@
 #include "mem.h"
 
 #include "home/printer.h"
-#define PRINTERPKT_DATA 0x04u
 #define TRUE 0x01u
 
 #include "generated/wram.h"
@@ -42,7 +43,6 @@
 #define SYM_CROSS 0x2Du
 
 #include "home/menus.h"
-#define PleaseMakeSureToTurnGameBoyPrinterOffText 0x027bu
 
 #include "generated/sram.h"
 #include "generated/wram.h"
@@ -52,18 +52,14 @@
 #include "home/print_text.h"
 #include "home/process_text.h"
 #include "home/text_box.h"
-#define CARDPAGETYPE_NOT_PLAY_AREA 0x00u
 #define RetreatWeakResistData RetreatWeakResistData_ADDR
 #define SYM_SPACE 0x00u
 #define SYM_No 0x13u
-#define TYPE_ENERGY 0x08u
 
 #include "home/menus.h"
 #include "home/lcd.h"
 #include "home/load_animation.h"
 #include "home/sprite_vblank.h"
-#define SCENE_GAMEBOY_PRINTER_TRANSMITTING 0x11u
-#define NowPrintingPleaseWaitText 0x0195u
 
 #include "home/printer.h"
 #include "home/frames.h"
@@ -71,27 +67,13 @@
 #include "generated/hram.h"
 #define PAD_B 0x02u
 #define FALSE 0x00u
-#define PRINTERPKT_INIT 0x01u
-#define PRINTERPKT_NUL 0x0Fu
-#define PRINTER_STATUS_BUSY 0x01u
-#define PRINTER_STATUS_PRINTING 0x03u
 
 #include "home/printer.h"
-#define PrinterIsNotConnectedText 0x00d7u
 
 #include "generated/wram.h"
 #include "home/menus.h"
 #include "home/printer.h"
-#define PRINTER_ERROR_BATTERIES_LOST_CHARGE 0x07u
-#define PRINTER_ERROR_CABLE_PRINTER_SWITCH 0x06u
-#define PRINTER_ERROR_PAPER_JAMMED 0x05u
-#define BatteriesHaveLostTheirChargeText 0x00d8u
-#define CheckCableOrPrinterSwitchText 0x00dau
-#define PrinterPacketErrorText 0x00dbu
-#define PrinterPaperIsJammedText 0x00d9u
-#define PrintingWasInterruptedText 0x00dcu
 
-#define PRINTERPKT_PRINT_INSTRUCTION 0x02u
 
 #include "home/printer.h"
 #include "generated/sram.h"
@@ -108,8 +90,6 @@
 #include "home/switch_sram.h"
 #include "home/text_box.h"
 #include "home/tiles.h"
-#define DECK_STRUCT_SIZE 0x54u
-#define DeckPrinterText 0x0021u
 
 #include "home/printer.h"
 
@@ -128,10 +108,8 @@
 #include "home/sprite_vblank.h"
 #include "home/text_box.h"
 #include "home/tiles.h"
-#define TX_END 0x00u
 #define SYM_Lv 0x11u
 #define SYM_HP 0x10u
-#define NowPrintingText 0x01a2u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -148,28 +126,8 @@
 #include "home/tiles.h"
 #define PAD_SELECT 0x04u
 #define PLAYER_TURN 0xC2u
-#define GRASS_ENERGY 0x01u
-#define STAR 0x02u
 /* PROMOTIONAL EQU CARD_SET_PROMOTIONAL << 4, and CARD_SET_PROMOTIONAL is $04
  * (card_data_constants.asm), so the byte is $40. */
-#define PROMOTIONAL 0x40u
-#define CARD_COUNT_MASK 0x7Fu
-#define CARD_NOT_OWNED 0x80u
-#define CARD_NOT_OWNED_F 0x07u
-#define TX_HALF2FULL 0x07u
-#define TYPE_TRAINER 0x10u
-#define AllCardsOwnedText 0x0015u
-#define TotalNumberOfCardsText 0x0016u
-#define TypesOfCardsText 0x0017u
-#define GrassPokemonText 0x0018u
-#define FirePokemonText 0x0019u
-#define WaterPokemonText 0x001Au
-#define LightningPokemonText 0x001Bu
-#define FightingPokemonText 0x001Cu
-#define PsychicPokemonText 0x001Du
-#define ColorlessPokemonText 0x001Eu
-#define TrainerCardText 0x001Fu
-#define EnergyCardText 0x0020u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -183,7 +141,6 @@
 #include "home/print_text.h"
 #include "home/process_text.h"
 #define SYM_BOX_TOP 0x1Cu
-#define PrintTheCardListText 0x0277u
 /* Data_ad05 is `02:6d05 Data_ad05` in poketcg.sym: the nine card-selection
  * parameter bytes (x 3, y 3, y spacing 0, x spacing 4, 2 entries,
  * SYM_CURSOR_R $0F, SYM_SPACE $00, NULL handler) this menu hands
@@ -203,17 +160,13 @@
 #include "home/process_text.h"
 #include "home/tiles.h"
 #include "mem.h"
-#define CONSOLE_CGB 0x02u
 #define MENU_CANCEL 0xFFu
-#define MENU_CONFIRM 0x01u
-#define NUM_FILTERS 0x09u
 #define PAD_DOWN 0x80u
 #define PAD_START 0x08u
 #define FILTERS_CARD_SELECTION_PARAMS_ADDR FiltersCardSelectionParams_ADDR
 #define PRINTER_POKEMON_CARDS_DATA_ADDR 0x6396u
 #define PRINTER_POKEMON_CARDS_PRINT_LIST_ADDR 0x642Du
 #define PRINTER_POKEMON_CARDS_SELECTION_PARAMS_ADDR (TransitionTable1_ADDR + 0x0Cu)
-#define PrintThisCardYesNoText 0x0274u
 
 #include "generated/hram.h"
 #include "generated/sram.h"
@@ -230,9 +183,6 @@
 #include "home/printer.h"
 #include "home/switch_sram.h"
 #include "home/text_box.h"
-#define PleaseSetTheContrastText 0x027au
-#define PrintMenuItemsText 0x0278u
-#define WhatWouldYouLikeToPrintText 0x0279u
 #define PRINTER_MENU_PARAMETERS_ADDR PrinterMenuParameters_ADDR
 #define PRINTER_INSTRUCTION_STACK 0xDFC6u
 #define PRINTER_QUALITY_PARAMETERS_ADDR (InputDeckName_ADDR + 0x6Cu)

@@ -1,5 +1,6 @@
 #include "home/config.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 
@@ -31,7 +32,6 @@ static const uint8_t kDuelAnimationSettings[8] = {
 
 #include "home/sound.h"
 
-#define SFX_CURSOR 0x01u
 
 #include "generated/hram.h"
 #include "home/overworld.h"
@@ -47,8 +47,6 @@ static const uint8_t kDuelAnimationSettings[8] = {
 #include "home/sound.h"
 #include "home/labels.h"
 #include "mem.h"
-#define SFX_CONFIRM 0x02u
-#define SINGLE_SPACED 0x01u
 /* <<< factory statics */
 
 void DrawConfigMenuCursor(uint8_t a, uint8_t c)

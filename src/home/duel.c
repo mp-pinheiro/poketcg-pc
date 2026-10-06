@@ -1,6 +1,8 @@
 #include "home/duel.h"
 #include <stdio.h>
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/sram.h"
@@ -129,7 +131,6 @@ SubtractHPResult SubtractHP(uint16_t hl, uint16_t de)
 
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xbau
 #define DUELVARS_DECK_CARDS 0x7eu
-#define DECK_SIZE 60u
 
 /* duel.asm:398-431. Copies DECK_SIZE - n remaining deck ids into wDuelTempList.
  * The `or a; ret` tail leaves carry clear on the non-empty path, so the exit is
@@ -195,8 +196,6 @@ TempListResult CountCardsInDuelTempList(void)
 #define DUELVARS_CARD_LOCATIONS 0x00u
 #define DUELVARS_ARENA_CARD 0xbbu
 #define DUELVARS_ARENA_CARD_HP 0xc8u
-#define CARD_LOCATION_JUST_DRAWN 0x40u
-#define TYPE_ENERGY_F 3u
 #define PLAY_AREA_MASK 0x10u
 
 /* duel.asm:2306-2320. The final `sub [hl]` borrows when the damage exceeds the
@@ -283,7 +282,6 @@ HandListResult CreateArenaOrBenchEnergyCardList(uint8_t a)
 
 #include "home/random.h"
 /* >>> factory statics */
-#define PRIZES_6 0x06u
 
 #include "home/bg_map.h"
 #include "home/objects.h"
@@ -351,7 +349,6 @@ void YourOrOppPlayAreaScreen_DrawCursor(void)
 #include "home/bg_map.h"
 
 #define V0_TILES0 0x8000u
-#define CONSOLE_CGB 0x02u
 #define R_VBK 0xFF4Fu
 #define PRIZE_TILE 0xACu
 #define PRIZE_TILE_CGB_ATTR 0x02u
@@ -375,7 +372,6 @@ static const uint8_t kCursorTileData[16] = {
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/serial.h"
-#define OPPACTION_BEGIN_ATTACK 0x08u
 #define TRUE 0x01u
 
 #include "home/duel.h"
@@ -394,10 +390,7 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/process_text.h"
 #include "home/print_text.h"
 #include "generated/wram.h"
-#define TX_END 0x00u
-#define TX_SYMBOL 0x05u
 #define SYM_CROSS 0x2du
-#define HandText_2 0x024eu
 
 #include "home/deck_configuration.h"
 #include "home/tiles.h"
@@ -419,11 +412,7 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/duel.h"
 #include "home/sound.h"
 #include "home/deck_check.h"
-#define B_CURSOR_BLINK_PERIOD 0x04u
-#define CURSOR_BLINK_PERIOD_MASK 0x0Fu
 #define MENU_CANCEL 0xFFu
-#define MENU_CONFIRM 0x01u
-#define SFX_CURSOR 0x01u
 #define B_PAD_LEFT 5u
 #define B_PAD_RIGHT 4u
 #define B_PAD_UP 6u
@@ -465,12 +454,6 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/serial.h"
 #include "home/duel_core.h"
 #include "home/effect_commands.h"
-#define EFFECTCMDTYPE_BEFORE_DAMAGE 0x03u
-#define EFFECTCMDTYPE_INITIAL_EFFECT_2 0x02u
-#define EFFECTCMDTYPE_REQUIRE_SELECTION 0x05u
-#define OPPACTION_DUEL_MAIN_SCENE 0x16u
-#define OPPACTION_EXECUTE_PKMN_POWER_EFFECT 0x0du
-#define OPPACTION_USE_PKMN_POWER 0x0cu
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -491,7 +474,6 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/process_text.h"
 #include "home/print_text.h"
 #include "home/tiles.h"
-#define DuelistsPlayAreaText 0x0247u
 
 #include "generated/wram.h"
 #include "home/duel.h"
@@ -507,7 +489,6 @@ static const uint8_t kCursorTileData[16] = {
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define PokemonsAttackText 0x0035u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -516,7 +497,6 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/menus.h"
 #include "home/print_text.h"
 #include "mem.h"
-#define WasUnsuccessfulText 0x014au
 
 #include "home/core.h"
 #include "home/duel.h"
@@ -533,7 +513,6 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/objects.h"
 #include "home/process_text.h"
 #include "home/tiles.h"
-#define CHECK_PLAY_AREA 0x0Au
 
 #include "home/core.h"
 #include "home/duel.h"
@@ -552,19 +531,10 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/serial.h"
 #include "home/print_text.h"
 #include "home/duel_core.h"
-#define EFFECTCMDTYPE_PKMN_POWER_TRIGGER 0x07u
-#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
-#define MUK 0x27u
-#define PLAY_AREA_BENCH_1 0x01u
-#define POKEMON_POWER 0x04u
-#define HavePokemonPowerText 0x0082u
-#define UnableToUsePkmnPowerDueToToxicGasText 0x0083u
-#define WillUseThePokemonPowerText 0x005cu
 
 #include "home/duel.h"
 #include "mem.h"
 #define DUELVARS_PRIZE_CARDS 0x3Cu
-#define PleaseChooseAPrizeText 0x024Du
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -574,26 +544,16 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/menus.h"
 #include "home/serial.h"
 #include "home/substatus.h"
-#define EFFECTCMDTYPE_DISCARD_ENERGY 0x06u
-#define EFFECTCMDTYPE_INITIAL_EFFECT_1 0x01u
-#define OPPACTION_EXECUTE_TRAINER_EFFECTS 0x07u
-#define OPPACTION_PLAY_TRAINER 0x06u
 
 #include "home/coin_toss.h"
 #include "generated/wram.h"
-#define CNF_SLP_PRZ 0x0fu
-#define CONFUSED 0x01u
-#define ConfusionCheckDamageText 0x00f7u
 
-#define RESIDUAL_F 0x07u
 
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/substatus.h"
-#define CARD_LOCATION_PLAY_AREA 0x10u
 
-#define ATK_ANIM_BENCH_HIT 0x78u
 
 #include "home/core.h"
 
@@ -601,7 +561,6 @@ static const uint8_t kCursorTileData[16] = {
 #include "generated/hram.h"
 
 #include "generated/wram.h"
-#define ATK_ANIM_RECOIL_HIT 0x7Au
 
 #include "home/glossary.h"
 
@@ -646,21 +605,15 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/core.h"
 #include "home/menus.h"
 #include "mem.h"
-#define ATK_ANIM_CONFUSION_HIT 0x75u
-#define DamageToSelfDueToConfusionText 0x004fu
 
 #include "home/effect_commands.h"
 #include "home/core.h"
 
-#define EFFECTCMDTYPE_AFTER_DAMAGE 0x04u
-#define DUEL_MAIN_SCENE 0x01u
-#define RESIDUAL 0x80u
 
 #include "home/menus.h"
 #include "home/duel.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define NO_DAMAGE_OR_EFFECT_AGILITY 0x01u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -678,8 +631,6 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/serial.h"
 #include "home/substatus.h"
 
-#define OPPACTION_ATTACK_ANIM_AND_DAMAGE 0x0Au
-#define OPPACTION_USE_ATTACK 0x09u
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -892,9 +843,6 @@ CopyTextResult CopyOpponentName(uint16_t de)
 
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
 #define DUELVARS_PRIZES 0xecu
-#define CARD_LOCATION_DECK 0x00u
-#define CARD_LOCATION_HAND 0x01u
-#define CARD_LOCATION_DISCARD_PILE 0x02u
 #define DUELVARS_ARENA_CARD_FLAGS 0xc2u
 #define DUELVARS_ARENA_CARD_STAGE 0xceu
 #define DUELVARS_ARENA_CARD_CHANGED_TYPE 0xd4u
@@ -907,16 +855,7 @@ CopyTextResult CopyOpponentName(uint16_t de)
 #define DUELVARS_ARENA_CARD_SUBSTATUS3 0xebu
 #define DUELVARS_ARENA_CARD_STATUS 0xf0u
 #define DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX 0xf2u
-#define SUBSTATUS3_THIS_TURN_DOUBLE_DAMAGE_F 0u
-#define CAN_EVOLVE_THIS_TURN 0x80u
-#define NUM_TYPES 8u
-#define TYPE_PKMN 0x07u
-#define PLUSPOWER 0xd8u
-#define DEFENDER 0xd9u
 #define ATTACK_DATA_LEN 0x13u
-#define MAX_PLAY_AREA_POKEMON 6u
-#define PLAY_AREA_ARENA 0u
-#define COLORLESS 6u
 
 /* duel.asm:60-104. */
 CardListResult CopyDeckData(uint16_t de)
@@ -1581,7 +1520,6 @@ DiscardIfInPlayResult MoveCardToDiscardPileIfInPlayArea(uint16_t de, uint8_t pag
 				       (uint16_t)(((uint16_t)page << 8) | DECK_SIZE)};
 }
 
-#define CARD_LOCATION_ARENA 0x10u
 #define WEAKNESS  (1u << 1)
 #define RESISTANCE (1u << 2)
 

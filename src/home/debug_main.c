@@ -1,5 +1,6 @@
 #include "home/debug_main.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 /* >>> factory statics */
@@ -17,8 +18,6 @@
 /* debug_main.asm:21 `ld hl, Unknown_128f7` (naming.asm:42). $12661 is bank 4
  * ($12661 - 4 * $4000 + $4000 = $6661), so the label's banked address is $68F7. */
 #define UNKNOWN_128F7 Unknown_128f7_ADDR
-#define SINGLE_SPACED 0x01u
-#define DOUBLE_SPACED 0x00u
 /* <<< factory statics */
 
 /* debug_main.asm:38-54. Menu item 10 dispatches to DebugQuit. The jump-table

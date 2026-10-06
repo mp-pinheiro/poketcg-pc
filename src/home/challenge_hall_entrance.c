@@ -1,5 +1,6 @@
 #include "home/challenge_hall_entrance.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -7,16 +8,6 @@
 /* >>> factory statics */
 #include "generated/wram.h"
 #include "home/scripting.h"
-#define CHALLENGE_CUP_NOT_STARTED 0x00u
-#define CHALLENGE_CUP_READY_TO_START 0x01u
-#define CHALLENGE_CUP_OVER 0x07u
-#define EVENT_CHALLENGE_CUP_1_STATE 0x3fu
-#define EVENT_CHALLENGE_CUP_2_STATE 0x40u
-#define EVENT_CHALLENGE_CUP_3_STATE 0x41u
-#define EVENT_CHALLENGE_CUP_NUMBER 0x44u
-#define EVENT_CHALLENGE_CUP_STARTING 0x42u
-#define EVENT_MEDAL_COUNT 0x2eu
-#define MUSIC_CHALLENGE_HALL 0x0bu
 /* <<< factory statics */
 
 /* >>> factory Preload_Clerk9 */

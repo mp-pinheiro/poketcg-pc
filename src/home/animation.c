@@ -1,5 +1,6 @@
 #include "home/animation.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -9,14 +10,12 @@
 /* >>> factory statics */
 #include "home/animation.h"
 #include "generated/wram.h"
-#define NUM_OW_FRAMESET_SUBGROUPS 0x03u
 
 #include "home/animation.h"
 #include "generated/wram.h"
 #include "mem.h"
 
 #include "home/animation.h"
-#define CONSOLE_CGB 0x02u
 #define MAP_OW_FRAMESET_POINTERS_BANK 0x20u
 #define MAP_OW_FRAMESET_POINTERS_ADDR MapOWFramesetPointers_ADDR
 /* <<< factory statics */

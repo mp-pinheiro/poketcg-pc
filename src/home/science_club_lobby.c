@@ -1,5 +1,6 @@
 #include "home/science_club_lobby.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -14,12 +15,6 @@
 #include "home/scripting.h"
 #include "home/random.h"
 #include "home/card_data.h"
-#define EVENT_TEMP_DUELED_IMAKUNI 0x03u
-#define EVENT_IMAKUNI_STATE 0x13u
-#define EVENT_IMAKUNI_ROOM 0x34u
-#define IMAKUNI_TALKED 0x02u
-#define IMAKUNI_SCIENCE_CLUB 0x01u
-#define MUSIC_IMAKUNI 0x10u
 /* <<< factory statics */
 
 /* >>> factory ScienceClubLobbyAfterDuel */

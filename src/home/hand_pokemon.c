@@ -1,5 +1,6 @@
 #include "home/hand_pokemon.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -11,49 +12,25 @@
 #include "home/substatus.h"
 #include "home/duel.h"
 
-#define CHARMELEON 0x31u
-#define DRAGONAIR 0xC0u
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
-#define GRIMER 0x26u
 #define INVINCIBLE_RONALD_DECK_ID 0x1Au
 #define LEGENDARY_DRAGONITE_DECK_ID 0x0Fu
 #define LEGENDARY_RONALD_DECK_ID 0x1Bu
-#define MAGIKARP 0x57u
-#define MUK 0x27u
-#define PLAY_AREA_ARENA 0x00u
 
 #include "home/retreat.h"
 
 #define LEGENDARY_ARTICUNO_DECK_ID 0x0Eu
 #define LEGENDARY_ZAPDOS_DECK_ID 0x0Du
-#define ARTICUNO_LV37 0x5Fu
-#define CNF_SLP_PRZ 0x0Fu
 #define DUELVARS_ARENA_CARD 0xBBu
 #define DUELVARS_ARENA_CARD_STATUS 0xF0u
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
-#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
-#define MAX_BENCH_POKEMON 0x05u
-#define MOLTRES_LV37 0x40u
-#define POKEMON_POWER 0x04u
-#define SNORLAX 0xBEu
-#define ZAPDOS_LV68 0x76u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
 #include "home/core.h"
 #include "home/duel.h"
-#define OPPACTION_PLAY_BASIC_PKMN 0x01u
-#define TYPE_ENERGY 0x08u
-#define AI_INFO_ENCOURAGE_EVO 0x02u
-#define MYSTERIOUS_FOSSIL 0xCCu
-#define OPPACTION_EVOLVE_PKMN 0x02u
-#define PIKACHU_ALT_LV16 0x63u
 #define PIKACHU_DECK_ID 0x25u
-#define PIKACHU_LV12 0x60u
-#define PIKACHU_LV14 0x61u
-#define PIKACHU_LV16 0x62u
-#define SECOND_ATTACK 0x01u
 /* <<< factory statics */
 
 /* >>> factory AIDecideSpecialEvolutions */

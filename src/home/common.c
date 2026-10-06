@@ -1,5 +1,6 @@
 #include "home/common.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -17,9 +18,7 @@
 #include "home/duel.h"
 #include "mem.h"
 
-#define DOUBLE_COLORLESS_ENERGY 0x07u
 #define DUELVARS_ARENA_CARD     0xbbu
-#define TYPE_ENERGY             0x08u
 
 #include "home/card_data.h"
 #include "home/duel.h"
@@ -32,7 +31,6 @@
 
 #include "home/duel.h"
 #include "generated/wram.h"
-#define MAX_PLAY_AREA_POKEMON 0x06u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -44,25 +42,20 @@
 #include "home/duel.h"
 #include "mem.h"
 
-#define DECK_SIZE 0x3cu
 #define DUELVARS_CARD_LOCATIONS 0x00u
 
-#define MEWTWO_LV53 0x9du
 
 #include "home/duel.h"
 #include "home/card_data.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
-#define TYPE_TRAINER 0x10u
 
 #include "home/duel.h"
 #include "home/card_data.h"
 
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
 
-#define PLAY_AREA_ARENA 0x00u
 
-#define CARD_LOCATION_DECK 0x00u
 
 #include "home/common.h"
 #include "home/duel.h"
@@ -82,9 +75,7 @@
 #include "home/core.h"
 #include "generated/wram.h"
 
-#define AI_MEWTWO_MILL_F 0x07u
 #define AI_MEWTWO_MILL (1u << AI_MEWTWO_MILL_F)
-#define AI_TRAINER_CARD_PHASE_05 0x05u
 
 #include "home/booster_pack.h"
 
@@ -93,8 +84,6 @@
 #include "generated/wram.h"
 #include "home/attacks.h"
 #include "home/duel.h"
-#define ATTACK_FLAG1_ADDRESS 0x00u
-#define HIGH_RECOIL_F 0x06u
 
 #include "generated/hram.h"
 #include "generated/wram.h"

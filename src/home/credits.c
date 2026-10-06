@@ -1,6 +1,7 @@
 #include "home/credits.h"
 #include "home/frames.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -160,8 +161,6 @@ void Func_1d705(void)
 
 /* <<< factory Func_1d705 */
 /* >>> factory PlayCreditsSequence */
-#define MUSIC_STOP 0x00u
-#define MUSIC_CREDITS 0x12u
 #define PAD_START 0x08u
 PlayCreditsSequenceResult PlayCreditsSequence(void)
 {

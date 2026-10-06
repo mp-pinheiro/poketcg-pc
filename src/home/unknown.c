@@ -1,5 +1,6 @@
 #include "home/unknown.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -16,11 +17,7 @@
 #define PAD_UP 0x40u
 #define PAD_DOWN 0x80u
 
-#define B_CURSOR_BLINK_PERIOD 0x04u
-#define CURSOR_BLINK_PERIOD_MASK 0x0fu
 #define MENU_CANCEL 0xffu
-#define MENU_CONFIRM 0x01u
-#define SFX_CURSOR 0x01u
 
 /* Tile ids verified against the real ROM's BG map writes: the blinking
  * check-menu cursor is tile $0f and the blank it is erased with is $00. */

@@ -2,6 +2,7 @@
 
 #include "home/script_entry_dispatch.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -14,7 +15,6 @@
 #include "home/scripting.h"
 
 #include "home/overworld_map.h"
-#define OVERWORLD_MAP 0x00u
 /* <<< factory statics */
 
 /* >>> factory LoadMapTilesAndPals */

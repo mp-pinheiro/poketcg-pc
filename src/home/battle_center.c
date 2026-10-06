@@ -1,5 +1,6 @@
 #include "home/battle_center.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -9,7 +10,6 @@
 #include "home/scripting.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define DUEL_LOSS 0x01u
 /* <<< factory statics */
 
 /* >>> factory Func_fc2b */

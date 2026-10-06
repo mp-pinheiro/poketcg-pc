@@ -1,5 +1,6 @@
 #include "home/fighting_club.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -11,10 +12,6 @@
 #define FightingClubAfterDuelTable (FightingClubAfterDuel_ADDR + 0x07u)
 
 #include "home/scripting.h"
-#define EVENT_PUPIL_MICHAEL_STATE 0x11u
-#define EVENT_PUPIL_CHRIS_STATE 0x17u
-#define EVENT_PUPIL_JESSICA_STATE 0x20u
-#define PUPIL_DEFEATED 0x08u
 
 /* fighting_club.asm:99-103, 129-133, 157-161: `cp PUPIL_DEFEATED` then `ccf`,
  * so carry -- load the pupil into the club -- means defeated. `ccf` clears N

@@ -1,5 +1,7 @@
 #include "home/diary.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -15,10 +17,6 @@
 #include "home/save.h"
 #include "home/menus.h"
 #include "generated/wram.h"
-#define SFX_SAVE_GAME 0x56u
-#define PlayerDiarySaveCancelText 0x0346u
-#define PlayerDiarySaveConfirmText 0x0345u
-#define PlayerDiarySaveQuestionText 0x0344u
 /* <<< factory statics */
 
 /* >>> factory _PauseMenu_Diary */

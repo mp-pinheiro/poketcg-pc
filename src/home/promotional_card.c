@@ -1,6 +1,8 @@
 #include "home/promotional_card.h"
 #include "home/frames.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -12,23 +14,8 @@
 #include "home/core.h"
 #include "home/music1.h"
 
-#define ARTICUNO_LV37 0x5fu
-#define BLASTOISE 0x43u
-#define DRAGONITE_LV41 0xc1u
-#define FLYING_PIKACHU 0x64u
-#define MOLTRES_LV37 0x40u
-#define MUSIC_MEDAL 0x1du
 #define PLAYER_TURN 0xc2u
-#define SURFING_PIKACHU_ALT_LV13 0x66u
-#define SURFING_PIKACHU_LV13 0x65u
-#define VILEPLUME 0x1eu
-#define ZAPDOS_LV68 0x76u
 
-#define ReceivedCardText 0x018fu
-#define ReceivedLegendaryCardText 0x0191u
-#define ReceivedPromotionalCardText 0x0190u
-#define ReceivedPromotionalFlyingPikachuText 0x0192u
-#define ReceivedPromotionalSurfingPikachuText 0x0193u
 /* <<< factory statics */
 
 /* >>> factory _ShowPromotionalCardScreen */

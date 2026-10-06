@@ -1,5 +1,6 @@
 #include "home/pkmn_powers.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -15,9 +16,6 @@
 #include "mem.h"
 
 #define DUELVARS_ARENA_CARD                 0xbbu
-#define OPPACTION_USE_PKMN_POWER            0x0cu
-#define OPPACTION_EXECUTE_PKMN_POWER_EFFECT 0x0du
-#define OPPACTION_DUEL_MAIN_SCENE           0x16u
 /* wce08: AI scratch byte holding the deck index the Pkmn Power acts on. */
 #define WCE08_ADDR                          0xce08u
 #define WCE06_ADDR                          0xce06u
@@ -53,20 +51,11 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 #include "home/duel.h"
 #include "home/random.h"
 
-#define AI_PEEK_TARGET_DECK                   0xffu
-#define AI_PEEK_TARGET_HAND                   0x80u
-#define AI_PEEK_TARGET_PRIZE                  0x40u
-#define DECK_SIZE                             0x3cu
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK  0xbau
 #define DUELVARS_PRIZES                       0xecu
 
 #define DUELVARS_ARENA_CARD_HP 0xc8u
-#define OPPACTION_6B15 0x15u
-#define PLAY_AREA_ARENA 0x00u
-#define VENUSAUR_LV67 0x0bu
 #define DUELVARS_CARD_LOCATIONS 0x00u
-#define CARD_LOCATION_ARENA 0x10u
-#define GRASS_ENERGY 0x01u
 #define OPPACTION_DUEL_MAIN_SCENE_269 0x16u
 /* wAttachedEnergies ($CC1B) indexed by GRASS ($01). */
 #define GRASS_ENERGY_COUNT_ADDR 0xCC1Cu
@@ -78,7 +67,6 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 #include "generated/hram.h"
 
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
-#define PLAY_AREA_BENCH_1 0x01u
 
 #include "home/core.h"
 #include "home/common.h"
@@ -88,34 +76,16 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define ABRA 0x8eu
-#define ALAKAZAM 0x90u
-#define CHANSEY 0xb8u
-#define KADABRA 0x8fu
-#define KANGASKHAN 0xb9u
-#define MR_MIME 0x9bu
-#define MUK 0x27u
-#define SNORLAX 0xbeu
 
 #include "home/effect_commands.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 
 #define DUELVARS_ARENA_CARD_STATUS 0xf0u
-#define CNF_SLP_PRZ 0x0fu
-#define EFFECTCMDTYPE_INITIAL_EFFECT_2 0x02u
-#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
-#define POKEMON_POWER 0x04u
-#define GENGAR 0x98u
-#define MANKEY 0x7bu
-#define SLOWBRO 0x93u
-#define VENOMOTH 0x22u
-#define VILEPLUME 0x1eu
 
 #include "home/energy.h"
 #include "home/substatus.h"
 #define GO_GO_RAIN_DANCE_DECK_ID 0x12u
-#define BLASTOISE 0x43u
 
 #include "home/core.h"
 #include "home/duel.h"
@@ -123,7 +93,6 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 #include "home/substatus.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define TENTACOOL 0x49u
 
 #include "generated/hram.h"
 #include "home/core.h"
@@ -732,11 +701,6 @@ AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void
  * the transfer count replaces it. RETREAT moves enough Grass energy to the
  * Arena card to pay its retreat cost, ATTACK enough for its second attack,
  * TO_BENCH tail-jumps to AIEnergyTransTransferEnergyToBench. */
-#define AI_ENERGY_TRANS_RETREAT 0x09u
-#define AI_ENERGY_TRANS_TO_BENCH 0x0Eu
-#define EXEGGUTOR 0x29u
-#define CARD_LOCATION_BENCH_1 0x11u
-#define SECOND_ATTACK 0x01u
 
 /* .CountGrassEnergyInBench: Grass energy cards attached to bench cards. */
 static uint8_t energy_trans_count_grass_in_bench(void)

@@ -1,5 +1,6 @@
 #include "home/attacks.h"
 
+#include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
@@ -13,50 +14,16 @@
 #include "home/special_attacks.h"
 #include "home/damage_calculation.h"
 #include "home/substatus.h"
-#define AI_FLAG_USED_PLUSPOWER 0x01u
-#define AI_MEWTWO_MILL 0x80u
-#define AI_TRAINER_CARD_PHASE_14 0x0eu
-#define ASLEEP 0x02u
-#define ATTACK_FLAG1_ADDRESS 0x00u
-#define ATTACK_FLAG2_ADDRESS 0x08u
-#define ATTACK_FLAG3_ADDRESS 0x10u
 #define BOOM_BOOM_SELFDESTRUCT_DECK_ID 0x26u
-#define CHANSEY 0xB8u
-#define CNF_SLP_PRZ 0x0Fu
-#define CONFUSED 0x01u
-#define DAMAGE_TO_OPPONENT_BENCH_F 0x05u
-#define DISCARD_ENERGY_F 0x03u
-#define DOUBLE_POISONED 0xC0u
-#define DRAW_CARD_F 0x07u
 #define DUELVARS_ARENA_CARD 0xBBu
 #define DUELVARS_ARENA_CARD_HP 0xC8u
 #define DUELVARS_ARENA_CARD_STATUS 0xF0u
 #define DUELVARS_BENCH 0xBCu
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
-#define ENCOURAGE_THIS_ATTACK_F 0x06u
-#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
-#define HEAL_USER_F 0x01u
-#define HEALING_EQUALS_10_HP 0x01u
-#define HEALING_EQUALS_DAMAGE_DEALT 0x03u
-#define HIGH_RECOIL_F 0x06u
-#define INFLICT_CONFUSION_F 0x03u
-#define INFLICT_PARALYSIS_F 0x02u
-#define INFLICT_POISON_F 0x00u
-#define INFLICT_SLEEP_F 0x01u
-#define LOW_RECOIL_F 0x04u
-#define MAGNEMITE_LV13 0x69u
-#define NULLIFY_OR_WEAKEN_ATTACK_F 0x02u
-#define PLAY_AREA_ARENA 0x00u
-#define POKEMON_POWER 0x04u
 #define POWER_GENERATOR_DECK_ID 0x27u
-#define RESIDUAL 0x80u
 #define ROCK_CRUSHER_DECK_ID 0x11u
-#define SECOND_ATTACK 0x01u
-#define SNORLAX 0xBEu
-#define SPECIAL_AI_HANDLING_F 0x01u
 #define TRUE 0x01u
-#define WEEZING 0x2Bu
 #define ZAPPING_SELFDESTRUCT_DECK_ID 0x13u
 
 #include "generated/wram.h"

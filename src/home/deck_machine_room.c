@@ -1,10 +1,9 @@
 #include "home/deck_machine_room.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
-#define MAP_EVENT_FIGHTING_DECK_MACHINE 0x02u
-#define MAP_EVENT_FIRE_DECK_MACHINE 0x09u
 
 #include "home/grass_club_entrance.h"
 

@@ -5,6 +5,8 @@
 #include "home/objects.h"
 #include "home/switch_rom.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -16,7 +18,6 @@
 
 #define DECK_CARD_STRIDE 0x54u
 
-#define DECK_STRUCT_SIZE 0x54u
 
 #include "generated/wram.h"
 
@@ -27,7 +28,6 @@
 
 #include "home/switch_sram.h"
 #include "mem.h"
-#define DECK_SIZE 0x3Cu
 
 #include "home/deck_selection.h"
 #define SYM_0 0x20u
@@ -37,32 +37,25 @@
 
 #define TRUE 0x01u
 
-#define ThereIsNoDeckHereText 0x022fu
 
 #include "generated/wram.h"
-#define DECK_CONFIG_BUFFER_SIZE 0x50u
 
 #include "generated/wram.h"
 #include "home/deck_configuration.h"
 
-#define NUM_FILTERS 0x09u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/deck_check.h"
 
 #define PAD_START 0x08u
-#define ALL_DECKS 0xFFu
 #define MENU_CANCEL 0xFFu
-#define MENU_CONFIRM 0x01u
 
 #include "generated/sram.h"
 #include "generated/wram.h"
 #include "home/input_name.h"
 #include "home/write_number.h"
 #include "mem.h"
-#define MAX_DECK_NAME_LENGTH 0x14u
-#define MAX_UNNAMED_DECK_NUM 0x3e7u
 #define INPUT_CUR_DECK_DECK1_DATA (PrintCardSetListEntries_ADDR + 0x69u)
 #define INPUT_CUR_DECK_DECK2_DATA (PrintCardSetListEntries_ADDR + 0x72u)
 #define INPUT_CUR_DECK_DECK3_DATA (PrintCardSetListEntries_ADDR + 0x7Bu)
@@ -78,8 +71,6 @@
 #define DECK_BUILDING_PARAMS_ADDR DeckBuildingParams_ADDR
 #define DECK_SELECTION_MENU_PARAMS_ADDR (DeckSelectionMenu_ADDR + 0x32u)
 #define DECK_SELECTION_DATA_ADDR DeckSelectionData_ADDR
-#define ChosenAsDuelingDeckText 0x022au
-#define PleaseSelectDeckText 0x0224u
 /* <<< factory statics */
 
 /* >>> factory GetPointerToDeckCards */

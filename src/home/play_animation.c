@@ -1,5 +1,6 @@
 #include "home/play_animation.h"
 
+#include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
@@ -7,7 +8,6 @@
 #include "home/switch_rom.h"
 #include "home/duel_animation_core.h"
 
-#define DUEL_SPECIAL_ANIMS 0x61u
 #define BANK_LOAD_DUEL_ANIM_BUFFER 7u
 
 #include "home/load_animation.h"
@@ -20,7 +20,6 @@
 #include "home/load_animation.h"
 /* <<< factory statics */
 
-#define ANIMATION_QUEUE_LENGTH 7u
 #define rQUEUE 0xD423u
 
 AnimationStatusResult CheckAnyAnimationPlaying(void)

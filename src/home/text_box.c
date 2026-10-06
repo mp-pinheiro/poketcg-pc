@@ -1,5 +1,6 @@
 #include "home/text_box.h"
 
+#include "generated/constants.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "home/print_text.h"
@@ -7,14 +8,10 @@
 #include "mem.h"
 #include "ppu.h"
 
-#define TX_SYMBOL 0x05
-#define TX_HALF2FULL 0x07
-#define TX_END 0x00
 #define SYM_BOX_TOP_L 0x18
 #define SYM_BOX_TOP_R 0x19
 #define SYM_BOX_TOP 0x1c
 #define FW_SPACE 0x70
-#define CONSOLE_CGB 0x02
 
 uint8_t SafeCopyDataDEtoHL(uint16_t *de, uint16_t *hl, uint8_t c)
 {

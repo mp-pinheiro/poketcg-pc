@@ -1,5 +1,6 @@
 #include "home/legendary_dragonite.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -14,17 +15,7 @@
 #include "home/general.h"
 #include "home/hand_pokemon.h"
 #include "home/init.h"
-#define AI_FLAG_USED_PROFESSOR_OAK 0x04u
-#define AI_TRAINER_CARD_PHASE_01 0x01u
-#define AI_TRAINER_CARD_PHASE_02 0x02u
-#define AI_TRAINER_CARD_PHASE_07 0x07u
-#define AI_TRAINER_CARD_PHASE_10 0x0au
-#define AI_TRAINER_CARD_PHASE_11 0x0bu
-#define AI_TRAINER_CARD_PHASE_15 0x0fu
 #define DUELVARS_ARENA_CARD 0xbbu
-#define KANGASKHAN 0xb9u
-#define OPPACTION_FINISH_NO_ATTACK 0x05u
-#define PLAY_AREA_ARENA 0x00u
 /* <<< factory statics */
 
 /* >>> factory AIDoTurn_LegendaryDragonite */

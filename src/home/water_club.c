@@ -3,11 +3,9 @@
 #include "mem.h"
 /* >>> factory statics */
 #include "home/scripting.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
-#define EVENT_JOSHUA_STATE 0x33u
-#define JOSHUA_DEFEATED 0x02u
-#define NPC_JOSHUA 0x21u
 
 #include "home/grass_club_entrance.h"
 #define WaterClubAfterDuelTable (WaterClubAfterDuel_ADDR + 0x07u)

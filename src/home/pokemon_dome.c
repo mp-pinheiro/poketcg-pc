@@ -3,36 +3,17 @@
 #include "home/map_events.h"
 #include "mem.h"
 /* >>> factory statics */
-#define MAP_EVENT_HALL_OF_HONOR_DOOR 0x01u
 
 #include "home/pokemon_dome.h"
 #include "home/scripting.h"
 #include "mem.h"
 #include "home/mail.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "home/fire_club_lobby.h"
 #include "home/grass_club_entrance.h"
 #define PokemonDomeAfterDuelTable (PokemonDomeAfterDuel_ADDR + 0x07u)
-#define EVENT_CHALLENGED_GRAND_MASTERS 0x64u
-#define EVENT_POKEMON_DOME_STATE 0x65u
-#define EVENT_COURTNEY_STATE 0x68u
-#define EVENT_STEVE_STATE 0x69u
-#define EVENT_JACK_STATE 0x6Au
-#define EVENT_ROD_STATE 0x6Bu
-#define EVENT_RONALD_POKEMON_DOME_STATE 0x6Cu
-#define EVENT_POKEMON_DOME_IN_MENU 0x66u
-#define COURTNEY_CHALLENGED 0x01u
-#define COURTNEY_DEFEATED 0x02u
-#define STEVE_CHALLENGED 0x01u
-#define STEVE_DEFEATED 0x02u
-#define JACK_CHALLENGED 0x01u
-#define JACK_DEFEATED 0x02u
-#define ROD_CHALLENGED 0x01u
-#define POKEMON_DOME_CHALLENGED 0x01u
-#define POKEMON_DOME_DEFEATED 0x02u
-#define RONALD_DEFEATED 0x02u
-#define MUSIC_RONALD 0x0Fu
 
 static PokemonDomeResult preload_grand_master(uint8_t event, uint8_t x, uint8_t y,
 	uint8_t challenged, uint8_t defeated)
@@ -51,7 +32,6 @@ static PokemonDomeResult preload_grand_master(uint8_t event, uint8_t x, uint8_t 
 #define W_LOAD_NPC_X_POS_ADDR 0xD3ACu
 #define W_LOAD_NPC_Y_POS_ADDR 0xD3ADu
 #define W_LOAD_NPC_DIRECTION_ADDR 0xD3AEu
-#define WEST 0x03u
 
 static uint8_t carry_flags(uint8_t f)
 {

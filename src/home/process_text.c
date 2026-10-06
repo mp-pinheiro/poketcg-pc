@@ -4,24 +4,17 @@
 #include "home/text_box.h"
 
 #include "home/copy.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
 #include "runtime.h"
 #include "home/write_number.h"
-#define TX_CTRL_START 0x05
-#define TX_SYMBOL 0x05
 #define SYM_SPACE 0x00
 #define SYM_0 0x20
 #define FW_SPACE 0x70
-#define TX_HALF2FULL 0x07
-#define TX_HALFWIDTH 0x06
-#define TX_HIRAGANA 0x0e
-#define TX_KATAKANA 0x0f
-#define TX_CTRL_END 0x10
 #define TILE_SIZE 16
-#define TILE_SIZE_1BPP 8
 
 void InitTextFormat(void)
 {

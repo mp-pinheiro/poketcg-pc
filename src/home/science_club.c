@@ -1,5 +1,6 @@
 #include "home/science_club.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -7,8 +8,6 @@
 /* >>> factory statics */
 #include "home/scripting.h"
 #include "generated/wram.h"
-#define EVENT_BEAT_JOSEPH 0x1Bu
-#define WEST 0x03u
 
 #include "home/grass_club_entrance.h"
 #define ScienceClubAfterDuelTable (ScienceClubAfterDuel_ADDR + 0x07u)

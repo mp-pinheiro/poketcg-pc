@@ -1,5 +1,6 @@
 #include "home/boss_deck_set_up.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -9,9 +10,6 @@
 #include "mem.h"
 #define DUELVARS_DECK_CARDS 0x7Eu
 #define DUELVARS_HAND 0x42u
-#define STARTING_HAND_SIZE 0x07u
-#define TYPE_ENERGY 0x08u
-#define TYPE_TRAINER 0x10u
 /* <<< factory statics */
 
 /* >>> factory SetUpBossStartingHandAndDeck */

@@ -1,5 +1,6 @@
 #include "home/npc_core.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -11,15 +12,6 @@
 #include "mem.h"
 
 /* engine/overworld/npc_core.asm constants */
-#define NPC_RONALD1              0x02u
-#define NPC_RONALD2              0x71u
-#define NPC_RONALD3              0x72u
-#define LOADED_NPC_SPRITE        0x01u
-#define LOADED_NPC_DIRECTION     0x04u
-#define LOADED_NPC_FLAGS         0x05u
-#define LOADED_NPC_ANIM          0x06u
-#define NPC_FLAG_DIRECTIONLESS_F 0x04u
-#define SPRITE_ANIM_COUNTER      0x0eu
 
 /* flag byte bits: Z=0x80, N=0x40, H=0x20, C=0x10 */
 #define F_Z                      0x80u
@@ -28,14 +20,10 @@
 #include "home/map.h"
 #include "home/npc_core.h"
 
-#define LOADED_NPC_DIRECTION_BACKUP 0x07u
 
 #include "home/map.h"
 
 /* engine/overworld/npc_core.asm constants */
-#define DIRECTION_MASK           0x7fu /* $ff ^ NO_MOVE ($80) */
-#define LOADED_NPC_MOVEMENT_STEP 0x08u
-#define NPC_FLAG_MOVING_F        0x05u
 #define MOVEMENT_CMD_SPECIAL     0xf0u
 #define MOVEMENT_CMD_STOP        0xffu
 
@@ -48,10 +36,7 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 	0xfeu, 0x00u, /* WEST */
 };
 
-#define LOADED_NPC_COORD_X 0x02u
 
-#define NPC_FLAG_MOVING (1u << NPC_FLAG_MOVING_F)
-#define SPRITE_ANIM_COORD_X 0x02u
 
 #include "generated/wram.h"
 #include "home/map.h"
@@ -74,8 +59,6 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 
 #include "generated/wram.h"
 
-#define LOADED_NPC_LENGTH 0x0Cu
-#define LOADED_NPC_MAX 0x08u
 
 #include "home/npc_core.h"
 #include "generated/wram.h"
@@ -98,11 +81,9 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 #include "home/npc_core.h"
 #include "home/overworld.h"
 #include "mem.h"
-#define RESTORE_FACING_DIRECTION 0x01u
 
 #include "home/npc_core.h"
 #include "mem.h"
-#define LOADED_NPC_MOVEMENT_PTR 0x09u
 
 #include "generated/wram.h"
 
@@ -111,8 +92,6 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 #include "home/load_animation.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define SPRITE_ANIM_FLAGS 0x0Fu
-#define SPRITE_ANIM_FLAG_UNSKIPPABLE_F 7u
 /* <<< factory statics */
 
 /* >>> factory CheckIfNPCIsRonald */

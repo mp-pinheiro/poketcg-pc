@@ -1,4 +1,5 @@
 #include "home/intro.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -20,18 +21,10 @@
 #include "home/play_animation.h"
 #define HANDLE_ALL_SPRITE_ANIMATIONS 0x3CB4u
 #define INTRO_SEQUENCE IntroSequence_ADDR
-#define SCENE_TITLE_SCREEN 0x00u
-#define MUSIC_TITLESCREEN 0x01u
 #define PAD_A 0x01u
 #define PAD_START 0x08u
 /* <<< factory statics */
 
-#define PALETTE_TITLE_SCREEN_ORBS 0x1eu
-#define SPRITE_ANIM_COORD_X 2u
-#define SPRITE_PRESS_START 0x6au
-#define SPRITE_ANIM_190 0xbeu
-#define SPRITE_ANIM_191 0xbfu
-#define CONSOLE_CGB 0x02u
 
 void LoadTitleScreenSprites(void)
 {

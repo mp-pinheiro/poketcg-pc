@@ -1,6 +1,7 @@
 #include "home/main_menu.h"
 #include "home/start.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -14,14 +15,9 @@
 /* >>> factory statics */
 #include "home/common.h"
 #include "home/lcd_enable_frame.h"
-#define MUSIC_OVERWORLD 0x09u
 #include "home/overworld.h"
 #include "home/sound.h"
 #include "generated/wram.h"
-#define MUSIC_CARD_POP 0x08u
-#define MUSIC_STOP 0x00u
-#define GAME_EVENT_OVERWORLD 0x00u
-#define GAME_EVENT_CONTINUE_DUEL 0x05u
 #define PLAYER_TURN 0xC2u
 #define START_MENU_PC_OPTIONS 0xFEu
 

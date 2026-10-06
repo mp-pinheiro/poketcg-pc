@@ -8,6 +8,7 @@
 #include "home/process_text.h"
 #include "home/tiles.h"
 /* >>> factory statics */
+#include "generated/text_ids.h"
 #include "generated/hram.h"
 #include "generated/sram.h"
 #include "generated/wram.h"
@@ -23,7 +24,6 @@
 #define IE_VBLANK 0x01u
 #define IE_TIMER 0x04u
 #define rIE 0xFFFFu
-#define ResetBackUpRamText 0x00a2u
 /* <<< factory statics */
 
 void SetupResetBackUpRamScreen(void)

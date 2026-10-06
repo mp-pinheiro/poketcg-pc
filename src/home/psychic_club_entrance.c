@@ -1,5 +1,6 @@
 #include "home/psychic_club_entrance.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -8,19 +9,14 @@
 #include "home/map.h"
 #include "home/scripting.h"
 #include "generated/wram.h"
-#define NPC_RONALD1 0x02u
 
 #include "home/map.h"
 #include "home/scripting.h"
 #include "generated/wram.h"
-#define NPC_RONALD2 0x71u
-#define EVENT_RONALD_FIRST_DUEL_STATE 0x4Cu
 
 #include "home/psychic_club_entrance.h"
 #include "home/map.h"
 #include "home/scripting.h"
-#define NPC_RONALD3 0x72u
-#define EVENT_RONALD_SECOND_DUEL_STATE 0x4Du
 
 #include "home/psychic_club_entrance.h"
 
@@ -33,11 +29,7 @@
 #include "home/scripting.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define EVENT_MEDAL_COUNT 0x2Eu
-#define RONALD_DUEL_WON 0x01u
-#define RONALD_DUEL_LOST 0x02u
 
-#define EVENT_RONALD_FIRST_CLUB_ENTRANCE_ENCOUNTER 0x4Bu
 #define TRUE 0x01u
 /* <<< factory statics */
 

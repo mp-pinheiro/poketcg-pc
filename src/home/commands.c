@@ -1,5 +1,7 @@
 #include "home/commands.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "home/duel.h"
@@ -11,13 +13,6 @@
 /* >>> factory statics */
 #define PLAYER_TURN ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
 #define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
-#define SET_ANIM_SCREEN_MAIN 0x01u
-#define SET_ANIM_SCREEN_PLAY_AREA 0x04u
-#define DUEL_ANIM_SCREEN_MAIN_SCENE 0x00u
-#define DUEL_ANIM_SCREEN_PLAYER_PLAY_AREA 0x01u
-#define DUEL_ANIM_SCREEN_OPP_PLAY_AREA 0x02u
-#define UNKNOWN_SCREEN_4 0x04u
-#define UNKNOWN_SCREEN_5 0x05u
 
 /* AnimationCommandPointerTable indices (commands.asm:162-171, table order). */
 #define ANIMCMD_END 0x00u
@@ -29,18 +24,7 @@
 #define ANIMCMD_END_UNUSED 0x06u
 
 /* animation_constants.asm: values are the file's own hex annotations. */
-#define DUEL_ANIM_SHOW_DAMAGE 0x09u
-#define DUEL_ANIM_SMALL_SHAKE_X 0x61u
-#define DUEL_ANIM_BIG_SHAKE_X 0x62u
-#define DUEL_ANIM_SMALL_SHAKE_Y 0x63u
-#define DUEL_ANIM_BIG_SHAKE_Y 0x64u
-#define DUEL_ANIM_DAMAGE_HUD 0x8Cu
 #define DUEL_ANIM_SET_SCREEN_CMD 0x96u
-#define DUEL_ANIM_PRINT_DAMAGE 0x97u
-#define DUEL_ANIM_UPDATE_HUD 0x98u
-#define DUEL_ANIM_SHAKE1 0xFAu
-#define DUEL_ANIM_SHAKE2 0xFBu
-#define DUEL_ANIM_SHAKE3 0xFCu
 
 #include "mem.h"
 
@@ -48,14 +32,6 @@
 #include "home/substatus.h"
 #include "home/print_text.h"
 
-#define RESISTANCE 0x02u
-#define WEAKNESS 0x01u
-#define AttackDamageText 0x003au
-#define NoDamageText 0x003bu
-#define ResistanceLessDamageText 0x0036u
-#define ResistanceNoDamageText 0x0039u
-#define WeaknessMoreDamage2Text 0x0038u
-#define WeaknessMoreDamageText 0x0037u
 
 #include "home/printer.h"
 
@@ -63,21 +39,16 @@
 #include "home/card_data.h"
 #include "home/menus.h"
 #include "mem.h"
-#define ATK_ANIM_HEAL 0x79u
-#define ATK_ANIM_HEALING_WIND_PLAY_AREA 0x86u
-#define TX_END 0x00u
 
 #include "generated/wram.h"
 #include "home/core.h"
 #include "mem.h"
-#define DUEL_MAIN_SCENE 0x01u
 
 #include "home/duel_menus.h"
 
 #include "home/script.h"
 #define BANK_POINTER_TABLE_ATTACK_ANIMATION 6u
 #define POINTER_TABLE_ATTACK_ANIMATION PointerTable_AttackAnimation_ADDR
-#define DUEL_ANIM_SET_SCREEN 0x96u
 #define TRUE 0x01u
 /* <<< factory statics */
 

@@ -1,5 +1,7 @@
 #include "home/debug.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "home/lcd.h"
@@ -13,7 +15,6 @@
 #include "home/print_text.h"
 #include "home/process_text.h"
 
-#define SINGLE_SPACED 0x01u
 #define FUNC_80C64_BANK 0x20u
 #define FUNC_80C64_MENU_PARAMS_ADDR CopyPalsToSRAMBuffer_ADDR
 #define FUNC_80C64_WIN_LOSE_PRIZES_TEXT 0x0385u
@@ -51,10 +52,6 @@
 #include "home/process_text.h"
 #include "home/sprite_animations.h"
 #include "mem.h"
-#define CONSOLE_CGB 0x02u
-#define PALETTE_DEFAULT_CGB 0x00u
-#define PALETTE_OVERWORLD_OAM 0x1du
-#define SPRText 0x0384u
 
 #include "generated/sram.h"
 #include "home/switch_sram.h"

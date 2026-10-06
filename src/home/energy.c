@@ -1,17 +1,14 @@
 #include "home/energy.h"
 #include "home/damage_calculation.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
 #include "home/duel.h"
 
-#define AI_ENERGY_FLAG_SKIP_ARENA_CARD 0x80u
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
-#define MAX_PLAY_AREA_POKEMON 0x06u
-#define PLAY_AREA_ARENA 0x00u
-#define PLAY_AREA_BENCH_1 0x01u
 
 #include "home/duel.h"
 #include "mem.h"
@@ -20,12 +17,7 @@
 #include "home/core.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
-#define CHARMANDER 0x30u
-#define COLORLESS 0x06u
-#define DOUBLE_COLORLESS_ENERGY 0x07u
-#define DRATINI 0xbfu
 #define DUELVARS_ARENA_CARD 0xbbu
-#define GROWLITHE 0x36u
 #define LEGENDARY_DRAGONITE_DECK_ID 0x0fu
 #define FIRE_CHARGE_DECK_ID 0x17u
 #define LEGENDARY_RONALD_DECK_ID 0x1bu
@@ -35,17 +27,8 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
-#define CHARIZARD 0x32u
-#define EXEGGUTOR 0x29u
 #define FALSE 0x00u
 #define TRUE 0x01u
-#define FIGHTING_ENERGY 0x05u
-#define FIRE_ENERGY 0x02u
-#define GRASS_ENERGY 0x01u
-#define LIGHTNING_ENERGY 0x04u
-#define PSYCHIC_ENERGY 0x06u
-#define WATER_ENERGY 0x03u
-#define ZAPDOS_LV64 0x75u
 
 #include "home/core.h"
 #include "home/duel.h"
@@ -68,30 +51,18 @@
 #define SECOND_ATTACK_600 0x01u
 #define OPPACTION_PLAY_ENERGY_600 0x03u
 
-#define ATTACHED_ENERGY_BOOST_F 0x04u
-#define ATTACK_FLAG2_ADDRESS 0x08u
-#define DISCARD_ENERGY_F 0x03u
-#define IGNORE_THIS_ATTACK_F 0x05u
-#define MAX_ENERGY_BOOST_IS_LIMITED 0x02u
 
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/substatus.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
-#define AI_ENERGY_FLAG_SKIP_EVOLUTION 0x02u
-#define AI_MEWTWO_MILL_F 0x07u
-#define DOUBLE_POISONED 0xc0u
 #define DUELVARS_ARENA_CARD_HP 0xc8u
 #define DUELVARS_ARENA_CARD_STATUS 0xf0u
-#define MUK 0x27u
-#define POISONED 0x80u
-#define VENUSAUR_LV67 0x0bu
 
 #include "home/energy.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
-#define AI_ENERGY_FLAG_DONT_PLAY 0x01u
 
 #include "home/energy.h"
 #include "generated/wram.h"

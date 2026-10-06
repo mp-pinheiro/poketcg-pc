@@ -1,6 +1,8 @@
 #include "home/give_booster_pack.h"
 #include "mem.h"
 /* >>> factory statics */
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/wram.h"
 #include "home/booster_packs.h"
 #include "home/common.h"
@@ -15,30 +17,13 @@
 #include "home/sound.h"
 #include "mem.h"
 
-#define NUM_BOOSTERS 0x1du
-#define MUSIC_BOOSTER_PACK 0x1cu
 #define TRUE 0x01u
 
-#define BOOSTER_COLOSSEUM 0x00u
-#define BOOSTER_EVOLUTION 0x01u
-#define BOOSTER_MYSTERY 0x02u
-#define BOOSTER_LABORATORY 0x03u
 
-#define SCENE_COLOSSEUM_BOOSTER 0x01u
-#define SCENE_EVOLUTION_BOOSTER 0x02u
-#define SCENE_MYSTERY_BOOSTER 0x03u
-#define SCENE_LABORATORY_BOOSTER 0x04u
 
-#define AndAnotherBoosterPackText 0x0388u
-#define CheckedCardsInBoosterPackText 0x0389u
-#define ReceivedBoosterPackText 0x0387u
 
 /* BoosterScenesAndNameTexts' four `tx` entries (give_booster_pack.asm:90-101),
  * resolved through poketcg/src/text/text_offsets.asm:940-943. */
-#define ColosseumBoosterText 0x03a8u
-#define EvolutionBoosterText 0x03a9u
-#define MysteryBoosterText 0x03aau
-#define LaboratoryBoosterText 0x03abu
 /* <<< factory statics */
 
 /* engine/menus/give_booster_pack.asm:113. _PauseMenu_Exit is a bare ret. */

@@ -1,5 +1,6 @@
 #include "home/grass_club_entrance.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -8,8 +9,6 @@
 #include "home/grass_club_entrance.h"
 #include "home/scripting.h"
 #include "generated/wram.h"
-#define DUEL_WIN 0x00u
-#define PUPIL_DEFEATED 0x08u
 #define GrassClubEntranceAfterDuelTable GrassClubEntranceAfterDuelTable_ADDR
 /* <<< factory statics */
 

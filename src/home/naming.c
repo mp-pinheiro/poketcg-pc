@@ -1,5 +1,6 @@
 #include "home/naming.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -16,8 +17,6 @@
 #include "home/switch_sram.h"
 #include "generated/sram.h"
 
-#define NAME_BUFFER_LENGTH 0x10u
-#define TX_END 0x00u
 #define MINT_NAME 0xffffu
 
 /* poketcg.sym: 04:68a9 DisplayPlayerNamingScreen, 04:68eb

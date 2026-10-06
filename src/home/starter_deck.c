@@ -2,6 +2,7 @@
 #include "home/deck_selection.h"
 #include "home/duel.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -10,21 +11,14 @@
 #include "home/print_text.h"
 #include "home/switch_sram.h"
 
-#define DECK_NAME_SIZE 24u
-#define DECK_SIZE 60u
 
 #include "generated/sram.h"
 
-#define CARDPOP_NAME_LIST_MAX_ELEMS 0x10u
-#define CARD_NOT_OWNED 0x80u
-#define NAME_BUFFER_LENGTH 0x10u
 #define PLAYER_TURN 0xc2u
-#define TEXT_SPEED_3 0x02u
 #define CHARMANDER_AND_FRIENDS_DECK 0x05u
 #define SQUIRTLE_AND_FRIENDS_DECK 0x07u
 #define BULBASAUR_AND_FRIENDS_DECK 0x09u
 
-#define CARD_NOT_OWNED_F 0x07u
 
 static const uint8_t kStarterCardIDs[6] = {3u, 4u, 5u, 6u, 7u, 8u};
 /* <<< factory statics */

@@ -1,11 +1,12 @@
 #include "home/card_album.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
-#define CARD_NOT_OWNED 0x80u
 
 #include "generated/wram.h"
 #include "home/bg_map.h"
@@ -13,19 +14,14 @@
 #include "home/deck_configuration.h"
 #include "home/menus.h"
 #include "home/process_text.h"
-#define DOUBLE_COLORLESS_ENERGY 0x07u
 #define FALSE 0x00u
-#define MEW_LV15 0xA1u
 #define TRUE 0x01u
-#define TX_SYMBOL 0x05u
-#define VENUSAUR_LV64 0x0Au
 #define SYM_BOX_TOP_R 0x19u
 #define SYM_BOX_BTM_R 0x1Bu
 #define SYM_CURSOR_U 0x0Cu
 #define SYM_CURSOR_D 0x2Fu
 #define SYM_0 0x20u
 #define SYM_SPACE 0x00u
-#define TX_END 0x00u
 
 #include "home/deck_configuration.h"
 #include "home/card_data.h"
@@ -50,19 +46,12 @@
 #define PAD_UP      0x40u
 #define PAD_DOWN    0x80u
 #define PAD_BUTTONS 0x0Fu
-#define SFX_CURSOR  0x01u
 
 #include "home/deck_configuration.h"
 #include "home/card_album.h"
 #include "home/switch_sram.h"
 #include "generated/wram.h"
 #include "generated/sram.h"
-#define CARD_COLLECTION_SIZE 0x100u
-#define CARD_SET_EVOLUTION 0x01u
-#define CARD_SET_LABORATORY 0x03u
-#define CARD_SET_MYSTERY 0x02u
-#define CARD_SET_PROMOTIONAL 0x04u
-#define NUM_CARD_ALBUM_VISIBLE_CARDS 0x07u
 
 #include "generated/wram.h"
 #include "generated/hram.h"
@@ -460,25 +449,9 @@ void CreateCardSetListAndInitListCoords(uint8_t a)
 #define CARD_ALBUM_BOOSTER_PACK_CARDS_MENU_PARAMS (CardAlbum_ADDR + 0xF7u)
 #define CARD_ALBUM_BOOSTER_PACKS_MENU_DATA 0x6B62u
 #define MENU_CANCEL 0xFFu
-#define MENU_CONFIRM 0x01u
 #define PAD_B 0x02u
 #define PAD_START 0x08u
-#define NUM_CARD_SETS 0x05u
-#define NUM_CARDS_COLOSSEUM 0x38u
-#define NUM_CARDS_EVOLUTION 0x32u
-#define NUM_CARDS_MYSTERY 0x33u
-#define NUM_CARDS_LABORATORY 0x33u
-#define NUM_CARDS_PROMOTIONAL 0x14u
-#define VENUSAUR_OWNED_PHANTOM_F 0x00u
-#define MEW_OWNED_PHANTOM_F 0x01u
 #define SYM_SLASH 0x2Eu
-#define Item1ColosseumText 0x0253u
-#define Item2EvolutionText 0x0254u
-#define Item3MysteryText 0x0255u
-#define Item4LaboratoryText 0x0256u
-#define Item5PromotionalCardText 0x0257u
-#define ViewWhichCardFileText 0x0258u
-#define EmptyPromotionalCardText 0x0259u
 
 static uint8_t card_album_num_card_entries(void)
 {

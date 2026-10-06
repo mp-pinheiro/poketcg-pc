@@ -1,6 +1,8 @@
 #include "home/start.h"
 #include <stdio.h>
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/wram.h"
 #include "generated/sram.h"
 #include "home/menus.h"
@@ -23,10 +25,6 @@
 #include "home/print_text.h"
 #include "home/print_stats.h"
 #include "home/text_box.h"
-#define ContinueFromDiarySummaryText 0x0370u
-#define StartANewGameText 0x0371u
-#define WhenYouCardPopWithFriendText 0x036Fu
-#define TheGameWillContinueFromThePointInTheDuelText 0x0372u
 #define OVERWORLD_MAP_NAMES 0x397Bu /* home/map.asm OverworldMapNames; fixed bank $00 */
 #include "home/lcd.h"
 #include "home/lcd_enable_frame.h"
@@ -35,8 +33,6 @@
 #include "home/print_text.h"
 #include "home/menus.h"
 #include "generated/wram.h"
-#define ContinueFromDiaryText 0x0377u
-#define DataExistsWhenPowerWasTurnedOFFDuringDuelText 0x0376u
 
 #include "generated/wram.h"
 #include "generated/hram.h"
@@ -51,14 +47,11 @@
 #include "home/sound.h"
 #include "home/process_text.h"
 #include "home/random.h"
-#define DOUBLE_SPACED 0x00u
-#define MUSIC_PC_MAIN_MENU 0x06u
 #define SYM_CURSOR_R 0x0Fu
 #define SYM_SPACE 0x00u
 
 #include "home/color.h"
 #include "home/play_animation.h"
-#define IsCrazyAboutPokemonAndPokemonCardCollectingText 0x0379u
 #define HANDLEALLSPRITEANIMATIONS_ADDR 0x3CB4u
 
 #include "home/lcd.h"
@@ -69,16 +62,12 @@
 #include "home/print_text.h"
 #include "home/menus.h"
 #include "generated/wram.h"
-#define AllDataWasDeletedText 0x0375u
-#define OKToDeleteTheDataText 0x0374u
-#define SavedDataAlreadyExistsText 0x0373u
 
 #include "home/intro.h"
 #include "home/intro_sequence_commands.h"
 #include "home/load_animation.h"
 #include "home/sound.h"
 #include "generated/wram.h"
-#define MUSIC_STOP 0x00u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -100,20 +89,15 @@
 #define rIE 0xFFFFu
 #define PAD_A 0x01u
 #define PAD_START 0x08u
-#define SFX_CONFIRM 0x02u
 #define PAD_B 0x02u
 #define PAD_RIGHT 0x10u
 #define PAD_LEFT 0x20u
 #define PAD_UP 0x40u
 #define PAD_DOWN 0x80u
-#define START_MENU_CARD_POP 0x00u
-#define START_MENU_CONTINUE_FROM_DIARY 0x01u
-#define START_MENU_NEW_GAME 0x02u
 #define START_MENU_PC_OPTIONS 0xFEu
 #define rVBK 0xFF4Fu
 /* <<< factory statics */
 
-#define CONSOLE_CGB 0x02u
 #define DISCLAIMER_TEXT_ID 0x0378u
 #define SYM_CURSOR_D 0x2Fu
 static void print_text_bytes(const uint8_t *text, uint8_t d, uint8_t e)

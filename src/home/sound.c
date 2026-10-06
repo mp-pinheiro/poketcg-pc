@@ -2,6 +2,7 @@
 #include "home/frames.h"
 
 #include "home/music1.h"
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "home/switch_rom.h"
 #include "mem.h"
@@ -95,7 +96,6 @@ TileConvertWrapResult Func_37a5(uint16_t hl, uint16_t de)
  * and does not cover them. Without the restore the driver's internal switch
  * leaks: the overworld script interpreter then fetched its next opcode out of
  * bank $3D and ran a different command. */
-#define SFX_DENIED 0x04u
 #define BANK_AUDIO_1 0x3Du
 
 static uint8_t enter_audio_bank(void)

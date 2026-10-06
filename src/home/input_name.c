@@ -1,5 +1,7 @@
 #include "home/input_name.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -19,13 +21,10 @@
 
 #include "home/sound.h"
 
-#define SFX_CONFIRM 0x02u
-#define SFX_CANCEL  0x03u
 
 #include "mem.h"
 
 /* engine/input_name.asm */
-#define TX_KATAKANA 0x0fu
 
 #include "home/random.h"
 
@@ -76,7 +75,6 @@
 #include "home/print_text.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define PlayerNameKeyboardText 0x0221u
 #define DRAW_PLAYER_NAMING_SCREEN_BG_DATA_ADDR (DrawPlayerNamingScreenBG_ADDR + 0x2Au)
 
 #include "home/input_name.h"
@@ -89,17 +87,14 @@
 #define TILE_SIZE 16u
 #define V0TILES0_ADDR 0x8000u
 
-#define DeckNameKeyboardText 0x0222u
 
 #include "generated/wram.h"
 #include "home/input_name.h"
-#define TX_END 0x00u
 
 #include "home/input_name.h"
 #include "home/process_text.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define NAMING_SCREEN_BUFFER_LENGTH 0x18u
 
 #include "home/input_name.h"
 #include "home/credits_sequence_commands.h"

@@ -1,5 +1,6 @@
 #include "home/load_animation.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -18,11 +19,8 @@
 #define BANK_DRAW_PORTRAIT 0x04u
 
 #include "generated/wram.h"
-#define TILEMAP_OPPONENT 0x63u
 
 #include "generated/wram.h"
-#define PLAYER_PIC 0x01u
-#define TILEMAP_PLAYER 0x62u
 #define MINT_PIC 0x2bu
 
 #include "home/animation.h"
@@ -35,12 +33,6 @@
 #define BANK_LOAD_SCENE 0x04u
 /* <<< factory statics */
 
-#define SPRITE_ANIM_BUFFER_CAPACITY 16u
-#define SPRITE_ANIM_LENGTH 16u
-#define SPRITE_ANIM_ENABLED 0u
-#define SPRITE_ANIM_FLAGS 15u
-#define SPRITE_ANIM_FLAG_CENTERED_F 2u
-#define SPRITE_ANIM_FRAME_BANK 11u
 
 #define OAM_PRIO    0x80u
 #define OAM_YFLIP   0x40u

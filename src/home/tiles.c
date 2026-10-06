@@ -1,5 +1,6 @@
 #include "home/tiles.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -64,7 +65,6 @@ void Copy1bppTiles(uint16_t *hl, uint16_t *de)
 
 #define BANK_FONTS 0x1du
 #define TILE_SIZE 16u
-#define CONSOLE_CGB 0x02u
 
 #define V0_TILES0 0x8000u
 #define V0_TILES1 0x8800u

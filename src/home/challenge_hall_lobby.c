@@ -1,5 +1,6 @@
 #include "home/challenge_hall_lobby.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -8,21 +9,11 @@
 #include "home/scripting.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define EVENT_RONALD_CHALLENGE_HALL_LOBBY_STATE 0x58u
-#define EVENT_RECEIVED_LEGENDARY_CARDS 0x22u
-#define EVENT_PLAYER_ENTERED_CHALLENGE_CUP 0x59u
-#define EVENT_CHALLENGE_CUP_2_STATE 0x40u
-#define EVENT_CHALLENGE_CUP_2_RESULT 0x49u
-#define EVENT_CHALLENGE_CUP_1_STATE 0x3Fu
-#define EVENT_CHALLENGE_CUP_1_RESULT 0x48u
-#define EVENT_CHALLENGE_CUP_STARTING 0x42u
 #define EVENT_CHALLENGE_CUP_NOT_STARTED 0u
-#define NPC_RONALD1 0x02u
 #define SCRIPT_F166 Script_f166_ADDR
 #define CUP1_TABLE RonaldChallengeHallLobbyCup1States_ADDR
 #define EVENT_CHALLENGE_CUP_STARTING_OFFSET 0x10u
 #define EVENT_CHALLENGE_CUP_STARTING_MASK 0x80u
-#define MUSIC_CHALLENGE_HALL 0x0Bu
 #define W_DEFAULT_SONG_ADDR 0xD111u
 #define CUP2_TABLE RonaldChallengeHallLobbyCup2States_ADDR
 

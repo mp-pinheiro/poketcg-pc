@@ -1,5 +1,7 @@
 #include "home/print_stats.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -45,7 +47,6 @@ static const uint8_t kMedalCoordsAndTilemaps[24] = {
 #include "home/bg_map.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define EVENT_MEDAL_COUNT 0x2Eu
 
 #include "home/text_box.h"
 #include "home/scripting.h"
@@ -53,10 +54,6 @@ static const uint8_t kMedalCoordsAndTilemaps[24] = {
 #include "home/load_gfx.h"
 #include "home/print_text.h"
 #include "generated/wram.h"
-#define EVENT_MEDAL_FLAGS 0x10u
-#define NUM_MEDALS 0x08u
-#define PALETTE_MEDALS 0x76u
-#define PlayerStatusMedalsTitleText 0x0347u
 /* <<< factory statics */
 
 /* >>> factory DrawPauseMenuPlayerPortrait */

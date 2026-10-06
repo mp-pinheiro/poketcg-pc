@@ -1,20 +1,17 @@
 #include "home/duel_core_state.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/card_data.h"
 #include "home/duel.h"
 
-#define TYPE_TRAINER 0x10u
 #define DUELVARS_PRIZE_CARDS 0x3cu
 #define DUELVARS_PRIZES 0xecu
 #define DUELVARS_ARENA_CARD 0xbbu
 #define DUELVARS_ARENA_CARD_HP 0xc8u
 #define DUELVARS_ARENA_CARD_FLAGS 0xc2u
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
-#define CARD_LOCATION_PRIZE 0x08u
-#define USED_PKMN_POWER_THIS_TURN (1u << 5)
-#define CAN_EVOLVE_THIS_TURN (1u << 7)
 
 static uint16_t duelvar_addr(uint8_t offset)
 {

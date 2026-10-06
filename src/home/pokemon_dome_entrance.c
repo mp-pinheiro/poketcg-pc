@@ -1,20 +1,11 @@
 #include "home/pokemon_dome_entrance.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
 #include "home/scripting.h"
 #include "home/map_events.h"
-#define MAP_EVENT_POKEMON_DOME_DOOR 0x00u
-#define EVENT_HALL_OF_HONOR_DOORS_OPEN 0x63u
-#define EVENT_POKEMON_DOME_STATE 0x65u
-#define EVENT_COURTNEY_STATE 0x68u
-#define EVENT_STEVE_STATE 0x69u
-#define EVENT_JACK_STATE 0x6Au
-#define EVENT_ROD_STATE 0x6Bu
-#define EVENT_RECEIVED_LEGENDARY_CARDS 0x22u
-#define EVENT_RONALD_POKEMON_DOME_STATE 0x6Cu
-#define EVENT_MEDAL_COUNT 0x2Eu
 /* <<< factory statics */
 
 /* >>> factory PokemonDomeEntranceLoadMap */

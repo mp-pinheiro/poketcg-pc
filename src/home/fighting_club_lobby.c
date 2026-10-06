@@ -1,5 +1,6 @@
 #include "home/fighting_club_lobby.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -10,15 +11,7 @@
 #include "generated/wram.h"
 #define FightingClubLobbyAfterDuelTable (FightingClubLobbyAfterDuel_ADDR + 0x07u)
 #include "home/scripting.h"
-#define EVENT_RECEIVED_LEGENDARY_CARDS 0x22u
 #define TRUE 0x01u
-#define EVENT_TEMP_DUELED_IMAKUNI 0x03u
-#define EVENT_IMAKUNI_STATE 0x13u
-#define EVENT_IMAKUNI_ROOM 0x34u
-#define IMAKUNI_NOT_MENTIONED 0x00u
-#define IMAKUNI_MENTIONED 0x01u
-#define IMAKUNI_FIGHTING_CLUB 0x00u
-#define MUSIC_IMAKUNI 0x10u
 /* <<< factory statics */
 
 /* >>> factory FightingClubLobbyAfterDuel */

@@ -3,6 +3,7 @@
 #include "home/script_entry_dispatch.h"
 #include "home/card_id_bus.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -38,7 +39,6 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/masters_beaten_list.h"
 #include "home/scripting.h"
 
-#define GAME_EVENT_CHALLENGE_MACHINE 0x06u
 
 #include "home/map.h"
 #include "home/play_song.h"
@@ -51,13 +51,8 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/npc_core.h"
 #include "mem.h"
 
-#define CONSOLE_CGB                  0x02u
-#define EVENT_MAN1_REQUESTED_CARD_ID 0x2bu
-#define LOADED_NPC_FLAGS             0x05u
-#define NPC_FLAG_DIRECTIONLESS_F     0x04u
 
 #define TRUE                     0x01u
-#define GAME_EVENT_BATTLE_CENTER 0x02u
 
 #include "home/scripting.h"
 #include "generated/wram.h"
@@ -72,7 +67,6 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "generated/wram.h"
 
 #include "generated/wram.h"
-#define EVENT_VAR_BYTES 0x40u
 
 #include "home/mail.h"
 
@@ -85,19 +79,12 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 
 #include "home/scripting.h"
 #include "home/card_collection.h"
-#define DOUBLE_COLORLESS_ENERGY 0x07u
-#define GRASS_ENERGY 0x01u
 
 #include "home/card_collection.h"
 #include "home/scripting.h"
 
 #include "home/scripting.h"
 #include "generated/wram.h"
-#define EVENT_PUPIL_CHRIS_STATE 0x17u
-#define EVENT_PUPIL_JESSICA_STATE 0x20u
-#define EVENT_PUPIL_MICHAEL_STATE 0x11u
-#define PUPIL_DEFEATED 0x08u
-#define PUPIL_INACTIVE 0x00u
 
 #include "generated/wram.h"
 #include "mem.h"
@@ -126,16 +113,12 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/scripting.h"
 #include "home/map.h"
 #include "generated/wram.h"
-#define GAME_EVENT_CREDITS 0x04u
 
 #include "home/scripting.h"
 #include "home/random.h"
 #include "home/challenge_hall.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define EVENT_CHALLENGE_CUP_NUMBER 0x44u
-#define EVENT_CHALLENGE_CUP_OPPONENT_NUMBER 0x45u
-#define NPC_RONALD1 0x02u
 #define CHALLENGE_HALL_NPC_COUNT 25u
 #define CHALLENGE_HALL_NPCS_BANK 3u
 #define CHALLENGE_HALL_NPCS_ADDR ChallengeHallNPCs_ADDR
@@ -147,19 +130,10 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 
 #include "home/scripting.h"
 #include "generated/wram.h"
-#define NPC_AMY 0x22u
 
 #include "home/scripting.h"
 #include "home/random.h"
 #include "generated/wram.h"
-#define EVENT_IMAKUNI_ROOM 0x34u
-#define EVENT_IMAKUNI_STATE 0x13u
-#define FIGHTING_CLUB_LOBBY 0x05u
-#define IMAKUNI_FIGHTING_CLUB 0x00u
-#define IMAKUNI_TALKED 0x02u
-#define LIGHTNING_CLUB_LOBBY 0x0eu
-#define SCIENCE_CLUB_LOBBY 0x17u
-#define WATER_CLUB_LOBBY 0x0bu
 
 #include "home/overworld.h"
 
@@ -169,15 +143,6 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 
 #include "home/scripting.h"
 #include "generated/wram.h"
-#define CHALLENGE_CUP_NOT_STARTED 0x00u
-#define CHALLENGE_CUP_READY_TO_START 0x01u
-#define CHALLENGE_CUP_WON 0x02u
-#define CHALLENGE_CUP_OVER 0x07u
-#define EVENT_RECEIVED_LEGENDARY_CARDS 0x22u
-#define EVENT_CHALLENGE_CUP_1_STATE 0x3fu
-#define EVENT_CHALLENGE_CUP_2_STATE 0x40u
-#define EVENT_CHALLENGE_CUP_3_STATE 0x41u
-#define OWMAP_CHALLENGE_HALL 0x0bu
 
 #include "home/scripting.h"
 #include "generated/wram.h"
@@ -186,27 +151,14 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/npc_core.h"
 #include "home/npc_data.h"
 #include "generated/wram.h"
-#define SOUTH 0x02u
 
 #include "home/scripting.h"
-#define EVENT_MASON_LAB_STATE 0x3eu
-#define EVENT_PLAYER_ENTERED_CHALLENGE_CUP 0x59u
-#define EVENT_CHALLENGE_CUP_OPPONENT_CHOSEN 0x46u
 #define Script_BeginGame Script_BeginGame_ADDR
 
 #include "home/scripting.h"
 #include "home/mail.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define EVENT_BEAT_NIKKI 0x08u
-#define EVENT_BEAT_RICK 0x09u
-#define EVENT_BEAT_KEN 0x0Au
-#define EVENT_BEAT_AMY 0x0Bu
-#define EVENT_BEAT_ISAAC 0x0Cu
-#define EVENT_BEAT_MURRAY 0x0Du
-#define EVENT_BEAT_GENE 0x0Eu
-#define EVENT_BEAT_MITCH 0x0Fu
-#define EVENT_MEDAL_COUNT 0x2Eu
 
 #include "home/scripting.h"
 #include "mem.h"
@@ -225,8 +177,6 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/npc_data.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define GAME_EVENT_DUEL 0x01u
-#define LOADED_NPC_ID 0x00u
 #define LIGHTNING_AND_FIRE_DECK_ID 0x09u
 #define WATER_AND_FIGHTING_DECK_ID 0x0Au
 #define GRASS_AND_PSYCHIC_DECK_ID 0x0Bu
@@ -240,7 +190,6 @@ static const uint8_t sAaronDeckIDs[] = {
 #include "home/npc_core.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define MUSIC_MATCH_START_2 0x16u
 
 #include "home/overworld.h"
 #include "home/scripting.h"
@@ -250,16 +199,13 @@ static const uint8_t sAaronDeckIDs[] = {
 #include "generated/wram.h"
 #include "home/map.h"
 #include "home/script.h"
-#define MAP_SCRIPT_AFTER_DUEL 0x0Au
 
 #include "generated/wram.h"
 #include "home/map.h"
 #include "home/script.h"
 
 #include "home/scripting.h"
-#define MAP_SCRIPT_LOAD_MAP 0x08u
 
-#define MAP_SCRIPT_MOVED_PLAYER 0x0cu
 
 #include "generated/wram.h"
 #include "home/overworld.h"
@@ -267,8 +213,6 @@ static const uint8_t sAaronDeckIDs[] = {
 #include "home/scripting.h"
 #include "home/gift_center.h"
 #include "generated/wram.h"
-#define EVENT_GIFT_CENTER_MENU_CHOICE 0x72u
-#define GAME_EVENT_GIFT_CENTER 0x03u
 
 #include "generated/wram.h"
 #include "home/overworld.h"
@@ -301,9 +245,6 @@ static const uint8_t sAaronDeckIDs[] = {
 #include "home/science_club_lobby.h"
 #include "home/script.h"
 #include "home/water_club.h"
-#define MAP_SCRIPT_NPCS 0x00u
-#define MAP_SCRIPT_POST_NPC 0x02u
-#define NPC_MAP_SIZE 0x06u
 
 #include "generated/wram.h"
 #include "home/lcd_enable_frame.h"
@@ -317,7 +258,6 @@ static const uint8_t sAaronDeckIDs[] = {
 #include "home/menus.h"
 #include "home/labels.h"
 #include "mem.h"
-#define AUTO_CLOSE_TEXTBOX 0x00u
 
 #include "home/scripting.h"
 #include "home/switch_rom.h"
@@ -327,7 +267,6 @@ static const uint8_t sAaronDeckIDs[] = {
 
 #include "home/scripting.h"
 #include "generated/wram.h"
-#define EVENT_AARON_DECK_MENU_CHOICE 0x76u
 #define EVENT_PLAYER_GENDER 0x77u
 #include "generated/wram.h"
 #include "home/give_booster_pack.h"
@@ -336,11 +275,6 @@ static const uint8_t sAaronDeckIDs[] = {
 
 /* scripting.asm:996-1000 .booster_type_table. TRUE is already defined above in
  * this statics block, so it is not repeated here. */
-#define BOOSTER_COLOSSEUM_TRAINER         0x06u
-#define BOOSTER_EVOLUTION_TRAINER         0x0Du
-#define BOOSTER_MYSTERY_TRAINER_COLORLESS 0x13u
-#define BOOSTER_LABORATORY_TRAINER        0x18u
-#define NO_BOOSTER                        0xFFu
 
 #include "generated/wram.h"
 #include "home/common.h"
@@ -365,7 +299,6 @@ static const uint8_t sAaronDeckIDs[] = {
 #include "home/scripting.h"
 #include "home/sound.h"
 
-#define MUSIC_DECK_MACHINE 0x07u
 
 #include "generated/wram.h"
 #include "home/map.h"
@@ -374,14 +307,12 @@ static const uint8_t sAaronDeckIDs[] = {
 #include "generated/wram.h"
 #include "mem.h"
 
-#define EVENT_MAN1_GIFTED_CARD_FLAGS 0x2du
 #define MAN1_REQUESTED_CARDS_BANK 3u
 #define MAN1_REQUESTED_CARDS_ADDR Man1RequestedCardsList_ADDR
 #define MAN1_REQUESTED_CARDS_COUNT 5u
 #define CHALLENGE_CUP_PRIZE_CARDS_BANK 3u
 #define CHALLENGE_CUP_PRIZE_CARDS_ADDR ChallengeCupPrizeCards_ADDR
 #define CHALLENGE_CUP_PRIZE_CARD_COUNT 15u
-#define EVENT_LEGENDARY_CARDS_RECEIVED_FLAGS 0x71u
 #define LEGENDARY_CARDS_BANK 3u
 #define LEGENDARY_CARDS_ADDR LegendaryCards_ADDR
 #define LEGENDARY_CARD_EVENTS_BANK 3u
@@ -1268,7 +1199,6 @@ ScriptCommand_JumpIfEventTrueResult ScriptCommand_JumpIfEventFalse(uint8_t b, ui
 #include "home/overworld_map.h"
 
 /* >>> factory ScriptCommand_WalkPlayerToMasonLaboratory */
-#define OWMAP_MASON_LABORATORY 0x01u
 
 /* scripting.asm:1830-1841. Drives the player's walk to the Mason Laboratory: the
  * loop runs a frame and advances the walking animation until

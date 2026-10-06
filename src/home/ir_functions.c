@@ -1,13 +1,14 @@
 #include "home/ir_functions.h"
 
 /* >>> factory statics */
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "generated/sram.h"
 #include "home/switch_sram.h"
 #include "mem.h"
 
-#define NAME_BUFFER_LENGTH 0x10u
 #define PLAYER_TURN 0xC2u
 
 #include "generated/wram.h"
@@ -16,10 +17,7 @@
 #include "home/load_animation.h"
 #include "home/sprite_vblank.h"
 #include "home/ir_core.h"
-#define SCENE_GAMEBOY_LINK_CONNECTING 0x0eu
 
-#define SCENE_GAMEBOY_LINK_NOT_CONNECTED 0x10u
-#define WouldYouLikeToTryAgainText 0x0197u
 
 #include "generated/wram.h"
 #include "home/ir_core.h"
@@ -35,27 +33,14 @@
 #include "home/ir_core.h"
 #include "home/ir_functions.h"
 #include "home/sound.h"
-#define IRPARAM_SEND_CARDS 0x02u
-#define CardTransferWasntSuccessful2Text 0x019fu
-#define ReceivingACardText 0x019bu
 
 #include "home/sound.h"
-#define IRPARAM_SEND_DECK 0x03u
-#define DeckConfigurationTransferWasntSuccessful2Text 0x01a1u
-#define ReceivingDeckConfigurationText 0x019du
-#define SendingACardText 0x019au
-#define SendingADeckConfigurationText 0x019cu
-#define CardTransferWasntSuccessful1Text 0x019eu
-#define DeckConfigurationTransferWasntSuccessful1Text 0x01a0u
-#define DECK_SIZE 0x3Cu
-#define DECK_STRUCT_SIZE 0x54u
 
 #include "home/frames.h"
 
 #include "home/sound.h"
 /* <<< factory statics */
 
-#define MUSIC_CARD_POP 0x08u
 
 void PlayCardPopSong(void)
 {

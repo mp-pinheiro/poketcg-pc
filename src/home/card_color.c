@@ -1,5 +1,6 @@
 #include "home/card_color.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/card_data.h"
@@ -85,8 +86,6 @@ uint8_t GetPlayAreaCardResistance(uint8_t a)
 
 #define DUELVARS_ARENA_CARD_CHANGED_TYPE 0xD4u
 #define HAS_CHANGED_COLOR_F_MASK 0x80u
-#define TYPE_TRAINER 0x10u
-#define COLORLESS 0x06u
 
 uint8_t GetPlayAreaCardColor(uint8_t a)
 {
@@ -106,9 +105,6 @@ uint8_t GetArenaCardColor(void)
 	return GetPlayAreaCardColor(0);
 }
 
-#define NUM_COLORED_TYPES 6u
-#define FIRE 0u
-#define CHARIZARD 0x32u
 
 void HandleEnergyBurn(void)
 {

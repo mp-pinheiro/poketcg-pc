@@ -1,5 +1,6 @@
 #include "home/legendary_ronald.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -14,22 +15,8 @@
 #include "home/hand_pokemon.h"
 #include "home/init.h"
 #include "home/substatus.h"
-#define AI_FLAG_USED_PROFESSOR_OAK 0x04u
-#define AI_TRAINER_CARD_PHASE_01 0x01u
-#define AI_TRAINER_CARD_PHASE_02 0x02u
-#define AI_TRAINER_CARD_PHASE_04 0x04u
-#define AI_TRAINER_CARD_PHASE_05 0x05u
-#define AI_TRAINER_CARD_PHASE_07 0x07u
-#define AI_TRAINER_CARD_PHASE_10 0x0au
-#define AI_TRAINER_CARD_PHASE_15 0x0fu
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xbau
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
-#define DECK_SIZE 0x3cu
-#define MAX_PLAY_AREA_POKEMON 0x06u
-#define MOLTRES_LV37 0x40u
-#define MUK 0x27u
-#define OPPACTION_FINISH_NO_ATTACK 0x05u
-#define OPPACTION_PLAY_BASIC_PKMN 0x01u
 /* <<< factory statics */
 
 /* >>> factory AIDoTurn_LegendaryRonald */

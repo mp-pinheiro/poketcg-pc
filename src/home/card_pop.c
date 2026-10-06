@@ -1,5 +1,7 @@
 #include "home/card_pop.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/wram.h"
 #include "home/card_data.h"
 #include "mem.h"
@@ -8,8 +10,6 @@
 #include "generated/sram.h"
 #include "home/switch_sram.h"
 #include "mem.h"
-#define CARDPOP_NAME_LIST_MAX_ELEMS 0x10u
-#define NAME_BUFFER_LENGTH 0x10u
 
 #include "home/card_pop.h"
 #include "home/switch_sram.h"
@@ -18,23 +18,12 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "generated/sram.h"
-#define CIRCLE 0x00u
-#define DIAMOND 0x01u
-#define STAR 0x02u
-#define MEW_LV15 0xa1u
-#define MUSIC_BOOSTER_PACK 0x1cu
-#define MUSIC_MATCH_VICTORY 0x18u
-#define MUSIC_MEDAL 0x1du
 #define PLAYER_TURN 0xc2u
-#define VENUSAUR_LV64 0x0au
 
 #include "home/copy.h"
 #include "home/ir_functions.h"
 #include "home/ir_core.h"
 #define CARDPOP_NAME_LIST_SIZE 0x100u
-#define IRPARAM_CARD_POP 0x01u
-#define CannotCardPopWithFriendPreviouslyPoppedWithText 0x018cu
-#define ThePopWasntSuccessfulText 0x018bu
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -48,21 +37,10 @@
 #include "home/save.h"
 #include "home/sound.h"
 #include "home/sprite_vblank.h"
-#define CONSOLE_SGB 0x01u
-#define SCENE_CARD_POP 0x13u
-#define SCENE_CARD_POP_ERROR 0x14u
-#define SCENE_GAMEBOY_LINK_CONNECTING 0x0eu
-#define SFX_RECEIVE_CARD_POP 0x5du
-#define AreYouBothReadyToCardPopText 0x018au
-#define CardPopCannotBePlayedWithTheGameBoyText 0x00ddu
-#define PositionGameBoyColorsAndPressAButtonText 0x018du
-#define ReceivedThroughCardPopText 0x018eu
 /* <<< factory statics */
 
 #define CARDPOP_NAME_LENGTH 16u
 #define FIRST_CARD_ID 8u
-#define TYPE_ENERGY 0x08u
-#define PROMOTIONAL 0x40u
 
 uint8_t CreateCardPopCandidateList(uint8_t a)
 {

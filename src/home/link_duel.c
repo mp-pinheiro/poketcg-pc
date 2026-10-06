@@ -1,6 +1,8 @@
 #include "home/link_duel.h"
 #include "runtime.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -24,20 +26,8 @@
 #include "home/bg_map.h"
 #include "mem.h"
 
-#define DECK_SIZE 0x3cu
-#define DUELIST_TYPE_LINK_OPP 0x01u
-#define DUELIST_TYPE_PLAYER 0x00u
-#define DUELTYPE_LINK 0x01u
-#define LINK_OPP_PIC 0x2au
-#define NAME_BUFFER_LENGTH 0x10u
 #define OPPONENT_TURN 0xc3u
 #define PLAYER_TURN 0xc2u
-#define PRIZES_2 0x02u
-#define PRIZES_4 0x04u
-#define PRIZES_6 0x06u
-#define SCENE_GAMEBOY_LINK_NOT_CONNECTED 0x10u
-#define SCENE_GAMEBOY_LINK_TRANSMITTING 0x0fu
-#define SHUFFLE_DECK 0x09u
 #define SYM_0 0x20u
 #define SYM_SPACE 0x00u
 #define B_PAD_A 0u
@@ -45,11 +35,6 @@
 #define B_PAD_LEFT 5u
 #define F_C 0x10u
 
-#define BeginAPrizeDuelWithText 0x0189u
-#define ChooseTheNumberOfPrizesText 0x0187u
-#define PleaseWaitDecidingNumberOfPrizesText 0x0188u
-#define PrizesCardsText 0x0186u
-#define TransmissionErrorText 0x0055u
 /* <<< factory statics */
 
 /* >>> factory _SetUpAndStartLinkDuel */

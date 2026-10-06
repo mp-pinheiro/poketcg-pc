@@ -1,12 +1,11 @@
 #include "home/gift_center.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
-#define CONSOLE_CGB 0x02u
-#define NORTH 0x00u
 
 #include "home/labels.h"
 #include "home/lcd_enable_frame.h"
@@ -20,8 +19,6 @@
 #define GIFT_CENTER_TEXT_POINTERS (ScriptCommand_SetChallengeHallNPCCoords_ADDR + 0x1Au)
 #define GIFT_CENTER_MENU_PARAMS (ScriptCommand_SetChallengeHallNPCCoords_ADDR + 0x22u)
 
-#define AUTO_CLOSE_TEXTBOX 0x00u
-#define GIFT_CENTER_MENU_EXIT 0x04u
 /* <<< factory statics */
 
 /* >>> factory Preload_GiftCenterClerk */

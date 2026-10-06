@@ -2,13 +2,13 @@
 
 #include <stdint.h>
 
+#include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
 #include "home/load_gfx.h"
 #include "home/overworld.h"
 /* >>> factory statics */
 #define TRUE 0x01u
-#define CONSOLE_CGB 0x02u
 
 static const uint8_t kSetOWMapEventTilemapPointers[44] = {
 	0x16u, 0x00u, 0x34u, 0x35u, /* PokemonDomeDoor */
@@ -25,7 +25,6 @@ static const uint8_t kSetOWMapEventTilemapPointers[44] = {
 };
 /* <<< factory statics */
 
-#define NUM_MAP_EVENTS 11u
 
 void ClearOWMapEvents(void)
 {

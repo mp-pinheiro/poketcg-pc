@@ -1,5 +1,6 @@
 #include "home/script.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -17,9 +18,6 @@
 #include "home/overworld.h"
 #include "home/scripting.h"
 
-#define MAP_OBJECT_SIZE 0x09u
-#define MAP_SCRIPT_OBJECTS 0x04u
-#define MAP_SCRIPT_PRESSED_A 0x06u
 
 #include "home/main_menu.h"
 #define BANK_GAME_LOOP 0x04u

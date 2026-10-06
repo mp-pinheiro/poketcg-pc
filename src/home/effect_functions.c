@@ -1,5 +1,7 @@
 #include "home/effect_functions.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -9,9 +11,6 @@
 #include "home/duel.h"
 #include "home/effect_functions.h"
 
-#define DUELIST_TYPE_PLAYER               0x00u
-#define POISONED                          0x80u
-#define DOUBLE_POISONED                   0xc0u
 #define DUELVARS_DUELIST_TYPE             0xf1u
 #define DUELVARS_ARENA_CARD_STATUS        0xf0u
 #define DUELVARS_ARENA_CARD_SUBSTATUS1    0xe7u
@@ -21,42 +20,24 @@
 
 #include "home/substatus.h"
 
-#define CLEFAIRY_DOLL 0xCBu
-#define EFFECT_FAILED_UNSUCCESSFUL 0x02u
-#define MYSTERIOUS_FOSSIL 0xCCu
-#define SNORLAX 0xBEu
 
 #define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0xEDu
 #define DUELVARS_DECK_CARDS 0x7Eu
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
-#define DECK_SIZE 60u
-#define TYPE_ENERGY 0x08u
-#define TYPE_ENERGY_DOUBLE_COLORLESS 0x0Eu
-#define TYPE_TRAINER 0x10u
 #define TX_ThereAreNoTrainerCardsInDiscardPileText 0x00C4u
 #define TX_NoCardsLeftInTheDeckText 0x00B1u
-#define NotEnoughWaterEnergyText 0x00C3u
-#define NoDamageCountersText 0x00ADu
-#define ThePkmnCardsInHandAndDeckWereShuffledText 0x014Eu
 
-#define SUBSTATUS1_REDUCE_BY_20 0x13u
 
 #include "home/effect_functions.h"
 
 #include "home/damage.h"
 #include "home/duel.h"
 
-#define PLAY_AREA_ARENA 0x00u
 
 #define DUELVARS_ARENA_CARD       0xBBu
 #define DUELVARS_ARENA_CARD_HP    0xC8u
 #define DUELVARS_ARENA_CARD_STAGE 0xCEu
-#define POKEMON_POWER             0x04u
 
-#define CONFUSED   0x01u
-#define PARALYZED  0x03u
-#define PSN_DBLPSN 0xf0u
-#define CNF_SLP_PRZ 0x0fu
 
 #define COLOR_TEXT_FIRE      0x48u
 #define COLOR_TEXT_GRASS     0x47u
@@ -82,92 +63,60 @@ static const uint16_t color_to_text[] = {
 #include "generated/wram.h"
 #include "home/duel.h"
 
-#define KRABBY 0x4fu
-#define SUBSTATUS3_HEADACHE_F 1u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "mem.h"
 
-#define FIRE 0x00u
-#define NotEnoughFireEnergyText 0x00c1u
 
 #define DUELVARS_ARENA_CARD_FLAGS 0xC2u
-#define USED_PKMN_POWER_THIS_TURN 0x20u
-#define WATER 0x03u
 
 #include "home/damage.h"
 #include "home/duel.h"
 #include "home/math.h"
 
-#define ASLEEP    0x02u
 
 #include "home/duel.h"
 #include "home/card_data.h"
 #define DUELVARS_CARD_LOCATIONS 0x00u
-#define CARD_LOCATION_ARENA    0x10u
 
 #define DUELVARS_ARENA_CARD_CHANGED_TYPE 0xD4u
 
-#define NoCardsLeftInTheDeckText 0x00b1u
 
-#define ATK_ANIM_NONE 0x00u
 
-#define PSYCHIC 0x05u
-#define NotEnoughPsychicEnergyText 0x00c2u
-#define OpponentIsNotAsleepText 0x00d3u
 
-#define SUBSTATUS1_REDUCE_BY_10 0x1eu
 
 #include "home/duel.h"
 #include "home/card_data.h"
-#define CARD_LOCATION_PLAY_AREA_F 4u
 
-#define ThereAreNoCardsInTheDiscardPileText 0x00bbu
 
 #define DUELVARS_HAND 0x42u
 #define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xeeu
 
-#define ThereAreNoStage1PokemonText 0x00BCu
 
-#define SUBSTATUS1_PREVENT_LESS_THAN_40 0x0eu
-#define EffectNoPokemonOnTheBenchText 0x00b7u
 
-#define SUBSTATUS1_HALVE_DAMAGE 0x15u
 
-#define CARD_LOCATION_PLAY_AREA 0x10u
-#define TYPE_ENERGY_GRASS 0x09u
 
-#define UNAFFECTED_BY_WEAKNESS_RESISTANCE_F 0x07u
 
 #include "generated/hram.h"
 
-#define USED_LEEK_SLAP_THIS_DUEL_F 0x06u
 
-#define NoResistanceText 0x00c9u
-#define NoWeaknessText 0x00c8u
 
 #include "home/math.h"
 #include "home/damage.h"
 #include "home/duel.h"
 
-#define NotAffectedByPoisonSleepParalysisOrConfusionText 0x00b5u
-#define NotEnoughCardsInHandText 0x00b6u
 
-#define NoGrassEnergyText 0x00CEu
 
 #include "home/menus.h"
 #include "home/print_text.h"
 #include "home/duel.h"
 
-#define OnlyOncePerTurnText 0x00CAu
 
-#define NotEnoughEnergyCardsText 0x00C0u
 
 #include "home/duel.h"
 
-#define ThereAreNoBasicEnergyCardsInDiscardPileText 0x00b0u
 
 #include "home/duel.h"
 #include "generated/hram.h"
@@ -187,40 +136,29 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 }
 
 #include "home/effect_functions.h"
-#define NoAttackMayBeChoosenText 0x00c5u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/effect_functions.h"
 #include "mem.h"
 
-#define TYPE_ENERGY_PSYCHIC 0x0du
 
 #include "generated/hram.h"
 #include "home/duel.h"
 
-#define NoEnergyAttachedToOpponentsActiveText 0x00aeu
 
-#define NoPokemonWithDamageCountersText 0x00acu
 
 #include "home/duel.h"
 #include "home/substatus.h"
 
-#define ConditionsForEvolvingToStage2NotFulfilledText 0x00b9u
-#define ThereAreNoCardsInHandThatYouCanChangeText 0x00bau
 
-#define MAX_PLAY_AREA_POKEMON 0x06u
 
 #define DUELVARS_ARENA_CARD_LAST_TURN_EFFECT 0xf8u
-#define LAST_TURN_EFFECT_DISCARD_ENERGY 0x01u
 
-#define ThereAreNoTrainerCardsInDiscardPileText 0x00c4u
 
-#define ThereAreNoEnergyCardsInDiscardPileText 0x00afu
 
 #include "home/random.h"
 
-#define ATK_ANIM_GLOW_EFFECT 0x5bu
 
 #include "mem.h"
 
@@ -230,13 +168,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "mem.h"
-#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
-#define SECOND_ATTACK 0x01u
 
 #include "generated/hram.h"
 #include "home/duel.h"
 #include "home/effect_functions.h"
-#define LAST_TURN_EFFECT_AMNESIA 0x02u
 
 #include "home/duel.h"
 #include "home/effect_functions.h"
@@ -247,7 +182,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "generated/wram.h"
 #include "mem.h"
 
-#define SUBSTATUS1_DESTINY_BOND 0x16u
 
 #include "home/effect_functions.h"
 #include "generated/hram.h"
@@ -271,10 +205,8 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "home/effect_functions.h"
 
-#define ThereIsNoEnergyCardAttachedText 0x00cdu
 #include "home/effect_functions.h"
 
-#define ThereAreNoPokemonInDiscardPileText 0x00b8u
 
 #include "home/effect_functions.h"
 #include "home/duel.h"
@@ -284,14 +216,12 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/substatus.h"
 #include "home/duel.h"
 #include "generated/hram.h"
-#define CannotUseSinceTheresOnly1PkmnText 0x00cfu
 
 #include "home/effect_functions.h"
 
 #include "home/effect_functions.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
-#define TYPE_ENERGY_WATER 0x0Bu
 
 #include "home/effect_functions.h"
 #include "home/duel.h"
@@ -314,9 +244,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/menus.h"
 #include "home/duel.h"
 #include "generated/hram.h"
-#define HAS_CHANGED_COLOR 0x80u
-#define USED_PKMN_POWER_THIS_TURN_F 0x05u
-#define ChangedTheColorOfText 0x0116u
 
 #include "home/effect_functions.h"
 #include "mem.h"
@@ -328,7 +255,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/effect_functions.h"
 #include "mem.h"
-#define SUBSTATUS1_BARRIER 0x14u
 
 #include "home/effect_functions.h"
 #include "home/duel.h"
@@ -337,7 +263,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
-#define PokemonAndAllAttachedCardsReturnedToHandText 0x0147u
 
 #include "home/effect_functions.h"
 #include "mem.h"
@@ -355,11 +280,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/substatus.h"
 #include "home/duel.h"
 #include "mem.h"
-#define CannotUseBecauseItWillBeKnockedOutText 0x00d0u
 
 #include "home/effect_functions.h"
 #include "home/core.h"
-#define ProcedureForEnergyTransferText 0x012du
 
 #include "home/effect_functions.h"
 #include "home/duel.h"
@@ -371,8 +294,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/effect_functions.h"
 #include "home/duel.h"
-#define NoEnergyCardsAttachedToPokemonInOppPlayAreaText 0x00beu
-#define NoEnergyCardsAttachedToPokemonInYourPlayAreaText 0x00bdu
 
 #include "home/effect_functions.h"
 #include "home/duel.h"
@@ -383,10 +304,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
-#define BASIC 0x00u
-#define DITTO 0xbbu
-#define AttackUnsuccessfulText 0x00fdu
-#define MetamorphsToText 0x010du
 
 #include "home/effect_functions.h"
 #include "home/core.h"
@@ -394,9 +311,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/random.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
-#define COLORLESS 0x06u
-#define NUM_COLORED_TYPES 0x06u
-#define TYPE_PKMN 0x07u
 
 #include "home/effect_functions.h"
 #include "home/menus.h"
@@ -406,7 +320,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "home/duel.h"
 #define DUELVARS_ARENA_CARD_CHANGED_RESISTANCE 0xEAu
-#define ChangedTheResistanceOfPokemonToColorText 0x0115u
 
 #include "home/effect_functions.h"
 #include "home/duel.h"
@@ -416,12 +329,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/menus.h"
 #define DUELVARS_ARENA_CARD_CHANGED_WEAKNESS 0xE9u
 #define DUELVARS_ARENA_CARD_LAST_TURN_CHANGE_WEAK 0xF7u
-#define ChangedTheWeaknessOfPokemonToColorText 0x0114u
 
 #include "home/core.h"
 #include "home/serial.h"
 #include "generated/hram.h"
-#define OPPACTION_6B30 0x12u
 
 #include "home/serial.h"
 #include "home/core.h"
@@ -458,7 +369,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "home/menus.h"
 #include "mem.h"
-#define PokemonDevolvedToText 0x017au
 
 #include "home/substatus.h"
 #include "home/core.h"
@@ -475,37 +385,26 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "home/print_text.h"
 #define DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX 0xF2u
-#define SUBSTATUS2_AMNESIA 0x04u
-#define WasChosenForTheEffectOfAmnesiaText 0x0148u
 
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "generated/wram.h"
-#define ATK_ANIM_HIT 0x01u
 #define DUELVARS_ARENA_CARD_LAST_TURN_DAMAGE 0xf3u
 
 #include "home/effect_functions.h"
-#define SUBSTATUS2_SMOKESCREEN 0x01u
 
 #include "home/effect_functions.h"
-#define SUBSTATUS2_GROWL 0x12u
 
 #include "home/effect_functions.h"
-#define SUBSTATUS2_POUNCE 0x07u
 
 #include "home/effect_functions.h"
-#define SUBSTATUS2_SAND_ATTACK 0x02u
 
 #include "home/effect_functions.h"
-#define SUBSTATUS2_REDUCE_BY_20 0x03u
 
 #include "generated/hram.h"
 #include "home/effect_functions.h"
 #include "home/duel.h"
 #include "mem.h"
-#define SUBSTATUS2_CONVERSION2 0x08u
-#define SUBSTATUS2_ACID 0x09u
-#define SUBSTATUS2_BONE_ATTACK 0x0bu
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -536,7 +435,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/menus.h"
-#define ChooseDiscardEnergyCardFromOpponentText 0x0123u
 
 #include "home/effect_functions.h"
 #include "home/core.h"
@@ -553,21 +451,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/frames.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define OPPACTION_6B15 0x15u
-#define ProcedureForStrangeBehaviorText 0x0139u
 
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/menus.h"
 #include "home/print_text.h"
-#define SEARCHEFFECT_BASIC_ENERGY 0x03u
-#define SEARCHEFFECT_BASIC_FIGHTING 0x02u
-#define SEARCHEFFECT_CARD_ID 0x00u
-#define SEARCHEFFECT_NIDORAN 0x01u
-#define SEARCHEFFECT_POKEMON 0x04u
-#define TYPE_PKMN_FIGHTING 0x04u
-#define ThereIsNoInTheDeckText 0x013bu
-#define WouldYouLikeToCheckTheDeckText 0x013cu
 
 #include "generated/hram.h"
 #include "home/core.h"
@@ -612,7 +500,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "generated/hram.h"
 #include "mem.h"
-#define ChooseAndDiscard2FireEnergyCardsText 0x011fu
 
 #include "generated/wram.h"
 #include "home/bg_map.h"
@@ -628,23 +515,18 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/print_text.h"
 #include "home/process_text.h"
 #include "home/tiles.h"
-#define TX_END 0x00u
-#define ColorListText 0x0046u
 
 #include "generated/hram.h"
 #include "home/effect_functions.h"
 #define C1_PLAY_AREA_ARENA 0x00u
-#define ChooseWeaknessYouWishToChangeText 0x0111u
 
 #include "home/effect_functions.h"
 #include "generated/hram.h"
-#define ChooseResistanceYouWishToChangeText 0x0112u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/menus.h"
 #include "home/print_text.h"
-#define YouCanSelectMoreCardsQuitText 0x017cu
 
 #include "generated/hram.h"
 #include "home/core.h"
@@ -652,7 +534,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
 #define SAH_BANK_DUEL_CORE 0x01u
-#define WasPlacedInTheHandText 0x016fu
 
 #include "generated/hram.h"
 #include "home/core.h"
@@ -660,7 +541,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
 #define RAH_BANK_DUEL_CORE 0x01u
-#define CardWasChosenText 0x0165u
 
 #include "generated/wram.h"
 #include "generated/hram.h"
@@ -669,9 +549,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "home/print_text.h"
 #include "home/sound.h"
-#define SFX_POKEMON_EVOLUTION 0x5Eu
-#define STAGE2_WITHOUT_STAGE1 0x03u
-#define PokemonEvolvedIntoPokemonText 0x0060u
 
 #include "generated/hram.h"
 #include "home/core.h"
@@ -718,7 +595,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "mem.h"
 #define RV_BANK_DUEL_CORE 0x01u
 #define RV_DUELVARS_ARENA_CARD_HP 0xC8u
-#define PlacedOnTheBenchText 0x0061u
 
 #include "generated/hram.h"
 #include "home/core.h"
@@ -737,28 +613,23 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
 
 #include "home/switch_rom.h"
-#define DiscardOppDeckAsManyFireEnergyCardsText 0x0120u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/menus.h"
-#define ChooseAndDiscard2EnergyCardsText 0x0121u
 
 #include "home/effect_functions.h"
 #include "home/duel.h"
 #include "home/core.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
-#define AttachedEnergyToPokemonText 0x005fu
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/duel.h"
-#define PokemonWasReturnedFromArenaToHandText 0x016cu
-#define PokemonWasReturnedFromBenchToHandText 0x016du
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -773,7 +644,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define SYM_SPACE 0x00u
 #define SYM_LIGHTNING 0x03u
 
-#define ProcedureForDamageSwapText 0x0137u
 
 #include "home/effect_functions.h"
 #include "home/frames.h"
@@ -783,7 +653,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/sound.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define ChooseUpTo3PkmnOnBenchToGiveDamageText 0x011bu
 
 #include "home/duel.h"
 #include "home/substatus.h"
@@ -802,8 +671,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/card_color.h"
 #include "home/duel.h"
 #include "home/effect_functions.h"
-#define ChoosePokemonWishToColorChangeText 0x0113u
-#define UnableToSelectText 0x0045u
 
 #include "home/duel.h"
 #include "home/effect_commands.h"
@@ -814,10 +681,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "generated/wram.h"
 #include "mem.h"
 
-#define ChooseOppAttackToBeUsedWithMetronomeText 0x013au
-#define EFFECTCMDTYPE_INITIAL_EFFECT_1 0x01u
-#define EFFECTCMDTYPE_INITIAL_EFFECT_2 0x02u
-#define OPPACTION_USE_METRONOME_ATTACK 0x14u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -829,7 +692,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/menus.h"
 #include "home/sound.h"
 
-#define ProcedureForCurseText 0x0131u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -839,11 +701,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "home/menus.h"
 #include "home/print_text.h"
-#define PokemonAndAllAttachedCardsWereReturnedToDeckText 0x016bu
 
 #include "home/serial.h"
 #include "home/coin_toss.h"
-#define OPPACTION_TOSS_COIN_A_TIMES 0x11u
 
 #include "home/coin_toss.h"
 
@@ -855,33 +715,8 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/math.h"
 #include "home/print_text.h"
 #include "generated/wram.h"
-#define DamageCheckIfHeadsXDamageText 0x00f4u
-#define DamageCheckIfHeadsPlusDamageText 0x00f3u
-#define AcidCheckText 0x00f5u
-#define IfHeadsOpponentCannotAttackText 0x00fcu
 
-#define IfHeadsNoDamageNextTurnText 0x00f1u
-#define IfHeadsDoNotReceiveDamageOrEffectText 0x00fbu
-#define ATK_ANIM_HIT_EFFECT 0x05u
-#define ATK_ANIM_AGILITY_PROTECT 0x52u
-#define ATK_ANIM_PROTECT 0x4fu
-#define ATK_ANIM_LEER 0x74u
-#define SUBSTATUS1_AGILITY 0x0cu
-#define SUBSTATUS1_FLY 0x0du
-#define SUBSTATUS1_NO_DAMAGE_HIDE_IN_SHELL 0x11u
-#define SUBSTATUS1_NO_DAMAGE_STIFFEN 0x0fu
-#define SUBSTATUS1_NO_DAMAGE_SCRUNCH 0x17u
-#define SuccessCheckIfHeadsAttackIsSuccessfulText 0x00eeu
-#define SUBSTATUS2_LEER 0x06u
-#define DamageCheckIfTailsNoDamageText 0x00e6u
-#define ATK_ANIM_DIVE_BOMB 0x11u
 #include "home/math.h"
-#define SUBSTATUS1_NO_DAMAGE_WITHDRAW 0x10u
-#define SUBSTATUS2_TAIL_WAG 0x05u
-#define ATK_ANIM_SCRUNCH 0x6bu
-#define ATK_ANIM_LURE 0x46u
-#define ATK_ANIM_MULTIPLE_SLASH 0x29u
-#define IfTailsYourPokemonBecomesConfusedText 0x00e5u
 #include "home/print_text.h"
 #include "home/effect_functions.h"
 
@@ -905,7 +740,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "generated/wram.h"
-#define ATK_ANIM_CAT_PUNCH_PLAY_AREA 0x83u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -949,8 +783,6 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "generated/wram.h"
 #include "mem.h"
 
-#define DrewFireEnergyFromTheHandText 0x014du
-#define ThereWasNoFireEnergyText 0x017bu
 
 #define FG_ATK_ANIM_FIREGIVER_OPP 0x85u
 #define FG_ATK_ANIM_FIREGIVER_PLAYER 0x84u
@@ -973,9 +805,6 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/core.h"
 #include "home/menus.h"
 #include "generated/hram.h"
-#define ChooseCardFromYourHandToSwitchText 0x015eu
-#define ChooseCardToSwitchText 0x015fu
-#define DuelistHandText 0x00a7u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -984,14 +813,10 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "home/menus.h"
-#define Choose2BasicEnergyCardsFromDiscardPileText 0x0153u
-#define PlayerDiscardPileText 0x00a6u
-#define PleaseSelectCardText 0x00abu
 
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/menus.h"
-#define ChooseCardToDiscardFromHandText 0x0151u
 
 #include "home/effect_functions.h"
 #include "home/core.h"
@@ -999,16 +824,12 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/duel.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
-#define ChooseAnEnergyCardText 0x0134u
 
 #include "home/effect_functions.h"
-#define Choose2EnergyCardsFromDiscardPileForHandText 0x0133u
 
-#define Choose2EnergyCardsFromDiscardPileToAttachText 0x0132u
 
 #include "home/core.h"
 #include "home/menus.h"
-#define Draw1CardFromTheDeckText 0x0117u
 
 #include "generated/wram.h"
 #include "home/core.h"
@@ -1029,17 +850,12 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/core.h"
 #include "home/menus.h"
 
-#define Choose2CardsFromHandToDiscardText 0x0155u
-#define ChooseTheCardToDiscardText 0x0173u
 
 #include "home/effect_functions.h"
-#define Choose2HandCardsFromHandToReturnToDeckText 0x0156u
-#define ChooseTheCardToPutBackText 0x0172u
 
 #include "home/effect_functions.h"
 #include "home/core.h"
 #include "generated/hram.h"
-#define ChooseCardToPlaceInHandText 0x0157u
 
 #include "home/effect_functions.h"
 #include "home/core.h"
@@ -1048,7 +864,6 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define ChooseUpTo4FromDiscardPileText 0x0169u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -1069,10 +884,6 @@ static void chain_lightning_damage_same_color_bench(void)
  * DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK are already defined earlier in this
  * statics block and are deliberately not repeated. */
 #define Pokedex_PlayerSelection_BANK_DUEL_CORE 0x01u
-#define ChooseTheOrderOfTheCardsText 0x0136u
-#define DuelistDeckText 0x00a9u
-#define IsThisOKText 0x002eu
-#define RearrangeThe5CardsAtTopOfDeckText 0x0162u
 
 #include "generated/wram.h"
 #include "home/duel.h"
@@ -1084,7 +895,6 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/duel.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define ChoosePokemonToPlaceInPlayText 0x015bu
 
 #include "generated/wram.h"
 #include "generated/hram.h"
@@ -1094,7 +904,6 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/duel_core.h"
 #include "home/core.h"
 #include "home/effect_functions.h"
-#define ATK_ANIM_DEVOLUTION_BEAM 0x5du
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -1103,11 +912,6 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/effect_functions.h"
 #include "home/sound.h"
 #include "mem.h"
-#define CARD_LOCATION_DECK 0x00u
-#define FIGHTING 0x04u
-#define ChooseBasicFightingPokemonFromDeckText 0x0125u
-#define ChooseBasicFightingPokemonText 0x012cu
-#define FightingPokemonDeckText 0x0143u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -1125,7 +929,6 @@ void BankswitchROM(uint8_t bank);
 #include "home/core.h"
 #include "home/menus.h"
 #include "generated/hram.h"
-#define ChooseBasicPokemonToPlaceOnBenchText 0x0166u
 
 #include "generated/hram.h"
 #include "home/coin_toss.h"
@@ -1135,9 +938,6 @@ void BankswitchROM(uint8_t bank);
 #include "home/sound.h"
 #include "mem.h"
 
-#define BellsproutText 0x0141u
-#define ChooseABellsproutFromDeckText 0x012eu
-#define ChooseABellsproutText 0x012fu
 
 #include "home/effect_functions.h"
 #include "home/duel.h"
@@ -1145,9 +945,6 @@ void BankswitchROM(uint8_t bank);
 #include "home/sound.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define BasicEnergyText 0x0144u
-#define Choose1BasicEnergyCardFromDeckText 0x011cu
-#define ChooseBasicEnergyCardText 0x0129u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -1156,25 +953,16 @@ void BankswitchROM(uint8_t bank);
 #include "home/effect_functions.h"
 #include "home/sound.h"
 #include "mem.h"
-#define ChooseAKrabbyFromDeckText 0x0122u
-#define ChooseAKrabbyText 0x0128u
-#define KrabbyText 0x0142u
 
-#define ChooseNidoranFromDeckText 0x012au
-#define ChooseNidoranText 0x012bu
-#define NidoranMNidoranFText 0x013fu
 
 #include "home/effect_functions.h"
 #include "home/substatus.h"
 #include "home/duel.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define ATK_ANIM_GUST_OF_WIND 0x8du
 
-#define ConfusionCheckText 0x00e3u
 
 #include "home/effect_functions.h"
-#define PoisonCheckText 0x00e2u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -1182,9 +970,7 @@ void BankswitchROM(uint8_t bank);
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/duel_core.h"
-#define ATK_ANIM_HEAL 0x79u
 
-#define ParalysisCheckText 0x00e0u
 
 #include "home/effect_functions.h"
 #include "home/menus.h"
@@ -1192,10 +978,8 @@ void BankswitchROM(uint8_t bank);
 #include "generated/wram.h"
 #include "mem.h"
 
-#define ChooseAttackOpponentWillNotBeAbleToUseText 0x0124u
 
 #include "home/effect_functions.h"
-#define SleepCheckText 0x00e1u
 
 #include "home/math.h"
 #include "home/print_text.h"
@@ -1210,7 +994,6 @@ void BankswitchROM(uint8_t bank);
 #include "home/effect_functions.h"
 #include "generated/hram.h"
 
-#define IfHeadPlus10IfTails10ToYourselfText 0x00e9u
 
 #include "home/math.h"
 #include "home/print_text.h"
@@ -1219,7 +1002,6 @@ void BankswitchROM(uint8_t bank);
 #include "home/effect_functions.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define ATK_ANIM_RECOVER 0x58u
 
 #include "home/damage.h"
 #include "home/print_text.h"
@@ -1231,7 +1013,6 @@ void BankswitchROM(uint8_t bank);
 
 #include "home/effect_functions.h"
 #include "generated/hram.h"
-#define IfTailsDamageToYourselfTooText 0x00edu
 
 #include "home/print_text.h"
 #include "home/effect_functions.h"
@@ -1241,9 +1022,7 @@ void BankswitchROM(uint8_t bank);
 #include "home/effect_functions.h"
 #include "home/print_text.h"
 
-#define DamageToOppBenchIfHeadsDamageToYoursIfTailsText 0x00eau
 
-#define VenomPowderCheckText 0x00e4u
 
 #include "home/math.h"
 #include "home/print_text.h"
@@ -1252,10 +1031,7 @@ void BankswitchROM(uint8_t bank);
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define PLAY_AREA_BENCH_1 0x01u
-#define BenchText 0x004du
 
-#define PoisonedIfHeadsConfusedIfTailsText 0x00fau
 
 #include "home/coin_toss.h"
 #include "home/core.h"
@@ -1265,13 +1041,8 @@ void BankswitchROM(uint8_t bank);
 #include "generated/hram.h"
 #include "generated/wram.h"
 
-#define ChooseAnOddishFromDeckText 0x0126u
-#define ChooseAnOddishText 0x0127u
-#define OddishText 0x0140u
 
 #include "home/core.h"
-#define ATK_ANIM_FULL_HEAL 0x8au
-#define NO_STATUS 0x00u
 
 #include "generated/wram.h"
 #include "home/core.h"
@@ -1280,8 +1051,6 @@ void BankswitchROM(uint8_t bank);
 #include "home/substatus.h"
 #include "home/effect_functions.h"
 #include "mem.h"
-#define ATK_ANIM_OWN_CONFUSION 0x7fu
-#define ThereWasNoEffectText 0x017du
 
 #include "home/core.h"
 #include "home/duel.h"
@@ -1289,39 +1058,28 @@ void BankswitchROM(uint8_t bank);
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define CardCheckIfHeads8CardsIfTails1CardText 0x00f0u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/duel_core.h"
-#define ATK_ANIM_HEALING_WIND_PLAY_AREA 0x86u
 
 #include "home/effect_functions.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
-#define ATK_ANIM_SPIT_POISON_SUCCESS 0x8cu
 
 #include "home/core.h"
 #include "home/duel_menus.h"
 #include "home/menus.h"
 #include "home/script.h"
 #include "home/serial.h"
-#define AI_PEEK_TARGET_HAND 0x80u
-#define AI_PEEK_TARGET_HAND_F 0x07u
-#define DUELIST_TYPE_AI_OPP 0x80u
-#define DUELIST_TYPE_LINK_OPP 0x01u
-#define CardPeekWasUsedOnText 0x0146u
-#define PeekWasUsedToLookInYourHandText 0x0145u
 
-#define TheEnergyCardFromPlayAreaWasMovedText 0x014cu
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/random.h"
-#define ATK_ANIM_THUNDER_PLAY_AREA 0x82u
 
 #include "home/effect_functions.h"
 #include "home/serial.h"
@@ -1335,9 +1093,6 @@ void BankswitchROM(uint8_t bank);
 #include "home/menus.h"
 #define OPPONENT_TURN 0xc3u
 #define PAD_A 0x01u
-#define ChooseTheCardYouWishToExamineText 0x0056u
-#define DuelistHasNoCardsInHandText 0x0178u
-#define PleaseCheckTheOpponentsHandText 0x0163u
 
 #include "generated/hram.h"
 #include "home/duel.h"
@@ -1352,7 +1107,6 @@ void BankswitchROM(uint8_t bank);
 #include "home/menus.h"
 #include "home/print_text.h"
 #include "mem.h"
-#define PokemonHealedDamageText 0x0179u
 
 #include "generated/hram.h"
 #include "home/duel.h"
@@ -1370,7 +1124,6 @@ void BankswitchROM(uint8_t bank);
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/effect_functions.h"
-#define TrainerCardSuccessCheckText 0x00efu
 
 #include "home/effect_functions.h"
 #include "home/duel.h"
@@ -1394,21 +1147,18 @@ void BankswitchROM(uint8_t bank);
 #include "home/duel.h"
 #include "home/core.h"
 #include "home/menus.h"
-#define IfHeadsDraw1CardFromDeckText 0x00e7u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/random.h"
 #include "home/effect_functions.h"
 #include "mem.h"
-#define FlipUntilFailAppears10DamageForEachHeadsText 0x00e8u
 
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/duel_core.h"
-#define ATK_ANIM_HEAL_BOTH_SIDES 0x8Eu
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -1416,8 +1166,6 @@ void BankswitchROM(uint8_t bank);
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "home/menus.h"
-#define PleaseSelectTheDeckText 0x013du
-#define ProcedureForProphecyText 0x0135u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -1440,15 +1188,11 @@ void BankswitchROM(uint8_t bank);
 #include "home/core.h"
 #include "home/effect_functions.h"
 #include "home/sound.h"
-#define ChooseBasicOrEvolutionPokemonCardFromDeckText 0x0160u
-#define ChoosePokemonCardText 0x0161u
-#define EvolutionCardText 0x0164u
 
 #include "home/duel.h"
 #include "home/core.h"
 #include "home/effect_functions.h"
 #include "generated/hram.h"
-#define PokemonWasReturnedToDeckText 0x016eu
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -1457,30 +1201,23 @@ void BankswitchROM(uint8_t bank);
 #include "home/duel.h"
 #include "home/menus.h"
 #include "home/serial.h"
-#define OPPACTION_FORCE_SWITCH_ACTIVE 0x0eu
-#define SelectPkmnOnBenchToSwitchWithActiveText 0x010eu
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/menus.h"
-#define NoEnergyCardsText 0x002du
 
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/menus.h"
 
-#define ChoosePokemonToAttachDefenderToText 0x0158u
 
 #include "home/menus.h"
 #include "home/duel.h"
 #include "home/effect_functions.h"
-#define ChoosePokemonToRemoveEnergyFromText 0x0152u
 
-#define ChoosePokemonToReturnToTheDeckText 0x015au
 
-#define SelectPokemonToPlaceInTheArenaText 0x010fu
 
 #include "home/core.h"
 #include "home/effect_functions.h"
@@ -1491,34 +1228,28 @@ void BankswitchROM(uint8_t bank);
 #include "home/duel.h"
 #include "home/menus.h"
 
-#define ChooseAPokemonToSwitchWithActivePokemonText 0x016au
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/menus.h"
 
-#define ChoosePkmnInTheBenchToGiveDamageText 0x011au
 
 #include "generated/hram.h"
 #include "home/duel.h"
 #include "home/effect_functions.h"
-#define IfHeadsChangeOpponentsActivePokemonText 0x00ebu
 
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/menus.h"
 #include "home/credits_sequence_commands.h"
 
-#define ChoosePokemonToScoopUpText 0x015du
 
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/menus.h"
 #include "home/effect_functions.h"
-#define PleaseSelectThePlayAreaText 0x013eu
-#define ProcedureForDevolutionBeamText 0x0138u
 
 #include "generated/hram.h"
 #include "home/core.h"
@@ -1531,7 +1262,6 @@ void BankswitchROM(uint8_t bank);
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "home/menus.h"
-#define ChooseBasicPokemonToEvolveText 0x015cu
 
 #include "generated/hram.h"
 #include "home/core.h"
@@ -1544,7 +1274,6 @@ void BankswitchROM(uint8_t bank);
 #include "home/core.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define BasicPokemonWasPlacedOnEachBenchText 0x0149u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -1554,7 +1283,6 @@ void BankswitchROM(uint8_t bank);
 #include "home/menus.h"
 #include "home/switch_rom.h"
 #include "mem.h"
-#define ChoosePokemonInYourAreaThenPokemonInYourOppText 0x0168u
 
 #include "home/menus.h"
 #include "home/credits_sequence_commands.h"
@@ -1566,12 +1294,10 @@ void BankswitchROM(uint8_t bank);
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define ChooseEvolutionCardAndPressAButtonToDevolveText 0x0167u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define HANDLE_COLOR_CHANGE_MENU_PARAMS (HandleColorChangeScreen_ADDR + 0x2Eu)
-#define CONSOLE_CGB 0x02u
 #define SHIFT_MENU_DATA ShiftMenuData_ADDR /* ShiftMenuData, bank $0b */
 #define COLOR_TILE_AND_BGP ColorTileAndBGP_ADDR /* ColorTileAndBGP, bank $0b */
 #define SHIFT_LIST_ITEM_TO_COLOR ShiftListItemToColor_ADDR /* ShiftListItemToColor, bank $0b */
@@ -2801,7 +2527,6 @@ void FoulGas_AIEffect(void)
 
 
 /* >>> factory Sprout_AISelectEffect */
-#define ODDISH 0x1cu
 void Sprout_AISelectEffect(uint8_t c, uint16_t de)
 {
 	(void)CreateDeckCardList(c, de);
@@ -2877,7 +2602,6 @@ void WeedlePoisonSting_AIEffect(void)
 /* <<< factory WeedlePoisonSting_AIEffect */
 
 /* >>> factory BellsproutCallForFamily_AISelectEffect */
-#define BELLSPROUT 0x23u
 void BellsproutCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
 {
 	(void)CreateDeckCardList(c, de);
@@ -2903,8 +2627,6 @@ void WeezingSmog_AIEffect(void)
 
 
 /* >>> factory NidoranFFurySwipes_AIEffect */
-#define NIDORANF 0x14u
-#define NIDORANM 0x17u
 void NidoranFFurySwipes_AIEffect(void)
 {
 	SetExpectedAIDamage(30u / 2u, 0u, 30u);
@@ -3041,8 +2763,6 @@ uint16_t LightScreenEffect(void)
 
 /* >>> factory Cowardice_CheckUseAndBench */
 /* effect_functions.asm:3391-3425 */
-#define CAN_EVOLVE_THIS_TURN 0x80u
-#define CannotBeUsedInTurnWhichWasPlayedText 0x00ccu
 CowardiceCheckUseAndBenchResult Cowardice_CheckUseAndBench(void)
 {
 	uint8_t location = hTempPlayAreaLocation_ff9d;
@@ -3298,7 +3018,6 @@ void Toxic_AIEffect(void)
 /* <<< factory Toxic_AIEffect */
 
 /* >>> factory BoyfriendsEffect */
-#define NIDOKING 0x19u
 void BoyfriendsEffect(void)
 {
 	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
@@ -4219,7 +3938,6 @@ IsPlayerTurnResult GustOfWind_BenchCheck(void)
 	return (IsPlayerTurnResult){value, flags, EffectNoPokemonOnTheBenchText};
 }
 /* <<< factory GustOfWind_BenchCheck */
-#define NoSpaceOnTheBenchText 0x00b2u
 
 /* >>> factory VictreebelLure_AssertPokemonInBench */
 /* effect_functions.asm:1496-1501 */
@@ -11269,10 +10987,6 @@ ChanseyDoubleEdgeEffectResult ChanseyDoubleEdgeEffect(uint8_t f, uint8_t d, uint
 /* <<< factory ChanseyDoubleEdgeEffect */
 
 /* >>> factory FriendshipSong_AddToBench50PercentEffect */
-#define SuccessCheckIfHeadsAttackIsSuccessfulText 0x00eeu
-#define NoneCameText 0x0176u
-#define CameToTheBenchText 0x0177u
-#define ATK_ANIM_FRIENDSHIP_SONG 0x6au
 FriendshipSong_AddToBench50PercentEffectResult FriendshipSong_AddToBench50PercentEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	(void)a;
@@ -12210,7 +11924,6 @@ void Curse_TransferDamageEffect(void)
 /* <<< factory Curse_TransferDamageEffect */
 
 /* >>> factory SuperPotion_PlayerSelectEffect */
-#define ChoosePokemonToRemoveDamageCounterFromText 0x0150u
 SuperPotion_PlayerSelectEffectResult SuperPotion_PlayerSelectEffect(void)
 {
 	(void)DrawWideTextBox_WaitForInput(ChoosePokemonToRemoveDamageCounterFromText);
@@ -12319,8 +12032,6 @@ void Wail_FillBenchEffect(void)
 /* <<< factory Wail_FillBenchEffect */
 
 /* >>> factory Heal_RemoveDamageEffect */
-#define IfHeadsHealIsSuccessfulText 0x00ecu
-#define ChoosePkmnToRemoveDamageCounterText 0x0130u
 void Heal_RemoveDamageEffect(void)
 {
 	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadsHealIsSuccessfulText, 0u);
@@ -12498,7 +12209,6 @@ DevolutionSpray_PlayerSelectionResult DevolutionSpray_PlayerSelection(void)
 /* <<< factory DevolutionSpray_PlayerSelection */
 
 /* >>> factory EnergySpike_PlayerSelectEffect */
-#define ChoosePokemonToAttachEnergyCardText 0x011du
 static uint8_t energy_spike_is_basic_energy(uint8_t deck_index)
 {
 	uint8_t type = GetCardType(GetCardIDFromDeckIndex(deck_index));

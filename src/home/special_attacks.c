@@ -1,5 +1,6 @@
 #include "home/special_attacks.h"
 
+#include "generated/constants.h"
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "mem.h"
@@ -8,14 +9,8 @@
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/damage_calculation.h"
-#define ATTACK_FLAG2_ADDRESS 0x08u
 #define DUELVARS_ARENA_CARD 0xBBu
 #define DUELVARS_ARENA_CARD_HP 0xC8u
-#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
-#define HEAL_USER_F 0x01u
-#define NULLIFY_OR_WEAKEN_ATTACK_F 0x02u
-#define PLAY_AREA_ARENA 0x00u
-#define SECOND_ATTACK 0x01u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -28,39 +23,9 @@
 #include "home/card_color.h"
 #include "home/card_data.h"
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
-#define CARD_LOCATION_DECK 0x00u
-#define MAX_BENCH_POKEMON 0x05u
-#define MAX_PLAY_AREA_POKEMON 0x06u
-#define NIDORANF 0x14u
-#define NIDORANM 0x17u
-#define ODDISH 0x1Cu
-#define BELLSPROUT 0x23u
-#define EXEGGUTOR 0x29u
-#define SCYTHER 0x2Eu
-#define KRABBY 0x4Fu
-#define VAPOREON_LV29 0x5Au
-#define ELECTRODE_LV42 0x6Fu
-#define DUGTRIO 0x7Au
-#define GEODUDE 0x80u
-#define ONIX 0x83u
-#define CUBONE 0x84u
-#define MAROWAK_LV26 0x85u
-#define RHYHORN 0x89u
-#define MEW_LV23 0xA2u
-#define JIGGLYPUFF_LV13 0xAEu
-#define KANGASKHAN 0xB9u
-#define DRAGONAIR 0xC0u
-#define NINETALES_LV35 0x35u
-#define MEWTWO_ALT_LV60 0x9Fu
-#define MEWTWO_LV60 0x9Eu
-#define ZAPDOS_LV68 0x76u
-#define ELECTRODE_LV35 0x6Eu
-#define GOLDUCK 0x45u
 /* <<< factory statics */
 
 #define DUELVARS_CARD_LOCATIONS 0x00u
-#define TYPE_ENERGY 0x08u
-#define DECK_SIZE 60u
 
 BasicPokemonDeckResult CheckIfAnyBasicPokemonInDeck(void)
 {
@@ -115,13 +80,6 @@ void CheckWhetherToSwitchToFirstAttack(void)
 /* <<< factory CheckWhetherToSwitchToFirstAttack */
 
 /* >>> factory HandleSpecialAIAttacks */
-#define PORYGON 0xBDu
-#define PSYCHIC_ENERGY 0x06u
-#define LIGHTNING_ENERGY 0x04u
-#define CARD_LOCATION_DISCARD_PILE 0x02u
-#define CONFUSED 0x01u
-#define CNF_SLP_PRZ 0x0Fu
-#define PLAY_AREA_BENCH_1 0x01u
 #define DUELVARS_BENCH 0xBCu
 #define DUELVARS_ARENA_CARD_STATUS 0xF0u
 #define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xEEu

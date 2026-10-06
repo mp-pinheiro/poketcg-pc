@@ -1,5 +1,6 @@
 #include "home/lcd.h"
 
+#include "generated/constants.h"
 #include "generated/wram.h"
 #include "home/frames.h"
 #include "mem.h"
@@ -12,7 +13,6 @@
 #define LCDC_ON 0x80u
 #define LCDC_WIN_ON 0x20u
 #define LCDC_OBJ_16 0x04u
-#define FLUSH_ALL_PALS 0xC0u
 #define IE_VBLANK 0x01u
 
 uint8_t EnableLCD(void)

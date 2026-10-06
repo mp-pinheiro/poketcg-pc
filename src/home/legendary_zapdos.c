@@ -1,5 +1,6 @@
 #include "home/legendary_zapdos.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -14,17 +15,7 @@
 #include "home/general.h"
 #include "home/hand_pokemon.h"
 #include "home/init.h"
-#define AI_TRAINER_CARD_PHASE_01 0x01u
-#define AI_TRAINER_CARD_PHASE_04 0x04u
-#define AI_TRAINER_CARD_PHASE_07 0x07u
-#define AI_TRAINER_CARD_PHASE_10 0x0au
-#define AI_TRAINER_CARD_PHASE_13 0x0du
 #define DUELVARS_ARENA_CARD 0xbbu
-#define ELECTABUZZ_LV35 0x71u
-#define ELECTRODE_LV35 0x6eu
-#define OPPACTION_FINISH_NO_ATTACK 0x05u
-#define PLAY_AREA_ARENA 0x00u
-#define VOLTORB 0x6du
 /* <<< factory statics */
 
 /* >>> factory AIDoTurn_LegendaryZapdos */

@@ -1,6 +1,7 @@
 #include "home/retreat.h"
 #include "home/damage_calculation.h"
 
+#include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
@@ -9,46 +10,22 @@
 #include "home/duel.h"
 #include "generated/hram.h"
 
-#define ASLEEP 0x02u
-#define CLEFAIRY_DOLL 0xCBu
-#define CNF_SLP_PRZ 0x0Fu
-#define DOUBLE_COLORLESS_ENERGY 0x07u
 #define DUELVARS_ARENA_CARD 0xBBu
 #define DUELVARS_ARENA_CARD_STATUS 0xF0u
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
 #define FLAG_C 0x10u
 #define FLAG_Z 0x80u
-#define MYSTERIOUS_FOSSIL 0xCCu
-#define OPPACTION_ATTEMPT_RETREAT 0x04u
-#define OPPACTION_DUEL_MAIN_SCENE 0x16u
-#define OPPACTION_EXECUTE_PKMN_POWER_EFFECT 0x0Du
-#define OPPACTION_PLAY_ENERGY 0x03u
-#define OPPACTION_USE_PKMN_POWER 0x0Cu
-#define PARALYZED 0x03u
-#define PLAY_AREA_ARENA 0x00u
-#define TYPE_ENERGY 0x08u
 
 #include "home/core.h"
 #include "home/duel.h"
 #include "generated/hram.h"
-#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
-#define SECOND_ATTACK 0x01u
-#define MR_MIME 0x9Bu
-#define MEW_LV8 0xA0u
 #define DUELVARS_ARENA_CARD_HP 0xC8u
-#define AI_INFO_BENCH_UTILITY 0x01u
 
 #include "home/card_color.h"
-#define CONFUSED 0x01u
-#define DOUBLE_POISONED 0xC0u
 #define DUELVARS_BENCH 0xBCu
-#define HITMONLEE 0x87u
-#define PLAY_AREA_BENCH_1 0x01u
-#define PORYGON 0xBDu
 #define TRUE 0x01u
 /* <<< factory statics */
 
-#define POKEMON_POWER 0x04u
 #define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
 
 static uint8_t flag_cp(uint8_t a, uint8_t value)

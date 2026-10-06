@@ -1,5 +1,6 @@
 #include "home/duel_core_status.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/duel.h"
@@ -8,13 +9,6 @@
 #define DUELVARS_ARENA_CARD_ATTACHED_DEFENDER 0xdau
 #define DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER 0xe0u
 #define DUELVARS_ARENA_CARD_STATUS 0xf0u
-#define MAX_PLAY_AREA_POKEMON 6u
-#define PLUSPOWER 0xd8u
-#define DEFENDER 0xd9u
-#define ASLEEP 0x02u
-#define POISONED 0x80u
-#define DOUBLE_POISONED 0xc0u
-#define CNF_SLP_PRZ 0x0fu
 
 DuelCoreStatusResult IsArenaPokemonAsleepOrPoisoned(void)
 {

@@ -1,4 +1,6 @@
 #include "home/mail.h"
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -17,11 +19,8 @@
 #include "home/overworld.h"
 #include "home/sound.h"
 
-#define NUM_MAILS 0x0Fu
 #define PAD_CTRL_PAD 0xF0u
-#define SFX_CURSOR 0x01u
 
-#define PACK_UNOPENED_F 0x07u
 
 #include "home/give_booster_pack.h"
 #include "home/init_menu.h"
@@ -32,22 +31,7 @@
 /* PCMailBoosterPacks' booster ids (mail.asm:294-311). NUM_MAILS and
  * PACK_UNOPENED_F are already defined by this file's earlier ports and are not
  * repeated here. */
-#define BOOSTER_COLOSSEUM_NEUTRAL 0x00u
-#define BOOSTER_COLOSSEUM_FIRE 0x02u
-#define BOOSTER_COLOSSEUM_TRAINER 0x06u
-#define BOOSTER_EVOLUTION_NEUTRAL 0x07u
-#define BOOSTER_EVOLUTION_GRASS 0x08u
-#define BOOSTER_EVOLUTION_FIGHTING 0x0bu
-#define BOOSTER_EVOLUTION_TRAINER 0x0du
-#define BOOSTER_MYSTERY_NEUTRAL 0x0eu
-#define BOOSTER_MYSTERY_WATER_COLORLESS 0x10u
-#define BOOSTER_MYSTERY_LIGHTNING_COLORLESS 0x11u
-#define BOOSTER_MYSTERY_TRAINER_COLORLESS 0x13u
-#define BOOSTER_LABORATORY_NEUTRAL 0x14u
-#define BOOSTER_LABORATORY_PSYCHIC 0x17u
-#define BOOSTER_LABORATORY_TRAINER 0x18u
 
-#define MailBoosterPackAlreadyOpenedText 0x0419u
 
 #include "home/labels.h"
 #include "home/lcd_enable_frame.h"
@@ -57,35 +41,10 @@
  * so $01. MailScreenLabels is the bank-4 label list at 04:47d2 (poketcg.sym),
  * loaded as a plain 16-bit pointer exactly like status.c's StatusScreenLabels. */
 #define PAD_A 0x01u
-#define SFX_CONFIRM 0x02u
 #define MailScreenLabels MailScreenLabels_ADDR
 
 /* PCMailTextPages' text ids (mail.asm:200-261). `tx Label` expands to
  * `dw Label_`, the textpointer index from text_offsets.asm:1029-1052. */
-#define Mail1Part1Text 0x0401u
-#define Mail1Part2Text 0x0402u
-#define Mail2Part1Text 0x0403u
-#define Mail2Part2Text 0x0404u
-#define Mail3Part1Text 0x0405u
-#define Mail3Part2Text 0x0406u
-#define Mail4Part1Text 0x0407u
-#define Mail4Part2Text 0x0408u
-#define Mail5Part1Text 0x0409u
-#define Mail5Part2Text 0x040Au
-#define Mail6Part1Text 0x040Bu
-#define Mail6Part2Text 0x040Cu
-#define Mail7Part1Text 0x040Du
-#define Mail7Part2Text 0x040Eu
-#define Mail8Part1Text 0x040Fu
-#define Mail8Part2Text 0x0410u
-#define Mail9Part1Text 0x0411u
-#define Mail9Part2Text 0x0412u
-#define Mail10Part1Text 0x0413u
-#define Mail11Part1Text 0x0414u
-#define Mail12Part1Text 0x0415u
-#define Mail13Part1Text 0x0416u
-#define Mail14Part1Text 0x0417u
-#define Mail15Part1Text 0x0418u
 
 /* mail.asm:22 (_PCMenu_ReadMail). PAD_B is 1 << B_PAD_B with B_PAD_B = 1,
  * so $02 (hardware.inc:94-104); SFX_CANCEL EQU $03. MailScreenLabels, PAD_A
@@ -94,11 +53,8 @@
  * home/lcd_enable_frame.h, home/process_text.h, home/sound.h,
  * generated/wram.h, generated/hram.h) is already included above. */
 #define PAD_B 0x02u
-#define SFX_CANCEL 0x03u
 /* <<< factory statics */
 
-#define NUM_PC_PACKS 15
-#define PACK_UNOPENED 0x80
 
 static const uint8_t pc_mail_coordinates[NUM_PC_PACKS][2] = {
 	{1, 2}, {7, 2}, {13, 2},

@@ -1,5 +1,7 @@
 #include "home/booster_pack.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -9,10 +11,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 
-#define DECK_SIZE 0x3Cu
 #define PLAYER_TURN 0xC2u
-#define BoosterPackText 0x0196u
-#define ChooseTheCardYouWishToExamineText 0x0056u
 #define PAD_A 0x01u
 #define PAD_START 0x08u
 /* <<< factory statics */

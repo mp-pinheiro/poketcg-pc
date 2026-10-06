@@ -1,9 +1,9 @@
+#include "generated/constants.h"
 #include "home/sgb.h"
 /* >>> factory statics */
 #include "home/sgb.h"
 #include "mem.h"
 
-#define SGB_PACKET_SIZE 0x10u
 #define JOYP_SGB_START 0x00u
 #define JOYP_SGB_ONE 0x10u
 #define JOYP_SGB_ZERO 0x20u
@@ -12,7 +12,6 @@
 #include "home/sgb.h"
 
 #include "home/sgb.h"
-#define JOYP_SGB_MLT_REQ 0x03u
 /* <<< factory statics */
 
 /* sgb.asm:258-274. The delay loop has no observable effects beyond its

@@ -1,5 +1,6 @@
 #include "home/auto_deck_machines.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -11,18 +12,10 @@
 #include "generated/wram.h"
 #include "generated/sram.h"
 #include "mem.h"
-#define DECK_NAME_SIZE 0x18u
-#define DECK_STRUCT_SIZE 0x54u
-#define NUM_DECK_MACHINE_SLOTS 0x05u
 #define AUTO_DECK_MACHINES_BANK 0x06u
 #define AUTO_DECK_MACHINE_ENTRIES AutoDeckMachineEntries_ADDR
 
 #include "home/deck_machine.h"
-#define DECK_1 0x01u
-#define DECK_2 0x02u
-#define DECK_3 0x04u
-#define DECK_4 0x08u
-#define NUM_DECKS 0x04u
 /* <<< factory statics */
 
 /* >>> factory ReadAutoDeckConfiguration */

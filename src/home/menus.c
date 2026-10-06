@@ -1,5 +1,6 @@
 #include "home/menus.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -15,8 +16,6 @@
 #include "home/sound.h"
 #include "generated/wram.h"
 
-#define SFX_CANCEL 0x03u
-#define SFX_CONFIRM 0x02u
 /* Function pointers the asm installs in RAM: menus.asm:322 CardListMenuFunction
  * into wMenuUpdateFunc; duel/core.asm:5030/5038 PlayAreaScreenMenuFunction
  * ($01:60CE) into wMenuUpdateFunc; core.asm:3395 CardListFunction ($01:5719)
@@ -37,7 +36,6 @@
 #define SYM_CURSOR_R 0x0Fu
 #define PAD_RIGHT 0x10u
 #define PAD_LEFT 0x20u
-#define SFX_CURSOR 0x01u
 
 #define SYM_CURSOR_U 0x0Cu
 #define SYM_CURSOR_D 0x2Fu
@@ -76,10 +74,7 @@
 
 #define SYM_0 0x20
 #define SYM_SPACE 0x00
-#define TYPE_ENERGY 0x08
-#define TYPE_TRAINER 0x10
 #define CARD_SYMBOL_TABLE 0x29dd
-#define CONSOLE_CGB 0x02
 #define YES_OR_NO_TEXT_ID 0x2f
 
 void InitializeCardListParameters(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl)

@@ -1,5 +1,6 @@
 #include "home/deck_check.h"
 
+#include "generated/constants.h"
 #include "generated/wram.h"
 #include "home/bg_map.h"
 #include "home/random.h"
@@ -18,15 +19,9 @@
 #define B_PAD_RIGHT_MASK 0x10u
 #define PAD_A_MASK 0x01u
 #define PAD_B_MASK 0x02u
-#define B_CURSOR_BLINK_PERIOD 4u
-#define CURSOR_BLINK_PERIOD_MASK 0x0Fu
 #define MENU_CANCEL 0xFFu
-#define MENU_CONFIRM 0x01u
-#define SFX_CURSOR 0x01u
 /* <<< factory statics */
 
-#define SFX_CONFIRM 0x02u
-#define SFX_CANCEL 0x03u
 
 DrawCheckMenuCursorResult DrawCheckMenuCursor(uint8_t a)
 {

@@ -1,5 +1,6 @@
 #include "home/play_area.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "home/objects.h"
@@ -14,33 +15,21 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 
-#define B_CURSOR_BLINK_PERIOD 0x04u
 #define B_PAD_UP 6u
 #define B_PAD_DOWN 7u
 #define B_PAD_LEFT 5u
 #define B_PAD_RIGHT 4u
 #define PAD_A 0x01u
 #define PAD_B 0x02u
-#define CURSOR_BLINK_PERIOD_MASK 0x0fu
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
-#define INPLAYAREA_OPP_BENCH_1 0x0bu
-#define INPLAYAREA_OPP_DISCARD_PILE 0x0au
-#define INPLAYAREA_OPP_PLAY_AREA 0x11u
-#define INPLAYAREA_PLAYER_ACTIVE 0x05u
-#define INPLAYAREA_PLAYER_PLAY_AREA 0x10u
 #define MENU_CANCEL 0xffu
-#define MENU_CONFIRM 0x01u
-#define SFX_CURSOR 0x01u
 
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/card_data.h"
 #include "home/core.h"
 #define DUELVARS_ARENA_CARD 0xBBu
-#define PLAY_AREA_ARENA 0x00u
 
-#define INPLAYAREA_OPP_ACTIVE 0x08u
-#define PLAY_AREA_BENCH_1 0x01u
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -63,9 +52,6 @@
 #define OPEN_IN_PLAY_AREA_TRANSITION_TABLE2 OpenInPlayAreaScreen_TransitionTable2_ADDR
 #define EMPTY_LINE_TEXT 0x0251u
 #define HAND_TEXT_2 0x024Eu
-#define PLAY_AREA_BENCH_5 0x05u
-#define INPLAYAREA_PLAYER_HAND 0x06u
-#define INPLAYAREA_OPP_HAND 0x09u
 #define TRUE 0x01u
 
 static void open_in_play_area_print_associated_text(uint8_t position)

@@ -2,6 +2,7 @@
 #include "home/indirect_dispatch.h"
 #include "home/overworld_map.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -18,7 +19,6 @@
 #include "home/process_text.h"
 #include "home/print_text.h"
 
-#define SINGLE_SPACED 0x01u
 
 #include "home/credits_sequence_commands.h"
 #include "home/tiles.h"
@@ -53,7 +53,6 @@
 #include "home/load_overworld.h"
 #include "home/load_gfx.h"
 
-#define PALETTE_OVERWORLD_OAM 0x1Du
 
 #include "home/load_animation.h"
 #include "home/npc_data.h"
@@ -61,7 +60,6 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define SPRITE_ANIM_COORD_X 0x02u
 
 #include "home/credits_sequence_commands.h"
 #include "generated/wram.h"

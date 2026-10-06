@@ -1,4 +1,5 @@
 #include "home/duel_animation_core.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "home/load_animation.h"
@@ -10,7 +11,6 @@
 #include "home/play_animation.h"
 #include "mem.h"
 
-#define DUEL_SPECIAL_ANIMS 0x61u
 #include "home/lcd.h"
 
 #define QUEUE_ADDR 0xd423u

@@ -1,5 +1,6 @@
 #include "home/rock_club_lobby.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -10,10 +11,7 @@
 #include "generated/wram.h"
 #define RockClubLobbyAfterDuelTable (RockClubLobbyAfterDuel_ADDR + 0x07u)
 #include "home/scripting.h"
-#define EVENT_RECEIVED_LEGENDARY_CARDS 0x22u
 #define TRUE 0x01u
-#define EVENT_PUPIL_CHRIS_STATE 0x17u
-#define PUPIL_DEFEATED 0x08u
 /* <<< factory statics */
 
 /* >>> factory RockClubLobbyAfterDuel */

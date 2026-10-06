@@ -1,5 +1,6 @@
 #include "home/init.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -10,10 +11,7 @@
 #include "home/duel.h"
 #include "generated/wram.h"
 
-#define AI_MEWTWO_MILL_F 0x07u
-#define AI_MEWTWO_MILL (1u << AI_MEWTWO_MILL_F)
 #define DUELVARS_ARENA_CARD 0xbbu
-#define MEWTWO_LV53 0x9du
 /* <<< factory statics */
 
 /* >>> factory InitAIDuelVars */

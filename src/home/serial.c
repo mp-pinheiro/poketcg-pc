@@ -1,6 +1,8 @@
 #include "home/serial.h"
 #include "serial_track.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/wram.h"
 #include "home/printer.h"
 #include "mem.h"
@@ -9,8 +11,6 @@
 #include "home/print_text.h"
 #include "home/sound.h"
 
-#define MUSIC_STOP 0x00u
-#define TransmissionErrorText 0x0055u
 
 #include "home/serial.h"
 
@@ -20,11 +20,7 @@
 #include "home/duel.h"
 #include "home/switch_rom.h"
 
-#define DUELTYPE_LINK          0x01u
 #define DUELVARS_DUELIST_TYPE  0xf1u
-#define DUELIST_TYPE_PLAYER    0x00u
-#define DUELIST_TYPE_LINK_OPP  0x01u
-#define RNGVARS_SIZE           0x03u
 #define BANK_LINK_OPP_TURN     0x01u
 #define F_Z                    0x80u
 #define F_N                    0x40u

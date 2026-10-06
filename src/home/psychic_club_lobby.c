@@ -1,5 +1,6 @@
 #include "home/psychic_club_lobby.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -8,7 +9,6 @@
 #include "home/map.h"
 #include "home/scripting.h"
 #include "generated/wram.h"
-#define NPC_RONALD1 0x02u
 
 #include "home/grass_club_entrance.h"
 #define PsychicClubLobbyAfterDuelTable (PsychicClubLobbyAfterDuel_ADDR + 0x07u)

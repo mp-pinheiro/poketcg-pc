@@ -1,5 +1,6 @@
 #include "home/intro_sequence_commands.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -18,12 +19,6 @@
 #include "home/random.h"
 #include "home/sprite_animations.h"
 
-#define CONSOLE_CGB                     0x02u
-#define SPRITE_ANIM_215                 0xd7u
-#define SPRITE_ANIM_216                 0xd8u
-#define SPRITE_ANIM_ATTRIBUTES          0x01u
-#define SPRITE_ANIM_COORD_X             0x02u
-#define SPRITE_ANIM_FLAG_UNSKIPPABLE_F  0x07u
 #define ORB_COUNTER_MASK                0x3fu
 #define NUM_TITLE_SCREEN_ORBS           0x07u
 
@@ -63,7 +58,6 @@ static void UpdateSpriteAttributes(void)
 #include "home/sound.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define MUSIC_TITLESCREEN 0x01u
 
 #include "home/intro_sequence_commands.h"
 #include "home/color.h"
@@ -90,14 +84,10 @@ static void UpdateSpriteAttributes(void)
 #include "mem.h"
 
 #include "home/intro_sequence_commands.h"
-#define SCENE_CHARIZARD_INTRO 0x05u
 
-#define SCENE_TITLE_SCREEN 0x00u
 
-#define SCENE_AERODACTYL_INTRO 0x07u
 
 #include "home/intro_sequence_commands.h"
-#define SCENE_SCYTHER_INTRO 0x06u
 
 #include "home/intro_sequence_commands.h"
 #include "generated/wram.h"

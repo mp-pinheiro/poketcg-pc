@@ -1,5 +1,7 @@
 #include "home/glossary.h"
 
+#include "generated/text_ids.h"
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -20,17 +22,8 @@
 #include "mem.h"
 #define PAD_B 0x02u
 #define PAD_SELECT 0x04u
-#define DOUBLE_SPACED 0x00u
 #define MENU_CANCEL 0xffu
-#define MENU_CONFIRM 0x01u
-#define SINGLE_SPACED 0x01u
 #define TRUE 0x01u
-#define TX_END 0x00u
-#define TX_SYMBOL 0x05u
-#define ChooseWordAndPressAButtonText 0x02f9u
-#define GlossaryMenuPage1Text 0x02f7u
-#define GlossaryMenuPage2Text 0x02f8u
-#define PokemonCardGlossaryText 0x02f6u
 /* <<< factory statics */
 
 /* >>> factory OpenGlossaryScreen */

@@ -1,5 +1,6 @@
 #include "home/sams_practice.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/duel.h"
@@ -7,24 +8,12 @@
 /* >>> factory statics */
 #include "home/core.h"
 
-#define RATICATE 0xA8u
-#define RATTATA 0xA7u
-#define PLAY_AREA_BENCH_1 1u
 
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/retreat.h"
 #define DUELVARS_ARENA_CARD 0xBBu
-#define FIGHTING_ENERGY 0x05u
-#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
-#define LIGHTNING_ENERGY 0x04u
-#define MACHOP 0x7Du
-#define OPPACTION_EVOLVE_PKMN 0x02u
-#define OPPACTION_FINISH_NO_ATTACK 0x05u
-#define OPPACTION_PLAY_BASIC_PKMN 0x01u
-#define PLAY_AREA_ARENA 0x00u
-#define PLAY_AREA_BENCH_2 0x02u
 /* <<< factory statics */
 
 SamsPracticeResult IsAIPracticeScriptedTurn(uint8_t a, uint8_t f, uint8_t b,

@@ -1,5 +1,6 @@
 #include "home/player_gender.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/bg_map.h"
@@ -13,17 +14,12 @@
 #include "home/text_box.h"
 #include "runtime.h"
 
-#define PLAYER_PIC 0x01u
 #define MINT_PIC 0x2Bu
-#define TILEMAP_PLAYER 0x62u
-#define TILEMAP_OPPONENT 0x63u
 #define SYM_CURSOR_R 0x0Fu
 #define SYM_SPACE 0x00u
 #define PAD_A 0x01u
 #define PAD_LEFT 0x20u
 #define PAD_RIGHT 0x10u
-#define SFX_CURSOR 0x01u
-#define SFX_CONFIRM 0x02u
 
 static void print_host_text(const char *text, uint8_t d, uint8_t e)
 {

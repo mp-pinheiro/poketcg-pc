@@ -1,5 +1,6 @@
 #include "home/general_no_retreat.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -12,22 +13,6 @@
 #include "home/hand_pokemon.h"
 #include "home/init.h"
 #include "home/pkmn_powers.h"
-#define AI_ENERGY_TRANS_ATTACK 0x0du
-#define AI_FLAG_USED_PROFESSOR_OAK 0x04u
-#define AI_TRAINER_CARD_PHASE_01 0x01u
-#define AI_TRAINER_CARD_PHASE_02 0x02u
-#define AI_TRAINER_CARD_PHASE_03 0x03u
-#define AI_TRAINER_CARD_PHASE_04 0x04u
-#define AI_TRAINER_CARD_PHASE_05 0x05u
-#define AI_TRAINER_CARD_PHASE_06 0x06u
-#define AI_TRAINER_CARD_PHASE_07 0x07u
-#define AI_TRAINER_CARD_PHASE_08 0x08u
-#define AI_TRAINER_CARD_PHASE_10 0x0au
-#define AI_TRAINER_CARD_PHASE_11 0x0bu
-#define AI_TRAINER_CARD_PHASE_12 0x0cu
-#define AI_TRAINER_CARD_PHASE_13 0x0du
-#define AI_TRAINER_CARD_PHASE_15 0x0fu
-#define OPPACTION_FINISH_NO_ATTACK 0x05u
 /* <<< factory statics */
 
 /* >>> factory AIDoTurn_GeneralNoRetreat */

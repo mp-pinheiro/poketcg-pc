@@ -1,5 +1,6 @@
 #include "home/scenes.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -8,8 +9,6 @@
 #include "home/load_gfx.h"
 #include "home/objects.h"
 
-#define CONSOLE_CGB 0x02u
-#define SPRITE_BOOSTER_PACK_OAM 0x69u
 
 static const uint8_t booster_logo_oam[] = {
 	0x20u,
@@ -49,10 +48,8 @@ static const uint8_t booster_logo_oam[] = {
 
 #include "generated/wram.h"
 #include "home/load_gfx.h"
-#define TILEMAP_PLAYER 0x62u
 
 #include "generated/wram.h"
-#define CONSOLE_SGB 0x01u
 
 #include "generated/wram.h"
 #include "mem.h"
@@ -60,7 +57,6 @@ static const uint8_t booster_logo_oam[] = {
 #include "home/sgb.h"
 #include "generated/wram.h"
 
-#define LINK_OPP_PIC 0x2au
 #define MINT_PIC 0x2bu
 #define TILESET_MINT 0x57u
 #define TILESET_MINT_SINGLE 0x58u
@@ -103,7 +99,6 @@ static void write_mint_attributes(uint8_t b, uint8_t c)
 #include "mem.h"
 #define SCENE_POINTERS_BANK 0x04u
 #define SCENE_POINTERS_ADDR ScenePointers_ADDR
-#define SPRITE_ANIM_COORD_X 0x02u
 
 #include "home/palettes.h"
 #include "home/scenes.h"

@@ -1,4 +1,5 @@
 #include "home/sprite_animations.h"
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/sram.h"
 #include "generated/wram.h"
@@ -25,7 +26,6 @@
 #define FLAG_X_INVERTED 0u
 #define FLAG_Y_INVERTED 1u
 #define FLAG_UNSKIPPABLE 7u
-#define GFXTABLE_SPRITE_ANIMATIONS 6u
 
 static uint16_t slot_addr(uint8_t slot, uint8_t field)
 {

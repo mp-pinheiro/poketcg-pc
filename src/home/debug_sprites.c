@@ -1,5 +1,6 @@
 #include "home/debug_sprites.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/load_animation.h"
@@ -11,9 +12,6 @@
 #define PAD_LEFT 0x20u
 #define PAD_UP 0x40u
 #define PAD_DOWN 0x80u
-#define SPRITE_ANIM_FLAGS 15u
-#define SPRITE_ANIM_FLAG_X_INVERTED 1u
-#define SPRITE_ANIM_FLAG_CENTERED_F 2u
 void Func_1c865(void)
 {
 }

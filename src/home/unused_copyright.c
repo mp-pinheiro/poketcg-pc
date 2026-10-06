@@ -1,5 +1,6 @@
 #include "home/unused_copyright.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -13,7 +14,6 @@
 #include "home/random.h"
 
 #define PAD_START 0x08u
-#define SCENE_COPYRIGHT 0x19u
 /* <<< factory statics */
 
 /* >>> factory UnusedCopyrightScreen */

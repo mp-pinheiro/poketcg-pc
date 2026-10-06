@@ -2,14 +2,11 @@
 
 #include "mem.h"
 /* >>> factory statics */
+#include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define TYPE_ENERGY 0x08u
-#define TX_END 0x00u
 #include "home/print_text.h"
 #include "home/process_text.h"
-#define TX_HALFWIDTH 0x06u
-#define TX_SYMBOL 0x05u
 #define SYM_Lv 0x11u
 #define SYM_0 0x20u
 #define FULLWIDTH_SPACE 0x70u

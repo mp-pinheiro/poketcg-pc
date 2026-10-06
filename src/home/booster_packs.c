@@ -1,5 +1,6 @@
 #include "home/booster_packs.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -8,17 +9,6 @@
 #include "generated/wram.h"
 #include "mem.h"
 
-#define NUM_CARD_TYPES              0x11u
-#define NUM_BOOSTER_CARD_TYPES      0x09u
-#define BOOSTER_CARD_TYPE_GRASS     0x00u
-#define BOOSTER_CARD_TYPE_FIRE      0x01u
-#define BOOSTER_CARD_TYPE_WATER     0x02u
-#define BOOSTER_CARD_TYPE_LIGHTNING 0x03u
-#define BOOSTER_CARD_TYPE_FIGHTING  0x04u
-#define BOOSTER_CARD_TYPE_PSYCHIC   0x05u
-#define BOOSTER_CARD_TYPE_COLORLESS 0x06u
-#define BOOSTER_CARD_TYPE_TRAINER   0x07u
-#define BOOSTER_CARD_TYPE_ENERGY    0x08u
 
 /* booster_packs.asm:166-184 (CardTypeTable) */
 static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
@@ -53,12 +43,10 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 #include "home/booster_packs.h"
 #include "mem.h"
 
-#define NUM_CARDS_IN_BOOSTER 0x0Au
 
 #include "home/booster_packs.h"
 #include "home/random.h"
 
-#define NUM_COLORED_TYPES 0x06u
 
 #include "home/booster_packs.h"
 
@@ -81,9 +69,7 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 #include "home/card_data.h"
 #include "generated/wram.h"
 
-#define NUM_CARDS 0xE4u
 
-#define STAR 0x02u
 
 #include "home/copy.h"
 #include "home/division.h"

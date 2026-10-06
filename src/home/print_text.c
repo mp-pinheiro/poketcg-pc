@@ -1,5 +1,6 @@
 #include "home/print_text.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/rom.h"
 #include "generated/sram.h"
@@ -347,7 +348,6 @@ ProcessTextHeaderResult InitTextPrinting_ProcessTextFromPointerToID(uint8_t d, u
 	return r;
 }
 
-#define TEXT_SPEED_3 2u
 #define PAD_B        0x02u
 
 TextResult PlaceTextItems(uint16_t hl)

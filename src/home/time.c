@@ -1,5 +1,6 @@
 #include "home/time.h"
 
+#include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
@@ -10,11 +11,9 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "serial_track.h"
-#define IN_TIMER 0x01u
 #define BANK_SOUND_TIMER_HANDLER 0x3Du
 /* <<< factory statics */
 
-#define CONSOLE_CGB 0x02u
 
 /* time.asm:40-67. Byte 3 counts mod 256 (ret nz), not 60, and only rolls into
  * byte 4 when it wraps. */

@@ -1,5 +1,6 @@
 #include "home/card_data.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "generated/rom.h"
@@ -11,7 +12,6 @@
 /* >>> factory statics */
 #include "home/switch_rom.h"
 #include "mem.h"
-#define PKMN_CARD_DATA_LENGTH 0x41u
 
 #include "home/switch_rom.h"
 #include "home/copy.h"
@@ -23,32 +23,15 @@
  * switch -- collapsed here to direct rom_ptr reads. */
 #define BANK_CARD_DATA      CardPointers_BANK
 #define CARD_POINTERS       CardPointers_ADDR
-#define CARD_DATA_TYPE      0x00u
-#define CARD_DATA_NAME      0x03u
-#define CARD_DATA_RARITY    0x05u
-#define CARD_DATA_SET       0x06u
-#ifndef POKETCG_CARD_COUNT
-#define POKETCG_CARD_COUNT 228u
-#endif
-#define NUM_CARDS POKETCG_CARD_COUNT
 #define GETCARDPTR_BOUND ((uint16_t)(CARD_POINTERS + 2u + 2u * NUM_CARDS))
 
 static CardPtrResult get_card_pointer(CardId cardid)
 {
-#ifdef POKETCG_PROFILE_EXTENDED
-	uint16_t entry = (uint16_t)(CARD_POINTERS + (uint16_t)cardid * 3u);
-	uint16_t bound = (uint16_t)(CARD_POINTERS + 3u * (NUM_CARDS + 1u));
-	if (entry >= bound)
-		return (CardPtrResult){entry, 1u, (uint8_t)(entry == bound), 0u};
-	const uint8_t *p = rom_ptr(BANK_CARD_DATA, entry);
-	return (CardPtrResult){(uint16_t)(p[0] | (uint16_t)p[1] << 8), 0u, 0u, p[2]};
-#else
 	uint16_t entry = (uint16_t)(CARD_POINTERS + (uint16_t)cardid * 2u);
 	if (entry >= GETCARDPTR_BOUND)
 		return (CardPtrResult){entry, 1u, (uint8_t)(entry == GETCARDPTR_BOUND), 0u};
 	const uint8_t *p = rom_ptr(BANK_CARD_DATA, entry);
 	return (CardPtrResult){(uint16_t)(p[0] | (uint16_t)p[1] << 8), 0u, 0u, BANK_CARD_DATA};
-#endif
 }
 
 static const uint8_t *card_data(CardId cardid)

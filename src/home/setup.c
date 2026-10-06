@@ -1,6 +1,7 @@
 #include "home/setup.h"
 #include "home/time.h"
 
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/palettes.h"
@@ -15,8 +16,6 @@
 #define rOBP0 0xFF48u
 #define rOBP1 0xFF49u
 
-#define CONSOLE_DMG 0x00u
-#define CONSOLE_CGB 0x02u
 #define BOOTUP_A_CGB 0x11u
 
 #define LCDC_BG_OBJ_WIN 0x47u /* LCDC_BG_ON | LCDC_OBJ_ON | LCDC_OBJ_16 | LCDC_WIN_9C00 */
