@@ -41,6 +41,18 @@ just build
 
 `just bootstrap` clones the pinned `pret/poketcg` disassembly and verifies its ROM checksum. `uv sync --project tools/oracle --frozen` installs the pinned PyBoy project. `just completion-gambatte-bootstrap` downloads the pinned Gambatte source archive, builds its shared library with the pinned SCons version, and rejects archive or core hash drift.
 
+## Profiles
+
+Vanilla remains the default direct profile. Extended is selected from the launcher or with `POKETCG_PROFILE=extended` for build and oracle commands.
+
+Set up the pinned Extended checkout and build the isolated profile with `just bootstrap-extended` and `just build-extended`. Generate its sparse data pack with `just completion-data-pack-extended`.
+
+Build both native targets and the SDL chooser with `just build-profiles`, then start the chooser with `just play`. Direct profile recipes are `just play-vanilla` and `just play-extended`; automation can use `build/poketcg-launcher --profile extended`.
+
+Extended source and assets have no recorded distribution permission. `just appimage-profiles` and `just windows-profiles` remain blocked until written permission is recorded in `profiles/extended/provenance.toml`.
+
+Extended game code is a per-basename overlay: `src/profiles/extended/home/<basename>.{c,h}` and `src/profiles/extended/probe/<basename>.c` replace the shared files of the same name, with cases in `tests/profiles/extended/cases/<basename>.py`. `python3 tools/profile_audit.py` lists shared basenames whose Extended asm differs without an overlay (`--routines <basename>` shows the per-routine diff); `just extended-overlay <basename>` copies the shared trio and seeds the Extended case module with RAM addresses relocated to the Extended symbol table; `python3 tools/overlay_prune.py <basename>` removes routines the Extended tree no longer has; `just extended-check <basename>` oracle-diffs the overlay against the Extended ROM in the `POKETCG_BUILD` directory (`just extended-configure-lane` configures a private one without regenerating the shared inventory or pack).
+
 ## Linux AppImage
 
 `just appimage` builds `build/appimage/poketcg-VERSION-x86_64.AppImage`: the windowed binary, the data pack, and the bundled SDL2 and PulseAudio libraries. It runs until the window closes and keeps its save at `${XDG_DATA_HOME:-~/.local/share}/poketcg/poketcg.sav`; arguments after the AppImage path pass through to `poketcg`. The build host's glibc sets the floor (2.38 when built on Ubuntu 24.04).
