@@ -18,16 +18,22 @@ static void adapt_CheckSandAttackOrSmokescreenSubstatus(ProbeState *s)
 
 static void adapt_CountTurnDuelistPokemonWithActivePkmnPower(ProbeState *s)
 {
-	PkmnPowerCountResult r = CountTurnDuelistPokemonWithActivePkmnPower(s->a);
+	CardId target = (CardId)(((uint16_t)s->d << 8) | s->e);
+	PkmnPowerCountResult r = CountTurnDuelistPokemonWithActivePkmnPower(target);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
 }
 
 static void adapt_CountPokemonWithActivePkmnPowerInBothPlayAreas(ProbeState *s)
 {
-	PkmnPowerCountResult r = CountPokemonWithActivePkmnPowerInBothPlayAreas(s->a);
+	CardId target = (CardId)(((uint16_t)s->d << 8) | s->e);
+	PkmnPowerCountResult r = CountPokemonWithActivePkmnPowerInBothPlayAreas(target);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
 }
 
 static void adapt_CheckIsIncapableOfUsingPkmnPower(ProbeState *s)
@@ -102,6 +108,8 @@ static void adapt_IsClairvoyanceActive(ProbeState *s)
 	PkmnPowerCountResult r = IsClairvoyanceActive();
 	s->a = r.a;
 	s->f = r.f;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
 }
 
 static void adapt_GetLoadedCard1RetreatCost(ProbeState *s)
@@ -128,6 +136,8 @@ static void adapt_IsPrehistoricPowerActive(ProbeState *s)
 	PrehistoricPowerResult r = IsPrehistoricPowerActive(s->hl);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
 	s->hl = r.hl;
 }
 
@@ -154,6 +164,8 @@ static void adapt_IsRainDanceActive(ProbeState *s)
 	PkmnPowerCountResult r = IsRainDanceActive();
 	s->a = r.a;
 	s->f = r.f;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
 }
 
 static void adapt_ClearChangedTypesIfMuk(ProbeState *s)

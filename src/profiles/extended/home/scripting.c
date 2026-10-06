@@ -491,41 +491,46 @@ uint8_t SetScriptControlBytePass(void)
 /* scripting.asm:1019-1036 */
 JumpIfCardInCollectionResult ScriptCommand_JumpIfCardInCollection(uint8_t b, uint8_t c)
 {
-	CardCountResult cnt = GetCardCountInCollection(c);
+	uint16_t card = (uint16_t)(((uint16_t)b << 8) | c);
+	CardCountResult cnt = GetCardCountInCollection(card);
 	if (cnt.a == 0) {
 		SetScriptControlByteFail();
-		IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
-		return (JumpIfCardInCollectionResult){r.a, r.f, b, r.c};
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy5();
+		return (JumpIfCardInCollectionResult){r.a, r.f, 0u, r.c,
+			(uint8_t)(card >> 8), (uint8_t)card};
 	}
 	SetScriptControlBytePass();
-	GetScriptArgsAfterPointerResult args = GetScriptArgs2AfterPointer();
+	GetScriptArgsAfterPointerResult args = GetScriptArgs3AfterPointer();
 	if (args.f & 0x80u) {
-		IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
-		return (JumpIfCardInCollectionResult){r.a, r.f, args.b, r.c};
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy5();
+		return (JumpIfCardInCollectionResult){r.a, r.f, args.b, r.c,
+			(uint8_t)(card >> 8), (uint8_t)card};
 	}
-	(void)SetScriptPointer((uint16_t)(args.b << 8 | args.c));
-	return (JumpIfCardInCollectionResult){args.a, args.f, args.b, args.c};
+	(void)SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
+	return (JumpIfCardInCollectionResult){args.a, args.f, args.b, args.c,
+		(uint8_t)(card >> 8), (uint8_t)card};
 }
 /* <<< factory ScriptCommand_JumpIfCardInCollection */
 
 /* >>> factory ScriptCommand_GiveCard */
 /* scripting.asm:1056-1063 */
-IncreaseScriptPointerResult ScriptCommand_GiveCard(uint8_t c)
+IncreaseScriptPointerResult ScriptCommand_GiveCard(uint8_t b, uint8_t c)
 {
-	uint8_t a = c;
-	if (a == 0)
-		a = wCardReceived;
-	AddCardToCollection(a);
-	return IncreaseScriptPointerBy2();
+	uint16_t card = (uint16_t)(((uint16_t)b << 8) | c);
+	if (card == 0u)
+		card = (uint16_t)(wCardReceived |
+			((uint16_t)wCardReceived_PTR[1] << 8));
+	AddCardToCollection(card);
+	return IncreaseScriptPointerBy3();
 }
 /* <<< factory ScriptCommand_GiveCard */
 
 /* >>> factory ScriptCommand_TakeCard */
 /* scripting.asm:1066-1069 */
-IncreaseScriptPointerResult ScriptCommand_TakeCard(uint8_t c)
+IncreaseScriptPointerResult ScriptCommand_TakeCard(uint8_t b, uint8_t c)
 {
-	RemoveCardFromCollection(c);
-	return IncreaseScriptPointerBy2();
+	RemoveCardFromCollection((uint16_t)(((uint16_t)b << 8) | c));
+	return IncreaseScriptPointerBy3();
 }
 /* <<< factory ScriptCommand_TakeCard */
 
@@ -645,18 +650,13 @@ IncreaseScriptPointerResult ScriptCommand_PlayDefaultSong(void)
 SetSpriteAttributesResult ScriptCommand_SetSpriteAttributes(uint8_t b, uint8_t c)
 {
 	wLoadedNPCTempIndex = wScriptNPC;
-	GetScriptArgsAfterPointerResult args = GetScriptArgs3AfterPointer();
 	PermissionResult item = GetItemInLoadedNPCIndex(wScriptNPC, LOADED_NPC_FLAGS);
-	uint8_t flags = (uint8_t)(gb_read8(item.hl) & (uint8_t)~(1u << NPC_FLAG_DIRECTIONLESS_F));
-	gb_write8(item.hl, flags); /* res NPC_FLAG_DIRECTIONLESS_F, [hl] */
-	flags = (uint8_t)(gb_read8(item.hl) | args.c); /* ld a, [hl]; or c */
-	gb_write8(item.hl, flags); /* ld [hl], a */
-	uint8_t e = c; /* ld e, c */
-	if (wConsole == CONSOLE_CGB) /* cp CONSOLE_CGB; jr nz, .not_cgb */
-		e = b; /* ld e, b */
-	(void)SetNPCAnimation(e); /* ld a, e; farcall SetNPCAnimation */
-	IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
-	return (SetSpriteAttributesResult){r.a, r.f, r.c, e};
+	uint8_t flags = (uint8_t)(gb_read8(item.hl) &
+		(uint8_t)~(1u << NPC_FLAG_DIRECTIONLESS_F));
+	gb_write8(item.hl, (uint8_t)(flags | b));
+	(void)SetNPCAnimation(c);
+	IncreaseScriptPointerResult r = IncreaseScriptPointerBy3();
+	return (SetSpriteAttributesResult){r.a, r.f, r.c};
 }
 /* <<< factory ScriptCommand_SetSpriteAttributes */
 
@@ -756,10 +756,11 @@ GetScriptArgsAfterPointerResult GetScriptArgs1AfterPointer(void)
 /* <<< factory GetScriptArgs1AfterPointer */
 
 /* >>> factory SetNextScript */
-void SetNextScript(uint16_t bc)
+uint16_t SetNextScript(uint8_t a, uint16_t bc)
 {
-	script_pointer_write(bc, 0u);
+	script_pointer_write(bc, a);
 	wOverworldMode = 0x03u;
+	return wNextScriptBank_ADDR;
 }
 /* <<< factory SetNextScript */
 
@@ -864,42 +865,44 @@ IncreaseScriptPointerResultWithB ScriptCommand_SetActiveNPCCoords(uint8_t b, uin
 /* >>> factory ScriptCommand_JumpIfEnoughCardsOwned */
 JumpIfCardInCollectionResult ScriptCommand_JumpIfEnoughCardsOwned(uint8_t b, uint8_t c)
 {
-	IncreaseScriptPointerBy1();
 	uint16_t owned = GetAmountOfCardsOwned();
 	uint16_t target = (uint16_t)(((uint16_t)b << 8) | c);
 	if (owned >= target) {
 		SetScriptControlBytePass();
-		GetScriptArgsAfterPointerResult args = GetScriptArgs2AfterPointer();
+		GetScriptArgsAfterPointerResult args = GetScriptArgs3AfterPointer();
 		if (args.f & 0x80u) {
-			IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+			IncreaseScriptPointerResult r = IncreaseScriptPointerBy5();
 			return (JumpIfCardInCollectionResult){r.a, r.f, args.b, r.c};
 		}
 		(void)SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
 		return (JumpIfCardInCollectionResult){args.a, args.f, args.b, args.c};
 	}
 	SetScriptControlByteFail();
-	IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+	IncreaseScriptPointerResult r = IncreaseScriptPointerBy5();
 	return (JumpIfCardInCollectionResult){r.a, r.f, b, r.c};
 }
 /* <<< factory ScriptCommand_JumpIfEnoughCardsOwned */
 
 /* >>> factory ScriptCommand_RemoveAllEnergyCardsFromCollection */
-IncreaseScriptPointerResult ScriptCommand_RemoveAllEnergyCardsFromCollection(void)
+ScriptCommand_RemoveAllEnergyCardsResult ScriptCommand_RemoveAllEnergyCardsFromCollection(uint8_t b)
 {
-	uint8_t card = 1u;
+	uint8_t b_reg = b;
+	uint16_t card = GRASS_ENERGY;
 	for (;;) {
 		CardCountResult count = GetCardCountInCollection(card);
 		if ((count.f & 0x10u) == 0u) {
-			uint8_t remaining = count.a;
-			while (remaining != 0u) {
+			b_reg = count.a;
+			while (b_reg != 0u) {
 				RemoveCardFromCollection(card);
-				--remaining;
+				--b_reg;
 			}
 		}
-		card = (uint8_t)(card + 1u);
-		if (card < (uint8_t)(DOUBLE_COLORLESS_ENERGY + 1u))
+		card = (uint16_t)(card + 1u);
+		if (card < (uint16_t)(DOUBLE_COLORLESS_ENERGY + 1u))
 			continue;
-		return IncreaseScriptPointerBy1();
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy1();
+		return (ScriptCommand_RemoveAllEnergyCardsResult){
+			r.a, r.f, b_reg, r.c, (uint8_t)(card >> 8), (uint8_t)card};
 	}
 }
 /* <<< factory ScriptCommand_RemoveAllEnergyCardsFromCollection */
@@ -908,23 +911,31 @@ IncreaseScriptPointerResult ScriptCommand_RemoveAllEnergyCardsFromCollection(voi
 ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult ScriptCommand_JumpIfAnyEnergyCardsInCollection(void)
 {
 	uint8_t total = 0u;
-	for (uint8_t card = GRASS_ENERGY; card <= DOUBLE_COLORLESS_ENERGY; ++card) {
+	uint16_t card = GRASS_ENERGY;
+	for (;;) {
 		CardCountResult count = GetCardCountInCollection(card);
 		total = (uint8_t)(total + count.a);
+		card = (uint16_t)(card + 1u);
+		if (card < (uint16_t)(DOUBLE_COLORLESS_ENERGY + 1u))
+			continue;
+		break;
 	}
 	if (total == 0u) {
 		SetScriptControlByteFail();
 		IncreaseScriptPointerResult r = IncreaseScriptPointerBy3();
-		return (ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult){r.a, r.f, total, r.c};
+		return (ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult){
+			r.a, r.f, 0u, r.c, (uint8_t)(card >> 8), (uint8_t)card};
 	}
 	SetScriptControlBytePass();
 	GetScriptArgsAfterPointerResult args = GetScriptArgs1AfterPointer();
 	if (args.f & 0x80u) {
 		IncreaseScriptPointerResult r = IncreaseScriptPointerBy3();
-		return (ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult){r.a, r.f, args.b, r.c};
+		return (ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult){
+			r.a, r.f, args.b, r.c, (uint8_t)(card >> 8), (uint8_t)card};
 	}
 	(void)SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
-	return (ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult){args.a, args.f, args.b, args.c};
+	return (ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult){
+		args.a, args.f, args.b, args.c, (uint8_t)(card >> 8), (uint8_t)card};
 }
 /* <<< factory ScriptCommand_JumpIfAnyEnergyCardsInCollection */
 
@@ -1258,7 +1269,7 @@ SetNextNPCAndScriptResult SetNextNPCAndScript(uint16_t bc, uint16_t hl)
 	(void)FindLoadedNPC();
 	wScriptNPC = wLoadedNPCTempIndex;
 	SetNewScriptNPCResult npc = SetNewScriptNPC(hl);
-	SetNextScript(bc);
+	SetNextScript(wNextScriptBank, bc);
 	return (SetNextNPCAndScriptResult){npc.a, npc.f, (uint8_t)(bc >> 8), (uint8_t)bc, npc.hl};
 }
 /* <<< factory SetNextNPCAndScript */
@@ -1291,20 +1302,24 @@ IncreaseScriptPointerResult Func_cdd1(void)
 /* >>> factory ScriptCommand_JumpIfCardOwned */
 JumpIfCardInCollectionResult ScriptCommand_JumpIfCardOwned(uint8_t b, uint8_t c)
 {
-	CardCountResult cnt = GetCardCountInCollectionAndDecks(c);
+	uint16_t card = (uint16_t)(((uint16_t)b << 8) | c);
+	CardCountResult cnt = GetCardCountInCollectionAndDecks(card);
 	if (cnt.a == 0) {
 		SetScriptControlByteFail();
-		IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
-		return (JumpIfCardInCollectionResult){r.a, r.f, b, r.c};
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy5();
+		return (JumpIfCardInCollectionResult){r.a, r.f, 0u, r.c,
+			(uint8_t)(card >> 8), (uint8_t)card};
 	}
 	SetScriptControlBytePass();
-	GetScriptArgsAfterPointerResult args = GetScriptArgs2AfterPointer();
+	GetScriptArgsAfterPointerResult args = GetScriptArgs3AfterPointer();
 	if (args.f & 0x80u) {
-		IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
-		return (JumpIfCardInCollectionResult){r.a, r.f, args.b, r.c};
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy5();
+		return (JumpIfCardInCollectionResult){r.a, r.f, args.b, r.c,
+			(uint8_t)(card >> 8), (uint8_t)card};
 	}
-	(void)SetScriptPointer((uint16_t)(args.b << 8 | args.c));
-	return (JumpIfCardInCollectionResult){args.a, args.f, args.b, args.c};
+	(void)SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
+	return (JumpIfCardInCollectionResult){args.a, args.f, args.b, args.c,
+		(uint8_t)(card >> 8), (uint8_t)card};
 }
 /* <<< factory ScriptCommand_JumpIfCardOwned */
 
@@ -1575,7 +1590,7 @@ LoadOverworldResult LoadOverworld(uint8_t b, uint8_t c)
 	uint8_t state = GetEventValue(EVENT_MASON_LAB_STATE);
 	if (state != 0u)
 		return (LoadOverworldResult){state, 0x00u, b, c};
-	SetNextScript(Script_BeginGame);
+	SetNextScript(Script_BeginGame_BANK, Script_BeginGame);
 	return (LoadOverworldResult){0x03u, 0x80u,
 		(uint8_t)(Script_BeginGame >> 8), (uint8_t)Script_BeginGame};
 }

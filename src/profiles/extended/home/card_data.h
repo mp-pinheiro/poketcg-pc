@@ -18,7 +18,7 @@ void LoadCardDataToBuffer1_FromName(uint16_t de);
 
 void LoadCardGfx(uint16_t hl, uint16_t de, uint8_t b, uint8_t c);
 
-typedef struct { uint16_t hl; uint8_t carry; uint8_t bound_zero; uint8_t bank; } CardPtrResult;
+typedef struct { uint16_t hl; uint8_t carry; uint8_t bank; } CardPtrResult;
 CardPtrResult GetCardPointer(CardId e);
 
 /* >>> factory LoadCardDataToHL_FromCardID */

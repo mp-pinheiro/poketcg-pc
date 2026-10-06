@@ -9,12 +9,12 @@
 #include "home/switch_sram.h"
 #include "mem.h"
 
-#define CARD_SLOT(table, id) ((uint16_t)(((table) & 0xFF00u) | (uint16_t)(id)))
+#define CARD_SLOT(table, id) ((uint16_t)((table) + (uint16_t)(id)))
 
 /* card_collection.asm:129-146 .AddDeckCards. */
 static void add_deck_cards(uint16_t de)
 {
-	if (gb_read8(de) == 0)
+	if ((uint8_t)(gb_read8(de) | gb_read8((uint16_t)(de + 1u))) == 0u)
 		return;
 	de = (uint16_t)(de + 24); /* DECK_NAME_SIZE: sDeck1Cards - sDeck1Name */
 	for (uint8_t i = 0; i < 60; i++) { /* DECK_SIZE */
@@ -54,21 +54,20 @@ void AddCardToCollection(CardId a)
 AlbumProgress GetCardAlbumProgress(void)
 {
 	EnableSRAM();
-	uint8_t e = 228; /* NUM_CARDS */
-	if (gb_read8(CARD_SLOT(sCardCollection_ADDR, 0x0A)) & 0x80u) /* VENUSAUR_LV64 */
-		e--;
-	if (gb_read8(CARD_SLOT(sCardCollection_ADDR, 0xA1)) & 0x80u) /* MEW_LV15 */
-		e--;
-	/* d is seeded from LOW(sCardCollection) = 0 and doubles as the loop index and the
-	 * owned counter, so a fully owned collection wraps it back to 0 after 256 steps.
-	 * The loop ends when `inc l` wraps, not on a sentinel. */
-	uint8_t d = 0;
-	for (uint16_t i = 0; i < 256; i++) {
-		if (!(gb_read8(CARD_SLOT(sCardCollection_ADDR, i)) & 0x80u))
-			d++;
+	uint16_t owned = 0u;
+	for (uint16_t i = 0u; i < CARD_COLLECTION_SIZE; i++) {
+		if ((gb_read8((uint16_t)(sCardCollection_ADDR + i)) & 0x80u) == 0u)
+			owned++;
 	}
+	uint16_t total = NUM_CARDS;
+	if ((gb_read8((uint16_t)(sCardCollection_ADDR + VENUSAUR_LV64)) & 0x80u) != 0u)
+		total--;
+	if ((gb_read8((uint16_t)(sCardCollection_ADDR + MEW_LV15)) & 0x80u) != 0u)
+		total--;
 	DisableSRAM();
-	return (AlbumProgress){ .d = d, .e = e };
+	return (AlbumProgress){
+		(uint8_t)(total >> 8), (uint8_t)total,
+		(uint8_t)(owned >> 8), (uint8_t)owned};
 }
 
 /* card_collection.asm:2-41. Sums DECK_SIZE for every deck whose first card slot

@@ -129,7 +129,7 @@ def main() -> int:
                               capture_output=True, check=False)
 
     def rebuild() -> None:
-        built = subprocess.run(["ninja", "-C", str(build_dir)], cwd=ROOT,
+        built = subprocess.run(["ninja", "-C", str(build_dir), str(PROFILE.probe)], cwd=ROOT,
                                text=True, capture_output=True, check=False)
         if built.returncode != 0:
             raise SystemExit(f"MUTATION_BUILD_FAILED: {built.stdout}{built.stderr}")

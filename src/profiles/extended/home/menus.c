@@ -20,7 +20,7 @@
  * into wMenuUpdateFunc; duel/core.asm:5030/5038 PlayAreaScreenMenuFunction
  * ($01:60CE) into wMenuUpdateFunc; core.asm:3395 CardListFunction ($01:5719)
  * into wListFunctionPointer. */
-#define CARD_LIST_MENU_FUNCTION 0x283Fu
+#define CARD_LIST_MENU_FUNCTION CardListMenuFunction_ADDR
 #define PLAY_AREA_SCREEN_MENU_FUNCTION PlayAreaScreenMenuFunction_ADDR
 #define CARD_LIST_FUNCTION CardListFunction_ADDR
 #include "home/core.h"
@@ -346,8 +346,7 @@ ProcessTextHeaderResult PrintYesOrNoItems(uint8_t d, uint8_t e)
 
 #define PAD_A        0x01u
 #define PAD_B        0x02u
-#define NTBM_PARAMS  0x2a96u
-#define WTBM_PARAMS  0x2ac8u
+#define WTBM_PARAMS  WideTextBoxMenuParameters_ADDR
 
 WaitResult WaitForButtonAorB(void)
 {
@@ -374,20 +373,6 @@ void DrawWideTextBox_PrintTextNoDelay_Wait(uint16_t hl)
 	WaitForWideTextBoxInput();
 }
 
-void DrawNarrowTextBox_WaitForInput(uint16_t hl)
-{
-	(void)DrawNarrowTextBox_PrintTextNoDelay(hl);
-	uint16_t params = NTBM_PARAMS;
-	InitializeMenuParameters(0, &params);
-	EnableLCD();
-	for (;;) {
-		DoFrame();
-		RefreshMenuCursor();
-		uint8_t keys = gb_read8(hKeysPressed_ADDR);
-		if (keys & (PAD_A | PAD_B))
-			break;
-	}
-}
 
 WaitResult DrawWideTextBox_WaitForInput(uint16_t hl)
 {

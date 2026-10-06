@@ -28,7 +28,10 @@
 
 void LoadTitleScreenSprites(void)
 {
-    static const uint8_t sprites[] = {0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71};
+    static const uint8_t sprites[] = {
+        SPRITE_GRASS, SPRITE_FIRE, SPRITE_WATER, SPRITE_COLORLESS,
+        SPRITE_LIGHTNING, SPRITE_PSYCHIC, SPRITE_FIGHTING
+    };
     uint16_t destination = wTitleScreenSprites_ADDR;
 
     gb_write8(wWhichOBP_ADDR, 0);
@@ -62,8 +65,6 @@ static void ShowPressStart(void)
 /* >>> factory PlayIntroSequence */
 void PlayIntroSequence(void)
 {
-	DisableLCD();
-	LoadConsolePaletteData();
 	(void)InitMenuScreen();
 	EnableAndClearSpriteAnimations();
 	(void)SetDoFrameFunction(HANDLE_ALL_SPRITE_ANIMATIONS);

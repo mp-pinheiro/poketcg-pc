@@ -112,8 +112,7 @@ static void UpdateSpriteAttributes(void)
 /* intro_sequence_commands.asm:331-390 */
 uint8_t AnimateRandomTitleScreenOrb(void)
 {
-	if (wConsole == CONSOLE_CGB)
-		UpdateSpriteAttributes();
+	UpdateSpriteAttributes();
 	uint8_t a = (uint8_t)(wTitleScreenOrbCounter & ORB_COUNTER_MASK);
 	if (a != 0u)
 		return a;
@@ -125,14 +124,12 @@ uint8_t AnimateRandomTitleScreenOrb(void)
 	} while (a != 0xffu);
 
 	uint16_t hl = GetSpriteAnimBufferProperty(SPRITE_ANIM_ATTRIBUTES);
-	if (wConsole == CONSOLE_CGB)
-		gb_write8(hl, (uint8_t)(gb_read8(hl) | (uint8_t)(1u << SPRITE_ANIM_FLAG_UNSKIPPABLE_F)));
+	gb_write8(hl, (uint8_t)(gb_read8(hl) | (uint8_t)(1u << SPRITE_ANIM_FLAG_UNSKIPPABLE_F)));
 	hl++;
 	gb_write8(hl, 248u);
 	hl++;
 	gb_write8(hl, 14u);
-	a = (wConsole == CONSOLE_CGB) ? SPRITE_ANIM_216 : SPRITE_ANIM_215;
-	return StartSpriteAnimation(a);
+	return StartSpriteAnimation(SPRITE_ANIM_216);
 }
 /* <<< factory AnimateRandomTitleScreenOrb */
 

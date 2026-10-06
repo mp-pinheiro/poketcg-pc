@@ -1621,11 +1621,11 @@ CheckAttackResult CheckIfDefendingPokemonHasAnyAttack(void)
 	uint8_t f;
 	uint8_t category = gb_read8(wLoadedCard2Atk1Category_ADDR);
 	if (category != POKEMON_POWER) {
-		f = (uint8_t)((category & 0x80u) | (category == 0u ? 0x80u : 0u));
+		f = (uint8_t)(category == 0u ? 0x80u : 0x00u);
 	} else {
 		uint8_t lo = gb_read8(wLoadedCard2Atk2Name_ADDR);
 		uint8_t hi = gb_read8((uint16_t)(wLoadedCard2Atk2Name_ADDR + 1u));
-		f = ((uint8_t)(lo | hi) != 0u) ? 0x00u : 0x90u;
+		f = ((uint8_t)(lo | hi) != 0u) ? 0x00u : 0x10u;
 	}
 
 	SwapTurn();
@@ -2423,7 +2423,7 @@ uint16_t SwordsDanceEffect(void)
 	CardId card_id = (CardId)(gb_read8(wTempTurnDuelistCardID_ADDR)
 		| ((CardId)gb_read8((uint16_t)(wTempTurnDuelistCardID_ADDR + 1u)) << 8));
 	if (card_id != SCYTHER)
-		return 0u;
+		return wTempTurnDuelistCardID_ADDR;
 	return ApplySubstatus1ToAttackingCard(0x19u);
 }
 /* <<< factory SwordsDanceEffect */
@@ -8228,7 +8228,7 @@ void GustOfWind_SwitchEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t
 	(void)SwapArenaWithBenchPokemon(e);
 	SwapTurn();
 	ClearDamageReductionSubstatus2();
-	wDuelDisplayedScreen = 0u;
+	gb_write8(wDuelDisplayedScreen_ADDR, 0u);
 }
 /* <<< factory GustOfWind_SwitchEffect */
 

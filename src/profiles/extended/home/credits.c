@@ -1,0 +1,195 @@
+#include "home/credits.h"
+#include "home/frames.h"
+
+#include "generated/rom.h"
+#include "generated/constants.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/credits_sequence_commands.h"
+#include "home/masters_beaten_list.h"
+#include "home/music1.h"
+#include "home/play_song.h"
+#include "home/wait_keys.h"
+#include "home/lcd_enable_frame.h"
+#include "home/sound.h"
+
+
+/* >>> factory statics */
+#define R_STAT        0xFF41u
+#define R_IE          0xFFFFu
+#define STAT_LYC_MASK 0x40u
+#define IE_STAT_MASK  0x02u
+
+#define WX_OFS 0x07u
+#define B_LCDC_OBJS 0x01u
+
+#include "home/tiles.h"
+
+#include "home/lcd.h"
+#include "home/load_animation.h"
+#include "home/credits.h"
+#include "home/init_menu.h"
+#include "home/color.h"
+#include "home/play_animation.h"
+#include "home/color.h"
+#include "home/init_menu.h"
+#include "home/lcd.h"
+#include "home/load_animation.h"
+#include "generated/wram.h"
+#include "mem.h"
+
+#define R_LYC 0xFF45u
+#define FUNC_3E31 Func_3e31_ADDR
+#define FUNC_3E44 Func_3e44_ADDR
+/* <<< factory statics */
+
+/* >>> factory Func_1d758 */
+/* credits.asm:79-86 */
+void Func_1d758(void)
+{
+	gb_write8(R_STAT, (uint8_t)(gb_read8(R_STAT) & (uint8_t)~STAT_LYC_MASK));
+	gb_write8(R_IE, (uint8_t)(gb_read8(R_IE) & (uint8_t)~IE_STAT_MASK));
+}
+/* <<< factory Func_1d758 */
+
+/* >>> factory Func_1d765 */
+/* credits.asm:88-224 */
+uint8_t Func_1d765(void)
+{
+	uint16_t hl = wd659_ADDR;
+	uint16_t de = wd65f_ADDR;
+	uint8_t a;
+	uint8_t c;
+
+	hWY = 0x00u;
+
+	if (gb_read8(wd648_ADDR) == 0x00u) {
+		a = (uint8_t)(0xA0u + WX_OFS);
+		hWX = a;
+		gb_write8(hl, a);
+		hl = (uint16_t)(hl + 1u);
+		wLCDC = (uint8_t)(wLCDC | (uint8_t)(1u << B_LCDC_OBJS));
+	} else {
+		a = gb_read8(wd647_ADDR);
+		if (a != 0x00u) {
+			a = (uint8_t)(a - 1u);
+			gb_write8(de, a);
+			de = (uint16_t)(de + 1u);
+			a = (uint8_t)(0xA0u + WX_OFS);
+			hWX = a;
+			gb_write8(hl, a);
+			hl = (uint16_t)(hl + 1u);
+			wLCDC = (uint8_t)(wLCDC | (uint8_t)(1u << B_LCDC_OBJS));
+			a = 0x07u;
+		} else {
+			a = WX_OFS;
+			hWX = a;
+			wLCDC = (uint8_t)(wLCDC & (uint8_t)~(1u << B_LCDC_OBJS));
+		}
+
+		gb_write8(hl, a);
+		hl = (uint16_t)(hl + 1u);
+
+		c = (uint8_t)(gb_read8(wd647_ADDR) - 1u);
+		c = (uint8_t)(gb_read8(wd648_ADDR) + c);
+		a = (uint8_t)(gb_read8(wd649_ADDR) - 1u);
+
+		if (a > c) {
+			gb_write8(de, c);
+			de = (uint16_t)(de + 1u);
+			gb_write8(hl, 0xA7u);
+			hl = (uint16_t)(hl + 1u);
+
+			/* credits.asm:196-198 `or a / jr z, .asm_1d7e2`: with no
+			 * second window the list ends here, before .asm_1d7d4. */
+			if (gb_read8(wd64a_ADDR) == 0x00u)
+				goto terminate;
+			a = (uint8_t)(gb_read8(wd649_ADDR) - 1u);
+			gb_write8(de, a);
+			de = (uint16_t)(de + 1u);
+			gb_write8(hl, 0x07u);
+			hl = (uint16_t)(hl + 1u);
+		}
+
+		c = (uint8_t)(gb_read8(wd649_ADDR) - 1u);
+		a = (uint8_t)(gb_read8(wd64a_ADDR) + c);
+		gb_write8(de, a);
+		de = (uint16_t)(de + 1u);
+		gb_write8(hl, 0xA7u);
+		hl = (uint16_t)(hl + 1u);
+	}
+
+terminate:
+	gb_write8(de, 0xFFu);
+	frame_boundary_isr_site(ISR_SITE_CREDITS_ARM);
+	wd665 = 0x01u;
+	return 0x01u;
+}
+/* <<< factory Func_1d765 */
+
+/* >>> factory Func_1d7ee */
+void Func_1d7ee(void)
+{
+	FillRectangle(0x00u, 20u, 18u, 0x0020u, 0x0000u);
+}
+/* <<< factory Func_1d7ee */
+
+/* >>> factory Func_1d705 */
+void Func_1d705(void)
+{
+	DisableLCD();
+	wd317 = 0u;
+	EnableAndClearSpriteAnimations();
+	(void)InitMenuScreen();
+	Func_1d7ee();
+	(void)SetDoFrameFunction(FUNC_3E31);
+
+	wd647 = 0x91u;
+	wd649 = 0x91u;
+	wd648 = 0x01u;
+	wd64a = 0x01u;
+	Func_1d765();
+	SetWindowOn();
+
+	wd657 = 0x00u;
+	gb_write8(wLCDCFunctionTrampoline_ADDR + 1u, (uint8_t)FUNC_3E44);
+	gb_write8(wLCDCFunctionTrampoline_ADDR + 2u, (uint8_t)(FUNC_3E44 >> 8));
+	gb_write8(R_STAT, (uint8_t)(gb_read8(R_STAT) | STAT_LYC_MASK));
+	gb_write8(R_LYC, 0x00u);
+	gb_write8(R_IE, (uint8_t)(gb_read8(R_IE) | IE_STAT_MASK));
+}
+
+/* <<< factory Func_1d705 */
+/* >>> factory PlayCreditsSequence */
+#define PAD_START 0x08u
+PlayCreditsSequenceResult PlayCreditsSequence(void)
+{
+	PlaySong(MUSIC_STOP);
+	Func_1d705();
+	uint8_t f = 0u;
+	(void)AddAllMastersToMastersBeatenList(&f);
+	gb_write8((uint16_t)(wOWMapEvents_ADDR + 1u), 0u);
+	PlaySong(MUSIC_CREDITS);
+	(void)FlashWhiteScreen();
+	SetCreditsSequenceCmdPtr();
+	do {
+		DoFrameIfLCDEnabled();
+		(void)Func_1d765();
+		ExecuteCreditsSequenceCmd();
+	} while (gb_read8(wSequenceDelay_ADDR) != 0xffu);
+	WaitForSongToFinish();
+	(void)WaitUntilKeysArePressed(PAD_START);
+	PlaySong(MUSIC_STOP);
+	FadeScreenToWhite();
+	ClearSpriteAnimations();
+	SetWindowOff();
+	Func_1d758();
+	(void)EnableLCD();
+	DoFrameIfLCDEnabled();
+	DisableLCD();
+	gb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) | (1u << B_LCDC_OBJS)));
+	(void)ResetDoFrameFunction(wLCDC_ADDR);
+	return (PlayCreditsSequenceResult){0u, 0x80u, wLCDC_ADDR};
+}
+/* <<< factory PlayCreditsSequence */

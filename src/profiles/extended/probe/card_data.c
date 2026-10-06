@@ -48,7 +48,7 @@ static void adapt_GetCardPointer(ProbeState *s)
 	s->hl = r.hl;
 	if (r.carry) {
 		s->a = hBankROM;
-		s->f = (uint8_t)(0x10u | (r.bound_zero ? 0x80u : 0u));
+		s->f = (uint8_t)((s->f & 0x80u) | 0x10u);
 	} else {
 		s->a = r.bank;
 		s->f = 0x00u;

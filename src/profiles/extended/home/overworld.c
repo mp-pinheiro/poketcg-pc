@@ -1467,7 +1467,7 @@ void LoadMap(void)
 	wReloadOverworldCallbackPtr = 0u;
 	gb_write8((uint16_t)(wReloadOverworldCallbackPtr_ADDR + 1u), 0u);
 	wMatchStartTheme = 0u;
-	LoadConsolePaletteData();
+	wd317 = 0u;
 	WhiteOutDMGPals();
 	ZeroObjectPositions();
 	wTileMapFill = 0u;

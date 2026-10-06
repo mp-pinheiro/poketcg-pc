@@ -161,13 +161,15 @@ static void adapt_ScriptCommand_JumpIfCardInCollection(ProbeState *s)
 	s->f = r.f;
 	s->b = r.b;
 	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
 }
 /* <<< factory ScriptCommand_JumpIfCardInCollection */
 
 /* >>> factory ScriptCommand_GiveCard */
 static void adapt_ScriptCommand_GiveCard(ProbeState *s)
 {
-	IncreaseScriptPointerResult r = ScriptCommand_GiveCard(s->c);
+	IncreaseScriptPointerResult r = ScriptCommand_GiveCard(s->b, s->c);
 	s->a = r.a;
 	s->f = r.f;
 	s->c = r.c;
@@ -177,7 +179,7 @@ static void adapt_ScriptCommand_GiveCard(ProbeState *s)
 /* >>> factory ScriptCommand_TakeCard */
 static void adapt_ScriptCommand_TakeCard(ProbeState *s)
 {
-	IncreaseScriptPointerResult r = ScriptCommand_TakeCard(s->c);
+	IncreaseScriptPointerResult r = ScriptCommand_TakeCard(s->b, s->c);
 	s->a = r.a;
 	s->f = r.f;
 	s->c = r.c;
@@ -291,7 +293,6 @@ static void adapt_ScriptCommand_SetSpriteAttributes(ProbeState *s)
 	s->a = r.a;
 	s->f = r.f;
 	s->c = r.c;
-	s->e = r.e;
 }
 /* <<< factory ScriptCommand_SetSpriteAttributes */
 
@@ -361,7 +362,7 @@ static void adapt_GetScriptArgs1AfterPointer(ProbeState *s)
 /* >>> factory SetNextScript */
 static void adapt_SetNextScript(ProbeState *s)
 {
-	SetNextScript((uint16_t)(((uint16_t)s->b << 8) | s->c));
+	s->hl = SetNextScript(s->a, (uint16_t)(((uint16_t)s->b << 8) | s->c));
 }
 /* <<< factory SetNextScript */
 
@@ -478,21 +479,28 @@ static void adapt_ScriptCommand_JumpIfEnoughCardsOwned(ProbeState *s)
 /* >>> factory ScriptCommand_RemoveAllEnergyCardsFromCollection */
 static void adapt_ScriptCommand_RemoveAllEnergyCardsFromCollection(ProbeState *s)
 {
-	IncreaseScriptPointerResult r = ScriptCommand_RemoveAllEnergyCardsFromCollection();
+	ScriptCommand_RemoveAllEnergyCardsResult r =
+		ScriptCommand_RemoveAllEnergyCardsFromCollection(s->b);
 	s->a = r.a;
 	s->f = r.f;
+	s->b = r.b;
 	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
 }
 /* <<< factory ScriptCommand_RemoveAllEnergyCardsFromCollection */
 
 /* >>> factory ScriptCommand_JumpIfAnyEnergyCardsInCollection */
 static void adapt_ScriptCommand_JumpIfAnyEnergyCardsInCollection(ProbeState *s)
 {
-	ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult r = ScriptCommand_JumpIfAnyEnergyCardsInCollection();
+	ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult r =
+		ScriptCommand_JumpIfAnyEnergyCardsInCollection();
 	s->a = r.a;
 	s->f = r.f;
 	s->b = r.b;
 	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
 }
 /* <<< factory ScriptCommand_JumpIfAnyEnergyCardsInCollection */
 
@@ -713,6 +721,8 @@ static void adapt_ScriptCommand_JumpIfCardOwned(ProbeState *s)
 	s->f = r.f;
 	s->b = r.b;
 	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
 }
 /* <<< factory ScriptCommand_JumpIfCardOwned */
 

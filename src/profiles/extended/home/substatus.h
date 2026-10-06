@@ -2,7 +2,7 @@
 #define POKETCG_HOME_SUBSTATUS_H
 
 #include <stdint.h>
-
+#include "home/card_id.h"
 /* poketcg/src/home/substatus.asm */
 
 typedef struct {
@@ -21,9 +21,10 @@ SandAttackCheckResult CheckSandAttackOrSmokescreenSubstatus(uint16_t de);
 typedef struct {
 	uint8_t a;
 	uint8_t f;
+	CardId de;
 } PkmnPowerCountResult;
-PkmnPowerCountResult CountTurnDuelistPokemonWithActivePkmnPower(uint8_t a);
-PkmnPowerCountResult CountPokemonWithActivePkmnPowerInBothPlayAreas(uint8_t a);
+PkmnPowerCountResult CountTurnDuelistPokemonWithActivePkmnPower(CardId target);
+PkmnPowerCountResult CountPokemonWithActivePkmnPowerInBothPlayAreas(CardId target);
 
 typedef struct {
 	uint8_t a;
@@ -120,6 +121,7 @@ TrainerEffectResult CheckCantUseTrainerDueToEffect(void);
 typedef struct {
 	uint8_t a;
 	uint8_t f;
+	CardId de;
 	uint16_t hl;
 } PrehistoricPowerResult;
 PrehistoricPowerResult IsPrehistoricPowerActive(uint16_t hl);

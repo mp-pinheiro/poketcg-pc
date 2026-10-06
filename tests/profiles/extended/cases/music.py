@@ -44,8 +44,8 @@ for name in ROUTINES:
         dict(POISON, a=0x01, c=0x01, hl=0xC101,
              wram={0xC101: b'\xD0\x01\x02'},
              read={0xD7A4: 1, 0xD7A6: 1, 0xD7B0: 4}),
-        dict(POISON, a=0xFF, c=0x03, hl=0xFFFF,
-             wram={0xFFFF: b'\xFE', 0x0000: b'\xFD', 0x0001: b'\xFC'},
+        dict(POISON, a=0xFF, c=0x03, hl=0xC1FF,
+             wram={0xC1FF: b'\xFE', 0xC200: b'\xFD\xFC'},
              read={0xD7A4: 1, 0xD7A6: 1, 0xD7B0: 4}),
     ]
 
@@ -62,8 +62,8 @@ CASES['GetMusicCommandAndArgs'] = [
      'read': {0xD909: 1, 0xD90A: 2}},
     dict(POISON, a=0x42, hl=0xC100,
          wram={0xC100: b'\xD0\x01\x02'}, read={0xD909: 1, 0xD90A: 2}),
-    dict(POISON, a=0x42, hl=0xFFFF,
-         wram={0xFFFF: b'\xFE', 0x0000: b'\xFD', 0x0001: b'\xFC'},
+    dict(POISON, a=0x42, hl=0xC1FF,
+         wram={0xC1FF: b'\xFE', 0xC200: b'\xFD\xFC'},
          read={0xD909: 1, 0xD90A: 2}),
 ]
 CASES['GetChannelStackPointer'] = [

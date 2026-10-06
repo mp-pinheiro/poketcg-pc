@@ -7,9 +7,6 @@ void SetMintSinglePalette(uint8_t single);
 /* >>> factory SetBoosterLogoOAM */
 void SetBoosterLogoOAM(void);
 /* <<< factory SetBoosterLogoOAM */
-/* >>> factory _DrawPortrait */
-void _DrawPortrait(uint8_t b, uint8_t c);
-/* <<< factory _DrawPortrait */
 /* >>> factory _LoadScene */
 void _LoadScene(uint8_t a, uint8_t b, uint8_t c);
 /* <<< factory _LoadScene */

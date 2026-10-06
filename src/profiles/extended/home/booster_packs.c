@@ -6,6 +6,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
+#include "home/card_id_bus.h"
 #include "generated/wram.h"
 #include "mem.h"
 
@@ -140,46 +141,56 @@ uint8_t UpdateBoosterCardTypesChanceByte(void)
 void AppendCurrentCardToHL(uint16_t *hl)
 {
 	uint16_t cursor = *hl;
-	while (gb_read8(cursor++) != 0u) {
+	for (;;) {
+		CardId card = card_id_read(&cursor);
+		if (card == 0u)
+			break;
 	}
-	cursor--;
-	gb_write8(cursor++, wBoosterCurrentCard);
-	gb_write8(cursor, 0u);
-	*hl = cursor;
+	cursor = (uint16_t)(cursor - 2u);
+	card_id_write(&cursor, card_id_read_at(wBoosterCurrentCard_ADDR));
+	card_id_write(&cursor, 0u);
+	*hl = (uint16_t)(cursor - 1u);
 }
 /* <<< factory AppendCurrentCardToHL */
 
 /* >>> factory AddBoosterCardToTempCardCollection */
-void AddBoosterCardToTempCardCollection(void)
+AddBoosterCardToTempCardCollectionResult AddBoosterCardToTempCardCollection(void)
 {
-	uint8_t card = gb_read8(wBoosterCurrentCard_ADDR);
-	uint16_t slot = (uint16_t)(wTempCardCollection_ADDR + card);
-	gb_write8(slot, (uint8_t)(gb_read8(slot) + 1u));
+	CardId card = card_id_read_at(wBoosterCurrentCard_ADDR);
+	uint32_t sum = (uint32_t)wTempCardCollection_ADDR + card;
+	uint16_t slot = (uint16_t)sum;
+	uint8_t old = gb_read8(slot);
+	uint8_t value = (uint8_t)(old + 1u);
+	gb_write8(slot, value);
+	uint8_t flags = (uint8_t)(value == 0u ? 0x80u : 0u);
+	if ((old & 0x0Fu) == 0x0Fu)
+		flags = (uint8_t)(flags | 0x20u);
+	if (sum > 0xFFFFu)
+		flags = (uint8_t)(flags | 0x10u);
+	return (AddBoosterCardToTempCardCollectionResult){(uint8_t)(slot >> 8), flags};
 }
 /* <<< factory AddBoosterCardToTempCardCollection */
 
 /* >>> factory AddBoosterCardToDrawnEnergies */
 AddBoosterCardToDrawnEnergiesResult AddBoosterCardToDrawnEnergies(void)
 {
-	uint8_t card = wBoosterCurrentCard;
 	uint16_t hl = wBoosterTempEnergiesDrawn_ADDR;
 	AppendCurrentCardToHL(&hl);
-	uint16_t address = (uint16_t)(wTempCardCollection_ADDR + card);
-	uint8_t old = gb_read8(address);
-	AddBoosterCardToTempCardCollection();
-	uint8_t value = (uint8_t)(old + 1u);
-	uint8_t flags = (uint8_t)((value == 0u ? 0x80u : 0u)
-		| ((old & 0x0Fu) == 0x0Fu ? 0x20u : 0u));
-	return (AddBoosterCardToDrawnEnergiesResult){card, flags};
+	AddBoosterCardToTempCardCollectionResult result =
+		AddBoosterCardToTempCardCollection();
+	return (AddBoosterCardToDrawnEnergiesResult){result.a, result.f};
 }
 /* <<< factory AddBoosterCardToDrawnEnergies */
 
 /* >>> factory AddBoosterEnergyToDrawnEnergies */
-AddBoosterEnergyToDrawnEnergiesResult AddBoosterEnergyToDrawnEnergies(uint8_t a)
+AddBoosterEnergyToDrawnEnergiesResult AddBoosterEnergyToDrawnEnergies(CardId a)
 {
-	wBoosterCurrentCard = a;
-	AddBoosterCardToDrawnEnergiesResult result = AddBoosterCardToDrawnEnergies();
-	return (AddBoosterEnergyToDrawnEnergiesResult){result.a, result.f};
+	uint16_t current = wBoosterCurrentCard_ADDR;
+	card_id_write(&current, a);
+	AddBoosterCardToDrawnEnergiesResult result =
+		AddBoosterCardToDrawnEnergies();
+	return (AddBoosterEnergyToDrawnEnergiesResult){
+		result.a, result.f, (uint8_t)(a >> 8), (uint8_t)a};
 }
 /* <<< factory AddBoosterEnergyToDrawnEnergies */
 
@@ -195,14 +206,17 @@ void ZeroBoosterRarityData(void)
 /* >>> factory GenerateTwoTypesEnergyBooster */
 GenerateTwoTypesEnergyBoosterResult GenerateTwoTypesEnergyBooster(uint16_t hl)
 {
+	CardId last = 0u;
 	for (uint8_t b = 0; b < 2u; b++) {
-		uint8_t card = gb_read8(hl);
+		CardId card = card_id_read_at(hl);
+		last = card;
 		for (uint8_t c = 0; c < NUM_CARDS_IN_BOOSTER / 2u; c++)
 			(void)AddBoosterEnergyToDrawnEnergies(card);
-		hl = (uint16_t)(hl + 1u);
+		hl = (uint16_t)(hl + 2u);
 	}
 	ZeroBoosterRarityData();
-	return (GenerateTwoTypesEnergyBoosterResult){0u, 0x80u, 0u, 0u, hl};
+	return (GenerateTwoTypesEnergyBoosterResult){
+		0u, 0x80u, 0u, 0u, (uint8_t)(last >> 8), (uint8_t)last, hl};
 }
 /* <<< factory GenerateTwoTypesEnergyBooster */
 
@@ -211,7 +225,7 @@ GenerateTwoTypesEnergyBoosterResult GenerateTwoTypesEnergyBooster(uint16_t hl)
 AddBoosterEnergyToDrawnEnergiesResult GenerateRandomEnergy(void)
 {
 	uint8_t random = Random(NUM_COLORED_TYPES);
-	return AddBoosterEnergyToDrawnEnergies((uint8_t)(random + 1u));
+	return AddBoosterEnergyToDrawnEnergies((CardId)(random + 1u));
 }
 /* <<< factory GenerateRandomEnergy */
 
@@ -273,29 +287,33 @@ AddBoosterEnergyToDrawnEnergiesResult GenerateWaterEnergy(void)
 /* <<< factory GenerateWaterEnergy */
 
 /* >>> factory GenerateRandomEnergyBooster */
-void GenerateRandomEnergyBooster(void)
+AddBoosterEnergyToDrawnEnergiesResult GenerateRandomEnergyBooster(void)
 {
+	AddBoosterEnergyToDrawnEnergiesResult last = {0u, 0u, 0u, 0u};
 	uint8_t count = NUM_CARDS_IN_BOOSTER;
 	while (count != 0u) {
-		(void)GenerateRandomEnergy();
+		last = GenerateRandomEnergy();
 		--count;
 	}
 	ZeroBoosterRarityData();
+	return (AddBoosterEnergyToDrawnEnergiesResult){0u, 0x80u, last.d, last.e};
 }
 /* <<< factory GenerateRandomEnergyBooster */
 
 /* >>> factory PutEnergiesAndNonEnergiesTogether */
 PutEnergiesAndNonEnergiesTogetherResult PutEnergiesAndNonEnergiesTogether(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
-	uint8_t *energy = wBoosterTempEnergiesDrawn_PTR;
-	while ((a = *energy++) != 0u) {
-		wBoosterCurrentCard = a;
-		uint16_t cursor = 0xC400u;
+	uint16_t energy = wBoosterTempEnergiesDrawn_ADDR;
+	for (;;) {
+		CardId card = card_id_read(&energy);
+		if (card == 0u)
+			break;
+		uint16_t cursor = wBoosterCardsDrawn_ADDR;
+		uint16_t current = wBoosterCurrentCard_ADDR;
+		card_id_write(&current, card);
 		AppendCurrentCardToHL(&cursor);
 	}
-	a = 0u;
-	f = 0x80u;
-	return (PutEnergiesAndNonEnergiesTogetherResult){a, f, b, c, d, e, hl};
+	return (PutEnergiesAndNonEnergiesTogetherResult){0u, 0x80u, b, c, d, e, hl};
 }
 /* <<< factory PutEnergiesAndNonEnergiesTogether */
 
@@ -358,9 +376,12 @@ void AddBoosterCardToDrawnNonEnergies(void)
 void AddBoosterCardsToCollection(void)
 {
 	uint16_t p = wBoosterCardsDrawn_ADDR;
-	uint8_t card;
-	while ((card = gb_read8(p++)) != 0u)
+	for (;;) {
+		CardId card = card_id_read(&p);
+		if (card == 0u)
+			break;
 		AddCardToCollection(card);
+	}
 }
 /* <<< factory AddBoosterCardsToCollection */
 
@@ -369,20 +390,52 @@ void GenerateBoosterEnergies(void)
 {
 	uint16_t ptr_addr = wBoosterData_EnergyFunctionPointer_ADDR;
 	uint8_t hi = gb_read8((uint16_t)(ptr_addr + 1u));
-	if (hi != 0u) {
-		uint8_t lo = gb_read8(ptr_addr);
-		uint16_t target = (uint16_t)(lo | ((uint16_t)hi << 8));
-		if (target == GenerateRandomEnergy_ADDR) { GenerateRandomEnergy(); return; }
-		if (target == GenerateRandomEnergyBooster_ADDR) { GenerateRandomEnergyBooster(); return; }
-		if (target == GenerateEnergyBoosterLightningFire_ADDR) { GenerateEnergyBoosterLightningFire(); return; }
-		if (target == GenerateEnergyBoosterWaterFighting_ADDR) { GenerateEnergyBoosterWaterFighting(); return; }
-		if (target == GenerateEnergyBoosterGrassPsychic_ADDR) { GenerateEnergyBoosterGrassPsychic(); return; }
+	if (hi == 0u)
+		return;
+	uint8_t lo = gb_read8(ptr_addr);
+	uint16_t target = (uint16_t)(lo | ((uint16_t)hi << 8));
+	if (target == GenerateGrassEnergy_ADDR) {
+		(void)GenerateGrassEnergy();
 		return;
 	}
-	uint8_t a = gb_read8(ptr_addr);
-	if (a == 0u)
+	if (target == GenerateFireEnergy_ADDR) {
+		(void)GenerateFireEnergy();
 		return;
-	(void)AddBoosterEnergyToDrawnEnergies(a);
+	}
+	if (target == GenerateWaterEnergy_ADDR) {
+		(void)GenerateWaterEnergy();
+		return;
+	}
+	if (target == GenerateLightningEnergy_ADDR) {
+		(void)GenerateLightningEnergy();
+		return;
+	}
+	if (target == GenerateFightingEnergy_ADDR) {
+		(void)GenerateFightingEnergy();
+		return;
+	}
+	if (target == GeneratePsychicEnergy_ADDR) {
+		(void)GeneratePsychicEnergy();
+		return;
+	}
+	if (target == GenerateRandomEnergy_ADDR) {
+		(void)GenerateRandomEnergy();
+		return;
+	}
+	if (target == GenerateRandomEnergyBooster_ADDR) {
+		GenerateRandomEnergyBooster();
+		return;
+	}
+	if (target == GenerateEnergyBoosterLightningFire_ADDR) {
+		(void)GenerateEnergyBoosterLightningFire();
+		return;
+	}
+	if (target == GenerateEnergyBoosterWaterFighting_ADDR) {
+		(void)GenerateEnergyBoosterWaterFighting();
+		return;
+	}
+	if (target == GenerateEnergyBoosterGrassPsychic_ADDR)
+		(void)GenerateEnergyBoosterGrassPsychic();
 }
 /* <<< factory GenerateBoosterEnergies */
 
@@ -392,24 +445,27 @@ DetermineBoosterCardResult DetermineBoosterCard(uint8_t d, uint8_t e)
 	uint8_t type = wBoosterJustDrawnCardType;
 	uint8_t b = 0u;
 	uint8_t c = type;
-	uint16_t hl = (uint16_t)(wBoosterAmountOfCardTypeTable_ADDR + type);
-	uint8_t amount = gb_read8(hl);
-	uint8_t chances = Random(amount);
+	uint16_t amount_addr = (uint16_t)(wBoosterAmountOfCardTypeTable_ADDR + type);
+	uint8_t chances = Random(gb_read8(amount_addr));
 	wTempBoosterChances = chances;
-	hl = wBoosterViableCardList_ADDR;
+	uint16_t hl = wBoosterViableCardList_ADDR;
 	for (;;) {
-		uint8_t card_id = gb_read8(hl);
-		hl = (uint16_t)(hl + 1u);
-		if (card_id == 0u)
+		uint8_t low = gb_read8(hl++);
+		uint8_t high = gb_read8(hl);
+		if ((uint8_t)(low | high) == 0u)
 			return (DetermineBoosterCardResult){0u, 0x90u, b, c, d, e, hl};
-		wBoosterCurrentCard = card_id;
+		hl = (uint16_t)(hl - 1u);
+		CardId card_id = (CardId)(gb_read8(hl)
+			| ((uint16_t)gb_read8((uint16_t)(hl + 1u)) << 8));
+		hl = (uint16_t)(hl + 2u);
+		uint16_t current = wBoosterCurrentCard_ADDR;
+		card_id_write(&current, card_id);
 		uint8_t entry_type = gb_read8(hl);
 		if (entry_type == type) {
 			chances = wTempBoosterChances;
 			if (chances == 0u)
 				return (DetermineBoosterCardResult){0u, 0x80u, b, c, d, e, hl};
-			chances = (uint8_t)(chances - 1u);
-			wTempBoosterChances = chances;
+			wTempBoosterChances = (uint8_t)(chances - 1u);
 		}
 		hl = (uint16_t)(hl + 1u);
 	}
@@ -419,7 +475,7 @@ DetermineBoosterCardResult DetermineBoosterCard(uint8_t d, uint8_t e)
 /* >>> factory CheckCardInSetAndRarity */
 CheckCardInSetAndRarityResult CheckCardInSetAndRarity(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
-	CardTRS r = GetCardTypeRarityAndSet(e);
+	CardTRS r = GetCardTypeRarityAndSet((CardId)(((uint16_t)d << 8) | e));
 	wBoosterCurrentCardType = r.type;
 	wBoosterCurrentCardRarity = r.rarity;
 	wBoosterCurrentCardSet = r.set;
@@ -450,13 +506,12 @@ CheckCardInSetAndRarityResult CheckCardInSetAndRarity(uint8_t b, uint8_t c, uint
 /* >>> factory CheckCardAlreadyDrawn */
 CheckCardAlreadyDrawnResult CheckCardAlreadyDrawn(void)
 {
-	uint8_t index = gb_read8(wBoosterCurrentCard_ADDR);
-	uint8_t value = gb_read8((uint16_t)(wTempCardCollection_ADDR + index));
-	uint8_t f = 0x00u;
-	if (value == 1u)
-		f |= 0x80u;
+	CardId card = card_id_read_at(wBoosterCurrentCard_ADDR);
+	uint16_t slot = (uint16_t)(wTempCardCollection_ADDR + card);
+	uint8_t value = gb_read8(slot);
+	uint8_t f = (uint8_t)(value == 1u ? 0x80u : 0u);
 	if (value != 0u)
-		f |= 0x10u;
+		f = (uint8_t)(f | 0x10u);
 	return (CheckCardAlreadyDrawnResult){value, f};
 }
 /* <<< factory CheckCardAlreadyDrawn */
@@ -467,24 +522,27 @@ void FindCardsInSetAndRarity(void)
 	for (uint8_t i = 0u; i < NUM_BOOSTER_CARD_TYPES; i++)
 		gb_write8((uint16_t)(wBoosterAmountOfCardTypeTable_ADDR + i), 0u);
 	uint16_t list_ptr = wBoosterViableCardList_ADDR;
-	gb_write8(list_ptr, 0u);
-	for (uint16_t card_id = 1u; card_id <= NUM_CARDS; card_id++) {
-		gb_write8(wBoosterCurrentCard_ADDR, (uint8_t)card_id);
+	card_id_write(&list_ptr, 0u);
+	list_ptr = (uint16_t)(list_ptr - 2u);
+	for (CardId card_id = 1u; card_id <= NUM_CARDS; card_id++) {
+		uint16_t current = wBoosterCurrentCard_ADDR;
+		card_id_write(&current, card_id);
 		CheckCardAlreadyDrawnResult drawn = CheckCardAlreadyDrawn();
 		if (drawn.f & 0x10u)
 			continue;
-		CheckCardInSetAndRarityResult r = CheckCardInSetAndRarity(0u, 0u, 0u, (uint8_t)card_id, 0u);
+		CheckCardInSetAndRarityResult r = CheckCardInSetAndRarity(
+			0u, 0u, (uint8_t)(card_id >> 8), (uint8_t)card_id, 0u);
 		if (r.f & 0x10u)
 			continue;
-		uint8_t card_type = gb_read8(wBoosterCurrentCardType_ADDR);
+		uint8_t card_type = wBoosterCurrentCardType;
 		uint8_t type_index = GetBoosterCardType(card_type);
 		uint8_t count = gb_read8((uint16_t)(wBoosterAmountOfCardTypeTable_ADDR + type_index));
-		gb_write8((uint16_t)(wBoosterAmountOfCardTypeTable_ADDR + type_index), (uint8_t)(count + 1u));
-		gb_write8(list_ptr, (uint8_t)card_id);
-		list_ptr++;
-		gb_write8(list_ptr, type_index);
-		list_ptr++;
-		gb_write8(list_ptr, 0u);
+		gb_write8((uint16_t)(wBoosterAmountOfCardTypeTable_ADDR + type_index),
+			(uint8_t)(count + 1u));
+		card_id_write(&list_ptr, card_id);
+		gb_write8(list_ptr++, type_index);
+		card_id_write(&list_ptr, 0u);
+		list_ptr = (uint16_t)(list_ptr - 2u);
 	}
 }
 /* <<< factory FindCardsInSetAndRarity */
@@ -524,7 +582,7 @@ void InitBoosterData(void)
 {
 	for (uint16_t addr = wBoosterCardsDrawn_ADDR; addr < wBoosterCardsDrawnEnd_ADDR; addr++)
 		gb_write8(addr, 0u);
-	for (uint16_t i = 0; i < 256u; i++)
+	for (uint16_t i = 0; i < CARD_COLLECTION_SIZE; i++)
 		gb_write8((uint16_t)(wTempCardCollection_ADDR + i), 0u);
 
 	uint16_t hl = FindBoosterDataPointer();

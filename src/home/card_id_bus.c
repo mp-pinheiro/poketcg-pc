@@ -59,7 +59,7 @@ uint16_t card_gfx_prepare(uint16_t source)
 {
 #ifdef POKETCG_PROFILE_EXTENDED
 	uint16_t cursor = source;
-	for (uint8_t i = 0u; i < 3u; i++)
+	for (uint8_t i = 0u; i < 24u; i++)
 		gb_write8((uint16_t)(wCardPalette_ADDR + i), gb_read8(cursor++));
 	for (uint8_t i = 0u; i < 0x30u; i++)
 		gb_write8((uint16_t)(wCardAttrMap_ADDR + i), gb_read8(cursor++));

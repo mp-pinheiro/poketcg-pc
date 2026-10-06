@@ -2,6 +2,7 @@
 #define POKETCG_HOME_BOOSTER_PACKS_H
 
 #include <stdint.h>
+#include "home/card_id.h"
 
 /* >>> factory GetCurrentRarityAmount */
 typedef struct { uint8_t a; uint16_t hl; } RarityAmount;
@@ -20,21 +21,22 @@ uint8_t UpdateBoosterCardTypesChanceByte(void);
 void AppendCurrentCardToHL(uint16_t *hl);
 /* <<< factory AppendCurrentCardToHL */
 /* >>> factory AddBoosterCardToTempCardCollection */
-void AddBoosterCardToTempCardCollection(void);
+typedef struct { uint8_t a; uint8_t f; } AddBoosterCardToTempCardCollectionResult;
+AddBoosterCardToTempCardCollectionResult AddBoosterCardToTempCardCollection(void);
 /* <<< factory AddBoosterCardToTempCardCollection */
 /* >>> factory AddBoosterCardToDrawnEnergies */
 typedef struct { uint8_t a; uint8_t f; } AddBoosterCardToDrawnEnergiesResult;
 AddBoosterCardToDrawnEnergiesResult AddBoosterCardToDrawnEnergies(void);
 /* <<< factory AddBoosterCardToDrawnEnergies */
 /* >>> factory AddBoosterEnergyToDrawnEnergies */
-typedef struct { uint8_t a; uint8_t f; } AddBoosterEnergyToDrawnEnergiesResult;
-AddBoosterEnergyToDrawnEnergiesResult AddBoosterEnergyToDrawnEnergies(uint8_t a);
+typedef struct { uint8_t a; uint8_t f; uint8_t d; uint8_t e; } AddBoosterEnergyToDrawnEnergiesResult;
+AddBoosterEnergyToDrawnEnergiesResult AddBoosterEnergyToDrawnEnergies(CardId a);
 /* <<< factory AddBoosterEnergyToDrawnEnergies */
 /* >>> factory ZeroBoosterRarityData */
 void ZeroBoosterRarityData(void);
 /* <<< factory ZeroBoosterRarityData */
 /* >>> factory GenerateTwoTypesEnergyBooster */
-typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint16_t hl; } GenerateTwoTypesEnergyBoosterResult;
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } GenerateTwoTypesEnergyBoosterResult;
 GenerateTwoTypesEnergyBoosterResult GenerateTwoTypesEnergyBooster(uint16_t hl);
 /* <<< factory GenerateTwoTypesEnergyBooster */
 /* >>> factory GenerateRandomEnergy */
@@ -68,7 +70,7 @@ AddBoosterEnergyToDrawnEnergiesResult GeneratePsychicEnergy(void);
 AddBoosterEnergyToDrawnEnergiesResult GenerateWaterEnergy(void);
 /* <<< factory GenerateWaterEnergy */
 /* >>> factory GenerateRandomEnergyBooster */
-void GenerateRandomEnergyBooster(void);
+AddBoosterEnergyToDrawnEnergiesResult GenerateRandomEnergyBooster(void);
 /* <<< factory GenerateRandomEnergyBooster */
 /* >>> factory PutEnergiesAndNonEnergiesTogether */
 typedef struct {

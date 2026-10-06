@@ -2925,7 +2925,8 @@ ApplyCardCGBAttributesResult ApplyCardCGBAttributes(uint8_t a, uint16_t de)
 void SetCardPalette(uint8_t a)
 {
 	uint16_t src = wCardPalette_ADDR;
-	uint16_t dst = (uint16_t)(wBackgroundPalettesCGB_ADDR + (uint16_t)a * PAL_SIZE);
+	uint8_t offset = (uint8_t)(a * PAL_SIZE);
+	uint16_t dst = (uint16_t)(wBackgroundPalettesCGB_ADDR + offset);
 	for (uint8_t i = 0u; i < 3u; i++)
 		gb_write8(dst++, gb_read8(src++));
 	for (uint8_t i = 0u; i < 0x30u; i++) {
@@ -4969,27 +4970,51 @@ void PrintPlayAreaCardHeader(void)
 }
 /* <<< factory PrintPlayAreaCardHeader */
 
+static void trim_leading_zero_digits(uint8_t value)
+{
+	uint16_t remaining = value;
+	uint16_t place = 10000u;
+	uint16_t dst = wStringBuffer_ADDR;
+
+	for (uint8_t i = 0u; i < 5u; i++) {
+		uint8_t digit = SYM_0;
+		while (remaining >= place) {
+			remaining = (uint16_t)(remaining - place);
+			digit++;
+		}
+		gb_write8(dst++, digit);
+		place = (uint16_t)(place / 10u);
+	}
+	gb_write8(dst, 0u);
+	for (uint8_t i = 0u; i < 4u; i++) {
+		uint16_t addr = (uint16_t)(wStringBuffer_ADDR + i);
+		if (gb_read8(addr) != SYM_0)
+			break;
+		gb_write8(addr, SYM_SPACE);
+	}
+}
+
 /* >>> factory WriteTwoByteNumberInTxSymbolFormat */
 void WriteTwoByteNumberInTxSymbolFormat(uint8_t a, uint8_t b, uint8_t c)
 {
-	(void)TwoByteNumberToTxSymbol_PadSpace(a);
+	trim_leading_zero_digits(a);
 	uint16_t src = (uint16_t)(wStringBuffer_ADDR + 2u);
 	uint16_t dst = BCCoordToBGMap0Address(b, c);
 	for (uint8_t i = 0u; i < 3u; i++) {
 		gb_write8(dst++, gb_read8(src));
-		src = (uint16_t)(src + 2u);
+		src = (uint16_t)(src + 1u);
 	}
 }
 /* <<< factory WriteTwoByteNumberInTxSymbolFormat */
 /* >>> factory WriteTwoDigitNumberInTxSymbolFormat */
 void WriteTwoDigitNumberInTxSymbolFormat(uint8_t a, uint8_t b, uint8_t c)
 {
-	(void)TwoByteNumberToTxSymbol_PadSpace(a);
+	trim_leading_zero_digits(a);
 	uint16_t src = (uint16_t)(wStringBuffer_ADDR + 3u);
 	uint16_t dst = BCCoordToBGMap0Address(b, c);
 	for (uint8_t i = 0u; i < 2u; i++) {
 		gb_write8(dst++, gb_read8(src));
-		src = (uint16_t)(src + 2u);
+		src = (uint16_t)(src + 1u);
 	}
 }
 /* <<< factory WriteTwoDigitNumberInTxSymbolFormat */
@@ -6639,7 +6664,6 @@ TossCoinResult _TossCoin(uint8_t a)
 	/* store duelist type and reset number of heads */
 	EnableLCD();
 	wCoinTossDuelistType = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE_7847).a;
-	(void)UpdateRNGSources();
 	wCoinTossNumHeads = 0u;
 
 	do {
@@ -7242,24 +7266,36 @@ CheckIfActivePokemonCanUseAnyNonResidualAttackResult CheckIfActivePokemonCanUseA
 	wSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;
 	CheckIfSelectedAttackIsUnusableResult first = CheckIfSelectedAttackIsUnusable(
 		FIRST_ATTACK_OR_PKMN_POWER, 0x80u, b, c, d, e, hl);
-	a = first.a; f = first.f; b = first.b; c = first.c; d = first.d; e = first.e; hl = first.hl;
-	if ((f & 0x10u) == 0u) {
+	a = first.a;
+	f = first.f;
+	b = first.b;
+	c = first.c;
+	d = first.d;
+	e = first.e;
+	hl = first.hl;
+	if ((f & FLAG_C) == 0u) {
 		a = (uint8_t)(wLoadedAttackCategory & RESIDUAL);
-		f = (a == 0u) ? 0x80u : 0u;
 		if (a == 0u)
-			return (CheckIfActivePokemonCanUseAnyNonResidualAttackResult){a, (uint8_t)(f | 0x10u), b, c, d, e, hl};
+			return (CheckIfActivePokemonCanUseAnyNonResidualAttackResult){0u, FLAG_C, b, c, d, e, hl};
 	}
+
 	wSelectedAttack = SECOND_ATTACK;
 	CheckIfSelectedAttackIsUnusableResult second = CheckIfSelectedAttackIsUnusable(
 		SECOND_ATTACK, f, b, c, d, e, hl);
-	a = second.a; f = second.f; b = second.b; c = second.c; d = second.d; e = second.e; hl = second.hl;
-	if ((f & 0x10u) == 0u) {
+	a = second.a;
+	f = second.f;
+	b = second.b;
+	c = second.c;
+	d = second.d;
+	e = second.e;
+	hl = second.hl;
+	if ((f & FLAG_C) == 0u) {
 		a = (uint8_t)(wLoadedAttackCategory & RESIDUAL);
 		if (a == 0u)
-			return (CheckIfActivePokemonCanUseAnyNonResidualAttackResult){a, (uint8_t)((f & 0x80u) | 0x10u), b, c, d, e, hl};
+			return (CheckIfActivePokemonCanUseAnyNonResidualAttackResult){0u, FLAG_C, b, c, d, e, hl};
 	}
-	f = (a == 0u) ? 0x80u : 0u;
-	return (CheckIfActivePokemonCanUseAnyNonResidualAttackResult){a, f, b, c, d, e, hl};
+	return (CheckIfActivePokemonCanUseAnyNonResidualAttackResult){
+		a, (a == 0u) ? FLAG_Z : 0u, b, c, d, e, hl};
 }
 /* <<< factory CheckIfActivePokemonCanUseAnyNonResidualAttack */
 /* >>> factory DisplayPlaceInitialPokemonCardsScreen */

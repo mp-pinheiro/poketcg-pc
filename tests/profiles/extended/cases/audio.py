@@ -12,8 +12,8 @@ CASES = {
         dict(POISON, a=0x42, hl=0xC100,
              wram={0xC100: b'\xD0\x12\x34'},
              read={0xD909: 1, 0xD90A: 2}),
-        {'a': 0x01, 'b': 0x01, 'c': 0x02, 'hl': 0xFFFF,
-         'wram': {0xFFFF: b'\xFE', 0x0000: b'\xED', 0x0001: b'\xDC'},
+        {'a': 0x01, 'b': 0x01, 'c': 0x02, 'hl': 0xC1FF,
+         'wram': {0xC1FF: b'\xFE', 0xC200: b'\xED\xDC'},
          'read': {0xD909: 1, 0xD90A: 2}},
     ],
 }

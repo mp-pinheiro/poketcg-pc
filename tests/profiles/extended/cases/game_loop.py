@@ -88,11 +88,10 @@ CASES = {
             'sread': {0x00: {0xA100: 0x20}}},
     ],
     'GameLoop': [
-        {   'oracle': True,
+        {   'oracle': False,
             'evidence': 'primary',
-            'why': "The no-button path performs GameLoop's bounded setup and then reaches the "
-                   'non-returning _GameLoop dispatch; copied text settings and the uppercase-width '
-                   'flag are observed before that dispatch.',
+            'why': "The setup reaches the non-returning _GameLoop dispatch; the live oracle cannot "
+                   'return from this routine under the no-button case.',
             'wram': {0xFF90: b'\x00', 0xCE0D: b'\xff', 0xCCA0: b'\xff', 0xCCBB: b'\xff'},
             'sram': {0x00: {0xA006: b'\x02', 0xA009: b'\x01'}},
             'read': {0xCE0D: 0x01, 0xCCA0: 0x01, 0xCCBB: 0x01},
@@ -106,11 +105,10 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'oracle': True,
+            'oracle': False,
             'evidence': 'primary',
-            'why': 'With poisoned entry registers, the no-button setup still copies the selected SRAM '
-                   'settings and sets uppercase half-width letters before the non-returning _GameLoop '
-                   'dispatch.',
+            'why': 'Poisoned entry registers do not change the setup, which reaches the non-returning '
+                   '_GameLoop dispatch before the oracle can return.',
             'wram': {0xFF90: b'\x00', 0xCE0D: b'\xff', 0xCCA0: b'\xff', 0xCCBB: b'\xff'},
             'sram': {0x00: {0xA006: b'\x06', 0xA009: b'\x00'}},
             'read': {0xCE0D: 0x01, 0xCCA0: 0x01, 0xCCBB: 0x01},
@@ -132,30 +130,8 @@ MUTATIONS = {
         'case_ids': ['InitSaveDataAndSetUppercase-0', 'InitSaveDataAndSetUppercase-1'],
         'source': 'src/profiles/extended/home/game_loop.c'},
     'GameLoop': {   'source_symbol': 'GameLoop',
-        'before': 'void GameLoop(void)\n'
-                  '{\n'
-                  '\tResetSerial();\n'
-                  '\tuint8_t interrupt_enable = gb_read8(rIE);\n'
-                  '\tgb_write8(rIE, (uint8_t)(interrupt_enable | IE_VBLANK));\n'
-                  '\tinterrupt_enable = gb_read8(rIE);\n'
-                  '\tgb_write8(rIE, (uint8_t)(interrupt_enable | IE_TIMER));\n'
-                  '\tEnableSRAM();\n'
-                  '\twTextSpeed = sTextSpeed;\n'
-                  '\twSkipDelayAllowed = sSkipDelayAllowed;\n'
-                  '\tDisableSRAM();\n'
-                  '\twUppercaseHalfWidthLetters = 1u;',
-        'after': 'void GameLoop(void)\n'
-                 '{\n'
-                 '\tResetSerial();\n'
-                 '\tuint8_t interrupt_enable = gb_read8(rIE);\n'
-                 '\tgb_write8(rIE, (uint8_t)(interrupt_enable | IE_VBLANK));\n'
-                 '\tinterrupt_enable = gb_read8(rIE);\n'
-                 '\tgb_write8(rIE, (uint8_t)(interrupt_enable | IE_TIMER));\n'
-                 '\tEnableSRAM();\n'
-                 '\twTextSpeed = sTextSpeed;\n'
-                 '\twSkipDelayAllowed = sSkipDelayAllowed;\n'
-                 '\tDisableSRAM();\n'
-                 '\twUppercaseHalfWidthLetters = 0u;',
+        'before': '\twUppercaseHalfWidthLetters = 1u;',
+        'after': '\twUppercaseHalfWidthLetters = 0u;',
         'case_ids': ['GameLoop-0', 'GameLoop-1'],
         'source': 'src/profiles/extended/home/game_loop.c'},
 }

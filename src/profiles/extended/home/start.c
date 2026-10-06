@@ -589,8 +589,6 @@ void HandleStartMenu(void)
 /* >>> factory DrawPlayerPortraitAndPrintNewGameText */
 void DrawPlayerPortraitAndPrintNewGameText(void)
 {
-	DisableLCD();
-	LoadConsolePaletteData();
 	(void)InitMenuScreen();
 	EnableAndClearSpriteAnimations();
 	(void)SetDoFrameFunction(HANDLEALLSPRITEANIMATIONS_ADDR);

@@ -84,15 +84,16 @@ typedef struct {
 	uint8_t f;
 	uint8_t b;
 	uint8_t c;
+	uint8_t d;
+	uint8_t e;
 } JumpIfCardInCollectionResult;
 
 JumpIfCardInCollectionResult ScriptCommand_JumpIfCardInCollection(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_JumpIfCardInCollection */
 /* >>> factory ScriptCommand_GiveCard */
-IncreaseScriptPointerResult ScriptCommand_GiveCard(uint8_t c);
+IncreaseScriptPointerResult ScriptCommand_GiveCard(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_GiveCard */
-/* >>> factory ScriptCommand_TakeCard */
-IncreaseScriptPointerResult ScriptCommand_TakeCard(uint8_t c);
+IncreaseScriptPointerResult ScriptCommand_TakeCard(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_TakeCard */
 /* >>> factory ScriptCommand_PauseSong */
 IncreaseScriptPointerResult ScriptCommand_PauseSong(void);
@@ -129,7 +130,6 @@ typedef struct {
 	uint8_t a;
 	uint8_t f;
 	uint8_t c;
-	uint8_t e;
 } SetSpriteAttributesResult;
 
 SetSpriteAttributesResult ScriptCommand_SetSpriteAttributes(uint8_t b, uint8_t c);
@@ -167,7 +167,7 @@ IncreaseScriptPointerResult ScriptCommand_EnterMap(void);
 GetScriptArgsAfterPointerResult GetScriptArgs1AfterPointer(void);
 /* <<< factory GetScriptArgs1AfterPointer */
 /* >>> factory SetNextScript */
-void SetNextScript(uint16_t bc);
+uint16_t SetNextScript(uint8_t a, uint16_t bc);
 /* <<< factory SetNextScript */
 /* >>> factory SetEventValue */
 typedef struct { uint8_t a; uint8_t f; } SetEventValueResult;
@@ -218,15 +218,24 @@ IncreaseScriptPointerResultWithB ScriptCommand_SetActiveNPCCoords(uint8_t b, uin
 /* >>> factory ScriptCommand_JumpIfEnoughCardsOwned */
 JumpIfCardInCollectionResult ScriptCommand_JumpIfEnoughCardsOwned(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_JumpIfEnoughCardsOwned */
-/* >>> factory ScriptCommand_RemoveAllEnergyCardsFromCollection */
-IncreaseScriptPointerResult ScriptCommand_RemoveAllEnergyCardsFromCollection(void);
-/* <<< factory ScriptCommand_RemoveAllEnergyCardsFromCollection */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+} ScriptCommand_RemoveAllEnergyCardsResult;
+
+ScriptCommand_RemoveAllEnergyCardsResult ScriptCommand_RemoveAllEnergyCardsFromCollection(uint8_t b);
 /* >>> factory ScriptCommand_JumpIfAnyEnergyCardsInCollection */
 typedef struct {
 	uint8_t a;
 	uint8_t f;
 	uint8_t b;
 	uint8_t c;
+	uint8_t d;
+	uint8_t e;
 } ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult;
 
 ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult ScriptCommand_JumpIfAnyEnergyCardsInCollection(void);

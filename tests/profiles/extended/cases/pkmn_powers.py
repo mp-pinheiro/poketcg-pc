@@ -503,6 +503,7 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
+            'keys': [0x00, 0x01],
             'wram': {0xC2EF: b'\x01', 0xC2BB: b'\x00', 0xC2C8: b'q', 0xC400: b'\x01'},
             'hram': {0xFF97: b'\xc3'},
             'expect_regs': {'a': 0x01, 'f': 0x00},

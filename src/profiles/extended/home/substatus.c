@@ -13,7 +13,7 @@
 #include "home/frames.h"
 #include "home/print_text.h"
 #include "mem.h"
-/* >>> factory statics */
+#include "home/card_id_bus.h"
 #include "generated/wram.h"
 #include "home/card_data.h"
 #include "home/core.h"
@@ -52,23 +52,24 @@
 /* <<< factory statics */
 
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
-#define SAND_ATTACK_CHECK_TEXT 0x00deu
-#define SMOKESCREEN_CHECK_TEXT 0x00dfu
+#define SAND_ATTACK_CHECK_TEXT SandAttackCheckText
+#define SMOKESCREEN_CHECK_TEXT SmokescreenCheckText
 #define DUELVARS_ARENA_CARD 0xbbu
 #define DUELVARS_BENCH 0xbcu
 #define DUELVARS_ARENA_CARD_STATUS 0xf0u
-#define wTempPokemonID_ADDR 0xce7cu
+#define wTempPokemonID_ADDR wTempPokemonID_ce7c_ADDR
 
 /* substatus.asm:544-590. Counts arena (if not status-incapable) plus bench
  * slots matching the target id. The bench walk ends at its $FF terminator. */
-PkmnPowerCountResult CountTurnDuelistPokemonWithActivePkmnPower(uint8_t a)
+PkmnPowerCountResult CountTurnDuelistPokemonWithActivePkmnPower(CardId target)
 {
-	gb_write8(wTempPokemonID_ADDR, a);
+	uint16_t target_addr = wTempPokemonID_ADDR;
+	card_id_write(&target_addr, target);
 	uint8_t count = 0;
 	uint8_t arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
 	if (arena != 0xFF) {
-		uint16_t arena_id = GetCardIDFromDeckIndex(arena);
-		if ((uint8_t)arena_id == gb_read8(wTempPokemonID_ADDR)) {
+		CardId arena_id = GetCardIDFromDeckIndex(arena);
+		if (arena_id == card_id_read_at(wTempPokemonID_ADDR)) {
 			uint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;
 			if (!(status & CNF_SLP_PRZ))
 				count++;
@@ -76,25 +77,24 @@ PkmnPowerCountResult CountTurnDuelistPokemonWithActivePkmnPower(uint8_t a)
 	}
 	uint16_t bench = GetTurnDuelistVariable(DUELVARS_BENCH).hl;
 	while (gb_read8(bench) != 0xFF) {
-		uint16_t slot_id = GetCardIDFromDeckIndex(gb_read8(bench));
-		if ((uint8_t)slot_id == gb_read8(wTempPokemonID_ADDR))
+		CardId slot_id = GetCardIDFromDeckIndex(gb_read8(bench));
+		if (slot_id == card_id_read_at(wTempPokemonID_ADDR))
 			count++;
 		bench++;
 	}
-	/* `or a / scf / jr nz / or a`: found = Z clear + C set. */
-	return (PkmnPowerCountResult){count, count ? 0x10u : 0x80u};
+	return (PkmnPowerCountResult){count, count ? 0x10u : 0x80u, target};
 }
 
-/* substatus.asm:522-543: both duelists' play areas. */
-PkmnPowerCountResult CountPokemonWithActivePkmnPowerInBothPlayAreas(uint8_t a)
+PkmnPowerCountResult CountPokemonWithActivePkmnPowerInBothPlayAreas(CardId target)
 {
-	gb_write8(wTempPokemonID_ADDR, a);
-	uint8_t count = CountTurnDuelistPokemonWithActivePkmnPower(a).a;
+	PkmnPowerCountResult turn = CountTurnDuelistPokemonWithActivePkmnPower(target);
 	SwapTurn();
-	count = (uint8_t)(count + CountTurnDuelistPokemonWithActivePkmnPower(a).a);
+	PkmnPowerCountResult other = CountTurnDuelistPokemonWithActivePkmnPower(target);
 	SwapTurn();
-	return (PkmnPowerCountResult){count, count ? 0x10u : 0x80u};
+	uint8_t count = (uint8_t)(turn.a + other.a);
+	return (PkmnPowerCountResult){count, count ? 0x10u : 0x80u, target};
 }
+
 
 /* substatus.asm:346-366. Returns carry iff the turn holder's arena card has the
  * sand-attack or smokescreen substatus active AND the coin toss came up tails.
@@ -137,19 +137,19 @@ SandAttackCheckResult CheckSandAttackOrSmokescreenSubstatus(uint16_t de)
 
 /* ldtx's compile-time text ids, matching text_offsets.asm's index (the same
  * convention as duel.c's PLAYER2_TEXT_ID). */
-#define CANNOT_USE_DUE_TO_STATUS_TEXT_ID 0x00cbu
-#define UNABLE_DUE_TO_TOXIC_GAS_TEXT_ID 0x00d4u
-#define UNABLE_TO_RETREAT_DUE_TO_ACID_TEXT_ID 0x00feu
-#define UNABLE_TO_USE_TRAINER_DUE_TO_HEADACHE_TEXT_ID 0x00ffu
-#define UNABLE_TO_ATTACK_DUE_TO_TAIL_WAG_TEXT_ID 0x0100u
-#define UNABLE_TO_ATTACK_DUE_TO_LEER_TEXT_ID 0x0101u
-#define UNABLE_TO_ATTACK_DUE_TO_BONE_ATTACK_TEXT_ID 0x0102u
-#define UNABLE_TO_USE_ATTACK_DUE_TO_AMNESIA_TEXT_ID 0x0103u
-#define UNABLE_TO_EVOLVE_DUE_TO_PREHISTORIC_POWER_TEXT_ID 0x0106u
-#define NO_DAMAGE_OR_EFFECT_DUE_TO_FLY_TEXT_ID 0x0107u
-#define NO_DAMAGE_OR_EFFECT_DUE_TO_BARRIER_TEXT_ID 0x0108u
-#define NO_DAMAGE_OR_EFFECT_DUE_TO_AGILITY_TEXT_ID 0x0109u
-#define NO_DAMAGE_OR_EFFECT_DUE_TO_NSHIELD_TEXT_ID 0x010bu
+#define CANNOT_USE_DUE_TO_STATUS_TEXT_ID CannotUseDueToStatusText
+#define UNABLE_DUE_TO_TOXIC_GAS_TEXT_ID UnableDueToToxicGasText
+#define UNABLE_TO_RETREAT_DUE_TO_ACID_TEXT_ID UnableToRetreatDueToAcidText
+#define UNABLE_TO_USE_TRAINER_DUE_TO_HEADACHE_TEXT_ID UnableToUseTrainerDueToHeadacheText
+#define UNABLE_TO_ATTACK_DUE_TO_TAIL_WAG_TEXT_ID UnableToAttackDueToTailWagText
+#define UNABLE_TO_ATTACK_DUE_TO_LEER_TEXT_ID UnableToAttackDueToLeerText
+#define UNABLE_TO_ATTACK_DUE_TO_BONE_ATTACK_TEXT_ID UnableToAttackDueToBoneAttackText
+#define UNABLE_TO_USE_ATTACK_DUE_TO_AMNESIA_TEXT_ID UnableToUseAttackDueToAmnesiaText
+#define UNABLE_TO_EVOLVE_DUE_TO_PREHISTORIC_POWER_TEXT_ID UnableToEvolveDueToPrehistoricPowerText
+#define NO_DAMAGE_OR_EFFECT_DUE_TO_FLY_TEXT_ID NoDamageOrEffectDueToFlyText
+#define NO_DAMAGE_OR_EFFECT_DUE_TO_BARRIER_TEXT_ID NoDamageOrEffectDueToBarrierText
+#define NO_DAMAGE_OR_EFFECT_DUE_TO_AGILITY_TEXT_ID NoDamageOrEffectDueToAgilityText
+#define NO_DAMAGE_OR_EFFECT_DUE_TO_NSHIELD_TEXT_ID NoDamageOrEffectDueToNShieldText
 
 /* substatus.asm:476-481, ROM0 fixed bank (00:34d8 per poketcg.sym). */
 #define NO_DAMAGE_OR_EFFECT_TEXT_ID_TABLE_ADDR NoDamageOrEffectTextIDTable_ADDR
@@ -311,9 +311,9 @@ NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus(uint8_t d, uint8_t e, uin
 
 	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower_ArenaCard();
 	hl = incapable.hl;
-	if (incapable.f & 0x10u)
-		return (NoDamageOrEffectResult){0x00u, d, e, hl};
-	return HandleNoDamageOrEffectSubstatus_PkmnPower(d, e, hl);
+	if (!(incapable.f & 0x10u))
+		return HandleNoDamageOrEffectSubstatus_PkmnPower(d, e, incapable.hl);
+	return (NoDamageOrEffectResult){0x00u, d, e, incapable.hl};
 }
 
 NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus_PkmnPower(uint8_t d, uint8_t e, uint16_t hl)
@@ -357,7 +357,7 @@ PkmnPowerCountResult IsClairvoyanceActive(void)
 {
 	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
 	if (muk.f & 0x10u)
-		return (PkmnPowerCountResult){muk.a, 0x00u};
+		return (PkmnPowerCountResult){muk.a, 0x00u, muk.de};
 	return CountTurnDuelistPokemonWithActivePkmnPower(OMANYTE);
 }
 
@@ -407,10 +407,10 @@ PrehistoricPowerResult IsPrehistoricPowerActive(uint16_t hl)
 {
 	PkmnPowerCountResult aero = CountPokemonWithActivePkmnPowerInBothPlayAreas(AERODACTYL);
 	if (!(aero.f & 0x10u))
-		return (PrehistoricPowerResult){aero.a, aero.f, hl};
+		return (PrehistoricPowerResult){aero.a, aero.f, aero.de, hl};
 	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
 	uint8_t f = (muk.f & 0x10u) ? 0x00u : 0x90u;
-	return (PrehistoricPowerResult){muk.a, f, UNABLE_TO_EVOLVE_DUE_TO_PREHISTORIC_POWER_TEXT_ID};
+	return (PrehistoricPowerResult){muk.a, f, muk.de, UNABLE_TO_EVOLVE_DUE_TO_PREHISTORIC_POWER_TEXT_ID};
 }
 
 void ClearDamageReductionSubstatus2(void)
@@ -457,7 +457,7 @@ PkmnPowerCountResult IsRainDanceActive(void)
 		return blastoise;
 	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
 	uint8_t f = (muk.f & 0x10u) ? 0x00u : 0x90u;
-	return (PkmnPowerCountResult){muk.a, f};
+	return (PkmnPowerCountResult){muk.a, f, muk.de};
 }
 
 static void zero_changed_type_run(void)

@@ -29,9 +29,9 @@ static CardPtrResult get_card_pointer(CardId cardid)
 {
 	uint16_t entry = (uint16_t)(CARD_POINTERS + (uint16_t)cardid * 3u);
 	if (entry >= GETCARDPTR_BOUND)
-		return (CardPtrResult){entry, 1u, (uint8_t)(entry == GETCARDPTR_BOUND), 0u};
+		return (CardPtrResult){entry, 1u, 0u};
 	const uint8_t *p = rom_ptr(BANK_CARD_DATA, entry);
-	return (CardPtrResult){(uint16_t)(p[0] | (uint16_t)p[1] << 8), 0u, 0u, p[2]};
+	return (CardPtrResult){(uint16_t)(p[0] | (uint16_t)p[1] << 8), 0u, p[2]};
 }
 
 static const uint8_t *card_data(CardId cardid)

@@ -45,14 +45,10 @@ static void adapt_AppendCurrentCardToHL(ProbeState *s)
 /* >>> factory AddBoosterCardToTempCardCollection */
 static void adapt_AddBoosterCardToTempCardCollection(ProbeState *s)
 {
-	uint8_t card = gb_read8(wBoosterCurrentCard_ADDR);
-	uint16_t slot = (uint16_t)(wTempCardCollection_ADDR + card);
-	uint8_t before = gb_read8(slot);
-	AddBoosterCardToTempCardCollection();
-	s->a = card;
-	s->f = (uint8_t)((s->f & 0x10u) |
-	                ((uint8_t)(before + 1u) == 0u ? 0x80u : 0u) |
-	                ((before & 0x0fu) == 0x0fu ? 0x20u : 0u));
+	AddBoosterCardToTempCardCollectionResult result =
+		AddBoosterCardToTempCardCollection();
+	s->a = result.a;
+	s->f = result.f;
 }
 /* <<< factory AddBoosterCardToTempCardCollection */
 
@@ -68,9 +64,13 @@ static void adapt_AddBoosterCardToDrawnEnergies(ProbeState *s)
 /* >>> factory AddBoosterEnergyToDrawnEnergies */
 static void adapt_AddBoosterEnergyToDrawnEnergies(ProbeState *s)
 {
-	AddBoosterEnergyToDrawnEnergiesResult result = AddBoosterEnergyToDrawnEnergies(s->a);
+	CardId id = (CardId)(((uint16_t)s->d << 8) | s->e);
+	AddBoosterEnergyToDrawnEnergiesResult result =
+		AddBoosterEnergyToDrawnEnergies(id);
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
+	s->e = result.e;
 }
 /* <<< factory AddBoosterEnergyToDrawnEnergies */
 
@@ -91,6 +91,8 @@ static void adapt_GenerateTwoTypesEnergyBooster(ProbeState *s)
 	s->f = result.f;
 	s->b = result.b;
 	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
 	s->hl = result.hl;
 }
 /* <<< factory GenerateTwoTypesEnergyBooster */
@@ -101,6 +103,8 @@ static void adapt_GenerateRandomEnergy(ProbeState *s)
 	AddBoosterEnergyToDrawnEnergiesResult result = GenerateRandomEnergy();
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
+	s->e = result.e;
 }
 /* <<< factory GenerateRandomEnergy */
 
@@ -112,6 +116,8 @@ static void adapt_GenerateEnergyBoosterGrassPsychic(ProbeState *s)
 	s->f = result.f;
 	s->b = result.b;
 	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
 	s->hl = result.hl;
 }
 /* <<< factory GenerateEnergyBoosterGrassPsychic */
@@ -124,6 +130,8 @@ static void adapt_GenerateEnergyBoosterLightningFire(ProbeState *s)
 	s->f = result.f;
 	s->b = result.b;
 	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
 	s->hl = result.hl;
 }
 /* <<< factory GenerateEnergyBoosterLightningFire */
@@ -136,6 +144,8 @@ static void adapt_GenerateEnergyBoosterWaterFighting(ProbeState *s)
 	s->f = result.f;
 	s->b = result.b;
 	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
 	s->hl = result.hl;
 }
 /* <<< factory GenerateEnergyBoosterWaterFighting */
@@ -145,6 +155,8 @@ static void adapt_GenerateFightingEnergy(ProbeState *s)
 	AddBoosterEnergyToDrawnEnergiesResult result = GenerateFightingEnergy();
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
+	s->e = result.e;
 }
 /* <<< factory GenerateFightingEnergy */
 /* >>> factory GenerateFireEnergy */
@@ -153,6 +165,8 @@ static void adapt_GenerateFireEnergy(ProbeState *s)
 	AddBoosterEnergyToDrawnEnergiesResult result = GenerateFireEnergy();
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
+	s->e = result.e;
 }
 /* <<< factory GenerateFireEnergy */
 /* >>> factory GenerateGrassEnergy */
@@ -161,6 +175,8 @@ static void adapt_GenerateGrassEnergy(ProbeState *s)
 	AddBoosterEnergyToDrawnEnergiesResult result = GenerateGrassEnergy();
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
+	s->e = result.e;
 }
 /* <<< factory GenerateGrassEnergy */
 /* >>> factory GenerateLightningEnergy */
@@ -169,6 +185,8 @@ static void adapt_GenerateLightningEnergy(ProbeState *s)
 	AddBoosterEnergyToDrawnEnergiesResult result = GenerateLightningEnergy();
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
+	s->e = result.e;
 }
 /* <<< factory GenerateLightningEnergy */
 /* >>> factory GeneratePsychicEnergy */
@@ -177,6 +195,8 @@ static void adapt_GeneratePsychicEnergy(ProbeState *s)
 	AddBoosterEnergyToDrawnEnergiesResult result = GeneratePsychicEnergy();
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
+	s->e = result.e;
 }
 /* <<< factory GeneratePsychicEnergy */
 /* >>> factory GenerateWaterEnergy */
@@ -185,15 +205,19 @@ static void adapt_GenerateWaterEnergy(ProbeState *s)
 	AddBoosterEnergyToDrawnEnergiesResult result = GenerateWaterEnergy();
 	s->a = result.a;
 	s->f = result.f;
+	s->d = result.d;
+	s->e = result.e;
 }
 /* <<< factory GenerateWaterEnergy */
 
 /* >>> factory GenerateRandomEnergyBooster */
 static void adapt_GenerateRandomEnergyBooster(ProbeState *s)
 {
-	GenerateRandomEnergyBooster();
-	s->a = 0u;
-	s->f = 0x80u;
+	AddBoosterEnergyToDrawnEnergiesResult result = GenerateRandomEnergyBooster();
+	s->a = result.a;
+	s->f = result.f;
+	s->d = result.d;
+	s->e = result.e;
 }
 /* <<< factory GenerateRandomEnergyBooster */
 

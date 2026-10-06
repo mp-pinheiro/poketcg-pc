@@ -44,7 +44,6 @@ ProcessTextHeaderResult PrintYesOrNoItems(uint8_t d, uint8_t e);
 
 WaitResult WaitForButtonAorB(void);
 void DrawWideTextBox_PrintTextNoDelay_Wait(uint16_t hl);
-void DrawNarrowTextBox_WaitForInput(uint16_t hl);
 WaitResult DrawWideTextBox_WaitForInput(uint16_t hl);
 WaitResult WaitForWideTextBoxInput(void);
 /* >>> factory RefreshMenuCursor_CheckPlaySFX */

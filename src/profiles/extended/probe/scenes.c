@@ -11,12 +11,6 @@ static void adapt_SetBoosterLogoOAM(ProbeState *s)
 }
 /* <<< factory SetBoosterLogoOAM */
 
-/* >>> factory _DrawPortrait */
-static void adapt__DrawPortrait(ProbeState *s)
-{
-	_DrawPortrait(s->b, s->c);
-}
-/* <<< factory _DrawPortrait */
 
 /* >>> factory _LoadScene */
 static void adapt__LoadScene(ProbeState *s)
@@ -34,7 +28,6 @@ static void adapt_LoadBoosterGfx(ProbeState *s)
 
 const ProbeEntry probe_entries_scenes[] = {
 	{ "SetBoosterLogoOAM", adapt_SetBoosterLogoOAM },
-	{ "_DrawPortrait", adapt__DrawPortrait },
 	{ "_LoadScene", adapt__LoadScene },
 	{ "LoadBoosterGfx", adapt_LoadBoosterGfx },
 	{ NULL, NULL },
